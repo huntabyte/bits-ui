@@ -60,7 +60,7 @@
         "nanoid": "^4.0.2"
     },
     "peerDependencies": {
-        "svelte": ">=3 <5"
+        "svelte": "^4.0.0"
     },
     "packageManager": "pnpm@8.6.3"
 }
