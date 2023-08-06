@@ -29,20 +29,8 @@
         "!dist/**/*.test.*",
         "!dist/**/*.spec.*"
     ],
-    "typesVersions": {
-        ">4.0": {
-            "index.d.ts": [
-                "./dist/index.d.ts"
-            ],
-            "internal/*": [
-                "./dist/internal/*/index.d.ts"
-            ],
-            "internal/types": [
-                "./dist/internal/types.d.ts"
-            ]
-        }
-    },
     "devDependencies": {
+        "@changesets/cli": "^2.26.2",
         "@melt-ui/pp": "^0.1.1",
         "@playwright/test": "^1.28.1",
         "@sveltejs/adapter-auto": "^2.0.0",
@@ -68,12 +56,11 @@
     "types": "./dist/index.d.ts",
     "type": "module",
     "dependencies": {
-        "@changesets/cli": "^2.26.2",
-        "@melt-ui/svelte": "^0.33.1",
+        "@melt-ui/svelte": "0.33.1",
         "nanoid": "^4.0.2"
     },
     "peerDependencies": {
-        "svelte": ">=3 <5"
+        "svelte": "^4.0.0"
     },
     "packageManager": "pnpm@8.6.3"
 }
