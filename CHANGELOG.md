@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.0.3
+
+### Patch Changes
+
+- 540c6ed: Add avatar primitive
+
 ## 0.0.2
 
 ### Patch Changes
