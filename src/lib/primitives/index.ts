@@ -1,6 +1,7 @@
 export * as Accordion from "./accordion/index.js";
 export * as AlertDialog from "./alert-dialog/index.js";
 export * as AspectRatio from "./aspect-ratio/index.js";
+export * as Avatar from "./avatar/index.js";
 export * as Button from "./button/index.js";
 export * as Checkbox from "./checkbox/index.js";
 export * as Collapsible from "./collapsible/index.js";
