@@ -9,6 +9,7 @@
 </script>
 
 {#if builders && builders.length}
+	<!-- svelte-ignore a11y-no-static-element-interactions -->
 	<svelte:element
 		this={href ? "a" : "button"}
 		type={href ? undefined : type}
@@ -19,7 +20,6 @@
 		on:keyup
 		on:mouseenter
 		on:mouseleave
-		role="button"
 		tabindex="0"
 		use:builderActions={{ builders }}
 		{...getAttrs(builders)}
@@ -28,6 +28,7 @@
 		<slot />
 	</svelte:element>
 {:else}
+	<!-- svelte-ignore a11y-no-static-element-interactions -->
 	<svelte:element
 		this={href ? "a" : "button"}
 		type={href ? undefined : type}
@@ -38,7 +39,6 @@
 		on:keyup
 		on:mouseenter
 		on:mouseleave
-		role="button"
 		tabindex="0"
 		{...$$restProps}
 	>
