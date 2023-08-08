@@ -96,7 +96,7 @@ function getSubTrigger() {
 	return subTrigger;
 }
 
-function getContent(sideoffset = -4) {
+function getContent(sideoffset = 5) {
 	const {
 		elements: { menu: content },
 		states: { open },

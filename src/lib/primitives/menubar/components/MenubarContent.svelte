@@ -4,7 +4,7 @@
 	import type { ContentProps } from "../types.js";
 
 	type $$Props = ContentProps;
-	export let sideOffset = 4;
+	export let sideOffset: $$Props["sideOffset"] = 4;
 	const { content, open } = ctx.getContent(sideOffset);
 </script>
 
