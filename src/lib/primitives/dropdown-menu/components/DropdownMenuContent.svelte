@@ -4,7 +4,8 @@
 	import type { ContentProps } from "../types.js";
 
 	type $$Props = ContentProps;
-	const { open, content } = ctx.getContent();
+	export let sideOffset: $$Props["sideOffset"] = 5;
+	const { open, content } = ctx.getContent(sideOffset);
 </script>
 
 {#if $open}

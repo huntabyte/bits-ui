@@ -20,7 +20,7 @@
 	export let label: $$Props["label"] = undefined;
 
 	const {
-		states: { open: localOpen, value: localValue, valueLabel },
+		states: { open: localOpen, value: localValue },
 		updateOption
 	} = ctx.set({
 		required,

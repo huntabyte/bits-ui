@@ -4,7 +4,7 @@
 	import type { TriggerProps } from "../types.js";
 
 	type $$Props = TriggerProps;
-	export let asChild: boolean = false;
+	export let asChild = false;
 	const trigger = ctx.get().elements.trigger;
 </script>
 

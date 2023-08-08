@@ -4,10 +4,8 @@
 	import type { ContentProps } from "../types.js";
 
 	type $$Props = ContentProps;
-	const {
-		elements: { menu: content },
-		states: { open }
-	} = ctx.get();
+	export let sideOffset: $$Props["sideOffset"] = 5;
+	const { content, open } = ctx.getContent(sideOffset);
 </script>
 
 {#if $open}

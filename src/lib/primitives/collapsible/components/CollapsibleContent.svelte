@@ -2,6 +2,7 @@
 	import { melt } from "@melt-ui/svelte";
 	import type { ContentProps } from "../types.js";
 	import { ctx } from "../ctx.js";
+	import type { Transition } from "$internal/types.js";
 
 	type T = $$Generic<Transition>;
 	type $$Props = ContentProps<T>;

@@ -28,7 +28,9 @@ type RadioGroupProps = Expand<
 > &
 	HTMLDivAttributes;
 
-type ContentProps = HTMLDivAttributes;
+type ContentProps = {
+	sideOffset?: number;
+} & HTMLDivAttributes;
 type GroupProps = HTMLDivAttributes;
 type ItemProps = HTMLDivAttributes;
 type CheckboxItemIndicatorProps = HTMLDivAttributes;
