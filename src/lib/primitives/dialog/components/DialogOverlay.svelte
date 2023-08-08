@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { ctx } from "../ctx.js";
-	import type { AlertDialogOverlayProps } from "../types.js";
+	import type { OverlayProps } from "../types.js";
 
-	type $$Props = AlertDialogOverlayProps;
+	type $$Props = OverlayProps;
 	const overlay = ctx.getOverlay();
 </script>
 

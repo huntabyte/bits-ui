@@ -4,7 +4,7 @@
 	import type { SubContentProps } from "../types.js";
 
 	type $$Props = SubContentProps;
-	const { subContent, subOpen } = ctx.getSubContent();
+	const { subContent } = ctx.getSubContent();
 </script>
 
 <div use:melt={$subContent} {...$$restProps}>
