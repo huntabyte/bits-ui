@@ -1,5 +1,12 @@
 # @huntabyte/primitives
 
+## 0.0.4
+
+### Patch Changes
+
+- 8219393: [Button] Remove default role
+- fe27357: [Menu Primitives] Fix `sideOffset` prop
+
 ## 0.0.3
 
 ### Patch Changes
