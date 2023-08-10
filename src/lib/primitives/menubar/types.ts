@@ -3,7 +3,8 @@ import type {
 	HTMLDivAttributes,
 	OmitChecked,
 	OmitOpen,
-	OmitValue
+	OmitValue,
+	OnChangeFn
 } from "$internal/index.js";
 import type {
 	CreateMenubarProps,
@@ -20,12 +21,15 @@ type Props = Expand<CreateMenubarProps> & HTMLDivAttributes;
 type MenuProps = Expand<
 	OmitOpen<CreateMenubarMenuProps> & {
 		open?: CreateMenubarMenuProps["defaultOpen"] & {};
+		onOpenChange?: OnChangeFn<CreateMenubarMenuProps["defaultOpen"]>;
 	}
 >;
 
 type CheckboxItemProps = Expand<
 	OmitChecked<CreateMenuCheckboxItemProps> & {
 		checked?: CreateMenuCheckboxItemProps["defaultChecked"] & {};
+		onCheckedChange?: OnChangeFn<CreateMenuCheckboxItemProps["defaultChecked"]>;
+		asChild?: boolean;
 	}
 > &
 	HTMLDivAttributes;
@@ -33,6 +37,7 @@ type CheckboxItemProps = Expand<
 type RadioGroupProps = Expand<
 	OmitValue<CreateMenuRadioGroupProps> & {
 		value?: CreateMenuRadioGroupProps["defaultValue"] & {};
+		onValueChange?: OnChangeFn<CreateMenuRadioGroupProps["defaultValue"]>;
 	}
 > &
 	HTMLDivAttributes;
@@ -41,10 +46,17 @@ type ContentProps = {
 	sideOffset?: number;
 } & HTMLDivAttributes;
 type GroupProps = HTMLDivAttributes;
-type ItemProps = HTMLDivAttributes;
+type ItemProps = {
+	asChild?: boolean;
+} & HTMLDivAttributes;
 type CheckboxItemIndicatorProps = HTMLDivAttributes;
 type LabelProps = HTMLDivAttributes;
-type RadioItemProps = MenubarRadioItemProps & HTMLDivAttributes;
+type RadioItemProps = Expand<
+	MenubarRadioItemProps & {
+		asChild?: boolean;
+	}
+> &
+	HTMLDivAttributes;
 type SeparatorProps = HTMLDivAttributes;
 type SubProps = Expand<CreateMenubarSubmenuProps>;
 type SubContentProps = HTMLDivAttributes;

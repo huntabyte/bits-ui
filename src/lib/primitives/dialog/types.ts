@@ -1,4 +1,10 @@
-import type { HTMLDivAttributes, HTMLHeadingAttributes, OmitOpen } from "$internal/index.js";
+import type {
+	Expand,
+	HTMLDivAttributes,
+	HTMLHeadingAttributes,
+	OmitOpen,
+	OnChangeFn
+} from "$internal/index.js";
 import type { HTMLButtonAttributes } from "svelte/elements";
 
 import type { CreateDialogProps } from "@melt-ui/svelte";
@@ -6,6 +12,7 @@ import type { CreateDialogProps } from "@melt-ui/svelte";
 type Props = Expand<
 	OmitOpen<Omit<CreateDialogProps, "role">> & {
 		open?: CreateDialogProps["defaultOpen"] & {};
+		onOpenChange?: OnChangeFn<CreateDialogProps["defaultOpen"]>;
 	}
 >;
 

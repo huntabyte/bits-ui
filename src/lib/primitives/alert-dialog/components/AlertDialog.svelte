@@ -10,6 +10,7 @@
 	export let portal: $$Props["portal"] = undefined;
 	export let forceVisible: $$Props["forceVisible"] = undefined;
 	export let open: $$Props["open"] = undefined;
+	export let onOpenChange: $$Props["onOpenChange"] = undefined;
 
 	const {
 		states: { open: localOpen },
@@ -23,6 +24,7 @@
 		defaultOpen: open,
 		onOpenChange: ({ next }) => {
 			open = next;
+			onOpenChange?.(next);
 			return next;
 		}
 	});

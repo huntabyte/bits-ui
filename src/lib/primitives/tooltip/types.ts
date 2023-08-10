@@ -5,13 +5,15 @@ import type {
 	OmitOpen,
 	OmitForceVisible,
 	Transition,
-	TransitionParams
+	TransitionParams,
+	OnChangeFn
 } from "$internal/index.js";
 import type { HTMLButtonAttributes } from "svelte/elements";
 
 type Props = Expand<
 	OmitOpen<OmitForceVisible<CreateTooltipProps>> & {
 		open?: CreateTooltipProps["defaultOpen"] & {};
+		onOpenChange?: OnChangeFn<CreateTooltipProps["defaultOpen"]>;
 	}
 >;
 

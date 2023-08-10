@@ -7,6 +7,7 @@
 	export let forceVisible: $$Props["forceVisible"] = false;
 	export let disabled: $$Props["disabled"] = undefined;
 	export let open: $$Props["open"] = undefined;
+	export let onOpenChange: $$Props["onOpenChange"] = undefined;
 
 	const {
 		elements: { root },
@@ -18,6 +19,7 @@
 		defaultOpen: open,
 		onOpenChange: ({ next }) => {
 			open = next;
+			onOpenChange?.(next);
 			return next;
 		}
 	});

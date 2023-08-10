@@ -1,11 +1,19 @@
 import type { CreateSelectProps, SelectOptionProps } from "@melt-ui/svelte";
-import type { HTMLDivAttributes, OmitOpen, OmitValue } from "$internal/index.js";
+import type {
+	Expand,
+	HTMLDivAttributes,
+	OmitOpen,
+	OmitValue,
+	OnChangeFn
+} from "$internal/index.js";
 import type { HTMLAttributes, HTMLButtonAttributes, HTMLInputAttributes } from "svelte/elements";
 
 type Props = Expand<
 	OmitOpen<OmitValue<Omit<CreateSelectProps, "defaultValueLabel" | "forceVisible">>> & {
 		value?: CreateSelectProps["defaultValue"] & {};
+		onValueChange?: OnChangeFn<CreateSelectProps["defaultValue"]>;
 		open?: CreateSelectProps["defaultOpen"] & {};
+		onOpenChange?: OnChangeFn<CreateSelectProps["defaultOpen"]>;
 		label?: CreateSelectProps["defaultValueLabel"] & {};
 	}
 >;
@@ -14,9 +22,16 @@ type ContentProps = HTMLDivAttributes;
 type GroupProps = HTMLDivAttributes;
 type InputProps = HTMLInputAttributes;
 type LabelProps = HTMLDivAttributes;
-type ItemProps = Expand<SelectOptionProps> & HTMLDivAttributes;
+type ItemProps = Expand<
+	SelectOptionProps & {
+		asChild?: boolean;
+	}
+> &
+	HTMLDivAttributes;
 type SeparatorProps = HTMLDivAttributes;
-type TriggerProps = HTMLButtonAttributes;
+type TriggerProps = {
+	asChild?: boolean;
+} & HTMLButtonAttributes;
 type ValueProps = {
 	placeholder?: string;
 } & HTMLAttributes<HTMLSpanElement>;

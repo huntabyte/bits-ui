@@ -8,6 +8,7 @@
 	export let multiple: $$Props["multiple"] = false;
 	export let disabled: $$Props["disabled"] = false;
 	export let value: $$Props["value"] = undefined;
+	export let onValueChange: $$Props["onValueChange"] = undefined;
 
 	const {
 		elements: { root },
@@ -19,6 +20,7 @@
 		defaultValue: value,
 		onValueChange: ({ next }) => {
 			value = next;
+			onValueChange?.(next);
 			return next;
 		}
 	});

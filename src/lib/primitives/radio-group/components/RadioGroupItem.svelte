@@ -6,10 +6,14 @@
 	type $$Props = ItemProps;
 	export let value: $$Props["value"];
 	export let disabled: $$Props["disabled"] = false;
-
+	export let asChild: $$Props["asChild"] = false;
 	const { item } = ctx.setItem(value);
 </script>
 
-<button use:melt={$item({ value, disabled })} {...$$restProps}>
-	<slot />
-</button>
+{#if asChild}
+	<slot item={$item} />
+{:else}
+	<button use:melt={$item({ value, disabled })} {...$$restProps}>
+		<slot item={$item} />
+	</button>
+{/if}

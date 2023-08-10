@@ -5,6 +5,7 @@
 	type $$Props = Props;
 	export let delayMs: $$Props["delayMs"] = undefined;
 	export let loadingStatus: $$Props["loadingStatus"] = undefined;
+	export let onLoadingStatusChange: $$Props["onLoadingStatusChange"] = undefined;
 
 	const {
 		states: { loadingStatus: localLoadingStatus },
@@ -14,6 +15,7 @@
 		delayMs,
 		onLoadingStatusChange: ({ next }) => {
 			loadingStatus = next;
+			onLoadingStatusChange?.(next);
 			return next;
 		}
 	});

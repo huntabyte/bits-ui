@@ -1,9 +1,10 @@
 import type { CreateSliderProps } from "@melt-ui/svelte";
-import type { Expand, OmitValue, HTMLSpanAttributes } from "$internal/index.js";
+import type { Expand, OmitValue, HTMLSpanAttributes, OnChangeFn } from "$internal/index.js";
 
 type Props = Expand<
 	OmitValue<CreateSliderProps> & {
 		value?: CreateSliderProps["defaultValue"] & {};
+		onValueChange?: OnChangeFn<CreateSliderProps["defaultValue"]>;
 	}
 > &
 	HTMLSpanAttributes;

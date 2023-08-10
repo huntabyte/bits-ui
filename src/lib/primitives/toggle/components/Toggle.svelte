@@ -6,7 +6,8 @@
 	type $$Props = Props;
 	export let disabled: $$Props["disabled"] = undefined;
 	export let pressed: $$Props["pressed"] = undefined;
-
+	export let onPressedChange: $$Props["onPressedChange"] = undefined;
+	export let asChild: $$Props["asChild"] = false;
 	const {
 		elements: { root },
 		states: { pressed: localPressed },
@@ -16,6 +17,7 @@
 		defaultPressed: pressed,
 		onPressedChange: ({ next }) => {
 			pressed = next;
+			onPressedChange?.(next);
 			return next;
 		}
 	});
@@ -24,6 +26,10 @@
 	$: updateOption("disabled", disabled);
 </script>
 
-<button use:melt={$root} {...$$restProps}>
-	<slot />
-</button>
+{#if asChild}
+	<slot toggle={$root} />
+{:else}
+	<button use:melt={$root} {...$$restProps}>
+		<slot toggle={$root} />
+	</button>
+{/if}

@@ -7,6 +7,7 @@
 
 	export let max: $$Props["max"] = undefined;
 	export let value: $$Props["value"] = undefined;
+	export let onValueChange: $$Props["onValueChange"] = undefined;
 
 	const {
 		elements: { root },
@@ -17,6 +18,7 @@
 		defaultValue: value,
 		onValueChange: ({ next }) => {
 			value = next;
+			onValueChange?.(next);
 			return next;
 		}
 	});

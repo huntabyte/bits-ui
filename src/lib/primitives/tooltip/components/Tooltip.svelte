@@ -11,6 +11,7 @@
 	export let openDelay: $$Props["openDelay"] = undefined;
 	export let closeDelay: $$Props["closeDelay"] = undefined;
 	export let open: $$Props["open"] = undefined;
+	export let onOpenChange: $$Props["onOpenChange"] = undefined;
 
 	const {
 		states: { open: localOpen },
@@ -23,7 +24,12 @@
 		closeOnPointerDown,
 		openDelay,
 		closeDelay,
-		defaultOpen: open
+		defaultOpen: open,
+		onOpenChange: ({ next }) => {
+			open = next;
+			onOpenChange?.(next);
+			return next;
+		}
 	});
 
 	$: open !== undefined && localOpen.set(open);

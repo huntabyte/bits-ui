@@ -3,7 +3,8 @@ import type {
 	Expand,
 	HTMLDivAttributes,
 	Transition,
-	TransitionParams
+	TransitionParams,
+	OnChangeFn
 } from "$internal/index.js";
 import type { CreatePopoverProps } from "@melt-ui/svelte";
 import type { HTMLButtonAttributes } from "svelte/elements";
@@ -11,6 +12,7 @@ import type { HTMLButtonAttributes } from "svelte/elements";
 type Props = Expand<
 	OmitOpen<CreatePopoverProps> & {
 		open?: CreatePopoverProps["defaultOpen"];
+		onOpenChange?: OnChangeFn<CreatePopoverProps["defaultOpen"]>;
 	}
 >;
 

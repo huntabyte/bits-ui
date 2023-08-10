@@ -1,10 +1,11 @@
-import type { HTMLDivAttributes, HTMLSpanAttributes } from "$internal/index.js";
+import type { Expand, HTMLDivAttributes, HTMLSpanAttributes, OnChangeFn } from "$internal/index.js";
 import type { CreateAvatarProps } from "@melt-ui/svelte";
 import type { HTMLImgAttributes } from "svelte/elements";
 
 type Props = Expand<
 	Omit<CreateAvatarProps, "onLoadingStatusChange" | "loadingStatus" | "src"> & {
 		loadingStatus?: "loading" | "loaded" | "error";
+		onLoadingStatusChange?: OnChangeFn<"loading" | "loaded" | "error">;
 	}
 > &
 	HTMLDivAttributes;

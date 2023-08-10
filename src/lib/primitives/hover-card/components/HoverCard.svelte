@@ -5,6 +5,7 @@
 
 	export let positioning: $$Props["positioning"] = undefined;
 	export let open: $$Props["open"] = undefined;
+	export let onOpenChange: $$Props["onOpenChange"] = undefined;
 	export let openDelay: $$Props["openDelay"] = undefined;
 	export let closeDelay: $$Props["closeDelay"] = undefined;
 	export let closeOnOutsideClick: $$Props["closeOnOutsideClick"] = undefined;
@@ -23,7 +24,12 @@
 		closeOnOutsideClick,
 		closeOnEscape,
 		arrowSize,
-		portal
+		portal,
+		onOpenChange: ({ next }) => {
+			open = next;
+			onOpenChange?.(next);
+			return next;
+		}
 	});
 
 	$: open !== undefined && localOpen.set(open);

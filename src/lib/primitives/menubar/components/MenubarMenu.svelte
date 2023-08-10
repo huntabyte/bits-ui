@@ -8,6 +8,7 @@
 	export let portal: $$Props["portal"] = undefined;
 	export let forceVisible: $$Props["forceVisible"] = undefined;
 	export let open: $$Props["open"] = undefined;
+	export let onOpenChange: $$Props["onOpenChange"] = undefined;
 	export let preventScroll: $$Props["preventScroll"] = undefined;
 	export let arrowSize: $$Props["arrowSize"] = undefined;
 	export let positioning: $$Props["positioning"] = undefined;
@@ -28,6 +29,7 @@
 		dir,
 		onOpenChange: ({ next }) => {
 			open = next;
+			onOpenChange?.(next);
 			return next;
 		}
 	});

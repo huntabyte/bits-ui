@@ -5,6 +5,7 @@
 
 	type $$Props = RadioGroupProps;
 	export let value: $$Props["value"] = undefined;
+	export let onValueChange: $$Props["onValueChange"] = undefined;
 
 	const {
 		elements: { radioGroup },
@@ -14,6 +15,7 @@
 		onValueChange: ({ next }) => {
 			if (next) {
 				value = next;
+				onValueChange?.(next);
 			}
 			return next;
 		}
