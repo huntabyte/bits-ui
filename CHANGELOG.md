@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.0.5
+
+### Patch Changes
+
+- 2c923c5: add asChild & onChange functions
+
 ## 0.0.4
 
 ### Patch Changes
