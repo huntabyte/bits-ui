@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.0.6
+
+### Patch Changes
+
+- 7937960: update dependencies
+
 ## 0.0.5
 
 ### Patch Changes
