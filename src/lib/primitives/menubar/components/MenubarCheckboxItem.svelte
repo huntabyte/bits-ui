@@ -5,7 +5,9 @@
 
 	type $$Props = CheckboxItemProps;
 	export let checked: $$Props["checked"] = undefined;
+	export let onCheckedChange: $$Props["onCheckedChange"] = undefined;
 	export let disabled: $$Props["disabled"] = undefined;
+	export let asChild: $$Props["asChild"] = false;
 
 	const {
 		elements: { checkboxItem },
@@ -16,6 +18,7 @@
 		defaultChecked: checked,
 		onCheckedChange: ({ next }) => {
 			checked = next;
+			onCheckedChange?.(next);
 			return next;
 		}
 	});
@@ -24,6 +27,10 @@
 	$: updateOption("disabled", disabled);
 </script>
 
-<div use:melt={$checkboxItem} {...$$restProps}>
-	<slot />
-</div>
+{#if asChild}
+	<slot checkboxItem={$checkboxItem} />
+{:else}
+	<div use:melt={$checkboxItem} {...$$restProps}>
+		<slot checkboxItem={$checkboxItem} />
+	</div>
+{/if}

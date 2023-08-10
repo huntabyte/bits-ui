@@ -1,10 +1,11 @@
-import type { HTMLDivAttributes, OmitChecked } from "$internal/index.js";
+import type { Expand, HTMLDivAttributes, OmitChecked, OnChangeFn } from "$internal/index.js";
 import type { CreateCheckboxProps } from "@melt-ui/svelte";
 import type { HTMLButtonAttributes, HTMLInputAttributes } from "svelte/elements";
 
 type Props = Expand<
 	OmitChecked<CreateCheckboxProps> & {
 		checked?: CreateCheckboxProps["defaultChecked"] & {};
+		onCheckedChange?: OnChangeFn<CreateCheckboxProps["defaultChecked"]>;
 	}
 > &
 	HTMLButtonAttributes;

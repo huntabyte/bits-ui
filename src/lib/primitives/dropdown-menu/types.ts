@@ -1,4 +1,11 @@
-import type { HTMLDivAttributes, OmitChecked, OmitOpen, OmitValue } from "$internal/index.js";
+import type {
+	Expand,
+	HTMLDivAttributes,
+	OmitChecked,
+	OmitOpen,
+	OmitValue,
+	OnChangeFn
+} from "$internal/index.js";
 import type {
 	CreateDropdownMenuProps,
 	CreateDropdownMenuCheckboxItemProps,
@@ -11,12 +18,15 @@ import type { HTMLButtonAttributes } from "svelte/elements";
 type Props = Expand<
 	OmitOpen<CreateDropdownMenuProps> & {
 		open?: CreateDropdownMenuProps["defaultOpen"] & {};
+		onOpenChange?: OnChangeFn<CreateDropdownMenuProps["defaultOpen"]>;
 	}
 >;
 
 type CheckboxItemProps = Expand<
 	OmitChecked<CreateDropdownMenuCheckboxItemProps> & {
 		checked?: CreateDropdownMenuCheckboxItemProps["defaultChecked"] & {};
+		onCheckedChange?: OnChangeFn<CreateDropdownMenuCheckboxItemProps["defaultChecked"]>;
+		asChild?: boolean;
 	}
 > &
 	HTMLDivAttributes;
@@ -24,6 +34,14 @@ type CheckboxItemProps = Expand<
 type RadioGroupProps = Expand<
 	OmitValue<CreateDropdownMenuRadioGroupProps> & {
 		value?: CreateDropdownMenuRadioGroupProps["defaultValue"] & {};
+		onValueChange?: OnChangeFn<CreateDropdownMenuRadioGroupProps["defaultValue"]>;
+	}
+> &
+	HTMLDivAttributes;
+
+type RadioItemProps = Expand<
+	DropdownMenuRadioItemProps & {
+		asChild?: boolean;
 	}
 > &
 	HTMLDivAttributes;
@@ -32,10 +50,11 @@ type ContentProps = {
 	sideOffset?: number;
 } & HTMLDivAttributes;
 type GroupProps = HTMLDivAttributes;
-type ItemProps = HTMLDivAttributes;
+type ItemProps = {
+	asChild?: boolean;
+} & HTMLDivAttributes;
 type CheckboxItemIndicatorProps = HTMLDivAttributes;
 type LabelProps = HTMLDivAttributes;
-type RadioItemProps = DropdownMenuRadioItemProps & HTMLDivAttributes;
 type SeparatorProps = HTMLDivAttributes;
 type SubProps = Expand<CreateDropdownSubmenuProps>;
 type SubContentProps = HTMLDivAttributes;

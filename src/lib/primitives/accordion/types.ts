@@ -3,7 +3,9 @@ import type {
 	ObjectVariation,
 	Transition,
 	TransitionParams,
-	OmitValue
+	OmitValue,
+	Expand,
+	OnChangeFn
 } from "$internal/index.js";
 import type {
 	CreateAccordionProps,
@@ -12,9 +14,13 @@ import type {
 } from "@melt-ui/svelte";
 import type { HTMLButtonAttributes } from "svelte/elements";
 
-type Props = OmitValue<CreateAccordionProps> & {
-	value?: CreateAccordionProps["defaultValue"] & {};
-} & HTMLDivAttributes;
+type Props = Expand<
+	OmitValue<CreateAccordionProps> & {
+		value?: CreateAccordionProps["defaultValue"] & {};
+		onValueChange?: OnChangeFn<CreateAccordionProps["defaultValue"]>;
+	}
+> &
+	HTMLDivAttributes;
 
 type ItemProps = ObjectVariation<_ItemProps> & HTMLDivAttributes;
 type HeaderProps = ObjectVariation<_HeadingProps> & HTMLDivAttributes;

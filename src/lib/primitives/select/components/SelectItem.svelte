@@ -8,11 +8,16 @@
 	export let value: $$Props["value"];
 	export let disabled: $$Props["disabled"] = undefined;
 	export let label: $$Props["label"] = undefined;
+	export let asChild: $$Props["asChild"] = false;
 	const item = ctx.setItem(value);
 </script>
 
-<div use:melt={$item({ value, disabled, label })} {...$$restProps}>
-	<slot>
-		{label ? label : value}
-	</slot>
-</div>
+{#if asChild}
+	<slot item={$item} />
+{:else}
+	<div use:melt={$item({ value, disabled, label })} {...$$restProps}>
+		<slot item={$item}>
+			{label ? label : value}
+		</slot>
+	</div>
+{/if}

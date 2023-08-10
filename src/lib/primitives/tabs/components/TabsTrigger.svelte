@@ -6,12 +6,17 @@
 
 	export let value: $$Props["value"];
 	export let disabled: $$Props["disabled"] = undefined;
+	export let asChild: $$Props["asChild"] = false;
 
 	const {
 		elements: { trigger }
 	} = ctx.get();
 </script>
 
-<button use:melt={$trigger({ value, disabled })} {...$$restProps}>
-	<slot />
-</button>
+{#if asChild}
+	<slot trigger={$trigger} />
+{:else}
+	<button use:melt={$trigger({ value, disabled })} {...$$restProps}>
+		<slot trigger={$trigger} />
+	</button>
+{/if}

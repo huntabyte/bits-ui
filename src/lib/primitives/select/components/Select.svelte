@@ -16,7 +16,9 @@
 	export let name: $$Props["name"] = undefined;
 	export let multiple: $$Props["multiple"] = undefined;
 	export let value: $$Props["value"] = undefined;
+	export let onValueChange: $$Props["onValueChange"] = undefined;
 	export let open: $$Props["open"] = undefined;
+	export let onOpenChange: $$Props["onOpenChange"] = undefined;
 	export let label: $$Props["label"] = undefined;
 
 	const {
@@ -39,10 +41,12 @@
 		defaultValueLabel: label,
 		onValueChange: ({ next }) => {
 			value = next;
+			onValueChange?.(next);
 			return next;
 		},
 		onOpenChange: ({ next }) => {
 			open = next;
+			onOpenChange?.(next);
 			return next;
 		}
 	});

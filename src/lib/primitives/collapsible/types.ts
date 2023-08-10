@@ -3,7 +3,8 @@ import type {
 	Transition,
 	TransitionParams,
 	OmitOpen,
-	Expand
+	Expand,
+	OnChangeFn
 } from "$internal/index.js";
 import type { CreateCollapsibleProps } from "@melt-ui/svelte";
 import type { HTMLButtonAttributes } from "svelte/elements";
@@ -11,6 +12,7 @@ import type { HTMLButtonAttributes } from "svelte/elements";
 type Props = Expand<
 	OmitOpen<CreateCollapsibleProps> & {
 		open?: CreateCollapsibleProps["defaultOpen"] & {};
+		onOpenChange?: OnChangeFn<CreateCollapsibleProps["defaultOpen"]> & {};
 	}
 > &
 	HTMLDivAttributes;

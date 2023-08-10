@@ -7,6 +7,7 @@
 	export let required: $$Props["required"] = undefined;
 	export let disabled: $$Props["disabled"] = undefined;
 	export let value: $$Props["value"] = undefined;
+	export let onValueChange: $$Props["onValueChange"] = undefined;
 	export let loop: $$Props["loop"] = undefined;
 	export let orientation: $$Props["orientation"] = undefined;
 
@@ -22,6 +23,7 @@
 		orientation,
 		onValueChange: ({ next }) => {
 			value = next;
+			onValueChange?.(next);
 			return next;
 		}
 	});

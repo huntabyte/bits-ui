@@ -9,6 +9,7 @@
 	export let name: CheckboxProps["name"] = undefined;
 	export let required: CheckboxProps["required"] = undefined;
 	export let value: CheckboxProps["value"] = undefined;
+	export let onCheckedChange: CheckboxProps["onCheckedChange"] = undefined;
 
 	const {
 		elements: { root, input },
@@ -22,6 +23,7 @@
 		value,
 		onCheckedChange: ({ next }) => {
 			checked = next;
+			onCheckedChange?.(next);
 			return next;
 		}
 	});

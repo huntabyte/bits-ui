@@ -1,10 +1,11 @@
-import type { OmitOpen, Expand, HTMLDivAttributes } from "$internal/index.js";
+import type { OmitOpen, Expand, HTMLDivAttributes, OnChangeFn } from "$internal/index.js";
 import type { CreateHoverCardProps } from "@melt-ui/svelte";
 import type { HTMLAnchorAttributes } from "svelte/elements";
 
 type Props = Expand<
 	OmitOpen<CreateHoverCardProps> & {
 		open?: CreateHoverCardProps["defaultOpen"];
+		onOpenChange?: OnChangeFn<CreateHoverCardProps["defaultOpen"]>;
 	}
 >;
 type TriggerProps = HTMLAnchorAttributes;

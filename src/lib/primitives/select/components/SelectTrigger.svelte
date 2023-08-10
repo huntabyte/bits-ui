@@ -4,9 +4,14 @@
 	import type { TriggerProps } from "../types.js";
 
 	type $$Props = TriggerProps;
+	export let asChild: $$Props["asChild"] = false;
 	const trigger = ctx.getTrigger();
 </script>
 
-<button use:melt={$trigger} {...$$restProps}>
-	<slot />
-</button>
+{#if asChild}
+	<slot trigger={$trigger} />
+{:else}
+	<button use:melt={$trigger} {...$$restProps}>
+		<slot trigger={$trigger} />
+	</button>
+{/if}

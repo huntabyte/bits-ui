@@ -5,6 +5,7 @@
 
 	type $$Props = Props;
 	export let checked: $$Props["checked"] = undefined;
+	export let onCheckedChange: $$Props["onCheckedChange"] = undefined;
 	export let disabled: $$Props["disabled"] = undefined;
 	export let name: $$Props["name"] = undefined;
 	export let value: $$Props["value"] = undefined;
@@ -20,6 +21,7 @@
 		defaultChecked: checked,
 		onCheckedChange: ({ next }) => {
 			checked = next;
+			onCheckedChange?.(next);
 			return next;
 		}
 	});
