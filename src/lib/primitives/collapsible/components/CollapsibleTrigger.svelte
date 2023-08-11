@@ -8,10 +8,10 @@
 	const trigger = ctx.get().elements.trigger;
 </script>
 
-{#if !asChild}
-	<button use:melt={$trigger} {...$$restProps}>
-		<slot />
-	</button>
-{:else}
+{#if asChild}
 	<slot trigger={$trigger} />
+{:else}
+	<button use:melt={$trigger} {...$$restProps} on:click on:keydown>
+		<slot trigger={$trigger} />
+	</button>
 {/if}

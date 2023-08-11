@@ -8,10 +8,11 @@
 	const trigger = ctx.getTrigger();
 </script>
 
+<!-- svelte-ignore a11y-no-static-element-interactions applied by melt's action/store -->
 {#if asChild}
 	<slot trigger={$trigger} />
 {:else}
-	<div use:melt={$trigger} {...$$restProps}>
+	<div use:melt={$trigger} {...$$restProps} on:click>
 		<slot trigger={$trigger} />
 	</div>
 {/if}

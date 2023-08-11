@@ -13,7 +13,7 @@
 {#if asChild}
 	<slot item={$item} />
 {:else}
-	<div use:melt={$item} {...$$restProps}>
+	<div use:melt={$item} {...$$restProps} on:m-click>
 		<slot item={$item} />
 	</div>
 {/if}

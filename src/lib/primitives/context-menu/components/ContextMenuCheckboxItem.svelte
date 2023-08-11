@@ -26,10 +26,11 @@
 	$: updateOption("disabled", disabled);
 </script>
 
+<!-- svelte-ignore a11y-no-static-element-interactions applied by melt's action/store -->
 {#if asChild}
 	<slot checkboxItem={$checkboxItem} />
 {:else}
-	<div use:melt={$checkboxItem} {...$$restProps}>
+	<div use:melt={$checkboxItem} {...$$restProps} on:click>
 		<slot checkboxItem={$checkboxItem} />
 	</div>
 {/if}

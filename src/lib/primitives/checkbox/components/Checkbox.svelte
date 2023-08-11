@@ -36,7 +36,7 @@
 	$: updateOption("value", value);
 </script>
 
-<button use:melt={$root} {...$$restProps}>
+<button use:melt={$root} {...$$restProps} on:click on:keydown>
 	<slot />
 	<input use:melt={$input} />
 </button>

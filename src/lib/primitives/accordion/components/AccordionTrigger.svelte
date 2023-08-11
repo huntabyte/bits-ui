@@ -7,6 +7,6 @@
 	const { trigger, props } = ctx.getTrigger();
 </script>
 
-<button use:melt={$trigger(props)} {...$$restProps} on:m-click on:m-keydown>
+<button use:melt={$trigger(props)} {...$$restProps} on:click on:keydown>
 	<slot />
 </button>

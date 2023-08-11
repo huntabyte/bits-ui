@@ -7,6 +7,6 @@
 	const subTrigger = ctx.getSubTrigger();
 </script>
 
-<div use:melt={$subTrigger} {...$$restProps}>
+<div use:melt={$subTrigger} {...$$restProps} on:m-click>
 	<slot />
 </div>
