@@ -3,7 +3,8 @@ import type {
 	HTMLDivAttributes,
 	KeydownClickEvents,
 	OmitValue,
-	OnChangeFn
+	OnChangeFn,
+	ObjectVariation
 } from "$internal/index.js";
 import type {
 	CreateRadioGroupProps,
@@ -23,7 +24,7 @@ type Props = Expand<
 type InputProps = HTMLInputAttributes;
 
 type ItemProps = Expand<
-	RadioGroupItemProps & {
+	ObjectVariation<RadioGroupItemProps> & {
 		asChild?: boolean;
 	}
 > &
