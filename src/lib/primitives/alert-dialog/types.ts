@@ -4,7 +4,9 @@ import type {
 	Expand,
 	HTMLHeadingAttributes,
 	OnChangeFn,
-	KeydownClickEvents
+	KeydownClickEvents,
+	Transition,
+	TransitionParams
 } from "$internal/index.js";
 import type { HTMLButtonAttributes } from "svelte/elements";
 import type { CreateDialogProps, DialogComponentEvents } from "@melt-ui/svelte";
@@ -22,7 +24,10 @@ type TriggerProps = HTMLButtonAttributes & {
 
 type ActionProps = TriggerProps;
 type CancelProps = TriggerProps;
-type ContentProps = HTMLDivAttributes;
+type ContentProps<T extends Transition = Transition> = HTMLDivAttributes & {
+	transition?: T;
+	transitionConfig?: TransitionParams<T>;
+};
 type DescriptionProps = HTMLDivAttributes;
 type OverlayProps = HTMLDivAttributes;
 type PortalProps = HTMLDivAttributes;

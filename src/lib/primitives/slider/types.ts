@@ -1,5 +1,11 @@
-import type { CreateSliderProps } from "@melt-ui/svelte";
-import type { Expand, OmitValue, HTMLSpanAttributes, OnChangeFn } from "$internal/index.js";
+import type { CreateSliderProps, SliderComponentEvents } from "@melt-ui/svelte";
+import type {
+	Expand,
+	OmitValue,
+	HTMLSpanAttributes,
+	OnChangeFn,
+	KeydownClickEvents
+} from "$internal/index.js";
 
 type Props = Expand<
 	OmitValue<CreateSliderProps> & {
@@ -13,6 +19,8 @@ type RangeProps = HTMLSpanAttributes;
 
 type ThumbProps = HTMLSpanAttributes;
 
+type ThumbEvents = SliderComponentEvents["thumb"] & KeydownClickEvents;
+
 export type {
 	Props,
 	RangeProps,
@@ -20,5 +28,9 @@ export type {
 	//
 	Props as SliderProps,
 	RangeProps as SliderRange,
-	ThumbProps as SliderThumb
+	ThumbProps as SliderThumb,
+	//
+	ThumbEvents,
+	//
+	ThumbEvents as SliderThumbEvents
 };

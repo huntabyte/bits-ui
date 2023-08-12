@@ -40,13 +40,13 @@
 		defaultOpen: open,
 		defaultValueLabel: label,
 		onValueChange: ({ next }) => {
-			value = next;
 			onValueChange?.(next);
+			value = next;
 			return next;
 		},
 		onOpenChange: ({ next }) => {
-			open = next;
 			onOpenChange?.(next);
+			open = next;
 			return next;
 		}
 	});

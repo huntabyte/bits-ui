@@ -27,21 +27,18 @@ export const ctx = {
 	get,
 	set,
 	setSub,
+	getSub,
 	setMenu,
 	getMenu,
-	getItem,
-	getTrigger: () => getMenu().elements.trigger,
+	setGroup,
 	getContent,
-	getSeparator: () => getMenu().elements.separator,
 	setRadioItem,
+	getGroupLabel,
 	setRadioGroup,
-	getSubTrigger,
 	getSubContent,
 	setCheckboxItem,
 	getRadioIndicator,
-	getCheckboxIndicator,
-	setGroup,
-	getGroupLabel
+	getCheckboxIndicator
 };
 
 function get() {
@@ -85,6 +82,9 @@ function setSub(props: CreateMenubarSubmenuProps) {
 		updateOption: getOptionUpdater(sub.options)
 	};
 }
+function getSub() {
+	return getContext<MenubarSubReturn>(SUB_NAME);
+}
 
 function setRadioGroup(props: CreateMenuRadioGroupProps) {
 	const {
@@ -96,50 +96,21 @@ function setRadioGroup(props: CreateMenuRadioGroupProps) {
 }
 
 function setRadioItem(value: string) {
-	const {
-		elements: { radioItem },
-		helpers: { isChecked }
-	} = getContext<MenubarRadioGroupReturn>(RADIO_GROUP_NAME);
-	setContext(RADIO_ITEM_NAME, { isChecked, value });
-	return radioItem;
-}
-
-function getSubTrigger() {
-	const {
-		elements: { subTrigger }
-	} = getContext<MenubarSubReturn>(SUB_NAME);
-	return subTrigger;
+	const radioGroup = getContext<MenubarRadioGroupReturn>(RADIO_GROUP_NAME);
+	setContext(RADIO_ITEM_NAME, { isChecked: radioGroup.helpers.isChecked, value });
+	return radioGroup;
 }
 
 function getContent(sideOffset = 5) {
-	const {
-		elements: { menu: content },
-		states: { open },
-		options: { positioning }
-	} = getMenu();
-
-	positioning.update((prev) => ({ ...prev, gutter: sideOffset }));
-
-	return { content, open };
+	const menu = getMenu();
+	menu.options.positioning.update((prev) => ({ ...prev, gutter: sideOffset }));
+	return menu;
 }
 
 function getSubContent(sideOffset = -1) {
-	const {
-		elements: { subMenu: subContent },
-		states: { subOpen },
-		options: { positioning }
-	} = getContext<MenubarSubReturn>(SUB_NAME);
-
-	positioning.update((prev) => ({ ...prev, gutter: sideOffset }));
-
-	return { subContent, subOpen };
-}
-
-function getItem() {
-	const {
-		elements: { item }
-	} = getMenu();
-	return { item };
+	const submenu = getSub();
+	submenu.options.positioning.update((prev) => ({ ...prev, gutter: sideOffset }));
+	return submenu;
 }
 
 function setCheckboxItem(props: CreateMenuCheckboxItemProps) {

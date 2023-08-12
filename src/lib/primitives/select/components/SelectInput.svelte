@@ -4,7 +4,9 @@
 	import type { InputProps } from "../types.js";
 
 	type $$Props = InputProps;
-	const input = ctx.getInput();
+	const {
+		elements: { input }
+	} = ctx.get();
 </script>
 
 <input use:melt={$input} hidden {...$$restProps} />

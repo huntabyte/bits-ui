@@ -15,7 +15,6 @@ export const ctx = {
 	set,
 	get,
 	setItem,
-	getInput: () => get().elements.itemInput,
 	getRadioIndicator
 };
 
@@ -33,12 +32,9 @@ function get() {
 }
 
 function setItem(value: string) {
-	const {
-		elements: { item },
-		helpers: { isChecked }
-	} = get();
-	setContext(ITEM_NAME, { value, isChecked });
-	return { item, isChecked };
+	const radioGroup = get();
+	setContext(ITEM_NAME, { value, isChecked: radioGroup.helpers.isChecked });
+	return radioGroup;
 }
 
 function getRadioIndicator() {

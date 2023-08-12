@@ -14,8 +14,8 @@
 		defaultValue: value,
 		onValueChange: ({ next }) => {
 			if (next) {
-				value = next;
 				onValueChange?.(next);
+				value = next;
 			}
 			return next;
 		}

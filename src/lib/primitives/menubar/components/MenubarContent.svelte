@@ -1,13 +1,18 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { ctx } from "../ctx.js";
-	import type { ContentProps } from "../types.js";
+	import type { ContentEvents, ContentProps } from "../types.js";
 
 	type $$Props = ContentProps;
+	type $$Events = ContentEvents;
 	export let sideOffset: $$Props["sideOffset"] = 4;
-	const { content } = ctx.getContent(sideOffset);
+	const {
+		elements: { menu }
+	} = ctx.getContent(sideOffset);
 </script>
 
-<div use:melt={$content} {...$$restProps}>
+<!-- svelte-ignore a11y-no-static-element-interactions / applied by melt's builder-->
+
+<div use:melt={$menu} {...$$restProps} on:m-keydown on:click on:keydown>
 	<slot />
 </div>

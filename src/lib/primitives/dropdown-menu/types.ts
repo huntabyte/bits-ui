@@ -1,17 +1,21 @@
 import type {
 	Expand,
 	HTMLDivAttributes,
+	KeydownClickEvents,
 	OmitChecked,
 	OmitOpen,
 	OmitValue,
-	OnChangeFn
+	OnChangeFn,
+	Transition,
+	TransitionParams
 } from "$internal/index.js";
 import type {
 	CreateDropdownMenuProps,
 	CreateDropdownMenuCheckboxItemProps,
 	CreateDropdownMenuRadioGroupProps,
 	DropdownMenuRadioItemProps,
-	CreateDropdownSubmenuProps
+	CreateDropdownSubmenuProps,
+	DropdownMenuComponentEvents
 } from "@melt-ui/svelte";
 import type { HTMLButtonAttributes } from "svelte/elements";
 
@@ -46,9 +50,12 @@ type RadioItemProps = Expand<
 > &
 	HTMLDivAttributes;
 
-type ContentProps = {
+type ContentProps<T extends Transition = Transition> = {
 	sideOffset?: number;
+	transition?: T;
+	transitionConfig?: TransitionParams<T>;
 } & HTMLDivAttributes;
+
 type GroupProps = HTMLDivAttributes;
 type ItemProps = {
 	asChild?: boolean;
@@ -57,11 +64,24 @@ type CheckboxItemIndicatorProps = HTMLDivAttributes;
 type LabelProps = HTMLDivAttributes;
 type SeparatorProps = HTMLDivAttributes;
 type SubProps = Expand<CreateDropdownSubmenuProps>;
-type SubContentProps = HTMLDivAttributes;
+type SubContentProps<T extends Transition = Transition> = {
+	sideOffset?: number;
+	transition?: T;
+	transitionConfig?: TransitionParams<T>;
+} & HTMLDivAttributes;
+
 type SubTriggerProps = HTMLDivAttributes;
 type TriggerProps = {
 	asChild?: boolean;
 } & HTMLButtonAttributes;
+
+type TriggerEvents = DropdownMenuComponentEvents["trigger"] & KeydownClickEvents;
+type CheckboxItemEvents = DropdownMenuComponentEvents["checkboxItem"] & KeydownClickEvents;
+type ContentEvents = DropdownMenuComponentEvents["menu"] & KeydownClickEvents;
+type RadioItemEvents = DropdownMenuComponentEvents["radioItem"] & KeydownClickEvents;
+type SubContentEvents = DropdownMenuComponentEvents["submenu"] & KeydownClickEvents;
+type SubTriggerEvents = DropdownMenuComponentEvents["subTrigger"] & KeydownClickEvents;
+type ItemEvents = DropdownMenuComponentEvents["item"] & KeydownClickEvents;
 
 export type {
 	Props,
@@ -93,5 +113,21 @@ export type {
 	SubProps as DropdownMenuSubProps,
 	SubContentProps as DropdownMenuSubContentProps,
 	SubTriggerProps as DropdownMenuSubTriggerProps,
-	TriggerProps as DropdownMenuTriggerProps
+	TriggerProps as DropdownMenuTriggerProps,
+	//
+	TriggerEvents,
+	CheckboxItemEvents,
+	ContentEvents,
+	RadioItemEvents,
+	SubContentEvents,
+	SubTriggerEvents,
+	ItemEvents,
+	//,
+	TriggerEvents as DropdownMenuTriggerEvents,
+	CheckboxItemEvents as DropdownMenuCheckboxItemEvents,
+	ContentEvents as DropdownMenuContentEvents,
+	RadioItemEvents as DropdownMenuRadioItemEvents,
+	SubContentEvents as DropdownMenuSubContentEvents,
+	SubTriggerEvents as DropdownMenuSubTriggerEvents,
+	ItemEvents as DropdownMenuItemEvents
 };

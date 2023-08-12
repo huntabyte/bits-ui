@@ -1,17 +1,20 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { ctx } from "../ctx.js";
-	import type { TriggerProps } from "../types.js";
+	import type { TriggerEvents, TriggerProps } from "../types.js";
 
 	type $$Props = TriggerProps;
+	type $$Events = TriggerEvents;
 	export let asChild: $$Props["asChild"] = false;
-	const trigger = ctx.getTrigger();
+	const {
+		elements: { trigger }
+	} = ctx.get();
 </script>
 
 {#if asChild}
 	<slot trigger={$trigger} />
 {:else}
-	<button use:melt={$trigger} {...$$restProps}>
+	<button use:melt={$trigger} {...$$restProps} on:m-click on:m-keydown on:keydown on:click>
 		<slot trigger={$trigger} />
 	</button>
 {/if}

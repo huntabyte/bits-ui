@@ -1,7 +1,8 @@
-import type { CreateSelectProps, SelectOptionProps } from "@melt-ui/svelte";
+import type { CreateSelectProps, SelectComponentEvents, SelectOptionProps } from "@melt-ui/svelte";
 import type {
 	Expand,
 	HTMLDivAttributes,
+	KeydownClickEvents,
 	OmitOpen,
 	OmitValue,
 	OnChangeFn
@@ -36,6 +37,11 @@ type ValueProps = {
 	placeholder?: string;
 } & HTMLAttributes<HTMLSpanElement>;
 
+type ItemEvents = SelectComponentEvents["option"] & KeydownClickEvents;
+type ContentEvents = SelectComponentEvents["menu"] & KeydownClickEvents;
+type TriggerEvents = SelectComponentEvents["trigger"] & KeydownClickEvents;
+type LabelEvents = SelectComponentEvents["label"];
+
 export type {
 	Props,
 	ContentProps,
@@ -55,5 +61,15 @@ export type {
 	ItemProps as SelectItemProps,
 	SeparatorProps as SelectSeparatorProps,
 	TriggerProps as SelectTriggerProps,
-	ValueProps as SelectValueProps
+	ValueProps as SelectValueProps,
+	//
+	ItemEvents,
+	ContentEvents,
+	TriggerEvents,
+	LabelEvents,
+	//
+	ItemEvents as SelectItemEvents,
+	ContentEvents as SelectContentEvents,
+	TriggerEvents as SelectTriggerEvents,
+	LabelEvents as SelectLabelEvents
 };

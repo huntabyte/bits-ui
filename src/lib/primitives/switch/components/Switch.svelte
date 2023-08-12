@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { ctx } from "../ctx.js";
-	import type { Props } from "../types.js";
+	import type { Events, Props } from "../types.js";
 
 	type $$Props = Props;
+	type $$Events = Events;
 	export let checked: $$Props["checked"] = undefined;
 	export let onCheckedChange: $$Props["onCheckedChange"] = undefined;
 	export let disabled: $$Props["disabled"] = undefined;
@@ -20,8 +21,8 @@
 		value,
 		defaultChecked: checked,
 		onCheckedChange: ({ next }) => {
-			checked = next;
 			onCheckedChange?.(next);
+			checked = next;
 			return next;
 		}
 	});
@@ -32,6 +33,6 @@
 	$: updateOption("value", value);
 </script>
 
-<button use:melt={$root} {...$$restProps}>
+<button use:melt={$root} {...$$restProps} on:m-click on:m-keydown on:click on:keydown>
 	<slot />
 </button>

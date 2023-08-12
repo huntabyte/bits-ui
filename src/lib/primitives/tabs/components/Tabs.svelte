@@ -22,8 +22,8 @@
 		autoSet,
 		defaultValue: value,
 		onValueChange: ({ next }) => {
-			value = next;
 			onValueChange?.(next);
+			value = next;
 			return next;
 		}
 	});

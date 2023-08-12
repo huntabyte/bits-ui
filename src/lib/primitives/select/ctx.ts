@@ -7,6 +7,15 @@ const NAME = "Select";
 const GROUP_NAME = "SelectGroup";
 const ITEM_NAME = "SelectItem";
 
+export const ctx = {
+	set,
+	get,
+	setGroup,
+	setItem,
+	getItemIndicator,
+	getGroupLabel
+};
+
 function get() {
 	return getContext<SelectReturn>(NAME);
 }
@@ -22,28 +31,6 @@ function set(props: CreateSelectProps) {
 	};
 }
 
-export const ctx = {
-	set,
-	get,
-	setGroup,
-	getContent,
-	getTrigger: () => get().elements.trigger,
-	setItem,
-	getItemIndicator,
-	getGroupLabel,
-	getSeparator: () => get().elements.separator,
-	getValue: () => get().states.valueLabel,
-	getInput: () => get().elements.input
-};
-
-function getContent() {
-	const {
-		elements: { menu: content },
-		states: { open }
-	} = get();
-	return { content, open };
-}
-
 function setGroup() {
 	const id = generateId();
 	setContext(GROUP_NAME, id);
@@ -54,11 +41,9 @@ function setGroup() {
 }
 
 function setItem(value: unknown) {
-	const {
-		elements: { option: item }
-	} = get();
+	const select = get();
 	setContext(ITEM_NAME, value);
-	return item;
+	return select;
 }
 
 function getGroupLabel() {

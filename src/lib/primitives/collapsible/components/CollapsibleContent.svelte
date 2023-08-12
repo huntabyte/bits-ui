@@ -16,14 +16,14 @@
 	} = ctx.get();
 </script>
 
-{#if transition}
-	{#if $open}
+{#if $open}
+	{#if transition}
 		<div use:melt={$content} transition:transition={transitionConfig} {...$$restProps}>
 			<slot />
 		</div>
+	{:else}
+		<div use:melt={$content} {...$$restProps}>
+			<slot />
+		</div>
 	{/if}
-{:else if $open}
-	<div use:melt={$content} {...$$restProps}>
-		<slot />
-	</div>
 {/if}

@@ -1,7 +1,8 @@
-import type { CreateTabsProps, TabsTriggerProps } from "@melt-ui/svelte";
+import type { CreateTabsProps, TabsComponentEvents, TabsTriggerProps } from "@melt-ui/svelte";
 import type {
 	Expand,
 	HTMLDivAttributes,
+	KeydownClickEvents,
 	ObjectVariation,
 	OmitValue,
 	OnChangeFn
@@ -29,6 +30,8 @@ type TriggerProps = Expand<
 
 type ListProps = HTMLDivAttributes;
 
+type TriggerEvents = TabsComponentEvents["trigger"] & KeydownClickEvents;
+
 export type {
 	Props,
 	ContentProps,
@@ -38,5 +41,9 @@ export type {
 	Props as TabsProps,
 	ContentProps as TabsContentProps,
 	TriggerProps as TabsTriggerProps,
-	ListProps as TabsListProps
+	ListProps as TabsListProps,
+	//
+	TriggerEvents,
+	//
+	TriggerEvents as TabsTriggerEvents
 };
