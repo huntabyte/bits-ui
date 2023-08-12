@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.0.9
+
+### Patch Changes
+
+- 1b3a7d2: fix radio button type
+
 ## 0.0.8
 
 ### Patch Changes
