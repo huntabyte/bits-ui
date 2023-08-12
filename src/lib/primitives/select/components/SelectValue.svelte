@@ -4,7 +4,9 @@
 
 	type $$Props = ValueProps;
 	export let placeholder: $$Props["placeholder"] = "";
-	const valueLabel = ctx.getValue();
+	const {
+		states: { valueLabel }
+	} = ctx.get();
 </script>
 
 <span {...$$restProps}>

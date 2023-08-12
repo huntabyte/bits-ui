@@ -1,6 +1,7 @@
 import type {
 	Expand,
 	HTMLDivAttributes,
+	KeydownClickEvents,
 	OmitChecked,
 	OmitOpen,
 	OmitValue,
@@ -12,7 +13,8 @@ import type {
 	CreateMenuCheckboxItemProps,
 	CreateMenuRadioGroupProps,
 	MenubarRadioItemProps,
-	CreateMenubarSubmenuProps
+	CreateMenubarSubmenuProps,
+	MenubarComponentEvents
 } from "@melt-ui/svelte";
 import type { HTMLButtonAttributes } from "svelte/elements";
 
@@ -65,6 +67,14 @@ type TriggerProps = {
 	asChild?: boolean;
 } & HTMLButtonAttributes;
 
+type TriggerEvents = MenubarComponentEvents["trigger"] & KeydownClickEvents;
+type ItemEvents = MenubarComponentEvents["item"] & KeydownClickEvents;
+type SubTriggerEvents = MenubarComponentEvents["subTrigger"] & KeydownClickEvents;
+type CheckboxItemEvents = MenubarComponentEvents["checkboxItem"] & KeydownClickEvents;
+type RadioItemEvents = MenubarComponentEvents["radioItem"] & KeydownClickEvents;
+type ContentEvents = MenubarComponentEvents["menu"] & KeydownClickEvents;
+type SubContentEvents = MenubarComponentEvents["submenu"] & KeydownClickEvents;
+
 export type {
 	Props,
 	SubProps,
@@ -97,5 +107,21 @@ export type {
 	SubTriggerProps as MenubarSubTriggerProps,
 	RadioGroupProps as MenubarRadioGroupProps,
 	CheckboxItemProps as MenubarCheckboxItemProps,
-	CheckboxItemIndicatorProps as MenubarCheckboxItemIndicatorProps
+	CheckboxItemIndicatorProps as MenubarCheckboxItemIndicatorProps,
+	//
+	TriggerEvents,
+	ItemEvents,
+	SubTriggerEvents,
+	CheckboxItemEvents,
+	RadioItemEvents,
+	ContentEvents,
+	SubContentEvents,
+	//
+	TriggerEvents as MenubarTriggerEvents,
+	ItemEvents as MenubarItemEvents,
+	SubTriggerEvents as MenubarSubTriggerEvents,
+	CheckboxItemEvents as MenubarCheckboxItemEvents,
+	RadioItemEvents as MenubarRadioItemEvents,
+	ContentEvents as MenubarContentEvents,
+	SubContentEvents as MenubarSubContentEvents
 };

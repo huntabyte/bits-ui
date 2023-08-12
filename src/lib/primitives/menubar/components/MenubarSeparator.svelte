@@ -4,7 +4,9 @@
 	import type { SeparatorProps } from "../types.js";
 
 	type $$Props = SeparatorProps;
-	const separator = ctx.getSeparator();
+	const {
+		elements: { separator }
+	} = ctx.getMenu();
 </script>
 
 <div use:melt={$separator} {...$$restProps} />

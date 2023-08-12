@@ -24,10 +24,7 @@ export const ctx = {
 	get,
 	set,
 	setSub,
-	getTrigger: () => get().elements.trigger,
 	getContent,
-	getItem,
-	getSeparator: () => get().elements.separator,
 	setRadioGroup,
 	setRadioItem,
 	getSubTrigger,
@@ -44,7 +41,7 @@ function get() {
 }
 
 function set(props: CreateDropdownMenuProps) {
-	const dropdownMenu = createDropdownMenu(removeUndefined(props));
+	const dropdownMenu = createDropdownMenu({ ...removeUndefined(props), forceVisible: true });
 	setContext(NAME, dropdownMenu);
 	return {
 		...dropdownMenu,
@@ -74,12 +71,9 @@ function setRadioGroup(props: DropdownRadioGroupProps) {
 }
 
 function setRadioItem(value: string) {
-	const {
-		elements: { radioItem },
-		helpers: { isChecked }
-	} = getContext<DropdownRadioGroupReturn>(RADIO_GROUP_NAME);
-	setContext(RADIO_ITEM_NAME, { isChecked, value });
-	return radioItem;
+	const dropdownMenu = getContext<DropdownRadioGroupReturn>(RADIO_GROUP_NAME);
+	setContext(RADIO_ITEM_NAME, { isChecked: dropdownMenu.helpers.isChecked, value });
+	return dropdownMenu;
 }
 
 function getRadioIndicator() {
@@ -90,39 +84,21 @@ function getRadioIndicator() {
 }
 
 function getSubTrigger() {
-	const {
-		elements: { subTrigger }
-	} = getContext<DropdownSubmenuReturn>(SUB_NAME);
-	return subTrigger;
+	const submenu = getContext<DropdownSubmenuReturn>(SUB_NAME);
+	return submenu;
 }
 
 function getContent(sideoffset = 5) {
-	const {
-		elements: { menu: content },
-		states: { open },
-		options: { positioning }
-	} = get();
+	const menu = get();
+	menu.options.positioning.update((prev) => ({ ...prev, gutter: sideoffset }));
 
-	positioning.update((prev) => ({ ...prev, gutter: sideoffset }));
-
-	return { content, open };
+	return menu;
 }
 
 function getSubContent(sideOffset = -1) {
-	const {
-		elements: { subMenu: subContent },
-		states: { subOpen },
-		options: { positioning }
-	} = getContext<DropdownSubmenuReturn>(SUB_NAME);
-	positioning.update((prev) => ({ ...prev, gutter: sideOffset }));
-	return { subContent, subOpen };
-}
-
-function getItem() {
-	const {
-		elements: { item }
-	} = get();
-	return { item };
+	const submenu = getContext<DropdownSubmenuReturn>(SUB_NAME);
+	submenu.options.positioning.update((prev) => ({ ...prev, gutter: sideOffset }));
+	return submenu;
 }
 
 function setCheckboxItem(props: DropdownCheckboxItemProps) {

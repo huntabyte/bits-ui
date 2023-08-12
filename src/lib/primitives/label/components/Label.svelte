@@ -1,12 +1,17 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { ctx } from "../ctx.js";
-	import type { Props } from "../types.js";
+	import type { Events, Props } from "../types.js";
 
 	type $$Props = Props;
-	const label = ctx.getLabel();
+	type $$Events = Events;
+	const {
+		elements: { root }
+	} = ctx.get();
 </script>
 
-<label use:melt={$label} {...$$restProps}>
+<!-- svelte-ignore a11y-no-static-element-interactions / applied by melt's builder-->
+
+<label use:melt={$root} {...$$restProps} on:m-mousedown>
 	<slot />
 </label>

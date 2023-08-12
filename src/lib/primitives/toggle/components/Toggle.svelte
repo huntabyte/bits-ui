@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { ctx } from "../ctx.js";
-	import type { Props } from "../types.js";
+	import type { Events, Props } from "../types.js";
 
 	type $$Props = Props;
+	type $$Events = Events;
 	export let disabled: $$Props["disabled"] = undefined;
 	export let pressed: $$Props["pressed"] = undefined;
 	export let onPressedChange: $$Props["onPressedChange"] = undefined;
@@ -16,8 +17,8 @@
 		disabled,
 		defaultPressed: pressed,
 		onPressedChange: ({ next }) => {
-			pressed = next;
 			onPressedChange?.(next);
+			pressed = next;
 			return next;
 		}
 	});
@@ -29,7 +30,7 @@
 {#if asChild}
 	<slot toggle={$root} />
 {:else}
-	<button use:melt={$root} {...$$restProps}>
+	<button use:melt={$root} {...$$restProps} on:m-click on:m-keydown on:click on:keydown>
 		<slot toggle={$root} />
 	</button>
 {/if}

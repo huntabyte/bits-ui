@@ -1,6 +1,7 @@
 import type {
 	Expand,
 	HTMLDivAttributes,
+	KeydownClickEvents,
 	OmitChecked,
 	OmitOpen,
 	OmitValue,
@@ -11,7 +12,8 @@ import type {
 	CreateContextMenuCheckboxItemProps,
 	CreateContextMenuRadioGroupProps,
 	ContextMenuRadioItemProps,
-	CreateContextSubmenuProps
+	CreateContextSubmenuProps,
+	ContextMenuComponentEvents
 } from "@melt-ui/svelte";
 
 type Props = Expand<
@@ -62,6 +64,14 @@ type TriggerProps = {
 	asChild?: boolean;
 } & HTMLDivAttributes;
 
+type CheckboxItemEvents = ContextMenuComponentEvents["checkboxItem"] & KeydownClickEvents;
+type ItemEvents = ContextMenuComponentEvents["item"] & KeydownClickEvents;
+type RadioItemEvents = ContextMenuComponentEvents["radioItem"] & KeydownClickEvents;
+type SubTriggerEvents = ContextMenuComponentEvents["subTrigger"] & KeydownClickEvents;
+type TriggerEvents = ContextMenuComponentEvents["trigger"] & KeydownClickEvents;
+type SubContentEvents = ContextMenuComponentEvents["submenu"] & KeydownClickEvents;
+type ContentEvents = ContextMenuComponentEvents["menu"] & KeydownClickEvents;
+
 export type {
 	Props,
 	CheckboxItemProps,
@@ -91,5 +101,21 @@ export type {
 	SubProps as ContextMenuSubProps,
 	SubContentProps as ContextMenuSubContentProps,
 	SubTriggerProps as ContextMenuSubTriggerProps,
-	TriggerProps as ContextMenuTriggerProps
+	TriggerProps as ContextMenuTriggerProps,
+	//
+	ContentEvents,
+	CheckboxItemEvents,
+	ItemEvents,
+	RadioItemEvents,
+	SubTriggerEvents,
+	TriggerEvents,
+	SubContentEvents,
+	//
+	ContentEvents as ContextMenuContentEvents,
+	CheckboxItemEvents as ContextMenuCheckboxItemEvents,
+	ItemEvents as ContextMenuItemEvents,
+	RadioItemEvents as ContextMenuRadioItemEvents,
+	SubTriggerEvents as ContextMenuSubTriggerEvents,
+	TriggerEvents as ContextMenuTriggerEvents,
+	SubContentEvents as ContextMenuSubContentEvents
 };

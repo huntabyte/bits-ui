@@ -1,15 +1,38 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
+	import type { Transition } from "$lib/internal/types.js";
 	import { ctx } from "../ctx.js";
-	import type { ContentProps } from "../types.js";
+	import type { ContentEvents, ContentProps } from "../types.js";
 
-	type $$Props = ContentProps;
+	type T = $$Generic<Transition>;
+	type $$Props = ContentProps<T>;
+	type $$Events = ContentEvents;
 	export let sideOffset: $$Props["sideOffset"] = 5;
-	const { open, content } = ctx.getContent(sideOffset);
+	export let transition: ContentProps<T>["transition"] = undefined;
+	export let transitionConfig: ContentProps<T>["transitionConfig"] = undefined;
+
+	const {
+		elements: { menu },
+		states: { open }
+	} = ctx.getContent(sideOffset);
 </script>
 
+<!-- svelte-ignore a11y-no-static-element-interactions applied by melt's action/store -->
 {#if $open}
-	<div use:melt={$content} {...$$restProps}>
-		<slot />
-	</div>
+	{#if transition}
+		<div
+			use:melt={$menu}
+			{...$$restProps}
+			on:m-keydown
+			on:click
+			on:keydown
+			transition:transition={transitionConfig}
+		>
+			<slot />
+		</div>
+	{:else}
+		<div use:melt={$menu} {...$$restProps} on:m-keydown on:click on:keydown>
+			<slot />
+		</div>
+	{/if}
 {/if}

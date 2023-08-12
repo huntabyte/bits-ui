@@ -2,12 +2,15 @@ import type {
 	Expand,
 	HTMLDivAttributes,
 	HTMLHeadingAttributes,
+	KeydownClickEvents,
 	OmitOpen,
-	OnChangeFn
+	OnChangeFn,
+	Transition,
+	TransitionParams
 } from "$internal/index.js";
 import type { HTMLButtonAttributes } from "svelte/elements";
 
-import type { CreateDialogProps } from "@melt-ui/svelte";
+import type { CreateDialogProps, DialogComponentEvents } from "@melt-ui/svelte";
 
 type Props = Expand<
 	OmitOpen<Omit<CreateDialogProps, "role">> & {
@@ -21,13 +24,19 @@ type TriggerProps = HTMLButtonAttributes & {
 };
 
 type CloseProps = TriggerProps;
-type ContentProps = HTMLDivAttributes;
+type ContentProps<T extends Transition = Transition> = HTMLDivAttributes & {
+	transition?: T;
+	transitionConfig?: TransitionParams<T>;
+};
 type DescriptionProps = HTMLDivAttributes;
 type OverlayProps = HTMLDivAttributes;
 type PortalProps = HTMLDivAttributes;
 type TitleProps = HTMLHeadingAttributes & {
 	level?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
 };
+
+type TriggerEvents = DialogComponentEvents["trigger"] & KeydownClickEvents;
+type CloseEvents = DialogComponentEvents["close"] & KeydownClickEvents;
 
 export type {
 	Props,
@@ -46,5 +55,11 @@ export type {
 	ContentProps as DialogContentProps,
 	TriggerProps as DialogTriggerProps,
 	OverlayProps as DialogOverlayProps,
-	DescriptionProps as DialogDescriptionProps
+	DescriptionProps as DialogDescriptionProps,
+	//
+	TriggerEvents,
+	CloseEvents,
+	//
+	TriggerEvents as DialogTriggerEvents,
+	CloseEvents as DialogCloseEvents
 };

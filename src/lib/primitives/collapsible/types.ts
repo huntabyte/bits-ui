@@ -4,9 +4,10 @@ import type {
 	TransitionParams,
 	OmitOpen,
 	Expand,
-	OnChangeFn
+	OnChangeFn,
+	KeydownClickEvents
 } from "$internal/index.js";
-import type { CreateCollapsibleProps } from "@melt-ui/svelte";
+import type { CollapsibleComponentEvents, CreateCollapsibleProps } from "@melt-ui/svelte";
 import type { HTMLButtonAttributes } from "svelte/elements";
 
 type Props = Expand<
@@ -26,6 +27,8 @@ type TriggerProps = {
 	asChild?: boolean;
 } & HTMLButtonAttributes;
 
+type TriggerEvents = CollapsibleComponentEvents["trigger"] & KeydownClickEvents;
+
 export type {
 	Props,
 	ContentProps,
@@ -33,5 +36,9 @@ export type {
 	//
 	Props as CollapsibleProps,
 	ContentProps as CollapsibleContentProps,
-	TriggerProps as CollapsibleTriggerProps
+	TriggerProps as CollapsibleTriggerProps,
+	//
+	TriggerEvents,
+	//
+	TriggerEvents as CollapsibleTriggerEvents
 };

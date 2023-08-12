@@ -3,9 +3,11 @@
 	import type { HTMLInputAttributes } from "svelte/elements";
 	import { ctx } from "../ctx.js";
 
-	const input = ctx.getInput();
+	const {
+		elements: { itemInput }
+	} = ctx.get();
 
 	type $$Props = HTMLInputAttributes;
 </script>
 
-<input use:melt={$input} hidden {...$$restProps} />
+<input use:melt={$itemInput} hidden {...$$restProps} />

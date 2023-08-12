@@ -10,9 +10,7 @@ const NAME = "Popover";
 
 export const ctx = {
 	set,
-	get,
-	getContent,
-	getTrigger
+	get
 };
 
 function set(props: CreatePopoverProps) {
@@ -29,22 +27,4 @@ function set(props: CreatePopoverProps) {
 
 function get() {
 	return getContext<PopoverReturn>(NAME);
-}
-
-function getContent() {
-	const {
-		elements: { content },
-		states: { open }
-	} = get();
-	return {
-		content,
-		open
-	};
-}
-
-function getTrigger() {
-	const {
-		elements: { trigger }
-	} = get();
-	return trigger;
 }

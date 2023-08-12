@@ -10,21 +10,8 @@ const NAME = "hovercard";
 
 export const ctx = {
 	set,
-	get,
-	getContent,
-	getTrigger: () => get().elements.trigger
+	get
 };
-
-function getContent() {
-	const {
-		elements: { content },
-		states: { open }
-	} = get();
-	return {
-		content,
-		open
-	};
-}
 
 function get() {
 	return getContext<HoverCardReturn>(NAME);

@@ -1,4 +1,4 @@
-import type { CreateTooltipProps } from "@melt-ui/svelte";
+import type { CreateTooltipProps, TooltipComponentEvents } from "@melt-ui/svelte";
 import type {
 	Expand,
 	HTMLDivAttributes,
@@ -6,7 +6,8 @@ import type {
 	OmitForceVisible,
 	Transition,
 	TransitionParams,
-	OnChangeFn
+	OnChangeFn,
+	KeydownClickEvents
 } from "$internal/index.js";
 import type { HTMLButtonAttributes } from "svelte/elements";
 
@@ -27,6 +28,9 @@ type TriggerProps = {
 	asChild?: boolean;
 } & HTMLButtonAttributes;
 
+type TriggerEvents = TooltipComponentEvents["trigger"] & KeydownClickEvents;
+type ContentEvents = TooltipComponentEvents["content"];
+
 export type {
 	Props,
 	TriggerProps,
@@ -34,5 +38,11 @@ export type {
 	//
 	Props as TooltipProps,
 	ContentProps as TooltipContentProps,
-	TriggerProps as TooltipTriggerProps
+	TriggerProps as TooltipTriggerProps,
+	//
+	TriggerEvents,
+	ContentEvents,
+	//
+	TriggerEvents as TooltipTriggerEvents,
+	ContentEvents as TooltipContentEvents
 };

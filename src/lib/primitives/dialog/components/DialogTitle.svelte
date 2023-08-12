@@ -5,7 +5,9 @@
 
 	type $$Props = TitleProps;
 	export let level: TitleProps["level"] = "h2";
-	const title = ctx.getTitle();
+	const {
+		elements: { title }
+	} = ctx.get();
 </script>
 
 <svelte:element this={level} use:melt={$title} {...$$restProps}>

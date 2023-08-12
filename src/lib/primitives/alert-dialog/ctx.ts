@@ -11,7 +11,8 @@ const NAME = "AlertDialog";
 function set(props: CreateAlertDialogProps) {
 	const alertDialog = createDialog({
 		...removeUndefined(props),
-		role: "alertdialog"
+		role: "alertdialog",
+		forceVisible: true
 	});
 	setContext(NAME, alertDialog);
 	return {

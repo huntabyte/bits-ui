@@ -1,5 +1,15 @@
-import type { Expand, HTMLDivAttributes, OmitValue, OnChangeFn } from "$internal/index.js";
-import type { CreateRadioGroupProps, RadioGroupItemProps } from "@melt-ui/svelte";
+import type {
+	Expand,
+	HTMLDivAttributes,
+	KeydownClickEvents,
+	OmitValue,
+	OnChangeFn
+} from "$internal/index.js";
+import type {
+	CreateRadioGroupProps,
+	RadioGroupComponentEvents,
+	RadioGroupItemProps
+} from "@melt-ui/svelte";
 import type { HTMLInputAttributes } from "svelte/elements";
 
 type Props = Expand<
@@ -19,6 +29,8 @@ type ItemProps = Expand<
 > &
 	HTMLButtonElement;
 
+type ItemEvents = RadioGroupComponentEvents["item"] & KeydownClickEvents;
+
 export type {
 	Props,
 	InputProps,
@@ -26,5 +38,9 @@ export type {
 	//
 	Props as RadioGroupProps,
 	InputProps as RadioGroupInputProps,
-	ItemProps as RadioGroupItemProps
+	ItemProps as RadioGroupItemProps,
+	//
+	ItemEvents,
+	//
+	ItemEvents as RadioGroupItemEvents
 };
