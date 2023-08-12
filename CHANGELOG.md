@@ -1,5 +1,13 @@
 # @huntabyte/primitives
 
+## 0.0.7
+
+### Patch Changes
+
+- 34b4346: - Add types to component events
+  - Forward component events
+  - Add transition options
+
 ## 0.0.6
 
 ### Patch Changes
