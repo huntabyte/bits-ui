@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.0.10
+
+### Patch Changes
+
+- ca0f8ed: fix radio group types
+
 ## 0.0.9
 
 ### Patch Changes
