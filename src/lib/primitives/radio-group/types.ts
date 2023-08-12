@@ -10,7 +10,7 @@ import type {
 	RadioGroupComponentEvents,
 	RadioGroupItemProps
 } from "@melt-ui/svelte";
-import type { HTMLInputAttributes } from "svelte/elements";
+import type { HTMLButtonAttributes, HTMLInputAttributes } from "svelte/elements";
 
 type Props = Expand<
 	OmitValue<CreateRadioGroupProps> & {
@@ -27,7 +27,7 @@ type ItemProps = Expand<
 		asChild?: boolean;
 	}
 > &
-	HTMLButtonElement;
+	HTMLButtonAttributes;
 
 type ItemEvents = RadioGroupComponentEvents["item"] & KeydownClickEvents;
 
