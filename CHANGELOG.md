@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.0.8
+
+### Patch Changes
+
+- 0850698: Fix Select Value Bug
+
 ## 0.0.7
 
 ### Patch Changes
