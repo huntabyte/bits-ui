@@ -5,7 +5,7 @@ import sequence from "svelte-sequential-preprocessor";
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
-	preprocess: sequence([vitePreprocess(), preprocessMeltUI()]),
+	preprocess: [sequence([vitePreprocess(), preprocessMeltUI()]), vitePreprocess({})],
 
 	kit: {
 		adapter: adapter(),
