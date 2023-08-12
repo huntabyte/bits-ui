@@ -5,12 +5,14 @@ import type {
 	TransitionParams,
 	OmitValue,
 	Expand,
-	OnChangeFn
+	OnChangeFn,
+	KeydownClickEvents
 } from "$internal/index.js";
 import type {
 	CreateAccordionProps,
 	AccordionItemProps as _ItemProps,
-	AccordionHeadingProps as _HeadingProps
+	AccordionHeadingProps as _HeadingProps,
+	AccordionComponentEvents
 } from "@melt-ui/svelte";
 import type { HTMLButtonAttributes } from "svelte/elements";
 
@@ -31,6 +33,8 @@ type ContentProps<T extends Transition = Transition> = {
 	transitionConfig?: TransitionParams<T>;
 } & HTMLDivAttributes;
 
+type TriggerEvents = AccordionComponentEvents["trigger"] & KeydownClickEvents;
+
 export type {
 	Props,
 	ItemProps,
@@ -42,5 +46,9 @@ export type {
 	ItemProps as AccordionItemProps,
 	HeaderProps as AccordionHeaderProps,
 	TriggerProps as AccordionTriggerProps,
-	ContentProps as AccordionContentProps
+	ContentProps as AccordionContentProps,
+	//
+	TriggerEvents,
+	//
+	TriggerEvents as AccordionTriggerEvents
 };

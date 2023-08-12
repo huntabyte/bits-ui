@@ -4,7 +4,9 @@
 	import type { OverlayProps } from "../types.js";
 
 	type $$Props = OverlayProps;
-	const overlay = ctx.getOverlay();
+	const {
+		elements: { overlay }
+	} = ctx.get();
 </script>
 
 <div use:melt={$overlay} {...$$restProps} />

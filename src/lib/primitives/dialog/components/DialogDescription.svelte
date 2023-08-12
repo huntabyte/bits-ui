@@ -4,7 +4,9 @@
 	import type { DescriptionProps } from "../types.js";
 
 	type $$Props = DescriptionProps;
-	const description = ctx.getDescription();
+	const {
+		elements: { description }
+	} = ctx.get();
 </script>
 
 <div use:melt={$description} {...$$restProps}>

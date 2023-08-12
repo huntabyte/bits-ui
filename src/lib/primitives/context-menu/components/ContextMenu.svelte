@@ -30,8 +30,8 @@
 		loop,
 		dir,
 		onOpenChange: ({ next }) => {
-			open = next;
 			onOpenChange?.(next);
+			open = next;
 			return next;
 		}
 	});

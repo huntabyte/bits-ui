@@ -16,5 +16,21 @@ interface ButtonElement extends Builders, HTMLButtonAttributes {
 }
 
 type Props = AnchorElement | ButtonElement;
+type Events = {
+	click: MouseEvent;
+	change: Event;
+	keydown: KeyboardEvent;
+	keyup: KeyboardEvent;
+	mouseenter: MouseEvent;
+	mouseleave: MouseEvent;
+};
 
-export type { Props, Props as ButtonProps };
+export type {
+	Props,
+	//
+	Props as ButtonProps,
+	//
+	Events,
+	//
+	Events as ButtonEvents
+};

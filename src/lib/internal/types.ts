@@ -41,3 +41,8 @@ export type Builder = {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	action: Action<HTMLElement, any, any>;
 };
+
+export type KeydownClickEvents = {
+	click: MouseEvent;
+	keydown: KeyboardEvent;
+};

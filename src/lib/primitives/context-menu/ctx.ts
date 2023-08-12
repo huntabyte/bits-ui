@@ -24,12 +24,9 @@ export const ctx = {
 	get,
 	set,
 	setSub,
-	getTrigger: () => get().elements.trigger,
 	getContent,
-	getItem,
-	getSeparator: () => get().elements.separator,
 	setRadioGroup,
-	getRadioItem,
+	setRadioItem,
 	getSubTrigger,
 	getSubContent,
 	setCheckboxItem,
@@ -73,13 +70,13 @@ function setRadioGroup(props: CreateContextMenuRadioGroupProps) {
 	return radioGroup;
 }
 
-function getRadioItem(value: string) {
-	const {
-		elements: { radioItem },
-		helpers: { isChecked }
-	} = getContext<ContextRadioGroupReturn>(RADIO_GROUP_NAME);
-	setContext(RADIO_ITEM_NAME, { isChecked, value });
-	return radioItem;
+function setRadioItem(value: string) {
+	const radioGroup = getContext<ContextRadioGroupReturn>(RADIO_GROUP_NAME);
+	setContext(RADIO_ITEM_NAME, {
+		isChecked: radioGroup.helpers.isChecked,
+		value
+	});
+	return radioGroup;
 }
 
 function getRadioIndicator() {
@@ -90,39 +87,24 @@ function getRadioIndicator() {
 }
 
 function getSubTrigger() {
-	const {
-		elements: { subTrigger }
-	} = getContext<ContextSubmenuReturn>(SUB_NAME);
-	return subTrigger;
+	return getContext<ContextSubmenuReturn>(SUB_NAME);
 }
 
 function getContent(sideoffset = 5) {
-	const {
-		elements: { menu: content },
-		states: { open },
-		options: { positioning }
-	} = get();
+	const menu = get();
 
-	positioning.update((prev) => ({ ...prev, gutter: sideoffset }));
+	menu.options.positioning.update((prev) => ({ ...prev, gutter: sideoffset }));
 
-	return { content, open };
+	return menu;
 }
 
 function getSubContent(sideOffset = -1) {
+	const submenu = getContext<ContextSubmenuReturn>(SUB_NAME);
 	const {
-		elements: { subMenu: subContent },
-		states: { subOpen },
 		options: { positioning }
-	} = getContext<ContextSubmenuReturn>(SUB_NAME);
+	} = submenu;
 	positioning.update((prev) => ({ ...prev, gutter: sideOffset }));
-	return { subContent, subOpen };
-}
-
-function getItem() {
-	const {
-		elements: { item }
-	} = get();
-	return { item };
+	return submenu;
 }
 
 function setCheckboxItem(props: ContextCheckboxItemProps) {

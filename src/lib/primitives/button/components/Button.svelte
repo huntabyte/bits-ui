@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { builderActions, getAttrs } from "$internal/index.js";
-	import type { Props } from "../types.js";
+	import type { Props, Events } from "../types.js";
 
 	type $$Props = Props;
+	type $$Events = Events;
 	export let href: $$Props["href"] = undefined;
 	export let type: $$Props["type"] = undefined;
 	export let builders: $$Props["builders"] = [];

@@ -1,15 +1,16 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { ctx } from "../ctx.js";
-	import type { CheckboxProps } from "../types.js";
+	import type { Props, Events } from "../types.js";
 
-	type $$Props = CheckboxProps;
-	export let checked: CheckboxProps["checked"] = undefined;
-	export let disabled: CheckboxProps["disabled"] = undefined;
-	export let name: CheckboxProps["name"] = undefined;
-	export let required: CheckboxProps["required"] = undefined;
-	export let value: CheckboxProps["value"] = undefined;
-	export let onCheckedChange: CheckboxProps["onCheckedChange"] = undefined;
+	type $$Props = Props;
+	type $$Events = Events;
+	export let checked: $$Props["checked"] = undefined;
+	export let disabled: $$Props["disabled"] = undefined;
+	export let name: $$Props["name"] = undefined;
+	export let required: $$Props["required"] = undefined;
+	export let value: $$Props["value"] = undefined;
+	export let onCheckedChange: $$Props["onCheckedChange"] = undefined;
 
 	const {
 		elements: { root, input },
@@ -22,8 +23,8 @@
 		required,
 		value,
 		onCheckedChange: ({ next }) => {
-			checked = next;
 			onCheckedChange?.(next);
+			checked = next;
 			return next;
 		}
 	});
@@ -36,7 +37,7 @@
 	$: updateOption("value", value);
 </script>
 
-<button use:melt={$root} {...$$restProps} on:click on:keydown>
+<button use:melt={$root} {...$$restProps} on:click on:keydown on:m-click on:m-keydown>
 	<slot />
 	<input use:melt={$input} />
 </button>

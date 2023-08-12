@@ -4,7 +4,9 @@
 	import type { ContentProps } from "../types.js";
 
 	type $$Props = ContentProps;
-	const content = ctx.getContent();
+	const {
+		elements: { content }
+	} = ctx.get();
 </script>
 
 <div use:melt={$content} {...$$restProps}>
