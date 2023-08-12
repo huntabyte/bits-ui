@@ -10,7 +10,7 @@
 	} = ctx.getSub();
 </script>
 
-<!-- svelte-ignore a11y-no-static-element-interactions / applied by melt's builder-->}
+<!-- svelte-ignore a11y-no-static-element-interactions / applied by melt's builder-->
 <div
 	use:melt={$subMenu}
 	{...$$restProps}
