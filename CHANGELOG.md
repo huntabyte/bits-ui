@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.0.11
+
+### Patch Changes
+
+- ee2a6d8: remove menubar bracket
+
 ## 0.0.10
 
 ### Patch Changes
