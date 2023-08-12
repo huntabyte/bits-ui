@@ -10,7 +10,7 @@ export const ctx = {
 };
 
 function set(props: CreateDialogProps) {
-	const dialog = createDialog({ ...removeUndefined(props), role: "dialog" });
+	const dialog = createDialog({ ...removeUndefined(props), role: "dialog", forceVisible: true });
 	setContext(NAME, dialog);
 	return {
 		...dialog,

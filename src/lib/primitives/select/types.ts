@@ -5,7 +5,9 @@ import type {
 	KeydownClickEvents,
 	OmitOpen,
 	OmitValue,
-	OnChangeFn
+	OnChangeFn,
+	Transition,
+	TransitionParams
 } from "$internal/index.js";
 import type { HTMLAttributes, HTMLButtonAttributes, HTMLInputAttributes } from "svelte/elements";
 
@@ -19,7 +21,10 @@ type Props = Expand<
 	}
 >;
 
-type ContentProps = HTMLDivAttributes;
+type ContentProps<T extends Transition = Transition> = HTMLDivAttributes & {
+	transition?: T;
+	transitionConfig?: TransitionParams<T>;
+};
 type GroupProps = HTMLDivAttributes;
 type InputProps = HTMLInputAttributes;
 type LabelProps = HTMLDivAttributes;

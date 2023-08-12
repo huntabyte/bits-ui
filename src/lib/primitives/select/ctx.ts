@@ -22,7 +22,8 @@ function get() {
 
 function set(props: CreateSelectProps) {
 	const select = createSelect({
-		...removeUndefined(props)
+		...removeUndefined(props),
+		forceVisible: true
 	});
 	setContext(NAME, select);
 	return {
