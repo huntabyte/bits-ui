@@ -3,7 +3,6 @@ import type { HTMLAnchorAttributes, HTMLButtonAttributes } from "svelte/elements
 
 type Builders = {
 	builders?: Builder[];
-	builder?: Builder;
 };
 
 interface AnchorElement extends Builders, HTMLAnchorAttributes {
