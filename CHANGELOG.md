@@ -1,5 +1,12 @@
 # @huntabyte/primitives
 
+## 0.0.16
+
+### Patch Changes
+
+- a70a5ed: fix popover aschild
+- 6ea08d1: fix button type
+
 ## 0.0.15
 
 ### Patch Changes
