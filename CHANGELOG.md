@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.0.14
+
+### Patch Changes
+
+- 897a55d: add disabled types to menus
+
 ## 0.0.13
 
 ### Patch Changes
