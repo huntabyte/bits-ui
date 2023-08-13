@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.0.15
+
+### Patch Changes
+
+- 0f4cac5: Add `asChild` everywhere
+
 ## 0.0.14
 
 ### Patch Changes
