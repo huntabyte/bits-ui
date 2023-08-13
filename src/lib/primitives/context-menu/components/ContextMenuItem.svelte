@@ -2,10 +2,12 @@
 	import { melt } from "@melt-ui/svelte";
 	import { ctx } from "../ctx.js";
 	import type { ItemEvents, ItemProps } from "../types.js";
+	import { disabledAttrs } from "$lib/internal/helpers.js";
 
 	type $$Props = ItemProps;
 	type $$Events = ItemEvents;
 	export let asChild: $$Props["asChild"] = false;
+	export let disabled = false;
 	const {
 		elements: { item }
 	} = ctx.get();
@@ -27,6 +29,7 @@
 		on:m-pointerdown
 		on:m-pointerleave
 		on:m-pointermove
+		{...disabledAttrs(disabled)}
 	>
 		<slot item={$item} />
 	</div>

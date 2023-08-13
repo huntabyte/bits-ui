@@ -1,4 +1,4 @@
-import type { StoreValue } from "@melt-ui/svelte";
+import type { StoresValues } from "svelte/store";
 import { nanoid } from "nanoid/non-secure";
 import type { Writable } from "svelte/store";
 import type { ActionReturn } from "svelte/action";
@@ -28,7 +28,7 @@ type Options = Record<string, Writable<unknown>>;
 export function getOptionUpdater(options: Options) {
 	return function <
 		K extends keyof typeof options,
-		V extends StoreValue<(typeof options)[keyof typeof options]>
+		V extends StoresValues<(typeof options)[keyof typeof options]>
 	>(key: K, value: V | undefined) {
 		if (value === undefined) return;
 		const store = options[key];
@@ -76,4 +76,8 @@ export function getAttrs(builders: Builder[]) {
 		});
 	});
 	return attrs;
+}
+
+export function disabledAttrs(disabled: boolean) {
+	return disabled ? { "aria-disabled": true, "data-disabled": "" } : {};
 }

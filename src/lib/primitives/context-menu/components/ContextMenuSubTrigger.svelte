@@ -2,9 +2,13 @@
 	import { melt } from "@melt-ui/svelte";
 	import { ctx } from "../ctx.js";
 	import type { SubTriggerEvents, SubTriggerProps } from "../types.js";
+	import { disabledAttrs } from "$lib/internal/helpers.js";
 
-	type $$Props = SubTriggerProps;
+	type $$Props = SubTriggerProps & {
+		disabled?: boolean;
+	};
 	type $$Events = SubTriggerEvents;
+	export let disabled = false;
 	const {
 		elements: { subTrigger }
 	} = ctx.getSubTrigger();
@@ -22,6 +26,7 @@
 	on:m-keydown
 	on:m-pointerleave
 	on:m-pointermove
+	{...disabledAttrs(disabled)}
 >
 	<slot />
 </div>
