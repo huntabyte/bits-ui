@@ -27,24 +27,5 @@ function get() {
 
 export const ctx = {
 	set: set,
-	get: get,
-	getClose: () => get().elements.close,
-	getContent: () => get().elements.content,
-	getOverlay: () => get().elements.overlay,
-	getPortal,
-	getTitle: () => get().elements.title,
-	getDescription: () => get().elements.description,
-	getTrigger: () => get().elements.trigger
+	get: get
 };
-
-function getPortal() {
-	const {
-		elements: { portalled },
-		states: { open }
-	} = get();
-
-	return {
-		portal: portalled,
-		open
-	};
-}

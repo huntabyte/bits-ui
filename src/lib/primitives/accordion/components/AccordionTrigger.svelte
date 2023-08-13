@@ -4,10 +4,15 @@
 	import type { TriggerEvents, TriggerProps } from "../types.js";
 	type $$Props = TriggerProps;
 	type $$Events = TriggerEvents;
+	export let asChild: TriggerProps["asChild"] = false;
 
 	const { trigger, props } = ctx.getTrigger();
 </script>
 
-<button use:melt={$trigger(props)} {...$$restProps} on:click on:keydown on:m-keydown on:m-click>
-	<slot />
-</button>
+{#if asChild}
+	<slot builder={$trigger(props)} />
+{:else}
+	<button use:melt={$trigger(props)} {...$$restProps} on:click on:keydown on:m-keydown on:m-click>
+		<slot builder={$trigger(props)} />
+	</button>
+{/if}

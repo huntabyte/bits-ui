@@ -6,6 +6,7 @@
 	type $$Props = RadioGroupProps;
 	export let value: $$Props["value"] = undefined;
 	export let onValueChange: $$Props["onValueChange"] = undefined;
+	export let asChild = false;
 
 	const {
 		elements: { radioGroup },
@@ -24,6 +25,10 @@
 	$: value !== undefined && localValue.set(value);
 </script>
 
-<div use:melt={$radioGroup} {...$$restProps}>
-	<slot />
-</div>
+{#if asChild}
+	<slot builder={$radioGroup} />
+{:else}
+	<div use:melt={$radioGroup} {...$$restProps}>
+		<slot builder={$radioGroup} />
+	</div>
+{/if}

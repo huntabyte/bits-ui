@@ -10,6 +10,7 @@
 
 	export let transition: ContentProps<T>["transition"] = undefined;
 	export let transitionConfig: ContentProps<T>["transitionConfig"] = undefined;
+	export let asChild = false;
 
 	const {
 		elements: { content },
@@ -20,7 +21,9 @@
 <!-- svelte-ignore a11y-no-static-element-interactions / applied by melt's builder-->
 
 {#if $open}
-	{#if transition}
+	{#if asChild}
+		<slot builder={$content} />
+	{:else if transition}
 		<div
 			use:melt={$content}
 			{...$$restProps}
@@ -32,7 +35,7 @@
 			on:keydown
 			transition:transition={transitionConfig}
 		>
-			<slot />
+			<slot builder={$content} />
 		</div>
 	{:else}
 		<div
@@ -45,7 +48,7 @@
 			on:click
 			on:keydown
 		>
-			<slot />
+			<slot builder={$content} />
 		</div>
 	{/if}
 {/if}

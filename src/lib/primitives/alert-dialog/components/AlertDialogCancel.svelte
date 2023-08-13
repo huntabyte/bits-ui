@@ -6,13 +6,13 @@
 	type $$Props = CancelProps;
 	type $$Events = CancelEvents;
 	export let asChild = false;
-	const cancel = ctx.getClose();
+	const close = ctx.get().elements.close;
 </script>
 
 {#if asChild}
-	<slot cancel={$cancel} />
+	<slot builder={$close} />
 {:else}
-	<button use:melt={$cancel} on:click on:keydown on:m-click on:m-keydown {...$$restProps}>
-		<slot cancel={$cancel} />
+	<button use:melt={$close} on:click on:keydown on:m-click on:m-keydown {...$$restProps}>
+		<slot builder={$close} />
 	</button>
 {/if}

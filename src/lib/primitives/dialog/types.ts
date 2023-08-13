@@ -1,8 +1,8 @@
 import type {
+	AsChild,
 	Expand,
 	HTMLDivAttributes,
 	HTMLHeadingAttributes,
-	KeydownClickEvents,
 	OmitOpen,
 	OnChangeFn,
 	Transition,
@@ -19,24 +19,24 @@ type Props = Expand<
 	}
 >;
 
-type TriggerProps = HTMLButtonAttributes & {
-	asChild?: boolean;
-};
+type TriggerProps = AsChild & HTMLButtonAttributes;
 
 type CloseProps = TriggerProps;
+
 type ContentProps<T extends Transition = Transition> = HTMLDivAttributes & {
 	transition?: T;
 	transitionConfig?: TransitionParams<T>;
 };
-type DescriptionProps = HTMLDivAttributes;
-type OverlayProps = HTMLDivAttributes;
-type PortalProps = HTMLDivAttributes;
-type TitleProps = HTMLHeadingAttributes & {
-	level?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
-};
 
-type TriggerEvents = DialogComponentEvents["trigger"] & KeydownClickEvents;
-type CloseEvents = DialogComponentEvents["close"] & KeydownClickEvents;
+type DescriptionProps = AsChild & HTMLDivAttributes;
+type OverlayProps = AsChild & HTMLDivAttributes;
+type PortalProps = AsChild & HTMLDivAttributes;
+type TitleProps = AsChild & {
+	level?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+} & HTMLHeadingAttributes;
+
+type TriggerEvents = DialogComponentEvents["trigger"];
+type CloseEvents = DialogComponentEvents["close"];
 
 export type {
 	Props,

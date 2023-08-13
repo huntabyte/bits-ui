@@ -7,15 +7,12 @@
 	type $$Events = ItemEvents;
 	export let asChild: $$Props["asChild"] = false;
 	export let disabled = false;
-	const {
-		elements: { item }
-	} = ctx.get();
+	const item = ctx.get().elements.item;
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions applied by melt's action/store -->
-
 {#if asChild}
-	<slot item={$item} />
+	<slot builder={$item} />
 {:else}
 	<div
 		use:melt={$item}
@@ -31,6 +28,6 @@
 		on:keydown
 		{...disabledAttrs(disabled)}
 	>
-		<slot item={$item} />
+		<slot builder={$item} />
 	</div>
 {/if}

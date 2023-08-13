@@ -6,6 +6,7 @@
 	export let delayMs: $$Props["delayMs"] = undefined;
 	export let loadingStatus: $$Props["loadingStatus"] = undefined;
 	export let onLoadingStatusChange: $$Props["onLoadingStatusChange"] = undefined;
+	export let asChild = false;
 
 	const {
 		states: { loadingStatus: localLoadingStatus },
@@ -24,6 +25,10 @@
 	$: updateOption("delayMs", delayMs);
 </script>
 
-<div {...$$restProps}>
+{#if asChild}
 	<slot />
-</div>
+{:else}
+	<div {...$$restProps}>
+		<slot />
+	</div>
+{/if}

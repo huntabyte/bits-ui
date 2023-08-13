@@ -9,6 +9,7 @@
 	export let disabled: $$Props["disabled"] = false;
 	export let value: $$Props["value"] = undefined;
 	export let onValueChange: $$Props["onValueChange"] = undefined;
+	export let asChild: $$Props["asChild"] = false;
 
 	const {
 		elements: { root },
@@ -31,6 +32,10 @@
 	$: updateOption("disabled", disabled);
 </script>
 
-<div use:melt={$root} {...$$restProps}>
-	<slot />
-</div>
+{#if asChild}
+	<slot builder={$root} />
+{:else}
+	<div use:melt={$root} {...$$restProps}>
+		<slot builder={$root} />
+	</div>
+{/if}

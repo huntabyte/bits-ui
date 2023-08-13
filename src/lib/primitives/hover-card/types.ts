@@ -3,9 +3,9 @@ import type {
 	Expand,
 	HTMLDivAttributes,
 	OnChangeFn,
-	KeydownClickEvents,
 	Transition,
-	TransitionParams
+	TransitionParams,
+	AsChild
 } from "$internal/index.js";
 import type { CreateHoverCardProps, HoverCardComponentEvents } from "@melt-ui/svelte";
 import type { HTMLAnchorAttributes } from "svelte/elements";
@@ -16,13 +16,16 @@ type Props = Expand<
 		onOpenChange?: OnChangeFn<CreateHoverCardProps["defaultOpen"]>;
 	}
 >;
-type TriggerProps = HTMLAnchorAttributes;
-type ContentProps<T extends Transition = Transition> = HTMLDivAttributes & {
+
+type TriggerProps = AsChild & HTMLAnchorAttributes;
+type ContentProps<T extends Transition = Transition> = {
 	transition?: T;
 	transitionConfig?: TransitionParams<T>;
-};
-type TriggerEvents = HoverCardComponentEvents["trigger"] & KeydownClickEvents;
-type ContentEvents = HoverCardComponentEvents["content"] & KeydownClickEvents;
+} & AsChild &
+	HTMLDivAttributes;
+
+type TriggerEvents = HoverCardComponentEvents["trigger"];
+type ContentEvents = HoverCardComponentEvents["content"];
 
 export type {
 	Props,

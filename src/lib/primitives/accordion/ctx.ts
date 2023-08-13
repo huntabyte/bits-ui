@@ -16,8 +16,7 @@ export const ctx = {
 	setItem,
 	getItemProps,
 	getContent,
-	getTrigger,
-	getHeader
+	getTrigger
 };
 
 function set(props: CreateAccordionProps) {
@@ -62,11 +61,4 @@ function getTrigger() {
 	} = get();
 	const { value: props } = getItemProps();
 	return { props, trigger };
-}
-
-function getHeader() {
-	const {
-		elements: { heading: header }
-	} = get();
-	return header;
 }

@@ -31,7 +31,7 @@
 <!-- svelte-ignore a11y-no-static-element-interactions / applied by melt's builder-->
 
 {#if asChild}
-	<slot checkboxItem={$checkboxItem} />
+	<slot builder={$checkboxItem} />
 {:else}
 	<div
 		use:melt={$checkboxItem}
@@ -43,9 +43,7 @@
 		on:m-pointerdown
 		on:m-pointerleave
 		on:m-pointermove
-		on:click
-		on:keydown
 	>
-		<slot checkboxItem={$checkboxItem} />
+		<slot builder={$checkboxItem} />
 	</div>
 {/if}

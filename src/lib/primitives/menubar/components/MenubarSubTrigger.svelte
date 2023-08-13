@@ -7,25 +7,27 @@
 	type $$Props = SubTriggerProps;
 	type $$Events = SubTriggerEvents;
 	export let disabled = false;
-	const {
-		elements: { subTrigger }
-	} = ctx.getSub();
+	export let asChild = false;
+	const subTrigger = ctx.getSub().elements.subTrigger;
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions / applied by melt's builder-->
-
-<div
-	use:melt={$subTrigger}
-	{...$$restProps}
-	on:m-click
-	on:m-focusin
-	on:m-focusout
-	on:m-keydown
-	on:m-pointerleave
-	on:m-pointermove
-	on:click
-	on:keydown
-	{...disabledAttrs(disabled)}
->
-	<slot />
-</div>
+{#if asChild}
+	<slot builder={$subTrigger} />
+{:else}
+	<div
+		use:melt={$subTrigger}
+		{...$$restProps}
+		on:m-click
+		on:m-focusin
+		on:m-focusout
+		on:m-keydown
+		on:m-pointerleave
+		on:m-pointermove
+		on:click
+		on:keydown
+		{...disabledAttrs(disabled)}
+	>
+		<slot builder={$subTrigger} />
+	</div>
+{/if}

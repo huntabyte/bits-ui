@@ -11,9 +11,10 @@
 	export let required: $$Props["required"] = undefined;
 	export let value: $$Props["value"] = undefined;
 	export let onCheckedChange: $$Props["onCheckedChange"] = undefined;
+	export let asChild = false;
 
 	const {
-		elements: { root, input },
+		elements: { root },
 		states: { checked: localChecked },
 		updateOption
 	} = ctx.set({
@@ -37,7 +38,10 @@
 	$: updateOption("value", value);
 </script>
 
-<button use:melt={$root} {...$$restProps} on:click on:keydown on:m-click on:m-keydown>
-	<slot />
-	<input use:melt={$input} />
-</button>
+{#if asChild}
+	<slot builder={$root} />
+{:else}
+	<button use:melt={$root} {...$$restProps} on:click on:keydown on:m-click on:m-keydown>
+		<slot builder={$root} />
+	</button>
+{/if}

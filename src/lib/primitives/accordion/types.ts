@@ -5,8 +5,7 @@ import type {
 	TransitionParams,
 	OmitValue,
 	Expand,
-	OnChangeFn,
-	KeydownClickEvents
+	OnChangeFn
 } from "$internal/index.js";
 import type {
 	CreateAccordionProps,
@@ -20,20 +19,32 @@ type Props = Expand<
 	OmitValue<CreateAccordionProps> & {
 		value?: CreateAccordionProps["defaultValue"] & {};
 		onValueChange?: OnChangeFn<CreateAccordionProps["defaultValue"]>;
+		asChild?: boolean;
 	}
 > &
 	HTMLDivAttributes;
 
-type ItemProps = ObjectVariation<_ItemProps> & HTMLDivAttributes;
-type HeaderProps = ObjectVariation<_HeadingProps> & HTMLDivAttributes;
-type TriggerProps = HTMLButtonAttributes;
+type ItemProps = {
+	asChild?: boolean;
+} & ObjectVariation<_ItemProps> &
+	HTMLDivAttributes;
+
+type HeaderProps = {
+	asChild?: boolean;
+} & ObjectVariation<_HeadingProps> &
+	HTMLDivAttributes;
+
+type TriggerProps = {
+	asChild?: boolean;
+} & HTMLButtonAttributes;
 
 type ContentProps<T extends Transition = Transition> = {
 	transition?: T;
 	transitionConfig?: TransitionParams<T>;
+	asChild?: boolean;
 } & HTMLDivAttributes;
 
-type TriggerEvents = AccordionComponentEvents["trigger"] & KeydownClickEvents;
+type TriggerEvents = AccordionComponentEvents["trigger"];
 
 export type {
 	Props,

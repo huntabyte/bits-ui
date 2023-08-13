@@ -1,15 +1,17 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import type { InputProps } from "../types.js";
 	import { ctx } from "../ctx.js";
+	import type { InputProps } from "../types.js";
 
 	type $$Props = InputProps;
+
 	export let asChild = false;
-	const itemInput = ctx.get().elements.itemInput;
+
+	const input = ctx.get().elements.input;
 </script>
 
 {#if asChild}
-	<slot builder={$itemInput} />
+	<slot builder={$input} />
 {:else}
-	<input use:melt={$itemInput} hidden {...$$restProps} />
+	<input use:melt={$input} {...$$restProps} />
 {/if}

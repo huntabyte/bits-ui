@@ -6,15 +6,13 @@
 	type $$Props = CloseProps;
 	type $$Events = CloseEvents;
 	export let asChild = false;
-	const {
-		elements: { close }
-	} = ctx.get();
+	const close = ctx.get().elements.close;
 </script>
 
 {#if asChild}
-	<slot close={$close} />
+	<slot builder={$close} />
 {:else}
 	<button use:melt={$close} {...$$restProps} on:m-click on:m-keydown on:click on:keydown>
-		<slot close={$close} />
+		<slot builder={$close} />
 	</button>
 {/if}

@@ -5,20 +5,15 @@
 
 	type $$Props = SubContentProps;
 	type $$Events = SubContentEvents;
-	const {
-		elements: { subMenu }
-	} = ctx.getSub();
+	export let asChild = false;
+	const subMenu = ctx.getSub().elements.subMenu;
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions / applied by melt's builder-->
-<div
-	use:melt={$subMenu}
-	{...$$restProps}
-	on:m-focusout
-	on:m-keydown
-	on:m-pointermove
-	on:click
-	on:keydown
->
-	<slot />
-</div>
+{#if asChild}
+	<slot builder={$subMenu} />
+{:else}
+	<div use:melt={$subMenu} {...$$restProps} on:m-focusout on:m-keydown on:m-pointermove>
+		<slot builder={$subMenu} />
+	</div>
+{/if}

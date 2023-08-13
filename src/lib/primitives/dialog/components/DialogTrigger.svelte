@@ -6,15 +6,13 @@
 	type $$Props = TriggerProps;
 	type $$Events = TriggerEvents;
 	export let asChild = false;
-	const {
-		elements: { trigger }
-	} = ctx.get();
+	const trigger = ctx.get().elements.trigger;
 </script>
 
 {#if asChild}
-	<slot trigger={$trigger} />
+	<slot builder={$trigger} />
 {:else}
 	<button use:melt={$trigger} {...$$restProps} on:m-click on:m-keydown on:click on:keydown>
-		<slot trigger={$trigger} />
+		<slot builder={$trigger} />
 	</button>
 {/if}

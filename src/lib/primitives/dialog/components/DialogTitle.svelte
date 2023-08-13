@@ -5,11 +5,14 @@
 
 	type $$Props = TitleProps;
 	export let level: TitleProps["level"] = "h2";
-	const {
-		elements: { title }
-	} = ctx.get();
+	export let asChild = false;
+	const title = ctx.get().elements.title;
 </script>
 
-<svelte:element this={level} use:melt={$title} {...$$restProps}>
-	<slot />
-</svelte:element>
+{#if asChild}
+	<slot builder={$title} />
+{:else}
+	<svelte:element this={level} use:melt={$title} {...$$restProps}>
+		<slot builder={$title} />
+	</svelte:element>
+{/if}

@@ -6,8 +6,8 @@
 	type $$Props = RadioItemProps;
 	type $$Events = RadioItemEvents;
 	export let value: $$Props["value"];
-	export let disabled: $$Props["disabled"] = false;
-	export let asChild: $$Props["asChild"] = false;
+	export let disabled = false;
+	export let asChild = false;
 	const {
 		elements: { radioItem }
 	} = ctx.setRadioItem(value);
@@ -15,7 +15,7 @@
 
 <!-- svelte-ignore a11y-no-static-element-interactions applied by melt's action/store -->
 {#if asChild}
-	<slot radioItem={$radioItem} />
+	<slot builder={$radioItem} />
 {:else}
 	<div
 		use:melt={$radioItem({ value, disabled })}
@@ -30,6 +30,6 @@
 		on:m-pointerleave
 		on:m-pointermove
 	>
-		<slot radioItem={$radioItem} />
+		<slot builder={$radioItem} />
 	</div>
 {/if}
