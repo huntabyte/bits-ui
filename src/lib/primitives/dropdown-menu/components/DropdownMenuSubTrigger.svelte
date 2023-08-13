@@ -26,8 +26,6 @@
 		on:m-keydown
 		on:m-pointerleave
 		on:m-pointermove
-		on:click
-		on:keydown
 		{...disabledAttrs(disabled)}
 	>
 		<slot builder={$subTrigger} />

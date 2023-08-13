@@ -23,18 +23,11 @@
 	{#if asChild}
 		<slot builder={$menu} />
 	{:else if transition}
-		<div
-			use:melt={$menu}
-			{...$$restProps}
-			on:m-keydown
-			on:click
-			on:keydown
-			transition:transition={transitionConfig}
-		>
+		<div use:melt={$menu} {...$$restProps} on:m-keydown transition:transition={transitionConfig}>
 			<slot builder={$menu} />
 		</div>
 	{:else}
-		<div use:melt={$menu} {...$$restProps} on:m-keydown on:click on:keydown>
+		<div use:melt={$menu} {...$$restProps} on:m-keydown>
 			<slot builder={$menu} />
 		</div>
 	{/if}

@@ -25,8 +25,6 @@
 		<div
 			use:melt={$subMenu}
 			{...$$restProps}
-			on:click
-			on:keydown
 			on:m-focusout
 			on:m-keydown
 			on:m-pointermove
@@ -35,15 +33,7 @@
 			<slot />
 		</div>
 	{:else}
-		<div
-			use:melt={$subMenu}
-			{...$$restProps}
-			on:click
-			on:keydown
-			on:m-focusout
-			on:m-keydown
-			on:m-pointermove
-		>
+		<div use:melt={$subMenu} {...$$restProps} on:m-focusout on:m-keydown on:m-pointermove>
 			<slot />
 		</div>
 	{/if}

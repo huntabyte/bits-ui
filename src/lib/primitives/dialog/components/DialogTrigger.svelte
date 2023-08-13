@@ -12,7 +12,7 @@
 {#if asChild}
 	<slot builder={$trigger} />
 {:else}
-	<button use:melt={$trigger} {...$$restProps} on:m-click on:m-keydown on:click on:keydown>
+	<button use:melt={$trigger} {...$$restProps} on:m-click on:m-keydown>
 		<slot builder={$trigger} />
 	</button>
 {/if}

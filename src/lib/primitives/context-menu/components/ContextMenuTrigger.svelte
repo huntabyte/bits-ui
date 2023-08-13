@@ -16,7 +16,6 @@
 	<div
 		use:melt={$trigger}
 		{...$$restProps}
-		on:click
 		on:m-contextmenu
 		on:m-pointercancel
 		on:m-pointerdown

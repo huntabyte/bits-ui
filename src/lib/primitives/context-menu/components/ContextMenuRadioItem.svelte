@@ -20,8 +20,6 @@
 	<div
 		use:melt={$radioItem({ value, disabled })}
 		{...$$restProps}
-		on:click
-		on:keydown
 		on:m-click
 		on:m-focusin
 		on:m-focusout

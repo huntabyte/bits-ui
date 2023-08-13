@@ -4,11 +4,14 @@
 	import type { ListProps } from "../types.js";
 	type $$Props = ListProps;
 
-	const {
-		elements: { list }
-	} = ctx.get();
+	export let asChild = false;
+	const list = ctx.get().elements.list;
 </script>
 
-<div use:melt={$list} {...$$restProps}>
-	<slot />
-</div>
+{#if asChild}
+	<slot builder={$list} />
+{:else}
+	<div use:melt={$list} {...$$restProps}>
+		<slot builder={$list} />
+	</div>
+{/if}

@@ -42,8 +42,6 @@
 		on:m-pointerdown
 		on:m-pointerleave
 		on:m-pointermove
-		on:click
-		on:keydown
 	>
 		<slot builder={$checkboxItem} />
 	</div>

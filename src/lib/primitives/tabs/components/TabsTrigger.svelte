@@ -9,13 +9,11 @@
 	export let disabled: $$Props["disabled"] = undefined;
 	export let asChild: $$Props["asChild"] = false;
 
-	const {
-		elements: { trigger }
-	} = ctx.get();
+	const trigger = ctx.get().elements.trigger;
 </script>
 
 {#if asChild}
-	<slot trigger={$trigger} />
+	<slot builder={$trigger} />
 {:else}
 	<button
 		use:melt={$trigger({ value, disabled })}
@@ -23,9 +21,7 @@
 		on:m-click
 		on:m-focus
 		on:m-keydown
-		on:click
-		on:keydown
 	>
-		<slot trigger={$trigger} />
+		<slot builder={$trigger} />
 	</button>
 {/if}

@@ -23,8 +23,6 @@
 	<div
 		use:melt={$subTrigger}
 		{...$$restProps}
-		on:click
-		on:keydown
 		on:m-click
 		on:m-focusin
 		on:m-focusout

@@ -18,8 +18,6 @@
 	<div
 		use:melt={$item}
 		{...$$restProps}
-		on:click
-		on:keydown
 		on:m-click
 		on:m-focusin
 		on:m-focusout

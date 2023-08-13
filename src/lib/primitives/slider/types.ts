@@ -4,7 +4,7 @@ import type {
 	OmitValue,
 	HTMLSpanAttributes,
 	OnChangeFn,
-	KeydownClickEvents
+	AsChild
 } from "$internal/index.js";
 
 type Props = Expand<
@@ -13,13 +13,14 @@ type Props = Expand<
 		onValueChange?: OnChangeFn<CreateSliderProps["defaultValue"]>;
 	}
 > &
+	AsChild &
 	HTMLSpanAttributes;
 
-type RangeProps = HTMLSpanAttributes;
+type RangeProps = AsChild & HTMLSpanAttributes;
 
-type ThumbProps = HTMLSpanAttributes;
+type ThumbProps = AsChild & HTMLSpanAttributes;
 
-type ThumbEvents = SliderComponentEvents["thumb"] & KeydownClickEvents;
+type ThumbEvents = SliderComponentEvents["thumb"];
 
 export type {
 	Props,

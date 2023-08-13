@@ -31,8 +31,6 @@
 			on:m-pointerdown
 			on:m-pointerenter
 			on:m-pointerleave
-			on:click
-			on:keydown
 			transition:transition={transitionConfig}
 		>
 			<slot builder={$content} />
@@ -45,8 +43,6 @@
 			on:m-pointerdown
 			on:m-pointerenter
 			on:m-pointerleave
-			on:click
-			on:keydown
 		>
 			<slot builder={$content} />
 		</div>

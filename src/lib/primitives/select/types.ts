@@ -1,8 +1,8 @@
 import type { CreateSelectProps, SelectComponentEvents, SelectOptionProps } from "@melt-ui/svelte";
 import type {
+	AsChild,
 	Expand,
 	HTMLDivAttributes,
-	KeydownClickEvents,
 	OmitOpen,
 	OmitValue,
 	OnChangeFn,
@@ -21,30 +21,27 @@ type Props = Expand<
 	}
 >;
 
-type ContentProps<T extends Transition = Transition> = HTMLDivAttributes & {
+type ContentProps<T extends Transition = Transition> = {
 	transition?: T;
 	transitionConfig?: TransitionParams<T>;
-};
-type GroupProps = HTMLDivAttributes;
-type InputProps = HTMLInputAttributes;
-type LabelProps = HTMLDivAttributes;
-type ItemProps = Expand<
-	SelectOptionProps & {
-		asChild?: boolean;
-	}
-> &
+} & AsChild &
 	HTMLDivAttributes;
-type SeparatorProps = HTMLDivAttributes;
-type TriggerProps = {
-	asChild?: boolean;
-} & HTMLButtonAttributes;
+
+type GroupProps = AsChild & HTMLDivAttributes;
+type InputProps = AsChild & HTMLInputAttributes;
+type LabelProps = AsChild & HTMLDivAttributes;
+type ItemProps = Expand<SelectOptionProps> & AsChild & HTMLDivAttributes;
+type SeparatorProps = AsChild & HTMLDivAttributes;
+
+type TriggerProps = AsChild & HTMLButtonAttributes;
 type ValueProps = {
 	placeholder?: string;
-} & HTMLAttributes<HTMLSpanElement>;
+} & AsChild &
+	HTMLAttributes<HTMLSpanElement>;
 
-type ItemEvents = SelectComponentEvents["option"] & KeydownClickEvents;
-type ContentEvents = SelectComponentEvents["menu"] & KeydownClickEvents;
-type TriggerEvents = SelectComponentEvents["trigger"] & KeydownClickEvents;
+type ItemEvents = SelectComponentEvents["option"];
+type ContentEvents = SelectComponentEvents["menu"];
+type TriggerEvents = SelectComponentEvents["trigger"];
 type LabelEvents = SelectComponentEvents["label"];
 
 export type {

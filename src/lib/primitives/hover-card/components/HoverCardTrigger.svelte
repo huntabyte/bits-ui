@@ -22,8 +22,6 @@
 		on:m-pointerenter
 		on:m-pointerleave
 		on:m-touchstart
-		on:click
-		on:keydown
 	>
 		<slot builder={$trigger} />
 	</svelte:element>

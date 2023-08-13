@@ -10,6 +10,7 @@
 	export let disabled: $$Props["disabled"] = undefined;
 	export let name: $$Props["name"] = undefined;
 	export let value: $$Props["value"] = undefined;
+	export let asChild = false;
 
 	const {
 		elements: { root },
@@ -33,6 +34,10 @@
 	$: updateOption("value", value);
 </script>
 
-<button use:melt={$root} {...$$restProps} on:m-click on:m-keydown on:click on:keydown>
-	<slot />
-</button>
+{#if asChild}
+	<slot builder={$root} />
+{:else}
+	<button use:melt={$root} {...$$restProps} on:m-click on:m-keydown>
+		<slot builder={$root} />
+	</button>
+{/if}

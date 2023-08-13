@@ -12,7 +12,7 @@
 {#if asChild}
 	<slot builder={$close} />
 {:else}
-	<button use:melt={$close} {...$$restProps} on:click on:keydown on:m-click on:m-keydown>
+	<button use:melt={$close} {...$$restProps} on:m-click on:m-keydown>
 		<slot builder={$close} />
 	</button>
 {/if}

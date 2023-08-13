@@ -30,22 +30,12 @@
 			on:m-focusout
 			on:m-keydown
 			on:m-pointermove
-			on:click
-			on:keydown
 			transition:transition={transitionConfig}
 		>
 			<slot builder={$subMenu} />
 		</div>
 	{:else}
-		<div
-			use:melt={$subMenu}
-			{...$$restProps}
-			on:m-focusout
-			on:m-keydown
-			on:m-pointermove
-			on:click
-			on:keydown
-		>
+		<div use:melt={$subMenu} {...$$restProps} on:m-focusout on:m-keydown on:m-pointermove>
 			<slot builder={$subMenu} />
 		</div>
 	{/if}

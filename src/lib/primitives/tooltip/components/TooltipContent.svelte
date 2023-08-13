@@ -11,6 +11,7 @@
 	export let transition: ContentProps<T>["transition"] = undefined;
 	export let transitionConfig: ContentProps<T>["transitionConfig"] = undefined;
 	export let sideOffset: ContentProps<T>["sideOffset"] = 4;
+	export let asChild = false;
 
 	const {
 		elements: { content },
@@ -19,7 +20,9 @@
 </script>
 
 {#if $open}
-	{#if transition}
+	{#if asChild}
+		<slot builder={$content} />
+	{:else if transition}
 		<div
 			use:melt={$content}
 			transition:transition={transitionConfig}
@@ -27,11 +30,11 @@
 			on:m-pointerdown
 			on:m-pointerenter
 		>
-			<slot />
+			<slot builder={$content} />
 		</div>
 	{:else}
 		<div use:melt={$content} {...$$restProps} on:m-pointerdown on:m-pointerenter>
-			<slot />
+			<slot builder={$content} />
 		</div>
 	{/if}
 {/if}

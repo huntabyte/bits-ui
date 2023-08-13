@@ -7,7 +7,7 @@ import type {
 	Transition,
 	TransitionParams,
 	OnChangeFn,
-	KeydownClickEvents
+	AsChild
 } from "$internal/index.js";
 import type { HTMLButtonAttributes } from "svelte/elements";
 
@@ -22,13 +22,12 @@ type ContentProps<T extends Transition = Transition> = {
 	transition?: T;
 	transitionConfig?: TransitionParams<T>;
 	sideOffset?: number;
-} & HTMLDivAttributes;
+} & AsChild &
+	HTMLDivAttributes;
 
-type TriggerProps = {
-	asChild?: boolean;
-} & HTMLButtonAttributes;
+type TriggerProps = AsChild & HTMLButtonAttributes;
 
-type TriggerEvents = TooltipComponentEvents["trigger"] & KeydownClickEvents;
+type TriggerEvents = TooltipComponentEvents["trigger"];
 type ContentEvents = TooltipComponentEvents["content"];
 
 export type {
