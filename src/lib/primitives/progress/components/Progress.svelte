@@ -8,6 +8,7 @@
 	export let max: $$Props["max"] = undefined;
 	export let value: $$Props["value"] = undefined;
 	export let onValueChange: $$Props["onValueChange"] = undefined;
+	export let asChild = false;
 
 	const {
 		elements: { root },
@@ -27,6 +28,10 @@
 	$: updateOption("max", max);
 </script>
 
-<div use:melt={$root} {...$$restProps}>
-	<slot />
-</div>
+{#if asChild}
+	<slot builder={$root} />
+{:else}
+	<div use:melt={$root} {...$$restProps}>
+		<slot builder={$root} />
+	</div>
+{/if}

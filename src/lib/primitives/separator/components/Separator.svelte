@@ -6,6 +6,7 @@
 	type $$Props = Props;
 	export let orientation: $$Props["orientation"] = "horizontal";
 	export let decorative: $$Props["decorative"] = true;
+	export let asChild = false;
 
 	const {
 		elements: { root },
@@ -16,4 +17,8 @@
 	$: updateOption("decorative", decorative);
 </script>
 
-<div use:melt={$root} {...$$restProps} />
+{#if asChild}
+	<slot builder={$root} />
+{:else}
+	<div use:melt={$root} {...$$restProps} />
+{/if}

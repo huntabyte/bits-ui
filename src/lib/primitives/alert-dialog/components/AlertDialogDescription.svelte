@@ -4,9 +4,16 @@
 	import type { DescriptionProps } from "../types.js";
 
 	type $$Props = DescriptionProps;
-	const description = ctx.getDescription();
+	export let asChild = false;
+	const {
+		elements: { description }
+	} = ctx.get();
 </script>
 
-<div use:melt={$description} {...$$restProps}>
-	<slot />
-</div>
+{#if asChild}
+	<slot builder={$description} />
+{:else}
+	<div use:melt={$description} {...$$restProps}>
+		<slot builder={$description} />
+	</div>
+{/if}

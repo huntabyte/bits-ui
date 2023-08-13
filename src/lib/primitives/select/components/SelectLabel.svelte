@@ -5,9 +5,14 @@
 
 	type $$Props = LabelProps;
 	type $$Events = LabelEvents;
+	export let asChild = false;
 	const { groupLabel, id } = ctx.getGroupLabel();
 </script>
 
-<div use:melt={$groupLabel(id)} {...$$restProps}>
-	<slot />
-</div>
+{#if asChild}
+	<slot builder={$groupLabel(id)} />
+{:else}
+	<div use:melt={$groupLabel(id)} {...$$restProps}>
+		<slot builder={$groupLabel(id)} />
+	</div>
+{/if}

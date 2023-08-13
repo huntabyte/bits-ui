@@ -1,7 +1,7 @@
 import type {
+	AsChild,
 	Expand,
 	HTMLDivAttributes,
-	KeydownClickEvents,
 	OmitChecked,
 	OmitOpen,
 	OmitValue,
@@ -30,9 +30,9 @@ type CheckboxItemProps = Expand<
 	OmitChecked<CreateDropdownMenuCheckboxItemProps> & {
 		checked?: CreateDropdownMenuCheckboxItemProps["defaultChecked"] & {};
 		onCheckedChange?: OnChangeFn<CreateDropdownMenuCheckboxItemProps["defaultChecked"]>;
-		asChild?: boolean;
 	}
 > &
+	AsChild &
 	HTMLDivAttributes;
 
 type RadioGroupProps = Expand<
@@ -41,52 +41,50 @@ type RadioGroupProps = Expand<
 		onValueChange?: OnChangeFn<CreateDropdownMenuRadioGroupProps["defaultValue"]>;
 	}
 > &
+	AsChild &
 	HTMLDivAttributes;
 
-type RadioItemProps = Expand<
-	DropdownMenuRadioItemProps & {
-		asChild?: boolean;
-	}
-> &
-	HTMLDivAttributes;
+type RadioItemProps = DropdownMenuRadioItemProps & AsChild & HTMLDivAttributes;
 
 type ContentProps<T extends Transition = Transition> = {
 	sideOffset?: number;
 	transition?: T;
 	transitionConfig?: TransitionParams<T>;
-} & HTMLDivAttributes;
+} & AsChild &
+	HTMLDivAttributes;
 
-type GroupProps = HTMLDivAttributes;
+type GroupProps = AsChild & HTMLDivAttributes;
 
 type ItemProps = {
-	asChild?: boolean;
 	disabled?: boolean;
-} & HTMLDivAttributes;
+} & AsChild &
+	HTMLDivAttributes;
 
 type CheckboxItemIndicatorProps = HTMLDivAttributes;
-type LabelProps = HTMLDivAttributes;
-type SeparatorProps = HTMLDivAttributes;
+type LabelProps = AsChild & HTMLDivAttributes;
+type SeparatorProps = AsChild & HTMLDivAttributes;
 type SubProps = Expand<CreateDropdownSubmenuProps>;
 type SubContentProps<T extends Transition = Transition> = {
 	sideOffset?: number;
 	transition?: T;
 	transitionConfig?: TransitionParams<T>;
-} & HTMLDivAttributes;
+} & AsChild &
+	HTMLDivAttributes;
 
 type SubTriggerProps = {
 	disabled?: boolean;
-} & HTMLDivAttributes;
-type TriggerProps = {
-	asChild?: boolean;
-} & HTMLButtonAttributes;
+} & AsChild &
+	HTMLDivAttributes;
 
-type TriggerEvents = DropdownMenuComponentEvents["trigger"] & KeydownClickEvents;
-type CheckboxItemEvents = DropdownMenuComponentEvents["checkboxItem"] & KeydownClickEvents;
-type ContentEvents = DropdownMenuComponentEvents["menu"] & KeydownClickEvents;
-type RadioItemEvents = DropdownMenuComponentEvents["radioItem"] & KeydownClickEvents;
-type SubContentEvents = DropdownMenuComponentEvents["submenu"] & KeydownClickEvents;
-type SubTriggerEvents = DropdownMenuComponentEvents["subTrigger"] & KeydownClickEvents;
-type ItemEvents = DropdownMenuComponentEvents["item"] & KeydownClickEvents;
+type TriggerProps = AsChild & HTMLButtonAttributes;
+
+type TriggerEvents = DropdownMenuComponentEvents["trigger"];
+type CheckboxItemEvents = DropdownMenuComponentEvents["checkboxItem"];
+type ContentEvents = DropdownMenuComponentEvents["menu"];
+type RadioItemEvents = DropdownMenuComponentEvents["radioItem"];
+type SubContentEvents = DropdownMenuComponentEvents["submenu"];
+type SubTriggerEvents = DropdownMenuComponentEvents["subTrigger"];
+type ItemEvents = DropdownMenuComponentEvents["item"];
 
 export type {
 	Props,

@@ -1,4 +1,4 @@
-import type { Expand, HTMLDivAttributes, OmitValue, OnChangeFn } from "$internal/index.js";
+import type { AsChild, Expand, HTMLDivAttributes, OmitValue, OnChangeFn } from "$internal/index.js";
 import type { CreateProgressProps } from "@melt-ui/svelte";
 
 type Props = Expand<
@@ -7,6 +7,7 @@ type Props = Expand<
 		onValueChange?: OnChangeFn<CreateProgressProps["defaultValue"]>;
 	}
 > &
+	AsChild &
 	HTMLDivAttributes;
 
 type IndicatorProps = HTMLDivAttributes;

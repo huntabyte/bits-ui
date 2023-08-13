@@ -5,9 +5,14 @@
 
 	type $$Props = HeaderProps;
 	export let level: HeaderProps["level"] = 3;
-	const header = ctx.getHeader();
+	export let asChild: HeaderProps["asChild"] = false;
+	const heading = ctx.get().elements.heading;
 </script>
 
-<div use:melt={$header(level)} {...$$restProps}>
-	<slot />
-</div>
+{#if asChild}
+	<slot builder={$heading(level)} />
+{:else}
+	<div use:melt={$heading(level)} {...$$restProps}>
+		<slot builder={$heading(level)} />
+	</div>
+{/if}

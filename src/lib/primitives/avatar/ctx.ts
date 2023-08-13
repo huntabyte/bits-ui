@@ -6,7 +6,7 @@ const NAME = "Avatar";
 export const ctx = {
 	set,
 	getImage,
-	getFallback
+	get
 };
 
 function set(props: CreateAvatarProps) {
@@ -26,6 +26,6 @@ function getImage(src: string | undefined | null = "") {
 	return avatar;
 }
 
-function getFallback() {
+function get() {
 	return getContext<AvatarReturn>(NAME);
 }

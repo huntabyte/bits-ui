@@ -1,8 +1,8 @@
 import type { CreateTabsProps, TabsComponentEvents, TabsTriggerProps } from "@melt-ui/svelte";
 import type {
+	AsChild,
 	Expand,
 	HTMLDivAttributes,
-	KeydownClickEvents,
 	ObjectVariation,
 	OmitValue,
 	OnChangeFn
@@ -15,22 +15,19 @@ type Props = Expand<
 		onValueChange?: OnChangeFn<CreateTabsProps["defaultValue"]>;
 	}
 > &
+	AsChild &
 	HTMLDivAttributes;
 
 type ContentProps = {
 	value: string;
-} & HTMLDivAttributes;
-
-type TriggerProps = Expand<
-	ObjectVariation<TabsTriggerProps> & {
-		asChild?: boolean;
-	}
-> &
+} & AsChild &
 	HTMLDivAttributes;
 
-type ListProps = HTMLDivAttributes;
+type TriggerProps = Expand<ObjectVariation<TabsTriggerProps>> & AsChild & HTMLDivAttributes;
 
-type TriggerEvents = TabsComponentEvents["trigger"] & KeydownClickEvents;
+type ListProps = AsChild & HTMLDivAttributes;
+
+type TriggerEvents = TabsComponentEvents["trigger"];
 
 export type {
 	Props,

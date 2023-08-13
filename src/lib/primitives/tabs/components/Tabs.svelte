@@ -10,6 +10,7 @@
 	export let autoSet: $$Props["autoSet"] = undefined;
 	export let value: $$Props["value"] = undefined;
 	export let onValueChange: $$Props["onValueChange"] = undefined;
+	export let asChild = false;
 
 	const {
 		elements: { root },
@@ -35,6 +36,10 @@
 	$: updateOption("autoSet", autoSet);
 </script>
 
-<div use:melt={$root} {...$$restProps}>
-	<slot />
-</div>
+{#if asChild}
+	<slot builder={$root} />
+{:else}
+	<div use:melt={$root} {...$$restProps}>
+		<slot builder={$root} />
+	</div>
+{/if}

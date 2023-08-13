@@ -8,23 +8,13 @@
 	export let value: $$Props["value"];
 	export let disabled: $$Props["disabled"] = false;
 	export let asChild: $$Props["asChild"] = false;
-	const {
-		elements: { item }
-	} = ctx.setItem(value);
+	const item = ctx.setItem(value).elements.item;
 </script>
 
 {#if asChild}
-	<slot item={$item} />
+	<slot builder={$item} />
 {:else}
-	<button
-		use:melt={$item({ value, disabled })}
-		{...$$restProps}
-		on:m-click
-		on:m-focus
-		on:m-keydown
-		on:click
-		on:keydown
-	>
-		<slot item={$item} />
+	<button use:melt={$item({ value, disabled })} {...$$restProps} on:m-click on:m-focus on:m-keydown>
+		<slot builder={$item} />
 	</button>
 {/if}

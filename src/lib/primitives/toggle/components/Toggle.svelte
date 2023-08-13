@@ -28,9 +28,9 @@
 </script>
 
 {#if asChild}
-	<slot toggle={$root} />
+	<slot builder={$root} />
 {:else}
-	<button use:melt={$root} {...$$restProps} on:m-click on:m-keydown on:click on:keydown>
-		<slot toggle={$root} />
+	<button use:melt={$root} {...$$restProps} on:m-click on:m-keydown>
+		<slot builder={$root} />
 	</button>
 {/if}

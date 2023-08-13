@@ -4,7 +4,12 @@
 	import type { OverlayProps } from "../types.js";
 
 	type $$Props = OverlayProps;
-	const overlay = ctx.getOverlay();
+	export let asChild = false;
+	const overlay = ctx.get().elements.overlay;
 </script>
 
-<div use:melt={$overlay} {...$$restProps} />
+{#if asChild}
+	<slot builder={$overlay} />
+{:else}
+	<div use:melt={$overlay} {...$$restProps} />
+{/if}

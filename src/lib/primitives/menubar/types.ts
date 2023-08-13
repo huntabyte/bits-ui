@@ -1,7 +1,7 @@
 import type {
+	AsChild,
 	Expand,
 	HTMLDivAttributes,
-	KeydownClickEvents,
 	OmitChecked,
 	OmitOpen,
 	OmitValue,
@@ -31,10 +31,10 @@ type CheckboxItemProps = Expand<
 	OmitChecked<CreateMenuCheckboxItemProps> & {
 		checked?: CreateMenuCheckboxItemProps["defaultChecked"] & {};
 		onCheckedChange?: OnChangeFn<CreateMenuCheckboxItemProps["defaultChecked"]>;
-		asChild?: boolean;
 		disabled?: boolean;
 	}
 > &
+	AsChild &
 	HTMLDivAttributes;
 
 type RadioGroupProps = Expand<
@@ -43,51 +43,47 @@ type RadioGroupProps = Expand<
 		onValueChange?: OnChangeFn<CreateMenuRadioGroupProps["defaultValue"]>;
 	}
 > &
+	AsChild &
 	HTMLDivAttributes;
 
 type ContentProps = {
 	sideOffset?: number;
-} & HTMLDivAttributes;
+} & AsChild &
+	HTMLDivAttributes;
 
-type GroupProps = HTMLDivAttributes;
+type GroupProps = AsChild & HTMLDivAttributes;
 
 type ItemProps = {
-	asChild?: boolean;
 	disabled?: boolean;
-} & HTMLDivAttributes;
+} & AsChild &
+	HTMLDivAttributes;
 
 type CheckboxItemIndicatorProps = HTMLDivAttributes;
 
-type LabelProps = HTMLDivAttributes;
+type LabelProps = AsChild & HTMLDivAttributes;
 
-type RadioItemProps = Expand<
-	MenubarRadioItemProps & {
-		asChild?: boolean;
-	}
-> &
-	HTMLDivAttributes;
+type RadioItemProps = Expand<MenubarRadioItemProps> & AsChild & HTMLDivAttributes;
 
-type SeparatorProps = HTMLDivAttributes;
+type SeparatorProps = AsChild & HTMLDivAttributes;
 
 type SubProps = Expand<CreateMenubarSubmenuProps>;
 
-type SubContentProps = HTMLDivAttributes;
+type SubContentProps = AsChild & HTMLDivAttributes;
 
 type SubTriggerProps = {
 	disabled?: boolean;
-} & HTMLDivAttributes;
+} & AsChild &
+	HTMLDivAttributes;
 
-type TriggerProps = {
-	asChild?: boolean;
-} & HTMLButtonAttributes;
+type TriggerProps = AsChild & HTMLButtonAttributes;
 
-type TriggerEvents = MenubarComponentEvents["trigger"] & KeydownClickEvents;
-type ItemEvents = MenubarComponentEvents["item"] & KeydownClickEvents;
-type SubTriggerEvents = MenubarComponentEvents["subTrigger"] & KeydownClickEvents;
-type CheckboxItemEvents = MenubarComponentEvents["checkboxItem"] & KeydownClickEvents;
-type RadioItemEvents = MenubarComponentEvents["radioItem"] & KeydownClickEvents;
-type ContentEvents = MenubarComponentEvents["menu"] & KeydownClickEvents;
-type SubContentEvents = MenubarComponentEvents["submenu"] & KeydownClickEvents;
+type TriggerEvents = MenubarComponentEvents["trigger"];
+type ItemEvents = MenubarComponentEvents["item"];
+type SubTriggerEvents = MenubarComponentEvents["subTrigger"];
+type CheckboxItemEvents = MenubarComponentEvents["checkboxItem"];
+type RadioItemEvents = MenubarComponentEvents["radioItem"];
+type ContentEvents = MenubarComponentEvents["menu"];
+type SubContentEvents = MenubarComponentEvents["submenu"];
 
 export type {
 	Props,

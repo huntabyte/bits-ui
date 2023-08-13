@@ -8,6 +8,7 @@
 	export let disabled: $$Props["disabled"] = undefined;
 	export let open: $$Props["open"] = undefined;
 	export let onOpenChange: $$Props["onOpenChange"] = undefined;
+	export let asChild = false;
 
 	const {
 		elements: { root },
@@ -30,6 +31,10 @@
 	$: updateOption("forceVisible", forceVisible);
 </script>
 
-<div use:melt={$root} {...$$restProps}>
-	<slot />
-</div>
+{#if asChild}
+	<slot builder={$root} />
+{:else}
+	<div use:melt={$root} {...$$restProps}>
+		<slot builder={$root} />
+	</div>
+{/if}

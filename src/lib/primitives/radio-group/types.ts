@@ -1,10 +1,10 @@
 import type {
 	Expand,
 	HTMLDivAttributes,
-	KeydownClickEvents,
 	OmitValue,
 	OnChangeFn,
-	ObjectVariation
+	ObjectVariation,
+	AsChild
 } from "$internal/index.js";
 import type {
 	CreateRadioGroupProps,
@@ -19,18 +19,14 @@ type Props = Expand<
 		onValueChange?: OnChangeFn<CreateRadioGroupProps["defaultValue"]>;
 	}
 > &
+	AsChild &
 	HTMLDivAttributes;
 
-type InputProps = HTMLInputAttributes;
+type InputProps = AsChild & HTMLInputAttributes;
 
-type ItemProps = Expand<
-	ObjectVariation<RadioGroupItemProps> & {
-		asChild?: boolean;
-	}
-> &
-	HTMLButtonAttributes;
+type ItemProps = Expand<ObjectVariation<RadioGroupItemProps>> & AsChild & HTMLButtonAttributes;
 
-type ItemEvents = RadioGroupComponentEvents["item"] & KeydownClickEvents;
+type ItemEvents = RadioGroupComponentEvents["item"];
 
 export type {
 	Props,

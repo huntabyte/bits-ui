@@ -6,10 +6,13 @@
 	type $$Props = ImageProps;
 	export let src: $$Props["src"] = undefined;
 	export let alt: $$Props["alt"] = undefined;
+	export let asChild = false;
 
-	const {
-		elements: { image }
-	} = ctx.getImage(src);
+	const image = ctx.getImage(src).elements.image;
 </script>
 
-<img use:melt={$image} {alt} {...$$restProps} />
+{#if asChild}
+	<slot builder={$image} />
+{:else}
+	<img use:melt={$image} {alt} {...$$restProps} />
+{/if}

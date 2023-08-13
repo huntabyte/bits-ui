@@ -4,9 +4,12 @@
 	import type { RangeProps } from "../types.js";
 
 	type $$Props = RangeProps;
-	const {
-		elements: { range }
-	} = ctx.get();
+	export let asChild = false;
+	const range = ctx.get().elements.range;
 </script>
 
-<span use:melt={$range} {...$$restProps} />
+{#if asChild}
+	<slot builder={$range} />
+{:else}
+	<span use:melt={$range} {...$$restProps} />
+{/if}

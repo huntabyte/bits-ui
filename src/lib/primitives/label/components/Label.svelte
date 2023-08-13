@@ -5,13 +5,15 @@
 
 	type $$Props = Props;
 	type $$Events = Events;
-	const {
-		elements: { root }
-	} = ctx.get();
+	export let asChild = false;
+	const root = ctx.get().elements.root;
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions / applied by melt's builder-->
-
-<label use:melt={$root} {...$$restProps} on:m-mousedown>
-	<slot />
-</label>
+{#if asChild}
+	<slot builder={$root} />
+{:else}
+	<label use:melt={$root} {...$$restProps} on:m-mousedown>
+		<slot builder={$root} />
+	</label>
+{/if}

@@ -4,12 +4,14 @@
 	import type { FallbackProps } from "../types.js";
 
 	type $$Props = FallbackProps;
-
-	const {
-		elements: { fallback }
-	} = ctx.getFallback();
+	export let asChild = false;
+	const fallback = ctx.get().elements.fallback;
 </script>
 
-<span use:melt={$fallback} {...$$restProps}>
-	<slot />
-</span>
+{#if asChild}
+	<slot builder={$fallback} />
+{:else}
+	<span use:melt={$fallback} {...$$restProps}>
+		<slot builder={$fallback} />
+	</span>
+{/if}

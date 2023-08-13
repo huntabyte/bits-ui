@@ -4,9 +4,12 @@
 	import type { SeparatorProps } from "../types.js";
 
 	type $$Props = SeparatorProps;
-	const {
-		elements: { separator }
-	} = ctx.getMenu();
+	export let asChild = false;
+	const separator = ctx.getMenu().elements.separator;
 </script>
 
-<div use:melt={$separator} {...$$restProps} />
+{#if asChild}
+	<slot builder={$separator} />
+{:else}
+	<div use:melt={$separator} {...$$restProps} />
+{/if}

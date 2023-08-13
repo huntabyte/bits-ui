@@ -5,12 +5,14 @@
 
 	type $$Props = ContentProps;
 	export let value: $$Props["value"];
-
-	const {
-		elements: { content }
-	} = ctx.get();
+	export let asChild = false;
+	const content = ctx.get().elements.content;
 </script>
 
-<div use:melt={$content(value)} {...$$restProps}>
-	<slot />
-</div>
+{#if asChild}
+	<slot builder={$content(value)} />
+{:else}
+	<div use:melt={$content(value)} {...$$restProps}>
+		<slot builder={$content(value)} />
+	</div>
+{/if}

@@ -3,9 +3,12 @@
 	import type { ThumbProps } from "../types.js";
 
 	type $$Props = ThumbProps;
-	const {
-		states: { checked }
-	} = ctx.get();
+	export let asChild = false;
+	const checked = ctx.get().states.checked;
 </script>
 
-<span data-state={$checked ? "checked" : "unchecked"} {...$$restProps} />
+{#if asChild}
+	<slot builder={$checked} />
+{:else}
+	<span data-state={$checked ? "checked" : "unchecked"} {...$$restProps} />
+{/if}

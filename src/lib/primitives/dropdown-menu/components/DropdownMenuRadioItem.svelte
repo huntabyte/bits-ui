@@ -16,7 +16,7 @@
 <!-- svelte-ignore a11y-no-static-element-interactions applied by melt's action/store -->
 
 {#if asChild}
-	<slot radioItem={$radioItem} />
+	<slot builder={$radioItem} />
 {:else}
 	<div
 		use:melt={$radioItem({ value, disabled })}
@@ -28,9 +28,7 @@
 		on:m-pointerdown
 		on:m-pointerleave
 		on:m-pointermove
-		on:click
-		on:keydown
 	>
-		<slot radioItem={$radioItem} />
+		<slot builder={$radioItem} />
 	</div>
 {/if}

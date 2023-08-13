@@ -10,15 +10,13 @@
 	export let disabled: $$Props["disabled"] = undefined;
 	export let label: $$Props["label"] = undefined;
 	export let asChild: $$Props["asChild"] = false;
-	const {
-		elements: { option }
-	} = ctx.setItem(value);
+	const option = ctx.setItem(value).elements.option;
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions / applied by melt's builder-->
 
 {#if asChild}
-	<slot item={$option} />
+	<slot builder={$option} />
 {:else}
 	<div
 		use:melt={$option({ value, disabled, label })}
@@ -29,10 +27,8 @@
 		on:m-keydown
 		on:m-pointerleave
 		on:m-pointermove
-		on:click
-		on:keydown
 	>
-		<slot item={$option}>
+		<slot builder={$option}>
 			{label ? label : value}
 		</slot>
 	</div>

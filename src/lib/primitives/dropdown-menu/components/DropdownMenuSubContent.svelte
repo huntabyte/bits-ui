@@ -10,6 +10,7 @@
 
 	export let transition: SubContentProps<T>["transition"] = undefined;
 	export let transitionConfig: SubContentProps<T>["transitionConfig"] = undefined;
+	export let asChild = false;
 
 	const {
 		elements: { subMenu },
@@ -20,30 +21,22 @@
 <!-- svelte-ignore a11y-no-static-element-interactions applied by melt's action/store -->
 
 {#if $subOpen}
-	{#if transition}
+	{#if asChild}
+		<slot builder={$subMenu} />
+	{:else if transition}
 		<div
 			use:melt={$subMenu}
 			{...$$restProps}
 			on:m-focusout
 			on:m-keydown
 			on:m-pointermove
-			on:click
-			on:keydown
 			transition:transition={transitionConfig}
 		>
-			<slot />
+			<slot builder={$subMenu} />
 		</div>
 	{:else}
-		<div
-			use:melt={$subMenu}
-			{...$$restProps}
-			on:m-focusout
-			on:m-keydown
-			on:m-pointermove
-			on:click
-			on:keydown
-		>
-			<slot />
+		<div use:melt={$subMenu} {...$$restProps} on:m-focusout on:m-keydown on:m-pointermove>
+			<slot builder={$subMenu} />
 		</div>
 	{/if}
 {/if}

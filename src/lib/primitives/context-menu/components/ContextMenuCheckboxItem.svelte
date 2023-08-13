@@ -8,7 +8,7 @@
 	export let checked: $$Props["checked"] = undefined;
 	export let disabled: $$Props["disabled"] = undefined;
 	export let onCheckedChange: $$Props["onCheckedChange"] = undefined;
-	export let asChild: $$Props["asChild"] = false;
+	export let asChild = false;
 	const {
 		elements: { checkboxItem },
 		states: { checked: localChecked },
@@ -29,13 +29,11 @@
 
 <!-- svelte-ignore a11y-no-static-element-interactions applied by melt's action/store -->
 {#if asChild}
-	<slot checkboxItem={$checkboxItem} />
+	<slot builder={$checkboxItem} />
 {:else}
 	<div
 		use:melt={$checkboxItem}
 		{...$$restProps}
-		on:click
-		on:keydown
 		on:m-click
 		on:m-focusin
 		on:m-focusout
@@ -44,6 +42,6 @@
 		on:m-pointerleave
 		on:m-pointermove
 	>
-		<slot checkboxItem={$checkboxItem} />
+		<slot builder={$checkboxItem} />
 	</div>
 {/if}

@@ -10,6 +10,7 @@
 	export let sideOffset: $$Props["sideOffset"] = 5;
 	export let transition: ContentProps<T>["transition"] = undefined;
 	export let transitionConfig: ContentProps<T>["transitionConfig"] = undefined;
+	export let asChild = false;
 
 	const {
 		elements: { menu },
@@ -19,20 +20,15 @@
 
 <!-- svelte-ignore a11y-no-static-element-interactions applied by melt's action/store -->
 {#if $open}
-	{#if transition}
-		<div
-			use:melt={$menu}
-			{...$$restProps}
-			on:m-keydown
-			on:click
-			on:keydown
-			transition:transition={transitionConfig}
-		>
-			<slot />
+	{#if asChild}
+		<slot builder={$menu} />
+	{:else if transition}
+		<div use:melt={$menu} {...$$restProps} on:m-keydown transition:transition={transitionConfig}>
+			<slot builder={$menu} />
 		</div>
 	{:else}
-		<div use:melt={$menu} {...$$restProps} on:m-keydown on:click on:keydown>
-			<slot />
+		<div use:melt={$menu} {...$$restProps} on:m-keydown>
+			<slot builder={$menu} />
 		</div>
 	{/if}
 {/if}

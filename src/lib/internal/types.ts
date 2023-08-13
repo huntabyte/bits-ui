@@ -46,3 +46,7 @@ export type KeydownClickEvents = {
 	click: MouseEvent;
 	keydown: KeyboardEvent;
 };
+
+export type AsChild = Expand<{
+	asChild?: boolean;
+}>;

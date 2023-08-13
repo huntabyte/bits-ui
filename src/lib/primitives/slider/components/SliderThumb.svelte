@@ -5,10 +5,13 @@
 
 	type $$Props = ThumbProps;
 	type $$Events = ThumbEvents;
-	const {
-		elements: { thumb }
-	} = ctx.get();
+	export let asChild = false;
+	const thumb = ctx.get().elements.thumb;
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions / applied by melts builders -->
-<span use:melt={$thumb()} {...$$restProps} on:m-keydown on:keydown on:click />
+{#if asChild}
+	<slot builder={$thumb()} />
+{:else}
+	<span use:melt={$thumb()} {...$$restProps} on:m-keydown />
+{/if}

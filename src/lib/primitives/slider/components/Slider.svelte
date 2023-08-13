@@ -12,6 +12,7 @@
 	export let orientation: $$Props["orientation"] = undefined;
 	export let value: $$Props["value"] = undefined;
 	export let onValueChange: $$Props["onValueChange"] = undefined;
+	export let asChild = false;
 
 	const {
 		elements: { root },
@@ -39,6 +40,10 @@
 	$: updateOption("orientation", orientation);
 </script>
 
-<span use:melt={$root} {...$$restProps}>
-	<slot />
-</span>
+{#if asChild}
+	<slot builder={$root} />
+{:else}
+	<span use:melt={$root} {...$$restProps}>
+		<slot builder={$root} />
+	</span>
+{/if}

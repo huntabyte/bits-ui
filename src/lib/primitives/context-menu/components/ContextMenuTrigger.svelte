@@ -6,25 +6,22 @@
 	type $$Props = TriggerProps;
 	type $$Events = TriggerEvents;
 	export let asChild = false;
-	const {
-		elements: { trigger }
-	} = ctx.get();
+	const trigger = ctx.get().elements.trigger;
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions applied by melt's action/store -->
 {#if asChild}
-	<slot trigger={$trigger} />
+	<slot builder={$trigger} />
 {:else}
 	<div
 		use:melt={$trigger}
 		{...$$restProps}
-		on:click
 		on:m-contextmenu
 		on:m-pointercancel
 		on:m-pointerdown
 		on:m-pointermove
 		on:m-pointerup
 	>
-		<slot trigger={$trigger} />
+		<slot builder={$trigger} />
 	</div>
 {/if}

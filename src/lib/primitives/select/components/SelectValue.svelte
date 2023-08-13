@@ -4,11 +4,14 @@
 
 	type $$Props = ValueProps;
 	export let placeholder: $$Props["placeholder"] = "";
-	const {
-		states: { valueLabel }
-	} = ctx.get();
+	export let asChild = false;
+	const valueLabel = ctx.get().states.valueLabel;
 </script>
 
-<span {...$$restProps}>
-	{$valueLabel ? $valueLabel : placeholder}
-</span>
+{#if asChild}
+	<slot valueLabel={$valueLabel} />
+{:else}
+	<span {...$$restProps}>
+		{$valueLabel ? $valueLabel : placeholder}
+	</span>
+{/if}
