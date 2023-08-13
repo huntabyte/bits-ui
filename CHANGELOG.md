@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.0.13
+
+### Patch Changes
+
+- 05cdcad: Add disable prop to menu primitives
+
 ## 0.0.12
 
 ### Patch Changes
