@@ -53,13 +53,16 @@ type ContentProps = {
 type GroupProps = HTMLDivAttributes;
 type ItemProps = {
 	asChild?: boolean;
+	disabled?: boolean;
 } & HTMLDivAttributes;
 type CheckboxItemIndicatorProps = HTMLDivAttributes;
 type LabelProps = HTMLDivAttributes;
 type SeparatorProps = HTMLDivAttributes;
 type SubProps = Expand<CreateContextSubmenuProps>;
 type SubContentProps = HTMLDivAttributes;
-type SubTriggerProps = HTMLDivAttributes;
+type SubTriggerProps = {
+	disabled?: boolean;
+} & HTMLDivAttributes;
 type TriggerProps = {
 	asChild?: boolean;
 } & HTMLDivAttributes;

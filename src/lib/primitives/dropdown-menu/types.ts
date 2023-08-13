@@ -57,9 +57,12 @@ type ContentProps<T extends Transition = Transition> = {
 } & HTMLDivAttributes;
 
 type GroupProps = HTMLDivAttributes;
+
 type ItemProps = {
 	asChild?: boolean;
+	disabled?: boolean;
 } & HTMLDivAttributes;
+
 type CheckboxItemIndicatorProps = HTMLDivAttributes;
 type LabelProps = HTMLDivAttributes;
 type SeparatorProps = HTMLDivAttributes;
@@ -70,7 +73,9 @@ type SubContentProps<T extends Transition = Transition> = {
 	transitionConfig?: TransitionParams<T>;
 } & HTMLDivAttributes;
 
-type SubTriggerProps = HTMLDivAttributes;
+type SubTriggerProps = {
+	disabled?: boolean;
+} & HTMLDivAttributes;
 type TriggerProps = {
 	asChild?: boolean;
 } & HTMLButtonAttributes;
