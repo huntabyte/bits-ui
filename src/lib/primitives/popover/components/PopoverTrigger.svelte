@@ -10,9 +10,9 @@
 </script>
 
 {#if asChild}
-	<slot builder="$trigger}" />
+	<slot builder={$trigger} />
 {:else}
 	<button use:melt={$trigger} {...$$restProps} on:m-click on:m-keydown>
-		<slot builder="$trigger}" />
+		<slot builder={$trigger} />
 	</button>
 {/if}
