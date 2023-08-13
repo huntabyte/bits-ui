@@ -32,6 +32,7 @@ type CheckboxItemProps = Expand<
 		checked?: CreateMenuCheckboxItemProps["defaultChecked"] & {};
 		onCheckedChange?: OnChangeFn<CreateMenuCheckboxItemProps["defaultChecked"]>;
 		asChild?: boolean;
+		disabled?: boolean;
 	}
 > &
 	HTMLDivAttributes;
@@ -47,22 +48,35 @@ type RadioGroupProps = Expand<
 type ContentProps = {
 	sideOffset?: number;
 } & HTMLDivAttributes;
+
 type GroupProps = HTMLDivAttributes;
+
 type ItemProps = {
 	asChild?: boolean;
+	disabled?: boolean;
 } & HTMLDivAttributes;
+
 type CheckboxItemIndicatorProps = HTMLDivAttributes;
+
 type LabelProps = HTMLDivAttributes;
+
 type RadioItemProps = Expand<
 	MenubarRadioItemProps & {
 		asChild?: boolean;
 	}
 > &
 	HTMLDivAttributes;
+
 type SeparatorProps = HTMLDivAttributes;
+
 type SubProps = Expand<CreateMenubarSubmenuProps>;
+
 type SubContentProps = HTMLDivAttributes;
-type SubTriggerProps = HTMLDivAttributes;
+
+type SubTriggerProps = {
+	disabled?: boolean;
+} & HTMLDivAttributes;
+
 type TriggerProps = {
 	asChild?: boolean;
 } & HTMLButtonAttributes;
