@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@melt-ui/svelte':
-    specifier: 0.34.5
-    version: 0.34.5(svelte@4.1.2)
+    specifier: 0.34.6
+    version: 0.34.6(svelte@4.1.2)
   nanoid:
     specifier: ^4.0.2
     version: 4.0.2
@@ -18,7 +18,7 @@ devDependencies:
     version: 2.26.2
   '@melt-ui/pp':
     specifier: ^0.1.2
-    version: 0.1.2(@melt-ui/svelte@0.34.5)(svelte@4.1.2)
+    version: 0.1.2(@melt-ui/svelte@0.34.6)(svelte@4.1.2)
   '@playwright/test':
     specifier: ^1.28.1
     version: 1.36.2
@@ -644,19 +644,19 @@ packages:
       read-yaml-file: 1.1.0
     dev: true
 
-  /@melt-ui/pp@0.1.2(@melt-ui/svelte@0.34.5)(svelte@4.1.2):
+  /@melt-ui/pp@0.1.2(@melt-ui/svelte@0.34.6)(svelte@4.1.2):
     resolution: {integrity: sha512-GZeqp7UWLNZUC2dJpREnZrWMR88vy27WO7C3cIBz4KW3/CFD19FjNkd3VbSRfcRryrMkdnEs9nu2VUa8/0u58w==}
     engines: {pnpm: '>=8.6.3'}
     peerDependencies:
       '@melt-ui/svelte': '>= 0.29.0'
       svelte: ^3.55.0 || ^4.0.0
     dependencies:
-      '@melt-ui/svelte': 0.34.5(svelte@4.1.2)
+      '@melt-ui/svelte': 0.34.6(svelte@4.1.2)
       svelte: 4.1.2
     dev: true
 
-  /@melt-ui/svelte@0.34.5(svelte@4.1.2):
-    resolution: {integrity: sha512-0ZuahJiolPrgVdxfGSsLmd/c5SFKyEB2THS7b2hnx3PcC3hiN8+cbrrnNaDsSTwKWj8zjBUgjDrVQ/tJwWEiqw==}
+  /@melt-ui/svelte@0.34.6(svelte@4.1.2):
+    resolution: {integrity: sha512-uH+s8QL5vxvb9//tULFupGSBhWTh+TvRMbIVVEae8BVlIyQrvYD5G61hoq0CiJ+Oieqgti3wnckLkaz20aYDIg==}
     peerDependencies:
       svelte: '>=3 <5'
     dependencies:
