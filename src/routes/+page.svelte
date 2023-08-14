@@ -1,6 +1,6 @@
 <script lang="ts">
-	import * as Select from "@/primitives/select";
-	import * as Menubar from "@/primitives/menubar";
+	import * as Select from "@/lib/primitives/select";
+	import * as Menubar from "@/lib/primitives/menubar";
 	const fruits = [
 		{ value: "apple", label: "Apple" },
 		{ value: "banana", label: "Banana" },
