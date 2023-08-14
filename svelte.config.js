@@ -13,7 +13,9 @@ const config = {
 			$lib: "src/lib",
 			"$lib/*": "src/lib/*",
 			$internal: "src/lib/internal",
-			"$internal/*": "src/lib/internal/*"
+			"$internal/*": "src/lib/internal/*",
+			"@/": "src/lib",
+			"@/*": "src/lib/*"
 		}
 	}
 };
