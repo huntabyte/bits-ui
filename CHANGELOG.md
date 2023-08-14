@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.0.17
+
+### Patch Changes
+
+- 3c326a2: Fix menubar kbd navigation bug
+
 ## 0.0.16
 
 ### Patch Changes
