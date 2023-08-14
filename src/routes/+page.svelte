@@ -144,29 +144,3 @@
 		</Menubar.Menu>
 	</Menubar.Root>
 </div>
-
-<style lang="postcss">
-	.menu {
-		@apply z-10 flex max-h-[300px] min-w-[220px] flex-col shadow-lg shadow-neutral-900/30;
-		@apply rounded-md bg-white p-1 lg:max-h-none;
-		@apply ring-0 !important;
-	}
-	.subMenu {
-		@apply min-w-[220px] shadow-md shadow-neutral-900/30;
-	}
-	.item {
-		@apply relative h-6 min-h-[24px] select-none rounded-sm pl-6 pr-1;
-		@apply z-20 text-green-900 outline-none;
-		@apply data-[highlighted]:bg-green-200 data-[highlighted]:text-green-900;
-		@apply data-[disabled]:text-neutral-300;
-		@apply flex items-center text-sm leading-none;
-		@apply cursor-default ring-0 !important;
-	}
-
-	.trigger {
-		@apply inline-flex items-center justify-center rounded-md bg-white px-3 py-2;
-		@apply text-green-900 transition-colors hover:bg-white/90 data-[highlighted]:outline-none;
-		@apply overflow-visible data-[highlighted]:bg-green-200 data-[highlighted]:ring-green-400 !important;
-		@apply !cursor-default text-sm font-medium leading-none focus:z-30 focus:ring;
-	}
-</style>
