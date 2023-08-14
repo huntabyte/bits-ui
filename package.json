@@ -1,6 +1,6 @@
 {
 	"name": "@huntabyte/primitives",
-	"version": "0.0.16",
+	"version": "0.0.17",
 	"license": "MIT",
 	"scripts": {
 		"dev": "vite dev",
