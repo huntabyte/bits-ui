@@ -6,8 +6,8 @@
 	export let positioning: $$Props["positioning"] = undefined;
 	export let open: $$Props["open"] = undefined;
 	export let onOpenChange: $$Props["onOpenChange"] = undefined;
-	export let openDelay: $$Props["openDelay"] = undefined;
-	export let closeDelay: $$Props["closeDelay"] = undefined;
+	export let openDelay: $$Props["openDelay"] = 700;
+	export let closeDelay: $$Props["closeDelay"] = 300;
 	export let closeOnOutsideClick: $$Props["closeOnOutsideClick"] = undefined;
 	export let closeOnEscape: $$Props["closeOnEscape"] = undefined;
 	export let arrowSize: $$Props["arrowSize"] = undefined;
