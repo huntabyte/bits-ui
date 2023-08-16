@@ -61,14 +61,19 @@ export default {
 	},
 	plugins: [
 		typography,
-		plugin(function ({ matchUtilities }) {
+		plugin(function ({ theme, matchUtilities }) {
 			// Square utility
-			matchUtilities({
-				sq: (value) => ({
-					width: value,
-					height: value
-				})
-			});
+			matchUtilities(
+				{
+					sq: (value) => ({
+						width: value,
+						height: value
+					})
+				},
+				{
+					values: theme("spacing")
+				}
+			);
 		})
 	]
 } satisfies Config;

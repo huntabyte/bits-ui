@@ -2,10 +2,16 @@
 	import { Button as ButtonPrimitive } from "@/lib";
 	import { cn } from "@/utils";
 	import { buttonVariants, type Size, type Variant } from ".";
+	import type { ButtonEventHandler } from "$lib/primitives/button";
 
 	type $$Props = ButtonPrimitive.Props & {
 		variant?: Variant;
 		size?: Size;
+	};
+
+	type $$Events = {
+		click: ButtonEventHandler<MouseEvent>;
+		keydown: ButtonEventHandler<KeyboardEvent>;
 	};
 
 	let className: $$Props["class"] = undefined;
@@ -20,11 +26,7 @@
 	class={cn(buttonVariants({ variant, size, className }))}
 	{...$$restProps}
 	on:click
-	on:change
 	on:keydown
-	on:keyup
-	on:mouseenter
-	on:mouseleave
 >
 	<slot />
 </ButtonPrimitive.Root>
