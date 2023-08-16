@@ -44,6 +44,7 @@
 		"eslint": "^8.28.0",
 		"eslint-config-prettier": "^8.5.0",
 		"eslint-plugin-svelte": "^2.30.0",
+		"esm-env": "^1.0.0",
 		"lucide-svelte": "^0.268.0",
 		"postcss": "^8.4.24",
 		"postcss-load-config": "^4.0.1",

@@ -1,51 +1,39 @@
 <script lang="ts">
-	import { Icons, LightSwitch, MainNav, MobileNav } from "@/components";
-	import { buttonVariants } from "@/components/ui/button";
-	import { siteConfig } from "$lib/config/site";
-	import { cn } from "@/utils";
+	import { Button } from "@/components/ui/button";
+	import { Xcom, GitHub } from "@/components/icons";
+	import { LightSwitch } from "@/components";
+	import { siteConfig } from "@/config";
 </script>
 
-<header
-	class="supports-backdrop-blur:bg-background/60 sticky top-0 z-40 w-full border-b bg-background/95 shadow-sm backdrop-blur"
->
-	<div class="container flex h-14 items-center">
-		<MainNav />
-		<MobileNav />
-		<div class="flex flex-1 items-center justify-between space-x-2 sm:space-x-4 md:justify-end">
-			<div class="w-full flex-1 md:w-auto md:flex-none">
-				<!-- Command Menu Here -->
+<header class="bg-background/75 backdrop-blur border-b border-border -mb-px sticky top-0 z-50">
+	<div class="mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+		<div class="flex items-center justify-between gap-3 h-16">
+			<div class="flex items-center gap-1.5">
+				<a href="/getting-started" class="font-bold leading-relaxed text-xl">Primitives</a>
 			</div>
-			<nav class="flex items-center space-x-1">
-				<a href={siteConfig.links.github} target="_blank" rel="noreferrer">
-					<div
-						class={cn(
-							buttonVariants({
-								size: "sm",
-								variant: "ghost"
-							}),
-							"w-9 px-0"
-						)}
-					>
-						<Icons.gitHub class="h-5 w-5" />
-						<span class="sr-only">GitHub</span>
-					</div>
-				</a>
-				<a href={siteConfig.links.shadTwitter} target="_blank" rel="noreferrer">
-					<div
-						class={cn(
-							buttonVariants({
-								size: "sm",
-								variant: "ghost"
-							}),
-							"w-9 px-0"
-						)}
-					>
-						<Icons.twitter class="h-5 w-5 fill-current" />
-						<span class="sr-only">Twitter</span>
-					</div>
-				</a>
+			<div class="items-center justify-end gap-1.5">
+				<Button
+					href={siteConfig.links.github}
+					target="_blank"
+					size="icon"
+					variant="ghost"
+					aria-label="View the github repo for this package."
+					class=""
+				>
+					<GitHub class="sq-5" />
+				</Button>
+				<Button
+					href={siteConfig.links.twitter}
+					target="_blank"
+					size="icon"
+					variant="ghost"
+					aria-label="X, formerly known as Twitter."
+					class=""
+				>
+					<Xcom class="sq-5" />
+				</Button>
 				<LightSwitch />
-			</nav>
+			</div>
 		</div>
 	</div>
 </header>

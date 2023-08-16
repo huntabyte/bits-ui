@@ -16,13 +16,14 @@ interface ButtonElement extends Builders, HTMLButtonAttributes {
 }
 
 type Props = AnchorElement | ButtonElement;
+
+type ButtonEventHandler<T extends Event = Event> = T & {
+	currentTarget: EventTarget & HTMLButtonElement;
+};
+
 type Events = {
-	click: MouseEvent;
-	change: Event;
-	keydown: KeyboardEvent;
-	keyup: KeyboardEvent;
-	mouseenter: MouseEvent;
-	mouseleave: MouseEvent;
+	click: ButtonEventHandler<MouseEvent>;
+	keydown: ButtonEventHandler<KeyboardEvent>;
 };
 
 export type {
@@ -32,5 +33,7 @@ export type {
 	//
 	Events,
 	//
-	Events as ButtonEvents
+	Events as ButtonEvents,
+	//
+	ButtonEventHandler
 };

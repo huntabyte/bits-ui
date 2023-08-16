@@ -1,15 +1,14 @@
 export const siteConfig = {
-	name: "Bits",
+	name: "Bit UI",
 	url: "https://bit-ui.com",
-	ogImage: "https://shadcn-svelte.com/og.jpg",
-	description: "Beautifully designed components built with Radix Svelte and Tailwind CSS.",
+	description: "Headless components for Svelte built on top of Melt UI.",
 	links: {
+		melt: "https://melt-ui.com",
+		meltGithub: "https://github.com/melt-ui/melt-ui",
 		twitter: "https://twitter.com/huntabyte",
-		github: "https://github.com/huntabyte/shadcn-svelte",
-		shadTwitter: "https://twitter.com/shadcn",
-		shadGithub: "https://github.com/shadcn/ui"
+		github: "https://github.com/huntabyte/primitives"
 	},
-	keywords: `shadcn,Svelte,SvelteKit,Svelte Components,TailwindCSS,Radix Svelte`
+	keywords: `Svelte,SvelteKit,Svelte Components,Headless Svelte Components,Headless UI Svelte`
 };
 
 export type SiteConfig = typeof siteConfig;

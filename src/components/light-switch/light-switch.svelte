@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Moon, Sun } from "lucide-svelte";
 	import { onMount } from "svelte";
-	import { buttonVariants } from "@/components/ui/button";
+	import { Button, buttonVariants } from "@/components/ui/button";
 	import { cn } from "@/utils";
 	import {
 		getModeOsPrefers,
@@ -11,7 +11,7 @@
 	} from "./light-switch";
 
 	type OnKeyDownEvent = KeyboardEvent & {
-		currentTarget: EventTarget & HTMLDivElement;
+		currentTarget: EventTarget & HTMLButtonElement;
 	};
 
 	function onToggleHandler(): void {
@@ -38,34 +38,19 @@
 	});
 </script>
 
-<div
+<Button
 	on:click={onToggleHandler}
-	on:click
 	on:keydown={onKeyDown}
-	on:keydown
-	on:keyup
-	on:keypress
 	role="switch"
 	aria-label="Light Switch"
 	aria-checked={$modeCurrent}
 	title="Toggle {$modeCurrent === true ? 'Dark' : 'Light'} Mode"
-	tabindex="0"
+	variant="ghost"
+	size="icon"
 >
-	<div
-		class={cn(
-			buttonVariants({
-				size: "sm",
-				variant: "ghost"
-			}),
-			"w-9 px-0"
-		)}
-	>
-		{#if $modeCurrent}
-			<Moon class="h-5 w-5" />
-			<span class="sr-only">Dark</span>
-		{:else}
-			<Sun class="h-5 w-5" />
-			<span class="sr-only">Light</span>
-		{/if}
-	</div>
-</div>
+	{#if $modeCurrent}
+		<Moon class="sq-5" aria-label="Moon" />
+	{:else}
+		<Sun class="sq-5" aria-label="Sun" />
+	{/if}
+</Button>
