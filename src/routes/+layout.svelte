@@ -1,5 +1,5 @@
 <script lang="ts">
-	import "../app.postcss";
+	import "@/styles/app.postcss";
 	import { dev } from "$app/environment";
 	import { SidebarNav, SiteHeader, TailwindIndicator } from "@/components";
 	import { setInitialClassState } from "@/components/light-switch/light-switch";
