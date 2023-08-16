@@ -18,7 +18,14 @@
 				<div class="lg:col-span-2">
 					<SidebarNav />
 				</div>
-				<slot />
+				<div class="lg:col-span-8">
+					<div class="grid lg:grid-cols-10 lg:gap-8">
+						<div class="lg:col-span-8">
+							<slot />
+						</div>
+						<div class="lg:col-span-2 order-first lg:order-last" />
+					</div>
+				</div>
 			</div>
 		</div>
 	</main>
