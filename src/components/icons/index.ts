@@ -1,70 +1,20 @@
 import type { Icon as LucideIcon } from "lucide-svelte";
-import {
-	AlertTriangle,
-	ArrowRight,
-	Check,
-	ChevronLeft,
-	ChevronRight,
-	ClipboardCheck,
-	Copy,
-	CreditCard,
-	File,
-	FileText,
-	HelpCircle,
-	Image,
-	Laptop,
-	Loader2,
-	Moon,
-	MoreVertical,
-	Pizza,
-	Plus,
-	Settings,
-	SunMedium,
-	Trash,
-	Twitter,
-	User,
-	X
-} from "lucide-svelte";
-import Aria from "./aria.svelte";
-import GitHub from "./github.svelte";
-import Npm from "./npm.svelte";
-import Pnpm from "./pnpm.svelte";
-import Tailwind from "./tailwind.svelte";
-import Yarn from "./yarn.svelte";
-import Xcom from "./x-com.svelte";
+
+export { default as CaretRight } from "./caret-right.svelte";
+export { default as SunDim } from "./sun-dim.svelte";
+export { default as Sun } from "./sun.svelte";
+export { default as MoonStars } from "./moon-stars.svelte";
+export { default as GitHub } from "./github.svelte";
+export { default as Xcom } from "./x-com.svelte";
+export { default as Tailwind } from "./tailwind.svelte";
+export { default as Aria } from "./aria.svelte";
+export { default as Npm } from "./npm.svelte";
+export { default as Pnpm } from "./pnpm.svelte";
+export { default as Yarn } from "./yarn.svelte";
+import type { HTMLAttributes } from "svelte/elements";
+
+export type IconProps = Partial<HTMLAttributes<SVGElement>> & {
+	class?: string;
+};
 
 export type Icon = LucideIcon;
-
-export {
-	X as Close,
-	Loader2 as Spinner,
-	ChevronLeft,
-	ChevronRight,
-	Trash,
-	FileText as Post,
-	File as Page,
-	Image as Media,
-	Settings,
-	CreditCard as Billing,
-	MoreVertical as Ellipsis,
-	Plus as Add,
-	AlertTriangle as Warning,
-	User,
-	ArrowRight,
-	HelpCircle as Help,
-	Pizza,
-	Twitter,
-	Check,
-	Copy,
-	ClipboardCheck as CopyDone,
-	SunMedium as Sun,
-	Moon,
-	Laptop,
-	GitHub,
-	Aria,
-	Npm,
-	Yarn,
-	Pnpm,
-	Tailwind,
-	Xcom
-};

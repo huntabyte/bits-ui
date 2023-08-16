@@ -1,8 +1,7 @@
 <script lang="ts">
-	import { Moon, Sun } from "lucide-svelte";
+	import { Sun, MoonStars } from "@/components/icons";
 	import { onMount } from "svelte";
-	import { Button, buttonVariants } from "@/components/ui/button";
-	import { cn } from "@/utils";
+	import { Button } from "@/components/ui/button";
 	import {
 		getModeOsPrefers,
 		modeCurrent,
@@ -49,7 +48,7 @@
 	size="icon"
 >
 	{#if $modeCurrent}
-		<Moon class="sq-5" aria-label="Moon" />
+		<MoonStars class="sq-5" aria-label="Moon" />
 	{:else}
 		<Sun class="sq-5" aria-label="Sun" />
 	{/if}
