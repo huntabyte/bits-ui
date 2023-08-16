@@ -51,18 +51,12 @@ export function localStorageStore<T>(
 
 			if (BROWSER) {
 				const handleStorage = (event: StorageEvent) => {
-					if (event.key === key)
-						set(
-							event.newValue
-								? serializer.parse(event.newValue)
-								: null
-						);
+					if (event.key === key) set(event.newValue ? serializer.parse(event.newValue) : null);
 				};
 
 				window.addEventListener("storage", handleStorage);
 
-				return () =>
-					window.removeEventListener("storage", handleStorage);
+				return () => window.removeEventListener("storage", handleStorage);
 			}
 		});
 

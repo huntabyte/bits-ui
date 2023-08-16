@@ -28,7 +28,7 @@ export const navigation: Navigation = {
 	],
 	sidebar: [
 		{
-			title: "Getting Started",
+			title: "Overview",
 			items: [
 				{
 					title: "Introduction",
@@ -36,13 +36,13 @@ export const navigation: Navigation = {
 					items: []
 				},
 				{
-					title: "Installation",
-					href: "/docs/installation",
+					title: "Getting started",
+					href: "/docs/getting-started",
 					items: []
 				},
 				{
-					title: "Quick Start",
-					href: "/docs/quick-start",
+					title: "Render delegation",
+					href: "/docs/render-delegation",
 					items: []
 				}
 			]
@@ -52,112 +52,112 @@ export const navigation: Navigation = {
 			items: [
 				{
 					title: "Accordion",
-					href: "/docs/accordion",
+					href: "/docs/components/accordion",
 					items: []
 				},
 				{
 					title: "Alert Dialog",
-					href: "/docs/alert-dialog",
+					href: "/docs/components/alert-dialog",
 					items: []
 				},
 				{
 					title: "Aspect Ratio",
-					href: "/docs/aspect-ratio",
+					href: "/docs/components/aspect-ratio",
 					items: []
 				},
 				{
 					title: "Avatar",
-					href: "/docs/avatar",
+					href: "/docs/components/avatar",
 					items: []
 				},
 				{
 					title: "Button",
-					href: "/docs/button",
+					href: "/docs/components/button",
 					items: []
 				},
 				{
 					title: "Checkbox",
-					href: "/docs/checkbox",
+					href: "/docs/components/checkbox",
 					items: []
 				},
 				{
 					title: "Collapsible",
-					href: "/docs/collapsible",
+					href: "/docs/components/collapsible",
 					items: []
 				},
 				{
 					title: "Dialog",
-					href: "/docs/dialog",
+					href: "/docs/components/dialog",
 					items: []
 				},
 				{
 					title: "Dropdown Menu",
-					href: "/docs/dropdown-menu",
+					href: "/docs/components/dropdown-menu",
 					items: []
 				},
 				{
 					title: "Hover Card",
-					href: "/docs/hover-card",
+					href: "/docs/components/hover-card",
 					items: []
 				},
 				{
 					title: "Label",
-					href: "/docs/label",
+					href: "/docs/components/label",
 					items: []
 				},
 				{
 					title: "Menubar",
-					href: "/docs/menubar",
+					href: "/docs/components/menubar",
 					items: []
 				},
 				{
 					title: "Popover",
-					href: "/docs/popover",
+					href: "/docs/components/popover",
 					items: []
 				},
 				{
 					title: "Progress",
-					href: "/docs/progress",
+					href: "/docs/components/progress",
 					items: []
 				},
 				{
 					title: "Radio Group",
-					href: "/docs/radio-group",
+					href: "/docs/components/radio-group",
 					items: []
 				},
 				{
 					title: "Select",
-					href: "/docs/select",
+					href: "/docs/components/select",
 					items: []
 				},
 				{
 					title: "Separator",
-					href: "/docs/separator",
+					href: "/docs/components/separator",
 					items: []
 				},
 				{
 					title: "Slider",
-					href: "/docs/slider",
+					href: "/docs/components/slider",
 					items: []
 				},
 				{
 					title: "Switch",
-					href: "/docs/switch",
+					href: "/docs/components/switch",
 					items: []
 				},
 				{
 					title: "Tabs",
-					href: "/docs/tabs",
+					href: "/docs/components/tabs",
 					items: []
 				},
 				{
 					title: "Toggle",
-					href: "/docs/toggle",
+					href: "/docs/components/toggle",
 					items: []
 				},
 				{
 					title: "Tooltip",
-					href: "/docs/tooltip",
+					href: "/docs/components/tooltip",
 					items: []
 				}
 			]

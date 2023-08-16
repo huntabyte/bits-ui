@@ -14,7 +14,8 @@
 	let tagline: string;
 	$: component = data.component as unknown as Component;
 	$: doc = data.metadata;
-	$: if ($page.url.pathname.includes("components")) {
+	$: console.log($page.url.pathname);
+	$: if ($page.url.pathname.split("/")) {
 		tagline = "Components";
 	} else {
 		tagline = "Getting Started";
@@ -26,3 +27,4 @@
 	<PageHeaderHeading>{doc.title}</PageHeaderHeading>
 	<PageHeaderDescription>{doc.description}</PageHeaderDescription>
 </PageHeader>
+<svelte:component this={component} />

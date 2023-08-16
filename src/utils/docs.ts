@@ -18,7 +18,7 @@ type Doc = {
 	title: string;
 };
 
-function slugFromPath(path: string) {
+export function slugFromPath(path: string) {
 	return path.replace("/src/content/", "").replace(".md", "");
 }
 

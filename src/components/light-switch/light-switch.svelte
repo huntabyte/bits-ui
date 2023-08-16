@@ -38,8 +38,11 @@
 </script>
 
 <Button
-	on:click={onToggleHandler}
-	on:keydown={onKeyDown}
+	on:click={() => {
+		console.log("click");
+		onToggleHandler();
+	}}
+	on:keydown={(e) => onKeyDown(e)}
 	role="switch"
 	aria-label="Light Switch"
 	aria-checked={$modeCurrent}

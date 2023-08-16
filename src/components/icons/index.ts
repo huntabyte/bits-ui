@@ -11,6 +11,8 @@ export { default as Aria } from "./aria.svelte";
 export { default as Npm } from "./npm.svelte";
 export { default as Pnpm } from "./pnpm.svelte";
 export { default as Yarn } from "./yarn.svelte";
+export { default as Check } from "./check.svelte";
+export { default as CopySimple } from "./copy-simple.svelte";
 import type { HTMLAttributes } from "svelte/elements";
 
 export type IconProps = Partial<HTMLAttributes<SVGElement>> & {

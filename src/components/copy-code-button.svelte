@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { cn } from "@/utils";
-	import { Copy, Check } from "./icons";
+	import { CopySimple, Check } from "./icons";
 	let className: string | undefined | null = undefined;
 	export let copyCode: () => void;
 	export let copied = false;
@@ -19,6 +19,6 @@
 	{#if copied}
 		<Check class="h-3 w-3" />
 	{:else}
-		<Copy class="h-3 w-3" />
+		<CopySimple class="h-3 w-3" />
 	{/if}
 </button>
