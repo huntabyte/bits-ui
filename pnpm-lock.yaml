@@ -88,6 +88,9 @@ devDependencies:
   svelte-sequential-preprocessor:
     specifier: ^2.0.1
     version: 2.0.1
+  svelte-wrap-balancer:
+    specifier: ^0.0.4
+    version: 0.0.4
   tailwind-variants:
     specifier: ^0.1.13
     version: 0.1.13(tailwindcss@3.3.3)
@@ -3727,6 +3730,10 @@ packages:
     dependencies:
       svelte: 4.1.2
       tslib: 2.6.1
+    dev: true
+
+  /svelte-wrap-balancer@0.0.4:
+    resolution: {integrity: sha512-o+WbHrl426YLDUMgNWJ0yKImmecZ6rFI6WFsrMx7YgsgdaZjtJX0d373TbJ35lzeBqsnMvjdRptl12qE0Mbe9w==}
     dev: true
 
   /svelte2tsx@0.6.19(svelte@4.1.2)(typescript@5.1.6):

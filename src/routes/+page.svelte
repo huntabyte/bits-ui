@@ -1,10 +1,15 @@
 <script lang="ts">
 	import { Button } from "@/components/ui/button";
+	import {
+		PageHeader,
+		PageHeaderHeading,
+		PageHeaderDescription,
+		PageHeaderTagline
+	} from "@/components";
 </script>
 
-<div class="relative">
-	<p class="font-medium">Getting Started</p>
-	<h1 class="text-4xl font-bold">Introduction</h1>
-	<p class="text-lg text-muted-foreground">Headless UI Components for Svelte.</p>
-	<Button variant="default">Hello world</Button>
-</div>
+<PageHeader>
+	<PageHeaderTagline>Getting Started</PageHeaderTagline>
+	<PageHeaderHeading>Introduction</PageHeaderHeading>
+	<PageHeaderDescription>Headless UI Components for Svelte.</PageHeaderDescription>
+</PageHeader>

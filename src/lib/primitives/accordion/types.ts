@@ -31,8 +31,8 @@ type ItemProps = {
 
 type HeaderProps = {
 	asChild?: boolean;
-} & ObjectVariation<_HeadingProps> &
-	HTMLDivAttributes;
+	level?: ObjectVariation<_HeadingProps>["level"];
+} & HTMLDivAttributes;
 
 type TriggerProps = {
 	asChild?: boolean;
