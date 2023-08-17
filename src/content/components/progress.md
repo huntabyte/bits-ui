@@ -10,5 +10,5 @@ description: A visual indicator that displays the progress of a task, usually in
 	import { Progress } from "bits-ui";
 </script>
 
-<Progress />
+<Progress.Root />
 ```

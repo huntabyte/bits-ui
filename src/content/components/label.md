@@ -10,5 +10,5 @@ description: An enhanced version of the native HTML label element.
 	import { Label } from "bits-ui";
 </script>
 
-<Label />
+<Label.Root />
 ```
