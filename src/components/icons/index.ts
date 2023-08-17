@@ -1,4 +1,5 @@
 import type { Icon as LucideIcon } from "lucide-svelte";
+import type { HTMLAttributes } from "svelte/elements";
 
 export { default as CaretRight } from "./caret-right.svelte";
 export { default as SunDim } from "./sun-dim.svelte";
@@ -13,7 +14,7 @@ export { default as Pnpm } from "./pnpm.svelte";
 export { default as Yarn } from "./yarn.svelte";
 export { default as Check } from "./check.svelte";
 export { default as CopySimple } from "./copy-simple.svelte";
-import type { HTMLAttributes } from "svelte/elements";
+export { default as ArrowSquareOut } from "./arrow-square-out.svelte";
 
 export type IconProps = Partial<HTMLAttributes<SVGElement>> & {
 	class?: string;

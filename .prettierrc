@@ -15,6 +15,13 @@
             "options": {
                 "parser": "svelte"
             }
+        },
+        {
+            "files": "*.md",
+            "options": {
+                "parser": "markdown",
+                "printWidth": 79
+            }
         }
     ]
 }

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import "@/styles/markdown.postcss";
 	import { page } from "$app/stores";
 	import type { SvelteComponent } from "svelte";
 	import type { PageData } from "./$types";
@@ -15,16 +16,18 @@
 	$: component = data.component as unknown as Component;
 	$: doc = data.metadata;
 	$: console.log($page.url.pathname);
-	$: if ($page.url.pathname.split("/")) {
+	$: if ($page.url.pathname.split("/")[2] === "components") {
 		tagline = "Components";
 	} else {
-		tagline = "Getting Started";
+		tagline = "Overview";
 	}
 </script>
 
-<PageHeader>
-	<PageHeaderTagline>{tagline}</PageHeaderTagline>
-	<PageHeaderHeading>{doc.title}</PageHeaderHeading>
-	<PageHeaderDescription>{doc.description}</PageHeaderDescription>
-</PageHeader>
-<svelte:component this={component} />
+<div class="markdown pb-24">
+	<PageHeader>
+		<PageHeaderTagline>{tagline}</PageHeaderTagline>
+		<PageHeaderHeading>{doc.title}</PageHeaderHeading>
+		<PageHeaderDescription>{doc.description}</PageHeaderDescription>
+	</PageHeader>
+	<svelte:component this={component} />
+</div>
