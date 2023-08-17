@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.0.20
+
+### Patch Changes
+
+- 169fcbe: rename to bits
+
 ## 0.0.19
 
 ### Patch Changes
