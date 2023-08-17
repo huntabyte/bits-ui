@@ -8,14 +8,14 @@ description: Learn how to get started using Bits in your app.
 Install bits using your favorite package manager.
 
 ```bash
-npm install @huntabyte/bits
+npm install bits-ui
 ```
 
 You can them import and start using them in your app.
 
 ```svelte
 <script lang="ts">
-	import { Accordion } from "@huntabyte/bits";
+	import { Accordion } from "bits-ui";
 </script>
 
 <Accordion.Root>

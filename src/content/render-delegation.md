@@ -1,6 +1,6 @@
 ---
 title: Render Delegation
-description: Learn how to use the asChild prop to delegate rendering to a child element.
+description: Learn how to use the asChild prop to delegate rendering to a child element / component.
 ---
 
 ## Usage
@@ -55,13 +55,13 @@ Let's create a custom `<Button />` component that could be used with this patter
 
 ```svelte
 <script lang="ts">
-	import { builderActions, builderAttrs, type Builder } from "@huntabyte/bits"
-	export let builders: Builder[] = []
+	import { builderActions, builderAttrs, type Builder } from "@huntabyte/bits";
+	export let builders: Builder[] = [];
 </script>
 
 <button use:builderActions={{ builders }} {...builderAttrs(builders)}>
-<slot />
-<button>
+	<slot />
+</button>
 ```
 
 We're using the `builderActions` and `builderAttrs` helpers to apply the actions and attributes to the button. We're also using the `Builder` type to type the `builders` prop we'd receive from whatever component we're using this with. We use an array here to cover the case where we may want to apply multiple builders to the button. The helper functions handle applying all the actions and attributes to the button for us.

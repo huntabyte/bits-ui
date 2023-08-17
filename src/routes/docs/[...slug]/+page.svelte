@@ -15,7 +15,6 @@
 	let tagline: string;
 	$: component = data.component as unknown as Component;
 	$: doc = data.metadata;
-	$: console.log($page.url.pathname);
 	$: if ($page.url.pathname.split("/")[2] === "components") {
 		tagline = "Components";
 	} else {

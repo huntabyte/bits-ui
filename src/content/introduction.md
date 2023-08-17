@@ -1,6 +1,6 @@
 ---
 title: Introduction
-description: A collection of headless Svelte components built with Melt UI builders.
+description: A collection of headless components for Svelte, built with Melt UI builders.
 ---
 
 Bits are headless component primitives that provide a simple interface for composing your own components. They have been thoughtfully designed to prioritize simplicity, customizability, and compatibility with any styling or UI framework you choose to work with.

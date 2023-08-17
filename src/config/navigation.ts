@@ -86,6 +86,11 @@ export const navigation: Navigation = {
 					items: []
 				},
 				{
+					title: "Context Menu",
+					href: "/docs/components/context-menu",
+					items: []
+				},
+				{
 					title: "Dialog",
 					href: "/docs/components/dialog",
 					items: []
