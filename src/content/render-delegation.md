@@ -55,7 +55,7 @@ Let's create a custom `<Button />` component that could be used with this patter
 
 ```svelte
 <script lang="ts">
-	import { builderActions, builderAttrs, type Builder } from "@huntabyte/bits";
+	import { builderActions, builderAttrs, type Builder } from "bits-ui";
 	export let builders: Builder[] = [];
 </script>
 
