@@ -1,11 +1,11 @@
 import remarkGfm from "remark-gfm";
 import rehypePrettyCode from "rehype-pretty-code";
 import { fileURLToPath } from "url";
-import { getHighlighter } from "shikiji";
 import { toHtml } from "hast-util-to-html";
 import { visit } from "unist-util-visit";
 import { escapeSvelte } from "@huntabyte/mdsvex";
 import { resolve } from "path";
+import { readFileSync } from "fs";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 
@@ -13,7 +13,14 @@ const __dirname = fileURLToPath(new URL(".", import.meta.url));
  * @type {import('rehype-pretty-code').Options}
  */
 const prettyCodeOptions = {
-	theme: "github-dark",
+	theme: {
+		dark: JSON.parse(
+			readFileSync(resolve(__dirname, "./src/styles/themes/tokyo-night-storm.json"))
+		),
+		light: JSON.parse(
+			readFileSync(resolve(__dirname, "./src/styles/themes/tokyo-night-light.json"))
+		)
+	},
 	keepBackground: false,
 	onVisitLine(node) {
 		if (node.children.length === 0) {
@@ -25,12 +32,6 @@ const prettyCodeOptions = {
 	},
 	onVisitHighlightedWord(node) {
 		node.properties.className = ["word--highlighted"];
-	},
-	getHighlighter: (options) => {
-		return getHighlighter({
-			...options,
-			langs: ["typescript", "javascript", "bash", "json", "svelte", "css"]
-		});
 	}
 };
 
@@ -44,7 +45,7 @@ export const mdsvexOptions = {
 		backticks: false,
 		dashes: false
 	},
-	remarkPlugins: [remarkGfm],
+	remarkPlugins: [remarkGfm, remarkEscapeCode],
 	rehypePlugins: [
 		rehypeComponentPreToPre,
 		[rehypePrettyCode, prettyCodeOptions],
@@ -53,6 +54,25 @@ export const mdsvexOptions = {
 		rehypePreToComponentPre
 	]
 };
+
+const entities = [
+	[/</g, "&lt;"],
+	[/>/g, "&gt;"],
+	[/{/g, "&#123;"],
+	[/}/g, "&#125;"]
+];
+
+function remarkEscapeCode() {
+	return async (tree) => {
+		visit(tree, "inlineCode", escape);
+
+		function escape(node) {
+			for (let i = 0; i < entities.length; i += 1) {
+				node.value = node.value.replace(entities[i][0], entities[i][1]);
+			}
+		}
+	};
+}
 
 function rehypeComponentPreToPre() {
 	return async (tree) => {
@@ -127,6 +147,7 @@ function rehypeRenderCode() {
 				);
 
 				codeEl.type = "raw";
+
 				codeEl.value = `{@html \`${escapeSvelte(meltString)}\`}`;
 			}
 		});
