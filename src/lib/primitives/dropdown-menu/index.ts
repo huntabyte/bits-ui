@@ -11,8 +11,8 @@ import RadioGroup from "./components/DropdownMenuRadioGroup.svelte";
 import SubContent from "./components/DropdownMenuSubContent.svelte";
 import SubTrigger from "./components/DropdownMenuSubTrigger.svelte";
 import CheckboxItem from "./components/DropdownMenuCheckboxItem.svelte";
-import RadioItemIndicator from "./components/DropdownMenuRadioItemIndicator.svelte";
-import CheckboxItemIndicator from "./components/DropdownMenuCheckboxIndicator.svelte";
+import RadioIndicator from "./components/DropdownMenuRadioIndicator.svelte";
+import CheckboxIndicator from "./components/DropdownMenuCheckboxIndicator.svelte";
 
 export {
 	Sub,
@@ -28,8 +28,8 @@ export {
 	RadioGroup,
 	SubContent,
 	CheckboxItem,
-	RadioItemIndicator,
-	CheckboxItemIndicator,
+	RadioIndicator,
+	CheckboxIndicator,
 	//
 	Root as DropdownMenu,
 	Sub as DropdownMenuSub,
@@ -44,7 +44,7 @@ export {
 	RadioGroup as DropdownMenuRadioGroup,
 	SubTrigger as DropdownMenuSubTrigger,
 	CheckboxItem as DropdownMenuCheckboxItem,
-	RadioItemIndicator as DropdownMenuRadioItemIndicator,
-	CheckboxItemIndicator as DropdownMenuCheckboxIndicator
+	RadioIndicator as DropdownMenuRadioIndicator,
+	CheckboxIndicator as DropdownMenuCheckboxIndicator
 };
 export * from "./types.js";
