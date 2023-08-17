@@ -3,6 +3,7 @@ import Sub from "./components/ContextMenuSub.svelte";
 import Item from "./components/ContextMenuItem.svelte";
 import Group from "./components/ContextMenuGroup.svelte";
 import Label from "./components/ContextMenuLabel.svelte";
+import Arrow from "./components/ContextMenuArrow.svelte";
 import Content from "./components/ContextMenuContent.svelte";
 import Trigger from "./components/ContextMenuTrigger.svelte";
 import RadioItem from "./components/ContextMenuRadioItem.svelte";
@@ -20,6 +21,7 @@ export {
 	Group,
 	Item,
 	Label,
+	Arrow,
 	Content,
 	Trigger,
 	RadioItem,
@@ -36,6 +38,7 @@ export {
 	Item as ContextMenuItem,
 	Group as ContextMenuGroup,
 	Label as ContextMenuLabel,
+	Arrow as ContextMenuArrow,
 	Content as ContextMenuContent,
 	Trigger as ContextMenuTrigger,
 	RadioItem as ContextMenuRadioItem,

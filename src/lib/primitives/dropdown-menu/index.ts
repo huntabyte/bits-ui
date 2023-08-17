@@ -3,6 +3,7 @@ import Sub from "./components/DropdownMenuSub.svelte";
 import Item from "./components/DropdownMenuItem.svelte";
 import Group from "./components/DropdownMenuGroup.svelte";
 import Label from "./components/DropdownMenuLabel.svelte";
+import Arrow from "./components/DropdownMenuArrow.svelte";
 import Content from "./components/DropdownMenuContent.svelte";
 import Trigger from "./components/DropdownMenuTrigger.svelte";
 import RadioItem from "./components/DropdownMenuRadioItem.svelte";
@@ -20,6 +21,7 @@ export {
 	Item,
 	Group,
 	Label,
+	Arrow,
 	Content,
 	Trigger,
 	Separator,
@@ -36,6 +38,7 @@ export {
 	Item as DropdownMenuItem,
 	Group as DropdownMenuGroup,
 	Label as DropdownMenuLabel,
+	Arrow as DropdownMenuArrow,
 	Content as DropdownMenuContent,
 	Trigger as DropdownMenuTrigger,
 	RadioItem as DropdownMenuRadioItem,

@@ -4,6 +4,7 @@ import Item from "./components/MenubarItem.svelte";
 import Menu from "./components/MenubarMenu.svelte";
 import Group from "./components/MenubarGroup.svelte";
 import Label from "./components/MenubarLabel.svelte";
+import Arrow from "./components/MenubarArrow.svelte";
 import Content from "./components/MenubarContent.svelte";
 import Trigger from "./components/MenubarTrigger.svelte";
 import RadioItem from "./components/MenubarRadioItem.svelte";
@@ -22,6 +23,7 @@ export {
 	Item,
 	Menu,
 	Label,
+	Arrow,
 	Content,
 	Trigger,
 	RadioItem,
@@ -39,6 +41,7 @@ export {
 	Menu as MenubarMenu,
 	Group as MenubarGroup,
 	Label as MenubarLabel,
+	Arrow as MenubarArrow,
 	Content as MenubarContent,
 	Trigger as MenubarTrigger,
 	RadioItem as MenubarRadioItem,
