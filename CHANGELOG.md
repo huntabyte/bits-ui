@@ -1,5 +1,13 @@
 # @huntabyte/primitives
 
+## 0.0.19
+
+### Patch Changes
+
+- e72b839: - Add arrow components to floating UI bits
+  - Rename indicators for menu `CheckboxItem` and `RadioItem`
+  - Add inputs for elements that have them
+
 ## 0.0.18
 
 ### Patch Changes
