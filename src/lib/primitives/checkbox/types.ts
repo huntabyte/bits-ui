@@ -19,7 +19,7 @@ type Props = Expand<
 	HTMLButtonAttributes;
 
 type IndicatorProps = HTMLDivAttributes;
-type InputProps = AsChild & HTMLInputAttributes;
+type InputProps = Omit<HTMLInputAttributes, "value">;
 
 type Events = CheckboxComponentEvents["root"] & KeydownClickEvents;
 

@@ -6,7 +6,7 @@ import type {
 	OmitChecked,
 	OnChangeFn
 } from "$internal/index.js";
-import type { HTMLButtonAttributes } from "svelte/elements";
+import type { HTMLButtonAttributes, HTMLInputAttributes } from "svelte/elements";
 
 type Props = Expand<
 	OmitChecked<CreateSwitchProps> & {
@@ -19,14 +19,18 @@ type Props = Expand<
 
 type ThumbProps = AsChild & HTMLSpanAttributes;
 
+type InputProps = HTMLInputAttributes;
+
 type Events = SwitchComponentEvents["root"];
 
 export type {
 	Props,
 	ThumbProps,
+	InputProps,
 	//
 	Props as SwitchProps,
 	ThumbProps as SwitchThumbProps,
+	InputProps as SwitchInputProps,
 	//
 	Events,
 	//

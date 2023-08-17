@@ -3,6 +3,7 @@ import Sub from "./components/ContextMenuSub.svelte";
 import Item from "./components/ContextMenuItem.svelte";
 import Group from "./components/ContextMenuGroup.svelte";
 import Label from "./components/ContextMenuLabel.svelte";
+import Arrow from "./components/ContextMenuArrow.svelte";
 import Content from "./components/ContextMenuContent.svelte";
 import Trigger from "./components/ContextMenuTrigger.svelte";
 import RadioItem from "./components/ContextMenuRadioItem.svelte";
@@ -11,8 +12,8 @@ import RadioGroup from "./components/ContextMenuRadioGroup.svelte";
 import SubContent from "./components/ContextMenuSubContent.svelte";
 import SubTrigger from "./components/ContextMenuSubTrigger.svelte";
 import CheckboxItem from "./components/ContextMenuCheckboxItem.svelte";
-import RadioItemIndicator from "./components/ContextMenuRadioItemIndicator.svelte";
-import CheckboxItemIndicator from "./components/ContextMenuCheckboxIndicator.svelte";
+import RadioIndicator from "./components/ContextMenuRadioIndicator.svelte";
+import CheckboxIndicator from "./components/ContextMenuCheckboxIndicator.svelte";
 
 export {
 	Sub,
@@ -20,6 +21,7 @@ export {
 	Group,
 	Item,
 	Label,
+	Arrow,
 	Content,
 	Trigger,
 	RadioItem,
@@ -28,14 +30,15 @@ export {
 	RadioGroup,
 	SubContent,
 	CheckboxItem,
-	RadioItemIndicator,
-	CheckboxItemIndicator,
+	RadioIndicator,
+	CheckboxIndicator,
 	//
 	Root as ContextMenu,
 	Sub as ContextMenuSub,
 	Item as ContextMenuItem,
 	Group as ContextMenuGroup,
 	Label as ContextMenuLabel,
+	Arrow as ContextMenuArrow,
 	Content as ContextMenuContent,
 	Trigger as ContextMenuTrigger,
 	RadioItem as ContextMenuRadioItem,
@@ -44,7 +47,7 @@ export {
 	RadioGroup as ContextMenuRadioGroup,
 	SubTrigger as ContextMenuSubTrigger,
 	CheckboxItem as ContextMenuCheckboxItem,
-	RadioItemIndicator as ContextMenuRadioItemIndicator,
-	CheckboxItemIndicator as ContextMenuCheckboxIndicator
+	RadioIndicator as ContextMenuRadioIndicator,
+	CheckboxIndicator as ContextMenuCheckboxIndicator
 };
 export * from "./types.js";

@@ -4,7 +4,9 @@
 
 	type $$Props = InputProps;
 
-	const isChecked = ctx.get().helpers.isChecked;
+	const {
+		states: { pressed }
+	} = ctx.get();
 </script>
 
-<input {...$$restProps} hidden value={$isChecked ? true : false} />
+<input {...$$restProps} value={$pressed} hidden />

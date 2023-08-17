@@ -127,7 +127,7 @@ function setGroup() {
 }
 
 function getGroupLabel() {
-	const id = getContext<string>(GROUP_NAME);
+	const id = getContext<string>(GROUP_NAME) ?? generateId();
 	const {
 		elements: { groupLabel }
 	} = get();

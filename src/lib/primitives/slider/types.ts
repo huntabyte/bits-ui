@@ -6,6 +6,7 @@ import type {
 	OnChangeFn,
 	AsChild
 } from "$internal/index.js";
+import type { HTMLInputAttributes } from "svelte/elements";
 
 type Props = Expand<
 	OmitValue<CreateSliderProps> & {
@@ -22,14 +23,18 @@ type ThumbProps = AsChild & HTMLSpanAttributes;
 
 type ThumbEvents = SliderComponentEvents["thumb"];
 
+type InputProps = Omit<HTMLInputAttributes, "value">;
+
 export type {
 	Props,
 	RangeProps,
 	ThumbProps,
+	InputProps,
 	//
 	Props as SliderProps,
-	RangeProps as SliderRange,
-	ThumbProps as SliderThumb,
+	RangeProps as SliderRangeProps,
+	ThumbProps as SliderThumbProps,
+	InputProps as SliderInputProps,
 	//
 	ThumbEvents,
 	//

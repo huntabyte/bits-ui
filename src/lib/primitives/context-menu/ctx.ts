@@ -24,6 +24,7 @@ export const ctx = {
 	get,
 	set,
 	setSub,
+	getSub,
 	getContent,
 	setRadioGroup,
 	setRadioItem,
@@ -59,6 +60,10 @@ function setSub(props: CreateContextSubmenuProps) {
 		...sub,
 		updateOption: getOptionUpdater(sub.options)
 	};
+}
+
+function getSub() {
+	return getContext<ContextSubmenuReturn>(SUB_NAME);
 }
 
 function setRadioGroup(props: CreateContextMenuRadioGroupProps) {
@@ -134,7 +139,7 @@ function setGroup() {
 }
 
 function getGroupLabel() {
-	const id = getContext<string>(GROUP_NAME);
+	const id = getContext<string>(GROUP_NAME) ?? generateId();
 	const {
 		elements: { groupLabel }
 	} = get();
