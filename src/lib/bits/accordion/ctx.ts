@@ -19,7 +19,7 @@ export const ctx = {
 	getTrigger
 };
 
-function set(props: CreateAccordionProps) {
+function set<Multiple extends boolean>(props: CreateAccordionProps<Multiple>) {
 	const accordion = createAccordion(removeUndefined(props));
 	setContext(NAME, accordion);
 	return {
