@@ -15,10 +15,10 @@ import type {
 } from "@melt-ui/svelte";
 import type { HTMLButtonAttributes } from "svelte/elements";
 
-type Props = Expand<
-	OmitValue<CreateAccordionProps> & {
-		value?: CreateAccordionProps["defaultValue"] & {};
-		onValueChange?: OnChangeFn<CreateAccordionProps["defaultValue"]>;
+type Props<Multiple extends boolean> = Expand<
+	OmitValue<CreateAccordionProps<Multiple>> & {
+		value?: CreateAccordionProps<Multiple>["defaultValue"];
+		onValueChange?: OnChangeFn<CreateAccordionProps<Multiple>["defaultValue"]>;
 		asChild?: boolean;
 	}
 > &

@@ -3,9 +3,10 @@
 	import type { Props } from "../types.js";
 	import { ctx } from "../ctx.js";
 
-	type $$Props = Props;
+	type Multiple = $$Generic<boolean>;
+	type $$Props = Props<Multiple>;
 
-	export let multiple: $$Props["multiple"] = false;
+	export let multiple: $$Props["multiple"] = false as Multiple;
 	export let disabled: $$Props["disabled"] = false;
 	export let value: $$Props["value"] = undefined;
 	export let onValueChange: $$Props["onValueChange"] = undefined;
@@ -19,14 +20,16 @@
 		multiple,
 		disabled,
 		defaultValue: value,
-		onValueChange: ({ next }) => {
+
+		onValueChange: (({ next }: { next: $$Props["value"] }) => {
 			onValueChange?.(next);
 			value = next;
 			return next;
-		}
+		}) as any // I'm sorry
 	});
 
-	$: value !== undefined && localValue.set(value);
+	// Svelte types get weird here saying set expects something that is both string and string[].
+	$: localValue.set(value as any);
 
 	$: updateOption("multiple", multiple);
 	$: updateOption("disabled", disabled);
