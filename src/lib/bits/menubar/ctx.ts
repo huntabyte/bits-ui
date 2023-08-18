@@ -48,6 +48,7 @@ function get() {
 function set(props: MenubarProps) {
 	const menubar = createMenubar(removeUndefined(props));
 	setContext(NAME, menubar);
+
 	return {
 		...menubar,
 		updateOption: getOptionUpdater(menubar.options)
