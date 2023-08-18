@@ -11,6 +11,18 @@
 		"strict": true,
 		"moduleResolution": "Bundler",
 		"paths": {
+			"$lib": [
+				"./src/lib"
+			],
+			"$lib/*": [
+				"./src/lib/*"
+			],
+			"@": [
+				"./src"
+			],
+			"@/*": [
+				"./src/*"
+			],
 			"contentlayer/generated": [
 				"./.contentlayer/generated"
 			]
