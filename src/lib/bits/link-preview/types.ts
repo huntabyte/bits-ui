@@ -7,13 +7,13 @@ import type {
 	TransitionParams,
 	AsChild
 } from "$internal/index.js";
-import type { CreateHoverCardProps, HoverCardComponentEvents } from "@melt-ui/svelte";
+import type { CreateLinkPreviewProps, LinkPreviewComponentEvents } from "@melt-ui/svelte";
 import type { HTMLAnchorAttributes } from "svelte/elements";
 
 type Props = Expand<
-	OmitOpen<CreateHoverCardProps> & {
-		open?: CreateHoverCardProps["defaultOpen"];
-		onOpenChange?: OnChangeFn<CreateHoverCardProps["defaultOpen"]>;
+	OmitOpen<CreateLinkPreviewProps> & {
+		open?: CreateLinkPreviewProps["defaultOpen"];
+		onOpenChange?: OnChangeFn<CreateLinkPreviewProps["defaultOpen"]>;
 	}
 >;
 
@@ -24,8 +24,8 @@ type ContentProps<T extends Transition = Transition> = {
 } & AsChild &
 	HTMLDivAttributes;
 
-type TriggerEvents = HoverCardComponentEvents["trigger"];
-type ContentEvents = HoverCardComponentEvents["content"];
+type TriggerEvents = LinkPreviewComponentEvents["trigger"];
+type ContentEvents = LinkPreviewComponentEvents["content"];
 
 export type {
 	Props,

@@ -1,8 +1,8 @@
 import { getOptionUpdater, removeUndefined } from "$internal/index.js";
 import {
-	createHoverCard,
-	type CreateHoverCardProps,
-	type HoverCard as HoverCardReturn
+	createLinkPreview,
+	type CreateLinkPreviewProps,
+	type LinkPreview as LinkPreviewReturn
 } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
 
@@ -14,11 +14,11 @@ export const ctx = {
 };
 
 function get() {
-	return getContext<HoverCardReturn>(NAME);
+	return getContext<LinkPreviewReturn>(NAME);
 }
 
-function set(props: CreateHoverCardProps) {
-	const hovercard = createHoverCard({
+function set(props: CreateLinkPreviewProps) {
+	const hovercard = createLinkPreview({
 		...removeUndefined(props),
 		forceVisible: true
 	});

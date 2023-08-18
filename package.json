@@ -1,6 +1,6 @@
 {
 	"name": "bits-ui",
-	"version": "0.0.20",
+	"version": "0.0.21",
 	"license": "MIT",
 	"scripts": {
 		"dev": "vite dev",
@@ -73,7 +73,7 @@
 	"types": "./dist/index.d.ts",
 	"type": "module",
 	"dependencies": {
-		"@melt-ui/svelte": "0.36.0",
+		"@melt-ui/svelte": "0.37.2",
 		"@sveltejs/adapter-vercel": "^3.0.3",
 		"nanoid": "^4.0.2",
 		"shiki": "^0.14.3",

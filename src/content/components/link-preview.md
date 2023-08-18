@@ -1,5 +1,5 @@
 ---
-title: Hover Card
+title: Link Preview
 description: Enable sighted users to preview content behind a link.
 ---
 
@@ -7,13 +7,13 @@ description: Enable sighted users to preview content behind a link.
 
 ```svelte
 <script lang="ts">
-	import { HoverCard } from "bits-ui";
+	import { LinkPreview } from "bits-ui";
 </script>
 
-<HoverCard.Root>
-	<HoverCard.Trigger />
-	<HoverCard.Content />
-</HoverCard.Root>
+<LinkPreview.Root>
+	<LinkPreview.Trigger />
+	<LinkPreview.Content />
+</LinkPreview.Root>
 ```
 
 🚧 **UNDER CONSTRUCTION** 🚧

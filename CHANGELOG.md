@@ -1,5 +1,12 @@
 # @huntabyte/primitives
 
+## 0.0.21
+
+### Patch Changes
+
+- 77d1a14: Fix Menubar bug
+- 3bbeda0: Properly type Accordion
+
 ## 0.0.20
 
 ### Patch Changes

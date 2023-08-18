@@ -2,4 +2,4 @@
 "bits-ui": patch
 ---
 
-Properly type Accordion
+Fix menubar keyboard
