@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.0.24
+
+### Patch Changes
+
+- 23ef6d1: Export `LinkPreview`
+
 ## 0.0.23
 
 ### Patch Changes
