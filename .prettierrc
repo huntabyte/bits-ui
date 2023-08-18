@@ -13,7 +13,8 @@
         {
             "files": "*.svelte",
             "options": {
-                "parser": "svelte"
+                "parser": "svelte",
+                "printWidth": 100
             }
         },
         {

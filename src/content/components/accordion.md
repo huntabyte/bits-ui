@@ -3,6 +3,11 @@ title: Accordion
 description: Organizes content in collapsible sections, enabling users to expand or collapse them as needed.
 ---
 
+<script>
+	import { APISection } from '@/components'
+	export let schemas
+</script>
+
 ## Structure
 
 ```svelte
@@ -19,3 +24,7 @@ description: Organizes content in collapsible sections, enabling users to expand
 	</Accordion.Item>
 </Accordion.Root>
 ```
+
+## Component API
+
+<APISection {schemas} />
