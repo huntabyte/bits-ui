@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.0.23
+
+### Patch Changes
+
+- 8f72add: fix menubar & rename hovercard
+
 ## 0.0.22
 
 ### Patch Changes
