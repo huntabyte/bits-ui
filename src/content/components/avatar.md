@@ -15,3 +15,5 @@ description: Displays user or entity images with a fallback option for failed lo
 	<Avatar.Fallback />
 </Avatar.Root>
 ```
+
+🚧 **UNDER CONSTRUCTION** 🚧

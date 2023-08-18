@@ -12,3 +12,5 @@ description: Visually divide or separate sections or elements, providing clarity
 
 <Separator.Root />
 ```
+
+🚧 **UNDER CONSTRUCTION** 🚧

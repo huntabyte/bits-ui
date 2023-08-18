@@ -15,3 +15,5 @@ description: An interactive component which expands and collapses content.
 	<Collapsible.Content />
 </Collapsible.Root>
 ```
+
+🚧 **UNDER CONSTRUCTION** 🚧

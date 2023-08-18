@@ -16,3 +16,5 @@ description: Enable users to select a value within a specific range with sliding
 	<Slider.Input />
 </Slider.Root>
 ```
+
+🚧 **UNDER CONSTRUCTION** 🚧
