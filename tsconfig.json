@@ -9,6 +9,31 @@
 		"skipLibCheck": true,
 		"sourceMap": true,
 		"strict": true,
-		"moduleResolution": "Bundler"
-	}
+		"moduleResolution": "Bundler",
+		"paths": {
+			"contentlayer/generated": [
+				"./.contentlayer/generated"
+			]
+		}
+	},
+	"include": [
+		"./svelte-kit/ambient.d.ts",
+		"./svelte-kit/types/**/$types.d.ts",
+		"./vite.config.ts",
+		"./src/**/*.js",
+		"./src/**/*.ts",
+		"./src/**/*.svelte",
+		"./tests/**/*.js",
+		"./tests/**/*.ts",
+		"./tests/**/*.svelte",
+		".contentlayer/generated"
+	],
+	"exclude": [
+		"./node_modules/**",
+		"./svelte-kit/[!ambient.d.ts]**",
+		"./src/service-worker.js",
+		"./src/service-worker.ts",
+		"./src/service-worker.d.ts",
+		".contentlayer/generated"
+	]
 }
