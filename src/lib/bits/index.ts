@@ -8,7 +8,7 @@ export * as Collapsible from "./collapsible/index.js";
 export * as ContextMenu from "./context-menu/index.js";
 export * as Dialog from "./dialog/index.js";
 export * as DropdownMenu from "./dropdown-menu/index.js";
-export * as HoverCard from "./link-preview/index.js";
+export * as LinkPreview from "./link-preview/index.js";
 export * as Label from "./label/index.js";
 export * as Menubar from "./menubar/index.js";
 export * as Popover from "./popover/index.js";
