@@ -19,7 +19,7 @@
 		{#each props as prop}
 			<Table.Row>
 				<Table.Cell class="align-baseline">
-					<Code>{prop.name}</Code>
+					<Code class="!text-white">{prop.name}</Code>
 				</Table.Cell>
 				<Table.Cell class="align-baseline">
 					{#if prop.default}
