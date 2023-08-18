@@ -8,18 +8,15 @@
 	export let sideOffset: $$Props["sideOffset"] = 4;
 	export let asChild = false;
 	const {
-		elements: { menu },
-		states: { open }
+		elements: { menu }
 	} = ctx.getContent(sideOffset);
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions / applied by melt's builder-->
-{#if $open}
-	{#if asChild}
+{#if asChild}
+	<slot builder={$menu} />
+{:else}
+	<div use:melt={$menu} {...$$restProps} on:m-keydown>
 		<slot builder={$menu} />
-	{:else}
-		<div use:melt={$menu} {...$$restProps} on:m-keydown>
-			<slot builder={$menu} />
-		</div>
-	{/if}
+	</div>
 {/if}
