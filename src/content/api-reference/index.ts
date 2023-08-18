@@ -1,5 +1,9 @@
 import type { APISchema } from "@/types";
 import { accordion } from "./accordion";
+import { alertDialog } from "./alert-dialog";
+import { dialog } from "./dialog";
+import { aspectRatio } from "./aspect-ratio";
+import { avatar } from "./avatar";
 
 export const bits = [
 	"accordion",
@@ -36,7 +40,11 @@ export function isBit(value: string): value is (typeof bits)[number] {
 export type Bit = (typeof bits)[number];
 
 export const apiSchemas: Record<Bit, APISchema[]> = {
-	accordion
+	accordion,
+	"alert-dialog": alertDialog,
+	dialog,
+	"aspect-ratio": aspectRatio,
+	avatar
 };
 
 export function getAPISchemas(bit: Bit): APISchema[] {

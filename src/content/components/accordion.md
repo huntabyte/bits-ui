@@ -25,6 +25,4 @@ description: Organizes content in collapsible sections, enabling users to expand
 </Accordion.Root>
 ```
 
-## Component API
-
 <APISection {schemas} />

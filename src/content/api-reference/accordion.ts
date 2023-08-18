@@ -1,7 +1,7 @@
 import type { APISchema } from "@/types";
 import { asChild } from "./helpers";
 
-export const root: APISchema = {
+const root: APISchema = {
 	title: "Root",
 	description: "The root accordion component used to set and manage the state of the accordion.",
 	props: [

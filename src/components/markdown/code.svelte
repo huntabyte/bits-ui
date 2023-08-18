@@ -7,8 +7,8 @@
 
 <code
 	class={cn(
-		"relative rounded !px-[0.25rem] !py-[0.15rem] font-mono !text-[12px]",
-		neutral ? "!bg-muted" : "!bg-secondary/25",
+		"relative rounded !px-[0.25rem] !py-[0.15rem] font-mono !text-[13px]",
+		neutral ? "!bg-muted" : "!bg-secondary",
 		className
 	)}
 >

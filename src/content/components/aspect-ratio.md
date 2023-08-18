@@ -3,6 +3,11 @@ title: Aspect Ratio
 description: Displays content with a specified aspect ratio, ensuring consistent and visually balanced presentation.
 ---
 
+<script>
+	import { APISection } from '@/components'
+	export let schemas;
+</script>
+
 ## Structure
 
 ```svelte
@@ -12,5 +17,7 @@ description: Displays content with a specified aspect ratio, ensuring consistent
 
 <AspectRatio.Root />
 ```
+
+<APISection {schemas} />
 
 🚧 **UNDER CONSTRUCTION** 🚧

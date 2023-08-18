@@ -3,6 +3,11 @@ title: Alert Dialog
 description: Presents critical information or prompts to the user, typically requiring their attention or action.
 ---
 
+<script>
+	import { APISection } from '@/components'
+	export let schemas;
+</script>
+
 ## Structure
 
 ```svelte
@@ -23,5 +28,7 @@ description: Presents critical information or prompts to the user, typically req
 	</AlertDialog.Portal>
 </AlertDialog.Root>
 ```
+
+<APISection {schemas} />
 
 🚧 **UNDER CONSTRUCTION** 🚧

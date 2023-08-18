@@ -3,6 +3,11 @@ title: Avatar
 description: Displays user or entity images with a fallback option for failed loading, ensuring consistent visual representation.
 ---
 
+<script>
+	import { APISection } from '@/components'
+	export let schemas;
+</script>
+
 ## Structure
 
 ```svelte
@@ -15,5 +20,7 @@ description: Displays user or entity images with a fallback option for failed lo
 	<Avatar.Fallback />
 </Avatar.Root>
 ```
+
+<APISection {schemas} />
 
 🚧 **UNDER CONSTRUCTION** 🚧

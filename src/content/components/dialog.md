@@ -3,6 +3,11 @@ title: Dialog
 description: A window overlaid on either the primary window or another dialog window, rendering the content underneath inert.
 ---
 
+<script>
+	import { APISection } from '@/components'
+	export let schemas;
+</script>
+
 ## Structure
 
 ```svelte
@@ -22,5 +27,7 @@ description: A window overlaid on either the primary window or another dialog wi
 	</Dialog.Portal>
 </Dialog.Root>
 ```
+
+<APISection {schemas} />
 
 🚧 **UNDER CONSTRUCTION** 🚧

@@ -63,7 +63,7 @@ function setMenu(props: CreateMenubarMenuProps) {
 		builders: { createMenu }
 	} = get();
 
-	const menu = createMenu(removeUndefined(props));
+	const menu = createMenu({ ...removeUndefined(props), forceVisible: false });
 	setContext(MENU_NAME, menu);
 	return {
 		...menu,

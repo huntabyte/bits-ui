@@ -19,7 +19,7 @@
 			{#each dataAttrs as attr}
 				<Table.Row>
 					<Table.Cell class="align-baseline">
-						<Code class="!text-white">data-{attr.name}</Code>
+						<Code class="!text-secondary-foreground">data-{attr.name}</Code>
 					</Table.Cell>
 					<Table.Cell class="align-baseline">
 						{#if attr.value}

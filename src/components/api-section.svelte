@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { DataAttrsTable, PropsTable } from "@/components";
-	import { h3 as H3 } from "@/components/markdown";
-	import { p as P } from "@/components/markdown";
+	import { h3 as H3, h2 as H2, p as P } from "@/components/markdown";
 	import type { APISchema } from "@/types";
 
 	export let schemas: APISchema[] = [];
 </script>
+
+<H2>Component API</H2>
 
 <div class="flex flex-col gap-8">
 	{#each schemas as schema}
