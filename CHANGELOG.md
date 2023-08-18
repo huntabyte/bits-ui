@@ -1,5 +1,12 @@
 # @huntabyte/primitives
 
+## 0.0.22
+
+### Patch Changes
+
+- 4fe9ccc: Revert menubar changes
+- 331c599: Fix menubar keyboard
+
 ## 0.0.21
 
 ### Patch Changes
