@@ -24,21 +24,28 @@ type ContentProps<T extends Transition = Transition> = {
 } & AsChild &
 	HTMLDivAttributes;
 
+type ArrowProps = {
+	size?: number;
+} & AsChild &
+	HTMLDivAttributes;
+
 type TriggerEvents = LinkPreviewComponentEvents["trigger"];
 type ContentEvents = LinkPreviewComponentEvents["content"];
 
 export type {
 	Props,
+	ArrowProps,
 	TriggerProps,
 	ContentProps,
 	//
-	Props as HoverCardProps,
-	TriggerProps as HoverCardTriggerProps,
-	ContentProps as HoverCardContentProps,
+	Props as LinkPreviewProps,
+	ArrowProps as LinkPreviewArrowProps,
+	TriggerProps as LinkPreviewTriggerProps,
+	ContentProps as LinkPreviewContentProps,
 	//
 	TriggerEvents,
 	ContentEvents,
 	//
-	TriggerEvents as HoverCardTriggerEvents,
-	ContentEvents as HoverCardContentEvents
+	TriggerEvents as LinkPreviewTriggerEvents,
+	ContentEvents as LinkPreviewContentEvents
 };

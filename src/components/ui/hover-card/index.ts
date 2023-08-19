@@ -1,4 +1,4 @@
-import { HoverCard as HoverCardPrimitive } from "@/lib";
+import { LinkPreview as HoverCardPrimitive } from "@/lib";
 
 import Content from "./hover-card-content.svelte";
 const Root = HoverCardPrimitive.Root;

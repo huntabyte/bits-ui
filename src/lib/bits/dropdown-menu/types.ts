@@ -78,6 +78,11 @@ type SubTriggerProps = {
 
 type TriggerProps = AsChild & HTMLButtonAttributes;
 
+type ArrowProps = {
+	size?: number;
+} & AsChild &
+	HTMLDivAttributes;
+
 type TriggerEvents = DropdownMenuComponentEvents["trigger"];
 type CheckboxItemEvents = DropdownMenuComponentEvents["checkboxItem"];
 type ContentEvents = DropdownMenuComponentEvents["menu"];
@@ -88,6 +93,7 @@ type ItemEvents = DropdownMenuComponentEvents["item"];
 
 export type {
 	Props,
+	ArrowProps,
 	CheckboxItemProps,
 	ContentProps,
 	GroupProps,
@@ -104,6 +110,7 @@ export type {
 
 	//
 	Props as DropdownMenuProps,
+	ArrowProps as DropdownMenuArrowProps,
 	CheckboxItemProps as DropdownMenuCheckboxItemProps,
 	ContentProps as DropdownMenuContentProps,
 	GroupProps as DropdownMenuGroupProps,

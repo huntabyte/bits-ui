@@ -6,7 +6,7 @@
 	const checked = ctx.getCheckboxIndicator();
 </script>
 
-<div {...$$restProps} data-melt-context-menu-checkbox-indicator="">
+<div {...$$restProps}>
 	{#if $checked}
 		<slot checked={$checked} />
 	{/if}

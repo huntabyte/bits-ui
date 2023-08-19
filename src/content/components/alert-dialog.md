@@ -4,9 +4,15 @@ description: Presents critical information or prompts to the user, typically req
 ---
 
 <script>
-	import { APISection } from '@/components'
+	import { APISection, ComponentPreview, AlertDialogDemo } from '@/components'
 	export let schemas;
 </script>
+
+<ComponentPreview name="alert-dialog-demo" comp="AlertDialog">
+
+<AlertDialogDemo slot="preview" />
+
+</ComponentPreview>
 
 ## Structure
 

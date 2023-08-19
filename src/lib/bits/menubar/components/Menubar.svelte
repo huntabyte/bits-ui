@@ -5,8 +5,8 @@
 
 	type $$Props = Props;
 
-	export const loop: $$Props["loop"] = true;
-	export const closeOnEscape: $$Props["closeOnEscape"] = true;
+	export let loop: $$Props["loop"] = true;
+	export let closeOnEscape: $$Props["closeOnEscape"] = true;
 
 	const {
 		elements: { menubar },

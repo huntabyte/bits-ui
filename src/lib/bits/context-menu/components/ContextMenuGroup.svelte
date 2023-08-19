@@ -10,7 +10,8 @@
 {#if asChild}
 	<slot builder={$group(id)} />
 {:else}
-	<div use:melt={$group(id)} {...$$restProps}>
-		<slot builder={$group(id)} />
+	{@const builder = $group(id)}
+	<div use:melt={builder} {...$$restProps}>
+		<slot {builder} />
 	</div>
 {/if}

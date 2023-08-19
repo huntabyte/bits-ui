@@ -12,7 +12,8 @@
 {#if asChild}
 	<slot builder={$title} />
 {:else}
-	<svelte:element this={level} use:melt={$title} {...$$restProps}>
-		<slot builder={$title} />
+	{@const builder = $title}
+	<svelte:element this={level} use:melt={builder} {...$$restProps}>
+		<slot {builder} />
 	</svelte:element>
 {/if}

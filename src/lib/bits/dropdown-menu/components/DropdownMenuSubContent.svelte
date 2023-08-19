@@ -21,7 +21,7 @@
 <!-- svelte-ignore a11y-no-static-element-interactions applied by melt's action/store -->
 
 {#if $subOpen}
-	{@const builder = { ...$subMenu, "data-melt-dropdown-menu-sub-content": "" }}
+	{@const builder = $subMenu}
 	{#if asChild}
 		<slot {builder} />
 	{:else if transition}

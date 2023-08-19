@@ -5,6 +5,7 @@ import { error, redirect } from "@sveltejs/kit";
 export type FrontMatter = {
 	title: string;
 	description: string;
+	component?: boolean;
 };
 
 export type DocFile = {
@@ -23,7 +24,7 @@ type Doc = {
 type ComponentDoc = {
 	component: DocFile["default"];
 	metadata: DocFile["metadata"];
-	title: string;
+	title: DocFile["metadata"]["title"];
 	schemas: APISchema[];
 };
 

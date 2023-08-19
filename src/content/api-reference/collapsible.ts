@@ -35,11 +35,6 @@ export const root: APISchema = {
 			name: "state",
 			value: "'open' | 'closed'",
 			description: "The collapsible's open state."
-		},
-		{
-			name: "melt-collapsible",
-			value: "''",
-			description: "Present on the root element of the collapsible."
 		}
 	]
 };
@@ -58,11 +53,6 @@ export const trigger: APISchema = {
 			name: "state",
 			value: "'open' | 'closed'",
 			description: "The collapsible's open state."
-		},
-		{
-			name: "melt-collapsible-trigger",
-			value: "''",
-			description: "Present on the trigger element of the collapsible."
 		}
 	]
 };
@@ -81,11 +71,6 @@ export const content: APISchema = {
 			name: "state",
 			value: "'open' | 'closed'",
 			description: "The collapsible's open state."
-		},
-		{
-			name: "melt-collapsible-content",
-			value: "''",
-			description: "Present on the content element of the collapsible."
 		}
 	]
 };

@@ -4,9 +4,15 @@ description: Displays a menu to the user, which can consist of links or function
 ---
 
 <script>
-	import { APISection } from '@/components'
-	export let schemas
+	import { APISection, ComponentPreview, DropdownMenuDemo } from '@/components'
+	export let schemas;
 </script>
+
+<ComponentPreview name="dropdown-menu-demo" comp="DropdownMenu">
+
+<DropdownMenuDemo slot="preview" />
+
+</ComponentPreview>
 
 ## Structure
 

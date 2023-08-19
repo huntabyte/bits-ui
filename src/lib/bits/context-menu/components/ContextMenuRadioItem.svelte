@@ -17,8 +17,9 @@
 {#if asChild}
 	<slot builder={$radioItem} />
 {:else}
+	{@const builder = $radioItem({ value, disabled })}
 	<div
-		use:melt={$radioItem({ value, disabled })}
+		use:melt={builder}
 		{...$$restProps}
 		on:m-click
 		on:m-focusin
@@ -28,6 +29,6 @@
 		on:m-pointerleave
 		on:m-pointermove
 	>
-		<slot builder={$radioItem} />
+		<slot {builder} />
 	</div>
 {/if}

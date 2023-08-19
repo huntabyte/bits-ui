@@ -17,11 +17,13 @@
 {#if asChild}
 	<slot builder={$content} />
 {:else if transition}
-	<div use:melt={$content} {...$$restProps} transition:transition={transitionConfig}>
-		<slot builder={$content} />
+	{@const builder = $content}
+	<div use:melt={builder} {...$$restProps} transition:transition={transitionConfig}>
+		<slot {builder} />
 	</div>
 {:else}
-	<div use:melt={$content} {...$$restProps}>
-		<slot builder={$content} />
+	{@const builder = $content}
+	<div use:melt={builder} {...$$restProps}>
+		<slot {builder} />
 	</div>
 {/if}

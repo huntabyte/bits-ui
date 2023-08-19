@@ -31,8 +31,9 @@
 {#if asChild}
 	<slot builder={$checkboxItem} />
 {:else}
+	{@const builder = $checkboxItem}
 	<div
-		use:melt={$checkboxItem}
+		use:melt={builder}
 		{...$$restProps}
 		on:m-click
 		on:m-focusin
@@ -42,6 +43,6 @@
 		on:m-pointerleave
 		on:m-pointermove
 	>
-		<slot builder={$checkboxItem} />
+		<slot {builder} />
 	</div>
 {/if}

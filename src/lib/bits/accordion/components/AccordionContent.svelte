@@ -19,13 +19,15 @@
 		<slot builder={$content(props)} />
 	{/if}
 {:else if transition}
+	{@const builder = $content(props)}
 	{#if $isSelected(props)}
-		<div use:melt={$content(props)} transition:transition={transitionConfig} {...$$restProps}>
-			<slot builder={$content(props)} />
+		<div use:melt={builder} transition:transition={transitionConfig} {...$$restProps}>
+			<slot {builder} />
 		</div>
 	{/if}
 {:else if $isSelected(props)}
-	<div use:melt={$content(props)} {...$$restProps}>
-		<slot builder={$content(props)} />
+	{@const builder = $content(props)}
+	<div use:melt={builder} {...$$restProps}>
+		<slot {builder} />
 	</div>
 {/if}

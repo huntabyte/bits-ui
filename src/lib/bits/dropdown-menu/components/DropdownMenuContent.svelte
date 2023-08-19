@@ -20,7 +20,7 @@
 
 <!-- svelte-ignore a11y-no-static-element-interactions applied by melt's action/store -->
 {#if $open}
-	{@const builder = { ...$menu, "data-melt-dropdown-menu-content": "" }}
+	{@const builder = $menu}
 	{#if asChild}
 		<slot {builder} />
 	{:else if transition}

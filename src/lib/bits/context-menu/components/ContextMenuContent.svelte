@@ -19,7 +19,7 @@
 </script>
 
 {#if $open}
-	{@const builder = { ...$menu, "data-melt-context-menu-content": "" }}
+	{@const builder = $menu}
 	{#if asChild}
 		<slot {builder} />
 	{:else if transition}

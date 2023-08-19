@@ -3,6 +3,17 @@ title: Menubar
 description: Displays a list of menus that can be used to control the application.
 ---
 
+<script>
+	import { APISection, ComponentPreview, MenubarDemo } from '@/components'
+	export let schemas;
+</script>
+
+<ComponentPreview name="menubar-demo" comp="Menubar">
+
+<MenubarDemo slot="preview" />
+
+</ComponentPreview>
+
 ## Structure
 
 ```svelte

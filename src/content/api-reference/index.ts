@@ -9,6 +9,8 @@ import { checkbox } from "./checkbox";
 import { collapsible } from "./collapsible";
 import { contextMenu } from "./context-menu";
 import { dropdownMenu } from "./dropdown-menu";
+import { label } from "./label";
+import { linkPreview } from "./link-preview";
 
 export const bits = [
 	"accordion",
@@ -54,7 +56,9 @@ export const apiSchemas: Record<Bit, APISchema[]> = {
 	checkbox,
 	collapsible,
 	"context-menu": contextMenu,
-	"dropdown-menu": dropdownMenu
+	"dropdown-menu": dropdownMenu,
+	label,
+	"link-preview": linkPreview
 };
 
 export function getAPISchemas(bit: Bit): APISchema[] {

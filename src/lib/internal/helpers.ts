@@ -81,3 +81,10 @@ export function getAttrs(builders: Builder[]) {
 export function disabledAttrs(disabled: boolean) {
 	return disabled ? { "aria-disabled": true, "data-disabled": "" } : {};
 }
+
+export function bitWrap<T extends object>(storeValues: T, bit: string): T {
+	return {
+		...storeValues,
+		[`data-bits-${bit}`]: ""
+	};
+}

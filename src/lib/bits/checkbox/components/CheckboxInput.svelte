@@ -10,10 +10,4 @@
 	} = ctx.get();
 </script>
 
-<input
-	hidden
-	value={$isChecked ? true : false}
-	disabled={$disabled}
-	{...$$restProps}
-	data-melt-checkbox-input={""}
-/>
+<input hidden value={$isChecked ? true : false} disabled={$disabled} {...$$restProps} />

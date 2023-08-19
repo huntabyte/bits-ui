@@ -4,9 +4,15 @@ description: Displays a menu at the pointer's position when the trigger is right
 ---
 
 <script>
-	import { APISection } from '@/components'
-	export let schemas
+	import { APISection, ComponentPreview, ContextMenuDemo } from '@/components'
+	export let schemas;
 </script>
+
+<ComponentPreview name="context-menu-demo" comp="ContextMenu">
+
+<ContextMenuDemo slot="preview" />
+
+</ComponentPreview>
 
 ## Structure
 

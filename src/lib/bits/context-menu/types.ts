@@ -77,6 +77,11 @@ type SubTriggerProps = {
 
 type TriggerProps = AsChild & HTMLDivAttributes;
 
+type ArrowProps = {
+	size?: number;
+} & AsChild &
+	HTMLDivAttributes;
+
 type CheckboxItemEvents = ContextMenuComponentEvents["checkboxItem"];
 type ItemEvents = ContextMenuComponentEvents["item"];
 type RadioItemEvents = ContextMenuComponentEvents["radioItem"];
@@ -87,6 +92,7 @@ type ContentEvents = ContextMenuComponentEvents["menu"];
 
 export type {
 	Props,
+	ArrowProps,
 	CheckboxItemProps,
 	ContentProps,
 	GroupProps,
@@ -102,6 +108,7 @@ export type {
 	TriggerProps,
 	//
 	Props as ContextMenuProps,
+	ArrowProps as ContextMenuArrowProps,
 	CheckboxItemProps as ContextMenuCheckboxItemProps,
 	ContentProps as ContextMenuContentProps,
 	GroupProps as ContextMenuGroupProps,

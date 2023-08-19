@@ -13,8 +13,9 @@
 {#if asChild}
 	<slot builder={$trigger} />
 {:else}
+	{@const builder = $trigger}
 	<div
-		use:melt={$trigger}
+		use:melt={builder}
 		{...$$restProps}
 		on:m-contextmenu
 		on:m-pointercancel
@@ -22,6 +23,6 @@
 		on:m-pointermove
 		on:m-pointerup
 	>
-		<slot builder={$trigger} />
+		<slot {builder} />
 	</div>
 {/if}

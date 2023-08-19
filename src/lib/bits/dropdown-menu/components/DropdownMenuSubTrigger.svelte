@@ -17,8 +17,9 @@
 {#if asChild}
 	<slot builder={$subTrigger} />
 {:else}
+	{@const builder = $subTrigger}
 	<div
-		use:melt={$subTrigger}
+		use:melt={builder}
 		{...$$restProps}
 		on:m-click
 		on:m-focusin
@@ -28,6 +29,6 @@
 		on:m-pointermove
 		{...disabledAttrs(disabled)}
 	>
-		<slot builder={$subTrigger} />
+		<slot {builder} />
 	</div>
 {/if}

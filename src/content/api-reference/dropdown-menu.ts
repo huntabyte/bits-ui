@@ -58,11 +58,6 @@ export const trigger: APISchema = {
 			name: "state",
 			value: "'open' | 'closed'",
 			description: "The dropdown menu's open state."
-		},
-		{
-			name: "melt-dropdown-menu-trigger",
-			value: "''",
-			description: "Present on the trigger element of the dropdown menu."
 		}
 	]
 };
@@ -88,11 +83,6 @@ export const content: APISchema = {
 			name: "state",
 			value: "'open' | 'closed'",
 			description: "The collapsible's open state."
-		},
-		{
-			name: "melt-dropdown-menu-content",
-			value: "''",
-			description: "Present on the content element of the dropdown menu."
 		}
 	]
 };
@@ -119,38 +109,30 @@ export const item: APISchema = {
 			name: "highlighted",
 			value: "''",
 			description: "Present when the menu item is highlighted."
-		},
-		{
-			name: "melt-dropdown-menu-item",
-			value: "''",
-			description: "Present on the item elements of the dropdown menu."
 		}
 	]
 };
 
 export const separator: APISchema = {
 	title: "Separator",
-	description: "A horizontal line to visually separate menu items.",
-	dataAttributes: [
-		{
-			name: "melt-dropdown-menu-separator",
-			value: "''",
-			description: "Present on the separator elements of the dropdown menu."
-		}
-	]
+	description: "A horizontal line to visually separate menu items."
 };
 
 export const arrow: APISchema = {
 	title: "Arrow",
 	description: "An optional arrow which points to the dropdown menu's anchor/trigger point.",
+	props: [
+		asChild,
+		{
+			name: "size",
+			type: "number",
+			default: "8",
+			description: "The height and width of the arrow in pixels."
+		}
+	],
 	dataAttributes: [
 		{
 			name: "arrow",
-			value: "''",
-			description: "Present on the arrow elements of the dropdown menu."
-		},
-		{
-			name: "melt-dropdown-menu-arrow",
 			value: "''",
 			description: "Present on the arrow elements of the dropdown menu."
 		}
@@ -186,11 +168,6 @@ export const checkboxItem: APISchema = {
 			name: "orientation",
 			value: "'horizontal' | 'vertical'",
 			description: "The orientation of the checkbox menu item."
-		},
-		{
-			name: "melt-dropdown-menu-checkbox-item",
-			value: "''",
-			description: "Present on the checkbox items of the dropdown menu."
 		}
 	]
 };
@@ -198,14 +175,7 @@ export const checkboxItem: APISchema = {
 export const checkboxIndicator: APISchema = {
 	title: "CheckboxIndicator",
 	description:
-		"A visual indicator of the checkbox menu item's checked state. It passed the item's checked state as a slot prop `checked` and can be used to render a custom indicator.",
-	dataAttributes: [
-		{
-			name: "melt-dropdown-menu-checkbox-indicator",
-			value: "''",
-			description: "Present on the checkbox indicators of the dropdown menu."
-		}
-	]
+		"A visual indicator of the checkbox menu item's checked state. It passed the item's checked state as a slot prop `checked` and can be used to render a custom indicator."
 };
 
 export const radioGroup: APISchema = {
@@ -222,13 +192,6 @@ export const radioGroup: APISchema = {
 			name: "onValueChange",
 			type: "(value: string) => void",
 			description: "A callback that is fired when the radio group's value changes."
-		}
-	],
-	dataAttributes: [
-		{
-			name: "melt-dropdown-menu-radio-group",
-			value: "''",
-			description: "Present on the radio group elements of the dropdown menu."
 		}
 	]
 };
@@ -250,13 +213,6 @@ export const radioItem: APISchema = {
 			type: "false",
 			description:
 				"Whether or not the radio menu item is disabled. Disabled items cannot be interacted with and are skipped when navigating with the keyboard."
-		}
-	],
-	dataAttributes: [
-		{
-			name: "melt-dropdown-menu-radio-item",
-			value: "''",
-			description: "Present on the radio item elements of the dropdown menu."
 		}
 	]
 };
@@ -312,11 +268,6 @@ export const subTrigger: APISchema = {
 			name: "disabled",
 			value: "''",
 			description: "Present when the submenu trigger is disabled."
-		},
-		{
-			name: "melt-dropdown-menu-sub-content",
-			value: "''",
-			description: "Present on the content element of the dropdown menu."
 		}
 	]
 };
@@ -342,11 +293,6 @@ export const subContent: APISchema = {
 			name: "state",
 			value: "'open' | 'closed'",
 			description: "The submenu's open state."
-		},
-		{
-			name: "melt-dropdown-menu-sub-content",
-			value: "''",
-			description: "Present on the content element of the dropdown menu."
 		}
 	]
 };
@@ -354,27 +300,13 @@ export const subContent: APISchema = {
 export const group: APISchema = {
 	title: "Group",
 	description:
-		"A group of menu items. It can be used along with the `DropdownMenu.Label` component to provide a visual label for a group of menu items. When a label is within a group, appropriate aria attributes will be applied to the group.",
-	dataAttributes: [
-		{
-			name: "melt-dropdown-menu-group",
-			value: "''",
-			description: "Present on the group elements of the dropdown menu."
-		}
-	]
+		"A group of menu items. It can be used along with the `DropdownMenu.Label` component to provide a visual label for a group of menu items. When a label is within a group, appropriate aria attributes will be applied to the group."
 };
 
 export const label: APISchema = {
 	title: "Label",
 	description:
-		"A label which will be skipped when navigating with the keyboard. It is used to provide a visual label for a group of menu items. When a label is within a `DropdownMenu.Group`, appropriate aria attributes will be applied to the group.",
-	dataAttributes: [
-		{
-			name: "melt-dropdown-menu-label",
-			value: "''",
-			description: "Present on the label elements of the dropdown menu."
-		}
-	]
+		"A label which will be skipped when navigating with the keyboard. It is used to provide a visual label for a group of menu items. When a label is within a `DropdownMenu.Group`, appropriate aria attributes will be applied to the group."
 };
 
 export const dropdownMenu = [

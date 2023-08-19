@@ -9,9 +9,10 @@
 </script>
 
 {#if asChild}
-	<slot builder={{ ...$groupLabel(id), "data-melt-dropdown-menu-label": "" }} />
+	<slot builder={$groupLabel(id)} />
 {:else}
-	<div use:melt={{ ...$groupLabel(id), "data-melt-dropdown-menu-label": "" }} {...$$restProps}>
-		<slot builder={{ ...$groupLabel(id), "data-melt-dropdown-menu-label": "" }} />
+	{@const builder = $groupLabel(id)}
+	<div use:melt={builder} {...$$restProps}>
+		<slot {builder} />
 	</div>
 {/if}

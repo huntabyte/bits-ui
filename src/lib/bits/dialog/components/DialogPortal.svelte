@@ -10,8 +10,8 @@
 	} = ctx.get();
 </script>
 
-<div use:melt={$portalled} {...$$restProps}>
-	{#if $open}
+{#if $open}
+	<div use:melt={$portalled} {...$$restProps}>
 		<slot />
-	{/if}
-</div>
+	</div>
+{/if}

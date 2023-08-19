@@ -80,11 +80,6 @@ const item: APISchema = {
 			name: "disabled",
 			value: "",
 			description: "Present when the accordion item is disabled."
-		},
-		{
-			name: "melt-accordion-item",
-			value: "",
-			description: "Present on the accordion item elements."
 		}
 	]
 };
@@ -108,11 +103,6 @@ const trigger: APISchema = {
 			name: "value",
 			value: "",
 			description: "The value of the accordion item."
-		},
-		{
-			name: "melt-accordion-trigger",
-			value: "",
-			description: "Present on the accordion item elements."
 		}
 	]
 };
@@ -136,11 +126,6 @@ const content: APISchema = {
 			name: "value",
 			value: "",
 			description: "The value of the accordion item."
-		},
-		{
-			name: "melt-accordion-content",
-			value: "",
-			description: "Present on the accordion item elements."
 		}
 	]
 };
