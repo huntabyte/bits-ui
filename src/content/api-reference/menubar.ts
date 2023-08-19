@@ -328,3 +328,23 @@ export const label: APISchema = {
 	description:
 		"A label which will be skipped when navigating with the keyboard. It is used to provide a visual label for a group of menu items. When a label is within a `DropdownMenu.Group`, appropriate aria attributes will be applied to the group."
 };
+
+export const menubar = [
+	root,
+	menu,
+	trigger,
+	content,
+	item,
+	checkboxItem,
+	checkboxIndicator,
+	radioGroup,
+	radioItem,
+	radioIndicator,
+	separator,
+	arrow,
+	group,
+	label,
+	sub,
+	subTrigger,
+	subContent
+];

@@ -16,10 +16,11 @@
 <!-- svelte-ignore a11y-no-static-element-interactions / applied by melt's builder-->
 
 {#if asChild}
-	<slot builder={$option} />
+	<slot builder={$option({ value, disabled, label })} />
 {:else}
+	{@const builder = $option({ value, disabled, label })}
 	<div
-		use:melt={$option({ value, disabled, label })}
+		use:melt={builder}
 		{...$$restProps}
 		on:m-click
 		on:m-focusin
@@ -28,7 +29,7 @@
 		on:m-pointerleave
 		on:m-pointermove
 	>
-		<slot builder={$option}>
+		<slot {builder}>
 			{label ? label : value}
 		</slot>
 	</div>

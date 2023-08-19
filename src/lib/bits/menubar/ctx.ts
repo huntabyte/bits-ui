@@ -30,6 +30,7 @@ export const ctx = {
 	getSub,
 	setMenu,
 	getMenu,
+	setArrow,
 	setGroup,
 	getContent,
 	setRadioItem,
@@ -152,4 +153,10 @@ function getGroupLabel() {
 		elements: { groupLabel }
 	} = getMenu();
 	return { groupLabel, id };
+}
+
+function setArrow(size = 8) {
+	const menu = getMenu();
+	menu.options.arrowSize.set(size);
+	return menu;
 }

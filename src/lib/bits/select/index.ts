@@ -1,4 +1,5 @@
 import Root from "./components/Select.svelte";
+import Arrow from "./components/SelectArrow.svelte";
 import Content from "./components/SelectContent.svelte";
 import Group from "./components/SelectGroup.svelte";
 import Input from "./components/SelectInput.svelte";
@@ -11,6 +12,7 @@ import Value from "./components/SelectValue.svelte";
 
 export {
 	Root,
+	Arrow,
 	Content,
 	Group,
 	Input,
@@ -22,6 +24,7 @@ export {
 	Value,
 	//
 	Root as Select,
+	Arrow as SelectArrow,
 	Content as SelectContent,
 	Group as SelectGroup,
 	Input as SelectInput,

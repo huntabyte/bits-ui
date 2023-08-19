@@ -29,34 +29,36 @@ type CheckboxItemProps = Expand<
 	OmitChecked<CreateContextMenuCheckboxItemProps> & {
 		checked?: CreateContextMenuCheckboxItemProps["defaultChecked"] & {};
 		onCheckedChange?: OnChangeFn<CreateContextMenuCheckboxItemProps["defaultChecked"]>;
-	}
+	} & AsChild
 > &
-	AsChild &
 	HTMLDivAttributes;
 
 type RadioGroupProps = Expand<
 	OmitValue<CreateContextMenuRadioGroupProps> & {
 		value?: CreateContextMenuRadioGroupProps["defaultValue"] & {};
 		onValueChange?: OnChangeFn<CreateContextMenuRadioGroupProps["defaultValue"]>;
-	}
+	} & AsChild
 > &
-	AsChild &
 	HTMLDivAttributes;
 
-type RadioItemProps = Expand<ContextMenuRadioItemProps> & AsChild & HTMLDivAttributes;
+type RadioItemProps = Expand<ContextMenuRadioItemProps & AsChild> & HTMLDivAttributes;
 
-type ContentProps<T extends Transition = Transition> = {
-	sideOffset?: number;
-	transition?: T;
-	transitionConfig?: TransitionParams<T>;
-} & AsChild &
+type ContentProps<T extends Transition = Transition> = Expand<
+	{
+		sideOffset?: number;
+		transition?: T;
+		transitionConfig?: TransitionParams<T>;
+	} & AsChild
+> &
 	HTMLDivAttributes;
 
 type GroupProps = AsChild & HTMLDivAttributes;
 
-type ItemProps = {
-	disabled?: boolean;
-} & AsChild &
+type ItemProps = Expand<
+	{
+		disabled?: boolean;
+	} & AsChild
+> &
 	HTMLDivAttributes;
 
 type CheckboxItemIndicatorProps = HTMLDivAttributes;
@@ -64,22 +66,28 @@ type LabelProps = AsChild & HTMLDivAttributes;
 type SeparatorProps = AsChild & HTMLDivAttributes;
 type SubProps = Expand<CreateContextSubmenuProps>;
 
-type SubContentProps<T extends Transition = Transition> = {
-	transition?: T;
-	transitionConfig?: TransitionParams<T>;
-} & AsChild &
+type SubContentProps<T extends Transition = Transition> = Expand<
+	{
+		transition?: T;
+		transitionConfig?: TransitionParams<T>;
+	} & AsChild
+> &
 	HTMLDivAttributes;
 
-type SubTriggerProps = {
-	disabled?: boolean;
-} & AsChild &
+type SubTriggerProps = Expand<
+	{
+		disabled?: boolean;
+	} & AsChild
+> &
 	HTMLDivAttributes;
 
 type TriggerProps = AsChild & HTMLDivAttributes;
 
-type ArrowProps = {
-	size?: number;
-} & AsChild &
+type ArrowProps = Expand<
+	{
+		size?: number;
+	} & AsChild
+> &
 	HTMLDivAttributes;
 
 type CheckboxItemEvents = ContextMenuComponentEvents["checkboxItem"];

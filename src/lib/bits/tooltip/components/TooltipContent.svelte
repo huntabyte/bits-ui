@@ -20,21 +20,22 @@
 </script>
 
 {#if $open}
+	{@const builder = $content}
 	{#if asChild}
-		<slot builder={$content} />
+		<slot {builder} />
 	{:else if transition}
 		<div
-			use:melt={$content}
+			use:melt={builder}
 			transition:transition={transitionConfig}
 			{...$$restProps}
 			on:m-pointerdown
 			on:m-pointerenter
 		>
-			<slot builder={$content} />
+			<slot {builder} />
 		</div>
 	{:else}
-		<div use:melt={$content} {...$$restProps} on:m-pointerdown on:m-pointerenter>
-			<slot builder={$content} />
+		<div use:melt={builder} {...$$restProps} on:m-pointerdown on:m-pointerenter>
+			<slot {builder} />
 		</div>
 	{/if}
 {/if}

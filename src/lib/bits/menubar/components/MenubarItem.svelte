@@ -16,8 +16,9 @@
 {#if asChild}
 	<slot builder={$item} />
 {:else}
+	{@const builder = $item}
 	<div
-		use:melt={$item}
+		use:melt={builder}
 		{...$$restProps}
 		on:m-click
 		on:m-focusin
@@ -28,6 +29,6 @@
 		on:m-pointermove
 		{...disabledAttrs(disabled)}
 	>
-		<slot builder={$item} />
+		<slot {builder} />
 	</div>
 {/if}

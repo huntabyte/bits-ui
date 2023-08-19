@@ -11,6 +11,8 @@ import { contextMenu } from "./context-menu";
 import { dropdownMenu } from "./dropdown-menu";
 import { label } from "./label";
 import { linkPreview } from "./link-preview";
+import { popover } from "./popover";
+import { menubar } from "./menubar";
 
 export const bits = [
 	"accordion",
@@ -58,7 +60,9 @@ export const apiSchemas: Record<Bit, APISchema[]> = {
 	"context-menu": contextMenu,
 	"dropdown-menu": dropdownMenu,
 	label,
-	"link-preview": linkPreview
+	"link-preview": linkPreview,
+	menubar,
+	popover
 };
 
 export function getAPISchemas(bit: Bit): APISchema[] {

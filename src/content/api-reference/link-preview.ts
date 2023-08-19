@@ -82,12 +82,20 @@ export const content: APISchema = {
 export const arrow: APISchema = {
 	title: "Arrow",
 	description: "An optional arrow element which points to the trigger when the preview is open.",
-	props: [asChild],
+	props: [
+		asChild,
+		{
+			name: "size",
+			type: "number",
+			default: "8",
+			description: "The height and width of the arrow in pixels."
+		}
+	],
 	dataAttributes: [
 		{
 			name: "arrow",
 			value: "",
-			description: "Present on the content element."
+			description: "Present on the arrow element."
 		}
 	]
 };

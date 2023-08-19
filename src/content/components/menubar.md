@@ -54,4 +54,6 @@ description: Displays a list of menus that can be used to control the applicatio
 </Menubar.Root>
 ```
 
+<APISection {schemas} />
+
 🚧 **UNDER CONSTRUCTION** 🚧

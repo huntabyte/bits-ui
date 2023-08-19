@@ -12,9 +12,8 @@ type Props = Expand<
 	Omit<CreateAvatarProps, "onLoadingStatusChange" | "loadingStatus" | "src"> & {
 		loadingStatus?: "loading" | "loaded" | "error";
 		onLoadingStatusChange?: OnChangeFn<"loading" | "loaded" | "error">;
-	}
+	} & AsChild
 > &
-	AsChild &
 	HTMLDivAttributes;
 
 type ImageProps = AsChild & HTMLImgAttributes;

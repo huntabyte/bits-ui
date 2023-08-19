@@ -8,7 +8,7 @@
 	export let checked: $$Props["checked"] = undefined;
 	export let onCheckedChange: $$Props["onCheckedChange"] = undefined;
 	export let disabled: $$Props["disabled"] = undefined;
-	export let asChild: $$Props["asChild"] = false;
+	export let asChild = false;
 
 	const {
 		elements: { checkboxItem },
@@ -33,8 +33,9 @@
 {#if asChild}
 	<slot builder={$checkboxItem} />
 {:else}
+	{@const builder = $checkboxItem}
 	<div
-		use:melt={$checkboxItem}
+		use:melt={builder}
 		{...$$restProps}
 		on:m-click
 		on:m-focusin
@@ -44,6 +45,6 @@
 		on:m-pointerleave
 		on:m-pointermove
 	>
-		<slot builder={$checkboxItem} />
+		<slot {builder} />
 	</div>
 {/if}

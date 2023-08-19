@@ -5,7 +5,8 @@ import type {
 	TransitionParams,
 	OmitValue,
 	Expand,
-	OnChangeFn
+	OnChangeFn,
+	AsChild
 } from "$internal/index.js";
 import type {
 	CreateAccordionProps,
@@ -19,30 +20,28 @@ type Props<Multiple extends boolean> = Expand<
 	OmitValue<CreateAccordionProps<Multiple>> & {
 		value?: CreateAccordionProps<Multiple>["defaultValue"];
 		onValueChange?: OnChangeFn<CreateAccordionProps<Multiple>["defaultValue"]>;
-		asChild?: boolean;
-	}
+	} & AsChild
 > &
 	HTMLDivAttributes;
 
-type ItemProps = {
-	asChild?: boolean;
-} & ObjectVariation<_ItemProps> &
+type ItemProps = Expand<ObjectVariation<_ItemProps> & AsChild> & HTMLDivAttributes;
+
+type HeaderProps = Expand<
+	{
+		level?: ObjectVariation<_HeadingProps>["level"];
+	} & AsChild
+> &
 	HTMLDivAttributes;
 
-type HeaderProps = {
-	asChild?: boolean;
-	level?: ObjectVariation<_HeadingProps>["level"];
-} & HTMLDivAttributes;
+type TriggerProps = AsChild & HTMLButtonAttributes;
 
-type TriggerProps = {
-	asChild?: boolean;
-} & HTMLButtonAttributes;
-
-type ContentProps<T extends Transition = Transition> = {
-	transition?: T;
-	transitionConfig?: TransitionParams<T>;
-	asChild?: boolean;
-} & HTMLDivAttributes;
+type ContentProps<T extends Transition = Transition> = Expand<
+	{
+		transition?: T;
+		transitionConfig?: TransitionParams<T>;
+	} & AsChild
+> &
+	HTMLDivAttributes;
 
 type TriggerEvents = AccordionComponentEvents["trigger"];
 

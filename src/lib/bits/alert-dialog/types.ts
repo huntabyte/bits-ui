@@ -23,10 +23,12 @@ type TriggerProps = AsChild & HTMLButtonAttributes;
 type ActionProps = TriggerProps;
 type CancelProps = TriggerProps;
 
-type ContentProps<T extends Transition = Transition> = {
-	transition?: T;
-	transitionConfig?: TransitionParams<T>;
-} & AsChild &
+type ContentProps<T extends Transition = Transition> = Expand<
+	{
+		transition?: T;
+		transitionConfig?: TransitionParams<T>;
+	} & AsChild
+> &
 	HTMLDivAttributes;
 
 type DescriptionProps = AsChild & HTMLDivAttributes;
@@ -35,9 +37,11 @@ type OverlayProps = AsChild & HTMLDivAttributes;
 
 type PortalProps = AsChild & HTMLDivAttributes;
 
-type TitleProps = {
-	level?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
-} & AsChild &
+type TitleProps = Expand<
+	{
+		level?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+	} & AsChild
+> &
 	HTMLHeadingAttributes;
 
 type TriggerEvents = DialogComponentEvents["trigger"];

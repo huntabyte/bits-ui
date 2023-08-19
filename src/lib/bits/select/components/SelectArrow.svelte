@@ -5,8 +5,9 @@
 
 	type $$Props = ArrowProps;
 
-	export let size = 8;
 	export let asChild = false;
+	export let size = 8;
+
 	const {
 		elements: { arrow }
 	} = ctx.setArrow(size);
@@ -15,5 +16,5 @@
 {#if asChild}
 	<slot builder={$arrow} />
 {:else}
-	<div use:melt={$arrow} />
+	<div use:melt={$arrow} {...$$restProps} />
 {/if}
