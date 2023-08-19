@@ -4,7 +4,16 @@
 
 	type $$Props = InputProps;
 
-	const isChecked = ctx.get().helpers.isChecked;
+	const {
+		helpers: { isChecked },
+		options: { disabled }
+	} = ctx.get();
 </script>
 
-<input {...$$restProps} hidden value={$isChecked ? true : false} />
+<input
+	hidden
+	value={$isChecked ? true : false}
+	disabled={$disabled}
+	{...$$restProps}
+	data-melt-checkbox-input
+/>

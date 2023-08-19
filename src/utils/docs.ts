@@ -1,4 +1,4 @@
-import { bits, bitsSet, getAPISchemas, isBit } from "@/content/api-reference";
+import { getAPISchemas, isBit } from "@/content/api-reference";
 import type { APISchema } from "@/types";
 import { error, redirect } from "@sveltejs/kit";
 

@@ -3,6 +3,11 @@ title: Checkbox
 description: Allow users to mark options as checked, unchecked, or indeterminate, accommodating versatile states.
 ---
 
+<script>
+	import { APISection } from '@/components'
+	export let schemas;
+</script>
+
 ## Structure
 
 ```svelte
@@ -15,5 +20,7 @@ description: Allow users to mark options as checked, unchecked, or indeterminate
 	<Checkbox.Input />
 </Checkbox.Root>
 ```
+
+<APISection {schemas} />
 
 🚧 **UNDER CONSTRUCTION** 🚧

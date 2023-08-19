@@ -3,6 +3,11 @@ title: Collapsible
 description: An interactive component which expands and collapses content.
 ---
 
+<script>
+	import { APISection } from '@/components'
+	export let schemas;
+</script>
+
 ## Structure
 
 ```svelte
@@ -15,5 +20,7 @@ description: An interactive component which expands and collapses content.
 	<Collapsible.Content />
 </Collapsible.Root>
 ```
+
+<APISection {schemas} />
 
 🚧 **UNDER CONSTRUCTION** 🚧

@@ -51,7 +51,7 @@ export const close: APISchema = {
 };
 
 export const content: APISchema = {
-	title: "Cancel",
+	title: "Content",
 	description: "The content displayed within the dialog modal.",
 	props: [asChild],
 	dataAttributes: [

@@ -1,7 +1,12 @@
 ---
 title: Button
-description: An interactive component that triggers an event.
+description: A special button component that can receive Melt UI builders for use with the `asChild` prop.
 ---
+
+<script>
+	import { APISection } from '@/components'
+	export let schemas;
+</script>
 
 ## Structure
 
@@ -12,5 +17,7 @@ description: An interactive component that triggers an event.
 
 <Button.Root />
 ```
+
+<APISection {schemas} />
 
 🚧 **UNDER CONSTRUCTION** 🚧

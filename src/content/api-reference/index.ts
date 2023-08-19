@@ -4,6 +4,9 @@ import { alertDialog } from "./alert-dialog";
 import { dialog } from "./dialog";
 import { aspectRatio } from "./aspect-ratio";
 import { avatar } from "./avatar";
+import { button } from "./button";
+import { checkbox } from "./checkbox";
+import { collapsible } from "./collapsible";
 
 export const bits = [
 	"accordion",
@@ -16,7 +19,7 @@ export const bits = [
 	"context-menu",
 	"dialog",
 	"dropdown-menu",
-	"hover-card",
+	"link-preview",
 	"label",
 	"menubar",
 	"popover",
@@ -44,7 +47,10 @@ export const apiSchemas: Record<Bit, APISchema[]> = {
 	"alert-dialog": alertDialog,
 	dialog,
 	"aspect-ratio": aspectRatio,
-	avatar
+	avatar,
+	button,
+	checkbox,
+	collapsible
 };
 
 export function getAPISchemas(bit: Bit): APISchema[] {
