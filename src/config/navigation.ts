@@ -101,13 +101,13 @@ export const navigation: Navigation = {
 					items: []
 				},
 				{
-					title: "Hover Card",
-					href: "/docs/components/hover-card",
+					title: "Label",
+					href: "/docs/components/label",
 					items: []
 				},
 				{
-					title: "Label",
-					href: "/docs/components/label",
+					title: "Link Preview",
+					href: "/docs/components/link-preview",
 					items: []
 				},
 				{
