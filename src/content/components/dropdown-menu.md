@@ -3,6 +3,11 @@ title: Dropdown Menu
 description: Displays a menu to the user, which can consist of links or functions, triggered by a button.
 ---
 
+<script>
+	import { APISection } from '@/components'
+	export let schemas
+</script>
+
 ## Structure
 
 ```svelte
@@ -41,5 +46,7 @@ description: Displays a menu to the user, which can consist of links or function
 	</DropdownMenu.Content>
 </DropdownMenu.Root>
 ```
+
+<APISection {schemas} />
 
 🚧 **UNDER CONSTRUCTION** 🚧

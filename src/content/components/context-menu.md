@@ -3,6 +3,11 @@ title: Context Menu
 description: Displays a menu at the pointer's position when the trigger is right-clicked or long-pressed.
 ---
 
+<script>
+	import { APISection } from '@/components'
+	export let schemas
+</script>
+
 ## Structure
 
 ```svelte
@@ -41,5 +46,7 @@ description: Displays a menu at the pointer's position when the trigger is right
 	</ContextMenu.Content>
 </ContextMenu.Root>
 ```
+
+<APISection {schemas} />
 
 🚧 **UNDER CONSTRUCTION** 🚧

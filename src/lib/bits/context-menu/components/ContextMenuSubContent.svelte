@@ -19,22 +19,23 @@
 
 <!-- svelte-ignore a11y-no-static-element-interactions / applied by melt store -->
 {#if $subOpen}
+	{@const builder = { ...$subMenu, "data-melt-context-menu-sub-content": "" }}
 	{#if asChild}
-		<slot builder={$subMenu} />
+		<slot {builder} />
 	{:else if transition}
 		<div
-			use:melt={$subMenu}
+			use:melt={builder}
 			{...$$restProps}
 			on:m-focusout
 			on:m-keydown
 			on:m-pointermove
 			transition:transition={transitionConfig}
 		>
-			<slot />
+			<slot {builder} />
 		</div>
 	{:else}
-		<div use:melt={$subMenu} {...$$restProps} on:m-focusout on:m-keydown on:m-pointermove>
-			<slot />
+		<div use:melt={builder} {...$$restProps} on:m-focusout on:m-keydown on:m-pointermove>
+			<slot {builder} />
 		</div>
 	{/if}
 {/if}

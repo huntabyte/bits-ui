@@ -15,5 +15,5 @@
 	value={$isChecked ? true : false}
 	disabled={$disabled}
 	{...$$restProps}
-	data-melt-checkbox-input
+	data-melt-checkbox-input={""}
 />

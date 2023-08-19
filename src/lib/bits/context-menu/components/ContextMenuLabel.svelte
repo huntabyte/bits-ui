@@ -8,9 +8,9 @@
 </script>
 
 {#if asChild}
-	<slot builder={$groupLabel(id)} />
+	<slot builder={{ ...$groupLabel(id), "data-melt-context-menu-label": "" }} />
 {:else}
-	<div use:melt={$groupLabel(id)} {...$$restProps}>
-		<slot builder={$groupLabel(id)} />
+	<div use:melt={{ ...$groupLabel(id), "data-melt-context-menu-label": "" }} {...$$restProps}>
+		<slot builder={{ ...$groupLabel(id), "data-melt-context-menu-label": "" }} />
 	</div>
 {/if}

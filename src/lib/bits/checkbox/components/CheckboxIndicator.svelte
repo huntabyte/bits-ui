@@ -6,6 +6,6 @@
 	const { isChecked, isIndeterminate } = ctx.getIndicator();
 </script>
 
-<div {...$$restProps} data-melt-checkbox-indicator>
+<div {...$$restProps} data-melt-checkbox-indicator={""}>
 	<slot isChecked={$isChecked} isIndeterminate={$isIndeterminate} />
 </div>
