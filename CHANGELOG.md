@@ -1,5 +1,12 @@
 # @huntabyte/primitives
 
+## 0.0.27
+
+### Patch Changes
+
+- 4ecd3ea: Fix: Add transparent menu overlay
+- 879ab10: Fix: issue preventing dialog transitions
+
 ## 0.0.26
 
 ### Patch Changes

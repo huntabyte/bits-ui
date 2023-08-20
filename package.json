@@ -1,6 +1,6 @@
 {
 	"name": "bits-ui",
-	"version": "0.0.26",
+	"version": "0.0.27",
 	"license": "MIT",
 	"scripts": {
 		"dev": "vite dev",
@@ -85,5 +85,4 @@
 		"svelte": "^4.0.0"
 	},
 	"packageManager": "pnpm@8.6.3"
-
 }
