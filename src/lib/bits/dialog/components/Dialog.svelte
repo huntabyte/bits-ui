@@ -8,7 +8,7 @@
 	export let closeOnEscape: $$Props["closeOnEscape"] = undefined;
 	export let closeOnOutsideClick: $$Props["closeOnOutsideClick"] = undefined;
 	export let portal: $$Props["portal"] = undefined;
-	export let forceVisible: $$Props["forceVisible"] = undefined;
+	export let forceVisible: $$Props["forceVisible"] = true;
 	export let open: $$Props["open"] = undefined;
 	export let onOpenChange: $$Props["onOpenChange"] = undefined;
 

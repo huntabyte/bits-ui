@@ -11,19 +11,23 @@
 	export let transitionConfig: ContentProps<T>["transitionConfig"] = undefined;
 	export let asChild = false;
 
-	const content = ctx.get().elements.content;
+	const {
+		elements: { content },
+		states: { open }
+	} = ctx.get();
 </script>
 
-{#if asChild}
-	<slot builder={$content} />
-{:else if transition}
+{#if $open}
 	{@const builder = $content}
-	<div use:melt={builder} {...$$restProps} transition:transition={transitionConfig}>
+	{#if asChild}
 		<slot {builder} />
-	</div>
-{:else}
-	{@const builder = $content}
-	<div use:melt={builder} {...$$restProps}>
-		<slot {builder} />
-	</div>
+	{:else if transition}
+		<div use:melt={builder} {...$$restProps} transition:transition={transitionConfig}>
+			<slot {builder} />
+		</div>
+	{:else}
+		<div use:melt={builder} {...$$restProps}>
+			<slot {builder} />
+		</div>
+	{/if}
 {/if}
