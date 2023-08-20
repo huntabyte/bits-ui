@@ -9,6 +9,7 @@ import type {
 	Transition,
 	TransitionParams
 } from "$internal/index.js";
+import type { DivEventHandler } from "$lib";
 import type {
 	CreateContextMenuProps,
 	CreateContextMenuCheckboxItemProps,
@@ -90,11 +91,31 @@ type ArrowProps = Expand<
 > &
 	HTMLDivAttributes;
 
-type CheckboxItemEvents = ContextMenuComponentEvents["checkboxItem"];
-type ItemEvents = ContextMenuComponentEvents["item"];
-type RadioItemEvents = ContextMenuComponentEvents["radioItem"];
-type SubTriggerEvents = ContextMenuComponentEvents["subTrigger"];
-type TriggerEvents = ContextMenuComponentEvents["trigger"];
+type CheckboxItemEvents = {
+	"m-click": DivEventHandler<MouseEvent>;
+	"m-keydown": DivEventHandler<KeyboardEvent>;
+};
+
+type ItemEvents = {
+	"m-click": DivEventHandler<MouseEvent>;
+	"m-keydown": DivEventHandler<KeyboardEvent>;
+};
+
+type RadioItemEvents = {
+	"m-click": DivEventHandler<MouseEvent>;
+	"m-keydown": DivEventHandler<KeyboardEvent>;
+};
+
+type SubTriggerEvents = {
+	"m-click": DivEventHandler<MouseEvent>;
+	"m-keydown": DivEventHandler<KeyboardEvent>;
+};
+
+type TriggerEvents = {
+	"m-pointerdown": DivEventHandler<MouseEvent>;
+	"m-contextmenu": DivEventHandler<MouseEvent>;
+};
+
 type SubContentEvents = ContextMenuComponentEvents["submenu"];
 type ContentEvents = ContextMenuComponentEvents["menu"];
 

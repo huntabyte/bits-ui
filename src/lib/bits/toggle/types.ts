@@ -1,6 +1,7 @@
-import type { CreateToggleProps, ToggleComponentEvents } from "@melt-ui/svelte";
+import type { CreateToggleProps } from "@melt-ui/svelte";
 import type { AsChild, Expand, OmitPressed, OnChangeFn } from "$internal/index.js";
 import type { HTMLButtonAttributes, HTMLInputAttributes } from "svelte/elements";
+import type { ButtonEventHandler } from "$lib/index.js";
 
 type Props = Expand<
 	OmitPressed<CreateToggleProps> & {
@@ -10,7 +11,10 @@ type Props = Expand<
 > &
 	HTMLButtonAttributes;
 
-type Events = ToggleComponentEvents["root"];
+type Events = {
+	"m-click": ButtonEventHandler<MouseEvent>;
+	"m-keydown": ButtonEventHandler<KeyboardEvent>;
+};
 
 type InputProps = Omit<HTMLInputAttributes, "value">;
 

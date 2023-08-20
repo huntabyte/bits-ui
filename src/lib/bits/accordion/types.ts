@@ -8,11 +8,11 @@ import type {
 	OnChangeFn,
 	AsChild
 } from "$internal/index.js";
+import type { ButtonEventHandler } from "$lib/index.js";
 import type {
 	CreateAccordionProps,
 	AccordionItemProps as _ItemProps,
-	AccordionHeadingProps as _HeadingProps,
-	AccordionComponentEvents
+	AccordionHeadingProps as _HeadingProps
 } from "@melt-ui/svelte";
 import type { HTMLButtonAttributes } from "svelte/elements";
 
@@ -43,7 +43,10 @@ type ContentProps<T extends Transition = Transition> = Expand<
 > &
 	HTMLDivAttributes;
 
-type TriggerEvents = AccordionComponentEvents["trigger"];
+type TriggerEvents = {
+	"m-click": ButtonEventHandler<MouseEvent>;
+	"m-keydown": ButtonEventHandler<KeyboardEvent>;
+};
 
 export type {
 	Props,

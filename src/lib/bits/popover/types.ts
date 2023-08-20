@@ -7,7 +7,8 @@ import type {
 	OnChangeFn,
 	AsChild
 } from "$internal/index.js";
-import type { CreatePopoverProps, PopoverComponentEvents } from "@melt-ui/svelte";
+import type { ButtonEventHandler } from "$lib/index.js";
+import type { CreatePopoverProps } from "@melt-ui/svelte";
 import type { HTMLButtonAttributes } from "svelte/elements";
 
 type Props = Expand<
@@ -35,8 +36,11 @@ type ArrowProps = Expand<
 > &
 	HTMLDivAttributes;
 
-type TriggerEvents = PopoverComponentEvents["trigger"];
-type CloseEvents = PopoverComponentEvents["close"];
+type TriggerEvents = {
+	"m-click": ButtonEventHandler<MouseEvent>;
+	"m-keydown": ButtonEventHandler<KeyboardEvent>;
+};
+type CloseEvents = TriggerEvents;
 
 export type {
 	Props,
