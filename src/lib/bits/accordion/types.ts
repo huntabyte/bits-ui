@@ -2,11 +2,11 @@ import type {
 	HTMLDivAttributes,
 	ObjectVariation,
 	Transition,
-	TransitionParams,
 	OmitValue,
 	Expand,
 	OnChangeFn,
-	AsChild
+	AsChild,
+	TransitionProps
 } from "$internal/index.js";
 import type { ButtonEventHandler } from "$lib/index.js";
 import type {
@@ -35,13 +35,11 @@ type HeaderProps = Expand<
 
 type TriggerProps = AsChild & HTMLButtonAttributes;
 
-type ContentProps<T extends Transition = Transition> = Expand<
-	{
-		transition?: T;
-		transitionConfig?: TransitionParams<T>;
-	} & AsChild
-> &
-	HTMLDivAttributes;
+type ContentProps<
+	T extends Transition = Transition,
+	In extends Transition = Transition,
+	Out extends Transition = Transition
+> = Expand<TransitionProps<T, In, Out> & AsChild> & HTMLDivAttributes;
 
 type TriggerEvents = {
 	"m-click": ButtonEventHandler<MouseEvent>;

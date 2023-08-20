@@ -6,7 +6,8 @@ import type {
 	OmitOpen,
 	OnChangeFn,
 	Transition,
-	TransitionParams
+	TransitionParams,
+	TransitionProps
 } from "$internal/index.js";
 import type { HTMLButtonAttributes } from "svelte/elements";
 
@@ -24,16 +25,20 @@ type TriggerProps = AsChild & HTMLButtonAttributes;
 
 type CloseProps = TriggerProps;
 
-type ContentProps<T extends Transition = Transition> = Expand<
-	{
-		transition?: T;
-		transitionConfig?: TransitionParams<T>;
-	} & AsChild
-> &
-	HTMLDivAttributes;
+type ContentProps<
+	T extends Transition = Transition,
+	In extends Transition = Transition,
+	Out extends Transition = Transition
+> = Expand<TransitionProps<T, In, Out> & AsChild> & HTMLDivAttributes;
 
 type DescriptionProps = AsChild & HTMLDivAttributes;
-type OverlayProps = AsChild & HTMLDivAttributes;
+
+type OverlayProps<
+	T extends Transition = Transition,
+	In extends Transition = Transition,
+	Out extends Transition = Transition
+> = Expand<TransitionProps<T, In, Out> & AsChild> & HTMLDivAttributes;
+
 type PortalProps = AsChild & HTMLDivAttributes;
 type TitleProps = Expand<
 	{

@@ -3,9 +3,9 @@ import type {
 	Expand,
 	HTMLDivAttributes,
 	Transition,
-	TransitionParams,
 	OnChangeFn,
-	AsChild
+	AsChild,
+	TransitionProps
 } from "$internal/index.js";
 import type { ButtonEventHandler } from "$lib/index.js";
 import type { CreatePopoverProps } from "@melt-ui/svelte";
@@ -18,13 +18,11 @@ type Props = Expand<
 	}
 >;
 
-type ContentProps<T extends Transition = Transition> = Expand<
-	{
-		transition?: T;
-		transitionConfig?: TransitionParams<T>;
-	} & AsChild
-> &
-	HTMLDivAttributes;
+type ContentProps<
+	T extends Transition = Transition,
+	In extends Transition = Transition,
+	Out extends Transition = Transition
+> = Expand<TransitionProps<T, In, Out> & AsChild> & HTMLDivAttributes;
 
 type TriggerProps = AsChild & HTMLButtonAttributes;
 type CloseProps = AsChild & HTMLButtonAttributes;

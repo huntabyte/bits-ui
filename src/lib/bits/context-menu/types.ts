@@ -7,7 +7,7 @@ import type {
 	OmitValue,
 	OnChangeFn,
 	Transition,
-	TransitionParams
+	TransitionProps
 } from "$internal/index.js";
 import type { DivEventHandler } from "$lib";
 import type {
@@ -44,12 +44,15 @@ type RadioGroupProps = Expand<
 
 type RadioItemProps = Expand<ContextMenuRadioItemProps & AsChild> & HTMLDivAttributes;
 
-type ContentProps<T extends Transition = Transition> = Expand<
+type ContentProps<
+	T extends Transition = Transition,
+	In extends Transition = Transition,
+	Out extends Transition = Transition
+> = Expand<
 	{
 		sideOffset?: number;
-		transition?: T;
-		transitionConfig?: TransitionParams<T>;
-	} & AsChild
+	} & TransitionProps<T, In, Out> &
+		AsChild
 > &
 	HTMLDivAttributes;
 
@@ -67,13 +70,11 @@ type LabelProps = AsChild & HTMLDivAttributes;
 type SeparatorProps = AsChild & HTMLDivAttributes;
 type SubProps = Expand<CreateContextSubmenuProps>;
 
-type SubContentProps<T extends Transition = Transition> = Expand<
-	{
-		transition?: T;
-		transitionConfig?: TransitionParams<T>;
-	} & AsChild
-> &
-	HTMLDivAttributes;
+type SubContentProps<
+	T extends Transition = Transition,
+	In extends Transition = Transition,
+	Out extends Transition = Transition
+> = Expand<TransitionProps<T, In, Out> & AsChild> & HTMLDivAttributes;
 
 type SubTriggerProps = Expand<
 	{

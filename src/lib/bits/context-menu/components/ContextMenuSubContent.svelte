@@ -5,10 +5,19 @@
 	import type { SubContentEvents, SubContentProps } from "../types.js";
 
 	type T = $$Generic<Transition>;
-	type $$Props = SubContentProps<T>;
+	type In = $$Generic<Transition>;
+	type Out = $$Generic<Transition>;
+	type $$Props = SubContentProps<T, In, Out>;
+
 	type $$Events = SubContentEvents;
-	export let transition: $$Props["transition"] = undefined;
-	export let transitionConfig: $$Props["transitionConfig"] = undefined;
+	export let transition: SubContentProps<T, In, Out>["transition"] = undefined;
+	export let transitionConfig: SubContentProps<T, In, Out>["transitionConfig"] = undefined;
+
+	export let inTransition: SubContentProps<T, In, Out>["inTransition"] = undefined;
+	export let inTransitionConfig: SubContentProps<T>["inTransitionConfig"] = undefined;
+
+	export let outTransition: SubContentProps<T, In, Out>["outTransition"] = undefined;
+	export let outTransitionConfig: SubContentProps<T, In, Out>["outTransitionConfig"] = undefined;
 	export let asChild = false;
 
 	const {
@@ -24,12 +33,46 @@
 		<slot {builder} />
 	{:else if transition}
 		<div
+			transition:transition|global={transitionConfig}
 			use:melt={builder}
 			{...$$restProps}
 			on:m-focusout
 			on:m-keydown
 			on:m-pointermove
-			transition:transition={transitionConfig}
+		>
+			<slot {builder} />
+		</div>
+	{:else if inTransition && outTransition}
+		<div
+			in:inTransition|global={inTransitionConfig}
+			out:outTransition|global={outTransitionConfig}
+			use:melt={builder}
+			{...$$restProps}
+			on:m-focusout
+			on:m-keydown
+			on:m-pointermove
+		>
+			<slot {builder} />
+		</div>
+	{:else if inTransition}
+		<div
+			in:inTransition|global={inTransitionConfig}
+			use:melt={builder}
+			{...$$restProps}
+			on:m-focusout
+			on:m-keydown
+			on:m-pointermove
+		>
+			<slot {builder} />
+		</div>
+	{:else if outTransition}
+		<div
+			out:outTransition|global={outTransitionConfig}
+			use:melt={builder}
+			{...$$restProps}
+			on:m-focusout
+			on:m-keydown
+			on:m-pointermove
 		>
 			<slot {builder} />
 		</div>

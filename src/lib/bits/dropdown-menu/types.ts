@@ -1,4 +1,5 @@
 import type {
+	TransitionProps,
 	AsChild,
 	Expand,
 	HTMLDivAttributes,
@@ -6,8 +7,7 @@ import type {
 	OmitOpen,
 	OmitValue,
 	OnChangeFn,
-	Transition,
-	TransitionParams
+	Transition
 } from "$internal/index.js";
 import type { ButtonEventHandler, DivEventHandler } from "$lib/index.js";
 import type {
@@ -45,12 +45,15 @@ type RadioGroupProps = Expand<
 
 type RadioItemProps = Expand<DropdownMenuRadioItemProps & AsChild> & HTMLDivAttributes;
 
-type ContentProps<T extends Transition = Transition> = Expand<
+type ContentProps<
+	T extends Transition = Transition,
+	In extends Transition = Transition,
+	Out extends Transition = Transition
+> = Expand<
 	{
 		sideOffset?: number;
-		transition?: T;
-		transitionConfig?: TransitionParams<T>;
-	} & AsChild
+	} & TransitionProps<T, In, Out> &
+		AsChild
 > &
 	HTMLDivAttributes;
 
@@ -67,12 +70,16 @@ type CheckboxItemIndicatorProps = HTMLDivAttributes;
 type LabelProps = AsChild & HTMLDivAttributes;
 type SeparatorProps = AsChild & HTMLDivAttributes;
 type SubProps = Expand<CreateDropdownSubmenuProps>;
-type SubContentProps<T extends Transition = Transition> = Expand<
+
+type SubContentProps<
+	T extends Transition = Transition,
+	In extends Transition = Transition,
+	Out extends Transition = Transition
+> = Expand<
 	{
 		sideOffset?: number;
-		transition?: T;
-		transitionConfig?: TransitionParams<T>;
-	} & AsChild
+	} & TransitionProps<T, In, Out> &
+		AsChild
 > &
 	HTMLDivAttributes;
 

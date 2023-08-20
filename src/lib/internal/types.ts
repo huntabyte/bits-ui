@@ -50,3 +50,16 @@ export type KeydownClickEvents = {
 export type AsChild = Expand<{
 	asChild?: boolean;
 }>;
+
+export type TransitionProps<
+	T extends Transition = Transition,
+	In extends Transition = Transition,
+	Out extends Transition = Transition
+> = Expand<{
+	transition?: T;
+	transitionConfig?: TransitionParams<T>;
+	inTransition?: In;
+	inTransitionConfig?: TransitionParams<In>;
+	outTransition?: Out;
+	outTransitionConfig?: TransitionParams<Out>;
+}>;
