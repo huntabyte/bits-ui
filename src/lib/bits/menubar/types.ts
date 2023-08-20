@@ -7,6 +7,7 @@ import type {
 	OmitValue,
 	OnChangeFn
 } from "$internal/index.js";
+import type { DivEventHandler, ButtonEventHandler } from "$lib/index.js";
 import type {
 	CreateMenubarProps,
 	CreateMenubarMenuProps,
@@ -88,11 +89,21 @@ type ArrowProps = Expand<
 > &
 	HTMLDivAttributes;
 
-type TriggerEvents = MenubarComponentEvents["trigger"];
-type ItemEvents = MenubarComponentEvents["item"];
-type SubTriggerEvents = MenubarComponentEvents["subTrigger"];
-type CheckboxItemEvents = MenubarComponentEvents["checkboxItem"];
-type RadioItemEvents = MenubarComponentEvents["radioItem"];
+type ItemEvents = {
+	"m-click": DivEventHandler<MouseEvent>;
+	"m-keydown": DivEventHandler<KeyboardEvent>;
+};
+type CheckboxItemEvents = ItemEvents;
+
+type RadioItemEvents = ItemEvents;
+
+type SubTriggerEvents = ItemEvents;
+
+type TriggerEvents = {
+	"m-click": ButtonEventHandler<MouseEvent>;
+	"m-keydown": ButtonEventHandler<KeyboardEvent>;
+};
+
 type ContentEvents = MenubarComponentEvents["menu"];
 type SubContentEvents = MenubarComponentEvents["submenu"];
 

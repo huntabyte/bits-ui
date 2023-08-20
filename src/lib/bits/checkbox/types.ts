@@ -1,12 +1,12 @@
 import type {
 	Expand,
 	HTMLDivAttributes,
-	KeydownClickEvents,
 	OmitChecked,
 	OnChangeFn,
 	AsChild
 } from "$internal/index.js";
-import type { CheckboxComponentEvents, CreateCheckboxProps } from "@melt-ui/svelte";
+import type { ButtonEventHandler } from "$lib/index.js";
+import type { CreateCheckboxProps } from "@melt-ui/svelte";
 import type { HTMLButtonAttributes, HTMLInputAttributes } from "svelte/elements";
 
 type Props = Expand<
@@ -20,7 +20,10 @@ type Props = Expand<
 type IndicatorProps = HTMLDivAttributes;
 type InputProps = Omit<HTMLInputAttributes, "value">;
 
-type Events = CheckboxComponentEvents["root"] & KeydownClickEvents;
+type Events = {
+	"m-click": ButtonEventHandler<MouseEvent>;
+	"m-keydown": ButtonEventHandler<KeyboardEvent>;
+};
 
 export type {
 	Props,

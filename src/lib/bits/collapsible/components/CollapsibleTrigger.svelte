@@ -5,6 +5,7 @@
 
 	type $$Props = TriggerProps;
 	type $$Events = TriggerEvents;
+
 	export let asChild = false;
 	const trigger = ctx.get().elements.trigger;
 </script>

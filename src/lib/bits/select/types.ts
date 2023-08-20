@@ -10,6 +10,7 @@ import type {
 	TransitionParams
 } from "$internal/index.js";
 import type { HTMLAttributes, HTMLButtonAttributes, HTMLInputAttributes } from "svelte/elements";
+import type { ButtonEventHandler, DivEventHandler } from "$lib/index.js";
 
 type Props = Expand<
 	OmitOpen<OmitValue<Omit<CreateSelectProps, "defaultValueLabel" | "forceVisible">>> & {
@@ -51,10 +52,18 @@ type ArrowProps = Expand<
 > &
 	HTMLDivAttributes;
 
-type ItemEvents = SelectComponentEvents["option"];
-type ContentEvents = SelectComponentEvents["menu"];
-type TriggerEvents = SelectComponentEvents["trigger"];
+type ItemEvents = {
+	"m-click": DivEventHandler<MouseEvent>;
+	"m-keydown": DivEventHandler<KeyboardEvent>;
+};
+
+type TriggerEvents = {
+	"m-click": ButtonEventHandler<MouseEvent>;
+	"m-keydown": ButtonEventHandler<KeyboardEvent>;
+};
+
 type LabelEvents = SelectComponentEvents["label"];
+type ContentEvents = SelectComponentEvents["menu"];
 
 export type {
 	Props,

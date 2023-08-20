@@ -9,6 +9,7 @@ import type {
 	Transition,
 	TransitionParams
 } from "$internal/index.js";
+import type { ButtonEventHandler, DivEventHandler } from "$lib/index.js";
 import type {
 	CreateDropdownMenuProps,
 	CreateDropdownMenuCheckboxItemProps,
@@ -91,13 +92,22 @@ type ArrowProps = Expand<
 > &
 	HTMLDivAttributes;
 
-type TriggerEvents = DropdownMenuComponentEvents["trigger"];
-type CheckboxItemEvents = DropdownMenuComponentEvents["checkboxItem"];
+type ItemEvents = {
+	"m-click": DivEventHandler<MouseEvent>;
+	"m-keydown": DivEventHandler<KeyboardEvent>;
+};
+
+type CheckboxItemEvents = ItemEvents;
+type RadioItemEvents = ItemEvents;
+type SubTriggerEvents = ItemEvents;
+
+type TriggerEvents = {
+	"m-click": ButtonEventHandler<MouseEvent>;
+	"m-keydown": ButtonEventHandler<KeyboardEvent>;
+};
+
 type ContentEvents = DropdownMenuComponentEvents["menu"];
-type RadioItemEvents = DropdownMenuComponentEvents["radioItem"];
 type SubContentEvents = DropdownMenuComponentEvents["submenu"];
-type SubTriggerEvents = DropdownMenuComponentEvents["subTrigger"];
-type ItemEvents = DropdownMenuComponentEvents["item"];
 
 export type {
 	Props,
