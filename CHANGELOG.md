@@ -1,5 +1,14 @@
 # @huntabyte/primitives
 
+## 0.0.25
+
+### Patch Changes
+
+- 855a961: - Improve types
+  - Fix bug with `Menubar` props
+  - Add `Arrow` components for the floating Bits
+  - Fix `asChild` bug affecting multiple Bits
+
 ## 0.0.24
 
 ### Patch Changes
