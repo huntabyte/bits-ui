@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Overlay from "$lib/internal/overlay.svelte";
 	import { melt } from "@melt-ui/svelte";
 	import type { Transition } from "$lib/internal/types.js";
 	import { ctx } from "../ctx.js";
@@ -20,6 +21,7 @@
 
 <!-- svelte-ignore a11y-no-static-element-interactions applied by melt's action/store -->
 {#if $open}
+	<Overlay />
 	{@const builder = $menu}
 	{#if asChild}
 		<slot {builder} />
