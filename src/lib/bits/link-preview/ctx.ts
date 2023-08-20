@@ -10,7 +10,8 @@ const NAME = "hovercard";
 
 export const ctx = {
 	set,
-	get
+	get,
+	setArrow
 };
 
 function get() {
@@ -27,4 +28,10 @@ function set(props: CreateLinkPreviewProps) {
 		...hovercard,
 		updateOption: getOptionUpdater(hovercard.options)
 	};
+}
+
+function setArrow(size = 8) {
+	const linkPreview = get();
+	linkPreview.options.arrowSize.set(size);
+	return linkPreview;
 }

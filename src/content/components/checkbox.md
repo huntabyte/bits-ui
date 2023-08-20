@@ -4,9 +4,15 @@ description: Allow users to mark options as checked, unchecked, or indeterminate
 ---
 
 <script>
-	import { APISection } from '@/components'
+	import { APISection, ComponentPreview, CheckboxDemo } from '@/components'
 	export let schemas;
 </script>
+
+<ComponentPreview name="checkbox-demo" comp="Checkbox">
+
+<CheckboxDemo slot="preview" />
+
+</ComponentPreview>
 
 ## Structure
 

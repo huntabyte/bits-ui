@@ -13,9 +13,8 @@ type Props = Expand<
 	OmitChecked<CreateCheckboxProps> & {
 		checked?: CreateCheckboxProps["defaultChecked"] & {};
 		onCheckedChange?: OnChangeFn<CreateCheckboxProps["defaultChecked"]>;
-	}
+	} & AsChild
 > &
-	AsChild &
 	HTMLButtonAttributes;
 
 type IndicatorProps = HTMLDivAttributes;

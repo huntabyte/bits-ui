@@ -19,15 +19,16 @@
 </script>
 
 {#if $open}
+	{@const builder = $menu}
 	{#if asChild}
-		<slot builder={$menu} />
+		<slot {builder} />
 	{:else if transition}
-		<div use:melt={$menu} {...$$restProps} on:m-keydown transition:transition={transitionConfig}>
-			<slot builder={$menu} />
+		<div use:melt={builder} {...$$restProps} on:m-keydown transition:transition={transitionConfig}>
+			<slot {builder} />
 		</div>
 	{:else}
-		<div use:melt={$menu} {...$$restProps} on:m-keydown>
-			<slot builder={$menu} />
+		<div use:melt={builder} {...$$restProps} on:m-keydown>
+			<slot {builder} />
 		</div>
 	{/if}
 {/if}

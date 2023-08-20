@@ -13,7 +13,8 @@ export const ctx = {
 	setGroup,
 	setItem,
 	getItemIndicator,
-	getGroupLabel
+	getGroupLabel,
+	setArrow
 };
 
 function get() {
@@ -63,4 +64,10 @@ function getItemIndicator() {
 		value,
 		isSelected
 	};
+}
+
+function setArrow(size = 8) {
+	const select = get();
+	select.options.arrowSize.set(size);
+	return select;
 }

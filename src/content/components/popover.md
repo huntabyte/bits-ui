@@ -3,6 +3,17 @@ title: Popover
 description: Displays content in a floating container that appears above the surrounding content.
 ---
 
+<script>
+	import { APISection, ComponentPreview, PopoverDemo } from '@/components'
+	export let schemas;
+</script>
+
+<ComponentPreview name="popover-demo" comp="Popover">
+
+<PopoverDemo slot="preview" />
+
+</ComponentPreview>
+
 ## Structure
 
 ```svelte
@@ -18,5 +29,7 @@ description: Displays content in a floating container that appears above the sur
 	</Popover.Content>
 </Popover.Root>
 ```
+
+<APISection {schemas} />
 
 🚧 **UNDER CONSTRUCTION** 🚧

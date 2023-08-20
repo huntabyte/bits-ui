@@ -13,15 +13,10 @@
 </script>
 
 {#if asChild}
-	<slot builder={$trigger} />
+	<slot builder={$trigger({ value, disabled })} />
 {:else}
-	<button
-		use:melt={$trigger({ value, disabled })}
-		{...$$restProps}
-		on:m-click
-		on:m-focus
-		on:m-keydown
-	>
-		<slot builder={$trigger} />
+	{@const builder = $trigger({ value, disabled })}
+	<button use:melt={builder} {...$$restProps} on:m-click on:m-focus on:m-keydown>
+		<slot {builder} />
 	</button>
 {/if}

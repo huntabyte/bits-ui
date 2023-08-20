@@ -15,11 +15,12 @@
 
 <!-- svelte-ignore a11y-no-static-element-interactions / applied by melt's builder-->
 {#if $open}
+	{@const builder = $menu}
 	{#if asChild}
-		<slot builder={$menu} />
+		<slot {builder} />
 	{:else}
-		<div use:melt={$menu} {...$$restProps} on:m-keydown>
-			<slot builder={$menu} />
+		<div use:melt={builder} {...$$restProps} on:m-keydown>
+			<slot {builder} />
 		</div>
 	{/if}
 {/if}

@@ -12,9 +12,8 @@ type Props = Expand<
 	OmitChecked<CreateSwitchProps> & {
 		checked?: CreateSwitchProps["defaultChecked"] & {};
 		onCheckedChange?: OnChangeFn<CreateSwitchProps["defaultChecked"]>;
-	}
+	} & AsChild
 > &
-	AsChild &
 	HTMLButtonAttributes;
 
 type ThumbProps = AsChild & HTMLSpanAttributes;

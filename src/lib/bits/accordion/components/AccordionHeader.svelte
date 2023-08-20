@@ -12,7 +12,8 @@
 {#if asChild}
 	<slot builder={$heading(level)} />
 {:else}
-	<div use:melt={$heading(level)} {...$$restProps}>
-		<slot builder={$heading(level)} />
+	{@const builder = $heading(level)}
+	<div use:melt={builder} {...$$restProps}>
+		<slot {builder} />
 	</div>
 {/if}

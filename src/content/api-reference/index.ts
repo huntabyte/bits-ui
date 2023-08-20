@@ -7,6 +7,16 @@ import { avatar } from "./avatar";
 import { button } from "./button";
 import { checkbox } from "./checkbox";
 import { collapsible } from "./collapsible";
+import { contextMenu } from "./context-menu";
+import { dropdownMenu } from "./dropdown-menu";
+import { label } from "./label";
+import { linkPreview } from "./link-preview";
+import { popover } from "./popover";
+import { menubar } from "./menubar";
+import { progress } from "./progress";
+import { radioGroup } from "./radio-group";
+import { select } from "./select";
+import { separator } from "./separator";
 
 export const bits = [
 	"accordion",
@@ -50,7 +60,17 @@ export const apiSchemas: Record<Bit, APISchema[]> = {
 	avatar,
 	button,
 	checkbox,
-	collapsible
+	collapsible,
+	"context-menu": contextMenu,
+	"dropdown-menu": dropdownMenu,
+	label,
+	"link-preview": linkPreview,
+	menubar,
+	popover,
+	progress,
+	"radio-group": radioGroup,
+	select,
+	separator
 };
 
 export function getAPISchemas(bit: Bit): APISchema[] {

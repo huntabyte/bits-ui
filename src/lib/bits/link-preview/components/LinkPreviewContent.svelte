@@ -21,11 +21,12 @@
 <!-- svelte-ignore a11y-no-static-element-interactions / applied by melt's builder-->
 
 {#if $open}
+	{@const builder = $content}
 	{#if asChild}
-		<slot builder={$content} />
+		<slot {builder} />
 	{:else if transition}
 		<div
-			use:melt={$content}
+			use:melt={builder}
 			{...$$restProps}
 			on:m-focusout
 			on:m-pointerdown
@@ -33,18 +34,18 @@
 			on:m-pointerleave
 			transition:transition={transitionConfig}
 		>
-			<slot builder={$content} />
+			<slot {builder} />
 		</div>
 	{:else}
 		<div
-			use:melt={$content}
+			use:melt={builder}
 			{...$$restProps}
 			on:m-focusout
 			on:m-pointerdown
 			on:m-pointerenter
 			on:m-pointerleave
 		>
-			<slot builder={$content} />
+			<slot {builder} />
 		</div>
 	{/if}
 {/if}

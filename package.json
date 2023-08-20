@@ -50,7 +50,7 @@
 		"lucide-svelte": "^0.268.0",
 		"postcss": "^8.4.24",
 		"postcss-load-config": "^4.0.1",
-		"prettier": "^2.8.0",
+		"prettier": "^2.8.8",
 		"prettier-plugin-svelte": "^2.10.1",
 		"publint": "^0.1.9",
 		"radix-icons-svelte": "^1.2.1",
@@ -77,7 +77,8 @@
 		"@sveltejs/adapter-vercel": "^3.0.3",
 		"nanoid": "^4.0.2",
 		"shiki": "^0.14.3",
-		"tailwind-merge": "^1.14.0"
+		"tailwind-merge": "^1.14.0",
+		"unist-builder": "^4.0.0"
 	},
 	"peerDependencies": {
 		"svelte": "^4.0.0"

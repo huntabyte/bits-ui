@@ -4,9 +4,15 @@ description: An interactive component which expands and collapses content.
 ---
 
 <script>
-	import { APISection } from '@/components'
+	import { APISection, ComponentPreview, CollapsibleDemo } from '@/components'
 	export let schemas;
 </script>
+
+<ComponentPreview name="collapsible-demo" comp="Collapsible">
+
+<CollapsibleDemo slot="preview" />
+
+</ComponentPreview>
 
 ## Structure
 

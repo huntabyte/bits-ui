@@ -34,7 +34,8 @@ export const ctx = {
 	getCheckboxIndicator,
 	getRadioIndicator,
 	setGroup,
-	getGroupLabel
+	getGroupLabel,
+	setArrow
 };
 
 function get() {
@@ -144,4 +145,10 @@ function getGroupLabel() {
 		elements: { groupLabel }
 	} = get();
 	return { groupLabel, id };
+}
+
+function setArrow(size = 8) {
+	const menu = get();
+	menu.options.arrowSize.set(size);
+	return menu;
 }

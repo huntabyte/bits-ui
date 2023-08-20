@@ -21,23 +21,35 @@ type Props = Expand<
 	}
 >;
 
-type ContentProps<T extends Transition = Transition> = {
-	transition?: T;
-	transitionConfig?: TransitionParams<T>;
-} & AsChild &
+type ContentProps<T extends Transition = Transition> = Expand<
+	{
+		transition?: T;
+		transitionConfig?: TransitionParams<T>;
+	} & AsChild
+> &
 	HTMLDivAttributes;
 
 type GroupProps = AsChild & HTMLDivAttributes;
 type InputProps = AsChild & HTMLInputAttributes;
 type LabelProps = AsChild & HTMLDivAttributes;
-type ItemProps = Expand<SelectOptionProps> & AsChild & HTMLDivAttributes;
+type ItemProps = Expand<SelectOptionProps & AsChild> & HTMLDivAttributes;
 type SeparatorProps = AsChild & HTMLDivAttributes;
 
 type TriggerProps = AsChild & HTMLButtonAttributes;
-type ValueProps = {
-	placeholder?: string;
-} & AsChild &
+
+type ValueProps = Expand<
+	{
+		placeholder?: string;
+	} & AsChild
+> &
 	HTMLAttributes<HTMLSpanElement>;
+
+type ArrowProps = Expand<
+	{
+		size?: number;
+	} & AsChild
+> &
+	HTMLDivAttributes;
 
 type ItemEvents = SelectComponentEvents["option"];
 type ContentEvents = SelectComponentEvents["menu"];
@@ -46,6 +58,7 @@ type LabelEvents = SelectComponentEvents["label"];
 
 export type {
 	Props,
+	ArrowProps,
 	ContentProps,
 	GroupProps,
 	InputProps,
@@ -56,6 +69,7 @@ export type {
 	ValueProps,
 	//
 	Props as SelectProps,
+	ArrowProps as SelectArrowProps,
 	ContentProps as SelectContentProps,
 	GroupProps as SelectGroupProps,
 	InputProps as SelectInputProps,

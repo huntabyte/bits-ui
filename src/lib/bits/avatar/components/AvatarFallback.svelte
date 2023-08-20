@@ -11,7 +11,8 @@
 {#if asChild}
 	<slot builder={$fallback} />
 {:else}
-	<span use:melt={$fallback} {...$$restProps}>
-		<slot builder={$fallback} />
+	{@const builder = $fallback}
+	<span use:melt={builder} {...$$restProps}>
+		<slot {builder} />
 	</span>
 {/if}

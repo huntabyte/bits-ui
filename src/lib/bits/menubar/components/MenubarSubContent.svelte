@@ -13,7 +13,8 @@
 {#if asChild}
 	<slot builder={$subMenu} />
 {:else}
-	<div use:melt={$subMenu} {...$$restProps} on:m-focusout on:m-keydown on:m-pointermove>
-		<slot builder={$subMenu} />
+	{@const builder = $subMenu}
+	<div use:melt={builder} {...$$restProps} on:m-focusout on:m-keydown on:m-pointermove>
+		<slot {builder} />
 	</div>
 {/if}

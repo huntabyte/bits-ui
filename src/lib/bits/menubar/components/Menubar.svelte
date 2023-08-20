@@ -5,8 +5,9 @@
 
 	type $$Props = Props;
 
-	export const loop: $$Props["loop"] = true;
-	export const closeOnEscape: $$Props["closeOnEscape"] = true;
+	export let loop = true;
+	export let closeOnEscape = true;
+	export let asChild = false;
 
 	const {
 		elements: { menubar },
@@ -17,6 +18,11 @@
 	$: updateOption("closeOnEscape", closeOnEscape);
 </script>
 
-<div use:melt={$menubar} {...$$restProps}>
-	<slot />
-</div>
+{#if asChild}
+	<slot builder={$menubar} />
+{:else}
+	{@const builder = $menubar}
+	<div use:melt={builder} {...$$restProps}>
+		<slot {builder} />
+	</div>
+{/if}

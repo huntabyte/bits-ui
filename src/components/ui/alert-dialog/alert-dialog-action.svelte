@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { AlertDialog as AlertDialogPrimitive } from "@/lib";
-	import { buttonVariants } from "@/registry/default/ui/button";
+	import { buttonVariants } from "@/components/ui/button";
 	import { cn } from "@/utils";
 
 	type $$Props = AlertDialogPrimitive.ActionProps;

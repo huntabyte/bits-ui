@@ -18,15 +18,16 @@
 </script>
 
 {#if $open}
+	{@const builder = $content}
 	{#if asChild}
-		<slot builder={$content} />
+		<slot {builder} />
 	{:else if transition}
-		<div {...$$restProps} use:melt={$content} transition:transition={transitionConfig}>
-			<slot builder={$content} />
+		<div {...$$restProps} use:melt={builder} transition:transition={transitionConfig}>
+			<slot {builder} />
 		</div>
 	{:else}
-		<div use:melt={$content} {...$$restProps}>
-			<slot builder={$content} />
+		<div use:melt={builder} {...$$restProps}>
+			<slot {builder} />
 		</div>
 	{/if}
 {/if}

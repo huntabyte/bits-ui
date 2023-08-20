@@ -4,9 +4,15 @@ description: A special button component that can receive Melt UI builders for us
 ---
 
 <script>
-	import { APISection } from '@/components'
+	import { APISection, ComponentPreview, ButtonDemo } from '@/components'
 	export let schemas;
 </script>
+
+<ComponentPreview name="button-demo" comp="Button">
+
+<ButtonDemo slot="preview" />
+
+</ComponentPreview>
 
 ## Structure
 

@@ -12,7 +12,8 @@
 {#if asChild}
 	<slot builder={$groupLabel(id)} />
 {:else}
-	<div use:melt={$groupLabel(id)} {...$$restProps}>
-		<slot builder={$groupLabel(id)} />
+	{@const builder = $groupLabel(id)}
+	<div use:melt={builder} {...$$restProps}>
+		<slot {builder} />
 	</div>
 {/if}

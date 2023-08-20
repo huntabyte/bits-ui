@@ -17,14 +17,13 @@ type Props = Expand<
 	OmitValue<CreateRadioGroupProps> & {
 		value?: CreateRadioGroupProps["defaultValue"];
 		onValueChange?: OnChangeFn<CreateRadioGroupProps["defaultValue"]>;
-	}
+	} & AsChild
 > &
-	AsChild &
 	HTMLDivAttributes;
 
 type InputProps = AsChild & HTMLInputAttributes;
 
-type ItemProps = Expand<ObjectVariation<RadioGroupItemProps>> & AsChild & HTMLButtonAttributes;
+type ItemProps = Expand<ObjectVariation<RadioGroupItemProps> & AsChild> & HTMLButtonAttributes;
 
 type ItemEvents = RadioGroupComponentEvents["item"];
 

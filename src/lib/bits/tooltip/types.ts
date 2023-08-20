@@ -18,24 +18,34 @@ type Props = Expand<
 	}
 >;
 
-type ContentProps<T extends Transition = Transition> = {
-	transition?: T;
-	transitionConfig?: TransitionParams<T>;
-	sideOffset?: number;
-} & AsChild &
+type ContentProps<T extends Transition = Transition> = Expand<
+	{
+		transition?: T;
+		transitionConfig?: TransitionParams<T>;
+		sideOffset?: number;
+	} & AsChild
+> &
 	HTMLDivAttributes;
 
 type TriggerProps = AsChild & HTMLButtonAttributes;
+type ArrowProps = Expand<
+	{
+		size?: number;
+	} & AsChild
+> &
+	HTMLDivAttributes;
 
 type TriggerEvents = TooltipComponentEvents["trigger"];
 type ContentEvents = TooltipComponentEvents["content"];
 
 export type {
 	Props,
+	ArrowProps,
 	TriggerProps,
 	ContentProps,
 	//
 	Props as TooltipProps,
+	ArrowProps as TooltipArrowProps,
 	ContentProps as TooltipContentProps,
 	TriggerProps as TooltipTriggerProps,
 	//

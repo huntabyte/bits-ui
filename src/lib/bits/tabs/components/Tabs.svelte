@@ -39,7 +39,8 @@
 {#if asChild}
 	<slot builder={$root} />
 {:else}
-	<div use:melt={$root} {...$$restProps}>
-		<slot builder={$root} />
+	{@const builder = $root}
+	<div use:melt={builder} {...$$restProps}>
+		<slot {builder} />
 	</div>
 {/if}

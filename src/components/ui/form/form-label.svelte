@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Label } from "@/registry/new-york/ui/label";
+	import { Label } from "@/components/ui/label";
 	import { cn } from "@/utils";
 	import { getContext } from "svelte";
 	import type { FormFieldContext } from ".";

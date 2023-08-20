@@ -34,11 +34,6 @@ export const root: APISchema = {
 			name: "state",
 			value: "'checked' | 'unchecked' | 'indeterminate'",
 			description: "The checkbox's state. Can be 'checked', 'unchecked', or 'indeterminate'."
-		},
-		{
-			name: "melt-checkbox",
-			value: "''",
-			description: "Present on the root element of the checkbox."
 		}
 	]
 };
@@ -62,27 +57,13 @@ export const input: APISchema = {
 			description:
 				"Whether or not the checkbox input is disabled. If not provided, it will inherit the disabled state of the Root component, which defaults to false."
 		}
-	],
-	dataAttributes: [
-		{
-			name: "melt-checkbox-input",
-			value: "''",
-			description: "Present on the input element."
-		}
 	]
 };
 
 export const indicator: APISchema = {
 	title: "Indicator",
 	description:
-		"A component which passes `isChecked` and `isIndeterminate` slot props to its children. This is useful for rendering the checkbox's indicator icon depending on its state.",
-	dataAttributes: [
-		{
-			name: "melt-checkbox-indicator",
-			value: "''",
-			description: "Present on the indicator element."
-		}
-	]
+		"A component which passes `isChecked` and `isIndeterminate` slot props to its children. This is useful for rendering the checkbox's indicator icon depending on its state."
 };
 
 export const checkbox = [root, input, indicator];

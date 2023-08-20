@@ -21,9 +21,9 @@
 	on:m-click
 >
 	<span class="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
-		<DropdownMenuPrimitive.RadioItemIndicator>
+		<DropdownMenuPrimitive.RadioIndicator>
 			<DotFilled class="h-4 w-4 fill-current" />
-		</DropdownMenuPrimitive.RadioItemIndicator>
+		</DropdownMenuPrimitive.RadioIndicator>
 	</span>
 	<slot />
 </DropdownMenuPrimitive.RadioItem>

@@ -10,7 +10,8 @@ const NAME = "Popover";
 
 export const ctx = {
 	set,
-	get
+	get,
+	setArrow
 };
 
 function set(props: CreatePopoverProps) {
@@ -27,4 +28,10 @@ function set(props: CreatePopoverProps) {
 
 function get() {
 	return getContext<PopoverReturn>(NAME);
+}
+
+function setArrow(size = 8) {
+	const popover = get();
+	popover.options.arrowSize.set(size);
+	return popover;
 }

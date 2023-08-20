@@ -28,7 +28,8 @@
 {#if asChild}
 	<slot builder={$radioGroup} />
 {:else}
-	<div use:melt={$radioGroup} {...$$restProps}>
-		<slot builder={$radioGroup} />
+	{@const builder = $radioGroup}
+	<div use:melt={builder} {...$$restProps}>
+		<slot {builder} />
 	</div>
 {/if}

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { HoverCard as HoverCardPrimitive } from "@/lib";
+	import { LinkPreview as HoverCardPrimitive } from "@/lib";
 	import { cn } from "@/utils";
 
 	type $$Props = HoverCardPrimitive.ContentProps;
