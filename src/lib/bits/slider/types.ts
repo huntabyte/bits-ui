@@ -12,9 +12,8 @@ type Props = Expand<
 	OmitValue<CreateSliderProps> & {
 		value?: CreateSliderProps["defaultValue"] & {};
 		onValueChange?: OnChangeFn<CreateSliderProps["defaultValue"]>;
-	}
+	} & AsChild
 > &
-	AsChild &
 	HTMLSpanAttributes;
 
 type RangeProps = AsChild & HTMLSpanAttributes;

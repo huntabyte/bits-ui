@@ -13,17 +13,18 @@ type Props = Expand<
 		orientation?: CreateTabsProps["orientation"] & {};
 		value?: CreateTabsProps["defaultValue"] & {};
 		onValueChange?: OnChangeFn<CreateTabsProps["defaultValue"]>;
-	}
+	} & AsChild
 > &
-	AsChild &
 	HTMLDivAttributes;
 
-type ContentProps = {
-	value: string;
-} & AsChild &
+type ContentProps = Expand<
+	{
+		value: string;
+	} & AsChild
+> &
 	HTMLDivAttributes;
 
-type TriggerProps = Expand<ObjectVariation<TabsTriggerProps>> & AsChild & HTMLDivAttributes;
+type TriggerProps = Expand<ObjectVariation<TabsTriggerProps> & AsChild> & HTMLDivAttributes;
 
 type ListProps = AsChild & HTMLDivAttributes;
 

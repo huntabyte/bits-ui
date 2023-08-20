@@ -18,15 +18,20 @@ type Props = Expand<
 >;
 
 type TriggerProps = AsChild & HTMLAnchorAttributes;
-type ContentProps<T extends Transition = Transition> = {
-	transition?: T;
-	transitionConfig?: TransitionParams<T>;
-} & AsChild &
+
+type ContentProps<T extends Transition = Transition> = Expand<
+	{
+		transition?: T;
+		transitionConfig?: TransitionParams<T>;
+	} & AsChild
+> &
 	HTMLDivAttributes;
 
-type ArrowProps = {
-	size?: number;
-} & AsChild &
+type ArrowProps = Expand<
+	{
+		size?: number;
+	} & AsChild
+> &
 	HTMLDivAttributes;
 
 type TriggerEvents = LinkPreviewComponentEvents["trigger"];

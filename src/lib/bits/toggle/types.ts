@@ -6,9 +6,8 @@ type Props = Expand<
 	OmitPressed<CreateToggleProps> & {
 		pressed?: CreateToggleProps["defaultPressed"];
 		onPressedChange?: OnChangeFn<CreateToggleProps["defaultPressed"]>;
-	}
+	} & AsChild
 > &
-	AsChild &
 	HTMLButtonAttributes;
 
 type Events = ToggleComponentEvents["root"];
