@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.0.26
+
+### Patch Changes
+
+- b6302eb: Improve component custom event types
+
 ## 0.0.25
 
 ### Patch Changes
