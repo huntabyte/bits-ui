@@ -1,0 +1,27 @@
+diff --git a/dist/builders/dialog/create.js b/dist/builders/dialog/create.js
+index 13cf6ab7c4ee392ae7530813b6f5a3edc2819628..d42908e0e139327970718e5c32731b3d0cc09de5 100644
+--- a/dist/builders/dialog/create.js
++++ b/dist/builders/dialog/create.js
+@@ -38,13 +38,15 @@ export function createDialog(props) {
+         activeTrigger.set(triggerEl);
+     }
+     function handleClose() {
+-        open.set(false);
+-        const triggerEl = document.getElementById(ids.trigger);
+-        if (triggerEl) {
+-            tick().then(() => {
+-                triggerEl.focus();
+-            });
+-        }
++        tick().then(() => {
++            open.set(false);
++            const triggerEl = document.getElementById(ids.trigger);
++            if (triggerEl) {
++                tick().then(() => {
++                    triggerEl.focus();
++                });
++            }
++        })
+     }
+     onMount(() => {
+         activeTrigger.set(document.getElementById(ids.trigger));

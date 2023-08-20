@@ -88,3 +88,7 @@ export function bitWrap<T extends object>(storeValues: T, bit: string): T {
 		[`data-bits-${bit}`]: ""
 	};
 }
+
+export function sleep(ms: number) {
+	return new Promise((resolve) => setTimeout(resolve, ms));
+}

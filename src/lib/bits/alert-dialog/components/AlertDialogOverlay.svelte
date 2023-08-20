@@ -5,11 +5,17 @@
 
 	type $$Props = OverlayProps;
 	export let asChild = false;
-	const overlay = ctx.get().elements.overlay;
+	const {
+		elements: { overlay },
+		states: { open }
+	} = ctx.get();
 </script>
 
-{#if asChild}
-	<slot builder={$overlay} />
-{:else}
-	<div use:melt={$overlay} {...$$restProps} />
+{#if $open}
+	{@const builder = $overlay}
+	{#if asChild}
+		<slot {builder} />
+	{:else}
+		<div use:melt={builder} {...$$restProps} />
+	{/if}
 {/if}

@@ -3,6 +3,7 @@
 	import { SheetOverlay, SheetPortal, sheetVariants, type Side } from ".";
 	import { Cross2 } from "radix-icons-svelte";
 	import { cn } from "@/utils";
+	import { fly, slide } from "svelte/transition";
 
 	type $$Props = SheetPrimitive.ContentProps & {
 		side?: Side;
