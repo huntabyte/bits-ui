@@ -7,8 +7,8 @@ export type PropSchema = {
 
 export type DataAttrSchema = {
 	name: string;
-	value: string;
-	description: string;
+	value?: string;
+	description?: string;
 };
 
 export type APISchema = {

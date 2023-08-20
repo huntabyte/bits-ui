@@ -3,50 +3,43 @@ import { asChild } from "./helpers.js";
 
 export const root: APISchema = {
 	title: "Root",
-	description: "The root component used to manage the state of the state of the popover.",
+	description: "The progress bar component.",
 	props: [
 		asChild,
 		{
-			name: "disableFocusTrap",
-			type: "boolean",
-			default: "false",
+			name: "max",
+			type: "number",
+			default: "100",
 			description:
-				"Whether or not to disable the focus trap that is applied to the popover when it's open."
+				"The maximum value of the progress bar. Used to calculate the percentage of the progress bar."
 		},
 		{
-			name: "preventScroll",
-			type: "boolean",
-			default: "false",
-			description: "Whether or not to prevent scrolling the body while the popover is open."
+			name: "value",
+			type: "number",
+			default: "0",
+			description: "The current value of the progress bar."
 		},
 		{
-			name: "positioning",
-			type: "FloatingConfig",
-			default: '{ position: "bottom", align: "center" }',
-			description: "The positioning configuration for the popover. (docs coming soon)"
+			name: "onValueChange",
+			type: "(value: number) => void",
+			description: "A callback that fires when the value changes."
+		}
+	],
+	dataAttributes: [
+		{
+			name: "value",
+			description: "The current value of the progress bar."
 		},
 		{
-			name: "closeOnOutsideClick",
-			type: "boolean",
-			default: "true",
-			description: "Whether or not to close the popover when clicking outside of it."
+			name: "state",
+			description: "The current state of the progress bar.",
+			value: "'indeterminate' | 'complete' | 'loading'"
 		},
 		{
-			name: "closeOnEscape",
-			type: "boolean",
-			default: "true",
-			description: "Whether or not to close the popover when pressing the escape key."
-		},
-		{
-			name: "open",
-			type: "boolean",
-			default: "false",
-			description: "The open state of the link popover component."
-		},
-		{
-			name: "onOpenChange",
-			type: "(open: boolean) => void",
-			description: "A callback that fires when the open state changes."
+			name: "max",
+			description: "The maximum value of the progress bar."
 		}
 	]
 };
+
+export const progress = [root];

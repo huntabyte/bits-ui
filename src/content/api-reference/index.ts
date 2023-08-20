@@ -13,6 +13,8 @@ import { label } from "./label";
 import { linkPreview } from "./link-preview";
 import { popover } from "./popover";
 import { menubar } from "./menubar";
+import { progress } from "./progress";
+import { radioGroup } from "./radio-group";
 
 export const bits = [
 	"accordion",
@@ -62,7 +64,9 @@ export const apiSchemas: Record<Bit, APISchema[]> = {
 	label,
 	"link-preview": linkPreview,
 	menubar,
-	popover
+	popover,
+	progress,
+	"radio-group": radioGroup
 };
 
 export function getAPISchemas(bit: Bit): APISchema[] {
