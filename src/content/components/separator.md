@@ -3,6 +3,17 @@ title: Separator
 description: Visually divide or separate sections or elements, providing clarity and organization.
 ---
 
+<script>
+	import { APISection, ComponentPreview, SeparatorDemo } from '@/components'
+	export let schemas;
+</script>
+
+<ComponentPreview name="separator-demo" comp="Separator">
+
+<SeparatorDemo slot="preview" />
+
+</ComponentPreview>
+
 ## Structure
 
 ```svelte
@@ -12,5 +23,7 @@ description: Visually divide or separate sections or elements, providing clarity
 
 <Separator.Root />
 ```
+
+<APISection {schemas} />
 
 🚧 **UNDER CONSTRUCTION** 🚧

@@ -3,6 +3,17 @@ title: Select
 description: Enable users to choose a single option from a dropdown menu that presents a list of selectable items.
 ---
 
+<script>
+	import { APISection, ComponentPreview, SelectDemo } from '@/components'
+	export let schemas;
+</script>
+
+<ComponentPreview name="select-demo" comp="Select">
+
+<SelectDemo slot="preview" />
+
+</ComponentPreview>
+
 ## Structure
 
 ```svelte
@@ -31,5 +42,7 @@ description: Enable users to choose a single option from a dropdown menu that pr
 	</Select.Content>
 </Select.Root>
 ```
+
+<APISection {schemas} />
 
 🚧 **UNDER CONSTRUCTION** 🚧

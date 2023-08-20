@@ -15,6 +15,8 @@ import { popover } from "./popover";
 import { menubar } from "./menubar";
 import { progress } from "./progress";
 import { radioGroup } from "./radio-group";
+import { select } from "./select";
+import { separator } from "./separator";
 
 export const bits = [
 	"accordion",
@@ -66,7 +68,9 @@ export const apiSchemas: Record<Bit, APISchema[]> = {
 	menubar,
 	popover,
 	progress,
-	"radio-group": radioGroup
+	"radio-group": radioGroup,
+	select,
+	separator
 };
 
 export function getAPISchemas(bit: Bit): APISchema[] {
