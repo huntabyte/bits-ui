@@ -40,7 +40,7 @@
 						() => {
 							localOpen.set(next);
 						},
-						$transitionTimes.out ? $transitionTimes.out * 2000 : 0
+						$transitionTimes.out ? $transitionTimes.out + 2000 : 0
 					);
 					open = !next;
 					return !next;
