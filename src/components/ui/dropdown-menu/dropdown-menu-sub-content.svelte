@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { DropdownMenu as DropdownMenuPrimitive } from "@/lib";
 	import { cn } from "@/utils";
-	import { subContentTransition } from ".";
+	import { transition } from ".";
 
 	type $$Props = DropdownMenuPrimitive.SubContentProps;
 
@@ -10,7 +10,8 @@
 </script>
 
 <DropdownMenuPrimitive.SubContent
-	transition={subContentTransition}
+	{transition}
+	transitionConfig={{ x: -5, y: 0 }}
 	class={cn(
 		"z-50 min-w-[8rem] rounded-md border bg-popover p-1 text-popover-foreground shadow-lg focus:outline-none",
 		className
