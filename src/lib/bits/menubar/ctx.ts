@@ -13,7 +13,7 @@ import {
 } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
 import { generateId, getOptionUpdater, removeUndefined } from "$internal/index.js";
-import type { Readable } from "svelte/store";
+import type { Readable, Writable } from "svelte/store";
 
 const NAME = "Menubar";
 const MENU_NAME = "MenubarMenu";
@@ -42,10 +42,6 @@ export const ctx = {
 	getCheckboxIndicator
 };
 
-function get() {
-	return getContext<MenubarReturn>(NAME);
-}
-
 function set(props: MenubarProps) {
 	const menubar = createMenubar(removeUndefined(props));
 	setContext(NAME, menubar);
@@ -54,6 +50,9 @@ function set(props: MenubarProps) {
 		...menubar,
 		updateOption: getOptionUpdater(menubar.options)
 	};
+}
+function get() {
+	return getContext<MenubarReturn>(NAME);
 }
 
 function getMenu() {
