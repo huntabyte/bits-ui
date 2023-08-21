@@ -13,7 +13,7 @@ import type { HTMLAttributes, HTMLButtonAttributes, HTMLInputAttributes } from "
 import type { ButtonEventHandler, DivEventHandler } from "$lib/index.js";
 
 type Props = Expand<
-	OmitOpen<OmitValue<Omit<CreateSelectProps, "defaultValueLabel" | "forceVisible">>> & {
+	OmitOpen<OmitValue<Omit<CreateSelectProps, "defaultValueLabel">>> & {
 		value?: CreateSelectProps["defaultValue"] & {};
 		onValueChange?: OnChangeFn<CreateSelectProps["defaultValue"]>;
 		open?: CreateSelectProps["defaultOpen"] & {};

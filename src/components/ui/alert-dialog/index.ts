@@ -49,7 +49,7 @@ type TransitionParams = {
 
 export const transition = (
 	node: Element,
-	params: TransitionParams = { y: 2, start: 0.95, duration: 200 }
+	params: TransitionParams = { y: -8, start: 0.95, duration: 200 }
 ): TransitionConfig => {
 	const style = getComputedStyle(node);
 	const transform = style.transform === "none" ? "" : style.transform;

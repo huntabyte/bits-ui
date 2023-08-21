@@ -34,38 +34,38 @@
 		<slot {builder} />
 	{:else if transition}
 		<div
+			transition:transition|global={transitionConfig}
 			use:melt={builder}
 			{...$$restProps}
 			on:m-keydown
-			transition:transition|global={transitionConfig}
 		>
 			<slot {builder} />
 		</div>
 	{:else if inTransition && outTransition}
 		<div
+			in:inTransition|global={inTransitionConfig}
+			out:outTransition|global={outTransitionConfig}
 			use:melt={builder}
 			{...$$restProps}
 			on:m-keydown
-			in:inTransition|global={inTransitionConfig}
-			out:outTransition|global={outTransitionConfig}
 		>
 			<slot {builder} />
 		</div>
 	{:else if inTransition}
 		<div
+			in:inTransition|global={inTransitionConfig}
 			use:melt={builder}
 			{...$$restProps}
 			on:m-keydown
-			in:inTransition|global={inTransitionConfig}
 		>
 			<slot {builder} />
 		</div>
 	{:else if outTransition}
 		<div
+			out:outTransition|global={outTransitionConfig}
 			use:melt={builder}
 			{...$$restProps}
 			on:m-keydown
-			out:outTransition|global={outTransitionConfig}
 		>
 			<slot {builder} />
 		</div>
