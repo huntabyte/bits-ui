@@ -32,21 +32,27 @@
 		tOpen,
 		onOpenChange: ({ next }) => {
 			open = next;
-			tOpen.set(next);
-			onOpenChange?.(next);
-			if (next) {
-				sleep($transitionTimes.in ? $transitionTimes.in + 100 : 0).then(() => {
-					console.log("im waiting");
-					return next;
-				});
-				return next;
-			} else {
-				sleep($transitionTimes.out ? $transitionTimes.out + 100 : 0).then(() => {
-					console.log("im waiting");
-				});
-				console.log("im returning");
-				return next;
+			if (next !== $tOpen) {
+				tOpen.set(next);
+				if (next) {
+					setTimeout(
+						() => {
+							localOpen.set(next);
+						},
+						$transitionTimes.in ? $transitionTimes.in + 100 : 0
+					);
+				} else {
+					setTimeout(
+						() => {
+							localOpen.set(next);
+						},
+						$transitionTimes.out ? $transitionTimes.out + 100 : 0
+					);
+				}
+				return !next;
 			}
+			onOpenChange?.(next);
+			return next;
 		}
 	});
 
