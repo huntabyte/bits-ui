@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.0.30
+
+### Patch Changes
+
+- 9f21863: Fix: Select events
+
 ## 0.0.29
 
 ### Patch Changes
