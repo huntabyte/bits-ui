@@ -30,6 +30,7 @@
 		on:m-keydown
 		on:m-pointerleave
 		on:m-pointermove
+		on:m-keydown
 		{...disabledAttrs(disabled)}
 	>
 		<slot {builder} />
