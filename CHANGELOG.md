@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.0.28
+
+### Patch Changes
+
+- 5d2e054: Feat: Improve transition props to support `in` and `out` transitions.
+
 ## 0.0.27
 
 ### Patch Changes
