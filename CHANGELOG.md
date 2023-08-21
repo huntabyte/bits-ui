@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.0.29
+
+### Patch Changes
+
+- 6d35961: Fix: `isBrowser` import
+
 ## 0.0.28
 
 ### Patch Changes
