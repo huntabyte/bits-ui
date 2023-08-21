@@ -1,6 +1,9 @@
 <script lang="ts">
+	import { writable } from "svelte/store";
 	import { ctx } from "../ctx.js";
 	import type { Props } from "../types.js";
+	import type { TransitionTimes } from "$lib/internal/types.js";
+	import { sleep } from "$lib/internal/helpers.js";
 
 	type $$Props = Props;
 
@@ -12,20 +15,38 @@
 	export let open: $$Props["open"] = undefined;
 	export let onOpenChange: $$Props["onOpenChange"] = undefined;
 
+	const transitionTimes = writable<TransitionTimes>({});
+	const tOpen = writable(false);
+
 	const {
 		states: { open: localOpen },
 		updateOption
 	} = ctx.set({
-		preventScroll,
 		closeOnEscape,
+		preventScroll,
 		closeOnOutsideClick,
 		portal,
 		forceVisible,
 		defaultOpen: open,
+		transitionTimes,
+		tOpen,
 		onOpenChange: ({ next }) => {
 			open = next;
+			tOpen.set(next);
 			onOpenChange?.(next);
-			return next;
+			if (next) {
+				sleep($transitionTimes.in ? $transitionTimes.in + 100 : 0).then(() => {
+					console.log("im waiting");
+					return next;
+				});
+				return next;
+			} else {
+				sleep($transitionTimes.out ? $transitionTimes.out + 100 : 0).then(() => {
+					console.log("im waiting");
+				});
+				console.log("im returning");
+				return next;
+			}
 		}
 	});
 

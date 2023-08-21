@@ -7,11 +7,12 @@
 	export let asChild = false;
 	const {
 		elements: { overlay },
-		states: { open }
+		states: { open },
+		tOpen
 	} = ctx.get();
 </script>
 
-{#if $open}
+{#if $tOpen}
 	{@const builder = $overlay}
 	{#if asChild}
 		<slot {builder} />

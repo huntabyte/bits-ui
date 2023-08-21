@@ -1,5 +1,6 @@
 import type { Action } from "svelte/action";
 import type { HTMLAttributes } from "svelte/elements";
+import type { Writable } from "svelte/store";
 import type { TransitionConfig } from "svelte/transition";
 
 export type ObjectVariation<T> = T extends object ? T : never;
@@ -63,3 +64,18 @@ export type TransitionProps<
 	outTransition?: Out;
 	outTransitionConfig?: TransitionParams<Out>;
 }>;
+
+export type TransitionTimes = {
+	in?: number;
+	out?: number;
+};
+
+export type TransitionTimesStore = Writable<Expand<TransitionTimes>>;
+
+export type TransitionTimesProp = {
+	transitionTimes: TransitionTimesStore;
+};
+
+export type TOpen = {
+	tOpen: Writable<boolean>;
+};
