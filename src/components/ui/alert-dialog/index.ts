@@ -12,6 +12,48 @@ import Header from "./alert-dialog-header.svelte";
 import Overlay from "./alert-dialog-overlay.svelte";
 import Content from "./alert-dialog-content.svelte";
 import Description from "./alert-dialog-description.svelte";
+import type { TransitionConfig } from "svelte/transition";
+import { styleToString } from "$lib/internal";
+import { cubicOut } from "svelte/easing";
+
+type TransitionParams = {
+	y: number;
+	start: number;
+	duration?: number;
+};
+
+export const transition = (
+	node: Element,
+	params: TransitionParams = { y: 2, start: 0.95, duration: 200 }
+): TransitionConfig => {
+	const style = getComputedStyle(node);
+	const transform = style.transform === "none" ? "" : style.transform;
+
+	const scaleConversion = (valueA: number, scaleA: [number, number], scaleB: [number, number]) => {
+		const [minA, maxA] = scaleA;
+		const [minB, maxB] = scaleB;
+
+		const percentage = (valueA - minA) / (maxA - minA);
+		const valueB = percentage * (maxB - minB) + minB;
+
+		return valueB;
+	};
+
+	return {
+		duration: params.duration ?? 200,
+		delay: 0,
+		css: (t) => {
+			const y = scaleConversion(t, [0, 1], [params.y, 0]);
+			const scale = scaleConversion(t, [0, 1], [params.start, 1]);
+
+			return styleToString({
+				transform: `${transform} translate3d(0, ${y}px, 0) scale(${scale})`,
+				opacity: t
+			});
+		},
+		easing: cubicOut
+	};
+};
 
 export {
 	Root,

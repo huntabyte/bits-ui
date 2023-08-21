@@ -21,7 +21,6 @@
 
 	const {
 		elements: { content },
-		states: { open },
 		transitionTimes,
 		tOpen
 	} = ctx.get();

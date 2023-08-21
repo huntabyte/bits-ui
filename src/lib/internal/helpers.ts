@@ -3,7 +3,6 @@ import { nanoid } from "nanoid/non-secure";
 import type { Writable } from "svelte/store";
 import type { ActionReturn } from "svelte/action";
 import type { Builder, Transition, TransitionParams, TransitionTimesStore } from "./types.js";
-import type { TransitionConfig } from "svelte/transition";
 import { isBrowser } from "@/utils/is.js";
 
 export function noop() {
