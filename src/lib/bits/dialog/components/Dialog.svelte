@@ -22,8 +22,8 @@
 		states: { open: localOpen },
 		updateOption
 	} = ctx.set({
-		preventScroll,
 		closeOnEscape,
+		preventScroll,
 		closeOnOutsideClick,
 		portal,
 		forceVisible,
