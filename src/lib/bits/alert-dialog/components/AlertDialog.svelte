@@ -4,6 +4,7 @@
 	import type { Props } from "../types.js";
 	import type { TransitionTimes } from "$lib/internal/types.js";
 	import { onDestroy } from "svelte";
+	import { isBrowser } from "@/utils/is.js";
 
 	type $$Props = Props;
 
@@ -56,7 +57,9 @@
 	});
 
 	onDestroy(() => {
-		window.clearTimeout(timeout);
+		if (isBrowser) {
+			window.clearTimeout(timeout);
+		}
 	});
 
 	$: open !== undefined && localOpen.set(open);

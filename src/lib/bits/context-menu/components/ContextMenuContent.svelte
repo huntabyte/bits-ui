@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { setTransitionTimes } from "$lib/internal/helpers.js";
-
 	import Overlay from "$lib/internal/overlay.svelte";
 
 	import { melt } from "@melt-ui/svelte";
@@ -24,22 +22,11 @@
 	export let asChild = false;
 	const {
 		elements: { menu },
-		tOpen,
-		transitionTimes
+		states: { open }
 	} = ctx.getContent(sideOffset);
-
-	$: setTransitionTimes(transitionTimes, {
-		transition,
-		transitionConfig,
-		inTransition,
-		inTransitionConfig,
-		outTransition,
-		outTransitionConfig
-	});
 </script>
 
-{#if $tOpen}
-	<Overlay />
+{#if $open}
 	{@const builder = $menu}
 	{#if asChild}
 		<slot {builder} />

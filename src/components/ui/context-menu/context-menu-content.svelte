@@ -11,7 +11,6 @@
 
 <ContextMenuPrimitive.Content
 	transition={ContextMenu.transition}
-	transitionConfig={{ duration: 150, y: 4, start: 0.95 }}
 	class={cn(
 		"z-50 min-w-[8rem] rounded-md border bg-popover p-1 text-popover-foreground shadow-md focus:outline-none",
 		className
