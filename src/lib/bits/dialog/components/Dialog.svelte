@@ -3,7 +3,7 @@
 	import { ctx } from "../ctx.js";
 	import type { Props } from "../types.js";
 	import type { TransitionTimes } from "$lib/internal/types.js";
-	import { isBrowser } from "@/utils/is.js";
+	import { isBrowser } from "$lib/internal/index.js";
 	import { onDestroy } from "svelte";
 
 	type $$Props = Props;
