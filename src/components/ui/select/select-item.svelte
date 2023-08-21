@@ -23,8 +23,6 @@
 	)}
 	{...$$restProps}
 	on:m-click
-	on:m-pointermove
-	on:m-focusin
 >
 	<span class="absolute right-2 flex h-3.5 w-3.5 items-center justify-center">
 		<SelectPrimitive.ItemIndicator>

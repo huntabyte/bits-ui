@@ -5,8 +5,8 @@ import type {
 	HTMLHeadingAttributes,
 	OnChangeFn,
 	Transition,
-	TransitionParams,
-	AsChild
+	AsChild,
+	TransitionProps
 } from "$internal/index.js";
 import type { HTMLButtonAttributes } from "svelte/elements";
 import type { CreateDialogProps } from "@melt-ui/svelte";
@@ -24,17 +24,19 @@ type TriggerProps = AsChild & HTMLButtonAttributes;
 type ActionProps = TriggerProps;
 type CancelProps = TriggerProps;
 
-type ContentProps<T extends Transition = Transition> = Expand<
-	{
-		transition?: T;
-		transitionConfig?: TransitionParams<T>;
-	} & AsChild
-> &
-	HTMLDivAttributes;
+type ContentProps<
+	T extends Transition = Transition,
+	In extends Transition = Transition,
+	Out extends Transition = Transition
+> = Expand<TransitionProps<T, In, Out> & AsChild> & HTMLDivAttributes;
 
 type DescriptionProps = AsChild & HTMLDivAttributes;
 
-type OverlayProps = AsChild & HTMLDivAttributes;
+type OverlayProps<
+	T extends Transition = Transition,
+	In extends Transition = Transition,
+	Out extends Transition = Transition
+> = Expand<TransitionProps<T, In, Out> & AsChild> & HTMLDivAttributes;
 
 type PortalProps = AsChild & HTMLDivAttributes;
 

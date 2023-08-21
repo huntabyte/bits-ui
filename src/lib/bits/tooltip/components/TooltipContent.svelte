@@ -5,13 +5,21 @@
 	import type { ContentEvents, ContentProps } from "../types.js";
 
 	type T = $$Generic<Transition>;
-	type $$Props = ContentProps<T>;
+	type In = $$Generic<Transition>;
+	type Out = $$Generic<Transition>;
+
+	type $$Props = ContentProps<T, In, Out>;
 	type $$Events = ContentEvents;
 
-	export let transition: ContentProps<T>["transition"] = undefined;
-	export let transitionConfig: ContentProps<T>["transitionConfig"] = undefined;
-	export let sideOffset: ContentProps<T>["sideOffset"] = 4;
+	export let transition: ContentProps<T, In, Out>["transition"] = undefined;
+	export let transitionConfig: ContentProps<T, In, Out>["transitionConfig"] = undefined;
+	export let inTransition: ContentProps<T, In, Out>["inTransition"] = undefined;
+	export let inTransitionConfig: ContentProps<T>["inTransitionConfig"] = undefined;
+	export let outTransition: ContentProps<T, In, Out>["outTransition"] = undefined;
+	export let outTransitionConfig: ContentProps<T, In, Out>["outTransitionConfig"] = undefined;
+
 	export let asChild = false;
+	export let sideOffset: ContentProps<T>["sideOffset"] = 4;
 
 	const {
 		elements: { content },
@@ -26,7 +34,38 @@
 	{:else if transition}
 		<div
 			use:melt={builder}
-			transition:transition={transitionConfig}
+			transition:transition|global={transitionConfig}
+			{...$$restProps}
+			on:m-pointerdown
+			on:m-pointerenter
+		>
+			<slot {builder} />
+		</div>
+	{:else if inTransition && outTransition}
+		<div
+			use:melt={builder}
+			in:inTransition|global={inTransitionConfig}
+			out:outTransition|global={outTransitionConfig}
+			{...$$restProps}
+			on:m-pointerdown
+			on:m-pointerenter
+		>
+			<slot {builder} />
+		</div>
+	{:else if inTransition}
+		<div
+			use:melt={builder}
+			in:inTransition|global={inTransitionConfig}
+			{...$$restProps}
+			on:m-pointerdown
+			on:m-pointerenter
+		>
+			<slot {builder} />
+		</div>
+	{:else if outTransition}
+		<div
+			use:melt={builder}
+			out:outTransition|global={outTransitionConfig}
 			{...$$restProps}
 			on:m-pointerdown
 			on:m-pointerenter

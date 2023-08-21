@@ -4,8 +4,8 @@ import type {
 	HTMLDivAttributes,
 	OnChangeFn,
 	Transition,
-	TransitionParams,
-	AsChild
+	AsChild,
+	TransitionProps
 } from "$internal/index.js";
 import type { CreateLinkPreviewProps, LinkPreviewComponentEvents } from "@melt-ui/svelte";
 import type { HTMLAnchorAttributes } from "svelte/elements";
@@ -19,13 +19,11 @@ type Props = Expand<
 
 type TriggerProps = AsChild & HTMLAnchorAttributes;
 
-type ContentProps<T extends Transition = Transition> = Expand<
-	{
-		transition?: T;
-		transitionConfig?: TransitionParams<T>;
-	} & AsChild
-> &
-	HTMLDivAttributes;
+type ContentProps<
+	T extends Transition = Transition,
+	In extends Transition = Transition,
+	Out extends Transition = Transition
+> = Expand<TransitionProps<T, In, Out> & AsChild> & HTMLDivAttributes;
 
 type ArrowProps = Expand<
 	{

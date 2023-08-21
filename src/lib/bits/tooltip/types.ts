@@ -5,9 +5,9 @@ import type {
 	OmitOpen,
 	OmitForceVisible,
 	Transition,
-	TransitionParams,
 	OnChangeFn,
-	AsChild
+	AsChild,
+	TransitionProps
 } from "$internal/index.js";
 import type { HTMLButtonAttributes } from "svelte/elements";
 
@@ -18,12 +18,15 @@ type Props = Expand<
 	}
 >;
 
-type ContentProps<T extends Transition = Transition> = Expand<
+type ContentProps<
+	T extends Transition = Transition,
+	In extends Transition = Transition,
+	Out extends Transition = Transition
+> = Expand<
 	{
-		transition?: T;
-		transitionConfig?: TransitionParams<T>;
 		sideOffset?: number;
-	} & AsChild
+	} & TransitionProps<T, In, Out> &
+		AsChild
 > &
 	HTMLDivAttributes;
 

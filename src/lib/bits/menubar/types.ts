@@ -5,7 +5,9 @@ import type {
 	OmitChecked,
 	OmitOpen,
 	OmitValue,
-	OnChangeFn
+	OnChangeFn,
+	Transition,
+	TransitionProps
 } from "$internal/index.js";
 import type { DivEventHandler, ButtonEventHandler } from "$lib/index.js";
 import type {
@@ -45,10 +47,15 @@ type RadioGroupProps = Expand<
 > &
 	HTMLDivAttributes;
 
-type ContentProps = Expand<
+type ContentProps<
+	T extends Transition = Transition,
+	In extends Transition = Transition,
+	Out extends Transition = Transition
+> = Expand<
 	{
 		sideOffset?: number;
-	} & AsChild
+	} & TransitionProps<T, In, Out> &
+		AsChild
 > &
 	HTMLDivAttributes;
 
@@ -71,7 +78,17 @@ type SeparatorProps = AsChild & HTMLDivAttributes;
 
 type SubProps = Expand<CreateMenubarSubmenuProps>;
 
-type SubContentProps = AsChild & HTMLDivAttributes;
+type SubContentProps<
+	T extends Transition = Transition,
+	In extends Transition = Transition,
+	Out extends Transition = Transition
+> = Expand<
+	{
+		sideOffset?: number;
+	} & TransitionProps<T, In, Out> &
+		AsChild
+> &
+	HTMLDivAttributes;
 
 type SubTriggerProps = Expand<
 	{

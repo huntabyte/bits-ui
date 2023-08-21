@@ -7,13 +7,13 @@ import type {
 	OmitValue,
 	OnChangeFn,
 	Transition,
-	TransitionParams
+	TransitionProps
 } from "$internal/index.js";
 import type { HTMLAttributes, HTMLButtonAttributes, HTMLInputAttributes } from "svelte/elements";
 import type { ButtonEventHandler, DivEventHandler } from "$lib/index.js";
 
 type Props = Expand<
-	OmitOpen<OmitValue<Omit<CreateSelectProps, "defaultValueLabel" | "forceVisible">>> & {
+	OmitOpen<OmitValue<Omit<CreateSelectProps, "defaultValueLabel">>> & {
 		value?: CreateSelectProps["defaultValue"] & {};
 		onValueChange?: OnChangeFn<CreateSelectProps["defaultValue"]>;
 		open?: CreateSelectProps["defaultOpen"] & {};
@@ -22,13 +22,11 @@ type Props = Expand<
 	}
 >;
 
-type ContentProps<T extends Transition = Transition> = Expand<
-	{
-		transition?: T;
-		transitionConfig?: TransitionParams<T>;
-	} & AsChild
-> &
-	HTMLDivAttributes;
+type ContentProps<
+	T extends Transition = Transition,
+	In extends Transition = Transition,
+	Out extends Transition = Transition
+> = Expand<TransitionProps<T, In, Out> & AsChild> & HTMLDivAttributes;
 
 type GroupProps = AsChild & HTMLDivAttributes;
 type InputProps = AsChild & HTMLInputAttributes;

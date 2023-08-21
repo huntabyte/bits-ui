@@ -38,10 +38,6 @@ export const ctx = {
 	setArrow
 };
 
-function get() {
-	return getContext<ContextMenuReturn>(NAME);
-}
-
 function set(props: CreateContextMenuProps) {
 	const contextMenu = createContextMenu(removeUndefined(props));
 	setContext(NAME, contextMenu);
@@ -49,6 +45,10 @@ function set(props: CreateContextMenuProps) {
 		...contextMenu,
 		updateOption: getOptionUpdater(contextMenu.options)
 	};
+}
+
+function get() {
+	return getContext<ContextMenuReturn>(NAME);
 }
 
 function setSub(props: CreateContextSubmenuProps) {
