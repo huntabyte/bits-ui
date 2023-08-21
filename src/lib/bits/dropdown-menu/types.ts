@@ -102,11 +102,16 @@ type ArrowProps = Expand<
 type ItemEvents = {
 	"m-click": DivEventHandler<MouseEvent>;
 	"m-keydown": DivEventHandler<KeyboardEvent>;
+	"m-focusin": DivEventHandler<FocusEvent>;
+	"m-focusout": DivEventHandler<FocusEvent>;
+	"m-pointerdown": DivEventHandler<MouseEvent>;
+	"m-pointerleave": DivEventHandler<MouseEvent>;
+	"m-pointermove": DivEventHandler<MouseEvent>;
 };
 
 type CheckboxItemEvents = ItemEvents;
 type RadioItemEvents = ItemEvents;
-type SubTriggerEvents = ItemEvents;
+type SubTriggerEvents = Omit<ItemEvents, "m-pointerdown">;
 
 type TriggerEvents = {
 	"m-click": ButtonEventHandler<MouseEvent>;
