@@ -1,12 +1,15 @@
 <script lang="ts">
 	import type { Props } from "../types.js";
 	import { ctx } from "../ctx.js";
+	import { writable } from "svelte/store";
+	import type { TransitionTimes } from "$lib/internal/types.js";
+	import { onDestroy } from "svelte";
 	type $$Props = Props;
 
 	export let closeOnOutsideClick: $$Props["closeOnOutsideClick"] = undefined;
 	export let closeOnEscape: $$Props["closeOnEscape"] = undefined;
 	export let portal: $$Props["portal"] = undefined;
-	export let forceVisible: $$Props["forceVisible"] = undefined;
+	export let forceVisible: $$Props["forceVisible"] = true;
 	export let open: $$Props["open"] = undefined;
 	export let onOpenChange: $$Props["onOpenChange"] = undefined;
 	export let preventScroll: $$Props["preventScroll"] = undefined;
@@ -14,6 +17,10 @@
 	export let positioning: $$Props["positioning"] = undefined;
 	export let loop: $$Props["loop"] = undefined;
 	export let dir: $$Props["dir"] = undefined;
+
+	const transitionTimes = writable<TransitionTimes>({});
+	const tOpen = writable(open);
+	let timeout = 0;
 
 	const {
 		states: { open: localOpen },
@@ -29,12 +36,36 @@
 		positioning,
 		loop,
 		dir,
+		transitionTimes,
+		tOpen,
 		onOpenChange: ({ next }) => {
 			onOpenChange?.(next);
+			if (next !== $tOpen) {
+				tOpen.set(next);
+				if (!next) {
+					window.clearTimeout(timeout);
+					timeout = window.setTimeout(
+						() => {
+							localOpen.set(next);
+						},
+						$transitionTimes.out ? $transitionTimes.out * 0.45 : 0
+					);
+					open = !next;
+					return !next;
+				} else {
+					open = next;
+					return next;
+				}
+			}
 			open = next;
 			return next;
 		}
 	});
+
+	onDestroy(() => {
+		window.clearTimeout(timeout);
+	});
+
 	$: open !== undefined && localOpen.set(open);
 
 	$: updateOption("closeOnOutsideClick", closeOnOutsideClick);

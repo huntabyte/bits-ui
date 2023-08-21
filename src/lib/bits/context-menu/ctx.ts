@@ -1,4 +1,10 @@
-import { generateId, getOptionUpdater, removeUndefined } from "$internal/index.js";
+import {
+	generateId,
+	getOptionUpdater,
+	removeUndefined,
+	type TOpen,
+	type TransitionTimesProp
+} from "$internal/index.js";
 import {
 	type ContextMenu as ContextMenuReturn,
 	type ContextMenuRadioGroup as ContextRadioGroupReturn,
@@ -38,17 +44,21 @@ export const ctx = {
 	setArrow
 };
 
-function get() {
-	return getContext<ContextMenuReturn>(NAME);
-}
+type SetProps = CreateContextMenuProps & TransitionTimesProp & TOpen;
 
-function set(props: CreateContextMenuProps) {
+type CtxReturn = ContextMenuReturn & TransitionTimesProp & TOpen;
+
+function set(props: SetProps) {
 	const contextMenu = createContextMenu(removeUndefined(props));
-	setContext(NAME, contextMenu);
+	setContext(NAME, { ...contextMenu, transitionTimes: props.transitionTimes, tOpen: props.tOpen });
 	return {
 		...contextMenu,
 		updateOption: getOptionUpdater(contextMenu.options)
 	};
+}
+
+function get() {
+	return getContext<CtxReturn>(NAME);
 }
 
 function setSub(props: CreateContextSubmenuProps) {

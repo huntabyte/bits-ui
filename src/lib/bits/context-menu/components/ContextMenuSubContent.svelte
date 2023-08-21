@@ -12,10 +12,8 @@
 	type $$Events = SubContentEvents;
 	export let transition: SubContentProps<T, In, Out>["transition"] = undefined;
 	export let transitionConfig: SubContentProps<T, In, Out>["transitionConfig"] = undefined;
-
 	export let inTransition: SubContentProps<T, In, Out>["inTransition"] = undefined;
 	export let inTransitionConfig: SubContentProps<T>["inTransitionConfig"] = undefined;
-
 	export let outTransition: SubContentProps<T, In, Out>["outTransition"] = undefined;
 	export let outTransitionConfig: SubContentProps<T, In, Out>["outTransitionConfig"] = undefined;
 	export let asChild = false;
