@@ -51,14 +51,15 @@ export {
 };
 
 type TransitionParams = {
-	y: number;
-	start: number;
+	y?: number;
+	x?: number;
+	start?: number;
 	duration?: number;
 };
 
 export const transition = (
 	node: Element,
-	params: TransitionParams = { y: 2, start: 0.95, duration: 200 }
+	params: TransitionParams = { y: 5, x: 0, start: 0.95, duration: 200 }
 ): TransitionConfig => {
 	const style = getComputedStyle(node);
 	const transform = style.transform === "none" ? "" : style.transform;
@@ -84,11 +85,12 @@ export const transition = (
 		duration: params.duration ?? 200,
 		delay: 0,
 		css: (t) => {
-			const y = scaleConversion(t, [0, 1], [params.y, 0]);
-			const scale = scaleConversion(t, [0, 1], [params.start, 1]);
+			const y = scaleConversion(t, [0, 1], [params.y ?? 5, 0]);
+			const x = scaleConversion(t, [0, 1], [params.x ?? 0, 0]);
+			const scale = scaleConversion(t, [0, 1], [params.start ?? 0.95, 1]);
 
 			return styleToString({
-				transform: `${transform} translate3d(0, ${y}px, 0) scale(${scale})`,
+				transform: `${transform} translate3d(${x}px, ${y}px, 0) scale(${scale})`,
 				opacity: t
 			});
 		},
