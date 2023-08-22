@@ -43,7 +43,8 @@
 {#if asChild}
 	<slot builder={$root} />
 {:else}
-	<span use:melt={$root} {...$$restProps}>
-		<slot builder={$root} />
+	{@const builder = $root}
+	<span use:melt={builder} {...$$restProps}>
+		<slot {builder} />
 	</span>
 {/if}

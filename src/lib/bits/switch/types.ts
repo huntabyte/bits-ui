@@ -1,4 +1,4 @@
-import type { CreateSwitchProps, SwitchComponentEvents } from "@melt-ui/svelte";
+import type { CreateSwitchProps } from "@melt-ui/svelte";
 import type {
 	AsChild,
 	Expand,
@@ -7,21 +7,24 @@ import type {
 	OnChangeFn
 } from "$internal/index.js";
 import type { HTMLButtonAttributes, HTMLInputAttributes } from "svelte/elements";
+import type { ButtonEventHandler } from "$lib/index.js";
 
 type Props = Expand<
 	OmitChecked<CreateSwitchProps> & {
 		checked?: CreateSwitchProps["defaultChecked"] & {};
 		onCheckedChange?: OnChangeFn<CreateSwitchProps["defaultChecked"]>;
-	}
+	} & AsChild
 > &
-	AsChild &
 	HTMLButtonAttributes;
 
 type ThumbProps = AsChild & HTMLSpanAttributes;
 
 type InputProps = HTMLInputAttributes;
 
-type Events = SwitchComponentEvents["root"];
+type Events = {
+	"m-click": ButtonEventHandler<MouseEvent>;
+	"m-keydown": ButtonEventHandler<KeyboardEvent>;
+};
 
 export type {
 	Props,

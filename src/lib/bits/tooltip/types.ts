@@ -5,9 +5,9 @@ import type {
 	OmitOpen,
 	OmitForceVisible,
 	Transition,
-	TransitionParams,
 	OnChangeFn,
-	AsChild
+	AsChild,
+	TransitionProps
 } from "$internal/index.js";
 import type { HTMLButtonAttributes } from "svelte/elements";
 
@@ -18,24 +18,37 @@ type Props = Expand<
 	}
 >;
 
-type ContentProps<T extends Transition = Transition> = {
-	transition?: T;
-	transitionConfig?: TransitionParams<T>;
-	sideOffset?: number;
-} & AsChild &
+type ContentProps<
+	T extends Transition = Transition,
+	In extends Transition = Transition,
+	Out extends Transition = Transition
+> = Expand<
+	{
+		sideOffset?: number;
+	} & TransitionProps<T, In, Out> &
+		AsChild
+> &
 	HTMLDivAttributes;
 
 type TriggerProps = AsChild & HTMLButtonAttributes;
+type ArrowProps = Expand<
+	{
+		size?: number;
+	} & AsChild
+> &
+	HTMLDivAttributes;
 
 type TriggerEvents = TooltipComponentEvents["trigger"];
 type ContentEvents = TooltipComponentEvents["content"];
 
 export type {
 	Props,
+	ArrowProps,
 	TriggerProps,
 	ContentProps,
 	//
 	Props as TooltipProps,
+	ArrowProps as TooltipArrowProps,
 	ContentProps as TooltipContentProps,
 	TriggerProps as TooltipTriggerProps,
 	//

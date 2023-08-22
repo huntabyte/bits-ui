@@ -5,13 +5,10 @@
 
 	type $$Props = PortalProps;
 	const {
-		elements: { portalled },
-		states: { open }
+		elements: { portalled }
 	} = ctx.get();
 </script>
 
 <div use:melt={$portalled} {...$$restProps}>
-	{#if $open}
-		<slot />
-	{/if}
+	<slot />
 </div>

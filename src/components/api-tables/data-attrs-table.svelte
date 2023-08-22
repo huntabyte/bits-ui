@@ -25,9 +25,11 @@
 						{#if attr.value}
 							<Code neutral>{attr.value}</Code>
 						{/if}
-						<p class="text-sm leading-7 my-2">
-							{@html parseMarkdown(attr.description)}
-						</p>
+						{#if attr.description}
+							<p class="text-sm leading-7 my-2">
+								{@html parseMarkdown(attr.description)}
+							</p>
+						{/if}
 					</Table.Cell>
 				</Table.Row>
 			{/each}

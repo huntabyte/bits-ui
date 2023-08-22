@@ -40,18 +40,11 @@ export const root: APISchema = {
 export const close: APISchema = {
 	title: "Close",
 	description: "A button used to close the dialog.",
-	props: [asChild],
-	dataAttributes: [
-		{
-			name: "melt-dialog-close",
-			value: "",
-			description: "Present on the close element."
-		}
-	]
+	props: [asChild]
 };
 
 export const content: APISchema = {
-	title: "Cancel",
+	title: "Content",
 	description: "The content displayed within the dialog modal.",
 	props: [asChild],
 	dataAttributes: [
@@ -59,11 +52,6 @@ export const content: APISchema = {
 			name: "state",
 			value: "'open' | 'closed'",
 			description: "The state of the dialog."
-		},
-		{
-			name: "melt-dialog-content",
-			value: "",
-			description: "Present on the content element."
 		}
 	]
 };
@@ -71,40 +59,19 @@ export const content: APISchema = {
 export const title: APISchema = {
 	title: "Title",
 	description: "An accessibile title for the dialog.",
-	props: [asChild],
-	dataAttributes: [
-		{
-			name: "melt-dialog-title",
-			value: "",
-			description: "Present on the title element."
-		}
-	]
+	props: [asChild]
 };
 
 export const description: APISchema = {
 	title: "Description",
 	description: "An accessibile description for the dialog.",
-	props: [asChild],
-	dataAttributes: [
-		{
-			name: "melt-dialog-description",
-			value: "",
-			description: "Present on the description element."
-		}
-	]
+	props: [asChild]
 };
 
 export const trigger: APISchema = {
 	title: "Trigger",
 	description: "The element which opens the dialog on press.",
-	props: [asChild],
-	dataAttributes: [
-		{
-			name: "melt-dialog-trigger",
-			value: "",
-			description: "Present on the trigger element."
-		}
-	]
+	props: [asChild]
 };
 
 export const overlay: APISchema = {
@@ -116,11 +83,6 @@ export const overlay: APISchema = {
 			name: "state",
 			value: "'open' | 'closed'",
 			description: "The state of the dialog."
-		},
-		{
-			name: "melt-dialog-overlay",
-			value: "",
-			description: "Present on the overlay element."
 		}
 	]
 };

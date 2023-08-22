@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@melt-ui/svelte':
-    specifier: 0.36.0
-    version: 0.36.0(svelte@4.1.2)
+    specifier: 0.37.2
+    version: 0.37.2(svelte@4.1.2)
   '@sveltejs/adapter-vercel':
     specifier: ^3.0.3
     version: 3.0.3(@sveltejs/kit@1.22.4)
@@ -20,6 +20,9 @@ dependencies:
   tailwind-merge:
     specifier: ^1.14.0
     version: 1.14.0
+  unist-builder:
+    specifier: ^4.0.0
+    version: 4.0.0
 
 devDependencies:
   '@changesets/cli':
@@ -30,7 +33,7 @@ devDependencies:
     version: 0.16.5(svelte@4.1.2)
   '@melt-ui/pp':
     specifier: ^0.1.2
-    version: 0.1.2(@melt-ui/svelte@0.36.0)(svelte@4.1.2)
+    version: 0.1.2(@melt-ui/svelte@0.37.2)(svelte@4.1.2)
   '@playwright/test':
     specifier: ^1.28.1
     version: 1.36.2
@@ -89,7 +92,7 @@ devDependencies:
     specifier: ^4.0.1
     version: 4.0.1(postcss@8.4.27)
   prettier:
-    specifier: ^2.8.0
+    specifier: ^2.8.8
     version: 2.8.8
   prettier-plugin-svelte:
     specifier: ^2.10.1
@@ -127,6 +130,9 @@ devDependencies:
   tailwindcss:
     specifier: ^3.3.2
     version: 3.3.3
+  tailwindcss-animate:
+    specifier: ^1.0.6
+    version: 1.0.6(tailwindcss@3.3.3)
   tslib:
     specifier: ^2.4.1
     version: 2.6.1
@@ -968,19 +974,19 @@ packages:
       - supports-color
     dev: true
 
-  /@melt-ui/pp@0.1.2(@melt-ui/svelte@0.36.0)(svelte@4.1.2):
+  /@melt-ui/pp@0.1.2(@melt-ui/svelte@0.37.2)(svelte@4.1.2):
     resolution: {integrity: sha512-GZeqp7UWLNZUC2dJpREnZrWMR88vy27WO7C3cIBz4KW3/CFD19FjNkd3VbSRfcRryrMkdnEs9nu2VUa8/0u58w==}
     engines: {pnpm: '>=8.6.3'}
     peerDependencies:
       '@melt-ui/svelte': '>= 0.29.0'
       svelte: ^3.55.0 || ^4.0.0
     dependencies:
-      '@melt-ui/svelte': 0.36.0(svelte@4.1.2)
+      '@melt-ui/svelte': 0.37.2(svelte@4.1.2)
       svelte: 4.1.2
     dev: true
 
-  /@melt-ui/svelte@0.36.0(svelte@4.1.2):
-    resolution: {integrity: sha512-Qk6uGvCY3hcpTKc48x6VOAtmg0W/VXnVc2yTccqxK2+PlrKH4YSeVEIiZLaHWKdFDF/aL34r7YwNC5fq3swU6Q==}
+  /@melt-ui/svelte@0.37.2(svelte@4.1.2):
+    resolution: {integrity: sha512-MdFnsY/yL2p/y0m2PqaM/tGmJ/ZsUAhACksPXCbrTXBw042rHkZHC8ykp5E5MVXGPn/eWc9nt9Vh3tmB+2CjXw==}
     peerDependencies:
       svelte: '>=3 <5'
     dependencies:
@@ -1518,7 +1524,6 @@ packages:
 
   /@types/unist@3.0.0:
     resolution: {integrity: sha512-MFETx3tbTjE7Uk6vvnWINA/1iJ7LuMdO4fcq8UfF0pRbj01aGLduVvQcRyswuACJdpnHgg8E3rQLhaRdNEJS0w==}
-    dev: true
 
   /@typescript-eslint/eslint-plugin@5.62.0(@typescript-eslint/parser@5.62.0)(eslint@8.46.0)(typescript@5.1.6):
     resolution: {integrity: sha512-TiZzBSJja/LbhNPvk6yc0JrX9XqhQ0hdh6M2svYfsHGejaKFIAGd9MQ+ERIMzLGlN/kZoYIgdxFV0PuljTKXag==}
@@ -5984,6 +5989,14 @@ packages:
       tailwindcss: 3.3.3
     dev: true
 
+  /tailwindcss-animate@1.0.6(tailwindcss@3.3.3):
+    resolution: {integrity: sha512-4WigSGMvbl3gCCact62ZvOngA+PRqhAn7si3TQ3/ZuPuQZcIEtVap+ENSXbzWhpojKB8CpvnIsrwBu8/RnHtuw==}
+    peerDependencies:
+      tailwindcss: '>=3.0.0 || insiders'
+    dependencies:
+      tailwindcss: 3.3.3
+    dev: true
+
   /tailwindcss@3.3.3:
     resolution: {integrity: sha512-A0KgSkef7eE4Mf+nKJ83i75TMyq8HqY3qmFIJSWy8bNt0v1lG7jUcpGpoTFxAwYcWOphcTBLPPJg+bDfhDf52w==}
     engines: {node: '>=14.0.0'}
@@ -6266,6 +6279,12 @@ packages:
       trough: 2.1.0
       vfile: 5.3.7
     dev: true
+
+  /unist-builder@4.0.0:
+    resolution: {integrity: sha512-wmRFnH+BLpZnTKpc5L7O67Kac89s9HMrtELpnNaE6TAobq5DTZZs5YaTQfAZBA9bFPECx2uVAPO31c+GVug8mg==}
+    dependencies:
+      '@types/unist': 3.0.0
+    dev: false
 
   /unist-util-generated@2.0.1:
     resolution: {integrity: sha512-qF72kLmPxAw0oN2fwpWIqbXAVyEqUzDHMsbtPvOudIlUzXYFIeQIuxXQCRCFh22B7cixvU0MG7m3MW8FTq/S+A==}

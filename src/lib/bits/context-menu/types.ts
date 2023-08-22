@@ -7,8 +7,9 @@ import type {
 	OmitValue,
 	OnChangeFn,
 	Transition,
-	TransitionParams
+	TransitionProps
 } from "$internal/index.js";
+import type { DivEventHandler } from "$lib";
 import type {
 	CreateContextMenuProps,
 	CreateContextMenuCheckboxItemProps,
@@ -29,34 +30,39 @@ type CheckboxItemProps = Expand<
 	OmitChecked<CreateContextMenuCheckboxItemProps> & {
 		checked?: CreateContextMenuCheckboxItemProps["defaultChecked"] & {};
 		onCheckedChange?: OnChangeFn<CreateContextMenuCheckboxItemProps["defaultChecked"]>;
-	}
+	} & AsChild
 > &
-	AsChild &
 	HTMLDivAttributes;
 
 type RadioGroupProps = Expand<
 	OmitValue<CreateContextMenuRadioGroupProps> & {
 		value?: CreateContextMenuRadioGroupProps["defaultValue"] & {};
 		onValueChange?: OnChangeFn<CreateContextMenuRadioGroupProps["defaultValue"]>;
-	}
+	} & AsChild
 > &
-	AsChild &
 	HTMLDivAttributes;
 
-type RadioItemProps = Expand<ContextMenuRadioItemProps> & AsChild & HTMLDivAttributes;
+type RadioItemProps = Expand<ContextMenuRadioItemProps & AsChild> & HTMLDivAttributes;
 
-type ContentProps<T extends Transition = Transition> = {
-	sideOffset?: number;
-	transition?: T;
-	transitionConfig?: TransitionParams<T>;
-} & AsChild &
+type ContentProps<
+	T extends Transition = Transition,
+	In extends Transition = Transition,
+	Out extends Transition = Transition
+> = Expand<
+	{
+		sideOffset?: number;
+	} & TransitionProps<T, In, Out> &
+		AsChild
+> &
 	HTMLDivAttributes;
 
 type GroupProps = AsChild & HTMLDivAttributes;
 
-type ItemProps = {
-	disabled?: boolean;
-} & AsChild &
+type ItemProps = Expand<
+	{
+		disabled?: boolean;
+	} & AsChild
+> &
 	HTMLDivAttributes;
 
 type CheckboxItemIndicatorProps = HTMLDivAttributes;
@@ -64,29 +70,59 @@ type LabelProps = AsChild & HTMLDivAttributes;
 type SeparatorProps = AsChild & HTMLDivAttributes;
 type SubProps = Expand<CreateContextSubmenuProps>;
 
-type SubContentProps<T extends Transition = Transition> = {
-	transition?: T;
-	transitionConfig?: TransitionParams<T>;
-} & AsChild &
-	HTMLDivAttributes;
+type SubContentProps<
+	T extends Transition = Transition,
+	In extends Transition = Transition,
+	Out extends Transition = Transition
+> = Expand<TransitionProps<T, In, Out> & AsChild> & HTMLDivAttributes;
 
-type SubTriggerProps = {
-	disabled?: boolean;
-} & AsChild &
+type SubTriggerProps = Expand<
+	{
+		disabled?: boolean;
+	} & AsChild
+> &
 	HTMLDivAttributes;
 
 type TriggerProps = AsChild & HTMLDivAttributes;
 
-type CheckboxItemEvents = ContextMenuComponentEvents["checkboxItem"];
-type ItemEvents = ContextMenuComponentEvents["item"];
-type RadioItemEvents = ContextMenuComponentEvents["radioItem"];
-type SubTriggerEvents = ContextMenuComponentEvents["subTrigger"];
-type TriggerEvents = ContextMenuComponentEvents["trigger"];
+type ArrowProps = Expand<
+	{
+		size?: number;
+	} & AsChild
+> &
+	HTMLDivAttributes;
+
+type CheckboxItemEvents = {
+	"m-click": DivEventHandler<MouseEvent>;
+	"m-keydown": DivEventHandler<KeyboardEvent>;
+};
+
+type ItemEvents = {
+	"m-click": DivEventHandler<MouseEvent>;
+	"m-keydown": DivEventHandler<KeyboardEvent>;
+};
+
+type RadioItemEvents = {
+	"m-click": DivEventHandler<MouseEvent>;
+	"m-keydown": DivEventHandler<KeyboardEvent>;
+};
+
+type SubTriggerEvents = {
+	"m-click": DivEventHandler<MouseEvent>;
+	"m-keydown": DivEventHandler<KeyboardEvent>;
+};
+
+type TriggerEvents = {
+	"m-pointerdown": DivEventHandler<MouseEvent>;
+	"m-contextmenu": DivEventHandler<MouseEvent>;
+};
+
 type SubContentEvents = ContextMenuComponentEvents["submenu"];
 type ContentEvents = ContextMenuComponentEvents["menu"];
 
 export type {
 	Props,
+	ArrowProps,
 	CheckboxItemProps,
 	ContentProps,
 	GroupProps,
@@ -102,6 +138,7 @@ export type {
 	TriggerProps,
 	//
 	Props as ContextMenuProps,
+	ArrowProps as ContextMenuArrowProps,
 	CheckboxItemProps as ContextMenuCheckboxItemProps,
 	ContentProps as ContextMenuContentProps,
 	GroupProps as ContextMenuGroupProps,

@@ -1,17 +1,26 @@
 import { createDialog, type CreateDialogProps, type Dialog as DialogReturn } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
-import { getOptionUpdater, removeUndefined } from "$internal/index.js";
+import {
+	getOptionUpdater,
+	removeUndefined,
+	type TOpen,
+	type TransitionTimesProp
+} from "$internal/index.js";
 
 const NAME = "Dialog";
+
+type SetProps = CreateDialogProps & TransitionTimesProp & TOpen;
+
+type CtxReturn = DialogReturn & TransitionTimesProp & TOpen;
 
 export const ctx = {
 	set,
 	get
 };
 
-function set(props: CreateDialogProps) {
-	const dialog = createDialog({ ...removeUndefined(props), role: "dialog", forceVisible: true });
-	setContext(NAME, dialog);
+function set(props: SetProps) {
+	const dialog = createDialog({ ...removeUndefined(props), role: "dialog" });
+	setContext(NAME, { ...dialog, transitionTimes: props.transitionTimes, tOpen: props.tOpen });
 	return {
 		...dialog,
 		updateOption: getOptionUpdater(dialog.options)
@@ -19,5 +28,5 @@ function set(props: CreateDialogProps) {
 }
 
 function get() {
-	return getContext<DialogReturn>(NAME);
+	return getContext<CtxReturn>(NAME);
 }

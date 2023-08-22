@@ -34,12 +34,9 @@ export const ctx = {
 	getCheckboxIndicator,
 	getRadioIndicator,
 	setGroup,
-	getGroupLabel
+	getGroupLabel,
+	setArrow
 };
-
-function get() {
-	return getContext<ContextMenuReturn>(NAME);
-}
 
 function set(props: CreateContextMenuProps) {
 	const contextMenu = createContextMenu(removeUndefined(props));
@@ -48,6 +45,10 @@ function set(props: CreateContextMenuProps) {
 		...contextMenu,
 		updateOption: getOptionUpdater(contextMenu.options)
 	};
+}
+
+function get() {
+	return getContext<ContextMenuReturn>(NAME);
 }
 
 function setSub(props: CreateContextSubmenuProps) {
@@ -144,4 +145,10 @@ function getGroupLabel() {
 		elements: { groupLabel }
 	} = get();
 	return { groupLabel, id };
+}
+
+function setArrow(size = 8) {
+	const menu = get();
+	menu.options.arrowSize.set(size);
+	return menu;
 }

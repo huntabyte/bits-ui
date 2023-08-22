@@ -14,9 +14,8 @@
 {#if asChild}
 	<slot builder={$portalled} />
 {:else}
-	<div use:melt={$portalled} {...$$restProps}>
-		{#if $open}
-			<slot builder={$portalled} />
-		{/if}
+	{@const builder = $portalled}
+	<div use:melt={builder} {...$$restProps}>
+		<slot {builder} />
 	</div>
 {/if}

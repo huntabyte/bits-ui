@@ -4,9 +4,15 @@ description: Displays content with a specified aspect ratio, ensuring consistent
 ---
 
 <script>
-	import { APISection } from '@/components'
+	import { APISection, ComponentPreview, AspectRatioDemo } from '@/components'
 	export let schemas;
 </script>
+
+<ComponentPreview name="aspect-ratio-demo" comp="AspectRatio">
+
+<AspectRatioDemo slot="preview" />
+
+</ComponentPreview>
 
 ## Structure
 

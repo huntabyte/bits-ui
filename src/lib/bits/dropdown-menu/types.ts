@@ -1,4 +1,5 @@
 import type {
+	TransitionProps,
 	AsChild,
 	Expand,
 	HTMLDivAttributes,
@@ -6,9 +7,9 @@ import type {
 	OmitOpen,
 	OmitValue,
 	OnChangeFn,
-	Transition,
-	TransitionParams
+	Transition
 } from "$internal/index.js";
+import type { ButtonEventHandler, DivEventHandler } from "$lib/index.js";
 import type {
 	CreateDropdownMenuProps,
 	CreateDropdownMenuCheckboxItemProps,
@@ -30,64 +31,94 @@ type CheckboxItemProps = Expand<
 	OmitChecked<CreateDropdownMenuCheckboxItemProps> & {
 		checked?: CreateDropdownMenuCheckboxItemProps["defaultChecked"] & {};
 		onCheckedChange?: OnChangeFn<CreateDropdownMenuCheckboxItemProps["defaultChecked"]>;
-	}
+	} & AsChild
 > &
-	AsChild &
 	HTMLDivAttributes;
 
 type RadioGroupProps = Expand<
 	OmitValue<CreateDropdownMenuRadioGroupProps> & {
 		value?: CreateDropdownMenuRadioGroupProps["defaultValue"] & {};
 		onValueChange?: OnChangeFn<CreateDropdownMenuRadioGroupProps["defaultValue"]>;
-	}
+	} & AsChild
 > &
-	AsChild &
 	HTMLDivAttributes;
 
-type RadioItemProps = DropdownMenuRadioItemProps & AsChild & HTMLDivAttributes;
+type RadioItemProps = Expand<DropdownMenuRadioItemProps & AsChild> & HTMLDivAttributes;
 
-type ContentProps<T extends Transition = Transition> = {
-	sideOffset?: number;
-	transition?: T;
-	transitionConfig?: TransitionParams<T>;
-} & AsChild &
+type ContentProps<
+	T extends Transition = Transition,
+	In extends Transition = Transition,
+	Out extends Transition = Transition
+> = Expand<
+	{
+		sideOffset?: number;
+	} & TransitionProps<T, In, Out> &
+		AsChild
+> &
 	HTMLDivAttributes;
 
 type GroupProps = AsChild & HTMLDivAttributes;
 
-type ItemProps = {
-	disabled?: boolean;
-} & AsChild &
+type ItemProps = Expand<
+	{
+		disabled?: boolean;
+	} & AsChild
+> &
 	HTMLDivAttributes;
 
 type CheckboxItemIndicatorProps = HTMLDivAttributes;
 type LabelProps = AsChild & HTMLDivAttributes;
 type SeparatorProps = AsChild & HTMLDivAttributes;
 type SubProps = Expand<CreateDropdownSubmenuProps>;
-type SubContentProps<T extends Transition = Transition> = {
-	sideOffset?: number;
-	transition?: T;
-	transitionConfig?: TransitionParams<T>;
-} & AsChild &
+
+type SubContentProps<
+	T extends Transition = Transition,
+	In extends Transition = Transition,
+	Out extends Transition = Transition
+> = Expand<
+	{
+		sideOffset?: number;
+	} & TransitionProps<T, In, Out> &
+		AsChild
+> &
 	HTMLDivAttributes;
 
-type SubTriggerProps = {
-	disabled?: boolean;
-} & AsChild &
+type SubTriggerProps = Expand<
+	{
+		disabled?: boolean;
+	} & AsChild
+> &
 	HTMLDivAttributes;
 
 type TriggerProps = AsChild & HTMLButtonAttributes;
 
-type TriggerEvents = DropdownMenuComponentEvents["trigger"];
-type CheckboxItemEvents = DropdownMenuComponentEvents["checkboxItem"];
+type ArrowProps = Expand<
+	{
+		size?: number;
+	} & AsChild
+> &
+	HTMLDivAttributes;
+
+type ItemEvents = {
+	"m-click": DivEventHandler<MouseEvent>;
+	"m-keydown": DivEventHandler<KeyboardEvent>;
+};
+
+type CheckboxItemEvents = ItemEvents;
+type RadioItemEvents = ItemEvents;
+type SubTriggerEvents = ItemEvents;
+
+type TriggerEvents = {
+	"m-click": ButtonEventHandler<MouseEvent>;
+	"m-keydown": ButtonEventHandler<KeyboardEvent>;
+};
+
 type ContentEvents = DropdownMenuComponentEvents["menu"];
-type RadioItemEvents = DropdownMenuComponentEvents["radioItem"];
 type SubContentEvents = DropdownMenuComponentEvents["submenu"];
-type SubTriggerEvents = DropdownMenuComponentEvents["subTrigger"];
-type ItemEvents = DropdownMenuComponentEvents["item"];
 
 export type {
 	Props,
+	ArrowProps,
 	CheckboxItemProps,
 	ContentProps,
 	GroupProps,
@@ -104,6 +135,7 @@ export type {
 
 	//
 	Props as DropdownMenuProps,
+	ArrowProps as DropdownMenuArrowProps,
 	CheckboxItemProps as DropdownMenuCheckboxItemProps,
 	ContentProps as DropdownMenuContentProps,
 	GroupProps as DropdownMenuGroupProps,

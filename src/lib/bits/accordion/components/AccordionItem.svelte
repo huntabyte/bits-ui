@@ -13,7 +13,8 @@
 {#if asChild}
 	<slot builder={$item(props)} />
 {:else}
-	<div use:melt={$item(props)} {...$$restProps}>
-		<slot builder={$item(props)} />
+	{@const builder = $item(props)}
+	<div use:melt={builder} {...$$restProps}>
+		<slot {builder} />
 	</div>
 {/if}

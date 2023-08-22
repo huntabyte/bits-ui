@@ -20,6 +20,7 @@
 	export let open: $$Props["open"] = undefined;
 	export let onOpenChange: $$Props["onOpenChange"] = undefined;
 	export let label: $$Props["label"] = undefined;
+	export let forceVisible: $$Props["forceVisible"] = true;
 
 	const {
 		states: { open: localOpen, value: localValue },
@@ -65,6 +66,7 @@
 	$: updateOption("positioning", positioning);
 	$: updateOption("name", name);
 	$: updateOption("multiple", multiple);
+	$: updateOption("forceVisible", forceVisible);
 </script>
 
 <slot />

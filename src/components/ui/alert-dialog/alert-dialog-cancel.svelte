@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { AlertDialog as AlertDialogPrimitive } from "@/lib";
-	import { buttonVariants } from "@/registry/default/ui/button";
+	import { buttonVariants } from "@/components/ui/button";
 	import { cn } from "@/utils";
 
 	type $$Props = AlertDialogPrimitive.CancelProps;
@@ -14,6 +14,7 @@
 	class={cn(buttonVariants({ variant: "outline" }), "mt-2 sm:mt-0", className)}
 	{...$$restProps}
 	on:m-click
+	let:builder
 >
-	<slot />
+	<slot {builder} />
 </AlertDialogPrimitive.Cancel>

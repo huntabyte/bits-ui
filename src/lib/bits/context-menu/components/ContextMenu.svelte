@@ -1,12 +1,16 @@
 <script lang="ts">
 	import type { Props } from "../types.js";
 	import { ctx } from "../ctx.js";
+	import { writable } from "svelte/store";
+	import type { TransitionTimes } from "$lib/internal/types.js";
+	import { onDestroy } from "svelte";
+	import { isBrowser } from "@/utils/is.js";
 	type $$Props = Props;
 
 	export let closeOnOutsideClick: $$Props["closeOnOutsideClick"] = undefined;
 	export let closeOnEscape: $$Props["closeOnEscape"] = undefined;
 	export let portal: $$Props["portal"] = undefined;
-	export let forceVisible: $$Props["forceVisible"] = undefined;
+	export let forceVisible: $$Props["forceVisible"] = true;
 	export let open: $$Props["open"] = undefined;
 	export let onOpenChange: $$Props["onOpenChange"] = undefined;
 	export let preventScroll: $$Props["preventScroll"] = undefined;
@@ -35,6 +39,7 @@
 			return next;
 		}
 	});
+
 	$: open !== undefined && localOpen.set(open);
 
 	$: updateOption("closeOnOutsideClick", closeOnOutsideClick);

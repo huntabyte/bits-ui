@@ -5,8 +5,11 @@ import type {
 	OmitChecked,
 	OmitOpen,
 	OmitValue,
-	OnChangeFn
+	OnChangeFn,
+	Transition,
+	TransitionProps
 } from "$internal/index.js";
+import type { DivEventHandler, ButtonEventHandler } from "$lib/index.js";
 import type {
 	CreateMenubarProps,
 	CreateMenubarMenuProps,
@@ -18,7 +21,7 @@ import type {
 } from "@melt-ui/svelte";
 import type { HTMLButtonAttributes } from "svelte/elements";
 
-type Props = Expand<CreateMenubarProps> & HTMLDivAttributes;
+type Props = Expand<CreateMenubarProps & AsChild> & HTMLDivAttributes;
 
 type MenuProps = Expand<
 	OmitOpen<CreateMenubarMenuProps> & {
@@ -32,56 +35,92 @@ type CheckboxItemProps = Expand<
 		checked?: CreateMenuCheckboxItemProps["defaultChecked"] & {};
 		onCheckedChange?: OnChangeFn<CreateMenuCheckboxItemProps["defaultChecked"]>;
 		disabled?: boolean;
-	}
+	} & AsChild
 > &
-	AsChild &
 	HTMLDivAttributes;
 
 type RadioGroupProps = Expand<
 	OmitValue<CreateMenuRadioGroupProps> & {
 		value?: CreateMenuRadioGroupProps["defaultValue"] & {};
 		onValueChange?: OnChangeFn<CreateMenuRadioGroupProps["defaultValue"]>;
-	}
+	} & AsChild
 > &
-	AsChild &
 	HTMLDivAttributes;
 
-type ContentProps = {
-	sideOffset?: number;
-} & AsChild &
+type ContentProps<
+	T extends Transition = Transition,
+	In extends Transition = Transition,
+	Out extends Transition = Transition
+> = Expand<
+	{
+		sideOffset?: number;
+	} & TransitionProps<T, In, Out> &
+		AsChild
+> &
 	HTMLDivAttributes;
 
 type GroupProps = AsChild & HTMLDivAttributes;
 
-type ItemProps = {
-	disabled?: boolean;
-} & AsChild &
+type ItemProps = Expand<
+	{
+		disabled?: boolean;
+	} & AsChild
+> &
 	HTMLDivAttributes;
 
 type CheckboxItemIndicatorProps = HTMLDivAttributes;
 
 type LabelProps = AsChild & HTMLDivAttributes;
 
-type RadioItemProps = Expand<MenubarRadioItemProps> & AsChild & HTMLDivAttributes;
+type RadioItemProps = Expand<MenubarRadioItemProps & AsChild> & HTMLDivAttributes;
 
 type SeparatorProps = AsChild & HTMLDivAttributes;
 
 type SubProps = Expand<CreateMenubarSubmenuProps>;
 
-type SubContentProps = AsChild & HTMLDivAttributes;
+type SubContentProps<
+	T extends Transition = Transition,
+	In extends Transition = Transition,
+	Out extends Transition = Transition
+> = Expand<
+	{
+		sideOffset?: number;
+	} & TransitionProps<T, In, Out> &
+		AsChild
+> &
+	HTMLDivAttributes;
 
-type SubTriggerProps = {
-	disabled?: boolean;
-} & AsChild &
+type SubTriggerProps = Expand<
+	{
+		disabled?: boolean;
+	} & AsChild
+> &
 	HTMLDivAttributes;
 
 type TriggerProps = AsChild & HTMLButtonAttributes;
 
-type TriggerEvents = MenubarComponentEvents["trigger"];
-type ItemEvents = MenubarComponentEvents["item"];
-type SubTriggerEvents = MenubarComponentEvents["subTrigger"];
-type CheckboxItemEvents = MenubarComponentEvents["checkboxItem"];
-type RadioItemEvents = MenubarComponentEvents["radioItem"];
+type ArrowProps = Expand<
+	{
+		size?: number;
+	} & AsChild
+> &
+	HTMLDivAttributes;
+
+type ItemEvents = {
+	"m-click": DivEventHandler<MouseEvent>;
+	"m-keydown": DivEventHandler<KeyboardEvent>;
+};
+type CheckboxItemEvents = ItemEvents;
+
+type RadioItemEvents = ItemEvents;
+
+type SubTriggerEvents = ItemEvents;
+
+type TriggerEvents = {
+	"m-click": ButtonEventHandler<MouseEvent>;
+	"m-keydown": ButtonEventHandler<KeyboardEvent>;
+};
+
 type ContentEvents = MenubarComponentEvents["menu"];
 type SubContentEvents = MenubarComponentEvents["submenu"];
 
@@ -90,6 +129,7 @@ export type {
 	SubProps,
 	MenuProps,
 	ItemProps,
+	ArrowProps,
 	GroupProps,
 	LabelProps,
 	TriggerProps,
@@ -107,6 +147,7 @@ export type {
 	SubProps as MenubarSubProps,
 	MenuProps as MenubarMenuProps,
 	ItemProps as MenubarItemProps,
+	ArrowProps as MenubarArrowProps,
 	GroupProps as MenubarGroupProps,
 	LabelProps as MenubarLabelProps,
 	ContentProps as MenubarContentProps,

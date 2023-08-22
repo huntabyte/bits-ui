@@ -3,6 +3,17 @@ title: Label
 description: An enhanced version of the native HTML label element.
 ---
 
+<script>
+	import { APISection, ComponentPreview, LabelDemo } from '@/components'
+	export let schemas;
+</script>
+
+<ComponentPreview name="label-demo" comp="Label">
+
+<LabelDemo slot="preview" />
+
+</ComponentPreview>
+
 ## Structure
 
 ```svelte
@@ -12,5 +23,7 @@ description: An enhanced version of the native HTML label element.
 
 <Label.Root />
 ```
+
+<APISection {schemas} />
 
 🚧 **UNDER CONSTRUCTION** 🚧

@@ -6,27 +6,26 @@ import type {
 	ObjectVariation,
 	AsChild
 } from "$internal/index.js";
-import type {
-	CreateRadioGroupProps,
-	RadioGroupComponentEvents,
-	RadioGroupItemProps
-} from "@melt-ui/svelte";
+import type { ButtonEventHandler } from "$lib/index.js";
+import type { CreateRadioGroupProps, RadioGroupItemProps } from "@melt-ui/svelte";
 import type { HTMLButtonAttributes, HTMLInputAttributes } from "svelte/elements";
 
 type Props = Expand<
 	OmitValue<CreateRadioGroupProps> & {
 		value?: CreateRadioGroupProps["defaultValue"];
 		onValueChange?: OnChangeFn<CreateRadioGroupProps["defaultValue"]>;
-	}
+	} & AsChild
 > &
-	AsChild &
 	HTMLDivAttributes;
 
 type InputProps = AsChild & HTMLInputAttributes;
 
-type ItemProps = Expand<ObjectVariation<RadioGroupItemProps>> & AsChild & HTMLButtonAttributes;
+type ItemProps = Expand<ObjectVariation<RadioGroupItemProps> & AsChild> & HTMLButtonAttributes;
 
-type ItemEvents = RadioGroupComponentEvents["item"];
+type ItemEvents = {
+	"m-click": ButtonEventHandler<MouseEvent>;
+	"m-keydown": ButtonEventHandler<KeyboardEvent>;
+};
 
 export type {
 	Props,

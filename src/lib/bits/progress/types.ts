@@ -5,9 +5,8 @@ type Props = Expand<
 	OmitValue<CreateProgressProps> & {
 		value?: CreateProgressProps["defaultValue"];
 		onValueChange?: OnChangeFn<CreateProgressProps["defaultValue"]>;
-	}
+	} & AsChild
 > &
-	AsChild &
 	HTMLDivAttributes;
 
 type IndicatorProps = HTMLDivAttributes;

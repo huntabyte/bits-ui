@@ -1,15 +1,23 @@
 <script lang="ts">
+	import Overlay from "$lib/internal/overlay.svelte";
+
 	import { melt } from "@melt-ui/svelte";
 	import { ctx } from "../ctx.js";
 	import type { Transition } from "$internal/types.js";
 	import type { ContentEvents, ContentProps } from "../types.js";
 
 	type T = $$Generic<Transition>;
-	type $$Props = ContentProps<T>;
+	type In = $$Generic<Transition>;
+	type Out = $$Generic<Transition>;
+	type $$Props = ContentProps<T, In, Out>;
 	type $$Events = ContentEvents;
 	export let sideOffset: $$Props["sideOffset"] = 5;
-	export let transition: $$Props["transition"] = undefined;
-	export let transitionConfig: $$Props["transitionConfig"] = undefined;
+	export let transition: ContentProps<T, In, Out>["transition"] = undefined;
+	export let transitionConfig: ContentProps<T, In, Out>["transitionConfig"] = undefined;
+	export let inTransition: ContentProps<T, In, Out>["inTransition"] = undefined;
+	export let inTransitionConfig: ContentProps<T>["inTransitionConfig"] = undefined;
+	export let outTransition: ContentProps<T, In, Out>["outTransition"] = undefined;
+	export let outTransitionConfig: ContentProps<T, In, Out>["outTransitionConfig"] = undefined;
 
 	export let asChild = false;
 	const {
@@ -19,15 +27,49 @@
 </script>
 
 {#if $open}
+	{@const builder = $menu}
 	{#if asChild}
-		<slot builder={$menu} />
+		<slot {builder} />
 	{:else if transition}
-		<div use:melt={$menu} {...$$restProps} on:m-keydown transition:transition={transitionConfig}>
-			<slot builder={$menu} />
+		<div
+			transition:transition|global={transitionConfig}
+			use:melt={builder}
+			{...$$restProps}
+			on:m-keydown
+		>
+			<slot {builder} />
+		</div>
+	{:else if inTransition && outTransition}
+		<div
+			in:inTransition|global={inTransitionConfig}
+			out:outTransition|global={outTransitionConfig}
+			use:melt={builder}
+			{...$$restProps}
+			on:m-keydown
+		>
+			<slot {builder} />
+		</div>
+	{:else if inTransition}
+		<div
+			in:inTransition|global={inTransitionConfig}
+			use:melt={builder}
+			{...$$restProps}
+			on:m-keydown
+		>
+			<slot {builder} />
+		</div>
+	{:else if outTransition}
+		<div
+			out:outTransition|global={outTransitionConfig}
+			use:melt={builder}
+			{...$$restProps}
+			on:m-keydown
+		>
+			<slot {builder} />
 		</div>
 	{:else}
-		<div use:melt={$menu} {...$$restProps} on:m-keydown>
-			<slot builder={$menu} />
+		<div use:melt={builder} {...$$restProps} on:m-keydown>
+			<slot {builder} />
 		</div>
 	{/if}
 {/if}

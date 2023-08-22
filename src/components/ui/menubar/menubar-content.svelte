@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Menubar as MenubarPrimitive } from "@/lib";
 	import { cn } from "@/utils";
-
+	import { transition } from ".";
 	type $$Props = MenubarPrimitive.ContentProps;
 	let className: $$Props["class"] = undefined;
 	export { className as class };
@@ -9,9 +9,10 @@
 </script>
 
 <MenubarPrimitive.Content
+	{transition}
 	{sideOffset}
 	class={cn(
-		"z-50 min-w-[12rem] rounded-md border bg-popover p-1 text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 focus:outline-none",
+		"z-50 min-w-[12rem] rounded-md border bg-popover p-1 text-popover-foreground shadow-md focus:outline-none",
 		className
 	)}
 	{...$$restProps}

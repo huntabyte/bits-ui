@@ -13,7 +13,8 @@
 {#if asChild}
 	<slot builder={$root} />
 {:else}
-	<label use:melt={$root} {...$$restProps} on:m-mousedown>
-		<slot builder={$root} />
+	{@const builder = $root}
+	<label use:melt={builder} {...$$restProps} on:m-mousedown>
+		<slot {builder} />
 	</label>
 {/if}

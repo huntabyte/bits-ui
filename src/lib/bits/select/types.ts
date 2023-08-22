@@ -7,12 +7,13 @@ import type {
 	OmitValue,
 	OnChangeFn,
 	Transition,
-	TransitionParams
+	TransitionProps
 } from "$internal/index.js";
 import type { HTMLAttributes, HTMLButtonAttributes, HTMLInputAttributes } from "svelte/elements";
+import type { ButtonEventHandler, DivEventHandler } from "$lib/index.js";
 
 type Props = Expand<
-	OmitOpen<OmitValue<Omit<CreateSelectProps, "defaultValueLabel" | "forceVisible">>> & {
+	OmitOpen<OmitValue<Omit<CreateSelectProps, "defaultValueLabel">>> & {
 		value?: CreateSelectProps["defaultValue"] & {};
 		onValueChange?: OnChangeFn<CreateSelectProps["defaultValue"]>;
 		open?: CreateSelectProps["defaultOpen"] & {};
@@ -21,31 +22,50 @@ type Props = Expand<
 	}
 >;
 
-type ContentProps<T extends Transition = Transition> = {
-	transition?: T;
-	transitionConfig?: TransitionParams<T>;
-} & AsChild &
-	HTMLDivAttributes;
+type ContentProps<
+	T extends Transition = Transition,
+	In extends Transition = Transition,
+	Out extends Transition = Transition
+> = Expand<TransitionProps<T, In, Out> & AsChild> & HTMLDivAttributes;
 
 type GroupProps = AsChild & HTMLDivAttributes;
 type InputProps = AsChild & HTMLInputAttributes;
 type LabelProps = AsChild & HTMLDivAttributes;
-type ItemProps = Expand<SelectOptionProps> & AsChild & HTMLDivAttributes;
+type ItemProps = Expand<SelectOptionProps & AsChild> & HTMLDivAttributes;
 type SeparatorProps = AsChild & HTMLDivAttributes;
 
 type TriggerProps = AsChild & HTMLButtonAttributes;
-type ValueProps = {
-	placeholder?: string;
-} & AsChild &
+
+type ValueProps = Expand<
+	{
+		placeholder?: string;
+	} & AsChild
+> &
 	HTMLAttributes<HTMLSpanElement>;
 
-type ItemEvents = SelectComponentEvents["option"];
-type ContentEvents = SelectComponentEvents["menu"];
-type TriggerEvents = SelectComponentEvents["trigger"];
+type ArrowProps = Expand<
+	{
+		size?: number;
+	} & AsChild
+> &
+	HTMLDivAttributes;
+
+type ItemEvents = {
+	"m-click": DivEventHandler<MouseEvent>;
+	"m-keydown": DivEventHandler<KeyboardEvent>;
+};
+
+type TriggerEvents = {
+	"m-click": ButtonEventHandler<MouseEvent>;
+	"m-keydown": ButtonEventHandler<KeyboardEvent>;
+};
+
 type LabelEvents = SelectComponentEvents["label"];
+type ContentEvents = SelectComponentEvents["menu"];
 
 export type {
 	Props,
+	ArrowProps,
 	ContentProps,
 	GroupProps,
 	InputProps,
@@ -56,6 +76,7 @@ export type {
 	ValueProps,
 	//
 	Props as SelectProps,
+	ArrowProps as SelectArrowProps,
 	ContentProps as SelectContentProps,
 	GroupProps as SelectGroupProps,
 	InputProps as SelectInputProps,

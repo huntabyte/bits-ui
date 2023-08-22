@@ -1,5 +1,45 @@
 # @huntabyte/primitives
 
+## 0.0.28
+
+### Patch Changes
+
+- 5d2e054: Feat: Improve transition props to support `in` and `out` transitions.
+
+## 0.0.27
+
+### Patch Changes
+
+- 4ecd3ea: Fix: Add transparent menu overlay
+- 879ab10: Fix: issue preventing dialog transitions
+
+## 0.0.26
+
+### Patch Changes
+
+- b6302eb: Improve component custom event types
+
+## 0.0.25
+
+### Patch Changes
+
+- 855a961: - Improve types
+  - Fix bug with `Menubar` props
+  - Add `Arrow` components for the floating Bits
+  - Fix `asChild` bug affecting multiple Bits
+
+## 0.0.24
+
+### Patch Changes
+
+- 23ef6d1: Export `LinkPreview`
+
+## 0.0.23
+
+### Patch Changes
+
+- 8f72add: fix menubar & rename hovercard
+
 ## 0.0.22
 
 ### Patch Changes

@@ -14,7 +14,8 @@
 {#if asChild}
 	<slot builder={$item} />
 {:else}
-	<button use:melt={$item({ value, disabled })} {...$$restProps} on:m-click on:m-focus on:m-keydown>
-		<slot builder={$item} />
+	{@const builder = $item({ value, disabled })}
+	<button use:melt={builder} {...$$restProps} on:m-click on:m-focus on:m-keydown>
+		<slot {builder} />
 	</button>
 {/if}

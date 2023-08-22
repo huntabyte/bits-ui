@@ -1,4 +1,4 @@
-import { getAPISchemas, isBit } from "@/lib/api-reference";
+import { getAPISchemas, isBit } from "@/content/api-reference";
 import type { APISchema } from "@/types";
 import { error, redirect } from "@sveltejs/kit";
 import type { Doc } from "contentlayer/generated";
@@ -21,7 +21,7 @@ type TDoc = {
 type ComponentDoc = {
 	component: DocFile["default"];
 	metadata: DocFile["metadata"];
-	title: string;
+	title: DocFile["metadata"]["title"];
 	schemas: APISchema[];
 };
 

@@ -2,16 +2,17 @@ import type {
 	HTMLDivAttributes,
 	ObjectVariation,
 	Transition,
-	TransitionParams,
 	OmitValue,
 	Expand,
-	OnChangeFn
+	OnChangeFn,
+	AsChild,
+	TransitionProps
 } from "$internal/index.js";
+import type { ButtonEventHandler } from "$lib/index.js";
 import type {
 	CreateAccordionProps,
 	AccordionItemProps as _ItemProps,
-	AccordionHeadingProps as _HeadingProps,
-	AccordionComponentEvents
+	AccordionHeadingProps as _HeadingProps
 } from "@melt-ui/svelte";
 import type { HTMLButtonAttributes } from "svelte/elements";
 
@@ -19,32 +20,31 @@ type Props<Multiple extends boolean> = Expand<
 	OmitValue<CreateAccordionProps<Multiple>> & {
 		value?: CreateAccordionProps<Multiple>["defaultValue"];
 		onValueChange?: OnChangeFn<CreateAccordionProps<Multiple>["defaultValue"]>;
-		asChild?: boolean;
-	}
+	} & AsChild
 > &
 	HTMLDivAttributes;
 
-type ItemProps = {
-	asChild?: boolean;
-} & ObjectVariation<_ItemProps> &
+type ItemProps = Expand<ObjectVariation<_ItemProps> & AsChild> & HTMLDivAttributes;
+
+type HeaderProps = Expand<
+	{
+		level?: ObjectVariation<_HeadingProps>["level"];
+	} & AsChild
+> &
 	HTMLDivAttributes;
 
-type HeaderProps = {
-	asChild?: boolean;
-	level?: ObjectVariation<_HeadingProps>["level"];
-} & HTMLDivAttributes;
+type TriggerProps = AsChild & HTMLButtonAttributes;
 
-type TriggerProps = {
-	asChild?: boolean;
-} & HTMLButtonAttributes;
+type ContentProps<
+	T extends Transition = Transition,
+	In extends Transition = Transition,
+	Out extends Transition = Transition
+> = Expand<TransitionProps<T, In, Out> & AsChild> & HTMLDivAttributes;
 
-type ContentProps<T extends Transition = Transition> = {
-	transition?: T;
-	transitionConfig?: TransitionParams<T>;
-	asChild?: boolean;
-} & HTMLDivAttributes;
-
-type TriggerEvents = AccordionComponentEvents["trigger"];
+type TriggerEvents = {
+	"m-click": ButtonEventHandler<MouseEvent>;
+	"m-keydown": ButtonEventHandler<KeyboardEvent>;
+};
 
 export type {
 	Props,

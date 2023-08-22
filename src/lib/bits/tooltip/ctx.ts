@@ -10,7 +10,8 @@ const NAME = "Tooltip";
 
 export const ctx = {
 	set,
-	get
+	get,
+	setArrow
 };
 
 function set(props: CreateTooltipProps) {
@@ -37,5 +38,11 @@ function get(sideOffset = 0) {
 	} = tooltip;
 	positioning.update((prev) => ({ ...prev, gutter: sideOffset }));
 
+	return tooltip;
+}
+
+function setArrow(size = 8) {
+	const tooltip = get();
+	tooltip.options.arrowSize.set(size);
 	return tooltip;
 }

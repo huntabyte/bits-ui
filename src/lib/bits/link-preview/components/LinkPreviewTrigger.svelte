@@ -13,16 +13,16 @@
 {#if asChild}
 	<slot builder={$trigger} />
 {:else}
+	{@const builder = $trigger}
 	<svelte:element
 		this={"a"}
-		use:melt={$trigger}
+		use:melt={builder}
 		{...$$restProps}
 		on:m-blur
 		on:m-focus
 		on:m-pointerenter
 		on:m-pointerleave
-		on:m-touchstart
 	>
-		<slot builder={$trigger} />
+		<slot {builder} />
 	</svelte:element>
 {/if}

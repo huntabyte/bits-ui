@@ -4,9 +4,15 @@ description: Displays user or entity images with a fallback option for failed lo
 ---
 
 <script>
-	import { APISection } from '@/components'
+	import { APISection, ComponentPreview, AvatarDemo } from '@/components'
 	export let schemas;
 </script>
+
+<ComponentPreview name="avatar-demo" comp="Avatar">
+
+<AvatarDemo slot="preview" />
+
+</ComponentPreview>
 
 ## Structure
 
