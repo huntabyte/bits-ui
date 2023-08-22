@@ -1,5 +1,23 @@
 # @huntabyte/primitives
 
+## 0.0.31
+
+### Patch Changes
+
+- 64db7da: hotfix: bug
+
+## 0.0.30
+
+### Patch Changes
+
+- 9f21863: Fix: Select events
+
+## 0.0.29
+
+### Patch Changes
+
+- 6d35961: Fix: `isBrowser` import
+
 ## 0.0.28
 
 ### Patch Changes

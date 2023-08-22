@@ -1,5 +1,5 @@
 import { writable } from "svelte/store";
-import { isBrowser } from "./is";
+import { isBrowser } from "$lib/internal/index.js";
 
 export function createCopyCodeButton() {
 	let codeString = "";

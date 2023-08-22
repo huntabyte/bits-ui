@@ -8,9 +8,10 @@
 		{ value: "grapes", label: "Grapes" },
 		{ value: "pineapple", label: "Pineapple" }
 	];
+	let value: any;
 </script>
 
-<Select.Root>
+<Select.Root bind:value>
 	<Select.Trigger class="w-[180px]">
 		<Select.Value placeholder="Select a fruit" />
 	</Select.Trigger>
@@ -18,7 +19,9 @@
 		<Select.Group>
 			<Select.Label>Fruits</Select.Label>
 			{#each fruits as fruit}
-				<Select.Item value={fruit.value} label={fruit.label}>{fruit.label}</Select.Item>
+				<Select.Item value={fruit.value} label={fruit.label} on:m-click={() => console.log("click")}
+					>{fruit.label}</Select.Item
+				>
 			{/each}
 		</Select.Group>
 	</Select.Content>

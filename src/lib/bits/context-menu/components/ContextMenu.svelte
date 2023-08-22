@@ -1,10 +1,6 @@
 <script lang="ts">
 	import type { Props } from "../types.js";
 	import { ctx } from "../ctx.js";
-	import { writable } from "svelte/store";
-	import type { TransitionTimes } from "$lib/internal/types.js";
-	import { onDestroy } from "svelte";
-	import { isBrowser } from "@/utils/is.js";
 	type $$Props = Props;
 
 	export let closeOnOutsideClick: $$Props["closeOnOutsideClick"] = undefined;
