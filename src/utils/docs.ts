@@ -1,12 +1,9 @@
 import { getAPISchemas, isBit } from "@/content/api-reference";
 import type { APISchema } from "@/types";
 import { error, redirect } from "@sveltejs/kit";
+import type { Doc } from "contentlayer/generated";
 
-export type FrontMatter = {
-	title: string;
-	description: string;
-	component?: boolean;
-};
+export type FrontMatter = Pick<Doc, "title" | "description">;
 
 export type DocFile = {
 	default: import("svelte").SvelteComponent;
@@ -15,7 +12,7 @@ export type DocFile = {
 
 export type DocResolver = () => Promise<DocFile>;
 
-type Doc = {
+type TDoc = {
 	component: DocFile["default"];
 	metadata: DocFile["metadata"];
 	title: string;
@@ -29,15 +26,15 @@ type ComponentDoc = {
 };
 
 export function slugFromPath(path: string) {
-	return path.replace("/src/content/", "").replace(".md", "");
+	return path.replace("/content/", "").replace(".md", "");
 }
 
-export async function getDoc(slug: string): Promise<Doc> {
+export async function getDoc(slug: string): Promise<TDoc> {
 	if (slug === "components") {
 		throw redirect(303, "/docs/components/accordion");
 	}
 
-	const modules = import.meta.glob("/src/content/**/*.md");
+	const modules = import.meta.glob(`/content/**/*.md`);
 
 	let match: { path?: string; resolver?: DocResolver } = {};
 
@@ -49,9 +46,11 @@ export async function getDoc(slug: string): Promise<Doc> {
 	}
 
 	const doc = await match?.resolver?.();
+
 	if (!doc || !doc.metadata) {
 		throw error(404);
 	}
+
 	return {
 		component: doc.default,
 		metadata: doc.metadata,
@@ -68,7 +67,7 @@ export async function getComponentDoc(slug: string): Promise<ComponentDoc> {
 		throw error(404);
 	}
 
-	const modules = import.meta.glob("/src/content/**/*.md");
+	const modules = import.meta.glob("/content/**/*.md");
 
 	let match: { path?: string; resolver?: DocResolver } = {};
 
