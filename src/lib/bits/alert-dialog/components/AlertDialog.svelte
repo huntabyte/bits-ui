@@ -4,7 +4,7 @@
 	import type { Props } from "../types.js";
 	import type { TransitionTimes } from "$lib/internal/types.js";
 	import { onDestroy } from "svelte";
-	import { isBrowser } from "$lib/internal/index.js";
+	import { isBrowser } from "$lib/internal/is.js";
 
 	type $$Props = Props;
 
