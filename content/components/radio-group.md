@@ -3,6 +3,17 @@ title: Radio Group
 description: Allows users to select a single option from a predetermined set of choices.
 ---
 
+<script>
+	import { APISection, ComponentPreview, RadioGroupDemo } from '@/components'
+	export let schemas;
+</script>
+
+<ComponentPreview name="radio-group-demo" comp="RadioGroup">
+
+<RadioGroupDemo slot="preview" />
+
+</ComponentPreview>
+
 ## Structure
 
 ```svelte
@@ -16,5 +27,7 @@ description: Allows users to select a single option from a predetermined set of 
 	</RadioGroup.Item>
 </RadioGroup.Root>
 ```
+
+<APISection {schemas} />
 
 🚧 **UNDER CONSTRUCTION** 🚧

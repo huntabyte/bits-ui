@@ -4,9 +4,15 @@ description: A window overlaid on either the primary window or another dialog wi
 ---
 
 <script>
-	import { APISection } from '@/components'
+	import { APISection, ComponentPreview, DialogDemo } from '@/components'
 	export let schemas;
 </script>
+
+<ComponentPreview name="dialog-demo" comp="Dialog">
+
+<DialogDemo slot="preview" />
+
+</ComponentPreview>
 
 ## Structure
 
