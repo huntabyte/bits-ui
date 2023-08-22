@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.0.31
+
+### Patch Changes
+
+- 64db7da: hotfix: bug
+
 ## 0.0.30
 
 ### Patch Changes
