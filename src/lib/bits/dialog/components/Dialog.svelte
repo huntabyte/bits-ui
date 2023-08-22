@@ -1,10 +1,10 @@
 <script lang="ts">
+	import { onDestroy } from "svelte";
 	import { writable } from "svelte/store";
 	import { ctx } from "../ctx.js";
 	import type { Props } from "../types.js";
 	import type { TransitionTimes } from "$lib/internal/types.js";
-	import { isBrowser } from "$lib/internal/index.js";
-	import { onDestroy } from "svelte";
+	import { isBrowser } from "$lib/internal/is.js";
 
 	type $$Props = Props;
 

@@ -74,7 +74,7 @@
 	"types": "./dist/index.d.ts",
 	"type": "module",
 	"dependencies": {
-		"@melt-ui/svelte": "0.37.2",
+		"@melt-ui/svelte": "0.37.5",
 		"@sveltejs/adapter-vercel": "^3.0.3",
 		"nanoid": "^4.0.2",
 		"shiki": "^0.14.3",
