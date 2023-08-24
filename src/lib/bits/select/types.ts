@@ -1,4 +1,4 @@
-import type { CreateSelectProps, SelectComponentEvents, SelectOptionProps } from "@melt-ui/svelte";
+import type { CreateSelectProps, SelectOptionProps } from "@melt-ui/svelte";
 import type {
 	AsChild,
 	Expand,
@@ -8,9 +8,9 @@ import type {
 	OnChangeFn,
 	Transition,
 	TransitionProps
-} from "$internal/index.js";
+} from "$lib/internal/index.js";
 import type { HTMLAttributes, HTMLButtonAttributes, HTMLInputAttributes } from "svelte/elements";
-import type { ButtonEventHandler, DivEventHandler, MEventHandler } from "$lib/index.js";
+import type { CustomEventHandler } from "$lib/index.js";
 
 type Props = Expand<
 	OmitOpen<OmitValue<Omit<CreateSelectProps, "defaultValueLabel">>> & {
@@ -50,25 +50,25 @@ type ArrowProps = Expand<
 > &
 	HTMLDivAttributes;
 
-type ItemEvents = {
-	"m-click": DivEventHandler<MouseEvent>;
-	"m-keydown": DivEventHandler<KeyboardEvent>;
-	"m-focusin": DivEventHandler<FocusEvent>;
-	"m-focusout": DivEventHandler<FocusEvent>;
-	"m-pointerleave": DivEventHandler<MouseEvent>;
-	"m-pointermove": DivEventHandler<MouseEvent>;
+type ItemEvents<T extends Element = HTMLDivElement> = {
+	click: CustomEventHandler<MouseEvent, T>;
+	keydown: CustomEventHandler<KeyboardEvent, T>;
+	focusin: CustomEventHandler<FocusEvent, T>;
+	focusout: CustomEventHandler<FocusEvent, T>;
+	pointerleave: CustomEventHandler<MouseEvent, T>;
+	pointermove: CustomEventHandler<MouseEvent, T>;
 };
 
-type TriggerEvents = {
-	"m-click": ButtonEventHandler<MouseEvent>;
-	"m-keydown": ButtonEventHandler<KeyboardEvent>;
+type TriggerEvents<T extends Element = HTMLButtonElement> = {
+	click: CustomEventHandler<MouseEvent, T>;
+	keydown: CustomEventHandler<KeyboardEvent, T>;
 };
 
-type LabelEvents = {
-	"m-click": MEventHandler<MouseEvent, HTMLSpanElement>;
+type LabelEvents<T extends Element = HTMLSpanElement> = {
+	click: CustomEventHandler<MouseEvent, T>;
 };
-type ContentEvents = {
-	"m-keydown": DivEventHandler<KeyboardEvent>;
+type ContentEvents<T extends Element = HTMLDivElement> = {
+	keydown: CustomEventHandler<KeyboardEvent, T>;
 };
 
 export type {

@@ -3,8 +3,7 @@
 	import { writable } from "svelte/store";
 	import { ctx } from "../ctx.js";
 	import type { Props } from "../types.js";
-	import type { TransitionTimes } from "$lib/internal/types.js";
-	import { isBrowser } from "$lib/internal/is.js";
+	import { type TransitionTimes, isBrowser } from "$lib/internal/index.js";
 
 	type $$Props = Props;
 
@@ -15,6 +14,7 @@
 	export let forceVisible: $$Props["forceVisible"] = true;
 	export let open: $$Props["open"] = undefined;
 	export let onOpenChange: $$Props["onOpenChange"] = undefined;
+
 	const transitionTimes = writable<TransitionTimes>({});
 	const tOpen = writable(open);
 	let timeout = 0;

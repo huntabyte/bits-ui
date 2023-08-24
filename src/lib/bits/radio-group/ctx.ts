@@ -1,11 +1,11 @@
-import { getOptionUpdater } from "$internal/index.js";
+import { getOptionUpdater } from "$lib/internal/index.js";
 import {
 	createRadioGroup,
 	type CreateRadioGroupProps,
 	type RadioGroup as RadioGroupReturn
 } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
-import { removeUndefined } from "$internal/index.js";
+import { removeUndefined } from "$lib/internal/index.js";
 import type { Readable } from "svelte/store";
 
 const NAME = "RadioGroup";

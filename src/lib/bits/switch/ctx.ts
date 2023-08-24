@@ -1,6 +1,6 @@
 import { createSwitch, type CreateSwitchProps, type Switch as SwitchReturn } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
-import { getOptionUpdater, removeUndefined } from "$internal/index.js";
+import { getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 
 const NAME = "Switch";
 export const ctx = {

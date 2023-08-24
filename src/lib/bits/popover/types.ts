@@ -6,8 +6,8 @@ import type {
 	OnChangeFn,
 	AsChild,
 	TransitionProps
-} from "$internal/index.js";
-import type { ButtonEventHandler } from "$lib/index.js";
+} from "$lib/internal/index.js";
+import type { CustomEventHandler } from "$lib/index.js";
 import type { CreatePopoverProps } from "@melt-ui/svelte";
 import type { HTMLButtonAttributes } from "svelte/elements";
 
@@ -34,10 +34,11 @@ type ArrowProps = Expand<
 > &
 	HTMLDivAttributes;
 
-type TriggerEvents = {
-	"m-click": ButtonEventHandler<MouseEvent>;
-	"m-keydown": ButtonEventHandler<KeyboardEvent>;
+type TriggerEvents<T extends Element = HTMLButtonElement> = {
+	click: CustomEventHandler<MouseEvent, T>;
+	keydown: CustomEventHandler<KeyboardEvent, T>;
 };
+
 type CloseEvents = TriggerEvents;
 
 export type {

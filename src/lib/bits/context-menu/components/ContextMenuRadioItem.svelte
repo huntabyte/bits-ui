@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
+	import { createCustomEventDispatcher } from "$lib/index.js";
 	import { ctx } from "../ctx.js";
 	import type { RadioItemEvents, RadioItemProps } from "../types.js";
 
@@ -11,6 +12,8 @@
 	const {
 		elements: { radioItem }
 	} = ctx.setRadioItem(value);
+
+	const dispatch = createCustomEventDispatcher();
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions applied by melt's action/store -->
@@ -21,13 +24,13 @@
 	<div
 		use:melt={builder}
 		{...$$restProps}
-		on:m-click
-		on:m-focusin
-		on:m-focusout
-		on:m-keydown
-		on:m-pointerdown
-		on:m-pointerleave
-		on:m-pointermove
+		on:m-click={dispatch}
+		on:m-focusin={dispatch}
+		on:m-focusout={dispatch}
+		on:m-keydown={dispatch}
+		on:m-pointerdown={dispatch}
+		on:m-pointerleave={dispatch}
+		on:m-pointermove={dispatch}
 	>
 		<slot {builder} />
 	</div>

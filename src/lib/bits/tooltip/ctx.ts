@@ -3,7 +3,7 @@ import {
 	type Tooltip as TooltipReturn,
 	type CreateTooltipProps
 } from "@melt-ui/svelte";
-import { getOptionUpdater, removeUndefined } from "$internal/index.js";
+import { getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 import { getContext, setContext } from "svelte";
 
 const NAME = "Tooltip";

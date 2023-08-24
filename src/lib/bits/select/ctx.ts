@@ -1,7 +1,6 @@
 import { type CreateSelectProps, type Select as SelectReturn, createSelect } from "@melt-ui/svelte";
-
 import { getContext, setContext } from "svelte";
-import { generateId, getOptionUpdater, removeUndefined } from "$internal/index.js";
+import { generateId, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 
 const NAME = "Select";
 const GROUP_NAME = "SelectGroup";

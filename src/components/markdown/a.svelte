@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { ArrowSquareOut } from "@/components/icons";
 	import { cn } from "@/utils";
 
 	let className: string | undefined | null = undefined;

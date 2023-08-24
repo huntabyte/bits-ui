@@ -5,7 +5,7 @@
 
 	type $$Props = Props;
 	export let orientation: $$Props["orientation"] = "horizontal";
-	export let decorative: $$Props["decorative"] = true;
+	export let decorative = true;
 	export let asChild = false;
 
 	const {

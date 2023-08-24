@@ -1,4 +1,4 @@
-import { generateId, getOptionUpdater, removeUndefined } from "$internal/index.js";
+import { generateId, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 import {
 	type ContextMenu as ContextMenuReturn,
 	type ContextMenuRadioGroup as ContextRadioGroupReturn,

@@ -4,7 +4,7 @@ import {
 	type CreateCheckboxProps
 } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
-import { removeUndefined, getOptionUpdater } from "$internal/index.js";
+import { removeUndefined, getOptionUpdater } from "$lib/internal/index.js";
 
 const NAME = "Checkbox";
 

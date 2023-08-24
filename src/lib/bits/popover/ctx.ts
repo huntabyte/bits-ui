@@ -4,7 +4,7 @@ import {
 	type Popover as PopoverReturn
 } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
-import { getOptionUpdater, removeUndefined } from "$internal/index.js";
+import { getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 
 const NAME = "Popover";
 

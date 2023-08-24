@@ -7,8 +7,8 @@ import type {
 	OnChangeFn,
 	AsChild,
 	TransitionProps
-} from "$internal/index.js";
-import type { ButtonEventHandler } from "$lib/index.js";
+} from "$lib/internal/index.js";
+import type { CustomEventHandler } from "$lib/index.js";
 import type {
 	CreateAccordionProps,
 	AccordionItemProps as _ItemProps,
@@ -42,8 +42,8 @@ type ContentProps<
 > = Expand<TransitionProps<T, In, Out> & AsChild> & HTMLDivAttributes;
 
 type TriggerEvents = {
-	"m-click": ButtonEventHandler<MouseEvent>;
-	"m-keydown": ButtonEventHandler<KeyboardEvent>;
+	click: CustomEventHandler<MouseEvent, HTMLButtonElement>;
+	keydown: CustomEventHandler<KeyboardEvent, HTMLButtonElement>;
 };
 
 export type {

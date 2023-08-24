@@ -1,9 +1,11 @@
+import type { CustomEventHandler } from "$lib";
 import type { AsChild } from "$lib/internal/types.js";
-import type { LabelComponentEvents } from "@melt-ui/svelte";
 import type { HTMLLabelAttributes } from "svelte/elements";
 
 type Props = AsChild & HTMLLabelAttributes;
-type Events = LabelComponentEvents["root"];
+type Events<T extends Element = HTMLLabelElement> = {
+	mousedown: CustomEventHandler<MouseEvent, T>;
+};
 
 export type {
 	Props,

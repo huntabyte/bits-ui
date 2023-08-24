@@ -6,8 +6,8 @@ import type {
 	ObjectVariation,
 	OmitValue,
 	OnChangeFn
-} from "$internal/index.js";
-import type { ButtonEventHandler } from "$lib/index.js";
+} from "$lib/internal/index.js";
+import type { CustomEventHandler } from "$lib/index.js";
 
 type Props = Expand<
 	OmitValue<CreateTabsProps> & {
@@ -29,9 +29,10 @@ type TriggerProps = Expand<ObjectVariation<TabsTriggerProps> & AsChild> & HTMLDi
 
 type ListProps = AsChild & HTMLDivAttributes;
 
-type TriggerEvents = {
-	"m-click": ButtonEventHandler<MouseEvent>;
-	"m-keydown": ButtonEventHandler<KeyboardEvent>;
+type TriggerEvents<T extends Element = HTMLButtonElement> = {
+	click: CustomEventHandler<MouseEvent, T>;
+	keydown: CustomEventHandler<KeyboardEvent, T>;
+	focus: CustomEventHandler<FocusEvent, T>;
 };
 
 export type {

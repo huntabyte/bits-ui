@@ -12,8 +12,8 @@ import {
 	type Checkbox as CheckboxReturn
 } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
-import { generateId, getOptionUpdater, removeUndefined } from "$internal/index.js";
-import type { Readable, Writable } from "svelte/store";
+import { generateId, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
+import type { Readable } from "svelte/store";
 
 const NAME = "Menubar";
 const MENU_NAME = "MenubarMenu";

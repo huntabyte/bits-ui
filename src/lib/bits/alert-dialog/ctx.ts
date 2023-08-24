@@ -9,7 +9,7 @@ import {
 	removeUndefined,
 	type TOpen,
 	type TransitionTimesProp
-} from "$internal/index.js";
+} from "$lib/internal/index.js";
 
 const NAME = "AlertDialog";
 

@@ -23,7 +23,7 @@
 	<slot builder={$menubar} />
 {:else}
 	{@const builder = $menubar}
-	<div use:melt={builder} style="z-index: 50" {...$$restProps}>
+	<div use:melt={builder} {...$$restProps}>
 		<slot {builder} />
 	</div>
 {/if}

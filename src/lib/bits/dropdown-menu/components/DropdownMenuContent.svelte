@@ -1,6 +1,7 @@
 <script lang="ts">
-	import Overlay from "$lib/internal/overlay.svelte";
 	import { melt } from "@melt-ui/svelte";
+	import Overlay from "$lib/internal/overlay.svelte";
+	import { createCustomEventDispatcher } from "$lib/index.js";
 	import type { Transition } from "$lib/internal/types.js";
 	import { ctx } from "../ctx.js";
 	import type { ContentEvents, ContentProps } from "../types.js";
@@ -11,14 +12,15 @@
 	type $$Props = ContentProps<T, In, Out>;
 	type $$Events = ContentEvents;
 	export let sideOffset: $$Props["sideOffset"] = 5;
-	export let transition: ContentProps<T, In, Out>["transition"] = undefined;
-	export let transitionConfig: ContentProps<T, In, Out>["transitionConfig"] = undefined;
 
-	export let inTransition: ContentProps<T, In, Out>["inTransition"] = undefined;
-	export let inTransitionConfig: ContentProps<T>["inTransitionConfig"] = undefined;
+	export let transition: $$Props["transition"] = undefined;
+	export let transitionConfig: $$Props["transitionConfig"] = undefined;
 
-	export let outTransition: ContentProps<T, In, Out>["outTransition"] = undefined;
-	export let outTransitionConfig: ContentProps<T, In, Out>["outTransitionConfig"] = undefined;
+	export let inTransition: $$Props["inTransition"] = undefined;
+	export let inTransitionConfig: $$Props["inTransitionConfig"] = undefined;
+
+	export let outTransition: $$Props["outTransition"] = undefined;
+	export let outTransitionConfig: $$Props["outTransitionConfig"] = undefined;
 
 	export let asChild = false;
 
@@ -26,6 +28,8 @@
 		elements: { menu },
 		states: { open }
 	} = ctx.getContent(sideOffset);
+
+	const dispatch = createCustomEventDispatcher();
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions applied by melt's action/store -->
@@ -39,7 +43,7 @@
 			transition:transition|global={transitionConfig}
 			use:melt={builder}
 			{...$$restProps}
-			on:m-keydown
+			on:m-keydown={dispatch}
 		>
 			<slot {builder} />
 		</div>
@@ -49,7 +53,7 @@
 			out:outTransition|global={outTransitionConfig}
 			use:melt={builder}
 			{...$$restProps}
-			on:m-keydown
+			on:m-keydown={dispatch}
 		>
 			<slot {builder} />
 		</div>
@@ -58,7 +62,7 @@
 			in:inTransition|global={inTransitionConfig}
 			use:melt={builder}
 			{...$$restProps}
-			on:m-keydown
+			on:m-keydown={dispatch}
 		>
 			<slot {builder} />
 		</div>
@@ -67,12 +71,12 @@
 			out:outTransition|global={outTransitionConfig}
 			use:melt={builder}
 			{...$$restProps}
-			on:m-keydown
+			on:m-keydown={dispatch}
 		>
 			<slot {builder} />
 		</div>
 	{:else}
-		<div use:melt={builder} {...$$restProps} on:m-keydown>
+		<div use:melt={builder} {...$$restProps} on:m-keydown={dispatch}>
 			<slot {builder} />
 		</div>
 	{/if}

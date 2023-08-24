@@ -1,5 +1,5 @@
 import { createProgress, type CreateProgressProps } from "@melt-ui/svelte";
-import { getOptionUpdater, removeUndefined } from "$internal/index.js";
+import { getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 
 export const ctx = {
 	set

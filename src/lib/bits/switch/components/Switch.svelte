@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
+	import { createCustomEventDispatcher } from "$lib/index.js";
 	import { ctx } from "../ctx.js";
 	import type { Events, Props } from "../types.js";
 
@@ -28,6 +29,8 @@
 		}
 	});
 
+	const dispatch = createCustomEventDispatcher();
+
 	$: checked !== undefined && localChecked.set(checked);
 	$: updateOption("disabled", disabled);
 	$: updateOption("name", name);
@@ -38,7 +41,7 @@
 	<slot builder={$root} />
 {:else}
 	{@const builder = $root}
-	<button use:melt={builder} {...$$restProps} on:m-click on:m-keydown>
+	<button use:melt={builder} {...$$restProps} on:m-click={dispatch} on:m-keydown={dispatch}>
 		<slot {builder} />
 	</button>
 {/if}

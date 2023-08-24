@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { setTransitionTimes, type Transition } from "$internal/index.js";
+	import { setTransitionTimes, type Transition } from "$lib/internal/index.js";
 	import { ctx } from "../ctx.js";
 	import type { ContentProps } from "../types.js";
 
@@ -10,12 +10,12 @@
 
 	type $$Props = ContentProps<T, In, Out>;
 
-	export let transition: ContentProps<T, In, Out>["transition"] = undefined;
-	export let transitionConfig: ContentProps<T, In, Out>["transitionConfig"] = undefined;
-	export let inTransition: ContentProps<T, In, Out>["inTransition"] = undefined;
-	export let inTransitionConfig: ContentProps<T, In, Out>["inTransitionConfig"] = undefined;
-	export let outTransition: ContentProps<T, In, Out>["outTransition"] = undefined;
-	export let outTransitionConfig: ContentProps<T, In, Out>["outTransitionConfig"] = undefined;
+	export let transition: $$Props["transition"] = undefined;
+	export let transitionConfig: $$Props["transitionConfig"] = undefined;
+	export let inTransition: $$Props["inTransition"] = undefined;
+	export let inTransitionConfig: $$Props["inTransitionConfig"] = undefined;
+	export let outTransition: $$Props["outTransition"] = undefined;
+	export let outTransitionConfig: $$Props["outTransitionConfig"] = undefined;
 
 	export let asChild = false;
 

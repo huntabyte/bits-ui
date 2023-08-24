@@ -1,4 +1,4 @@
-import { getOptionUpdater, removeUndefined } from "$internal/index.js";
+import { getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 import { createSlider, type CreateSliderProps, type Slider as SliderReturn } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
 

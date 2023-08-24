@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
+	import { createCustomEventDispatcher } from "$lib/index.js";
 	import { ctx } from "../ctx.js";
 	import type { ItemEvents, ItemProps } from "../types.js";
 
@@ -9,8 +10,9 @@
 	export let value: $$Props["value"];
 	export let disabled: $$Props["disabled"] = undefined;
 	export let label: $$Props["label"] = undefined;
-	export let asChild: $$Props["asChild"] = false;
+	export let asChild = false;
 	const option = ctx.setItem(value).elements.option;
+	const dispatch = createCustomEventDispatcher();
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions / applied by melt's builder-->
@@ -22,12 +24,12 @@
 	<div
 		use:melt={builder}
 		{...$$restProps}
-		on:m-click
-		on:m-focusin
-		on:m-focusout
-		on:m-keydown
-		on:m-pointerleave
-		on:m-pointermove
+		on:m-click={dispatch}
+		on:m-focusin={dispatch}
+		on:m-focusout={dispatch}
+		on:m-keydown={dispatch}
+		on:m-pointerleave={dispatch}
+		on:m-pointermove={dispatch}
 	>
 		<slot {builder}>
 			{label ? label : value}

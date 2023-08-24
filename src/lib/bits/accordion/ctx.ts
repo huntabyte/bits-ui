@@ -5,7 +5,7 @@ import {
 } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
 import type { AccordionItemProps } from "./types.js";
-import { getOptionUpdater, removeUndefined } from "$internal/index.js";
+import { getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 
 const NAME = "Accordion";
 const ITEM_NAME = "AccordionItem";

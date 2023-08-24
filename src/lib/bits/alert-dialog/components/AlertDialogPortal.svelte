@@ -11,11 +11,13 @@
 	} = ctx.get();
 </script>
 
-{#if asChild}
-	<slot builder={$portalled} />
-{:else}
+{#if $open}
 	{@const builder = $portalled}
-	<div use:melt={builder} {...$$restProps}>
+	{#if asChild}
 		<slot {builder} />
-	</div>
+	{:else}
+		<div use:melt={builder} {...$$restProps}>
+			<slot {builder} />
+		</div>
+	{/if}
 {/if}

@@ -5,8 +5,8 @@ import type {
 	OnChangeFn,
 	ObjectVariation,
 	AsChild
-} from "$internal/index.js";
-import type { ButtonEventHandler } from "$lib/index.js";
+} from "$lib/internal/index.js";
+import type { CustomEventHandler } from "$lib/index.js";
 import type { CreateRadioGroupProps, RadioGroupItemProps } from "@melt-ui/svelte";
 import type { HTMLButtonAttributes, HTMLInputAttributes } from "svelte/elements";
 
@@ -22,9 +22,10 @@ type InputProps = AsChild & HTMLInputAttributes;
 
 type ItemProps = Expand<ObjectVariation<RadioGroupItemProps> & AsChild> & HTMLButtonAttributes;
 
-type ItemEvents = {
-	"m-click": ButtonEventHandler<MouseEvent>;
-	"m-keydown": ButtonEventHandler<KeyboardEvent>;
+type ItemEvents<T extends Element = HTMLButtonElement> = {
+	click: CustomEventHandler<MouseEvent, T>;
+	keydown: CustomEventHandler<KeyboardEvent, T>;
+	focus: CustomEventHandler<FocusEvent, T>;
 };
 
 export type {

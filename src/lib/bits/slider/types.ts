@@ -1,11 +1,12 @@
-import type { CreateSliderProps, SliderComponentEvents } from "@melt-ui/svelte";
+import type { CreateSliderProps } from "@melt-ui/svelte";
 import type {
 	Expand,
 	OmitValue,
 	HTMLSpanAttributes,
 	OnChangeFn,
 	AsChild
-} from "$internal/index.js";
+} from "$lib/internal/index.js";
+import type { CustomEventHandler } from "$lib/index.js";
 import type { HTMLInputAttributes } from "svelte/elements";
 
 type Props = Expand<
@@ -20,7 +21,9 @@ type RangeProps = AsChild & HTMLSpanAttributes;
 
 type ThumbProps = AsChild & HTMLSpanAttributes;
 
-type ThumbEvents = SliderComponentEvents["thumb"];
+type ThumbEvents<T extends Element = HTMLSpanElement> = {
+	keydown: CustomEventHandler<KeyboardEvent, T>;
+};
 
 type InputProps = Omit<HTMLInputAttributes, "value">;
 

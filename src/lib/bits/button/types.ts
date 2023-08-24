@@ -1,4 +1,4 @@
-import type { Builder } from "$internal/index.js";
+import type { Builder } from "$lib/internal/index.js";
 import type { HTMLAnchorAttributes, HTMLButtonAttributes } from "svelte/elements";
 
 type Builders = {

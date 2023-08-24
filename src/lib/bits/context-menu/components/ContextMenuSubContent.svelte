@@ -1,7 +1,8 @@
 <script lang="ts">
+	import { createCustomEventDispatcher } from "$lib/index.js";
 	import { melt } from "@melt-ui/svelte";
 	import { ctx } from "../ctx.js";
-	import type { Transition } from "$internal/types.js";
+	import type { Transition } from "$lib/internal/types.js";
 	import type { SubContentEvents, SubContentProps } from "../types.js";
 
 	type T = $$Generic<Transition>;
@@ -10,18 +11,20 @@
 	type $$Props = SubContentProps<T, In, Out>;
 
 	type $$Events = SubContentEvents;
-	export let transition: SubContentProps<T, In, Out>["transition"] = undefined;
-	export let transitionConfig: SubContentProps<T, In, Out>["transitionConfig"] = undefined;
-	export let inTransition: SubContentProps<T, In, Out>["inTransition"] = undefined;
-	export let inTransitionConfig: SubContentProps<T>["inTransitionConfig"] = undefined;
-	export let outTransition: SubContentProps<T, In, Out>["outTransition"] = undefined;
-	export let outTransitionConfig: SubContentProps<T, In, Out>["outTransitionConfig"] = undefined;
+	export let transition: $$Props["transition"] = undefined;
+	export let transitionConfig: $$Props["transitionConfig"] = undefined;
+	export let inTransition: $$Props["inTransition"] = undefined;
+	export let inTransitionConfig: $$Props["inTransitionConfig"] = undefined;
+	export let outTransition: $$Props["outTransition"] = undefined;
+	export let outTransitionConfig: $$Props["outTransitionConfig"] = undefined;
 	export let asChild = false;
 
 	const {
 		elements: { subMenu },
 		states: { subOpen }
 	} = ctx.getSubContent();
+
+	const dispatch = createCustomEventDispatcher();
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions / applied by melt store -->
@@ -34,9 +37,9 @@
 			transition:transition|global={transitionConfig}
 			use:melt={builder}
 			{...$$restProps}
-			on:m-focusout
-			on:m-keydown
-			on:m-pointermove
+			on:m-focusout={dispatch}
+			on:m-keydown={dispatch}
+			on:m-pointermove={dispatch}
 		>
 			<slot {builder} />
 		</div>
@@ -46,9 +49,9 @@
 			out:outTransition|global={outTransitionConfig}
 			use:melt={builder}
 			{...$$restProps}
-			on:m-focusout
-			on:m-keydown
-			on:m-pointermove
+			on:m-focusout={dispatch}
+			on:m-keydown={dispatch}
+			on:m-pointermove={dispatch}
 		>
 			<slot {builder} />
 		</div>
@@ -57,9 +60,9 @@
 			in:inTransition|global={inTransitionConfig}
 			use:melt={builder}
 			{...$$restProps}
-			on:m-focusout
-			on:m-keydown
-			on:m-pointermove
+			on:m-focusout={dispatch}
+			on:m-keydown={dispatch}
+			on:m-pointermove={dispatch}
 		>
 			<slot {builder} />
 		</div>
@@ -68,14 +71,20 @@
 			out:outTransition|global={outTransitionConfig}
 			use:melt={builder}
 			{...$$restProps}
-			on:m-focusout
-			on:m-keydown
-			on:m-pointermove
+			on:m-focusout={dispatch}
+			on:m-keydown={dispatch}
+			on:m-pointermove={dispatch}
 		>
 			<slot {builder} />
 		</div>
 	{:else}
-		<div use:melt={builder} {...$$restProps} on:m-focusout on:m-keydown on:m-pointermove>
+		<div
+			use:melt={builder}
+			{...$$restProps}
+			on:m-focusout={dispatch}
+			on:m-keydown={dispatch}
+			on:m-pointermove={dispatch}
+		>
 			<slot {builder} />
 		</div>
 	{/if}

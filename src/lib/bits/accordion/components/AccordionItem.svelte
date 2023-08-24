@@ -4,9 +4,9 @@
 	import type { ItemProps } from "../types.js";
 	type $$Props = ItemProps;
 
-	export let value: ItemProps["value"];
-	export let disabled: ItemProps["disabled"] = undefined;
-	export let asChild: ItemProps["asChild"] = false;
+	export let value: $$Props["value"];
+	export let disabled: $$Props["disabled"] = undefined;
+	export let asChild = false;
 	const { item, props } = ctx.setItem({ value, disabled });
 </script>
 
