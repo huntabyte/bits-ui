@@ -4,7 +4,7 @@
 
 <Accordion.Root class="w-full sm:max-w-[70%]">
 	<Accordion.Item value="item-1">
-		<Accordion.Trigger on:click={(e) => e.preventDefault()}>Is it accessible?</Accordion.Trigger>
+		<Accordion.Trigger>Is it accessible?</Accordion.Trigger>
 		<Accordion.Content>Yes. It adheres to the WAI-ARIA design pattern.</Accordion.Content>
 	</Accordion.Item>
 	<Accordion.Item value="item-2">
