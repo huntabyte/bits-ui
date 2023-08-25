@@ -25,8 +25,10 @@
 		required,
 		value,
 		onCheckedChange: ({ next }) => {
-			onCheckedChange?.(next);
-			checked = next;
+			if (checked !== next) {
+				onCheckedChange?.(next);
+				checked = next;
+			}
 			return next;
 		}
 	});

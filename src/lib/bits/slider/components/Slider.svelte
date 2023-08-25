@@ -26,8 +26,10 @@
 		orientation,
 		defaultValue: value,
 		onValueChange: ({ next }) => {
-			value = next;
-			onValueChange?.(next);
+			if (value !== next) {
+				onValueChange?.(next);
+				value = next;
+			}
 			return next;
 		}
 	});

@@ -4,7 +4,6 @@ import type {
 	Expand,
 	HTMLDivAttributes,
 	OmitOpen,
-	OmitValue,
 	OnChangeFn,
 	Transition,
 	TransitionProps
@@ -13,12 +12,11 @@ import type { HTMLAttributes, HTMLButtonAttributes, HTMLInputAttributes } from "
 import type { CustomEventHandler } from "$lib/index.js";
 
 type Props = Expand<
-	OmitOpen<OmitValue<Omit<CreateSelectProps, "defaultValueLabel">>> & {
-		value?: CreateSelectProps["defaultValue"] & {};
-		onValueChange?: OnChangeFn<CreateSelectProps["defaultValue"]>;
+	OmitOpen<Omit<CreateSelectProps, "selected" | "defaultSelected" | "onSelectedChange">> & {
+		selected?: CreateSelectProps["defaultSelected"] & {};
+		onSelectedChange?: OnChangeFn<CreateSelectProps["defaultSelected"]>;
 		open?: CreateSelectProps["defaultOpen"] & {};
 		onOpenChange?: OnChangeFn<CreateSelectProps["defaultOpen"]>;
-		label?: CreateSelectProps["defaultValueLabel"] & {};
 	}
 >;
 

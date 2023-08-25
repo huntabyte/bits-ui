@@ -22,8 +22,10 @@
 		defaultValue: value,
 
 		onValueChange: (({ next }: { next: $$Props["value"] }) => {
-			onValueChange?.(next);
-			value = next;
+			if (value !== next) {
+				onValueChange?.(next);
+				value = next;
+			}
 			return next;
 		}) as any // I'm sorry
 	});

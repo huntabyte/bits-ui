@@ -26,8 +26,10 @@
 		portal,
 		defaultOpen: open,
 		onOpenChange: ({ next }) => {
-			onOpenChange?.(next);
-			open = next;
+			if (open !== next) {
+				onOpenChange?.(next);
+				open = next;
+			}
 			return next;
 		}
 	});

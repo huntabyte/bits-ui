@@ -5,13 +5,15 @@
 	type $$Props = ValueProps;
 	export let placeholder = "";
 	export let asChild = false;
-	const valueLabel = ctx.get().states.valueLabel;
+	const {
+		states: { selectedLabel }
+	} = ctx.get();
 </script>
 
 {#if asChild}
-	<slot valueLabel={$valueLabel} />
+	<slot label={$selectedLabel} />
 {:else}
 	<span {...$$restProps}>
-		{$valueLabel ? $valueLabel : placeholder}
+		{$selectedLabel ? $selectedLabel : placeholder}
 	</span>
 {/if}
