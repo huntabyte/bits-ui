@@ -23,24 +23,27 @@
 	} = ctx.get();
 </script>
 
-{#if $tOpen}
+{#if asChild && $tOpen}
 	{@const builder = $overlay}
-	{#if asChild}
-		<slot {builder} />
-	{:else if transition}
-		<div transition:transition|global={transitionConfig} use:melt={builder} {...$$restProps} />
-	{:else if inTransition && outTransition}
-		<div
-			in:inTransition|global={inTransitionConfig}
-			out:outTransition|global={outTransitionConfig}
-			use:melt={builder}
-			{...$$restProps}
-		/>
-	{:else if inTransition}
-		<div in:inTransition|global={inTransitionConfig} use:melt={builder} {...$$restProps} />
-	{:else if outTransition}
-		<div out:outTransition|global={outTransitionConfig} use:melt={builder} {...$$restProps} />
-	{:else}
-		<div use:melt={builder} {...$$restProps} />
-	{/if}
+	<slot {builder} />
+{:else if transition && $tOpen}
+	{@const builder = $overlay}
+	<div transition:transition={transitionConfig} use:melt={builder} {...$$restProps} />
+{:else if inTransition && outTransition}
+	{@const builder = $overlay}
+	<div
+		in:inTransition={inTransitionConfig}
+		out:outTransition={outTransitionConfig}
+		use:melt={builder}
+		{...$$restProps}
+	/>
+{:else if inTransition && $tOpen}
+	{@const builder = $overlay}
+	<div in:inTransition={inTransitionConfig} use:melt={builder} {...$$restProps} />
+{:else if outTransition && $tOpen}
+	{@const builder = $overlay}
+	<div out:outTransition={outTransitionConfig} use:melt={builder} {...$$restProps} />
+{:else if $tOpen}
+	{@const builder = $overlay}
+	<div use:melt={builder} {...$$restProps} />
 {/if}

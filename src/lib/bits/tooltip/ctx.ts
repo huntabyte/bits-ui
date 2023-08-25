@@ -22,8 +22,7 @@ function set(props: CreateTooltipProps) {
 			placement: "top"
 		},
 		openDelay: 700,
-		...removeUndefined(props),
-		forceVisible: true
+		...removeUndefined(props)
 	});
 	setContext(NAME, tooltip);
 	return {

@@ -36,6 +36,7 @@
 		positioning,
 		name,
 		multiple,
+		forceVisible,
 		defaultSelected: selected,
 		defaultOpen: open,
 		onSelectedChange: ({ next }) => {

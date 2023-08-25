@@ -32,49 +32,54 @@
 
 {#if $open}
 	<Overlay />
+{/if}
+{#if asChild && $open}
 	{@const builder = $menu}
-	{#if asChild}
+	<slot {builder} />
+{:else if transition && $open}
+	{@const builder = $menu}
+	<div
+		transition:transition={transitionConfig}
+		use:melt={builder}
+		{...$$restProps}
+		on:m-keydown={dispatch}
+	>
 		<slot {builder} />
-	{:else if transition}
-		<div
-			transition:transition|global={transitionConfig}
-			use:melt={builder}
-			{...$$restProps}
-			on:m-keydown={dispatch}
-		>
-			<slot {builder} />
-		</div>
-	{:else if inTransition && outTransition}
-		<div
-			in:inTransition|global={inTransitionConfig}
-			out:outTransition|global={outTransitionConfig}
-			use:melt={builder}
-			{...$$restProps}
-			on:m-keydown={dispatch}
-		>
-			<slot {builder} />
-		</div>
-	{:else if inTransition}
-		<div
-			in:inTransition|global={inTransitionConfig}
-			use:melt={builder}
-			{...$$restProps}
-			on:m-keydown={dispatch}
-		>
-			<slot {builder} />
-		</div>
-	{:else if outTransition}
-		<div
-			out:outTransition|global={outTransitionConfig}
-			use:melt={builder}
-			{...$$restProps}
-			on:m-keydown={dispatch}
-		>
-			<slot {builder} />
-		</div>
-	{:else}
-		<div use:melt={builder} {...$$restProps} on:m-keydown={dispatch}>
-			<slot {builder} />
-		</div>
-	{/if}
+	</div>
+{:else if inTransition && outTransition && $open}
+	{@const builder = $menu}
+	<div
+		in:inTransition={inTransitionConfig}
+		out:outTransition={outTransitionConfig}
+		use:melt={builder}
+		{...$$restProps}
+		on:m-keydown={dispatch}
+	>
+		<slot {builder} />
+	</div>
+{:else if inTransition && $open}
+	{@const builder = $menu}
+	<div
+		in:inTransition={inTransitionConfig}
+		use:melt={builder}
+		{...$$restProps}
+		on:m-keydown={dispatch}
+	>
+		<slot {builder} />
+	</div>
+{:else if outTransition && $open}
+	{@const builder = $menu}
+	<div
+		out:outTransition={outTransitionConfig}
+		use:melt={builder}
+		{...$$restProps}
+		on:m-keydown={dispatch}
+	>
+		<slot {builder} />
+	</div>
+{:else if $open}
+	{@const builder = $menu}
+	<div use:melt={builder} {...$$restProps} on:m-keydown={dispatch}>
+		<slot {builder} />
+	</div>
 {/if}

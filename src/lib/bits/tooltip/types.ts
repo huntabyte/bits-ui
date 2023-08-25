@@ -3,7 +3,6 @@ import type {
 	Expand,
 	HTMLDivAttributes,
 	OmitOpen,
-	OmitForceVisible,
 	Transition,
 	OnChangeFn,
 	AsChild,
@@ -13,7 +12,7 @@ import type { HTMLButtonAttributes } from "svelte/elements";
 import type { CustomEventHandler } from "$lib";
 
 type Props = Expand<
-	OmitOpen<OmitForceVisible<CreateTooltipProps>> & {
+	OmitOpen<CreateTooltipProps> & {
 		open?: CreateTooltipProps["defaultOpen"] & {};
 		onOpenChange?: OnChangeFn<CreateTooltipProps["defaultOpen"]>;
 	}

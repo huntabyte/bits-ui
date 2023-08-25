@@ -29,59 +29,57 @@
 	const dispatch = createDispatcher();
 </script>
 
-{#if $open}
+{#if asChild && $open}
 	{@const builder = $content}
-	{#if asChild}
+	<slot {builder} />
+{:else if transition && $open}
+	{@const builder = $content}
+	<div
+		use:melt={builder}
+		transition:transition={transitionConfig}
+		{...$$restProps}
+		on:m-pointerdown={dispatch}
+		on:m-pointerenter={dispatch}
+	>
 		<slot {builder} />
-	{:else if transition}
-		<div
-			use:melt={builder}
-			transition:transition|global={transitionConfig}
-			{...$$restProps}
-			on:m-pointerdown={dispatch}
-			on:m-pointerenter={dispatch}
-		>
-			<slot {builder} />
-		</div>
-	{:else if inTransition && outTransition}
-		<div
-			use:melt={builder}
-			in:inTransition|global={inTransitionConfig}
-			out:outTransition|global={outTransitionConfig}
-			{...$$restProps}
-			on:m-pointerdown={dispatch}
-			on:m-pointerenter={dispatch}
-		>
-			<slot {builder} />
-		</div>
-	{:else if inTransition}
-		<div
-			use:melt={builder}
-			in:inTransition|global={inTransitionConfig}
-			{...$$restProps}
-			on:m-pointerdown={dispatch}
-			on:m-pointerenter={dispatch}
-		>
-			<slot {builder} />
-		</div>
-	{:else if outTransition}
-		<div
-			use:melt={builder}
-			out:outTransition|global={outTransitionConfig}
-			{...$$restProps}
-			on:m-pointerdown={dispatch}
-			on:m-pointerenter={dispatch}
-		>
-			<slot {builder} />
-		</div>
-	{:else}
-		<div
-			use:melt={builder}
-			{...$$restProps}
-			on:m-pointerdown={dispatch}
-			on:m-pointerenter={dispatch}
-		>
-			<slot {builder} />
-		</div>
-	{/if}
+	</div>
+{:else if inTransition && outTransition && $open}
+	{@const builder = $content}
+	<div
+		use:melt={builder}
+		in:inTransition={inTransitionConfig}
+		out:outTransition={outTransitionConfig}
+		{...$$restProps}
+		on:m-pointerdown={dispatch}
+		on:m-pointerenter={dispatch}
+	>
+		<slot {builder} />
+	</div>
+{:else if inTransition && $open}
+	{@const builder = $content}
+	<div
+		use:melt={builder}
+		in:inTransition={inTransitionConfig}
+		{...$$restProps}
+		on:m-pointerdown={dispatch}
+		on:m-pointerenter={dispatch}
+	>
+		<slot {builder} />
+	</div>
+{:else if outTransition && $open}
+	{@const builder = $content}
+	<div
+		use:melt={builder}
+		out:outTransition={outTransitionConfig}
+		{...$$restProps}
+		on:m-pointerdown={dispatch}
+		on:m-pointerenter={dispatch}
+	>
+		<slot {builder} />
+	</div>
+{:else if $open}
+	{@const builder = $content}
+	<div use:melt={builder} {...$$restProps} on:m-pointerdown={dispatch} on:m-pointerenter={dispatch}>
+		<slot {builder} />
+	</div>
 {/if}

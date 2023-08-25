@@ -24,34 +24,37 @@
 	const { content, isSelected, props } = ctx.getContent();
 </script>
 
-{#if $isSelected(props)}
+{#if asChild && $isSelected(props)}
 	{@const builder = $content(props)}
-	{#if asChild}
+	<slot {builder} />
+{:else if transition && $isSelected(props)}
+	{@const builder = $content(props)}
+	<div transition:transition={transitionConfig} use:melt={builder} {...$$restProps}>
 		<slot {builder} />
-	{:else if transition}
-		<div transition:transition|global={transitionConfig} use:melt={builder} {...$$restProps}>
-			<slot {builder} />
-		</div>
-	{:else if inTransition && outTransition}
-		<div
-			in:inTransition|global={inTransitionConfig}
-			out:outTransition|global={outTransitionConfig}
-			use:melt={builder}
-			{...$$restProps}
-		>
-			<slot {builder} />
-		</div>
-	{:else if inTransition}
-		<div in:inTransition|global={inTransitionConfig} use:melt={builder} {...$$restProps}>
-			<slot {builder} />
-		</div>
-	{:else if outTransition}
-		<div out:outTransition|global={outTransitionConfig} use:melt={builder} {...$$restProps}>
-			<slot {builder} />
-		</div>
-	{:else}
-		<div {...$$restProps}>
-			<slot {builder} />
-		</div>
-	{/if}
+	</div>
+{:else if inTransition && outTransition && $isSelected(props)}
+	{@const builder = $content(props)}
+	<div
+		in:inTransition={inTransitionConfig}
+		out:outTransition={outTransitionConfig}
+		use:melt={builder}
+		{...$$restProps}
+	>
+		<slot {builder} />
+	</div>
+{:else if inTransition && $isSelected(props)}
+	{@const builder = $content(props)}
+	<div in:inTransition={inTransitionConfig} use:melt={builder} {...$$restProps}>
+		<slot {builder} />
+	</div>
+{:else if outTransition && $isSelected(props)}
+	{@const builder = $content(props)}
+	<div out:outTransition={outTransitionConfig} use:melt={builder} {...$$restProps}>
+		<slot {builder} />
+	</div>
+{:else if $isSelected(props)}
+	{@const builder = $content(props)}
+	<div {...$$restProps}>
+		<slot {builder} />
+	</div>
 {/if}
