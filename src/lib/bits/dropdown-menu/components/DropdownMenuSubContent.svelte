@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { createCustomEventDispatcher } from "$lib/index.js";
-	import type { Transition } from "$lib/internal/index.js";
+	import { createDispatcher, type Transition } from "$lib/internal/index.js";
 	import { ctx } from "../ctx.js";
 	import type { SubContentEvents, SubContentProps } from "../types.js";
 
@@ -26,7 +25,7 @@
 		states: { subOpen }
 	} = ctx.getSubContent();
 
-	const dispatch = createCustomEventDispatcher();
+	const dispatch = createDispatcher();
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions / applied by melt store -->

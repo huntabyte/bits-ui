@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { createCustomEventDispatcher } from "$lib/index.js";
 	import { ctx } from "../ctx.js";
 	import type { CheckboxItemEvents, CheckboxItemProps } from "../types.js";
+	import { createDispatcher } from "$lib/internal/events.js";
 
 	type $$Props = CheckboxItemProps;
 	type $$Events = CheckboxItemEvents;
@@ -25,7 +25,7 @@
 		}
 	});
 
-	const dispatch = createCustomEventDispatcher();
+	const dispatch = createDispatcher();
 
 	$: checked !== undefined && localChecked.set(checked);
 	$: updateOption("disabled", disabled);
@@ -38,7 +38,6 @@
 	{@const builder = $checkboxItem}
 	<div
 		use:melt={builder}
-		{...$$restProps}
 		on:m-click={dispatch}
 		on:m-focusin={dispatch}
 		on:m-focusout={dispatch}
@@ -46,6 +45,7 @@
 		on:m-pointerdown={dispatch}
 		on:m-pointerleave={dispatch}
 		on:m-pointermove={dispatch}
+		{...$$restProps}
 	>
 		<slot {builder} />
 	</div>

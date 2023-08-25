@@ -1,16 +1,18 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { disabledAttrs } from "$lib/internal/helpers.js";
-	import { createCustomEventDispatcher } from "$lib/index.js";
 	import { ctx } from "../ctx.js";
 	import type { SubTriggerEvents, SubTriggerProps } from "../types.js";
+	import { createDispatcher } from "$lib/internal/events.js";
 
 	type $$Props = SubTriggerProps;
 	type $$Events = SubTriggerEvents;
 	export let disabled = false;
 	export let asChild = false;
-	const subTrigger = ctx.getSub().elements.subTrigger;
-	const dispatch = createCustomEventDispatcher();
+	const {
+		elements: { subTrigger }
+	} = ctx.getSub();
+	const dispatch = createDispatcher();
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions / applied by melt's builder-->

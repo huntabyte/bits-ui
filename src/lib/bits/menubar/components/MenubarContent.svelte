@@ -1,6 +1,7 @@
 <script lang="ts">
+	import { createDispatcher } from "$lib/internal/events.js";
+
 	import { melt } from "@melt-ui/svelte";
-	import { createCustomEventDispatcher } from "$lib/index.js";
 	import { ctx } from "../ctx.js";
 	import type { ContentEvents, ContentProps } from "../types.js";
 
@@ -26,7 +27,7 @@
 		states: { open }
 	} = ctx.getContent(sideOffset);
 
-	const dispatch = createCustomEventDispatcher();
+	const dispatch = createDispatcher();
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions applied by melt's action/store -->

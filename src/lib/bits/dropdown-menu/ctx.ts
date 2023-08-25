@@ -37,8 +37,12 @@ export const ctx = {
 	setArrow
 };
 
+type GetReturn = DropdownMenuReturn;
+type GetSubReturn = DropdownSubmenuReturn;
+type GetRadioGroupReturn = DropdownRadioGroupReturn;
+
 function get() {
-	return getContext<DropdownMenuReturn>(NAME);
+	return getContext<GetReturn>(NAME);
 }
 
 function set(props: CreateDropdownMenuProps) {
@@ -72,7 +76,7 @@ function setRadioGroup(props: DropdownRadioGroupProps) {
 }
 
 function setRadioItem(value: string) {
-	const dropdownMenu = getContext<DropdownRadioGroupReturn>(RADIO_GROUP_NAME);
+	const dropdownMenu = getContext<GetRadioGroupReturn>(RADIO_GROUP_NAME);
 	setContext(RADIO_ITEM_NAME, { isChecked: dropdownMenu.helpers.isChecked, value });
 	return dropdownMenu;
 }
@@ -85,7 +89,7 @@ function getRadioIndicator() {
 }
 
 function getSubTrigger() {
-	const submenu = getContext<DropdownSubmenuReturn>(SUB_NAME);
+	const submenu = getContext<GetSubReturn>(SUB_NAME);
 	return submenu;
 }
 
@@ -97,7 +101,7 @@ function getContent(sideoffset = 5) {
 }
 
 function getSubContent(sideOffset = -1) {
-	const submenu = getContext<DropdownSubmenuReturn>(SUB_NAME);
+	const submenu = getContext<GetSubReturn>(SUB_NAME);
 	submenu.options.positioning.update((prev) => ({ ...prev, gutter: sideOffset }));
 	return submenu;
 }

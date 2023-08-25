@@ -103,9 +103,9 @@ type ItemEvents<T extends Element = HTMLDivElement> = {
 	keydown: CustomEventHandler<KeyboardEvent, T>;
 	focusin: CustomEventHandler<FocusEvent, T>;
 	focusout: CustomEventHandler<FocusEvent, T>;
-	pointerdown: CustomEventHandler<MouseEvent, T>;
-	pointerleave: CustomEventHandler<MouseEvent, T>;
-	pointermove: CustomEventHandler<MouseEvent, T>;
+	pointerdown: CustomEventHandler<PointerEvent, T>;
+	pointerleave: CustomEventHandler<PointerEvent, T>;
+	pointermove: CustomEventHandler<PointerEvent, T>;
 };
 
 type CheckboxItemEvents = ItemEvents;

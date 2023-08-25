@@ -11,7 +11,7 @@ const NAME = "Dialog";
 
 type SetProps = CreateDialogProps & TransitionTimesProp & TOpen;
 
-type CtxReturn = DialogReturn & TransitionTimesProp & TOpen;
+type GetReturn = DialogReturn & TransitionTimesProp & TOpen;
 
 export const ctx = {
 	set,
@@ -20,7 +20,11 @@ export const ctx = {
 
 function set(props: SetProps) {
 	const dialog = createDialog({ ...removeUndefined(props), role: "dialog" });
-	setContext(NAME, { ...dialog, transitionTimes: props.transitionTimes, tOpen: props.tOpen });
+	setContext(NAME, {
+		...dialog,
+		transitionTimes: props.transitionTimes,
+		tOpen: props.tOpen
+	});
 	return {
 		...dialog,
 		updateOption: getOptionUpdater(dialog.options)
@@ -28,5 +32,5 @@ function set(props: SetProps) {
 }
 
 function get() {
-	return getContext<CtxReturn>(NAME);
+	return getContext<GetReturn>(NAME);
 }

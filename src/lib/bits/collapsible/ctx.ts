@@ -13,6 +13,8 @@ export const ctx = {
 	set
 };
 
+type GetReturn = CollapsibleReturn;
+
 function set(props: CreateCollapsibleProps) {
 	const collapsible = createCollapsible(removeUndefined(props));
 	setContext(NAME, collapsible);
@@ -23,5 +25,5 @@ function set(props: CreateCollapsibleProps) {
 }
 
 function get() {
-	return getContext<CollapsibleReturn>(NAME);
+	return getContext<GetReturn>(NAME);
 }

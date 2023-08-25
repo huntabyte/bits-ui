@@ -1,7 +1,8 @@
 <script lang="ts">
+	import { createDispatcher } from "$lib/internal/events.js";
+
 	import { melt } from "@melt-ui/svelte";
 	import Overlay from "$lib/internal/overlay.svelte";
-	import { createCustomEventDispatcher } from "$lib/index.js";
 	import type { Transition } from "$lib/internal/types.js";
 	import { ctx } from "../ctx.js";
 	import type { ContentEvents, ContentProps } from "../types.js";
@@ -24,7 +25,7 @@
 		elements: { menu },
 		states: { open }
 	} = ctx.get();
-	const dispatch = createCustomEventDispatcher();
+	const dispatch = createDispatcher();
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions / applied by melt's builder-->

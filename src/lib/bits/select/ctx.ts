@@ -16,8 +16,10 @@ export const ctx = {
 	setArrow
 };
 
+type GetReturn = SelectReturn;
+
 function get() {
-	return getContext<SelectReturn>(NAME);
+	return getContext<GetReturn>(NAME);
 }
 
 function set(props: CreateSelectProps) {

@@ -1,15 +1,17 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { createCustomEventDispatcher } from "$lib/index.js";
 	import { ctx } from "../ctx.js";
 	import type { CancelEvents, CancelProps } from "../types.js";
 
 	type $$Props = CancelProps;
 	type $$Events = CancelEvents;
 	export let asChild = false;
-	const close = ctx.get().elements.close;
+	const {
+		elements: { close },
+		createDispatcher
+	} = ctx.get();
 
-	const dispatch = createCustomEventDispatcher();
+	const dispatch = createDispatcher();
 </script>
 
 {#if asChild}

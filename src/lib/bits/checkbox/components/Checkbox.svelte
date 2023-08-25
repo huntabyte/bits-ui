@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { createCustomEventDispatcher } from "$lib/index.js";
 	import { melt } from "@melt-ui/svelte";
 	import { ctx } from "../ctx.js";
 	import type { Props, Events } from "../types.js";
+	import { createDispatcher } from "$lib/internal/events.js";
 
 	type $$Props = Props;
 	type $$Events = Events;
@@ -31,7 +31,7 @@
 		}
 	});
 
-	const dispatch = createCustomEventDispatcher();
+	const dispatch = createDispatcher();
 
 	$: checked !== undefined && localChecked.set(checked);
 

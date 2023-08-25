@@ -1,15 +1,15 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { createCustomEventDispatcher } from "$lib/index.js";
 	import { ctx } from "../ctx.js";
 	import type { TriggerEvents, TriggerProps } from "../types.js";
+	import { createDispatcher } from "$lib/internal/events.js";
 	type $$Props = TriggerProps;
 	type $$Events = TriggerEvents;
 	export let asChild: TriggerProps["asChild"] = false;
 
 	const { trigger, props } = ctx.getTrigger();
 
-	const dispatch = createCustomEventDispatcher<HTMLButtonElement>();
+	const dispatch = createDispatcher();
 </script>
 
 {#if asChild}

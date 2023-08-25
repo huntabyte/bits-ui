@@ -38,6 +38,10 @@ export const ctx = {
 	setArrow
 };
 
+type GetReturn = ContextMenuReturn;
+type GetSubReturn = ContextSubmenuReturn;
+type GetRadioReturn = ContextRadioGroupReturn;
+
 function set(props: CreateContextMenuProps) {
 	const contextMenu = createContextMenu(removeUndefined(props));
 	setContext(NAME, contextMenu);
@@ -48,7 +52,7 @@ function set(props: CreateContextMenuProps) {
 }
 
 function get() {
-	return getContext<ContextMenuReturn>(NAME);
+	return getContext<GetReturn>(NAME);
 }
 
 function setSub(props: CreateContextSubmenuProps) {
@@ -64,7 +68,7 @@ function setSub(props: CreateContextSubmenuProps) {
 }
 
 function getSub() {
-	return getContext<ContextSubmenuReturn>(SUB_NAME);
+	return getContext<GetSubReturn>(SUB_NAME);
 }
 
 function setRadioGroup(props: CreateContextMenuRadioGroupProps) {
@@ -77,7 +81,7 @@ function setRadioGroup(props: CreateContextMenuRadioGroupProps) {
 }
 
 function setRadioItem(value: string) {
-	const radioGroup = getContext<ContextRadioGroupReturn>(RADIO_GROUP_NAME);
+	const radioGroup = getContext<GetRadioReturn>(RADIO_GROUP_NAME);
 	setContext(RADIO_ITEM_NAME, {
 		isChecked: radioGroup.helpers.isChecked,
 		value
@@ -93,7 +97,7 @@ function getRadioIndicator() {
 }
 
 function getSubTrigger() {
-	return getContext<ContextSubmenuReturn>(SUB_NAME);
+	return getContext<GetSubReturn>(SUB_NAME);
 }
 
 function getContent(sideoffset = 5) {
@@ -105,7 +109,7 @@ function getContent(sideoffset = 5) {
 }
 
 function getSubContent(sideOffset = -1) {
-	const submenu = getContext<ContextSubmenuReturn>(SUB_NAME);
+	const submenu = getContext<GetSubReturn>(SUB_NAME);
 	const {
 		options: { positioning }
 	} = submenu;

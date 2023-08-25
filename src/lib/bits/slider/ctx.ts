@@ -8,6 +8,8 @@ export const ctx = {
 	get
 };
 
+type GetReturn = SliderReturn;
+
 function set(props: CreateSliderProps) {
 	const slider = createSlider(removeUndefined(props));
 	setContext(NAME, slider);
@@ -18,5 +20,5 @@ function set(props: CreateSliderProps) {
 }
 
 function get() {
-	return getContext<SliderReturn>(NAME);
+	return getContext<GetReturn>(NAME);
 }

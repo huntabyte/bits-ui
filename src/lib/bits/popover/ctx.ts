@@ -14,6 +14,8 @@ export const ctx = {
 	setArrow
 };
 
+type GetReturn = PopoverReturn;
+
 function set(props: CreatePopoverProps) {
 	const popover = createPopover({
 		...removeUndefined(props),
@@ -27,7 +29,7 @@ function set(props: CreatePopoverProps) {
 }
 
 function get() {
-	return getContext<PopoverReturn>(NAME);
+	return getContext<GetReturn>(NAME);
 }
 
 function setArrow(size = 8) {

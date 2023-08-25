@@ -18,6 +18,8 @@ export const ctx = {
 	getRadioIndicator
 };
 
+type GetReturn = RadioGroupReturn;
+
 function set(props: CreateRadioGroupProps) {
 	const radioGroup = createRadioGroup(removeUndefined(props));
 	setContext(NAME, radioGroup);
@@ -28,7 +30,7 @@ function set(props: CreateRadioGroupProps) {
 }
 
 function get() {
-	return getContext<RadioGroupReturn>(NAME);
+	return getContext<GetReturn>(NAME);
 }
 
 function setItem(value: string) {

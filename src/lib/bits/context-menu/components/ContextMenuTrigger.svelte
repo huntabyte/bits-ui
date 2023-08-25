@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { createCustomEventDispatcher } from "$lib/index.js";
 	import { ctx } from "../ctx.js";
 	import type { TriggerEvents, TriggerProps } from "../types.js";
 	import Overlay from "$lib/internal/overlay.svelte";
+	import { createDispatcher } from "$lib/internal/events.js";
 
 	type $$Props = TriggerProps;
 	type $$Events = TriggerEvents;
@@ -12,7 +12,7 @@
 		elements: { trigger },
 		states: { open }
 	} = ctx.get();
-	const dispatch = createCustomEventDispatcher();
+	const dispatch = createDispatcher();
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions applied by melt's action/store -->

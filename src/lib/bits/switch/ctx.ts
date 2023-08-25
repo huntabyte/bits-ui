@@ -8,6 +8,8 @@ export const ctx = {
 	get
 };
 
+type GetReturn = SwitchReturn;
+
 function set(props: CreateSwitchProps) {
 	const Switch = createSwitch(removeUndefined(props));
 	setContext(NAME, Switch);
@@ -18,5 +20,5 @@ function set(props: CreateSwitchProps) {
 }
 
 function get() {
-	return getContext<SwitchReturn>(NAME);
+	return getContext<GetReturn>(NAME);
 }

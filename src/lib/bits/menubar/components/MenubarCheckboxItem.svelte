@@ -2,7 +2,7 @@
 	import { melt } from "@melt-ui/svelte";
 	import { ctx } from "../ctx.js";
 	import type { CheckboxItemEvents, CheckboxItemProps } from "../types.js";
-	import { createCustomEventDispatcher } from "$lib/index.js";
+	import { createDispatcher } from "$lib/internal/events.js";
 
 	type $$Props = CheckboxItemProps;
 	type $$Events = CheckboxItemEvents;
@@ -25,7 +25,7 @@
 		}
 	});
 
-	const dispatch = createCustomEventDispatcher();
+	const dispatch = createDispatcher();
 
 	$: checked !== undefined && localChecked.set(checked);
 	$: updateOption("disabled", disabled);

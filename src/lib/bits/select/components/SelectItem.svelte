@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { createCustomEventDispatcher } from "$lib/index.js";
 	import { ctx } from "../ctx.js";
 	import type { ItemEvents, ItemProps } from "../types.js";
+	import { createDispatcher } from "$lib/internal/events.js";
 
 	type $$Props = ItemProps;
 	type $$Events = ItemEvents;
@@ -11,8 +11,10 @@
 	export let disabled: $$Props["disabled"] = undefined;
 	export let label: $$Props["label"] = undefined;
 	export let asChild = false;
-	const option = ctx.setItem(value).elements.option;
-	const dispatch = createCustomEventDispatcher();
+	const {
+		elements: { option }
+	} = ctx.setItem(value);
+	const dispatch = createDispatcher();
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions / applied by melt's builder-->

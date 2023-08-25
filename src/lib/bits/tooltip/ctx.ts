@@ -14,6 +14,8 @@ export const ctx = {
 	setArrow
 };
 
+type GetReturn = TooltipReturn;
+
 function set(props: CreateTooltipProps) {
 	const tooltip = createTooltip({
 		positioning: {
@@ -31,7 +33,7 @@ function set(props: CreateTooltipProps) {
 }
 
 function get(sideOffset = 0) {
-	const tooltip = getContext<TooltipReturn>(NAME);
+	const tooltip = getContext<GetReturn>(NAME);
 
 	const {
 		options: { positioning }

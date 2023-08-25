@@ -9,6 +9,8 @@ export const ctx = {
 	get
 };
 
+type GetReturn = ToggleReturn;
+
 function set(props: CreateToggleProps) {
 	const toggle = createToggle(removeUndefined(props));
 	setContext(NAME, toggle);
@@ -18,5 +20,5 @@ function set(props: CreateToggleProps) {
 	};
 }
 function get() {
-	return getContext<ToggleReturn>(NAME);
+	return getContext<GetReturn>(NAME);
 }

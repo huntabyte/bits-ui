@@ -8,6 +8,7 @@ export const ctx = {
 	set,
 	get
 };
+type GetReturn = TabsReturn;
 
 function set(props: CreateTabsProps) {
 	const tabs = createTabs(removeUndefined(props));
@@ -19,5 +20,5 @@ function set(props: CreateTabsProps) {
 }
 
 function get() {
-	return getContext<TabsReturn>(NAME);
+	return getContext<GetReturn>(NAME);
 }

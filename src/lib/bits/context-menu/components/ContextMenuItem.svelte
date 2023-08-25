@@ -3,14 +3,16 @@
 	import { ctx } from "../ctx.js";
 	import type { ItemEvents, ItemProps } from "../types.js";
 	import { disabledAttrs } from "$lib/internal/helpers.js";
-	import { createCustomEventDispatcher } from "$lib/index.js";
+	import { createDispatcher } from "$lib/internal/events.js";
 
 	type $$Props = ItemProps;
 	type $$Events = ItemEvents;
 	export let asChild: $$Props["asChild"] = false;
 	export let disabled = false;
-	const item = ctx.get().elements.item;
-	const dispatch = createCustomEventDispatcher();
+	const {
+		elements: { item }
+	} = ctx.get();
+	const dispatch = createDispatcher();
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions / role applied by melt store-->

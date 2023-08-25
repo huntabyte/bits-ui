@@ -2,15 +2,17 @@
 	import { melt } from "@melt-ui/svelte";
 	import { ctx } from "../ctx.js";
 	import type { ItemEvents, ItemProps } from "../types.js";
-	import { createCustomEventDispatcher } from "$lib";
+	import { createDispatcher } from "$lib/internal/events.js";
 
 	type $$Props = ItemProps;
 	type $$Events = ItemEvents;
 	export let value: $$Props["value"];
 	export let disabled = false;
 	export let asChild = false;
-	const item = ctx.setItem(value).elements.item;
-	const dispatch = createCustomEventDispatcher();
+	const {
+		elements: { item }
+	} = ctx.setItem(value);
+	const dispatch = createDispatcher();
 </script>
 
 {#if asChild}

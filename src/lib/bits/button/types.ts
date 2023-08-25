@@ -24,6 +24,10 @@ type ButtonEventHandler<T extends Event = Event> = T & {
 type Events = {
 	click: ButtonEventHandler<MouseEvent>;
 	keydown: ButtonEventHandler<KeyboardEvent>;
+	change: ButtonEventHandler<Event>;
+	keyup: ButtonEventHandler<KeyboardEvent>;
+	mouseenter: ButtonEventHandler<MouseEvent>;
+	mouseleave: ButtonEventHandler<MouseEvent>;
 };
 
 export type {
