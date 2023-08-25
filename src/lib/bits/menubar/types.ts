@@ -115,7 +115,7 @@ type ItemEvents<T extends Element = HTMLDivElement> = {
 };
 
 type SubTriggerEvents<T extends Element = HTMLDivElement> = Expand<
-	Omit<ItemEvents<T>, "pointderdown"> & {
+	Omit<ItemEvents<T>, "pointerdown"> & {
 		click: CustomEventHandler<MouseEvent, T>;
 	}
 >;

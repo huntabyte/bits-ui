@@ -18,7 +18,9 @@
 		inset && "pl-8",
 		className
 	)}
-	on:m-click
+	on:click
+	on:pointermove
+	on:keydown
 	{...$$restProps}
 >
 	<slot />

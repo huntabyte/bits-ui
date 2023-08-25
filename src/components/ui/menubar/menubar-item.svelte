@@ -19,7 +19,12 @@
 		className
 	)}
 	{...$$restProps}
-	on:m-click
+	on:focusin
+	on:focusout
+	on:keydown
+	on:pointerdown
+	on:pointerleave
+	on:pointermove
 >
 	<slot />
 </MenubarPrimitive.Item>

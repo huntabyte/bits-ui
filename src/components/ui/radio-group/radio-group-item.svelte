@@ -20,7 +20,9 @@
 		className
 	)}
 	{...$$restProps}
-	on:m-click
+	on:click
+	on:keydown
+	on:focus
 >
 	<div class="flex items-center justify-center">
 		<RadioGroupPrimitive.ItemIndicator>

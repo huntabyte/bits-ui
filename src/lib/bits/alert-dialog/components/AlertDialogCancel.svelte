@@ -2,13 +2,13 @@
 	import { melt } from "@melt-ui/svelte";
 	import { ctx } from "../ctx.js";
 	import type { CancelEvents, CancelProps } from "../types.js";
+	import { createDispatcher } from "$lib/internal/events.js";
 
 	type $$Props = CancelProps;
 	type $$Events = CancelEvents;
 	export let asChild = false;
 	const {
-		elements: { close },
-		createDispatcher
+		elements: { close }
 	} = ctx.get();
 
 	const dispatch = createDispatcher();

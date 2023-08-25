@@ -17,6 +17,9 @@
 		className
 	)}
 	{...$$restProps}
+	on:keydown
+	on:focusout
+	on:pointermove
 >
 	<slot />
 </ContextMenuPrimitive.SubContent>

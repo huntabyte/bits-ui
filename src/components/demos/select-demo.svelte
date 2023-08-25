@@ -19,7 +19,7 @@
 		<Select.Group>
 			<Select.Label>Fruits</Select.Label>
 			{#each fruits as fruit}
-				<Select.Item value={fruit.value} label={fruit.label} on:m-click={() => console.log("click")}
+				<Select.Item value={fruit.value} label={fruit.label} on:click={() => console.log("click")}
 					>{fruit.label}</Select.Item
 				>
 			{/each}

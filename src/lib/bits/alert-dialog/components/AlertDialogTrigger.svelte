@@ -2,13 +2,13 @@
 	import { melt } from "@melt-ui/svelte";
 	import { ctx } from "../ctx.js";
 	import type { TriggerEvents, TriggerProps } from "../types.js";
+	import { createDispatcher } from "$lib/internal/events.js";
 
 	type $$Props = TriggerProps;
 	type $$Events = TriggerEvents;
 	export let asChild = false;
 	const {
-		elements: { trigger },
-		createDispatcher
+		elements: { trigger }
 	} = ctx.get();
 	const dispatch = createDispatcher();
 </script>

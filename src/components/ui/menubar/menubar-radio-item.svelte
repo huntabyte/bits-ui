@@ -17,7 +17,12 @@
 		className
 	)}
 	{...$$restProps}
-	on:m-click
+	on:focusin
+	on:focusout
+	on:keydown
+	on:pointerdown
+	on:pointerleave
+	on:pointermove
 >
 	<span class="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
 		<MenubarPrimitive.RadioIndicator>

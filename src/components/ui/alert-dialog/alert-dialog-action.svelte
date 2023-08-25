@@ -10,6 +10,11 @@
 	export { className as class };
 </script>
 
-<AlertDialogPrimitive.Action class={cn(buttonVariants(), className)} {...$$restProps} on:m-click>
+<AlertDialogPrimitive.Action
+	class={cn(buttonVariants(), className)}
+	{...$$restProps}
+	on:click
+	on:keydown
+>
 	<slot />
 </AlertDialogPrimitive.Action>
