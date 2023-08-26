@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.5.1
+
+### Patch Changes
+
+- f4dbdc5: Add `click` event listener type to `Menubar.Item` Events
+
 ## 0.5.0
 
 ### Minor Changes
