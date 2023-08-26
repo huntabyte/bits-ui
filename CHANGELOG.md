@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.5.0
+
+### Minor Changes
+
+- 38c2afb: - Export `CheckboxInput`
+
 ## 0.1.0
 
 ### Minor Changes
