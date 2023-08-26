@@ -1,5 +1,16 @@
 # @huntabyte/primitives
 
+## 0.1.0
+
+### Minor Changes
+
+- 97ebef8: - Export `CheckboxInput`
+
+### Patch Changes
+
+- 0f9ed31: - Add transition support & improve events
+  - `Select.Root` now takes a `selected` prop instead of `value`, to align with [Melt UI](https://melt-ui.com/docs/builders/select)'s recent update.
+
 ## 0.0.31
 
 ### Patch Changes
