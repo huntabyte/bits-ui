@@ -1,6 +1,6 @@
 {
 	"name": "bits-ui",
-	"version": "0.0.34",
+	"version": "0.0.33",
 	"license": "MIT",
 	"scripts": {
 		"dev": "concurrently \"pnpm:dev:content\" \"pnpm:dev:svelte\"",
@@ -39,6 +39,7 @@
 		"@melt-ui/pp": "^0.1.2",
 		"@playwright/test": "^1.28.1",
 		"@sveltejs/adapter-auto": "^2.0.0",
+		"@sveltejs/adapter-vercel": "^3.0.3",
 		"@sveltejs/kit": "^1.20.4",
 		"@sveltejs/package": "^2.0.0",
 		"@tailwindcss/typography": "^0.5.9",
@@ -62,16 +63,19 @@
 		"radix-icons-svelte": "^1.2.1",
 		"rehype-pretty-code": "^0.10.0",
 		"remark-gfm": "^3.0.1",
+		"shiki": "^0.14.3",
 		"shikiji": "^0.4.0",
 		"svelte": "^4.0.5",
 		"svelte-check": "^3.4.3",
 		"svelte-sequential-preprocessor": "^2.0.1",
 		"svelte-wrap-balancer": "^0.0.4",
+		"tailwind-merge": "^1.14.0",
 		"tailwind-variants": "^0.1.13",
 		"tailwindcss": "^3.3.2",
 		"tailwindcss-animate": "^1.0.6",
 		"tslib": "^2.4.1",
 		"typescript": "^5.0.0",
+		"unist-builder": "^4.0.0",
 		"unist-util-visit": "^5.0.0",
 		"vite": "^4.4.2",
 		"vitest": "^0.32.2"
@@ -81,11 +85,7 @@
 	"type": "module",
 	"dependencies": {
 		"@melt-ui/svelte": "0.39.0",
-		"@sveltejs/adapter-vercel": "^3.0.3",
-		"nanoid": "^4.0.2",
-		"shiki": "^0.14.3",
-		"tailwind-merge": "^1.14.0",
-		"unist-builder": "^4.0.0"
+		"nanoid": "^4.0.2"
 	},
 	"peerDependencies": {
 		"svelte": "^4.0.0"
