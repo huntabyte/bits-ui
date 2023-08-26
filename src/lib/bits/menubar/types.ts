@@ -106,6 +106,7 @@ type ArrowProps = Expand<
 	HTMLDivAttributes;
 
 type ItemEvents<T extends Element = HTMLDivElement> = {
+	click: CustomEventHandler<PointerEvent, T>;
 	focusin: CustomEventHandler<FocusEvent, T>;
 	focusout: CustomEventHandler<FocusEvent, T>;
 	keydown: CustomEventHandler<KeyboardEvent, T>;
@@ -115,9 +116,7 @@ type ItemEvents<T extends Element = HTMLDivElement> = {
 };
 
 type SubTriggerEvents<T extends Element = HTMLDivElement> = Expand<
-	Omit<ItemEvents<T>, "pointerdown"> & {
-		click: CustomEventHandler<MouseEvent, T>;
-	}
+	Omit<ItemEvents<T>, "pointerdown">
 >;
 
 type CheckboxItemEvents = ItemEvents;
