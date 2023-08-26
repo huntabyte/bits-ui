@@ -82,3 +82,13 @@ export type TOpen = {
 };
 
 export type WithDispatcher<T> = T & CreateDispatcher;
+
+export type Side = "left" | "right" | "top" | "bottom";
+export type Align = "start" | "center" | "end";
+
+export type SideAndAlign = {
+	side?: Side;
+	sideOffset?: number;
+	align?: Align;
+	alignOffset?: number;
+};

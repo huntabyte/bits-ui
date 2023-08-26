@@ -29,7 +29,7 @@
 {:else if transition && $tOpen}
 	{@const builder = $overlay}
 	<div transition:transition={transitionConfig} use:melt={builder} {...$$restProps} />
-{:else if inTransition && outTransition}
+{:else if inTransition && outTransition && $tOpen}
 	{@const builder = $overlay}
 	<div
 		in:inTransition={inTransitionConfig}

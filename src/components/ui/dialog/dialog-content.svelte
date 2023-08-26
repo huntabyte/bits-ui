@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Dialog as DialogPrimitive } from "@/lib";
+	import { transition } from "@/components/ui/alert-dialog";
 	import * as Dialog from ".";
 	import { cn } from "@/utils";
 	import { Cross2 } from "radix-icons-svelte";
@@ -13,7 +14,7 @@
 <Dialog.Portal>
 	<Dialog.Overlay />
 	<DialogPrimitive.Content
-		transition={Dialog.transition}
+		{transition}
 		class={cn(
 			"fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg sm:rounded-lg md:w-full",
 			className
