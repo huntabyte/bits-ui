@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import type { Transition } from "$internal/index.js";
+	import { createDispatcher, type Transition } from "$lib/internal/index.js";
 	import { ctx } from "../ctx.js";
 	import type { ContentEvents, ContentProps } from "../types.js";
 
@@ -11,70 +11,75 @@
 	type $$Props = ContentProps<T, In, Out>;
 	type $$Events = ContentEvents;
 
-	export let transition: ContentProps<T, In, Out>["transition"] = undefined;
-	export let transitionConfig: ContentProps<T, In, Out>["transitionConfig"] = undefined;
-	export let inTransition: ContentProps<T, In, Out>["inTransition"] = undefined;
-	export let inTransitionConfig: ContentProps<T>["inTransitionConfig"] = undefined;
-	export let outTransition: ContentProps<T, In, Out>["outTransition"] = undefined;
-	export let outTransitionConfig: ContentProps<T, In, Out>["outTransitionConfig"] = undefined;
+	export let transition: $$Props["transition"] = undefined;
+	export let transitionConfig: $$Props["transitionConfig"] = undefined;
+	export let inTransition: $$Props["inTransition"] = undefined;
+	export let inTransitionConfig: $$Props["inTransitionConfig"] = undefined;
+	export let outTransition: $$Props["outTransition"] = undefined;
+	export let outTransitionConfig: $$Props["outTransitionConfig"] = undefined;
 
 	export let asChild = false;
-	export let sideOffset: ContentProps<T>["sideOffset"] = 4;
+	export let sideOffset = 4;
 
 	const {
 		elements: { content },
 		states: { open }
 	} = ctx.get(sideOffset);
+
+	const dispatch = createDispatcher();
 </script>
 
-{#if $open}
+{#if asChild && $open}
 	{@const builder = $content}
-	{#if asChild}
+	<slot {builder} />
+{:else if transition && $open}
+	{@const builder = $content}
+	<div
+		use:melt={builder}
+		transition:transition={transitionConfig}
+		{...$$restProps}
+		on:m-pointerdown={dispatch}
+		on:m-pointerenter={dispatch}
+	>
 		<slot {builder} />
-	{:else if transition}
-		<div
-			use:melt={builder}
-			transition:transition|global={transitionConfig}
-			{...$$restProps}
-			on:m-pointerdown
-			on:m-pointerenter
-		>
-			<slot {builder} />
-		</div>
-	{:else if inTransition && outTransition}
-		<div
-			use:melt={builder}
-			in:inTransition|global={inTransitionConfig}
-			out:outTransition|global={outTransitionConfig}
-			{...$$restProps}
-			on:m-pointerdown
-			on:m-pointerenter
-		>
-			<slot {builder} />
-		</div>
-	{:else if inTransition}
-		<div
-			use:melt={builder}
-			in:inTransition|global={inTransitionConfig}
-			{...$$restProps}
-			on:m-pointerdown
-			on:m-pointerenter
-		>
-			<slot {builder} />
-		</div>
-	{:else if outTransition}
-		<div
-			use:melt={builder}
-			out:outTransition|global={outTransitionConfig}
-			{...$$restProps}
-			on:m-pointerdown
-			on:m-pointerenter
-		>
-			<slot {builder} />
-		</div>
-	{:else}
-		<div use:melt={builder} {...$$restProps} on:m-pointerdown on:m-pointerenter>
-			<slot {builder} />
-		</div>
-	{/if}
+	</div>
+{:else if inTransition && outTransition && $open}
+	{@const builder = $content}
+	<div
+		use:melt={builder}
+		in:inTransition={inTransitionConfig}
+		out:outTransition={outTransitionConfig}
+		{...$$restProps}
+		on:m-pointerdown={dispatch}
+		on:m-pointerenter={dispatch}
+	>
+		<slot {builder} />
+	</div>
+{:else if inTransition && $open}
+	{@const builder = $content}
+	<div
+		use:melt={builder}
+		in:inTransition={inTransitionConfig}
+		{...$$restProps}
+		on:m-pointerdown={dispatch}
+		on:m-pointerenter={dispatch}
+	>
+		<slot {builder} />
+	</div>
+{:else if outTransition && $open}
+	{@const builder = $content}
+	<div
+		use:melt={builder}
+		out:outTransition={outTransitionConfig}
+		{...$$restProps}
+		on:m-pointerdown={dispatch}
+		on:m-pointerenter={dispatch}
+	>
+		<slot {builder} />
+	</div>
+{:else if $open}
+	{@const builder = $content}
+	<div use:melt={builder} {...$$restProps} on:m-pointerdown={dispatch} on:m-pointerenter={dispatch}>
+		<slot {builder} />
+	</div>
 {/if}

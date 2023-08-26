@@ -1,4 +1,4 @@
-import type { Builder } from "$internal/index.js";
+import type { Builder } from "$lib/internal/index.js";
 import type { HTMLAnchorAttributes, HTMLButtonAttributes } from "svelte/elements";
 
 type Builders = {
@@ -24,6 +24,10 @@ type ButtonEventHandler<T extends Event = Event> = T & {
 type Events = {
 	click: ButtonEventHandler<MouseEvent>;
 	keydown: ButtonEventHandler<KeyboardEvent>;
+	change: ButtonEventHandler<Event>;
+	keyup: ButtonEventHandler<KeyboardEvent>;
+	mouseenter: ButtonEventHandler<MouseEvent>;
+	mouseleave: ButtonEventHandler<MouseEvent>;
 };
 
 export type {

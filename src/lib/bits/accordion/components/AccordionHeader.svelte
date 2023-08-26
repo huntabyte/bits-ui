@@ -5,7 +5,7 @@
 
 	type $$Props = HeaderProps;
 	export let level = 3;
-	export let asChild: HeaderProps["asChild"] = false;
+	export let asChild = false;
 	const heading = ctx.get().elements.heading;
 </script>
 

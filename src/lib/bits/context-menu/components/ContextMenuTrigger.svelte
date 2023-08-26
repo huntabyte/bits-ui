@@ -3,35 +3,30 @@
 	import { ctx } from "../ctx.js";
 	import type { TriggerEvents, TriggerProps } from "../types.js";
 	import Overlay from "$lib/internal/overlay.svelte";
+	import { createDispatcher } from "$lib/internal/events.js";
 
 	type $$Props = TriggerProps;
 	type $$Events = TriggerEvents;
 	export let asChild = false;
 	const {
-		elements: { trigger },
-		states: { open }
+		elements: { trigger }
 	} = ctx.get();
+	const dispatch = createDispatcher();
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions applied by melt's action/store -->
 {#if asChild}
-	{#if $open}
-		<Overlay />
-	{/if}
 	<slot builder={$trigger} />
 {:else}
-	{#if $open}
-		<Overlay />
-	{/if}
 	{@const builder = $trigger}
 	<div
 		use:melt={builder}
 		{...$$restProps}
-		on:m-contextmenu
-		on:m-pointercancel
-		on:m-pointerdown
-		on:m-pointermove
-		on:m-pointerup
+		on:m-contextmenu={dispatch}
+		on:m-pointercancel={dispatch}
+		on:m-pointerdown={dispatch}
+		on:m-pointermove={dispatch}
+		on:m-pointerup={dispatch}
 	>
 		<slot {builder} />
 	</div>

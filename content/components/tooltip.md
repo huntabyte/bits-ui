@@ -3,6 +3,16 @@ title: Tooltip
 description: Displays floating content containing additional information about an action on hover or focus.
 ---
 
+<script>
+	import { ComponentPreview, TooltipDemo } from '@/components'
+</script>
+
+<ComponentPreview name="tooltip-demo" comp="Tooltip">
+
+<TooltipDemo slot="preview" />
+
+</ComponentPreview>
+
 ## Structure
 
 ```svelte

@@ -8,16 +8,15 @@ import type {
 	OnChangeFn,
 	Transition,
 	TransitionProps
-} from "$internal/index.js";
-import type { DivEventHandler, ButtonEventHandler } from "$lib/index.js";
+} from "$lib/internal/index.js";
+import type { CustomEventHandler } from "$lib/index.js";
 import type {
 	CreateMenubarProps,
 	CreateMenubarMenuProps,
 	CreateMenuCheckboxItemProps,
 	CreateMenuRadioGroupProps,
 	MenubarRadioItemProps,
-	CreateMenubarSubmenuProps,
-	MenubarComponentEvents
+	CreateMenubarSubmenuProps
 } from "@melt-ui/svelte";
 import type { HTMLButtonAttributes } from "svelte/elements";
 
@@ -106,23 +105,39 @@ type ArrowProps = Expand<
 > &
 	HTMLDivAttributes;
 
-type ItemEvents = {
-	"m-click": DivEventHandler<MouseEvent>;
-	"m-keydown": DivEventHandler<KeyboardEvent>;
+type ItemEvents<T extends Element = HTMLDivElement> = {
+	focusin: CustomEventHandler<FocusEvent, T>;
+	focusout: CustomEventHandler<FocusEvent, T>;
+	keydown: CustomEventHandler<KeyboardEvent, T>;
+	pointerdown: CustomEventHandler<PointerEvent, T>;
+	pointerleave: CustomEventHandler<PointerEvent, T>;
+	pointermove: CustomEventHandler<PointerEvent, T>;
 };
-type CheckboxItemEvents = ItemEvents;
 
+type SubTriggerEvents<T extends Element = HTMLDivElement> = Expand<
+	Omit<ItemEvents<T>, "pointerdown"> & {
+		click: CustomEventHandler<MouseEvent, T>;
+	}
+>;
+
+type CheckboxItemEvents = ItemEvents;
 type RadioItemEvents = ItemEvents;
 
-type SubTriggerEvents = ItemEvents;
-
-type TriggerEvents = {
-	"m-click": ButtonEventHandler<MouseEvent>;
-	"m-keydown": ButtonEventHandler<KeyboardEvent>;
+type TriggerEvents<T extends Element = HTMLButtonElement> = {
+	keydown: CustomEventHandler<KeyboardEvent, T>;
+	click: CustomEventHandler<MouseEvent, T>;
+	pointerenter: CustomEventHandler<PointerEvent, T>;
 };
 
-type ContentEvents = MenubarComponentEvents["menu"];
-type SubContentEvents = MenubarComponentEvents["submenu"];
+type ContentEvents<T extends Element = HTMLDivElement> = {
+	keydown: CustomEventHandler<KeyboardEvent, T>;
+};
+
+type SubContentEvents<T extends Element = HTMLDivElement> = {
+	focusout: CustomEventHandler<FocusEvent, T>;
+	pointermove: CustomEventHandler<PointerEvent, T>;
+	keydown: CustomEventHandler<KeyboardEvent, T>;
+};
 
 export type {
 	Props,

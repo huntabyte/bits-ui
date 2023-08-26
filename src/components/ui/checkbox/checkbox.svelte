@@ -17,7 +17,8 @@
 		className
 	)}
 	bind:checked
-	on:m-click
+	on:click
+	on:keydown
 	{...$$restProps}
 >
 	<CheckboxPrimitive.Indicator

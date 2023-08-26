@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { createDispatcher } from "$lib/internal/events.js";
+
 	import { melt } from "@melt-ui/svelte";
 	import { ctx } from "../ctx.js";
 	import type { SubContentEvents, SubContentProps } from "../types.js";
@@ -7,77 +9,89 @@
 	type In = $$Generic<Transition>;
 	type Out = $$Generic<Transition>;
 	type $$Props = SubContentProps<T, In, Out>;
-
 	type $$Events = SubContentEvents;
-	export let transition: SubContentProps<T, In, Out>["transition"] = undefined;
-	export let transitionConfig: SubContentProps<T, In, Out>["transitionConfig"] = undefined;
 
-	export let inTransition: SubContentProps<T, In, Out>["inTransition"] = undefined;
-	export let inTransitionConfig: SubContentProps<T>["inTransitionConfig"] = undefined;
+	export let transition: $$Props["transition"] = undefined;
+	export let transitionConfig: $$Props["transitionConfig"] = undefined;
 
-	export let outTransition: SubContentProps<T, In, Out>["outTransition"] = undefined;
-	export let outTransitionConfig: SubContentProps<T, In, Out>["outTransitionConfig"] = undefined;
+	export let inTransition: $$Props["inTransition"] = undefined;
+	export let inTransitionConfig: $$Props["inTransitionConfig"] = undefined;
+
+	export let outTransition: $$Props["outTransition"] = undefined;
+	export let outTransitionConfig: $$Props["outTransitionConfig"] = undefined;
+
 	export let asChild = false;
 
 	const {
 		elements: { subMenu },
 		states: { subOpen }
 	} = ctx.getSub();
+
+	const dispatch = createDispatcher();
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions / applied by melt store -->
-{#if $subOpen}
+{#if asChild && $subOpen}
 	{@const builder = $subMenu}
-	{#if asChild}
+	<slot {builder} />
+{:else if transition && $subOpen}
+	{@const builder = $subMenu}
+	<div
+		transition:transition={transitionConfig}
+		use:melt={builder}
+		{...$$restProps}
+		on:m-focusout={dispatch}
+		on:m-keydown={dispatch}
+		on:m-pointermove={dispatch}
+	>
 		<slot {builder} />
-	{:else if transition}
-		<div
-			transition:transition|global={transitionConfig}
-			use:melt={builder}
-			{...$$restProps}
-			on:m-focusout
-			on:m-keydown
-			on:m-pointermove
-		>
-			<slot {builder} />
-		</div>
-	{:else if inTransition && outTransition}
-		<div
-			in:inTransition|global={inTransitionConfig}
-			out:outTransition|global={outTransitionConfig}
-			use:melt={builder}
-			{...$$restProps}
-			on:m-focusout
-			on:m-keydown
-			on:m-pointermove
-		>
-			<slot {builder} />
-		</div>
-	{:else if inTransition}
-		<div
-			in:inTransition|global={inTransitionConfig}
-			use:melt={builder}
-			{...$$restProps}
-			on:m-focusout
-			on:m-keydown
-			on:m-pointermove
-		>
-			<slot {builder} />
-		</div>
-	{:else if outTransition}
-		<div
-			out:outTransition|global={outTransitionConfig}
-			use:melt={builder}
-			{...$$restProps}
-			on:m-focusout
-			on:m-keydown
-			on:m-pointermove
-		>
-			<slot {builder} />
-		</div>
-	{:else}
-		<div use:melt={builder} {...$$restProps} on:m-focusout on:m-keydown on:m-pointermove>
-			<slot {builder} />
-		</div>
-	{/if}
+	</div>
+{:else if inTransition && outTransition && $subOpen}
+	{@const builder = $subMenu}
+	<div
+		in:inTransition={inTransitionConfig}
+		out:outTransition={outTransitionConfig}
+		use:melt={builder}
+		{...$$restProps}
+		on:m-focusout={dispatch}
+		on:m-keydown={dispatch}
+		on:m-pointermove={dispatch}
+	>
+		<slot {builder} />
+	</div>
+{:else if inTransition && $subOpen}
+	{@const builder = $subMenu}
+	<div
+		in:inTransition={inTransitionConfig}
+		use:melt={builder}
+		{...$$restProps}
+		on:m-focusout={dispatch}
+		on:m-keydown={dispatch}
+		on:m-pointermove={dispatch}
+	>
+		<slot {builder} />
+	</div>
+{:else if outTransition && $subOpen}
+	{@const builder = $subMenu}
+	<div
+		out:outTransition={outTransitionConfig}
+		use:melt={builder}
+		{...$$restProps}
+		on:m-focusout={dispatch}
+		on:m-keydown={dispatch}
+		on:m-pointermove={dispatch}
+	>
+		<slot {builder} />
+	</div>
+{:else if $subOpen}
+	{@const builder = $subMenu}
+	<div
+		use:melt={builder}
+		{...$$restProps}
+		on:m-focusout={dispatch}
+		on:m-keydown={dispatch}
+		on:m-pointermove={dispatch}
+	>
+		<slot {builder} />
+	</div>
 {/if}

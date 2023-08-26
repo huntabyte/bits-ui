@@ -1,4 +1,4 @@
-import { getOptionUpdater, removeUndefined } from "$internal/index.js";
+import { getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 import {
 	createCollapsible,
 	type Collapsible as CollapsibleReturn,
@@ -13,6 +13,8 @@ export const ctx = {
 	set
 };
 
+type GetReturn = CollapsibleReturn;
+
 function set(props: CreateCollapsibleProps) {
 	const collapsible = createCollapsible(removeUndefined(props));
 	setContext(NAME, collapsible);
@@ -23,5 +25,5 @@ function set(props: CreateCollapsibleProps) {
 }
 
 function get() {
-	return getContext<CollapsibleReturn>(NAME);
+	return getContext<GetReturn>(NAME);
 }

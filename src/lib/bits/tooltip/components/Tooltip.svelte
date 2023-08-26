@@ -12,6 +12,7 @@
 	export let closeDelay: $$Props["closeDelay"] = undefined;
 	export let open: $$Props["open"] = undefined;
 	export let onOpenChange: $$Props["onOpenChange"] = undefined;
+	export let forceVisible: $$Props["forceVisible"] = true;
 
 	const {
 		states: { open: localOpen },
@@ -24,10 +25,13 @@
 		closeOnPointerDown,
 		openDelay,
 		closeDelay,
+		forceVisible,
 		defaultOpen: open,
 		onOpenChange: ({ next }) => {
-			onOpenChange?.(next);
-			open = next;
+			if (open !== next) {
+				onOpenChange?.(next);
+				open = next;
+			}
 			return next;
 		}
 	});
@@ -40,6 +44,7 @@
 	$: updateOption("closeOnPointerDown", closeOnPointerDown);
 	$: updateOption("openDelay", openDelay);
 	$: updateOption("closeDelay", closeDelay);
+	$: updateOption("forceVisible", forceVisible);
 </script>
 
 <slot />

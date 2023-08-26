@@ -11,7 +11,6 @@
 
 <SelectPrimitive.Content
 	inTransition={transition}
-	inTransitionConfig={{ y: -8, duration: 100 }}
 	outTransition={scale}
 	outTransitionConfig={{ start: 0.95, opacity: 0, duration: 50 }}
 	class={cn(

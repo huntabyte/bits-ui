@@ -3,7 +3,9 @@
 	import type { IndicatorProps } from "../types.js";
 
 	type $$Props = IndicatorProps;
-	const { isChecked, isIndeterminate } = ctx.getIndicator();
+	const {
+		helpers: { isChecked, isIndeterminate }
+	} = ctx.get();
 </script>
 
 <div {...$$restProps}>

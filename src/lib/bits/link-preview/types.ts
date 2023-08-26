@@ -1,3 +1,4 @@
+import type { CustomEventHandler } from "$lib/index.js";
 import type {
 	OmitOpen,
 	Expand,
@@ -6,8 +7,8 @@ import type {
 	Transition,
 	AsChild,
 	TransitionProps
-} from "$internal/index.js";
-import type { CreateLinkPreviewProps, LinkPreviewComponentEvents } from "@melt-ui/svelte";
+} from "$lib/internal/index.js";
+import type { CreateLinkPreviewProps } from "@melt-ui/svelte";
 import type { HTMLAnchorAttributes } from "svelte/elements";
 
 type Props = Expand<
@@ -32,8 +33,19 @@ type ArrowProps = Expand<
 > &
 	HTMLDivAttributes;
 
-type TriggerEvents = LinkPreviewComponentEvents["trigger"];
-type ContentEvents = LinkPreviewComponentEvents["content"];
+type TriggerEvents<T extends Element = HTMLAnchorElement> = {
+	click: CustomEventHandler<MouseEvent, T>;
+	blur: CustomEventHandler<FocusEvent, T>;
+	focus: CustomEventHandler<FocusEvent, T>;
+	pointerenter: CustomEventHandler<PointerEvent, T>;
+	pointerleave: CustomEventHandler<PointerEvent, T>;
+};
+type ContentEvents<T extends Element = HTMLDivElement> = {
+	focusout: CustomEventHandler<FocusEvent, T>;
+	pointerenter: CustomEventHandler<PointerEvent, T>;
+	pointerleave: CustomEventHandler<PointerEvent, T>;
+	pointerdown: CustomEventHandler<PointerEvent, T>;
+};
 
 export type {
 	Props,

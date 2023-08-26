@@ -1,11 +1,11 @@
-import { getOptionUpdater } from "$internal/index.js";
+import { getOptionUpdater } from "$lib/internal/index.js";
 import {
 	createRadioGroup,
 	type CreateRadioGroupProps,
 	type RadioGroup as RadioGroupReturn
 } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
-import { removeUndefined } from "$internal/index.js";
+import { removeUndefined } from "$lib/internal/index.js";
 import type { Readable } from "svelte/store";
 
 const NAME = "RadioGroup";
@@ -18,6 +18,8 @@ export const ctx = {
 	getRadioIndicator
 };
 
+type GetReturn = RadioGroupReturn;
+
 function set(props: CreateRadioGroupProps) {
 	const radioGroup = createRadioGroup(removeUndefined(props));
 	setContext(NAME, radioGroup);
@@ -28,7 +30,7 @@ function set(props: CreateRadioGroupProps) {
 }
 
 function get() {
-	return getContext<RadioGroupReturn>(NAME);
+	return getContext<GetReturn>(NAME);
 }
 
 function setItem(value: string) {

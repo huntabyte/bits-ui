@@ -4,7 +4,7 @@ import type {
 	HTMLDivAttributes,
 	HTMLSpanAttributes,
 	OnChangeFn
-} from "$internal/index.js";
+} from "$lib/internal/index.js";
 import type { CreateAvatarProps } from "@melt-ui/svelte";
 import type { HTMLImgAttributes } from "svelte/elements";
 

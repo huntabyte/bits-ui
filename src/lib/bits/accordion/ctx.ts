@@ -5,7 +5,7 @@ import {
 } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
 import type { AccordionItemProps } from "./types.js";
-import { getOptionUpdater, removeUndefined } from "$internal/index.js";
+import { getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 
 const NAME = "Accordion";
 const ITEM_NAME = "AccordionItem";
@@ -19,6 +19,8 @@ export const ctx = {
 	getTrigger
 };
 
+type GetReturn = AccordionReturn;
+
 function set<Multiple extends boolean>(props: CreateAccordionProps<Multiple>) {
 	const accordion = createAccordion(removeUndefined(props));
 	setContext(NAME, accordion);
@@ -29,7 +31,7 @@ function set<Multiple extends boolean>(props: CreateAccordionProps<Multiple>) {
 }
 
 function get() {
-	return getContext<AccordionReturn>(NAME);
+	return getContext<GetReturn>(NAME);
 }
 
 function setItem(props: AccordionItemProps) {

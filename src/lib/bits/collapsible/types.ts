@@ -6,8 +6,8 @@ import type {
 	OnChangeFn,
 	AsChild,
 	TransitionProps
-} from "$internal/index.js";
-import type { ButtonEventHandler } from "$lib/index.js";
+} from "$lib/internal/index.js";
+import type { CustomEventHandler } from "$lib/index.js";
 import type { CreateCollapsibleProps } from "@melt-ui/svelte";
 import type { HTMLButtonAttributes } from "svelte/elements";
 
@@ -29,7 +29,7 @@ type ContentProps<
 type TriggerProps = AsChild & HTMLButtonAttributes;
 
 type TriggerEvents = {
-	"m-click": ButtonEventHandler<MouseEvent>;
+	click: CustomEventHandler<MouseEvent, HTMLButtonElement>;
 };
 
 export type {

@@ -1,4 +1,10 @@
-import type { AsChild, Expand, HTMLDivAttributes, OmitValue, OnChangeFn } from "$internal/index.js";
+import type {
+	AsChild,
+	Expand,
+	HTMLDivAttributes,
+	OmitValue,
+	OnChangeFn
+} from "$lib/internal/index.js";
 import type { CreateProgressProps } from "@melt-ui/svelte";
 
 type Props = Expand<

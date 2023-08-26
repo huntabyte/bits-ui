@@ -1,4 +1,4 @@
-import { getOptionUpdater, removeUndefined } from "$internal/index.js";
+import { getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 import { createToggle, type CreateToggleProps, type Toggle as ToggleReturn } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
 
@@ -9,6 +9,8 @@ export const ctx = {
 	get
 };
 
+type GetReturn = ToggleReturn;
+
 function set(props: CreateToggleProps) {
 	const toggle = createToggle(removeUndefined(props));
 	setContext(NAME, toggle);
@@ -18,5 +20,5 @@ function set(props: CreateToggleProps) {
 	};
 }
 function get() {
-	return getContext<ToggleReturn>(NAME);
+	return getContext<GetReturn>(NAME);
 }

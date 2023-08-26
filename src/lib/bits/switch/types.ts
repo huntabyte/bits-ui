@@ -5,9 +5,9 @@ import type {
 	HTMLSpanAttributes,
 	OmitChecked,
 	OnChangeFn
-} from "$internal/index.js";
+} from "$lib/internal/index.js";
 import type { HTMLButtonAttributes, HTMLInputAttributes } from "svelte/elements";
-import type { ButtonEventHandler } from "$lib/index.js";
+import type { CustomEventHandler } from "$lib/index.js";
 
 type Props = Expand<
 	OmitChecked<CreateSwitchProps> & {
@@ -21,9 +21,9 @@ type ThumbProps = AsChild & HTMLSpanAttributes;
 
 type InputProps = HTMLInputAttributes;
 
-type Events = {
-	"m-click": ButtonEventHandler<MouseEvent>;
-	"m-keydown": ButtonEventHandler<KeyboardEvent>;
+type Events<T extends Element = HTMLButtonElement> = {
+	click: CustomEventHandler<MouseEvent, T>;
+	keydown: CustomEventHandler<KeyboardEvent, T>;
 };
 
 export type {

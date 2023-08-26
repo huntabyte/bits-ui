@@ -2,6 +2,7 @@ import type { Action } from "svelte/action";
 import type { HTMLAttributes } from "svelte/elements";
 import type { Writable } from "svelte/store";
 import type { TransitionConfig } from "svelte/transition";
+import type { CreateDispatcher } from ".";
 
 export type ObjectVariation<T> = T extends object ? T : never;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -78,4 +79,16 @@ export type TransitionTimesProp = {
 
 export type TOpen = {
 	tOpen: Writable<boolean>;
+};
+
+export type WithDispatcher<T> = T & CreateDispatcher;
+
+export type Side = "left" | "right" | "top" | "bottom";
+export type Align = "start" | "center" | "end";
+
+export type SideAndAlign = {
+	side?: Side;
+	sideOffset?: number;
+	align?: Align;
+	alignOffset?: number;
 };

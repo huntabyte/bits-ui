@@ -15,15 +15,14 @@
 	export let positioning: $$Props["positioning"] = undefined;
 	export let name: $$Props["name"] = undefined;
 	export let multiple: $$Props["multiple"] = undefined;
-	export let value: $$Props["value"] = undefined;
-	export let onValueChange: $$Props["onValueChange"] = undefined;
+	export let selected: $$Props["selected"] = undefined;
+	export let onSelectedChange: $$Props["onSelectedChange"] = undefined;
 	export let open: $$Props["open"] = undefined;
 	export let onOpenChange: $$Props["onOpenChange"] = undefined;
-	export let label: $$Props["label"] = undefined;
 	export let forceVisible: $$Props["forceVisible"] = true;
 
 	const {
-		states: { open: localOpen, value: localValue },
+		states: { open: localOpen, selected: localSelected },
 		updateOption
 	} = ctx.set({
 		required,
@@ -37,23 +36,27 @@
 		positioning,
 		name,
 		multiple,
-		defaultValue: value,
+		forceVisible,
+		defaultSelected: selected,
 		defaultOpen: open,
-		defaultValueLabel: label,
-		onValueChange: ({ next }) => {
-			onValueChange?.(next);
-			value = next;
+		onSelectedChange: ({ next }) => {
+			if (selected !== next) {
+				onSelectedChange?.(next);
+				selected = next;
+			}
 			return next;
 		},
 		onOpenChange: ({ next }) => {
-			onOpenChange?.(next);
-			open = next;
+			if (open !== next) {
+				onOpenChange?.(next);
+				open = next;
+			}
 			return next;
 		}
 	});
 
 	$: open !== undefined && localOpen.set(open);
-	$: value !== undefined && localValue.set(value);
+	$: selected !== undefined && localSelected.set(selected);
 
 	$: updateOption("required", required);
 	$: updateOption("disabled", disabled);

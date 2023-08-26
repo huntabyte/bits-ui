@@ -1,4 +1,4 @@
-import { getOptionUpdater, removeUndefined } from "$internal/index.js";
+import { getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 import {
 	createLinkPreview,
 	type CreateLinkPreviewProps,
@@ -14,8 +14,10 @@ export const ctx = {
 	setArrow
 };
 
+type GetReturn = LinkPreviewReturn;
+
 function get() {
-	return getContext<LinkPreviewReturn>(NAME);
+	return getContext<GetReturn>(NAME);
 }
 
 function set(props: CreateLinkPreviewProps) {

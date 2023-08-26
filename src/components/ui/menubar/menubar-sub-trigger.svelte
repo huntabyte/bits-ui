@@ -20,7 +20,12 @@
 		className
 	)}
 	{...$$restProps}
-	on:m-click
+	on:click
+	on:keydown
+	on:focusin
+	on:focusout
+	on:pointermove
+	on:pointerleave
 >
 	<slot />
 	<ChevronRight class="ml-auto h-4 w-4" />

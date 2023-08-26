@@ -5,11 +5,11 @@
 
 	type $$Props = InputProps;
 	export let asChild = false;
-	const itemInput = ctx.get().elements.itemInput;
+	const hiddenInput = ctx.get().elements.hiddenInput;
 </script>
 
 {#if asChild}
-	<slot builder={$itemInput} />
+	<slot builder={$hiddenInput} />
 {:else}
-	<input use:melt={$itemInput} hidden {...$$restProps} />
+	<input use:melt={$hiddenInput} {...$$restProps} />
 {/if}

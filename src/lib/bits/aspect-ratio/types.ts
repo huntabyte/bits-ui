@@ -1,4 +1,4 @@
-import type { HTMLDivAttributes } from "$internal/index.js";
+import type { HTMLDivAttributes } from "$lib/internal/index.js";
 
 type Props = {
 	ratio: number;

@@ -2,6 +2,7 @@
 	import { melt } from "@melt-ui/svelte";
 	import { ctx } from "../ctx.js";
 	import type { Events, Props } from "../types.js";
+	import { createDispatcher } from "$lib/internal/events.js";
 
 	type $$Props = Props;
 	type $$Events = Events;
@@ -22,11 +23,15 @@
 		value,
 		defaultChecked: checked,
 		onCheckedChange: ({ next }) => {
-			onCheckedChange?.(next);
-			checked = next;
+			if (checked !== next) {
+				onCheckedChange?.(next);
+				checked = next;
+			}
 			return next;
 		}
 	});
+
+	const dispatch = createDispatcher();
 
 	$: checked !== undefined && localChecked.set(checked);
 	$: updateOption("disabled", disabled);
@@ -38,7 +43,7 @@
 	<slot builder={$root} />
 {:else}
 	{@const builder = $root}
-	<button use:melt={builder} {...$$restProps} on:m-click on:m-keydown>
+	<button use:melt={builder} {...$$restProps} on:m-click={dispatch} on:m-keydown={dispatch}>
 		<slot {builder} />
 	</button>
 {/if}

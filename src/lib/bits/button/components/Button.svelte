@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { builderActions, getAttrs } from "$internal/index.js";
+	import { builderActions, getAttrs } from "$lib/internal/index.js";
 	import type { Props, Events } from "../types.js";
 
 	type $$Props = Props;

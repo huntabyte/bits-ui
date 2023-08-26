@@ -3,6 +3,7 @@
 	import { ctx } from "../ctx.js";
 	import type { SubTriggerEvents, SubTriggerProps } from "../types.js";
 	import { disabledAttrs } from "$lib/internal/helpers.js";
+	import { createDispatcher } from "$lib/internal/events.js";
 
 	type $$Props = SubTriggerProps & {
 		disabled?: boolean;
@@ -14,6 +15,7 @@
 	const {
 		elements: { subTrigger }
 	} = ctx.getSubTrigger();
+	const dispatch = createDispatcher();
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions / applied by melt store -->
@@ -24,13 +26,13 @@
 	<div
 		use:melt={builder}
 		{...$$restProps}
-		on:m-click
-		on:m-focusin
-		on:m-focusout
-		on:m-keydown
-		on:m-pointerleave
-		on:m-pointermove
-		on:m-keydown
+		on:m-click={dispatch}
+		on:m-focusin={dispatch}
+		on:m-focusout={dispatch}
+		on:m-keydown={dispatch}
+		on:m-pointerleave={dispatch}
+		on:m-pointermove={dispatch}
+		on:m-keydown={dispatch}
 		{...disabledAttrs(disabled)}
 	>
 		<slot {builder} />

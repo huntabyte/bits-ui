@@ -6,18 +6,16 @@ import type {
 	OmitOpen,
 	OnChangeFn,
 	Transition,
-	TransitionParams,
 	TransitionProps
-} from "$internal/index.js";
+} from "$lib/internal/index.js";
 import type { HTMLButtonAttributes } from "svelte/elements";
-
 import type { CreateDialogProps } from "@melt-ui/svelte";
-import type { ButtonEventHandler } from "$lib/index.js";
+import type { CustomEventHandler } from "$lib/index.js";
 
 type Props = Expand<
 	OmitOpen<Omit<CreateDialogProps, "role">> & {
 		open?: CreateDialogProps["defaultOpen"] & {};
-		onOpenChange?: OnChangeFn<CreateDialogProps["defaultOpen"]>;
+		onOpenChange?: OnChangeFn<boolean | undefined>;
 	}
 >;
 
@@ -47,9 +45,9 @@ type TitleProps = Expand<
 > &
 	HTMLHeadingAttributes;
 
-type TriggerEvents = {
-	"m-click": ButtonEventHandler<MouseEvent>;
-	"m-keydown": ButtonEventHandler<KeyboardEvent>;
+type TriggerEvents<T extends Element = HTMLButtonElement> = {
+	click: CustomEventHandler<MouseEvent, T>;
+	keydown: CustomEventHandler<KeyboardEvent, T>;
 };
 type CloseEvents = TriggerEvents;
 

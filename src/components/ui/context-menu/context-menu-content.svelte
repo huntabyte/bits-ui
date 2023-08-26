@@ -16,6 +16,7 @@
 		className
 	)}
 	{...$$restProps}
+	on:keydown
 >
 	<slot />
 </ContextMenuPrimitive.Content>

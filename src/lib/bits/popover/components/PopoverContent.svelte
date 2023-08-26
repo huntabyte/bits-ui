@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import type { Transition } from "$internal/index.js";
+	import type { Transition } from "$lib/internal/index.js";
 	import { ctx } from "../ctx.js";
 	import type { ContentProps } from "../types.js";
 
@@ -10,12 +10,12 @@
 
 	type $$Props = ContentProps<T, In, Out>;
 
-	export let transition: ContentProps<T, In, Out>["transition"] = undefined;
-	export let transitionConfig: ContentProps<T, In, Out>["transitionConfig"] = undefined;
-	export let inTransition: ContentProps<T, In, Out>["inTransition"] = undefined;
-	export let inTransitionConfig: ContentProps<T>["inTransitionConfig"] = undefined;
-	export let outTransition: ContentProps<T, In, Out>["outTransition"] = undefined;
-	export let outTransitionConfig: ContentProps<T, In, Out>["outTransitionConfig"] = undefined;
+	export let transition: $$Props["transition"] = undefined;
+	export let transitionConfig: $$Props["transitionConfig"] = undefined;
+	export let inTransition: $$Props["inTransition"] = undefined;
+	export let inTransitionConfig: $$Props["inTransitionConfig"] = undefined;
+	export let outTransition: $$Props["outTransition"] = undefined;
+	export let outTransitionConfig: $$Props["outTransitionConfig"] = undefined;
 
 	export let asChild = false;
 
@@ -25,34 +25,37 @@
 	} = ctx.get();
 </script>
 
-{#if $open}
+{#if asChild && $open}
 	{@const builder = $content}
-	{#if asChild}
+	<slot {builder} />
+{:else if transition && $open}
+	{@const builder = $content}
+	<div transition:transition={transitionConfig} use:melt={builder} {...$$restProps}>
 		<slot {builder} />
-	{:else if transition}
-		<div transition:transition|global={transitionConfig} use:melt={builder} {...$$restProps}>
-			<slot {builder} />
-		</div>
-	{:else if inTransition && outTransition}
-		<div
-			in:inTransition|global={inTransitionConfig}
-			out:outTransition|global={outTransitionConfig}
-			use:melt={builder}
-			{...$$restProps}
-		>
-			<slot {builder} />
-		</div>
-	{:else if inTransition}
-		<div in:inTransition|global={inTransitionConfig} use:melt={builder} {...$$restProps}>
-			<slot {builder} />
-		</div>
-	{:else if outTransition}
-		<div out:outTransition|global={outTransitionConfig} use:melt={builder} {...$$restProps}>
-			<slot {builder} />
-		</div>
-	{:else}
-		<div {...$$restProps}>
-			<slot {builder} />
-		</div>
-	{/if}
+	</div>
+{:else if inTransition && outTransition && $open}
+	{@const builder = $content}
+	<div
+		in:inTransition={inTransitionConfig}
+		out:outTransition={outTransitionConfig}
+		use:melt={builder}
+		{...$$restProps}
+	>
+		<slot {builder} />
+	</div>
+{:else if inTransition && $open}
+	{@const builder = $content}
+	<div in:inTransition={inTransitionConfig} use:melt={builder} {...$$restProps}>
+		<slot {builder} />
+	</div>
+{:else if outTransition && $open}
+	{@const builder = $content}
+	<div out:outTransition={outTransitionConfig} use:melt={builder} {...$$restProps}>
+		<slot {builder} />
+	</div>
+{:else if $open}
+	{@const builder = $content}
+	<div {...$$restProps}>
+		<slot {builder} />
+	</div>
 {/if}

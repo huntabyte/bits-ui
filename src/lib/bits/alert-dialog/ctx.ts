@@ -9,20 +9,24 @@ import {
 	removeUndefined,
 	type TOpen,
 	type TransitionTimesProp
-} from "$internal/index.js";
+} from "$lib/internal/index.js";
 
 const NAME = "AlertDialog";
 
 type SetProps = CreateAlertDialogProps & TransitionTimesProp & TOpen;
 
-type CtxReturn = AlertDialogReturn & TransitionTimesProp & TOpen;
+type GetReturn = AlertDialogReturn & TransitionTimesProp & TOpen;
 
 function set(props: SetProps) {
 	const alertDialog = createDialog({
 		...removeUndefined(props),
 		role: "alertdialog"
 	});
-	setContext(NAME, { ...alertDialog, transitionTimes: props.transitionTimes, tOpen: props.tOpen });
+	setContext(NAME, {
+		...alertDialog,
+		transitionTimes: props.transitionTimes,
+		tOpen: props.tOpen
+	});
 	return {
 		...alertDialog,
 		updateOption: getOptionUpdater(alertDialog.options)
@@ -30,7 +34,7 @@ function set(props: SetProps) {
 }
 
 function get() {
-	return getContext<CtxReturn>(NAME);
+	return getContext<GetReturn>(NAME);
 }
 
 export const ctx = {

@@ -2,7 +2,6 @@
 	import { melt } from "@melt-ui/svelte";
 	import { ctx } from "../ctx.js";
 	import type { Props } from "../types.js";
-	import { writable } from "svelte/store";
 
 	type $$Props = Props;
 
@@ -23,7 +22,7 @@
 	<slot builder={$menubar} />
 {:else}
 	{@const builder = $menubar}
-	<div use:melt={builder} style="z-index: 50" {...$$restProps}>
+	<div use:melt={builder} {...$$restProps}>
 		<slot {builder} />
 	</div>
 {/if}

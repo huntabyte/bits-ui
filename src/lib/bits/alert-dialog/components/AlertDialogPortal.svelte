@@ -12,7 +12,8 @@
 </script>
 
 {#if asChild}
-	<slot builder={$portalled} />
+	{@const builder = $portalled}
+	<slot {builder} />
 {:else}
 	{@const builder = $portalled}
 	<div use:melt={builder} {...$$restProps}>

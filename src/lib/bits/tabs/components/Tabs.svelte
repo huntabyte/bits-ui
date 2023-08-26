@@ -23,8 +23,10 @@
 		autoSet,
 		defaultValue: value,
 		onValueChange: ({ next }) => {
-			onValueChange?.(next);
-			value = next;
+			if (value !== next) {
+				onValueChange?.(next);
+				value = next;
+			}
 			return next;
 		}
 	});

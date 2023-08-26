@@ -4,21 +4,21 @@ import {
 	type CreateCheckboxProps
 } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
-import { removeUndefined, getOptionUpdater } from "$internal/index.js";
+import { removeUndefined, getOptionUpdater } from "$lib/internal/index.js";
 
 const NAME = "Checkbox";
 
 export const ctx = {
 	set,
-	get,
-	getIndicator,
-	getInput,
-	getCheckbox
+	get
 };
+
+type GetReturn = CheckboxReturn;
 
 function set(props: CreateCheckboxProps) {
 	const checkbox = createCheckbox(removeUndefined(props));
-	setContext(NAME, checkbox);
+	setContext(NAME, { ...checkbox });
+
 	return {
 		...checkbox,
 		updateOption: getOptionUpdater(checkbox.options)
@@ -26,20 +26,5 @@ function set(props: CreateCheckboxProps) {
 }
 
 function get() {
-	return getContext<CheckboxReturn>(NAME);
-}
-
-function getCheckbox() {
-	return get().elements.root;
-}
-
-function getIndicator() {
-	return {
-		isChecked: get().helpers.isChecked,
-		isIndeterminate: get().helpers.isIndeterminate
-	};
-}
-
-function getInput() {
-	return get().elements.input;
+	return getContext<GetReturn>(NAME);
 }

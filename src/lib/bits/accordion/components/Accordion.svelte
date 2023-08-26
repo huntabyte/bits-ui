@@ -7,10 +7,10 @@
 	type $$Props = Props<Multiple>;
 
 	export let multiple: $$Props["multiple"] = false as Multiple;
-	export let disabled: $$Props["disabled"] = false;
 	export let value: $$Props["value"] = undefined;
 	export let onValueChange: $$Props["onValueChange"] = undefined;
-	export let asChild: $$Props["asChild"] = false;
+	export let disabled = false;
+	export let asChild = false;
 
 	const {
 		elements: { root },
@@ -22,8 +22,10 @@
 		defaultValue: value,
 
 		onValueChange: (({ next }: { next: $$Props["value"] }) => {
-			onValueChange?.(next);
-			value = next;
+			if (value !== next) {
+				onValueChange?.(next);
+				value = next;
+			}
 			return next;
 		}) as any // I'm sorry
 	});
