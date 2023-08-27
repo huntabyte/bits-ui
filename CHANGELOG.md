@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.5.2
+
+### Patch Changes
+
+- af9a922: - Upgrade Melt UI to resolve `Select` portal bug
+
 ## 0.5.1
 
 ### Patch Changes
