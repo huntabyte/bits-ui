@@ -11,7 +11,10 @@
 	<Menubar.Menu>
 		<Menubar.Trigger>File</Menubar.Trigger>
 		<Menubar.Content>
-			<Menubar.Item>New Tab</Menubar.Item>
+			<Menubar.Item
+				on:click={() => console.log("click")}
+				on:pointerdown={() => console.log("pointerdown")}>New Tab</Menubar.Item
+			>
 			<Menubar.Item>New Window</Menubar.Item>
 			<Menubar.Item>New Incognito Window</Menubar.Item>
 			<Menubar.Separator />

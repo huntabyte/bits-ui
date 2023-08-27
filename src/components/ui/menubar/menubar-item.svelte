@@ -19,6 +19,7 @@
 		className
 	)}
 	{...$$restProps}
+	on:click
 	on:focusin
 	on:focusout
 	on:keydown
