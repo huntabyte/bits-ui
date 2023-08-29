@@ -1,6 +1,4 @@
 <script lang="ts">
-	import Overlay from "$lib/internal/overlay.svelte";
-
 	import { createDispatcher } from "$lib/internal/events.js";
 
 	import { melt } from "@melt-ui/svelte";
@@ -30,10 +28,6 @@
 
 	const dispatch = createDispatcher();
 </script>
-
-{#if $open}
-	<Overlay />
-{/if}
 
 {#if asChild && $open}
 	{@const builder = $menu}
