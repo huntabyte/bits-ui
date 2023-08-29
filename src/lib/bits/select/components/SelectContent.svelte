@@ -2,7 +2,6 @@
 	import { createDispatcher } from "$lib/internal/events.js";
 
 	import { melt } from "@melt-ui/svelte";
-	import Overlay from "$lib/internal/overlay.svelte";
 	import type { Transition } from "$lib/internal/types.js";
 	import { ctx } from "../ctx.js";
 	import type { ContentEvents, ContentProps } from "../types.js";
@@ -30,9 +29,6 @@
 
 <!-- svelte-ignore a11y-no-static-element-interactions / applied by melt's builder-->
 
-{#if $open}
-	<Overlay />
-{/if}
 {#if asChild && $open}
 	{@const builder = $menu}
 	<slot {builder} />
