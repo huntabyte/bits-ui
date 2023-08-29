@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.5.3
+
+### Patch Changes
+
+- b595e60: Fix: remove background overlay from menu components
+
 ## 0.5.2
 
 ### Patch Changes
