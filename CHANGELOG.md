@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.5.5
+
+### Patch Changes
+
+- b66e02a: Fix: cleanup dialog timeout
+
 ## 0.5.4
 
 ### Patch Changes

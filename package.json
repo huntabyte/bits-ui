@@ -1,6 +1,6 @@
 {
 	"name": "bits-ui",
-	"version": "0.5.4",
+	"version": "0.5.5",
 	"license": "MIT",
 	"scripts": {
 		"dev": "concurrently \"pnpm:dev:content\" \"pnpm:dev:svelte\"",
