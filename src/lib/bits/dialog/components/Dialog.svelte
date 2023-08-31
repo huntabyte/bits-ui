@@ -31,6 +31,7 @@
 		transitionTimes,
 		tOpen,
 		onOpenChange: ({ next }) => {
+			window.clearTimeout(timeout);
 			if (open !== next) {
 				onOpenChange?.(next);
 			}
@@ -42,7 +43,7 @@
 						() => {
 							localOpen.set(next);
 						},
-						$transitionTimes.out ? $transitionTimes.out * 0.5 : 0
+						$transitionTimes.out ? $transitionTimes.out * 0.6 : 0
 					);
 					open = !next;
 					return !next;

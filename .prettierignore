@@ -14,3 +14,6 @@ yarn.lock
 .changeset/
 .prettierrc
 package.json
+.vercel
+.contentlayer
+dist
