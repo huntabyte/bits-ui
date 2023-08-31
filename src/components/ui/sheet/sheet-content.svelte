@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Dialog as SheetPrimitive } from "bits-ui";
+	import { Dialog as SheetPrimitive } from "@/lib";
 	import { SheetOverlay, SheetPortal, sheetVariants, sheetTransitions, type Side } from ".";
 	import { Cross2 } from "radix-icons-svelte";
 	import { cn } from "@/utils";
