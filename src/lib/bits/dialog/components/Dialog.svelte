@@ -31,8 +31,8 @@
 		transitionTimes,
 		tOpen,
 		onOpenChange: ({ next }) => {
-			if (isBrowser) {
-				window.clearTimeout(timeout);
+			if (!isBrowser) {
+				return next;
 			}
 			if (open !== next) {
 				onOpenChange?.(next);
@@ -40,15 +40,13 @@
 			if (next !== $tOpen) {
 				tOpen.set(next);
 				if (!next) {
-					if (isBrowser) {
-						window.clearTimeout(timeout);
-						timeout = window.setTimeout(
-							() => {
-								localOpen.set(next);
-							},
-							$transitionTimes.out ? $transitionTimes.out * 0.6 : 0
-						);
-					}
+					window.clearTimeout(timeout);
+					timeout = window.setTimeout(
+						() => {
+							localOpen.set(next);
+						},
+						$transitionTimes.out ? $transitionTimes.out * 0.6 : 0
+					);
 					open = !next;
 					return !next;
 				} else {
