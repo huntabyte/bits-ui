@@ -34,13 +34,13 @@
 			if (!isBrowser) {
 				return next;
 			}
+			window.clearTimeout(timeout);
 			if (open !== next) {
 				onOpenChange?.(next);
 			}
 			if (next !== $tOpen) {
 				tOpen.set(next);
 				if (!next) {
-					window.clearTimeout(timeout);
 					timeout = window.setTimeout(
 						() => {
 							localOpen.set(next);
