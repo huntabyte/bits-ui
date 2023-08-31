@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.5.4
+
+### Patch Changes
+
+- 984ca98: fix: dialog crashing when back-to-back trigger clicks
+
 ## 0.5.3
 
 ### Patch Changes
