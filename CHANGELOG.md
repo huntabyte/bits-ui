@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.5.6
+
+### Patch Changes
+
+- 5e1c692: – Update Melt UI version for a bug fix that was preventing the dialog portal divs from being cleaned up on `unmount`.
+
 ## 0.5.5
 
 ### Patch Changes
