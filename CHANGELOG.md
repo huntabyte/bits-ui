@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.5.7
+
+### Patch Changes
+
+- 52819ef: - Update Melt UI for a bug fix that allows the menubar triggers to properly toggle.
+
 ## 0.5.6
 
 ### Patch Changes
