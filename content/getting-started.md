@@ -11,7 +11,7 @@ Install bits using your favorite package manager.
 npm install bits-ui
 ```
 
-You can them import and start using them in your app.
+You can then import and start using them in your app.
 
 ```svelte
 <script lang="ts">
