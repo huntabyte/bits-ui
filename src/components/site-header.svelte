@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Button } from "@/components/ui/button";
 	import { Xcom, GitHub } from "@/components/icons";
-	import { LightSwitch } from "@/components";
+	import { LightSwitch, MobileNav } from "@/components";
 	import { siteConfig } from "@/config";
 </script>
 
@@ -9,6 +9,7 @@
 	<div class="mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
 		<div class="flex items-center justify-between gap-3 h-16">
 			<div class="flex items-center gap-1.5">
+				<MobileNav />
 				<a href="/" class="font-bold tracking-tight text-2xl underline underline-offset-4">bits</a>
 			</div>
 			<div class="items-center justify-end gap-1.5">
