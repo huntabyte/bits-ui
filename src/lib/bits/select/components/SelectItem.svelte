@@ -23,16 +23,7 @@
 	<slot builder={$option({ value, disabled, label })} />
 {:else}
 	{@const builder = $option({ value, disabled, label })}
-	<div
-		use:melt={builder}
-		{...$$restProps}
-		on:m-click={dispatch}
-		on:m-focusin={dispatch}
-		on:m-focusout={dispatch}
-		on:m-keydown={dispatch}
-		on:m-pointerleave={dispatch}
-		on:m-pointermove={dispatch}
-	>
+	<div use:melt={builder} {...$$restProps} on:m-click={dispatch} on:m-pointermove={dispatch}>
 		<slot {builder}>
 			{label ? label : value}
 		</slot>

@@ -38,7 +38,7 @@
 		transition:transition={transitionConfig}
 		use:melt={builder}
 		{...$$restProps}
-		on:m-keydown={dispatch}
+		on:m-pointerleave={dispatch}
 	>
 		<slot {builder} />
 	</div>
@@ -49,7 +49,7 @@
 		out:outTransition={outTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
-		on:m-keydown={dispatch}
+		on:m-pointerleave={dispatch}
 	>
 		<slot {builder} />
 	</div>
@@ -59,7 +59,7 @@
 		in:inTransition={inTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
-		on:m-keydown={dispatch}
+		on:m-pointerleave={dispatch}
 	>
 		<slot {builder} />
 	</div>
@@ -69,13 +69,13 @@
 		out:outTransition={outTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
-		on:m-keydown={dispatch}
+		on:m-pointerleave={dispatch}
 	>
 		<slot {builder} />
 	</div>
 {:else if $open}
 	{@const builder = $menu}
-	<div use:melt={builder} {...$$restProps} on:m-keydown={dispatch}>
+	<div use:melt={builder} {...$$restProps} on:m-pointerleave={dispatch}>
 		<slot {builder} />
 	</div>
 {/if}

@@ -6,7 +6,7 @@ import Input from "./components/SelectInput.svelte";
 import Item from "./components/SelectItem.svelte";
 import ItemIndicator from "./components/SelectItemIndicator.svelte";
 import Label from "./components/SelectLabel.svelte";
-import Separator from "./components/SelectSeparator.svelte";
+import Separator from "../separator/components/Separator.svelte";
 import Trigger from "./components/SelectTrigger.svelte";
 import Value from "./components/SelectValue.svelte";
 
