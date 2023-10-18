@@ -5,7 +5,7 @@
 
 	type $$Props = InputProps;
 	export let asChild = false;
-	const input = ctx.get().elements.input;
+	const input = ctx.get().elements.hiddenInput;
 </script>
 
 {#if asChild}

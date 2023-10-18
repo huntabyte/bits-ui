@@ -67,6 +67,6 @@ function getItemIndicator() {
 
 function setArrow(size = 8) {
 	const select = get();
-	select.options.arrowSize.set(size);
+	select.options.arrowSize?.set(size);
 	return select;
 }

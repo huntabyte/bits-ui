@@ -50,11 +50,7 @@ type ArrowProps = Expand<
 
 type ItemEvents<T extends Element = HTMLDivElement> = {
 	click: CustomEventHandler<MouseEvent, T>;
-	keydown: CustomEventHandler<KeyboardEvent, T>;
-	focusin: CustomEventHandler<FocusEvent, T>;
-	focusout: CustomEventHandler<FocusEvent, T>;
-	pointerleave: CustomEventHandler<MouseEvent, T>;
-	pointermove: CustomEventHandler<MouseEvent, T>;
+	pointermove: CustomEventHandler<PointerEvent, T>;
 };
 
 type TriggerEvents<T extends Element = HTMLButtonElement> = {
@@ -66,7 +62,7 @@ type LabelEvents<T extends Element = HTMLSpanElement> = {
 	click: CustomEventHandler<MouseEvent, T>;
 };
 type ContentEvents<T extends Element = HTMLDivElement> = {
-	keydown: CustomEventHandler<KeyboardEvent, T>;
+	pointerleave: CustomEventHandler<PointerEvent, T>;
 };
 
 export type {
