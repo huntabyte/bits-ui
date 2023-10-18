@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.6.0
+
+### Minor Changes
+
+- 4c9aca7: - update to the latest Melt UI version
+
 ## 0.5.7
 
 ### Patch Changes
