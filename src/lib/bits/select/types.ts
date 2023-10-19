@@ -8,7 +8,12 @@ import type {
 	Transition,
 	TransitionProps
 } from "$lib/internal/index.js";
-import type { HTMLAttributes, HTMLButtonAttributes, HTMLInputAttributes } from "svelte/elements";
+import type {
+	EventHandler,
+	HTMLAttributes,
+	HTMLButtonAttributes,
+	HTMLInputAttributes
+} from "svelte/elements";
 import type { CustomEventHandler } from "$lib/index.js";
 
 type Props = Expand<
@@ -51,6 +56,10 @@ type ArrowProps = Expand<
 type ItemEvents<T extends Element = HTMLDivElement> = {
 	click: CustomEventHandler<MouseEvent, T>;
 	pointermove: CustomEventHandler<PointerEvent, T>;
+	focusin: EventHandler<FocusEvent, T>;
+	keydown: EventHandler<KeyboardEvent, T>;
+	focusout: EventHandler<FocusEvent, T>;
+	pointerleave: EventHandler<PointerEvent, T>;
 };
 
 type TriggerEvents<T extends Element = HTMLButtonElement> = {
@@ -63,6 +72,7 @@ type LabelEvents<T extends Element = HTMLSpanElement> = {
 };
 type ContentEvents<T extends Element = HTMLDivElement> = {
 	pointerleave: CustomEventHandler<PointerEvent, T>;
+	keydown: EventHandler<KeyboardEvent, T>;
 };
 
 export type {

@@ -39,6 +39,7 @@
 		use:melt={builder}
 		{...$$restProps}
 		on:m-pointerleave={dispatch}
+		on:keydown
 	>
 		<slot {builder} />
 	</div>
@@ -50,6 +51,7 @@
 		use:melt={builder}
 		{...$$restProps}
 		on:m-pointerleave={dispatch}
+		on:keydown
 	>
 		<slot {builder} />
 	</div>
@@ -60,6 +62,7 @@
 		use:melt={builder}
 		{...$$restProps}
 		on:m-pointerleave={dispatch}
+		on:keydown
 	>
 		<slot {builder} />
 	</div>
@@ -70,12 +73,13 @@
 		use:melt={builder}
 		{...$$restProps}
 		on:m-pointerleave={dispatch}
+		on:keydown
 	>
 		<slot {builder} />
 	</div>
 {:else if $open}
 	{@const builder = $menu}
-	<div use:melt={builder} {...$$restProps} on:m-pointerleave={dispatch}>
+	<div use:melt={builder} {...$$restProps} on:m-pointerleave={dispatch} on:keydown>
 		<slot {builder} />
 	</div>
 {/if}
