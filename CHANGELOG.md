@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.6.1
+
+### Patch Changes
+
+- e788665: expose additional events
+
 ## 0.6.0
 
 ### Minor Changes
