@@ -17,6 +17,9 @@ export { default as CopySimple } from "./copy-simple.svelte";
 export { default as ArrowSquareOut } from "./arrow-square-out.svelte";
 export { default as CaretUpDown } from "./caret-up-down.svelte";
 export { default as SquareHalf } from "./square-half.svelte";
+export { default as BookOpen } from "./book-open.svelte";
+export { default as Code } from "./code.svelte";
+export { default as RocketLaunch } from "./rocket-launch.svelte";
 
 export type IconProps = Partial<HTMLAttributes<SVGElement>> & {
 	class?: string;

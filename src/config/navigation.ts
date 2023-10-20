@@ -36,12 +36,12 @@ export const navigation: Navigation = {
 					items: []
 				},
 				{
-					title: "Getting started",
+					title: "Getting Started",
 					href: "/docs/getting-started",
 					items: []
 				},
 				{
-					title: "Render delegation",
+					title: "Render Delegation",
 					href: "/docs/render-delegation",
 					items: []
 				}

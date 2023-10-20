@@ -3,12 +3,7 @@
 	import { page } from "$app/stores";
 	import type { SvelteComponent } from "svelte";
 	import type { PageData } from "./$types";
-	import {
-		PageHeader,
-		PageHeaderDescription,
-		PageHeaderHeading,
-		PageHeaderTagline
-	} from "@/components";
+	import { PageHeader, PageHeaderDescription, PageHeaderHeading } from "@/components";
 	type Component = $$Generic<typeof SvelteComponent>;
 
 	export let data: PageData;
@@ -24,7 +19,6 @@
 
 <div class="markdown pb-24">
 	<PageHeader>
-		<PageHeaderTagline>{tagline}</PageHeaderTagline>
 		<PageHeaderHeading>{doc.title}</PageHeaderHeading>
 		<PageHeaderDescription>{doc.description}</PageHeaderDescription>
 	</PageHeader>
