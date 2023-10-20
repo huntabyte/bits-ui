@@ -6,7 +6,7 @@
 </script>
 
 <header class="bg-background/75 backdrop-blur border-b border-border -mb-px sticky top-0 z-50">
-	<div class="mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+	<div class="mx-auto px-4 sm:px-6 lg:px-8 container">
 		<div class="flex items-center justify-between gap-3 h-16">
 			<div class="flex items-center gap-1.5">
 				<MobileNav />
