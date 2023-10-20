@@ -18,12 +18,12 @@
 			<div class="lg:col-span-2 border-r border-border">
 				<SidebarNav items={navigation.sidebar} />
 			</div>
-			<div class="lg:col-span-10">
-				<div class="lg:grid lg:grid-cols-10 lg:gap-6">
-					<div class="lg:col-span-8">
+			<div class="lg:col-span-10 lg:col-start-4">
+				<div class="lg:grid lg:grid-cols-9 lg:gap-6">
+					<div class="lg:col-span-7">
 						<slot />
 					</div>
-					<div class="lg:col-span-2 order-first lg:order-last" />
+					<div class="lg:col-span-2 lg:col-start-11 order-first lg:order-last" />
 				</div>
 			</div>
 		</div>
