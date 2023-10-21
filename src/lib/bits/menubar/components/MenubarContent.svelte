@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createDispatcher } from "$lib/internal/events.js";
+	import { createDispatcher, type Transition } from "$lib/internal/index.js";
 
 	import { melt } from "@melt-ui/svelte";
 	import { ctx } from "../ctx.js";

@@ -6,8 +6,7 @@
 	type $$Props = PortalProps;
 	export let asChild = false;
 	const {
-		elements: { portalled },
-		states: { open }
+		elements: { portalled }
 	} = ctx.get();
 </script>
 

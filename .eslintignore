@@ -14,3 +14,6 @@ yarn.lock
 .changeset/
 .prettierrc
 package.json
+
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*

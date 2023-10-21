@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
+	import type { Transition } from "$lib/internal/index.js";
 	import { ctx } from "../ctx.js";
 	import type { OverlayProps } from "../types.js";
 

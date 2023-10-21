@@ -70,7 +70,12 @@ export const apiSchemas: Record<Bit, APISchema[]> = {
 	progress,
 	"radio-group": radioGroup,
 	select,
-	separator
+	separator,
+	switch: [],
+	slider: [],
+	tabs: [],
+	toggle: [],
+	tooltip: []
 };
 
 export function getAPISchemas(bit: Bit): APISchema[] {

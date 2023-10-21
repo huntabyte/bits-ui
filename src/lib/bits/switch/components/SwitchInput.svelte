@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
 	import { ctx } from "../ctx.js";
 	import type { InputProps } from "../types.js";
 

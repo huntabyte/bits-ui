@@ -2,7 +2,6 @@
 	import { melt } from "@melt-ui/svelte";
 	import { ctx } from "../ctx.js";
 	import type { TriggerEvents, TriggerProps } from "../types.js";
-	import Overlay from "$lib/internal/overlay.svelte";
 	import { createDispatcher } from "$lib/internal/events.js";
 
 	type $$Props = TriggerProps;
