@@ -8,7 +8,7 @@
 	export let alt: $$Props["alt"] = undefined;
 	export let asChild = false;
 
-	const image = ctx.getImage(src).elements.image;
+	$: image = ctx.getImage(src).elements.image;
 </script>
 
 {#if asChild}

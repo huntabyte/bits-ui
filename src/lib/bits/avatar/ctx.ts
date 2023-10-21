@@ -20,7 +20,9 @@ function set(props: CreateAvatarProps) {
 
 function getImage(src: string | undefined | null = "") {
 	const avatar = getContext<AvatarReturn>(NAME);
-	if (src) {
+	if (!src) {
+		avatar.options.src.set("");
+	} else {
 		avatar.options.src.set(src);
 	}
 	return avatar;
