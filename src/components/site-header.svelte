@@ -16,6 +16,7 @@
 				<Button
 					href={siteConfig.links.github}
 					target="_blank"
+					rel="noopener noreferrer"
 					size="icon"
 					variant="ghost"
 					aria-label="View the github repo for this package."
@@ -26,6 +27,7 @@
 				<Button
 					href={siteConfig.links.twitter}
 					target="_blank"
+					rel="noopener noreferrer"
 					size="icon"
 					variant="ghost"
 					aria-label="X, formerly known as Twitter."

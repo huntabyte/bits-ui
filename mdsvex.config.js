@@ -101,6 +101,7 @@ export function rehypeComponentExample() {
 					if (!index) return;
 					parent.children.splice(index + 1, 0, sourceCodeNode);
 				} catch (e) {
+					// eslint-disable-next-line no-console
 					console.error(e);
 				}
 			}

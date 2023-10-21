@@ -39,7 +39,6 @@
 
 <Button
 	on:click={() => {
-		console.log("click");
 		onToggleHandler();
 	}}
 	on:keydown={(e) => onKeyDown(e)}

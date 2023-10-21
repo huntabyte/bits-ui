@@ -17,3 +17,6 @@ package.json
 .vercel
 .contentlayer
 dist
+
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*

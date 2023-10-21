@@ -3,6 +3,7 @@
 	import type { HTMLAttributes } from "svelte/elements";
 
 	type $$Props = HTMLAttributes<HTMLTableRowElement> & {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		"data-state"?: any;
 	};
 

@@ -27,10 +27,12 @@
 				value = next;
 			}
 			return next;
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		}) as any // I'm sorry
 	});
 
 	// Svelte types get weird here saying set expects something that is both string and string[].
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	$: localValue.set(value as any);
 
 	$: updateOption("multiple", multiple);
