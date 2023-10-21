@@ -8,25 +8,31 @@
 </script>
 
 {#if dev}
-	<div class={cn("group relative my-4 flex flex-col space-y-2", className)} {...$$restProps}>
+	<div
+		class={cn("group relative my-4 flex flex-col space-y-2", className)}
+		{...$$restProps}
+		data-preview
+	>
 		<Tabs.Root value="preview" class="relative mr-auto w-full">
-			<div class="flex items-center justify-between pb-3">
-				<Tabs.List class="w-full justify-start rounded-none border-b bg-transparent p-0">
+			<div class="flex items-center justify-between">
+				<Tabs.List
+					class="absolute w-full justify-end rounded-none bg-transparent p-0 z-20 top-5 right-4"
+				>
 					<Tabs.Trigger
 						value="preview"
-						class="relative h-9 rounded-none border-b-2 border-b-transparent bg-transparent px-4 pb-3 pt-2 font-semibold text-muted-foreground shadow-none transition-none data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none"
+						class="relative h-9 rounded-lg bg-muted px-3 py-2 font-semibold text-muted-foreground shadow-none transition-none data-[state=active]:bg-background data-[state=active]:text-foreground hover:bg-primary/5 transition-all"
 					>
 						Preview
 					</Tabs.Trigger>
 					<Tabs.Trigger
 						value="code"
-						class="relative h-9 rounded-none border-b-2 border-b-transparent bg-transparent px-4 pb-3 pt-2 font-semibold text-muted-foreground shadow-none transition-none data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none"
+						class="relative h-9 rounded-lg bg-muted px-3 py-2 font-semibold text-muted-foreground shadow-none transition-none data-[state=active]:bg-background data-[state=active]:text-foreground hover:bg-primary/5 transition-all"
 					>
-						Code
+						&lt;Code/&gt;
 					</Tabs.Trigger>
 				</Tabs.List>
 			</div>
-			<Tabs.Content value="preview" class="relative rounded-md border">
+			<Tabs.Content value="preview" class="relative rounded-md bg-muted">
 				<div
 					class={cn(
 						"preview flex min-h-[350px] w-full justify-center p-10",
