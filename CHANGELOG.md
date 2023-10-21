@@ -1,5 +1,12 @@
 # @huntabyte/primitives
 
+## 0.6.2
+
+### Patch Changes
+
+- a780302: - cleanup types and lint issues
+- 30ed8d5: - Fix: Bug preventing avatar `src` from clearing
+
 ## 0.6.1
 
 ### Patch Changes
