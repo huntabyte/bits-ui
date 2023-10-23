@@ -55,7 +55,7 @@
 	</div>
 {:else if $open}
 	{@const builder = $content}
-	<div {...$$restProps}>
+	<div use:melt={builder} {...$$restProps}>
 		<slot {builder} />
 	</div>
 {/if}
