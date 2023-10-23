@@ -101,7 +101,7 @@ export const item: APISchema = {
 		{
 			name: "href",
 			type: "string",
-			description: "An optional prop that when passed converts the button into an anchor tag."
+			description: "An optional prop that when passed converts the dropdown item into an anchor tag."
 		}
 	],
 	dataAttributes: [
