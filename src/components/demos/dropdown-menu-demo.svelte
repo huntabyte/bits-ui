@@ -56,6 +56,9 @@
 		<DropdownMenu.Item>
 			<span>Support</span>
 		</DropdownMenu.Item>
+		<DropdownMenu.Item href="/">
+			Anchor Link
+		</DropdownMenu.Item>
 		<DropdownMenu.Item>
 			<span>API</span>
 		</DropdownMenu.Item>

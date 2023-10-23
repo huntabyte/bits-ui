@@ -17,7 +17,7 @@ import type {
 	DropdownMenuRadioItemProps,
 	CreateDropdownSubmenuProps
 } from "@melt-ui/svelte";
-import type { HTMLButtonAttributes } from "svelte/elements";
+import type { HTMLAnchorAttributes, HTMLButtonAttributes } from "svelte/elements";
 
 type Props = Expand<
 	OmitOpen<CreateDropdownMenuProps> & {
@@ -61,6 +61,7 @@ type GroupProps = AsChild & HTMLDivAttributes;
 type ItemProps = Expand<
 	{
 		disabled?: boolean;
+		href?: HTMLAnchorAttributes["href"];
 	} & AsChild
 > &
 	HTMLDivAttributes;
@@ -128,52 +129,15 @@ type SubContentEvents<T extends Element = HTMLDivElement> = {
 };
 
 export type {
-	Props,
-	ArrowProps,
-	CheckboxItemProps,
-	ContentProps,
-	GroupProps,
-	ItemProps,
-	CheckboxItemIndicatorProps,
-	LabelProps,
-	RadioGroupProps,
-	RadioItemProps,
-	SeparatorProps,
-	SubProps,
-	SubContentProps,
-	SubTriggerProps,
-	TriggerProps,
-
+	ArrowProps, CheckboxItemEvents, CheckboxItemIndicatorProps, CheckboxItemProps, ContentEvents, ContentProps, ArrowProps as DropdownMenuArrowProps, CheckboxItemEvents as DropdownMenuCheckboxItemEvents, CheckboxItemIndicatorProps as DropdownMenuCheckboxItemIndicatorProps, CheckboxItemProps as DropdownMenuCheckboxItemProps, ContentEvents as DropdownMenuContentEvents, ContentProps as DropdownMenuContentProps,
+	GroupProps as DropdownMenuGroupProps, ItemEvents as DropdownMenuItemEvents, ItemProps as DropdownMenuItemProps, LabelProps as DropdownMenuLabelProps,
 	//
-	Props as DropdownMenuProps,
-	ArrowProps as DropdownMenuArrowProps,
-	CheckboxItemProps as DropdownMenuCheckboxItemProps,
-	ContentProps as DropdownMenuContentProps,
-	GroupProps as DropdownMenuGroupProps,
-	ItemProps as DropdownMenuItemProps,
-	CheckboxItemIndicatorProps as DropdownMenuCheckboxItemIndicatorProps,
-	LabelProps as DropdownMenuLabelProps,
-	RadioGroupProps as DropdownMenuRadioGroupProps,
-	RadioItemProps as DropdownMenuRadioItemProps,
-	SeparatorProps as DropdownMenuSeparatorProps,
-	SubProps as DropdownMenuSubProps,
-	SubContentProps as DropdownMenuSubContentProps,
-	SubTriggerProps as DropdownMenuSubTriggerProps,
-	TriggerProps as DropdownMenuTriggerProps,
-	//
-	TriggerEvents,
-	CheckboxItemEvents,
-	ContentEvents,
-	RadioItemEvents,
-	SubContentEvents,
-	SubTriggerEvents,
-	ItemEvents,
+	Props as DropdownMenuProps, RadioGroupProps as DropdownMenuRadioGroupProps, RadioItemEvents as DropdownMenuRadioItemEvents, RadioItemProps as DropdownMenuRadioItemProps,
+	SeparatorProps as DropdownMenuSeparatorProps, SubContentEvents as DropdownMenuSubContentEvents, SubContentProps as DropdownMenuSubContentProps, SubProps as DropdownMenuSubProps, SubTriggerEvents as DropdownMenuSubTriggerEvents, SubTriggerProps as DropdownMenuSubTriggerProps,
 	//,
-	TriggerEvents as DropdownMenuTriggerEvents,
-	CheckboxItemEvents as DropdownMenuCheckboxItemEvents,
-	ContentEvents as DropdownMenuContentEvents,
-	RadioItemEvents as DropdownMenuRadioItemEvents,
-	SubContentEvents as DropdownMenuSubContentEvents,
-	SubTriggerEvents as DropdownMenuSubTriggerEvents,
-	ItemEvents as DropdownMenuItemEvents
+	TriggerEvents as DropdownMenuTriggerEvents, TriggerProps as DropdownMenuTriggerProps, GroupProps, ItemEvents, ItemProps, LabelProps, Props, RadioGroupProps, RadioItemEvents, RadioItemProps,
+	SeparatorProps, SubContentEvents, SubContentProps, SubProps, SubTriggerEvents, SubTriggerProps,
+	//
+	TriggerEvents, TriggerProps
 };
+
