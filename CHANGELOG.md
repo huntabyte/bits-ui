@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.6.3
+
+### Patch Changes
+
+- 8655546: fix popover content bug
+
 ## 0.6.2
 
 ### Patch Changes
