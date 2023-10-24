@@ -97,6 +97,11 @@ export const item: APISchema = {
 			type: "boolean",
 			default: "false",
 			description: "Whether or not the menu item is disabled."
+		},
+		{
+			name: "href",
+			type: "string",
+			description: "An optional prop that when passed converts the dropdown item into an anchor tag."
 		}
 	],
 	dataAttributes: [
