@@ -4,11 +4,11 @@
 
 ### Minor Changes
 
-- e645ad2: Add support for Anchor dropdown items
+- Add support for Anchor dropdown items ([#131](https://github.com/huntabyte/bits-ui/pull/131))
 
 ### Patch Changes
 
-- 2c406b2: Improve prop and `onChange` types
+- Improve prop and `onChange` types ([#134](https://github.com/huntabyte/bits-ui/pull/134))
 
 ## 0.6.3
 
