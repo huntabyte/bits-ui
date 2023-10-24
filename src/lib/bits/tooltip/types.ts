@@ -13,8 +13,8 @@ import type { CustomEventHandler } from "$lib";
 
 type Props = Expand<
 	OmitOpen<CreateTooltipProps> & {
-		open?: CreateTooltipProps["defaultOpen"] & {};
-		onOpenChange?: OnChangeFn<CreateTooltipProps["defaultOpen"]>;
+		open?: boolean & {};
+		onOpenChange?: OnChangeFn<boolean>;
 	}
 >;
 

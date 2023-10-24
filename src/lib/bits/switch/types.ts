@@ -11,8 +11,8 @@ import type { CustomEventHandler } from "$lib/index.js";
 
 type Props = Expand<
 	OmitChecked<CreateSwitchProps> & {
-		checked?: CreateSwitchProps["defaultChecked"] & {};
-		onCheckedChange?: OnChangeFn<CreateSwitchProps["defaultChecked"]>;
+		checked?: boolean;
+		onCheckedChange?: OnChangeFn<boolean>;
 	} & AsChild
 > &
 	HTMLButtonAttributes;

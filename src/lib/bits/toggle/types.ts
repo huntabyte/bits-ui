@@ -5,8 +5,8 @@ import type { CustomEventHandler } from "$lib/index.js";
 
 type Props = Expand<
 	OmitPressed<CreateToggleProps> & {
-		pressed?: CreateToggleProps["defaultPressed"];
-		onPressedChange?: OnChangeFn<CreateToggleProps["defaultPressed"]>;
+		pressed?: boolean;
+		onPressedChange?: OnChangeFn<boolean>;
 	} & AsChild
 > &
 	HTMLButtonAttributes;

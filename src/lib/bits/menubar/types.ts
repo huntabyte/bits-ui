@@ -24,15 +24,15 @@ type Props = Expand<CreateMenubarProps & AsChild> & HTMLDivAttributes;
 
 type MenuProps = Expand<
 	OmitOpen<CreateMenubarMenuProps> & {
-		open?: CreateMenubarMenuProps["defaultOpen"] & {};
-		onOpenChange?: OnChangeFn<CreateMenubarMenuProps["defaultOpen"]>;
+		open?: boolean;
+		onOpenChange?: OnChangeFn<boolean>;
 	}
 >;
 
 type CheckboxItemProps = Expand<
 	OmitChecked<CreateMenuCheckboxItemProps> & {
-		checked?: CreateMenuCheckboxItemProps["defaultChecked"] & {};
-		onCheckedChange?: OnChangeFn<CreateMenuCheckboxItemProps["defaultChecked"]>;
+		checked?: boolean | "indeterminate";
+		onCheckedChange?: OnChangeFn<boolean | "indeterminate">;
 		disabled?: boolean;
 	} & AsChild
 > &

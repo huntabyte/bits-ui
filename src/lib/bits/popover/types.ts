@@ -13,8 +13,8 @@ import type { HTMLButtonAttributes } from "svelte/elements";
 
 type Props = Expand<
 	OmitOpen<CreatePopoverProps> & {
-		open?: CreatePopoverProps["defaultOpen"];
-		onOpenChange?: OnChangeFn<CreatePopoverProps["defaultOpen"]>;
+		open?: boolean;
+		onOpenChange?: OnChangeFn<boolean>;
 	}
 >;
 

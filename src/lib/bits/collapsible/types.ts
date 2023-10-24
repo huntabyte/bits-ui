@@ -13,8 +13,8 @@ import type { HTMLButtonAttributes } from "svelte/elements";
 
 type Props = Expand<
 	OmitOpen<CreateCollapsibleProps> & {
-		open?: CreateCollapsibleProps["defaultOpen"] & {};
-		onOpenChange?: OnChangeFn<CreateCollapsibleProps["defaultOpen"]> & {};
+		open?: boolean;
+		onOpenChange?: OnChangeFn<boolean>;
 	}
 > &
 	AsChild &
