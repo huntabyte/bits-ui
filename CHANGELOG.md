@@ -1,5 +1,15 @@
 # @huntabyte/primitives
 
+## 0.7.0
+
+### Minor Changes
+
+- e645ad2: Add support for Anchor dropdown items
+
+### Patch Changes
+
+- 2c406b2: Improve prop and `onChange` types
+
 ## 0.6.3
 
 ### Patch Changes
