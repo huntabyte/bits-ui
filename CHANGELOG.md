@@ -1,5 +1,15 @@
 # @huntabyte/primitives
 
+## 0.7.0
+
+### Minor Changes
+
+- Add support for Anchor dropdown items ([#131](https://github.com/huntabyte/bits-ui/pull/131))
+
+### Patch Changes
+
+- Improve prop and `onChange` types ([#134](https://github.com/huntabyte/bits-ui/pull/134))
+
 ## 0.6.3
 
 ### Patch Changes
