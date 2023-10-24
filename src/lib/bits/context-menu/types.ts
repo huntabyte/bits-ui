@@ -20,15 +20,15 @@ import type {
 
 type Props = Expand<
 	OmitOpen<CreateContextMenuProps> & {
-		open?: CreateContextMenuProps["defaultOpen"] & {};
-		onOpenChange?: OnChangeFn<CreateContextMenuProps["defaultOpen"]>;
+		open?: boolean;
+		onOpenChange?: OnChangeFn<boolean>;
 	}
 >;
 
 type CheckboxItemProps = Expand<
 	OmitChecked<CreateContextMenuCheckboxItemProps> & {
-		checked?: CreateContextMenuCheckboxItemProps["defaultChecked"] & {};
-		onCheckedChange?: OnChangeFn<CreateContextMenuCheckboxItemProps["defaultChecked"]>;
+		checked?: boolean | "indeterminate";
+		onCheckedChange?: OnChangeFn<boolean | "indeterminate">;
 	} & AsChild
 > &
 	HTMLDivAttributes;

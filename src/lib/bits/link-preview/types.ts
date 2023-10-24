@@ -13,8 +13,8 @@ import type { HTMLAnchorAttributes } from "svelte/elements";
 
 type Props = Expand<
 	OmitOpen<CreateLinkPreviewProps> & {
-		open?: CreateLinkPreviewProps["defaultOpen"];
-		onOpenChange?: OnChangeFn<CreateLinkPreviewProps["defaultOpen"]>;
+		open?: boolean;
+		onOpenChange?: OnChangeFn<boolean>;
 	}
 >;
 

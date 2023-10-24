@@ -11,8 +11,8 @@ import type { HTMLButtonAttributes, HTMLInputAttributes } from "svelte/elements"
 
 type Props = Expand<
 	OmitChecked<CreateCheckboxProps> & {
-		checked?: CreateCheckboxProps["defaultChecked"] & {};
-		onCheckedChange?: OnChangeFn<CreateCheckboxProps["defaultChecked"]>;
+		checked?: boolean | "indeterminate";
+		onCheckedChange?: OnChangeFn<boolean | "indeterminate">;
 	} & AsChild
 > &
 	HTMLButtonAttributes;

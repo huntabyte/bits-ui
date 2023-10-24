@@ -20,8 +20,8 @@ type Props = Expand<
 	OmitOpen<Omit<CreateSelectProps, "selected" | "defaultSelected" | "onSelectedChange">> & {
 		selected?: CreateSelectProps["defaultSelected"] & {};
 		onSelectedChange?: OnChangeFn<CreateSelectProps["defaultSelected"]>;
-		open?: CreateSelectProps["defaultOpen"] & {};
-		onOpenChange?: OnChangeFn<CreateSelectProps["defaultOpen"]>;
+		open?: boolean & {};
+		onOpenChange?: OnChangeFn<boolean>;
 	}
 >;
 

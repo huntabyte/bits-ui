@@ -21,15 +21,15 @@ import type { HTMLAnchorAttributes, HTMLButtonAttributes } from "svelte/elements
 
 type Props = Expand<
 	OmitOpen<CreateDropdownMenuProps> & {
-		open?: CreateDropdownMenuProps["defaultOpen"] & {};
-		onOpenChange?: OnChangeFn<CreateDropdownMenuProps["defaultOpen"]>;
+		open?: boolean;
+		onOpenChange?: OnChangeFn<boolean>;
 	}
 >;
 
 type CheckboxItemProps = Expand<
 	OmitChecked<CreateDropdownMenuCheckboxItemProps> & {
-		checked?: CreateDropdownMenuCheckboxItemProps["defaultChecked"] & {};
-		onCheckedChange?: OnChangeFn<CreateDropdownMenuCheckboxItemProps["defaultChecked"]>;
+		checked?: boolean | "indeterminate";
+		onCheckedChange?: OnChangeFn<boolean | "indeterminate">;
 	} & AsChild
 > &
 	HTMLDivAttributes;
