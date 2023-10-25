@@ -85,8 +85,8 @@
 	"types": "./dist/index.d.ts",
 	"type": "module",
 	"dependencies": {
-		"@melt-ui/svelte": "0.55.3",
-		"nanoid": "^4.0.2"
+		"@melt-ui/svelte": "0.56.0",
+		"nanoid": "^5.0.2"
 	},
 	"peerDependencies": {
 		"svelte": "^4.0.0"

@@ -41,8 +41,8 @@ export const navigation: Navigation = {
 					items: []
 				},
 				{
-					title: "Render Delegation",
-					href: "/docs/render-delegation",
+					title: "Delegation",
+					href: "/docs/delegation",
 					items: []
 				}
 			]

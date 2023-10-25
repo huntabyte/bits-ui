@@ -14,6 +14,8 @@
 	export let forceVisible: $$Props["forceVisible"] = true;
 	export let open: $$Props["open"] = undefined;
 	export let onOpenChange: $$Props["onOpenChange"] = undefined;
+	export let openFocus: $$Props["openFocus"] = undefined;
+	export let closeFocus: $$Props["closeFocus"] = undefined;
 
 	const transitionTimes = writable<TransitionTimes>({});
 	const tOpen = writable(open);
@@ -30,6 +32,8 @@
 		defaultOpen: open,
 		transitionTimes,
 		tOpen,
+		openFocus,
+		closeFocus,
 		onOpenChange: ({ next }) => {
 			if (!isBrowser) {
 				return next;
@@ -72,6 +76,8 @@
 	$: updateOption("closeOnOutsideClick", closeOnOutsideClick);
 	$: updateOption("portal", portal);
 	$: updateOption("forceVisible", forceVisible);
+	$: updateOption("openFocus", openFocus);
+	$: updateOption("closeFocus", closeFocus);
 </script>
 
 <slot />

@@ -12,6 +12,8 @@
 	export let portal: $$Props["portal"] = undefined;
 	export let open: $$Props["open"] = undefined;
 	export let onOpenChange: $$Props["onOpenChange"] = undefined;
+	export let openFocus: $$Props["openFocus"] = undefined;
+	export let closeFocus: $$Props["closeFocus"] = undefined;
 
 	const {
 		updateOption,
@@ -25,6 +27,8 @@
 		preventScroll,
 		portal,
 		defaultOpen: open,
+		openFocus,
+		closeFocus,
 		onOpenChange: ({ next }) => {
 			if (open !== next) {
 				onOpenChange?.(next);
@@ -42,6 +46,8 @@
 	$: updateOption("closeOnOutsideClick", closeOnOutsideClick);
 	$: updateOption("preventScroll", preventScroll);
 	$: updateOption("portal", portal);
+	$: updateOption("openFocus", openFocus);
+	$: updateOption("closeFocus", closeFocus);
 </script>
 
 <slot />
