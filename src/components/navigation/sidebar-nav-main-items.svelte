@@ -9,7 +9,7 @@
 	const iconMap = {
 		Introduction: BookOpen,
 		"Getting Started": RocketLaunch,
-		"Render Delegation": Code
+		Delegation: Code
 	} as const;
 
 	const iconMapKeys = Object.keys(iconMap) as (keyof typeof iconMap)[];

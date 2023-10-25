@@ -13,8 +13,8 @@
 
 <SiteHeader />
 <main class="min-h-[calc(100vh-64px)]">
-	<div class="mx-auto px-4 sm:px-6 lg:px-8 container">
-		<div class="lg:grid lg:grid-cols-12 lg:gap-6">
+	<div class="mx-auto px-4 container">
+		<div class="lg:grid lg:grid-cols-12">
 			<div class="lg:col-span-2 border-r border-border">
 				<SidebarNav items={navigation.sidebar} />
 			</div>
