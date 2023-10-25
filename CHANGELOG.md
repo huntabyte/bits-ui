@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.8.0
+
+### Minor Changes
+
+- Update Melt UI version & include new `openFocus` & `closeFocus` props ([#138](https://github.com/huntabyte/bits-ui/pull/138))
+
 ## 0.7.0
 
 ### Minor Changes
