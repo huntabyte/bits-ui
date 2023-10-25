@@ -11,8 +11,8 @@ import type { HTMLInputAttributes } from "svelte/elements";
 
 type Props = Expand<
 	OmitValue<CreateSliderProps> & {
-		value?: CreateSliderProps["defaultValue"] & {};
-		onValueChange?: OnChangeFn<CreateSliderProps["defaultValue"]>;
+		value?: number[];
+		onValueChange?: OnChangeFn<number[]>;
 	} & AsChild
 > &
 	HTMLSpanAttributes;

@@ -14,7 +14,7 @@ import type { CustomEventHandler } from "$lib/index.js";
 
 type Props = Expand<
 	OmitOpen<Omit<CreateDialogProps, "role">> & {
-		open?: boolean & {};
+		open?: boolean;
 		onOpenChange?: OnChangeFn<boolean>;
 	}
 >;

@@ -13,6 +13,9 @@
 	export let positioning: $$Props["positioning"] = undefined;
 	export let loop: $$Props["loop"] = undefined;
 	export let dir: $$Props["dir"] = undefined;
+	export let typeahead: $$Props["typeahead"] = undefined;
+	export let closeFocus: $$Props["closeFocus"] = undefined;
+	export let disableFocusFirstItem: $$Props["disableFocusFirstItem"] = undefined;
 
 	const {
 		states: { open: localOpen },
@@ -26,6 +29,9 @@
 		positioning,
 		loop,
 		dir,
+		typeahead,
+		closeFocus,
+		disableFocusFirstItem,
 		onOpenChange: ({ next }) => {
 			if (open !== next) {
 				onOpenChange?.(next);
@@ -44,6 +50,9 @@
 	$: updateOption("positioning", positioning);
 	$: updateOption("loop", loop);
 	$: updateOption("dir", dir);
+	$: updateOption("closeFocus", closeFocus);
+	$: updateOption("disableFocusFirstItem", disableFocusFirstItem);
+	$: updateOption("typeahead", typeahead);
 </script>
 
 <slot />

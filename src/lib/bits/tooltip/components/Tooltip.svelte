@@ -13,6 +13,8 @@
 	export let open: $$Props["open"] = undefined;
 	export let onOpenChange: $$Props["onOpenChange"] = undefined;
 	export let forceVisible: $$Props["forceVisible"] = true;
+	export let disableHoverableContent: $$Props["disableHoverableContent"] = undefined;
+	export let group: $$Props["group"] = undefined;
 
 	const {
 		states: { open: localOpen },
@@ -27,6 +29,8 @@
 		closeDelay,
 		forceVisible,
 		defaultOpen: open,
+		disableHoverableContent,
+		group,
 		onOpenChange: ({ next }) => {
 			if (open !== next) {
 				onOpenChange?.(next);
@@ -45,6 +49,8 @@
 	$: updateOption("openDelay", openDelay);
 	$: updateOption("closeDelay", closeDelay);
 	$: updateOption("forceVisible", forceVisible);
+	$: updateOption("group", group);
+	$: updateOption("disableHoverableContent", disableHoverableContent);
 </script>
 
 <slot />
