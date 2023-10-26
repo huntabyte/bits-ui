@@ -8,13 +8,15 @@
 	export let disabled: $$Props["disabled"] = undefined;
 	export let asChild = false;
 	const { item, props } = ctx.setItem({ value, disabled });
+
+	$: builder = $item(props);
+	const attrs = ctx.getAttrs("item");
 </script>
 
 {#if asChild}
-	<slot builder={$item(props)} />
+	<slot {builder} {attrs} />
 {:else}
-	{@const builder = $item(props)}
-	<div use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+	<div use:melt={builder} {...$$restProps} {...attrs}>
+		<slot {builder} {attrs} />
 	</div>
 {/if}

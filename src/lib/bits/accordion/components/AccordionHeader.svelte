@@ -6,14 +6,16 @@
 	type $$Props = HeaderProps;
 	export let level = 3;
 	export let asChild = false;
-	const heading = ctx.get().elements.heading;
+	const header = ctx.get().elements.heading;
+	const attrs = ctx.getAttrs("header");
+
+	$: builder = $header(level);
 </script>
 
 {#if asChild}
-	<slot builder={$heading(level)} />
+	<slot {builder} {attrs} />
 {:else}
-	{@const builder = $heading(level)}
-	<div use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+	<div use:melt={builder} {...$$restProps} {...attrs}>
+		<slot {builder} {attrs} />
 	</div>
 {/if}

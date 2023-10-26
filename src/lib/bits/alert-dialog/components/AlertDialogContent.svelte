@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { ATTRS } from "../attrs.js";
+
 	import { melt } from "@melt-ui/svelte";
 	import { setTransitionTimes, type Transition } from "$lib/internal/index.js";
 	import { ctx } from "../ctx.js";
@@ -33,39 +35,37 @@
 		outTransition,
 		outTransitionConfig
 	});
+
+	$: builder = $content;
+	const attrs = ATTRS.content;
 </script>
 
 {#if asChild && $tOpen}
-	{@const builder = $content}
-	<slot {builder} />
+	<slot {builder} {attrs} />
 {:else if transition && $tOpen}
-	{@const builder = $content}
-	<div transition:transition={transitionConfig} use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+	<div transition:transition={transitionConfig} use:melt={builder} {...$$restProps} {...attrs}>
+		<slot {builder} {attrs} />
 	</div>
 {:else if inTransition && outTransition && $tOpen}
-	{@const builder = $content}
 	<div
 		in:inTransition={inTransitionConfig}
 		out:outTransition={outTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
+		{...attrs}
 	>
-		<slot {builder} />
+		<slot {builder} {attrs} />
 	</div>
 {:else if inTransition && $tOpen}
-	{@const builder = $content}
-	<div in:inTransition={inTransitionConfig} use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+	<div in:inTransition={inTransitionConfig} use:melt={builder} {...$$restProps} {...attrs}>
+		<slot {builder} {attrs} />
 	</div>
 {:else if outTransition && $tOpen}
-	{@const builder = $content}
-	<div out:outTransition={outTransitionConfig} use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+	<div out:outTransition={outTransitionConfig} use:melt={builder} {...$$restProps} {...attrs}>
+		<slot {builder} {attrs} />
 	</div>
 {:else if $tOpen}
-	{@const builder = $content}
-	<div use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+	<div use:melt={builder} {...$$restProps} {...attrs}>
+		<slot {builder} {attrs} />
 	</div>
 {/if}

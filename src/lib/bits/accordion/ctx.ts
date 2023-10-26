@@ -5,10 +5,13 @@ import {
 } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
 import type { AccordionItemProps } from "./types.js";
-import { getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
+import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 
-const NAME = "Accordion";
-const ITEM_NAME = "AccordionItem";
+const NAME = "accordion";
+const ITEM_NAME = "accordion-item";
+const PARTS = ["root", "content", "header", "item", "trigger"] as const;
+
+const getAttrs = createBitAttrs(NAME, PARTS);
 
 export const ctx = {
 	set,
@@ -16,7 +19,8 @@ export const ctx = {
 	setItem,
 	getItemProps,
 	getContent,
-	getTrigger
+	getTrigger,
+	getAttrs
 };
 
 type GetReturn = AccordionReturn;
