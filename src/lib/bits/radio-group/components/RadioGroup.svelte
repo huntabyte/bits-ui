@@ -2,6 +2,7 @@
 	import { melt } from "@melt-ui/svelte";
 	import { ctx } from "../ctx.js";
 	import type { Props } from "../types.js";
+	import { ATTRS } from "../attrs.js";
 
 	type $$Props = Props;
 	export let required: $$Props["required"] = undefined;
@@ -39,10 +40,10 @@
 </script>
 
 {#if asChild}
-	<slot builder={$root} />
+	<slot builder={$root} attrs={ATTRS.root} />
 {:else}
 	{@const builder = $root}
-	<div use:melt={builder} {...$$restProps}>
+	<div use:melt={builder} {...$$restProps} {...ATTRS.root}>
 		<slot {builder} />
 	</div>
 {/if}

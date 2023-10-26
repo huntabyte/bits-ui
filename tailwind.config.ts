@@ -53,6 +53,9 @@ export default {
 			},
 			fontFamily: {
 				sans: ["Inter", ...fontFamily.sans]
+			},
+			borderWidth: {
+				6: "6px"
 			}
 		}
 	},

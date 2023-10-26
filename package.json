@@ -56,6 +56,7 @@
 		"esm-env": "^1.0.0",
 		"hast-util-to-html": "^9.0.0",
 		"lucide-svelte": "^0.268.0",
+		"phosphor-svelte": "^1.3.0",
 		"postcss": "^8.4.31",
 		"postcss-load-config": "^4.0.1",
 		"prettier": "^2.8.8",
