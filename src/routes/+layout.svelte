@@ -13,20 +13,19 @@
 
 <SiteHeader />
 <main class="min-h-[calc(100vh-64px)]">
-	<div class="mx-auto px-4 container">
-		<div class="lg:grid lg:grid-cols-12">
-			<div class="lg:col-span-2 border-r border-border">
-				<SidebarNav items={navigation.sidebar} />
+	<div
+		class="container flex-1 items-start md:grid md:grid-cols-[220px_minmax(0,1fr)] md:gap-6 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-10"
+	>
+		<SidebarNav items={navigation.sidebar} />
+		<main class="relative py-6 lg:gap-10 lg:py-8 xl:grid xl:grid-cols-[1fr_300px]">
+			<div class="mx-auto w-full min-w-0">
+				<slot />
 			</div>
-			<div class="lg:col-span-10 lg:col-start-4">
-				<div class="lg:grid lg:grid-cols-9 lg:gap-6">
-					<div class="lg:col-span-7">
-						<slot />
-					</div>
-					<div class="lg:col-span-2 lg:col-start-11 order-first lg:order-last" />
-				</div>
+
+			<div class="hidden text-sm xl:block">
+				<div class="sticky top-16 -mt-10 h-[calc(100vh-3.5rem)] overflow-hidden pt-6" />
 			</div>
-		</div>
+		</main>
 	</div>
 </main>
 

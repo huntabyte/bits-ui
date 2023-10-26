@@ -3,6 +3,17 @@ title: Switch
 description: Enables users to toggle between two states.
 ---
 
+<script>
+	import { APISection, ComponentPreview, SwitchDemo } from '@/components'
+	export let schemas;
+</script>
+
+<ComponentPreview name="switch-demo" comp="Switch">
+
+<SwitchDemo slot="preview" />
+
+</ComponentPreview>
+
 ## Structure
 
 ```svelte
