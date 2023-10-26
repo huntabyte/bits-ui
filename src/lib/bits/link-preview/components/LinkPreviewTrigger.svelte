@@ -16,7 +16,6 @@
 	const attrs = ctx.getAttrs("trigger");
 </script>
 
-<!-- svelte-ignore a11y-no-static-element-interactions / applied by melt's builder-->
 {#if asChild}
 	<slot {attrs} {builder} />
 {:else}

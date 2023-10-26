@@ -7,6 +7,7 @@
 	const {
 		states: { checked }
 	} = ctx.get();
+	const attrs = ctx.getAttrs("input");
 </script>
 
-<input {...$$restProps} value={$checked} hidden />
+<input {...$$restProps} value={$checked} hidden {...attrs} />

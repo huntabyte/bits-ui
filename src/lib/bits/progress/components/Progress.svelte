@@ -26,13 +26,15 @@
 
 	$: value !== undefined && localValue.set(value);
 	$: updateOption("max", max);
+
+	$: builder = $root;
+	const attrs = ctx.getAttrs("root");
 </script>
 
 {#if asChild}
-	<slot builder={$root} />
+	<slot {builder} {attrs} />
 {:else}
-	{@const builder = $root}
-	<div use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+	<div use:melt={builder} {...$$restProps} {...attrs}>
+		<slot {builder} {attrs} />
 	</div>
 {/if}

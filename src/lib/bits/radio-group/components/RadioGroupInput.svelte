@@ -6,10 +6,12 @@
 	type $$Props = InputProps;
 	export let asChild = false;
 	const hiddenInput = ctx.get().elements.hiddenInput;
+	$: builder = $hiddenInput;
+	const attrs = ctx.getAttrs("input");
 </script>
 
 {#if asChild}
-	<slot builder={$hiddenInput} />
+	<slot {builder} {attrs} />
 {:else}
-	<input use:melt={$hiddenInput} {...$$restProps} />
+	<input use:melt={builder} {...$$restProps} {...attrs} />
 {/if}

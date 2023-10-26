@@ -30,13 +30,21 @@
 
 	$: pressed !== undefined && localPressed.set(pressed);
 	$: updateOption("disabled", disabled);
+
+	$: builder = $root;
+	const attrs = ctx.getAttrs("root");
 </script>
 
 {#if asChild}
-	<slot builder={$root} />
+	<slot {builder} {attrs} />
 {:else}
-	{@const builder = $root}
-	<button use:melt={builder} {...$$restProps} on:m-click={dispatch} on:m-keydown={dispatch}>
-		<slot {builder} />
+	<button
+		use:melt={builder}
+		{...$$restProps}
+		{...attrs}
+		on:m-click={dispatch}
+		on:m-keydown={dispatch}
+	>
+		<slot {builder} {attrs} />
 	</button>
 {/if}

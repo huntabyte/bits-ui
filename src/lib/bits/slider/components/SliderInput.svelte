@@ -15,6 +15,7 @@
 		}
 	}
 	$: inputValue = getValue($value);
+	const attrs = ctx.getAttrs("input");
 </script>
 
-<input {...$$restProps} value={inputValue} hidden />
+<input {...$$restProps} value={inputValue} hidden {...attrs} />

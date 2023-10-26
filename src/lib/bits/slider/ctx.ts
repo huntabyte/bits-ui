@@ -1,11 +1,16 @@
-import { getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
+import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 import { createSlider, type CreateSliderProps, type Slider as SliderReturn } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
 
-const NAME = "Slider";
+const NAME = "slider";
+const PARTS = ["root", "input", "range", "thumb"] as const;
+
+const getAttrs = createBitAttrs(NAME, PARTS);
+
 export const ctx = {
 	set,
-	get
+	get,
+	getAttrs
 };
 
 type GetReturn = SliderReturn;

@@ -10,10 +10,13 @@
 	const {
 		elements: { arrow }
 	} = ctx.setArrow(size);
+
+	$: builder = $arrow;
+	const attrs = ctx.getAttrs("arrow");
 </script>
 
 {#if asChild}
-	<slot builder={$arrow} />
+	<slot {builder} {attrs} />
 {:else}
-	<div use:melt={$arrow} />
+	<div use:melt={builder} {...attrs} {...$$restProps} />
 {/if}

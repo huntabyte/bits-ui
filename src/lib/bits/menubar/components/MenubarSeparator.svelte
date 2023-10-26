@@ -6,10 +6,12 @@
 	type $$Props = SeparatorProps;
 	export let asChild = false;
 	const separator = ctx.getMenu().elements.separator;
+	$: builder = $separator;
+	const attrs = ctx.getAttrs("separator");
 </script>
 
 {#if asChild}
-	<slot builder={$separator} />
+	<slot {builder} />
 {:else}
-	<div use:melt={$separator} {...$$restProps} />
+	<div use:melt={builder} {...$$restProps} {...attrs} />
 {/if}

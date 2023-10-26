@@ -15,10 +15,13 @@
 
 	$: updateOption("orientation", orientation);
 	$: updateOption("decorative", decorative);
+
+	$: builder = $root;
+	const attrs = ctx.getAttrs("root");
 </script>
 
 {#if asChild}
-	<slot builder={$root} />
+	<slot {builder} {attrs} />
 {:else}
-	<div use:melt={$root} {...$$restProps} />
+	<div use:melt={builder} {...$$restProps} {...attrs} />
 {/if}

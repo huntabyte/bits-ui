@@ -11,13 +11,20 @@
 		elements: { close }
 	} = ctx.get();
 	const dispatch = createDispatcher();
+	$: builder = $close;
+	const attrs = ctx.getAttrs("close");
 </script>
 
 {#if asChild}
-	<slot builder={$close} />
+	<slot {builder} {attrs} />
 {:else}
-	{@const builder = $close}
-	<button use:melt={builder} {...$$restProps} on:m-click={dispatch} on:m-keydown={dispatch}>
-		<slot {builder} />
+	<button
+		use:melt={builder}
+		{...$$restProps}
+		{...attrs}
+		on:m-click={dispatch}
+		on:m-keydown={dispatch}
+	>
+		<slot {builder} {attrs} />
 	</button>
 {/if}

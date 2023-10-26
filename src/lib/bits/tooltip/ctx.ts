@@ -3,15 +3,19 @@ import {
 	type Tooltip as TooltipReturn,
 	type CreateTooltipProps
 } from "@melt-ui/svelte";
-import { getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
+import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 import { getContext, setContext } from "svelte";
 
-const NAME = "Tooltip";
+const NAME = "tooltip";
+const PARTS = ["arrow", "content", "trigger"] as const;
+
+const getAttrs = createBitAttrs(NAME, PARTS);
 
 export const ctx = {
 	set,
 	get,
-	setArrow
+	setArrow,
+	getAttrs
 };
 
 type GetReturn = TooltipReturn;

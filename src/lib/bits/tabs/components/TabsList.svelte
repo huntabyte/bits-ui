@@ -6,13 +6,15 @@
 
 	export let asChild = false;
 	const list = ctx.get().elements.list;
+
+	$: builder = $list;
+	const attrs = ctx.getAttrs("list");
 </script>
 
 {#if asChild}
-	<slot builder={$list} />
+	<slot {builder} {attrs} />
 {:else}
-	{@const builder = $list}
-	<div use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+	<div use:melt={builder} {...$$restProps} {...attrs}>
+		<slot {builder} {attrs} />
 	</div>
 {/if}

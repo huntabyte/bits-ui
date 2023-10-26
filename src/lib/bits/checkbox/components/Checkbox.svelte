@@ -52,9 +52,9 @@
 	<button
 		use:melt={builder}
 		{...$$restProps}
+		{...attrs}
 		on:m-click={dispatch}
 		on:m-keydown={dispatch}
-		{...attrs}
 	>
 		<slot {builder} {attrs} />
 	</button>

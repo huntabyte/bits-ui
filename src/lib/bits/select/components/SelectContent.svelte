@@ -25,61 +25,61 @@
 		states: { open }
 	} = ctx.get();
 	const dispatch = createDispatcher();
+	$: builder = $menu;
+	const attrs = ctx.getAttrs("content");
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions / applied by melt's builder-->
 
 {#if asChild && $open}
-	{@const builder = $menu}
-	<slot {builder} />
+	<slot {builder} {attrs} />
 {:else if transition && $open}
-	{@const builder = $menu}
 	<div
 		transition:transition={transitionConfig}
 		use:melt={builder}
 		{...$$restProps}
+		{...attrs}
 		on:m-pointerleave={dispatch}
 		on:keydown
 	>
-		<slot {builder} />
+		<slot {builder} {attrs} />
 	</div>
 {:else if inTransition && outTransition && $open}
-	{@const builder = $menu}
 	<div
 		in:inTransition={inTransitionConfig}
 		out:outTransition={outTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
+		{...attrs}
 		on:m-pointerleave={dispatch}
 		on:keydown
 	>
-		<slot {builder} />
+		<slot {builder} {attrs} />
 	</div>
 {:else if inTransition && $open}
-	{@const builder = $menu}
 	<div
 		in:inTransition={inTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
+		{...attrs}
 		on:m-pointerleave={dispatch}
 		on:keydown
 	>
-		<slot {builder} />
+		<slot {builder} {attrs} />
 	</div>
 {:else if outTransition && $open}
-	{@const builder = $menu}
 	<div
 		out:outTransition={outTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
+		{...attrs}
 		on:m-pointerleave={dispatch}
 		on:keydown
 	>
-		<slot {builder} />
+		<slot {builder} {attrs} />
 	</div>
 {:else if $open}
-	{@const builder = $menu}
-	<div use:melt={builder} {...$$restProps} on:m-pointerleave={dispatch} on:keydown>
-		<slot {builder} />
+	<div use:melt={builder} {...$$restProps} {...attrs} on:m-pointerleave={dispatch} on:keydown>
+		<slot {builder} {attrs} />
 	</div>
 {/if}

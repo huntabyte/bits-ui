@@ -15,17 +15,19 @@
 		elements: { option }
 	} = ctx.setItem(value);
 	const dispatch = createDispatcher();
+	$: builder = $option({ value, disabled, label });
+	const attrs = ctx.getAttrs("item");
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions / applied by melt's builder-->
 
 {#if asChild}
-	<slot builder={$option({ value, disabled, label })} />
+	<slot {builder} {attrs} />
 {:else}
-	{@const builder = $option({ value, disabled, label })}
 	<div
 		use:melt={builder}
 		{...$$restProps}
+		{...attrs}
 		on:m-click={dispatch}
 		on:m-pointermove={dispatch}
 		on:focusin
@@ -33,7 +35,7 @@
 		on:focusout
 		on:pointerleave
 	>
-		<slot {builder}>
+		<slot {builder} {attrs}>
 			{label ? label : value}
 		</slot>
 	</div>

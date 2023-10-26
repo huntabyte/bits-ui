@@ -1,10 +1,19 @@
 import { type CreateSelectProps, type Select as SelectReturn, createSelect } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
-import { generateId, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
+import {
+	createBitAttrs,
+	generateId,
+	getOptionUpdater,
+	removeUndefined
+} from "$lib/internal/index.js";
 
-const NAME = "Select";
-const GROUP_NAME = "SelectGroup";
-const ITEM_NAME = "SelectItem";
+const NAME = "select";
+const GROUP_NAME = "select-group";
+const ITEM_NAME = "select-item";
+
+const PARTS = ["arrow", "content", "group", "item", "input", "label", "trigger", "value"] as const;
+
+const getAttrs = createBitAttrs(NAME, PARTS);
 
 export const ctx = {
 	set,
@@ -13,7 +22,8 @@ export const ctx = {
 	setItem,
 	getItemIndicator,
 	getGroupLabel,
-	setArrow
+	setArrow,
+	getAttrs
 };
 
 type GetReturn = SelectReturn;

@@ -8,12 +8,15 @@
 	const {
 		states: { selectedLabel }
 	} = ctx.get();
+
+	$: label = $selectedLabel;
+	const attrs = ctx.getAttrs("value");
 </script>
 
 {#if asChild}
-	<slot label={$selectedLabel} />
+	<slot {label} {attrs} />
 {:else}
-	<span {...$$restProps}>
-		{$selectedLabel ? $selectedLabel : placeholder}
+	<span {...$$restProps} {...attrs}>
+		{label ? label : placeholder}
 	</span>
 {/if}

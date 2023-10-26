@@ -40,13 +40,15 @@
 	$: updateOption("max", max);
 	$: updateOption("step", step);
 	$: updateOption("orientation", orientation);
+
+	$: builder = $root;
+	const attrs = ctx.getAttrs("root");
 </script>
 
 {#if asChild}
-	<slot builder={$root} />
+	<slot {builder} {attrs} />
 {:else}
-	{@const builder = $root}
-	<span use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+	<span use:melt={builder} {...$$restProps} {...attrs}>
+		<slot {builder} {attrs} />
 	</span>
 {/if}

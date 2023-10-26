@@ -18,5 +18,5 @@
 {#if asChild}
 	<slot {builder} {attrs} />
 {:else}
-	<div use:melt={$arrow} {...attrs} />
+	<div use:melt={$arrow} {...$$restProps} {...attrs} />
 {/if}

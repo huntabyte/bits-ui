@@ -21,10 +21,10 @@
 {:else}
 	<button
 		use:melt={builder}
-		on:m-click={dispatch}
-		on:m-keydown={dispatch}
 		{...$$restProps}
 		{...attrs}
+		on:m-click={dispatch}
+		on:m-keydown={dispatch}
 	>
 		<slot {builder} {attrs} />
 	</button>

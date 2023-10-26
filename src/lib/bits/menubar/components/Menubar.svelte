@@ -16,13 +16,14 @@
 
 	$: updateOption("loop", loop);
 	$: updateOption("closeOnEscape", closeOnEscape);
+	$: builder = $menubar;
+	const attrs = ctx.getAttrs("root");
 </script>
 
 {#if asChild}
-	<slot builder={$menubar} />
+	<slot {builder} {attrs} />
 {:else}
-	{@const builder = $menubar}
-	<div use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+	<div use:melt={builder} {...$$restProps} {...attrs}>
+		<slot {builder} {attrs} />
 	</div>
 {/if}

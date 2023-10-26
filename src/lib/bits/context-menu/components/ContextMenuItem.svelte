@@ -14,7 +14,7 @@
 	} = ctx.get();
 	const dispatch = createDispatcher();
 	$: builder = $item;
-	const attrs = ctx.getAttrs("item");
+	$: attrs = { ...ctx.getAttrs("item"), ...disabledAttrs(disabled) };
 </script>
 
 {#if asChild}
@@ -24,7 +24,6 @@
 		use:melt={builder}
 		{...$$restProps}
 		{...attrs}
-		{...disabledAttrs(disabled)}
 		on:m-click={dispatch}
 		on:m-focusin={dispatch}
 		on:m-focusout={dispatch}

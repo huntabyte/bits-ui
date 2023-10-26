@@ -6,10 +6,12 @@
 	type $$Props = RangeProps;
 	export let asChild = false;
 	const range = ctx.get().elements.range;
+	$: builder = $range;
+	const attrs = ctx.getAttrs("range");
 </script>
 
 {#if asChild}
-	<slot builder={$range} />
+	<slot {builder} {attrs} />
 {:else}
-	<span use:melt={$range} {...$$restProps} />
+	<span use:melt={builder} {...$$restProps} {...attrs} />
 {/if}

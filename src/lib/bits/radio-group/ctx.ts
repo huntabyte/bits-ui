@@ -1,4 +1,4 @@
-import { getOptionUpdater } from "$lib/internal/index.js";
+import { createBitAttrs, getOptionUpdater } from "$lib/internal/index.js";
 import {
 	createRadioGroup,
 	type CreateRadioGroupProps,
@@ -8,14 +8,18 @@ import { getContext, setContext } from "svelte";
 import { removeUndefined } from "$lib/internal/index.js";
 import type { Readable } from "svelte/store";
 
-const NAME = "RadioGroup";
-const ITEM_NAME = "RadioGroupItem";
+const NAME = "radio-group";
+const ITEM_NAME = "radio-group-item";
+const PARTS = ["root", "item", "input"] as const;
+
+const getAttrs = createBitAttrs(NAME, PARTS);
 
 export const ctx = {
 	set,
 	get,
 	setItem,
-	getRadioIndicator
+	getRadioIndicator,
+	getAttrs
 };
 
 type GetReturn = RadioGroupReturn;

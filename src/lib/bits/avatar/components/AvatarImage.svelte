@@ -9,10 +9,12 @@
 	export let asChild = false;
 
 	$: image = ctx.getImage(src).elements.image;
+	$: builder = $image;
+	const attrs = ctx.getAttrs("image");
 </script>
 
 {#if asChild}
-	<slot builder={$image} />
+	<slot {builder} {attrs} />
 {:else}
-	<img use:melt={$image} {alt} {...$$restProps} />
+	<img use:melt={builder} {alt} {...$$restProps} {...attrs} />
 {/if}

@@ -2,7 +2,6 @@
 	import { melt } from "@melt-ui/svelte";
 	import { ctx } from "../ctx.js";
 	import type { Props } from "../types.js";
-	import { ATTRS } from "../attrs.js";
 
 	type $$Props = Props;
 	export let required: $$Props["required"] = undefined;
@@ -37,13 +36,15 @@
 	$: updateOption("disabled", disabled);
 	$: updateOption("loop", loop);
 	$: updateOption("orientation", orientation);
+
+	$: builder = $root;
+	const attrs = ctx.getAttrs("root");
 </script>
 
 {#if asChild}
-	<slot builder={$root} attrs={ATTRS.root} />
+	<slot {builder} {attrs} />
 {:else}
-	{@const builder = $root}
-	<div use:melt={builder} {...$$restProps} {...ATTRS.root}>
-		<slot {builder} />
+	<div use:melt={builder} {...$$restProps} {...attrs}>
+		<slot {builder} {attrs} />
 	</div>
 {/if}

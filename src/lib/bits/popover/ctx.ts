@@ -4,14 +4,18 @@ import {
 	type Popover as PopoverReturn
 } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
-import { getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
+import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 
-const NAME = "Popover";
+const NAME = "popover";
+const PARTS = ["arrow", "close", "content", "trigger"] as const;
+
+const getAttrs = createBitAttrs(NAME, PARTS);
 
 export const ctx = {
 	set,
 	get,
-	setArrow
+	setArrow,
+	getAttrs
 };
 
 type GetReturn = PopoverReturn;

@@ -6,13 +6,14 @@
 	type $$Props = GroupProps;
 	export let asChild = false;
 	const { group, id } = ctx.setGroup();
+	$: builder = $group(id);
+	const attrs = ctx.getAttrs("group");
 </script>
 
 {#if asChild}
-	<slot builder={$group(id)} />
+	<slot {builder} {attrs} />
 {:else}
-	{@const builder = $group(id)}
-	<div use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+	<div use:melt={builder} {...$$restProps} {...attrs}>
+		<slot {builder} {attrs} />
 	</div>
 {/if}

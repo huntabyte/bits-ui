@@ -13,17 +13,18 @@
 		elements: { item }
 	} = ctx.getMenu();
 	const dispatch = createDispatcher();
+	$: builder = $item;
+
+	$: attrs = { ...ctx.getAttrs("item"), ...disabledAttrs(disabled) };
 </script>
 
-<!-- svelte-ignore a11y-no-static-element-interactions / applied by melt's builder-->
-
 {#if asChild}
-	<slot builder={$item} />
+	<slot {builder} {attrs} />
 {:else}
-	{@const builder = $item}
 	<div
 		use:melt={builder}
 		{...$$restProps}
+		{...attrs}
 		on:m-click={dispatch}
 		on:m-focusin={dispatch}
 		on:m-focusout={dispatch}
@@ -31,8 +32,7 @@
 		on:m-pointerdown={dispatch}
 		on:m-pointerleave={dispatch}
 		on:m-pointermove={dispatch}
-		{...disabledAttrs(disabled)}
 	>
-		<slot {builder} />
+		<slot {builder} {attrs} />
 	</div>
 {/if}

@@ -5,10 +5,15 @@
 	type $$Props = ThumbProps;
 	export let asChild = false;
 	const checked = ctx.get().states.checked;
+	$: attrs = {
+		...ctx.getAttrs("thumb"),
+		"data-state": $checked ? "checked" : "unchecked",
+		"data-checked": $checked ? "" : undefined
+	};
 </script>
 
 {#if asChild}
-	<slot builder={$checked} />
+	<slot checked={$checked} {attrs} />
 {:else}
-	<span data-state={$checked ? "checked" : "unchecked"} {...$$restProps} />
+	<span {...$$restProps} {...attrs} />
 {/if}

@@ -12,20 +12,44 @@ import {
 	type Checkbox as CheckboxReturn
 } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
-import { generateId, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
+import {
+	createBitAttrs,
+	generateId,
+	getOptionUpdater,
+	removeUndefined
+} from "$lib/internal/index.js";
 import type { Readable } from "svelte/store";
 
-const NAME = "Menubar";
-const MENU_NAME = "MenubarMenu";
-const SUB_NAME = "MenubarSub";
-const CHECKBOX_ITEM_NAME = "MenubarCheckboxItem";
-const RADIO_GROUP_NAME = "MenubarRadioGroup";
-const RADIO_ITEM_NAME = "MenubarRadioItem";
-const GROUP_NAME = "MenubarGroup";
+const NAME = "menubar";
+const MENU_NAME = "menubar-menu";
+const SUB_NAME = "menubar-sub";
+const CHECKBOX_ITEM_NAME = "menubar-checkbox-item";
+const RADIO_GROUP_NAME = "menubar-radio-group";
+const RADIO_ITEM_NAME = "menubar-radio-item";
+const GROUP_NAME = "menubar-group";
+const PARTS = [
+	"root",
+	"arrow",
+	"checkbox-indicator",
+	"checkbox-item",
+	"content",
+	"group",
+	"item",
+	"label",
+	"radio-group",
+	"radio-item",
+	"separator",
+	"sub-content",
+	"sub-trigger",
+	"trigger"
+] as const;
+
+const getAttrs = createBitAttrs(NAME, PARTS);
 
 export const ctx = {
 	get,
 	set,
+	getAttrs,
 	setSub,
 	getSub,
 	setMenu,
