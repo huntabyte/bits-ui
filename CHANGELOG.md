@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.8.1
+
+### Patch Changes
+
+- Update Melt UI to v0.57.0 ([#141](https://github.com/huntabyte/bits-ui/pull/141))
+
 ## 0.8.0
 
 ### Minor Changes
