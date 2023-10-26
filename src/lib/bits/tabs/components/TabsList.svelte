@@ -5,7 +5,9 @@
 	type $$Props = ListProps;
 
 	export let asChild = false;
-	const list = getCtx().elements.list;
+	const {
+		elements: { list }
+	} = getCtx();
 
 	$: builder = $list;
 	const attrs = getAttrs("list");

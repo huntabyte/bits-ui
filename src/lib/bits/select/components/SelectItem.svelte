@@ -11,7 +11,9 @@
 	export let disabled: $$Props["disabled"] = undefined;
 	export let label: $$Props["label"] = undefined;
 	export let asChild = false;
-	const item = setItemCtx(value).elements.option;
+	const {
+		elements: { option: item }
+	} = setItemCtx(value);
 	const dispatch = createDispatcher();
 	$: builder = $item({ value, disabled, label });
 	const attrs = getAttrs("item");

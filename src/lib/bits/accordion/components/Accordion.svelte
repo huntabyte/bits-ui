@@ -12,8 +12,6 @@
 	export let disabled = false;
 	export let asChild = false;
 
-	const attrs = getAttrs("root");
-
 	const {
 		elements: { root },
 		states: { value: localValue },
@@ -41,6 +39,7 @@
 	$: updateOption("disabled", disabled);
 
 	$: builder = $root;
+	const attrs = getAttrs("root");
 </script>
 
 {#if asChild}

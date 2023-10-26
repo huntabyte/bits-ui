@@ -7,7 +7,9 @@
 	type $$Props = TriggerProps;
 	type $$Events = TriggerEvents;
 	export let asChild = false;
-	const trigger = getMenuCtx().elements.trigger;
+	const {
+		elements: { trigger }
+	} = getMenuCtx();
 	const dispatch = createDispatcher();
 	$: builder = $trigger;
 	const attrs = getAttrs("trigger");

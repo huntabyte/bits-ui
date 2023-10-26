@@ -5,7 +5,9 @@
 
 	type $$Props = InputProps;
 	export let asChild = false;
-	const hiddenInput = getCtx().elements.hiddenInput;
+	const {
+		elements: { hiddenInput }
+	} = getCtx();
 	$: builder = $hiddenInput;
 	const attrs = getAttrs("input");
 </script>

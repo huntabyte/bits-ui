@@ -7,7 +7,9 @@
 	type $$Props = ThumbProps;
 	type $$Events = ThumbEvents;
 	export let asChild = false;
-	const thumb = getCtx().elements.thumb;
+	const {
+		elements: { thumb }
+	} = getCtx();
 	const dispatch = createDispatcher();
 	$: builder = $thumb();
 	const attrs = getAttrs("thumb");

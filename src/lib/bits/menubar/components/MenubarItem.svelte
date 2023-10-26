@@ -9,7 +9,9 @@
 	type $$Events = ItemEvents;
 	export let asChild = false;
 	export let disabled = false;
-	const item = getMenuCtx().elements.item;
+	const {
+		elements: { item }
+	} = getMenuCtx();
 	const dispatch = createDispatcher();
 	$: builder = $item;
 

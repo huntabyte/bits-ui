@@ -6,7 +6,9 @@
 	type $$Props = HeaderProps;
 	export let level = 3;
 	export let asChild = false;
-	const header = getCtx().elements.heading;
+	const {
+		elements: { heading: header }
+	} = getCtx();
 	const attrs = getAttrs("header");
 
 	$: builder = $header(level);

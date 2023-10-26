@@ -10,7 +10,9 @@
 	export let disabled = false;
 	export let asChild = false;
 
-	const radioItem = setRadioItem(value).elements.radioItem;
+	const {
+		elements: { radioItem }
+	} = setRadioItem(value);
 
 	$: builder = $radioItem({ value, disabled });
 

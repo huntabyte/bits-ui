@@ -105,7 +105,7 @@ export function setRadioGroupCtx(props: CreateMenuRadioGroupProps) {
 	return radioGroup;
 }
 
-export function setRadioItem(value: string) {
+export function setRadioItemCtx(value: string) {
 	const radioGroup = getContext<GetRadioGroupReturn>(RADIO_GROUP_NAME);
 	setContext(RADIO_ITEM_NAME, { isChecked: radioGroup.helpers.isChecked, value });
 	return radioGroup;

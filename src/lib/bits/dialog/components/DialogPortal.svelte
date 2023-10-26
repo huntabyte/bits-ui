@@ -5,9 +5,11 @@
 
 	type $$Props = PortalProps;
 	export let asChild = false;
-	const portal = getCtx().elements.portalled;
+	const {
+		elements: { portalled }
+	} = getCtx();
 
-	$: builder = $portal;
+	$: builder = $portalled;
 	const attrs = getAttrs("portal");
 </script>
 

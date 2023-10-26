@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { getSubTrigger, getAttrs } from "../ctx.js";
+	import { getSubMenuCtx, getAttrs } from "../ctx.js";
 	import type { SubTriggerEvents, SubTriggerProps } from "../types.js";
 	import { disabledAttrs } from "$lib/internal/helpers.js";
 	import { createDispatcher } from "$lib/internal/events.js";
@@ -14,7 +14,7 @@
 
 	const {
 		elements: { subTrigger }
-	} = getSubTrigger();
+	} = getSubMenuCtx();
 	const dispatch = createDispatcher();
 	$: builder = $subTrigger;
 	$: attrs = { ...getAttrs("sub-trigger"), ...disabledAttrs(disabled) };

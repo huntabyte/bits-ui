@@ -5,7 +5,9 @@
 
 	type $$Props = SeparatorProps;
 	export let asChild = false;
-	const separator = getCtx().elements.separator;
+	const {
+		elements: { separator }
+	} = getCtx();
 	$: builder = $separator;
 	const attrs = getAttrs("separator");
 </script>

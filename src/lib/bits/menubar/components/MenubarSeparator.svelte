@@ -5,7 +5,9 @@
 
 	type $$Props = SeparatorProps;
 	export let asChild = false;
-	const separator = getMenuCtx().elements.separator;
+	const {
+		elements: { separator }
+	} = getMenuCtx();
 	$: builder = $separator;
 	const attrs = getAttrs("separator");
 </script>

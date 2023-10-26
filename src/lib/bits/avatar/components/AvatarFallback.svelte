@@ -5,7 +5,9 @@
 
 	type $$Props = FallbackProps;
 	export let asChild = false;
-	const fallback = getCtx().elements.fallback;
+	const {
+		elements: { fallback }
+	} = getCtx();
 	$: builder = $fallback;
 	const attrs = getAttrs("fallback");
 </script>

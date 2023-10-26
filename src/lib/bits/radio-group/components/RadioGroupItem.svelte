@@ -9,7 +9,9 @@
 	export let value: $$Props["value"];
 	export let disabled = false;
 	export let asChild = false;
-	const item = setItemCtx(value).elements.item;
+	const {
+		elements: { item }
+	} = setItemCtx(value);
 	const dispatch = createDispatcher();
 
 	$: builder = $item({ value, disabled });

@@ -4,7 +4,9 @@
 
 	type $$Props = ThumbProps;
 	export let asChild = false;
-	const checked = getCtx().states.checked;
+	const {
+		states: { checked }
+	} = getCtx();
 	$: attrs = {
 		...getAttrs("thumb"),
 		"data-state": $checked ? "checked" : "unchecked",

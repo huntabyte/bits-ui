@@ -6,7 +6,9 @@
 	type $$Props = TitleProps;
 	export let level: TitleProps["level"] = "h2";
 	export let asChild = false;
-	const title = getCtx().elements.title;
+	const {
+		elements: { title }
+	} = getCtx();
 
 	$: builder = $title;
 	const attrs = getAttrs("title");

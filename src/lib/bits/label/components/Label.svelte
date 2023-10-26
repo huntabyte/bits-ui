@@ -7,7 +7,9 @@
 	type $$Props = Props;
 	type $$Events = Events;
 	export let asChild = false;
-	const root = createLabel().elements.root;
+	const {
+		elements: { root }
+	} = createLabel();
 
 	const dispatch = createDispatcher();
 	$: builder = $root;

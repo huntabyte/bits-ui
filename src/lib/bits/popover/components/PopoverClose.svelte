@@ -7,7 +7,9 @@
 	type $$Props = TriggerProps;
 	type $$Events = TriggerEvents;
 	export let asChild = false;
-	const close = getCtx().elements.close;
+	const {
+		elements: { close }
+	} = getCtx();
 	const dispatch = createDispatcher();
 	$: builder = $close;
 	const attrs = getAttrs("close");

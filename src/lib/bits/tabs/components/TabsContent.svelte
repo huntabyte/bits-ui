@@ -6,7 +6,9 @@
 	type $$Props = ContentProps;
 	export let value: $$Props["value"];
 	export let asChild = false;
-	const content = getCtx().elements.content;
+	const {
+		elements: { content }
+	} = getCtx();
 
 	$: builder = $content(value);
 	const attrs = getAttrs("content");

@@ -5,7 +5,9 @@
 
 	type $$Props = RangeProps;
 	export let asChild = false;
-	const range = getCtx().elements.range;
+	const {
+		elements: { range }
+	} = getCtx();
 	$: builder = $range;
 	const attrs = getAttrs("range");
 </script>

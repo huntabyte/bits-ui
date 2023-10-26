@@ -8,7 +8,9 @@
 	export let size = 8;
 	export let asChild = false;
 
-	const arrow = setArrow(size).elements.arrow;
+	const {
+		elements: { arrow }
+	} = setArrow(size);
 
 	$: builder = $arrow;
 	const attrs = getAttrs("arrow");

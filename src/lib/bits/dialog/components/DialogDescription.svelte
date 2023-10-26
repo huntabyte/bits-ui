@@ -5,7 +5,9 @@
 
 	type $$Props = DescriptionProps;
 	export let asChild = false;
-	const description = getCtx().elements.description;
+	const {
+		elements: { description }
+	} = getCtx();
 	$: builder = $description;
 	const attrs = getAttrs("description");
 </script>

@@ -10,7 +10,9 @@
 	export let asChild = false;
 	export let disabled = false;
 
-	const item = getCtx().elements.item;
+	const {
+		elements: { item }
+	} = getCtx();
 
 	$: builder = $item;
 	const attrs = getAttrs("item");

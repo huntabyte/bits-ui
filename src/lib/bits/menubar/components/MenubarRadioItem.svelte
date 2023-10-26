@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { setRadioItem, getAttrs } from "../ctx.js";
+	import { setRadioItemCtx, getAttrs } from "../ctx.js";
 	import type { RadioItemEvents, RadioItemProps } from "../types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
 
@@ -9,7 +9,9 @@
 	export let value: $$Props["value"];
 	export let disabled = false;
 	export let asChild = false;
-	const radioItem = setRadioItem(value).elements.radioItem;
+	const {
+		elements: { radioItem }
+	} = setRadioItemCtx(value);
 	const dispatch = createDispatcher();
 
 	$: builder = $radioItem({ value, disabled });

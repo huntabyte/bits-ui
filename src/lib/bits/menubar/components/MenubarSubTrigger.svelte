@@ -9,7 +9,9 @@
 	type $$Events = SubTriggerEvents;
 	export let disabled = false;
 	export let asChild = false;
-	const subTrigger = getSubMenuCtx().elements.subTrigger;
+	const {
+		elements: { subTrigger }
+	} = getSubMenuCtx();
 	const dispatch = createDispatcher();
 	$: builder = $subTrigger;
 	$: attrs = { ...getAttrs("sub-trigger"), ...disabledAttrs(disabled) };
