@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { ctx } from "../ctx.js";
+	import { setCtx, getAttrs } from "../ctx.js";
 	import type { Props, Events } from "../types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
 
@@ -18,7 +18,7 @@
 		elements: { root },
 		states: { checked: localChecked },
 		updateOption
-	} = ctx.set({
+	} = setCtx({
 		defaultChecked: checked,
 		disabled,
 		name,
@@ -43,7 +43,7 @@
 	$: updateOption("value", value);
 
 	$: builder = $root;
-	const attrs = ctx.getAttrs("root");
+	const attrs = getAttrs("root");
 </script>
 
 {#if asChild}

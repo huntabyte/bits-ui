@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ctx } from "../ctx.js";
+	import { setArrow, getAttrs } from "../ctx.js";
 	import { melt } from "@melt-ui/svelte";
 	import type { ArrowProps } from "../types.js";
 
@@ -7,11 +7,9 @@
 
 	export let asChild = false;
 	export let size = 8;
-	const {
-		elements: { arrow }
-	} = ctx.setArrow(size);
+	const arrow = setArrow(size).elements.arrow;
 	$: builder = $arrow;
-	const attrs = ctx.getAttrs("arrow");
+	const attrs = getAttrs("arrow");
 </script>
 
 {#if asChild}

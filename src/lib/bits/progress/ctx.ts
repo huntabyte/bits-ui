@@ -4,14 +4,9 @@ import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal
 const NAME = "progress";
 const PARTS = ["root"] as const;
 
-const getAttrs = createBitAttrs(NAME, PARTS);
+export const getAttrs = createBitAttrs(NAME, PARTS);
 
-export const ctx = {
-	set,
-	getAttrs
-};
-
-function set(props: CreateProgressProps) {
+export function setCtx(props: CreateProgressProps) {
 	const progress = createProgress(removeUndefined(props));
 
 	return {

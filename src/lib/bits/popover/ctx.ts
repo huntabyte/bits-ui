@@ -9,18 +9,11 @@ import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal
 const NAME = "popover";
 const PARTS = ["arrow", "close", "content", "trigger"] as const;
 
-const getAttrs = createBitAttrs(NAME, PARTS);
-
-export const ctx = {
-	set,
-	get,
-	setArrow,
-	getAttrs
-};
+export const getAttrs = createBitAttrs(NAME, PARTS);
 
 type GetReturn = PopoverReturn;
 
-function set(props: CreatePopoverProps) {
+export function setCtx(props: CreatePopoverProps) {
 	const popover = createPopover({
 		...removeUndefined(props),
 		forceVisible: true
@@ -32,12 +25,12 @@ function set(props: CreatePopoverProps) {
 	};
 }
 
-function get() {
+export function getCtx() {
 	return getContext<GetReturn>(NAME);
 }
 
-function setArrow(size = 8) {
-	const popover = get();
+export function setArrow(size = 8) {
+	const popover = getCtx();
 	popover.options.arrowSize.set(size);
 	return popover;
 }

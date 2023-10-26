@@ -12,19 +12,11 @@ const NAME = "radio-group";
 const ITEM_NAME = "radio-group-item";
 const PARTS = ["root", "item", "input"] as const;
 
-const getAttrs = createBitAttrs(NAME, PARTS);
-
-export const ctx = {
-	set,
-	get,
-	setItem,
-	getRadioIndicator,
-	getAttrs
-};
+export const getAttrs = createBitAttrs(NAME, PARTS);
 
 type GetReturn = RadioGroupReturn;
 
-function set(props: CreateRadioGroupProps) {
+export function setCtx(props: CreateRadioGroupProps) {
 	const radioGroup = createRadioGroup(removeUndefined(props));
 	setContext(NAME, radioGroup);
 	return {
@@ -33,17 +25,17 @@ function set(props: CreateRadioGroupProps) {
 	};
 }
 
-function get() {
+export function getCtx() {
 	return getContext<GetReturn>(NAME);
 }
 
-function setItem(value: string) {
-	const radioGroup = get();
+export function setItemCtx(value: string) {
+	const radioGroup = getCtx();
 	setContext(ITEM_NAME, { value, isChecked: radioGroup.helpers.isChecked });
 	return radioGroup;
 }
 
-function getRadioIndicator() {
+export function getRadioIndicator() {
 	return getContext<{
 		isChecked: Readable<(itemValue: string) => boolean>;
 		value: string;

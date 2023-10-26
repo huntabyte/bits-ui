@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { ctx } from "../ctx.js";
+	import { getCtx, getAttrs } from "../ctx.js";
 	import type { ThumbProps } from "../types.js";
 
 	type $$Props = ThumbProps;
 	export let asChild = false;
-	const checked = ctx.get().states.checked;
+	const checked = getCtx().states.checked;
 	$: attrs = {
-		...ctx.getAttrs("thumb"),
+		...getAttrs("thumb"),
 		"data-state": $checked ? "checked" : "unchecked",
 		"data-checked": $checked ? "" : undefined
 	};

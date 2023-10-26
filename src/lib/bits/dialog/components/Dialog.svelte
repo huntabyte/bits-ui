@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onDestroy } from "svelte";
 	import { writable } from "svelte/store";
-	import { ctx } from "../ctx.js";
+	import { setCtx } from "../ctx.js";
 	import type { Props } from "../types.js";
 	import { type TransitionTimes, isBrowser } from "$lib/internal/index.js";
 
@@ -23,7 +23,7 @@
 	const {
 		states: { open: localOpen },
 		updateOption
-	} = ctx.set({
+	} = setCtx({
 		closeOnEscape,
 		preventScroll,
 		closeOnOutsideClick,

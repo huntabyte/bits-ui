@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { ctx } from "../ctx.js";
+	import { getAttrs, getCtx } from "../ctx.js";
 	import type { HeaderProps } from "../types.js";
 
 	type $$Props = HeaderProps;
 	export let level = 3;
 	export let asChild = false;
-	const header = ctx.get().elements.heading;
-	const attrs = ctx.getAttrs("header");
+	const header = getCtx().elements.heading;
+	const attrs = getAttrs("header");
 
 	$: builder = $header(level);
 </script>

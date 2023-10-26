@@ -9,17 +9,11 @@ import { getContext, setContext } from "svelte";
 const NAME = "collapsible";
 const PARTS = ["root", "content", "trigger"] as const;
 
-const getAttrs = createBitAttrs(NAME, PARTS);
-
-export const ctx = {
-	get,
-	set,
-	getAttrs
-};
+export const getAttrs = createBitAttrs(NAME, PARTS);
 
 type GetReturn = CollapsibleReturn;
 
-function set(props: CreateCollapsibleProps) {
+export function setCtx(props: CreateCollapsibleProps) {
 	const collapsible = createCollapsible(removeUndefined(props));
 	setContext(NAME, collapsible);
 	return {
@@ -28,6 +22,6 @@ function set(props: CreateCollapsibleProps) {
 	};
 }
 
-function get() {
+export function getCtx() {
 	return getContext<GetReturn>(NAME);
 }

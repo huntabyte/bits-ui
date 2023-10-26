@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { ctx } from "../ctx.js";
+	import { getCtx, getAttrs } from "../ctx.js";
 	import type { ListProps } from "../types.js";
 	type $$Props = ListProps;
 
 	export let asChild = false;
-	const list = ctx.get().elements.list;
+	const list = getCtx().elements.list;
 
 	$: builder = $list;
-	const attrs = ctx.getAttrs("list");
+	const attrs = getAttrs("list");
 </script>
 
 {#if asChild}

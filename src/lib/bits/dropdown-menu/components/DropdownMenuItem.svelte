@@ -2,19 +2,18 @@
 	import { createDispatcher } from "$lib/internal/events.js";
 	import { disabledAttrs } from "$lib/internal/helpers.js";
 	import { melt } from "@melt-ui/svelte";
-	import { ctx } from "../ctx.js";
+	import { getCtx, getAttrs } from "../ctx.js";
 	import type { ItemEvents, ItemProps } from "../types.js";
 	type $$Props = ItemProps;
 	type $$Events = ItemEvents;
 	export let href: $$Props["href"] = undefined;
 	export let asChild = false;
 	export let disabled = false;
-	const {
-		elements: { item }
-	} = ctx.get();
+
+	const item = getCtx().elements.item;
 
 	$: builder = $item;
-	const attrs = ctx.getAttrs("item");
+	const attrs = getAttrs("item");
 
 	const dispatch = createDispatcher();
 </script>

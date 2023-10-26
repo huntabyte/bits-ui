@@ -1,10 +1,10 @@
 <script lang="ts">
 	import type { CheckboxItemIndicatorProps } from "../types.js";
-	import { ctx } from "../ctx.js";
+	import { getCheckboxIndicator, getAttrs } from "../ctx.js";
 
 	type $$Props = CheckboxItemIndicatorProps;
-	const checked = ctx.getCheckboxIndicator();
-	const attrs = ctx.getAttrs("checkbox-indicator");
+	const checked = getCheckboxIndicator();
+	const attrs = getAttrs("checkbox-indicator");
 </script>
 
 <div {...$$restProps} {...attrs}>

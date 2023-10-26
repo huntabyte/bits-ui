@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { setTransitionTimes, type Transition } from "$lib/internal/index.js";
-	import { ctx } from "../ctx.js";
+	import { getCtx, getAttrs } from "../ctx.js";
 	import type { ContentProps } from "../types.js";
 
 	type T = $$Generic<Transition>;
@@ -23,7 +23,7 @@
 		elements: { content },
 		transitionTimes,
 		tOpen
-	} = ctx.get();
+	} = getCtx();
 
 	$: setTransitionTimes(transitionTimes, {
 		transition,
@@ -35,7 +35,7 @@
 	});
 
 	$: builder = $content;
-	const attrs = ctx.getAttrs("content");
+	const attrs = getAttrs("content");
 </script>
 
 {#if asChild && $tOpen}

@@ -9,17 +9,11 @@ import { removeUndefined, getOptionUpdater, createBitAttrs } from "$lib/internal
 const NAME = "checkbox";
 const PARTS = ["root", "input", "indicator"] as const;
 
-const getAttrs = createBitAttrs(NAME, PARTS);
-
-export const ctx = {
-	set,
-	get,
-	getAttrs
-};
+export const getAttrs = createBitAttrs(NAME, PARTS);
 
 type GetReturn = CheckboxReturn;
 
-function set(props: CreateCheckboxProps) {
+export function setCtx(props: CreateCheckboxProps) {
 	const checkbox = createCheckbox(removeUndefined(props));
 	setContext(NAME, { ...checkbox });
 
@@ -29,6 +23,6 @@ function set(props: CreateCheckboxProps) {
 	};
 }
 
-function get() {
+export function getCtx() {
 	return getContext<GetReturn>(NAME);
 }

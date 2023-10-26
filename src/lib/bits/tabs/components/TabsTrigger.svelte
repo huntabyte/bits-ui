@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { ctx } from "../ctx.js";
+	import { getCtx, getAttrs } from "../ctx.js";
 	import type { TriggerEvents, TriggerProps } from "../types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
 	type $$Props = TriggerProps;
@@ -10,11 +10,11 @@
 	export let disabled: $$Props["disabled"] = undefined;
 	export let asChild = false;
 
-	const trigger = ctx.get().elements.trigger;
+	const trigger = getCtx().elements.trigger;
 	const dispatch = createDispatcher();
 
 	$: builder = $trigger({ value, disabled });
-	const attrs = ctx.getAttrs("trigger");
+	const attrs = getAttrs("trigger");
 </script>
 
 {#if asChild}

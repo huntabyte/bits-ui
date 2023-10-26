@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ctx } from "../ctx.js";
+	import { setSubMenuCtx } from "../ctx.js";
 	import type { SubProps } from "../types.js";
 	type $$Props = SubProps;
 
@@ -7,7 +7,7 @@
 	export let disabled: $$Props["disabled"] = undefined;
 	export let arrowSize: $$Props["arrowSize"] = undefined;
 
-	const { updateOption } = ctx.setSub({
+	const { updateOption } = setSubMenuCtx({
 		positioning,
 		disabled,
 		arrowSize

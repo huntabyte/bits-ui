@@ -41,32 +41,13 @@ const PARTS = [
 	"trigger"
 ] as const;
 
-const getAttrs = createBitAttrs(NAME, PARTS);
-
-export const ctx = {
-	get,
-	set,
-	getAttrs,
-	setSub,
-	getSub,
-	getContent,
-	setRadioGroup,
-	setRadioItem,
-	getSubTrigger,
-	getSubContent,
-	setCheckboxItem,
-	getCheckboxIndicator,
-	getRadioIndicator,
-	setGroup,
-	getGroupLabel,
-	setArrow
-};
+export const getAttrs = createBitAttrs(NAME, PARTS);
 
 type GetReturn = ContextMenuReturn;
 type GetSubReturn = ContextSubmenuReturn;
 type GetRadioReturn = ContextRadioGroupReturn;
 
-function set(props: CreateContextMenuProps) {
+export function setCtx(props: CreateContextMenuProps) {
 	const contextMenu = createContextMenu(removeUndefined(props));
 	setContext(NAME, contextMenu);
 	return {
@@ -75,14 +56,14 @@ function set(props: CreateContextMenuProps) {
 	};
 }
 
-function get() {
+export function getCtx() {
 	return getContext<GetReturn>(NAME);
 }
 
-function setSub(props: CreateContextSubmenuProps) {
+export function setSubMenuCtx(props: CreateContextSubmenuProps) {
 	const {
 		builders: { createSubmenu }
-	} = get();
+	} = getCtx();
 	const sub = createSubmenu(removeUndefined(props));
 	setContext(SUB_NAME, sub);
 	return {
@@ -91,21 +72,25 @@ function setSub(props: CreateContextSubmenuProps) {
 	};
 }
 
-function getSub() {
+export function getSubMenuCtx() {
 	return getContext<GetSubReturn>(SUB_NAME);
 }
 
-function setRadioGroup(props: CreateContextMenuRadioGroupProps) {
+export function setRadioGroupCtx(props: CreateContextMenuRadioGroupProps) {
 	const {
 		builders: { createMenuRadioGroup }
-	} = get();
+	} = getCtx();
 	const radioGroup = createMenuRadioGroup(removeUndefined(props));
 	setContext(RADIO_GROUP_NAME, radioGroup);
 	return radioGroup;
 }
 
-function setRadioItem(value: string) {
-	const radioGroup = getContext<GetRadioReturn>(RADIO_GROUP_NAME);
+function getRadioGroupCtx() {
+	return getContext<GetRadioReturn>(RADIO_GROUP_NAME);
+}
+
+export function setRadioItem(value: string) {
+	const radioGroup = getRadioGroupCtx();
 	setContext(RADIO_ITEM_NAME, {
 		isChecked: radioGroup.helpers.isChecked,
 		value
@@ -113,27 +98,23 @@ function setRadioItem(value: string) {
 	return radioGroup;
 }
 
-function getRadioIndicator() {
+export function getRadioIndicator() {
 	return getContext<{
 		isChecked: Readable<(itemValue: string) => boolean>;
 		value: string;
 	}>(RADIO_ITEM_NAME);
 }
 
-function getSubTrigger() {
-	return getContext<GetSubReturn>(SUB_NAME);
-}
-
-function getContent(sideoffset = 5) {
-	const menu = get();
+export function getContent(sideoffset = 5) {
+	const menu = getCtx();
 
 	menu.options.positioning.update((prev) => ({ ...prev, gutter: sideoffset }));
 
 	return menu;
 }
 
-function getSubContent(sideOffset = -1) {
-	const submenu = getContext<GetSubReturn>(SUB_NAME);
+export function getSubContent(sideOffset = -1) {
+	const submenu = getSubMenuCtx();
 	const {
 		options: { positioning }
 	} = submenu;
@@ -141,10 +122,10 @@ function getSubContent(sideOffset = -1) {
 	return submenu;
 }
 
-function setCheckboxItem(props: ContextCheckboxItemProps) {
+export function setCheckboxItem(props: ContextCheckboxItemProps) {
 	const {
 		builders: { createCheckboxItem }
-	} = get();
+	} = getCtx();
 	const checkboxItem = createCheckboxItem(removeUndefined(props));
 	setContext(CHECKBOX_ITEM_NAME, checkboxItem.states.checked);
 
@@ -154,29 +135,29 @@ function setCheckboxItem(props: ContextCheckboxItemProps) {
 	};
 }
 
-function getCheckboxIndicator() {
+export function getCheckboxIndicator() {
 	return getContext<CheckboxReturn["states"]["checked"]>(CHECKBOX_ITEM_NAME);
 }
 
-function setGroup() {
+export function setGroup() {
 	const {
 		elements: { group }
-	} = get();
+	} = getCtx();
 	const id = generateId();
 	setContext(GROUP_NAME, id);
 	return { group, id };
 }
 
-function getGroupLabel() {
+export function getGroupLabel() {
 	const id = getContext<string>(GROUP_NAME) ?? generateId();
 	const {
 		elements: { groupLabel }
-	} = get();
+	} = getCtx();
 	return { groupLabel, id };
 }
 
-function setArrow(size = 8) {
-	const menu = get();
+export function setArrow(size = 8) {
+	const menu = getCtx();
 	menu.options.arrowSize.set(size);
 	return menu;
 }

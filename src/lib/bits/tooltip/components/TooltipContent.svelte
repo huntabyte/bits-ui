@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { createDispatcher, type Transition } from "$lib/internal/index.js";
-	import { ctx } from "../ctx.js";
+	import { getCtx, getAttrs } from "../ctx.js";
 	import type { ContentEvents, ContentProps } from "../types.js";
 
 	type T = $$Generic<Transition>;
@@ -24,12 +24,12 @@
 	const {
 		elements: { content },
 		states: { open }
-	} = ctx.get(sideOffset);
+	} = getCtx(sideOffset);
 
 	const dispatch = createDispatcher();
 
 	$: builder = $content;
-	const attrs = ctx.getAttrs("content");
+	const attrs = getAttrs("content");
 </script>
 
 {#if asChild && $open}

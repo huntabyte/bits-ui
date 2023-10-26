@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { disabledAttrs } from "$lib/internal/helpers.js";
-	import { ctx } from "../ctx.js";
+	import { getSubMenuCtx, getAttrs } from "../ctx.js";
 	import type { SubTriggerEvents, SubTriggerProps } from "../types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
 
@@ -9,12 +9,10 @@
 	type $$Events = SubTriggerEvents;
 	export let disabled = false;
 	export let asChild = false;
-	const {
-		elements: { subTrigger }
-	} = ctx.getSub();
+	const subTrigger = getSubMenuCtx().elements.subTrigger;
 	const dispatch = createDispatcher();
 	$: builder = $subTrigger;
-	$: attrs = { ...ctx.getAttrs("sub-trigger"), ...disabledAttrs(disabled) };
+	$: attrs = { ...getAttrs("sub-trigger"), ...disabledAttrs(disabled) };
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions / applied by melt's builder-->

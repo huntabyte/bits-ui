@@ -1,15 +1,15 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { ctx } from "../ctx.js";
+	import { getCtx, getAttrs } from "../ctx.js";
 	import type { TitleProps } from "../types.js";
 
 	type $$Props = TitleProps;
 	export let level: TitleProps["level"] = "h2";
 	export let asChild = false;
-	const title = ctx.get().elements.title;
+	const title = getCtx().elements.title;
 
 	$: builder = $title;
-	const attrs = ctx.getAttrs("title");
+	const attrs = getAttrs("title");
 </script>
 
 {#if asChild}

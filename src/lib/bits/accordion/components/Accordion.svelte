@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import type { Props } from "../types.js";
-	import { ctx } from "../ctx.js";
+	import { setCtx, getAttrs } from "../ctx.js";
 
 	type Multiple = $$Generic<boolean>;
 	type $$Props = Props<Multiple>;
@@ -12,13 +12,13 @@
 	export let disabled = false;
 	export let asChild = false;
 
-	const attrs = ctx.getAttrs("root");
+	const attrs = getAttrs("root");
 
 	const {
 		elements: { root },
 		states: { value: localValue },
 		updateOption
-	} = ctx.set({
+	} = setCtx({
 		multiple,
 		disabled,
 		defaultValue: value,

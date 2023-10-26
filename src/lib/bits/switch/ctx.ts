@@ -5,17 +5,11 @@ import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal
 const NAME = "switch";
 const PARTS = ["root", "input", "thumb"] as const;
 
-const getAttrs = createBitAttrs(NAME, PARTS);
-
-export const ctx = {
-	set,
-	get,
-	getAttrs
-};
+export const getAttrs = createBitAttrs(NAME, PARTS);
 
 type GetReturn = SwitchReturn;
 
-function set(props: CreateSwitchProps) {
+export function setCtx(props: CreateSwitchProps) {
 	const Switch = createSwitch(removeUndefined(props));
 	setContext(NAME, Switch);
 	return {
@@ -24,6 +18,6 @@ function set(props: CreateSwitchProps) {
 	};
 }
 
-function get() {
+export function getCtx() {
 	return getContext<GetReturn>(NAME);
 }

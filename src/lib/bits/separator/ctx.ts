@@ -4,14 +4,9 @@ import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal
 const NAME = "separator";
 const PARTS = ["root"] as const;
 
-const getAttrs = createBitAttrs(NAME, PARTS);
+export const getAttrs = createBitAttrs(NAME, PARTS);
 
-export const ctx = {
-	get,
-	getAttrs
-};
-
-function get(props: CreateSeparatorProps) {
+export function setCtx(props: CreateSeparatorProps) {
 	const separator = createSeparator(removeUndefined(props));
 	return {
 		...separator,

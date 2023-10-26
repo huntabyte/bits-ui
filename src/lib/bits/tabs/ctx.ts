@@ -5,17 +5,11 @@ import { getContext, setContext } from "svelte";
 const NAME = "tabs";
 const PARTS = ["root", "content", "list", "trigger"] as const;
 
-const getAttrs = createBitAttrs(NAME, PARTS);
-
-export const ctx = {
-	set,
-	get,
-	getAttrs
-};
+export const getAttrs = createBitAttrs(NAME, PARTS);
 
 type GetReturn = TabsReturn;
 
-function set(props: CreateTabsProps) {
+export function setCtx(props: CreateTabsProps) {
 	const tabs = createTabs(removeUndefined(props));
 	setContext(NAME, tabs);
 	return {
@@ -24,6 +18,6 @@ function set(props: CreateTabsProps) {
 	};
 }
 
-function get() {
+export function getCtx() {
 	return getContext<GetReturn>(NAME);
 }

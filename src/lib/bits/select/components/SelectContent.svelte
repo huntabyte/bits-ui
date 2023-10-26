@@ -3,7 +3,7 @@
 
 	import { melt } from "@melt-ui/svelte";
 	import type { Transition } from "$lib/internal/types.js";
-	import { ctx } from "../ctx.js";
+	import { getCtx, getAttrs } from "../ctx.js";
 	import type { ContentEvents, ContentProps } from "../types.js";
 
 	type T = $$Generic<Transition>;
@@ -23,10 +23,10 @@
 	const {
 		elements: { menu },
 		states: { open }
-	} = ctx.get();
+	} = getCtx();
 	const dispatch = createDispatcher();
 	$: builder = $menu;
-	const attrs = ctx.getAttrs("content");
+	const attrs = getAttrs("content");
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions / applied by melt's builder-->

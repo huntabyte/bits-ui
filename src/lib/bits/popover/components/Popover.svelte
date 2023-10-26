@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Props } from "../types.js";
-	import { ctx } from "../ctx.js";
+	import { setCtx } from "../ctx.js";
 
 	type $$Props = Props;
 	export let positioning: $$Props["positioning"] = undefined;
@@ -18,7 +18,7 @@
 	const {
 		updateOption,
 		states: { open: localOpen }
-	} = ctx.set({
+	} = setCtx({
 		positioning,
 		arrowSize,
 		disableFocusTrap,

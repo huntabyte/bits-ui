@@ -24,19 +24,12 @@ const PARTS = [
 	"trigger"
 ] as const;
 
-const getAttrs = createBitAttrs(NAME, PARTS);
-
-export const ctx = {
-	set,
-	get,
-	getAttrs
-};
-
 type SetProps = CreateAlertDialogProps & TransitionTimesProp & TOpen;
-
 type GetReturn = AlertDialogReturn & TransitionTimesProp & TOpen;
 
-function set(props: SetProps) {
+export const getAttrs = createBitAttrs(NAME, PARTS);
+
+export function setCtx(props: SetProps) {
 	const alertDialog = createDialog({
 		...removeUndefined(props),
 		role: "alertdialog"
@@ -52,6 +45,6 @@ function set(props: SetProps) {
 	};
 }
 
-function get() {
+export function getCtx() {
 	return getContext<GetReturn>(NAME);
 }

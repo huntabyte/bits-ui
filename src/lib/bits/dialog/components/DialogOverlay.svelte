@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import type { Transition } from "$lib/internal/index.js";
-	import { ctx } from "../ctx.js";
+	import { getCtx, getAttrs } from "../ctx.js";
 	import type { OverlayProps } from "../types.js";
 
 	type T = $$Generic<Transition>;
@@ -21,10 +21,10 @@
 	const {
 		elements: { overlay },
 		tOpen
-	} = ctx.get();
+	} = getCtx();
 
 	$: builder = $overlay;
-	const attrs = ctx.getAttrs("overlay");
+	const attrs = getAttrs("overlay");
 </script>
 
 {#if asChild && $tOpen}

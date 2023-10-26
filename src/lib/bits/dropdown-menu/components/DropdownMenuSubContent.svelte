@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { createDispatcher, type Transition } from "$lib/internal/index.js";
-	import { ctx } from "../ctx.js";
+	import { getSubContent, getAttrs } from "../ctx.js";
 	import type { SubContentEvents, SubContentProps } from "../types.js";
 
 	type T = $$Generic<Transition>;
@@ -23,12 +23,12 @@
 	const {
 		elements: { subMenu },
 		states: { subOpen }
-	} = ctx.getSubContent();
+	} = getSubContent();
 
 	const dispatch = createDispatcher();
 
 	$: builder = $subMenu;
-	const attrs = ctx.getAttrs("sub-content");
+	const attrs = getAttrs("sub-content");
 </script>
 
 {#if asChild && $subOpen}

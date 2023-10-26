@@ -5,17 +5,11 @@ import { getContext, setContext } from "svelte";
 const NAME = "toggle";
 const PARTS = ["root", "input"] as const;
 
-const getAttrs = createBitAttrs(NAME, PARTS);
-
-export const ctx = {
-	set,
-	get,
-	getAttrs
-};
+export const getAttrs = createBitAttrs(NAME, PARTS);
 
 type GetReturn = ToggleReturn;
 
-function set(props: CreateToggleProps) {
+export function setCtx(props: CreateToggleProps) {
 	const toggle = createToggle(removeUndefined(props));
 	setContext(NAME, toggle);
 	return {
@@ -23,6 +17,7 @@ function set(props: CreateToggleProps) {
 		updateOption: getOptionUpdater(toggle.options)
 	};
 }
-function get() {
+
+export function getCtx() {
 	return getContext<GetReturn>(NAME);
 }

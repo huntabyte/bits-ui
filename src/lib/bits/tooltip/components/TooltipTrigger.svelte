@@ -1,17 +1,17 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { createDispatcher } from "$lib/internal/index.js";
-	import { ctx } from "../ctx.js";
+	import { getCtx, getAttrs } from "../ctx.js";
 	import type { TriggerEvents, TriggerProps } from "../types.js";
 
 	type $$Props = TriggerProps;
 	type $$Events = TriggerEvents;
 	export let asChild = false;
-	const trigger = ctx.get().elements.trigger;
+	const trigger = getCtx().elements.trigger;
 	const dispatch = createDispatcher();
 
 	$: builder = $trigger;
-	const attrs = ctx.getAttrs("trigger");
+	const attrs = getAttrs("trigger");
 </script>
 
 {#if asChild}

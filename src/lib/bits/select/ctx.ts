@@ -13,26 +13,15 @@ const ITEM_NAME = "select-item";
 
 const PARTS = ["arrow", "content", "group", "item", "input", "label", "trigger", "value"] as const;
 
-const getAttrs = createBitAttrs(NAME, PARTS);
-
-export const ctx = {
-	set,
-	get,
-	setGroup,
-	setItem,
-	getItemIndicator,
-	getGroupLabel,
-	setArrow,
-	getAttrs
-};
+export const getAttrs = createBitAttrs(NAME, PARTS);
 
 type GetReturn = SelectReturn;
 
-function get() {
+export function getCtx() {
 	return getContext<GetReturn>(NAME);
 }
 
-function set(props: CreateSelectProps) {
+export function setCtx(props: CreateSelectProps) {
 	const select = createSelect(removeUndefined(props));
 	setContext(NAME, select);
 	return {
@@ -41,33 +30,33 @@ function set(props: CreateSelectProps) {
 	};
 }
 
-function setGroup() {
+export function setGroupCtx() {
 	const id = generateId();
 	setContext(GROUP_NAME, id);
 	const {
 		elements: { group }
-	} = get();
+	} = getCtx();
 	return { group, id };
 }
 
-function setItem(value: unknown) {
-	const select = get();
+export function setItemCtx(value: unknown) {
+	const select = getCtx();
 	setContext(ITEM_NAME, value);
 	return select;
 }
 
-function getGroupLabel() {
+export function getGroupLabel() {
 	const id = getContext<string>(GROUP_NAME);
 	const {
 		elements: { groupLabel }
-	} = get();
+	} = getCtx();
 	return { groupLabel, id };
 }
 
-function getItemIndicator() {
+export function getItemIndicator() {
 	const {
 		helpers: { isSelected }
-	} = get();
+	} = getCtx();
 	const value = getContext<unknown>(ITEM_NAME);
 	return {
 		value,
@@ -75,8 +64,8 @@ function getItemIndicator() {
 	};
 }
 
-function setArrow(size = 8) {
-	const select = get();
+export function setArrow(size = 8) {
+	const select = getCtx();
 	select.options.arrowSize?.set(size);
 	return select;
 }

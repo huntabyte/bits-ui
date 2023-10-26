@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ctx } from "../ctx.js";
+	import { setCtx, getAttrs } from "../ctx.js";
 	import type { Props } from "../types.js";
 
 	type $$Props = Props;
@@ -11,7 +11,7 @@
 	const {
 		states: { loadingStatus: localLoadingStatus },
 		updateOption
-	} = ctx.set({
+	} = setCtx({
 		src: "",
 		delayMs,
 		onLoadingStatusChange: ({ next }) => {
@@ -24,7 +24,7 @@
 	$: loadingStatus !== undefined && localLoadingStatus.set(loadingStatus);
 	$: updateOption("delayMs", delayMs);
 
-	const attrs = ctx.getAttrs("root");
+	const attrs = getAttrs("root");
 </script>
 
 {#if asChild}

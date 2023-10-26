@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Props } from "../types.js";
-	import { ctx } from "../ctx.js";
+	import { setCtx } from "../ctx.js";
 	type $$Props = Props;
 
 	export let closeOnOutsideClick: $$Props["closeOnOutsideClick"] = undefined;
@@ -21,7 +21,7 @@
 	const {
 		states: { open: localOpen },
 		updateOption
-	} = ctx.set({
+	} = setCtx({
 		closeOnOutsideClick,
 		closeOnEscape,
 		portal,

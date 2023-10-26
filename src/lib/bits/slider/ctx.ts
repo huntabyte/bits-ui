@@ -5,17 +5,11 @@ import { getContext, setContext } from "svelte";
 const NAME = "slider";
 const PARTS = ["root", "input", "range", "thumb"] as const;
 
-const getAttrs = createBitAttrs(NAME, PARTS);
-
-export const ctx = {
-	set,
-	get,
-	getAttrs
-};
+export const getAttrs = createBitAttrs(NAME, PARTS);
 
 type GetReturn = SliderReturn;
 
-function set(props: CreateSliderProps) {
+export function setCtx(props: CreateSliderProps) {
 	const slider = createSlider(removeUndefined(props));
 	setContext(NAME, slider);
 	return {
@@ -24,6 +18,6 @@ function set(props: CreateSliderProps) {
 	};
 }
 
-function get() {
+export function getCtx() {
 	return getContext<GetReturn>(NAME);
 }

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { ctx } from "../ctx.js";
+	import { getCtx, getAttrs } from "../ctx.js";
 	import type { CancelEvents, CancelProps } from "../types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
 
@@ -9,11 +9,11 @@
 	export let asChild = false;
 	const {
 		elements: { close }
-	} = ctx.get();
+	} = getCtx();
 
 	const dispatch = createDispatcher();
 	$: builder = $close;
-	const attrs = ctx.getAttrs("cancel");
+	const attrs = getAttrs("cancel");
 </script>
 
 {#if asChild}

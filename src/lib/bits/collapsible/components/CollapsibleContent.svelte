@@ -2,7 +2,7 @@
 	import { melt } from "@melt-ui/svelte";
 	import type { Transition } from "$lib/internal/types.js";
 	import type { ContentProps } from "../types.js";
-	import { ctx } from "../ctx.js";
+	import { getCtx, getAttrs } from "../ctx.js";
 
 	type T = $$Generic<Transition>;
 	type In = $$Generic<Transition>;
@@ -20,9 +20,9 @@
 	const {
 		elements: { content },
 		states: { open }
-	} = ctx.get();
+	} = getCtx();
 	$: builder = $content;
-	const attrs = ctx.getAttrs("content");
+	const attrs = getAttrs("content");
 </script>
 
 {#if asChild && $open}

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { ctx } from "../ctx.js";
+	import { getSubTrigger, getAttrs } from "../ctx.js";
 	import type { SubTriggerEvents, SubTriggerProps } from "../types.js";
 	import { disabledAttrs } from "$lib/internal/helpers.js";
 	import { createDispatcher } from "$lib/internal/events.js";
@@ -14,10 +14,10 @@
 
 	const {
 		elements: { subTrigger }
-	} = ctx.getSubTrigger();
+	} = getSubTrigger();
 	const dispatch = createDispatcher();
 	$: builder = $subTrigger;
-	$: attrs = { ...ctx.getAttrs("sub-trigger"), ...disabledAttrs(disabled) };
+	$: attrs = { ...getAttrs("sub-trigger"), ...disabledAttrs(disabled) };
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions / applied by melt store -->

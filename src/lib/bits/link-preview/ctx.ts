@@ -8,22 +8,15 @@ import { getContext, setContext } from "svelte";
 
 const NAME = "link-preview";
 const PARTS = ["arrow", "content", "trigger"];
-const getAttrs = createBitAttrs(NAME, PARTS);
-
-export const ctx = {
-	set,
-	get,
-	getAttrs,
-	setArrow
-};
+export const getAttrs = createBitAttrs(NAME, PARTS);
 
 type GetReturn = LinkPreviewReturn;
 
-function get() {
+export function getCtx() {
 	return getContext<GetReturn>(NAME);
 }
 
-function set(props: CreateLinkPreviewProps) {
+export function setCtx(props: CreateLinkPreviewProps) {
 	const linkPreview = createLinkPreview({
 		...removeUndefined(props),
 		forceVisible: true
@@ -35,8 +28,8 @@ function set(props: CreateLinkPreviewProps) {
 	};
 }
 
-function setArrow(size = 8) {
-	const linkPreview = get();
+export function setArrow(size = 8) {
+	const linkPreview = getCtx();
 	linkPreview.options.arrowSize.set(size);
 	return linkPreview;
 }

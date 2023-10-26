@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { ctx } from "../ctx.js";
+	import { setGroupCtx, getAttrs } from "../ctx.js";
 	import type { GroupProps } from "../types.js";
 
 	type $$Props = GroupProps;
 	export let asChild = false;
-	const { group, id } = ctx.setGroup();
+	const { group, id } = setGroupCtx();
 	$: builder = $group(id);
-	const attrs = ctx.getAttrs("group");
+	const attrs = getAttrs("group");
 </script>
 
 {#if asChild}

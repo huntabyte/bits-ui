@@ -5,16 +5,9 @@ import { getContext, setContext } from "svelte";
 const NAME = "avatar";
 const PARTS = ["root", "image", "fallback"] as const;
 
-const getAttrs = createBitAttrs(NAME, PARTS);
+export const getAttrs = createBitAttrs(NAME, PARTS);
 
-export const ctx = {
-	get,
-	set,
-	getImage,
-	getAttrs
-};
-
-function set(props: CreateAvatarProps) {
+export function setCtx(props: CreateAvatarProps) {
 	const avatar = createAvatar(removeUndefined(props));
 	setContext(NAME, avatar);
 	return {
@@ -23,7 +16,7 @@ function set(props: CreateAvatarProps) {
 	};
 }
 
-function getImage(src: string | undefined | null = "") {
+export function getImage(src: string | undefined | null = "") {
 	const avatar = getContext<AvatarReturn>(NAME);
 	if (!src) {
 		avatar.options.src.set("");
@@ -33,6 +26,6 @@ function getImage(src: string | undefined | null = "") {
 	return avatar;
 }
 
-function get() {
+export function getCtx() {
 	return getContext<AvatarReturn>(NAME);
 }

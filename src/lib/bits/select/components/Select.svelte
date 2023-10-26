@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ctx } from "../ctx.js";
+	import { setCtx } from "../ctx.js";
 	import type { SelectProps } from "../types.js";
 
 	type $$Props = SelectProps;
@@ -24,7 +24,7 @@
 	const {
 		states: { open: localOpen, selected: localSelected },
 		updateOption
-	} = ctx.set({
+	} = setCtx({
 		required,
 		disabled,
 		arrowSize,

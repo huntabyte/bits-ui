@@ -11,19 +11,13 @@ import {
 const NAME = "dialog";
 const PARTS = ["close", "content", "description", "overlay", "portal", "title", "trigger"] as const;
 
-const getAttrs = createBitAttrs(NAME, PARTS);
+export const getAttrs = createBitAttrs(NAME, PARTS);
 
 type SetProps = CreateDialogProps & TransitionTimesProp & TOpen;
 
 type GetReturn = DialogReturn & TransitionTimesProp & TOpen;
 
-export const ctx = {
-	set,
-	get,
-	getAttrs
-};
-
-function set(props: SetProps) {
+export function setCtx(props: SetProps) {
 	const dialog = createDialog({ ...removeUndefined(props), role: "dialog" });
 	setContext(NAME, {
 		...dialog,
@@ -36,6 +30,6 @@ function set(props: SetProps) {
 	};
 }
 
-function get() {
+export function getCtx() {
 	return getContext<GetReturn>(NAME);
 }

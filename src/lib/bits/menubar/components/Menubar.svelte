@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { ctx } from "../ctx.js";
+	import { setCtx, getAttrs } from "../ctx.js";
 	import type { Props } from "../types.js";
 
 	type $$Props = Props;
@@ -12,12 +12,12 @@
 	const {
 		elements: { menubar },
 		updateOption
-	} = ctx.set({ loop, closeOnEscape });
+	} = setCtx({ loop, closeOnEscape });
 
 	$: updateOption("loop", loop);
 	$: updateOption("closeOnEscape", closeOnEscape);
 	$: builder = $menubar;
-	const attrs = ctx.getAttrs("root");
+	const attrs = getAttrs("root");
 </script>
 
 {#if asChild}

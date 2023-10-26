@@ -2,7 +2,7 @@
 	import { createDispatcher } from "$lib/internal/events.js";
 
 	import { melt } from "@melt-ui/svelte";
-	import { ctx } from "../ctx.js";
+	import { getContent, getAttrs } from "../ctx.js";
 	import type { Transition } from "$lib/internal/types.js";
 	import type { ContentEvents, ContentProps } from "../types.js";
 
@@ -24,11 +24,11 @@
 	const {
 		elements: { menu },
 		states: { open }
-	} = ctx.getContent(sideOffset);
+	} = getContent(sideOffset);
 
 	const dispatch = createDispatcher();
 	$: builder = $menu;
-	const attrs = ctx.getAttrs("content");
+	const attrs = getAttrs("content");
 </script>
 
 {#if asChild && $open}

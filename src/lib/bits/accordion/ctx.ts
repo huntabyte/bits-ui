@@ -11,21 +11,11 @@ const NAME = "accordion";
 const ITEM_NAME = "accordion-item";
 const PARTS = ["root", "content", "header", "item", "trigger"] as const;
 
-const getAttrs = createBitAttrs(NAME, PARTS);
-
-export const ctx = {
-	set,
-	get,
-	setItem,
-	getItemProps,
-	getContent,
-	getTrigger,
-	getAttrs
-};
+export const getAttrs = createBitAttrs(NAME, PARTS);
 
 type GetReturn = AccordionReturn;
 
-function set<Multiple extends boolean>(props: CreateAccordionProps<Multiple>) {
+export function setCtx<Multiple extends boolean>(props: CreateAccordionProps<Multiple>) {
 	const accordion = createAccordion(removeUndefined(props));
 	setContext(NAME, accordion);
 	return {
@@ -34,37 +24,37 @@ function set<Multiple extends boolean>(props: CreateAccordionProps<Multiple>) {
 	};
 }
 
-function get() {
+export function getCtx() {
 	return getContext<GetReturn>(NAME);
 }
 
-function setItem(props: AccordionItemProps) {
+export function setItem(props: AccordionItemProps) {
 	setContext(ITEM_NAME, { ...props });
 	const {
 		elements: { item }
-	} = get();
+	} = getCtx();
 	return { item, props };
 }
 
-function getItemProps() {
+export function getItemProps() {
 	const itemProps = getContext<AccordionItemProps>(ITEM_NAME);
 	return itemProps;
 }
 
-function getContent() {
+export function getContent() {
 	const {
 		elements: { content },
 		helpers: { isSelected },
 		states: { value }
-	} = get();
+	} = getCtx();
 	const { value: props } = getItemProps();
 	return { content, props, isSelected, value };
 }
 
-function getTrigger() {
+export function getTrigger() {
 	const {
 		elements: { trigger }
-	} = get();
+	} = getCtx();
 	const { value: props } = getItemProps();
 	return { props, trigger };
 }

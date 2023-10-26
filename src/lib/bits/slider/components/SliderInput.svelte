@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { ctx } from "../ctx.js";
+	import { getCtx, getAttrs } from "../ctx.js";
 	import type { InputProps } from "../types.js";
 
 	type $$Props = InputProps;
 	const {
 		states: { value }
-	} = ctx.get();
+	} = getCtx();
 
 	function getValue(value: number[]) {
 		if (value.length === 1) {
@@ -15,7 +15,7 @@
 		}
 	}
 	$: inputValue = getValue($value);
-	const attrs = ctx.getAttrs("input");
+	const attrs = getAttrs("input");
 </script>
 
 <input {...$$restProps} value={inputValue} hidden {...attrs} />

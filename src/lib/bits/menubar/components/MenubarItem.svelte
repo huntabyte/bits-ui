@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { disabledAttrs } from "$lib/internal/helpers.js";
-	import { ctx } from "../ctx.js";
+	import { getMenuCtx, getAttrs } from "../ctx.js";
 	import type { ItemEvents, ItemProps } from "../types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
 
@@ -9,13 +9,11 @@
 	type $$Events = ItemEvents;
 	export let asChild = false;
 	export let disabled = false;
-	const {
-		elements: { item }
-	} = ctx.getMenu();
+	const item = getMenuCtx().elements.item;
 	const dispatch = createDispatcher();
 	$: builder = $item;
 
-	$: attrs = { ...ctx.getAttrs("item"), ...disabledAttrs(disabled) };
+	$: attrs = { ...getAttrs("item"), ...disabledAttrs(disabled) };
 </script>
 
 {#if asChild}
