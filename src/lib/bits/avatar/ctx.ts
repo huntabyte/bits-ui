@@ -1,12 +1,17 @@
-import { getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
+import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 import { createAvatar, type CreateAvatarProps, type Avatar as AvatarReturn } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
 
-const NAME = "Avatar";
+const NAME = "avatar";
+const PARTS = ["root", "image", "fallback"] as const;
+
+const getAttrs = createBitAttrs(NAME, PARTS);
+
 export const ctx = {
+	get,
 	set,
 	getImage,
-	get
+	getAttrs
 };
 
 function set(props: CreateAvatarProps) {

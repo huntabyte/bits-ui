@@ -11,22 +11,24 @@
 		elements: { trigger }
 	} = ctx.get();
 	const dispatch = createDispatcher();
+	$: builder = $trigger;
+	const attrs = ctx.getAttrs("trigger");
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions applied by melt's action/store -->
 {#if asChild}
-	<slot builder={$trigger} />
+	<slot {builder} {attrs} />
 {:else}
-	{@const builder = $trigger}
 	<div
 		use:melt={builder}
 		{...$$restProps}
+		{...attrs}
 		on:m-contextmenu={dispatch}
 		on:m-pointercancel={dispatch}
 		on:m-pointerdown={dispatch}
 		on:m-pointermove={dispatch}
 		on:m-pointerup={dispatch}
 	>
-		<slot {builder} />
+		<slot {builder} {attrs} />
 	</div>
 {/if}

@@ -5,13 +5,32 @@ import {
 } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
 import {
+	createBitAttrs,
 	getOptionUpdater,
 	removeUndefined,
 	type TOpen,
 	type TransitionTimesProp
 } from "$lib/internal/index.js";
 
-const NAME = "AlertDialog";
+const NAME = "alert-dialog";
+const PARTS = [
+	"action",
+	"cancel",
+	"content",
+	"description",
+	"overlay",
+	"portal",
+	"title",
+	"trigger"
+] as const;
+
+const getAttrs = createBitAttrs(NAME, PARTS);
+
+export const ctx = {
+	set,
+	get,
+	getAttrs
+};
 
 type SetProps = CreateAlertDialogProps & TransitionTimesProp & TOpen;
 
@@ -36,8 +55,3 @@ function set(props: SetProps) {
 function get() {
 	return getContext<GetReturn>(NAME);
 }
-
-export const ctx = {
-	set: set,
-	get: get
-};

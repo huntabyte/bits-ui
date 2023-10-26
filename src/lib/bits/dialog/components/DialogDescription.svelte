@@ -6,13 +6,14 @@
 	type $$Props = DescriptionProps;
 	export let asChild = false;
 	const description = ctx.get().elements.description;
+	$: builder = $description;
+	const attrs = ctx.getAttrs("description");
 </script>
 
 {#if asChild}
-	<slot builder={$description} />
+	<slot {builder} {attrs} />
 {:else}
-	{@const builder = $description}
-	<div use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+	<div use:melt={builder} {...$$restProps} {...attrs}>
+		<slot {builder} {attrs} />
 	</div>
 {/if}

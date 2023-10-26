@@ -13,19 +13,23 @@
 		elements: { item }
 	} = ctx.get();
 
+	$: builder = $item;
+	const attrs = ctx.getAttrs("item");
+
 	const dispatch = createDispatcher();
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions applied by melt's action/store -->
 {#if asChild}
-	<slot builder={$item} />
+	<slot {builder} {attrs} />
 {:else}
-	{@const builder = $item}
 	<svelte:element
 		this={href ? "a" : "div"}
 		{href}
 		use:melt={builder}
 		{...$$restProps}
+		{...attrs}
+		{...disabledAttrs(disabled)}
 		on:m-click={dispatch}
 		on:m-focusin={dispatch}
 		on:m-focusout={dispatch}
@@ -33,8 +37,7 @@
 		on:m-pointerdown={dispatch}
 		on:m-pointerleave={dispatch}
 		on:m-pointermove={dispatch}
-		{...disabledAttrs(disabled)}
 	>
-		<slot {builder} />
+		<slot {builder} {attrs} />
 	</svelte:element>
 {/if}

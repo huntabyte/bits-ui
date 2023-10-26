@@ -11,13 +11,21 @@
 		elements: { trigger }
 	} = ctx.get();
 	const dispatch = createDispatcher();
+
+	$: builder = $trigger;
+	const attrs = ctx.getAttrs("trigger");
 </script>
 
 {#if asChild}
-	<slot builder={$trigger} />
+	<slot {builder} {attrs} />
 {:else}
-	{@const builder = $trigger}
-	<button use:melt={builder} {...$$restProps} on:m-keydown={dispatch} on:m-pointerdown={dispatch}>
-		<slot {builder} />
+	<button
+		use:melt={builder}
+		{...$$restProps}
+		{...attrs}
+		on:m-keydown={dispatch}
+		on:m-pointerdown={dispatch}
+	>
+		<slot {builder} {attrs} />
 	</button>
 {/if}

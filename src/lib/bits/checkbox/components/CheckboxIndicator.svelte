@@ -6,8 +6,9 @@
 	const {
 		helpers: { isChecked, isIndeterminate }
 	} = ctx.get();
+	const attrs = ctx.getAttrs("indicator");
 </script>
 
-<div {...$$restProps}>
+<div {...$$restProps} {...attrs}>
 	<slot isChecked={$isChecked} isIndeterminate={$isIndeterminate} />
 </div>

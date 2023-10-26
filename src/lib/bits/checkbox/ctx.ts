@@ -4,13 +4,17 @@ import {
 	type CreateCheckboxProps
 } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
-import { removeUndefined, getOptionUpdater } from "$lib/internal/index.js";
+import { removeUndefined, getOptionUpdater, createBitAttrs } from "$lib/internal/index.js";
 
-const NAME = "Checkbox";
+const NAME = "checkbox";
+const PARTS = ["root", "input", "indicator"] as const;
+
+const getAttrs = createBitAttrs(NAME, PARTS);
 
 export const ctx = {
 	set,
-	get
+	get,
+	getAttrs
 };
 
 type GetReturn = CheckboxReturn;

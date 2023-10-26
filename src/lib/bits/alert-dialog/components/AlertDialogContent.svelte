@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { ATTRS } from "../attrs.js";
-
 	import { melt } from "@melt-ui/svelte";
 	import { setTransitionTimes, type Transition } from "$lib/internal/index.js";
 	import { ctx } from "../ctx.js";
@@ -37,7 +35,7 @@
 	});
 
 	$: builder = $content;
-	const attrs = ATTRS.content;
+	const attrs = ctx.getAttrs("content");
 </script>
 
 {#if asChild && $tOpen}

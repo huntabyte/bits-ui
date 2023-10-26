@@ -23,13 +23,15 @@
 	});
 
 	$: value !== undefined && localValue.set(value);
+
+	$: builder = $radioGroup;
+	const attrs = ctx.getAttrs("radio-group");
 </script>
 
 {#if asChild}
-	<slot builder={$radioGroup} />
+	<slot {builder} {attrs} />
 {:else}
-	{@const builder = $radioGroup}
-	<div use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+	<div use:melt={builder} {...$$restProps} {...attrs}>
+		<slot {builder} {attrs} />
 	</div>
 {/if}

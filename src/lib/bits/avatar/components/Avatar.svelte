@@ -23,12 +23,14 @@
 
 	$: loadingStatus !== undefined && localLoadingStatus.set(loadingStatus);
 	$: updateOption("delayMs", delayMs);
+
+	const attrs = ctx.getAttrs("root");
 </script>
 
 {#if asChild}
-	<slot />
+	<slot {attrs} />
 {:else}
-	<div {...$$restProps}>
-		<slot />
+	<div {...$$restProps} {...attrs}>
+		<slot {attrs} />
 	</div>
 {/if}

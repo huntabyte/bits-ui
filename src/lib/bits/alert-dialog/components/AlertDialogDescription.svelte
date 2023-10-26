@@ -2,7 +2,6 @@
 	import { melt } from "@melt-ui/svelte";
 	import { ctx } from "../ctx.js";
 	import type { DescriptionProps } from "../types.js";
-	import { ATTRS } from "../attrs.js";
 
 	type $$Props = DescriptionProps;
 	export let asChild = false;
@@ -11,7 +10,7 @@
 	} = ctx.get();
 
 	$: builder = $description;
-	const attrs = ATTRS.description;
+	const attrs = ctx.getAttrs("description");
 </script>
 
 {#if asChild}

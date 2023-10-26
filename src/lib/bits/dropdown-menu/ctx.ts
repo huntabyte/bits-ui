@@ -1,4 +1,9 @@
-import { generateId, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
+import {
+	createBitAttrs,
+	generateId,
+	getOptionUpdater,
+	removeUndefined
+} from "$lib/internal/index.js";
 import {
 	type CreateDropdownSubmenuProps as DropdownSubmenuProps,
 	type DropdownMenu as DropdownMenuReturn,
@@ -13,16 +18,35 @@ import {
 import { getContext, setContext } from "svelte";
 import type { Readable } from "svelte/store";
 
-const NAME = "DropdownMenu";
-const SUB_NAME = "DropdownSubmenu";
-const RADIO_GROUP_NAME = "DropdownRadioGroup";
-const CHECKBOX_ITEM_NAME = "DropdownCheckboxItem";
-const RADIO_ITEM_NAME = "DropdownRadioItem";
-const GROUP_NAME = "DropdownGroup";
+const NAME = "dropdown-menu";
+const SUB_NAME = "dropdown-menu-submenu";
+const RADIO_GROUP_NAME = "dropdown-menu-radiogroup";
+const CHECKBOX_ITEM_NAME = "dropdown-menu-checkboxitem";
+const RADIO_ITEM_NAME = "dropdown-menu-radioitem";
+const GROUP_NAME = "dropdown-menu-group";
+
+const PARTS = [
+	"arrow",
+	"checkbox-indicator",
+	"checkbox-item",
+	"content",
+	"group",
+	"item",
+	"label",
+	"radio-group",
+	"radio-item",
+	"separator",
+	"sub-content",
+	"sub-trigger",
+	"trigger"
+] as const;
+
+const getAttrs = createBitAttrs(NAME, PARTS);
 
 export const ctx = {
 	get,
 	set,
+	getAttrs,
 	setSub,
 	getContent,
 	setRadioGroup,

@@ -41,13 +41,21 @@
 	$: updateOption("name", name);
 	$: updateOption("required", required);
 	$: updateOption("value", value);
+
+	$: builder = $root;
+	const attrs = ctx.getAttrs("root");
 </script>
 
 {#if asChild}
-	<slot builder={$root} />
+	<slot {builder} {attrs} />
 {:else}
-	{@const builder = $root}
-	<button use:melt={builder} {...$$restProps} on:m-click={dispatch} on:m-keydown={dispatch}>
-		<slot {builder} />
+	<button
+		use:melt={builder}
+		{...$$restProps}
+		on:m-click={dispatch}
+		on:m-keydown={dispatch}
+		{...attrs}
+	>
+		<slot {builder} {attrs} />
 	</button>
 {/if}

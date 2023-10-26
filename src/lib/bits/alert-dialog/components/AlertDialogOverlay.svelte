@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { ATTRS } from "../attrs.js";
-
 	import { melt } from "@melt-ui/svelte";
 	import type { Transition } from "$lib/internal/index.js";
 	import { ctx } from "../ctx.js";
@@ -26,7 +24,7 @@
 	} = ctx.get();
 
 	$: builder = $overlay;
-	const attrs = ATTRS.overlay;
+	const attrs = ctx.getAttrs("overlay");
 </script>
 
 {#if asChild && $tOpen}

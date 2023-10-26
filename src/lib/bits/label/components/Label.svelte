@@ -11,14 +11,14 @@
 		elements: { root }
 	} = ctx.get();
 	const dispatch = createDispatcher();
+	$: builder = $root;
+	const attrs = ctx.getAttrs("root");
 </script>
 
-<!-- svelte-ignore a11y-no-static-element-interactions / applied by melt's builder-->
 {#if asChild}
-	<slot builder={$root} />
+	<slot {builder} {attrs} />
 {:else}
-	{@const builder = $root}
-	<label use:melt={builder} {...$$restProps} on:m-mousedown={dispatch}>
-		<slot {builder} />
+	<label use:melt={builder} {...$$restProps} {...attrs} on:m-mousedown={dispatch}>
+		<slot {builder} {attrs} />
 	</label>
 {/if}

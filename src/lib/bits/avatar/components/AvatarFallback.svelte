@@ -6,13 +6,14 @@
 	type $$Props = FallbackProps;
 	export let asChild = false;
 	const fallback = ctx.get().elements.fallback;
+	$: builder = $fallback;
+	const attrs = ctx.getAttrs("fallback");
 </script>
 
 {#if asChild}
-	<slot builder={$fallback} />
+	<slot {builder} {attrs} />
 {:else}
-	{@const builder = $fallback}
-	<span use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+	<span use:melt={builder} {...$$restProps} {...attrs}>
+		<slot {builder} {attrs} />
 	</span>
 {/if}

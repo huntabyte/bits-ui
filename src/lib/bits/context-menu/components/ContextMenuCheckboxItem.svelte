@@ -28,16 +28,18 @@
 
 	$: checked !== undefined && localChecked.set(checked);
 	$: updateOption("disabled", disabled);
+	$: builder = $checkboxItem;
+	const attrs = ctx.getAttrs("checkbox-item");
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions applied by melt's action/store -->
 {#if asChild}
-	<slot builder={$checkboxItem} />
+	<slot {builder} {attrs} />
 {:else}
-	{@const builder = $checkboxItem}
 	<div
 		use:melt={builder}
 		{...$$restProps}
+		{...attrs}
 		on:m-click={dispatch}
 		on:m-focusin={dispatch}
 		on:m-focusout={dispatch}
@@ -46,6 +48,6 @@
 		on:m-pointerleave={dispatch}
 		on:m-pointermove={dispatch}
 	>
-		<slot {builder} />
+		<slot {builder} {attrs} />
 	</div>
 {/if}

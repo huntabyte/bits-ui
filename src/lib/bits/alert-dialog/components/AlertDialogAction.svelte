@@ -3,7 +3,6 @@
 	import { createDispatcher } from "$lib/internal/events.js";
 	import { ctx } from "../ctx.js";
 	import type { ActionEvents, ActionProps } from "../types.js";
-	import { ATTRS } from "../attrs.js";
 
 	type $$Props = ActionProps;
 	type $$Events = ActionEvents;
@@ -15,7 +14,7 @@
 	const dispatch = createDispatcher();
 
 	$: builder = $close;
-	const attrs = ATTRS.action;
+	const attrs = ctx.getAttrs("action");
 </script>
 
 {#if asChild}

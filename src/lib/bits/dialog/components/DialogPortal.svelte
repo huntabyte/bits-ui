@@ -8,14 +8,15 @@
 	const {
 		elements: { portalled }
 	} = ctx.get();
+
+	$: builder = $portalled;
+	const attrs = ctx.getAttrs("portal");
 </script>
 
 {#if asChild}
-	{@const builder = $portalled}
-	<slot {builder} />
+	<slot {builder} {attrs} />
 {:else}
-	{@const builder = $portalled}
-	<div use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+	<div use:melt={builder} {...$$restProps} {...attrs}>
+		<slot {builder} {attrs} />
 	</div>
 {/if}

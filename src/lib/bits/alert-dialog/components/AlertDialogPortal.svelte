@@ -2,7 +2,6 @@
 	import { melt } from "@melt-ui/svelte";
 	import { ctx } from "../ctx.js";
 	import type { PortalProps } from "../types.js";
-	import { ATTRS } from "../attrs.js";
 
 	type $$Props = PortalProps;
 	export let asChild = false;
@@ -11,7 +10,7 @@
 	} = ctx.get();
 
 	$: builder = $portalled;
-	const attrs = ATTRS.portal;
+	const attrs = ctx.getAttrs("portal");
 </script>
 
 {#if asChild}

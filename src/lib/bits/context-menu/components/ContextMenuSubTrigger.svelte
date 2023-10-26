@@ -16,16 +16,18 @@
 		elements: { subTrigger }
 	} = ctx.getSubTrigger();
 	const dispatch = createDispatcher();
+	$: builder = $subTrigger;
+	$: attrs = { ...ctx.getAttrs("sub-trigger"), ...disabledAttrs(disabled) };
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions / applied by melt store -->
 {#if asChild}
-	<slot builder={$subTrigger} />
+	<slot {builder} {attrs} />
 {:else}
-	{@const builder = $subTrigger}
 	<div
 		use:melt={builder}
 		{...$$restProps}
+		{...attrs}
 		on:m-click={dispatch}
 		on:m-focusin={dispatch}
 		on:m-focusout={dispatch}
@@ -33,8 +35,7 @@
 		on:m-pointerleave={dispatch}
 		on:m-pointermove={dispatch}
 		on:m-keydown={dispatch}
-		{...disabledAttrs(disabled)}
 	>
-		<slot {builder} />
+		<slot {builder} {attrs} />
 	</div>
 {/if}

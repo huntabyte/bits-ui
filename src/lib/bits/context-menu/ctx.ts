@@ -1,4 +1,9 @@
-import { generateId, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
+import {
+	createBitAttrs,
+	generateId,
+	getOptionUpdater,
+	removeUndefined
+} from "$lib/internal/index.js";
 import {
 	type ContextMenu as ContextMenuReturn,
 	type ContextMenuRadioGroup as ContextRadioGroupReturn,
@@ -13,16 +18,35 @@ import {
 import { getContext, setContext } from "svelte";
 import type { Readable } from "svelte/store";
 
-const NAME = "ContextMenu";
-const SUB_NAME = "ContextSubmenu";
-const RADIO_GROUP_NAME = "ContextRadioGroup";
-const CHECKBOX_ITEM_NAME = "ContextCheckboxItem";
-const RADIO_ITEM_NAME = "ContextRadioItem";
-const GROUP_NAME = "ContextGroup";
+const NAME = "context-menu";
+const SUB_NAME = "context-menu-submenu";
+const RADIO_GROUP_NAME = "context-menu-radiogroup";
+const CHECKBOX_ITEM_NAME = "context-menu-checkboxitem";
+const RADIO_ITEM_NAME = "context-menu-radioitem";
+const GROUP_NAME = "context-menu-group";
+
+const PARTS = [
+	"arrow",
+	"checkbox-indicator",
+	"checkbox-item",
+	"content",
+	"group",
+	"item",
+	"label",
+	"radio-group",
+	"radio-item",
+	"separator",
+	"sub-content",
+	"sub-trigger",
+	"trigger"
+] as const;
+
+const getAttrs = createBitAttrs(NAME, PARTS);
 
 export const ctx = {
 	get,
 	set,
+	getAttrs,
 	setSub,
 	getSub,
 	getContent,

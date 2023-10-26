@@ -3,7 +3,6 @@
 	import { ctx } from "../ctx.js";
 	import type { CancelEvents, CancelProps } from "../types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
-	import { ATTRS } from "../attrs.js";
 
 	type $$Props = CancelProps;
 	type $$Events = CancelEvents;
@@ -14,7 +13,7 @@
 
 	const dispatch = createDispatcher();
 	$: builder = $close;
-	const attrs = ATTRS.cancel;
+	const attrs = ctx.getAttrs("cancel");
 </script>
 
 {#if asChild}

@@ -4,9 +4,10 @@
 
 	type $$Props = CheckboxItemIndicatorProps;
 	const checked = ctx.getCheckboxIndicator();
+	const attrs = ctx.getAttrs('checkbox-indicator')
 </script>
 
-<div {...$$restProps}>
+<div {...$$restProps} {...attrs}>
 	{#if $checked}
 		<slot checked={$checked} />
 	{/if}

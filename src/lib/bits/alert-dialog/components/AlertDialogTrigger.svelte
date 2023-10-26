@@ -3,7 +3,6 @@
 	import { ctx } from "../ctx.js";
 	import type { TriggerEvents, TriggerProps } from "../types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
-	import { ATTRS } from "../attrs.js";
 
 	type $$Props = TriggerProps;
 	type $$Events = TriggerEvents;
@@ -14,7 +13,7 @@
 	const dispatch = createDispatcher();
 
 	$: builder = $trigger;
-	const attrs = ATTRS.trigger;
+	const attrs = ctx.getAttrs("trigger");
 </script>
 
 {#if asChild}
