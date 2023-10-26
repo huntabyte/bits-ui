@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import type { Props } from "../types.js";
-	import { ctx } from "../ctx.js";
+	import { setCtx, getAttrs } from "../ctx.js";
 
 	type Multiple = $$Generic<boolean>;
 	type $$Props = Props<Multiple>;
@@ -16,7 +16,7 @@
 		elements: { root },
 		states: { value: localValue },
 		updateOption
-	} = ctx.set({
+	} = setCtx({
 		multiple,
 		disabled,
 		defaultValue: value,
@@ -28,7 +28,7 @@
 			}
 			return next;
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		}) as any // I'm sorry
+		}) as any
 	});
 
 	// Svelte types get weird here saying set expects something that is both string and string[].
@@ -37,13 +37,15 @@
 
 	$: updateOption("multiple", multiple);
 	$: updateOption("disabled", disabled);
+
+	$: builder = $root;
+	const attrs = getAttrs("root");
 </script>
 
 {#if asChild}
-	<slot builder={$root} />
+	<slot {builder} {attrs} />
 {:else}
-	{@const builder = $root}
-	<div use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+	<div use:melt={builder} {...$$restProps} {...attrs}>
+		<slot {builder} {attrs} />
 	</div>
 {/if}

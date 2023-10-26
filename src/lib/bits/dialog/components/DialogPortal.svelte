@@ -1,21 +1,22 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { ctx } from "../ctx.js";
+	import { getCtx, getAttrs } from "../ctx.js";
 	import type { PortalProps } from "../types.js";
 
 	type $$Props = PortalProps;
 	export let asChild = false;
 	const {
 		elements: { portalled }
-	} = ctx.get();
+	} = getCtx();
+
+	$: builder = $portalled;
+	const attrs = getAttrs("portal");
 </script>
 
 {#if asChild}
-	{@const builder = $portalled}
-	<slot {builder} />
+	<slot {builder} {attrs} />
 {:else}
-	{@const builder = $portalled}
-	<div use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+	<div use:melt={builder} {...$$restProps} {...attrs}>
+		<slot {builder} {attrs} />
 	</div>
 {/if}

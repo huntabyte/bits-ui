@@ -3,20 +3,17 @@ import {
 	type Tooltip as TooltipReturn,
 	type CreateTooltipProps
 } from "@melt-ui/svelte";
-import { getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
+import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 import { getContext, setContext } from "svelte";
 
-const NAME = "Tooltip";
+const NAME = "tooltip";
+const PARTS = ["arrow", "content", "trigger"] as const;
 
-export const ctx = {
-	set,
-	get,
-	setArrow
-};
+export const getAttrs = createBitAttrs(NAME, PARTS);
 
 type GetReturn = TooltipReturn;
 
-function set(props: CreateTooltipProps) {
+export function setCtx(props: CreateTooltipProps) {
 	const tooltip = createTooltip({
 		positioning: {
 			placement: "top"
@@ -31,7 +28,7 @@ function set(props: CreateTooltipProps) {
 	};
 }
 
-function get(sideOffset = 0) {
+export function getCtx(sideOffset = 0) {
 	const tooltip = getContext<GetReturn>(NAME);
 
 	const {
@@ -42,8 +39,8 @@ function get(sideOffset = 0) {
 	return tooltip;
 }
 
-function setArrow(size = 8) {
-	const tooltip = get();
+export function setArrow(size = 8) {
+	const tooltip = getCtx();
 	tooltip.options.arrowSize.set(size);
 	return tooltip;
 }

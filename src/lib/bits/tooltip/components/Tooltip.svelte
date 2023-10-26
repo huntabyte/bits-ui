@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ctx } from "../ctx.js";
+	import { setCtx } from "../ctx.js";
 	import type { Props } from "../types.js";
 	type $$Props = Props;
 
@@ -19,7 +19,7 @@
 	const {
 		states: { open: localOpen },
 		updateOption
-	} = ctx.set({
+	} = setCtx({
 		positioning,
 		arrowSize,
 		closeOnEscape,

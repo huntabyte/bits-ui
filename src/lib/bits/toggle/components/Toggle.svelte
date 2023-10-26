@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { ctx } from "../ctx.js";
+	import { setCtx, getAttrs } from "../ctx.js";
 	import type { Events, Props } from "../types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
 
@@ -14,7 +14,7 @@
 		elements: { root },
 		states: { pressed: localPressed },
 		updateOption
-	} = ctx.set({
+	} = setCtx({
 		disabled,
 		defaultPressed: pressed,
 		onPressedChange: ({ next }) => {
@@ -30,13 +30,21 @@
 
 	$: pressed !== undefined && localPressed.set(pressed);
 	$: updateOption("disabled", disabled);
+
+	$: builder = $root;
+	const attrs = getAttrs("root");
 </script>
 
 {#if asChild}
-	<slot builder={$root} />
+	<slot {builder} {attrs} />
 {:else}
-	{@const builder = $root}
-	<button use:melt={builder} {...$$restProps} on:m-click={dispatch} on:m-keydown={dispatch}>
-		<slot {builder} />
+	<button
+		use:melt={builder}
+		{...$$restProps}
+		{...attrs}
+		on:m-click={dispatch}
+		on:m-keydown={dispatch}
+	>
+		<slot {builder} {attrs} />
 	</button>
 {/if}

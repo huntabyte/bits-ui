@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { ctx } from "../ctx.js";
+	import { setCtx, getAttrs } from "../ctx.js";
 	import type { Props } from "../types.js";
 
 	type $$Props = Props;
@@ -16,7 +16,7 @@
 		elements: { root },
 		states: { value: localValue },
 		updateOption
-	} = ctx.set({
+	} = setCtx({
 		required,
 		disabled,
 		defaultValue: value,
@@ -36,13 +36,15 @@
 	$: updateOption("disabled", disabled);
 	$: updateOption("loop", loop);
 	$: updateOption("orientation", orientation);
+
+	$: builder = $root;
+	const attrs = getAttrs("root");
 </script>
 
 {#if asChild}
-	<slot builder={$root} />
+	<slot {builder} {attrs} />
 {:else}
-	{@const builder = $root}
-	<div use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+	<div use:melt={builder} {...$$restProps} {...attrs}>
+		<slot {builder} {attrs} />
 	</div>
 {/if}

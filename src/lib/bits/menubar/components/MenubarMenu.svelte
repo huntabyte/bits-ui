@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { MenuProps } from "../types.js";
-	import { ctx } from "../ctx.js";
+	import { setMenuCtx } from "../ctx.js";
 	type $$Props = MenuProps;
 
 	export let closeOnOutsideClick: $$Props["closeOnOutsideClick"] = undefined;
@@ -20,7 +20,7 @@
 	const {
 		states: { open: localOpen },
 		updateOption
-	} = ctx.setMenu({
+	} = setMenuCtx({
 		closeOnOutsideClick,
 		closeOnEscape,
 		portal,

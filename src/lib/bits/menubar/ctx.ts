@@ -12,42 +12,46 @@ import {
 	type Checkbox as CheckboxReturn
 } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
-import { generateId, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
+import {
+	createBitAttrs,
+	generateId,
+	getOptionUpdater,
+	removeUndefined
+} from "$lib/internal/index.js";
 import type { Readable } from "svelte/store";
 
-const NAME = "Menubar";
-const MENU_NAME = "MenubarMenu";
-const SUB_NAME = "MenubarSub";
-const CHECKBOX_ITEM_NAME = "MenubarCheckboxItem";
-const RADIO_GROUP_NAME = "MenubarRadioGroup";
-const RADIO_ITEM_NAME = "MenubarRadioItem";
-const GROUP_NAME = "MenubarGroup";
+const NAME = "menubar";
+const MENU_NAME = "menubar-menu";
+const SUB_NAME = "menubar-sub";
+const CHECKBOX_ITEM_NAME = "menubar-checkbox-item";
+const RADIO_GROUP_NAME = "menubar-radio-group";
+const RADIO_ITEM_NAME = "menubar-radio-item";
+const GROUP_NAME = "menubar-group";
+const PARTS = [
+	"root",
+	"arrow",
+	"checkbox-indicator",
+	"checkbox-item",
+	"content",
+	"group",
+	"item",
+	"label",
+	"radio-group",
+	"radio-item",
+	"separator",
+	"sub-content",
+	"sub-trigger",
+	"trigger"
+] as const;
 
-export const ctx = {
-	get,
-	set,
-	setSub,
-	getSub,
-	setMenu,
-	getMenu,
-	setArrow,
-	setGroup,
-	getContent,
-	setRadioItem,
-	getGroupLabel,
-	setRadioGroup,
-	getSubContent,
-	setCheckboxItem,
-	getRadioIndicator,
-	getCheckboxIndicator
-};
+export const getAttrs = createBitAttrs(NAME, PARTS);
 
 type GetReturn = MenubarReturn;
 type GetMenuReturn = MenubarMenuReturn;
 type GetSubmenuReturn = MenubarSubReturn;
 type GetRadioGroupReturn = MenubarRadioGroupReturn;
 
-function set(props: MenubarProps) {
+export function setCtx(props: MenubarProps) {
 	const menubar = createMenubar(removeUndefined(props));
 	setContext(NAME, menubar);
 
@@ -56,14 +60,14 @@ function set(props: MenubarProps) {
 		updateOption: getOptionUpdater(menubar.options)
 	};
 }
-function get() {
+export function getCtx() {
 	return getContext<GetReturn>(NAME);
 }
 
-function setMenu(props: CreateMenubarMenuProps) {
+export function setMenuCtx(props: CreateMenubarMenuProps) {
 	const {
 		builders: { createMenu }
-	} = get();
+	} = getCtx();
 
 	const menu = createMenu({ ...removeUndefined(props), forceVisible: false });
 	setContext(MENU_NAME, menu);
@@ -73,14 +77,14 @@ function setMenu(props: CreateMenubarMenuProps) {
 	};
 }
 
-function getMenu() {
+export function getMenuCtx() {
 	return getContext<GetMenuReturn>(MENU_NAME);
 }
 
-function setSub(props: CreateMenubarSubmenuProps) {
+export function setSubMenuCtx(props: CreateMenubarSubmenuProps) {
 	const {
 		builders: { createSubmenu }
-	} = getMenu();
+	} = getMenuCtx();
 	const sub = createSubmenu(removeUndefined(props));
 	setContext(SUB_NAME, sub);
 	return {
@@ -88,41 +92,41 @@ function setSub(props: CreateMenubarSubmenuProps) {
 		updateOption: getOptionUpdater(sub.options)
 	};
 }
-function getSub() {
+export function getSubMenuCtx() {
 	return getContext<GetSubmenuReturn>(SUB_NAME);
 }
 
-function setRadioGroup(props: CreateMenuRadioGroupProps) {
+export function setRadioGroupCtx(props: CreateMenuRadioGroupProps) {
 	const {
 		builders: { createMenuRadioGroup }
-	} = getMenu();
+	} = getMenuCtx();
 	const radioGroup = createMenuRadioGroup(removeUndefined(props));
 	setContext(RADIO_GROUP_NAME, radioGroup);
 	return radioGroup;
 }
 
-function setRadioItem(value: string) {
+export function setRadioItemCtx(value: string) {
 	const radioGroup = getContext<GetRadioGroupReturn>(RADIO_GROUP_NAME);
 	setContext(RADIO_ITEM_NAME, { isChecked: radioGroup.helpers.isChecked, value });
 	return radioGroup;
 }
 
-function getContent(sideOffset = 5) {
-	const menu = getMenu();
+export function getContent(sideOffset = 5) {
+	const menu = getMenuCtx();
 	menu.options.positioning.update((prev) => ({ ...prev, gutter: sideOffset }));
 	return menu;
 }
 
-function getSubContent(sideOffset = -1) {
-	const submenu = getSub();
+export function getSubContent(sideOffset = -1) {
+	const submenu = getSubMenuCtx();
 	submenu.options.positioning.update((prev) => ({ ...prev, gutter: sideOffset }));
 	return submenu;
 }
 
-function setCheckboxItem(props: CreateMenuCheckboxItemProps) {
+export function setCheckboxItem(props: CreateMenuCheckboxItemProps) {
 	const {
 		builders: { createCheckboxItem }
-	} = getMenu();
+	} = getMenuCtx();
 	const checkboxItem = createCheckboxItem(removeUndefined(props));
 	setContext(CHECKBOX_ITEM_NAME, checkboxItem.states.checked);
 
@@ -132,35 +136,35 @@ function setCheckboxItem(props: CreateMenuCheckboxItemProps) {
 	};
 }
 
-function getCheckboxIndicator() {
+export function getCheckboxIndicator() {
 	return getContext<CheckboxReturn["states"]["checked"]>(CHECKBOX_ITEM_NAME);
 }
 
-function getRadioIndicator() {
+export function getRadioIndicator() {
 	return getContext<{
 		isChecked: Readable<(itemValue: string) => boolean>;
 		value: string;
 	}>(RADIO_ITEM_NAME);
 }
-function setGroup() {
+export function setGroupCtx() {
 	const {
 		elements: { group }
-	} = getMenu();
+	} = getMenuCtx();
 	const id = generateId();
 	setContext(GROUP_NAME, id);
 	return { group, id };
 }
 
-function getGroupLabel() {
+export function getGroupLabel() {
 	const id = getContext<string>(GROUP_NAME) ?? generateId();
 	const {
 		elements: { groupLabel }
-	} = getMenu();
+	} = getMenuCtx();
 	return { groupLabel, id };
 }
 
-function setArrow(size = 8) {
-	const menu = getMenu();
+export function setArrow(size = 8) {
+	const menu = getMenuCtx();
 	menu.options.arrowSize.set(size);
 	return menu;
 }

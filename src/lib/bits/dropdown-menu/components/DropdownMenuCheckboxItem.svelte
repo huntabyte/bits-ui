@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { ctx } from "../ctx.js";
+	import { setCheckboxItem, getAttrs } from "../ctx.js";
 	import type { CheckboxItemEvents, CheckboxItemProps } from "../types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
 
@@ -15,7 +15,7 @@
 		elements: { checkboxItem },
 		states: { checked: localChecked },
 		updateOption
-	} = ctx.setCheckboxItem({
+	} = setCheckboxItem({
 		disabled,
 		defaultChecked: checked,
 		onCheckedChange: ({ next }) => {
@@ -29,15 +29,18 @@
 
 	$: checked !== undefined && localChecked.set(checked);
 	$: updateOption("disabled", disabled);
+
+	$: builder = $checkboxItem;
+	const attrs = getAttrs("checkbox-item");
 </script>
 
-<!-- svelte-ignore a11y-no-static-element-interactions applied by melt's action/store -->
 {#if asChild}
-	<slot builder={$checkboxItem} />
+	<slot {builder} {attrs} />
 {:else}
-	{@const builder = $checkboxItem}
 	<div
 		use:melt={builder}
+		{...$$restProps}
+		{...attrs}
 		on:m-click={dispatch}
 		on:m-focusin={dispatch}
 		on:m-focusout={dispatch}
@@ -45,8 +48,7 @@
 		on:m-pointerdown={dispatch}
 		on:m-pointerleave={dispatch}
 		on:m-pointermove={dispatch}
-		{...$$restProps}
 	>
-		<slot {builder} />
+		<slot {builder} {attrs} />
 	</div>
 {/if}

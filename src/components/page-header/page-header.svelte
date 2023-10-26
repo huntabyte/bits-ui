@@ -4,6 +4,6 @@
 	export { className as class };
 </script>
 
-<section class={cn("relative pt-[72px]", className)}>
+<section class={cn("relative", className)}>
 	<slot />
 </section>

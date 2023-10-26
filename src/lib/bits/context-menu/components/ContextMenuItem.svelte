@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { ctx } from "../ctx.js";
+	import { getCtx, getAttrs } from "../ctx.js";
 	import type { ItemEvents, ItemProps } from "../types.js";
 	import { disabledAttrs } from "$lib/internal/helpers.js";
 	import { createDispatcher } from "$lib/internal/events.js";
@@ -11,18 +11,19 @@
 	export let disabled = false;
 	const {
 		elements: { item }
-	} = ctx.get();
+	} = getCtx();
 	const dispatch = createDispatcher();
+	$: builder = $item;
+	$: attrs = { ...getAttrs("item"), ...disabledAttrs(disabled) };
 </script>
 
-<!-- svelte-ignore a11y-no-static-element-interactions / role applied by melt store-->
 {#if asChild}
-	<slot builder={$item} />
+	<slot {builder} {attrs} />
 {:else}
-	{@const builder = $item}
 	<div
 		use:melt={builder}
 		{...$$restProps}
+		{...attrs}
 		on:m-click={dispatch}
 		on:m-focusin={dispatch}
 		on:m-focusout={dispatch}
@@ -30,8 +31,7 @@
 		on:m-pointerdown={dispatch}
 		on:m-pointerleave={dispatch}
 		on:m-pointermove={dispatch}
-		{...disabledAttrs(disabled)}
 	>
-		<slot {builder} />
+		<slot {builder} {attrs} />
 	</div>
 {/if}

@@ -1,15 +1,19 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { ctx } from "../ctx.js";
+	import { getCtx, getAttrs } from "../ctx.js";
 	import type { SeparatorProps } from "../types.js";
 
 	type $$Props = SeparatorProps;
 	export let asChild = false;
-	const separator = ctx.get().elements.separator;
+	const {
+		elements: { separator }
+	} = getCtx();
+	$: builder = $separator;
+	const attrs = getAttrs("separator");
 </script>
 
 {#if asChild}
-	<slot builder={$separator} />
+	<slot {builder} {attrs} />
 {:else}
-	<div use:melt={$separator} {...$$restProps} />
+	<div use:melt={$separator} {...$$restProps} {...attrs} />
 {/if}

@@ -1,5 +1,6 @@
-import { createLabel } from "@melt-ui/svelte";
+import { createBitAttrs } from "$lib/internal";
 
-export const ctx = {
-	get: () => createLabel()
-};
+const NAME = "label";
+const PARTS = ["root"];
+
+export const getAttrs = createBitAttrs(NAME, PARTS);

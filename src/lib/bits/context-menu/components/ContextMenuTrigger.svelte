@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { ctx } from "../ctx.js";
+	import { getCtx, getAttrs } from "../ctx.js";
 	import type { TriggerEvents, TriggerProps } from "../types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
 
@@ -9,24 +9,26 @@
 	export let asChild = false;
 	const {
 		elements: { trigger }
-	} = ctx.get();
+	} = getCtx();
 	const dispatch = createDispatcher();
+	$: builder = $trigger;
+	const attrs = getAttrs("trigger");
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions applied by melt's action/store -->
 {#if asChild}
-	<slot builder={$trigger} />
+	<slot {builder} {attrs} />
 {:else}
-	{@const builder = $trigger}
 	<div
 		use:melt={builder}
 		{...$$restProps}
+		{...attrs}
 		on:m-contextmenu={dispatch}
 		on:m-pointercancel={dispatch}
 		on:m-pointerdown={dispatch}
 		on:m-pointermove={dispatch}
 		on:m-pointerup={dispatch}
 	>
-		<slot {builder} />
+		<slot {builder} {attrs} />
 	</div>
 {/if}

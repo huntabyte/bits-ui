@@ -1,12 +1,13 @@
 <script lang="ts">
-	import { ctx } from "../ctx.js";
+	import { getCtx, getAttrs } from "../ctx.js";
 	import type { InputProps } from "../types.js";
 
 	type $$Props = InputProps;
 
 	const {
 		states: { checked }
-	} = ctx.get();
+	} = getCtx();
+	const attrs = getAttrs("input");
 </script>
 
-<input {...$$restProps} value={$checked} hidden />
+<input {...$$restProps} value={$checked} hidden {...attrs} />

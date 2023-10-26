@@ -1,4 +1,9 @@
-import { generateId, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
+import {
+	createBitAttrs,
+	generateId,
+	getOptionUpdater,
+	removeUndefined
+} from "$lib/internal/index.js";
 import {
 	type CreateDropdownSubmenuProps as DropdownSubmenuProps,
 	type DropdownMenu as DropdownMenuReturn,
@@ -13,39 +18,40 @@ import {
 import { getContext, setContext } from "svelte";
 import type { Readable } from "svelte/store";
 
-const NAME = "DropdownMenu";
-const SUB_NAME = "DropdownSubmenu";
-const RADIO_GROUP_NAME = "DropdownRadioGroup";
-const CHECKBOX_ITEM_NAME = "DropdownCheckboxItem";
-const RADIO_ITEM_NAME = "DropdownRadioItem";
-const GROUP_NAME = "DropdownGroup";
+const NAME = "dropdown-menu";
+const SUB_NAME = "dropdown-menu-submenu";
+const RADIO_GROUP_NAME = "dropdown-menu-radiogroup";
+const CHECKBOX_ITEM_NAME = "dropdown-menu-checkboxitem";
+const RADIO_ITEM_NAME = "dropdown-menu-radioitem";
+const GROUP_NAME = "dropdown-menu-group";
 
-export const ctx = {
-	get,
-	set,
-	setSub,
-	getContent,
-	setRadioGroup,
-	setRadioItem,
-	getSubTrigger,
-	getSubContent,
-	setCheckboxItem,
-	getCheckboxIndicator,
-	getRadioIndicator,
-	setGroup,
-	getGroupLabel,
-	setArrow
-};
+const PARTS = [
+	"arrow",
+	"checkbox-indicator",
+	"checkbox-item",
+	"content",
+	"group",
+	"item",
+	"label",
+	"radio-group",
+	"radio-item",
+	"separator",
+	"sub-content",
+	"sub-trigger",
+	"trigger"
+] as const;
+
+export const getAttrs = createBitAttrs(NAME, PARTS);
 
 type GetReturn = DropdownMenuReturn;
 type GetSubReturn = DropdownSubmenuReturn;
 type GetRadioGroupReturn = DropdownRadioGroupReturn;
 
-function get() {
+export function getCtx() {
 	return getContext<GetReturn>(NAME);
 }
 
-function set(props: CreateDropdownMenuProps) {
+export function setCtx(props: CreateDropdownMenuProps) {
 	const dropdownMenu = createDropdownMenu({ ...removeUndefined(props), forceVisible: true });
 	setContext(NAME, dropdownMenu);
 	return {
@@ -54,10 +60,10 @@ function set(props: CreateDropdownMenuProps) {
 	};
 }
 
-function setSub(props: DropdownSubmenuProps) {
+export function setSubMenuCtx(props: DropdownSubmenuProps) {
 	const {
 		builders: { createSubmenu }
-	} = get();
+	} = getCtx();
 	const sub = createSubmenu(removeUndefined(props));
 	setContext(SUB_NAME, sub);
 	return {
@@ -66,50 +72,50 @@ function setSub(props: DropdownSubmenuProps) {
 	};
 }
 
-function setRadioGroup(props: DropdownRadioGroupProps) {
+export function setRadioGroupCtx(props: DropdownRadioGroupProps) {
 	const {
 		builders: { createMenuRadioGroup }
-	} = get();
+	} = getCtx();
 	const radioGroup = createMenuRadioGroup(props);
 	setContext(RADIO_GROUP_NAME, radioGroup);
 	return radioGroup;
 }
 
-function setRadioItem(value: string) {
+export function setRadioItem(value: string) {
 	const dropdownMenu = getContext<GetRadioGroupReturn>(RADIO_GROUP_NAME);
 	setContext(RADIO_ITEM_NAME, { isChecked: dropdownMenu.helpers.isChecked, value });
 	return dropdownMenu;
 }
 
-function getRadioIndicator() {
+export function getRadioIndicator() {
 	return getContext<{
 		isChecked: Readable<(itemValue: string) => boolean>;
 		value: string;
 	}>(RADIO_ITEM_NAME);
 }
 
-function getSubTrigger() {
+export function getSubTrigger() {
 	const submenu = getContext<GetSubReturn>(SUB_NAME);
 	return submenu;
 }
 
-function getContent(sideoffset = 5) {
-	const menu = get();
+export function getContent(sideoffset = 5) {
+	const menu = getCtx();
 	menu.options.positioning.update((prev) => ({ ...prev, gutter: sideoffset }));
 
 	return menu;
 }
 
-function getSubContent(sideOffset = -1) {
+export function getSubContent(sideOffset = -1) {
 	const submenu = getContext<GetSubReturn>(SUB_NAME);
 	submenu.options.positioning.update((prev) => ({ ...prev, gutter: sideOffset }));
 	return submenu;
 }
 
-function setCheckboxItem(props: DropdownCheckboxItemProps) {
+export function setCheckboxItem(props: DropdownCheckboxItemProps) {
 	const {
 		builders: { createCheckboxItem }
-	} = get();
+	} = getCtx();
 	const checkboxItem = createCheckboxItem(removeUndefined(props));
 	setContext(CHECKBOX_ITEM_NAME, checkboxItem.states.checked);
 
@@ -119,28 +125,28 @@ function setCheckboxItem(props: DropdownCheckboxItemProps) {
 	};
 }
 
-function getCheckboxIndicator() {
+export function getCheckboxIndicator() {
 	return getContext<CheckboxReturn["states"]["checked"]>(CHECKBOX_ITEM_NAME);
 }
-function setGroup() {
+export function setGroupCtx() {
 	const {
 		elements: { group }
-	} = get();
+	} = getCtx();
 	const id = generateId();
 	setContext(GROUP_NAME, id);
 	return { group, id };
 }
 
-function getGroupLabel() {
+export function getGroupLabel() {
 	const id = getContext<string>(GROUP_NAME) ?? generateId();
 	const {
 		elements: { groupLabel }
-	} = get();
+	} = getCtx();
 	return { groupLabel, id };
 }
 
-function setArrow(size = 8) {
-	const menu = get();
+export function setArrow(size = 8) {
+	const menu = getCtx();
 	menu.options.arrowSize.set(size);
 	return menu;
 }

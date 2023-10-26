@@ -3,7 +3,7 @@
 
 	import { melt } from "@melt-ui/svelte";
 	import type { Transition } from "$lib/internal/types.js";
-	import { ctx } from "../ctx.js";
+	import { getContent, getAttrs } from "../ctx.js";
 	import type { ContentEvents, ContentProps } from "../types.js";
 
 	type T = $$Generic<Transition>;
@@ -27,59 +27,60 @@
 	const {
 		elements: { menu },
 		states: { open }
-	} = ctx.getContent(sideOffset);
+	} = getContent(sideOffset);
+
+	$: builder = $menu;
+	const attrs = getAttrs("content");
 
 	const dispatch = createDispatcher();
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions applied by melt's action/store -->
 {#if asChild && $open}
-	{@const builder = $menu}
-	<slot {builder} />
+	<slot {builder} {attrs} />
 {:else if transition && $open}
-	{@const builder = $menu}
 	<div
 		transition:transition={transitionConfig}
 		use:melt={builder}
 		{...$$restProps}
+		{...attrs}
 		on:m-keydown={dispatch}
 	>
-		<slot {builder} />
+		<slot {builder} {attrs} />
 	</div>
 {:else if inTransition && outTransition && $open}
-	{@const builder = $menu}
 	<div
 		in:inTransition={inTransitionConfig}
 		out:outTransition={outTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
+		{...attrs}
 		on:m-keydown={dispatch}
 	>
-		<slot {builder} />
+		<slot {builder} {attrs} />
 	</div>
 {:else if inTransition && $open}
-	{@const builder = $menu}
 	<div
 		in:inTransition={inTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
+		{...attrs}
 		on:m-keydown={dispatch}
 	>
-		<slot {builder} />
+		<slot {builder} {attrs} />
 	</div>
 {:else if outTransition && $open}
-	{@const builder = $menu}
 	<div
 		out:outTransition={outTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
+		{...attrs}
 		on:m-keydown={dispatch}
 	>
-		<slot {builder} />
+		<slot {builder} {attrs} />
 	</div>
 {:else if $open}
-	{@const builder = $menu}
-	<div use:melt={builder} {...$$restProps} on:m-keydown={dispatch}>
-		<slot {builder} />
+	<div use:melt={builder} {...$$restProps} {...attrs} on:m-keydown={dispatch}>
+		<slot {builder} {attrs} />
 	</div>
 {/if}

@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@melt-ui/svelte':
-    specifier: 0.56.0
-    version: 0.56.0(svelte@4.2.2)
+    specifier: 0.57.0
+    version: 0.57.0(svelte@4.2.2)
   nanoid:
     specifier: ^5.0.2
     version: 5.0.2
@@ -21,7 +21,7 @@ devDependencies:
     version: 0.16.5(svelte@4.2.2)
   '@melt-ui/pp':
     specifier: ^0.1.2
-    version: 0.1.2(@melt-ui/svelte@0.56.0)(svelte@4.2.2)
+    version: 0.1.2(@melt-ui/svelte@0.57.0)(svelte@4.2.2)
   '@playwright/test':
     specifier: ^1.28.1
     version: 1.36.2
@@ -79,6 +79,9 @@ devDependencies:
   lucide-svelte:
     specifier: ^0.268.0
     version: 0.268.0(svelte@4.2.2)
+  phosphor-svelte:
+    specifier: ^1.3.0
+    version: 1.3.0(svelte@4.2.2)
   postcss:
     specifier: ^8.4.31
     version: 8.4.31
@@ -1013,19 +1016,19 @@ packages:
       - supports-color
     dev: true
 
-  /@melt-ui/pp@0.1.2(@melt-ui/svelte@0.56.0)(svelte@4.2.2):
+  /@melt-ui/pp@0.1.2(@melt-ui/svelte@0.57.0)(svelte@4.2.2):
     resolution: {integrity: sha512-GZeqp7UWLNZUC2dJpREnZrWMR88vy27WO7C3cIBz4KW3/CFD19FjNkd3VbSRfcRryrMkdnEs9nu2VUa8/0u58w==}
     engines: {pnpm: '>=8.6.3'}
     peerDependencies:
       '@melt-ui/svelte': '>= 0.29.0'
       svelte: ^3.55.0 || ^4.0.0
     dependencies:
-      '@melt-ui/svelte': 0.56.0(svelte@4.2.2)
+      '@melt-ui/svelte': 0.57.0(svelte@4.2.2)
       svelte: 4.2.2
     dev: true
 
-  /@melt-ui/svelte@0.56.0(svelte@4.2.2):
-    resolution: {integrity: sha512-7T/hGDaeMzHG+C53J1Lanlp9PUe8Mr926LgLvdmQewfi+2n/50bsA9NO/Bk2jZWHLlwRKfyn1th+8eWnmCREQw==}
+  /@melt-ui/svelte@0.57.0(svelte@4.2.2):
+    resolution: {integrity: sha512-vfrkYw+sqYTwR1U4T5lkaHsNN6ZnchnRaKjalf1t0IrOVX/QlkyhUS9ZFlhaIUp+qam0mQW1H+f+AzNz/HTNEA==}
     peerDependencies:
       svelte: '>=3 <5'
     dependencies:
@@ -5275,6 +5278,14 @@ packages:
       '@types/estree': 1.0.1
       estree-walker: 3.0.3
       is-reference: 3.0.1
+
+  /phosphor-svelte@1.3.0(svelte@4.2.2):
+    resolution: {integrity: sha512-aW6/O2+j3TCA8oku8CwkMUvy00OHUa5CqpeqBr/Y9nT8wT/eTKZIBGt2G+JJddEHs0KkSBr7oIYdJUsUJY80fQ==}
+    peerDependencies:
+      svelte: '>=3'
+    dependencies:
+      svelte: 4.2.2
+    dev: true
 
   /picocolors@1.0.0:
     resolution: {integrity: sha512-1fygroTLlHu66zi26VoTDv8yRgm0Fccecssto+MhsZ0D/DGW2sm8E8AjW7NU5VVTRt5GxbeZ5qBuJr+HyLYkjQ==}

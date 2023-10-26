@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { ctx } from "../ctx.js";
+	import { setCtx, getAttrs } from "../ctx.js";
 	import type { Props } from "../types.js";
 
 	type $$Props = Props;
@@ -14,7 +14,7 @@
 		elements: { root },
 		states: { value: localValue },
 		updateOption
-	} = ctx.set({
+	} = setCtx({
 		max,
 		defaultValue: value,
 		onValueChange: ({ next }) => {
@@ -26,13 +26,15 @@
 
 	$: value !== undefined && localValue.set(value);
 	$: updateOption("max", max);
+
+	$: builder = $root;
+	const attrs = getAttrs("root");
 </script>
 
 {#if asChild}
-	<slot builder={$root} />
+	<slot {builder} {attrs} />
 {:else}
-	{@const builder = $root}
-	<div use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+	<div use:melt={builder} {...$$restProps} {...attrs}>
+		<slot {builder} {attrs} />
 	</div>
 {/if}

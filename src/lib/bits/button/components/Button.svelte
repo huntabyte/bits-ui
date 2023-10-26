@@ -7,6 +7,9 @@
 	export let href: $$Props["href"] = undefined;
 	export let type: $$Props["type"] = undefined;
 	export let builders: $$Props["builders"] = [];
+	const attrs = {
+		"data-bits-button-root": ""
+	};
 </script>
 
 {#if builders && builders.length}
@@ -25,6 +28,7 @@
 		use:builderActions={{ builders }}
 		{...getAttrs(builders)}
 		{...$$restProps}
+		{...attrs}
 	>
 		<slot />
 	</svelte:element>
@@ -42,6 +46,7 @@
 		on:mouseleave
 		tabindex="0"
 		{...$$restProps}
+		{...attrs}
 	>
 		<slot />
 	</svelte:element>

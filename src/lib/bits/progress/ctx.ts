@@ -1,11 +1,12 @@
 import { createProgress, type CreateProgressProps } from "@melt-ui/svelte";
-import { getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
+import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 
-export const ctx = {
-	set
-};
+const NAME = "progress";
+const PARTS = ["root"] as const;
 
-function set(props: CreateProgressProps) {
+export const getAttrs = createBitAttrs(NAME, PARTS);
+
+export function setCtx(props: CreateProgressProps) {
 	const progress = createProgress(removeUndefined(props));
 
 	return {

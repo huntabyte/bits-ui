@@ -1,18 +1,22 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { ctx } from "../ctx.js";
+	import { getCtx, getAttrs } from "../ctx.js";
 	import type { ListProps } from "../types.js";
 	type $$Props = ListProps;
 
 	export let asChild = false;
-	const list = ctx.get().elements.list;
+	const {
+		elements: { list }
+	} = getCtx();
+
+	$: builder = $list;
+	const attrs = getAttrs("list");
 </script>
 
 {#if asChild}
-	<slot builder={$list} />
+	<slot {builder} {attrs} />
 {:else}
-	{@const builder = $list}
-	<div use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+	<div use:melt={builder} {...$$restProps} {...attrs}>
+		<slot {builder} {attrs} />
 	</div>
 {/if}

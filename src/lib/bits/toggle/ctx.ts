@@ -1,17 +1,15 @@
-import { getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
+import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 import { createToggle, type CreateToggleProps, type Toggle as ToggleReturn } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
 
-const NAME = "Toggle";
+const NAME = "toggle";
+const PARTS = ["root", "input"] as const;
 
-export const ctx = {
-	set,
-	get
-};
+export const getAttrs = createBitAttrs(NAME, PARTS);
 
 type GetReturn = ToggleReturn;
 
-function set(props: CreateToggleProps) {
+export function setCtx(props: CreateToggleProps) {
 	const toggle = createToggle(removeUndefined(props));
 	setContext(NAME, toggle);
 	return {
@@ -19,6 +17,7 @@ function set(props: CreateToggleProps) {
 		updateOption: getOptionUpdater(toggle.options)
 	};
 }
-function get() {
+
+export function getCtx() {
 	return getContext<GetReturn>(NAME);
 }

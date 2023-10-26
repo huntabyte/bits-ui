@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { ctx } from "../ctx.js";
+	import { melt, createLabel } from "@melt-ui/svelte";
+	import { getAttrs } from "../ctx.js";
 	import type { Events, Props } from "../types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
 
@@ -9,16 +9,17 @@
 	export let asChild = false;
 	const {
 		elements: { root }
-	} = ctx.get();
+	} = createLabel();
+
 	const dispatch = createDispatcher();
+	$: builder = $root;
+	const attrs = getAttrs("root");
 </script>
 
-<!-- svelte-ignore a11y-no-static-element-interactions / applied by melt's builder-->
 {#if asChild}
-	<slot builder={$root} />
+	<slot {builder} {attrs} />
 {:else}
-	{@const builder = $root}
-	<label use:melt={builder} {...$$restProps} on:m-mousedown={dispatch}>
-		<slot {builder} />
+	<label use:melt={builder} {...$$restProps} {...attrs} on:m-mousedown={dispatch}>
+		<slot {builder} {attrs} />
 	</label>
 {/if}

@@ -1,16 +1,15 @@
 import { createTabs, type CreateTabsProps, type Tabs as TabsReturn } from "@melt-ui/svelte";
-import { getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
+import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 import { getContext, setContext } from "svelte";
 
-const NAME = "Tabs";
+const NAME = "tabs";
+const PARTS = ["root", "content", "list", "trigger"] as const;
 
-export const ctx = {
-	set,
-	get
-};
+export const getAttrs = createBitAttrs(NAME, PARTS);
+
 type GetReturn = TabsReturn;
 
-function set(props: CreateTabsProps) {
+export function setCtx(props: CreateTabsProps) {
 	const tabs = createTabs(removeUndefined(props));
 	setContext(NAME, tabs);
 	return {
@@ -19,6 +18,6 @@ function set(props: CreateTabsProps) {
 	};
 }
 
-function get() {
+export function getCtx() {
 	return getContext<GetReturn>(NAME);
 }

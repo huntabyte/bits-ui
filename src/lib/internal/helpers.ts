@@ -4,6 +4,7 @@ import type { Writable } from "svelte/store";
 import type { ActionReturn } from "svelte/action";
 import type { Builder, Transition, TransitionParams, TransitionTimesStore } from "./types.js";
 import { isBrowser } from "./is.js";
+import type { Bit } from "@/content/api-reference/index.js";
 
 export function noop() {
 	// do nothing
@@ -81,13 +82,6 @@ export function getAttrs(builders: Builder[]) {
 
 export function disabledAttrs(disabled: boolean) {
 	return disabled ? { "aria-disabled": true, "data-disabled": "" } : {};
-}
-
-export function bitWrap<T extends object>(storeValues: T, bit: string): T {
-	return {
-		...storeValues,
-		[`data-bits-${bit}`]: ""
-	};
 }
 
 export function sleep(ms: number) {
@@ -181,4 +175,17 @@ function calcTime(delay: number | undefined, duration: number | undefined) {
 	const numDuration = duration ?? 0;
 
 	return numDelay + numDuration;
+}
+
+export function createBitAttrs<T extends readonly string[]>(bit: Bit, parts: T) {
+	const attrs: Record<string, Record<string, string>> = {};
+	parts.forEach((part) => {
+		attrs[part] = {
+			[`data-bits-${bit}-${part}`]: ""
+		};
+	});
+
+	// return a getter that given a part returns the attrs for that part
+
+	return (part: T[number]) => attrs[part];
 }

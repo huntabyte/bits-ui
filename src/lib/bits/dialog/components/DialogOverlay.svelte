@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import type { Transition } from "$lib/internal/index.js";
-	import { ctx } from "../ctx.js";
+	import { getCtx, getAttrs } from "../ctx.js";
 	import type { OverlayProps } from "../types.js";
 
 	type T = $$Generic<Transition>;
@@ -21,30 +21,28 @@
 	const {
 		elements: { overlay },
 		tOpen
-	} = ctx.get();
+	} = getCtx();
+
+	$: builder = $overlay;
+	const attrs = getAttrs("overlay");
 </script>
 
 {#if asChild && $tOpen}
-	{@const builder = $overlay}
-	<slot {builder} />
+	<slot {builder} {attrs} />
 {:else if transition && $tOpen}
-	{@const builder = $overlay}
-	<div transition:transition={transitionConfig} use:melt={builder} {...$$restProps} />
+	<div transition:transition={transitionConfig} use:melt={builder} {...$$restProps} {...attrs} />
 {:else if inTransition && outTransition && $tOpen}
-	{@const builder = $overlay}
 	<div
 		in:inTransition={inTransitionConfig}
 		out:outTransition={outTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
+		{...attrs}
 	/>
 {:else if inTransition && $tOpen}
-	{@const builder = $overlay}
-	<div in:inTransition={inTransitionConfig} use:melt={builder} {...$$restProps} />
+	<div in:inTransition={inTransitionConfig} use:melt={builder} {...$$restProps} {...attrs} />
 {:else if outTransition && $tOpen}
-	{@const builder = $overlay}
-	<div out:outTransition={outTransitionConfig} use:melt={builder} {...$$restProps} />
+	<div out:outTransition={outTransitionConfig} use:melt={builder} {...$$restProps} {...attrs} />
 {:else if $tOpen}
-	{@const builder = $overlay}
-	<div use:melt={builder} {...$$restProps} />
+	<div use:melt={builder} {...$$restProps} {...attrs} />
 {/if}

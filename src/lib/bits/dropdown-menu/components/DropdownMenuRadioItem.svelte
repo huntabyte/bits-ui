@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { ctx } from "../ctx.js";
+	import { setRadioItem, getAttrs } from "../ctx.js";
 	import type { RadioItemEvents, RadioItemProps } from "../types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
 
@@ -9,9 +9,14 @@
 	export let value: $$Props["value"];
 	export let disabled = false;
 	export let asChild = false;
+
 	const {
 		elements: { radioItem }
-	} = ctx.setRadioItem(value);
+	} = setRadioItem(value);
+
+	$: builder = $radioItem({ value, disabled });
+
+	const attrs = getAttrs("radio-item");
 
 	const dispatch = createDispatcher();
 </script>
@@ -19,12 +24,12 @@
 <!-- svelte-ignore a11y-no-static-element-interactions applied by melt's action/store -->
 
 {#if asChild}
-	<slot builder={$radioItem} />
+	<slot {builder} {attrs} />
 {:else}
-	{@const builder = $radioItem({ value, disabled })}
 	<div
 		use:melt={builder}
 		{...$$restProps}
+		{...attrs}
 		on:m-click={dispatch}
 		on:m-focusin={dispatch}
 		on:m-focusout={dispatch}
@@ -33,6 +38,6 @@
 		on:m-pointerleave={dispatch}
 		on:m-pointermove={dispatch}
 	>
-		<slot {builder} />
+		<slot {builder} {attrs} />
 	</div>
 {/if}

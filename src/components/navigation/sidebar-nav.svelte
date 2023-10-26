@@ -6,9 +6,9 @@
 
 {#if items.length}
 	<aside
-		class="hidden overflow-y-auto lg:block lg:max-h-[calc(100vh-64px)] lg:sticky lg:top-[60px] py-10 pr-2"
+		class="fixed top-14 z-30 hidden h-[calc(100vh-3.5rem)] w-full shrink-0 md:sticky md:block overflow-y-auto border-r border-border"
 	>
-		<div class="relative">
+		<div class="h-full py-6 lg:py-8 pr-8">
 			<nav class="space-y-3">
 				<div class="flex flex-col w-full">
 					{#each items as item, index (index)}

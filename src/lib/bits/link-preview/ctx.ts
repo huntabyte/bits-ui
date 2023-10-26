@@ -1,4 +1,4 @@
-import { getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
+import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 import {
 	createLinkPreview,
 	type CreateLinkPreviewProps,
@@ -6,34 +6,30 @@ import {
 } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
 
-const NAME = "hovercard";
-
-export const ctx = {
-	set,
-	get,
-	setArrow
-};
+const NAME = "link-preview";
+const PARTS = ["arrow", "content", "trigger"];
+export const getAttrs = createBitAttrs(NAME, PARTS);
 
 type GetReturn = LinkPreviewReturn;
 
-function get() {
+export function getCtx() {
 	return getContext<GetReturn>(NAME);
 }
 
-function set(props: CreateLinkPreviewProps) {
-	const hovercard = createLinkPreview({
+export function setCtx(props: CreateLinkPreviewProps) {
+	const linkPreview = createLinkPreview({
 		...removeUndefined(props),
 		forceVisible: true
 	});
-	setContext(NAME, hovercard);
+	setContext(NAME, linkPreview);
 	return {
-		...hovercard,
-		updateOption: getOptionUpdater(hovercard.options)
+		...linkPreview,
+		updateOption: getOptionUpdater(linkPreview.options)
 	};
 }
 
-function setArrow(size = 8) {
-	const linkPreview = get();
+export function setArrow(size = 8) {
+	const linkPreview = getCtx();
 	linkPreview.options.arrowSize.set(size);
 	return linkPreview;
 }

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { ctx } from "../ctx.js";
+	import { setItemCtx, getAttrs } from "../ctx.js";
 	import type { ItemEvents, ItemProps } from "../types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
 
@@ -11,21 +11,24 @@
 	export let asChild = false;
 	const {
 		elements: { item }
-	} = ctx.setItem(value);
+	} = setItemCtx(value);
 	const dispatch = createDispatcher();
+
+	$: builder = $item({ value, disabled });
+	const attrs = getAttrs("item");
 </script>
 
 {#if asChild}
-	<slot builder={$item} />
+	<slot {builder} {attrs} />
 {:else}
-	{@const builder = $item({ value, disabled })}
 	<button
 		use:melt={builder}
 		{...$$restProps}
+		{...attrs}
 		on:m-click={dispatch}
 		on:m-focus={dispatch}
 		on:m-keydown={dispatch}
 	>
-		<slot {builder} />
+		<slot {builder} {attrs} />
 	</button>
 {/if}

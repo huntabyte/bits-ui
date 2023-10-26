@@ -1,12 +1,14 @@
 <script lang="ts">
-	import { ctx } from "../ctx.js";
+	import { getCtx, getAttrs } from "../ctx.js";
 	import type { InputProps } from "../types.js";
 
 	type $$Props = InputProps;
 
 	const {
 		states: { pressed }
-	} = ctx.get();
+	} = getCtx();
+
+	const attrs = getAttrs("input");
 </script>
 
-<input {...$$restProps} value={$pressed} hidden />
+<input value={$pressed} hidden {...$$restProps} {...attrs} />

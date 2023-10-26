@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ctx } from "../ctx.js";
+	import { getCtx, getAttrs } from "../ctx.js";
 	import type { ValueProps } from "../types.js";
 
 	type $$Props = ValueProps;
@@ -7,13 +7,16 @@
 	export let asChild = false;
 	const {
 		states: { selectedLabel }
-	} = ctx.get();
+	} = getCtx();
+
+	$: label = $selectedLabel;
+	const attrs = getAttrs("value");
 </script>
 
 {#if asChild}
-	<slot label={$selectedLabel} />
+	<slot {label} {attrs} />
 {:else}
-	<span {...$$restProps}>
-		{$selectedLabel ? $selectedLabel : placeholder}
+	<span {...$$restProps} {...attrs}>
+		{label ? label : placeholder}
 	</span>
 {/if}

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { ctx } from "../ctx.js";
+	import { setCtx, getAttrs } from "../ctx.js";
 	import type { Props } from "../types.js";
 
 	type $$Props = Props;
@@ -11,14 +11,17 @@
 	const {
 		elements: { root },
 		updateOption
-	} = ctx.get({ orientation, decorative });
+	} = setCtx({ orientation, decorative });
 
 	$: updateOption("orientation", orientation);
 	$: updateOption("decorative", decorative);
+
+	$: builder = $root;
+	const attrs = getAttrs("root");
 </script>
 
 {#if asChild}
-	<slot builder={$root} />
+	<slot {builder} {attrs} />
 {:else}
-	<div use:melt={$root} {...$$restProps} />
+	<div use:melt={builder} {...$$restProps} {...attrs} />
 {/if}
