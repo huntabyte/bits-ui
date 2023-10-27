@@ -15,6 +15,14 @@ type Props = Expand<
 	OmitOpen<CreatePopoverProps> & {
 		open?: boolean;
 		onOpenChange?: OnChangeFn<boolean>;
+		/**
+		 * Focus the trigger when `open` is programmatically set to false.
+		 * This is in addition to the automatic focus that occurs when you
+		 * don't programmatically set `open` to false.
+		 *
+		 * @default false;
+		 */
+		focusTriggerOnClose?: boolean;
 	}
 >;
 
