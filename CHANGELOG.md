@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.8.3
+
+### Patch Changes
+
+- Pass controlled `ids` as slot props to each `Component.Root` ([#145](https://github.com/huntabyte/bits-ui/pull/145))
+
 ## 0.8.2
 
 ### Patch Changes
