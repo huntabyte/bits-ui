@@ -15,7 +15,8 @@
 
 	const {
 		states: { open: localOpen },
-		updateOption
+		updateOption,
+		ids
 	} = setCtx({
 		defaultOpen: open,
 		positioning,
@@ -44,4 +45,4 @@
 	$: updateOption("portal", portal);
 </script>
 
-<slot />
+<slot {ids} />

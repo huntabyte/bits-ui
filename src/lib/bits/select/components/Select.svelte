@@ -23,7 +23,8 @@
 
 	const {
 		states: { open: localOpen, selected: localSelected },
-		updateOption
+		updateOption,
+		ids
 	} = setCtx({
 		required,
 		disabled,
@@ -72,4 +73,4 @@
 	$: updateOption("forceVisible", forceVisible);
 </script>
 
-<slot />
+<slot {ids} />

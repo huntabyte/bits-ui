@@ -17,7 +17,8 @@
 	const {
 		elements: { root },
 		states: { value: localValue },
-		updateOption
+		updateOption,
+		ids
 	} = setCtx({
 		disabled,
 		min,
@@ -46,9 +47,9 @@
 </script>
 
 {#if asChild}
-	<slot {builder} {attrs} />
+	<slot {builder} {attrs} {ids} />
 {:else}
 	<span use:melt={builder} {...$$restProps} {...attrs}>
-		<slot {builder} {attrs} />
+		<slot {builder} {attrs} {ids} />
 	</span>
 {/if}

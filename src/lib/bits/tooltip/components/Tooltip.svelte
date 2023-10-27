@@ -18,7 +18,8 @@
 
 	const {
 		states: { open: localOpen },
-		updateOption
+		updateOption,
+		ids
 	} = setCtx({
 		positioning,
 		arrowSize,
@@ -53,4 +54,4 @@
 	$: updateOption("disableHoverableContent", disableHoverableContent);
 </script>
 
-<slot />
+<slot {ids} />

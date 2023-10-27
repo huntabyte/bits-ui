@@ -22,7 +22,8 @@
 
 	const {
 		states: { open: localOpen },
-		updateOption
+		updateOption,
+		ids
 	} = setCtx({
 		closeOnEscape,
 		preventScroll,
@@ -73,4 +74,4 @@
 	$: updateOption("forceVisible", forceVisible);
 </script>
 
-<slot />
+<slot {ids} />
