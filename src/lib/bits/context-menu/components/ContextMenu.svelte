@@ -20,7 +20,8 @@
 
 	const {
 		states: { open: localOpen },
-		updateOption
+		updateOption,
+		ids
 	} = setCtx({
 		closeOnOutsideClick,
 		closeOnEscape,
@@ -60,4 +61,4 @@
 	$: updateOption("typeahead", typeahead);
 </script>
 
-<slot />
+<slot {ids} />
