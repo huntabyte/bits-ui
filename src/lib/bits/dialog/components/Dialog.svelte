@@ -22,7 +22,8 @@
 	let timeout = 0;
 	const {
 		states: { open: localOpen },
-		updateOption
+		updateOption,
+		ids
 	} = setCtx({
 		closeOnEscape,
 		preventScroll,
@@ -80,4 +81,4 @@
 	$: updateOption("closeFocus", closeFocus);
 </script>
 
-<slot />
+<slot {ids} />
