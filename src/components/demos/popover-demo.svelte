@@ -3,14 +3,17 @@
 	import * as Label from "@/components/ui/label";
 	import * as Button from "@/components/ui/button";
 	import * as Input from "@/components/ui/input";
+
+	let open = false;
 </script>
 
-<Popover.Root>
+<Popover.Root bind:open focusTriggerOnClose={true}>
 	<Popover.Trigger asChild let:builder>
 		<Button.Root builders={[builder]} variant="outline">Open</Button.Root>
 	</Popover.Trigger>
 	<Popover.Content class="w-80">
 		<div class="grid gap-4">
+			<button on:click={() => (open = false)}> close me </button>
 			<div class="space-y-2">
 				<h4 class="font-medium leading-none">Dimensions</h4>
 				<p class="text-sm text-muted-foreground">Set the dimensions for the layer.</p>

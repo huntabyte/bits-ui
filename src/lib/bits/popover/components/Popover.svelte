@@ -56,7 +56,19 @@
 		return next;
 	};
 
-	$: open !== undefined && localOpen.set(open);
+	$: open !== undefined &&
+		localOpen.update((curr) => {
+			if (open === undefined || curr === open) return curr;
+			if (open === false && focusTriggerOnClose && isBrowser) {
+				tick().then(() => {
+					const triggerEl = document.getElementById(trigger);
+					if (triggerEl) {
+						triggerEl.focus();
+					}
+				});
+			}
+			return open;
+		});
 
 	$: updateOption("positioning", positioning);
 	$: updateOption("arrowSize", arrowSize);
