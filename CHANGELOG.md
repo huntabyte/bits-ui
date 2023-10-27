@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.8.2
+
+### Patch Changes
+
+- add controlled popover focus prop ([#143](https://github.com/huntabyte/bits-ui/pull/143))
+
 ## 0.8.1
 
 ### Patch Changes
