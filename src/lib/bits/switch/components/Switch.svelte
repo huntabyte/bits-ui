@@ -47,6 +47,7 @@
 {:else}
 	<button
 		use:melt={builder}
+		type="button"
 		{...$$restProps}
 		{...attrs}
 		on:m-click={dispatch}

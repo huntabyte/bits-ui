@@ -7,6 +7,7 @@ import type {
 	OmitValue,
 	OnChangeFn
 } from "$lib/internal/index.js";
+import type { HTMLButtonAttributes } from "svelte/elements";
 import type { CustomEventHandler } from "$lib/index.js";
 
 type Props = Expand<
@@ -25,7 +26,7 @@ type ContentProps = Expand<
 > &
 	HTMLDivAttributes;
 
-type TriggerProps = Expand<ObjectVariation<TabsTriggerProps> & AsChild> & HTMLDivAttributes;
+type TriggerProps = Expand<ObjectVariation<TabsTriggerProps> & AsChild> & HTMLButtonAttributes;
 
 type ListProps = AsChild & HTMLDivAttributes;
 

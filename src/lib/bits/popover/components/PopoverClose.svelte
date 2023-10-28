@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { getCtx, getAttrs } from "../ctx.js";
-	import type { TriggerEvents, TriggerProps } from "../types.js";
+	import type { CloseProps, CloseEvents } from "../types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
 
-	type $$Props = TriggerProps;
-	type $$Events = TriggerEvents;
+	type $$Props = CloseProps;
+	type $$Events = CloseEvents;
 	export let asChild = false;
 	const {
 		elements: { close }
@@ -20,6 +20,7 @@
 {:else}
 	<button
 		use:melt={builder}
+		type="button"
 		{...$$restProps}
 		{...attrs}
 		on:m-click={dispatch}
