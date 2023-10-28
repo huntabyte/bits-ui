@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.8.4
+
+### Patch Changes
+
+- Pass ids as slot props to components with managed ids ([#147](https://github.com/huntabyte/bits-ui/pull/147))
+
 ## 0.8.3
 
 ### Patch Changes
