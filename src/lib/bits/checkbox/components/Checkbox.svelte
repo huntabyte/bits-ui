@@ -6,7 +6,7 @@
 
 	type $$Props = Props;
 	type $$Events = Events;
-	export let checked: $$Props["checked"] = undefined;
+	export let checked: $$Props["checked"] = false;
 	export let disabled: $$Props["disabled"] = undefined;
 	export let name: $$Props["name"] = undefined;
 	export let required: $$Props["required"] = undefined;
