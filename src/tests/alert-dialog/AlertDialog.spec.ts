@@ -2,29 +2,38 @@ import { render, screen } from "@testing-library/svelte";
 import userEvent from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
-import DialogTest from "./DialogTest.svelte";
+import AlertDialogTest from "./AlertDialogTest.svelte";
 import { testKbd as kbd } from "../utils.js";
 import { sleep } from "$lib/internal";
 
-describe("Dialog", () => {
+describe("Alert Dialog", () => {
 	it("has no accessibility violations", async () => {
-		const { container } = render(DialogTest);
+		const { container } = render(AlertDialogTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
 	it("has bits data attrs", async () => {
-		const { getByTestId } = render(DialogTest, { open: true });
-		const parts = ["trigger", "overlay", "portal", "close", "title", "description", "content"];
+		const { getByTestId } = render(AlertDialogTest, { open: true });
+		const parts = [
+			"trigger",
+			"overlay",
+			"portal",
+			"cancel",
+			"action",
+			"title",
+			"description",
+			"content"
+		];
 
 		for (const part of parts) {
 			const el = getByTestId(part);
-			expect(el).toHaveAttribute(`data-bits-dialog-${part}`);
+			expect(el).toHaveAttribute(`data-bits-alert-dialog-${part}`);
 		}
 	});
 
 	it("opens when the trigger is clicked", async () => {
 		const user = userEvent.setup();
-		const { getByTestId, queryByTestId } = render(DialogTest);
+		const { getByTestId, queryByTestId } = render(AlertDialogTest);
 
 		const trigger = getByTestId("trigger");
 		const content = queryByTestId("content");
@@ -34,9 +43,9 @@ describe("Dialog", () => {
 		expect(contentAfter).not.toBeNull();
 	});
 
-	it("closes when the close button is clicked", async () => {
+	it("closes when the cancel button is clicked", async () => {
 		const user = userEvent.setup();
-		const { getByTestId, queryByTestId } = render(DialogTest);
+		const { getByTestId, queryByTestId } = render(AlertDialogTest);
 
 		const trigger = getByTestId("trigger");
 		const content = queryByTestId("content");
@@ -45,15 +54,32 @@ describe("Dialog", () => {
 		const contentAfter = getByTestId("content");
 		expect(contentAfter).not.toBeNull();
 
-		const close = getByTestId("close");
-		await user.click(close);
+		const cancel = getByTestId("cancel");
+		await user.click(cancel);
+		const contentAfter2 = queryByTestId("content");
+		expect(contentAfter2).toBeNull();
+	});
+
+	it("closes when the action button is clicked", async () => {
+		const user = userEvent.setup();
+		const { getByTestId, queryByTestId } = render(AlertDialogTest);
+
+		const trigger = getByTestId("trigger");
+		const content = queryByTestId("content");
+		expect(content).toBeNull();
+		await user.click(trigger);
+		const contentAfter = getByTestId("content");
+		expect(contentAfter).not.toBeNull();
+
+		const action = getByTestId("action");
+		await user.click(action);
 		const contentAfter2 = queryByTestId("content");
 		expect(contentAfter2).toBeNull();
 	});
 
 	it("closes when the `Escape` key is pressed", async () => {
 		const user = userEvent.setup();
-		const { getByTestId, queryByTestId } = render(DialogTest);
+		const { getByTestId, queryByTestId } = render(AlertDialogTest);
 
 		const trigger = getByTestId("trigger");
 		const content = queryByTestId("content");
@@ -68,9 +94,9 @@ describe("Dialog", () => {
 		expect(trigger).toHaveFocus();
 	});
 
-	it("closes when the overlay is clicked", async () => {
+	it("doesnt close when the overlay is clicked", async () => {
 		const user = userEvent.setup();
-		const { getByTestId, queryByTestId } = render(DialogTest);
+		const { getByTestId, queryByTestId } = render(AlertDialogTest);
 
 		const trigger = getByTestId("trigger");
 		const content = queryByTestId("content");
@@ -84,12 +110,12 @@ describe("Dialog", () => {
 		await user.click(overlay);
 
 		const contentAfter2 = queryByTestId("content");
-		expect(contentAfter2).toBeNull();
+		expect(contentAfter2).not.toBeNull();
 	});
 
 	it("attaches to body when using portal element", async () => {
 		const user = userEvent.setup();
-		render(DialogTest);
+		render(AlertDialogTest);
 
 		const trigger = screen.getByTestId("trigger");
 		await user.click(trigger);
@@ -101,7 +127,7 @@ describe("Dialog", () => {
 
 	it("doesnt attached to body when portal prop is null", async () => {
 		const user = userEvent.setup();
-		render(DialogTest, { portal: null });
+		render(AlertDialogTest, { portal: null });
 
 		const trigger = screen.getByTestId("trigger");
 		await user.click(trigger);
@@ -113,7 +139,7 @@ describe("Dialog", () => {
 
 	it("Focuses first focusable item upon opening", async () => {
 		const user = userEvent.setup();
-		const { getByTestId, queryByTestId } = render(DialogTest);
+		const { getByTestId, queryByTestId } = render(AlertDialogTest);
 
 		const trigger = getByTestId("trigger");
 		const content = queryByTestId("content");
@@ -129,7 +155,7 @@ describe("Dialog", () => {
 
 	it("Doesnt close when content is clicked", async () => {
 		const user = userEvent.setup();
-		const { getByTestId, queryByTestId } = render(DialogTest);
+		const { getByTestId, queryByTestId } = render(AlertDialogTest);
 
 		const trigger = getByTestId("trigger");
 		const content = queryByTestId("content");
@@ -145,7 +171,7 @@ describe("Dialog", () => {
 
 	it("Respects binding to the `open` prop", async () => {
 		const user = userEvent.setup();
-		const { getByTestId, queryByTestId } = render(DialogTest);
+		const { getByTestId, queryByTestId } = render(AlertDialogTest);
 
 		const trigger = getByTestId("trigger");
 		const binding = getByTestId("binding");
@@ -163,7 +189,7 @@ describe("Dialog", () => {
 
 	it("respects the `closeOnOutsideClick` prop", async () => {
 		const user = userEvent.setup();
-		const { getByTestId, queryByTestId } = render(DialogTest, { closeOnOutsideClick: false });
+		const { getByTestId, queryByTestId } = render(AlertDialogTest, { closeOnOutsideClick: false });
 
 		const trigger = getByTestId("trigger");
 		const content = queryByTestId("content");
@@ -182,7 +208,7 @@ describe("Dialog", () => {
 
 	it("respects the the `closeOnEscape` prop", async () => {
 		const user = userEvent.setup();
-		const { getByTestId, queryByTestId } = render(DialogTest, { closeOnEscape: false });
+		const { getByTestId, queryByTestId } = render(AlertDialogTest, { closeOnEscape: false });
 
 		const trigger = getByTestId("trigger");
 		const content = queryByTestId("content");
