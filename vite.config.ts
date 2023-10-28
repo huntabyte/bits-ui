@@ -1,3 +1,4 @@
+/// <reference types="vitest" />
 import { sveltekit } from "@sveltejs/kit/vite";
 import { defineConfig } from "vitest/config";
 import { fileURLToPath, URL } from "url";
@@ -12,9 +13,13 @@ export default defineConfig({
 		// in-source testing
 		includeSource: ["src/**/*.{js,ts,svelte}"],
 		// Add @testing-library/jest-dom's matchers & mocks of SvelteKit modules
-		setupFiles: ["./other/setupTest.ts"]
+		setupFiles: ["./other/setupTest.ts"],
+		coverage: {
+			exclude: ["setupTest.ts"]
+		},
+		alias: [{ find: /^svelte$/, replacement: "svelte/internal" }]
 	},
-	assetsInclude: ["**/*.md", "**/*.mdx"],
+	assetsInclude: ["**/*.md"],
 	server: {
 		fs: {
 			strict: false
