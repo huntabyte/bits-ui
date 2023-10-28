@@ -13,9 +13,10 @@
 	export let multiple = false;
 	export let disabled: Accordion.Props<false>["disabled"] = false;
 	export let items: Item[];
+	export let value: string | undefined = undefined;
 </script>
 
-<Accordion.Root {multiple} {disabled} data-testid="root">
+<Accordion.Root {multiple} {value} {disabled} data-testid="root">
 	{#each items as { value, title, disabled, content }}
 		<Accordion.Item {value} data-testid="{value}-item">
 			<Accordion.Header data-testid="{value}-header">

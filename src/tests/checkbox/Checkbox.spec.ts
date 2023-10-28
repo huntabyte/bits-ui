@@ -12,6 +12,14 @@ describe("Checkbox", () => {
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
+	it("has bits data attrs", async () => {
+		const { getByTestId } = render(CheckboxTest);
+		const root = getByTestId("root");
+		const indicator = getByTestId("indicator");
+		expect(root).toHaveAttribute("data-bits-checkbox-root");
+		expect(indicator).toHaveAttribute("data-bits-checkbox-indicator");
+	});
+
 	it('defaults the value to "on", when no value prop is passed', async () => {
 		const { getByTestId } = render(CheckboxTest);
 		const input = getByTestId("input");
@@ -134,4 +142,6 @@ describe("Checkbox", () => {
 		await tick();
 		expect(binding).toHaveTextContent("true");
 	});
+
+	it.todo("`asChild` behavior");
 });

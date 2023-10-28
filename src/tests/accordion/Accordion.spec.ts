@@ -5,6 +5,7 @@ import { describe, it } from "vitest";
 import AccordionTest from "./AccordionTest.svelte";
 import type { Item } from "./AccordionTest.svelte";
 import { testKbd as kbd } from "../utils";
+import AccordionTestIsolated from "./AccordionTestIsolated.svelte";
 
 const items: Item[] = [
 	{
@@ -37,6 +38,20 @@ describe("Accordion", () => {
 	it("has no accessibility violations", async () => {
 		const { container } = render(AccordionTest, { items });
 		expect(await axe(container)).toHaveNoViolations();
+	});
+
+	it("has bits data attrs", async () => {
+		const { getByTestId } = render(AccordionTestIsolated);
+		const root = getByTestId("root");
+		const trigger = getByTestId("trigger");
+		const item = getByTestId("item");
+		const header = getByTestId("header");
+		const content = getByTestId("content");
+		expect(root).toHaveAttribute("data-bits-accordion-root");
+		expect(item).toHaveAttribute("data-bits-accordion-item");
+		expect(header).toHaveAttribute("data-bits-accordion-header");
+		expect(content).toHaveAttribute("data-bits-accordion-content");
+		expect(trigger).toHaveAttribute("data-bits-accordion-trigger");
 	});
 
 	it("displays content when an item is expanded", async () => {
