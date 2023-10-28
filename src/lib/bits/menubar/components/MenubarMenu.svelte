@@ -19,7 +19,8 @@
 
 	const {
 		states: { open: localOpen },
-		updateOption
+		updateOption,
+		ids
 	} = setMenuCtx({
 		closeOnOutsideClick,
 		closeOnEscape,
@@ -55,4 +56,4 @@
 	$: updateOption("typeahead", typeahead);
 </script>
 
-<slot />
+<slot menuIds={ids} />

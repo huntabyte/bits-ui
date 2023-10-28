@@ -11,7 +11,8 @@
 
 	const {
 		elements: { menubar },
-		updateOption
+		updateOption,
+		ids
 	} = setCtx({ loop, closeOnEscape });
 
 	$: updateOption("loop", loop);
@@ -21,9 +22,9 @@
 </script>
 
 {#if asChild}
-	<slot {builder} {attrs} />
+	<slot {builder} {attrs} {ids} />
 {:else}
 	<div use:melt={builder} {...$$restProps} {...attrs}>
-		<slot {builder} {attrs} />
+		<slot {builder} {attrs} {ids} />
 	</div>
 {/if}

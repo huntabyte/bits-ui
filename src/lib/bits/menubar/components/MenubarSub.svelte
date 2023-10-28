@@ -7,7 +7,7 @@
 	export let disabled: $$Props["disabled"] = undefined;
 	export let arrowSize: $$Props["arrowSize"] = undefined;
 
-	const { updateOption } = setSubMenuCtx({
+	const { updateOption, ids } = setSubMenuCtx({
 		positioning,
 		disabled,
 		arrowSize
@@ -18,4 +18,4 @@
 	$: updateOption("arrowSize", arrowSize);
 </script>
 
-<slot />
+<slot subIds={ids} />
