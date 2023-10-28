@@ -1,10 +1,46 @@
-import { render, screen } from "@testing-library/svelte";
+import { render, screen, type Matcher, type MatcherOptions } from "@testing-library/svelte";
 import userEvent from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import DialogTest from "./DialogTest.svelte";
 import { testKbd as kbd } from "../utils.js";
 import { sleep } from "$lib/internal";
+import type { Dialog } from "$lib";
+
+function expectIsClosed(
+	queryByTestId: (id: Matcher, options?: MatcherOptions | undefined) => HTMLElement | null
+) {
+	const content = queryByTestId("content");
+	expect(content).toBeNull();
+}
+
+function expectIsOpen(
+	queryByTestId: (id: Matcher, options?: MatcherOptions | undefined) => HTMLElement | null
+) {
+	const content = queryByTestId("content");
+	expect(content).not.toBeNull();
+}
+
+function setup(props: Dialog.Props = {}) {
+	const user = userEvent.setup();
+	const { getByTestId, queryByTestId } = render(DialogTest, { ...props });
+	return {
+		getByTestId,
+		queryByTestId,
+		user
+	};
+}
+
+async function open(props: Dialog.Props = {}) {
+	const { getByTestId, queryByTestId, user } = setup(props);
+	const trigger = getByTestId("trigger");
+	const content = queryByTestId("content");
+	expect(content).toBeNull();
+	await user.click(trigger);
+	const contentAfter = getByTestId("content");
+	expect(contentAfter).not.toBeNull();
+	return { getByTestId, queryByTestId, user };
+}
 
 describe("Dialog", () => {
 	it("has no accessibility violations", async () => {
@@ -23,61 +59,26 @@ describe("Dialog", () => {
 	});
 
 	it("opens when the trigger is clicked", async () => {
-		const user = userEvent.setup();
-		const { getByTestId, queryByTestId } = render(DialogTest);
-
-		const trigger = getByTestId("trigger");
-		const content = queryByTestId("content");
-		expect(content).toBeNull();
-		await user.click(trigger);
-		const contentAfter = getByTestId("content");
-		expect(contentAfter).not.toBeNull();
+		await open();
 	});
 
 	it("closes when the close button is clicked", async () => {
-		const user = userEvent.setup();
-		const { getByTestId, queryByTestId } = render(DialogTest);
-
-		const trigger = getByTestId("trigger");
-		const content = queryByTestId("content");
-		expect(content).toBeNull();
-		await user.click(trigger);
-		const contentAfter = getByTestId("content");
-		expect(contentAfter).not.toBeNull();
-
+		const { getByTestId, queryByTestId, user } = await open();
 		const close = getByTestId("close");
 		await user.click(close);
-		const contentAfter2 = queryByTestId("content");
-		expect(contentAfter2).toBeNull();
+		expectIsClosed(queryByTestId);
 	});
 
 	it("closes when the `Escape` key is pressed", async () => {
-		const user = userEvent.setup();
-		const { getByTestId, queryByTestId } = render(DialogTest);
-
-		const trigger = getByTestId("trigger");
-		const content = queryByTestId("content");
-		expect(content).toBeNull();
-		await user.click(trigger);
-		const contentAfter = getByTestId("content");
-		expect(contentAfter).not.toBeNull();
+		const { queryByTestId, user, getByTestId } = await open();
 
 		await user.keyboard(kbd.ESCAPE);
-		const contentAfter2 = queryByTestId("content");
-		expect(contentAfter2).toBeNull();
-		expect(trigger).toHaveFocus();
+		expectIsClosed(queryByTestId);
+		expect(getByTestId("trigger")).toHaveFocus();
 	});
 
 	it("closes when the overlay is clicked", async () => {
-		const user = userEvent.setup();
-		const { getByTestId, queryByTestId } = render(DialogTest);
-
-		const trigger = getByTestId("trigger");
-		const content = queryByTestId("content");
-		expect(content).toBeNull();
-		await user.click(trigger);
-		const contentAfter = getByTestId("content");
-		expect(contentAfter).not.toBeNull();
+		const { getByTestId, queryByTestId, user } = await open();
 		await sleep(100);
 
 		const overlay = getByTestId("overlay");
@@ -88,11 +89,7 @@ describe("Dialog", () => {
 	});
 
 	it("attaches to body when using portal element", async () => {
-		const user = userEvent.setup();
-		render(DialogTest);
-
-		const trigger = screen.getByTestId("trigger");
-		await user.click(trigger);
+		await open();
 
 		const portalled = screen.getByTestId("portal");
 
@@ -100,65 +97,35 @@ describe("Dialog", () => {
 	});
 
 	it("doesnt attached to body when portal prop is null", async () => {
-		const user = userEvent.setup();
-		render(DialogTest, { portal: null });
-
-		const trigger = screen.getByTestId("trigger");
-		await user.click(trigger);
-
+		await open({ portal: null });
 		const portalled = screen.getByTestId("portal");
 
 		expect(portalled.parentElement).not.toEqual(document.body);
 	});
 
 	it("portals to the target if passed as a prop", async () => {
-		const user = userEvent.setup();
-		const { getByTestId } = render(DialogTest, { portal: "#portalTarget" });
-
-		const trigger = getByTestId("trigger");
-		const portalTarget = getByTestId("portalTarget");
-		await user.click(trigger);
-
-		const portalled = getByTestId("portal");
-
+		await open({ portal: "#portalTarget" });
+		const portalTarget = screen.getByTestId("portalTarget");
+		const portalled = screen.getByTestId("portal");
 		expect(portalled.parentElement).toEqual(portalTarget);
 	});
 
 	it("Focuses first focusable item upon opening", async () => {
-		const user = userEvent.setup();
-		const { getByTestId, queryByTestId } = render(DialogTest);
-
-		const trigger = getByTestId("trigger");
-		const content = queryByTestId("content");
-
-		expect(content).toBeNull();
-		await user.click(trigger);
-		const contentAfter = getByTestId("content");
-		expect(contentAfter).not.toBeNull();
+		const { getByTestId } = await open();
 		// Testing focus-trap is a bit flaky. So the focusable element is
 		// always content here.
-		expect(document.activeElement).toBe(contentAfter);
+		expect(document.activeElement).toBe(getByTestId("content"));
 	});
 
 	it("Doesnt close when content is clicked", async () => {
-		const user = userEvent.setup();
-		const { getByTestId, queryByTestId } = render(DialogTest);
-
-		const trigger = getByTestId("trigger");
-		const content = queryByTestId("content");
-
-		expect(content).toBeNull();
-		await user.click(trigger);
-		const contentAfter = getByTestId("content");
-		expect(contentAfter).not.toBeNull();
-		await user.click(contentAfter);
-		const contentAfter2 = getByTestId("content");
-		expect(contentAfter2).not.toBeNull();
+		const { user, getByTestId, queryByTestId } = await open();
+		const content = getByTestId("content");
+		await user.click(content);
+		expectIsOpen(queryByTestId);
 	});
 
 	it("Respects binding to the `open` prop", async () => {
-		const user = userEvent.setup();
-		const { getByTestId, queryByTestId } = render(DialogTest);
+		const { getByTestId, queryByTestId, user } = setup();
 
 		const trigger = getByTestId("trigger");
 		const binding = getByTestId("binding");
@@ -169,44 +136,28 @@ describe("Dialog", () => {
 		expect(binding).toHaveTextContent("false");
 
 		const toggle = getByTestId("toggle");
-		expect(queryByTestId("content")).toBeNull();
+		expectIsClosed(queryByTestId);
 		await user.click(toggle);
-		expect(queryByTestId("content")).not.toBeNull();
+		expectIsOpen(queryByTestId);
 	});
 
 	it("respects the `closeOnOutsideClick` prop", async () => {
-		const user = userEvent.setup();
-		const { getByTestId, queryByTestId } = render(DialogTest, { closeOnOutsideClick: false });
-
-		const trigger = getByTestId("trigger");
-		const content = queryByTestId("content");
-		expect(content).toBeNull();
-		await user.click(trigger);
-		const contentAfter = getByTestId("content");
-		expect(contentAfter).not.toBeNull();
+		const { getByTestId, queryByTestId, user } = await open({ closeOnOutsideClick: false });
 		await sleep(100);
 
 		const overlay = getByTestId("overlay");
 		await user.click(overlay);
 
-		const contentAfter2 = queryByTestId("content");
-		expect(contentAfter2).not.toBeNull();
+		expectIsOpen(queryByTestId);
 	});
 
 	it("respects the the `closeOnEscape` prop", async () => {
-		const user = userEvent.setup();
-		const { getByTestId, queryByTestId } = render(DialogTest, { closeOnEscape: false });
-
-		const trigger = getByTestId("trigger");
-		const content = queryByTestId("content");
-		expect(content).toBeNull();
-		await user.click(trigger);
-		const contentAfter = getByTestId("content");
-		expect(contentAfter).not.toBeNull();
+		const { user, getByTestId, queryByTestId } = await open({
+			closeOnEscape: false
+		});
 
 		await user.keyboard(kbd.ESCAPE);
-		const contentAfter2 = queryByTestId("content");
-		expect(contentAfter2).not.toBeNull();
-		expect(trigger).not.toHaveFocus();
+		expectIsOpen(queryByTestId);
+		expect(getByTestId("trigger")).not.toHaveFocus();
 	});
 });

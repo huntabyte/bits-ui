@@ -1,10 +1,39 @@
-import { render, screen } from "@testing-library/svelte";
+import { render, screen, type Matcher, type MatcherOptions } from "@testing-library/svelte";
 import userEvent from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import AlertDialogTest from "./AlertDialogTest.svelte";
 import { testKbd as kbd } from "../utils.js";
 import { sleep } from "$lib/internal";
+import type { AlertDialog } from "$lib";
+
+function expectIsClosed(
+	queryByTestId: (id: Matcher, options?: MatcherOptions | undefined) => HTMLElement | null
+) {
+	const content = queryByTestId("content");
+	expect(content).toBeNull();
+}
+
+function setup(props: AlertDialog.Props = {}) {
+	const user = userEvent.setup();
+	const { getByTestId, queryByTestId } = render(AlertDialogTest, { ...props });
+	return {
+		getByTestId,
+		queryByTestId,
+		user
+	};
+}
+
+async function open(props: AlertDialog.Props = {}) {
+	const { getByTestId, queryByTestId, user } = setup(props);
+	const trigger = getByTestId("trigger");
+	const content = queryByTestId("content");
+	expect(content).toBeNull();
+	await user.click(trigger);
+	const contentAfter = getByTestId("content");
+	expect(contentAfter).not.toBeNull();
+	return { getByTestId, queryByTestId, user };
+}
 
 describe("Alert Dialog", () => {
 	it("has no accessibility violations", async () => {
@@ -32,85 +61,39 @@ describe("Alert Dialog", () => {
 	});
 
 	it("opens when the trigger is clicked", async () => {
-		const user = userEvent.setup();
-		const { getByTestId, queryByTestId } = render(AlertDialogTest);
-
-		const trigger = getByTestId("trigger");
-		const content = queryByTestId("content");
-		expect(content).toBeNull();
-		await user.click(trigger);
-		const contentAfter = getByTestId("content");
-		expect(contentAfter).not.toBeNull();
+		await open();
 	});
 
 	it("closes when the cancel button is clicked", async () => {
-		const user = userEvent.setup();
-		const { getByTestId, queryByTestId } = render(AlertDialogTest);
-
-		const trigger = getByTestId("trigger");
-		const content = queryByTestId("content");
-		expect(content).toBeNull();
-		await user.click(trigger);
-		const contentAfter = getByTestId("content");
-		expect(contentAfter).not.toBeNull();
-
+		const { user, getByTestId, queryByTestId } = await open();
 		const cancel = getByTestId("cancel");
 		await user.click(cancel);
-		const contentAfter2 = queryByTestId("content");
-		expect(contentAfter2).toBeNull();
+		expectIsClosed(queryByTestId);
 	});
 
 	it("closes when the action button is clicked", async () => {
-		const user = userEvent.setup();
-		const { getByTestId, queryByTestId } = render(AlertDialogTest);
-
-		const trigger = getByTestId("trigger");
-		const content = queryByTestId("content");
-		expect(content).toBeNull();
-		await user.click(trigger);
-		const contentAfter = getByTestId("content");
-		expect(contentAfter).not.toBeNull();
+		const { user, getByTestId, queryByTestId } = await open();
 
 		const action = getByTestId("action");
 		await user.click(action);
-		const contentAfter2 = queryByTestId("content");
-		expect(contentAfter2).toBeNull();
+		expectIsClosed(queryByTestId);
 	});
 
 	it("closes when the `Escape` key is pressed", async () => {
-		const user = userEvent.setup();
-		const { getByTestId, queryByTestId } = render(AlertDialogTest);
-
-		const trigger = getByTestId("trigger");
-		const content = queryByTestId("content");
-		expect(content).toBeNull();
-		await user.click(trigger);
-		const contentAfter = getByTestId("content");
-		expect(contentAfter).not.toBeNull();
+		const { user, queryByTestId, getByTestId } = await open();
 
 		await user.keyboard(kbd.ESCAPE);
-		const contentAfter2 = queryByTestId("content");
-		expect(contentAfter2).toBeNull();
-		expect(trigger).toHaveFocus();
+		expectIsClosed(queryByTestId);
+		expect(getByTestId("trigger")).toHaveFocus();
 	});
 
 	it("doesnt close when the overlay is clicked", async () => {
-		const user = userEvent.setup();
-		const { getByTestId, queryByTestId } = render(AlertDialogTest);
-
-		const trigger = getByTestId("trigger");
-		const content = queryByTestId("content");
-		expect(content).toBeNull();
-		await user.click(trigger);
-		const contentAfter = getByTestId("content");
-		expect(contentAfter).not.toBeNull();
+		const { getByTestId, queryByTestId, user } = await open();
 		await sleep(100);
 
 		const overlay = getByTestId("overlay");
 		await user.click(overlay);
-
-		const contentAfter2 = queryByTestId("content");
-		expect(contentAfter2).not.toBeNull();
+		expect(queryByTestId("content")).not.toBeNull();
 	});
 
 	it("attaches to body when using portal element", async () => {
@@ -121,7 +104,6 @@ describe("Alert Dialog", () => {
 		await user.click(trigger);
 
 		const portalled = screen.getByTestId("portal");
-
 		expect(portalled.parentElement).toEqual(document.body);
 	});
 
