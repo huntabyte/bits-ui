@@ -111,6 +111,19 @@ describe("Dialog", () => {
 		expect(portalled.parentElement).not.toEqual(document.body);
 	});
 
+	it("portals to the target if passed as a prop", async () => {
+		const user = userEvent.setup();
+		const { getByTestId } = render(DialogTest, { portal: "#portalTarget" });
+
+		const trigger = getByTestId("trigger");
+		const portalTarget = getByTestId("portalTarget");
+		await user.click(trigger);
+
+		const portalled = getByTestId("portal");
+
+		expect(portalled.parentElement).toEqual(portalTarget);
+	});
+
 	it("Focuses first focusable item upon opening", async () => {
 		const user = userEvent.setup();
 		const { getByTestId, queryByTestId } = render(DialogTest);
