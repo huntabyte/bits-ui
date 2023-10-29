@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.8.5
+
+### Patch Changes
+
+- Remove `ToggleInput` & fix bugs ([#149](https://github.com/huntabyte/bits-ui/pull/149))
+
 ## 0.8.4
 
 ### Patch Changes
