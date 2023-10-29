@@ -1,13 +1,23 @@
 <script lang="ts">
-	import { getCtx, getAttrs } from "../ctx.js";
+	import { melt } from "@melt-ui/svelte";
+	import { getCtx } from "../ctx.js";
 	import type { InputProps } from "../types.js";
 
 	type $$Props = InputProps;
 
 	const {
-		states: { checked }
+		elements: { input },
+		options: { value, name, disabled, required }
 	} = getCtx();
-	const attrs = getAttrs("input");
+
+	$: inputValue = $value === undefined || $value === "" ? "on" : $value;
 </script>
 
-<input {...$$restProps} value={$checked} hidden {...attrs} />
+<input
+	use:melt={$input}
+	name={$name}
+	disabled={$disabled}
+	required={$required}
+	value={inputValue}
+	{...$$restProps}
+/>

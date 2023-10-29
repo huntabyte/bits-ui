@@ -3,6 +3,7 @@
 	import { setCtx, getAttrs } from "../ctx.js";
 	import type { Events, Props } from "../types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
+	import SwitchInput from "./SwitchInput.svelte";
 
 	type $$Props = Props;
 	type $$Events = Events;
@@ -11,7 +12,10 @@
 	export let disabled: $$Props["disabled"] = undefined;
 	export let name: $$Props["name"] = undefined;
 	export let value: $$Props["value"] = undefined;
+	export let includeInput: $$Props["includeInput"] = true;
+	export let required: $$Props["required"] = undefined;
 	export let asChild = false;
+	export let inputAttrs: $$Props["inputAttrs"] = undefined;
 
 	const {
 		elements: { root },
@@ -21,6 +25,7 @@
 		disabled,
 		name,
 		value,
+		required,
 		defaultChecked: checked,
 		onCheckedChange: ({ next }) => {
 			if (checked !== next) {
@@ -37,9 +42,10 @@
 	$: updateOption("disabled", disabled);
 	$: updateOption("name", name);
 	$: updateOption("value", value);
+	$: updateOption("required", required);
 
 	$: builder = $root;
-	const attrs = getAttrs("root");
+	$: attrs = { ...getAttrs("root"), "data-checked": checked ? "" : undefined };
 </script>
 
 {#if asChild}
@@ -54,4 +60,7 @@
 	>
 		<slot {builder} {attrs} />
 	</button>
+{/if}
+{#if includeInput}
+	<SwitchInput {...inputAttrs} />
 {/if}
