@@ -9,6 +9,8 @@ export function getOptionUpdater(options: Options) {
 	>(key: K, value: V | undefined) {
 		if (value === undefined) return;
 		const store = options[key];
-		store.set(value as never);
+		if (store) {
+			store.set(value as never);
+		}
 	};
 }
