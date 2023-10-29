@@ -21,6 +21,8 @@ type RangeProps = AsChild & HTMLSpanAttributes;
 
 type ThumbProps = AsChild & HTMLSpanAttributes;
 
+type TickProps = AsChild & HTMLSpanAttributes;
+
 type ThumbEvents<T extends Element = HTMLSpanElement> = {
 	keydown: CustomEventHandler<KeyboardEvent, T>;
 };
@@ -32,11 +34,13 @@ export type {
 	RangeProps,
 	ThumbProps,
 	InputProps,
+	TickProps,
 	//
 	Props as SliderProps,
 	RangeProps as SliderRangeProps,
 	ThumbProps as SliderThumbProps,
 	InputProps as SliderInputProps,
+	TickProps as SliderTickProps,
 	//
 	ThumbEvents,
 	//

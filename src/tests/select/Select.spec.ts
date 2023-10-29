@@ -138,8 +138,7 @@ describe("Select", () => {
 		expect(content.parentElement).toBe(main);
 	});
 
-	it.skip("respects the `closeOnEscape` prop", async () => {
-		// Unskip once this is merged: https://github.com/melt-ui/melt-ui/pull/676
+	it("respects the `closeOnEscape` prop", async () => {
 		const { user, queryByTestId } = await open({ closeOnEscape: false });
 		await user.keyboard(kbd.ESCAPE);
 		await waitFor(() => expect(queryByTestId("content")).not.toBeNull());

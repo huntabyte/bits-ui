@@ -242,8 +242,7 @@ describe("Context Menu", () => {
 		expect(queryByTestId("content")).toBeNull();
 	});
 
-	it.skip("respects the `closeOnEscape` prop", async () => {
-		/** Skip until https://github.com/melt-ui/melt-ui/pull/676 is merged & released */
+	it("respects the `closeOnEscape` prop", async () => {
 		const { queryByTestId, user } = await open({ closeOnEscape: false });
 		await user.keyboard(kbd.ESCAPE);
 		expect(queryByTestId("content")).not.toBeNull();

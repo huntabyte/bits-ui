@@ -3,6 +3,17 @@ title: Slider
 description: Enable users to select a value within a specific range with sliding handles.
 ---
 
+<script>
+	import { APISection, ComponentPreview, SliderDemo } from '@/components'
+	export let schemas;
+</script>
+
+<ComponentPreview name="slider-demo" comp="Slider">
+
+<SliderDemo slot="preview" />
+
+</ComponentPreview>
+
 ## Structure
 
 ```svelte
