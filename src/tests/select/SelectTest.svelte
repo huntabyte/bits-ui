@@ -27,17 +27,27 @@
 			<Select.Group data-testid="group">
 				<Select.Label data-testid="label">Options</Select.Label>
 				{#each items as { value, label, disabled }}
-					<Select.Item data-testid={value} {disabled} {value} {label}>{label}</Select.Item>
+					<Select.Item data-testid={value} {disabled} {value} {label}>
+						<Select.ItemIndicator>
+							<span data-testid="{value}-indicator">x</span>
+						</Select.ItemIndicator>
+						{label}
+					</Select.Item>
 				{/each}
 			</Select.Group>
 		</Select.Content>
+		<Select.Input data-testid="input" />
 	</Select.Root>
 	<div data-testid="outside" />
 	<button data-testid="open-binding" on:click={() => (open = !open)}>
 		{open}
 	</button>
 	<button data-testid="selected-binding" on:click={() => (selected = undefined)}>
-		{selected}
+		{#if selected === undefined}
+			undefined
+		{:else}
+			{selected.label} - {selected.value}
+		{/if}
 	</button>
 </main>
 <div data-testid="portal-target" id="portal-target" />
