@@ -28,10 +28,20 @@ async function open(props: Popover.Props = {}, openWith: "click" | (string & {})
 	return { trigger, getByTestId, queryByTestId, user, content };
 }
 
-describe("Link Preview", () => {
+describe("Popover", () => {
 	it("has no accessibility violations", async () => {
 		const { container } = render(PopoverTest);
 		expect(await axe(container)).toHaveNoViolations();
+	});
+
+	it("has bits data attrs", async () => {
+		const { getByTestId } = await open();
+		const parts = ["trigger", "content", "close"];
+
+		for (const part of parts) {
+			const el = getByTestId(part);
+			expect(el).toHaveAttribute(`data-bits-popover-${part}`);
+		}
 	});
 
 	it("opens on click", async () => {

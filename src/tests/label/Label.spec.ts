@@ -10,6 +10,12 @@ describe("Label", () => {
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
+	it("has bits data attrs", async () => {
+		const { getByTestId } = render(LabelTest);
+		const root = getByTestId("label");
+		expect(root).toHaveAttribute("data-bits-label-root");
+	});
+
 	it("renders the label text", async () => {
 		const { getByTestId } = render(LabelTest);
 		const label = getByTestId("label");

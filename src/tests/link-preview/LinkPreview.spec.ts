@@ -28,6 +28,16 @@ describe("Link Preview", () => {
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
+	it("has bits data attrs", async () => {
+		const { getByTestId } = await open();
+		const parts = ["trigger", "content"];
+
+		for (const part of parts) {
+			const el = getByTestId(part);
+			expect(el).toHaveAttribute(`data-bits-link-preview-${part}`);
+		}
+	});
+
 	it("opens on hover", async () => {
 		const { user, content } = await open();
 		await user.click(content);
