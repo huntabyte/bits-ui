@@ -6,7 +6,8 @@
 	type $$Props = InputProps;
 	export let asChild = false;
 	const {
-		elements: { hiddenInput }
+		elements: { hiddenInput },
+		options: { disabled }
 	} = getCtx();
 	$: builder = $hiddenInput;
 	const attrs = getAttrs("input");
@@ -15,5 +16,5 @@
 {#if asChild}
 	<slot {builder} {attrs} />
 {:else}
-	<input use:melt={builder} hidden {...$$restProps} {...attrs} />
+	<input use:melt={builder} {...$$restProps} {...attrs} disabled={$disabled ? true : undefined} />
 {/if}

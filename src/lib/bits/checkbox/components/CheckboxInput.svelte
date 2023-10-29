@@ -1,14 +1,11 @@
 <script lang="ts">
-	import { getCtx, getAttrs } from "../ctx.js";
-	import type { InputProps } from "../types.js";
-
-	type $$Props = InputProps;
+	import { melt } from "@melt-ui/svelte";
+	import { getCtx } from "../ctx.js";
 
 	const {
-		helpers: { isChecked },
-		options: { disabled }
+		elements: { input },
+		options: { value }
 	} = getCtx();
-	const attrs = getAttrs("input");
 </script>
 
-<input hidden value={$isChecked ? true : false} disabled={$disabled} {...$$restProps} {...attrs} />
+<input use:melt={$input} value={$value ?? "on"} {...$$restProps} />

@@ -3,7 +3,7 @@ import { createSlider, type CreateSliderProps, type Slider as SliderReturn } fro
 import { getContext, setContext } from "svelte";
 
 const NAME = "slider";
-const PARTS = ["root", "input", "range", "thumb"] as const;
+const PARTS = ["root", "input", "range", "thumb", "tick"] as const;
 
 export const getAttrs = createBitAttrs(NAME, PARTS);
 
