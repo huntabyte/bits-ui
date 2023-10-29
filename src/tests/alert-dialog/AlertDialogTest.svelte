@@ -1,18 +1,6 @@
 <script lang="ts">
 	import { AlertDialog } from "$lib";
 
-	/**
-	 *
-    preventScroll?: boolean | undefined;
-    closeOnEscape?: boolean | undefined;
-    closeOnOutsideClick?: boolean | undefined;
-    portal?: string | HTMLElement | null | undefined;
-    openFocus?: FocusProp | undefined;
-    closeFocus?: FocusProp | undefined;
-    open?: boolean | undefined;
-    onOpenChange?: OnChangeFn<...> | undefined;
-	 */
-
 	type $$Props = AlertDialog.Props;
 
 	export let open: AlertDialog.Props["open"] = false;
