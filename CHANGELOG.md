@@ -1,5 +1,15 @@
 # @huntabyte/primitives
 
+## 0.9.0
+
+### Minor Changes
+
+- New Component: Toggle Group ([#154](https://github.com/huntabyte/bits-ui/pull/154))
+
+### Patch Changes
+
+- add default type="button" to all components using button element ([#150](https://github.com/huntabyte/bits-ui/pull/150))
+
 ## 0.8.5
 
 ### Patch Changes
