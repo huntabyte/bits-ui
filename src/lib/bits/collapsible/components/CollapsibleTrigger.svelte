@@ -19,7 +19,7 @@
 {#if asChild}
 	<slot {builder} {attrs} />
 {:else}
-	<button use:melt={builder} {...$$restProps} {...attrs} on:m-click={dispatch}>
+	<button use:melt={builder} type="button" {...$$restProps} {...attrs} on:m-click={dispatch}>
 		<slot {builder} {attrs} />
 	</button>
 {/if}

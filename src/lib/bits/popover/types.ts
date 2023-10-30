@@ -25,7 +25,7 @@ type ContentProps<
 > = Expand<TransitionProps<T, In, Out> & AsChild> & HTMLDivAttributes;
 
 type TriggerProps = AsChild & HTMLButtonAttributes;
-type CloseProps = AsChild & HTMLButtonAttributes;
+type CloseProps = TriggerProps;
 
 type ArrowProps = Expand<
 	{

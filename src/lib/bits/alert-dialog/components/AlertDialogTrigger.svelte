@@ -21,6 +21,7 @@
 {:else}
 	<button
 		use:melt={builder}
+		type="button"
 		on:m-click={dispatch}
 		on:m-keydown={dispatch}
 		{...$$restProps}
