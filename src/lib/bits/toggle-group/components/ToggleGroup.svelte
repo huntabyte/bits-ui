@@ -9,7 +9,9 @@
 	type $$Events = Events;
 	export let kind: $$Props["kind"] = "single" as T;
 	export let disabled: $$Props["disabled"] = undefined;
+	export let loop: $$Props["loop"] = undefined;
 	export let value: $$Props["value"] = undefined;
+	export let orientation: $$Props["orientation"] = undefined;
 	export let onValueChange: $$Props["onValueChange"] = undefined;
 	export let asChild = false;
 
@@ -21,7 +23,15 @@
 		disabled,
 		type: kind,
 		defaultValue: value,
+		loop,
+		orientation,
 		onValueChange: (({ next }: { next: $$Props["value"] }) => {
+			if (Array.isArray(next)) {
+				onValueChange?.(next);
+				value = next;
+				return next;
+			}
+
 			if (value !== next) {
 				onValueChange?.(next);
 				value = next;
@@ -33,6 +43,9 @@
 
 	$: value !== undefined && localValue.set(value);
 	$: updateOption("disabled", disabled);
+	$: updateOption("loop", loop);
+	$: updateOption("type", kind);
+	$: updateOption("orientation", orientation);
 
 	$: builder = $root;
 	const attrs = getAttrs("root");

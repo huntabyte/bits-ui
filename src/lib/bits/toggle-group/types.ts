@@ -22,7 +22,6 @@ type Props<T extends "single" | "multiple"> = Expand<
 type ItemProps = {
 	value: string;
 	disabled?: boolean;
-	pressed?: boolean;
 } & AsChild &
 	HTMLButtonAttributes;
 

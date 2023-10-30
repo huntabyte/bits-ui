@@ -2,9 +2,12 @@
 	import { ToggleGroup } from "$lib";
 	import { Bold, Italic } from "lucide-svelte";
 	import { toggleVariants } from "@/components/ui/toggle";
+
+	let value: string[] | undefined = undefined;
+	$: console.log(value);
 </script>
 
-<ToggleGroup.Root>
+<ToggleGroup.Root bind:value kind="multiple">
 	<ToggleGroup.Item
 		class={toggleVariants({ variant: "default" })}
 		aria-label="toggle bold"
