@@ -176,6 +176,18 @@ describe("Toggle", () => {
 		await user.click(item1);
 		await user.click(item2);
 		expect(binding).toHaveTextContent("1,2");
+		await user.click(item3);
+		expect(binding).toHaveTextContent("1,2,3");
+		await user.click(item4);
+		expect(binding).toHaveTextContent("1,2,3,4");
+		await user.click(item1);
+		expect(binding).toHaveTextContent("2,3,4");
+		await user.click(item2);
+		expect(binding).toHaveTextContent("3,4");
+		await user.click(item3);
+		expect(binding).toHaveTextContent("4");
+		await user.click(item4);
+		expect(binding).toHaveTextContent("");
 	});
 
 	it.todo("`asChild` behavior");
