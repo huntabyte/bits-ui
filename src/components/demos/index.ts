@@ -20,4 +20,5 @@ export { default as SliderDemo } from "./slider-demo.svelte";
 export { default as SwitchDemo } from "./switch-demo.svelte";
 export { default as TabsDemo } from "./tabs-demo.svelte";
 export { default as ToggleDemo } from "./toggle-demo.svelte";
+export { default as ToggleGroupDemo } from "./toggle-group-demo.svelte";
 export { default as TooltipDemo } from "./tooltip-demo.svelte";

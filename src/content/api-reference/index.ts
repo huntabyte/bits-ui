@@ -41,6 +41,7 @@ export const bits = [
 	"switch",
 	"tabs",
 	"toggle",
+	"toggle-group",
 	"tooltip"
 ] as const;
 
@@ -75,6 +76,7 @@ export const apiSchemas: Record<Bit, APISchema[]> = {
 	slider: [],
 	tabs: [],
 	toggle: [],
+	"toggle-group": [],
 	tooltip: []
 };
 

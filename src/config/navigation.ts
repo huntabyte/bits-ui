@@ -161,6 +161,11 @@ export const navigation: Navigation = {
 					items: []
 				},
 				{
+					title: "Toggle Group",
+					href: "/docs/components/toggle-group",
+					items: []
+				},
+				{
 					title: "Tooltip",
 					href: "/docs/components/tooltip",
 					items: []

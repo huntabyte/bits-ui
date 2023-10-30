@@ -20,4 +20,5 @@ export * as Slider from "./slider/index.js";
 export * as Switch from "./switch/index.js";
 export * as Tabs from "./tabs/index.js";
 export * as Toggle from "./toggle/index.js";
+export * as ToggleGroup from "./toggle-group/index.js";
 export * as Tooltip from "./tooltip/index.js";
