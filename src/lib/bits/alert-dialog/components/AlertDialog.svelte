@@ -9,8 +9,8 @@
 	type $$Props = Props;
 
 	export let preventScroll: $$Props["preventScroll"] = undefined;
-	export let closeOnEscape: $$Props["closeOnEscape"] = undefined;
-	export let closeOnOutsideClick: $$Props["closeOnOutsideClick"] = false;
+	export let closeOnEscape: $$Props["closeOnEscape"] = true;
+	export let closeOnOutsideClick: $$Props["closeOnOutsideClick"] = true;
 	export let portal: $$Props["portal"] = undefined;
 	export let forceVisible: $$Props["forceVisible"] = true;
 	export let open: $$Props["open"] = undefined;
