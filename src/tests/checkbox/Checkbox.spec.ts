@@ -5,6 +5,20 @@ import { describe, it } from "vitest";
 import CheckboxTest from "./CheckboxTest.svelte";
 import { testKbd as kbd } from "../utils.js";
 import { tick } from "svelte";
+import type { Checkbox } from "$lib";
+
+function setup(props?: Checkbox.Props) {
+	const user = userEvent.setup();
+	const returned = render(CheckboxTest, props);
+	const root = returned.getByTestId("root");
+	const input = returned.getByTestId("input") as HTMLInputElement;
+	return {
+		...returned,
+		root,
+		input,
+		user
+	};
+}
 
 describe("Checkbox", () => {
 	it("has no accessibility violations", async () => {
@@ -13,23 +27,19 @@ describe("Checkbox", () => {
 	});
 
 	it("has bits data attrs", async () => {
-		const { getByTestId } = render(CheckboxTest);
-		const root = getByTestId("root");
+		const { getByTestId, root } = setup();
 		const indicator = getByTestId("indicator");
 		expect(root).toHaveAttribute("data-bits-checkbox-root");
 		expect(indicator).toHaveAttribute("data-bits-checkbox-indicator");
 	});
 
 	it('defaults the value to "on", when no value prop is passed', async () => {
-		const { getByTestId } = render(CheckboxTest);
-		const input = getByTestId("input");
+		const { input } = setup();
 		expect(input).toHaveAttribute("value", "on");
 	});
 
 	it("can be indeterminate", async () => {
-		const { getByTestId } = render(CheckboxTest, { checked: "indeterminate" });
-		const root = getByTestId("root");
-		const input = getByTestId("input") as HTMLInputElement;
+		const { getByTestId, root, input } = setup({ checked: "indeterminate" });
 		const indicator = getByTestId("indicator");
 		expect(root).toHaveAttribute("data-state", "indeterminate");
 		expect(root).toHaveAttribute("aria-checked", "mixed");
@@ -40,10 +50,7 @@ describe("Checkbox", () => {
 	});
 
 	it("toggles when clicked", async () => {
-		const user = userEvent.setup();
-		const { getByTestId } = render(CheckboxTest);
-		const root = getByTestId("root");
-		const input = getByTestId("input") as HTMLInputElement;
+		const { getByTestId, root, input, user } = setup();
 		const indicator = getByTestId("indicator");
 		expect(root).toHaveAttribute("data-state", "unchecked");
 		expect(root).toHaveAttribute("aria-checked", "false");
@@ -61,10 +68,7 @@ describe("Checkbox", () => {
 	});
 
 	it("toggles when the `Space` key is pressed", async () => {
-		const user = userEvent.setup();
-		const { getByTestId } = render(CheckboxTest);
-		const root = getByTestId("root");
-		const input = getByTestId("input") as HTMLInputElement;
+		const { root, input, user } = setup();
 		expect(root).toHaveAttribute("data-state", "unchecked");
 		expect(root).toHaveAttribute("aria-checked", "false");
 		expect(input.checked).toBe(false);
@@ -76,10 +80,7 @@ describe("Checkbox", () => {
 	});
 
 	it("does not toggle when the `Enter` key is pressed", async () => {
-		const user = userEvent.setup();
-		const { getByTestId } = render(CheckboxTest);
-		const root = getByTestId("root");
-		const input = getByTestId("input") as HTMLInputElement;
+		const { getByTestId, root, input, user } = setup();
 		const indicator = getByTestId("indicator");
 		expect(root).toHaveAttribute("data-state", "unchecked");
 		expect(root).toHaveAttribute("aria-checked", "false");
@@ -98,10 +99,7 @@ describe("Checkbox", () => {
 	});
 
 	it("should be disabled when the `disabled` prop is passed", async () => {
-		const user = userEvent.setup();
-		const { getByTestId } = render(CheckboxTest, { disabled: true });
-		const root = getByTestId("root");
-		const input = getByTestId("input") as HTMLInputElement;
+		const { root, input, user } = setup({ disabled: true });
 		expect(root).toHaveAttribute("data-state", "unchecked");
 		expect(root).toHaveAttribute("aria-checked", "false");
 		expect(input.checked).toBe(false);
@@ -109,13 +107,12 @@ describe("Checkbox", () => {
 		await user.click(root);
 		expect(root).toHaveAttribute("data-state", "unchecked");
 		expect(root).toHaveAttribute("aria-checked", "false");
+		expect(root).toBeDisabled();
 		expect(input.checked).toBe(false);
 	});
 
 	it("should be required when the `required` prop is passed", async () => {
-		const { getByTestId } = render(CheckboxTest, { required: true });
-		const root = getByTestId("root");
-		const input = getByTestId("input") as HTMLInputElement;
+		const { root, input } = setup({ required: true });
 		expect(root).toHaveAttribute("aria-required", "true");
 		expect(input.required).toBe(true);
 	});
@@ -125,17 +122,13 @@ describe("Checkbox", () => {
 		function onCheckedChange(next: boolean | "indeterminate") {
 			newValue = next;
 		}
-		const user = userEvent.setup();
-		const { getByTestId } = render(CheckboxTest, { onCheckedChange });
-		const root = getByTestId("root");
+		const { root, user } = setup({ onCheckedChange });
 		await user.click(root);
 		expect(newValue).toBe(true);
 	});
 
 	it("should respect binding the `checked` prop", async () => {
-		const user = userEvent.setup();
-		const { getByTestId } = render(CheckboxTest);
-		const root = getByTestId("root");
+		const { root, getByTestId, user } = setup();
 		const binding = getByTestId("binding");
 		expect(binding).toHaveTextContent("false");
 		await user.click(root);
