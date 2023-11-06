@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.9.1
+
+### Patch Changes
+
+- [Checkbox]: Fix bug with `disabled` attribute on the button ([#158](https://github.com/huntabyte/bits-ui/pull/158))
+
 ## 0.9.0
 
 ### Minor Changes
