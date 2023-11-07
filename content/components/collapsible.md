@@ -27,6 +27,23 @@ description: An interactive component which expands and collapses content.
 </Collapsible.Root>
 ```
 
+## Controlled Usage
+
+Sometimes, you want to either control or be aware of the `open` state of the collapsible from outside of the component. To do so, you can bind to the `open` prop.
+
+```svelte
+<script lang="ts">
+	import { Collapsible } from "bits-ui";
+	let collapsibleOpen = false;
+</script>
+
+<button on:click={() => (collapsibleOpen = true)}>Open</button>
+<Collapsible.Root bind:open={collapsibleOpen}>
+	<Collapsible.Trigger />
+	<Collapsible.Content />
+</Collapsible.Root>
+```
+
 <APISection {schemas} />
 
 🚧 **UNDER CONSTRUCTION** 🚧

@@ -27,6 +27,23 @@ description: Allow users to mark options as checked, unchecked, or indeterminate
 </Checkbox.Root>
 ```
 
+## Controlled Usage
+
+If you want to control or be aware of the `checked` state of the checkbox from outside of the component, you can bind to the `checked` prop.
+
+```svelte
+<script lang="ts">
+	import { Checkbox } from "bits-ui";
+	let myChecked = false;
+</script>
+
+<p>Checked: {myChecked}</p>
+<Checkbox.Root bind:checked={myChecked}>
+	<Checkbox.Indicator />
+	<Checkbox.Input />
+</Checkbox.Root>
+```
+
 <APISection {schemas} />
 
 🚧 **UNDER CONSTRUCTION** 🚧
