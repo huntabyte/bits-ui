@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.9.2
+
+### Patch Changes
+
+- Chore: Remove transition workaround in favor of Melt fix ([#162](https://github.com/huntabyte/bits-ui/pull/162))
+
 ## 0.9.1
 
 ### Patch Changes
