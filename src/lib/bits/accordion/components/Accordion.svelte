@@ -21,7 +21,6 @@
 		multiple,
 		disabled,
 		defaultValue: value,
-
 		onValueChange: (({ next }: { next: $$Props["value"] }) => {
 			if (value !== next) {
 				onValueChange?.(next);

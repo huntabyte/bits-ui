@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { derived } from "svelte/store";
 	import { setCtx } from "../ctx.js";
 	import type { Props } from "../types.js";
 	type $$Props = Props;
@@ -35,6 +36,11 @@
 		}
 	});
 
+	const idValues = derived([ids.content, ids.trigger], ([$contentId, $triggerId]) => ({
+		content: $contentId,
+		trigger: $triggerId
+	}));
+
 	$: open !== undefined && localOpen.set(open);
 	$: updateOption("positioning", positioning);
 	$: updateOption("openDelay", openDelay);
@@ -45,4 +51,4 @@
 	$: updateOption("portal", portal);
 </script>
 
-<slot {ids} />
+<slot ids={$idValues} />

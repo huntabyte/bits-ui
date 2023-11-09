@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { derived } from "svelte/store";
 	import { setSubMenuCtx } from "../ctx.js";
 	import type { SubProps } from "../types.js";
 	type $$Props = SubProps;
@@ -13,9 +14,14 @@
 		arrowSize
 	});
 
+	const idValues = derived([ids.menu, ids.trigger], ([$menuId, $triggerId]) => ({
+		menu: $menuId,
+		trigger: $triggerId
+	}));
+
 	$: updateOption("positioning", positioning);
 	$: updateOption("disabled", disabled);
 	$: updateOption("arrowSize", arrowSize);
 </script>
 
-<slot subIds={ids} />
+<slot subIds={$idValues} />

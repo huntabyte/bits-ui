@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { derived } from "svelte/store";
 	import { setCtx } from "../ctx.js";
 	import type { Props } from "../types.js";
 
@@ -32,6 +33,15 @@
 		}
 	});
 
+	const idValues = derived(
+		[ids.content, ids.description, ids.title],
+		([$contentId, $descriptionId, $titleId]) => ({
+			content: $contentId,
+			description: $descriptionId,
+			title: $titleId
+		})
+	);
+
 	$: open !== undefined && localOpen.set(open);
 
 	$: updateOption("preventScroll", preventScroll);
@@ -41,4 +51,4 @@
 	$: updateOption("forceVisible", forceVisible);
 </script>
 
-<slot {ids} />
+<slot ids={$idValues} />
