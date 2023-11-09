@@ -6,6 +6,5 @@ export * from "./kbd.js";
 export * from "./object.js";
 export * from "./sleep.js";
 export * from "./style.js";
-export * from "./transition.js";
 export * from "./types.js";
 export * from "./updater.js";
