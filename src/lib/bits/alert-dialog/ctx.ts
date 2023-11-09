@@ -4,13 +4,7 @@ import {
 	type CreateDialogProps as CreateAlertDialogProps
 } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
-import {
-	createBitAttrs,
-	getOptionUpdater,
-	removeUndefined,
-	type TOpen,
-	type TransitionTimesProp
-} from "$lib/internal/index.js";
+import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 
 const NAME = "alert-dialog";
 const PARTS = [
@@ -24,8 +18,8 @@ const PARTS = [
 	"trigger"
 ] as const;
 
-type SetProps = CreateAlertDialogProps & TransitionTimesProp & TOpen;
-type GetReturn = AlertDialogReturn & TransitionTimesProp & TOpen;
+type SetProps = CreateAlertDialogProps;
+type GetReturn = AlertDialogReturn;
 
 export const getAttrs = createBitAttrs(NAME, PARTS);
 
@@ -34,11 +28,7 @@ export function setCtx(props: SetProps) {
 		...removeUndefined(props),
 		role: "alertdialog"
 	});
-	setContext(NAME, {
-		...alertDialog,
-		transitionTimes: props.transitionTimes,
-		tOpen: props.tOpen
-	});
+	setContext(NAME, alertDialog);
 	return {
 		...alertDialog,
 		updateOption: getOptionUpdater(alertDialog.options)

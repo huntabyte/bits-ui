@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { derived } from "svelte/store";
 	import { setCtx } from "../ctx.js";
 	import type { SelectProps } from "../types.js";
 
@@ -56,6 +57,15 @@
 		}
 	});
 
+	const idValues = derived(
+		[ids.menu, ids.trigger, ids.label],
+		([$menuId, $triggerId, $labelId]) => ({
+			menu: $menuId,
+			trigger: $triggerId,
+			label: $labelId
+		})
+	);
+
 	$: open !== undefined && localOpen.set(open);
 	$: selected !== undefined && localSelected.set(selected);
 
@@ -73,4 +83,4 @@
 	$: updateOption("forceVisible", forceVisible);
 </script>
 
-<slot {ids} />
+<slot ids={$idValues} />

@@ -1,9 +1,7 @@
 <script lang="ts">
-	import { onDestroy } from "svelte";
-	import { writable } from "svelte/store";
+	import { derived } from "svelte/store";
 	import { setCtx } from "../ctx.js";
 	import type { Props } from "../types.js";
-	import { type TransitionTimes, isBrowser } from "$lib/internal/index.js";
 
 	type $$Props = Props;
 
@@ -17,9 +15,6 @@
 	export let openFocus: $$Props["openFocus"] = undefined;
 	export let closeFocus: $$Props["closeFocus"] = undefined;
 
-	const transitionTimes = writable<TransitionTimes>({});
-	const tOpen = writable(open);
-	let timeout = 0;
 	const {
 		states: { open: localOpen },
 		updateOption,
@@ -31,44 +26,25 @@
 		portal,
 		forceVisible,
 		defaultOpen: open,
-		transitionTimes,
-		tOpen,
 		openFocus,
 		closeFocus,
 		onOpenChange: ({ next }) => {
-			if (!isBrowser) {
-				return next;
-			}
-			window.clearTimeout(timeout);
 			if (open !== next) {
 				onOpenChange?.(next);
+				open = next;
 			}
-			if (next !== $tOpen) {
-				tOpen.set(next);
-				if (!next) {
-					timeout = window.setTimeout(
-						() => {
-							localOpen.set(next);
-						},
-						$transitionTimes.out ? $transitionTimes.out * 0.6 : 0
-					);
-					open = !next;
-					return !next;
-				} else {
-					open = next;
-					return next;
-				}
-			}
-			open = next;
 			return next;
 		}
 	});
 
-	onDestroy(() => {
-		if (isBrowser) {
-			window.clearTimeout(timeout);
-		}
-	});
+	const idValues = derived(
+		[ids.content, ids.description, ids.title],
+		([$contentId, $descriptionId, $titleId]) => ({
+			content: $contentId,
+			description: $descriptionId,
+			title: $titleId
+		})
+	);
 
 	$: open !== undefined && localOpen.set(open);
 
@@ -81,4 +57,4 @@
 	$: updateOption("closeFocus", closeFocus);
 </script>
 
-<slot {ids} />
+<slot ids={$idValues} />

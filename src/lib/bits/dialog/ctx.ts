@@ -1,29 +1,19 @@
 import { createDialog, type CreateDialogProps, type Dialog as DialogReturn } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
-import {
-	createBitAttrs,
-	getOptionUpdater,
-	removeUndefined,
-	type TOpen,
-	type TransitionTimesProp
-} from "$lib/internal/index.js";
+import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 
 const NAME = "dialog";
 const PARTS = ["close", "content", "description", "overlay", "portal", "title", "trigger"] as const;
 
 export const getAttrs = createBitAttrs(NAME, PARTS);
 
-type SetProps = CreateDialogProps & TransitionTimesProp & TOpen;
+type SetProps = CreateDialogProps;
 
-type GetReturn = DialogReturn & TransitionTimesProp & TOpen;
+type GetReturn = DialogReturn;
 
 export function setCtx(props: SetProps) {
 	const dialog = createDialog({ ...removeUndefined(props), role: "dialog" });
-	setContext(NAME, {
-		...dialog,
-		transitionTimes: props.transitionTimes,
-		tOpen: props.tOpen
-	});
+	setContext(NAME, dialog);
 	return {
 		...dialog,
 		updateOption: getOptionUpdater(dialog.options)

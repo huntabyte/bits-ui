@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { MenuProps } from "../types.js";
 	import { setMenuCtx } from "../ctx.js";
+	import { generateId } from "$lib/internal/id.js";
 	type $$Props = MenuProps;
 
 	export let closeOnOutsideClick: $$Props["closeOnOutsideClick"] = undefined;
@@ -17,12 +18,17 @@
 	export let closeFocus: $$Props["closeFocus"] = undefined;
 	export let disableFocusFirstItem: $$Props["disableFocusFirstItem"] = undefined;
 
+	const ids = {
+		menu: generateId(),
+		trigger: generateId()
+	};
+
 	const {
 		states: { open: localOpen },
-		updateOption,
-		ids
+		updateOption
 	} = setMenuCtx({
 		closeOnOutsideClick,
+		ids,
 		closeOnEscape,
 		portal,
 		preventScroll,

@@ -20,18 +20,18 @@
 	export let asChild = false;
 	const {
 		elements: { overlay },
-		tOpen
+		states: { open }
 	} = getCtx();
 
 	$: builder = $overlay;
 	const attrs = getAttrs("overlay");
 </script>
 
-{#if asChild && $tOpen}
+{#if asChild && $open}
 	<slot {builder} {attrs} />
-{:else if transition && $tOpen}
+{:else if transition && $open}
 	<div transition:transition={transitionConfig} use:melt={builder} {...$$restProps} {...attrs} />
-{:else if inTransition && outTransition && $tOpen}
+{:else if inTransition && outTransition && $open}
 	<div
 		in:inTransition={inTransitionConfig}
 		out:outTransition={outTransitionConfig}
@@ -39,10 +39,10 @@
 		{...$$restProps}
 		{...attrs}
 	/>
-{:else if inTransition && $tOpen}
+{:else if inTransition && $open}
 	<div in:inTransition={inTransitionConfig} use:melt={builder} {...$$restProps} {...attrs} />
-{:else if outTransition && $tOpen}
+{:else if outTransition && $open}
 	<div out:outTransition={outTransitionConfig} use:melt={builder} {...$$restProps} {...attrs} />
-{:else if $tOpen}
+{:else if $open}
 	<div use:melt={builder} {...$$restProps} {...attrs} />
 {/if}

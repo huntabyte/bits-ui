@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Props } from "../types.js";
 	import { setCtx } from "../ctx.js";
+	import { derived } from "svelte/store";
 
 	type $$Props = Props;
 	export let positioning: $$Props["positioning"] = undefined;
@@ -39,6 +40,11 @@
 		}
 	});
 
+	const idValues = derived([ids.content, ids.trigger], ([$contentId, $triggerId]) => ({
+		content: $contentId,
+		trigger: $triggerId
+	}));
+
 	$: open !== undefined && localOpen.set(open);
 
 	$: updateOption("positioning", positioning);
@@ -52,4 +58,4 @@
 	$: updateOption("closeFocus", closeFocus);
 </script>
 
-<slot {ids} />
+<slot ids={$idValues} />
