@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.9.3
+
+### Patch Changes
+
+- fix: id synchronization ([#165](https://github.com/huntabyte/bits-ui/pull/165))
+
 ## 0.9.2
 
 ### Patch Changes
