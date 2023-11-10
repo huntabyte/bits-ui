@@ -9,7 +9,7 @@
 	export let disabled: $$Props["disabled"] = undefined;
 	export let pressed: $$Props["pressed"] = undefined;
 	export let onPressedChange: $$Props["onPressedChange"] = undefined;
-	export let asChild = false;
+	export let asChild: $$Props["asChild"] = false;
 	const {
 		elements: { root },
 		states: { pressed: localPressed },

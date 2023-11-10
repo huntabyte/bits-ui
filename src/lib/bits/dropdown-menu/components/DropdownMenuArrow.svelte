@@ -6,7 +6,7 @@
 	type $$Props = ArrowProps;
 
 	export let size = 8;
-	export let asChild = false;
+	export let asChild: $$Props["asChild"] = false;
 
 	const {
 		elements: { arrow }

@@ -4,11 +4,18 @@
 	import type { TitleProps } from "../types.js";
 
 	type $$Props = TitleProps;
-	export let level: TitleProps["level"] = "h2";
-	export let asChild = false;
+	export let level: $$Props["level"] = "h2";
+	export let asChild: $$Props["asChild"] = false;
+	export let id: $$Props["id"] = undefined;
+
 	const {
-		elements: { title }
+		elements: { title },
+		ids
 	} = getCtx();
+
+	$: if (id) {
+		ids.title.set(id);
+	}
 
 	$: builder = $title;
 	const attrs = getAttrs("title");

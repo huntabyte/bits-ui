@@ -4,7 +4,7 @@
 	import type { PortalProps } from "../types.js";
 
 	type $$Props = PortalProps;
-	export let asChild = false;
+	export let asChild: $$Props["asChild"] = false;
 	const {
 		elements: { portalled }
 	} = getCtx();

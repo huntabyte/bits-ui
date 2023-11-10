@@ -8,7 +8,7 @@
 	type $$Events = ItemEvents;
 	export let value: $$Props["value"];
 	export let disabled = false;
-	export let asChild = false;
+	export let asChild: $$Props["asChild"] = false;
 	const {
 		elements: { item }
 	} = setItemCtx(value);

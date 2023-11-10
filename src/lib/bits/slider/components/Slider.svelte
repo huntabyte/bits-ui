@@ -12,13 +12,12 @@
 	export let orientation: $$Props["orientation"] = undefined;
 	export let value: $$Props["value"] = undefined;
 	export let onValueChange: $$Props["onValueChange"] = undefined;
-	export let asChild = false;
+	export let asChild: $$Props["asChild"] = false;
 
 	const {
 		elements: { root },
 		states: { value: localValue, ticks },
-		updateOption,
-		ids
+		updateOption
 	} = setCtx({
 		disabled,
 		min,
@@ -47,9 +46,9 @@
 </script>
 
 {#if asChild}
-	<slot {builder} {attrs} {ids} ticks={$ticks} />
+	<slot {builder} {attrs} ticks={$ticks} />
 {:else}
 	<span use:melt={builder} {...$$restProps} {...attrs}>
-		<slot {builder} {attrs} {ids} ticks={$ticks} />
+		<slot {builder} {attrs} ticks={$ticks} />
 	</span>
 {/if}

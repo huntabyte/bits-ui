@@ -9,13 +9,20 @@
 		disabled?: boolean;
 	};
 	type $$Events = SubTriggerEvents;
-	export let disabled = false;
-	export let asChild = false;
+	export let disabled: $$Props["disabled"] = false;
+	export let asChild: $$Props["asChild"] = false;
+	export let id: $$Props["id"] = undefined;
 
 	const {
-		elements: { subTrigger }
+		elements: { subTrigger },
+		ids
 	} = getSubMenuCtx();
 	const dispatch = createDispatcher();
+
+	$: if (id) {
+		ids.trigger.set(id);
+	}
+
 	$: builder = $subTrigger;
 	$: attrs = { ...getAttrs("sub-trigger"), ...disabledAttrs(disabled) };
 </script>

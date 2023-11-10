@@ -10,7 +10,7 @@
 	export let value: $$Props["value"];
 	export let disabled: $$Props["disabled"] = undefined;
 	export let label: $$Props["label"] = undefined;
-	export let asChild = false;
+	export let asChild: $$Props["asChild"] = false;
 	const {
 		elements: { option: item }
 	} = setItemCtx(value);

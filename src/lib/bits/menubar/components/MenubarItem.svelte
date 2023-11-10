@@ -7,7 +7,7 @@
 
 	type $$Props = ItemProps;
 	type $$Events = ItemEvents;
-	export let asChild = false;
+	export let asChild: $$Props["asChild"] = false;
 	export let disabled = false;
 	const {
 		elements: { item }

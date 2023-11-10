@@ -16,13 +16,18 @@
 	export let inTransitionConfig: $$Props["inTransitionConfig"] = undefined;
 	export let outTransition: $$Props["outTransition"] = undefined;
 	export let outTransitionConfig: $$Props["outTransitionConfig"] = undefined;
-
-	export let asChild = false;
+	export let id: $$Props["id"] = undefined;
+	export let asChild: $$Props["asChild"] = false;
 
 	const {
 		elements: { content },
-		states: { open }
+		states: { open },
+		ids
 	} = getCtx();
+
+	$: if (id) {
+		ids.content.set(id);
+	}
 
 	$: builder = $content;
 	const attrs = getAttrs("content");

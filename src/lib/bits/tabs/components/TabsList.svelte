@@ -4,7 +4,7 @@
 	import type { ListProps } from "../types.js";
 	type $$Props = ListProps;
 
-	export let asChild = false;
+	export let asChild: $$Props["asChild"] = false;
 	const {
 		elements: { list }
 	} = getCtx();

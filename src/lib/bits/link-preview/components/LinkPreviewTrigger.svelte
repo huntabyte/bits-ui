@@ -6,11 +6,19 @@
 
 	type $$Props = TriggerProps;
 	type $$Events = TriggerEvents;
-	export let asChild = false;
+	export let asChild: $$Props["asChild"] = false;
+	export let id: $$Props["id"] = undefined;
+
 	const {
-		elements: { trigger }
+		elements: { trigger },
+		ids
 	} = getCtx();
+
 	const dispatch = createDispatcher();
+
+	$: if (id) {
+		ids.trigger.set(id);
+	}
 
 	$: builder = $trigger;
 	const attrs = getAttrs("trigger");

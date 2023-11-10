@@ -6,7 +6,7 @@
 
 	type $$Props = Props;
 	type $$Events = Events;
-	export let asChild = false;
+	export let asChild: $$Props["asChild"] = false;
 	const {
 		elements: { root }
 	} = createLabel();

@@ -3,7 +3,7 @@
 	import { getGroupLabel, getAttrs } from "../ctx.js";
 	import type { LabelProps } from "../types.js";
 	type $$Props = LabelProps;
-	export let asChild = false;
+	export let asChild: $$Props["asChild"] = false;
 
 	const { groupLabel, id } = getGroupLabel();
 	$: builder = $groupLabel(id);
