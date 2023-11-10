@@ -8,7 +8,7 @@
 
 	export let value: $$Props["value"];
 	export let disabled: $$Props["disabled"] = undefined;
-	export let asChild = false;
+	export let asChild: $$Props["asChild"] = false;
 
 	const {
 		elements: { trigger }

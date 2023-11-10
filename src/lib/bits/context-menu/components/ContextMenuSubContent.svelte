@@ -16,14 +16,20 @@
 	export let inTransitionConfig: $$Props["inTransitionConfig"] = undefined;
 	export let outTransition: $$Props["outTransition"] = undefined;
 	export let outTransitionConfig: $$Props["outTransitionConfig"] = undefined;
-	export let asChild = false;
+	export let asChild: $$Props["asChild"] = false;
+	export let id: $$Props["id"] = undefined;
 
 	const {
 		elements: { subMenu },
-		states: { subOpen }
+		states: { subOpen },
+		ids
 	} = getSubContent();
 
 	$: builder = $subMenu;
+
+	$: if (id) {
+		ids.menu.set(id);
+	}
 
 	const dispatch = createDispatcher();
 	const attrs = getAttrs("sub-content");

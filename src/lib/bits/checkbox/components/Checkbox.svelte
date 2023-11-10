@@ -12,7 +12,7 @@
 	export let required: $$Props["required"] = undefined;
 	export let value: $$Props["value"] = undefined;
 	export let onCheckedChange: $$Props["onCheckedChange"] = undefined;
-	export let asChild = false;
+	export let asChild: $$Props["asChild"] = false;
 
 	const {
 		elements: { root },

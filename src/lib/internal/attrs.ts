@@ -11,6 +11,6 @@ export function createBitAttrs<T extends readonly string[]>(bit: Bit, parts: T) 
 	return (part: T[number]) => attrs[part];
 }
 
-export function disabledAttrs(disabled: boolean) {
+export function disabledAttrs(disabled: boolean | undefined | null) {
 	return disabled ? { "aria-disabled": true, "data-disabled": "" } : {};
 }

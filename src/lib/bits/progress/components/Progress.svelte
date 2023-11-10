@@ -8,7 +8,7 @@
 	export let max: $$Props["max"] = undefined;
 	export let value: $$Props["value"] = undefined;
 	export let onValueChange: $$Props["onValueChange"] = undefined;
-	export let asChild = false;
+	export let asChild: $$Props["asChild"] = false;
 
 	const {
 		elements: { root },

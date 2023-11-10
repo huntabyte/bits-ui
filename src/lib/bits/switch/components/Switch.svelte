@@ -14,7 +14,7 @@
 	export let value: $$Props["value"] = undefined;
 	export let includeInput: $$Props["includeInput"] = true;
 	export let required: $$Props["required"] = undefined;
-	export let asChild = false;
+	export let asChild: $$Props["asChild"] = false;
 	export let inputAttrs: $$Props["inputAttrs"] = undefined;
 
 	const {

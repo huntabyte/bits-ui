@@ -12,22 +12,26 @@
 
 	export let transition: $$Props["transition"] = undefined;
 	export let transitionConfig: $$Props["transitionConfig"] = undefined;
-
 	export let inTransition: $$Props["inTransition"] = undefined;
 	export let inTransitionConfig: $$Props["inTransitionConfig"] = undefined;
-
 	export let outTransition: $$Props["outTransition"] = undefined;
 	export let outTransitionConfig: $$Props["outTransitionConfig"] = undefined;
-
-	export let asChild = false;
+	export let asChild: $$Props["asChild"] = false;
+	export let id: $$Props["id"] = undefined;
 
 	const {
 		elements: { subMenu },
-		states: { subOpen }
+		states: { subOpen },
+		ids
 	} = getSubMenuCtx();
 
 	const dispatch = createDispatcher();
+
+	$: if (id) {
+		ids.menu.set(id);
+	}
 	$: builder = $subMenu;
+
 	const attrs = getAttrs("sub-content");
 </script>
 

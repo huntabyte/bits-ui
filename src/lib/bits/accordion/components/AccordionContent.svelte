@@ -19,7 +19,7 @@
 	export let outTransition: $$Props["outTransition"] = undefined;
 	export let outTransitionConfig: $$Props["outTransitionConfig"] = undefined;
 
-	export let asChild = false;
+	export let asChild: $$Props["asChild"] = false;
 
 	const { content, isSelected, props } = getContent();
 

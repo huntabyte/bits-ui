@@ -6,9 +6,10 @@
 
 	type $$Props = Props;
 
-	export let loop = true;
-	export let closeOnEscape = true;
-	export let asChild = false;
+	export let loop: $$Props["loop"] = true;
+	export let closeOnEscape: $$Props["closeOnEscape"] = true;
+	export let asChild: $$Props["asChild"] = false;
+	export let id: $$Props["id"] = undefined;
 
 	const {
 		elements: { menubar },
@@ -19,6 +20,10 @@
 	const idValues = derived([ids.menubar], ([$menubarId]) => ({
 		menubar: $menubarId
 	}));
+
+	$: if (id) {
+		ids.menubar.set(id);
+	}
 
 	$: updateOption("loop", loop);
 	$: updateOption("closeOnEscape", closeOnEscape);

@@ -18,16 +18,20 @@
 	export let outTransition: $$Props["outTransition"] = undefined;
 	export let outTransitionConfig: $$Props["outTransitionConfig"] = undefined;
 
-	export let asChild = false;
-	export let sideOffset = 4;
+	export let asChild: $$Props["asChild"] = false;
+	export let sideOffset: $$Props["sideOffset"] = 4;
+	export let id: $$Props["id"] = undefined;
 
 	const {
 		elements: { content },
-		states: { open }
+		states: { open },
+		ids
 	} = getCtx(sideOffset);
 
 	const dispatch = createDispatcher();
-
+	$: if (id) {
+		ids.content.set(id);
+	}
 	$: builder = $content;
 	const attrs = getAttrs("content");
 </script>

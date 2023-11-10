@@ -5,7 +5,7 @@
 
 	type $$Props = ContentProps;
 	export let value: $$Props["value"];
-	export let asChild = false;
+	export let asChild: $$Props["asChild"] = false;
 	const {
 		elements: { content }
 	} = getCtx();

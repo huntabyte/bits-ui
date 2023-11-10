@@ -6,7 +6,7 @@
 	export let delayMs: $$Props["delayMs"] = undefined;
 	export let loadingStatus: $$Props["loadingStatus"] = undefined;
 	export let onLoadingStatusChange: $$Props["onLoadingStatusChange"] = undefined;
-	export let asChild = false;
+	export let asChild: $$Props["asChild"] = false;
 
 	const {
 		states: { loadingStatus: localLoadingStatus },

@@ -6,7 +6,7 @@
 
 	type $$Props = CancelProps;
 	type $$Events = CancelEvents;
-	export let asChild = false;
+	export let asChild: $$Props["asChild"] = false;
 	const {
 		elements: { close }
 	} = getCtx();
