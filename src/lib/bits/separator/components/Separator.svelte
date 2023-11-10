@@ -6,7 +6,7 @@
 	type $$Props = Props;
 	export let orientation: $$Props["orientation"] = "horizontal";
 	export let decorative = true;
-	export let asChild = false;
+	export let asChild: $$Props["asChild"] = false;
 
 	const {
 		elements: { root },

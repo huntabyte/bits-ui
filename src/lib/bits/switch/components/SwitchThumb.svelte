@@ -3,7 +3,7 @@
 	import type { ThumbProps } from "../types.js";
 
 	type $$Props = ThumbProps;
-	export let asChild = false;
+	export let asChild: $$Props["asChild"] = false;
 	const {
 		states: { checked }
 	} = getCtx();

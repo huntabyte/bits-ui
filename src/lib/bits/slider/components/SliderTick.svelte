@@ -4,7 +4,7 @@
 	import type { TickProps } from "../types.js";
 
 	type $$Props = TickProps;
-	export let asChild = false;
+	export let asChild: $$Props["asChild"] = false;
 	const {
 		elements: { tick }
 	} = getCtx();

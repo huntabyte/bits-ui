@@ -4,7 +4,7 @@
 	import type { RangeProps } from "../types.js";
 
 	type $$Props = RangeProps;
-	export let asChild = false;
+	export let asChild: $$Props["asChild"] = false;
 	const {
 		elements: { range }
 	} = getCtx();

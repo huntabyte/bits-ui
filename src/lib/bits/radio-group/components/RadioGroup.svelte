@@ -10,7 +10,7 @@
 	export let onValueChange: $$Props["onValueChange"] = undefined;
 	export let loop: $$Props["loop"] = undefined;
 	export let orientation: $$Props["orientation"] = undefined;
-	export let asChild = false;
+	export let asChild: $$Props["asChild"] = false;
 
 	const {
 		elements: { root },

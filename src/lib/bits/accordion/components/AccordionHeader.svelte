@@ -5,7 +5,7 @@
 
 	type $$Props = HeaderProps;
 	export let level = 3;
-	export let asChild = false;
+	export let asChild: $$Props["asChild"] = false;
 	const {
 		elements: { heading: header }
 	} = getCtx();

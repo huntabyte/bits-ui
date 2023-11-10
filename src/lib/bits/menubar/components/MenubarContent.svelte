@@ -20,14 +20,18 @@
 	export let outTransition: $$Props["outTransition"] = undefined;
 	export let outTransitionConfig: $$Props["outTransitionConfig"] = undefined;
 
-	export let asChild = false;
+	export let asChild: $$Props["asChild"] = false;
+	export let id: $$Props["id"] = undefined;
 	const {
 		elements: { menu },
-		states: { open }
+		states: { open },
+		ids
 	} = getContent(sideOffset);
 
 	const dispatch = createDispatcher();
-
+	$: if (id) {
+		ids.menu.set(id);
+	}
 	$: builder = $menu;
 	const attrs = getAttrs("content");
 </script>

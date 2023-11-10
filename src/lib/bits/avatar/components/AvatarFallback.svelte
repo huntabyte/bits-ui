@@ -4,7 +4,7 @@
 	import type { FallbackProps } from "../types.js";
 
 	type $$Props = FallbackProps;
-	export let asChild = false;
+	export let asChild: $$Props["asChild"] = false;
 	const {
 		elements: { fallback }
 	} = getCtx();

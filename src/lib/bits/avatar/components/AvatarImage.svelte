@@ -6,7 +6,7 @@
 	type $$Props = ImageProps;
 	export let src: $$Props["src"] = undefined;
 	export let alt: $$Props["alt"] = undefined;
-	export let asChild = false;
+	export let asChild: $$Props["asChild"] = false;
 
 	$: image = getImage(src).elements.image;
 	$: builder = $image;

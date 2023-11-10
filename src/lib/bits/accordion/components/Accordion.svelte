@@ -9,14 +9,13 @@
 	export let multiple: $$Props["multiple"] = false as Multiple;
 	export let value: $$Props["value"] = undefined;
 	export let onValueChange: $$Props["onValueChange"] = undefined;
-	export let disabled = false;
-	export let asChild = false;
+	export let disabled: $$Props["disabled"] = false;
+	export let asChild: $$Props["asChild"] = false;
 
 	const {
 		elements: { root },
 		states: { value: localValue },
-		updateOption,
-		ids
+		updateOption
 	} = setCtx({
 		multiple,
 		disabled,
@@ -43,9 +42,9 @@
 </script>
 
 {#if asChild}
-	<slot {builder} {attrs} {ids} />
+	<slot {builder} {attrs} />
 {:else}
 	<div use:melt={builder} {...$$restProps} {...attrs}>
-		<slot {builder} {attrs} {ids} />
+		<slot {builder} {attrs} />
 	</div>
 {/if}

@@ -7,7 +7,7 @@
 	type $$Props = TriggerProps;
 	type $$Events = TriggerEvents;
 
-	export let asChild = false;
+	export let asChild: $$Props["asChild"] = false;
 	const {
 		elements: { trigger }
 	} = getCtx();

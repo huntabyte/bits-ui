@@ -4,7 +4,7 @@
 	import type { SeparatorProps } from "../types.js";
 
 	type $$Props = SeparatorProps;
-	export let asChild = false;
+	export let asChild: $$Props["asChild"] = false;
 	const {
 		elements: { separator }
 	} = getCtx();

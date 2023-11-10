@@ -4,7 +4,7 @@
 	import type { GroupProps } from "../types.js";
 
 	type $$Props = GroupProps;
-	export let asChild = false;
+	export let asChild: $$Props["asChild"] = false;
 	const { group, id } = setGroupCtx();
 	$: builder = $group(id);
 	const attrs = getAttrs("group");

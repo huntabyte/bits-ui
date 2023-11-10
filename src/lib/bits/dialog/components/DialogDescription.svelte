@@ -4,10 +4,17 @@
 	import type { DescriptionProps } from "../types.js";
 
 	type $$Props = DescriptionProps;
-	export let asChild = false;
+	export let asChild: $$Props["asChild"] = false;
+	export let id: $$Props["id"] = undefined;
+
 	const {
-		elements: { description }
+		elements: { description },
+		ids
 	} = getCtx();
+
+	$: if (id) {
+		ids.description.set(id);
+	}
 	$: builder = $description;
 	const attrs = getAttrs("description");
 </script>

@@ -4,7 +4,7 @@
 
 	type $$Props = ValueProps;
 	export let placeholder = "";
-	export let asChild = false;
+	export let asChild: $$Props["asChild"] = false;
 	const {
 		states: { selectedLabel }
 	} = getCtx();

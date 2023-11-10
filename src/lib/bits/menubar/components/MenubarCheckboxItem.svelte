@@ -9,7 +9,7 @@
 	export let checked: $$Props["checked"] = undefined;
 	export let onCheckedChange: $$Props["onCheckedChange"] = undefined;
 	export let disabled: $$Props["disabled"] = undefined;
-	export let asChild = false;
+	export let asChild: $$Props["asChild"] = false;
 
 	const {
 		elements: { checkboxItem },

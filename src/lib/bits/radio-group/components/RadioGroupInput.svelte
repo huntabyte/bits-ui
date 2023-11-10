@@ -4,7 +4,7 @@
 	import { getCtx, getAttrs } from "../ctx.js";
 
 	type $$Props = InputProps;
-	export let asChild = false;
+	export let asChild: $$Props["asChild"] = false;
 	const {
 		elements: { hiddenInput }
 	} = getCtx();
