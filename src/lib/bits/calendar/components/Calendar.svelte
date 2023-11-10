@@ -26,7 +26,7 @@
 
 	const {
 		elements: { calendar },
-		states: { value: localValue, placeholder: localPlaceholder },
+		states: { value: localValue, placeholder: localPlaceholder, months, daysOfWeek },
 		updateOption,
 		ids
 	} = setCtx({
@@ -82,12 +82,19 @@
 
 	$: builder = $calendar;
 	const attrs = getAttrs("root");
+
+	$: slotProps = {
+		builder,
+		attrs,
+		months: $months,
+		daysOfWeek: $daysOfWeek
+	};
 </script>
 
 {#if asChild}
-	<slot {builder} {attrs} />
+	<slot {builder} {attrs} months={$months} daysOfWeek={$daysOfWeek} />
 {:else}
 	<div use:melt={builder} {...$$restProps} {...attrs}>
-		<slot {builder} {attrs} />
+		<slot {builder} {attrs} months={$months} daysOfWeek={$daysOfWeek} />
 	</div>
 {/if}
