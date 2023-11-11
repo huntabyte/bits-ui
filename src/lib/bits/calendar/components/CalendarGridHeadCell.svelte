@@ -1,0 +1,17 @@
+<script lang="ts">
+	import { getAttrs } from "../ctx.js";
+	import type { GridHeadCellProps } from "../types.js";
+
+	type $$Props = GridHeadCellProps;
+	export let asChild: $$Props["asChild"] = false;
+
+	const attrs = getAttrs("grid-head-cell");
+</script>
+
+{#if asChild}
+	<slot {attrs} />
+{:else}
+	<th {...$$restProps} {...attrs}>
+		<slot />
+	</th>
+{/if}

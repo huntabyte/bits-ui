@@ -7,7 +7,19 @@ import { getContext, setContext } from "svelte";
 import { removeUndefined, getOptionUpdater, createBitAttrs } from "$lib/internal/index.js";
 
 const NAME = "calendar";
-const PARTS = ["root", "prev-button", "next-button", "heading", "grid", "cell"];
+const PARTS = [
+	"root",
+	"prev-button",
+	"next-button",
+	"heading",
+	"grid",
+	"header",
+	"grid-head",
+	"grid-head-cell",
+	"grid-body",
+	"grid-body-cell",
+	"grid-row"
+] as const;
 
 export const getAttrs = createBitAttrs(NAME, PARTS);
 

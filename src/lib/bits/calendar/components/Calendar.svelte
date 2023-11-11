@@ -92,9 +92,9 @@
 </script>
 
 {#if asChild}
-	<slot {builder} {attrs} months={$months} daysOfWeek={$daysOfWeek} />
+	<slot {...slotProps} />
 {:else}
 	<div use:melt={builder} {...$$restProps} {...attrs}>
-		<slot {builder} {attrs} months={$months} daysOfWeek={$daysOfWeek} />
+		<slot {...slotProps} />
 	</div>
 {/if}

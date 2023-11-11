@@ -1,18 +1,18 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { getAttrs, getCtx } from "../ctx.js";
-	import type { PrevButtonProps } from "../types.js";
+	import type { GridProps } from "../types.js";
 
-	type $$Props = PrevButtonProps;
+	type $$Props = GridProps;
 
 	export let asChild: $$Props["asChild"] = false;
 
 	const {
-		elements: { prevButton }
+		elements: { grid }
 	} = getCtx();
 
-	$: builder = $prevButton;
-	const attrs = getAttrs("prev-button");
+	$: builder = $grid;
+	const attrs = getAttrs("grid");
 
 	$: slotProps = {
 		builder,
@@ -23,7 +23,7 @@
 {#if asChild}
 	<slot {...slotProps} />
 {:else}
-	<button use:melt={builder} type="button" {...$$restProps} {...attrs}>
+	<table use:melt={builder} {...$$restProps} {...attrs}>
 		<slot {...slotProps} />
-	</button>
+	</table>
 {/if}
