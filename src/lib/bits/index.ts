@@ -3,6 +3,7 @@ export * as AlertDialog from "./alert-dialog/index.js";
 export * as AspectRatio from "./aspect-ratio/index.js";
 export * as Avatar from "./avatar/index.js";
 export * as Button from "./button/index.js";
+export * as Calendar from "./calendar/index.js";
 export * as Checkbox from "./checkbox/index.js";
 export * as Collapsible from "./collapsible/index.js";
 export * as ContextMenu from "./context-menu/index.js";

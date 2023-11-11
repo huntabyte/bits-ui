@@ -76,6 +76,11 @@ export const navigation: Navigation = {
 					items: []
 				},
 				{
+					title: "Calendar",
+					href: "/docs/components/calendar",
+					items: []
+				},
+				{
 					title: "Checkbox",
 					href: "/docs/components/checkbox",
 					items: []

@@ -26,7 +26,7 @@
 					</div>
 				</div>
 			{:else}
-				<div class="relative rounded-md bg-secondary border border-border">
+				<div class="relative rounded-md border border-border">
 					<div
 						class={cn(
 							"preview flex min-h-[350px] w-full justify-center p-12",

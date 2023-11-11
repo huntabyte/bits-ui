@@ -16,4 +16,3 @@
 		<slot {attrs} />
 	</tr>
 {/if}
-```

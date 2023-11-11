@@ -3,6 +3,7 @@ export { default as AlertDialogDemo } from "./alert-dialog-demo.svelte";
 export { default as AspectRatioDemo } from "./aspect-ratio-demo.svelte";
 export { default as AvatarDemo } from "./avatar-demo.svelte";
 export { default as ButtonDemo } from "./button-demo.svelte";
+export { default as CalendarDemo } from "./calendar-demo.svelte";
 export { default as CheckboxDemo } from "./checkbox-demo.svelte";
 export { default as CollapsibleDemo } from "./collapsible-demo.svelte";
 export { default as ContextMenuDemo } from "./context-menu-demo.svelte";

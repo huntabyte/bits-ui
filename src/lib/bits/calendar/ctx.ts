@@ -13,6 +13,7 @@ const PARTS = [
 	"next-button",
 	"heading",
 	"grid",
+	"date",
 	"header",
 	"grid-head",
 	"grid-head-cell",

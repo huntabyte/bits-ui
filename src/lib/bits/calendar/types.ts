@@ -5,6 +5,7 @@ import type {
 	HTMLAttributes,
 	HTMLButtonAttributes,
 	HTMLTableAttributes,
+	HTMLTdAttributes,
 	HTMLThAttributes
 } from "svelte/elements";
 
@@ -46,7 +47,7 @@ type GridBodyProps = Expand<AsChild> & HTMLAttributes<HTMLTableSectionElement>;
 
 type GridRowProps = Expand<AsChild> & HTMLAttributes<HTMLTableRowElement>;
 
-type GridBodyCellProps = Expand<
+type BaseDateProps = Expand<
 	{
 		/**
 		 * The date value of the cell.
@@ -58,8 +59,11 @@ type GridBodyCellProps = Expand<
 		 */
 		month: DateValue;
 	} & AsChild
-> &
-	HTMLDivAttributes;
+>;
+
+type GridBodyCellProps = Expand<Omit<BaseDateProps, "month">> & HTMLTdAttributes;
+type DateProps = Expand<BaseDateProps> & HTMLDivAttributes;
+
 export type {
 	Props,
 	PrevButtonProps,
@@ -72,6 +76,7 @@ export type {
 	GridHeadCellProps,
 	GridHeadProps,
 	HeaderProps,
+	DateProps,
 	//
 	Props as CalendarProps,
 	PrevButtonProps as CalendarPrevButtonProps,
@@ -83,5 +88,6 @@ export type {
 	GridHeadCellProps as CalendarGridHeadCellProps,
 	GridBodyProps as CalendarGridBodyProps,
 	GridBodyCellProps as CalendarGridBodyCellProps,
-	GridRowProps as CalendarGridRowProps
+	GridRowProps as CalendarGridRowProps,
+	DateProps as CalendarDateProps
 };
