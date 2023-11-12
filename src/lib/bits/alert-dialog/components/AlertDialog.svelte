@@ -26,6 +26,8 @@
 		portal,
 		forceVisible,
 		defaultOpen: open,
+		openFocus,
+		closeFocus,
 		onOpenChange: ({ next }) => {
 			if (open !== next) {
 				onOpenChange?.(next);
