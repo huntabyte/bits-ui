@@ -25,7 +25,7 @@ type ItemProps = {
 } & AsChild &
 	HTMLButtonAttributes;
 
-type Events<T extends Element = HTMLButtonElement> = {
+type ItemEvents<T extends Element = HTMLButtonElement> = {
 	click: CustomEventHandler<MouseEvent, T>;
 	keydown: CustomEventHandler<KeyboardEvent, T>;
 };
@@ -37,7 +37,7 @@ export type {
 	Props as ToggleGroupProps,
 	ItemProps as ToggleGroupItemProps,
 	//
-	Events,
+	ItemEvents,
 	//
-	Events as ToggleGroupEvents
+	ItemEvents as ToggleGroupItemEvents
 };

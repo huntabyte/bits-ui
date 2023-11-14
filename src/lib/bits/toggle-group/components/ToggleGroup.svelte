@@ -1,12 +1,11 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { setCtx, getAttrs } from "../ctx.js";
-	import type { Events, Props } from "../types.js";
+	import type { Props } from "../types.js";
 
 	type T = $$Generic<"single" | "multiple">;
 
 	type $$Props = Props<T>;
-	type $$Events = Events;
 	export let kind: $$Props["kind"] = "single" as T;
 	export let disabled: $$Props["disabled"] = undefined;
 	export let loop: $$Props["loop"] = undefined;
