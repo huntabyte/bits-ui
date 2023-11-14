@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.9.5
+
+### Patch Changes
+
+- feat: add autofocus & closefocus to alert dialog ([#176](https://github.com/huntabyte/bits-ui/pull/176))
+
 ## 0.9.4
 
 ### Patch Changes
