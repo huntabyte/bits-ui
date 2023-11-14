@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { getCtx, getAttrs } from "../ctx";
-	import type { ItemProps } from "../types";
+	import { getCtx, getAttrs } from "../ctx.js";
+	import type { ItemProps, ItemEvents } from "../types.js";
 	import { createDispatcher } from "$lib/internal";
 
 	type $$Props = ItemProps;
+	type $$Events = ItemEvents;
 
 	export let value: $$Props["value"];
 	export let disabled: $$Props["disabled"] = false;
