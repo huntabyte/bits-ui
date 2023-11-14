@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.9.6
+
+### Patch Changes
+
+- fix: correct item events ([#179](https://github.com/huntabyte/bits-ui/pull/179))
+
 ## 0.9.5
 
 ### Patch Changes
