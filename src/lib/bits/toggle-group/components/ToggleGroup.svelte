@@ -6,7 +6,7 @@
 	type T = $$Generic<"single" | "multiple">;
 
 	type $$Props = Props<T>;
-	export let kind: $$Props["kind"] = "single" as T;
+	export let type: $$Props["type"] = "single" as T;
 	export let disabled: $$Props["disabled"] = undefined;
 	export let loop: $$Props["loop"] = undefined;
 	export let value: $$Props["value"] = undefined;
@@ -20,7 +20,7 @@
 		updateOption
 	} = setCtx<T>({
 		disabled,
-		type: kind,
+		type,
 		defaultValue: value,
 		loop,
 		orientation,
@@ -43,7 +43,7 @@
 	$: value !== undefined && localValue.set(value);
 	$: updateOption("disabled", disabled);
 	$: updateOption("loop", loop);
-	$: updateOption("type", kind);
+	$: updateOption("type", type);
 	$: updateOption("orientation", orientation);
 
 	$: builder = $root;
