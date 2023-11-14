@@ -4,10 +4,9 @@
 	import { toggleVariants } from "@/components/ui/toggle";
 
 	let value: string[] | undefined = undefined;
-	$: console.log(value);
 </script>
 
-<ToggleGroup.Root bind:value kind="multiple">
+<ToggleGroup.Root bind:value type="multiple">
 	<ToggleGroup.Item
 		class={toggleVariants({ variant: "default" })}
 		aria-label="toggle bold"
