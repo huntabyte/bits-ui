@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.9.7
+
+### Patch Changes
+
+- change: `kind` prop to `type` in toggle group ([#181](https://github.com/huntabyte/bits-ui/pull/181))
+
 ## 0.9.6
 
 ### Patch Changes
