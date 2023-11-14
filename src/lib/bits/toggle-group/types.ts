@@ -10,10 +10,10 @@ import type { HTMLButtonAttributes } from "svelte/elements";
 import type { CustomEventHandler } from "$lib/index.js";
 
 type Props<T extends "single" | "multiple"> = Expand<
-	OmitValue<CreateToggleGroupProps> & {
+	OmitValue<CreateToggleGroupProps<T>> & {
 		value?: CreateToggleGroupProps<T>["defaultValue"];
 		onValueChange?: OnChangeFn<CreateToggleGroupProps<T>["defaultValue"]>;
-		kind?: T;
+		type?: T;
 	}
 > &
 	AsChild &

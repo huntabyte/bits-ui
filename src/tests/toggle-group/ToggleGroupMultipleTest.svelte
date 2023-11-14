@@ -17,7 +17,7 @@
 
 <main>
 	<button data-testid="binding" on:click={() => (value = ["4"])}>{value}</button>
-	<ToggleGroup.Root data-testid="root" bind:value {...$$restProps} kind="multiple">
+	<ToggleGroup.Root data-testid="root" bind:value {...$$restProps} type="multiple">
 		{#each items as { value, disabled }}
 			<ToggleGroup.Item {value} {disabled} data-testid="item-{value}">
 				{value}
