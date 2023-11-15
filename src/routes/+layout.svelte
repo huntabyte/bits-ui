@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { dev } from "$app/environment";
-	import { SidebarNav, SiteHeader, TailwindIndicator } from "@/components";
+	import { SidebarNav, SiteHeader, TableOfContents, TailwindIndicator } from "@/components";
 	import { navigation } from "@/config";
 	import { ModeWatcher } from "mode-watcher";
 	import "@/styles/app.postcss";
@@ -15,12 +15,14 @@
 	>
 		<SidebarNav items={navigation.sidebar} />
 		<main class="relative pb-6 pt-16 lg:gap-10 xl:grid xl:grid-cols-[1fr_300px]">
-			<div class="mx-auto w-full min-w-0">
+			<div class="mx-auto w-full min-w-0" id="content">
 				<slot />
 			</div>
 
 			<div class="hidden text-sm xl:block">
-				<div class="sticky top-16 -mt-10 h-[calc(100vh-3.5rem)] overflow-hidden pt-6" />
+				<div class="sticky top-16 -mt-10 h-[calc(100vh-3.5rem)] overflow-hidden pt-6">
+					<TableOfContents />
+				</div>
 			</div>
 		</main>
 	</div>

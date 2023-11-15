@@ -3,6 +3,7 @@ export * from "./page-header";
 export * from "./navigation";
 export * from "./api-tables";
 export * from "./demos";
+export * from "./toc";
 export { default as SiteHeader } from "./site-header.svelte";
 export { default as TailwindIndicator } from "./tailwind-indicator.svelte";
 export { default as SidebarNav } from "./navigation/sidebar-nav.svelte";
