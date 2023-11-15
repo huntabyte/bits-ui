@@ -16,7 +16,8 @@
 				class="h-[29px] px-3 bg-accent rounded-button inline-flex items-center justify-center font-mono tracking-tight text-[17px] leading-tight font-medium"
 			>
 				<h3>
-					<span class="text-muted-foreground">{$page.data.title}.</span>{schema.title}
+					<span class="text-muted-foreground">{$page.data.title.replace(" ", "")}.</span
+					>{schema.title}
 				</h3>
 			</div>
 			<P class="!mt-2 !mb-5">{schema.description}</P>
