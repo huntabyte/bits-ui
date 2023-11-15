@@ -49,7 +49,7 @@ export default {
 				"card-lg": "1.25rem",
 				"card-sm": "0.625rem",
 				input: "0.563rem",
-				button: "0.313"
+				button: "0.313rem"
 			},
 			height: {
 				input: "3rem",
