@@ -8,7 +8,7 @@
 	<aside
 		class="fixed top-10 z-30 hidden h-[calc(100vh-3.5rem)] w-full shrink-0 md:sticky md:block overflow-y-auto border-r border-border"
 	>
-		<div class="h-full py-6 lg:py-8 pr-8">
+		<div class="h-full py-6 lg:py-8 pr-4">
 			<nav class="space-y-3">
 				<div class="flex flex-col w-full">
 					{#each items as item, index (index)}

@@ -7,13 +7,13 @@
 </script>
 
 {#if items.length}
-	<div class="grid grid-flow-row auto-rows-max text-sm">
+	<div class="grid grid-flow-row auto-rows-max text-sm gap-1">
 		{#each items as item, index (index)}
 			{#if item.href}
 				<a
 					href={item.href}
 					class={cn(
-						"group flex w-full items-center rounded-md text-foreground py-2 px-2.5 hover:bg-muted transition-all",
+						"group flex w-full items-center rounded-md text-foreground py-1.5 px-2.5 hover:bg-muted transition-all",
 						item.disabled && "cursor-not-allowed opacity-60",
 						$page.url.pathname === item.href ? "bg-muted" : ""
 					)}
@@ -31,7 +31,7 @@
 				</a>
 			{:else}
 				<span
-					class="flex w-full cursor-not-allowed items-center rounded-md p-2 text-muted-foreground hover:underline"
+					class="flex w-full cursor-not-allowed items-center rounded-md px-2.5 py-1.5 text-muted-foreground hover:underline"
 				>
 					{item.title}
 				</span>
