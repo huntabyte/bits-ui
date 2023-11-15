@@ -2,13 +2,11 @@
 	import { cn } from "@/utils";
 	let className: string | undefined | null = undefined;
 	export { className as class };
-	export let neutral = false;
 </script>
 
 <code
 	class={cn(
-		"relative rounded !px-[0.25rem] !py-[0.15rem] font-mono !text-[13px]",
-		neutral ? "!bg-muted" : "!bg-secondary",
+		"relative inline-flex justify-center items-center !rounded-button !px-[10px] font-mono !text-sm !bg-muted h-[29px] tracking-tight text-foreground/60 !font-medium",
 		className
 	)}
 >

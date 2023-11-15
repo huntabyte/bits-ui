@@ -29,7 +29,7 @@ export default {
 				},
 				muted: {
 					DEFAULT: "hsl(var(--muted) / <alpha-value>)",
-					foreground: "hsl(var(--muted-foreground) / <alpha-value>)"
+					foreground: "hsl(var(--muted-foreground))"
 				},
 				dark: {
 					DEFAULT: "hsl(var(--dark) / <alpha-value>)",
@@ -38,7 +38,8 @@ export default {
 				accent: "hsl(var(--accent) / <alpha-value>)"
 			},
 			fontFamily: {
-				sans: ["Inter", ...fontFamily.sans]
+				sans: ["Inter", ...fontFamily.sans],
+				mono: ["Source Code Pro", ...fontFamily.mono]
 			},
 			borderWidth: {
 				6: "6px"
