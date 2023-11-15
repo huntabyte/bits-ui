@@ -17,8 +17,8 @@ export default {
 		extend: {
 			colors: {
 				border: {
-					DEFAULT: "hsl(var(--border) / <alpha-value>)",
-					input: "hsl(var(--border-input)"
+					DEFAULT: "hsl(var(--border-card))",
+					input: "hsl(var(--border-input))"
 				},
 				background: {
 					DEFAULT: "hsl(var(--background) / <alpha-value>)"
@@ -28,7 +28,7 @@ export default {
 					alt: "hsl(var(--foreground-alt) / <alpha-value>)"
 				},
 				muted: {
-					DEFAULT: "hsl(var(--muted) / <alpha-value>)",
+					DEFAULT: "hsl(var(--muted))",
 					foreground: "hsl(var(--muted-foreground))"
 				},
 				dark: {

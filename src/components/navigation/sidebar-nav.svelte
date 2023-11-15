@@ -6,7 +6,7 @@
 
 {#if items.length}
 	<aside
-		class="fixed top-14 z-30 hidden h-[calc(100vh-3.5rem)] w-full shrink-0 md:sticky md:block overflow-y-auto border-r border-border"
+		class="fixed top-10 z-30 hidden h-[calc(100vh-3.5rem)] w-full shrink-0 md:sticky md:block overflow-y-auto border-r border-border"
 	>
 		<div class="h-full py-6 lg:py-8 pr-8">
 			<nav class="space-y-3">
@@ -16,9 +16,7 @@
 							<SidebarNavMainItems items={item.items} />
 						{:else}
 							<div class="pb-4">
-								<h4
-									class="mb-1 rounded-md text-foreground/40 py-2 px-2.5 text-sm font-normal uppercase"
-								>
+								<h4 class="mb-1 rounded-md py-2 px-2.5 text-sm font-normal uppercase">
 									{item.title}
 								</h4>
 								{#if item.items}

@@ -1,4 +1,3 @@
-export * from "./light-switch";
 export * from "./icons";
 export * from "./page-header";
 export * from "./navigation";
@@ -12,3 +11,4 @@ export { default as Steps } from "./steps.svelte";
 export { default as Code } from "./markdown/code.svelte";
 export { default as APISection } from "./api-section.svelte";
 export { default as ComponentPreview } from "./component-preview.svelte";
+export { default as LightSwitch } from "./light-switch.svelte";
