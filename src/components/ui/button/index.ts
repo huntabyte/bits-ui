@@ -5,7 +5,7 @@ export const buttonVariants = tv({
 	base: "inline-flex items-center justify-center text-sm font-medium transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50",
 	variants: {
 		variant: {
-			default: "bg-muted text-foreground shadow hover:bg-muted/50",
+			default: "bg-muted text-foreground",
 			destructive: "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
 			outline:
 				"border border-input bg-transparent shadow-sm hover:bg-accent hover:text-accent-foreground",
@@ -14,7 +14,7 @@ export const buttonVariants = tv({
 			link: "text-primary underline-offset-4 hover:underline"
 		},
 		size: {
-			default: "h-9 rounded-md px-4 py-2",
+			default: "h-8 rounded-[7px] px-[14px] py-2 font-semibold",
 			sm: "h-8 rounded-md px-3 text-xs",
 			lg: "h-input-sm rounded-input px-4 font-semibold",
 			icon: "h-9 w-9"

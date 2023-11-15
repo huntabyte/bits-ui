@@ -39,12 +39,17 @@
 
 	$: builder = $root;
 	const attrs = getAttrs("root");
+	$: slotProps = {
+		builder,
+		attrs,
+		value: $localValue
+	};
 </script>
 
 {#if asChild}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else}
 	<div use:melt={builder} {...$$restProps} {...attrs}>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {/if}

@@ -53,6 +53,9 @@ export default {
 			height: {
 				input: "3rem",
 				"input-sm": "2.5rem"
+			},
+			boxShadow: {
+				mini: "var(--shadow-mini)"
 			}
 		}
 	},

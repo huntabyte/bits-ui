@@ -16,6 +16,9 @@
 		--dark: 240 6% 10%;
 		--dark-10: 240 6% 10% / 0.1;
 		--accent: 204 94% 94%;
+
+		/* Shadows */
+		--shadow-mini: 0px 1px 0px 1px rgba(0, 0, 0, 0.04);
 	}
 
 	.dark {
@@ -55,7 +58,7 @@
 
 	/* === Scrollbars === */
 
-	::-webkit-scrollbar {
+	/* ::-webkit-scrollbar {
 		@apply w-2;
 		@apply h-2;
 	}
@@ -64,13 +67,13 @@
 		@apply !bg-muted;
 	}
 	::-webkit-scrollbar-thumb {
-		@apply rounded-sm !bg-muted-foreground/30;
-	}
+		@apply rounded-sm !bg-muted-foreground;
+	} */
 
 	/* Firefox */
 	/* https://developer.mozilla.org/en-US/docs/Web/CSS/scrollbar-color#browser_compatibility */
 
-	html {
+	/* html {
 		scrollbar-color: hsl(215.4 16.3% 46.9% / 0.3);
 	}
 
@@ -85,7 +88,7 @@
 	.hide-scrollbar {
 		-ms-overflow-style: none;
 		scrollbar-width: none;
-	}
+	} */
 
 	.antialised {
 		-webkit-font-smoothing: antialiased;

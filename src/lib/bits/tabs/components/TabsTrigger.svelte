@@ -17,10 +17,14 @@
 
 	$: builder = $trigger({ value, disabled });
 	const attrs = getAttrs("trigger");
+	$: slotProps = {
+		builder,
+		attrs
+	};
 </script>
 
 {#if asChild}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else}
 	<button
 		use:melt={builder}
@@ -31,6 +35,6 @@
 		on:m-focus={dispatch}
 		on:m-keydown={dispatch}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</button>
 {/if}
