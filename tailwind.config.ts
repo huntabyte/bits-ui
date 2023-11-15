@@ -28,8 +28,8 @@ export default {
 					alt: "hsl(var(--foreground-alt) / <alpha-value>)"
 				},
 				muted: {
-					DEFAULT: "hsl(var(--muted))",
-					foreground: "hsl(var(--muted-foreground))"
+					DEFAULT: "hsl(var(--muted) / <alpha-value>)",
+					foreground: "hsl(var(--muted-foreground) / <alpha-value>)"
 				},
 				dark: {
 					DEFAULT: "hsl(var(--dark) / <alpha-value>)",

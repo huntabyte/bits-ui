@@ -14,8 +14,8 @@
 	size="icon"
 >
 	{#if $mode === "light"}
-		<MoonStars class="sq-5" aria-label="Moon" />
+		<MoonStars class="sq-[28px]" aria-label="Moon" />
 	{:else}
-		<Sun class="sq-5" aria-label="Sun" />
+		<Sun class="sq-[28px]" aria-label="Sun" />
 	{/if}
 </Button>
