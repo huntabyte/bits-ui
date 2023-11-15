@@ -1,9 +1,9 @@
 export const codeBlockPrettierConfig = {
-	useTabs: false,
+	useTabs: true,
 	tabWidth: 2,
 	singleQuote: false,
 	trailingComma: "none",
-	printWidth: 80,
+	printWidth: 60,
 	endOfLine: "lf",
 	pluginSearchDirs: ["node_modules/prettier-plugin-svelte"],
 	parser: "svelte",
@@ -22,25 +22,5 @@ export const codeBlockPrettierConfig = {
 			}
 		}
 	],
-	bracketSameLine: false,
-	importOrder: [
-		"<TYPES>",
-		"<TYPES>^[.]",
-		"<BUILTIN_MODULES>",
-		"<THIRD_PARTY_MODULES>",
-		"^\\$app",
-		"^\\$env",
-		"^\\$service-worker",
-		"^\\$lib/server",
-		"^\\$(?![^\\/]*\\/)",
-		"^\\$[^/]*\\/[^/]+",
-		"^[./]",
-		"\\.js$",
-		"\\.svelte$"
-	],
-	importOrderSeparation: false,
-	importOrderSortSpecifiers: true,
-	importOrderBuiltinModulesToTop: true,
-	importOrderParserPlugins: ["typescript", "svelte"],
-	importOrderMergeDuplicateImports: true
+	bracketSameLine: false
 };
