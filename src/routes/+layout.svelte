@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { dev } from "$app/environment";
-	import { SidebarNav, SiteHeader, TailwindIndicator } from "@/components";
+	import { Metadata, SidebarNav, SiteHeader, TailwindIndicator } from "@/components";
 	import { setInitialClassState } from "@/components/light-switch/light-switch";
 	import { navigation } from "@/config";
 	import "@/styles/app.postcss";
@@ -10,6 +10,7 @@
 	<!-- This causes the new eslint-plugin-svelte: https://github.com/sveltejs/eslint-plugin-svelte/issues/492 -->
 	{@html `<\u{73}cript nonce="%sveltekit.nonce%">(${setInitialClassState.toString()})();</script>`}
 </svelte:head>
+<Metadata />
 
 <SiteHeader />
 <main class="min-h-[calc(100vh-64px)]">
