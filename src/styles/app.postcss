@@ -1,75 +1,35 @@
-/* Write your global styles here, in PostCSS syntax */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Light - 60 8% 96% */
-/* Dark - 192 10% 10% */
-/* Primary - 320 7% 16%*/
-
 @layer base {
 	:root {
+		/* Colors */
 		--background: 0 0% 100%;
 		--foreground: 0 0% 9%;
-
-		--muted: 240 5% 96%;
-		--muted-foreground: 0 0% 64%;
-
-		--popover: 0 0% 98%;
-		--popover-foreground: 320 7% 8%;
-
-		--card: 0 0% 98%;
-		--card-foreground: 320 7% 8%;
-
-		--border: 0 0% 89%;
-		--input: 320 5.9% 90%;
-
-		--primary: 320 7% 16%;
-		--primary-foreground: 0 0% 98%;
-
-		--secondary: 163 62% 90%;
-		--secondary-foreground: 170 31% 19%;
-
-		--accent: 0 0% 98%;
-		--accent-foreground: 0 9% 9%;
-
-		--destructive: 0 84.2% 60.2%;
-		--destructive-foreground: 0 0% 98%;
-
-		--ring: 320 5.9% 64.9%;
-
-		--radius: 0.5rem;
+		--foreground-alt: 0 0% 32%;
+		--muted: 240 5% 98%;
+		--muted-foreground: 0 0% 9% / 0.4;
+		--border: 240 6% 10%;
+		--border-input: 240 6% 96% / 0.17;
+		--border-card: 240 6% 96% / 0.1;
+		--dark: 240 6% 10%;
+		--dark-10: 240 6% 10% / 0.1;
+		--accent: 204 94% 94%;
 	}
 
 	.dark {
-		--background: 320 7% 8%;
-		--foreground: 0 0% 98%;
-
-		--muted: 320 3.7% 15.9%;
-		--muted-foreground: 320 5.9% 64.9%;
-
-		--popover: 320 7% 8%;
-		--popover-foreground: 0 0% 98%;
-
-		--card: 320 7% 8%;
-		--card-foreground: 0 0% 98%;
-
-		--border: 320 3.7% 15.9%;
-		--input: 320 3.7% 15.9%;
-
-		--primary: 0 0% 98%;
-		--primary-foreground: 320 7% 16%;
-
-		--secondary: 173 34% 14%;
-		--secondary-foreground: 151 61% 88%;
-
-		--accent: 320 3.7% 15.9%;
-		--accent-foreground: 0 0% 98%;
-
-		--destructive: 0 62.8% 30.6%;
-		--destructive-foreground: 0 85.7% 97.3%;
-
-		--ring: 320 3.7% 15.9%;
+		/* Colors */
+		--background: 0 0% 9%;
+		--foreground: 0 0% 100%;
+		--foreground-alt: 0 0% 100%;
+		--muted: 240 4% 16%;
+		--muted-foreground: 0 0% 100% / 0.4;
+		--border: 240 5% 96%;
+		--border-input: 240 5% 96% / 0.17;
+		--dark: 0 0% 9%;
+		--dark-10: 240 5% 96% / 0.1;
+		--accent: 204 80% 16%;
 	}
 }
 
