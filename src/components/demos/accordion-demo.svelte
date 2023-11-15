@@ -26,7 +26,7 @@
 	{#each items as item, i}
 		<Accordion.Item value="${i}" class="border-b border-dark-10 px-1.5 group">
 			<Accordion.Trigger
-				class="flex w-full flex-1 items-center justify-between py-5 text-[15px] font-medium [&[data-state=open]>span]:rotate-180 transition-all "
+				class="flex w-full flex-1 items-center justify-between py-5 text-[15px] font-medium [&[data-state=open]>span>svg]:rotate-180 transition-all "
 			>
 				{item.title}
 				<span
