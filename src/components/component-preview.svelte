@@ -2,9 +2,16 @@
 	import { Tabs } from "$lib";
 	import { cn } from "@/utils";
 	import { buttonVariants } from "./ui/button";
+	import { crossfade } from "svelte/transition";
+	import { cubicInOut } from "svelte/easing";
 	let className: string;
 	export let align: "center" | "start" | "end" = "center";
 	export { className as class };
+
+	const [send, receive] = crossfade({
+		duration: 250,
+		easing: cubicInOut
+	});
 </script>
 
 <div
@@ -13,27 +20,47 @@
 	data-preview
 >
 	<Tabs.Root class="relative mr-auto w-full" let:value>
-		<Tabs.List class="absolute z-20 top-5 right-4 flex items-center">
+		<Tabs.List
+			class="absolute z-20 top-2.5 right-2.5 flex items-center bg-black/8 dark:bg-white/8 px-[5px] h-input-sm rounded-card-sm justify-center shadow-mini-inset"
+		>
 			<Tabs.Trigger
 				value="preview"
 				class={cn(
 					buttonVariants(),
 					value === "preview"
-						? "bg-background font-semibold shadow-mini hover:bg-opacity-90"
-						: "bg-transparent shadow-none hover:bg-background"
+						? "bg-transparent font-semibold shadow-mini hover:bg-opacity-90"
+						: "bg-transparent shadow-none hover:text-foreground-alt transition-all",
+					"relative"
 				)}
 			>
-				Preview
+				<span class="z-20"> Preview </span>
+				{#if value === "preview"}
+					<div
+						class="h-8 w-full bg-background absolute top-0 left-0 rounded-[7px]"
+						in:send={{ key: "active" }}
+						out:receive={{ key: "active" }}
+					/>
+				{/if}
 			</Tabs.Trigger>
 			<Tabs.Trigger
 				value="code"
 				class={cn(
 					buttonVariants(),
 					value === "code"
-						? "bg-background font-semibold shadow-mini hover:bg-opacity-90"
-						: "bg-transparent shadow-none hover:bg-background hover:shadow-mini"
-				)}>&lt;Code&gt;</Tabs.Trigger
+						? "bg-transparent font-semibold shadow-mini hover:bg-opacity-90"
+						: "bg-transparent shadow-none hover:text-foreground-alt transition-all",
+					"relative"
+				)}
 			>
+				<span class="z-20"> &lt;Code&gt; </span>
+				{#if value === "code"}
+					<div
+						class="h-8 w-full bg-background absolute top-0 left-0 rounded-[7px]"
+						in:send={{ key: "active" }}
+						out:receive={{ key: "active" }}
+					/>
+				{/if}
+			</Tabs.Trigger>
 		</Tabs.List>
 		<Tabs.Content value="code">
 			<div
@@ -42,7 +69,7 @@
 				<slot />
 			</div>
 		</Tabs.Content>
-		<Tabs.Content value="preview" class="relative bg-muted rounded-card">
+		<Tabs.Content value="preview" class="relative border-2 border-muted rounded-card">
 			<div
 				class={cn(
 					"preview flex min-h-[443px] w-full justify-center p-12",
@@ -59,3 +86,15 @@
 		</Tabs.Content>
 	</Tabs.Root>
 </div>
+
+<style lang="postcss">
+	.activeTheme {
+		background: var(--grayA5);
+		border-radius: 9999px;
+		height: 32px;
+		width: 100%;
+		top: 0;
+		position: absolute;
+		left: 0;
+	}
+</style>

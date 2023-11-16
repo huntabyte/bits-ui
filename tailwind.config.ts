@@ -57,7 +57,11 @@ export default {
 			},
 			boxShadow: {
 				mini: "var(--shadow-mini)",
+				"mini-inset": "var(--shadow-mini-inset)",
 				popover: "var(--shadow-popover)"
+			},
+			opacity: {
+				8: "0.08"
 			}
 		}
 	},
