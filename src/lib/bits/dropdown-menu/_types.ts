@@ -22,6 +22,7 @@ import type {
 	CreateDropdownSubmenuProps,
 	CreateDropdownMenuCheckboxItemProps
 } from "@melt-ui/svelte";
+import type { _ArrowProps } from "$lib/shared/types.js";
 
 type Props = Expand<
 	OmitOpen<OmitIds<Omit<CreateDropdownMenuProps, "arrowSize">>> & {
@@ -139,11 +140,7 @@ type SubTriggerProps = Expand<
 
 type TriggerProps = AsChild;
 
-type ArrowProps = Expand<
-	{
-		size?: number;
-	} & AsChild
->;
+type ArrowProps = _ArrowProps;
 
 type ItemEvents<T extends Element = HTMLDivElement> = {
 	click: CustomEventHandler<MouseEvent, T>;

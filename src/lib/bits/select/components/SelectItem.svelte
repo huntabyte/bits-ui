@@ -11,18 +11,22 @@
 	export let disabled: $$Props["disabled"] = undefined;
 	export let label: $$Props["label"] = undefined;
 	export let asChild: $$Props["asChild"] = false;
+
 	const {
 		elements: { option: item }
 	} = setItemCtx(value);
+
 	const dispatch = createDispatcher();
-	$: builder = $item({ value, disabled, label });
 	const attrs = getAttrs("item");
+
+	$: builder = $item({ value, disabled, label });
+	$: slotProps = { builder, attrs };
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions / applied by melt's builder-->
 
 {#if asChild}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else}
 	<div
 		use:melt={builder}
@@ -35,7 +39,7 @@
 		on:focusout
 		on:pointerleave
 	>
-		<slot {builder} {attrs}>
+		<slot {...slotProps}>
 			{label ? label : value}
 		</slot>
 	</div>

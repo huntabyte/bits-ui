@@ -1,12 +1,12 @@
 import type { HTMLDivAttributes, HTMLSpanAttributes } from "$lib/internal/index.js";
 import type { HTMLImgAttributes } from "svelte/elements";
-import type * as T from "./_types.js";
+import type * as I from "./_types.js";
 
-type Props = T.Props & HTMLDivAttributes;
+type Props = I.Props & HTMLDivAttributes;
 
-type ImageProps = T.ImageProps & HTMLImgAttributes;
+type ImageProps = I.ImageProps & HTMLImgAttributes;
 
-type FallbackProps = T.FallbackProps & HTMLSpanAttributes;
+type FallbackProps = I.FallbackProps & HTMLSpanAttributes;
 
 export type {
 	Props,

@@ -1,23 +1,23 @@
 import type { HTMLDivAttributes, Transition } from "$lib/internal/index.js";
 import type { CustomEventHandler } from "$lib";
-import type * as T from "./_types.js";
 import type { HTMLAnchorAttributes } from "svelte/elements";
+import type * as I from "./_types.js";
 
-type Props = T.Props;
+type Props = I.Props;
 
-type CheckboxItemProps = T.CheckboxItemProps & HTMLDivAttributes;
+type CheckboxItemProps = I.CheckboxItemProps & HTMLDivAttributes;
 
-type RadioGroupProps = T.RadioGroupProps & HTMLDivAttributes;
+type RadioGroupProps = I.RadioGroupProps & HTMLDivAttributes;
 
-type RadioItemProps = T.RadioItemProps & HTMLDivAttributes;
+type RadioItemProps = I.RadioItemProps & HTMLDivAttributes;
 
 type ContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
 	Out extends Transition = Transition
-> = T.ContentProps<T, In, Out> & HTMLDivAttributes;
+> = I.ContentProps<T, In, Out> & HTMLDivAttributes;
 
-type GroupProps = T.GroupProps & HTMLDivAttributes;
+type GroupProps = I.GroupProps & HTMLDivAttributes;
 
 type AnchorElement = HTMLAnchorAttributes & {
 	href?: HTMLAnchorAttributes["href"];
@@ -27,24 +27,24 @@ type DivElement = HTMLDivAttributes & {
 	href?: never;
 };
 
-type ItemProps = T.ItemProps & (AnchorElement | DivElement);
+type ItemProps = I.ItemProps & (AnchorElement | DivElement);
 
-type CheckboxItemIndicatorProps = T.CheckboxItemIndicatorProps & HTMLDivAttributes;
-type LabelProps = T.LabelProps & HTMLDivAttributes;
-type SeparatorProps = T.SeparatorProps & HTMLDivAttributes;
-type SubProps = T.SubProps;
+type CheckboxItemIndicatorProps = I.CheckboxItemIndicatorProps & HTMLDivAttributes;
+type LabelProps = I.LabelProps & HTMLDivAttributes;
+type SeparatorProps = I.SeparatorProps & HTMLDivAttributes;
+type SubProps = I.SubProps;
 
 type SubContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
 	Out extends Transition = Transition
-> = T.SubContentProps<T, In, Out> & HTMLDivAttributes;
+> = I.SubContentProps<T, In, Out> & HTMLDivAttributes;
 
-type SubTriggerProps = T.SubTriggerProps & HTMLDivAttributes;
+type SubTriggerProps = I.SubTriggerProps & HTMLDivAttributes;
 
-type TriggerProps = T.TriggerProps & HTMLDivAttributes;
+type TriggerProps = I.TriggerProps & HTMLDivAttributes;
 
-type ArrowProps = T.ArrowProps & HTMLDivAttributes;
+type ArrowProps = I.ArrowProps & HTMLDivAttributes;
 
 type ItemEvents<T extends Element = HTMLDivElement> = {
 	click: CustomEventHandler<MouseEvent, T>;

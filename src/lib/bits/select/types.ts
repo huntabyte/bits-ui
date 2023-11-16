@@ -1,13 +1,4 @@
-import type { CreateSelectProps, SelectOptionProps } from "@melt-ui/svelte";
-import type {
-	AsChild,
-	Expand,
-	HTMLDivAttributes,
-	OmitOpen,
-	OnChangeFn,
-	Transition,
-	TransitionProps
-} from "$lib/internal/index.js";
+import type { HTMLDivAttributes, Transition } from "$lib/internal/index.js";
 import type {
 	EventHandler,
 	HTMLAttributes,
@@ -15,43 +6,27 @@ import type {
 	HTMLInputAttributes
 } from "svelte/elements";
 import type { CustomEventHandler } from "$lib/index.js";
+import type { _ArrowProps } from "$lib/shared/types.js";
+import type * as I from "./_types.js";
 
-type Props = Expand<
-	OmitOpen<Omit<CreateSelectProps, "selected" | "defaultSelected" | "onSelectedChange">> & {
-		selected?: CreateSelectProps["defaultSelected"] & {};
-		onSelectedChange?: OnChangeFn<CreateSelectProps["defaultSelected"]>;
-		open?: boolean & {};
-		onOpenChange?: OnChangeFn<boolean>;
-	}
->;
+type Props<T = unknown> = I.Props<T>;
 
 type ContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
 	Out extends Transition = Transition
-> = Expand<TransitionProps<T, In, Out> & AsChild> & HTMLDivAttributes;
+> = I.ContentProps<T, In, Out> & HTMLDivAttributes;
 
-type GroupProps = AsChild & HTMLDivAttributes;
-type InputProps = AsChild & HTMLInputAttributes;
-type LabelProps = AsChild & HTMLDivAttributes;
-type ItemProps = Expand<SelectOptionProps & AsChild> & HTMLDivAttributes;
-type SeparatorProps = AsChild & HTMLDivAttributes;
+type GroupProps = I.GroupProps & HTMLDivAttributes;
+type InputProps = I.InputProps & HTMLInputAttributes;
+type LabelProps = I.LabelProps & HTMLDivAttributes;
+type ItemProps = I.ItemProps & HTMLDivAttributes;
+type SeparatorProps = I.SeparatorProps & HTMLDivAttributes;
+type TriggerProps = I.TriggerProps & HTMLButtonAttributes;
 
-type TriggerProps = AsChild & HTMLButtonAttributes;
+type ValueProps = I.ValueProps & HTMLAttributes<HTMLSpanElement>;
 
-type ValueProps = Expand<
-	{
-		placeholder?: string;
-	} & AsChild
-> &
-	HTMLAttributes<HTMLSpanElement>;
-
-type ArrowProps = Expand<
-	{
-		size?: number;
-	} & AsChild
-> &
-	HTMLDivAttributes;
+type ArrowProps = I.ArrowProps & HTMLDivAttributes;
 
 type ItemEvents<T extends Element = HTMLDivElement> = {
 	click: CustomEventHandler<MouseEvent, T>;

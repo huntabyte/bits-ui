@@ -7,7 +7,6 @@
 
 	export let required: $$Props["required"] = undefined;
 	export let disabled: $$Props["disabled"] = undefined;
-	export let arrowSize: $$Props["arrowSize"] = undefined;
 	export let preventScroll: $$Props["preventScroll"] = undefined;
 	export let loop: $$Props["loop"] = undefined;
 	export let closeOnEscape: $$Props["closeOnEscape"] = undefined;
@@ -20,7 +19,6 @@
 	export let onSelectedChange: $$Props["onSelectedChange"] = undefined;
 	export let open: $$Props["open"] = undefined;
 	export let onOpenChange: $$Props["onOpenChange"] = undefined;
-	export let forceVisible: $$Props["forceVisible"] = true;
 
 	const {
 		states: { open: localOpen, selected: localSelected },
@@ -29,7 +27,6 @@
 	} = setCtx({
 		required,
 		disabled,
-		arrowSize,
 		preventScroll,
 		loop,
 		closeOnEscape,
@@ -38,7 +35,7 @@
 		positioning,
 		name,
 		multiple,
-		forceVisible,
+		forceVisible: true,
 		defaultSelected: selected,
 		defaultOpen: open,
 		onSelectedChange: ({ next }) => {
@@ -71,7 +68,6 @@
 
 	$: updateOption("required", required);
 	$: updateOption("disabled", disabled);
-	$: updateOption("arrowSize", arrowSize);
 	$: updateOption("preventScroll", preventScroll);
 	$: updateOption("loop", loop);
 	$: updateOption("closeOnEscape", closeOnEscape);
@@ -80,7 +76,6 @@
 	$: updateOption("positioning", positioning);
 	$: updateOption("name", name);
 	$: updateOption("multiple", multiple);
-	$: updateOption("forceVisible", forceVisible);
 </script>
 
 <slot ids={$idValues} />

@@ -4,17 +4,22 @@
 	import type { InputProps } from "../types.js";
 
 	type $$Props = InputProps;
+
 	export let asChild: $$Props["asChild"] = false;
+
 	const {
 		elements: { hiddenInput },
 		options: { disabled }
 	} = getCtx();
-	$: builder = $hiddenInput;
+
 	const attrs = getAttrs("input");
+
+	$: builder = $hiddenInput;
+	$: slotProps = { builder, attrs: { ...attrs, disabled: $disabled ? true : undefined } };
 </script>
 
 {#if asChild}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else}
 	<input use:melt={builder} {...$$restProps} {...attrs} disabled={$disabled ? true : undefined} />
 {/if}

@@ -4,8 +4,9 @@
 	import type { Props } from "../types.js";
 
 	type $$Props = Props;
+
 	export let orientation: $$Props["orientation"] = "horizontal";
-	export let decorative = true;
+	export let decorative: $$Props["decorative"] = true;
 	export let asChild: $$Props["asChild"] = false;
 
 	const {
@@ -13,15 +14,17 @@
 		updateOption
 	} = setCtx({ orientation, decorative });
 
+	const attrs = getAttrs("root");
+
 	$: updateOption("orientation", orientation);
 	$: updateOption("decorative", decorative);
 
 	$: builder = $root;
-	const attrs = getAttrs("root");
+	$: slotProps = { builder, attrs };
 </script>
 
 {#if asChild}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else}
 	<div use:melt={builder} {...$$restProps} {...attrs} />
 {/if}

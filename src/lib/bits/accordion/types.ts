@@ -5,21 +5,21 @@ import type {
 	AccordionHeadingProps as _HeadingProps
 } from "@melt-ui/svelte";
 import type { HTMLButtonAttributes } from "svelte/elements";
-import type * as T from "./_types.js";
+import type * as I from "./_types.js";
 
-type Props<Multiple extends boolean> = T.Props<Multiple> & HTMLDivAttributes;
+type Props<Multiple extends boolean> = I.Props<Multiple> & HTMLDivAttributes;
 
-type ItemProps = T.ItemProps & HTMLDivAttributes;
+type ItemProps = I.ItemProps & HTMLDivAttributes;
 
-type HeaderProps = T.HeaderProps & HTMLDivAttributes;
+type HeaderProps = I.HeaderProps & HTMLDivAttributes;
 
-type TriggerProps = T.TriggerProps & HTMLButtonAttributes;
+type TriggerProps = I.TriggerProps & HTMLButtonAttributes;
 
 type ContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
 	Out extends Transition = Transition
-> = T.ContentProps<T, In, Out> & HTMLDivAttributes;
+> = I.ContentProps<T, In, Out> & HTMLDivAttributes;
 
 type TriggerEvents = {
 	click: CustomEventHandler<MouseEvent, HTMLButtonElement>;

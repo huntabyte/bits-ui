@@ -34,6 +34,8 @@
 		}
 	});
 
+	const attrs = getAttrs("root");
+
 	$: value !== undefined && localValue.set(value);
 	$: updateOption("disabled", disabled);
 	$: updateOption("min", min);
@@ -42,13 +44,13 @@
 	$: updateOption("orientation", orientation);
 
 	$: builder = $root;
-	const attrs = getAttrs("root");
+	$: slotProps = { builder, attrs, ticks: $ticks };
 </script>
 
 {#if asChild}
-	<slot {builder} {attrs} ticks={$ticks} />
+	<slot {...slotProps} />
 {:else}
 	<span use:melt={builder} {...$$restProps} {...attrs}>
-		<slot {builder} {attrs} ticks={$ticks} />
+		<slot {...slotProps} />
 	</span>
 {/if}

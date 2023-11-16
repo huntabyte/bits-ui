@@ -5,24 +5,25 @@
 
 	type $$Props = LabelProps;
 	type $$Events = LabelEvents;
+
 	export let asChild: $$Props["asChild"] = false;
 	export let id: $$Props["id"] = undefined;
 
 	const { ids } = getCtx();
 	const { groupLabel, id: groupId } = getGroupLabel();
+	const attrs = getAttrs("label");
 
 	$: if (id) {
 		ids.label.set(id);
 	}
-
 	$: builder = $groupLabel(groupId);
-	const attrs = getAttrs("label");
+	$: slotProps = { builder, attrs };
 </script>
 
 {#if asChild}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else}
 	<div use:melt={builder} {...$$restProps} {...attrs}>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {/if}

@@ -15,6 +15,7 @@ import type {
 	TransitionProps,
 	OmitIds
 } from "$lib/internal/index.js";
+import type { _ArrowProps } from "$lib/shared/types.js";
 import type {
 	CreateMenubarProps,
 	CreateMenubarMenuProps,
@@ -152,14 +153,7 @@ type SubTriggerProps = Expand<
 
 type TriggerProps = AsChild;
 
-type ArrowProps = Expand<
-	{
-		/**
-		 * The size of the arrow in pixels.
-		 */
-		size?: number;
-	} & AsChild
->;
+type ArrowProps = _ArrowProps;
 
 export type {
 	Props,

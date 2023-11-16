@@ -6,17 +6,22 @@
 
 	type $$Props = ThumbProps;
 	type $$Events = ThumbEvents;
+
 	export let asChild: $$Props["asChild"] = false;
+
 	const {
 		elements: { thumb }
 	} = getCtx();
+
 	const dispatch = createDispatcher();
-	$: builder = $thumb();
 	const attrs = getAttrs("thumb");
+
+	$: builder = $thumb();
+	$: slotProps = { builder, attrs };
 </script>
 
 {#if asChild}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else}
 	<span use:melt={builder} {...$$restProps} {...attrs} on:m-keydown={dispatch} />
 {/if}

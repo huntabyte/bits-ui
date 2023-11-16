@@ -10,6 +10,7 @@ import type {
 } from "$lib/internal/index.js";
 import type { HTMLButtonAttributes } from "svelte/elements";
 import type { CustomEventHandler } from "$lib";
+import type { _ArrowProps } from "$lib/shared/types.js";
 
 type Props = Expand<
 	OmitOpen<CreateTooltipProps> & {
@@ -31,12 +32,7 @@ type ContentProps<
 	HTMLDivAttributes;
 
 type TriggerProps = AsChild & HTMLButtonAttributes;
-type ArrowProps = Expand<
-	{
-		size?: number;
-	} & AsChild
-> &
-	HTMLDivAttributes;
+type ArrowProps = _ArrowProps & HTMLDivAttributes;
 
 type TriggerEvents<T extends Element = HTMLButtonElement> = {
 	blur: CustomEventHandler<FocusEvent, T>;

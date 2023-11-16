@@ -31,6 +31,8 @@
 		}
 	});
 
+	const attrs = getAttrs("root");
+
 	$: value !== undefined && localValue.set(value);
 	$: updateOption("required", required);
 	$: updateOption("disabled", disabled);
@@ -38,13 +40,16 @@
 	$: updateOption("orientation", orientation);
 
 	$: builder = $root;
-	const attrs = getAttrs("root");
+	$: slotProps = {
+		builder,
+		attrs
+	};
 </script>
 
 {#if asChild}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else}
 	<div use:melt={builder} {...$$restProps} {...attrs}>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {/if}

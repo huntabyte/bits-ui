@@ -1,21 +1,21 @@
 import type { HTMLDivAttributes, Transition } from "$lib/internal/index.js";
 import type { CustomEventHandler } from "$lib/index.js";
 import type { HTMLButtonAttributes } from "svelte/elements";
-import type * as T from "./_types.js";
+import type * as I from "./_types.js";
 
-type Props = T.Props;
+type Props = I.Props;
 
 type ContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
 	Out extends Transition = Transition
-> = T.ContentProps<T, In, Out> & HTMLDivAttributes;
+> = I.ContentProps<T, In, Out> & HTMLDivAttributes;
 
-type TriggerProps = T.TriggerProps & HTMLButtonAttributes;
+type TriggerProps = I.TriggerProps & HTMLButtonAttributes;
 
-type CloseProps = T.ContentProps & HTMLButtonAttributes;
+type CloseProps = I.ContentProps & HTMLButtonAttributes;
 
-type ArrowProps = T.ArrowProps & HTMLDivAttributes;
+type ArrowProps = I.ArrowProps & HTMLDivAttributes;
 
 type TriggerEvents<T extends Element = HTMLButtonElement> = {
 	click: CustomEventHandler<MouseEvent, T>;

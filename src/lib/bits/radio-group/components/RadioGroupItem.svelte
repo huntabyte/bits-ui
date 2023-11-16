@@ -6,20 +6,27 @@
 
 	type $$Props = ItemProps;
 	type $$Events = ItemEvents;
+
 	export let value: $$Props["value"];
-	export let disabled = false;
+	export let disabled: $$Props["disabled"] = false;
 	export let asChild: $$Props["asChild"] = false;
+
 	const {
 		elements: { item }
 	} = setItemCtx(value);
+
 	const dispatch = createDispatcher();
+	const attrs = getAttrs("item");
 
 	$: builder = $item({ value, disabled });
-	const attrs = getAttrs("item");
+	$: slotProps = {
+		builder,
+		attrs
+	};
 </script>
 
 {#if asChild}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else}
 	<button
 		use:melt={builder}
@@ -30,6 +37,6 @@
 		on:m-focus={dispatch}
 		on:m-keydown={dispatch}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</button>
 {/if}

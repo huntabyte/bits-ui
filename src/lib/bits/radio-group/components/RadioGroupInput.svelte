@@ -4,16 +4,24 @@
 	import { getCtx, getAttrs } from "../ctx.js";
 
 	type $$Props = InputProps;
+
 	export let asChild: $$Props["asChild"] = false;
+
 	const {
 		elements: { hiddenInput }
 	} = getCtx();
-	$: builder = $hiddenInput;
+
 	const attrs = getAttrs("input");
+
+	$: builder = $hiddenInput;
+	$: slotProps = {
+		builder,
+		attrs
+	};
 </script>
 
 {#if asChild}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else}
 	<input use:melt={builder} {...$$restProps} {...attrs} />
 {/if}
