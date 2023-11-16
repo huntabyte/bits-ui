@@ -50,6 +50,12 @@ export type KeydownClickEvents = {
 };
 
 export type AsChild = Expand<{
+	/**
+	 * Whether to delegate rendering the element to your own
+	 * custom element.
+	 *
+	 * @see https://www.bits-ui.com/docs/delegation
+	 */
 	asChild?: boolean;
 }>;
 

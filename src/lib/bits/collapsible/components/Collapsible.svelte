@@ -4,7 +4,6 @@
 	import type { Props } from "../types.js";
 
 	type $$Props = Props;
-	export let forceVisible: $$Props["forceVisible"] = false;
 	export let disabled: $$Props["disabled"] = undefined;
 	export let open: $$Props["open"] = undefined;
 	export let onOpenChange: $$Props["onOpenChange"] = undefined;
@@ -16,7 +15,7 @@
 		updateOption
 	} = setCtx({
 		disabled,
-		forceVisible,
+		forceVisible: true,
 		defaultOpen: open,
 		onOpenChange: ({ next }) => {
 			if (open !== next) {
@@ -30,16 +29,20 @@
 	$: open !== undefined && localOpen.set(open);
 
 	$: updateOption("disabled", disabled);
-	$: updateOption("forceVisible", forceVisible);
 
 	$: builder = $root;
 	const attrs = getAttrs("root");
+
+	$: slotProps = {
+		builder,
+		attrs
+	};
 </script>
 
 {#if asChild}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else}
 	<div use:melt={builder} {...$$restProps} {...attrs}>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {/if}

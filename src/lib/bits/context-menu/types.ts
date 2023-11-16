@@ -1,95 +1,41 @@
-import type {
-	AsChild,
-	Expand,
-	HTMLDivAttributes,
-	OmitChecked,
-	OmitOpen,
-	OmitValue,
-	OnChangeFn,
-	Transition,
-	TransitionProps
-} from "$lib/internal/index.js";
+import type { HTMLDivAttributes, Transition } from "$lib/internal/index.js";
 import type { CustomEventHandler } from "$lib";
-import type {
-	CreateContextMenuProps,
-	CreateContextMenuCheckboxItemProps,
-	CreateContextMenuRadioGroupProps,
-	ContextMenuRadioItemProps,
-	CreateContextSubmenuProps
-} from "@melt-ui/svelte";
+import type * as T from "./_types.js";
 
-type Props = Expand<
-	OmitOpen<CreateContextMenuProps> & {
-		open?: boolean;
-		onOpenChange?: OnChangeFn<boolean>;
-	}
->;
+type Props = T.Props;
 
-type CheckboxItemProps = Expand<
-	OmitChecked<CreateContextMenuCheckboxItemProps> & {
-		checked?: boolean | "indeterminate";
-		onCheckedChange?: OnChangeFn<boolean | "indeterminate">;
-	} & AsChild
-> &
-	HTMLDivAttributes;
+type CheckboxItemProps = T.CheckboxItemProps & HTMLDivAttributes;
 
-type RadioGroupProps = Expand<
-	OmitValue<CreateContextMenuRadioGroupProps> & {
-		value?: CreateContextMenuRadioGroupProps["defaultValue"] & {};
-		onValueChange?: OnChangeFn<CreateContextMenuRadioGroupProps["defaultValue"]>;
-	} & AsChild
-> &
-	HTMLDivAttributes;
+type RadioGroupProps = T.RadioGroupProps & HTMLDivAttributes;
 
-type RadioItemProps = Expand<ContextMenuRadioItemProps & AsChild> & HTMLDivAttributes;
+type RadioItemProps = T.RadioItemProps & HTMLDivAttributes;
 
 type ContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
 	Out extends Transition = Transition
-> = Expand<
-	{
-		sideOffset?: number;
-	} & TransitionProps<T, In, Out> &
-		AsChild
-> &
-	HTMLDivAttributes;
+> = T.ContentProps<T, In, Out> & HTMLDivAttributes;
 
-type GroupProps = AsChild & HTMLDivAttributes;
+type GroupProps = T.GroupProps & HTMLDivAttributes;
 
-type ItemProps = Expand<
-	{
-		disabled?: boolean;
-	} & AsChild
-> &
-	HTMLDivAttributes;
+type ItemProps = T.ItemProps & HTMLDivAttributes;
 
-type CheckboxItemIndicatorProps = HTMLDivAttributes;
-type LabelProps = AsChild & HTMLDivAttributes;
-type SeparatorProps = AsChild & HTMLDivAttributes;
-type SubProps = Expand<CreateContextSubmenuProps>;
+type CheckboxItemIndicatorProps = T.CheckboxItemIndicatorProps & HTMLDivAttributes;
+type LabelProps = T.LabelProps & HTMLDivAttributes;
+type SeparatorProps = T.SeparatorProps & HTMLDivAttributes;
+type SubProps = T.SubProps;
 
 type SubContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
 	Out extends Transition = Transition
-> = Expand<TransitionProps<T, In, Out> & AsChild> & HTMLDivAttributes;
+> = T.SubContentProps<T, In, Out> & HTMLDivAttributes;
 
-type SubTriggerProps = Expand<
-	{
-		disabled?: boolean;
-	} & AsChild
-> &
-	HTMLDivAttributes;
+type SubTriggerProps = T.SubTriggerProps & HTMLDivAttributes;
 
-type TriggerProps = AsChild & HTMLDivAttributes;
+type TriggerProps = T.TriggerProps & HTMLDivAttributes;
 
-type ArrowProps = Expand<
-	{
-		size?: number;
-	} & AsChild
-> &
-	HTMLDivAttributes;
+type ArrowProps = T.ArrowProps & HTMLDivAttributes;
 
 type ItemEvents<T extends Element = HTMLDivElement> = {
 	click: CustomEventHandler<MouseEvent, T>;

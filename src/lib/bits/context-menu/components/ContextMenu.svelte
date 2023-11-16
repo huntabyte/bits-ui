@@ -10,7 +10,6 @@
 	export let open: $$Props["open"] = undefined;
 	export let onOpenChange: $$Props["onOpenChange"] = undefined;
 	export let preventScroll: $$Props["preventScroll"] = undefined;
-	export let arrowSize: $$Props["arrowSize"] = undefined;
 	export let positioning: $$Props["positioning"] = undefined;
 	export let loop: $$Props["loop"] = undefined;
 	export let dir: $$Props["dir"] = undefined;
@@ -29,7 +28,6 @@
 		forceVisible,
 		defaultOpen: open,
 		preventScroll,
-		arrowSize,
 		positioning,
 		loop,
 		dir,
@@ -52,7 +50,6 @@
 	$: updateOption("portal", portal);
 	$: updateOption("forceVisible", forceVisible);
 	$: updateOption("preventScroll", preventScroll);
-	$: updateOption("arrowSize", arrowSize);
 	$: updateOption("positioning", positioning);
 	$: updateOption("loop", loop);
 	$: updateOption("dir", dir);

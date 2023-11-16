@@ -3,12 +3,22 @@
 	import { getCheckboxIndicator, getAttrs } from "../ctx.js";
 
 	type $$Props = CheckboxItemIndicatorProps;
+	export let asChild: $$Props["asChild"] = false;
 	const checked = getCheckboxIndicator();
 	const attrs = getAttrs("checkbox-indicator");
+
+	$: slotProps = {
+		attrs,
+		checked: $checked
+	};
 </script>
 
-<div {...$$restProps} {...attrs}>
-	{#if $checked}
-		<slot checked={$checked} />
-	{/if}
-</div>
+{#if asChild}
+	<slot {...slotProps} />
+{:else}
+	<div {...$$restProps} {...attrs}>
+		{#if $checked}
+			<slot {...slotProps} />
+		{/if}
+	</div>
+{/if}
