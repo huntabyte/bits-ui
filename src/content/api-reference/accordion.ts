@@ -1,5 +1,5 @@
 import type { APISchema } from "@/types";
-import * as C from "@/content/api-reference/constants";
+import * as C from "@/content/constants";
 import { union, enums, asChild, transitionProps } from "@/content";
 import type * as Accordion from "$lib/bits/accordion/_types.js";
 

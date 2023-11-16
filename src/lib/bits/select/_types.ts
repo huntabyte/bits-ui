@@ -5,7 +5,7 @@
  */
 import type { CreateSelectProps, SelectOptionProps } from "@melt-ui/svelte";
 import type { AsChild, Expand, OmitFloating, OnChangeFn } from "$lib/internal/index.js";
-import type { FloatingArrowProps, FloatingContentProps } from "$lib/shared/index.js";
+import type { ContentProps, ArrowProps } from "$lib/bits/floating/_types.js";
 
 type Props<T = unknown> = Expand<
 	OmitFloating<Omit<CreateSelectProps, "selected" | "defaultSelected" | "onSelectedChange">> & {
@@ -58,8 +58,8 @@ type ValueProps = Expand<
 
 export type {
 	Props,
-	FloatingArrowProps as ArrowProps,
-	FloatingContentProps as ContentProps,
+	ArrowProps,
+	ContentProps,
 	GroupProps,
 	InputProps,
 	LabelProps,

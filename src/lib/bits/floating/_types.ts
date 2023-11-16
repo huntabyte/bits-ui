@@ -1,12 +1,12 @@
 import type { AsChild, Transition, TransitionProps } from "$lib/internal/index.js";
 
-export type FloatingArrowProps = Expand<
+export type ArrowProps = Expand<
 	{
 		size?: number;
 	} & AsChild
 >;
 
-export type FloatingContentProps<
+export type ContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
 	Out extends Transition = Transition

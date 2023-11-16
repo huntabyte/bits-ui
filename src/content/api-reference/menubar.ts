@@ -1,30 +1,38 @@
 import type { APISchema } from "@/types";
+import { asChild, enums } from "./helpers";
 import {
+	props as menuProps,
+	subProps,
+	subContentProps,
 	arrowProps,
-	asChild,
-	menuCheckboxItemProps,
-	menuContentProps,
-	menuProps,
-	menuRadioGroupProps,
-	menuRadioItemProps,
-	menuSubContentProps,
-	menuSubProps,
-	menuSubTriggerProps
-} from "./helpers";
+	triggerProps,
+	subTriggerProps,
+	contentProps,
+	itemProps,
+	checkboxItemProps,
+	checkboxIndicatorProps,
+	radioGroupProps,
+	radioItemProps,
+	separatorProps,
+	groupProps,
+	labelProps
+} from "./menu";
 import type * as Menubar from "$lib/bits/menubar/_types";
+import type * as Menu from "$lib/bits/menu/_types";
+import * as C from "@/content/constants";
 
 export const root: APISchema<Menubar.Props> = {
 	title: "Root",
 	description: "The root menubar component which manages & scopes the state of the menubar.",
 	props: {
 		closeOnEscape: {
-			default: "true",
-			type: "boolean",
+			default: C.TRUE,
+			type: C.BOOLEAN,
 			description: "Whether to close the open menubar menu when the escape key is pressed."
 		},
 		loop: {
-			default: "true",
-			type: "boolean",
+			default: C.TRUE,
+			type: C.BOOLEAN,
 			description:
 				"Whether or not to loop through the menubar menu triggers when navigating with the keyboard."
 		},
@@ -32,54 +40,47 @@ export const root: APISchema<Menubar.Props> = {
 	}
 };
 
-export const menu: APISchema<Menubar.MenuProps> = {
+export const menu: APISchema<Menu.Props> = {
 	title: "Menu",
 	description: "A menu within the menubar.",
 	props: menuProps
 };
 
-export const trigger: APISchema<Menubar.TriggerProps> = {
+export const trigger: APISchema<Menu.TriggerProps> = {
 	title: "Trigger",
-	description: "The button element which toggles the menu.",
-	props: { asChild },
+	description: "The button element which toggles the dropdown menu.",
+	props: triggerProps,
 	dataAttributes: [
 		{
 			name: "state",
-			value: "'open' | 'closed'",
-			description: "The menu's open state."
+			value: enums("open", "closed"),
+			description: "The dropdown menu's open state."
 		}
 	]
 };
 
-export const content: APISchema<Menubar.ContentProps> = {
+export const content: APISchema<Menu.ContentProps> = {
 	title: "Content",
-	description: "The content displayed when the menu is open.",
-	props: menuContentProps,
+	description: "The content displayed when the dropdown menu is open.",
+	props: contentProps,
 	dataAttributes: [
 		{
 			name: "state",
-			value: "'open' | 'closed'",
-			description: "The collapsible's open state."
+			value: enums("open", "closed"),
+			description: "The menus's open state."
 		}
 	]
 };
 
-export const item: APISchema<Menubar.ItemProps> = {
+export const item: APISchema<Menu.ItemProps & { href: string }> = {
 	title: "Item",
-	description: "A menu item within the menu.",
-	props: {
-		asChild,
-		disabled: {
-			type: "boolean",
-			default: "false",
-			description: "Whether or not the menu item is disabled."
-		}
-	},
+	description: "A menu item within the dropdown menu.",
+	props: itemProps,
 	dataAttributes: [
 		{
 			name: "orientation",
-			value: "'horizontal' | 'vertical'",
-			description: "The orientation of the menu item."
+			value: enums("horizontal", "vertical"),
+			description: "The orientation of the dropdown menu item."
 		},
 		{
 			name: "highlighted",
@@ -89,56 +90,56 @@ export const item: APISchema<Menubar.ItemProps> = {
 	]
 };
 
-export const separator: APISchema<Menubar.SeparatorProps> = {
+export const separator: APISchema<Menu.SeparatorProps> = {
 	title: "Separator",
 	description: "A horizontal line to visually separate menu items.",
-	props: { asChild }
+	props: separatorProps
 };
 
-export const arrow: APISchema<Menubar.ArrowProps> = {
+export const arrow: APISchema<Menu.ArrowProps> = {
 	title: "Arrow",
-	description: "An optional arrow which points to the menu's anchor/trigger point.",
+	description: "An optional arrow which points to the dropdown menu's anchor/trigger point.",
 	props: arrowProps,
 	dataAttributes: [
 		{
 			name: "arrow",
 			value: "''",
-			description: "Present on the arrow elements of the menu."
+			description: "Present on the arrow elements of the dropdown menu."
 		}
 	]
 };
 
-export const checkboxItem: APISchema<Menubar.CheckboxItemProps> = {
+export const checkboxItem: APISchema<Menu.CheckboxItemProps> = {
 	title: "CheckboxItem",
 	description: "A menu item that can be controlled and toggled like a checkbox.",
-	props: menuCheckboxItemProps,
+	props: checkboxItemProps,
 	dataAttributes: [
 		{
 			name: "orientation",
-			value: "'horizontal' | 'vertical'",
+			value: enums("horizontal", "vertical"),
 			description: "The orientation of the checkbox menu item."
 		}
 	]
 };
 
-export const checkboxIndicator: APISchema<Menubar.CheckboxIndicatorProps> = {
+export const checkboxIndicator: APISchema<Menu.CheckboxItemIndicatorProps> = {
 	title: "CheckboxIndicator",
 	description:
 		"A visual indicator of the checkbox menu item's checked state. It passed the item's checked state as a slot prop `checked` and can be used to render a custom indicator.",
-	props: { asChild }
+	props: checkboxIndicatorProps
 };
 
-export const radioGroup: APISchema<Menubar.RadioGroupProps> = {
+export const radioGroup: APISchema<Menu.RadioGroupProps> = {
 	title: "RadioGroup",
 	description: "A group of radio menu items, where only one can be checked at a time.",
-	props: menuRadioGroupProps
+	props: radioGroupProps
 };
 
-export const radioItem: APISchema<Menubar.RadioItemProps> = {
+export const radioItem: APISchema<Menu.RadioItemProps> = {
 	title: "RadioItem",
 	description:
 		"A menu item that can be controlled and toggled like a radio button. It must be a child of a `RadioGroup`.",
-	props: menuRadioItemProps
+	props: radioItemProps
 };
 
 export const radioIndicator: APISchema = {
@@ -147,21 +148,21 @@ export const radioIndicator: APISchema = {
 		"A visual indicator helper for `RadioItem`s. It only renders it's children when the radio item is checked."
 };
 
-export const sub: APISchema<Menubar.SubProps> = {
+export const sub: APISchema<Menu.SubProps> = {
 	title: "Sub",
 	description:
-		"A submenu belonging to the parent menu. Responsible for managing the state of the submenu.",
-	props: menuSubProps
+		"A submenu belonging to the parent dropdown menu. Responsible for managing the state of the submenu.",
+	props: subProps
 };
 
-export const subTrigger: APISchema<Menubar.SubTriggerProps> = {
+export const subTrigger: APISchema<Menu.SubTriggerProps> = {
 	title: "SubTrigger",
 	description: "A menu item which when pressed or hovered, opens the submenu.",
-	props: menuSubTriggerProps,
+	props: subTriggerProps,
 	dataAttributes: [
 		{
 			name: "state",
-			value: "'open' | 'closed'",
+			value: enums("open", "closed"),
 			description: "The submenu's open state."
 		},
 		{
@@ -172,38 +173,31 @@ export const subTrigger: APISchema<Menubar.SubTriggerProps> = {
 	]
 };
 
-export const subContent: APISchema<Menubar.SubContentProps> = {
+export const subContent: APISchema<Menu.SubContentProps> = {
 	title: "SubContent",
 	description: "The submenu content displayed when the parent submenu is open.",
-	props: {
-		...menuSubContentProps,
-		sideOffset: {
-			type: "number",
-			default: "0",
-			description: "The offset of the submenu from the parent menu."
-		}
-	},
+	props: subContentProps,
 	dataAttributes: [
 		{
 			name: "state",
-			value: "'open' | 'closed'",
+			value: enums("open", "closed"),
 			description: "The submenu's open state."
 		}
 	]
 };
 
-export const group: APISchema<Menubar.GroupProps> = {
+export const group: APISchema<Menu.GroupProps> = {
 	title: "Group",
 	description:
-		"A group of menu items. It can be used along with the `DropdownMenu.Label` component to provide a visual label for a group of menu items. When a label is within a group, appropriate aria attributes will be applied to the group.",
-	props: { asChild }
+		"A group of menu items. It can be used along with the `Menu.Label` component to provide a visual label for a group of menu items. When a label is within a group, appropriate aria attributes will be applied to the group.",
+	props: groupProps
 };
 
-export const label: APISchema<Menubar.LabelProps> = {
+export const label: APISchema<Menu.LabelProps> = {
 	title: "Label",
 	description:
-		"A label which will be skipped when navigating with the keyboard. It is used to provide a visual label for a group of menu items. When a label is within a `DropdownMenu.Group`, appropriate aria attributes will be applied to the group.",
-	props: { asChild }
+		"A label which will be skipped when navigating with the keyboard. It is used to provide a visual label for a group of menu items. When a label is within a `Menu.Group`, appropriate aria attributes will be applied to the group.",
+	props: labelProps
 };
 
 export const menubar = [

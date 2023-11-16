@@ -6,3 +6,6 @@ export const ENUM = "enum";
 export const UNDEFINED = "undefined";
 export const UNION = "union";
 export const OBJECT = "object";
+export const FALSE = "false";
+export const TRUE = "true";
+export const UNKNOWN = "unknown";

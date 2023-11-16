@@ -1,24 +1,31 @@
 import type { APISchema } from "@/types";
-import { asChild } from "./helpers.js";
+import { asChild, enums } from "./helpers.js";
 import type * as Avatar from "$lib/bits/avatar/_types";
+import * as C from "@/content/constants.js";
 
 export const root: APISchema<Avatar.Props> = {
 	title: "Root",
 	description: "The root component used to set and manage the state of the avatar.",
 	props: {
 		delayMs: {
+			type: C.NUMBER,
 			default: "0",
-			type: "number",
 			description:
 				"How long to wait before showing the image after it has loaded. This can be useful to prevent a harsh flickering effect when the image loads quickly."
 		},
 		loadingStatus: {
-			type: "'loading' | 'loaded' | 'error'",
+			type: {
+				type: "LoadingStatus",
+				definition: enums("loading", "loaded", "error")
+			},
 			description:
 				"The loading status of the avatars source image. You can bind a variable to track the status outside of the component and use it to show a loading indicator or error message."
 		},
 		onLoadingStatusChange: {
-			type: "(status: 'loading' | 'loaded' | 'error') => void",
+			type: {
+				type: C.FUNCTION,
+				definition: "(status: LoadingStatus) => void"
+			},
 			description: "A callback function called when the loading status of the image changes."
 		},
 		asChild
@@ -30,12 +37,12 @@ export const image: APISchema<Avatar.ImageProps> = {
 	description: "The avatar image displayed once it has loaded.",
 	props: {
 		src: {
-			type: "string",
+			type: "HTMLImgAttributes['src']",
 			description:
 				"The source of the image. This is typed the same as the native `img` element so you can use any valid `img` `src` value."
 		},
 		alt: {
-			type: "string",
+			type: "HTMLImgAttributes['src']",
 			description:
 				"The alt text of the image. This is typed the same as the native `img` element so you can use any valid `img` `alt` value."
 		},

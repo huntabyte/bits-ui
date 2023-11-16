@@ -4,7 +4,7 @@
  * but we don't want to document the HTML attributes.
  */
 import type { Expand, OnChangeFn, AsChild, OmitFloating } from "$lib/internal/index.js";
-import type { FloatingArrowProps, FloatingContentProps } from "$lib/shared/index.js";
+import type { ArrowProps, ContentProps } from "$lib/bits/floating/_types.js";
 import type { CreatePopoverProps } from "@melt-ui/svelte";
 
 type Props = Expand<
@@ -27,10 +27,4 @@ type Props = Expand<
 type TriggerProps = AsChild;
 type CloseProps = AsChild;
 
-export type {
-	Props,
-	CloseProps,
-	FloatingArrowProps as ArrowProps,
-	FloatingContentProps as ContentProps,
-	TriggerProps
-};
+export type { Props, CloseProps, ArrowProps, ContentProps, TriggerProps };

@@ -1,29 +1,32 @@
 import type { APISchema } from "@/types";
-import { asChild } from "./helpers";
+import { asChild, enums } from "./helpers";
+import * as C from "@/content/constants";
+import type * as Separator from "$lib/bits/separator/_types";
 
-export const root: APISchema = {
+export const root: APISchema<Separator.Props> = {
 	title: "Root",
 	description: "An element used to separate content.",
-	props: [
-		asChild,
-		{
-			name: "orientation",
-			type: "'horizontal' | 'vertical'",
-			description: "The orientation of the separator.",
-			default: "'horizontal'"
+	props: {
+		orientation: {
+			type: {
+				type: C.ENUM,
+				definition: enums("horizontal", "vertical")
+			},
+			default: "'horizontal'",
+			description: "The orientation of the separator."
 		},
-		{
-			name: "decorative",
-			type: "boolean",
+		decorative: {
+			type: C.BOOLEAN,
+			default: C.FALSE,
 			description:
-				"Whether the separator is decorative or not, which will determine if it is announce by screen readers.",
-			default: "false"
-		}
-	],
+				"Whether the separator is decorative or not, which will determine if it is announce by screen readers."
+		},
+		asChild
+	},
 	dataAttributes: [
 		{
 			name: "orientation",
-			value: "'horizontal' | 'vertical'",
+			value: enums("horizontal", "vertical"),
 			description: "The orientation of the separator."
 		}
 	]

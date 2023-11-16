@@ -1,30 +1,32 @@
 import type { APISchema } from "@/types/index.js";
-import { asChild } from "./helpers.js";
+import { asChild, enums } from "./helpers.js";
+import * as C from "@/content/constants.js";
+import type * as Progress from "$lib/bits/progress/_types.js";
 
-export const root: APISchema = {
+export const root: APISchema<Progress.Props> = {
 	title: "Root",
 	description: "The progress bar component.",
-	props: [
-		asChild,
-		{
-			name: "max",
-			type: "number",
+	props: {
+		max: {
+			type: C.NUMBER,
 			default: "100",
 			description:
 				"The maximum value of the progress bar. Used to calculate the percentage of the progress bar."
 		},
-		{
-			name: "value",
-			type: "number",
+		value: {
+			type: C.NUMBER,
 			default: "0",
 			description: "The current value of the progress bar."
 		},
-		{
-			name: "onValueChange",
-			type: "(value: number) => void",
+		onValueChange: {
+			type: {
+				type: C.FUNCTION,
+				definition: "(value: number) => void"
+			},
 			description: "A callback that fires when the value changes."
-		}
-	],
+		},
+		asChild
+	},
 	dataAttributes: [
 		{
 			name: "value",
@@ -33,7 +35,7 @@ export const root: APISchema = {
 		{
 			name: "state",
 			description: "The current state of the progress bar.",
-			value: "'indeterminate' | 'complete' | 'loading'"
+			value: enums("indeterminate", "complete", "loading")
 		},
 		{
 			name: "max",

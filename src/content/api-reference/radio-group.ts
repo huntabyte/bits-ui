@@ -1,71 +1,78 @@
 import type { APISchema } from "@/types";
-import { asChild } from "./helpers";
+import { asChild, enums } from "./helpers";
+import type * as RadioGroup from "$lib/bits/radio-group/_types";
+import * as C from "@/content/constants";
 
-export const root: APISchema = {
+export const root: APISchema<RadioGroup.Props> = {
 	title: "Root",
 	description:
 		"The radio group component used to group radio items under a common name for form submission.",
-	props: [
-		asChild,
-		{
-			name: "disabled",
-			default: "false",
-			type: "boolean",
+	props: {
+		disabled: {
+			default: C.FALSE,
+			type: C.BOOLEAN,
 			description:
 				"Whether or not the radio group is disabled. This prevents the user from interacting with it."
 		},
-		{
-			name: "loop",
-			default: "false",
-			type: "boolean",
+		required: {
+			default: C.FALSE,
+			type: C.BOOLEAN,
+			description: "Whether or not the radio group is required."
+		},
+		loop: {
+			default: C.FALSE,
+			type: C.BOOLEAN,
 			description:
 				"Whether or not the radio group should loop through the items when navigating with the arrow keys."
 		},
-		{
-			name: "orientation",
+		orientation: {
 			default: "'vertical'",
-			type: "'vertical' | 'horizontal'",
+			type: {
+				type: C.ENUM,
+				definition: enums("vertical", "horizontal")
+			},
 			description: "The orientation of the radio group."
 		},
-		{
-			name: "value",
-			type: "string",
+		value: {
+			type: C.STRING,
 			description:
 				"The value of the currently selected radio item. This is the value that will be submitted with a form."
 		},
-		{
-			name: "onValueCHange",
-			type: "(value: string | undefined) => void",
+		onValueChange: {
+			type: {
+				type: C.FUNCTION,
+				definition: "(value: string | undefined) => void"
+			},
 			description: "A callback that is fired when the radio group's value changes."
-		}
-	],
+		},
+		asChild
+	},
 	dataAttributes: [
 		{
 			name: "orientation",
-			value: "'vertical' | 'horizontal'",
+			value: enums("vertical", "horizontal"),
 			description: "The orientation of the radio group."
 		}
 	]
 };
-export const item: APISchema = {
+export const item: APISchema<RadioGroup.ItemProps> = {
 	title: "Item",
 	description: "An radio item, which must be a child of the `RadioGroup.Root` component.",
-	props: [
-		asChild,
-		{
-			name: "disabled",
-			default: "false",
-			type: "boolean",
+	props: {
+		disabled: {
+			default: C.FALSE,
+			type: C.BOOLEAN,
 			description:
 				"Whether or not the radio item is disabled. This prevents the user from interacting with it."
 		},
-		{
-			name: "value",
-			type: "string",
+		value: {
+			type: C.STRING,
 			description:
-				"The value of the currently selected radio item. This is the value that will be submitted with a form."
-		}
-	],
+				"The value of the currently selected radio item. This is the value that will be submitted with a form.",
+			required: true
+		},
+		asChild
+	},
 	dataAttributes: [
 		{
 			name: "disabled",
@@ -77,22 +84,22 @@ export const item: APISchema = {
 		},
 		{
 			name: "state",
-			value: "'checked' | 'unchecked'",
+			value: enums("checked", "unchecked"),
 			description: "The radio item's checked state."
 		},
 		{
 			name: "orientation",
-			value: "'vertical' | 'horizontal'",
+			value: enums("vertical", "horizontal"),
 			description: "The orientation of the parent radio group."
 		}
 	]
 };
 
-export const input: APISchema = {
+export const input: APISchema<RadioGroup.InputProps> = {
 	title: "Input",
 	description:
 		"A hidden input that is used to submit the radio group's value with a form. It can receive all the same props/attributes as a normal HTML input.",
-	props: [asChild]
+	props: { asChild }
 };
 
 export const indicator: APISchema = {

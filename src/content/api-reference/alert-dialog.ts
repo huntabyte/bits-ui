@@ -1,6 +1,6 @@
 import type { APISchema } from "@/types";
 import { asChild, enums, portalProp, transitionProps } from "./helpers";
-import * as C from "@/content/api-reference/constants";
+import * as C from "@/content/constants";
 import { focusProp } from "@/content/api-reference/extended-types";
 import type * as AlertDialog from "$lib/bits/alert-dialog/_types.js";
 
@@ -10,22 +10,22 @@ export const root: APISchema<AlertDialog.Props> = {
 	props: {
 		preventScroll: {
 			type: C.BOOLEAN,
-			default: "true",
+			default: C.TRUE,
 			description: "Whether or not to prevent scroll on the body when the alert dialog is open."
 		},
 		closeOnEscape: {
 			type: C.BOOLEAN,
-			default: "true",
+			default: C.TRUE,
 			description: "Whether to close the alert dialog when the escape key is pressed."
 		},
 		closeOnOutsideClick: {
 			type: C.BOOLEAN,
-			default: "true",
+			default: C.TRUE,
 			description: "Whether to close the alert dialog when a click occurs outside of it."
 		},
 		open: {
 			type: C.BOOLEAN,
-			default: "false",
+			default: C.FALSE,
 			description: "Whether or not the alert dialog is open."
 		},
 		onOpenChange: {

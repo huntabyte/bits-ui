@@ -1,6 +1,6 @@
 import type { APISchema } from "@/types";
 import type * as Button from "$lib/bits/button/_types";
-
+import * as C from "@/content/constants";
 export const root: APISchema<Button.Props & { href: string }> = {
 	title: "Root",
 	description:
@@ -12,7 +12,7 @@ export const root: APISchema<Button.Props & { href: string }> = {
 			description: "An array of melt builders to be applied to the button."
 		},
 		href: {
-			type: "string",
+			type: C.STRING,
 			description: "An optional prop that when passed converts the button into an anchor tag."
 		}
 	}
