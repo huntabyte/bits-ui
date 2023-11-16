@@ -22,7 +22,7 @@
 			</div>
 			<P class="!mt-2 !mb-5">{schema.description}</P>
 			<div class="flex flex-col gap-4">
-				{#if schema.props && schema.props.length}
+				{#if schema.props}
 					<PropsTable props={schema.props} />
 				{/if}
 				{#if schema.dataAttributes && schema.dataAttributes.length}

@@ -1,5 +1,5 @@
 import type { APISchema } from "@/types";
-import { asChild, enums } from "./helpers";
+import { asChild, enums } from "@/content/api-reference/helpers.js";
 import * as C from "@/content/constants";
 import type * as Separator from "$lib/bits/separator/_types";
 

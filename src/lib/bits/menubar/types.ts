@@ -7,7 +7,7 @@ import type {
 	ArrowProps,
 	GroupProps,
 	LabelProps,
-	DropdownTriggerProps as TriggerProps,
+	MenubarTriggerProps as TriggerProps,
 	ContentProps,
 	RadioItemProps,
 	SeparatorProps,
@@ -17,7 +17,7 @@ import type {
 	CheckboxItemProps,
 	CheckboxItemIndicatorProps,
 	//
-	DropdownTriggerEvents as TriggerEvents,
+	MenubarTriggerEvents as TriggerEvents,
 	ItemEvents,
 	SubTriggerEvents,
 	CheckboxItemEvents,

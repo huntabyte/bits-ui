@@ -1,5 +1,5 @@
 import type { APISchema } from "@/types";
-import { asChild, enums } from "./helpers.js";
+import { asChild, enums } from "@/content/api-reference/helpers.js";
 import type * as Avatar from "$lib/bits/avatar/_types";
 import * as C from "@/content/constants.js";
 

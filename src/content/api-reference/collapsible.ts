@@ -1,5 +1,5 @@
 import type { APISchema, PropObj } from "@/types";
-import { asChild, enums, transitionProps } from "@/content";
+import { asChild, enums, transitionProps } from "@/content/api-reference/helpers.js";
 import type * as Collapsible from "$lib/bits/collapsible/_types";
 import * as C from "@/content/constants";
 export const root: APISchema<Collapsible.Props> = {

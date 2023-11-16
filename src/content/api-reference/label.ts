@@ -1,5 +1,5 @@
 import type { APISchema } from "@/types";
-import { asChild } from "./helpers";
+import { asChild } from "@/content/api-reference/helpers.js";
 import type * as Label from "$lib/bits/label/_types";
 
 export const root: APISchema<Label.Props> = {

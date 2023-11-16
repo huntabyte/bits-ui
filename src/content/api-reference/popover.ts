@@ -1,8 +1,13 @@
 import type { APISchema } from "@/types/index.js";
-import { arrowProps, asChild, enums } from "./helpers.js";
 import type * as Popover from "$lib/bits/popover/_types.js";
 import { floatingConfigProp, focusProp } from "./extended-types/index.js";
-import { portalProp, transitionProps } from "./helpers.js";
+import {
+	portalProp,
+	transitionProps,
+	arrowProps,
+	asChild,
+	enums
+} from "@/content/api-reference/helpers.js";
 import * as C from "@/content/constants.js";
 
 export const root: APISchema<Popover.Props> = {

@@ -1,7 +1,7 @@
-import type { APISchema } from "@/types";
-import { asChild, enums, portalProp, transitionProps } from "./helpers";
-import * as C from "@/content/constants";
-import { focusProp } from "@/content/api-reference/extended-types";
+import type { APISchema } from "@/types/api.js";
+import { asChild, enums, portalProp, transitionProps } from "@/content/api-reference/helpers.js";
+import * as C from "@/content/constants.js";
+import { focusProp } from "@/content/api-reference/extended-types/index.js";
 import type * as AlertDialog from "$lib/bits/alert-dialog/_types.js";
 
 export const root: APISchema<AlertDialog.Props> = {

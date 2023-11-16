@@ -53,7 +53,7 @@ type SubTriggerProps = I.SubTriggerProps & HTMLDivAttributes;
 // Trigger for context menu
 type ContextTriggerProps = I.TriggerProps & HTMLDivAttributes;
 
-// Trigger dropdown and menubar menus
+// Trigger for dropdown menu & menubar menu
 type DropdownTriggerProps = I.TriggerProps & HTMLButtonAttributes;
 
 type ArrowProps = I.ArrowProps & HTMLDivAttributes;
@@ -80,10 +80,17 @@ type ContextTriggerEvents<T extends Element = HTMLDivElement> = {
 	contextmenu: CustomEventHandler<Event, T>;
 };
 
-// Trigger events used by the dropdown and menubar menus
+// Trigger events used by the dropdown
 type DropdownTriggerEvents<T extends Element = HTMLButtonElement> = {
 	click: CustomEventHandler<MouseEvent, T>;
 	keydown: CustomEventHandler<KeyboardEvent, T>;
+};
+
+// Trigger events used by the menubar
+type MenubarTriggerEvents<T extends Element = HTMLButtonElement> = {
+	click: CustomEventHandler<MouseEvent, T>;
+	keydown: CustomEventHandler<KeyboardEvent, T>;
+	pointerenter: CustomEventHandler<PointerEvent, T>;
 };
 
 type SubContentEvents<T extends Element = HTMLDivElement> = {
@@ -113,6 +120,7 @@ export type {
 	SubTriggerProps,
 	ContextTriggerProps,
 	DropdownTriggerProps,
+	DropdownTriggerProps as MenubarTriggerProps,
 	//
 	ContentEvents,
 	CheckboxItemEvents,
@@ -121,5 +129,6 @@ export type {
 	SubTriggerEvents,
 	ContextTriggerEvents,
 	DropdownTriggerEvents,
+	MenubarTriggerEvents,
 	SubContentEvents
 };

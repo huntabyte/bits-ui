@@ -1,5 +1,5 @@
 import type { APISchema } from "@/types";
-import { asChild, enums } from "./helpers";
+import { asChild, enums } from "@/content/api-reference/helpers.js";
 import type * as RadioGroup from "$lib/bits/radio-group/_types";
 import * as C from "@/content/constants";
 

@@ -1,5 +1,5 @@
 import type { APISchema } from "@/types";
-import { asChild, enums, portalProp, transitionProps } from "./helpers";
+import { asChild, enums, portalProp, transitionProps } from "@/content/api-reference/helpers.js";
 import type * as Dialog from "$lib/bits/dialog/_types";
 import { focusProp } from "./extended-types";
 import * as C from "@/content/constants";

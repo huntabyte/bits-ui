@@ -1,6 +1,12 @@
 import type { PropObj } from "@/types";
 import { floatingConfigProp, focusProp } from "./extended-types";
-import { asChild, transitionProps, portalProp, enums, union } from "@/content";
+import {
+	asChild,
+	transitionProps,
+	portalProp,
+	enums,
+	union
+} from "@/content/api-reference/helpers.js";
 import type * as Menu from "$lib/bits/menu/_types";
 import * as C from "@/content/constants";
 

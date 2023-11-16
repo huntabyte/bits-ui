@@ -1,5 +1,5 @@
-import type { PropSchema } from "@/types";
-import * as C from "@/content/constants";
+import type { PropSchema } from "@/types/api.js";
+import * as C from "@/content/constants.js";
 
 export const asChild = {
 	type: C.BOOLEAN,

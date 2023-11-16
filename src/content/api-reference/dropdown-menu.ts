@@ -17,7 +17,7 @@ import {
 	checkboxIndicatorProps
 } from "./menu";
 import type * as Menu from "$lib/bits/menu/_types";
-import { enums } from "..";
+import { enums } from "@/content/api-reference/helpers.js";
 
 export const root: APISchema<Menu.Props> = {
 	title: "Root",

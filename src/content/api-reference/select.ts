@@ -1,5 +1,11 @@
 import type { APISchema } from "@/types";
-import { arrowProps, asChild, enums, portalProp, transitionProps } from "./helpers";
+import {
+	arrowProps,
+	asChild,
+	enums,
+	portalProp,
+	transitionProps
+} from "@/content/api-reference/helpers.js";
 import * as C from "@/content/constants";
 import type * as Select from "$lib/bits/select/_types";
 

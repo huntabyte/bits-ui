@@ -1,11 +1,18 @@
 <script lang="ts">
 	import * as Table from "@/components/ui/table";
 	import { Code } from "@/components";
-	import type { PropSchema } from "@/types";
+	import type { PropObj, PropSchema } from "@/types";
 	import { parseMarkdown } from "@/utils";
 	import PropTypeContent from "./prop-type-content.svelte";
 
-	export let props: PropSchema[] = [];
+	export let props: PropObj<Record<string, unknown>>;
+
+	$: propData = Object.entries(props).map(([name, prop]) => {
+		const { type, description, default: defaultVal } = prop as PropSchema;
+		return { name, type, description, default: defaultVal };
+	});
+
+	$: console.log(propData);
 </script>
 
 <Table.Root>
@@ -17,7 +24,7 @@
 		</Table.Row>
 	</Table.Header>
 	<Table.Body>
-		{#each props as { type, name, description, default: defaultVal }}
+		{#each propData as { type, name, description, default: defaultVal }}
 			<Table.Row>
 				<Table.Cell class="align-baseline pr-1">
 					<Code class="text-foreground font-semibold">{name}</Code>

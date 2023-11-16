@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Popover } from "$lib";
-	import { cn, flyAndScale, parseTypeDef } from "@/utils";
+	import { flyAndScale, parseTypeDef } from "@/utils";
 	import { Code } from "@/components";
 	import { Info } from "phosphor-svelte";
 	import type { PropType } from "@/types";

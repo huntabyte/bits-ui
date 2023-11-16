@@ -12,7 +12,7 @@ import type {
 	AsChild,
 	TransitionProps
 } from "$lib/internal/index.js";
-import type { FloatingArrowProps } from "$lib/shared/index.js";
+import type { ArrowProps } from "$lib/bits/floating/_types.js";
 
 type Props = Expand<OmitFloating<CreateTooltipProps>> & {
 	/**
@@ -56,4 +56,4 @@ type ContentProps<
 
 type TriggerProps = AsChild;
 
-export type { Props, FloatingArrowProps as ArrowProps, TriggerProps, ContentProps };
+export type { Props, ArrowProps, TriggerProps, ContentProps };

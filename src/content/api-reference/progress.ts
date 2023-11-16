@@ -1,5 +1,5 @@
 import type { APISchema } from "@/types/index.js";
-import { asChild, enums } from "./helpers.js";
+import { asChild, enums } from "@/content/api-reference/helpers.js";
 import * as C from "@/content/constants.js";
 import type * as Progress from "$lib/bits/progress/_types.js";
 

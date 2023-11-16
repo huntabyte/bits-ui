@@ -1,5 +1,11 @@
 import type { APISchema } from "@/types";
-import { arrowProps, asChild, enums, portalProp, transitionProps } from "./helpers";
+import {
+	arrowProps,
+	asChild,
+	enums,
+	portalProp,
+	transitionProps
+} from "@/content/api-reference/helpers.js";
 import type * as LinkPreview from "$lib/bits/link-preview/_types";
 import * as C from "@/content/constants";
 import { floatingConfigProp } from "./extended-types";

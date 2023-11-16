@@ -1,7 +1,8 @@
-import { asChild, enums, union } from "@/content";
+import { asChild, enums, union } from "./helpers.js";
 import type { APISchema } from "@/types";
 import type * as Checkbox from "$lib/bits/checkbox/_types";
 import * as C from "@/content/constants";
+
 export const root: APISchema<Checkbox.Props> = {
 	title: "Root",
 	description: "The button component used to toggle the state of the checkbox.",
