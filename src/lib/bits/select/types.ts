@@ -6,7 +6,6 @@ import type {
 	HTMLInputAttributes
 } from "svelte/elements";
 import type { CustomEventHandler } from "$lib/index.js";
-import type { _ArrowProps } from "$lib/shared/types.js";
 import type * as I from "./_types.js";
 
 type Props<T = unknown> = I.Props<T>;

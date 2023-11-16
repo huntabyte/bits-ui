@@ -17,7 +17,6 @@
 	export let inTransitionConfig: $$Props["inTransitionConfig"] = undefined;
 	export let outTransition: $$Props["outTransition"] = undefined;
 	export let outTransitionConfig: $$Props["outTransitionConfig"] = undefined;
-
 	export let asChild: $$Props["asChild"] = false;
 	export let sideOffset: $$Props["sideOffset"] = 4;
 	export let id: $$Props["id"] = undefined;
@@ -29,15 +28,17 @@
 	} = getCtx(sideOffset);
 
 	const dispatch = createDispatcher();
+	const attrs = getAttrs("content");
+
 	$: if (id) {
 		ids.content.set(id);
 	}
 	$: builder = $content;
-	const attrs = getAttrs("content");
+	$: slotProps = { builder, attrs };
 </script>
 
 {#if asChild && $open}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else if transition && $open}
 	<div
 		use:melt={builder}
@@ -47,7 +48,7 @@
 		on:m-pointerdown={dispatch}
 		on:m-pointerenter={dispatch}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {:else if inTransition && outTransition && $open}
 	<div
@@ -59,7 +60,7 @@
 		on:m-pointerdown={dispatch}
 		on:m-pointerenter={dispatch}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {:else if inTransition && $open}
 	<div
@@ -70,7 +71,7 @@
 		on:m-pointerdown={dispatch}
 		on:m-pointerenter={dispatch}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {:else if outTransition && $open}
 	<div
@@ -81,7 +82,7 @@
 		on:m-pointerdown={dispatch}
 		on:m-pointerenter={dispatch}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {:else if $open}
 	<div
@@ -91,6 +92,6 @@
 		on:m-pointerdown={dispatch}
 		on:m-pointerenter={dispatch}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {/if}

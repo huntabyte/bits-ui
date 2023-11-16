@@ -4,16 +4,8 @@
  * but we don't want to document the HTML attributes.
  */
 
-import type {
-	OmitOpen,
-	Expand,
-	OnChangeFn,
-	Transition,
-	AsChild,
-	TransitionProps,
-	OmitIds
-} from "$lib/internal/index.js";
-import type { _ArrowProps } from "$lib/shared/types.js";
+import type { OmitOpen, Expand, OnChangeFn, AsChild, OmitIds } from "$lib/internal/index.js";
+import type { FloatingArrowProps, FloatingContentProps } from "$lib/shared/index.js";
 import type { CreateLinkPreviewProps } from "@melt-ui/svelte";
 
 type Props = Expand<
@@ -35,12 +27,9 @@ type Props = Expand<
 
 type TriggerProps = AsChild;
 
-type ContentProps<
-	T extends Transition = Transition,
-	In extends Transition = Transition,
-	Out extends Transition = Transition
-> = Expand<TransitionProps<T, In, Out> & AsChild>;
-
-type ArrowProps = _ArrowProps;
-
-export type { Props, ArrowProps, TriggerProps, ContentProps };
+export type {
+	Props,
+	FloatingArrowProps as ArrowProps,
+	FloatingContentProps as ContentProps,
+	TriggerProps
+};

@@ -22,7 +22,7 @@ import type {
 	CreateDropdownSubmenuProps,
 	CreateDropdownMenuCheckboxItemProps
 } from "@melt-ui/svelte";
-import type { _ArrowProps } from "$lib/shared/types.js";
+import type { FloatingArrowProps, MenuContentProps } from "$lib/shared/index.js";
 
 type Props = Expand<
 	OmitOpen<OmitIds<Omit<CreateDropdownMenuProps, "arrowSize">>> & {
@@ -77,17 +77,6 @@ type RadioGroupProps = Expand<
 
 type RadioItemProps = Expand<DropdownMenuRadioItemProps & AsChild>;
 
-type ContentProps<
-	T extends Transition = Transition,
-	In extends Transition = Transition,
-	Out extends Transition = Transition
-> = Expand<
-	{
-		sideOffset?: number;
-	} & TransitionProps<T, In, Out> &
-		AsChild
->;
-
 type GroupProps = AsChild;
 
 type ItemProps = Expand<
@@ -140,8 +129,6 @@ type SubTriggerProps = Expand<
 
 type TriggerProps = AsChild;
 
-type ArrowProps = _ArrowProps;
-
 type ItemEvents<T extends Element = HTMLDivElement> = {
 	click: CustomEventHandler<MouseEvent, T>;
 	keydown: CustomEventHandler<KeyboardEvent, T>;
@@ -153,10 +140,10 @@ type ItemEvents<T extends Element = HTMLDivElement> = {
 };
 
 export type {
-	ArrowProps,
+	FloatingArrowProps as ArrowProps,
+	MenuContentProps as ContentProps,
 	CheckboxItemIndicatorProps,
 	CheckboxItemProps,
-	ContentProps,
 	GroupProps,
 	ItemEvents,
 	ItemProps,

@@ -31,6 +31,8 @@
 		}
 	});
 
+	const attrs = getAttrs("root");
+
 	$: value !== undefined && localValue.set(value);
 	$: updateOption("orientation", orientation);
 	$: updateOption("activateOnFocus", activateOnFocus);
@@ -38,7 +40,6 @@
 	$: updateOption("autoSet", autoSet);
 
 	$: builder = $root;
-	const attrs = getAttrs("root");
 	$: slotProps = {
 		builder,
 		attrs,

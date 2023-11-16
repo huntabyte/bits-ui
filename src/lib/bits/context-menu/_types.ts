@@ -13,7 +13,7 @@ import type {
 	Transition,
 	TransitionProps
 } from "$lib/internal/index.js";
-import type { _ArrowProps } from "$lib/shared/types.js";
+import type { FloatingArrowProps, MenuContentProps } from "$lib/shared/index.js";
 import type {
 	CreateContextMenuProps,
 	CreateContextMenuRadioGroupProps,
@@ -74,17 +74,6 @@ type RadioGroupProps = Expand<
 
 type RadioItemProps = Expand<ContextMenuRadioItemProps & AsChild>;
 
-type ContentProps<
-	T extends Transition = Transition,
-	In extends Transition = Transition,
-	Out extends Transition = Transition
-> = Expand<
-	{
-		sideOffset?: number;
-	} & TransitionProps<T, In, Out> &
-		AsChild
->;
-
 type GroupProps = AsChild;
 
 type ItemProps = Expand<
@@ -138,13 +127,11 @@ type SubTriggerProps = Expand<
 
 type TriggerProps = AsChild;
 
-type ArrowProps = _ArrowProps;
-
 export type {
 	Props,
-	ArrowProps,
+	FloatingArrowProps as ArrowProps,
 	CheckboxItemProps,
-	ContentProps,
+	MenuContentProps as ContentProps,
 	GroupProps,
 	ItemProps,
 	CheckboxItemIndicatorProps,

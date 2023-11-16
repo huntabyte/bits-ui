@@ -6,10 +6,12 @@
 
 	type $$Props = Props;
 	type $$Events = Events;
+
 	export let disabled: $$Props["disabled"] = undefined;
 	export let pressed: $$Props["pressed"] = undefined;
 	export let onPressedChange: $$Props["onPressedChange"] = undefined;
 	export let asChild: $$Props["asChild"] = false;
+
 	const {
 		elements: { root },
 		states: { pressed: localPressed },
@@ -27,16 +29,17 @@
 	});
 
 	const dispatch = createDispatcher();
+	const attrs = getAttrs("root");
 
 	$: pressed !== undefined && localPressed.set(pressed);
 	$: updateOption("disabled", disabled);
 
 	$: builder = $root;
-	const attrs = getAttrs("root");
+	$: slotProps = { builder, attrs };
 </script>
 
 {#if asChild}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else}
 	<button
 		use:melt={builder}
@@ -46,6 +49,6 @@
 		on:m-click={dispatch}
 		on:m-keydown={dispatch}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</button>
 {/if}

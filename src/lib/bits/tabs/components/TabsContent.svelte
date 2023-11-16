@@ -4,14 +4,16 @@
 	import type { ContentProps } from "../types.js";
 
 	type $$Props = ContentProps;
+
 	export let value: $$Props["value"];
 	export let asChild: $$Props["asChild"] = false;
+
 	const {
 		elements: { content }
 	} = getCtx();
+	const attrs = getAttrs("content");
 
 	$: builder = $content(value);
-	const attrs = getAttrs("content");
 
 	$: slotProps = {
 		builder,

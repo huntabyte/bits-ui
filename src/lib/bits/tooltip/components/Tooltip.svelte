@@ -2,10 +2,10 @@
 	import { derived } from "svelte/store";
 	import { setCtx } from "../ctx.js";
 	import type { Props } from "../types.js";
+
 	type $$Props = Props;
 
 	export let positioning: $$Props["positioning"] = undefined;
-	export let arrowSize: $$Props["arrowSize"] = undefined;
 	export let closeOnEscape: $$Props["closeOnEscape"] = undefined;
 	export let portal: $$Props["portal"] = undefined;
 	export let closeOnPointerDown: $$Props["closeOnPointerDown"] = undefined;
@@ -13,7 +13,6 @@
 	export let closeDelay: $$Props["closeDelay"] = undefined;
 	export let open: $$Props["open"] = undefined;
 	export let onOpenChange: $$Props["onOpenChange"] = undefined;
-	export let forceVisible: $$Props["forceVisible"] = true;
 	export let disableHoverableContent: $$Props["disableHoverableContent"] = undefined;
 	export let group: $$Props["group"] = undefined;
 
@@ -23,13 +22,12 @@
 		ids
 	} = setCtx({
 		positioning,
-		arrowSize,
 		closeOnEscape,
 		portal,
 		closeOnPointerDown,
 		openDelay,
 		closeDelay,
-		forceVisible,
+		forceVisible: true,
 		defaultOpen: open,
 		disableHoverableContent,
 		group,
@@ -49,13 +47,11 @@
 
 	$: open !== undefined && localOpen.set(open);
 	$: updateOption("positioning", positioning);
-	$: updateOption("arrowSize", arrowSize);
 	$: updateOption("closeOnEscape", closeOnEscape);
 	$: updateOption("portal", portal);
 	$: updateOption("closeOnPointerDown", closeOnPointerDown);
 	$: updateOption("openDelay", openDelay);
 	$: updateOption("closeDelay", closeDelay);
-	$: updateOption("forceVisible", forceVisible);
 	$: updateOption("group", group);
 	$: updateOption("disableHoverableContent", disableHoverableContent);
 </script>

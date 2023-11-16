@@ -1,34 +1,15 @@
-import type { CreateTabsProps, TabsTriggerProps } from "@melt-ui/svelte";
-import type {
-	AsChild,
-	Expand,
-	HTMLDivAttributes,
-	ObjectVariation,
-	OmitValue,
-	OnChangeFn
-} from "$lib/internal/index.js";
+import type { HTMLDivAttributes } from "$lib/internal/index.js";
 import type { HTMLButtonAttributes } from "svelte/elements";
 import type { CustomEventHandler } from "$lib/index.js";
+import type * as I from "./_types.js";
 
-type Props = Expand<
-	OmitValue<CreateTabsProps> & {
-		orientation?: CreateTabsProps["orientation"] & {};
-		value?: CreateTabsProps["defaultValue"] & {};
-		onValueChange?: OnChangeFn<CreateTabsProps["defaultValue"]>;
-	} & AsChild
-> &
-	HTMLDivAttributes;
+type Props = I.Props & HTMLDivAttributes;
 
-type ContentProps = Expand<
-	{
-		value: string;
-	} & AsChild
-> &
-	HTMLDivAttributes;
+type ContentProps = I.ContentProps & HTMLDivAttributes;
 
-type TriggerProps = Expand<ObjectVariation<TabsTriggerProps> & AsChild> & HTMLButtonAttributes;
+type TriggerProps = I.TriggerProps & HTMLButtonAttributes;
 
-type ListProps = AsChild & HTMLDivAttributes;
+type ListProps = I.ListProps & HTMLDivAttributes;
 
 type TriggerEvents<T extends Element = HTMLButtonElement> = {
 	click: CustomEventHandler<MouseEvent, T>;

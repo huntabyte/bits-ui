@@ -19,6 +19,8 @@ export type OmitPressed<T> = Omit<T, "pressed" | "defaultPressed" | "onPressedCh
 export type OmitForceVisible<T> = Omit<T, "forceVisible">;
 export type OmitIds<T> = Omit<T, "ids">;
 
+export type OmitFloating<T> = OmitOpen<Omit<T, "forceVisible" | "ids" | "arrowSize">>;
+
 export type OnChangeFn<T> = (value: T) => void;
 
 export type Expand<T> = T extends object

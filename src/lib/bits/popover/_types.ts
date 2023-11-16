@@ -3,20 +3,12 @@
  * to type-check our API documentation, which requires we document each prop,
  * but we don't want to document the HTML attributes.
  */
-import type {
-	OmitOpen,
-	Expand,
-	Transition,
-	OnChangeFn,
-	AsChild,
-	TransitionProps,
-	OmitIds
-} from "$lib/internal/index.js";
-import type { _ArrowProps } from "$lib/shared/types.js";
+import type { Expand, OnChangeFn, AsChild, OmitFloating } from "$lib/internal/index.js";
+import type { FloatingArrowProps, FloatingContentProps } from "$lib/shared/index.js";
 import type { CreatePopoverProps } from "@melt-ui/svelte";
 
 type Props = Expand<
-	OmitOpen<OmitIds<Omit<CreatePopoverProps, "arrowSize">>> & {
+	OmitFloating<CreatePopoverProps> & {
 		/**
 		 * The open state of the popover.
 		 * You can bind this to a boolean value to programmatically control the open state.
@@ -32,15 +24,13 @@ type Props = Expand<
 	}
 >;
 
-type ContentProps<
-	T extends Transition = Transition,
-	In extends Transition = Transition,
-	Out extends Transition = Transition
-> = Expand<TransitionProps<T, In, Out> & AsChild>;
-
 type TriggerProps = AsChild;
 type CloseProps = AsChild;
 
-type ArrowProps = _ArrowProps;
-
-export type { Props, CloseProps, ArrowProps, ContentProps, TriggerProps };
+export type {
+	Props,
+	CloseProps,
+	FloatingArrowProps as ArrowProps,
+	FloatingContentProps as ContentProps,
+	TriggerProps
+};

@@ -16,13 +16,14 @@
 	} = getCtx();
 
 	const dispatch = createDispatcher();
+	const attrs = getAttrs("item");
 
 	$: builder = $item({ value, disabled });
-	const attrs = getAttrs("item");
+	$: slotProps = { builder, attrs };
 </script>
 
 {#if asChild}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else}
 	<button
 		use:melt={builder}
@@ -31,6 +32,6 @@
 		on:m-click={dispatch}
 		on:m-keydown={dispatch}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</button>
 {/if}

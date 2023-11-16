@@ -4,26 +4,11 @@
  * but we don't want to document the HTML attributes.
  */
 import type { CreateSelectProps, SelectOptionProps } from "@melt-ui/svelte";
-import type {
-	AsChild,
-	Expand,
-	OmitForceVisible,
-	OmitIds,
-	OmitOpen,
-	OnChangeFn,
-	Transition,
-	TransitionProps
-} from "$lib/internal/index.js";
-import type { _ArrowProps } from "$lib/shared/types.js";
+import type { AsChild, Expand, OmitFloating, OnChangeFn } from "$lib/internal/index.js";
+import type { FloatingArrowProps, FloatingContentProps } from "$lib/shared/index.js";
 
 type Props<T = unknown> = Expand<
-	OmitOpen<
-		OmitForceVisible<
-			OmitIds<
-				Omit<CreateSelectProps, "selected" | "defaultSelected" | "onSelectedChange" | "arrowSize">
-			>
-		>
-	> & {
+	OmitFloating<Omit<CreateSelectProps, "selected" | "defaultSelected" | "onSelectedChange">> & {
 		/**
 		 * The selected value of the select.
 		 * You can bind this to a value to programmatically control the selected value.
@@ -52,12 +37,6 @@ type Props<T = unknown> = Expand<
 	}
 >;
 
-type ContentProps<
-	T extends Transition = Transition,
-	In extends Transition = Transition,
-	Out extends Transition = Transition
-> = Expand<TransitionProps<T, In, Out> & AsChild>;
-
 type GroupProps = AsChild;
 type InputProps = AsChild;
 type LabelProps = AsChild;
@@ -77,12 +56,10 @@ type ValueProps = Expand<
 	} & AsChild
 >;
 
-type ArrowProps = _ArrowProps;
-
 export type {
 	Props,
-	ArrowProps,
-	ContentProps,
+	FloatingArrowProps as ArrowProps,
+	FloatingContentProps as ContentProps,
 	GroupProps,
 	InputProps,
 	LabelProps,

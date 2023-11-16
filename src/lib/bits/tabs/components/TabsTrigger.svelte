@@ -3,6 +3,7 @@
 	import { getCtx, getAttrs } from "../ctx.js";
 	import type { TriggerEvents, TriggerProps } from "../types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
+
 	type $$Props = TriggerProps;
 	type $$Events = TriggerEvents;
 
@@ -13,10 +14,11 @@
 	const {
 		elements: { trigger }
 	} = getCtx();
+
 	const dispatch = createDispatcher();
+	const attrs = getAttrs("trigger");
 
 	$: builder = $trigger({ value, disabled });
-	const attrs = getAttrs("trigger");
 	$: slotProps = {
 		builder,
 		attrs

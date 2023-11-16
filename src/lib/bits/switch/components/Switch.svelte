@@ -46,10 +46,11 @@
 
 	$: builder = $root;
 	$: attrs = { ...getAttrs("root"), "data-checked": checked ? "" : undefined };
+	$: slotProps = { builder, attrs };
 </script>
 
 {#if asChild}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else}
 	<button
 		use:melt={builder}
@@ -59,7 +60,7 @@
 		on:m-click={dispatch}
 		on:m-keydown={dispatch}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</button>
 {/if}
 {#if includeInput}

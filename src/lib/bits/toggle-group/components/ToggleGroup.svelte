@@ -4,8 +4,8 @@
 	import type { Props } from "../types.js";
 
 	type T = $$Generic<"single" | "multiple">;
-
 	type $$Props = Props<T>;
+
 	export let type: $$Props["type"] = "single" as T;
 	export let disabled: $$Props["disabled"] = undefined;
 	export let loop: $$Props["loop"] = undefined;
@@ -40,20 +40,26 @@
 		}) as any
 	});
 
+	const attrs = getAttrs("root");
+
 	$: value !== undefined && localValue.set(value);
+
 	$: updateOption("disabled", disabled);
 	$: updateOption("loop", loop);
 	$: updateOption("type", type);
 	$: updateOption("orientation", orientation);
 
 	$: builder = $root;
-	const attrs = getAttrs("root");
+	$: slotProps = {
+		builder,
+		attrs
+	};
 </script>
 
 {#if asChild}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else}
 	<div use:melt={builder} {...$$restProps} {...attrs}>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {/if}

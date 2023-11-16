@@ -11,11 +11,9 @@ import type {
 	OmitOpen,
 	OmitValue,
 	OnChangeFn,
-	Transition,
-	TransitionProps,
 	OmitIds
 } from "$lib/internal/index.js";
-import type { _ArrowProps } from "$lib/shared/types.js";
+import type { FloatingArrowProps, MenuContentProps } from "$lib/shared/index.js";
 import type {
 	CreateMenubarProps,
 	CreateMenubarMenuProps,
@@ -85,17 +83,6 @@ type RadioGroupProps = Expand<
 	} & AsChild
 >;
 
-type ContentProps<
-	T extends Transition = Transition,
-	In extends Transition = Transition,
-	Out extends Transition = Transition
-> = Expand<
-	{
-		sideOffset?: number;
-	} & TransitionProps<T, In, Out> &
-		AsChild
->;
-
 type GroupProps = AsChild;
 
 type ItemProps = Expand<
@@ -134,17 +121,6 @@ type SubProps = Expand<
 	}
 >;
 
-type SubContentProps<
-	T extends Transition = Transition,
-	In extends Transition = Transition,
-	Out extends Transition = Transition
-> = Expand<
-	{
-		sideOffset?: number;
-	} & TransitionProps<T, In, Out> &
-		AsChild
->;
-
 type SubTriggerProps = Expand<
 	{
 		disabled?: boolean;
@@ -153,22 +129,20 @@ type SubTriggerProps = Expand<
 
 type TriggerProps = AsChild;
 
-type ArrowProps = _ArrowProps;
-
 export type {
 	Props,
 	SubProps,
 	MenuProps,
 	ItemProps,
-	ArrowProps,
+	FloatingArrowProps as ArrowProps,
 	GroupProps,
 	LabelProps,
 	TriggerProps,
-	ContentProps,
+	MenuContentProps as ContentProps,
 	RadioItemProps,
 	SeparatorProps,
 	RadioGroupProps,
-	SubContentProps,
+	MenuContentProps as SubContentProps,
 	SubTriggerProps,
 	CheckboxItemProps,
 	CheckboxIndicatorProps

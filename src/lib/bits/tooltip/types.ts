@@ -1,38 +1,18 @@
-import type { CreateTooltipProps } from "@melt-ui/svelte";
-import type {
-	Expand,
-	HTMLDivAttributes,
-	OmitOpen,
-	Transition,
-	OnChangeFn,
-	AsChild,
-	TransitionProps
-} from "$lib/internal/index.js";
+import type { HTMLDivAttributes, Transition } from "$lib/internal/index.js";
 import type { HTMLButtonAttributes } from "svelte/elements";
 import type { CustomEventHandler } from "$lib";
-import type { _ArrowProps } from "$lib/shared/types.js";
+import type * as I from "./_types.js";
 
-type Props = Expand<
-	OmitOpen<CreateTooltipProps> & {
-		open?: boolean & {};
-		onOpenChange?: OnChangeFn<boolean>;
-	}
->;
+type Props = I.Props;
 
 type ContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
 	Out extends Transition = Transition
-> = Expand<
-	{
-		sideOffset?: number;
-	} & TransitionProps<T, In, Out> &
-		AsChild
-> &
-	HTMLDivAttributes;
+> = I.ContentProps<T, In, Out> & HTMLDivAttributes;
 
-type TriggerProps = AsChild & HTMLButtonAttributes;
-type ArrowProps = _ArrowProps & HTMLDivAttributes;
+type TriggerProps = I.TriggerProps & HTMLButtonAttributes;
+type ArrowProps = I.ArrowProps & HTMLDivAttributes;
 
 type TriggerEvents<T extends Element = HTMLButtonElement> = {
 	blur: CustomEventHandler<FocusEvent, T>;
@@ -42,6 +22,7 @@ type TriggerEvents<T extends Element = HTMLButtonElement> = {
 	pointerenter: CustomEventHandler<PointerEvent, T>;
 	pointerleave: CustomEventHandler<PointerEvent, T>;
 };
+
 type ContentEvents<T extends Element = HTMLDivElement> = {
 	pointerdown: CustomEventHandler<PointerEvent, T>;
 	pointerenter: CustomEventHandler<PointerEvent, T>;
