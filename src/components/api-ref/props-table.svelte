@@ -11,8 +11,6 @@
 		const { type, description, default: defaultVal } = prop as PropSchema;
 		return { name, type, description, default: defaultVal };
 	});
-
-	$: console.log(propData);
 </script>
 
 <Table.Root>
