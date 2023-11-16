@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.9.8
+
+### Patch Changes
+
+- Update melt ([#186](https://github.com/huntabyte/bits-ui/pull/186))
+
 ## 0.9.7
 
 ### Patch Changes
