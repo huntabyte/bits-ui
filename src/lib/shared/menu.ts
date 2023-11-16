@@ -1,4 +1,4 @@
-import type { Transition } from "$lib/internal";
+import type { AsChild, Transition } from "$lib/internal";
 import type { FloatingContentProps } from "./index.js";
 
 export type MenuContentProps<
@@ -8,5 +8,17 @@ export type MenuContentProps<
 > = Expand<
 	{
 		sideOffset?: number;
-	} & FloatingContentProps<T, In, Out>
+	} & FloatingContentProps<T, In, Out> &
+		AsChild
+>;
+
+export type MenuSubTriggerProps = Expand<
+	{
+		/**
+		 * Whether the subtrigger is disabled or not.
+		 *
+		 * @defaultValue false;
+		 */
+		disabled?: boolean;
+	} & AsChild
 >;

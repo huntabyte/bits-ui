@@ -1,29 +1,42 @@
+import { asChild } from "@/content";
 import type { APISchema } from "@/types";
+import type * as Checkbox from "$lib/bits/checkbox/_types";
 
-export const root: APISchema = {
+export const root: APISchema<Checkbox.Props> = {
 	title: "Root",
 	description: "The button component used to toggle the state of the checkbox.",
-	props: [
-		{
-			name: "disabled",
+	props: {
+		disabled: {
 			default: "false",
 			type: "boolean",
 			description:
 				"Whether or not the checkbox button is disabled. This prevents the user from interacting with it."
 		},
-		{
-			name: "checked",
+		checked: {
 			default: "false",
 			type: "boolean | 'indeterminate'",
 			description:
 				"The checkbox button's checked state. This can be a boolean or the string 'indeterminate', which would typically display a dash in the checkbox."
 		},
-		{
-			name: "onCheckedChange",
+		onCheckedChange: {
 			type: "(checked: boolean | 'indeterminate') => void",
 			description: "A callback that is fired when the checkbox button's checked state changes."
-		}
-	],
+		},
+		required: {
+			default: "false",
+			type: "boolean",
+			description: "Whether or not the checkbox is required."
+		},
+		name: {
+			type: "string",
+			description: "The name of the checkbox. This is used for form submission."
+		},
+		value: {
+			type: "string",
+			description: "The value of the checkbox. This is used for form submission."
+		},
+		asChild
+	},
 	dataAttributes: [
 		{
 			name: "disabled",
@@ -42,22 +55,20 @@ export const input: APISchema = {
 	title: "Input",
 	description:
 		"The hidden input element that is used to store the checkbox's state for form submission. It receives all the same props as a regular HTML input element.",
-	props: [
-		{
-			name: "value",
+	props: {
+		value: {
 			default: "false",
 			type: "boolean",
 			description:
 				"Unless a value is provided, the input's value will be a boolean that represents the checkbox's checked state. Indeterminate checkboxes will have a value of `false`."
 		},
-		{
-			name: "disabled",
+		disabled: {
 			default: "false",
 			type: "boolean",
 			description:
 				"Whether or not the checkbox input is disabled. If not provided, it will inherit the disabled state of the Root component, which defaults to false."
 		}
-	]
+	}
 };
 
 export const indicator: APISchema = {

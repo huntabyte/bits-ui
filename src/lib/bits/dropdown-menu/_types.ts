@@ -12,7 +12,8 @@ import type {
 	OmitIds,
 	OnChangeFn,
 	Transition,
-	OmitChecked
+	OmitChecked,
+	OmitFloating
 } from "$lib/internal/index.js";
 import type { CustomEventHandler } from "$lib/index.js";
 import type {
@@ -22,10 +23,14 @@ import type {
 	CreateDropdownSubmenuProps,
 	CreateDropdownMenuCheckboxItemProps
 } from "@melt-ui/svelte";
-import type { FloatingArrowProps, MenuContentProps } from "$lib/shared/index.js";
+import type {
+	FloatingArrowProps,
+	MenuContentProps,
+	MenuSubTriggerProps
+} from "$lib/shared/index.js";
 
 type Props = Expand<
-	OmitOpen<OmitIds<Omit<CreateDropdownMenuProps, "arrowSize">>> & {
+	OmitFloating<CreateDropdownMenuProps> & {
 		/**
 		 * The open state of the dropdown menu.
 		 * You can bind this to a boolean value to programmatically control the open state.
@@ -121,12 +126,6 @@ type SubContentProps<
 		AsChild
 >;
 
-type SubTriggerProps = Expand<
-	{
-		disabled?: boolean;
-	} & AsChild
->;
-
 type TriggerProps = AsChild;
 
 type ItemEvents<T extends Element = HTMLDivElement> = {
@@ -142,6 +141,7 @@ type ItemEvents<T extends Element = HTMLDivElement> = {
 export type {
 	FloatingArrowProps as ArrowProps,
 	MenuContentProps as ContentProps,
+	MenuSubTriggerProps as SubTriggerProps,
 	CheckboxItemIndicatorProps,
 	CheckboxItemProps,
 	GroupProps,
@@ -154,6 +154,5 @@ export type {
 	SeparatorProps,
 	SubContentProps,
 	SubProps,
-	SubTriggerProps,
 	TriggerProps
 };

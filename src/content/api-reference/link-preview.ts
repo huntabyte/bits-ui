@@ -1,62 +1,56 @@
 import type { APISchema } from "@/types";
-import { asChild } from "./helpers";
+import { asChild, portalProp, transitionProps } from "./helpers";
+import type * as LinkPreview from "$lib/bits/link-preview/_types";
 
-export const root: APISchema = {
+export const root: APISchema<LinkPreview.Props> = {
 	title: "Root",
 	description: "The root component used to manage the state of the state of the link preview.",
-	props: [
-		asChild,
-		{
-			name: "openDelay",
+	props: {
+		openDelay: {
 			type: "number",
 			default: "700",
 			description:
 				"The amount of time in milliseconds to delay opening the preview when hovering over the trigger."
 		},
-		{
-			name: "closeDelay",
+		closeDelay: {
 			type: "number",
 			default: "300",
 			description:
 				"The amount of time in milliseconds to delay closing the preview when the mouse leaves the trigger."
 		},
-		{
-			name: "positioning",
+		positioning: {
 			type: "FloatingConfig",
 			default: '{ position: "bottom", align: "center" }',
 			description: "The positioning configuration for the preview. (docs coming soon)"
 		},
-		{
-			name: "closeOnOutsideClick",
+		closeOnOutsideClick: {
 			type: "boolean",
 			default: "true",
 			description: "Whether or not to close the preview when clicking outside of it."
 		},
-		{
-			name: "closeOnEscape",
+		closeOnEscape: {
 			type: "boolean",
 			default: "true",
 			description: "Whether or not to close the preview when pressing the escape key."
 		},
-		{
-			name: "open",
+		open: {
 			type: "boolean",
 			default: "false",
 			description: "The open state of the link preview component."
 		},
-		{
-			name: "onOpenChange",
+		onOpenChange: {
 			type: "(open: boolean) => void",
 			description: "A callback that fires when the open state changes."
-		}
-	]
+		},
+		portal: { ...portalProp("link preview") }
+	}
 };
 
-export const trigger: APISchema = {
+export const trigger: APISchema<LinkPreview.TriggerProps> = {
 	title: "Trigger",
 	description:
 		"A component which triggers the opening and closing of the link preview on hover or focus.",
-	props: [asChild],
+	props: { asChild },
 	dataAttributes: [
 		{
 			name: "state",
@@ -66,10 +60,10 @@ export const trigger: APISchema = {
 	]
 };
 
-export const content: APISchema = {
+export const content: APISchema<LinkPreview.ContentProps> = {
 	title: "Content",
 	description: "The contents of the link preview which are displayed when the preview is open.",
-	props: [asChild],
+	props: { asChild, ...transitionProps },
 	dataAttributes: [
 		{
 			name: "state",
@@ -79,18 +73,17 @@ export const content: APISchema = {
 	]
 };
 
-export const arrow: APISchema = {
+export const arrow: APISchema<LinkPreview.ArrowProps> = {
 	title: "Arrow",
 	description: "An optional arrow element which points to the trigger when the preview is open.",
-	props: [
-		asChild,
-		{
-			name: "size",
+	props: {
+		size: {
 			type: "number",
 			default: "8",
 			description: "The height and width of the arrow in pixels."
-		}
-	],
+		},
+		asChild
+	},
 	dataAttributes: [
 		{
 			name: "arrow",

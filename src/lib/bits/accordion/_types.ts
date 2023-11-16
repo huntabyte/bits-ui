@@ -2,6 +2,7 @@ import type {
 	ObjectVariation,
 	Transition,
 	OmitValue,
+	OmitForceVisible,
 	Expand,
 	OnChangeFn,
 	AsChild,
@@ -14,7 +15,7 @@ import type {
 } from "@melt-ui/svelte";
 
 type Props<Multiple extends boolean> = Expand<
-	OmitValue<CreateAccordionProps<Multiple>> & {
+	OmitValue<OmitForceVisible<CreateAccordionProps<Multiple>>> & {
 		/**
 		 * The value of the accordion.
 		 * You can bind this to a value to programmatically control the open state.

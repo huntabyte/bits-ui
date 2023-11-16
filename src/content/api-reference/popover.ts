@@ -1,60 +1,64 @@
 import type { APISchema } from "@/types/index.js";
-import { asChild } from "./helpers.js";
+import { arrowProps, asChild } from "./helpers.js";
+import type * as Popover from "$lib/bits/popover/_types";
+import { focusProp } from "./extended-types/index.js";
+import { portalProp } from "./helpers";
 
-export const root: APISchema = {
+export const root: APISchema<Popover.Props> = {
 	title: "Root",
 	description: "The root component used to manage the state of the state of the popover.",
-	props: [
-		asChild,
-		{
-			name: "disableFocusTrap",
+	props: {
+		disableFocusTrap: {
 			type: "boolean",
 			default: "false",
 			description:
 				"Whether or not to disable the focus trap that is applied to the popover when it's open."
 		},
-		{
-			name: "preventScroll",
+		preventScroll: {
 			type: "boolean",
 			default: "false",
 			description: "Whether or not to prevent scrolling the body while the popover is open."
 		},
-		{
-			name: "positioning",
+		positioning: {
 			type: "FloatingConfig",
 			default: '{ position: "bottom", align: "center" }',
 			description: "The positioning configuration for the popover. (docs coming soon)"
 		},
-		{
-			name: "closeOnOutsideClick",
+		closeOnOutsideClick: {
 			type: "boolean",
 			default: "true",
 			description: "Whether or not to close the popover when clicking outside of it."
 		},
-		{
-			name: "closeOnEscape",
+		closeOnEscape: {
 			type: "boolean",
 			default: "true",
 			description: "Whether or not to close the popover when pressing the escape key."
 		},
-		{
-			name: "open",
+		open: {
 			type: "boolean",
 			default: "false",
 			description: "The open state of the link popover component."
 		},
-		{
-			name: "onOpenChange",
+		onOpenChange: {
 			type: "(open: boolean) => void",
 			description: "A callback that fires when the open state changes."
-		}
-	]
+		},
+		openFocus: {
+			type: focusProp,
+			description: "Override the focus when the popover is opened."
+		},
+		closeFocus: {
+			type: focusProp,
+			description: "Override the focus when the popover is closed."
+		},
+		portal: { ...portalProp("popover") }
+	}
 };
 
 export const trigger: APISchema = {
 	title: "Trigger",
 	description: "A component which toggles the opening and closing of the popover on press.",
-	props: [asChild],
+	props: { asChild },
 	dataAttributes: [
 		{
 			name: "state",
@@ -67,28 +71,20 @@ export const trigger: APISchema = {
 export const content: APISchema = {
 	title: "Content",
 	description: "The contents of the popover which are displayed when the popover is open.",
-	props: [asChild]
+	props: { asChild }
 };
 
 export const close: APISchema = {
 	title: "Close",
 	description:
 		"A button which closes the popover when pressed and is typically placed in the content.",
-	props: [asChild]
+	props: { asChild }
 };
 
 export const arrow: APISchema = {
 	title: "Arrow",
 	description: "An optional arrow element which points to the trigger when the popover is open.",
-	props: [
-		asChild,
-		{
-			name: "size",
-			type: "number",
-			default: "8",
-			description: "The height and width of the arrow in pixels."
-		}
-	],
+	props: arrowProps,
 	dataAttributes: [
 		{
 			name: "arrow",

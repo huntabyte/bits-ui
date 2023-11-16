@@ -8,12 +8,17 @@ import type {
 	AsChild,
 	Expand,
 	OmitChecked,
+	OmitFloating,
 	OmitOpen,
 	OnChangeFn,
 	Transition,
 	TransitionProps
 } from "$lib/internal/index.js";
-import type { FloatingArrowProps, MenuContentProps } from "$lib/shared/index.js";
+import type {
+	FloatingArrowProps,
+	MenuContentProps,
+	MenuSubTriggerProps
+} from "$lib/shared/index.js";
 import type {
 	CreateContextMenuProps,
 	CreateContextMenuRadioGroupProps,
@@ -23,7 +28,7 @@ import type {
 } from "@melt-ui/svelte";
 
 type Props = Expand<
-	OmitOpen<Omit<CreateContextMenuProps, "ids" | "arrowSize">> & {
+	OmitFloating<CreateContextMenuProps> & {
 		/**
 		 * The open state of the context menu.
 		 * You can bind this to a boolean value to programmatically control the open state.
@@ -114,17 +119,6 @@ type SubContentProps<
 	Out extends Transition = Transition
 > = Expand<TransitionProps<T, In, Out> & AsChild>;
 
-type SubTriggerProps = Expand<
-	{
-		/**
-		 * Whether the subtrigger is disabled or not.
-		 *
-		 * @defaultValue false;
-		 */
-		disabled?: boolean;
-	} & AsChild
->;
-
 type TriggerProps = AsChild;
 
 export type {
@@ -141,6 +135,6 @@ export type {
 	SeparatorProps,
 	SubProps,
 	SubContentProps,
-	SubTriggerProps,
+	MenuSubTriggerProps as SubTriggerProps,
 	TriggerProps
 };

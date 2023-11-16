@@ -1,57 +1,38 @@
 import type { APISchema } from "@/types";
 import * as C from "@/content/api-reference/constants";
-import { union, enums, asChild } from "@/content";
+import { union, enums, asChild, transitionProps } from "@/content";
+import type * as Accordion from "$lib/bits/accordion/_types.js";
 
-const root: APISchema = {
+const root: APISchema<Accordion.Props<false>> = {
 	title: "Root",
 	description: "The root accordion component used to set and manage the state of the accordion.",
-	props: [
-		{
-			name: "multiple",
+	props: {
+		multiple: {
 			default: "false",
 			type: C.BOOLEAN,
 			description: "Whether or not multiple accordion items can be active at the same time."
 		},
-		{
-			name: "disabled",
+		disabled: {
 			default: "false",
 			type: C.BOOLEAN,
 			description: "Whether or not the accordion is disabled."
 		},
-		{
-			name: "value",
+		value: {
 			type: {
 				type: C.UNION,
 				definition: union("string", "undefined")
 			},
 			description: "The active accordion item value."
 		},
-		{
-			name: "onValueChange",
+		onValueChange: {
 			type: {
 				type: C.FUNCTION,
 				definition: "(value: string | undefined) => void"
 			},
 			description: "A callback function called when the active accordion item value changes."
 		},
-		{
-			name: "value",
-			type: {
-				type: C.UNION,
-				definition: union("string[]", "undefined")
-			},
-			description: "The active accordion item value when `multiple` is true."
-		},
-		{
-			name: "onValueChange",
-			type: {
-				type: C.FUNCTION,
-				definition: "(value: string[] | undefined) => void"
-			},
-			description:
-				"A callback function called when the active accordion item value changes when `multiple` is true."
-		}
-	],
+		asChild
+	},
 	dataAttributes: [
 		{
 			name: "orientation",
@@ -66,24 +47,22 @@ const root: APISchema = {
 	]
 };
 
-const item: APISchema = {
+const item: APISchema<Accordion.ItemProps> = {
 	title: "Item",
 	description: "An accordion item.",
-	props: [
-		asChild,
-		{
-			name: "value",
+	props: {
+		value: {
 			required: true,
 			type: "string",
 			description: "The value of the accordion item."
 		},
-		{
-			name: "disabled",
+		disabled: {
 			default: "false",
 			type: "boolean",
 			description: "Whether or not the accordion item is disabled."
-		}
-	],
+		},
+		asChild
+	},
 	dataAttributes: [
 		{
 			name: "state",
@@ -102,10 +81,10 @@ const item: APISchema = {
 	]
 };
 
-const trigger: APISchema = {
+const trigger: APISchema<Accordion.TriggerProps> = {
 	title: "Trigger",
 	description: "The accordion item trigger, which opens and closes the accordion item.",
-	props: [asChild],
+	props: { asChild },
 	dataAttributes: [
 		{
 			name: "state",
@@ -127,10 +106,10 @@ const trigger: APISchema = {
 	]
 };
 
-const content: APISchema = {
+const content: APISchema<Accordion.ContentProps> = {
 	title: "Content",
 	description: "The accordion item content, which is displayed when the item is open.",
-	props: [asChild],
+	props: { ...transitionProps, asChild },
 	dataAttributes: [
 		{
 			name: "state",

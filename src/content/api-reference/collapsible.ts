@@ -1,30 +1,29 @@
 import type { APISchema } from "@/types";
-import { asChild } from "./helpers";
+import { asChild, transitionProps } from "@/content";
+import type * as Collapsible from "$lib/bits/collapsible/_types";
 
-export const root: APISchema = {
+export const root: APISchema<Collapsible.Props> = {
 	title: "Root",
 	description: "The root collapsible container which manages the state of the collapsible.",
-	props: [
-		{
-			name: "disabled",
+	props: {
+		disabled: {
 			default: "false",
 			type: "boolean",
 			description:
 				"Whether or not the collapsible is disabled. This prevents the user from interacting with it."
 		},
-		{
-			name: "open",
+		open: {
 			default: "false",
 			type: "boolean",
 			description:
 				"The open state of the collapsible. The content will be visible when this is true, and hidden when it's false."
 		},
-		{
-			name: "onOpenChange",
+		onOpenChange: {
 			type: "(open: boolean) => void",
 			description: "A callback that is fired when the collapsible's open state changes."
-		}
-	],
+		},
+		asChild
+	},
 	dataAttributes: [
 		{
 			name: "disabled",
@@ -39,10 +38,10 @@ export const root: APISchema = {
 	]
 };
 
-export const trigger: APISchema = {
+export const trigger: APISchema<Collapsible.TriggerProps> = {
 	title: "Trigger",
 	description: "The button responsible for toggling the collapsible's open state.",
-	props: [asChild],
+	props: { asChild },
 	dataAttributes: [
 		{
 			name: "disabled",
@@ -57,10 +56,10 @@ export const trigger: APISchema = {
 	]
 };
 
-export const content: APISchema = {
+export const content: APISchema<Collapsible.ContentProps> = {
 	title: "Content",
 	description: "The content displayed when the collapsible is open.",
-	props: [asChild],
+	props: { ...transitionProps, asChild },
 	dataAttributes: [
 		{
 			name: "disabled",

@@ -15,7 +15,7 @@ import type {
 import type { CreateDialogProps } from "@melt-ui/svelte";
 
 type Props = Expand<
-	OmitOpen<Omit<CreateDialogProps, "role" | "ids">> & {
+	OmitOpen<Omit<CreateDialogProps, "role" | "ids" | "forceVisible">> & {
 		/**
 		 * The open state of the dialog.
 		 * You can bind this to a boolean value to programmatically control the open state.

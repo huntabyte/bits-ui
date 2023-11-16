@@ -1,8 +1,8 @@
 import type { APISchema } from "@/types";
-import { asChild, portalProp } from "./helpers";
+import { asChild, enums, portalProp, transitionProps } from "./helpers";
 import * as C from "@/content/api-reference/constants";
 import { focusProp } from "@/content/api-reference/extended-types";
-import type { AlertDialog } from "$lib";
+import type * as AlertDialog from "$lib/bits/alert-dialog/_types.js";
 
 export const root: APISchema<AlertDialog.Props> = {
 	title: "Root",
@@ -47,7 +47,7 @@ export const root: APISchema<AlertDialog.Props> = {
 	}
 };
 
-export const action: APISchema = {
+export const action: APISchema<AlertDialog.ActionProps> = {
 	title: "Action",
 	description: "A button used to close the alert dialog by taking an action.",
 	props: {
@@ -61,57 +61,66 @@ export const action: APISchema = {
 	]
 };
 
-export const cancel: APISchema = {
+export const cancel: APISchema<AlertDialog.CancelProps> = {
 	title: "Cancel",
 	description: "A button used to close the alert dialog without taking an action.",
-	props: [asChild]
+	props: { asChild }
 };
 
-export const content: APISchema = {
+export const content: APISchema<AlertDialog.ContentProps> = {
 	title: "Content",
 	description: "The content displayed within the alert dialog modal.",
-	props: [asChild],
+	props: { ...transitionProps, asChild },
 	dataAttributes: [
 		{
 			name: "state",
-			value: "'open' | 'closed'",
+			value: enums("open", "closed"),
 			description: "The state of the alert dialog."
 		}
 	]
 };
 
-export const title: APISchema = {
+export const title: APISchema<AlertDialog.TitleProps> = {
 	title: "Title",
 	description: "An accessibile title for the alert dialog.",
-	props: [asChild]
+	props: {
+		asChild,
+		level: {
+			type: {
+				type: "enum",
+				definition: enums("h1", "h2", "h3", "h4", "h5", "h6")
+			},
+			description: "The heading level of the title."
+		}
+	}
 };
 
-export const description: APISchema = {
+export const description: APISchema<AlertDialog.DescriptionProps> = {
 	title: "Description",
 	description: "An accessibile description for the alert dialog.",
-	props: [asChild]
+	props: { asChild }
 };
 
-export const trigger: APISchema = {
+export const trigger: APISchema<AlertDialog.TriggerProps> = {
 	title: "Trigger",
 	description: "The element which opens the alert dialog on press.",
-	props: [asChild]
+	props: { asChild }
 };
 
-export const overlay: APISchema = {
+export const overlay: APISchema<AlertDialog.OverlayProps> = {
 	title: "Overlay",
 	description: "An overlay which covers the body when the alert dialog is open.",
-	props: [asChild],
+	props: { ...transitionProps, asChild },
 	dataAttributes: [
 		{
 			name: "state",
-			value: "'open' | 'closed'",
+			value: enums("open", "closed"),
 			description: "The state of the alert dialog."
 		}
 	]
 };
 
-export const portal: APISchema = {
+export const portal: APISchema<AlertDialog.PortalProps> = {
 	title: "Portal",
 	description: "A portal which renders the alert dialog into the body when it is open."
 };

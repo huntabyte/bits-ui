@@ -4,12 +4,12 @@
  * but we don't want to document the HTML attributes.
  */
 
-import type { OmitOpen, Expand, OnChangeFn, AsChild, OmitIds } from "$lib/internal/index.js";
+import type { Expand, OnChangeFn, AsChild, OmitFloating } from "$lib/internal/index.js";
 import type { FloatingArrowProps, FloatingContentProps } from "$lib/shared/index.js";
 import type { CreateLinkPreviewProps } from "@melt-ui/svelte";
 
 type Props = Expand<
-	OmitOpen<OmitIds<Omit<CreateLinkPreviewProps, "arrowSize">>> & {
+	OmitFloating<CreateLinkPreviewProps> & {
 		/**
 		 * The open state of the link preview.
 		 * You can bind this to a boolean value to programmatically control the open state.

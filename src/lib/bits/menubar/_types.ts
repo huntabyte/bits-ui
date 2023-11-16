@@ -8,12 +8,16 @@ import type {
 	AsChild,
 	Expand,
 	OmitChecked,
-	OmitOpen,
 	OmitValue,
 	OnChangeFn,
-	OmitIds
+	OmitIds,
+	OmitFloating
 } from "$lib/internal/index.js";
-import type { FloatingArrowProps, MenuContentProps } from "$lib/shared/index.js";
+import type {
+	FloatingArrowProps,
+	MenuContentProps,
+	MenuSubTriggerProps
+} from "$lib/shared/index.js";
 import type {
 	CreateMenubarProps,
 	CreateMenubarMenuProps,
@@ -26,7 +30,7 @@ import type {
 type Props = Expand<OmitIds<CreateMenubarProps> & AsChild>;
 
 type MenuProps = Expand<
-	OmitOpen<OmitIds<Omit<CreateMenubarMenuProps, "arrowSize">>> & {
+	OmitFloating<CreateMenubarMenuProps> & {
 		/**
 		 * The open state of the menu.
 		 * You can bind this to a boolean value to programmatically control the open state.
@@ -105,7 +109,7 @@ type RadioItemProps = Expand<MenubarRadioItemProps & AsChild>;
 type SeparatorProps = AsChild;
 
 type SubProps = Expand<
-	OmitIds<OmitOpen<Omit<CreateMenubarSubmenuProps, "arrowSize">>> & {
+	OmitFloating<CreateMenubarSubmenuProps> & {
 		/**
 		 * The open state of the submenu.
 		 * You can bind this to a boolean value to programmatically control the open state.
@@ -119,12 +123,6 @@ type SubProps = Expand<
 		 */
 		onOpenChange?: OnChangeFn<boolean>;
 	}
->;
-
-type SubTriggerProps = Expand<
-	{
-		disabled?: boolean;
-	} & AsChild
 >;
 
 type TriggerProps = AsChild;
@@ -143,7 +141,7 @@ export type {
 	SeparatorProps,
 	RadioGroupProps,
 	MenuContentProps as SubContentProps,
-	SubTriggerProps,
+	MenuSubTriggerProps as SubTriggerProps,
 	CheckboxItemProps,
 	CheckboxIndicatorProps
 };
