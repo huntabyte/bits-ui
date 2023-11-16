@@ -1,8 +1,14 @@
-export type PropSchema = {
-	name: string;
-	default?: string;
+export type PropType = {
 	type: string;
+	definition: string;
+};
+
+export type PropSchema<T> = {
+	name: T;
+	default?: string;
+	type: PropType | string;
 	description: string;
+	required?: boolean;
 };
 
 export type DataAttrSchema = {
@@ -11,9 +17,9 @@ export type DataAttrSchema = {
 	description?: string;
 };
 
-export type APISchema = {
+export type APISchema<T> = {
 	title: string;
 	description: string;
-	props?: PropSchema[];
+	props?: PropSchema<keyof T>[];
 	dataAttributes?: DataAttrSchema[];
 };

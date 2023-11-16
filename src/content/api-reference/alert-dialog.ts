@@ -1,38 +1,54 @@
 import type { APISchema } from "@/types";
 import { asChild } from "./helpers";
+import * as C from "@/content/constants";
+import { focusProp } from "@/content/api-reference/extended-types";
+import type { AlertDialog } from "$lib";
 
-export const root: APISchema = {
+export const root: APISchema<AlertDialog.Props> = {
 	title: "Root",
 	description: "The root component used to set and manage the state of the alert dialog.",
 	props: [
 		{
 			name: "preventScroll",
+			type: C.BOOLEAN,
 			default: "true",
-			type: "boolean",
 			description: "Whether or not to prevent scroll on the body when the alert dialog is open."
 		},
 		{
 			name: "closeOnEscape",
+			type: C.BOOLEAN,
 			default: "true",
-			type: "boolean",
 			description: "Whether to close the alert dialog when the escape key is pressed."
 		},
 		{
 			name: "closeOnOutsideClick",
-			type: "boolean",
+			type: C.BOOLEAN,
 			default: "true",
 			description: "Whether to close the alert dialog when a click occurs outside of it."
 		},
 		{
 			name: "open",
-			type: "boolean",
+			type: C.BOOLEAN,
 			default: "false",
 			description: "Whether or not the alert dialog is open."
 		},
 		{
 			name: "onOpenChange",
-			type: "(open: boolean) => void",
+			type: {
+				type: C.FUNCTION,
+				definition: "(open: boolean) => void"
+			},
 			description: "A callback function called when the open state changes."
+		},
+		{
+			name: "openFocus",
+			type: focusProp,
+			description: "Override the initial focus when the alert dialog is opened."
+		},
+		{
+			name: "closeFocus",
+			type: focusProp,
+			description: "Override the focus when the alert dialog is closed."
 		}
 	]
 };
@@ -40,7 +56,13 @@ export const root: APISchema = {
 export const action: APISchema = {
 	title: "Action",
 	description: "A button used to close the alert dialog by taking an action.",
-	props: [asChild]
+	props: [asChild],
+	dataAttributes: [
+		{
+			name: "bits-alert-dialog-action",
+			description: "Present on the action button."
+		}
+	]
 };
 
 export const cancel: APISchema = {

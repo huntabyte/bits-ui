@@ -56,7 +56,8 @@ export default {
 				"input-sm": "2.5rem"
 			},
 			boxShadow: {
-				mini: "var(--shadow-mini)"
+				mini: "var(--shadow-mini)",
+				popover: "var(--shadow-popover)"
 			}
 		}
 	},

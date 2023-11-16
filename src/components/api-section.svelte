@@ -21,7 +21,7 @@
 				</h3>
 			</div>
 			<P class="!mt-2 !mb-5">{schema.description}</P>
-			<div class="flex flex-col gap-8">
+			<div class="flex flex-col gap-4">
 				{#if schema.props && schema.props.length}
 					<PropsTable props={schema.props} />
 				{/if}

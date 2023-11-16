@@ -1,7 +1,7 @@
 export * from "./icons";
 export * from "./page-header";
 export * from "./navigation";
-export * from "./api-tables";
+export * from "./api-ref";
 export * from "./demos";
 export * from "./toc";
 export { default as SiteHeader } from "./site-header.svelte";

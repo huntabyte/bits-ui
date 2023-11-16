@@ -1,5 +1,7 @@
 import type { APISchema } from "@/types";
 import { asChild } from "./helpers";
+import * as C from "@/content/constants";
+import { union, enums } from "@/content/helpers";
 
 const root: APISchema = {
 	title: "Root",
@@ -8,33 +10,45 @@ const root: APISchema = {
 		{
 			name: "multiple",
 			default: "false",
-			type: "boolean",
+			type: C.BOOLEAN,
 			description: "Whether or not multiple accordion items can be active at the same time."
 		},
 		{
 			name: "disabled",
 			default: "false",
-			type: "boolean",
+			type: C.BOOLEAN,
 			description: "Whether or not the accordion is disabled."
 		},
 		{
 			name: "value",
-			type: "string | undefined",
+			type: {
+				type: C.UNION,
+				definition: union("string", "undefined")
+			},
 			description: "The active accordion item value."
 		},
 		{
 			name: "onValueChange",
-			type: "(value: string | undefined) => void",
+			type: {
+				type: C.FUNCTION,
+				definition: "(value: string | undefined) => void"
+			},
 			description: "A callback function called when the active accordion item value changes."
 		},
 		{
 			name: "value",
-			type: "string | undefined",
+			type: {
+				type: C.UNION,
+				definition: union("string[]", "undefined")
+			},
 			description: "The active accordion item value when `multiple` is true."
 		},
 		{
 			name: "onValueChange",
-			type: "(value: string[]) => void",
+			type: {
+				type: C.FUNCTION,
+				definition: "(value: string[] | undefined) => void"
+			},
 			description:
 				"A callback function called when the active accordion item value changes when `multiple` is true."
 		}
@@ -42,11 +56,11 @@ const root: APISchema = {
 	dataAttributes: [
 		{
 			name: "orientation",
-			value: "'horizontal' | 'vertical'",
+			value: enums("horizontal", "vertical"),
 			description: "The orientation of the accordion."
 		},
 		{
-			name: "melt-accordion",
+			name: "bits-accordion-root",
 			value: "",
 			description: "Present on the root element."
 		}
@@ -60,6 +74,7 @@ const item: APISchema = {
 		asChild,
 		{
 			name: "value",
+			required: true,
 			type: "string",
 			description: "The value of the accordion item."
 		},
@@ -73,13 +88,17 @@ const item: APISchema = {
 	dataAttributes: [
 		{
 			name: "state",
-			value: "'open' | 'closed'",
+			value: enums("open", "closed"),
 			description: "The state of the accordion item."
 		},
 		{
 			name: "disabled",
 			value: "",
 			description: "Present when the accordion item is disabled."
+		},
+		{
+			name: "bits-accordion-item",
+			description: "Present on the item element."
 		}
 	]
 };
@@ -91,18 +110,20 @@ const trigger: APISchema = {
 	dataAttributes: [
 		{
 			name: "state",
-			value: "'open' | 'closed'",
+			value: enums("open", "closed"),
 			description: "The state of the accordion item."
 		},
 		{
 			name: "disabled",
-			value: "",
 			description: "Present when the accordion item is disabled."
 		},
 		{
 			name: "value",
-			value: "",
 			description: "The value of the accordion item."
+		},
+		{
+			name: "bits-accordion-trigger",
+			description: "Present on the trigger element."
 		}
 	]
 };
@@ -114,18 +135,20 @@ const content: APISchema = {
 	dataAttributes: [
 		{
 			name: "state",
-			value: "'open' | 'closed'",
+			value: enums("open", "closed"),
 			description: "The state of the accordion item."
 		},
 		{
 			name: "disabled",
-			value: "",
 			description: "Present when the accordion item is disabled."
 		},
 		{
 			name: "value",
-			value: "",
 			description: "The value of the accordion item."
+		},
+		{
+			name: "bits-accordion-content",
+			description: "Present on the content element."
 		}
 	]
 };

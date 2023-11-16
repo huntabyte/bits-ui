@@ -11,7 +11,7 @@
 	<Table.Header>
 		<Table.Row class="w-1/4">
 			<Table.Head class="w-1/2 whitespace-nowrap">Data Attribute</Table.Head>
-			<Table.Head class="w-1/2 whitespace-nowrap">Value/Description</Table.Head>
+			<Table.Head class="w-1/2 whitespace-nowrap">Description/Value</Table.Head>
 		</Table.Row>
 	</Table.Header>
 	<Table.Body>

@@ -14,8 +14,8 @@
 		class="container flex-1 items-start md:grid md:grid-cols-[220px_minmax(0,1fr)] md:gap-6 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-10"
 	>
 		<SidebarNav items={navigation.sidebar} />
-		<main class="relative pb-6 pt-16 lg:gap-10 xl:grid xl:grid-cols-[1fr_300px]">
-			<div class="mx-auto w-full min-w-0" id="content">
+		<main class="relative pb-6 pt-16 lg:gap-10 xl:grid xl:grid-cols-[1fr_220px]">
+			<div class="mx-auto w-full min-w-0 max-w-[700px]" id="content">
 				<slot />
 			</div>
 
