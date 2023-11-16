@@ -4,24 +4,30 @@
 	import { melt } from "@melt-ui/svelte";
 	import { getCtx, getAttrs } from "../ctx.js";
 	import type { ItemEvents, ItemProps } from "../types.js";
+
 	type $$Props = ItemProps;
 	type $$Events = ItemEvents;
+
 	export let href: $$Props["href"] = undefined;
 	export let asChild: $$Props["asChild"] = false;
-	export let disabled = false;
+	export let disabled: $$Props["disabled"] = false;
 
 	const {
 		elements: { item }
 	} = getCtx();
+	const dispatch = createDispatcher();
 
 	$: builder = $item;
 	$: attrs = { ...getAttrs("item"), ...disabledAttrs(disabled) };
 
-	const dispatch = createDispatcher();
+	$: slotProps = {
+		builder,
+		attrs
+	};
 </script>
 
 {#if asChild}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else}
 	<svelte:element
 		this={href ? "a" : "div"}
@@ -37,6 +43,6 @@
 		on:m-pointerleave={dispatch}
 		on:m-pointermove={dispatch}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</svelte:element>
 {/if}

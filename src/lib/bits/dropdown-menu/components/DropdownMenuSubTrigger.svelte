@@ -17,6 +17,7 @@
 		elements: { subTrigger },
 		ids
 	} = getSubTrigger();
+
 	const dispatch = createDispatcher();
 
 	$: if (id) {
@@ -25,11 +26,14 @@
 
 	$: builder = $subTrigger;
 	$: attrs = { ...getAttrs("sub-trigger"), ...disabledAttrs(disabled) };
+	$: slotProps = {
+		builder,
+		attrs
+	};
 </script>
 
-<!-- svelte-ignore a11y-no-static-element-interactions applied by melt's action/store -->
 {#if asChild}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else}
 	<div
 		use:melt={builder}
@@ -42,6 +46,6 @@
 		on:m-pointerleave={dispatch}
 		on:m-pointermove={dispatch}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {/if}

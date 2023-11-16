@@ -36,10 +36,15 @@
 
 	$: builder = $menu;
 	const attrs = getAttrs("content");
+
+	$: slotProps = {
+		builder,
+		attrs
+	};
 </script>
 
 {#if asChild && $open}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else if transition && $open}
 	<div
 		transition:transition={transitionConfig}
@@ -48,7 +53,7 @@
 		{...attrs}
 		on:m-keydown={dispatch}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {:else if inTransition && outTransition && $open}
 	<div
@@ -59,7 +64,7 @@
 		{...attrs}
 		on:m-keydown={dispatch}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {:else if inTransition && $open}
 	<div
@@ -69,7 +74,7 @@
 		{...attrs}
 		on:m-keydown={dispatch}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {:else if outTransition && $open}
 	<div
@@ -79,10 +84,10 @@
 		{...attrs}
 		on:m-keydown={dispatch}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {:else if $open}
 	<div use:melt={builder} {...$$restProps} {...attrs} on:m-keydown={dispatch}>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {/if}

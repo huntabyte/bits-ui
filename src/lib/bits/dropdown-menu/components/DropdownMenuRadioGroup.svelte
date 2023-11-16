@@ -4,6 +4,7 @@
 	import type { RadioGroupProps } from "../types.js";
 
 	type $$Props = RadioGroupProps;
+
 	export let value: $$Props["value"] = undefined;
 	export let onValueChange: $$Props["onValueChange"] = undefined;
 	export let asChild: $$Props["asChild"] = false;
@@ -22,16 +23,20 @@
 		}
 	});
 
-	$: value !== undefined && localValue.set(value);
-
-	$: builder = $radioGroup;
 	const attrs = getAttrs("radio-group");
+
+	$: value !== undefined && localValue.set(value);
+	$: builder = $radioGroup;
+	$: slotProps = {
+		builder,
+		attrs
+	};
 </script>
 
 {#if asChild}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else}
 	<div use:melt={builder} {...$$restProps} {...attrs}>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {/if}

@@ -1,103 +1,51 @@
-import type {
-	TransitionProps,
-	AsChild,
-	Expand,
-	HTMLDivAttributes,
-	OmitChecked,
-	OmitOpen,
-	OmitValue,
-	OnChangeFn,
-	Transition
-} from "$lib/internal/index.js";
+import type { HTMLDivAttributes, Transition } from "$lib/internal/index.js";
 import type { CustomEventHandler } from "$lib/index.js";
-import type {
-	CreateDropdownMenuProps,
-	CreateDropdownMenuCheckboxItemProps,
-	CreateDropdownMenuRadioGroupProps,
-	DropdownMenuRadioItemProps,
-	CreateDropdownSubmenuProps
-} from "@melt-ui/svelte";
+
 import type { HTMLAnchorAttributes, HTMLButtonAttributes } from "svelte/elements";
+import type * as T from "./_types.js";
 
-type Props = Expand<
-	OmitOpen<CreateDropdownMenuProps> & {
-		open?: boolean;
-		onOpenChange?: OnChangeFn<boolean>;
-	}
->;
+type Props = T.Props;
 
-type CheckboxItemProps = Expand<
-	OmitChecked<CreateDropdownMenuCheckboxItemProps> & {
-		checked?: boolean | "indeterminate";
-		onCheckedChange?: OnChangeFn<boolean | "indeterminate">;
-	} & AsChild
-> &
-	HTMLDivAttributes;
+type CheckboxItemProps = T.CheckboxItemProps & HTMLDivAttributes;
 
-type RadioGroupProps = Expand<
-	OmitValue<CreateDropdownMenuRadioGroupProps> & {
-		value?: CreateDropdownMenuRadioGroupProps["defaultValue"] & {};
-		onValueChange?: OnChangeFn<CreateDropdownMenuRadioGroupProps["defaultValue"]>;
-	} & AsChild
-> &
-	HTMLDivAttributes;
+type RadioGroupProps = T.RadioGroupProps & HTMLDivAttributes;
 
-type RadioItemProps = Expand<DropdownMenuRadioItemProps & AsChild> & HTMLDivAttributes;
+type RadioItemProps = T.RadioItemProps & HTMLDivAttributes;
 
 type ContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
 	Out extends Transition = Transition
-> = Expand<
-	{
-		sideOffset?: number;
-	} & TransitionProps<T, In, Out> &
-		AsChild
-> &
-	HTMLDivAttributes;
+> = T.ContentProps<T, In, Out> & HTMLDivAttributes;
 
-type GroupProps = AsChild & HTMLDivAttributes;
+type GroupProps = T.GroupProps & HTMLDivAttributes;
 
-type ItemProps = Expand<
-	{
-		disabled?: boolean;
-		href?: HTMLAnchorAttributes["href"];
-	} & AsChild
-> &
-	HTMLDivAttributes;
+type AnchorElement = HTMLAnchorAttributes & {
+	href?: HTMLAnchorAttributes["href"];
+};
 
-type CheckboxItemIndicatorProps = HTMLDivAttributes;
-type LabelProps = AsChild & HTMLDivAttributes;
-type SeparatorProps = AsChild & HTMLDivAttributes;
-type SubProps = Expand<CreateDropdownSubmenuProps>;
+type DivElement = HTMLDivAttributes & {
+	href?: never;
+};
+
+type ItemProps = T.ItemProps & (AnchorElement | DivElement);
+
+type CheckboxItemIndicatorProps = T.CheckboxItemIndicatorProps & HTMLDivAttributes;
+type LabelProps = T.LabelProps & HTMLDivAttributes;
+type SeparatorProps = T.SeparatorProps & HTMLDivAttributes;
+type SubProps = T.SubProps;
 
 type SubContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
 	Out extends Transition = Transition
-> = Expand<
-	{
-		sideOffset?: number;
-	} & TransitionProps<T, In, Out> &
-		AsChild
-> &
-	HTMLDivAttributes;
+> = T.SubContentProps<T, In, Out> & HTMLDivAttributes;
 
-type SubTriggerProps = Expand<
-	{
-		disabled?: boolean;
-	} & AsChild
-> &
-	HTMLDivAttributes;
+type SubTriggerProps = T.SubTriggerProps & HTMLDivAttributes;
 
-type TriggerProps = AsChild & HTMLButtonAttributes;
+type TriggerProps = T.TriggerProps & HTMLButtonAttributes;
 
-type ArrowProps = Expand<
-	{
-		size?: number;
-	} & AsChild
-> &
-	HTMLDivAttributes;
+type ArrowProps = T.ArrowProps & HTMLDivAttributes;
 
 type ItemEvents<T extends Element = HTMLDivElement> = {
 	click: CustomEventHandler<MouseEvent, T>;

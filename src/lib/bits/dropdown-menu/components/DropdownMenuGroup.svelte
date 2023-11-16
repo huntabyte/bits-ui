@@ -6,14 +6,19 @@
 	export let asChild: $$Props["asChild"] = false;
 
 	const { group, id } = setGroupCtx();
-	$: builder = $group(id);
 	const attrs = getAttrs("group");
+
+	$: builder = $group(id);
+	$: slotProps = {
+		builder,
+		attrs
+	};
 </script>
 
 {#if asChild}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else}
 	<div use:melt={builder} {...$$restProps} {...attrs}>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {/if}

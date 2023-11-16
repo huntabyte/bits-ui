@@ -11,6 +11,7 @@
 	type Out = $$Generic<Transition>;
 	type $$Props = ContentProps<T, In, Out>;
 	type $$Events = ContentEvents;
+
 	export let sideOffset: $$Props["sideOffset"] = 5;
 
 	export let transition: $$Props["transition"] = undefined;
@@ -31,17 +32,21 @@
 		ids
 	} = getContent(sideOffset);
 
+	const attrs = getAttrs("content");
+	const dispatch = createDispatcher();
+
 	$: if (id) {
 		ids.menu.set(id);
 	}
 	$: builder = $menu;
-	const attrs = getAttrs("content");
-	const dispatch = createDispatcher();
+	$: slotProps = {
+		builder,
+		attrs
+	};
 </script>
 
-<!-- svelte-ignore a11y-no-static-element-interactions applied by melt's action/store -->
 {#if asChild && $open}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else if transition && $open}
 	<div
 		transition:transition={transitionConfig}
@@ -50,7 +55,7 @@
 		{...attrs}
 		on:m-keydown={dispatch}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {:else if inTransition && outTransition && $open}
 	<div
@@ -61,7 +66,7 @@
 		{...attrs}
 		on:m-keydown={dispatch}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {:else if inTransition && $open}
 	<div
@@ -71,7 +76,7 @@
 		{...attrs}
 		on:m-keydown={dispatch}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {:else if outTransition && $open}
 	<div
@@ -81,10 +86,10 @@
 		{...attrs}
 		on:m-keydown={dispatch}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {:else if $open}
 	<div use:melt={builder} {...$$restProps} {...attrs} on:m-keydown={dispatch}>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {/if}

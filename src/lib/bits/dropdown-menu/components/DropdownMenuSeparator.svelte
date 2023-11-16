@@ -4,16 +4,24 @@
 	import type { SeparatorProps } from "../types.js";
 
 	type $$Props = SeparatorProps;
+
 	export let asChild: $$Props["asChild"] = false;
+
 	const {
 		elements: { separator }
 	} = getCtx();
-	$: builder = $separator;
+
 	const attrs = getAttrs("separator");
+
+	$: builder = $separator;
+	$: slotProps = {
+		builder,
+		attrs
+	};
 </script>
 
 {#if asChild}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else}
 	<div use:melt={$separator} {...$$restProps} {...attrs} />
 {/if}

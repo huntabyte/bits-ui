@@ -14,13 +14,17 @@
 	} = setRadioItem(value);
 
 	const dispatch = createDispatcher();
+	const attrs = getAttrs("radio-item");
 
 	$: builder = $radioItem({ value, disabled });
-	const attrs = getAttrs("radio-item");
+	$: slotProps = {
+		builder,
+		attrs
+	};
 </script>
 
 {#if asChild}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else}
 	<div
 		use:melt={builder}
@@ -34,6 +38,6 @@
 		on:m-pointerleave={dispatch}
 		on:m-pointermove={dispatch}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {/if}

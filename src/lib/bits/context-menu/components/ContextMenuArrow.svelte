@@ -11,12 +11,18 @@
 	const {
 		elements: { arrow }
 	} = setArrow(size);
-	$: builder = $arrow;
+
 	const attrs = getAttrs("arrow");
+
+	$: builder = $arrow;
+	$: slotProps = {
+		builder,
+		attrs
+	};
 </script>
 
 {#if asChild}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else}
 	<div use:melt={$arrow} {...$$restProps} {...attrs} />
 {/if}

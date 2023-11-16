@@ -6,18 +6,25 @@
 
 	type $$Props = CloseProps;
 	type $$Events = CloseEvents;
+
 	export let asChild: $$Props["asChild"] = false;
+
 	const {
 		elements: { close }
 	} = getCtx();
 
 	const dispatch = createDispatcher();
-	$: builder = $close;
 	const attrs = getAttrs("close");
+
+	$: builder = $close;
+	$: slotProps = {
+		builder,
+		attrs
+	};
 </script>
 
 {#if asChild}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else}
 	<button
 		use:melt={builder}
@@ -27,6 +34,6 @@
 		on:m-click={dispatch}
 		on:m-keydown={dispatch}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</button>
 {/if}

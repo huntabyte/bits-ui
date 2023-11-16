@@ -5,10 +5,9 @@
 	import { disabledAttrs } from "$lib/internal/index.js";
 	import { createDispatcher } from "$lib/internal/events.js";
 
-	type $$Props = SubTriggerProps & {
-		disabled?: boolean;
-	};
+	type $$Props = SubTriggerProps;
 	type $$Events = SubTriggerEvents;
+
 	export let disabled: $$Props["disabled"] = false;
 	export let asChild: $$Props["asChild"] = false;
 	export let id: $$Props["id"] = undefined;
@@ -17,6 +16,7 @@
 		elements: { subTrigger },
 		ids
 	} = getSubMenuCtx();
+
 	const dispatch = createDispatcher();
 
 	$: if (id) {
@@ -25,11 +25,16 @@
 
 	$: builder = $subTrigger;
 	$: attrs = { ...getAttrs("sub-trigger"), ...disabledAttrs(disabled) };
+
+	$: slotProps = {
+		builder,
+		attrs
+	};
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions / applied by melt store -->
 {#if asChild}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else}
 	<div
 		use:melt={builder}
@@ -43,6 +48,6 @@
 		on:m-pointermove={dispatch}
 		on:m-keydown={dispatch}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {/if}

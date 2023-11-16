@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Props } from "../types.js";
 	import { setCtx } from "../ctx.js";
+	import { derived } from "svelte/store";
 	type $$Props = Props;
 
 	export let closeOnOutsideClick: $$Props["closeOnOutsideClick"] = undefined;
@@ -43,6 +44,11 @@
 		}
 	});
 
+	const idValues = derived([ids.menu, ids.trigger], ([$menuId, $triggerId]) => ({
+		menu: $menuId,
+		trigger: $triggerId
+	}));
+
 	$: open !== undefined && localOpen.set(open);
 
 	$: updateOption("closeOnOutsideClick", closeOnOutsideClick);
@@ -58,4 +64,4 @@
 	$: updateOption("typeahead", typeahead);
 </script>
 
-<slot {ids} />
+<slot ids={$idValues} />

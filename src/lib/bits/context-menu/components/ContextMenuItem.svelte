@@ -7,12 +7,17 @@
 
 	type $$Props = ItemProps;
 	type $$Events = ItemEvents;
+
 	export let asChild: $$Props["asChild"] = false;
-	export let disabled = false;
+	export let disabled: $$Props["disabled"] = false;
+	export let href: $$Props["href"] = undefined;
+
 	const {
 		elements: { item }
 	} = getCtx();
+
 	const dispatch = createDispatcher();
+
 	$: builder = $item;
 	$: attrs = { ...getAttrs("item"), ...disabledAttrs(disabled) };
 </script>
@@ -20,7 +25,9 @@
 {#if asChild}
 	<slot {builder} {attrs} />
 {:else}
-	<div
+	<svelte:element
+		this={href ? "a" : "div"}
+		{href}
 		use:melt={builder}
 		{...$$restProps}
 		{...attrs}
@@ -33,5 +40,5 @@
 		on:m-pointermove={dispatch}
 	>
 		<slot {builder} {attrs} />
-	</div>
+	</svelte:element>
 {/if}

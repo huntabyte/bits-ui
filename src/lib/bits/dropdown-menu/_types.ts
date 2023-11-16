@@ -5,26 +5,27 @@
  */
 
 import type {
+	TransitionProps,
 	AsChild,
 	Expand,
-	OmitChecked,
 	OmitOpen,
 	OnChangeFn,
 	Transition,
-	TransitionProps
+	OmitChecked
 } from "$lib/internal/index.js";
+import type { CustomEventHandler } from "$lib/index.js";
 import type {
-	CreateContextMenuProps,
-	CreateContextMenuRadioGroupProps,
-	ContextMenuRadioItemProps,
-	CreateContextSubmenuProps,
-	CreateContextMenuCheckboxItemProps
+	CreateDropdownMenuProps,
+	CreateDropdownMenuRadioGroupProps,
+	DropdownMenuRadioItemProps,
+	CreateDropdownSubmenuProps,
+	CreateDropdownMenuCheckboxItemProps
 } from "@melt-ui/svelte";
 
 type Props = Expand<
-	OmitOpen<Omit<CreateContextMenuProps, "ids" | "arrowSize">> & {
+	OmitOpen<Omit<CreateDropdownMenuProps, "ids" | "arrowSize">> & {
 		/**
-		 * The open state of the context menu.
+		 * The open state of the dropdown menu.
 		 * You can bind this to a boolean value to programmatically control the open state.
 		 *
 		 * @defaultValue false
@@ -39,7 +40,7 @@ type Props = Expand<
 >;
 
 type CheckboxItemProps = Expand<
-	OmitChecked<CreateContextMenuCheckboxItemProps> & {
+	OmitChecked<CreateDropdownMenuCheckboxItemProps> & {
 		/**
 		 * The checked state of the checkbox item.
 		 * You can bind this to a boolean value to programmatically control the checked state.
@@ -59,19 +60,20 @@ type RadioGroupProps = Expand<
 	{
 		/**
 		 * The value of the radio group.
+		 * You can bind this to a string value to programmatically control the value.
 		 *
 		 * @defaultValue undefined
 		 */
-		value?: CreateContextMenuRadioGroupProps["defaultValue"] & {};
+		value?: CreateDropdownMenuRadioGroupProps["defaultValue"] & {};
 
 		/**
 		 * A callback function called when the value changes.
 		 */
-		onValueChange?: OnChangeFn<CreateContextMenuRadioGroupProps["defaultValue"]>;
+		onValueChange?: OnChangeFn<CreateDropdownMenuRadioGroupProps["defaultValue"]>;
 	} & AsChild
 >;
 
-type RadioItemProps = Expand<ContextMenuRadioItemProps & AsChild>;
+type RadioItemProps = Expand<DropdownMenuRadioItemProps & AsChild>;
 
 type ContentProps<
 	T extends Transition = Transition,
@@ -102,7 +104,7 @@ type LabelProps = AsChild;
 type SeparatorProps = AsChild;
 
 type SubProps = Expand<
-	OmitOpen<Omit<CreateContextSubmenuProps, "ids" | "arrowSize">> & {
+	OmitOpen<Omit<CreateDropdownSubmenuProps, "ids" | "arrowSize">> & {
 		/**
 		 * The open state of the submenu.
 		 * You can bind this to a boolean value to programmatically control the open state.
@@ -117,20 +119,19 @@ type SubProps = Expand<
 		onOpenChange?: OnChangeFn<boolean>;
 	}
 >;
-
 type SubContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
 	Out extends Transition = Transition
-> = Expand<TransitionProps<T, In, Out> & AsChild>;
+> = Expand<
+	{
+		sideOffset?: number;
+	} & TransitionProps<T, In, Out> &
+		AsChild
+>;
 
 type SubTriggerProps = Expand<
 	{
-		/**
-		 * Whether the subtrigger is disabled or not.
-		 *
-		 * @defaultValue false;
-		 */
 		disabled?: boolean;
 	} & AsChild
 >;
@@ -139,29 +140,35 @@ type TriggerProps = AsChild;
 
 type ArrowProps = Expand<
 	{
-		/**
-		 * The size of the arrow in pixels.
-		 *
-		 * @defaultValue 8
-		 */
 		size?: number;
 	} & AsChild
 >;
 
+type ItemEvents<T extends Element = HTMLDivElement> = {
+	click: CustomEventHandler<MouseEvent, T>;
+	keydown: CustomEventHandler<KeyboardEvent, T>;
+	focusin: CustomEventHandler<FocusEvent, T>;
+	focusout: CustomEventHandler<FocusEvent, T>;
+	pointerdown: CustomEventHandler<PointerEvent, T>;
+	pointerleave: CustomEventHandler<PointerEvent, T>;
+	pointermove: CustomEventHandler<PointerEvent, T>;
+};
+
 export type {
-	Props,
 	ArrowProps,
+	CheckboxItemIndicatorProps,
 	CheckboxItemProps,
 	ContentProps,
 	GroupProps,
+	ItemEvents,
 	ItemProps,
-	CheckboxItemIndicatorProps,
 	LabelProps,
+	Props,
 	RadioGroupProps,
 	RadioItemProps,
 	SeparatorProps,
-	SubProps,
 	SubContentProps,
+	SubProps,
 	SubTriggerProps,
 	TriggerProps
 };

@@ -21,17 +21,20 @@
 			return next;
 		}
 	});
+	const attrs = getAttrs("radio-group");
 
 	$: value !== undefined && localValue.set(value);
-
 	$: builder = $radioGroup;
-	const attrs = getAttrs("radio-group");
+	$: slotProps = {
+		builder,
+		attrs
+	};
 </script>
 
 {#if asChild}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else}
 	<div use:melt={builder} {...$$restProps} {...attrs}>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {/if}

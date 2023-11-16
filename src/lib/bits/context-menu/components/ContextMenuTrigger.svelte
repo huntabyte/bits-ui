@@ -6,25 +6,32 @@
 
 	type $$Props = TriggerProps;
 	type $$Events = TriggerEvents;
+
 	export let asChild: $$Props["asChild"] = false;
 	export let id: $$Props["id"] = undefined;
+
 	const {
 		elements: { trigger },
 		ids
 	} = getCtx();
 
 	const dispatch = createDispatcher();
+	const attrs = getAttrs("trigger");
 
 	$: if (id) {
 		ids.trigger.set(id);
 	}
 	$: builder = $trigger;
-	const attrs = getAttrs("trigger");
+
+	$: slotProps = {
+		builder,
+		attrs
+	};
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions applied by melt's action/store -->
 {#if asChild}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else}
 	<div
 		use:melt={builder}
@@ -36,6 +43,6 @@
 		on:m-pointermove={dispatch}
 		on:m-pointerup={dispatch}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {/if}

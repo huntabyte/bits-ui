@@ -1,6 +1,7 @@
 import type { HTMLDivAttributes, Transition } from "$lib/internal/index.js";
 import type { CustomEventHandler } from "$lib";
 import type * as T from "./_types.js";
+import type { HTMLAnchorAttributes } from "svelte/elements";
 
 type Props = T.Props;
 
@@ -18,7 +19,15 @@ type ContentProps<
 
 type GroupProps = T.GroupProps & HTMLDivAttributes;
 
-type ItemProps = T.ItemProps & HTMLDivAttributes;
+type AnchorElement = HTMLAnchorAttributes & {
+	href?: HTMLAnchorAttributes["href"];
+};
+
+type DivElement = HTMLDivAttributes & {
+	href?: never;
+};
+
+type ItemProps = T.ItemProps & (AnchorElement | DivElement);
 
 type CheckboxItemIndicatorProps = T.CheckboxItemIndicatorProps & HTMLDivAttributes;
 type LabelProps = T.LabelProps & HTMLDivAttributes;

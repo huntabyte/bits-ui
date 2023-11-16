@@ -3,7 +3,9 @@
 	import { getCheckboxIndicator, getAttrs } from "../ctx.js";
 
 	type $$Props = CheckboxItemIndicatorProps;
+
 	export let asChild: $$Props["asChild"] = false;
+
 	const checked = getCheckboxIndicator();
 	const attrs = getAttrs("checkbox-indicator");
 
