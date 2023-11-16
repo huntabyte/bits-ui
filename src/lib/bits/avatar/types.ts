@@ -1,24 +1,12 @@
-import type {
-	Expand,
-	AsChild,
-	HTMLDivAttributes,
-	HTMLSpanAttributes,
-	OnChangeFn
-} from "$lib/internal/index.js";
-import type { CreateAvatarProps } from "@melt-ui/svelte";
+import type { HTMLDivAttributes, HTMLSpanAttributes } from "$lib/internal/index.js";
 import type { HTMLImgAttributes } from "svelte/elements";
+import type * as T from "./_types.js";
 
-type Props = Expand<
-	Omit<CreateAvatarProps, "onLoadingStatusChange" | "loadingStatus" | "src"> & {
-		loadingStatus?: "loading" | "loaded" | "error";
-		onLoadingStatusChange?: OnChangeFn<"loading" | "loaded" | "error">;
-	} & AsChild
-> &
-	HTMLDivAttributes;
+type Props = T.Props & HTMLDivAttributes;
 
-type ImageProps = AsChild & HTMLImgAttributes;
+type ImageProps = T.ImageProps & HTMLImgAttributes;
 
-type FallbackProps = AsChild & HTMLSpanAttributes;
+type FallbackProps = T.FallbackProps & HTMLSpanAttributes;
 
 export type {
 	Props,

@@ -1,62 +1,58 @@
 import type { APISchema } from "@/types";
-import { asChild } from "./helpers";
-import * as C from "@/content/constants";
+import { asChild, portalProp } from "./helpers";
+import * as C from "@/content/api-reference/constants";
 import { focusProp } from "@/content/api-reference/extended-types";
 import type { AlertDialog } from "$lib";
 
 export const root: APISchema<AlertDialog.Props> = {
 	title: "Root",
 	description: "The root component used to set and manage the state of the alert dialog.",
-	props: [
-		{
-			name: "preventScroll",
+	props: {
+		preventScroll: {
 			type: C.BOOLEAN,
 			default: "true",
 			description: "Whether or not to prevent scroll on the body when the alert dialog is open."
 		},
-		{
-			name: "closeOnEscape",
+		closeOnEscape: {
 			type: C.BOOLEAN,
 			default: "true",
 			description: "Whether to close the alert dialog when the escape key is pressed."
 		},
-		{
-			name: "closeOnOutsideClick",
+		closeOnOutsideClick: {
 			type: C.BOOLEAN,
 			default: "true",
 			description: "Whether to close the alert dialog when a click occurs outside of it."
 		},
-		{
-			name: "open",
+		open: {
 			type: C.BOOLEAN,
 			default: "false",
 			description: "Whether or not the alert dialog is open."
 		},
-		{
-			name: "onOpenChange",
+		onOpenChange: {
 			type: {
 				type: C.FUNCTION,
 				definition: "(open: boolean) => void"
 			},
 			description: "A callback function called when the open state changes."
 		},
-		{
-			name: "openFocus",
+		openFocus: {
 			type: focusProp,
 			description: "Override the initial focus when the alert dialog is opened."
 		},
-		{
-			name: "closeFocus",
+		closeFocus: {
 			type: focusProp,
 			description: "Override the focus when the alert dialog is closed."
-		}
-	]
+		},
+		portal: { ...portalProp("alert dialog") }
+	}
 };
 
 export const action: APISchema = {
 	title: "Action",
 	description: "A button used to close the alert dialog by taking an action.",
-	props: [asChild],
+	props: {
+		asChild
+	},
 	dataAttributes: [
 		{
 			name: "bits-alert-dialog-action",

@@ -5,3 +5,4 @@ export const FUNCTION = "function";
 export const ENUM = "enum";
 export const UNDEFINED = "undefined";
 export const UNION = "union";
+export const OBJECT = "object";

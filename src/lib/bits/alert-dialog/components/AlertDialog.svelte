@@ -9,7 +9,6 @@
 	export let closeOnEscape: $$Props["closeOnEscape"] = undefined;
 	export let closeOnOutsideClick: $$Props["closeOnOutsideClick"] = false;
 	export let portal: $$Props["portal"] = undefined;
-	export let forceVisible: $$Props["forceVisible"] = true;
 	export let open: $$Props["open"] = undefined;
 	export let onOpenChange: $$Props["onOpenChange"] = undefined;
 	export let openFocus: $$Props["openFocus"] = undefined;
@@ -24,7 +23,7 @@
 		preventScroll,
 		closeOnOutsideClick,
 		portal,
-		forceVisible,
+		forceVisible: true,
 		defaultOpen: open,
 		openFocus,
 		closeFocus,
@@ -52,7 +51,6 @@
 	$: updateOption("closeOnEscape", closeOnEscape);
 	$: updateOption("closeOnOutsideClick", closeOnOutsideClick);
 	$: updateOption("portal", portal);
-	$: updateOption("forceVisible", forceVisible);
 	$: updateOption("openFocus", openFocus);
 	$: updateOption("closeFocus", closeFocus);
 </script>

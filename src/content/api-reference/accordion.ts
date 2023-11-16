@@ -1,7 +1,6 @@
 import type { APISchema } from "@/types";
-import { asChild } from "./helpers";
-import * as C from "@/content/constants";
-import { union, enums } from "@/content/helpers";
+import * as C from "@/content/api-reference/constants";
+import { union, enums, asChild } from "@/content";
 
 const root: APISchema = {
 	title: "Root",

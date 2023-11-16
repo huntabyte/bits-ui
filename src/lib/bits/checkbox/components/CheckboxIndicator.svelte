@@ -3,12 +3,25 @@
 	import type { IndicatorProps } from "../types.js";
 
 	type $$Props = IndicatorProps;
+	export let asChild: $$Props["asChild"] = false;
+
 	const {
 		helpers: { isChecked, isIndeterminate }
 	} = getCtx();
+
 	const attrs = getAttrs("indicator");
+
+	$: slotProps = {
+		isChecked: $isChecked,
+		isIndeterminate: $isIndeterminate,
+		attrs
+	};
 </script>
 
-<div {...$$restProps} {...attrs}>
-	<slot isChecked={$isChecked} isIndeterminate={$isIndeterminate} />
-</div>
+{#if asChild}
+	<slot {...slotProps} />
+{:else}
+	<div {...$$restProps} {...attrs}>
+		<slot {...slotProps} />
+	</div>
+{/if}

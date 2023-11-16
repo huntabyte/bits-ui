@@ -1,23 +1,12 @@
-import type {
-	Expand,
-	HTMLDivAttributes,
-	OmitChecked,
-	OnChangeFn,
-	AsChild
-} from "$lib/internal/index.js";
+import type { HTMLDivAttributes } from "$lib/internal/index.js";
 import type { CustomEventHandler } from "$lib/index.js";
-import type { CreateCheckboxProps } from "@melt-ui/svelte";
 import type { HTMLButtonAttributes, HTMLInputAttributes } from "svelte/elements";
+import type * as T from "./_types.js";
 
-type Props = Expand<
-	OmitChecked<CreateCheckboxProps> & {
-		checked?: boolean | "indeterminate";
-		onCheckedChange?: OnChangeFn<boolean | "indeterminate">;
-	} & AsChild
-> &
-	HTMLButtonAttributes;
+type Props = T.Props & HTMLButtonAttributes;
 
-type IndicatorProps = HTMLDivAttributes;
+type IndicatorProps = T.IndicatorProps & HTMLDivAttributes;
+
 type InputProps = Omit<HTMLInputAttributes, "value">;
 
 type Events = {

@@ -3,12 +3,15 @@ export type PropType = {
 	definition: string;
 };
 
-export type PropSchema<T> = {
-	name: T;
+export type PropSchema = {
 	default?: string;
 	type: PropType | string;
 	description: string;
 	required?: boolean;
+};
+
+export type PropObj<T> = {
+	[K in keyof T]-?: PropSchema;
 };
 
 export type DataAttrSchema = {
@@ -17,9 +20,9 @@ export type DataAttrSchema = {
 	description?: string;
 };
 
-export type APISchema<T> = {
+export type APISchema<T = Record<string, unknown>> = {
 	title: string;
 	description: string;
-	props?: PropSchema<keyof T>[];
+	props?: PropObj<T>;
 	dataAttributes?: DataAttrSchema[];
 };

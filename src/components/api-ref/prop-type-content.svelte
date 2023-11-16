@@ -6,7 +6,6 @@
 	import type { PropType } from "@/types";
 
 	export let type: PropType | string;
-	$: console.log(type);
 </script>
 
 <div class="flex items-center gap-1.5">

@@ -1,19 +1,17 @@
-import type { Builder } from "$lib/internal/index.js";
 import type { HTMLAnchorAttributes, HTMLButtonAttributes } from "svelte/elements";
+import type * as T from "./_types.js";
 
-type Builders = {
-	builders?: Builder[];
-};
+type AnchorElement = T.Props &
+	HTMLAnchorAttributes & {
+		href?: HTMLAnchorAttributes["href"];
+		type?: never;
+	};
 
-interface AnchorElement extends Builders, HTMLAnchorAttributes {
-	href?: HTMLAnchorAttributes["href"];
-	type?: never;
-}
-
-interface ButtonElement extends Builders, HTMLButtonAttributes {
-	type?: HTMLButtonAttributes["type"];
-	href?: never;
-}
+type ButtonElement = T.Props &
+	HTMLButtonAttributes & {
+		type?: HTMLButtonAttributes["type"];
+		href?: never;
+	};
 
 type Props = AnchorElement | ButtonElement;
 
