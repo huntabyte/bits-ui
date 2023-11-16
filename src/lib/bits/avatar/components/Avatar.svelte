@@ -20,11 +20,10 @@
 			return next;
 		}
 	});
+	const attrs = getAttrs("root");
 
 	$: loadingStatus !== undefined && localLoadingStatus.set(loadingStatus);
 	$: updateOption("delayMs", delayMs);
-
-	const attrs = getAttrs("root");
 </script>
 
 {#if asChild}

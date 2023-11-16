@@ -21,15 +21,21 @@
 		elements: { content },
 		states: { open }
 	} = getCtx();
-	$: builder = $content;
+
 	const attrs = getAttrs("content");
+
+	$: builder = $content;
+	$: slotProps = {
+		builder,
+		attrs
+	};
 </script>
 
 {#if asChild && $open}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else if transition && $open}
 	<div transition:transition={transitionConfig} use:melt={builder} {...$$restProps} {...attrs}>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {:else if inTransition && outTransition && $open}
 	<div
@@ -39,18 +45,18 @@
 		{...$$restProps}
 		{...attrs}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {:else if inTransition && $open}
 	<div in:inTransition={inTransitionConfig} use:melt={builder} {...$$restProps} {...attrs}>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {:else if outTransition && $open}
 	<div out:outTransition={outTransitionConfig} use:melt={builder} {...$$restProps} {...attrs}>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {:else if $open}
 	<div use:melt={builder} {...$$restProps} {...attrs}>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {/if}

@@ -6,20 +6,27 @@
 
 	type $$Props = Props;
 	type $$Events = Events;
+
 	export let asChild: $$Props["asChild"] = false;
+
 	const {
 		elements: { root }
 	} = createLabel();
 
 	const dispatch = createDispatcher();
-	$: builder = $root;
 	const attrs = getAttrs("root");
+
+	$: builder = $root;
+	$: slotProps = {
+		builder,
+		attrs
+	};
 </script>
 
 {#if asChild}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else}
 	<label use:melt={builder} {...$$restProps} {...attrs} on:m-mousedown={dispatch}>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</label>
 {/if}

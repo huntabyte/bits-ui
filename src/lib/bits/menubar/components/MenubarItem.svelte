@@ -7,19 +7,25 @@
 
 	type $$Props = ItemProps;
 	type $$Events = ItemEvents;
+
 	export let asChild: $$Props["asChild"] = false;
-	export let disabled = false;
+	export let disabled: $$Props["disabled"] = false;
+
 	const {
 		elements: { item }
 	} = getMenuCtx();
 	const dispatch = createDispatcher();
-	$: builder = $item;
 
+	$: builder = $item;
 	$: attrs = { ...getAttrs("item"), ...disabledAttrs(disabled) };
+	$: slotProps = {
+		builder,
+		attrs
+	};
 </script>
 
 {#if asChild}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else}
 	<div
 		use:melt={builder}
@@ -33,6 +39,6 @@
 		on:m-pointerleave={dispatch}
 		on:m-pointermove={dispatch}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {/if}

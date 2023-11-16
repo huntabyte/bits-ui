@@ -1,37 +1,19 @@
 import type { CustomEventHandler } from "$lib/index.js";
-import type {
-	OmitOpen,
-	Expand,
-	HTMLDivAttributes,
-	OnChangeFn,
-	Transition,
-	AsChild,
-	TransitionProps
-} from "$lib/internal/index.js";
-import type { CreateLinkPreviewProps } from "@melt-ui/svelte";
+import type { HTMLDivAttributes, Transition } from "$lib/internal/index.js";
 import type { HTMLAnchorAttributes } from "svelte/elements";
+import type * as T from "./_types.js";
 
-type Props = Expand<
-	OmitOpen<CreateLinkPreviewProps> & {
-		open?: boolean;
-		onOpenChange?: OnChangeFn<boolean>;
-	}
->;
+type Props = T.Props;
 
-type TriggerProps = AsChild & HTMLAnchorAttributes;
+type TriggerProps = T.TriggerProps & HTMLAnchorAttributes;
 
 type ContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
 	Out extends Transition = Transition
-> = Expand<TransitionProps<T, In, Out> & AsChild> & HTMLDivAttributes;
+> = T.ContentProps<T, In, Out> & HTMLDivAttributes;
 
-type ArrowProps = Expand<
-	{
-		size?: number;
-	} & AsChild
-> &
-	HTMLDivAttributes;
+type ArrowProps = T.ArrowProps & HTMLDivAttributes;
 
 type TriggerEvents<T extends Element = HTMLAnchorElement> = {
 	click: CustomEventHandler<MouseEvent, T>;

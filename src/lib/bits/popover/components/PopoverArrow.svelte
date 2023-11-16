@@ -7,15 +7,22 @@
 
 	export let asChild: $$Props["asChild"] = false;
 	export let size = 8;
+
 	const {
 		elements: { arrow }
 	} = setArrow(size);
-	$: builder = $arrow;
+
 	const attrs = getAttrs("arrow");
+
+	$: builder = $arrow;
+	$: slotProps = {
+		builder,
+		attrs
+	};
 </script>
 
 {#if asChild}
-	<slot {builder} />
+	<slot {...slotProps} />
 {:else}
 	<div use:melt={builder} {...$$restProps} {...attrs} />
 {/if}

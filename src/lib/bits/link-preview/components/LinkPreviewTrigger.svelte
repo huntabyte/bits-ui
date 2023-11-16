@@ -6,6 +6,7 @@
 
 	type $$Props = TriggerProps;
 	type $$Events = TriggerEvents;
+
 	export let asChild: $$Props["asChild"] = false;
 	export let id: $$Props["id"] = undefined;
 
@@ -15,17 +16,20 @@
 	} = getCtx();
 
 	const dispatch = createDispatcher();
+	const attrs = getAttrs("trigger");
 
 	$: if (id) {
 		ids.trigger.set(id);
 	}
-
 	$: builder = $trigger;
-	const attrs = getAttrs("trigger");
+	$: slotProps = {
+		builder,
+		attrs
+	};
 </script>
 
 {#if asChild}
-	<slot {attrs} {builder} />
+	<slot {...slotProps} />
 {:else}
 	{@const builder = $trigger}
 	<svelte:element
@@ -38,6 +42,6 @@
 		on:m-pointerenter={dispatch}
 		on:m-pointerleave={dispatch}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</svelte:element>
 {/if}

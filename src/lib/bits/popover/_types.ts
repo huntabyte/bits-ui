@@ -3,21 +3,21 @@
  * to type-check our API documentation, which requires we document each prop,
  * but we don't want to document the HTML attributes.
  */
-
 import type {
 	OmitOpen,
 	Expand,
-	OnChangeFn,
 	Transition,
+	OnChangeFn,
 	AsChild,
-	TransitionProps
+	TransitionProps,
+	OmitIds
 } from "$lib/internal/index.js";
-import type { CreateDialogProps } from "@melt-ui/svelte";
+import type { CreatePopoverProps } from "@melt-ui/svelte";
 
 type Props = Expand<
-	OmitOpen<Omit<CreateDialogProps, "role" | "forceVisible" | "ids">> & {
+	OmitOpen<OmitIds<Omit<CreatePopoverProps, "arrowSize">>> & {
 		/**
-		 * The open state of the alert dialog.
+		 * The open state of the popover.
 		 * You can bind this to a boolean value to programmatically control the open state.
 		 *
 		 * @defaultValue false
@@ -31,35 +31,22 @@ type Props = Expand<
 	}
 >;
 
-type TriggerProps = AsChild;
-
-type ActionProps = TriggerProps;
-type CancelProps = TriggerProps;
-
 type ContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
 	Out extends Transition = Transition
 > = Expand<TransitionProps<T, In, Out> & AsChild>;
 
-type DescriptionProps = AsChild;
+type TriggerProps = AsChild;
+type CloseProps = AsChild;
 
-type PortalProps = AsChild;
-
-type TitleProps = Expand<
+type ArrowProps = Expand<
 	{
-		level?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+		/**
+		 * The size of the arrow in pixels.
+		 */
+		size?: number;
 	} & AsChild
 >;
 
-export type {
-	Props,
-	TriggerProps,
-	ActionProps,
-	CancelProps,
-	ContentProps,
-	DescriptionProps,
-	ContentProps as OverlayProps,
-	PortalProps,
-	TitleProps
-};
+export type { Props, CloseProps, ArrowProps, ContentProps, TriggerProps };

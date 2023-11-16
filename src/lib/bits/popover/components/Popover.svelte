@@ -5,7 +5,6 @@
 
 	type $$Props = Props;
 	export let positioning: $$Props["positioning"] = undefined;
-	export let arrowSize: $$Props["arrowSize"] = undefined;
 	export let disableFocusTrap: $$Props["disableFocusTrap"] = undefined;
 	export let closeOnEscape: $$Props["closeOnEscape"] = undefined;
 	export let closeOnOutsideClick: $$Props["closeOnOutsideClick"] = undefined;
@@ -22,7 +21,6 @@
 		ids
 	} = setCtx({
 		positioning,
-		arrowSize,
 		disableFocusTrap,
 		closeOnEscape,
 		closeOnOutsideClick,
@@ -48,7 +46,6 @@
 	$: open !== undefined && localOpen.set(open);
 
 	$: updateOption("positioning", positioning);
-	$: updateOption("arrowSize", arrowSize);
 	$: updateOption("disableFocusTrap", disableFocusTrap);
 	$: updateOption("closeOnEscape", closeOnEscape);
 	$: updateOption("closeOnOutsideClick", closeOnOutsideClick);

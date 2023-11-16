@@ -7,16 +7,21 @@
 	export let value: $$Props["value"];
 	export let disabled: $$Props["disabled"] = undefined;
 	export let asChild: $$Props["asChild"] = false;
+
 	const { item, props } = setItem({ value, disabled });
+	const attrs = getAttrs("item");
 
 	$: builder = $item(props);
-	const attrs = getAttrs("item");
+	$: slotProps = {
+		builder,
+		attrs
+	};
 </script>
 
 {#if asChild}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else}
 	<div use:melt={builder} {...$$restProps} {...attrs}>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {/if}

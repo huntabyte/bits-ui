@@ -16,19 +16,23 @@
 	export let inTransitionConfig: $$Props["inTransitionConfig"] = undefined;
 	export let outTransition: $$Props["outTransition"] = undefined;
 	export let outTransitionConfig: $$Props["outTransitionConfig"] = undefined;
-
 	export let asChild: $$Props["asChild"] = false;
+
 	const {
 		elements: { overlay },
 		states: { open }
 	} = getCtx();
+	const attrs = getAttrs("overlay");
 
 	$: builder = $overlay;
-	const attrs = getAttrs("overlay");
+	$: slotProps = {
+		builder,
+		attrs
+	};
 </script>
 
 {#if asChild && $open}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else if transition && $open}
 	<div transition:transition={transitionConfig} use:melt={builder} {...$$restProps} {...attrs} />
 {:else if inTransition && outTransition && $open}

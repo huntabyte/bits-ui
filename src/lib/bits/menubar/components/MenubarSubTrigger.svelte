@@ -7,6 +7,7 @@
 
 	type $$Props = SubTriggerProps;
 	type $$Events = SubTriggerEvents;
+
 	export let disabled: $$Props["disabled"] = false;
 	export let asChild: $$Props["asChild"] = false;
 	export let id: $$Props["id"] = undefined;
@@ -23,11 +24,14 @@
 	}
 	$: builder = $subTrigger;
 	$: attrs = { ...getAttrs("sub-trigger"), ...disabledAttrs(disabled) };
+	$: slotProps = {
+		builder,
+		attrs
+	};
 </script>
 
-<!-- svelte-ignore a11y-no-static-element-interactions / applied by melt's builder-->
 {#if asChild}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else}
 	<div
 		use:melt={builder}
@@ -40,6 +44,6 @@
 		on:m-pointerleave={dispatch}
 		on:m-pointermove={dispatch}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {/if}

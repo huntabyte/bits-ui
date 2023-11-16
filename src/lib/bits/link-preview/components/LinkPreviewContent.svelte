@@ -17,7 +17,6 @@
 	export let inTransitionConfig: $$Props["inTransitionConfig"] = undefined;
 	export let outTransition: $$Props["outTransition"] = undefined;
 	export let outTransitionConfig: $$Props["outTransitionConfig"] = undefined;
-
 	export let asChild: $$Props["asChild"] = false;
 	export let id: $$Props["id"] = undefined;
 
@@ -31,16 +30,18 @@
 		ids.content.set(id);
 	}
 
-	$: builder = $content;
 	const attrs = getAttrs("content");
-
 	const dispatch = createDispatcher();
+
+	$: builder = $content;
+	$: slotProps = {
+		builder,
+		attrs
+	};
 </script>
 
-<!-- svelte-ignore a11y-no-static-element-interactions / applied by melt's builder-->
-
 {#if asChild && $open}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else if transition && $open}
 	<div
 		transition:transition={transitionConfig}
@@ -52,7 +53,7 @@
 		on:m-pointerenter={dispatch}
 		on:m-pointerleave={dispatch}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {:else if inTransition && outTransition && $open}
 	<div
@@ -66,7 +67,7 @@
 		on:m-pointerenter={dispatch}
 		on:m-pointerleave={dispatch}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {:else if inTransition && $open}
 	<div
@@ -79,7 +80,7 @@
 		on:m-pointerenter={dispatch}
 		on:m-pointerleave={dispatch}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {:else if outTransition && $open}
 	<div
@@ -92,7 +93,7 @@
 		on:m-pointerenter={dispatch}
 		on:m-pointerleave={dispatch}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {:else if $open}
 	<div
@@ -104,6 +105,6 @@
 		on:m-pointerenter={dispatch}
 		on:m-pointerleave={dispatch}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {/if}

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { MenuProps } from "../types.js";
 	import { setMenuCtx } from "../ctx.js";
-	import { generateId } from "$lib/internal/id.js";
+	import { derived } from "svelte/store";
 	type $$Props = MenuProps;
 
 	export let closeOnOutsideClick: $$Props["closeOnOutsideClick"] = undefined;
@@ -10,7 +10,6 @@
 	export let open: $$Props["open"] = undefined;
 	export let onOpenChange: $$Props["onOpenChange"] = undefined;
 	export let preventScroll: $$Props["preventScroll"] = undefined;
-	export let arrowSize: $$Props["arrowSize"] = undefined;
 	export let positioning: $$Props["positioning"] = undefined;
 	export let loop: $$Props["loop"] = undefined;
 	export let dir: $$Props["dir"] = undefined;
@@ -18,21 +17,15 @@
 	export let closeFocus: $$Props["closeFocus"] = undefined;
 	export let disableFocusFirstItem: $$Props["disableFocusFirstItem"] = undefined;
 
-	const ids = {
-		menu: generateId(),
-		trigger: generateId()
-	};
-
 	const {
 		states: { open: localOpen },
-		updateOption
+		updateOption,
+		ids
 	} = setMenuCtx({
 		closeOnOutsideClick,
-		ids,
 		closeOnEscape,
 		portal,
 		preventScroll,
-		arrowSize,
 		positioning,
 		loop,
 		dir,
@@ -47,13 +40,18 @@
 			return next;
 		}
 	});
+
+	const idValues = derived([ids.menu, ids.trigger], ([$menuId, $triggerId]) => ({
+		menu: $menuId,
+		trigger: $triggerId
+	}));
+
 	$: open !== undefined && localOpen.set(open);
 
 	$: updateOption("closeOnOutsideClick", closeOnOutsideClick);
 	$: updateOption("closeOnEscape", closeOnEscape);
 	$: updateOption("portal", portal);
 	$: updateOption("preventScroll", preventScroll);
-	$: updateOption("arrowSize", arrowSize);
 	$: updateOption("positioning", positioning);
 	$: updateOption("loop", loop);
 	$: updateOption("dir", dir);
@@ -62,4 +60,4 @@
 	$: updateOption("typeahead", typeahead);
 </script>
 
-<slot menuIds={ids} />
+<slot menuIds={$idValues} />

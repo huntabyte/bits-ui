@@ -25,14 +25,11 @@
 			return next;
 		}
 	});
-
-	$: open !== undefined && localOpen.set(open);
-
-	$: updateOption("disabled", disabled);
-
-	$: builder = $root;
 	const attrs = getAttrs("root");
 
+	$: open !== undefined && localOpen.set(open);
+	$: updateOption("disabled", disabled);
+	$: builder = $root;
 	$: slotProps = {
 		builder,
 		attrs

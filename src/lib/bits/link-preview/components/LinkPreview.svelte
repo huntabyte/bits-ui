@@ -11,7 +11,6 @@
 	export let closeDelay: $$Props["closeDelay"] = 300;
 	export let closeOnOutsideClick: $$Props["closeOnOutsideClick"] = undefined;
 	export let closeOnEscape: $$Props["closeOnEscape"] = undefined;
-	export let arrowSize: $$Props["arrowSize"] = undefined;
 	export let portal: $$Props["portal"] = undefined;
 
 	const {
@@ -25,7 +24,6 @@
 		closeDelay,
 		closeOnOutsideClick,
 		closeOnEscape,
-		arrowSize,
 		portal,
 		onOpenChange: ({ next }) => {
 			if (open !== next) {
@@ -47,7 +45,6 @@
 	$: updateOption("closeDelay", closeDelay);
 	$: updateOption("closeOnOutsideClick", closeOnOutsideClick);
 	$: updateOption("closeOnEscape", closeOnEscape);
-	$: updateOption("arrowSize", arrowSize);
 	$: updateOption("portal", portal);
 </script>
 

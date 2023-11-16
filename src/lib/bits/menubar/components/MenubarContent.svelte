@@ -13,15 +13,13 @@
 	export let sideOffset: $$Props["sideOffset"] = 5;
 	export let transition: $$Props["transition"] = undefined;
 	export let transitionConfig: $$Props["transitionConfig"] = undefined;
-
 	export let inTransition: $$Props["inTransition"] = undefined;
 	export let inTransitionConfig: $$Props["inTransitionConfig"] = undefined;
-
 	export let outTransition: $$Props["outTransition"] = undefined;
 	export let outTransitionConfig: $$Props["outTransitionConfig"] = undefined;
-
 	export let asChild: $$Props["asChild"] = false;
 	export let id: $$Props["id"] = undefined;
+
 	const {
 		elements: { menu },
 		states: { open },
@@ -29,15 +27,20 @@
 	} = getContent(sideOffset);
 
 	const dispatch = createDispatcher();
+	const attrs = getAttrs("content");
+
 	$: if (id) {
 		ids.menu.set(id);
 	}
 	$: builder = $menu;
-	const attrs = getAttrs("content");
+	$: slotProps = {
+		builder,
+		attrs
+	};
 </script>
 
 {#if asChild && $open}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else if transition && $open}
 	<div
 		transition:transition={transitionConfig}
@@ -46,7 +49,7 @@
 		{...attrs}
 		on:m-keydown={dispatch}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {:else if inTransition && outTransition && $open}
 	<div
@@ -57,7 +60,7 @@
 		{...attrs}
 		on:m-keydown={dispatch}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {:else if inTransition && $open}
 	<div
@@ -67,7 +70,7 @@
 		{...attrs}
 		on:m-keydown={dispatch}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {:else if outTransition && $open}
 	<div
@@ -77,10 +80,10 @@
 		{...attrs}
 		on:m-keydown={dispatch}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {:else if $open}
 	<div use:melt={builder} {...$$restProps} {...attrs} on:m-keydown={dispatch}>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {/if}

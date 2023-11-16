@@ -34,6 +34,7 @@
 	});
 
 	const dispatch = createDispatcher();
+	const attrs = getAttrs("root");
 
 	$: checked !== undefined && localChecked.set(checked);
 
@@ -43,11 +44,17 @@
 	$: updateOption("value", value);
 
 	$: builder = $root;
-	const attrs = getAttrs("root");
+	$: slotProps = {
+		builder,
+		attrs: {
+			...attrs,
+			disabled: disabled ? true : undefined
+		}
+	};
 </script>
 
 {#if asChild}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else}
 	<button
 		use:melt={builder}
@@ -58,6 +65,6 @@
 		on:m-keydown={dispatch}
 		disabled={disabled ? true : undefined}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</button>
 {/if}

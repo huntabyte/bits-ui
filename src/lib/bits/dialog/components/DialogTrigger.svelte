@@ -6,18 +6,25 @@
 
 	type $$Props = TriggerProps;
 	type $$Events = TriggerEvents;
+
 	export let asChild: $$Props["asChild"] = false;
+
 	const {
 		elements: { trigger }
 	} = getCtx();
+
 	const dispatch = createDispatcher();
+	const attrs = getAttrs("trigger");
 
 	$: builder = $trigger;
-	const attrs = getAttrs("trigger");
+	$: slotProps = {
+		builder,
+		attrs
+	};
 </script>
 
 {#if asChild}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else}
 	<button
 		use:melt={builder}
@@ -27,6 +34,6 @@
 		on:m-click={dispatch}
 		on:m-keydown={dispatch}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</button>
 {/if}

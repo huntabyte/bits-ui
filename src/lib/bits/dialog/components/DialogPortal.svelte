@@ -4,19 +4,25 @@
 	import type { PortalProps } from "../types.js";
 
 	type $$Props = PortalProps;
+
 	export let asChild: $$Props["asChild"] = false;
+
 	const {
 		elements: { portalled }
 	} = getCtx();
+	const attrs = getAttrs("portal");
 
 	$: builder = $portalled;
-	const attrs = getAttrs("portal");
+	$: slotProps = {
+		builder,
+		attrs
+	};
 </script>
 
 {#if asChild}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else}
 	<div use:melt={builder} {...$$restProps} {...attrs}>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {/if}

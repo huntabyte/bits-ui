@@ -3,6 +3,7 @@
 	import type { IndicatorProps } from "../types.js";
 
 	type $$Props = IndicatorProps;
+
 	export let asChild: $$Props["asChild"] = false;
 
 	const {

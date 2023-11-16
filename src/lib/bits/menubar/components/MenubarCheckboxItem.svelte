@@ -6,6 +6,7 @@
 
 	type $$Props = CheckboxItemProps;
 	type $$Events = CheckboxItemEvents;
+
 	export let checked: $$Props["checked"] = undefined;
 	export let onCheckedChange: $$Props["onCheckedChange"] = undefined;
 	export let disabled: $$Props["disabled"] = undefined;
@@ -26,15 +27,19 @@
 	});
 
 	const dispatch = createDispatcher();
+	const attrs = getAttrs("checkbox-item");
 
 	$: checked !== undefined && localChecked.set(checked);
 	$: updateOption("disabled", disabled);
 	$: builder = $checkboxItem;
-	const attrs = getAttrs("checkbox-item");
+	$: slotProps = {
+		builder,
+		attrs
+	};
 </script>
 
 {#if asChild}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else}
 	<div
 		use:melt={builder}
@@ -48,6 +53,6 @@
 		on:m-pointerleave={dispatch}
 		on:m-pointermove={dispatch}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {/if}

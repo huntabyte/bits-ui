@@ -30,6 +30,8 @@
 		}) as any
 	});
 
+	const attrs = getAttrs("root");
+
 	// Svelte types get weird here saying set expects something that is both string and string[].
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	$: localValue.set(value as any);
@@ -38,13 +40,16 @@
 	$: updateOption("disabled", disabled);
 
 	$: builder = $root;
-	const attrs = getAttrs("root");
+	$: slotProps = {
+		builder,
+		attrs
+	};
 </script>
 
 {#if asChild}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else}
 	<div use:melt={builder} {...$$restProps} {...attrs}>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {/if}

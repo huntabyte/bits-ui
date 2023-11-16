@@ -26,18 +26,20 @@
 	} = getSubMenuCtx();
 
 	const dispatch = createDispatcher();
+	const attrs = getAttrs("sub-content");
 
 	$: if (id) {
 		ids.menu.set(id);
 	}
 	$: builder = $subMenu;
-
-	const attrs = getAttrs("sub-content");
+	$: slotProps = {
+		builder,
+		attrs
+	};
 </script>
 
-<!-- svelte-ignore a11y-no-static-element-interactions / applied by melt store -->
 {#if asChild && $subOpen}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else if transition && $subOpen}
 	<div
 		transition:transition={transitionConfig}
@@ -48,7 +50,7 @@
 		on:m-keydown={dispatch}
 		on:m-pointermove={dispatch}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {:else if inTransition && outTransition && $subOpen}
 	<div
@@ -61,7 +63,7 @@
 		on:m-keydown={dispatch}
 		on:m-pointermove={dispatch}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {:else if inTransition && $subOpen}
 	<div
@@ -73,7 +75,7 @@
 		on:m-keydown={dispatch}
 		on:m-pointermove={dispatch}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {:else if outTransition && $subOpen}
 	<div
@@ -85,7 +87,7 @@
 		on:m-keydown={dispatch}
 		on:m-pointermove={dispatch}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {:else if $subOpen}
 	<div
@@ -96,6 +98,6 @@
 		on:m-keydown={dispatch}
 		on:m-pointermove={dispatch}
 	>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {/if}

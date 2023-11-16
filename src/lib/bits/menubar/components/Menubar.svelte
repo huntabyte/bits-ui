@@ -20,6 +20,7 @@
 	const idValues = derived([ids.menubar], ([$menubarId]) => ({
 		menubar: $menubarId
 	}));
+	const attrs = getAttrs("root");
 
 	$: if (id) {
 		ids.menubar.set(id);
@@ -28,13 +29,16 @@
 	$: updateOption("loop", loop);
 	$: updateOption("closeOnEscape", closeOnEscape);
 	$: builder = $menubar;
-	const attrs = getAttrs("root");
+	$: slotProps = {
+		builder,
+		attrs
+	};
 </script>
 
 {#if asChild}
-	<slot {builder} {attrs} ids={$idValues} />
+	<slot {...slotProps} ids={$idValues} />
 {:else}
 	<div use:melt={builder} {...$$restProps} {...attrs}>
-		<slot {builder} {attrs} ids={$idValues} />
+		<slot {...slotProps} ids={$idValues} />
 	</div>
 {/if}

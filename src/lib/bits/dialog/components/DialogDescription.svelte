@@ -4,6 +4,7 @@
 	import type { DescriptionProps } from "../types.js";
 
 	type $$Props = DescriptionProps;
+
 	export let asChild: $$Props["asChild"] = false;
 	export let id: $$Props["id"] = undefined;
 
@@ -11,18 +12,22 @@
 		elements: { description },
 		ids
 	} = getCtx();
+	const attrs = getAttrs("description");
 
 	$: if (id) {
 		ids.description.set(id);
 	}
 	$: builder = $description;
-	const attrs = getAttrs("description");
+	$: slotProps = {
+		builder,
+		attrs
+	};
 </script>
 
 {#if asChild}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else}
 	<div use:melt={builder} {...$$restProps} {...attrs}>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</div>
 {/if}

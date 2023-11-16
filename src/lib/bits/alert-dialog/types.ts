@@ -19,8 +19,6 @@ type ContentProps<
 
 type DescriptionProps = T.DescriptionProps & HTMLDivAttributes;
 
-type OverlayProps = T.OverlayProps & HTMLDivAttributes;
-
 type PortalProps = T.PortalProps & HTMLDivAttributes;
 
 type TitleProps = T.TitleProps & HTMLHeadingAttributes;
@@ -40,7 +38,7 @@ export type {
 	CancelProps,
 	ContentProps,
 	DescriptionProps,
-	OverlayProps,
+	ContentProps as OverlayProps,
 	PortalProps,
 	TitleProps,
 	//
@@ -50,7 +48,7 @@ export type {
 	CancelProps as AlertDialogCancelProps,
 	ContentProps as AlertDialogContentProps,
 	DescriptionProps as AlertDialogDescriptionProps,
-	OverlayProps as AlertDialogOverlayProps,
+	ContentProps as AlertDialogOverlayProps,
 	PortalProps as AlertDialogPortalProps,
 	TitleProps as AlertDialogTitleProps,
 	//

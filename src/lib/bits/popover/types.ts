@@ -1,38 +1,21 @@
-import type {
-	OmitOpen,
-	Expand,
-	HTMLDivAttributes,
-	Transition,
-	OnChangeFn,
-	AsChild,
-	TransitionProps
-} from "$lib/internal/index.js";
+import type { HTMLDivAttributes, Transition } from "$lib/internal/index.js";
 import type { CustomEventHandler } from "$lib/index.js";
-import type { CreatePopoverProps } from "@melt-ui/svelte";
 import type { HTMLButtonAttributes } from "svelte/elements";
+import type * as T from "./_types.js";
 
-type Props = Expand<
-	OmitOpen<CreatePopoverProps> & {
-		open?: boolean;
-		onOpenChange?: OnChangeFn<boolean>;
-	}
->;
+type Props = T.Props;
 
 type ContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
 	Out extends Transition = Transition
-> = Expand<TransitionProps<T, In, Out> & AsChild> & HTMLDivAttributes;
+> = T.ContentProps<T, In, Out> & HTMLDivAttributes;
 
-type TriggerProps = AsChild & HTMLButtonAttributes;
-type CloseProps = TriggerProps;
+type TriggerProps = T.TriggerProps & HTMLButtonAttributes;
 
-type ArrowProps = Expand<
-	{
-		size?: number;
-	} & AsChild
-> &
-	HTMLDivAttributes;
+type CloseProps = T.ContentProps & HTMLButtonAttributes;
+
+type ArrowProps = T.ArrowProps & HTMLDivAttributes;
 
 type TriggerEvents<T extends Element = HTMLButtonElement> = {
 	click: CustomEventHandler<MouseEvent, T>;
