@@ -106,7 +106,7 @@
 				</kbd>
 			</div>
 		</ContextMenu.Item>
-		<ContextMenu.Separator class="w-full bg-muted h-px my-1 -mx-1" />
+		<ContextMenu.Separator class="block bg-muted h-px my-1 -mr-1 -ml-1" />
 		<ContextMenu.Item
 			class="data-[highlighted]:bg-muted text-sm font-medium flex items-center py-3 pl-3 pr-1.5 h-10 rounded-button select-none transition-all outline-none duration-75"
 		>
