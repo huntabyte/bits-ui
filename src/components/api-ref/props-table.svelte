@@ -31,10 +31,10 @@
 					<PropTypeContent {type} />
 				</Table.Cell>
 				<Table.Cell class="align-baseline">
-					<p class="text-sm leading-6">
+					<p class="text-sm leading-[1.3rem]">
 						{@html parseMarkdown(description)}
 					</p>
-					<div class="mt-4">
+					<div class="mt-2">
 						<Code class="bg-background px-0 h-auto"
 							>Default:
 							{#if defaultVal}

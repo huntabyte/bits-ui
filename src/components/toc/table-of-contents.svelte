@@ -16,7 +16,7 @@
 	});
 </script>
 
-<div class="overflow-y-auto rounded-lg p-4">
+<div class="overflow-y-auto rounded-lg p-4 mt-1">
 	<nav>
 		{#key $headingsTree}
 			<Tree tree={$headingsTree} activeHeadingIdxs={$activeHeadingIdxs} {item} {isActive} />

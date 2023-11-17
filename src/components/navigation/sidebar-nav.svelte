@@ -16,7 +16,9 @@
 							<SidebarNavMainItems items={item.items} />
 						{:else}
 							<div class="pb-4">
-								<h4 class="mb-1 rounded-md py-2 px-2.5 text-sm font-normal uppercase">
+								<h4
+									class="mb-1 rounded-md py-2 px-2.5 text-sm font-normal uppercase text-muted-foreground"
+								>
 									{item.title}
 								</h4>
 								{#if item.items}
