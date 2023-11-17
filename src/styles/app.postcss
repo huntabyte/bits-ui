@@ -35,7 +35,7 @@
 		--border: 0 0% 96%;
 		--border-input: 0 0% 96% / 0.17;
 		--border-card: 0 0% 96% / 0.1;
-		--dark: 0 0% 9%;
+		--dark: 0 0% 96%;
 		--dark-10: 0 0% 96% / 0.1;
 		--accent: 204 80% 16%;
 
@@ -102,5 +102,16 @@
 		@apply absolute w-9 h-9 bg-muted rounded-full font-mono font-medium text-center text-base inline-flex items-center justify-center -indent-px border-4 border-background;
 		@apply ml-[-50px] mt-[-4px];
 		content: counter(step);
+	}
+}
+
+@layer components {
+	.button-gradient {
+		background: linear-gradient(0deg, #000 0%, #000 100%), hsla(var(--dark));
+	}
+	.dark {
+		& .button-gradient {
+			background: linear-gradient(0deg, #fff 0%, #fff 100%), hsla(var(--dark));
+		}
 	}
 }
