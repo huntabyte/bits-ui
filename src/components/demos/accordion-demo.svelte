@@ -7,17 +7,17 @@
 		{
 			title: "Feature Overview",
 			content:
-				"Our platform offers task management, team messaging, file sharing, progress tracking,and reporting for streamlined project management."
+				"Task management, messaging, file sharing, progress tracking, and reporting for your team."
 		},
 		{
 			title: "Advantages of our Platform",
 			content:
-				"Experience improved productivity, enhanced communication, and customizable project views for successful project execution."
+				"Experience improved productivity, enhanced communication, and customizable project views for project execution."
 		},
 		{
 			title: "Effective Implementation Strategies",
 			content:
-				"Define clear goals, provide comprehensive training, encourage adoption, and iterate based on feedback."
+				"Define clear goals, provide training, encourage adoption, and iterate based on feedback."
 		}
 	];
 </script>
