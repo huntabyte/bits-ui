@@ -1,56 +1,87 @@
 <script lang="ts">
-	import * as ContextMenu from "@/components/ui/context-menu";
-
-	let showBookmarks = false;
-	let showFullURLs = true;
-
-	let value = "pedro";
+	import { ContextMenu } from "$lib";
+	import { flyAndScale } from "@/utils";
+	import { PencilSimpleLine, PlusCircle, CopySimple, Trash } from "phosphor-svelte";
 </script>
 
 <ContextMenu.Root>
 	<ContextMenu.Trigger
-		class="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed text-sm"
+		class="flex h-[150px] w-[300px] items-center justify-center rounded-card-sm text-sm font-medium bg-muted select-none"
 	>
-		Right click here
+		Right click me
 	</ContextMenu.Trigger>
-	<ContextMenu.Content class="w-64">
-		<ContextMenu.Item inset>
-			Back
-			<ContextMenu.Shortcut>⌘[</ContextMenu.Shortcut>
+	<ContextMenu.Content
+		class="max-w-[229px] w-full rounded-xl border border-muted shadow-popover p-1 bg-background outline-none"
+		transition={flyAndScale}
+	>
+		<ContextMenu.Item
+			class="data-[highlighted]:bg-muted text-sm font-medium flex items-center py-3 pl-3 pr-1.5 h-10 rounded-button select-none transition-all outline-none duration-75"
+		>
+			<div class="flex items-center">
+				<PencilSimpleLine class="mr-2 h-4 w-4 text-foreground-alt" />
+				Edit
+			</div>
+			<div class="ml-auto flex items-center gap-px">
+				<kbd
+					class="h-5 w-5 rounded-button border border-dark-10 shadow-kbd inline-flex items-center justify-center text-muted-foreground text-xs bg-background"
+				>
+					⌘
+				</kbd>
+				<kbd
+					class="h-5 w-5 rounded-button border border-dark-10 shadow-kbd inline-flex items-center justify-center text-muted-foreground text-[10px] bg-background"
+				>
+					E
+				</kbd>
+			</div>
 		</ContextMenu.Item>
-		<ContextMenu.Item inset>
-			Forward
-			<ContextMenu.Shortcut>⌘]</ContextMenu.Shortcut>
+		<ContextMenu.Item
+			class="data-[highlighted]:bg-muted text-sm font-medium flex items-center py-3 pl-3 pr-1.5 h-10 rounded-button select-none transition-all outline-none duration-75"
+		>
+			<div class="flex items-center">
+				<PlusCircle class="mr-2 h-4 w-4 text-foreground-alt" />
+				Add
+			</div>
+			<div class="ml-auto flex items-center gap-px">
+				<kbd
+					class="h-5 w-5 rounded-button border border-dark-10 shadow-kbd inline-flex items-center justify-center text-muted-foreground text-xs bg-background"
+				>
+					⌘
+				</kbd>
+				<kbd
+					class="h-5 w-5 rounded-button border border-dark-10 shadow-kbd inline-flex items-center justify-center text-muted-foreground text-[10px] bg-background"
+				>
+					N
+				</kbd>
+			</div>
 		</ContextMenu.Item>
-		<ContextMenu.Item inset>
-			Reload
-			<ContextMenu.Shortcut>⌘R</ContextMenu.Shortcut>
+		<ContextMenu.Item
+			class="data-[highlighted]:bg-muted text-sm font-medium flex items-center py-3 pl-3 pr-1.5 h-10 rounded-button select-none transition-all outline-none duration-75"
+		>
+			<div class="flex items-center">
+				<CopySimple class="mr-2 h-4 w-4 text-foreground-alt" />
+				Duplicate
+			</div>
+			<div class="ml-auto flex items-center gap-px">
+				<kbd
+					class="h-5 w-5 rounded-button border border-dark-10 shadow-kbd inline-flex items-center justify-center text-muted-foreground text-xs bg-background"
+				>
+					⌘
+				</kbd>
+				<kbd
+					class="h-5 w-5 rounded-button border border-dark-10 shadow-kbd inline-flex items-center justify-center text-muted-foreground text-[10px] bg-background"
+				>
+					D
+				</kbd>
+			</div>
 		</ContextMenu.Item>
-		<ContextMenu.Sub>
-			<ContextMenu.SubTrigger inset>More Tools</ContextMenu.SubTrigger>
-			<ContextMenu.SubContent class="w-48">
-				<ContextMenu.Item>
-					Save Page As...
-					<ContextMenu.Shortcut>⇧⌘S</ContextMenu.Shortcut>
-				</ContextMenu.Item>
-				<ContextMenu.Item>Create Shortcut...</ContextMenu.Item>
-				<ContextMenu.Item>Name Window...</ContextMenu.Item>
-				<ContextMenu.Separator />
-				<ContextMenu.Item>Developer Tools</ContextMenu.Item>
-			</ContextMenu.SubContent>
-		</ContextMenu.Sub>
-		<ContextMenu.Separator />
-		<ContextMenu.CheckboxItem bind:checked={showBookmarks}>
-			Show Bookmarks Bar
-			<ContextMenu.Shortcut>⌘⇧B</ContextMenu.Shortcut>
-		</ContextMenu.CheckboxItem>
-		<ContextMenu.CheckboxItem bind:checked={showFullURLs}>Show Full URLs</ContextMenu.CheckboxItem>
-		<ContextMenu.Separator />
-		<ContextMenu.RadioGroup bind:value>
-			<ContextMenu.Label inset>People</ContextMenu.Label>
-			<ContextMenu.Separator />
-			<ContextMenu.RadioItem value="pedro">Pedro Duarte</ContextMenu.RadioItem>
-			<ContextMenu.RadioItem value="colm">Colm Tuite</ContextMenu.RadioItem>
-		</ContextMenu.RadioGroup>
+		<ContextMenu.Separator class="w-full bg-muted h-px my-1" />
+		<ContextMenu.Item
+			class="data-[highlighted]:bg-muted text-sm font-medium flex items-center py-3 pl-3 pr-1.5 h-10 rounded-button select-none transition-all outline-none duration-75"
+		>
+			<div class="flex items-center">
+				<Trash class="mr-2 h-4 w-4 text-foreground-alt" />
+				Delete
+			</div>
+		</ContextMenu.Item>
 	</ContextMenu.Content>
 </ContextMenu.Root>
