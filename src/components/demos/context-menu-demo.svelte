@@ -36,7 +36,7 @@
 		</ContextMenu.Item>
 		<ContextMenu.Sub>
 			<ContextMenu.SubTrigger
-				class="data-[highlighted]:bg-muted text-sm font-medium flex items-center py-3 pl-3 pr-1.5 h-10 rounded-button select-none transition-all outline-none duration-75"
+				class="data-[highlighted]:bg-muted data-[state=open]:bg-muted text-sm font-medium flex items-center py-3 pl-3 pr-1.5 h-10 rounded-button select-none transition-all outline-none duration-75"
 			>
 				<div class="flex items-center">
 					<PlusCircle class="mr-2 h-4 w-4 text-foreground-alt" />
