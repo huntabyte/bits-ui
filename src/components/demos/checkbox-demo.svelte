@@ -4,7 +4,7 @@
 	import { Check, Minus } from "phosphor-svelte";
 </script>
 
-<div class="flex items-center space-x-2">
+<div class="flex items-center space-x-3">
 	<Checkbox.Root
 		id="terms"
 		aria-labelledby="terms-label"
