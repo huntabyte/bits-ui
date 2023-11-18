@@ -7,15 +7,19 @@
 </script>
 
 {#if items.length}
-	<div class="grid grid-flow-row auto-rows-max text-sm gap-1">
+	<div
+		class="grid grid-flow-row auto-rows-max gap-1 overflow-x-visible pl-4 text-sm"
+	>
 		{#each items as item, index (index)}
 			{#if item.href}
 				<a
 					href={item.href}
 					class={cn(
-						"group flex w-full items-center rounded-md text-foreground py-1.5 px-2.5 hover:bg-muted transition-all",
-						item.disabled && "cursor-not-allowed opacity-60",
-						$page.url.pathname === item.href ? "bg-muted" : ""
+						"group inline-flex w-full items-center overflow-x-visible rounded-md px-2.5 py-1.5 text-foreground transition-colors hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-foreground focus-visible:ring-offset-1 focus-visible:ring-offset-background",
+						item.disabled && "cursor-not-allowed opacity-60 ",
+						$page.url.pathname === item.href
+							? "bg-muted focus-visible:ring-muted"
+							: ""
 					)}
 					target={item.external ? "_blank" : ""}
 					rel={item.external ? "noreferrer" : ""}

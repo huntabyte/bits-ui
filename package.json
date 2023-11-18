@@ -68,6 +68,7 @@
 		"postcss-load-config": "^4.0.1",
 		"prettier": "^2.8.8",
 		"prettier-plugin-svelte": "^2.10.1",
+		"prettier-plugin-tailwindcss": "0.2.7",
 		"publint": "^0.2.5",
 		"radix-icons-svelte": "^1.2.1",
 		"rehype-pretty-code": "^0.10.0",

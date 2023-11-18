@@ -1,27 +1,33 @@
 <script lang="ts">
-	import { Button } from "@/components/ui/button";
+	import { Button } from "$lib";
 	import { LightSwitch, MobileNav } from "@/components";
 	import { siteConfig } from "@/config";
 </script>
 
-<header class="bg-background/75 backdrop-blur border-b border-border -mb-px sticky top-0 z-50">
-	<div class="container">
-		<div class="flex items-center justify-between gap-3 h-[70px]">
+<header
+	class="sticky top-0 z-50 -mb-px border-b border-border bg-background/75 backdrop-blur"
+>
+	<div class="container px-4">
+		<div class="flex h-[70px] items-center justify-between gap-3">
 			<div class="flex items-center gap-1.5">
 				<MobileNav />
-				<a href="/" class="font-bold tracking-tight text-2xl underline underline-offset-4">bits</a>
+				<a
+					href="/"
+					class="text-2xl font-bold tracking-tight underline underline-offset-4"
+					>bits</a
+				>
 			</div>
 			<div class="flex items-center justify-end gap-5">
-				<Button
+				<Button.Root
 					href={siteConfig.links.github}
 					target="_blank"
 					rel="noopener noreferrer"
-					size="lg"
-					aria-label="View the github repo for this package."
-					class=""
+					class="inline-flex h-10 items-center
+					justify-center whitespace-nowrap rounded-[9px] bg-muted px-4
+					text-sm font-semibold text-foreground shadow-mini ring-offset-background transition-colors hover:bg-muted/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-muted focus-visible:ring-offset-2 focus-visible:ring-offset-background"
 				>
 					Report an issue
-				</Button>
+				</Button.Root>
 				<LightSwitch />
 			</div>
 		</div>
