@@ -1,50 +1,110 @@
 <script lang="ts">
-	import * as Popover from "@/components/ui/popover";
-	import * as Label from "@/components/ui/label";
-	import * as Button from "@/components/ui/button";
-	import * as Input from "@/components/ui/input";
-	import { tick } from "svelte";
+	import { Popover, Label, Switch, Separator } from "$lib";
+	import { Cookie } from "phosphor-svelte";
+
 	import { flyAndScale } from "@/utils";
 
-	let open = false;
+	let open = true;
+	let necessary = true;
+	let marketing = false;
+	let shopping = false;
 </script>
 
-<Popover.Root bind:open let:ids>
+<Popover.Root bind:open>
 	<Popover.Trigger
 		class="inline-flex h-12 items-center
 	justify-center whitespace-nowrap rounded-input bg-dark px-[21px]
-	text-[15px] font-semibold text-background shadow-mini ring-dark ring-offset-background transition-colors hover:bg-foreground/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dark focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+	text-[15px] font-semibold text-background shadow-mini ring-dark ring-offset-background transition-colors hover:bg-foreground/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dark focus-visible:ring-offset-2 focus-visible:ring-offset-background"
 	>
-		Open
+		Manage Cookies
 	</Popover.Trigger>
 	<Popover.Content
-		class="w-full max-w-[300px] rounded-xl border border-muted bg-background p-5 shadow-popover outline-none"
+		class="w-full max-w-[392px] rounded-card border border-muted bg-background p-5 shadow-card outline-none"
 		transition={flyAndScale}
 	>
-		<div class="grid gap-4">
-			<div class="space-y-2">
-				<h4 class="font-medium leading-none">Dimensions</h4>
-				<p class="text-sm text-muted-foreground">
-					Set the dimensions for the layer.
+		<div class="flex items-center">
+			<div
+				class="mr-[13px] flex h-12 w-12 items-center justify-center rounded-full bg-muted"
+			>
+				<Cookie class="h-6 w-6" />
+			</div>
+			<div class="flex flex-col">
+				<h4 class="text-[17px] font-semibold tracking-[-0.01em]">
+					Set Cookies
+				</h4>
+				<p class="text-sm font-medium text-muted-foreground">
+					Manage your cookie settings here
 				</p>
 			</div>
-			<div class="grid gap-2">
-				<div class="grid grid-cols-3 items-center gap-4">
-					<Label.Root for="width">Width</Label.Root>
-					<Input.Root id="width" value="100%" class="col-span-2 h-8" />
+		</div>
+		<Separator.Root class="-mx-5 mb-7 mt-[17px] block h-px bg-muted" />
+		<div class="flex flex-col gap-7 pl-2 pr-[2px]">
+			<div class="flex w-full items-center justify-between">
+				<div class="flex flex-col gap-0.5">
+					<div class="flex items-center gap-1.5">
+						<Label.Root for="necessary" class="text-sm font-medium"
+							>Strictly necessary</Label.Root
+						>
+						<div
+							class="text-accent-foreground inline-flex h-5 items-center justify-center rounded-[30px] bg-accent px-2 text-[11px] font-medium"
+						>
+							required
+						</div>
+					</div>
+					<p class="text-[13px] font-medium text-muted-foreground">
+						These cookies are essential
+					</p>
 				</div>
-				<div class="grid grid-cols-3 items-center gap-4">
-					<Label.Root for="maxWidth">Max. width</Label.Root>
-					<Input.Root id="maxWidth" value="300px" class="col-span-2 h-8" />
+				<Switch.Root
+					id="necessary"
+					class="focus-visible:ring-ring peer inline-flex h-7 w-12 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent shadow-mini-inset transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-foreground data-[state=unchecked]:bg-muted"
+					bind:checked={necessary}
+					disabled
+				>
+					<Switch.Thumb
+						class="pointer-events-none block h-6 w-6 rounded-full bg-background shadow-mini ring-0 transition-transform data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0"
+					/>
+				</Switch.Root>
+			</div>
+			<div class="flex w-full items-center justify-between">
+				<div class="flex flex-col gap-0.5">
+					<Label.Root for="marketing" class="text-sm font-medium"
+						>Marketing cookies</Label.Root
+					>
+
+					<p class="text-[13px] font-medium text-muted-foreground">
+						These cookies are non-essential
+					</p>
 				</div>
-				<div class="grid grid-cols-3 items-center gap-4">
-					<Label.Root for="height">Height</Label.Root>
-					<Input.Root id="height" value="25px" class="col-span-2 h-8" />
+				<Switch.Root
+					id="marketing"
+					class="focus-visible:ring-ring peer inline-flex h-7 w-12 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent shadow-mini-inset transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-foreground data-[state=unchecked]:bg-muted"
+					bind:checked={marketing}
+				>
+					<Switch.Thumb
+						class="pointer-events-none block h-6 w-6 rounded-full bg-background shadow-mini ring-0 transition-transform data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0"
+					/>
+				</Switch.Root>
+			</div>
+			<div class="flex w-full items-center justify-between">
+				<div class="flex flex-col gap-0.5">
+					<Label.Root for="shopping" class="text-sm font-medium"
+						>Shopping cookies</Label.Root
+					>
+
+					<p class="text-[13px] font-medium text-muted-foreground">
+						These cookies are non-essential
+					</p>
 				</div>
-				<div class="grid grid-cols-3 items-center gap-4">
-					<Label.Root for="maxHeight">Max. height</Label.Root>
-					<Input.Root id="maxHeight" value="none" class="col-span-2 h-8" />
-				</div>
+				<Switch.Root
+					id="shopping"
+					class="focus-visible:ring-ring peer inline-flex h-7 w-12 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent shadow-mini-inset transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-foreground data-[state=unchecked]:bg-muted"
+					bind:checked={shopping}
+				>
+					<Switch.Thumb
+						class="pointer-events-none block h-6 w-6 rounded-full bg-background shadow-mini ring-0 transition-transform data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0"
+					/>
+				</Switch.Root>
 			</div>
 		</div>
 	</Popover.Content>

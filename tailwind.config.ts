@@ -34,7 +34,10 @@ export default {
 					DEFAULT: "hsl(var(--dark) / <alpha-value>)",
 					10: "hsl(var(--dark-10))"
 				},
-				accent: "hsl(var(--accent) / <alpha-value>)"
+				accent: {
+					DEFAULT: "hsl(var(--accent) / <alpha-value>)",
+					foreground: "hsl(var(--accent-foreground) / <alpha-value>)"
+				}
 			},
 			fontFamily: {
 				sans: ["Inter", ...fontFamily.sans],
@@ -59,7 +62,8 @@ export default {
 				"mini-inset": "var(--shadow-mini-inset)",
 				popover: "var(--shadow-popover)",
 				kbd: "var(--shadow-kbd)",
-				btn: "var(--shadow-btn)"
+				btn: "var(--shadow-btn)",
+				card: "var(--shadow-card)"
 			},
 			opacity: {
 				8: "0.08"
