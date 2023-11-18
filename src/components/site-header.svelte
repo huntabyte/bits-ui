@@ -5,7 +5,7 @@
 </script>
 
 <header
-	class="sticky top-0 z-50 -mb-px border-b border-border bg-background/75 backdrop-blur"
+	class="sticky top-0 z-50 overflow-x-hidden border-b border-border bg-background/75 backdrop-blur"
 >
 	<div class="container px-4">
 		<div class="flex h-[70px] items-center justify-between gap-3">

@@ -20,9 +20,9 @@
 	>
 		<SidebarNav items={navigation.sidebar} />
 		<main
-			class="relative pb-6 pr-4 pt-16 lg:gap-10 xl:grid xl:grid-cols-[1fr_220px]"
+			class="relative pb-6 pl-4 pr-4 pt-16 md:pl-0 lg:gap-10 xl:grid xl:grid-cols-[1fr_220px]"
 		>
-			<div class="mx-auto w-full min-w-0 max-w-[700px]" id="content">
+			<div class="mx-auto w-full min-w-0 md:max-w-[700px]" id="content">
 				<slot />
 			</div>
 
