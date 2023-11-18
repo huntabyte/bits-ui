@@ -21,22 +21,22 @@
 >
 	<Tabs.Root class="relative mr-auto w-full" let:value>
 		<Tabs.List
-			class="absolute z-20 top-2.5 right-2.5 flex items-center bg-black/8 dark:bg-white/8 px-[5px] h-input-sm rounded-card-sm justify-center shadow-mini-inset"
+			class="absolute right-2.5 top-2.5 z-20 flex h-input-sm items-center justify-center rounded-card-sm bg-black/8 px-[5px] shadow-mini-inset dark:bg-white/8"
 		>
 			<Tabs.Trigger
 				value="preview"
 				class={cn(
 					buttonVariants(),
 					value === "preview"
-						? "bg-transparent font-semibold shadow-mini hover:bg-opacity-90"
-						: "bg-transparent shadow-none hover:text-foreground-alt transition-all",
-					"relative"
+						? "font-semibold shadow-mini hover:bg-opacity-90"
+						: "shadow-none transition-all hover:text-foreground-alt",
+					"relative bg-transparent"
 				)}
 			>
 				<span class="z-20"> Preview </span>
 				{#if value === "preview"}
 					<div
-						class="h-8 w-full bg-background absolute top-0 left-0 rounded-[7px]"
+						class="absolute left-0 top-0 h-8 w-full rounded-[7px] bg-background"
 						in:send={{ key: "active" }}
 						out:receive={{ key: "active" }}
 					/>
@@ -48,14 +48,14 @@
 					buttonVariants(),
 					value === "code"
 						? "bg-transparent font-semibold shadow-mini hover:bg-opacity-90"
-						: "bg-transparent shadow-none hover:text-foreground-alt transition-all",
+						: "bg-transparent shadow-none transition-all hover:text-foreground-alt",
 					"relative"
 				)}
 			>
 				<span class="z-20"> &lt;Code&gt; </span>
 				{#if value === "code"}
 					<div
-						class="h-8 w-full bg-background absolute top-0 left-0 rounded-[7px]"
+						class="absolute left-0 top-0 h-8 w-full rounded-[7px] bg-background"
 						in:send={{ key: "active" }}
 						out:receive={{ key: "active" }}
 					/>
@@ -64,12 +64,15 @@
 		</Tabs.List>
 		<Tabs.Content value="code">
 			<div
-				class="w-full ![&_pre]:mt-0 [&_pre]:max-h-[443px] [&_pre]:min-h-[443px] [&_pre]:overflow-auto ![&_pre]:rounded-card"
+				class="![&_pre]:mt-0 ![&_pre]:rounded-card w-full [&_pre]:max-h-[443px] [&_pre]:min-h-[443px] [&_pre]:overflow-auto"
 			>
 				<slot />
 			</div>
 		</Tabs.Content>
-		<Tabs.Content value="preview" class="relative border-2 border-muted rounded-card">
+		<Tabs.Content
+			value="preview"
+			class="relative rounded-card border-2 border-muted"
+		>
 			<div
 				class={cn(
 					"preview flex min-h-[443px] w-full justify-center p-12",
