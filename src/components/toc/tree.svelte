@@ -56,7 +56,7 @@
 					<a
 						href="#{heading.id}"
 						use:melt={$item(heading.id)}
-						class="transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background data-[active]:text-foreground"
+						class="rounded-sm transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background data-[active]:text-foreground"
 						use:hoverAction
 					>
 						{@html nodeWithoutSpan}
@@ -76,11 +76,3 @@
 		{/each}
 	{/if}
 </ul>
-
-<style lang="postcss">
-	.parent .child[data-attribute="special"] {
-		/* Apply styles to the parent when the child with data-attribute="special" is present */
-		/* For example: */
-		background-color: lightblue;
-	}
-</style>

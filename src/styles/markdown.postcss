@@ -2,10 +2,6 @@
 	@apply relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm;
 }
 
-.link {
-	@apply inline-flex items-center gap-1 font-medium underline underline-offset-4;
-}
-
 [data-theme="light"] {
 	display: flex;
 	flex-direction: column;
@@ -42,7 +38,7 @@
 	@apply relative;
 
 	& pre {
-		@apply mb-4 mt-6 overflow-x-auto rounded-card w-full py-4 px-2.5 text-sm font-semibold;
+		@apply mb-4 mt-6 w-full overflow-x-auto rounded-card px-2.5 py-4 text-sm font-semibold;
 	}
 
 	& code {
@@ -62,7 +58,7 @@
 
 [data-preview] {
 	& pre {
-		@apply mt-0 mb-0;
+		@apply mb-0 mt-0;
 	}
 
 	& [data-copy-code] {

@@ -15,7 +15,7 @@
 		<Code class="bg-transparent px-0">{type.type}</Code>
 		<Popover.Root positioning={{ placement: "top", gutter: 8 }}>
 			<Popover.Trigger
-				class="rounded-button inline-flex items-center justify-center text-foreground-alt hover:text-foreground-alt/80 transition-colors"
+				class="inline-flex items-center justify-center rounded-button text-foreground-alt transition-colors hover:text-foreground-alt/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
 			>
 				<Info class="sq-4" weight="bold" />
 				<span class="sr-only">See type definition</span>
@@ -23,9 +23,9 @@
 			<Popover.Content
 				transition={flyAndScale}
 				transitionConfig={{ y: 8 }}
-				class="z-50 bg-background rounded-input p-4 shadow-popover border border-border"
+				class="z-50 rounded-input border border-border bg-background p-4 shadow-popover"
 			>
-				<Code class="bg-transparent px-0 text-foreground tracking-tight h-auto">
+				<Code class="h-auto bg-transparent px-0 tracking-tight text-foreground">
 					{@html parseTypeDef(type.definition)}
 				</Code>
 			</Popover.Content>
