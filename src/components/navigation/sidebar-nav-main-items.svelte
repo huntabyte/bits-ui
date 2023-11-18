@@ -20,13 +20,13 @@
 </script>
 
 {#if items.length}
-	<div class="grid grid-flow-row auto-rows-max text-sm pb-8">
+	<div class="grid grid-flow-row auto-rows-max text-sm pb-8 gap-1">
 		{#each items as item, index (index)}
 			{#if item.href}
 				<a
 					href={item.href}
 					class={cn(
-						"group flex w-full items-center rounded-md p-2 text-sm text-foreground font-semibold gap-2.5 hover:bg-muted transition-all",
+						"group flex w-full items-center rounded-md py-1.5 px-2.5 text-sm text-foreground font-semibold gap-2.5 hover:bg-muted transition-all",
 						$page.url.pathname === item.href ? "bg-muted" : "bg-transparent"
 					)}
 					target={item.external ? "_blank" : ""}

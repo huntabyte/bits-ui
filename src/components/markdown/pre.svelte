@@ -9,10 +9,7 @@
 </script>
 
 <pre
-	class={cn(
-		"mb-4 mt-6 overflow-x-auto rounded-card bg-background border-muted border-2 py-4 ",
-		className
-	)}
+	class={cn("mb-4 mt-6 overflow-x-auto rounded-card border-muted border-2 py-4 ", className)}
 	use:setCodeString
 	{...$$restProps}>
 	<slot />
