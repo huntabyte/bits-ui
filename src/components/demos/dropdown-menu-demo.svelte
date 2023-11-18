@@ -103,7 +103,7 @@
 					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
 				>
 					<Avatar.Root
-						class="relative mr-3 flex h-5 w-5 shrink-0 overflow-hidden rounded-full ring-2 ring-foreground ring-offset-2 ring-offset-background"
+						class="relative mr-3 flex h-5 w-5 shrink-0 overflow-hidden rounded-full border border-foreground/50"
 					>
 						<Avatar.Image
 							src="https://github.com/huntabyte.png"
@@ -121,7 +121,7 @@
 					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
 				>
 					<Avatar.Root
-						class="relative mr-3 flex h-5 w-5 shrink-0 overflow-hidden rounded-full ring-2 ring-foreground ring-offset-2 ring-offset-background"
+						class="relative mr-3 flex h-5 w-5 shrink-0 overflow-hidden rounded-full border border-foreground/50"
 					>
 						<Avatar.Image
 							src="https://github.com/pavelstianko.png"
@@ -139,7 +139,7 @@
 					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
 				>
 					<Avatar.Root
-						class="relative mr-3 flex h-5 w-5 shrink-0 overflow-hidden rounded-full ring-2 ring-foreground ring-offset-2 ring-offset-background"
+						class="relative mr-3 flex h-5 w-5 shrink-0 overflow-hidden rounded-full border border-foreground/50"
 					>
 						<Avatar.Image
 							src="https://github.com/adriangonz97.png"
@@ -157,7 +157,7 @@
 					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
 				>
 					<Avatar.Root
-						class="relative mr-3 flex h-5 w-5 shrink-0 overflow-hidden rounded-full ring-2 ring-foreground ring-offset-2 ring-offset-background"
+						class="relative mr-3 flex h-5 w-5 shrink-0 overflow-hidden rounded-full border border-foreground/50"
 					>
 						<Avatar.Image
 							src="https://github.com/tglide.png"

@@ -15,15 +15,11 @@
 
 	function hoverAction(node: HTMLElement) {
 		function handleMouseEnter() {
-			node.parentElement?.classList.add("border-l-foreground");
+			node.parentElement?.setAttribute("data-hover", "");
 		}
 
 		function handleMouseLeave() {
-			if (node.hasAttribute("data-active")) {
-				return;
-			}
-			node.parentElement?.classList.remove("border-l-foreground");
-			node.parentElement?.classList.add("border-l-transparent");
+			node.parentElement?.removeAttribute("data-hover");
 		}
 
 		node.addEventListener("mouseenter", handleMouseEnter);
@@ -46,18 +42,16 @@
 			<li class="mt-0 {level === 1 && 'border-l'}">
 				<div
 					class={cn(
-						"group -mx-[1px] inline-flex items-center justify-center gap-1 border-l pb-2 pl-4 text-muted-foreground no-underline",
+						"-mx-[1px] inline-flex items-center justify-center gap-1 border-l border-l-transparent pb-2 pl-4 text-muted-foreground no-underline transition-colors data-[hover]:border-l-foreground",
 						level !== 1 ? "pl-8" : "",
-						$isActive(heading.id)
-							? "border-l-foreground"
-							: "border-l-transparent"
+						$isActive(heading.id) && "border-l-foreground"
 					)}
 				>
 					<a
 						href="#{heading.id}"
 						use:melt={$item(heading.id)}
-						class="rounded-sm transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background data-[active]:text-foreground"
 						use:hoverAction
+						class="transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background data-[active]:text-foreground"
 					>
 						{@html nodeWithoutSpan}
 					</a>
