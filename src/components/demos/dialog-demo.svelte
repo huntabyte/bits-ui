@@ -41,7 +41,7 @@
 				<div class="relative w-full">
 					<input
 						id="apiKey"
-						class="inline-flex h-input w-full items-center rounded-card-sm border border-dark-10 bg-background px-4 text-sm placeholder:text-foreground-alt/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+						class="inline-flex h-input w-full items-center rounded-card-sm border border-dark-10 bg-background px-4 text-sm placeholder:text-foreground-alt/50 focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2 focus:ring-offset-background"
 						placeholder="secret_api_key"
 						type="password"
 						autocomplete="off"

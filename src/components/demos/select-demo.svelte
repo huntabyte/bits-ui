@@ -1,5 +1,6 @@
 <script lang="ts">
-	import * as Select from "@/components/ui/select";
+	import { Select } from "$lib";
+	import { flyAndScale } from "@/utils";
 
 	const fruits = [
 		{ value: "apple", label: "Apple" },
@@ -11,15 +12,22 @@
 </script>
 
 <Select.Root>
-	<Select.Trigger class="w-[180px]">
-		<Select.Value placeholder="Select a fruit" />
+	<Select.Trigger
+		class="inline-flex h-input w-[180px] items-center rounded-card-sm border border-dark-10 bg-background px-4 text-sm placeholder:text-foreground-alt/50 focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2 focus:ring-offset-background"
+	>
+		<Select.Value class="text-sm font-medium" placeholder="Select a fruit" />
 	</Select.Trigger>
-	<Select.Content>
+	<Select.Content
+		class="w-full rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover outline-none"
+		transition={flyAndScale}
+	>
 		<Select.Group>
-			<Select.Label>Fruits</Select.Label>
+			<Select.Label class="py-1.5 pl-2 font-medium">Fruits</Select.Label>
 			{#each fruits as fruit}
-				<Select.Item value={fruit.value} label={fruit.label}
-					>{fruit.label}</Select.Item
+				<Select.Item
+					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm  outline-none transition-all duration-75 data-[highlighted]:bg-muted"
+					value={fruit.value}
+					label={fruit.label}>{fruit.label}</Select.Item
 				>
 			{/each}
 		</Select.Group>
