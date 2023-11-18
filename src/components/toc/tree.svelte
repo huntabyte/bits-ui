@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { cn } from "@/utils";
 	import {
 		type TableOfContentsItem,
 		type TableOfContentsElements,
@@ -11,6 +12,30 @@
 	export let item: TableOfContentsElements["item"];
 	export let level = 1;
 	export let isActive: TableOfContents["helpers"]["isActive"];
+
+	function hoverAction(node: HTMLElement) {
+		function handleMouseEnter() {
+			node.parentElement?.classList.add("border-l-foreground");
+		}
+
+		function handleMouseLeave() {
+			if (node.hasAttribute("data-active")) {
+				return;
+			}
+			node.parentElement?.classList.remove("border-l-foreground");
+			node.parentElement?.classList.add("border-l-transparent");
+		}
+
+		node.addEventListener("mouseenter", handleMouseEnter);
+		node.addEventListener("mouseleave", handleMouseLeave);
+
+		return {
+			destroy() {
+				node.removeEventListener("mouseenter", handleMouseEnter);
+				node.removeEventListener("mouseleave", handleMouseLeave);
+			}
+		};
+	}
 </script>
 
 <ul class="m-0 list-none">
@@ -19,15 +44,24 @@
 			{@const node = heading.node.innerHTML}
 			{@const nodeWithoutSpan = node.replace(/<span.*<\/span>/g, "")}
 			<li class="mt-0 {level === 1 && 'border-l'}">
-				<a
-					href="#{heading.id}"
-					use:melt={$item(heading.id)}
-					class="inline-flex items-center justify-center gap-1 text-muted-foreground no-underline transition-colors
-				hover:text-foreground data-[active]:text-foreground data-[active]:border-l-foreground border-l border-l-transparent pl-4 pb-2 {level !==
-						1 && 'pl-8'} -mx-[1px] transition-all duration-200"
+				<div
+					class={cn(
+						"group -mx-[1px] inline-flex items-center justify-center gap-1 border-l pb-2 pl-4 text-muted-foreground no-underline",
+						level !== 1 ? "pl-8" : "",
+						$isActive(heading.id)
+							? "border-l-foreground"
+							: "border-l-transparent"
+					)}
 				>
-					{@html nodeWithoutSpan}
-				</a>
+					<a
+						href="#{heading.id}"
+						use:melt={$item(heading.id)}
+						class="transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background data-[active]:text-foreground"
+						use:hoverAction
+					>
+						{@html nodeWithoutSpan}
+					</a>
+				</div>
 
 				{#if heading.children && heading.children.length}
 					<svelte:self
@@ -42,3 +76,11 @@
 		{/each}
 	{/if}
 </ul>
+
+<style lang="postcss">
+	.parent .child[data-attribute="special"] {
+		/* Apply styles to the parent when the child with data-attribute="special" is present */
+		/* For example: */
+		background-color: lightblue;
+	}
+</style>
