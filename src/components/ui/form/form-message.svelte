@@ -9,7 +9,10 @@
 </script>
 
 {#if $errors}
-	<p class={cn("text-[0.8rem] font-medium text-destructive", className)} id={formMessageId}>
+	<p
+		class={cn("text-destructive text-[0.8rem] font-medium", className)}
+		id={formMessageId}
+	>
 		{$errors}
 	</p>
 {/if}

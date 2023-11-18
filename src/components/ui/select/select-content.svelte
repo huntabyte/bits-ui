@@ -14,7 +14,7 @@
 	outTransition={scale}
 	outTransitionConfig={{ start: 0.95, opacity: 0, duration: 50 }}
 	class={cn(
-		"relative z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground outline-none shadow-md data-[state=open]:translate-y-1",
+		"bg-popover text-popover-foreground relative z-50 min-w-[8rem] overflow-hidden rounded-md border shadow-md outline-none data-[state=open]:translate-y-1",
 		className
 	)}
 	{...$$restProps}

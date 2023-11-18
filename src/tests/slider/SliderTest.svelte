@@ -24,14 +24,24 @@
 </script>
 
 <main>
-	<Slider.Root data-testid="root" bind:value {...$$restProps} let:ticks {min} {max} {step}>
-		<span class="relative h-1.5 w-full grow overflow-hidden rounded-full bg-primary/20">
-			<Slider.Range data-testid="range" class="absolute h-full bg-primary" />
+	<Slider.Root
+		data-testid="root"
+		bind:value
+		{...$$restProps}
+		let:ticks
+		{min}
+		{max}
+		{step}
+	>
+		<span
+			class="bg-primary/20 relative h-1.5 w-full grow overflow-hidden rounded-full"
+		>
+			<Slider.Range data-testid="range" class="bg-primary absolute h-full" />
 		</span>
 		<Slider.Thumb
 			aria-label="age"
 			data-testid="thumb"
-			class="block h-4 w-4 rounded-full border border-primary/50 bg-background shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+			class="border-primary/50 focus-visible:ring-ring block h-4 w-4 rounded-full border bg-background shadow transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50"
 		/>
 
 		{#each { length: ticks } as _}

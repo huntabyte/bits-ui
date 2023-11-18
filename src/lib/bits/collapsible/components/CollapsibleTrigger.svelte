@@ -26,7 +26,13 @@
 {#if asChild}
 	<slot {...slotProps} />
 {:else}
-	<button use:melt={builder} type="button" {...$$restProps} {...attrs} on:m-click={dispatch}>
+	<button
+		use:melt={builder}
+		type="button"
+		{...$$restProps}
+		{...attrs}
+		on:m-click={dispatch}
+	>
 		<slot {...slotProps} />
 	</button>
 {/if}

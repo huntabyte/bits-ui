@@ -24,7 +24,7 @@
 		<ContextMenu.Root bind:open {...$$restProps}>
 			<ContextMenu.Trigger
 				data-testid="trigger"
-				class="w-[500px] h-[500px]"
+				class="h-[500px] w-[500px]"
 				aria-expanded={undefined}
 				aria-controls={undefined}>open</ContextMenu.Trigger
 			>
@@ -45,16 +45,25 @@
 						<ContextMenu.Item data-testid="sub-item">
 							<span>Email</span>
 						</ContextMenu.Item>
-						<ContextMenu.CheckboxItem bind:checked={subChecked} data-testid="sub-checkbox-item">
-							<ContextMenu.CheckboxIndicator data-testid="sub-checkbox-indicator">
+						<ContextMenu.CheckboxItem
+							bind:checked={subChecked}
+							data-testid="sub-checkbox-item"
+						>
+							<ContextMenu.CheckboxIndicator
+								data-testid="sub-checkbox-indicator"
+							>
 								checked
 							</ContextMenu.CheckboxIndicator>
 							sub checkbox
 						</ContextMenu.CheckboxItem>
 					</ContextMenu.SubContent>
 				</ContextMenu.Sub>
-				<ContextMenu.Item disabled data-testid="disabled-item">disabled item</ContextMenu.Item>
-				<ContextMenu.Item disabled data-testid="disabled-item-2">disabled item 2</ContextMenu.Item>
+				<ContextMenu.Item disabled data-testid="disabled-item"
+					>disabled item</ContextMenu.Item
+				>
+				<ContextMenu.Item disabled data-testid="disabled-item-2"
+					>disabled item 2</ContextMenu.Item
+				>
 				<ContextMenu.CheckboxItem bind:checked data-testid="checkbox-item">
 					<ContextMenu.CheckboxIndicator data-testid="checkbox-indicator">
 						checked
@@ -82,15 +91,22 @@
 
 	<!-- Buttons to test binding -->
 	<button data-testid="binding" on:click={() => (open = !open)}>{open}</button>
-	<button data-testid="checked-binding" on:click={() => (checked = !checked)}>{checked}</button>
-	<button data-testid="sub-checked-binding" on:click={() => (subChecked = !subChecked)}
-		>{subChecked}</button
+	<button data-testid="checked-binding" on:click={() => (checked = !checked)}
+		>{checked}</button
 	>
-	<button aria-label="radio-main" data-testid="radio-binding" on:click={() => (radio = "")}
-		>{radio}</button
+	<button
+		data-testid="sub-checked-binding"
+		on:click={() => (subChecked = !subChecked)}>{subChecked}</button
 	>
-	<button aria-label="radio-sub" data-testid="sub-radio-binding" on:click={() => (subRadio = "")}
-		>{subRadio}</button
+	<button
+		aria-label="radio-main"
+		data-testid="radio-binding"
+		on:click={() => (radio = "")}>{radio}</button
+	>
+	<button
+		aria-label="radio-sub"
+		data-testid="sub-radio-binding"
+		on:click={() => (subRadio = "")}>{subRadio}</button
 	>
 	<div id="portal-target" data-testid="portal-target" />
 </main>

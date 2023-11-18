@@ -16,10 +16,15 @@
 	});
 </script>
 
-<div class="overflow-y-auto rounded-lg p-4 mt-1">
+<div class="mt-1 overflow-y-auto rounded-lg p-4">
 	<nav>
 		{#key $headingsTree}
-			<Tree tree={$headingsTree} activeHeadingIdxs={$activeHeadingIdxs} {item} {isActive} />
+			<Tree
+				tree={$headingsTree}
+				activeHeadingIdxs={$activeHeadingIdxs}
+				{item}
+				{isActive}
+			/>
 		{/key}
 	</nav>
 </div>

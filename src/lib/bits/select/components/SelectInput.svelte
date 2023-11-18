@@ -15,11 +15,19 @@
 	const attrs = getAttrs("input");
 
 	$: builder = $hiddenInput;
-	$: slotProps = { builder, attrs: { ...attrs, disabled: $disabled ? true : undefined } };
+	$: slotProps = {
+		builder,
+		attrs: { ...attrs, disabled: $disabled ? true : undefined }
+	};
 </script>
 
 {#if asChild}
 	<slot {...slotProps} />
 {:else}
-	<input use:melt={builder} {...$$restProps} {...attrs} disabled={$disabled ? true : undefined} />
+	<input
+		use:melt={builder}
+		{...$$restProps}
+		{...attrs}
+		disabled={$disabled ? true : undefined}
+	/>
 {/if}

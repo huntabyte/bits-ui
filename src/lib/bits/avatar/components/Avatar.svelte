@@ -5,7 +5,8 @@
 	type $$Props = Props;
 	export let delayMs: $$Props["delayMs"] = undefined;
 	export let loadingStatus: $$Props["loadingStatus"] = undefined;
-	export let onLoadingStatusChange: $$Props["onLoadingStatusChange"] = undefined;
+	export let onLoadingStatusChange: $$Props["onLoadingStatusChange"] =
+		undefined;
 	export let asChild: $$Props["asChild"] = false;
 
 	const {

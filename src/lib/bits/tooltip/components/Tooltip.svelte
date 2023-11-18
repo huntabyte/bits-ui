@@ -13,7 +13,8 @@
 	export let closeDelay: $$Props["closeDelay"] = undefined;
 	export let open: $$Props["open"] = undefined;
 	export let onOpenChange: $$Props["onOpenChange"] = undefined;
-	export let disableHoverableContent: $$Props["disableHoverableContent"] = undefined;
+	export let disableHoverableContent: $$Props["disableHoverableContent"] =
+		undefined;
 	export let group: $$Props["group"] = undefined;
 
 	const {
@@ -40,10 +41,13 @@
 		}
 	});
 
-	const idValues = derived([ids.content, ids.trigger], ([$contentId, $triggerId]) => ({
-		content: $contentId,
-		trigger: $triggerId
-	}));
+	const idValues = derived(
+		[ids.content, ids.trigger],
+		([$contentId, $triggerId]) => ({
+			content: $contentId,
+			trigger: $triggerId
+		})
+	);
 
 	$: open !== undefined && localOpen.set(open);
 	$: updateOption("positioning", positioning);

@@ -10,5 +10,7 @@
 		<Collapsible.Trigger data-testid="trigger">Trigger</Collapsible.Trigger>
 		<Collapsible.Content data-testid="content">Content</Collapsible.Content>
 	</Collapsible.Root>
-	<button data-testid="alt-trigger" on:click={() => (open = !open)}>Toggle</button>
+	<button data-testid="alt-trigger" on:click={() => (open = !open)}
+		>Toggle</button
+	>
 </main>

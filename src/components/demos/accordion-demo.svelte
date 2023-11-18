@@ -24,13 +24,13 @@
 
 <Accordion.Root class="w-full sm:max-w-[70%]" multiple>
 	{#each items as item, i}
-		<Accordion.Item value="${i}" class="border-b border-dark-10 px-1.5 group">
+		<Accordion.Item value="${i}" class="group border-b border-dark-10 px-1.5">
 			<Accordion.Trigger
-				class="flex w-full flex-1 items-center justify-between py-5 text-[15px] font-medium [&[data-state=open]>span>svg]:rotate-180 transition-all "
+				class="flex w-full flex-1 items-center justify-between py-5 text-[15px] font-medium transition-all [&[data-state=open]>span>svg]:rotate-180 "
 			>
 				{item.title}
 				<span
-					class="rounded-[7px] inline-flex items-center justify-center h-8 w-8 hover:bg-dark-10 bg-transparent transition-all"
+					class="inline-flex h-8 w-8 items-center justify-center rounded-[7px] bg-transparent transition-all hover:bg-dark-10"
 				>
 					<CaretDown class="h-[18px] w-[18px] transition-all duration-200" />
 				</span>
@@ -38,7 +38,7 @@
 			<Accordion.Content
 				transition={slide}
 				transitionConfig={{ duration: 200 }}
-				class="text-sm pb-[25px]"
+				class="pb-[25px] text-sm"
 			>
 				{item.content}
 			</Accordion.Content>

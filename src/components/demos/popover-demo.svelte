@@ -26,7 +26,9 @@
 			</button>
 			<div class="space-y-2">
 				<h4 class="font-medium leading-none">Dimensions</h4>
-				<p class="text-sm text-muted-foreground">Set the dimensions for the layer.</p>
+				<p class="text-sm text-muted-foreground">
+					Set the dimensions for the layer.
+				</p>
 			</div>
 			<div class="grid gap-2">
 				<div class="grid grid-cols-3 items-center gap-4">

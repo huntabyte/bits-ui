@@ -24,7 +24,9 @@
 					{title}
 				</Accordion.Trigger>
 			</Accordion.Header>
-			<Accordion.Content data-testid="{value}-content">{content}</Accordion.Content>
+			<Accordion.Content data-testid="{value}-content"
+				>{content}</Accordion.Content
+			>
 		</Accordion.Item>
 	{/each}
 </Accordion.Root>

@@ -23,5 +23,10 @@
 {#if asChild}
 	<slot {...slotProps} />
 {:else}
-	<span use:melt={builder} {...$$restProps} {...attrs} on:m-keydown={dispatch} />
+	<span
+		use:melt={builder}
+		{...$$restProps}
+		{...attrs}
+		on:m-keydown={dispatch}
+	/>
 {/if}

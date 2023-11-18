@@ -40,16 +40,24 @@
 						<DropdownMenu.Item data-testid="sub-item">
 							<span>Email</span>
 						</DropdownMenu.Item>
-						<DropdownMenu.CheckboxItem bind:checked={subChecked} data-testid="sub-checkbox-item">
-							<DropdownMenu.CheckboxIndicator data-testid="sub-checkbox-indicator">
+						<DropdownMenu.CheckboxItem
+							bind:checked={subChecked}
+							data-testid="sub-checkbox-item"
+						>
+							<DropdownMenu.CheckboxIndicator
+								data-testid="sub-checkbox-indicator"
+							>
 								checked
 							</DropdownMenu.CheckboxIndicator>
 							sub checkbox
 						</DropdownMenu.CheckboxItem>
 					</DropdownMenu.SubContent>
 				</DropdownMenu.Sub>
-				<DropdownMenu.Item disabled data-testid="disabled-item">disabled item</DropdownMenu.Item>
-				<DropdownMenu.Item disabled data-testid="disabled-item-2">disabled item 2</DropdownMenu.Item
+				<DropdownMenu.Item disabled data-testid="disabled-item"
+					>disabled item</DropdownMenu.Item
+				>
+				<DropdownMenu.Item disabled data-testid="disabled-item-2"
+					>disabled item 2</DropdownMenu.Item
 				>
 				<DropdownMenu.CheckboxItem bind:checked data-testid="checkbox-item">
 					<DropdownMenu.CheckboxIndicator data-testid="checkbox-indicator">
@@ -78,15 +86,22 @@
 
 	<!-- Buttons to test binding -->
 	<button data-testid="binding" on:click={() => (open = !open)}>{open}</button>
-	<button data-testid="checked-binding" on:click={() => (checked = !checked)}>{checked}</button>
-	<button data-testid="sub-checked-binding" on:click={() => (subChecked = !subChecked)}
-		>{subChecked}</button
+	<button data-testid="checked-binding" on:click={() => (checked = !checked)}
+		>{checked}</button
 	>
-	<button aria-label="radio-main" data-testid="radio-binding" on:click={() => (radio = "")}
-		>{radio}</button
+	<button
+		data-testid="sub-checked-binding"
+		on:click={() => (subChecked = !subChecked)}>{subChecked}</button
 	>
-	<button aria-label="radio-sub" data-testid="sub-radio-binding" on:click={() => (subRadio = "")}
-		>{subRadio}</button
+	<button
+		aria-label="radio-main"
+		data-testid="radio-binding"
+		on:click={() => (radio = "")}>{radio}</button
+	>
+	<button
+		aria-label="radio-sub"
+		data-testid="sub-radio-binding"
+		on:click={() => (subRadio = "")}>{subRadio}</button
 	>
 	<div id="portal-target" data-testid="portal-target" />
 </main>

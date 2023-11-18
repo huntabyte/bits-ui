@@ -26,7 +26,12 @@
 {#if asChild}
 	<slot {...slotProps} />
 {:else}
-	<label use:melt={builder} {...$$restProps} {...attrs} on:m-mousedown={dispatch}>
+	<label
+		use:melt={builder}
+		{...$$restProps}
+		{...attrs}
+		on:m-mousedown={dispatch}
+	>
 		<slot {...slotProps} />
 	</label>
 {/if}

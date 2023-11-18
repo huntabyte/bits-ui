@@ -5,7 +5,12 @@
 	export { className as class };
 </script>
 
-<p class={cn("text-[21px] font-semibold text-foreground/40 mt-3 tracking-tight", className)}>
+<p
+	class={cn(
+		"mt-3 text-[21px] font-semibold tracking-tight text-foreground/40",
+		className
+	)}
+>
 	<Balancer>
 		<slot />
 	</Balancer>

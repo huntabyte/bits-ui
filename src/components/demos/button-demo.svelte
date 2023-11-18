@@ -3,8 +3,8 @@
 </script>
 
 <Button.Root
-	class="rounded-input h-12 text-[15px] font-semibold px-[21px] inline-flex
-	items-center justify-center bg-dark text-background hover:button-gradient
+	class="hover:button-gradient inline-flex h-12 items-center justify-center rounded-input
+	bg-dark px-[21px] text-[15px] font-semibold text-background
 	shadow-mini transition-all"
 >
 	Unlimited

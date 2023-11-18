@@ -28,7 +28,9 @@
 		</div>
 		<Sheet.Footer>
 			<Sheet.Close asChild let:builder>
-				<Button.Root builders={[builder]} type="submit">Save changes</Button.Root>
+				<Button.Root builders={[builder]} type="submit"
+					>Save changes</Button.Root
+				>
 			</Sheet.Close>
 		</Sheet.Footer>
 	</Sheet.Content>

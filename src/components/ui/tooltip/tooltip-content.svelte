@@ -15,7 +15,7 @@
 	transitionConfig={{ y: 8, start: 0.95, duration: 150 }}
 	{sideOffset}
 	class={cn(
-		"z-50 overflow-hidden rounded-md bg-primary px-3 py-1.5 text-xs text-primary-foreground ",
+		"bg-primary text-primary-foreground z-50 overflow-hidden rounded-md px-3 py-1.5 text-xs ",
 		className
 	)}
 	{...$$restProps}

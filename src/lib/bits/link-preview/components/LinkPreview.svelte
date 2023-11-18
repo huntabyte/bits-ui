@@ -34,10 +34,13 @@
 		}
 	});
 
-	const idValues = derived([ids.content, ids.trigger], ([$contentId, $triggerId]) => ({
-		content: $contentId,
-		trigger: $triggerId
-	}));
+	const idValues = derived(
+		[ids.content, ids.trigger],
+		([$contentId, $triggerId]) => ({
+			content: $contentId,
+			trigger: $triggerId
+		})
+	);
 
 	$: open !== undefined && localOpen.set(open);
 	$: updateOption("positioning", positioning);

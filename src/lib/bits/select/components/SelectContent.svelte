@@ -87,7 +87,13 @@
 		<slot {...slotProps} />
 	</div>
 {:else if $open}
-	<div use:melt={builder} {...$$restProps} {...attrs} on:m-pointerleave={dispatch} on:keydown>
+	<div
+		use:melt={builder}
+		{...$$restProps}
+		{...attrs}
+		on:m-pointerleave={dispatch}
+		on:keydown
+	>
 		<slot {...slotProps} />
 	</div>
 {/if}

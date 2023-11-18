@@ -3,7 +3,7 @@
 </script>
 
 <Avatar.Root
-	class="h-12 w-12 rounded-full bg-muted uppercase text-[17px] font-medium text-muted-foreground flex items-center justify-center"
+	class="flex h-12 w-12 items-center justify-center rounded-full bg-muted text-[17px] font-medium uppercase text-muted-foreground"
 >
 	<Avatar.Image src="/avatar-1.png" alt="@huntabyte" />
 	<Avatar.Fallback>HB</Avatar.Fallback>

@@ -26,10 +26,13 @@
 		}
 	});
 
-	const idValues = derived([ids.menu, ids.trigger], ([$menuId, $triggerId]) => ({
-		menu: $menuId,
-		trigger: $triggerId
-	}));
+	const idValues = derived(
+		[ids.menu, ids.trigger],
+		([$menuId, $triggerId]) => ({
+			menu: $menuId,
+			trigger: $triggerId
+		})
+	);
 
 	$: open !== undefined && subOpen.set(open);
 

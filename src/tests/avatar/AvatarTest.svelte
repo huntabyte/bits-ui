@@ -9,5 +9,7 @@
 		<Avatar.Fallback data-testid="fallback">HJ</Avatar.Fallback>
 	</Avatar.Root>
 
-	<button on:click={() => (src = "")} data-testid="clear-button">clear src</button>
+	<button on:click={() => (src = "")} data-testid="clear-button"
+		>clear src</button
+	>
 </main>

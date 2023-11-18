@@ -34,7 +34,12 @@
 {#if asChild && $open}
 	<slot {...slotProps} />
 {:else if transition && $open}
-	<div transition:transition={transitionConfig} use:melt={builder} {...$$restProps} {...attrs}>
+	<div
+		transition:transition={transitionConfig}
+		use:melt={builder}
+		{...$$restProps}
+		{...attrs}
+	>
 		<slot {...slotProps} />
 	</div>
 {:else if inTransition && outTransition && $open}
@@ -48,11 +53,21 @@
 		<slot {...slotProps} />
 	</div>
 {:else if inTransition && $open}
-	<div in:inTransition={inTransitionConfig} use:melt={builder} {...$$restProps} {...attrs}>
+	<div
+		in:inTransition={inTransitionConfig}
+		use:melt={builder}
+		{...$$restProps}
+		{...attrs}
+	>
 		<slot {...slotProps} />
 	</div>
 {:else if outTransition && $open}
-	<div out:outTransition={outTransitionConfig} use:melt={builder} {...$$restProps} {...attrs}>
+	<div
+		out:outTransition={outTransitionConfig}
+		use:melt={builder}
+		{...$$restProps}
+		{...attrs}
+	>
 		<slot {...slotProps} />
 	</div>
 {:else if $open}

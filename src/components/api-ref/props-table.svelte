@@ -24,10 +24,10 @@
 	<Table.Body>
 		{#each propData as { type, name, description, default: defaultVal }}
 			<Table.Row>
-				<Table.Cell class="align-baseline pr-1">
-					<Code class="text-foreground font-semibold">{name}</Code>
+				<Table.Cell class="pr-1 align-baseline">
+					<Code class="font-semibold text-foreground">{name}</Code>
 				</Table.Cell>
-				<Table.Cell class="align-baseline pr-1">
+				<Table.Cell class="pr-1 align-baseline">
 					<PropTypeContent {type} />
 				</Table.Cell>
 				<Table.Cell class="align-baseline">
@@ -35,7 +35,7 @@
 						{@html parseMarkdown(description)}
 					</p>
 					<div class="mt-2">
-						<Code class="bg-background px-0 h-auto"
+						<Code class="h-auto bg-background px-0"
 							>Default:
 							{#if defaultVal}
 								{` ${defaultVal}`}

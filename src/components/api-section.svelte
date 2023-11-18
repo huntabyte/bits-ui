@@ -13,14 +13,15 @@
 	{#each schemas as schema}
 		<div>
 			<div
-				class="h-[29px] px-3 bg-accent rounded-button inline-flex items-center justify-center font-mono tracking-tight text-[17px] leading-tight font-medium"
+				class="inline-flex h-[29px] items-center justify-center rounded-button bg-accent px-3 font-mono text-[17px] font-medium leading-tight tracking-tight"
 			>
 				<h3>
-					<span class="text-muted-foreground">{$page.data.title.replace(" ", "")}.</span
+					<span class="text-muted-foreground"
+						>{$page.data.title.replace(" ", "")}.</span
 					>{schema.title}
 				</h3>
 			</div>
-			<P class="!mt-2 !mb-5">{schema.description}</P>
+			<P class="!mb-5 !mt-2">{schema.description}</P>
 			<div class="flex flex-col gap-4">
 				{#if schema.props}
 					<PropsTable props={schema.props} />

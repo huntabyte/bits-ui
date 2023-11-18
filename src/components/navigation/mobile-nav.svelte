@@ -23,7 +23,7 @@
 		<MobileLink href="/" class="flex items-center" {open}>
 			<span class="font-bold">{siteConfig.name}</span>
 		</MobileLink>
-		<div class="my-4 h-[calc(100vh-8rem)] pb-10 pl-6 overflow-auto">
+		<div class="my-4 h-[calc(100vh-8rem)] overflow-auto pb-10 pl-6">
 			<div class="flex flex-col space-y-2">
 				{#each navigation.sidebar as navItem, index (index)}
 					<div class="flex flex-col space-y-3 pt-6">

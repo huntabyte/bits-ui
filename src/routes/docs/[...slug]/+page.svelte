@@ -2,7 +2,11 @@
 	import "@/styles/markdown.postcss";
 	import type { SvelteComponent } from "svelte";
 	import type { PageData } from "./$types";
-	import { PageHeader, PageHeaderDescription, PageHeaderHeading } from "@/components";
+	import {
+		PageHeader,
+		PageHeaderDescription,
+		PageHeaderHeading
+	} from "@/components";
 	type Component = $$Generic<typeof SvelteComponent>;
 
 	export let data: PageData;
