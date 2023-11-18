@@ -1,20 +1,17 @@
 <script lang="ts">
-	import { Dialog, Separator, Button, Label } from "$lib";
+	import { Dialog, Separator, Label } from "$lib";
 	import { flyAndScale } from "@/utils";
 	import { fade } from "svelte/transition";
 	import { X, LockKeyOpen } from "phosphor-svelte";
 </script>
 
 <Dialog.Root>
-	<Dialog.Trigger asChild let:builder>
-		<Button.Root
-			builders={[builder]}
-			class="inline-flex h-12 items-center
-			justify-center whitespace-nowrap rounded-input bg-dark px-[21px]
-			text-[15px] font-semibold text-background shadow-mini  transition-colors hover:bg-foreground/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-		>
-			Subscribe
-		</Button.Root>
+	<Dialog.Trigger
+		class="inline-flex h-12 items-center
+	justify-center whitespace-nowrap rounded-input bg-dark px-[21px]
+	text-[15px] font-semibold text-background shadow-mini  transition-colors hover:bg-foreground/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+	>
+		New API key
 	</Dialog.Trigger>
 	<Dialog.Portal>
 		<Dialog.Overlay
