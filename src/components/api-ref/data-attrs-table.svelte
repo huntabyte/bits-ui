@@ -19,18 +19,21 @@
 			{#each dataAttrs as attr}
 				<Table.Row>
 					<Table.Cell class="align-baseline">
-						<Code class="!text-foreground !font-semibold">data-{attr.name}</Code>
+						<Code class="!font-semibold !text-foreground">data-{attr.name}</Code
+						>
 					</Table.Cell>
 					<Table.Cell class="align-baseline">
 						{#if attr.description}
-							<p class="text-sm leading-7 my-2">
+							<p class="my-2 text-sm leading-7">
 								{@html parseMarkdown(attr.description)}
 							</p>
 						{/if}
 						{#if attr.value}
-							<Code class="!bg-background !px-0 !h-0">Value: {attr.value}</Code>
+							<Code class="!h-min !bg-background !px-0"
+								>Value: {attr.value}</Code
+							>
 						{:else}
-							<Code class="!bg-background !px-0 !h-0">Value: ''</Code>
+							<Code class="!h-min !bg-background !px-0">Value: ''</Code>
 						{/if}
 					</Table.Cell>
 				</Table.Row>

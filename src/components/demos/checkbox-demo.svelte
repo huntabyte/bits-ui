@@ -8,7 +8,8 @@
 	<Checkbox.Root
 		id="terms"
 		aria-labelledby="terms-label"
-		class="peer h-[25px] w-[25px] rounded-md border border-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background data-[state=checked]:bg-foreground data-[state=checked]:focus-visible:ring-foreground"
+		class="peer h-[25px] w-[25px] rounded-md border border-muted bg-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background data-[state=unchecked]:bg-background"
+		checked="indeterminate"
 	>
 		<Checkbox.Indicator
 			let:isChecked
