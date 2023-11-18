@@ -1,20 +1,16 @@
 <script lang="ts">
 	import { AlertDialog } from "$lib";
-	import { Button } from "$lib";
 	import { flyAndScale } from "@/utils";
 	import { fade } from "svelte/transition";
 </script>
 
 <AlertDialog.Root>
-	<AlertDialog.Trigger asChild let:builder>
-		<Button.Root
-			builders={[builder]}
-			class="inline-flex h-12 items-center
-		justify-center whitespace-nowrap rounded-input bg-dark px-[21px]
-		text-[15px] font-semibold text-background shadow-mini ring-dark ring-offset-background transition-colors hover:bg-foreground/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dark focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-		>
-			Subscribe
-		</Button.Root>
+	<AlertDialog.Trigger
+		class="inline-flex h-12 items-center
+	justify-center whitespace-nowrap rounded-input bg-dark px-[21px]
+	text-[15px] font-semibold text-background shadow-mini ring-dark ring-offset-background transition-colors hover:bg-foreground/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dark focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+	>
+		Subscribe
 	</AlertDialog.Trigger>
 	<AlertDialog.Portal>
 		<AlertDialog.Overlay

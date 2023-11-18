@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Popover, Label, Switch, Separator } from "$lib";
+	import { Popover, Label, Switch, Separator, Button } from "$lib";
 	import { Cookie } from "phosphor-svelte";
 
 	import { flyAndScale } from "@/utils";
@@ -18,7 +18,7 @@
 		Manage Cookies
 	</Popover.Trigger>
 	<Popover.Content
-		class="w-full max-w-[392px] rounded-card border border-muted bg-background p-5 shadow-card outline-none"
+		class="z-20 w-full max-w-[392px] rounded-card border border-muted bg-background p-5 shadow-card outline-none"
 		transition={flyAndScale}
 	>
 		<div class="flex items-center">
@@ -37,7 +37,7 @@
 			</div>
 		</div>
 		<Separator.Root class="-mx-5 mb-7 mt-[17px] block h-px bg-muted" />
-		<div class="flex flex-col gap-7 pl-2 pr-[2px]">
+		<div class="flex flex-col gap-7 pb-10 pl-2 pr-[2px]">
 			<div class="flex w-full items-center justify-between">
 				<div class="flex flex-col gap-0.5">
 					<div class="flex items-center gap-1.5">
@@ -106,5 +106,10 @@
 				</Switch.Root>
 			</div>
 		</div>
+		<Button.Root
+			class="inline-flex h-input w-full items-center justify-center rounded-input bg-dark text-[15px] font-semibold text-background shadow-mini focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dark focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+		>
+			Save settings
+		</Button.Root>
 	</Popover.Content>
 </Popover.Root>
