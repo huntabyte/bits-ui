@@ -4,26 +4,24 @@
 	import * as Button from "@/components/ui/button";
 	import * as Input from "@/components/ui/input";
 	import { tick } from "svelte";
+	import { flyAndScale } from "@/utils";
 
 	let open = false;
 </script>
 
 <Popover.Root bind:open let:ids>
-	<Popover.Trigger asChild let:builder>
-		<Button.Root builders={[builder]} variant="outline">Open</Button.Root>
+	<Popover.Trigger
+		class="inline-flex h-12 items-center
+	justify-center whitespace-nowrap rounded-input bg-dark px-[21px]
+	text-[15px] font-semibold text-background shadow-mini ring-dark ring-offset-background transition-colors hover:bg-foreground/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dark focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+	>
+		Open
 	</Popover.Trigger>
-	<Popover.Content class="w-80">
+	<Popover.Content
+		class="w-full max-w-[300px] rounded-xl border border-muted bg-background p-5 shadow-popover outline-none"
+		transition={flyAndScale}
+	>
 		<div class="grid gap-4">
-			<button
-				on:click={() => {
-					open = false;
-					tick().then(() => {
-						document.getElementById(ids.trigger)?.focus();
-					});
-				}}
-			>
-				close me
-			</button>
 			<div class="space-y-2">
 				<h4 class="font-medium leading-none">Dimensions</h4>
 				<p class="text-sm text-muted-foreground">
