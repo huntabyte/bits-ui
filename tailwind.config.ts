@@ -58,7 +58,8 @@ export default {
 				mini: "var(--shadow-mini)",
 				"mini-inset": "var(--shadow-mini-inset)",
 				popover: "var(--shadow-popover)",
-				kbd: "var(--shadow-kbd)"
+				kbd: "var(--shadow-kbd)",
+				btn: "var(--shadow-btn)",
 			},
 			opacity: {
 				8: "0.08"
