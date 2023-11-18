@@ -4,13 +4,12 @@
 
 	import { flyAndScale } from "@/utils";
 
-	let open = true;
 	let necessary = true;
 	let marketing = false;
 	let shopping = false;
 </script>
 
-<Popover.Root bind:open>
+<Popover.Root>
 	<Popover.Trigger
 		class="inline-flex h-12 items-center
 	justify-center whitespace-nowrap rounded-input bg-dark px-[21px]
@@ -46,7 +45,7 @@
 							>Strictly necessary</Label.Root
 						>
 						<div
-							class="text-accent-foreground inline-flex h-5 items-center justify-center rounded-[30px] bg-accent px-2 text-[11px] font-medium"
+							class="inline-flex h-5 items-center justify-center rounded-[30px] bg-accent px-2 text-[11px] font-medium text-accent-foreground"
 						>
 							required
 						</div>
