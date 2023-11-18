@@ -26,8 +26,10 @@
 				<a
 					href={item.href}
 					class={cn(
-						"group flex w-full items-center gap-2.5 rounded-md px-2.5 py-1.5 text-sm font-semibold text-foreground transition-all hover:bg-muted",
-						$page.url.pathname === item.href ? "bg-muted" : "bg-transparent"
+						"group flex w-full items-center gap-2.5 rounded-md px-2.5 py-1.5 text-sm font-semibold text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+						$page.url.pathname === item.href
+							? "bg-muted"
+							: "bg-transparent hover:bg-muted/50"
 					)}
 					target={item.external ? "_blank" : ""}
 					rel={item.external ? "noreferrer" : ""}

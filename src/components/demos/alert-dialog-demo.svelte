@@ -37,7 +37,7 @@
 			</div>
 			<div class="flex w-full items-center justify-center gap-2">
 				<AlertDialog.Cancel
-					class="inline-flex h-input w-full items-center justify-center rounded-input bg-muted text-[15px] font-medium shadow-mini focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-muted focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+					class="inline-flex h-input w-full items-center justify-center rounded-input bg-muted text-[15px] font-medium shadow-mini focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
 					>Cancel</AlertDialog.Cancel
 				>
 				<AlertDialog.Action
