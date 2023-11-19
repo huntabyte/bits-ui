@@ -40,6 +40,10 @@ export const root: APISchema<Progress.Props> = {
 		{
 			name: "max",
 			description: "The maximum value of the progress bar."
+		},
+		{
+			name: "bits-progress-root",
+			description: "Present on the root element."
 		}
 	]
 };

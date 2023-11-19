@@ -73,6 +73,10 @@ export const trigger: APISchema<Popover.TriggerProps> = {
 			name: "state",
 			value: enums("open", "closed"),
 			description: "The open state of the link preview."
+		},
+		{
+			name: "bits-popover-trigger",
+			description: "Present on the trigger element."
 		}
 	]
 };
@@ -80,14 +84,31 @@ export const trigger: APISchema<Popover.TriggerProps> = {
 export const content: APISchema<Popover.ContentProps> = {
 	title: "Content",
 	description: "The contents of the popover which are displayed when the popover is open.",
-	props: { ...transitionProps, asChild }
+	props: { ...transitionProps, asChild },
+	dataAttributes: [
+		{
+			name: "state",
+			value: enums("open", "closed"),
+			description: "The open state of the popover."
+		},
+		{
+			name: "bits-popover-content",
+			description: "Present on the content element."
+		}
+	]
 };
 
 export const close: APISchema<Popover.CloseProps> = {
 	title: "Close",
 	description:
 		"A button which closes the popover when pressed and is typically placed in the content.",
-	props: { asChild }
+	props: { asChild },
+	dataAttributes: [
+		{
+			name: "bits-popover-close",
+			description: "Present on the close button."
+		}
+	]
 };
 
 export const arrow: APISchema<Popover.ArrowProps> = {
@@ -98,6 +119,10 @@ export const arrow: APISchema<Popover.ArrowProps> = {
 		{
 			name: "arrow",
 			value: "",
+			description: "Present on the arrow element."
+		},
+		{
+			name: "bits-popover-arrow",
 			description: "Present on the arrow element."
 		}
 	]

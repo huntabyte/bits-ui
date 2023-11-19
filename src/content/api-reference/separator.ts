@@ -28,6 +28,10 @@ export const root: APISchema<Separator.Props> = {
 			name: "orientation",
 			value: enums("horizontal", "vertical"),
 			description: "The orientation of the separator."
+		},
+		{
+			name: "bits-separator-root",
+			description: "Present on the root element."
 		}
 	]
 };

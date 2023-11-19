@@ -68,6 +68,10 @@ export const content: APISchema<Dialog.ContentProps> = {
 			name: "state",
 			value: enums("open", "closed"),
 			description: "The state of the dialog."
+		},
+		{
+			name: "bits-dialog-content",
+			description: "Present on the content."
 		}
 	]
 };
@@ -84,7 +88,13 @@ export const title: APISchema<Dialog.TitleProps> = {
 			description: "The heading level of the title."
 		},
 		asChild
-	}
+	},
+	dataAttributes: [
+		{
+			name: "bits-dialog-title",
+			description: "Present on the title."
+		}
+	]
 };
 
 export const description: APISchema<Dialog.DescriptionProps> = {

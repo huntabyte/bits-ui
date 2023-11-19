@@ -52,6 +52,10 @@ export const root: APISchema<RadioGroup.Props> = {
 			name: "orientation",
 			value: enums("vertical", "horizontal"),
 			description: "The orientation of the radio group."
+		},
+		{
+			name: "bits-radio-group-root",
+			description: "Present on the root element."
 		}
 	]
 };
@@ -91,6 +95,10 @@ export const item: APISchema<RadioGroup.ItemProps> = {
 			name: "orientation",
 			value: enums("vertical", "horizontal"),
 			description: "The orientation of the parent radio group."
+		},
+		{
+			name: "bits-radio-group-item",
+			description: "Present on the radio item element."
 		}
 	]
 };
@@ -105,7 +113,13 @@ export const input: APISchema<RadioGroup.InputProps> = {
 export const indicator: APISchema = {
 	title: "ItemIndicator",
 	description:
-		"A component which is used to indicate the radio item's checked state. Any children of this component will only be visible when the radio item is checked."
+		"A component which is used to indicate the radio item's checked state. Any children of this component will only be visible when the radio item is checked.",
+	dataAttributes: [
+		{
+			name: "bits-radio-group-indicator",
+			description: "Present on the indicator element."
+		}
+	]
 };
 
 export const radioGroup = [root, item, input, indicator];
