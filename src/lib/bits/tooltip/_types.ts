@@ -4,15 +4,8 @@
  * but we don't want to document the HTML attributes.
  */
 import type { CreateTooltipProps } from "@melt-ui/svelte";
-import type {
-	Expand,
-	OmitFloating,
-	Transition,
-	OnChangeFn,
-	AsChild,
-	TransitionProps
-} from "$lib/internal/index.js";
-import type { ArrowProps } from "$lib/bits/floating/_types.js";
+import type { Expand, OmitFloating, OnChangeFn, AsChild } from "$lib/internal/index.js";
+import type { ArrowProps, ContentProps } from "$lib/bits/floating/_types.js";
 
 type Props = Expand<OmitFloating<CreateTooltipProps>> & {
 	/**
@@ -42,17 +35,6 @@ type Props = Expand<OmitFloating<CreateTooltipProps>> & {
 	 */
 	onOpenChange?: OnChangeFn<boolean>;
 };
-
-type ContentProps<
-	T extends Transition = Transition,
-	In extends Transition = Transition,
-	Out extends Transition = Transition
-> = Expand<
-	{
-		sideOffset?: number;
-	} & TransitionProps<T, In, Out> &
-		AsChild
->;
 
 type TriggerProps = AsChild;
 

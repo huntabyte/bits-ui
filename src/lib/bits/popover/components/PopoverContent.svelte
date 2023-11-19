@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import type { Transition } from "$lib/internal/index.js";
-	import { getCtx, getAttrs } from "../ctx.js";
+	import { getCtx, getAttrs, updatePositioning } from "../ctx.js";
 	import type { ContentProps } from "../types.js";
 
 	type T = $$Generic<Transition>;
@@ -18,6 +18,15 @@
 	export let outTransitionConfig: $$Props["outTransitionConfig"] = undefined;
 	export let asChild: $$Props["asChild"] = false;
 	export let id: $$Props["id"] = undefined;
+	export let side: $$Props["side"] = "bottom";
+	export let align: $$Props["align"] = "center";
+	export let sideOffset: $$Props["sideOffset"] = 0;
+	export let alignOffset: $$Props["alignOffset"] = 0;
+	export let collisionPadding: $$Props["collisionPadding"] = 8;
+	export let avoidCollisions: $$Props["avoidCollisions"] = true;
+	export let collisionBoundary: $$Props["collisionBoundary"] = undefined;
+	export let sameWidth: $$Props["sameWidth"] = false;
+	export let fitViewport: $$Props["fitViewport"] = false;
 
 	const {
 		elements: { content },
@@ -35,6 +44,18 @@
 		builder,
 		attrs
 	};
+
+	$: updatePositioning({
+		side,
+		align,
+		sideOffset,
+		alignOffset,
+		collisionPadding,
+		avoidCollisions,
+		collisionBoundary,
+		sameWidth,
+		fitViewport
+	});
 </script>
 
 {#if asChild && $open}
