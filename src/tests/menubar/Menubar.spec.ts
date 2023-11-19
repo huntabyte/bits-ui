@@ -48,13 +48,13 @@ describe("Menubar", () => {
 
 		for (const part in parts) {
 			const el = screen.getByTestId(mappedParts[part]);
-			expect(el).toHaveAttribute(`data-bits-menubar-${parts[part]}`);
+			expect(el).toHaveAttribute(`data-bits-menu-${parts[part]}`);
 		}
 
 		await user.click(getByTestId("1-sub-trigger"));
 
 		const subContent = getByTestId("1-sub-content");
-		expect(subContent).toHaveAttribute(`data-bits-menubar-sub-content`);
+		expect(subContent).toHaveAttribute(`data-bits-menu-sub-content`);
 	});
 
 	it("navigates triggers within the menubar using arrow keys", async () => {

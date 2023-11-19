@@ -2,6 +2,7 @@ import type { APISchema, PropObj } from "@/types";
 import { asChild, enums, transitionProps } from "@/content/api-reference/helpers.js";
 import type * as Collapsible from "$lib/bits/collapsible/_types";
 import * as C from "@/content/constants";
+
 export const root: APISchema<Collapsible.Props> = {
 	title: "Root",
 	description: "The root collapsible container which manages the state of the collapsible.",
@@ -37,6 +38,10 @@ export const root: APISchema<Collapsible.Props> = {
 			name: "state",
 			value: enums("open", "closed"),
 			description: "The collapsible's open state."
+		},
+		{
+			name: "bits-collapsible-root",
+			description: "Present on the root element."
 		}
 	]
 };
@@ -55,6 +60,10 @@ export const trigger: APISchema<Collapsible.TriggerProps> = {
 			name: "state",
 			value: enums("open", "closed"),
 			description: "The collapsible's open state."
+		},
+		{
+			name: "bits-collapsible-trigger",
+			description: "Present on the trigger element."
 		}
 	]
 };
@@ -78,6 +87,10 @@ export const content: APISchema<Collapsible.ContentProps> = {
 			name: "state",
 			value: enums("open", "closed"),
 			description: "The collapsible's open state."
+		},
+		{
+			name: "bits-collapsible-content",
+			description: "Present on the content element."
 		}
 	]
 };

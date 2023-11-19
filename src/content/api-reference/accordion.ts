@@ -131,4 +131,30 @@ const content: APISchema<Accordion.ContentProps> = {
 	]
 };
 
-export const accordion = [root, item, trigger, content];
+const header: APISchema<Accordion.HeaderProps> = {
+	title: "Header",
+	description: "The accordion item header, which wraps the trigger and makes it more accessible.",
+	props: {
+		level: {
+			type: {
+				type: C.ENUM,
+				definition: union("1", "2", "3", "4", "5", "6")
+			},
+			description:
+				"The heading level to use for the header. This will be set as the `aria-level` attribute."
+		},
+		asChild
+	},
+	dataAttributes: [
+		{
+			name: "heading-level",
+			description: "The heading level of the header."
+		},
+		{
+			name: "bits-accordion-header",
+			description: "Present on the header element."
+		}
+	]
+};
+
+export const accordion = [root, item, header, trigger, content];

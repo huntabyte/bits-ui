@@ -37,6 +37,9 @@ export default {
 				accent: {
 					DEFAULT: "hsl(var(--accent) / <alpha-value>)",
 					foreground: "hsl(var(--accent-foreground) / <alpha-value>)"
+				},
+				destructive: {
+					DEFAULT: "hsl(var(--destructive) / <alpha-value>)"
 				}
 			},
 			fontFamily: {

@@ -24,8 +24,8 @@ const transitionProp: PropSchema = {
 };
 
 const transitionConfigProp: PropSchema = {
-	type: C.OBJECT,
-	description: "The Svelte `TransitionConfig` object to apply to the transition."
+	type: "TransitionConfig",
+	description: "The configuration to apply to the transition."
 };
 
 export const transitionProps = {

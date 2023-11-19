@@ -50,7 +50,13 @@ export const root: APISchema<Dialog.Props> = {
 export const close: APISchema<Dialog.CloseProps> = {
 	title: "Close",
 	description: "A button used to close the dialog.",
-	props: { asChild }
+	props: { asChild },
+	dataAttributes: [
+		{
+			name: "bits-dialog-close",
+			description: "Present on the close button."
+		}
+	]
 };
 
 export const content: APISchema<Dialog.ContentProps> = {
@@ -84,13 +90,25 @@ export const title: APISchema<Dialog.TitleProps> = {
 export const description: APISchema<Dialog.DescriptionProps> = {
 	title: "Description",
 	description: "An accessibile description for the dialog.",
-	props: { asChild }
+	props: { asChild },
+	dataAttributes: [
+		{
+			name: "bits-dialog-description",
+			description: "Present on the description."
+		}
+	]
 };
 
 export const trigger: APISchema<Dialog.TriggerProps> = {
 	title: "Trigger",
 	description: "The element which opens the dialog on press.",
-	props: { asChild }
+	props: { asChild },
+	dataAttributes: [
+		{
+			name: "bits-dialog-trigger",
+			description: "Present on the trigger."
+		}
+	]
 };
 
 export const overlay: APISchema<Dialog.OverlayProps> = {
@@ -102,6 +120,10 @@ export const overlay: APISchema<Dialog.OverlayProps> = {
 			name: "state",
 			value: enums("open", "closed"),
 			description: "The state of the dialog."
+		},
+		{
+			name: "bits-dialog-overlay",
+			description: "Present on the overlay."
 		}
 	]
 };
@@ -109,7 +131,17 @@ export const overlay: APISchema<Dialog.OverlayProps> = {
 export const portal: APISchema<Dialog.PortalProps> = {
 	title: "Portal",
 	description: "A portal which renders the dialog into the body when it is open.",
-	props: { asChild }
+	props: { asChild },
+	dataAttributes: [
+		{
+			name: "portal",
+			description: "Present on the portal."
+		},
+		{
+			name: "bits-dialog-portal",
+			description: "Present on the portal."
+		}
+	]
 };
 
 export const dialog = [root, trigger, content, overlay, portal, close, title, description];

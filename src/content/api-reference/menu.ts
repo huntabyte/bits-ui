@@ -1,4 +1,4 @@
-import type { PropObj } from "@/types";
+import type { APISchema, PropObj } from "@/types";
 import { floatingConfigProp, focusProp } from "./extended-types";
 import {
 	asChild,
@@ -10,7 +10,7 @@ import {
 import type * as Menu from "$lib/bits/menu/_types";
 import * as C from "@/content/constants";
 
-export const props = {
+const props = {
 	preventScroll: {
 		default: C.TRUE,
 		type: C.BOOLEAN,
@@ -72,7 +72,7 @@ export const props = {
 	}
 } satisfies PropObj<Menu.Props>;
 
-export const subProps = {
+const subProps = {
 	disabled: {
 		type: C.BOOLEAN,
 		description: "Whether or not the submenu is disabled."
@@ -95,7 +95,7 @@ export const subProps = {
 	}
 } satisfies PropObj<Menu.SubProps>;
 
-export const contentProps = {
+const contentProps = {
 	...transitionProps,
 	sideOffset: {
 		type: C.NUMBER,
@@ -105,7 +105,7 @@ export const contentProps = {
 	asChild
 } satisfies PropObj<Menu.ContentProps>;
 
-export const subContentProps = {
+const subContentProps = {
 	...transitionProps,
 	asChild,
 	sideOffset: {
@@ -115,7 +115,7 @@ export const subContentProps = {
 	}
 } satisfies PropObj<Menu.SubContentProps>;
 
-export const arrowProps = {
+const arrowProps = {
 	asChild,
 	size: {
 		type: C.NUMBER,
@@ -124,7 +124,7 @@ export const arrowProps = {
 	}
 } satisfies PropObj<Menu.ArrowProps>;
 
-export const checkboxItemProps = {
+const checkboxItemProps = {
 	disabled: {
 		type: C.BOOLEAN,
 		default: C.FALSE,
@@ -146,7 +146,7 @@ export const checkboxItemProps = {
 	asChild
 } satisfies PropObj<Menu.CheckboxItemProps>;
 
-export const radioGroupProps = {
+const radioGroupProps = {
 	value: {
 		type: C.STRING,
 		description: "The value of the currently checked radio menu item."
@@ -161,7 +161,7 @@ export const radioGroupProps = {
 	asChild
 } satisfies PropObj<Menu.RadioGroupProps>;
 
-export const radioItemProps = {
+const radioItemProps = {
 	value: {
 		type: C.STRING,
 		description:
@@ -176,7 +176,7 @@ export const radioItemProps = {
 	asChild
 } satisfies PropObj<Menu.RadioItemProps>;
 
-export const itemProps = {
+const itemProps = {
 	asChild,
 	disabled: {
 		type: C.BOOLEAN,
@@ -189,7 +189,7 @@ export const itemProps = {
 	}
 } satisfies PropObj<Menu.ItemProps & { href: string }>;
 
-export const subTriggerProps = {
+const subTriggerProps = {
 	disabled: {
 		type: C.BOOLEAN,
 		default: C.FALSE,
@@ -198,10 +198,240 @@ export const subTriggerProps = {
 	asChild
 } satisfies PropObj<Menu.SubTriggerProps>;
 
-export const triggerProps = { asChild } satisfies PropObj<Menu.TriggerProps>;
-export const groupProps = { asChild } satisfies PropObj<Menu.GroupProps>;
-export const labelProps = { asChild } satisfies PropObj<Menu.LabelProps>;
-export const separatorProps = { asChild } satisfies PropObj<Menu.SeparatorProps>;
-export const checkboxIndicatorProps = {
+const triggerProps = { asChild } satisfies PropObj<Menu.TriggerProps>;
+const groupProps = { asChild } satisfies PropObj<Menu.GroupProps>;
+const labelProps = { asChild } satisfies PropObj<Menu.LabelProps>;
+const separatorProps = { asChild } satisfies PropObj<Menu.SeparatorProps>;
+const checkboxIndicatorProps = {
 	asChild
 } satisfies PropObj<Menu.CheckboxItemIndicatorProps>;
+
+const STATE = {
+	name: "state",
+	value: enums("open", "closed"),
+	description: "The open state of the menu or submenu the element controls or belongs to."
+};
+
+type DataAttrs = APISchema["dataAttributes"];
+
+const triggerAttrs: DataAttrs = [
+	STATE,
+	{
+		name: "bits-menu-trigger",
+		description: "Present on the trigger element."
+	}
+];
+
+const contentAttrs: DataAttrs = [
+	STATE,
+	{
+		name: "bits-menu-content",
+		description: "Present on the content element."
+	}
+];
+
+const arrowAttrs: DataAttrs = [
+	STATE,
+	{
+		name: "bits-menu-arrow",
+		description: "Present on the arrow element."
+	}
+];
+
+const sharedItemAttrs: DataAttrs = [
+	{
+		name: "orientation",
+		value: "vertical"
+	},
+	{
+		name: "highlighted",
+		description: "Present when the menu item is highlighted."
+	},
+	{
+		name: "disabled",
+		description: "Present when the menu item is disabled."
+	}
+];
+
+const itemAttrs: DataAttrs = [
+	...sharedItemAttrs,
+	{
+		name: "bits-menu-item",
+		description: "Present on the item element."
+	}
+];
+
+const groupAttrs: DataAttrs = [
+	{
+		name: "bits-menu-group",
+		description: "Present on the group element."
+	}
+];
+
+const labelAttrs: DataAttrs = [
+	{
+		name: "bits-menu-label",
+		description: "Present on the group label element."
+	}
+];
+
+const checkboxItemAttrs: DataAttrs = [
+	...sharedItemAttrs,
+	{
+		name: "state",
+		value: enums("checked", "unchecked", "indeterminate"),
+		description: "The checkbox menu item's checked state."
+	}
+];
+
+const radioGroupAttrs: DataAttrs = [
+	{
+		name: "bits-menu-radio-group",
+		description: "Present on the radio group element."
+	}
+];
+
+const radioItemAttrs: DataAttrs = [
+	...sharedItemAttrs,
+	{
+		name: "state",
+		value: enums("checked", "unchecked"),
+		description: "The radio menu item's checked state."
+	},
+	{
+		name: "value",
+		description: "The value of the radio item."
+	},
+	{
+		name: "bits-menu-radio-item",
+		description: "Present on the radio item element."
+	}
+];
+
+const separatorAttrs: DataAttrs = [
+	{
+		name: "orientation",
+		value: "vertical",
+		description: "The orientation of the separator."
+	},
+	{
+		name: "bits-menu-separator",
+		description: "Present on the separator element."
+	}
+];
+
+const subContentAttrs: DataAttrs = [
+	STATE,
+	{
+		name: "bits-menu-sub-content",
+		description: "Present on the submenu content element."
+	}
+];
+
+const subTriggerAttrs: DataAttrs = [
+	...sharedItemAttrs,
+	STATE,
+	{
+		name: "bits-menu-sub-trigger",
+		description: "Present on the submenu trigger element."
+	}
+];
+
+const checkboxIndicatorAttrs: DataAttrs = [
+	{
+		name: "bits-menu-checkbox-indicator",
+		description: "Present on the checkbox indicator element."
+	}
+];
+
+export const trigger = {
+	props: triggerProps,
+	dataAttributes: triggerAttrs
+};
+
+export const content = {
+	props: contentProps,
+	dataAttributes: contentAttrs
+};
+
+export const arrow = {
+	props: arrowProps,
+	dataAttributes: arrowAttrs
+};
+
+export const item = {
+	props: itemProps,
+	dataAttributes: itemAttrs
+};
+
+export const group = {
+	props: groupProps,
+	dataAttributes: groupAttrs
+};
+
+export const label = {
+	props: labelProps,
+	dataAttributes: labelAttrs
+};
+
+export const separator = {
+	props: separatorProps,
+	dataAttributes: separatorAttrs
+};
+
+export const checkboxIndicator = {
+	props: checkboxIndicatorProps,
+	dataAttributes: checkboxIndicatorAttrs
+};
+
+export const checkboxItem = {
+	props: checkboxItemProps,
+	dataAttributes: checkboxItemAttrs
+};
+
+export const radioGroup = {
+	props: radioGroupProps,
+	dataAttributes: radioGroupAttrs
+};
+
+export const radioItem = {
+	props: radioItemProps,
+	dataAttributes: radioItemAttrs
+};
+
+export const subTrigger = {
+	props: subTriggerProps,
+	dataAttributes: subTriggerAttrs
+};
+
+export const subContent = {
+	props: subContentProps,
+	dataAttributes: subContentAttrs
+};
+
+export const sub = {
+	props: subProps
+};
+
+export const root = {
+	props,
+	dataAttributes: [...triggerAttrs, ...contentAttrs]
+};
+
+export const menu = {
+	root,
+	trigger,
+	content,
+	item,
+	checkboxItem,
+	checkboxIndicator,
+	radioGroup,
+	radioItem,
+	separator,
+	arrow,
+	group,
+	label,
+	sub,
+	subTrigger,
+	subContent
+};

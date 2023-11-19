@@ -54,6 +54,10 @@ export const root: APISchema<Checkbox.Props> = {
 			name: "state",
 			value: enums("checked", "unchecked", "indeterminate"),
 			description: "The checkbox's state. Can be 'checked', 'unchecked', or 'indeterminate'."
+		},
+		{
+			name: "bits-checkbox-root",
+			description: "Present on the root element."
 		}
 	]
 };
@@ -82,7 +86,13 @@ export const indicator: APISchema<Checkbox.IndicatorProps> = {
 	title: "Indicator",
 	description:
 		"A component which passes `isChecked` and `isIndeterminate` slot props to its children. This is useful for rendering the checkbox's indicator icon depending on its state.",
-	props: { asChild }
+	props: { asChild },
+	dataAttributes: [
+		{
+			name: "bits-checkbox-indicator",
+			description: "Present on the indicator element."
+		}
+	]
 };
 
 export const checkbox = [root, input, indicator];

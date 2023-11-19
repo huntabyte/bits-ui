@@ -28,7 +28,6 @@ const RADIO_GROUP_NAME = "menubar-radio-group";
 const RADIO_ITEM_NAME = "menubar-radio-item";
 const GROUP_NAME = "menubar-group";
 const PARTS = [
-	"root",
 	"arrow",
 	"checkbox-indicator",
 	"checkbox-item",
@@ -44,7 +43,8 @@ const PARTS = [
 	"trigger"
 ] as const;
 
-export const getAttrs = createBitAttrs(NAME, PARTS);
+export const getMenubarAttrs = createBitAttrs(NAME, ["root"]);
+export const getAttrs = createBitAttrs("menu", PARTS);
 
 type GetReturn = MenubarReturn;
 type GetMenuReturn = MenubarMenuReturn;

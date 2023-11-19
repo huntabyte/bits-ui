@@ -23,7 +23,7 @@
 			<Popover.Content
 				transition={flyAndScale}
 				transitionConfig={{ y: 8 }}
-				class="z-50 rounded-input border border-border bg-background p-4 shadow-popover"
+				class="z-50 max-h-[400px] overflow-auto rounded-input border border-border bg-background p-4 shadow-popover"
 			>
 				<Code class="h-auto bg-transparent px-0 tracking-tight text-foreground">
 					{@html parseTypeDef(type.definition)}

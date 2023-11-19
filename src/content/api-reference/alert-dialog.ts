@@ -4,7 +4,7 @@ import * as C from "@/content/constants.js";
 import { focusProp } from "@/content/api-reference/extended-types/index.js";
 import type * as AlertDialog from "$lib/bits/alert-dialog/_types.js";
 
-export const root: APISchema<AlertDialog.Props> = {
+const root: APISchema<AlertDialog.Props> = {
 	title: "Root",
 	description: "The root component used to set and manage the state of the alert dialog.",
 	props: {
@@ -47,7 +47,7 @@ export const root: APISchema<AlertDialog.Props> = {
 	}
 };
 
-export const action: APISchema<AlertDialog.ActionProps> = {
+const action: APISchema<AlertDialog.ActionProps> = {
 	title: "Action",
 	description: "A button used to close the alert dialog by taking an action.",
 	props: {
@@ -61,7 +61,7 @@ export const action: APISchema<AlertDialog.ActionProps> = {
 	]
 };
 
-export const cancel: APISchema<AlertDialog.CancelProps> = {
+const cancel: APISchema<AlertDialog.CancelProps> = {
 	title: "Cancel",
 	description: "A button used to close the alert dialog without taking an action.",
 	props: { asChild },
@@ -73,7 +73,7 @@ export const cancel: APISchema<AlertDialog.CancelProps> = {
 	]
 };
 
-export const content: APISchema<AlertDialog.ContentProps> = {
+const content: APISchema<AlertDialog.ContentProps> = {
 	title: "Content",
 	description: "The content displayed within the alert dialog modal.",
 	props: { ...transitionProps, asChild },
@@ -90,7 +90,7 @@ export const content: APISchema<AlertDialog.ContentProps> = {
 	]
 };
 
-export const title: APISchema<AlertDialog.TitleProps> = {
+const title: APISchema<AlertDialog.TitleProps> = {
 	title: "Title",
 	description: "An accessibile title for the alert dialog.",
 	props: {
@@ -102,16 +102,28 @@ export const title: APISchema<AlertDialog.TitleProps> = {
 			},
 			description: "The heading level of the title."
 		}
-	}
+	},
+	dataAttributes: [
+		{
+			name: "bits-alert-dialog-title",
+			description: "Present on the title."
+		}
+	]
 };
 
-export const description: APISchema<AlertDialog.DescriptionProps> = {
+const description: APISchema<AlertDialog.DescriptionProps> = {
 	title: "Description",
 	description: "An accessibile description for the alert dialog.",
-	props: { asChild }
+	props: { asChild },
+	dataAttributes: [
+		{
+			name: "bits-alert-dialog-description",
+			description: "Present on the description."
+		}
+	]
 };
 
-export const trigger: APISchema<AlertDialog.TriggerProps> = {
+const trigger: APISchema<AlertDialog.TriggerProps> = {
 	title: "Trigger",
 	description: "The element which opens the alert dialog on press.",
 	props: { asChild },
@@ -123,7 +135,7 @@ export const trigger: APISchema<AlertDialog.TriggerProps> = {
 	]
 };
 
-export const overlay: APISchema<AlertDialog.OverlayProps> = {
+const overlay: APISchema<AlertDialog.OverlayProps> = {
 	title: "Overlay",
 	description: "An overlay which covers the body when the alert dialog is open.",
 	props: { ...transitionProps, asChild },
@@ -140,7 +152,7 @@ export const overlay: APISchema<AlertDialog.OverlayProps> = {
 	]
 };
 
-export const portal: APISchema<AlertDialog.PortalProps> = {
+const portal: APISchema<AlertDialog.PortalProps> = {
 	title: "Portal",
 	description: "A portal which renders the alert dialog into the body when it is open.",
 	dataAttributes: [

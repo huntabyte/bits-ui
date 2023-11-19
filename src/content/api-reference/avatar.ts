@@ -29,31 +29,39 @@ export const root: APISchema<Avatar.Props> = {
 			description: "A callback function called when the loading status of the image changes."
 		},
 		asChild
-	}
+	},
+	dataAttributes: [
+		{
+			name: "bits-avatar-root",
+			description: "Present on the root element."
+		}
+	]
 };
 
 export const image: APISchema<Avatar.ImageProps> = {
 	title: "Image",
 	description: "The avatar image displayed once it has loaded.",
 	props: {
-		src: {
-			type: "HTMLImgAttributes['src']",
-			description:
-				"The source of the image. This is typed the same as the native `img` element so you can use any valid `img` `src` value."
-		},
-		alt: {
-			type: "HTMLImgAttributes['src']",
-			description:
-				"The alt text of the image. This is typed the same as the native `img` element so you can use any valid `img` `alt` value."
-		},
 		asChild
-	}
+	},
+	dataAttributes: [
+		{
+			name: "bits-avatar-image",
+			description: "Present on the image element."
+		}
+	]
 };
 
 export const fallback: APISchema<Avatar.FallbackProps> = {
 	title: "Fallback",
 	description: "The fallback displayed while the avatar image is loading or if it fails to load",
-	props: { asChild }
+	props: { asChild },
+	dataAttributes: [
+		{
+			name: "bits-avatar-fallback",
+			description: "Present on the fallback element."
+		}
+	]
 };
 
 export const avatar = [root, image, fallback];

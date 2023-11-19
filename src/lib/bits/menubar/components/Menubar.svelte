@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { setCtx, getAttrs } from "../ctx.js";
+	import { setCtx, getMenubarAttrs } from "../ctx.js";
 	import type { Props } from "../types.js";
 	import { derived } from "svelte/store";
 
@@ -20,7 +20,7 @@
 	const idValues = derived([ids.menubar], ([$menubarId]) => ({
 		menubar: $menubarId
 	}));
-	const attrs = getAttrs("root");
+	const attrs = getMenubarAttrs("root");
 
 	$: if (id) {
 		ids.menubar.set(id);

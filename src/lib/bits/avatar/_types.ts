@@ -6,7 +6,6 @@
 
 import type { Expand, AsChild, OnChangeFn } from "$lib/internal/index.js";
 import type { CreateAvatarProps } from "@melt-ui/svelte";
-import type { HTMLImgAttributes } from "svelte/elements";
 
 type Props = Expand<
 	Omit<CreateAvatarProps, "onLoadingStatusChange" | "loadingStatus" | "src"> & {
@@ -23,12 +22,7 @@ type Props = Expand<
 	} & AsChild
 >;
 
-type ImageProps = Expand<
-	{
-		src?: HTMLImgAttributes["src"];
-		alt?: HTMLImgAttributes["alt"];
-	} & AsChild
->;
+type ImageProps = Expand<AsChild>;
 
 type FallbackProps = AsChild;
 

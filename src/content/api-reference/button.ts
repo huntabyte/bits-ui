@@ -15,7 +15,13 @@ export const root: APISchema<Button.Props & { href: string }> = {
 			type: C.STRING,
 			description: "An optional prop that when passed converts the button into an anchor tag."
 		}
-	}
+	},
+	dataAttributes: [
+		{
+			name: "bits-button-root",
+			description: "Present on the button element."
+		}
+	]
 };
 
 export const button = [root];

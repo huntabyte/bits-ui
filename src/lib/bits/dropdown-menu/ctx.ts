@@ -41,7 +41,7 @@ const PARTS = [
 	"trigger"
 ] as const;
 
-export const getAttrs = createBitAttrs(NAME, PARTS);
+export const getAttrs = createBitAttrs("menu", PARTS);
 
 type GetReturn = DropdownMenuReturn;
 type GetSubReturn = DropdownSubmenuReturn;

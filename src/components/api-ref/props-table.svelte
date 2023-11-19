@@ -8,8 +8,13 @@
 	export let props: PropObj<Record<string, unknown>>;
 
 	$: propData = Object.entries(props).map(([name, prop]) => {
-		const { type, description, default: defaultVal } = prop as PropSchema;
-		return { name, type, description, default: defaultVal };
+		const {
+			type,
+			description,
+			default: defaultVal,
+			required
+		} = prop as PropSchema;
+		return { name, type, description, default: defaultVal, required };
 	});
 </script>
 
@@ -22,10 +27,14 @@
 		</Table.Row>
 	</Table.Header>
 	<Table.Body>
-		{#each propData as { type, name, description, default: defaultVal }}
+		{#each propData as { type, name, description, default: defaultVal, required }}
 			<Table.Row>
-				<Table.Cell class="pr-1 align-baseline">
+				<Table.Cell class="flex items-center gap-1 pr-1 align-baseline">
 					<Code class="font-semibold text-foreground">{name}</Code>
+					{#if required}
+						<div class="pb-1 text-destructive">*</div>
+						<span class="sr-only">Required</span>
+					{/if}
 				</Table.Cell>
 				<Table.Cell class="pr-1 align-baseline">
 					<PropTypeContent {type} />
