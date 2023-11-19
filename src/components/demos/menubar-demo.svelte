@@ -14,7 +14,7 @@
 >
 	<Menubar.Menu>
 		<Menubar.Trigger
-			class="inline-flex h-10 items-center justify-center rounded-[9px] px-3 text-sm outline-none data-[highlighted]:bg-muted data-[state=open]:bg-muted"
+			class="inline-flex h-10 cursor-default items-center justify-center rounded-[9px] px-3 text-sm outline-none data-[highlighted]:bg-muted data-[state=open]:bg-muted"
 			>File</Menubar.Trigger
 		>
 		<Menubar.Content
@@ -70,7 +70,7 @@
 	</Menubar.Menu>
 	<Menubar.Menu>
 		<Menubar.Trigger
-			class="inline-flex h-10 items-center justify-center rounded-[9px] px-3 text-sm outline-none data-[highlighted]:bg-muted data-[state=open]:bg-muted"
+			class="inline-flex h-10 cursor-default items-center justify-center rounded-[9px] px-3 text-sm outline-none data-[highlighted]:bg-muted data-[state=open]:bg-muted"
 			>Edit</Menubar.Trigger
 		>
 		<Menubar.Content
@@ -135,7 +135,7 @@
 	</Menubar.Menu>
 	<Menubar.Menu>
 		<Menubar.Trigger
-			class="inline-flex h-10 items-center justify-center rounded-[9px] px-3 text-sm outline-none data-[highlighted]:bg-muted data-[state=open]:bg-muted"
+			class="inline-flex h-10 cursor-default items-center justify-center rounded-[9px] px-3 text-sm outline-none data-[highlighted]:bg-muted data-[state=open]:bg-muted"
 			>View</Menubar.Trigger
 		>
 		<Menubar.Content
@@ -173,7 +173,7 @@
 	</Menubar.Menu>
 	<Menubar.Menu>
 		<Menubar.Trigger
-			class="inline-flex h-10 items-center justify-center rounded-[9px] px-3 text-sm outline-none data-[highlighted]:bg-muted data-[state=open]:bg-muted"
+			class="inline-flex h-10 cursor-default items-center justify-center rounded-[9px] px-3 text-sm outline-none data-[highlighted]:bg-muted data-[state=open]:bg-muted"
 			>Profiles</Menubar.Trigger
 		>
 		<Menubar.Content
