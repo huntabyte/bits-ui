@@ -64,7 +64,13 @@ export const action: APISchema<AlertDialog.ActionProps> = {
 export const cancel: APISchema<AlertDialog.CancelProps> = {
 	title: "Cancel",
 	description: "A button used to close the alert dialog without taking an action.",
-	props: { asChild }
+	props: { asChild },
+	dataAttributes: [
+		{
+			name: "bits-alert-dialog-cancel",
+			description: "Present on the cancel button."
+		}
+	]
 };
 
 export const content: APISchema<AlertDialog.ContentProps> = {
@@ -76,6 +82,10 @@ export const content: APISchema<AlertDialog.ContentProps> = {
 			name: "state",
 			value: enums("open", "closed"),
 			description: "The state of the alert dialog."
+		},
+		{
+			name: "bits-alert-dialog-content",
+			description: "Present on the content."
 		}
 	]
 };
@@ -104,7 +114,13 @@ export const description: APISchema<AlertDialog.DescriptionProps> = {
 export const trigger: APISchema<AlertDialog.TriggerProps> = {
 	title: "Trigger",
 	description: "The element which opens the alert dialog on press.",
-	props: { asChild }
+	props: { asChild },
+	dataAttributes: [
+		{
+			name: "bits-alert-dialog-trigger",
+			description: "Present on the trigger."
+		}
+	]
 };
 
 export const overlay: APISchema<AlertDialog.OverlayProps> = {
@@ -116,13 +132,27 @@ export const overlay: APISchema<AlertDialog.OverlayProps> = {
 			name: "state",
 			value: enums("open", "closed"),
 			description: "The state of the alert dialog."
+		},
+		{
+			name: "bits-alert-dialog-overlay",
+			description: "Present on the overlay."
 		}
 	]
 };
 
 export const portal: APISchema<AlertDialog.PortalProps> = {
 	title: "Portal",
-	description: "A portal which renders the alert dialog into the body when it is open."
+	description: "A portal which renders the alert dialog into the body when it is open.",
+	dataAttributes: [
+		{
+			name: "portal",
+			description: "Present if the `portal` prop is not `null`."
+		},
+		{
+			name: "bits-alert-dialog-portal",
+			description: "Present on the portal."
+		}
+	]
 };
 
 export const alertDialog = [

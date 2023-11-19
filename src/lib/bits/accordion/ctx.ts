@@ -55,6 +55,6 @@ export function getTrigger() {
 	const {
 		elements: { trigger }
 	} = getCtx();
-	const { value: props } = getItemProps();
-	return { props, trigger };
+	const { value, disabled } = getItemProps();
+	return { props: { value, disabled }, trigger };
 }
