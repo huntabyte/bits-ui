@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	import * as Progress from "@/components/ui/progress";
+	import { Progress } from "$lib";
 
 	let value = 13;
 	onMount(() => {
@@ -9,4 +9,15 @@
 	});
 </script>
 
-<Progress.Root {value} max={100} class="w-[60%]" />
+<Progress.Root
+	{value}
+	max={100}
+	class="relative h-6 w-[60%] overflow-hidden rounded-full bg-foreground/20 "
+>
+	<div
+		class="h-full w-full flex-1 bg-foreground transition-all"
+		style={`transform: translateX(-${
+			100 - (100 * (value ?? 0)) / (100 ?? 1)
+		}%)`}
+	/>
+</Progress.Root>
