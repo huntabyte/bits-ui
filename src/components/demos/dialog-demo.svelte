@@ -43,7 +43,9 @@
 						type="password"
 						autocomplete="off"
 					/>
-					<LockKeyOpen class="absolute right-4 top-4 text-dark/30" />
+					<LockKeyOpen
+						class="absolute right-4 top-[14px] h-[22px] w-[22px] text-dark/30"
+					/>
 				</div>
 			</div>
 			<div class="flex w-full justify-end">

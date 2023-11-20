@@ -17,7 +17,7 @@
 					>bits</a
 				>
 			</div>
-			<div class="flex items-center justify-end gap-5">
+			<div class="flex items-center justify-end gap-3">
 				<Button.Root
 					href={siteConfig.links.github}
 					target="_blank"

@@ -17,9 +17,9 @@
 			class="inline-flex items-center justify-center"
 		>
 			{#if isChecked}
-				<Check class="h-[15px] w-[15px] text-background" />
+				<Check class="h-[15px] w-[15px] text-background" weight="bold" />
 			{:else if isIndeterminate}
-				<Minus class="h-[15px] w-[15px] text-background" />
+				<Minus class="h-[15px] w-[15px] text-background" weight="bold" />
 			{/if}
 		</Checkbox.Indicator>
 	</Checkbox.Root>

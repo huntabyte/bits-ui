@@ -40,7 +40,7 @@
 			<Accordion.Content
 				transition={slide}
 				transitionConfig={{ duration: 200 }}
-				class="pb-[25px] text-sm"
+				class="pb-[25px] text-sm tracking-[-0.01em]"
 			>
 				{item.content}
 			</Accordion.Content>

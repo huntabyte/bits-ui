@@ -31,7 +31,7 @@
 				</a>
 			{:else}
 				<span
-					class="flex w-full cursor-not-allowed items-center rounded-md px-2.5 py-1.5 text-muted-foreground hover:underline"
+					class="flex w-full cursor-not-allowed items-center rounded-md px-2.5 py-1.5 text-sm text-muted-foreground hover:underline"
 				>
 					{item.title}
 				</span>
