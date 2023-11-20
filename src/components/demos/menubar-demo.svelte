@@ -1,10 +1,15 @@
 <script lang="ts">
 	import { Menubar } from "$lib";
 	import { flyAndScale } from "@/utils";
-	import { CaretRight } from "phosphor-svelte";
+	import { CaretRight, Cat, Check } from "phosphor-svelte";
 
 	let bookmarks = false;
 	let fullUrls = true;
+
+	let pixelGrid = true;
+	let layoutGrid = false;
+
+	let view = "table";
 
 	const profileRadioValue = "benoit";
 </script>
@@ -12,70 +17,80 @@
 <Menubar.Root
 	class="flex h-12 items-center gap-1 rounded-[10px] border border-muted px-[3px] shadow-mini"
 >
+	<div class="px-[10px]">
+		<Cat class="h-6 w-6" />
+	</div>
 	<Menubar.Menu>
 		<Menubar.Trigger
-			class="inline-flex h-10 cursor-default items-center justify-center rounded-[9px] px-3 text-sm outline-none data-[highlighted]:bg-muted data-[state=open]:bg-muted"
-			>File</Menubar.Trigger
+			class="inline-flex h-10 cursor-default items-center justify-center rounded-[9px] px-3 text-sm font-medium outline-none data-[highlighted]:bg-muted data-[state=open]:bg-muted"
+			>View</Menubar.Trigger
 		>
 		<Menubar.Content
 			class="w-full max-w-[220px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover outline-none"
 			transition={flyAndScale}
+			align="start"
+			sideOffset={3}
 		>
-			<Menubar.Item
+			<Menubar.CheckboxItem
 				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
-				>New Tab</Menubar.Item
+				bind:checked={pixelGrid}
 			>
-			<Menubar.Item
+				Pixel grid
+				<Menubar.CheckboxIndicator class="ml-auto ">
+					<Check class="h-5 w-5" />
+				</Menubar.CheckboxIndicator>
+			</Menubar.CheckboxItem>
+			<Menubar.CheckboxItem
 				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
-				>New Window</Menubar.Item
+				bind:checked={layoutGrid}
 			>
-			<Menubar.Item
-				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
-				>New Incognito Window</Menubar.Item
-			>
-			<Menubar.Separator />
-			<Menubar.Sub>
-				<Menubar.SubTrigger
-					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted data-[state=open]:bg-muted"
+				Layout grid
+				<Menubar.CheckboxIndicator class="ml-auto">
+					<Check class="h-5 w-5" />
+				</Menubar.CheckboxIndicator>
+			</Menubar.CheckboxItem>
+			<Menubar.Separator class="my-1 -ml-1 -mr-1 block h-px bg-muted" />
+			<Menubar.RadioGroup bind:value={view}>
+				<Menubar.RadioItem
+					value="table"
+					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
 				>
-					Share
-					<div class="ml-auto flex items-center gap-px">
-						<CaretRight class="h-4 w-4 text-foreground-alt" />
-					</div>
-				</Menubar.SubTrigger>
-				<Menubar.SubContent
-					class="w-full max-w-[209px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover outline-none"
-					transition={flyAndScale}
+					Table
+					<Menubar.RadioIndicator class="ml-auto">
+						<Check class="h-5 w-5" />
+					</Menubar.RadioIndicator>
+				</Menubar.RadioItem>
+				<Menubar.RadioItem
+					value="board"
+					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
 				>
-					<Menubar.Item
-						class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
-						>Email link</Menubar.Item
-					>
-					<Menubar.Item
-						class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
-						>Messages</Menubar.Item
-					>
-					<Menubar.Item
-						class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
-						>Notes</Menubar.Item
-					>
-				</Menubar.SubContent>
-			</Menubar.Sub>
-			<Menubar.Separator />
-			<Menubar.Item
-				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
-				>Print...</Menubar.Item
-			>
+					Board
+					<Menubar.RadioIndicator class="ml-auto">
+						<Check class="h-5 w-5" />
+					</Menubar.RadioIndicator>
+				</Menubar.RadioItem>
+				<Menubar.RadioItem
+					value="gallery"
+					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
+				>
+					Gallery
+					<Menubar.RadioIndicator class="ml-auto">
+						<Check class="h-5 w-5" />
+					</Menubar.RadioIndicator>
+				</Menubar.RadioItem>
+			</Menubar.RadioGroup>
 		</Menubar.Content>
 	</Menubar.Menu>
 	<Menubar.Menu>
 		<Menubar.Trigger
-			class="inline-flex h-10 cursor-default items-center justify-center rounded-[9px] px-3 text-sm outline-none data-[highlighted]:bg-muted data-[state=open]:bg-muted"
+			class="inline-flex h-10 cursor-default items-center justify-center rounded-[9px] px-3 text-sm font-medium outline-none data-[highlighted]:bg-muted data-[state=open]:bg-muted"
 			>Edit</Menubar.Trigger
 		>
 		<Menubar.Content
 			class="w-full max-w-[220px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover outline-none"
 			transition={flyAndScale}
+			align="start"
+			sideOffset={3}
 		>
 			<Menubar.Item
 				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
@@ -135,12 +150,14 @@
 	</Menubar.Menu>
 	<Menubar.Menu>
 		<Menubar.Trigger
-			class="inline-flex h-10 cursor-default items-center justify-center rounded-[9px] px-3 text-sm outline-none data-[highlighted]:bg-muted data-[state=open]:bg-muted"
+			class="inline-flex h-10 cursor-default items-center justify-center rounded-[9px] px-3 text-sm font-medium outline-none data-[highlighted]:bg-muted data-[state=open]:bg-muted"
 			>View</Menubar.Trigger
 		>
 		<Menubar.Content
 			class="w-full max-w-[220px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover outline-none"
 			transition={flyAndScale}
+			align="start"
+			sideOffset={3}
 		>
 			<Menubar.CheckboxItem
 				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
@@ -173,12 +190,14 @@
 	</Menubar.Menu>
 	<Menubar.Menu>
 		<Menubar.Trigger
-			class="inline-flex h-10 cursor-default items-center justify-center rounded-[9px] px-3 text-sm outline-none data-[highlighted]:bg-muted data-[state=open]:bg-muted"
+			class="inline-flex h-10 cursor-default items-center justify-center rounded-[9px] px-3 text-sm font-medium outline-none data-[highlighted]:bg-muted data-[state=open]:bg-muted"
 			>Profiles</Menubar.Trigger
 		>
 		<Menubar.Content
 			class="w-full max-w-[220px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover outline-none"
 			transition={flyAndScale}
+			align="start"
+			sideOffset={3}
 		>
 			<Menubar.RadioGroup value={profileRadioValue}>
 				<Menubar.RadioItem

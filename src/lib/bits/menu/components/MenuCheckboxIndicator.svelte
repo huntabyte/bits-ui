@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { CheckboxItemIndicatorProps } from "../types.js";
+	import type { CheckboxIndicatorProps } from "../types.js";
 	import { getAttrs, getCheckboxIndicator } from "../ctx.js";
 
-	type $$Props = CheckboxItemIndicatorProps;
+	type $$Props = CheckboxIndicatorProps;
 	export let asChild: $$Props["asChild"] = false;
 
 	const checked = getCheckboxIndicator();

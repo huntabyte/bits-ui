@@ -104,7 +104,8 @@ export type ItemProps = Expand<
 
 export type ArrowProps = FloatingArrowProps;
 export type GroupProps = AsChild;
-export type CheckboxItemIndicatorProps = AsChild;
+export type CheckboxIndicatorProps = AsChild;
+export type RadioIndicatorProps = AsChild;
 export type LabelProps = AsChild;
 export type SeparatorProps = AsChild;
 export type TriggerProps = AsChild;

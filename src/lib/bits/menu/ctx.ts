@@ -37,6 +37,7 @@ const PARTS = [
 	"label",
 	"radio-group",
 	"radio-item",
+	"radio-indicator",
 	"separator",
 	"sub-content",
 	"sub-trigger",

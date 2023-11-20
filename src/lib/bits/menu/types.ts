@@ -29,7 +29,9 @@ type DivElement = HTMLDivAttributes & {
 
 type ItemProps = I.ItemProps & (AnchorElement | DivElement);
 
-type CheckboxItemIndicatorProps = I.CheckboxItemIndicatorProps & HTMLDivAttributes;
+type CheckboxIndicatorProps = I.CheckboxIndicatorProps & HTMLDivAttributes;
+
+type RadioIndicatorProps = I.RadioIndicatorProps & HTMLDivAttributes;
 
 type LabelProps = I.LabelProps & HTMLDivAttributes;
 
@@ -99,7 +101,8 @@ export type {
 	ContentProps,
 	GroupProps,
 	ItemProps,
-	CheckboxItemIndicatorProps,
+	CheckboxIndicatorProps,
+	RadioIndicatorProps,
 	LabelProps,
 	RadioGroupProps,
 	RadioItemProps,

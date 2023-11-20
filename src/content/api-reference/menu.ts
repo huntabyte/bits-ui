@@ -329,6 +329,13 @@ const checkboxIndicatorAttrs: DataAttrs = [
 	}
 ];
 
+const radioIndicatorAttrs: DataAttrs = [
+	{
+		name: "bits-menu-radio-indicator",
+		description: "Present on the radio indicator element."
+	}
+];
+
 export const trigger = {
 	props: triggerProps,
 	dataAttributes: triggerAttrs
