@@ -1,7 +1,6 @@
 import type { Icon as LucideIcon } from "lucide-svelte";
 import type { HTMLAttributes } from "svelte/elements";
 
-export { default as CaretRight } from "./caret-right.svelte";
 export { default as SunDim } from "./sun-dim.svelte";
 export { default as Sun } from "./sun.svelte";
 export { default as MoonStars } from "./moon-stars.svelte";
@@ -20,6 +19,7 @@ export { default as SquareHalf } from "./square-half.svelte";
 export { default as BookOpen } from "./book-open.svelte";
 export { default as Code } from "./code.svelte";
 export { default as RocketLaunch } from "./rocket-launch.svelte";
+export { default as Logo } from "./logo.svelte";
 
 export type IconProps = Partial<HTMLAttributes<SVGElement>> & {
 	class?: string;

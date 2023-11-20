@@ -161,6 +161,10 @@ const radioItemProps = {
 	asChild
 } satisfies PropObj<Menu.RadioItemProps>;
 
+const radioIndicatorProps = {
+	asChild
+} satisfies PropObj<Menu.RadioIndicatorProps>;
+
 const itemProps = {
 	asChild,
 	disabled: {
@@ -189,7 +193,7 @@ const labelProps = { asChild } satisfies PropObj<Menu.LabelProps>;
 const separatorProps = { asChild } satisfies PropObj<Menu.SeparatorProps>;
 const checkboxIndicatorProps = {
 	asChild
-} satisfies PropObj<Menu.CheckboxItemIndicatorProps>;
+} satisfies PropObj<Menu.CheckboxIndicatorProps>;
 
 const STATE = {
 	name: "state",
@@ -401,6 +405,11 @@ export const subContent = {
 	dataAttributes: subContentAttrs
 };
 
+export const radioIndicator = {
+	props: radioIndicatorProps,
+	dataAttributes: radioIndicatorAttrs
+};
+
 export const sub = {
 	props: subProps
 };
@@ -419,6 +428,7 @@ export const menu = {
 	checkboxIndicator,
 	radioGroup,
 	radioItem,
+	radioIndicator,
 	separator,
 	arrow,
 	group,

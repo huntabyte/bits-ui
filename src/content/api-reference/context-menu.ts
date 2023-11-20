@@ -80,7 +80,7 @@ export const checkboxItem: APISchema<Menu.CheckboxItemProps> = {
 	...menu.checkboxItem
 };
 
-export const checkboxIndicator: APISchema<Menu.CheckboxItemIndicatorProps> = {
+export const checkboxIndicator: APISchema<Menu.CheckboxIndicatorProps> = {
 	title: "CheckboxIndicator",
 	description:
 		"A visual indicator of the checkbox menu item's checked state. It passes the item's checked state as a slot prop `checked` and can be used to render a custom indicator.",
@@ -100,10 +100,11 @@ export const radioItem: APISchema<Menu.RadioItemProps> = {
 	...menu.radioItem
 };
 
-export const radioIndicator: APISchema = {
+export const radioIndicator: APISchema<Menu.RadioIndicatorProps> = {
 	title: "RadioIndicator",
 	description:
-		"A visual indicator helper for `RadioItem`s. It only renders it's children when the radio item is checked."
+		"A visual indicator helper for `RadioItem`s. It only renders it's children when the radio item is checked.",
+	...menu.radioIndicator
 };
 
 export const sub: APISchema<Menu.SubProps> = {

@@ -2,6 +2,7 @@
 	import { Button } from "$lib";
 	import { LightSwitch, MobileNav } from "@/components";
 	import { siteConfig } from "@/config";
+	import { Logo } from "@/components/icons";
 </script>
 
 <header
@@ -11,11 +12,9 @@
 		<div class="flex h-[70px] items-center justify-between gap-3">
 			<div class="flex items-center gap-1.5">
 				<MobileNav />
-				<a
-					href="/"
-					class="text-2xl font-bold tracking-tight underline underline-offset-4"
-					>bits</a
-				>
+				<a href="/">
+					<Logo />
+				</a>
 			</div>
 			<div class="flex items-center justify-end gap-3">
 				<Button.Root
