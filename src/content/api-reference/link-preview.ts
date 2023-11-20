@@ -6,9 +6,9 @@ import {
 	portalProp,
 	transitionProps
 } from "@/content/api-reference/helpers.js";
+import { floatingPositioning } from "./floating.js";
 import type * as LinkPreview from "$lib/bits/link-preview/_types";
 import * as C from "@/content/constants";
-import { floatingConfigProp } from "./extended-types";
 
 export const root: APISchema<LinkPreview.Props> = {
 	title: "Root",
@@ -25,11 +25,6 @@ export const root: APISchema<LinkPreview.Props> = {
 			default: "300",
 			description:
 				"The amount of time in milliseconds to delay closing the preview when the mouse leaves the trigger."
-		},
-		positioning: {
-			type: floatingConfigProp,
-			default: '{ position: "bottom", align: "center" }',
-			description: "The positioning configuration for the preview. (docs coming soon)"
 		},
 		closeOnOutsideClick: {
 			type: C.BOOLEAN,
@@ -78,7 +73,7 @@ export const trigger: APISchema<LinkPreview.TriggerProps> = {
 export const content: APISchema<LinkPreview.ContentProps> = {
 	title: "Content",
 	description: "The contents of the link preview which are displayed when the preview is open.",
-	props: { ...transitionProps, asChild },
+	props: { ...transitionProps, ...floatingPositioning, asChild },
 	dataAttributes: [
 		{
 			name: "state",

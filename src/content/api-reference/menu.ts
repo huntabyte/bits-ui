@@ -1,5 +1,6 @@
 import type { APISchema, PropObj } from "@/types";
-import { floatingConfigProp, focusProp } from "./extended-types";
+import { focusProp } from "./extended-types/index.js";
+import { floatingPositioning } from "./floating.js";
 import {
 	asChild,
 	transitionProps,
@@ -43,10 +44,6 @@ const props = {
 		},
 		description: "A callback that is fired when the menu's open state changes."
 	},
-	positioning: {
-		type: floatingConfigProp,
-		description: "The positioning configuration for the  menu. (docs coming soon)"
-	},
 	dir: {
 		type: {
 			type: C.ENUM,
@@ -77,10 +74,6 @@ const subProps = {
 		type: C.BOOLEAN,
 		description: "Whether or not the submenu is disabled."
 	},
-	positioning: {
-		type: floatingConfigProp,
-		description: "The positioning configuration for the submenu."
-	},
 	open: {
 		type: C.BOOLEAN,
 		default: C.FALSE,
@@ -97,22 +90,14 @@ const subProps = {
 
 const contentProps = {
 	...transitionProps,
-	sideOffset: {
-		type: C.NUMBER,
-		default: "0",
-		description: "The amount of offset to apply to the menu's position on the x-axis."
-	},
+	...floatingPositioning,
 	asChild
 } satisfies PropObj<Menu.ContentProps>;
 
 const subContentProps = {
 	...transitionProps,
-	asChild,
-	sideOffset: {
-		type: C.NUMBER,
-		default: "0",
-		description: "The amount of offset to apply to the menu's position on the x-axis."
-	}
+	...floatingPositioning,
+	asChild
 } satisfies PropObj<Menu.SubContentProps>;
 
 const arrowProps = {

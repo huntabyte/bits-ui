@@ -1,6 +1,9 @@
 import type { APISchema } from "@/types";
 import { menu } from "./menu";
 import type * as Menu from "$lib/bits/menu/_types";
+import type * as ContextMenu from "$lib/bits/context-menu/_types";
+import * as C from "@/content/constants.js";
+import { transitionProps, asChild, union } from "./helpers";
 
 export const root: APISchema<Menu.Props> = {
 	title: "Root",
@@ -14,10 +17,43 @@ export const trigger: APISchema<Menu.TriggerProps> = {
 	...menu.trigger
 };
 
-export const content: APISchema<Menu.ContentProps> = {
+export const content: APISchema<ContextMenu.ContentProps> = {
 	title: "Content",
 	description: "The content displayed when the context menu is open.",
-	...menu.content
+	props: {
+		...transitionProps,
+		asChild,
+		alignOffset: {
+			type: C.NUMBER,
+			default: "0",
+			description: "An offset in pixels from the 'start' or 'end' alignment options."
+		},
+		avoidCollisions: {
+			type: C.BOOLEAN,
+			default: C.TRUE,
+			description:
+				"When `true`, overrides the `side` and `align` options to prevent collisions with the boundary edges."
+		},
+		collisionBoundary: {
+			type: {
+				type: C.UNION,
+				definition: union("'clippingAncestors'", "Element", "Array<Element>", "Rect")
+			},
+			description: "A boundary element or array of elements to check for collisions against."
+		},
+		collisionPadding: {
+			type: C.NUMBER,
+			default: "0",
+			description:
+				"The amount in pixels of virtual padding around the viewport edges to check for overflow which will cause a collision."
+		},
+		fitViewport: {
+			type: C.BOOLEAN,
+			default: C.FALSE,
+			description: "Whether the floating element should be constrained to the viewport."
+		}
+	},
+	dataAttributes: menu.content.dataAttributes
 };
 
 export const item: APISchema<Menu.ItemProps & { href: string }> = {

@@ -1,4 +1,4 @@
-import type { APISchema } from "@/types";
+import type { APISchema } from "@/types/index.js";
 import {
 	arrowProps,
 	asChild,
@@ -6,8 +6,9 @@ import {
 	portalProp,
 	transitionProps
 } from "@/content/api-reference/helpers.js";
-import * as C from "@/content/constants";
-import type * as Select from "$lib/bits/select/_types";
+import { floatingPositioning } from "./floating.js";
+import * as C from "@/content/constants.js";
+import type * as Select from "$lib/bits/select/_types.js";
 
 export const root: APISchema<Select.Props> = {
 	title: "Root",
@@ -55,10 +56,6 @@ export const root: APISchema<Select.Props> = {
 				definition: "(open: boolean) => void"
 			},
 			description: "A callback that is fired when the select menu's open state changes."
-		},
-		positioning: {
-			type: "FloatingConfig",
-			description: "The positioning configuration for the select menu. (docs coming soon)"
 		},
 		selected: {
 			type: {
@@ -126,7 +123,7 @@ export const trigger: APISchema<Select.TriggerProps> = {
 export const content: APISchema<Select.ContentProps> = {
 	title: "Content",
 	description: "The content/menu element which contains the select menu's items.",
-	props: { ...transitionProps, asChild }
+	props: { ...transitionProps, ...floatingPositioning, asChild }
 };
 
 export const item: APISchema<Select.ItemProps> = {

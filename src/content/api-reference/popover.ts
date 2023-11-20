@@ -1,6 +1,7 @@
 import type { APISchema } from "@/types/index.js";
 import type * as Popover from "$lib/bits/popover/_types.js";
-import { floatingConfigProp, focusProp } from "./extended-types/index.js";
+import { focusProp } from "./extended-types/index.js";
+import { floatingPositioning } from "./floating.js";
 import {
 	portalProp,
 	transitionProps,
@@ -24,11 +25,6 @@ export const root: APISchema<Popover.Props> = {
 			type: C.BOOLEAN,
 			default: C.FALSE,
 			description: "Whether or not to prevent scrolling the body while the popover is open."
-		},
-		positioning: {
-			type: floatingConfigProp,
-			default: '{ position: "bottom", align: "center" }',
-			description: "The positioning configuration for the popover. (docs coming soon)"
 		},
 		closeOnOutsideClick: {
 			type: C.BOOLEAN,
@@ -84,7 +80,7 @@ export const trigger: APISchema<Popover.TriggerProps> = {
 export const content: APISchema<Popover.ContentProps> = {
 	title: "Content",
 	description: "The contents of the popover which are displayed when the popover is open.",
-	props: { ...transitionProps, asChild },
+	props: { ...transitionProps, ...floatingPositioning, asChild },
 	dataAttributes: [
 		{
 			name: "state",

@@ -44,7 +44,7 @@ export function getCtx() {
 }
 
 const defaultPlacement = {
-	side: "right",
+	side: "bottom",
 	align: "start"
 } satisfies PositioningProps;
 

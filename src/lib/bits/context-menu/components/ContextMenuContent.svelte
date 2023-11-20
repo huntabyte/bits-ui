@@ -19,14 +19,10 @@
 	export let outTransitionConfig: $$Props["outTransitionConfig"] = undefined;
 	export let asChild: $$Props["asChild"] = false;
 	export let id: $$Props["id"] = undefined;
-	export let side: $$Props["side"] = "top";
-	export let align: $$Props["align"] = "center";
-	export let sideOffset: $$Props["sideOffset"] = 0;
 	export let alignOffset: $$Props["alignOffset"] = 0;
 	export let collisionPadding: $$Props["collisionPadding"] = 8;
 	export let avoidCollisions: $$Props["avoidCollisions"] = true;
 	export let collisionBoundary: $$Props["collisionBoundary"] = undefined;
-	export let sameWidth: $$Props["sameWidth"] = false;
 	export let fitViewport: $$Props["fitViewport"] = false;
 
 	const {
@@ -48,14 +44,10 @@
 	};
 
 	$: updatePositioning({
-		side,
-		align,
-		sideOffset,
 		alignOffset,
 		collisionPadding,
 		avoidCollisions,
 		collisionBoundary,
-		sameWidth,
 		fitViewport
 	});
 </script>
