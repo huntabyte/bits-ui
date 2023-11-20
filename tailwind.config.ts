@@ -32,6 +32,7 @@ export default {
 				},
 				dark: {
 					DEFAULT: "hsl(var(--dark) / <alpha-value>)",
+					4: "hsl(var(--dark-04))",
 					10: "hsl(var(--dark-10))"
 				},
 				accent: {
@@ -40,6 +41,9 @@ export default {
 				},
 				destructive: {
 					DEFAULT: "hsl(var(--destructive) / <alpha-value>)"
+				},
+				contrast: {
+					DEFAULT: "hsl(var(--contrast) / <alpha-value>)"
 				}
 			},
 			fontFamily: {
