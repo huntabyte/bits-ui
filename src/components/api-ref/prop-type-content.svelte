@@ -22,7 +22,7 @@
 			</Popover.Trigger>
 			<Popover.Content
 				side="top"
-				sideOffset={8}
+				sideOffset={10}
 				transition={flyAndScale}
 				transitionConfig={{ y: 8 }}
 				class="z-50 max-h-[400px] overflow-auto rounded-input border border-border bg-background p-4 shadow-popover"
