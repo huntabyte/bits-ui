@@ -5,15 +5,19 @@
 		PencilSimpleLine,
 		PlusCircle,
 		CopySimple,
-		Trash
+		Trash,
+		MouseSimple
 	} from "phosphor-svelte";
 </script>
 
 <ContextMenu.Root>
 	<ContextMenu.Trigger
-		class="flex h-[150px] w-[300px] select-none items-center justify-center rounded-card-sm bg-muted text-sm font-medium"
+		class="flex h-[188px] w-[279px] select-none items-center justify-center rounded-card border-2 border-dashed border-border-input bg-background  font-semibold text-muted-foreground"
 	>
-		Right click me
+		<div class="flex flex-col items-center justify-center gap-4 text-center">
+			<MouseSimple class="sq-8" />
+			Right click me
+		</div>
 	</ContextMenu.Trigger>
 	<ContextMenu.Content
 		class="w-full max-w-[229px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover outline-none"

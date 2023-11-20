@@ -75,7 +75,8 @@ export function setArrow(size = 8) {
 
 const defaultPlacement = {
 	side: "bottom",
-	align: "center"
+	align: "center",
+	sameWidth: true
 } satisfies PositioningProps;
 
 export function updatePositioning(props: PositioningProps) {

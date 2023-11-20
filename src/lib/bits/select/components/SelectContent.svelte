@@ -27,7 +27,7 @@
 	export let collisionPadding: $$Props["collisionPadding"] = 8;
 	export let avoidCollisions: $$Props["avoidCollisions"] = true;
 	export let collisionBoundary: $$Props["collisionBoundary"] = undefined;
-	export let sameWidth: $$Props["sameWidth"] = false;
+	export let sameWidth: $$Props["sameWidth"] = true;
 	export let fitViewport: $$Props["fitViewport"] = false;
 
 	const {
