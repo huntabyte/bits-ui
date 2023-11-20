@@ -4,27 +4,25 @@ import {
 	getOptionUpdater,
 	removeUndefined
 } from "$lib/internal/index.js";
-import {
-	type ContextMenu as ContextMenuReturn,
-	type ContextMenuRadioGroup as ContextRadioGroupReturn,
-	type ContextMenuSubmenu as ContextSubmenuReturn,
-	type Checkbox as CheckboxReturn,
-	type CreateContextMenuCheckboxItemProps as ContextCheckboxItemProps,
-	createContextMenu,
-	type CreateContextMenuProps,
-	type CreateContextMenuRadioGroupProps,
-	type CreateContextSubmenuProps
+import type {
+	ContextMenu as ContextMenuReturn,
+	ContextMenuRadioGroup as ContextRadioGroupReturn,
+	ContextMenuSubmenu as ContextSubmenuReturn,
+	Checkbox as CheckboxReturn,
+	CreateContextMenuCheckboxItemProps as ContextCheckboxItemProps,
+	CreateContextMenuRadioGroupProps,
+	CreateContextSubmenuProps
 } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
 import type { Readable, Writable } from "svelte/store";
 import { getPositioningUpdater, type PositioningProps } from "../floating/helpers.js";
 
-const NAME = "context-menu";
-const SUB_NAME = "context-menu-submenu";
-const RADIO_GROUP_NAME = "context-menu-radiogroup";
-const CHECKBOX_ITEM_NAME = "context-menu-checkboxitem";
-const RADIO_ITEM_NAME = "context-menu-radioitem";
-const GROUP_NAME = "context-menu-group";
+const NAME = "menu";
+const SUB_NAME = "menu-submenu";
+const RADIO_GROUP_NAME = "menu-radiogroup";
+const CHECKBOX_ITEM_NAME = "menu-checkboxitem";
+const RADIO_ITEM_NAME = "menu-radioitem";
+const GROUP_NAME = "menu-group";
 
 const PARTS = [
 	"arrow",
@@ -47,15 +45,6 @@ export const getAttrs = createBitAttrs("menu", PARTS);
 type GetReturn = ContextMenuReturn;
 type GetSubReturn = ContextSubmenuReturn;
 type GetRadioReturn = ContextRadioGroupReturn;
-
-export function setCtx(props: CreateContextMenuProps) {
-	const contextMenu = createContextMenu(removeUndefined(props));
-	setContext(NAME, contextMenu);
-	return {
-		...contextMenu,
-		updateOption: getOptionUpdater(contextMenu.options)
-	};
-}
 
 export function getCtx() {
 	return getContext<GetReturn>(NAME);

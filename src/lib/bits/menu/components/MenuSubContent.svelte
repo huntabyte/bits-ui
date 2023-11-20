@@ -1,15 +1,14 @@
 <script lang="ts">
-	import { createDispatcher } from "$lib/internal/events.js";
 	import { melt } from "@melt-ui/svelte";
-	import { getAttrs, getCtx, updatePositioning } from "../ctx.js";
-	import type { Transition } from "$lib/internal/types.js";
-	import type { ContentEvents, ContentProps } from "../types.js";
+	import { createDispatcher, type Transition } from "$lib/internal/index.js";
+	import { getAttrs, getSubMenuCtx, updateSubPositioning } from "../ctx.js";
+	import type { SubContentEvents, SubContentProps } from "../types.js";
 
 	type T = $$Generic<Transition>;
 	type In = $$Generic<Transition>;
 	type Out = $$Generic<Transition>;
-	type $$Props = ContentProps<T, In, Out>;
-	type $$Events = ContentEvents;
+	type $$Props = SubContentProps<T, In, Out>;
+	type $$Events = SubContentEvents;
 
 	export let transition: $$Props["transition"] = undefined;
 	export let transitionConfig: $$Props["transitionConfig"] = undefined;
@@ -30,24 +29,24 @@
 	export let fitViewport: $$Props["fitViewport"] = false;
 
 	const {
-		elements: { menu },
-		states: { open },
+		elements: { subMenu },
+		states: { subOpen },
 		ids
-	} = getCtx();
+	} = getSubMenuCtx();
 
 	const dispatch = createDispatcher();
-	const attrs = getAttrs("content");
+	const attrs = getAttrs("sub-content");
 
 	$: if (id) {
 		ids.menu.set(id);
 	}
-	$: builder = $menu;
+	$: builder = $subMenu;
 	$: slotProps = {
 		builder,
 		attrs
 	};
 
-	$: updatePositioning({
+	$: updateSubPositioning({
 		side,
 		align,
 		sideOffset,
@@ -60,51 +59,66 @@
 	});
 </script>
 
-{#if asChild && $open}
+{#if asChild && $subOpen}
 	<slot {...slotProps} />
-{:else if transition && $open}
+{:else if transition && $subOpen}
 	<div
 		transition:transition={transitionConfig}
 		use:melt={builder}
 		{...$$restProps}
 		{...attrs}
+		on:m-focusout={dispatch}
 		on:m-keydown={dispatch}
+		on:m-pointermove={dispatch}
 	>
 		<slot {...slotProps} />
 	</div>
-{:else if inTransition && outTransition && $open}
+{:else if inTransition && outTransition && $subOpen}
 	<div
 		in:inTransition={inTransitionConfig}
 		out:outTransition={outTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
 		{...attrs}
+		on:m-focusout={dispatch}
 		on:m-keydown={dispatch}
+		on:m-pointermove={dispatch}
 	>
 		<slot {...slotProps} />
 	</div>
-{:else if inTransition && $open}
+{:else if inTransition && $subOpen}
 	<div
 		in:inTransition={inTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
 		{...attrs}
+		on:m-focusout={dispatch}
 		on:m-keydown={dispatch}
+		on:m-pointermove={dispatch}
 	>
 		<slot {...slotProps} />
 	</div>
-{:else if outTransition && $open}
+{:else if outTransition && $subOpen}
 	<div
 		out:outTransition={outTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
 		{...attrs}
+		on:m-focusout={dispatch}
 		on:m-keydown={dispatch}
+		on:m-pointermove={dispatch}
 	>
 		<slot {...slotProps} />
 	</div>
-{:else if $open}
-	<div use:melt={builder} {...$$restProps} {...attrs} on:m-keydown={dispatch}>
+{:else if $subOpen}
+	<div
+		use:melt={builder}
+		{...$$restProps}
+		{...attrs}
+		on:m-focusout={dispatch}
+		on:m-keydown={dispatch}
+		on:m-pointermove={dispatch}
+	>
 		<slot {...slotProps} />
 	</div>
 {/if}

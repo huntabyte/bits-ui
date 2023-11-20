@@ -1,9 +1,8 @@
 <script lang="ts">
 	import { createDispatcher } from "$lib/internal/events.js";
-
 	import { melt } from "@melt-ui/svelte";
+	import { getAttrs, getCtx, updatePositioning } from "../ctx.js";
 	import type { Transition } from "$lib/internal/types.js";
-	import { getContent, getAttrs } from "../ctx.js";
 	import type { ContentEvents, ContentProps } from "../types.js";
 
 	type T = $$Generic<Transition>;
@@ -12,28 +11,32 @@
 	type $$Props = ContentProps<T, In, Out>;
 	type $$Events = ContentEvents;
 
-	export let sideOffset: $$Props["sideOffset"] = 5;
-
 	export let transition: $$Props["transition"] = undefined;
 	export let transitionConfig: $$Props["transitionConfig"] = undefined;
-
 	export let inTransition: $$Props["inTransition"] = undefined;
 	export let inTransitionConfig: $$Props["inTransitionConfig"] = undefined;
-
 	export let outTransition: $$Props["outTransition"] = undefined;
 	export let outTransitionConfig: $$Props["outTransitionConfig"] = undefined;
-
 	export let asChild: $$Props["asChild"] = false;
 	export let id: $$Props["id"] = undefined;
+	export let side: $$Props["side"] = "top";
+	export let align: $$Props["align"] = "center";
+	export let sideOffset: $$Props["sideOffset"] = 0;
+	export let alignOffset: $$Props["alignOffset"] = 0;
+	export let collisionPadding: $$Props["collisionPadding"] = 8;
+	export let avoidCollisions: $$Props["avoidCollisions"] = true;
+	export let collisionBoundary: $$Props["collisionBoundary"] = undefined;
+	export let sameWidth: $$Props["sameWidth"] = false;
+	export let fitViewport: $$Props["fitViewport"] = false;
 
 	const {
 		elements: { menu },
 		states: { open },
 		ids
-	} = getContent(sideOffset);
+	} = getCtx();
 
-	const attrs = getAttrs("content");
 	const dispatch = createDispatcher();
+	const attrs = getAttrs("content");
 
 	$: if (id) {
 		ids.menu.set(id);
@@ -43,6 +46,18 @@
 		builder,
 		attrs
 	};
+
+	$: updatePositioning({
+		side,
+		align,
+		sideOffset,
+		alignOffset,
+		collisionPadding,
+		avoidCollisions,
+		collisionBoundary,
+		sameWidth,
+		fitViewport
+	});
 </script>
 
 {#if asChild && $open}

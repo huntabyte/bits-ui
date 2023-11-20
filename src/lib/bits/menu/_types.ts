@@ -1,14 +1,7 @@
 /**
  * Shared internal types for the various menu components.
  */
-import type {
-	AsChild,
-	OmitChecked,
-	OmitFloating,
-	OnChangeFn,
-	Transition,
-	TransitionProps
-} from "$lib/internal/index.js";
+import type { AsChild, OmitChecked, OmitFloating, OnChangeFn } from "$lib/internal/index.js";
 import type {
 	CreateContextMenuCheckboxItemProps,
 	CreateContextMenuRadioGroupProps,
@@ -16,10 +9,7 @@ import type {
 	CreateContextSubmenuProps,
 	CreateContextMenuProps
 } from "@melt-ui/svelte";
-import type {
-	ContentProps as FloatingContentProps,
-	ArrowProps as FloatingArrowProps
-} from "$lib/bits/floating/_types.js";
+import type { ArrowProps as FloatingArrowProps, ContentProps } from "$lib/bits/floating/_types.js";
 
 export type Props = Expand<
 	OmitFloating<CreateContextMenuProps> & {
@@ -36,17 +26,6 @@ export type Props = Expand<
 		 */
 		onOpenChange?: OnChangeFn<boolean>;
 	}
->;
-
-export type ContentProps<
-	T extends Transition = Transition,
-	In extends Transition = Transition,
-	Out extends Transition = Transition
-> = Expand<
-	{
-		sideOffset?: number;
-	} & FloatingContentProps<T, In, Out> &
-		AsChild
 >;
 
 export type SubTriggerProps = Expand<
@@ -123,19 +102,11 @@ export type ItemProps = Expand<
 	} & AsChild
 >;
 
-export type SubContentProps<
-	T extends Transition = Transition,
-	In extends Transition = Transition,
-	Out extends Transition = Transition
-> = Expand<
-	TransitionProps<T, In, Out> & {
-		sideOffset?: number;
-	} & AsChild
->;
-
 export type ArrowProps = FloatingArrowProps;
 export type GroupProps = AsChild;
 export type CheckboxItemIndicatorProps = AsChild;
 export type LabelProps = AsChild;
 export type SeparatorProps = AsChild;
 export type TriggerProps = AsChild;
+
+export { ContentProps, ContentProps as SubContentProps };

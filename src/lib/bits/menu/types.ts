@@ -3,10 +3,11 @@
  * such as `DropdownMenu`, `Menubar` & `ContextMenu`.
  */
 
-import type { Transition, HTMLDivAttributes } from "$lib/internal/index.js";
+import type { HTMLDivAttributes } from "$lib/internal/index.js";
 import type { CustomEventHandler } from "$lib";
 import type { HTMLAnchorAttributes, HTMLButtonAttributes } from "svelte/elements";
 import type * as I from "$lib/bits/menu/_types.js";
+import type { ContentProps } from "$lib/bits/floating/types.js";
 
 type Props = I.Props;
 
@@ -15,12 +16,6 @@ type CheckboxItemProps = I.CheckboxItemProps & HTMLDivAttributes;
 type RadioGroupProps = I.RadioGroupProps & HTMLDivAttributes;
 
 type RadioItemProps = I.RadioItemProps & HTMLDivAttributes;
-
-type ContentProps<
-	T extends Transition = Transition,
-	In extends Transition = Transition,
-	Out extends Transition = Transition
-> = I.ContentProps<T, In, Out> & HTMLDivAttributes;
 
 type GroupProps = I.GroupProps & HTMLDivAttributes;
 
@@ -41,12 +36,6 @@ type LabelProps = I.LabelProps & HTMLDivAttributes;
 type SeparatorProps = I.SeparatorProps & HTMLDivAttributes;
 
 type SubProps = I.SubProps;
-
-type SubContentProps<
-	T extends Transition = Transition,
-	In extends Transition = Transition,
-	Out extends Transition = Transition
-> = I.SubContentProps<T, In, Out> & HTMLDivAttributes;
 
 type SubTriggerProps = I.SubTriggerProps & HTMLDivAttributes;
 
@@ -116,7 +105,7 @@ export type {
 	RadioItemProps,
 	SeparatorProps,
 	SubProps,
-	SubContentProps,
+	ContentProps as SubContentProps,
 	SubTriggerProps,
 	ContextTriggerProps,
 	DropdownTriggerProps,
