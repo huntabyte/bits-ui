@@ -29,7 +29,6 @@
 	};
 </script>
 
-<!-- svelte-ignore a11y-no-static-element-interactions applied by melt's action/store -->
 {#if asChild}
 	<slot {...slotProps} />
 {:else}

@@ -5,7 +5,6 @@
 
 	type $$Props = SubProps;
 
-	export let positioning: $$Props["positioning"] = undefined;
 	export let disabled: $$Props["disabled"] = undefined;
 	export let open: $$Props["open"] = undefined;
 	export let onOpenChange: $$Props["onOpenChange"] = undefined;
@@ -15,7 +14,6 @@
 		ids,
 		states: { subOpen }
 	} = setSubMenuCtx({
-		positioning,
 		disabled,
 		onOpenChange: ({ next }) => {
 			if (open !== next) {
@@ -36,7 +34,6 @@
 
 	$: open !== undefined && subOpen.set(open);
 
-	$: updateOption("positioning", positioning);
 	$: updateOption("disabled", disabled);
 </script>
 

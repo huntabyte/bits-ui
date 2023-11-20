@@ -5,7 +5,6 @@
 
 	type $$Props = Props;
 
-	export let positioning: $$Props["positioning"] = undefined;
 	export let closeOnEscape: $$Props["closeOnEscape"] = undefined;
 	export let portal: $$Props["portal"] = undefined;
 	export let closeOnPointerDown: $$Props["closeOnPointerDown"] = undefined;
@@ -22,7 +21,6 @@
 		updateOption,
 		ids
 	} = setCtx({
-		positioning,
 		closeOnEscape,
 		portal,
 		closeOnPointerDown,
@@ -50,7 +48,6 @@
 	);
 
 	$: open !== undefined && localOpen.set(open);
-	$: updateOption("positioning", positioning);
 	$: updateOption("closeOnEscape", closeOnEscape);
 	$: updateOption("portal", portal);
 	$: updateOption("closeOnPointerDown", closeOnPointerDown);

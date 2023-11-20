@@ -4,7 +4,6 @@
 	import { derived } from "svelte/store";
 
 	type $$Props = Props;
-	export let positioning: $$Props["positioning"] = undefined;
 	export let disableFocusTrap: $$Props["disableFocusTrap"] = undefined;
 	export let closeOnEscape: $$Props["closeOnEscape"] = undefined;
 	export let closeOnOutsideClick: $$Props["closeOnOutsideClick"] = undefined;
@@ -20,7 +19,6 @@
 		states: { open: localOpen },
 		ids
 	} = setCtx({
-		positioning,
 		disableFocusTrap,
 		closeOnEscape,
 		closeOnOutsideClick,
@@ -48,7 +46,6 @@
 
 	$: open !== undefined && localOpen.set(open);
 
-	$: updateOption("positioning", positioning);
 	$: updateOption("disableFocusTrap", disableFocusTrap);
 	$: updateOption("closeOnEscape", closeOnEscape);
 	$: updateOption("closeOnOutsideClick", closeOnOutsideClick);

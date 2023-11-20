@@ -6,6 +6,9 @@ import {
 	getOptionUpdater,
 	removeUndefined
 } from "$lib/internal/index.js";
+import { getPositioningUpdater, type PositioningProps } from "../floating/helpers";
+import type { Writable } from "svelte/store";
+import type { FloatingConfig } from "../floating/floating-config";
 
 const NAME = "select";
 const GROUP_NAME = "select-group";
@@ -68,4 +71,19 @@ export function setArrow(size = 8) {
 	const select = getCtx();
 	select.options.arrowSize?.set(size);
 	return select;
+}
+
+const defaultPlacement = {
+	side: "bottom",
+	align: "center"
+} satisfies PositioningProps;
+
+export function updatePositioning(props: PositioningProps) {
+	const withDefaults = { ...defaultPlacement, ...props } satisfies PositioningProps;
+	const {
+		options: { positioning }
+	} = getCtx();
+
+	const updater = getPositioningUpdater(positioning as Writable<FloatingConfig>);
+	updater(withDefaults);
 }

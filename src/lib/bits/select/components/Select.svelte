@@ -12,7 +12,6 @@
 	export let closeOnEscape: $$Props["closeOnEscape"] = undefined;
 	export let closeOnOutsideClick: $$Props["closeOnOutsideClick"] = undefined;
 	export let portal: $$Props["portal"] = undefined;
-	export let positioning: $$Props["positioning"] = undefined;
 	export let name: $$Props["name"] = undefined;
 	export let multiple: $$Props["multiple"] = undefined;
 	export let selected: $$Props["selected"] = undefined;
@@ -32,7 +31,6 @@
 		closeOnEscape,
 		closeOnOutsideClick,
 		portal,
-		positioning,
 		name,
 		multiple,
 		forceVisible: true,
@@ -73,7 +71,6 @@
 	$: updateOption("closeOnEscape", closeOnEscape);
 	$: updateOption("closeOnOutsideClick", closeOnOutsideClick);
 	$: updateOption("portal", portal);
-	$: updateOption("positioning", positioning);
 	$: updateOption("name", name);
 	$: updateOption("multiple", multiple);
 </script>

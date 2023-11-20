@@ -4,7 +4,6 @@
 	import type { Props } from "../types.js";
 	type $$Props = Props;
 
-	export let positioning: $$Props["positioning"] = undefined;
 	export let open: $$Props["open"] = undefined;
 	export let onOpenChange: $$Props["onOpenChange"] = undefined;
 	export let openDelay: $$Props["openDelay"] = 700;
@@ -19,7 +18,6 @@
 		ids
 	} = setCtx({
 		defaultOpen: open,
-		positioning,
 		openDelay,
 		closeDelay,
 		closeOnOutsideClick,
@@ -43,7 +41,6 @@
 	);
 
 	$: open !== undefined && localOpen.set(open);
-	$: updateOption("positioning", positioning);
 	$: updateOption("openDelay", openDelay);
 	$: updateOption("closeDelay", closeDelay);
 	$: updateOption("closeOnOutsideClick", closeOnOutsideClick);

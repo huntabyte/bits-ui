@@ -1,11 +1,14 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { getCtx, getAttrs } from "../ctx.js";
-	import type { TriggerEvents, TriggerProps } from "../types.js";
+	import type {
+		DropdownTriggerEvents,
+		DropdownTriggerProps
+	} from "../types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
 
-	type $$Props = TriggerProps;
-	type $$Events = TriggerEvents;
+	type $$Props = DropdownTriggerProps;
+	type $$Events = DropdownTriggerEvents;
 
 	export let asChild: $$Props["asChild"] = false;
 	export let id: $$Props["id"] = undefined;

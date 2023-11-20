@@ -1,19 +1,19 @@
 import Root from "./components/ContextMenu.svelte";
-import Sub from "./components/ContextMenuSub.svelte";
-import Item from "./components/ContextMenuItem.svelte";
-import Group from "./components/ContextMenuGroup.svelte";
-import Label from "./components/ContextMenuLabel.svelte";
-import Arrow from "./components/ContextMenuArrow.svelte";
+import Sub from "$lib/bits/menu/components/MenuSub.svelte";
+import Item from "$lib/bits/menu/components/MenuItem.svelte";
+import Group from "$lib/bits/menu/components/MenuGroup.svelte";
+import Label from "$lib/bits/menu/components/MenuLabel.svelte";
+import Arrow from "$lib/bits/menu/components/MenuArrow.svelte";
 import Content from "./components/ContextMenuContent.svelte";
 import Trigger from "./components/ContextMenuTrigger.svelte";
-import RadioItem from "./components/ContextMenuRadioItem.svelte";
-import Separator from "./components/ContextMenuSeparator.svelte";
-import RadioGroup from "./components/ContextMenuRadioGroup.svelte";
-import SubContent from "./components/ContextMenuSubContent.svelte";
-import SubTrigger from "./components/ContextMenuSubTrigger.svelte";
-import CheckboxItem from "./components/ContextMenuCheckboxItem.svelte";
-import RadioIndicator from "./components/ContextMenuRadioIndicator.svelte";
-import CheckboxIndicator from "./components/ContextMenuCheckboxIndicator.svelte";
+import RadioItem from "$lib/bits/menu/components/MenuRadioItem.svelte";
+import Separator from "$lib/bits/menu/components/MenuSeparator.svelte";
+import RadioGroup from "$lib/bits/menu/components/MenuRadioGroup.svelte";
+import SubContent from "$lib/bits/menu/components/MenuSubContent.svelte";
+import SubTrigger from "$lib/bits/menu/components/MenuSubTrigger.svelte";
+import CheckboxItem from "$lib/bits/menu/components/MenuCheckboxItem.svelte";
+import RadioIndicator from "$lib/bits/menu/components/MenuRadioIndicator.svelte";
+import CheckboxIndicator from "$lib/bits/menu/components/MenuCheckboxIndicator.svelte";
 
 export {
 	Sub,

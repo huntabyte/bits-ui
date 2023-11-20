@@ -13,7 +13,7 @@
 		<Code class="bg-transparent px-0">{type}</Code>
 	{:else}
 		<Code class="bg-transparent px-0">{type.type}</Code>
-		<Popover.Root positioning={{ placement: "top", gutter: 8 }}>
+		<Popover.Root>
 			<Popover.Trigger
 				class="inline-flex items-center justify-center rounded-button text-foreground-alt transition-colors hover:text-foreground-alt/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
 			>
@@ -21,6 +21,8 @@
 				<span class="sr-only">See type definition</span>
 			</Popover.Trigger>
 			<Popover.Content
+				side="top"
+				sideOffset={8}
 				transition={flyAndScale}
 				transitionConfig={{ y: 8 }}
 				class="z-50 max-h-[400px] overflow-auto rounded-input border border-border bg-background p-4 shadow-popover"
