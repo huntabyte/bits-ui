@@ -7,7 +7,7 @@
 <header
 	class="sticky top-0 z-50 overflow-x-hidden border-b border-border bg-background/75 backdrop-blur"
 >
-	<div class="container px-4">
+	<div class="container w-full px-4">
 		<div class="flex h-[70px] items-center justify-between gap-3">
 			<div class="flex items-center gap-1.5">
 				<MobileNav />
