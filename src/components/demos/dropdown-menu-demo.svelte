@@ -21,6 +21,7 @@
 	<DropdownMenu.Content
 		class="w-full max-w-[229px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover outline-none"
 		transition={flyAndScale}
+		sideOffset={8}
 	>
 		<DropdownMenu.Item
 			class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
@@ -98,6 +99,7 @@
 			<DropdownMenu.SubContent
 				class="w-full max-w-[209px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover outline-none"
 				transition={flyAndScale}
+				sideOffset={8}
 			>
 				<DropdownMenu.Item
 					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"

@@ -19,7 +19,7 @@
 	export let outTransitionConfig: $$Props["outTransitionConfig"] = undefined;
 	export let asChild: $$Props["asChild"] = false;
 	export let id: $$Props["id"] = undefined;
-	export let side: $$Props["side"] = "top";
+	export let side: $$Props["side"] = "bottom";
 	export let align: $$Props["align"] = "center";
 	export let sideOffset: $$Props["sideOffset"] = 0;
 	export let alignOffset: $$Props["alignOffset"] = 0;
