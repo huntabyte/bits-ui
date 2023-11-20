@@ -113,7 +113,7 @@
 							class="aspect-square h-full w-full"
 						/>
 						<Avatar.Fallback
-							class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+							class="flex h-full w-full items-center justify-center rounded-full bg-muted text-xs"
 							>HJ</Avatar.Fallback
 						>
 					</Avatar.Root>
