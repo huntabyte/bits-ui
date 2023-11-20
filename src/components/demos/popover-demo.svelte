@@ -20,6 +20,7 @@
 	<Popover.Content
 		class="z-20 w-full max-w-[392px] rounded-card border border-muted bg-background p-5 shadow-card outline-none"
 		transition={flyAndScale}
+		sideOffset={8}
 	>
 		<div class="flex items-center">
 			<div
