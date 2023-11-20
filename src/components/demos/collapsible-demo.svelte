@@ -1,33 +1,35 @@
 <script lang="ts">
-	import * as Collapsible from "@/components/ui/collapsible";
-	import * as Button from "@/components/ui/button";
-	import { CaretUpDown } from "@/components/icons";
+	import { Collapsible } from "$lib";
+	import { CaretUpDown } from "phosphor-svelte";
+	import { slide } from "svelte/transition";
 </script>
 
-<Collapsible.Root class="w-[350px] space-y-2">
-	<div class="flex items-center justify-between space-x-4 px-4">
-		<h4 class="text-sm font-semibold">@huntabyte starred 3 repositories</h4>
-		<Collapsible.Trigger asChild let:builder>
-			<Button.Root
-				builders={[builder]}
-				variant="ghost"
-				size="sm"
-				class="w-9 p-0"
-			>
-				<CaretUpDown class="h-4 w-4" />
-				<span class="sr-only">Toggle</span>
-			</Button.Root>
+<Collapsible.Root class="w-[327px] space-y-3">
+	<div class="flex items-center justify-between space-x-10">
+		<h4 class="text-[15px] font-medium">@huntabyte starred 3 repositories</h4>
+		<Collapsible.Trigger
+			class="inline-flex h-10 w-10 items-center justify-center rounded-[9px] border border-border-input shadow-btn focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+		>
+			<CaretUpDown class="h-4 w-4 text-foreground" weight="bold" />
+			<span class="sr-only">Toggle</span>
 		</Collapsible.Trigger>
 	</div>
-	<div class="rounded-md border px-4 py-3 font-mono text-sm">
-		@huntabyte/bits
-	</div>
-	<Collapsible.Content class="space-y-2">
-		<div class="rounded-md border px-4 py-3 font-mono text-sm">
-			@melt-ui/melt
+
+	<Collapsible.Content class="space-y-2" transition={slide}>
+		<div
+			class="inline-flex h-12 w-full items-center rounded-[9px] bg-muted px-[18px] py-3 font-mono text-[15px] tracking-[0.01em]"
+		>
+			@huntabyte/bits-ui
 		</div>
-		<div class="rounded-md border px-4 py-3 font-mono text-sm">
+		<div
+			class="inline-flex h-12 w-full items-center rounded-[9px] bg-muted px-[18px] py-3 font-mono text-[15px] tracking-[0.01em]"
+		>
 			@huntabyte/shadcn-svelte
+		</div>
+		<div
+			class="inline-flex h-12 w-full items-center rounded-[9px] bg-muted px-[18px] py-3 font-mono text-[15px] tracking-[0.01em]"
+		>
+			@melt-ui/meltui
 		</div>
 	</Collapsible.Content>
 </Collapsible.Root>
