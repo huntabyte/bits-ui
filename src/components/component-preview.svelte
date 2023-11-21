@@ -30,7 +30,7 @@
 					value === "preview"
 						? "font-semibold shadow-mini hover:bg-opacity-90"
 						: "shadow-none transition-all hover:text-foreground-alt",
-					"relative bg-transparent"
+					"relative bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
 				)}
 			>
 				<span class="z-20"> Preview </span>
@@ -49,7 +49,7 @@
 					value === "code"
 						? "bg-transparent font-semibold shadow-mini hover:bg-opacity-90"
 						: "bg-transparent shadow-none transition-all hover:text-foreground-alt",
-					"relative"
+					"relative focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
 				)}
 			>
 				<span class="z-20"> &lt;Code&gt; </span>
