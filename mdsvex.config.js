@@ -17,8 +17,12 @@ const __dirname = fileURLToPath(new URL(".", import.meta.url));
  */
 const prettyCodeOptions = {
 	theme: {
-		dark: JSON.parse(readFileSync(resolve(__dirname, "./src/styles/themes/custom-dark.json"))),
-		light: JSON.parse(readFileSync(resolve(__dirname, "./src/styles/themes/custom-light.json")))
+		dark: JSON.parse(
+			readFileSync(resolve(__dirname, "./src/styles/themes/serendipity-midnight.json"))
+		),
+		light: JSON.parse(
+			readFileSync(resolve(__dirname, "./src/styles/themes/serendipity-morning.json"))
+		)
 	},
 	keepBackground: false,
 	onVisitLine(node) {
