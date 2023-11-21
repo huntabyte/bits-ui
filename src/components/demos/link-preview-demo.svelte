@@ -28,17 +28,19 @@
 				<Avatar.Image src="/avatar-1.png" alt="@huntabyte" />
 				<Avatar.Fallback>HB</Avatar.Fallback>
 			</Avatar.Root>
-			<div class="space-y-1">
-				<h4 class="text-sm font-medium">@huntabyte</h4>
-				<p class="text-sm">I do things on the internet.</p>
-				<div class="flex items-center gap-[21px]">
-					<div class="flex items-center pt-2">
-						<MapPin class="mr-1 h-4 w-4 opacity-70" />
-						<span class="text-xs text-muted-foreground"> FL, USA </span>
+			<div class="space-y-1 text-sm">
+				<h4 class="font-medium">@huntabyte</h4>
+				<p>I do things on the internet.</p>
+				<div
+					class="flex items-center gap-[21px] pt-2 text-xs text-muted-foreground"
+				>
+					<div class="flex items-center text-xs">
+						<MapPin class="mr-1 h-4 w-4" />
+						<span> FL, USA </span>
 					</div>
-					<div class="flex items-center pt-2">
-						<CalendarBlank class="mr-1 h-4 w-4 opacity-70" />
-						<span class="text-xs text-muted-foreground"> Joined May 2020</span>
+					<div class="flex items-center text-xs">
+						<CalendarBlank class="mr-1 h-4 w-4" />
+						<span> Joined May 2020</span>
 					</div>
 				</div>
 			</div>

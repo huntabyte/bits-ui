@@ -2,7 +2,7 @@
 	import * as AspectRatio from "@/components/ui/aspect-ratio";
 </script>
 
-<AspectRatio.Root ratio={16 / 9} class="rounded-[15px] bg-transparent pt-4">
+<AspectRatio.Root ratio={16 / 9} class="scale-80 rounded-[15px] bg-transparent">
 	<img
 		src="/abstract.png"
 		alt="an abstract painting"
