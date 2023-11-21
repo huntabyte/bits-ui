@@ -1,6 +1,7 @@
 import type { APISchema } from "@/types";
 import type * as Button from "$lib/bits/button/_types";
 import * as C from "@/content/constants";
+
 export const root: APISchema<Button.Props & { href: string }> = {
 	title: "Root",
 	description:

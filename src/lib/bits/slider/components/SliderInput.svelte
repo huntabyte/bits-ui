@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { getCtx, getAttrs } from "../ctx.js";
 	import type { InputProps } from "../types.js";
+	import { srOnlyStyles } from "$lib/internal/style.js";
 
 	type $$Props = InputProps;
 
@@ -15,9 +16,13 @@
 			return value[1] - value[0];
 		}
 	}
-	const attrs = getAttrs("input");
+
+	const attrs = {
+		...getAttrs("input"),
+		style: srOnlyStyles
+	};
 
 	$: inputValue = getValue($value);
 </script>
 
-<input {...$$restProps} value={inputValue} hidden {...attrs} />
+<input {...$$restProps} value={inputValue} {...attrs} />

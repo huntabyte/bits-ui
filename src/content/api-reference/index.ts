@@ -17,6 +17,7 @@ import { progress } from "./progress";
 import { radioGroup } from "./radio-group";
 import { select } from "./select";
 import { separator } from "./separator";
+import { switchData } from "./switch";
 
 export const bits = [
 	"accordion",
@@ -72,7 +73,7 @@ export const apiSchemas: Record<Bit, APISchema[]> = {
 	"radio-group": radioGroup,
 	select,
 	separator,
-	switch: [],
+	switch: switchData,
 	slider: [],
 	tabs: [],
 	toggle: [],
