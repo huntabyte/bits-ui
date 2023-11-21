@@ -1,18 +1,6 @@
 <script lang="ts">
 	import { Dialog } from "$lib";
 
-	/**
-	 *
-    preventScroll?: boolean | undefined;
-    closeOnEscape?: boolean | undefined;
-    closeOnOutsideClick?: boolean | undefined;
-    portal?: string | HTMLElement | null | undefined;
-    openFocus?: FocusProp | undefined;
-    closeFocus?: FocusProp | undefined;
-    open?: boolean | undefined;
-    onOpenChange?: OnChangeFn<...> | undefined;
-	 */
-
 	type $$Props = Dialog.Props;
 
 	export let open: Dialog.Props["open"] = false;
