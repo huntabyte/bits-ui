@@ -29,4 +29,6 @@ description: Allows users to navigate between different views
 </Tabs.Root>
 ```
 
+<APISection {schemas} />
+
 🚧 **UNDER CONSTRUCTION** 🚧

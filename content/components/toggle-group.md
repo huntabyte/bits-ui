@@ -27,4 +27,6 @@ description: An interactive component that toggles between two states.
 </ToggleGroup.Root>
 ```
 
+<APISection {schemas} />
+
 🚧 **UNDER CONSTRUCTION** 🚧

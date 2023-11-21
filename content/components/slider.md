@@ -28,4 +28,6 @@ description: Enable users to select a value within a specific range with sliding
 </Slider.Root>
 ```
 
+<APISection {schemas} />
+
 🚧 **UNDER CONSTRUCTION** 🚧

@@ -27,4 +27,6 @@ description: Enables users to toggle between two states.
 </Switch.Root>
 ```
 
+<APISection {schemas} />
+
 🚧 **UNDER CONSTRUCTION** 🚧

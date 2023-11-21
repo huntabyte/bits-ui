@@ -72,4 +72,27 @@ const root: APISchema<Switch.Props> = {
 	]
 };
 
-export const switchData = [root];
+const thumb: APISchema<Switch.ThumbProps> = {
+	title: "Thumb",
+	description: "The thumb on the switch used to indicate the switch's state.",
+	props: {
+		asChild
+	},
+	dataAttributes: [
+		{
+			name: "state",
+			value: enums("checked", "unchecked"),
+			description: "The switch's checked state."
+		},
+		{
+			name: "checked",
+			description: "Present when the switch is checked."
+		},
+		{
+			name: "bits-switch-thumb",
+			description: "Present on the thumb element."
+		}
+	]
+};
+
+export const switchData = [root, thumb];
