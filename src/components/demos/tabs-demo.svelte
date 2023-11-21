@@ -12,12 +12,12 @@
 	>
 		<Tabs.Trigger
 			value="login"
-			class="h-8 rounded-[7px] bg-transparent py-2 text-sm font-semibold leading-[0.01em] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background data-[state=active]:bg-white data-[state=active]:shadow-mini dark:data-[state=active]:bg-background"
+			class="h-8 rounded-[7px] bg-transparent py-2 text-sm font-semibold leading-[0.01em] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98 data-[state=active]:bg-white data-[state=active]:shadow-mini dark:data-[state=active]:bg-background"
 			>Login</Tabs.Trigger
 		>
 		<Tabs.Trigger
 			value="register"
-			class="h-8 rounded-[7px] bg-transparent py-2 text-sm font-semibold leading-[0.01em] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background data-[state=active]:bg-white data-[state=active]:shadow-mini dark:data-[state=active]:bg-background"
+			class="h-8 rounded-[7px] bg-transparent py-2 text-sm font-semibold leading-[0.01em] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98 data-[state=active]:bg-white data-[state=active]:shadow-mini dark:data-[state=active]:bg-background"
 			>Register</Tabs.Trigger
 		>
 	</Tabs.List>

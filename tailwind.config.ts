@@ -74,6 +74,10 @@ export default {
 			},
 			opacity: {
 				8: "0.08"
+			},
+			scale: {
+				98: ".98",
+				99: ".99"
 			}
 		}
 	},
