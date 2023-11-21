@@ -3,7 +3,7 @@
 	import { flyAndScale } from "@/utils";
 	import { Check } from "phosphor-svelte";
 
-	const fruits = [
+	const frameworks = [
 		{ value: "svelte", label: "Svelte" },
 		{ value: "vue", label: "Vue" },
 		{ value: "solid", label: "Solid" },
@@ -30,13 +30,13 @@
 			<Select.Label class="py-1.5 pl-2 text-sm font-medium"
 				>Frameworks</Select.Label
 			>
-			{#each fruits as fruit}
+			{#each frameworks as framework}
 				<Select.Item
 					class="flex h-10 w-full select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm outline-none transition-all duration-75 data-[highlighted]:bg-muted/50 data-[selected]:bg-muted"
-					value={fruit.value}
-					label={fruit.label}
+					value={framework.value}
+					label={framework.label}
 				>
-					{fruit.label}
+					{framework.label}
 					<Select.ItemIndicator class="ml-auto" asChild={false}>
 						<Check />
 					</Select.ItemIndicator>
