@@ -10,7 +10,7 @@
 	>
 		<div class="h-full py-6 pr-4 lg:py-8">
 			<nav class="space-y-3">
-				<div class="flex w-full flex-col">
+				<div class="flex w-full flex-col pb-[50px]">
 					{#each items as item, index (index)}
 						{#if item.title === "Overview"}
 							<SidebarNavMainItems items={item.items} />
