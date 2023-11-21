@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Select } from "$lib";
 	import { flyAndScale } from "@/utils";
+	import { Check } from "phosphor-svelte";
 
 	const fruits = [
 		{ value: "svelte", label: "Svelte" },
@@ -31,10 +32,15 @@
 			>
 			{#each fruits as fruit}
 				<Select.Item
-					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm outline-none transition-all duration-75 data-[selected]:bg-muted data-[highlighted]:hover:bg-muted/50"
+					class="flex h-10 w-full select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm outline-none transition-all duration-75 data-[highlighted]:bg-muted/50 data-[selected]:bg-muted"
 					value={fruit.value}
-					label={fruit.label}>{fruit.label}</Select.Item
+					label={fruit.label}
 				>
+					{fruit.label}
+					<Select.ItemIndicator class="ml-auto" asChild={false}>
+						<Check />
+					</Select.ItemIndicator>
+				</Select.Item>
 			{/each}
 		</Select.Group>
 	</Select.Content>

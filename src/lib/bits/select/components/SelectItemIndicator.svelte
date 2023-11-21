@@ -17,8 +17,10 @@
 
 {#if asChild}
 	<slot {...slotProps} />
-{:else if $isSelected(value)}
+{:else}
 	<div {...$$restProps} {...attrs}>
-		<slot {...slotProps} />
+		{#if $isSelected(value)}
+			<slot {...slotProps} />
+		{/if}
 	</div>
 {/if}
