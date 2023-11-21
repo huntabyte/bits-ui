@@ -4,7 +4,7 @@ description: Displays floating content containing additional information about a
 ---
 
 <script>
-	import { ComponentPreview, TooltipDemo } from '@/components'
+	import { ComponentPreview, TooltipDemo, APISection } from '@/components'
 	export let schemas;
 </script>
 
