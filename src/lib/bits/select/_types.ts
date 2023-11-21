@@ -43,6 +43,8 @@ type LabelProps = AsChild;
 type ItemProps = Expand<SelectOptionProps & AsChild>;
 type SeparatorProps = AsChild;
 
+type IndicatorProps = AsChild
+
 type TriggerProps = AsChild;
 
 type ValueProps = Expand<
@@ -60,6 +62,7 @@ export type {
 	Props,
 	ArrowProps,
 	ContentProps,
+	IndicatorProps,
 	GroupProps,
 	InputProps,
 	LabelProps,

@@ -116,6 +116,10 @@ export const trigger: APISchema<Select.TriggerProps> = {
 		{
 			name: "disabled",
 			description: "Present when the trigger is disabled."
+		},
+		{
+			name: "bits-select-trigger",
+			description: "Present on the trigger element."
 		}
 	]
 };
@@ -123,7 +127,13 @@ export const trigger: APISchema<Select.TriggerProps> = {
 export const content: APISchema<Select.ContentProps> = {
 	title: "Content",
 	description: "The content/menu element which contains the select menu's items.",
-	props: { ...transitionProps, ...floatingPositioning, asChild }
+	props: { ...transitionProps, ...floatingPositioning, asChild },
+	dataAttributes: [
+		{
+			name: "bits-select-content",
+			description: "Present on the content element."
+		}
+	]
 };
 
 export const item: APISchema<Select.ItemProps> = {
@@ -145,7 +155,22 @@ export const item: APISchema<Select.ItemProps> = {
 				"Whether or not the select item is disabled. This will prevent interaction/selection."
 		},
 		asChild
-	}
+	},
+	dataAttributes: [
+		{
+			name: "state",
+			value: enums("selected", "hovered"),
+			description: "The state of the item."
+		},
+		{
+			name: "disabled",
+			description: "Present when the item is disabled."
+		},
+		{
+			name: "bits-select-item",
+			description: "Present on the item element."
+		}
+	]
 };
 
 export const value: APISchema = {
@@ -158,7 +183,13 @@ export const value: APISchema = {
 			description: "A placeholder value to display when no value is selected."
 		},
 		asChild
-	}
+	},
+	dataAttributes: [
+		{
+			name: "bits-select-value",
+			description: "Present on the value element."
+		}
+	]
 };
 
 export const input: APISchema<Select.InputProps> = {
@@ -171,14 +202,26 @@ export const input: APISchema<Select.InputProps> = {
 export const group: APISchema<Select.GroupProps> = {
 	title: "Group",
 	description: "An accessible group of select menu items.",
-	props: { asChild }
+	props: { asChild },
+	dataAttributes: [
+		{
+			name: "bits-select-group",
+			description: "Present on the group element."
+		}
+	]
 };
 
 export const label: APISchema<Select.LabelProps> = {
 	title: "Label",
 	description:
 		"A label for the select menu which will be skipped when navigating with the keyboard. This must be a child of the `Select.Group` component to be accessible.",
-	props: { asChild }
+	props: { asChild },
+	dataAttributes: [
+		{
+			name: "bits-select-label",
+			description: "Present on the label element."
+		}
+	]
 };
 
 export const separator: APISchema<Select.SeparatorProps> = {
@@ -186,7 +229,27 @@ export const separator: APISchema<Select.SeparatorProps> = {
 	description: "A visual separator for use between select items or groups.",
 	props: {
 		asChild
-	}
+	},
+	dataAttributes: [
+		{
+			name: "bits-select-separator",
+			description: "Present on the separator element."
+		}
+	]
+};
+
+export const indicator: APISchema<Select.IndicatorProps> = {
+	title: "Separator",
+	description: "A visual separator for use between select items or groups.",
+	props: {
+		asChild
+	},
+	dataAttributes: [
+		{
+			name: "bits-select-indicator",
+			description: "Present on the indicator element."
+		}
+	]
 };
 
 export const arrow: APISchema<Select.ArrowProps> = {
@@ -196,7 +259,6 @@ export const arrow: APISchema<Select.ArrowProps> = {
 	dataAttributes: [
 		{
 			name: "arrow",
-			value: "",
 			description: "Present on the arrow element."
 		}
 	]

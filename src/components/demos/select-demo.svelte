@@ -31,7 +31,7 @@
 			>
 			{#each fruits as fruit}
 				<Select.Item
-					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm  outline-none transition-all duration-75 data-[highlighted]:bg-muted"
+					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm outline-none transition-all duration-75 data-[selected]:bg-muted data-[highlighted]:hover:bg-muted/50"
 					value={fruit.value}
 					label={fruit.label}>{fruit.label}</Select.Item
 				>

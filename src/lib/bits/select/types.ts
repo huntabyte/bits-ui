@@ -27,6 +27,8 @@ type ValueProps = I.ValueProps & HTMLAttributes<HTMLSpanElement>;
 
 type ArrowProps = I.ArrowProps & HTMLDivAttributes;
 
+type IndicatorProps = I.IndicatorProps & HTMLDivAttributes;
+
 type ItemEvents<T extends Element = HTMLDivElement> = {
 	click: CustomEventHandler<MouseEvent, T>;
 	pointermove: CustomEventHandler<PointerEvent, T>;
@@ -57,6 +59,7 @@ export type {
 	InputProps,
 	LabelProps,
 	ItemProps,
+	IndicatorProps,
 	SeparatorProps,
 	TriggerProps,
 	ValueProps,
@@ -68,6 +71,7 @@ export type {
 	InputProps as SelectInputProps,
 	LabelProps as SelectLabelProps,
 	ItemProps as SelectItemProps,
+	IndicatorProps as SelectIndicatorProps,
 	SeparatorProps as SelectSeparatorProps,
 	TriggerProps as SelectTriggerProps,
 	ValueProps as SelectValueProps,

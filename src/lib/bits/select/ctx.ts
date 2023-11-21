@@ -14,7 +14,17 @@ const NAME = "select";
 const GROUP_NAME = "select-group";
 const ITEM_NAME = "select-item";
 
-const PARTS = ["arrow", "content", "group", "item", "input", "label", "trigger", "value"] as const;
+const PARTS = [
+	"arrow",
+	"content",
+	"group",
+	"item",
+	"indicator",
+	"input",
+	"label",
+	"trigger",
+	"value"
+] as const;
 
 export const getAttrs = createBitAttrs(NAME, PARTS);
 
