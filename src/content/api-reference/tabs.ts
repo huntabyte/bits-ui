@@ -38,7 +38,10 @@ const root: APISchema<Tabs.Props> = {
 		},
 		orientation: {
 			default: C.HORIZONTAL,
-			type: enums(C.HORIZONTAL, C.VERTICAL),
+			type: {
+				type: C.ENUM,
+				definition: enums(C.HORIZONTAL, C.VERTICAL)
+			},
 			description: "The orientation of the tabs."
 		},
 		asChild

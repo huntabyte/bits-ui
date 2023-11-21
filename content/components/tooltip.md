@@ -5,6 +5,7 @@ description: Displays floating content containing additional information about a
 
 <script>
 	import { ComponentPreview, TooltipDemo } from '@/components'
+	export let schemas;
 </script>
 
 <ComponentPreview name="tooltip-demo" comp="Tooltip">
@@ -27,5 +28,7 @@ description: Displays floating content containing additional information about a
 	</Tooltip.Content>
 </Tooltip.Root>
 ```
+
+<APISection {schemas} />
 
 🚧 **UNDER CONSTRUCTION** 🚧
