@@ -8,7 +8,7 @@
 	<AlertDialog.Trigger
 		class="inline-flex h-12 items-center
 	justify-center whitespace-nowrap rounded-input bg-dark px-[21px]
-	text-[15px] font-semibold text-background shadow-mini ring-dark ring-offset-background transition-colors hover:bg-foreground/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dark focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
+	text-[15px] font-semibold text-background shadow-mini ring-dark ring-offset-background transition-all hover:bg-dark/95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dark focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
 	>
 		Subscribe
 	</AlertDialog.Trigger>
@@ -33,11 +33,11 @@
 			</div>
 			<div class="flex w-full items-center justify-center gap-2">
 				<AlertDialog.Cancel
-					class="inline-flex h-input w-full items-center justify-center rounded-input bg-muted text-[15px] font-medium shadow-mini focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
+					class="inline-flex h-input w-full items-center justify-center rounded-input bg-muted text-[15px] font-medium shadow-mini transition-all hover:bg-muted/95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
 					>Cancel</AlertDialog.Cancel
 				>
 				<AlertDialog.Action
-					class="inline-flex h-input w-full items-center justify-center rounded-input bg-dark text-[15px] font-semibold text-background shadow-mini focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dark focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
+					class="inline-flex h-input w-full items-center justify-center rounded-input bg-dark text-[15px] font-semibold text-background shadow-mini transition-all hover:bg-dark/95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dark focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
 					>Continue</AlertDialog.Action
 				>
 			</div>

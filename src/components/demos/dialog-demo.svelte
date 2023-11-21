@@ -9,7 +9,7 @@
 	<Dialog.Trigger
 		class="inline-flex h-12 items-center
 	justify-center whitespace-nowrap rounded-input bg-dark px-[21px]
-	text-[15px] font-semibold text-background shadow-mini  transition-colors hover:bg-foreground/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
+	text-[15px] font-semibold text-background shadow-mini transition-colors hover:bg-dark/95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
 	>
 		New API key
 	</Dialog.Trigger>
@@ -50,7 +50,7 @@
 			</div>
 			<div class="flex w-full justify-end">
 				<Dialog.Close
-					class="hover:button-gradient inline-flex h-input items-center justify-center rounded-input bg-dark px-[50px] text-[15px] font-semibold text-background shadow-mini focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dark focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
+					class="inline-flex h-input items-center justify-center rounded-input bg-dark px-[50px] text-[15px] font-semibold text-background shadow-mini hover:bg-dark/95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dark focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
 				>
 					Save
 				</Dialog.Close>

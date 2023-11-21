@@ -14,7 +14,7 @@
 
 <Select.Root>
 	<Select.Trigger
-		class="inline-flex h-input w-[180px] items-center rounded-card-sm border border-dark-10 bg-background px-4 text-sm transition-colors placeholder:text-foreground-alt/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+		class="inline-flex h-input w-[180px] items-center rounded-card-sm border border-dark-10 bg-background px-4 text-sm transition-all placeholder:text-foreground-alt/50 hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
 	>
 		<Select.Value
 			class="text-sm font-medium"

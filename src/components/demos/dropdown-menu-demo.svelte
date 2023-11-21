@@ -14,7 +14,7 @@
 
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger
-		class="border-input inline-flex h-10 w-10 items-center justify-center rounded-full border bg-background text-sm font-medium text-foreground shadow-btn focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
+		class="border-input inline-flex h-10 w-10 items-center justify-center rounded-full border bg-background text-sm font-medium text-foreground shadow-btn transition-all hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
 	>
 		<DotsThree class="h-6 w-6 text-foreground" />
 	</DropdownMenu.Trigger>
@@ -131,7 +131,7 @@
 							class="aspect-square h-full w-full"
 						/>
 						<Avatar.Fallback
-							class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+							class="flex h-full w-full items-center justify-center rounded-full bg-muted text-xs"
 							>PS</Avatar.Fallback
 						>
 					</Avatar.Root>
@@ -149,7 +149,7 @@
 							class="aspect-square h-full w-full"
 						/>
 						<Avatar.Fallback
-							class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+							class="flex h-full w-full items-center justify-center rounded-full bg-muted text-xs"
 							>CK</Avatar.Fallback
 						>
 					</Avatar.Root>
@@ -167,7 +167,7 @@
 							class="aspect-square h-full w-full"
 						/>
 						<Avatar.Fallback
-							class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+							class="flex h-full w-full items-center justify-center rounded-full bg-muted text-xs"
 							>TL</Avatar.Fallback
 						>
 					</Avatar.Root>
