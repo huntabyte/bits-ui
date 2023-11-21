@@ -7,6 +7,7 @@ import { getContext, setContext } from "svelte";
 import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 import { getPositioningUpdater, type PositioningProps } from "../floating/helpers";
 import type { Writable } from "svelte/store";
+import type { FloatingConfig } from "../floating/floating-config";
 
 const NAME = "popover";
 const PARTS = ["arrow", "close", "content", "trigger"] as const;

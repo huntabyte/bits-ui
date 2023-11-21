@@ -7,6 +7,7 @@ import {
 import { getContext, setContext } from "svelte";
 import type { Writable } from "svelte/store";
 import { getPositioningUpdater, type PositioningProps } from "../floating/helpers.js";
+import type { FloatingConfig } from "../floating/floating-config.js";
 
 const NAME = "menu";
 

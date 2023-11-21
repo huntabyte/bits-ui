@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Sun, MoonStars } from "@/components/icons";
+	import { Sun, MoonStars } from "phosphor-svelte";
 	import { Button } from "$lib";
 	import { toggleMode, mode } from "mode-watcher";
 	import { scale } from "svelte/transition";

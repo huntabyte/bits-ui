@@ -8,6 +8,13 @@ export type ArrowProps = Expand<
 
 export type Boundary = "clippingAncestors" | Element | Array<Element> | Rect;
 
+export type Rect = {
+	x: number;
+	y: number;
+	width: number;
+	height: number;
+};
+
 export type ContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,

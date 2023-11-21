@@ -1,6 +1,6 @@
 <script lang="ts">
+	import { SquareHalf } from "phosphor-svelte";
 	import * as Sheet from "@/components/ui/sheet";
-	import { SquareHalf } from "@/components/icons";
 	import { Button } from "@/components/ui/button";
 	import { navigation } from "@/config";
 	import MobileLink from "./mobile-link.svelte";

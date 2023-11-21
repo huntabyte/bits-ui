@@ -1,4 +1,6 @@
 import type { Writable } from "svelte/store";
+import type { FloatingConfig } from "./floating-config";
+import type { Boundary } from "./_types.js";
 
 export type Side = "top" | "right" | "bottom" | "left";
 export type Align = "start" | "center" | "end";

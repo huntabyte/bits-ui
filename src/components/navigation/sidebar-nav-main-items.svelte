@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { SidebarNavItem } from "@/config";
-	import { RocketLaunch, BookOpen, Code } from "@/components/icons";
+	import { RocketLaunch, BookOpen, Code } from "phosphor-svelte";
 	import { page } from "$app/stores";
 	import { cn } from "@/utils";
 

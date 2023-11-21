@@ -15,7 +15,7 @@ import type {
 	SubContentProps,
 	SubTriggerProps,
 	CheckboxItemProps,
-	CheckboxItemIndicatorProps,
+	CheckboxIndicatorProps,
 	//
 	MenubarTriggerEvents as TriggerEvents,
 	ItemEvents,
@@ -44,7 +44,7 @@ export type {
 	SubContentProps,
 	SubTriggerProps,
 	CheckboxItemProps,
-	CheckboxItemIndicatorProps,
+	CheckboxIndicatorProps,
 	//
 	Props as MenubarProps,
 	SubProps as MenubarSubProps,
@@ -61,7 +61,7 @@ export type {
 	SubTriggerProps as MenubarSubTriggerProps,
 	RadioGroupProps as MenubarRadioGroupProps,
 	CheckboxItemProps as MenubarCheckboxItemProps,
-	CheckboxItemIndicatorProps as MenubarCheckboxItemIndicatorProps,
+	CheckboxIndicatorProps as MenubarCheckboxIndicatorProps,
 	//
 	ItemEvents,
 	TriggerEvents,
