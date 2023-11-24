@@ -21,7 +21,7 @@
 >
 	<Tabs.Root class="relative mr-auto w-full" let:value>
 		<Tabs.List
-			class="absolute right-2.5 top-2.5 z-20 flex h-input-sm items-center justify-center rounded-card-sm bg-black/8 px-[5px] shadow-mini-inset dark:bg-white/8"
+			class="absolute right-2.5 top-2.5 z-20 flex h-input-sm items-center justify-center rounded-card-sm bg-neutral-200 px-[5px] shadow-mini-inset dark:bg-neutral-800 "
 		>
 			<Tabs.Trigger
 				value="preview"
@@ -71,7 +71,7 @@
 		</Tabs.Content>
 		<Tabs.Content
 			value="preview"
-			class="relative rounded-card border-2 border-muted focus-visible:outline-none"
+			class="relative rounded-card border-2 border-muted bg-zinc-50 focus-visible:outline-none dark:bg-[#1f1f21]"
 		>
 			<div
 				class={cn(
