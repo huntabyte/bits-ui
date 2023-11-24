@@ -2,9 +2,9 @@ import Root from "./components/Calendar.svelte";
 import Date from "./components/CalendarDate.svelte";
 import Grid from "./components/CalendarGrid.svelte";
 import GridBody from "./components/CalendarGridBody.svelte";
-import GridBodyCell from "./components/CalendarGridBodyCell.svelte";
+import Cell from "./components/CalendarCell.svelte";
 import GridHead from "./components/CalendarGridHead.svelte";
-import GridHeadCell from "./components/CalendarGridHeadCell.svelte";
+import HeadCell from "./components/CalendarHeadCell.svelte";
 import GridRow from "./components/CalendarGridRow.svelte";
 import Header from "./components/CalendarHeader.svelte";
 import Heading from "./components/CalendarHeading.svelte";
@@ -16,9 +16,9 @@ export {
 	Date,
 	Grid,
 	GridBody,
-	GridBodyCell,
+	Cell,
 	GridHead,
-	GridHeadCell,
+	HeadCell,
 	GridRow,
 	Header,
 	Heading,
@@ -29,9 +29,9 @@ export {
 	Date as CalendarDate,
 	Grid as CalendarGrid,
 	GridBody as CalendarGridBody,
-	GridBodyCell as CalendarGridBodyCell,
+	Cell as CalendarGridBodyCell,
 	GridHead as CalendarGridHead,
-	GridHeadCell as CalendarGridHeadCell,
+	HeadCell as CalendarGridHeadCell,
 	GridRow as CalendarGridRow,
 	Header as CalendarHeader,
 	Heading as CalendarHeading,

@@ -5,8 +5,12 @@
 	import { buttonVariants } from "../ui/button";
 </script>
 
-<Calendar.Root class="p-3 rounded-md border" let:months let:daysOfWeek>
-	<Calendar.Header class="flex justify-between items-center">
+<Calendar.Root
+	class="rounded-card border bg-background p-6 shadow-card"
+	let:months
+	let:daysOfWeek
+>
+	<Calendar.Header class="flex items-center justify-between">
 		<Calendar.PrevButton
 			class={cn(
 				buttonVariants({ variant: "outline" }),
@@ -25,34 +29,36 @@
 			<ChevronRight class="h-4 w-4" />
 		</Calendar.NextButton>
 	</Calendar.Header>
-	<div class="flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0 pt-4">
+	<div
+		class="flex flex-col space-y-4 pt-4 sm:flex-row sm:space-x-4 sm:space-y-0"
+	>
 		{#each months as month}
 			<Calendar.Grid class="w-full border-collapse space-y-1">
 				<Calendar.GridHead>
 					<Calendar.GridRow class="flex w-full justify-between">
 						{#each daysOfWeek as day}
-							<Calendar.GridHeadCell
-								class="text-muted-foreground rounded-md w-9 font-normal text-[0.8rem]"
+							<Calendar.HeadCell
+								class="w-9 rounded-md text-[0.8rem] font-medium text-muted-foreground"
 							>
 								<div>{day}</div>
-							</Calendar.GridHeadCell>
+							</Calendar.HeadCell>
 						{/each}
 					</Calendar.GridRow>
 				</Calendar.GridHead>
 				<Calendar.GridBody>
 					{#each month.weeks as weekDates}
-						<Calendar.GridRow class="flex w-full mt-2">
+						<Calendar.GridRow class="mt-2 flex w-full">
 							{#each weekDates as date}
-								<Calendar.GridBodyCell
+								<Calendar.Cell
 									{date}
-									class="h-9 w-9 text-center text-sm p-0 relative [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20"
+									class="relative h-9 w-9 p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-muted first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md"
 								>
 									<Calendar.Date
 										{date}
 										month={month.value}
-										class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 w-9 p-0 font-normal aria-selected:opacity-100 text-muted-foreground opacity-50"
+										class="focus-visible:ring-ring inline-flex h-9 w-9 items-center justify-center whitespace-nowrap rounded-md bg-background p-0 text-sm font-normal text-foreground ring-offset-background transition-colors hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 aria-selected:bg-muted data-[outside-month]:opacity-0"
 									/>
-								</Calendar.GridBodyCell>
+								</Calendar.Cell>
 							{/each}
 						</Calendar.GridRow>
 					{/each}
