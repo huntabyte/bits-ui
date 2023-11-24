@@ -136,6 +136,11 @@ export const navigation: Navigation = {
 					items: []
 				},
 				{
+					title: "Range Calendar",
+					href: "/docs/components/range-calendar",
+					items: []
+				},
+				{
 					title: "Select",
 					href: "/docs/components/select",
 					items: []
