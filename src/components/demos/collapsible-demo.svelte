@@ -29,7 +29,7 @@
 		<div
 			class="inline-flex h-12 w-full items-center rounded-[9px] bg-muted px-[18px] py-3 font-mono text-[15px] tracking-[0.01em]"
 		>
-			@melt-ui/meltui
+			@melt-ui/melt-ui
 		</div>
 	</Collapsible.Content>
 </Collapsible.Root>
