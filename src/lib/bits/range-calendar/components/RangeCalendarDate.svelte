@@ -11,7 +11,7 @@
 
 	const {
 		elements: { cell },
-		helpers: { isDateDisabled, isDateUnavailable, isDateSelected }
+		helpers: { isDateDisabled, isDateUnavailable }
 	} = getCtx();
 
 	$: builder = $cell(date, month);
@@ -21,8 +21,7 @@
 		builder,
 		attrs,
 		disabled: $isDateDisabled(date),
-		unavailable: $isDateUnavailable(date),
-		selected: $isDateSelected(date)
+		unavailable: $isDateUnavailable(date)
 	};
 </script>
 

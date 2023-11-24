@@ -4,11 +4,11 @@ description: A calendar component with range selection.
 ---
 
 <script>
-	import { APISection, ComponentPreview, CalendarDemo } from '@/components'
+	import { APISection, ComponentPreview, RangeCalendarDemo } from '@/components'
 </script>
 
-<ComponentPreview name="calendar-demo" comp="Calendar">
+<ComponentPreview name="range-calendar-demo" comp="Range Calendar">
 
-<CalendarDemo slot="preview" />
+<RangeCalendarDemo slot="preview" />
 
 </ComponentPreview>

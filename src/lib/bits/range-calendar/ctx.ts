@@ -1,12 +1,12 @@
 import {
-	createCalendar,
-	type Calendar as CalendarReturn,
-	type CreateCalendarProps
+	type RangeCalendar as RangeCalendarReturn,
+	type CreateRangeCalendarProps,
+	createRangeCalendar
 } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
 import { removeUndefined, getOptionUpdater, createBitAttrs } from "$lib/internal/index.js";
 
-const NAME = "calendar";
+const NAME = "range-calendar";
 const PARTS = [
 	"root",
 	"prev-button",
@@ -24,14 +24,14 @@ const PARTS = [
 
 export const getAttrs = createBitAttrs(NAME, PARTS);
 
-type GetReturn = CalendarReturn;
+type GetReturn = RangeCalendarReturn;
 
-export function setCtx(props: CreateCalendarProps) {
-	const calendar = createCalendar(removeUndefined(props));
-	setContext(NAME, calendar);
+export function setCtx(props: CreateRangeCalendarProps) {
+	const rangeCalendar = createRangeCalendar(removeUndefined(props));
+	setContext(NAME, rangeCalendar);
 	return {
-		...calendar,
-		updateOption: getOptionUpdater(calendar.options)
+		...rangeCalendar,
+		updateOption: getOptionUpdater(rangeCalendar.options)
 	};
 }
 
