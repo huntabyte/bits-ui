@@ -85,28 +85,28 @@
 			<div class="flex flex-col gap-4 pt-5">
 				<div class="flex flex-col gap-1">
 					<Label.Root
-						for="username"
+						for="registerUsername"
 						class="text-sm font-medium text-foreground"
 					>
 						Username
 					</Label.Root>
 					<input
 						type="text"
-						id="username"
+						id="registerUsername"
 						placeholder="name@example.com"
 						class="inline-flex h-input w-full items-center rounded-card-sm border border-dark-10 bg-background px-4 text-sm placeholder:text-foreground-alt/50 focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2 focus:ring-offset-background"
 					/>
 				</div>
 				<div class="flex flex-col gap-1">
 					<Label.Root
-						for="password"
+						for="registerPassword"
 						class="text-sm font-medium text-foreground"
 					>
 						Password
 					</Label.Root>
 					<div class="relative w-full">
 						<input
-							id="password"
+							id="registerPassword"
 							class="inline-flex h-input w-full items-center rounded-card-sm border border-dark-10 bg-background px-4 text-sm placeholder:text-foreground-alt/50 focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2 focus:ring-offset-background"
 							placeholder="super_secret"
 							type="password"
