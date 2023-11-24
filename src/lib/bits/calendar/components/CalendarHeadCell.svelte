@@ -5,7 +5,7 @@
 	type $$Props = GridHeadCellProps;
 	export let asChild: $$Props["asChild"] = false;
 
-	const attrs = getAttrs("grid-head-cell");
+	const attrs = getAttrs("head-cell");
 </script>
 
 {#if asChild}

@@ -12,7 +12,7 @@
 	} = getCtx();
 
 	$: attrs = {
-		...getAttrs("grid-body-cell"),
+		...getAttrs("cell"),
 		"aria-disabled": $isDateDisabled(date) || $isDateUnavailable(date),
 		role: "gridcell"
 	};

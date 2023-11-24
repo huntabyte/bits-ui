@@ -16,9 +16,9 @@ const PARTS = [
 	"date",
 	"header",
 	"grid-head",
-	"grid-head-cell",
+	"head-cell",
 	"grid-body",
-	"grid-body-cell",
+	"cell",
 	"grid-row"
 ] as const;
 
