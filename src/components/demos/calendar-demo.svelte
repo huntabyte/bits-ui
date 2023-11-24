@@ -19,7 +19,7 @@
 		>
 			<ChevronLeft class="h-4 w-4" />
 		</Calendar.PrevButton>
-		<Calendar.Heading class="text-sm font-medium" />
+		<Calendar.Heading class="font-medium" />
 		<Calendar.NextButton
 			class={cn(
 				buttonVariants({ variant: "outline" }),
@@ -47,7 +47,7 @@
 				</Calendar.GridHead>
 				<Calendar.GridBody>
 					{#each month.weeks as weekDates}
-						<Calendar.GridRow class="mt-2 flex w-full">
+						<Calendar.GridRow class="mt-2 flex w-full gap-1">
 							{#each weekDates as date}
 								<Calendar.Cell
 									{date}
@@ -56,7 +56,7 @@
 									<Calendar.Date
 										{date}
 										month={month.value}
-										class="focus-visible:ring-ring inline-flex h-9 w-9 items-center justify-center whitespace-nowrap rounded-md bg-background p-0 text-sm font-normal text-foreground ring-offset-background transition-colors hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 aria-selected:bg-muted data-[outside-month]:opacity-0"
+										class="focus-visible:ring-ring inline-flex h-9 w-9 items-center justify-center whitespace-nowrap rounded-md bg-background p-0 text-sm font-normal text-foreground ring-offset-background transition-colors hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 aria-selected:bg-muted data-[outside-month]:pointer-events-none data-[outside-month]:opacity-0"
 									/>
 								</Calendar.Cell>
 							{/each}
