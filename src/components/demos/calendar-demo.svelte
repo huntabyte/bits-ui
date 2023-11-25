@@ -4,7 +4,7 @@
 </script>
 
 <Calendar.Root
-	class="mt-6 rounded-card border bg-background p-6 shadow-card"
+	class="mt-6 rounded-card border border-dark-10 bg-background p-6 shadow-card"
 	let:months
 	let:daysOfWeek
 >
@@ -25,7 +25,7 @@
 		class="flex flex-col space-y-4 pt-4 sm:flex-row sm:space-x-4 sm:space-y-0"
 	>
 		{#each months as month}
-			<Calendar.Grid class="w-full border-collapse space-y-1">
+			<Calendar.Grid class="w-full border-collapse select-none space-y-1">
 				<Calendar.GridHead>
 					<Calendar.GridRow class="flex w-full justify-between">
 						{#each daysOfWeek as day}
@@ -39,7 +39,7 @@
 				</Calendar.GridHead>
 				<Calendar.GridBody>
 					{#each month.weeks as weekDates}
-						<Calendar.GridRow class="mt-2 flex w-full gap-1">
+						<Calendar.GridRow class="mt-1 flex w-full gap-1">
 							{#each weekDates as date}
 								<Calendar.Cell
 									{date}
@@ -48,7 +48,7 @@
 									<Calendar.Date
 										{date}
 										month={month.value}
-										class="inline-flex h-9 w-9 items-center justify-center whitespace-nowrap rounded-[7px] bg-background p-0 text-sm font-normal text-foreground ring-offset-background transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 data-[disabled]:pointer-events-none data-[outside-month]:pointer-events-none data-[selected]:bg-foreground data-[selected]:text-background data-[disabled]:opacity-50 data-[outside-month]:opacity-20"
+										class="inline-flex h-9 w-9 items-center justify-center whitespace-nowrap rounded-[7px] bg-background p-0 text-sm font-normal text-foreground ring-offset-background transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 data-[disabled]:pointer-events-none data-[outside-month]:pointer-events-none data-[selected]:bg-foreground data-[selected]:text-background data-[disabled]:opacity-50 data-[outside-month]:opacity-20 "
 									/>
 								</Calendar.Cell>
 							{/each}

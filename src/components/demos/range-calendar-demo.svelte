@@ -4,7 +4,7 @@
 </script>
 
 <RangeCalendar.Root
-	class="mt-6 rounded-card border bg-background p-6 shadow-card"
+	class="mt-6 rounded-card border border-dark-10 bg-background p-6 shadow-card"
 	let:months
 	let:daysOfWeek
 >
@@ -25,7 +25,7 @@
 		class="flex flex-col space-y-4 pt-4 sm:flex-row sm:space-x-4 sm:space-y-0"
 	>
 		{#each months as month}
-			<RangeCalendar.Grid class="w-full border-collapse space-y-1">
+			<RangeCalendar.Grid class="w-full border-collapse select-none space-y-1">
 				<RangeCalendar.GridHead>
 					<RangeCalendar.GridRow class="flex w-full justify-between">
 						{#each daysOfWeek as day}
