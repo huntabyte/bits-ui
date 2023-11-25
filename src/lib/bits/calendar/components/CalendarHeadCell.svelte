@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { getAttrs } from "../ctx.js";
-	import type { GridHeadCellProps } from "../types.js";
+	import type { HeadCellProps } from "../types.js";
 
-	type $$Props = GridHeadCellProps;
+	type $$Props = HeadCellProps;
 	export let asChild: $$Props["asChild"] = false;
 
 	const attrs = getAttrs("head-cell");

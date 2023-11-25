@@ -5,6 +5,7 @@ import { dialog } from "./dialog";
 import { aspectRatio } from "./aspect-ratio";
 import { avatar } from "./avatar";
 import { button } from "./button";
+import { calendar } from "./calendar";
 import { checkbox } from "./checkbox";
 import { collapsible } from "./collapsible";
 import { contextMenu } from "./context-menu";
@@ -67,7 +68,7 @@ export const apiSchemas: Record<Bit, APISchema[]> = {
 	"aspect-ratio": aspectRatio,
 	avatar,
 	button,
-	calendar: [],
+	calendar,
 	checkbox,
 	collapsible,
 	"context-menu": contextMenu,

@@ -1,6 +1,4 @@
-import type { CreateCalendarProps } from "@melt-ui/svelte";
-import type { DateValue } from "@internationalized/date";
-import type { AsChild, HTMLDivAttributes, OnChangeFn } from "$lib/internal";
+import type { HTMLDivAttributes } from "$lib/internal";
 import type {
 	HTMLAttributes,
 	HTMLButtonAttributes,
@@ -8,61 +6,31 @@ import type {
 	HTMLTdAttributes,
 	HTMLThAttributes
 } from "svelte/elements";
+import type * as I from "./_types.js";
 
-type Props = Expand<
-	Omit<
-		CreateCalendarProps,
-		| "placeholder"
-		| "defaultPlaceholder"
-		| "value"
-		| "defaultValue"
-		| "onPlaceholderChange"
-		| "onValueChange"
-	> & {
-		placeholder?: DateValue;
-		value?: DateValue;
-		onPlaceholderChange?: OnChangeFn<DateValue>;
-		onValueChange?: OnChangeFn<DateValue | undefined>;
-		asChild?: boolean;
-	}
-> &
-	Omit<HTMLDivAttributes, "placeholder">;
+type Props = I.Props & Omit<HTMLDivAttributes, "placeholder">;
 
-type ButtonProps = Expand<AsChild> & HTMLButtonAttributes;
+type PrevButtonProps = I.PrevButtonProps & HTMLButtonAttributes;
 
-type PrevButtonProps = ButtonProps;
-type NextButtonProps = ButtonProps;
+type NextButtonProps = I.NextButtonProps & HTMLButtonAttributes;
 
-type HeadingProps = Expand<AsChild> & HTMLDivAttributes;
+type HeadingProps = I.HeadingProps & HTMLDivAttributes;
 
-type HeaderProps = Expand<AsChild> & HTMLDivAttributes;
+type HeaderProps = I.HeaderProps & HTMLDivAttributes;
 
-type GridProps = Expand<AsChild> & HTMLTableAttributes;
+type GridProps = I.GridProps & HTMLTableAttributes;
 
-type GridHeadProps = Expand<AsChild> & HTMLAttributes<HTMLTableSectionElement>;
+type GridHeadProps = I.GridHeadProps & HTMLAttributes<HTMLTableSectionElement>;
 
-type GridHeadCellProps = Expand<AsChild> & HTMLThAttributes;
+type HeadCellProps = I.HeadCellProps & HTMLThAttributes;
 
-type GridBodyProps = Expand<AsChild> & HTMLAttributes<HTMLTableSectionElement>;
+type GridBodyProps = I.GridBodyProps & HTMLAttributes<HTMLTableSectionElement>;
 
-type GridRowProps = Expand<AsChild> & HTMLAttributes<HTMLTableRowElement>;
+type GridRowProps = I.GridRowProps & HTMLAttributes<HTMLTableRowElement>;
 
-type BaseDateProps = Expand<
-	{
-		/**
-		 * The date value of the cell.
-		 */
-		date: DateValue;
+type CellProps = I.CellProps & HTMLTdAttributes;
 
-		/**
-		 * The month value that the cell belongs to.
-		 */
-		month: DateValue;
-	} & AsChild
->;
-
-type GridBodyCellProps = Expand<Omit<BaseDateProps, "month">> & HTMLTdAttributes;
-type DateProps = Expand<BaseDateProps> & HTMLDivAttributes;
+type DateProps = I.DateProps & HTMLDivAttributes;
 
 export type {
 	Props,
@@ -70,10 +38,10 @@ export type {
 	NextButtonProps,
 	HeadingProps,
 	GridProps,
-	GridBodyCellProps,
+	CellProps,
 	GridRowProps,
 	GridBodyProps,
-	GridHeadCellProps,
+	HeadCellProps,
 	GridHeadProps,
 	HeaderProps,
 	DateProps,
@@ -85,9 +53,9 @@ export type {
 	HeaderProps as CalendarHeaderProps,
 	GridProps as CalendarGridProps,
 	GridHeadProps as CalendarGridHeadProps,
-	GridHeadCellProps as CalendarGridHeadCellProps,
+	HeadCellProps as CalendarHeadCellProps,
 	GridBodyProps as CalendarGridBodyProps,
-	GridBodyCellProps as CalendarGridBodyCellProps,
+	CellProps as CalendarCellProps,
 	GridRowProps as CalendarGridRowProps,
 	DateProps as CalendarDateProps
 };
