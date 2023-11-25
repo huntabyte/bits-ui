@@ -61,8 +61,8 @@ const root: APISchema<ToggleGroup.Props<"multiple">> = {
 };
 
 const item: APISchema<ToggleGroup.ItemProps> = {
-	title: "Root",
-	description: "The toggle button.",
+	title: "Item",
+	description: "An individual toggle item within the group.",
 	props: {
 		value: {
 			type: C.STRING,
