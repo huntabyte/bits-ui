@@ -16,6 +16,7 @@ import { popover } from "./popover";
 import { menubar } from "./menubar";
 import { progress } from "./progress";
 import { radioGroup } from "./radio-group";
+import { rangeCalendar } from "./range-calendar";
 import { select } from "./select";
 import { separator } from "./separator";
 import { slider } from "./slider";
@@ -80,7 +81,7 @@ export const apiSchemas: Record<Bit, APISchema[]> = {
 	popover,
 	progress,
 	"radio-group": radioGroup,
-	"range-calendar": [],
+	"range-calendar": rangeCalendar,
 	select,
 	separator,
 	slider,

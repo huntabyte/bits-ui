@@ -1,32 +1,24 @@
 <script lang="ts">
 	import { RangeCalendar } from "$lib";
-	import { cn } from "@/utils";
-	import { ChevronLeft, ChevronRight } from "lucide-svelte";
-	import { buttonVariants } from "../ui/button";
+	import { CaretRight, CaretLeft } from "phosphor-svelte";
 </script>
 
 <RangeCalendar.Root
-	class="rounded-card border bg-background p-6 shadow-card"
+	class="mt-6 rounded-card border bg-background p-6 shadow-card"
 	let:months
 	let:daysOfWeek
 >
 	<RangeCalendar.Header class="flex items-center justify-between">
 		<RangeCalendar.PrevButton
-			class={cn(
-				buttonVariants({ variant: "outline" }),
-				"h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100"
-			)}
+			class="inline-flex h-7 w-7 items-center justify-center rounded-[7px] border border-border-input bg-background shadow-btn transition-all hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
 		>
-			<ChevronLeft class="h-4 w-4" />
+			<CaretLeft class="h-4 w-4" />
 		</RangeCalendar.PrevButton>
 		<RangeCalendar.Heading class="font-medium" />
 		<RangeCalendar.NextButton
-			class={cn(
-				buttonVariants({ variant: "outline" }),
-				"h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100"
-			)}
+			class="inline-flex h-7 w-7 items-center justify-center rounded-[7px] border border-border-input bg-background shadow-btn transition-all hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
 		>
-			<ChevronRight class="h-4 w-4" />
+			<CaretRight class="h-4 w-4" />
 		</RangeCalendar.NextButton>
 	</RangeCalendar.Header>
 	<div
@@ -47,16 +39,16 @@
 				</RangeCalendar.GridHead>
 				<RangeCalendar.GridBody>
 					{#each month.weeks as weekDates}
-						<RangeCalendar.GridRow class="mt-2 flex w-full gap-1">
+						<RangeCalendar.GridRow class="mt-1 flex w-full gap-1">
 							{#each weekDates as date}
 								<RangeCalendar.Cell
 									{date}
-									class="relative h-9 w-9 p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-muted first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md"
+									class="relative h-9 w-9 p-0 text-center text-sm focus-within:relative focus-within:z-20"
 								>
 									<RangeCalendar.Date
 										{date}
 										month={month.value}
-										class="focus-visible:ring-ring inline-flex h-9 w-9 items-center justify-center whitespace-nowrap rounded-md bg-background p-0 text-sm font-normal text-foreground ring-offset-background transition-colors hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 aria-selected:bg-muted data-[outside-month]:pointer-events-none data-[outside-month]:opacity-0"
+										class="inline-flex h-9 w-9 items-center justify-center whitespace-nowrap rounded-[7px] bg-background p-0 text-sm font-normal text-foreground ring-offset-background transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 data-[disabled]:pointer-events-none data-[outside-month]:pointer-events-none data-[highlighted]:bg-muted data-[selected]:bg-foreground data-[selection-end]:bg-foreground data-[selection-start]:bg-foreground data-[selected]:text-background data-[disabled]:opacity-50 data-[outside-month]:opacity-20"
 									/>
 								</RangeCalendar.Cell>
 							{/each}

@@ -6,7 +6,7 @@ import {
 import { getContext, setContext } from "svelte";
 import { removeUndefined, getOptionUpdater, createBitAttrs } from "$lib/internal/index.js";
 
-const NAME = "range-calendar";
+const NAME = "calendar";
 const PARTS = [
 	"root",
 	"prev-button",
