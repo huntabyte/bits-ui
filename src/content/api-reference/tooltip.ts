@@ -74,7 +74,7 @@ export const trigger: APISchema<Tooltip.TriggerProps> = {
 			description: "The open state of the tooltip."
 		},
 		{
-			name: "bits-tooltip-trigger",
+			name: "tooltip-trigger",
 			description: "Present on the trigger element."
 		}
 	]
@@ -86,7 +86,7 @@ export const content: APISchema<Tooltip.ContentProps> = {
 	props: { ...transitionProps, ...floatingPositioning, asChild },
 	dataAttributes: [
 		{
-			name: "bits-tooltip-content",
+			name: "tooltip-content",
 			description: "Present on the content element."
 		}
 	]
@@ -103,7 +103,7 @@ export const arrow: APISchema<Tooltip.ArrowProps> = {
 			description: "Present on the arrow element."
 		},
 		{
-			name: "bits-tooltip-arrow",
+			name: "tooltip-arrow",
 			description: "Present on the arrow element."
 		}
 	]

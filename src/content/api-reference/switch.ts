@@ -66,7 +66,7 @@ const root: APISchema<Switch.Props> = {
 			description: "Present when the switch is disabled."
 		},
 		{
-			name: "bits-switch-root",
+			name: "switch-root",
 			description: "Present on the root element."
 		}
 	]
@@ -89,7 +89,7 @@ const thumb: APISchema<Switch.ThumbProps> = {
 			description: "Present when the switch is checked."
 		},
 		{
-			name: "bits-switch-thumb",
+			name: "switch-thumb",
 			description: "Present on the thumb element."
 		}
 	]

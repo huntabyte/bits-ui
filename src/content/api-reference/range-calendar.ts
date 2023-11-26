@@ -116,7 +116,7 @@ const root: APISchema<RangeCalendar.Props> = {
 			description: "Present on the root element when the calendar is readonly."
 		},
 		{
-			name: "bits-calendar-root",
+			name: "calendar-root",
 			description: "Present on the root element."
 		}
 	]
@@ -138,7 +138,7 @@ const cell: APISchema<RangeCalendar.CellProps> = {
 			description: "Present on the element when the date is disabled."
 		},
 		{
-			name: "bits-calendar-cell",
+			name: "calendar-cell",
 			description: "Present on the cell element."
 		}
 	]
@@ -208,7 +208,7 @@ const date: APISchema<RangeCalendar.DateProps> = {
 			description: "Present on the element when the date is focused."
 		},
 		{
-			name: "bits-calendar-date",
+			name: "calendar-date",
 			description: "Present on the date element."
 		}
 	]
@@ -222,7 +222,7 @@ const grid: APISchema<RangeCalendar.GridProps> = {
 	},
 	dataAttributes: [
 		{
-			name: "bits-calendar-grid",
+			name: "calendar-grid",
 			description: "Present on the grid element."
 		}
 	]
@@ -236,7 +236,7 @@ const gridBody: APISchema<RangeCalendar.GridBodyProps> = {
 	},
 	dataAttributes: [
 		{
-			name: "bits-calendar-grid-body",
+			name: "calendar-grid-body",
 			description: "Present on the grid body element."
 		}
 	]
@@ -250,7 +250,7 @@ const gridHead: APISchema<RangeCalendar.GridHeadProps> = {
 	},
 	dataAttributes: [
 		{
-			name: "bits-calendar-grid-head",
+			name: "calendar-grid-head",
 			description: "Present on the grid head element."
 		}
 	]
@@ -264,7 +264,7 @@ const gridRow: APISchema<RangeCalendar.GridRowProps> = {
 	},
 	dataAttributes: [
 		{
-			name: "bits-calendar-grid-row",
+			name: "calendar-grid-row",
 			description: "Present on the grid row element."
 		}
 	]
@@ -278,7 +278,7 @@ const headCell: APISchema<RangeCalendar.HeadCellProps> = {
 	},
 	dataAttributes: [
 		{
-			name: "bits-calendar-head-cell",
+			name: "calendar-head-cell",
 			description: "Present on the head cell element."
 		}
 	]
@@ -292,7 +292,7 @@ const header: APISchema<RangeCalendar.HeaderProps> = {
 	},
 	dataAttributes: [
 		{
-			name: "bits-calendar-header",
+			name: "calendar-header",
 			description: "Present on the header element."
 		}
 	]
@@ -306,7 +306,7 @@ const heading: APISchema<RangeCalendar.HeadingProps> = {
 	},
 	dataAttributes: [
 		{
-			name: "bits-calendar-heading",
+			name: "calendar-heading",
 			description: "Present on the heading element."
 		}
 	]
@@ -320,7 +320,7 @@ const nextButton: APISchema<RangeCalendar.NextButtonProps> = {
 	},
 	dataAttributes: [
 		{
-			name: "bits-calendar-next-button",
+			name: "calendar-next-button",
 			description: "Present on the next button element."
 		}
 	]
@@ -334,7 +334,7 @@ const prevButton: APISchema<RangeCalendar.PrevButtonProps> = {
 	},
 	dataAttributes: [
 		{
-			name: "bits-calendar-prev-button",
+			name: "calendar-prev-button",
 			description: "Present on the prev button element."
 		}
 	]

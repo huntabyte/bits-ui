@@ -8,7 +8,7 @@ export const root: APISchema<Label.Props> = {
 	props: { asChild },
 	dataAttributes: [
 		{
-			name: "bits-label-root",
+			name: "label-root",
 			description: "Present on the root element."
 		}
 	]

@@ -40,7 +40,7 @@ const root: APISchema<Accordion.Props<false>> = {
 			description: "The orientation of the accordion."
 		},
 		{
-			name: "bits-accordion-root",
+			name: "accordion-root",
 			value: "",
 			description: "Present on the root element."
 		}
@@ -75,7 +75,7 @@ const item: APISchema<Accordion.ItemProps> = {
 			description: "Present when the accordion item is disabled."
 		},
 		{
-			name: "bits-accordion-item",
+			name: "accordion-item",
 			description: "Present on the item element."
 		}
 	]
@@ -100,7 +100,7 @@ const trigger: APISchema<Accordion.TriggerProps> = {
 			description: "The value of the accordion item."
 		},
 		{
-			name: "bits-accordion-trigger",
+			name: "accordion-trigger",
 			description: "Present on the trigger element."
 		}
 	]
@@ -125,7 +125,7 @@ const content: APISchema<Accordion.ContentProps> = {
 			description: "The value of the accordion item."
 		},
 		{
-			name: "bits-accordion-content",
+			name: "accordion-content",
 			description: "Present on the content element."
 		}
 	]
@@ -151,7 +151,7 @@ const header: APISchema<Accordion.HeaderProps> = {
 			description: "The heading level of the header."
 		},
 		{
-			name: "bits-accordion-header",
+			name: "accordion-header",
 			description: "Present on the header element."
 		}
 	]

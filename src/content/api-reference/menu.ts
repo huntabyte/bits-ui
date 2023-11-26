@@ -206,7 +206,7 @@ type DataAttrs = APISchema["dataAttributes"];
 const triggerAttrs: DataAttrs = [
 	STATE,
 	{
-		name: "bits-menu-trigger",
+		name: "menu-trigger",
 		description: "Present on the trigger element."
 	}
 ];
@@ -214,7 +214,7 @@ const triggerAttrs: DataAttrs = [
 const contentAttrs: DataAttrs = [
 	STATE,
 	{
-		name: "bits-menu-content",
+		name: "menu-content",
 		description: "Present on the content element."
 	}
 ];
@@ -222,7 +222,7 @@ const contentAttrs: DataAttrs = [
 const arrowAttrs: DataAttrs = [
 	STATE,
 	{
-		name: "bits-menu-arrow",
+		name: "menu-arrow",
 		description: "Present on the arrow element."
 	}
 ];
@@ -245,21 +245,21 @@ const sharedItemAttrs: DataAttrs = [
 const itemAttrs: DataAttrs = [
 	...sharedItemAttrs,
 	{
-		name: "bits-menu-item",
+		name: "menu-item",
 		description: "Present on the item element."
 	}
 ];
 
 const groupAttrs: DataAttrs = [
 	{
-		name: "bits-menu-group",
+		name: "menu-group",
 		description: "Present on the group element."
 	}
 ];
 
 const labelAttrs: DataAttrs = [
 	{
-		name: "bits-menu-label",
+		name: "menu-label",
 		description: "Present on the group label element."
 	}
 ];
@@ -275,7 +275,7 @@ const checkboxItemAttrs: DataAttrs = [
 
 const radioGroupAttrs: DataAttrs = [
 	{
-		name: "bits-menu-radio-group",
+		name: "menu-radio-group",
 		description: "Present on the radio group element."
 	}
 ];
@@ -292,7 +292,7 @@ const radioItemAttrs: DataAttrs = [
 		description: "The value of the radio item."
 	},
 	{
-		name: "bits-menu-radio-item",
+		name: "menu-radio-item",
 		description: "Present on the radio item element."
 	}
 ];
@@ -304,7 +304,7 @@ const separatorAttrs: DataAttrs = [
 		description: "The orientation of the separator."
 	},
 	{
-		name: "bits-menu-separator",
+		name: "menu-separator",
 		description: "Present on the separator element."
 	}
 ];
@@ -312,7 +312,7 @@ const separatorAttrs: DataAttrs = [
 const subContentAttrs: DataAttrs = [
 	STATE,
 	{
-		name: "bits-menu-sub-content",
+		name: "menu-sub-content",
 		description: "Present on the submenu content element."
 	}
 ];
@@ -321,21 +321,21 @@ const subTriggerAttrs: DataAttrs = [
 	...sharedItemAttrs,
 	STATE,
 	{
-		name: "bits-menu-sub-trigger",
+		name: "menu-sub-trigger",
 		description: "Present on the submenu trigger element."
 	}
 ];
 
 const checkboxIndicatorAttrs: DataAttrs = [
 	{
-		name: "bits-menu-checkbox-indicator",
+		name: "menu-checkbox-indicator",
 		description: "Present on the checkbox indicator element."
 	}
 ];
 
 const radioIndicatorAttrs: DataAttrs = [
 	{
-		name: "bits-menu-radio-indicator",
+		name: "menu-radio-indicator",
 		description: "Present on the radio indicator element."
 	}
 ];

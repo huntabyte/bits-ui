@@ -27,8 +27,8 @@ describe("Switch", () => {
 
 	it("has bits data attrs", async () => {
 		const { root, thumb } = setup();
-		expect(root).toHaveAttribute("data-bits-switch-root");
-		expect(thumb).toHaveAttribute("data-bits-switch-thumb");
+		expect(root).toHaveAttribute("data-switch-root");
+		expect(thumb).toHaveAttribute("data-switch-thumb");
 	});
 
 	it('defaults the value to "on", when no value prop is passed', async () => {

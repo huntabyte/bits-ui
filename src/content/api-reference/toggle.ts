@@ -37,7 +37,7 @@ const root: APISchema<Toggle.Props> = {
 			description: "Present when the toggle is disabled."
 		},
 		{
-			name: "bits-toggle-root",
+			name: "toggle-root",
 			description: "Present on the root element."
 		}
 	]

@@ -30,7 +30,7 @@ export const root: APISchema<Separator.Props> = {
 			description: "The orientation of the separator."
 		},
 		{
-			name: "bits-separator-root",
+			name: "separator-root",
 			description: "Present on the root element."
 		}
 	]
