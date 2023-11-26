@@ -18,6 +18,16 @@ export type OmitChecked<T> = Omit<T, "checked" | "defaultChecked" | "onCheckedCh
 export type OmitPressed<T> = Omit<T, "pressed" | "defaultPressed" | "onPressedChange">;
 export type OmitForceVisible<T> = Omit<T, "forceVisible">;
 export type OmitIds<T> = Omit<T, "ids">;
+export type OmitDates<T> = Omit<
+	T,
+	| "value"
+	| "defaultValue"
+	| "placeholder"
+	| "defaultPlaceholder"
+	| "onPlaceholderChange"
+	| "onValueChange"
+	| "ids"
+>;
 
 export type OmitFloating<T> = OmitOpen<
 	Omit<T, "forceVisible" | "ids" | "arrowSize" | "positioning">

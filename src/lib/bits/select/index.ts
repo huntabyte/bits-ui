@@ -1,39 +1,13 @@
-import Root from "./components/Select.svelte";
-import Arrow from "./components/SelectArrow.svelte";
-import Content from "./components/SelectContent.svelte";
-import Group from "./components/SelectGroup.svelte";
-import Input from "./components/SelectInput.svelte";
-import Item from "./components/SelectItem.svelte";
-import ItemIndicator from "./components/SelectItemIndicator.svelte";
-import Label from "./components/SelectLabel.svelte";
-import Separator from "../separator/components/Separator.svelte";
-import Trigger from "./components/SelectTrigger.svelte";
-import Value from "./components/SelectValue.svelte";
-
-export {
-	Root,
-	Arrow,
-	Content,
-	Group,
-	Input,
-	Item,
-	ItemIndicator,
-	Label,
-	Separator,
-	Trigger,
-	Value,
-	//
-	Root as Select,
-	Arrow as SelectArrow,
-	Content as SelectContent,
-	Group as SelectGroup,
-	Input as SelectInput,
-	Item as SelectItem,
-	ItemIndicator as SelectItemIndicator,
-	Label as SelectLabel,
-	Separator as SelectSeparator,
-	Trigger as SelectTrigger,
-	Value as SelectValue
-};
+export { default as Root } from "./components/select.svelte";
+export { default as Arrow } from "./components/select-arrow.svelte";
+export { default as Content } from "./components/select-content.svelte";
+export { default as Group } from "./components/select-group.svelte";
+export { default as Input } from "./components/select-input.svelte";
+export { default as Item } from "./components/select-item.svelte";
+export { default as ItemIndicator } from "./components/select-item-indicator.svelte";
+export { default as Label } from "./components/select-label.svelte";
+export { default as Separator } from "../separator/components/separator.svelte";
+export { default as Trigger } from "./components/select-trigger.svelte";
+export { default as Value } from "./components/select-value.svelte";
 
 export * from "./types.js";

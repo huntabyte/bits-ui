@@ -1,4 +1,2 @@
-import Root from "./components/Progress.svelte";
-
-export { Root, Root as Progress };
+export { default as Root } from "./components/progress.svelte";
 export * from "./types.js";

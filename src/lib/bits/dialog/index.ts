@@ -1,31 +1,10 @@
-import Root from "./components/Dialog.svelte";
-import Title from "./components/DialogTitle.svelte";
-import Close from "./components/DialogClose.svelte";
-import Portal from "./components/DialogPortal.svelte";
-import Content from "./components/DialogContent.svelte";
-import Overlay from "./components/DialogOverlay.svelte";
-import Trigger from "./components/DialogTrigger.svelte";
-import Description from "./components/DialogDescription.svelte";
-
-export {
-	Root,
-	Title,
-	Close,
-	Portal,
-	Content,
-	Overlay,
-	Trigger,
-	Description,
-
-	//
-	Root as Dialog,
-	Title as DialogTitle,
-	Close as DialogClose,
-	Portal as DialogPortal,
-	Content as DialogContent,
-	Overlay as DialogOverlay,
-	Trigger as DialogTrigger,
-	Description as DialogDescription
-};
+export { default as Root } from "./components/dialog.svelte";
+export { default as Title } from "./components/dialog-title.svelte";
+export { default as Close } from "./components/dialog-close.svelte";
+export { default as Portal } from "./components/dialog-portal.svelte";
+export { default as Content } from "./components/dialog-content.svelte";
+export { default as Overlay } from "./components/dialog-overlay.svelte";
+export { default as Trigger } from "./components/dialog-trigger.svelte";
+export { default as Description } from "./components/dialog-description.svelte";
 
 export * from "./types.js";

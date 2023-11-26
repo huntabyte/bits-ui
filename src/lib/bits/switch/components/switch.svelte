@@ -3,7 +3,7 @@
 	import { setCtx, getAttrs } from "../ctx.js";
 	import type { Events, Props } from "../types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
-	import SwitchInput from "./SwitchInput.svelte";
+	import SwitchInput from "./switch-input.svelte";
 
 	type $$Props = Props;
 	type $$Events = Events;

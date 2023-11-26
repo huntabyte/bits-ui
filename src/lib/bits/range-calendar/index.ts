@@ -1,41 +1,14 @@
-import Root from "./components/RangeCalendar.svelte";
-import Date from "./components/RangeCalendarDate.svelte";
-import Grid from "./components/RangeCalendarGrid.svelte";
-import GridBody from "./components/RangeCalendarGridBody.svelte";
-import Cell from "./components/RangeCalendarCell.svelte";
-import GridHead from "./components/RangeCalendarGridHead.svelte";
-import HeadCell from "./components/RangeCalendarHeadCell.svelte";
-import GridRow from "./components/RangeCalendarGridRow.svelte";
-import Header from "./components/RangeCalendarHeader.svelte";
-import Heading from "./components/RangeCalendarHeading.svelte";
-import NextButton from "./components/RangeCalendarNextButton.svelte";
-import PrevButton from "./components/RangeCalendarPrevButton.svelte";
+export { default as Root } from "./components/range-calendar.svelte";
+export { default as Date } from "./components/range-calendar-date.svelte";
+export { default as Grid } from "./components/range-calendar-grid.svelte";
+export { default as GridBody } from "./components/range-calendar-grid-body.svelte";
+export { default as Cell } from "./components/range-calendar-cell.svelte";
+export { default as GridHead } from "./components/range-calendar-grid-head.svelte";
+export { default as HeadCell } from "./components/range-calendar-head-cell.svelte";
+export { default as GridRow } from "./components/range-calendar-grid-row.svelte";
+export { default as Header } from "./components/range-calendar-header.svelte";
+export { default as Heading } from "./components/range-calendar-heading.svelte";
+export { default as NextButton } from "./components/range-calendar-next-button.svelte";
+export { default as PrevButton } from "./components/range-calendar-prev-button.svelte";
 
-export {
-	Root,
-	Date,
-	Grid,
-	GridBody,
-	Cell,
-	GridHead,
-	HeadCell,
-	GridRow,
-	Header,
-	Heading,
-	NextButton,
-	PrevButton,
-	//
-	Root as RangeCalendar,
-	Date as RangeCalendarDate,
-	Grid as RangeCalendarGrid,
-	GridBody as RangeCalendarGridBody,
-	Cell as RangeCalendarGridBodyCell,
-	GridHead as RangeCalendarGridHead,
-	HeadCell as RangeCalendarGridHeadCell,
-	GridRow as RangeCalendarGridRow,
-	Header as RangeCalendarHeader,
-	Heading as RangeCalendarHeading,
-	NextButton as RangeCalendarNextButton,
-	PrevButton as RangeCalendarPrevButton
-};
 export * from "./types.js";

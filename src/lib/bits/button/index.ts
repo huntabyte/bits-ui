@@ -1,4 +1,3 @@
-import Root from "./components/Button.svelte";
+export { default as Root } from "./components/button.svelte";
 
-export { Root, Root as Button };
 export * from "./types.js";

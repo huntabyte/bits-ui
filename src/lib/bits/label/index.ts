@@ -1,8 +1,2 @@
-import Root from "./components/Label.svelte";
-
-export {
-	Root,
-	//
-	Root as Label
-};
+export { default as Root } from "./components/label.svelte";
 export * from "./types.js";
