@@ -12,10 +12,10 @@
 <Progress.Root
 	{value}
 	max={100}
-	class="relative h-6 w-[60%] overflow-hidden rounded-full bg-foreground/20 "
+	class="relative h-[15px] w-[60%] overflow-hidden rounded-full bg-dark-10 shadow-mini-inset"
 >
 	<div
-		class="h-full w-full flex-1 bg-foreground transition-all"
+		class="h-full w-full flex-1 rounded-full bg-foreground shadow-mini-inset transition-all"
 		style={`transform: translateX(-${
 			100 - (100 * (value ?? 0)) / (100 ?? 1)
 		}%)`}
