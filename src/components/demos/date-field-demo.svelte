@@ -2,24 +2,24 @@
 	import { DateField } from "$lib";
 </script>
 
-<div class="relative w-full max-w-[50%]">
-	<div class="h-full w-full">
-		<DateField.Root>
-			<DateField.Label class="select-none">Check-in date</DateField.Label>
-			<DateField.Field
-				let:segments
-				class="flex h-input w-full max-w-[300px] items-center rounded-input border border-border-input p-3 shadow-mini"
-			>
-				{#each segments as { part, value }}
+<DateField.Root>
+	<div class="flex min-w-[200px] flex-col gap-1">
+		<DateField.Label class="block select-none">Check-in date</DateField.Label>
+		<DateField.Field
+			let:segments
+			class="flex h-input w-full max-w-[300px] grow-0 select-none items-center rounded-input border border-border-input p-3 shadow-mini"
+		>
+			{#each segments as { part, value }}
+				<div class="inline-block select-none px-0.5">
 					<DateField.Segment
 						{part}
-						class="grow-0 rounded-5px p-0.5 focus-visible:bg-foreground focus-visible:text-background focus-visible:outline-none data-[segment=literal]:text-muted-foreground"
+						class="rounded-[3px] focus-visible:bg-foreground focus-visible:font-medium focus-visible:text-background focus-visible:outline-none data-[segment=literal]:text-muted-foreground"
 					>
 						{value}
 					</DateField.Segment>
-				{/each}
-			</DateField.Field>
-			<DateField.Input />
-		</DateField.Root>
+				</div>
+			{/each}
+		</DateField.Field>
 	</div>
-</div>
+	<DateField.Input />
+</DateField.Root>

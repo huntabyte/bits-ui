@@ -75,7 +75,7 @@
 		>
 			<div
 				class={cn(
-					"preview relative flex min-h-[443px] w-full justify-center p-12",
+					"preview flex min-h-[443px] w-full justify-center p-12",
 					{
 						"items-center": align === "center",
 						"items-start": align === "start",

@@ -14,7 +14,7 @@
 		ids
 	} = getCtx();
 
-	if (id && part !== "literal") {
+	$: if (id && part !== "literal") {
 		ids[part].set(id);
 	}
 

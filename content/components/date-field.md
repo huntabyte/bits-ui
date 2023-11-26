@@ -35,3 +35,5 @@ description: A date field component.
 ```
 
 <APISection {schemas} />
+
+<DateFieldDemo />

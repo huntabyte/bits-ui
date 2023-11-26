@@ -14,7 +14,7 @@
 		ids
 	} = getCtx();
 
-	if (id) {
+	$: if (id) {
 		ids.field.set(id);
 	}
 
