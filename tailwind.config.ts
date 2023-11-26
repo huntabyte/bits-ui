@@ -54,11 +54,14 @@ export default {
 				6: "6px"
 			},
 			borderRadius: {
-				card: "1rem",
-				"card-lg": "1.25rem",
-				"card-sm": "0.625rem",
-				input: "0.563rem",
-				button: "0.313rem"
+				card: "16px",
+				"card-lg": "20px",
+				"card-sm": "10px",
+				input: "9px",
+				button: "5px",
+				"5px": "5px",
+				"9px": "9px",
+				"10px": "10px"
 			},
 			height: {
 				input: "3rem",

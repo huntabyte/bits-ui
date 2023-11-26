@@ -1,48 +1,42 @@
 <script lang="ts">
 	import { Select } from "$lib";
 	import { flyAndScale } from "@/utils";
-	import { Check } from "phosphor-svelte";
+	import { Check, Palette, CaretUpDown } from "phosphor-svelte";
 
-	const frameworks = [
-		{ value: "svelte", label: "Svelte" },
-		{ value: "vue", label: "Vue" },
-		{ value: "solid", label: "Solid" },
-		{ value: "angular", label: "Angular" },
-		{ value: "react", label: "React" }
+	const themes = [
+		{ value: "light-monochrome", label: "Light Monochrome" },
+		{ value: "dark-green", label: "Dark Green" },
+		{ value: "svelte-orange", label: "Svelte Orange" },
+		{ value: "punk-pink", label: "Punk Pink" }
 	];
 </script>
 
 <Select.Root>
 	<Select.Trigger
-		class="inline-flex h-input w-[180px] items-center rounded-card-sm border border-dark-10 bg-background px-4 text-sm transition-all placeholder:text-foreground-alt/50 hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
+		class="inline-flex h-input w-[296px] items-center rounded-9px border border-border-input bg-background px-[11px] text-sm transition-colors placeholder:text-foreground-alt/50  focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2 focus:ring-offset-background "
+		aria-label="Select a theme"
 	>
-		<Select.Value
-			class="text-sm font-medium"
-			placeholder="Select a framework"
-		/>
+		<Palette class="mr-[9px] text-muted-foreground sq-6" />
+		<Select.Value class="text-sm" placeholder="Select a theme" />
+		<CaretUpDown class="ml-auto text-muted-foreground sq-6" />
 	</Select.Trigger>
 	<Select.Content
-		class="w-full rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover outline-none"
+		class="w-full rounded-xl border border-muted bg-background px-1 py-3 shadow-popover outline-none"
 		transition={flyAndScale}
 		sideOffset={8}
 	>
-		<Select.Group>
-			<Select.Label class="py-1.5 pl-2 text-sm font-medium"
-				>Frameworks</Select.Label
+		{#each themes as theme}
+			<Select.Item
+				class="flex h-10 w-full select-none items-center rounded-button py-3 pl-5 pr-1.5 text-sm outline-none transition-all duration-75 data-[highlighted]:bg-muted/50 data-[selected]:bg-muted"
+				value={theme.value}
+				label={theme.label}
 			>
-			{#each frameworks as framework}
-				<Select.Item
-					class="flex h-10 w-full select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm outline-none transition-all duration-75 data-[highlighted]:bg-muted/50 data-[selected]:bg-muted"
-					value={framework.value}
-					label={framework.label}
-				>
-					{framework.label}
-					<Select.ItemIndicator class="ml-auto" asChild={false}>
-						<Check />
-					</Select.ItemIndicator>
-				</Select.Item>
-			{/each}
-		</Select.Group>
+				{theme.label}
+				<Select.ItemIndicator class="ml-auto" asChild={false}>
+					<Check />
+				</Select.ItemIndicator>
+			</Select.Item>
+		{/each}
 	</Select.Content>
 	<Select.Input name="favoriteFruit" />
 </Select.Root>
