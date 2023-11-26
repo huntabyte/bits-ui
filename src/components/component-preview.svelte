@@ -71,11 +71,11 @@
 		</Tabs.Content>
 		<Tabs.Content
 			value="preview"
-			class="relative rounded-card border-2 border-muted bg-zinc-50 focus-visible:outline-none dark:bg-[#1f1f21]"
+			class="relative rounded-card border-2 border-muted bg-zinc-50 focus-visible:outline-none  dark:bg-[#1f1f21]"
 		>
 			<div
 				class={cn(
-					"preview flex min-h-[443px] w-full justify-center p-12",
+					"preview relative flex min-h-[443px] w-full justify-center p-12",
 					{
 						"items-center": align === "center",
 						"items-start": align === "start",

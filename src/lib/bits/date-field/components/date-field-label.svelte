@@ -29,7 +29,7 @@
 {#if asChild}
 	<slot {...slotProps} />
 {:else}
-	<div use:melt={builder} {...$$restProps} {...attrs}>
+	<span use:melt={builder} {...$$restProps} {...attrs}>
 		<slot {...slotProps} />
-	</div>
+	</span>
 {/if}

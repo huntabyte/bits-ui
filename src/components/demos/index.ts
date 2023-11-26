@@ -7,6 +7,7 @@ export { default as CalendarDemo } from "./calendar-demo.svelte";
 export { default as CheckboxDemo } from "./checkbox-demo.svelte";
 export { default as CollapsibleDemo } from "./collapsible-demo.svelte";
 export { default as ContextMenuDemo } from "./context-menu-demo.svelte";
+export { default as DateFieldDemo } from "./date-field-demo.svelte";
 export { default as DialogDemo } from "./dialog-demo.svelte";
 export { default as DropdownMenuDemo } from "./dropdown-menu-demo.svelte";
 export { default as LabelDemo } from "./label-demo.svelte";

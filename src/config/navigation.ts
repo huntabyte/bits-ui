@@ -101,6 +101,11 @@ export const navigation: Navigation = {
 					items: []
 				},
 				{
+					title: "Date Field",
+					href: "/docs/components/date-field",
+					items: []
+				},
+				{
 					title: "Dialog",
 					href: "/docs/components/dialog",
 					items: []
