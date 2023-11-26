@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { SidebarNavItem } from "@/config";
-	import { RocketLaunch, BookOpen, Code } from "phosphor-svelte";
+	import { RocketLaunch, BookOpen, Code, Palette } from "phosphor-svelte";
 	import { page } from "$app/stores";
 	import { cn } from "@/utils";
 
@@ -9,7 +9,8 @@
 	const iconMap = {
 		Introduction: BookOpen,
 		"Getting Started": RocketLaunch,
-		Delegation: Code
+		Delegation: Code,
+		Styling: Palette
 	} as const;
 
 	const iconMapKeys = Object.keys(iconMap) as (keyof typeof iconMap)[];
