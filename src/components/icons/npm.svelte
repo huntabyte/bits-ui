@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { IconProps } from "lucide-svelte";
+	import type { IconProps } from "./index.js";
 
 	type $$Props = IconProps;
 </script>

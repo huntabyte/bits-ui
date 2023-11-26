@@ -26,7 +26,12 @@
 
 	const {
 		elements: { calendar },
-		states: { value: localValue, placeholder: localPlaceholder, months, daysOfWeek },
+		states: {
+			value: localValue,
+			placeholder: localPlaceholder,
+			months,
+			daysOfWeek
+		},
 		updateOption,
 		ids
 	} = setCtx({

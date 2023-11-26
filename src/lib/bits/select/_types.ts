@@ -43,7 +43,7 @@ type LabelProps = AsChild;
 type ItemProps = Expand<SelectOptionProps & AsChild>;
 type SeparatorProps = AsChild;
 
-type IndicatorProps = AsChild
+type IndicatorProps = AsChild;
 
 type TriggerProps = AsChild;
 

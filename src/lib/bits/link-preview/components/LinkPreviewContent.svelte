@@ -47,7 +47,7 @@
 		builder,
 		attrs
 	};
-	
+
 	$: updatePositioning({
 		side,
 		align,

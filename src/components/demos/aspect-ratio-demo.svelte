@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as AspectRatio from "@/components/ui/aspect-ratio";
+	import { AspectRatio } from "$lib";
 </script>
 
 <AspectRatio.Root ratio={16 / 9} class="scale-80 rounded-[15px] bg-transparent">

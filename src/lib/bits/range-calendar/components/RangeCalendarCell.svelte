@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { getCtx, getAttrs } from "../ctx.js";
-	import type { GridBodyCellProps } from "../types.js";
+	import type { CellProps } from "../types.js";
 
-	type $$Props = GridBodyCellProps;
+	type $$Props = CellProps;
 
 	export let date: $$Props["date"];
 	export let asChild: $$Props["asChild"] = false;

@@ -1,4 +1,5 @@
 import type { AsChild, Transition, TransitionProps } from "$lib/internal/index.js";
+import type { Boundary } from "../floating/_types";
 
 export type ContentProps<
 	T extends Transition = Transition,
