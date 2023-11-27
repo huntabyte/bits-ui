@@ -8,6 +8,7 @@ export * as Checkbox from "./checkbox/index.js";
 export * as Collapsible from "./collapsible/index.js";
 export * as ContextMenu from "./context-menu/index.js";
 export * as DateField from "./date-field/index.js";
+export * as DateRangeField from "./date-range-field/index.js";
 export * as Dialog from "./dialog/index.js";
 export * as DropdownMenu from "./dropdown-menu/index.js";
 export * as LinkPreview from "./link-preview/index.js";

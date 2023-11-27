@@ -5,21 +5,20 @@
 <DateField.Root>
 	<div class="flex min-w-[200px] flex-col gap-1">
 		<DateField.Label class="block select-none">Check-in date</DateField.Label>
-		<DateField.Field
+		<DateField.Input
 			let:segments
-			class="flex h-input w-full max-w-[300px] select-none items-center rounded-input border border-border-input p-3 shadow-mini"
+			class="flex h-input w-full max-w-[300px] select-none items-center rounded-input border border-border-input bg-background p-3 text-sm shadow-mini"
 		>
 			{#each segments as { part, value }}
 				<div class="inline-block select-none">
 					<DateField.Segment
 						{part}
-						class="rounded-[3px] px-1 focus-visible:bg-foreground focus-visible:font-medium focus-visible:text-background focus-visible:outline-none data-[segment=literal]:px-0.5 data-[segment=literal]:text-muted-foreground"
+						class="rounded-[3px] px-1 focus-visible:bg-foreground focus-visible:font-medium focus-visible:text-background focus-visible:outline-none data-[segment=literal]:px-px data-[segment=literal]:text-muted-foreground"
 					>
 						{value}
 					</DateField.Segment>
 				</div>
 			{/each}
-		</DateField.Field>
+		</DateField.Input>
 	</div>
-	<DateField.Input />
 </DateField.Root>

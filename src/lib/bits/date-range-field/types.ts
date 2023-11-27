@@ -9,6 +9,4 @@ type SegmentProps = I.SegmentProps & HTMLDivAttributes;
 
 type InputProps = I.InputProps & HTMLDivAttributes;
 
-type DescriptionProps = I.DescriptionProps & HTMLDivAttributes;
-
-export type { Props, LabelProps, DescriptionProps, InputProps, SegmentProps };
+export type { Props, LabelProps, InputProps, SegmentProps };

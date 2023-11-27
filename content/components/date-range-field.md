@@ -1,16 +1,16 @@
 ---
-title: Date Field
-description: A date field component.
+title: Date Range Field
+description: A date range field component.
 ---
 
 <script>
-	import { APISection, ComponentPreview, DateFieldDemo } from '@/components'
+	import { APISection, ComponentPreview, DateRangeFieldDemo } from '@/components'
 	export let schemas;
 </script>
 
-<ComponentPreview name="date-field-demo" comp="Date Field">
+<ComponentPreview name="date-range-field-demo" comp="Date Range Field">
 
-<DateFieldDemo slot="preview" />
+<DateRangeFieldDemo slot="preview" />
 
 </ComponentPreview>
 
@@ -34,5 +34,3 @@ description: A date field component.
 ```
 
 <APISection {schemas} />
-
-<DateFieldDemo />

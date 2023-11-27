@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { getCtx, getAttrs } from "../ctx.js";
-	import type { FieldProps } from "../types.js";
+	import type { InputProps } from "../types.js";
 
-	type $$Props = FieldProps;
+	type $$Props = InputProps;
 
 	export let asChild: $$Props["asChild"] = false;
 	export let id: $$Props["id"] = undefined;
@@ -15,16 +15,19 @@
 	} = getCtx();
 
 	$: if (id) {
-		ids.field.set(id);
+		ids.field.field.set(id);
 	}
 
-	const attrs = getAttrs("field");
+	const attrs = getAttrs("input");
 
 	$: builder = $field;
 	$: slotProps = {
 		builder,
 		attrs,
-		segments: $segmentContents
+		segments: {
+			start: $segmentContents.start,
+			end: $segmentContents.end
+		}
 	};
 </script>
 

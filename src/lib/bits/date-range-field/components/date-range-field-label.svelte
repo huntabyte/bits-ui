@@ -1,37 +1,35 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { getCtx, getAttrs } from "../ctx.js";
-	import type { InputProps } from "../types.js";
+	import type { LabelProps } from "../types.js";
 
-	type $$Props = InputProps;
+	type $$Props = LabelProps;
 
 	export let asChild: $$Props["asChild"] = false;
 	export let id: $$Props["id"] = undefined;
 
 	const {
-		elements: { field },
-		states: { segmentContents },
+		elements: { label },
 		ids
 	} = getCtx();
 
-	$: if (id) {
-		ids.field.set(id);
+	if (id) {
+		ids.field.label.set(id);
 	}
 
-	const attrs = getAttrs("input");
+	const attrs = getAttrs("label");
 
-	$: builder = $field;
+	$: builder = $label;
 	$: slotProps = {
 		builder,
-		attrs,
-		segments: $segmentContents
+		attrs
 	};
 </script>
 
 {#if asChild}
 	<slot {...slotProps} />
 {:else}
-	<div use:melt={builder} {...$$restProps} {...attrs}>
+	<span use:melt={builder} {...$$restProps} {...attrs}>
 		<slot {...slotProps} />
-	</div>
+	</span>
 {/if}

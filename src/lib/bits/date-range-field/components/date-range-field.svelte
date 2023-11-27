@@ -57,26 +57,24 @@
 		}
 	});
 
-	const idValues = derived(
+	const startIdValues = derived(
 		[
-			ids.day,
-			ids.description,
-			ids.dayPeriod,
-			ids.field,
-			ids.hour,
-			ids.minute,
-			ids.month,
-			ids.second,
-			ids.year,
-			ids.validation,
-			ids.label,
-			ids.timeZoneName
+			ids.start.day,
+			ids.start.description,
+			ids.start.dayPeriod,
+			ids.start.hour,
+			ids.start.minute,
+			ids.start.month,
+			ids.start.second,
+			ids.start.year,
+			ids.start.validation,
+			ids.start.label,
+			ids.start.timeZoneName
 		],
 		([
 			$dayId,
 			$descriptionId,
 			$dayPeriodId,
-			$fieldId,
 			$hourId,
 			$minuteId,
 			$monthId,
@@ -89,7 +87,6 @@
 			day: $dayId,
 			description: $descriptionId,
 			dayPeriod: $dayPeriodId,
-			field: $fieldId,
 			hour: $hourId,
 			minute: $minuteId,
 			month: $monthId,
@@ -101,12 +98,68 @@
 		})
 	);
 
-	$: if (validationId) {
-		ids.validation.set(validationId);
-	}
+	const endIdValues = derived(
+		[
+			ids.end.day,
+			ids.end.description,
+			ids.end.dayPeriod,
+			ids.end.hour,
+			ids.end.minute,
+			ids.end.month,
+			ids.end.second,
+			ids.end.year,
+			ids.end.validation,
+			ids.end.label,
+			ids.end.timeZoneName
+		],
+		([
+			$dayId,
+			$descriptionId,
+			$dayPeriodId,
+			$hourId,
+			$minuteId,
+			$monthId,
+			$secondId,
+			$yearId,
+			$validationId,
+			$labelId,
+			$timeZoneNameId
+		]) => ({
+			day: $dayId,
+			description: $descriptionId,
+			dayPeriod: $dayPeriodId,
+			hour: $hourId,
+			minute: $minuteId,
+			month: $monthId,
+			second: $secondId,
+			year: $yearId,
+			validation: $validationId,
+			label: $labelId,
+			timeZoneName: $timeZoneNameId
+		})
+	);
+
+	const fieldIdValues = derived(
+		[
+			ids.field.description,
+			ids.field.field,
+			ids.field.label,
+			ids.field.validation
+		],
+		([$descriptionId, $fieldId, $labelId, $validationId]) => ({
+			description: $descriptionId,
+			field: $fieldId,
+			label: $labelId,
+			validation: $validationId
+		})
+	);
 
 	$: if (descriptionId) {
-		ids.description.set(descriptionId);
+		ids.field.description.set(descriptionId);
+	}
+
+	$: if (validationId) {
+		ids.field.validation.set(validationId);
 	}
 
 	$: value !== undefined && localValue.set(value);
@@ -124,7 +177,11 @@
 
 	$: slotProps = {
 		isInvalid: $localIsInvalid,
-		ids: $idValues
+		ids: {
+			start: $startIdValues,
+			end: $endIdValues,
+			field: $fieldIdValues
+		}
 	};
 </script>
 

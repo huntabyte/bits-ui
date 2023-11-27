@@ -5,7 +5,7 @@
  */
 
 import type { Expand, OnChangeFn, AsChild, OmitDates } from "$lib/internal/index.js";
-import type { SegmentPart } from "$lib/shared";
+import type { DateRange, SegmentPart } from "$lib/shared/index.js";
 import type { DateValue } from "@internationalized/date";
 import type { CreateDateFieldProps } from "@melt-ui/svelte";
 
@@ -15,12 +15,12 @@ type Props = Expand<
 		 * The value of the date field.
 		 * You can bind this to a `DateValue` object to programmatically control the value.
 		 */
-		value?: DateValue;
+		value?: DateRange;
 
 		/**
 		 * A callback function called when the value changes.
 		 */
-		onValueChange?: OnChangeFn<DateValue | undefined>;
+		onValueChange?: OnChangeFn<DateRange | undefined>;
 
 		/**
 		 * The placeholder date used to start the field.
@@ -48,14 +48,20 @@ type Props = Expand<
 
 type InputProps = AsChild;
 
-type DescriptionProps = AsChild;
-
 type LabelProps = AsChild;
 
 type SegmentProps = Expand<
 	{
+		/**
+		 * The type of field to render (start or end).
+		 */
+		type: "start" | "end";
+
+		/**
+		 * The part of the date to render.
+		 */
 		part: SegmentPart;
 	} & AsChild
 >;
 
-export type { Props, LabelProps, DescriptionProps, InputProps, SegmentProps };
+export type { Props, LabelProps, InputProps, SegmentProps };

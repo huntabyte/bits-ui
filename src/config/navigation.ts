@@ -106,6 +106,11 @@ export const navigation: Navigation = {
 					items: []
 				},
 				{
+					title: "Date Range Field",
+					href: "/docs/components/date-range-field",
+					items: []
+				},
+				{
 					title: "Dialog",
 					href: "/docs/components/dialog",
 					items: []
