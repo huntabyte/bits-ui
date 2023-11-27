@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { getCtx, getAttrs } from "../ctx.js";
+	import { getCtx, getFieldAttrs } from "../ctx.js";
 	import type { LabelProps } from "../types.js";
 
 	type $$Props = LabelProps;
@@ -17,7 +17,7 @@
 		ids.dateField.label.set(id);
 	}
 
-	const attrs = getAttrs("label");
+	const attrs = getFieldAttrs("label");
 
 	$: builder = $label;
 	$: slotProps = {

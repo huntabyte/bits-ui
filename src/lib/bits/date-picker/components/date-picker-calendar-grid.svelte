@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { getAttrs, getCtx } from "../ctx.js";
+	import { getCalendarAttrs, getCtx } from "../ctx.js";
 	import type { GridProps } from "../types.js";
 
 	type $$Props = GridProps;
@@ -12,7 +12,7 @@
 	} = getCtx();
 
 	$: builder = $grid;
-	const attrs = getAttrs("grid");
+	const attrs = getCalendarAttrs("grid");
 
 	$: slotProps = {
 		builder,

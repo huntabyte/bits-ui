@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { getAttrs, getCtx } from "../ctx.js";
+	import { getCalendarAttrs, getCtx } from "../ctx.js";
 	import type { HeadingProps } from "../types.js";
 
 	type $$Props = HeadingProps;
@@ -13,7 +13,7 @@
 	} = getCtx();
 
 	$: builder = $heading;
-	const attrs = getAttrs("heading");
+	const attrs = getCalendarAttrs("heading");
 </script>
 
 {#if asChild}

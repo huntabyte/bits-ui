@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getCtx, getAttrs } from "../ctx.js";
+	import { getCtx, getCalendarAttrs } from "../ctx.js";
 	import type { CellProps } from "../types.js";
 
 	type $$Props = CellProps;
@@ -12,7 +12,7 @@
 	} = getCtx();
 
 	$: attrs = {
-		...getAttrs("cell"),
+		...getCalendarAttrs("cell"),
 		"aria-disabled": $isDateDisabled(date) || $isDateUnavailable(date),
 		"data-disabled": $isDateDisabled(date) ? "" : undefined,
 		role: "gridcell"

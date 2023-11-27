@@ -26,7 +26,7 @@
 			>View</Menubar.Trigger
 		>
 		<Menubar.Content
-			class="w-full max-w-[220px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover outline-none"
+			class="z-50 w-full max-w-[220px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover outline-none"
 			transition={flyAndScale}
 			align="start"
 			sideOffset={3}
@@ -87,7 +87,7 @@
 			>Edit</Menubar.Trigger
 		>
 		<Menubar.Content
-			class="w-full max-w-[220px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover outline-none"
+			class="z-50 w-full max-w-[220px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover outline-none"
 			transition={flyAndScale}
 			align="start"
 			sideOffset={3}
@@ -154,7 +154,7 @@
 			>View</Menubar.Trigger
 		>
 		<Menubar.Content
-			class="w-full max-w-[220px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover outline-none"
+			class="z-50 w-full max-w-[220px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover outline-none"
 			transition={flyAndScale}
 			align="start"
 			sideOffset={3}
@@ -194,7 +194,7 @@
 			>Profiles</Menubar.Trigger
 		>
 		<Menubar.Content
-			class="w-full max-w-[220px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover outline-none"
+			class="z-50 w-full max-w-[220px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover outline-none"
 			transition={flyAndScale}
 			align="start"
 			sideOffset={3}

@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { getAttrs } from "../ctx.js";
+	import { getCalendarAttrs } from "../ctx.js";
 	import type { GridRowProps } from "../types.js";
 
 	type $$Props = GridRowProps;
 
 	export let asChild: $$Props["asChild"] = false;
 
-	const attrs = getAttrs("grid-row");
+	const attrs = getCalendarAttrs("grid-row");
 </script>
 
 {#if asChild}

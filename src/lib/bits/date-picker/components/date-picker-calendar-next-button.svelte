@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { getAttrs, getCtx } from "../ctx.js";
+	import { getCalendarAttrs, getCtx } from "../ctx.js";
 	import type { NextButtonProps } from "../types.js";
 
 	type $$Props = NextButtonProps;
@@ -12,7 +12,7 @@
 	} = getCtx();
 
 	$: builder = $nextButton;
-	const attrs = getAttrs("next-button");
+	const attrs = getCalendarAttrs("next-button");
 </script>
 
 {#if asChild}

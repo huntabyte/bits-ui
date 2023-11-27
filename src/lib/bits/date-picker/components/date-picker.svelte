@@ -82,7 +82,11 @@
 			ids.dateField.year,
 			ids.dateField.validation,
 			ids.dateField.label,
-			ids.dateField.timeZoneName
+			ids.dateField.timeZoneName,
+			ids.calendar.calendar,
+			ids.calendar.grid,
+			ids.popover.content,
+			ids.popover.trigger
 		],
 		([
 			$dayId,
@@ -96,7 +100,11 @@
 			$yearId,
 			$validationId,
 			$labelId,
-			$timeZoneNameId
+			$timeZoneNameId,
+			$calendarId,
+			$gridId,
+			$contentId,
+			$triggerId
 		]) => ({
 			day: $dayId,
 			description: $descriptionId,
@@ -109,7 +117,11 @@
 			year: $yearId,
 			validation: $validationId,
 			label: $labelId,
-			timeZoneName: $timeZoneNameId
+			timeZoneName: $timeZoneNameId,
+			calendar: $calendarId,
+			grid: $gridId,
+			content: $contentId,
+			trigger: $triggerId
 		})
 	);
 

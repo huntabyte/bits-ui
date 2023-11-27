@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { getCtx, getAttrs } from "../ctx.js";
+	import { getCtx, getCalendarAttrs } from "../ctx.js";
 	import type { DateProps } from "../types.js";
 
 	type $$Props = DateProps;
@@ -15,7 +15,7 @@
 	} = getCtx();
 
 	$: builder = $cell(date, month);
-	const attrs = getAttrs("date");
+	const attrs = getCalendarAttrs("date");
 
 	$: slotProps = {
 		builder,

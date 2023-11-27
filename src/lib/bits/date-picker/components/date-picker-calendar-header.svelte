@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { getAttrs } from "../ctx.js";
+	import { getCalendarAttrs } from "../ctx.js";
 	import type { HeaderProps } from "../types.js";
 	type $$Props = HeaderProps;
 	export let asChild: $$Props["asChild"] = false;
 
-	const attrs = getAttrs("header");
+	const attrs = getCalendarAttrs("header");
 </script>
 
 {#if asChild}

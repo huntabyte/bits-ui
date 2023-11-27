@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { getAttrs, getCtx } from "../ctx.js";
+	import { getCalendarAttrs, getCtx } from "../ctx.js";
 	import type { PrevButtonProps } from "../types.js";
 
 	type $$Props = PrevButtonProps;
@@ -12,7 +12,7 @@
 	} = getCtx();
 
 	$: builder = $prevButton;
-	const attrs = getAttrs("prev-button");
+	const attrs = getCalendarAttrs("prev-button");
 
 	$: slotProps = {
 		builder,

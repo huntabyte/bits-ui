@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { getAttrs } from "../ctx.js";
+	import { getCalendarAttrs } from "../ctx.js";
 	import type { GridHeadProps } from "../types.js";
 
 	type $$Props = GridHeadProps;
 	export let asChild: $$Props["asChild"] = false;
 
-	const attrs = { ...getAttrs("grid-head"), "aria-hidden": true };
+	const attrs = { ...getCalendarAttrs("grid-head"), "aria-hidden": true };
 </script>
 
 {#if asChild}

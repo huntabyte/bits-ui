@@ -20,7 +20,7 @@
 		</div>
 	</ContextMenu.Trigger>
 	<ContextMenu.Content
-		class="w-full max-w-[229px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover outline-none"
+		class="z-50 w-full max-w-[229px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover outline-none"
 		transition={flyAndScale}
 	>
 		<ContextMenu.Item
@@ -65,7 +65,7 @@
 				</div>
 			</ContextMenu.SubTrigger>
 			<ContextMenu.SubContent
-				class="w-full max-w-[209px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover outline-none"
+				class="z-50 w-full max-w-[209px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover outline-none"
 				transition={flyAndScale}
 				sideOffset={10}
 			>

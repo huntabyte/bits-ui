@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { getCtx, getAttrs } from "../ctx.js";
+	import { getCtx, getFieldAttrs } from "../ctx.js";
 	import type { SegmentProps } from "../types.js";
 
 	type $$Props = SegmentProps;
@@ -18,7 +18,7 @@
 		ids.dateField[part].set(id);
 	}
 
-	const attrs = getAttrs("segment");
+	const attrs = getFieldAttrs("segment");
 
 	$: builder = $segment(part);
 	$: slotProps = {
