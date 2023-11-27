@@ -27,7 +27,7 @@
 			class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
 		>
 			<div class="flex items-center">
-				<PencilSimpleLine class="mr-2 text-foreground-alt sq-[22px]" />
+				<PencilSimpleLine class="mr-2 text-foreground-alt sq-5" />
 				Edit
 			</div>
 			<div class="ml-auto flex items-center gap-px">
@@ -48,7 +48,7 @@
 				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted data-[state=open]:bg-muted"
 			>
 				<div class="flex items-center">
-					<PlusCircle class="mr-2 text-foreground-alt sq-[22px]" />
+					<PlusCircle class="mr-2 text-foreground-alt sq-5" />
 					Add
 				</div>
 				<div class="ml-auto flex items-center gap-px">
@@ -100,7 +100,7 @@
 			class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
 		>
 			<div class="flex items-center">
-				<CopySimple class="mr-2 text-foreground-alt sq-[22px]" />
+				<CopySimple class="mr-2 text-foreground-alt sq-5" />
 				Duplicate
 			</div>
 			<div class="ml-auto flex items-center gap-px">
@@ -121,7 +121,7 @@
 			class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
 		>
 			<div class="flex items-center">
-				<Trash class="mr-2 text-foreground-alt sq-[22px]" />
+				<Trash class="mr-2 text-foreground-alt sq-5" />
 				Delete
 			</div>
 		</ContextMenu.Item>
