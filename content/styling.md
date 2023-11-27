@@ -30,7 +30,7 @@ You can then use those data attributes like so:
 #### Define global styles
 
 ```css title="src/app.pcss"
-[data-button-root] {
+[data-b-button-root] {
 	height: 3rem;
 	width: 100%;
 	background-color: #3182ce;
