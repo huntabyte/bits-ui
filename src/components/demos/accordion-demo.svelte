@@ -10,12 +10,12 @@
 				"Task management, messaging, file sharing, progress tracking, and reporting for your team."
 		},
 		{
-			title: "Advantages of our Platform",
+			title: "Platform Advantages",
 			content:
 				"Experience improved productivity, enhanced communication, and customizable project views for project execution."
 		},
 		{
-			title: "Effective Implementation Strategies",
+			title: "Implementation Strategies",
 			content:
 				"Define clear goals, provide training, encourage adoption, and iterate based on feedback."
 		}
