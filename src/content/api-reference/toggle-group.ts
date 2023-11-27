@@ -54,7 +54,7 @@ const root: APISchema<ToggleGroup.Props<"multiple">> = {
 			description: "The orientation of the toggle group."
 		},
 		{
-			name: "b-b-toggle-group-root",
+			name: "b-toggle-group-root",
 			description: "Present on the root element."
 		}
 	]
@@ -94,7 +94,7 @@ const item: APISchema<ToggleGroup.ItemProps> = {
 			description: "Present when the toggle item is disabled."
 		},
 		{
-			name: "b-b-toggle-group-item",
+			name: "b-toggle-group-item",
 			description: "Present on the item elements."
 		}
 	]

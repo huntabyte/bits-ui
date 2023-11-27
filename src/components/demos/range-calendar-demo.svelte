@@ -30,7 +30,7 @@
 					<RangeCalendar.GridRow class="flex w-full justify-between">
 						{#each daysOfWeek as day}
 							<RangeCalendar.HeadCell
-								class="w-9 rounded-md text-[0.8rem] font-medium text-muted-foreground"
+								class="w-7 rounded-md text-[0.8rem] font-medium text-muted-foreground"
 							>
 								<div>{day}</div>
 							</RangeCalendar.HeadCell>
@@ -39,16 +39,16 @@
 				</RangeCalendar.GridHead>
 				<RangeCalendar.GridBody>
 					{#each month.weeks as weekDates}
-						<RangeCalendar.GridRow class="mt-1 flex w-full gap-1">
+						<RangeCalendar.GridRow class="mt-0.5 flex w-full gap-0.5">
 							{#each weekDates as date}
 								<RangeCalendar.Cell
 									{date}
-									class="relative h-9 w-9 p-0 text-center text-sm focus-within:relative focus-within:z-20"
+									class="relative p-0 text-center text-sm sq-7 focus-within:relative focus-within:z-20"
 								>
 									<RangeCalendar.Date
 										{date}
 										month={month.value}
-										class="inline-flex h-9 w-9 items-center justify-center whitespace-nowrap rounded-[7px] bg-background p-0 text-sm font-normal text-foreground ring-offset-background transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 data-[disabled]:pointer-events-none data-[outside-month]:pointer-events-none data-[highlighted]:bg-muted data-[selected]:bg-foreground data-[selection-end]:bg-foreground data-[selection-start]:bg-foreground data-[selected]:text-background data-[disabled]:opacity-50 data-[outside-month]:opacity-20"
+										class="inline-flex items-center justify-center whitespace-nowrap rounded-[5px] bg-background p-0 text-sm font-normal text-foreground ring-offset-background transition-colors sq-7 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 data-[disabled]:pointer-events-none data-[outside-month]:pointer-events-none data-[highlighted]:bg-muted data-[selected]:bg-foreground data-[selection-end]:bg-foreground data-[selection-start]:bg-foreground data-[selected]:text-background data-[disabled]:opacity-50 data-[outside-month]:opacity-20"
 									/>
 								</RangeCalendar.Cell>
 							{/each}

@@ -5,7 +5,7 @@ import { getAttrs as getCalendarAttrs } from "$lib/bits/calendar/ctx.js";
 import { getAttrs as getFieldAttrs } from "$lib/bits/date-field/ctx.js";
 import { getAttrs as getPopoverAttrs } from "$lib/bits/popover/ctx.js";
 import { getPositioningUpdater, type PositioningProps } from "../floating/helpers";
-import type { Writable } from "svelte/store";
+import { get, type Writable } from "svelte/store";
 import type { FloatingConfig } from "../floating/floating-config";
 
 const NAME = "date-picker";
@@ -33,6 +33,7 @@ const defaultPlacement = {
 } satisfies PositioningProps;
 
 export function updatePositioning(props: PositioningProps) {
+	console.log("updating positioning");
 	const withDefaults = { ...defaultPlacement, ...props } satisfies PositioningProps;
 	const {
 		options: { positioning }
@@ -40,4 +41,5 @@ export function updatePositioning(props: PositioningProps) {
 
 	const updater = getPositioningUpdater(positioning as Writable<FloatingConfig>);
 	updater(withDefaults);
+	console.log(get(positioning));
 }

@@ -28,7 +28,7 @@
 			</DatePicker.Trigger>
 		</DatePicker.Input>
 	</div>
-	<DatePicker.Content sideOffset={2} transition={flyAndScale}>
+	<DatePicker.Content sideOffset={8} transition={flyAndScale} class="relative">
 		<DatePicker.Calendar
 			class="rounded-card border border-dark-10 bg-background p-6 shadow-popover"
 			let:months
@@ -58,7 +58,7 @@
 							<DatePicker.CalendarGridRow class="flex w-full justify-between">
 								{#each daysOfWeek as day}
 									<DatePicker.CalendarHeadCell
-										class="w-9 rounded-md text-[0.8rem] font-medium text-muted-foreground"
+										class="w-7 rounded-md text-[0.8rem] font-medium text-muted-foreground"
 									>
 										<div>{day}</div>
 									</DatePicker.CalendarHeadCell>
@@ -67,16 +67,16 @@
 						</DatePicker.CalendarGridHead>
 						<DatePicker.CalendarGridBody>
 							{#each month.weeks as weekDates}
-								<DatePicker.CalendarGridRow class="mt-1 flex w-full gap-1">
+								<DatePicker.CalendarGridRow class="mt-0.5 flex w-full gap-0.5">
 									{#each weekDates as date}
 										<DatePicker.CalendarCell
 											{date}
-											class="relative h-9 w-9 p-0 text-center text-sm focus-within:relative focus-within:z-20"
+											class="relative p-0 text-center text-sm sq-7 focus-within:relative focus-within:z-20"
 										>
 											<DatePicker.CalendarDate
 												{date}
 												month={month.value}
-												class="inline-flex h-9 w-9 items-center justify-center whitespace-nowrap rounded-[7px] bg-background p-0 text-sm font-normal text-foreground ring-offset-background transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 data-[disabled]:pointer-events-none data-[outside-month]:pointer-events-none data-[selected]:bg-foreground data-[selected]:text-background data-[disabled]:opacity-50 data-[outside-month]:opacity-20 "
+												class="inline-flex items-center justify-center whitespace-nowrap rounded-[7px] bg-background p-0 text-sm font-normal text-foreground ring-offset-background transition-colors sq-7 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 data-[disabled]:pointer-events-none data-[outside-month]:pointer-events-none data-[selected]:bg-foreground data-[selected]:text-background data-[disabled]:opacity-50 data-[outside-month]:opacity-20 "
 											/>
 										</DatePicker.CalendarCell>
 									{/each}

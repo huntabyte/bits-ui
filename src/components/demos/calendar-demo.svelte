@@ -30,7 +30,7 @@
 					<Calendar.GridRow class="flex w-full justify-between">
 						{#each daysOfWeek as day}
 							<Calendar.HeadCell
-								class="w-9 rounded-md text-[0.8rem] font-medium text-muted-foreground"
+								class="w-7 rounded-md text-[0.8rem] font-medium text-muted-foreground"
 							>
 								<div>{day}</div>
 							</Calendar.HeadCell>
