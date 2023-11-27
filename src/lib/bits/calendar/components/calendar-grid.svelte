@@ -12,6 +12,7 @@
 	} = getCtx();
 
 	$: builder = $grid;
+
 	const attrs = getAttrs("grid");
 
 	$: slotProps = {

@@ -54,7 +54,7 @@ export const root: APISchema<RadioGroup.Props> = {
 			description: "The orientation of the radio group."
 		},
 		{
-			name: "radio-group-root",
+			name: "b-radio-group-root",
 			description: "Present on the root element."
 		}
 	]
@@ -97,7 +97,7 @@ export const item: APISchema<RadioGroup.ItemProps> = {
 			description: "The orientation of the parent radio group."
 		},
 		{
-			name: "radio-group-item",
+			name: "b-radio-group-item",
 			description: "Present on the radio item element."
 		}
 	]
@@ -116,7 +116,7 @@ export const indicator: APISchema = {
 		"A component which is used to indicate the radio item's checked state. Any children of this component will only be visible when the radio item is checked.",
 	dataAttributes: [
 		{
-			name: "radio-group-indicator",
+			name: "b-radio-group-indicator",
 			description: "Present on the indicator element."
 		}
 	]

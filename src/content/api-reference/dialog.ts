@@ -53,7 +53,7 @@ export const close: APISchema<Dialog.CloseProps> = {
 	props: { asChild },
 	dataAttributes: [
 		{
-			name: "dialog-close",
+			name: "b-dialog-close",
 			description: "Present on the close button."
 		}
 	]
@@ -70,7 +70,7 @@ export const content: APISchema<Dialog.ContentProps> = {
 			description: "The state of the dialog."
 		},
 		{
-			name: "dialog-content",
+			name: "b-dialog-content",
 			description: "Present on the content."
 		}
 	]
@@ -91,7 +91,7 @@ export const title: APISchema<Dialog.TitleProps> = {
 	},
 	dataAttributes: [
 		{
-			name: "dialog-title",
+			name: "b-dialog-title",
 			description: "Present on the title."
 		}
 	]
@@ -103,7 +103,7 @@ export const description: APISchema<Dialog.DescriptionProps> = {
 	props: { asChild },
 	dataAttributes: [
 		{
-			name: "dialog-description",
+			name: "b-dialog-description",
 			description: "Present on the description."
 		}
 	]
@@ -115,7 +115,7 @@ export const trigger: APISchema<Dialog.TriggerProps> = {
 	props: { asChild },
 	dataAttributes: [
 		{
-			name: "dialog-trigger",
+			name: "b-dialog-trigger",
 			description: "Present on the trigger."
 		}
 	]
@@ -132,7 +132,7 @@ export const overlay: APISchema<Dialog.OverlayProps> = {
 			description: "The state of the dialog."
 		},
 		{
-			name: "dialog-overlay",
+			name: "b-dialog-overlay",
 			description: "Present on the overlay."
 		}
 	]
@@ -148,7 +148,7 @@ export const portal: APISchema<Dialog.PortalProps> = {
 			description: "Present on the portal."
 		},
 		{
-			name: "dialog-portal",
+			name: "b-dialog-portal",
 			description: "Present on the portal."
 		}
 	]

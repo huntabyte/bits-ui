@@ -15,9 +15,9 @@ describe("Collapsible", () => {
 		const root = getByTestId("root");
 		const trigger = getByTestId("trigger");
 		const content = getByTestId("content");
-		expect(root).toHaveAttribute("data-collapsible-root");
-		expect(trigger).toHaveAttribute("data-collapsible-trigger");
-		expect(content).toHaveAttribute("data-collapsible-content");
+		expect(root).toHaveAttribute("data-b-collapsible-root");
+		expect(trigger).toHaveAttribute("data-b-collapsible-trigger");
+		expect(content).toHaveAttribute("data-b-collapsible-content");
 	});
 
 	it("doesnt render content when `open` is false", async () => {

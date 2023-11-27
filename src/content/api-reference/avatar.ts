@@ -32,7 +32,7 @@ export const root: APISchema<Avatar.Props> = {
 	},
 	dataAttributes: [
 		{
-			name: "avatar-root",
+			name: "b-avatar-root",
 			description: "Present on the root element."
 		}
 	]
@@ -46,7 +46,7 @@ export const image: APISchema<Avatar.ImageProps> = {
 	},
 	dataAttributes: [
 		{
-			name: "avatar-image",
+			name: "b-avatar-image",
 			description: "Present on the image element."
 		}
 	]
@@ -58,7 +58,7 @@ export const fallback: APISchema<Avatar.FallbackProps> = {
 	props: { asChild },
 	dataAttributes: [
 		{
-			name: "avatar-fallback",
+			name: "b-avatar-fallback",
 			description: "Present on the fallback element."
 		}
 	]

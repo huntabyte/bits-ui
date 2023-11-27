@@ -118,7 +118,7 @@ export const trigger: APISchema<Select.TriggerProps> = {
 			description: "Present when the trigger is disabled."
 		},
 		{
-			name: "select-trigger",
+			name: "b-select-trigger",
 			description: "Present on the trigger element."
 		}
 	]
@@ -130,7 +130,7 @@ export const content: APISchema<Select.ContentProps> = {
 	props: { ...transitionProps, ...floatingPositioning, asChild },
 	dataAttributes: [
 		{
-			name: "select-content",
+			name: "b-select-content",
 			description: "Present on the content element."
 		}
 	]
@@ -167,7 +167,7 @@ export const item: APISchema<Select.ItemProps> = {
 			description: "Present when the item is disabled."
 		},
 		{
-			name: "select-item",
+			name: "b-select-item",
 			description: "Present on the item element."
 		}
 	]
@@ -186,7 +186,7 @@ export const value: APISchema = {
 	},
 	dataAttributes: [
 		{
-			name: "select-value",
+			name: "b-select-value",
 			description: "Present on the value element."
 		}
 	]
@@ -205,7 +205,7 @@ export const group: APISchema<Select.GroupProps> = {
 	props: { asChild },
 	dataAttributes: [
 		{
-			name: "select-group",
+			name: "b-select-group",
 			description: "Present on the group element."
 		}
 	]
@@ -218,7 +218,7 @@ export const label: APISchema<Select.LabelProps> = {
 	props: { asChild },
 	dataAttributes: [
 		{
-			name: "select-label",
+			name: "b-select-label",
 			description: "Present on the label element."
 		}
 	]
@@ -232,7 +232,7 @@ export const separator: APISchema<Select.SeparatorProps> = {
 	},
 	dataAttributes: [
 		{
-			name: "select-separator",
+			name: "b-select-separator",
 			description: "Present on the separator element."
 		}
 	]
@@ -246,7 +246,7 @@ export const indicator: APISchema<Select.IndicatorProps> = {
 	},
 	dataAttributes: [
 		{
-			name: "select-indicator",
+			name: "b-select-indicator",
 			description: "Present on the indicator element."
 		}
 	]

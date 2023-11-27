@@ -34,7 +34,7 @@ describe("Link Preview", () => {
 
 		for (const part of parts) {
 			const el = getByTestId(part);
-			expect(el).toHaveAttribute(`data-link-preview-${part}`);
+			expect(el).toHaveAttribute(`data-b-link-preview-${part}`);
 		}
 	});
 

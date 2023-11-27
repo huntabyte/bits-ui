@@ -71,7 +71,7 @@ export const trigger: APISchema<Popover.TriggerProps> = {
 			description: "The open state of the link preview."
 		},
 		{
-			name: "popover-trigger",
+			name: "b-popover-trigger",
 			description: "Present on the trigger element."
 		}
 	]
@@ -88,7 +88,7 @@ export const content: APISchema<Popover.ContentProps> = {
 			description: "The open state of the popover."
 		},
 		{
-			name: "popover-content",
+			name: "b-popover-content",
 			description: "Present on the content element."
 		}
 	]
@@ -101,7 +101,7 @@ export const close: APISchema<Popover.CloseProps> = {
 	props: { asChild },
 	dataAttributes: [
 		{
-			name: "popover-close",
+			name: "b-popover-close",
 			description: "Present on the close button."
 		}
 	]
@@ -118,7 +118,7 @@ export const arrow: APISchema<Popover.ArrowProps> = {
 			description: "Present on the arrow element."
 		},
 		{
-			name: "popover-arrow",
+			name: "b-popover-arrow",
 			description: "Present on the arrow element."
 		}
 	]

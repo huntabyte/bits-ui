@@ -56,7 +56,7 @@ export const root: APISchema<Checkbox.Props> = {
 			description: "The checkbox's state. Can be 'checked', 'unchecked', or 'indeterminate'."
 		},
 		{
-			name: "checkbox-root",
+			name: "b-checkbox-root",
 			description: "Present on the root element."
 		}
 	]
@@ -89,7 +89,7 @@ export const indicator: APISchema<Checkbox.IndicatorProps> = {
 	props: { asChild },
 	dataAttributes: [
 		{
-			name: "checkbox-indicator",
+			name: "b-checkbox-indicator",
 			description: "Present on the indicator element."
 		}
 	]

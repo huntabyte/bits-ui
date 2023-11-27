@@ -58,10 +58,10 @@ describe("Tabs", () => {
 		const trigger = getByTestId("trigger-1");
 		const content = getByTestId("content-1");
 
-		expect(root).toHaveAttribute("data-tabs-root");
-		expect(list).toHaveAttribute("data-tabs-list");
-		expect(trigger).toHaveAttribute("data-tabs-trigger");
-		expect(content).toHaveAttribute("data-tabs-content");
+		expect(root).toHaveAttribute("data-b-tabs-root");
+		expect(list).toHaveAttribute("data-b-tabs-list");
+		expect(trigger).toHaveAttribute("data-b-tabs-trigger");
+		expect(content).toHaveAttribute("data-b-tabs-content");
 	});
 
 	it("switches tabs on click", async () => {

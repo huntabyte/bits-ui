@@ -8,7 +8,7 @@
 	export let type: $$Props["type"] = undefined;
 	export let builders: $$Props["builders"] = [];
 	const attrs = {
-		"data-button-root": ""
+		"data-b-button-root": ""
 	};
 </script>
 

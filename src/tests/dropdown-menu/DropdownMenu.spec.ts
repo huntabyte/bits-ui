@@ -87,13 +87,13 @@ describe("Dropdown Menu", () => {
 
 		for (const part of parts) {
 			const el = screen.getByTestId(part);
-			expect(el).toHaveAttribute(`data-menu-${part}`);
+			expect(el).toHaveAttribute(`data-b-menu-${part}`);
 		}
 
 		await user.click(getByTestId("sub-trigger"));
 
 		const subContent = getByTestId("sub-content");
-		expect(subContent).toHaveAttribute(`data-menu-sub-content`);
+		expect(subContent).toHaveAttribute(`data-b-menu-sub-content`);
 	});
 
 	it.each(OPEN_KEYS)("Opens when %s is pressed & respects binding", async (key) => {
