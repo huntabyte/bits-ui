@@ -15,7 +15,7 @@
 	class="relative h-[15px] w-[60%] overflow-hidden rounded-full bg-dark-10 shadow-mini-inset"
 >
 	<div
-		class="h-full w-full flex-1 rounded-full bg-foreground shadow-mini-inset transition-all"
+		class="h-full w-full flex-1 rounded-full bg-foreground shadow-mini-inset transition-all duration-300 ease-linear"
 		style={`transform: translateX(-${
 			100 - (100 * (value ?? 0)) / (100 ?? 1)
 		}%)`}
