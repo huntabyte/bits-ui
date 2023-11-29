@@ -22,12 +22,12 @@
 				</div>
 			{/each}
 			<DatePicker.Trigger
-				class="ml-auto rounded-[5px] p-1 transition-all hover:bg-dark-10"
+				class="ml-auto rounded-[5px] p-1 transition-all hover:bg-dark-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
 			>
 				<CalendarBlank class="h-5 w-5" />
 			</DatePicker.Trigger>
 		</DatePicker.Input>
-		<DatePicker.Content sideOffset={8} transition={flyAndScale}>
+		<DatePicker.Content sideOffset={10} transition={flyAndScale}>
 			<DatePicker.Calendar
 				class="rounded-card border border-dark-10 bg-background p-6 shadow-popover"
 				let:months
