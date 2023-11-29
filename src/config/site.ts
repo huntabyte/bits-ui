@@ -1,6 +1,6 @@
 export const siteConfig = {
-	name: "Bit UI",
-	url: "https://bit-ui.com",
+	name: "Bits UI",
+	url: "https://bits-ui.com",
 	description: "Headless components for Svelte built on top of Melt UI.",
 	links: {
 		melt: "https://melt-ui.com",

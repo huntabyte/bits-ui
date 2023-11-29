@@ -55,15 +55,15 @@ Let's create a custom `<Button />` component that could be used with this patter
 
 ```svelte
 <script lang="ts">
-	import { builderActions, builderAttrs, type Builder } from "bits-ui";
+	import { builderActions, getAttrs, type Builder } from "bits-ui";
 	export let builders: Builder[] = [];
 </script>
 
-<button use:builderActions={{ builders }} {...builderAttrs(builders)}>
+<button use:builderActions={{ builders }} {...getAttrs(builders)}>
 	<slot />
 </button>
 ```
 
-We're using the `builderActions` and `builderAttrs` helpers to apply the actions and attributes to the button. We're also using the `Builder` type to type the `builders` prop we'd receive from whatever component we're using this with. We use an array here to cover the case where we may want to apply multiple builders to the button. The helper functions handle applying all the actions and attributes to the button for us.
+We're using the `builderActions` and `getAttrs` helpers to apply the actions and attributes to the button. We're also using the `Builder` type to type the `builders` prop we'd receive from whatever component we're using this with. We use an array here to cover the case where we may want to apply multiple builders to the button. The helper functions handle applying all the actions and attributes to the button for us.
 
 If you do plan to pass multiple builders, the order in which you pass them matters. Certain actions/attributes may override others, so be sure to test your implementation to ensure it's working as expected.

@@ -88,6 +88,14 @@ describe("Select", () => {
 		expect(input).not.toBeVisible();
 	});
 
+	it.each([kbd.SPACE, kbd.ENTER])("selects item with the %s key", async (key) => {
+		const { user, queryByTestId, getByTestId } = await open();
+		await user.keyboard(kbd.ARROW_DOWN);
+		await user.keyboard(key);
+		await waitFor(() => expect(queryByTestId("content")).toBeNull());
+		expect(getByTestId("value")).toHaveTextContent("A");
+	});
+
 	it("syncs the name prop to the hidden input", async () => {
 		const { input } = setup({ name: "test" });
 		expect(input).toHaveAttribute("name", "test");

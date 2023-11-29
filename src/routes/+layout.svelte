@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { dev } from "$app/environment";
 	import {
+		Metadata,
 		SidebarNav,
 		SiteHeader,
 		TableOfContents,
@@ -12,6 +13,7 @@
 </script>
 
 <ModeWatcher />
+<Metadata />
 
 <SiteHeader />
 <div class="min-h-[calc(100vh-64px)]">
