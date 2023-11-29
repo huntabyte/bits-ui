@@ -32,7 +32,7 @@
 			sideOffset={3}
 		>
 			<Menubar.CheckboxItem
-				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
+				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none data-[highlighted]:bg-muted"
 				bind:checked={pixelGrid}
 			>
 				Pixel grid
@@ -41,7 +41,7 @@
 				</Menubar.CheckboxIndicator>
 			</Menubar.CheckboxItem>
 			<Menubar.CheckboxItem
-				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
+				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none data-[highlighted]:bg-muted"
 				bind:checked={layoutGrid}
 			>
 				Layout grid
@@ -53,7 +53,7 @@
 			<Menubar.RadioGroup bind:value={view}>
 				<Menubar.RadioItem
 					value="table"
-					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
+					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none data-[highlighted]:bg-muted"
 				>
 					Table
 					<Menubar.RadioIndicator class="ml-auto">
@@ -62,7 +62,7 @@
 				</Menubar.RadioItem>
 				<Menubar.RadioItem
 					value="board"
-					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
+					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none data-[highlighted]:bg-muted"
 				>
 					Board
 					<Menubar.RadioIndicator class="ml-auto">
@@ -71,7 +71,7 @@
 				</Menubar.RadioItem>
 				<Menubar.RadioItem
 					value="gallery"
-					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
+					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none data-[highlighted]:bg-muted"
 				>
 					Gallery
 					<Menubar.RadioIndicator class="ml-auto">
@@ -93,17 +93,17 @@
 			sideOffset={3}
 		>
 			<Menubar.Item
-				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
+				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none data-[highlighted]:bg-muted"
 				>Undo</Menubar.Item
 			>
 			<Menubar.Item
-				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
+				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none data-[highlighted]:bg-muted"
 				>Redo</Menubar.Item
 			>
 			<Menubar.Separator />
 			<Menubar.Sub>
 				<Menubar.SubTrigger
-					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted data-[state=open]:bg-muted"
+					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none data-[highlighted]:bg-muted data-[state=open]:bg-muted"
 				>
 					Find
 					<div class="ml-auto flex items-center gap-px">
@@ -115,35 +115,35 @@
 					transition={flyAndScale}
 				>
 					<Menubar.Item
-						class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
+						class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none data-[highlighted]:bg-muted"
 						>Search the web</Menubar.Item
 					>
 					<Menubar.Separator />
 					<Menubar.Item
-						class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
+						class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none data-[highlighted]:bg-muted"
 						>Find...</Menubar.Item
 					>
 					<Menubar.Item
-						class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
+						class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none data-[highlighted]:bg-muted"
 						>Find Next</Menubar.Item
 					>
 					<Menubar.Item
-						class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
+						class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none data-[highlighted]:bg-muted"
 						>Find Previous</Menubar.Item
 					>
 				</Menubar.SubContent>
 			</Menubar.Sub>
 			<Menubar.Separator />
 			<Menubar.Item
-				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
+				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none data-[highlighted]:bg-muted"
 				>Cut</Menubar.Item
 			>
 			<Menubar.Item
-				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
+				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none data-[highlighted]:bg-muted"
 				>Copy</Menubar.Item
 			>
 			<Menubar.Item
-				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
+				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none data-[highlighted]:bg-muted"
 				>Paste</Menubar.Item
 			>
 		</Menubar.Content>
@@ -160,30 +160,30 @@
 			sideOffset={3}
 		>
 			<Menubar.CheckboxItem
-				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
+				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none data-[highlighted]:bg-muted"
 				bind:checked={bookmarks}>Show Bookmarks Bar</Menubar.CheckboxItem
 			>
 			<Menubar.CheckboxItem
-				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
+				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none data-[highlighted]:bg-muted"
 				bind:checked={fullUrls}>Show Full URLs</Menubar.CheckboxItem
 			>
 			<Menubar.Separator />
 			<Menubar.Item
-				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
+				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none data-[highlighted]:bg-muted"
 				>Reload</Menubar.Item
 			>
 			<Menubar.Item
-				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
+				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none data-[highlighted]:bg-muted"
 				>Force Reload</Menubar.Item
 			>
 			<Menubar.Separator />
 			<Menubar.Item
-				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
+				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none data-[highlighted]:bg-muted"
 				>Toggle Fullscreen</Menubar.Item
 			>
 			<Menubar.Separator />
 			<Menubar.Item
-				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
+				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none data-[highlighted]:bg-muted"
 				>Hide Sidebar</Menubar.Item
 			>
 		</Menubar.Content>
@@ -201,26 +201,26 @@
 		>
 			<Menubar.RadioGroup value={profileRadioValue}>
 				<Menubar.RadioItem
-					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
+					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none data-[highlighted]:bg-muted"
 					value="andy">Andy</Menubar.RadioItem
 				>
 				<Menubar.RadioItem
-					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
+					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none data-[highlighted]:bg-muted"
 					value="benoit">Benoit</Menubar.RadioItem
 				>
 				<Menubar.RadioItem
-					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
+					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none data-[highlighted]:bg-muted"
 					value="Luis">Luis</Menubar.RadioItem
 				>
 			</Menubar.RadioGroup>
 			<Menubar.Separator />
 			<Menubar.Item
-				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
+				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none data-[highlighted]:bg-muted"
 				>Edit...</Menubar.Item
 			>
 			<Menubar.Separator />
 			<Menubar.Item
-				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
+				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none data-[highlighted]:bg-muted"
 				>Add Profile...</Menubar.Item
 			>
 		</Menubar.Content>
