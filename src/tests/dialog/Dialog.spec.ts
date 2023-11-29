@@ -54,7 +54,7 @@ describe("Dialog", () => {
 
 		for (const part of parts) {
 			const el = getByTestId(part);
-			expect(el).toHaveAttribute(`data-b-dialog-${part}`);
+			expect(el).toHaveAttribute(`data-dialog-${part}`);
 		}
 	});
 

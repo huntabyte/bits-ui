@@ -53,7 +53,7 @@ const root: APISchema<Tabs.Props> = {
 			description: "The orientation of the tabs."
 		},
 		{
-			name: "b-tabs-root",
+			name: "tabs-root",
 			description: "Present on the root element."
 		}
 	]
@@ -72,7 +72,7 @@ const list: APISchema<Tabs.ListProps> = {
 			description: "The orientation of the tabs."
 		},
 		{
-			name: "b-tabs-list",
+			name: "tabs-list",
 			description: "Present on the list element."
 		}
 	]
@@ -114,7 +114,7 @@ const trigger: APISchema<Tabs.TriggerProps> = {
 			description: "Present when the tab trigger is disabled."
 		},
 		{
-			name: "b-tabs-trigger",
+			name: "tabs-trigger",
 			description: "Present on the trigger elements."
 		}
 	]
@@ -133,7 +133,7 @@ const content: APISchema<Tabs.ContentProps> = {
 	},
 	dataAttributes: [
 		{
-			name: "b-tabs-content",
+			name: "tabs-content",
 			description: "Present on the content elements."
 		}
 	]

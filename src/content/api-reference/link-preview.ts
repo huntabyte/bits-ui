@@ -64,7 +64,7 @@ export const trigger: APISchema<LinkPreview.TriggerProps> = {
 			description: "The open state of the link preview."
 		},
 		{
-			name: "b-link-preview-trigger",
+			name: "link-preview-trigger",
 			description: "Present on the trigger element."
 		}
 	]
@@ -81,7 +81,7 @@ export const content: APISchema<LinkPreview.ContentProps> = {
 			description: "The open state of the link preview."
 		},
 		{
-			name: "b-link-preview-content",
+			name: "link-preview-content",
 			description: "Present on the content element."
 		}
 	]
@@ -98,7 +98,7 @@ export const arrow: APISchema<LinkPreview.ArrowProps> = {
 			description: "Present on the arrow element."
 		},
 		{
-			name: "b-link-preview-arrow",
+			name: "link-preview-arrow",
 			description: "Present on the arrow element."
 		}
 	]

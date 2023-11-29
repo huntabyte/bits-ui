@@ -13,7 +13,7 @@ describe("Label", () => {
 	it("has bits data attrs", async () => {
 		const { getByTestId } = render(LabelTest);
 		const root = getByTestId("label");
-		expect(root).toHaveAttribute("data-b-label-root");
+		expect(root).toHaveAttribute("data-label-root");
 	});
 
 	it("renders the label text", async () => {

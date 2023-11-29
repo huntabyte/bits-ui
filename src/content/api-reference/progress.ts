@@ -42,7 +42,7 @@ export const root: APISchema<Progress.Props> = {
 			description: "The maximum value of the progress bar."
 		},
 		{
-			name: "b-progress-root",
+			name: "progress-root",
 			description: "Present on the root element."
 		}
 	]

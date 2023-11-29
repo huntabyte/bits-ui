@@ -29,8 +29,8 @@ describe("Checkbox", () => {
 	it("has bits data attrs", async () => {
 		const { getByTestId, root } = setup();
 		const indicator = getByTestId("indicator");
-		expect(root).toHaveAttribute("data-b-checkbox-root");
-		expect(indicator).toHaveAttribute("data-b-checkbox-indicator");
+		expect(root).toHaveAttribute("data-checkbox-root");
+		expect(indicator).toHaveAttribute("data-checkbox-indicator");
 	});
 
 	it('defaults the value to "on", when no value prop is passed', async () => {

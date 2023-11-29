@@ -56,7 +56,7 @@ const root: APISchema<Slider.Props> = {
 			description: "The orientation of the slider."
 		},
 		{
-			name: "b-slider-root",
+			name: "slider-root",
 			description: "Present on the root element."
 		}
 	]
@@ -70,7 +70,7 @@ const thumb: APISchema<Slider.ThumbProps> = {
 	},
 	dataAttributes: [
 		{
-			name: "b-slider-thumb",
+			name: "slider-thumb",
 			description: "Present on the thumb elements."
 		}
 	]
@@ -84,7 +84,7 @@ const range: APISchema<Slider.RangeProps> = {
 	},
 	dataAttributes: [
 		{
-			name: "b-slider-range",
+			name: "slider-range",
 			description: "Present on the range elements."
 		}
 	]
@@ -102,7 +102,7 @@ const tick: APISchema<Slider.TickProps> = {
 			description: "Present when the tick is bounded."
 		},
 		{
-			name: "b-slider-tick",
+			name: "slider-tick",
 			description: "Present on the tick elements."
 		}
 	]

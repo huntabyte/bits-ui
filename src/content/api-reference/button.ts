@@ -19,7 +19,7 @@ export const root: APISchema<Button.Props & { href: string }> = {
 	},
 	dataAttributes: [
 		{
-			name: "b-button-root",
+			name: "button-root",
 			description: "Present on the button element."
 		}
 	]

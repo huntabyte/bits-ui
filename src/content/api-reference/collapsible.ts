@@ -40,7 +40,7 @@ export const root: APISchema<Collapsible.Props> = {
 			description: "The collapsible's open state."
 		},
 		{
-			name: "b-collapsible-root",
+			name: "collapsible-root",
 			description: "Present on the root element."
 		}
 	]
@@ -62,7 +62,7 @@ export const trigger: APISchema<Collapsible.TriggerProps> = {
 			description: "The collapsible's open state."
 		},
 		{
-			name: "b-collapsible-trigger",
+			name: "collapsible-trigger",
 			description: "Present on the trigger element."
 		}
 	]
@@ -89,7 +89,7 @@ export const content: APISchema<Collapsible.ContentProps> = {
 			description: "The collapsible's open state."
 		},
 		{
-			name: "b-collapsible-content",
+			name: "collapsible-content",
 			description: "Present on the content element."
 		}
 	]

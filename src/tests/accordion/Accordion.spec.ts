@@ -58,11 +58,11 @@ describe("Accordion", () => {
 		const item = getByTestId("item");
 		const header = getByTestId("header");
 		const content = getByTestId("content");
-		expect(root).toHaveAttribute("data-b-accordion-root");
-		expect(item).toHaveAttribute("data-b-accordion-item");
-		expect(header).toHaveAttribute("data-b-accordion-header");
-		expect(content).toHaveAttribute("data-b-accordion-content");
-		expect(trigger).toHaveAttribute("data-b-accordion-trigger");
+		expect(root).toHaveAttribute("data-accordion-root");
+		expect(item).toHaveAttribute("data-accordion-item");
+		expect(header).toHaveAttribute("data-accordion-header");
+		expect(content).toHaveAttribute("data-accordion-content");
+		expect(trigger).toHaveAttribute("data-accordion-trigger");
 	});
 
 	it("has expected data attributes", async () => {
@@ -119,7 +119,7 @@ describe("Accordion", () => {
 			expect(itemEl).toHaveAttribute("data-state", "open");
 		}
 		const openItems = Array.from(
-			document.querySelectorAll("[data-state='open'][data-b-accordion-item]")
+			document.querySelectorAll("[data-state='open'][data-accordion-item]")
 		);
 		expect(openItems.length).toBe(1);
 	});
@@ -141,7 +141,7 @@ describe("Accordion", () => {
 			expect(itemEl).toHaveAttribute("data-state", "open");
 		}
 		const openItems = Array.from(
-			document.querySelectorAll("[data-state='open'][data-b-accordion-item]")
+			document.querySelectorAll("[data-state='open'][data-accordion-item]")
 		);
 		expect(openItems.length).toBe(4);
 	});

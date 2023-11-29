@@ -55,7 +55,7 @@ const action: APISchema<AlertDialog.ActionProps> = {
 	},
 	dataAttributes: [
 		{
-			name: "b-alert-dialog-action",
+			name: "alert-dialog-action",
 			description: "Present on the action button."
 		}
 	]
@@ -67,7 +67,7 @@ const cancel: APISchema<AlertDialog.CancelProps> = {
 	props: { asChild },
 	dataAttributes: [
 		{
-			name: "b-alert-dialog-cancel",
+			name: "alert-dialog-cancel",
 			description: "Present on the cancel button."
 		}
 	]
@@ -84,7 +84,7 @@ const content: APISchema<AlertDialog.ContentProps> = {
 			description: "The state of the alert dialog."
 		},
 		{
-			name: "b-alert-dialog-content",
+			name: "alert-dialog-content",
 			description: "Present on the content."
 		}
 	]
@@ -105,7 +105,7 @@ const title: APISchema<AlertDialog.TitleProps> = {
 	},
 	dataAttributes: [
 		{
-			name: "b-alert-dialog-title",
+			name: "alert-dialog-title",
 			description: "Present on the title."
 		}
 	]
@@ -117,7 +117,7 @@ const description: APISchema<AlertDialog.DescriptionProps> = {
 	props: { asChild },
 	dataAttributes: [
 		{
-			name: "b-alert-dialog-description",
+			name: "alert-dialog-description",
 			description: "Present on the description."
 		}
 	]
@@ -129,7 +129,7 @@ const trigger: APISchema<AlertDialog.TriggerProps> = {
 	props: { asChild },
 	dataAttributes: [
 		{
-			name: "b-alert-dialog-trigger",
+			name: "alert-dialog-trigger",
 			description: "Present on the trigger."
 		}
 	]
@@ -146,7 +146,7 @@ const overlay: APISchema<AlertDialog.OverlayProps> = {
 			description: "The state of the alert dialog."
 		},
 		{
-			name: "b-alert-dialog-overlay",
+			name: "alert-dialog-overlay",
 			description: "Present on the overlay."
 		}
 	]
@@ -161,7 +161,7 @@ const portal: APISchema<AlertDialog.PortalProps> = {
 			description: "Present if the `portal` prop is not `null`."
 		},
 		{
-			name: "b-alert-dialog-portal",
+			name: "alert-dialog-portal",
 			description: "Present on the portal."
 		}
 	]

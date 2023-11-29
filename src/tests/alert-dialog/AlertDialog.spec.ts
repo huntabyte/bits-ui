@@ -56,7 +56,7 @@ describe("Alert Dialog", () => {
 
 		for (const part of parts) {
 			const el = getByTestId(part);
-			expect(el).toHaveAttribute(`data-b-alert-dialog-${part}`);
+			expect(el).toHaveAttribute(`data-alert-dialog-${part}`);
 		}
 	});
 
