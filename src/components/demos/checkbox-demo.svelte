@@ -8,18 +8,18 @@
 	<Checkbox.Root
 		id="terms"
 		aria-labelledby="terms-label"
-		class="peer inline-flex h-[25px] w-[25px] items-center justify-center rounded-md border border-muted bg-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98 data-[state=unchecked]:border-border-input data-[state=unchecked]:bg-background"
+		class="peer inline-flex items-center justify-center rounded-md border border-muted bg-foreground sq-[25px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98 data-[state=unchecked]:border-border-input data-[state=unchecked]:bg-background"
 		checked="indeterminate"
 	>
 		<Checkbox.Indicator
 			let:isChecked
 			let:isIndeterminate
-			class="inline-flex items-center justify-center"
+			class="inline-flex items-center justify-center text-background"
 		>
 			{#if isChecked}
-				<Check class="h-[15px] w-[15px] text-background" weight="bold" />
+				<Check class="sq-[15px]" weight="bold" />
 			{:else if isIndeterminate}
-				<Minus class="h-[15px] w-[15px] text-background" weight="bold" />
+				<Minus class="sq-[15px]" weight="bold" />
 			{/if}
 		</Checkbox.Indicator>
 	</Checkbox.Root>

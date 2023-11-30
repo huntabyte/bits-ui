@@ -24,7 +24,7 @@
 			<DatePicker.Trigger
 				class="ml-auto rounded-[5px] p-1 transition-all hover:bg-dark-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
 			>
-				<CalendarBlank class="h-5 w-5" />
+				<CalendarBlank class="sq-5" />
 			</DatePicker.Trigger>
 		</DatePicker.Input>
 		<DatePicker.Content sideOffset={10} transition={flyAndScale}>
@@ -35,13 +35,13 @@
 			>
 				<DatePicker.CalendarHeader class="flex items-center justify-between">
 					<DatePicker.CalendarPrevButton
-						class="inline-flex h-7 w-7 items-center justify-center rounded-[7px] border border-border-input bg-background shadow-btn transition-all hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
+						class="inline-flex items-center justify-center rounded-[7px] border border-border-input bg-background shadow-btn transition-all sq-7 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
 					>
 						<CaretLeft class="h-4 w-4" />
 					</DatePicker.CalendarPrevButton>
 					<DatePicker.CalendarHeading class="font-medium" />
 					<DatePicker.CalendarNextButton
-						class="inline-flex h-7 w-7 items-center justify-center rounded-[7px] border border-border-input bg-background shadow-btn transition-all hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
+						class="inline-flex items-center justify-center rounded-[7px] border border-border-input bg-background shadow-btn transition-all sq-7 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
 					>
 						<CaretRight class="h-4 w-4" />
 					</DatePicker.CalendarNextButton>

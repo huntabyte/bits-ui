@@ -48,7 +48,8 @@ export default {
 			},
 			fontFamily: {
 				sans: ["Inter", ...fontFamily.sans],
-				mono: ["Source Code Pro", ...fontFamily.mono]
+				mono: ["Source Code Pro", ...fontFamily.mono],
+				alt: ["Courier", ...fontFamily.sans]
 			},
 			borderWidth: {
 				6: "6px"

@@ -125,13 +125,10 @@
 }
 
 @layer components {
-	.button-gradient {
-		background: linear-gradient(0deg, #000 0%, #000 100%), hsla(var(--dark));
-	}
-
-	.dark {
-		& .button-gradient {
-			background: linear-gradient(0deg, #fff 0%, #fff 100%), hsla(var(--dark));
+	*:not(body) {
+		outline: none !important;
+		&:focus-visible {
+			@apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background;
 		}
 	}
 

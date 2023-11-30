@@ -24,7 +24,7 @@
 		transition={flyAndScale}
 	>
 		<ContextMenu.Item
-			class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
+			class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-colors data-[highlighted]:bg-muted"
 		>
 			<div class="flex items-center">
 				<PencilSimpleLine class="mr-2 text-foreground-alt sq-5" />
@@ -32,12 +32,12 @@
 			</div>
 			<div class="ml-auto flex items-center gap-px">
 				<kbd
-					class="inline-flex h-5 w-5 items-center justify-center rounded-button border border-dark-10 bg-background text-xs text-muted-foreground shadow-kbd"
+					class="inline-flex items-center justify-center rounded-button border border-dark-10 bg-background text-xs text-muted-foreground shadow-kbd sq-5"
 				>
 					⌘
 				</kbd>
 				<kbd
-					class="inline-flex h-5 w-5 items-center justify-center rounded-button border border-dark-10 bg-background text-[10px] text-muted-foreground shadow-kbd"
+					class="inline-flex items-center justify-center rounded-button border border-dark-10 bg-background text-[10px] text-muted-foreground shadow-kbd sq-5"
 				>
 					E
 				</kbd>
@@ -45,7 +45,7 @@
 		</ContextMenu.Item>
 		<ContextMenu.Sub>
 			<ContextMenu.SubTrigger
-				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted data-[state=open]:bg-muted"
+				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-colors data-[highlighted]:bg-muted data-[state=open]:bg-muted"
 			>
 				<div class="flex items-center">
 					<PlusCircle class="mr-2 text-foreground-alt sq-5" />
@@ -53,51 +53,51 @@
 				</div>
 				<div class="ml-auto flex items-center gap-px">
 					<kbd
-						class="inline-flex h-5 w-5 items-center justify-center rounded-button border border-dark-10 bg-background text-xs text-muted-foreground shadow-kbd"
+						class="inline-flex items-center justify-center rounded-button border border-dark-10 bg-background text-xs text-muted-foreground shadow-kbd sq-5"
 					>
 						⌘
 					</kbd>
 					<kbd
-						class="inline-flex h-5 w-5 items-center justify-center rounded-button border border-dark-10 bg-background text-[10px] text-muted-foreground shadow-kbd"
+						class="inline-flex items-center justify-center rounded-button border border-dark-10 bg-background text-[10px] text-muted-foreground shadow-kbd sq-5"
 					>
 						N
 					</kbd>
 				</div>
 			</ContextMenu.SubTrigger>
 			<ContextMenu.SubContent
-				class="z-50 w-full max-w-[209px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover outline-none"
+				class="z-50 w-full max-w-[209px] select-none rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover outline-none"
 				transition={flyAndScale}
 				sideOffset={10}
 			>
 				<ContextMenu.Item
-					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-normal outline-none transition-all duration-75 data-[highlighted]:bg-muted"
+					class="flex h-10 items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-normal outline-none transition-colors data-[highlighted]:bg-muted"
 				>
 					Header
 				</ContextMenu.Item>
 				<ContextMenu.Item
-					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-normal outline-none transition-all duration-75 data-[highlighted]:bg-muted"
+					class="flex h-10 items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-normal outline-none transition-colors data-[highlighted]:bg-muted"
 				>
 					Paragraph
 				</ContextMenu.Item>
 				<ContextMenu.Item
-					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-normal outline-none transition-all duration-75 data-[highlighted]:bg-muted"
+					class="flex h-10 items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-normal outline-none transition-colors data-[highlighted]:bg-muted"
 				>
 					Codeblock
 				</ContextMenu.Item>
 				<ContextMenu.Item
-					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-normal outline-none transition-all duration-75 data-[highlighted]:bg-muted"
+					class="flex h-10 items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-normal outline-none transition-colors data-[highlighted]:bg-muted"
 				>
 					List
 				</ContextMenu.Item>
 				<ContextMenu.Item
-					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-normal outline-none transition-all duration-75 data-[highlighted]:bg-muted"
+					class="flex h-10 items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-normal outline-none transition-colors data-[highlighted]:bg-muted"
 				>
 					Task
 				</ContextMenu.Item>
 			</ContextMenu.SubContent>
 		</ContextMenu.Sub>
 		<ContextMenu.Item
-			class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
+			class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-colors data-[highlighted]:bg-muted"
 		>
 			<div class="flex items-center">
 				<CopySimple class="mr-2 text-foreground-alt sq-5" />
@@ -105,20 +105,20 @@
 			</div>
 			<div class="ml-auto flex items-center gap-px">
 				<kbd
-					class="inline-flex h-5 w-5 items-center justify-center rounded-button border border-dark-10 bg-background text-xs text-muted-foreground shadow-kbd"
+					class="inline-flex items-center justify-center rounded-button border border-dark-10 bg-background text-xs text-muted-foreground shadow-kbd sq-5"
 				>
 					⌘
 				</kbd>
 				<kbd
-					class="inline-flex h-5 w-5 items-center justify-center rounded-button border border-dark-10 bg-background text-[10px] text-muted-foreground shadow-kbd"
+					class="inline-flex items-center justify-center rounded-button border border-dark-10 bg-background text-[10px] text-muted-foreground shadow-kbd sq-5"
 				>
 					D
 				</kbd>
 			</div>
 		</ContextMenu.Item>
-		<ContextMenu.Separator class="my-1 -ml-1 -mr-1 block h-px bg-muted" />
+		<ContextMenu.Separator class="-mx-1 my-1 block h-px bg-muted" />
 		<ContextMenu.Item
-			class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-all duration-75 data-[highlighted]:bg-muted"
+			class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-colors data-[highlighted]:bg-muted"
 		>
 			<div class="flex items-center">
 				<Trash class="mr-2 text-foreground-alt sq-5" />

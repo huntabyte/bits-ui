@@ -24,9 +24,9 @@
 	>
 		<div class="flex items-center">
 			<div
-				class="mr-[13px] flex h-12 w-12 items-center justify-center rounded-full bg-muted"
+				class="mr-[13px] flex items-center justify-center rounded-full bg-muted sq-12"
 			>
-				<Cookie class="h-6 w-6" />
+				<Cookie class="sq-6" />
 			</div>
 			<div class="flex flex-col">
 				<h4 class="text-[17px] font-semibold tracking-[-0.01em]">
@@ -40,18 +40,18 @@
 		<Separator.Root class="-mx-5 mb-7 mt-[17px] block h-px bg-muted" />
 		<div class="flex flex-col gap-7 pb-10 pl-2 pr-[2px]">
 			<div class="flex w-full items-center justify-between">
-				<div class="flex flex-col gap-0.5">
+				<div class="flex flex-col gap-0.5 font-medium">
 					<div class="flex items-center gap-1.5">
-						<Label.Root for="necessary" class="text-sm font-medium"
+						<Label.Root for="necessary" class="text-sm"
 							>Strictly necessary</Label.Root
 						>
 						<div
-							class="inline-flex h-5 items-center justify-center rounded-[30px] bg-accent px-2 text-[11px] font-medium text-accent-foreground"
+							class="inline-flex h-5 items-center justify-center rounded-[30px] bg-accent px-2 text-[11px] text-accent-foreground"
 						>
 							required
 						</div>
 					</div>
-					<p class="text-[13px] font-medium text-muted-foreground">
+					<p class="text-[13px] text-muted-foreground">
 						These cookies are essential
 					</p>
 				</div>
@@ -87,12 +87,12 @@
 				</Switch.Root>
 			</div>
 			<div class="flex w-full items-center justify-between">
-				<div class="flex flex-col gap-0.5">
-					<Label.Root for="shopping" class="text-sm font-medium"
+				<div class="flex flex-col gap-0.5 font-medium">
+					<Label.Root for="shopping" class="text-sm"
 						>Shopping cookies</Label.Root
 					>
 
-					<p class="text-[13px] font-medium text-muted-foreground">
+					<p class="text-[13px] text-muted-foreground">
 						These cookies are non-essential
 					</p>
 				</div>

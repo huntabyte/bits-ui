@@ -31,9 +31,9 @@
 				>
 					{item.title}
 					<span
-						class="inline-flex h-8 w-8 items-center justify-center rounded-[7px] bg-transparent transition-all hover:bg-dark-10"
+						class="inline-flex items-center justify-center rounded-[7px] bg-transparent transition-all sq-8 hover:bg-dark-10"
 					>
-						<CaretDown class="h-[18px] w-[18px] transition-all duration-200" />
+						<CaretDown class="transition-all duration-200 sq-[18px]" />
 					</span>
 				</Accordion.Trigger>
 			</Accordion.Header>

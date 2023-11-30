@@ -10,15 +10,15 @@
 >
 	<RangeCalendar.Header class="flex items-center justify-between">
 		<RangeCalendar.PrevButton
-			class="inline-flex h-7 w-7 items-center justify-center rounded-[7px] border border-border-input bg-background shadow-btn transition-all hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
+			class="inline-flex items-center justify-center rounded-[7px] border border-border-input bg-background shadow-btn transition-all sq-7 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
 		>
-			<CaretLeft class="h-4 w-4" />
+			<CaretLeft class="sq-4" />
 		</RangeCalendar.PrevButton>
 		<RangeCalendar.Heading class="font-medium" />
 		<RangeCalendar.NextButton
-			class="inline-flex h-7 w-7 items-center justify-center rounded-[7px] border border-border-input bg-background shadow-btn transition-all hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
+			class="inline-flex items-center justify-center rounded-[7px] border border-border-input bg-background shadow-btn transition-all sq-7 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
 		>
-			<CaretRight class="h-4 w-4" />
+			<CaretRight class="sq-4" />
 		</RangeCalendar.NextButton>
 	</RangeCalendar.Header>
 	<div
@@ -30,7 +30,7 @@
 					<RangeCalendar.GridRow class="flex w-full justify-between">
 						{#each daysOfWeek as day}
 							<RangeCalendar.HeadCell
-								class="w-7 rounded-md text-[0.8rem] font-medium text-muted-foreground"
+								class="w-8 rounded-md text-[0.8rem] font-medium text-muted-foreground"
 							>
 								<div>{day}</div>
 							</RangeCalendar.HeadCell>
@@ -43,12 +43,12 @@
 							{#each weekDates as date}
 								<RangeCalendar.Cell
 									{date}
-									class="relative p-0 text-center text-sm sq-7 focus-within:relative focus-within:z-20"
+									class="relative p-0 text-center text-sm sq-8 focus-within:relative focus-within:z-20"
 								>
 									<RangeCalendar.Date
 										{date}
 										month={month.value}
-										class="inline-flex items-center justify-center whitespace-nowrap rounded-[5px] bg-background p-0 text-sm font-normal text-foreground ring-offset-background transition-colors sq-7 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 data-[disabled]:pointer-events-none data-[outside-month]:pointer-events-none data-[highlighted]:bg-muted data-[selected]:bg-foreground data-[selection-end]:bg-foreground data-[selection-start]:bg-foreground data-[selected]:text-background data-[disabled]:opacity-50 data-[outside-month]:opacity-20"
+										class="inline-flex items-center justify-center whitespace-nowrap rounded-[5px] bg-background p-0 text-sm font-normal text-foreground ring-offset-background transition-colors sq-8 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 data-[disabled]:pointer-events-none data-[outside-month]:pointer-events-none data-[highlighted]:bg-muted data-[selected]:bg-foreground data-[selection-end]:bg-foreground data-[selection-start]:bg-foreground data-[selected]:text-background data-[disabled]:opacity-50 data-[outside-month]:opacity-20"
 									/>
 								</RangeCalendar.Cell>
 							{/each}

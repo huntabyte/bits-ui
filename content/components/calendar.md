@@ -27,6 +27,7 @@ description: A calendar component.
 		<Calendar.Heading />
 		<Calendar.NextButton />
 	</Calendar.Header>
+
 	{#each months as month}
 		<Calendar.Grid>
 			<Calendar.GridHead>

@@ -11,7 +11,7 @@
 		class="rounded-sm underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-8 focus-visible:outline-black"
 	>
 		<Avatar.Root
-			class="flex h-12 w-12 items-center justify-center rounded-full bg-muted text-[17px] font-medium uppercase text-muted-foreground"
+			class="flex items-center justify-center rounded-full bg-muted text-[17px] font-medium uppercase text-muted-foreground sq-12"
 		>
 			<Avatar.Image src="/avatar-1.png" alt="@huntabyte" />
 			<Avatar.Fallback>HB</Avatar.Fallback>
@@ -23,7 +23,7 @@
 	>
 		<div class="flex space-x-4">
 			<Avatar.Root
-				class="flex h-12 w-12 items-center justify-center rounded-full bg-muted text-[17px] font-medium uppercase text-muted-foreground"
+				class="flex items-center justify-center rounded-full bg-muted text-[17px] font-medium uppercase text-muted-foreground sq-12"
 			>
 				<Avatar.Image src="/avatar-1.png" alt="@huntabyte" />
 				<Avatar.Fallback>HB</Avatar.Fallback>
@@ -35,11 +35,11 @@
 					class="flex items-center gap-[21px] pt-2 text-xs text-muted-foreground"
 				>
 					<div class="flex items-center text-xs">
-						<MapPin class="mr-1 h-4 w-4" />
+						<MapPin class="mr-1 sq-4" />
 						<span> FL, USA </span>
 					</div>
 					<div class="flex items-center text-xs">
-						<CalendarBlank class="mr-1 h-4 w-4" />
+						<CalendarBlank class="mr-1 sq-4" />
 						<span> Joined May 2020</span>
 					</div>
 				</div>

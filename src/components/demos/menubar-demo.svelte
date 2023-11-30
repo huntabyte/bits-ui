@@ -18,7 +18,7 @@
 	class="flex h-12 items-center gap-1 rounded-[10px] border border-dark-10 bg-background px-[3px] shadow-mini"
 >
 	<div class="px-[10px]">
-		<Cat class="h-6 w-6" />
+		<Cat class="sq-6" />
 	</div>
 	<Menubar.Menu>
 		<Menubar.Trigger
@@ -37,7 +37,7 @@
 			>
 				Pixel grid
 				<Menubar.CheckboxIndicator class="ml-auto ">
-					<Check class="h-5 w-5" />
+					<Check class="sq-5" />
 				</Menubar.CheckboxIndicator>
 			</Menubar.CheckboxItem>
 			<Menubar.CheckboxItem
@@ -46,7 +46,7 @@
 			>
 				Layout grid
 				<Menubar.CheckboxIndicator class="ml-auto">
-					<Check class="h-5 w-5" />
+					<Check class="sq-5" />
 				</Menubar.CheckboxIndicator>
 			</Menubar.CheckboxItem>
 			<Menubar.Separator class="my-1 -ml-1 -mr-1 block h-px bg-muted" />
@@ -57,7 +57,7 @@
 				>
 					Table
 					<Menubar.RadioIndicator class="ml-auto">
-						<Check class="h-5 w-5" />
+						<Check class="sq-5" />
 					</Menubar.RadioIndicator>
 				</Menubar.RadioItem>
 				<Menubar.RadioItem
@@ -66,7 +66,7 @@
 				>
 					Board
 					<Menubar.RadioIndicator class="ml-auto">
-						<Check class="h-5 w-5" />
+						<Check class="sq-5" />
 					</Menubar.RadioIndicator>
 				</Menubar.RadioItem>
 				<Menubar.RadioItem
@@ -75,7 +75,7 @@
 				>
 					Gallery
 					<Menubar.RadioIndicator class="ml-auto">
-						<Check class="h-5 w-5" />
+						<Check class="sq-5" />
 					</Menubar.RadioIndicator>
 				</Menubar.RadioItem>
 			</Menubar.RadioGroup>

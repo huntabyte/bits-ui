@@ -44,7 +44,7 @@
 						autocomplete="off"
 					/>
 					<LockKeyOpen
-						class="absolute right-4 top-[14px] h-[22px] w-[22px] text-dark/30"
+						class="absolute right-4 top-[14px] text-dark/30 sq-[22px]"
 					/>
 				</div>
 			</div>
@@ -59,7 +59,7 @@
 				class="absolute right-5 top-5 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
 			>
 				<div>
-					<X class="h-5 w-5 text-foreground" />
+					<X class="text-foreground sq-5" />
 					<span class="sr-only">Close</span>
 				</div>
 			</Dialog.Close>

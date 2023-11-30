@@ -1,11 +1,27 @@
 <script lang="ts">
-	import { TextB } from "phosphor-svelte";
+	import { LockKeyOpen } from "phosphor-svelte";
 	import { Toggle } from "$lib";
+
+	let unlocked = true;
+	let code = "1985";
+	$: code = unlocked ? "1985" : "••••";
 </script>
 
-<Toggle.Root
-	aria-label="toggle bold"
-	class="inline-flex items-center justify-center rounded-[9px] bg-background transition-all sq-10 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98 data-[state=on]:bg-muted"
+<div
+	class="min-h-input flex h-full w-[176px] items-center gap-2 rounded-card-sm border border-muted bg-background py-1 pl-[18px] pr-1.5 shadow-mini"
 >
-	<TextB class="h-6 w-6" />
-</Toggle.Root>
+	<div
+		class="text-end font-alt text-[19px] tracking-[13.87px] {unlocked
+			? 'text-foreground'
+			: 'text-muted-foreground'}"
+	>
+		{code}
+	</div>
+	<Toggle.Root
+		aria-label="toggle code visibility"
+		class="inline-flex items-center justify-center rounded-[9px] bg-background transition-all sq-10 hover:bg-muted active:scale-98 active:bg-muted data-[state=on]:bg-muted  active:data-[state=on]:bg-dark-10"
+		bind:pressed={unlocked}
+	>
+		<LockKeyOpen class="sq-6" />
+	</Toggle.Root>
+</div>

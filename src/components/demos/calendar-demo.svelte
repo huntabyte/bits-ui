@@ -30,7 +30,7 @@
 					<Calendar.GridRow class="flex w-full justify-between">
 						{#each daysOfWeek as day}
 							<Calendar.HeadCell
-								class="w-7 rounded-md text-[0.8rem] font-medium text-muted-foreground"
+								class="w-8 rounded-md text-[0.8rem] font-medium text-muted-foreground"
 							>
 								<div>{day}</div>
 							</Calendar.HeadCell>
@@ -43,12 +43,12 @@
 							{#each weekDates as date}
 								<Calendar.Cell
 									{date}
-									class="relative h-7 w-7 p-0 text-center text-sm"
+									class="relative h-8 w-8 p-0 text-center text-sm"
 								>
 									<Calendar.Date
 										{date}
 										month={month.value}
-										class="inline-flex h-7 w-7 items-center justify-center whitespace-nowrap rounded-[7px] bg-background p-0 text-sm font-normal text-foreground ring-offset-background transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 data-[disabled]:pointer-events-none data-[outside-month]:pointer-events-none data-[selected]:bg-foreground data-[selected]:text-background data-[disabled]:opacity-50 data-[outside-month]:opacity-20 "
+										class="inline-flex h-8 w-8 items-center justify-center whitespace-nowrap rounded-[7px] bg-background p-0 text-sm font-normal text-foreground ring-offset-background transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 data-[disabled]:pointer-events-none data-[outside-month]:pointer-events-none data-[selected]:bg-foreground data-[selected]:text-background data-[disabled]:opacity-50 data-[outside-month]:opacity-20 "
 									/>
 								</Calendar.Cell>
 							{/each}

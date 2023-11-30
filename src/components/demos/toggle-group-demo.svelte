@@ -9,7 +9,7 @@
 	<ToggleGroup.Item
 		aria-label="toggle bold"
 		value="bold"
-		class="inline-flex items-center justify-center rounded-[9px] bg-background transition-all sq-10 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98 data-[state=on]:bg-muted"
+		class="inline-flex items-center justify-center rounded-[9px] bg-background transition-all sq-10 hover:bg-muted  active:scale-98 data-[state=on]:bg-muted"
 	>
 		<TextB class="sq-6" />
 	</ToggleGroup.Item>
