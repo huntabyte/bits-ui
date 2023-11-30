@@ -18,6 +18,7 @@ export type DataAttrSchema = {
 	name: string;
 	value?: string;
 	description?: string;
+	isEnum?: boolean;
 };
 
 export type APISchema<T = Record<string, unknown>> = {

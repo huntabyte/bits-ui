@@ -52,8 +52,9 @@ const root: APISchema<Slider.Props> = {
 	dataAttributes: [
 		{
 			name: "orientation",
+			description: "The orientation of the slider.",
 			value: enums("horizontal", "vertical"),
-			description: "The orientation of the slider."
+			isEnum: true
 		},
 		{
 			name: "slider-root",

@@ -89,11 +89,13 @@ export const item: APISchema<RadioGroup.ItemProps> = {
 		{
 			name: "state",
 			value: enums("checked", "unchecked"),
+			isEnum: true,
 			description: "The radio item's checked state."
 		},
 		{
 			name: "orientation",
 			value: enums("vertical", "horizontal"),
+			isEnum: true,
 			description: "The orientation of the parent radio group."
 		},
 		{

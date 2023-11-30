@@ -26,8 +26,9 @@ export const root: APISchema<Separator.Props> = {
 	dataAttributes: [
 		{
 			name: "orientation",
+			description: "The orientation of the separator.",
 			value: enums("horizontal", "vertical"),
-			description: "The orientation of the separator."
+			isEnum: true
 		},
 		{
 			name: "separator-root",

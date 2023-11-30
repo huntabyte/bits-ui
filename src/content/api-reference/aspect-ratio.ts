@@ -11,7 +11,13 @@ const root: APISchema<AspectRatio.Props> = {
 			default: "1",
 			description: "The desired aspect ratio."
 		}
-	}
+	},
+	dataAttributes: [
+		{
+			name: "aspect-ratio-root",
+			description: "Present on the element."
+		}
+	]
 };
 
 export const aspectRatio = [root];

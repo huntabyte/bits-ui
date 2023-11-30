@@ -61,7 +61,8 @@ export const trigger: APISchema<LinkPreview.TriggerProps> = {
 		{
 			name: "state",
 			value: enums("open", "closed"),
-			description: "The open state of the link preview."
+			description: "The open state of the link preview.",
+			isEnum: true
 		},
 		{
 			name: "link-preview-trigger",
@@ -78,7 +79,8 @@ export const content: APISchema<LinkPreview.ContentProps> = {
 		{
 			name: "state",
 			value: enums("open", "closed"),
-			description: "The open state of the link preview."
+			description: "The open state of the link preview.",
+			isEnum: true
 		},
 		{
 			name: "link-preview-content",
@@ -94,7 +96,6 @@ export const arrow: APISchema<LinkPreview.ArrowProps> = {
 	dataAttributes: [
 		{
 			name: "arrow",
-			value: "",
 			description: "Present on the arrow element."
 		},
 		{

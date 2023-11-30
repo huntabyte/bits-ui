@@ -70,8 +70,9 @@ export const trigger: APISchema<Tooltip.TriggerProps> = {
 	dataAttributes: [
 		{
 			name: "state",
+			description: "The open state of the tooltip.",
 			value: enums("open", "closed"),
-			description: "The open state of the tooltip."
+			isEnum: true
 		},
 		{
 			name: "tooltip-trigger",
@@ -99,7 +100,6 @@ export const arrow: APISchema<Tooltip.ArrowProps> = {
 	dataAttributes: [
 		{
 			name: "arrow",
-			value: "",
 			description: "Present on the arrow element."
 		},
 		{

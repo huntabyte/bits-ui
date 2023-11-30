@@ -67,7 +67,8 @@ export const content: APISchema<Dialog.ContentProps> = {
 		{
 			name: "state",
 			value: enums("open", "closed"),
-			description: "The state of the dialog."
+			description: "The state of the dialog.",
+			isEnum: true
 		},
 		{
 			name: "dialog-content",
@@ -129,7 +130,8 @@ export const overlay: APISchema<Dialog.OverlayProps> = {
 		{
 			name: "state",
 			value: enums("open", "closed"),
-			description: "The state of the dialog."
+			description: "The state of the dialog.",
+			isEnum: true
 		},
 		{
 			name: "dialog-overlay",

@@ -31,13 +31,13 @@ export const root: APISchema<Collapsible.Props> = {
 	dataAttributes: [
 		{
 			name: "disabled",
-			description: "Present when the checkbox is disabled.",
-			value: "''"
+			description: "Present when the checkbox is disabled."
 		},
 		{
 			name: "state",
 			value: enums("open", "closed"),
-			description: "The collapsible's open state."
+			description: "The collapsible's open state.",
+			isEnum: true
 		},
 		{
 			name: "collapsible-root",
@@ -53,13 +53,13 @@ export const trigger: APISchema<Collapsible.TriggerProps> = {
 	dataAttributes: [
 		{
 			name: "disabled",
-			description: "Present when the checkbox is disabled.",
-			value: "''"
+			description: "Present when the checkbox is disabled."
 		},
 		{
 			name: "state",
 			value: enums("open", "closed"),
-			description: "The collapsible's open state."
+			description: "The collapsible's open state.",
+			isEnum: true
 		},
 		{
 			name: "collapsible-trigger",
@@ -86,7 +86,8 @@ export const content: APISchema<Collapsible.ContentProps> = {
 		{
 			name: "state",
 			value: enums("open", "closed"),
-			description: "The collapsible's open state."
+			description: "The collapsible's open state.",
+			isEnum: true
 		},
 		{
 			name: "collapsible-content",

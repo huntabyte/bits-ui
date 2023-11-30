@@ -78,8 +78,9 @@ const item: APISchema<ToggleGroup.ItemProps> = {
 	dataAttributes: [
 		{
 			name: "state",
+			description: "Whether the toggle item is in the on or off state.",
 			value: enums("on", "off"),
-			description: "Whether the toggle item is in the on or off state."
+			isEnum: true
 		},
 		{
 			name: "value",

@@ -68,7 +68,8 @@ export const trigger: APISchema<Popover.TriggerProps> = {
 		{
 			name: "state",
 			value: enums("open", "closed"),
-			description: "The open state of the link preview."
+			description: "The open state of the link preview.",
+			isEnum: true
 		},
 		{
 			name: "popover-trigger",
@@ -85,7 +86,8 @@ export const content: APISchema<Popover.ContentProps> = {
 		{
 			name: "state",
 			value: enums("open", "closed"),
-			description: "The open state of the popover."
+			description: "The open state of the popover.",
+			isEnum: true
 		},
 		{
 			name: "popover-content",
@@ -114,7 +116,6 @@ export const arrow: APISchema<Popover.ArrowProps> = {
 	dataAttributes: [
 		{
 			name: "arrow",
-			value: "",
 			description: "Present on the arrow element."
 		},
 		{

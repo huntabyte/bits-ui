@@ -161,17 +161,14 @@ const date: APISchema<RangeCalendar.DateProps> = {
 	dataAttributes: [
 		{
 			name: "disabled",
-			value: "",
 			description: "Present on the element when the date is disabled."
 		},
 		{
 			name: "selected",
-			value: "",
 			description: "Present on the element when the date is selected."
 		},
 		{
 			name: "unavailable",
-			value: "",
 			description: "Present on the element when the date is unavailable."
 		},
 		{

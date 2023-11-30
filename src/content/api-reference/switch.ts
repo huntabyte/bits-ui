@@ -54,8 +54,9 @@ const root: APISchema<Switch.Props> = {
 	dataAttributes: [
 		{
 			name: "state",
+			description: "The switch's checked state.",
 			value: enums("checked", "unchecked"),
-			description: "The switch's checked state."
+			isEnum: true
 		},
 		{
 			name: "checked",
@@ -81,8 +82,9 @@ const thumb: APISchema<Switch.ThumbProps> = {
 	dataAttributes: [
 		{
 			name: "state",
+			description: "The switch's checked state.",
 			value: enums("checked", "unchecked"),
-			description: "The switch's checked state."
+			isEnum: true
 		},
 		{
 			name: "checked",

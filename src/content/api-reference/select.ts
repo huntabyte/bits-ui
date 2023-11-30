@@ -111,6 +111,7 @@ export const trigger: APISchema<Select.TriggerProps> = {
 		{
 			name: "state",
 			value: enums("open", "closed"),
+			isEnum: true,
 			description: "The dropdown menu's open state."
 		},
 		{
@@ -159,8 +160,9 @@ export const item: APISchema<Select.ItemProps> = {
 	dataAttributes: [
 		{
 			name: "state",
+			description: "The state of the item.",
 			value: enums("selected", "hovered"),
-			description: "The state of the item."
+			isEnum: true
 		},
 		{
 			name: "disabled",

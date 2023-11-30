@@ -35,7 +35,8 @@ export const root: APISchema<Progress.Props> = {
 		{
 			name: "state",
 			description: "The current state of the progress bar.",
-			value: enums("indeterminate", "complete", "loading")
+			value: enums("indeterminate", "complete", "loading"),
+			isEnum: true
 		},
 		{
 			name: "max",

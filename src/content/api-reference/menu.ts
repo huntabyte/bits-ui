@@ -269,7 +269,8 @@ const checkboxItemAttrs: DataAttrs = [
 	{
 		name: "state",
 		value: enums("checked", "unchecked", "indeterminate"),
-		description: "The checkbox menu item's checked state."
+		description: "The checkbox menu item's checked state.",
+		isEnum: true
 	}
 ];
 
@@ -285,7 +286,8 @@ const radioItemAttrs: DataAttrs = [
 	{
 		name: "state",
 		value: enums("checked", "unchecked"),
-		description: "The radio menu item's checked state."
+		description: "The radio menu item's checked state.",
+		isEnum: true
 	},
 	{
 		name: "value",

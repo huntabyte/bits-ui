@@ -97,8 +97,9 @@ const trigger: APISchema<Tabs.TriggerProps> = {
 	dataAttributes: [
 		{
 			name: "state",
+			description: "The state of the tab trigger.",
 			value: enums("active", "inactive"),
-			description: "The state of the tab trigger."
+			isEnum: true
 		},
 		{
 			name: "value",
@@ -106,8 +107,9 @@ const trigger: APISchema<Tabs.TriggerProps> = {
 		},
 		{
 			name: "orientation",
+			description: "The orientation of the tabs.",
 			value: enums("horizontal", "vertical"),
-			description: "The orientation of the tabs."
+			isEnum: true
 		},
 		{
 			name: "disabled",

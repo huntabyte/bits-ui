@@ -114,7 +114,8 @@ const content: APISchema<Accordion.ContentProps> = {
 		{
 			name: "state",
 			value: enums("open", "closed"),
-			description: "The state of the accordion item."
+			description: "The state of the accordion item.",
+			isEnum: true
 		},
 		{
 			name: "disabled",
@@ -148,7 +149,9 @@ const header: APISchema<Accordion.HeaderProps> = {
 	dataAttributes: [
 		{
 			name: "heading-level",
-			description: "The heading level of the header."
+			value: enums("1", "2", "3", "4", "5", "6"),
+			description: "The heading level of the header.",
+			isEnum: true
 		},
 		{
 			name: "accordion-header",

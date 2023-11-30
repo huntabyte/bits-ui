@@ -47,13 +47,13 @@ export const root: APISchema<Checkbox.Props> = {
 	dataAttributes: [
 		{
 			name: "disabled",
-			description: "Present when the checkbox is disabled.",
-			value: "''"
+			description: "Present when the checkbox is disabled."
 		},
 		{
 			name: "state",
 			value: enums("checked", "unchecked", "indeterminate"),
-			description: "The checkbox's state. Can be 'checked', 'unchecked', or 'indeterminate'."
+			description: "The checkbox's state. Can be 'checked', 'unchecked', or 'indeterminate'.",
+			isEnum: true
 		},
 		{
 			name: "checkbox-root",
