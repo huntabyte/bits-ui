@@ -1,4 +1,4 @@
-import type { APISchema, PropObj } from "@/types";
+import type { APISchema, DataAttrSchema, PropObj } from "@/types";
 import { focusProp } from "./extended-types/index.js";
 import { floatingPositioning } from "./floating.js";
 import {
@@ -198,10 +198,11 @@ const checkboxIndicatorProps = {
 	asChild
 } satisfies PropObj<Menu.CheckboxIndicatorProps>;
 
-const STATE = {
+const STATE: DataAttrSchema = {
 	name: "state",
 	value: enums("open", "closed"),
-	description: "The open state of the menu or submenu the element controls or belongs to."
+	description: "The open state of the menu or submenu the element controls or belongs to.",
+	isEnum: true
 };
 
 type DataAttrs = APISchema["dataAttributes"];
@@ -317,7 +318,7 @@ const separatorAttrs: DataAttrs = [
 const subContentAttrs: DataAttrs = [
 	STATE,
 	{
-		name: "menu-sucontent",
+		name: "menu-subcontent",
 		description: "Present on the submenu content element."
 	}
 ];
@@ -326,7 +327,7 @@ const subTriggerAttrs: DataAttrs = [
 	...sharedItemAttrs,
 	STATE,
 	{
-		name: "menu-sutrigger",
+		name: "menu-subtrigger",
 		description: "Present on the submenu trigger element."
 	}
 ];
