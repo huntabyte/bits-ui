@@ -13,21 +13,21 @@
 	<ToggleGroup.Item
 		aria-label="toggle bold"
 		value="bold"
-		class="inline-flex items-center justify-center rounded-[9px] bg-background transition-all sq-10 hover:bg-muted active:scale-98 data-[state=on]:bg-muted"
+		class="inline-flex items-center justify-center rounded-[9px] bg-background transition-all sq-10 hover:bg-dark-10 active:scale-98 data-[state=on]:bg-muted"
 	>
 		<TextB class="sq-6" />
 	</ToggleGroup.Item>
 	<ToggleGroup.Item
 		aria-label="toggle italic"
 		value="italic"
-		class="inline-flex items-center justify-center rounded-[9px] bg-background transition-all sq-10 hover:bg-muted active:scale-98 data-[state=on]:bg-muted"
+		class="inline-flex items-center justify-center rounded-[9px] bg-background transition-all sq-10 hover:bg-dark-10 active:scale-98 data-[state=on]:bg-muted"
 	>
 		<TextItalic class="sq-6" />
 	</ToggleGroup.Item>
 	<ToggleGroup.Item
 		aria-label="toggle strikethrough"
 		value="strikethrough"
-		class="inline-flex items-center justify-center rounded-[9px] bg-background transition-all sq-10 hover:bg-muted active:scale-98 data-[state=on]:bg-muted"
+		class="inline-flex items-center justify-center rounded-[9px] bg-background transition-all sq-10 hover:bg-dark-10 active:scale-98 data-[state=on]:bg-muted"
 	>
 		<TextStrikethrough class="sq-6" />
 	</ToggleGroup.Item>
