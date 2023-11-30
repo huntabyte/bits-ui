@@ -81,7 +81,8 @@ const content: APISchema<AlertDialog.ContentProps> = {
 		{
 			name: "state",
 			value: enums("open", "closed"),
-			description: "The state of the alert dialog."
+			description: "The state of the alert dialog.",
+			isEnum: true
 		},
 		{
 			name: "alert-dialog-content",

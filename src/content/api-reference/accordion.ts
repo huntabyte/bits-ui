@@ -37,7 +37,8 @@ const root: APISchema<Accordion.Props<false>> = {
 		{
 			name: "orientation",
 			value: enums("horizontal", "vertical"),
-			description: "The orientation of the accordion."
+			description: "The orientation of the accordion.",
+			isEnum: true
 		},
 		{
 			name: "accordion-root",
@@ -67,7 +68,8 @@ const item: APISchema<Accordion.ItemProps> = {
 		{
 			name: "state",
 			value: enums("open", "closed"),
-			description: "The state of the accordion item."
+			description: "The state of the accordion item.",
+			isEnum: true
 		},
 		{
 			name: "disabled",
@@ -89,7 +91,8 @@ const trigger: APISchema<Accordion.TriggerProps> = {
 		{
 			name: "state",
 			value: enums("open", "closed"),
-			description: "The state of the accordion item."
+			description: "The state of the accordion item.",
+			isEnum: true
 		},
 		{
 			name: "disabled",

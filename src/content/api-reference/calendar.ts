@@ -175,7 +175,7 @@ const date: APISchema<Calendar.DateProps> = {
 		},
 		{
 			name: "value",
-			value: 'The date in the format "YYYY-MM-DD".'
+			description: 'The date in the format "YYYY-MM-DD".'
 		},
 		{
 			name: "today",

@@ -3,6 +3,7 @@
 	import { Code } from "@/components";
 	import { parseMarkdown } from "@/utils";
 	import type { DataAttrSchema } from "@/types";
+	import ValueContent from "./data-attr-value-content.svelte";
 
 	export let dataAttrs: DataAttrSchema[] = [];
 </script>
@@ -10,8 +11,8 @@
 <Table.Root>
 	<Table.Header>
 		<Table.Row class="w-1/4">
-			<Table.Head class="w-[35%] whitespace-nowrap">Data Attribute</Table.Head>
-			<Table.Head class="w-[25%] whitespace-nowrap">Value</Table.Head>
+			<Table.Head class="w-[38%] whitespace-nowrap">Data Attribute</Table.Head>
+			<Table.Head class="w-[22%] whitespace-nowrap">Value</Table.Head>
 			<Table.Head class="w-[40%] whitespace-nowrap">Description</Table.Head>
 		</Table.Row>
 	</Table.Header>
@@ -22,9 +23,8 @@
 					<Table.Cell class="align-baseline">
 						<Code class="font-semibold text-foreground">data-{attr.name}</Code>
 					</Table.Cell>
-					<Table.Cell class="align-baseline">
-						<Code class="!h-min !bg-background !px-0">{attr.value ?? "——"}</Code
-						>
+					<Table.Cell class="pr-1 align-baseline">
+						<ValueContent {attr} />
 					</Table.Cell>
 					<Table.Cell class="align-baseline">
 						{#if attr.description}
