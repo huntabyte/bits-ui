@@ -24,5 +24,10 @@
 {#if asChild}
 	<slot {...slotProps} />
 {:else}
-	<input use:melt={builder} {...$$restProps} {...attrs} />
+	<input
+		use:melt={builder}
+		{...$$restProps}
+		{...attrs}
+		disabled={$disabled ? true : undefined}
+	/>
 {/if}
