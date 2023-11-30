@@ -16,7 +16,7 @@
 					<DateRangeField.Segment
 						type="start"
 						{part}
-						class="rounded-[3px] px-1 focus-visible:bg-foreground focus-visible:font-medium focus-visible:text-background focus-visible:outline-none data-[segment=literal]:px-px data-[segment=literal]:text-muted-foreground"
+						class="rounded-[3px] px-1 data-[segment=literal]:px-px data-[segment=literal]:text-muted-foreground"
 					>
 						{value}
 					</DateRangeField.Segment>
@@ -28,7 +28,7 @@
 					<DateRangeField.Segment
 						type="end"
 						{part}
-						class="rounded-[3px] px-1 focus-visible:bg-foreground focus-visible:font-medium focus-visible:text-background focus-visible:outline-none data-[segment=literal]:px-px data-[segment=literal]:text-muted-foreground"
+						class="rounded-[3px] px-1 data-[segment=literal]:px-px data-[segment=literal]:text-muted-foreground"
 					>
 						{value}
 					</DateRangeField.Segment>
