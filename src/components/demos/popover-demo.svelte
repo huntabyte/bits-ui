@@ -46,7 +46,7 @@
 					>
 					<input
 						type="number"
-						class="h-input w-[119px] rounded-10px border border-border-input pl-10 pr-2 text-sm text-foreground"
+						class="h-input w-[119px] rounded-10px border border-border-input bg-background pl-10 pr-2 text-sm text-foreground"
 						bind:value={width}
 					/>
 				</div>
@@ -58,7 +58,7 @@
 					>
 					<input
 						type="number"
-						class="h-input w-[119px] rounded-10px border border-border-input pl-10 pr-2 text-sm text-foreground"
+						class="h-input w-[119px] rounded-10px border border-border-input bg-background pl-10 pr-2 text-sm text-foreground"
 						bind:value={height}
 					/>
 				</div>
