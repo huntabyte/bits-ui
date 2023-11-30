@@ -11,7 +11,7 @@ export const asChild = {
 export const builderSlotProp: PropSchema = {
 	type: {
 		type: C.OBJECT,
-		definition: "{ [k: string]: any; action: Action<any, any, any>}"
+		definition: "{ [k: string]: any; action: Action<any, any, any>&nbsp;}"
 	},
 	description:
 		"The builder attributes and actions to apply to the element if using the `asChild` prop with [delegation](/docs/delegation)."
@@ -20,7 +20,7 @@ export const builderSlotProp: PropSchema = {
 export const attrsSlotProp: PropSchema = {
 	type: {
 		type: C.OBJECT,
-		definition: "Record<string, string>"
+		definition: "Record&lt;string, string&gt;"
 	},
 	description:
 		"Additional attributes to apply to the element if using the `asChild` prop with [delegation](/docs/delegation)."
