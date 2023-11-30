@@ -3,12 +3,14 @@ import {
 	arrowProps,
 	asChild,
 	enums,
+	idsSlotProp,
 	portalProp,
 	transitionProps
 } from "@/content/api-reference/helpers.js";
 import { floatingPositioning } from "./floating.js";
 import type * as LinkPreview from "$lib/bits/link-preview/_types";
 import * as C from "@/content/constants";
+import { builderAndAttrsSlotProps } from "./helpers";
 
 export const root: APISchema<LinkPreview.Props> = {
 	title: "Root",
@@ -49,6 +51,9 @@ export const root: APISchema<LinkPreview.Props> = {
 			description: "A callback that fires when the open state changes."
 		},
 		portal: { ...portalProp("link preview") }
+	},
+	slotProps: {
+		ids: idsSlotProp
 	}
 };
 
@@ -57,6 +62,7 @@ export const trigger: APISchema<LinkPreview.TriggerProps> = {
 	description:
 		"A component which triggers the opening and closing of the link preview on hover or focus.",
 	props: { asChild },
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "state",
@@ -75,6 +81,7 @@ export const content: APISchema<LinkPreview.ContentProps> = {
 	title: "Content",
 	description: "The contents of the link preview which are displayed when the preview is open.",
 	props: { ...transitionProps, ...floatingPositioning, asChild },
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "state",
@@ -93,6 +100,7 @@ export const arrow: APISchema<LinkPreview.ArrowProps> = {
 	title: "Arrow",
 	description: "An optional arrow element which points to the trigger when the preview is open.",
 	props: arrowProps,
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "arrow",

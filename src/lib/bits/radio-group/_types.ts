@@ -33,4 +33,6 @@ type InputProps = AsChild;
 
 type ItemProps = Expand<ObjectVariation<RadioGroupItemProps> & AsChild>;
 
-export type { Props, InputProps, ItemProps };
+type ItemIndicatorProps = AsChild;
+
+export type { Props, InputProps, ItemProps, ItemIndicatorProps };

@@ -14,6 +14,8 @@ export type PropObj<T> = {
 	[K in keyof T]-?: PropSchema;
 };
 
+export type SlotPropObj = Record<string, PropSchema>;
+
 export type DataAttrSchema = {
 	name: string;
 	value?: string;
@@ -25,5 +27,6 @@ export type APISchema<T = Record<string, unknown>> = {
 	title: string;
 	description: string;
 	props?: PropObj<T>;
+	slotProps?: SlotPropObj;
 	dataAttributes?: DataAttrSchema[];
 };

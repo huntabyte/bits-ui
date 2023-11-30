@@ -1,7 +1,8 @@
 import type { APISchema } from "@/types";
-import { asChild, enums } from "@/content/api-reference/helpers.js";
+import { asChild, attrsSlotProp, enums } from "@/content/api-reference/helpers.js";
 import type * as RadioGroup from "$lib/bits/radio-group/_types";
 import * as C from "@/content/constants";
+import { builderAndAttrsSlotProps } from "./helpers";
 
 export const root: APISchema<RadioGroup.Props> = {
 	title: "Root",
@@ -47,6 +48,7 @@ export const root: APISchema<RadioGroup.Props> = {
 		},
 		asChild
 	},
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "orientation",
@@ -59,6 +61,7 @@ export const root: APISchema<RadioGroup.Props> = {
 		}
 	]
 };
+
 export const item: APISchema<RadioGroup.ItemProps> = {
 	title: "Item",
 	description: "An radio item, which must be a child of the `RadioGroup.Root` component.",
@@ -77,6 +80,7 @@ export const item: APISchema<RadioGroup.ItemProps> = {
 		},
 		asChild
 	},
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "disabled",
@@ -116,9 +120,17 @@ export const indicator: APISchema = {
 	title: "ItemIndicator",
 	description:
 		"A component which is used to indicate the radio item's checked state. Any children of this component will only be visible when the radio item is checked.",
+	props: { asChild },
+	slotProps: {
+		attrs: attrsSlotProp,
+		checked: {
+			type: C.BOOLEAN,
+			description: "Whether or not the radio item is checked."
+		}
+	},
 	dataAttributes: [
 		{
-			name: "radio-group-indicator",
+			name: "radio-item-indicator",
 			description: "Present on the indicator element."
 		}
 	]

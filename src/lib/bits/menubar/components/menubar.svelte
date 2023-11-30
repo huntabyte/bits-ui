@@ -31,14 +31,15 @@
 	$: builder = $menubar;
 	$: slotProps = {
 		builder,
-		attrs
+		attrs,
+		ids: $idValues
 	};
 </script>
 
 {#if asChild}
-	<slot {...slotProps} ids={$idValues} />
+	<slot {...slotProps} />
 {:else}
 	<div use:melt={builder} {...$$restProps} {...attrs}>
-		<slot {...slotProps} ids={$idValues} />
+		<slot {...slotProps} />
 	</div>
 {/if}

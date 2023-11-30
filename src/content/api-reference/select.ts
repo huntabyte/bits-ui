@@ -2,13 +2,16 @@ import type { APISchema } from "@/types/index.js";
 import {
 	arrowProps,
 	asChild,
+	attrsSlotProp,
 	enums,
+	idsSlotProp,
 	portalProp,
 	transitionProps
 } from "@/content/api-reference/helpers.js";
 import { floatingPositioning } from "./floating.js";
 import * as C from "@/content/constants.js";
 import type * as Select from "$lib/bits/select/_types.js";
+import { builderAndAttrsSlotProps } from "./helpers";
 
 export const root: APISchema<Select.Props> = {
 	title: "Root",
@@ -100,13 +103,15 @@ export const root: APISchema<Select.Props> = {
 			description:
 				"Whether or not to enable typeahead functionality. When enabled, the user can type to navigate to menu items."
 		}
-	}
+	},
+	slotProps: { ids: idsSlotProp }
 };
 
 export const trigger: APISchema<Select.TriggerProps> = {
 	title: "Trigger",
 	description: "The button element which toggles the select menu's open state.",
 	props: { asChild },
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "state",
@@ -129,6 +134,7 @@ export const content: APISchema<Select.ContentProps> = {
 	title: "Content",
 	description: "The content/menu element which contains the select menu's items.",
 	props: { ...transitionProps, ...floatingPositioning, asChild },
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "select-content",
@@ -157,6 +163,7 @@ export const item: APISchema<Select.ItemProps> = {
 		},
 		asChild
 	},
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "state",
@@ -186,6 +193,13 @@ export const value: APISchema = {
 		},
 		asChild
 	},
+	slotProps: {
+		attrs: attrsSlotProp,
+		label: {
+			type: C.STRING,
+			description: "The label of the currently selected item."
+		}
+	},
 	dataAttributes: [
 		{
 			name: "select-value",
@@ -198,13 +212,15 @@ export const input: APISchema<Select.InputProps> = {
 	title: "Input",
 	description:
 		"A hidden input element which is used to store the select menu's value, used for form submission. It receives the same value as the `Select.Value` component and can receive any props that a normal input element can receive.",
-	props: { asChild }
+	props: { asChild },
+	slotProps: { ...builderAndAttrsSlotProps }
 };
 
 export const group: APISchema<Select.GroupProps> = {
 	title: "Group",
 	description: "An accessible group of select menu items.",
 	props: { asChild },
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "select-group",
@@ -218,6 +234,7 @@ export const label: APISchema<Select.LabelProps> = {
 	description:
 		"A label for the select menu which will be skipped when navigating with the keyboard. This must be a child of the `Select.Group` component to be accessible.",
 	props: { asChild },
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "select-label",
@@ -229,12 +246,11 @@ export const label: APISchema<Select.LabelProps> = {
 export const separator: APISchema<Select.SeparatorProps> = {
 	title: "Separator",
 	description: "A visual separator for use between select items or groups.",
-	props: {
-		asChild
-	},
+	props: { asChild },
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
-			name: "select-separator",
+			name: "separator-root",
 			description: "Present on the separator element."
 		}
 	]
@@ -243,8 +259,13 @@ export const separator: APISchema<Select.SeparatorProps> = {
 export const indicator: APISchema<Select.IndicatorProps> = {
 	title: "Separator",
 	description: "A visual separator for use between select items or groups.",
-	props: {
-		asChild
+	props: { asChild },
+	slotProps: {
+		attrs: attrsSlotProp,
+		isSelected: {
+			type: C.BOOLEAN,
+			description: "Whether or not the item is selected."
+		}
 	},
 	dataAttributes: [
 		{
@@ -258,6 +279,7 @@ export const arrow: APISchema<Select.ArrowProps> = {
 	title: "Arrow",
 	description: "An optional arrow element which points to the trigger when open.",
 	props: arrowProps,
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "arrow",

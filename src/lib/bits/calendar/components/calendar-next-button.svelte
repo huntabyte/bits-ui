@@ -13,12 +13,17 @@
 
 	$: builder = $nextButton;
 	const attrs = getAttrs("next-button");
+
+	$: slotProps = {
+		builder,
+		attrs
+	};
 </script>
 
 {#if asChild}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else}
 	<button use:melt={builder} type="button" {...$$restProps} {...attrs}>
-		<slot {builder} {attrs} />
+		<slot {...slotProps} />
 	</button>
 {/if}

@@ -12,6 +12,6 @@
 	<slot {attrs} />
 {:else}
 	<thead {...$$restProps} {...attrs}>
-		<slot />
+		<slot {attrs} />
 	</thead>
 {/if}

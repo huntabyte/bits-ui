@@ -2,7 +2,7 @@ import type { APISchema } from "@/types";
 import { asChild, enums } from "@/content/api-reference/helpers.js";
 import type * as ToggleGroup from "$lib/bits/toggle-group/_types.js";
 import * as C from "@/content/constants.js";
-import { union } from "./helpers";
+import { union, builderAndAttrsSlotProps } from "./helpers";
 
 const root: APISchema<ToggleGroup.Props<"multiple">> = {
 	title: "Root",
@@ -48,6 +48,7 @@ const root: APISchema<ToggleGroup.Props<"multiple">> = {
 		},
 		asChild
 	},
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "orientation",
@@ -75,6 +76,7 @@ const item: APISchema<ToggleGroup.ItemProps> = {
 		},
 		asChild
 	},
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "state",

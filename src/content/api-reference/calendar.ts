@@ -1,7 +1,8 @@
 import type { APISchema } from "@/types";
 import * as C from "@/content/constants.js";
-import { asChild } from "@/content/api-reference/helpers.js";
+import { asChild, daysOfWeekSlotProp, monthsSlotProp } from "@/content/api-reference/helpers.js";
 import type * as Calendar from "$lib/bits/calendar/_types.js";
+import { attrsSlotProp, builderAndAttrsSlotProps } from "./helpers";
 
 const root: APISchema<Calendar.Props> = {
 	title: "Root",
@@ -104,6 +105,11 @@ const root: APISchema<Calendar.Props> = {
 		},
 		asChild
 	},
+	slotProps: {
+		months: monthsSlotProp,
+		daysOfWeek: daysOfWeekSlotProp,
+		...builderAndAttrsSlotProps
+	},
 	dataAttributes: [
 		{
 			name: "invalid",
@@ -134,6 +140,9 @@ const cell: APISchema<Calendar.CellProps> = {
 			description: "The date for the cell."
 		}
 	},
+	slotProps: {
+		attrs: attrsSlotProp
+	},
 	dataAttributes: [
 		{
 			name: "disabled",
@@ -159,6 +168,21 @@ const date: APISchema<Calendar.DateProps> = {
 			type: "DateValue",
 			description: "The current month the date is being displayed in."
 		}
+	},
+	slotProps: {
+		disabled: {
+			description: "Whether or not the date is disabled.",
+			type: C.BOOLEAN
+		},
+		unavailable: {
+			description: "Whether or not the date is unavailable.",
+			type: C.BOOLEAN
+		},
+		selected: {
+			description: "Whether or not the date is selected.",
+			type: C.BOOLEAN
+		},
+		...builderAndAttrsSlotProps
 	},
 	dataAttributes: [
 		{
@@ -206,6 +230,7 @@ const grid: APISchema<Calendar.GridProps> = {
 	props: {
 		asChild
 	},
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "calendar-grid",
@@ -220,6 +245,7 @@ const gridBody: APISchema<Calendar.GridBodyProps> = {
 	props: {
 		asChild
 	},
+	slotProps: { attrs: attrsSlotProp },
 	dataAttributes: [
 		{
 			name: "calendar-grid-body",
@@ -233,6 +259,9 @@ const gridHead: APISchema<Calendar.GridHeadProps> = {
 	description: "The head of the grid of dates in the calendar.",
 	props: {
 		asChild
+	},
+	slotProps: {
+		attrs: attrsSlotProp
 	},
 	dataAttributes: [
 		{
@@ -248,6 +277,9 @@ const gridRow: APISchema<Calendar.GridRowProps> = {
 	props: {
 		asChild
 	},
+	slotProps: {
+		attrs: attrsSlotProp
+	},
 	dataAttributes: [
 		{
 			name: "calendar-grid-row",
@@ -261,6 +293,9 @@ const headCell: APISchema<Calendar.HeadCellProps> = {
 	description: "A cell in the head of the grid of dates in the calendar.",
 	props: {
 		asChild
+	},
+	slotProps: {
+		attrs: attrsSlotProp
 	},
 	dataAttributes: [
 		{
@@ -276,6 +311,9 @@ const header: APISchema<Calendar.HeaderProps> = {
 	props: {
 		asChild
 	},
+	slotProps: {
+		attrs: attrsSlotProp
+	},
 	dataAttributes: [
 		{
 			name: "calendar-header",
@@ -289,6 +327,13 @@ const heading: APISchema<Calendar.HeadingProps> = {
 	description: "The heading of the calendar.",
 	props: {
 		asChild
+	},
+	slotProps: {
+		...builderAndAttrsSlotProps,
+		headingValue: {
+			type: C.STRING,
+			description: "The heading value."
+		}
 	},
 	dataAttributes: [
 		{
@@ -304,6 +349,9 @@ const nextButton: APISchema<Calendar.NextButtonProps> = {
 	props: {
 		asChild
 	},
+	slotProps: {
+		...builderAndAttrsSlotProps
+	},
 	dataAttributes: [
 		{
 			name: "calendar-next-button",
@@ -317,6 +365,9 @@ const prevButton: APISchema<Calendar.PrevButtonProps> = {
 	description: "The previous button of the calendar.",
 	props: {
 		asChild
+	},
+	slotProps: {
+		...builderAndAttrsSlotProps
 	},
 	dataAttributes: [
 		{

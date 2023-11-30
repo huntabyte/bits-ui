@@ -1,11 +1,56 @@
 import type { PropSchema } from "@/types/api.js";
 import * as C from "@/content/constants.js";
+import { monthsPropType } from "./extended-types";
 
 export const asChild = {
 	type: C.BOOLEAN,
 	default: C.FALSE,
 	description: "Whether to use [render delegation](/docs/delegation) with this component or not."
 };
+
+export const builderSlotProp: PropSchema = {
+	type: {
+		type: C.OBJECT,
+		definition: "{ [k: string]: any; action: Action<any, any, any>}"
+	},
+	description:
+		"The builder attributes and actions to apply to the element if using the `asChild` prop with [delegation[(/docs/delegation)."
+};
+
+export const attrsSlotProp: PropSchema = {
+	type: {
+		type: C.OBJECT,
+		definition: "Record<string, string>"
+	},
+	description:
+		"Additional attributes to apply to the element if using the `asChild` prop with [delegation[(/docs/delegation)."
+};
+
+export const builderAndAttrsSlotProps: Record<string, PropSchema> = {
+	builder: builderSlotProp,
+	attrs: attrsSlotProp
+};
+
+export const monthsSlotProp: PropSchema = {
+	type: monthsPropType,
+	description: "The current months to display in the calendar. Used to render the calendar."
+};
+
+export const daysOfWeekSlotProp: PropSchema = {
+	type: "string[]",
+	description:
+		"The days of the week to display in the calendar, typically used within the table header."
+};
+
+export const idsSlotProp: PropSchema = {
+	type: {
+		type: C.OBJECT,
+		definition: "Record<string, string>"
+	},
+	description:
+		"The ids of the elements within the component, useful when you don't necessarily want to provide a custom ID, but still want access to the ID being assigned (if any)."
+};
+
 export const arrowProps = {
 	asChild,
 	size: {

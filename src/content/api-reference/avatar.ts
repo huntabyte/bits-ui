@@ -1,7 +1,8 @@
 import type { APISchema } from "@/types";
-import { asChild, enums } from "@/content/api-reference/helpers.js";
+import { asChild, attrsSlotProp, enums } from "@/content/api-reference/helpers.js";
 import type * as Avatar from "$lib/bits/avatar/_types";
 import * as C from "@/content/constants.js";
+import { builderAndAttrsSlotProps } from "./helpers";
 
 export const root: APISchema<Avatar.Props> = {
 	title: "Root",
@@ -30,6 +31,9 @@ export const root: APISchema<Avatar.Props> = {
 		},
 		asChild
 	},
+	slotProps: {
+		attrs: attrsSlotProp
+	},
 	dataAttributes: [
 		{
 			name: "avatar-root",
@@ -41,9 +45,8 @@ export const root: APISchema<Avatar.Props> = {
 export const image: APISchema<Avatar.ImageProps> = {
 	title: "Image",
 	description: "The avatar image displayed once it has loaded.",
-	props: {
-		asChild
-	},
+	props: { asChild },
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "avatar-image",
@@ -56,6 +59,7 @@ export const fallback: APISchema<Avatar.FallbackProps> = {
 	title: "Fallback",
 	description: "The fallback displayed while the avatar image is loading or if it fails to load",
 	props: { asChild },
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "avatar-fallback",

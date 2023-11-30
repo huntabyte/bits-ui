@@ -7,9 +7,11 @@ import {
 	transitionProps,
 	arrowProps,
 	asChild,
-	enums
+	enums,
+	idsSlotProp
 } from "@/content/api-reference/helpers.js";
 import * as C from "@/content/constants.js";
+import { builderAndAttrsSlotProps } from "./helpers";
 
 export const root: APISchema<Popover.Props> = {
 	title: "Root",
@@ -57,13 +59,15 @@ export const root: APISchema<Popover.Props> = {
 			description: "Override the focus when the popover is closed."
 		},
 		portal: { ...portalProp("popover") }
-	}
+	},
+	slotProps: { ids: idsSlotProp }
 };
 
 export const trigger: APISchema<Popover.TriggerProps> = {
 	title: "Trigger",
 	description: "A component which toggles the opening and closing of the popover on press.",
 	props: { asChild },
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "state",
@@ -82,6 +86,7 @@ export const content: APISchema<Popover.ContentProps> = {
 	title: "Content",
 	description: "The contents of the popover which are displayed when the popover is open.",
 	props: { ...transitionProps, ...floatingPositioning, asChild },
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "state",
@@ -101,6 +106,7 @@ export const close: APISchema<Popover.CloseProps> = {
 	description:
 		"A button which closes the popover when pressed and is typically placed in the content.",
 	props: { asChild },
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "popover-close",
@@ -113,6 +119,7 @@ export const arrow: APISchema<Popover.ArrowProps> = {
 	title: "Arrow",
 	description: "An optional arrow element which points to the trigger when the popover is open.",
 	props: arrowProps,
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "arrow",

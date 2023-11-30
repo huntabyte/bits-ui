@@ -6,10 +6,13 @@ import {
 	transitionProps,
 	portalProp,
 	enums,
-	union
+	union,
+	idsSlotProp,
+	attrsSlotProp
 } from "@/content/api-reference/helpers.js";
 import type * as Menu from "$lib/bits/menu/_types";
 import * as C from "@/content/constants";
+import { builderAndAttrsSlotProps } from "./helpers";
 
 const props = {
 	preventScroll: {
@@ -344,81 +347,112 @@ const radioIndicatorAttrs: DataAttrs = [
 
 export const trigger = {
 	props: triggerProps,
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: triggerAttrs
 };
 
 export const content = {
 	props: contentProps,
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: contentAttrs
 };
 
 export const arrow = {
 	props: arrowProps,
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: arrowAttrs
 };
 
 export const item = {
 	props: itemProps,
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: itemAttrs
 };
 
 export const group = {
 	props: groupProps,
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: groupAttrs
 };
 
 export const label = {
 	props: labelProps,
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: labelAttrs
 };
 
 export const separator = {
 	props: separatorProps,
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: separatorAttrs
 };
 
 export const checkboxIndicator = {
 	props: checkboxIndicatorProps,
+	slotProps: {
+		attrs: attrsSlotProp,
+		checked: {
+			type: C.BOOLEAN,
+			description: "Whether or not the checkbox is checked."
+		}
+	},
 	dataAttributes: checkboxIndicatorAttrs
 };
 
 export const checkboxItem = {
 	props: checkboxItemProps,
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: checkboxItemAttrs
 };
 
 export const radioGroup = {
 	props: radioGroupProps,
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: radioGroupAttrs
 };
 
 export const radioItem = {
 	props: radioItemProps,
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: radioItemAttrs
 };
 
 export const subTrigger = {
 	props: subTriggerProps,
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: subTriggerAttrs
 };
 
 export const subContent = {
 	props: subContentProps,
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: subContentAttrs
 };
 
 export const radioIndicator = {
 	props: radioIndicatorProps,
+	slotProps: {
+		attrs: attrsSlotProp,
+		checked: {
+			type: C.BOOLEAN,
+			description: "Whether or not the checkbox is checked."
+		}
+	},
 	dataAttributes: radioIndicatorAttrs
 };
 
 export const sub = {
-	props: subProps
+	props: subProps,
+	slotProps: {
+		subIds: idsSlotProp
+	}
 };
 
 export const root = {
 	props,
-	dataAttributes: [...triggerAttrs, ...contentAttrs]
+	slotProps: {
+		ids: idsSlotProp
+	}
 };
 
 export const menu = {

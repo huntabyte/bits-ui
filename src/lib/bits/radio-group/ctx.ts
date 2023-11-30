@@ -10,7 +10,7 @@ import type { Readable } from "svelte/store";
 
 const NAME = "radio-group";
 const ITEM_NAME = "radio-group-item";
-const PARTS = ["root", "item", "input"] as const;
+const PARTS = ["root", "item", "input", "item-indicator"] as const;
 
 export const getAttrs = createBitAttrs(NAME, PARTS);
 

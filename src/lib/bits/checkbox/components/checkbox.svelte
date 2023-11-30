@@ -63,7 +63,6 @@
 		{...attrs}
 		on:m-click={dispatch}
 		on:m-keydown={dispatch}
-		disabled={disabled ? true : undefined}
 	>
 		<slot {...slotProps} />
 	</button>

@@ -3,7 +3,7 @@ import { menu } from "./menu";
 import type * as Menu from "$lib/bits/menu/_types";
 import type * as ContextMenu from "$lib/bits/context-menu/_types";
 import * as C from "@/content/constants.js";
-import { transitionProps, asChild, union } from "./helpers";
+import { transitionProps, asChild, union, builderAndAttrsSlotProps } from "./helpers";
 
 export const root: APISchema<Menu.Props> = {
 	title: "Root",
@@ -53,6 +53,7 @@ export const content: APISchema<ContextMenu.ContentProps> = {
 			description: "Whether the floating element should be constrained to the viewport."
 		}
 	},
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: menu.content.dataAttributes
 };
 

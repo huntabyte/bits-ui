@@ -1,8 +1,15 @@
 import type { APISchema } from "@/types";
-import { asChild, enums, portalProp, transitionProps } from "@/content/api-reference/helpers.js";
+import {
+	asChild,
+	enums,
+	idsSlotProp,
+	portalProp,
+	transitionProps
+} from "@/content/api-reference/helpers.js";
 import type * as Dialog from "$lib/bits/dialog/_types";
 import { focusProp } from "./extended-types";
 import * as C from "@/content/constants";
+import { builderAndAttrsSlotProps } from "./helpers";
 
 export const root: APISchema<Dialog.Props> = {
 	title: "Root",
@@ -44,6 +51,9 @@ export const root: APISchema<Dialog.Props> = {
 			description: "Override the focus when the dialog is closed."
 		},
 		portal: { ...portalProp("dialog") }
+	},
+	slotProps: {
+		ids: idsSlotProp
 	}
 };
 
@@ -51,6 +61,7 @@ export const close: APISchema<Dialog.CloseProps> = {
 	title: "Close",
 	description: "A button used to close the dialog.",
 	props: { asChild },
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "dialog-close",
@@ -63,6 +74,7 @@ export const content: APISchema<Dialog.ContentProps> = {
 	title: "Content",
 	description: "The content displayed within the dialog modal.",
 	props: { ...transitionProps, asChild },
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "state",
@@ -90,6 +102,7 @@ export const title: APISchema<Dialog.TitleProps> = {
 		},
 		asChild
 	},
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "dialog-title",
@@ -102,6 +115,7 @@ export const description: APISchema<Dialog.DescriptionProps> = {
 	title: "Description",
 	description: "An accessibile description for the dialog.",
 	props: { asChild },
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "dialog-description",
@@ -114,6 +128,7 @@ export const trigger: APISchema<Dialog.TriggerProps> = {
 	title: "Trigger",
 	description: "The element which opens the dialog on press.",
 	props: { asChild },
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "dialog-trigger",
@@ -126,6 +141,7 @@ export const overlay: APISchema<Dialog.OverlayProps> = {
 	title: "Overlay",
 	description: "An overlay which covers the body when the dialog is open.",
 	props: { ...transitionProps, asChild },
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "state",
@@ -144,6 +160,7 @@ export const portal: APISchema<Dialog.PortalProps> = {
 	title: "Portal",
 	description: "A portal which renders the dialog into the body when it is open.",
 	props: { asChild },
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "portal",

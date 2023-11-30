@@ -1,4 +1,5 @@
 import type { DateValue } from "@internationalized/date";
+import type { Month } from '@melt-ui/svelte'
 
 export type DateRange = {
 	start: DateValue | undefined;
@@ -15,3 +16,5 @@ export type SegmentPart =
 	| "dayPeriod"
 	| "timeZoneName"
 	| "literal";
+
+export type { Month }

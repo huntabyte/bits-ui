@@ -2,6 +2,7 @@ import type { APISchema } from "@/types";
 import * as C from "@/content/constants.js";
 import { union, enums, asChild } from "@/content/api-reference/helpers.js";
 import type * as Tabs from "$lib/bits/tabs/_types.js";
+import { builderAndAttrsSlotProps } from "./helpers";
 
 const root: APISchema<Tabs.Props> = {
 	title: "Root",
@@ -46,6 +47,13 @@ const root: APISchema<Tabs.Props> = {
 		},
 		asChild
 	},
+	slotProps: {
+		...builderAndAttrsSlotProps,
+		value: {
+			type: C.STRING,
+			description: "The currently active tab value."
+		}
+	},
 	dataAttributes: [
 		{
 			name: "orientation",
@@ -62,9 +70,8 @@ const root: APISchema<Tabs.Props> = {
 const list: APISchema<Tabs.ListProps> = {
 	title: "List",
 	description: "The component containing the tab triggers.",
-	props: {
-		asChild
-	},
+	props: { asChild },
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "orientation",
@@ -94,6 +101,7 @@ const trigger: APISchema<Tabs.TriggerProps> = {
 		},
 		asChild
 	},
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "state",
@@ -133,6 +141,7 @@ const content: APISchema<Tabs.ContentProps> = {
 		},
 		asChild
 	},
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "tabs-content",

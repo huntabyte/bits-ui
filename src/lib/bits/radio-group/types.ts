@@ -9,6 +9,8 @@ type InputProps = I.InputProps & HTMLInputAttributes;
 
 type ItemProps = I.ItemProps & HTMLButtonAttributes;
 
+type ItemIndicatorProps = I.ItemIndicatorProps & HTMLDivAttributes;
+
 type ItemEvents<T extends Element = HTMLButtonElement> = {
 	click: CustomEventHandler<MouseEvent, T>;
 	keydown: CustomEventHandler<KeyboardEvent, T>;
@@ -19,10 +21,12 @@ export type {
 	Props,
 	InputProps,
 	ItemProps,
+	ItemIndicatorProps,
 	//
 	Props as RadioGroupProps,
 	InputProps as RadioGroupInputProps,
 	ItemProps as RadioGroupItemProps,
+	ItemIndicatorProps as RadioGroupItemIndicatorProps,
 	//
 	ItemEvents,
 	//

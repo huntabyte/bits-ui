@@ -12,6 +12,6 @@
 	<slot {attrs} />
 {:else}
 	<th {...$$restProps} {...attrs}>
-		<slot />
+		<slot {attrs} />
 	</th>
 {/if}

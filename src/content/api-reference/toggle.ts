@@ -2,6 +2,7 @@ import type { APISchema } from "@/types";
 import { asChild, enums } from "@/content/api-reference/helpers.js";
 import type * as Toggle from "$lib/bits/toggle/_types.js";
 import * as C from "@/content/constants.js";
+import { builderAndAttrsSlotProps } from "./helpers";
 
 const root: APISchema<Toggle.Props> = {
 	title: "Root",
@@ -26,6 +27,7 @@ const root: APISchema<Toggle.Props> = {
 		},
 		asChild
 	},
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "state",

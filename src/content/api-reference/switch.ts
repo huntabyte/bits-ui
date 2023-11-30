@@ -1,7 +1,8 @@
 import type { APISchema } from "@/types";
-import { asChild, enums } from "@/content/api-reference/helpers.js";
+import { asChild, attrsSlotProp, enums } from "@/content/api-reference/helpers.js";
 import type * as Switch from "$lib/bits/switch/_types.js";
 import * as C from "@/content/constants.js";
+import { builderAndAttrsSlotProps } from "./helpers";
 
 const root: APISchema<Switch.Props> = {
 	title: "Root",
@@ -51,6 +52,9 @@ const root: APISchema<Switch.Props> = {
 		},
 		asChild
 	},
+	slotProps: {
+		...builderAndAttrsSlotProps
+	},
 	dataAttributes: [
 		{
 			name: "state",
@@ -76,8 +80,13 @@ const root: APISchema<Switch.Props> = {
 const thumb: APISchema<Switch.ThumbProps> = {
 	title: "Thumb",
 	description: "The thumb on the switch used to indicate the switch's state.",
-	props: {
-		asChild
+	props: { asChild },
+	slotProps: {
+		attrs: attrsSlotProp,
+		checked: {
+			type: C.BOOLEAN,
+			description: "Whether or not the switch is checked."
+		}
 	},
 	dataAttributes: [
 		{

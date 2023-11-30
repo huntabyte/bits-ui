@@ -14,13 +14,19 @@
 
 	$: builder = $heading;
 	const attrs = getAttrs("heading");
+
+	$: slotProps = {
+		builder,
+		attrs,
+		headingValue: $headingValue
+	};
 </script>
 
 {#if asChild}
-	<slot {builder} {attrs} headingValue={$headingValue} />
+	<slot {...slotProps} />
 {:else}
 	<div use:melt={builder} {...$$restProps} {...attrs}>
-		<slot {builder} {attrs} headingValue={$headingValue}>
+		<slot {...slotProps}>
 			{$headingValue}
 		</slot>
 	</div>

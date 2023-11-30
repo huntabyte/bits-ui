@@ -6,6 +6,7 @@
 	import PropTypeContent from "./prop-type-content.svelte";
 
 	export let props: PropObj<Record<string, unknown>>;
+	export let slot = false;
 
 	$: propData = Object.entries(props).map(([name, prop]) => {
 		const {
@@ -21,7 +22,9 @@
 <Table.Root>
 	<Table.Header>
 		<Table.Row class="w-1/4">
-			<Table.Head class="w-[38%] whitespace-nowrap pr-1">Property</Table.Head>
+			<Table.Head class="w-[38%] whitespace-nowrap pr-1"
+				>{slot ? "Slot" : ""} Property</Table.Head
+			>
 			<Table.Head class="w-[22%] whitespace-nowrap pr-1">Type</Table.Head>
 			<Table.Head class="w-[40%] whitespace-nowrap">Description</Table.Head>
 		</Table.Row>

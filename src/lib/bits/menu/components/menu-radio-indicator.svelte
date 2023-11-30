@@ -8,9 +8,8 @@
 	const { isChecked, value } = getRadioIndicator();
 	const attrs = getAttrs("radio-indicator");
 
-	$: checked = $isChecked(value);
 	$: slotProps = {
-		checked,
+		checked: $isChecked(value),
 		attrs
 	};
 </script>

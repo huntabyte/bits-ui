@@ -2,6 +2,7 @@ import type { APISchema, PropObj } from "@/types";
 import { asChild, enums, transitionProps } from "@/content/api-reference/helpers.js";
 import type * as Collapsible from "$lib/bits/collapsible/_types";
 import * as C from "@/content/constants";
+import { builderAndAttrsSlotProps } from "./helpers";
 
 export const root: APISchema<Collapsible.Props> = {
 	title: "Root",
@@ -28,6 +29,7 @@ export const root: APISchema<Collapsible.Props> = {
 		},
 		asChild
 	},
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "disabled",
@@ -50,6 +52,7 @@ export const trigger: APISchema<Collapsible.TriggerProps> = {
 	title: "Trigger",
 	description: "The button responsible for toggling the collapsible's open state.",
 	props: { asChild },
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "disabled",
@@ -77,11 +80,11 @@ export const content: APISchema<Collapsible.ContentProps> = {
 	title: "Content",
 	description: "The content displayed when the collapsible is open.",
 	props: contentProps,
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "disabled",
-			description: "Present when the checkbox is disabled.",
-			value: "''"
+			description: "Present when the checkbox is disabled."
 		},
 		{
 			name: "state",
