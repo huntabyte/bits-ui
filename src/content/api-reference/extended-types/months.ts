@@ -1,4 +1,4 @@
-import { DateValue } from "@internationalized/date";
+import type { DateValue } from "@internationalized/date";
 
 type Month = {
 	/**
