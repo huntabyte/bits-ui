@@ -46,17 +46,19 @@
 					<p class="text-sm leading-[1.3rem]">
 						{@html parseMarkdown(description)}
 					</p>
-					<div class="mt-2">
-						<Code class="h-auto bg-background px-0"
-							>Default:
-							{#if defaultVal}
-								{` ${defaultVal}`}
-							{:else}
-								<span aria-hidden> &nbsp;—— </span>
-								<span class="sr-only"> undefined </span>
-							{/if}
-						</Code>
-					</div>
+					{#if !slot}
+						<div class="mt-2">
+							<Code class="h-auto bg-background px-0">
+								Default:
+								{#if defaultVal}
+									{` ${defaultVal}`}
+								{:else}
+									<span aria-hidden> &nbsp;—— </span>
+									<span class="sr-only"> undefined </span>
+								{/if}
+							</Code>
+						</div>
+					{/if}
 				</Table.Cell>
 			</Table.Row>
 		{/each}

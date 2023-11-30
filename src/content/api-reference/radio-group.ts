@@ -53,7 +53,8 @@ export const root: APISchema<RadioGroup.Props> = {
 		{
 			name: "orientation",
 			value: enums("vertical", "horizontal"),
-			description: "The orientation of the radio group."
+			description: "The orientation of the radio group.",
+			isEnum: true
 		},
 		{
 			name: "radio-group-root",

@@ -14,7 +14,7 @@ export const builderSlotProp: PropSchema = {
 		definition: "{ [k: string]: any; action: Action<any, any, any>}"
 	},
 	description:
-		"The builder attributes and actions to apply to the element if using the `asChild` prop with [delegation[(/docs/delegation)."
+		"The builder attributes and actions to apply to the element if using the `asChild` prop with [delegation](/docs/delegation)."
 };
 
 export const attrsSlotProp: PropSchema = {
@@ -23,7 +23,7 @@ export const attrsSlotProp: PropSchema = {
 		definition: "Record<string, string>"
 	},
 	description:
-		"Additional attributes to apply to the element if using the `asChild` prop with [delegation[(/docs/delegation)."
+		"Additional attributes to apply to the element if using the `asChild` prop with [delegation](/docs/delegation)."
 };
 
 export const builderAndAttrsSlotProps: Record<string, PropSchema> = {
