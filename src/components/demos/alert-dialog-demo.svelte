@@ -20,7 +20,7 @@
 		/>
 		<AlertDialog.Content
 			transition={flyAndScale}
-			class="fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 rounded-card-lg border bg-background p-7 shadow-popover outline-none md:w-full"
+			class="fixed left-[50%] top-[50%] z-50 grid w-full max-w-[94%] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-card-lg border bg-background p-7 shadow-popover outline-none sm:max-w-lg md:w-full"
 		>
 			<div class="flex flex-col gap-4 pb-6">
 				<AlertDialog.Title class="text-lg font-semibold tracking-tight"
