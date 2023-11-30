@@ -2,8 +2,7 @@
 	import { LockKeyOpen } from "phosphor-svelte";
 	import { Toggle } from "$lib";
 
-	let unlocked = true;
-	let code = "1985";
+	let unlocked = false;
 	$: code = unlocked ? "1985" : "••••";
 </script>
 
