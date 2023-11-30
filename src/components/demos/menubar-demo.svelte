@@ -1,17 +1,15 @@
 <script lang="ts">
 	import { Menubar } from "$lib";
 	import { flyAndScale } from "@/utils";
+	import { SwitchOn, SwitchOff } from "@/components/icons";
 	import { CaretRight, Cat, Check } from "phosphor-svelte";
 
 	let bookmarks = false;
 	let fullUrls = true;
-
 	let pixelGrid = true;
 	let layoutGrid = false;
-
 	let view = "table";
-
-	const profileRadioValue = "benoit";
+	let profile = "pavel";
 </script>
 
 <Menubar.Root
@@ -36,9 +34,14 @@
 				bind:checked={pixelGrid}
 			>
 				Pixel grid
-				<Menubar.CheckboxIndicator class="ml-auto ">
-					<Check class="sq-5" />
+				<Menubar.CheckboxIndicator class="ml-auto">
+					<SwitchOn />
 				</Menubar.CheckboxIndicator>
+				{#if !pixelGrid}
+					<div class="ml-auto">
+						<SwitchOff />
+					</div>
+				{/if}
 			</Menubar.CheckboxItem>
 			<Menubar.CheckboxItem
 				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none data-[highlighted]:bg-muted"
@@ -46,8 +49,13 @@
 			>
 				Layout grid
 				<Menubar.CheckboxIndicator class="ml-auto">
-					<Check class="sq-5" />
+					<SwitchOn />
 				</Menubar.CheckboxIndicator>
+				{#if !layoutGrid}
+					<div class="ml-auto">
+						<SwitchOff />
+					</div>
+				{/if}
 			</Menubar.CheckboxItem>
 			<Menubar.Separator class="my-1 -ml-1 -mr-1 block h-px bg-muted" />
 			<Menubar.RadioGroup bind:value={view}>
@@ -161,12 +169,32 @@
 		>
 			<Menubar.CheckboxItem
 				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none data-[highlighted]:bg-muted"
-				bind:checked={bookmarks}>Show Bookmarks Bar</Menubar.CheckboxItem
+				bind:checked={bookmarks}
 			>
+				Show Bookmarks Bar
+				<Menubar.CheckboxIndicator class="ml-auto">
+					<SwitchOn />
+				</Menubar.CheckboxIndicator>
+				{#if !bookmarks}
+					<div class="ml-auto">
+						<SwitchOff />
+					</div>
+				{/if}
+			</Menubar.CheckboxItem>
 			<Menubar.CheckboxItem
 				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none data-[highlighted]:bg-muted"
-				bind:checked={fullUrls}>Show Full URLs</Menubar.CheckboxItem
+				bind:checked={fullUrls}
 			>
+				Show Full URLs
+				<Menubar.CheckboxIndicator class="ml-auto">
+					<SwitchOn />
+				</Menubar.CheckboxIndicator>
+				{#if !fullUrls}
+					<div class="ml-auto">
+						<SwitchOff />
+					</div>
+				{/if}
+			</Menubar.CheckboxItem>
 			<Menubar.Separator />
 			<Menubar.Item
 				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none data-[highlighted]:bg-muted"
@@ -199,19 +227,34 @@
 			align="start"
 			sideOffset={3}
 		>
-			<Menubar.RadioGroup value={profileRadioValue}>
+			<Menubar.RadioGroup bind:value={profile}>
 				<Menubar.RadioItem
 					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none data-[highlighted]:bg-muted"
-					value="andy">Andy</Menubar.RadioItem
+					value="hunter"
 				>
+					Hunter
+					<Menubar.RadioIndicator class="ml-auto">
+						<Check class="sq-5" />
+					</Menubar.RadioIndicator>
+				</Menubar.RadioItem>
 				<Menubar.RadioItem
 					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none data-[highlighted]:bg-muted"
-					value="benoit">Benoit</Menubar.RadioItem
+					value="pavel"
 				>
+					Pavel
+					<Menubar.RadioIndicator class="ml-auto">
+						<Check class="sq-5" />
+					</Menubar.RadioIndicator>
+				</Menubar.RadioItem>
 				<Menubar.RadioItem
 					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none data-[highlighted]:bg-muted"
-					value="Luis">Luis</Menubar.RadioItem
+					value="adrian"
 				>
+					Adrian
+					<Menubar.RadioIndicator class="ml-auto">
+						<Check class="sq-5" />
+					</Menubar.RadioIndicator>
+				</Menubar.RadioItem>
 			</Menubar.RadioGroup>
 			<Menubar.Separator />
 			<Menubar.Item
