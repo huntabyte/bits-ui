@@ -51,6 +51,9 @@ export default {
 				mono: ["Source Code Pro", ...fontFamily.mono],
 				alt: ["Courier", ...fontFamily.sans]
 			},
+			fontSize: {
+				xxs: "10px"
+			},
 			borderWidth: {
 				6: "6px"
 			},
