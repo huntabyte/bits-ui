@@ -39,7 +39,7 @@
 				</RangeCalendar.GridHead>
 				<RangeCalendar.GridBody>
 					{#each month.weeks as weekDates}
-						<RangeCalendar.GridRow class="mt-0.5 flex w-full gap-0.5">
+						<RangeCalendar.GridRow class="mt-1 flex w-full gap-0.5">
 							{#each weekDates as date}
 								<RangeCalendar.Cell
 									{date}

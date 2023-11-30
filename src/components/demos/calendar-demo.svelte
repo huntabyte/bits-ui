@@ -10,13 +10,13 @@
 >
 	<Calendar.Header class="flex items-center justify-between">
 		<Calendar.PrevButton
-			class="inline-flex h-7 w-7 items-center justify-center rounded-[7px] border border-border-input bg-background shadow-btn transition-all hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
+			class="inline-flex items-center justify-center rounded-[7px] border border-border-input bg-background shadow-btn transition-all sq-7 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
 		>
 			<CaretLeft class="h-4 w-4" />
 		</Calendar.PrevButton>
 		<Calendar.Heading class="font-medium" />
 		<Calendar.NextButton
-			class="inline-flex h-7 w-7 items-center justify-center rounded-[7px] border border-border-input bg-background shadow-btn transition-all hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
+			class="inline-flex items-center justify-center rounded-[7px] border border-border-input bg-background shadow-btn transition-all sq-7 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
 		>
 			<CaretRight class="h-4 w-4" />
 		</Calendar.NextButton>
