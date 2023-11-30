@@ -2,12 +2,12 @@
 	import { Popover, Separator, Toggle } from "$lib";
 	import { ImageSquare, LinkSimpleHorizontalBreak } from "phosphor-svelte";
 	import { flyAndScale } from "@/utils";
-	let open = true;
+
 	let width = 1024;
 	let height = 768;
 </script>
 
-<Popover.Root bind:open>
+<Popover.Root>
 	<Popover.Trigger
 		class="inline-flex h-10
 	items-center justify-center whitespace-nowrap rounded-input border
