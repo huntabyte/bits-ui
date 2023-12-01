@@ -5,7 +5,7 @@
 </script>
 
 <RangeCalendar.Root
-	class="mt-6 rounded-[15px] border border-dark-10 bg-background p-[22px] shadow-card"
+	class="mt-6 rounded-15px border border-dark-10 bg-background p-[22px] shadow-card"
 	let:months
 	let:daysOfWeek
 >
@@ -50,7 +50,7 @@
 										{date}
 										month={month.value}
 										class={cn(
-											"group relative inline-flex items-center justify-center whitespace-nowrap rounded-9px bg-background bg-transparent p-0 text-sm font-normal text-foreground transition-all sq-10 data-[disabled]:pointer-events-none data-[outside-month]:pointer-events-none data-[highlighted]:rounded-none data-[selection-end]:rounded-9px data-[selection-start]:rounded-9px data-[highlighted]:bg-muted data-[selected]:bg-muted data-[selection-end]:bg-foreground data-[selection-start]:bg-foreground data-[selected]:font-medium data-[selection-end]:font-medium data-[selection-start]:font-medium data-[disabled]:text-foreground/30 data-[selected]:text-foreground data-[selection-end]:text-background data-[selection-start]:text-background data-[unavailable]:text-muted-foreground data-[unavailable]:line-through data-[selected]:[&:not([data-selection-start])]:[&:not([data-selection-end])]:rounded-none"
+											"group relative inline-flex items-center justify-center whitespace-nowrap rounded-9px border border-transparent bg-background bg-transparent p-0 text-sm font-normal text-foreground transition-all sq-10 hover:border-foreground data-[disabled]:pointer-events-none data-[outside-month]:pointer-events-none data-[highlighted]:rounded-none data-[selection-end]:rounded-9px data-[selection-start]:rounded-9px data-[highlighted]:bg-muted data-[selected]:bg-muted data-[selection-end]:bg-foreground data-[selection-start]:bg-foreground data-[selected]:font-medium data-[selection-end]:font-medium data-[selection-start]:font-medium data-[disabled]:text-foreground/30 data-[selected]:text-foreground data-[selection-end]:text-background data-[selection-start]:text-background data-[unavailable]:text-muted-foreground data-[unavailable]:line-through data-[selected]:[&:not([data-selection-start])]:[&:not([data-selection-end])]:rounded-none"
 										)}
 									>
 										<div
