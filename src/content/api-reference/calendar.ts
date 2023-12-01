@@ -1,6 +1,11 @@
 import type { APISchema } from "@/types";
 import * as C from "@/content/constants.js";
-import { asChild, daysOfWeekSlotProp, monthsSlotProp } from "@/content/api-reference/helpers.js";
+import {
+	asChild,
+	daysOfWeekSlotProp,
+	enums,
+	monthsSlotProp
+} from "@/content/api-reference/helpers.js";
 import type * as Calendar from "$lib/bits/calendar/_types.js";
 import { attrsSlotProp, builderAndAttrsSlotProps } from "./helpers";
 
@@ -47,6 +52,14 @@ const root: APISchema<Calendar.Props> = {
 			type: C.NUMBER,
 			description: "The day of the week to start the calendar on. 0 is Sunday, 1 is Monday, etc.",
 			default: "0"
+		},
+		weekdayFormat: {
+			type: {
+				type: C.ENUM,
+				definition: enums("narrow", "short", "long")
+			},
+			description:
+				"The format to use for the weekday strings provided via the `weekdays` slot prop."
 		},
 		calendarLabel: {
 			type: C.STRING,

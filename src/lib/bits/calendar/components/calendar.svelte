@@ -21,6 +21,7 @@
 	export let readonly: $$Props["readonly"] = undefined;
 	export let fixedWeeks: $$Props["fixedWeeks"] = undefined;
 	export let calendarLabel: $$Props["calendarLabel"] = undefined;
+	export let weekdayFormat: $$Props["weekdayFormat"] = undefined;
 	export let asChild: $$Props["asChild"] = false;
 	export let id: $$Props["id"] = undefined;
 
@@ -30,7 +31,7 @@
 			value: localValue,
 			placeholder: localPlaceholder,
 			months,
-			daysOfWeek
+			weekdays
 		},
 		updateOption,
 		ids
@@ -49,6 +50,7 @@
 		readonly,
 		fixedWeeks,
 		calendarLabel,
+		weekdayFormat,
 		onPlaceholderChange: ({ next }) => {
 			if (placeholder !== next) {
 				onPlaceholderChange?.(next);
@@ -84,6 +86,7 @@
 	$: updateOption("readonly", readonly);
 	$: updateOption("fixedWeeks", fixedWeeks);
 	$: updateOption("calendarLabel", calendarLabel);
+	$: updateOption("weekdayFormat", weekdayFormat);
 
 	$: builder = $calendar;
 	const attrs = getAttrs("root");
@@ -92,7 +95,7 @@
 		builder,
 		attrs,
 		months: $months,
-		daysOfWeek: $daysOfWeek
+		weekdays: $weekdays
 	};
 </script>
 

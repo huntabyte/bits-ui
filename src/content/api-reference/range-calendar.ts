@@ -4,6 +4,7 @@ import {
 	asChild,
 	attrsSlotProp,
 	daysOfWeekSlotProp,
+	enums,
 	monthsSlotProp
 } from "@/content/api-reference/helpers.js";
 import type * as RangeCalendar from "$lib/bits/range-calendar/_types.js";
@@ -50,6 +51,14 @@ const root: APISchema<RangeCalendar.Props> = {
 			description:
 				"Whether or not to prevent the user from deselecting a date without selecting another date first.",
 			default: C.FALSE
+		},
+		weekdayFormat: {
+			type: {
+				type: C.ENUM,
+				definition: enums("narrow", "short", "long")
+			},
+			description:
+				"The format to use for the weekday strings provided via the `weekdays` slot prop."
 		},
 		weekStartsOn: {
 			type: C.NUMBER,

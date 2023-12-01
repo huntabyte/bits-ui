@@ -4,7 +4,7 @@
 	import { CaretLeft, CaretRight, CalendarBlank } from "phosphor-svelte";
 </script>
 
-<DatePicker.Root>
+<DatePicker.Root weekdayFormat="short">
 	<div class="flex min-w-[200px] flex-col gap-1">
 		<DatePicker.Label class="block select-none font-medium"
 			>Birthday</DatePicker.Label
@@ -33,7 +33,7 @@
 			<DatePicker.Calendar
 				class="rounded-[15px] border border-dark-10 bg-background p-[22px] shadow-card"
 				let:months
-				let:daysOfWeek
+				let:weekdays
 			>
 				<DatePicker.CalendarHeader class="flex items-center justify-between">
 					<DatePicker.CalendarPrevButton
@@ -59,7 +59,7 @@
 								<DatePicker.CalendarGridRow
 									class="mb-1 flex w-full justify-between"
 								>
-									{#each daysOfWeek as day}
+									{#each weekdays as day}
 										<DatePicker.CalendarHeadCell
 											class="w-10 rounded-md text-xs !font-normal text-muted-foreground"
 										>

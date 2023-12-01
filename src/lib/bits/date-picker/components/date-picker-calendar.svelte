@@ -10,7 +10,7 @@
 
 	const {
 		elements: { calendar },
-		states: { months, daysOfWeek },
+		states: { months, weekdays },
 		ids
 	} = getCtx();
 
@@ -25,7 +25,7 @@
 		builder,
 		attrs,
 		months: $months,
-		daysOfWeek: $daysOfWeek
+		weekdays: $weekdays
 	};
 </script>
 

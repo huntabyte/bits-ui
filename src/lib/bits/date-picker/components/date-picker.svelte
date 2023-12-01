@@ -26,6 +26,7 @@
 	export let isDateDisabled: $$Props["isDateDisabled"] = undefined;
 	export let fixedWeeks: $$Props["fixedWeeks"] = undefined;
 	export let calendarLabel: $$Props["calendarLabel"] = undefined;
+	export let weekdayFormat: $$Props["weekdayFormat"] = undefined;
 
 	const {
 		states: {
@@ -52,6 +53,7 @@
 		maxValue,
 		minValue,
 		readonly,
+		weekdayFormat,
 		isDateUnavailable,
 		onValueChange: ({ next }) => {
 			if (value !== next) {
@@ -84,7 +86,6 @@
 			ids.dateField.label,
 			ids.dateField.timeZoneName,
 			ids.calendar.calendar,
-			ids.calendar.grid,
 			ids.popover.content,
 			ids.popover.trigger
 		],
@@ -102,9 +103,7 @@
 			$labelId,
 			$timeZoneNameId,
 			$calendarId,
-			$gridId,
-			$contentId,
-			$triggerId
+			$contentId
 		]) => ({
 			day: $dayId,
 			description: $descriptionId,
@@ -119,9 +118,7 @@
 			label: $labelId,
 			timeZoneName: $timeZoneNameId,
 			calendar: $calendarId,
-			grid: $gridId,
-			content: $contentId,
-			trigger: $triggerId
+			content: $contentId
 		})
 	);
 
@@ -151,6 +148,7 @@
 	$: updateOption("weekStartsOn", weekStartsOn);
 	$: updateOption("isDateDisabled", isDateDisabled);
 	$: updateOption("calendarLabel", calendarLabel);
+	$: updateOption("weekdayFormat", weekdayFormat);
 
 	$: slotProps = {
 		isInvalid: $localIsInvalid,

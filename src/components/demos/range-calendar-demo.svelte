@@ -7,7 +7,8 @@
 <RangeCalendar.Root
 	class="mt-6 rounded-15px border border-dark-10 bg-background p-[22px] shadow-card"
 	let:months
-	let:daysOfWeek
+	let:weekdays
+	weekdayFormat="short"
 >
 	<RangeCalendar.Header class="flex items-center justify-between">
 		<RangeCalendar.PrevButton
@@ -29,7 +30,7 @@
 			<RangeCalendar.Grid class="w-full border-collapse select-none space-y-1">
 				<RangeCalendar.GridHead>
 					<RangeCalendar.GridRow class="mb-1 flex w-full justify-between">
-						{#each daysOfWeek as day}
+						{#each weekdays as day}
 							<RangeCalendar.HeadCell
 								class="w-10 rounded-md text-xs !font-normal text-muted-foreground"
 							>
