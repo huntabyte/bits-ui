@@ -65,7 +65,8 @@ export default {
 				button: "5px",
 				"5px": "5px",
 				"9px": "9px",
-				"10px": "10px"
+				"10px": "10px",
+				"15px": "15px"
 			},
 			height: {
 				input: "3rem",

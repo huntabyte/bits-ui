@@ -1,24 +1,25 @@
 <script lang="ts">
 	import { RangeCalendar } from "$lib";
+	import { cn } from "@/utils";
 	import { CaretRight, CaretLeft } from "phosphor-svelte";
 </script>
 
 <RangeCalendar.Root
-	class="mt-6 rounded-card border border-dark-10 bg-background p-6 shadow-card"
+	class="mt-6 rounded-[15px] border border-dark-10 bg-background p-[22px] shadow-card"
 	let:months
 	let:daysOfWeek
 >
 	<RangeCalendar.Header class="flex items-center justify-between">
 		<RangeCalendar.PrevButton
-			class="inline-flex items-center justify-center rounded-[7px] border border-border-input bg-background shadow-btn transition-all sq-7 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
+			class="inline-flex items-center justify-center rounded-9px bg-background transition-all sq-10 hover:bg-muted active:scale-98"
 		>
-			<CaretLeft class="sq-4" />
+			<CaretLeft class="sq-6" />
 		</RangeCalendar.PrevButton>
-		<RangeCalendar.Heading class="font-medium" />
+		<RangeCalendar.Heading class="text-[15px] font-medium" />
 		<RangeCalendar.NextButton
-			class="inline-flex items-center justify-center rounded-[7px] border border-border-input bg-background shadow-btn transition-all sq-7 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
+			class="inline-flex items-center justify-center rounded-9px bg-background transition-all sq-10 hover:bg-muted active:scale-98"
 		>
-			<CaretRight class="sq-4" />
+			<CaretRight class="sq-6" />
 		</RangeCalendar.NextButton>
 	</RangeCalendar.Header>
 	<div
@@ -27,10 +28,10 @@
 		{#each months as month}
 			<RangeCalendar.Grid class="w-full border-collapse select-none space-y-1">
 				<RangeCalendar.GridHead>
-					<RangeCalendar.GridRow class="flex w-full justify-between">
+					<RangeCalendar.GridRow class="mb-1 flex w-full justify-between">
 						{#each daysOfWeek as day}
 							<RangeCalendar.HeadCell
-								class="w-8 rounded-md text-[0.8rem] font-medium text-muted-foreground"
+								class="w-10 rounded-md text-xs !font-normal text-muted-foreground"
 							>
 								<div>{day}</div>
 							</RangeCalendar.HeadCell>
@@ -39,17 +40,24 @@
 				</RangeCalendar.GridHead>
 				<RangeCalendar.GridBody>
 					{#each month.weeks as weekDates}
-						<RangeCalendar.GridRow class="mt-1 flex w-full gap-0.5">
+						<RangeCalendar.GridRow class="flex w-full">
 							{#each weekDates as date}
 								<RangeCalendar.Cell
 									{date}
-									class="relative p-0 text-center text-sm sq-8 focus-within:relative focus-within:z-20"
+									class="relative m-0 !p-0 text-center text-sm sq-10"
 								>
 									<RangeCalendar.Date
 										{date}
 										month={month.value}
-										class="inline-flex items-center justify-center whitespace-nowrap rounded-[5px] bg-background p-0 text-sm font-normal text-foreground ring-offset-background transition-colors sq-8 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 data-[disabled]:pointer-events-none data-[outside-month]:pointer-events-none data-[highlighted]:bg-muted data-[selected]:bg-foreground data-[selection-end]:bg-foreground data-[selection-start]:bg-foreground data-[selected]:text-background data-[disabled]:opacity-50 data-[outside-month]:opacity-20"
-									/>
+										class={cn(
+											"group relative inline-flex items-center justify-center whitespace-nowrap rounded-9px bg-background bg-transparent p-0 text-sm font-normal text-foreground transition-all sq-10 data-[disabled]:pointer-events-none data-[outside-month]:pointer-events-none data-[highlighted]:rounded-none data-[selection-end]:rounded-9px data-[selection-start]:rounded-9px data-[highlighted]:bg-muted data-[selected]:bg-muted data-[selection-end]:bg-foreground data-[selection-start]:bg-foreground data-[selected]:font-medium data-[selection-end]:font-medium data-[selection-start]:font-medium data-[disabled]:text-foreground/30 data-[selected]:text-foreground data-[selection-end]:text-background data-[selection-start]:text-background data-[unavailable]:text-muted-foreground data-[unavailable]:line-through data-[selected]:[&:not([data-selection-start])]:[&:not([data-selection-end])]:rounded-none"
+										)}
+									>
+										<div
+											class="absolute top-[5px] hidden rounded-full bg-foreground transition-all sq-1 group-data-[today]:block group-data-[selected]:bg-background"
+										/>
+										{date.day}
+									</RangeCalendar.Date>
 								</RangeCalendar.Cell>
 							{/each}
 						</RangeCalendar.GridRow>

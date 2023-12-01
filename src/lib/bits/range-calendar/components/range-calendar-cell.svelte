@@ -21,7 +21,7 @@
 {#if asChild}
 	<slot {attrs} />
 {:else}
-	<td {...attrs}>
+	<td {...$$restProps} {...attrs}>
 		<slot {attrs} />
 	</td>
 {/if}

@@ -1,24 +1,29 @@
 <script lang="ts">
 	import { Calendar } from "$lib";
 	import { CaretRight, CaretLeft } from "phosphor-svelte";
+
+	const isDateUnavailable: Calendar.Props["isDateUnavailable"] = (date) => {
+		return date.day === 17 || date.day === 18;
+	};
 </script>
 
 <Calendar.Root
-	class="mt-6 rounded-card border border-dark-10 bg-background p-6 shadow-card"
+	class="mt-6 rounded-[15px] border border-dark-10 bg-background p-[22px] shadow-card"
 	let:months
 	let:daysOfWeek
+	{isDateUnavailable}
 >
 	<Calendar.Header class="flex items-center justify-between">
 		<Calendar.PrevButton
-			class="inline-flex items-center justify-center rounded-[7px] border border-border-input bg-background shadow-btn transition-all sq-7 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
+			class="inline-flex items-center justify-center rounded-9px bg-background transition-all sq-10 hover:bg-muted active:scale-98"
 		>
-			<CaretLeft class="h-4 w-4" />
+			<CaretLeft class="sq-6" />
 		</Calendar.PrevButton>
-		<Calendar.Heading class="font-medium" />
+		<Calendar.Heading class="text-[15px] font-medium" />
 		<Calendar.NextButton
-			class="inline-flex items-center justify-center rounded-[7px] border border-border-input bg-background shadow-btn transition-all sq-7 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
+			class="inline-flex items-center justify-center rounded-9px bg-background transition-all sq-10 hover:bg-muted active:scale-98"
 		>
-			<CaretRight class="h-4 w-4" />
+			<CaretRight class="sq-6" />
 		</Calendar.NextButton>
 	</Calendar.Header>
 	<div
@@ -27,10 +32,10 @@
 		{#each months as month}
 			<Calendar.Grid class="w-full border-collapse select-none space-y-1">
 				<Calendar.GridHead>
-					<Calendar.GridRow class="flex w-full justify-between">
+					<Calendar.GridRow class="mb-1 flex w-full justify-between">
 						{#each daysOfWeek as day}
 							<Calendar.HeadCell
-								class="w-8 rounded-md text-[0.8rem] font-medium text-muted-foreground"
+								class="w-10 rounded-md text-xs !font-normal text-muted-foreground"
 							>
 								<div>{day}</div>
 							</Calendar.HeadCell>
@@ -39,17 +44,22 @@
 				</Calendar.GridHead>
 				<Calendar.GridBody>
 					{#each month.weeks as weekDates}
-						<Calendar.GridRow class="mt-1 flex w-full gap-0.5">
+						<Calendar.GridRow class="flex w-full">
 							{#each weekDates as date}
 								<Calendar.Cell
 									{date}
-									class="relative h-8 w-8 p-0 text-center text-sm"
+									class="relative !p-0 text-center text-sm sq-10"
 								>
 									<Calendar.Date
 										{date}
 										month={month.value}
-										class="inline-flex h-8 w-8 items-center justify-center whitespace-nowrap rounded-[7px] bg-background p-0 text-sm font-normal text-foreground ring-offset-background transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 data-[disabled]:pointer-events-none data-[outside-month]:pointer-events-none data-[selected]:bg-foreground data-[selected]:text-background data-[disabled]:opacity-50 data-[outside-month]:opacity-20 "
-									/>
+										class="group relative inline-flex items-center justify-center whitespace-nowrap rounded-9px border border-transparent bg-transparent p-0 text-sm font-normal text-foreground transition-all sq-10 hover:border-foreground data-[disabled]:pointer-events-none data-[outside-month]:pointer-events-none data-[selected]:bg-foreground data-[selected]:font-medium data-[disabled]:text-foreground/30 data-[selected]:text-background data-[unavailable]:text-muted-foreground data-[unavailable]:line-through"
+									>
+										<div
+											class="absolute top-[5px] hidden rounded-full bg-foreground transition-all sq-1 group-data-[today]:block group-data-[selected]:bg-background"
+										/>
+										{date.day}
+									</Calendar.Date>
 								</Calendar.Cell>
 							{/each}
 						</Calendar.GridRow>
