@@ -59,7 +59,8 @@ const root: APISchema<Calendar.Props> = {
 				definition: enums("narrow", "short", "long")
 			},
 			description:
-				"The format to use for the weekday strings provided via the `weekdays` slot prop."
+				"The format to use for the weekday strings provided via the `weekdays` slot prop.",
+			default: "'narrow'"
 		},
 		calendarLabel: {
 			type: C.STRING,

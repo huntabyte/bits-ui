@@ -9,7 +9,7 @@ For each component that renders an HTML element, we provide a `class` prop that 
 
 ## CSS frameworks
 
-If you're using a CSS framework like Tailwind or UnoCSS, you can simply pass the classes you need to the component, and they will be applies to the underlying HTML element it renders.
+If you're using a CSS framework like Tailwind or UnoCSS, you can simply pass the classes you need to the component, and they will be applied to the underlying HTML element it renders.
 
 ```svelte
 <script lang="ts">
