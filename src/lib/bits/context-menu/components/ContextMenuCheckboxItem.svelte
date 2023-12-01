@@ -18,8 +18,10 @@
 		disabled,
 		defaultChecked: checked,
 		onCheckedChange: ({ next }) => {
-			checked = next;
-			onCheckedChange?.(next);
+			if (checked !== next) {
+				onCheckedChange?.(next);
+				checked = next;
+			}
 			return next;
 		}
 	});
