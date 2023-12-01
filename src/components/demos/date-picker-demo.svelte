@@ -31,21 +31,21 @@
 		</DatePicker.Input>
 		<DatePicker.Content sideOffset={6} transition={flyAndScale}>
 			<DatePicker.Calendar
-				class="rounded-card border border-dark-10 bg-background p-6 shadow-popover"
+				class="rounded-[15px] border border-dark-10 bg-background p-[22px] shadow-card"
 				let:months
 				let:daysOfWeek
 			>
 				<DatePicker.CalendarHeader class="flex items-center justify-between">
 					<DatePicker.CalendarPrevButton
-						class="inline-flex items-center justify-center rounded-[7px] border border-border-input bg-background shadow-btn transition-all sq-7 hover:bg-muted active:scale-98"
+						class="inline-flex items-center justify-center rounded-9px bg-background transition-all sq-10 hover:bg-muted active:scale-98"
 					>
-						<CaretLeft class="h-4 w-4" />
+						<CaretLeft class="sq-6" />
 					</DatePicker.CalendarPrevButton>
-					<DatePicker.CalendarHeading class="font-medium" />
+					<DatePicker.CalendarHeading class="text-[15px] font-medium" />
 					<DatePicker.CalendarNextButton
-						class="inline-flex items-center justify-center rounded-[7px] border border-border-input bg-background shadow-btn transition-all sq-7 hover:bg-muted active:scale-98"
+						class="inline-flex items-center justify-center rounded-9px bg-background transition-all sq-10 hover:bg-muted active:scale-98"
 					>
-						<CaretRight class="h-4 w-4" />
+						<CaretRight class="sq-6" />
 					</DatePicker.CalendarNextButton>
 				</DatePicker.CalendarHeader>
 				<div
@@ -56,10 +56,12 @@
 							class="w-full border-collapse select-none space-y-1"
 						>
 							<DatePicker.CalendarGridHead>
-								<DatePicker.CalendarGridRow class="flex w-full justify-between">
+								<DatePicker.CalendarGridRow
+									class="mb-1 flex w-full justify-between"
+								>
 									{#each daysOfWeek as day}
 										<DatePicker.CalendarHeadCell
-											class="w-8 rounded-md text-[0.8rem] font-medium text-muted-foreground"
+											class="w-10 rounded-md text-xs !font-normal text-muted-foreground"
 										>
 											<div>{day}</div>
 										</DatePicker.CalendarHeadCell>
@@ -68,19 +70,22 @@
 							</DatePicker.CalendarGridHead>
 							<DatePicker.CalendarGridBody>
 								{#each month.weeks as weekDates}
-									<DatePicker.CalendarGridRow
-										class="mt-0.5 flex w-full gap-0.5"
-									>
+									<DatePicker.CalendarGridRow class="flex w-full">
 										{#each weekDates as date}
 											<DatePicker.CalendarCell
 												{date}
-												class="relative p-0 text-center text-sm sq-8 focus-within:relative focus-within:z-20"
+												class="relative !p-0 text-center text-sm sq-10"
 											>
 												<DatePicker.CalendarDate
 													{date}
 													month={month.value}
-													class="inline-flex items-center justify-center whitespace-nowrap rounded-[7px] bg-background p-0 text-sm font-normal text-foreground ring-offset-background transition-colors sq-8 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 data-[disabled]:pointer-events-none data-[outside-month]:pointer-events-none data-[selected]:bg-foreground data-[selected]:text-background data-[disabled]:opacity-50 data-[outside-month]:opacity-20 "
-												/>
+													class="group relative inline-flex items-center justify-center whitespace-nowrap rounded-9px border border-transparent bg-transparent p-0 text-sm font-normal text-foreground transition-all sq-10 hover:border-foreground data-[disabled]:pointer-events-none data-[outside-month]:pointer-events-none data-[selected]:bg-foreground data-[selected]:font-medium data-[disabled]:text-foreground/30 data-[selected]:text-background data-[unavailable]:text-muted-foreground data-[unavailable]:line-through"
+												>
+													<div
+														class="absolute top-[5px] hidden rounded-full bg-foreground transition-all sq-1 group-data-[today]:block group-data-[selected]:bg-background"
+													/>
+													{date.day}
+												</DatePicker.CalendarDate>
 											</DatePicker.CalendarCell>
 										{/each}
 									</DatePicker.CalendarGridRow>
