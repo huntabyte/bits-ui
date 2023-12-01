@@ -2,14 +2,14 @@ import type { APISchema } from "@/types";
 import * as C from "@/content/constants.js";
 import {
 	asChild,
-	daysOfWeekSlotProp,
+	weekdaysSlotProp,
 	enums,
 	monthsSlotProp
 } from "@/content/api-reference/helpers.js";
 import type * as Calendar from "$lib/bits/calendar/_types.js";
 import { attrsSlotProp, builderAndAttrsSlotProps } from "./helpers";
 
-const root: APISchema<Calendar.Props> = {
+export const root: APISchema<Calendar.Props> = {
 	title: "Root",
 	description: "The root calendar component which contains all other calendar components.",
 	props: {
@@ -121,7 +121,7 @@ const root: APISchema<Calendar.Props> = {
 	},
 	slotProps: {
 		months: monthsSlotProp,
-		daysOfWeek: daysOfWeekSlotProp,
+		daysOfWeek: weekdaysSlotProp,
 		...builderAndAttrsSlotProps
 	},
 	dataAttributes: [
@@ -144,7 +144,7 @@ const root: APISchema<Calendar.Props> = {
 	]
 };
 
-const cell: APISchema<Calendar.CellProps> = {
+export const cell: APISchema<Calendar.CellProps> = {
 	title: "Cell",
 	description: "A cell in the calendar grid.",
 	props: {
@@ -169,7 +169,7 @@ const cell: APISchema<Calendar.CellProps> = {
 	]
 };
 
-const date: APISchema<Calendar.DateProps> = {
+export const date: APISchema<Calendar.DateProps> = {
 	title: "Date",
 	description: "A date in the calendar grid.",
 	props: {
@@ -238,7 +238,7 @@ const date: APISchema<Calendar.DateProps> = {
 	]
 };
 
-const grid: APISchema<Calendar.GridProps> = {
+export const grid: APISchema<Calendar.GridProps> = {
 	title: "Grid",
 	description: "The grid of dates in the calendar, typically representing a month.",
 	props: {
@@ -253,7 +253,7 @@ const grid: APISchema<Calendar.GridProps> = {
 	]
 };
 
-const gridBody: APISchema<Calendar.GridBodyProps> = {
+export const gridBody: APISchema<Calendar.GridBodyProps> = {
 	title: "GridBody",
 	description: "The body of the grid of dates in the calendar.",
 	props: {
@@ -268,7 +268,7 @@ const gridBody: APISchema<Calendar.GridBodyProps> = {
 	]
 };
 
-const gridHead: APISchema<Calendar.GridHeadProps> = {
+export const gridHead: APISchema<Calendar.GridHeadProps> = {
 	title: "GridHead",
 	description: "The head of the grid of dates in the calendar.",
 	props: {
@@ -285,7 +285,7 @@ const gridHead: APISchema<Calendar.GridHeadProps> = {
 	]
 };
 
-const gridRow: APISchema<Calendar.GridRowProps> = {
+export const gridRow: APISchema<Calendar.GridRowProps> = {
 	title: "GridRow",
 	description: "A row in the grid of dates in the calendar.",
 	props: {
@@ -302,7 +302,7 @@ const gridRow: APISchema<Calendar.GridRowProps> = {
 	]
 };
 
-const headCell: APISchema<Calendar.HeadCellProps> = {
+export const headCell: APISchema<Calendar.HeadCellProps> = {
 	title: "HeadCell",
 	description: "A cell in the head of the grid of dates in the calendar.",
 	props: {
@@ -319,7 +319,7 @@ const headCell: APISchema<Calendar.HeadCellProps> = {
 	]
 };
 
-const header: APISchema<Calendar.HeaderProps> = {
+export const header: APISchema<Calendar.HeaderProps> = {
 	title: "Header",
 	description: "The header of the calendar.",
 	props: {
@@ -336,7 +336,7 @@ const header: APISchema<Calendar.HeaderProps> = {
 	]
 };
 
-const heading: APISchema<Calendar.HeadingProps> = {
+export const heading: APISchema<Calendar.HeadingProps> = {
 	title: "Heading",
 	description: "The heading of the calendar.",
 	props: {
@@ -357,7 +357,7 @@ const heading: APISchema<Calendar.HeadingProps> = {
 	]
 };
 
-const nextButton: APISchema<Calendar.NextButtonProps> = {
+export const nextButton: APISchema<Calendar.NextButtonProps> = {
 	title: "NextButton",
 	description: "The next button of the calendar.",
 	props: {
@@ -374,7 +374,7 @@ const nextButton: APISchema<Calendar.NextButtonProps> = {
 	]
 };
 
-const prevButton: APISchema<Calendar.PrevButtonProps> = {
+export const prevButton: APISchema<Calendar.PrevButtonProps> = {
 	title: "PrevButton",
 	description: "The previous button of the calendar.",
 	props: {

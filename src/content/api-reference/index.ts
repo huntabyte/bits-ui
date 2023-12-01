@@ -9,6 +9,8 @@ import { calendar } from "./calendar";
 import { checkbox } from "./checkbox";
 import { collapsible } from "./collapsible";
 import { contextMenu } from "./context-menu";
+import { dateField } from "./date-field";
+import { datePicker } from "./date-picker";
 import { dropdownMenu } from "./dropdown-menu";
 import { label } from "./label";
 import { linkPreview } from "./link-preview";
@@ -77,8 +79,8 @@ export const apiSchemas: Record<Bit, APISchema[]> = {
 	checkbox,
 	collapsible,
 	"context-menu": contextMenu,
-	"date-field": [],
-	"date-picker": [],
+	"date-field": dateField,
+	"date-picker": datePicker,
 	"date-range-field": [],
 	"date-range-picker": [],
 	dialog,

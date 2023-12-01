@@ -36,7 +36,7 @@ export const monthsSlotProp: PropSchema = {
 	description: "The current months to display in the calendar. Used to render the calendar."
 };
 
-export const daysOfWeekSlotProp: PropSchema = {
+export const weekdaysSlotProp: PropSchema = {
 	type: "string[]",
 	description:
 		"The days of the week to display in the calendar, typically used within the table header."

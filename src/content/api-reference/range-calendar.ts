@@ -3,7 +3,7 @@ import * as C from "@/content/constants.js";
 import {
 	asChild,
 	attrsSlotProp,
-	daysOfWeekSlotProp,
+	weekdaysSlotProp,
 	enums,
 	monthsSlotProp
 } from "@/content/api-reference/helpers.js";
@@ -120,7 +120,7 @@ const root: APISchema<RangeCalendar.Props> = {
 	},
 	slotProps: {
 		months: monthsSlotProp,
-		daysOfWeek: daysOfWeekSlotProp,
+		daysOfWeek: weekdaysSlotProp,
 		...builderAndAttrsSlotProps
 	},
 	dataAttributes: [

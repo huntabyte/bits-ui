@@ -43,7 +43,7 @@ type Props = Expand<
 		 * This is used to apply the appropriate `aria-describedby` attribute to the input.
 		 */
 		descriptionId?: string;
-	} & AsChild
+	}
 >;
 
 type InputProps = AsChild;
