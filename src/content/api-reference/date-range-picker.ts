@@ -7,7 +7,7 @@ import {
 	monthsSlotProp,
 	union
 } from "@/content/api-reference/helpers.js";
-import type * as DatePicker from "$lib/bits/date-picker/_types.js";
+import type * as DateRangePicker from "$lib/bits/date-range-picker/_types.js";
 import { builderAndAttrsSlotProps, portalProp } from "./helpers";
 import { focusProp } from "./extended-types";
 import {
@@ -22,22 +22,25 @@ import {
 	prevButton,
 	date,
 	grid
-} from "./calendar";
+} from "./range-calendar";
 import { content, trigger } from "./popover";
-import { label, segment } from "./date-field";
+import { label, segment } from "./date-range-field";
 
-const root: APISchema<DatePicker.Props> = {
+const root: APISchema<DateRangePicker.Props> = {
 	title: "Root",
 	description: "The root date picker component.",
 	props: {
 		value: {
-			type: "DateValue",
-			description: "The selected date."
+			type: {
+				type: "DateRange",
+				definition: "{ start: DateValue; end: DateValue; }"
+			},
+			description: "The selected date range."
 		},
 		onValueChange: {
 			type: {
 				type: C.FUNCTION,
-				definition: "(date: DateValue | undefined) => void"
+				definition: "(date: DateRange | undefined) => void"
 			},
 			description: "A function that is called when the selected date changes."
 		},
@@ -113,11 +116,6 @@ const root: APISchema<DatePicker.Props> = {
 		locale: {
 			type: C.STRING,
 			description: "The locale to use for formatting dates."
-		},
-		multiple: {
-			type: C.BOOLEAN,
-			description: "Whether or not multiple dates can be selected.",
-			default: C.FALSE
 		},
 		numberOfMonths: {
 			type: C.NUMBER,
@@ -234,7 +232,7 @@ const root: APISchema<DatePicker.Props> = {
 	]
 };
 
-const calendar: APISchema<DatePicker.CalendarProps> = {
+const calendar: APISchema<DateRangePicker.CalendarProps> = {
 	title: "Calendar",
 	description: "The calendar component containing the grids of dates.",
 	slotProps: {
@@ -262,7 +260,7 @@ const calendar: APISchema<DatePicker.CalendarProps> = {
 	]
 };
 
-const input: APISchema<DatePicker.InputProps> = {
+const input: APISchema<DateRangePicker.InputProps> = {
 	title: "Input",
 	description: "The field input component which contains the segments of the date field.",
 	props: { asChild },
@@ -270,10 +268,11 @@ const input: APISchema<DatePicker.InputProps> = {
 		...builderAndAttrsSlotProps,
 		segments: {
 			type: {
-				type: C.ARRAY,
-				definition: "{ part: SegmentPart; value: string; }[]"
+				type: C.OBJECT,
+				definition: "Record&lt;'start' | 'end', { part: SegmentPart; value: string; }[]&gt;"
 			},
-			description: "An array of objects used to render the segments of the date field."
+			description:
+				"An object containing the start and end segment arrays used to render the start and end segments of the date field."
 		}
 	},
 	dataAttributes: [
@@ -292,7 +291,7 @@ const input: APISchema<DatePicker.InputProps> = {
 	]
 };
 
-export const datePicker = [
+export const dateRangePicker = [
 	root,
 	label,
 	input,

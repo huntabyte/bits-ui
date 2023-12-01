@@ -132,11 +132,10 @@ const input: APISchema<DateField.InputProps> = {
 	]
 };
 
-const segment: APISchema<DateField.SegmentProps> = {
+export const segment: APISchema<DateField.SegmentProps> = {
 	title: "Segment",
 	description: "A segment of the date field.",
 	props: {
-		asChild,
 		part: {
 			type: {
 				type: "SegmentPart",
@@ -152,8 +151,10 @@ const segment: APISchema<DateField.SegmentProps> = {
 					"literal"
 				)
 			},
-			description: "The part of the date to render."
-		}
+			description: "The part of the date to render.",
+			required: true
+		},
+		asChild
 	},
 	slotProps: {
 		...builderAndAttrsSlotProps
@@ -190,7 +191,7 @@ const segment: APISchema<DateField.SegmentProps> = {
 	]
 };
 
-const label: APISchema<DateField.LabelProps> = {
+export const label: APISchema<DateField.LabelProps> = {
 	title: "Label",
 	description: "The label for the date field.",
 	props: { asChild },

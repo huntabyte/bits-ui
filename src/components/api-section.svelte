@@ -17,7 +17,7 @@
 			>
 				<h3>
 					<span class="text-muted-foreground"
-						>{$page.data.title.replace(" ", "")}.</span
+						>{$page.data.title.replaceAll(" ", "")}.</span
 					>{schema.title}
 				</h3>
 			</div>

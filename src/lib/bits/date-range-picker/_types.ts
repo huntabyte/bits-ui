@@ -4,13 +4,35 @@
  * but we don't want to document the HTML attributes.
  */
 
-import type { Expand, OnChangeFn, AsChild, OmitDates } from "$lib/internal/index.js";
+import type { Expand, OnChangeFn, AsChild, OmitDates, OmitFloating } from "$lib/internal/index.js";
 import type { DateRange, SegmentPart } from "$lib/shared";
 import type { DateValue } from "@internationalized/date";
 import type { CreateDateRangePickerProps } from "@melt-ui/svelte";
 
+type OmitStartEnd<T> = Omit<
+	T,
+	"startName" | "endName" | "startIds" | "endIds" | "dateFieldIds" | "popoverIds" | "calendarIds"
+>;
+
+type OmitForm<T> = Omit<T, "required" | "name">;
+
+type WithOmission<T> = OmitForm<OmitDates<OmitStartEnd<OmitFloating<T>>>>;
+
 type Props = Expand<
-	Omit<OmitDates<CreateDateRangePickerProps>, "required" | "name"> & {
+	WithOmission<CreateDateRangePickerProps> & {
+		/**
+		 * The open state of the popover.
+		 * You can bind this to a boolean value to programmatically control the open state.
+		 *
+		 * @default false
+		 */
+		open?: boolean;
+
+		/**
+		 * A callback function called when the open state changes.
+		 */
+		onOpenChange?: OnChangeFn<boolean>;
+
 		/**
 		 * The value of the date field.
 		 * You can bind this to a `DateValue` object to programmatically control the value.

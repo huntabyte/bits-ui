@@ -10,7 +10,7 @@ import {
 import type * as RangeCalendar from "$lib/bits/range-calendar/_types.js";
 import { builderAndAttrsSlotProps } from "./helpers";
 
-const root: APISchema<RangeCalendar.Props> = {
+export const root: APISchema<RangeCalendar.Props> = {
 	title: "Root",
 	description: "The root range calendar component which contains all other calendar components.",
 	props: {
@@ -143,7 +143,7 @@ const root: APISchema<RangeCalendar.Props> = {
 	]
 };
 
-const cell: APISchema<RangeCalendar.CellProps> = {
+export const cell: APISchema<RangeCalendar.CellProps> = {
 	title: "Cell",
 	description: "A cell in the calendar grid.",
 	props: {
@@ -168,7 +168,7 @@ const cell: APISchema<RangeCalendar.CellProps> = {
 	]
 };
 
-const date: APISchema<RangeCalendar.DateProps> = {
+export const date: APISchema<RangeCalendar.DateProps> = {
 	title: "Date",
 	description: "A date in the calendar grid.",
 	props: {
@@ -250,7 +250,7 @@ const date: APISchema<RangeCalendar.DateProps> = {
 	]
 };
 
-const grid: APISchema<RangeCalendar.GridProps> = {
+export const grid: APISchema<RangeCalendar.GridProps> = {
 	title: "Grid",
 	description: "The grid of dates in the calendar, typically representing a month.",
 	props: { asChild },
@@ -263,7 +263,7 @@ const grid: APISchema<RangeCalendar.GridProps> = {
 	]
 };
 
-const gridBody: APISchema<RangeCalendar.GridBodyProps> = {
+export const gridBody: APISchema<RangeCalendar.GridBodyProps> = {
 	title: "GridBody",
 	description: "The body of the grid of dates in the calendar.",
 	props: { asChild },
@@ -276,7 +276,7 @@ const gridBody: APISchema<RangeCalendar.GridBodyProps> = {
 	]
 };
 
-const gridHead: APISchema<RangeCalendar.GridHeadProps> = {
+export const gridHead: APISchema<RangeCalendar.GridHeadProps> = {
 	title: "GridHead",
 	description: "The head of the grid of dates in the calendar.",
 	props: { asChild },
@@ -289,7 +289,7 @@ const gridHead: APISchema<RangeCalendar.GridHeadProps> = {
 	]
 };
 
-const gridRow: APISchema<RangeCalendar.GridRowProps> = {
+export const gridRow: APISchema<RangeCalendar.GridRowProps> = {
 	title: "GridRow",
 	description: "A row in the grid of dates in the calendar.",
 	props: { asChild },
@@ -302,7 +302,7 @@ const gridRow: APISchema<RangeCalendar.GridRowProps> = {
 	]
 };
 
-const headCell: APISchema<RangeCalendar.HeadCellProps> = {
+export const headCell: APISchema<RangeCalendar.HeadCellProps> = {
 	title: "HeadCell",
 	description: "A cell in the head of the grid of dates in the calendar.",
 	props: { asChild },
@@ -315,7 +315,7 @@ const headCell: APISchema<RangeCalendar.HeadCellProps> = {
 	]
 };
 
-const header: APISchema<RangeCalendar.HeaderProps> = {
+export const header: APISchema<RangeCalendar.HeaderProps> = {
 	title: "Header",
 	description: "The header of the calendar.",
 	props: { asChild },
@@ -328,7 +328,7 @@ const header: APISchema<RangeCalendar.HeaderProps> = {
 	]
 };
 
-const heading: APISchema<RangeCalendar.HeadingProps> = {
+export const heading: APISchema<RangeCalendar.HeadingProps> = {
 	title: "Heading",
 	description: "The heading of the calendar.",
 	props: { asChild },
@@ -347,7 +347,7 @@ const heading: APISchema<RangeCalendar.HeadingProps> = {
 	]
 };
 
-const nextButton: APISchema<RangeCalendar.NextButtonProps> = {
+export const nextButton: APISchema<RangeCalendar.NextButtonProps> = {
 	title: "NextButton",
 	description: "The next button of the calendar.",
 	props: { asChild },
@@ -360,7 +360,7 @@ const nextButton: APISchema<RangeCalendar.NextButtonProps> = {
 	]
 };
 
-const prevButton: APISchema<RangeCalendar.PrevButtonProps> = {
+export const prevButton: APISchema<RangeCalendar.PrevButtonProps> = {
 	title: "PrevButton",
 	description: "The previous button of the calendar.",
 	props: { asChild },

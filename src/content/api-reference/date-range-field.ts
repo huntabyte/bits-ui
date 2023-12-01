@@ -103,7 +103,7 @@ export const root: APISchema<DateRangeField.Props> = {
 	}
 };
 
-const input: APISchema<DateRangeField.InputProps> = {
+export const input: APISchema<DateRangeField.InputProps> = {
 	title: "Input",
 	description: "The container for the segments of the date field.",
 	props: {
@@ -135,11 +135,10 @@ const input: APISchema<DateRangeField.InputProps> = {
 	]
 };
 
-const segment: APISchema<DateRangeField.SegmentProps> = {
+export const segment: APISchema<DateRangeField.SegmentProps> = {
 	title: "Segment",
 	description: "A segment of the date field.",
 	props: {
-		asChild,
 		part: {
 			type: {
 				type: "SegmentPart",
@@ -155,15 +154,18 @@ const segment: APISchema<DateRangeField.SegmentProps> = {
 					"literal"
 				)
 			},
-			description: "The part of the date to render."
+			description: "The part of the date to render.",
+			required: true
 		},
 		type: {
 			type: {
 				type: C.ENUM,
 				definition: enums("start", "end")
 			},
-			description: "The type of field to render (start or end)."
-		}
+			description: "The type of field to render (start or end).",
+			required: true
+		},
+		asChild
 	},
 	slotProps: {
 		...builderAndAttrsSlotProps
@@ -200,7 +202,7 @@ const segment: APISchema<DateRangeField.SegmentProps> = {
 	]
 };
 
-const label: APISchema<DateRangeField.LabelProps> = {
+export const label: APISchema<DateRangeField.LabelProps> = {
 	title: "Label",
 	description: "The label for the date field.",
 	props: { asChild },

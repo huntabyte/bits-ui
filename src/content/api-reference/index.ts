@@ -12,6 +12,7 @@ import { contextMenu } from "./context-menu";
 import { dateField } from "./date-field";
 import { dateRangeField } from "./date-range-field";
 import { datePicker } from "./date-picker";
+import { dateRangePicker } from "./date-range-picker";
 import { dropdownMenu } from "./dropdown-menu";
 import { label } from "./label";
 import { linkPreview } from "./link-preview";
@@ -83,7 +84,7 @@ export const apiSchemas: Record<Bit, APISchema[]> = {
 	"date-field": dateField,
 	"date-picker": datePicker,
 	"date-range-field": dateRangeField,
-	"date-range-picker": [],
+	"date-range-picker": dateRangePicker,
 	dialog,
 	"dropdown-menu": dropdownMenu,
 	label,
