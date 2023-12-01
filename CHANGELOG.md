@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.9.9
+
+### Patch Changes
+
+- fix: bug where menu `onChange` functions were being called before change ([#191](https://github.com/huntabyte/bits-ui/pull/191))
+
 ## 0.9.8
 
 ### Patch Changes
