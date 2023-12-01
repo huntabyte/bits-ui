@@ -33,34 +33,34 @@ description: A date picker component.
 	</DatePicker.Input>
 	<DatePicker.Content>
 		<DatePicker.Calendar let:months let:daysOfWeek>
-			<DatePicker.CalendarHeader>
-				<DatePicker.CalendarPrevButton />
-				<DatePicker.CalendarHeading />
-				<DatePicker.CalendarNextButton />
-			</DatePicker.CalendarHeader>
+			<DatePicker.Header>
+				<DatePicker.PrevButton />
+				<DatePicker.Heading />
+				<DatePicker.NextButton />
+			</DatePicker.Header>
 			{#each months as month}
-				<DatePicker.CalendarGrid>
-					<DatePicker.CalendarGridHead>
-						<DatePicker.CalendarGridRow>
+				<DatePicker.Grid>
+					<DatePicker.GridHead>
+						<DatePicker.GridRow>
 							{#each daysOfWeek as day}
-								<DatePicker.CalendarHeadCell>
+								<DatePicker.HeadCell>
 									{day}
-								</DatePicker.CalendarHeadCell>
+								</DatePicker.HeadCell>
 							{/each}
-						</DatePicker.CalendarGridRow>
-					</DatePicker.CalendarGridHead>
-					<DatePicker.CalendarGridBody>
+						</DatePicker.GridRow>
+					</DatePicker.GridHead>
+					<DatePicker.GridBody>
 						{#each month.weeks as weekDates}
-							<DatePicker.CalendarGridRow>
+							<DatePicker.GridRow>
 								{#each weekDates as date}
-									<DatePicker.CalendarCell {date}>
-										<DatePicker.CalendarDate {date} month={month.value} />
-									</DatePicker.CalendarCell>
+									<DatePicker.Cell {date}>
+										<DatePicker.Date {date} month={month.value} />
+									</DatePicker.Cell>
 								{/each}
-							</DatePicker.CalendarGridRow>
+							</DatePicker.GridRow>
 						{/each}
-					</DatePicker.CalendarGridBody>
-				</DatePicker.CalendarGrid>
+					</DatePicker.GridBody>
+				</DatePicker.Grid>
 			{/each}
 		</DatePicker.Calendar>
 	</DatePicker.Content>

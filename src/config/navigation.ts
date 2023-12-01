@@ -106,13 +106,18 @@ export const navigation: Navigation = {
 					items: []
 				},
 				{
+					title: "Date Picker",
+					href: "/docs/components/date-picker",
+					items: []
+				},
+				{
 					title: "Date Range Field",
 					href: "/docs/components/date-range-field",
 					items: []
 				},
 				{
-					title: "Date Picker",
-					href: "/docs/components/date-picker",
+					title: "Date Range Picker",
+					href: "/docs/components/date-range-picker",
 					items: []
 				},
 				{

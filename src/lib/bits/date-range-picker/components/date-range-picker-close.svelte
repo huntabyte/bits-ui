@@ -1,0 +1,39 @@
+<script lang="ts">
+	import { melt } from "@melt-ui/svelte";
+	import { getCtx, getPopoverAttrs } from "../ctx.js";
+	import type { CloseProps, CloseEvents } from "../types.js";
+	import { createDispatcher } from "$lib/internal/events.js";
+
+	type $$Props = CloseProps;
+	type $$Events = CloseEvents;
+
+	export let asChild: $$Props["asChild"] = false;
+
+	const {
+		elements: { close }
+	} = getCtx();
+
+	const dispatch = createDispatcher();
+	const attrs = getPopoverAttrs("close");
+
+	$: builder = $close;
+	$: slotProps = {
+		builder,
+		attrs
+	};
+</script>
+
+{#if asChild}
+	<slot {...slotProps} />
+{:else}
+	<button
+		use:melt={builder}
+		type="button"
+		{...$$restProps}
+		{...attrs}
+		on:m-click={dispatch}
+		on:m-keydown={dispatch}
+	>
+		<slot {...slotProps} />
+	</button>
+{/if}
