@@ -3,6 +3,7 @@
 	import { DataAttrsTable, PropsTable } from "@/components";
 	import { h2 as H2, p as P } from "@/components/markdown";
 	import type { APISchema } from "@/types";
+	import { parseMarkdown } from "@/utils";
 
 	export let schemas: APISchema[] = [];
 </script>
@@ -21,7 +22,7 @@
 					>{schema.title}
 				</h3>
 			</div>
-			<P class="!mb-5 !mt-2">{schema.description}</P>
+			<P class="!mb-5 !mt-2">{@html parseMarkdown(schema.description)}</P>
 			<div class="flex flex-col gap-4">
 				{#if schema.props}
 					<PropsTable props={schema.props} />
