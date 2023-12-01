@@ -21,7 +21,7 @@ description: A calendar component with range selection.
 	import { RangeCalendar } from "bits-ui";
 </script>
 
-<RangeCalendar.Root let:months let:daysOfWeek>
+<RangeCalendar.Root let:months let:weekdays>
 	<RangeCalendar.Header>
 		<RangeCalendar.PrevButton />
 		<RangeCalendar.Heading />
@@ -31,7 +31,7 @@ description: A calendar component with range selection.
 		<RangeCalendar.Grid>
 			<RangeCalendar.GridHead>
 				<RangeCalendar.GridRow>
-					{#each daysOfWeek as day}
+					{#each weekdays as day}
 						<RangeCalendar.HeadCell>
 							{day}
 						</RangeCalendar.HeadCell>

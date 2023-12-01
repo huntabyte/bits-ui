@@ -21,7 +21,7 @@ description: A calendar component.
 	import { Calendar } from "bits-ui";
 </script>
 
-<Calendar.Root let:months let:daysOfWeek>
+<Calendar.Root let:months let:weekdays>
 	<Calendar.Header>
 		<Calendar.PrevButton />
 		<Calendar.Heading />
@@ -32,7 +32,7 @@ description: A calendar component.
 		<Calendar.Grid>
 			<Calendar.GridHead>
 				<Calendar.GridRow>
-					{#each daysOfWeek as day}
+					{#each weekdays as day}
 						<Calendar.HeadCell>
 							{day}
 						</Calendar.HeadCell>

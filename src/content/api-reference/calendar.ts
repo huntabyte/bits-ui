@@ -121,7 +121,7 @@ export const root: APISchema<Calendar.Props> = {
 	},
 	slotProps: {
 		months: monthsSlotProp,
-		daysOfWeek: weekdaysSlotProp,
+		weekdays: weekdaysSlotProp,
 		...builderAndAttrsSlotProps
 	},
 	dataAttributes: [

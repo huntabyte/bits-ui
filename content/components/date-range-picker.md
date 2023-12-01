@@ -32,7 +32,7 @@ description: A date range picker component.
 		<DateRangePicker.Trigger />
 	</DateRangePicker.Input>
 	<DateRangePicker.Content>
-		<DateRangePicker.Calendar let:months let:daysOfWeek>
+		<DateRangePicker.Calendar let:months let:weekdays>
 			<DateRangePicker.Header>
 				<DateRangePicker.PrevButton />
 				<DateRangePicker.Heading />
@@ -42,7 +42,7 @@ description: A date range picker component.
 				<DateRangePicker.Grid>
 					<DateRangePicker.GridHead>
 						<DateRangePicker.GridRow>
-							{#each daysOfWeek as day}
+							{#each weekdays as day}
 								<DateRangePicker.HeadCell>
 									{day}
 								</DateRangePicker.HeadCell>

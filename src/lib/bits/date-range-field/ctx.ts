@@ -6,7 +6,7 @@ import {
 import { getContext, setContext } from "svelte";
 import { removeUndefined, getOptionUpdater, createBitAttrs } from "$lib/internal/index.js";
 
-const NAME = "date-range-field";
+const NAME = "date-field";
 const PARTS = ["label", "field", "input", "segment"] as const;
 
 export const getAttrs = createBitAttrs(NAME, PARTS);

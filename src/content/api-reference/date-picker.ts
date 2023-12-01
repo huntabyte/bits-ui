@@ -210,7 +210,7 @@ const root: APISchema<DatePicker.Props> = {
 	},
 	slotProps: {
 		months: monthsSlotProp,
-		daysOfWeek: weekdaysSlotProp,
+		weekdays: weekdaysSlotProp,
 		...builderAndAttrsSlotProps
 	},
 	dataAttributes: [
