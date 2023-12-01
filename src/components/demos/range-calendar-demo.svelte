@@ -34,7 +34,7 @@
 							<RangeCalendar.HeadCell
 								class="w-10 rounded-md text-xs !font-normal text-muted-foreground"
 							>
-								<div>{day}</div>
+								<div>{day.slice(0, 2)}</div>
 							</RangeCalendar.HeadCell>
 						{/each}
 					</RangeCalendar.GridRow>

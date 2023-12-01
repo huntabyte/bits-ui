@@ -63,7 +63,7 @@
 										<DatePicker.CalendarHeadCell
 											class="w-10 rounded-md text-xs !font-normal text-muted-foreground"
 										>
-											<div>{day}</div>
+											<div>{day.slice(0, 2)}</div>
 										</DatePicker.CalendarHeadCell>
 									{/each}
 								</DatePicker.CalendarGridRow>
