@@ -9,20 +9,20 @@
 		class="w-[428px] rounded-card border border-muted bg-background p-6 shadow-card"
 	>
 		<Tabs.List
-			class="grid w-full grid-cols-2 gap-1 rounded-[9px] bg-dark-4 p-1 text-sm font-semibold leading-[0.01em] shadow-mini-inset"
+			class="grid w-full grid-cols-2 gap-1 rounded-9px bg-dark-4 p-1 text-sm font-semibold leading-[0.01em] shadow-mini-inset"
 		>
 			<Tabs.Trigger
 				value="login"
-				class="h-8 rounded-[7px] bg-transparent py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background data-[state=active]:bg-white data-[state=active]:shadow-mini dark:data-[state=active]:bg-background"
+				class="h-8 rounded-[7px] bg-transparent py-2 data-[state=active]:bg-white data-[state=active]:shadow-mini dark:data-[state=active]:bg-background"
 				>Login</Tabs.Trigger
 			>
 			<Tabs.Trigger
 				value="register"
-				class="h-8 rounded-[7px] bg-transparent py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background data-[state=active]:bg-white data-[state=active]:shadow-mini dark:data-[state=active]:bg-background"
+				class="h-8 rounded-[7px] bg-transparent py-2 data-[state=active]:bg-white data-[state=active]:shadow-mini dark:data-[state=active]:bg-background"
 				>Register</Tabs.Trigger
 			>
 		</Tabs.List>
-		<Tabs.Content value="login" class="pt-6 focus-visible:outline-none">
+		<Tabs.Content value="login" class="pt-6">
 			<div class="flex flex-col">
 				<h4 class="text-[19px] font-semibold leading-none tracking-[-0.01em]">
 					Login to your account
@@ -40,7 +40,7 @@
 						type="text"
 						id="username"
 						placeholder="name@example.com"
-						class="inline-flex h-input w-full items-center rounded-card-sm border border-dark-10 bg-background px-4 placeholder:text-foreground-alt/50 focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2 focus:ring-offset-background"
+						class="inline-flex h-input w-full items-center rounded-card-sm border border-dark-10 bg-background px-4 placeholder:text-foreground-alt/50"
 					/>
 				</div>
 				<div class="flex flex-col gap-1">
@@ -50,7 +50,7 @@
 					<div class="relative w-full">
 						<input
 							id="password"
-							class="inline-flex h-input w-full items-center rounded-card-sm border border-dark-10 bg-background px-4 placeholder:text-foreground-alt/50 focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2 focus:ring-offset-background"
+							class="inline-flex h-input w-full items-center rounded-card-sm border border-dark-10 bg-background px-4 placeholder:text-foreground-alt/50"
 							placeholder="super_secret"
 							type="password"
 							autocomplete="off"
@@ -62,12 +62,12 @@
 				</div>
 			</div>
 			<Button.Root
-				class="hover:button-gradient mt-[22px] inline-flex h-input w-full items-center justify-center rounded-input bg-dark px-[50px] text-[15px] font-semibold text-background shadow-mini focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dark focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+				class="hover:button-gradient mt-[22px] inline-flex h-input w-full items-center justify-center rounded-input bg-dark px-[50px] text-[15px] font-semibold text-background shadow-mini"
 			>
 				Login
 			</Button.Root>
 		</Tabs.Content>
-		<Tabs.Content value="register" class="pt-6 focus-visible:outline-none">
+		<Tabs.Content value="register" class="pt-6">
 			<div class="flex flex-col">
 				<h4 class="text-[19px] font-semibold leading-none tracking-[-0.01em]">
 					Register for an account
@@ -88,7 +88,7 @@
 						type="text"
 						id="registerUsername"
 						placeholder="name@example.com"
-						class="inline-flex h-input w-full items-center rounded-card-sm border border-dark-10 bg-background px-4 text-sm placeholder:text-foreground-alt/50 focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2 focus:ring-offset-background"
+						class="inline-flex h-input w-full items-center rounded-card-sm border border-dark-10 bg-background px-4 text-sm placeholder:text-foreground-alt/50"
 					/>
 				</div>
 				<div class="flex flex-col gap-1">
@@ -101,7 +101,7 @@
 					<div class="relative w-full">
 						<input
 							id="registerPassword"
-							class="inline-flex h-input w-full items-center rounded-card-sm border border-dark-10 bg-background px-4 text-sm placeholder:text-foreground-alt/50 focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2 focus:ring-offset-background"
+							class="inline-flex h-input w-full items-center rounded-card-sm border border-dark-10 bg-background px-4 text-sm placeholder:text-foreground-alt/50"
 							placeholder="super_secret"
 							type="password"
 							autocomplete="off"
@@ -121,7 +121,7 @@
 					<div class="relative w-full">
 						<input
 							id="passwordConfirm"
-							class="inline-flex h-input w-full items-center rounded-card-sm border border-dark-10 bg-background px-4 text-sm placeholder:text-foreground-alt/50 focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2 focus:ring-offset-background"
+							class="inline-flex h-input w-full items-center rounded-card-sm border border-dark-10 bg-background px-4 text-sm placeholder:text-foreground-alt/50"
 							placeholder="super_secret"
 							type="password"
 							autocomplete="off"
@@ -133,7 +133,7 @@
 				</div>
 			</div>
 			<Button.Root
-				class="hover:button-gradient mt-[22px] inline-flex h-input w-full items-center justify-center rounded-input bg-dark px-[50px] text-[15px] font-semibold text-background shadow-mini focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dark focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+				class="hover:button-gradient mt-[22px] inline-flex h-input w-full items-center justify-center rounded-input bg-dark px-[50px] text-[15px] font-semibold text-background shadow-mini"
 			>
 				Login
 			</Button.Root>

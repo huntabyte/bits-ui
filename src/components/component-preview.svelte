@@ -62,10 +62,7 @@
 				{/if}
 			</Tabs.Trigger>
 		</Tabs.List>
-		<Tabs.Content
-			value="code"
-			class="!focus-visible:ring-0 focus-visible:outline-none"
-		>
+		<Tabs.Content value="code" class="!ring-transparent">
 			<div
 				class="![&_pre]:mt-0 ![&_pre]:rounded-card w-full [&_pre]:max-h-[443px] [&_pre]:min-h-[443px] [&_pre]:overflow-auto"
 			>
@@ -74,7 +71,7 @@
 		</Tabs.Content>
 		<Tabs.Content
 			value="preview"
-			class="!focus-visible:ring-0 relative rounded-card border-2 border-muted bg-zinc-50 focus-visible:outline-none dark:bg-[#1f1f21]"
+			class="relative rounded-card border-2 border-muted bg-zinc-50 !ring-transparent dark:bg-[#1f1f21]"
 		>
 			<div
 				class={cn(
