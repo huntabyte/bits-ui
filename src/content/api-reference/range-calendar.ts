@@ -212,7 +212,7 @@ export const date: APISchema<RangeCalendar.DateProps> = {
 		},
 		{
 			name: "value",
-			value: 'The date in the format "YYYY-MM-DD".'
+			description: 'The date in the format "YYYY-MM-DD".'
 		},
 		{
 			name: "today",
