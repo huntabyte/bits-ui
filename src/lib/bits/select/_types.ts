@@ -7,7 +7,7 @@ import type { CreateSelectProps, SelectOptionProps } from "@melt-ui/svelte";
 import type { AsChild, Expand, OmitFloating, OnChangeFn } from "$lib/internal/index.js";
 import type { ContentProps, ArrowProps } from "$lib/bits/floating/_types.js";
 
-type Props<T = unknown> = Expand<
+type Props<T, Multiple extends boolean> = Expand<
 	OmitFloating<Omit<CreateSelectProps, "selected" | "defaultSelected" | "onSelectedChange">> & {
 		/**
 		 * The selected value of the select.
@@ -15,12 +15,12 @@ type Props<T = unknown> = Expand<
 		 *
 		 * @defaultValue undefined
 		 */
-		selected?: CreateSelectProps["defaultSelected"] & {};
+		selected?: CreateSelectProps<T, Multiple>["defaultSelected"] & {};
 
 		/**
 		 * A callback function called when the selected value changes.
 		 */
-		onSelectedChange?: OnChangeFn<T>;
+		onSelectedChange?: OnChangeFn<CreateSelectProps<T, Multiple>["defaultSelected"]>;
 
 		/**
 		 * The open state of the select menu.
@@ -34,6 +34,11 @@ type Props<T = unknown> = Expand<
 		 * A callback function called when the open state changes.
 		 */
 		onOpenChange?: OnChangeFn<boolean>;
+
+		/**
+		 *
+		 */
+		multiple?: Multiple;
 	}
 >;
 

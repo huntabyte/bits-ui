@@ -34,8 +34,20 @@ export function getCtx() {
 	return getContext<GetReturn>(NAME);
 }
 
-export function setCtx(props: CreateSelectProps) {
-	const select = createSelect(removeUndefined(props));
+type Items<T> = {
+	value: T;
+	label?: string;
+};
+
+type Props<T = unknown, M extends boolean = false> = CreateSelectProps<T, M> & {
+	items?: Items<T>[];
+};
+
+export function setCtx<T = unknown, M extends boolean = false>(
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	props: Props<T, M>
+) {
+	const select = createSelect<T, M>(removeUndefined(props));
 	setContext(NAME, select);
 	return {
 		...select,

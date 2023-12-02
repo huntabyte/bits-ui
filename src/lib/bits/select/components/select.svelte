@@ -3,7 +3,18 @@
 	import { setCtx } from "../ctx.js";
 	import type { SelectProps } from "../types.js";
 
-	type $$Props = SelectProps;
+	type T = $$Generic<unknown>;
+	type Multiple = $$Generic<boolean>;
+
+	type $$Props = Omit<SelectProps<T, Multiple>, "multiple"> & {
+		items?: Items<T>;
+		multiple?: Multiple;
+	};
+
+	type Items<T> = {
+		value: T;
+		label?: string;
+	}[];
 
 	export let required: $$Props["required"] = undefined;
 	export let disabled: $$Props["disabled"] = undefined;
@@ -13,11 +24,13 @@
 	export let closeOnOutsideClick: $$Props["closeOnOutsideClick"] = undefined;
 	export let portal: $$Props["portal"] = undefined;
 	export let name: $$Props["name"] = undefined;
-	export let multiple: $$Props["multiple"] = undefined;
+	export let multiple: $$Props["multiple"] = false as Multiple;
 	export let selected: $$Props["selected"] = undefined;
 	export let onSelectedChange: $$Props["onSelectedChange"] = undefined;
 	export let open: $$Props["open"] = undefined;
 	export let onOpenChange: $$Props["onOpenChange"] = undefined;
+	// eslint-disable-next-line svelte/valid-compile
+	export let items: $$Props["items"] = [];
 
 	const {
 		states: { open: localOpen, selected: localSelected },
@@ -32,11 +45,17 @@
 		closeOnOutsideClick,
 		portal,
 		name,
-		multiple,
+		multiple: multiple as Multiple,
 		forceVisible: true,
 		defaultSelected: selected,
 		defaultOpen: open,
 		onSelectedChange: ({ next }) => {
+			if (Array.isArray(next)) {
+				onSelectedChange?.(next);
+				selected = next;
+				return next;
+			}
+
 			if (selected !== next) {
 				onSelectedChange?.(next);
 				selected = next;
@@ -49,7 +68,8 @@
 				open = next;
 			}
 			return next;
-		}
+		},
+		items
 	});
 
 	const idValues = derived(
