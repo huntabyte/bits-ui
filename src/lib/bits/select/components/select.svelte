@@ -47,12 +47,16 @@
 		name,
 		multiple: multiple as Multiple,
 		forceVisible: true,
-		defaultSelected: selected,
+		defaultSelected: Array.isArray(selected)
+			? ([...selected] as $$Props["selected"])
+			: selected,
 		defaultOpen: open,
 		onSelectedChange: ({ next }) => {
 			if (Array.isArray(next)) {
-				onSelectedChange?.(next);
-				selected = next;
+				if (JSON.stringify(next) !== JSON.stringify(selected)) {
+					onSelectedChange?.(next);
+					selected = next;
+				}
 				return next;
 			}
 
@@ -82,7 +86,12 @@
 	);
 
 	$: open !== undefined && localOpen.set(open);
-	$: selected !== undefined && localSelected.set(selected);
+	$: selected !== undefined &&
+		localSelected.set(
+			Array.isArray(selected)
+				? ([...selected] as $$Props["selected"])
+				: selected
+		);
 
 	$: updateOption("required", required);
 	$: updateOption("disabled", disabled);
