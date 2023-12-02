@@ -1,6 +1,6 @@
 ---
 title: Date Field
-description: A date field component.
+description: Enables users to input specific dates within a designated field.
 ---
 
 <script>

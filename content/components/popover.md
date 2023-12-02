@@ -1,6 +1,6 @@
 ---
 title: Popover
-description: Displays content in a floating container that appears above the surrounding content.
+description: Display supplementary content or information when users interact with specific elements.
 ---
 
 <script>

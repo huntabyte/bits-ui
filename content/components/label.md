@@ -1,6 +1,6 @@
 ---
 title: Label
-description: An enhanced version of the native HTML label element.
+description: Identifies or describes associated UI elements.
 ---
 
 <script>

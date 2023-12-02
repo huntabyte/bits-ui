@@ -1,6 +1,6 @@
 ---
 title: Date Range Field
-description: A date range field component.
+description: Allows users to input a range of dates within a designated field.
 ---
 
 <script>

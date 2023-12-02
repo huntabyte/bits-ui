@@ -1,6 +1,6 @@
 ---
 title: Range Calendar
-description: A calendar component with range selection.
+description: Presents a calendar view tailored for selecting date ranges.
 ---
 
 <script>

@@ -1,6 +1,6 @@
 ---
 title: Date Picker
-description: A date picker component.
+description: Facilitates the selection of dates through an input and calendar-based interface.
 ---
 
 <script>

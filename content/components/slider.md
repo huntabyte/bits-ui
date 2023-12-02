@@ -1,6 +1,6 @@
 ---
 title: Slider
-description: Enable users to select a value within a specific range with sliding handles.
+description: Allows users to select a value from a continuous range by sliding a handle.
 ---
 
 <script>

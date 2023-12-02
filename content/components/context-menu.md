@@ -1,6 +1,6 @@
 ---
 title: Context Menu
-description: Displays a menu at the pointer's position when the trigger is right-clicked or long-pressed.
+description: Displays options or actions relevant to a specific context or selected item, triggered by a right-click.
 ---
 
 <script>

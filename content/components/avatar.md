@@ -1,6 +1,6 @@
 ---
 title: Avatar
-description: Displays images with a fallback option for failed loading, ensuring consistent visual representation.
+description: Represents a user or entity with a recognizable image or placeholder in UI elements.
 ---
 
 <script>

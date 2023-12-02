@@ -1,6 +1,6 @@
 ---
 title: Tooltip
-description: Displays floating content containing additional information about an action on hover or focus.
+description: Provides additional information or context when users hover over or interact with an element.
 ---
 
 <script>

@@ -1,6 +1,6 @@
 ---
 title: Date Range Picker
-description: A date range picker component.
+description: Facilitates the selection of date ranges through an input and calendar-based interface.
 ---
 
 <script>

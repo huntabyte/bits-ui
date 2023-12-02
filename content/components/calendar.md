@@ -1,6 +1,6 @@
 ---
 title: Calendar
-description: A calendar component.
+description: Displays dates and days of the week, facilitating date-related interactions.
 ---
 
 <script>
