@@ -9,6 +9,8 @@
 	function changeValue(field: "day" | "month" | "year") {
 		if (value) {
 			value = value.cycle(field, 1);
+		} else if (placeholder) {
+			placeholder = placeholder.cycle(field, 1);
 		}
 	}
 </script>
@@ -44,7 +46,7 @@
 					<Calendar.GridHead data-testid="grid-head-{m}">
 						<Calendar.GridRow data-testid="grid-row-{m}">
 							{#each weekdays as day, i}
-								<Calendar.HeadCell data-testid="head-cell-{i}">
+								<Calendar.HeadCell data-testid="weekday-{m}-{i}">
 									{day}
 								</Calendar.HeadCell>
 							{/each}
