@@ -7,7 +7,7 @@ import type { CreateSelectProps, SelectOptionProps } from "@melt-ui/svelte";
 import type { AsChild, Expand, OmitFloating, OnChangeFn } from "$lib/internal/index.js";
 import type { ContentProps, ArrowProps } from "$lib/bits/floating/_types.js";
 
-type Props<T, Multiple extends boolean> = Expand<
+type Props<T = unknown, Multiple extends boolean = false> = Expand<
 	OmitFloating<Omit<CreateSelectProps, "selected" | "defaultSelected" | "onSelectedChange">> & {
 		/**
 		 * The selected value of the select.

@@ -19,7 +19,7 @@ type OmitCalendarProps<T> = Omit<
 	| "ids"
 >;
 
-type Props<Multiple extends boolean> = Expand<
+type Props<Multiple extends boolean = false> = Expand<
 	OmitCalendarProps<CreateCalendarProps<Multiple>> & {
 		/**
 		 * The selected date value. This updates as the user selects

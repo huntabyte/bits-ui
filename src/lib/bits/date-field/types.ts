@@ -3,7 +3,7 @@ import type * as I from "./_types.js";
 
 type Props = I.Props;
 
-type LabelProps = I.Props & HTMLSpanAttributes;
+type LabelProps = I.LabelProps & HTMLSpanAttributes;
 
 type SegmentProps = I.SegmentProps & HTMLDivAttributes;
 
