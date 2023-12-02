@@ -8,21 +8,47 @@ import type { AsChild, OnChangeFn } from "$lib/internal";
 import type { DateValue } from "@internationalized/date";
 import type { CreateCalendarProps } from "@melt-ui/svelte";
 
-type Props = Expand<
-	Omit<
-		CreateCalendarProps,
-		| "placeholder"
-		| "defaultPlaceholder"
-		| "value"
-		| "defaultValue"
-		| "onPlaceholderChange"
-		| "onValueChange"
-		| "ids"
-	> & {
+type OmitCalendarProps<T> = Omit<
+	T,
+	| "placeholder"
+	| "defaultPlaceholder"
+	| "value"
+	| "defaultValue"
+	| "onPlaceholderChange"
+	| "onValueChange"
+	| "ids"
+>;
+
+type Props<Multiple extends boolean> = Expand<
+	OmitCalendarProps<CreateCalendarProps<Multiple>> & {
+		/**
+		 * The selected date value. This updates as the user selects
+		 * date(s) in the calendar.
+		 *
+		 * You can bind this to a value to programmatically control the
+		 * value state.
+		 */
+		value?: CreateCalendarProps<Multiple>["defaultValue"];
+
+		/**
+		 * A callback function called when the value changes.
+		 */
+		onValueChange?: OnChangeFn<CreateCalendarProps<Multiple>["defaultValue"]>;
+
+		/**
+		 * The placeholder date, used to display the calendar when no
+		 * date is selected. This updates as the user navigates
+		 * the calendar.
+		 *
+		 * You can bind this to a value to programmatically control the
+		 * placeholder state.
+		 */
 		placeholder?: DateValue;
-		value?: DateValue;
+
+		/**
+		 * A callback function called when the placeholder changes.
+		 */
 		onPlaceholderChange?: OnChangeFn<DateValue>;
-		onValueChange?: OnChangeFn<DateValue | undefined>;
 	} & AsChild
 >;
 

@@ -3,7 +3,8 @@
 	import { setCtx, getAttrs } from "../ctx.js";
 	import type { Props } from "../types.js";
 
-	type $$Props = Props;
+	type Multiple = $$Generic<boolean>;
+	type $$Props = Props<Multiple>;
 
 	export let placeholder: $$Props["placeholder"] = undefined;
 	export let onPlaceholderChange: $$Props["onPlaceholderChange"] = undefined;
@@ -22,6 +23,7 @@
 	export let fixedWeeks: $$Props["fixedWeeks"] = undefined;
 	export let calendarLabel: $$Props["calendarLabel"] = undefined;
 	export let weekdayFormat: $$Props["weekdayFormat"] = undefined;
+	export let multiple: $$Props["multiple"] = false as Multiple;
 	export let asChild: $$Props["asChild"] = false;
 	export let id: $$Props["id"] = undefined;
 
@@ -51,6 +53,7 @@
 		fixedWeeks,
 		calendarLabel,
 		weekdayFormat,
+		multiple,
 		onPlaceholderChange: ({ next }) => {
 			if (placeholder !== next) {
 				onPlaceholderChange?.(next);
@@ -58,7 +61,7 @@
 			}
 			return next;
 		},
-		onValueChange: ({ next }) => {
+		onValueChange: ({ next }: { next: $$Props["value"] }) => {
 			if (value !== next) {
 				onValueChange?.(next);
 				value = next;

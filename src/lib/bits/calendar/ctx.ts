@@ -26,7 +26,7 @@ export const getAttrs = createBitAttrs(NAME, PARTS);
 
 type GetReturn = CalendarReturn;
 
-export function setCtx(props: CreateCalendarProps) {
+export function setCtx<Multiple extends boolean>(props: CreateCalendarProps<Multiple>) {
 	const calendar = createCalendar(removeUndefined(props));
 	setContext(NAME, calendar);
 	return {

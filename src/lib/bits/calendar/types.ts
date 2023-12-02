@@ -8,7 +8,8 @@ import type {
 } from "svelte/elements";
 import type * as I from "./_types.js";
 
-type Props = I.Props & Omit<HTMLDivAttributes, "placeholder">;
+type Props<Multiple extends boolean = false> = I.Props<Multiple> &
+	Omit<HTMLDivAttributes, "placeholder">;
 
 type PrevButtonProps = I.PrevButtonProps & HTMLButtonAttributes;
 
