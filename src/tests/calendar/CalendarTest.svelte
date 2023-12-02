@@ -52,7 +52,7 @@
 					</Calendar.GridHead>
 					<Calendar.GridBody data-testid="grid-body-{m}">
 						{#each month.weeks as weekDates, i}
-							<Calendar.GridRow data-testid="grid-row-{m}-{i}">
+							<Calendar.GridRow data-testid="grid-row-{m}-{i}" data-week>
 								{#each weekDates as date, d}
 									<Calendar.Cell {date} data-testid="cell-{date.month}-{d}">
 										<Calendar.Date

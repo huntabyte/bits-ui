@@ -1,4 +1,4 @@
-import { render, waitFor } from "@testing-library/svelte";
+import { render } from "@testing-library/svelte";
 import userEvent from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
@@ -6,7 +6,6 @@ import { testKbd as kbd } from "../utils.js";
 import CalendarTest from "./CalendarTest.svelte";
 import type { Calendar } from "$lib";
 import { CalendarDate, CalendarDateTime, toZoned } from "@internationalized/date";
-import { get } from "svelte/store";
 
 const calendarDate = new CalendarDate(1980, 1, 20);
 const calendarDateTime = new CalendarDateTime(1980, 1, 20, 12, 30, 0, 0);
@@ -231,5 +230,82 @@ describe("Calendar", () => {
 		await user.click(prevButton);
 		expect(heading).toHaveTextContent("December 1979 - January 1980");
 		expect(firstMonthDay).not.toHaveAttribute("data-value", firstMonthDayDateStr);
+	});
+
+	it("properly handles `pagedNavigation` with multiple months", async () => {
+		const { getByTestId, calendar, user } = setup({
+			value: calendarDateTime,
+			numberOfMonths: 2,
+			pagedNavigation: true
+		});
+
+		const selectedDay = calendar.querySelector("[data-selected]") as HTMLElement;
+		expect(selectedDay).toHaveTextContent(String(calendarDateTime.day));
+
+		const heading = getByTestId("heading");
+		expect(heading).toHaveTextContent("January - February 1980");
+
+		const firstMonthDayDateStr = calendarDateTime.set({ day: 12 }).toString();
+		const firstMonthDay = getByTestId("date-1-12");
+		expect(firstMonthDay).toHaveTextContent("12");
+		expect(firstMonthDay).toHaveAttribute("data-value", firstMonthDayDateStr);
+
+		const secondMonthDay = getByTestId("date-2-15");
+		const secondMonthDayDateStr = calendarDateTime.set({ day: 15, month: 2 }).toString();
+		expect(secondMonthDay).toHaveTextContent("15");
+		expect(secondMonthDay).toHaveAttribute("data-value", secondMonthDayDateStr);
+
+		const prevButton = getByTestId("prev-button");
+		const nextButton = getByTestId("next-button");
+
+		await user.click(nextButton);
+		expect(heading).toHaveTextContent("March - April 1980");
+		expect(firstMonthDay).not.toHaveAttribute("data-value", firstMonthDayDateStr);
+
+		await user.click(prevButton);
+		expect(heading).toHaveTextContent("January - February 1980");
+		expect(firstMonthDay).toHaveAttribute("data-value", firstMonthDayDateStr);
+
+		await user.click(prevButton);
+		expect(heading).toHaveTextContent("November - December 1979");
+		expect(firstMonthDay).not.toHaveAttribute("data-value", firstMonthDayDateStr);
+	});
+
+	it("always renders six weeks when `fixedWeeks` is `true`", async () => {
+		const { getByTestId, calendar, user } = setup({
+			value: calendarDate,
+			fixedWeeks: true
+		});
+
+		function getNumberOfWeeks() {
+			return calendar.querySelectorAll("[data-week]").length;
+		}
+
+		const nextButton = getByTestId("next-button");
+
+		for (let i = 0; i < 12; i++) {
+			expect(getNumberOfWeeks()).toBe(6);
+			await user.click(nextButton);
+		}
+
+		for (let i = 0; i < 24; i++) {
+			expect(getNumberOfWeeks()).toBe(6);
+			await user.click(nextButton);
+		}
+	});
+
+	it("should update the selected date when value controlled externally", async () => {
+		const { getByTestId, user, calendar } = setup({
+			value: calendarDate
+		});
+
+		const selectedDate = calendar.querySelector("[data-selected]") as HTMLElement;
+		expect(selectedDate).toHaveTextContent("20");
+		expect(calendar.querySelectorAll("[data-selected]").length).toBe(1);
+
+		const addDayBtn = getByTestId("add-day");
+		await user.click(addDayBtn);
+		expect(calendar.querySelector("[data-selected]")).toHaveTextContent("21");
+		expect(calendar.querySelectorAll("[data-selected]").length).toBe(1);
 	});
 });
