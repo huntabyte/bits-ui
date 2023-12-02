@@ -6,7 +6,7 @@ import { testKbd as kbd } from "../utils.js";
 import CalendarTest from "./CalendarTest.svelte";
 import type { Calendar } from "$lib";
 import { CalendarDate, CalendarDateTime, toZoned } from "@internationalized/date";
-import { tick } from "svelte";
+import { get } from "svelte/store";
 
 const calendarDate = new CalendarDate(1980, 1, 20);
 const calendarDateTime = new CalendarDateTime(1980, 1, 20, 12, 30, 0, 0);
@@ -139,5 +139,97 @@ describe("Calendar", () => {
 			await user.click(prevBtn);
 		}
 		expect(heading).toHaveTextContent("January 1979");
+	});
+
+	it("allows dates to be deselected by clicking the selected date", async () => {
+		const { getByTestId, user, calendar } = setup({
+			value: calendarDate
+		});
+
+		const value = getByTestId("value");
+		expect(value).toHaveTextContent("1980-01-20");
+
+		const selectedDay = calendar.querySelector("[data-selected]") as HTMLElement;
+		expect(selectedDay).toHaveTextContent(String(calendarDate.day));
+
+		await user.click(selectedDay);
+		expect(value).toHaveTextContent("undefined");
+	});
+
+	it.each([kbd.ENTER, kbd.SPACE])("allows deselection with %s key", async (key) => {
+		const { getByTestId, user, calendar } = setup({
+			value: calendarDate
+		});
+
+		const value = getByTestId("value");
+		expect(value).toHaveTextContent("1980-01-20");
+
+		const selectedDay = calendar.querySelector("[data-selected]") as HTMLElement;
+		expect(selectedDay).toHaveTextContent(String(calendarDate.day));
+		selectedDay.focus();
+		await user.keyboard(key);
+		expect(value).toHaveTextContent("undefined");
+	});
+
+	it("allows selection with mouse", async () => {
+		const { getByTestId, user } = setup({
+			placeholder: zonedDateTime
+		});
+
+		const secondDayInMonth = getByTestId("date-1-2");
+		expect(secondDayInMonth).toHaveTextContent("2");
+		await user.click(secondDayInMonth);
+
+		const newDate = zonedDateTime.set({ day: 2 });
+		expect(getByTestId("value")).toHaveTextContent(newDate.toString());
+	});
+
+	it.each([kbd.SPACE, kbd.ENTER])("allows selection with %s key", async (key) => {
+		const { getByTestId, user } = setup({
+			placeholder: zonedDateTime
+		});
+
+		const secondDayInMonth = getByTestId("date-1-2");
+		expect(secondDayInMonth).toHaveTextContent("2");
+		secondDayInMonth.focus();
+		await user.keyboard(key);
+
+		const newDate = zonedDateTime.set({ day: 2 });
+		expect(getByTestId("value")).toHaveTextContent(newDate.toString());
+	});
+
+	it("displays multiple months when `numberOfMonths` is greater than 1", async () => {
+		const { getByTestId, calendar, user } = setup({ value: calendarDateTime, numberOfMonths: 2 });
+
+		const selectedDay = calendar.querySelector("[data-selected]") as HTMLElement;
+		expect(selectedDay).toHaveTextContent(String(calendarDateTime.day));
+
+		const heading = getByTestId("heading");
+		expect(heading).toHaveTextContent("January - February 1980");
+
+		const firstMonthDayDateStr = calendarDateTime.set({ day: 12 }).toString();
+		const firstMonthDay = getByTestId("date-1-12");
+		expect(firstMonthDay).toHaveTextContent("12");
+		expect(firstMonthDay).toHaveAttribute("data-value", firstMonthDayDateStr);
+
+		const secondMonthDay = getByTestId("date-2-15");
+		const secondMonthDayDateStr = calendarDateTime.set({ day: 15, month: 2 }).toString();
+		expect(secondMonthDay).toHaveTextContent("15");
+		expect(secondMonthDay).toHaveAttribute("data-value", secondMonthDayDateStr);
+
+		const prevButton = getByTestId("prev-button");
+		const nextButton = getByTestId("next-button");
+
+		await user.click(nextButton);
+		expect(heading).toHaveTextContent("February - March 1980");
+		expect(firstMonthDay).not.toHaveAttribute("data-value", firstMonthDayDateStr);
+
+		await user.click(prevButton);
+		expect(heading).toHaveTextContent("January - February 1980");
+		expect(firstMonthDay).toHaveAttribute("data-value", firstMonthDayDateStr);
+
+		await user.click(prevButton);
+		expect(heading).toHaveTextContent("December 1979 - January 1980");
+		expect(firstMonthDay).not.toHaveAttribute("data-value", firstMonthDayDateStr);
 	});
 });

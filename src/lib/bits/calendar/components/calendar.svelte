@@ -26,6 +26,7 @@
 	export let multiple: $$Props["multiple"] = false as Multiple;
 	export let asChild: $$Props["asChild"] = false;
 	export let id: $$Props["id"] = undefined;
+	export let numberOfMonths: $$Props["numberOfMonths"] = undefined;
 
 	const {
 		elements: { calendar },
@@ -54,6 +55,7 @@
 		calendarLabel,
 		weekdayFormat,
 		multiple,
+		numberOfMonths,
 		onPlaceholderChange: ({ next }) => {
 			if (placeholder !== next) {
 				onPlaceholderChange?.(next);
@@ -90,6 +92,7 @@
 	$: updateOption("fixedWeeks", fixedWeeks);
 	$: updateOption("calendarLabel", calendarLabel);
 	$: updateOption("weekdayFormat", weekdayFormat);
+	$: updateOption("numberOfMonths", numberOfMonths);
 
 	$: builder = $calendar;
 	const attrs = getAttrs("root");
