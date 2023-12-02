@@ -93,9 +93,17 @@ export function portalProp(compName = "content") {
 }
 
 export function union(...types: string[]): string {
-	return types.join(" | ");
+	return types
+		.join(" | ")
+		.replaceAll(" ", "&nbsp;")
+		.replaceAll("<", "&lt;")
+		.replaceAll(">", "&gt;");
 }
 
 export function enums(...values: string[]): string {
 	return values.map((value) => `'${value}'`).join(" | ");
+}
+
+export function seeFloating(content: string, link: string) {
+	return `${content} [Floating UI reference](${link}).`;
 }

@@ -28,6 +28,8 @@
 	export let collisionBoundary: $$Props["collisionBoundary"] = undefined;
 	export let sameWidth: $$Props["sameWidth"] = false;
 	export let fitViewport: $$Props["fitViewport"] = false;
+	export let strategy: $$Props["strategy"] = "absolute";
+	export let overlap: $$Props["overlap"] = false;
 
 	const {
 		elements: { content },
@@ -57,7 +59,9 @@
 		avoidCollisions,
 		collisionBoundary,
 		sameWidth,
-		fitViewport
+		fitViewport,
+		strategy,
+		overlap
 	});
 </script>
 

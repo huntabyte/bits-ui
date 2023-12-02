@@ -1,7 +1,7 @@
 export type FloatingConfig = {
 	/**
 	 * The initial placement of the floating element.
-	 * @defaultValue `"top"`
+	 * @default `"top"`
 	 *
 	 * @see https://floating-ui.com/docs/computePosition#placement
 	 */
@@ -21,7 +21,7 @@ export type FloatingConfig = {
 
 	/**
 	 * The strategy to use for positioning.
-	 * @defaultValue `"absolute"`
+	 * @default `"absolute"`
 	 *
 	 * @see https://floating-ui.com/docs/computePosition#placement
 	 */
@@ -36,7 +36,7 @@ export type FloatingConfig = {
 
 	/**
 	 * The main axis offset or gap between the reference and floating elements.
-	 * @defaultValue `5`
+	 * @default `5`
 	 *
 	 * @see https://floating-ui.com/docs/offset#options
 	 */
@@ -44,7 +44,7 @@ export type FloatingConfig = {
 
 	/**
 	 * The virtual padding around the viewport edges to check for overflow.
-	 * @defaultValue `8`
+	 * @default `8`
 	 *
 	 * @see https://floating-ui.com/docs/detectOverflow#padding
 	 */
@@ -52,7 +52,7 @@ export type FloatingConfig = {
 
 	/**
 	 * Whether to flip the placement.
-	 * @defaultValue `true`
+	 * @default `true`
 	 *
 	 * @see https://floating-ui.com/docs/flip
 	 */
@@ -60,7 +60,7 @@ export type FloatingConfig = {
 
 	/**
 	 * Whether the floating element can overlap the reference element.
-	 * @defaultValue `false`
+	 * @default `false`
 	 *
 	 * @see https://floating-ui.com/docs/shift#options
 	 */
@@ -68,7 +68,7 @@ export type FloatingConfig = {
 
 	/**
 	 * Whether to make the floating element same width as the reference element.
-	 * @defaultValue `false`
+	 * @default `false`
 	 *
 	 * @see https://floating-ui.com/docs/size
 	 */
@@ -76,7 +76,7 @@ export type FloatingConfig = {
 
 	/**
 	 * Whether the floating element should fit the viewport.
-	 * @defaultValue `false`
+	 * @default `false`
 	 *
 	 * @see https://floating-ui.com/docs/size
 	 */

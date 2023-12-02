@@ -1,21 +1,9 @@
 import type { Writable } from "svelte/store";
 import type { FloatingConfig } from "./floating-config";
-import type { Boundary } from "./_types.js";
+import type { FloatingProps } from "./_types.js";
 
-export type Side = "top" | "right" | "bottom" | "left";
-export type Align = "start" | "center" | "end";
-
-export type PositioningProps = {
-	side?: Side;
-	align?: Align;
-	sideOffset?: number;
-	alignOffset?: number;
-	collisionPadding?: number;
-	avoidCollisions?: boolean;
-	sameWidth?: boolean;
-	collisionBoundary?: Boundary;
-	fitViewport?: boolean;
-};
+type Side = "top" | "right" | "bottom" | "left";
+type Align = "start" | "center" | "end";
 
 const defaultPositioningProps = {
 	side: "bottom",
@@ -26,16 +14,16 @@ const defaultPositioningProps = {
 	avoidCollisions: true,
 	collisionPadding: 8,
 	fitViewport: false
-} satisfies PositioningProps;
+} satisfies FloatingProps;
 
 export function getPositioningUpdater(store: Writable<FloatingConfig>) {
-	return (props: PositioningProps = {}) => {
+	return (props: FloatingProps = {}) => {
 		return updatePositioning(store, props);
 	};
 }
 
-export function updatePositioning(store: Writable<FloatingConfig>, props: PositioningProps) {
-	const withDefaults = { ...defaultPositioningProps, ...props } satisfies PositioningProps;
+export function updatePositioning(store: Writable<FloatingConfig>, props: FloatingProps) {
+	const withDefaults = { ...defaultPositioningProps, ...props } satisfies FloatingProps;
 	store.update((prev) => {
 		return {
 			...prev,

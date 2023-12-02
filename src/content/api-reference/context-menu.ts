@@ -3,7 +3,14 @@ import { menu } from "./menu";
 import type * as Menu from "$lib/bits/menu/_types";
 import type * as ContextMenu from "$lib/bits/context-menu/_types";
 import * as C from "@/content/constants.js";
-import { transitionProps, asChild, union, builderAndAttrsSlotProps } from "./helpers";
+import {
+	transitionProps,
+	asChild,
+	union,
+	builderAndAttrsSlotProps,
+	enums,
+	seeFloating
+} from "./helpers";
 
 export const root: APISchema<Menu.Props> = {
 	title: "Root",
@@ -26,31 +33,63 @@ export const content: APISchema<ContextMenu.ContentProps> = {
 		alignOffset: {
 			type: C.NUMBER,
 			default: "0",
-			description: "An offset in pixels from the 'start' or 'end' alignment options."
+			description: seeFloating(
+				"An offset in pixels from the 'start' or 'end' alignment options.",
+				"https://floating-ui.com/docs/offset#options"
+			)
 		},
 		avoidCollisions: {
 			type: C.BOOLEAN,
 			default: C.TRUE,
-			description:
-				"When `true`, overrides the `side` and `align` options to prevent collisions with the boundary edges."
+			description: seeFloating(
+				"When `true`, overrides the `side` and `align` options to prevent collisions with the boundary edges.",
+				"https://floating-ui.com/docs/flip"
+			)
 		},
 		collisionBoundary: {
 			type: {
 				type: C.UNION,
 				definition: union("'clippingAncestors'", "Element", "Array<Element>", "Rect")
 			},
-			description: "A boundary element or array of elements to check for collisions against."
+			description: seeFloating(
+				"A boundary element or array of elements to check for collisions against.",
+				"https://floating-ui.com/docs/detectoverflow#boundary"
+			)
 		},
 		collisionPadding: {
 			type: C.NUMBER,
 			default: "0",
-			description:
-				"The amount in pixels of virtual padding around the viewport edges to check for overflow which will cause a collision."
+			description: seeFloating(
+				"The amount in pixels of virtual padding around the viewport edges to check for overflow which will cause a collision.",
+				"https://floating-ui.com/docs/detectOverflow#padding"
+			)
 		},
 		fitViewport: {
 			type: C.BOOLEAN,
 			default: C.FALSE,
-			description: "Whether the floating element should be constrained to the viewport."
+			description: seeFloating(
+				"Whether the floating element should be constrained to the viewport.",
+				"https://floating-ui.com/docs/size"
+			)
+		},
+		strategy: {
+			type: {
+				type: C.ENUM,
+				definition: enums("absolute", "fixed")
+			},
+			default: "absolute",
+			description: seeFloating(
+				"The positioning strategy to use for the floating element.",
+				"https://floating-ui.com/docs/computeposition#strategy"
+			)
+		},
+		overlap: {
+			type: C.BOOLEAN,
+			default: C.FALSE,
+			description: seeFloating(
+				"Whether the floating element can overlap the reference element.",
+				"https://floating-ui.com/docs/shift#options"
+			)
 		}
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
