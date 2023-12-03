@@ -1,8 +1,14 @@
 <script lang="ts">
 	import { DateRangeField } from "$lib";
+	import { CalendarDate } from "@internationalized/date";
+
+	let value = {
+		start: new CalendarDate(2022, 1, 1),
+		end: new CalendarDate(2022, 3, 1)
+	};
 </script>
 
-<DateRangeField.Root>
+<DateRangeField.Root bind:value>
 	<div class="flex min-w-[200px] flex-col gap-1">
 		<DateRangeField.Label class="block select-none"
 			>Hotel dates</DateRangeField.Label

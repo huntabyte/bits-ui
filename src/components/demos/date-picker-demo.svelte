@@ -29,7 +29,7 @@
 				<CalendarBlank class="sq-5" />
 			</DatePicker.Trigger>
 		</DatePicker.Input>
-		<DatePicker.Content sideOffset={6} transition={flyAndScale}>
+		<DatePicker.Content sideOffset={6} transition={flyAndScale} class="z-50">
 			<DatePicker.Calendar
 				class="rounded-[15px] border border-dark-10 bg-background p-[22px] shadow-card"
 				let:months

@@ -1,10 +1,12 @@
 <script lang="ts">
-	import { DateRangePicker } from "$lib";
+	import { DateRangePicker, type DateRange } from "$lib";
 	import { cn, flyAndScale } from "@/utils";
 	import { CaretLeft, CaretRight, CalendarBlank } from "phosphor-svelte";
+
+	let value: DateRange | undefined = undefined;
 </script>
 
-<DateRangePicker.Root weekdayFormat="short">
+<DateRangePicker.Root bind:value weekdayFormat="short">
 	<div class="flex min-w-[200px] flex-col gap-1">
 		<DateRangePicker.Label class="block select-none font-medium"
 			>Rental Days</DateRangePicker.Label
@@ -42,7 +44,11 @@
 				<CalendarBlank class="sq-5" />
 			</DateRangePicker.Trigger>
 		</DateRangePicker.Input>
-		<DateRangePicker.Content sideOffset={6} transition={flyAndScale}>
+		<DateRangePicker.Content
+			sideOffset={6}
+			transition={flyAndScale}
+			class="z-50"
+		>
 			<DateRangePicker.Calendar
 				class="mt-6 rounded-15px border border-dark-10 bg-background p-[22px] shadow-card"
 				let:months
