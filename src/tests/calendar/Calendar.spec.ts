@@ -6,6 +6,7 @@ import { testKbd as kbd } from "../utils.js";
 import CalendarTest from "./CalendarTest.svelte";
 import type { Calendar } from "$lib";
 import { CalendarDate, CalendarDateTime, toZoned } from "@internationalized/date";
+import CalendarMultiTest from "./CalendarMultiTest.svelte";
 
 const calendarDate = new CalendarDate(1980, 1, 20);
 const calendarDateTime = new CalendarDateTime(1980, 1, 20, 12, 30, 0, 0);
@@ -20,6 +21,14 @@ const months = ["January", "February", "March", "April", "May", "June", "July", 
 function setup(props: Calendar.Props = {}) {
 	const user = userEvent.setup();
 	const returned = render(CalendarTest, { ...props });
+	const calendar = returned.getByTestId("calendar");
+	expect(calendar).toBeVisible();
+	return { ...returned, user, calendar };
+}
+
+function setupMulti(props: Calendar.Props<true> = {}) {
+	const user = userEvent.setup();
+	const returned = render(CalendarMultiTest, { ...props, multiple: true });
 	const calendar = returned.getByTestId("calendar");
 	expect(calendar).toBeVisible();
 	return { ...returned, user, calendar };
@@ -551,4 +560,88 @@ describe("Calendar", () => {
 	});
 });
 
-describe.todo("Calendar - `multiple`");
+describe("Calendar - `multiple`", () => {
+	it("handles default value when `value` prop is provided - `CalendarDate[]`", async () => {
+		const d1 = new CalendarDate(1980, 1, 2);
+		const d2 = new CalendarDate(1980, 1, 5);
+
+		const { calendar } = setupMulti({
+			value: [d1, d2]
+		});
+
+		const selectedDays = calendar.querySelectorAll("[data-selected]");
+		expect(selectedDays.length).toBe(2);
+		expect(selectedDays[0]).toHaveTextContent(String(d1.day));
+		expect(selectedDays[1]).toHaveTextContent(String(d2.day));
+	});
+
+	it("handles default value when `value` prop is provided - `CalendarDateTime[]`", async () => {
+		const d1 = new CalendarDateTime(1980, 1, 2);
+		const d2 = new CalendarDateTime(1980, 1, 5);
+
+		const { calendar } = setupMulti({
+			value: [d1, d2]
+		});
+
+		const selectedDays = calendar.querySelectorAll("[data-selected]");
+		expect(selectedDays.length).toBe(2);
+		expect(selectedDays[0]).toHaveTextContent(String(d1.day));
+		expect(selectedDays[1]).toHaveTextContent(String(d2.day));
+	});
+
+	it("handles default value when `value` prop is provided - `ZonedDateTime[]`", async () => {
+		const d1 = toZoned(new CalendarDateTime(1980, 1, 2), "America/New_York");
+		const d2 = toZoned(new CalendarDateTime(1980, 1, 5), "America/New_York");
+
+		const { calendar } = setupMulti({
+			value: [d1, d2]
+		});
+
+		const selectedDays = calendar.querySelectorAll("[data-selected]");
+		expect(selectedDays.length).toBe(2);
+		expect(selectedDays[0]).toHaveTextContent(String(d1.day));
+		expect(selectedDays[1]).toHaveTextContent(String(d2.day));
+	});
+
+	it("sets placeholder to last value in `value` prop", async () => {
+		const d1 = new CalendarDate(1980, 1, 2);
+		const d2 = new CalendarDate(1980, 5, 5);
+
+		const { calendar, getByTestId } = setupMulti({
+			value: [d1, d2]
+		});
+
+		const selectedDays = calendar.querySelectorAll("[data-selected]");
+		expect(selectedDays.length).toBe(1);
+		expect(getByTestId("heading")).toHaveTextContent("May 1980");
+	});
+
+	it("allows deselection", async () => {
+		const d1 = new CalendarDate(1980, 1, 2);
+		const d2 = new CalendarDate(1980, 1, 5);
+
+		const { calendar, user } = setupMulti({
+			value: [d1, d2]
+		});
+		const selectedDays = calendar.querySelectorAll<HTMLElement>("[data-selected]");
+		expect(selectedDays.length).toBe(2);
+		await user.click(selectedDays[0]);
+		expect(calendar.querySelectorAll("[data-selected]").length).toBe(1);
+	});
+
+	it("prevents deselection when only one date is selected and `preventDeselect` is `true`", async () => {
+		const d1 = new CalendarDate(1980, 1, 2);
+
+		const { calendar, user } = setupMulti({
+			value: [d1],
+			preventDeselect: true
+		});
+		const selectedDays = calendar.querySelectorAll("[data-selected]");
+		expect(selectedDays.length).toBe(1);
+		await user.click(selectedDays[0]);
+		const selectedDays2 = calendar.querySelectorAll("[data-selected]");
+		expect(selectedDays2.length).toBe(1);
+		await user.click(selectedDays2[0]);
+		expect(calendar.querySelectorAll("[data-selected]").length).toBe(1);
+	});
+});
