@@ -1,0 +1,8 @@
+{
+  "mode": "pre",
+  "tag": "next",
+  "initialVersions": {
+    "bits-ui": "0.9.9"
+  },
+  "changesets": []
+}
