@@ -1,13 +1,17 @@
 <script lang="ts">
-	import { RangeCalendar } from "$lib";
+	import { RangeCalendar, type DateRange } from "$lib";
 	import { cn } from "@/utils";
 	import { CaretRight, CaretLeft } from "phosphor-svelte";
+	let value: DateRange | undefined = undefined;
 </script>
 
+<div>start: {value?.start}</div>
+<div>end: {value?.end}</div>
 <RangeCalendar.Root
 	class="mt-6 rounded-15px border border-dark-10 bg-background p-[22px] shadow-card"
 	let:months
 	let:weekdays
+	bind:value
 	weekdayFormat="short"
 >
 	<RangeCalendar.Header class="flex items-center justify-between">

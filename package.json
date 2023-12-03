@@ -33,7 +33,7 @@
 		"!dist/**/*.spec.*"
 	],
 	"devDependencies": {
-		"@changesets/cli": "^2.26.2",
+		"@changesets/cli": "^2.27.1",
 		"@huntabyte/mdsvex": "0.16.5",
 		"@melt-ui/pp": "^0.1.4",
 		"@playwright/test": "^1.28.1",
@@ -92,8 +92,8 @@
 	"type": "module",
 	"dependencies": {
 		"@internationalized/date": "^3.5.0",
-		"@melt-ui/svelte": "0.64.0",
-		"nanoid": "^5.0.3"
+		"@melt-ui/svelte": "0.64.1",
+		"nanoid": "^5.0.4"
 	},
 	"peerDependencies": {
 		"svelte": "^4.0.0"
