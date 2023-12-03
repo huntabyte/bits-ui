@@ -7,6 +7,7 @@ import type {
 	HTMLThAttributes
 } from "svelte/elements";
 import type * as I from "./_types.js";
+import type { CustomEventHandler } from "$lib";
 
 type Props<Multiple extends boolean = false> = I.Props<Multiple> &
 	Omit<HTMLDivAttributes, "placeholder">;
@@ -33,6 +34,26 @@ type CellProps = I.CellProps & HTMLTdAttributes;
 
 type DateProps = I.DateProps & HTMLDivAttributes;
 
+/**
+ * Events
+ */
+
+type ButtonEvents = {
+	click: CustomEventHandler<MouseEvent, HTMLButtonElement>;
+};
+
+type PrevButtonEvents = ButtonEvents;
+
+type NextButtonEvents = ButtonEvents;
+
+type DateEvents = {
+	click: CustomEventHandler<MouseEvent, HTMLDivElement>;
+};
+
+type Events = {
+	keydown: CustomEventHandler<KeyboardEvent, HTMLDivElement>;
+};
+
 export type {
 	Props,
 	PrevButtonProps,
@@ -58,5 +79,17 @@ export type {
 	GridBodyProps as CalendarGridBodyProps,
 	CellProps as CalendarCellProps,
 	GridRowProps as CalendarGridRowProps,
-	DateProps as CalendarDateProps
+	DateProps as CalendarDateProps,
+	//
+	// Events
+	//
+	Events,
+	PrevButtonEvents,
+	NextButtonEvents,
+	DateEvents,
+	//
+	Events as CalendarEvents,
+	PrevButtonEvents as CalendarPrevButtonEvents,
+	NextButtonEvents as CalendarNextButtonEvents,
+	DateEvents as CalendarDateEvents
 };

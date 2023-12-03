@@ -2,6 +2,7 @@
 	import { melt } from "@melt-ui/svelte";
 	import { getCtx, getAttrs } from "../ctx.js";
 	import type { SegmentProps } from "../types.js";
+	import { createDispatcher } from "$lib/internal/events.js";
 
 	type $$Props = SegmentProps;
 
@@ -24,6 +25,7 @@
 	}
 
 	const attrs = getAttrs("segment");
+	const dispatch = createDispatcher();
 
 	$: builder = type === "start" ? $startSegment(part) : $endSegment(part);
 
@@ -36,7 +38,14 @@
 {#if asChild}
 	<slot {...slotProps} />
 {:else}
-	<div use:melt={builder} {...$$restProps} {...attrs}>
+	<div
+		use:melt={builder}
+		{...$$restProps}
+		{...attrs}
+		on:m-click={dispatch}
+		on:m-focusout={dispatch}
+		on:m-keydown={dispatch}
+	>
 		<slot {...slotProps} />
 	</div>
 {/if}

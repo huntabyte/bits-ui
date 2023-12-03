@@ -1,38 +1,4 @@
 import type {
-	ArrowProps,
-	CheckboxItemProps,
-	RadioGroupProps,
-	RadioItemProps,
-	GroupProps,
-	SubContentProps,
-	SubTriggerProps,
-	ContextTriggerProps as TriggerProps,
-	ItemProps,
-	CheckboxIndicatorProps,
-	SeparatorProps,
-	SubProps,
-	LabelProps,
-	Props,
-	RadioIndicatorProps,
-	//
-	ContentEvents,
-	CheckboxItemEvents,
-	ItemEvents,
-	RadioItemEvents,
-	SubTriggerEvents,
-	ContextTriggerEvents as TriggerEvents,
-	SubContentEvents
-} from "$lib/bits/menu/index.js";
-import type { HTMLDivAttributes, Transition } from "$lib/internal";
-import type * as I from "./_types.js";
-
-type ContentProps<
-	T extends Transition = Transition,
-	In extends Transition = Transition,
-	Out extends Transition = Transition
-> = I.ContentProps<T, In, Out> & HTMLDivAttributes;
-
-export type {
 	Props,
 	SubProps,
 	ItemProps,
@@ -47,15 +13,27 @@ export type {
 	SubContentProps,
 	SubTriggerProps,
 	CheckboxItemProps,
-	CheckboxIndicatorProps,
 	RadioIndicatorProps,
+	CheckboxIndicatorProps,
 	//
+	// Events
+	//
+	ItemEvents,
+	TriggerEvents,
+	ContentEvents,
+	RadioItemEvents,
+	SubContentEvents,
+	SubTriggerEvents,
+	CheckboxItemEvents
+} from "./types.js";
+
+export type {
 	Props as ContextMenuProps,
 	SubProps as ContextMenuSubProps,
 	ItemProps as ContextMenuItemProps,
-	LabelProps as ContextMenuLabelProps,
 	ArrowProps as ContextMenuArrowProps,
 	GroupProps as ContextMenuGroupProps,
+	LabelProps as ContextMenuLabelProps,
 	ContentProps as ContextMenuContentProps,
 	TriggerProps as ContextMenuTriggerProps,
 	RadioItemProps as ContextMenuRadioItemProps,
@@ -64,15 +42,10 @@ export type {
 	SubContentProps as ContextMenuSubContentProps,
 	SubTriggerProps as ContextMenuSubTriggerProps,
 	CheckboxItemProps as ContextMenuCheckboxItemProps,
+	RadioIndicatorProps as ContextMenuRadioIndicatorProps,
 	CheckboxIndicatorProps as ContextMenuCheckboxIndicatorProps,
-	//,
-	ItemEvents,
-	TriggerEvents,
-	ContentEvents,
-	RadioItemEvents,
-	SubContentEvents,
-	SubTriggerEvents,
-	CheckboxItemEvents,
+	//
+	// Events
 	//
 	ItemEvents as ContextMenuItemEvents,
 	TriggerEvents as ContextMenuTriggerEvents,

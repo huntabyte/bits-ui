@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { getCtx, getCalendarAttrs } from "../ctx.js";
-	import type { DateProps } from "../types.js";
+	import type { DateEvents, DateProps } from "../types.js";
+	import { createDispatcher } from "$lib/internal/events.js";
 
 	type $$Props = DateProps;
+	type $$Events = DateEvents;
 
 	export let date: $$Props["date"];
 	export let month: $$Props["month"];
@@ -15,7 +17,9 @@
 	} = getCtx();
 
 	$: builder = $cell(date, month);
+
 	const attrs = getCalendarAttrs("date");
+	const dispatch = createDispatcher();
 
 	$: slotProps = {
 		builder,
@@ -29,7 +33,7 @@
 {#if asChild}
 	<slot {...slotProps} />
 {:else}
-	<div use:melt={builder} {...attrs} {...$$restProps}>
+	<div use:melt={builder} {...attrs} {...$$restProps} on:m-click={dispatch}>
 		<slot {...slotProps}>
 			{date.day}
 		</slot>

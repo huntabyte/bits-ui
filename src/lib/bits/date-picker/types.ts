@@ -11,7 +11,11 @@ import type {
 	HeaderProps,
 	HeadingProps,
 	NextButtonProps,
-	PrevButtonProps
+	PrevButtonProps,
+	CalendarEvents,
+	DateEvents,
+	PrevButtonEvents,
+	NextButtonEvents
 } from "../calendar/types.js";
 import type {
 	TriggerProps,
@@ -21,6 +25,7 @@ import type {
 	CloseEvents,
 	TriggerEvents
 } from "../popover/types.js";
+import type { SegmentEvents } from "../date-field/types.js";
 
 type Props = I.Props;
 type LabelProps = I.Props & HTMLSpanAttributes;
@@ -51,6 +56,14 @@ export type {
 	ContentProps,
 	ArrowProps,
 	CloseProps,
+	//
+	// Events
+	//
 	CloseEvents,
-	TriggerEvents
+	TriggerEvents,
+	CalendarEvents,
+	DateEvents,
+	PrevButtonEvents,
+	NextButtonEvents,
+	SegmentEvents
 };

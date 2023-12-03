@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { getCtx, getCalendarAttrs } from "../ctx.js";
-	import type { CalendarProps } from "../types.js";
+	import type { CalendarEvents, CalendarProps } from "../types.js";
+	import { createDispatcher } from "$lib/internal/events.js";
 
 	type $$Props = CalendarProps;
+	type $$Events = CalendarEvents;
 
 	export let asChild: $$Props["asChild"] = false;
 	export let id: $$Props["id"] = undefined;
@@ -19,7 +21,9 @@
 	}
 
 	$: builder = $calendar;
+
 	const attrs = getCalendarAttrs("root");
+	const dispatch = createDispatcher();
 
 	$: slotProps = {
 		builder,
@@ -32,7 +36,7 @@
 {#if asChild}
 	<slot {...slotProps} />
 {:else}
-	<div use:melt={builder} {...$$restProps} {...attrs}>
+	<div use:melt={builder} {...$$restProps} {...attrs} on:m-keydown={dispatch}>
 		<slot {...slotProps} />
 	</div>
 {/if}

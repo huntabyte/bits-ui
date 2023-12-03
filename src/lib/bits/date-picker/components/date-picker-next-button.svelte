@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { getCalendarAttrs, getCtx } from "../ctx.js";
-	import type { NextButtonProps } from "../types.js";
+	import type { NextButtonEvents, NextButtonProps } from "../types.js";
+	import { createDispatcher } from "$lib/internal/events.js";
 
 	type $$Props = NextButtonProps;
+	type $$Events = NextButtonEvents;
 
 	export let asChild: $$Props["asChild"] = false;
 
@@ -11,14 +13,27 @@
 		elements: { nextButton }
 	} = getCtx();
 
-	$: builder = $nextButton;
 	const attrs = getCalendarAttrs("next-button");
+	const dispatch = createDispatcher();
+
+	$: builder = $nextButton;
+
+	$: slotProps = {
+		builder,
+		attrs
+	};
 </script>
 
 {#if asChild}
-	<slot {builder} {attrs} />
+	<slot {...slotProps} />
 {:else}
-	<button use:melt={builder} type="button" {...$$restProps} {...attrs}>
-		<slot {builder} {attrs} />
+	<button
+		use:melt={builder}
+		type="button"
+		{...$$restProps}
+		{...attrs}
+		on:m-click={dispatch}
+	>
+		<slot {...slotProps} />
 	</button>
 {/if}

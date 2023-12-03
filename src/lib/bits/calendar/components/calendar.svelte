@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { createDispatcher } from "$lib/internal/events.js";
+
 	import { melt } from "@melt-ui/svelte";
 	import { setCtx, getAttrs } from "../ctx.js";
 	import type { Props } from "../types.js";
@@ -95,7 +97,9 @@
 	$: updateOption("numberOfMonths", numberOfMonths);
 
 	$: builder = $calendar;
+
 	const attrs = getAttrs("root");
+	const dispatch = createDispatcher();
 
 	$: slotProps = {
 		builder,
@@ -108,7 +112,7 @@
 {#if asChild}
 	<slot {...slotProps} />
 {:else}
-	<div use:melt={builder} {...$$restProps} {...attrs}>
+	<div use:melt={builder} {...$$restProps} {...attrs} on:m-keydown={dispatch}>
 		<slot {...slotProps} />
 	</div>
 {/if}
