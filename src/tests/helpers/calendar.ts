@@ -3,5 +3,5 @@ export function getSelectedDays(calendar: HTMLElement) {
 }
 
 export function getSelectedDay(calendar: HTMLElement) {
-	return calendar.querySelector<HTMLElement>("[data-selected]");
+	return calendar.querySelector<HTMLElement>("[data-selected]") as HTMLElement;
 }

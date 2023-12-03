@@ -7,6 +7,7 @@ import CalendarTest from "./CalendarTest.svelte";
 import type { Calendar } from "$lib";
 import { CalendarDate, CalendarDateTime, toZoned } from "@internationalized/date";
 import CalendarMultiTest from "./CalendarMultiTest.svelte";
+import { getSelectedDay, getSelectedDays } from "../helpers/calendar.js";
 
 const calendarDate = new CalendarDate(1980, 1, 20);
 const calendarDateTime = new CalendarDateTime(1980, 1, 20, 12, 30, 0, 0);
@@ -43,27 +44,21 @@ describe("Calendar", () => {
 	it("respects a default value if provided - `CalendarDate`", async () => {
 		const { calendar, getByTestId } = setup({ value: calendarDate });
 
-		const selectedDay = calendar.querySelector("[data-selected]");
-		expect(selectedDay).toHaveTextContent(String(calendarDate.day));
-
+		expect(getSelectedDay(calendar)).toHaveTextContent(String(calendarDate.day));
 		expect(getByTestId("heading")).toHaveTextContent("January 1980");
 	});
 
 	it("respects a default value if provided - `CalendarDateTime`", async () => {
 		const { calendar, getByTestId } = setup({ value: calendarDateTime });
 
-		const selectedDay = calendar.querySelector("[data-selected]");
-		expect(selectedDay).toHaveTextContent(String(calendarDateTime.day));
-
+		expect(getSelectedDay(calendar)).toHaveTextContent(String(calendarDateTime.day));
 		expect(getByTestId("heading")).toHaveTextContent("January 1980");
 	});
 
 	it("respects a default value if provided - `ZonedDateTime`", async () => {
 		const { calendar, getByTestId } = setup({ value: zonedDateTime });
 
-		const selectedDay = calendar.querySelector("[data-selected]");
-		expect(selectedDay).toHaveTextContent(String(zonedDateTime.day));
-
+		expect(getSelectedDay(calendar)).toHaveTextContent(String(zonedDateTime.day));
 		expect(getByTestId("heading")).toHaveTextContent("January 1980");
 	});
 
@@ -157,7 +152,7 @@ describe("Calendar", () => {
 		const value = getByTestId("value");
 		expect(value).toHaveTextContent("1980-01-20");
 
-		const selectedDay = calendar.querySelector("[data-selected]") as HTMLElement;
+		const selectedDay = getSelectedDay(calendar);
 		expect(selectedDay).toHaveTextContent(String(calendarDate.day));
 
 		await user.click(selectedDay);
@@ -172,7 +167,7 @@ describe("Calendar", () => {
 		const value = getByTestId("value");
 		expect(value).toHaveTextContent("1980-01-20");
 
-		const selectedDay = calendar.querySelector("[data-selected]") as HTMLElement;
+		const selectedDay = getSelectedDay(calendar);
 		expect(selectedDay).toHaveTextContent(String(calendarDate.day));
 		selectedDay.focus();
 		await user.keyboard(key);
@@ -209,7 +204,7 @@ describe("Calendar", () => {
 	it("displays multiple months when `numberOfMonths` is greater than 1", async () => {
 		const { getByTestId, calendar, user } = setup({ value: calendarDateTime, numberOfMonths: 2 });
 
-		const selectedDay = calendar.querySelector("[data-selected]") as HTMLElement;
+		const selectedDay = getSelectedDay(calendar);
 		expect(selectedDay).toHaveTextContent(String(calendarDateTime.day));
 
 		const heading = getByTestId("heading");
@@ -248,7 +243,7 @@ describe("Calendar", () => {
 			pagedNavigation: true
 		});
 
-		const selectedDay = calendar.querySelector("[data-selected]") as HTMLElement;
+		const selectedDay = getSelectedDay(calendar);
 		expect(selectedDay).toHaveTextContent(String(calendarDateTime.day));
 
 		const heading = getByTestId("heading");
@@ -308,14 +303,14 @@ describe("Calendar", () => {
 			value: calendarDate
 		});
 
-		const selectedDate = calendar.querySelector("[data-selected]") as HTMLElement;
+		const selectedDate = getSelectedDay(calendar);
 		expect(selectedDate).toHaveTextContent("20");
-		expect(calendar.querySelectorAll("[data-selected]").length).toBe(1);
+		expect(getSelectedDays(calendar).length).toBe(1);
 
 		const addDayBtn = getByTestId("add-day");
 		await user.click(addDayBtn);
-		expect(calendar.querySelector("[data-selected]")).toHaveTextContent("21");
-		expect(calendar.querySelectorAll("[data-selected]").length).toBe(1);
+		expect(getSelectedDay(calendar)).toHaveTextContent("21");
+		expect(getSelectedDays(calendar).length).toBe(1);
 	});
 
 	it("should change view when controlled placeholder changes", async () => {
@@ -569,7 +564,7 @@ describe("Calendar - `multiple`", () => {
 			value: [d1, d2]
 		});
 
-		const selectedDays = calendar.querySelectorAll("[data-selected]");
+		const selectedDays = getSelectedDays(calendar);
 		expect(selectedDays.length).toBe(2);
 		expect(selectedDays[0]).toHaveTextContent(String(d1.day));
 		expect(selectedDays[1]).toHaveTextContent(String(d2.day));
@@ -583,7 +578,7 @@ describe("Calendar - `multiple`", () => {
 			value: [d1, d2]
 		});
 
-		const selectedDays = calendar.querySelectorAll("[data-selected]");
+		const selectedDays = getSelectedDays(calendar);
 		expect(selectedDays.length).toBe(2);
 		expect(selectedDays[0]).toHaveTextContent(String(d1.day));
 		expect(selectedDays[1]).toHaveTextContent(String(d2.day));
@@ -597,7 +592,7 @@ describe("Calendar - `multiple`", () => {
 			value: [d1, d2]
 		});
 
-		const selectedDays = calendar.querySelectorAll("[data-selected]");
+		const selectedDays = getSelectedDays(calendar);
 		expect(selectedDays.length).toBe(2);
 		expect(selectedDays[0]).toHaveTextContent(String(d1.day));
 		expect(selectedDays[1]).toHaveTextContent(String(d2.day));
@@ -611,7 +606,7 @@ describe("Calendar - `multiple`", () => {
 			value: [d1, d2]
 		});
 
-		const selectedDays = calendar.querySelectorAll("[data-selected]");
+		const selectedDays = getSelectedDays(calendar);
 		expect(selectedDays.length).toBe(1);
 		expect(getByTestId("heading")).toHaveTextContent("May 1980");
 	});
@@ -623,10 +618,10 @@ describe("Calendar - `multiple`", () => {
 		const { calendar, user } = setupMulti({
 			value: [d1, d2]
 		});
-		const selectedDays = calendar.querySelectorAll<HTMLElement>("[data-selected]");
+		const selectedDays = getSelectedDays(calendar);
 		expect(selectedDays.length).toBe(2);
 		await user.click(selectedDays[0]);
-		expect(calendar.querySelectorAll("[data-selected]").length).toBe(1);
+		expect(getSelectedDays(calendar).length).toBe(1);
 	});
 
 	it("prevents deselection when only one date is selected and `preventDeselect` is `true`", async () => {
@@ -636,12 +631,11 @@ describe("Calendar - `multiple`", () => {
 			value: [d1],
 			preventDeselect: true
 		});
-		const selectedDays = calendar.querySelectorAll("[data-selected]");
-		expect(selectedDays.length).toBe(1);
+		const selectedDays = getSelectedDays(calendar);
 		await user.click(selectedDays[0]);
-		const selectedDays2 = calendar.querySelectorAll("[data-selected]");
+		const selectedDays2 = getSelectedDays(calendar);
 		expect(selectedDays2.length).toBe(1);
 		await user.click(selectedDays2[0]);
-		expect(calendar.querySelectorAll("[data-selected]").length).toBe(1);
+		expect(getSelectedDays(calendar).length).toBe(1);
 	});
 });
