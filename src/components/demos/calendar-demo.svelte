@@ -16,13 +16,13 @@
 >
 	<Calendar.Header class="flex items-center justify-between">
 		<Calendar.PrevButton
-			class="inline-flex items-center justify-center rounded-9px bg-background transition-all sq-10 hover:bg-muted active:scale-98"
+			class="inline-flex items-center justify-center rounded-9px bg-background sq-10 hover:bg-muted active:scale-98 active:transition-all"
 		>
 			<CaretLeft class="sq-6" />
 		</Calendar.PrevButton>
 		<Calendar.Heading class="text-[15px] font-medium" />
 		<Calendar.NextButton
-			class="inline-flex items-center justify-center rounded-9px bg-background transition-all sq-10 hover:bg-muted active:scale-98"
+			class="inline-flex items-center justify-center rounded-9px bg-background sq-10 hover:bg-muted active:scale-98 active:transition-all"
 		>
 			<CaretRight class="sq-6" />
 		</Calendar.NextButton>
