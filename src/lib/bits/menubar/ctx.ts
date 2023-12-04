@@ -9,9 +9,10 @@ import {
 } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
 import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
-import { getPositioningUpdater, type PositioningProps } from "../floating/helpers";
+import { getPositioningUpdater } from "../floating/helpers.js";
 import type { Writable } from "svelte/store";
-import type { FloatingConfig } from "../floating/floating-config";
+import type { FloatingConfig } from "../floating/floating-config.js";
+import type { FloatingProps } from "../floating/_types.js";
 import { getSubmenuCtx } from "../menu/ctx";
 
 const NAME = "menubar";
@@ -89,10 +90,10 @@ export function getSubMenuCtx() {
 const defaultPlacement = {
 	side: "bottom",
 	align: "center"
-} satisfies PositioningProps;
+} satisfies FloatingProps;
 
-export function updatePositioning(props: PositioningProps) {
-	const withDefaults = { ...defaultPlacement, ...props } satisfies PositioningProps;
+export function updatePositioning(props: FloatingProps) {
+	const withDefaults = { ...defaultPlacement, ...props } satisfies FloatingProps;
 	const {
 		options: { positioning }
 	} = getMenuCtx();
@@ -104,10 +105,10 @@ export function updatePositioning(props: PositioningProps) {
 const defaultSubPlacement = {
 	side: "right",
 	align: "start"
-} satisfies PositioningProps;
+} satisfies FloatingProps;
 
-export function updateSubPositioning(props: PositioningProps) {
-	const withDefaults = { ...defaultSubPlacement, ...props } satisfies PositioningProps;
+export function updateSubPositioning(props: FloatingProps) {
+	const withDefaults = { ...defaultSubPlacement, ...props } satisfies FloatingProps;
 	const {
 		options: { positioning }
 	} = getSubmenuCtx();

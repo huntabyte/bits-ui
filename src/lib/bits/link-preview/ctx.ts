@@ -5,7 +5,8 @@ import {
 	type LinkPreview as LinkPreviewReturn
 } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
-import { getPositioningUpdater, type PositioningProps } from "../floating/helpers.js";
+import { getPositioningUpdater } from "../floating/helpers.js";
+import type { FloatingProps } from "../floating/_types.js";
 import type { Writable } from "svelte/store";
 import type { FloatingConfig } from "../floating/floating-config.js";
 
@@ -41,10 +42,10 @@ export function setArrow(size = 8) {
 const defaultPlacement = {
 	side: "bottom",
 	align: "center"
-} satisfies PositioningProps;
+} satisfies FloatingProps;
 
-export function updatePositioning(props: PositioningProps) {
-	const withDefaults = { ...defaultPlacement, ...props } satisfies PositioningProps;
+export function updatePositioning(props: FloatingProps) {
+	const withDefaults = { ...defaultPlacement, ...props } satisfies FloatingProps;
 	const {
 		options: { positioning }
 	} = getCtx();

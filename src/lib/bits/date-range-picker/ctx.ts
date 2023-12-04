@@ -6,7 +6,8 @@ import { getAttrs as getCalendarAttrs } from "$lib/bits/calendar/ctx.js";
 import { getAttrs as getFieldAttrs } from "$lib/bits/date-field/ctx.js";
 import { getAttrs as getPopoverAttrs } from "$lib/bits/popover/ctx.js";
 import type { FloatingConfig } from "$lib/bits/floating/floating-config.js";
-import { getPositioningUpdater, type PositioningProps } from "$lib/bits/floating/helpers.js";
+import { getPositioningUpdater } from "$lib/bits/floating/helpers.js";
+import type { FloatingProps } from "$lib/bits/floating/_types.js";
 
 const NAME = "date-range-picker";
 
@@ -30,10 +31,10 @@ export function getCtx() {
 const defaultPlacement = {
 	side: "bottom",
 	align: "center"
-} satisfies PositioningProps;
+} satisfies FloatingProps;
 
-export function updatePositioning(props: PositioningProps) {
-	const withDefaults = { ...defaultPlacement, ...props } satisfies PositioningProps;
+export function updatePositioning(props: FloatingProps) {
+	const withDefaults = { ...defaultPlacement, ...props } satisfies FloatingProps;
 	const {
 		options: { positioning }
 	} = getCtx();

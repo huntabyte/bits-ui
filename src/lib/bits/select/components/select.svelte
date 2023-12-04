@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { derived } from "svelte/store";
 	import { setCtx } from "../ctx.js";
-	import type { SelectProps } from "../types.js";
+	import type { Props } from "../types.js";
 
 	type T = $$Generic<unknown>;
 	type Multiple = $$Generic<boolean>;
 
-	type $$Props = Omit<SelectProps<T, Multiple>, "multiple"> & {
+	type $$Props = Omit<Props<T, Multiple>, "multiple"> & {
 		items?: Items<T>;
 		multiple?: Multiple;
 	};

@@ -6,8 +6,9 @@ import {
 } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
 import type { Writable } from "svelte/store";
-import { getPositioningUpdater, type PositioningProps } from "../floating/helpers.js";
-import type { FloatingConfig } from "../floating/floating-config.js";
+import { getPositioningUpdater } from "$lib/bits/floating/helpers.js";
+import type { FloatingConfig } from "$lib/bits/floating/floating-config.js";
+import type { FloatingProps } from "$lib/bits/floating/_types.js";
 
 const NAME = "menu";
 
@@ -47,10 +48,10 @@ export function getCtx() {
 const defaultPlacement = {
 	side: "bottom",
 	align: "start"
-} satisfies PositioningProps;
+} satisfies FloatingProps;
 
-export function updatePositioning(props: PositioningProps) {
-	const withDefaults = { ...defaultPlacement, ...props } satisfies PositioningProps;
+export function updatePositioning(props: FloatingProps) {
+	const withDefaults = { ...defaultPlacement, ...props } satisfies FloatingProps;
 	const {
 		options: { positioning }
 	} = getCtx();

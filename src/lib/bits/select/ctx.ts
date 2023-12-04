@@ -6,9 +6,10 @@ import {
 	getOptionUpdater,
 	removeUndefined
 } from "$lib/internal/index.js";
-import { getPositioningUpdater, type PositioningProps } from "../floating/helpers";
+import { getPositioningUpdater } from "../floating/helpers.js";
 import type { Writable } from "svelte/store";
-import type { FloatingConfig } from "../floating/floating-config";
+import type { FloatingConfig } from "../floating/floating-config.js";
+import type { FloatingProps } from "../floating/_types.js";
 
 const NAME = "select";
 const GROUP_NAME = "select-group";
@@ -99,10 +100,10 @@ const defaultPlacement = {
 	side: "bottom",
 	align: "center",
 	sameWidth: true
-} satisfies PositioningProps;
+} satisfies FloatingProps;
 
-export function updatePositioning(props: PositioningProps) {
-	const withDefaults = { ...defaultPlacement, ...props } satisfies PositioningProps;
+export function updatePositioning(props: FloatingProps) {
+	const withDefaults = { ...defaultPlacement, ...props } satisfies FloatingProps;
 	const {
 		options: { positioning }
 	} = getCtx();
