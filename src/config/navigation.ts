@@ -44,6 +44,11 @@ export const navigation: Navigation = {
 					title: "Delegation",
 					href: "/docs/delegation",
 					items: []
+				},
+				{
+					title: "Styling",
+					href: "/docs/styling",
+					items: []
 				}
 			]
 		},
@@ -76,6 +81,11 @@ export const navigation: Navigation = {
 					items: []
 				},
 				{
+					title: "Calendar",
+					href: "/docs/components/calendar",
+					items: []
+				},
+				{
 					title: "Checkbox",
 					href: "/docs/components/checkbox",
 					items: []
@@ -88,6 +98,26 @@ export const navigation: Navigation = {
 				{
 					title: "Context Menu",
 					href: "/docs/components/context-menu",
+					items: []
+				},
+				{
+					title: "Date Field",
+					href: "/docs/components/date-field",
+					items: []
+				},
+				{
+					title: "Date Picker",
+					href: "/docs/components/date-picker",
+					items: []
+				},
+				{
+					title: "Date Range Field",
+					href: "/docs/components/date-range-field",
+					items: []
+				},
+				{
+					title: "Date Range Picker",
+					href: "/docs/components/date-range-picker",
 					items: []
 				},
 				{
@@ -128,6 +158,11 @@ export const navigation: Navigation = {
 				{
 					title: "Radio Group",
 					href: "/docs/components/radio-group",
+					items: []
+				},
+				{
+					title: "Range Calendar",
+					href: "/docs/components/range-calendar",
 					items: []
 				},
 				{

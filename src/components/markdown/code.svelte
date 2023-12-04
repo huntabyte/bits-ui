@@ -2,14 +2,13 @@
 	import { cn } from "@/utils";
 	let className: string | undefined | null = undefined;
 	export { className as class };
-	export let neutral = false;
 </script>
 
 <code
 	class={cn(
-		"relative rounded !px-[0.25rem] !py-[0.15rem] font-mono !text-[13px]",
-		neutral ? "!bg-muted" : "!bg-secondary",
-		className
+		"relative inline-flex h-[27px] items-center justify-center rounded-button bg-muted px-[8px] font-mono text-xs font-medium tracking-tighter text-foreground/60 sm:text-sm",
+		className,
+		"custom"
 	)}
 >
 	<slot />

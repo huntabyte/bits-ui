@@ -1,6 +1,6 @@
 ---
 title: Slider
-description: Enable users to select a value within a specific range with sliding handles.
+description: Allows users to select a value from a continuous range by sliding a handle.
 ---
 
 <script>
@@ -27,5 +27,7 @@ description: Enable users to select a value within a specific range with sliding
 	<Slider.Input />
 </Slider.Root>
 ```
+
+<APISection {schemas} />
 
 🚧 **UNDER CONSTRUCTION** 🚧

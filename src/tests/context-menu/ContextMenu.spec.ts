@@ -76,13 +76,13 @@ describe("Context Menu", () => {
 
 		for (const part of parts) {
 			const el = screen.getByTestId(part);
-			expect(el).toHaveAttribute(`data-bits-context-menu-${part}`);
+			expect(el).toHaveAttribute(`data-menu-${part}`);
 		}
 
 		await user.click(getByTestId("sub-trigger"));
 
 		const subContent = getByTestId("sub-content");
-		expect(subContent).toHaveAttribute(`data-bits-context-menu-sub-content`);
+		expect(subContent).toHaveAttribute(`data-menu-sub-content`);
 	});
 
 	it("Opens when right-clicked & respects binding", async () => {

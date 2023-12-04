@@ -1,14 +1,5 @@
-import Root from "./components/Switch.svelte";
-import Thumb from "./components/SwitchThumb.svelte";
-import Input from "./components/SwitchInput.svelte";
+export { default as Root } from "./components/switch.svelte";
+export { default as Thumb } from "./components/switch-thumb.svelte";
+export { default as Input } from "./components/switch-input.svelte";
 
-export {
-	Root,
-	Thumb,
-	Input,
-	//
-	Root as Switch,
-	Thumb as SwitchThumb,
-	Input as SwitchInput
-};
 export * from "./types.js";

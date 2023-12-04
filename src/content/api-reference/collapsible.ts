@@ -1,76 +1,100 @@
-import type { APISchema } from "@/types";
-import { asChild } from "./helpers";
+import type { APISchema, PropObj } from "@/types";
+import { asChild, enums, transitionProps } from "@/content/api-reference/helpers.js";
+import type * as Collapsible from "$lib/bits/collapsible/_types";
+import * as C from "@/content/constants";
+import { builderAndAttrsSlotProps } from "./helpers";
 
-export const root: APISchema = {
+export const root: APISchema<Collapsible.Props> = {
 	title: "Root",
 	description: "The root collapsible container which manages the state of the collapsible.",
-	props: [
-		{
-			name: "disabled",
-			default: "false",
-			type: "boolean",
+	props: {
+		disabled: {
+			default: C.FALSE,
+			type: C.BOOLEAN,
 			description:
 				"Whether or not the collapsible is disabled. This prevents the user from interacting with it."
 		},
-		{
-			name: "open",
-			default: "false",
-			type: "boolean",
+		open: {
+			default: C.FALSE,
+			type: C.BOOLEAN,
 			description:
 				"The open state of the collapsible. The content will be visible when this is true, and hidden when it's false."
 		},
-		{
-			name: "onOpenChange",
-			type: "(open: boolean) => void",
+		onOpenChange: {
+			type: {
+				type: C.FUNCTION,
+				definition: "(open: boolean) => void"
+			},
 			description: "A callback that is fired when the collapsible's open state changes."
-		}
-	],
+		},
+		asChild
+	},
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "disabled",
-			description: "Present when the checkbox is disabled.",
-			value: "''"
+			description: "Present when the checkbox is disabled."
 		},
 		{
 			name: "state",
-			value: "'open' | 'closed'",
-			description: "The collapsible's open state."
+			value: enums("open", "closed"),
+			description: "The collapsible's open state.",
+			isEnum: true
+		},
+		{
+			name: "collapsible-root",
+			description: "Present on the root element."
 		}
 	]
 };
 
-export const trigger: APISchema = {
+export const trigger: APISchema<Collapsible.TriggerProps> = {
 	title: "Trigger",
 	description: "The button responsible for toggling the collapsible's open state.",
-	props: [asChild],
+	props: { asChild },
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "disabled",
-			description: "Present when the checkbox is disabled.",
-			value: "''"
+			description: "Present when the checkbox is disabled."
 		},
 		{
 			name: "state",
-			value: "'open' | 'closed'",
-			description: "The collapsible's open state."
+			value: enums("open", "closed"),
+			description: "The collapsible's open state.",
+			isEnum: true
+		},
+		{
+			name: "collapsible-trigger",
+			description: "Present on the trigger element."
 		}
 	]
 };
 
-export const content: APISchema = {
+const contentProps = {
+	...transitionProps,
+	asChild
+} satisfies PropObj<Collapsible.ContentProps>;
+
+export const content: APISchema<Collapsible.ContentProps> = {
 	title: "Content",
 	description: "The content displayed when the collapsible is open.",
-	props: [asChild],
+	props: contentProps,
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "disabled",
-			description: "Present when the checkbox is disabled.",
-			value: "''"
+			description: "Present when the checkbox is disabled."
 		},
 		{
 			name: "state",
-			value: "'open' | 'closed'",
-			description: "The collapsible's open state."
+			value: enums("open", "closed"),
+			description: "The collapsible's open state.",
+			isEnum: true
+		},
+		{
+			name: "collapsible-content",
+			description: "Present on the content element."
 		}
 	]
 };

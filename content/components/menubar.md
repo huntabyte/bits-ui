@@ -1,6 +1,6 @@
 ---
 title: Menubar
-description: Displays a list of menus that can be used to control the application.
+description: Organizes and presents a collection of menu options or actions within a horizontal bar.
 ---
 
 <script>

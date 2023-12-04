@@ -1,6 +1,6 @@
 ---
 title: Toggle
-description: An interactive component that toggles between two states.
+description: Groups multiple toggle controls, allowing users to enable one or multiple options.
 ---
 
 <script>
@@ -26,5 +26,7 @@ description: An interactive component that toggles between two states.
 	<Toggle.Input />
 </Toggle.Root>
 ```
+
+<APISection {schemas} />
 
 🚧 **UNDER CONSTRUCTION** 🚧

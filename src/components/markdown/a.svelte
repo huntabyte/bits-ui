@@ -10,12 +10,6 @@
 	$: target = !internal ? "_blank" : undefined;
 </script>
 
-<a
-	{href}
-	{target}
-	{rel}
-	class={cn("inline-flex items-center gap-1 font-medium underline underline-offset-4", className)}
-	{...$$restProps}
->
+<a {href} {target} {rel} class={cn("link", className)} {...$$restProps}>
 	<slot />
 </a>

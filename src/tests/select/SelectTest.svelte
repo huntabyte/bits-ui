@@ -42,7 +42,10 @@
 	<button data-testid="open-binding" on:click={() => (open = !open)}>
 		{open}
 	</button>
-	<button data-testid="selected-binding" on:click={() => (selected = undefined)}>
+	<button
+		data-testid="selected-binding"
+		on:click={() => (selected = undefined)}
+	>
 		{#if selected === undefined}
 			undefined
 		{:else}

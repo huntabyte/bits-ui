@@ -1,8 +1,2 @@
-import Root from "./components/AspectRatio.svelte";
-
-export {
-	Root,
-	//
-	Root as AspectRatio
-};
+export { default as Root } from "./components/aspect-ratio.svelte";
 export * from "./types.js";

@@ -25,7 +25,7 @@ describe("Toggle", () => {
 
 	it("has bits data attrs", async () => {
 		const { root } = setup();
-		expect(root).toHaveAttribute("data-bits-toggle-root");
+		expect(root).toHaveAttribute("data-toggle-root");
 	});
 
 	it("toggles when clicked", async () => {

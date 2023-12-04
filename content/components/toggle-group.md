@@ -1,6 +1,6 @@
 ---
 title: Toggle Group
-description: An interactive component that toggles between two states.
+description: A control element that switches between two states, providing a binary choice.
 ---
 
 <script>
@@ -26,5 +26,7 @@ description: An interactive component that toggles between two states.
 	<ToggleGroup.Item value="italic">italic</ToggleGroup.Item>
 </ToggleGroup.Root>
 ```
+
+<APISection {schemas} />
 
 🚧 **UNDER CONSTRUCTION** 🚧

@@ -1,40 +1,35 @@
 <script lang="ts">
-	import { Button } from "@/components/ui/button";
-	import { Xcom, GitHub } from "@/components/icons";
+	import { Button } from "$lib";
 	import { LightSwitch, MobileNav } from "@/components";
 	import { siteConfig } from "@/config";
+	import { Logo } from "@/components/icons";
 </script>
 
-<header class="bg-background/75 backdrop-blur border-b border-border -mb-px sticky top-0 z-50">
-	<div class="container">
-		<div class="flex items-center justify-between gap-3 h-16">
+<header
+	class="sticky top-0 z-50 overflow-x-hidden border-b border-border bg-background/75 backdrop-blur"
+>
+	<div class="container px-4">
+		<div class="flex h-[70px] items-center justify-between gap-3">
 			<div class="flex items-center gap-1.5">
 				<MobileNav />
-				<a href="/" class="font-bold tracking-tight text-2xl underline underline-offset-4">bits</a>
+				<a
+					href="/"
+					class="ml-2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+				>
+					<Logo />
+				</a>
 			</div>
-			<div class="items-center justify-end gap-1.5">
-				<Button
+			<div class="flex items-center justify-end gap-3">
+				<Button.Root
 					href={siteConfig.links.github}
 					target="_blank"
 					rel="noopener noreferrer"
-					size="icon"
-					variant="ghost"
-					aria-label="View the github repo for this package."
-					class=""
+					class="inline-flex h-10 items-center
+					justify-center whitespace-nowrap rounded-[9px] bg-muted px-4
+					text-sm font-semibold text-foreground shadow-mini ring-offset-background transition-colors hover:bg-muted/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
 				>
-					<GitHub class="sq-5" />
-				</Button>
-				<Button
-					href={siteConfig.links.twitter}
-					target="_blank"
-					rel="noopener noreferrer"
-					size="icon"
-					variant="ghost"
-					aria-label="X, formerly known as Twitter."
-					class=""
-				>
-					<Xcom class="sq-5" />
-				</Button>
+					Report an issue
+				</Button.Root>
 				<LightSwitch />
 			</div>
 		</div>

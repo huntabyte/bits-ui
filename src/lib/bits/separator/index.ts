@@ -1,5 +1,3 @@
-import Root from "./components/Separator.svelte";
-
-export { Root, Root as Separator };
+export { default as Root } from "./components/separator.svelte";
 
 export * from "./types.js";

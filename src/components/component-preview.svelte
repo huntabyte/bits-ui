@@ -1,47 +1,103 @@
 <script lang="ts">
-	import { dev } from "$app/environment";
-	import PreviewSwitch from "./preview-switch.svelte";
+	import { Tabs } from "$lib";
 	import { cn } from "@/utils";
+	import { buttonVariants } from "./ui/button";
+	import { crossfade } from "svelte/transition";
+	import { cubicInOut } from "svelte/easing";
 	let className: string;
 	export let align: "center" | "start" | "end" = "center";
 	export { className as class };
 
-	let showCode = false;
+	const [send, receive] = crossfade({
+		duration: 250,
+		easing: cubicInOut
+	});
 </script>
 
-{#if dev}
-	<div
-		class={cn("group relative my-4 flex flex-col space-y-2", className)}
-		{...$$restProps}
-		data-preview
-	>
-		<div class="relative mr-auto w-full">
-			<div class="absolute rounded-none bg-transparent p-0 z-20 top-5 right-4">
-				<PreviewSwitch bind:checked={showCode} />
-			</div>
-			{#if showCode}
-				<div>
-					<div class="w-full rounded-md ![&_pre]:mt-0 [&_pre]:max-h-[350px] [&_pre]:overflow-auto">
-						<slot />
-					</div>
-				</div>
-			{:else}
-				<div class="relative rounded-md bg-secondary border border-border">
+<div
+	class={cn("group relative mb-4 mt-10 flex flex-col space-y-2", className)}
+	{...$$restProps}
+	data-preview
+>
+	<Tabs.Root class="relative mr-auto w-full" let:value>
+		<Tabs.List
+			class="absolute right-2.5 top-2.5 z-20 flex h-input-sm items-center justify-center rounded-card-sm bg-neutral-200 px-[5px] shadow-mini-inset dark:bg-neutral-800 "
+		>
+			<Tabs.Trigger
+				value="preview"
+				class={cn(
+					buttonVariants(),
+					value === "preview"
+						? "font-semibold shadow-mini hover:bg-opacity-90"
+						: "shadow-none transition-all hover:text-foreground-alt",
+					"relative bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+				)}
+			>
+				<span class="z-20"> Preview </span>
+				{#if value === "preview"}
 					<div
-						class={cn(
-							"preview flex min-h-[350px] w-full justify-center p-12",
-							{
-								"items-center": align === "center",
-								"items-start": align === "start",
-								"items-end": align === "end"
-							},
-							className
-						)}
-					>
-						<slot name="preview" />
-					</div>
-				</div>
-			{/if}
-		</div>
-	</div>
-{/if}
+						class="absolute left-0 top-0 h-8 w-full rounded-[7px] bg-background"
+						in:send={{ key: "active" }}
+						out:receive={{ key: "active" }}
+					/>
+				{/if}
+			</Tabs.Trigger>
+			<Tabs.Trigger
+				value="code"
+				class={cn(
+					buttonVariants(),
+					value === "code"
+						? "bg-transparent font-semibold shadow-mini hover:bg-opacity-90"
+						: "bg-transparent shadow-none transition-all hover:text-foreground-alt",
+					"relative focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+				)}
+			>
+				<span class="z-20"> &lt;Code&gt; </span>
+				{#if value === "code"}
+					<div
+						class="absolute left-0 top-0 h-8 w-full rounded-[7px] bg-background"
+						in:send={{ key: "active" }}
+						out:receive={{ key: "active" }}
+					/>
+				{/if}
+			</Tabs.Trigger>
+		</Tabs.List>
+		<Tabs.Content value="code" class="!ring-transparent">
+			<div
+				class="![&_pre]:mt-0 ![&_pre]:rounded-card w-full [&_pre]:max-h-[443px] [&_pre]:min-h-[443px] [&_pre]:overflow-auto"
+			>
+				<slot />
+			</div>
+		</Tabs.Content>
+		<Tabs.Content
+			value="preview"
+			class="relative rounded-card border-2 border-muted bg-zinc-50 !ring-transparent dark:bg-[#1f1f21]"
+		>
+			<div
+				class={cn(
+					"preview flex min-h-[443px] w-full justify-center p-12",
+					{
+						"items-center": align === "center",
+						"items-start": align === "start",
+						"items-end": align === "end"
+					},
+					className
+				)}
+			>
+				<slot name="preview" />
+			</div>
+		</Tabs.Content>
+	</Tabs.Root>
+</div>
+
+<style lang="postcss">
+	.activeTheme {
+		background: var(--grayA5);
+		border-radius: 9999px;
+		height: 32px;
+		width: 100%;
+		top: 0;
+		position: absolute;
+		left: 0;
+	}
+</style>

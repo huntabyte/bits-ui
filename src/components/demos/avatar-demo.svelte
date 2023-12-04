@@ -1,8 +1,10 @@
 <script lang="ts">
-	import * as Avatar from "@/components/ui/avatar";
+	import { Avatar } from "$lib";
 </script>
 
-<Avatar.Root>
-	<Avatar.Image src="https://github.com/huntabyte.png" alt="@huntabyte" />
+<Avatar.Root
+	class="flex h-12 w-12 items-center justify-center rounded-full bg-muted text-[17px] font-medium uppercase text-muted-foreground"
+>
+	<Avatar.Image src="/avatar-1.png" alt="@huntabyte" />
 	<Avatar.Fallback>HB</Avatar.Fallback>
 </Avatar.Root>

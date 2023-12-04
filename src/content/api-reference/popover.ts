@@ -1,98 +1,132 @@
 import type { APISchema } from "@/types/index.js";
-import { asChild } from "./helpers.js";
+import type * as Popover from "$lib/bits/popover/_types.js";
+import { focusProp } from "./extended-types/index.js";
+import { floatingPositioning } from "./floating.js";
+import {
+	portalProp,
+	transitionProps,
+	arrowProps,
+	asChild,
+	enums,
+	idsSlotProp
+} from "@/content/api-reference/helpers.js";
+import * as C from "@/content/constants.js";
+import { builderAndAttrsSlotProps } from "./helpers";
 
-export const root: APISchema = {
+export const root: APISchema<Popover.Props> = {
 	title: "Root",
 	description: "The root component used to manage the state of the state of the popover.",
-	props: [
-		asChild,
-		{
-			name: "disableFocusTrap",
-			type: "boolean",
-			default: "false",
+	props: {
+		disableFocusTrap: {
+			type: C.BOOLEAN,
+			default: C.FALSE,
 			description:
 				"Whether or not to disable the focus trap that is applied to the popover when it's open."
 		},
-		{
-			name: "preventScroll",
-			type: "boolean",
-			default: "false",
+		preventScroll: {
+			type: C.BOOLEAN,
+			default: C.FALSE,
 			description: "Whether or not to prevent scrolling the body while the popover is open."
 		},
-		{
-			name: "positioning",
-			type: "FloatingConfig",
-			default: '{ position: "bottom", align: "center" }',
-			description: "The positioning configuration for the popover. (docs coming soon)"
-		},
-		{
-			name: "closeOnOutsideClick",
-			type: "boolean",
-			default: "true",
+		closeOnOutsideClick: {
+			type: C.BOOLEAN,
+			default: C.TRUE,
 			description: "Whether or not to close the popover when clicking outside of it."
 		},
-		{
-			name: "closeOnEscape",
-			type: "boolean",
-			default: "true",
+		closeOnEscape: {
+			type: C.BOOLEAN,
+			default: C.TRUE,
 			description: "Whether or not to close the popover when pressing the escape key."
 		},
-		{
-			name: "open",
-			type: "boolean",
-			default: "false",
+		open: {
+			type: C.BOOLEAN,
+			default: C.FALSE,
 			description: "The open state of the link popover component."
 		},
-		{
-			name: "onOpenChange",
-			type: "(open: boolean) => void",
+		onOpenChange: {
+			type: {
+				type: C.FUNCTION,
+				definition: "(open: boolean) => void"
+			},
 			description: "A callback that fires when the open state changes."
-		}
-	]
+		},
+		openFocus: {
+			type: focusProp,
+			description: "Override the focus when the popover is opened."
+		},
+		closeFocus: {
+			type: focusProp,
+			description: "Override the focus when the popover is closed."
+		},
+		portal: { ...portalProp("popover") }
+	},
+	slotProps: { ids: idsSlotProp }
 };
 
-export const trigger: APISchema = {
+export const trigger: APISchema<Popover.TriggerProps> = {
 	title: "Trigger",
 	description: "A component which toggles the opening and closing of the popover on press.",
-	props: [asChild],
+	props: { asChild },
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "state",
-			value: "'open' | 'closed'",
-			description: "The open state of the link preview."
+			value: enums("open", "closed"),
+			description: "The open state of the link preview.",
+			isEnum: true
+		},
+		{
+			name: "popover-trigger",
+			description: "Present on the trigger element."
 		}
 	]
 };
 
-export const content: APISchema = {
+export const content: APISchema<Popover.ContentProps> = {
 	title: "Content",
 	description: "The contents of the popover which are displayed when the popover is open.",
-	props: [asChild]
+	props: { ...transitionProps, ...floatingPositioning, asChild },
+	slotProps: { ...builderAndAttrsSlotProps },
+	dataAttributes: [
+		{
+			name: "state",
+			value: enums("open", "closed"),
+			description: "The open state of the popover.",
+			isEnum: true
+		},
+		{
+			name: "popover-content",
+			description: "Present on the content element."
+		}
+	]
 };
 
-export const close: APISchema = {
+export const close: APISchema<Popover.CloseProps> = {
 	title: "Close",
 	description:
 		"A button which closes the popover when pressed and is typically placed in the content.",
-	props: [asChild]
+	props: { asChild },
+	slotProps: { ...builderAndAttrsSlotProps },
+	dataAttributes: [
+		{
+			name: "popover-close",
+			description: "Present on the close button."
+		}
+	]
 };
 
-export const arrow: APISchema = {
+export const arrow: APISchema<Popover.ArrowProps> = {
 	title: "Arrow",
 	description: "An optional arrow element which points to the trigger when the popover is open.",
-	props: [
-		asChild,
-		{
-			name: "size",
-			type: "number",
-			default: "8",
-			description: "The height and width of the arrow in pixels."
-		}
-	],
+	props: arrowProps,
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "arrow",
-			value: "",
+			description: "Present on the arrow element."
+		},
+		{
+			name: "popover-arrow",
 			description: "Present on the arrow element."
 		}
 	]

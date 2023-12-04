@@ -13,11 +13,13 @@
 			href="https://github.com/sveltejs"
 			target="_blank"
 			rel="noreferrer noopener"
-			class="hover:underline underline-offset-4 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-8 focus-visible:outline-black"
+			class="rounded-sm underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-8 focus-visible:outline-black"
 		>
 			@sveltejs
 		</LinkPreview.Trigger>
-		<LinkPreview.Content data-testid="content" class="w-80">Content</LinkPreview.Content>
+		<LinkPreview.Content data-testid="content" class="w-80"
+			>Content</LinkPreview.Content
+		>
 	</LinkPreview.Root>
 	<button data-testid="binding" on:click={() => (open = !open)}>{open}</button>
 	<div data-testid="outside">outside</div>

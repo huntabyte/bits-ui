@@ -56,8 +56,8 @@ describe("Radio Group", () => {
 		const root = getByTestId("root");
 		const item = getByTestId(testItems[0].value + "-item");
 
-		expect(root).toHaveAttribute("data-bits-radio-group-root");
-		expect(item).toHaveAttribute("data-bits-radio-group-item");
+		expect(root).toHaveAttribute("data-radio-group-root");
+		expect(item).toHaveAttribute("data-radio-group-item");
 	});
 
 	it("changes the value when an item is clicked", async () => {

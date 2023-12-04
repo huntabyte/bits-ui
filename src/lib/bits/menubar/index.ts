@@ -1,56 +1,18 @@
-import Root from "./components/Menubar.svelte";
-import Sub from "./components/MenubarSub.svelte";
-import Item from "./components/MenubarItem.svelte";
-import Menu from "./components/MenubarMenu.svelte";
-import Group from "./components/MenubarGroup.svelte";
-import Label from "./components/MenubarLabel.svelte";
-import Arrow from "./components/MenubarArrow.svelte";
-import Content from "./components/MenubarContent.svelte";
-import Trigger from "./components/MenubarTrigger.svelte";
-import RadioItem from "./components/MenubarRadioItem.svelte";
-import Separator from "./components/MenubarSeparator.svelte";
-import SubContent from "./components/MenubarSubContent.svelte";
-import SubTrigger from "./components/MenubarSubTrigger.svelte";
-import RadioGroup from "./components/MenubarRadioGroup.svelte";
-import CheckboxItem from "./components/MenubarCheckboxItem.svelte";
-import RadioIndicator from "./components/MenubarRadioIndicator.svelte";
-import CheckboxIndicator from "./components/MenubarCheckboxIndicator.svelte";
-
-export {
-	Sub,
-	Root,
-	Group,
-	Item,
-	Menu,
-	Label,
-	Arrow,
-	Content,
-	Trigger,
-	RadioItem,
-	Separator,
-	SubTrigger,
-	SubContent,
-	RadioGroup,
-	CheckboxItem,
-	RadioIndicator,
-	CheckboxIndicator,
-	//
-	Root as Menubar,
-	Sub as MenubarSub,
-	Item as MenubarItem,
-	Menu as MenubarMenu,
-	Group as MenubarGroup,
-	Label as MenubarLabel,
-	Arrow as MenubarArrow,
-	Content as MenubarContent,
-	Trigger as MenubarTrigger,
-	RadioItem as MenubarRadioItem,
-	Separator as MenubarSeparator,
-	SubContent as MenubarSubContent,
-	SubTrigger as MenubarSubTrigger,
-	RadioGroup as MenubarRadioGroup,
-	CheckboxItem as MenubarCheckboxItem,
-	RadioIndicator as MenubarRadioIndicator,
-	CheckboxIndicator as MenubarCheckboxIndicator
-};
+export { default as Root } from "./components/menubar.svelte";
+export { default as Sub } from "./components/menubar-sub.svelte";
+export { default as Menu } from "./components/menubar-menu.svelte";
+export { default as Trigger } from "./components/menubar-trigger.svelte";
+export { default as Item } from "$lib/bits/menu/components/menu-item.svelte";
+export { default as Group } from "$lib/bits/menu/components/menu-group.svelte";
+export { default as Label } from "$lib/bits/menu/components/menu-label.svelte";
+export { default as Arrow } from "$lib/bits/menu/components/menu-arrow.svelte";
+export { default as Content } from "$lib/bits/menu/components/menu-content.svelte";
+export { default as RadioItem } from "$lib/bits/menu/components/menu-radio-item.svelte";
+export { default as Separator } from "$lib/bits/menu/components/menu-separator.svelte";
+export { default as SubContent } from "$lib/bits/menu/components/menu-sub-content.svelte";
+export { default as SubTrigger } from "$lib/bits/menu/components/menu-sub-trigger.svelte";
+export { default as RadioGroup } from "$lib/bits/menu/components/menu-radio-group.svelte";
+export { default as CheckboxItem } from "$lib/bits/menu/components/menu-checkbox-item.svelte";
+export { default as RadioIndicator } from "$lib/bits/menu/components/menu-radio-indicator.svelte";
+export { default as CheckboxIndicator } from "$lib/bits/menu/components/menu-checkbox-indicator.svelte";
 export * from "./types.js";

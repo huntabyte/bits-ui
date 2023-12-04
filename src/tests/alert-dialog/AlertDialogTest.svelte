@@ -12,14 +12,16 @@
 		<AlertDialog.Portal data-testid="portal">
 			<AlertDialog.Overlay
 				data-testid="overlay"
-				class="fixed inset-0 bg-black w-[100vw] h-[100vh]"
+				class="fixed inset-0 h-[100vh] w-[100vw] bg-black"
 			/>
 			<AlertDialog.Content
 				data-testid="content"
-				class="fixed top-[50%] left-[50%] tranlate-x-[50%] translate-y-[50%] bg-white p-1"
+				class="tranlate-x-[50%] fixed left-[50%] top-[50%] translate-y-[50%] bg-white p-1"
 			>
 				<AlertDialog.Title data-testid="title">title</AlertDialog.Title>
-				<AlertDialog.Description data-testid="description">description</AlertDialog.Description>
+				<AlertDialog.Description data-testid="description"
+					>description</AlertDialog.Description
+				>
 				<AlertDialog.Cancel data-testid="cancel">cancel</AlertDialog.Cancel>
 				<AlertDialog.Action data-testid="action">action</AlertDialog.Action>
 			</AlertDialog.Content>

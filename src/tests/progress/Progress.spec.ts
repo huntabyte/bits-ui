@@ -21,7 +21,7 @@ describe("Progress", () => {
 
 	it("has bits data attrs", async () => {
 		const { root } = setup();
-		expect(root).toHaveAttribute("data-bits-progress-root");
+		expect(root).toHaveAttribute("data-progress-root");
 	});
 
 	it("respects the value prop", async () => {

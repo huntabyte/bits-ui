@@ -3,15 +3,15 @@ title: Introduction
 description: A collection of headless components for Svelte, built with Melt UI builders.
 ---
 
-Bits are headless component primitives that provide a simple interface for composing your own components. They have been thoughtfully designed to prioritize simplicity, customizability, and compatibility with any styling or UI framework you choose to work with.
+Bits UI is a collection of headless component primitives that enable you to build your own custom components. They have been thoughtfully designed to prioritize simplicity without compromising customizability.
 
-Under the hood, these components are powered by [Melt UI](https://melt-ui.com), which provides an even lower-level builder API for creating headless components. Bits take that API and wrap it in a more familiar component interface which allows us to handle some quality of life improvements for you.
-
-While our goal has been to keep the APIs as close to Melt's as possible, there are some slight differences, so be sure to check out the documentation for the Bit you're interested in to understand how it works.
+Under the hood, most of these components are powered by [Melt UI](https://melt-ui.com), which provides an even lower-level builder API for creating headless components. We take that API and wrap it in a more familiar component interface, which allows us to handle some quality of life improvements for you.
 
 ## Credits
 
+- [Bitworks](https://bitworks.cz) - The design team behind the Bits UI documentation and example components.
 - [Melt UI](https://melt-ui.com) - The underlying builder API that powers Bits.
-- [Radix UI](https://radix-ui.com) - The de-facto standard for headless APIs that we've strived to follow.
+- [Radix UI](https://radix-ui.com) - The incredible headless component APIs that we've taken heavy inspiration from.
+- [React Spectrum](https://react-spectrum.adobe.com) - An incredible collection of headless components we've taken inspiration from.
 
 🚧 **UNDER CONSTRUCTION** 🚧

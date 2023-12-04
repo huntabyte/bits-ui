@@ -1,6 +1,5 @@
 import type { Action } from "svelte/action";
 import type { HTMLAttributes } from "svelte/elements";
-import type { Writable } from "svelte/store";
 import type { TransitionConfig } from "svelte/transition";
 import type { CreateDispatcher } from ".";
 
@@ -18,6 +17,21 @@ export type OmitValue<T> = Omit<T, "value" | "defaultValue" | "onValueChange">;
 export type OmitChecked<T> = Omit<T, "checked" | "defaultChecked" | "onCheckedChange">;
 export type OmitPressed<T> = Omit<T, "pressed" | "defaultPressed" | "onPressedChange">;
 export type OmitForceVisible<T> = Omit<T, "forceVisible">;
+export type OmitIds<T> = Omit<T, "ids">;
+export type OmitDates<T> = Omit<
+	T,
+	| "value"
+	| "defaultValue"
+	| "placeholder"
+	| "defaultPlaceholder"
+	| "onPlaceholderChange"
+	| "onValueChange"
+	| "ids"
+>;
+
+export type OmitFloating<T> = OmitOpen<
+	Omit<T, "forceVisible" | "ids" | "arrowSize" | "positioning">
+>;
 
 export type OnChangeFn<T> = (value: T) => void;
 
@@ -50,6 +64,12 @@ export type KeydownClickEvents = {
 };
 
 export type AsChild = Expand<{
+	/**
+	 * Whether to delegate rendering the element to your own
+	 * custom element.
+	 *
+	 * @see https://www.bits-ui.com/docs/delegation
+	 */
 	asChild?: boolean;
 }>;
 
@@ -58,28 +78,40 @@ export type TransitionProps<
 	In extends Transition = Transition,
 	Out extends Transition = Transition
 > = Expand<{
+	/**
+	 * A transition function to use during both the in and out transitions.
+	 */
 	transition?: T;
+
+	/**
+	 * The configuration to pass to the `transition` function.
+	 */
 	transitionConfig?: TransitionParams<T>;
+
+	/**
+	 * A transition function to use during the in transition.
+	 *
+	 * If provided, this will override the `transition` function.
+	 */
 	inTransition?: In;
+
+	/**
+	 * The configuration to pass to the `inTransition` function.
+	 */
 	inTransitionConfig?: TransitionParams<In>;
+
+	/**
+	 * A transition function to use during the out transition.
+	 *
+	 * If provided, this will override the `transition` function.
+	 */
 	outTransition?: Out;
+
+	/**
+	 * The configuration to pass to the `outTransition` function.
+	 */
 	outTransitionConfig?: TransitionParams<Out>;
 }>;
-
-export type TransitionTimes = {
-	in?: number;
-	out?: number;
-};
-
-export type TransitionTimesStore = Writable<Expand<TransitionTimes>>;
-
-export type TransitionTimesProp = {
-	transitionTimes: TransitionTimesStore;
-};
-
-export type TOpen = {
-	tOpen: Writable<boolean>;
-};
 
 export type WithDispatcher<T> = T & CreateDispatcher;
 

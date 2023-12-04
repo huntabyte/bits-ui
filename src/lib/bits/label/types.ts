@@ -1,8 +1,9 @@
 import type { CustomEventHandler } from "$lib";
-import type { AsChild } from "$lib/internal/types.js";
 import type { HTMLLabelAttributes } from "svelte/elements";
+import type * as I from "./_types.js";
 
-type Props = AsChild & HTMLLabelAttributes;
+type Props = I.Props & HTMLLabelAttributes;
+
 type Events<T extends Element = HTMLLabelElement> = {
 	mousedown: CustomEventHandler<MouseEvent, T>;
 };
@@ -10,9 +11,5 @@ type Events<T extends Element = HTMLLabelElement> = {
 export type {
 	Props,
 	//
-	Props as LabelProps,
-	//
-	Events,
-	//
-	Events as LabelEvents
+	Events
 };

@@ -67,11 +67,11 @@ describe("Select", () => {
 
 		parts.forEach((part) => {
 			const el = getByTestId(part);
-			expect(el).toHaveAttribute(`data-bits-select-${part}`);
+			expect(el).toHaveAttribute(`data-select-${part}`);
 		});
 
 		const item = getByTestId("1");
-		expect(item).toHaveAttribute("data-bits-select-item");
+		expect(item).toHaveAttribute("data-select-item");
 		1;
 	});
 

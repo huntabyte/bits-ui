@@ -1,101 +1,188 @@
-import type { APISchema } from "@/types";
-import { asChild } from "./helpers";
+import type { APISchema } from "@/types/api.js";
+import {
+	asChild,
+	enums,
+	idsSlotProp,
+	portalProp,
+	transitionProps
+} from "@/content/api-reference/helpers.js";
+import * as C from "@/content/constants.js";
+import { focusProp } from "@/content/api-reference/extended-types/index.js";
+import type * as AlertDialog from "$lib/bits/alert-dialog/_types.js";
+import { builderAndAttrsSlotProps } from "./helpers";
 
-export const root: APISchema = {
+const root: APISchema<AlertDialog.Props> = {
 	title: "Root",
 	description: "The root component used to set and manage the state of the alert dialog.",
-	props: [
-		{
-			name: "preventScroll",
-			default: "true",
-			type: "boolean",
+	slotProps: {
+		ids: idsSlotProp
+	},
+	props: {
+		preventScroll: {
+			type: C.BOOLEAN,
+			default: C.TRUE,
 			description: "Whether or not to prevent scroll on the body when the alert dialog is open."
 		},
-		{
-			name: "closeOnEscape",
-			default: "true",
-			type: "boolean",
+		closeOnEscape: {
+			type: C.BOOLEAN,
+			default: C.TRUE,
 			description: "Whether to close the alert dialog when the escape key is pressed."
 		},
-		{
-			name: "closeOnOutsideClick",
-			type: "boolean",
-			default: "true",
+		closeOnOutsideClick: {
+			type: C.BOOLEAN,
+			default: C.TRUE,
 			description: "Whether to close the alert dialog when a click occurs outside of it."
 		},
-		{
-			name: "open",
-			type: "boolean",
-			default: "false",
+		open: {
+			type: C.BOOLEAN,
+			default: C.FALSE,
 			description: "Whether or not the alert dialog is open."
 		},
-		{
-			name: "onOpenChange",
-			type: "(open: boolean) => void",
+		onOpenChange: {
+			type: {
+				type: C.FUNCTION,
+				definition: "(open: boolean) => void"
+			},
 			description: "A callback function called when the open state changes."
-		}
-	]
+		},
+		openFocus: {
+			type: focusProp,
+			description: "Override the initial focus when the alert dialog is opened."
+		},
+		closeFocus: {
+			type: focusProp,
+			description: "Override the focus when the alert dialog is closed."
+		},
+		portal: { ...portalProp("alert dialog") }
+	}
 };
 
-export const action: APISchema = {
+const action: APISchema<AlertDialog.ActionProps> = {
 	title: "Action",
 	description: "A button used to close the alert dialog by taking an action.",
-	props: [asChild]
+	props: { asChild },
+	slotProps: { ...builderAndAttrsSlotProps },
+	dataAttributes: [
+		{
+			name: "alert-dialog-action",
+			description: "Present on the action button."
+		}
+	]
 };
 
-export const cancel: APISchema = {
+const cancel: APISchema<AlertDialog.CancelProps> = {
 	title: "Cancel",
 	description: "A button used to close the alert dialog without taking an action.",
-	props: [asChild]
+	props: { asChild },
+	slotProps: { ...builderAndAttrsSlotProps },
+	dataAttributes: [
+		{
+			name: "alert-dialog-cancel",
+			description: "Present on the cancel button."
+		}
+	]
 };
 
-export const content: APISchema = {
+const content: APISchema<AlertDialog.ContentProps> = {
 	title: "Content",
 	description: "The content displayed within the alert dialog modal.",
-	props: [asChild],
+	props: { ...transitionProps, asChild },
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "state",
-			value: "'open' | 'closed'",
-			description: "The state of the alert dialog."
+			value: enums("open", "closed"),
+			description: "The state of the alert dialog.",
+			isEnum: true
+		},
+		{
+			name: "alert-dialog-content",
+			description: "Present on the content."
 		}
 	]
 };
 
-export const title: APISchema = {
+const title: APISchema<AlertDialog.TitleProps> = {
 	title: "Title",
 	description: "An accessibile title for the alert dialog.",
-	props: [asChild]
-};
-
-export const description: APISchema = {
-	title: "Description",
-	description: "An accessibile description for the alert dialog.",
-	props: [asChild]
-};
-
-export const trigger: APISchema = {
-	title: "Trigger",
-	description: "The element which opens the alert dialog on press.",
-	props: [asChild]
-};
-
-export const overlay: APISchema = {
-	title: "Overlay",
-	description: "An overlay which covers the body when the alert dialog is open.",
-	props: [asChild],
+	props: {
+		asChild,
+		level: {
+			type: {
+				type: "enum",
+				definition: enums("h1", "h2", "h3", "h4", "h5", "h6")
+			},
+			description: "The heading level of the title."
+		}
+	},
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
-			name: "state",
-			value: "'open' | 'closed'",
-			description: "The state of the alert dialog."
+			name: "alert-dialog-title",
+			description: "Present on the title."
 		}
 	]
 };
 
-export const portal: APISchema = {
+const description: APISchema<AlertDialog.DescriptionProps> = {
+	title: "Description",
+	description: "An accessibile description for the alert dialog.",
+	props: { asChild },
+	slotProps: { ...builderAndAttrsSlotProps },
+	dataAttributes: [
+		{
+			name: "alert-dialog-description",
+			description: "Present on the description."
+		}
+	]
+};
+
+const trigger: APISchema<AlertDialog.TriggerProps> = {
+	title: "Trigger",
+	description: "The element which opens the alert dialog on press.",
+	props: { asChild },
+	slotProps: { ...builderAndAttrsSlotProps },
+	dataAttributes: [
+		{
+			name: "alert-dialog-trigger",
+			description: "Present on the trigger."
+		}
+	]
+};
+
+const overlay: APISchema<AlertDialog.OverlayProps> = {
+	title: "Overlay",
+	description: "An overlay which covers the body when the alert dialog is open.",
+	props: { ...transitionProps, asChild },
+	slotProps: { ...builderAndAttrsSlotProps },
+	dataAttributes: [
+		{
+			name: "state",
+			value: enums("open", "closed"),
+			description: "The state of the alert dialog.",
+			isEnum: true
+		},
+		{
+			name: "alert-dialog-overlay",
+			description: "Present on the overlay."
+		}
+	]
+};
+
+const portal: APISchema<AlertDialog.PortalProps> = {
 	title: "Portal",
-	description: "A portal which renders the alert dialog into the body when it is open."
+	description: "A portal which renders the alert dialog into the body when it is open.",
+	slotProps: { ...builderAndAttrsSlotProps },
+	dataAttributes: [
+		{
+			name: "portal",
+			description: "Present if the `portal` prop is not `null`."
+		},
+		{
+			name: "alert-dialog-portal",
+			description: "Present on the portal."
+		}
+	]
 };
 
 export const alertDialog = [

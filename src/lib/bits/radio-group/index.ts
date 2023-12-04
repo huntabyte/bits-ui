@@ -1,18 +1,6 @@
-import Root from "./components/RadioGroup.svelte";
-import Input from "./components/RadioGroupInput.svelte";
-import Item from "./components/RadioGroupItem.svelte";
-import ItemIndicator from "./components/RadioGroupItemIndicator.svelte";
-
-export {
-	Root,
-	Input,
-	Item,
-	ItemIndicator,
-	//
-	Root as RadioGroup,
-	Input as RadioGroupInput,
-	Item as RadioGroupItem,
-	ItemIndicator as RadioGroupItemIndicator
-};
+export { default as Root } from "./components/radio-group.svelte";
+export { default as Input } from "./components/radio-group-input.svelte";
+export { default as Item } from "./components/radio-group-item.svelte";
+export { default as ItemIndicator } from "./components/radio-group-item-indicator.svelte";
 
 export * from "./types.js";

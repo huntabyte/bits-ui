@@ -1,312 +1,183 @@
 import type { APISchema } from "@/types";
-import { asChild } from "./helpers";
+import { menu } from "./menu";
+import type * as Menu from "$lib/bits/menu/_types";
+import type * as ContextMenu from "$lib/bits/context-menu/_types";
+import * as C from "@/content/constants.js";
+import {
+	transitionProps,
+	asChild,
+	union,
+	builderAndAttrsSlotProps,
+	enums,
+	seeFloating
+} from "./helpers";
 
-export const root: APISchema = {
+export const root: APISchema<Menu.Props> = {
 	title: "Root",
 	description: "The root component which manages & scopes the state of the context menu.",
-	props: [
-		{
-			name: "preventScroll",
-			default: "true",
-			type: "boolean",
-			description: "Whether or not to prevent scroll on the body when the context menu is open."
-		},
-		{
-			name: "closeOnEscape",
-			default: "true",
-			type: "boolean",
-			description: "Whether to close the context menu when the escape key is pressed."
-		},
-		{
-			name: "closeOnOutsideClick",
-			type: "boolean",
-			default: "true",
-			description: "Whether to close the context menu when a click occurs outside of it."
-		},
-		{
-			name: "loop",
-			type: "boolean",
-			default: "false",
-			description:
-				"Whether or not to loop through the menu items when navigating with the keyboard."
-		},
-		{
-			name: "open",
-			type: "boolean",
-			default: "false",
-			description: "The open state of the context menu."
-		},
-		{
-			name: "onOpenChange",
-			type: "(open: boolean) => void",
-			description: "A callback that is fired when the context menu's open state changes."
-		},
-		{
-			name: "positioning",
-			type: "FloatingConfig",
-			description: "The positioning configuration for the context menu. (docs coming soon)"
-		}
-	]
+	...menu.root
 };
 
-export const trigger: APISchema = {
+export const trigger: APISchema<Menu.TriggerProps> = {
 	title: "Trigger",
-	description: "The element which when right clicked inside, opens the context menu.",
-	props: [asChild],
-	dataAttributes: [
-		{
-			name: "state",
-			value: "'open' | 'closed'",
-			description: "The context menu's open state."
-		}
-	]
+	description: "The element which when right-clicked, opens the context menu.",
+	...menu.trigger
 };
 
-export const content: APISchema = {
+export const content: APISchema<ContextMenu.ContentProps> = {
 	title: "Content",
 	description: "The content displayed when the context menu is open.",
-	props: [
+	props: {
+		...transitionProps,
 		asChild,
-		{
-			name: "transition",
-			type: "(node: Element, params?: any) => TransitionConfig",
-			description: "A Svelte transition function to use when transitioning the content in and out. "
+		alignOffset: {
+			type: C.NUMBER,
+			default: "0",
+			description: seeFloating(
+				"An offset in pixels from the 'start' or 'end' alignment options.",
+				"https://floating-ui.com/docs/offset#options"
+			)
 		},
-		{
-			name: "transitionConfig",
-			type: "TransitionConfig",
-			description: "The Svelte `TransitionConfig` object to apply to the transition."
+		avoidCollisions: {
+			type: C.BOOLEAN,
+			default: C.TRUE,
+			description: seeFloating(
+				"When `true`, overrides the `side` and `align` options to prevent collisions with the boundary edges.",
+				"https://floating-ui.com/docs/flip"
+			)
+		},
+		collisionBoundary: {
+			type: {
+				type: C.UNION,
+				definition: union("'clippingAncestors'", "Element", "Array<Element>", "Rect")
+			},
+			description: seeFloating(
+				"A boundary element or array of elements to check for collisions against.",
+				"https://floating-ui.com/docs/detectoverflow#boundary"
+			)
+		},
+		collisionPadding: {
+			type: C.NUMBER,
+			default: "0",
+			description: seeFloating(
+				"The amount in pixels of virtual padding around the viewport edges to check for overflow which will cause a collision.",
+				"https://floating-ui.com/docs/detectOverflow#padding"
+			)
+		},
+		fitViewport: {
+			type: C.BOOLEAN,
+			default: C.FALSE,
+			description: seeFloating(
+				"Whether the floating element should be constrained to the viewport.",
+				"https://floating-ui.com/docs/size"
+			)
+		},
+		strategy: {
+			type: {
+				type: C.ENUM,
+				definition: enums("absolute", "fixed")
+			},
+			default: "absolute",
+			description: seeFloating(
+				"The positioning strategy to use for the floating element.",
+				"https://floating-ui.com/docs/computeposition#strategy"
+			)
+		},
+		overlap: {
+			type: C.BOOLEAN,
+			default: C.FALSE,
+			description: seeFloating(
+				"Whether the floating element can overlap the reference element.",
+				"https://floating-ui.com/docs/shift#options"
+			)
 		}
-	],
-	dataAttributes: [
-		{
-			name: "state",
-			value: "'open' | 'closed'",
-			description: "The collapsible's open state."
-		}
-	]
+	},
+	slotProps: { ...builderAndAttrsSlotProps },
+	dataAttributes: menu.content.dataAttributes
 };
 
-export const item: APISchema = {
+export const item: APISchema<Menu.ItemProps & { href: string }> = {
 	title: "Item",
 	description: "A menu item within the context menu.",
-	props: [
-		asChild,
-		{
-			name: "disabled",
-			type: "boolean",
-			default: "false",
-			description: "Whether or not the menu item is disabled."
-		}
-	],
-	dataAttributes: [
-		{
-			name: "orientation",
-			value: "'horizontal' | 'vertical'",
-			description: "The orientation of the context menu item."
-		},
-		{
-			name: "highlighted",
-			value: "''",
-			description: "Present when the menu item is highlighted."
-		}
-	]
+	...menu.item
 };
 
-export const separator: APISchema = {
+export const separator: APISchema<Menu.SeparatorProps> = {
 	title: "Separator",
-	description: "A horizontal line to visually separate menu items."
+	description: "A horizontal line to visually separate menu items.",
+	...menu.separator
 };
 
-export const arrow: APISchema = {
+export const arrow: APISchema<Menu.ArrowProps> = {
 	title: "Arrow",
 	description: "An optional arrow which points to the context menu's anchor/trigger point.",
-	props: [
-		asChild,
-		{
-			name: "size",
-			type: "number",
-			default: "8",
-			description: "The height and width of the arrow in pixels."
-		}
-	],
-	dataAttributes: [
-		{
-			name: "arrow",
-			value: "''",
-			description: "Present on the arrow elements of the context menu."
-		}
-	]
+	...menu.arrow
 };
 
-export const checkboxItem: APISchema = {
+export const checkboxItem: APISchema<Menu.CheckboxItemProps> = {
 	title: "CheckboxItem",
 	description: "A menu item that can be controlled and toggled like a checkbox.",
-	props: [
-		asChild,
-		{
-			name: "disabled",
-			type: "boolean",
-			default: "false",
-			description:
-				"Whether or not the checkbox menu item is disabled. Disabled items cannot be interacted with and are skipped when navigating with the keyboard."
-		},
-		{
-			name: "checked",
-			default: "false",
-			type: "boolean | 'indeterminate'",
-			description: "The checkbox menu item's checked state."
-		},
-		{
-			name: "onCheckedChange",
-			type: "(checked: boolean | 'indeterminate') => void",
-			description: "A callback that is fired when the checkbox menu item's checked state changes."
-		}
-	],
-	dataAttributes: [
-		{
-			name: "orientation",
-			value: "'horizontal' | 'vertical'",
-			description: "The orientation of the checkbox menu item."
-		}
-	]
+	...menu.checkboxItem
 };
 
-export const checkboxIndicator: APISchema = {
+export const checkboxIndicator: APISchema<Menu.CheckboxIndicatorProps> = {
 	title: "CheckboxIndicator",
 	description:
-		"A visual indicator of the checkbox menu item's checked state. It passed the item's checked state as a slot prop `checked` and can be used to render a custom indicator."
+		"A visual indicator of the checkbox menu item's checked state. It passes the item's checked state as a slot prop `checked` and can be used to render a custom indicator.",
+	...menu.checkboxIndicator
 };
 
-export const radioGroup: APISchema = {
+export const radioGroup: APISchema<Menu.RadioGroupProps> = {
 	title: "RadioGroup",
 	description: "A group of radio menu items, where only one can be checked at a time.",
-	props: [
-		asChild,
-		{
-			name: "value",
-			type: "string",
-			description: "The value of the currently checked radio menu item."
-		},
-		{
-			name: "onValueChange",
-			type: "(value: string) => void",
-			description: "A callback that is fired when the radio group's value changes."
-		}
-	]
+	...menu.radioGroup
 };
 
-export const radioItem: APISchema = {
+export const radioItem: APISchema<Menu.RadioItemProps> = {
 	title: "RadioItem",
 	description:
 		"A menu item that can be controlled and toggled like a radio button. It must be a child of a `RadioGroup`.",
-	props: [
-		asChild,
-		{
-			name: "value",
-			type: "string",
-			description:
-				"The value of the radio item. When checked, the parent `RadioGroup`'s value will be set to this value."
-		},
-		{
-			name: "disabled",
-			type: "false",
-			description:
-				"Whether or not the radio menu item is disabled. Disabled items cannot be interacted with and are skipped when navigating with the keyboard."
-		}
-	]
+	...menu.radioItem
 };
 
-export const radioIndicator: APISchema = {
+export const radioIndicator: APISchema<Menu.RadioIndicatorProps> = {
 	title: "RadioIndicator",
 	description:
-		"A visual indicator helper for `RadioItem`s. It only renders it's children when the radio item is checked."
+		"A visual indicator helper for `RadioItem`s. It only renders it's children when the radio item is checked.",
+	...menu.radioIndicator
 };
 
-export const sub: APISchema = {
+export const sub: APISchema<Menu.SubProps> = {
 	title: "Sub",
 	description:
 		"A submenu belonging to the parent context menu. Responsible for managing the state of the submenu.",
-	props: [
-		{
-			name: "disabled",
-			type: "boolean",
-			description: "Whether or not the submenu is disabled."
-		},
-		{
-			name: "arrowSize",
-			type: "number",
-			default: "8",
-			description: "The size of the optional submenu arrow component in pixels."
-		},
-		{
-			name: "positioning",
-			type: "FloatingConfig",
-			description: "The positioning configuration for the context menu. (docs coming soon)"
-		}
-	]
+	...menu.sub
 };
 
-export const subTrigger: APISchema = {
+export const subTrigger: APISchema<Menu.SubTriggerProps> = {
 	title: "SubTrigger",
 	description: "A menu item which when pressed or hovered, opens the submenu.",
-	props: [
-		{
-			name: "disabled",
-			type: "boolean",
-			default: "false",
-			description: "Whether or not the submenu trigger is disabled."
-		}
-	],
-	dataAttributes: [
-		{
-			name: "state",
-			value: "'open' | 'closed'",
-			description: "The submenu's open state."
-		},
-		{
-			name: "disabled",
-			value: "''",
-			description: "Present when the submenu trigger is disabled."
-		}
-	]
+	...menu.subTrigger
 };
 
-export const subContent: APISchema = {
+export const subContent: APISchema<Menu.SubContentProps> = {
 	title: "SubContent",
 	description: "The submenu content displayed when the parent submenu is open.",
-	props: [
-		asChild,
-		{
-			name: "transition",
-			type: "(node: Element, params?: any) => TransitionConfig",
-			description: "A Svelte transition function to use when transitioning the content in and out. "
-		},
-		{
-			name: "transitionConfig",
-			type: "TransitionConfig",
-			description: "The Svelte `TransitionConfig` object to apply to the transition."
-		}
-	],
-	dataAttributes: [
-		{
-			name: "state",
-			value: "'open' | 'closed'",
-			description: "The submenu's open state."
-		}
-	]
+	...menu.subContent
 };
 
-export const group: APISchema = {
+export const group: APISchema<Menu.GroupProps> = {
 	title: "Group",
 	description:
-		"A group of menu items. It can be used along with the `ContextMenu.Label` component to provide a visual label for a group of menu items. When a label is within a group, appropriate aria attributes will be applied to the group."
+		"A group of menu items. It can be used along with the `Menu.Label` component to provide a visual label for a group of menu items. When a label is within a group, appropriate aria attributes will be applied to the group.",
+	...menu.group
 };
 
-export const label: APISchema = {
+export const label: APISchema<Menu.LabelProps> = {
 	title: "Label",
 	description:
-		"A label which will be skipped when navigating with the keyboard. It is used to provide a visual label for a group of menu items. When a label is within a `ContextMenu.Group`, appropriate aria attributes will be applied to the group."
+		"A label which will be skipped when navigating with the keyboard. It is used to provide a visual label for a group of menu items. When a label is within a `Menu.Group`, appropriate aria attributes will be applied to the group.",
+	...menu.label
 };
 
 export const contextMenu = [

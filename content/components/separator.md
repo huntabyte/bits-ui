@@ -1,6 +1,6 @@
 ---
 title: Separator
-description: Visually divide or separate sections or elements, providing clarity and organization.
+description: Visually separates content or UI elements for clarity and organization.
 ---
 
 <script>

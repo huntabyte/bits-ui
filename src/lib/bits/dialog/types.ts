@@ -1,49 +1,29 @@
-import type {
-	AsChild,
-	Expand,
-	HTMLDivAttributes,
-	HTMLHeadingAttributes,
-	OmitOpen,
-	OnChangeFn,
-	Transition,
-	TransitionProps
-} from "$lib/internal/index.js";
+import type { HTMLDivAttributes, HTMLHeadingAttributes, Transition } from "$lib/internal/index.js";
 import type { HTMLButtonAttributes } from "svelte/elements";
-import type { CreateDialogProps } from "@melt-ui/svelte";
 import type { CustomEventHandler } from "$lib/index.js";
+import type * as I from "./_types.js";
 
-type Props = Expand<
-	OmitOpen<Omit<CreateDialogProps, "role">> & {
-		open?: CreateDialogProps["defaultOpen"] & {};
-		onOpenChange?: OnChangeFn<boolean>;
-	}
->;
+type Props = I.Props;
 
-type TriggerProps = AsChild & HTMLButtonAttributes;
-
+type TriggerProps = I.TriggerProps & HTMLButtonAttributes;
 type CloseProps = TriggerProps;
 
 type ContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
 	Out extends Transition = Transition
-> = Expand<TransitionProps<T, In, Out> & AsChild> & HTMLDivAttributes;
+> = I.ContentProps<T, In, Out> & HTMLDivAttributes;
 
-type DescriptionProps = AsChild & HTMLDivAttributes;
+type DescriptionProps = I.DescriptionProps & HTMLDivAttributes;
 
 type OverlayProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
 	Out extends Transition = Transition
-> = Expand<TransitionProps<T, In, Out> & AsChild> & HTMLDivAttributes;
+> = I.OverlayProps<T, In, Out> & HTMLDivAttributes;
 
-type PortalProps = AsChild & HTMLDivAttributes;
-type TitleProps = Expand<
-	{
-		level?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
-	} & AsChild
-> &
-	HTMLHeadingAttributes;
+type PortalProps = I.PortalProps & HTMLDivAttributes;
+type TitleProps = I.TitleProps & HTMLHeadingAttributes;
 
 type TriggerEvents<T extends Element = HTMLButtonElement> = {
 	click: CustomEventHandler<MouseEvent, T>;
@@ -61,18 +41,6 @@ export type {
 	OverlayProps,
 	DescriptionProps,
 	//
-	Props as DialogProps,
-	CloseProps as DialogCloseProps,
-	TitleProps as DialogTitleProps,
-	PortalProps as DialogPortalProps,
-	ContentProps as DialogContentProps,
-	TriggerProps as DialogTriggerProps,
-	OverlayProps as DialogOverlayProps,
-	DescriptionProps as DialogDescriptionProps,
-	//
 	TriggerEvents,
-	CloseEvents,
-	//
-	TriggerEvents as DialogTriggerEvents,
-	CloseEvents as DialogCloseEvents
+	CloseEvents
 };

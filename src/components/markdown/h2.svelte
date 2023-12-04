@@ -6,7 +6,10 @@
 </script>
 
 <h2
-	class={cn("mt-12 scroll-m-20 text-2xl font-bold tracking-tight first:mt-0", className)}
+	class={cn(
+		"mt-12 -scroll-m-36 text-[27px] font-semibold tracking-tight first:mt-0",
+		className
+	)}
 	{...$$restProps}
 >
 	<slot />

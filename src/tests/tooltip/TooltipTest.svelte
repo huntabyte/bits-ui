@@ -9,7 +9,8 @@
 <main data-testid="main">
 	<Tooltip.Root bind:open {...$$restProps} openDelay={50} closeDelay={50}>
 		<Tooltip.Trigger data-testid="trigger">@sveltejs</Tooltip.Trigger>
-		<Tooltip.Content data-testid="content" class="w-80">Content</Tooltip.Content>
+		<Tooltip.Content data-testid="content" class="w-80">Content</Tooltip.Content
+		>
 	</Tooltip.Root>
 	<button data-testid="binding" on:click={() => (open = !open)}>{open}</button>
 	<div data-testid="outside">outside</div>
