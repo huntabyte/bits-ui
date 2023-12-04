@@ -1,32 +1,3 @@
-import type {
-	Props,
-	SubProps,
-	ItemProps,
-	ArrowProps,
-	GroupProps,
-	LabelProps,
-	ContentProps,
-	TriggerProps,
-	RadioItemProps,
-	SeparatorProps,
-	RadioGroupProps,
-	SubContentProps,
-	SubTriggerProps,
-	CheckboxItemProps,
-	RadioIndicatorProps,
-	CheckboxIndicatorProps,
-	//
-	// Events
-	//
-	ItemEvents,
-	TriggerEvents,
-	ContentEvents,
-	RadioItemEvents,
-	SubContentEvents,
-	SubTriggerEvents,
-	CheckboxItemEvents
-} from "./types.js";
-
 export type {
 	Props as DropdownMenuProps,
 	SubProps as DropdownMenuSubProps,
@@ -45,8 +16,6 @@ export type {
 	RadioIndicatorProps as DropdownMenuRadioIndicatorProps,
 	CheckboxIndicatorProps as DropdownMenuCheckboxIndicatorProps,
 	//
-	// Events
-	//
 	ItemEvents as DropdownMenuItemEvents,
 	TriggerEvents as DropdownMenuTriggerEvents,
 	ContentEvents as DropdownMenuContentEvents,
@@ -54,4 +23,4 @@ export type {
 	SubContentEvents as DropdownMenuSubContentEvents,
 	SubTriggerEvents as DropdownMenuSubTriggerEvents,
 	CheckboxItemEvents as DropdownMenuCheckboxItemEvents
-};
+} from "./types.js";

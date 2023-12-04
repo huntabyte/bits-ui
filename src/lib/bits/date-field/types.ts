@@ -25,15 +25,5 @@ export type {
 	InputProps,
 	SegmentProps,
 	//
-	Props as DateFieldProps,
-	LabelProps as DateFieldLabelProps,
-	DescriptionProps as DateFieldDescriptionProps,
-	InputProps as DateFieldInputProps,
-	SegmentProps as DateFieldSegmentProps,
-	//
-	// Events
-	//
-	SegmentEvents,
-	//
-	SegmentEvents as DateFieldSegmentEvents
+	SegmentEvents
 };

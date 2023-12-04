@@ -1,25 +1,3 @@
-import type {
-	Props,
-	PrevButtonProps,
-	NextButtonProps,
-	HeadingProps,
-	GridProps,
-	CellProps,
-	GridRowProps,
-	GridBodyProps,
-	HeadCellProps,
-	GridHeadProps,
-	HeaderProps,
-	DateProps,
-	//
-	// Events
-	//
-	Events,
-	PrevButtonEvents,
-	NextButtonEvents,
-	DateEvents
-} from "./types.js";
-
 export type {
 	Props as CalendarProps,
 	PrevButtonProps as CalendarPrevButtonProps,
@@ -34,10 +12,8 @@ export type {
 	HeaderProps as CalendarHeaderProps,
 	DateProps as CalendarDateProps,
 	//
-	// Events
-	//
 	Events as CalendarEvents,
 	PrevButtonEvents as CalendarPrevButtonEvents,
 	NextButtonEvents as CalendarNextButtonEvents,
 	DateEvents as CalendarDateEvents
-};
+} from "./types.js";

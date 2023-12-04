@@ -49,22 +49,6 @@ export type {
 	CheckboxItemProps,
 	CheckboxIndicatorProps,
 	RadioIndicatorProps,
-	//
-	Props as ContextMenuProps,
-	SubProps as ContextMenuSubProps,
-	ItemProps as ContextMenuItemProps,
-	LabelProps as ContextMenuLabelProps,
-	ArrowProps as ContextMenuArrowProps,
-	GroupProps as ContextMenuGroupProps,
-	ContentProps as ContextMenuContentProps,
-	TriggerProps as ContextMenuTriggerProps,
-	RadioItemProps as ContextMenuRadioItemProps,
-	SeparatorProps as ContextMenuSeparatorProps,
-	RadioGroupProps as ContextMenuRadioGroupProps,
-	SubContentProps as ContextMenuSubContentProps,
-	SubTriggerProps as ContextMenuSubTriggerProps,
-	CheckboxItemProps as ContextMenuCheckboxItemProps,
-	CheckboxIndicatorProps as ContextMenuCheckboxIndicatorProps,
 	//,
 	ItemEvents,
 	TriggerEvents,
@@ -72,13 +56,5 @@ export type {
 	RadioItemEvents,
 	SubContentEvents,
 	SubTriggerEvents,
-	CheckboxItemEvents,
-	//
-	ItemEvents as ContextMenuItemEvents,
-	TriggerEvents as ContextMenuTriggerEvents,
-	ContentEvents as ContextMenuContentEvents,
-	RadioItemEvents as ContextMenuRadioItemEvents,
-	SubContentEvents as ContextMenuSubContentEvents,
-	SubTriggerEvents as ContextMenuSubTriggerEvents,
-	CheckboxItemEvents as ContextMenuCheckboxItemEvents
+	CheckboxItemEvents
 };

@@ -8,12 +8,4 @@ type ImageProps = I.ImageProps & HTMLImgAttributes;
 
 type FallbackProps = I.FallbackProps & HTMLSpanAttributes;
 
-export type {
-	Props,
-	ImageProps,
-	FallbackProps,
-	//
-	Props as AvatarProps,
-	ImageProps as AvatarImageProps,
-	FallbackProps as AvatarFallbackProps
-};
+export type { Props, ImageProps, FallbackProps };

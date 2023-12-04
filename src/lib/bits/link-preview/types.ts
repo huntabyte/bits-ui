@@ -35,14 +35,6 @@ export type {
 	TriggerProps,
 	ContentProps,
 	//
-	Props as LinkPreviewProps,
-	ArrowProps as LinkPreviewArrowProps,
-	TriggerProps as LinkPreviewTriggerProps,
-	ContentProps as LinkPreviewContentProps,
-	//
 	TriggerEvents,
-	ContentEvents,
-	//
-	TriggerEvents as LinkPreviewTriggerEvents,
-	ContentEvents as LinkPreviewContentEvents
+	ContentEvents
 };

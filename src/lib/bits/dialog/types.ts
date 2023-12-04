@@ -41,18 +41,6 @@ export type {
 	OverlayProps,
 	DescriptionProps,
 	//
-	Props as DialogProps,
-	CloseProps as DialogCloseProps,
-	TitleProps as DialogTitleProps,
-	PortalProps as DialogPortalProps,
-	ContentProps as DialogContentProps,
-	TriggerProps as DialogTriggerProps,
-	OverlayProps as DialogOverlayProps,
-	DescriptionProps as DialogDescriptionProps,
-	//
 	TriggerEvents,
-	CloseEvents,
-	//
-	TriggerEvents as DialogTriggerEvents,
-	CloseEvents as DialogCloseEvents
+	CloseEvents
 };

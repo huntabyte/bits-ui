@@ -16,10 +16,5 @@ export type {
 	Props,
 	ItemProps,
 	//
-	Props as ToggleGroupProps,
-	ItemProps as ToggleGroupItemProps,
-	//
-	ItemEvents,
-	//
-	ItemEvents as ToggleGroupItemEvents
+	ItemEvents
 };

@@ -26,15 +26,6 @@ export type {
 	ContentProps,
 	TriggerProps,
 	//
-	Props as PopoverProps,
-	ArrowProps as PopoverArrowProps,
-	CloseProps as PopoverCloseProps,
-	ContentProps as PopoverContentProps,
-	TriggerProps as PopoverTriggerProps,
-	//
 	TriggerEvents,
-	CloseEvents,
-	//
-	TriggerEvents as PopoverTriggerEvents,
-	CloseEvents as PopoverCloseEvents
+	CloseEvents
 };

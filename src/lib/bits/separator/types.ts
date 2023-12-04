@@ -3,8 +3,4 @@ import type * as I from "./_types.js";
 
 type Props = I.Props & HTMLDivAttributes;
 
-export type {
-	Props,
-	//
-	Props as SeparatorProps
-};
+export type { Props };

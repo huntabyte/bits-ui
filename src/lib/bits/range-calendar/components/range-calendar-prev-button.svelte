@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { getAttrs, getCtx } from "../ctx.js";
-	import type { PrevButtonProps } from "../types.js";
+	import type { PrevButtonEvents, PrevButtonProps } from "../types.js";
+	import { createDispatcher } from "$lib/internal/events.js";
 
 	type $$Props = PrevButtonProps;
+	type $$Events = PrevButtonEvents;
 
 	export let asChild: $$Props["asChild"] = false;
 
@@ -12,6 +14,8 @@
 	} = getCtx();
 
 	const attrs = getAttrs("prev-button");
+	const dispatch = createDispatcher();
+
 	$: builder = $prevButton;
 	$: Object.assign(builder, attrs);
 </script>
@@ -19,7 +23,12 @@
 {#if asChild}
 	<slot {builder} />
 {:else}
-	<button use:melt={builder} type="button" {...$$restProps}>
+	<button
+		use:melt={builder}
+		type="button"
+		{...$$restProps}
+		on:m-click={dispatch}
+	>
 		<slot {builder} />
 	</button>
 {/if}

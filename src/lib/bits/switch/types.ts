@@ -19,11 +19,5 @@ export type {
 	ThumbProps,
 	InputProps,
 	//
-	Props as SwitchProps,
-	ThumbProps as SwitchThumbProps,
-	InputProps as SwitchInputProps,
-	//
-	Events,
-	//
-	Events as SwitchEvents
+	Events
 };

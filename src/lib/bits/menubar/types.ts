@@ -1,5 +1,6 @@
 import type { HTMLDivAttributes } from "$lib/internal/index.js";
 import type { Props as MenubarProps } from "./_types.js";
+
 import type {
 	Props as MenuProps,
 	SubProps,
@@ -15,6 +16,7 @@ import type {
 	SubContentProps,
 	SubTriggerProps,
 	CheckboxItemProps,
+	RadioIndicatorProps,
 	CheckboxIndicatorProps,
 	//
 	MenubarTriggerEvents as TriggerEvents,
@@ -44,24 +46,8 @@ export type {
 	SubContentProps,
 	SubTriggerProps,
 	CheckboxItemProps,
+	RadioIndicatorProps,
 	CheckboxIndicatorProps,
-	//
-	Props as MenubarProps,
-	SubProps as MenubarSubProps,
-	MenuProps as MenubarMenuProps,
-	ItemProps as MenubarItemProps,
-	ArrowProps as MenubarArrowProps,
-	GroupProps as MenubarGroupProps,
-	LabelProps as MenubarLabelProps,
-	ContentProps as MenubarContentProps,
-	TriggerProps as MenubarTriggerProps,
-	RadioItemProps as MenubarRadioItemProps,
-	SeparatorProps as MenubarSeparatorProps,
-	SubContentProps as MenubarSubContentProps,
-	SubTriggerProps as MenubarSubTriggerProps,
-	RadioGroupProps as MenubarRadioGroupProps,
-	CheckboxItemProps as MenubarCheckboxItemProps,
-	CheckboxIndicatorProps as MenubarCheckboxIndicatorProps,
 	//
 	ItemEvents,
 	TriggerEvents,
@@ -69,13 +55,5 @@ export type {
 	RadioItemEvents,
 	SubTriggerEvents,
 	SubContentEvents,
-	CheckboxItemEvents,
-	//
-	ItemEvents as MenubarItemEvents,
-	ContentEvents as MenubarContentEvents,
-	TriggerEvents as MenubarTriggerEvents,
-	RadioItemEvents as MenubarRadioItemEvents,
-	SubTriggerEvents as MenubarSubTriggerEvents,
-	SubContentEvents as MenubarSubContentEvents,
-	CheckboxItemEvents as MenubarCheckboxItemEvents
+	CheckboxItemEvents
 };

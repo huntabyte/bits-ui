@@ -45,8 +45,6 @@ export type {
 	RadioIndicatorProps,
 	CheckboxIndicatorProps,
 	//
-	// Events
-	//
 	ItemEvents,
 	TriggerEvents,
 	ContentEvents,

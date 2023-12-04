@@ -12,9 +12,5 @@ type Events<T extends Element = HTMLButtonElement> = {
 export type {
 	Props,
 	//
-	Props as ToggleProps,
-	//
-	Events,
-	//
-	Events as ToggleEvents
+	Events
 };

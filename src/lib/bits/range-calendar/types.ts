@@ -7,6 +7,7 @@ import type {
 	HTMLThAttributes
 } from "svelte/elements";
 import type * as I from "./_types.js";
+import type { CustomEventHandler } from "$lib";
 
 type Props = I.Props & Omit<HTMLDivAttributes, "placeholder">;
 
@@ -32,6 +33,28 @@ type CellProps = I.CellProps & HTMLTdAttributes;
 
 type DateProps = I.DateProps & HTMLDivAttributes;
 
+/**
+ * Events
+ */
+
+type ButtonEvents = {
+	click: CustomEventHandler<MouseEvent, HTMLButtonElement>;
+};
+
+type PrevButtonEvents = ButtonEvents;
+
+type NextButtonEvents = ButtonEvents;
+
+type DateEvents = {
+	click: CustomEventHandler<MouseEvent, HTMLDivElement>;
+	focusin: CustomEventHandler<FocusEvent, HTMLDivElement>;
+	mouseenter: CustomEventHandler<MouseEvent, HTMLDivElement>;
+};
+
+type Events = {
+	keydown: CustomEventHandler<KeyboardEvent, HTMLDivElement>;
+};
+
 export type {
 	Props,
 	PrevButtonProps,
@@ -46,16 +69,8 @@ export type {
 	HeaderProps,
 	DateProps,
 	//
-	Props as RangeCalendarProps,
-	PrevButtonProps as RangeCalendarPrevButtonProps,
-	NextButtonProps as RangeCalendarNextButtonProps,
-	HeadingProps as RangeCalendarHeadingProps,
-	HeaderProps as RangeCalendarHeaderProps,
-	GridProps as RangeCalendarGridProps,
-	GridHeadProps as RangeCalendarGridHeadProps,
-	HeadCellProps as RangeCalendarHeadCellProps,
-	GridBodyProps as RangeCalendarGridBodyProps,
-	CellProps as RangeCalendarCellProps,
-	GridRowProps as RangeCalendarGridRowProps,
-	DateProps as RangeCalendarDateProps
+	Events,
+	PrevButtonEvents,
+	NextButtonEvents,
+	DateEvents
 };

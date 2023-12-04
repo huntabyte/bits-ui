@@ -19,11 +19,5 @@ export type {
 	IndicatorProps,
 	InputProps,
 	//
-	Props as CheckboxProps,
-	IndicatorProps as CheckboxIndicatorProps,
-	InputProps as CheckboxInputProps,
-	//
-	Events,
-	//
-	Events as CheckboxEvents
+	Events
 };

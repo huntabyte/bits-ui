@@ -22,11 +22,5 @@ export type {
 	ContentProps,
 	TriggerProps,
 	//
-	Props as CollapsibleProps,
-	ContentProps as CollapsibleContentProps,
-	TriggerProps as CollapsibleTriggerProps,
-	//
-	TriggerEvents,
-	//
-	TriggerEvents as CollapsibleTriggerEvents
+	TriggerEvents
 };

@@ -42,21 +42,7 @@ export type {
 	PortalProps,
 	TitleProps,
 	//
-	Props as AlertDialogProps,
-	TriggerProps as AlertDialogTriggerProps,
-	ActionProps as AlertDialogActionProps,
-	CancelProps as AlertDialogCancelProps,
-	ContentProps as AlertDialogContentProps,
-	DescriptionProps as AlertDialogDescriptionProps,
-	ContentProps as AlertDialogOverlayProps,
-	PortalProps as AlertDialogPortalProps,
-	TitleProps as AlertDialogTitleProps,
-	//
 	TriggerEvents,
 	CancelEvents,
-	ActionEvents,
-	//
-	TriggerEvents as AlertDialogTriggerEvents,
-	CancelEvents as AlertDialogCancelEvents,
-	ActionEvents as AlertDialogActionEvents
+	ActionEvents
 };

@@ -31,11 +31,7 @@ type Events = {
 export type {
 	Props,
 	//
-	Props as ButtonProps,
-	//
 	Events,
-	//
-	Events as ButtonEvents,
 	//
 	ButtonEventHandler
 };

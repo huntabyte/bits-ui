@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { setCtx, getAttrs } from "../ctx.js";
-	import type { Props } from "../types.js";
+	import type { Events, Props } from "../types.js";
+	import { createDispatcher } from "$lib/internal/events.js";
 
 	type $$Props = Props;
+	type $$Events = Events;
 
 	export let placeholder: $$Props["placeholder"] = undefined;
 	export let onPlaceholderChange: $$Props["onPlaceholderChange"] = undefined;
@@ -89,6 +91,8 @@
 	$: updateOption("weekdayFormat", weekdayFormat);
 
 	const attrs = getAttrs("root");
+	const dispatch = createDispatcher();
+
 	$: builder = $calendar;
 	$: Object.assign(builder, attrs);
 
@@ -102,7 +106,7 @@
 {#if asChild}
 	<slot {...slotProps} />
 {:else}
-	<div use:melt={builder} {...$$restProps}>
+	<div use:melt={builder} {...$$restProps} on:m-keydown={dispatch}>
 		<slot {...slotProps} />
 	</div>
 {/if}

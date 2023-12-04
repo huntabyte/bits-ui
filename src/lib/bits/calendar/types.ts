@@ -68,28 +68,8 @@ export type {
 	HeaderProps,
 	DateProps,
 	//
-	Props as CalendarProps,
-	PrevButtonProps as CalendarPrevButtonProps,
-	NextButtonProps as CalendarNextButtonProps,
-	HeadingProps as CalendarHeadingProps,
-	HeaderProps as CalendarHeaderProps,
-	GridProps as CalendarGridProps,
-	GridHeadProps as CalendarGridHeadProps,
-	HeadCellProps as CalendarHeadCellProps,
-	GridBodyProps as CalendarGridBodyProps,
-	CellProps as CalendarCellProps,
-	GridRowProps as CalendarGridRowProps,
-	DateProps as CalendarDateProps,
-	//
-	// Events
-	//
 	Events,
 	PrevButtonEvents,
 	NextButtonEvents,
-	DateEvents,
-	//
-	Events as CalendarEvents,
-	PrevButtonEvents as CalendarPrevButtonEvents,
-	NextButtonEvents as CalendarNextButtonEvents,
-	DateEvents as CalendarDateEvents
+	DateEvents
 };

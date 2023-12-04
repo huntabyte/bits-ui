@@ -23,12 +23,5 @@ export type {
 	TriggerProps,
 	ListProps,
 	//
-	Props as TabsProps,
-	ContentProps as TabsContentProps,
-	TriggerProps as TabsTriggerProps,
-	ListProps as TabsListProps,
-	//
-	TriggerEvents,
-	//
-	TriggerEvents as TabsTriggerEvents
+	TriggerEvents
 };

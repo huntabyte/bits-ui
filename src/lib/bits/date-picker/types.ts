@@ -12,7 +12,7 @@ import type {
 	HeadingProps,
 	NextButtonProps,
 	PrevButtonProps,
-	CalendarEvents,
+	Events as CalendarEvents,
 	DateEvents,
 	PrevButtonEvents,
 	NextButtonEvents

@@ -23,12 +23,5 @@ export type {
 	ItemProps,
 	ItemIndicatorProps,
 	//
-	Props as RadioGroupProps,
-	InputProps as RadioGroupInputProps,
-	ItemProps as RadioGroupItemProps,
-	ItemIndicatorProps as RadioGroupItemIndicatorProps,
-	//
-	ItemEvents,
-	//
-	ItemEvents as RadioGroupItemEvents
+	ItemEvents
 };

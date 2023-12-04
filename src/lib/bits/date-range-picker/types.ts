@@ -11,8 +11,12 @@ import type {
 	HeaderProps,
 	HeadingProps,
 	NextButtonProps,
-	PrevButtonProps
-} from "$lib/bits/calendar/types.js";
+	PrevButtonProps,
+	NextButtonEvents,
+	PrevButtonEvents,
+	DateEvents,
+	Events as CalendarEvents
+} from "$lib/bits/range-calendar/types.js";
 import type {
 	TriggerProps,
 	ContentProps,
@@ -21,6 +25,7 @@ import type {
 	CloseEvents,
 	TriggerEvents
 } from "$lib/bits/popover/types.js";
+import type { SegmentEvents } from "$lib/bits/date-range-field/types.js";
 
 type Props = I.Props;
 type LabelProps = I.Props & HTMLSpanAttributes;
@@ -51,6 +56,12 @@ export type {
 	ContentProps,
 	ArrowProps,
 	CloseProps,
+	//
 	CloseEvents,
-	TriggerEvents
+	TriggerEvents,
+	NextButtonEvents,
+	PrevButtonEvents,
+	DateEvents,
+	CalendarEvents,
+	SegmentEvents
 };

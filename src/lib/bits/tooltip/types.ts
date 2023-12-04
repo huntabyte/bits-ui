@@ -34,14 +34,6 @@ export type {
 	TriggerProps,
 	ContentProps,
 	//
-	Props as TooltipProps,
-	ArrowProps as TooltipArrowProps,
-	ContentProps as TooltipContentProps,
-	TriggerProps as TooltipTriggerProps,
-	//
 	TriggerEvents,
-	ContentEvents,
-	//
-	TriggerEvents as TooltipTriggerEvents,
-	ContentEvents as TooltipContentEvents
+	ContentEvents
 };
