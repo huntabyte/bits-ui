@@ -1,5 +1,19 @@
 # @huntabyte/primitives
 
+## 0.10.0
+
+### Minor Changes
+
+- remove `arrowSize` prop from menu Root components in favor of passing it as a prop to the Arrow components ([#184](https://github.com/huntabyte/bits-ui/pull/184))
+
+- New component: Date Range Picker ([#184](https://github.com/huntabyte/bits-ui/pull/184))
+
+- feat: Calendar ([#184](https://github.com/huntabyte/bits-ui/pull/184))
+
+- Breaking change: separate floating `positioning` props into individual props and move them to content components ([#184](https://github.com/huntabyte/bits-ui/pull/184))
+
+- New components: Range Calendar, Date Field, Date Range Field ([#184](https://github.com/huntabyte/bits-ui/pull/184))
+
 ## 0.10.0-next.0
 
 ### Minor Changes
