@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.10.1
+
+### Patch Changes
+
+- fix: Update `Builder` type to support all Melt UI builders ([#201](https://github.com/huntabyte/bits-ui/pull/201))
+
 ## 0.10.0
 
 ### Minor Changes
