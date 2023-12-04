@@ -13,14 +13,14 @@
 </script>
 
 <Menubar.Root
-	class="flex h-12 items-center gap-1 rounded-[10px] border border-dark-10 bg-background px-[3px] shadow-mini"
+	class="flex h-12 items-center gap-1 rounded-10px border border-dark-10 bg-background px-[3px] shadow-mini"
 >
-	<div class="px-[10px]">
+	<div class="px-2.5">
 		<Cat class="sq-6" />
 	</div>
 	<Menubar.Menu>
 		<Menubar.Trigger
-			class="inline-flex h-10 cursor-default items-center justify-center rounded-[9px] px-3 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted data-[state=open]:bg-muted"
+			class="inline-flex h-10 cursor-default items-center justify-center rounded-9px px-3 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted data-[state=open]:bg-muted"
 			>View</Menubar.Trigger
 		>
 		<Menubar.Content
@@ -158,7 +158,7 @@
 	</Menubar.Menu>
 	<Menubar.Menu>
 		<Menubar.Trigger
-			class="inline-flex h-10 cursor-default items-center justify-center rounded-[9px] px-3 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted data-[state=open]:bg-muted"
+			class="inline-flex h-10 cursor-default items-center justify-center rounded-9px px-3 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted data-[state=open]:bg-muted"
 			>View</Menubar.Trigger
 		>
 		<Menubar.Content
