@@ -18,6 +18,7 @@
 	const attrs = getAttrs("date");
 
 	$: builder = $cell(date, month);
+
 	$: Object.assign(builder, attrs);
 	const dispatch = createDispatcher();
 
