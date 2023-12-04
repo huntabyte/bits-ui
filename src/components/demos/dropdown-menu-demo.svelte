@@ -14,17 +14,17 @@
 
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger
-		class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border-input bg-background text-sm font-medium text-foreground shadow-btn transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
+		class="focus-visible inline-flex h-10 w-10 items-center justify-center rounded-full border border-border-input bg-background text-sm font-medium text-foreground shadow-btn hover:bg-muted focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
 	>
 		<DotsThree class="h-6 w-6 text-foreground" />
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content
-		class="w-full max-w-[229px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover outline-none"
+		class="w-full max-w-[229px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover"
 		transition={flyAndScale}
 		sideOffset={8}
 	>
 		<DropdownMenu.Item
-			class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-colors data-[highlighted]:bg-muted"
+			class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted"
 		>
 			<div class="flex items-center">
 				<UserCircle class="mr-2 text-foreground-alt sq-5" />
@@ -44,7 +44,7 @@
 			</div>
 		</DropdownMenu.Item>
 		<DropdownMenu.Item
-			class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-colors data-[highlighted]:bg-muted"
+			class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted"
 		>
 			<div class="flex items-center">
 				<Cardholder class="mr-2 text-foreground-alt sq-5" />
@@ -64,7 +64,7 @@
 			</div>
 		</DropdownMenu.Item>
 		<DropdownMenu.Item
-			class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-colors data-[highlighted]:bg-muted"
+			class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted"
 		>
 			<div class="flex items-center">
 				<GearSix class="mr-2 text-foreground-alt sq-5" />
@@ -86,7 +86,7 @@
 		<DropdownMenu.Separator class="my-1 -ml-1 -mr-1 block h-px bg-muted" />
 		<DropdownMenu.Sub>
 			<DropdownMenu.SubTrigger
-				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-colors data-[highlighted]:bg-muted data-[state=open]:bg-muted"
+				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted data-[state=open]:bg-muted"
 			>
 				<div class="flex items-center">
 					<UserCirclePlus class="mr-2 text-foreground-alt sq-5" />
@@ -97,12 +97,12 @@
 				</div>
 			</DropdownMenu.SubTrigger>
 			<DropdownMenu.SubContent
-				class="w-full max-w-[209px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover outline-none"
+				class="w-full max-w-[209px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover !ring-0 !ring-transparent"
 				transition={flyAndScale}
 				sideOffset={10}
 			>
 				<DropdownMenu.Item
-					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-colors data-[highlighted]:bg-muted"
+					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted"
 				>
 					<Avatar.Root
 						class="relative mr-3 flex shrink-0 overflow-hidden rounded-full border border-foreground/50 sq-5"
@@ -120,7 +120,7 @@
 					@huntabyte
 				</DropdownMenu.Item>
 				<DropdownMenu.Item
-					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-colors data-[highlighted]:bg-muted"
+					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted"
 				>
 					<Avatar.Root
 						class="relative mr-3 flex shrink-0 overflow-hidden rounded-full border border-foreground/50 sq-5"
@@ -138,7 +138,7 @@
 					@pavel_stianko
 				</DropdownMenu.Item>
 				<DropdownMenu.Item
-					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-colors data-[highlighted]:bg-muted"
+					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted"
 				>
 					<Avatar.Root
 						class="relative mr-3 flex shrink-0 overflow-hidden rounded-full border border-foreground/50 sq-5"
@@ -156,7 +156,7 @@
 					@cokakoala_
 				</DropdownMenu.Item>
 				<DropdownMenu.Item
-					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-colors data-[highlighted]:bg-muted"
+					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted"
 				>
 					<Avatar.Root
 						class="relative mr-3 flex shrink-0 overflow-hidden rounded-full border border-foreground/50 sq-5"
