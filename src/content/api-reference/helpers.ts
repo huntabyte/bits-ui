@@ -8,7 +8,7 @@ export const asChild = {
 	description: "Whether to use [render delegation](/docs/delegation) with this component or not."
 };
 
-export const builderSlotProp: PropSchema = {
+const builderSlotProp: PropSchema = {
 	type: {
 		type: C.OBJECT,
 		definition: "{ [k: string]: any; action: Action<any, any, any>&nbsp;}"
@@ -27,8 +27,7 @@ export const attrsSlotProp: PropSchema = {
 };
 
 export const builderAndAttrsSlotProps: Record<string, PropSchema> = {
-	builder: builderSlotProp,
-	attrs: attrsSlotProp
+	builder: builderSlotProp
 };
 
 export const monthsSlotProp: PropSchema = {
