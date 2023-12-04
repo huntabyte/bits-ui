@@ -4,7 +4,7 @@
 	let value = [50];
 </script>
 
-<div class="w-full md:max-w-[75%]">
+<div class="w-full md:max-w-[280px]">
 	<Slider.Root
 		bind:value
 		class="relative flex w-full touch-none select-none items-center"

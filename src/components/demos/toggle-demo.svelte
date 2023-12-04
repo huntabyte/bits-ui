@@ -7,7 +7,7 @@
 </script>
 
 <div
-	class="min-h-input flex h-full w-[176px] items-center gap-2 rounded-card-sm border border-muted bg-background py-1 pl-[18px] pr-1.5 shadow-mini"
+	class="min-h-input flex h-full w-[176px] items-center gap-2 rounded-card-sm border border-border bg-background py-1 pl-[18px] pr-1.5 shadow-mini"
 >
 	<div
 		class="text-end font-alt text-[19px] tracking-[13.87px] {unlocked

@@ -24,7 +24,7 @@
 		transition={flyAndScale}
 	>
 		<ContextMenu.Item
-			class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-colors data-[highlighted]:bg-muted"
+			class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none !ring-0 !ring-transparent data-[highlighted]:bg-muted"
 		>
 			<div class="flex items-center">
 				<PencilSimpleLine class="mr-2 text-foreground-alt sq-5" />
@@ -45,7 +45,7 @@
 		</ContextMenu.Item>
 		<ContextMenu.Sub>
 			<ContextMenu.SubTrigger
-				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-colors data-[highlighted]:bg-muted data-[state=open]:bg-muted"
+				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none !ring-0 !ring-transparent data-[highlighted]:bg-muted data-[state=open]:bg-muted"
 			>
 				<div class="flex items-center">
 					<PlusCircle class="mr-2 text-foreground-alt sq-5" />
@@ -70,34 +70,34 @@
 				sideOffset={10}
 			>
 				<ContextMenu.Item
-					class="flex h-10 items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-normal outline-none transition-colors data-[highlighted]:bg-muted"
+					class="flex h-10 items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-normal outline-none !ring-0 !ring-transparent data-[highlighted]:bg-muted"
 				>
 					Header
 				</ContextMenu.Item>
 				<ContextMenu.Item
-					class="flex h-10 items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-normal outline-none transition-colors data-[highlighted]:bg-muted"
+					class="flex h-10 items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-normal outline-none !ring-0 !ring-transparent data-[highlighted]:bg-muted"
 				>
 					Paragraph
 				</ContextMenu.Item>
 				<ContextMenu.Item
-					class="flex h-10 items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-normal outline-none transition-colors data-[highlighted]:bg-muted"
+					class="flex h-10 items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-normal outline-none !ring-0 !ring-transparent data-[highlighted]:bg-muted"
 				>
 					Codeblock
 				</ContextMenu.Item>
 				<ContextMenu.Item
-					class="flex h-10 items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-normal outline-none transition-colors data-[highlighted]:bg-muted"
+					class="flex h-10 items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-normal outline-none !ring-0 !ring-transparent data-[highlighted]:bg-muted"
 				>
 					List
 				</ContextMenu.Item>
 				<ContextMenu.Item
-					class="flex h-10 items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-normal outline-none transition-colors data-[highlighted]:bg-muted"
+					class="flex h-10 items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-normal outline-none !ring-0 !ring-transparent data-[highlighted]:bg-muted"
 				>
 					Task
 				</ContextMenu.Item>
 			</ContextMenu.SubContent>
 		</ContextMenu.Sub>
 		<ContextMenu.Item
-			class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-colors data-[highlighted]:bg-muted"
+			class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none !ring-0 !ring-transparent data-[highlighted]:bg-muted"
 		>
 			<div class="flex items-center">
 				<CopySimple class="mr-2 text-foreground-alt sq-5" />
@@ -118,7 +118,7 @@
 		</ContextMenu.Item>
 		<ContextMenu.Separator class="-mx-1 my-1 block h-px bg-muted" />
 		<ContextMenu.Item
-			class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-colors data-[highlighted]:bg-muted"
+			class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none !ring-0 !ring-transparent data-[highlighted]:bg-muted"
 		>
 			<div class="flex items-center">
 				<Trash class="mr-2 text-foreground-alt sq-5" />

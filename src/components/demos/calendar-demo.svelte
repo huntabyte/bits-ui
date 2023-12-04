@@ -16,13 +16,13 @@
 >
 	<Calendar.Header class="flex items-center justify-between">
 		<Calendar.PrevButton
-			class="inline-flex items-center justify-center rounded-9px bg-background transition-all sq-10 hover:bg-muted active:scale-98"
+			class="inline-flex items-center justify-center rounded-9px bg-background sq-10 hover:bg-muted active:scale-98 active:transition-all"
 		>
 			<CaretLeft class="sq-6" />
 		</Calendar.PrevButton>
 		<Calendar.Heading class="text-[15px] font-medium" />
 		<Calendar.NextButton
-			class="inline-flex items-center justify-center rounded-9px bg-background transition-all sq-10 hover:bg-muted active:scale-98"
+			class="inline-flex items-center justify-center rounded-9px bg-background sq-10 hover:bg-muted active:scale-98 active:transition-all"
 		>
 			<CaretRight class="sq-6" />
 		</Calendar.NextButton>
@@ -54,10 +54,10 @@
 									<Calendar.Date
 										{date}
 										month={month.value}
-										class="group relative inline-flex items-center justify-center whitespace-nowrap rounded-9px border border-transparent bg-transparent p-0 text-sm font-normal text-foreground transition-all sq-10 hover:border-foreground data-[disabled]:pointer-events-none data-[outside-month]:pointer-events-none data-[selected]:bg-foreground data-[selected]:font-medium data-[disabled]:text-foreground/30 data-[selected]:text-background data-[unavailable]:text-muted-foreground data-[unavailable]:line-through"
+										class="group relative inline-flex items-center justify-center whitespace-nowrap rounded-9px border border-transparent bg-transparent p-0 text-sm font-normal text-foreground sq-10 hover:border-foreground data-[disabled]:pointer-events-none data-[outside-month]:pointer-events-none data-[selected]:bg-foreground data-[selected]:font-medium data-[disabled]:text-foreground/30 data-[selected]:text-background data-[unavailable]:text-muted-foreground data-[unavailable]:line-through"
 									>
 										<div
-											class="absolute top-[5px] hidden rounded-full bg-foreground transition-all sq-1 group-data-[today]:block group-data-[selected]:bg-background"
+											class="absolute top-[5px] hidden rounded-full bg-foreground sq-1 group-data-[today]:block group-data-[selected]:bg-background"
 										/>
 										{date.day}
 									</Calendar.Date>

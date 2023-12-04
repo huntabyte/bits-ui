@@ -27,7 +27,7 @@
 			class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-colors data-[highlighted]:bg-muted"
 		>
 			<div class="flex items-center">
-				<UserCircle class="mr-2 text-foreground-alt sq-4" />
+				<UserCircle class="mr-2 text-foreground-alt sq-5" />
 				Profile
 			</div>
 			<div class="ml-auto flex items-center gap-px">
@@ -47,7 +47,7 @@
 			class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-colors data-[highlighted]:bg-muted"
 		>
 			<div class="flex items-center">
-				<Cardholder class="mr-2 text-foreground-alt sq-4" />
+				<Cardholder class="mr-2 text-foreground-alt sq-5" />
 				Billing
 			</div>
 			<div class="ml-auto flex items-center gap-px">
@@ -67,7 +67,7 @@
 			class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-colors data-[highlighted]:bg-muted"
 		>
 			<div class="flex items-center">
-				<GearSix class="mr-2 text-foreground-alt sq-4" />
+				<GearSix class="mr-2 text-foreground-alt sq-5" />
 				Settings
 			</div>
 			<div class="ml-auto flex items-center gap-px">
@@ -89,11 +89,11 @@
 				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none transition-colors data-[highlighted]:bg-muted data-[state=open]:bg-muted"
 			>
 				<div class="flex items-center">
-					<UserCirclePlus class="mr-2 text-foreground-alt sq-4" />
+					<UserCirclePlus class="mr-2 text-foreground-alt sq-5" />
 					Invite users
 				</div>
 				<div class="ml-auto flex items-center gap-px">
-					<CaretRight class="text-foreground-alt sq-4" />
+					<CaretRight class="text-foreground-alt sq-5" />
 				</div>
 			</DropdownMenu.SubTrigger>
 			<DropdownMenu.SubContent
@@ -113,7 +113,7 @@
 							class="aspect-square h-full w-full"
 						/>
 						<Avatar.Fallback
-							class="flex h-full w-full items-center justify-center rounded-full bg-muted text-xs"
+							class="flex h-full w-full items-center justify-center rounded-full bg-muted text-xxs"
 							>HJ</Avatar.Fallback
 						>
 					</Avatar.Root>
