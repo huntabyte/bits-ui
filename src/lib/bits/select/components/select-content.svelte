@@ -42,8 +42,10 @@
 	$: if (id) {
 		ids.menu.set(id);
 	}
+
 	$: builder = $menu;
-	$: slotProps = { builder, attrs };
+	$: Object.assign(builder, attrs);
+
 	$: updatePositioning({
 		side,
 		align,
@@ -59,17 +61,16 @@
 
 <!-- svelte-ignore a11y-no-static-element-interactions / applied by melt's builder-->
 {#if asChild && $open}
-	<slot {...slotProps} />
+	<slot {builder} />
 {:else if transition && $open}
 	<div
 		transition:transition={transitionConfig}
 		use:melt={builder}
 		{...$$restProps}
-		{...attrs}
 		on:m-pointerleave={dispatch}
 		on:keydown
 	>
-		<slot {...slotProps} />
+		<slot {builder} />
 	</div>
 {:else if inTransition && outTransition && $open}
 	<div
@@ -77,42 +78,38 @@
 		out:outTransition={outTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
-		{...attrs}
 		on:m-pointerleave={dispatch}
 		on:keydown
 	>
-		<slot {...slotProps} />
+		<slot {builder} />
 	</div>
 {:else if inTransition && $open}
 	<div
 		in:inTransition={inTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
-		{...attrs}
 		on:m-pointerleave={dispatch}
 		on:keydown
 	>
-		<slot {...slotProps} />
+		<slot {builder} />
 	</div>
 {:else if outTransition && $open}
 	<div
 		out:outTransition={outTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
-		{...attrs}
 		on:m-pointerleave={dispatch}
 		on:keydown
 	>
-		<slot {...slotProps} />
+		<slot {builder} />
 	</div>
 {:else if $open}
 	<div
 		use:melt={builder}
 		{...$$restProps}
-		{...attrs}
 		on:m-pointerleave={dispatch}
 		on:keydown
 	>
-		<slot {...slotProps} />
+		<slot {builder} />
 	</div>
 {/if}

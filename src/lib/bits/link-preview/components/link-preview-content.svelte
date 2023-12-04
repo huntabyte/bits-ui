@@ -45,10 +45,7 @@
 	const dispatch = createDispatcher();
 
 	$: builder = $content;
-	$: slotProps = {
-		builder,
-		attrs
-	};
+	$: Object.assign(builder, attrs);
 
 	$: updatePositioning({
 		side,
@@ -66,19 +63,18 @@
 </script>
 
 {#if asChild && $open}
-	<slot {...slotProps} />
+	<slot {builder} />
 {:else if transition && $open}
 	<div
 		transition:transition={transitionConfig}
 		use:melt={builder}
 		{...$$restProps}
-		{...attrs}
 		on:m-focusout={dispatch}
 		on:m-pointerdown={dispatch}
 		on:m-pointerenter={dispatch}
 		on:m-pointerleave={dispatch}
 	>
-		<slot {...slotProps} />
+		<slot {builder} />
 	</div>
 {:else if inTransition && outTransition && $open}
 	<div
@@ -86,50 +82,46 @@
 		out:outTransition={outTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
-		{...attrs}
 		on:m-focusout={dispatch}
 		on:m-pointerdown={dispatch}
 		on:m-pointerenter={dispatch}
 		on:m-pointerleave={dispatch}
 	>
-		<slot {...slotProps} />
+		<slot {builder} />
 	</div>
 {:else if inTransition && $open}
 	<div
 		in:inTransition={inTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
-		{...attrs}
 		on:m-focusout={dispatch}
 		on:m-pointerdown={dispatch}
 		on:m-pointerenter={dispatch}
 		on:m-pointerleave={dispatch}
 	>
-		<slot {...slotProps} />
+		<slot {builder} />
 	</div>
 {:else if outTransition && $open}
 	<div
 		out:outTransition={outTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
-		{...attrs}
 		on:m-focusout={dispatch}
 		on:m-pointerdown={dispatch}
 		on:m-pointerenter={dispatch}
 		on:m-pointerleave={dispatch}
 	>
-		<slot {...slotProps} />
+		<slot {builder} />
 	</div>
 {:else if $open}
 	<div
 		use:melt={builder}
 		{...$$restProps}
-		{...attrs}
 		on:m-focusout={dispatch}
 		on:m-pointerdown={dispatch}
 		on:m-pointerenter={dispatch}
 		on:m-pointerleave={dispatch}
 	>
-		<slot {...slotProps} />
+		<slot {builder} />
 	</div>
 {/if}

@@ -12,15 +12,21 @@
 		states: { headingValue }
 	} = getCtx();
 
-	$: builder = $heading;
 	const attrs = getCalendarAttrs("heading");
+	$: builder = $heading;
+	$: Object.assign(builder, attrs);
+
+	$: slotProps = {
+		builder,
+		headingValue: $headingValue
+	};
 </script>
 
 {#if asChild}
-	<slot {builder} {attrs} headingValue={$headingValue} />
+	<slot {...slotProps} />
 {:else}
-	<div use:melt={builder} {...$$restProps} {...attrs}>
-		<slot {builder} {attrs} headingValue={$headingValue}>
+	<div use:melt={builder} {...$$restProps}>
+		<slot {...slotProps}>
 			{$headingValue}
 		</slot>
 	</div>

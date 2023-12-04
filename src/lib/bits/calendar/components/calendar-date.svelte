@@ -15,15 +15,14 @@
 		elements: { cell },
 		helpers: { isDateDisabled, isDateUnavailable, isDateSelected }
 	} = getCtx();
+	const attrs = getAttrs("date");
 
 	$: builder = $cell(date, month);
-
-	const attrs = getAttrs("date");
+	$: Object.assign(builder, attrs);
 	const dispatch = createDispatcher();
 
 	$: slotProps = {
 		builder,
-		attrs,
 		disabled: $isDateDisabled(date),
 		unavailable: $isDateUnavailable(date),
 		selected: $isDateSelected(date)
@@ -33,7 +32,7 @@
 {#if asChild}
 	<slot {...slotProps} />
 {:else}
-	<div use:melt={builder} {...attrs} {...$$restProps} on:m-click={dispatch}>
+	<div use:melt={builder} {...$$restProps} on:m-click={dispatch}>
 		<slot {...slotProps}>
 			{date.day}
 		</slot>

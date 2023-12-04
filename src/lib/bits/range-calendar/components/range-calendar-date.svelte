@@ -14,12 +14,12 @@
 		helpers: { isDateDisabled, isDateUnavailable }
 	} = getCtx();
 
-	$: builder = $cell(date, month);
 	const attrs = getAttrs("date");
+	$: builder = $cell(date, month);
+	$: Object.assign(builder, attrs);
 
 	$: slotProps = {
 		builder,
-		attrs,
 		disabled: $isDateDisabled(date),
 		unavailable: $isDateUnavailable(date)
 	};
@@ -28,7 +28,7 @@
 {#if asChild}
 	<slot {...slotProps} />
 {:else}
-	<div use:melt={builder} {...attrs} {...$$restProps}>
+	<div use:melt={builder} {...$$restProps}>
 		<slot {...slotProps}>
 			{date.day}
 		</slot>

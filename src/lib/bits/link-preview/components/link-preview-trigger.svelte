@@ -22,16 +22,12 @@
 		ids.trigger.set(id);
 	}
 	$: builder = $trigger;
-	$: slotProps = {
-		builder,
-		attrs
-	};
+	$: Object.assign(builder, attrs);
 </script>
 
 {#if asChild}
-	<slot {...slotProps} />
+	<slot {builder} />
 {:else}
-	{@const builder = $trigger}
 	<svelte:element
 		this={"a"}
 		use:melt={builder}
@@ -42,6 +38,6 @@
 		on:m-pointerenter={dispatch}
 		on:m-pointerleave={dispatch}
 	>
-		<slot {...slotProps} />
+		<slot {builder} />
 	</svelte:element>
 {/if}

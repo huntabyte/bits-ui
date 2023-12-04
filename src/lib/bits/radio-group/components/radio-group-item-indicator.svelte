@@ -1,8 +1,12 @@
 <script lang="ts">
 	import { getRadioIndicator, getAttrs } from "../ctx.js";
-	const { isChecked, value } = getRadioIndicator();
+	import type { ItemIndicatorProps } from "../types.js";
+
+	type $$Props = ItemIndicatorProps;
 
 	export let asChild = false;
+
+	const { isChecked, value } = getRadioIndicator();
 
 	const attrs = getAttrs("item-indicator");
 
@@ -15,7 +19,7 @@
 {#if asChild}
 	<slot {...slotProps} />
 {:else}
-	<div {...attrs}>
+	<div {...attrs} {...$$restProps}>
 		{#if $isChecked(value)}
 			<slot {...slotProps} />
 		{/if}

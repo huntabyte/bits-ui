@@ -24,23 +24,19 @@
 	const dispatch = createDispatcher();
 
 	$: builder = $segment(part);
-	$: slotProps = {
-		builder,
-		attrs
-	};
+	$: Object.assign(builder, attrs);
 </script>
 
 {#if asChild}
-	<slot {...slotProps} />
+	<slot {builder} />
 {:else}
 	<div
 		use:melt={builder}
 		{...$$restProps}
-		{...attrs}
 		on:m-click={dispatch}
 		on:m-focusout={dispatch}
 		on:m-keydown={dispatch}
 	>
-		<slot {...slotProps} />
+		<slot {builder} />
 	</div>
 {/if}

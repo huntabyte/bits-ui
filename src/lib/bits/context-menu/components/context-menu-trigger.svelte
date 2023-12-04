@@ -21,27 +21,23 @@
 	$: if (id) {
 		ids.trigger.set(id);
 	}
-	$: builder = $trigger;
 
-	$: slotProps = {
-		builder,
-		attrs
-	};
+	$: builder = $trigger;
+	$: Object.assign(builder, attrs);
 </script>
 
 {#if asChild}
-	<slot {...slotProps} />
+	<slot {builder} />
 {:else}
 	<div
 		use:melt={builder}
 		{...$$restProps}
-		{...attrs}
 		on:m-contextmenu={dispatch}
 		on:m-pointercancel={dispatch}
 		on:m-pointerdown={dispatch}
 		on:m-pointermove={dispatch}
 		on:m-pointerup={dispatch}
 	>
-		<slot {...slotProps} />
+		<slot {builder} />
 	</div>
 {/if}

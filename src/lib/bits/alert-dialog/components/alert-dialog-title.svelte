@@ -21,16 +21,13 @@
 	}
 
 	$: builder = $title;
-	$: slotProps = {
-		builder,
-		attrs
-	};
+	$: Object.assign(builder, attrs);
 </script>
 
 {#if asChild}
-	<slot {...slotProps} />
+	<slot {builder} />
 {:else}
-	<svelte:element this={level} use:melt={builder} {...$$restProps} {...attrs}>
-		<slot {...slotProps} />
+	<svelte:element this={level} use:melt={builder} {...$$restProps}>
+		<slot {builder} />
 	</svelte:element>
 {/if}

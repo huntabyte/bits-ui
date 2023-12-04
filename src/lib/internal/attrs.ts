@@ -12,5 +12,7 @@ export function createBitAttrs<T extends readonly string[]>(bit: Bit | "menu", p
 }
 
 export function disabledAttrs(disabled: boolean | undefined | null) {
-	return disabled ? { "aria-disabled": true, "data-disabled": "" } : {};
+	return disabled
+		? { "aria-disabled": "true", "data-disabled": "" }
+		: { "aria-disabled": undefined, "data-disabled": undefined };
 }

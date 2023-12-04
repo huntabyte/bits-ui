@@ -11,19 +11,16 @@
 		elements: { grid }
 	} = getCtx();
 
-	$: builder = $grid;
 	const attrs = getCalendarAttrs("grid");
 
-	$: slotProps = {
-		builder,
-		attrs
-	};
+	$: builder = $grid;
+	$: Object.assign(builder, attrs);
 </script>
 
 {#if asChild}
-	<slot {...slotProps} />
+	<slot {builder} />
 {:else}
-	<table use:melt={builder} {...$$restProps} {...attrs}>
-		<slot {...slotProps} />
+	<table use:melt={builder} {...$$restProps}>
+		<slot {builder} />
 	</table>
 {/if}

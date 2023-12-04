@@ -14,11 +14,11 @@
 	const attrs = getAttrs("tick");
 
 	$: builder = $tick();
-	$: slotProps = { builder, attrs };
+	$: Object.assign(builder, attrs);
 </script>
 
 {#if asChild}
-	<slot {...slotProps} />
+	<slot {builder} />
 {:else}
-	<span use:melt={builder} {...$$restProps} {...attrs} />
+	<span use:melt={builder} {...$$restProps} />
 {/if}

@@ -25,20 +25,16 @@
 	const attrs = getAttrs("overlay");
 
 	$: builder = $overlay;
-	$: slotProps = {
-		builder,
-		attrs
-	};
+	$: Object.assign(builder, attrs);
 </script>
 
 {#if asChild && $open}
-	<slot {...slotProps} />
+	<slot {builder} />
 {:else if transition && $open}
 	<div
 		transition:transition={transitionConfig}
 		use:melt={builder}
 		{...$$restProps}
-		{...attrs}
 	/>
 {:else if inTransition && outTransition && $open}
 	<div
@@ -46,22 +42,19 @@
 		out:outTransition={outTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
-		{...attrs}
 	/>
 {:else if inTransition && $open}
 	<div
 		in:inTransition={inTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
-		{...attrs}
 	/>
 {:else if outTransition && $open}
 	<div
 		out:outTransition={outTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
-		{...attrs}
 	/>
 {:else if $open}
-	<div use:melt={builder} {...$$restProps} {...attrs} />
+	<div use:melt={builder} {...$$restProps} />
 {/if}

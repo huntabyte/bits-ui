@@ -21,9 +21,10 @@
 	const attrs = getFieldAttrs("input");
 
 	$: builder = $field;
+	$: Object.assign(builder, attrs);
+
 	$: slotProps = {
 		builder,
-		attrs,
 		segments: $segmentContents
 	};
 </script>
@@ -31,7 +32,7 @@
 {#if asChild}
 	<slot {...slotProps} />
 {:else}
-	<div use:melt={builder} {...$$restProps} {...attrs}>
+	<div use:melt={builder} {...$$restProps}>
 		<slot {...slotProps} />
 	</div>
 {/if}

@@ -17,21 +17,13 @@
 	const attrs = getAttrs("root");
 
 	$: builder = $root;
-	$: slotProps = {
-		builder,
-		attrs
-	};
+	$: Object.assign(builder, attrs);
 </script>
 
 {#if asChild}
-	<slot {...slotProps} />
+	<slot {builder} />
 {:else}
-	<label
-		use:melt={builder}
-		{...$$restProps}
-		{...attrs}
-		on:m-mousedown={dispatch}
-	>
-		<slot {...slotProps} />
+	<label use:melt={builder} {...$$restProps} on:m-mousedown={dispatch}>
+		<slot {builder} />
 	</label>
 {/if}

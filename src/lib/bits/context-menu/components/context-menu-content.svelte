@@ -38,10 +38,7 @@
 		ids.menu.set(id);
 	}
 	$: builder = $menu;
-	$: slotProps = {
-		builder,
-		attrs
-	};
+	$: Object.assign(builder, attrs);
 
 	$: updatePositioning({
 		alignOffset,
@@ -53,16 +50,15 @@
 </script>
 
 {#if asChild && $open}
-	<slot {...slotProps} />
+	<slot {builder} />
 {:else if transition && $open}
 	<div
 		transition:transition={transitionConfig}
 		use:melt={builder}
 		{...$$restProps}
-		{...attrs}
 		on:m-keydown={dispatch}
 	>
-		<slot {...slotProps} />
+		<slot {builder} />
 	</div>
 {:else if inTransition && outTransition && $open}
 	<div
@@ -70,33 +66,30 @@
 		out:outTransition={outTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
-		{...attrs}
 		on:m-keydown={dispatch}
 	>
-		<slot {...slotProps} />
+		<slot {builder} />
 	</div>
 {:else if inTransition && $open}
 	<div
 		in:inTransition={inTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
-		{...attrs}
 		on:m-keydown={dispatch}
 	>
-		<slot {...slotProps} />
+		<slot {builder} />
 	</div>
 {:else if outTransition && $open}
 	<div
 		out:outTransition={outTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
-		{...attrs}
 		on:m-keydown={dispatch}
 	>
-		<slot {...slotProps} />
+		<slot {builder} />
 	</div>
 {:else if $open}
-	<div use:melt={builder} {...$$restProps} {...attrs} on:m-keydown={dispatch}>
-		<slot {...slotProps} />
+	<div use:melt={builder} {...$$restProps} on:m-keydown={dispatch}>
+		<slot {builder} />
 	</div>
 {/if}

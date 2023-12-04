@@ -20,18 +20,17 @@
 	const attrs = getAttrs("item");
 
 	$: builder = $item({ value, disabled, label });
-	$: slotProps = { builder, attrs };
+	$: Object.assign(builder, attrs);
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions / applied by melt's builder-->
 
 {#if asChild}
-	<slot {...slotProps} />
+	<slot {builder} />
 {:else}
 	<div
 		use:melt={builder}
 		{...$$restProps}
-		{...attrs}
 		on:m-click={dispatch}
 		on:m-pointermove={dispatch}
 		on:focusin
@@ -39,7 +38,7 @@
 		on:focusout
 		on:pointerleave
 	>
-		<slot {...slotProps}>
+		<slot {builder}>
 			{label ? label : value}
 		</slot>
 	</div>

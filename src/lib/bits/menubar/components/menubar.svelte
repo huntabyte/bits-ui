@@ -29,9 +29,9 @@
 	$: updateOption("loop", loop);
 	$: updateOption("closeOnEscape", closeOnEscape);
 	$: builder = $menubar;
+	$: Object.assign(builder, attrs);
 	$: slotProps = {
 		builder,
-		attrs,
 		ids: $idValues
 	};
 </script>
@@ -39,7 +39,7 @@
 {#if asChild}
 	<slot {...slotProps} />
 {:else}
-	<div use:melt={builder} {...$$restProps} {...attrs}>
+	<div use:melt={builder} {...$$restProps}>
 		<slot {...slotProps} />
 	</div>
 {/if}

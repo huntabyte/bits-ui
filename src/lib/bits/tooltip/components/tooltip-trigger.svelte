@@ -22,17 +22,16 @@
 		ids.trigger.set(id);
 	}
 	$: builder = $trigger;
-	$: slotProps = { builder, attrs };
+	$: Object.assign(builder, attrs);
 </script>
 
 {#if asChild}
-	<slot {...slotProps} />
+	<slot {builder} />
 {:else}
 	<button
 		use:melt={builder}
 		type="button"
 		{...$$restProps}
-		{...attrs}
 		on:m-blur={dispatch}
 		on:m-focus={dispatch}
 		on:m-keydown={dispatch}
@@ -40,6 +39,6 @@
 		on:m-pointerenter={dispatch}
 		on:m-pointerleave={dispatch}
 	>
-		<slot {...slotProps} />
+		<slot {builder} />
 	</button>
 {/if}

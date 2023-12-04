@@ -44,13 +44,14 @@
 	$: updateOption("orientation", orientation);
 
 	$: builder = $root;
-	$: slotProps = { builder, attrs, ticks: $ticks };
+	$: Object.assign(builder, attrs);
+	$: slotProps = { builder, ticks: $ticks };
 </script>
 
 {#if asChild}
 	<slot {...slotProps} />
 {:else}
-	<span use:melt={builder} {...$$restProps} {...attrs}>
+	<span use:melt={builder} {...$$restProps}>
 		<slot {...slotProps} />
 	</span>
 {/if}

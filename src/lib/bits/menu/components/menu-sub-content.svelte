@@ -42,11 +42,9 @@
 	$: if (id) {
 		ids.menu.set(id);
 	}
+
 	$: builder = $subMenu;
-	$: slotProps = {
-		builder,
-		attrs
-	};
+	$: Object.assign(builder, attrs);
 
 	$: updateSubPositioning({
 		side,
@@ -64,18 +62,17 @@
 </script>
 
 {#if asChild && $subOpen}
-	<slot {...slotProps} />
+	<slot {builder} />
 {:else if transition && $subOpen}
 	<div
 		transition:transition={transitionConfig}
 		use:melt={builder}
 		{...$$restProps}
-		{...attrs}
 		on:m-focusout={dispatch}
 		on:m-keydown={dispatch}
 		on:m-pointermove={dispatch}
 	>
-		<slot {...slotProps} />
+		<slot {builder} />
 	</div>
 {:else if inTransition && outTransition && $subOpen}
 	<div
@@ -83,46 +80,42 @@
 		out:outTransition={outTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
-		{...attrs}
 		on:m-focusout={dispatch}
 		on:m-keydown={dispatch}
 		on:m-pointermove={dispatch}
 	>
-		<slot {...slotProps} />
+		<slot {builder} />
 	</div>
 {:else if inTransition && $subOpen}
 	<div
 		in:inTransition={inTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
-		{...attrs}
 		on:m-focusout={dispatch}
 		on:m-keydown={dispatch}
 		on:m-pointermove={dispatch}
 	>
-		<slot {...slotProps} />
+		<slot {builder} />
 	</div>
 {:else if outTransition && $subOpen}
 	<div
 		out:outTransition={outTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
-		{...attrs}
 		on:m-focusout={dispatch}
 		on:m-keydown={dispatch}
 		on:m-pointermove={dispatch}
 	>
-		<slot {...slotProps} />
+		<slot {builder} />
 	</div>
 {:else if $subOpen}
 	<div
 		use:melt={builder}
 		{...$$restProps}
-		{...attrs}
 		on:m-focusout={dispatch}
 		on:m-keydown={dispatch}
 		on:m-pointermove={dispatch}
 	>
-		<slot {...slotProps} />
+		<slot {builder} />
 	</div>
 {/if}

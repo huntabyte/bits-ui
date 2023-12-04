@@ -14,14 +14,11 @@
 	const attrs = getAttrs("separator");
 
 	$: builder = $separator;
-	$: slotProps = {
-		builder,
-		attrs
-	};
+	$: Object.assign(builder, attrs);
 </script>
 
 {#if asChild}
-	<slot {...slotProps} />
+	<slot {builder} />
 {:else}
-	<div use:melt={$separator} {...$$restProps} {...attrs} />
+	<div use:melt={$separator} {...$$restProps} />
 {/if}

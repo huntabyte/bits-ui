@@ -12,15 +12,13 @@
 	const attrs = getAttrs("image");
 
 	$: image = getImage(src).elements.image;
+
 	$: builder = $image;
-	$: slotProps = {
-		builder,
-		attrs
-	};
+	$: Object.assign(builder, attrs);
 </script>
 
 {#if asChild}
-	<slot {...slotProps} />
+	<slot {builder} />
 {:else}
-	<img use:melt={builder} {alt} {...$$restProps} {...attrs} />
+	<img use:melt={builder} {alt} {...$$restProps} />
 {/if}

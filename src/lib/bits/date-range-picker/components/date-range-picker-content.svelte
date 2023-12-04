@@ -42,10 +42,7 @@
 		ids.popover.content.set(id);
 	}
 	$: builder = $content;
-	$: slotProps = {
-		builder,
-		attrs
-	};
+	$: Object.assign(builder, attrs);
 
 	$: updatePositioning({
 		side,
@@ -63,15 +60,14 @@
 </script>
 
 {#if asChild && $open}
-	<slot {...slotProps} />
+	<slot {builder} />
 {:else if transition && $open}
 	<div
 		transition:transition={transitionConfig}
 		use:melt={builder}
 		{...$$restProps}
-		{...attrs}
 	>
-		<slot {...slotProps} />
+		<slot {builder} />
 	</div>
 {:else if inTransition && outTransition && $open}
 	<div
@@ -79,30 +75,23 @@
 		out:outTransition={outTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
-		{...attrs}
 	>
-		<slot {...slotProps} />
+		<slot {builder} />
 	</div>
 {:else if inTransition && $open}
-	<div
-		in:inTransition={inTransitionConfig}
-		use:melt={builder}
-		{...$$restProps}
-		{...attrs}
-	>
-		<slot {...slotProps} />
+	<div in:inTransition={inTransitionConfig} use:melt={builder} {...$$restProps}>
+		<slot {builder} />
 	</div>
 {:else if outTransition && $open}
 	<div
 		out:outTransition={outTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
-		{...attrs}
 	>
-		<slot {...slotProps} />
+		<slot {builder} />
 	</div>
 {:else if $open}
-	<div use:melt={builder} {...$$restProps} {...attrs}>
-		<slot {...slotProps} />
+	<div use:melt={builder} {...$$restProps}>
+		<slot {builder} />
 	</div>
 {/if}

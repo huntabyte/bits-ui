@@ -15,6 +15,7 @@
 		"data-state": $checked ? "checked" : "unchecked",
 		"data-checked": $checked ? "" : undefined
 	};
+
 	$: slotProps = { checked: $checked, attrs };
 </script>
 

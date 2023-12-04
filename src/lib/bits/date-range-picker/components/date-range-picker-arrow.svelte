@@ -18,14 +18,11 @@
 	$: updateOption("arrowSize", size);
 
 	$: builder = $arrow;
-	$: slotProps = {
-		builder,
-		attrs
-	};
+	$: Object.assign(builder, attrs);
 </script>
 
 {#if asChild}
-	<slot {...slotProps} />
+	<slot {builder} />
 {:else}
-	<div use:melt={builder} {...$$restProps} {...attrs} />
+	<div use:melt={builder} {...$$restProps} />
 {/if}

@@ -7,10 +7,20 @@
 	export let asChild: $$Props["asChild"] = false;
 
 	const {
-		helpers: { isChecked, isIndeterminate }
+		helpers: { isChecked, isIndeterminate },
+		states: { checked }
 	} = getCtx();
 
-	const attrs = getAttrs("indicator");
+	function getStateAttr(state: boolean | "indeterminate") {
+		if (state === "indeterminate") return "indeterminate";
+		if (state) return "checked";
+		return "unchecked";
+	}
+
+	$: attrs = {
+		...getAttrs("indicator"),
+		"data-state": getStateAttr($checked)
+	};
 
 	$: slotProps = {
 		isChecked: $isChecked,

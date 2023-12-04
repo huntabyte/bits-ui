@@ -18,12 +18,13 @@
 		ids.calendar.calendar.set(id);
 	}
 
-	$: builder = $calendar;
 	const attrs = getCalendarAttrs("root");
+
+	$: builder = $calendar;
+	$: Object.assign(builder, attrs);
 
 	$: slotProps = {
 		builder,
-		attrs,
 		months: $months,
 		weekdays: $weekdays
 	};
@@ -32,7 +33,7 @@
 {#if asChild}
 	<slot {...slotProps} />
 {:else}
-	<div use:melt={builder} {...$$restProps} {...attrs}>
+	<div use:melt={builder} {...$$restProps}>
 		<slot {...slotProps} />
 	</div>
 {/if}

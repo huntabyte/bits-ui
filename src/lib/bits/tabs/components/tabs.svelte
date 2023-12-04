@@ -40,9 +40,9 @@
 	$: updateOption("autoSet", autoSet);
 
 	$: builder = $root;
+	$: Object.assign(builder, attrs);
 	$: slotProps = {
 		builder,
-		attrs,
 		value: $localValue
 	};
 </script>
@@ -50,7 +50,7 @@
 {#if asChild}
 	<slot {...slotProps} />
 {:else}
-	<div use:melt={builder} {...$$restProps} {...attrs}>
+	<div use:melt={builder} {...$$restProps}>
 		<slot {...slotProps} />
 	</div>
 {/if}

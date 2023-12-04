@@ -20,14 +20,14 @@
 		ids.calendar.calendar.set(id);
 	}
 
-	$: builder = $calendar;
-
 	const attrs = getCalendarAttrs("root");
 	const dispatch = createDispatcher();
 
+	$: builder = $calendar;
+	$: Object.assign(builder, attrs);
+
 	$: slotProps = {
 		builder,
-		attrs,
 		months: $months,
 		weekdays: $weekdays
 	};
@@ -36,7 +36,7 @@
 {#if asChild}
 	<slot {...slotProps} />
 {:else}
-	<div use:melt={builder} {...$$restProps} {...attrs} on:m-keydown={dispatch}>
+	<div use:melt={builder} {...$$restProps} on:m-keydown={dispatch}>
 		<slot {...slotProps} />
 	</div>
 {/if}

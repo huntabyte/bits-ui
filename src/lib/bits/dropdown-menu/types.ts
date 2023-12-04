@@ -1,27 +1,30 @@
 import type {
+	Props,
+	SubProps,
+	ItemProps,
+	LabelProps,
+	GroupProps,
 	ArrowProps,
 	ContentProps,
-	CheckboxItemProps,
-	RadioGroupProps,
+	SeparatorProps,
 	RadioItemProps,
-	GroupProps,
+	RadioGroupProps,
 	SubContentProps,
 	SubTriggerProps,
-	DropdownTriggerProps as TriggerProps,
-	ItemProps,
+	CheckboxItemProps,
+	RadioIndicatorProps,
 	CheckboxIndicatorProps,
-	SeparatorProps,
-	SubProps,
-	LabelProps,
-	Props,
+	DropdownTriggerProps as TriggerProps,
 	//
-	ContentEvents,
-	CheckboxItemEvents,
+	// Events
+	//
 	ItemEvents,
+	ContentEvents,
 	RadioItemEvents,
 	SubTriggerEvents,
-	DropdownTriggerEvents as TriggerEvents,
-	SubContentEvents
+	SubContentEvents,
+	CheckboxItemEvents,
+	DropdownTriggerEvents as TriggerEvents
 } from "$lib/bits/menu/index.js";
 
 export type {
@@ -39,37 +42,16 @@ export type {
 	SubContentProps,
 	SubTriggerProps,
 	CheckboxItemProps,
+	RadioIndicatorProps,
 	CheckboxIndicatorProps,
 	//
-	Props as DropdownMenuProps,
-	SubProps as DropdownMenuSubProps,
-	ItemProps as DropdownMenuItemProps,
-	LabelProps as DropdownMenuLabelProps,
-	ArrowProps as DropdownMenuArrowProps,
-	GroupProps as DropdownMenuGroupProps,
-	ContentProps as DropdownMenuContentProps,
-	TriggerProps as DropdownMenuTriggerProps,
-	RadioItemProps as DropdownMenuRadioItemProps,
-	SeparatorProps as DropdownMenuSeparatorProps,
-	SubTriggerProps as DropdownMenuSubTriggerProps,
-	RadioGroupProps as DropdownMenuRadioGroupProps,
-	SubContentProps as DropdownMenuSubContentProps,
-	CheckboxItemProps as DropdownMenuCheckboxItemProps,
-	CheckboxIndicatorProps as DropdownMenuCheckboxIndicatorProps,
-	//,
+	// Events
+	//
 	ItemEvents,
 	TriggerEvents,
 	ContentEvents,
 	RadioItemEvents,
 	SubContentEvents,
 	SubTriggerEvents,
-	CheckboxItemEvents,
-	//
-	ItemEvents as DropdownMenuItemEvents,
-	TriggerEvents as DropdownMenuTriggerEvents,
-	ContentEvents as DropdownMenuContentEvents,
-	RadioItemEvents as DropdownMenuRadioItemEvents,
-	SubContentEvents as DropdownMenuSubContentEvents,
-	SubTriggerEvents as DropdownMenuSubTriggerEvents,
-	CheckboxItemEvents as DropdownMenuCheckboxItemEvents
+	CheckboxItemEvents
 };

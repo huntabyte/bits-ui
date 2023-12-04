@@ -13,27 +13,23 @@
 		elements: { prevButton }
 	} = getCtx();
 
-	$: builder = $prevButton;
-
 	const attrs = getAttrs("prev-button");
-	const dispatch = createDispatcher();
 
-	$: slotProps = {
-		builder,
-		attrs
-	};
+	$: builder = $prevButton;
+	$: Object.assign(builder, attrs);
+
+	const dispatch = createDispatcher();
 </script>
 
 {#if asChild}
-	<slot {...slotProps} />
+	<slot {builder} />
 {:else}
 	<button
 		use:melt={builder}
 		type="button"
 		{...$$restProps}
-		{...attrs}
 		on:m-click={dispatch}
 	>
-		<slot {...slotProps} />
+		<slot {builder} />
 	</button>
 {/if}

@@ -11,14 +11,16 @@
 		elements: { nextButton }
 	} = getCtx();
 
-	$: builder = $nextButton;
 	const attrs = getCalendarAttrs("next-button");
+
+	$: builder = $nextButton;
+	$: Object.assign(builder, attrs);
 </script>
 
 {#if asChild}
-	<slot {builder} {attrs} />
+	<slot {builder} />
 {:else}
-	<button use:melt={builder} type="button" {...$$restProps} {...attrs}>
-		<slot {builder} {attrs} />
+	<button use:melt={builder} type="button" {...$$restProps}>
+		<slot {builder} />
 	</button>
 {/if}

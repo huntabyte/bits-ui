@@ -96,14 +96,14 @@
 	$: updateOption("weekdayFormat", weekdayFormat);
 	$: updateOption("numberOfMonths", numberOfMonths);
 
-	$: builder = $calendar;
-
 	const attrs = getAttrs("root");
+
+	$: builder = $calendar;
+	$: Object.assign(builder, attrs);
 	const dispatch = createDispatcher();
 
 	$: slotProps = {
 		builder,
-		attrs,
 		months: $months,
 		weekdays: $weekdays
 	};
@@ -112,7 +112,7 @@
 {#if asChild}
 	<slot {...slotProps} />
 {:else}
-	<div use:melt={builder} {...$$restProps} {...attrs} on:m-keydown={dispatch}>
+	<div use:melt={builder} {...$$restProps} on:m-keydown={dispatch}>
 		<slot {...slotProps} />
 	</div>
 {/if}

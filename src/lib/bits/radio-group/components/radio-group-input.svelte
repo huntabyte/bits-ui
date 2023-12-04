@@ -14,14 +14,11 @@
 	const attrs = getAttrs("input");
 
 	$: builder = $hiddenInput;
-	$: slotProps = {
-		builder,
-		attrs
-	};
+	$: Object.assign(builder, attrs);
 </script>
 
 {#if asChild}
-	<slot {...slotProps} />
+	<slot {builder} />
 {:else}
-	<input use:melt={builder} {...$$restProps} {...attrs} />
+	<input use:melt={builder} {...$$restProps} />
 {/if}

@@ -12,6 +12,6 @@ export { default as RadioGroup } from "$lib/bits/menu/components/menu-radio-grou
 export { default as SubContent } from "$lib/bits/menu/components/menu-sub-content.svelte";
 export { default as SubTrigger } from "$lib/bits/menu/components/menu-sub-trigger.svelte";
 export { default as CheckboxItem } from "$lib/bits/menu/components/menu-checkbox-item.svelte";
-export { default as RadioIndicator } from "$lib/bits/menu/components/menu-radio-indicator.svelte";
 export { default as CheckboxIndicator } from "$lib/bits/menu/components/menu-checkbox-indicator.svelte";
+export { default as RadioIndicator } from "$lib/bits/menu/components/menu-radio-indicator.svelte";
 export * from "./types.js";

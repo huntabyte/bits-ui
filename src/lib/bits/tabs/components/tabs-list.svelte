@@ -14,16 +14,13 @@
 	const attrs = getAttrs("list");
 
 	$: builder = $list;
-	$: slotProps = {
-		builder,
-		attrs
-	};
+	$: Object.assign(builder, attrs);
 </script>
 
 {#if asChild}
-	<slot {...slotProps} />
+	<slot {builder} />
 {:else}
-	<div use:melt={builder} {...$$restProps} {...attrs}>
-		<slot {...slotProps} />
+	<div use:melt={builder} {...$$restProps}>
+		<slot {builder} />
 	</div>
 {/if}

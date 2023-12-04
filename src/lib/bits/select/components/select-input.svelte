@@ -12,22 +12,17 @@
 		options: { disabled }
 	} = getCtx();
 
-	const attrs = getAttrs("input");
+	$: attrs = {
+		...getAttrs("input"),
+		disabled: $disabled ? true : undefined
+	};
 
 	$: builder = $hiddenInput;
-	$: slotProps = {
-		builder,
-		attrs: { ...attrs, disabled: $disabled ? true : undefined }
-	};
+	$: Object.assign(builder, attrs);
 </script>
 
 {#if asChild}
-	<slot {...slotProps} />
+	<slot {builder} />
 {:else}
-	<input
-		use:melt={builder}
-		{...$$restProps}
-		{...attrs}
-		disabled={$disabled ? true : undefined}
-	/>
+	<input use:melt={builder} {...$$restProps} />
 {/if}
