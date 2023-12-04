@@ -1,14 +1,5 @@
-import Root from "./components/Avatar.svelte";
-import Image from "./components/AvatarImage.svelte";
-import Fallback from "./components/AvatarFallback.svelte";
+export { default as Root } from "./components/avatar.svelte";
+export { default as Image } from "./components/avatar-image.svelte";
+export { default as Fallback } from "./components/avatar-fallback.svelte";
 
-export {
-	Root,
-	Image,
-	Fallback,
-	//
-	Root as Avatar,
-	Image as AvatarImage,
-	Fallback as AvatarFallback
-};
 export * from "./types.js";

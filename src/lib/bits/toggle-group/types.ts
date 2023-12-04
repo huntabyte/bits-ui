@@ -1,29 +1,11 @@
-import type { CreateToggleGroupProps } from "@melt-ui/svelte";
-import type {
-	AsChild,
-	Expand,
-	HTMLDivAttributes,
-	OmitValue,
-	OnChangeFn
-} from "$lib/internal/index.js";
+import type { HTMLDivAttributes } from "$lib/internal/index.js";
 import type { HTMLButtonAttributes } from "svelte/elements";
 import type { CustomEventHandler } from "$lib/index.js";
+import type * as I from "./_types.js";
 
-type Props<T extends "single" | "multiple"> = Expand<
-	OmitValue<CreateToggleGroupProps<T>> & {
-		value?: CreateToggleGroupProps<T>["defaultValue"];
-		onValueChange?: OnChangeFn<CreateToggleGroupProps<T>["defaultValue"]>;
-		type?: T;
-	}
-> &
-	AsChild &
-	HTMLDivAttributes;
+type Props<T extends "single" | "multiple"> = I.Props<T> & HTMLDivAttributes;
 
-type ItemProps = {
-	value: string;
-	disabled?: boolean;
-} & AsChild &
-	HTMLButtonAttributes;
+type ItemProps = I.ItemProps & HTMLButtonAttributes;
 
 type ItemEvents<T extends Element = HTMLButtonElement> = {
 	click: CustomEventHandler<MouseEvent, T>;
@@ -34,10 +16,5 @@ export type {
 	Props,
 	ItemProps,
 	//
-	Props as ToggleGroupProps,
-	ItemProps as ToggleGroupItemProps,
-	//
-	ItemEvents,
-	//
-	ItemEvents as ToggleGroupItemEvents
+	ItemEvents
 };

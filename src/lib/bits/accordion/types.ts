@@ -1,45 +1,25 @@
-import type {
-	HTMLDivAttributes,
-	ObjectVariation,
-	Transition,
-	OmitValue,
-	Expand,
-	OnChangeFn,
-	AsChild,
-	TransitionProps
-} from "$lib/internal/index.js";
+import type { HTMLDivAttributes, Transition } from "$lib/internal/index.js";
 import type { CustomEventHandler } from "$lib/index.js";
 import type {
-	CreateAccordionProps,
 	AccordionItemProps as _ItemProps,
 	AccordionHeadingProps as _HeadingProps
 } from "@melt-ui/svelte";
 import type { HTMLButtonAttributes } from "svelte/elements";
+import type * as I from "./_types.js";
 
-type Props<Multiple extends boolean> = Expand<
-	OmitValue<CreateAccordionProps<Multiple>> & {
-		value?: CreateAccordionProps<Multiple>["defaultValue"];
-		onValueChange?: OnChangeFn<CreateAccordionProps<Multiple>["defaultValue"]>;
-	} & AsChild
-> &
-	HTMLDivAttributes;
+type Props<Multiple extends boolean> = I.Props<Multiple> & HTMLDivAttributes;
 
-type ItemProps = Expand<ObjectVariation<_ItemProps> & AsChild> & HTMLDivAttributes;
+type ItemProps = I.ItemProps & HTMLDivAttributes;
 
-type HeaderProps = Expand<
-	{
-		level?: ObjectVariation<_HeadingProps>["level"];
-	} & AsChild
-> &
-	HTMLDivAttributes;
+type HeaderProps = I.HeaderProps & HTMLDivAttributes;
 
-type TriggerProps = AsChild & HTMLButtonAttributes;
+type TriggerProps = I.TriggerProps & HTMLButtonAttributes;
 
 type ContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
 	Out extends Transition = Transition
-> = Expand<TransitionProps<T, In, Out> & AsChild> & HTMLDivAttributes;
+> = I.ContentProps<T, In, Out> & HTMLDivAttributes;
 
 type TriggerEvents = {
 	click: CustomEventHandler<MouseEvent, HTMLButtonElement>;
@@ -53,13 +33,5 @@ export type {
 	TriggerProps,
 	ContentProps,
 	//
-	Props as AccordionProps,
-	ItemProps as AccordionItemProps,
-	HeaderProps as AccordionHeaderProps,
-	TriggerProps as AccordionTriggerProps,
-	ContentProps as AccordionContentProps,
-	//
-	TriggerEvents,
-	//
-	TriggerEvents as AccordionTriggerEvents
+	TriggerEvents
 };

@@ -1,6 +1,6 @@
 ---
 title: Collapsible
-description: An interactive component which expands and collapses content.
+description: Conceals or reveals content sections, enhancing space utilization and organization.
 ---
 
 <script>

@@ -6,10 +6,15 @@ import type { Matcher, MatcherOptions } from "@testing-library/svelte";
  * which require the key names to be wrapped in curly braces.
  */
 export type KbdKeys = keyof typeof kbd;
-export const testKbd: Record<KbdKeys, string> = Object.entries(kbd).reduce((acc, [key, value]) => {
+const initTestKbd: Record<KbdKeys, string> = Object.entries(kbd).reduce((acc, [key, value]) => {
 	acc[key as KbdKeys] = `{${value}}`;
 	return acc;
 }, {} as Record<KbdKeys, string>);
+
+export const testKbd = {
+	...initTestKbd,
+	SHIFT_TAB: `{Shift>}{${kbd.TAB}}`
+};
 
 export type queryByTestId = (
 	id: Matcher,

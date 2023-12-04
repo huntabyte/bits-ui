@@ -1,0 +1,14 @@
+{
+  "mode": "exit",
+  "tag": "next",
+  "initialVersions": {
+    "bits-ui": "0.9.9"
+  },
+  "changesets": [
+    "brave-schools-burn",
+    "fresh-dryers-sneeze",
+    "mighty-cobras-care",
+    "old-dancers-allow",
+    "spotty-beans-return"
+  ]
+}

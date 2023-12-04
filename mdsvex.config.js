@@ -18,10 +18,10 @@ const __dirname = fileURLToPath(new URL(".", import.meta.url));
 const prettyCodeOptions = {
 	theme: {
 		dark: JSON.parse(
-			readFileSync(resolve(__dirname, "./src/styles/themes/tokyo-night-storm.json"))
+			readFileSync(resolve(__dirname, "./src/styles/themes/serendipity-midnight.json"))
 		),
 		light: JSON.parse(
-			readFileSync(resolve(__dirname, "./src/styles/themes/tokyo-night-light.json"))
+			readFileSync(resolve(__dirname, "./src/styles/themes/serendipity-morning.json"))
 		)
 	},
 	keepBackground: false,
@@ -185,29 +185,18 @@ function rehypeHandleMetadata() {
 
 function rehypeRenderCode() {
 	return async (tree) => {
-		let counter = 0;
 		visit(tree, (node) => {
 			if (
 				node?.type === "element" &&
 				(node?.tagName === "Components.pre" || node?.tagName === "pre")
 			) {
-				counter++;
-
-				const isNonPP = counter % 2 === 0;
-				if (isNonPP) {
-					node.properties = {
-						...node.properties,
-						"data-non-pp": ""
-					};
-				}
-
 				/** @type HTMLElement */
 				const codeEl = node.children[0];
 				if (codeEl.tagName !== "code") {
 					return;
 				}
 
-				const meltString = tabsToSpaces(
+				const codeString = tabsToSpaces(
 					toHtml(codeEl, {
 						allowDangerousCharacters: true,
 						allowDangerousHtml: true
@@ -216,7 +205,7 @@ function rehypeRenderCode() {
 
 				codeEl.type = "raw";
 
-				codeEl.value = `{@html \`${escapeSvelte(meltString)}\`}`;
+				codeEl.value = `{@html \`${escapeSvelte(codeString)}\`}`;
 			}
 		});
 	};

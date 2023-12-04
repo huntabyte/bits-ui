@@ -1,75 +1,64 @@
-/* Write your global styles here, in PostCSS syntax */
+@import url("https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Light - 60 8% 96% */
-/* Dark - 192 10% 10% */
-/* Primary - 320 7% 16%*/
-
 @layer base {
 	:root {
+		/* Colors */
 		--background: 0 0% 100%;
 		--foreground: 0 0% 9%;
-
+		--foreground-alt: 0 0% 32%;
 		--muted: 240 5% 96%;
-		--muted-foreground: 0 0% 64%;
+		--muted-foreground: 0 0% 9% / 0.4;
+		--border: 240 6% 10%;
+		--border-input: 240 6% 10% / 0.17;
+		--border-card: 240 6% 10% / 0.1;
+		--dark: 240 6% 10%;
+		--dark-10: 240 6% 10% / 0.1;
+		--dark-04: 240 6% 10% / 0.04;
+		--accent: 204 94% 94%;
+		--accent-foreground: 204 80% 16%;
+		--destructive: 347 77% 50%;
 
-		--popover: 0 0% 98%;
-		--popover-foreground: 320 7% 8%;
+		/* black */
+		--constrast: 0 0% 0%;
 
-		--card: 0 0% 98%;
-		--card-foreground: 320 7% 8%;
-
-		--border: 0 0% 89%;
-		--input: 320 5.9% 90%;
-
-		--primary: 320 7% 16%;
-		--primary-foreground: 0 0% 98%;
-
-		--secondary: 163 62% 90%;
-		--secondary-foreground: 170 31% 19%;
-
-		--accent: 0 0% 98%;
-		--accent-foreground: 0 9% 9%;
-
-		--destructive: 0 84.2% 60.2%;
-		--destructive-foreground: 0 0% 98%;
-
-		--ring: 320 5.9% 64.9%;
-
-		--radius: 0.5rem;
+		/* Shadows */
+		--shadow-mini: 0px 1px 0px 1px rgba(0, 0, 0, 0.04);
+		--shadow-mini-inset: 0px 1px 0px 0px rgba(0, 0, 0, 0.04) inset;
+		--shadow-popover: 0px 7px 12px 3px hsla(var(--dark-10));
+		--shadow-kbd: 0px 2px 0px 0px rgba(0, 0, 0, 0.07);
+		--shadow-btn: 0px 1px 0px 1px rgba(0, 0, 0, 0.03);
+		--shadow-card: 0px 2px 0px 1px rgba(0, 0, 0, 0.04);
 	}
 
 	.dark {
-		--background: 320 7% 8%;
-		--foreground: 0 0% 98%;
+		/* Colors */
+		--background: 0 0% 9%;
+		--foreground: 0 0% 100%;
+		--foreground-alt: 0 0% 100%;
+		--muted: 240 4% 16%;
+		--muted-foreground: 0 0% 100% / 0.4;
+		--border: 0 0% 96%;
+		--border-input: 0 0% 96% / 0.17;
+		--border-card: 0 0% 96% / 0.1;
+		--dark: 0 0% 96%;
+		--dark-10: 0 0% 96% / 0.1;
+		--dark-04: 0 0% 96% / 0.04;
+		--accent: 204 80% 16%;
+		--accent-foreground: 204 94% 94%;
+		--destructive: 350 89% 60%;
 
-		--muted: 320 3.7% 15.9%;
-		--muted-foreground: 320 5.9% 64.9%;
+		/* white */
+		--constrast: 0 0% 100%;
 
-		--popover: 320 7% 8%;
-		--popover-foreground: 0 0% 98%;
-
-		--card: 320 7% 8%;
-		--card-foreground: 0 0% 98%;
-
-		--border: 320 3.7% 15.9%;
-		--input: 320 3.7% 15.9%;
-
-		--primary: 0 0% 98%;
-		--primary-foreground: 320 7% 16%;
-
-		--secondary: 173 34% 14%;
-		--secondary-foreground: 151 61% 88%;
-
-		--accent: 320 3.7% 15.9%;
-		--accent-foreground: 0 0% 98%;
-
-		--destructive: 0 62.8% 30.6%;
-		--destructive-foreground: 0 85.7% 97.3%;
-
-		--ring: 320 3.7% 15.9%;
+		/* Shadows */
+		--shadow-popover: 0px 7px 12px 3px rbga(255, 255, 255, 0.2);
+		--shadow-kbd: 0px 2px 0px 0px rgba(255, 255, 255, 0.07);
+		--shadow-btn: 0px 1px 0px 1px rgba(255, 255, 255, 0.03);
+		--shadow-card: 0px 2px 0px 1px rgba(255, 255, 255, 0.04);
 	}
 }
 
@@ -100,30 +89,21 @@
 	}
 
 	::-webkit-scrollbar-track {
-		@apply !bg-muted;
+		@apply !bg-transparent;
 	}
 	::-webkit-scrollbar-thumb {
-		@apply rounded-sm !bg-muted-foreground/30;
+		@apply rounded-card-lg !bg-dark-10;
+	}
+
+	::-webkit-scrollbar-corner {
+		background: rgba(0, 0, 0, 0);
 	}
 
 	/* Firefox */
 	/* https://developer.mozilla.org/en-US/docs/Web/CSS/scrollbar-color#browser_compatibility */
 
 	html {
-		scrollbar-color: hsl(215.4 16.3% 46.9% / 0.3);
-	}
-
-	html.dark {
-		scrollbar-color: hsl(215.4 16.3% 56.9% / 0.3);
-	}
-
-	.hide-scrollbar::-webkit-scrollbar {
-		display: none;
-	}
-
-	.hide-scrollbar {
-		-ms-overflow-style: none;
-		scrollbar-width: none;
+		scrollbar-color: var(--bg-muted);
 	}
 
 	.antialised {
@@ -138,8 +118,32 @@
 	}
 
 	.step:before {
-		@apply absolute w-9 h-9 bg-muted rounded-full font-mono font-medium text-center text-base inline-flex items-center justify-center -indent-px border-4 border-background;
+		@apply absolute inline-flex h-9 w-9 items-center justify-center rounded-full border-4 border-background bg-muted text-center -indent-px font-mono text-base font-medium;
 		@apply ml-[-50px] mt-[-4px];
 		content: counter(step);
+	}
+}
+
+@layer components {
+	*:not(body) {
+		outline: none !important;
+		&:focus-visible {
+			@apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+		}
+	}
+
+	.link {
+		@apply inline-flex items-center gap-1 rounded-sm font-medium underline underline-offset-4 hover:text-foreground/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+	}
+
+	input::-webkit-outer-spin-button,
+	input::-webkit-inner-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
+
+	/* Firefox */
+	input[type="number"] {
+		-moz-appearance: textfield;
 	}
 }

@@ -1,6 +1,6 @@
 ---
 title: Accordion
-description: Organizes content into collapsable sections.
+description: Organizes content into collapsible sections, allowing users to focus on one section at a time.
 ---
 
 <script>

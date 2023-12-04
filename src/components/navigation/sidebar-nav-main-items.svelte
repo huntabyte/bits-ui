@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { SidebarNavItem } from "@/config";
-	import { RocketLaunch, BookOpen, Code } from "@/components/icons";
+	import { RocketLaunch, BookOpen, Code, Palette } from "phosphor-svelte";
 	import { page } from "$app/stores";
 	import { cn } from "@/utils";
 
@@ -9,7 +9,8 @@
 	const iconMap = {
 		Introduction: BookOpen,
 		"Getting Started": RocketLaunch,
-		Delegation: Code
+		Delegation: Code,
+		Styling: Palette
 	} as const;
 
 	const iconMapKeys = Object.keys(iconMap) as (keyof typeof iconMap)[];
@@ -20,14 +21,16 @@
 </script>
 
 {#if items.length}
-	<div class="grid grid-flow-row auto-rows-max text-sm pb-8">
+	<div class="grid grid-flow-row auto-rows-max gap-1 pb-8 pl-4 text-sm">
 		{#each items as item, index (index)}
 			{#if item.href}
 				<a
 					href={item.href}
 					class={cn(
-						"group flex w-full items-center rounded-md p-2 text-sm text-foreground font-semibold gap-2.5 hover:bg-muted transition-all",
-						$page.url.pathname === item.href ? "bg-muted" : "bg-transparent"
+						"group flex w-full items-center gap-2.5 rounded-md px-2.5 py-1.5 text-sm font-semibold text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+						$page.url.pathname === item.href
+							? "bg-muted"
+							: "bg-transparent hover:bg-muted/50"
 					)}
 					target={item.external ? "_blank" : ""}
 					rel={item.external ? "noreferrer" : ""}

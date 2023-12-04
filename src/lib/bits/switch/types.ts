@@ -1,34 +1,11 @@
-import type { CreateSwitchProps } from "@melt-ui/svelte";
-import type {
-	AsChild,
-	Expand,
-	HTMLSpanAttributes,
-	OmitChecked,
-	OnChangeFn
-} from "$lib/internal/index.js";
+import type { HTMLSpanAttributes } from "$lib/internal/index.js";
 import type { HTMLButtonAttributes, HTMLInputAttributes } from "svelte/elements";
 import type { CustomEventHandler } from "$lib/index.js";
+import type * as I from "./_types.js";
 
-type Props = Expand<
-	OmitChecked<CreateSwitchProps> & {
-		checked?: boolean;
-		onCheckedChange?: OnChangeFn<boolean>;
-		/**
-		 * Whether to include the hidden input element in the DOM.
-		 */
-		includeInput?: boolean;
+type Props = I.Props & HTMLButtonAttributes;
 
-		/**
-		 * Additional input attributes to pass to the hidden input element.
-		 * Note, the value, name, type, and checked attributes are derived from the
-		 * Switch props and cannot be overridden.
-		 */
-		inputAttrs?: Partial<Omit<HTMLInputAttributes, "value" | "name" | "type" | "checked">>;
-	} & AsChild
-> &
-	HTMLButtonAttributes;
-
-type ThumbProps = AsChild & HTMLSpanAttributes;
+type ThumbProps = I.ThumbProps & HTMLSpanAttributes;
 
 type InputProps = HTMLInputAttributes;
 
@@ -42,11 +19,5 @@ export type {
 	ThumbProps,
 	InputProps,
 	//
-	Props as SwitchProps,
-	ThumbProps as SwitchThumbProps,
-	InputProps as SwitchInputProps,
-	//
-	Events,
-	//
-	Events as SwitchEvents
+	Events
 };

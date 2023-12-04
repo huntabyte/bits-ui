@@ -1,30 +1,40 @@
 import type { APISchema } from "@/types";
-import { asChild } from "./helpers";
+import { asChild, enums } from "@/content/api-reference/helpers.js";
+import * as C from "@/content/constants";
+import type * as Separator from "$lib/bits/separator/_types";
+import { builderAndAttrsSlotProps } from "./helpers";
 
-export const root: APISchema = {
+export const root: APISchema<Separator.Props> = {
 	title: "Root",
 	description: "An element used to separate content.",
-	props: [
-		asChild,
-		{
-			name: "orientation",
-			type: "'horizontal' | 'vertical'",
-			description: "The orientation of the separator.",
-			default: "'horizontal'"
+	props: {
+		orientation: {
+			type: {
+				type: C.ENUM,
+				definition: enums("horizontal", "vertical")
+			},
+			default: "'horizontal'",
+			description: "The orientation of the separator."
 		},
-		{
-			name: "decorative",
-			type: "boolean",
+		decorative: {
+			type: C.BOOLEAN,
+			default: C.FALSE,
 			description:
-				"Whether the separator is decorative or not, which will determine if it is announce by screen readers.",
-			default: "false"
-		}
-	],
+				"Whether the separator is decorative or not, which will determine if it is announce by screen readers."
+		},
+		asChild
+	},
+	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "orientation",
-			value: "'horizontal' | 'vertical'",
-			description: "The orientation of the separator."
+			description: "The orientation of the separator.",
+			value: enums("horizontal", "vertical"),
+			isEnum: true
+		},
+		{
+			name: "separator-root",
+			description: "Present on the root element."
 		}
 	]
 };

@@ -1,21 +1,7 @@
-import Root from "./components/Slider.svelte";
-import Range from "./components/SliderRange.svelte";
-import Thumb from "./components/SliderThumb.svelte";
-import Input from "./components/SliderInput.svelte";
-import Tick from "./components/SliderTick.svelte";
-
-export {
-	Root,
-	Range,
-	Thumb,
-	Input,
-	Tick,
-	//
-	Root as Slider,
-	Range as SliderRange,
-	Thumb as SliderThumb,
-	Input as SliderInput,
-	Tick as SliderTick
-};
+export { default as Root } from "./components/slider.svelte";
+export { default as Range } from "./components/slider-range.svelte";
+export { default as Thumb } from "./components/slider-thumb.svelte";
+export { default as Input } from "./components/slider-input.svelte";
+export { default as Tick } from "./components/slider-tick.svelte";
 
 export * from "./types.js";

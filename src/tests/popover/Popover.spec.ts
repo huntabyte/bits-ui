@@ -40,7 +40,7 @@ describe("Popover", () => {
 
 		for (const part of parts) {
 			const el = getByTestId(part);
-			expect(el).toHaveAttribute(`data-bits-popover-${part}`);
+			expect(el).toHaveAttribute(`data-popover-${part}`);
 		}
 	});
 

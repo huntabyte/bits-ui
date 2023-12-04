@@ -1,6 +1,6 @@
 ---
 title: Switch
-description: Enables users to toggle between two states.
+description: A toggle control enabling users to switch between "on" and "off" states.
 ---
 
 <script>
@@ -26,5 +26,7 @@ description: Enables users to toggle between two states.
 	<Switch.Input />
 </Switch.Root>
 ```
+
+<APISection {schemas} />
 
 🚧 **UNDER CONSTRUCTION** 🚧

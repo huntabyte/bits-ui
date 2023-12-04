@@ -1,18 +1,5 @@
-import Root from "./components/LinkPreview.svelte";
-import Arrow from "./components/LinkPreviewArrow.svelte";
-import Content from "./components/LinkPreviewContent.svelte";
-import Trigger from "./components/LinkPreviewTrigger.svelte";
-
-export {
-	Root,
-	Arrow,
-	Content,
-	Trigger,
-	//
-	Root as LinkPreview,
-	Arrow as LinkPreviewArrow,
-	Content as LinkPreviewContent,
-	Trigger as LinkPreviewTrigger
-};
-
+export { default as Root } from "./components/link-preview.svelte";
+export { default as Arrow } from "./components/link-preview-arrow.svelte";
+export { default as Content } from "./components/link-preview-content.svelte";
+export { default as Trigger } from "./components/link-preview-trigger.svelte";
 export * from "./types.js";

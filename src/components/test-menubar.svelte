@@ -1,5 +1,5 @@
 <script>
-	import * as Menubar from "@/components/ui/menubar";
+	import { Menubar } from "$lib";
 	let bookmarks = false;
 	let fullUrls = true;
 	const profileRadioValue = "benoit";
@@ -9,12 +9,8 @@
 	<Menubar.Menu>
 		<Menubar.Trigger>File</Menubar.Trigger>
 		<Menubar.Content>
-			<Menubar.Item>
-				New Tab <Menubar.Shortcut>⌘T</Menubar.Shortcut>
-			</Menubar.Item>
-			<Menubar.Item>
-				New Window <Menubar.Shortcut>⌘N</Menubar.Shortcut>
-			</Menubar.Item>
+			<Menubar.Item>New Tab</Menubar.Item>
+			<Menubar.Item>New Window</Menubar.Item>
 			<Menubar.Item>New Incognito Window</Menubar.Item>
 			<Menubar.Separator />
 			<Menubar.Sub>
@@ -26,20 +22,14 @@
 				</Menubar.SubContent>
 			</Menubar.Sub>
 			<Menubar.Separator />
-			<Menubar.Item>
-				Print... <Menubar.Shortcut>⌘P</Menubar.Shortcut>
-			</Menubar.Item>
+			<Menubar.Item>Print...</Menubar.Item>
 		</Menubar.Content>
 	</Menubar.Menu>
 	<Menubar.Menu>
 		<Menubar.Trigger>Edit</Menubar.Trigger>
 		<Menubar.Content>
-			<Menubar.Item>
-				Undo <Menubar.Shortcut>⌘Z</Menubar.Shortcut>
-			</Menubar.Item>
-			<Menubar.Item>
-				Redo <Menubar.Shortcut>⇧⌘Z</Menubar.Shortcut>
-			</Menubar.Item>
+			<Menubar.Item>Undo</Menubar.Item>
+			<Menubar.Item>Redo</Menubar.Item>
 			<Menubar.Separator />
 			<Menubar.Sub>
 				<Menubar.SubTrigger>Find</Menubar.SubTrigger>
@@ -60,20 +50,19 @@
 	<Menubar.Menu>
 		<Menubar.Trigger>View</Menubar.Trigger>
 		<Menubar.Content>
-			<Menubar.CheckboxItem bind:checked={bookmarks}>Always Show Bookmarks Bar</Menubar.CheckboxItem
+			<Menubar.CheckboxItem bind:checked={bookmarks}
+				>Always Show Bookmarks Bar</Menubar.CheckboxItem
 			>
-			<Menubar.CheckboxItem bind:checked={fullUrls}>Always Show Full URLs</Menubar.CheckboxItem>
+			<Menubar.CheckboxItem bind:checked={fullUrls}
+				>Always Show Full URLs</Menubar.CheckboxItem
+			>
 			<Menubar.Separator />
-			<Menubar.Item inset>
-				Reload <Menubar.Shortcut>⌘R</Menubar.Shortcut>
-			</Menubar.Item>
-			<Menubar.Item inset>
-				Force Reload <Menubar.Shortcut>⇧⌘R</Menubar.Shortcut>
-			</Menubar.Item>
+			<Menubar.Item>Reload</Menubar.Item>
+			<Menubar.Item>Force Reload</Menubar.Item>
 			<Menubar.Separator />
-			<Menubar.Item inset>Toggle Fullscreen</Menubar.Item>
+			<Menubar.Item>Toggle Fullscreen</Menubar.Item>
 			<Menubar.Separator />
-			<Menubar.Item inset>Hide Sidebar</Menubar.Item>
+			<Menubar.Item>Hide Sidebar</Menubar.Item>
 		</Menubar.Content>
 	</Menubar.Menu>
 	<Menubar.Menu>
@@ -85,9 +74,9 @@
 				<Menubar.RadioItem value="Luis">Luis</Menubar.RadioItem>
 			</Menubar.RadioGroup>
 			<Menubar.Separator />
-			<Menubar.Item inset>Edit...</Menubar.Item>
+			<Menubar.Item>Edit...</Menubar.Item>
 			<Menubar.Separator />
-			<Menubar.Item inset>Add Profile...</Menubar.Item>
+			<Menubar.Item>Add Profile...</Menubar.Item>
 		</Menubar.Content>
 	</Menubar.Menu>
 </Menubar.Root>

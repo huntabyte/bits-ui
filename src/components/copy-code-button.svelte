@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { cn } from "@/utils";
-	import { CopySimple, Check } from "./icons";
+	import { CopySimple, Check } from "phosphor-svelte";
 	let className: string | undefined | null = undefined;
+
 	export let copyCode: () => void;
 	export let copied = false;
 	export { className as class };
@@ -9,7 +10,7 @@
 
 <button
 	class={cn(
-		"relative z-20 inline-flex h-6 w-6 items-center justify-center rounded-md border bg-background text-sm font-medium transition-all hover:bg-muted focus:outline-none",
+		"relative z-20 inline-flex h-6 w-6 items-center justify-center rounded-md border bg-background text-sm font-medium transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background",
 		className
 	)}
 	on:click={copyCode}

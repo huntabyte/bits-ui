@@ -1,6 +1,6 @@
 ---
 title: Tabs
-description: Allows users to navigate between different views
+description: Organizes content into distinct sections, allowing users to switch between them.
 ---
 
 <script>
@@ -28,5 +28,7 @@ description: Allows users to navigate between different views
 	<Tabs.Content />
 </Tabs.Root>
 ```
+
+<APISection {schemas} />
 
 🚧 **UNDER CONSTRUCTION** 🚧

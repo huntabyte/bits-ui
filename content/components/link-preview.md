@@ -1,6 +1,6 @@
 ---
 title: Link Preview
-description: Enable sighted users to preview content behind a link.
+description: Displays a summarized preview of a linked content's details or information.
 ---
 
 <script>

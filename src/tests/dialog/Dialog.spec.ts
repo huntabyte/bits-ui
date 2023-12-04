@@ -54,8 +54,19 @@ describe("Dialog", () => {
 
 		for (const part of parts) {
 			const el = getByTestId(part);
-			expect(el).toHaveAttribute(`data-bits-dialog-${part}`);
+			expect(el).toHaveAttribute(`data-dialog-${part}`);
 		}
+	});
+
+	it("has expected data attributes", async () => {
+		const { getByTestId } = await open();
+
+		const overlay = getByTestId("overlay");
+		expect(overlay).toHaveAttribute("data-state", "open");
+		const content = getByTestId("content");
+		expect(content).toHaveAttribute("data-state", "open");
+		const portal = getByTestId("portal");
+		expect(portal).toHaveAttribute("data-portal");
 	});
 
 	it("opens when the trigger is clicked", async () => {

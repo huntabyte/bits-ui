@@ -1,10 +1,11 @@
 ---
 title: Tooltip
-description: Displays floating content containing additional information about an action on hover or focus.
+description: Provides additional information or context when users hover over or interact with an element.
 ---
 
 <script>
-	import { ComponentPreview, TooltipDemo } from '@/components'
+	import { ComponentPreview, TooltipDemo, APISection } from '@/components'
+	export let schemas;
 </script>
 
 <ComponentPreview name="tooltip-demo" comp="Tooltip">
@@ -27,5 +28,7 @@ description: Displays floating content containing additional information about a
 	</Tooltip.Content>
 </Tooltip.Root>
 ```
+
+<APISection {schemas} />
 
 🚧 **UNDER CONSTRUCTION** 🚧

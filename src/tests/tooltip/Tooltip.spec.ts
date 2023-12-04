@@ -34,7 +34,7 @@ describe("Tooltip", () => {
 
 		for (const part of parts) {
 			const el = getByTestId(part);
-			expect(el).toHaveAttribute(`data-bits-tooltip-${part}`);
+			expect(el).toHaveAttribute(`data-tooltip-${part}`);
 		}
 	});
 

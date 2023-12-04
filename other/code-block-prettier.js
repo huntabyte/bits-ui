@@ -1,5 +1,5 @@
 export const codeBlockPrettierConfig = {
-	useTabs: false,
+	useTabs: true,
 	tabWidth: 2,
 	singleQuote: false,
 	trailingComma: "none",
@@ -9,7 +9,6 @@ export const codeBlockPrettierConfig = {
 	parser: "svelte",
 	svelteIndexScriptAndStyle: true,
 	svelteStrictMode: false,
-	svelteSortOrder: "scripts-markup-styles-options",
 	plugins: ["prettier-plugin-svelte"],
 	overrides: [
 		{
@@ -17,30 +16,8 @@ export const codeBlockPrettierConfig = {
 			options: {
 				parser: "svelte",
 				svelteIndentScriptAndStyle: true,
-				svelteStrictMode: false,
-				svelteSortOrder: "scripts-markup-styles-options"
+				svelteStrictMode: false
 			}
 		}
-	],
-	bracketSameLine: false,
-	importOrder: [
-		"<TYPES>",
-		"<TYPES>^[.]",
-		"<BUILTIN_MODULES>",
-		"<THIRD_PARTY_MODULES>",
-		"^\\$app",
-		"^\\$env",
-		"^\\$service-worker",
-		"^\\$lib/server",
-		"^\\$(?![^\\/]*\\/)",
-		"^\\$[^/]*\\/[^/]+",
-		"^[./]",
-		"\\.js$",
-		"\\.svelte$"
-	],
-	importOrderSeparation: false,
-	importOrderSortSpecifiers: true,
-	importOrderBuiltinModulesToTop: true,
-	importOrderParserPlugins: ["typescript", "svelte"],
-	importOrderMergeDuplicateImports: true
+	]
 };

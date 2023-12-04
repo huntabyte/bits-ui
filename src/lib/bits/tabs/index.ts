@@ -1,17 +1,6 @@
-import Root from "./components/Tabs.svelte";
-import Content from "./components/TabsContent.svelte";
-import List from "./components/TabsList.svelte";
-import Trigger from "./components/TabsTrigger.svelte";
+export { default as Root } from "./components/tabs.svelte";
+export { default as Content } from "./components/tabs-content.svelte";
+export { default as List } from "./components/tabs-list.svelte";
+export { default as Trigger } from "./components/tabs-trigger.svelte";
 
-export {
-	Root,
-	Content,
-	List,
-	Trigger,
-	//
-	Root as Tabs,
-	Content as TabsContent,
-	List as TabsList,
-	Trigger as TabsTrigger
-};
 export * from "./types.js";

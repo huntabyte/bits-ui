@@ -1,6 +1,6 @@
 ---
 title: Radio Group
-description: Allows users to select a single option from a predetermined set of choices.
+description: Allows users to select a single option from a list of mutually exclusive choices.
 ---
 
 <script>

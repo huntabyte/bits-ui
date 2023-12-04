@@ -9,3 +9,7 @@ export function parseMarkdown(text: string) {
 		.replace(/&gt;([^>]+)\n/g, "<blockquote>$1</blockquote>")
 		.replace(/\n/g, "<br />");
 }
+
+export function parseTypeDef(text: string) {
+	return text.replace(/\n/g, "<br />");
+}

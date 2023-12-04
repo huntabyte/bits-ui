@@ -1,32 +1,17 @@
-import type {
-	HTMLDivAttributes,
-	Transition,
-	OmitOpen,
-	Expand,
-	OnChangeFn,
-	AsChild,
-	TransitionProps
-} from "$lib/internal/index.js";
+import type { HTMLDivAttributes, Transition } from "$lib/internal/index.js";
 import type { CustomEventHandler } from "$lib/index.js";
-import type { CreateCollapsibleProps } from "@melt-ui/svelte";
 import type { HTMLButtonAttributes } from "svelte/elements";
+import type * as I from "./_types.js";
 
-type Props = Expand<
-	OmitOpen<CreateCollapsibleProps> & {
-		open?: boolean;
-		onOpenChange?: OnChangeFn<boolean>;
-	}
-> &
-	AsChild &
-	HTMLDivAttributes;
+type Props = I.Props & HTMLDivAttributes;
 
 type ContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
 	Out extends Transition = Transition
-> = Expand<TransitionProps<T, In, Out> & AsChild> & HTMLDivAttributes;
+> = I.ContentProps<T, In, Out> & HTMLDivAttributes;
 
-type TriggerProps = AsChild & HTMLButtonAttributes;
+type TriggerProps = I.TriggerProps & HTMLButtonAttributes;
 
 type TriggerEvents = {
 	click: CustomEventHandler<MouseEvent, HTMLButtonElement>;
@@ -37,11 +22,5 @@ export type {
 	ContentProps,
 	TriggerProps,
 	//
-	Props as CollapsibleProps,
-	ContentProps as CollapsibleContentProps,
-	TriggerProps as CollapsibleTriggerProps,
-	//
-	TriggerEvents,
-	//
-	TriggerEvents as CollapsibleTriggerEvents
+	TriggerEvents
 };

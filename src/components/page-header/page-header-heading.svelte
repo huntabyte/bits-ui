@@ -4,6 +4,8 @@
 	export { className as class };
 </script>
 
-<h1 class={cn("scroll-m-20 text-4xl font-semibold tracking-tight", className)}>
+<h1
+	class={cn("scroll-m-20 text-5xl font-semibold tracking-[-0.01em]", className)}
+>
 	<slot />
 </h1>

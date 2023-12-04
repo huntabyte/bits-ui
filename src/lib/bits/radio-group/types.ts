@@ -1,26 +1,15 @@
-import type {
-	Expand,
-	HTMLDivAttributes,
-	OmitValue,
-	OnChangeFn,
-	ObjectVariation,
-	AsChild
-} from "$lib/internal/index.js";
+import type { HTMLDivAttributes } from "$lib/internal/index.js";
 import type { CustomEventHandler } from "$lib/index.js";
-import type { CreateRadioGroupProps, RadioGroupItemProps } from "@melt-ui/svelte";
 import type { HTMLButtonAttributes, HTMLInputAttributes } from "svelte/elements";
+import type * as I from "./_types.js";
 
-type Props = Expand<
-	OmitValue<CreateRadioGroupProps> & {
-		value?: CreateRadioGroupProps["defaultValue"];
-		onValueChange?: OnChangeFn<CreateRadioGroupProps["defaultValue"]>;
-	} & AsChild
-> &
-	HTMLDivAttributes;
+type Props = I.Props & HTMLDivAttributes;
 
-type InputProps = AsChild & HTMLInputAttributes;
+type InputProps = I.InputProps & HTMLInputAttributes;
 
-type ItemProps = Expand<ObjectVariation<RadioGroupItemProps> & AsChild> & HTMLButtonAttributes;
+type ItemProps = I.ItemProps & HTMLButtonAttributes;
+
+type ItemIndicatorProps = I.ItemIndicatorProps & HTMLDivAttributes;
 
 type ItemEvents<T extends Element = HTMLButtonElement> = {
 	click: CustomEventHandler<MouseEvent, T>;
@@ -32,12 +21,7 @@ export type {
 	Props,
 	InputProps,
 	ItemProps,
+	ItemIndicatorProps,
 	//
-	Props as RadioGroupProps,
-	InputProps as RadioGroupInputProps,
-	ItemProps as RadioGroupItemProps,
-	//
-	ItemEvents,
-	//
-	ItemEvents as RadioGroupItemEvents
+	ItemEvents
 };

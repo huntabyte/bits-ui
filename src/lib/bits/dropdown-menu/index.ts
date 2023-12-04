@@ -1,53 +1,17 @@
-import Root from "./components/DropdownMenu.svelte";
-import Sub from "./components/DropdownMenuSub.svelte";
-import Item from "./components/DropdownMenuItem.svelte";
-import Group from "./components/DropdownMenuGroup.svelte";
-import Label from "./components/DropdownMenuLabel.svelte";
-import Arrow from "./components/DropdownMenuArrow.svelte";
-import Content from "./components/DropdownMenuContent.svelte";
-import Trigger from "./components/DropdownMenuTrigger.svelte";
-import RadioItem from "./components/DropdownMenuRadioItem.svelte";
-import Separator from "./components/DropdownMenuSeparator.svelte";
-import RadioGroup from "./components/DropdownMenuRadioGroup.svelte";
-import SubContent from "./components/DropdownMenuSubContent.svelte";
-import SubTrigger from "./components/DropdownMenuSubTrigger.svelte";
-import CheckboxItem from "./components/DropdownMenuCheckboxItem.svelte";
-import RadioIndicator from "./components/DropdownMenuRadioIndicator.svelte";
-import CheckboxIndicator from "./components/DropdownMenuCheckboxIndicator.svelte";
-
-export {
-	Sub,
-	Root,
-	Item,
-	Group,
-	Label,
-	Arrow,
-	Content,
-	Trigger,
-	Separator,
-	RadioItem,
-	SubTrigger,
-	RadioGroup,
-	SubContent,
-	CheckboxItem,
-	RadioIndicator,
-	CheckboxIndicator,
-	//
-	Root as DropdownMenu,
-	Sub as DropdownMenuSub,
-	Item as DropdownMenuItem,
-	Group as DropdownMenuGroup,
-	Label as DropdownMenuLabel,
-	Arrow as DropdownMenuArrow,
-	Content as DropdownMenuContent,
-	Trigger as DropdownMenuTrigger,
-	RadioItem as DropdownMenuRadioItem,
-	Separator as DropdownMenuSeparator,
-	SubContent as DropdownMenuSubContent,
-	RadioGroup as DropdownMenuRadioGroup,
-	SubTrigger as DropdownMenuSubTrigger,
-	CheckboxItem as DropdownMenuCheckboxItem,
-	RadioIndicator as DropdownMenuRadioIndicator,
-	CheckboxIndicator as DropdownMenuCheckboxIndicator
-};
+export { default as Root } from "$lib/bits/menu/components/menu.svelte";
+export { default as Sub } from "$lib/bits/menu/components/menu-sub.svelte";
+export { default as Item } from "$lib/bits/menu/components/menu-item.svelte";
+export { default as Group } from "$lib/bits/menu/components/menu-group.svelte";
+export { default as Label } from "$lib/bits/menu/components/menu-label.svelte";
+export { default as Arrow } from "$lib/bits/menu/components/menu-arrow.svelte";
+export { default as Content } from "$lib/bits/menu/components/menu-content.svelte";
+export { default as Trigger } from "$lib/bits/menu/components/menu-trigger.svelte";
+export { default as RadioItem } from "$lib/bits/menu/components/menu-radio-item.svelte";
+export { default as Separator } from "$lib/bits/menu/components/menu-separator.svelte";
+export { default as RadioGroup } from "$lib/bits/menu/components/menu-radio-group.svelte";
+export { default as SubContent } from "$lib/bits/menu/components/menu-sub-content.svelte";
+export { default as SubTrigger } from "$lib/bits/menu/components/menu-sub-trigger.svelte";
+export { default as CheckboxItem } from "$lib/bits/menu/components/menu-checkbox-item.svelte";
+export { default as CheckboxIndicator } from "$lib/bits/menu/components/menu-checkbox-indicator.svelte";
+export { default as RadioIndicator } from "$lib/bits/menu/components/menu-radio-indicator.svelte";
 export * from "./types.js";

@@ -1,14 +1,5 @@
-import Root from "./components/Checkbox.svelte";
-import Indicator from "./components/CheckboxIndicator.svelte";
-import Input from "./components/CheckboxInput.svelte";
+export { default as Root } from "./components/checkbox.svelte";
+export { default as Indicator } from "./components/checkbox-indicator.svelte";
+export { default as Input } from "./components/checkbox-input.svelte";
 
-export {
-	Root,
-	Indicator,
-	Input,
-	//
-	Root as Checkbox,
-	Indicator as CheckboxIndicator,
-	Input as CheckboxInput
-};
 export * from "./types.js";

@@ -1,5 +1,11 @@
 <script lang="ts">
-	import * as Button from "@/components/ui/button";
+	import { Button } from "$lib";
 </script>
 
-<Button.Root>Get started</Button.Root>
+<Button.Root
+	class="inline-flex h-12 items-center justify-center rounded-input bg-dark
+	px-[21px] text-[15px] font-semibold text-background shadow-mini
+	transition-all hover:bg-dark/95 active:scale-98 "
+>
+	Unlimited
+</Button.Root>
