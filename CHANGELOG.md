@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.10.3
+
+### Patch Changes
+
+- Calendar & Range Calendar: add `initialFocus` prop to autofocus dates on mount ([#207](https://github.com/huntabyte/bits-ui/pull/207))
+
 ## 0.10.2
 
 ### Patch Changes
