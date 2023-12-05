@@ -49,6 +49,15 @@ type Props<Multiple extends boolean = false> = Expand<
 		 * A callback function called when the placeholder changes.
 		 */
 		onPlaceholderChange?: OnChangeFn<DateValue>;
+
+		/**
+		 * If `true`, the calendar will focus the selected day,
+		 * today, or the first day of the month in that order depending
+		 * on what is visible when the calendar is mounted.
+		 *
+		 * @default false
+		 */
+		initialFocus?: boolean;
 	} & AsChild
 >;
 

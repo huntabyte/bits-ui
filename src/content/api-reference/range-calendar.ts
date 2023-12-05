@@ -116,6 +116,12 @@ export const root: APISchema<RangeCalendar.Props> = {
 			description: "Whether or not the calendar is readonly.",
 			default: C.FALSE
 		},
+		initialFocus: {
+			type: C.BOOLEAN,
+			description:
+				"If `true`, the calendar will focus the selected day, today, or the first day of the month in that order depending on what is visible when the calendar is mounted.",
+			default: C.FALSE
+		},
 		asChild
 	},
 	slotProps: {

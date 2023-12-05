@@ -20,10 +20,42 @@ type Props = Expand<
 		| "onValueChange"
 		| "ids"
 	> & {
-		placeholder?: DateValue;
+		/**
+		 * The selected date range. This updates as the user selects
+		 * date ranges in the calendar.
+		 *
+		 * You can bind this to a value to programmatically control the
+		 * value state.
+		 */
 		value?: DateRange;
-		onPlaceholderChange?: OnChangeFn<DateValue>;
+
+		/**
+		 * A callback function called when the value changes.
+		 */
 		onValueChange?: OnChangeFn<DateRange>;
+
+		/**
+		 * The placeholder date, used to display the calendar when no
+		 * date is selected. This updates as the user navigates
+		 * the calendar.
+		 *
+		 * You can bind this to a value to programmatically control the
+		 * placeholder state.
+		 */
+		placeholder?: DateValue;
+
+		/**
+		 * A callback function called when the placeholder changes.
+		 */
+		onPlaceholderChange?: OnChangeFn<DateValue>;
+		/**
+		 * If `true`, the calendar will focus the selected day,
+		 * today, or the first day of the month in that order depending
+		 * on what is visible when the calendar is mounted.
+		 *
+		 * @default false
+		 */
+		initialFocus?: boolean;
 	} & AsChild
 >;
 
