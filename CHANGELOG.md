@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.11.0
+
+### Minor Changes
+
+- breaking: rename `Date` to `Day` in Calendar components ([#210](https://github.com/huntabyte/bits-ui/pull/210))
+
 ## 0.10.3
 
 ### Patch Changes
