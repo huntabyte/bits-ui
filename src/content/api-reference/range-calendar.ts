@@ -250,8 +250,8 @@ export const day: APISchema<RangeCalendar.DayProps> = {
 			description: "Present on the element when the date is focused."
 		},
 		{
-			name: "calendar-date",
-			description: "Present on the date element."
+			name: "calendar-day",
+			description: "Present on the day element."
 		}
 	]
 };

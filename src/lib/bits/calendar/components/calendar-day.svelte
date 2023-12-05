@@ -16,7 +16,7 @@
 		helpers: { isDateDisabled, isDateUnavailable, isDateSelected }
 	} = getCtx();
 
-	const attrs = getAttrs("date");
+	const attrs = getAttrs("day");
 	const dispatch = createDispatcher();
 
 	$: builder = $cell(date, month);

@@ -14,7 +14,7 @@
 		helpers: { isDateDisabled, isDateUnavailable }
 	} = getCtx();
 
-	const attrs = getCalendarAttrs("date");
+	const attrs = getCalendarAttrs("day");
 
 	$: builder = $cell(date, month);
 	$: Object.assign(builder, attrs);
