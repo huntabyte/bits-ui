@@ -95,7 +95,7 @@
 												{date}
 												class="relative m-0 !p-0 text-center text-sm sq-10"
 											>
-												<DateRangePicker.Date
+												<DateRangePicker.Day
 													{date}
 													month={month.value}
 													class={cn(
@@ -106,7 +106,7 @@
 														class="absolute top-[5px] hidden rounded-full bg-foreground transition-all sq-1 group-data-[today]:block group-data-[selected]:bg-background"
 													/>
 													{date.day}
-												</DateRangePicker.Date>
+												</DateRangePicker.Day>
 											</DateRangePicker.Cell>
 										{/each}
 									</DateRangePicker.GridRow>

@@ -43,7 +43,9 @@
 			value: localValue,
 			placeholder: localPlaceholder,
 			months,
-			weekdays
+			weekdays,
+			startValue,
+			endValue
 		},
 		updateOption,
 		ids
@@ -109,7 +111,9 @@
 	$: slotProps = {
 		builder,
 		months: $months,
-		weekdays: $weekdays
+		weekdays: $weekdays,
+		startValue: $startValue,
+		endValue: $endValue
 	};
 </script>
 

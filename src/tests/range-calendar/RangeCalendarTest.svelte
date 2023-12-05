@@ -49,13 +49,13 @@
 										{date}
 										data-testid="cell-{date.month}-{d}"
 									>
-										<RangeCalendar.Date
+										<RangeCalendar.Day
 											{date}
 											month={month.value}
 											data-testid="date-{date.month}-{date.day}"
 										>
 											{date.day}
-										</RangeCalendar.Date>
+										</RangeCalendar.Day>
 									</RangeCalendar.Cell>
 								{/each}
 							</RangeCalendar.GridRow>

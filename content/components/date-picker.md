@@ -54,7 +54,7 @@ description: Facilitates the selection of dates through an input and calendar-ba
 							<DatePicker.GridRow>
 								{#each weekDates as date}
 									<DatePicker.Cell {date}>
-										<DatePicker.Date {date} month={month.value} />
+										<DatePicker.Day {date} month={month.value} />
 									</DatePicker.Cell>
 								{/each}
 							</DatePicker.GridRow>

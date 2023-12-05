@@ -174,9 +174,9 @@ export const cell: APISchema<RangeCalendar.CellProps> = {
 	]
 };
 
-export const date: APISchema<RangeCalendar.DateProps> = {
-	title: "Date",
-	description: "A date in the calendar grid.",
+export const day: APISchema<RangeCalendar.DayProps> = {
+	title: "Day",
+	description: "A day in the calendar grid.",
 	props: {
 		asChild,
 		date: {
@@ -250,8 +250,8 @@ export const date: APISchema<RangeCalendar.DateProps> = {
 			description: "Present on the element when the date is focused."
 		},
 		{
-			name: "calendar-date",
-			description: "Present on the date element."
+			name: "calendar-day",
+			description: "Present on the day element."
 		}
 	]
 };
@@ -386,7 +386,7 @@ export const rangeCalendar = [
 	nextButton,
 	prevButton,
 	cell,
-	date,
+	day,
 	grid,
 	gridBody,
 	gridHead,

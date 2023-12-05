@@ -32,7 +32,9 @@
 		states: {
 			value: localValue,
 			placeholder: localPlaceholder,
-			isInvalid: localIsInvalid
+			isInvalid: localIsInvalid,
+			startValue,
+			endValue
 		},
 		updateOption,
 		ids
@@ -202,7 +204,9 @@
 
 	$: slotProps = {
 		isInvalid: $localIsInvalid,
-		ids: $idValues
+		ids: $idValues,
+		startValue: $startValue,
+		endValue: $endValue
 	};
 </script>
 
