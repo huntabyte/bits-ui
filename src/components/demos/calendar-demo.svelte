@@ -13,6 +13,7 @@
 	let:weekdays
 	{isDateUnavailable}
 	weekdayFormat="short"
+	fixedWeeks={true}
 >
 	<Calendar.Header class="flex items-center justify-between">
 		<Calendar.PrevButton

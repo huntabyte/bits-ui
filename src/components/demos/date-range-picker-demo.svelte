@@ -6,7 +6,7 @@
 	let value: DateRange | undefined = undefined;
 </script>
 
-<DateRangePicker.Root bind:value weekdayFormat="short">
+<DateRangePicker.Root bind:value weekdayFormat="short" fixedWeeks={true}>
 	<div class="flex min-w-[200px] flex-col gap-1">
 		<DateRangePicker.Label class="block select-none font-medium"
 			>Rental Days</DateRangePicker.Label

@@ -9,6 +9,7 @@
 	let:months
 	let:weekdays
 	weekdayFormat="short"
+	fixedWeeks={true}
 >
 	<RangeCalendar.Header class="flex items-center justify-between">
 		<RangeCalendar.PrevButton

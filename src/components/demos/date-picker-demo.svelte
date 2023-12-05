@@ -4,7 +4,7 @@
 	import { CaretLeft, CaretRight, CalendarBlank } from "phosphor-svelte";
 </script>
 
-<DatePicker.Root weekdayFormat="short">
+<DatePicker.Root weekdayFormat="short" fixedWeeks={true}>
 	<div class="flex min-w-[200px] flex-col gap-1">
 		<DatePicker.Label class="block select-none font-medium"
 			>Birthday</DatePicker.Label
