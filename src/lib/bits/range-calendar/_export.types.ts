@@ -10,10 +10,10 @@ export type {
 	GridBodyProps as RangeCalendarGridBodyProps,
 	CellProps as RangeCalendarCellProps,
 	GridRowProps as RangeCalendarGridRowProps,
-	DateProps as RangeCalendarDateProps,
+	DayProps as RangeCalendarDayProps,
 	//
 	Events as RangeCalendarEvents,
 	PrevButtonEvents as RangeCalendarPrevButtonEvents,
 	NextButtonEvents as RangeCalendarNextButtonEvents,
-	DateEvents as RangeCalendarDateEvents
+	DayEvents as RangeCalendarDayEvents
 } from "./types.js";

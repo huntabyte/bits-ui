@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { getCtx, getCalendarAttrs } from "../ctx.js";
-	import type { DateProps } from "../types.js";
+	import type { DayProps } from "../types.js";
 
-	type $$Props = DateProps;
+	type $$Props = DayProps;
 
 	export let date: $$Props["date"];
 	export let month: $$Props["month"];

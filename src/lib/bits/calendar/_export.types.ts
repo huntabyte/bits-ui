@@ -10,10 +10,10 @@ export type {
 	HeadCellProps as CalendarHeadCellProps,
 	GridHeadProps as CalendarGridHeadProps,
 	HeaderProps as CalendarHeaderProps,
-	DateProps as CalendarDateProps,
+	DayProps as CalendarDayProps,
 	//
 	Events as CalendarEvents,
 	PrevButtonEvents as CalendarPrevButtonEvents,
 	NextButtonEvents as CalendarNextButtonEvents,
-	DateEvents as CalendarDateEvents
+	DayEvents as CalendarDayEvents
 } from "./types.js";

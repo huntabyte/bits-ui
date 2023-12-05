@@ -77,7 +77,7 @@ type GridBodyProps = AsChild;
 
 type GridRowProps = AsChild;
 
-type BaseDateProps = Expand<
+type BaseDayProps = Expand<
 	{
 		/**
 		 * The date value of the cell.
@@ -91,9 +91,9 @@ type BaseDateProps = Expand<
 	} & AsChild
 >;
 
-type CellProps = Expand<Omit<BaseDateProps, "month">>;
+type CellProps = Expand<Omit<BaseDayProps, "month">>;
 
-type DateProps = Expand<BaseDateProps>;
+type DayProps = Expand<BaseDayProps>;
 
 export type {
 	Props,
@@ -107,5 +107,5 @@ export type {
 	GridBodyProps,
 	GridRowProps,
 	CellProps,
-	DateProps
+	DayProps
 };

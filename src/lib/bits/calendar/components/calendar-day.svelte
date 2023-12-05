@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { getCtx, getAttrs } from "../ctx.js";
-	import type { DateEvents, DateProps } from "../types.js";
+	import type { DayEvents, DayProps } from "../types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
 
-	type $$Props = DateProps;
-	type $$Events = DateEvents;
+	type $$Props = DayProps;
+	type $$Events = DayEvents;
 
 	export let date: $$Props["date"];
 	export let month: $$Props["month"];
@@ -13,7 +13,7 @@
 
 	const {
 		elements: { cell },
-		helpers: { isDateDisabled, isDateUnavailable }
+		helpers: { isDateDisabled, isDateUnavailable, isDateSelected }
 	} = getCtx();
 
 	const attrs = getAttrs("date");
@@ -25,20 +25,15 @@
 	$: slotProps = {
 		builder,
 		disabled: $isDateDisabled(date),
-		unavailable: $isDateUnavailable(date)
+		unavailable: $isDateUnavailable(date),
+		selected: $isDateSelected(date)
 	};
 </script>
 
 {#if asChild}
 	<slot {...slotProps} />
 {:else}
-	<div
-		use:melt={builder}
-		{...$$restProps}
-		on:m-click={dispatch}
-		on:m-focusin={dispatch}
-		on:m-mouseenter={dispatch}
-	>
+	<div use:melt={builder} {...$$restProps} on:m-click={dispatch}>
 		<slot {...slotProps}>
 			{date.day}
 		</slot>

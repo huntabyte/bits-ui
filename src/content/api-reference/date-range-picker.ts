@@ -20,7 +20,7 @@ import {
 	heading,
 	nextButton,
 	prevButton,
-	date,
+	day,
 	grid
 } from "./range-calendar";
 import { content, trigger } from "./popover";
@@ -309,5 +309,5 @@ export const dateRangePicker = [
 	headCell,
 	gridBody,
 	cell,
-	date
+	day
 ];

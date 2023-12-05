@@ -32,7 +32,7 @@ type GridRowProps = I.GridRowProps & HTMLAttributes<HTMLTableRowElement>;
 
 type CellProps = I.CellProps & HTMLTdAttributes;
 
-type DateProps = I.DateProps & HTMLDivAttributes;
+type DayProps = I.DayProps & HTMLDivAttributes;
 
 /**
  * Events
@@ -46,7 +46,7 @@ type PrevButtonEvents = ButtonEvents;
 
 type NextButtonEvents = ButtonEvents;
 
-type DateEvents = {
+type DayEvents = {
 	click: CustomEventHandler<MouseEvent, HTMLDivElement>;
 };
 
@@ -66,10 +66,10 @@ export type {
 	HeadCellProps,
 	GridHeadProps,
 	HeaderProps,
-	DateProps,
+	DayProps,
 	//
 	Events,
 	PrevButtonEvents,
 	NextButtonEvents,
-	DateEvents
+	DayEvents
 };
