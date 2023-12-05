@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.10.2
+
+### Patch Changes
+
+- fix: calendar `data-selected` attribute ([#205](https://github.com/huntabyte/bits-ui/pull/205))
+
 ## 0.10.1
 
 ### Patch Changes
