@@ -3,6 +3,8 @@
 	import { setCtx, getAttrs } from "../ctx.js";
 	import type { Events, Props } from "../types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
+	import { onMount } from "svelte";
+	import { handleCalendarInitialFocus } from "$lib/internal/focus.js";
 
 	type $$Props = Props;
 	type $$Events = Events;
@@ -26,6 +28,14 @@
 	export let asChild: $$Props["asChild"] = false;
 	export let id: $$Props["id"] = undefined;
 	export let weekdayFormat: $$Props["weekdayFormat"] = undefined;
+	export let initialFocus: $$Props["initialFocus"] = false;
+
+	let el: HTMLElement | undefined = undefined;
+
+	onMount(() => {
+		if (!initialFocus || !el) return;
+		handleCalendarInitialFocus(el);
+	});
 
 	const {
 		elements: { calendar },
@@ -106,7 +116,12 @@
 {#if asChild}
 	<slot {...slotProps} />
 {:else}
-	<div use:melt={builder} {...$$restProps} on:m-keydown={dispatch}>
+	<div
+		use:melt={builder}
+		{...$$restProps}
+		on:m-keydown={dispatch}
+		bind:this={el}
+	>
 		<slot {...slotProps} />
 	</div>
 {/if}
