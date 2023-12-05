@@ -52,7 +52,7 @@
 									{date}
 									class="relative !p-0 text-center text-sm sq-10"
 								>
-									<Calendar.Date
+									<Calendar.Day
 										{date}
 										month={month.value}
 										class="group relative inline-flex items-center justify-center whitespace-nowrap rounded-9px border border-transparent bg-transparent p-0 text-sm font-normal text-foreground sq-10 hover:border-foreground data-[disabled]:pointer-events-none data-[outside-month]:pointer-events-none data-[selected]:bg-foreground data-[selected]:font-medium data-[disabled]:text-foreground/30 data-[selected]:text-background data-[unavailable]:text-muted-foreground data-[unavailable]:line-through"
@@ -61,7 +61,7 @@
 											class="absolute top-[5px] hidden rounded-full bg-foreground sq-1 group-data-[today]:block group-data-[selected]:bg-background"
 										/>
 										{date.day}
-									</Calendar.Date>
+									</Calendar.Day>
 								</Calendar.Cell>
 							{/each}
 						</Calendar.GridRow>

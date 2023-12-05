@@ -48,7 +48,7 @@
 									{date}
 									class="relative m-0 !p-0 text-center text-sm sq-10"
 								>
-									<RangeCalendar.Date
+									<RangeCalendar.Day
 										{date}
 										month={month.value}
 										class={cn(
@@ -59,7 +59,7 @@
 											class="absolute top-[5px] hidden rounded-full bg-foreground transition-all sq-1 group-data-[today]:block group-data-[selected]:bg-background"
 										/>
 										{date.day}
-									</RangeCalendar.Date>
+									</RangeCalendar.Day>
 								</RangeCalendar.Cell>
 							{/each}
 						</RangeCalendar.GridRow>

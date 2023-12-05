@@ -1,6 +1,6 @@
 export { default as Arrow } from "./components/date-range-picker-arrow.svelte";
 export { default as Cell } from "./components/date-range-picker-cell.svelte";
-export { default as Date } from "./components/date-range-picker-date.svelte";
+export { default as Day } from "./components/date-range-picker-day.svelte";
 export { default as Heading } from "./components/date-range-picker-heading.svelte";
 export { default as NextButton } from "./components/date-range-picker-next-button.svelte";
 export { default as PrevButton } from "./components/date-range-picker-prev-button.svelte";

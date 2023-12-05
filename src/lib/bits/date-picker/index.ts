@@ -14,7 +14,7 @@ export { default as GridRow } from "$lib/bits/calendar/components/calendar-grid-
 export { default as HeadCell } from "$lib/bits/calendar/components/calendar-head-cell.svelte";
 export { default as Header } from "$lib/bits/calendar/components/calendar-header.svelte";
 export { default as Cell } from "./components/date-picker-cell.svelte";
-export { default as Date } from "./components/date-picker-date.svelte";
+export { default as Day } from "./components/date-picker-day.svelte";
 export { default as Grid } from "./components/date-picker-grid.svelte";
 
 export { default as Heading } from "./components/date-picker-heading.svelte";
