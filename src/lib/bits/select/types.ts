@@ -8,7 +8,7 @@ import type {
 import type { CustomEventHandler } from "$lib/index.js";
 import type * as I from "./_types.js";
 
-type Props<T = unknown, Multiple extends boolean = false> = I.Props<T, Multiple>;
+type Props<T, Multiple extends boolean = false> = I.Props<T, Multiple>;
 
 type ContentProps<
 	T extends Transition = Transition,
