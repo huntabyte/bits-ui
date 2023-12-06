@@ -2,7 +2,7 @@
 	import { melt } from "@melt-ui/svelte";
 	import { getGroupCtx, getAttrs } from "../ctx.js";
 	import type { GroupItemProps, GroupItemEvents } from "../types.js";
-	import { createDispatcher, disabledAttrs } from "$lib/internal";
+	import { createDispatcher, disabledAttrs } from "$lib/internal/index.js";
 
 	type $$Props = GroupItemProps;
 	type $$Events = GroupItemEvents;
