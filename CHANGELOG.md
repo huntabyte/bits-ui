@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.11.2
+
+### Patch Changes
+
+- fix: exported `SelectProps` type ([#214](https://github.com/huntabyte/bits-ui/pull/214))
+
 ## 0.11.1
 
 ### Patch Changes
