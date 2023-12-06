@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.11.3
+
+### Patch Changes
+
+- fix: generic type inference for `Select` component ([#217](https://github.com/huntabyte/bits-ui/pull/217))
+
 ## 0.11.2
 
 ### Patch Changes
