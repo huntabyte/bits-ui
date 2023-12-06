@@ -5,7 +5,8 @@ import {
 	attrsSlotProp,
 	weekdaysSlotProp,
 	enums,
-	monthsSlotProp
+	monthsSlotProp,
+	union
 } from "@/content/api-reference/helpers.js";
 import type * as RangeCalendar from "$lib/bits/range-calendar/_types.js";
 import { builderAndAttrsSlotProps } from "./helpers";
@@ -121,6 +122,30 @@ export const root: APISchema<RangeCalendar.Props> = {
 			description:
 				"If `true`, the calendar will focus the selected day, today, or the first day of the month in that order depending on what is visible when the calendar is mounted.",
 			default: C.FALSE
+		},
+		/**
+		 * The `start` value of the date range, which can exist prior
+		 * to the `value` being set. The `value` is only set once a `start`
+		 * and `end` value are selected.
+		 *
+		 * You can `bind:startValue` to a value to receive updates outside
+		 * this component when the user selects a `start` value.
+		 *
+		 * Modifying this value outside the component will have no effect.
+		 * To programmatically control the `start` value, use `bind:value`
+		 * and update the `start` property of the `DateRange` object.
+		 *
+		 * This is provided as a convenience for use cases where you want
+		 * to display the selected `start` value outside the component before
+		 * the `value` is set.
+		 */
+		startValue: {
+			type: {
+				type: C.UNION,
+				definition: union("DateValue", "undefined")
+			},
+			description:
+				"The `start` value of the date range, which can exist prior to the true `value` being set, which is only set once a `start` and `end` value are selected. You can `bind:startValue` to a value to receive updates, but modifying this value outside the component will have no effect. To programmatically control the `start` value, use `bind:value` and update the `start` property of the `DateRange` object. This is provided as a convenience for use cases where you want to display the selected `start` value outside the component before the `value` is set."
 		},
 		asChild
 	},

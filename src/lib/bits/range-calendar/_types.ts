@@ -48,6 +48,7 @@ type Props = Expand<
 		 * A callback function called when the placeholder changes.
 		 */
 		onPlaceholderChange?: OnChangeFn<DateValue>;
+
 		/**
 		 * If `true`, the calendar will focus the selected day,
 		 * today, or the first day of the month in that order depending
@@ -56,6 +57,24 @@ type Props = Expand<
 		 * @default false
 		 */
 		initialFocus?: boolean;
+
+		/**
+		 * The `start` value of the date range, which can exist prior
+		 * to the `value` being set. The `value` is only set once a `start`
+		 * and `end` value are selected.
+		 *
+		 * You can `bind:startValue` to a value to receive updates outside
+		 * this component when the user selects a `start` value.
+		 *
+		 * Modifying this value outside the component will have no effect.
+		 * To programmatically control the `start` value, use `bind:value`
+		 * and update the `start` property of the `DateRange` object.
+		 *
+		 * This is provided as a convenience for use cases where you want
+		 * to display the selected `start` value outside the component before
+		 * the `value` is set.
+		 */
+		startValue?: DateValue | undefined;
 	} & AsChild
 >;
 

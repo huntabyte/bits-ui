@@ -27,13 +27,14 @@
 	export let fixedWeeks: $$Props["fixedWeeks"] = undefined;
 	export let calendarLabel: $$Props["calendarLabel"] = undefined;
 	export let weekdayFormat: $$Props["weekdayFormat"] = undefined;
+	export let startValue: $$Props["startValue"] = undefined;
 
 	const {
 		states: {
 			value: localValue,
 			placeholder: localPlaceholder,
 			isInvalid: localIsInvalid,
-			startValue,
+			startValue: localStartValue,
 			endValue
 		},
 		updateOption,
@@ -182,6 +183,7 @@
 		ids.rangeField.field.description.set(descriptionId);
 	}
 
+	$: startValue = $localStartValue;
 	$: value !== undefined && localValue.set(value);
 	$: placeholder !== undefined && localPlaceholder.set(placeholder);
 
@@ -205,7 +207,7 @@
 	$: slotProps = {
 		isInvalid: $localIsInvalid,
 		ids: $idValues,
-		startValue: $startValue,
+		startValue: $localStartValue,
 		endValue: $endValue
 	};
 </script>

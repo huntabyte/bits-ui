@@ -29,6 +29,7 @@
 	export let id: $$Props["id"] = undefined;
 	export let weekdayFormat: $$Props["weekdayFormat"] = undefined;
 	export let initialFocus: $$Props["initialFocus"] = false;
+	export let startValue: $$Props["startValue"] = undefined;
 
 	let el: HTMLElement | undefined = undefined;
 
@@ -44,7 +45,7 @@
 			placeholder: localPlaceholder,
 			months,
 			weekdays,
-			startValue,
+			startValue: localStartValue,
 			endValue
 		},
 		updateOption,
@@ -85,6 +86,8 @@
 		ids.calendar.set(id);
 	}
 
+	$: startValue = $localStartValue;
+
 	$: value !== undefined && localValue.set(value);
 	$: placeholder !== undefined && localPlaceholder.set(placeholder);
 
@@ -112,7 +115,7 @@
 		builder,
 		months: $months,
 		weekdays: $weekdays,
-		startValue: $startValue,
+		startValue: $localStartValue,
 		endValue: $endValue
 	};
 </script>
