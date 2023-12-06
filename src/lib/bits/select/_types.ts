@@ -7,6 +7,11 @@ import type { CreateSelectProps, SelectOptionProps } from "@melt-ui/svelte";
 import type { AsChild, Expand, OmitFloating, OnChangeFn } from "$lib/internal/index.js";
 import type { ContentProps, ArrowProps } from "$lib/bits/floating/_types.js";
 
+type Items<T> = {
+	value: T;
+	label?: string;
+}[];
+
 type Props<T = unknown, Multiple extends boolean = false> = Expand<
 	OmitFloating<Omit<CreateSelectProps, "selected" | "defaultSelected" | "onSelectedChange">> & {
 		/**
@@ -36,9 +41,15 @@ type Props<T = unknown, Multiple extends boolean = false> = Expand<
 		onOpenChange?: OnChangeFn<boolean>;
 
 		/**
-		 *
+		 * Whether or not multiple values can be selected.
 		 */
 		multiple?: Multiple;
+
+		/**
+		 * Optional array of items to add type-safety to the
+		 * `onSelectedChange` callback and `selected` prop.
+		 */
+		items?: Items<T>;
 	}
 >;
 
