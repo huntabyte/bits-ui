@@ -6,26 +6,34 @@
 import type { CreateSelectProps, SelectOptionProps } from "@melt-ui/svelte";
 import type { AsChild, Expand, OmitFloating, OnChangeFn } from "$lib/internal/index.js";
 import type { ContentProps, ArrowProps } from "$lib/bits/floating/_types.js";
+import type { Selected } from "$lib";
 
-type Items<T> = {
-	value: T;
-	label?: string;
-}[];
+export type WhenTrue<TrueOrFalse, IfTrue, IfFalse, IfNeither = IfTrue | IfFalse> = [
+	TrueOrFalse
+] extends [true]
+	? IfTrue
+	: [TrueOrFalse] extends [false]
+	? IfFalse
+	: IfNeither;
 
-type Props<T = unknown, Multiple extends boolean = false> = Expand<
-	OmitFloating<Omit<CreateSelectProps, "selected" | "defaultSelected" | "onSelectedChange">> & {
+type SelectValue<T, Multiple extends boolean> = WhenTrue<Multiple, T[] | undefined, T | undefined>;
+
+type Props<T, Multiple extends boolean = false> = Expand<
+	OmitFloating<
+		Omit<CreateSelectProps, "selected" | "defaultSelected" | "onSelectedChange" | "multiple">
+	> & {
 		/**
 		 * The selected value of the select.
 		 * You can bind this to a value to programmatically control the selected value.
 		 *
 		 * @defaultValue undefined
 		 */
-		selected?: CreateSelectProps<T, Multiple>["defaultSelected"] & {};
+		selected?: SelectValue<T, Multiple> | undefined;
 
 		/**
 		 * A callback function called when the selected value changes.
 		 */
-		onSelectedChange?: OnChangeFn<CreateSelectProps<T, Multiple>["defaultSelected"]>;
+		onSelectedChange?: OnChangeFn<SelectValue<T, Multiple>>;
 
 		/**
 		 * The open state of the select menu.
@@ -46,10 +54,10 @@ type Props<T = unknown, Multiple extends boolean = false> = Expand<
 		multiple?: Multiple;
 
 		/**
-		 * Optional array of items to add type-safety to the
-		 * `onSelectedChange` callback and `selected` prop.
+		 * Optionally provide an array of `Selected<T>` objects to
+		 * type the `selected` and `onSelectedChange` props.
 		 */
-		items?: Items<T>;
+		items?: Selected<T>[];
 	}
 >;
 

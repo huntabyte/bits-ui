@@ -1,20 +1,14 @@
-<script lang="ts">
+<script lang="ts" context="module">
+	type T = unknown;
+	type Multiple = boolean;
+</script>
+
+<script lang="ts" generics="T, Multiple extends boolean = false">
 	import { derived } from "svelte/store";
 	import { setCtx } from "../ctx.js";
 	import type { Props } from "../types.js";
 
-	type T = $$Generic<unknown>;
-	type Multiple = $$Generic<boolean>;
-
-	type $$Props = Omit<Props<T, Multiple>, "multiple"> & {
-		items?: Items<T>;
-		multiple?: Multiple;
-	};
-
-	type Items<T> = {
-		value: T;
-		label?: string;
-	}[];
+	type $$Props = Props<T, Multiple>;
 
 	export let required: $$Props["required"] = undefined;
 	export let disabled: $$Props["disabled"] = undefined;
@@ -29,14 +23,13 @@
 	export let onSelectedChange: $$Props["onSelectedChange"] = undefined;
 	export let open: $$Props["open"] = undefined;
 	export let onOpenChange: $$Props["onOpenChange"] = undefined;
-	// eslint-disable-next-line svelte/valid-compile
 	export let items: $$Props["items"] = [];
 
 	const {
 		states: { open: localOpen, selected: localSelected },
 		updateOption,
 		ids
-	} = setCtx({
+	} = setCtx<T, Multiple>({
 		required,
 		disabled,
 		preventScroll,
@@ -49,9 +42,10 @@
 		forceVisible: true,
 		defaultSelected: Array.isArray(selected)
 			? ([...selected] as $$Props["selected"])
-			: selected,
+			: // eslint-disable-next-line @typescript-eslint/no-explicit-any
+			  (selected as any),
 		defaultOpen: open,
-		onSelectedChange: ({ next }) => {
+		onSelectedChange: (({ next }: { next: $$Props["selected"] }) => {
 			if (Array.isArray(next)) {
 				if (JSON.stringify(next) !== JSON.stringify(selected)) {
 					onSelectedChange?.(next);
@@ -65,7 +59,8 @@
 				selected = next;
 			}
 			return next;
-		},
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		}) as any,
 		onOpenChange: ({ next }) => {
 			if (open !== next) {
 				onOpenChange?.(next);
@@ -90,7 +85,8 @@
 		localSelected.set(
 			Array.isArray(selected)
 				? ([...selected] as $$Props["selected"])
-				: selected
+				: // eslint-disable-next-line @typescript-eslint/no-explicit-any
+				  (selected as any)
 		);
 
 	$: updateOption("required", required);
