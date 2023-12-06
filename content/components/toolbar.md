@@ -22,13 +22,13 @@ description: A container for grouping a set of controls, such as buttons, links 
 </script>
 
 <Toolbar.Root>
-  <Toolbar.Group>
-    <Toolbar.GroupItem />
-  </Toolbar.Group>
-  <Toolbar.Separator />
-  <Toolbar.Link />
-  <Toolbar.Button />
-<Toolbar.Root />
+	<Toolbar.Group>
+		<Toolbar.GroupItem />
+	</Toolbar.Group>
+	<Toolbar.Separator />
+	<Toolbar.Link />
+	<Toolbar.Button />
+</Toolbar.Root>
 ```
 
 <APISection {schemas} />
