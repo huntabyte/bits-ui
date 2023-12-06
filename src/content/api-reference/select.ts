@@ -102,6 +102,13 @@ export const root: APISchema<Select.Props> = {
 			default: C.TRUE,
 			description:
 				"Whether or not to enable typeahead functionality. When enabled, the user can type to navigate to menu items."
+		},
+		items: {
+			type: {
+				type: "Selected[]",
+				definition: "Array<{ value: T; label?: string }>"
+			},
+			description: "An array of items to add type-safety to the `onSelectedChange` callback."
 		}
 	},
 	slotProps: { ids: idsSlotProp }
