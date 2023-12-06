@@ -8,12 +8,12 @@
 	export let asChild: $$Props["asChild"] = false;
 
 	const {
-		elements: { link }
+		elements: { separator }
 	} = getCtx();
 
 	const attrs = getAttrs("separator");
 
-	$: builder = $link;
+	$: builder = $separator;
 	$: Object.assign(builder, attrs);
 </script>
 
