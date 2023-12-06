@@ -11,7 +11,7 @@ import { getContext, setContext } from "svelte";
 const NAME = "toolbar";
 const GROUP_NAME = "toolbar-group";
 
-const PARTS = ["root", "button", "link", "separator", "group", "group-item"] as const;
+const PARTS = ["root", "button", "link", "group", "group-item"] as const;
 
 export const getAttrs = createBitAttrs(NAME, PARTS);
 

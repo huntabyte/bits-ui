@@ -2,7 +2,6 @@ export type {
 	Props as ToolbarProps,
 	ButtonProps as ToolbarButtonProps,
 	LinkProps as ToolbarLinkProps,
-	SeparatorProps as ToolbarSeparatorProps,
 	GroupProps as ToolbarGroupProps,
 	GroupItemProps as ToolbarItemProps,
 	//

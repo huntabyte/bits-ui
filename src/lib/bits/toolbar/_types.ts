@@ -12,8 +12,6 @@ type ButtonProps = AsChild;
 
 type LinkProps = AsChild;
 
-type SeparatorProps = AsChild;
-
 type GroupProps<T extends "single" | "multiple"> = Expand<
 	OmitValue<CreateToolbarGroupProps<T>> & {
 		/**
@@ -60,4 +58,4 @@ type GroupItemProps = Expand<
 	} & AsChild
 >;
 
-export type { Props, ButtonProps, LinkProps, SeparatorProps, GroupProps, GroupItemProps };
+export type { Props, ButtonProps, LinkProps, GroupProps, GroupItemProps };

@@ -9,8 +9,6 @@ type ButtonProps = I.ButtonProps & HTMLButtonAttributes;
 
 type LinkProps = I.LinkProps & HTMLAnchorAttributes;
 
-type SeparatorProps = I.SeparatorProps & HTMLDivAttributes;
-
 type GroupProps<T extends "single" | "multiple"> = I.GroupProps<T> & HTMLDivAttributes;
 
 type GroupItemProps = I.GroupItemProps & HTMLButtonAttributes;
@@ -35,7 +33,6 @@ export type {
 	Props,
 	ButtonProps,
 	LinkProps,
-	SeparatorProps,
 	GroupProps,
 	GroupItemProps,
 	//

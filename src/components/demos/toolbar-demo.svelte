@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Toolbar } from "$lib";
+	import { Separator, Toolbar } from "$lib";
 	import { TextB, TextItalic, TextStrikethrough } from "phosphor-svelte";
 
 	let value: string[] | undefined = ["bold"];
@@ -36,7 +36,7 @@
 		</Toolbar.GroupItem>
 	</Toolbar.Group>
 
-	<Toolbar.Separator class="w-[1px] self-stretch bg-muted" />
+	<Separator.Root class="w-[1px] self-stretch bg-muted" />
 
 	<Toolbar.Link
 		class="link nowrap flex-shrink-0"

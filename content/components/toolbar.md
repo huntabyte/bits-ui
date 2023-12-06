@@ -25,7 +25,6 @@ description: A container for grouping a set of controls, such as buttons, links 
 	<Toolbar.Group>
 		<Toolbar.GroupItem />
 	</Toolbar.Group>
-	<Toolbar.Separator />
 	<Toolbar.Link />
 	<Toolbar.Button />
 </Toolbar.Root>

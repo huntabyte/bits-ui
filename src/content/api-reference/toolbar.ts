@@ -59,19 +59,6 @@ const link: APISchema<Toolbar.LinkProps> = {
 	]
 };
 
-const separator: APISchema<Toolbar.SeparatorProps> = {
-	title: "Separator",
-	description: "A horizontal line to visually separate sections in the toolbar.",
-	props: { asChild },
-	slotProps: { ...builderAndAttrsSlotProps },
-	dataAttributes: [
-		{
-			name: "toolbar-separator",
-			description: "Present on the separator element."
-		}
-	]
-};
-
 const group: APISchema<Toolbar.GroupProps<"multiple">> = {
 	title: "Group",
 	description: "A group of toggle items in the toolbar.",
@@ -145,4 +132,4 @@ const groupItem: APISchema<Toolbar.GroupItemProps> = {
 	]
 };
 
-export const toolbar = [root, button, link, separator, group, groupItem];
+export const toolbar = [root, button, link, group, groupItem];
