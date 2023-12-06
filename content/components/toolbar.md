@@ -23,7 +23,7 @@ description: A container for grouping a set of controls, such as buttons, links 
 
 <Toolbar.Root>
   <Toolbar.Group>
-    <Toolbar.Item />
+    <Toolbar.GroupItem />
   </Toolbar.Group>
   <Toolbar.Separator />
   <Toolbar.Link />

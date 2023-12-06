@@ -13,7 +13,7 @@ type SeparatorProps = I.SeparatorProps & HTMLDivAttributes;
 
 type GroupProps<T extends "single" | "multiple"> = I.GroupProps<T> & HTMLDivAttributes;
 
-type ItemProps = I.ItemProps & HTMLButtonAttributes;
+type GroupItemProps = I.GroupItemProps & HTMLButtonAttributes;
 
 /**
  * Events
@@ -26,7 +26,7 @@ type LinkEvents = {
 	keydown: CustomEventHandler<KeyboardEvent, HTMLAnchorElement>;
 };
 
-type ItemEvents<T extends Element = HTMLButtonElement> = {
+type GroupItemEvents<T extends Element = HTMLButtonElement> = {
 	click: CustomEventHandler<MouseEvent, T>;
 	keydown: CustomEventHandler<KeyboardEvent, T>;
 };
@@ -37,9 +37,9 @@ export type {
 	LinkProps,
 	SeparatorProps,
 	GroupProps,
-	ItemProps,
+	GroupItemProps,
 	//
 	ButtonEvents,
 	LinkEvents,
-	ItemEvents
+	GroupItemEvents
 };

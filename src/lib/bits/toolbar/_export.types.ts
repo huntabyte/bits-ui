@@ -4,9 +4,9 @@ export type {
 	LinkProps as ToolbarLinkProps,
 	SeparatorProps as ToolbarSeparatorProps,
 	GroupProps as ToolbarGroupProps,
-	ItemProps as ToolbarItemProps,
+	GroupItemProps as ToolbarItemProps,
 	//
 	ButtonEvents as ToolbarButtonEvents,
 	LinkEvents as ToolbarLinkEvents,
-	ItemEvents as ToolbarItemEvents
+	GroupItemEvents as ToolbarItemEvents
 } from "./types.js";

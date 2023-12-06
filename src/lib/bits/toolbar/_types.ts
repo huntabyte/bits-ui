@@ -40,7 +40,7 @@ type GroupProps<T extends "single" | "multiple"> = Expand<
 	} & AsChild
 >;
 
-type ItemProps = Expand<
+type GroupItemProps = Expand<
 	{
 		/**
 		 * The value of the toolbar toggle group item. When the toolbar toggle group item is selected,
@@ -60,4 +60,4 @@ type ItemProps = Expand<
 	} & AsChild
 >;
 
-export type { Props, ButtonProps, LinkProps, SeparatorProps, GroupProps, ItemProps };
+export type { Props, ButtonProps, LinkProps, SeparatorProps, GroupProps, GroupItemProps };

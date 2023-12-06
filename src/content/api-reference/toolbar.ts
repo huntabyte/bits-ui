@@ -106,14 +106,14 @@ const group: APISchema<Toolbar.GroupProps<"multiple">> = {
 	]
 };
 
-const item: APISchema<Toolbar.ItemProps> = {
-	title: "Item",
-	description: "A toggle item in the toolbar.",
+const groupItem: APISchema<Toolbar.GroupItemProps> = {
+	title: "GroupItem",
+	description: "A toggle item in the toolbar toggle group.",
 	props: {
 		value: {
 			type: C.STRING,
 			description:
-				"The value of the toggle group item. When the toggle group item is selected, the toggle group's value will be set to this value if in single mode, or this value will be pushed to the toggle group's array value if in multiple mode."
+				"The value of the toolbar toggle group item. When the toolbar toggle group item is selected, toolbar the toggle group's value will be set to this value if in single mode, or this value will be pushed to the toggle group's array value if in multiple mode."
 		},
 		disabled: {
 			default: C.FALSE,
@@ -126,17 +126,17 @@ const item: APISchema<Toolbar.ItemProps> = {
 	dataAttributes: [
 		{
 			name: "state",
-			description: "Whether the toggle item is in the on or off state.",
+			description: "Whether the toolbar toggle item is in the on or off state.",
 			value: enums("on", "off"),
 			isEnum: true
 		},
 		{
 			name: "value",
-			description: "The value of the toggle item."
+			description: "The value of the toolbar toggle item."
 		},
 		{
 			name: "disabled",
-			description: "Present when the toggle item is disabled."
+			description: "Present when the toolbar toggle item is disabled."
 		},
 		{
 			name: "toolbar-item",
@@ -145,4 +145,4 @@ const item: APISchema<Toolbar.ItemProps> = {
 	]
 };
 
-export const toolbar = [root, button, link, separator, group, item];
+export const toolbar = [root, button, link, separator, group, groupItem];

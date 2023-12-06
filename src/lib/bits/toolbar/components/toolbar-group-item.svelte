@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { getGroupCtx, getAttrs } from "../ctx.js";
-	import type { ItemProps, ItemEvents } from "../types.js";
+	import type { GroupItemProps, GroupItemEvents } from "../types.js";
 	import { createDispatcher } from "$lib/internal";
 
-	type $$Props = ItemProps;
-	type $$Events = ItemEvents;
+	type $$Props = GroupItemProps;
+	type $$Events = GroupItemEvents;
 
 	export let value: $$Props["value"];
 	export let disabled: $$Props["disabled"] = false;
@@ -16,7 +16,7 @@
 	} = getGroupCtx();
 
 	const dispatch = createDispatcher();
-	const attrs = getAttrs("item");
+	const attrs = getAttrs("group-item");
 
 	$: builder = $item({ value, disabled });
 	$: Object.assign(builder, attrs);
