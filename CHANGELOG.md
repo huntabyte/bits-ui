@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.11.1
+
+### Patch Changes
+
+- feat: readonly startValue prop ([#212](https://github.com/huntabyte/bits-ui/pull/212))
+
 ## 0.11.0
 
 ### Minor Changes
