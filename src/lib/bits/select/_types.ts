@@ -18,7 +18,7 @@ export type WhenTrue<TrueOrFalse, IfTrue, IfFalse, IfNeither = IfTrue | IfFalse>
 
 type SelectValue<T, Multiple extends boolean> = WhenTrue<Multiple, T[] | undefined, T | undefined>;
 
-type Props<T, Multiple extends boolean = false> = Expand<
+type Props<T = unknown, Multiple extends boolean = false> = Expand<
 	OmitFloating<
 		Omit<CreateSelectProps, "selected" | "defaultSelected" | "onSelectedChange" | "multiple">
 	> & {
@@ -28,12 +28,12 @@ type Props<T, Multiple extends boolean = false> = Expand<
 		 *
 		 * @defaultValue undefined
 		 */
-		selected?: SelectValue<T, Multiple> | undefined;
+		selected?: SelectValue<Selected<T>, Multiple> | undefined;
 
 		/**
 		 * A callback function called when the selected value changes.
 		 */
-		onSelectedChange?: OnChangeFn<SelectValue<T, Multiple>>;
+		onSelectedChange?: OnChangeFn<SelectValue<Selected<T>, Multiple>>;
 
 		/**
 		 * The open state of the select menu.

@@ -26,9 +26,9 @@ const testItems: Item[] = [
 	}
 ];
 
-function setup(props: Select.Props = {}, items: Item[] = testItems) {
+function setup(props: Select.Props<unknown, false> = {}, options: Item[] = testItems) {
 	const user = userEvent.setup();
-	const returned = render(SelectTest, { ...props, items });
+	const returned = render(SelectTest, { ...props, options });
 	const trigger = returned.getByTestId("trigger");
 	const input = returned.getByTestId("input");
 	return {
@@ -38,7 +38,10 @@ function setup(props: Select.Props = {}, items: Item[] = testItems) {
 		...returned
 	};
 }
-async function open(props: Select.Props = {}, openWith: "click" | (string & {}) = "click") {
+async function open(
+	props: Select.Props<unknown, false> = {},
+	openWith: "click" | (string & {}) = "click"
+) {
 	const returned = setup(props);
 	const { trigger, getByTestId, queryByTestId, user } = returned;
 	expect(queryByTestId("content")).toBeNull();
