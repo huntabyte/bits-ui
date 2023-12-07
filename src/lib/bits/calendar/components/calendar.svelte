@@ -75,6 +75,14 @@
 			return next;
 		},
 		onValueChange: ({ next }: { next: $$Props["value"] }) => {
+			if (Array.isArray(next)) {
+				if (JSON.stringify(next) !== JSON.stringify(value)) {
+					onValueChange?.(next);
+					value = next;
+				}
+				return next;
+			}
+
 			if (value !== next) {
 				onValueChange?.(next);
 				value = next;
