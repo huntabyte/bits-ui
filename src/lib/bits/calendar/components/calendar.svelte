@@ -121,17 +121,15 @@
 	};
 </script>
 
-{#key placeholder}
-	{#if asChild}
+{#if asChild}
+	<slot {...slotProps} />
+{:else}
+	<div
+		use:melt={builder}
+		{...$$restProps}
+		on:m-keydown={dispatch}
+		bind:this={el}
+	>
 		<slot {...slotProps} />
-	{:else}
-		<div
-			use:melt={builder}
-			{...$$restProps}
-			on:m-keydown={dispatch}
-			bind:this={el}
-		>
-			<slot {...slotProps} />
-		</div>
-	{/if}
-{/key}
+	</div>
+{/if}
