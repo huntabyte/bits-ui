@@ -16,6 +16,7 @@ export * as DropdownMenu from "./dropdown-menu/index.js";
 export * as LinkPreview from "./link-preview/index.js";
 export * as Label from "./label/index.js";
 export * as Menubar from "./menubar/index.js";
+export * as Pagination from "./pagination/index.js";
 export * as Popover from "./popover/index.js";
 export * as Progress from "./progress/index.js";
 export * as RadioGroup from "./radio-group/index.js";
