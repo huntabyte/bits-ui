@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.11.5
+
+### Patch Changes
+
+- fix: calendar `months` type & range calendar `numberOfMonths` prop ([#224](https://github.com/huntabyte/bits-ui/pull/224))
+
 ## 0.11.4
 
 ### Patch Changes
