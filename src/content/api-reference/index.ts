@@ -1,7 +1,6 @@
 import type { APISchema } from "@/types";
 import { accordion } from "./accordion";
 import { alertDialog } from "./alert-dialog";
-import { dialog } from "./dialog";
 import { aspectRatio } from "./aspect-ratio";
 import { avatar } from "./avatar";
 import { button } from "./button";
@@ -10,15 +9,17 @@ import { checkbox } from "./checkbox";
 import { collapsible } from "./collapsible";
 import { contextMenu } from "./context-menu";
 import { dateField } from "./date-field";
-import { dateRangeField } from "./date-range-field";
 import { datePicker } from "./date-picker";
+import { dateRangeField } from "./date-range-field";
 import { dateRangePicker } from "./date-range-picker";
+import { dialog } from "./dialog";
 import { dropdownMenu } from "./dropdown-menu";
 import { label } from "./label";
 import { linkPreview } from "./link-preview";
-import { popover } from "./popover";
 import { pagination } from "./pagination";
 import { menubar } from "./menubar";
+import { pinInput } from "./pin-input";
+import { popover } from "./popover";
 import { progress } from "./progress";
 import { radioGroup } from "./radio-group";
 import { rangeCalendar } from "./range-calendar";
@@ -48,10 +49,11 @@ export const bits = [
 	"date-range-picker",
 	"dialog",
 	"dropdown-menu",
-	"link-preview",
 	"label",
+	"link-preview",
 	"menubar",
 	"pagination",
+	"pin-input",
 	"popover",
 	"progress",
 	"radio-group",
@@ -95,6 +97,7 @@ export const apiSchemas: Record<Bit, APISchema[]> = {
 	"link-preview": linkPreview,
 	menubar,
 	pagination,
+	"pin-input": pinInput,
 	popover,
 	progress,
 	"radio-group": radioGroup,

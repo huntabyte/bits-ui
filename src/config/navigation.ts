@@ -151,6 +151,11 @@ export const navigation: Navigation = {
 					items: []
 				},
 				{
+					title: "PIN Input",
+					href: "/docs/components/pin-input",
+					items: []
+				},
+				{
 					title: "Popover",
 					href: "/docs/components/popover",
 					items: []
