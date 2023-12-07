@@ -15,18 +15,13 @@
 	const attrs = getCalendarAttrs("heading");
 	$: builder = $heading;
 	$: Object.assign(builder, attrs);
-
-	$: slotProps = {
-		builder,
-		headingValue: $headingValue
-	};
 </script>
 
 {#if asChild}
-	<slot {...slotProps} />
+	<slot {builder} headingValue={$headingValue} />
 {:else}
 	<div use:melt={builder} {...$$restProps}>
-		<slot {...slotProps}>
+		<slot {builder} headingValue={$headingValue}>
 			{$headingValue}
 		</slot>
 	</div>

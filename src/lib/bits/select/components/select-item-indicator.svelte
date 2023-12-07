@@ -8,19 +8,14 @@
 
 	const { isSelected, value } = getItemIndicator();
 	const attrs = getAttrs("indicator");
-
-	$: slotProps = {
-		isSelected: $isSelected(value),
-		attrs
-	};
 </script>
 
 {#if asChild}
-	<slot {...slotProps} />
+	<slot {attrs} isSelected={$isSelected(value)} />
 {:else}
 	<div {...$$restProps} {...attrs}>
 		{#if $isSelected(value)}
-			<slot {...slotProps} />
+			<slot {attrs} isSelected={$isSelected(value)} />
 		{/if}
 	</div>
 {/if}

@@ -175,14 +175,11 @@
 	$: updateOption("minValue", minValue);
 	$: updateOption("readonly", readonly);
 
-	$: slotProps = {
-		isInvalid: $localIsInvalid,
-		ids: {
-			start: $startIdValues,
-			end: $endIdValues,
-			field: $fieldIdValues
-		}
+	$: idSlotProp = {
+		start: $startIdValues,
+		end: $endIdValues,
+		field: $fieldIdValues
 	};
 </script>
 
-<slot {...slotProps} />
+<slot isInvalid={$localIsInvalid} ids={idSlotProp} />

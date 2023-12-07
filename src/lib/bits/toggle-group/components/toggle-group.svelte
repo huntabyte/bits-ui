@@ -26,8 +26,10 @@
 		orientation,
 		onValueChange: (({ next }: { next: $$Props["value"] }) => {
 			if (Array.isArray(next)) {
-				onValueChange?.(next);
-				value = next;
+				if (JSON.stringify(next) !== JSON.stringify(value)) {
+					onValueChange?.(next);
+					value = next;
+				}
 				return next;
 			}
 
@@ -42,7 +44,8 @@
 
 	const attrs = getAttrs("root");
 
-	$: value !== undefined && localValue.set(value);
+	$: value !== undefined &&
+		localValue.set(Array.isArray(value) ? [...value] : value);
 
 	$: updateOption("disabled", disabled);
 	$: updateOption("loop", loop);

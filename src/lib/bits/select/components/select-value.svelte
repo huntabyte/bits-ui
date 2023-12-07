@@ -13,11 +13,10 @@
 	const attrs = getAttrs("value");
 
 	$: label = $selectedLabel;
-	$: slotProps = { label, attrs };
 </script>
 
 {#if asChild}
-	<slot {...slotProps} />
+	<slot {label} {attrs} />
 {:else}
 	<span {...$$restProps} {...attrs}>
 		{label ? label : placeholder}

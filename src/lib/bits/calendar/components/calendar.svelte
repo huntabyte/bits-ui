@@ -75,6 +75,14 @@
 			return next;
 		},
 		onValueChange: ({ next }: { next: $$Props["value"] }) => {
+			if (Array.isArray(next)) {
+				if (JSON.stringify(next) !== JSON.stringify(value)) {
+					onValueChange?.(next);
+					value = next;
+				}
+				return next;
+			}
+
 			if (value !== next) {
 				onValueChange?.(next);
 				value = next;
@@ -87,7 +95,11 @@
 		ids.calendar.set(id);
 	}
 
-	$: value !== undefined && localValue.set(value);
+	$: value !== undefined &&
+		localValue.set(
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			Array.isArray(value) ? [...value] : (value as any)
+		);
 	$: placeholder !== undefined && localPlaceholder.set(placeholder);
 
 	$: updateOption("preventDeselect", preventDeselect);
@@ -110,16 +122,10 @@
 	$: builder = $calendar;
 	$: Object.assign(builder, attrs);
 	const dispatch = createDispatcher();
-
-	$: slotProps = {
-		builder,
-		months: $months,
-		weekdays: $weekdays
-	};
 </script>
 
 {#if asChild}
-	<slot {...slotProps} />
+	<slot months={$months} weekdays={$weekdays} {builder} />
 {:else}
 	<div
 		use:melt={builder}
@@ -127,6 +133,6 @@
 		on:m-keydown={dispatch}
 		bind:this={el}
 	>
-		<slot {...slotProps} />
+		<slot months={$months} weekdays={$weekdays} {builder} />
 	</div>
 {/if}

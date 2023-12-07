@@ -7,19 +7,14 @@
 
 	const checked = getCheckboxIndicator();
 	const attrs = getAttrs("checkbox-indicator");
-
-	$: slotProps = {
-		attrs,
-		checked: $checked
-	};
 </script>
 
 {#if asChild}
-	<slot {...slotProps} />
+	<slot {attrs} checked={$checked} />
 {:else}
 	<div {...$$restProps} {...attrs}>
 		{#if $checked}
-			<slot {...slotProps} />
+			<slot {attrs} checked={$checked} />
 		{/if}
 	</div>
 {/if}

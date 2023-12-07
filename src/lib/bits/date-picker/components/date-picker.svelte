@@ -149,11 +149,6 @@
 	$: updateOption("isDateDisabled", isDateDisabled);
 	$: updateOption("calendarLabel", calendarLabel);
 	$: updateOption("weekdayFormat", weekdayFormat);
-
-	$: slotProps = {
-		isInvalid: $localIsInvalid,
-		ids: $idValues
-	};
 </script>
 
-<slot {...slotProps} />
+<slot ids={$idValues} isInvalid={$localIsInvalid} />

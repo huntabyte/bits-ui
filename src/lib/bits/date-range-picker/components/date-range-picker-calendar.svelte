@@ -22,18 +22,12 @@
 
 	$: builder = $calendar;
 	$: Object.assign(builder, attrs);
-
-	$: slotProps = {
-		builder,
-		months: $months,
-		weekdays: $weekdays
-	};
 </script>
 
 {#if asChild}
-	<slot {...slotProps} />
+	<slot {builder} months={$months} weekdays={$weekdays} />
 {:else}
 	<div use:melt={builder} {...$$restProps}>
-		<slot {...slotProps} />
+		<slot {builder} months={$months} weekdays={$weekdays} />
 	</div>
 {/if}

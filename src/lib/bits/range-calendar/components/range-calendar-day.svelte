@@ -21,16 +21,12 @@
 
 	$: builder = $cell(date, month);
 	$: Object.assign(builder, attrs);
-
-	$: slotProps = {
-		builder,
-		disabled: $isDateDisabled(date),
-		unavailable: $isDateUnavailable(date)
-	};
+	$: disabled = $isDateDisabled(date);
+	$: unavailable = $isDateUnavailable(date);
 </script>
 
 {#if asChild}
-	<slot {...slotProps} />
+	<slot {builder} {disabled} {unavailable} />
 {:else}
 	<div
 		use:melt={builder}
@@ -39,7 +35,7 @@
 		on:m-focusin={dispatch}
 		on:m-mouseenter={dispatch}
 	>
-		<slot {...slotProps}>
+		<slot {builder} {disabled} {unavailable}>
 			{date.day}
 		</slot>
 	</div>

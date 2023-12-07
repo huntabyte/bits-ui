@@ -22,17 +22,12 @@
 
 	$: builder = $field;
 	$: Object.assign(builder, attrs);
-
-	$: slotProps = {
-		builder,
-		segments: $segmentContents
-	};
 </script>
 
 {#if asChild}
-	<slot {...slotProps} />
+	<slot builder segments={$segmentContents} />
 {:else}
 	<div use:melt={builder} {...$$restProps}>
-		<slot {...slotProps} />
+		<slot builder segments={$segmentContents} />
 	</div>
 {/if}
