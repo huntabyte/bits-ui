@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.11.4
+
+### Patch Changes
+
+- Fix: bugs with reactive slot props & `multiple` value bindings ([#221](https://github.com/huntabyte/bits-ui/pull/221))
+
 ## 0.11.3
 
 ### Patch Changes
