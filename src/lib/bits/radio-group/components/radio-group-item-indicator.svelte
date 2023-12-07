@@ -9,19 +9,15 @@
 	const { isChecked, value } = getRadioIndicator();
 
 	const attrs = getAttrs("item-indicator");
-
-	$: slotProps = {
-		checked: $isChecked(value),
-		attrs
-	};
+	$: checked = $isChecked(value);
 </script>
 
 {#if asChild}
-	<slot {...slotProps} />
+	<slot {checked} {attrs} />
 {:else}
 	<div {...attrs} {...$$restProps}>
-		{#if $isChecked(value)}
-			<slot {...slotProps} />
+		{#if checked}
+			<slot {checked} {attrs} />
 		{/if}
 	</div>
 {/if}

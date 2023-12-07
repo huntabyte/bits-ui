@@ -41,16 +41,12 @@
 
 	$: builder = $root;
 	$: Object.assign(builder, attrs);
-	$: slotProps = {
-		builder,
-		value: $localValue
-	};
 </script>
 
 {#if asChild}
-	<slot {...slotProps} />
+	<slot {builder} value={$localValue} />
 {:else}
 	<div use:melt={builder} {...$$restProps}>
-		<slot {...slotProps} />
+		<slot {builder} value={$localValue} />
 	</div>
 {/if}

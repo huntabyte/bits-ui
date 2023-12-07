@@ -112,7 +112,7 @@
 	<div
 		class="flex flex-col space-y-4 pt-4 sm:flex-row sm:space-x-4 sm:space-y-0"
 	>
-		{#each months as month}
+		{#each months as month, i (i)}
 			<Calendar.Grid class="w-full border-collapse select-none space-y-1">
 				<Calendar.GridHead>
 					<Calendar.GridRow class="mb-1 flex w-full justify-between">

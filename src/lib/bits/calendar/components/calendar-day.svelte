@@ -21,20 +21,16 @@
 
 	$: builder = $cell(date, month);
 	$: Object.assign(builder, attrs);
-
-	$: slotProps = {
-		builder,
-		disabled: $isDateDisabled(date),
-		unavailable: $isDateUnavailable(date),
-		selected: $isDateSelected(date)
-	};
+	$: disabled = $isDateDisabled(date);
+	$: unavailable = $isDateUnavailable(date);
+	$: selected = $isDateSelected(date);
 </script>
 
 {#if asChild}
-	<slot {...slotProps} />
+	<slot {builder} {disabled} {unavailable} {selected} />
 {:else}
 	<div use:melt={builder} {...$$restProps} on:m-click={dispatch}>
-		<slot {...slotProps}>
+		<slot {builder} {disabled} {unavailable} {selected}>
 			{date.day}
 		</slot>
 	</div>

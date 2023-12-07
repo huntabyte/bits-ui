@@ -121,11 +121,6 @@
 	$: updateOption("maxValue", maxValue);
 	$: updateOption("minValue", minValue);
 	$: updateOption("readonly", readonly);
-
-	$: slotProps = {
-		isInvalid: $localIsInvalid,
-		ids: $idValues
-	};
 </script>
 
-<slot {...slotProps} />
+<slot ids={$idValues} isInvalid={$localIsInvalid} />
