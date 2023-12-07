@@ -1,7 +1,9 @@
 <script lang="ts">
+	import type { DateValue } from "@internationalized/date";
+
 	import { handleCalendarInitialFocus } from "$lib/internal/focus.js";
 	import { createDispatcher } from "$lib/internal/events.js";
-	import { melt } from "@melt-ui/svelte";
+	import { melt, type Month } from "@melt-ui/svelte";
 	import { onMount } from "svelte";
 	import { setCtx, getAttrs } from "../ctx.js";
 	import type { Props } from "../types.js";
@@ -44,7 +46,7 @@
 		states: {
 			value: localValue,
 			placeholder: localPlaceholder,
-			months,
+			months: localMonths,
 			weekdays
 		},
 		updateOption,
@@ -122,10 +124,13 @@
 	$: builder = $calendar;
 	$: Object.assign(builder, attrs);
 	const dispatch = createDispatcher();
+
+	let months: Month<DateValue>[] = $localMonths;
+	$: months = $localMonths;
 </script>
 
 {#if asChild}
-	<slot months={$months} weekdays={$weekdays} {builder} />
+	<slot {months} weekdays={$weekdays} {builder} />
 {:else}
 	<div
 		use:melt={builder}
@@ -133,6 +138,6 @@
 		on:m-keydown={dispatch}
 		bind:this={el}
 	>
-		<slot months={$months} weekdays={$weekdays} {builder} />
+		<slot {months} weekdays={$weekdays} {builder} />
 	</div>
 {/if}
