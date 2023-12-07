@@ -6,7 +6,6 @@
 		today,
 		type DateValue
 	} from "@internationalized/date";
-	import { CaretRight, CaretLeft } from "phosphor-svelte";
 
 	const isDateUnavailable: Calendar.Props["isDateUnavailable"] = (date) => {
 		return date.day === 17 || date.day === 18;
@@ -81,7 +80,7 @@
 				<Select.Value placeholder="Select month" />
 			</Select.Trigger>
 			<Select.Content class="max-h-[200px] overflow-y-auto">
-				{#each monthOptions as m, i (i)}
+				{#each monthOptions as m}
 					<Select.Item value={m.value} label={m.label}>
 						{m.label}
 					</Select.Item>
@@ -102,7 +101,7 @@
 				<Select.Value placeholder="Select year" />
 			</Select.Trigger>
 			<Select.Content class="max-h-[200px] overflow-y-auto">
-				{#each yearOptions as y, i (i)}
+				{#each yearOptions as y}
 					<Select.Item value={y.value} label={y.label}>
 						{y.label}
 					</Select.Item>
@@ -113,7 +112,7 @@
 	<div
 		class="flex flex-col space-y-4 pt-4 sm:flex-row sm:space-x-4 sm:space-y-0"
 	>
-		{#each months as month, i (i)}
+		{#each months as month}
 			<Calendar.Grid class="w-full border-collapse select-none space-y-1">
 				<Calendar.GridHead>
 					<Calendar.GridRow class="mb-1 flex w-full justify-between">
