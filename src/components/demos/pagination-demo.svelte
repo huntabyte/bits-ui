@@ -26,7 +26,7 @@
 			{/if}
 		{/each}
 		<Pagination.NextButton
-			class="inline-flex items-center justify-center rounded-[9px] bg-background transition-all sq-10 hover:bg-muted"
+			class="inline-flex items-center justify-center rounded-[9px] bg-background transition-all sq-10 hover:bg-muted active:scale-98 active:bg-dark-10 disabled:cursor-not-allowed disabled:bg-muted"
 		>
 			<CaretRight class="sq-6" />
 		</Pagination.NextButton>
