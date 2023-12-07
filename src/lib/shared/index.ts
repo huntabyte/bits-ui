@@ -1,5 +1,5 @@
 import type { DateValue } from "@internationalized/date";
-import type { Month } from "@melt-ui/svelte";
+import type { Month, Page, PageItem, Ellipsis } from "@melt-ui/svelte";
 
 export type Selected<Value> = {
 	value: Value;
@@ -22,4 +22,4 @@ export type SegmentPart =
 	| "timeZoneName"
 	| "literal";
 
-export type { Month };
+export type { Month, Page, PageItem, Ellipsis };

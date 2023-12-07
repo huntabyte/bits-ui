@@ -23,7 +23,7 @@ description: Facilitates navigation between pages.
 
 <Pagination.Root let:pages>
 	<Pagination.PrevButton />
-	{#each pages as page}
+	{#each pages as page (page.key)}
 		<Pagination.Page {page} />
 	{/each}
 	<Pagination.NextButton />

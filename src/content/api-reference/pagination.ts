@@ -3,6 +3,7 @@ import type * as Pagination from "$lib/bits/pagination/_types.js";
 import * as C from "@/content/constants.js";
 import { asChild } from "@/content/api-reference/helpers.js";
 import { builderAndAttrsSlotProps } from "./helpers";
+import { pageItemProp } from "./extended-types";
 
 export const root: APISchema<Pagination.Props> = {
 	title: "Root",
@@ -25,14 +26,15 @@ export const root: APISchema<Pagination.Props> = {
 		},
 		page: {
 			type: C.NUMBER,
-			description: "The selected page."
+			description:
+				"The selected page. You can bind this to a variable to control the selected page from outside the component."
 		},
 		onPageChange: {
 			type: {
 				type: C.FUNCTION,
-				definition: "(page: number | undefined) => void"
+				definition: "(page: number) => void"
 			},
-			description: "A function that is called when the selected page changes."
+			description: "A function called when the selected page changes."
 		},
 		asChild
 	}
@@ -43,8 +45,8 @@ export const page: APISchema<Pagination.PageProps> = {
 	description: "A button that triggers a page change.",
 	props: {
 		page: {
-			type: "PageItem",
-			description: "The page item."
+			type: pageItemProp,
+			description: "The page item this component represents."
 		},
 		asChild
 	},
