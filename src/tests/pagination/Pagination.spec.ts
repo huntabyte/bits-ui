@@ -1,8 +1,10 @@
+// NOTE: these tests were shamelessly copied from melt-ui 🥲
 import { render } from "@testing-library/svelte";
 import userEvent from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import type { Pagination } from "$lib";
 import PaginationTest from "./PaginationTest.svelte";
+import { isHTMLElement } from "@melt-ui/svelte/internal/helpers";
 
 function setup(props: Pagination.Props = { count: 100 }) {
 	const user = userEvent.setup();
@@ -21,6 +23,14 @@ function setup(props: Pagination.Props = { count: 100 }) {
 		user,
 		...returned
 	};
+}
+
+function getPageButton(el: HTMLElement, page: number) {
+	const btn = el.querySelector(`[data-value="${page}"]`);
+	if (!isHTMLElement(btn)) {
+		throw new Error(`Page button ${page} not found`);
+	}
+	return btn;
 }
 
 function getValue(el: HTMLElement) {
@@ -47,6 +57,18 @@ describe("Pagination", () => {
 		await expect(getValue(root)).toBe("2");
 	});
 
-	// TODO: write more tests
-	test.todo("Should change on clicked button");
+	test("Should change on clicked button", async () => {
+		const { getByTestId } = await render(PaginationTest);
+
+		const root = getByTestId('root');
+		const page2 = getPageButton(root, 2);
+
+		await expect(getValue(root)).toBe('1');
+		await page2.click();
+		await expect(getValue(root)).toBe('2');
+
+		const page10 = getPageButton(root, 10);
+		await page10.click();
+		await expect(getValue(root)).toBe('10');
+	});
 });
