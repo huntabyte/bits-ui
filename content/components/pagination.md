@@ -9,7 +9,9 @@ description: Facilitates navigation between pages.
 </script>
 
 <ComponentPreview name="pagination-demo" comp="Pagination">
-    <PaginationDemo slot="preview" />
+
+<PaginationDemo slot="preview" />
+
 </ComponentPreview>
 
 ## Structure
@@ -20,13 +22,12 @@ description: Facilitates navigation between pages.
 </script>
 
 <Pagination.Root let:pages>
-    <Pagination.PrevButton />
-    {#each pages as page}
-        <Pagination.Page {page} />
-    {/each}
-    <Pagination.NextButton />
+	<Pagination.PrevButton />
+	{#each pages as page}
+		<Pagination.Page {page} />
+	{/each}
+	<Pagination.NextButton />
 </Pagination.Root>
 ```
 
 <APISection {schemas} />
-
