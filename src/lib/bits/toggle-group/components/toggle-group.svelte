@@ -25,12 +25,8 @@
 		loop,
 		orientation,
 		onValueChange: (({ next }: { next: $$Props["value"] }) => {
-			console.log("value", value);
-			console.log("next", next);
 			if (Array.isArray(next)) {
-				console.log("next is array");
 				if (JSON.stringify(next) !== JSON.stringify(value)) {
-					console.log("next is array and not equal to value");
 					onValueChange?.(next);
 					value = next;
 				}
