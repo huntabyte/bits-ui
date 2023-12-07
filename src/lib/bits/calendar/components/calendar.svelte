@@ -126,6 +126,7 @@
 	const dispatch = createDispatcher();
 
 	let months: Month<DateValue>[] = $localMonths;
+	$: months = $localMonths;
 </script>
 
 {#if asChild}
