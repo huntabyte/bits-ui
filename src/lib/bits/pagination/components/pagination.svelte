@@ -34,18 +34,12 @@
 
 	$: builder = $root;
 	$: Object.assign(builder, attrs);
-
-	$: slotProps = {
-		builder,
-		pages: $pages,
-		range: $range
-	};
 </script>
 
 {#if asChild}
-	<slot {...slotProps} />
+	<slot {builder} pages={$pages} range={$range} />
 {:else}
 	<div use:melt={builder} {...$$restProps}>
-		<slot {...slotProps} />
+		<slot {builder} pages={$pages} range={$range} />
 	</div>
 {/if}
