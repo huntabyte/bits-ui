@@ -1,6 +1,6 @@
 ---
 title: Toolbar
-description: A container for grouping a set of controls, such as buttons, links or toggle groups.
+description: Displays frequently used actions or tools in a compact, easily accessible bar.
 ---
 
 <script>

@@ -15,7 +15,10 @@ const root: APISchema<Toolbar.Props> = {
 		},
 		orientation: {
 			default: C.HORIZONTAL,
-			type: enums(C.HORIZONTAL, C.VERTICAL),
+			type: {
+				type: C.ENUM,
+				definition: enums(C.HORIZONTAL, C.VERTICAL)
+			},
 			description: "The orientation of the toolbar."
 		},
 		asChild
@@ -64,7 +67,10 @@ const group: APISchema<Toolbar.GroupProps<"multiple">> = {
 	description: "A group of toggle items in the toolbar.",
 	props: {
 		value: {
-			type: union(C.STRING, "string[]"),
+			type: {
+				type: C.UNION,
+				definition: union(C.STRING, "string[]")
+			},
 			description:
 				"The value of the toggle group. If the type is multiple, this will be an array of strings, otherwise it will be a string."
 		},
@@ -80,7 +86,10 @@ const group: APISchema<Toolbar.GroupProps<"multiple">> = {
 		type: {
 			default: "single",
 			description: "The type of toggle group.",
-			type: enums("single", "multiple")
+			type: {
+				type: C.ENUM,
+				definition: enums("single", "multiple")
+			}
 		},
 		asChild
 	},
