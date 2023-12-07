@@ -2,7 +2,7 @@ import type { HTMLDivAttributes, HTMLSpanAttributes } from "$lib/internal/index.
 import type * as I from "./_types.js";
 import type {
 	CellProps,
-	DateProps,
+	DayProps,
 	GridBodyProps,
 	GridHeadProps,
 	GridRowProps,
@@ -14,7 +14,7 @@ import type {
 	PrevButtonProps,
 	NextButtonEvents,
 	PrevButtonEvents,
-	DateEvents,
+	DayEvents,
 	Events as CalendarEvents
 } from "$lib/bits/range-calendar/types.js";
 import type {
@@ -42,7 +42,7 @@ export type {
 	InputProps,
 	SegmentProps,
 	CellProps,
-	DateProps,
+	DayProps,
 	GridBodyProps,
 	GridHeadProps,
 	GridRowProps,
@@ -61,7 +61,7 @@ export type {
 	TriggerEvents,
 	NextButtonEvents,
 	PrevButtonEvents,
-	DateEvents,
+	DayEvents,
 	CalendarEvents,
 	SegmentEvents
 };

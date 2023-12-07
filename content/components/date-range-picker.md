@@ -54,7 +54,7 @@ description: Facilitates the selection of date ranges through an input and calen
 							<DateRangePicker.GridRow>
 								{#each weekDates as date}
 									<DateRangePicker.Cell {date}>
-										<DateRangePicker.Date {date} month={month.value} />
+										<DateRangePicker.Day {date} month={month.value} />
 									</DateRangePicker.Cell>
 								{/each}
 							</DateRangePicker.GridRow>

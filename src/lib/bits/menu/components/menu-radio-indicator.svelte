@@ -7,19 +7,15 @@
 
 	const { isChecked, value } = getRadioIndicator();
 	const attrs = getAttrs("radio-indicator");
-
-	$: slotProps = {
-		checked: $isChecked(value),
-		attrs
-	};
+	$: checked = $isChecked(value);
 </script>
 
 {#if asChild}
-	<slot {...slotProps} />
+	<slot {attrs} {checked} />
 {:else}
 	<div {...$$restProps} {...attrs}>
-		{#if $isChecked(value)}
-			<slot {...slotProps} />
+		{#if checked}
+			<slot {attrs} {checked} />
 		{/if}
 	</div>
 {/if}

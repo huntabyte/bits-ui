@@ -44,7 +44,7 @@ description: Displays dates and days of the week, facilitating date-related inte
 					<Calendar.GridRow>
 						{#each weekDates as date}
 							<Calendar.Cell {date}>
-								<Calendar.Date {date} month={month.value} />
+								<Calendar.Day {date} month={month.value} />
 							</Calendar.Cell>
 						{/each}
 					</Calendar.GridRow>

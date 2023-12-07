@@ -20,7 +20,7 @@ import {
 	heading,
 	nextButton,
 	prevButton,
-	date,
+	day,
 	grid
 } from "./calendar";
 import { content, trigger } from "./popover";
@@ -310,5 +310,5 @@ export const datePicker = [
 	headCell,
 	gridBody,
 	cell,
-	date
+	day
 ];

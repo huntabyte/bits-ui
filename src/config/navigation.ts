@@ -206,6 +206,11 @@ export const navigation: Navigation = {
 					items: []
 				},
 				{
+					title: "Toolbar",
+					href: "/docs/components/toolbar",
+					items: []
+				},
+				{
 					title: "Tooltip",
 					href: "/docs/components/tooltip",
 					items: []

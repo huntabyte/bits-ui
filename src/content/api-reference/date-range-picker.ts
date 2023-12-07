@@ -20,7 +20,7 @@ import {
 	heading,
 	nextButton,
 	prevButton,
-	date,
+	day,
 	grid
 } from "./range-calendar";
 import { content, trigger } from "./popover";
@@ -204,7 +204,14 @@ const root: APISchema<DateRangePicker.Props> = {
 			description: "Override the focus when the popover is closed."
 		},
 		portal: { ...portalProp("popover") },
-
+		startValue: {
+			type: {
+				type: C.UNION,
+				definition: union("DateValue", "undefined")
+			},
+			description:
+				"The `start` value of the date range, which can exist prior to the true `value` being set, which is only set once a `start` and `end` value are selected. You can `bind:startValue` to a value to receive updates, but modifying this value outside the component will have no effect. To programmatically control the `start` value, use `bind:value` and update the `start` property of the `DateRange` object. This is provided as a convenience for use cases where you want to display the selected `start` value outside the component before the `value` is set."
+		},
 		asChild
 	},
 	slotProps: {
@@ -309,5 +316,5 @@ export const dateRangePicker = [
 	headCell,
 	gridBody,
 	cell,
-	date
+	day
 ];

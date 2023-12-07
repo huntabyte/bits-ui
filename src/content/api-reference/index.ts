@@ -29,6 +29,7 @@ import { switchData } from "./switch";
 import { tabs } from "./tabs";
 import { toggle } from "./toggle";
 import { toggleGroup } from "./toggle-group";
+import { toolbar } from "./toolbar";
 import { tooltip } from "./tooltip";
 
 export const bits = [
@@ -62,6 +63,7 @@ export const bits = [
 	"tabs",
 	"toggle",
 	"toggle-group",
+	"toolbar",
 	"tooltip"
 ] as const;
 
@@ -104,6 +106,7 @@ export const apiSchemas: Record<Bit, APISchema[]> = {
 	tabs,
 	toggle: toggle,
 	"toggle-group": toggleGroup,
+	toolbar,
 	tooltip
 };
 

@@ -1,6 +1,6 @@
 <script lang="ts" context="module">
 	export type Item = {
-		value: string;
+		value: unknown;
 		label: string;
 		disabled?: boolean;
 	};
@@ -9,12 +9,12 @@
 <script lang="ts">
 	import { Select } from "$lib";
 
-	type $$Props = Select.Props & {
-		items: Item[];
+	type $$Props = Select.Props<unknown> & {
+		options: Item[];
 	};
 	export let selected: $$Props["selected"] = undefined;
 	export let open: $$Props["open"] = false;
-	export let items: Item[] = [];
+	export let options: Item[] = [];
 	export let placeholder = "Select something";
 </script>
 
@@ -26,7 +26,7 @@
 		<Select.Content data-testid="content">
 			<Select.Group data-testid="group">
 				<Select.Label data-testid="label">Options</Select.Label>
-				{#each items as { value, label, disabled }}
+				{#each options as { value, label, disabled }}
 					<Select.Item data-testid={value} {disabled} {value} {label}>
 						<Select.ItemIndicator>
 							<span data-testid="{value}-indicator">x</span>

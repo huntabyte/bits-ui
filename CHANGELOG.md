@@ -1,5 +1,41 @@
 # @huntabyte/primitives
 
+## 0.11.5
+
+### Patch Changes
+
+- fix: calendar `months` type & range calendar `numberOfMonths` prop ([#224](https://github.com/huntabyte/bits-ui/pull/224))
+
+## 0.11.4
+
+### Patch Changes
+
+- Fix: bugs with reactive slot props & `multiple` value bindings ([#221](https://github.com/huntabyte/bits-ui/pull/221))
+
+## 0.11.3
+
+### Patch Changes
+
+- fix: generic type inference for `Select` component ([#217](https://github.com/huntabyte/bits-ui/pull/217))
+
+## 0.11.2
+
+### Patch Changes
+
+- fix: exported `SelectProps` type ([#214](https://github.com/huntabyte/bits-ui/pull/214))
+
+## 0.11.1
+
+### Patch Changes
+
+- feat: readonly startValue prop ([#212](https://github.com/huntabyte/bits-ui/pull/212))
+
+## 0.11.0
+
+### Minor Changes
+
+- breaking: rename `Date` to `Day` in Calendar components ([#210](https://github.com/huntabyte/bits-ui/pull/210))
+
 ## 0.10.3
 
 ### Patch Changes

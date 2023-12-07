@@ -6,7 +6,7 @@ export type {
 	InputProps as DateRangePickerInputProps,
 	SegmentProps as DateRangePickerSegmentProps,
 	CellProps as DateRangePickerCellProps,
-	DateProps as DateRangePickerDateProps,
+	DayProps as DateRangePickerDayProps,
 	GridBodyProps as DateRangePickerGridBodyProps,
 	GridHeadProps as DateRangePickerGridHeadProps,
 	GridRowProps as DateRangePickerGridRowProps,
@@ -26,7 +26,7 @@ export type {
 	CloseEvents as DateRangePickerCloseEvents,
 	TriggerEvents as DateRangePickerTriggerEvents,
 	CalendarEvents as DateRangePickerCalendarEvents,
-	DateEvents as DateRangePickerDateEvents,
+	DayEvents as DateRangePickerDayEvents,
 	PrevButtonEvents as DateRangePickerPrevButtonEvents,
 	NextButtonEvents as DateRangePickerNextButtonEvents,
 	SegmentEvents as DateRangePickerSegmentEvents

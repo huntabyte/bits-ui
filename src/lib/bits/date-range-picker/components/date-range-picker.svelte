@@ -27,12 +27,16 @@
 	export let fixedWeeks: $$Props["fixedWeeks"] = undefined;
 	export let calendarLabel: $$Props["calendarLabel"] = undefined;
 	export let weekdayFormat: $$Props["weekdayFormat"] = undefined;
+	export let startValue: $$Props["startValue"] = undefined;
+	export let numberOfMonths: $$Props["numberOfMonths"] = undefined;
 
 	const {
 		states: {
 			value: localValue,
 			placeholder: localPlaceholder,
-			isInvalid: localIsInvalid
+			isInvalid: localIsInvalid,
+			startValue: localStartValue,
+			endValue
 		},
 		updateOption,
 		ids
@@ -54,6 +58,7 @@
 		minValue,
 		readonly,
 		weekdayFormat,
+		numberOfMonths,
 		isDateUnavailable,
 		onValueChange: ({ next }) => {
 			if (value !== next) {
@@ -180,6 +185,7 @@
 		ids.rangeField.field.description.set(descriptionId);
 	}
 
+	$: startValue = $localStartValue;
 	$: value !== undefined && localValue.set(value);
 	$: placeholder !== undefined && localPlaceholder.set(placeholder);
 
@@ -199,11 +205,12 @@
 	$: updateOption("isDateDisabled", isDateDisabled);
 	$: updateOption("calendarLabel", calendarLabel);
 	$: updateOption("weekdayFormat", weekdayFormat);
-
-	$: slotProps = {
-		isInvalid: $localIsInvalid,
-		ids: $idValues
-	};
+	$: updateOption("numberOfMonths", numberOfMonths);
 </script>
 
-<slot {...slotProps} />
+<slot
+	ids={$idValues}
+	isInvalid={$localIsInvalid}
+	startValue={$localStartValue}
+	endValue={$endValue}
+/>

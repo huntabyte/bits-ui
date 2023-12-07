@@ -1,10 +1,11 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
+	import { melt, type Month } from "@melt-ui/svelte";
 	import { setCtx, getAttrs } from "../ctx.js";
 	import type { Events, Props } from "../types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
 	import { onMount } from "svelte";
 	import { handleCalendarInitialFocus } from "$lib/internal/focus.js";
+	import type { DateValue } from "@internationalized/date";
 
 	type $$Props = Props;
 	type $$Events = Events;
@@ -29,6 +30,8 @@
 	export let id: $$Props["id"] = undefined;
 	export let weekdayFormat: $$Props["weekdayFormat"] = undefined;
 	export let initialFocus: $$Props["initialFocus"] = false;
+	export let startValue: $$Props["startValue"] = undefined;
+	export let numberOfMonths: $$Props["numberOfMonths"] = undefined;
 
 	let el: HTMLElement | undefined = undefined;
 
@@ -42,8 +45,10 @@
 		states: {
 			value: localValue,
 			placeholder: localPlaceholder,
-			months,
-			weekdays
+			months: localMonths,
+			weekdays,
+			startValue: localStartValue,
+			endValue
 		},
 		updateOption,
 		ids
@@ -63,6 +68,7 @@
 		fixedWeeks,
 		calendarLabel,
 		weekdayFormat,
+		numberOfMonths,
 		onPlaceholderChange: ({ next }) => {
 			if (placeholder !== next) {
 				onPlaceholderChange?.(next);
@@ -83,6 +89,8 @@
 		ids.calendar.set(id);
 	}
 
+	$: startValue = $localStartValue;
+
 	$: value !== undefined && localValue.set(value);
 	$: placeholder !== undefined && localPlaceholder.set(placeholder);
 
@@ -99,22 +107,25 @@
 	$: updateOption("fixedWeeks", fixedWeeks);
 	$: updateOption("calendarLabel", calendarLabel);
 	$: updateOption("weekdayFormat", weekdayFormat);
+	$: updateOption("numberOfMonths", numberOfMonths);
 
 	const attrs = getAttrs("root");
 	const dispatch = createDispatcher();
 
 	$: builder = $calendar;
 	$: Object.assign(builder, attrs);
-
-	$: slotProps = {
-		builder,
-		months: $months,
-		weekdays: $weekdays
-	};
+	let months: Month<DateValue>[] = $localMonths;
+	$: months = $localMonths;
 </script>
 
 {#if asChild}
-	<slot {...slotProps} />
+	<slot
+		{builder}
+		{months}
+		weekdays={$weekdays}
+		startValue={$localStartValue}
+		endValue={$endValue}
+	/>
 {:else}
 	<div
 		use:melt={builder}
@@ -122,6 +133,12 @@
 		on:m-keydown={dispatch}
 		bind:this={el}
 	>
-		<slot {...slotProps} />
+		<slot
+			{builder}
+			{months}
+			weekdays={$weekdays}
+			startValue={$localStartValue}
+			endValue={$endValue}
+		/>
 	</div>
 {/if}

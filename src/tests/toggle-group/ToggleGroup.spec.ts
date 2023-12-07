@@ -53,7 +53,7 @@ function setup(props: ToggleGroup.Props<"single"> = {}) {
 	};
 }
 
-describe("Toggle", () => {
+describe("ToggleGroup", () => {
 	it("has no accessibility violations", async () => {
 		const { container } = render(ToggleGroupTest);
 		expect(await axe(container)).toHaveNoViolations();
