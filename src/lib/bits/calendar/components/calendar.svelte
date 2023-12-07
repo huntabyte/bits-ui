@@ -95,7 +95,11 @@
 		ids.calendar.set(id);
 	}
 
-	$: value !== undefined && localValue.set(value);
+	$: value !== undefined &&
+		localValue.set(
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			Array.isArray(value) ? [...value] : (value as any)
+		);
 	$: placeholder !== undefined && localPlaceholder.set(placeholder);
 
 	$: updateOption("preventDeselect", preventDeselect);

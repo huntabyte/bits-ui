@@ -41,8 +41,9 @@
 	const attrs = getAttrs("root");
 
 	// Svelte types get weird here saying set expects something that is both string and string[].
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	$: localValue.set(value as any);
+	$: value !== undefined &&
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		localValue.set(Array.isArray(value) ? [...value] : (value as any));
 
 	$: updateOption("multiple", multiple);
 	$: updateOption("disabled", disabled);
