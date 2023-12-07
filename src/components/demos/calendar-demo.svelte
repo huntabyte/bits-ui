@@ -41,23 +41,19 @@
 	// menus no longer work...
 	export let value: DateValue | undefined = undefined;
 
-	const defaultYear = placeholder
+	$: defaultYear = placeholder
 		? {
 				value: placeholder.year,
 				label: String(placeholder.year)
 		  }
 		: undefined;
 
-	const defaultMonth = placeholder
+	$: defaultMonth = placeholder
 		? {
 				value: placeholder.month,
 				label: monthFmt.format(placeholder.toDate(getLocalTimeZone()))
 		  }
 		: undefined;
-
-	$: console.log("placeholder", placeholder);
-	$: console.log("placeholder month", placeholder?.month);
-	$: console.log("placeholder year", placeholder?.year);
 </script>
 
 <Calendar.Root
@@ -65,6 +61,7 @@
 	let:months
 	let:weekdays
 	bind:placeholder
+	bind:value
 	{isDateUnavailable}
 	weekdayFormat="short"
 	fixedWeeks={true}
@@ -84,9 +81,9 @@
 				<Select.Value placeholder="Select month" />
 			</Select.Trigger>
 			<Select.Content class="max-h-[200px] overflow-y-auto">
-				{#each monthOptions as { value, label }}
-					<Select.Item {value} {label}>
-						{label}
+				{#each monthOptions as m, i (i)}
+					<Select.Item value={m.value} label={m.label}>
+						{m.label}
 					</Select.Item>
 				{/each}
 			</Select.Content>
@@ -105,9 +102,9 @@
 				<Select.Value placeholder="Select year" />
 			</Select.Trigger>
 			<Select.Content class="max-h-[200px] overflow-y-auto">
-				{#each yearOptions as { value, label }}
-					<Select.Item {value} {label}>
-						{label}
+				{#each yearOptions as y, i (i)}
+					<Select.Item value={y.value} label={y.label}>
+						{y.label}
 					</Select.Item>
 				{/each}
 			</Select.Content>
@@ -116,7 +113,7 @@
 	<div
 		class="flex flex-col space-y-4 pt-4 sm:flex-row sm:space-x-4 sm:space-y-0"
 	>
-		{#each months as month}
+		{#each months as month, i (i)}
 			<Calendar.Grid class="w-full border-collapse select-none space-y-1">
 				<Calendar.GridHead>
 					<Calendar.GridRow class="mb-1 flex w-full justify-between">

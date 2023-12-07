@@ -105,6 +105,9 @@
 	$: updateOption("weekdayFormat", weekdayFormat);
 	$: updateOption("numberOfMonths", numberOfMonths);
 
+	$: console.log("value in calendar", value);
+	$: console.log("placeholder in calendar", placeholder);
+
 	const attrs = getAttrs("root");
 
 	$: builder = $calendar;
@@ -118,15 +121,17 @@
 	};
 </script>
 
-{#if asChild}
-	<slot {...slotProps} />
-{:else}
-	<div
-		use:melt={builder}
-		{...$$restProps}
-		on:m-keydown={dispatch}
-		bind:this={el}
-	>
+{#key placeholder}
+	{#if asChild}
 		<slot {...slotProps} />
-	</div>
-{/if}
+	{:else}
+		<div
+			use:melt={builder}
+			{...$$restProps}
+			on:m-keydown={dispatch}
+			bind:this={el}
+		>
+			<slot {...slotProps} />
+		</div>
+	{/if}
+{/key}
