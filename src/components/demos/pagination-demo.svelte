@@ -4,7 +4,9 @@
 </script>
 
 <Pagination.Root count={100} perPage={10} let:pages let:range>
-	<p class="text-sm text-muted-foreground">Showing {range.start} - {range.end}</p>
+	<p class="text-sm text-muted-foreground">
+		Showing {range.start} - {range.end}
+	</p>
 	<div class="mt-4 flex items-center justify-center gap-1.5">
 		<Pagination.PrevButton
 			class="inline-flex items-center justify-center rounded-[9px] bg-background transition-all sq-10 hover:bg-muted active:scale-98 active:bg-dark-10 disabled:cursor-not-allowed disabled:bg-muted"
