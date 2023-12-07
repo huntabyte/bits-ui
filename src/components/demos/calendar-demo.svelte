@@ -1,32 +1,117 @@
 <script lang="ts">
-	import { Calendar } from "$lib";
+	import { Calendar, Select } from "$lib";
+	import {
+		DateFormatter,
+		getLocalTimeZone,
+		today,
+		type DateValue
+	} from "@internationalized/date";
 	import { CaretRight, CaretLeft } from "phosphor-svelte";
 
 	const isDateUnavailable: Calendar.Props["isDateUnavailable"] = (date) => {
 		return date.day === 17 || date.day === 18;
 	};
+
+	const monthOptions = [
+		"January",
+		"February",
+		"March",
+		"April",
+		"May",
+		"June",
+		"July",
+		"August",
+		"September",
+		"October",
+		"November",
+		"December"
+	].map((month, i) => ({ value: i + 1, label: month }));
+
+	const monthFmt = new DateFormatter("en-US", {
+		month: "long"
+	});
+
+	const yearOptions = Array.from({ length: 100 }, (_, i) => ({
+		label: String(new Date().getFullYear() - i),
+		value: new Date().getFullYear() - i
+	}));
+
+	export let placeholder = today(getLocalTimeZone());
+	// if you try to `bind:value` to the calendar.root, the select
+	// menus no longer work...
+	export let value: DateValue | undefined = undefined;
+
+	const defaultYear = placeholder
+		? {
+				value: placeholder.year,
+				label: String(placeholder.year)
+		  }
+		: undefined;
+
+	const defaultMonth = placeholder
+		? {
+				value: placeholder.month,
+				label: monthFmt.format(placeholder.toDate(getLocalTimeZone()))
+		  }
+		: undefined;
+
+	$: console.log("placeholder", placeholder);
+	$: console.log("placeholder month", placeholder?.month);
+	$: console.log("placeholder year", placeholder?.year);
 </script>
 
 <Calendar.Root
 	class="mt-6 rounded-[15px] border border-dark-10 bg-background p-[22px] shadow-card"
 	let:months
 	let:weekdays
+	bind:placeholder
 	{isDateUnavailable}
 	weekdayFormat="short"
 	fixedWeeks={true}
 >
 	<Calendar.Header class="flex items-center justify-between">
-		<Calendar.PrevButton
-			class="inline-flex items-center justify-center rounded-9px bg-background sq-10 hover:bg-muted active:scale-98 active:transition-all"
+		<Select.Root
+			selected={defaultMonth}
+			items={monthOptions}
+			onSelectedChange={(v) => {
+				if (!v || !placeholder) {
+					return;
+				} else if (v.value === placeholder?.month) return;
+				placeholder = placeholder.set({ month: v.value });
+			}}
 		>
-			<CaretLeft class="sq-6" />
-		</Calendar.PrevButton>
-		<Calendar.Heading class="text-[15px] font-medium" />
-		<Calendar.NextButton
-			class="inline-flex items-center justify-center rounded-9px bg-background sq-10 hover:bg-muted active:scale-98 active:transition-all"
+			<Select.Trigger aria-label="Select month">
+				<Select.Value placeholder="Select month" />
+			</Select.Trigger>
+			<Select.Content class="max-h-[200px] overflow-y-auto">
+				{#each monthOptions as { value, label }}
+					<Select.Item {value} {label}>
+						{label}
+					</Select.Item>
+				{/each}
+			</Select.Content>
+		</Select.Root>
+		<Select.Root
+			selected={defaultYear}
+			items={yearOptions}
+			onSelectedChange={(v) => {
+				if (!v || !placeholder) {
+					return;
+				} else if (v.value === placeholder?.year) return;
+				placeholder = placeholder.set({ year: v.value });
+			}}
 		>
-			<CaretRight class="sq-6" />
-		</Calendar.NextButton>
+			<Select.Trigger aria-label="Select year">
+				<Select.Value placeholder="Select year" />
+			</Select.Trigger>
+			<Select.Content class="max-h-[200px] overflow-y-auto">
+				{#each yearOptions as { value, label }}
+					<Select.Item {value} {label}>
+						{label}
+					</Select.Item>
+				{/each}
+			</Select.Content>
+		</Select.Root>
 	</Calendar.Header>
 	<div
 		class="flex flex-col space-y-4 pt-4 sm:flex-row sm:space-x-4 sm:space-y-0"
