@@ -1,10 +1,11 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
+	import { melt, type Month } from "@melt-ui/svelte";
 	import { setCtx, getAttrs } from "../ctx.js";
 	import type { Events, Props } from "../types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
 	import { onMount } from "svelte";
 	import { handleCalendarInitialFocus } from "$lib/internal/focus.js";
+	import type { DateValue } from "@internationalized/date";
 
 	type $$Props = Props;
 	type $$Events = Events;
@@ -30,6 +31,7 @@
 	export let weekdayFormat: $$Props["weekdayFormat"] = undefined;
 	export let initialFocus: $$Props["initialFocus"] = false;
 	export let startValue: $$Props["startValue"] = undefined;
+	export let numberOfMonths: $$Props["numberOfMonths"] = undefined;
 
 	let el: HTMLElement | undefined = undefined;
 
@@ -43,7 +45,7 @@
 		states: {
 			value: localValue,
 			placeholder: localPlaceholder,
-			months,
+			months: localMonths,
 			weekdays,
 			startValue: localStartValue,
 			endValue
@@ -66,6 +68,7 @@
 		fixedWeeks,
 		calendarLabel,
 		weekdayFormat,
+		numberOfMonths,
 		onPlaceholderChange: ({ next }) => {
 			if (placeholder !== next) {
 				onPlaceholderChange?.(next);
@@ -104,18 +107,21 @@
 	$: updateOption("fixedWeeks", fixedWeeks);
 	$: updateOption("calendarLabel", calendarLabel);
 	$: updateOption("weekdayFormat", weekdayFormat);
+	$: updateOption("numberOfMonths", numberOfMonths);
 
 	const attrs = getAttrs("root");
 	const dispatch = createDispatcher();
 
 	$: builder = $calendar;
 	$: Object.assign(builder, attrs);
+	let months: Month<DateValue>[] = $localMonths;
+	$: months = $localMonths;
 </script>
 
 {#if asChild}
 	<slot
 		{builder}
-		months={$months}
+		{months}
 		weekdays={$weekdays}
 		startValue={$localStartValue}
 		endValue={$endValue}
@@ -129,7 +135,7 @@
 	>
 		<slot
 			{builder}
-			months={$months}
+			{months}
 			weekdays={$weekdays}
 			startValue={$localStartValue}
 			endValue={$endValue}
