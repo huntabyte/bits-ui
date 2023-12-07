@@ -60,15 +60,15 @@ describe("Pagination", () => {
 	test("Should change on clicked button", async () => {
 		const { getByTestId } = await render(PaginationTest);
 
-		const root = getByTestId('root');
+		const root = getByTestId("root");
 		const page2 = getPageButton(root, 2);
 
-		await expect(getValue(root)).toBe('1');
+		await expect(getValue(root)).toBe("1");
 		await page2.click();
-		await expect(getValue(root)).toBe('2');
+		await expect(getValue(root)).toBe("2");
 
 		const page10 = getPageButton(root, 10);
 		await page10.click();
-		await expect(getValue(root)).toBe('10');
+		await expect(getValue(root)).toBe("10");
 	});
 });
