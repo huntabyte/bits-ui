@@ -146,6 +146,11 @@ export const navigation: Navigation = {
 					items: []
 				},
 				{
+					title: "Pagination",
+					href: "/docs/components/pagination",
+					items: []
+				},
+				{
 					title: "Popover",
 					href: "/docs/components/popover",
 					items: []

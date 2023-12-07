@@ -16,6 +16,7 @@ export { default as DropdownMenuDemo } from "./dropdown-menu-demo.svelte";
 export { default as LabelDemo } from "./label-demo.svelte";
 export { default as LinkPreviewDemo } from "./link-preview-demo.svelte";
 export { default as MenubarDemo } from "./menubar-demo.svelte";
+export { default as PaginationDemo } from "./pagination-demo.svelte";
 export { default as PopoverDemo } from "./popover-demo.svelte";
 export { default as ProgressDemo } from "./progress-demo.svelte";
 export { default as RadioGroupDemo } from "./radio-group-demo.svelte";
