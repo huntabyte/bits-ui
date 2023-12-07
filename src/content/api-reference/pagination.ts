@@ -1,6 +1,6 @@
 import type { APISchema } from "@/types";
 import type * as Pagination from "$lib/bits/pagination/_types.js";
-import { asChild } from "@/content/api-reference/helpers.js"
+import { asChild } from "@/content/api-reference/helpers.js";
 import { builderAndAttrsSlotProps } from "./helpers";
 
 // TODO: fill missing content

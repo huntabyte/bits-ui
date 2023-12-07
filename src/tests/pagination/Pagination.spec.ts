@@ -4,7 +4,7 @@ import { axe } from "jest-axe";
 import type { Pagination } from "$lib";
 import PaginationTest from "./PaginationTest.svelte";
 
-function setup(props: Pagination.Props = { count: 100}) {
+function setup(props: Pagination.Props = { count: 100 }) {
 	const user = userEvent.setup();
 	const returned = render(PaginationTest, { ...props });
 

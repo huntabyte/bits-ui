@@ -7,13 +7,13 @@
 	type $$Props = PrevButtonProps;
 	type $$Events = PrevButtonEvents;
 
-	export let asChild: $$Props["asChild"] = undefined
+	export let asChild: $$Props["asChild"] = undefined;
 
 	const {
 		elements: { prevButton }
-	} = getCtx()
-	
-	 const attrs = getAttrs("prev-button");
+	} = getCtx();
+
+	const attrs = getAttrs("prev-button");
 
 	$: builder = $prevButton;
 	$: Object.assign(builder, attrs);

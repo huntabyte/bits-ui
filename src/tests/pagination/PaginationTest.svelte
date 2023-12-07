@@ -2,7 +2,7 @@
 	import { Pagination } from "$lib";
 
 	type $$Props = Pagination.Props;
-	
+
 	export let count: $$Props["count"] = 100;
 	export let perPage: $$Props["perPage"] = 10;
 </script>
@@ -21,9 +21,9 @@
 				<span>&LeftArrow;</span>
 			</Pagination.PrevButton>
 			{#each pages as page (page.key)}
-				{#if page.type === 'ellipsis'}
+				{#if page.type === "ellipsis"}
 					<span>...</span>
-					{:else if page.type === 'page'}
+				{:else if page.type === "page"}
 					<Pagination.Page {page} data-testid="page-{page.value}">
 						{page.value}
 					</Pagination.Page>

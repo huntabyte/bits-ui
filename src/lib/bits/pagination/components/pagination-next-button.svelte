@@ -7,13 +7,13 @@
 	type $$Props = NextButtonProps;
 	type $$Events = NextButtonEvents;
 
-	export let asChild: $$Props["asChild"] = undefined
+	export let asChild: $$Props["asChild"] = undefined;
 
 	const {
 		elements: { nextButton }
-	} = getCtx()
-	
-	 const attrs = getAttrs("next-button");
+	} = getCtx();
+
+	const attrs = getAttrs("next-button");
 
 	$: builder = $nextButton;
 	$: Object.assign(builder, attrs);

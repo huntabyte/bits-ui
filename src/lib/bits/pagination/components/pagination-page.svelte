@@ -11,7 +11,7 @@
 	export let page: $$Props["page"];
 
 	const {
-		elements: { pageTrigger },
+		elements: { pageTrigger }
 	} = getCtx();
 
 	const attrs = getAttrs("page");
@@ -25,11 +25,7 @@
 {#if asChild}
 	<slot {builder} />
 {:else}
-	<div
-		use:melt={builder}
-		on:m-click={dispatch}
-		{...$$restProps}
-	>
+	<div use:melt={builder} on:m-click={dispatch} {...$$restProps}>
 		<slot {builder}>
 			{page.value}
 		</slot>

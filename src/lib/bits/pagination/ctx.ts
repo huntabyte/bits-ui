@@ -20,9 +20,9 @@ export function setCtx(props: CreatePaginationProps) {
 	return {
 		...pagination,
 		updateOption: getOptionUpdater(pagination.options)
-	}
+	};
 }
 
 export function getCtx() {
-	return getContext<GetReturn>(NAME)
+	return getContext<GetReturn>(NAME);
 }
