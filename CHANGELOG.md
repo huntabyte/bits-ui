@@ -1,5 +1,13 @@
 # @huntabyte/primitives
 
+## 0.11.6
+
+### Patch Changes
+
+- feat: add `Pagination` component ([#223](https://github.com/huntabyte/bits-ui/pull/223))
+
+- feat: add Toolbar component ([#219](https://github.com/huntabyte/bits-ui/pull/219))
+
 ## 0.11.5
 
 ### Patch Changes
