@@ -13,7 +13,7 @@
 	} = getCtx();
 
 	$: attrs = {
-		...getAttrs("input"),
+		...getAttrs("hidden-input"),
 		disabled: $disabled ? true : undefined
 	};
 
