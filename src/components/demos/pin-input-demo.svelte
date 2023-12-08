@@ -16,16 +16,16 @@
 	type={pinInputType}
 >
 	<PinInput.Input
-		class="w-5 bg-inherit text-center font-alt text-[19px] tracking-[13.87px] text-foreground"
+		class="w-5 bg-inherit text-center font-alt text-[19px] text-foreground"
 	/>
 	<PinInput.Input
-		class="w-5 bg-inherit text-center font-alt text-[19px] tracking-[13.87px] text-foreground"
+		class="w-5 bg-inherit text-center font-alt text-[19px] text-foreground"
 	/>
 	<PinInput.Input
-		class="w-5 bg-inherit text-center font-alt text-[19px] tracking-[13.87px] text-foreground"
+		class="w-5 bg-inherit text-center font-alt text-[19px] text-foreground"
 	/>
 	<PinInput.Input
-		class="w-5 bg-inherit text-center font-alt text-[19px] tracking-[13.87px] text-foreground"
+		class="w-5 bg-inherit text-center font-alt text-[19px] text-foreground"
 	/>
 	<PinInput.HiddenInput />
 	<Toggle.Root
