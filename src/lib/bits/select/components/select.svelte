@@ -4,6 +4,8 @@
 </script>
 
 <script lang="ts" generics="T, Multiple extends boolean = false">
+	import { arraysAreEqual } from "$lib/internal/arrays.js";
+
 	import { derived } from "svelte/store";
 	import { setCtx } from "../ctx.js";
 	import type { Props } from "../types.js";
@@ -47,9 +49,15 @@
 		defaultOpen: open,
 		onSelectedChange: (({ next }: { next: $$Props["selected"] }) => {
 			if (Array.isArray(next)) {
-				if (JSON.stringify(next) !== JSON.stringify(selected)) {
+				if (!Array.isArray(selected)) {
 					onSelectedChange?.(next);
 					selected = next;
+					return next;
+				}
+				if (!arraysAreEqual(selected, next)) {
+					onSelectedChange?.(next);
+					selected = next;
+					return next;
 				}
 				return next;
 			}
