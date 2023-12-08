@@ -23,6 +23,9 @@ description: Allows users to input a sequence of one-character alphanumeric inpu
 
 <PinInput.Root>
 	<PinInput.Input />
+	<PinInput.Input />
+	<PinInput.Input />
+	<PinInput.Input />
 	<PinInput.HiddenInput />
 </PinInput.Root>
 ```
