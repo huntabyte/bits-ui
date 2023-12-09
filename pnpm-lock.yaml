@@ -86,8 +86,8 @@ devDependencies:
     specifier: ^9.0.0
     version: 9.1.0(eslint@8.55.0)
   eslint-plugin-svelte:
-    specifier: 2.35.1
-    version: 2.35.1(eslint@8.55.0)(svelte@5.0.0-next.22)
+    specifier: 2.36.0-next.3
+    version: 2.36.0-next.3(eslint@8.55.0)(svelte@5.0.0-next.22)
   esm-env:
     specifier: ^1.0.0
     version: 1.0.0
@@ -3207,12 +3207,12 @@ packages:
       eslint: 8.55.0
     dev: true
 
-  /eslint-plugin-svelte@2.35.1(eslint@8.55.0)(svelte@5.0.0-next.22):
-    resolution: {integrity: sha512-IF8TpLnROSGy98Z3NrsKXWDSCbNY2ReHDcrYTuXZMbfX7VmESISR78TWgO9zdg4Dht1X8coub5jKwHzP0ExRug==}
+  /eslint-plugin-svelte@2.36.0-next.3(eslint@8.55.0)(svelte@5.0.0-next.22):
+    resolution: {integrity: sha512-YSgJ6nNI4fDeYEnZNAbPPJmUYaCt3pOrMFIiyqODRJnAq7lO0uhVlhizLKBTGdupZMeh3FGjlQUT61RmvTWL7A==}
     engines: {node: ^14.17.0 || >=16.0.0}
     peerDependencies:
       eslint: ^7.0.0 || ^8.0.0-0
-      svelte: ^3.37.0 || ^4.0.0
+      svelte: ^3.37.0 || ^4.0.0 || ^5.0.0-next.16
     peerDependenciesMeta:
       svelte:
         optional: true
@@ -3230,7 +3230,7 @@ packages:
       postcss-selector-parser: 6.0.13
       semver: 7.5.4
       svelte: 5.0.0-next.22
-      svelte-eslint-parser: 0.33.1(svelte@5.0.0-next.22)
+      svelte-eslint-parser: 0.34.0-next.6(svelte@5.0.0-next.22)
     transitivePeerDependencies:
       - supports-color
       - ts-node
@@ -7111,11 +7111,11 @@ packages:
       - sugarss
     dev: true
 
-  /svelte-eslint-parser@0.33.1(svelte@5.0.0-next.22):
-    resolution: {integrity: sha512-vo7xPGTlKBGdLH8T5L64FipvTrqv3OQRx9d2z5X05KKZDlF4rQk8KViZO4flKERY+5BiVdOh7zZ7JGJWo5P0uA==}
+  /svelte-eslint-parser@0.34.0-next.6(svelte@5.0.0-next.22):
+    resolution: {integrity: sha512-yhVqfBoPj2e8LRbyik1jPQ/b0oBmlTbZJzYpFHG9+vZT7RgIqQhGF9rcDWu80A9Ufh1BBcDF8NcmYM/TZFnihw==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     peerDependencies:
-      svelte: ^3.37.0 || ^4.0.0
+      svelte: ^3.37.0 || ^4.0.0 || ^5.0.0-next.17
     peerDependenciesMeta:
       svelte:
         optional: true
