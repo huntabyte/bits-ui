@@ -1,27 +1,29 @@
-<script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { getAttrs, getCtx } from "../ctx.js";
-	import type { HeaderProps } from "../types.js";
+<script lang="ts" context="module">
+	import type { Snippet } from "svelte";
 
-	type $$Props = HeaderProps;
-
-	export let level = 3;
-	export let asChild: $$Props["asChild"] = false;
-
-	const {
-		elements: { heading: header }
-	} = getCtx();
-
-	const attrs = getAttrs("header");
-
-	$: builder = $header(level);
-	$: Object.assign(builder, attrs);
+	type Props = {
+		asChild?: boolean;
+		level?: 1 | 2 | 3 | 4 | 5 | 6;
+		children?: Snippet
+	};
 </script>
 
-{#if asChild}
-	<slot {builder} />
+<script lang="ts">
+	let { asChild = false, level = 2, children, ...rest } = $props<Props>();
+
+	let attrs = $derived({
+		role: "heading",
+		"aria-level": level,
+		"data-heading-level": level
+	});
+</script>
+
+{#if asChild && children}
+	{@render children()}
 {:else}
-	<div use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+	<div {...rest} {...attrs}>
+		{#if children}
+			{@render children()}
+		{/if}
 	</div>
 {/if}

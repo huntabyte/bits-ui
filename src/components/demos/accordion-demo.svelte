@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { Accordion } from "$lib";
+	import { AccordionValue } from "$lib/bits/accordion/components/state.svelte.js";
 	import { CaretDown } from "phosphor-svelte";
+	import { cubicInOut } from "svelte/easing";
 	import { slide } from "svelte/transition";
 
 	const items = [
@@ -20,14 +22,19 @@
 				"Define clear goals, provide training, encourage adoption, and iterate based on feedback."
 		}
 	];
+
+	let value = new AccordionValue({ value: "2", onValueChange: console.log });
 </script>
 
-<Accordion.Root class="w-full sm:max-w-[70%]" multiple>
+<Accordion.Root {value} class="w-full sm:max-w-[70%]">
 	{#each items as item, i}
-		<Accordion.Item value="${i}" class="group border-b border-dark-10 px-1.5">
+		<Accordion.Item
+			value={String(i)}
+			class="group border-b border-dark-10 px-1.5"
+		>
 			<Accordion.Header>
 				<Accordion.Trigger
-					class="flex w-full flex-1 items-center justify-between py-5 text-[15px] font-medium transition-all [&[data-state=open]>span>svg]:rotate-180 "
+					class="flex w-full flex-1 items-center justify-between py-5 text-[15px] font-medium transition-all [&[data-state=open]>span>svg]:rotate-180"
 				>
 					{item.title}
 					<span
@@ -39,7 +46,7 @@
 			</Accordion.Header>
 			<Accordion.Content
 				transition={slide}
-				transitionConfig={{ duration: 200 }}
+				transitionConfig={{ duration: 200, easing: cubicInOut }}
 				class="pb-[25px] text-sm tracking-[-0.01em]"
 			>
 				{item.content}

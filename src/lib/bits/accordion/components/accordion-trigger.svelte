@@ -1,32 +1,110 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { getTrigger, getAttrs } from "../ctx.js";
-	import type { TriggerEvents, TriggerProps } from "../types.js";
-	import { createDispatcher } from "$lib/internal/events.js";
+	import { getContext } from "svelte";
+	import type {
+		AccordionRootContext,
+		AccordionTriggerProps,
+		AccordionItemContext
+	} from "./types.js";
+	import { kbd } from "$lib/internal/index.js";
 
-	type $$Props = TriggerProps;
-	type $$Events = TriggerEvents;
+	let {
+		disabled = false,
+		asChild = false,
+		onclick: onClick,
+		onkeydown: onKeydown,
+		el = null,
+		...rest
+	} = $props<AccordionTriggerProps>();
 
-	export let asChild: TriggerProps["asChild"] = false;
+	const ctx = getContext<AccordionRootContext>("ACCORDION");
+	const itemCtx = getContext<AccordionItemContext>("ACCORDION_ITEM");
 
-	const { trigger, props } = getTrigger();
-	const dispatch = createDispatcher();
-	const attrs = getAttrs("trigger");
+	let isDisabled = $derived(disabled || ctx.disabled);
+	let isSelected = $derived(ctx.value.value === itemCtx.value);
 
-	$: builder = $trigger(props);
-	$: Object.assign(builder, attrs);
+	let attrs = $derived({
+		disabled: isDisabled,
+		"aria-expanded": isSelected ? true : false,
+		"aria-disabled": disabled ? true : false,
+		"data-disabled": isDisabled ? "" : undefined,
+		"data-value": itemCtx.value,
+		"data-state": isSelected ? "open" : "closed",
+		"data-accordion-trigger": ""
+	});
+
+	function updateValue() {
+		if (ctx.value.value === itemCtx.value) {
+			ctx.value.value = "";
+		} else {
+			ctx.value.value = itemCtx.value;
+		}
+	}
+
+	function onclick(e: MouseEvent) {
+		onClick?.(e);
+		if (e.defaultPrevented || isDisabled) return;
+		updateValue();
+	}
+
+	const KEYS = [kbd.ARROW_DOWN, kbd.ARROW_UP, kbd.HOME, kbd.END];
+
+	function onkeydown(e: KeyboardEvent) {
+		onKeydown?.(e);
+		if (e.defaultPrevented || isDisabled) return;
+		if (!KEYS.includes(e.key)) return;
+
+		e.preventDefault();
+
+		if (e.key === "Space" || e.key === "Enter") {
+			if (disabled) return;
+			updateValue();
+			return;
+		}
+
+		if (!ctx.el || !el) return;
+
+		const items = Array.from(
+			ctx.el.querySelectorAll<HTMLElement>("[data-accordion-trigger]")
+		);
+		const candidateItems = items.filter(
+			(item): item is HTMLElement => !item.dataset.disabled
+		);
+
+		console.log("items", items);
+
+		if (!candidateItems.length) return;
+		const currentIdx = candidateItems.indexOf(el);
+
+		switch (e.key) {
+			case kbd.ARROW_DOWN:
+				candidateItems[(currentIdx + 1) % candidateItems.length].focus();
+				return;
+			case kbd.ARROW_UP:
+				candidateItems[
+					(currentIdx - 1 + candidateItems.length) % candidateItems.length
+				].focus();
+				return;
+			case kbd.HOME:
+				candidateItems[0].focus();
+				return;
+			case kbd.END:
+				candidateItems[candidateItems.length - 1].focus();
+				return;
+		}
+	}
 </script>
 
 {#if asChild}
-	<slot {builder} />
+	<slot />
 {:else}
 	<button
-		use:melt={builder}
+		bind:this={el}
 		type="button"
-		{...$$restProps}
-		on:m-keydown={dispatch}
-		on:m-click={dispatch}
+		{...attrs}
+		{...rest}
+		{onkeydown}
+		{onclick}
 	>
-		<slot {builder} />
+		<slot />
 	</button>
 {/if}

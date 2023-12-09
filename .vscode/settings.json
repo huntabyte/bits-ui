@@ -1,0 +1,5 @@
+{
+	"svelte.plugin.svelte.compilerWarnings": {
+		"static-state-reference": "ignore"
+	}
+}

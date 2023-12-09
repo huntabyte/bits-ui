@@ -58,11 +58,11 @@ export const mdsvexOptions = {
 		rehypePreToComponentPre
 	]
 };
-export function rehypeComponentExample() {
+export async function rehypeComponentExample() {
 	return async (tree) => {
 		const nameRegex = /name="([^"]+)"/;
 		const compRegex = /comp="([^"]+)"/;
-		visit(tree, (node, index, parent) => {
+		visit(tree, async (node, index, parent) => {
 			if (node?.type === "raw" && node?.value?.startsWith("<ComponentPreview")) {
 				const nameMatch = node.value.match(nameRegex);
 				const name = nameMatch ? nameMatch[1] : null;
@@ -74,7 +74,7 @@ export function rehypeComponentExample() {
 				}
 
 				try {
-					let sourceCode = getComponentSourceFileContent(name);
+					let sourceCode = await getComponentSourceFileContent(name);
 					sourceCode = sourceCode.replaceAll(`@/components`, "@/components/");
 
 					const sourceCodeNode = u("element", {
@@ -109,7 +109,7 @@ export function rehypeComponentExample() {
 	};
 }
 
-function getComponentSourceFileContent(src = undefined) {
+async function getComponentSourceFileContent(src = undefined) {
 	const newSrc = `./src/components/demos/${src}.svelte`;
 	if (!newSrc) {
 		return null;
@@ -118,7 +118,10 @@ function getComponentSourceFileContent(src = undefined) {
 	// Read the source file.
 	const filePath = path.join(process.cwd(), newSrc);
 
-	const formattedSource = prettier.format(readFileSync(filePath, "utf-8"), codeBlockPrettierConfig);
+	const formattedSource = await prettier.format(
+		readFileSync(filePath, "utf-8"),
+		codeBlockPrettierConfig
+	);
 
 	return formattedSource;
 }
