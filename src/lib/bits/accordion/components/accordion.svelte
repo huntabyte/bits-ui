@@ -1,37 +1,37 @@
 <script lang="ts">
-	import { AccordionValue } from "./state.svelte.js";
+	import { AccordionMultiValue, AccordionValue } from "./state.svelte.js";
 	import type { AccordionRootProps, AccordionRootContext } from "./types.js";
 	import { setContext } from "svelte";
 
 	let {
 		disabled = false,
 		forceVisible = false,
-		onValueChange = undefined,
 		asChild = false,
 		children,
-		value = new AccordionValue(),
+		type,
 		...rest
 	} = $props<AccordionRootProps>();
 
-	let ctxState = $state<AccordionRootContext>({
+	function getAccordionValue() {
+		return type === "single" ? new AccordionValue() : new AccordionMultiValue();
+	}
+
+	let value = rest.value ?? getAccordionValue();
+
+	let root = $state<AccordionRootContext>({
 		value,
 		disabled,
 		forceVisible,
-		onValueChange,
 		el: null
 	});
 
-	$effect(() => {
-		onValueChange?.(value.value);
-	});
-
-	setContext<AccordionRootContext>("ACCORDION", ctxState);
+	setContext<AccordionRootContext>("ACCORDION", root);
 </script>
 
 {#if asChild && children}
 	{@render children()}
 {:else}
-	<div bind:this={ctxState.el} {...rest}>
+	<div bind:this={root.el} {...rest}>
 		{#if children}
 			{@render children()}
 		{/if}

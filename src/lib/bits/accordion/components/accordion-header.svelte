@@ -4,7 +4,7 @@
 	type Props = {
 		asChild?: boolean;
 		level?: 1 | 2 | 3 | 4 | 5 | 6;
-		children?: Snippet
+		children?: Snippet;
 	};
 </script>
 

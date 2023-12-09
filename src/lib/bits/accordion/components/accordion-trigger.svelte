@@ -16,27 +16,45 @@
 		...rest
 	} = $props<AccordionTriggerProps>();
 
-	const ctx = getContext<AccordionRootContext>("ACCORDION");
-	const itemCtx = getContext<AccordionItemContext>("ACCORDION_ITEM");
+	const root = getContext<AccordionRootContext>("ACCORDION");
 
-	let isDisabled = $derived(disabled || ctx.disabled);
-	let isSelected = $derived(ctx.value.value === itemCtx.value);
+	const item = getContext<AccordionItemContext>("ACCORDION_ITEM");
+
+	let isDisabled = $derived(disabled || root.disabled || item.disabled);
+
+	let isSelected = $derived(getIsSelected());
+
+	function getIsSelected() {
+		if (root.value.isMulti) {
+			return root.value.value.includes(item.value);
+		} else {
+			return root.value.value === item.value;
+		}
+	}
 
 	let attrs = $derived({
 		disabled: isDisabled,
 		"aria-expanded": isSelected ? true : false,
 		"aria-disabled": disabled ? true : false,
 		"data-disabled": isDisabled ? "" : undefined,
-		"data-value": itemCtx.value,
+		"data-value": item.value,
 		"data-state": isSelected ? "open" : "closed",
 		"data-accordion-trigger": ""
 	});
 
 	function updateValue() {
-		if (ctx.value.value === itemCtx.value) {
-			ctx.value.value = "";
+		if (root.value.isMulti) {
+			if (root.value.value.includes(item.value)) {
+				root.value.value = root.value.value.filter((v) => v !== item.value);
+			} else {
+				root.value.value.push(item.value);
+			}
 		} else {
-			ctx.value.value = itemCtx.value;
+			if (root.value.value === item.value) {
+				root.value.value = "";
+			} else {
+				root.value.value = item.value;
+			}
 		}
 	}
 
@@ -61,16 +79,14 @@
 			return;
 		}
 
-		if (!ctx.el || !el) return;
+		if (!root.el || !el) return;
 
 		const items = Array.from(
-			ctx.el.querySelectorAll<HTMLElement>("[data-accordion-trigger]")
+			root.el.querySelectorAll<HTMLElement>("[data-accordion-trigger]")
 		);
 		const candidateItems = items.filter(
 			(item): item is HTMLElement => !item.dataset.disabled
 		);
-
-		console.log("items", items);
 
 		if (!candidateItems.length) return;
 		const currentIdx = candidateItems.indexOf(el);

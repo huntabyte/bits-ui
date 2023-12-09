@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { Accordion } from "$lib";
-	import { AccordionValue } from "$lib/bits/accordion/components/state.svelte.js";
+	import {
+		AccordionMultiValue,
+		AccordionValue
+	} from "$lib/bits/accordion/components/state.svelte.js";
 	import { CaretDown } from "phosphor-svelte";
 	import { cubicInOut } from "svelte/easing";
 	import { slide } from "svelte/transition";
@@ -22,11 +25,9 @@
 				"Define clear goals, provide training, encourage adoption, and iterate based on feedback."
 		}
 	];
-
-	let value = new AccordionValue({ value: "2", onValueChange: console.log });
 </script>
 
-<Accordion.Root {value} class="w-full sm:max-w-[70%]">
+<Accordion.Root type="multiple" class="w-full sm:max-w-[70%]">
 	{#each items as item, i}
 		<Accordion.Item
 			value={String(i)}

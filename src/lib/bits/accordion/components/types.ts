@@ -1,25 +1,35 @@
 import type { HTMLDivAttributes, Transition, TransitionParams } from "$lib/internal/index.js";
 import type { Snippet } from "svelte";
-import type { AccordionValue } from "./state.svelte.js";
-import type { HTMLButtonAttributes } from "svelte/elements.js";
+import type { AccordionMultiValue, AccordionValue } from "./state.svelte.js";
+import type { HTMLButtonAttributes } from "svelte/elements";
 
-export type AccordionRootProps = {
+type BaseAccordionProps = {
 	asChild?: boolean;
 	disabled?: boolean;
 	forceVisible?: boolean;
-	value?: AccordionValue;
-	onValueChange?: (value: string) => void;
 	el?: HTMLElement | null;
 	children?: Snippet;
-} & HTMLDivAttributes;
+};
+
+type SingleAccordionProps = BaseAccordionProps & {
+	value?: AccordionValue;
+	type: "single";
+};
+
+type MultipleAccordionProps = BaseAccordionProps & {
+	value?: AccordionMultiValue;
+	type: "multiple";
+};
+
+export type AccordionRootProps = (SingleAccordionProps | MultipleAccordionProps) &
+	HTMLDivAttributes;
 
 export type AccordionRootWithoutHTML = Omit<AccordionRootProps, keyof HTMLDivAttributes>;
 
 export type AccordionRootContext = {
-	value: AccordionValue;
+	value: AccordionValue | AccordionMultiValue;
 	disabled: boolean;
 	forceVisible: boolean;
-	onValueChange?: (value: string) => void;
 	el: HTMLElement | null;
 };
 
@@ -30,9 +40,12 @@ export type AccordionTriggerProps = {
 	onkeydown?: (e: KeyboardEvent) => void;
 	el?: HTMLElement | null;
 	children?: Snippet;
-} & HTMLButtonAttributes;
+} & Omit<HTMLButtonAttributes, "disabled">;
 
-export type AccordionTriggerWithoutHTML = Omit<AccordionTriggerProps, keyof HTMLButtonAttributes>;
+export type AccordionTriggerWithoutHTML = Omit<
+	AccordionTriggerProps,
+	Exclude<keyof HTMLButtonAttributes, "disabled">
+>;
 
 export type AccordionItemContext = {
 	value: string;

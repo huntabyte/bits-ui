@@ -13,13 +13,22 @@
 		...rest
 	} = $props<AccordionItemProps>();
 
-	const ctx = getContext<AccordionRootContext>("ACCORDION");
+	const root = getContext<AccordionRootContext>("ACCORDION");
+
 	const itemCtx = $state({ value, disabled });
 
 	setContext<AccordionItemContext>("ACCORDION_ITEM", itemCtx);
 
-	let isDisabled = $derived(disabled || ctx.disabled);
-	let isSelected = $derived(ctx.value.value === value);
+	let isDisabled = $derived(disabled || root.disabled);
+	let isSelected = $derived(getIsSelected());
+
+	function getIsSelected() {
+		if (root.value.isMulti) {
+			return root.value.value.includes(itemCtx.value);
+		} else {
+			return root.value.value === itemCtx.value;
+		}
+	}
 
 	let attrs = $derived({
 		"data-state": isSelected ? "open" : "closed",

@@ -1,5 +1,6 @@
 <script lang="ts" context="module">
 	import type { Transition } from "$lib/internal/index.js";
+	import { isMulti } from "./helpers.js";
 	type T = unknown;
 	type In = unknown;
 	type Out = unknown;
@@ -28,14 +29,23 @@
 		...rest
 	} = $props<AccordionContentProps<T, In, Out>>();
 
-	const ctx = getContext<AccordionRootContext>("ACCORDION");
-	const itemCtx = getContext<AccordionItemContext>("ACCORDION_ITEM");
-	let isSelected = $derived(ctx.value.value === itemCtx.value);
+	const root = getContext<AccordionRootContext>("ACCORDION");
+	const item = getContext<AccordionItemContext>("ACCORDION_ITEM");
+
+	let isSelected = $derived(getIsSelected());
+
+	function getIsSelected() {
+		if (isMulti(root.value.isMulti)) {
+			return root.value.value.includes(item.value);
+		} else {
+			return root.value.value === item.value;
+		}
+	}
 
 	let attrs = $derived({
 		"data-state": isSelected ? "open" : "closed",
-		"data-disabled": ctx.disabled || itemCtx.disabled ? "" : undefined,
-		"data-value": itemCtx.value
+		"data-disabled": root.disabled || item.disabled ? "" : undefined,
+		"data-value": item.value
 	});
 </script>
 
