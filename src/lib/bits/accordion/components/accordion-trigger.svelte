@@ -6,6 +6,10 @@
 		AccordionItemContext
 	} from "./types.js";
 	import { kbd } from "$lib/internal/index.js";
+	import {
+		getAccordionItemContext,
+		getAccordionRootContext
+	} from "./state.svelte.js";
 
 	let {
 		disabled = false,
@@ -16,9 +20,8 @@
 		...rest
 	} = $props<AccordionTriggerProps>();
 
-	const root = getContext<AccordionRootContext>("ACCORDION");
-
-	const item = getContext<AccordionItemContext>("ACCORDION_ITEM");
+	const root = getAccordionRootContext();
+	const item = getAccordionItemContext();
 
 	let isDisabled = $derived(disabled || root.disabled || item.disabled);
 

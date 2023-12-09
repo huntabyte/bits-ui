@@ -7,3 +7,7 @@ export function isMulti(v: unknown): v is AccordionMultiValue {
 export function isSingle(v: unknown): v is AccordionValue {
 	return v instanceof AccordionValue;
 }
+
+export function getAccordionValue(type: "single" | "multiple") {
+	return type === "single" ? new AccordionValue() : new AccordionMultiValue();
+}

@@ -1,3 +1,6 @@
+import { getContext, setContext } from "svelte"
+import type { AccordionItemContext, AccordionRootContext } from "./types"
+
 type AccordionValueProps =
 	| {
 			value: string;
@@ -42,7 +45,7 @@ export class AccordionMultiValue {
 		if (Array.isArray(props)) {
 			this.value.push(...props);
 		} else {
-			this.value = props.value;
+			this.value.push(...props.value)
 			this.onValueChange = props.onValueChange;
 		}
 
@@ -51,3 +54,25 @@ export class AccordionMultiValue {
 		});
 	}
 }
+
+
+
+const ACCORDION_ROOT_CONTEXT = "ACCORDION_ROOT_CONTEXT"
+const ACCORDION_ITEM_CONTEXT = "ACCORDION_ITEM_CONTEXT"
+
+export function setAccordionRootContext(ctx: AccordionRootContext) {
+	setContext(ACCORDION_ROOT_CONTEXT, ctx)
+}
+
+export function getAccordionRootContext(): AccordionRootContext {
+	return getContext(ACCORDION_ROOT_CONTEXT)
+}
+
+export function setAccordionItemContext(ctx: AccordionItemContext) {
+	setContext(ACCORDION_ITEM_CONTEXT, ctx)
+}
+
+export function getAccordionItemContext(): AccordionItemContext {
+	return getContext(ACCORDION_ITEM_CONTEXT)
+}
+

@@ -1,9 +1,7 @@
+<svelte:options runes />
+
 <script lang="ts">
 	import { Accordion } from "$lib";
-	import {
-		AccordionMultiValue,
-		AccordionValue
-	} from "$lib/bits/accordion/components/state.svelte.js";
 	import { CaretDown } from "phosphor-svelte";
 	import { cubicInOut } from "svelte/easing";
 	import { slide } from "svelte/transition";

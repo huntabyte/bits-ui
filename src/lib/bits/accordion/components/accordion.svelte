@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { AccordionMultiValue, AccordionValue } from "./state.svelte.js";
+	import { getAccordionValue } from "./helpers.js";
+	import { setAccordionRootContext } from "./state.svelte.js";
 	import type { AccordionRootProps, AccordionRootContext } from "./types.js";
 	import { setContext } from "svelte";
 
@@ -12,11 +13,7 @@
 		...rest
 	} = $props<AccordionRootProps>();
 
-	function getAccordionValue() {
-		return type === "single" ? new AccordionValue() : new AccordionMultiValue();
-	}
-
-	let value = rest.value ?? getAccordionValue();
+	let value = rest.value ?? getAccordionValue(type);
 
 	let root = $state<AccordionRootContext>({
 		value,
@@ -25,7 +22,12 @@
 		el: null
 	});
 
-	setContext<AccordionRootContext>("ACCORDION", root);
+	$effect(() => {
+		root.disabled = disabled;
+		root.forceVisible = forceVisible;
+	});
+
+	setAccordionRootContext(root);
 </script>
 
 {#if asChild && children}

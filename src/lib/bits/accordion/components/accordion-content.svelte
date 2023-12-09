@@ -1,6 +1,10 @@
 <script lang="ts" context="module">
 	import type { Transition } from "$lib/internal/index.js";
 	import { isMulti } from "./helpers.js";
+	import {
+		getAccordionItemContext,
+		getAccordionRootContext
+	} from "./state.svelte.js";
 	type T = unknown;
 	type In = unknown;
 	type Out = unknown;
@@ -29,23 +33,23 @@
 		...rest
 	} = $props<AccordionContentProps<T, In, Out>>();
 
-	const root = getContext<AccordionRootContext>("ACCORDION");
-	const item = getContext<AccordionItemContext>("ACCORDION_ITEM");
+	const root = getAccordionRootContext();
+	const itemCtx = getAccordionItemContext();
 
 	let isSelected = $derived(getIsSelected());
 
 	function getIsSelected() {
-		if (isMulti(root.value.isMulti)) {
-			return root.value.value.includes(item.value);
+		if (root.value.isMulti) {
+			return root.value.value.includes(itemCtx.value);
 		} else {
-			return root.value.value === item.value;
+			return root.value.value === itemCtx.value;
 		}
 	}
 
 	let attrs = $derived({
 		"data-state": isSelected ? "open" : "closed",
-		"data-disabled": root.disabled || item.disabled ? "" : undefined,
-		"data-value": item.value
+		"data-disabled": root.disabled || itemCtx.disabled ? "" : undefined,
+		"data-value": itemCtx.value
 	});
 </script>
 
