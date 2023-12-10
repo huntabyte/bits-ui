@@ -50,7 +50,8 @@ export class CheckboxState {
 		checked: this.checked === true,
 		disabled: this.disabled,
 		style: hiddenInputStyles,
-		"data-checkbox-input": ""
+		"data-checkbox-input": "",
+		type: "checkbox"
 	});
 
 	constructor(init: Partial<CheckboxStateParams> = {}) {
