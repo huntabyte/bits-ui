@@ -1,5 +1,5 @@
 import { getContext, setContext } from "svelte";
-import type { OnChangeFn } from "$lib/internal";
+import { composeHandlers, kbd, type OnChangeFn } from "$lib/internal";
 import { removeUndefined } from "../../../internal/object";
 
 /**
@@ -121,7 +121,7 @@ export class AccordionItemState {
 
 	constructor(props: AccordionItemStateProps) {
 		this.value = props.value;
-		this.disabled = props.disabled ?? false;
+		this.disabled = props?.disabled ?? false;
 		this.rootState = props.rootState;
 
 		$effect(() => {
@@ -148,7 +148,106 @@ export class AccordionItemState {
 			}
 		}
 	}
+
+	createTrigger(props: AccordionTriggerStateProps) {
+		return new AccordionTrigger(props, this, this.rootState);
+	}
 }
+
+const defaultAccordionTriggerProps = {
+	disabled: false,
+	el: null,
+	handlers: {
+		onclick: undefined,
+		onkeydown: undefined
+	}
+};
+
+type AccordionTriggerHandlers = {
+	onclick?: (e: MouseEvent) => void;
+	onkeydown?: (e: KeyboardEvent) => void;
+};
+
+class AccordionTrigger {
+	disabled: boolean = $state(false);
+	el: HTMLElement | null = $state(null);
+	itemState: AccordionItemState;
+	rootState: AccordionState;
+	handlers: AccordionTriggerHandlers = $state({});
+
+	constructor(
+		props: AccordionTriggerStateProps,
+		itemState: AccordionItemState,
+		rootState: AccordionState
+	) {
+		const mergedProps = { ...defaultAccordionTriggerProps, ...removeUndefined(props) };
+		this.disabled = mergedProps.disabled;
+		this.el = mergedProps.el;
+		this.itemState = itemState;
+		this.rootState = rootState;
+		this.handlers = mergedProps.handlers;
+	}
+
+	onclick = composeHandlers<MouseEvent>(this.handlers.onclick, () => {
+		if (this.disabled || this.itemState.disabled || this.rootState.disabled) {
+			return;
+		}
+		this.itemState.updateValue();
+	});
+
+	onkeydown = composeHandlers<KeyboardEvent>(this.handlers.onkeydown, (e: KeyboardEvent) => {
+		const handledKeys = new Set([kbd.ARROW_DOWN, kbd.ARROW_UP, kbd.HOME, kbd.END]);
+		if (
+			this.disabled ||
+			this.itemState.disabled ||
+			this.rootState.disabled ||
+			!handledKeys.has(e.key)
+		) {
+			return;
+		}
+
+		e.preventDefault();
+
+		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
+			this.itemState.updateValue();
+			return;
+		}
+
+		if (!this.rootState.el || !this.el) return;
+
+		const items = Array.from(
+			this.rootState.el.querySelectorAll<HTMLElement>("[data-accordion-trigger]")
+		);
+		if (!items.length) return;
+
+		const candidateItems = items.filter((item) => !item.dataset.disabled);
+		if (!candidateItems.length) return;
+
+		const currentIndex = candidateItems.indexOf(this.el);
+
+		switch (e.key) {
+			case kbd.ARROW_DOWN:
+				candidateItems[(currentIndex + 1) % candidateItems.length].focus();
+				return;
+			case kbd.ARROW_UP:
+				candidateItems[(currentIndex - 1 + candidateItems.length) % candidateItems.length].focus();
+				return;
+			case kbd.HOME:
+				candidateItems[0].focus();
+				return;
+			case kbd.END:
+				candidateItems[candidateItems.length - 1].focus();
+				return;
+		}
+	});
+}
+
+type AccordionTriggerStateProps = {
+	onclick?: (e: MouseEvent) => void;
+	onkeydown?: (e: KeyboardEvent) => void;
+	disabled: boolean;
+	el: HTMLElement | null;
+};
 
 /**
  * CONTEXT

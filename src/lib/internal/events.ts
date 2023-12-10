@@ -30,3 +30,17 @@ export function createDispatcher<M extends Element = Element>() {
 export type CreateDispatcher = {
 	createDispatcher: typeof createDispatcher;
 };
+
+type EventCallback<T extends Event> = (e: T) => void;
+
+export function composeHandlers<T extends Event>(
+	...handlers: Array<EventCallback<T> | undefined>
+): (e: T) => void {
+	return (e: T) => {
+		for (const handler of handlers) {
+			if (handler && !e.defaultPrevented) {
+				handler(e);
+			}
+		}
+	};
+}
