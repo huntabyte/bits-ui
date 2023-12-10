@@ -14,7 +14,7 @@
 		<Checkbox.Indicator
 			class="inline-flex items-center justify-center text-background"
 		>
-			{#snippet children({ checked })}
+			{#snippet child({ checked })}
 				{#if checked === true}
 					<Check class="sq-[15px]" weight="bold" />
 				{:else if checked === "indeterminate"}
@@ -22,7 +22,6 @@
 				{/if}
 			{/snippet}
 		</Checkbox.Indicator>
-
 		<Checkbox.Input />
 	</Checkbox.Root>
 	<Label.Root

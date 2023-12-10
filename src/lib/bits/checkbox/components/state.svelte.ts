@@ -6,7 +6,6 @@ import type { CheckboxPropsWithoutHTML } from "./types";
 /**
  * The parameters used to initialize the root state of the checkbox.
  */
-
 interface CheckboxStateParams extends Required<Omit<CheckboxPropsWithoutHTML, "onCheckedChange">> {
 	onCheckedChange?: OnChangeFn<boolean | "indeterminate">;
 	onclick?: EventCallback<MouseEvent>;

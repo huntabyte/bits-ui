@@ -3,17 +3,28 @@
 	import { initCheckboxState } from "./state.svelte";
 	import type { CheckboxProps } from "./types";
 
+	type AsChildProps = Omit<CheckboxProps, "children" | "asChild"> & {
+		child: Snippet<CheckboxProps>;
+		children?: never;
+		asChild: true;
+	};
+
+	type DefaultProps = Omit<CheckboxProps, "asChild"> & {
+		asChild?: never;
+		child?: never;
+	};
+
 	let {
-		asChild = false,
 		checked = "indeterminate",
 		disabled = false,
 		onCheckedChange = undefined,
 		required = false,
 		children,
+		child,
 		onclick,
 		onkeydown,
 		...props
-	} = $props<CheckboxProps & { children?: Snippet<CheckboxProps> }>();
+	} = $props<AsChildProps | DefaultProps>();
 
 	const rootState = initCheckboxState({
 		checked,
@@ -32,8 +43,8 @@
 	});
 </script>
 
-{#if asChild && children}
-	{@render children({ ...props, ...rootState.rootAttrs })}
+{#if props.asChild && child}
+	{@render child({ ...props, ...rootState.rootAttrs })}
 {:else}
 	<button
 		type="button"
@@ -43,7 +54,7 @@
 		onkeydown={rootState.onkeydown}
 	>
 		{#if children}
-			{@render children({ ...props, ...rootState.rootAttrs })}
+			{@render children()}
 		{/if}
 	</button>
 {/if}

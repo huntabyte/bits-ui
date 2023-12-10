@@ -4,25 +4,25 @@
 	import type { CheckboxIndicatorProps } from "./types";
 
 	type Props = Omit<CheckboxIndicatorProps, "children"> & {
-		children: Snippet<
+		child: Snippet<
 			CheckboxIndicatorProps & { checked: boolean | "indeterminate" }
 		>;
 	};
 
-	let { asChild = false, children, ...props } = $props<Props>();
+	let { asChild = false, child, ...props } = $props<Props>();
 
 	const rootState = getCheckboxState();
 </script>
 
 {#if asChild}
-	{@render children({
+	{@render child({
 		...props,
 		...rootState.indicatorAttrs,
 		checked: rootState.checked
 	})}
 {:else}
 	<div {...props} {...rootState.indicatorAttrs}>
-		{@render children({
+		{@render child({
 			...props,
 			...rootState.indicatorAttrs,
 			checked: rootState.checked
