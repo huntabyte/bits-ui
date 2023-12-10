@@ -1,25 +1,19 @@
 <script lang="ts" context="module">
 	import type { Transition } from "$lib/internal/index.js";
-	import { isMulti } from "./helpers.js";
-	import {
-		getAccordionItemContext,
-		getAccordionRootContext
-	} from "./state.svelte.js";
-	type T = unknown;
-	type In = unknown;
-	type Out = unknown;
+	type T = Transition;
+	type In = Transition;
+	type Out = Transition;
 </script>
 
 <script
 	lang="ts"
 	generics="T extends Transition, In extends Transition, Out extends Transition"
 >
-	import type {
-		AccordionContentProps,
-		AccordionRootContext,
-		AccordionItemContext
-	} from "./types.js";
-	import { getContext } from "svelte";
+	import type { AccordionContentProps } from "./types.js";
+	import {
+		getAccordionItemContext,
+		getAccordionRootContext
+	} from "./state.svelte.js";
 
 	let {
 		transition,

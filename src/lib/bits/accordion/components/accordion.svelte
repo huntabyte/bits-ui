@@ -2,7 +2,6 @@
 	import { getAccordionValue } from "./helpers.js";
 	import { setAccordionRootContext } from "./state.svelte.js";
 	import type { AccordionRootProps, AccordionRootContext } from "./types.js";
-	import { setContext } from "svelte";
 
 	let {
 		disabled = false,
@@ -10,13 +9,14 @@
 		asChild = false,
 		children,
 		type,
-		...rest
-	} = $props<AccordionRootProps>();
+		value = undefined,
+		...props
+	} = $props<AccordionRootProps & { v: string }>();
 
-	let value = rest.value ?? getAccordionValue(type);
+	let localValue = value ?? getAccordionValue(type);
 
 	let root = $state<AccordionRootContext>({
-		value,
+		value: localValue,
 		disabled,
 		forceVisible,
 		el: null
@@ -27,13 +27,14 @@
 		root.forceVisible = forceVisible;
 	});
 
+	// eslint-disable-next-line svelte/valid-compile
 	setAccordionRootContext(root);
 </script>
 
 {#if asChild && children}
 	{@render children()}
 {:else}
-	<div bind:this={root.el} {...rest}>
+	<div bind:this={root.el} {...props}>
 		{#if children}
 			{@render children()}
 		{/if}
