@@ -179,6 +179,7 @@ class AccordionTrigger {
 		keydown: EventCallback<KeyboardEvent> | undefined;
 	} = $state(defaultAccordionTriggerProps.handlers);
 	isDisabled: boolean = $state(false);
+	attrs: Record<string, unknown> = $state({});
 
 	constructor(
 		props: AccordionTriggerStateProps,
@@ -194,6 +195,18 @@ class AccordionTrigger {
 
 		$effect(() => {
 			this.isDisabled = this.disabled || this.itemState.disabled || this.rootState.disabled;
+		});
+
+		$effect(() => {
+			this.attrs = {
+				disabled: this.isDisabled,
+				"aria-expanded": itemState.isSelected ? "true" : "false",
+				"aria-disabled": this.isDisabled ? "true" : "false",
+				"data-disabled": this.isDisabled ? "" : undefined,
+				"data-value": itemState.value,
+				"data-state": itemState.isSelected ? "open" : "closed",
+				"data-accordion-trigger": ""
+			};
 		});
 	}
 

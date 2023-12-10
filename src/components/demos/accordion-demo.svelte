@@ -34,10 +34,6 @@
 			<Accordion.Header>
 				<Accordion.Trigger
 					class="flex w-full flex-1 items-center justify-between py-5 text-[15px] font-medium transition-all [&[data-state=open]>span>svg]:rotate-180"
-					onclick={(e) => {
-						console.log("click");
-						e.preventDefault();
-					}}
 				>
 					{item.title}
 					<span
