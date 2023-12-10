@@ -8,10 +8,10 @@
 	let {
 		disabled = false,
 		asChild = false,
-		onclick,
-		onkeydown,
 		el = null,
-		...rest
+		onkeydown = undefined,
+		onclick = undefined,
+		...props
 	} = $props<AccordionTriggerProps>();
 
 	const rootState = getAccordionRootContext();
@@ -19,8 +19,8 @@
 	const triggerState = itemState.createTrigger({
 		el,
 		disabled,
-		onclick,
-		onkeydown
+		onkeydown,
+		onclick
 	});
 
 	let isDisabled = $derived(
@@ -36,6 +36,13 @@
 		"data-state": itemState.isSelected ? "open" : "closed",
 		"data-accordion-trigger": ""
 	});
+
+	$effect(() => {
+		triggerState.disabled = disabled;
+		triggerState.el = el;
+		triggerState.handlers.click = onclick;
+		triggerState.handlers.keydown = onkeydown;
+	});
 </script>
 
 {#if asChild}
@@ -45,7 +52,7 @@
 		bind:this={el}
 		type="button"
 		{...attrs}
-		{...rest}
+		{...props}
 		onclick={triggerState.onclick}
 		onkeydown={triggerState.onkeydown}
 	>

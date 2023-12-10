@@ -1,5 +1,5 @@
 import { getContext, setContext } from "svelte";
-import { composeHandlers, kbd, type OnChangeFn } from "$lib/internal";
+import { composeHandlers, kbd, type EventCallback, type OnChangeFn } from "$lib/internal";
 import { removeUndefined } from "../../../internal/object";
 
 /**
@@ -153,19 +153,20 @@ export class AccordionItemState {
 		return new AccordionTrigger(props, this, this.rootState);
 	}
 }
+type AccordionTriggerStateProps = {
+	onclick?: (e: MouseEvent) => void;
+	onkeydown?: (e: KeyboardEvent) => void;
+	disabled: boolean;
+	el: HTMLElement | null;
+};
 
 const defaultAccordionTriggerProps = {
 	disabled: false,
 	el: null,
 	handlers: {
-		onclick: undefined,
-		onkeydown: undefined
+		click: undefined,
+		keydown: undefined
 	}
-};
-
-type AccordionTriggerHandlers = {
-	onclick?: (e: MouseEvent) => void;
-	onkeydown?: (e: KeyboardEvent) => void;
 };
 
 class AccordionTrigger {
@@ -173,36 +174,39 @@ class AccordionTrigger {
 	el: HTMLElement | null = $state(null);
 	itemState: AccordionItemState;
 	rootState: AccordionState;
-	handlers: AccordionTriggerHandlers = $state({});
+	handlers: {
+		click: EventCallback<MouseEvent> | undefined;
+		keydown: EventCallback<KeyboardEvent> | undefined;
+	} = $state(defaultAccordionTriggerProps.handlers);
+	isDisabled: boolean = $state(false);
 
 	constructor(
 		props: AccordionTriggerStateProps,
 		itemState: AccordionItemState,
 		rootState: AccordionState
 	) {
-		const mergedProps = { ...defaultAccordionTriggerProps, ...removeUndefined(props) };
-		this.disabled = mergedProps.disabled;
-		this.el = mergedProps.el;
+		this.disabled = props.disabled;
+		this.el = props.el;
 		this.itemState = itemState;
 		this.rootState = rootState;
-		this.handlers = mergedProps.handlers;
+		this.handlers.click = props.onclick;
+		this.handlers.keydown = props.onkeydown;
+
+		$effect(() => {
+			this.isDisabled = this.disabled || this.itemState.disabled || this.rootState.disabled;
+		});
 	}
 
-	onclick = composeHandlers<MouseEvent>(this.handlers.onclick, () => {
-		if (this.disabled || this.itemState.disabled || this.rootState.disabled) {
+	onclick = composeHandlers<MouseEvent>(this.handlers.click, () => {
+		if (this.isDisabled) {
 			return;
 		}
 		this.itemState.updateValue();
 	});
 
-	onkeydown = composeHandlers<KeyboardEvent>(this.handlers.onkeydown, (e: KeyboardEvent) => {
+	onkeydown = composeHandlers<KeyboardEvent>(this.handlers.keydown, (e: KeyboardEvent) => {
 		const handledKeys = new Set([kbd.ARROW_DOWN, kbd.ARROW_UP, kbd.HOME, kbd.END]);
-		if (
-			this.disabled ||
-			this.itemState.disabled ||
-			this.rootState.disabled ||
-			!handledKeys.has(e.key)
-		) {
+		if (this.isDisabled || !handledKeys.has(e.key)) {
 			return;
 		}
 
@@ -241,13 +245,6 @@ class AccordionTrigger {
 		}
 	});
 }
-
-type AccordionTriggerStateProps = {
-	onclick?: (e: MouseEvent) => void;
-	onkeydown?: (e: KeyboardEvent) => void;
-	disabled: boolean;
-	el: HTMLElement | null;
-};
 
 /**
  * CONTEXT
