@@ -10,10 +10,7 @@
 	generics="T extends Transition, In extends Transition, Out extends Transition"
 >
 	import type { AccordionContentProps } from "./types.js";
-	import {
-		getAccordionItemContext,
-		getAccordionRootContext
-	} from "./state.svelte.js";
+	import { getAccordionItemContext } from "./state.svelte.js";
 
 	let {
 		transition,
@@ -24,23 +21,21 @@
 		outTransitionConfig,
 		asChild = false,
 		children,
-		...rest
+		...props
 	} = $props<AccordionContentProps<T, In, Out>>();
 
-	const rootState = getAccordionRootContext();
 	const itemState = getAccordionItemContext();
-
-	let attrs = $derived({
-		"data-state": itemState.isSelected ? "open" : "closed",
-		"data-disabled": rootState.disabled || itemState.disabled ? "" : undefined,
-		"data-value": itemState.value
-	});
+	const contentState = itemState.createContent();
 </script>
 
 {#if asChild && itemState.isSelected && children}
 	{@render children()}
 {:else if transition && itemState.isSelected}
-	<div transition:transition={transitionConfig} {...rest} {...attrs}>
+	<div
+		transition:transition={transitionConfig}
+		{...props}
+		{...contentState.attrs}
+	>
 		{#if children}
 			{@render children()}
 		{/if}
@@ -49,26 +44,30 @@
 	<div
 		in:inTransition={inTransitionConfig}
 		out:outTransition={outTransitionConfig}
-		{...rest}
+		{...props}
 	>
 		{#if children}
 			{@render children()}
 		{/if}
 	</div>
 {:else if inTransition && itemState.isSelected}
-	<div in:inTransition={inTransitionConfig} {...rest} {...attrs}>
+	<div in:inTransition={inTransitionConfig} {...props} {...contentState.attrs}>
 		{#if children}
 			{@render children()}
 		{/if}
 	</div>
 {:else if outTransition && itemState.isSelected}
-	<div out:outTransition={outTransitionConfig} {...rest} {...attrs}>
+	<div
+		out:outTransition={outTransitionConfig}
+		{...props}
+		{...contentState.attrs}
+	>
 		{#if children}
 			{@render children()}
 		{/if}
 	</div>
 {:else if itemState.isSelected}
-	<div {...rest} {...attrs}>
+	<div {...props} {...contentState.attrs}>
 		{#if children}
 			{@render children()}
 		{/if}

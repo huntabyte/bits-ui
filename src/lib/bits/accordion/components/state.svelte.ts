@@ -152,6 +152,10 @@ export class AccordionItemState {
 	createTrigger(props: AccordionTriggerStateProps) {
 		return new AccordionTrigger(props, this, this.rootState);
 	}
+
+	createContent() {
+		return new AccordionContent(this, this.rootState);
+	}
 }
 
 /**
@@ -265,7 +269,26 @@ class AccordionTrigger {
 }
 
 /**
- * CONTEXT
+ * CONTENT
+ */
+
+class AccordionContent {
+	attrs: Record<string, unknown> = $state({});
+
+	constructor(itemState: AccordionItemState, rootState: AccordionState) {
+		$effect(() => {
+			this.attrs = {
+				"data-state": itemState.isSelected ? "open" : "closed",
+				"data-disabled": rootState.disabled || itemState.disabled ? "" : undefined,
+				"data-value": itemState.value,
+				"data-accordion-content": ""
+			};
+		});
+	}
+}
+
+/**
+ * CONTEXT METHODS
  */
 
 const ACCORDION_ROOT_CONTEXT = "ACCORDION_ROOT_CONTEXT";
