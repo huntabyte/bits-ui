@@ -1,62 +1,40 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { setCtx, getAttrs } from "../ctx.js";
-	import type { Props, Events } from "../types.js";
-	import { createDispatcher } from "$lib/internal/events.js";
+	import { CheckboxState, setCheckboxRootContext } from "./state.svelte";
+	import type { CheckboxRootProps } from "./types";
 
-	type $$Props = Props;
-	type $$Events = Events;
-	export let checked: $$Props["checked"] = false;
-	export let disabled: $$Props["disabled"] = undefined;
-	export let name: $$Props["name"] = undefined;
-	export let required: $$Props["required"] = undefined;
-	export let value: $$Props["value"] = undefined;
-	export let onCheckedChange: $$Props["onCheckedChange"] = undefined;
-	export let asChild: $$Props["asChild"] = false;
+	let {
+		asChild = false,
+		checked = false,
+		disabled = false,
+		onCheckedChange = undefined,
+		required = false,
+		children,
+		...props
+	} = $props<CheckboxRootProps>();
 
-	const {
-		elements: { root },
-		states: { checked: localChecked },
-		updateOption
-	} = setCtx({
-		defaultChecked: checked,
-		disabled,
-		name,
-		required,
-		value,
-		onCheckedChange: ({ next }) => {
-			if (checked !== next) {
-				onCheckedChange?.(next);
-				checked = next;
-			}
-			return next;
-		}
+	const rootState = new CheckboxState({
+		checked: props.checked,
+		disabled: props.disabled,
+		onCheckedChange: props.onCheckedChange,
+		required: props.required
 	});
 
-	const dispatch = createDispatcher();
+	setCheckboxRootContext(rootState);
 
-	$: attrs = { ...getAttrs("root"), disabled: disabled ? true : undefined };
-	$: checked !== undefined && localChecked.set(checked);
-
-	$: updateOption("disabled", disabled);
-	$: updateOption("name", name);
-	$: updateOption("required", required);
-	$: updateOption("value", value);
-
-	$: builder = $root;
-	$: Object.assign(builder, attrs);
+	$effect(() => {
+		rootState.checked = props.checked;
+		rootState.disabled = props.disabled;
+		rootState.onCheckedChange = props.onCheckedChange;
+		rootState.required = props.required;
+	});
 </script>
 
-{#if asChild}
-	<slot {builder} />
+{#if asChild && children}
+	{@render children()}
 {:else}
-	<button
-		use:melt={builder}
-		type="button"
-		{...$$restProps}
-		on:m-click={dispatch}
-		on:m-keydown={dispatch}
-	>
-		<slot {builder} />
+	<button type="button" {...props}>
+		{#if children}
+			{@render children()}
+		{/if}
 	</button>
 {/if}

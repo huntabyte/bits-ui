@@ -2,10 +2,6 @@
 	import type { AspectRatioProps } from "./types.js";
 
 	let { ratio = 1 / 1, ...props } = $props<AspectRatioProps>();
-
-	const attrs = {
-		"data-aspect-ratio-root": ""
-	};
 </script>
 
 <div
@@ -19,7 +15,7 @@
 		style:right="0"
 		style:bottom="0"
 		style:left="0"
-		{...attrs}
+		data-aspect-ratio-root=""
 		{...props}
 	>
 		<slot />
