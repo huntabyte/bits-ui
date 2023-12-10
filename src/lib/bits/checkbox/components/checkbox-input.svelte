@@ -1,11 +1,19 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { getCtx } from "../ctx.js";
+	import type { Snippet } from "svelte";
+	import { getCheckboxState } from "./state.svelte";
+	import type { CheckboxInputProps } from "./types";
 
-	const {
-		elements: { input },
-		options: { value }
-	} = getCtx();
+	let {
+		asChild = false,
+		children,
+		...props
+	} = $props<CheckboxInputProps & { children?: Snippet<CheckboxInputProps> }>();
+
+	const rootState = getCheckboxState();
 </script>
 
-<input use:melt={$input} value={$value ?? "on"} {...$$restProps} />
+{#if asChild && children}
+	{@render children({ ...props, ...rootState.inputAttrs })}
+{:else}
+	<input {...props} {...rootState.inputAttrs} />
+{/if}

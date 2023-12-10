@@ -8,3 +8,10 @@ export function removeUndefined<T extends object>(obj: T): T {
 	}
 	return result;
 }
+
+export function mergeProps<T extends object>(defaults: T, props: Partial<T>): T {
+	return {
+		...defaults,
+		...removeUndefined(props)
+	};
+}

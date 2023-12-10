@@ -1,114 +1,91 @@
-import type { OnChangeFn } from "$lib/internal";
+import type { EventCallback, OnChangeFn } from "$lib/internal";
+import { composeHandlers, hiddenInputStyles, kbd, mergeProps } from "$lib/internal";
 import { getContext, setContext } from "svelte";
-import { removeUndefined } from "../../../internal/object";
+import type { CheckboxPropsWithoutHTML } from "./types";
 
-export type CheckboxStateProps = {
-	checked: boolean | "indeterminate";
-	disabled: boolean;
-	onCheckedChange: OnChangeFn<boolean | "indeterminate"> | undefined;
-	required: boolean;
-};
+/**
+ * The parameters used to initialize the root state of the checkbox.
+ */
 
-const defaultCheckboxStateProps = {
-	checked: false,
+interface CheckboxStateParams extends Required<Omit<CheckboxPropsWithoutHTML, "onCheckedChange">> {
+	onCheckedChange?: OnChangeFn<boolean | "indeterminate">;
+	onclick?: EventCallback<MouseEvent>;
+	onkeydown?: EventCallback<KeyboardEvent>;
+}
+
+const defaultCheckboxState = {
+	checked: "indeterminate",
+	defaultChecked: false,
 	disabled: false,
 	onCheckedChange: undefined,
-	required: false
-} satisfies CheckboxStateProps;
+	required: false,
+	onclick: undefined,
+	onkeydown: undefined
+} satisfies CheckboxStateParams;
 
 export class CheckboxState {
-	checked: CheckboxStateProps["checked"] = $state(false);
-	disabled: CheckboxStateProps["disabled"] = $state(false);
-	onCheckedChange: CheckboxStateProps["onCheckedChange"] = $state(undefined);
-	required: CheckboxStateProps["required"] = $state(false);
-	attrs: Record<string, unknown> = $state({});
+	checked: CheckboxStateParams["checked"] = $state("indeterminate");
+	disabled: CheckboxStateParams["disabled"] = $state(false);
+	required: CheckboxStateParams["required"] = $state(false);
+	onCheckedChange: CheckboxStateParams["onCheckedChange"] = $state(() => {});
+	rootAttrs: Record<string, unknown> = $derived({
+		"data-disabled": getDataDisabled(this.disabled),
+		"data-state": getCheckboxDataState(this.checked),
+		"aria-checked": getCheckboxAriaChecked(this.checked),
+		"aria-required": this.required,
+		type: "button",
+		role: "checkbox",
+		"data-checkbox-root": ""
+	});
+	isChecked = $derived(this.checked === true);
+	isIndeterminate = $derived(this.checked === "indeterminate");
+	propOnKeydown: CheckboxStateParams["onkeydown"] = $state(() => {});
+	propOnClick: CheckboxStateParams["onclick"] = $state(() => {});
 
-	constructor(props: Partial<CheckboxStateProps> = {}) {
-		const mergedProps = {
-			...defaultCheckboxStateProps,
-			...removeUndefined(props)
-		} satisfies CheckboxStateProps;
-		this.checked = mergedProps.checked;
-		this.disabled = mergedProps.disabled;
-		this.onCheckedChange = mergedProps.onCheckedChange;
-		this.required = mergedProps.required;
+	indicatorAttrs = $derived({
+		"data-state": getCheckboxDataState(this.checked),
+		"data-checkbox-indicator": ""
+	});
+
+	inputAttrs = $derived({
+		checked: this.checked === true,
+		disabled: this.disabled,
+		style: hiddenInputStyles,
+		"data-checkbox-input": ""
+	});
+
+	constructor(init: Partial<CheckboxStateParams> = {}) {
+		const { disabled, required, checked, onclick, onkeydown, onCheckedChange } = mergeProps(
+			defaultCheckboxState,
+			init
+		) satisfies CheckboxStateParams;
+
+		this.disabled = disabled;
+		this.checked = checked;
+		this.required = required;
+		this.propOnKeydown = onkeydown;
+		this.propOnClick = onclick;
+		this.onCheckedChange = onCheckedChange;
 
 		$effect(() => {
 			this.onCheckedChange?.(this.checked);
 		});
-
-		$effect(() => {
-			this.attrs = {
-				"data-disabled": this.disabled ? "" : undefined,
-				"data-state":
-					this.checked === "indeterminate"
-						? "indeterminate"
-						: this.checked
-						  ? "checked"
-						  : "unchecked",
-				type: "button",
-				role: "checkbox",
-				"aria-checked": this.checked === "indeterminate" ? "mixed" : this.checked,
-				"aria-required": this.required
-			};
-		});
 	}
 
-	createIndicator() {
-		return new CheckboxIndicator(this);
-	}
+	onkeydown = composeHandlers<KeyboardEvent>(this.propOnKeydown, (e) => {
+		// Checkboxes don't active on 'Enter' keydown
+		if (e.key === kbd.ENTER) e.preventDefault();
+	});
 
-	createInput() {
-		return new CheckboxInput(this);
-	}
-}
+	onclick = composeHandlers<MouseEvent>(this.propOnClick, () => {
+		if (this.disabled) return;
 
-class CheckboxIndicator {
-	rootState: CheckboxState;
-	isChecked: boolean = $state(false);
-	isIndeterminate: boolean = $state(false);
-	attrs: Record<string, unknown> = $state({});
-
-	constructor(rootState: CheckboxState) {
-		this.rootState = rootState;
-
-		$effect(() => {
-			this.isChecked = this.rootState.checked === true;
-			this.isIndeterminate = this.rootState.checked === "indeterminate";
-		});
-
-		$effect(() => {
-			this.attrs = {
-				"data-state": this.isChecked
-					? "checked"
-					: this.isIndeterminate
-					  ? "indeterminate"
-					  : "unchecked",
-				"data-checkbox-indicator": ""
-			};
-		});
-	}
-}
-
-class CheckboxInput {
-	rootState: CheckboxState;
-	attrs: Record<string, unknown> = $state({});
-
-	constructor(rootState: CheckboxState) {
-		this.rootState = rootState;
-
-		$effect(() => {
-			this.attrs = {
-				"data-checkbox-input": "",
-				checked: this.rootState.checked === true,
-				disabled: this.rootState.disabled
-			};
-		});
-	}
-
-	get required() {
-		return this.rootState.required;
-	}
+		if (this.checked === "indeterminate") {
+			this.checked = true;
+		} else {
+			this.checked = !this.checked;
+		}
+	});
 }
 
 /**
@@ -117,10 +94,32 @@ class CheckboxInput {
 
 const CHECKBOX_ROOT_CONTEXT = "CHECKBOX_ROOT_CONTEXT";
 
-export function setCheckboxRootContext(ctx: CheckboxState) {
-	setContext(CHECKBOX_ROOT_CONTEXT, ctx);
+export function initCheckboxState(props: Partial<CheckboxStateParams>) {
+	const state = new CheckboxState(props);
+	setContext(CHECKBOX_ROOT_CONTEXT, state);
+	return state;
 }
 
-export function getCheckboxRootContext(): CheckboxState {
+export function getCheckboxState(): CheckboxState {
 	return getContext(CHECKBOX_ROOT_CONTEXT);
+}
+
+/**
+ * HELPERS
+ */
+
+function getCheckboxDataState(checked: boolean | "indeterminate") {
+	if (checked === "indeterminate") return "indeterminate";
+	if (checked) return "checked";
+	return "unchecked";
+}
+
+function getCheckboxAriaChecked(checked: boolean | "indeterminate") {
+	if (checked === "indeterminate") return "mixed";
+	if (checked) return "true";
+	return "false";
+}
+
+function getDataDisabled(disabled: boolean) {
+	return disabled ? "" : undefined;
 }

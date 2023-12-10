@@ -1,40 +1,49 @@
 <script lang="ts">
-	import { CheckboxState, setCheckboxRootContext } from "./state.svelte";
-	import type { CheckboxRootProps } from "./types";
+	import type { Snippet } from "svelte";
+	import { initCheckboxState } from "./state.svelte";
+	import type { CheckboxProps } from "./types";
 
 	let {
 		asChild = false,
-		checked = false,
+		checked = "indeterminate",
 		disabled = false,
 		onCheckedChange = undefined,
 		required = false,
 		children,
+		onclick,
+		onkeydown,
 		...props
-	} = $props<CheckboxRootProps>();
+	} = $props<CheckboxProps & { children?: Snippet<CheckboxProps> }>();
 
-	const rootState = new CheckboxState({
-		checked: props.checked,
-		disabled: props.disabled,
-		onCheckedChange: props.onCheckedChange,
-		required: props.required
+	const rootState = initCheckboxState({
+		checked,
+		disabled,
+		onCheckedChange,
+		required,
+		onclick,
+		onkeydown
 	});
 
-	setCheckboxRootContext(rootState);
-
 	$effect(() => {
-		rootState.checked = props.checked;
-		rootState.disabled = props.disabled;
-		rootState.onCheckedChange = props.onCheckedChange;
-		rootState.required = props.required;
+		rootState.checked = checked;
+		rootState.disabled = disabled;
+		rootState.onCheckedChange = onCheckedChange;
+		rootState.required = required;
 	});
 </script>
 
 {#if asChild && children}
-	{@render children()}
+	{@render children({ ...props, ...rootState.rootAttrs })}
 {:else}
-	<button type="button" {...props}>
+	<button
+		type="button"
+		{...props}
+		{...rootState.rootAttrs}
+		onclick={rootState.onclick}
+		onkeydown={rootState.onkeydown}
+	>
 		{#if children}
-			{@render children()}
+			{@render children({ ...props, ...rootState.rootAttrs })}
 		{/if}
 	</button>
 {/if}

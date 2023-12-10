@@ -1,28 +1,30 @@
-import type { HTMLDivAttributes, OnChangeFn } from "$lib/internal";
-import type { HTMLButtonAttributes, HTMLInputAttributes } from "svelte/elements";
+import type {
+	EventCallback,
+	OnChangeFn,
+	PrimitiveButtonAttributes,
+	PrimitiveDivAttributes,
+	PrimitiveInputAttributes
+} from "$lib/internal";
 
-export type CheckboxRootProps = {
+export interface CheckboxProps extends Omit<PrimitiveButtonAttributes, "disabled"> {
 	disabled?: boolean;
-	asChild?: boolean;
 	defaultChecked?: boolean | "indeterminate";
 	checked?: boolean | "indeterminate";
 	onCheckedChange?: OnChangeFn<boolean | "indeterminate">;
 	required?: boolean;
-} & HTMLButtonAttributes;
+	onclick?: EventCallback<MouseEvent>;
+	onkeydown?: EventCallback<KeyboardEvent>;
+}
 
-export type CheckboxRootWithoutHTML = Omit<
-	CheckboxRootProps,
-	Exclude<keyof HTMLButtonAttributes, "disabled">
->;
+export interface CheckboxPropsWithoutHTML
+	extends Omit<CheckboxProps, Exclude<keyof PrimitiveButtonAttributes, "disabled">> {}
 
-export type CheckboxInputProps = {
-	asChild?: boolean;
-} & HTMLInputAttributes;
+export interface CheckboxInputProps extends PrimitiveInputAttributes {}
 
-export type CheckboxInputWithoutHTML = Omit<CheckboxInputProps, keyof HTMLInputAttributes>;
+export interface CheckboxInputPropsWithoutHTML
+	extends Omit<CheckboxInputProps, keyof PrimitiveInputAttributes> {}
 
-export type CheckboxIndicatorProps = {
-	asChild?: boolean;
-} & HTMLDivAttributes;
+export interface CheckboxIndicatorProps extends PrimitiveDivAttributes {}
 
-export type CheckboxIndicatorWithoutHTML = Omit<CheckboxIndicatorProps, keyof HTMLDivAttributes>;
+export interface CheckboxIndicatorPropsWithoutHTML
+	extends Omit<CheckboxIndicatorProps, keyof PrimitiveDivAttributes> {}

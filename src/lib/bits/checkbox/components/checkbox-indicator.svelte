@@ -1,32 +1,31 @@
 <script lang="ts">
-	import { getCtx, getAttrs } from "../ctx.js";
-	import type { IndicatorProps } from "../types.js";
+	import type { Snippet } from "svelte";
+	import { getCheckboxState } from "./state.svelte";
+	import type { CheckboxIndicatorProps } from "./types";
 
-	type $$Props = IndicatorProps;
-
-	export let asChild: $$Props["asChild"] = false;
-
-	const {
-		helpers: { isChecked, isIndeterminate },
-		states: { checked }
-	} = getCtx();
-
-	function getStateAttr(state: boolean | "indeterminate") {
-		if (state === "indeterminate") return "indeterminate";
-		if (state) return "checked";
-		return "unchecked";
-	}
-
-	$: attrs = {
-		...getAttrs("indicator"),
-		"data-state": getStateAttr($checked)
+	type Props = Omit<CheckboxIndicatorProps, "children"> & {
+		children: Snippet<
+			CheckboxIndicatorProps & { checked: boolean | "indeterminate" }
+		>;
 	};
+
+	let { asChild = false, children, ...props } = $props<Props>();
+
+	const rootState = getCheckboxState();
 </script>
 
 {#if asChild}
-	<slot {attrs} isChecked={$isChecked} isIndeterminate={$isIndeterminate} />
+	{@render children({
+		...props,
+		...rootState.indicatorAttrs,
+		checked: rootState.checked
+	})}
 {:else}
-	<div {...$$restProps} {...attrs}>
-		<slot {attrs} isChecked={$isChecked} isIndeterminate={$isIndeterminate} />
+	<div {...props} {...rootState.indicatorAttrs}>
+		{@render children({
+			...props,
+			...rootState.indicatorAttrs,
+			checked: rootState.checked
+		})}
 	</div>
 {/if}

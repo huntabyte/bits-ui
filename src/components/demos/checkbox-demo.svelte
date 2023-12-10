@@ -12,16 +12,18 @@
 		checked="indeterminate"
 	>
 		<Checkbox.Indicator
-			let:isChecked
-			let:isIndeterminate
 			class="inline-flex items-center justify-center text-background"
 		>
-			{#if isChecked}
-				<Check class="sq-[15px]" weight="bold" />
-			{:else if isIndeterminate}
-				<Minus class="sq-[15px]" weight="bold" />
-			{/if}
+			{#snippet children({ checked })}
+				{#if checked === true}
+					<Check class="sq-[15px]" weight="bold" />
+				{:else if checked === "indeterminate"}
+					<Minus class="sq-[15px]" weight="bold" />
+				{/if}
+			{/snippet}
 		</Checkbox.Indicator>
+
+		<Checkbox.Input />
 	</Checkbox.Root>
 	<Label.Root
 		id="terms-label"
