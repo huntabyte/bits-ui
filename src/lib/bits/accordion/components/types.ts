@@ -1,6 +1,5 @@
 import type { HTMLDivAttributes, Transition, TransitionParams } from "$lib/internal/index.js";
 import type { Snippet } from "svelte";
-import type { AccordionMultiValue, AccordionValue } from "./state.svelte.js";
 import type { HTMLButtonAttributes } from "svelte/elements";
 
 type BaseAccordionProps = {
@@ -12,26 +11,19 @@ type BaseAccordionProps = {
 };
 
 type SingleAccordionProps = BaseAccordionProps & {
-	value?: AccordionValue;
 	type: "single";
+	value?: string;
 };
 
 type MultipleAccordionProps = BaseAccordionProps & {
-	value?: AccordionMultiValue;
 	type: "multiple";
+	value?: string[];
 };
 
 export type AccordionRootProps = (SingleAccordionProps | MultipleAccordionProps) &
 	HTMLDivAttributes;
 
 export type AccordionRootWithoutHTML = Omit<AccordionRootProps, keyof HTMLDivAttributes>;
-
-export type AccordionRootContext = {
-	value: AccordionValue | AccordionMultiValue;
-	disabled: boolean;
-	forceVisible: boolean;
-	el: HTMLElement | null;
-};
 
 export type AccordionTriggerProps = {
 	asChild?: boolean;
@@ -75,3 +67,9 @@ export type AccordionContentProps<
 	asChild?: boolean;
 	children?: Snippet;
 } & HTMLDivAttributes;
+
+export type AccordionHeaderProps = {
+	asChild?: boolean;
+	level?: 1 | 2 | 3 | 4 | 5 | 6;
+	children?: Snippet;
+};

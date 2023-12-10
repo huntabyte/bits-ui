@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { AccordionItemProps } from "./types.js";
 	import {
+		AccordionItemState,
 		getAccordionRootContext,
 		setAccordionItemContext
 	} from "./state.svelte.js";
@@ -12,29 +13,20 @@
 		...rest
 	} = $props<AccordionItemProps>();
 
-	const root = getAccordionRootContext();
-	const itemCtx = $state({ value, disabled });
+	const rootState = getAccordionRootContext();
+	const itemState = new AccordionItemState({ value, disabled, rootState });
 
-	setAccordionItemContext(itemCtx);
+	setAccordionItemContext(itemState);
 
-	let isDisabled = $derived(disabled || root.disabled);
-	let isSelected = $derived(getIsSelected());
-
-	function getIsSelected() {
-		if (root.value.isMulti) {
-			return root.value.value.includes(itemCtx.value);
-		} else {
-			return root.value.value === itemCtx.value;
-		}
-	}
+	let isDisabled = $derived(disabled || rootState.disabled);
 
 	$effect(() => {
-		itemCtx.disabled = disabled;
-		itemCtx.value = value;
+		itemState.disabled = disabled;
+		itemState.value = value;
 	});
 
 	let attrs = $derived({
-		"data-state": isSelected ? "open" : "closed",
+		"data-state": itemState.isSelected ? "open" : "closed",
 		"data-disabled": isDisabled ? "" : undefined
 	});
 </script>

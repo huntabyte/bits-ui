@@ -1,13 +1,28 @@
-import { AccordionMultiValue, AccordionValue } from "./state.svelte.js";
+import { AccordionMultiState, AccordionSingleState } from "./state.svelte.js";
 
-export function isMulti(v: unknown): v is AccordionMultiValue {
-	return v instanceof AccordionMultiValue;
+export function isMulti(v: unknown): v is AccordionMultiState {
+	return v instanceof AccordionMultiState;
 }
 
-export function isSingle(v: unknown): v is AccordionValue {
-	return v instanceof AccordionValue;
+export function isSingle(v: unknown): v is AccordionSingleState {
+	return v instanceof AccordionSingleState;
 }
 
-export function getAccordionValue(type: "single" | "multiple") {
-	return type === "single" ? new AccordionValue() : new AccordionMultiValue();
+type SingleInitAccordionProps = {
+	type: "single";
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	value?: any;
+};
+
+type MultiInitAccordionProps = {
+	type: "multiple";
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	value?: any;
+};
+
+export function initAccordionState(props: SingleInitAccordionProps | MultiInitAccordionProps) {
+	const { type, value } = props;
+	return type === "single"
+		? new AccordionSingleState({ value: value })
+		: new AccordionMultiState({ value: value });
 }

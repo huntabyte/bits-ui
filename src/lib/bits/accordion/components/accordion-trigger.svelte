@@ -1,10 +1,5 @@
 <script lang="ts">
-	import { getContext } from "svelte";
-	import type {
-		AccordionRootContext,
-		AccordionTriggerProps,
-		AccordionItemContext
-	} from "./types.js";
+	import type { AccordionTriggerProps } from "./types.js";
 	import { kbd } from "$lib/internal/index.js";
 	import {
 		getAccordionItemContext,
@@ -20,51 +15,27 @@
 		...rest
 	} = $props<AccordionTriggerProps>();
 
-	const root = getAccordionRootContext();
-	const item = getAccordionItemContext();
+	const rootState = getAccordionRootContext();
+	const itemState = getAccordionItemContext();
 
-	let isDisabled = $derived(disabled || root.disabled || item.disabled);
-
-	let isSelected = $derived(getIsSelected());
-
-	function getIsSelected() {
-		if (root.value.isMulti) {
-			return root.value.value.includes(item.value);
-		} else {
-			return root.value.value === item.value;
-		}
-	}
+	let isDisabled = $derived(
+		disabled || rootState.disabled || itemState.disabled
+	);
 
 	let attrs = $derived({
 		disabled: isDisabled,
-		"aria-expanded": isSelected ? true : false,
+		"aria-expanded": itemState.isSelected ? true : false,
 		"aria-disabled": disabled ? true : false,
 		"data-disabled": isDisabled ? "" : undefined,
-		"data-value": item.value,
-		"data-state": isSelected ? "open" : "closed",
+		"data-value": itemState.value,
+		"data-state": itemState.isSelected ? "open" : "closed",
 		"data-accordion-trigger": ""
 	});
-
-	function updateValue() {
-		if (root.value.isMulti) {
-			if (root.value.value.includes(item.value)) {
-				root.value.value = root.value.value.filter((v) => v !== item.value);
-			} else {
-				root.value.value.push(item.value);
-			}
-		} else {
-			if (root.value.value === item.value) {
-				root.value.value = "";
-			} else {
-				root.value.value = item.value;
-			}
-		}
-	}
 
 	function onclick(e: MouseEvent) {
 		onClick?.(e);
 		if (e.defaultPrevented || isDisabled) return;
-		updateValue();
+		itemState.updateValue();
 	}
 
 	const KEYS = [kbd.ARROW_DOWN, kbd.ARROW_UP, kbd.HOME, kbd.END];
@@ -78,14 +49,14 @@
 
 		if (e.key === "Space" || e.key === "Enter") {
 			if (disabled) return;
-			updateValue();
+			itemState.updateValue();
 			return;
 		}
 
-		if (!root.el || !el) return;
+		if (!rootState.el || !el) return;
 
 		const items = Array.from(
-			root.el.querySelectorAll<HTMLElement>("[data-accordion-trigger]")
+			rootState.el.querySelectorAll<HTMLElement>("[data-accordion-trigger]")
 		);
 		const candidateItems = items.filter(
 			(item): item is HTMLElement => !item.dataset.disabled

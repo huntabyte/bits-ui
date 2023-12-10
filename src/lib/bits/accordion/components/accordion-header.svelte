@@ -1,15 +1,12 @@
-<script lang="ts" context="module">
-	import type { Snippet } from "svelte";
-
-	type Props = {
-		asChild?: boolean;
-		level?: 1 | 2 | 3 | 4 | 5 | 6;
-		children?: Snippet;
-	};
-</script>
-
 <script lang="ts">
-	let { asChild = false, level = 2, children, ...rest } = $props<Props>();
+	import type { AccordionHeaderProps } from "./types.js";
+
+	let {
+		asChild = false,
+		level = 2,
+		children,
+		...rest
+	} = $props<AccordionHeaderProps>();
 
 	let attrs = $derived({
 		role: "heading",

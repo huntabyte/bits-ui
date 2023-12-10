@@ -27,35 +27,25 @@
 		...rest
 	} = $props<AccordionContentProps<T, In, Out>>();
 
-	const root = getAccordionRootContext();
-	const itemCtx = getAccordionItemContext();
-
-	let isSelected = $derived(getIsSelected());
-
-	function getIsSelected() {
-		if (root.value.isMulti) {
-			return root.value.value.includes(itemCtx.value);
-		} else {
-			return root.value.value === itemCtx.value;
-		}
-	}
+	const rootState = getAccordionRootContext();
+	const itemState = getAccordionItemContext();
 
 	let attrs = $derived({
-		"data-state": isSelected ? "open" : "closed",
-		"data-disabled": root.disabled || itemCtx.disabled ? "" : undefined,
-		"data-value": itemCtx.value
+		"data-state": itemState.isSelected ? "open" : "closed",
+		"data-disabled": rootState.disabled || itemState.disabled ? "" : undefined,
+		"data-value": itemState.value
 	});
 </script>
 
-{#if asChild && isSelected && children}
+{#if asChild && itemState.isSelected && children}
 	{@render children()}
-{:else if transition && isSelected}
+{:else if transition && itemState.isSelected}
 	<div transition:transition={transitionConfig} {...rest} {...attrs}>
 		{#if children}
 			{@render children()}
 		{/if}
 	</div>
-{:else if inTransition && outTransition && isSelected}
+{:else if inTransition && outTransition && itemState.isSelected}
 	<div
 		in:inTransition={inTransitionConfig}
 		out:outTransition={outTransitionConfig}
@@ -65,19 +55,19 @@
 			{@render children()}
 		{/if}
 	</div>
-{:else if inTransition && isSelected}
+{:else if inTransition && itemState.isSelected}
 	<div in:inTransition={inTransitionConfig} {...rest} {...attrs}>
 		{#if children}
 			{@render children()}
 		{/if}
 	</div>
-{:else if outTransition && isSelected}
+{:else if outTransition && itemState.isSelected}
 	<div out:outTransition={outTransitionConfig} {...rest} {...attrs}>
 		{#if children}
 			{@render children()}
 		{/if}
 	</div>
-{:else if isSelected}
+{:else if itemState.isSelected}
 	<div {...rest} {...attrs}>
 		{#if children}
 			{@render children()}
