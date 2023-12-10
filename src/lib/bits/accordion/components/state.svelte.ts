@@ -153,6 +153,11 @@ export class AccordionItemState {
 		return new AccordionTrigger(props, this, this.rootState);
 	}
 }
+
+/**
+ * TRIGGER
+ */
+
 type AccordionTriggerStateProps = {
 	onclick?: (e: MouseEvent) => void;
 	onkeydown?: (e: KeyboardEvent) => void;
