@@ -21,7 +21,7 @@ description: Provides additional information or context when users hover over or
 	import { Tooltip } from 'bits-ui';
 </script>
 
-<ToolTip.Root>
+<Tooltip.Root>
 	<Tooltip.Trigger />
 	<Tooltip.Content>
 		<Tooltip.Arrow />
