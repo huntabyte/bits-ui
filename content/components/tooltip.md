@@ -18,7 +18,7 @@ description: Provides additional information or context when users hover over or
 
 ```svelte
 <script lang="ts">
-	import { Tooltip } from 'bits-ui';
+	import { Tooltip } from "bits-ui";
 </script>
 
 <Tooltip.Root>
