@@ -45,6 +45,7 @@
 		in:inTransition={inTransitionConfig}
 		out:outTransition={outTransitionConfig}
 		{...props}
+		{...contentState.attrs}
 	>
 		{#if children}
 			{@render children()}

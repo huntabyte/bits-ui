@@ -1,6 +1,11 @@
 import { getContext, setContext } from "svelte";
-import { composeHandlers, kbd, type EventCallback, type OnChangeFn } from "$lib/internal";
-import { removeUndefined } from "../../../internal/object";
+import {
+	composeHandlers,
+	kbd,
+	removeUndefined,
+	type EventCallback,
+	type OnChangeFn
+} from "$lib/internal";
 
 /**
  * BASE
