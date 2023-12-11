@@ -1,66 +1,69 @@
-<script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import type { Transition } from "$lib/internal/types.js";
-	import type { ContentProps } from "../types.js";
-	import { getCtx, getAttrs } from "../ctx.js";
-
-	type T = $$Generic<Transition>;
-	type In = $$Generic<Transition>;
-	type Out = $$Generic<Transition>;
-	type $$Props = ContentProps<T, In, Out>;
-
-	export let transition: $$Props["transition"] = undefined;
-	export let transitionConfig: $$Props["transitionConfig"] = undefined;
-	export let inTransition: $$Props["inTransition"] = undefined;
-	export let inTransitionConfig: $$Props["inTransitionConfig"] = undefined;
-	export let outTransition: $$Props["outTransition"] = undefined;
-	export let outTransitionConfig: $$Props["outTransitionConfig"] = undefined;
-	export let asChild: $$Props["asChild"] = false;
-
-	const {
-		elements: { content },
-		states: { open }
-	} = getCtx();
-
-	const attrs = getAttrs("content");
-
-	$: builder = $content;
-	$: Object.assign(builder, attrs);
+<script lang="ts" context="module">
+	import type { Transition } from "$lib/internal/index.js";
+	type T = Transition;
+	type In = Transition;
+	type Out = Transition;
 </script>
 
-{#if asChild && $open}
-	<slot {builder} />
-{:else if transition && $open}
+<script
+	lang="ts"
+	generics="T extends Transition, In extends Transition, Out extends Transition"
+>
+	import { getCollapsibleState } from "./state.svelte";
+	import type { CollapsibleContentProps } from "./types";
+
+	let {
+		child,
+		children,
+		transition,
+		inTransition,
+		outTransition,
+		transitionConfig,
+		inTransitionConfig,
+		outTransitionConfig,
+		...props
+	} = $props<CollapsibleContentProps<T, In, Out>>();
+
+	const rootState = getCollapsibleState();
+</script>
+
+{#if props.asChild && rootState.open && child}
+	{@render child({ ...props, ...rootState.contentAttrs })}
+{:else if transition && rootState.open && children}
 	<div
 		transition:transition={transitionConfig}
-		use:melt={builder}
-		{...$$restProps}
+		{...props}
+		{...rootState.contentAttrs}
 	>
-		<slot {builder} />
+		{@render children()}
 	</div>
-{:else if inTransition && outTransition && $open}
+{:else if inTransition && outTransition && rootState.open && children}
 	<div
 		in:inTransition={inTransitionConfig}
 		out:outTransition={outTransitionConfig}
-		use:melt={builder}
-		{...$$restProps}
+		{...props}
+		{...rootState.contentAttrs}
 	>
-		<slot {builder} />
+		{@render children()}
 	</div>
-{:else if inTransition && $open}
-	<div in:inTransition={inTransitionConfig} use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+{:else if inTransition && rootState.open && children}
+	<div
+		in:inTransition={inTransitionConfig}
+		{...props}
+		{...rootState.contentAttrs}
+	>
+		{@render children()}
 	</div>
-{:else if outTransition && $open}
+{:else if outTransition && rootState.open && children}
 	<div
 		out:outTransition={outTransitionConfig}
-		use:melt={builder}
-		{...$$restProps}
+		{...props}
+		{...rootState.contentAttrs}
 	>
-		<slot {builder} />
+		{@render children()}
 	</div>
-{:else if $open}
-	<div use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+{:else if rootState.open && children}
+	<div {...props} {...rootState.contentAttrs}>
+		{@render children()}
 	</div>
 {/if}

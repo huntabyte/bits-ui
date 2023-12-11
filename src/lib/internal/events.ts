@@ -31,12 +31,14 @@ export type CreateDispatcher = {
 	createDispatcher: typeof createDispatcher;
 };
 
-export type EventCallback<T extends Event> = (e: T) => void;
+export type EventCallback<E extends Event = Event, T extends EventTarget = Element> = (
+	event: E & { currentTarget: EventTarget & T }
+) => void;
 
-export function composeHandlers<T extends Event>(
-	...handlers: Array<EventCallback<T> | undefined>
-): (e: T) => void {
-	return (e: T) => {
+export function composeHandlers<E extends Event = Event, T extends EventTarget = Element>(
+	...handlers: Array<EventCallback<E, T> | undefined>
+): (e: E & { currentTarget: EventTarget & T }) => void {
+	return (e: E & { currentTarget: EventTarget & T }) => {
 		for (const handler of handlers) {
 			if (handler && !e.defaultPrevented) {
 				handler(e);

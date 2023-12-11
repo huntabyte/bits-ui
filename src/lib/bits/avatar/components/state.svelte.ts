@@ -16,8 +16,8 @@ const defaultAvatarRootStateProps: Required<AvatarRootStateProps> = {
 export class AvatarRootState {
 	loadingStatus: AvatarLoadingStatus = $state("loading");
 	delayMs: number = $state(0);
-	fallbackStyle: string | undefined = $state(undefined);
-	imageStyle: string | undefined = $state(undefined);
+	fallbackStyle?: string = $state(undefined);
+	imageStyle?: string = $state(undefined);
 
 	constructor(props: AvatarRootStateProps = {}) {
 		const mergedProps = { ...defaultAvatarRootStateProps, ...props } satisfies AvatarRootStateProps;

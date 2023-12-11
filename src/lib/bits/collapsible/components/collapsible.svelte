@@ -1,44 +1,36 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { setCtx, getAttrs } from "../ctx.js";
-	import type { Props } from "../types.js";
+	import type { CollapsibleProps } from "./types.js";
+	import { initCollapsibleState } from "./state.svelte.js";
 
-	type $$Props = Props;
-	export let disabled: $$Props["disabled"] = undefined;
-	export let open: $$Props["open"] = undefined;
-	export let onOpenChange: $$Props["onOpenChange"] = undefined;
-	export let asChild: $$Props["asChild"] = false;
+	let {
+		open = false,
+		defaultOpen = false,
+		disabled = false,
+		onOpenChange = undefined,
+		children,
+		child,
+		...props
+	} = $props<CollapsibleProps>();
 
-	const {
-		elements: { root },
-		states: { open: localOpen },
-		updateOption
-	} = setCtx({
+	const rootState = initCollapsibleState({
+		open,
 		disabled,
-		forceVisible: true,
-		defaultOpen: open,
-		onOpenChange: ({ next }) => {
-			if (open !== next) {
-				onOpenChange?.(next);
-				open = next;
-			}
-			return next;
-		}
+		onOpenChange,
+		defaultOpen
 	});
-	const attrs = getAttrs("root");
 
-	$: open !== undefined && localOpen.set(open);
-
-	$: updateOption("disabled", disabled);
-
-	$: builder = $root;
-	$: Object.assign(builder, attrs);
+	$effect(() => {
+		rootState.open = open;
+		rootState.disabled = disabled;
+		rootState.onOpenChange = onOpenChange;
+		rootState.defaultOpen = defaultOpen;
+	});
 </script>
 
-{#if asChild}
-	<slot {builder} />
-{:else}
-	<div use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+{#if props.asChild && child}
+	{@render child({ ...props })}
+{:else if children}
+	<div {...props} {...rootState.rootAttrs}>
+		{@render children()}
 	</div>
 {/if}

@@ -44,7 +44,12 @@
 </script>
 
 {#if props.asChild && child}
-	{@render child({ ...props, ...rootState.rootAttrs })}
+	{@render child({
+		...props,
+		...rootState.rootAttrs,
+		onclick: rootState.onclick,
+		onkeydown: rootState.onkeydown
+	})}
 {:else}
 	<button
 		type="button"

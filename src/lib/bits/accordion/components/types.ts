@@ -1,63 +1,67 @@
-import type { HTMLDivAttributes, Transition, TransitionParams } from "$lib/internal/index.js";
+import type {
+	PrimitiveButtonAttributes,
+	PrimitiveDivAttributes,
+	Transition,
+	TransitionParams
+} from "$lib/internal/index.js";
 import type { Snippet } from "svelte";
-import type { HTMLButtonAttributes } from "svelte/elements";
 
-type BaseAccordionProps = {
+interface BaseAccordionProps {
 	asChild?: boolean;
 	disabled?: boolean;
 	forceVisible?: boolean;
 	el?: HTMLElement | null;
 	children?: Snippet;
-};
+}
 
-type SingleAccordionProps = BaseAccordionProps & {
+interface SingleAccordionProps extends BaseAccordionProps {
 	type: "single";
 	value?: string;
-};
+}
 
-type MultipleAccordionProps = BaseAccordionProps & {
+interface MultipleAccordionProps extends BaseAccordionProps {
 	type: "multiple";
 	value?: string[];
-};
+}
 
 export type AccordionRootProps = (SingleAccordionProps | MultipleAccordionProps) &
-	HTMLDivAttributes;
+	PrimitiveDivAttributes;
 
-export type AccordionRootWithoutHTML = Omit<AccordionRootProps, keyof HTMLDivAttributes>;
+export interface AccordionRootWithoutHTML
+	extends Omit<AccordionRootProps, keyof PrimitiveDivAttributes> {}
 
-export type AccordionTriggerProps = {
+export interface AccordionTriggerProps extends Omit<PrimitiveButtonAttributes, "disabled"> {
 	asChild?: boolean;
 	disabled?: boolean;
 	onclick?: (e: MouseEvent) => void;
 	onkeydown?: (e: KeyboardEvent) => void;
 	el?: HTMLElement | null;
 	children?: Snippet;
-} & Omit<HTMLButtonAttributes, "disabled">;
+}
 
-export type AccordionTriggerWithoutHTML = Omit<
-	AccordionTriggerProps,
-	Exclude<keyof HTMLButtonAttributes, "disabled">
->;
+export interface AccordionTriggerWithoutHTML
+	extends Omit<AccordionTriggerProps, keyof Exclude<PrimitiveButtonAttributes, "disabled">> {}
 
-export type AccordionItemContext = {
+export interface AccordionItemContext {
 	value: string;
 	disabled: boolean;
-};
+}
 
-export type AccordionItemProps = {
+export interface AccordionItemProps extends PrimitiveDivAttributes {
 	asChild?: boolean;
 	value: string;
 	disabled?: boolean;
 	children?: Snippet;
-} & HTMLDivAttributes;
+}
 
-export type AccordionItemWithoutHTML = Omit<AccordionItemProps, keyof HTMLDivAttributes>;
+export interface AccordionItemWithoutHTML
+	extends Omit<AccordionItemProps, keyof PrimitiveDivAttributes> {}
 
-export type AccordionContentProps<
+export interface AccordionContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
 	Out extends Transition = Transition
-> = {
+> extends PrimitiveDivAttributes {
 	transition?: T;
 	transitionConfig?: TransitionParams<T>;
 	inTransition?: In;
@@ -66,10 +70,10 @@ export type AccordionContentProps<
 	outTransitionConfig?: TransitionParams<Out>;
 	asChild?: boolean;
 	children?: Snippet;
-} & HTMLDivAttributes;
+}
 
-export type AccordionHeaderProps = {
+export interface AccordionHeaderProps extends PrimitiveDivAttributes {
 	asChild?: boolean;
 	level?: 1 | 2 | 3 | 4 | 5 | 6;
 	children?: Snippet;
-};
+}

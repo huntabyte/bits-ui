@@ -1,7 +1,7 @@
-import type { HTMLDivAttributes } from "$lib/internal"
+import type { PrimitiveDivAttributes } from "$lib/internal";
 
 export type AspectRatioProps = {
 	ratio: number;
-} & HTMLDivAttributes;
+} & PrimitiveDivAttributes;
 
-export type AspectRatioWithoutHTML = Omit<AspectRatioProps, keyof HTMLDivAttributes>;
+export type AspectRatioWithoutHTML = Omit<AspectRatioProps, keyof PrimitiveDivAttributes>;
