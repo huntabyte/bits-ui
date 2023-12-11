@@ -1,5 +1,13 @@
 # @huntabyte/primitives
 
+## 0.11.7
+
+### Patch Changes
+
+- fix: bug with select menus inside popovers not restoring scroll ([#209](https://github.com/huntabyte/bits-ui/pull/209))
+
+- add `closeOnItemClick` prop to menu components ([#209](https://github.com/huntabyte/bits-ui/pull/209))
+
 ## 0.11.6
 
 ### Patch Changes
