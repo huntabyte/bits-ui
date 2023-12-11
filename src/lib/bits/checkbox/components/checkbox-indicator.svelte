@@ -21,18 +21,12 @@
 		...getAttrs("indicator"),
 		"data-state": getStateAttr($checked)
 	};
-
-	$: slotProps = {
-		isChecked: $isChecked,
-		isIndeterminate: $isIndeterminate,
-		attrs
-	};
 </script>
 
 {#if asChild}
-	<slot {...slotProps} />
+	<slot {attrs} isChecked={$isChecked} isIndeterminate={$isIndeterminate} />
 {:else}
 	<div {...$$restProps} {...attrs}>
-		<slot {...slotProps} />
+		<slot {attrs} isChecked={$isChecked} isIndeterminate={$isIndeterminate} />
 	</div>
 {/if}

@@ -15,12 +15,10 @@
 		"data-state": $checked ? "checked" : "unchecked",
 		"data-checked": $checked ? "" : undefined
 	};
-
-	$: slotProps = { checked: $checked, attrs };
 </script>
 
 {#if asChild}
-	<slot {...slotProps} />
+	<slot {attrs} checked={$checked} />
 {:else}
 	<span {...$$restProps} {...attrs} />
 {/if}

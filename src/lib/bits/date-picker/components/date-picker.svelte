@@ -27,6 +27,7 @@
 	export let fixedWeeks: $$Props["fixedWeeks"] = undefined;
 	export let calendarLabel: $$Props["calendarLabel"] = undefined;
 	export let weekdayFormat: $$Props["weekdayFormat"] = undefined;
+	export let numberOfMonths: $$Props["numberOfMonths"] = undefined;
 
 	const {
 		states: {
@@ -54,6 +55,7 @@
 		minValue,
 		readonly,
 		weekdayFormat,
+		numberOfMonths,
 		isDateUnavailable,
 		onValueChange: ({ next }) => {
 			if (value !== next) {
@@ -149,11 +151,7 @@
 	$: updateOption("isDateDisabled", isDateDisabled);
 	$: updateOption("calendarLabel", calendarLabel);
 	$: updateOption("weekdayFormat", weekdayFormat);
-
-	$: slotProps = {
-		isInvalid: $localIsInvalid,
-		ids: $idValues
-	};
+	$: updateOption("numberOfMonths", numberOfMonths);
 </script>
 
-<slot {...slotProps} />
+<slot ids={$idValues} isInvalid={$localIsInvalid} />

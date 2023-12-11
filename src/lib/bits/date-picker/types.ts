@@ -2,7 +2,7 @@ import type { HTMLDivAttributes, HTMLSpanAttributes } from "$lib/internal/index.
 import type * as I from "./_types.js";
 import type {
 	CellProps,
-	DateProps,
+	DayProps,
 	GridBodyProps,
 	GridHeadProps,
 	GridRowProps,
@@ -13,7 +13,7 @@ import type {
 	NextButtonProps,
 	PrevButtonProps,
 	Events as CalendarEvents,
-	DateEvents,
+	DayEvents,
 	PrevButtonEvents,
 	NextButtonEvents
 } from "../calendar/types.js";
@@ -42,7 +42,7 @@ export type {
 	InputProps,
 	SegmentProps,
 	CellProps,
-	DateProps,
+	DayProps,
 	GridBodyProps,
 	GridHeadProps,
 	GridRowProps,
@@ -62,7 +62,7 @@ export type {
 	CloseEvents,
 	TriggerEvents,
 	CalendarEvents,
-	DateEvents,
+	DayEvents,
 	PrevButtonEvents,
 	NextButtonEvents,
 	SegmentEvents

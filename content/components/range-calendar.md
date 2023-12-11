@@ -43,7 +43,7 @@ description: Presents a calendar view tailored for selecting date ranges.
 					<RangeCalendar.GridRow>
 						{#each weekDates as date}
 							<RangeCalendar.Cell {date}>
-								<RangeCalendar.Date {date} month={month.value} />
+								<RangeCalendar.Day {date} month={month.value} />
 							</RangeCalendar.Cell>
 						{/each}
 					</RangeCalendar.GridRow>

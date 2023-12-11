@@ -1,7 +1,9 @@
 <script lang="ts">
+	import type { DateValue } from "@internationalized/date";
+
 	import { handleCalendarInitialFocus } from "$lib/internal/focus.js";
 	import { createDispatcher } from "$lib/internal/events.js";
-	import { melt } from "@melt-ui/svelte";
+	import { melt, type Month } from "@melt-ui/svelte";
 	import { onMount } from "svelte";
 	import { setCtx, getAttrs } from "../ctx.js";
 	import type { Props } from "../types.js";
@@ -44,7 +46,7 @@
 		states: {
 			value: localValue,
 			placeholder: localPlaceholder,
-			months,
+			months: localMonths,
 			weekdays
 		},
 		updateOption,
@@ -75,6 +77,14 @@
 			return next;
 		},
 		onValueChange: ({ next }: { next: $$Props["value"] }) => {
+			if (Array.isArray(next)) {
+				if (JSON.stringify(next) !== JSON.stringify(value)) {
+					onValueChange?.(next);
+					value = next;
+				}
+				return next;
+			}
+
 			if (value !== next) {
 				onValueChange?.(next);
 				value = next;
@@ -87,7 +97,11 @@
 		ids.calendar.set(id);
 	}
 
-	$: value !== undefined && localValue.set(value);
+	$: value !== undefined &&
+		localValue.set(
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			Array.isArray(value) ? [...value] : (value as any)
+		);
 	$: placeholder !== undefined && localPlaceholder.set(placeholder);
 
 	$: updateOption("preventDeselect", preventDeselect);
@@ -111,15 +125,12 @@
 	$: Object.assign(builder, attrs);
 	const dispatch = createDispatcher();
 
-	$: slotProps = {
-		builder,
-		months: $months,
-		weekdays: $weekdays
-	};
+	let months: Month<DateValue>[] = $localMonths;
+	$: months = $localMonths;
 </script>
 
 {#if asChild}
-	<slot {...slotProps} />
+	<slot {months} weekdays={$weekdays} {builder} />
 {:else}
 	<div
 		use:melt={builder}
@@ -127,6 +138,6 @@
 		on:m-keydown={dispatch}
 		bind:this={el}
 	>
-		<slot {...slotProps} />
+		<slot {months} weekdays={$weekdays} {builder} />
 	</div>
 {/if}

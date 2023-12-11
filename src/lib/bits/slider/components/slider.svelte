@@ -45,13 +45,12 @@
 
 	$: builder = $root;
 	$: Object.assign(builder, attrs);
-	$: slotProps = { builder, ticks: $ticks };
 </script>
 
 {#if asChild}
-	<slot {...slotProps} />
+	<slot {builder} ticks={$ticks} />
 {:else}
 	<span use:melt={builder} {...$$restProps}>
-		<slot {...slotProps} />
+		<slot {builder} ticks={$ticks} />
 	</span>
 {/if}

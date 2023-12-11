@@ -42,13 +42,13 @@
 							<Calendar.GridRow data-testid="grid-row-{m}-{i}" data-week>
 								{#each weekDates as date, d}
 									<Calendar.Cell {date} data-testid="cell-{date.month}-{d}">
-										<Calendar.Date
+										<Calendar.Day
 											{date}
 											month={month.value}
 											data-testid="date-{date.month}-{date.day}"
 										>
 											{date.day}
-										</Calendar.Date>
+										</Calendar.Day>
 									</Calendar.Cell>
 								{/each}
 							</Calendar.GridRow>

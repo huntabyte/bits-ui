@@ -92,11 +92,7 @@ export function portalProp(compName = "content") {
 }
 
 export function union(...types: string[]): string {
-	return types
-		.join(" | ")
-		.replaceAll(" ", "&nbsp;")
-		.replaceAll("<", "&lt;")
-		.replaceAll(">", "&gt;");
+	return escape(types.join(" | "));
 }
 
 export function enums(...values: string[]): string {
@@ -105,4 +101,18 @@ export function enums(...values: string[]): string {
 
 export function seeFloating(content: string, link: string) {
 	return `${content} [Floating UI reference](${link}).`;
+}
+
+const entities = [
+	[/</g, "&lt;"],
+	[/>/g, "&gt;"],
+	[/{/g, "&#123;"],
+	[/}/g, "&#125;"]
+] as const;
+
+export function escape(str: string): string {
+	for (let i = 0; i < entities.length; i += 1) {
+		str = str.replace(entities[i][0], entities[i][1]);
+	}
+	return str;
 }

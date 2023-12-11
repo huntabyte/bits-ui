@@ -10,6 +10,8 @@
 	import { navigation } from "@/config";
 	import { ModeWatcher } from "mode-watcher";
 	import "@/styles/app.postcss";
+	import { page } from "$app/stores";
+	import { cn } from "@/utils";
 </script>
 
 <ModeWatcher />
@@ -22,19 +24,24 @@
 	>
 		<SidebarNav items={navigation.sidebar} />
 		<main
-			class="relative pb-6 pl-4 pr-4 pt-16 md:pl-0 lg:gap-10 xl:grid xl:grid-cols-[1fr_220px]"
+			class={cn(
+				"relative pb-6 pl-4 pr-4 pt-16 md:pl-0 lg:gap-10 xl:grid-cols-[1fr_220px]",
+				$page.error ?? "xl:grid"
+			)}
 		>
 			<div class="mx-auto w-full min-w-0 md:max-w-[700px]" id="content">
 				<slot />
 			</div>
 
-			<div class="hidden text-sm xl:block">
-				<div
-					class="sticky top-16 -mt-10 h-[calc(100vh-3.5rem)] overflow-hidden pt-6"
-				>
-					<TableOfContents />
+			{#if !$page.error}
+				<div class="hidden text-sm xl:block">
+					<div
+						class="sticky top-16 -mt-10 h-[calc(100vh-3.5rem)] overflow-hidden pt-6"
+					>
+						<TableOfContents />
+					</div>
 				</div>
-			</div>
+			{/if}
 		</main>
 	</div>
 </div>

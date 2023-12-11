@@ -146,6 +146,11 @@ export const navigation: Navigation = {
 					items: []
 				},
 				{
+					title: "Pagination",
+					href: "/docs/components/pagination",
+					items: []
+				},
+				{
 					title: "Popover",
 					href: "/docs/components/popover",
 					items: []
@@ -198,6 +203,11 @@ export const navigation: Navigation = {
 				{
 					title: "Toggle Group",
 					href: "/docs/components/toggle-group",
+					items: []
+				},
+				{
+					title: "Toolbar",
+					href: "/docs/components/toolbar",
 					items: []
 				},
 				{

@@ -17,6 +17,7 @@ import { dropdownMenu } from "./dropdown-menu";
 import { label } from "./label";
 import { linkPreview } from "./link-preview";
 import { popover } from "./popover";
+import { pagination } from "./pagination";
 import { menubar } from "./menubar";
 import { progress } from "./progress";
 import { radioGroup } from "./radio-group";
@@ -28,6 +29,7 @@ import { switchData } from "./switch";
 import { tabs } from "./tabs";
 import { toggle } from "./toggle";
 import { toggleGroup } from "./toggle-group";
+import { toolbar } from "./toolbar";
 import { tooltip } from "./tooltip";
 
 export const bits = [
@@ -49,6 +51,7 @@ export const bits = [
 	"link-preview",
 	"label",
 	"menubar",
+	"pagination",
 	"popover",
 	"progress",
 	"radio-group",
@@ -60,6 +63,7 @@ export const bits = [
 	"tabs",
 	"toggle",
 	"toggle-group",
+	"toolbar",
 	"tooltip"
 ] as const;
 
@@ -90,6 +94,7 @@ export const apiSchemas: Record<Bit, APISchema[]> = {
 	label,
 	"link-preview": linkPreview,
 	menubar,
+	pagination,
 	popover,
 	progress,
 	"radio-group": radioGroup,
@@ -101,6 +106,7 @@ export const apiSchemas: Record<Bit, APISchema[]> = {
 	tabs,
 	toggle: toggle,
 	"toggle-group": toggleGroup,
+	toolbar,
 	tooltip
 };
 

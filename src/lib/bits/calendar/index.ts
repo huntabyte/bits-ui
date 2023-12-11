@@ -1,5 +1,5 @@
 export { default as Root } from "./components/calendar.svelte";
-export { default as Date } from "./components/calendar-date.svelte";
+export { default as Day } from "./components/calendar-day.svelte";
 export { default as Grid } from "./components/calendar-grid.svelte";
 export { default as GridBody } from "./components/calendar-grid-body.svelte";
 export { default as Cell } from "./components/calendar-cell.svelte";
