@@ -1,9 +1,7 @@
-# Bits
+# Bits UI
 
-Headless Svelte components built with [Melt UI](https://melt-ui.com) builders.
+The headless components for Svelte.
 
 [Read the docs](https://bits-ui.com) (still a work in progress)
 
-## Credits
-
-Logo created by [BruceWayyn](https://github.com/brucewayyn)
+Powered by [Melt UI](https://melt-ui.com) builders.

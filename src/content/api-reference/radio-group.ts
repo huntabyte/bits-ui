@@ -37,7 +37,7 @@ export const root: APISchema<RadioGroup.Props> = {
 		value: {
 			type: C.STRING,
 			description:
-				"The value of the currently selected radio item. This is the value that will be submitted with a form."
+				"The value of the currently selected radio item. You can bind to this value to control the radio group's value from outside the component."
 		},
 		onValueChange: {
 			type: {
@@ -76,7 +76,7 @@ export const item: APISchema<RadioGroup.ItemProps> = {
 		value: {
 			type: C.STRING,
 			description:
-				"The value of the currently selected radio item. This is the value that will be submitted with a form.",
+				"The value of the radio item. This should be unique for each radio item in the group.",
 			required: true
 		},
 		asChild

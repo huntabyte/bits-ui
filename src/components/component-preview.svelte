@@ -30,10 +30,14 @@
 					value === "preview"
 						? "font-semibold shadow-mini hover:bg-opacity-90"
 						: "shadow-none transition-all hover:text-foreground-alt",
-					"relative bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+					"group relative bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
 				)}
 			>
-				<span class="z-20"> Preview </span>
+				<span
+					class="z-20 group-data-[state=active]:text-foreground group-data-[state=inactive]:text-foreground-alt"
+				>
+					Preview
+				</span>
 				{#if value === "preview"}
 					<div
 						class="absolute left-0 top-0 h-8 w-full rounded-[7px] bg-background"
@@ -49,10 +53,14 @@
 					value === "code"
 						? "bg-transparent font-semibold shadow-mini hover:bg-opacity-90"
 						: "bg-transparent shadow-none transition-all hover:text-foreground-alt",
-					"relative focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+					"group relative focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
 				)}
 			>
-				<span class="z-20"> &lt;Code&gt; </span>
+				<span
+					class="z-20 group-data-[state=active]:text-foreground group-data-[state=inactive]:text-foreground-alt"
+				>
+					&lt;Code&gt;
+				</span>
 				{#if value === "code"}
 					<div
 						class="absolute left-0 top-0 h-8 w-full rounded-[7px] bg-background"

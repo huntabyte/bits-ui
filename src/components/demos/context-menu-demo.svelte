@@ -32,12 +32,12 @@
 			</div>
 			<div class="ml-auto flex items-center gap-px">
 				<kbd
-					class="inline-flex items-center justify-center rounded-button border border-dark-10 bg-background text-xs text-muted-foreground shadow-kbd sq-5"
+					class="inline-flex items-center justify-center rounded-button border border-dark-10 bg-background text-[13px] text-muted-foreground shadow-kbd sq-5"
 				>
 					⌘
 				</kbd>
 				<kbd
-					class="inline-flex items-center justify-center rounded-button border border-dark-10 bg-background text-[10px] text-muted-foreground shadow-kbd sq-5"
+					class="inline-flex items-center justify-center rounded-button border border-dark-10 bg-background text-[11px] text-muted-foreground shadow-kbd sq-5"
 				>
 					E
 				</kbd>
@@ -53,12 +53,12 @@
 				</div>
 				<div class="ml-auto flex items-center gap-px">
 					<kbd
-						class="inline-flex items-center justify-center rounded-button border border-dark-10 bg-background text-xs text-muted-foreground shadow-kbd sq-5"
+						class="inline-flex items-center justify-center rounded-button border border-dark-10 bg-background text-[13px] text-muted-foreground shadow-kbd sq-5"
 					>
 						⌘
 					</kbd>
 					<kbd
-						class="inline-flex items-center justify-center rounded-button border border-dark-10 bg-background text-[10px] text-muted-foreground shadow-kbd sq-5"
+						class="inline-flex items-center justify-center rounded-button border border-dark-10 bg-background text-[11px] text-muted-foreground shadow-kbd sq-5"
 					>
 						N
 					</kbd>
@@ -105,12 +105,12 @@
 			</div>
 			<div class="ml-auto flex items-center gap-px">
 				<kbd
-					class="inline-flex items-center justify-center rounded-button border border-dark-10 bg-background text-xs text-muted-foreground shadow-kbd sq-5"
+					class="inline-flex items-center justify-center rounded-button border border-dark-10 bg-background text-[13px] text-muted-foreground shadow-kbd sq-5"
 				>
 					⌘
 				</kbd>
 				<kbd
-					class="inline-flex items-center justify-center rounded-button border border-dark-10 bg-background text-[10px] text-muted-foreground shadow-kbd sq-5"
+					class="inline-flex items-center justify-center rounded-button border border-dark-10 bg-background text-[11px] text-muted-foreground shadow-kbd sq-5"
 				>
 					D
 				</kbd>

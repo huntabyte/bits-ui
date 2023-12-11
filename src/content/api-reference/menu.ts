@@ -69,6 +69,11 @@ const props = {
 		type: C.BOOLEAN,
 		default: C.FALSE,
 		description: "Whether or not to disable focus on the first item when the menu is opened."
+	},
+	closeOnItemClick: {
+		type: C.BOOLEAN,
+		default: C.TRUE,
+		description: "Whether or not to close the menu when an item is clicked."
 	}
 } satisfies PropObj<Menu.Props>;
 

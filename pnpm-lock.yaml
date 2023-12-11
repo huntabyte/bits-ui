@@ -9,8 +9,8 @@ dependencies:
     specifier: ^3.5.0
     version: 3.5.0
   '@melt-ui/svelte':
-    specifier: 0.64.5
-    version: 0.64.5(svelte@4.2.3)
+    specifier: 0.65.1
+    version: 0.65.1(svelte@4.2.3)
   nanoid:
     specifier: ^5.0.4
     version: 5.0.4
@@ -24,7 +24,7 @@ devDependencies:
     version: 0.16.5(svelte@4.2.3)
   '@melt-ui/pp':
     specifier: ^0.1.4
-    version: 0.1.4(@melt-ui/svelte@0.64.5)(svelte@4.2.3)
+    version: 0.1.4(@melt-ui/svelte@0.65.1)(svelte@4.2.3)
   '@playwright/test':
     specifier: ^1.28.1
     version: 1.36.2
@@ -1064,20 +1064,20 @@ packages:
       - supports-color
     dev: true
 
-  /@melt-ui/pp@0.1.4(@melt-ui/svelte@0.64.5)(svelte@4.2.3):
+  /@melt-ui/pp@0.1.4(@melt-ui/svelte@0.65.1)(svelte@4.2.3):
     resolution: {integrity: sha512-zR+Kl3CZJPJBHW8V7YcdQCMI/dVcnW9Ct3yGbVaIywYVStVRS7F9uEDOea3xLLT2WTGodQePzPlUn53yKFu87g==}
     engines: {pnpm: '>=8.6.3'}
     peerDependencies:
       '@melt-ui/svelte': '>= 0.29.0'
       svelte: ^3.55.0 || ^4.0.0 || ^5.0.0-next.1
     dependencies:
-      '@melt-ui/svelte': 0.64.5(svelte@4.2.3)
+      '@melt-ui/svelte': 0.65.1(svelte@4.2.3)
       estree-walker: 3.0.3
       svelte: 4.2.3
     dev: true
 
-  /@melt-ui/svelte@0.64.5(svelte@4.2.3):
-    resolution: {integrity: sha512-nPQA2guLuLitpZ6A968eWyGMC2riTKLq4R26hPRLdzP/JHCpd9yvddgMwil8JKbUKjT2dC3i358vUqeUOGxknA==}
+  /@melt-ui/svelte@0.65.1(svelte@4.2.3):
+    resolution: {integrity: sha512-EFLLcfT7i3ICsGmdK4i83V5+08jl6ZKFKxguvOr2zNV08cIXWwp4lIwoYLOpP6ydORrbJjiRBd9sfNJcrm5YWg==}
     peerDependencies:
       svelte: '>=3 <5'
     dependencies:
