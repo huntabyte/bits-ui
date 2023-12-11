@@ -16,7 +16,7 @@
 	export let closeFocus: $$Props["closeFocus"] = undefined;
 	export let disableFocusFirstItem: $$Props["disableFocusFirstItem"] =
 		undefined;
-	export let closeOnItemClick: $$Props["closeOnItemClick"] = undefined
+	export let closeOnItemClick: $$Props["closeOnItemClick"] = undefined;
 
 	const {
 		states: { open: localOpen },
