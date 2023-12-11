@@ -27,7 +27,7 @@
 	>
 		{#each themes as theme}
 			<Select.Item
-				class="flex h-10 w-full select-none items-center rounded-button py-3 pl-5 pr-1.5 text-sm outline-none transition-all duration-75 data-[highlighted]:bg-muted/50"
+				class="flex h-10 w-full select-none items-center rounded-button py-3 pl-5 pr-1.5 text-sm outline-none transition-all duration-75 data-[highlighted]:bg-muted"
 				value={theme.value}
 				label={theme.label}
 			>
