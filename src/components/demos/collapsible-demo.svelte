@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Collapsible } from "$lib";
 	import { CaretUpDown } from "phosphor-svelte";
+	import { cubicInOut } from "svelte/easing";
 	import { slide } from "svelte/transition";
 </script>
 
@@ -14,10 +15,10 @@
 			<span class="sr-only">Toggle</span>
 		</Collapsible.Trigger>
 	</div>
-
 	<Collapsible.Content
-		class="space-y-2 font-mono text-[15px] tracking-[0.01em]"
 		transition={slide}
+		transitionConfig={{ duration: 250, easing: cubicInOut }}
+		class="space-y-2 font-mono text-[15px] tracking-[0.01em]"
 	>
 		<div
 			class="inline-flex h-12 w-full items-center rounded-9px bg-muted px-[18px] py-3"

@@ -1,12 +1,7 @@
 <script lang="ts">
-	import type { Props } from "../types.js";
+	import type { AspectRatioProps } from "./types.js";
 
-	type $$Props = Props;
-	export let ratio: $$Props["ratio"] = 1 / 1;
-
-	const attrs = {
-		"data-aspect-ratio-root": ""
-	};
+	let { ratio = 1 / 1, ...props } = $props<AspectRatioProps>();
 </script>
 
 <div
@@ -20,8 +15,8 @@
 		style:right="0"
 		style:bottom="0"
 		style:left="0"
-		{...$$restProps}
-		{...attrs}
+		data-aspect-ratio-root=""
+		{...props}
 	>
 		<slot />
 	</div>

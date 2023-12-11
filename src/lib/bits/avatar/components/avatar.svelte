@@ -1,36 +1,28 @@
 <script lang="ts">
-	import { setCtx, getAttrs } from "../ctx.js";
-	import type { Props } from "../types.js";
+	import { AvatarRootState, setAvatarRootContext } from "./state.svelte";
+	import type { AvatarProps } from "./types";
 
-	type $$Props = Props;
-	export let delayMs: $$Props["delayMs"] = undefined;
-	export let loadingStatus: $$Props["loadingStatus"] = undefined;
-	export let onLoadingStatusChange: $$Props["onLoadingStatusChange"] =
-		undefined;
-	export let asChild: $$Props["asChild"] = false;
+	let {
+		delayMs = 0,
+		loadingStatus = "loading",
+		asChild = false,
+		...props
+	} = $props<AvatarProps>();
 
-	const {
-		states: { loadingStatus: localLoadingStatus },
-		updateOption
-	} = setCtx({
-		src: "",
-		delayMs,
-		onLoadingStatusChange: ({ next }) => {
-			loadingStatus = next;
-			onLoadingStatusChange?.(next);
-			return next;
-		}
+	const rootState = new AvatarRootState();
+
+	setAvatarRootContext(rootState);
+
+	$effect(() => {
+		rootState.delayMs = delayMs;
+		rootState.loadingStatus = loadingStatus;
 	});
-	const attrs = getAttrs("root");
-
-	$: loadingStatus !== undefined && localLoadingStatus.set(loadingStatus);
-	$: updateOption("delayMs", delayMs);
 </script>
 
 {#if asChild}
-	<slot {attrs} />
+	<slot />
 {:else}
-	<div {...$$restProps} {...attrs}>
-		<slot {attrs} />
+	<div {...props}>
+		<slot />
 	</div>
 {/if}

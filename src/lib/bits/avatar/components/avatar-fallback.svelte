@@ -1,25 +1,16 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { getCtx, getAttrs } from "../ctx.js";
-	import type { FallbackProps } from "../types.js";
+	import { getAvatarRootContext } from "./state.svelte";
+	import type { AvatarFallbackProps } from "./types";
 
-	type $$Props = FallbackProps;
+	let { asChild = false, ...props } = $props<AvatarFallbackProps>();
 
-	export let asChild: $$Props["asChild"] = false;
-
-	const {
-		elements: { fallback }
-	} = getCtx();
-	const attrs = getAttrs("fallback");
-
-	$: builder = $fallback;
-	$: Object.assign(builder, attrs);
+	const rootState = getAvatarRootContext();
 </script>
 
 {#if asChild}
-	<slot {builder} />
+	<slot />
 {:else}
-	<span use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+	<span {...props} style={rootState.fallbackStyle}>
+		<slot />
 	</span>
 {/if}

@@ -3,9 +3,6 @@
     "singleQuote": false,
     "trailingComma": "none",
     "printWidth": 100,
-    "pluginSearchDirs": [
-        "."
-    ],
     "plugins": [
         "prettier-plugin-svelte",
         "prettier-plugin-tailwindcss"

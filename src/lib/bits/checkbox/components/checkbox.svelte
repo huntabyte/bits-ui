@@ -1,62 +1,65 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { setCtx, getAttrs } from "../ctx.js";
-	import type { Props, Events } from "../types.js";
-	import { createDispatcher } from "$lib/internal/events.js";
+	import type { Snippet } from "svelte";
+	import { initCheckboxState } from "./state.svelte";
+	import type { CheckboxProps } from "./types";
 
-	type $$Props = Props;
-	type $$Events = Events;
-	export let checked: $$Props["checked"] = false;
-	export let disabled: $$Props["disabled"] = undefined;
-	export let name: $$Props["name"] = undefined;
-	export let required: $$Props["required"] = undefined;
-	export let value: $$Props["value"] = undefined;
-	export let onCheckedChange: $$Props["onCheckedChange"] = undefined;
-	export let asChild: $$Props["asChild"] = false;
+	type AsChildProps = Omit<CheckboxProps, "children" | "asChild"> & {
+		child: Snippet<CheckboxProps>;
+		children?: never;
+		asChild: true;
+	};
 
-	const {
-		elements: { root },
-		states: { checked: localChecked },
-		updateOption
-	} = setCtx({
-		defaultChecked: checked,
+	type DefaultProps = Omit<CheckboxProps, "asChild"> & {
+		asChild?: never;
+		child?: never;
+	};
+
+	let {
+		checked = "indeterminate",
+		disabled = false,
+		onCheckedChange = undefined,
+		required = false,
+		children,
+		child,
+		onclick,
+		onkeydown,
+		...props
+	} = $props<AsChildProps | DefaultProps>();
+
+	const rootState = initCheckboxState({
+		checked,
 		disabled,
-		name,
+		onCheckedChange,
 		required,
-		value,
-		onCheckedChange: ({ next }) => {
-			if (checked !== next) {
-				onCheckedChange?.(next);
-				checked = next;
-			}
-			return next;
-		}
+		onclick,
+		onkeydown
 	});
 
-	const dispatch = createDispatcher();
-
-	$: attrs = { ...getAttrs("root"), disabled: disabled ? true : undefined };
-	$: checked !== undefined && localChecked.set(checked);
-
-	$: updateOption("disabled", disabled);
-	$: updateOption("name", name);
-	$: updateOption("required", required);
-	$: updateOption("value", value);
-
-	$: builder = $root;
-	$: Object.assign(builder, attrs);
+	$effect(() => {
+		rootState.checked = checked;
+		rootState.disabled = disabled;
+		rootState.onCheckedChange = onCheckedChange;
+		rootState.required = required;
+	});
 </script>
 
-{#if asChild}
-	<slot {builder} />
+{#if props.asChild && child}
+	{@render child({
+		...props,
+		...rootState.rootAttrs,
+		onclick: rootState.onclick,
+		onkeydown: rootState.onkeydown
+	})}
 {:else}
 	<button
-		use:melt={builder}
 		type="button"
-		{...$$restProps}
-		on:m-click={dispatch}
-		on:m-keydown={dispatch}
+		{...props}
+		{...rootState.rootAttrs}
+		onclick={rootState.onclick}
+		onkeydown={rootState.onkeydown}
 	>
-		<slot {builder} />
+		{#if children}
+			{@render children()}
+		{/if}
 	</button>
 {/if}

@@ -1,34 +1,30 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { createDispatcher } from "$lib/internal/events.js";
-	import { getCtx, getAttrs } from "../ctx.js";
-	import type { TriggerEvents, TriggerProps } from "../types.js";
+	import { getCollapsibleState } from "./state.svelte";
+	import type { CollapsibleTriggerProps } from "./types";
 
-	type $$Props = TriggerProps;
-	type $$Events = TriggerEvents;
+	let { children, child, ...props } = $props<CollapsibleTriggerProps>();
 
-	export let asChild: $$Props["asChild"] = false;
-
-	const {
-		elements: { trigger }
-	} = getCtx();
-
-	const dispatch = createDispatcher();
-	const attrs = getAttrs("trigger");
-
-	$: builder = $trigger;
-	$: Object.assign(builder, attrs);
+	const rootState = getCollapsibleState();
+	const triggerState = rootState.createTrigger({
+		onclick: props.onclick ?? undefined
+	});
 </script>
 
-{#if asChild}
-	<slot {builder} />
+{#if props.asChild && child}
+	{@render child({
+		...props,
+		...rootState.triggerAttrs,
+		onclick: triggerState.onclick
+	})}
 {:else}
 	<button
-		use:melt={builder}
 		type="button"
-		{...$$restProps}
-		on:m-click={dispatch}
+		{...props}
+		{...rootState.triggerAttrs}
+		onclick={triggerState.onclick}
 	>
-		<slot {builder} />
+		{#if children}
+			{@render children()}
+		{/if}
 	</button>
 {/if}

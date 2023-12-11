@@ -1,24 +1,18 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { getImage, getAttrs } from "../ctx.js";
-	import type { ImageProps } from "../types.js";
+	import type { AvatarImageProps } from "./types";
+	import { getAvatarRootContext } from "./state.svelte";
 
-	type $$Props = ImageProps;
+	let { src, asChild = false, ...props } = $props<AvatarImageProps>();
 
-	export let src: $$Props["src"] = undefined;
-	export let alt: $$Props["alt"] = undefined;
-	export let asChild: $$Props["asChild"] = false;
+	const rootState = getAvatarRootContext();
 
-	const attrs = getAttrs("image");
-
-	$: image = getImage(src).elements.image;
-
-	$: builder = $image;
-	$: Object.assign(builder, attrs);
+	$effect(() => {
+		rootState.initImage(src);
+	});
 </script>
 
 {#if asChild}
-	<slot {builder} />
+	<slot />
 {:else}
-	<img use:melt={builder} {alt} {...$$restProps} />
+	<img {src} {...props} style={rootState.imageStyle} />
 {/if}

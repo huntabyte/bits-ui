@@ -10,6 +10,13 @@ const config = {
 	preprocess: [sequence([mdsvex(mdsvexOptions), vitePreprocess(), preprocessMeltUI()])],
 	extensions: [".svelte", ".md"],
 
+	onwarn: (warning, handler) => {
+		if (warning.code === "static-state-reference") {
+			return;
+		}
+		handler(warning);
+	},
+
 	kit: {
 		adapter: adapter(),
 		alias: {
