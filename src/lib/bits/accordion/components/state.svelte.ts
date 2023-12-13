@@ -6,6 +6,7 @@ import {
 	type EventCallback,
 	type OnChangeFn
 } from "$lib/internal";
+import { verifyContextDeps } from "$lib/internal/new/helpers";
 
 /**
  * BASE
@@ -122,44 +123,44 @@ export class AccordionItemState {
 	value: string = $state("");
 	disabled: boolean = $state(false);
 	isSelected: boolean = $state(false);
-	rootState: AccordionState;
+	root: AccordionState;
 
 	constructor(props: AccordionItemStateProps) {
 		this.value = props.value;
 		this.disabled = props?.disabled ?? false;
-		this.rootState = props.rootState;
+		this.root = props.rootState;
 
 		$effect(() => {
-			if (this.rootState.isMulti) {
-				this.isSelected = this.rootState.value.includes(this.value);
+			if (this.root.isMulti) {
+				this.isSelected = this.root.value.includes(this.value);
 			} else {
-				this.isSelected = this.rootState.value === this.value;
+				this.isSelected = this.root.value === this.value;
 			}
 		});
 	}
 
 	updateValue() {
-		if (this.rootState.isMulti) {
-			if (this.rootState.value.includes(this.value)) {
-				this.rootState.value = this.rootState.value.filter((v) => v !== this.value);
+		if (this.root.isMulti) {
+			if (this.root.value.includes(this.value)) {
+				this.root.value = this.root.value.filter((v) => v !== this.value);
 			} else {
-				this.rootState.value.push(this.value);
+				this.root.value.push(this.value);
 			}
 		} else {
-			if (this.rootState.value === this.value) {
-				this.rootState.value = "";
+			if (this.root.value === this.value) {
+				this.root.value = "";
 			} else {
-				this.rootState.value = this.value;
+				this.root.value = this.value;
 			}
 		}
 	}
 
 	createTrigger(props: AccordionTriggerStateProps) {
-		return new AccordionTrigger(props, this, this.rootState);
+		return new AccordionTriggerState(props, this);
 	}
 
 	createContent() {
-		return new AccordionContent(this, this.rootState);
+		return new AccordionContentState(this);
 	}
 }
 
@@ -183,11 +184,11 @@ const defaultAccordionTriggerProps = {
 	}
 };
 
-class AccordionTrigger {
+class AccordionTriggerState {
 	disabled: boolean = $state(false);
 	el: HTMLElement | null = $state(null);
 	itemState: AccordionItemState;
-	rootState: AccordionState;
+	root: AccordionState;
 	handlers: {
 		click: EventCallback<MouseEvent> | undefined;
 		keydown: EventCallback<KeyboardEvent> | undefined;
@@ -195,20 +196,16 @@ class AccordionTrigger {
 	isDisabled: boolean = $state(false);
 	attrs: Record<string, unknown> = $state({});
 
-	constructor(
-		props: AccordionTriggerStateProps,
-		itemState: AccordionItemState,
-		rootState: AccordionState
-	) {
+	constructor(props: AccordionTriggerStateProps, itemState: AccordionItemState) {
 		this.disabled = props.disabled;
 		this.el = props.el;
 		this.itemState = itemState;
-		this.rootState = rootState;
+		this.root = itemState.root;
 		this.handlers.click = props.onclick;
 		this.handlers.keydown = props.onkeydown;
 
 		$effect(() => {
-			this.isDisabled = this.disabled || this.itemState.disabled || this.rootState.disabled;
+			this.isDisabled = this.disabled || this.itemState.disabled || this.root.disabled;
 		});
 
 		$effect(() => {
@@ -244,10 +241,10 @@ class AccordionTrigger {
 			return;
 		}
 
-		if (!this.rootState.el || !this.el) return;
+		if (!this.root.el || !this.el) return;
 
 		const items = Array.from(
-			this.rootState.el.querySelectorAll<HTMLElement>("[data-accordion-trigger]")
+			this.root.el.querySelectorAll<HTMLElement>("[data-accordion-trigger]")
 		);
 		if (!items.length) return;
 
@@ -277,15 +274,17 @@ class AccordionTrigger {
  * CONTENT
  */
 
-class AccordionContent {
+class AccordionContentState {
+	item: AccordionItemState;
 	attrs: Record<string, unknown> = $state({});
 
-	constructor(itemState: AccordionItemState, rootState: AccordionState) {
+	constructor(item: AccordionItemState) {
+		this.item = item;
 		$effect(() => {
 			this.attrs = {
-				"data-state": itemState.isSelected ? "open" : "closed",
-				"data-disabled": rootState.disabled || itemState.disabled ? "" : undefined,
-				"data-value": itemState.value,
+				"data-state": item.isSelected ? "open" : "closed",
+				"data-disabled": item.root.disabled || item.disabled ? "" : undefined,
+				"data-value": item.value,
 				"data-accordion-content": ""
 			};
 		});
@@ -296,23 +295,58 @@ class AccordionContent {
  * CONTEXT METHODS
  */
 
-const ACCORDION_ROOT_CONTEXT = "ACCORDION_ROOT_CONTEXT";
-const ACCORDION_ITEM_CONTEXT = "ACCORDION_ITEM_CONTEXT";
+export const ACCORDION_ROOT = "Accordion.Root";
+export const ACCORDION_ITEM = "Accordion.Item";
 
 type AccordionState = AccordionSingleState | AccordionMultiState;
 
-export function setAccordionRootContext(ctx: AccordionState) {
-	setContext(ACCORDION_ROOT_CONTEXT, ctx);
+type SingleInitAccordionProps = {
+	type: "single";
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	value?: any;
+};
+
+type MultiInitAccordionProps = {
+	type: "multiple";
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	value?: any;
+};
+
+type InitAccordionProps = SingleInitAccordionProps | MultiInitAccordionProps;
+
+export function setAccordionRootState(props: InitAccordionProps) {
+	const rootState =
+		props.type === "single"
+			? new AccordionSingleState({ value: props.value })
+			: new AccordionMultiState({ value: props.value });
+	setContext(ACCORDION_ROOT, rootState);
+	return rootState;
 }
 
-export function getAccordionRootContext(): AccordionState {
-	return getContext(ACCORDION_ROOT_CONTEXT);
+export function getAccordionRootState(): AccordionState {
+	return getContext(ACCORDION_ROOT);
 }
 
-export function setAccordionItemContext(ctx: AccordionItemState) {
-	setContext(ACCORDION_ITEM_CONTEXT, ctx);
+export function setAccordionItemState(props: Omit<AccordionItemStateProps, "rootState">) {
+	verifyContextDeps(ACCORDION_ROOT);
+	const rootState = getAccordionRootState();
+	const itemState = new AccordionItemState({ ...props, rootState });
+	setContext(ACCORDION_ITEM, itemState);
+	return itemState;
 }
 
-export function getAccordionItemContext(): AccordionItemState {
-	return getContext(ACCORDION_ITEM_CONTEXT);
+export function getAccordionItemState(): AccordionItemState {
+	return getContext(ACCORDION_ITEM);
+}
+
+export function getAccordionTriggerState(props: AccordionTriggerStateProps): AccordionTriggerState {
+	verifyContextDeps(ACCORDION_ITEM);
+	const itemState = getAccordionItemState();
+	return itemState.createTrigger(props);
+}
+
+export function getAccordionContentState(): AccordionContentState {
+	verifyContextDeps(ACCORDION_ITEM);
+	const itemState = getAccordionItemState();
+	return itemState.createContent();
 }

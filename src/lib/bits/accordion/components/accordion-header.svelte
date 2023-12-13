@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { verifyContextDeps } from "$lib/internal/new/helpers.js";
+	import { ACCORDION_ITEM } from "./state.svelte.js";
 	import type { AccordionHeaderProps } from "./types.js";
 
 	let {
@@ -7,6 +9,8 @@
 		children,
 		...rest
 	} = $props<AccordionHeaderProps>();
+
+	verifyContextDeps(ACCORDION_ITEM);
 
 	let attrs = $derived({
 		role: "heading",

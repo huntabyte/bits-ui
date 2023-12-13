@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { AccordionTriggerProps } from "./types.js";
-	import { getAccordionItemContext } from "./state.svelte.js";
+	import { getAccordionTriggerState } from "./state.svelte.js";
 
 	let {
 		disabled = false,
@@ -11,8 +11,7 @@
 		...props
 	} = $props<AccordionTriggerProps>();
 
-	const itemState = getAccordionItemContext();
-	const triggerState = itemState.createTrigger({
+	const trigger = getAccordionTriggerState({
 		el,
 		disabled,
 		onkeydown,
@@ -20,10 +19,10 @@
 	});
 
 	$effect(() => {
-		triggerState.disabled = disabled;
-		triggerState.el = el;
-		triggerState.handlers.click = onclick;
-		triggerState.handlers.keydown = onkeydown;
+		trigger.disabled = disabled;
+		trigger.el = el;
+		trigger.handlers.click = onclick;
+		trigger.handlers.keydown = onkeydown;
 	});
 </script>
 
@@ -33,10 +32,10 @@
 	<button
 		bind:this={el}
 		type="button"
-		{...triggerState.attrs}
+		{...trigger.attrs}
 		{...props}
-		onclick={triggerState.onclick}
-		onkeydown={triggerState.onkeydown}
+		onclick={trigger.onclick}
+		onkeydown={trigger.onkeydown}
 	>
 		<slot />
 	</button>

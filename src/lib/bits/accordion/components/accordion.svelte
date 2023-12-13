@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { initAccordionState } from "./helpers.js";
-	import { setAccordionRootContext } from "./state.svelte.js";
+	import { setAccordionRootState } from "./state.svelte.js";
 	import type { AccordionRootProps } from "./types.js";
 
 	let {
@@ -13,8 +12,7 @@
 		...props
 	} = $props<AccordionRootProps>();
 
-	const rootState = initAccordionState({ type, value });
-	setAccordionRootContext(rootState);
+	const rootState = setAccordionRootState({ type, value });
 
 	$effect(() => {
 		rootState.disabled = disabled;
