@@ -3,29 +3,23 @@
 	import { getCheckboxState } from "./state.svelte";
 	import type { CheckboxIndicatorProps } from "./types";
 
-	type Props = Omit<CheckboxIndicatorProps, "children"> & {
-		child: Snippet<
-			CheckboxIndicatorProps & { checked: boolean | "indeterminate" }
-		>;
-	};
+	let { child, children, ...props } = $props<CheckboxIndicatorProps>();
 
-	let { asChild = false, child, ...props } = $props<Props>();
-
-	const rootState = getCheckboxState();
+	const root = getCheckboxState();
 </script>
 
-{#if asChild}
+{#if props.asChild && child}
 	{@render child({
 		...props,
-		...rootState.indicatorAttrs,
-		checked: rootState.checked
+		...root.indicatorAttrs,
+		checked: root.checked
 	})}
-{:else}
-	<div {...props} {...rootState.indicatorAttrs}>
-		{@render child({
+{:else if children}
+	<div {...props} {...root.indicatorAttrs}>
+		{@render children({
 			...props,
-			...rootState.indicatorAttrs,
-			checked: rootState.checked
+			...root.indicatorAttrs,
+			checked: root.checked
 		})}
 	</div>
 {/if}

@@ -1,7 +1,6 @@
 /**
  * Types for the new internal API for Svelte 5.
  */
-
 import type { Snippet } from "svelte";
 
 /**
@@ -22,6 +21,8 @@ export type DefaultProps<T> = {
 	asChild?: never;
 	child?: never;
 } & Omit<T, "child" | "asChild">;
+
+export type DefaultOrAsChildProps<T> = DefaultProps<T> | AsChildProps<T>;
 
 /**
  * Constructs a new type by omitting properties from type

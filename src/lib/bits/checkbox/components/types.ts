@@ -5,8 +5,9 @@ import type {
 	PrimitiveDivAttributes,
 	PrimitiveInputAttributes
 } from "$lib/internal";
+import type { DefaultOrAsChildProps, Without } from "$lib/internal/new/types";
 
-export interface CheckboxProps extends Omit<PrimitiveButtonAttributes, "disabled"> {
+type BaseCollapsibleProps = {
 	disabled?: boolean;
 	defaultChecked?: boolean | "indeterminate";
 	checked?: boolean | "indeterminate";
@@ -14,17 +15,19 @@ export interface CheckboxProps extends Omit<PrimitiveButtonAttributes, "disabled
 	required?: boolean;
 	onclick?: EventCallback<MouseEvent>;
 	onkeydown?: EventCallback<KeyboardEvent>;
-}
+} & Omit<PrimitiveButtonAttributes, "disabled">;
 
-export interface CheckboxPropsWithoutHTML
-	extends Omit<CheckboxProps, Exclude<keyof PrimitiveButtonAttributes, "disabled">> {}
+export type CheckboxProps = DefaultOrAsChildProps<BaseCollapsibleProps>;
 
-export interface CheckboxInputProps extends PrimitiveInputAttributes {}
+export type CheckboxWithoutHTML = Without<
+	BaseCollapsibleProps,
+	Omit<PrimitiveButtonAttributes, "disabled">
+>;
 
-export interface CheckboxInputPropsWithoutHTML
-	extends Omit<CheckboxInputProps, keyof PrimitiveInputAttributes> {}
+export type CheckboxInputProps = DefaultOrAsChildProps<PrimitiveInputAttributes>;
 
-export interface CheckboxIndicatorProps extends PrimitiveDivAttributes {}
+export type CheckboxInputWithoutHTML = Without<PrimitiveInputAttributes, PrimitiveInputAttributes>;
 
-export interface CheckboxIndicatorPropsWithoutHTML
-	extends Omit<CheckboxIndicatorProps, keyof PrimitiveDivAttributes> {}
+export type CheckboxIndicatorProps = DefaultOrAsChildProps<PrimitiveDivAttributes>;
+
+export type CheckboxIndicatorWithoutHTML = Without<PrimitiveDivAttributes, PrimitiveDivAttributes>;

@@ -1,18 +1,6 @@
 <script lang="ts">
-	import type { Snippet } from "svelte";
 	import { initCheckboxState } from "./state.svelte";
 	import type { CheckboxProps } from "./types";
-
-	type AsChildProps = Omit<CheckboxProps, "children" | "asChild"> & {
-		child: Snippet<CheckboxProps>;
-		children?: never;
-		asChild: true;
-	};
-
-	type DefaultProps = Omit<CheckboxProps, "asChild"> & {
-		asChild?: never;
-		child?: never;
-	};
 
 	let {
 		checked = "indeterminate",
@@ -24,7 +12,7 @@
 		onclick,
 		onkeydown,
 		...props
-	} = $props<AsChildProps | DefaultProps>();
+	} = $props<CheckboxProps>();
 
 	const rootState = initCheckboxState({
 		checked,

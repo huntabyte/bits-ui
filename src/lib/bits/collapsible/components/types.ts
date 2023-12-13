@@ -5,7 +5,12 @@ import type {
 	Transition,
 	TransitionProps
 } from "$lib/internal";
-import type { AsChildProps, DefaultProps, Without } from "$lib/internal/new/types";
+import type {
+	AsChildProps,
+	DefaultOrAsChildProps,
+	DefaultProps,
+	Without
+} from "$lib/internal/new/types";
 
 type BaseCollapsibleProps = {
 	/**
@@ -40,11 +45,9 @@ type BaseCollapsibleProps = {
 	onOpenChange?: OnChangeFn<boolean>;
 } & PrimitiveDivAttributes;
 
-export type CollapsibleProps =
-	| AsChildProps<BaseCollapsibleProps>
-	| DefaultProps<BaseCollapsibleProps>;
+export type CollapsibleProps = DefaultOrAsChildProps<BaseCollapsibleProps>;
 
-export type CollapsibleWithoutHTML = Omit<BaseCollapsibleProps, keyof PrimitiveDivAttributes>;
+export type CollapsibleWithoutHTML = Without<BaseCollapsibleProps, PrimitiveDivAttributes>;
 
 export interface BaseCollapsibleContentProps<
 	T extends Transition = Transition,
