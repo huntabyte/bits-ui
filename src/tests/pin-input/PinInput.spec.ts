@@ -149,10 +149,8 @@ describe("PIN Input", () => {
 		input1.focus();
 		expect(input1).toHaveValue("1");
 		await user.keyboard(kbd.DELETE);
-		// the next line works, so the value is deleted
 		expect(input1).toHaveValue("");
 		expect(input1).toHaveFocus();
-		// but the next line here fails - what's going on?
 		expect(hiddenInput).toHaveValue("2345");
 		input2.focus();
 		expect(input2).toHaveValue("2");
