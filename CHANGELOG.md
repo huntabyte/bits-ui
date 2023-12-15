@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.11.8
+
+### Patch Changes
+
+- feat: add PIN Input component ([#227](https://github.com/huntabyte/bits-ui/pull/227))
+
 ## 0.11.7
 
 ### Patch Changes
