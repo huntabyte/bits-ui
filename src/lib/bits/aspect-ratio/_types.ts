@@ -5,7 +5,7 @@
  */
 
 type Props = Expand<{
-	ratio: number;
+	ratio?: number;
 }>;
 
 export type { Props };
