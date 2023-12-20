@@ -37,14 +37,14 @@ export type OnChangeFn<T> = (value: T) => void;
 
 export type Expand<T> = T extends object
 	? T extends infer O
-		? { [K in keyof O]: O[K] }
-		: never
+	? { [K in keyof O]: O[K] }
+	: never
 	: T;
 
 export type ExpandDeep<T> = T extends object
 	? T extends infer O
-		? { [K in keyof O]: ExpandDeep<O[K]> }
-		: never
+	? { [K in keyof O]: ExpandDeep<O[K]> }
+	: never
 	: T;
 
 export type Prettify<T> = {
@@ -62,6 +62,13 @@ export type KeydownClickEvents = {
 	click: MouseEvent;
 	keydown: KeyboardEvent;
 };
+
+export type DOMEl<T extends HTMLElement = HTMLDivElement> = Expand<{
+	/**
+	 * Wheter to expose the underlying DOM element.
+	 */
+	el?: T
+}>
 
 export type AsChild = Expand<{
 	/**
