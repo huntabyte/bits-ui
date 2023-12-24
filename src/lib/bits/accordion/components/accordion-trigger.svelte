@@ -7,7 +7,8 @@
 	type $$Props = TriggerProps;
 	type $$Events = TriggerEvents;
 
-	export let asChild: TriggerProps["asChild"] = false;
+	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const { trigger, props } = getTrigger();
 	const dispatch = createDispatcher();
@@ -21,6 +22,7 @@
 	<slot {builder} />
 {:else}
 	<button
+		bind:this={el}
 		use:melt={builder}
 		type="button"
 		{...$$restProps}
