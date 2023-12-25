@@ -8,6 +8,7 @@
 	export let open: $$Props["open"] = undefined;
 	export let onOpenChange: $$Props["onOpenChange"] = undefined;
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { root },
@@ -38,7 +39,7 @@
 {#if asChild}
 	<slot {builder} />
 {:else}
-	<div use:melt={builder} {...$$restProps}>
+	<div bind:this={el} use:melt={builder} {...$$restProps}>
 		<slot {builder} />
 	</div>
 {/if}
