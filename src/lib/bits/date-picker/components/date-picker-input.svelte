@@ -7,6 +7,7 @@
 
 	export let asChild: $$Props["asChild"] = false;
 	export let id: $$Props["id"] = undefined;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { field },
@@ -27,7 +28,7 @@
 {#if asChild}
 	<slot builder segments={$segmentContents} />
 {:else}
-	<div use:melt={builder} {...$$restProps}>
+	<div bind:this={el} use:melt={builder} {...$$restProps}>
 		<slot builder segments={$segmentContents} />
 	</div>
 {/if}

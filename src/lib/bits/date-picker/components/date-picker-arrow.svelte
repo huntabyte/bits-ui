@@ -6,6 +6,7 @@
 	type $$Props = ArrowProps;
 
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 	export let size = 8;
 
 	const {
@@ -24,5 +25,5 @@
 {#if asChild}
 	<slot {builder} />
 {:else}
-	<div use:melt={builder} {...$$restProps} />
+	<div bind:this={el} use:melt={builder} {...$$restProps} />
 {/if}
