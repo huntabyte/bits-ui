@@ -1,4 +1,4 @@
-import type { HTMLDivAttributes } from "$lib/internal";
+import type { DOMEl, HTMLDivAttributes } from "$lib/internal";
 import type {
 	HTMLAttributes,
 	HTMLButtonAttributes,
@@ -9,29 +9,29 @@ import type {
 import type * as I from "./_types.js";
 import type { CustomEventHandler } from "$lib";
 
-type Props = I.Props & Omit<HTMLDivAttributes, "placeholder">;
+type Props = I.Props & Omit<HTMLDivAttributes, "placeholder"> & DOMEl<HTMLDivElement>;
 
-type PrevButtonProps = I.PrevButtonProps & HTMLButtonAttributes;
+type PrevButtonProps = I.PrevButtonProps & HTMLButtonAttributes & DOMEl<HTMLButtonElement>;
 
-type NextButtonProps = I.NextButtonProps & HTMLButtonAttributes;
+type NextButtonProps = I.NextButtonProps & HTMLButtonAttributes & DOMEl<HTMLButtonElement>;
 
-type HeadingProps = I.HeadingProps & HTMLDivAttributes;
+type HeadingProps = I.HeadingProps & HTMLDivAttributes & DOMEl<HTMLDivElement>;
 
-type HeaderProps = I.HeaderProps & HTMLDivAttributes;
+type HeaderProps = I.HeaderProps & HTMLDivAttributes & DOMEl;
 
-type GridProps = I.GridProps & HTMLTableAttributes;
+type GridProps = I.GridProps & HTMLTableAttributes & DOMEl<HTMLTableElement>;
 
-type GridHeadProps = I.GridHeadProps & HTMLAttributes<HTMLTableSectionElement>;
+type GridHeadProps = I.GridHeadProps & HTMLAttributes<HTMLTableSectionElement> & DOMEl<HTMLTableSectionElement>;
 
-type HeadCellProps = I.HeadCellProps & HTMLThAttributes;
+type HeadCellProps = I.HeadCellProps & HTMLThAttributes & DOMEl<HTMLTableCellElement>;
 
-type GridBodyProps = I.GridBodyProps & HTMLAttributes<HTMLTableSectionElement>;
+type GridBodyProps = I.GridBodyProps & HTMLAttributes<HTMLTableSectionElement> & DOMEl<HTMLTableSectionElement>;
 
-type GridRowProps = I.GridRowProps & HTMLAttributes<HTMLTableRowElement>;
+type GridRowProps = I.GridRowProps & HTMLAttributes<HTMLTableRowElement> & DOMEl<HTMLTableRowElement>;
 
-type CellProps = I.CellProps & HTMLTdAttributes;
+type CellProps = I.CellProps & HTMLTdAttributes & DOMEl<HTMLTableCellElement>;
 
-type DayProps = I.DayProps & HTMLDivAttributes;
+type DayProps = I.DayProps & HTMLDivAttributes & DOMEl<HTMLDivElement>;
 
 /**
  * Events

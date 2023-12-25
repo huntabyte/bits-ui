@@ -4,6 +4,7 @@
 
 	type $$Props = GridHeadProps;
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const attrs = { ...getAttrs("grid-head"), "aria-hidden": true };
 </script>
@@ -11,7 +12,7 @@
 {#if asChild}
 	<slot {attrs} />
 {:else}
-	<thead {...$$restProps} {...attrs}>
+	<thead bind:this={el} {...$$restProps} {...attrs}>
 		<slot />
 	</thead>
 {/if}
