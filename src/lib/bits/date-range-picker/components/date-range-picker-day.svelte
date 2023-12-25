@@ -8,6 +8,7 @@
 	export let date: $$Props["date"];
 	export let month: $$Props["month"];
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { cell },
@@ -25,7 +26,7 @@
 {#if asChild}
 	<slot {builder} {disabled} {unavailable} />
 {:else}
-	<div use:melt={builder} {...$$restProps}>
+	<div bind:this={el} use:melt={builder} {...$$restProps}>
 		<slot {builder} {disabled} {unavailable}>
 			{date.day}
 		</slot>
