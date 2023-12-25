@@ -4,6 +4,7 @@
 	import { srOnlyStyles } from "$lib/internal/style.js";
 
 	type $$Props = InputProps;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		states: { value }
@@ -25,4 +26,4 @@
 	$: inputValue = getValue($value);
 </script>
 
-<input {...$$restProps} value={inputValue} {...attrs} />
+<input bind:this={el} {...$$restProps} value={inputValue} {...attrs} />

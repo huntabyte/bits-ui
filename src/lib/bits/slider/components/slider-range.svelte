@@ -6,6 +6,7 @@
 	type $$Props = RangeProps;
 
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { range }
@@ -20,5 +21,5 @@
 {#if asChild}
 	<slot {builder} />
 {:else}
-	<span use:melt={builder} {...$$restProps} />
+	<span bind:this={el} use:melt={builder} {...$$restProps} />
 {/if}
