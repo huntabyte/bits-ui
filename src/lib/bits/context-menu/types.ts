@@ -23,14 +23,14 @@ import type {
 	ContextTriggerEvents as TriggerEvents,
 	SubContentEvents
 } from "$lib/bits/menu/index.js";
-import type { HTMLDivAttributes, Transition } from "$lib/internal";
+import type { DOMEl, HTMLDivAttributes, Transition } from "$lib/internal";
 import type * as I from "./_types.js";
 
 type ContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
 	Out extends Transition = Transition
-> = I.ContentProps<T, In, Out> & HTMLDivAttributes;
+> = I.ContentProps<T, In, Out> & HTMLDivAttributes & DOMEl<HTMLDivElement>;
 
 export type {
 	Props,
