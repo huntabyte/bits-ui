@@ -5,6 +5,7 @@
 	type $$Props = ItemIndicatorProps;
 
 	export let asChild = false;
+	export let el: $$Props["el"] = undefined;
 
 	const { isChecked, value } = getRadioIndicator();
 
@@ -15,7 +16,7 @@
 {#if asChild}
 	<slot {checked} {attrs} />
 {:else}
-	<div {...attrs} {...$$restProps}>
+	<div bind:this={el} {...attrs} {...$$restProps}>
 		{#if checked}
 			<slot {checked} {attrs} />
 		{/if}

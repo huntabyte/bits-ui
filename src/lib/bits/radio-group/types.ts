@@ -1,15 +1,15 @@
-import type { HTMLDivAttributes } from "$lib/internal/index.js";
+import type { DOMEl, HTMLDivAttributes } from "$lib/internal/index.js";
 import type { CustomEventHandler } from "$lib/index.js";
 import type { HTMLButtonAttributes, HTMLInputAttributes } from "svelte/elements";
 import type * as I from "./_types.js";
 
-type Props = I.Props & HTMLDivAttributes;
+type Props = I.Props & HTMLDivAttributes & DOMEl<HTMLDivElement>;
 
-type InputProps = I.InputProps & HTMLInputAttributes;
+type InputProps = I.InputProps & HTMLInputAttributes & DOMEl<HTMLInputElement>;
 
-type ItemProps = I.ItemProps & HTMLButtonAttributes;
+type ItemProps = I.ItemProps & HTMLButtonAttributes & DOMEl<HTMLButtonElement>;
 
-type ItemIndicatorProps = I.ItemIndicatorProps & HTMLDivAttributes;
+type ItemIndicatorProps = I.ItemIndicatorProps & HTMLDivAttributes & DOMEl<HTMLDivElement>;
 
 type ItemEvents<T extends Element = HTMLButtonElement> = {
 	click: CustomEventHandler<MouseEvent, T>;
