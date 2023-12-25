@@ -11,6 +11,7 @@
 	export let href: $$Props["href"] = undefined;
 	export let asChild: $$Props["asChild"] = false;
 	export let disabled: $$Props["disabled"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { item }
@@ -26,6 +27,7 @@
 	<slot {builder} />
 {:else}
 	<svelte:element
+		bind:this={el}
 		this={href ? "a" : "div"}
 		{href}
 		use:melt={builder}

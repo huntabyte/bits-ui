@@ -4,6 +4,7 @@
 	import type { GroupProps } from "../types.js";
 	type $$Props = GroupProps;
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const { group, id } = setGroupCtx();
 	const attrs = getAttrs("group");
@@ -15,7 +16,7 @@
 {#if asChild}
 	<slot {builder} />
 {:else}
-	<div use:melt={builder} {...$$restProps}>
+	<div bind:this={el} use:melt={builder} {...$$restProps}>
 		<slot {builder} />
 	</div>
 {/if}

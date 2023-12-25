@@ -6,6 +6,7 @@
 	type $$Props = SeparatorProps;
 
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { separator }
@@ -20,5 +21,5 @@
 {#if asChild}
 	<slot {builder} />
 {:else}
-	<div use:melt={$separator} {...$$restProps} />
+	<div bind:this={el} use:melt={$separator} {...$$restProps} />
 {/if}
