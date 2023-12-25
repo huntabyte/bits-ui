@@ -1,19 +1,19 @@
 import type { CustomEventHandler } from "$lib/index.js";
-import type { HTMLDivAttributes, Transition } from "$lib/internal/index.js";
+import type { DOMEl, HTMLDivAttributes, Transition } from "$lib/internal/index.js";
 import type { HTMLAnchorAttributes } from "svelte/elements";
 import type * as I from "./_types.js";
 
 type Props = I.Props;
 
-type TriggerProps = I.TriggerProps & HTMLAnchorAttributes;
+type TriggerProps = I.TriggerProps & HTMLAnchorAttributes & DOMEl<HTMLAnchorElement>;
 
 type ContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
 	Out extends Transition = Transition
-> = I.ContentProps<T, In, Out> & HTMLDivAttributes;
+> = I.ContentProps<T, In, Out> & HTMLDivAttributes & DOMEl<HTMLDivElement>;
 
-type ArrowProps = I.ArrowProps & HTMLDivAttributes;
+type ArrowProps = I.ArrowProps & HTMLDivAttributes & DOMEl<HTMLDivElement>;
 
 type TriggerEvents<T extends Element = HTMLAnchorElement> = {
 	click: CustomEventHandler<MouseEvent, T>;
