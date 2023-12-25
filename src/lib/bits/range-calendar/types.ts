@@ -21,13 +21,19 @@ type HeaderProps = I.HeaderProps & HTMLDivAttributes & DOMEl;
 
 type GridProps = I.GridProps & HTMLTableAttributes & DOMEl<HTMLTableElement>;
 
-type GridHeadProps = I.GridHeadProps & HTMLAttributes<HTMLTableSectionElement> & DOMEl<HTMLTableSectionElement>;
+type GridHeadProps = I.GridHeadProps &
+	HTMLAttributes<HTMLTableSectionElement> &
+	DOMEl<HTMLTableSectionElement>;
 
 type HeadCellProps = I.HeadCellProps & HTMLThAttributes & DOMEl<HTMLTableCellElement>;
 
-type GridBodyProps = I.GridBodyProps & HTMLAttributes<HTMLTableSectionElement> & DOMEl<HTMLTableSectionElement>;
+type GridBodyProps = I.GridBodyProps &
+	HTMLAttributes<HTMLTableSectionElement> &
+	DOMEl<HTMLTableSectionElement>;
 
-type GridRowProps = I.GridRowProps & HTMLAttributes<HTMLTableRowElement> & DOMEl<HTMLTableRowElement>;
+type GridRowProps = I.GridRowProps &
+	HTMLAttributes<HTMLTableRowElement> &
+	DOMEl<HTMLTableRowElement>;
 
 type CellProps = I.CellProps & HTMLTdAttributes & DOMEl<HTMLTableCellElement>;
 

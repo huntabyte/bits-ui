@@ -27,8 +27,8 @@
 	<slot {builder} />
 {:else}
 	<svelte:element
-		bind:this={el}
 		this={href ? "a" : "div"}
+		bind:this={el}
 		{href}
 		use:melt={builder}
 		{...$$restProps}
