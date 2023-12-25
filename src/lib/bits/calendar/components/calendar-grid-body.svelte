@@ -4,6 +4,7 @@
 
 	type $$Props = GridBodyProps;
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const attrs = getAttrs("grid-body");
 </script>
@@ -11,7 +12,7 @@
 {#if asChild}
 	<slot {attrs} />
 {:else}
-	<tbody {...$$restProps} {...attrs}>
+	<tbody bind:this={el} {...$$restProps} {...attrs}>
 		<slot {attrs} />
 	</tbody>
 {/if}
