@@ -11,6 +11,7 @@
 	export let pressed: $$Props["pressed"] = undefined;
 	export let onPressedChange: $$Props["onPressedChange"] = undefined;
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { root },
@@ -42,6 +43,7 @@
 	<slot {builder} />
 {:else}
 	<button
+		bind:this={el}
 		use:melt={builder}
 		type="button"
 		{...$$restProps}
