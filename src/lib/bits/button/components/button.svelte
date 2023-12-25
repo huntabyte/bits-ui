@@ -7,6 +7,7 @@
 	export let href: $$Props["href"] = undefined;
 	export let type: $$Props["type"] = undefined;
 	export let builders: $$Props["builders"] = [];
+	export let el: $$Props["el"] = undefined;
 	const attrs = {
 		"data-button-root": ""
 	};
@@ -15,6 +16,7 @@
 {#if builders && builders.length}
 	<!-- svelte-ignore a11y-no-static-element-interactions -->
 	<svelte:element
+		bind:this={el}
 		this={href ? "a" : "button"}
 		type={href ? undefined : type}
 		{href}
