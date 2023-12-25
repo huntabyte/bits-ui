@@ -63,7 +63,7 @@ export type KeydownClickEvents = {
 	keydown: KeyboardEvent;
 };
 
-export type DOMEl<T extends HTMLElement = HTMLDivElement> = Expand<{
+export type DOMEl<T extends Element = HTMLElement> = Expand<{
 	/**
 	 * Wheter to expose the underlying DOM element.
 	 */
