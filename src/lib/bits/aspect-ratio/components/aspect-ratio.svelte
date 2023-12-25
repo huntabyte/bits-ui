@@ -3,6 +3,7 @@
 
 	type $$Props = Props;
 	export let ratio: $$Props["ratio"] = 1 / 1;
+	export let el: $$Props["el"] = undefined;
 
 	const attrs = {
 		"data-aspect-ratio-root": ""
@@ -15,6 +16,7 @@
 	style:padding-bottom="{100 / ratio}%"
 >
 	<div
+		bind:this={el}
 		style:position="absolute"
 		style:top="0"
 		style:right="0"
