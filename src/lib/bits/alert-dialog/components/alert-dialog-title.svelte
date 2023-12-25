@@ -8,6 +8,7 @@
 	export let level: $$Props["level"] = "h2";
 	export let asChild: $$Props["asChild"] = false;
 	export let id: $$Props["id"] = undefined;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { title },
@@ -27,7 +28,12 @@
 {#if asChild}
 	<slot {builder} />
 {:else}
-	<svelte:element this={level} use:melt={builder} {...$$restProps}>
+	<svelte:element
+		this={level}
+		bind:this={el}
+		use:melt={builder}
+		{...$$restProps}
+	>
 		<slot {builder} />
 	</svelte:element>
 {/if}

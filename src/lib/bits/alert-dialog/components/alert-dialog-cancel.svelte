@@ -8,6 +8,7 @@
 	type $$Events = CancelEvents;
 
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { close }
@@ -24,6 +25,7 @@
 	<slot {builder} />
 {:else}
 	<button
+		bind:this={el}
 		use:melt={builder}
 		type="button"
 		{...$$restProps}
