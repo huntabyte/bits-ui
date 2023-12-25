@@ -8,6 +8,7 @@
 	type $$Events = Events;
 
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { root }
@@ -23,7 +24,12 @@
 {#if asChild}
 	<slot {builder} />
 {:else}
-	<label use:melt={builder} {...$$restProps} on:m-mousedown={dispatch}>
+	<label
+		bind:this={el}
+		use:melt={builder}
+		{...$$restProps}
+		on:m-mousedown={dispatch}
+	>
 		<slot {builder} />
 	</label>
 {/if}
