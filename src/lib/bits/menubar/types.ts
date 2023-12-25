@@ -1,4 +1,4 @@
-import type { HTMLDivAttributes } from "$lib/internal/index.js";
+import type { DOMEl, HTMLDivAttributes } from "$lib/internal/index.js";
 import type { Props as MenubarProps } from "./_types.js";
 
 import type {
@@ -28,7 +28,7 @@ import type {
 	SubContentEvents
 } from "$lib/bits/menu/types.js";
 
-type Props = MenubarProps & HTMLDivAttributes;
+type Props = MenubarProps & HTMLDivAttributes & DOMEl<HTMLDivElement>;
 
 export type {
 	Props,
