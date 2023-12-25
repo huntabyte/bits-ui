@@ -1,4 +1,4 @@
-import type { HTMLDivAttributes, Transition } from "$lib/internal/index.js";
+import type { DOMEl, HTMLDivAttributes, Transition } from "$lib/internal/index.js";
 import type { HTMLButtonAttributes } from "svelte/elements";
 import type { CustomEventHandler } from "$lib";
 import type * as I from "./_types.js";
@@ -9,10 +9,10 @@ type ContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
 	Out extends Transition = Transition
-> = I.ContentProps<T, In, Out> & HTMLDivAttributes;
+> = I.ContentProps<T, In, Out> & HTMLDivAttributes & DOMEl;
 
-type TriggerProps = I.TriggerProps & HTMLButtonAttributes;
-type ArrowProps = I.ArrowProps & HTMLDivAttributes;
+type TriggerProps = I.TriggerProps & HTMLButtonAttributes & DOMEl<HTMLButtonElement>;
+type ArrowProps = I.ArrowProps & HTMLDivAttributes & DOMEl;
 
 type TriggerEvents<T extends Element = HTMLButtonElement> = {
 	blur: CustomEventHandler<FocusEvent, T>;
