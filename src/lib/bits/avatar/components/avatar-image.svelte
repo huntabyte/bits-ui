@@ -8,6 +8,7 @@
 	export let src: $$Props["src"] = undefined;
 	export let alt: $$Props["alt"] = undefined;
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const attrs = getAttrs("image");
 
@@ -20,5 +21,5 @@
 {#if asChild}
 	<slot {builder} />
 {:else}
-	<img use:melt={builder} {alt} {...$$restProps} />
+	<img bind:this={el} use:melt={builder} {alt} {...$$restProps} />
 {/if}
