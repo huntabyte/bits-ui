@@ -8,6 +8,7 @@
 	type $$Events = InputEvents;
 
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { input }
@@ -24,6 +25,7 @@
 	<slot {builder} />
 {:else}
 	<input
+		bind:this={el}
 		use:melt={builder}
 		{...$$restProps}
 		on:m-keydown={dispatch}
