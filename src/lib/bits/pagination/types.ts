@@ -1,15 +1,15 @@
 import type { HTMLButtonAttributes } from "svelte/elements";
 import type { CustomEventHandler } from "$lib";
 import type * as I from "./_types.js";
-import type { HTMLDivAttributes } from "$lib/internal/types.js";
+import type { DOMEl, HTMLDivAttributes } from "$lib/internal/types.js";
 
-type Props = I.Props & HTMLDivAttributes;
+type Props = I.Props & HTMLDivAttributes & DOMEl<HTMLDivElement>;
 
-type PrevButtonProps = I.PrevButtonProps & HTMLButtonAttributes;
+type PrevButtonProps = I.PrevButtonProps & HTMLButtonAttributes & DOMEl<HTMLButtonElement>;
 
-type NextButtonProps = I.NextButtonProps & HTMLButtonAttributes;
+type NextButtonProps = I.NextButtonProps & HTMLButtonAttributes & DOMEl<HTMLButtonElement>;
 
-type PageProps = I.PageProps & HTMLButtonAttributes;
+type PageProps = I.PageProps & HTMLButtonAttributes & DOMEl<HTMLButtonElement>;
 
 /**
  * Events
