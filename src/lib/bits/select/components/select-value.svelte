@@ -6,6 +6,7 @@
 
 	export let placeholder: $$Props["placeholder"] = "";
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		states: { selectedLabel }
@@ -18,7 +19,7 @@
 {#if asChild}
 	<slot {label} {attrs} />
 {:else}
-	<span {...$$restProps} {...attrs}>
+	<span bind:this={el} {...$$restProps} {...attrs}>
 		{label ? label : placeholder}
 	</span>
 {/if}
