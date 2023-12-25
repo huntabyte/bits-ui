@@ -3,7 +3,7 @@ import type { CustomEventHandler } from "$lib";
 import type { HTMLInputAttributes } from "svelte/elements";
 import type * as I from "./_types.js";
 
-type Props = I.Props & HTMLDivAttributes & DOMEl<HTMLDivElement>;
+type Props = I.Props & HTMLDivAttributes & DOMEl;
 
 type InputProps = I.InputProps & HTMLInputAttributes & DOMEl<HTMLInputElement>;
 

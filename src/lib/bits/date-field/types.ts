@@ -6,11 +6,11 @@ type Props = I.Props;
 
 type LabelProps = I.LabelProps & HTMLSpanAttributes & DOMEl<HTMLSpanElement>;
 
-type SegmentProps = I.SegmentProps & HTMLDivAttributes & DOMEl<HTMLDivElement>;
+type SegmentProps = I.SegmentProps & HTMLDivAttributes & DOMEl;
 
-type InputProps = I.InputProps & HTMLDivAttributes & DOMEl<HTMLDivElement>;
+type InputProps = I.InputProps & HTMLDivAttributes & DOMEl;
 
-type DescriptionProps = I.DescriptionProps & HTMLDivAttributes & DOMEl<HTMLDivElement>;
+type DescriptionProps = I.DescriptionProps & HTMLDivAttributes & DOMEl;
 
 type SegmentEvents = {
 	click: CustomEventHandler<MouseEvent, HTMLDivElement>;

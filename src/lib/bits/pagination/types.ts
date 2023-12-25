@@ -3,7 +3,7 @@ import type { CustomEventHandler } from "$lib";
 import type * as I from "./_types.js";
 import type { DOMEl, HTMLDivAttributes } from "$lib/internal/types.js";
 
-type Props = I.Props & HTMLDivAttributes & DOMEl<HTMLDivElement>;
+type Props = I.Props & HTMLDivAttributes & DOMEl;
 
 type PrevButtonProps = I.PrevButtonProps & HTMLButtonAttributes & DOMEl<HTMLButtonElement>;
 

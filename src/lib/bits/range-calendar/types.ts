@@ -9,15 +9,15 @@ import type {
 import type * as I from "./_types.js";
 import type { CustomEventHandler } from "$lib";
 
-type Props = I.Props & Omit<HTMLDivAttributes, "placeholder"> & DOMEl<HTMLDivElement>;
+type Props = I.Props & Omit<HTMLDivAttributes, "placeholder"> & DOMEl;
 
 type PrevButtonProps = I.PrevButtonProps & HTMLButtonAttributes & DOMEl<HTMLButtonElement>;
 
 type NextButtonProps = I.NextButtonProps & HTMLButtonAttributes & DOMEl<HTMLButtonElement>;
 
-type HeadingProps = I.HeadingProps & HTMLDivAttributes & DOMEl<HTMLDivElement>;
+type HeadingProps = I.HeadingProps & HTMLDivAttributes & DOMEl;
 
-type HeaderProps = I.HeaderProps & HTMLDivAttributes & DOMEl;
+type HeaderProps = I.HeaderProps & HTMLDivAttributes & DOMEl<Element>;
 
 type GridProps = I.GridProps & HTMLTableAttributes & DOMEl<HTMLTableElement>;
 
@@ -37,7 +37,7 @@ type GridRowProps = I.GridRowProps &
 
 type CellProps = I.CellProps & HTMLTdAttributes & DOMEl<HTMLTableCellElement>;
 
-type DayProps = I.DayProps & HTMLDivAttributes & DOMEl<HTMLDivElement>;
+type DayProps = I.DayProps & HTMLDivAttributes & DOMEl;
 
 /**
  * Events

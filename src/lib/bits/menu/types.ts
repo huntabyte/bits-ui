@@ -9,15 +9,15 @@ import type { HTMLAnchorAttributes, HTMLButtonAttributes } from "svelte/elements
 import type * as I from "$lib/bits/menu/_types.js";
 import type { ContentProps } from "$lib/bits/floating/types.js";
 
-type Props = I.Props & DOMEl<HTMLDivElement>;
+type Props = I.Props & DOMEl;
 
-type CheckboxItemProps = I.CheckboxItemProps & HTMLDivAttributes & DOMEl<HTMLDivElement>;
+type CheckboxItemProps = I.CheckboxItemProps & HTMLDivAttributes & DOMEl;
 
-type RadioGroupProps = I.RadioGroupProps & HTMLDivAttributes & DOMEl<HTMLDivElement>;
+type RadioGroupProps = I.RadioGroupProps & HTMLDivAttributes & DOMEl;
 
-type RadioItemProps = I.RadioItemProps & HTMLDivAttributes & DOMEl<HTMLDivElement>;
+type RadioItemProps = I.RadioItemProps & HTMLDivAttributes & DOMEl;
 
-type GroupProps = I.GroupProps & HTMLDivAttributes & DOMEl<HTMLDivElement>;
+type GroupProps = I.GroupProps & HTMLDivAttributes & DOMEl;
 
 type AnchorElement = HTMLAnchorAttributes & {
 	href?: HTMLAnchorAttributes["href"];
@@ -25,29 +25,29 @@ type AnchorElement = HTMLAnchorAttributes & {
 
 type DivElement = HTMLDivAttributes & {
 	href?: never;
-} & DOMEl<HTMLDivElement>;
+} & DOMEl;
 
 type ItemProps = I.ItemProps & (AnchorElement | DivElement);
 
-type CheckboxIndicatorProps = I.CheckboxIndicatorProps & HTMLDivAttributes & DOMEl<HTMLDivElement>;
+type CheckboxIndicatorProps = I.CheckboxIndicatorProps & HTMLDivAttributes & DOMEl;
 
-type RadioIndicatorProps = I.RadioIndicatorProps & HTMLDivAttributes & DOMEl<HTMLDivElement>;
+type RadioIndicatorProps = I.RadioIndicatorProps & HTMLDivAttributes & DOMEl;
 
-type LabelProps = I.LabelProps & HTMLDivAttributes & DOMEl<HTMLDivElement>;
+type LabelProps = I.LabelProps & HTMLDivAttributes & DOMEl;
 
-type SeparatorProps = I.SeparatorProps & HTMLDivAttributes & DOMEl<HTMLDivElement>;
+type SeparatorProps = I.SeparatorProps & HTMLDivAttributes & DOMEl;
 
-type SubProps = I.SubProps & DOMEl<HTMLDivElement>;
+type SubProps = I.SubProps & DOMEl;
 
-type SubTriggerProps = I.SubTriggerProps & HTMLDivAttributes & DOMEl<HTMLDivElement>;
+type SubTriggerProps = I.SubTriggerProps & HTMLDivAttributes & DOMEl;
 
 // Trigger for context menu
-type ContextTriggerProps = I.TriggerProps & HTMLDivAttributes & DOMEl<HTMLDivElement>;
+type ContextTriggerProps = I.TriggerProps & HTMLDivAttributes & DOMEl;
 
 // Trigger for dropdown menu & menubar menu
 type DropdownTriggerProps = I.TriggerProps & HTMLButtonAttributes & DOMEl<HTMLButtonElement>;
 
-type ArrowProps = I.ArrowProps & HTMLDivAttributes & DOMEl<HTMLDivElement>;
+type ArrowProps = I.ArrowProps & HTMLDivAttributes & DOMEl;
 
 type ItemEvents<T extends Element = HTMLDivElement> = {
 	click: CustomEventHandler<MouseEvent, T>;

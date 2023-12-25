@@ -11,9 +11,9 @@ type ContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
 	Out extends Transition = Transition
-> = I.ContentProps<T, In, Out> & HTMLDivAttributes & DOMEl<HTMLDivElement>;
+> = I.ContentProps<T, In, Out> & HTMLDivAttributes & DOMEl;
 
-type ArrowProps = I.ArrowProps & HTMLDivAttributes & DOMEl<HTMLDivElement>;
+type ArrowProps = I.ArrowProps & HTMLDivAttributes & DOMEl;
 
 type TriggerEvents<T extends Element = HTMLAnchorElement> = {
 	click: CustomEventHandler<MouseEvent, T>;

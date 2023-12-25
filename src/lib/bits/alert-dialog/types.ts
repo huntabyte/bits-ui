@@ -20,11 +20,11 @@ type ContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
 	Out extends Transition = Transition
-> = I.ContentProps<T, In, Out> & HTMLDivAttributes & DOMEl<HTMLDivElement>;
+> = I.ContentProps<T, In, Out> & HTMLDivAttributes & DOMEl;
 
-type DescriptionProps = I.DescriptionProps & HTMLDivAttributes & DOMEl<HTMLDivElement>;
+type DescriptionProps = I.DescriptionProps & HTMLDivAttributes & DOMEl;
 
-type PortalProps = I.PortalProps & HTMLDivAttributes & DOMEl<HTMLDivElement>;
+type PortalProps = I.PortalProps & HTMLDivAttributes & DOMEl;
 
 type TitleProps = I.TitleProps & HTMLHeadingAttributes & DOMEl<HTMLHeadingElement>;
 

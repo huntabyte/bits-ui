@@ -10,7 +10,7 @@ type TriggerProps = I.TriggerProps & HTMLButtonAttributes & DOMEl<HTMLButtonElem
 
 type CloseProps = I.ContentProps & HTMLButtonAttributes & DOMEl<HTMLButtonElement>;
 
-type ArrowProps = I.ArrowProps & HTMLDivAttributes & DOMEl<HTMLDivElement>;
+type ArrowProps = I.ArrowProps & HTMLDivAttributes & DOMEl;
 
 type TriggerEvents<T extends Element = HTMLButtonElement> = {
 	click: CustomEventHandler<MouseEvent, T>;

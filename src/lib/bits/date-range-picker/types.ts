@@ -29,10 +29,10 @@ import type { SegmentEvents } from "$lib/bits/date-range-field/types.js";
 
 type Props = I.Props;
 type LabelProps = I.Props & HTMLSpanAttributes & DOMEl<HTMLSpanElement>;
-type SegmentProps = I.SegmentProps & HTMLDivAttributes & DOMEl<HTMLDivElement>;
-type InputProps = I.InputProps & HTMLDivAttributes & DOMEl<HTMLDivElement>;
-type DescriptionProps = I.DescriptionProps & HTMLDivAttributes & DOMEl<HTMLDivElement>;
-type CalendarProps = I.CalendarProps & HTMLDivAttributes & DOMEl<HTMLDivElement>;
+type SegmentProps = I.SegmentProps & HTMLDivAttributes & DOMEl;
+type InputProps = I.InputProps & HTMLDivAttributes & DOMEl;
+type DescriptionProps = I.DescriptionProps & HTMLDivAttributes & DOMEl;
+type CalendarProps = I.CalendarProps & HTMLDivAttributes & DOMEl;
 
 export type {
 	Props,

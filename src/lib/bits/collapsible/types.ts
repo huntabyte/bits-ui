@@ -3,13 +3,13 @@ import type { CustomEventHandler } from "$lib/index.js";
 import type { HTMLButtonAttributes } from "svelte/elements";
 import type * as I from "./_types.js";
 
-type Props = I.Props & HTMLDivAttributes & DOMEl<HTMLDivElement>;
+type Props = I.Props & HTMLDivAttributes & DOMEl;
 
 type ContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
 	Out extends Transition = Transition
-> = I.ContentProps<T, In, Out> & HTMLDivAttributes & DOMEl<HTMLDivElement>;
+> = I.ContentProps<T, In, Out> & HTMLDivAttributes & DOMEl;
 
 type TriggerProps = I.TriggerProps & HTMLButtonAttributes & DOMEl<HTMLButtonElement>;
 

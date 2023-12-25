@@ -5,7 +5,7 @@ import type * as I from "./_types.js";
 
 type Props = I.Props & HTMLButtonAttributes & DOMEl<HTMLButtonElement>;
 
-type IndicatorProps = I.IndicatorProps & HTMLDivAttributes & DOMEl<HTMLDivElement>;
+type IndicatorProps = I.IndicatorProps & HTMLDivAttributes & DOMEl;
 
 type InputProps = Omit<HTMLInputAttributes, "value"> & DOMEl<HTMLInputElement>;
 

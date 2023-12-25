@@ -2,7 +2,7 @@ import type { DOMEl, HTMLDivAttributes, HTMLSpanAttributes } from "$lib/internal
 import type { HTMLImgAttributes } from "svelte/elements";
 import type * as I from "./_types.js";
 
-type Props = I.Props & HTMLDivAttributes & DOMEl<HTMLDivElement>;
+type Props = I.Props & HTMLDivAttributes & DOMEl;
 
 type ImageProps = I.ImageProps & HTMLImgAttributes & DOMEl<HTMLImageElement>;
 

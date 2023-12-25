@@ -28,7 +28,7 @@ import type {
 	SubContentEvents
 } from "$lib/bits/menu/types.js";
 
-type Props = MenubarProps & HTMLDivAttributes & DOMEl<HTMLDivElement>;
+type Props = MenubarProps & HTMLDivAttributes & DOMEl;
 
 export type {
 	Props,
