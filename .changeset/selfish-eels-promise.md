@@ -1,5 +1,5 @@
 ---
-"bits-ui": patch
+"bits-ui": minor
 ---
 
-expose el prop for DOM manipulation
+Expose `el` prop for all components to allow binding & interacting with the underlying element  
