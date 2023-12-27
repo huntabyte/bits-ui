@@ -83,7 +83,7 @@ export type DOMElement<T extends Element = HTMLDivElement> = Expand<{
 	 * Bind to the underlying DOM element of the component.
 	 */
 	el?: T;
-}>
+}>;
 
 export type AsChild = Expand<{
 	/**
