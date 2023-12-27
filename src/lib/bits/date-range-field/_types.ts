@@ -4,7 +4,7 @@
  * but we don't want to document the HTML attributes.
  */
 
-import type { Expand, OnChangeFn, AsChild, OmitDates } from "$lib/internal/index.js";
+import type { Expand, OnChangeFn, OmitDates, DOMElement } from "$lib/internal/index.js";
 import type { DateRange, SegmentPart } from "$lib/shared/index.js";
 import type { DateValue } from "@internationalized/date";
 import type { CreateDateFieldProps } from "@melt-ui/svelte";
@@ -46,9 +46,9 @@ type Props = Expand<
 	}
 >;
 
-type InputProps = AsChild;
+type InputProps = DOMElement;
 
-type LabelProps = AsChild;
+type LabelProps = DOMElement<HTMLSpanElement>;
 
 type SegmentProps = Expand<
 	{
@@ -61,7 +61,7 @@ type SegmentProps = Expand<
 		 * The part of the date to render.
 		 */
 		part: SegmentPart;
-	} & AsChild
+	} & DOMElement
 >;
 
 export type { Props, LabelProps, InputProps, SegmentProps };

@@ -2,7 +2,6 @@ import type { APISchema, DataAttrSchema, PropObj } from "@/types";
 import { focusProp } from "./extended-types/index.js";
 import { floatingPositioning } from "./floating.js";
 import {
-	asChild,
 	transitionProps,
 	portalProp,
 	enums,
@@ -12,7 +11,7 @@ import {
 } from "@/content/api-reference/helpers.js";
 import type * as Menu from "$lib/bits/menu/_types";
 import * as C from "@/content/constants";
-import { builderAndAttrsSlotProps } from "./helpers";
+import { builderAndAttrsSlotProps, domElProps } from "./helpers";
 
 const props = {
 	preventScroll: {
@@ -99,22 +98,22 @@ const subProps = {
 const contentProps = {
 	...transitionProps,
 	...floatingPositioning,
-	asChild
+	...domElProps("HTMLDivElement")
 } satisfies PropObj<Menu.ContentProps>;
 
 const subContentProps = {
 	...transitionProps,
 	...floatingPositioning,
-	asChild
+	...domElProps("HTMLDivElement")
 } satisfies PropObj<Menu.SubContentProps>;
 
 const arrowProps = {
-	asChild,
 	size: {
 		type: C.NUMBER,
 		default: "8",
 		description: "The height and width of the arrow in pixels."
-	}
+	},
+	...domElProps("HTMLDivElement")
 } satisfies PropObj<Menu.ArrowProps>;
 
 const checkboxItemProps = {
@@ -136,7 +135,7 @@ const checkboxItemProps = {
 		},
 		description: "A callback that is fired when the checkbox menu item's checked state changes."
 	},
-	asChild
+	...domElProps("HTMLDivElement")
 } satisfies PropObj<Menu.CheckboxItemProps>;
 
 const radioGroupProps = {
@@ -151,7 +150,7 @@ const radioGroupProps = {
 		},
 		description: "A callback that is fired when the radio group's value changes."
 	},
-	asChild
+	...domElProps("HTMLDivElement")
 } satisfies PropObj<Menu.RadioGroupProps>;
 
 const radioItemProps = {
@@ -166,15 +165,14 @@ const radioItemProps = {
 		description:
 			"Whether or not the radio menu item is disabled. Disabled items cannot be interacted with and are skipped when navigating with the keyboard."
 	},
-	asChild
+	...domElProps("HTMLDivElement")
 } satisfies PropObj<Menu.RadioItemProps>;
 
 const radioIndicatorProps = {
-	asChild
+	...domElProps("HTMLDivElement")
 } satisfies PropObj<Menu.RadioIndicatorProps>;
 
 const itemProps = {
-	asChild,
 	disabled: {
 		type: C.BOOLEAN,
 		default: C.FALSE,
@@ -183,7 +181,8 @@ const itemProps = {
 	href: {
 		type: C.STRING,
 		description: "An optional prop that when passed converts the dropdown item into an anchor tag."
-	}
+	},
+	...domElProps("HTMLDivElement")
 } satisfies PropObj<Menu.ItemProps & { href: string }>;
 
 const subTriggerProps = {
@@ -192,15 +191,15 @@ const subTriggerProps = {
 		default: C.FALSE,
 		description: "Whether or not the submenu trigger is disabled."
 	},
-	asChild
+	...domElProps("HTMLDivElement")
 } satisfies PropObj<Menu.SubTriggerProps>;
 
-const triggerProps = { asChild } satisfies PropObj<Menu.TriggerProps>;
-const groupProps = { asChild } satisfies PropObj<Menu.GroupProps>;
-const labelProps = { asChild } satisfies PropObj<Menu.LabelProps>;
-const separatorProps = { asChild } satisfies PropObj<Menu.SeparatorProps>;
+const triggerProps = domElProps("HTMLButtonElement") satisfies PropObj<Menu.TriggerProps>;
+const groupProps = domElProps("HTMLDivElement") satisfies PropObj<Menu.GroupProps>;
+const labelProps = domElProps("HTMLDivElement") satisfies PropObj<Menu.LabelProps>;
+const separatorProps = domElProps("HTMLDivElement") satisfies PropObj<Menu.SeparatorProps>;
 const checkboxIndicatorProps = {
-	asChild
+	...domElProps("HTMLDivElement")
 } satisfies PropObj<Menu.CheckboxIndicatorProps>;
 
 const STATE: DataAttrSchema = {

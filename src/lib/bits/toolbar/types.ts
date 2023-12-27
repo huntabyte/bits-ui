@@ -1,17 +1,17 @@
-import type { DOMEl, HTMLDivAttributes } from "$lib/internal/index.js";
+import type { HTMLDivAttributes } from "$lib/internal/index.js";
 import type { HTMLAnchorAttributes, HTMLButtonAttributes } from "svelte/elements";
 import type * as I from "$lib/bits/toolbar/_types.js";
 import type { CustomEventHandler } from "$lib/index.js";
 
-type Props = I.Props & HTMLDivAttributes & DOMEl;
+type Props = I.Props & HTMLDivAttributes;
 
-type ButtonProps = I.ButtonProps & HTMLButtonAttributes & DOMEl<HTMLButtonElement>;
+type ButtonProps = I.ButtonProps & HTMLButtonAttributes;
 
-type LinkProps = I.LinkProps & HTMLAnchorAttributes & DOMEl<HTMLAnchorElement>;
+type LinkProps = I.LinkProps & HTMLAnchorAttributes;
 
-type GroupProps<T extends "single" | "multiple"> = I.GroupProps<T> & HTMLDivAttributes & DOMEl;
+type GroupProps<T extends "single" | "multiple"> = I.GroupProps<T> & HTMLDivAttributes;
 
-type GroupItemProps = I.GroupItemProps & HTMLButtonAttributes & DOMEl<HTMLButtonElement>;
+type GroupItemProps = I.GroupItemProps & HTMLButtonAttributes;
 
 /**
  * Events

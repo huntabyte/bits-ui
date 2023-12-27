@@ -3,9 +3,9 @@ import type { CustomEventHandler } from "$lib/index.js";
 import type { HTMLButtonAttributes, HTMLInputAttributes } from "svelte/elements";
 import type * as I from "./_types.js";
 
-type Props = I.Props & HTMLButtonAttributes & DOMEl<HTMLButtonElement>;
+type Props = I.Props & HTMLButtonAttributes;
 
-type IndicatorProps = I.IndicatorProps & HTMLDivAttributes & DOMEl;
+type IndicatorProps = I.IndicatorProps & HTMLDivAttributes;
 
 type InputProps = Omit<HTMLInputAttributes, "value"> & DOMEl<HTMLInputElement>;
 

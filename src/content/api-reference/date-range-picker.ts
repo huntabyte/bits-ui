@@ -1,11 +1,11 @@
 import type { APISchema } from "@/types";
 import * as C from "@/content/constants.js";
 import {
-	asChild,
 	weekdaysSlotProp,
 	enums,
 	monthsSlotProp,
-	union
+	union,
+	domElProps
 } from "@/content/api-reference/helpers.js";
 import type * as DateRangePicker from "$lib/bits/date-range-picker/_types.js";
 import { builderAndAttrsSlotProps, portalProp } from "./helpers";
@@ -211,8 +211,7 @@ const root: APISchema<DateRangePicker.Props> = {
 			},
 			description:
 				"The `start` value of the date range, which can exist prior to the true `value` being set, which is only set once a `start` and `end` value are selected. You can `bind:startValue` to a value to receive updates, but modifying this value outside the component will have no effect. To programmatically control the `start` value, use `bind:value` and update the `start` property of the `DateRange` object. This is provided as a convenience for use cases where you want to display the selected `start` value outside the component before the `value` is set."
-		},
-		asChild
+		}
 	},
 	slotProps: {
 		months: monthsSlotProp,
@@ -270,7 +269,7 @@ const calendar: APISchema<DateRangePicker.CalendarProps> = {
 const input: APISchema<DateRangePicker.InputProps> = {
 	title: "Input",
 	description: "The field input component which contains the segments of the date field.",
-	props: { asChild },
+	props: domElProps("HTMLDivElement"),
 	slotProps: {
 		...builderAndAttrsSlotProps,
 		segments: {

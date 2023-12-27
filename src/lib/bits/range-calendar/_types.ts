@@ -4,7 +4,7 @@
  * but we don't want to document the HTML attributes.
  */
 
-import type { AsChild, OnChangeFn } from "$lib/internal/index.js";
+import type { DOMElement, OnChangeFn } from "$lib/internal/index.js";
 import type { DateRange } from "$lib/shared/index.js";
 import type { DateValue } from "@internationalized/date";
 import type { CreateRangeCalendarProps } from "@melt-ui/svelte";
@@ -75,44 +75,42 @@ type Props = Expand<
 		 * the `value` is set.
 		 */
 		startValue?: DateValue | undefined;
-	} & AsChild
+	} & DOMElement
 >;
 
-type PrevButtonProps = AsChild;
+type PrevButtonProps = DOMElement<HTMLButtonElement>;
 
-type NextButtonProps = AsChild;
+type NextButtonProps = DOMElement<HTMLButtonElement>;
 
-type HeadingProps = AsChild;
+type HeadingProps = DOMElement;
 
-type HeaderProps = AsChild;
+type HeaderProps = DOMElement<HTMLElement>;
 
-type GridHeadProps = AsChild;
+type GridHeadProps = DOMElement<HTMLTableSectionElement>;
 
-type HeadCellProps = AsChild;
+type HeadCellProps = DOMElement<HTMLTableCellElement>;
 
-type GridProps = AsChild;
+type GridProps = DOMElement<HTMLTableElement>;
 
-type GridBodyProps = AsChild;
+type GridBodyProps = DOMElement<HTMLTableSectionElement>;
 
-type GridRowProps = AsChild;
+type GridRowProps = DOMElement<HTMLTableRowElement>;
 
-type BaseDayProps = Expand<
-	{
-		/**
-		 * The date value of the cell.
-		 */
-		date: DateValue;
+type BaseDayProps = Expand<{
+	/**
+	 * The date value of the cell.
+	 */
+	date: DateValue;
 
-		/**
-		 * The month value that the cell belongs to.
-		 */
-		month: DateValue;
-	} & AsChild
->;
+	/**
+	 * The month value that the cell belongs to.
+	 */
+	month: DateValue;
+}>;
 
-type CellProps = Expand<Omit<BaseDayProps, "month">>;
+type CellProps = Expand<Omit<BaseDayProps, "month"> & DOMElement<HTMLTableCellElement>>;
 
-type DayProps = Expand<BaseDayProps>;
+type DayProps = Expand<BaseDayProps & DOMElement>;
 
 export type {
 	Props,

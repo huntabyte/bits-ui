@@ -1,16 +1,16 @@
 import type { CustomEventHandler } from "$lib";
-import type { DOMEl, HTMLDivAttributes, HTMLSpanAttributes } from "$lib/internal/index.js";
+import type { HTMLDivAttributes, HTMLSpanAttributes } from "$lib/internal/index.js";
 import type * as I from "./_types.js";
 
 type Props = I.Props;
 
-type LabelProps = I.LabelProps & HTMLSpanAttributes & DOMEl<HTMLSpanElement>;
+type LabelProps = I.LabelProps & HTMLSpanAttributes;
 
-type SegmentProps = I.SegmentProps & HTMLDivAttributes & DOMEl;
+type SegmentProps = I.SegmentProps & HTMLDivAttributes;
 
-type InputProps = I.InputProps & HTMLDivAttributes & DOMEl;
+type InputProps = I.InputProps & HTMLDivAttributes;
 
-type DescriptionProps = I.DescriptionProps & HTMLDivAttributes & DOMEl;
+type DescriptionProps = I.DescriptionProps & HTMLDivAttributes;
 
 type SegmentEvents = {
 	click: CustomEventHandler<MouseEvent, HTMLDivElement>;

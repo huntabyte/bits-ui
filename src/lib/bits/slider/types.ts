@@ -3,13 +3,13 @@ import type { CustomEventHandler } from "$lib/index.js";
 import type { HTMLInputAttributes } from "svelte/elements";
 import type * as I from "./_types.js";
 
-type Props = I.Props & HTMLSpanAttributes & DOMEl<HTMLSpanElement>;
+type Props = I.Props & HTMLSpanAttributes;
 
-type RangeProps = I.RangeProps & HTMLSpanAttributes & DOMEl<HTMLSpanElement>;
+type RangeProps = I.RangeProps & HTMLSpanAttributes;
 
-type ThumbProps = I.ThumbProps & HTMLSpanAttributes & DOMEl<HTMLSpanElement>;
+type ThumbProps = I.ThumbProps & HTMLSpanAttributes;
 
-type TickProps = I.TickProps & HTMLSpanAttributes & DOMEl<HTMLSpanElement>;
+type TickProps = I.TickProps & HTMLSpanAttributes;
 
 type InputProps = Omit<HTMLInputAttributes, "value"> & DOMEl<HTMLInputElement>;
 

@@ -1,11 +1,11 @@
 import type { APISchema } from "@/types";
 import * as C from "@/content/constants.js";
 import {
-	asChild,
 	weekdaysSlotProp,
 	enums,
 	monthsSlotProp,
-	union
+	union,
+	domElProps
 } from "@/content/api-reference/helpers.js";
 import type * as DatePicker from "$lib/bits/date-picker/_types.js";
 import { builderAndAttrsSlotProps, portalProp } from "./helpers";
@@ -205,9 +205,7 @@ const root: APISchema<DatePicker.Props> = {
 			type: focusProp,
 			description: "Override the focus when the popover is closed."
 		},
-		portal: { ...portalProp("popover") },
-
-		asChild
+		portal: { ...portalProp("popover") }
 	},
 	slotProps: {
 		months: monthsSlotProp,
@@ -265,7 +263,7 @@ const calendar: APISchema<DatePicker.CalendarProps> = {
 const input: APISchema<DatePicker.InputProps> = {
 	title: "Input",
 	description: "The field input component which contains the segments of the date field.",
-	props: { asChild },
+	props: domElProps("HTMLDivElement"),
 	slotProps: {
 		...builderAndAttrsSlotProps,
 		segments: {

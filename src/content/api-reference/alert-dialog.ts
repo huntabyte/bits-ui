@@ -1,15 +1,15 @@
 import type { APISchema } from "@/types/api.js";
 import {
-	asChild,
+	domElProps,
 	enums,
 	idsSlotProp,
 	portalProp,
-	transitionProps
+	transitionProps,
+	builderAndAttrsSlotProps
 } from "@/content/api-reference/helpers.js";
 import * as C from "@/content/constants.js";
 import { focusProp } from "@/content/api-reference/extended-types/index.js";
 import type * as AlertDialog from "$lib/bits/alert-dialog/_types.js";
-import { builderAndAttrsSlotProps } from "./helpers";
 
 const root: APISchema<AlertDialog.Props> = {
 	title: "Root",
@@ -60,7 +60,7 @@ const root: APISchema<AlertDialog.Props> = {
 const action: APISchema<AlertDialog.ActionProps> = {
 	title: "Action",
 	description: "A button used to close the alert dialog by taking an action.",
-	props: { asChild },
+	props: domElProps("HTMLButtonElement"),
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -73,7 +73,7 @@ const action: APISchema<AlertDialog.ActionProps> = {
 const cancel: APISchema<AlertDialog.CancelProps> = {
 	title: "Cancel",
 	description: "A button used to close the alert dialog without taking an action.",
-	props: { asChild },
+	props: domElProps("HTMLButtonElement"),
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -86,7 +86,7 @@ const cancel: APISchema<AlertDialog.CancelProps> = {
 const content: APISchema<AlertDialog.ContentProps> = {
 	title: "Content",
 	description: "The content displayed within the alert dialog modal.",
-	props: { ...transitionProps, asChild },
+	props: { ...transitionProps, ...domElProps("HTMLDivElement") },
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -106,7 +106,7 @@ const title: APISchema<AlertDialog.TitleProps> = {
 	title: "Title",
 	description: "An accessibile title for the alert dialog.",
 	props: {
-		asChild,
+		...domElProps("HTMLHeadingElement"),
 		level: {
 			type: {
 				type: "enum",
@@ -127,7 +127,7 @@ const title: APISchema<AlertDialog.TitleProps> = {
 const description: APISchema<AlertDialog.DescriptionProps> = {
 	title: "Description",
 	description: "An accessibile description for the alert dialog.",
-	props: { asChild },
+	props: domElProps("HTMLDivElement"),
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -140,7 +140,7 @@ const description: APISchema<AlertDialog.DescriptionProps> = {
 const trigger: APISchema<AlertDialog.TriggerProps> = {
 	title: "Trigger",
 	description: "The element which opens the alert dialog on press.",
-	props: { asChild },
+	props: domElProps("HTMLButtonElement"),
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -153,7 +153,7 @@ const trigger: APISchema<AlertDialog.TriggerProps> = {
 const overlay: APISchema<AlertDialog.OverlayProps> = {
 	title: "Overlay",
 	description: "An overlay which covers the body when the alert dialog is open.",
-	props: { ...transitionProps, asChild },
+	props: { ...transitionProps, ...domElProps("HTMLDivElement") },
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{

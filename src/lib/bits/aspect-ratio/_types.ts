@@ -4,8 +4,12 @@
  * but we don't want to document the HTML attributes.
  */
 
-type Props = Expand<{
-	ratio: number;
-}>;
+import type { DOMEl } from "$lib/internal/index.js";
+
+type Props = Expand<
+	{
+		ratio: number;
+	} & DOMEl
+>;
 
 export type { Props };

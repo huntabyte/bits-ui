@@ -1,13 +1,13 @@
-import type { DOMEl, HTMLDivAttributes } from "$lib/internal/index.js";
+import type { HTMLDivAttributes } from "$lib/internal/index.js";
 import type { CustomEventHandler } from "$lib";
 import type { HTMLInputAttributes } from "svelte/elements";
 import type * as I from "./_types.js";
 
-type Props = I.Props & HTMLDivAttributes & DOMEl;
+type Props = I.Props & HTMLDivAttributes;
 
-type InputProps = I.InputProps & HTMLInputAttributes & DOMEl<HTMLInputElement>;
+type InputProps = I.InputProps & HTMLInputAttributes;
 
-type HiddenInputProps = I.HiddenInputProps & HTMLInputAttributes & DOMEl<HTMLInputElement>;
+type HiddenInputProps = I.HiddenInputProps & HTMLInputAttributes;
 
 type InputEvents = {
 	keydown: CustomEventHandler<KeyboardEvent, HTMLInputElement>;

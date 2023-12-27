@@ -1,4 +1,4 @@
-import type { DOMEl, HTMLDivAttributes, HTMLSpanAttributes } from "$lib/internal/index.js";
+import type { HTMLDivAttributes, HTMLSpanAttributes } from "$lib/internal/index.js";
 import type * as I from "./_types.js";
 import type {
 	CellProps,
@@ -28,11 +28,11 @@ import type {
 import type { SegmentEvents } from "$lib/bits/date-range-field/types.js";
 
 type Props = I.Props;
-type LabelProps = I.Props & HTMLSpanAttributes & DOMEl<HTMLSpanElement>;
-type SegmentProps = I.SegmentProps & HTMLDivAttributes & DOMEl;
-type InputProps = I.InputProps & HTMLDivAttributes & DOMEl;
-type DescriptionProps = I.DescriptionProps & HTMLDivAttributes & DOMEl;
-type CalendarProps = I.CalendarProps & HTMLDivAttributes & DOMEl;
+type LabelProps = I.LabelProps & HTMLSpanAttributes;
+type SegmentProps = I.SegmentProps & HTMLDivAttributes;
+type InputProps = I.InputProps & HTMLDivAttributes;
+type DescriptionProps = I.DescriptionProps & HTMLDivAttributes;
+type CalendarProps = I.CalendarProps & HTMLDivAttributes;
 
 export type {
 	Props,

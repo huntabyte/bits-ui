@@ -1,4 +1,4 @@
-import type { DOMEl, HTMLDivAttributes } from "$lib/internal";
+import type { HTMLDivAttributes } from "$lib/internal/index.js";
 import type {
 	HTMLAttributes,
 	HTMLButtonAttributes,
@@ -7,39 +7,32 @@ import type {
 	HTMLThAttributes
 } from "svelte/elements";
 import type * as I from "./_types.js";
-import type { CustomEventHandler } from "$lib";
+import type { CustomEventHandler } from "$lib/index.js";
 
 type Props<Multiple extends boolean = false> = I.Props<Multiple> &
-	Omit<HTMLDivAttributes, "placeholder"> &
-	DOMEl;
+	Omit<HTMLDivAttributes, "placeholder">;
 
-type PrevButtonProps = I.PrevButtonProps & HTMLButtonAttributes & DOMEl<HTMLButtonElement>;
+type PrevButtonProps = I.PrevButtonProps & HTMLButtonAttributes;
 
-type NextButtonProps = I.NextButtonProps & HTMLButtonAttributes & DOMEl<HTMLButtonElement>;
+type NextButtonProps = I.NextButtonProps & HTMLButtonAttributes;
 
-type HeadingProps = I.HeadingProps & HTMLDivAttributes & DOMEl;
+type HeadingProps = I.HeadingProps & HTMLDivAttributes;
 
-type HeaderProps = I.HeaderProps & HTMLDivAttributes & DOMEl<Element>;
+type HeaderProps = I.HeaderProps & HTMLDivAttributes;
 
-type GridProps = I.GridProps & HTMLTableAttributes & DOMEl<HTMLTableElement>;
+type GridProps = I.GridProps & HTMLTableAttributes;
 
-type GridHeadProps = I.GridHeadProps &
-	HTMLAttributes<HTMLTableSectionElement> &
-	DOMEl<HTMLTableSectionElement>;
+type GridHeadProps = I.GridHeadProps & HTMLAttributes<HTMLTableSectionElement>;
 
-type HeadCellProps = I.HeadCellProps & HTMLThAttributes & DOMEl<HTMLTableCellElement>;
+type HeadCellProps = I.HeadCellProps & HTMLThAttributes;
 
-type GridBodyProps = I.GridBodyProps &
-	HTMLAttributes<HTMLTableSectionElement> &
-	DOMEl<HTMLTableSectionElement>;
+type GridBodyProps = I.GridBodyProps & HTMLAttributes<HTMLTableSectionElement>;
 
-type GridRowProps = I.GridRowProps &
-	HTMLAttributes<HTMLTableRowElement> &
-	DOMEl<HTMLTableRowElement>;
+type GridRowProps = I.GridRowProps & HTMLAttributes<HTMLTableRowElement>;
 
-type CellProps = I.CellProps & HTMLTdAttributes & DOMEl<HTMLTableCellElement>;
+type CellProps = I.CellProps & HTMLTdAttributes;
 
-type DayProps = I.DayProps & HTMLDivAttributes & DOMEl;
+type DayProps = I.DayProps & HTMLDivAttributes;
 
 /**
  * Events
