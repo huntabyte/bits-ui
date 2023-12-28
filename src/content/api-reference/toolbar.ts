@@ -1,8 +1,13 @@
 import type { APISchema } from "@/types";
-import { asChild, enums } from "@/content/api-reference/helpers.js";
+import {
+	enums,
+	union,
+	builderAndAttrsSlotProps,
+	domElProps
+} from "@/content/api-reference/helpers.js";
 import type * as Toolbar from "$lib/bits/toolbar/_types.js";
 import * as C from "@/content/constants.js";
-import { union, builderAndAttrsSlotProps } from "./helpers";
+import {} from "./helpers";
 
 const root: APISchema<Toolbar.Props> = {
 	title: "Root",
@@ -21,7 +26,7 @@ const root: APISchema<Toolbar.Props> = {
 			},
 			description: "The orientation of the toolbar."
 		},
-		asChild
+		...domElProps("HTMLDivElement")
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
@@ -39,7 +44,7 @@ const root: APISchema<Toolbar.Props> = {
 const button: APISchema<Toolbar.ButtonProps> = {
 	title: "Button",
 	description: "A button in the toolbar.",
-	props: { asChild },
+	props: domElProps("HTMLButtonElement"),
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -52,7 +57,7 @@ const button: APISchema<Toolbar.ButtonProps> = {
 const link: APISchema<Toolbar.LinkProps> = {
 	title: "Link",
 	description: "A link in the toolbar.",
-	props: { asChild },
+	props: domElProps("HTMLAnchorElement"),
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -91,7 +96,7 @@ const group: APISchema<Toolbar.GroupProps<"multiple">> = {
 				definition: enums("single", "multiple")
 			}
 		},
-		asChild
+		...domElProps("HTMLDivElement")
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
@@ -116,7 +121,7 @@ const groupItem: APISchema<Toolbar.GroupItemProps> = {
 			type: C.BOOLEAN,
 			description: "Whether or not the item is disabled."
 		},
-		asChild
+		...domElProps("HTMLButtonElement")
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [

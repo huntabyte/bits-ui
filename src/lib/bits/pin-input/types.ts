@@ -7,6 +7,8 @@ type Props = I.Props & HTMLDivAttributes;
 
 type InputProps = I.InputProps & HTMLInputAttributes;
 
+type HiddenInputProps = I.HiddenInputProps & HTMLInputAttributes;
+
 type InputEvents = {
 	keydown: CustomEventHandler<KeyboardEvent, HTMLInputElement>;
 	input: CustomEventHandler<InputEvent, HTMLInputElement>;
@@ -15,8 +17,6 @@ type InputEvents = {
 	focus: CustomEventHandler<FocusEvent, HTMLInputElement>;
 	blur: CustomEventHandler<FocusEvent, HTMLInputElement>;
 };
-
-type HiddenInputProps = I.HiddenInputProps & HTMLInputAttributes;
 
 export type {
 	Props,

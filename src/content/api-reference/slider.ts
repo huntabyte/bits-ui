@@ -1,8 +1,7 @@
 import type { APISchema } from "@/types";
-import { asChild, enums } from "@/content/api-reference/helpers.js";
+import { enums, builderAndAttrsSlotProps, domElProps } from "@/content/api-reference/helpers.js";
 import type * as Slider from "$lib/bits/slider/_types.js";
 import * as C from "@/content/constants.js";
-import { builderAndAttrsSlotProps } from "./helpers";
 
 const root: APISchema<Slider.Props> = {
 	title: "Root",
@@ -48,7 +47,7 @@ const root: APISchema<Slider.Props> = {
 			type: C.NUMBER,
 			description: "The step value of the slider."
 		},
-		asChild
+		...domElProps("HTMLSpanElement")
 	},
 	slotProps: {
 		...builderAndAttrsSlotProps,
@@ -74,7 +73,7 @@ const root: APISchema<Slider.Props> = {
 const thumb: APISchema<Slider.ThumbProps> = {
 	title: "Thumb",
 	description: "A thumb on the slider.",
-	props: { asChild },
+	props: domElProps("HTMLSpanElement"),
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -87,7 +86,7 @@ const thumb: APISchema<Slider.ThumbProps> = {
 const range: APISchema<Slider.RangeProps> = {
 	title: "Range",
 	description: "The range of the slider.",
-	props: { asChild },
+	props: domElProps("HTMLSpanElement"),
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -100,7 +99,7 @@ const range: APISchema<Slider.RangeProps> = {
 const tick: APISchema<Slider.TickProps> = {
 	title: "Tick",
 	description: "A tick mark on the slider.",
-	props: { asChild },
+	props: domElProps("HTMLSpanElement"),
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{

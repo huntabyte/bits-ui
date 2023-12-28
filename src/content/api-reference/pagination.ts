@@ -1,8 +1,7 @@
 import type { APISchema } from "@/types";
 import type * as Pagination from "$lib/bits/pagination/_types.js";
 import * as C from "@/content/constants.js";
-import { asChild } from "@/content/api-reference/helpers.js";
-import { builderAndAttrsSlotProps } from "./helpers";
+import { builderAndAttrsSlotProps, domElProps } from "./helpers";
 import { pageItemProp } from "./extended-types";
 
 export const root: APISchema<Pagination.Props> = {
@@ -36,7 +35,7 @@ export const root: APISchema<Pagination.Props> = {
 			},
 			description: "A function called when the selected page changes."
 		},
-		asChild
+		...domElProps("HTMLDivElement")
 	}
 };
 
@@ -48,7 +47,7 @@ export const page: APISchema<Pagination.PageProps> = {
 			type: pageItemProp,
 			description: "The page item this component represents."
 		},
-		asChild
+		...domElProps("HTMLButtonElement")
 	},
 	slotProps: {
 		...builderAndAttrsSlotProps
@@ -68,9 +67,7 @@ export const page: APISchema<Pagination.PageProps> = {
 export const prevButton: APISchema<Pagination.PrevButtonProps> = {
 	title: "PrevButton",
 	description: "The previous button of the pagination.",
-	props: {
-		asChild
-	},
+	props: domElProps("HTMLButtonElement"),
 	slotProps: {
 		...builderAndAttrsSlotProps
 	},
@@ -85,9 +82,7 @@ export const prevButton: APISchema<Pagination.PrevButtonProps> = {
 export const nextButton: APISchema<Pagination.NextButtonProps> = {
 	title: "NextButton",
 	description: "The next button of the pagination.",
-	props: {
-		asChild
-	},
+	props: domElProps("HTMLButtonElement"),
 	slotProps: {
 		...builderAndAttrsSlotProps
 	},

@@ -5,6 +5,7 @@
 	type $$Props = ThumbProps;
 
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		states: { checked }
@@ -20,5 +21,5 @@
 {#if asChild}
 	<slot {attrs} checked={$checked} />
 {:else}
-	<span {...$$restProps} {...attrs} />
+	<span bind:this={el} {...$$restProps} {...attrs} />
 {/if}

@@ -1,17 +1,18 @@
 import type { HTMLAnchorAttributes, HTMLButtonAttributes } from "svelte/elements";
 import type * as I from "./_types.js";
+import type { DOMEl } from "$lib/internal/types.js";
 
 type AnchorElement = I.Props &
 	HTMLAnchorAttributes & {
 		href?: HTMLAnchorAttributes["href"];
 		type?: never;
-	};
+	} & DOMEl<HTMLAnchorElement>;
 
 type ButtonElement = I.Props &
 	HTMLButtonAttributes & {
 		type?: HTMLButtonAttributes["type"];
 		href?: never;
-	};
+	} & DOMEl<HTMLButtonElement>;
 
 type Props = AnchorElement | ButtonElement;
 

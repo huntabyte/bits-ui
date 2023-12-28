@@ -4,7 +4,7 @@
  * but we don't want to document the HTML attributes.
  */
 
-import type { AsChild, Expand, OnChangeFn } from "$lib/internal";
+import type { DOMElement, Expand, OnChangeFn } from "$lib/internal";
 import type { CreatePaginationProps, Page } from "@melt-ui/svelte";
 
 type OmitPaginationProps<T> = Omit<T, "page" | "defaultPage" | "onPageChange">;
@@ -22,15 +22,15 @@ type Props = Expand<
 		 * A callback function called when the page changes.
 		 */
 		onPageChange?: OnChangeFn<number>;
-	} & AsChild
+	} & DOMElement
 >;
 
 type PageProps = {
 	page: Page;
-} & AsChild;
+} & DOMElement<HTMLButtonElement>;
 
-type PrevButtonProps = AsChild;
+type PrevButtonProps = DOMElement<HTMLButtonElement>;
 
-type NextButtonProps = AsChild;
+type NextButtonProps = DOMElement<HTMLButtonElement>;
 
 export type { Props, PrevButtonProps, NextButtonProps, PageProps };

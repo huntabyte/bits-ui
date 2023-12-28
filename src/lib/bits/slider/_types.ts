@@ -4,7 +4,7 @@
  * but we don't want to document the HTML attributes.
  */
 import type { CreateSliderProps } from "@melt-ui/svelte";
-import type { Expand, OmitValue, OnChangeFn, AsChild } from "$lib/internal/index.js";
+import type { Expand, OmitValue, OnChangeFn, DOMElement } from "$lib/internal/index.js";
 
 type Props = Expand<
 	OmitValue<CreateSliderProps> & {
@@ -18,13 +18,13 @@ type Props = Expand<
 		 * A callback function called when the value changes.
 		 */
 		onValueChange?: OnChangeFn<number[]>;
-	} & AsChild
+	} & DOMElement<HTMLSpanElement>
 >;
 
-type RangeProps = AsChild;
+type RangeProps = DOMElement<HTMLSpanElement>;
 
-type ThumbProps = AsChild;
+type ThumbProps = DOMElement<HTMLSpanElement>;
 
-type TickProps = AsChild;
+type TickProps = DOMElement<HTMLSpanElement>;
 
 export type { Props, RangeProps, ThumbProps, TickProps };

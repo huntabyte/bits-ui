@@ -5,6 +5,7 @@
 	type $$Props = GridRowProps;
 
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const attrs = getAttrs("grid-row");
 </script>
@@ -12,7 +13,7 @@
 {#if asChild}
 	<slot {attrs} />
 {:else}
-	<tr {...$$restProps} {...attrs}>
+	<tr bind:this={el} {...$$restProps} {...attrs}>
 		<slot {attrs} />
 	</tr>
 {/if}

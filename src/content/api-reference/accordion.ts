@@ -1,8 +1,8 @@
 import type { APISchema } from "@/types";
 import * as C from "@/content/constants.js";
-import { union, enums, asChild, transitionProps } from "@/content/api-reference/helpers.js";
+import { union, enums, transitionProps } from "@/content/api-reference/helpers.js";
 import type * as Accordion from "$lib/bits/accordion/_types.js";
-import { builderAndAttrsSlotProps } from "./helpers";
+import { builderAndAttrsSlotProps, domElProps } from "./helpers";
 
 const root: APISchema<Accordion.Props<false>> = {
 	title: "Root",
@@ -32,7 +32,7 @@ const root: APISchema<Accordion.Props<false>> = {
 			},
 			description: "A callback function called when the active accordion item value changes."
 		},
-		asChild
+		...domElProps("HTMLDivElement")
 	},
 	slotProps: {
 		...builderAndAttrsSlotProps
@@ -66,7 +66,7 @@ const item: APISchema<Accordion.ItemProps> = {
 			type: "boolean",
 			description: "Whether or not the accordion item is disabled."
 		},
-		asChild
+		...domElProps("HTMLDivElement")
 	},
 	slotProps: {
 		...builderAndAttrsSlotProps
@@ -93,7 +93,7 @@ const item: APISchema<Accordion.ItemProps> = {
 const trigger: APISchema<Accordion.TriggerProps> = {
 	title: "Trigger",
 	description: "The accordion item trigger, which opens and closes the accordion item.",
-	props: { asChild },
+	props: { ...domElProps("HTMLButtonElement") },
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -120,7 +120,7 @@ const trigger: APISchema<Accordion.TriggerProps> = {
 const content: APISchema<Accordion.ContentProps> = {
 	title: "Content",
 	description: "The accordion item content, which is displayed when the item is open.",
-	props: { ...transitionProps, asChild },
+	props: { ...transitionProps, ...domElProps("HTMLDivElement") },
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -156,7 +156,7 @@ const header: APISchema<Accordion.HeaderProps> = {
 			description:
 				"The heading level to use for the header. This will be set as the `aria-level` attribute."
 		},
-		asChild
+		...domElProps("HTMLDivElement")
 	},
 	slotProps: {
 		...builderAndAttrsSlotProps

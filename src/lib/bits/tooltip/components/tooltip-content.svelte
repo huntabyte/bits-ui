@@ -30,6 +30,7 @@
 	export let fitViewport: $$Props["fitViewport"] = false;
 	export let strategy: $$Props["strategy"] = "absolute";
 	export let overlap: $$Props["overlap"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { content },
@@ -64,6 +65,7 @@
 	<slot {builder} />
 {:else if transition && $open}
 	<div
+		bind:this={el}
 		use:melt={builder}
 		transition:transition={transitionConfig}
 		{...$$restProps}
@@ -74,6 +76,7 @@
 	</div>
 {:else if inTransition && outTransition && $open}
 	<div
+		bind:this={el}
 		use:melt={builder}
 		in:inTransition={inTransitionConfig}
 		out:outTransition={outTransitionConfig}
@@ -85,6 +88,7 @@
 	</div>
 {:else if inTransition && $open}
 	<div
+		bind:this={el}
 		use:melt={builder}
 		in:inTransition={inTransitionConfig}
 		{...$$restProps}
@@ -95,6 +99,7 @@
 	</div>
 {:else if outTransition && $open}
 	<div
+		bind:this={el}
 		use:melt={builder}
 		out:outTransition={outTransitionConfig}
 		{...$$restProps}
@@ -105,6 +110,7 @@
 	</div>
 {:else if $open}
 	<div
+		bind:this={el}
 		use:melt={builder}
 		{...$$restProps}
 		on:m-pointerdown={dispatch}

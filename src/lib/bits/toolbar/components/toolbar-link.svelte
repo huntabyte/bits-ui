@@ -8,6 +8,7 @@
 	type $$Events = LinkEvents;
 
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { link }
@@ -25,6 +26,7 @@
 {:else}
 	<svelte:element
 		this={"a"}
+		bind:this={el}
 		use:melt={builder}
 		{...$$restProps}
 		on:m-keydown={dispatch}

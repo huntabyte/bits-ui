@@ -5,6 +5,7 @@
 	type $$Props = IndicatorProps;
 
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const { isSelected, value } = getItemIndicator();
 	const attrs = getAttrs("indicator");
@@ -13,7 +14,7 @@
 {#if asChild}
 	<slot {attrs} isSelected={$isSelected(value)} />
 {:else}
-	<div {...$$restProps} {...attrs}>
+	<div bind:this={el} {...$$restProps} {...attrs}>
 		{#if $isSelected(value)}
 			<slot {attrs} isSelected={$isSelected(value)} />
 		{/if}

@@ -7,6 +7,7 @@
 
 	export let asChild: $$Props["asChild"] = false;
 	export let id: $$Props["id"] = undefined;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { label },
@@ -26,7 +27,7 @@
 {#if asChild}
 	<slot {builder} />
 {:else}
-	<span use:melt={builder} {...$$restProps}>
+	<span bind:this={el} use:melt={builder} {...$$restProps}>
 		<slot {builder} />
 	</span>
 {/if}

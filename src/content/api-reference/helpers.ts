@@ -8,6 +8,36 @@ export const asChild = {
 	description: "Whether to use [render delegation](/docs/delegation) with this component or not."
 };
 
+type ElementKind =
+	| "HTMLDivElement"
+	| "HTMLButtonElement"
+	| "HTMLSpanElement"
+	| "HTMLAnchorElement"
+	| "HTMLTableCellElement"
+	| "HTMLTableSectionElement"
+	| "HTMLTableRowElement"
+	| "HTMLTableElement"
+	| "HTMLLabelElement"
+	| "HTMLHeadingElement"
+	| "HTMLImageElement"
+	| "HTMLInputElement"
+	| "HTMLElement";
+
+export function domElProps(elType: ElementKind) {
+	return {
+		asChild: {
+			type: C.BOOLEAN,
+			default: C.FALSE,
+			description: `Whether to use [render delegation](/docs/delegation) with this component or not.`
+		},
+		el: {
+			type: elType,
+			description:
+				"The underlying DOM element being rendered. You can bind to this to programatically interact with the element."
+		}
+	};
+}
+
 const builderSlotProp: PropSchema = {
 	type: {
 		type: C.OBJECT,
@@ -51,12 +81,12 @@ export const idsSlotProp: PropSchema = {
 };
 
 export const arrowProps = {
-	asChild,
 	size: {
 		type: C.NUMBER,
 		default: "8",
 		description: "The height and width of the arrow in pixels."
-	}
+	},
+	...domElProps("HTMLDivElement")
 };
 
 const transitionProp: PropSchema = {

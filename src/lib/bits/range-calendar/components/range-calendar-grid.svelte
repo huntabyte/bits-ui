@@ -6,6 +6,7 @@
 	type $$Props = GridProps;
 
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { grid }
@@ -19,7 +20,7 @@
 {#if asChild}
 	<slot {builder} />
 {:else}
-	<table use:melt={builder} {...$$restProps}>
+	<table bind:this={el} use:melt={builder} {...$$restProps}>
 		<slot {builder} />
 	</table>
 {/if}

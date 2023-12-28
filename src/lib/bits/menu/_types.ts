@@ -1,7 +1,7 @@
 /**
  * Shared internal types for the various menu components.
  */
-import type { AsChild, OmitChecked, OmitFloating, OnChangeFn } from "$lib/internal/index.js";
+import type { DOMElement, OmitChecked, OmitFloating, OnChangeFn } from "$lib/internal/index.js";
 import type {
 	CreateContextMenuCheckboxItemProps,
 	CreateContextMenuRadioGroupProps,
@@ -36,7 +36,7 @@ export type SubTriggerProps = Expand<
 		 * @defaultValue false;
 		 */
 		disabled?: boolean;
-	} & AsChild
+	} & DOMElement
 >;
 
 export type CheckboxItemProps = Expand<
@@ -53,7 +53,7 @@ export type CheckboxItemProps = Expand<
 		 * A callback function called when the checked state changes.
 		 */
 		onCheckedChange?: OnChangeFn<boolean | "indeterminate">;
-	} & AsChild
+	} & DOMElement
 >;
 
 export type RadioGroupProps = Expand<
@@ -69,10 +69,10 @@ export type RadioGroupProps = Expand<
 		 * A callback function called when the value changes.
 		 */
 		onValueChange?: OnChangeFn<CreateContextMenuRadioGroupProps["defaultValue"]>;
-	} & AsChild
+	} & DOMElement
 >;
 
-export type RadioItemProps = Expand<ContextMenuRadioItemProps & AsChild>;
+export type RadioItemProps = Expand<ContextMenuRadioItemProps & DOMElement>;
 
 export type SubProps = Expand<
 	OmitFloating<CreateContextSubmenuProps> & {
@@ -99,15 +99,15 @@ export type ItemProps = Expand<
 		 * @defaultValue false
 		 */
 		disabled?: boolean;
-	} & AsChild
+	} & DOMElement
 >;
 
 export type ArrowProps = FloatingArrowProps;
-export type GroupProps = AsChild;
-export type CheckboxIndicatorProps = AsChild;
-export type RadioIndicatorProps = AsChild;
-export type LabelProps = AsChild;
-export type SeparatorProps = AsChild;
-export type TriggerProps = AsChild;
+export type GroupProps = DOMElement;
+export type CheckboxIndicatorProps = DOMElement;
+export type RadioIndicatorProps = DOMElement;
+export type LabelProps = DOMElement;
+export type SeparatorProps = DOMElement;
+export type TriggerProps = DOMElement<HTMLElement>;
 
 export { ContentProps, ContentProps as SubContentProps };

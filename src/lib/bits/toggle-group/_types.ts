@@ -4,7 +4,7 @@
  * but we don't want to document the HTML attributes.
  */
 import type { CreateToggleGroupProps } from "@melt-ui/svelte";
-import type { AsChild, Expand, OmitValue, OnChangeFn } from "$lib/internal/index.js";
+import type { DOMElement, Expand, OmitValue, OnChangeFn } from "$lib/internal/index.js";
 
 type Props<T extends "single" | "multiple"> = Expand<
 	OmitValue<CreateToggleGroupProps<T>> & {
@@ -29,7 +29,7 @@ type Props<T extends "single" | "multiple"> = Expand<
 		 * to be selected at a time.
 		 */
 		type?: T;
-	} & AsChild
+	} & DOMElement
 >;
 
 type ItemProps = Expand<
@@ -49,7 +49,7 @@ type ItemProps = Expand<
 		 * @defaultValue false
 		 */
 		disabled?: boolean;
-	} & AsChild
+	} & DOMElement<HTMLButtonElement>
 >;
 
 export type { Props, ItemProps };

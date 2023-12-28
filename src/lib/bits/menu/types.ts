@@ -3,7 +3,7 @@
  * such as `DropdownMenu`, `Menubar` & `ContextMenu`.
  */
 
-import type { HTMLDivAttributes } from "$lib/internal/index.js";
+import type { DOMEl, HTMLDivAttributes } from "$lib/internal/index.js";
 import type { CustomEventHandler } from "$lib";
 import type { HTMLAnchorAttributes, HTMLButtonAttributes } from "svelte/elements";
 import type * as I from "$lib/bits/menu/_types.js";
@@ -21,13 +21,13 @@ type GroupProps = I.GroupProps & HTMLDivAttributes;
 
 type AnchorElement = HTMLAnchorAttributes & {
 	href?: HTMLAnchorAttributes["href"];
-};
+} & DOMEl<HTMLAnchorElement>;
 
 type DivElement = HTMLDivAttributes & {
 	href?: never;
-};
+} & DOMEl;
 
-type ItemProps = I.ItemProps & (AnchorElement | DivElement);
+type ItemProps = Omit<I.ItemProps, "el"> & (AnchorElement | DivElement);
 
 type CheckboxIndicatorProps = I.CheckboxIndicatorProps & HTMLDivAttributes;
 
@@ -42,10 +42,12 @@ type SubProps = I.SubProps;
 type SubTriggerProps = I.SubTriggerProps & HTMLDivAttributes;
 
 // Trigger for context menu
-type ContextTriggerProps = I.TriggerProps & HTMLDivAttributes;
+type ContextTriggerProps = Omit<I.TriggerProps, "el"> & HTMLDivAttributes & DOMEl;
 
 // Trigger for dropdown menu & menubar menu
-type DropdownTriggerProps = I.TriggerProps & HTMLButtonAttributes;
+type DropdownTriggerProps = Omit<I.TriggerProps, "el"> &
+	HTMLButtonAttributes &
+	DOMEl<HTMLButtonElement>;
 
 type ArrowProps = I.ArrowProps & HTMLDivAttributes;
 

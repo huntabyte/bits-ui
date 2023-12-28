@@ -9,6 +9,7 @@
 	export let id: $$Props["id"] = undefined;
 	export let part: $$Props["part"];
 	export let type: $$Props["type"];
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { startSegment, endSegment },
@@ -32,7 +33,7 @@
 {#if asChild}
 	<slot {builder} />
 {:else}
-	<div use:melt={builder} {...$$restProps}>
+	<div bind:this={el} use:melt={builder} {...$$restProps}>
 		<slot {builder} />
 	</div>
 {/if}

@@ -1,8 +1,7 @@
 import type { APISchema } from "@/types";
-import { asChild, enums } from "@/content/api-reference/helpers.js";
+import { enums, builderAndAttrsSlotProps, domElProps } from "@/content/api-reference/helpers.js";
 import type * as Toggle from "$lib/bits/toggle/_types.js";
 import * as C from "@/content/constants.js";
-import { builderAndAttrsSlotProps } from "./helpers";
 
 const root: APISchema<Toggle.Props> = {
 	title: "Root",
@@ -25,7 +24,7 @@ const root: APISchema<Toggle.Props> = {
 			type: C.BOOLEAN,
 			description: "Whether or not the switch is disabled."
 		},
-		asChild
+		...domElProps("HTMLButtonElement")
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [

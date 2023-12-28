@@ -8,6 +8,7 @@
 	type $$Events = ThumbEvents;
 
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { thumb }
@@ -23,5 +24,10 @@
 {#if asChild}
 	<slot {builder} />
 {:else}
-	<span use:melt={builder} {...$$restProps} on:m-keydown={dispatch} />
+	<span
+		bind:this={el}
+		use:melt={builder}
+		{...$$restProps}
+		on:m-keydown={dispatch}
+	/>
 {/if}

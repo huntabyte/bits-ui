@@ -9,6 +9,7 @@
 
 	export let asChild: $$Props["asChild"] = false;
 	export let id: $$Props["id"] = undefined;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { trigger },
@@ -30,6 +31,7 @@
 {:else}
 	<svelte:element
 		this={"a"}
+		bind:this={el}
 		use:melt={builder}
 		{...$$restProps}
 		{...attrs}

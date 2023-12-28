@@ -4,7 +4,7 @@
  * but we don't want to document the HTML attributes.
  */
 import type { CreateToggleProps } from "@melt-ui/svelte";
-import type { AsChild, Expand, OmitPressed, OnChangeFn } from "$lib/internal/index.js";
+import type { DOMElement, Expand, OmitPressed, OnChangeFn } from "$lib/internal/index.js";
 
 type Props = Expand<
 	OmitPressed<CreateToggleProps> & {
@@ -20,7 +20,7 @@ type Props = Expand<
 		 * A callback function called when the pressed state changes.
 		 */
 		onPressedChange?: OnChangeFn<boolean>;
-	} & AsChild
+	} & DOMElement<HTMLButtonElement>
 >;
 
 export type {

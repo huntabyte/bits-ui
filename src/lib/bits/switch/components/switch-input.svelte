@@ -4,6 +4,7 @@
 	import type { InputProps } from "../types.js";
 
 	type $$Props = InputProps;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { input },
@@ -14,6 +15,7 @@
 </script>
 
 <input
+	bind:this={el}
 	use:melt={$input}
 	name={$name}
 	disabled={$disabled}

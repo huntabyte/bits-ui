@@ -1,8 +1,7 @@
 import type { APISchema } from "@/types";
-import { asChild, enums } from "@/content/api-reference/helpers.js";
+import { enums, builderAndAttrsSlotProps, domElProps } from "@/content/api-reference/helpers.js";
 import * as C from "@/content/constants";
 import type * as Separator from "$lib/bits/separator/_types";
-import { builderAndAttrsSlotProps } from "./helpers";
 
 export const root: APISchema<Separator.Props> = {
 	title: "Root",
@@ -22,7 +21,7 @@ export const root: APISchema<Separator.Props> = {
 			description:
 				"Whether the separator is decorative or not, which will determine if it is announce by screen readers."
 		},
-		asChild
+		...domElProps("HTMLDivElement")
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [

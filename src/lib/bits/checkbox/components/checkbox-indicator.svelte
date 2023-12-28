@@ -5,6 +5,7 @@
 	type $$Props = IndicatorProps;
 
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		helpers: { isChecked, isIndeterminate },
@@ -26,7 +27,7 @@
 {#if asChild}
 	<slot {attrs} isChecked={$isChecked} isIndeterminate={$isIndeterminate} />
 {:else}
-	<div {...$$restProps} {...attrs}>
+	<div bind:this={el} {...$$restProps} {...attrs}>
 		<slot {attrs} isChecked={$isChecked} isIndeterminate={$isIndeterminate} />
 	</div>
 {/if}

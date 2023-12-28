@@ -5,8 +5,8 @@ import type {
 	OmitForceVisible,
 	Expand,
 	OnChangeFn,
-	AsChild,
-	TransitionProps
+	TransitionProps,
+	DOMElement
 } from "$lib/internal/index.js";
 import type {
 	CreateAccordionProps,
@@ -26,10 +26,10 @@ type Props<Multiple extends boolean> = Expand<
 		 * A callback function called when the value changes.
 		 */
 		onValueChange?: OnChangeFn<CreateAccordionProps<Multiple>["defaultValue"]>;
-	} & AsChild
+	} & DOMElement
 >;
 
-type ItemProps = Expand<ObjectVariation<AccordionItemProps> & AsChild>;
+type ItemProps = Expand<ObjectVariation<AccordionItemProps> & DOMElement>;
 
 type HeaderProps = Expand<
 	{
@@ -37,15 +37,15 @@ type HeaderProps = Expand<
 		 * The heading level of the accordion header.
 		 */
 		level?: ObjectVariation<AccordionHeadingProps>["level"];
-	} & AsChild
+	} & DOMElement
 >;
 
-type TriggerProps = AsChild;
+type TriggerProps = DOMElement<HTMLButtonElement>;
 
 type ContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
 	Out extends Transition = Transition
-> = Expand<TransitionProps<T, In, Out> & AsChild>;
+> = Expand<TransitionProps<T, In, Out> & DOMElement>;
 
 export type { Props, ItemProps, HeaderProps, TriggerProps, ContentProps };

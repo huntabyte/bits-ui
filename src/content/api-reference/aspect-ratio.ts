@@ -1,6 +1,7 @@
 import type { APISchema } from "@/types";
 import type * as AspectRatio from "$lib/bits/aspect-ratio/_types.js";
 import * as C from "@/content/constants";
+import { domElProps } from "./helpers";
 
 const root: APISchema<AspectRatio.Props> = {
 	title: "Root",
@@ -10,7 +11,8 @@ const root: APISchema<AspectRatio.Props> = {
 			type: C.NUMBER,
 			default: "1",
 			description: "The desired aspect ratio."
-		}
+		},
+		...domElProps("HTMLDivElement")
 	},
 	dataAttributes: [
 		{

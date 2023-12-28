@@ -6,6 +6,7 @@
 
 	export let date: $$Props["date"];
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		helpers: { isDateDisabled, isDateUnavailable }
@@ -21,7 +22,7 @@
 {#if asChild}
 	<slot {attrs} />
 {:else}
-	<td {...$$restProps} {...attrs}>
+	<td bind:this={el} {...$$restProps} {...attrs}>
 		<slot {attrs} />
 	</td>
 {/if}

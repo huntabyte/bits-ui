@@ -1,4 +1,4 @@
-import type { HTMLDivAttributes } from "$lib/internal";
+import type { HTMLDivAttributes } from "$lib/internal/index.js";
 import type {
 	HTMLAttributes,
 	HTMLButtonAttributes,
@@ -7,7 +7,7 @@ import type {
 	HTMLThAttributes
 } from "svelte/elements";
 import type * as I from "./_types.js";
-import type { CustomEventHandler } from "$lib";
+import type { CustomEventHandler } from "$lib/index.js";
 
 type Props<Multiple extends boolean = false> = I.Props<Multiple> &
 	Omit<HTMLDivAttributes, "placeholder">;

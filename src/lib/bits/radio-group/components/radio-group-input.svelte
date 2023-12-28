@@ -6,6 +6,7 @@
 	type $$Props = InputProps;
 
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { hiddenInput }
@@ -20,5 +21,5 @@
 {#if asChild}
 	<slot {builder} />
 {:else}
-	<input use:melt={builder} {...$$restProps} />
+	<input bind:this={el} use:melt={builder} {...$$restProps} />
 {/if}

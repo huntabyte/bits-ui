@@ -1,8 +1,12 @@
 import type { APISchema } from "@/types";
-import { asChild, enums } from "@/content/api-reference/helpers.js";
+import {
+	enums,
+	union,
+	builderAndAttrsSlotProps,
+	domElProps
+} from "@/content/api-reference/helpers.js";
 import type * as ToggleGroup from "$lib/bits/toggle-group/_types.js";
 import * as C from "@/content/constants.js";
-import { union, builderAndAttrsSlotProps } from "./helpers";
 
 const root: APISchema<ToggleGroup.Props<"multiple">> = {
 	title: "Root",
@@ -46,7 +50,7 @@ const root: APISchema<ToggleGroup.Props<"multiple">> = {
 			description: "The type of toggle group.",
 			type: enums("single", "multiple")
 		},
-		asChild
+		...domElProps("HTMLDivElement")
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
@@ -74,7 +78,7 @@ const item: APISchema<ToggleGroup.ItemProps> = {
 			type: C.BOOLEAN,
 			description: "Whether or not the switch is disabled."
 		},
-		asChild
+		...domElProps("HTMLButtonElement")
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
