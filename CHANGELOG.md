@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.12.0
+
+### Minor Changes
+
+- Expose `el` prop for all components to allow binding & interacting with the underlying element ([#244](https://github.com/huntabyte/bits-ui/pull/244))
+
 ## 0.11.8
 
 ### Patch Changes
