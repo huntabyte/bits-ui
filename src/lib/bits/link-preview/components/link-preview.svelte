@@ -11,6 +11,7 @@
 	export let closeOnOutsideClick: $$Props["closeOnOutsideClick"] = undefined;
 	export let closeOnEscape: $$Props["closeOnEscape"] = undefined;
 	export let portal: $$Props["portal"] = undefined;
+	export let onOutsideClick: $$Props["onOutsideClick"] = undefined;
 
 	const {
 		states: { open: localOpen },
@@ -23,6 +24,7 @@
 		closeOnOutsideClick,
 		closeOnEscape,
 		portal,
+		onOutsideClick,
 		onOpenChange: ({ next }) => {
 			if (open !== next) {
 				onOpenChange?.(next);
@@ -46,6 +48,7 @@
 	$: updateOption("closeOnOutsideClick", closeOnOutsideClick);
 	$: updateOption("closeOnEscape", closeOnEscape);
 	$: updateOption("portal", portal);
+	$: updateOption("onOutsideClick", onOutsideClick);
 </script>
 
 <slot ids={$idValues} />

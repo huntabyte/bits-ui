@@ -17,6 +17,7 @@
 	export let disableFocusFirstItem: $$Props["disableFocusFirstItem"] =
 		undefined;
 	export let closeOnItemClick: $$Props["closeOnItemClick"] = undefined;
+	export let onOutsideClick: $$Props["onOutsideClick"] = undefined;
 
 	const {
 		states: { open: localOpen },
@@ -33,6 +34,7 @@
 		closeFocus,
 		disableFocusFirstItem,
 		closeOnItemClick,
+		onOutsideClick,
 		onOpenChange: ({ next }) => {
 			if (open !== next) {
 				onOpenChange?.(next);
@@ -62,6 +64,7 @@
 	$: updateOption("disableFocusFirstItem", disableFocusFirstItem);
 	$: updateOption("typeahead", typeahead);
 	$: updateOption("closeOnItemClick", closeOnItemClick);
+	$: updateOption("onOutsideClick", onOutsideClick);
 </script>
 
 <slot menuIds={$idValues} />

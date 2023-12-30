@@ -9,7 +9,8 @@ import {
 	enums,
 	idsSlotProp,
 	domElProps,
-	builderAndAttrsSlotProps
+	builderAndAttrsSlotProps,
+	onOutsideClickProp
 } from "@/content/api-reference/helpers.js";
 import * as C from "@/content/constants.js";
 
@@ -58,7 +59,8 @@ export const root: APISchema<Popover.Props> = {
 			type: focusProp,
 			description: "Override the focus when the popover is closed."
 		},
-		portal: { ...portalProp("popover") }
+		portal: { ...portalProp("popover") },
+		onOutsideClick: onOutsideClickProp
 	},
 	slotProps: { ids: idsSlotProp }
 };

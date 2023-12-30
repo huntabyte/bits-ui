@@ -2,13 +2,14 @@
 	import { melt } from "@melt-ui/svelte";
 	import type { Transition } from "$lib/internal/index.js";
 	import { getCtx, getAttrs } from "../ctx.js";
-	import type { ContentProps } from "../types.js";
+	import type { ContentEvents, ContentProps } from "../types.js";
 
 	type T = $$Generic<Transition>;
 	type In = $$Generic<Transition>;
 	type Out = $$Generic<Transition>;
 
 	type $$Props = ContentProps<T, In, Out>;
+	type $$Events = ContentEvents;
 
 	export let transition: $$Props["transition"] = undefined;
 	export let transitionConfig: $$Props["transitionConfig"] = undefined;
@@ -43,6 +44,9 @@
 		transition:transition={transitionConfig}
 		use:melt={builder}
 		{...$$restProps}
+		on:pointerdown
+		on:pointermove
+		on:pointerup
 	>
 		<slot {builder} />
 	</div>
@@ -52,6 +56,9 @@
 		in:inTransition={inTransitionConfig}
 		out:outTransition={outTransitionConfig}
 		use:melt={builder}
+		on:pointerdown
+		on:pointermove
+		on:pointerup
 		{...$$restProps}
 	>
 		<slot {builder} />
@@ -61,6 +68,9 @@
 		bind:this={el}
 		in:inTransition={inTransitionConfig}
 		use:melt={builder}
+		on:pointerdown
+		on:pointermove
+		on:pointerup
 		{...$$restProps}
 	>
 		<slot {builder} />
@@ -70,12 +80,22 @@
 		bind:this={el}
 		out:outTransition={outTransitionConfig}
 		use:melt={builder}
+		on:pointerdown
+		on:pointermove
+		on:pointerup
 		{...$$restProps}
 	>
 		<slot {builder} />
 	</div>
 {:else if $open}
-	<div bind:this={el} use:melt={builder} {...$$restProps}>
+	<div
+		bind:this={el}
+		use:melt={builder}
+		on:pointerdown
+		on:pointermove
+		on:pointerup
+		{...$$restProps}
+	>
 		<slot {builder} />
 	</div>
 {/if}

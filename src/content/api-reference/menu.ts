@@ -11,7 +11,7 @@ import {
 } from "@/content/api-reference/helpers.js";
 import type * as Menu from "$lib/bits/menu/_types";
 import * as C from "@/content/constants";
-import { builderAndAttrsSlotProps, domElProps } from "./helpers";
+import { builderAndAttrsSlotProps, domElProps, onOutsideClickProp } from "./helpers";
 
 const props = {
 	preventScroll: {
@@ -73,7 +73,8 @@ const props = {
 		type: C.BOOLEAN,
 		default: C.TRUE,
 		description: "Whether or not to close the menu when an item is clicked."
-	}
+	},
+	onOutsideClick: onOutsideClickProp
 } satisfies PropObj<Menu.Props>;
 
 const subProps = {

@@ -6,7 +6,8 @@ import {
 	idsSlotProp,
 	portalProp,
 	transitionProps,
-	builderAndAttrsSlotProps
+	builderAndAttrsSlotProps,
+	onOutsideClickProp
 } from "@/content/api-reference/helpers.js";
 import { floatingPositioning } from "./floating.js";
 import type * as LinkPreview from "$lib/bits/link-preview/_types";
@@ -50,7 +51,8 @@ export const root: APISchema<LinkPreview.Props> = {
 			},
 			description: "A callback that fires when the open state changes."
 		},
-		portal: { ...portalProp("link preview") }
+		portal: { ...portalProp("link preview") },
+		onOutsideClick: onOutsideClickProp
 	},
 	slotProps: {
 		ids: idsSlotProp

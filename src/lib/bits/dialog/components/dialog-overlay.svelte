@@ -2,13 +2,14 @@
 	import { melt } from "@melt-ui/svelte";
 	import type { Transition } from "$lib/internal/index.js";
 	import { getCtx, getAttrs } from "../ctx.js";
-	import type { OverlayProps } from "../types.js";
+	import type { OverlayEvents, OverlayProps } from "../types.js";
 
 	type T = $$Generic<Transition>;
 	type In = $$Generic<Transition>;
 	type Out = $$Generic<Transition>;
 
 	type $$Props = OverlayProps<T, In, Out>;
+	type $$Events = OverlayEvents;
 
 	export let transition: $$Props["transition"] = undefined;
 	export let transitionConfig: $$Props["transitionConfig"] = undefined;
@@ -32,34 +33,43 @@
 {#if asChild && $open}
 	<slot {builder} />
 {:else if transition && $open}
+	<!-- svelte-ignore a11y-no-static-element-interactions -->
 	<div
+		on:mouseup
 		bind:this={el}
 		transition:transition={transitionConfig}
 		use:melt={builder}
 		{...$$restProps}
 	/>
 {:else if inTransition && outTransition && $open}
+	<!-- svelte-ignore a11y-no-static-element-interactions -->
 	<div
 		bind:this={el}
 		in:inTransition={inTransitionConfig}
 		out:outTransition={outTransitionConfig}
 		use:melt={builder}
+		on:mouseup
 		{...$$restProps}
 	/>
 {:else if inTransition && $open}
+	<!-- svelte-ignore a11y-no-static-element-interactions -->
 	<div
 		bind:this={el}
 		in:inTransition={inTransitionConfig}
 		use:melt={builder}
+		on:mouseup
 		{...$$restProps}
 	/>
 {:else if outTransition && $open}
+	<!-- svelte-ignore a11y-no-static-element-interactions -->
 	<div
 		bind:this={el}
 		out:outTransition={outTransitionConfig}
 		use:melt={builder}
+		on:mouseup
 		{...$$restProps}
 	/>
 {:else if $open}
-	<div bind:this={el} use:melt={builder} {...$$restProps} />
+	<!-- svelte-ignore a11y-no-static-element-interactions -->
+	<div bind:this={el} use:melt={builder} on:mouseup {...$$restProps} />
 {/if}

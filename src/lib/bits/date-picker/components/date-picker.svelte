@@ -28,6 +28,7 @@
 	export let calendarLabel: $$Props["calendarLabel"] = undefined;
 	export let weekdayFormat: $$Props["weekdayFormat"] = undefined;
 	export let numberOfMonths: $$Props["numberOfMonths"] = undefined;
+	export let onOutsideClick: $$Props["onOutsideClick"] = undefined;
 
 	const {
 		states: {
@@ -57,6 +58,7 @@
 		weekdayFormat,
 		numberOfMonths,
 		isDateUnavailable,
+		onOutsideClick,
 		onValueChange: ({ next }) => {
 			if (value !== next) {
 				onValueChange?.(next);
@@ -152,6 +154,7 @@
 	$: updateOption("calendarLabel", calendarLabel);
 	$: updateOption("weekdayFormat", weekdayFormat);
 	$: updateOption("numberOfMonths", numberOfMonths);
+	$: updateOption("onOutsideClick", onOutsideClick);
 </script>
 
 <slot ids={$idValues} isInvalid={$localIsInvalid} />

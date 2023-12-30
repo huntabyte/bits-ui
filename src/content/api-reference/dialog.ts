@@ -2,6 +2,7 @@ import type { APISchema } from "@/types";
 import {
 	enums,
 	idsSlotProp,
+	onOutsideClickProp,
 	portalProp,
 	transitionProps
 } from "@/content/api-reference/helpers.js";
@@ -49,7 +50,8 @@ export const root: APISchema<Dialog.Props> = {
 			type: focusProp,
 			description: "Override the focus when the dialog is closed."
 		},
-		portal: { ...portalProp("dialog") }
+		portal: { ...portalProp("dialog") },
+		onOutsideClick: onOutsideClickProp
 	},
 	slotProps: {
 		ids: idsSlotProp
