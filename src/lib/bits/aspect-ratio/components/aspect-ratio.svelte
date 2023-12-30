@@ -13,7 +13,7 @@
 <div
 	style:position="relative"
 	style:width="100%"
-	style:padding-bottom="{100 / ratio}%"
+	style:padding-bottom="{ratio ? 100 / ratio : 0}%"
 >
 	<div
 		bind:this={el}

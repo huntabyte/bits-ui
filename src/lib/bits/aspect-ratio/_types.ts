@@ -8,7 +8,7 @@ import type { DOMEl } from "$lib/internal/index.js";
 
 type Props = Expand<
 	{
-		ratio: number;
+		ratio?: number;
 	} & DOMEl
 >;
 
