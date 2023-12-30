@@ -3,7 +3,7 @@
  * to type-check our API documentation, which requires we document each prop,
  * but we don't want to document the HTML attributes.
  */
-import type { Expand, OnChangeFn, AsChild, OmitFloating } from "$lib/internal/index.js";
+import type { Expand, OnChangeFn, OmitFloating, DOMElement } from "$lib/internal/index.js";
 import type { ArrowProps, ContentProps } from "$lib/bits/floating/_types.js";
 import type { CreatePopoverProps } from "@melt-ui/svelte";
 
@@ -24,7 +24,7 @@ type Props = Expand<
 	}
 >;
 
-type TriggerProps = AsChild;
-type CloseProps = AsChild;
+type TriggerProps = DOMElement<HTMLButtonElement>;
+type CloseProps = DOMElement<HTMLButtonElement>;
 
 export type { Props, CloseProps, ArrowProps, ContentProps, TriggerProps };

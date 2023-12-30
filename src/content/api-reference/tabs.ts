@@ -1,8 +1,12 @@
 import type { APISchema } from "@/types";
 import * as C from "@/content/constants.js";
-import { union, enums, asChild } from "@/content/api-reference/helpers.js";
+import {
+	union,
+	enums,
+	builderAndAttrsSlotProps,
+	domElProps
+} from "@/content/api-reference/helpers.js";
 import type * as Tabs from "$lib/bits/tabs/_types.js";
-import { builderAndAttrsSlotProps } from "./helpers";
 
 const root: APISchema<Tabs.Props> = {
 	title: "Root",
@@ -45,7 +49,7 @@ const root: APISchema<Tabs.Props> = {
 			},
 			description: "The orientation of the tabs."
 		},
-		asChild
+		...domElProps("HTMLDivElement")
 	},
 	slotProps: {
 		...builderAndAttrsSlotProps,
@@ -70,7 +74,7 @@ const root: APISchema<Tabs.Props> = {
 const list: APISchema<Tabs.ListProps> = {
 	title: "List",
 	description: "The component containing the tab triggers.",
-	props: { asChild },
+	props: domElProps("HTMLDivElement"),
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -99,7 +103,7 @@ const trigger: APISchema<Tabs.TriggerProps> = {
 			type: C.BOOLEAN,
 			description: "Whether or not the tab is disabled."
 		},
-		asChild
+		...domElProps("HTMLButtonElement")
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
@@ -139,7 +143,7 @@ const content: APISchema<Tabs.ContentProps> = {
 			type: "string",
 			description: "The value of the tab this content represents."
 		},
-		asChild
+		...domElProps("HTMLDivElement")
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [

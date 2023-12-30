@@ -7,6 +7,7 @@
 	export let value: $$Props["value"];
 	export let disabled: $$Props["disabled"] = undefined;
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const { item, props } = setItem({ value, disabled });
 	const attrs = getAttrs("item");
@@ -18,7 +19,7 @@
 {#if asChild}
 	<slot {builder} />
 {:else}
-	<div use:melt={builder} {...$$restProps}>
+	<div bind:this={el} use:melt={builder} {...$$restProps}>
 		<slot {builder} />
 	</div>
 {/if}

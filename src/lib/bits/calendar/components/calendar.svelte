@@ -33,8 +33,7 @@
 	export let id: $$Props["id"] = undefined;
 	export let numberOfMonths: $$Props["numberOfMonths"] = undefined;
 	export let initialFocus: $$Props["initialFocus"] = false;
-
-	let el: HTMLElement | undefined = undefined;
+	export let el: $$Props["el"] = undefined;
 
 	onMount(() => {
 		if (!initialFocus || !el) return;

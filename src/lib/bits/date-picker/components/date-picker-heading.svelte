@@ -6,6 +6,7 @@
 	type $$Props = HeadingProps;
 
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { heading },
@@ -20,7 +21,7 @@
 {#if asChild}
 	<slot {builder} headingValue={$headingValue} />
 {:else}
-	<div use:melt={builder} {...$$restProps}>
+	<div bind:this={el} use:melt={builder} {...$$restProps}>
 		<slot {builder} headingValue={$headingValue}>
 			{$headingValue}
 		</slot>

@@ -6,7 +6,7 @@
 
 import type { CreateTabsProps, TabsTriggerProps } from "@melt-ui/svelte";
 import type {
-	AsChild,
+	DOMElement,
 	Expand,
 	ObjectVariation,
 	OmitValue,
@@ -32,17 +32,17 @@ type Props = Expand<
 		 * @defaultValue "horizontal"
 		 */
 		orientation?: CreateTabsProps["orientation"] & {};
-	} & AsChild
+	} & DOMElement
 >;
 
 type ContentProps = Expand<
 	{
 		value: string;
-	} & AsChild
+	} & DOMElement
 >;
 
-type TriggerProps = Expand<ObjectVariation<TabsTriggerProps> & AsChild>;
+type TriggerProps = Expand<ObjectVariation<TabsTriggerProps> & DOMElement<HTMLButtonElement>>;
 
-type ListProps = AsChild;
+type ListProps = DOMElement;
 
 export type { Props, ContentProps, TriggerProps, ListProps };

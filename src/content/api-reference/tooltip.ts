@@ -1,16 +1,16 @@
 import type { APISchema } from "@/types";
 import {
 	arrowProps,
-	asChild,
 	enums,
 	idsSlotProp,
 	portalProp,
-	transitionProps
+	transitionProps,
+	builderAndAttrsSlotProps,
+	domElProps
 } from "@/content/api-reference/helpers.js";
 import { floatingPositioning } from "./floating.js";
 import type * as Tooltip from "$lib/bits/tooltip/_types";
 import * as C from "@/content/constants";
-import { builderAndAttrsSlotProps } from "./helpers";
 
 export const root: APISchema<Tooltip.Props> = {
 	title: "Root",
@@ -71,7 +71,7 @@ export const trigger: APISchema<Tooltip.TriggerProps> = {
 	title: "Trigger",
 	description:
 		"A component which triggers the opening and closing of the tooltip on hover or focus.",
-	props: { asChild },
+	props: domElProps("HTMLButtonElement"),
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -90,7 +90,7 @@ export const trigger: APISchema<Tooltip.TriggerProps> = {
 export const content: APISchema<Tooltip.ContentProps> = {
 	title: "Content",
 	description: "The contents of the tooltip which are displayed when the tooltip is open.",
-	props: { ...transitionProps, ...floatingPositioning, asChild },
+	props: { ...transitionProps, ...floatingPositioning, ...domElProps("HTMLDivElement") },
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{

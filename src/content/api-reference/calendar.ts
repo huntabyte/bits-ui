@@ -1,13 +1,8 @@
 import type { APISchema } from "@/types";
 import * as C from "@/content/constants.js";
-import {
-	asChild,
-	weekdaysSlotProp,
-	enums,
-	monthsSlotProp
-} from "@/content/api-reference/helpers.js";
+import { weekdaysSlotProp, enums, monthsSlotProp } from "@/content/api-reference/helpers.js";
 import type * as Calendar from "$lib/bits/calendar/_types.js";
-import { attrsSlotProp, builderAndAttrsSlotProps } from "./helpers";
+import { attrsSlotProp, builderAndAttrsSlotProps, domElProps } from "./helpers";
 
 export const root: APISchema<Calendar.Props> = {
 	title: "Root",
@@ -123,7 +118,7 @@ export const root: APISchema<Calendar.Props> = {
 				"If `true`, the calendar will focus the selected day, today, or the first day of the month in that order depending on what is visible when the calendar is mounted.",
 			default: C.FALSE
 		},
-		asChild
+		...domElProps("HTMLDivElement")
 	},
 	slotProps: {
 		months: monthsSlotProp,
@@ -154,11 +149,11 @@ export const cell: APISchema<Calendar.CellProps> = {
 	title: "Cell",
 	description: "A cell in the calendar grid.",
 	props: {
-		asChild,
 		date: {
 			type: "DateValue",
 			description: "The date for the cell."
-		}
+		},
+		...domElProps("HTMLTableCellElement")
 	},
 	slotProps: {
 		attrs: attrsSlotProp
@@ -179,7 +174,6 @@ export const day: APISchema<Calendar.DayProps> = {
 	title: "Day",
 	description: "A day in the calendar grid.",
 	props: {
-		asChild,
 		date: {
 			type: "DateValue",
 			description: "The date for the cell."
@@ -187,7 +181,8 @@ export const day: APISchema<Calendar.DayProps> = {
 		month: {
 			type: "DateValue",
 			description: "The current month the date is being displayed in."
-		}
+		},
+		...domElProps("HTMLDivElement")
 	},
 	slotProps: {
 		disabled: {
@@ -247,9 +242,7 @@ export const day: APISchema<Calendar.DayProps> = {
 export const grid: APISchema<Calendar.GridProps> = {
 	title: "Grid",
 	description: "The grid of dates in the calendar, typically representing a month.",
-	props: {
-		asChild
-	},
+	props: domElProps("HTMLTableElement"),
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -262,9 +255,7 @@ export const grid: APISchema<Calendar.GridProps> = {
 export const gridBody: APISchema<Calendar.GridBodyProps> = {
 	title: "GridBody",
 	description: "The body of the grid of dates in the calendar.",
-	props: {
-		asChild
-	},
+	props: domElProps("HTMLTableSectionElement"),
 	slotProps: { attrs: attrsSlotProp },
 	dataAttributes: [
 		{
@@ -277,9 +268,7 @@ export const gridBody: APISchema<Calendar.GridBodyProps> = {
 export const gridHead: APISchema<Calendar.GridHeadProps> = {
 	title: "GridHead",
 	description: "The head of the grid of dates in the calendar.",
-	props: {
-		asChild
-	},
+	props: domElProps("HTMLTableSectionElement"),
 	slotProps: {
 		attrs: attrsSlotProp
 	},
@@ -294,9 +283,7 @@ export const gridHead: APISchema<Calendar.GridHeadProps> = {
 export const gridRow: APISchema<Calendar.GridRowProps> = {
 	title: "GridRow",
 	description: "A row in the grid of dates in the calendar.",
-	props: {
-		asChild
-	},
+	props: domElProps("HTMLTableRowElement"),
 	slotProps: {
 		attrs: attrsSlotProp
 	},
@@ -311,9 +298,7 @@ export const gridRow: APISchema<Calendar.GridRowProps> = {
 export const headCell: APISchema<Calendar.HeadCellProps> = {
 	title: "HeadCell",
 	description: "A cell in the head of the grid of dates in the calendar.",
-	props: {
-		asChild
-	},
+	props: domElProps("HTMLTableCellElement"),
 	slotProps: {
 		attrs: attrsSlotProp
 	},
@@ -328,9 +313,7 @@ export const headCell: APISchema<Calendar.HeadCellProps> = {
 export const header: APISchema<Calendar.HeaderProps> = {
 	title: "Header",
 	description: "The header of the calendar.",
-	props: {
-		asChild
-	},
+	props: domElProps("HTMLElement"),
 	slotProps: {
 		attrs: attrsSlotProp
 	},
@@ -345,9 +328,7 @@ export const header: APISchema<Calendar.HeaderProps> = {
 export const heading: APISchema<Calendar.HeadingProps> = {
 	title: "Heading",
 	description: "The heading of the calendar.",
-	props: {
-		asChild
-	},
+	props: domElProps("HTMLDivElement"),
 	slotProps: {
 		...builderAndAttrsSlotProps,
 		headingValue: {
@@ -366,9 +347,7 @@ export const heading: APISchema<Calendar.HeadingProps> = {
 export const nextButton: APISchema<Calendar.NextButtonProps> = {
 	title: "NextButton",
 	description: "The next button of the calendar.",
-	props: {
-		asChild
-	},
+	props: domElProps("HTMLButtonElement"),
 	slotProps: {
 		...builderAndAttrsSlotProps
 	},
@@ -383,9 +362,7 @@ export const nextButton: APISchema<Calendar.NextButtonProps> = {
 export const prevButton: APISchema<Calendar.PrevButtonProps> = {
 	title: "PrevButton",
 	description: "The previous button of the calendar.",
-	props: {
-		asChild
-	},
+	props: domElProps("HTMLButtonElement"),
 	slotProps: {
 		...builderAndAttrsSlotProps
 	},

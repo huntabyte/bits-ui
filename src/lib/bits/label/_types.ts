@@ -1,5 +1,5 @@
-import type { AsChild } from "$lib/internal/types.js";
+import type { DOMElement } from "$lib/internal/types.js";
 
-type Props = AsChild;
+type Props = DOMElement<HTMLLabelElement>;
 
 export type { Props };

@@ -9,6 +9,7 @@
 
 	export let asChild: $$Props["asChild"] = undefined;
 	export let page: $$Props["page"];
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { pageTrigger }
@@ -26,6 +27,7 @@
 	<slot {builder} />
 {:else}
 	<button
+		bind:this={el}
 		type="button"
 		use:melt={builder}
 		on:m-click={dispatch}

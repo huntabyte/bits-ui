@@ -17,6 +17,7 @@
 	export let outTransition: $$Props["outTransition"] = undefined;
 	export let outTransitionConfig: $$Props["outTransitionConfig"] = undefined;
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { overlay },
@@ -32,12 +33,14 @@
 	<slot {builder} />
 {:else if transition && $open}
 	<div
+		bind:this={el}
 		transition:transition={transitionConfig}
 		use:melt={builder}
 		{...$$restProps}
 	/>
 {:else if inTransition && outTransition && $open}
 	<div
+		bind:this={el}
 		in:inTransition={inTransitionConfig}
 		out:outTransition={outTransitionConfig}
 		use:melt={builder}
@@ -45,16 +48,18 @@
 	/>
 {:else if inTransition && $open}
 	<div
+		bind:this={el}
 		in:inTransition={inTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
 	/>
 {:else if outTransition && $open}
 	<div
+		bind:this={el}
 		out:outTransition={outTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
 	/>
 {:else if $open}
-	<div use:melt={builder} {...$$restProps} />
+	<div bind:this={el} use:melt={builder} {...$$restProps} />
 {/if}

@@ -5,7 +5,7 @@
  */
 
 import type {
-	AsChild,
+	DOMElement,
 	Expand,
 	OmitOpen,
 	OnChangeFn,
@@ -31,7 +31,7 @@ type Props = Expand<
 	}
 >;
 
-type TriggerProps = AsChild;
+type TriggerProps = DOMElement<HTMLButtonElement>;
 
 type CloseProps = TriggerProps;
 
@@ -39,22 +39,22 @@ type ContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
 	Out extends Transition = Transition
-> = Expand<TransitionProps<T, In, Out> & AsChild>;
+> = Expand<TransitionProps<T, In, Out> & DOMElement>;
 
-type DescriptionProps = AsChild;
+type DescriptionProps = DOMElement;
 
 type OverlayProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
 	Out extends Transition = Transition
-> = Expand<TransitionProps<T, In, Out> & AsChild>;
+> = Expand<TransitionProps<T, In, Out> & DOMElement>;
 
-type PortalProps = AsChild;
+type PortalProps = DOMElement;
 
 type TitleProps = Expand<
 	{
 		level?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
-	} & AsChild
+	} & DOMElement<HTMLHeadingElement>
 >;
 
 export type {

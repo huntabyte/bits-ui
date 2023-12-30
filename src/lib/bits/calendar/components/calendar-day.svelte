@@ -10,6 +10,7 @@
 	export let date: $$Props["date"];
 	export let month: $$Props["month"];
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { cell },
@@ -29,7 +30,7 @@
 {#if asChild}
 	<slot {builder} {disabled} {unavailable} {selected} />
 {:else}
-	<div use:melt={builder} {...$$restProps} on:m-click={dispatch}>
+	<div bind:this={el} use:melt={builder} {...$$restProps} on:m-click={dispatch}>
 		<slot {builder} {disabled} {unavailable} {selected}>
 			{date.day}
 		</slot>

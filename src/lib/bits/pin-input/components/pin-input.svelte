@@ -14,6 +14,7 @@
 	export let onValueChange: $$Props["onValueChange"] = undefined;
 	export let id: $$Props["id"] = undefined;
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { root },
@@ -64,7 +65,7 @@
 {#if asChild}
 	<slot {...slotProps} />
 {:else}
-	<div use:melt={builder} {...$$restProps}>
+	<div bind:this={el} use:melt={builder} {...$$restProps}>
 		<slot {...slotProps} />
 	</div>
 {/if}

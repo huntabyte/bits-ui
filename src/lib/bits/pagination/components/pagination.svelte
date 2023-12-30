@@ -11,6 +11,7 @@
 	export let perPage: $$Props["perPage"] = undefined;
 	export let siblingCount: $$Props["siblingCount"] = undefined;
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { root },
@@ -39,7 +40,7 @@
 {#if asChild}
 	<slot {builder} pages={$pages} range={$range} />
 {:else}
-	<div use:melt={builder} {...$$restProps}>
+	<div bind:this={el} use:melt={builder} {...$$restProps}>
 		<slot {builder} pages={$pages} range={$range} />
 	</div>
 {/if}

@@ -3,15 +3,16 @@ import {
 	arrowProps,
 	asChild,
 	attrsSlotProp,
+	domElProps,
 	enums,
 	idsSlotProp,
 	portalProp,
-	transitionProps
+	transitionProps,
+	builderAndAttrsSlotProps
 } from "@/content/api-reference/helpers.js";
 import { floatingPositioning } from "./floating.js";
 import * as C from "@/content/constants.js";
 import type * as Select from "$lib/bits/select/_types.js";
-import { builderAndAttrsSlotProps } from "./helpers";
 
 export const root: APISchema<Select.Props> = {
 	title: "Root",
@@ -117,7 +118,7 @@ export const root: APISchema<Select.Props> = {
 export const trigger: APISchema<Select.TriggerProps> = {
 	title: "Trigger",
 	description: "The button element which toggles the select menu's open state.",
-	props: { asChild },
+	props: domElProps("HTMLButtonElement"),
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -140,7 +141,7 @@ export const trigger: APISchema<Select.TriggerProps> = {
 export const content: APISchema<Select.ContentProps> = {
 	title: "Content",
 	description: "The content/menu element which contains the select menu's items.",
-	props: { ...transitionProps, ...floatingPositioning, asChild },
+	props: { ...transitionProps, ...floatingPositioning, ...domElProps("HTMLDivElement") },
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -168,7 +169,7 @@ export const item: APISchema<Select.ItemProps> = {
 			description:
 				"Whether or not the select item is disabled. This will prevent interaction/selection."
 		},
-		asChild
+		...domElProps("HTMLDivElement")
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
@@ -219,14 +220,14 @@ export const input: APISchema<Select.InputProps> = {
 	title: "Input",
 	description:
 		"A hidden input element which is used to store the select menu's value, used for form submission. It receives the same value as the `Select.Value` component and can receive any props that a normal input element can receive.",
-	props: { asChild },
+	props: domElProps("HTMLInputElement"),
 	slotProps: { ...builderAndAttrsSlotProps }
 };
 
 export const group: APISchema<Select.GroupProps> = {
 	title: "Group",
 	description: "An accessible group of select menu items.",
-	props: { asChild },
+	props: domElProps("HTMLDivElement"),
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -240,7 +241,7 @@ export const label: APISchema<Select.LabelProps> = {
 	title: "Label",
 	description:
 		"A label for the select menu which will be skipped when navigating with the keyboard. This must be a child of the `Select.Group` component to be accessible.",
-	props: { asChild },
+	props: domElProps("HTMLLabelElement"),
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -253,7 +254,7 @@ export const label: APISchema<Select.LabelProps> = {
 export const separator: APISchema<Select.SeparatorProps> = {
 	title: "Separator",
 	description: "A visual separator for use between select items or groups.",
-	props: { asChild },
+	props: domElProps("HTMLDivElement"),
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -266,7 +267,7 @@ export const separator: APISchema<Select.SeparatorProps> = {
 export const indicator: APISchema<Select.IndicatorProps> = {
 	title: "Separator",
 	description: "A visual separator for use between select items or groups.",
-	props: { asChild },
+	props: domElProps("HTMLDivElement"),
 	slotProps: {
 		attrs: attrsSlotProp,
 		isSelected: {

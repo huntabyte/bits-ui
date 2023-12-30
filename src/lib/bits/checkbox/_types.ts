@@ -4,7 +4,7 @@
  * but we don't want to document the HTML attributes.
  */
 
-import type { Expand, OmitChecked, OnChangeFn, AsChild } from "$lib/internal/index.js";
+import type { Expand, OmitChecked, OnChangeFn, DOMElement } from "$lib/internal/index.js";
 import type { CreateCheckboxProps } from "@melt-ui/svelte";
 
 type Props = Expand<
@@ -21,10 +21,10 @@ type Props = Expand<
 		 * A callback function called when the checked state changes.
 		 */
 		onCheckedChange?: OnChangeFn<boolean | "indeterminate">;
-	} & AsChild
+	} & DOMElement<HTMLButtonElement>
 >;
 
-type IndicatorProps = AsChild;
+type IndicatorProps = DOMElement;
 
 export type {
 	Props,

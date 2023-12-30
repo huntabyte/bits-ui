@@ -3,7 +3,7 @@
  * to type-check our API documentation, which requires we document each prop,
  * but we don't want to document the HTML attributes.
  */
-import type { AsChild, Expand, OmitValue, OnChangeFn } from "$lib/internal/index.js";
+import type { DOMElement, Expand, OmitValue, OnChangeFn } from "$lib/internal/index.js";
 import type { CreateProgressProps } from "@melt-ui/svelte";
 
 type Props = Expand<
@@ -18,7 +18,7 @@ type Props = Expand<
 		 * A callback function called when the value changes.
 		 */
 		onValueChange?: OnChangeFn<number>;
-	} & AsChild
+	} & DOMElement
 >;
 
 export type { Props };

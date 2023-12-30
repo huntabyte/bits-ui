@@ -9,6 +9,7 @@
 	export let value: $$Props["value"];
 	export let disabled = false;
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { radioItem }
@@ -25,6 +26,7 @@
 	<slot {builder} />
 {:else}
 	<div
+		bind:this={el}
 		use:melt={builder}
 		{...$$restProps}
 		on:m-click={dispatch}

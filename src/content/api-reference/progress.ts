@@ -1,8 +1,8 @@
 import type { APISchema } from "@/types/index.js";
-import { asChild, enums } from "@/content/api-reference/helpers.js";
+import { enums } from "@/content/api-reference/helpers.js";
 import * as C from "@/content/constants.js";
 import type * as Progress from "$lib/bits/progress/_types.js";
-import { builderAndAttrsSlotProps } from "./helpers";
+import { builderAndAttrsSlotProps, domElProps } from "./helpers";
 
 export const root: APISchema<Progress.Props> = {
 	title: "Root",
@@ -26,7 +26,7 @@ export const root: APISchema<Progress.Props> = {
 			},
 			description: "A callback that fires when the value changes."
 		},
-		asChild
+		...domElProps("HTMLDivElement")
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [

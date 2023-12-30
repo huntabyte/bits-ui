@@ -1,8 +1,8 @@
 import type { APISchema } from "@/types";
-import { asChild, enums } from "@/content/api-reference/helpers.js";
+import { enums } from "@/content/api-reference/helpers.js";
 import type * as PinInput from "$lib/bits/pin-input/_types.js";
 import * as C from "@/content/constants.js";
-import { builderAndAttrsSlotProps, idsSlotProp } from "./helpers";
+import { builderAndAttrsSlotProps, idsSlotProp, domElProps } from "./helpers";
 
 const root: APISchema<PinInput.Props> = {
 	title: "Root",
@@ -38,7 +38,7 @@ const root: APISchema<PinInput.Props> = {
 			},
 			description: "A callback function called when the pin-input value changes."
 		},
-		asChild
+		...domElProps("HTMLDivElement")
 	},
 	slotProps: { ...builderAndAttrsSlotProps, ids: idsSlotProp },
 	dataAttributes: [
@@ -56,9 +56,7 @@ const root: APISchema<PinInput.Props> = {
 const input: APISchema<PinInput.InputProps> = {
 	title: "Input",
 	description: "The input component which contains the pin-input.",
-	props: {
-		asChild
-	},
+	props: domElProps("HTMLInputElement"),
 	dataAttributes: [
 		{
 			name: "pin-input-input",
@@ -74,9 +72,7 @@ const input: APISchema<PinInput.InputProps> = {
 const hiddenInput: APISchema<PinInput.HiddenInputProps> = {
 	title: "HiddenInput",
 	description: "The hidden input component which contains the pin-input.",
-	props: {
-		asChild
-	},
+	props: domElProps("HTMLInputElement"),
 	dataAttributes: [
 		{
 			name: "pin-input-hidden-input",

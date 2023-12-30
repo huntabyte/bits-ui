@@ -13,6 +13,7 @@
 	export let value: $$Props["value"] = undefined;
 	export let onCheckedChange: $$Props["onCheckedChange"] = undefined;
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { root },
@@ -51,6 +52,7 @@
 	<slot {builder} />
 {:else}
 	<button
+		bind:this={el}
 		use:melt={builder}
 		type="button"
 		{...$$restProps}

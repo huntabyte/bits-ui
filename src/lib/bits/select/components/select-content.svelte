@@ -29,6 +29,7 @@
 	export let collisionBoundary: $$Props["collisionBoundary"] = undefined;
 	export let sameWidth: $$Props["sameWidth"] = true;
 	export let fitViewport: $$Props["fitViewport"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { menu },
@@ -64,6 +65,7 @@
 	<slot {builder} />
 {:else if transition && $open}
 	<div
+		bind:this={el}
 		transition:transition={transitionConfig}
 		use:melt={builder}
 		{...$$restProps}
@@ -74,6 +76,7 @@
 	</div>
 {:else if inTransition && outTransition && $open}
 	<div
+		bind:this={el}
 		in:inTransition={inTransitionConfig}
 		out:outTransition={outTransitionConfig}
 		use:melt={builder}
@@ -85,6 +88,7 @@
 	</div>
 {:else if inTransition && $open}
 	<div
+		bind:this={el}
 		in:inTransition={inTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
@@ -95,6 +99,7 @@
 	</div>
 {:else if outTransition && $open}
 	<div
+		bind:this={el}
 		out:outTransition={outTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
@@ -105,6 +110,7 @@
 	</div>
 {:else if $open}
 	<div
+		bind:this={el}
 		use:melt={builder}
 		{...$$restProps}
 		on:m-pointerleave={dispatch}

@@ -8,6 +8,7 @@
 	export let onLoadingStatusChange: $$Props["onLoadingStatusChange"] =
 		undefined;
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		states: { loadingStatus: localLoadingStatus },
@@ -30,7 +31,7 @@
 {#if asChild}
 	<slot {attrs} />
 {:else}
-	<div {...$$restProps} {...attrs}>
+	<div bind:this={el} {...$$restProps} {...attrs}>
 		<slot {attrs} />
 	</div>
 {/if}

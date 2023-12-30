@@ -4,7 +4,7 @@
  * but we don't want to document the HTML attributes.
  */
 import type { CreateSelectProps, SelectOptionProps } from "@melt-ui/svelte";
-import type { AsChild, Expand, OmitFloating, OnChangeFn } from "$lib/internal/index.js";
+import type { DOMElement, Expand, OmitFloating, OnChangeFn } from "$lib/internal/index.js";
 import type { ContentProps, ArrowProps } from "$lib/bits/floating/_types.js";
 import type { Selected } from "$lib";
 
@@ -61,15 +61,15 @@ type Props<T = unknown, Multiple extends boolean = false> = Expand<
 	}
 >;
 
-type GroupProps = AsChild;
-type InputProps = AsChild;
-type LabelProps = AsChild;
-type ItemProps = Expand<SelectOptionProps & AsChild>;
-type SeparatorProps = AsChild;
+type GroupProps = DOMElement;
+type InputProps = DOMElement<HTMLInputElement>;
+type LabelProps = DOMElement;
+type ItemProps = Expand<SelectOptionProps & DOMElement>;
+type SeparatorProps = DOMElement;
 
-type IndicatorProps = AsChild;
+type IndicatorProps = DOMElement;
 
-type TriggerProps = AsChild;
+type TriggerProps = DOMElement<HTMLButtonElement>;
 
 type ValueProps = Expand<
 	{
@@ -79,7 +79,7 @@ type ValueProps = Expand<
 		 * @defaultValue ""
 		 */
 		placeholder?: string;
-	} & AsChild
+	} & DOMElement<HTMLSpanElement>
 >;
 
 export type {

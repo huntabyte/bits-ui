@@ -4,7 +4,7 @@
  * but we don't want to document the HTML attributes.
  */
 import type { CreateSwitchProps } from "@melt-ui/svelte";
-import type { AsChild, Expand, OmitChecked, OnChangeFn } from "$lib/internal/index.js";
+import type { DOMElement, Expand, OmitChecked, OnChangeFn } from "$lib/internal/index.js";
 import type { HTMLInputAttributes } from "svelte/elements";
 
 type Props = Expand<
@@ -33,9 +33,9 @@ type Props = Expand<
 		 * Switch props and cannot be overridden.
 		 */
 		inputAttrs?: Partial<Omit<HTMLInputAttributes, "value" | "name" | "type" | "checked">>;
-	} & AsChild
+	} & DOMElement<HTMLButtonElement>
 >;
 
-type ThumbProps = AsChild;
+type ThumbProps = DOMElement<HTMLSpanElement>;
 
 export type { Props, ThumbProps };

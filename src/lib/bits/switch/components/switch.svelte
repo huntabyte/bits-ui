@@ -16,6 +16,7 @@
 	export let required: $$Props["required"] = undefined;
 	export let asChild: $$Props["asChild"] = false;
 	export let inputAttrs: $$Props["inputAttrs"] = undefined;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { root },
@@ -53,6 +54,7 @@
 	<slot {builder} />
 {:else}
 	<button
+		bind:this={el}
 		use:melt={builder}
 		type="button"
 		{...$$restProps}

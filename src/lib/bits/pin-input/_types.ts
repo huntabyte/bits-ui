@@ -4,7 +4,7 @@
  * but we don't want to document the HTML attributes.
  */
 import type { CreatePinInputProps } from "@melt-ui/svelte";
-import type { AsChild, Expand, OmitIds, OmitValue, OnChangeFn } from "$lib/internal/index.js";
+import type { DOMElement, Expand, OmitIds, OmitValue, OnChangeFn } from "$lib/internal/index.js";
 
 type Props = Expand<
 	OmitIds<
@@ -20,12 +20,12 @@ type Props = Expand<
 			 * A callback function called when the value changes.
 			 */
 			onValueChange?: OnChangeFn<CreatePinInputProps["defaultValue"]>;
-		} & AsChild
+		} & DOMElement
 	>
 >;
 
-type InputProps = AsChild;
+type InputProps = DOMElement<HTMLInputElement>;
 
-type HiddenInputProps = AsChild;
+type HiddenInputProps = DOMElement<HTMLInputElement>;
 
 export type { Props, InputProps, HiddenInputProps };
