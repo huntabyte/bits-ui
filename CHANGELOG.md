@@ -1,5 +1,17 @@
 # @huntabyte/primitives
 
+## 0.13.0
+
+### Minor Changes
+
+- - Forward pointerdown pointerup & pointermove events for AlertDialog.Content and Dialog.Content ([#249](https://github.com/huntabyte/bits-ui/pull/249))
+  - Update Melt UI and add onOutsideClick prop to components that handle outside clicks. You can override the default behavior of closing the component by calling event.preventDefault() within that handler.
+  - Added RTL support for the Slider via the dir prop which can be set to "ltr" | "rtl" defaulting to "ltr"
+
+### Patch Changes
+
+- fix: Set aspect ratio prop optional as default value is setted ([#238](https://github.com/huntabyte/bits-ui/pull/238))
+
 ## 0.12.0
 
 ### Minor Changes
