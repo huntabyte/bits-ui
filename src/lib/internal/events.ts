@@ -8,6 +8,10 @@ type MeltEvent<T extends Event = Event> = {
 	preventDefault: () => void;
 };
 
+export type SvelteEvent<T extends Event = Event, U extends EventTarget = EventTarget> = T & {
+	currentTarget: EventTarget & U;
+};
+
 export function createDispatcher<M extends Element = Element>() {
 	const dispatch = createEventDispatcher();
 	return (e: MeltEvent) => {

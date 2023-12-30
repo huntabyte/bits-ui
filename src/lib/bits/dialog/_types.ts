@@ -4,6 +4,7 @@
  * but we don't want to document the HTML attributes.
  */
 
+import type { FocusProp } from "$lib/shared/index.js";
 import type {
 	DOMElement,
 	Expand,
@@ -15,7 +16,9 @@ import type {
 import type { CreateDialogProps } from "@melt-ui/svelte";
 
 type Props = Expand<
-	OmitOpen<Omit<CreateDialogProps, "role" | "ids" | "forceVisible">> & {
+	OmitOpen<
+		Omit<CreateDialogProps, "role" | "ids" | "forceVisible" | "openFocus" | "closeFocus">
+	> & {
 		/**
 		 * The open state of the dialog.
 		 * You can bind this to a boolean value to programmatically control the open state.
@@ -28,6 +31,16 @@ type Props = Expand<
 		 * A callback function called when the open state changes.
 		 */
 		onOpenChange?: OnChangeFn<boolean>;
+
+		/**
+		 * Override the default autofocus behavior of the dialog when it opens
+		 */
+		openFocus?: FocusProp;
+
+		/**
+		 * Override the default autofocus behavior of the dialog after close
+		 */
+		closeFocus?: FocusProp;
 	}
 >;
 

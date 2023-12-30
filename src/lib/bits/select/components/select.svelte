@@ -24,6 +24,7 @@
 	export let open: $$Props["open"] = undefined;
 	export let onOpenChange: $$Props["onOpenChange"] = undefined;
 	export let items: $$Props["items"] = [];
+	export let onOutsideClick: $$Props["onOutsideClick"] = undefined;
 
 	const {
 		states: { open: localOpen, selected: localSelected },
@@ -38,6 +39,7 @@
 		closeOnOutsideClick,
 		portal,
 		name,
+		onOutsideClick,
 		multiple: multiple as Multiple,
 		forceVisible: true,
 		defaultSelected: Array.isArray(selected)
@@ -98,6 +100,7 @@
 	$: updateOption("portal", portal);
 	$: updateOption("name", name);
 	$: updateOption("multiple", multiple);
+	$: updateOption("onOutsideClick", onOutsideClick);
 </script>
 
 <slot ids={$idValues} />

@@ -8,7 +8,8 @@ import {
 	idsSlotProp,
 	portalProp,
 	transitionProps,
-	builderAndAttrsSlotProps
+	builderAndAttrsSlotProps,
+	onOutsideClickProp
 } from "@/content/api-reference/helpers.js";
 import { floatingPositioning } from "./floating.js";
 import * as C from "@/content/constants.js";
@@ -110,7 +111,8 @@ export const root: APISchema<Select.Props> = {
 				definition: "Array<{ value: T; label?: string }>"
 			},
 			description: "An array of items to add type-safety to the `onSelectedChange` callback."
-		}
+		},
+		onOutsideClick: onOutsideClickProp
 	},
 	slotProps: { ids: idsSlotProp }
 };

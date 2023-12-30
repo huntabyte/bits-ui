@@ -5,7 +5,8 @@ import {
 	idsSlotProp,
 	portalProp,
 	transitionProps,
-	builderAndAttrsSlotProps
+	builderAndAttrsSlotProps,
+	onOutsideClickProp
 } from "@/content/api-reference/helpers.js";
 import * as C from "@/content/constants.js";
 import { focusProp } from "@/content/api-reference/extended-types/index.js";
@@ -53,7 +54,8 @@ const root: APISchema<AlertDialog.Props> = {
 			type: focusProp,
 			description: "Override the focus when the alert dialog is closed."
 		},
-		portal: { ...portalProp("alert dialog") }
+		portal: { ...portalProp("alert dialog") },
+		onOutsideClick: onOutsideClickProp
 	}
 };
 

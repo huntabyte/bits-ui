@@ -47,6 +47,15 @@ const root: APISchema<Slider.Props> = {
 			type: C.NUMBER,
 			description: "The step value of the slider."
 		},
+		dir: {
+			default: '"ltr"',
+			type: {
+				type: C.ENUM,
+				definition: enums("ltr", "rtl")
+			},
+			description:
+				"The reading direction of the slider. If set to 'rtl', the slider will be reversed for both `'horizontal'` and `'vertical'` orientations."
+		},
 		...domElProps("HTMLSpanElement")
 	},
 	slotProps: {

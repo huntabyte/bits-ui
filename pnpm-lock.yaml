@@ -6,11 +6,11 @@ settings:
 
 dependencies:
   '@internationalized/date':
-    specifier: ^3.5.0
-    version: 3.5.0
+    specifier: ^3.5.1
+    version: 3.5.1
   '@melt-ui/svelte':
-    specifier: 0.65.2
-    version: 0.65.2(svelte@4.2.3)
+    specifier: 0.67.0
+    version: 0.67.0(svelte@4.2.3)
   nanoid:
     specifier: ^5.0.4
     version: 5.0.4
@@ -24,7 +24,7 @@ devDependencies:
     version: 0.16.5(svelte@4.2.3)
   '@melt-ui/pp':
     specifier: ^0.1.4
-    version: 0.1.4(@melt-ui/svelte@0.65.2)(svelte@4.2.3)
+    version: 0.1.4(@melt-ui/svelte@0.67.0)(svelte@4.2.3)
   '@playwright/test':
     specifier: ^1.28.1
     version: 1.36.2
@@ -922,8 +922,8 @@ packages:
       vfile-message: 2.0.4
     dev: true
 
-  /@internationalized/date@3.5.0:
-    resolution: {integrity: sha512-nw0Q+oRkizBWMioseI8+2TeUPEyopJVz5YxoYVzR0W1v+2YytiYah7s/ot35F149q/xAg4F1gT/6eTd+tsUpFQ==}
+  /@internationalized/date@3.5.1:
+    resolution: {integrity: sha512-LUQIfwU9e+Fmutc/DpRTGXSdgYZLBegi4wygCWDSVmUdLTaMHsQyASDiJtREwanwKuQLq0hY76fCJ9J/9I2xOQ==}
     dependencies:
       '@swc/helpers': 0.5.3
 
@@ -1064,26 +1064,26 @@ packages:
       - supports-color
     dev: true
 
-  /@melt-ui/pp@0.1.4(@melt-ui/svelte@0.65.2)(svelte@4.2.3):
+  /@melt-ui/pp@0.1.4(@melt-ui/svelte@0.67.0)(svelte@4.2.3):
     resolution: {integrity: sha512-zR+Kl3CZJPJBHW8V7YcdQCMI/dVcnW9Ct3yGbVaIywYVStVRS7F9uEDOea3xLLT2WTGodQePzPlUn53yKFu87g==}
     engines: {pnpm: '>=8.6.3'}
     peerDependencies:
       '@melt-ui/svelte': '>= 0.29.0'
       svelte: ^3.55.0 || ^4.0.0 || ^5.0.0-next.1
     dependencies:
-      '@melt-ui/svelte': 0.65.2(svelte@4.2.3)
+      '@melt-ui/svelte': 0.67.0(svelte@4.2.3)
       estree-walker: 3.0.3
       svelte: 4.2.3
     dev: true
 
-  /@melt-ui/svelte@0.65.2(svelte@4.2.3):
-    resolution: {integrity: sha512-BpsSl9Bjp1++8U3+LaDOFUoX/PFQ9N7QWFhlFdUEZduhrbVyU70v9A459SKrQ+esFSjvh1AvqJYkMAUJXJlAmQ==}
+  /@melt-ui/svelte@0.67.0(svelte@4.2.3):
+    resolution: {integrity: sha512-fd9PsDE6sKbeyExagqH0nOpZEnDqyr2efbkjfmCRRYXVW5vlDEOPaSB+mg4Tjch121102sFH1Od+MlXwmeHy3A==}
     peerDependencies:
       svelte: '>=3 <5'
     dependencies:
       '@floating-ui/core': 1.5.0
       '@floating-ui/dom': 1.5.3
-      '@internationalized/date': 3.5.0
+      '@internationalized/date': 3.5.1
       dequal: 2.0.3
       focus-trap: 7.5.4
       nanoid: 4.0.2

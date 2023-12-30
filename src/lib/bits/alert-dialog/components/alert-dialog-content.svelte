@@ -42,6 +42,9 @@
 		bind:this={el}
 		transition:transition={transitionConfig}
 		use:melt={builder}
+		on:pointerdown
+		on:pointermove
+		on:pointerup
 		{...$$restProps}
 	>
 		<slot {builder} />
@@ -52,6 +55,9 @@
 		in:inTransition={inTransitionConfig}
 		out:outTransition={outTransitionConfig}
 		use:melt={builder}
+		on:pointerdown
+		on:pointermove
+		on:pointerup
 		{...$$restProps}
 	>
 		<slot {builder} />
@@ -61,6 +67,9 @@
 		bind:this={el}
 		in:inTransition={inTransitionConfig}
 		use:melt={builder}
+		on:pointerdown
+		on:pointermove
+		on:pointerup
 		{...$$restProps}
 	>
 		<slot {builder} />
@@ -70,12 +79,22 @@
 		bind:this={el}
 		out:outTransition={outTransitionConfig}
 		use:melt={builder}
+		on:pointerdown
+		on:pointermove
+		on:pointerup
 		{...$$restProps}
 	>
 		<slot {builder} />
 	</div>
 {:else if $open}
-	<div bind:this={el} use:melt={builder} {...$$restProps}>
+	<div
+		bind:this={el}
+		use:melt={builder}
+		on:pointerdown
+		on:pointermove
+		on:pointerup
+		{...$$restProps}
+	>
 		<slot {builder} />
 	</div>
 {/if}

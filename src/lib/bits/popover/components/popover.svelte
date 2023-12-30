@@ -13,6 +13,7 @@
 	export let onOpenChange: $$Props["onOpenChange"] = undefined;
 	export let openFocus: $$Props["openFocus"] = undefined;
 	export let closeFocus: $$Props["closeFocus"] = undefined;
+	export let onOutsideClick: $$Props["onOutsideClick"] = undefined;
 
 	const {
 		updateOption,
@@ -27,6 +28,7 @@
 		defaultOpen: open,
 		openFocus,
 		closeFocus,
+		onOutsideClick,
 		onOpenChange: ({ next }) => {
 			if (open !== next) {
 				onOpenChange?.(next);
@@ -53,6 +55,7 @@
 	$: updateOption("portal", portal);
 	$: updateOption("openFocus", openFocus);
 	$: updateOption("closeFocus", closeFocus);
+	$: updateOption("onOutsideClick", onOutsideClick);
 </script>
 
 <slot ids={$idValues} />

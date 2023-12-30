@@ -5,7 +5,8 @@ import {
 	enums,
 	monthsSlotProp,
 	union,
-	domElProps
+	domElProps,
+	onOutsideClickProp
 } from "@/content/api-reference/helpers.js";
 import type * as DatePicker from "$lib/bits/date-picker/_types.js";
 import { builderAndAttrsSlotProps, portalProp } from "./helpers";
@@ -205,7 +206,8 @@ const root: APISchema<DatePicker.Props> = {
 			type: focusProp,
 			description: "Override the focus when the popover is closed."
 		},
-		portal: { ...portalProp("popover") }
+		portal: { ...portalProp("popover") },
+		onOutsideClick: onOutsideClickProp
 	},
 	slotProps: {
 		months: monthsSlotProp,

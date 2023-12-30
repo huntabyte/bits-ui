@@ -22,4 +22,7 @@ export type SegmentPart =
 	| "timeZoneName"
 	| "literal";
 
+export type FocusTarget = string | HTMLElement | SVGElement | null;
+export type FocusProp = FocusTarget | ((defaultEl?: HTMLElement | null) => FocusTarget);
+
 export type { Month, Page, PageItem, Ellipsis };

@@ -146,3 +146,12 @@ export function escape(str: string): string {
 	}
 	return str;
 }
+
+export const onOutsideClickProp: PropSchema = {
+	type: {
+		type: C.FUNCTION,
+		definition: "(event: PointerEvent) => void"
+	},
+	description:
+		"A callback function called when a click occurs outside of the element. If `event.preventDefault()` is called, the default behavior of closing the element will be prevented."
+};
