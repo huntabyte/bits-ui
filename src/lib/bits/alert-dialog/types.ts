@@ -1,4 +1,9 @@
-import type { HTMLDivAttributes, HTMLHeadingAttributes, Transition } from "$lib/internal/index.js";
+import type {
+	HTMLDivAttributes,
+	HTMLHeadingAttributes,
+	SvelteEvent,
+	Transition
+} from "$lib/internal/index.js";
 import type { HTMLButtonAttributes } from "svelte/elements";
 import type { CustomEventHandler } from "$lib/index.js";
 import type * as I from "./_types.js";
@@ -28,6 +33,12 @@ type TriggerEvents<T extends Element = HTMLButtonElement> = {
 	keydown: CustomEventHandler<KeyboardEvent, T>;
 };
 
+type ContentEvents<T extends Element = HTMLElement> = {
+	pointerdown: SvelteEvent<PointerEvent, T>;
+	pointerup: SvelteEvent<PointerEvent, T>;
+	pointermove: SvelteEvent<PointerEvent, T>;
+};
+
 type ActionEvents = TriggerEvents;
 type CancelEvents = TriggerEvents;
 
@@ -44,5 +55,6 @@ export type {
 	//
 	TriggerEvents,
 	CancelEvents,
-	ActionEvents
+	ActionEvents,
+	ContentEvents
 };
