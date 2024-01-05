@@ -3,7 +3,7 @@
 
 	import { melt } from "@melt-ui/svelte";
 	import type { Transition } from "$lib/internal/types.js";
-	import { getCtx, getAttrs, updatePositioning } from "../ctx.js";
+	import { getCtx, updatePositioning } from "../ctx.js";
 	import type { ContentEvents, ContentProps } from "../types.js";
 
 	type T = $$Generic<Transition>;
@@ -34,7 +34,8 @@
 	const {
 		elements: { menu },
 		states: { open },
-		ids
+		ids,
+		getAttrs
 	} = getCtx();
 
 	const dispatch = createDispatcher();

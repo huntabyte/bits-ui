@@ -1,28 +1,24 @@
-import {
-	type DateRangeField as DateRangeFieldReturn,
-	type CreateDateRangeFieldProps,
-	createDateRangeField
-} from "@melt-ui/svelte";
+import { type CreateDateRangeFieldProps, createDateRangeField } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
 import { removeUndefined, getOptionUpdater, createBitAttrs } from "$lib/internal/index.js";
+import { getDateFieldData } from "../date-field/ctx";
 
-const NAME = "date-field";
-const PARTS = ["label", "field", "input", "segment"] as const;
-
-export const getAttrs = createBitAttrs(NAME, PARTS);
-
-type GetReturn = DateRangeFieldReturn;
+type GetReturn = Omit<ReturnType<typeof setCtx>, "updateOption">;
 
 export function setCtx(props: CreateDateRangeFieldProps) {
-	const dateField = createDateRangeField(removeUndefined(props));
-	setContext(NAME, dateField);
+	const { NAME, PARTS } = getDateFieldData();
+	const getAttrs = createBitAttrs(NAME, PARTS);
+	const dateRangeField = { ...createDateRangeField(removeUndefined(props)), getAttrs };
+
+	setContext(NAME, dateRangeField);
 
 	return {
-		...dateField,
-		updateOption: getOptionUpdater(dateField.options)
+		...dateRangeField,
+		updateOption: getOptionUpdater(dateRangeField.options)
 	};
 }
 
 export function getCtx() {
+	const { NAME } = getDateFieldData();
 	return getContext<GetReturn>(NAME);
 }

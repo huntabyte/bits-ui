@@ -5,7 +5,7 @@
 	import { createDispatcher } from "$lib/internal/events.js";
 	import { melt, type Month } from "@melt-ui/svelte";
 	import { onMount } from "svelte";
-	import { setCtx, getAttrs } from "../ctx.js";
+	import { setCtx } from "../ctx.js";
 	import type { Props } from "../types.js";
 
 	type Multiple = $$Generic<boolean>;
@@ -49,7 +49,8 @@
 			weekdays
 		},
 		updateOption,
-		ids
+		ids,
+		getAttrs
 	} = setCtx({
 		defaultPlaceholder: placeholder,
 		defaultValue: value,

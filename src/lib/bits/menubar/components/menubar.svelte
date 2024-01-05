@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { setCtx, getMenubarAttrs } from "../ctx.js";
+	import { setCtx } from "../ctx.js";
 	import type { Props } from "../types.js";
 	import { derived } from "svelte/store";
 
@@ -15,7 +15,8 @@
 	const {
 		elements: { menubar },
 		updateOption,
-		ids
+		ids,
+		getMenubarAttrs
 	} = setCtx({ loop, closeOnEscape });
 
 	const idValues = derived([ids.menubar], ([$menubarId]) => ({

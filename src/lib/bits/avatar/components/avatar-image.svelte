@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { getImage, getAttrs } from "../ctx.js";
+	import { getImage } from "../ctx.js";
 	import type { ImageProps } from "../types.js";
 
 	type $$Props = ImageProps;
@@ -10,7 +10,9 @@
 	export let asChild: $$Props["asChild"] = false;
 	export let el: $$Props["el"] = undefined;
 
-	const attrs = getAttrs("image");
+	const attrs = {
+		"data-bits-avatar-image": ""
+	};
 
 	$: image = getImage(src).elements.image;
 

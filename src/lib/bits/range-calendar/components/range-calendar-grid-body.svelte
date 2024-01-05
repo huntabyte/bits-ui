@@ -1,10 +1,12 @@
 <script lang="ts">
-	import { getAttrs } from "../ctx.js";
+	import { getCtx } from "../ctx.js";
 	import type { GridBodyProps } from "../types.js";
 
 	type $$Props = GridBodyProps;
 	export let asChild: $$Props["asChild"] = false;
 	export let el: $$Props["el"] = undefined;
+
+	const { getAttrs } = getCtx();
 
 	const attrs = getAttrs("grid-body");
 </script>

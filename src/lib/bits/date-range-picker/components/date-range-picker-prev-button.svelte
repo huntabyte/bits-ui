@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { getCalendarAttrs, getCtx } from "../ctx.js";
+	import { getCtx } from "../ctx.js";
 	import type { PrevButtonProps } from "../types.js";
 
 	type $$Props = PrevButtonProps;
@@ -9,7 +9,8 @@
 	export let el: $$Props["el"] = undefined;
 
 	const {
-		elements: { prevButton }
+		elements: { prevButton },
+		getCalendarAttrs
 	} = getCtx();
 
 	const attrs = getCalendarAttrs("prev-button");

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { getCtx, getFieldAttrs } from "../ctx.js";
+	import { getCtx } from "../ctx.js";
 	import type { SegmentProps } from "../types.js";
 
 	type $$Props = SegmentProps;
@@ -13,7 +13,8 @@
 
 	const {
 		elements: { startSegment, endSegment },
-		ids
+		ids,
+		getFieldAttrs
 	} = getCtx();
 
 	$: if (id && part !== "literal") {

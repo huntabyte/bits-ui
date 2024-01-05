@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { getCtx, getAttrs } from "../ctx.js";
+	import { getCtx } from "../ctx.js";
 	import type { SegmentProps } from "../types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
 
@@ -14,7 +14,8 @@
 
 	const {
 		elements: { startSegment, endSegment },
-		ids
+		ids,
+		getAttrs
 	} = getCtx();
 
 	$: if (id && part !== "literal") {

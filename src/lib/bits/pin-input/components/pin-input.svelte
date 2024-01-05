@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { setCtx, getAttrs } from "../ctx.js";
+	import { setCtx } from "../ctx.js";
 	import type { Props } from "../types.js";
 	import { derived } from "svelte/store";
 
@@ -20,7 +20,8 @@
 		elements: { root },
 		states: { value: localValue },
 		updateOption,
-		ids
+		ids,
+		getAttrs
 	} = setCtx({
 		placeholder,
 		defaultValue: value,

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { createDispatcher, type Transition } from "$lib/internal/index.js";
-	import { getAttrs, getSubmenuCtx, updateSubPositioning } from "../ctx.js";
+	import { getSubmenuCtx, updateSubPositioning } from "../ctx.js";
 	import type { SubContentEvents, SubContentProps } from "../types.js";
 
 	type T = $$Generic<Transition>;
@@ -34,7 +34,8 @@
 	const {
 		elements: { subMenu },
 		states: { subOpen },
-		ids
+		ids,
+		getAttrs
 	} = getSubmenuCtx();
 
 	const dispatch = createDispatcher();

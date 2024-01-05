@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt, createLabel } from "@melt-ui/svelte";
-	import { getAttrs } from "../ctx.js";
+	import { getLabelData } from "../ctx.js";
 	import type { Events, Props } from "../types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
 
@@ -15,6 +15,7 @@
 	} = createLabel();
 
 	const dispatch = createDispatcher();
+	const { getAttrs } = getLabelData();
 	const attrs = getAttrs("root");
 
 	$: builder = $root;

@@ -1,20 +1,23 @@
 import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
-import {
-	createToggleGroup,
-	type CreateToggleGroupProps,
-	type ToggleGroup as ToggleGroupReturn
-} from "@melt-ui/svelte";
+import { createToggleGroup, type CreateToggleGroupProps } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
 
-const NAME = "toggle-group";
-const PARTS = ["root", "item"] as const;
+function getToggleGroupData() {
+	const NAME = "toggle-group" as const;
+	const PARTS = ["root", "item"] as const;
+	return {
+		NAME,
+		PARTS
+	};
+}
 
-export const getAttrs = createBitAttrs(NAME, PARTS);
-
-type GetReturn = ToggleGroupReturn;
+type GetReturn = Omit<ReturnType<typeof setCtx>, "updateOption">;
 
 export function setCtx<T extends "single" | "multiple">(props: CreateToggleGroupProps<T>) {
-	const toggleGroup = createToggleGroup(removeUndefined(props));
+	const { NAME, PARTS } = getToggleGroupData();
+
+	const getAttrs = createBitAttrs(NAME, PARTS);
+	const toggleGroup = { ...createToggleGroup(removeUndefined(props)), getAttrs };
 	setContext(NAME, toggleGroup);
 	return {
 		...toggleGroup,
@@ -23,5 +26,6 @@ export function setCtx<T extends "single" | "multiple">(props: CreateToggleGroup
 }
 
 export function getCtx() {
+	const { NAME } = getToggleGroupData();
 	return getContext<GetReturn>(NAME);
 }

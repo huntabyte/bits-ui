@@ -1,36 +1,45 @@
 import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
-import {
-	createLinkPreview,
-	type CreateLinkPreviewProps,
-	type LinkPreview as LinkPreviewReturn
-} from "@melt-ui/svelte";
+import { createLinkPreview, type CreateLinkPreviewProps } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
 import { getPositioningUpdater } from "../floating/helpers.js";
 import type { FloatingProps } from "../floating/_types.js";
 import type { Writable } from "svelte/store";
 import type { FloatingConfig } from "../floating/floating-config.js";
 
-const NAME = "link-preview";
-const PARTS = ["arrow", "content", "trigger"];
+export function getLinkPreviewData() {
+	const NAME = "link-preview" as const;
+	const PARTS = ["arrow", "content", "trigger"];
 
-export const getAttrs = createBitAttrs(NAME, PARTS);
-
-type GetReturn = LinkPreviewReturn;
-
-export function getCtx() {
-	return getContext<GetReturn>(NAME);
+	return {
+		NAME,
+		PARTS
+	};
 }
 
+type GetReturn = Omit<ReturnType<typeof setCtx>, "updateOption">;
+
 export function setCtx(props: CreateLinkPreviewProps) {
-	const linkPreview = createLinkPreview({
-		...removeUndefined(props),
-		forceVisible: true
-	});
+	const { NAME, PARTS } = getLinkPreviewData();
+	const getAttrs = createBitAttrs(NAME, PARTS);
+
+	const linkPreview = {
+		...createLinkPreview({
+			...removeUndefined(props),
+			forceVisible: true
+		}),
+		getAttrs
+	};
+
 	setContext(NAME, linkPreview);
 	return {
 		...linkPreview,
 		updateOption: getOptionUpdater(linkPreview.options)
 	};
+}
+
+export function getCtx() {
+	const { NAME } = getLinkPreviewData();
+	return getContext<GetReturn>(NAME);
 }
 
 export function setArrow(size = 8) {
@@ -39,12 +48,12 @@ export function setArrow(size = 8) {
 	return linkPreview;
 }
 
-const defaultPlacement = {
-	side: "bottom",
-	align: "center"
-} satisfies FloatingProps;
-
 export function updatePositioning(props: FloatingProps) {
+	const defaultPlacement = {
+		side: "bottom",
+		align: "center"
+	} satisfies FloatingProps;
+
 	const withDefaults = { ...defaultPlacement, ...props } satisfies FloatingProps;
 	const {
 		options: { positioning }

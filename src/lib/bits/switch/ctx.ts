@@ -1,16 +1,22 @@
-import { createSwitch, type CreateSwitchProps, type Switch as SwitchReturn } from "@melt-ui/svelte";
+import { createSwitch, type CreateSwitchProps } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
 import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 
-const NAME = "switch";
-const PARTS = ["root", "input", "thumb"] as const;
+function getSwitchData() {
+	const NAME = "switch" as const;
+	const PARTS = ["root", "input", "thumb"] as const;
+	return {
+		NAME,
+		PARTS
+	};
+}
 
-export const getAttrs = createBitAttrs(NAME, PARTS);
-
-type GetReturn = SwitchReturn;
+type GetReturn = Omit<ReturnType<typeof setCtx>, "updateOption">;
 
 export function setCtx(props: CreateSwitchProps) {
-	const Switch = createSwitch(removeUndefined(props));
+	const { NAME, PARTS } = getSwitchData();
+	const getAttrs = createBitAttrs(NAME, PARTS);
+	const Switch = { ...createSwitch(removeUndefined(props)), getAttrs };
 	setContext(NAME, Switch);
 	return {
 		...Switch,
@@ -19,5 +25,6 @@ export function setCtx(props: CreateSwitchProps) {
 }
 
 export function getCtx() {
+	const { NAME } = getSwitchData();
 	return getContext<GetReturn>(NAME);
 }

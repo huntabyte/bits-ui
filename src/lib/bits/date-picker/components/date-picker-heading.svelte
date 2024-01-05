@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { getCalendarAttrs, getCtx } from "../ctx.js";
+	import { getCtx } from "../ctx.js";
 	import type { HeadingProps } from "../types.js";
 
 	type $$Props = HeadingProps;
@@ -10,7 +10,8 @@
 
 	const {
 		elements: { heading },
-		states: { headingValue }
+		states: { headingValue },
+		getCalendarAttrs
 	} = getCtx();
 
 	const attrs = getCalendarAttrs("heading");

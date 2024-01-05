@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { getCtx, getAttrs } from "../ctx.js";
+	import { getCtx } from "../ctx.js";
 	import type { SeparatorProps } from "../types.js";
 
 	type $$Props = SeparatorProps;
@@ -9,7 +9,8 @@
 	export let el: $$Props["el"] = undefined;
 
 	const {
-		elements: { separator }
+		elements: { separator },
+		getAttrs
 	} = getCtx();
 
 	const attrs = getAttrs("separator");

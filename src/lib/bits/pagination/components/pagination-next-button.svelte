@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { NextButtonEvents, NextButtonProps } from "../types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
-	import { getAttrs, getCtx } from "../ctx.js";
+	import { getCtx } from "../ctx.js";
 	import { melt } from "@melt-ui/svelte";
 
 	type $$Props = NextButtonProps;
@@ -11,7 +11,8 @@
 	export let el: $$Props["el"] = undefined;
 
 	const {
-		elements: { nextButton }
+		elements: { nextButton },
+		getAttrs
 	} = getCtx();
 
 	const attrs = getAttrs("next-button");

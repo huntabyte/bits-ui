@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { createDispatcher } from "$lib/internal/events.js";
 	import { melt } from "@melt-ui/svelte";
-	import { getAttrs, getCtx, updatePositioning } from "../ctx.js";
+	import { getCtx, updatePositioning } from "../ctx.js";
 	import type { Transition } from "$lib/internal/types.js";
 	import type { ContentEvents, ContentProps } from "../types.js";
 
@@ -29,7 +29,8 @@
 	const {
 		elements: { menu },
 		states: { open },
-		ids
+		ids,
+		getAttrs
 	} = getCtx();
 
 	const dispatch = createDispatcher();

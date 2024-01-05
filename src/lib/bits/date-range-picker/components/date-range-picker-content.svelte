@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import type { Transition } from "$lib/internal/index.js";
-	import { getCtx, getPopoverAttrs, updatePositioning } from "../ctx.js";
+	import { getCtx, updatePositioning } from "../ctx.js";
 	import type { ContentProps } from "../types.js";
 
 	type T = $$Generic<Transition>;
@@ -34,7 +34,8 @@
 	const {
 		elements: { content },
 		states: { open },
-		ids
+		ids,
+		getPopoverAttrs
 	} = getCtx();
 
 	const attrs = getPopoverAttrs("content");

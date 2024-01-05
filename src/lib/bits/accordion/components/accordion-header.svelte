@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { getAttrs, getCtx } from "../ctx.js";
+	import { getCtx } from "../ctx.js";
 	import type { HeaderProps } from "../types.js";
 
 	type $$Props = HeaderProps;
@@ -10,7 +10,8 @@
 	export let el: $$Props["el"] = undefined;
 
 	const {
-		elements: { heading: header }
+		elements: { heading: header },
+		getAttrs
 	} = getCtx();
 
 	const attrs = getAttrs("header");

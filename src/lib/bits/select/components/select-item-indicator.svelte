@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getAttrs, getItemIndicator } from "../ctx.js";
+	import { getItemIndicator } from "../ctx.js";
 	import type { IndicatorProps } from "../types.js";
 
 	type $$Props = IndicatorProps;
@@ -7,7 +7,7 @@
 	export let asChild: $$Props["asChild"] = false;
 	export let el: $$Props["el"] = undefined;
 
-	const { isSelected, value } = getItemIndicator();
+	const { isSelected, value, getAttrs } = getItemIndicator();
 	const attrs = getAttrs("indicator");
 </script>
 

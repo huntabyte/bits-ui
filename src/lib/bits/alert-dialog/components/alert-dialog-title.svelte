@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { getCtx, getAttrs } from "../ctx.js";
+	import { getCtx } from "../ctx.js";
 	import type { TitleProps } from "../types.js";
 
 	type $$Props = TitleProps;
@@ -12,7 +12,8 @@
 
 	const {
 		elements: { title },
-		ids
+		ids,
+		getAttrs
 	} = getCtx();
 
 	const attrs = getAttrs("title");

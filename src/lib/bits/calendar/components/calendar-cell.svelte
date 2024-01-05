@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getCtx, getAttrs } from "../ctx.js";
+	import { getCtx } from "../ctx.js";
 	import type { CellProps } from "../types.js";
 
 	type $$Props = CellProps;
@@ -9,7 +9,8 @@
 	export let el: $$Props["el"] = undefined;
 
 	const {
-		helpers: { isDateDisabled, isDateUnavailable }
+		helpers: { isDateDisabled, isDateUnavailable },
+		getAttrs
 	} = getCtx();
 
 	$: attrs = {

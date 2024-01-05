@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { setCheckboxItem, getAttrs } from "../ctx.js";
+	import { setCheckboxItem } from "../ctx.js";
 	import type { CheckboxItemEvents, CheckboxItemProps } from "../types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
 
@@ -16,7 +16,8 @@
 	const {
 		elements: { checkboxItem },
 		states: { checked: localChecked },
-		updateOption
+		updateOption,
+		getAttrs
 	} = setCheckboxItem({
 		disabled,
 		defaultChecked: checked,

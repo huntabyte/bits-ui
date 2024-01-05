@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { getAttrs, getCtx } from "../ctx.js";
+	import { getCtx } from "../ctx.js";
 	import type { LinkEvents, LinkProps } from "../types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
 
@@ -11,7 +11,8 @@
 	export let el: $$Props["el"] = undefined;
 
 	const {
-		elements: { link }
+		elements: { link },
+		getAttrs
 	} = getCtx();
 
 	const dispatch = createDispatcher();
