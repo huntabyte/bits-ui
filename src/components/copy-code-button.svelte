@@ -14,10 +14,10 @@
 		className
 	)}
 	on:click={copyCode}
+	aria-label="Copy"
 	{...$$restProps}
 	data-copy-code
 >
-	<span class="sr-only">Copy</span>
 	{#if copied}
 		<Check class="h-3 w-3" />
 	{:else}
