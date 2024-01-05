@@ -2,12 +2,14 @@ import { render } from "@testing-library/svelte";
 import userEvent from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
-import { testKbd as kbd } from "../utils.js";
+import { getTestKbd } from "../utils.js";
 import RangeCalendarTest from "./RangeCalendarTest.svelte";
 import type { RangeCalendar } from "$lib";
 import { CalendarDate, CalendarDateTime, toZoned } from "@internationalized/date";
 import { getSelectedDays } from "../helpers/calendar.js";
 import { tick } from "svelte";
+
+const kbd = getTestKbd();
 
 const calendarDateRange = {
 	start: new CalendarDate(1980, 1, 20),

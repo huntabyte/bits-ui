@@ -3,8 +3,10 @@ import userEvent from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import ContextMenuTest from "./ContextMenuTest.svelte";
-import { testKbd as kbd } from "../utils.js";
+import { getTestKbd } from "../utils.js";
 import type { ContextMenuTestProps } from "./ContextMenuTest.svelte";
+
+const kbd = getTestKbd();
 
 /**
  * Helper function to reduce boilerplate in tests

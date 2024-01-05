@@ -2,9 +2,11 @@ import { render, waitFor } from "@testing-library/svelte";
 import userEvent from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
-import { testKbd as kbd } from "../utils.js";
+import { getTestKbd } from "../utils.js";
 import TooltipTest from "./TooltipTest.svelte";
 import type { Tooltip } from "$lib";
+
+const kbd = getTestKbd();
 
 function setup(props: Tooltip.Props = {}) {
 	const user = userEvent.setup();

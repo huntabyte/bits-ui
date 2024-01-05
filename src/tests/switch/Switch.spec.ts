@@ -3,8 +3,10 @@ import userEvent from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import SwitchTest from "./SwitchTest.svelte";
-import { testKbd as kbd } from "../utils.js";
+import { getTestKbd } from "../utils.js";
 import type { Switch } from "$lib";
+
+const kbd = getTestKbd();
 
 function setup(props: Switch.Props = {}) {
 	const user = userEvent.setup();

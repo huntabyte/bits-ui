@@ -6,7 +6,9 @@ import { describe, it } from "vitest";
 import SliderTest from "./SliderTest.svelte";
 import SliderRangeTest from "./SliderRangeTest.svelte";
 import type { Slider } from "$lib";
-import { testKbd as kbd } from "../utils";
+import { getTestKbd } from "../utils";
+
+const kbd = getTestKbd();
 
 function renderSlider(props: Slider.Props = {}) {
 	return render(SliderTest, { ...props });
