@@ -1,8 +1,4 @@
-import {
-	createTooltip,
-	type Tooltip as TooltipReturn,
-	type CreateTooltipProps
-} from "@melt-ui/svelte";
+import { createTooltip, type CreateTooltipProps } from "@melt-ui/svelte";
 import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 import { getContext, setContext } from "svelte";
 import { getPositioningUpdater } from "../floating/helpers.js";
@@ -10,21 +6,30 @@ import type { Writable } from "svelte/store";
 import type { FloatingConfig } from "../floating/floating-config.js";
 import type { FloatingProps } from "../floating/_types.js";
 
-const NAME = "tooltip";
-const PARTS = ["arrow", "content", "trigger"] as const;
+type GetReturn = Omit<ReturnType<typeof setCtx>, "updateOption">;
 
-export const getAttrs = createBitAttrs(NAME, PARTS);
-
-type GetReturn = TooltipReturn;
+function getTooltipData() {
+	const NAME = "tooltip" as const;
+	const PARTS = ["arrow", "content", "trigger"] as const;
+	return {
+		NAME,
+		PARTS
+	};
+}
 
 export function setCtx(props: CreateTooltipProps) {
-	const tooltip = createTooltip({
-		positioning: {
-			placement: "top"
-		},
-		openDelay: 700,
-		...removeUndefined(props)
-	});
+	const { NAME, PARTS } = getTooltipData();
+	const getAttrs = createBitAttrs(NAME, PARTS);
+	const tooltip = {
+		...createTooltip({
+			positioning: {
+				placement: "top"
+			},
+			openDelay: 700,
+			...removeUndefined(props)
+		}),
+		getAttrs
+	};
 	setContext(NAME, tooltip);
 	return {
 		...tooltip,
@@ -33,6 +38,7 @@ export function setCtx(props: CreateTooltipProps) {
 }
 
 export function getCtx(sideOffset = 0) {
+	const { NAME } = getTooltipData();
 	const tooltip = getContext<GetReturn>(NAME);
 
 	const {
@@ -49,12 +55,11 @@ export function setArrow(size = 8) {
 	return tooltip;
 }
 
-const defaultPlacement = {
-	side: "top",
-	align: "center"
-} satisfies FloatingProps;
-
 export function updatePositioning(props: FloatingProps) {
+	const defaultPlacement = {
+		side: "top",
+		align: "center"
+	} satisfies FloatingProps;
 	const withDefaults = { ...defaultPlacement, ...props } satisfies FloatingProps;
 	const {
 		options: { positioning }

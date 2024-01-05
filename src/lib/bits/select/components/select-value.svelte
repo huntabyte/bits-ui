@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getCtx, getAttrs } from "../ctx.js";
+	import { getCtx } from "../ctx.js";
 	import type { ValueProps } from "../types.js";
 
 	type $$Props = ValueProps;
@@ -9,7 +9,8 @@
 	export let el: $$Props["el"] = undefined;
 
 	const {
-		states: { selectedLabel }
+		states: { selectedLabel },
+		getAttrs
 	} = getCtx();
 	const attrs = getAttrs("value");
 

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { createDispatcher } from "$lib/internal/events.js";
-	import { getAttrs, getCtx } from "../ctx.js";
+	import { getCtx } from "../ctx.js";
 	import { melt } from "@melt-ui/svelte";
 	import type { PageEvents, PageProps } from "../types.js";
 
@@ -12,7 +12,8 @@
 	export let el: $$Props["el"] = undefined;
 
 	const {
-		elements: { pageTrigger }
+		elements: { pageTrigger },
+		getAttrs
 	} = getCtx();
 
 	const attrs = getAttrs("page");

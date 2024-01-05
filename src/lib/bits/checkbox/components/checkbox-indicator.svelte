@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getCtx, getAttrs } from "../ctx.js";
+	import { getCtx } from "../ctx.js";
 	import type { IndicatorProps } from "../types.js";
 
 	type $$Props = IndicatorProps;
@@ -9,7 +9,8 @@
 
 	const {
 		helpers: { isChecked, isIndeterminate },
-		states: { checked }
+		states: { checked },
+		getAttrs
 	} = getCtx();
 
 	function getStateAttr(state: boolean | "indeterminate") {

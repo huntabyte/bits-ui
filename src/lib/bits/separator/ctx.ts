@@ -1,13 +1,19 @@
 import { createSeparator, type CreateSeparatorProps } from "@melt-ui/svelte";
 import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 
-const NAME = "separator";
-const PARTS = ["root"] as const;
-
-export const getAttrs = createBitAttrs(NAME, PARTS);
+function getSeparatorData() {
+	const NAME = "separator" as const;
+	const PARTS = ["root"] as const;
+	return {
+		NAME,
+		PARTS
+	};
+}
 
 export function setCtx(props: CreateSeparatorProps) {
-	const separator = createSeparator(removeUndefined(props));
+	const { NAME, PARTS } = getSeparatorData();
+	const getAttrs = createBitAttrs(NAME, PARTS);
+	const separator = { ...createSeparator(removeUndefined(props)), getAttrs };
 	return {
 		...separator,
 		updateOption: getOptionUpdater(separator.options)

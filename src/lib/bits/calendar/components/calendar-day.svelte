@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { getCtx, getAttrs } from "../ctx.js";
+	import { getCtx } from "../ctx.js";
 	import type { DayEvents, DayProps } from "../types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
 
@@ -14,7 +14,8 @@
 
 	const {
 		elements: { cell },
-		helpers: { isDateDisabled, isDateUnavailable, isDateSelected }
+		helpers: { isDateDisabled, isDateUnavailable, isDateSelected },
+		getAttrs
 	} = getCtx();
 
 	const attrs = getAttrs("day");

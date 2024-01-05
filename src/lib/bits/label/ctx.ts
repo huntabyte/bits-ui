@@ -1,6 +1,13 @@
 import { createBitAttrs } from "$lib/internal";
 
-const NAME = "label";
-const PARTS = ["root"];
+export function getLabelData() {
+	const NAME = "label";
+	const PARTS = ["root"];
 
-export const getAttrs = createBitAttrs(NAME, PARTS);
+	const getAttrs = createBitAttrs(NAME, PARTS);
+
+	return {
+		NAME,
+		getAttrs
+	};
+}

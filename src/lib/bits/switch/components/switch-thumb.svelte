@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getCtx, getAttrs } from "../ctx.js";
+	import { getCtx } from "../ctx.js";
 	import type { ThumbProps } from "../types.js";
 
 	type $$Props = ThumbProps;
@@ -8,7 +8,8 @@
 	export let el: $$Props["el"] = undefined;
 
 	const {
-		states: { checked }
+		states: { checked },
+		getAttrs
 	} = getCtx();
 
 	$: attrs = {

@@ -2,7 +2,7 @@
 	import { melt } from "@melt-ui/svelte";
 	import type { Transition } from "$lib/internal/index.js";
 	import type { ContentProps } from "../types.js";
-	import { getContent, getAttrs } from "../ctx.js";
+	import { getContent } from "../ctx.js";
 
 	type T = $$Generic<Transition>;
 	type In = $$Generic<Transition>;
@@ -20,7 +20,12 @@
 	export let asChild: $$Props["asChild"] = false;
 	export let el: $$Props["el"] = undefined;
 
-	const { content, isSelected, props } = getContent();
+	const {
+		elements: { content },
+		helpers: { isSelected },
+		props,
+		getAttrs
+	} = getContent();
 
 	const attrs = getAttrs("content");
 

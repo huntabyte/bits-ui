@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getRadioIndicator, getAttrs } from "../ctx.js";
+	import { getRadioIndicator } from "../ctx.js";
 	import type { ItemIndicatorProps } from "../types.js";
 
 	type $$Props = ItemIndicatorProps;
@@ -7,7 +7,11 @@
 	export let asChild = false;
 	export let el: $$Props["el"] = undefined;
 
-	const { isChecked, value } = getRadioIndicator();
+	const {
+		helpers: { isChecked },
+		value,
+		getAttrs
+	} = getRadioIndicator();
 
 	const attrs = getAttrs("item-indicator");
 	$: checked = $isChecked(value);

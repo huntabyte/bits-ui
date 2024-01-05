@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { getCtx, getAttrs } from "../ctx.js";
+	import { getCtx } from "../ctx.js";
 	import type { ContentProps } from "../types.js";
 
 	type $$Props = ContentProps;
@@ -10,7 +10,8 @@
 	export let el: $$Props["el"] = undefined;
 
 	const {
-		elements: { content }
+		elements: { content },
+		getAttrs
 	} = getCtx();
 	const attrs = getAttrs("content");
 

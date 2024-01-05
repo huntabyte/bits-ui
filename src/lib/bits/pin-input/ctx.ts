@@ -1,21 +1,24 @@
 import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
-import {
-	createPinInput,
-	type PinInput as PinInputReturn,
-	type CreatePinInputProps as PinInputProps
-} from "@melt-ui/svelte";
+import { createPinInput, type CreatePinInputProps as PinInputProps } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
 
-const NAME = "pin-input";
+export function getPinInputData() {
+	const NAME = "pin-input" as const;
+	const PARTS = ["root", "input", "hidden-input"] as const;
 
-const PARTS = ["root", "input", "hidden-input"] as const;
+	return {
+		NAME,
+		PARTS
+	};
+}
 
-export const getAttrs = createBitAttrs(NAME, PARTS);
-
-type GetReturn = PinInputReturn;
+type GetReturn = Omit<ReturnType<typeof setCtx>, "updateOption">;
 
 export function setCtx(props: PinInputProps) {
-	const pinInput = createPinInput(removeUndefined(props));
+	const { NAME, PARTS } = getPinInputData();
+	const getAttrs = createBitAttrs(NAME, PARTS);
+
+	const pinInput = { ...createPinInput(removeUndefined(props)), getAttrs };
 	setContext(NAME, pinInput);
 	return {
 		...pinInput,
@@ -24,5 +27,6 @@ export function setCtx(props: PinInputProps) {
 }
 
 export function getCtx() {
+	const { NAME } = getPinInputData();
 	return getContext<GetReturn>(NAME);
 }

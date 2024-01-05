@@ -1,20 +1,24 @@
-import {
-	createPagination,
-	type CreatePaginationProps,
-	type Pagination as PaginationReturn
-} from "@melt-ui/svelte";
+import { createPagination, type CreatePaginationProps } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
 import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal";
 
-const NAME = "pagination";
-const PARTS = ["root", "prev-button", "next-button", "page"] as const;
+export function getPaginationData() {
+	const NAME = "pagination" as const;
+	const PARTS = ["root", "prev-button", "next-button", "page"] as const;
 
-export const getAttrs = createBitAttrs(NAME, PARTS);
+	return {
+		NAME,
+		PARTS
+	};
+}
 
-type GetReturn = PaginationReturn;
+type GetReturn = Omit<ReturnType<typeof setCtx>, "updateOption">;
 
 export function setCtx(props: CreatePaginationProps) {
-	const pagination = createPagination(removeUndefined(props));
+	const { NAME, PARTS } = getPaginationData();
+	const getAttrs = createBitAttrs(NAME, PARTS);
+
+	const pagination = { ...createPagination(removeUndefined(props)), getAttrs };
 	setContext(NAME, pagination);
 
 	return {
@@ -24,5 +28,6 @@ export function setCtx(props: CreatePaginationProps) {
 }
 
 export function getCtx() {
+	const { NAME } = getPaginationData();
 	return getContext<GetReturn>(NAME);
 }

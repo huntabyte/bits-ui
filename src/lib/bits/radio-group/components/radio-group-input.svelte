@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import type { InputProps } from "../types.js";
-	import { getCtx, getAttrs } from "../ctx.js";
+	import { getCtx } from "../ctx.js";
 
 	type $$Props = InputProps;
 
@@ -9,7 +9,8 @@
 	export let el: $$Props["el"] = undefined;
 
 	const {
-		elements: { hiddenInput }
+		elements: { hiddenInput },
+		getAttrs
 	} = getCtx();
 
 	const attrs = getAttrs("input");

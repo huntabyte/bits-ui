@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getPopoverAttrs, getCtx } from "../ctx.js";
+	import { getCtx } from "../ctx.js";
 	import { melt } from "@melt-ui/svelte";
 	import type { ArrowProps } from "../types.js";
 
@@ -11,7 +11,8 @@
 
 	const {
 		elements: { arrow },
-		updateOption
+		updateOption,
+		getPopoverAttrs
 	} = getCtx();
 
 	const attrs = getPopoverAttrs("arrow");

@@ -5,17 +5,6 @@ import type { FloatingProps } from "./_types.js";
 type Side = "top" | "right" | "bottom" | "left";
 type Align = "start" | "center" | "end";
 
-const defaultPositioningProps = {
-	side: "bottom",
-	align: "center",
-	sideOffset: 0,
-	alignOffset: 0,
-	sameWidth: false,
-	avoidCollisions: true,
-	collisionPadding: 8,
-	fitViewport: false
-} satisfies FloatingProps;
-
 export function getPositioningUpdater(store: Writable<FloatingConfig>) {
 	return (props: FloatingProps = {}) => {
 		return updatePositioning(store, props);
@@ -23,6 +12,17 @@ export function getPositioningUpdater(store: Writable<FloatingConfig>) {
 }
 
 export function updatePositioning(store: Writable<FloatingConfig>, props: FloatingProps) {
+	const defaultPositioningProps = {
+		side: "bottom",
+		align: "center",
+		sideOffset: 0,
+		alignOffset: 0,
+		sameWidth: false,
+		avoidCollisions: true,
+		collisionPadding: 8,
+		fitViewport: false
+	} satisfies FloatingProps;
+
 	const withDefaults = { ...defaultPositioningProps, ...props } satisfies FloatingProps;
 	store.update((prev) => {
 		return {

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { getCtx, getAttrs } from "../ctx.js";
+	import { getCtx } from "../ctx.js";
 	import type { RangeProps } from "../types.js";
 
 	type $$Props = RangeProps;
@@ -9,7 +9,8 @@
 	export let el: $$Props["el"] = undefined;
 
 	const {
-		elements: { range }
+		elements: { range },
+		getAttrs
 	} = getCtx();
 
 	const attrs = getAttrs("range");

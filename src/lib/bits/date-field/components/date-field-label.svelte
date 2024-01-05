@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { getCtx, getAttrs } from "../ctx.js";
+	import { getCtx } from "../ctx.js";
 	import type { LabelProps } from "../types.js";
 
 	type $$Props = LabelProps;
@@ -11,7 +11,8 @@
 
 	const {
 		elements: { label },
-		ids
+		ids,
+		getAttrs
 	} = getCtx();
 
 	if (id) {

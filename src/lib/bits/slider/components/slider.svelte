@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { setCtx, getAttrs } from "../ctx.js";
+	import { setCtx } from "../ctx.js";
 	import type { Props } from "../types.js";
 
 	type $$Props = Props;
@@ -18,7 +18,8 @@
 	const {
 		elements: { root },
 		states: { value: localValue, ticks },
-		updateOption
+		updateOption,
+		getAttrs
 	} = setCtx({
 		disabled,
 		min,

@@ -1,25 +1,29 @@
 import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 import {
 	createToolbar,
-	type Toolbar as ToolbarReturn,
-	type ToolbarGroup as ToolbarGroupReturn,
 	type CreateToolbarProps as ToolbarProps,
 	type CreateToolbarGroupProps as ToolbarGroupProps
 } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
 
-const NAME = "toolbar";
-const GROUP_NAME = "toolbar-group";
+function getToolbarData() {
+	const NAME = "toolbar" as const;
+	const GROUP_NAME = "toolbar-group";
+	const PARTS = ["root", "button", "link", "group", "group-item"] as const;
+	return {
+		NAME,
+		GROUP_NAME,
+		PARTS
+	};
+}
 
-const PARTS = ["root", "button", "link", "group", "group-item"] as const;
-
-export const getAttrs = createBitAttrs(NAME, PARTS);
-
-type GetReturn = ToolbarReturn;
-type GetGroupReturn = ToolbarGroupReturn;
+type GetReturn = Omit<ReturnType<typeof setCtx>, "updateOption">;
+type GetGroupReturn = Omit<ReturnType<typeof setGroupCtx>, "updateOption">;
 
 export function setCtx(props: ToolbarProps) {
-	const toolbar = createToolbar(removeUndefined(props));
+	const { NAME, PARTS } = getToolbarData();
+	const getAttrs = createBitAttrs(NAME, PARTS);
+	const toolbar = { ...createToolbar(removeUndefined(props)), getAttrs };
 	setContext(NAME, toolbar);
 	return {
 		...toolbar,
@@ -29,9 +33,11 @@ export function setCtx(props: ToolbarProps) {
 
 export function setGroupCtx<T extends "single" | "multiple">(props: ToolbarGroupProps<T>) {
 	const {
-		builders: { createToolbarGroup }
+		builders: { createToolbarGroup },
+		getAttrs
 	} = getCtx();
-	const group = createToolbarGroup(removeUndefined(props));
+	const group = { ...createToolbarGroup(removeUndefined(props)), getAttrs };
+	const { GROUP_NAME } = getToolbarData();
 	setContext(GROUP_NAME, group);
 	return {
 		...group,
@@ -40,9 +46,11 @@ export function setGroupCtx<T extends "single" | "multiple">(props: ToolbarGroup
 }
 
 export function getCtx() {
+	const { NAME } = getToolbarData();
 	return getContext<GetReturn>(NAME);
 }
 
 export function getGroupCtx() {
+	const { GROUP_NAME } = getToolbarData();
 	return getContext<GetGroupReturn>(GROUP_NAME);
 }

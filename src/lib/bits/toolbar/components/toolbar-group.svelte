@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { setGroupCtx, getAttrs } from "../ctx.js";
+	import { setGroupCtx } from "../ctx.js";
 	import type { GroupProps } from "../types.js";
 
 	type T = $$Generic<"single" | "multiple">;
@@ -16,7 +16,8 @@
 	const {
 		elements: { group },
 		states: { value: localValue },
-		updateOption
+		updateOption,
+		getAttrs
 	} = setGroupCtx<T>({
 		disabled,
 		type,

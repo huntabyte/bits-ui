@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt, type Month } from "@melt-ui/svelte";
-	import { getCtx, getCalendarAttrs } from "../ctx.js";
+	import { getCtx } from "../ctx.js";
 	import type { CalendarEvents, CalendarProps } from "../types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
 	import type { DateValue } from "@internationalized/date";
@@ -15,7 +15,8 @@
 	const {
 		elements: { calendar },
 		states: { months: localMonths, weekdays },
-		ids
+		ids,
+		getCalendarAttrs
 	} = getCtx();
 
 	$: if (id) {

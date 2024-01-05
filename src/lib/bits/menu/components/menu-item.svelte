@@ -2,7 +2,7 @@
 	import { createDispatcher } from "$lib/internal/events.js";
 	import { disabledAttrs } from "$lib/internal/index.js";
 	import { melt } from "@melt-ui/svelte";
-	import { getCtx, getAttrs } from "../ctx.js";
+	import { getCtx } from "../ctx.js";
 	import type { ItemEvents, ItemProps } from "../types.js";
 
 	type $$Props = ItemProps;
@@ -14,7 +14,8 @@
 	export let el: $$Props["el"] = undefined;
 
 	const {
-		elements: { item }
+		elements: { item },
+		getAttrs
 	} = getCtx();
 	const dispatch = createDispatcher();
 

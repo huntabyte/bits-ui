@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { getTrigger, getAttrs } from "../ctx.js";
+	import { getTrigger } from "../ctx.js";
 	import type { TriggerEvents, TriggerProps } from "../types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
 
@@ -10,7 +10,11 @@
 	export let asChild: $$Props["asChild"] = false;
 	export let el: $$Props["el"] = undefined;
 
-	const { trigger, props } = getTrigger();
+	const {
+		elements: { trigger },
+		props,
+		getAttrs
+	} = getTrigger();
 	const dispatch = createDispatcher();
 	const attrs = getAttrs("trigger");
 

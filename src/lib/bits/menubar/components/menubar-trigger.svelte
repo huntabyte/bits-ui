@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { getMenuCtx, getAttrs } from "../ctx.js";
+	import { getMenuCtx } from "../ctx.js";
 	import type { TriggerEvents, TriggerProps } from "../types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
 
@@ -13,7 +13,8 @@
 
 	const {
 		elements: { trigger },
-		ids
+		ids,
+		getAttrs
 	} = getMenuCtx();
 
 	const dispatch = createDispatcher();
