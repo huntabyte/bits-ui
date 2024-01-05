@@ -3,8 +3,10 @@ import userEvent from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import ToggleTest from "./ToggleTest.svelte";
-import { testKbd as kbd } from "../utils.js";
+import { getTestKbd } from "../utils.js";
 import type { Toggle } from "$lib";
+
+const kbd = getTestKbd();
 
 function setup(props: Toggle.Props = {}) {
 	const user = userEvent.setup();

@@ -3,9 +3,11 @@ import userEvent from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import CheckboxTest from "./CheckboxTest.svelte";
-import { testKbd as kbd } from "../utils.js";
+import { getTestKbd } from "../utils.js";
 import { tick } from "svelte";
 import type { Checkbox } from "$lib";
+
+const kbd = getTestKbd();
 
 function setup(props?: Checkbox.Props) {
 	const user = userEvent.setup();

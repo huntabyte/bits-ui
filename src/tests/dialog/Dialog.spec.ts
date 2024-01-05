@@ -3,9 +3,11 @@ import userEvent from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import DialogTest from "./DialogTest.svelte";
-import { testKbd as kbd } from "../utils.js";
+import { getTestKbd } from "../utils.js";
 import { sleep } from "$lib/internal";
 import type { Dialog } from "$lib";
+
+const kbd = getTestKbd();
 
 function expectIsClosed(
 	queryByTestId: (id: Matcher, options?: MatcherOptions | undefined) => HTMLElement | null
