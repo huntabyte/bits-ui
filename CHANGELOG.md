@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.13.2
+
+### Patch Changes
+
+- fix: improve tree-shaking ([#257](https://github.com/huntabyte/bits-ui/pull/257))
+
 ## 0.13.1
 
 ### Patch Changes
