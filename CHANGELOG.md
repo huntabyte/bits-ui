@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.13.3
+
+### Patch Changes
+
+- fix: date picker context issue ([#260](https://github.com/huntabyte/bits-ui/pull/260))
+
 ## 0.13.2
 
 ### Patch Changes
