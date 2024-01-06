@@ -26,9 +26,10 @@ type GetReturn = Omit<ReturnType<typeof setCtx>, "updateOption">;
 
 export function setCtx<Multiple extends boolean>(props: CreateCalendarProps<Multiple>) {
 	const { NAME, PARTS } = getCalendarData();
-	const getAttrs = createBitAttrs(NAME, PARTS);
+	const getCalendarAttrs = createBitAttrs(NAME, PARTS);
+	console.log(getCalendarAttrs);
 
-	const calendar = { ...createCalendar(removeUndefined(props)), getAttrs };
+	const calendar = { ...createCalendar(removeUndefined(props)), getCalendarAttrs };
 
 	setContext(NAME, calendar);
 
@@ -40,5 +41,8 @@ export function setCtx<Multiple extends boolean>(props: CreateCalendarProps<Mult
 
 export function getCtx() {
 	const { NAME } = getCalendarData();
-	return getContext<GetReturn>(NAME);
+
+	const ctx = getContext<GetReturn>(NAME);
+	console.log(ctx);
+	return ctx;
 }

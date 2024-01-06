@@ -10,10 +10,10 @@
 
 	const {
 		elements: { grid },
-		getAttrs
+		getCalendarAttrs
 	} = getCtx();
 
-	const attrs = getAttrs("grid");
+	const attrs = getCalendarAttrs("grid");
 
 	$: builder = $grid;
 	$: Object.assign(builder, attrs);

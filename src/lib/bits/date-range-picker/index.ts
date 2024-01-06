@@ -14,10 +14,10 @@ export { default as Segment } from "./components/date-range-picker-segment.svelt
 export { default as Trigger } from "./components/date-range-picker-trigger.svelte";
 export { default as Root } from "./components/date-range-picker.svelte";
 export { default as Grid } from "./components/date-range-picker-grid.svelte";
-export { default as GridBody } from "$lib/bits/range-calendar/components/range-calendar-grid-body.svelte";
-export { default as GridHead } from "$lib/bits/range-calendar/components/range-calendar-grid-head.svelte";
-export { default as GridRow } from "$lib/bits/range-calendar/components/range-calendar-grid-row.svelte";
-export { default as HeadCell } from "$lib/bits/range-calendar/components/range-calendar-head-cell.svelte";
-export { default as Header } from "$lib/bits/range-calendar/components/range-calendar-header.svelte";
+export { default as GridBody } from "./components/date-range-picker-grid-body.svelte";
+export { default as GridHead } from "./components/date-range-picker-grid-head.svelte";
+export { default as GridRow } from "./components/date-range-picker-grid-row.svelte";
+export { default as HeadCell } from "./components/date-range-picker-head-cell.svelte";
+export { default as Header } from "./components/date-range-picker-header.svelte";
 
 export type * from "./types.js";

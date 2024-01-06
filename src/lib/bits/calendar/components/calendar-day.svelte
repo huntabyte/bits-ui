@@ -15,10 +15,10 @@
 	const {
 		elements: { cell },
 		helpers: { isDateDisabled, isDateUnavailable, isDateSelected },
-		getAttrs
+		getCalendarAttrs
 	} = getCtx();
 
-	const attrs = getAttrs("day");
+	const attrs = getCalendarAttrs("day");
 	const dispatch = createDispatcher();
 
 	$: builder = $cell(date, month);
