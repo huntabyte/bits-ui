@@ -1,19 +1,20 @@
 <script lang="ts">
 	import { getCtx } from "../ctx.js";
-	import type { GridBodyProps } from "../types.js";
+	import type { HeadCellProps } from "../types.js";
 
-	type $$Props = GridBodyProps;
+	type $$Props = HeadCellProps;
 	export let asChild: $$Props["asChild"] = false;
 	export let el: $$Props["el"] = undefined;
+
 	const { getCalendarAttrs } = getCtx();
 
-	const attrs = getCalendarAttrs("grid-body");
+	const attrs = getCalendarAttrs("head-cell");
 </script>
 
 {#if asChild}
 	<slot {attrs} />
 {:else}
-	<tbody bind:this={el} {...$$restProps} {...attrs}>
-		<slot {attrs} />
-	</tbody>
+	<th bind:this={el} {...$$restProps} {...attrs}>
+		<slot />
+	</th>
 {/if}

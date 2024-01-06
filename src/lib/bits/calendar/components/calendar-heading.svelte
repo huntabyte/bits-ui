@@ -11,10 +11,10 @@
 	const {
 		elements: { heading },
 		states: { headingValue },
-		getAttrs
+		getCalendarAttrs
 	} = getCtx();
 
-	const attrs = getAttrs("heading");
+	const attrs = getCalendarAttrs("heading");
 
 	$: builder = $heading;
 	$: Object.assign(builder, attrs);

@@ -10,11 +10,11 @@
 
 	const {
 		helpers: { isDateDisabled, isDateUnavailable },
-		getAttrs
+		getCalendarAttrs
 	} = getCtx();
 
 	$: attrs = {
-		...getAttrs("cell"),
+		...getCalendarAttrs("cell"),
 		"aria-disabled": $isDateDisabled(date) || $isDateUnavailable(date),
 		"data-disabled": $isDateDisabled(date) ? "" : undefined,
 		role: "gridcell"

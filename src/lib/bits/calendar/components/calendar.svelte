@@ -50,7 +50,7 @@
 		},
 		updateOption,
 		ids,
-		getAttrs
+		getCalendarAttrs
 	} = setCtx({
 		defaultPlaceholder: placeholder,
 		defaultValue: value,
@@ -119,7 +119,7 @@
 	$: updateOption("weekdayFormat", weekdayFormat);
 	$: updateOption("numberOfMonths", numberOfMonths);
 
-	const attrs = getAttrs("root");
+	const attrs = getCalendarAttrs("root");
 
 	$: builder = $calendar;
 	$: Object.assign(builder, attrs);

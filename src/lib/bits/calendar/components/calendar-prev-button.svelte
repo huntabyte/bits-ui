@@ -12,10 +12,10 @@
 
 	const {
 		elements: { prevButton },
-		getAttrs
+		getCalendarAttrs
 	} = getCtx();
 
-	const attrs = getAttrs("prev-button");
+	const attrs = getCalendarAttrs("prev-button");
 
 	$: builder = $prevButton;
 	$: Object.assign(builder, attrs);
