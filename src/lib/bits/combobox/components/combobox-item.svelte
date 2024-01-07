@@ -21,6 +21,10 @@
 	const dispatch = createDispatcher();
 	const attrs = getAttrs("item");
 
+	// this fixes the issue of 2 extra spaces in the end of the label
+	// when the label is not provided
+	$: if (!label && typeof value === "string") label = value;
+
 	$: builder = $item({ value, disabled, label });
 	$: Object.assign(builder, attrs);
 </script>
