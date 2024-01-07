@@ -7,6 +7,7 @@ import { button } from "./button";
 import { calendar } from "./calendar";
 import { checkbox } from "./checkbox";
 import { collapsible } from "./collapsible";
+import { combobox } from "./combobox";
 import { contextMenu } from "./context-menu";
 import { dateField } from "./date-field";
 import { datePicker } from "./date-picker";
@@ -42,6 +43,7 @@ export const bits = [
 	"calendar",
 	"checkbox",
 	"collapsible",
+	"combobox",
 	"context-menu",
 	"date-field",
 	"date-picker",
@@ -86,6 +88,7 @@ export const apiSchemas: Record<Bit, APISchema[]> = {
 	calendar,
 	checkbox,
 	collapsible,
+	combobox,
 	"context-menu": contextMenu,
 	"date-field": dateField,
 	"date-picker": datePicker,
