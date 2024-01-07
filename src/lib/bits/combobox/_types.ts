@@ -21,7 +21,7 @@ type SelectValue<T, Multiple extends boolean> = WhenTrue<Multiple, T[] | undefin
 
 type Props<T = unknown, Multiple extends boolean = false> = Expand<
 	OmitFloating<
-		Omit<CreateComboboxProps, "selected" | "defaultSelected" | "onSelectedChange" | "multiple">
+		Omit<CreateComboboxProps, "selected" | "defaultSelected" | "onSelectedChange" | "inputValue" |"multiple">
 	> & {
 		/**
 		 * The selected value of the combobox.
@@ -58,7 +58,7 @@ type Props<T = unknown, Multiple extends boolean = false> = Expand<
 		 * The value of the input.
 		 * You can bind this to a value to programmatically control the input value.
 		 *
-		 * @defaultValue undefined
+		 * @defaultValue ""
 		 */
 		inputValue?: string;
 
@@ -72,7 +72,7 @@ type Props<T = unknown, Multiple extends boolean = false> = Expand<
 
 type InputProps = DOMElement<HTMLInputElement>;
 type ContentProps = DOMElement;
-type LabelProps = DOMElement;
+type LabelProps = DOMElement<HTMLLabelElement>;
 type ItemProps = Expand<ComboboxOptionProps & DOMElement>;
 type IndicatorProps = DOMElement;
 type HiddenInputProps = DOMElement;

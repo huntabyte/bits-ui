@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { setArrow, getAttrs } from "../ctx";
-	import type { ArrowProps } from "../types";
+	import { setArrow } from "../ctx.js";
+	import type { ArrowProps } from "../types.js";
 
 	type $$Props = ArrowProps;
 
@@ -10,7 +10,8 @@
 	export let size = 8;
 
 	const {
-		elements: { arrow }
+		elements: { arrow },
+		getAttrs
 	} = setArrow(size);
 
 	const attrs = getAttrs("arrow");

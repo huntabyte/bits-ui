@@ -12,21 +12,20 @@
 
 	export let required: $$Props["required"] = undefined;
 	export let disabled: $$Props["disabled"] = undefined;
+	export let preventScroll: $$Props["preventScroll"] = undefined;
+	export let loop: $$Props["loop"] = undefined;
+	export let closeOnEscape: $$Props["closeOnEscape"] = undefined;
+	export let closeOnOutsideClick: $$Props["closeOnOutsideClick"] = undefined;
+	export let portal: $$Props["portal"] = undefined;
 	export let name: $$Props["name"] = undefined;
-	export let items: $$Props["items"] = [];
+	export let multiple: $$Props["multiple"] = false as Multiple;
 	export let selected: $$Props["selected"] = undefined;
 	export let onSelectedChange: $$Props["onSelectedChange"] = undefined;
-	export let multiple: $$Props["multiple"] = false as Multiple;
 	export let open: $$Props["open"] = undefined;
 	export let onOpenChange: $$Props["onOpenChange"] = undefined;
+	export let items: $$Props["items"] = [];
 	export let onOutsideClick: $$Props["onOutsideClick"] = undefined;
-	export let inputValue: $$Props["inputValue"] = undefined;
-	// scrollAlignment
-	export let loop: $$Props["loop"] = undefined;
-	export let closeOnOutsideClick: $$Props["closeOnOutsideClick"] = undefined;
-	export let closeOnEscape: $$Props["closeOnEscape"] = undefined;
-	export let preventScroll: $$Props["preventScroll"] = undefined;
-	export let portal: $$Props["portal"] = undefined;
+	export let inputValue: $$Props["inputValue"] = "";
 
 	const {
 		states: {
