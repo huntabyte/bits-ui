@@ -97,6 +97,12 @@ export const navigation: Navigation = {
 					items: [],
 				},
 				{
+					title: "Combobox",
+					href: "/docs/components/combobox",
+					label: "New",
+					items: [],
+				},
+				{
 					title: "Context Menu",
 					href: "/docs/components/context-menu",
 					items: [],

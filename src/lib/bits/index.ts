@@ -6,6 +6,7 @@ export * as Button from "./button/index.js";
 export * as Calendar from "./calendar/index.js";
 export * as Checkbox from "./checkbox/index.js";
 export * as Collapsible from "./collapsible/index.js";
+export * as Combobox from "./combobox/index.js";
 export * as ContextMenu from "./context-menu/index.js";
 export * as DateField from "./date-field/index.js";
 export * as DatePicker from "./date-picker/index.js";
