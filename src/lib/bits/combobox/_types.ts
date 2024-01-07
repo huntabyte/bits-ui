@@ -21,7 +21,10 @@ type SelectValue<T, Multiple extends boolean> = WhenTrue<Multiple, T[] | undefin
 
 type Props<T = unknown, Multiple extends boolean = false> = Expand<
 	OmitFloating<
-		Omit<CreateComboboxProps, "selected" | "defaultSelected" | "onSelectedChange" | "inputValue" |"multiple">
+		Omit<
+			CreateComboboxProps,
+			"selected" | "defaultSelected" | "onSelectedChange" | "inputValue" | "multiple"
+		>
 	> & {
 		/**
 		 * The selected value of the combobox.

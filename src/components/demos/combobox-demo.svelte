@@ -37,7 +37,7 @@
 		sideOffset={8}
 	>
 		{#if filteredFruits.length}
-			{#each filteredFruits as fruit}
+			{#each filteredFruits as fruit, index (fruit)}
 				<Combobox.Item
 					class="flex h-10 w-full select-none items-center rounded-button py-3 pl-5 pr-1.5 text-sm capitalize outline-none transition-all duration-75 data-[highlighted]:bg-muted"
 					value={fruit}
