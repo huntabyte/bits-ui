@@ -15,8 +15,9 @@
 
 	const {
 		elements: { root },
-		states: { pages, range },
-		getAttrs
+		states: { pages, range, page: localPage },
+		getAttrs,
+		updateOption
 	} = setCtx({
 		count,
 		perPage,
@@ -32,10 +33,16 @@
 		}
 	});
 
+	$: page !== undefined && localPage.set(page);
+
 	const attrs = getAttrs("root");
 
 	$: builder = $root;
 	$: Object.assign(builder, attrs);
+
+	$: updateOption("count", count);
+	$: updateOption("perPage", perPage);
+	$: updateOption("siblingCount", siblingCount);
 </script>
 
 {#if asChild}
