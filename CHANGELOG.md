@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.13.4
+
+### Patch Changes
+
+- fix: pagination prop reactivity ([#262](https://github.com/huntabyte/bits-ui/pull/262))
+
 ## 0.13.3
 
 ### Patch Changes
