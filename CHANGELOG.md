@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.13.5
+
+### Patch Changes
+
+- fix: bug with tooltip arrow causing it to increase offset on each toggle ([#264](https://github.com/huntabyte/bits-ui/pull/264))
+
 ## 0.13.4
 
 ### Patch Changes
