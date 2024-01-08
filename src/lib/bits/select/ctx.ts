@@ -59,7 +59,10 @@ export function setCtx<T = unknown, M extends boolean = false>(
 	const { NAME, PARTS } = getSelectData();
 	const getAttrs = createBitAttrs(NAME, PARTS);
 
-	const select = { ...createSelect<T, M>(removeUndefined(props)), getAttrs };
+	const select = {
+		...createSelect<T, M>({ ...removeUndefined(props), forceVisible: true }),
+		getAttrs
+	};
 	setContext(NAME, select);
 	return {
 		...select,
