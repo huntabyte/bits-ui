@@ -20,7 +20,7 @@ export function updatePositioning(store: Writable<FloatingConfig>, props: Floati
 		sameWidth: false,
 		avoidCollisions: true,
 		collisionPadding: 8,
-		fitViewport: false
+		fitViewport: false,
 	} satisfies FloatingProps;
 
 	const withDefaults = { ...defaultPositioningProps, ...props } satisfies FloatingProps;
@@ -29,10 +29,11 @@ export function updatePositioning(store: Writable<FloatingConfig>, props: Floati
 			...prev,
 			placement: joinPlacement(withDefaults.side, withDefaults.align),
 			offset: {
+				...prev.offset,
 				mainAxis: withDefaults.sideOffset,
 				crossAxis: withDefaults.alignOffset
 			},
-			gutter: undefined,
+			gutter: 0,
 			sameWidth: withDefaults.sameWidth,
 			flip: withDefaults.avoidCollisions,
 			overflowPadding: withDefaults.collisionPadding,

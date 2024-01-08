@@ -36,6 +36,12 @@
 				open = next;
 			}
 			return next;
+		},
+		positioning: {
+			gutter: 0,
+			offset: {
+				mainAxis: 1
+			}
 		}
 	});
 
@@ -48,6 +54,7 @@
 	);
 
 	$: open !== undefined && localOpen.set(open);
+
 	$: updateOption("closeOnEscape", closeOnEscape);
 	$: updateOption("portal", portal);
 	$: updateOption("closeOnPointerDown", closeOnPointerDown);

@@ -37,7 +37,7 @@ module.exports = {
 		"svelte/require-each-key": "off",
 		"svelte/no-at-html-tags": "off",
 		"svelte/no-unused-svelte-ignore": "off",
-		"svelte/require-stores-init": "off"
+		"svelte/require-stores-init": "off",
 	},
 	overrides: [
 		{
@@ -51,7 +51,7 @@ module.exports = {
 					"warn",
 					{
 						argsIgnorePattern: "^_",
-						varsIgnorePattern: "^\\$\\$(Props|Events|Slots|Generic|_[^$])*$"
+						varsIgnorePattern: "^\\$\\$(Props|Events|Slots|Generic)$"
 					}
 				]
 			}
