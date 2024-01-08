@@ -23,10 +23,12 @@ export function setCtx(props: CreateTooltipProps) {
 	const tooltip = {
 		...createTooltip({
 			positioning: {
-				placement: "top"
+				placement: "top",
+				gutter: 0
 			},
 			openDelay: 700,
-			...removeUndefined(props)
+			...removeUndefined(props),
+			forceVisible: true
 		}),
 		getAttrs
 	};
@@ -37,16 +39,9 @@ export function setCtx(props: CreateTooltipProps) {
 	};
 }
 
-export function getCtx(sideOffset = 0) {
+export function getCtx() {
 	const { NAME } = getTooltipData();
-	const tooltip = getContext<GetReturn>(NAME);
-
-	const {
-		options: { positioning }
-	} = tooltip;
-	positioning.update((prev) => ({ ...prev, gutter: sideOffset }));
-
-	return tooltip;
+	return getContext<GetReturn>(NAME);
 }
 
 export function setArrow(size = 8) {
@@ -58,7 +53,8 @@ export function setArrow(size = 8) {
 export function updatePositioning(props: FloatingProps) {
 	const defaultPlacement = {
 		side: "top",
-		align: "center"
+		align: "center",
+		sideOffset: 1
 	} satisfies FloatingProps;
 	const withDefaults = { ...defaultPlacement, ...props } satisfies FloatingProps;
 	const {
@@ -66,5 +62,5 @@ export function updatePositioning(props: FloatingProps) {
 	} = getCtx();
 
 	const updater = getPositioningUpdater(positioning as Writable<FloatingConfig>);
-	updater(withDefaults);
+	updater({ ...withDefaults });
 }

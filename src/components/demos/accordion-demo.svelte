@@ -5,19 +5,18 @@
 
 	const items = [
 		{
-			title: "Feature Overview",
+			title: "What is the meaning of life?",
 			content:
-				"Task management, messaging, file sharing, progress tracking, and reporting for your team."
+				"To become a better person, to help others, and to leave the world a better place than you found it."
 		},
 		{
-			title: "Platform Advantages",
+			title: "How do I become a better person?",
 			content:
-				"Experience improved productivity, enhanced communication, and customizable project views for project execution."
+				"Read books, listen to podcasts, and surround yourself with people who inspire you."
 		},
 		{
-			title: "Implementation Strategies",
-			content:
-				"Define clear goals, provide training, encourage adoption, and iterate based on feedback."
+			title: "What is the best way to help others?",
+			content: "Give them your time, attention, and love."
 		}
 	];
 </script>

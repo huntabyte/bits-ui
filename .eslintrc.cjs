@@ -51,7 +51,7 @@ module.exports = {
 					"warn",
 					{
 						argsIgnorePattern: "^_",
-						varsIgnorePattern: "^\\$\\$(Props|Events|Slots|Generic|_[^$])*$"
+						varsIgnorePattern: "^\\$\\$(Props|Events|Slots|Generic)$"
 					}
 				]
 			}
