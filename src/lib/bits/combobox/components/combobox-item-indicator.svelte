@@ -1,0 +1,22 @@
+<script lang="ts">
+	import { getItemIndicator } from "../ctx";
+	import type { IndicatorProps } from "../types";
+
+	type $$Props = IndicatorProps;
+
+	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
+
+	const { isSelected, value, getAttrs } = getItemIndicator();
+	const attrs = getAttrs("indicator");
+</script>
+
+{#if asChild}
+	<slot {attrs} isSelected={$isSelected(value)} />
+{:else}
+	<div bind:this={el} {...$$restProps} {...attrs}>
+		{#if $isSelected(value)}
+			<slot {attrs} isSelected={$isSelected(value)} />
+		{/if}
+	</div>
+{/if}
