@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { createDispatcher, type Transition } from "$lib/internal/index.js";
-	import { getAttrs, getSubmenuCtx, updateSubPositioning } from "../ctx.js";
+	import { getSubmenuCtx, updateSubPositioning } from "../ctx.js";
 	import type { SubContentEvents, SubContentProps } from "../types.js";
 
 	type T = $$Generic<Transition>;
@@ -29,11 +29,13 @@
 	export let fitViewport: $$Props["fitViewport"] = false;
 	export let strategy: $$Props["strategy"] = "absolute";
 	export let overlap: $$Props["overlap"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { subMenu },
 		states: { subOpen },
-		ids
+		ids,
+		getAttrs
 	} = getSubmenuCtx();
 
 	const dispatch = createDispatcher();
@@ -65,6 +67,7 @@
 	<slot {builder} />
 {:else if transition && $subOpen}
 	<div
+		bind:this={el}
 		transition:transition={transitionConfig}
 		use:melt={builder}
 		{...$$restProps}
@@ -76,6 +79,7 @@
 	</div>
 {:else if inTransition && outTransition && $subOpen}
 	<div
+		bind:this={el}
 		in:inTransition={inTransitionConfig}
 		out:outTransition={outTransitionConfig}
 		use:melt={builder}
@@ -88,6 +92,7 @@
 	</div>
 {:else if inTransition && $subOpen}
 	<div
+		bind:this={el}
 		in:inTransition={inTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
@@ -99,6 +104,7 @@
 	</div>
 {:else if outTransition && $subOpen}
 	<div
+		bind:this={el}
 		out:outTransition={outTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
@@ -110,6 +116,7 @@
 	</div>
 {:else if $subOpen}
 	<div
+		bind:this={el}
 		use:melt={builder}
 		{...$$restProps}
 		on:m-focusout={dispatch}

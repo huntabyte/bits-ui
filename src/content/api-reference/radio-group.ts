@@ -1,8 +1,8 @@
 import type { APISchema } from "@/types";
-import { asChild, attrsSlotProp, enums } from "@/content/api-reference/helpers.js";
+import { attrsSlotProp, enums } from "@/content/api-reference/helpers.js";
 import type * as RadioGroup from "$lib/bits/radio-group/_types";
 import * as C from "@/content/constants";
-import { builderAndAttrsSlotProps } from "./helpers";
+import { builderAndAttrsSlotProps, domElProps } from "./helpers";
 
 export const root: APISchema<RadioGroup.Props> = {
 	title: "Root",
@@ -37,7 +37,7 @@ export const root: APISchema<RadioGroup.Props> = {
 		value: {
 			type: C.STRING,
 			description:
-				"The value of the currently selected radio item. This is the value that will be submitted with a form."
+				"The value of the currently selected radio item. You can bind to this value to control the radio group's value from outside the component."
 		},
 		onValueChange: {
 			type: {
@@ -46,7 +46,7 @@ export const root: APISchema<RadioGroup.Props> = {
 			},
 			description: "A callback that is fired when the radio group's value changes."
 		},
-		asChild
+		...domElProps("HTMLDivElement")
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
@@ -76,10 +76,10 @@ export const item: APISchema<RadioGroup.ItemProps> = {
 		value: {
 			type: C.STRING,
 			description:
-				"The value of the currently selected radio item. This is the value that will be submitted with a form.",
+				"The value of the radio item. This should be unique for each radio item in the group.",
 			required: true
 		},
-		asChild
+		...domElProps("HTMLButtonElement")
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
@@ -114,14 +114,14 @@ export const input: APISchema<RadioGroup.InputProps> = {
 	title: "Input",
 	description:
 		"A hidden input that is used to submit the radio group's value with a form. It can receive all the same props/attributes as a normal HTML input.",
-	props: { asChild }
+	props: domElProps("HTMLInputElement")
 };
 
 export const indicator: APISchema = {
 	title: "ItemIndicator",
 	description:
 		"A component which is used to indicate the radio item's checked state. Any children of this component will only be visible when the radio item is checked.",
-	props: { asChild },
+	props: domElProps("HTMLDivElement"),
 	slotProps: {
 		attrs: attrsSlotProp,
 		checked: {

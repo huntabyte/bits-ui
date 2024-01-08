@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { setCtx, getAttrs } from "../ctx.js";
+	import { setCtx } from "../ctx.js";
 	import type { Props, Events } from "../types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
 
@@ -13,11 +13,13 @@
 	export let value: $$Props["value"] = undefined;
 	export let onCheckedChange: $$Props["onCheckedChange"] = undefined;
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { root },
 		states: { checked: localChecked },
-		updateOption
+		updateOption,
+		getAttrs
 	} = setCtx({
 		defaultChecked: checked,
 		disabled,
@@ -51,6 +53,7 @@
 	<slot {builder} />
 {:else}
 	<button
+		bind:this={el}
 		use:melt={builder}
 		type="button"
 		{...$$restProps}

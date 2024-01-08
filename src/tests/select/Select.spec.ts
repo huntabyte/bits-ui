@@ -4,8 +4,10 @@ import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import SelectTest from "./SelectTest.svelte";
 import type { Item } from "./SelectTest.svelte";
-import { testKbd as kbd } from "../utils.js";
+import { getTestKbd } from "../utils.js";
 import type { Select } from "$lib";
+
+const kbd = getTestKbd();
 
 const testItems: Item[] = [
 	{

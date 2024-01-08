@@ -1,23 +1,26 @@
 import { createBitAttrs, getOptionUpdater } from "$lib/internal/index.js";
-import {
-	createRadioGroup,
-	type CreateRadioGroupProps,
-	type RadioGroup as RadioGroupReturn
-} from "@melt-ui/svelte";
+import { createRadioGroup, type CreateRadioGroupProps } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
 import { removeUndefined } from "$lib/internal/index.js";
-import type { Readable } from "svelte/store";
 
-const NAME = "radio-group";
-const ITEM_NAME = "radio-group-item";
-const PARTS = ["root", "item", "input", "item-indicator"] as const;
+function getRadioGroupData() {
+	const NAME = "radio-group" as const;
+	const ITEM_NAME = "radio-group-item";
+	const PARTS = ["root", "item", "input", "item-indicator"] as const;
 
-export const getAttrs = createBitAttrs(NAME, PARTS);
+	return {
+		NAME,
+		ITEM_NAME,
+		PARTS
+	};
+}
 
-type GetReturn = RadioGroupReturn;
+type GetReturn = Omit<ReturnType<typeof setCtx>, "updateOption">;
 
 export function setCtx(props: CreateRadioGroupProps) {
-	const radioGroup = createRadioGroup(removeUndefined(props));
+	const { NAME, PARTS } = getRadioGroupData();
+	const getAttrs = createBitAttrs(NAME, PARTS);
+	const radioGroup = { ...createRadioGroup(removeUndefined(props)), getAttrs };
 	setContext(NAME, radioGroup);
 	return {
 		...radioGroup,
@@ -26,18 +29,19 @@ export function setCtx(props: CreateRadioGroupProps) {
 }
 
 export function getCtx() {
+	const { NAME } = getRadioGroupData();
 	return getContext<GetReturn>(NAME);
 }
 
 export function setItemCtx(value: string) {
-	const radioGroup = getCtx();
-	setContext(ITEM_NAME, { value, isChecked: radioGroup.helpers.isChecked });
+	const { ITEM_NAME } = getRadioGroupData();
+	const radioGroup = { ...getCtx(), value };
+	setContext(ITEM_NAME, radioGroup);
 	return radioGroup;
 }
 
+type GetItemReturn = Omit<ReturnType<typeof setItemCtx>, "updateOption">;
 export function getRadioIndicator() {
-	return getContext<{
-		isChecked: Readable<(itemValue: string) => boolean>;
-		value: string;
-	}>(ITEM_NAME);
+	const { ITEM_NAME } = getRadioGroupData();
+	return getContext<GetItemReturn>(ITEM_NAME);
 }

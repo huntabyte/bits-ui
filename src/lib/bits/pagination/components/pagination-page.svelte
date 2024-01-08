@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { createDispatcher } from "$lib/internal/events.js";
-	import { getAttrs, getCtx } from "../ctx.js";
+	import { getCtx } from "../ctx.js";
 	import { melt } from "@melt-ui/svelte";
 	import type { PageEvents, PageProps } from "../types.js";
 
@@ -9,9 +9,11 @@
 
 	export let asChild: $$Props["asChild"] = undefined;
 	export let page: $$Props["page"];
+	export let el: $$Props["el"] = undefined;
 
 	const {
-		elements: { pageTrigger }
+		elements: { pageTrigger },
+		getAttrs
 	} = getCtx();
 
 	const attrs = getAttrs("page");
@@ -26,6 +28,7 @@
 	<slot {builder} />
 {:else}
 	<button
+		bind:this={el}
 		type="button"
 		use:melt={builder}
 		on:m-click={dispatch}

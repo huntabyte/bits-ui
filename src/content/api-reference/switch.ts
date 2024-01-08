@@ -1,8 +1,8 @@
 import type { APISchema } from "@/types";
-import { asChild, attrsSlotProp, enums } from "@/content/api-reference/helpers.js";
+import { attrsSlotProp, enums } from "@/content/api-reference/helpers.js";
 import type * as Switch from "$lib/bits/switch/_types.js";
 import * as C from "@/content/constants.js";
-import { builderAndAttrsSlotProps } from "./helpers";
+import { builderAndAttrsSlotProps, domElProps } from "./helpers";
 
 const root: APISchema<Switch.Props> = {
 	title: "Root",
@@ -50,7 +50,7 @@ const root: APISchema<Switch.Props> = {
 			description:
 				"The value of the hidden input element to be used in form submissions when the switch is checked."
 		},
-		asChild
+		...domElProps("HTMLButtonElement")
 	},
 	slotProps: {
 		...builderAndAttrsSlotProps
@@ -80,7 +80,7 @@ const root: APISchema<Switch.Props> = {
 const thumb: APISchema<Switch.ThumbProps> = {
 	title: "Thumb",
 	description: "The thumb on the switch used to indicate the switch's state.",
-	props: { asChild },
+	props: domElProps("HTMLSpanElement"),
 	slotProps: {
 		attrs: attrsSlotProp,
 		checked: {

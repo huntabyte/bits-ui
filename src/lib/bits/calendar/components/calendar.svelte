@@ -5,7 +5,7 @@
 	import { createDispatcher } from "$lib/internal/events.js";
 	import { melt, type Month } from "@melt-ui/svelte";
 	import { onMount } from "svelte";
-	import { setCtx, getAttrs } from "../ctx.js";
+	import { setCtx } from "../ctx.js";
 	import type { Props } from "../types.js";
 
 	type Multiple = $$Generic<boolean>;
@@ -33,8 +33,7 @@
 	export let id: $$Props["id"] = undefined;
 	export let numberOfMonths: $$Props["numberOfMonths"] = undefined;
 	export let initialFocus: $$Props["initialFocus"] = false;
-
-	let el: HTMLElement | undefined = undefined;
+	export let el: $$Props["el"] = undefined;
 
 	onMount(() => {
 		if (!initialFocus || !el) return;
@@ -50,7 +49,8 @@
 			weekdays
 		},
 		updateOption,
-		ids
+		ids,
+		getCalendarAttrs
 	} = setCtx({
 		defaultPlaceholder: placeholder,
 		defaultValue: value,
@@ -119,7 +119,7 @@
 	$: updateOption("weekdayFormat", weekdayFormat);
 	$: updateOption("numberOfMonths", numberOfMonths);
 
-	const attrs = getAttrs("root");
+	const attrs = getCalendarAttrs("root");
 
 	$: builder = $calendar;
 	$: Object.assign(builder, attrs);

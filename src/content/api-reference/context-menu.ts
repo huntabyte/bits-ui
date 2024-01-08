@@ -3,14 +3,8 @@ import { menu } from "./menu";
 import type * as Menu from "$lib/bits/menu/_types";
 import type * as ContextMenu from "$lib/bits/context-menu/_types";
 import * as C from "@/content/constants.js";
-import {
-	transitionProps,
-	asChild,
-	union,
-	builderAndAttrsSlotProps,
-	enums,
-	seeFloating
-} from "./helpers";
+import { domElProps } from "./helpers";
+import { transitionProps, union, builderAndAttrsSlotProps, enums, seeFloating } from "./helpers";
 
 export const root: APISchema<Menu.Props> = {
 	title: "Root",
@@ -21,7 +15,14 @@ export const root: APISchema<Menu.Props> = {
 export const trigger: APISchema<Menu.TriggerProps> = {
 	title: "Trigger",
 	description: "The element which when right-clicked, opens the context menu.",
-	...menu.trigger
+	...menu.trigger,
+	props: {
+		...menu.trigger.props,
+		el: {
+			type: "HTMLDivElement",
+			description: "You can bind to this prop to programatically interact with the element."
+		}
+	}
 };
 
 export const content: APISchema<ContextMenu.ContentProps> = {
@@ -29,7 +30,6 @@ export const content: APISchema<ContextMenu.ContentProps> = {
 	description: "The content displayed when the context menu is open.",
 	props: {
 		...transitionProps,
-		asChild,
 		alignOffset: {
 			type: C.NUMBER,
 			default: "0",
@@ -90,7 +90,8 @@ export const content: APISchema<ContextMenu.ContentProps> = {
 				"Whether the floating element can overlap the reference element.",
 				"https://floating-ui.com/docs/shift#options"
 			)
-		}
+		},
+		...domElProps("HTMLDivElement")
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: menu.content.dataAttributes

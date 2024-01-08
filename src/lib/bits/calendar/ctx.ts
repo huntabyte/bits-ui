@@ -1,34 +1,38 @@
-import {
-	createCalendar,
-	type Calendar as CalendarReturn,
-	type CreateCalendarProps
-} from "@melt-ui/svelte";
+import { createCalendar, type CreateCalendarProps } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
 import { removeUndefined, getOptionUpdater, createBitAttrs } from "$lib/internal/index.js";
 
-const NAME = "calendar";
-const PARTS = [
-	"root",
-	"prev-button",
-	"next-button",
-	"heading",
-	"grid",
-	"day",
-	"header",
-	"grid-head",
-	"head-cell",
-	"grid-body",
-	"cell",
-	"grid-row"
-] as const;
+export function getCalendarData() {
+	const NAME = "calendar" as const;
+	const PARTS = [
+		"root",
+		"prev-button",
+		"next-button",
+		"heading",
+		"grid",
+		"day",
+		"header",
+		"grid-head",
+		"head-cell",
+		"grid-body",
+		"cell",
+		"grid-row"
+	] as const;
 
-export const getAttrs = createBitAttrs(NAME, PARTS);
+	return { NAME, PARTS };
+}
 
-type GetReturn = CalendarReturn;
+type GetReturn = Omit<ReturnType<typeof setCtx>, "updateOption">;
 
 export function setCtx<Multiple extends boolean>(props: CreateCalendarProps<Multiple>) {
-	const calendar = createCalendar(removeUndefined(props));
+	const { NAME, PARTS } = getCalendarData();
+	const getCalendarAttrs = createBitAttrs(NAME, PARTS);
+	console.log(getCalendarAttrs);
+
+	const calendar = { ...createCalendar(removeUndefined(props)), getCalendarAttrs };
+
 	setContext(NAME, calendar);
+
 	return {
 		...calendar,
 		updateOption: getOptionUpdater(calendar.options)
@@ -36,5 +40,9 @@ export function setCtx<Multiple extends boolean>(props: CreateCalendarProps<Mult
 }
 
 export function getCtx() {
-	return getContext<GetReturn>(NAME);
+	const { NAME } = getCalendarData();
+
+	const ctx = getContext<GetReturn>(NAME);
+	console.log(ctx);
+	return ctx;
 }

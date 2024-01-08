@@ -8,7 +8,7 @@ type Props = I.Props;
 
 type TriggerProps = I.TriggerProps & HTMLButtonAttributes;
 
-type CloseProps = I.ContentProps & HTMLButtonAttributes;
+type CloseProps = I.CloseProps & HTMLButtonAttributes;
 
 type ArrowProps = I.ArrowProps & HTMLDivAttributes;
 

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { getCtx, getAttrs } from "../ctx.js";
+	import { getCtx } from "../ctx.js";
 	import type { ThumbEvents, ThumbProps } from "../types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
 
@@ -8,9 +8,11 @@
 	type $$Events = ThumbEvents;
 
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
-		elements: { thumb }
+		elements: { thumb },
+		getAttrs
 	} = getCtx();
 
 	const dispatch = createDispatcher();
@@ -23,5 +25,10 @@
 {#if asChild}
 	<slot {builder} />
 {:else}
-	<span use:melt={builder} {...$$restProps} on:m-keydown={dispatch} />
+	<span
+		bind:this={el}
+		use:melt={builder}
+		{...$$restProps}
+		on:m-keydown={dispatch}
+	/>
 {/if}

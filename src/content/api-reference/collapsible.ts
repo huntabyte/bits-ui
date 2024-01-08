@@ -1,8 +1,8 @@
 import type { APISchema, PropObj } from "@/types";
-import { asChild, enums, transitionProps } from "@/content/api-reference/helpers.js";
+import { enums, transitionProps } from "@/content/api-reference/helpers.js";
 import type * as Collapsible from "$lib/bits/collapsible/_types";
 import * as C from "@/content/constants";
-import { builderAndAttrsSlotProps } from "./helpers";
+import { builderAndAttrsSlotProps, domElProps } from "./helpers";
 
 export const root: APISchema<Collapsible.Props> = {
 	title: "Root",
@@ -27,7 +27,7 @@ export const root: APISchema<Collapsible.Props> = {
 			},
 			description: "A callback that is fired when the collapsible's open state changes."
 		},
-		asChild
+		...domElProps("HTMLDivElement")
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
@@ -51,7 +51,7 @@ export const root: APISchema<Collapsible.Props> = {
 export const trigger: APISchema<Collapsible.TriggerProps> = {
 	title: "Trigger",
 	description: "The button responsible for toggling the collapsible's open state.",
-	props: { asChild },
+	props: domElProps("HTMLButtonElement"),
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -73,7 +73,7 @@ export const trigger: APISchema<Collapsible.TriggerProps> = {
 
 const contentProps = {
 	...transitionProps,
-	asChild
+	...domElProps("HTMLDivElement")
 } satisfies PropObj<Collapsible.ContentProps>;
 
 export const content: APISchema<Collapsible.ContentProps> = {

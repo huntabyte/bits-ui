@@ -9,5 +9,6 @@ export type {
 	DescriptionProps as DialogDescriptionProps,
 	//
 	TriggerEvents as DialogTriggerEvents,
-	CloseEvents as DialogCloseEvents
+	CloseEvents as DialogCloseEvents,
+	ContentEvents as DialogContentEvents
 } from "./types.js";

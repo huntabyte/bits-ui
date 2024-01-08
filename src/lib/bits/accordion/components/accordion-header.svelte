@@ -1,15 +1,17 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { getAttrs, getCtx } from "../ctx.js";
+	import { getCtx } from "../ctx.js";
 	import type { HeaderProps } from "../types.js";
 
 	type $$Props = HeaderProps;
 
 	export let level = 3;
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
-		elements: { heading: header }
+		elements: { heading: header },
+		getAttrs
 	} = getCtx();
 
 	const attrs = getAttrs("header");
@@ -21,7 +23,7 @@
 {#if asChild}
 	<slot {builder} />
 {:else}
-	<div use:melt={builder} {...$$restProps}>
+	<div bind:this={el} use:melt={builder} {...$$restProps}>
 		<slot {builder} />
 	</div>
 {/if}

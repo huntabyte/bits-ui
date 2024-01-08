@@ -1,7 +1,7 @@
 import * as C from "@/content/constants.js";
 import type * as DateField from "$lib/bits/date-field/_types.js";
 import type { APISchema } from "@/types";
-import { enums, idsSlotProp, union, asChild } from "@/content/api-reference/helpers.js";
+import { enums, idsSlotProp, union, domElProps } from "@/content/api-reference/helpers.js";
 import { builderAndAttrsSlotProps } from "./helpers";
 
 export const root: APISchema<DateField.Props> = {
@@ -103,9 +103,7 @@ export const root: APISchema<DateField.Props> = {
 const input: APISchema<DateField.InputProps> = {
 	title: "Input",
 	description: "The container for the segments of the date field.",
-	props: {
-		asChild
-	},
+	props: domElProps("HTMLDivElement"),
 	slotProps: {
 		...builderAndAttrsSlotProps,
 		segments: {
@@ -154,7 +152,7 @@ export const segment: APISchema<DateField.SegmentProps> = {
 			description: "The part of the date to render.",
 			required: true
 		},
-		asChild
+		...domElProps("HTMLDivElement")
 	},
 	slotProps: {
 		...builderAndAttrsSlotProps
@@ -194,7 +192,7 @@ export const segment: APISchema<DateField.SegmentProps> = {
 export const label: APISchema<DateField.LabelProps> = {
 	title: "Label",
 	description: "The label for the date field.",
-	props: { asChild },
+	props: domElProps("HTMLSpanElement"),
 	slotProps: {
 		...builderAndAttrsSlotProps
 	},

@@ -1,5 +1,69 @@
 # @huntabyte/primitives
 
+## 0.13.4
+
+### Patch Changes
+
+- fix: pagination prop reactivity ([#262](https://github.com/huntabyte/bits-ui/pull/262))
+
+## 0.13.3
+
+### Patch Changes
+
+- fix: date picker context issue ([#260](https://github.com/huntabyte/bits-ui/pull/260))
+
+## 0.13.2
+
+### Patch Changes
+
+- fix: improve tree-shaking ([#257](https://github.com/huntabyte/bits-ui/pull/257))
+
+## 0.13.1
+
+### Patch Changes
+
+- fix: issues with tree shaking ([#255](https://github.com/huntabyte/bits-ui/pull/255))
+
+## 0.13.0
+
+### Minor Changes
+
+- - Forward pointerdown pointerup & pointermove events for AlertDialog.Content and Dialog.Content ([#249](https://github.com/huntabyte/bits-ui/pull/249))
+  - Update Melt UI and add onOutsideClick prop to components that handle outside clicks. You can override the default behavior of closing the component by calling event.preventDefault() within that handler.
+  - Added RTL support for the Slider via the dir prop which can be set to "ltr" | "rtl" defaulting to "ltr"
+
+### Patch Changes
+
+- fix: Set aspect ratio prop optional as default value is setted ([#238](https://github.com/huntabyte/bits-ui/pull/238))
+
+## 0.12.0
+
+### Minor Changes
+
+- Expose `el` prop for all components to allow binding & interacting with the underlying element ([#244](https://github.com/huntabyte/bits-ui/pull/244))
+
+## 0.11.8
+
+### Patch Changes
+
+- feat: add PIN Input component ([#227](https://github.com/huntabyte/bits-ui/pull/227))
+
+## 0.11.7
+
+### Patch Changes
+
+- fix: bug with select menus inside popovers not restoring scroll ([#209](https://github.com/huntabyte/bits-ui/pull/209))
+
+- add `closeOnItemClick` prop to menu components ([#209](https://github.com/huntabyte/bits-ui/pull/209))
+
+## 0.11.6
+
+### Patch Changes
+
+- feat: add `Pagination` component ([#223](https://github.com/huntabyte/bits-ui/pull/223))
+
+- feat: add Toolbar component ([#219](https://github.com/huntabyte/bits-ui/pull/219))
+
 ## 0.11.5
 
 ### Patch Changes

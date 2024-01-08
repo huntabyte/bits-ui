@@ -33,7 +33,8 @@ export default {
 				dark: {
 					DEFAULT: "hsl(var(--dark) / <alpha-value>)",
 					4: "hsl(var(--dark-04))",
-					10: "hsl(var(--dark-10))"
+					10: "hsl(var(--dark-10))",
+					40: "hsl(var(--dark-40))"
 				},
 				accent: {
 					DEFAULT: "hsl(var(--accent) / <alpha-value>)",

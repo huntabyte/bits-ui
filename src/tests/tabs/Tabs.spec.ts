@@ -4,8 +4,10 @@ import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import TabsTest from "./TabsTest.svelte";
 import type { Item } from "./TabsTest.svelte";
-import { testKbd as kbd } from "../utils.js";
+import { getTestKbd } from "../utils.js";
 import type { Tabs } from "$lib";
+
+const kbd = getTestKbd();
 
 type Props = Tabs.Props & { items?: Item[] };
 

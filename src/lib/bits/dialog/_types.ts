@@ -4,8 +4,9 @@
  * but we don't want to document the HTML attributes.
  */
 
+import type { FocusProp } from "$lib/shared/index.js";
 import type {
-	AsChild,
+	DOMElement,
 	Expand,
 	OmitOpen,
 	OnChangeFn,
@@ -15,7 +16,9 @@ import type {
 import type { CreateDialogProps } from "@melt-ui/svelte";
 
 type Props = Expand<
-	OmitOpen<Omit<CreateDialogProps, "role" | "ids" | "forceVisible">> & {
+	OmitOpen<
+		Omit<CreateDialogProps, "role" | "ids" | "forceVisible" | "openFocus" | "closeFocus">
+	> & {
 		/**
 		 * The open state of the dialog.
 		 * You can bind this to a boolean value to programmatically control the open state.
@@ -28,10 +31,20 @@ type Props = Expand<
 		 * A callback function called when the open state changes.
 		 */
 		onOpenChange?: OnChangeFn<boolean>;
+
+		/**
+		 * Override the default autofocus behavior of the dialog when it opens
+		 */
+		openFocus?: FocusProp;
+
+		/**
+		 * Override the default autofocus behavior of the dialog after close
+		 */
+		closeFocus?: FocusProp;
 	}
 >;
 
-type TriggerProps = AsChild;
+type TriggerProps = DOMElement<HTMLButtonElement>;
 
 type CloseProps = TriggerProps;
 
@@ -39,22 +52,22 @@ type ContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
 	Out extends Transition = Transition
-> = Expand<TransitionProps<T, In, Out> & AsChild>;
+> = Expand<TransitionProps<T, In, Out> & DOMElement>;
 
-type DescriptionProps = AsChild;
+type DescriptionProps = DOMElement;
 
 type OverlayProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
 	Out extends Transition = Transition
-> = Expand<TransitionProps<T, In, Out> & AsChild>;
+> = Expand<TransitionProps<T, In, Out> & DOMElement>;
 
-type PortalProps = AsChild;
+type PortalProps = DOMElement;
 
 type TitleProps = Expand<
 	{
 		level?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
-	} & AsChild
+	} & DOMElement<HTMLHeadingElement>
 >;
 
 export type {

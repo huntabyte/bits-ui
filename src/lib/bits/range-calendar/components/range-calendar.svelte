@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt, type Month } from "@melt-ui/svelte";
-	import { setCtx, getAttrs } from "../ctx.js";
+	import { setCtx } from "../ctx.js";
 	import type { Events, Props } from "../types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
 	import { onMount } from "svelte";
@@ -32,8 +32,7 @@
 	export let initialFocus: $$Props["initialFocus"] = false;
 	export let startValue: $$Props["startValue"] = undefined;
 	export let numberOfMonths: $$Props["numberOfMonths"] = undefined;
-
-	let el: HTMLElement | undefined = undefined;
+	export let el: $$Props["el"] = undefined;
 
 	onMount(() => {
 		if (!initialFocus || !el) return;
@@ -51,7 +50,8 @@
 			endValue
 		},
 		updateOption,
-		ids
+		ids,
+		getAttrs
 	} = setCtx({
 		defaultPlaceholder: placeholder,
 		defaultValue: value,

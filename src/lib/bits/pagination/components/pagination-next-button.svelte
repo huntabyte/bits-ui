@@ -1,16 +1,18 @@
 <script lang="ts">
 	import type { NextButtonEvents, NextButtonProps } from "../types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
-	import { getAttrs, getCtx } from "../ctx.js";
+	import { getCtx } from "../ctx.js";
 	import { melt } from "@melt-ui/svelte";
 
 	type $$Props = NextButtonProps;
 	type $$Events = NextButtonEvents;
 
 	export let asChild: $$Props["asChild"] = undefined;
+	export let el: $$Props["el"] = undefined;
 
 	const {
-		elements: { nextButton }
+		elements: { nextButton },
+		getAttrs
 	} = getCtx();
 
 	const attrs = getAttrs("next-button");
@@ -25,6 +27,7 @@
 	<slot {builder} />
 {:else}
 	<button
+		bind:this={el}
 		use:melt={builder}
 		type="button"
 		{...$$restProps}

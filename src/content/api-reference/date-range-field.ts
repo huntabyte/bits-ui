@@ -1,7 +1,7 @@
 import * as C from "@/content/constants.js";
 import type * as DateRangeField from "$lib/bits/date-range-field/_types.js";
 import type { APISchema } from "@/types";
-import { enums, idsSlotProp, union, asChild } from "@/content/api-reference/helpers.js";
+import { enums, idsSlotProp, union, domElProps } from "@/content/api-reference/helpers.js";
 import { builderAndAttrsSlotProps } from "./helpers";
 
 export const root: APISchema<DateRangeField.Props> = {
@@ -106,9 +106,7 @@ export const root: APISchema<DateRangeField.Props> = {
 export const input: APISchema<DateRangeField.InputProps> = {
 	title: "Input",
 	description: "The container for the segments of the date field.",
-	props: {
-		asChild
-	},
+	props: domElProps("HTMLDivElement"),
 	slotProps: {
 		...builderAndAttrsSlotProps,
 		segments: {
@@ -165,7 +163,7 @@ export const segment: APISchema<DateRangeField.SegmentProps> = {
 			description: "The type of field to render (start or end).",
 			required: true
 		},
-		asChild
+		...domElProps("HTMLDivElement")
 	},
 	slotProps: {
 		...builderAndAttrsSlotProps
@@ -205,7 +203,7 @@ export const segment: APISchema<DateRangeField.SegmentProps> = {
 export const label: APISchema<DateRangeField.LabelProps> = {
 	title: "Label",
 	description: "The label for the date field.",
-	props: { asChild },
+	props: domElProps("HTMLSpanElement"),
 	slotProps: {
 		...builderAndAttrsSlotProps
 	},

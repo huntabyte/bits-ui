@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { setCtx, getAttrs } from "../ctx.js";
+	import { setCtx } from "../ctx.js";
 	import type { Props } from "../types.js";
 
 	type $$Props = Props;
@@ -8,10 +8,12 @@
 	export let onLoadingStatusChange: $$Props["onLoadingStatusChange"] =
 		undefined;
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		states: { loadingStatus: localLoadingStatus },
-		updateOption
+		updateOption,
+		getAttrs
 	} = setCtx({
 		src: "",
 		delayMs,
@@ -30,7 +32,7 @@
 {#if asChild}
 	<slot {attrs} />
 {:else}
-	<div {...$$restProps} {...attrs}>
+	<div bind:this={el} {...$$restProps} {...attrs}>
 		<slot {attrs} />
 	</div>
 {/if}

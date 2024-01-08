@@ -3,10 +3,12 @@ import userEvent from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import ToggleGroupTest from "./ToggleGroupTest.svelte";
-import { testKbd as kbd } from "../utils.js";
+import { getTestKbd } from "../utils.js";
 import type { ToggleGroup } from "$lib";
 import type { Item } from "./ToggleGroupTest.svelte";
 import ToggleGroupMultipleTest from "./ToggleGroupMultipleTest.svelte";
+
+const kbd = getTestKbd();
 
 const items: Item[] = [
 	{

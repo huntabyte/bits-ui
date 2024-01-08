@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { getAttrs, getCtx } from "../ctx.js";
+	import { getCtx } from "../ctx.js";
 	import type { LinkEvents, LinkProps } from "../types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
 
@@ -8,9 +8,11 @@
 	type $$Events = LinkEvents;
 
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
-		elements: { link }
+		elements: { link },
+		getAttrs
 	} = getCtx();
 
 	const dispatch = createDispatcher();
@@ -25,6 +27,7 @@
 {:else}
 	<svelte:element
 		this={"a"}
+		bind:this={el}
 		use:melt={builder}
 		{...$$restProps}
 		on:m-keydown={dispatch}

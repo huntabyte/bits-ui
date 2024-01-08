@@ -4,7 +4,7 @@
  * but we don't want to document the HTML attributes.
  */
 import type { CreateTooltipProps } from "@melt-ui/svelte";
-import type { Expand, OmitFloating, OnChangeFn, AsChild } from "$lib/internal/index.js";
+import type { Expand, OmitFloating, OnChangeFn, DOMElement } from "$lib/internal/index.js";
 import type { ArrowProps, ContentProps } from "$lib/bits/floating/_types.js";
 
 type Props = Expand<OmitFloating<CreateTooltipProps>> & {
@@ -36,6 +36,6 @@ type Props = Expand<OmitFloating<CreateTooltipProps>> & {
 	onOpenChange?: OnChangeFn<boolean>;
 };
 
-type TriggerProps = AsChild;
+type TriggerProps = DOMElement<HTMLButtonElement>;
 
 export type { Props, ArrowProps, TriggerProps, ContentProps };

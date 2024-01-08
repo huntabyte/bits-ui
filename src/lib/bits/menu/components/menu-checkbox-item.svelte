@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { setCheckboxItem, getAttrs } from "../ctx.js";
+	import { setCheckboxItem } from "../ctx.js";
 	import type { CheckboxItemEvents, CheckboxItemProps } from "../types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
 
@@ -11,11 +11,13 @@
 	export let onCheckedChange: $$Props["onCheckedChange"] = undefined;
 	export let disabled: $$Props["disabled"] = undefined;
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { checkboxItem },
 		states: { checked: localChecked },
-		updateOption
+		updateOption,
+		getAttrs
 	} = setCheckboxItem({
 		disabled,
 		defaultChecked: checked,
@@ -42,6 +44,7 @@
 	<slot {builder} />
 {:else}
 	<div
+		bind:this={el}
 		use:melt={builder}
 		{...$$restProps}
 		on:m-click={dispatch}

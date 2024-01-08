@@ -1,4 +1,4 @@
-import { type CreateSelectProps, type Select as SelectReturn, createSelect } from "@melt-ui/svelte";
+import { type CreateSelectProps, createSelect } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
 import {
 	createBitAttrs,
@@ -11,27 +11,35 @@ import type { Writable } from "svelte/store";
 import type { FloatingConfig } from "../floating/floating-config.js";
 import type { FloatingProps } from "../floating/_types.js";
 
-const NAME = "select";
-const GROUP_NAME = "select-group";
-const ITEM_NAME = "select-item";
+function getSelectData() {
+	const NAME = "select" as const;
+	const GROUP_NAME = "select-group";
+	const ITEM_NAME = "select-item";
 
-const PARTS = [
-	"arrow",
-	"content",
-	"group",
-	"item",
-	"indicator",
-	"input",
-	"label",
-	"trigger",
-	"value"
-] as const;
+	const PARTS = [
+		"arrow",
+		"content",
+		"group",
+		"item",
+		"indicator",
+		"input",
+		"label",
+		"trigger",
+		"value"
+	] as const;
 
-export const getAttrs = createBitAttrs(NAME, PARTS);
+	return {
+		NAME,
+		GROUP_NAME,
+		ITEM_NAME,
+		PARTS
+	};
+}
 
-type GetReturn = SelectReturn;
+type GetReturn = Omit<ReturnType<typeof setCtx>, "updateOption">;
 
 export function getCtx() {
+	const { NAME } = getSelectData();
 	return getContext<GetReturn>(NAME);
 }
 
@@ -48,7 +56,10 @@ export function setCtx<T = unknown, M extends boolean = false>(
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	props: Props<T, M>
 ) {
-	const select = createSelect<T, M>(removeUndefined(props));
+	const { NAME, PARTS } = getSelectData();
+	const getAttrs = createBitAttrs(NAME, PARTS);
+
+	const select = { ...createSelect<T, M>(removeUndefined(props)), getAttrs };
 	setContext(NAME, select);
 	return {
 		...select,
@@ -57,36 +68,44 @@ export function setCtx<T = unknown, M extends boolean = false>(
 }
 
 export function setGroupCtx() {
+	const { GROUP_NAME } = getSelectData();
 	const id = generateId();
 	setContext(GROUP_NAME, id);
 	const {
-		elements: { group }
+		elements: { group },
+		getAttrs
 	} = getCtx();
-	return { group, id };
+	return { group, id, getAttrs };
 }
 
 export function setItemCtx(value: unknown) {
+	const { ITEM_NAME } = getSelectData();
 	const select = getCtx();
 	setContext(ITEM_NAME, value);
 	return select;
 }
 
 export function getGroupLabel() {
+	const { GROUP_NAME } = getSelectData();
 	const id = getContext<string>(GROUP_NAME);
 	const {
-		elements: { groupLabel }
+		elements: { groupLabel },
+		getAttrs
 	} = getCtx();
-	return { groupLabel, id };
+	return { groupLabel, id, getAttrs };
 }
 
 export function getItemIndicator() {
+	const { ITEM_NAME } = getSelectData();
 	const {
-		helpers: { isSelected }
+		helpers: { isSelected },
+		getAttrs
 	} = getCtx();
 	const value = getContext<unknown>(ITEM_NAME);
 	return {
 		value,
-		isSelected
+		isSelected,
+		getAttrs
 	};
 }
 
@@ -96,13 +115,12 @@ export function setArrow(size = 8) {
 	return select;
 }
 
-const defaultPlacement = {
-	side: "bottom",
-	align: "center",
-	sameWidth: true
-} satisfies FloatingProps;
-
 export function updatePositioning(props: FloatingProps) {
+	const defaultPlacement = {
+		side: "bottom",
+		align: "center",
+		sameWidth: true
+	} satisfies FloatingProps;
 	const withDefaults = { ...defaultPlacement, ...props } satisfies FloatingProps;
 	const {
 		options: { positioning }

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { setCtx, getAttrs } from "../ctx.js";
+	import { setCtx } from "../ctx.js";
 	import type { Events, Props } from "../types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
 	import SwitchInput from "./switch-input.svelte";
@@ -16,11 +16,13 @@
 	export let required: $$Props["required"] = undefined;
 	export let asChild: $$Props["asChild"] = false;
 	export let inputAttrs: $$Props["inputAttrs"] = undefined;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { root },
 		states: { checked: localChecked },
-		updateOption
+		updateOption,
+		getAttrs
 	} = setCtx({
 		disabled,
 		name,
@@ -53,6 +55,7 @@
 	<slot {builder} />
 {:else}
 	<button
+		bind:this={el}
 		use:melt={builder}
 		type="button"
 		{...$$restProps}

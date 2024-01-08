@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { setRadioGroupCtx, getAttrs } from "../ctx.js";
+	import { setRadioGroupCtx } from "../ctx.js";
 	import type { RadioGroupProps } from "../types.js";
 
 	type $$Props = RadioGroupProps;
@@ -8,10 +8,12 @@
 	export let value: $$Props["value"] = undefined;
 	export let onValueChange: $$Props["onValueChange"] = undefined;
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { radioGroup },
-		states: { value: localValue }
+		states: { value: localValue },
+		getAttrs
 	} = setRadioGroupCtx({
 		defaultValue: value,
 		onValueChange: ({ next }) => {
@@ -33,7 +35,7 @@
 {#if asChild}
 	<slot {builder} />
 {:else}
-	<div use:melt={builder} {...$$restProps}>
+	<div bind:this={el} use:melt={builder} {...$$restProps}>
 		<slot {builder} />
 	</div>
 {/if}

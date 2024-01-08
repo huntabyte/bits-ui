@@ -4,13 +4,13 @@
  * but we don't want to document the HTML attributes.
  */
 import type { CreateToolbarProps, CreateToolbarGroupProps } from "@melt-ui/svelte";
-import type { AsChild, Expand, OmitValue, OnChangeFn } from "$lib/internal/index.js";
+import type { DOMElement, Expand, OmitValue, OnChangeFn } from "$lib/internal/index.js";
 
-type Props = Expand<CreateToolbarProps & AsChild>;
+type Props = Expand<CreateToolbarProps & DOMElement>;
 
-type ButtonProps = AsChild;
+type ButtonProps = DOMElement<HTMLButtonElement>;
 
-type LinkProps = AsChild;
+type LinkProps = DOMElement<HTMLAnchorElement>;
 
 type GroupProps<T extends "single" | "multiple"> = Expand<
 	OmitValue<CreateToolbarGroupProps<T>> & {
@@ -35,7 +35,7 @@ type GroupProps<T extends "single" | "multiple"> = Expand<
 		 * to be selected at a time.
 		 */
 		type?: T;
-	} & AsChild
+	} & DOMElement
 >;
 
 type GroupItemProps = Expand<
@@ -55,7 +55,7 @@ type GroupItemProps = Expand<
 		 * @defaultValue false
 		 */
 		disabled?: boolean;
-	} & AsChild
+	} & DOMElement<HTMLButtonElement>
 >;
 
 export type { Props, ButtonProps, LinkProps, GroupProps, GroupItemProps };

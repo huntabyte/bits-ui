@@ -1,33 +1,33 @@
-import {
-	type RangeCalendar as RangeCalendarReturn,
-	type CreateRangeCalendarProps,
-	createRangeCalendar
-} from "@melt-ui/svelte";
+import { type CreateRangeCalendarProps, createRangeCalendar } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
 import { removeUndefined, getOptionUpdater, createBitAttrs } from "$lib/internal/index.js";
 
-const NAME = "calendar";
-const PARTS = [
-	"root",
-	"prev-button",
-	"next-button",
-	"heading",
-	"grid",
-	"day",
-	"header",
-	"grid-head",
-	"head-cell",
-	"grid-body",
-	"cell",
-	"grid-row"
-] as const;
+function getRangeCalendarData() {
+	const NAME = "calendar" as const;
+	const PARTS = [
+		"root",
+		"prev-button",
+		"next-button",
+		"heading",
+		"grid",
+		"day",
+		"header",
+		"grid-head",
+		"head-cell",
+		"grid-body",
+		"cell",
+		"grid-row"
+	] as const;
 
-export const getAttrs = createBitAttrs(NAME, PARTS);
+	return { NAME, PARTS };
+}
 
-type GetReturn = RangeCalendarReturn;
+type GetReturn = Omit<ReturnType<typeof setCtx>, "updateOption">;
 
 export function setCtx(props: CreateRangeCalendarProps) {
-	const rangeCalendar = createRangeCalendar(removeUndefined(props));
+	const { NAME, PARTS } = getRangeCalendarData();
+	const getAttrs = createBitAttrs(NAME, PARTS);
+	const rangeCalendar = { ...createRangeCalendar(removeUndefined(props)), getAttrs };
 	setContext(NAME, rangeCalendar);
 	return {
 		...rangeCalendar,
@@ -36,5 +36,6 @@ export function setCtx(props: CreateRangeCalendarProps) {
 }
 
 export function getCtx() {
+	const { NAME } = getRangeCalendarData();
 	return getContext<GetReturn>(NAME);
 }

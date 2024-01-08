@@ -1,11 +1,8 @@
 import {
 	createMenubar,
-	type Menubar as MenubarReturn,
 	type CreateMenubarProps as MenubarProps,
-	type MenubarMenu as MenubarMenuReturn,
 	type CreateMenubarSubmenuProps,
-	type CreateMenubarMenuProps,
-	type MenubarMenuSubmenu as MenubarSubReturn
+	type CreateMenubarMenuProps
 } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
 import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
@@ -15,35 +12,44 @@ import type { FloatingConfig } from "../floating/floating-config.js";
 import type { FloatingProps } from "../floating/_types.js";
 import { getSubmenuCtx } from "../menu/ctx";
 
-const NAME = "menubar";
-const MENU_NAME = "menu";
-const SUB_NAME = "menu-submenu";
+function getMenubarData() {
+	const NAME = "menubar" as const;
+	const MENU_NAME = "menu" as const;
+	const SUB_NAME = "menu-submenu";
 
-const PARTS = [
-	"arrow",
-	"checkbox-indicator",
-	"checkbox-item",
-	"content",
-	"group",
-	"item",
-	"label",
-	"radio-group",
-	"radio-item",
-	"separator",
-	"sub-content",
-	"sub-trigger",
-	"trigger"
-] as const;
+	const PARTS = [
+		"arrow",
+		"checkbox-indicator",
+		"checkbox-item",
+		"content",
+		"group",
+		"item",
+		"label",
+		"radio-group",
+		"radio-item",
+		"separator",
+		"sub-content",
+		"sub-trigger",
+		"trigger"
+	] as const;
 
-export const getMenubarAttrs = createBitAttrs(NAME, ["root"]);
-export const getAttrs = createBitAttrs("menu", PARTS);
+	return {
+		NAME,
+		MENU_NAME,
+		SUB_NAME,
+		PARTS
+	};
+}
 
-type GetReturn = MenubarReturn;
-type GetMenuReturn = MenubarMenuReturn;
-type GetSubmenuReturn = MenubarSubReturn;
+type GetReturn = Omit<ReturnType<typeof setCtx>, "updateOption">;
+type GetMenuReturn = Omit<ReturnType<typeof setMenuCtx>, "updateOption">;
+type GetSubmenuReturn = Omit<ReturnType<typeof setSubMenuCtx>, "updateOption">;
 
 export function setCtx(props: MenubarProps) {
-	const menubar = createMenubar(removeUndefined(props));
+	const { NAME, PARTS, MENU_NAME } = getMenubarData();
+	const getMenubarAttrs = createBitAttrs(NAME, ["root"]);
+	const getAttrs = createBitAttrs(MENU_NAME, PARTS);
+	const menubar = { ...createMenubar(removeUndefined(props)), getAttrs, getMenubarAttrs };
 	setContext(NAME, menubar);
 
 	return {
@@ -52,15 +58,18 @@ export function setCtx(props: MenubarProps) {
 	};
 }
 export function getCtx() {
+	const { NAME } = getMenubarData();
 	return getContext<GetReturn>(NAME);
 }
 
 export function setMenuCtx(props: CreateMenubarMenuProps) {
+	const { MENU_NAME } = getMenubarData();
 	const {
-		builders: { createMenu }
+		builders: { createMenu },
+		getAttrs
 	} = getCtx();
 
-	const menu = createMenu({ ...removeUndefined(props), forceVisible: false });
+	const menu = { ...createMenu({ ...removeUndefined(props), forceVisible: false }), getAttrs };
 	setContext(MENU_NAME, menu);
 	return {
 		...menu,
@@ -69,14 +78,17 @@ export function setMenuCtx(props: CreateMenubarMenuProps) {
 }
 
 export function getMenuCtx() {
+	const { MENU_NAME } = getMenubarData();
 	return getContext<GetMenuReturn>(MENU_NAME);
 }
 
 export function setSubMenuCtx(props: CreateMenubarSubmenuProps) {
+	const { SUB_NAME } = getMenubarData();
 	const {
-		builders: { createSubmenu }
+		builders: { createSubmenu },
+		getAttrs
 	} = getMenuCtx();
-	const sub = createSubmenu(removeUndefined(props));
+	const sub = { ...createSubmenu(removeUndefined(props)), getAttrs };
 	setContext(SUB_NAME, sub);
 	return {
 		...sub,
@@ -84,6 +96,7 @@ export function setSubMenuCtx(props: CreateMenubarSubmenuProps) {
 	};
 }
 export function getSubMenuCtx() {
+	const { SUB_NAME } = getMenubarData();
 	return getContext<GetSubmenuReturn>(SUB_NAME);
 }
 

@@ -1,9 +1,9 @@
-import type { AsChild, Transition, TransitionProps } from "$lib/internal/index.js";
+import type { DOMElement, Transition, TransitionProps } from "$lib/internal/index.js";
 
 export type ArrowProps = Expand<
 	{
 		size?: number;
-	} & AsChild
+	} & DOMElement
 >;
 
 export type Boundary = "clippingAncestors" | Element | Array<Element> | Rect;
@@ -103,4 +103,4 @@ export type ContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
 	Out extends Transition = Transition
-> = Expand<FloatingProps & TransitionProps<T, In, Out> & AsChild>;
+> = Expand<FloatingProps & TransitionProps<T, In, Out> & DOMElement>;

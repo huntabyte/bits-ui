@@ -6,12 +6,13 @@ import {
 	portalProp,
 	transitionProps,
 	arrowProps,
-	asChild,
 	enums,
-	idsSlotProp
+	idsSlotProp,
+	domElProps,
+	builderAndAttrsSlotProps,
+	onOutsideClickProp
 } from "@/content/api-reference/helpers.js";
 import * as C from "@/content/constants.js";
-import { builderAndAttrsSlotProps } from "./helpers";
 
 export const root: APISchema<Popover.Props> = {
 	title: "Root",
@@ -58,7 +59,8 @@ export const root: APISchema<Popover.Props> = {
 			type: focusProp,
 			description: "Override the focus when the popover is closed."
 		},
-		portal: { ...portalProp("popover") }
+		portal: { ...portalProp("popover") },
+		onOutsideClick: onOutsideClickProp
 	},
 	slotProps: { ids: idsSlotProp }
 };
@@ -66,7 +68,7 @@ export const root: APISchema<Popover.Props> = {
 export const trigger: APISchema<Popover.TriggerProps> = {
 	title: "Trigger",
 	description: "A component which toggles the opening and closing of the popover on press.",
-	props: { asChild },
+	props: domElProps("HTMLButtonElement"),
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -85,7 +87,7 @@ export const trigger: APISchema<Popover.TriggerProps> = {
 export const content: APISchema<Popover.ContentProps> = {
 	title: "Content",
 	description: "The contents of the popover which are displayed when the popover is open.",
-	props: { ...transitionProps, ...floatingPositioning, asChild },
+	props: { ...transitionProps, ...floatingPositioning, ...domElProps("HTMLDivElement") },
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -105,7 +107,7 @@ export const close: APISchema<Popover.CloseProps> = {
 	title: "Close",
 	description:
 		"A button which closes the popover when pressed and is typically placed in the content.",
-	props: { asChild },
+	props: domElProps("HTMLButtonElement"),
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{

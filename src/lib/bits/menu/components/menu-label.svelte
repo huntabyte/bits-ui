@@ -1,13 +1,14 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { getGroupLabel, getAttrs } from "../ctx.js";
+	import { getGroupLabel } from "../ctx.js";
 	import type { LabelProps } from "../types.js";
 
 	type $$Props = LabelProps;
 
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
-	const { groupLabel, id } = getGroupLabel();
+	const { groupLabel, id, getAttrs } = getGroupLabel();
 	const attrs = getAttrs("label");
 
 	$: builder = $groupLabel(id);
@@ -17,7 +18,7 @@
 {#if asChild}
 	<slot {builder} />
 {:else}
-	<div use:melt={builder} {...$$restProps}>
+	<div bind:this={el} use:melt={builder} {...$$restProps}>
 		<slot {builder} />
 	</div>
 {/if}

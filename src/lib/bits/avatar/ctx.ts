@@ -2,13 +2,23 @@ import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal
 import { createAvatar, type CreateAvatarProps, type Avatar as AvatarReturn } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
 
-const NAME = "avatar";
-const PARTS = ["root", "image", "fallback"] as const;
+export function getAvatarData() {
+	const NAME = "avatar" as const;
+	const PARTS = ["root", "image", "fallback"] as const;
 
-export const getAttrs = createBitAttrs(NAME, PARTS);
+	return {
+		NAME,
+		PARTS
+	};
+}
+
+type GetReturn = Omit<ReturnType<typeof setCtx>, "updateOption">;
 
 export function setCtx(props: CreateAvatarProps) {
-	const avatar = createAvatar(removeUndefined(props));
+	const { NAME, PARTS } = getAvatarData();
+	const getAttrs = createBitAttrs(NAME, PARTS);
+	const avatar = { ...createAvatar(removeUndefined(props)), getAttrs };
+
 	setContext(NAME, avatar);
 	return {
 		...avatar,
@@ -17,6 +27,7 @@ export function setCtx(props: CreateAvatarProps) {
 }
 
 export function getImage(src: string | undefined | null = "") {
+	const { NAME } = getAvatarData();
 	const avatar = getContext<AvatarReturn>(NAME);
 	if (!src) {
 		avatar.options.src.set("");
@@ -27,5 +38,6 @@ export function getImage(src: string | undefined | null = "") {
 }
 
 export function getCtx() {
-	return getContext<AvatarReturn>(NAME);
+	const { NAME } = getAvatarData();
+	return getContext<GetReturn>(NAME);
 }

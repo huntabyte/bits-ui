@@ -1,17 +1,19 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { getAttrs, getCtx } from "../ctx.js";
+	import { getCtx } from "../ctx.js";
 	import type { GridProps } from "../types.js";
 
 	type $$Props = GridProps;
 
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
-		elements: { grid }
+		elements: { grid },
+		getCalendarAttrs
 	} = getCtx();
 
-	const attrs = getAttrs("grid");
+	const attrs = getCalendarAttrs("grid");
 
 	$: builder = $grid;
 	$: Object.assign(builder, attrs);
@@ -20,7 +22,7 @@
 {#if asChild}
 	<slot {builder} />
 {:else}
-	<table use:melt={builder} {...$$restProps}>
+	<table bind:this={el} use:melt={builder} {...$$restProps}>
 		<slot {builder} />
 	</table>
 {/if}

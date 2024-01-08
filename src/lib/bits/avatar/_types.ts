@@ -4,7 +4,7 @@
  * but we don't want to document the HTML attributes.
  */
 
-import type { Expand, AsChild, OnChangeFn } from "$lib/internal/index.js";
+import type { Expand, OnChangeFn, DOMElement } from "$lib/internal/index.js";
 import type { CreateAvatarProps } from "@melt-ui/svelte";
 
 type Props = Expand<
@@ -19,11 +19,11 @@ type Props = Expand<
 		 * A callback function called when the loading state changes.
 		 */
 		onLoadingStatusChange?: OnChangeFn<"loading" | "loaded" | "error">;
-	} & AsChild
+	} & DOMElement
 >;
 
-type ImageProps = Expand<AsChild>;
+type ImageProps = DOMElement<HTMLImageElement>;
 
-type FallbackProps = AsChild;
+type FallbackProps = DOMElement<HTMLSpanElement>;
 
 export type { Props, ImageProps, FallbackProps };

@@ -4,8 +4,10 @@ import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import AccordionTest from "./AccordionTest.svelte";
 import type { Item } from "./AccordionTest.svelte";
-import { testKbd as kbd } from "../utils";
+import { getTestKbd } from "../utils";
 import AccordionTestIsolated from "./AccordionTestIsolated.svelte";
+
+const kbd = getTestKbd();
 
 const items: Item[] = [
 	{

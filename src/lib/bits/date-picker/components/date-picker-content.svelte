@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import type { Transition } from "$lib/internal/index.js";
-	import { getCtx, getPopoverAttrs, updatePositioning } from "../ctx.js";
+	import { getCtx, updatePositioning } from "../ctx.js";
 	import type { ContentProps } from "../types.js";
 
 	type T = $$Generic<Transition>;
@@ -29,11 +29,13 @@
 	export let fitViewport: $$Props["fitViewport"] = false;
 	export let strategy: $$Props["strategy"] = "absolute";
 	export let overlap: $$Props["overlap"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { content },
 		states: { open },
-		ids
+		ids,
+		getPopoverAttrs
 	} = getCtx();
 
 	const attrs = getPopoverAttrs("content");
@@ -64,6 +66,7 @@
 	<slot {builder} />
 {:else if transition && $open}
 	<div
+		bind:this={el}
 		transition:transition={transitionConfig}
 		use:melt={builder}
 		{...$$restProps}
@@ -72,6 +75,7 @@
 	</div>
 {:else if inTransition && outTransition && $open}
 	<div
+		bind:this={el}
 		in:inTransition={inTransitionConfig}
 		out:outTransition={outTransitionConfig}
 		use:melt={builder}
@@ -80,11 +84,17 @@
 		<slot {builder} />
 	</div>
 {:else if inTransition && $open}
-	<div in:inTransition={inTransitionConfig} use:melt={builder} {...$$restProps}>
+	<div
+		bind:this={el}
+		in:inTransition={inTransitionConfig}
+		use:melt={builder}
+		{...$$restProps}
+	>
 		<slot {builder} />
 	</div>
 {:else if outTransition && $open}
 	<div
+		bind:this={el}
 		out:outTransition={outTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
@@ -92,7 +102,7 @@
 		<slot {builder} />
 	</div>
 {:else if $open}
-	<div use:melt={builder} {...$$restProps}>
+	<div bind:this={el} use:melt={builder} {...$$restProps}>
 		<slot {builder} />
 	</div>
 {/if}

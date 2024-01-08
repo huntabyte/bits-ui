@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt, type Month } from "@melt-ui/svelte";
-	import { getCtx, getCalendarAttrs } from "../ctx.js";
+	import { getCtx } from "../ctx.js";
 	import type { CalendarProps } from "../types.js";
 	import type { DateValue } from "@internationalized/date";
 
@@ -8,11 +8,13 @@
 
 	export let asChild: $$Props["asChild"] = false;
 	export let id: $$Props["id"] = undefined;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { calendar },
 		states: { months: localMonths, weekdays },
-		ids
+		ids,
+		getCalendarAttrs
 	} = getCtx();
 
 	$: if (id) {
@@ -30,7 +32,7 @@
 {#if asChild}
 	<slot {builder} {months} weekdays={$weekdays} />
 {:else}
-	<div use:melt={builder} {...$$restProps}>
+	<div bind:this={el} use:melt={builder} {...$$restProps}>
 		<slot {builder} {months} weekdays={$weekdays} />
 	</div>
 {/if}

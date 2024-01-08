@@ -1,40 +1,47 @@
-import {
-	createDialog,
-	type Dialog as AlertDialogReturn,
-	type CreateDialogProps as CreateAlertDialogProps
-} from "@melt-ui/svelte";
+import { createDialog, type CreateDialogProps as CreateAlertDialogProps } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
 import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 
-const NAME = "alert-dialog";
-const PARTS = [
-	"action",
-	"cancel",
-	"content",
-	"description",
-	"overlay",
-	"portal",
-	"title",
-	"trigger"
-] as const;
-
 type SetProps = CreateAlertDialogProps;
-type GetReturn = AlertDialogReturn;
 
-export const getAttrs = createBitAttrs(NAME, PARTS);
+function getAlertDialogData() {
+	const NAME = "alert-dialog" as const;
+	const PARTS = [
+		"action",
+		"cancel",
+		"content",
+		"description",
+		"overlay",
+		"portal",
+		"title",
+		"trigger"
+	] as const;
+
+	return { NAME, PARTS };
+}
 
 export function setCtx(props: SetProps) {
-	const alertDialog = createDialog({
+	const { NAME, PARTS } = getAlertDialogData();
+	const getAttrs = createBitAttrs(NAME, PARTS);
+	const initAlertDialog = createDialog({
 		...removeUndefined(props),
 		role: "alertdialog"
 	});
+	const alertDialog = {
+		...initAlertDialog,
+		getAttrs,
+		updateOption: getOptionUpdater(initAlertDialog.options)
+	};
+
 	setContext(NAME, alertDialog);
 	return {
 		...alertDialog,
-		updateOption: getOptionUpdater(alertDialog.options)
+		updateOption: getOptionUpdater(alertDialog.options),
+		getAttrs
 	};
 }
 
 export function getCtx() {
-	return getContext<GetReturn>(NAME);
+	const { NAME } = getAlertDialogData();
+	return getContext<ReturnType<typeof setCtx>>(NAME);
 }

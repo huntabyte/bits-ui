@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { disabledAttrs } from "$lib/internal/index.js";
-	import { getSubTrigger, getAttrs } from "../ctx.js";
+	import { getSubTrigger } from "../ctx.js";
 	import type { SubTriggerEvents, SubTriggerProps } from "../types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
 
@@ -12,10 +12,12 @@
 	export let disabled: $$Props["disabled"] = false;
 	export let asChild: $$Props["asChild"] = false;
 	export let id: $$Props["id"] = undefined;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { subTrigger },
-		ids
+		ids,
+		getAttrs
 	} = getSubTrigger();
 
 	const dispatch = createDispatcher();
@@ -33,6 +35,7 @@
 	<slot {builder} />
 {:else}
 	<div
+		bind:this={el}
 		use:melt={builder}
 		{...$$restProps}
 		on:m-click={dispatch}

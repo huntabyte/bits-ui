@@ -1,16 +1,17 @@
 import type { APISchema } from "@/types";
 import {
 	arrowProps,
-	asChild,
+	domElProps,
 	enums,
 	idsSlotProp,
 	portalProp,
-	transitionProps
+	transitionProps,
+	builderAndAttrsSlotProps,
+	onOutsideClickProp
 } from "@/content/api-reference/helpers.js";
 import { floatingPositioning } from "./floating.js";
 import type * as LinkPreview from "$lib/bits/link-preview/_types";
 import * as C from "@/content/constants";
-import { builderAndAttrsSlotProps } from "./helpers";
 
 export const root: APISchema<LinkPreview.Props> = {
 	title: "Root",
@@ -50,7 +51,8 @@ export const root: APISchema<LinkPreview.Props> = {
 			},
 			description: "A callback that fires when the open state changes."
 		},
-		portal: { ...portalProp("link preview") }
+		portal: { ...portalProp("link preview") },
+		onOutsideClick: onOutsideClickProp
 	},
 	slotProps: {
 		ids: idsSlotProp
@@ -61,7 +63,7 @@ export const trigger: APISchema<LinkPreview.TriggerProps> = {
 	title: "Trigger",
 	description:
 		"A component which triggers the opening and closing of the link preview on hover or focus.",
-	props: { asChild },
+	props: domElProps("HTMLAnchorElement"),
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -80,7 +82,7 @@ export const trigger: APISchema<LinkPreview.TriggerProps> = {
 export const content: APISchema<LinkPreview.ContentProps> = {
 	title: "Content",
 	description: "The contents of the link preview which are displayed when the preview is open.",
-	props: { ...transitionProps, ...floatingPositioning, asChild },
+	props: { ...transitionProps, ...floatingPositioning, ...domElProps("HTMLDivElement") },
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{

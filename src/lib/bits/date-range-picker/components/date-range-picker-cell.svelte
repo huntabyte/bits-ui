@@ -1,14 +1,16 @@
 <script lang="ts">
-	import { getCtx, getCalendarAttrs } from "../ctx.js";
+	import { getCtx } from "../ctx.js";
 	import type { CellProps } from "../types.js";
 
 	type $$Props = CellProps;
 
 	export let date: $$Props["date"];
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
-		helpers: { isDateDisabled, isDateUnavailable }
+		helpers: { isDateDisabled, isDateUnavailable },
+		getCalendarAttrs
 	} = getCtx();
 
 	$: attrs = {
@@ -22,7 +24,7 @@
 {#if asChild}
 	<slot {attrs} />
 {:else}
-	<td {...$$restProps} {...attrs}>
+	<td bind:this={el} {...$$restProps} {...attrs}>
 		<slot {attrs} />
 	</td>
 {/if}

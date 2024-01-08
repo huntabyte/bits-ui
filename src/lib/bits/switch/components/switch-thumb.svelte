@@ -1,13 +1,15 @@
 <script lang="ts">
-	import { getCtx, getAttrs } from "../ctx.js";
+	import { getCtx } from "../ctx.js";
 	import type { ThumbProps } from "../types.js";
 
 	type $$Props = ThumbProps;
 
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
-		states: { checked }
+		states: { checked },
+		getAttrs
 	} = getCtx();
 
 	$: attrs = {
@@ -20,5 +22,5 @@
 {#if asChild}
 	<slot {attrs} checked={$checked} />
 {:else}
-	<span {...$$restProps} {...attrs} />
+	<span bind:this={el} {...$$restProps} {...attrs} />
 {/if}

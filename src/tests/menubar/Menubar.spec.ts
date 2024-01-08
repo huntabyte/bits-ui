@@ -3,8 +3,10 @@ import userEvent from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import MenubarTest from "./MenubarTest.svelte";
-import { testKbd as kbd } from "../utils.js";
+import { getTestKbd } from "../utils.js";
 import type { Menubar } from "$lib";
+
+const kbd = getTestKbd();
 
 /**
  * Helper function to reduce boilerplate in tests

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { createDispatcher, type Transition } from "$lib/internal/index.js";
-	import { getCtx, getAttrs, updatePositioning } from "../ctx.js";
+	import { getCtx, updatePositioning } from "../ctx.js";
 	import type { ContentEvents, ContentProps } from "../types.js";
 
 	type T = $$Generic<Transition>;
@@ -30,11 +30,13 @@
 	export let fitViewport: $$Props["fitViewport"] = false;
 	export let strategy: $$Props["strategy"] = "absolute";
 	export let overlap: $$Props["overlap"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { content },
 		states: { open },
-		ids
+		ids,
+		getAttrs
 	} = getCtx();
 
 	$: if (id) {
@@ -66,6 +68,7 @@
 	<slot {builder} />
 {:else if transition && $open}
 	<div
+		bind:this={el}
 		transition:transition={transitionConfig}
 		use:melt={builder}
 		{...$$restProps}
@@ -78,6 +81,7 @@
 	</div>
 {:else if inTransition && outTransition && $open}
 	<div
+		bind:this={el}
 		in:inTransition={inTransitionConfig}
 		out:outTransition={outTransitionConfig}
 		use:melt={builder}
@@ -91,6 +95,7 @@
 	</div>
 {:else if inTransition && $open}
 	<div
+		bind:this={el}
 		in:inTransition={inTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
@@ -103,6 +108,7 @@
 	</div>
 {:else if outTransition && $open}
 	<div
+		bind:this={el}
 		out:outTransition={outTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
@@ -115,6 +121,7 @@
 	</div>
 {:else if $open}
 	<div
+		bind:this={el}
 		use:melt={builder}
 		{...$$restProps}
 		on:m-focusout={dispatch}

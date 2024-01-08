@@ -1,10 +1,10 @@
 import type { APISchema } from "@/types";
-import { asChild, idsSlotProp } from "@/content/api-reference/helpers.js";
+import { idsSlotProp } from "@/content/api-reference/helpers.js";
 import { menu as m } from "./menu";
 import type * as Menubar from "$lib/bits/menubar/_types";
 import type * as Menu from "$lib/bits/menu/_types";
 import * as C from "@/content/constants";
-import { builderAndAttrsSlotProps } from "./helpers";
+import { builderAndAttrsSlotProps, domElProps } from "./helpers";
 
 export const root: APISchema<Menubar.Props> = {
 	title: "Root",
@@ -21,7 +21,7 @@ export const root: APISchema<Menubar.Props> = {
 			description:
 				"Whether or not to loop through the menubar menu triggers when navigating with the keyboard."
 		},
-		asChild
+		...domElProps("HTMLDivElement")
 	},
 	slotProps: { ...builderAndAttrsSlotProps, ids: idsSlotProp }
 };

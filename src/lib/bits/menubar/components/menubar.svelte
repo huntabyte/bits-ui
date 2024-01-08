@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { setCtx, getMenubarAttrs } from "../ctx.js";
+	import { setCtx } from "../ctx.js";
 	import type { Props } from "../types.js";
 	import { derived } from "svelte/store";
 
@@ -10,11 +10,13 @@
 	export let closeOnEscape: $$Props["closeOnEscape"] = true;
 	export let asChild: $$Props["asChild"] = false;
 	export let id: $$Props["id"] = undefined;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { menubar },
 		updateOption,
-		ids
+		ids,
+		getMenubarAttrs
 	} = setCtx({ loop, closeOnEscape });
 
 	const idValues = derived([ids.menubar], ([$menubarId]) => ({
@@ -35,7 +37,7 @@
 {#if asChild}
 	<slot {builder} ids={$idValues} />
 {:else}
-	<div use:melt={builder} {...$$restProps}>
+	<div bind:this={el} use:melt={builder} {...$$restProps}>
 		<slot {builder} ids={$idValues} />
 	</div>
 {/if}

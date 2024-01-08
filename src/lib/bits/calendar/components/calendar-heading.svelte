@@ -1,18 +1,20 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { getAttrs, getCtx } from "../ctx.js";
+	import { getCtx } from "../ctx.js";
 	import type { HeadingProps } from "../types.js";
 
 	type $$Props = HeadingProps;
 
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { heading },
-		states: { headingValue }
+		states: { headingValue },
+		getCalendarAttrs
 	} = getCtx();
 
-	const attrs = getAttrs("heading");
+	const attrs = getCalendarAttrs("heading");
 
 	$: builder = $heading;
 	$: Object.assign(builder, attrs);
@@ -21,7 +23,7 @@
 {#if asChild}
 	<slot {builder} headingValue={$headingValue} />
 {:else}
-	<div use:melt={builder} {...$$restProps}>
+	<div bind:this={el} use:melt={builder} {...$$restProps}>
 		<slot {builder} headingValue={$headingValue}>
 			{$headingValue}
 		</slot>

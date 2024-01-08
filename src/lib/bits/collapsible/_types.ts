@@ -10,8 +10,8 @@ import type {
 	OmitForceVisible,
 	Expand,
 	OnChangeFn,
-	AsChild,
-	TransitionProps
+	TransitionProps,
+	DOMElement
 } from "$lib/internal/index.js";
 import type { CreateCollapsibleProps } from "@melt-ui/svelte";
 
@@ -29,15 +29,15 @@ type Props = Expand<
 		 * A callback function called when the open state changes.
 		 */
 		onOpenChange?: OnChangeFn<boolean>;
-	} & AsChild
+	} & DOMElement
 >;
 
 type ContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
 	Out extends Transition = Transition
-> = Expand<TransitionProps<T, In, Out> & AsChild>;
+> = Expand<TransitionProps<T, In, Out> & DOMElement>;
 
-type TriggerProps = AsChild;
+type TriggerProps = DOMElement<HTMLButtonElement>;
 
 export type { Props, ContentProps, TriggerProps };

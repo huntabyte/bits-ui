@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { getCtx, getFieldAttrs } from "../ctx.js";
+	import { getCtx } from "../ctx.js";
 	import type { SegmentEvents, SegmentProps } from "../types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
 
@@ -10,10 +10,12 @@
 	export let asChild: $$Props["asChild"] = false;
 	export let id: $$Props["id"] = undefined;
 	export let part: $$Props["part"];
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { segment },
-		ids
+		ids,
+		getFieldAttrs
 	} = getCtx();
 
 	$: if (id && part !== "literal") {
@@ -31,6 +33,7 @@
 	<slot {builder} />
 {:else}
 	<div
+		bind:this={el}
 		use:melt={builder}
 		{...$$restProps}
 		on:m-click={dispatch}

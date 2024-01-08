@@ -2,7 +2,7 @@
 	import { melt } from "@melt-ui/svelte";
 	import type { Transition } from "$lib/internal/index.js";
 	import type { ContentProps } from "../types.js";
-	import { getContent, getAttrs } from "../ctx.js";
+	import { getContent } from "../ctx.js";
 
 	type T = $$Generic<Transition>;
 	type In = $$Generic<Transition>;
@@ -18,8 +18,14 @@
 	export let outTransition: $$Props["outTransition"] = undefined;
 	export let outTransitionConfig: $$Props["outTransitionConfig"] = undefined;
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
-	const { content, isSelected, props } = getContent();
+	const {
+		elements: { content },
+		helpers: { isSelected },
+		props,
+		getAttrs
+	} = getContent();
 
 	const attrs = getAttrs("content");
 
@@ -31,6 +37,7 @@
 	<slot {builder} />
 {:else if transition && $isSelected(props)}
 	<div
+		bind:this={el}
 		transition:transition={transitionConfig}
 		use:melt={builder}
 		{...$$restProps}
@@ -39,6 +46,7 @@
 	</div>
 {:else if inTransition && outTransition && $isSelected(props)}
 	<div
+		bind:this={el}
 		in:inTransition={inTransitionConfig}
 		out:outTransition={outTransitionConfig}
 		use:melt={builder}
@@ -47,11 +55,17 @@
 		<slot {builder} />
 	</div>
 {:else if inTransition && $isSelected(props)}
-	<div in:inTransition={inTransitionConfig} use:melt={builder} {...$$restProps}>
+	<div
+		bind:this={el}
+		in:inTransition={inTransitionConfig}
+		use:melt={builder}
+		{...$$restProps}
+	>
 		<slot {builder} />
 	</div>
 {:else if outTransition && $isSelected(props)}
 	<div
+		bind:this={el}
 		out:outTransition={outTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
@@ -59,7 +73,7 @@
 		<slot {builder} />
 	</div>
 {:else if $isSelected(props)}
-	<div use:melt={builder} {...$$restProps}>
+	<div bind:this={el} use:melt={builder} {...$$restProps}>
 		<slot {builder} />
 	</div>
 {/if}

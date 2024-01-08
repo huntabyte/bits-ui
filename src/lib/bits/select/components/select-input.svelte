@@ -1,15 +1,17 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { getCtx, getAttrs } from "../ctx.js";
+	import { getCtx } from "../ctx.js";
 	import type { InputProps } from "../types.js";
 
 	type $$Props = InputProps;
 
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { hiddenInput },
-		options: { disabled }
+		options: { disabled },
+		getAttrs
 	} = getCtx();
 
 	$: attrs = {
@@ -24,5 +26,5 @@
 {#if asChild}
 	<slot {builder} />
 {:else}
-	<input use:melt={builder} {...$$restProps} />
+	<input bind:this={el} use:melt={builder} {...$$restProps} />
 {/if}

@@ -1,8 +1,8 @@
-import { asChild, attrsSlotProp, enums, union } from "./helpers.js";
+import { attrsSlotProp, enums, union } from "./helpers.js";
 import type { APISchema } from "@/types";
 import type * as Checkbox from "$lib/bits/checkbox/_types";
 import * as C from "@/content/constants";
-import { builderAndAttrsSlotProps } from "./helpers";
+import { builderAndAttrsSlotProps, domElProps } from "./helpers";
 
 export const root: APISchema<Checkbox.Props> = {
 	title: "Root",
@@ -43,7 +43,7 @@ export const root: APISchema<Checkbox.Props> = {
 			type: C.STRING,
 			description: "The value of the checkbox. This is used for form submission."
 		},
-		asChild
+		...domElProps("HTMLButtonElement")
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
@@ -88,7 +88,7 @@ export const indicator: APISchema<Checkbox.IndicatorProps> = {
 	title: "Indicator",
 	description:
 		"A component which passes `isChecked` and `isIndeterminate` slot props to its children. This is useful for rendering the checkbox's indicator icon depending on its state.",
-	props: { asChild },
+	props: domElProps("HTMLDivElement"),
 	slotProps: {
 		isChecked: {
 			type: C.BOOLEAN,

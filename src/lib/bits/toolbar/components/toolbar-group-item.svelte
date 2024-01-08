@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { getGroupCtx, getAttrs } from "../ctx.js";
+	import { getGroupCtx } from "../ctx.js";
 	import type { GroupItemProps, GroupItemEvents } from "../types.js";
 	import { createDispatcher, disabledAttrs } from "$lib/internal/index.js";
 
@@ -10,9 +10,11 @@
 	export let value: $$Props["value"];
 	export let disabled: $$Props["disabled"] = false;
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
-		elements: { item }
+		elements: { item },
+		getAttrs
 	} = getGroupCtx();
 
 	const dispatch = createDispatcher();
@@ -26,6 +28,7 @@
 	<slot {builder} />
 {:else}
 	<button
+		bind:this={el}
 		use:melt={builder}
 		{...$$restProps}
 		on:m-click={dispatch}

@@ -8,7 +8,7 @@ import type {
 	OmitValue,
 	OnChangeFn,
 	ObjectVariation,
-	AsChild
+	DOMElement
 } from "$lib/internal/index.js";
 import type { CreateRadioGroupProps, RadioGroupItemProps } from "@melt-ui/svelte";
 
@@ -26,13 +26,13 @@ type Props = Expand<
 		 * A callback function called when the value changes.
 		 */
 		onValueChange?: OnChangeFn<CreateRadioGroupProps["defaultValue"] & {}>;
-	} & AsChild
+	} & DOMElement
 >;
 
-type InputProps = AsChild;
+type InputProps = DOMElement<HTMLInputElement>;
 
-type ItemProps = Expand<ObjectVariation<RadioGroupItemProps> & AsChild>;
+type ItemProps = Expand<ObjectVariation<RadioGroupItemProps> & DOMElement<HTMLButtonElement>>;
 
-type ItemIndicatorProps = AsChild;
+type ItemIndicatorProps = DOMElement;
 
 export type { Props, InputProps, ItemProps, ItemIndicatorProps };

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { getAttrs, setCtx } from "../ctx.js";
+	import { setCtx } from "../ctx.js";
 	import type { Props } from "../types.js";
 
 	type $$Props = Props;
@@ -11,10 +11,13 @@
 	export let perPage: $$Props["perPage"] = undefined;
 	export let siblingCount: $$Props["siblingCount"] = undefined;
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { root },
-		states: { pages, range }
+		states: { pages, range, page: localPage },
+		getAttrs,
+		updateOption
 	} = setCtx({
 		count,
 		perPage,
@@ -30,16 +33,22 @@
 		}
 	});
 
+	$: page !== undefined && localPage.set(page);
+
 	const attrs = getAttrs("root");
 
 	$: builder = $root;
 	$: Object.assign(builder, attrs);
+
+	$: updateOption("count", count);
+	$: updateOption("perPage", perPage);
+	$: updateOption("siblingCount", siblingCount);
 </script>
 
 {#if asChild}
 	<slot {builder} pages={$pages} range={$range} />
 {:else}
-	<div use:melt={builder} {...$$restProps}>
+	<div bind:this={el} use:melt={builder} {...$$restProps}>
 		<slot {builder} pages={$pages} range={$range} />
 	</div>
 {/if}

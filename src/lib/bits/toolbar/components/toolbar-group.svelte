@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { setGroupCtx, getAttrs } from "../ctx.js";
+	import { setGroupCtx } from "../ctx.js";
 	import type { GroupProps } from "../types.js";
 
 	type T = $$Generic<"single" | "multiple">;
@@ -11,11 +11,13 @@
 	export let value: $$Props["value"] = undefined;
 	export let onValueChange: $$Props["onValueChange"] = undefined;
 	export let asChild: $$Props["asChild"] = false;
+	export let el: $$Props["el"] = undefined;
 
 	const {
 		elements: { group },
 		states: { value: localValue },
-		updateOption
+		updateOption,
+		getAttrs
 	} = setGroupCtx<T>({
 		disabled,
 		type,
@@ -50,7 +52,7 @@
 {#if asChild}
 	<slot {builder} />
 {:else}
-	<div use:melt={builder} {...$$restProps}>
+	<div bind:this={el} use:melt={builder} {...$$restProps}>
 		<slot {builder} />
 	</div>
 {/if}

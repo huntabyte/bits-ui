@@ -4,7 +4,7 @@
  * but we don't want to document the HTML attributes.
  */
 
-import type { Expand, OnChangeFn, AsChild, OmitFloating } from "$lib/internal/index.js";
+import type { Expand, OnChangeFn, OmitFloating, DOMElement } from "$lib/internal/index.js";
 import type { ArrowProps, ContentProps } from "$lib/bits/floating/_types.js";
 import type { CreateLinkPreviewProps } from "@melt-ui/svelte";
 
@@ -25,6 +25,6 @@ type Props = Expand<
 	}
 >;
 
-type TriggerProps = AsChild;
+type TriggerProps = DOMElement<HTMLAnchorElement>;
 
 export type { Props, ArrowProps, ContentProps, TriggerProps };
