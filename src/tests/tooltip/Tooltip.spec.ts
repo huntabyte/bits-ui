@@ -97,12 +97,12 @@ describe("Tooltip", () => {
 	it("respects binding the open prop", async () => {
 		const { queryByTestId, getByTestId, user } = await open({ closeOnPointerDown: false });
 		const binding = getByTestId("binding");
-		await waitFor(() => expect(binding).toHaveTextContent("true"))
+		await waitFor(() => expect(binding).toHaveTextContent("true"));
 		await user.click(binding);
-		await waitFor(() => expect(binding).toHaveTextContent("false"))
+		await waitFor(() => expect(binding).toHaveTextContent("false"));
 		expect(queryByTestId("content")).toBeNull();
 		await user.click(binding);
-		await waitFor(() => expect(binding).toHaveTextContent("true"))
+		await waitFor(() => expect(binding).toHaveTextContent("true"));
 		expect(queryByTestId("content")).not.toBeNull();
 	});
 });
