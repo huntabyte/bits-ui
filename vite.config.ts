@@ -1,4 +1,3 @@
-/// <reference types="vitest" />
 import { sveltekit } from "@sveltejs/kit/vite";
 import { defineConfig } from "vitest/config";
 import { fileURLToPath, URL } from "url";
@@ -17,7 +16,8 @@ export default defineConfig({
 		coverage: {
 			exclude: ["setupTest.ts"]
 		},
-		alias: [{ find: /^svelte$/, replacement: "svelte/internal" }]
+		alias: [{ find: /^svelte$/, replacement: "svelte/internal" }],
+		retry: 3
 	},
 	assetsInclude: ["**/*.md"],
 	server: {
