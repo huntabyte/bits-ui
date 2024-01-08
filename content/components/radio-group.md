@@ -29,5 +29,3 @@ description: Allows users to select a single option from a list of mutually excl
 ```
 
 <APISection {schemas} />
-
-🚧 **UNDER CONSTRUCTION** 🚧

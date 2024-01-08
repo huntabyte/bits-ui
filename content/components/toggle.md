@@ -28,5 +28,3 @@ description: Groups multiple toggle controls, allowing users to enable one or mu
 ```
 
 <APISection {schemas} />
-
-🚧 **UNDER CONSTRUCTION** 🚧

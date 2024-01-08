@@ -54,5 +54,3 @@ description: Displays a menu of items that users can select from when triggered.
 ```
 
 <APISection {schemas} />
-
-🚧 **UNDER CONSTRUCTION** 🚧

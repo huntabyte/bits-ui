@@ -59,5 +59,3 @@ If you want to control or be aware of the `open` state of the dialog from outsid
 ```
 
 <APISection {schemas} />
-
-🚧 **UNDER CONSTRUCTION** 🚧

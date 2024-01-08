@@ -28,5 +28,3 @@ description: Represents a user or entity with a recognizable image or placeholde
 ```
 
 <APISection {schemas} />
-
-🚧 **UNDER CONSTRUCTION** 🚧

@@ -31,5 +31,3 @@ description: Displays frequently used actions or tools in a compact, easily acce
 ```
 
 <APISection {schemas} />
-
-🚧 **UNDER CONSTRUCTION** 🚧

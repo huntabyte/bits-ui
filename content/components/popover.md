@@ -51,5 +51,3 @@ If you want to control or be aware of the `open` state of the popover from outsi
 ```
 
 <APISection {schemas} />
-
-🚧 **UNDER CONSTRUCTION** 🚧

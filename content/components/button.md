@@ -25,5 +25,3 @@ description: A special button component that can receive Melt UI builders for us
 ```
 
 <APISection {schemas} />
-
-🚧 **UNDER CONSTRUCTION** 🚧

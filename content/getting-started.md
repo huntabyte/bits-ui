@@ -39,5 +39,3 @@ You can then import and start using them in your app.
 	</Accordion.Item>
 </Accordion.Root>
 ```
-
-🚧 **UNDER CONSTRUCTION** 🚧

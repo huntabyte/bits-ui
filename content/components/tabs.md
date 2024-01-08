@@ -30,5 +30,3 @@ description: Organizes content into distinct sections, allowing users to switch 
 ```
 
 <APISection {schemas} />
-
-🚧 **UNDER CONSTRUCTION** 🚧

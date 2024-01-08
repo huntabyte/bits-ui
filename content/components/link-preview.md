@@ -28,5 +28,3 @@ description: Displays a summarized preview of a linked content's details or info
 ```
 
 <APISection {schemas} />
-
-🚧 **UNDER CONSTRUCTION** 🚧

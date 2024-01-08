@@ -44,5 +44,3 @@ description: Enables users to choose from a list of options presented in a dropd
 ```
 
 <APISection {schemas} />
-
-🚧 **UNDER CONSTRUCTION** 🚧

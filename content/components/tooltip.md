@@ -30,5 +30,3 @@ description: Provides additional information or context when users hover over or
 ```
 
 <APISection {schemas} />
-
-🚧 **UNDER CONSTRUCTION** 🚧
