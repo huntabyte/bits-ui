@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.13.6
+
+### Patch Changes
+
+- fix: bug with exit transitions ([#268](https://github.com/huntabyte/bits-ui/pull/268))
+
 ## 0.13.5
 
 ### Patch Changes
