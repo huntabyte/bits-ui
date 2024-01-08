@@ -27,7 +27,10 @@ export function setCtx(props: SetProps) {
 	const { NAME, PARTS } = getDialogData();
 	const getAttrs = createBitAttrs(NAME, PARTS);
 
-	const dialog = { ...createDialog({ ...removeUndefined(props), role: "dialog" }), getAttrs };
+	const dialog = {
+		...createDialog({ ...removeUndefined(props), role: "dialog", forceVisible: true }),
+		getAttrs
+	};
 
 	setContext(NAME, dialog);
 	return {

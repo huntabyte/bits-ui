@@ -27,7 +27,7 @@ export function setCtx(props: CreateDateRangePickerProps) {
 	const getPopoverAttrs = createBitAttrs(POPOVER_NAME, POPOVER_PARTS);
 
 	const dateRangePicker = {
-		...createDateRangePicker(removeUndefined(props)),
+		...createDateRangePicker({ ...removeUndefined(props), forceVisible: true }),
 		getCalendarAttrs,
 		getFieldAttrs,
 		getPopoverAttrs
