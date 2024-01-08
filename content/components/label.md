@@ -25,5 +25,3 @@ description: Identifies or describes associated UI elements.
 ```
 
 <APISection {schemas} />
-
-🚧 **UNDER CONSTRUCTION** 🚧

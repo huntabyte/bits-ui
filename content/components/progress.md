@@ -25,5 +25,3 @@ description: Visualizes the progress or completion status of a task or process.
 ```
 
 <APISection {schemas} />
-
-🚧 **UNDER CONSTRUCTION** 🚧

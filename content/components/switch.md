@@ -28,5 +28,3 @@ description: A toggle control enabling users to switch between "on" and "off" st
 ```
 
 <APISection {schemas} />
-
-🚧 **UNDER CONSTRUCTION** 🚧

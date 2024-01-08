@@ -54,5 +54,3 @@ description: Displays options or actions relevant to a specific context or selec
 ```
 
 <APISection {schemas} />
-
-🚧 **UNDER CONSTRUCTION** 🚧

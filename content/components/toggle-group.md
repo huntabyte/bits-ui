@@ -28,5 +28,3 @@ description: A control element that switches between two states, providing a bin
 ```
 
 <APISection {schemas} />
-
-🚧 **UNDER CONSTRUCTION** 🚧

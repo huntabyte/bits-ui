@@ -31,5 +31,3 @@ description: Allows users to input a sequence of one-character alphanumeric inpu
 ```
 
 <APISection {schemas} />
-
-🚧 **UNDER CONSTRUCTION** 🚧

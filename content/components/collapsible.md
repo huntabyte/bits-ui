@@ -45,5 +45,3 @@ Sometimes, you want to either control or be aware of the `open` state of the col
 ```
 
 <APISection {schemas} />
-
-🚧 **UNDER CONSTRUCTION** 🚧

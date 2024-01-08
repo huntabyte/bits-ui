@@ -25,5 +25,3 @@ description: Visually separates content or UI elements for clarity and organizat
 ```
 
 <APISection {schemas} />
-
-🚧 **UNDER CONSTRUCTION** 🚧

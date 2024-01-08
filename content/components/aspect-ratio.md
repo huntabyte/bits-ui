@@ -25,5 +25,3 @@ description: Displays content while maintaining a specified aspect ratio, ensuri
 ```
 
 <APISection {schemas} />
-
-🚧 **UNDER CONSTRUCTION** 🚧

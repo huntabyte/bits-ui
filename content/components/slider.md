@@ -29,5 +29,3 @@ description: Allows users to select a value from a continuous range by sliding a
 ```
 
 <APISection {schemas} />
-
-🚧 **UNDER CONSTRUCTION** 🚧

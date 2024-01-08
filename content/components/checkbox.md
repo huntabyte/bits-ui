@@ -45,5 +45,3 @@ If you want to control or be aware of the `checked` state of the checkbox from o
 ```
 
 <APISection {schemas} />
-
-🚧 **UNDER CONSTRUCTION** 🚧

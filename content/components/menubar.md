@@ -55,5 +55,3 @@ description: Organizes and presents a collection of menu options or actions with
 ```
 
 <APISection {schemas} />
-
-🚧 **UNDER CONSTRUCTION** 🚧
