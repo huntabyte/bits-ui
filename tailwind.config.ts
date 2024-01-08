@@ -18,7 +18,7 @@ export default {
 				border: {
 					DEFAULT: "hsl(var(--border-card))",
 					input: "hsl(var(--border-input))",
-					"input-hover": "hsl(var(--border-input-hover))",
+					"input-hover": "hsl(var(--border-input-hover))"
 				},
 				background: {
 					DEFAULT: "hsl(var(--background) / <alpha-value>)"
@@ -81,7 +81,7 @@ export default {
 				kbd: "var(--shadow-kbd)",
 				btn: "var(--shadow-btn)",
 				card: "var(--shadow-card)",
-				"date-field-focus": "var(--shadow-date-field-focus)",
+				"date-field-focus": "var(--shadow-date-field-focus)"
 			},
 			opacity: {
 				8: "0.08"

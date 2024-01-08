@@ -24,12 +24,11 @@ export function setCtx(props: CreateTooltipProps) {
 		...createTooltip({
 			positioning: {
 				placement: "top",
-				gutter: 0,
+				gutter: 0
 			},
 			openDelay: 700,
 			...removeUndefined(props),
-			forceVisible: true,
-			
+			forceVisible: true
 		}),
 		getAttrs
 	};
@@ -55,7 +54,7 @@ export function updatePositioning(props: FloatingProps) {
 	const defaultPlacement = {
 		side: "top",
 		align: "center",
-		sideOffset: 1,
+		sideOffset: 1
 	} satisfies FloatingProps;
 	const withDefaults = { ...defaultPlacement, ...props } satisfies FloatingProps;
 	const {

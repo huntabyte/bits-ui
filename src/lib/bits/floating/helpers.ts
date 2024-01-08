@@ -20,7 +20,7 @@ export function updatePositioning(store: Writable<FloatingConfig>, props: Floati
 		sameWidth: false,
 		avoidCollisions: true,
 		collisionPadding: 8,
-		fitViewport: false,
+		fitViewport: false
 	} satisfies FloatingProps;
 
 	const withDefaults = { ...defaultPositioningProps, ...props } satisfies FloatingProps;
