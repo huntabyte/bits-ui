@@ -20,6 +20,7 @@
 	export let readonly: $$Props["readonly"] = undefined;
 	export let validationId: $$Props["validationId"] = undefined;
 	export let descriptionId: $$Props["descriptionId"] = undefined;
+	export let readonlySegments: $$Props["readonlySegments"] = undefined;
 
 	const {
 		states: {
@@ -40,6 +41,7 @@
 		maxValue,
 		minValue,
 		readonly,
+		readonlySegments,
 		isDateUnavailable,
 		onValueChange: ({ next }) => {
 			if (value !== next) {
@@ -121,6 +123,7 @@
 	$: updateOption("maxValue", maxValue);
 	$: updateOption("minValue", minValue);
 	$: updateOption("readonly", readonly);
+	$: updateOption("readonlySegments", readonlySegments);
 </script>
 
 <slot isInvalid={$localIsInvalid} ids={$idValues} />

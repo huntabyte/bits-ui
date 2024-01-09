@@ -7,10 +7,10 @@
 import type { Expand, OnChangeFn, OmitDates, DOMElement } from "$lib/internal/index.js";
 import type { DateRange, SegmentPart } from "$lib/shared/index.js";
 import type { DateValue } from "@internationalized/date";
-import type { CreateDateFieldProps } from "@melt-ui/svelte";
+import type { CreateDateRangeFieldProps } from "@melt-ui/svelte";
 
 type Props = Expand<
-	Omit<OmitDates<CreateDateFieldProps>, "required" | "name"> & {
+	Omit<OmitDates<CreateDateRangeFieldProps>, "required" | "name"> & {
 		/**
 		 * The value of the date field.
 		 * You can bind this to a `DateValue` object to programmatically control the value.
