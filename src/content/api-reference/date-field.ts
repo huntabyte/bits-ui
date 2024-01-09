@@ -89,6 +89,13 @@ export const root: APISchema<DateField.Props> = {
 			type: C.BOOLEAN,
 			description: "Whether or not the field is readonly.",
 			default: C.FALSE
+		},
+		readonlySegments: {
+			type: {
+				type: C.ARRAY,
+				definition: "EditableSegmentPart[]"
+			},
+			description: "An array of segments that should be readonly, which prevent user input on them."
 		}
 	},
 	slotProps: {

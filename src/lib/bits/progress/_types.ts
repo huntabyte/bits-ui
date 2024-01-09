@@ -12,12 +12,12 @@ type Props = Expand<
 		 * The value of the progress bar.
 		 * You can bind this to a number value to programmatically control the value.
 		 */
-		value?: CreateProgressProps["defaultValue"] & {};
+		value?: CreateProgressProps["defaultValue"];
 
 		/**
 		 * A callback function called when the value changes.
 		 */
-		onValueChange?: OnChangeFn<number>;
+		onValueChange?: OnChangeFn<number | null>;
 	} & DOMElement
 >;
 

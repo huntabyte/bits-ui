@@ -25,7 +25,8 @@ export function setCtx(props: SetProps) {
 	const getAttrs = createBitAttrs(NAME, PARTS);
 	const initAlertDialog = createDialog({
 		...removeUndefined(props),
-		role: "alertdialog"
+		role: "alertdialog",
+		forceVisible: true
 	});
 	const alertDialog = {
 		...initAlertDialog,

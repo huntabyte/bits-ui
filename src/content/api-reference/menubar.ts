@@ -21,6 +21,12 @@ export const root: APISchema<Menubar.Props> = {
 			description:
 				"Whether or not to loop through the menubar menu triggers when navigating with the keyboard."
 		},
+		preventScroll: {
+			default: C.FALSE,
+			type: C.BOOLEAN,
+			description:
+				"Whether or not to prevent scrolling the body while a menu in the menubar is open."
+		},
 		...domElProps("HTMLDivElement")
 	},
 	slotProps: { ...builderAndAttrsSlotProps, ids: idsSlotProp }

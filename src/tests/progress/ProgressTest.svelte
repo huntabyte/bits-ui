@@ -2,7 +2,7 @@
 	import { Progress } from "$lib";
 
 	type $$Props = Progress.Props;
-	export let value = 0;
+	export let value: $$Props["value"] = 0;
 </script>
 
 <main>
