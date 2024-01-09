@@ -1,5 +1,23 @@
 # @huntabyte/primitives
 
+## 0.14.0
+
+### Minor Changes
+
+- Progress: update `value` type to include `null` for `'indeterminate'` state ([#272](https://github.com/huntabyte/bits-ui/pull/272))
+
+- Menubar: move `preventScroll` prop from `Menubar.Menu` to `Menubar.Root` ([#272](https://github.com/huntabyte/bits-ui/pull/272))
+
+- Date Field: add `readonlySegments` prop to specify certain segments as readonly ([#272](https://github.com/huntabyte/bits-ui/pull/272))
+
+### Patch Changes
+
+- Date Range Field: add `readonlySegments` prop to specify certain segments as 'readonly' to the user ([#272](https://github.com/huntabyte/bits-ui/pull/272))
+
+- chore: array comparison perf improvements ([#229](https://github.com/huntabyte/bits-ui/pull/229))
+
+- Alert Dialog: Fix bug with exit transitions ([#272](https://github.com/huntabyte/bits-ui/pull/272))
+
 ## 0.13.6
 
 ### Patch Changes
