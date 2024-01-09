@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { arraysAreEqual } from "$lib/internal/arrays.js";
+
 	import type { DateValue } from "@internationalized/date";
 
 	import { handleCalendarInitialFocus } from "$lib/internal/focus.js";
@@ -78,9 +80,10 @@
 		},
 		onValueChange: ({ next }: { next: $$Props["value"] }) => {
 			if (Array.isArray(next)) {
-				if (JSON.stringify(next) !== JSON.stringify(value)) {
+				if (!Array.isArray(value) || !arraysAreEqual(value, next)) {
 					onValueChange?.(next);
 					value = next;
+					return next;
 				}
 				return next;
 			}

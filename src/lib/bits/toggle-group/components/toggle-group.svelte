@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { arraysAreEqual } from "$lib/internal/arrays.js";
+
 	import { melt } from "@melt-ui/svelte";
 	import { setCtx } from "../ctx.js";
 	import type { Props } from "../types.js";
@@ -28,9 +30,10 @@
 		orientation,
 		onValueChange: (({ next }: { next: $$Props["value"] }) => {
 			if (Array.isArray(next)) {
-				if (JSON.stringify(next) !== JSON.stringify(value)) {
+				if (!Array.isArray(value) || !arraysAreEqual(value, next)) {
 					onValueChange?.(next);
 					value = next;
+					return next;
 				}
 				return next;
 			}
