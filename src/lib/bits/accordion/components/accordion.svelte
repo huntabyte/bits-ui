@@ -26,12 +26,7 @@
 		defaultValue: value,
 		onValueChange: (({ next }: { next: $$Props["value"] }) => {
 			if (Array.isArray(next)) {
-				if (!Array.isArray(value)) {
-					onValueChange?.(next);
-					value = next;
-					return next;
-				}
-				if (!arraysAreEqual(value, next)) {
+				if (!Array.isArray(value) || !arraysAreEqual(value, next)) {
 					onValueChange?.(next);
 					value = next;
 					return next;

@@ -51,12 +51,7 @@
 		defaultOpen: open,
 		onSelectedChange: (({ next }: { next: $$Props["selected"] }) => {
 			if (Array.isArray(next)) {
-				if (!Array.isArray(selected)) {
-					onSelectedChange?.(next);
-					selected = next;
-					return next;
-				}
-				if (!arraysAreEqual(selected, next)) {
+				if (!Array.isArray(selected) || !arraysAreEqual(selected, next)) {
 					onSelectedChange?.(next);
 					selected = next;
 					return next;

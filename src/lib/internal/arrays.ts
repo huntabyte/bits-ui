@@ -1,5 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function arraysAreEqual(arr1: any[], arr2: any[]): boolean {
+export function arraysAreEqual<T extends Array<unknown>>(arr1: T, arr2: T): boolean {
 	if (arr1.length !== arr2.length) {
 		return false;
 	}
