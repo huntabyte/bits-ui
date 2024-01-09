@@ -1,5 +1,5 @@
 import type { DateValue } from "@internationalized/date";
-import type { Month, Page, PageItem, Ellipsis } from "@melt-ui/svelte";
+import type { Month, Page, PageItem, Ellipsis, EditableSegmentPart } from "@melt-ui/svelte";
 
 export type Selected<Value> = {
 	value: Value;
@@ -25,4 +25,4 @@ export type SegmentPart =
 export type FocusTarget = string | HTMLElement | SVGElement | null;
 export type FocusProp = FocusTarget | ((defaultEl?: HTMLElement | null) => FocusTarget);
 
-export type { Month, Page, PageItem, Ellipsis };
+export type { Month, Page, PageItem, Ellipsis, EditableSegmentPart };

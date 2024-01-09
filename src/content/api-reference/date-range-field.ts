@@ -92,6 +92,14 @@ export const root: APISchema<DateRangeField.Props> = {
 			type: C.BOOLEAN,
 			description: "Whether or not the field is readonly.",
 			default: C.FALSE
+		},
+		readonlySegments: {
+			type: {
+				type: C.OBJECT,
+				definition: "{ start: EditableSegmentPart[]; end: EditableSegmentPart[]; }"
+			},
+			description:
+				"The segments for the start and end fields that should be readonly, meaning users cannot edit them. This is useful for prepopulating fixed segments like years, months, or days."
 		}
 	},
 	slotProps: {
