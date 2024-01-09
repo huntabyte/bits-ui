@@ -10,6 +10,7 @@
 	export let closeOnEscape: $$Props["closeOnEscape"] = true;
 	export let asChild: $$Props["asChild"] = false;
 	export let id: $$Props["id"] = undefined;
+	export let preventScroll: $$Props["preventScroll"] = undefined;
 	export let el: $$Props["el"] = undefined;
 
 	const {
@@ -17,7 +18,7 @@
 		updateOption,
 		ids,
 		getMenubarAttrs
-	} = setCtx({ loop, closeOnEscape });
+	} = setCtx({ loop, closeOnEscape, preventScroll });
 
 	const idValues = derived([ids.menubar], ([$menubarId]) => ({
 		menubar: $menubarId
@@ -30,6 +31,7 @@
 
 	$: updateOption("loop", loop);
 	$: updateOption("closeOnEscape", closeOnEscape);
+	$: updateOption("preventScroll", preventScroll);
 	$: builder = $menubar;
 	$: Object.assign(builder, attrs);
 </script>

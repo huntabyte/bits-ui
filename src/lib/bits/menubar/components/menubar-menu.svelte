@@ -9,7 +9,6 @@
 	export let portal: $$Props["portal"] = undefined;
 	export let open: $$Props["open"] = undefined;
 	export let onOpenChange: $$Props["onOpenChange"] = undefined;
-	export let preventScroll: $$Props["preventScroll"] = undefined;
 	export let loop: $$Props["loop"] = undefined;
 	export let dir: $$Props["dir"] = undefined;
 	export let typeahead: $$Props["typeahead"] = undefined;
@@ -27,7 +26,6 @@
 		closeOnOutsideClick,
 		closeOnEscape,
 		portal,
-		preventScroll,
 		loop,
 		dir,
 		typeahead,
@@ -57,7 +55,6 @@
 	$: updateOption("closeOnOutsideClick", closeOnOutsideClick);
 	$: updateOption("closeOnEscape", closeOnEscape);
 	$: updateOption("portal", portal);
-	$: updateOption("preventScroll", preventScroll);
 	$: updateOption("loop", loop);
 	$: updateOption("dir", dir);
 	$: updateOption("closeFocus", closeFocus);
