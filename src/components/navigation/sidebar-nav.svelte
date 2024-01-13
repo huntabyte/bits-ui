@@ -17,7 +17,7 @@
 						{:else}
 							<div class="pb-4">
 								<h4
-									class="mb-1 ml-[9px] rounded-md px-2.5 py-2 pl-4 text-xs font-normal uppercase text-muted-foreground"
+									class="mb-1 ml-[9px] rounded-md px-2.5 py-2 pl-4 text-xs font-medium uppercase text-muted-foreground"
 								>
 									{item.title}
 								</h4>

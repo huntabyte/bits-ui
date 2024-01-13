@@ -7,7 +7,7 @@
 </script>
 
 {#if items.length}
-	<div class="grid grid-flow-row auto-rows-max gap-1 pl-4 text-sm">
+	<div class="grid grid-flow-row auto-rows-max gap-0.5 pl-4 text-sm">
 		{#each items as item, index (index)}
 			{#if item.href}
 				<a
