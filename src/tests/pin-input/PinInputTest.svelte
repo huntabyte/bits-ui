@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { PinInput } from "$lib";
+	import { PinInput } from "$lib/index.js";
 
 	type $$Props = PinInput.Props;
 

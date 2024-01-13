@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { Menubar } from "$lib";
-	import { flyAndScale } from "@/utils";
-	import { SwitchOn, SwitchOff } from "@/components/icons";
+	import { Menubar } from "$lib/index.js";
+	import { flyAndScale } from "@/utils/index.js";
+	import { SwitchOn, SwitchOff } from "@/components/icons/index.js";
 	import { CaretRight, Cat, Check } from "phosphor-svelte";
 
 	let bookmarks = false;

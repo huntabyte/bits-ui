@@ -9,7 +9,7 @@
 </script>
 
 <script lang="ts">
-	import { DropdownMenu } from "$lib";
+	import { DropdownMenu } from "$lib/index.js";
 
 	export let checked = false;
 	export let subChecked = false;

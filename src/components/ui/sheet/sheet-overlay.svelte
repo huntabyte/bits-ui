@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { Dialog as SheetPrimitive } from "@/lib";
-	import { cn } from "@/utils";
+	import { Dialog as SheetPrimitive } from "@/lib/index.js";
+	import { cn } from "@/utils/index.js";
 	import { fade } from "svelte/transition";
 
 	type $$Props = SheetPrimitive.OverlayProps;

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Collapsible } from "$lib";
+	import { Collapsible } from "$lib/index.js";
 	import { CaretUpDown } from "phosphor-svelte";
 	import { slide } from "svelte/transition";
 </script>

@@ -1,6 +1,6 @@
 import type { PropSchema } from "@/types/api.js";
 import * as C from "@/content/constants.js";
-import { monthsPropType } from "./extended-types";
+import { monthsPropType } from "./extended-types/index.js";
 
 export const asChild = {
 	type: C.BOOLEAN,

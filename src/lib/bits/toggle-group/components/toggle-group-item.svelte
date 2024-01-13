@@ -2,7 +2,7 @@
 	import { melt } from "@melt-ui/svelte";
 	import { getCtx } from "../ctx.js";
 	import type { ItemProps, ItemEvents } from "../types.js";
-	import { createDispatcher } from "$lib/internal";
+	import { createDispatcher } from "$lib/internal/index.js";
 
 	type $$Props = ItemProps;
 	type $$Events = ItemEvents;

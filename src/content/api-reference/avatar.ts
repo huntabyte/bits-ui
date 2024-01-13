@@ -1,8 +1,8 @@
-import type { APISchema } from "@/types";
+import type { APISchema } from "@/types/index.js";
 import { attrsSlotProp, enums } from "@/content/api-reference/helpers.js";
-import type * as Avatar from "$lib/bits/avatar/_types";
+import type * as Avatar from "$lib/bits/avatar/_types.js";
 import * as C from "@/content/constants.js";
-import { builderAndAttrsSlotProps, domElProps } from "./helpers";
+import { builderAndAttrsSlotProps, domElProps } from "./helpers.js";
 
 export const root: APISchema<Avatar.Props> = {
 	title: "Root",

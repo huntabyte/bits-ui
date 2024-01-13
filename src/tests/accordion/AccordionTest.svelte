@@ -9,7 +9,7 @@
 </script>
 
 <script lang="ts">
-	import { Accordion } from "$lib";
+	import { Accordion } from "$lib/index.js";
 
 	export let multiple = false;
 	export let disabled: Accordion.Props<false>["disabled"] = false;

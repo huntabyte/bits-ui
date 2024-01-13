@@ -1,7 +1,7 @@
 import type { Action } from "svelte/action";
 import type { HTMLAttributes } from "svelte/elements";
 import type { TransitionConfig } from "svelte/transition";
-import type { CreateDispatcher } from ".";
+import type { CreateDispatcher } from "./index.js";
 
 export type ObjectVariation<T> = T extends object ? T : never;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

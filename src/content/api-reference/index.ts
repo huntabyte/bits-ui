@@ -1,37 +1,37 @@
-import type { APISchema } from "@/types";
-import { accordion } from "./accordion";
-import { alertDialog } from "./alert-dialog";
-import { aspectRatio } from "./aspect-ratio";
-import { avatar } from "./avatar";
-import { button } from "./button";
-import { calendar } from "./calendar";
-import { checkbox } from "./checkbox";
-import { collapsible } from "./collapsible";
-import { contextMenu } from "./context-menu";
-import { dateField } from "./date-field";
-import { datePicker } from "./date-picker";
-import { dateRangeField } from "./date-range-field";
-import { dateRangePicker } from "./date-range-picker";
-import { dialog } from "./dialog";
-import { dropdownMenu } from "./dropdown-menu";
-import { label } from "./label";
-import { linkPreview } from "./link-preview";
-import { menubar } from "./menubar";
-import { pagination } from "./pagination";
-import { pinInput } from "./pin-input";
-import { popover } from "./popover";
-import { progress } from "./progress";
-import { radioGroup } from "./radio-group";
-import { rangeCalendar } from "./range-calendar";
-import { select } from "./select";
-import { separator } from "./separator";
-import { slider } from "./slider";
-import { switchData } from "./switch";
-import { tabs } from "./tabs";
-import { toggle } from "./toggle";
-import { toggleGroup } from "./toggle-group";
-import { toolbar } from "./toolbar";
-import { tooltip } from "./tooltip";
+import type { APISchema } from "@/types/index.js";
+import { accordion } from "./accordion.js";
+import { alertDialog } from "./alert-dialog.js";
+import { aspectRatio } from "./aspect-ratio.js";
+import { avatar } from "./avatar.js";
+import { button } from "./button.js";
+import { calendar } from "./calendar.js";
+import { checkbox } from "./checkbox.js";
+import { collapsible } from "./collapsible.js";
+import { contextMenu } from "./context-menu.js";
+import { dateField } from "./date-field.js";
+import { datePicker } from "./date-picker.js";
+import { dateRangeField } from "./date-range-field.js";
+import { dateRangePicker } from "./date-range-picker.js";
+import { dialog } from "./dialog.js";
+import { dropdownMenu } from "./dropdown-menu.js";
+import { label } from "./label.js";
+import { linkPreview } from "./link-preview.js";
+import { menubar } from "./menubar.js";
+import { pagination } from "./pagination.js";
+import { pinInput } from "./pin-input.js";
+import { popover } from "./popover.js";
+import { progress } from "./progress.js";
+import { radioGroup } from "./radio-group.js";
+import { rangeCalendar } from "./range-calendar.js";
+import { select } from "./select.js";
+import { separator } from "./separator.js";
+import { slider } from "./slider.js";
+import { switchData } from "./switch.js";
+import { tabs } from "./tabs.js";
+import { toggle } from "./toggle.js";
+import { toggleGroup } from "./toggle-group.js";
+import { toolbar } from "./toolbar.js";
+import { tooltip } from "./tooltip.js";
 
 export const bits = [
 	"accordion",
@@ -117,4 +117,4 @@ export function getAPISchemas(bit: Bit): APISchema[] {
 	return apiSchemas[bit];
 }
 
-export * from "./helpers";
+export * from "./helpers.js";

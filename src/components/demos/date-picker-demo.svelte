@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { DatePicker } from "$lib";
-	import { flyAndScale } from "@/utils";
+	import { DatePicker } from "$lib/index.js";
+	import { flyAndScale } from "@/utils/index.js";
 	import { CaretLeft, CaretRight, CalendarBlank } from "phosphor-svelte";
 </script>
 

@@ -1,8 +1,8 @@
-import type { APISchema, PropObj } from "@/types";
+import type { APISchema, PropObj } from "@/types/index.js";
 import { enums, transitionProps } from "@/content/api-reference/helpers.js";
-import type * as Collapsible from "$lib/bits/collapsible/_types";
-import * as C from "@/content/constants";
-import { builderAndAttrsSlotProps, domElProps } from "./helpers";
+import type * as Collapsible from "$lib/bits/collapsible/_types.js";
+import * as C from "@/content/constants.js";
+import { builderAndAttrsSlotProps, domElProps } from "./helpers.js";
 
 export const root: APISchema<Collapsible.Props> = {
 	title: "Root",

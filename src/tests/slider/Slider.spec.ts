@@ -1,12 +1,12 @@
 // Credit to @paoloricciuti for this code via melt :)
 import { render } from "@testing-library/svelte";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import SliderTest from "./SliderTest.svelte";
 import SliderRangeTest from "./SliderRangeTest.svelte";
-import type { Slider } from "$lib";
-import { getTestKbd } from "../utils";
+import type { Slider } from "$lib/index.js";
+import { getTestKbd } from "../utils.js";
 
 const kbd = getTestKbd();
 

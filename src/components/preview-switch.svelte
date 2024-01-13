@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { Switch } from "@/lib";
-	import { cn } from "@/utils";
+	import { Switch } from "@/lib/index.js";
+	import { cn } from "@/utils/index.js";
 
 	type $$Props = Switch.Props;
 	type $$Events = Switch.Events;

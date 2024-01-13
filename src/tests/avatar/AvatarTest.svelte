@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Avatar } from "$lib";
+	import { Avatar } from "$lib/index.js";
 	export let src: string;
 </script>
 

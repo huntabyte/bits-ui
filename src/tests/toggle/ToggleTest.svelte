@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Toggle } from "$lib";
+	import { Toggle } from "$lib/index.js";
 
 	type $$Props = Toggle.Props;
 	export let pressed: $$Props["pressed"] = false;

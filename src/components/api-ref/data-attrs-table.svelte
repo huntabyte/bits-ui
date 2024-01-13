@@ -1,8 +1,8 @@
 <script lang="ts">
-	import * as Table from "@/components/ui/table";
-	import { Code } from "@/components";
-	import { parseMarkdown } from "@/utils";
-	import type { DataAttrSchema } from "@/types";
+	import * as Table from "@/components/ui/table/index.js";
+	import { Code } from "@/components/index.js";
+	import { parseMarkdown } from "@/utils/index.js";
+	import type { DataAttrSchema } from "@/types/index.js";
 	import ValueContent from "./data-attr-value-content.svelte";
 
 	export let dataAttrs: DataAttrSchema[] = [];

@@ -3,7 +3,7 @@
 		PageHeader,
 		PageHeaderHeading,
 		PageHeaderDescription
-	} from "@/components";
+	} from "@/components/index.js";
 </script>
 
 <PageHeader>

@@ -7,7 +7,7 @@
 </script>
 
 <script lang="ts">
-	import { Select } from "$lib";
+	import { Select } from "$lib/index.js";
 
 	type $$Props = Select.Props<unknown> & {
 		options: Item[];

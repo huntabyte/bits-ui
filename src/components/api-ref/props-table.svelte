@@ -1,8 +1,8 @@
 <script lang="ts">
-	import * as Table from "@/components/ui/table";
-	import { Code } from "@/components";
-	import type { PropObj, PropSchema } from "@/types";
-	import { parseMarkdown } from "@/utils";
+	import * as Table from "@/components/ui/table/index.js";
+	import { Code } from "@/components/index.js";
+	import type { PropObj, PropSchema } from "@/types/index.js";
+	import { parseMarkdown } from "@/utils/index.js";
 	import PropTypeContent from "./prop-type-content.svelte";
 
 	export let props: PropObj<Record<string, unknown>>;

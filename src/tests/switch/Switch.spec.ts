@@ -1,10 +1,10 @@
 import { render } from "@testing-library/svelte";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import SwitchTest from "./SwitchTest.svelte";
 import { getTestKbd } from "../utils.js";
-import type { Switch } from "$lib";
+import type { Switch } from "$lib/index.js";
 
 const kbd = getTestKbd();
 

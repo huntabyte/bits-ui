@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Switch, Label } from "$lib";
+	import { Switch, Label } from "$lib/index.js";
 </script>
 
 <div class="flex items-center space-x-3">

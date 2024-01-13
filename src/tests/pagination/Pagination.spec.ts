@@ -1,8 +1,8 @@
 // NOTE: these tests were shamelessly copied from melt-ui 🥲
 import { render } from "@testing-library/svelte";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
-import type { Pagination } from "$lib";
+import type { Pagination } from "$lib/index.js";
 import PaginationTest from "./PaginationTest.svelte";
 import { isHTMLElement } from "@melt-ui/svelte/internal/helpers";
 

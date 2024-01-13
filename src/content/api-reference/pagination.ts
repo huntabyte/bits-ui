@@ -1,8 +1,8 @@
-import type { APISchema } from "@/types";
+import type { APISchema } from "@/types/index.js";
 import type * as Pagination from "$lib/bits/pagination/_types.js";
 import * as C from "@/content/constants.js";
-import { builderAndAttrsSlotProps, domElProps } from "./helpers";
-import { pageItemProp } from "./extended-types";
+import { builderAndAttrsSlotProps, domElProps } from "./helpers.js";
+import { pageItemProp } from "./extended-types/index.js";
 
 export const root: APISchema<Pagination.Props> = {
 	title: "Root",

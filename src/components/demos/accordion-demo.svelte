@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Accordion } from "$lib";
+	import { Accordion } from "$lib/index.js";
 	import { CaretDown } from "phosphor-svelte";
 	import { slide } from "svelte/transition";
 

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { LinkPreview, Avatar } from "$lib";
-	import { flyAndScale } from "@/utils";
+	import { LinkPreview, Avatar } from "$lib/index.js";
+	import { flyAndScale } from "@/utils/index.js";
 	import { MapPin, CalendarBlank } from "phosphor-svelte";
 	let loadingStatusTrigger: Avatar.Props["loadingStatus"] = undefined;
 	let loadingStatusContent: Avatar.Props["loadingStatus"] = undefined;

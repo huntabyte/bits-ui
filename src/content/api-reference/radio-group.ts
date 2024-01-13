@@ -1,8 +1,8 @@
-import type { APISchema } from "@/types";
+import type { APISchema } from "@/types/index.js";
 import { attrsSlotProp, enums } from "@/content/api-reference/helpers.js";
-import type * as RadioGroup from "$lib/bits/radio-group/_types";
-import * as C from "@/content/constants";
-import { builderAndAttrsSlotProps, domElProps } from "./helpers";
+import type * as RadioGroup from "$lib/bits/radio-group/_types.js";
+import * as C from "@/content/constants.js";
+import { builderAndAttrsSlotProps, domElProps } from "./helpers.js";
 
 export const root: APISchema<RadioGroup.Props> = {
 	title: "Root",

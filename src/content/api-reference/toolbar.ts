@@ -1,4 +1,4 @@
-import type { APISchema } from "@/types";
+import type { APISchema } from "@/types/index.js";
 import {
 	enums,
 	union,
@@ -7,7 +7,7 @@ import {
 } from "@/content/api-reference/helpers.js";
 import type * as Toolbar from "$lib/bits/toolbar/_types.js";
 import * as C from "@/content/constants.js";
-import {} from "./helpers";
+import {} from "./helpers.js";
 
 const root: APISchema<Toolbar.Props> = {
 	title: "Root",

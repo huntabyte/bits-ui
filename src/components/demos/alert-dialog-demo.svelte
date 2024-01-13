@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { AlertDialog } from "$lib";
-	import { flyAndScale } from "@/utils";
+	import { AlertDialog } from "$lib/index.js";
+	import { flyAndScale } from "@/utils/index.js";
 	import { fade } from "svelte/transition";
 </script>
 

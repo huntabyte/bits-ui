@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Slider } from "$lib";
+	import { Slider } from "$lib/index.js";
 
 	type $$Props = Slider.Props;
 	export let value: $$Props["value"] = [30];

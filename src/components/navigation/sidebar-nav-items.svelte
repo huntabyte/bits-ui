@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type { SidebarNavItem } from "@/config";
+	import type { SidebarNavItem } from "@/config/index.js";
 	import { page } from "$app/stores";
-	import { cn } from "@/utils";
+	import { cn } from "@/utils/index.js";
 
 	export let items: SidebarNavItem[] = [];
 </script>

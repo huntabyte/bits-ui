@@ -6,7 +6,7 @@
 import type { CreateSelectProps, SelectOptionProps } from "@melt-ui/svelte";
 import type { DOMElement, Expand, OmitFloating, OnChangeFn } from "$lib/internal/index.js";
 import type { ContentProps, ArrowProps } from "$lib/bits/floating/_types.js";
-import type { Selected } from "$lib";
+import type { Selected } from "$lib/index.js";
 
 export type WhenTrue<TrueOrFalse, IfTrue, IfFalse, IfNeither = IfTrue | IfFalse> = [
 	TrueOrFalse

@@ -1,9 +1,9 @@
 import { render } from "@testing-library/svelte";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import { getTestKbd } from "../utils.js";
-import type { Toolbar } from "$lib";
+import type { Toolbar } from "$lib/index.js";
 import ToolbarTest from "./ToolbarTest.svelte";
 
 const kbd = getTestKbd();

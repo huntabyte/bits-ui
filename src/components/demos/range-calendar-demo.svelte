@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { RangeCalendar } from "$lib";
-	import { cn } from "@/utils";
+	import { RangeCalendar } from "$lib/index.js";
+	import { cn } from "@/utils/index.js";
 	import { CaretRight, CaretLeft } from "phosphor-svelte";
 </script>
 

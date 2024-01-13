@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { DateRangePicker, type DateRange } from "$lib";
-	import { cn, flyAndScale } from "@/utils";
+	import { DateRangePicker, type DateRange } from "$lib/index.js";
+	import { cn, flyAndScale } from "@/utils/index.js";
 	import { CaretLeft, CaretRight, CalendarBlank } from "phosphor-svelte";
 
 	let value: DateRange | undefined = undefined;

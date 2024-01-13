@@ -1,4 +1,4 @@
-import type { APISchema } from "@/types";
+import type { APISchema } from "@/types/index.js";
 import {
 	arrowProps,
 	enums,
@@ -9,8 +9,8 @@ import {
 	domElProps
 } from "@/content/api-reference/helpers.js";
 import { floatingPositioning } from "./floating.js";
-import type * as Tooltip from "$lib/bits/tooltip/_types";
-import * as C from "@/content/constants";
+import type * as Tooltip from "$lib/bits/tooltip/_types.js";
+import * as C from "@/content/constants.js";
 
 export const root: APISchema<Tooltip.Props> = {
 	title: "Root",

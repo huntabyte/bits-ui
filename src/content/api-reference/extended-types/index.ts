@@ -1,4 +1,4 @@
-import type { PropType } from "@/types";
+import type { PropType } from "@/types/index.js";
 import rawFocusProp from "@/content/api-reference/extended-types/focus-target.js?raw";
 import rawMonthProp from "@/content/api-reference/extended-types/months.js?raw";
 import rawPageItemProp from "@/content/api-reference/extended-types/page-item.js?raw";

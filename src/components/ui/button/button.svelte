@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { Button as ButtonPrimitive } from "@/lib";
-	import { cn } from "@/utils";
-	import { buttonVariants, type Size, type Variant } from ".";
+	import { Button as ButtonPrimitive } from "@/lib/index.js";
+	import { cn } from "@/utils/index.js";
+	import { buttonVariants, type Size, type Variant } from "./index.js";
 
 	type $$Props = ButtonPrimitive.Props & {
 		variant?: Variant;

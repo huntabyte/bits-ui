@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Avatar } from "$lib";
+	import { Avatar } from "$lib/index.js";
 	export let loadingStatus: Avatar.Props["loadingStatus"] = undefined;
 </script>
 

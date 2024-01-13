@@ -1,5 +1,5 @@
 import type { Writable } from "svelte/store";
-import type { FloatingConfig } from "./floating-config";
+import type { FloatingConfig } from "./floating-config.js";
 import type { FloatingProps } from "./_types.js";
 
 type Side = "top" | "right" | "bottom" | "left";

@@ -10,7 +10,7 @@ import { getPositioningUpdater } from "../floating/helpers.js";
 import type { Writable } from "svelte/store";
 import type { FloatingConfig } from "../floating/floating-config.js";
 import type { FloatingProps } from "../floating/_types.js";
-import { getSubmenuCtx } from "../menu/ctx";
+import { getSubmenuCtx } from "../menu/ctx.js";
 
 function getMenubarData() {
 	const NAME = "menubar" as const;

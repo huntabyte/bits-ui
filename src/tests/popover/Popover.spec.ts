@@ -1,10 +1,10 @@
 import { render, waitFor } from "@testing-library/svelte";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import { getTestKbd } from "../utils.js";
 import PopoverTest from "./PopoverTest.svelte";
-import type { Popover } from "$lib";
+import type { Popover } from "$lib/index.js";
 
 const kbd = getTestKbd();
 

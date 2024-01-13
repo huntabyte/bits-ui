@@ -1,6 +1,6 @@
-import type { APISchema } from "@/types";
-import type * as Button from "$lib/bits/button/_types";
-import * as C from "@/content/constants";
+import type { APISchema } from "@/types/index.js";
+import type * as Button from "$lib/bits/button/_types.js";
+import * as C from "@/content/constants.js";
 
 export const root: APISchema<Button.Props & { href: string }> = {
 	title: "Root",

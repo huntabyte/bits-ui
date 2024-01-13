@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { Popover } from "$lib";
-	import { flyAndScale } from "@/utils";
-	import { Code } from "@/components";
+	import { Popover } from "$lib/index.js";
+	import { flyAndScale } from "@/utils/index.js";
+	import { Code } from "@/components/index.js";
 	import { Info } from "phosphor-svelte";
-	import type { DataAttrSchema } from "@/types";
+	import type { DataAttrSchema } from "@/types/index.js";
 
 	export let attr: DataAttrSchema;
 </script>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { cn } from "@/utils";
+	import { cn } from "@/utils/index.js";
 	import { CopySimple, Check } from "phosphor-svelte";
 	let className: string | undefined | null = undefined;
 

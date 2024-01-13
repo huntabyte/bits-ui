@@ -6,7 +6,7 @@
 </script>
 
 <script lang="ts">
-	import { RadioGroup } from "$lib";
+	import { RadioGroup } from "$lib/index.js";
 
 	type $$Props = RadioGroup.Props & {
 		items: Item[];

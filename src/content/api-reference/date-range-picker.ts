@@ -1,4 +1,4 @@
-import type { APISchema } from "@/types";
+import type { APISchema } from "@/types/index.js";
 import * as C from "@/content/constants.js";
 import {
 	weekdaysSlotProp,
@@ -9,8 +9,8 @@ import {
 	onOutsideClickProp
 } from "@/content/api-reference/helpers.js";
 import type * as DateRangePicker from "$lib/bits/date-range-picker/_types.js";
-import { builderAndAttrsSlotProps, portalProp } from "./helpers";
-import { focusProp } from "./extended-types";
+import { builderAndAttrsSlotProps, portalProp } from "./helpers.js";
+import { focusProp } from "./extended-types/index.js";
 import {
 	header,
 	cell,
@@ -23,9 +23,9 @@ import {
 	prevButton,
 	day,
 	grid
-} from "./range-calendar";
-import { content, trigger } from "./popover";
-import { label, segment } from "./date-range-field";
+} from "./range-calendar.js";
+import { content, trigger } from "./popover.js";
+import { label, segment } from "./date-range-field.js";
 
 const root: APISchema<DateRangePicker.Props> = {
 	title: "Root",

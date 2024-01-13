@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { Tabs } from "$lib";
-	import { cn } from "@/utils";
-	import { buttonVariants } from "./ui/button";
+	import { Tabs } from "$lib/index.js";
+	import { cn } from "@/utils/index.js";
+	import { buttonVariants } from "./ui/button/index.js";
 	import { crossfade } from "svelte/transition";
 	import { cubicInOut } from "svelte/easing";
 	let className: string;

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	import { Progress } from "$lib";
+	import { Progress } from "$lib/index.js";
 
 	let value = 13;
 	onMount(() => {

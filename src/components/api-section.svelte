@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { page } from "$app/stores";
-	import { DataAttrsTable, PropsTable } from "@/components";
-	import { h2 as H2, p as P } from "@/components/markdown";
-	import type { APISchema } from "@/types";
-	import { parseMarkdown } from "@/utils";
+	import { DataAttrsTable, PropsTable } from "@/components/index.js";
+	import { h2 as H2, p as P } from "@/components/markdown/index.js";
+	import type { APISchema } from "@/types/index.js";
+	import { parseMarkdown } from "@/utils/index.js";
 
 	export let schemas: APISchema[] = [];
 </script>

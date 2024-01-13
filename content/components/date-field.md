@@ -18,7 +18,7 @@ description: Enables users to input specific dates within a designated field.
 
 ```svelte
 <script lang="ts">
-	import { DateField } from "$lib";
+	import { DateField } from "$lib/index.js";
 </script>
 
 <DateField.Root>

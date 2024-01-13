@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Tabs, Label, Button } from "$lib";
+	import { Tabs, Label, Button } from "$lib/index.js";
 	import { LockKeyOpen } from "phosphor-svelte";
 </script>
 

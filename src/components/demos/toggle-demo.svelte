@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { LockKeyOpen } from "phosphor-svelte";
-	import { Toggle } from "$lib";
+	import { Toggle } from "$lib/index.js";
 
 	let unlocked = false;
 	$: code = unlocked ? "1985" : "••••";

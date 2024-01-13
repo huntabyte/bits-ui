@@ -4,7 +4,7 @@
  * but we don't want to document the HTML attributes.
  */
 
-import type { DOMElement, Expand, OnChangeFn } from "$lib/internal";
+import type { DOMElement, Expand, OnChangeFn } from "$lib/internal/index.js";
 import type { CreatePaginationProps, Page } from "@melt-ui/svelte";
 
 type OmitPaginationProps<T> = Omit<T, "page" | "defaultPage" | "onPageChange">;

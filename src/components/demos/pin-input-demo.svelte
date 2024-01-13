@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { PinInput } from "$lib";
-	import { Toggle } from "$lib";
+	import { PinInput } from "$lib/index.js";
+	import { Toggle } from "$lib/index.js";
 	import { LockKey, LockKeyOpen } from "phosphor-svelte";
 
 	let value: string[] | undefined = ["5", "1", "3", "7"];

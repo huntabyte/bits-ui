@@ -1,9 +1,9 @@
 import { render, waitFor } from "@testing-library/svelte";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import { getTestKbd } from "../utils.js";
-import type { PinInput } from "$lib";
+import type { PinInput } from "$lib/index.js";
 import PinInputTest from "./PinInputTest.svelte";
 
 const kbd = getTestKbd();

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Menubar } from "$lib";
+	import { Menubar } from "$lib/index.js";
 	import MenubarMenu from "./MenubarMenu.svelte";
 
 	type $$Props = Menubar.Props;

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { SidebarNavItem } from "@/config";
-	import { SidebarNavItems, SidebarNavMainItems } from "@/components";
+	import type { SidebarNavItem } from "@/config/index.js";
+	import { SidebarNavItems, SidebarNavMainItems } from "@/components/index.js";
 	export let items: SidebarNavItem[] = [];
 </script>
 

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { Checkbox } from "$lib";
-	import { Label } from "$lib";
+	import { Checkbox } from "$lib/index.js";
+	import { Label } from "$lib/index.js";
 	import { Check, Minus } from "phosphor-svelte";
 </script>
 

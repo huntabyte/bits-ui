@@ -1,4 +1,4 @@
-import { isBrowser } from ".";
+import { isBrowser } from "./index.js";
 
 /**
  * Handles `initialFocus` prop behavior for the

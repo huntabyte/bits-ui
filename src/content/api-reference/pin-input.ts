@@ -1,8 +1,8 @@
-import type { APISchema } from "@/types";
+import type { APISchema } from "@/types/index.js";
 import { enums } from "@/content/api-reference/helpers.js";
 import type * as PinInput from "$lib/bits/pin-input/_types.js";
 import * as C from "@/content/constants.js";
-import { builderAndAttrsSlotProps, idsSlotProp, domElProps } from "./helpers";
+import { builderAndAttrsSlotProps, idsSlotProp, domElProps } from "./helpers.js";
 
 const root: APISchema<PinInput.Props> = {
 	title: "Root",

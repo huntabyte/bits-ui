@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { Popover, Separator, Toggle } from "$lib";
+	import { Popover, Separator, Toggle } from "$lib/index.js";
 	import { ImageSquare, LinkSimpleHorizontalBreak } from "phosphor-svelte";
-	import { flyAndScale } from "@/utils";
+	import { flyAndScale } from "@/utils/index.js";
 
 	let width = 1024;
 	let height = 768;

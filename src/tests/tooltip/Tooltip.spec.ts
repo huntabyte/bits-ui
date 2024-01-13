@@ -1,10 +1,10 @@
 import { render, waitFor } from "@testing-library/svelte";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import { getTestKbd } from "../utils.js";
 import TooltipTest from "./TooltipTest.svelte";
-import type { Tooltip } from "$lib";
+import type { Tooltip } from "$lib/index.js";
 
 const kbd = getTestKbd();
 

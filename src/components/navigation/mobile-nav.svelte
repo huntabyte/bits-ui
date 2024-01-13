@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { SquareHalf } from "phosphor-svelte";
-	import * as Sheet from "@/components/ui/sheet";
-	import { Button } from "@/components/ui/button";
-	import { navigation } from "@/config";
+	import * as Sheet from "@/components/ui/sheet/index.js";
+	import { Button } from "@/components/ui/button/index.js";
+	import { navigation } from "@/config/index.js";
 	import MobileLink from "./mobile-link.svelte";
-	import { Logo } from "@/components/icons";
+	import { Logo } from "@/components/icons/index.js";
 
 	let open = false;
 </script>

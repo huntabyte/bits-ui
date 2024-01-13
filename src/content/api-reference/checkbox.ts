@@ -1,8 +1,8 @@
 import { attrsSlotProp, enums, union } from "./helpers.js";
-import type { APISchema } from "@/types";
-import type * as Checkbox from "$lib/bits/checkbox/_types";
-import * as C from "@/content/constants";
-import { builderAndAttrsSlotProps, domElProps } from "./helpers";
+import type { APISchema } from "@/types/index.js";
+import type * as Checkbox from "$lib/bits/checkbox/_types.js";
+import * as C from "@/content/constants.js";
+import { builderAndAttrsSlotProps, domElProps } from "./helpers.js";
 
 export const root: APISchema<Checkbox.Props> = {
 	title: "Root",

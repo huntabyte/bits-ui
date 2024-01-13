@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { Dialog, Separator, Label } from "$lib";
-	import { flyAndScale } from "@/utils";
+	import { Dialog, Separator, Label } from "$lib/index.js";
+	import { flyAndScale } from "@/utils/index.js";
 	import { fade } from "svelte/transition";
 	import { X, LockKeyOpen } from "phosphor-svelte";
 </script>

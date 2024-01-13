@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Sun, MoonStars } from "phosphor-svelte";
-	import { Button } from "$lib";
+	import { Button } from "$lib/index.js";
 	import { toggleMode, mode } from "mode-watcher";
 	import { scale } from "svelte/transition";
 	import { cubicOut } from "svelte/easing";

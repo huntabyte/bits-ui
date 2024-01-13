@@ -1,4 +1,4 @@
-import { Dialog as SheetPrimitive } from "@/lib";
+import { Dialog as SheetPrimitive } from "@/lib/index.js";
 import { tv, type VariantProps } from "tailwind-variants";
 
 import Portal from "./sheet-portal.svelte";

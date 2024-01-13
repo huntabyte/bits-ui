@@ -1,10 +1,10 @@
 import { render } from "@testing-library/svelte";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import { getTestKbd } from "../utils.js";
 import CalendarTest from "./CalendarTest.svelte";
-import type { Calendar } from "$lib";
+import type { Calendar } from "$lib/index.js";
 import { CalendarDate, CalendarDateTime, toZoned } from "@internationalized/date";
 import CalendarMultiTest from "./CalendarMultiTest.svelte";
 import { getSelectedDay, getSelectedDays } from "../helpers/calendar.js";
