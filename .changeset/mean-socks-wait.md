@@ -2,4 +2,4 @@
 "bits-ui": patch
 ---
 
-Fix internal import paths to be ESM compliant
+fix: Changed import paths to support modern module resolution strategies
