@@ -26,7 +26,7 @@
 					rel="noopener noreferrer"
 					class="inline-flex h-10 items-center
 					justify-center whitespace-nowrap rounded-[9px] bg-muted px-4
-					text-sm font-semibold text-foreground shadow-mini ring-offset-background transition-colors hover:bg-muted/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+					text-sm font-semibold text-foreground ring-offset-background transition-colors hover:bg-dark-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
 				>
 					Report an issue
 				</Button.Root>

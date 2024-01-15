@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Sun, MoonStars } from "phosphor-svelte";
+	import { Sun, Moon } from "phosphor-svelte";
 	import { Button } from "$lib";
 	import { toggleMode, mode } from "mode-watcher";
 	import { scale } from "svelte/transition";
@@ -24,7 +24,7 @@
 				easing: cubicOut
 			}}
 		>
-			<MoonStars class="sq-6" aria-label="Moon" />
+			<Moon class="sq-6" aria-label="Moon" />
 		</div>
 	{:else}
 		<div

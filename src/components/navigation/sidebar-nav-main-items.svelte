@@ -1,15 +1,15 @@
 <script lang="ts">
 	import type { SidebarNavItem } from "@/config";
-	import { RocketLaunch, BookOpen, Code, Palette } from "phosphor-svelte";
+	import { Sticker, Compass, CodeBlock, Palette } from "phosphor-svelte";
 	import { page } from "$app/stores";
 	import { cn } from "@/utils";
 
 	export let items: SidebarNavItem[] = [];
 
 	const iconMap = {
-		Introduction: BookOpen,
-		"Getting Started": RocketLaunch,
-		Delegation: Code,
+		Introduction: Sticker,
+		"Getting Started": Compass,
+		Delegation: CodeBlock,
 		Styling: Palette
 	} as const;
 
@@ -36,7 +36,7 @@
 					rel={item.external ? "noreferrer" : ""}
 				>
 					{#if isIconMapKey(item.title)}
-						<svelte:component this={iconMap[item.title]} class="sq-5" />
+						<svelte:component this={iconMap[item.title]} size={22} />
 					{/if}
 					{item.title}
 					{#if item.label}
