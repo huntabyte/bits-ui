@@ -8,7 +8,7 @@
 
 	const iconMap = {
 		Introduction: Sticker,
-		"Getting Started": Compass, 
+		"Getting Started": Compass,
 		Delegation: CodeBlock,
 		Styling: Palette
 	} as const;
@@ -36,7 +36,7 @@
 					rel={item.external ? "noreferrer" : ""}
 				>
 					{#if isIconMapKey(item.title)}
-						<svelte:component this={iconMap[item.title]} size="{22}" />
+						<svelte:component this={iconMap[item.title]} size={22} />
 					{/if}
 					{item.title}
 					{#if item.label}
