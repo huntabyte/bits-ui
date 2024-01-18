@@ -20,7 +20,12 @@
 {#if asChild}
 	<slot {label} {attrs} />
 {:else}
-	<span bind:this={el} {...$$restProps} {...attrs}>
+	<span
+		bind:this={el}
+		{...$$restProps}
+		{...attrs}
+		data-placeholder={!label ? "" : undefined}
+	>
 		{label ? label : placeholder}
 	</span>
 {/if}
