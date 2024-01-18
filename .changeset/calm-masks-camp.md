@@ -2,4 +2,4 @@
 "bits-ui": patch
 ---
 
-fix: Floating UI options
+fix: expose missing Floating UI content props
