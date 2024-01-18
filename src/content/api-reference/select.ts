@@ -214,6 +214,11 @@ export const value: APISchema = {
 		{
 			name: "select-value",
 			description: "Present on the value element."
+		},
+		{
+			name: "placeholder",
+			description:
+				"Present when the placeholder is being displayed (there isn't a value selected). You can use this to style the placeholder differently than the selected value."
 		}
 	]
 };
