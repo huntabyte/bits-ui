@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.15.1
+
+### Patch Changes
+
+- fix: floating arrow shifting content ([#291](https://github.com/huntabyte/bits-ui/pull/291))
+
 ## 0.15.0
 
 ### Minor Changes
