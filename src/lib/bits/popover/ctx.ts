@@ -23,6 +23,10 @@ export function setCtx(props: CreatePopoverProps) {
 	const getAttrs = createBitAttrs(NAME, PARTS);
 	const popover = {
 		...createPopover({
+			positioning: {
+				placement: "bottom",
+				gutter: 0
+			},
 			...removeUndefined(props),
 			forceVisible: true
 		}),

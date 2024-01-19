@@ -35,6 +35,12 @@
 				open = next;
 			}
 			return next;
+		},
+		positioning: {
+			gutter: 0,
+			offset: {
+				mainAxis: 1
+			}
 		}
 	});
 

@@ -50,19 +50,21 @@
 	$: builder = $menu;
 	$: Object.assign(builder, attrs);
 
-	$: updatePositioning({
-		side,
-		align,
-		sideOffset,
-		alignOffset,
-		collisionPadding,
-		avoidCollisions,
-		collisionBoundary,
-		sameWidth,
-		fitViewport,
-		strategy,
-		overlap
-	});
+	$: if ($open) {
+		updatePositioning({
+			side,
+			align,
+			sideOffset,
+			alignOffset,
+			collisionPadding,
+			avoidCollisions,
+			collisionBoundary,
+			sameWidth,
+			fitViewport,
+			strategy,
+			overlap
+		});
+	}
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions / applied by melt's builder-->

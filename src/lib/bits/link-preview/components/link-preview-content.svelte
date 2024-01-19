@@ -49,19 +49,21 @@
 	$: builder = $content;
 	$: Object.assign(builder, attrs);
 
-	$: updatePositioning({
-		side,
-		align,
-		sideOffset,
-		alignOffset,
-		collisionPadding,
-		avoidCollisions,
-		collisionBoundary,
-		sameWidth,
-		fitViewport,
-		strategy,
-		overlap
-	});
+	$: if ($open) {
+		updatePositioning({
+			side,
+			align,
+			sideOffset,
+			alignOffset,
+			collisionPadding,
+			avoidCollisions,
+			collisionBoundary,
+			sameWidth,
+			fitViewport,
+			strategy,
+			overlap
+		});
+	}
 </script>
 
 {#if asChild && $open}
