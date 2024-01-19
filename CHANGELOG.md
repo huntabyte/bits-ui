@@ -1,5 +1,17 @@
 # @huntabyte/primitives
 
+## 0.15.0
+
+### Minor Changes
+
+- feat: expose `isSelected` slot prop from `Select.Item` ([#285](https://github.com/huntabyte/bits-ui/pull/285))
+
+- feat: adds `data-placeholder` attribute to `Select.Value` when no value is selected / when the placeholder is being displayed ([#284](https://github.com/huntabyte/bits-ui/pull/284))
+
+### Patch Changes
+
+- fix: expose missing Floating UI content props ([#278](https://github.com/huntabyte/bits-ui/pull/278))
+
 ## 0.14.0
 
 ### Minor Changes
