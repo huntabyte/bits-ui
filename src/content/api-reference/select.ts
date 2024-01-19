@@ -173,7 +173,13 @@ export const item: APISchema<Select.ItemProps> = {
 		},
 		...domElProps("HTMLDivElement")
 	},
-	slotProps: { ...builderAndAttrsSlotProps },
+	slotProps: {
+		isSelected: {
+			type: C.BOOLEAN,
+			description: "Whether or not the item is selected."
+		},
+		...builderAndAttrsSlotProps
+	},
 	dataAttributes: [
 		{
 			name: "state",

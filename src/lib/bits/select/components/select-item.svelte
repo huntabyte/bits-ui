@@ -15,6 +15,7 @@
 
 	const {
 		elements: { option: item },
+		helpers: { isSelected: isSelectedStore },
 		getAttrs
 	} = setItemCtx(value);
 
@@ -23,12 +24,13 @@
 
 	$: builder = $item({ value, disabled, label });
 	$: Object.assign(builder, attrs);
+	$: isSelected = $isSelectedStore(value);
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions / applied by melt's builder-->
 
 {#if asChild}
-	<slot {builder} />
+	<slot {builder} {isSelected} />
 {:else}
 	<div
 		bind:this={el}
@@ -41,7 +43,7 @@
 		on:focusout
 		on:pointerleave
 	>
-		<slot {builder}>
+		<slot {builder} {isSelected}>
 			{label ? label : value}
 		</slot>
 	</div>
