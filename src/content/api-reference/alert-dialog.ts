@@ -31,7 +31,7 @@ const root: APISchema<AlertDialog.Props> = {
 		},
 		closeOnOutsideClick: {
 			type: C.BOOLEAN,
-			default: C.TRUE,
+			default: C.FALSE,
 			description: "Whether to close the alert dialog when a click occurs outside of it."
 		},
 		open: {
