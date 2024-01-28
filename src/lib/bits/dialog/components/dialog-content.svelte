@@ -48,6 +48,10 @@
 		on:pointerdown
 		on:pointermove
 		on:pointerup
+		on:touchend
+		on:touchstart
+		on:touchcancel
+		on:touchmove
 	>
 		<slot {builder} />
 	</div>
@@ -60,6 +64,10 @@
 		on:pointerdown
 		on:pointermove
 		on:pointerup
+		on:touchend
+		on:touchstart
+		on:touchcancel
+		on:touchmove
 		{...$$restProps}
 	>
 		<slot {builder} />
@@ -72,6 +80,10 @@
 		on:pointerdown
 		on:pointermove
 		on:pointerup
+		on:touchend
+		on:touchstart
+		on:touchcancel
+		on:touchmove
 		{...$$restProps}
 	>
 		<slot {builder} />
@@ -84,6 +96,10 @@
 		on:pointerdown
 		on:pointermove
 		on:pointerup
+		on:touchend
+		on:touchstart
+		on:touchcancel
+		on:touchmove
 		{...$$restProps}
 	>
 		<slot {builder} />
@@ -95,6 +111,10 @@
 		on:pointerdown
 		on:pointermove
 		on:pointerup
+		on:touchend
+		on:touchstart
+		on:touchcancel
+		on:touchmove
 		{...$$restProps}
 	>
 		<slot {builder} />
