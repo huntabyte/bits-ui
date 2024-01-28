@@ -21,7 +21,7 @@
 </script>
 
 {#if items.length}
-	<div class="grid grid-flow-row auto-rows-max gap-1 pb-8 pl-4 text-sm">
+	<div class="grid grid-flow-row auto-rows-max gap-0.5 pb-8 pl-4 text-sm">
 		{#each items as item, index (index)}
 			{#if item.href}
 				<a
@@ -41,7 +41,7 @@
 					{item.title}
 					{#if item.label}
 						<span
-							class="ml-2 rounded-md bg-[#adfa1d] px-1.5 py-0.5 text-xs leading-none text-[#000000] no-underline group-hover:no-underline"
+						class="ml-2 rounded-[4px] bg-[#FCDAFE] px-1.5 py-1 text-xs font-semibold leading-none text-[#2A266B] no-underline group-hover:no-underline"
 						>
 							{item.label}
 						</span>

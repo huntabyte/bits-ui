@@ -83,6 +83,7 @@ export const navigation: Navigation = {
 				{
 					title: "Calendar",
 					href: "/docs/components/calendar",
+					label: "New",
 					items: []
 				},
 				{
@@ -153,6 +154,7 @@ export const navigation: Navigation = {
 				{
 					title: "PIN Input",
 					href: "/docs/components/pin-input",
+					label: "New",
 					items: []
 				},
 				{

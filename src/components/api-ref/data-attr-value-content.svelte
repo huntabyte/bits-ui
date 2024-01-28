@@ -15,7 +15,7 @@
 		<Code class="bg-transparent px-0">enum</Code>
 		<Popover.Root>
 			<Popover.Trigger
-				class="inline-flex items-center justify-center rounded-button text-foreground-alt transition-colors hover:text-foreground-alt/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+				class="inline-flex items-center justify-center rounded-button text-muted-foreground transition-colors hover:text-foreground-alt/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
 			>
 				<Info class="sq-4" weight="bold" />
 				<span class="sr-only">See possible values</span>
