@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.16.0
+
+### Minor Changes
+
+- feat: forward/expose `touch` events on `Dialog.Content` & `AlertDialog.Content` components ([#300](https://github.com/huntabyte/bits-ui/pull/300))
+
 ## 0.15.1
 
 ### Patch Changes
