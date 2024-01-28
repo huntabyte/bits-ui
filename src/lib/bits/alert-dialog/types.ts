@@ -37,6 +37,10 @@ type ContentEvents<T extends Element = HTMLElement> = {
 	pointerdown: SvelteEvent<PointerEvent, T>;
 	pointerup: SvelteEvent<PointerEvent, T>;
 	pointermove: SvelteEvent<PointerEvent, T>;
+	touchend: SvelteEvent<TouchEvent, T>;
+	touchstart: SvelteEvent<TouchEvent, T>;
+	touchcancel: SvelteEvent<TouchEvent, T>;
+	touchmove: SvelteEvent<TouchEvent, T>;
 };
 
 type ActionEvents = TriggerEvents;
