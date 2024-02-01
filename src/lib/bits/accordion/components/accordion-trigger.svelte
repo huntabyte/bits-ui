@@ -1,38 +1,42 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { getTrigger } from "../ctx.js";
-	import type { TriggerEvents, TriggerProps } from "../types.js";
-	import { createDispatcher } from "$lib/internal/events.js";
+	import type { AccordionTriggerProps } from "../types.js";
+	import { getAccordionTriggerState } from "../state.svelte.js";
 
-	type $$Props = TriggerProps;
-	type $$Events = TriggerEvents;
+	let {
+		disabled = false,
+		asChild = false,
+		el = null,
+		onkeydown = undefined,
+		onclick = undefined,
+		...props
+	} = $props<AccordionTriggerProps>();
 
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
+	const trigger = getAccordionTriggerState({
+		el,
+		disabled,
+		onkeydown,
+		onclick,
+	});
 
-	const {
-		elements: { trigger },
-		props,
-		getAttrs,
-	} = getTrigger();
-	const dispatch = createDispatcher();
-	const attrs = getAttrs("trigger");
-
-	$: builder = $trigger(props);
-	$: Object.assign(builder, attrs);
+	$effect(() => {
+		trigger.disabled = disabled;
+		trigger.el = el;
+		trigger.handlers.click = onclick;
+		trigger.handlers.keydown = onkeydown;
+	});
 </script>
 
 {#if asChild}
-	<slot {builder} />
+	<slot />
 {:else}
 	<button
 		bind:this={el}
-		use:melt={builder}
 		type="button"
-		{...$$restProps}
-		on:m-keydown={dispatch}
-		on:m-click={dispatch}
+		{...trigger.attrs}
+		{...props}
+		onclick={trigger.onclick}
+		onkeydown={trigger.onkeydown}
 	>
-		<slot {builder} />
+		<slot />
 	</button>
 {/if}

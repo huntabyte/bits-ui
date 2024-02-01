@@ -1,66 +1,41 @@
 <script lang="ts">
-	import { arraysAreEqual } from "$lib/internal/arrays.js";
+	import { setAccordionRootState } from "../state.svelte.js";
+	import type { AccordionRootProps } from "../types.js";
 
-	import { melt } from "@melt-ui/svelte";
-	import type { Props } from "../types.js";
-	import { setCtx } from "../ctx.js";
+	let {
+		disabled = false,
+		forceVisible = false,
+		asChild = false,
+		children,
+		type,
+		value,
+		...props
+	} = $props<AccordionRootProps>();
 
-	type Multiple = $$Generic<boolean>;
-	type $$Props = Props<Multiple>;
+	const rootState = setAccordionRootState({ type, value });
 
-	export let multiple: $$Props["multiple"] = false as Multiple;
-	export let value: $$Props["value"] = undefined;
-	export let onValueChange: $$Props["onValueChange"] = undefined;
-	export let disabled: $$Props["disabled"] = false;
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
+	$effect.pre(() => {
+		if (value !== undefined) {
+			rootState.value = value
+		}
+	})
 
-	const {
-		elements: { root },
-		states: { value: localValue },
-		updateOption,
-		getAttrs,
-	} = setCtx({
-		multiple,
-		disabled,
-		defaultValue: value,
-		onValueChange: (({ next }: { next: $$Props["value"] }) => {
-			if (Array.isArray(next)) {
-				if (!Array.isArray(value) || !arraysAreEqual(value, next)) {
-					onValueChange?.(next);
-					value = next;
-					return next;
-				}
-				return next;
-			}
+	$effect.pre(() => {
+		value = rootState.value
+	})
 
-			if (value !== next) {
-				onValueChange?.(next);
-				value = next;
-			}
-			return next;
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		}) as any,
+	$effect(() => {
+		rootState.disabled = disabled;
+		rootState.forceVisible = forceVisible;
 	});
-
-	const attrs = getAttrs("root");
-
-	// Svelte types get weird here saying set expects something that is both string and string[].
-	$: value !== undefined &&
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		localValue.set(Array.isArray(value) ? [...value] : (value as any));
-
-	$: updateOption("multiple", multiple);
-	$: updateOption("disabled", disabled);
-
-	$: builder = $root;
-	$: Object.assign(builder, attrs);
 </script>
 
-{#if asChild}
-	<slot {builder} />
+{#if asChild && children}
+	{@render children()}
 {:else}
-	<div bind:this={el} use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+	<div bind:this={rootState.el} {...props}>
+		{#if children}
+			{@render children()}
+		{/if}
 	</div>
 {/if}

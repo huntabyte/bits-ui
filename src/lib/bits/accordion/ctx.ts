@@ -1,6 +1,6 @@
 import { createAccordion, type CreateAccordionProps } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
-import type { ItemProps } from "./types.js";
+import type { AccordionItemProps } from "./types.js";
 import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 
 function getAccordionData() {
@@ -30,7 +30,7 @@ export function getCtx() {
 	return getContext<ReturnType<typeof setCtx>>(NAME);
 }
 
-export function setItem(props: ItemProps) {
+export function setItem(props: AccordionItemProps) {
 	const { ITEM_NAME } = getAccordionData();
 	setContext(ITEM_NAME, { ...props });
 	const ctx = getCtx();
@@ -39,7 +39,7 @@ export function setItem(props: ItemProps) {
 
 export function getItemProps() {
 	const { ITEM_NAME } = getAccordionData();
-	return getContext<ItemProps>(ITEM_NAME);
+	return getContext<AccordionItemProps>(ITEM_NAME);
 }
 
 export function getContent() {

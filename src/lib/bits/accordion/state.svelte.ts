@@ -229,14 +229,12 @@ class AccordionTriggerState {
 	});
 
 	onkeydown = composeHandlers<KeyboardEvent>(this.handlers.keydown, (e: KeyboardEvent) => {
-		const handledKeys = new Set([kbd.ARROW_DOWN, kbd.ARROW_UP, kbd.HOME, kbd.END]);
-		if (this.isDisabled || !handledKeys.has(e.key)) {
-			return;
-		}
+		const handledKeys = [kbd.ARROW_DOWN, kbd.ARROW_UP, kbd.HOME, kbd.END];
+		if (this.isDisabled || !handledKeys.includes(e.key)) return;
 
 		e.preventDefault();
 
-		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
+		if ([kbd.SPACE, kbd.ENTER].includes(e.key)) {
 			this.itemState.updateValue();
 			return;
 		}

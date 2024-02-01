@@ -18,11 +18,13 @@
 			content: "Give them your time, attention, and love.",
 		},
 	];
+
+	let value = $state(["0", "1"]);
 </script>
 
-<Accordion.Root class="w-full sm:max-w-[70%]" multiple>
+<Accordion.Root class="w-full sm:max-w-[70%]" type="multiple" bind:value>
 	{#each items as item, i}
-		<Accordion.Item value="${i}" class="group border-b border-dark-10 px-1.5">
+		<Accordion.Item value={`${i}`} class="group border-b border-dark-10 px-1.5">
 			<Accordion.Header>
 				<Accordion.Trigger
 					class="flex w-full flex-1 items-center justify-between py-5 text-[15px] font-medium transition-all [&[data-state=open]>span>svg]:rotate-180 "

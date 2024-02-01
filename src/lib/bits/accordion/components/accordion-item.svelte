@@ -1,29 +1,35 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { setItem } from "../ctx.js";
-	import type { ItemProps } from "../types.js";
-	type $$Props = ItemProps;
+	import type { AccordionItemProps } from "../types.js";
+	import { setAccordionItemState } from "../state.svelte.js";
+	let {
+		asChild = false,
+		disabled = false,
+		value,
+		children,
+		...rest
+	} = $props<AccordionItemProps>();
 
-	export let value: $$Props["value"];
-	export let disabled: $$Props["disabled"] = undefined;
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
+	const item = setAccordionItemState({ value, disabled });
 
-	const {
-		elements: { item },
-		props,
-		getAttrs,
-	} = setItem({ value, disabled });
-	const attrs = getAttrs("item");
+	let isDisabled = $derived(disabled || item.root.disabled);
 
-	$: builder = $item(props);
-	$: Object.assign(builder, attrs);
+	$effect(() => {
+		item.disabled = disabled;
+		item.value = value;
+	});
+
+	let attrs = $derived({
+		"data-state": item.isSelected ? "open" : "closed",
+		"data-disabled": isDisabled ? "" : undefined
+	});
 </script>
 
-{#if asChild}
-	<slot {builder} />
+{#if asChild && children}
+	{@render children()}
 {:else}
-	<div bind:this={el} use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+	<div {...attrs} {...rest}>
+		{#if children}
+			{@render children()}
+		{/if}
 	</div>
 {/if}

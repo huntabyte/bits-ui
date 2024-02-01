@@ -1,63 +1,67 @@
-<script lang="ts">
-	import { melt } from "@melt-ui/svelte";
+<script lang="ts" context="module">
 	import type { Transition } from "$lib/internal/index.js";
-	import type { ContentProps } from "../types.js";
-	import { getContent } from "../ctx.js";
-
-	type T = $$Generic<Transition>;
-	type In = $$Generic<Transition>;
-	type Out = $$Generic<Transition>;
-
-	type $$Props = ContentProps<T, In, Out>;
-
-	export let transition: $$Props["transition"] = undefined;
-	export let transitionConfig: $$Props["transitionConfig"] = undefined;
-	export let inTransition: $$Props["inTransition"] = undefined;
-	export let inTransitionConfig: ContentProps<T>["inTransitionConfig"] = undefined;
-	export let outTransition: $$Props["outTransition"] = undefined;
-	export let outTransitionConfig: $$Props["outTransitionConfig"] = undefined;
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
-
-	const {
-		elements: { content },
-		helpers: { isSelected },
-		props,
-		getAttrs,
-	} = getContent();
-
-	const attrs = getAttrs("content");
-
-	$: builder = $content(props);
-	$: Object.assign(builder, attrs);
+	import { getAccordionContentState } from "../state.svelte.js";
+	type T = Transition;
+	type In = Transition;
+	type Out = Transition;
 </script>
 
-{#if asChild && $isSelected(props)}
-	<slot {builder} />
-{:else if transition && $isSelected(props)}
-	<div bind:this={el} transition:transition={transitionConfig} use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+<script
+	lang="ts"
+	generics="T extends Transition, In extends Transition, Out extends Transition"
+>
+	import type { AccordionContentProps } from "../types.js";
+
+	let {
+		transition,
+		transitionConfig,
+		inTransition,
+		inTransitionConfig,
+		outTransition,
+		outTransitionConfig,
+		asChild = false,
+		children,
+		...props
+	} = $props<AccordionContentProps<T, In, Out>>();
+
+	const content = getAccordionContentState();
+</script>
+
+{#if asChild && content.item.isSelected && children}
+	{@render children()}
+{:else if transition && content.item.isSelected}
+	<div transition:transition={transitionConfig} {...props} {...content.attrs}>
+		{#if children}
+			{@render children()}
+		{/if}
 	</div>
-{:else if inTransition && outTransition && $isSelected(props)}
+{:else if inTransition && outTransition && content.item.isSelected}
 	<div
-		bind:this={el}
 		in:inTransition={inTransitionConfig}
 		out:outTransition={outTransitionConfig}
-		use:melt={builder}
-		{...$$restProps}
+		{...props}
+		{...content.attrs}
 	>
-		<slot {builder} />
+		{#if children}
+			{@render children()}
+		{/if}
 	</div>
-{:else if inTransition && $isSelected(props)}
-	<div bind:this={el} in:inTransition={inTransitionConfig} use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+{:else if inTransition && content.item.isSelected}
+	<div in:inTransition={inTransitionConfig} {...props} {...content.attrs}>
+		{#if children}
+			{@render children()}
+		{/if}
 	</div>
-{:else if outTransition && $isSelected(props)}
-	<div bind:this={el} out:outTransition={outTransitionConfig} use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+{:else if outTransition && content.item.isSelected}
+	<div out:outTransition={outTransitionConfig} {...props} {...content.attrs}>
+		{#if children}
+			{@render children()}
+		{/if}
 	</div>
-{:else if $isSelected(props)}
-	<div bind:this={el} use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+{:else if content.item.isSelected}
+	<div {...props} {...content.attrs}>
+		{#if children}
+			{@render children()}
+		{/if}
 	</div>
 {/if}
