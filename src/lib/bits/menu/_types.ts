@@ -110,4 +110,4 @@ export type LabelProps = DOMElement;
 export type SeparatorProps = DOMElement;
 export type TriggerProps = DOMElement<HTMLElement>;
 
-export { ContentProps, ContentProps as SubContentProps };
+export type { ContentProps, ContentProps as SubContentProps };
