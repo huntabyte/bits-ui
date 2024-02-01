@@ -31,5 +31,5 @@ export type {
 	IndicatorProps,
 	//
 	Props as CheckboxProps,
-	IndicatorProps as CheckboxIndicatorProps
+	IndicatorProps as CheckboxIndicatorProps,
 };

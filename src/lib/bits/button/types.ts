@@ -34,5 +34,5 @@ export type {
 	//
 	Events,
 	//
-	ButtonEventHandler
+	ButtonEventHandler,
 };

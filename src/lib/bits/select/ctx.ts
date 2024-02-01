@@ -4,7 +4,7 @@ import {
 	createBitAttrs,
 	generateId,
 	getOptionUpdater,
-	removeUndefined
+	removeUndefined,
 } from "$lib/internal/index.js";
 import { getPositioningUpdater } from "../floating/helpers.js";
 import type { Writable } from "svelte/store";
@@ -25,14 +25,14 @@ function getSelectData() {
 		"input",
 		"label",
 		"trigger",
-		"value"
+		"value",
 	] as const;
 
 	return {
 		NAME,
 		GROUP_NAME,
 		ITEM_NAME,
-		PARTS
+		PARTS,
 	};
 }
 
@@ -61,12 +61,12 @@ export function setCtx<T = unknown, M extends boolean = false>(
 
 	const select = {
 		...createSelect<T, M>({ ...removeUndefined(props), forceVisible: true }),
-		getAttrs
+		getAttrs,
 	};
 	setContext(NAME, select);
 	return {
 		...select,
-		updateOption: getOptionUpdater(select.options)
+		updateOption: getOptionUpdater(select.options),
 	};
 }
 
@@ -76,7 +76,7 @@ export function setGroupCtx() {
 	setContext(GROUP_NAME, id);
 	const {
 		elements: { group },
-		getAttrs
+		getAttrs,
 	} = getCtx();
 	return { group, id, getAttrs };
 }
@@ -93,7 +93,7 @@ export function getGroupLabel() {
 	const id = getContext<string>(GROUP_NAME);
 	const {
 		elements: { groupLabel },
-		getAttrs
+		getAttrs,
 	} = getCtx();
 	return { groupLabel, id, getAttrs };
 }
@@ -102,13 +102,13 @@ export function getItemIndicator() {
 	const { ITEM_NAME } = getSelectData();
 	const {
 		helpers: { isSelected },
-		getAttrs
+		getAttrs,
 	} = getCtx();
 	const value = getContext<unknown>(ITEM_NAME);
 	return {
 		value,
 		isSelected,
-		getAttrs
+		getAttrs,
 	};
 }
 
@@ -122,11 +122,11 @@ export function updatePositioning(props: FloatingProps) {
 	const defaultPlacement = {
 		side: "bottom",
 		align: "center",
-		sameWidth: true
+		sameWidth: true,
 	} satisfies FloatingProps;
 	const withDefaults = { ...defaultPlacement, ...props } satisfies FloatingProps;
 	const {
-		options: { positioning }
+		options: { positioning },
 	} = getCtx();
 
 	const updater = getPositioningUpdater(positioning as Writable<FloatingConfig>);

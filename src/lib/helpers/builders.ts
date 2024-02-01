@@ -35,7 +35,7 @@ export function builderActions(
 					unsub.destroy();
 				}
 			});
-		}
+		},
 	};
 }
 

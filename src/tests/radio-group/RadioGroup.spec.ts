@@ -12,20 +12,20 @@ const kbd = getTestKbd();
 const testItems: Item[] = [
 	{
 		value: "a",
-		disabled: false
+		disabled: false,
 	},
 	{
 		value: "b",
-		disabled: false
+		disabled: false,
 	},
 	{
 		value: "c",
-		disabled: false
+		disabled: false,
 	},
 	{
 		value: "d",
-		disabled: false
-	}
+		disabled: false,
+	},
 ];
 
 const itemIds = testItems.map((item) => item.value + "-item");
@@ -36,7 +36,7 @@ function setup(props: RadioGroup.Props = {}, items: Item[] = testItems) {
 	const returned = render(RadioGroupTest, { ...props, items });
 	return {
 		user,
-		...returned
+		...returned,
 	};
 }
 
@@ -53,7 +53,7 @@ describe("Radio Group", () => {
 	it("has bits data attrs", async () => {
 		const { getByTestId } = render(RadioGroupTest, {
 			items: [testItems[0]],
-			value: testItems[0].value
+			value: testItems[0].value,
 		});
 		const root = getByTestId("root");
 		const item = getByTestId(testItems[0].value + "-item");
@@ -77,7 +77,7 @@ describe("Radio Group", () => {
 	it("doesnt change the value when a disabled item is clicked", async () => {
 		const { getByTestId, queryByTestId, user } = setup({}, [
 			...testItems,
-			{ value: "e", disabled: true }
+			{ value: "e", disabled: true },
 		]);
 
 		const item = getByTestId("e-item");
@@ -110,7 +110,7 @@ describe("Radio Group", () => {
 
 	it("respects the loop prop", async () => {
 		const { getByTestId, user } = setup({
-			loop: false
+			loop: false,
 		});
 
 		const item0 = getByTestId(itemIds[0]);
@@ -128,7 +128,7 @@ describe("Radio Group", () => {
 
 	it("respects the value prop & binding", async () => {
 		const { getByTestId, user, queryByTestId } = setup({
-			value: "b"
+			value: "b",
 		});
 		const binding = getByTestId("binding");
 		expect(binding).toHaveTextContent("b");
@@ -143,7 +143,7 @@ describe("Radio Group", () => {
 
 	it("modifies keyboard navigation when the orientation is horizontal", async () => {
 		const { getByTestId, user } = setup({
-			orientation: "horizontal"
+			orientation: "horizontal",
 		});
 
 		const item0 = getByTestId(itemIds[0]);
@@ -171,7 +171,7 @@ describe("Radio Group", () => {
 	it("respects the loop prop when orientation is horizontal", async () => {
 		const { getByTestId, user } = setup({
 			loop: false,
-			orientation: "horizontal"
+			orientation: "horizontal",
 		});
 
 		const item0 = getByTestId(itemIds[0]);
@@ -200,7 +200,7 @@ describe("Radio Group", () => {
 
 	it("makes the input required if the radio group is required", async () => {
 		const { getByTestId } = setup({
-			required: true
+			required: true,
 		});
 
 		const input = getByTestId("input");
@@ -209,7 +209,7 @@ describe("Radio Group", () => {
 
 	it("disables the input if the radio group is disabled", async () => {
 		const { getByTestId } = setup({
-			disabled: true
+			disabled: true,
 		});
 
 		const input = getByTestId("input");

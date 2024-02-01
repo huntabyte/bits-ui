@@ -19,7 +19,7 @@ export function handleCalendarInitialFocus(calendar: HTMLElement) {
 export function focusWithoutScroll(element: HTMLElement) {
 	const scrollPosition = {
 		x: window.pageXOffset || document.documentElement.scrollLeft,
-		y: window.pageYOffset || document.documentElement.scrollTop
+		y: window.pageYOffset || document.documentElement.scrollTop,
 	};
 	element.focus();
 	window.scrollTo(scrollPosition.x, scrollPosition.y);

@@ -8,7 +8,7 @@ export function getPinInputData() {
 
 	return {
 		NAME,
-		PARTS
+		PARTS,
 	};
 }
 
@@ -22,7 +22,7 @@ export function setCtx(props: PinInputProps) {
 	setContext(NAME, pinInput);
 	return {
 		...pinInput,
-		updateOption: getOptionUpdater(pinInput.options)
+		updateOption: getOptionUpdater(pinInput.options),
 	};
 }
 

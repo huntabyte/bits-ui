@@ -13,7 +13,7 @@
 
 	const {
 		elements: { pageTrigger },
-		getAttrs
+		getAttrs,
 	} = getCtx();
 
 	const attrs = getAttrs("page");
@@ -27,13 +27,7 @@
 {#if asChild}
 	<slot {builder} />
 {:else}
-	<button
-		bind:this={el}
-		type="button"
-		use:melt={builder}
-		on:m-click={dispatch}
-		{...$$restProps}
-	>
+	<button bind:this={el} type="button" use:melt={builder} on:m-click={dispatch} {...$$restProps}>
 		<slot {builder}>
 			{page.value}
 		</slot>

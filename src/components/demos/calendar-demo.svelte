@@ -28,17 +28,13 @@
 			<CaretRight class="sq-6" />
 		</Calendar.NextButton>
 	</Calendar.Header>
-	<div
-		class="flex flex-col space-y-4 pt-4 sm:flex-row sm:space-x-4 sm:space-y-0"
-	>
+	<div class="flex flex-col space-y-4 pt-4 sm:flex-row sm:space-x-4 sm:space-y-0">
 		{#each months as month, i (i)}
 			<Calendar.Grid class="w-full border-collapse select-none space-y-1">
 				<Calendar.GridHead>
 					<Calendar.GridRow class="mb-1 flex w-full justify-between">
 						{#each weekdays as day}
-							<Calendar.HeadCell
-								class="w-10 rounded-md text-xs !font-normal text-muted-foreground"
-							>
+							<Calendar.HeadCell class="w-10 rounded-md text-xs !font-normal text-muted-foreground">
 								<div>{day.slice(0, 2)}</div>
 							</Calendar.HeadCell>
 						{/each}
@@ -48,10 +44,7 @@
 					{#each month.weeks as weekDates}
 						<Calendar.GridRow class="flex w-full">
 							{#each weekDates as date}
-								<Calendar.Cell
-									{date}
-									class="relative !p-0 text-center text-sm sq-10"
-								>
+								<Calendar.Cell {date} class="relative !p-0 text-center text-sm sq-10">
 									<Calendar.Day
 										{date}
 										month={month.value}

@@ -22,7 +22,7 @@ const prettyCodeOptions = {
 		),
 		light: JSON.parse(
 			readFileSync(resolve(__dirname, "./src/styles/themes/serendipity-morning.json"))
-		)
+		),
 	},
 	keepBackground: false,
 	onVisitLine(node) {
@@ -35,7 +35,7 @@ const prettyCodeOptions = {
 	},
 	onVisitHighlightedWord(node) {
 		node.properties.className = ["word--highlighted"];
-	}
+	},
 };
 
 /** @type {import('@huntabyte/mdsvex').MdsvexOptions} */
@@ -46,7 +46,7 @@ export const mdsvexOptions = {
 		quotes: false,
 		ellipses: false,
 		backticks: false,
-		dashes: false
+		dashes: false,
 	},
 	remarkPlugins: [remarkGfm, remarkEscapeCode],
 	rehypePlugins: [
@@ -55,8 +55,8 @@ export const mdsvexOptions = {
 		[rehypePrettyCode, prettyCodeOptions],
 		rehypeHandleMetadata,
 		rehypeRenderCode,
-		rehypePreToComponentPre
-	]
+		rehypePreToComponentPre,
+	],
 };
 export function rehypeComponentExample() {
 	return async (tree) => {
@@ -80,23 +80,23 @@ export function rehypeComponentExample() {
 					const sourceCodeNode = u("element", {
 						tagName: "pre",
 						properties: {
-							className: ["code"]
+							className: ["code"],
 						},
 						children: [
 							u("element", {
 								tagName: "code",
 								properties: {
-									className: [`language-svelte`]
+									className: [`language-svelte`],
 								},
 								attributes: {},
 								children: [
 									{
 										type: "text",
-										value: sourceCode
-									}
-								]
-							})
-						]
+										value: sourceCode,
+									},
+								],
+							}),
+						],
 					});
 					if (!index) return;
 					parent.children.splice(index + 1, 0, sourceCodeNode);
@@ -127,7 +127,7 @@ const entities = [
 	[/</g, "&lt;"],
 	[/>/g, "&gt;"],
 	[/{/g, "&#123;"],
-	[/}/g, "&#125;"]
+	[/}/g, "&#125;"],
 ];
 
 function remarkEscapeCode() {
@@ -199,7 +199,7 @@ function rehypeRenderCode() {
 				const codeString = tabsToSpaces(
 					toHtml(codeEl, {
 						allowDangerousCharacters: true,
-						allowDangerousHtml: true
+						allowDangerousHtml: true,
 					})
 				);
 

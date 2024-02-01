@@ -10,7 +10,7 @@
 	const {
 		helpers: { isChecked, isIndeterminate },
 		states: { checked },
-		getAttrs
+		getAttrs,
 	} = getCtx();
 
 	function getStateAttr(state: boolean | "indeterminate") {
@@ -21,7 +21,7 @@
 
 	$: attrs = {
 		...getAttrs("indicator"),
-		"data-state": getStateAttr($checked)
+		"data-state": getStateAttr($checked),
 	};
 </script>
 

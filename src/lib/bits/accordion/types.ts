@@ -1,37 +1,79 @@
-import type { HTMLDivAttributes, Transition } from "$lib/internal/index.js";
-import type { CustomEventHandler } from "$lib/index.js";
 import type {
-	AccordionItemProps as _ItemProps,
-	AccordionHeadingProps as _HeadingProps
-} from "@melt-ui/svelte";
-import type { HTMLButtonAttributes } from "svelte/elements";
-import type * as I from "./_types.js";
+	PrimitiveButtonAttributes,
+	PrimitiveDivAttributes,
+	Transition,
+	TransitionParams,
+} from "$lib/internal/index.js";
+import type { Snippet } from "svelte";
 
-type Props<Multiple extends boolean> = I.Props<Multiple> & HTMLDivAttributes;
+interface BaseAccordionProps {
+	asChild?: boolean;
+	disabled?: boolean;
+	forceVisible?: boolean;
+	el?: HTMLElement | null;
+	children?: Snippet;
+}
 
-type ItemProps = I.ItemProps & HTMLDivAttributes;
+interface SingleAccordionProps extends BaseAccordionProps {
+	type: "single";
+	value?: string;
+}
 
-type HeaderProps = I.HeaderProps & HTMLDivAttributes;
+interface MultipleAccordionProps extends BaseAccordionProps {
+	type: "multiple";
+	value?: string[];
+}
 
-type TriggerProps = I.TriggerProps & HTMLButtonAttributes;
+export type AccordionRootProps = (SingleAccordionProps | MultipleAccordionProps) &
+	PrimitiveDivAttributes;
 
-type ContentProps<
+export interface AccordionRootWithoutHTML
+	extends Omit<AccordionRootProps, keyof PrimitiveDivAttributes> {}
+
+export interface AccordionTriggerProps extends Omit<PrimitiveButtonAttributes, "disabled"> {
+	asChild?: boolean;
+	disabled?: boolean;
+	onclick?: (e: MouseEvent) => void;
+	onkeydown?: (e: KeyboardEvent) => void;
+	el?: HTMLElement | null;
+	children?: Snippet;
+}
+
+export interface AccordionTriggerWithoutHTML
+	extends Omit<AccordionTriggerProps, keyof Exclude<PrimitiveButtonAttributes, "disabled">> {}
+
+export interface AccordionItemContext {
+	value: string;
+	disabled: boolean;
+}
+
+export interface AccordionItemProps extends PrimitiveDivAttributes {
+	asChild?: boolean;
+	value: string;
+	disabled?: boolean;
+	children?: Snippet;
+}
+
+export interface AccordionItemWithoutHTML
+	extends Omit<AccordionItemProps, keyof PrimitiveDivAttributes> {}
+
+export interface AccordionContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
 	Out extends Transition = Transition
-> = I.ContentProps<T, In, Out> & HTMLDivAttributes;
+> extends PrimitiveDivAttributes {
+	transition?: T;
+	transitionConfig?: TransitionParams<T>;
+	inTransition?: In;
+	inTransitionConfig?: TransitionParams<In>;
+	outTransition?: Out;
+	outTransitionConfig?: TransitionParams<Out>;
+	asChild?: boolean;
+	children?: Snippet;
+}
 
-type TriggerEvents = {
-	click: CustomEventHandler<MouseEvent, HTMLButtonElement>;
-	keydown: CustomEventHandler<KeyboardEvent, HTMLButtonElement>;
-};
-
-export type {
-	Props,
-	ItemProps,
-	HeaderProps,
-	TriggerProps,
-	ContentProps,
-	//
-	TriggerEvents
-};
+export interface AccordionHeaderProps extends PrimitiveDivAttributes {
+	asChild?: boolean;
+	level?: 1 | 2 | 3 | 4 | 5 | 6;
+	children?: Snippet;
+}

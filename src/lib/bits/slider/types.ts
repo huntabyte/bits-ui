@@ -24,5 +24,5 @@ export type {
 	InputProps,
 	TickProps,
 	//
-	ThumbEvents
+	ThumbEvents,
 };

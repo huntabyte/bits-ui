@@ -1,5 +1,10 @@
 import type { Action } from "svelte/action";
-import type { HTMLAttributes } from "svelte/elements";
+import type {
+	HTMLAttributes,
+	HTMLButtonAttributes,
+	HTMLImgAttributes,
+	HTMLInputAttributes,
+} from "svelte/elements";
 import type { TransitionConfig } from "svelte/transition";
 import type { CreateDispatcher } from ".";
 
@@ -146,3 +151,20 @@ export type SideAndAlign = {
 	align?: Align;
 	alignOffset?: number;
 };
+
+export type Primitive<T> = T & {
+	/**
+	 * Whether or not to delegate rendering of the element
+	 * to your own custom element.
+	 *
+	 * @see https://www.bits-ui.com/docs/delegation
+	 */
+	asChild?: boolean;
+};
+
+export type PrimitiveButtonAttributes = Primitive<HTMLButtonAttributes>;
+export type PrimitiveDivAttributes = Primitive<HTMLAttributes<HTMLDivElement>>;
+export type PrimitiveInputAttributes = Primitive<HTMLInputAttributes>;
+export type PrimitiveSpanAttributes = Primitive<HTMLAttributes<HTMLSpanElement>>;
+export type PrimitiveImgAttributes = Primitive<HTMLImgAttributes>;
+export type PrimitiveHeadingAttributes = Primitive<HTMLHeadingAttributes>;

@@ -14,7 +14,7 @@ export function setCtx(props: CreateDateRangeFieldProps) {
 
 	return {
 		...dateRangeField,
-		updateOption: getOptionUpdater(dateRangeField.options)
+		updateOption: getOptionUpdater(dateRangeField.options),
 	};
 }
 

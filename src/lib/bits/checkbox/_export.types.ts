@@ -3,5 +3,5 @@ export type {
 	IndicatorProps as CheckboxIndicatorProps,
 	InputProps as CheckboxInputProps,
 	//
-	Events as CheckboxEvents
+	Events as CheckboxEvents,
 } from "./types.js";

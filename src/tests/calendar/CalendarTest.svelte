@@ -17,15 +17,9 @@
 
 <main>
 	<div data-testid="value">{value}</div>
-	<button on:click={() => changeValue("day")} data-testid="add-day">
-		Add Day
-	</button>
-	<button on:click={() => changeValue("month")} data-testid="add-month"
-		>Add Month</button
-	>
-	<button on:click={() => changeValue("year")} data-testid="add-year"
-		>Add Year</button
-	>
+	<button on:click={() => changeValue("day")} data-testid="add-day"> Add Day </button>
+	<button on:click={() => changeValue("month")} data-testid="add-month">Add Month</button>
+	<button on:click={() => changeValue("year")} data-testid="add-year">Add Year</button>
 	<Calendar.Root
 		let:months
 		let:weekdays

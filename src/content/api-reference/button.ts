@@ -10,19 +10,19 @@ export const root: APISchema<Button.Props & { href: string }> = {
 		builders: {
 			default: "[]",
 			type: "Builder[]",
-			description: "An array of melt builders to be applied to the button."
+			description: "An array of melt builders to be applied to the button.",
 		},
 		href: {
 			type: C.STRING,
-			description: "An optional prop that when passed converts the button into an anchor tag."
-		}
+			description: "An optional prop that when passed converts the button into an anchor tag.",
+		},
 	},
 	dataAttributes: [
 		{
 			name: "button-root",
-			description: "Present on the button element."
-		}
-	]
+			description: "Present on the button element.",
+		},
+	],
 };
 
 export const button = [root];

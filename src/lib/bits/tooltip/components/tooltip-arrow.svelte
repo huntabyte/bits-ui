@@ -11,7 +11,7 @@
 
 	const {
 		elements: { arrow },
-		getAttrs
+		getAttrs,
 	} = setArrow(size);
 
 	const attrs = getAttrs("arrow");

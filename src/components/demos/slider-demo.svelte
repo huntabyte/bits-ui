@@ -5,13 +5,8 @@
 </script>
 
 <div class="w-full md:max-w-[280px]">
-	<Slider.Root
-		bind:value
-		class="relative flex w-full touch-none select-none items-center"
-	>
-		<span
-			class="relative h-2 w-full grow overflow-hidden rounded-full bg-dark-10"
-		>
+	<Slider.Root bind:value class="relative flex w-full touch-none select-none items-center">
+		<span class="relative h-2 w-full grow overflow-hidden rounded-full bg-dark-10">
 			<Slider.Range class="absolute h-full bg-foreground" />
 		</span>
 		<Slider.Thumb

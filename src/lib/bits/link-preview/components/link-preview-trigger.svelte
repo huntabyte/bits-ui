@@ -14,7 +14,7 @@
 	const {
 		elements: { trigger },
 		ids,
-		getAttrs
+		getAttrs,
 	} = getCtx();
 
 	const dispatch = createDispatcher();
@@ -31,7 +31,7 @@
 	<slot {builder} />
 {:else}
 	<svelte:element
-		this={"a"}
+		this="a"
 		bind:this={el}
 		use:melt={builder}
 		{...$$restProps}

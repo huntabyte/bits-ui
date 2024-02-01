@@ -35,7 +35,7 @@
 		elements: { content },
 		states: { open },
 		ids,
-		getPopoverAttrs
+		getPopoverAttrs,
 	} = getCtx();
 
 	const attrs = getPopoverAttrs("content");
@@ -58,19 +58,14 @@
 		sameWidth,
 		fitViewport,
 		strategy,
-		overlap
+		overlap,
 	});
 </script>
 
 {#if asChild && $open}
 	<slot {builder} />
 {:else if transition && $open}
-	<div
-		bind:this={el}
-		transition:transition={transitionConfig}
-		use:melt={builder}
-		{...$$restProps}
-	>
+	<div bind:this={el} transition:transition={transitionConfig} use:melt={builder} {...$$restProps}>
 		<slot {builder} />
 	</div>
 {:else if inTransition && outTransition && $open}
@@ -84,21 +79,11 @@
 		<slot {builder} />
 	</div>
 {:else if inTransition && $open}
-	<div
-		bind:this={el}
-		in:inTransition={inTransitionConfig}
-		use:melt={builder}
-		{...$$restProps}
-	>
+	<div bind:this={el} in:inTransition={inTransitionConfig} use:melt={builder} {...$$restProps}>
 		<slot {builder} />
 	</div>
 {:else if outTransition && $open}
-	<div
-		bind:this={el}
-		out:outTransition={outTransitionConfig}
-		use:melt={builder}
-		{...$$restProps}
-	>
+	<div bind:this={el} out:outTransition={outTransitionConfig} use:melt={builder} {...$$restProps}>
 		<slot {builder} />
 	</div>
 {:else if $open}

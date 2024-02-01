@@ -17,9 +17,9 @@ const config = {
 			"$lib/*": "src/lib/*",
 			$internal: "src/lib/internal",
 			"$internal/*": "src/lib/internal/*",
-			"@/*": "src/*"
-		}
-	}
+			"@/*": "src/*",
+		},
+	},
 };
 
 export default config;

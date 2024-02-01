@@ -11,7 +11,7 @@
 
 	const {
 		elements: { content },
-		getAttrs
+		getAttrs,
 	} = getCtx();
 	const attrs = getAttrs("content");
 

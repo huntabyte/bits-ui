@@ -8,10 +8,6 @@ type MeltEvent<T extends Event = Event> = {
 	preventDefault: () => void;
 };
 
-export type SvelteEvent<T extends Event = Event, U extends EventTarget = EventTarget> = T & {
-	currentTarget: EventTarget & U;
-};
-
 export function createDispatcher<M extends Element = Element>() {
 	const dispatch = createEventDispatcher();
 	return (e: MeltEvent) => {
@@ -34,3 +30,19 @@ export function createDispatcher<M extends Element = Element>() {
 export type CreateDispatcher = {
 	createDispatcher: typeof createDispatcher;
 };
+
+export type EventCallback<E extends Event = Event, T extends EventTarget = Element> = (
+	event: E & { currentTarget: EventTarget & T }
+) => void;
+
+export function composeHandlers<E extends Event = Event, T extends EventTarget = Element>(
+	...handlers: Array<EventCallback<E, T> | undefined>
+): (e: E & { currentTarget: EventTarget & T }) => void {
+	return (e: E & { currentTarget: EventTarget & T }) => {
+		for (const handler of handlers) {
+			if (handler && !e.defaultPrevented) {
+				handler(e);
+			}
+		}
+	};
+}

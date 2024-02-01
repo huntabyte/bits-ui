@@ -13,7 +13,7 @@
 	const {
 		elements: { title },
 		ids,
-		getAttrs
+		getAttrs,
 	} = getCtx();
 
 	const attrs = getAttrs("title");
@@ -29,12 +29,7 @@
 {#if asChild}
 	<slot {builder} />
 {:else}
-	<svelte:element
-		this={level}
-		bind:this={el}
-		use:melt={builder}
-		{...$$restProps}
-	>
+	<svelte:element this={level} bind:this={el} use:melt={builder} {...$$restProps}>
 		<slot {builder} />
 	</svelte:element>
 {/if}

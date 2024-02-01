@@ -11,7 +11,7 @@ function getRadioGroupData() {
 	return {
 		NAME,
 		ITEM_NAME,
-		PARTS
+		PARTS,
 	};
 }
 
@@ -24,7 +24,7 @@ export function setCtx(props: CreateRadioGroupProps) {
 	setContext(NAME, radioGroup);
 	return {
 		...radioGroup,
-		updateOption: getOptionUpdater(radioGroup.options)
+		updateOption: getOptionUpdater(radioGroup.options),
 	};
 }
 

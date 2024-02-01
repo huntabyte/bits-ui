@@ -12,7 +12,7 @@ import {
 	type TimeFields,
 	type DateFields,
 	now,
-	parseAbsoluteToLocal
+	parseAbsoluteToLocal,
 } from "@internationalized/date";
 
 const kbd = getTestKbd();
@@ -42,7 +42,7 @@ describe("Date Field", () => {
 
 	it("populates segment with value - `CalendarDate`", async () => {
 		const { month, day, year, value } = setup({
-			value: calendarDate
+			value: calendarDate,
 		});
 
 		expect(month).toHaveTextContent(String(calendarDate.month));
@@ -53,7 +53,7 @@ describe("Date Field", () => {
 
 	it("populates segment with value - `CalendarDateTime`", async () => {
 		const { month, day, year, value, getByTestId } = setup({
-			value: calendarDateTime
+			value: calendarDateTime,
 		});
 
 		expect(month).toHaveTextContent(String(calendarDateTime.month));
@@ -66,7 +66,7 @@ describe("Date Field", () => {
 
 	it("populates segment with value - `ZonedDateTime`", async () => {
 		const { month, day, year, value, getByTestId } = setup({
-			value: zonedDateTime
+			value: zonedDateTime,
 		});
 
 		expect(month).toHaveTextContent(String(zonedDateTime.month));
@@ -81,7 +81,7 @@ describe("Date Field", () => {
 
 	it("changes segment positioning based on `locale`", async () => {
 		const { input } = setup({
-			locale: "en-UK"
+			locale: "en-UK",
 		});
 
 		const firstSeg = input.children[0];
@@ -97,14 +97,14 @@ describe("Date Field", () => {
 	it("doesnt show the day period for locales that don't use them", async () => {
 		const { queryByTestId } = setup({
 			locale: "en-UK",
-			value: calendarDateTime
+			value: calendarDateTime,
 		});
 		expect(queryByTestId("dayPeriod")).toBeNull();
 	});
 
 	it("does show the day period for locales that do use them", async () => {
 		const { queryByTestId } = setup({
-			value: calendarDateTime
+			value: calendarDateTime,
 		});
 		expect(queryByTestId("dayPeriod")).not.toBeNull();
 	});
@@ -117,7 +117,7 @@ describe("Date Field", () => {
 
 	it("focuses segments on click", async () => {
 		const { user, day, month, year, getByTestId } = setup({
-			value: zonedDateTime
+			value: zonedDateTime,
 		});
 
 		const hour = getByTestId("hour");
@@ -135,7 +135,7 @@ describe("Date Field", () => {
 	it("incremenets segment on arrow up", async () => {
 		const { user, day, month, year, getByTestId } = setup({
 			value: zonedDateTime,
-			granularity: "second"
+			granularity: "second",
 		});
 
 		const hour = getByTestId("hour");
@@ -169,7 +169,7 @@ describe("Date Field", () => {
 	it("decrements segment on arrow down", async () => {
 		const { user, day, month, year, getByTestId } = setup({
 			value: zonedDateTime,
-			granularity: "second"
+			granularity: "second",
 		});
 
 		const hour = getByTestId("hour");
@@ -203,7 +203,7 @@ describe("Date Field", () => {
 	it("navigates segments using the arrow keys", async () => {
 		const { getByTestId, user, day, month, year } = setup({
 			value: zonedDateTime,
-			granularity: "second"
+			granularity: "second",
 		});
 		const { hour, minute, second, dayPeriod, timeZoneName } = getTimeSegments(getByTestId);
 
@@ -227,7 +227,7 @@ describe("Date Field", () => {
 	it("navigates the segments using tab", async () => {
 		const { getByTestId, user, day, month, year } = setup({
 			value: zonedDateTime,
-			granularity: "second"
+			granularity: "second",
 		});
 		const { hour, minute, second, dayPeriod, timeZoneName } = getTimeSegments(getByTestId);
 
@@ -251,7 +251,7 @@ describe("Date Field", () => {
 		const { user, getByTestId, day, month, year } = setup({
 			value: zonedDateTime,
 			granularity: "second",
-			disabled: true
+			disabled: true,
 		});
 
 		const { hour, minute, second, dayPeriod, timeZoneName } = getTimeSegments(getByTestId);
@@ -268,7 +268,7 @@ describe("Date Field", () => {
 		const { user, getByTestId, day, month, year } = setup({
 			value: zonedDateTime,
 			granularity: "second",
-			readonly: true
+			readonly: true,
 		});
 		const { hour, minute, second } = getTimeSegments(getByTestId);
 		const segments = [month, day, year, hour, minute, second];
@@ -287,7 +287,7 @@ describe("Date Field", () => {
 		const { getByTestId, day, month, year, input, label, user } = setup({
 			granularity: "second",
 			isDateUnavailable: (date) => date.day === 19,
-			value: zonedDateTime
+			value: zonedDateTime,
 		});
 
 		const { hour, minute, second, dayPeriod, timeZoneName } = getTimeSegments(getByTestId);
@@ -315,7 +315,7 @@ describe("Date Field", () => {
 	it("adjusts the hour cycle with the `hourCycle` prop", async () => {
 		const { getByTestId, queryByTestId, user } = setup({
 			value: zonedDateTime,
-			hourCycle: 24
+			hourCycle: 24,
 		});
 
 		expect(queryByTestId("dayPeriod")).toBeNull();
@@ -330,7 +330,7 @@ describe("Date Field", () => {
 	it("overrides the default displayed segments with the `granularity` prop - `'day'`", async () => {
 		const { queryByTestId, month, day, year } = setup({
 			value: calendarDateTime,
-			granularity: "day"
+			granularity: "day",
 		});
 
 		const nonDisplayedSegments = ["hour", "minute", "second", "dayPeriod"];
@@ -346,7 +346,7 @@ describe("Date Field", () => {
 	it("overrides the default displayed segments with the `granularity` prop - `'minute'`", async () => {
 		const { queryByTestId, getByTestId, month, day, year } = setup({
 			value: calendarDateTime,
-			granularity: "minute"
+			granularity: "minute",
 		});
 
 		const displayedSegments = [
@@ -355,7 +355,7 @@ describe("Date Field", () => {
 			year,
 			getByTestId("hour"),
 			getByTestId("minute"),
-			getByTestId("dayPeriod")
+			getByTestId("dayPeriod"),
 		];
 
 		expect(queryByTestId("second")).toBeNull();
@@ -367,7 +367,7 @@ describe("Date Field", () => {
 
 	it("changes the value when the dayPeriod segment is changed", async () => {
 		const { getByTestId, user, value } = setup({
-			value: calendarDateTime
+			value: calendarDateTime,
 		});
 
 		expect(value).toHaveTextContent("1980-01-20T12:30");
@@ -384,7 +384,7 @@ describe("Date Field", () => {
 	it("takes you all the way through the segment with spamming 3", async () => {
 		const { getByTestId, user, month, day, year } = setup({
 			value: zonedDateTime,
-			granularity: "second"
+			granularity: "second",
 		});
 
 		const { hour, minute, second, dayPeriod } = getTimeSegments(getByTestId);
@@ -413,7 +413,7 @@ describe("Date Field", () => {
 	it("fully overwrites on first click and type - `month`", async () => {
 		const { user, month } = setup({
 			value: zonedDateTime,
-			granularity: "second"
+			granularity: "second",
 		});
 
 		await user.click(month);
@@ -426,7 +426,7 @@ describe("Date Field", () => {
 	it("fully overwrites on first click and type - `day`", async () => {
 		const { user, day } = setup({
 			value: zonedDateTime,
-			granularity: "second"
+			granularity: "second",
 		});
 
 		await user.click(day);
@@ -439,7 +439,7 @@ describe("Date Field", () => {
 	it("fully overwrites on first click and type - `year`", async () => {
 		const { user, year } = setup({
 			value: zonedDateTime,
-			granularity: "second"
+			granularity: "second",
 		});
 
 		await user.click(year);
@@ -452,7 +452,7 @@ describe("Date Field", () => {
 	it("fully overwrites on first click and type - `hour`", async () => {
 		const { user, getByTestId } = setup({
 			value: zonedDateTime,
-			granularity: "second"
+			granularity: "second",
 		});
 		const hour = getByTestId("hour");
 
@@ -466,7 +466,7 @@ describe("Date Field", () => {
 	it("fully overwrites on first click and type - `minute`", async () => {
 		const { user, getByTestId } = setup({
 			value: zonedDateTime,
-			granularity: "second"
+			granularity: "second",
 		});
 		const minute = getByTestId("minute");
 
@@ -480,7 +480,7 @@ describe("Date Field", () => {
 	it("fully overwrites on first click and type - `second`", async () => {
 		const { user, getByTestId } = setup({
 			value: zonedDateTime,
-			granularity: "second"
+			granularity: "second",
 		});
 		const second = getByTestId("second");
 
@@ -493,7 +493,7 @@ describe("Date Field", () => {
 
 	it("displays correct timezone with ZonedDateTime value - `now`", async () => {
 		const { getByTestId } = setup({
-			value: now("America/Los_Angeles")
+			value: now("America/Los_Angeles"),
 		});
 
 		const timeZone = getByTestId("timeZoneName");
@@ -506,7 +506,7 @@ describe("Date Field", () => {
 
 	it("displays correct timezone with ZonedDateTime value - absolute -> local", async () => {
 		const { getByTestId } = setup({
-			value: parseAbsoluteToLocal("2023-10-12T12:30:00Z")
+			value: parseAbsoluteToLocal("2023-10-12T12:30:00Z"),
 		});
 
 		const timeZone = getByTestId("timeZoneName");
@@ -521,7 +521,7 @@ function getTimeSegments(getByTestId: (...args: any[]) => HTMLElement) {
 		minute: getByTestId("minute"),
 		second: getByTestId("second"),
 		dayPeriod: getByTestId("dayPeriod"),
-		timeZoneName: getByTestId("timeZoneName")
+		timeZoneName: getByTestId("timeZoneName"),
 	};
 }
 

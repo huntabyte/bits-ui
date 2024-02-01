@@ -12,20 +12,20 @@ const kbd = getTestKbd();
 const testItems: Item[] = [
 	{
 		value: "1",
-		label: "A"
+		label: "A",
 	},
 	{
 		value: "2",
-		label: "B"
+		label: "B",
 	},
 	{
 		value: "3",
-		label: "C"
+		label: "C",
 	},
 	{
 		value: "4",
-		label: "D"
-	}
+		label: "D",
+	},
 ];
 
 function setup(props: Select.Props<unknown, false> = {}, options: Item[] = testItems) {
@@ -37,7 +37,7 @@ function setup(props: Select.Props<unknown, false> = {}, options: Item[] = testI
 		trigger,
 		user,
 		input,
-		...returned
+		...returned,
 	};
 }
 async function open(
@@ -159,7 +159,7 @@ describe("Select", () => {
 
 	it('respects the "closeOnOutsideClick" prop', async () => {
 		const { user, queryByTestId, getByTestId } = await open({
-			closeOnOutsideClick: false
+			closeOnOutsideClick: false,
 		});
 		const outside = getByTestId("outside");
 		await user.click(outside);
@@ -261,7 +261,7 @@ describe("Select", () => {
 
 	it("selects a default item when provided", async () => {
 		const { getByTestId, queryByTestId, input } = await open({
-			selected: { value: "2", label: "B" }
+			selected: { value: "2", label: "B" },
 		});
 		expect(queryByTestId("2-indicator")).not.toBeNull();
 		const value = getByTestId("value");

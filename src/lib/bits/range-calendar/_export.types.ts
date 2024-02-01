@@ -15,5 +15,5 @@ export type {
 	Events as RangeCalendarEvents,
 	PrevButtonEvents as RangeCalendarPrevButtonEvents,
 	NextButtonEvents as RangeCalendarNextButtonEvents,
-	DayEvents as RangeCalendarDayEvents
+	DayEvents as RangeCalendarDayEvents,
 } from "./types.js";

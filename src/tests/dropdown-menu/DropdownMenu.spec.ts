@@ -20,7 +20,7 @@ function setup(props: DropdownMenuTestProps = {}) {
 		getByTestId,
 		queryByTestId,
 		user,
-		trigger
+		trigger,
 	};
 }
 
@@ -58,7 +58,7 @@ async function openSubmenu(props: Awaited<ReturnType<typeof openWithKbd>>) {
 		user,
 		getByTestId,
 		queryByTestId,
-		trigger
+		trigger,
 	};
 }
 
@@ -83,7 +83,7 @@ describe("Dropdown Menu", () => {
 			"checkbox-item",
 			"radio-group",
 			"radio-item",
-			"checkbox-indicator"
+			"checkbox-indicator",
 		];
 
 		for (const part of parts) {
@@ -276,7 +276,7 @@ describe("Dropdown Menu", () => {
 
 	it("respects the `closeOnOutsideClick` prop", async () => {
 		const { queryByTestId, user, getByTestId } = await openWithPointer({
-			closeOnOutsideClick: false
+			closeOnOutsideClick: false,
 		});
 		const outside = getByTestId("outside");
 		await user.click(outside);

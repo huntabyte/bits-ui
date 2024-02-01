@@ -1,13 +1,7 @@
 <script lang="ts">
 	import { ContextMenu } from "$lib";
 	import { flyAndScale } from "@/utils";
-	import {
-		PencilSimpleLine,
-		PlusCircle,
-		CopySimple,
-		Trash,
-		MouseSimple
-	} from "phosphor-svelte";
+	import { PencilSimpleLine, PlusCircle, CopySimple, Trash, MouseSimple } from "phosphor-svelte";
 </script>
 
 <ContextMenu.Root>

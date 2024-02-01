@@ -7,7 +7,7 @@
 		TextAlignLeft,
 		TextAlignCenter,
 		TextAlignRight,
-		Sparkle
+		Sparkle,
 	} from "phosphor-svelte";
 
 	let text: string[] | undefined = ["bold"];
@@ -17,11 +17,7 @@
 <Toolbar.Root
 	class="flex h-12 min-w-max items-center justify-center rounded-10px border border-border bg-background p-1 shadow-mini"
 >
-	<Toolbar.Group
-		bind:value={text}
-		type="multiple"
-		class="flex items-center gap-x-0.5"
-	>
+	<Toolbar.Group bind:value={text} type="multiple" class="flex items-center gap-x-0.5">
 		<Toolbar.GroupItem
 			aria-label="toggle bold"
 			value="bold"
@@ -47,11 +43,7 @@
 
 	<Separator.Root class="-my-1 mx-1 w-[1px] self-stretch bg-dark-10" />
 
-	<Toolbar.Group
-		bind:value={align}
-		type="single"
-		class="flex items-center gap-x-0.5"
-	>
+	<Toolbar.Group bind:value={align} type="single" class="flex items-center gap-x-0.5">
 		<Toolbar.GroupItem
 			aria-label="align left"
 			value="left"

@@ -4,7 +4,7 @@ import {
 	idsSlotProp,
 	onOutsideClickProp,
 	portalProp,
-	transitionProps
+	transitionProps,
 } from "@/content/api-reference/helpers.js";
 import type * as Dialog from "$lib/bits/dialog/_types";
 import { focusProp } from "./extended-types";
@@ -18,44 +18,44 @@ export const root: APISchema<Dialog.Props> = {
 		preventScroll: {
 			type: C.BOOLEAN,
 			default: C.TRUE,
-			description: "Whether or not to prevent scroll on the body when the dialog is open."
+			description: "Whether or not to prevent scroll on the body when the dialog is open.",
 		},
 		closeOnEscape: {
 			type: C.BOOLEAN,
 			default: C.TRUE,
-			description: "Whether to close the dialog when the escape key is pressed."
+			description: "Whether to close the dialog when the escape key is pressed.",
 		},
 		closeOnOutsideClick: {
 			type: C.BOOLEAN,
 			default: C.TRUE,
-			description: "Whether to close the dialog when a click occurs outside of it."
+			description: "Whether to close the dialog when a click occurs outside of it.",
 		},
 		open: {
 			type: C.BOOLEAN,
 			default: C.FALSE,
-			description: "Whether or not the dialog is open."
+			description: "Whether or not the dialog is open.",
 		},
 		onOpenChange: {
 			type: {
 				type: C.FUNCTION,
-				definition: "(open: boolean) => void"
+				definition: "(open: boolean) => void",
 			},
-			description: "A callback function called when the open state changes."
+			description: "A callback function called when the open state changes.",
 		},
 		openFocus: {
 			type: focusProp,
-			description: "Override the initial focus when the dialog is opened."
+			description: "Override the initial focus when the dialog is opened.",
 		},
 		closeFocus: {
 			type: focusProp,
-			description: "Override the focus when the dialog is closed."
+			description: "Override the focus when the dialog is closed.",
 		},
 		portal: { ...portalProp("dialog") },
-		onOutsideClick: onOutsideClickProp
+		onOutsideClick: onOutsideClickProp,
 	},
 	slotProps: {
-		ids: idsSlotProp
-	}
+		ids: idsSlotProp,
+	},
 };
 
 export const close: APISchema<Dialog.CloseProps> = {
@@ -66,9 +66,9 @@ export const close: APISchema<Dialog.CloseProps> = {
 	dataAttributes: [
 		{
 			name: "dialog-close",
-			description: "Present on the close button."
-		}
-	]
+			description: "Present on the close button.",
+		},
+	],
 };
 
 export const content: APISchema<Dialog.ContentProps> = {
@@ -81,13 +81,13 @@ export const content: APISchema<Dialog.ContentProps> = {
 			name: "state",
 			value: enums("open", "closed"),
 			description: "The state of the dialog.",
-			isEnum: true
+			isEnum: true,
 		},
 		{
 			name: "dialog-content",
-			description: "Present on the content."
-		}
-	]
+			description: "Present on the content.",
+		},
+	],
 };
 
 export const title: APISchema<Dialog.TitleProps> = {
@@ -97,19 +97,19 @@ export const title: APISchema<Dialog.TitleProps> = {
 		level: {
 			type: {
 				type: C.ENUM,
-				definition: enums("h1", "h2", "h3", "h4", "h5", "h6")
+				definition: enums("h1", "h2", "h3", "h4", "h5", "h6"),
 			},
-			description: "The heading level of the title."
+			description: "The heading level of the title.",
 		},
-		...domElProps("HTMLHeadingElement")
+		...domElProps("HTMLHeadingElement"),
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "dialog-title",
-			description: "Present on the title."
-		}
-	]
+			description: "Present on the title.",
+		},
+	],
 };
 
 export const description: APISchema<Dialog.DescriptionProps> = {
@@ -120,9 +120,9 @@ export const description: APISchema<Dialog.DescriptionProps> = {
 	dataAttributes: [
 		{
 			name: "dialog-description",
-			description: "Present on the description."
-		}
-	]
+			description: "Present on the description.",
+		},
+	],
 };
 
 export const trigger: APISchema<Dialog.TriggerProps> = {
@@ -133,9 +133,9 @@ export const trigger: APISchema<Dialog.TriggerProps> = {
 	dataAttributes: [
 		{
 			name: "dialog-trigger",
-			description: "Present on the trigger."
-		}
-	]
+			description: "Present on the trigger.",
+		},
+	],
 };
 
 export const overlay: APISchema<Dialog.OverlayProps> = {
@@ -148,13 +148,13 @@ export const overlay: APISchema<Dialog.OverlayProps> = {
 			name: "state",
 			value: enums("open", "closed"),
 			description: "The state of the dialog.",
-			isEnum: true
+			isEnum: true,
 		},
 		{
 			name: "dialog-overlay",
-			description: "Present on the overlay."
-		}
-	]
+			description: "Present on the overlay.",
+		},
+	],
 };
 
 export const portal: APISchema<Dialog.PortalProps> = {
@@ -165,13 +165,13 @@ export const portal: APISchema<Dialog.PortalProps> = {
 	dataAttributes: [
 		{
 			name: "portal",
-			description: "Present on the portal."
+			description: "Present on the portal.",
 		},
 		{
 			name: "dialog-portal",
-			description: "Present on the portal."
-		}
-	]
+			description: "Present on the portal.",
+		},
+	],
 };
 
 export const dialog = [root, trigger, content, overlay, portal, close, title, description];

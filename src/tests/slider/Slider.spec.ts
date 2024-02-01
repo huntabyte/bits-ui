@@ -209,7 +209,7 @@ describe("Slider (Range)", () => {
 		async (key) => {
 			const { getByTestId } = setup(
 				{
-					value: [49, 51]
+					value: [49, 51],
 				},
 				"range"
 			);
@@ -234,7 +234,7 @@ describe("Slider (Range)", () => {
 		async (key) => {
 			const { getByTestId } = setup(
 				{
-					value: [49, 51]
+					value: [49, 51],
 				},
 				"range"
 			);
@@ -319,7 +319,7 @@ describe("Slider (Small min, max, step)", () => {
 			value: [0.5],
 			min: 0,
 			max: 1,
-			step: 0.01
+			step: 0.01,
 		});
 
 		const thumb = getByTestId("thumb");
@@ -333,7 +333,7 @@ describe("Slider (Small min, max, step)", () => {
 			value: [0.5],
 			min: 0,
 			max: 1,
-			step: 0.01
+			step: 0.01,
 		});
 
 		const user = userEvent.setup();
@@ -352,7 +352,7 @@ describe("Slider (Small min, max, step)", () => {
 			value: [0.5],
 			min: 0,
 			max: 1,
-			step: 0.01
+			step: 0.01,
 		});
 		const user = userEvent.setup();
 
@@ -372,7 +372,7 @@ describe("Slider (negative min)", () => {
 			value: [0],
 			min: -50,
 			max: 50,
-			step: 1
+			step: 1,
 		});
 
 		const thumb = getByTestId("thumb");
@@ -386,7 +386,7 @@ describe("Slider (negative min)", () => {
 			value: [0],
 			min: -50,
 			max: 50,
-			step: 1
+			step: 1,
 		});
 
 		const user = userEvent.setup();
@@ -405,7 +405,7 @@ describe("Slider (negative min)", () => {
 			value: [0],
 			min: -50,
 			max: 50,
-			step: 1
+			step: 1,
 		});
 		const user = userEvent.setup();
 
@@ -424,7 +424,7 @@ describe("Slider (value=[5], min=0, max=10, step=1)", () => {
 		value: [5],
 		min: 0,
 		max: 10,
-		step: 1
+		step: 1,
 	};
 
 	it("11 ticks are rendered", () => {
@@ -457,7 +457,7 @@ describe("Slider (min=0, max=8, step=3)", () => {
 		const { getAllByTestId } = setup({
 			min: 0,
 			max: 8,
-			step: 3
+			step: 3,
 		});
 
 		expect(getAllByTestId("tick")).toHaveLength(3);
@@ -469,7 +469,7 @@ describe("Slider (min=0, max=9, step=3)", () => {
 		const { getAllByTestId } = setup({
 			min: 0,
 			max: 9,
-			step: 3
+			step: 3,
 		});
 
 		expect(getAllByTestId("tick")).toHaveLength(4);
@@ -481,7 +481,7 @@ describe("Slider (value=[3,6], min=0, max=10, step=3)", () => {
 		value: [3, 6],
 		min: 0,
 		max: 10,
-		step: 3
+		step: 3,
 	};
 
 	it("4 ticks are rendered", () => {
@@ -514,7 +514,7 @@ describe("Slider changing options after building", () => {
 		value: [5],
 		min: 0,
 		max: 10,
-		step: 1
+		step: 1,
 	};
 
 	it("Changing min", async () => {
@@ -562,7 +562,7 @@ function isCloseEnough(value: number, style: string) {
 function expectPercentage({
 	percentage,
 	thumb,
-	range
+	range,
 }: {
 	percentage: number;
 	thumb: HTMLElement;
@@ -576,7 +576,7 @@ function expectPercentage({
 function expectPercentages({
 	percentages,
 	thumbs,
-	range
+	range,
 }: {
 	percentages: number[];
 	thumbs: HTMLElement[];
