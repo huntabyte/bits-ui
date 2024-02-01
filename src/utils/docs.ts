@@ -31,7 +31,7 @@ export function slugFromPath(path: string) {
 
 export async function getDoc(slug: string): Promise<TDoc> {
 	if (slug === "components") {
-		throw redirect(303, "/docs/components/accordion");
+		redirect(303, "/docs/components/accordion");
 	}
 
 	const modules = import.meta.glob(`/content/**/*.md`);
@@ -48,7 +48,7 @@ export async function getDoc(slug: string): Promise<TDoc> {
 	const doc = await match?.resolver?.();
 
 	if (!doc || !doc.metadata) {
-		throw error(404);
+		error(404);
 	}
 
 	return {
@@ -60,11 +60,11 @@ export async function getDoc(slug: string): Promise<TDoc> {
 
 export async function getComponentDoc(slug: string): Promise<ComponentDoc> {
 	if (slug === "components") {
-		throw redirect(303, "/docs/components/accordion");
+		redirect(303, "/docs/components/accordion");
 	}
 
 	if (!isBit(slug)) {
-		throw error(404);
+		error(404);
 	}
 
 	const modules = import.meta.glob("/content/**/*.md");
@@ -80,7 +80,7 @@ export async function getComponentDoc(slug: string): Promise<ComponentDoc> {
 
 	const doc = await match?.resolver?.();
 	if (!doc || !doc.metadata) {
-		throw error(404);
+		error(404);
 	}
 
 	return {
