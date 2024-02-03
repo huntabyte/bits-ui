@@ -7,6 +7,7 @@ import type {
 } from "svelte/elements";
 import type { TransitionConfig } from "svelte/transition";
 import type { CreateDispatcher } from ".";
+import type { Snippet } from "svelte";
 
 export type ObjectVariation<T> = T extends object ? T : never;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -103,7 +104,7 @@ export type AsChild = Expand<{
 export type TransitionProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
-	Out extends Transition = Transition
+	Out extends Transition = Transition,
 > = Expand<{
 	/**
 	 * A transition function to use during both the in and out transitions.
@@ -168,3 +169,31 @@ export type PrimitiveInputAttributes = Primitive<HTMLInputAttributes>;
 export type PrimitiveSpanAttributes = Primitive<HTMLAttributes<HTMLSpanElement>>;
 export type PrimitiveImgAttributes = Primitive<HTMLImgAttributes>;
 export type PrimitiveHeadingAttributes = Primitive<HTMLHeadingAttributes>;
+
+export type AsChildProps<T, U> = {
+	child: Snippet<[U]>;
+	children?: never;
+	asChild: true;
+} & Omit<T, "children" | "asChild">;
+
+export type DefaultProps<T> = {
+	asChild?: never;
+	child?: never;
+	children?: Snippet;
+} & Omit<T, "child" | "asChild">;
+
+export type DefaultOrAsChildProps<T, U extends Record<PropertyKey, unknown> = {}> =
+	| DefaultProps<T>
+	| AsChildProps<T, U>;
+
+/**
+ * Constructs a new type by omitting properties from type
+ * 'T' that exist in type 'U'.
+ *
+ * @template T - The base object type from which properties will be omitted.
+ * @template U - The object type whose properties will be omitted from 'T'.
+ * @example
+ * type Result = Without<{ a: number; b: string; }, { b: string; }>;
+ * // Result type will be { a: number; }
+ */
+export type Without<T extends object, U extends object> = Omit<T, keyof U>;

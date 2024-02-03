@@ -1,17 +1,16 @@
 import type {
+	DefaultOrAsChildProps,
 	PrimitiveButtonAttributes,
 	PrimitiveDivAttributes,
 	Transition,
 	TransitionParams,
 } from "$lib/internal/index.js";
-import type { Snippet } from "svelte";
 
 interface BaseAccordionProps {
 	asChild?: boolean;
 	disabled?: boolean;
 	forceVisible?: boolean;
 	el?: HTMLElement | null;
-	children?: Snippet;
 }
 
 interface SingleAccordionProps extends BaseAccordionProps {
@@ -24,20 +23,20 @@ interface MultipleAccordionProps extends BaseAccordionProps {
 	value?: string[];
 }
 
-export type AccordionRootProps = (SingleAccordionProps | MultipleAccordionProps) &
+export type AccordionRootProps = DefaultOrAsChildProps<
+	SingleAccordionProps | MultipleAccordionProps
+> &
 	PrimitiveDivAttributes;
 
-export interface AccordionRootWithoutHTML
-	extends Omit<AccordionRootProps, keyof PrimitiveDivAttributes> {}
+// export type AccordionRootWithoutHTML = Omit<AccordionRootProps, keyof PrimitiveDivAttributes>;
 
-export interface AccordionTriggerProps extends Omit<PrimitiveButtonAttributes, "disabled"> {
-	asChild?: boolean;
+export type AccordionTriggerProps = DefaultOrAsChildProps<{
 	disabled?: boolean;
 	onclick?: (e: MouseEvent) => void;
 	onkeydown?: (e: KeyboardEvent) => void;
 	el?: HTMLElement | null;
-	children?: Snippet;
-}
+}> &
+	Omit<PrimitiveButtonAttributes, "disabled">;
 
 export interface AccordionTriggerWithoutHTML
 	extends Omit<AccordionTriggerProps, keyof Exclude<PrimitiveButtonAttributes, "disabled">> {}
@@ -47,33 +46,31 @@ export interface AccordionItemContext {
 	disabled: boolean;
 }
 
-export interface AccordionItemProps extends PrimitiveDivAttributes {
-	asChild?: boolean;
+export type AccordionItemProps = DefaultOrAsChildProps<{
 	value: string;
 	disabled?: boolean;
-	children?: Snippet;
-}
+}> &
+	PrimitiveDivAttributes;
 
 export interface AccordionItemWithoutHTML
 	extends Omit<AccordionItemProps, keyof PrimitiveDivAttributes> {}
 
-export interface AccordionContentProps<
+export type AccordionContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
-	Out extends Transition = Transition
-> extends PrimitiveDivAttributes {
+	Out extends Transition = Transition,
+> = DefaultOrAsChildProps<{
 	transition?: T;
 	transitionConfig?: TransitionParams<T>;
 	inTransition?: In;
 	inTransitionConfig?: TransitionParams<In>;
 	outTransition?: Out;
 	outTransitionConfig?: TransitionParams<Out>;
-	asChild?: boolean;
-	children?: Snippet;
-}
+}> &
+	PrimitiveDivAttributes;
 
-export interface AccordionHeaderProps extends PrimitiveDivAttributes {
+export type AccordionHeaderProps = DefaultOrAsChildProps<{
 	asChild?: boolean;
 	level?: 1 | 2 | 3 | 4 | 5 | 6;
-	children?: Snippet;
-}
+}> &
+	PrimitiveDivAttributes;

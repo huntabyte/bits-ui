@@ -3,24 +3,19 @@
 	import { ACCORDION_ITEM } from "../state.svelte.js";
 	import type { AccordionHeaderProps } from "../types.js";
 
-	let {
-		asChild = false,
-		level = 2,
-		children,
-		...rest
-	} = $props<AccordionHeaderProps>();
+	let { asChild = false, level = 2, children, child, ...rest } = $props<AccordionHeaderProps>();
 
 	verifyContextDeps(ACCORDION_ITEM);
 
 	let attrs = $derived({
 		role: "heading",
 		"aria-level": level,
-		"data-heading-level": level
+		"data-heading-level": level,
 	});
 </script>
 
-{#if asChild && children}
-	{@render children()}
+{#if asChild && child}
+	{@render child({ ...rest, ...attrs })}
 {:else}
 	<div {...rest} {...attrs}>
 		{#if children}

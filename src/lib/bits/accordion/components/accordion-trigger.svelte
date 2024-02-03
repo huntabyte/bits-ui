@@ -8,6 +8,8 @@
 		el = null,
 		onkeydown = undefined,
 		onclick = undefined,
+		children,
+		child,
 		...props
 	} = $props<AccordionTriggerProps>();
 
@@ -26,8 +28,13 @@
 	});
 </script>
 
-{#if asChild}
-	<slot />
+{#if asChild && child}
+	{@render child({
+		...props,
+		...trigger.attrs,
+		onclick: trigger.onclick,
+		onkeydown: trigger.onkeydown,
+	})}
 {:else}
 	<button
 		bind:this={el}
@@ -37,6 +44,8 @@
 		onclick={trigger.onclick}
 		onkeydown={trigger.onkeydown}
 	>
-		<slot />
+		{#if children}
+			{@render children()}
+		{/if}
 	</button>
 {/if}

@@ -6,6 +6,7 @@
 		disabled = false,
 		value,
 		children,
+		child,
 		...rest
 	} = $props<AccordionItemProps>();
 
@@ -20,12 +21,12 @@
 
 	let attrs = $derived({
 		"data-state": item.isSelected ? "open" : "closed",
-		"data-disabled": isDisabled ? "" : undefined
+		"data-disabled": isDisabled ? "" : undefined,
 	});
 </script>
 
-{#if asChild && children}
-	{@render children()}
+{#if asChild && child}
+	{@render child({ ...rest, ...attrs })}
 {:else}
 	<div {...attrs} {...rest}>
 		{#if children}

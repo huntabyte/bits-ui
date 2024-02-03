@@ -229,7 +229,7 @@ class AccordionTriggerState {
 	});
 
 	onkeydown = composeHandlers<KeyboardEvent>(this.handlers.keydown, (e: KeyboardEvent) => {
-		const handledKeys = [kbd.ARROW_DOWN, kbd.ARROW_UP, kbd.HOME, kbd.END];
+		const handledKeys = [kbd.ARROW_DOWN, kbd.ARROW_UP, kbd.HOME, kbd.END, kbd.SPACE, kbd.ENTER];
 		if (this.isDisabled || !handledKeys.includes(e.key)) return;
 
 		e.preventDefault();

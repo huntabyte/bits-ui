@@ -16,13 +16,13 @@
 
 	$effect.pre(() => {
 		if (value !== undefined) {
-			rootState.value = value
+			rootState.value = value;
 		}
-	})
+	});
 
 	$effect.pre(() => {
-		value = rootState.value
-	})
+		value = rootState.value;
+	});
 
 	$effect(() => {
 		rootState.disabled = disabled;
