@@ -7,6 +7,7 @@
 		forceVisible = false,
 		asChild = false,
 		children,
+		child,
 		type,
 		value,
 		...props
@@ -30,8 +31,8 @@
 	});
 </script>
 
-{#if asChild && children}
-	{@render children()}
+{#if asChild && child}
+	{@render child(props)}
 {:else}
 	<div bind:this={rootState.el} {...props}>
 		{#if children}

@@ -7,7 +7,7 @@
 		value,
 		children,
 		child,
-		...rest
+		...props
 	} = $props<AccordionItemProps>();
 
 	const item = setAccordionItemState({ value, disabled });
@@ -26,9 +26,9 @@
 </script>
 
 {#if asChild && child}
-	{@render child({ ...rest, ...attrs })}
+	{@render child({ ...props, ...attrs })}
 {:else}
-	<div {...attrs} {...rest}>
+	<div {...attrs} {...props}>
 		{#if children}
 			{@render children()}
 		{/if}

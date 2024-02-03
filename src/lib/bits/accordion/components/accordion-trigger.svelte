@@ -31,9 +31,7 @@
 {#if asChild && child}
 	{@render child({
 		...props,
-		...trigger.attrs,
-		onclick: trigger.onclick,
-		onkeydown: trigger.onkeydown,
+		...trigger.props,
 	})}
 {:else}
 	<button

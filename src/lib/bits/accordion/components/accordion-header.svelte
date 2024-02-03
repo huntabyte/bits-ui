@@ -3,7 +3,7 @@
 	import { ACCORDION_ITEM } from "../state.svelte.js";
 	import type { AccordionHeaderProps } from "../types.js";
 
-	let { asChild = false, level = 2, children, child, ...rest } = $props<AccordionHeaderProps>();
+	let { asChild = false, level = 2, children, child, ...props } = $props<AccordionHeaderProps>();
 
 	verifyContextDeps(ACCORDION_ITEM);
 
@@ -15,9 +15,9 @@
 </script>
 
 {#if asChild && child}
-	{@render child({ ...rest, ...attrs })}
+	{@render child({ ...props, ...attrs })}
 {:else}
-	<div {...rest} {...attrs}>
+	<div {...props} {...attrs}>
 		{#if children}
 			{@render children()}
 		{/if}

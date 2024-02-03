@@ -266,6 +266,14 @@ class AccordionTriggerState {
 				return;
 		}
 	});
+
+	get props() {
+		return {
+			...this.attrs,
+			onclick: this.onclick,
+			onkeydown: this.onkeydown,
+		};
+	}
 }
 
 /**
@@ -286,6 +294,10 @@ class AccordionContentState {
 				"data-accordion-content": "",
 			};
 		});
+	}
+
+	get props() {
+		return this.attrs;
 	}
 }
 

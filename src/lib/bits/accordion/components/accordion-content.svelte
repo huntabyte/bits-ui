@@ -17,8 +17,8 @@
 
 {#if asChild && content.item.isSelected}
 	{#if child}
-		{@render child({ ...props, ...content.attrs })}
+		{@render child({ ...props, ...content.props })}
 	{/if}
 {:else}
-	<WithTransition {...props} {...content.attrs} condition={content.item.isSelected} />
+	<WithTransition {...props} {...content.props} condition={content.item.isSelected} />
 {/if}
