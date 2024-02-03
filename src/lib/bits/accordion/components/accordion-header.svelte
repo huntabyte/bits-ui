@@ -7,7 +7,8 @@
 
 	verifyContextDeps(ACCORDION_ITEM);
 
-	let attrs = $derived({
+	const mergedProps = $derived({
+		...props,
 		role: "heading",
 		"aria-level": level,
 		"data-heading-level": level,
@@ -15,9 +16,9 @@
 </script>
 
 {#if asChild && child}
-	{@render child({ ...props, ...attrs })}
+	{@render child(mergedProps)}
 {:else}
-	<div {...props} {...attrs}>
+	<div {...mergedProps}>
 		{#if children}
 			{@render children()}
 		{/if}

@@ -13,12 +13,17 @@
 	let { child, asChild = false, ...props } = $props<AccordionContentProps<T, In, Out>>();
 
 	const content = getAccordionContentState();
+
+	const mergedProps = $derived({
+		...props,
+		...content.props,
+	});
 </script>
 
 {#if asChild && content.item.isSelected}
 	{#if child}
-		{@render child({ ...props, ...content.props })}
+		{@render child(mergedProps)}
 	{/if}
 {:else}
-	<WithTransition {...props} {...content.props} condition={content.item.isSelected} />
+	<WithTransition {...mergedProps} condition={content.item.isSelected} />
 {/if}

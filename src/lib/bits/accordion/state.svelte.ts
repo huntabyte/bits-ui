@@ -24,7 +24,7 @@ const defaultAccordionRootBaseProps = {
 } satisfies Required<AccordionBaseStateProps>;
 
 class AccordionBaseState {
-	el: HTMLElement | null = $state(null);
+	el: HTMLElement | null | undefined = $state();
 	disabled: boolean = $state(false);
 	forceVisible: boolean = $state(false);
 
@@ -172,7 +172,6 @@ type AccordionTriggerStateProps = {
 	onclick?: (e: MouseEvent) => void;
 	onkeydown?: (e: KeyboardEvent) => void;
 	disabled: boolean;
-	el: HTMLElement | null;
 };
 
 const defaultAccordionTriggerProps = {
@@ -186,7 +185,7 @@ const defaultAccordionTriggerProps = {
 
 class AccordionTriggerState {
 	disabled: boolean = $state(false);
-	el: HTMLElement | null = $state(null);
+	el: HTMLElement | null | undefined = $state();
 	itemState: AccordionItemState;
 	root: AccordionState;
 	handlers: {
@@ -198,7 +197,6 @@ class AccordionTriggerState {
 
 	constructor(props: AccordionTriggerStateProps, itemState: AccordionItemState) {
 		this.disabled = props.disabled;
-		this.el = props.el;
 		this.itemState = itemState;
 		this.root = itemState.root;
 		this.handlers.click = props.onclick;
@@ -327,8 +325,8 @@ type InitAccordionProps = SingleInitAccordionProps | MultiInitAccordionProps;
 export function setAccordionRootState(props: InitAccordionProps) {
 	const rootState =
 		props.type === "single"
-			? new AccordionSingleState({ value: props.value })
-			: new AccordionMultiState({ value: props.value });
+			? new AccordionSingleState({ ...props, value: props.value })
+			: new AccordionMultiState({ ...props, value: props.value });
 	setContext(ACCORDION_ROOT, rootState);
 	return rootState;
 }

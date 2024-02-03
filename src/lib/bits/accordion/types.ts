@@ -1,5 +1,5 @@
 import type {
-	DefaultOrAsChildProps,
+	WithAsChild,
 	PrimitiveButtonAttributes,
 	PrimitiveDivAttributes,
 	Transition,
@@ -23,14 +23,12 @@ interface MultipleAccordionProps extends BaseAccordionProps {
 	value?: string[];
 }
 
-export type AccordionRootProps = DefaultOrAsChildProps<
-	SingleAccordionProps | MultipleAccordionProps
-> &
+export type AccordionRootProps = WithAsChild<SingleAccordionProps | MultipleAccordionProps> &
 	PrimitiveDivAttributes;
 
 // export type AccordionRootWithoutHTML = Omit<AccordionRootProps, keyof PrimitiveDivAttributes>;
 
-export type AccordionTriggerProps = DefaultOrAsChildProps<{
+export type AccordionTriggerProps = WithAsChild<{
 	disabled?: boolean;
 	onclick?: (e: MouseEvent) => void;
 	onkeydown?: (e: KeyboardEvent) => void;
@@ -46,9 +44,10 @@ export interface AccordionItemContext {
 	disabled: boolean;
 }
 
-export type AccordionItemProps = DefaultOrAsChildProps<{
+export type AccordionItemProps = WithAsChild<{
 	value: string;
 	disabled?: boolean;
+	el?: HTMLElement | null;
 }> &
 	PrimitiveDivAttributes;
 
@@ -59,7 +58,7 @@ export type AccordionContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
 	Out extends Transition = Transition,
-> = DefaultOrAsChildProps<{
+> = WithAsChild<{
 	transition?: T;
 	transitionConfig?: TransitionParams<T>;
 	inTransition?: In;
@@ -69,7 +68,7 @@ export type AccordionContentProps<
 }> &
 	PrimitiveDivAttributes;
 
-export type AccordionHeaderProps = DefaultOrAsChildProps<{
+export type AccordionHeaderProps = WithAsChild<{
 	asChild?: boolean;
 	level?: 1 | 2 | 3 | 4 | 5 | 6;
 }> &

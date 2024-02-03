@@ -5,7 +5,7 @@
 	let {
 		disabled = false,
 		asChild = false,
-		el = null,
+		el,
 		onkeydown = undefined,
 		onclick = undefined,
 		children,
@@ -14,34 +14,34 @@
 	} = $props<AccordionTriggerProps>();
 
 	const trigger = getAccordionTriggerState({
-		el,
 		disabled,
 		onkeydown,
 		onclick,
 	});
 
-	$effect(() => {
+	$effect.pre(() => {
 		trigger.disabled = disabled;
+	});
+	$effect.pre(() => {
 		trigger.el = el;
+	});
+	$effect.pre(() => {
 		trigger.handlers.click = onclick;
+	});
+	$effect.pre(() => {
 		trigger.handlers.keydown = onkeydown;
+	});
+
+	const mergedProps = $derived({
+		...props,
+		...trigger.props,
 	});
 </script>
 
 {#if asChild && child}
-	{@render child({
-		...props,
-		...trigger.props,
-	})}
+	{@render child(mergedProps)}
 {:else}
-	<button
-		bind:this={el}
-		type="button"
-		{...trigger.attrs}
-		{...props}
-		onclick={trigger.onclick}
-		onkeydown={trigger.onkeydown}
-	>
+	<button bind:this={el} type="button" {...mergedProps}>
 		{#if children}
 			{@render children()}
 		{/if}

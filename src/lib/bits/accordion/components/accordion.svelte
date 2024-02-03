@@ -10,6 +10,7 @@
 		child,
 		type,
 		value,
+		el,
 		...props
 	} = $props<AccordionRootProps>();
 
@@ -20,13 +21,16 @@
 			rootState.value = value;
 		}
 	});
-
 	$effect.pre(() => {
 		value = rootState.value;
 	});
-
-	$effect(() => {
+	$effect.pre(() => {
+		rootState.el = el;
+	});
+	$effect.pre(() => {
 		rootState.disabled = disabled;
+	});
+	$effect.pre(() => {
 		rootState.forceVisible = forceVisible;
 	});
 </script>
@@ -34,7 +38,7 @@
 {#if asChild && child}
 	{@render child(props)}
 {:else}
-	<div bind:this={rootState.el} {...props}>
+	<div bind:this={el} {...props}>
 		{#if children}
 			{@render children()}
 		{/if}

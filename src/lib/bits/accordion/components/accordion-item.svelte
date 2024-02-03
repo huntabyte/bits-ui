@@ -7,6 +7,7 @@
 		value,
 		children,
 		child,
+		el,
 		...props
 	} = $props<AccordionItemProps>();
 
@@ -14,21 +15,25 @@
 
 	let isDisabled = $derived(disabled || item.root.disabled);
 
-	$effect(() => {
+	$effect.pre(() => {
 		item.disabled = disabled;
+	});
+
+	$effect.pre(() => {
 		item.value = value;
 	});
 
-	let attrs = $derived({
+	const mergedProps = $derived({
+		...props,
 		"data-state": item.isSelected ? "open" : "closed",
 		"data-disabled": isDisabled ? "" : undefined,
 	});
 </script>
 
 {#if asChild && child}
-	{@render child({ ...props, ...attrs })}
+	{@render child(mergedProps)}
 {:else}
-	<div {...attrs} {...props}>
+	<div {...mergedProps} bind:this={el}>
 		{#if children}
 			{@render children()}
 		{/if}

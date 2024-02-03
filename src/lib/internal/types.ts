@@ -182,7 +182,7 @@ export type DefaultProps<T> = {
 	children?: Snippet;
 } & Omit<T, "child" | "asChild">;
 
-export type DefaultOrAsChildProps<T, U extends Record<PropertyKey, unknown> = {}> =
+export type WithAsChild<T, U extends Record<PropertyKey, unknown> = {}> =
 	| DefaultProps<T>
 	| AsChildProps<T, U>;
 
