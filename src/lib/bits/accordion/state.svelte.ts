@@ -68,7 +68,7 @@ export class AccordionSingleState extends AccordionBaseState {
 		this.value = mergedProps.value;
 		this.onValueChange = mergedProps.onValueChange;
 
-		$effect(() => {
+		$effect.pre(() => {
 			this.onValueChange?.(this.value);
 		});
 	}
@@ -103,7 +103,7 @@ export class AccordionMultiState extends AccordionBaseState {
 		this.value.push(...mergedProps.value);
 		this.onValueChange = mergedProps.onValueChange;
 
-		$effect(() => {
+		$effect.pre(() => {
 			this.onValueChange?.(this.value);
 		});
 	}
@@ -284,7 +284,7 @@ class AccordionContentState {
 
 	constructor(item: AccordionItemState) {
 		this.item = item;
-		$effect(() => {
+		$effect.pre(() => {
 			this.attrs = {
 				"data-state": item.isSelected ? "open" : "closed",
 				"data-disabled": item.root.disabled || item.disabled ? "" : undefined,
@@ -324,9 +324,7 @@ type InitAccordionProps = SingleInitAccordionProps | MultiInitAccordionProps;
 
 export function setAccordionRootState(props: InitAccordionProps) {
 	const rootState =
-		props.type === "single"
-			? new AccordionSingleState({ ...props, value: props.value })
-			: new AccordionMultiState({ ...props, value: props.value });
+		props.type === "single" ? new AccordionSingleState(props) : new AccordionMultiState(props);
 	setContext(ACCORDION_ROOT, rootState);
 	return rootState;
 }
