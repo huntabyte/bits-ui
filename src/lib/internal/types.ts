@@ -199,3 +199,5 @@ export type WithAsChild<T, U extends Record<PropertyKey, unknown> = {}> =
 export type Without<T extends object, U extends object> = Omit<T, keyof U>;
 
 export type ElementRef = { value?: HTMLElement | null | undefined };
+
+export type Ref<T> = { value: T };
