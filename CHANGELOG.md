@@ -1,5 +1,15 @@
 # @huntabyte/primitives
 
+## 0.17.0
+
+### Minor Changes
+
+- Slider: `ticks` and `thumbs` are now arrays of builders passed via the `Slider.Root`s slot props and must be passed to the individual `Slider.Thumb` and `Slider.Tick` components ([#309](https://github.com/huntabyte/bits-ui/pull/309))
+
+### Patch Changes
+
+- Menubar: fixed bug preventing submenus from being disabled ([#309](https://github.com/huntabyte/bits-ui/pull/309))
+
 ## 0.16.0
 
 ### Minor Changes
