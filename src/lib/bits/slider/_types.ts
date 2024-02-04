@@ -3,8 +3,9 @@
  * to type-check our API documentation, which requires we document each prop,
  * but we don't want to document the HTML attributes.
  */
-import type { CreateSliderProps } from "@melt-ui/svelte";
+import type { CreateSliderProps, Slider } from "@melt-ui/svelte";
 import type { Expand, OmitValue, OnChangeFn, DOMElement } from "$lib/internal/index.js";
+import type { StoresValues } from "svelte/store";
 
 type Props = Expand<
 	OmitValue<CreateSliderProps> & {
@@ -23,8 +24,23 @@ type Props = Expand<
 
 type RangeProps = DOMElement<HTMLSpanElement>;
 
-type ThumbProps = DOMElement<HTMLSpanElement>;
+type ThumbProps = DOMElement<HTMLSpanElement> & {
+	/**
+	 * An individual thumb builder from the `thumbs` slot prop
+	 * provided by the `Slider.Root` component.
+	 */
+	thumb: Thumb;
+};
 
-type TickProps = DOMElement<HTMLSpanElement>;
+type TickProps = DOMElement<HTMLSpanElement> & {
+	/**
+	 * An individual tick builder from the `ticks` slot prop
+	 * provided by the `Slider.Root` component.
+	 */
+	tick: Tick;
+};
 
 export type { Props, RangeProps, ThumbProps, TickProps };
+
+type Tick = StoresValues<Slider["elements"]["ticks"]>[number];
+type Thumb = StoresValues<Slider["elements"]["thumbs"]>[number];

@@ -59,11 +59,15 @@ const root: APISchema<Slider.Props> = {
 		...domElProps("HTMLSpanElement")
 	},
 	slotProps: {
-		...builderAndAttrsSlotProps,
 		ticks: {
-			type: C.NUMBER,
-			description: "The number of ticks to display on the slider."
-		}
+			type: "Tick[]",
+			description: "The tick builders to pass to the individual `Slider.Tick` components."
+		},
+		thumbs: {
+			type: "Thumb[]",
+			description: "The thumb builders to pass to the individual `Slider.Thumb` components."
+		},
+		...builderAndAttrsSlotProps
 	},
 	dataAttributes: [
 		{
@@ -82,7 +86,14 @@ const root: APISchema<Slider.Props> = {
 const thumb: APISchema<Slider.ThumbProps> = {
 	title: "Thumb",
 	description: "A thumb on the slider.",
-	props: domElProps("HTMLSpanElement"),
+	props: {
+		thumb: {
+			type: "Thumb",
+			description:
+				"An individual thumb builder from the `thumbs` slot prop provided by the `Slider.Root` component."
+		},
+		...domElProps("HTMLSpanElement")
+	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -108,7 +119,14 @@ const range: APISchema<Slider.RangeProps> = {
 const tick: APISchema<Slider.TickProps> = {
 	title: "Tick",
 	description: "A tick mark on the slider.",
-	props: domElProps("HTMLSpanElement"),
+	props: {
+		tick: {
+			type: "Tick",
+			description:
+				"An individual tick builder from the `ticks` slot prop provided by the `Slider.Root` component."
+		},
+		...domElProps("HTMLSpanElement")
+	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{

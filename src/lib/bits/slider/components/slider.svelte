@@ -16,8 +16,8 @@
 	export let el: $$Props["el"] = undefined;
 
 	const {
-		elements: { root },
-		states: { value: localValue, ticks },
+		elements: { root, ticks, thumbs },
+		states: { value: localValue },
 		updateOption,
 		getAttrs
 	} = setCtx({
@@ -50,9 +50,9 @@
 </script>
 
 {#if asChild}
-	<slot {builder} ticks={$ticks} />
+	<slot {builder} ticks={$ticks} thumbs={$thumbs} />
 {:else}
 	<span bind:this={el} use:melt={builder} {...$$restProps}>
-		<slot {builder} ticks={$ticks} />
+		<slot {builder} ticks={$ticks} thumbs={$thumbs} />
 	</span>
 {/if}
