@@ -17,8 +17,10 @@
 	const {
 		elements: { subTrigger },
 		ids,
-		getAttrs
+		getAttrs,
+		options
 	} = getSubTrigger();
+	const { disabled: disabledStore } = options;
 
 	const dispatch = createDispatcher();
 
@@ -27,7 +29,10 @@
 	}
 
 	$: builder = $subTrigger;
-	$: attrs = { ...getAttrs("sub-trigger"), ...disabledAttrs(disabled) };
+	$: attrs = {
+		...getAttrs("sub-trigger"),
+		...disabledAttrs(disabled || $disabledStore)
+	};
 	$: Object.assign(builder, attrs);
 </script>
 

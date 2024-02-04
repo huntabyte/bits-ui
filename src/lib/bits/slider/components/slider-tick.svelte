@@ -7,15 +7,13 @@
 
 	export let asChild: $$Props["asChild"] = false;
 	export let el: $$Props["el"] = undefined;
+	export let tick: $$Props["tick"];
 
-	const {
-		elements: { tick },
-		getAttrs
-	} = getCtx();
+	const { getAttrs } = getCtx();
 
 	const attrs = getAttrs("tick");
 
-	$: builder = $tick();
+	$: builder = tick;
 	$: Object.assign(builder, attrs);
 </script>
 

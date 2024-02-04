@@ -9,16 +9,14 @@
 
 	export let asChild: $$Props["asChild"] = false;
 	export let el: $$Props["el"] = undefined;
+	export let thumb: $$Props["thumb"];
 
-	const {
-		elements: { thumb },
-		getAttrs
-	} = getCtx();
+	const { getAttrs } = getCtx();
 
 	const dispatch = createDispatcher();
 	const attrs = getAttrs("thumb");
 
-	$: builder = $thumb();
+	$: builder = thumb;
 	$: Object.assign(builder, attrs);
 </script>
 

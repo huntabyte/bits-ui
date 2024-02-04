@@ -29,6 +29,7 @@
 		bind:value
 		{...$$restProps}
 		let:ticks
+		let:thumbs
 		{min}
 		{max}
 		{step}
@@ -38,14 +39,17 @@
 		>
 			<Slider.Range data-testid="range" class="bg-primary absolute h-full" />
 		</span>
-		<Slider.Thumb
-			aria-label="age"
-			data-testid="thumb"
-			class="border-primary/50 focus-visible:ring-ring block h-4 w-4 rounded-full border bg-background shadow transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50"
-		/>
+		{#each thumbs as thumb}
+			<Slider.Thumb
+				{thumb}
+				aria-label="age"
+				data-testid="thumb"
+				class="border-primary/50 focus-visible:ring-ring block h-4 w-4 rounded-full border bg-background shadow transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50"
+			/>
+		{/each}
 
-		{#each { length: ticks } as _}
-			<Slider.Tick data-testid="tick" />
+		{#each ticks as tick}
+			<Slider.Tick data-testid="tick" {tick} />
 		{/each}
 	</Slider.Root>
 </main>
