@@ -22,7 +22,7 @@
 	const {
 		elements: { overlay },
 		states: { open },
-		getAttrs
+		getAttrs,
 	} = getCtx();
 
 	const attrs = getAttrs("overlay");
@@ -49,19 +49,9 @@
 		{...$$restProps}
 	/>
 {:else if inTransition && $open}
-	<div
-		bind:this={el}
-		in:inTransition={inTransitionConfig}
-		use:melt={builder}
-		{...$$restProps}
-	/>
+	<div bind:this={el} in:inTransition={inTransitionConfig} use:melt={builder} {...$$restProps} />
 {:else if outTransition && $open}
-	<div
-		bind:this={el}
-		out:outTransition={outTransitionConfig}
-		use:melt={builder}
-		{...$$restProps}
-	/>
+	<div bind:this={el} out:outTransition={outTransitionConfig} use:melt={builder} {...$$restProps} />
 {:else if $open}
 	<div bind:this={el} use:melt={builder} {...$$restProps} />
 {/if}

@@ -13,7 +13,7 @@ function getTooltipData() {
 	const PARTS = ["arrow", "content", "trigger"] as const;
 	return {
 		NAME,
-		PARTS
+		PARTS,
 	};
 }
 
@@ -24,18 +24,18 @@ export function setCtx(props: CreateTooltipProps) {
 		...createTooltip({
 			positioning: {
 				placement: "top",
-				gutter: 0
+				gutter: 0,
 			},
 			openDelay: 700,
 			...removeUndefined(props),
-			forceVisible: true
+			forceVisible: true,
 		}),
-		getAttrs
+		getAttrs,
 	};
 	setContext(NAME, tooltip);
 	return {
 		...tooltip,
-		updateOption: getOptionUpdater(tooltip.options)
+		updateOption: getOptionUpdater(tooltip.options),
 	};
 }
 
@@ -54,11 +54,11 @@ export function updatePositioning(props: FloatingProps) {
 	const defaultPlacement = {
 		side: "top",
 		align: "center",
-		sideOffset: 1
+		sideOffset: 1,
 	} satisfies FloatingProps;
 	const withDefaults = { ...defaultPlacement, ...props } satisfies FloatingProps;
 	const {
-		options: { positioning }
+		options: { positioning },
 	} = getCtx();
 
 	const updater = getPositioningUpdater(positioning as Writable<FloatingConfig>);

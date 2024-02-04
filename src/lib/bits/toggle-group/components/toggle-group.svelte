@@ -21,7 +21,7 @@
 		elements: { root },
 		states: { value: localValue },
 		updateOption,
-		getAttrs
+		getAttrs,
 	} = setCtx<T>({
 		disabled,
 		type,
@@ -44,13 +44,12 @@
 			}
 			return next;
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		}) as any
+		}) as any,
 	});
 
 	const attrs = getAttrs("root");
 
-	$: value !== undefined &&
-		localValue.set(Array.isArray(value) ? [...value] : value);
+	$: value !== undefined && localValue.set(Array.isArray(value) ? [...value] : value);
 
 	$: updateOption("disabled", disabled);
 	$: updateOption("loop", loop);

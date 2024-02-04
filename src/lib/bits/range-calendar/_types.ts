@@ -124,5 +124,5 @@ export type {
 	GridBodyProps,
 	GridRowProps,
 	CellProps,
-	DayProps
+	DayProps,
 };

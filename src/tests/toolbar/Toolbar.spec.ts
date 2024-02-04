@@ -44,7 +44,7 @@ function setup(
 		button,
 		styleBinding,
 		alignBinding,
-		...returned
+		...returned,
 	};
 }
 
@@ -62,7 +62,7 @@ describe("Toolbar", () => {
 			groupSingle,
 			groupSingleItemLeft,
 			link,
-			button
+			button,
 		} = setup();
 		expect(root).toHaveAttribute("data-toolbar-root");
 		expect(groupMultiple).toHaveAttribute("data-toolbar-group");
@@ -83,7 +83,7 @@ describe("Toolbar", () => {
 			groupSingleItemCenter,
 			groupSingleItemRight,
 			link,
-			button
+			button,
 		} = setup();
 		groupMultipleItemBold.focus();
 		await user.keyboard(kbd.ARROW_RIGHT);
@@ -114,7 +114,7 @@ describe("Toolbar", () => {
 
 	it("respects the loop prop", async () => {
 		const { user, groupMultipleItemBold, button } = setup({
-			loop: false
+			loop: false,
 		});
 		groupMultipleItemBold.focus();
 		await user.keyboard(kbd.ARROW_LEFT);
@@ -155,7 +155,7 @@ describe("Toolbar", () => {
 			groupMultipleItemBold,
 			groupMultipleItemItalic,
 			groupMultipleItemStrikethrough,
-			styleBinding
+			styleBinding,
 		} = setup();
 		expect(styleBinding).toHaveTextContent("bold");
 		await user.click(groupMultipleItemItalic);
@@ -177,7 +177,7 @@ describe("Toolbar", () => {
 			groupMultipleItemStrikethrough,
 			groupSingleItemLeft,
 			groupSingleItemCenter,
-			groupSingleItemRight
+			groupSingleItemRight,
 		} = setup({ multipleProps: { disabled: true }, singleProps: { disabled: true } });
 		expect(groupMultipleItemBold).toBeDisabled();
 		expect(groupMultipleItemItalic).toBeDisabled();
@@ -200,7 +200,7 @@ describe("Toolbar", () => {
 
 		const { user, groupMultipleItemStrikethrough, groupSingleItemRight } = setup({
 			multipleProps: { onValueChange: multipleOnValueChange },
-			singleProps: { onValueChange: singleOnValueChange }
+			singleProps: { onValueChange: singleOnValueChange },
 		});
 
 		expect(newMultipleValue).toStrictEqual(["bold"]);

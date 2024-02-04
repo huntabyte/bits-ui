@@ -148,7 +148,7 @@ describe("Calendar", () => {
 
 	it("allows dates to be deselected by clicking the selected date", async () => {
 		const { getByTestId, user, calendar } = setup({
-			value: calendarDate
+			value: calendarDate,
 		});
 
 		const value = getByTestId("value");
@@ -163,7 +163,7 @@ describe("Calendar", () => {
 
 	it.each([kbd.ENTER, kbd.SPACE])("allows deselection with %s key", async (key) => {
 		const { getByTestId, user, calendar } = setup({
-			value: calendarDate
+			value: calendarDate,
 		});
 
 		const value = getByTestId("value");
@@ -178,7 +178,7 @@ describe("Calendar", () => {
 
 	it("allows selection with mouse", async () => {
 		const { getByTestId, user } = setup({
-			placeholder: zonedDateTime
+			placeholder: zonedDateTime,
 		});
 
 		const secondDayInMonth = getByTestId("date-1-2");
@@ -191,7 +191,7 @@ describe("Calendar", () => {
 
 	it.each([kbd.SPACE, kbd.ENTER])("allows selection with %s key", async (key) => {
 		const { getByTestId, user } = setup({
-			placeholder: zonedDateTime
+			placeholder: zonedDateTime,
 		});
 
 		const secondDayInMonth = getByTestId("date-1-2");
@@ -242,7 +242,7 @@ describe("Calendar", () => {
 		const { getByTestId, calendar, user } = setup({
 			value: calendarDateTime,
 			numberOfMonths: 2,
-			pagedNavigation: true
+			pagedNavigation: true,
 		});
 
 		const selectedDay = getSelectedDay(calendar);
@@ -280,7 +280,7 @@ describe("Calendar", () => {
 	it("always renders six weeks when `fixedWeeks` is `true`", async () => {
 		const { getByTestId, calendar, user } = setup({
 			value: calendarDate,
-			fixedWeeks: true
+			fixedWeeks: true,
 		});
 
 		function getNumberOfWeeks() {
@@ -302,7 +302,7 @@ describe("Calendar", () => {
 
 	it("should update the selected date when value controlled externally", async () => {
 		const { getByTestId, user, calendar } = setup({
-			value: calendarDate
+			value: calendarDate,
 		});
 
 		const selectedDate = getSelectedDay(calendar);
@@ -317,7 +317,7 @@ describe("Calendar", () => {
 
 	it("should change view when controlled placeholder changes", async () => {
 		const { getByTestId, user } = setup({
-			placeholder: calendarDate
+			placeholder: calendarDate,
 		});
 
 		const heading = getByTestId("heading");
@@ -337,7 +337,7 @@ describe("Calendar", () => {
 	it("should not allow navigation before the `minValue` (prev button)", async () => {
 		const { getByTestId, user } = setup({
 			value: calendarDate,
-			minValue: new CalendarDate(1979, 11, 25)
+			minValue: new CalendarDate(1979, 11, 25),
 		});
 
 		const prevBtn = getByTestId("prev-button");
@@ -359,7 +359,7 @@ describe("Calendar", () => {
 	it("should not allow navigation after the `maxValue` (next button)", async () => {
 		const { getByTestId, user } = setup({
 			value: calendarDate,
-			maxValue: new CalendarDate(1980, 3, 25)
+			maxValue: new CalendarDate(1980, 3, 25),
 		});
 
 		const nextBtn = getByTestId("next-button");
@@ -381,7 +381,7 @@ describe("Calendar", () => {
 	it("does not navigate after `maxValue` (with keyboard)", async () => {
 		const { getByTestId, user } = setup({
 			value: calendarDate,
-			maxValue: new CalendarDate(1980, 3, 31)
+			maxValue: new CalendarDate(1980, 3, 31),
 		});
 
 		const firstDayInMonth = getByTestId("date-1-1");
@@ -430,7 +430,7 @@ describe("Calendar", () => {
 	it("does not navigate before `minValue` (with keyboard)", async () => {
 		const { getByTestId, user } = setup({
 			value: calendarDate,
-			minValue: new CalendarDate(1979, 12, 1)
+			minValue: new CalendarDate(1979, 12, 1),
 		});
 
 		const firstDayInMonth = getByTestId("date-1-1");
@@ -462,7 +462,7 @@ describe("Calendar", () => {
 			placeholder: calendarDate,
 			isDateUnavailable: (date) => {
 				return date.day === 3;
-			}
+			},
 		});
 
 		const thirdDayInMonth = getByTestId("date-1-3");
@@ -476,7 +476,7 @@ describe("Calendar", () => {
 	it("doesnt allow focus or interaction when `disabled` is `true`", async () => {
 		const { getByTestId, user } = setup({
 			placeholder: calendarDate,
-			disabled: true
+			disabled: true,
 		});
 
 		const grid = getByTestId("grid-1");
@@ -503,7 +503,7 @@ describe("Calendar", () => {
 	it("prevents selection but allows focus when `readonly` is `true`", async () => {
 		const { getByTestId, user } = setup({
 			placeholder: calendarDate,
-			readonly: true
+			readonly: true,
 		});
 
 		const grid = getByTestId("grid-1");
@@ -526,7 +526,7 @@ describe("Calendar", () => {
 	it("formats the weekday labels correctly - `'narrow'`", async () => {
 		const { getByTestId } = setup({
 			placeholder: calendarDate,
-			weekdayFormat: "narrow"
+			weekdayFormat: "narrow",
 		});
 		for (const [i, weekday] of narrowWeekdays.entries()) {
 			const weekdayEl = getByTestId(`weekday-1-${i}`);
@@ -537,7 +537,7 @@ describe("Calendar", () => {
 	it("formats the weekday labels correctly - `'short'`", async () => {
 		const { getByTestId } = setup({
 			placeholder: calendarDate,
-			weekdayFormat: "short"
+			weekdayFormat: "short",
 		});
 		for (const [i, weekday] of shortWeekdays.entries()) {
 			const weekdayEl = getByTestId(`weekday-1-${i}`);
@@ -548,7 +548,7 @@ describe("Calendar", () => {
 	it("formats the weekday labels correctly - `'long'`", async () => {
 		const { getByTestId } = setup({
 			placeholder: calendarDate,
-			weekdayFormat: "long"
+			weekdayFormat: "long",
 		});
 		for (const [i, weekday] of longWeekdays.entries()) {
 			const weekdayEl = getByTestId(`weekday-1-${i}`);
@@ -563,7 +563,7 @@ describe("Calendar - `multiple`", () => {
 		const d2 = new CalendarDate(1980, 1, 5);
 
 		const { calendar } = setupMulti({
-			value: [d1, d2]
+			value: [d1, d2],
 		});
 
 		const selectedDays = getSelectedDays(calendar);
@@ -577,7 +577,7 @@ describe("Calendar - `multiple`", () => {
 		const d2 = new CalendarDateTime(1980, 1, 5);
 
 		const { calendar } = setupMulti({
-			value: [d1, d2]
+			value: [d1, d2],
 		});
 
 		const selectedDays = getSelectedDays(calendar);
@@ -591,7 +591,7 @@ describe("Calendar - `multiple`", () => {
 		const d2 = toZoned(new CalendarDateTime(1980, 1, 5), "America/New_York");
 
 		const { calendar } = setupMulti({
-			value: [d1, d2]
+			value: [d1, d2],
 		});
 
 		const selectedDays = getSelectedDays(calendar);
@@ -605,7 +605,7 @@ describe("Calendar - `multiple`", () => {
 		const d2 = new CalendarDate(1980, 5, 5);
 
 		const { calendar, getByTestId } = setupMulti({
-			value: [d1, d2]
+			value: [d1, d2],
 		});
 
 		const selectedDays = getSelectedDays(calendar);
@@ -618,7 +618,7 @@ describe("Calendar - `multiple`", () => {
 		const d2 = new CalendarDate(1980, 1, 5);
 
 		const { calendar, user } = setupMulti({
-			value: [d1, d2]
+			value: [d1, d2],
 		});
 		const selectedDays = getSelectedDays(calendar);
 		expect(selectedDays.length).toBe(2);
@@ -631,7 +631,7 @@ describe("Calendar - `multiple`", () => {
 
 		const { calendar, user } = setupMulti({
 			value: [d1],
-			preventDeselect: true
+			preventDeselect: true,
 		});
 		const selectedDays = getSelectedDays(calendar);
 		await user.click(selectedDays[0]);

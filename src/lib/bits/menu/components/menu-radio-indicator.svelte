@@ -9,7 +9,7 @@
 	const {
 		helpers: { isChecked },
 		value,
-		getAttrs
+		getAttrs,
 	} = getRadioIndicator();
 
 	const attrs = getAttrs("radio-indicator");

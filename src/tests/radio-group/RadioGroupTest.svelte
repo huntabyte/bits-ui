@@ -27,9 +27,7 @@
 		{/each}
 		<RadioGroup.Input data-testid="input" />
 	</RadioGroup.Root>
-	<button
-		aria-label="binding"
-		data-testid="binding"
-		on:click={() => (value = items[0].value)}>{value}</button
+	<button aria-label="binding" data-testid="binding" on:click={() => (value = items[0].value)}
+		>{value}</button
 	>
 </main>

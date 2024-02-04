@@ -11,7 +11,7 @@
 	export let el: $$Props["el"] = undefined;
 
 	const attrs = {
-		"data-bits-avatar-image": ""
+		"data-bits-avatar-image": "",
 	};
 
 	$: image = getImage(src).elements.image;

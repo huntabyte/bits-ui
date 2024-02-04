@@ -10,7 +10,7 @@
 
 	const {
 		states: { selectedLabel },
-		getAttrs
+		getAttrs,
 	} = getCtx();
 	const attrs = getAttrs("value");
 
@@ -20,12 +20,7 @@
 {#if asChild}
 	<slot {label} {attrs} />
 {:else}
-	<span
-		bind:this={el}
-		{...$$restProps}
-		{...attrs}
-		data-placeholder={!label ? "" : undefined}
-	>
+	<span bind:this={el} {...$$restProps} {...attrs} data-placeholder={!label ? "" : undefined}>
 		{label ? label : placeholder}
 	</span>
 {/if}

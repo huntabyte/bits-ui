@@ -15,7 +15,7 @@ import type {
 	NextButtonEvents,
 	PrevButtonEvents,
 	DayEvents,
-	Events as CalendarEvents
+	Events as CalendarEvents,
 } from "$lib/bits/range-calendar/types.js";
 import type {
 	TriggerProps,
@@ -23,7 +23,7 @@ import type {
 	ArrowProps,
 	CloseProps,
 	CloseEvents,
-	TriggerEvents
+	TriggerEvents,
 } from "$lib/bits/popover/types.js";
 import type { SegmentEvents } from "$lib/bits/date-range-field/types.js";
 
@@ -63,5 +63,5 @@ export type {
 	PrevButtonEvents,
 	DayEvents,
 	CalendarEvents,
-	SegmentEvents
+	SegmentEvents,
 };

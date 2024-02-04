@@ -56,11 +56,7 @@
 				<CalendarBlank class="sq-5" />
 			</DateRangePicker.Trigger>
 		</DateRangePicker.Input>
-		<DateRangePicker.Content
-			sideOffset={6}
-			transition={flyAndScale}
-			class="z-50"
-		>
+		<DateRangePicker.Content sideOffset={6} transition={flyAndScale} class="z-50">
 			<DateRangePicker.Calendar
 				class="mt-6 rounded-15px border border-dark-10 bg-background p-[22px] shadow-card"
 				let:months
@@ -79,17 +75,11 @@
 						<CaretRight class="sq-6" />
 					</DateRangePicker.NextButton>
 				</DateRangePicker.Header>
-				<div
-					class="flex flex-col space-y-4 pt-4 sm:flex-row sm:space-x-4 sm:space-y-0"
-				>
+				<div class="flex flex-col space-y-4 pt-4 sm:flex-row sm:space-x-4 sm:space-y-0">
 					{#each months as month}
-						<DateRangePicker.Grid
-							class="w-full border-collapse select-none space-y-1"
-						>
+						<DateRangePicker.Grid class="w-full border-collapse select-none space-y-1">
 							<DateRangePicker.GridHead>
-								<DateRangePicker.GridRow
-									class="mb-1 flex w-full justify-between"
-								>
+								<DateRangePicker.GridRow class="mb-1 flex w-full justify-between">
 									{#each weekdays as day}
 										<DateRangePicker.HeadCell
 											class="w-10 rounded-md text-xs !font-normal text-muted-foreground"

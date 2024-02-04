@@ -21,7 +21,7 @@ import type {
 	RadioItemEvents,
 	SubTriggerEvents,
 	ContextTriggerEvents as TriggerEvents,
-	SubContentEvents
+	SubContentEvents,
 } from "$lib/bits/menu/index.js";
 import type { HTMLDivAttributes, Transition } from "$lib/internal";
 import type * as I from "./_types.js";
@@ -56,5 +56,5 @@ export type {
 	RadioItemEvents,
 	SubContentEvents,
 	SubTriggerEvents,
-	CheckboxItemEvents
+	CheckboxItemEvents,
 };

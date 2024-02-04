@@ -8,7 +8,7 @@ import type {
 	OmitValue,
 	OnChangeFn,
 	ObjectVariation,
-	DOMElement
+	DOMElement,
 } from "$lib/internal/index.js";
 import type { CreateRadioGroupProps, RadioGroupItemProps } from "@melt-ui/svelte";
 

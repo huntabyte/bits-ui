@@ -12,34 +12,34 @@ export const root: APISchema<Avatar.Props> = {
 			type: C.NUMBER,
 			default: "0",
 			description:
-				"How long to wait before showing the image after it has loaded. This can be useful to prevent a harsh flickering effect when the image loads quickly."
+				"How long to wait before showing the image after it has loaded. This can be useful to prevent a harsh flickering effect when the image loads quickly.",
 		},
 		loadingStatus: {
 			type: {
 				type: "LoadingStatus",
-				definition: enums("loading", "loaded", "error")
+				definition: enums("loading", "loaded", "error"),
 			},
 			description:
-				"The loading status of the avatars source image. You can bind a variable to track the status outside of the component and use it to show a loading indicator or error message."
+				"The loading status of the avatars source image. You can bind a variable to track the status outside of the component and use it to show a loading indicator or error message.",
 		},
 		onLoadingStatusChange: {
 			type: {
 				type: C.FUNCTION,
-				definition: "(status: LoadingStatus) => void"
+				definition: "(status: LoadingStatus) => void",
 			},
-			description: "A callback function called when the loading status of the image changes."
+			description: "A callback function called when the loading status of the image changes.",
 		},
-		...domElProps("HTMLDivElement")
+		...domElProps("HTMLDivElement"),
 	},
 	slotProps: {
-		attrs: attrsSlotProp
+		attrs: attrsSlotProp,
 	},
 	dataAttributes: [
 		{
 			name: "avatar-root",
-			description: "Present on the root element."
-		}
-	]
+			description: "Present on the root element.",
+		},
+	],
 };
 
 export const image: APISchema<Avatar.ImageProps> = {
@@ -50,9 +50,9 @@ export const image: APISchema<Avatar.ImageProps> = {
 	dataAttributes: [
 		{
 			name: "avatar-image",
-			description: "Present on the image element."
-		}
-	]
+			description: "Present on the image element.",
+		},
+	],
 };
 
 export const fallback: APISchema<Avatar.FallbackProps> = {
@@ -63,9 +63,9 @@ export const fallback: APISchema<Avatar.FallbackProps> = {
 	dataAttributes: [
 		{
 			name: "avatar-fallback",
-			description: "Present on the fallback element."
-		}
-	]
+			description: "Present on the fallback element.",
+		},
+	],
 };
 
 export const avatar = [root, image, fallback];

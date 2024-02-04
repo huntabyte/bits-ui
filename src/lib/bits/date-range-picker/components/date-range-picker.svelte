@@ -37,10 +37,10 @@
 			placeholder: localPlaceholder,
 			isInvalid: localIsInvalid,
 			startValue: localStartValue,
-			endValue
+			endValue,
 		},
 		updateOption,
-		ids
+		ids,
 	} = setCtx({
 		defaultValue: value,
 		defaultPlaceholder: placeholder,
@@ -75,7 +75,7 @@
 				placeholder = next;
 			}
 			return next;
-		}
+		},
 	});
 
 	const startFieldIds = derived(
@@ -88,7 +88,7 @@
 			ids.rangeField.start.month,
 			ids.rangeField.start.second,
 			ids.rangeField.start.year,
-			ids.rangeField.start.timeZoneName
+			ids.rangeField.start.timeZoneName,
 		],
 		([
 			$dayId,
@@ -98,7 +98,7 @@
 			$monthId,
 			$secondId,
 			$yearId,
-			$timeZoneNameId
+			$timeZoneNameId,
 		]) => ({
 			day: $dayId,
 			dayPeriod: $dayPeriodId,
@@ -107,7 +107,7 @@
 			month: $monthId,
 			second: $secondId,
 			year: $yearId,
-			timeZoneName: $timeZoneNameId
+			timeZoneName: $timeZoneNameId,
 		})
 	);
 
@@ -121,7 +121,7 @@
 			ids.rangeField.end.month,
 			ids.rangeField.end.second,
 			ids.rangeField.end.year,
-			ids.rangeField.end.timeZoneName
+			ids.rangeField.end.timeZoneName,
 		],
 		([
 			$dayId,
@@ -131,7 +131,7 @@
 			$monthId,
 			$secondId,
 			$yearId,
-			$timeZoneNameId
+			$timeZoneNameId,
 		]) => ({
 			day: $dayId,
 			dayPeriod: $dayPeriodId,
@@ -140,7 +140,7 @@
 			month: $monthId,
 			second: $secondId,
 			year: $yearId,
-			timeZoneName: $timeZoneNameId
+			timeZoneName: $timeZoneNameId,
 		})
 	);
 
@@ -154,7 +154,7 @@
 			ids.popover.content,
 			ids.popover.trigger,
 			startFieldIds,
-			endFieldIds
+			endFieldIds,
 		],
 		([
 			$fieldId,
@@ -165,7 +165,7 @@
 			$contentId,
 			$triggerId,
 			$startFieldIds,
-			$endFieldIds
+			$endFieldIds,
 		]) => ({
 			field: $fieldId,
 			description: $descriptionId,
@@ -175,7 +175,7 @@
 			content: $contentId,
 			trigger: $triggerId,
 			startField: $startFieldIds,
-			endField: $endFieldIds
+			endField: $endFieldIds,
 		})
 	);
 

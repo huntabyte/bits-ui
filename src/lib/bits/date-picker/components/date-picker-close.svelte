@@ -12,7 +12,7 @@
 
 	const {
 		elements: { close },
-		getPopoverAttrs
+		getPopoverAttrs,
 	} = getCtx();
 
 	const dispatch = createDispatcher();

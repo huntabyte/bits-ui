@@ -36,5 +36,5 @@ export type {
 	ContentProps,
 	//
 	TriggerEvents,
-	ContentEvents
+	ContentEvents,
 };

@@ -11,7 +11,5 @@
 			class="pointer-events-none block shrink-0 rounded-full bg-background transition-transform sq-[30px] data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0 data-[state=unchecked]:shadow-mini dark:border-border-input dark:shadow-mini dark:data-[state=unchecked]:border"
 		/>
 	</Switch.Root>
-	<Label.Root for="marketing" class="text-sm font-medium"
-		>Do not disturb</Label.Root
-	>
+	<Label.Root for="marketing" class="text-sm font-medium">Do not disturb</Label.Root>
 </div>

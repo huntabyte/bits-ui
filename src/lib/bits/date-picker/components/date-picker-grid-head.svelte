@@ -10,7 +10,7 @@
 
 	const attrs = {
 		...getCalendarAttrs("grid-head"),
-		"aria-hidden": true
+		"aria-hidden": true,
 	};
 </script>
 

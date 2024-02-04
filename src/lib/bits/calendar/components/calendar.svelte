@@ -44,15 +44,10 @@
 
 	const {
 		elements: { calendar },
-		states: {
-			value: localValue,
-			placeholder: localPlaceholder,
-			months: localMonths,
-			weekdays
-		},
+		states: { value: localValue, placeholder: localPlaceholder, months: localMonths, weekdays },
 		updateOption,
 		ids,
-		getCalendarAttrs
+		getCalendarAttrs,
 	} = setCtx({
 		defaultPlaceholder: placeholder,
 		defaultValue: value,
@@ -93,7 +88,7 @@
 				value = next;
 			}
 			return next;
-		}
+		},
 	});
 
 	$: if (id) {
@@ -135,12 +130,7 @@
 {#if asChild}
 	<slot {months} weekdays={$weekdays} {builder} />
 {:else}
-	<div
-		use:melt={builder}
-		{...$$restProps}
-		on:m-keydown={dispatch}
-		bind:this={el}
-	>
+	<div use:melt={builder} {...$$restProps} on:m-keydown={dispatch} bind:this={el}>
 		<slot {months} weekdays={$weekdays} {builder} />
 	</div>
 {/if}

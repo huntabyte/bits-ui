@@ -13,7 +13,7 @@
 		elements: { field },
 		states: { segmentContents },
 		ids,
-		getAttrs
+		getAttrs,
 	} = getCtx();
 
 	$: if (id) {

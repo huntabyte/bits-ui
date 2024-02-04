@@ -15,7 +15,7 @@
 	const {
 		elements: { segment },
 		ids,
-		getFieldAttrs
+		getFieldAttrs,
 	} = getCtx();
 
 	$: if (id && part !== "literal") {

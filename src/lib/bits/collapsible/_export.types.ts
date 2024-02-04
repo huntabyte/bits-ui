@@ -3,5 +3,5 @@ export type {
 	ContentProps as CollapsibleContentProps,
 	TriggerProps as CollapsibleTriggerProps,
 	//
-	TriggerEvents as CollapsibleTriggerEvents
+	TriggerEvents as CollapsibleTriggerEvents,
 } from "./types.js";

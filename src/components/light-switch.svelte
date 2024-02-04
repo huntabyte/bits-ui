@@ -21,7 +21,7 @@
 				delay: 50,
 				duration: 200,
 				start: 0.7,
-				easing: cubicOut
+				easing: cubicOut,
 			}}
 		>
 			<Moon class="sq-6" aria-label="Moon" />
@@ -33,7 +33,7 @@
 				delay: 50,
 				duration: 200,
 				start: 0.7,
-				easing: cubicOut
+				easing: cubicOut,
 			}}
 		>
 			<Sun class="sq-6" aria-label="Sun" />

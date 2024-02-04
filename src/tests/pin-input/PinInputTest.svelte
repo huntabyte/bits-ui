@@ -7,10 +7,7 @@
 </script>
 
 <main>
-	<button
-		data-testid="binding"
-		on:click={() => (value = ["0", "1", "1", "3", "4"])}
-	>
+	<button data-testid="binding" on:click={() => (value = ["0", "1", "1", "3", "4"])}>
 		{value}
 	</button>
 	<PinInput.Root bind:value {...$$restProps} data-testid="root">

@@ -6,7 +6,7 @@ import {
 	portalProp,
 	transitionProps,
 	builderAndAttrsSlotProps,
-	domElProps
+	domElProps,
 } from "@/content/api-reference/helpers.js";
 import { floatingPositioning } from "./floating.js";
 import type * as Tooltip from "$lib/bits/tooltip/_types";
@@ -20,51 +20,51 @@ export const root: APISchema<Tooltip.Props> = {
 			type: C.NUMBER,
 			default: "700",
 			description:
-				"The amount of time in milliseconds to delay opening the tooltip when hovering over the trigger."
+				"The amount of time in milliseconds to delay opening the tooltip when hovering over the trigger.",
 		},
 		closeDelay: {
 			type: C.NUMBER,
 			default: "300",
 			description:
-				"The amount of time in milliseconds to delay closing the tooltip when the mouse leaves the trigger."
+				"The amount of time in milliseconds to delay closing the tooltip when the mouse leaves the trigger.",
 		},
 		closeOnEscape: {
 			type: C.BOOLEAN,
 			default: C.TRUE,
-			description: "Whether or not to close the tooltip when pressing the escape key."
+			description: "Whether or not to close the tooltip when pressing the escape key.",
 		},
 		closeOnPointerDown: {
 			type: C.BOOLEAN,
 			default: C.TRUE,
-			description: "Whether or not to close the tooltip when clicking outside of the tooltip."
+			description: "Whether or not to close the tooltip when clicking outside of the tooltip.",
 		},
 		disableHoverableContent: {
 			type: C.BOOLEAN,
 			default: C.FALSE,
 			description:
-				"Whether or not to disable the hoverable content. This is useful when the content contains interactive elements."
+				"Whether or not to disable the hoverable content. This is useful when the content contains interactive elements.",
 		},
 		group: {
 			type: C.STRING,
-			description: "The group the tooltip belongs to."
+			description: "The group the tooltip belongs to.",
 		},
 		open: {
 			type: C.BOOLEAN,
 			default: "false",
-			description: "The open state of the tooltip component."
+			description: "The open state of the tooltip component.",
 		},
 		onOpenChange: {
 			type: {
 				type: C.FUNCTION,
-				definition: "(open: boolean) => void"
+				definition: "(open: boolean) => void",
 			},
-			description: "A callback that fires when the open state changes."
+			description: "A callback that fires when the open state changes.",
 		},
-		portal: { ...portalProp("tooltip") }
+		portal: { ...portalProp("tooltip") },
 	},
 	slotProps: {
-		ids: idsSlotProp
-	}
+		ids: idsSlotProp,
+	},
 };
 
 export const trigger: APISchema<Tooltip.TriggerProps> = {
@@ -78,13 +78,13 @@ export const trigger: APISchema<Tooltip.TriggerProps> = {
 			name: "state",
 			description: "The open state of the tooltip.",
 			value: enums("open", "closed"),
-			isEnum: true
+			isEnum: true,
 		},
 		{
 			name: "tooltip-trigger",
-			description: "Present on the trigger element."
-		}
-	]
+			description: "Present on the trigger element.",
+		},
+	],
 };
 
 export const content: APISchema<Tooltip.ContentProps> = {
@@ -95,9 +95,9 @@ export const content: APISchema<Tooltip.ContentProps> = {
 	dataAttributes: [
 		{
 			name: "tooltip-content",
-			description: "Present on the content element."
-		}
-	]
+			description: "Present on the content element.",
+		},
+	],
 };
 
 export const arrow: APISchema<Tooltip.ArrowProps> = {
@@ -108,13 +108,13 @@ export const arrow: APISchema<Tooltip.ArrowProps> = {
 	dataAttributes: [
 		{
 			name: "arrow",
-			description: "Present on the arrow element."
+			description: "Present on the arrow element.",
 		},
 		{
 			name: "tooltip-arrow",
-			description: "Present on the arrow element."
-		}
-	]
+			description: "Present on the arrow element.",
+		},
+	],
 };
 
 export const tooltip = [root, trigger, content, arrow];

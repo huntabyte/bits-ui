@@ -17,9 +17,7 @@
 		>
 			@sveltejs
 		</LinkPreview.Trigger>
-		<LinkPreview.Content data-testid="content" class="w-80"
-			>Content</LinkPreview.Content
-		>
+		<LinkPreview.Content data-testid="content" class="w-80">Content</LinkPreview.Content>
 	</LinkPreview.Root>
 	<button data-testid="binding" on:click={() => (open = !open)}>{open}</button>
 	<div data-testid="outside">outside</div>

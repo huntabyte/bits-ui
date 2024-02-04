@@ -3,5 +3,5 @@ export type {
 	ThumbProps as SwitchThumbProps,
 	InputProps as SwitchInputProps,
 	//
-	Events as SwitchEvents
+	Events as SwitchEvents,
 } from "./types.js";

@@ -10,7 +10,7 @@
 
 	const {
 		elements: { fallback },
-		getAttrs
+		getAttrs,
 	} = getCtx();
 	const attrs = getAttrs("fallback");
 

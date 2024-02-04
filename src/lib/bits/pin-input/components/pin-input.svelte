@@ -21,7 +21,7 @@
 		states: { value: localValue },
 		updateOption,
 		ids,
-		getAttrs
+		getAttrs,
 	} = setCtx({
 		placeholder,
 		defaultValue: value,
@@ -34,7 +34,7 @@
 				value = next;
 			}
 			return next;
-		}
+		},
 	});
 
 	$: value !== undefined && localValue.set(value);
@@ -50,7 +50,7 @@
 	$: Object.assign(builder, attrs);
 
 	const idValues = derived([ids.root], ([$menubarId]) => ({
-		menubar: $menubarId
+		menubar: $menubarId,
 	}));
 
 	$: if (id) {
@@ -59,7 +59,7 @@
 
 	$: slotProps = {
 		builder,
-		ids: $idValues
+		ids: $idValues,
 	};
 </script>
 

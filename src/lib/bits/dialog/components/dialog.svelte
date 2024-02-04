@@ -18,7 +18,7 @@
 	const {
 		states: { open: localOpen },
 		updateOption,
-		ids
+		ids,
 	} = setCtx({
 		closeOnEscape,
 		preventScroll,
@@ -35,7 +35,7 @@
 				open = next;
 			}
 			return next;
-		}
+		},
 	});
 
 	const idValues = derived(
@@ -43,7 +43,7 @@
 		([$contentId, $descriptionId, $titleId]) => ({
 			content: $contentId,
 			description: $descriptionId,
-			title: $titleId
+			title: $titleId,
 		})
 	);
 

@@ -7,7 +7,7 @@ import {
 	portalProp,
 	transitionProps,
 	builderAndAttrsSlotProps,
-	onOutsideClickProp
+	onOutsideClickProp,
 } from "@/content/api-reference/helpers.js";
 import { floatingPositioning } from "./floating.js";
 import type * as LinkPreview from "$lib/bits/link-preview/_types";
@@ -21,42 +21,42 @@ export const root: APISchema<LinkPreview.Props> = {
 			type: C.NUMBER,
 			default: "700",
 			description:
-				"The amount of time in milliseconds to delay opening the preview when hovering over the trigger."
+				"The amount of time in milliseconds to delay opening the preview when hovering over the trigger.",
 		},
 		closeDelay: {
 			type: C.NUMBER,
 			default: "300",
 			description:
-				"The amount of time in milliseconds to delay closing the preview when the mouse leaves the trigger."
+				"The amount of time in milliseconds to delay closing the preview when the mouse leaves the trigger.",
 		},
 		closeOnOutsideClick: {
 			type: C.BOOLEAN,
 			default: C.TRUE,
-			description: "Whether or not to close the preview when clicking outside of it."
+			description: "Whether or not to close the preview when clicking outside of it.",
 		},
 		closeOnEscape: {
 			type: C.BOOLEAN,
 			default: C.TRUE,
-			description: "Whether or not to close the preview when pressing the escape key."
+			description: "Whether or not to close the preview when pressing the escape key.",
 		},
 		open: {
 			type: C.BOOLEAN,
 			default: "false",
-			description: "The open state of the link preview component."
+			description: "The open state of the link preview component.",
 		},
 		onOpenChange: {
 			type: {
 				type: C.FUNCTION,
-				definition: "(open: boolean) => void"
+				definition: "(open: boolean) => void",
 			},
-			description: "A callback that fires when the open state changes."
+			description: "A callback that fires when the open state changes.",
 		},
 		portal: { ...portalProp("link preview") },
-		onOutsideClick: onOutsideClickProp
+		onOutsideClick: onOutsideClickProp,
 	},
 	slotProps: {
-		ids: idsSlotProp
-	}
+		ids: idsSlotProp,
+	},
 };
 
 export const trigger: APISchema<LinkPreview.TriggerProps> = {
@@ -70,13 +70,13 @@ export const trigger: APISchema<LinkPreview.TriggerProps> = {
 			name: "state",
 			value: enums("open", "closed"),
 			description: "The open state of the link preview.",
-			isEnum: true
+			isEnum: true,
 		},
 		{
 			name: "link-preview-trigger",
-			description: "Present on the trigger element."
-		}
-	]
+			description: "Present on the trigger element.",
+		},
+	],
 };
 
 export const content: APISchema<LinkPreview.ContentProps> = {
@@ -89,13 +89,13 @@ export const content: APISchema<LinkPreview.ContentProps> = {
 			name: "state",
 			value: enums("open", "closed"),
 			description: "The open state of the link preview.",
-			isEnum: true
+			isEnum: true,
 		},
 		{
 			name: "link-preview-content",
-			description: "Present on the content element."
-		}
-	]
+			description: "Present on the content element.",
+		},
+	],
 };
 
 export const arrow: APISchema<LinkPreview.ArrowProps> = {
@@ -106,13 +106,13 @@ export const arrow: APISchema<LinkPreview.ArrowProps> = {
 	dataAttributes: [
 		{
 			name: "arrow",
-			description: "Present on the arrow element."
+			description: "Present on the arrow element.",
 		},
 		{
 			name: "link-preview-arrow",
-			description: "Present on the arrow element."
-		}
-	]
+			description: "Present on the arrow element.",
+		},
+	],
 };
 
 export const linkPreview = [root, trigger, content, arrow];

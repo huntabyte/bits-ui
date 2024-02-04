@@ -32,7 +32,7 @@
 		elements: { menu },
 		states: { open },
 		ids,
-		getAttrs
+		getAttrs,
 	} = getCtx();
 
 	const dispatch = createDispatcher();
@@ -51,7 +51,7 @@
 		collisionBoundary,
 		fitViewport,
 		strategy,
-		overlap
+		overlap,
 	});
 </script>
 
@@ -99,12 +99,7 @@
 		<slot {builder} />
 	</div>
 {:else if $open}
-	<div
-		bind:this={el}
-		use:melt={builder}
-		{...$$restProps}
-		on:m-keydown={dispatch}
-	>
+	<div bind:this={el} use:melt={builder} {...$$restProps} on:m-keydown={dispatch}>
 		<slot {builder} />
 	</div>
 {/if}

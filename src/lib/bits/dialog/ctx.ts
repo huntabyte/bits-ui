@@ -11,12 +11,12 @@ export function getDialogData() {
 		"overlay",
 		"portal",
 		"title",
-		"trigger"
+		"trigger",
 	] as const;
 
 	return {
 		NAME,
-		PARTS
+		PARTS,
 	};
 }
 
@@ -29,13 +29,13 @@ export function setCtx(props: SetProps) {
 
 	const dialog = {
 		...createDialog({ ...removeUndefined(props), role: "dialog", forceVisible: true }),
-		getAttrs
+		getAttrs,
 	};
 
 	setContext(NAME, dialog);
 	return {
 		...dialog,
-		updateOption: getOptionUpdater(dialog.options)
+		updateOption: getOptionUpdater(dialog.options),
 	};
 }
 

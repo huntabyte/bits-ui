@@ -14,5 +14,5 @@ export type {
 	ItemEvents as SelectItemEvents,
 	ContentEvents as SelectContentEvents,
 	TriggerEvents as SelectTriggerEvents,
-	LabelEvents as SelectLabelEvents
+	LabelEvents as SelectLabelEvents,
 } from "./types.js";

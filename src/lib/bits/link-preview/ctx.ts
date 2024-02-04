@@ -12,7 +12,7 @@ export function getLinkPreviewData() {
 
 	return {
 		NAME,
-		PARTS
+		PARTS,
 	};
 }
 
@@ -25,15 +25,15 @@ export function setCtx(props: CreateLinkPreviewProps) {
 	const linkPreview = {
 		...createLinkPreview({
 			...removeUndefined(props),
-			forceVisible: true
+			forceVisible: true,
 		}),
-		getAttrs
+		getAttrs,
 	};
 
 	setContext(NAME, linkPreview);
 	return {
 		...linkPreview,
-		updateOption: getOptionUpdater(linkPreview.options)
+		updateOption: getOptionUpdater(linkPreview.options),
 	};
 }
 
@@ -51,12 +51,12 @@ export function setArrow(size = 8) {
 export function updatePositioning(props: FloatingProps) {
 	const defaultPlacement = {
 		side: "bottom",
-		align: "center"
+		align: "center",
 	} satisfies FloatingProps;
 
 	const withDefaults = { ...defaultPlacement, ...props } satisfies FloatingProps;
 	const {
-		options: { positioning }
+		options: { positioning },
 	} = getCtx();
 
 	const updater = getPositioningUpdater(positioning as Writable<FloatingConfig>);

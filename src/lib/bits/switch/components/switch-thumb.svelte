@@ -9,13 +9,13 @@
 
 	const {
 		states: { checked },
-		getAttrs
+		getAttrs,
 	} = getCtx();
 
 	$: attrs = {
 		...getAttrs("thumb"),
 		"data-state": $checked ? "checked" : "unchecked",
-		"data-checked": $checked ? "" : undefined
+		"data-checked": $checked ? "" : undefined,
 	};
 </script>
 

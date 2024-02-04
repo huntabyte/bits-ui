@@ -11,7 +11,7 @@
 	const {
 		elements: { heading },
 		states: { headingValue },
-		getAttrs
+		getAttrs,
 	} = getCtx();
 
 	const attrs = getAttrs("heading");

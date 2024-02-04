@@ -11,7 +11,7 @@ import type {
 	Expand,
 	OnChangeFn,
 	TransitionProps,
-	DOMElement
+	DOMElement,
 } from "$lib/internal/index.js";
 import type { CreateCollapsibleProps } from "@melt-ui/svelte";
 

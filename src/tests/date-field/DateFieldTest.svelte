@@ -13,10 +13,7 @@
 			<DateField.Label data-testid="label">Label</DateField.Label>
 			<DateField.Input let:segments data-testid="input">
 				{#each segments as { part, value }}
-					<DateField.Segment
-						{part}
-						data-testid={part === "literal" ? undefined : part}
-					>
+					<DateField.Segment {part} data-testid={part === "literal" ? undefined : part}>
 						{value}
 					</DateField.Segment>
 				{/each}

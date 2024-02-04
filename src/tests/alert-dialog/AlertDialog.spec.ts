@@ -22,7 +22,7 @@ function setup(props: AlertDialog.Props = {}) {
 	return {
 		getByTestId,
 		queryByTestId,
-		user
+		user,
 	};
 }
 
@@ -53,7 +53,7 @@ describe("Alert Dialog", () => {
 			"action",
 			"title",
 			"description",
-			"content"
+			"content",
 		];
 
 		for (const part of parts) {

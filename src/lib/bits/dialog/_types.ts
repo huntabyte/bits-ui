@@ -11,7 +11,7 @@ import type {
 	OmitOpen,
 	OnChangeFn,
 	Transition,
-	TransitionProps
+	TransitionProps,
 } from "$lib/internal/index.js";
 import type { CreateDialogProps } from "@melt-ui/svelte";
 
@@ -78,5 +78,5 @@ export type {
 	ContentProps,
 	TriggerProps,
 	OverlayProps,
-	DescriptionProps
+	DescriptionProps,
 };

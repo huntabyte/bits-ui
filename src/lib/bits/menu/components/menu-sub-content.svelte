@@ -35,7 +35,7 @@
 		elements: { subMenu },
 		states: { subOpen },
 		ids,
-		getAttrs
+		getAttrs,
 	} = getSubmenuCtx();
 
 	const dispatch = createDispatcher();
@@ -59,7 +59,7 @@
 		sameWidth,
 		fitViewport,
 		strategy,
-		overlap
+		overlap,
 	});
 </script>
 

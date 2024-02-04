@@ -16,8 +16,6 @@
 >
 	<div
 		class="h-full w-full flex-1 rounded-full bg-foreground shadow-mini-inset transition-all duration-300 ease-linear"
-		style={`transform: translateX(-${
-			100 - (100 * (value ?? 0)) / (100 ?? 1)
-		}%)`}
+		style={`transform: translateX(-${100 - (100 * (value ?? 0)) / (100 ?? 1)}%)`}
 	/>
 </Progress.Root>

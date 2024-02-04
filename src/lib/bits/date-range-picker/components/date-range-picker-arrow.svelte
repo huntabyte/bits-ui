@@ -12,7 +12,7 @@
 	const {
 		elements: { arrow },
 		updateOption,
-		getPopoverAttrs
+		getPopoverAttrs,
 	} = getCtx();
 
 	const attrs = getPopoverAttrs("arrow");

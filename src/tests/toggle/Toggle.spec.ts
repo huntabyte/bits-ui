@@ -15,7 +15,7 @@ function setup(props: Toggle.Props = {}) {
 	return {
 		root,
 		user,
-		...returned
+		...returned,
 	};
 }
 

@@ -8,7 +8,7 @@
 
 	const {
 		states: { value },
-		getAttrs
+		getAttrs,
 	} = getCtx();
 
 	function getValue(value: number[]) {
@@ -21,7 +21,7 @@
 
 	const attrs = {
 		...getAttrs("input"),
-		style: getSrOnlyStyles()
+		style: getSrOnlyStyles(),
 	};
 
 	$: inputValue = getValue($value);

@@ -10,7 +10,7 @@
 
 	const {
 		elements: { tick },
-		getAttrs
+		getAttrs,
 	} = getCtx();
 
 	const attrs = getAttrs("tick");

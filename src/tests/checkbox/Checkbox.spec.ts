@@ -18,7 +18,7 @@ function setup(props?: Checkbox.Props) {
 		...returned,
 		root,
 		input,
-		user
+		user,
 	};
 }
 

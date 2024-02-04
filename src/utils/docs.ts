@@ -54,7 +54,7 @@ export async function getDoc(slug: string): Promise<TDoc> {
 	return {
 		component: doc.default,
 		metadata: doc.metadata,
-		title: doc.metadata.title
+		title: doc.metadata.title,
 	};
 }
 
@@ -87,6 +87,6 @@ export async function getComponentDoc(slug: string): Promise<ComponentDoc> {
 		component: doc.default,
 		metadata: doc.metadata,
 		title: doc.metadata.title,
-		schemas: getAPISchemas(slug)
+		schemas: getAPISchemas(slug),
 	};
 }

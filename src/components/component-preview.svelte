@@ -10,7 +10,7 @@
 
 	const [send, receive] = crossfade({
 		duration: 250,
-		easing: cubicInOut
+		easing: cubicInOut,
 	});
 </script>
 
@@ -87,7 +87,7 @@
 					{
 						"items-center": align === "center",
 						"items-start": align === "start",
-						"items-end": align === "end"
+						"items-end": align === "end",
 					},
 					className
 				)}

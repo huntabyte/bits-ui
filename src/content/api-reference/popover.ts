@@ -10,7 +10,7 @@ import {
 	idsSlotProp,
 	domElProps,
 	builderAndAttrsSlotProps,
-	onOutsideClickProp
+	onOutsideClickProp,
 } from "@/content/api-reference/helpers.js";
 import * as C from "@/content/constants.js";
 
@@ -22,47 +22,47 @@ export const root: APISchema<Popover.Props> = {
 			type: C.BOOLEAN,
 			default: C.FALSE,
 			description:
-				"Whether or not to disable the focus trap that is applied to the popover when it's open."
+				"Whether or not to disable the focus trap that is applied to the popover when it's open.",
 		},
 		preventScroll: {
 			type: C.BOOLEAN,
 			default: C.FALSE,
-			description: "Whether or not to prevent scrolling the body while the popover is open."
+			description: "Whether or not to prevent scrolling the body while the popover is open.",
 		},
 		closeOnOutsideClick: {
 			type: C.BOOLEAN,
 			default: C.TRUE,
-			description: "Whether or not to close the popover when clicking outside of it."
+			description: "Whether or not to close the popover when clicking outside of it.",
 		},
 		closeOnEscape: {
 			type: C.BOOLEAN,
 			default: C.TRUE,
-			description: "Whether or not to close the popover when pressing the escape key."
+			description: "Whether or not to close the popover when pressing the escape key.",
 		},
 		open: {
 			type: C.BOOLEAN,
 			default: C.FALSE,
-			description: "The open state of the link popover component."
+			description: "The open state of the link popover component.",
 		},
 		onOpenChange: {
 			type: {
 				type: C.FUNCTION,
-				definition: "(open: boolean) => void"
+				definition: "(open: boolean) => void",
 			},
-			description: "A callback that fires when the open state changes."
+			description: "A callback that fires when the open state changes.",
 		},
 		openFocus: {
 			type: focusProp,
-			description: "Override the focus when the popover is opened."
+			description: "Override the focus when the popover is opened.",
 		},
 		closeFocus: {
 			type: focusProp,
-			description: "Override the focus when the popover is closed."
+			description: "Override the focus when the popover is closed.",
 		},
 		portal: { ...portalProp("popover") },
-		onOutsideClick: onOutsideClickProp
+		onOutsideClick: onOutsideClickProp,
 	},
-	slotProps: { ids: idsSlotProp }
+	slotProps: { ids: idsSlotProp },
 };
 
 export const trigger: APISchema<Popover.TriggerProps> = {
@@ -75,13 +75,13 @@ export const trigger: APISchema<Popover.TriggerProps> = {
 			name: "state",
 			value: enums("open", "closed"),
 			description: "The open state of the link preview.",
-			isEnum: true
+			isEnum: true,
 		},
 		{
 			name: "popover-trigger",
-			description: "Present on the trigger element."
-		}
-	]
+			description: "Present on the trigger element.",
+		},
+	],
 };
 
 export const content: APISchema<Popover.ContentProps> = {
@@ -94,13 +94,13 @@ export const content: APISchema<Popover.ContentProps> = {
 			name: "state",
 			value: enums("open", "closed"),
 			description: "The open state of the popover.",
-			isEnum: true
+			isEnum: true,
 		},
 		{
 			name: "popover-content",
-			description: "Present on the content element."
-		}
-	]
+			description: "Present on the content element.",
+		},
+	],
 };
 
 export const close: APISchema<Popover.CloseProps> = {
@@ -112,9 +112,9 @@ export const close: APISchema<Popover.CloseProps> = {
 	dataAttributes: [
 		{
 			name: "popover-close",
-			description: "Present on the close button."
-		}
-	]
+			description: "Present on the close button.",
+		},
+	],
 };
 
 export const arrow: APISchema<Popover.ArrowProps> = {
@@ -125,13 +125,13 @@ export const arrow: APISchema<Popover.ArrowProps> = {
 	dataAttributes: [
 		{
 			name: "arrow",
-			description: "Present on the arrow element."
+			description: "Present on the arrow element.",
 		},
 		{
 			name: "popover-arrow",
-			description: "Present on the arrow element."
-		}
-	]
+			description: "Present on the arrow element.",
+		},
+	],
 };
 
 export const popover = [root, trigger, content, close, arrow];

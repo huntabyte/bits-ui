@@ -24,18 +24,8 @@
 </script>
 
 <main>
-	<Slider.Root
-		data-testid="root"
-		bind:value
-		{...$$restProps}
-		let:ticks
-		{min}
-		{max}
-		{step}
-	>
-		<span
-			class="bg-primary/20 relative h-1.5 w-full grow overflow-hidden rounded-full"
-		>
+	<Slider.Root data-testid="root" bind:value {...$$restProps} let:ticks {min} {max} {step}>
+		<span class="bg-primary/20 relative h-1.5 w-full grow overflow-hidden rounded-full">
 			<Slider.Range data-testid="range" class="bg-primary absolute h-full" />
 		</span>
 		<Slider.Thumb

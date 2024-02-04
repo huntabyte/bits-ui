@@ -10,7 +10,7 @@ import type {
 	OnChangeFn,
 	Transition,
 	TransitionProps,
-	DOMElement
+	DOMElement,
 } from "$lib/internal/index.js";
 import type { CreateDialogProps } from "@melt-ui/svelte";
 
@@ -61,5 +61,5 @@ export type {
 	DescriptionProps,
 	ContentProps as OverlayProps,
 	PortalProps,
-	TitleProps
+	TitleProps,
 };

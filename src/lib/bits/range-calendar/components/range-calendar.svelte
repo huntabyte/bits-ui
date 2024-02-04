@@ -47,11 +47,11 @@
 			months: localMonths,
 			weekdays,
 			startValue: localStartValue,
-			endValue
+			endValue,
 		},
 		updateOption,
 		ids,
-		getAttrs
+		getAttrs,
 	} = setCtx({
 		defaultPlaceholder: placeholder,
 		defaultValue: value,
@@ -82,7 +82,7 @@
 				value = next;
 			}
 			return next;
-		}
+		},
 	});
 
 	$: if (id) {
@@ -127,12 +127,7 @@
 		endValue={$endValue}
 	/>
 {:else}
-	<div
-		use:melt={builder}
-		{...$$restProps}
-		on:m-keydown={dispatch}
-		bind:this={el}
-	>
+	<div use:melt={builder} {...$$restProps} on:m-keydown={dispatch} bind:this={el}>
 		<slot
 			{builder}
 			{months}

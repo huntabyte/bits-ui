@@ -26,5 +26,5 @@ type Props = Expand<
 export type {
 	Props,
 	//
-	Props as ToggleProps
+	Props as ToggleProps,
 };

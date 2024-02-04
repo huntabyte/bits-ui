@@ -93,5 +93,5 @@ export type {
 	ItemProps,
 	SeparatorProps,
 	TriggerProps,
-	ValueProps
+	ValueProps,
 };

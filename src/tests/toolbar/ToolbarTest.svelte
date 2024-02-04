@@ -29,11 +29,7 @@
 			type="multiple"
 			{...multipleProps}
 		>
-			<Toolbar.GroupItem
-				data-testid="group-multiple-bold"
-				aria-label="toggle bold"
-				value="bold"
-			>
+			<Toolbar.GroupItem data-testid="group-multiple-bold" aria-label="toggle bold" value="bold">
 				Bold
 			</Toolbar.GroupItem>
 			<Toolbar.GroupItem
@@ -52,31 +48,14 @@
 			</Toolbar.GroupItem>
 		</Toolbar.Group>
 
-		<Toolbar.Group
-			data-testid="group-single"
-			bind:value={align}
-			type="single"
-			{...singleProps}
-		>
-			<Toolbar.GroupItem
-				data-testid="group-single-left"
-				aria-label="align left"
-				value="left"
-			>
+		<Toolbar.Group data-testid="group-single" bind:value={align} type="single" {...singleProps}>
+			<Toolbar.GroupItem data-testid="group-single-left" aria-label="align left" value="left">
 				Left
 			</Toolbar.GroupItem>
-			<Toolbar.GroupItem
-				data-testid="group-single-center"
-				aria-label="align center"
-				value="center"
-			>
+			<Toolbar.GroupItem data-testid="group-single-center" aria-label="align center" value="center">
 				Center
 			</Toolbar.GroupItem>
-			<Toolbar.GroupItem
-				data-testid="group-single-right"
-				aria-label="align right"
-				value="right"
-			>
+			<Toolbar.GroupItem data-testid="group-single-right" aria-label="align right" value="right">
 				Right
 			</Toolbar.GroupItem>
 		</Toolbar.Group>

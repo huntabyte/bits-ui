@@ -1,12 +1,6 @@
 <script lang="ts">
 	import { Dialog as SheetPrimitive } from "@/lib";
-	import {
-		SheetOverlay,
-		SheetPortal,
-		sheetVariants,
-		sheetTransitions,
-		type Side
-	} from ".";
+	import { SheetOverlay, SheetPortal, sheetVariants, sheetTransitions, type Side } from ".";
 	import { X } from "phosphor-svelte";
 	import { cn } from "@/utils";
 	import { fly } from "svelte/transition";

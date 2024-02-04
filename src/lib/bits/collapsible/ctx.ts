@@ -8,7 +8,7 @@ export function getCollapsibleData() {
 
 	return {
 		NAME,
-		PARTS
+		PARTS,
 	};
 }
 
@@ -22,7 +22,7 @@ export function setCtx(props: CreateCollapsibleProps) {
 	setContext(NAME, collapsible);
 	return {
 		...collapsible,
-		updateOption: getOptionUpdater(collapsible.options)
+		updateOption: getOptionUpdater(collapsible.options),
 	};
 }
 

@@ -17,7 +17,7 @@
 		elements: { root },
 		states: { pages, range, page: localPage },
 		getAttrs,
-		updateOption
+		updateOption,
 	} = setCtx({
 		count,
 		perPage,
@@ -30,7 +30,7 @@
 			}
 
 			return next;
-		}
+		},
 	});
 
 	$: page !== undefined && localPage.set(page);

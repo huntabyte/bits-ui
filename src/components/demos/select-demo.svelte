@@ -7,7 +7,7 @@
 		{ value: "light-monochrome", label: "Light Monochrome" },
 		{ value: "dark-green", label: "Dark Green" },
 		{ value: "svelte-orange", label: "Svelte Orange" },
-		{ value: "punk-pink", label: "Punk Pink" }
+		{ value: "punk-pink", label: "Punk Pink" },
 	];
 </script>
 

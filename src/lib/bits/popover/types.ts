@@ -27,5 +27,5 @@ export type {
 	TriggerProps,
 	//
 	TriggerEvents,
-	CloseEvents
+	CloseEvents,
 };

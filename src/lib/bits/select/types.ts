@@ -3,7 +3,7 @@ import type {
 	EventHandler,
 	HTMLAttributes,
 	HTMLButtonAttributes,
-	HTMLInputAttributes
+	HTMLInputAttributes,
 } from "svelte/elements";
 import type { CustomEventHandler } from "$lib/index.js";
 import type * as I from "./_types.js";
@@ -67,5 +67,5 @@ export type {
 	ItemEvents,
 	ContentEvents,
 	TriggerEvents,
-	LabelEvents
+	LabelEvents,
 };

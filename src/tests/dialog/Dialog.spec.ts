@@ -29,7 +29,7 @@ function setup(props: Dialog.Props = {}) {
 	return {
 		getByTestId,
 		queryByTestId,
-		user
+		user,
 	};
 }
 
@@ -166,7 +166,7 @@ describe("Dialog", () => {
 
 	it("respects the the `closeOnEscape` prop", async () => {
 		const { user, getByTestId, queryByTestId } = await open({
-			closeOnEscape: false
+			closeOnEscape: false,
 		});
 
 		await user.keyboard(kbd.ESCAPE);

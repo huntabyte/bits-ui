@@ -37,5 +37,5 @@ export type {
 	Events,
 	PageEvents,
 	PrevButtonEvents,
-	NextButtonEvents
+	NextButtonEvents,
 };

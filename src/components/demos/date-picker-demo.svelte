@@ -6,9 +6,7 @@
 
 <DatePicker.Root weekdayFormat="short" fixedWeeks={true}>
 	<div class="flex w-full max-w-[232px] flex-col gap-1.5">
-		<DatePicker.Label class="block select-none text-sm font-medium"
-			>Birthday</DatePicker.Label
-		>
+		<DatePicker.Label class="block select-none text-sm font-medium">Birthday</DatePicker.Label>
 		<DatePicker.Input
 			let:segments
 			class="flex h-input w-full max-w-[232px] select-none items-center rounded-input border border-border-input bg-background p-3 text-sm tracking-[0.01em] text-muted-foreground focus-within:border-border-input-hover focus-within:shadow-date-field-focus hover:border-border-input-hover"
@@ -59,13 +57,9 @@
 						<CaretRight class="sq-6" />
 					</DatePicker.NextButton>
 				</DatePicker.Header>
-				<div
-					class="flex flex-col space-y-4 pt-4 sm:flex-row sm:space-x-4 sm:space-y-0"
-				>
+				<div class="flex flex-col space-y-4 pt-4 sm:flex-row sm:space-x-4 sm:space-y-0">
 					{#each months as month}
-						<DatePicker.Grid
-							class="w-full border-collapse select-none space-y-1"
-						>
+						<DatePicker.Grid class="w-full border-collapse select-none space-y-1">
 							<DatePicker.GridHead>
 								<DatePicker.GridRow class="mb-1 flex w-full justify-between">
 									{#each weekdays as day}
@@ -81,10 +75,7 @@
 								{#each month.weeks as weekDates}
 									<DatePicker.GridRow class="flex w-full">
 										{#each weekDates as date}
-											<DatePicker.Cell
-												{date}
-												class="relative !p-0 text-center text-sm sq-10"
-											>
+											<DatePicker.Cell {date} class="relative !p-0 text-center text-sm sq-10">
 												<DatePicker.Day
 													{date}
 													month={month.value}

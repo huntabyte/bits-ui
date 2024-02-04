@@ -124,5 +124,5 @@ export type {
 	ContextTriggerEvents,
 	DropdownTriggerEvents,
 	MenubarTriggerEvents,
-	SubContentEvents
+	SubContentEvents,
 };

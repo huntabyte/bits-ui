@@ -17,7 +17,7 @@
 	const {
 		elements: { subTrigger },
 		ids,
-		getAttrs
+		getAttrs,
 	} = getSubTrigger();
 
 	const dispatch = createDispatcher();

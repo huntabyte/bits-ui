@@ -6,7 +6,7 @@ import {
 	portalProp,
 	transitionProps,
 	builderAndAttrsSlotProps,
-	onOutsideClickProp
+	onOutsideClickProp,
 } from "@/content/api-reference/helpers.js";
 import * as C from "@/content/constants.js";
 import { focusProp } from "@/content/api-reference/extended-types/index.js";
@@ -16,47 +16,47 @@ const root: APISchema<AlertDialog.Props> = {
 	title: "Root",
 	description: "The root component used to set and manage the state of the alert dialog.",
 	slotProps: {
-		ids: idsSlotProp
+		ids: idsSlotProp,
 	},
 	props: {
 		preventScroll: {
 			type: C.BOOLEAN,
 			default: C.TRUE,
-			description: "Whether or not to prevent scroll on the body when the alert dialog is open."
+			description: "Whether or not to prevent scroll on the body when the alert dialog is open.",
 		},
 		closeOnEscape: {
 			type: C.BOOLEAN,
 			default: C.TRUE,
-			description: "Whether to close the alert dialog when the escape key is pressed."
+			description: "Whether to close the alert dialog when the escape key is pressed.",
 		},
 		closeOnOutsideClick: {
 			type: C.BOOLEAN,
 			default: C.FALSE,
-			description: "Whether to close the alert dialog when a click occurs outside of it."
+			description: "Whether to close the alert dialog when a click occurs outside of it.",
 		},
 		open: {
 			type: C.BOOLEAN,
 			default: C.FALSE,
-			description: "Whether or not the alert dialog is open."
+			description: "Whether or not the alert dialog is open.",
 		},
 		onOpenChange: {
 			type: {
 				type: C.FUNCTION,
-				definition: "(open: boolean) => void"
+				definition: "(open: boolean) => void",
 			},
-			description: "A callback function called when the open state changes."
+			description: "A callback function called when the open state changes.",
 		},
 		openFocus: {
 			type: focusProp,
-			description: "Override the initial focus when the alert dialog is opened."
+			description: "Override the initial focus when the alert dialog is opened.",
 		},
 		closeFocus: {
 			type: focusProp,
-			description: "Override the focus when the alert dialog is closed."
+			description: "Override the focus when the alert dialog is closed.",
 		},
 		portal: { ...portalProp("alert dialog") },
-		onOutsideClick: onOutsideClickProp
-	}
+		onOutsideClick: onOutsideClickProp,
+	},
 };
 
 const action: APISchema<AlertDialog.ActionProps> = {
@@ -67,9 +67,9 @@ const action: APISchema<AlertDialog.ActionProps> = {
 	dataAttributes: [
 		{
 			name: "alert-dialog-action",
-			description: "Present on the action button."
-		}
-	]
+			description: "Present on the action button.",
+		},
+	],
 };
 
 const cancel: APISchema<AlertDialog.CancelProps> = {
@@ -80,9 +80,9 @@ const cancel: APISchema<AlertDialog.CancelProps> = {
 	dataAttributes: [
 		{
 			name: "alert-dialog-cancel",
-			description: "Present on the cancel button."
-		}
-	]
+			description: "Present on the cancel button.",
+		},
+	],
 };
 
 const content: APISchema<AlertDialog.ContentProps> = {
@@ -95,13 +95,13 @@ const content: APISchema<AlertDialog.ContentProps> = {
 			name: "state",
 			value: enums("open", "closed"),
 			description: "The state of the alert dialog.",
-			isEnum: true
+			isEnum: true,
 		},
 		{
 			name: "alert-dialog-content",
-			description: "Present on the content."
-		}
-	]
+			description: "Present on the content.",
+		},
+	],
 };
 
 const title: APISchema<AlertDialog.TitleProps> = {
@@ -112,18 +112,18 @@ const title: APISchema<AlertDialog.TitleProps> = {
 		level: {
 			type: {
 				type: "enum",
-				definition: enums("h1", "h2", "h3", "h4", "h5", "h6")
+				definition: enums("h1", "h2", "h3", "h4", "h5", "h6"),
 			},
-			description: "The heading level of the title."
-		}
+			description: "The heading level of the title.",
+		},
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "alert-dialog-title",
-			description: "Present on the title."
-		}
-	]
+			description: "Present on the title.",
+		},
+	],
 };
 
 const description: APISchema<AlertDialog.DescriptionProps> = {
@@ -134,9 +134,9 @@ const description: APISchema<AlertDialog.DescriptionProps> = {
 	dataAttributes: [
 		{
 			name: "alert-dialog-description",
-			description: "Present on the description."
-		}
-	]
+			description: "Present on the description.",
+		},
+	],
 };
 
 const trigger: APISchema<AlertDialog.TriggerProps> = {
@@ -147,9 +147,9 @@ const trigger: APISchema<AlertDialog.TriggerProps> = {
 	dataAttributes: [
 		{
 			name: "alert-dialog-trigger",
-			description: "Present on the trigger."
-		}
-	]
+			description: "Present on the trigger.",
+		},
+	],
 };
 
 const overlay: APISchema<AlertDialog.OverlayProps> = {
@@ -162,13 +162,13 @@ const overlay: APISchema<AlertDialog.OverlayProps> = {
 			name: "state",
 			value: enums("open", "closed"),
 			description: "The state of the alert dialog.",
-			isEnum: true
+			isEnum: true,
 		},
 		{
 			name: "alert-dialog-overlay",
-			description: "Present on the overlay."
-		}
-	]
+			description: "Present on the overlay.",
+		},
+	],
 };
 
 const portal: APISchema<AlertDialog.PortalProps> = {
@@ -178,13 +178,13 @@ const portal: APISchema<AlertDialog.PortalProps> = {
 	dataAttributes: [
 		{
 			name: "portal",
-			description: "Present if the `portal` prop is not `null`."
+			description: "Present if the `portal` prop is not `null`.",
 		},
 		{
 			name: "alert-dialog-portal",
-			description: "Present on the portal."
-		}
-	]
+			description: "Present on the portal.",
+		},
+	],
 };
 
 export const alertDialog = [
@@ -196,5 +196,5 @@ export const alertDialog = [
 	action,
 	cancel,
 	title,
-	description
+	description,
 ];

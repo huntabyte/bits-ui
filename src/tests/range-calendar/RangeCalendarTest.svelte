@@ -20,13 +20,9 @@
 		data-testid="calendar"
 	>
 		<RangeCalendar.Header data-testid="header">
-			<RangeCalendar.PrevButton data-testid="prev-button"
-				>Prev</RangeCalendar.PrevButton
-			>
+			<RangeCalendar.PrevButton data-testid="prev-button">Prev</RangeCalendar.PrevButton>
 			<RangeCalendar.Heading data-testid="heading" />
-			<RangeCalendar.NextButton data-testid="next-button"
-				>Next</RangeCalendar.NextButton
-			>
+			<RangeCalendar.NextButton data-testid="next-button">Next</RangeCalendar.NextButton>
 		</RangeCalendar.Header>
 		<div>
 			{#each months as month}
@@ -45,10 +41,7 @@
 						{#each month.weeks as weekDates, i}
 							<RangeCalendar.GridRow data-testid="grid-row-{m}-{i}" data-week>
 								{#each weekDates as date, d}
-									<RangeCalendar.Cell
-										{date}
-										data-testid="cell-{date.month}-{d}"
-									>
+									<RangeCalendar.Cell {date} data-testid="cell-{date.month}-{d}">
 										<RangeCalendar.Day
 											{date}
 											month={month.value}

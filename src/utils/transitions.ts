@@ -40,9 +40,9 @@ export const flyAndScale = (node: Element, params?: FlyAndScaleParams): Transiti
 
 			return styleToString({
 				transform: `${transform} translate3d(0, ${y}px, 0) scale(${scale})`,
-				opacity: t
+				opacity: t,
 			});
 		},
-		easing: cubicOut
+		easing: cubicOut,
 	};
 };

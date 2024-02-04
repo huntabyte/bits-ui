@@ -12,7 +12,7 @@
 
 	const {
 		elements: { prevButton },
-		getAttrs
+		getAttrs,
 	} = getCtx();
 
 	const attrs = getAttrs("prev-button");
@@ -26,13 +26,7 @@
 {#if asChild}
 	<slot {builder} />
 {:else}
-	<button
-		bind:this={el}
-		use:melt={builder}
-		type="button"
-		{...$$restProps}
-		on:m-click={dispatch}
-	>
+	<button bind:this={el} use:melt={builder} type="button" {...$$restProps} on:m-click={dispatch}>
 		<slot {builder} />
 	</button>
 {/if}

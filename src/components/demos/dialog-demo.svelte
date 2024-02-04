@@ -29,12 +29,10 @@
 			>
 			<Separator.Root class="-mx-5 mb-6 mt-5 block h-px bg-muted" />
 			<Dialog.Description class="text-sm text-foreground-alt">
-				Create and manage API keys. You can create multiple keys to organize
-				your applications.
+				Create and manage API keys. You can create multiple keys to organize your applications.
 			</Dialog.Description>
 			<div class="flex flex-col items-start gap-1 pb-11 pt-7">
-				<Label.Root for="apiKey" class="text-sm font-medium">API Key</Label.Root
-				>
+				<Label.Root for="apiKey" class="text-sm font-medium">API Key</Label.Root>
 				<div class="relative w-full">
 					<input
 						id="apiKey"
@@ -43,9 +41,7 @@
 						type="password"
 						autocomplete="off"
 					/>
-					<LockKeyOpen
-						class="absolute right-4 top-[14px] text-dark/30 sq-[22px]"
-					/>
+					<LockKeyOpen class="absolute right-4 top-[14px] text-dark/30 sq-[22px]" />
 				</div>
 			</div>
 			<div class="flex w-full justify-end">

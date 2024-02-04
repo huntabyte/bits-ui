@@ -14,7 +14,7 @@
 	const {
 		elements: { trigger },
 		ids,
-		getPopoverAttrs
+		getPopoverAttrs,
 	} = getCtx();
 
 	const dispatch = createDispatcher();

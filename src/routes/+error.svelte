@@ -5,9 +5,7 @@
 	$: message = $page.status === 404 ? "Not Found" : "Something went wrong";
 </script>
 
-<section
-	class="flex h-[calc(100vh_-_71px_-_8rem)] flex-col items-center justify-center gap-3"
->
+<section class="flex h-[calc(100vh_-_71px_-_8rem)] flex-col items-center justify-center gap-3">
 	<h1 class="text-6xl font-bold tracking-wider text-foreground">
 		{$page.status}
 	</h1>

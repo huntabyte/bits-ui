@@ -25,5 +25,5 @@ export type {
 	InputProps,
 	SegmentProps,
 	//
-	SegmentEvents
+	SegmentEvents,
 };

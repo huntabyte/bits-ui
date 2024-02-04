@@ -14,7 +14,7 @@
 		elements: { root },
 		states: { open: localOpen },
 		updateOption,
-		getAttrs
+		getAttrs,
 	} = setCtx({
 		disabled,
 		forceVisible: true,
@@ -25,7 +25,7 @@
 				open = next;
 			}
 			return next;
-		}
+		},
 	});
 	const attrs = getAttrs("root");
 

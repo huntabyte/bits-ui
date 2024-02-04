@@ -17,7 +17,7 @@ function setup(props: Switch.Props = {}) {
 		root,
 		thumb,
 		user,
-		...returned
+		...returned,
 	};
 }
 

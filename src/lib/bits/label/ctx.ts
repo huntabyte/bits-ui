@@ -8,6 +8,6 @@ export function getLabelData() {
 
 	return {
 		NAME,
-		getAttrs
+		getAttrs,
 	};
 }

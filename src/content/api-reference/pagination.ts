@@ -11,32 +11,32 @@ export const root: APISchema<Pagination.Props> = {
 		count: {
 			type: C.NUMBER,
 			description: "The total number of items.",
-			required: true
+			required: true,
 		},
 		perPage: {
 			type: C.NUMBER,
 			description: "The number of items per page.",
-			default: "1"
+			default: "1",
 		},
 		siblingCount: {
 			type: C.NUMBER,
 			description: "The number of page triggers to show on either side of the current page.",
-			default: "1"
+			default: "1",
 		},
 		page: {
 			type: C.NUMBER,
 			description:
-				"The selected page. You can bind this to a variable to control the selected page from outside the component."
+				"The selected page. You can bind this to a variable to control the selected page from outside the component.",
 		},
 		onPageChange: {
 			type: {
 				type: C.FUNCTION,
-				definition: "(page: number) => void"
+				definition: "(page: number) => void",
 			},
-			description: "A function called when the selected page changes."
+			description: "A function called when the selected page changes.",
 		},
-		...domElProps("HTMLDivElement")
-	}
+		...domElProps("HTMLDivElement"),
+	},
 };
 
 export const page: APISchema<Pagination.PageProps> = {
@@ -45,23 +45,23 @@ export const page: APISchema<Pagination.PageProps> = {
 	props: {
 		page: {
 			type: pageItemProp,
-			description: "The page item this component represents."
+			description: "The page item this component represents.",
 		},
-		...domElProps("HTMLButtonElement")
+		...domElProps("HTMLButtonElement"),
 	},
 	slotProps: {
-		...builderAndAttrsSlotProps
+		...builderAndAttrsSlotProps,
 	},
 	dataAttributes: [
 		{
 			name: "selected",
-			description: "Present on the current page element."
+			description: "Present on the current page element.",
 		},
 		{
 			name: "pagination-page",
-			description: "Present on the page trigger element."
-		}
-	]
+			description: "Present on the page trigger element.",
+		},
+	],
 };
 
 export const prevButton: APISchema<Pagination.PrevButtonProps> = {
@@ -69,14 +69,14 @@ export const prevButton: APISchema<Pagination.PrevButtonProps> = {
 	description: "The previous button of the pagination.",
 	props: domElProps("HTMLButtonElement"),
 	slotProps: {
-		...builderAndAttrsSlotProps
+		...builderAndAttrsSlotProps,
 	},
 	dataAttributes: [
 		{
 			name: "pagination-prev-button",
-			description: "Present on the previous button element."
-		}
-	]
+			description: "Present on the previous button element.",
+		},
+	],
 };
 
 export const nextButton: APISchema<Pagination.NextButtonProps> = {
@@ -84,14 +84,14 @@ export const nextButton: APISchema<Pagination.NextButtonProps> = {
 	description: "The next button of the pagination.",
 	props: domElProps("HTMLButtonElement"),
 	slotProps: {
-		...builderAndAttrsSlotProps
+		...builderAndAttrsSlotProps,
 	},
 	dataAttributes: [
 		{
 			name: "pagination-next-button",
-			description: "Present on the next button element."
-		}
-	]
+			description: "Present on the next button element.",
+		},
+	],
 };
 
 export const pagination = [root, page, prevButton, nextButton];

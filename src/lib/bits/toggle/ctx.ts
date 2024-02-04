@@ -7,7 +7,7 @@ function getToggleData() {
 	const PARTS = ["root", "input"] as const;
 	return {
 		NAME,
-		PARTS
+		PARTS,
 	};
 }
 
@@ -20,7 +20,7 @@ export function setCtx(props: CreateToggleProps) {
 	setContext(NAME, toggle);
 	return {
 		...toggle,
-		updateOption: getOptionUpdater(toggle.options)
+		updateOption: getOptionUpdater(toggle.options),
 	};
 }
 

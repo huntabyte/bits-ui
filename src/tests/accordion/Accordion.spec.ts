@@ -15,29 +15,29 @@ const items: Item[] = [
 		title: "Item 1",
 		content: "Content 1",
 		disabled: false,
-		level: 3
+		level: 3,
 	},
 	{
 		value: "item-2",
 		title: "Item 2",
 		content: "Content 2",
 		disabled: false,
-		level: 3
+		level: 3,
 	},
 	{
 		value: "item-3",
 		title: "Item 3",
 		content: "Content 3",
 		disabled: false,
-		level: 3
+		level: 3,
 	},
 	{
 		value: "item-4",
 		title: "Item 4",
 		content: "Content 4",
 		disabled: false,
-		level: 3
-	}
+		level: 3,
+	},
 ];
 
 const itemsWithDisabled = items.map((item) => {

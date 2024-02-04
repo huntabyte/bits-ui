@@ -7,5 +7,5 @@ export type {
 	Events as PaginationEvents,
 	PrevButtonEvents as PaginationPrevButtonEvents,
 	NextButtonEvents as PaginationNextButtonEvents,
-	PageEvents as PaginationPageEvents
+	PageEvents as PaginationPageEvents,
 } from "./types.js";

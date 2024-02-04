@@ -23,13 +23,9 @@
 	export let readonlySegments: $$Props["readonlySegments"] = undefined;
 
 	const {
-		states: {
-			value: localValue,
-			placeholder: localPlaceholder,
-			isInvalid: localIsInvalid
-		},
+		states: { value: localValue, placeholder: localPlaceholder, isInvalid: localIsInvalid },
 		updateOption,
-		ids
+		ids,
 	} = setCtx({
 		defaultValue: value,
 		defaultPlaceholder: placeholder,
@@ -56,7 +52,7 @@
 				placeholder = next;
 			}
 			return next;
-		}
+		},
 	});
 
 	const startIdValues = derived(
@@ -71,7 +67,7 @@
 			ids.start.year,
 			ids.start.validation,
 			ids.start.label,
-			ids.start.timeZoneName
+			ids.start.timeZoneName,
 		],
 		([
 			$dayId,
@@ -84,7 +80,7 @@
 			$yearId,
 			$validationId,
 			$labelId,
-			$timeZoneNameId
+			$timeZoneNameId,
 		]) => ({
 			day: $dayId,
 			description: $descriptionId,
@@ -96,7 +92,7 @@
 			year: $yearId,
 			validation: $validationId,
 			label: $labelId,
-			timeZoneName: $timeZoneNameId
+			timeZoneName: $timeZoneNameId,
 		})
 	);
 
@@ -112,7 +108,7 @@
 			ids.end.year,
 			ids.end.validation,
 			ids.end.label,
-			ids.end.timeZoneName
+			ids.end.timeZoneName,
 		],
 		([
 			$dayId,
@@ -125,7 +121,7 @@
 			$yearId,
 			$validationId,
 			$labelId,
-			$timeZoneNameId
+			$timeZoneNameId,
 		]) => ({
 			day: $dayId,
 			description: $descriptionId,
@@ -137,22 +133,17 @@
 			year: $yearId,
 			validation: $validationId,
 			label: $labelId,
-			timeZoneName: $timeZoneNameId
+			timeZoneName: $timeZoneNameId,
 		})
 	);
 
 	const fieldIdValues = derived(
-		[
-			ids.field.description,
-			ids.field.field,
-			ids.field.label,
-			ids.field.validation
-		],
+		[ids.field.description, ids.field.field, ids.field.label, ids.field.validation],
 		([$descriptionId, $fieldId, $labelId, $validationId]) => ({
 			description: $descriptionId,
 			field: $fieldId,
 			label: $labelId,
-			validation: $validationId
+			validation: $validationId,
 		})
 	);
 
@@ -181,7 +172,7 @@
 	$: idSlotProp = {
 		start: $startIdValues,
 		end: $endIdValues,
-		field: $fieldIdValues
+		field: $fieldIdValues,
 	};
 </script>
 

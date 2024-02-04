@@ -25,7 +25,7 @@ import type {
 	CheckboxItemEvents,
 	RadioItemEvents,
 	ContentEvents,
-	SubContentEvents
+	SubContentEvents,
 } from "$lib/bits/menu/types.js";
 
 type Props = MenubarProps & HTMLDivAttributes;
@@ -55,5 +55,5 @@ export type {
 	RadioItemEvents,
 	SubTriggerEvents,
 	SubContentEvents,
-	CheckboxItemEvents
+	CheckboxItemEvents,
 };

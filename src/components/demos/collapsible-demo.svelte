@@ -15,23 +15,14 @@
 		</Collapsible.Trigger>
 	</div>
 
-	<Collapsible.Content
-		class="space-y-2 font-mono text-[15px] tracking-[0.01em]"
-		transition={slide}
-	>
-		<div
-			class="inline-flex h-12 w-full items-center rounded-9px bg-muted px-[18px] py-3"
-		>
+	<Collapsible.Content class="space-y-2 font-mono text-[15px] tracking-[0.01em]" transition={slide}>
+		<div class="inline-flex h-12 w-full items-center rounded-9px bg-muted px-[18px] py-3">
 			@huntabyte/bits-ui
 		</div>
-		<div
-			class="inline-flex h-12 w-full items-center rounded-9px bg-muted px-[18px] py-3"
-		>
+		<div class="inline-flex h-12 w-full items-center rounded-9px bg-muted px-[18px] py-3">
 			@huntabyte/shadcn-svelte
 		</div>
-		<div
-			class="inline-flex h-12 w-full items-center rounded-9px bg-muted px-[18px] py-3"
-		>
+		<div class="inline-flex h-12 w-full items-center rounded-9px bg-muted px-[18px] py-3">
 			@melt-ui/melt-ui
 		</div>
 	</Collapsible.Content>

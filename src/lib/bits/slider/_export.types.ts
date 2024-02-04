@@ -5,5 +5,5 @@ export type {
 	InputProps as SliderInputProps,
 	TickProps as SliderTickProps,
 	//
-	ThumbEvents as SliderThumbEvents
+	ThumbEvents as SliderThumbEvents,
 } from "./types.js";

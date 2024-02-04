@@ -16,7 +16,7 @@
 	const {
 		states: { open: localOpen },
 		updateOption,
-		ids
+		ids,
 	} = setCtx({
 		defaultOpen: open,
 		openDelay,
@@ -31,16 +31,13 @@
 				open = next;
 			}
 			return next;
-		}
+		},
 	});
 
-	const idValues = derived(
-		[ids.content, ids.trigger],
-		([$contentId, $triggerId]) => ({
-			content: $contentId,
-			trigger: $triggerId
-		})
-	);
+	const idValues = derived([ids.content, ids.trigger], ([$contentId, $triggerId]) => ({
+		content: $contentId,
+		trigger: $triggerId,
+	}));
 
 	$: open !== undefined && localOpen.set(open);
 	$: updateOption("openDelay", openDelay);

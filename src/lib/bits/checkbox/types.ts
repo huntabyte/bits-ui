@@ -19,5 +19,5 @@ export type {
 	IndicatorProps,
 	InputProps,
 	//
-	Events
+	Events,
 };

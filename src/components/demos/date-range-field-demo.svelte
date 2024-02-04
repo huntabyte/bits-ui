@@ -4,7 +4,7 @@
 
 	let value = {
 		start: new CalendarDate(2022, 1, 1),
-		end: new CalendarDate(2022, 3, 1)
+		end: new CalendarDate(2022, 3, 1),
 	};
 </script>
 

@@ -50,9 +50,7 @@
 			<div class="space-y-1 text-sm">
 				<h4 class="font-medium">@huntabyte</h4>
 				<p>I do things on the internet.</p>
-				<div
-					class="flex items-center gap-[21px] pt-2 text-xs text-muted-foreground"
-				>
+				<div class="flex items-center gap-[21px] pt-2 text-xs text-muted-foreground">
 					<div class="flex items-center text-xs">
 						<MapPin class="mr-1 sq-4" />
 						<span> FL, USA </span>

@@ -10,7 +10,7 @@
 
 	const {
 		elements: { grid },
-		getAttrs
+		getAttrs,
 	} = getCtx();
 
 	const attrs = getAttrs("grid");

@@ -14,23 +14,23 @@ export default defineConfig({
 		// Add @testing-library/jest-dom's matchers & mocks of SvelteKit modules
 		setupFiles: ["./other/setupTest.ts"],
 		coverage: {
-			exclude: ["setupTest.ts"]
+			exclude: ["setupTest.ts"],
 		},
 		alias: [{ find: /^svelte$/, replacement: "svelte/internal" }],
-		retry: 3
+		retry: 3,
 	},
 	assetsInclude: ["**/*.md"],
 	server: {
 		fs: {
-			strict: false
-		}
+			strict: false,
+		},
 	},
 	resolve: {
 		alias: [
 			{
 				find: "contentlayer/generated",
-				replacement: fileURLToPath(new URL("./.contentlayer/generated", import.meta.url))
-			}
-		]
-	}
+				replacement: fileURLToPath(new URL("./.contentlayer/generated", import.meta.url)),
+			},
+		],
+	},
 });

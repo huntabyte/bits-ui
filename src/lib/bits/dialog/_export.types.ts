@@ -10,5 +10,5 @@ export type {
 	//
 	TriggerEvents as DialogTriggerEvents,
 	CloseEvents as DialogCloseEvents,
-	ContentEvents as DialogContentEvents
+	ContentEvents as DialogContentEvents,
 } from "./types.js";

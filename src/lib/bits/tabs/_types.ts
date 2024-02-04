@@ -10,7 +10,7 @@ import type {
 	Expand,
 	ObjectVariation,
 	OmitValue,
-	OnChangeFn
+	OnChangeFn,
 } from "$lib/internal/index.js";
 
 type Props = Expand<

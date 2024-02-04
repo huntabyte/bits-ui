@@ -10,7 +10,7 @@
 
 	const {
 		elements: { hiddenInput },
-		getAttrs
+		getAttrs,
 	} = getCtx();
 
 	const attrs = getAttrs("input");

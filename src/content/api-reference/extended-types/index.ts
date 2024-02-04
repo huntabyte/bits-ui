@@ -5,15 +5,15 @@ import rawPageItemProp from "@/content/api-reference/extended-types/page-item.js
 
 export const monthsPropType: PropType = {
 	type: "Month[]",
-	definition: rawMonthProp
+	definition: rawMonthProp,
 };
 
 export const focusProp: PropType = {
 	type: "FocusProp",
-	definition: rawFocusProp
+	definition: rawFocusProp,
 };
 
 export const pageItemProp: PropType = {
 	type: "PageItem",
-	definition: rawPageItemProp
+	definition: rawPageItemProp,
 };

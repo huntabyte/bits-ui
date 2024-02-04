@@ -23,5 +23,5 @@ export type {
 	RadioItemEvents as MenubarRadioItemEvents,
 	SubTriggerEvents as MenubarSubTriggerEvents,
 	SubContentEvents as MenubarSubContentEvents,
-	CheckboxItemEvents as MenubarCheckboxItemEvents
+	CheckboxItemEvents as MenubarCheckboxItemEvents,
 } from "./types.js";

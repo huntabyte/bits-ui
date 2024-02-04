@@ -14,7 +14,7 @@
 
 	const {
 		elements: { trigger },
-		getAttrs
+		getAttrs,
 	} = getCtx();
 
 	const dispatch = createDispatcher();

@@ -14,7 +14,7 @@
 	const {
 		elements: { trigger },
 		ids,
-		getAttrs
+		getAttrs,
 	} = getMenuCtx();
 
 	const dispatch = createDispatcher();

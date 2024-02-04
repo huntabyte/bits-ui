@@ -5,7 +5,7 @@ import type {
 	ContentProps,
 	//
 	TriggerEvents,
-	ContentEvents
+	ContentEvents,
 } from "./types.js";
 
 export type {
@@ -15,5 +15,5 @@ export type {
 	ContentProps as LinkPreviewContentProps,
 	//
 	TriggerEvents as LinkPreviewTriggerEvents,
-	ContentEvents as LinkPreviewContentEvents
+	ContentEvents as LinkPreviewContentEvents,
 };

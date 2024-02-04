@@ -12,7 +12,7 @@
 	const {
 		elements: { description },
 		ids,
-		getAttrs
+		getAttrs,
 	} = getCtx();
 	const attrs = getAttrs("description");
 

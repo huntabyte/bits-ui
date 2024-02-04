@@ -66,7 +66,7 @@ export const bits = [
 	"toggle",
 	"toggle-group",
 	"toolbar",
-	"tooltip"
+	"tooltip",
 ] as const;
 
 export const bitsSet = new Set(bits);
@@ -110,7 +110,7 @@ export const apiSchemas: Record<Bit, APISchema[]> = {
 	toggle: toggle,
 	"toggle-group": toggleGroup,
 	toolbar,
-	tooltip
+	tooltip,
 };
 
 export function getAPISchemas(bit: Bit): APISchema[] {

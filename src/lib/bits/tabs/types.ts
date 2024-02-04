@@ -23,5 +23,5 @@ export type {
 	TriggerProps,
 	ListProps,
 	//
-	TriggerEvents
+	TriggerEvents,
 };

@@ -14,16 +14,16 @@ type Props = Tabs.Props & { items?: Item[] };
 const items: Item[] = [
 	{
 		value: "1",
-		disabled: false
+		disabled: false,
 	},
 	{
 		value: "2",
-		disabled: false
+		disabled: false,
 	},
 	{
 		value: "3",
-		disabled: false
-	}
+		disabled: false,
+	},
 ];
 
 function setup(props: Props = {}) {
@@ -32,7 +32,7 @@ function setup(props: Props = {}) {
 	const returned = render(TabsTest, withDefaults);
 	return {
 		user,
-		...returned
+		...returned,
 	};
 }
 
@@ -42,17 +42,17 @@ describe("Tabs", () => {
 			items: [
 				{
 					value: "1",
-					disabled: false
-				}
+					disabled: false,
+				},
 			],
-			value: "1"
+			value: "1",
 		});
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
 	it("has bits data attrs", async () => {
 		const { getByTestId } = render(TabsTest, {
-			items: [items[0]]
+			items: [items[0]],
 		});
 
 		const root = getByTestId("root");
@@ -158,7 +158,7 @@ describe("Tabs", () => {
 
 	it("respects the `activateOnFocus` prop", async () => {
 		const { getByTestId, user } = setup({
-			activateOnFocus: false
+			activateOnFocus: false,
 		});
 
 		const trigger1 = getByTestId("trigger-1");
@@ -182,7 +182,7 @@ describe("Tabs", () => {
 	});
 	it("navigates using up & down when orientation is vertical", async () => {
 		const { getByTestId, user } = setup({
-			orientation: "vertical"
+			orientation: "vertical",
 		});
 
 		const trigger1 = getByTestId("trigger-1");

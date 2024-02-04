@@ -4,5 +4,5 @@ export type {
 	ItemProps as RadioGroupItemProps,
 	ItemIndicatorProps as RadioGroupItemIndicatorProps,
 	//
-	ItemEvents as RadioGroupItemEvents
+	ItemEvents as RadioGroupItemEvents,
 } from "./types.js";

@@ -16,8 +16,8 @@ export const codeBlockPrettierConfig = {
 			options: {
 				parser: "svelte",
 				svelteIndentScriptAndStyle: true,
-				svelteStrictMode: false
-			}
-		}
-	]
+				svelteStrictMode: false,
+			},
+		},
+	],
 };

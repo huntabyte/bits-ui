@@ -17,7 +17,7 @@
 		elements: { group },
 		states: { value: localValue },
 		updateOption,
-		getAttrs
+		getAttrs,
 	} = setGroupCtx<T>({
 		disabled,
 		type,
@@ -35,7 +35,7 @@
 			}
 			return next;
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		}) as any
+		}) as any,
 	});
 
 	const attrs = getAttrs("group");

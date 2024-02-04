@@ -86,7 +86,7 @@ describe("Link Preview", () => {
 
 	it("respects the close on outside click prop", async () => {
 		const { content, user, queryByTestId, getByTestId } = await open({
-			closeOnOutsideClick: false
+			closeOnOutsideClick: false,
 		});
 		await user.click(content);
 		const outside = getByTestId("outside");

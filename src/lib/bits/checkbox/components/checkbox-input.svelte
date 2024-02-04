@@ -8,13 +8,8 @@
 
 	const {
 		elements: { input },
-		options: { value }
+		options: { value },
 	} = getCtx();
 </script>
 
-<input
-	bind:this={el}
-	use:melt={$input}
-	value={$value ?? "on"}
-	{...$$restProps}
-/>
+<input bind:this={el} use:melt={$input} value={$value ?? "on"} {...$$restProps} />

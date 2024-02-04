@@ -23,7 +23,7 @@
 	const {
 		elements: { overlay },
 		states: { open },
-		getAttrs
+		getAttrs,
 	} = getCtx();
 	const attrs = getAttrs("overlay");
 

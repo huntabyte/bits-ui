@@ -12,56 +12,56 @@ export const root: APISchema<Checkbox.Props> = {
 			default: C.FALSE,
 			type: C.BOOLEAN,
 			description:
-				"Whether or not the checkbox button is disabled. This prevents the user from interacting with it."
+				"Whether or not the checkbox button is disabled. This prevents the user from interacting with it.",
 		},
 		checked: {
 			default: C.FALSE,
 			type: {
 				type: C.ENUM,
-				definition: union("boolean", "'indeterminate'")
+				definition: union("boolean", "'indeterminate'"),
 			},
 			description:
-				"The checkbox button's checked state. This can be a boolean or the string 'indeterminate', which would typically display a dash in the checkbox."
+				"The checkbox button's checked state. This can be a boolean or the string 'indeterminate', which would typically display a dash in the checkbox.",
 		},
 		onCheckedChange: {
 			type: {
 				type: C.FUNCTION,
-				definition: "(checked: boolean | 'indeterminate') => void"
+				definition: "(checked: boolean | 'indeterminate') => void",
 			},
-			description: "A callback that is fired when the checkbox button's checked state changes."
+			description: "A callback that is fired when the checkbox button's checked state changes.",
 		},
 		required: {
 			default: C.FALSE,
 			type: C.BOOLEAN,
-			description: "Whether or not the checkbox is required."
+			description: "Whether or not the checkbox is required.",
 		},
 		name: {
 			type: C.STRING,
-			description: "The name of the checkbox. This is used for form submission."
+			description: "The name of the checkbox. This is used for form submission.",
 		},
 		value: {
 			type: C.STRING,
-			description: "The value of the checkbox. This is used for form submission."
+			description: "The value of the checkbox. This is used for form submission.",
 		},
-		...domElProps("HTMLButtonElement")
+		...domElProps("HTMLButtonElement"),
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "disabled",
-			description: "Present when the checkbox is disabled."
+			description: "Present when the checkbox is disabled.",
 		},
 		{
 			name: "state",
 			value: enums("checked", "unchecked", "indeterminate"),
 			description: "The checkbox's state. Can be 'checked', 'unchecked', or 'indeterminate'.",
-			isEnum: true
+			isEnum: true,
 		},
 		{
 			name: "checkbox-root",
-			description: "Present on the root element."
-		}
-	]
+			description: "Present on the root element.",
+		},
+	],
 };
 
 export const input: APISchema = {
@@ -73,15 +73,15 @@ export const input: APISchema = {
 			default: C.FALSE,
 			type: C.BOOLEAN,
 			description:
-				"Unless a value is provided, the input's value will be a boolean that represents the checkbox's checked state. Indeterminate checkboxes will have a value of `false`."
+				"Unless a value is provided, the input's value will be a boolean that represents the checkbox's checked state. Indeterminate checkboxes will have a value of `false`.",
 		},
 		disabled: {
 			default: C.FALSE,
 			type: C.BOOLEAN,
 			description:
-				"Whether or not the checkbox input is disabled. If not provided, it will inherit the disabled state of the Root component, which defaults to false."
-		}
-	}
+				"Whether or not the checkbox input is disabled. If not provided, it will inherit the disabled state of the Root component, which defaults to false.",
+		},
+	},
 };
 
 export const indicator: APISchema<Checkbox.IndicatorProps> = {
@@ -92,20 +92,20 @@ export const indicator: APISchema<Checkbox.IndicatorProps> = {
 	slotProps: {
 		isChecked: {
 			type: C.BOOLEAN,
-			description: "Whether or not the checkbox is checked."
+			description: "Whether or not the checkbox is checked.",
 		},
 		isIndeterminate: {
 			type: C.BOOLEAN,
-			description: "Whether or not the checkbox is indeterminate."
+			description: "Whether or not the checkbox is indeterminate.",
 		},
-		attrs: attrsSlotProp
+		attrs: attrsSlotProp,
 	},
 	dataAttributes: [
 		{
 			name: "checkbox-indicator",
-			description: "Present on the indicator element."
-		}
-	]
+			description: "Present on the indicator element.",
+		},
+	],
 };
 
 export const checkbox = [root, input, indicator];

@@ -29,5 +29,5 @@ export type {
 	DayEvents as DatePickerDayEvents,
 	PrevButtonEvents as DatePickerPrevButtonEvents,
 	NextButtonEvents as DatePickerNextButtonEvents,
-	SegmentEvents as DatePickerSegmentEvents
+	SegmentEvents as DatePickerSegmentEvents,
 } from "./types.js";

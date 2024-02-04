@@ -4,9 +4,7 @@
 
 <DateField.Root>
 	<div class="flex w-full max-w-[232px] flex-col gap-1.5">
-		<DateField.Label class="block select-none text-sm font-medium"
-			>Birthday</DateField.Label
-		>
+		<DateField.Label class="block select-none text-sm font-medium">Birthday</DateField.Label>
 		<DateField.Input
 			let:segments
 			class="flex h-input w-full max-w-[232px] select-none items-center rounded-input border border-border-input bg-background p-3 text-sm tracking-[0.01em] text-muted-foreground focus-within:border-border-input-hover focus-within:shadow-date-field-focus hover:border-border-input-hover"

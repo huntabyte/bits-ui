@@ -4,7 +4,7 @@ export function createBitAttrs<T extends readonly string[]>(bit: Bit | "menu", p
 	const attrs: Record<string, Record<string, string>> = {};
 	parts.forEach((part) => {
 		attrs[part] = {
-			[`data-${bit}-${part}`]: ""
+			[`data-${bit}-${part}`]: "",
 		};
 	});
 
@@ -15,4 +15,16 @@ export function disabledAttrs(disabled: boolean | undefined | null) {
 	return disabled
 		? { "aria-disabled": "true", "data-disabled": "" }
 		: { "aria-disabled": undefined, "data-disabled": undefined };
+}
+
+export function getDataDisabled(disabled: boolean) {
+	return disabled ? "" : undefined;
+}
+
+export function getAriaDisabled(disabled: boolean) {
+	return disabled ? "true" : "false";
+}
+
+export function getDataOpenClosed(open: boolean) {
+	return open ? "open" : "closed";
 }

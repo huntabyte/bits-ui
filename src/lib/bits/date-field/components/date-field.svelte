@@ -23,13 +23,9 @@
 	export let readonlySegments: $$Props["readonlySegments"] = undefined;
 
 	const {
-		states: {
-			value: localValue,
-			placeholder: localPlaceholder,
-			isInvalid: localIsInvalid
-		},
+		states: { value: localValue, placeholder: localPlaceholder, isInvalid: localIsInvalid },
 		updateOption,
-		ids
+		ids,
 	} = setCtx({
 		defaultValue: value,
 		defaultPlaceholder: placeholder,
@@ -56,7 +52,7 @@
 				placeholder = next;
 			}
 			return next;
-		}
+		},
 	});
 
 	const idValues = derived(
@@ -72,7 +68,7 @@
 			ids.year,
 			ids.validation,
 			ids.label,
-			ids.timeZoneName
+			ids.timeZoneName,
 		],
 		([
 			$dayId,
@@ -86,7 +82,7 @@
 			$yearId,
 			$validationId,
 			$labelId,
-			$timeZoneNameId
+			$timeZoneNameId,
 		]) => ({
 			day: $dayId,
 			description: $descriptionId,
@@ -99,7 +95,7 @@
 			year: $yearId,
 			validation: $validationId,
 			label: $labelId,
-			timeZoneName: $timeZoneNameId
+			timeZoneName: $timeZoneNameId,
 		})
 	);
 

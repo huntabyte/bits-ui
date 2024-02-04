@@ -23,5 +23,5 @@ export type {
 	InputProps,
 	HiddenInputProps,
 	//
-	InputEvents
+	InputEvents,
 };

@@ -22,12 +22,12 @@ export function getContextMenuData() {
 		"separator",
 		"sub-content",
 		"sub-trigger",
-		"trigger"
+		"trigger",
 	] as const;
 
 	return {
 		NAME,
-		PARTS
+		PARTS,
 	};
 }
 
@@ -41,7 +41,7 @@ export function setCtx(props: CreateContextMenuProps) {
 	setContext(NAME, contextMenu);
 	return {
 		...contextMenu,
-		updateOption: getOptionUpdater(contextMenu.options)
+		updateOption: getOptionUpdater(contextMenu.options),
 	};
 }
 
@@ -53,12 +53,12 @@ export function getCtx() {
 export function updatePositioning(props: FloatingProps) {
 	const defaultPlacement = {
 		side: "bottom",
-		align: "start"
+		align: "start",
 	} satisfies FloatingProps;
 
 	const withDefaults = { ...defaultPlacement, ...props } satisfies FloatingProps;
 	const {
-		options: { positioning }
+		options: { positioning },
 	} = getCtx();
 
 	const updater = getPositioningUpdater(positioning as Writable<FloatingConfig>);

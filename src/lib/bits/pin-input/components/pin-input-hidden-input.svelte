@@ -11,12 +11,12 @@
 	const {
 		elements: { hiddenInput },
 		options: { disabled },
-		getAttrs
+		getAttrs,
 	} = getCtx();
 
 	$: attrs = {
 		...getAttrs("hidden-input"),
-		disabled: $disabled ? true : undefined
+		disabled: $disabled ? true : undefined,
 	};
 
 	$: builder = $hiddenInput;

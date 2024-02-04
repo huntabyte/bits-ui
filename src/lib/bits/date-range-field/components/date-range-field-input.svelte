@@ -13,7 +13,7 @@
 		elements: { field },
 		states: { segmentContents },
 		ids,
-		getAttrs
+		getAttrs,
 	} = getCtx();
 
 	$: if (id) {
@@ -26,7 +26,7 @@
 	$: Object.assign(builder, attrs);
 	$: segments = {
 		start: $segmentContents.start,
-		end: $segmentContents.end
+		end: $segmentContents.end,
 	};
 </script>
 

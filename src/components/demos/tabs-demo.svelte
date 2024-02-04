@@ -27,15 +27,11 @@
 				<h4 class="text-[19px] font-semibold leading-none tracking-[-0.01em]">
 					Login to your account
 				</h4>
-				<p class="text-sm font-medium text-muted-foreground">
-					to access all your data
-				</p>
+				<p class="text-sm font-medium text-muted-foreground">to access all your data</p>
 			</div>
 			<div class="flex flex-col gap-4 pt-5 text-sm">
 				<div class="flex flex-col gap-1">
-					<Label.Root for="username" class="font-medium text-foreground">
-						Username
-					</Label.Root>
+					<Label.Root for="username" class="font-medium text-foreground">Username</Label.Root>
 					<input
 						type="text"
 						id="username"
@@ -44,9 +40,7 @@
 					/>
 				</div>
 				<div class="flex flex-col gap-1">
-					<Label.Root for="password" class="font-medium text-foreground">
-						Password
-					</Label.Root>
+					<Label.Root for="password" class="font-medium text-foreground">Password</Label.Root>
 					<div class="relative w-full">
 						<input
 							id="password"
@@ -55,9 +49,7 @@
 							type="password"
 							autocomplete="off"
 						/>
-						<LockKeyOpen
-							class="absolute right-4 top-[14px] text-dark/30 sq-[22px]"
-						/>
+						<LockKeyOpen class="absolute right-4 top-[14px] text-dark/30 sq-[22px]" />
 					</div>
 				</div>
 			</div>
@@ -72,16 +64,11 @@
 				<h4 class="text-[19px] font-semibold leading-none tracking-[-0.01em]">
 					Register for an account
 				</h4>
-				<p class="text-sm font-medium text-muted-foreground">
-					to start using all our features
-				</p>
+				<p class="text-sm font-medium text-muted-foreground">to start using all our features</p>
 			</div>
 			<div class="flex flex-col gap-4 pt-5">
 				<div class="flex flex-col gap-1">
-					<Label.Root
-						for="registerUsername"
-						class="text-sm font-medium text-foreground"
-					>
+					<Label.Root for="registerUsername" class="text-sm font-medium text-foreground">
 						Username
 					</Label.Root>
 					<input
@@ -92,10 +79,7 @@
 					/>
 				</div>
 				<div class="flex flex-col gap-1">
-					<Label.Root
-						for="registerPassword"
-						class="text-sm font-medium text-foreground"
-					>
+					<Label.Root for="registerPassword" class="text-sm font-medium text-foreground">
 						Password
 					</Label.Root>
 					<div class="relative w-full">
@@ -106,16 +90,11 @@
 							type="password"
 							autocomplete="off"
 						/>
-						<LockKeyOpen
-							class="absolute right-4 top-[14px] text-dark/30 sq-[22px]"
-						/>
+						<LockKeyOpen class="absolute right-4 top-[14px] text-dark/30 sq-[22px]" />
 					</div>
 				</div>
 				<div class="flex flex-col gap-1">
-					<Label.Root
-						for="passwordConfirm"
-						class="text-sm font-medium text-foreground"
-					>
+					<Label.Root for="passwordConfirm" class="text-sm font-medium text-foreground">
 						Confirm Password
 					</Label.Root>
 					<div class="relative w-full">
@@ -126,9 +105,7 @@
 							type="password"
 							autocomplete="off"
 						/>
-						<LockKeyOpen
-							class="absolute right-4 top-[14px] text-dark/30 sq-[22px]"
-						/>
+						<LockKeyOpen class="absolute right-4 top-[14px] text-dark/30 sq-[22px]" />
 					</div>
 				</div>
 			</div>

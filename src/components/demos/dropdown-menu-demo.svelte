@@ -8,7 +8,7 @@
 		GearSix,
 		UserCirclePlus,
 		DotsThree,
-		CaretRight
+		CaretRight,
 	} from "phosphor-svelte";
 </script>
 

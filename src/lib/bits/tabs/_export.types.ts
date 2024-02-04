@@ -4,5 +4,5 @@ export type {
 	TriggerProps as TabsTriggerProps,
 	ListProps as TabsListProps,
 	//
-	TriggerEvents as TabsTriggerEvents
+	TriggerEvents as TabsTriggerEvents,
 } from "./types.js";

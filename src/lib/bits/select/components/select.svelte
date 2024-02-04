@@ -31,7 +31,7 @@
 	const {
 		states: { open: localOpen, selected: localSelected },
 		updateOption,
-		ids
+		ids,
 	} = setCtx<T, Multiple>({
 		required,
 		disabled,
@@ -73,7 +73,7 @@
 			}
 			return next;
 		},
-		items
+		items,
 	});
 
 	const idValues = derived(
@@ -81,7 +81,7 @@
 		([$menuId, $triggerId, $labelId]) => ({
 			menu: $menuId,
 			trigger: $triggerId,
-			label: $labelId
+			label: $labelId,
 		})
 	);
 

@@ -12,43 +12,43 @@ export const root: APISchema<Progress.Props> = {
 			type: C.NUMBER,
 			default: "100",
 			description:
-				"The maximum value of the progress bar. Used to calculate the percentage of the progress bar."
+				"The maximum value of the progress bar. Used to calculate the percentage of the progress bar.",
 		},
 		value: {
 			type: C.NUMBER,
 			default: "0",
-			description: "The current value of the progress bar."
+			description: "The current value of the progress bar.",
 		},
 		onValueChange: {
 			type: {
 				type: C.FUNCTION,
-				definition: "(value: number) => void"
+				definition: "(value: number) => void",
 			},
-			description: "A callback that fires when the value changes."
+			description: "A callback that fires when the value changes.",
 		},
-		...domElProps("HTMLDivElement")
+		...domElProps("HTMLDivElement"),
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "value",
-			description: "The current value of the progress bar."
+			description: "The current value of the progress bar.",
 		},
 		{
 			name: "state",
 			description: "The current state of the progress bar.",
 			value: enums("indeterminate", "complete", "loading"),
-			isEnum: true
+			isEnum: true,
 		},
 		{
 			name: "max",
-			description: "The maximum value of the progress bar."
+			description: "The maximum value of the progress bar.",
 		},
 		{
 			name: "progress-root",
-			description: "Present on the root element."
-		}
-	]
+			description: "Present on the root element.",
+		},
+	],
 };
 
 export const progress = [root];

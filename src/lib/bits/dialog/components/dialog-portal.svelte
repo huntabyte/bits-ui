@@ -10,7 +10,7 @@
 
 	const {
 		elements: { portalled },
-		getAttrs
+		getAttrs,
 	} = getCtx();
 
 	const attrs = getAttrs("portal");

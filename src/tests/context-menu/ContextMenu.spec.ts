@@ -19,7 +19,7 @@ function setup(props: ContextMenuTestProps = {}) {
 		getByTestId,
 		queryByTestId,
 		user,
-		trigger
+		trigger,
 	};
 }
 
@@ -48,7 +48,7 @@ async function openSubmenu(props: Awaited<ReturnType<typeof open>>) {
 		user,
 		getByTestId,
 		queryByTestId,
-		trigger
+		trigger,
 	};
 }
 
@@ -73,7 +73,7 @@ describe("Context Menu", () => {
 			"checkbox-item",
 			"radio-group",
 			"radio-item",
-			"checkbox-indicator"
+			"checkbox-indicator",
 		];
 
 		for (const part of parts) {
@@ -252,7 +252,7 @@ describe("Context Menu", () => {
 
 	it("respects the `closeOnOutsideClick` prop", async () => {
 		const { queryByTestId, user, getByTestId } = await open({
-			closeOnOutsideClick: false
+			closeOnOutsideClick: false,
 		});
 		const outside = getByTestId("outside");
 		await user.click(outside);

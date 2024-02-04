@@ -15,18 +15,10 @@
 	class="min-h-input flex h-full w-[176px] items-center gap-2 rounded-card-sm border border-border bg-background py-1 pl-[18px] pr-1.5 shadow-mini"
 	type={pinInputType}
 >
-	<PinInput.Input
-		class="w-5 bg-inherit text-center font-alt text-[19px] text-foreground"
-	/>
-	<PinInput.Input
-		class="w-5 bg-inherit text-center font-alt text-[19px] text-foreground"
-	/>
-	<PinInput.Input
-		class="w-5 bg-inherit text-center font-alt text-[19px] text-foreground"
-	/>
-	<PinInput.Input
-		class="w-5 bg-inherit text-center font-alt text-[19px] text-foreground"
-	/>
+	<PinInput.Input class="w-5 bg-inherit text-center font-alt text-[19px] text-foreground" />
+	<PinInput.Input class="w-5 bg-inherit text-center font-alt text-[19px] text-foreground" />
+	<PinInput.Input class="w-5 bg-inherit text-center font-alt text-[19px] text-foreground" />
+	<PinInput.Input class="w-5 bg-inherit text-center font-alt text-[19px] text-foreground" />
 	<PinInput.HiddenInput />
 	<Toggle.Root
 		aria-label="toggle code visibility"

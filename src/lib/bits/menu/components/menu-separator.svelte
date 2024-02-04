@@ -10,7 +10,7 @@
 
 	const {
 		elements: { separator },
-		getAttrs
+		getAttrs,
 	} = getCtx();
 
 	const attrs = getAttrs("separator");

@@ -22,5 +22,5 @@ export type {
 	ContentProps,
 	TriggerProps,
 	//
-	TriggerEvents
+	TriggerEvents,
 };

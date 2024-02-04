@@ -12,7 +12,7 @@
 
 	const {
 		elements: { input },
-		getAttrs
+		getAttrs,
 	} = getCtx();
 
 	const dispatch = createDispatcher();

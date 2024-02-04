@@ -5,7 +5,7 @@
 		SidebarNav,
 		SiteHeader,
 		TableOfContents,
-		TailwindIndicator
+		TailwindIndicator,
 	} from "@/components";
 	import { navigation } from "@/config";
 	import { ModeWatcher } from "mode-watcher";
@@ -35,9 +35,7 @@
 
 			{#if !$page.error}
 				<div class="hidden text-sm xl:block">
-					<div
-						class="sticky top-16 -mt-10 h-[calc(100vh-3.5rem)] overflow-hidden pt-6"
-					>
+					<div class="sticky top-16 -mt-10 h-[calc(100vh-3.5rem)] overflow-hidden pt-6">
 						<TableOfContents />
 					</div>
 				</div>

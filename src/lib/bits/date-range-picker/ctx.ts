@@ -12,7 +12,7 @@ import type { FloatingProps } from "$lib/bits/floating/_types.js";
 function getDateRangePickerData() {
 	const NAME = "date-range-picker" as const;
 	return {
-		NAME
+		NAME,
 	};
 }
 
@@ -30,14 +30,14 @@ export function setCtx(props: CreateDateRangePickerProps) {
 		...createDateRangePicker({ ...removeUndefined(props), forceVisible: true }),
 		getCalendarAttrs,
 		getFieldAttrs,
-		getPopoverAttrs
+		getPopoverAttrs,
 	};
 	const updateOption = getOptionUpdater(dateRangePicker.options);
 	setContext(NAME, { ...dateRangePicker, updateOption });
 
 	return {
 		...dateRangePicker,
-		updateOption
+		updateOption,
 	};
 }
 
@@ -49,12 +49,12 @@ export function getCtx() {
 export function updatePositioning(props: FloatingProps) {
 	const defaultPlacement = {
 		side: "bottom",
-		align: "center"
+		align: "center",
 	} satisfies FloatingProps;
 
 	const withDefaults = { ...defaultPlacement, ...props } satisfies FloatingProps;
 	const {
-		options: { positioning }
+		options: { positioning },
 	} = getCtx();
 
 	const updater = getPositioningUpdater(positioning as Writable<FloatingConfig>);

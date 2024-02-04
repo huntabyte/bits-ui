@@ -5,15 +5,14 @@
 	type $$Props = Props;
 	export let delayMs: $$Props["delayMs"] = undefined;
 	export let loadingStatus: $$Props["loadingStatus"] = undefined;
-	export let onLoadingStatusChange: $$Props["onLoadingStatusChange"] =
-		undefined;
+	export let onLoadingStatusChange: $$Props["onLoadingStatusChange"] = undefined;
 	export let asChild: $$Props["asChild"] = false;
 	export let el: $$Props["el"] = undefined;
 
 	const {
 		states: { loadingStatus: localLoadingStatus },
 		updateOption,
-		getAttrs
+		getAttrs,
 	} = setCtx({
 		src: "",
 		delayMs,
@@ -21,7 +20,7 @@
 			loadingStatus = next;
 			onLoadingStatusChange?.(next);
 			return next;
-		}
+		},
 	});
 	const attrs = getAttrs("root");
 

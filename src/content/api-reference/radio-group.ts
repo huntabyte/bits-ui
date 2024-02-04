@@ -13,40 +13,40 @@ export const root: APISchema<RadioGroup.Props> = {
 			default: C.FALSE,
 			type: C.BOOLEAN,
 			description:
-				"Whether or not the radio group is disabled. This prevents the user from interacting with it."
+				"Whether or not the radio group is disabled. This prevents the user from interacting with it.",
 		},
 		required: {
 			default: C.FALSE,
 			type: C.BOOLEAN,
-			description: "Whether or not the radio group is required."
+			description: "Whether or not the radio group is required.",
 		},
 		loop: {
 			default: C.FALSE,
 			type: C.BOOLEAN,
 			description:
-				"Whether or not the radio group should loop through the items when navigating with the arrow keys."
+				"Whether or not the radio group should loop through the items when navigating with the arrow keys.",
 		},
 		orientation: {
 			default: "'vertical'",
 			type: {
 				type: C.ENUM,
-				definition: enums("vertical", "horizontal")
+				definition: enums("vertical", "horizontal"),
 			},
-			description: "The orientation of the radio group."
+			description: "The orientation of the radio group.",
 		},
 		value: {
 			type: C.STRING,
 			description:
-				"The value of the currently selected radio item. You can bind to this value to control the radio group's value from outside the component."
+				"The value of the currently selected radio item. You can bind to this value to control the radio group's value from outside the component.",
 		},
 		onValueChange: {
 			type: {
 				type: C.FUNCTION,
-				definition: "(value: string | undefined) => void"
+				definition: "(value: string | undefined) => void",
 			},
-			description: "A callback that is fired when the radio group's value changes."
+			description: "A callback that is fired when the radio group's value changes.",
 		},
-		...domElProps("HTMLDivElement")
+		...domElProps("HTMLDivElement"),
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
@@ -54,13 +54,13 @@ export const root: APISchema<RadioGroup.Props> = {
 			name: "orientation",
 			value: enums("vertical", "horizontal"),
 			description: "The orientation of the radio group.",
-			isEnum: true
+			isEnum: true,
 		},
 		{
 			name: "radio-group-root",
-			description: "Present on the root element."
-		}
-	]
+			description: "Present on the root element.",
+		},
+	],
 };
 
 export const item: APISchema<RadioGroup.ItemProps> = {
@@ -71,50 +71,50 @@ export const item: APISchema<RadioGroup.ItemProps> = {
 			default: C.FALSE,
 			type: C.BOOLEAN,
 			description:
-				"Whether or not the radio item is disabled. This prevents the user from interacting with it."
+				"Whether or not the radio item is disabled. This prevents the user from interacting with it.",
 		},
 		value: {
 			type: C.STRING,
 			description:
 				"The value of the radio item. This should be unique for each radio item in the group.",
-			required: true
+			required: true,
 		},
-		...domElProps("HTMLButtonElement")
+		...domElProps("HTMLButtonElement"),
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "disabled",
-			description: "Present when the radio item is disabled."
+			description: "Present when the radio item is disabled.",
 		},
 		{
 			name: "value",
-			description: "The value of the radio item."
+			description: "The value of the radio item.",
 		},
 		{
 			name: "state",
 			value: enums("checked", "unchecked"),
 			isEnum: true,
-			description: "The radio item's checked state."
+			description: "The radio item's checked state.",
 		},
 		{
 			name: "orientation",
 			value: enums("vertical", "horizontal"),
 			isEnum: true,
-			description: "The orientation of the parent radio group."
+			description: "The orientation of the parent radio group.",
 		},
 		{
 			name: "radio-group-item",
-			description: "Present on the radio item element."
-		}
-	]
+			description: "Present on the radio item element.",
+		},
+	],
 };
 
 export const input: APISchema<RadioGroup.InputProps> = {
 	title: "Input",
 	description:
 		"A hidden input that is used to submit the radio group's value with a form. It can receive all the same props/attributes as a normal HTML input.",
-	props: domElProps("HTMLInputElement")
+	props: domElProps("HTMLInputElement"),
 };
 
 export const indicator: APISchema = {
@@ -126,15 +126,15 @@ export const indicator: APISchema = {
 		attrs: attrsSlotProp,
 		checked: {
 			type: C.BOOLEAN,
-			description: "Whether or not the radio item is checked."
-		}
+			description: "Whether or not the radio item is checked.",
+		},
 	},
 	dataAttributes: [
 		{
 			name: "radio-item-indicator",
-			description: "Present on the indicator element."
-		}
-	]
+			description: "Present on the indicator element.",
+		},
+	],
 };
 
 export const radioGroup = [root, item, input, indicator];

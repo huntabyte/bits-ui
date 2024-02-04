@@ -21,7 +21,7 @@ function setup(props: Pagination.Props = { count: 100 }) {
 		prev,
 		next,
 		user,
-		...returned
+		...returned,
 	};
 }
 

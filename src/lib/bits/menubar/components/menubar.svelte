@@ -17,11 +17,11 @@
 		elements: { menubar },
 		updateOption,
 		ids,
-		getMenubarAttrs
+		getMenubarAttrs,
 	} = setCtx({ loop, closeOnEscape, preventScroll });
 
 	const idValues = derived([ids.menubar], ([$menubarId]) => ({
-		menubar: $menubarId
+		menubar: $menubarId,
 	}));
 	const attrs = getMenubarAttrs("root");
 

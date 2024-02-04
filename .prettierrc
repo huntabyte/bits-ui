@@ -1,11 +1,8 @@
 {
     "useTabs": true,
     "singleQuote": false,
-    "trailingComma": "none",
+    "trailingComma": "es5",
     "printWidth": 100,
-    "pluginSearchDirs": [
-        "."
-    ],
     "plugins": [
         "prettier-plugin-svelte",
         "prettier-plugin-tailwindcss"
@@ -15,7 +12,7 @@
             "files": "*.svelte",
             "options": {
                 "parser": "svelte",
-                "printWidth": 80
+                "printWidth": 100
             }
         },
         {

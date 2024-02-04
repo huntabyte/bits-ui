@@ -18,7 +18,7 @@
 	const {
 		updateOption,
 		states: { open: localOpen },
-		ids
+		ids,
 	} = setCtx({
 		disableFocusTrap,
 		closeOnEscape,
@@ -39,18 +39,15 @@
 		positioning: {
 			gutter: 0,
 			offset: {
-				mainAxis: 1
-			}
-		}
+				mainAxis: 1,
+			},
+		},
 	});
 
-	const idValues = derived(
-		[ids.content, ids.trigger],
-		([$contentId, $triggerId]) => ({
-			content: $contentId,
-			trigger: $triggerId
-		})
-	);
+	const idValues = derived([ids.content, ids.trigger], ([$contentId, $triggerId]) => ({
+		content: $contentId,
+		trigger: $triggerId,
+	}));
 
 	$: open !== undefined && localOpen.set(open);
 

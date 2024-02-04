@@ -16,7 +16,7 @@ function getRangeCalendarData() {
 		"head-cell",
 		"grid-body",
 		"cell",
-		"grid-row"
+		"grid-row",
 	] as const;
 
 	return { NAME, PARTS };
@@ -31,7 +31,7 @@ export function setCtx(props: CreateRangeCalendarProps) {
 	setContext(NAME, rangeCalendar);
 	return {
 		...rangeCalendar,
-		updateOption: getOptionUpdater(rangeCalendar.options)
+		updateOption: getOptionUpdater(rangeCalendar.options),
 	};
 }
 

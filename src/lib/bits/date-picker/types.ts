@@ -15,7 +15,7 @@ import type {
 	Events as CalendarEvents,
 	DayEvents,
 	PrevButtonEvents,
-	NextButtonEvents
+	NextButtonEvents,
 } from "../calendar/types.js";
 import type {
 	TriggerProps,
@@ -23,7 +23,7 @@ import type {
 	ArrowProps,
 	CloseProps,
 	CloseEvents,
-	TriggerEvents
+	TriggerEvents,
 } from "../popover/types.js";
 import type { SegmentEvents } from "../date-field/types.js";
 
@@ -65,5 +65,5 @@ export type {
 	DayEvents,
 	PrevButtonEvents,
 	NextButtonEvents,
-	SegmentEvents
+	SegmentEvents,
 };

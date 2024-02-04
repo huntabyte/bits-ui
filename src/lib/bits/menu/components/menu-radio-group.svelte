@@ -13,7 +13,7 @@
 	const {
 		elements: { radioGroup },
 		states: { value: localValue },
-		getAttrs
+		getAttrs,
 	} = setRadioGroupCtx({
 		defaultValue: value,
 		onValueChange: ({ next }) => {
@@ -22,7 +22,7 @@
 				value = next;
 			}
 			return next;
-		}
+		},
 	});
 
 	const attrs = getAttrs("radio-group");

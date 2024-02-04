@@ -12,7 +12,7 @@ import type { FloatingProps } from "$lib/bits/floating/_types.js";
 function getDatePickerData() {
 	const NAME = "date-picker" as const;
 	return {
-		NAME
+		NAME,
 	};
 }
 
@@ -29,14 +29,14 @@ export function setCtx(props: CreateDatePickerProps) {
 		...createDatePicker({ ...removeUndefined(props), forceVisible: true }),
 		getCalendarAttrs,
 		getFieldAttrs,
-		getPopoverAttrs
+		getPopoverAttrs,
 	};
 	const updateOption = getOptionUpdater(datePicker.options);
 	setContext(NAME, { ...datePicker, updateOption });
 
 	return {
 		...datePicker,
-		updateOption
+		updateOption,
 	};
 }
 
@@ -48,11 +48,11 @@ export function getCtx() {
 export function updatePositioning(props: FloatingProps) {
 	const defaultPlacement = {
 		side: "bottom",
-		align: "center"
+		align: "center",
 	} satisfies FloatingProps;
 	const withDefaults = { ...defaultPlacement, ...props } satisfies FloatingProps;
 	const {
-		options: { positioning }
+		options: { positioning },
 	} = getCtx();
 
 	const updater = getPositioningUpdater(positioning as Writable<FloatingConfig>);

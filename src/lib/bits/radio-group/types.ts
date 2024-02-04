@@ -23,5 +23,5 @@ export type {
 	ItemProps,
 	ItemIndicatorProps,
 	//
-	ItemEvents
+	ItemEvents,
 };

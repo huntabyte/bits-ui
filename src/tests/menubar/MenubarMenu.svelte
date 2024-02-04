@@ -41,12 +41,8 @@
 				</Menubar.CheckboxItem>
 			</Menubar.SubContent>
 		</Menubar.Sub>
-		<Menubar.Item disabled data-testid="{id}-disabled-item"
-			>disabled item</Menubar.Item
-		>
-		<Menubar.Item disabled data-testid="{id}-disabled-item-2"
-			>disabled item 2</Menubar.Item
-		>
+		<Menubar.Item disabled data-testid="{id}-disabled-item">disabled item</Menubar.Item>
+		<Menubar.Item disabled data-testid="{id}-disabled-item-2">disabled item 2</Menubar.Item>
 		<Menubar.CheckboxItem data-testid="{id}-checkbox-item">
 			<Menubar.CheckboxIndicator data-testid="{id}-checkbox-indicator">
 				checked

@@ -7,7 +7,7 @@ function getProgressData() {
 
 	return {
 		NAME,
-		PARTS
+		PARTS,
 	};
 }
 
@@ -18,6 +18,6 @@ export function setCtx(props: CreateProgressProps) {
 
 	return {
 		...progress,
-		updateOption: getOptionUpdater(progress.options)
+		updateOption: getOptionUpdater(progress.options),
 	};
 }
