@@ -16,7 +16,7 @@
 		<AlertDialog.Overlay
 			transition={fade}
 			transitionConfig={{ duration: 150 }}
-			class="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm"
+			class="fixed inset-0 z-50 bg-black/80"
 		/>
 		<AlertDialog.Content
 			transition={flyAndScale}
@@ -33,7 +33,7 @@
 			</div>
 			<div class="flex w-full items-center justify-center gap-2">
 				<AlertDialog.Cancel
-					class="inline-flex h-input w-full items-center justify-center rounded-input bg-muted text-[15px] font-medium shadow-mini transition-all hover:bg-muted/95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
+					class="inline-flex h-input w-full items-center justify-center rounded-input bg-muted text-[15px] font-medium shadow-mini transition-all hover:bg-dark-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
 					>Cancel</AlertDialog.Cancel
 				>
 				<AlertDialog.Action

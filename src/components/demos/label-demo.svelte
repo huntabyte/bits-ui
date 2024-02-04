@@ -8,7 +8,7 @@
 	<Checkbox.Root
 		id="terms"
 		aria-labelledby="terms-label"
-		class="peer inline-flex items-center justify-center rounded-md border border-muted bg-foreground sq-[25px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98 data-[state=unchecked]:border-border-input data-[state=unchecked]:bg-background"
+		class="peer inline-flex items-center justify-center rounded-md border border-muted bg-foreground transition-all duration-150 ease-in-out sq-[25px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98 data-[state=unchecked]:border-border-input data-[state=unchecked]:bg-background data-[state=unchecked]:hover:border-dark-40"
 		checked="indeterminate"
 	>
 		<Checkbox.Indicator

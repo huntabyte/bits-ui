@@ -4,7 +4,7 @@
 </script>
 
 <Pagination.Root count={100} perPage={10} let:pages let:range>
-	<div class="mb-[55px] flex items-center">
+	<div class="my-8 flex items-center">
 		<Pagination.PrevButton
 			class="mr-[25px] inline-flex items-center justify-center rounded-[9px] bg-transparent sq-10 hover:bg-dark-10 active:scale-98 disabled:cursor-not-allowed disabled:text-muted-foreground hover:disabled:bg-transparent"
 		>
