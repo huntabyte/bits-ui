@@ -1,5 +1,5 @@
 import type { HTMLAttributes } from "svelte/elements";
-import type { FocusOutsideEvent, PointerDownOutsideEvent } from "./utils";
+import type { FocusOutsideEvent, PointerDownOutsideEvent } from "./utils.svelte";
 
 export type DismissibleLayerProps = {
 	/**
