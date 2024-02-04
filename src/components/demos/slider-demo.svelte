@@ -15,7 +15,7 @@
 			<Slider.Range class="absolute h-full bg-foreground" />
 		</span>
 		<Slider.Thumb
-			class="block rounded-full border border-border-input bg-background shadow transition-colors sq-[27px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 active:scale-98 disabled:pointer-events-none disabled:opacity-50 cursor-pointer hover:hover:border-dark-40"
+			class="block cursor-pointer rounded-full border border-border-input bg-background shadow transition-colors sq-[27px] hover:hover:border-dark-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 active:scale-98 disabled:pointer-events-none disabled:opacity-50"
 		/>
 	</Slider.Root>
 </div>

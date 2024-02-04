@@ -13,7 +13,7 @@
 		>
 		<DateRangePicker.Input
 			let:segments
-			class="flex h-input w-full max-w-[320px] select-none items-center rounded-input border border-border-input bg-background py-3 px-2 text-sm tracking-[0.01em] text-muted-foreground focus-within:border-border-input-hover focus-within:shadow-date-field-focus hover:border-border-input-hover"
+			class="flex h-input w-full max-w-[320px] select-none items-center rounded-input border border-border-input bg-background px-2 py-3 text-sm tracking-[0.01em] text-muted-foreground focus-within:border-border-input-hover focus-within:shadow-date-field-focus hover:border-border-input-hover"
 		>
 			{#each segments.start as { part, value }}
 				<div class="inline-block select-none">
@@ -51,7 +51,7 @@
 				</div>
 			{/each}
 			<DateRangePicker.Trigger
-				class="ml-auto inline-flex items-center justify-center rounded-[5px] transition-all sq-8 hover:bg-muted active:bg-dark-10 text-foreground/60"
+				class="ml-auto inline-flex items-center justify-center rounded-[5px] text-foreground/60 transition-all sq-8 hover:bg-muted active:bg-dark-10"
 			>
 				<CalendarBlank class="sq-6" />
 			</DateRangePicker.Trigger>
