@@ -3,7 +3,7 @@
 	import { Toggle } from "$lib";
 
 	let unlocked = false;
-	$: code = unlocked ? "1985" : "••••";
+	$: code = unlocked ? "B1T5" : "••••";
 </script>
 
 <div

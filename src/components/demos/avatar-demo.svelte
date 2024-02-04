@@ -10,7 +10,7 @@
 		: 'border-transparent'} bg-muted text-[17px] font-medium uppercase text-muted-foreground"
 >
 	<div
-		class="flex h-full w-full items-center justify-center rounded-full border border-background"
+		class="flex h-full w-full items-center justify-center rounded-full border-transparent overflow-hidden border-2"
 	>
 		<Avatar.Image src="/avatar-1.png" alt="@huntabyte" />
 		<Avatar.Fallback class="border border-muted">HB</Avatar.Fallback>
