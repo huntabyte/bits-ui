@@ -19,7 +19,7 @@
 		elements: { root, ticks, thumbs },
 		states: { value: localValue },
 		updateOption,
-		getAttrs
+		getAttrs,
 	} = setCtx({
 		disabled,
 		min,
@@ -33,7 +33,7 @@
 				value = next;
 			}
 			return next;
-		}
+		},
 	});
 
 	const attrs = getAttrs("root");

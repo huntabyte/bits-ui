@@ -1,13 +1,7 @@
 <script lang="ts">
 	import { ContextMenu } from "$lib";
 	import { flyAndScale } from "@/utils";
-	import {
-		PencilSimpleLine,
-		PlusCircle,
-		CopySimple,
-		Trash,
-		MouseSimple
-	} from "phosphor-svelte";
+	import { PencilSimpleLine, PlusCircle, CopySimple, Trash, MouseSimple } from "$icons/index.js";
 </script>
 
 <ContextMenu.Root>
@@ -15,7 +9,7 @@
 		class="flex h-[188px] w-[279px] select-none items-center justify-center rounded-card border-2 border-dashed border-border-input bg-transparent font-semibold text-muted-foreground"
 	>
 		<div class="flex flex-col items-center justify-center gap-4 text-center">
-			<MouseSimple class="sq-8" />
+			<MouseSimple class="size-8" />
 			Right click me
 		</div>
 	</ContextMenu.Trigger>
@@ -27,17 +21,17 @@
 			class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none !ring-0 !ring-transparent data-[highlighted]:bg-muted"
 		>
 			<div class="flex items-center">
-				<PencilSimpleLine class="mr-2 text-foreground-alt sq-5" />
+				<PencilSimpleLine class="mr-2 size-5 text-foreground-alt" />
 				Edit
 			</div>
 			<div class="ml-auto flex items-center gap-px">
 				<kbd
-					class="inline-flex items-center justify-center rounded-button border border-dark-10 bg-background text-[13px] text-muted-foreground shadow-kbd sq-5"
+					class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background text-[13px] text-muted-foreground shadow-kbd"
 				>
 					⌘
 				</kbd>
 				<kbd
-					class="inline-flex items-center justify-center rounded-button border border-dark-10 bg-background text-[11px] text-muted-foreground shadow-kbd sq-5"
+					class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background text-[11px] text-muted-foreground shadow-kbd"
 				>
 					E
 				</kbd>
@@ -48,17 +42,17 @@
 				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none !ring-0 !ring-transparent data-[highlighted]:bg-muted data-[state=open]:bg-muted"
 			>
 				<div class="flex items-center">
-					<PlusCircle class="mr-2 text-foreground-alt sq-5" />
+					<PlusCircle class="mr-2 size-5 text-foreground-alt" />
 					Add
 				</div>
 				<div class="ml-auto flex items-center gap-px">
 					<kbd
-						class="inline-flex items-center justify-center rounded-button border border-dark-10 bg-background text-[13px] text-muted-foreground shadow-kbd sq-5"
+						class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background text-[13px] text-muted-foreground shadow-kbd"
 					>
 						⌘
 					</kbd>
 					<kbd
-						class="inline-flex items-center justify-center rounded-button border border-dark-10 bg-background text-[11px] text-muted-foreground shadow-kbd sq-5"
+						class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background text-[11px] text-muted-foreground shadow-kbd"
 					>
 						N
 					</kbd>
@@ -100,17 +94,17 @@
 			class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none !ring-0 !ring-transparent data-[highlighted]:bg-muted"
 		>
 			<div class="flex items-center">
-				<CopySimple class="mr-2 text-foreground-alt sq-5" />
+				<CopySimple class="mr-2 size-5 text-foreground-alt" />
 				Duplicate
 			</div>
 			<div class="ml-auto flex items-center gap-px">
 				<kbd
-					class="inline-flex items-center justify-center rounded-button border border-dark-10 bg-background text-[13px] text-muted-foreground shadow-kbd sq-5"
+					class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background text-[13px] text-muted-foreground shadow-kbd"
 				>
 					⌘
 				</kbd>
 				<kbd
-					class="inline-flex items-center justify-center rounded-button border border-dark-10 bg-background text-[11px] text-muted-foreground shadow-kbd sq-5"
+					class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background text-[11px] text-muted-foreground shadow-kbd"
 				>
 					D
 				</kbd>
@@ -121,7 +115,7 @@
 			class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none !ring-0 !ring-transparent data-[highlighted]:bg-muted"
 		>
 			<div class="flex items-center">
-				<Trash class="mr-2 text-foreground-alt sq-5" />
+				<Trash class="mr-2 size-5 text-foreground-alt" />
 				Delete
 			</div>
 		</ContextMenu.Item>

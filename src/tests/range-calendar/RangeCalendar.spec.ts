@@ -13,17 +13,17 @@ const kbd = getTestKbd();
 
 const calendarDateRange = {
 	start: new CalendarDate(1980, 1, 20),
-	end: new CalendarDate(1980, 1, 25)
+	end: new CalendarDate(1980, 1, 25),
 };
 
 const calendarDateTimeRange = {
 	start: new CalendarDateTime(1980, 1, 20, 12, 30, 0, 0),
-	end: new CalendarDateTime(1980, 1, 25, 12, 30, 0, 0)
+	end: new CalendarDateTime(1980, 1, 25, 12, 30, 0, 0),
 };
 
 const zonedDateTimeRange = {
 	start: toZoned(calendarDateTimeRange.start, "America/New_York"),
-	end: toZoned(calendarDateTimeRange.end, "America/New_York")
+	end: toZoned(calendarDateTimeRange.end, "America/New_York"),
 };
 
 const narrowWeekdays = ["S", "M", "T", "W", "T", "F", "S"];
@@ -78,7 +78,7 @@ describe("Calendar", () => {
 
 	it("resets range on select when a range is already selected", async () => {
 		const { getByTestId, calendar, user } = setup({
-			value: calendarDateRange
+			value: calendarDateRange,
 		});
 
 		const startValue = getByTestId("start-value");
@@ -135,7 +135,7 @@ describe("Calendar", () => {
 	it("always renders six weeks when `fixedWeeks` is `true`", async () => {
 		const { getByTestId, calendar, user } = setup({
 			value: calendarDateTimeRange,
-			fixedWeeks: true
+			fixedWeeks: true,
 		});
 
 		function getNumberOfWeeks() {
@@ -158,7 +158,7 @@ describe("Calendar", () => {
 	it("should not allow navigation before the `minValue` (prev button)", async () => {
 		const { getByTestId, user } = setup({
 			value: calendarDateRange,
-			minValue: new CalendarDate(1979, 11, 25)
+			minValue: new CalendarDate(1979, 11, 25),
 		});
 
 		const prevBtn = getByTestId("prev-button");
@@ -180,7 +180,7 @@ describe("Calendar", () => {
 	it("should not allow navigation after the `maxValue` (next button)", async () => {
 		const { getByTestId, user } = setup({
 			value: calendarDateRange,
-			maxValue: new CalendarDate(1980, 3, 25)
+			maxValue: new CalendarDate(1980, 3, 25),
 		});
 
 		const nextBtn = getByTestId("next-button");
@@ -202,7 +202,7 @@ describe("Calendar", () => {
 	it("does not navigate after `maxValue` (with keyboard)", async () => {
 		const { getByTestId, user } = setup({
 			value: calendarDateRange,
-			maxValue: new CalendarDate(1980, 3, 31)
+			maxValue: new CalendarDate(1980, 3, 31),
 		});
 
 		const firstDayInMonth = getByTestId("date-1-1");
@@ -251,7 +251,7 @@ describe("Calendar", () => {
 	it("does not navigate before `minValue` (with keyboard)", async () => {
 		const { getByTestId, user } = setup({
 			value: calendarDateRange,
-			minValue: new CalendarDate(1979, 12, 1)
+			minValue: new CalendarDate(1979, 12, 1),
 		});
 
 		const firstDayInMonth = getByTestId("date-1-1");
@@ -283,7 +283,7 @@ describe("Calendar", () => {
 			placeholder: calendarDateRange.start,
 			isDateUnavailable: (date) => {
 				return date.day === 3;
-			}
+			},
 		});
 
 		const thirdDayInMonth = getByTestId("date-1-3");
@@ -297,7 +297,7 @@ describe("Calendar", () => {
 	it("formats the weekday labels correctly - `'narrow'`", async () => {
 		const { getByTestId } = setup({
 			placeholder: calendarDateRange.start,
-			weekdayFormat: "narrow"
+			weekdayFormat: "narrow",
 		});
 		for (const [i, weekday] of narrowWeekdays.entries()) {
 			const weekdayEl = getByTestId(`weekday-1-${i}`);
@@ -308,7 +308,7 @@ describe("Calendar", () => {
 	it("formats the weekday labels correctly - `'short'`", async () => {
 		const { getByTestId } = setup({
 			placeholder: calendarDateRange.start,
-			weekdayFormat: "short"
+			weekdayFormat: "short",
 		});
 		for (const [i, weekday] of shortWeekdays.entries()) {
 			const weekdayEl = getByTestId(`weekday-1-${i}`);
@@ -319,7 +319,7 @@ describe("Calendar", () => {
 	it("formats the weekday labels correctly - `'long'`", async () => {
 		const { getByTestId } = setup({
 			placeholder: calendarDateRange.start,
-			weekdayFormat: "long"
+			weekdayFormat: "long",
 		});
 		for (const [i, weekday] of longWeekdays.entries()) {
 			const weekdayEl = getByTestId(`weekday-1-${i}`);

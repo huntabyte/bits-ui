@@ -11,45 +11,45 @@ const root: APISchema<Accordion.Props<false>> = {
 		multiple: {
 			default: "false",
 			type: C.BOOLEAN,
-			description: "Whether or not multiple accordion items can be active at the same time."
+			description: "Whether or not multiple accordion items can be active at the same time.",
 		},
 		disabled: {
 			default: "false",
 			type: C.BOOLEAN,
-			description: "Whether or not the accordion is disabled."
+			description: "Whether or not the accordion is disabled.",
 		},
 		value: {
 			type: {
 				type: C.UNION,
-				definition: union("string", "undefined")
+				definition: union("string", "undefined"),
 			},
-			description: "The active accordion item value."
+			description: "The active accordion item value.",
 		},
 		onValueChange: {
 			type: {
 				type: C.FUNCTION,
-				definition: "(value: string | undefined) => void"
+				definition: "(value: string | undefined) => void",
 			},
-			description: "A callback function called when the active accordion item value changes."
+			description: "A callback function called when the active accordion item value changes.",
 		},
-		...domElProps("HTMLDivElement")
+		...domElProps("HTMLDivElement"),
 	},
 	slotProps: {
-		...builderAndAttrsSlotProps
+		...builderAndAttrsSlotProps,
 	},
 	dataAttributes: [
 		{
 			name: "orientation",
 			value: enums("horizontal", "vertical"),
 			description: "The orientation of the accordion.",
-			isEnum: true
+			isEnum: true,
 		},
 		{
 			name: "accordion-root",
 			value: "",
-			description: "Present on the root element."
-		}
-	]
+			description: "Present on the root element.",
+		},
+	],
 };
 
 const item: APISchema<Accordion.ItemProps> = {
@@ -59,35 +59,35 @@ const item: APISchema<Accordion.ItemProps> = {
 		value: {
 			required: true,
 			type: "string",
-			description: "The value of the accordion item."
+			description: "The value of the accordion item.",
 		},
 		disabled: {
 			default: "false",
 			type: "boolean",
-			description: "Whether or not the accordion item is disabled."
+			description: "Whether or not the accordion item is disabled.",
 		},
-		...domElProps("HTMLDivElement")
+		...domElProps("HTMLDivElement"),
 	},
 	slotProps: {
-		...builderAndAttrsSlotProps
+		...builderAndAttrsSlotProps,
 	},
 	dataAttributes: [
 		{
 			name: "state",
 			value: enums("open", "closed"),
 			description: "The state of the accordion item.",
-			isEnum: true
+			isEnum: true,
 		},
 		{
 			name: "disabled",
 			value: "",
-			description: "Present when the accordion item is disabled."
+			description: "Present when the accordion item is disabled.",
 		},
 		{
 			name: "accordion-item",
-			description: "Present on the item element."
-		}
-	]
+			description: "Present on the item element.",
+		},
+	],
 };
 
 const trigger: APISchema<Accordion.TriggerProps> = {
@@ -100,21 +100,21 @@ const trigger: APISchema<Accordion.TriggerProps> = {
 			name: "state",
 			value: enums("open", "closed"),
 			description: "The state of the accordion item.",
-			isEnum: true
+			isEnum: true,
 		},
 		{
 			name: "disabled",
-			description: "Present when the accordion item is disabled."
+			description: "Present when the accordion item is disabled.",
 		},
 		{
 			name: "value",
-			description: "The value of the accordion item."
+			description: "The value of the accordion item.",
 		},
 		{
 			name: "accordion-trigger",
-			description: "Present on the trigger element."
-		}
-	]
+			description: "Present on the trigger element.",
+		},
+	],
 };
 
 const content: APISchema<Accordion.ContentProps> = {
@@ -127,21 +127,21 @@ const content: APISchema<Accordion.ContentProps> = {
 			name: "state",
 			value: enums("open", "closed"),
 			description: "The state of the accordion item.",
-			isEnum: true
+			isEnum: true,
 		},
 		{
 			name: "disabled",
-			description: "Present when the accordion item is disabled."
+			description: "Present when the accordion item is disabled.",
 		},
 		{
 			name: "value",
-			description: "The value of the accordion item."
+			description: "The value of the accordion item.",
 		},
 		{
 			name: "accordion-content",
-			description: "Present on the content element."
-		}
-	]
+			description: "Present on the content element.",
+		},
+	],
 };
 
 const header: APISchema<Accordion.HeaderProps> = {
@@ -151,28 +151,28 @@ const header: APISchema<Accordion.HeaderProps> = {
 		level: {
 			type: {
 				type: C.ENUM,
-				definition: union("1", "2", "3", "4", "5", "6")
+				definition: union("1", "2", "3", "4", "5", "6"),
 			},
 			description:
-				"The heading level to use for the header. This will be set as the `aria-level` attribute."
+				"The heading level to use for the header. This will be set as the `aria-level` attribute.",
 		},
-		...domElProps("HTMLDivElement")
+		...domElProps("HTMLDivElement"),
 	},
 	slotProps: {
-		...builderAndAttrsSlotProps
+		...builderAndAttrsSlotProps,
 	},
 	dataAttributes: [
 		{
 			name: "heading-level",
 			value: enums("1", "2", "3", "4", "5", "6"),
 			description: "The heading level of the header.",
-			isEnum: true
+			isEnum: true,
 		},
 		{
 			name: "accordion-header",
-			description: "Present on the header element."
-		}
-	]
+			description: "Present on the header element.",
+		},
+	],
 };
 
 export const accordion = [root, item, header, trigger, content];

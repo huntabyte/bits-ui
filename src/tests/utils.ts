@@ -17,7 +17,7 @@ export function getTestKbd() {
 
 	return {
 		...initTestKbd,
-		SHIFT_TAB: `{Shift>}{${kbd.TAB}}`
+		SHIFT_TAB: `{Shift>}{${kbd.TAB}}`,
 	};
 }
 

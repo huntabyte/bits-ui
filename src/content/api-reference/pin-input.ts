@@ -11,46 +11,46 @@ const root: APISchema<PinInput.Props> = {
 		placeholder: {
 			type: C.STRING,
 			default: "○",
-			description: "The placeholder character to use for empty pin-inputs."
+			description: "The placeholder character to use for empty pin-inputs.",
 		},
 		value: {
 			type: "string[]",
-			description: "The value of the pin-input."
+			description: "The value of the pin-input.",
 		},
 		name: {
 			type: C.STRING,
-			description: "The name of the pin-input. This is used for form submission."
+			description: "The name of the pin-input. This is used for form submission.",
 		},
 		disabled: {
 			type: C.BOOLEAN,
 			default: C.FALSE,
-			description: "Whether or not the pin-input is disabled."
+			description: "Whether or not the pin-input is disabled.",
 		},
 		type: {
 			type: enums("text", "password"),
 			default: "text",
-			description: "The type of the input. Use `password` to mask the input."
+			description: "The type of the input. Use `password` to mask the input.",
 		},
 		onValueChange: {
 			type: {
 				type: C.FUNCTION,
-				definition: "(value: string | undefined) => void"
+				definition: "(value: string | undefined) => void",
 			},
-			description: "A callback function called when the pin-input value changes."
+			description: "A callback function called when the pin-input value changes.",
 		},
-		...domElProps("HTMLDivElement")
+		...domElProps("HTMLDivElement"),
 	},
 	slotProps: { ...builderAndAttrsSlotProps, ids: idsSlotProp },
 	dataAttributes: [
 		{
 			name: "pin-input-root",
-			description: "Present on the root element."
+			description: "Present on the root element.",
 		},
 		{
 			name: "complete",
-			description: "Present if the pin-input is complete."
-		}
-	]
+			description: "Present if the pin-input is complete.",
+		},
+	],
 };
 
 const input: APISchema<PinInput.InputProps> = {
@@ -60,13 +60,13 @@ const input: APISchema<PinInput.InputProps> = {
 	dataAttributes: [
 		{
 			name: "pin-input-input",
-			description: "Present on the input element."
+			description: "Present on the input element.",
 		},
 		{
 			name: "complete",
-			description: "Present if the pin-input is complete."
-		}
-	]
+			description: "Present if the pin-input is complete.",
+		},
+	],
 };
 
 const hiddenInput: APISchema<PinInput.HiddenInputProps> = {
@@ -76,9 +76,9 @@ const hiddenInput: APISchema<PinInput.HiddenInputProps> = {
 	dataAttributes: [
 		{
 			name: "pin-input-hidden-input",
-			description: "Present on the hidden input element."
-		}
-	]
+			description: "Present on the hidden input element.",
+		},
+	],
 };
 
 export const pinInput = [root, input, hiddenInput];

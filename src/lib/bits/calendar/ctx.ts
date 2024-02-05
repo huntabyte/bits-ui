@@ -16,7 +16,7 @@ export function getCalendarData() {
 		"head-cell",
 		"grid-body",
 		"cell",
-		"grid-row"
+		"grid-row",
 	] as const;
 
 	return { NAME, PARTS };
@@ -34,7 +34,7 @@ export function setCtx<Multiple extends boolean>(props: CreateCalendarProps<Mult
 
 	return {
 		...calendar,
-		updateOption: getOptionUpdater(calendar.options)
+		updateOption: getOptionUpdater(calendar.options),
 	};
 }
 

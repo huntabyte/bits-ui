@@ -24,5 +24,5 @@ export type {
 	RadioItemEvents as ContextMenuRadioItemEvents,
 	SubContentEvents as ContextMenuSubContentEvents,
 	SubTriggerEvents as ContextMenuSubTriggerEvents,
-	CheckboxItemEvents as ContextMenuCheckboxItemEvents
+	CheckboxItemEvents as ContextMenuCheckboxItemEvents,
 } from "./types.js";

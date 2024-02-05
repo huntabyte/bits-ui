@@ -7,7 +7,7 @@ function getTabsData() {
 	const PARTS = ["root", "content", "list", "trigger"] as const;
 	return {
 		NAME,
-		PARTS
+		PARTS,
 	};
 }
 
@@ -20,7 +20,7 @@ export function setCtx(props: CreateTabsProps) {
 	setContext(NAME, tabs);
 	return {
 		...tabs,
-		updateOption: getOptionUpdater(tabs.options)
+		updateOption: getOptionUpdater(tabs.options),
 	};
 }
 

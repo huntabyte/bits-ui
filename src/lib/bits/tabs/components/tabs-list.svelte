@@ -10,7 +10,7 @@
 
 	const {
 		elements: { list },
-		getAttrs
+		getAttrs,
 	} = getCtx();
 
 	const attrs = getAttrs("list");

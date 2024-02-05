@@ -2,7 +2,7 @@ import {
 	createBitAttrs,
 	generateId,
 	getOptionUpdater,
-	removeUndefined
+	removeUndefined,
 } from "$lib/internal/index.js";
 import {
 	type CreateDropdownSubmenuProps as DropdownSubmenuProps,
@@ -10,7 +10,7 @@ import {
 	type Checkbox as CheckboxReturn,
 	type CreateDropdownMenuCheckboxItemProps as DropdownCheckboxItemProps,
 	type CreateDropdownMenuProps,
-	createDropdownMenu
+	createDropdownMenu,
 } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
 import type { Writable } from "svelte/store";
@@ -40,7 +40,7 @@ export function getMenuData() {
 		"separator",
 		"sub-content",
 		"sub-trigger",
-		"trigger"
+		"trigger",
 	] as const;
 
 	return {
@@ -50,7 +50,7 @@ export function getMenuData() {
 		CHECKBOX_ITEM_NAME,
 		RADIO_ITEM_NAME,
 		GROUP_NAME,
-		PARTS
+		PARTS,
 	};
 }
 
@@ -69,12 +69,12 @@ export function setCtx(props: CreateDropdownMenuProps) {
 	const getAttrs = createBitAttrs("menu", PARTS);
 	const dropdownMenu = {
 		...createDropdownMenu({ ...removeUndefined(props), forceVisible: true }),
-		getAttrs
+		getAttrs,
 	};
 	setContext(NAME, dropdownMenu);
 	return {
 		...dropdownMenu,
-		updateOption: getOptionUpdater(dropdownMenu.options)
+		updateOption: getOptionUpdater(dropdownMenu.options),
 	};
 }
 
@@ -82,13 +82,13 @@ export function setSubMenuCtx(props: DropdownSubmenuProps) {
 	const { SUB_NAME } = getMenuData();
 	const {
 		builders: { createSubmenu },
-		getAttrs
+		getAttrs,
 	} = getCtx();
 	const sub = { ...createSubmenu(removeUndefined(props)), getAttrs };
 	setContext(SUB_NAME, sub);
 	return {
 		...sub,
-		updateOption: getOptionUpdater(sub.options)
+		updateOption: getOptionUpdater(sub.options),
 	};
 }
 
@@ -96,13 +96,13 @@ export function setRadioGroupCtx(props: DropdownRadioGroupProps) {
 	const { RADIO_GROUP_NAME } = getMenuData();
 	const {
 		builders: { createMenuRadioGroup },
-		getAttrs
+		getAttrs,
 	} = getCtx();
 	const radioGroup = createMenuRadioGroup(props);
 	setContext(RADIO_GROUP_NAME, { ...radioGroup, getAttrs });
 	return {
 		...radioGroup,
-		getAttrs
+		getAttrs,
 	};
 }
 
@@ -112,7 +112,7 @@ export function setRadioItem(value: string) {
 	setContext(RADIO_ITEM_NAME, { ...dropdownMenu, value });
 	return {
 		...dropdownMenu,
-		value
+		value,
 	};
 }
 
@@ -120,7 +120,7 @@ export function getRadioIndicator() {
 	const { RADIO_ITEM_NAME } = getMenuData();
 	const radioItem = getContext<GetRadioItem>(RADIO_ITEM_NAME);
 	return {
-		...radioItem
+		...radioItem,
 	};
 }
 
@@ -139,7 +139,7 @@ export function setCheckboxItem(props: DropdownCheckboxItemProps) {
 	const { CHECKBOX_ITEM_NAME } = getMenuData();
 	const {
 		builders: { createCheckboxItem },
-		getAttrs
+		getAttrs,
 	} = getCtx();
 	const checkboxItem = createCheckboxItem(removeUndefined(props));
 	setContext(CHECKBOX_ITEM_NAME, checkboxItem.states.checked);
@@ -147,7 +147,7 @@ export function setCheckboxItem(props: DropdownCheckboxItemProps) {
 	return {
 		...checkboxItem,
 		updateOption: getOptionUpdater(checkboxItem.options),
-		getAttrs
+		getAttrs,
 	};
 }
 
@@ -159,7 +159,7 @@ export function setGroupCtx() {
 	const { GROUP_NAME } = getMenuData();
 	const {
 		elements: { group },
-		getAttrs
+		getAttrs,
 	} = getCtx();
 	const id = generateId();
 	setContext(GROUP_NAME, id);
@@ -171,7 +171,7 @@ export function getGroupLabel() {
 	const id = getContext<string>(GROUP_NAME) ?? generateId();
 	const {
 		elements: { groupLabel },
-		getAttrs
+		getAttrs,
 	} = getCtx();
 	return { groupLabel, id, getAttrs };
 }
@@ -185,11 +185,11 @@ export function setArrow(size = 8) {
 export function updatePositioning(props: FloatingProps) {
 	const defaultPlacement = {
 		side: "bottom",
-		align: "center"
+		align: "center",
 	} satisfies FloatingProps;
 	const withDefaults = { ...defaultPlacement, ...props } satisfies FloatingProps;
 	const {
-		options: { positioning }
+		options: { positioning },
 	} = getCtx();
 
 	const updater = getPositioningUpdater(positioning as Writable<FloatingConfig>);
@@ -199,12 +199,12 @@ export function updatePositioning(props: FloatingProps) {
 export function updateSubPositioning(props: FloatingProps) {
 	const defaultSubPlacement = {
 		side: "right",
-		align: "start"
+		align: "start",
 	} satisfies FloatingProps;
 
 	const withDefaults = { ...defaultSubPlacement, ...props } satisfies FloatingProps;
 	const {
-		options: { positioning }
+		options: { positioning },
 	} = getSubmenuCtx();
 
 	const updater = getPositioningUpdater(positioning as Writable<FloatingConfig>);

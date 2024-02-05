@@ -16,5 +16,5 @@ export type {
 	Props,
 	ItemProps,
 	//
-	ItemEvents
+	ItemEvents,
 };

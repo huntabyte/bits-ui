@@ -6,5 +6,5 @@ export type {
 	TriggerProps as PopoverTriggerProps,
 	//
 	TriggerEvents as PopoverTriggerEvents,
-	CloseEvents as PopoverCloseEvents
+	CloseEvents as PopoverCloseEvents,
 } from "./types.js";

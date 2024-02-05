@@ -1,23 +1,22 @@
 <script lang="ts">
 	import { Accordion } from "$lib";
-	import { CaretDown } from "phosphor-svelte";
+	import { CaretDown } from "$icons/index.js";
 	import { slide } from "svelte/transition";
 
 	const items = [
 		{
 			title: "What is the meaning of life?",
 			content:
-				"To become a better person, to help others, and to leave the world a better place than you found it."
+				"To become a better person, to help others, and to leave the world a better place than you found it.",
 		},
 		{
 			title: "How do I become a better person?",
-			content:
-				"Read books, listen to podcasts, and surround yourself with people who inspire you."
+			content: "Read books, listen to podcasts, and surround yourself with people who inspire you.",
 		},
 		{
 			title: "What is the best way to help others?",
-			content: "Give them your time, attention, and love."
-		}
+			content: "Give them your time, attention, and love.",
+		},
 	];
 </script>
 
@@ -30,9 +29,9 @@
 				>
 					{item.title}
 					<span
-						class="inline-flex items-center justify-center rounded-[7px] bg-transparent transition-all sq-8 hover:bg-dark-10"
+						class="inline-flex size-8 items-center justify-center rounded-[7px] bg-transparent transition-all hover:bg-dark-10"
 					>
-						<CaretDown class="transition-all duration-200 sq-[18px]" />
+						<CaretDown class="size-[18px] transition-all duration-200" />
 					</span>
 				</Accordion.Trigger>
 			</Accordion.Header>

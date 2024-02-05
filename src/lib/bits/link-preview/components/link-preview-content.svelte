@@ -36,7 +36,7 @@
 		elements: { content },
 		states: { open },
 		ids,
-		getAttrs
+		getAttrs,
 	} = getCtx();
 
 	$: if (id) {
@@ -61,7 +61,7 @@
 			sameWidth,
 			fitViewport,
 			strategy,
-			overlap
+			overlap,
 		});
 	}
 </script>

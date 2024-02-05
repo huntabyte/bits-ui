@@ -12,7 +12,7 @@
 
 	const {
 		elements: { link },
-		getAttrs
+		getAttrs,
 	} = getCtx();
 
 	const dispatch = createDispatcher();

@@ -7,7 +7,7 @@ export function getCheckboxData() {
 	const PARTS = ["root", "input", "indicator"] as const;
 	return {
 		NAME,
-		PARTS
+		PARTS,
 	};
 }
 
@@ -22,7 +22,7 @@ export function setCtx(props: CreateCheckboxProps) {
 
 	return {
 		...checkbox,
-		updateOption: getOptionUpdater(checkbox.options)
+		updateOption: getOptionUpdater(checkbox.options),
 	};
 }
 

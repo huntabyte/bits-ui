@@ -14,7 +14,7 @@ function getAlertDialogData() {
 		"overlay",
 		"portal",
 		"title",
-		"trigger"
+		"trigger",
 	] as const;
 
 	return { NAME, PARTS };
@@ -26,19 +26,19 @@ export function setCtx(props: SetProps) {
 	const initAlertDialog = createDialog({
 		...removeUndefined(props),
 		role: "alertdialog",
-		forceVisible: true
+		forceVisible: true,
 	});
 	const alertDialog = {
 		...initAlertDialog,
 		getAttrs,
-		updateOption: getOptionUpdater(initAlertDialog.options)
+		updateOption: getOptionUpdater(initAlertDialog.options),
 	};
 
 	setContext(NAME, alertDialog);
 	return {
 		...alertDialog,
 		updateOption: getOptionUpdater(alertDialog.options),
-		getAttrs
+		getAttrs,
 	};
 }
 

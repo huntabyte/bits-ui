@@ -16,7 +16,7 @@
 	const {
 		elements: { option: item },
 		helpers: { isSelected: isSelectedStore },
-		getAttrs
+		getAttrs,
 	} = setItemCtx(value);
 
 	const dispatch = createDispatcher();

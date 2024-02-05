@@ -24,7 +24,7 @@ import type {
 	SubTriggerEvents,
 	SubContentEvents,
 	CheckboxItemEvents,
-	DropdownTriggerEvents as TriggerEvents
+	DropdownTriggerEvents as TriggerEvents,
 } from "$lib/bits/menu/index.js";
 
 export type {
@@ -51,5 +51,5 @@ export type {
 	RadioItemEvents,
 	SubContentEvents,
 	SubTriggerEvents,
-	CheckboxItemEvents
+	CheckboxItemEvents,
 };

@@ -12,7 +12,7 @@
 	const {
 		elements: { label },
 		ids,
-		getAttrs
+		getAttrs,
 	} = getCtx();
 
 	if (id) {

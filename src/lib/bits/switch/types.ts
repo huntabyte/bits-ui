@@ -19,5 +19,5 @@ export type {
 	ThumbProps,
 	InputProps,
 	//
-	Events
+	Events,
 };

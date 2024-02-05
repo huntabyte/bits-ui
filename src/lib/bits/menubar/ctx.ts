@@ -2,7 +2,7 @@ import {
 	createMenubar,
 	type CreateMenubarProps as MenubarProps,
 	type CreateMenubarSubmenuProps,
-	type CreateMenubarMenuProps
+	type CreateMenubarMenuProps,
 } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
 import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
@@ -30,14 +30,14 @@ function getMenubarData() {
 		"separator",
 		"sub-content",
 		"sub-trigger",
-		"trigger"
+		"trigger",
 	] as const;
 
 	return {
 		NAME,
 		MENU_NAME,
 		SUB_NAME,
-		PARTS
+		PARTS,
 	};
 }
 
@@ -54,7 +54,7 @@ export function setCtx(props: MenubarProps) {
 
 	return {
 		...menubar,
-		updateOption: getOptionUpdater(menubar.options)
+		updateOption: getOptionUpdater(menubar.options),
 	};
 }
 export function getCtx() {
@@ -66,14 +66,14 @@ export function setMenuCtx(props: CreateMenubarMenuProps) {
 	const { MENU_NAME } = getMenubarData();
 	const {
 		builders: { createMenu },
-		getAttrs
+		getAttrs,
 	} = getCtx();
 
 	const menu = { ...createMenu({ ...removeUndefined(props), forceVisible: false }), getAttrs };
 	setContext(MENU_NAME, menu);
 	return {
 		...menu,
-		updateOption: getOptionUpdater(menu.options)
+		updateOption: getOptionUpdater(menu.options),
 	};
 }
 
@@ -86,13 +86,13 @@ export function setSubMenuCtx(props: CreateMenubarSubmenuProps) {
 	const { SUB_NAME } = getMenubarData();
 	const {
 		builders: { createSubmenu },
-		getAttrs
+		getAttrs,
 	} = getMenuCtx();
 	const sub = { ...createSubmenu(removeUndefined(props)), getAttrs };
 	setContext(SUB_NAME, sub);
 	return {
 		...sub,
-		updateOption: getOptionUpdater(sub.options)
+		updateOption: getOptionUpdater(sub.options),
 	};
 }
 export function getSubMenuCtx() {
@@ -102,13 +102,13 @@ export function getSubMenuCtx() {
 
 const defaultPlacement = {
 	side: "bottom",
-	align: "center"
+	align: "center",
 } satisfies FloatingProps;
 
 export function updatePositioning(props: FloatingProps) {
 	const withDefaults = { ...defaultPlacement, ...props } satisfies FloatingProps;
 	const {
-		options: { positioning }
+		options: { positioning },
 	} = getMenuCtx();
 
 	const updater = getPositioningUpdater(positioning as Writable<FloatingConfig>);
@@ -117,13 +117,13 @@ export function updatePositioning(props: FloatingProps) {
 
 const defaultSubPlacement = {
 	side: "right",
-	align: "start"
+	align: "start",
 } satisfies FloatingProps;
 
 export function updateSubPositioning(props: FloatingProps) {
 	const withDefaults = { ...defaultSubPlacement, ...props } satisfies FloatingProps;
 	const {
-		options: { positioning }
+		options: { positioning },
 	} = getSubmenuCtx();
 
 	const updater = getPositioningUpdater(positioning as Writable<FloatingConfig>);

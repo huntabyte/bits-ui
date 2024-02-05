@@ -4,5 +4,5 @@ export type {
 	InputProps as DateRangeFieldInputProps,
 	SegmentProps as DateRangeFieldSegmentProps,
 	//
-	SegmentEvents as DateRangeFieldSegmentEvents
+	SegmentEvents as DateRangeFieldSegmentEvents,
 } from "./types.js";

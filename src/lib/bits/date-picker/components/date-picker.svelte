@@ -31,13 +31,9 @@
 	export let onOutsideClick: $$Props["onOutsideClick"] = undefined;
 
 	const {
-		states: {
-			value: localValue,
-			placeholder: localPlaceholder,
-			isInvalid: localIsInvalid
-		},
+		states: { value: localValue, placeholder: localPlaceholder, isInvalid: localIsInvalid },
 		updateOption,
-		ids
+		ids,
 	} = setCtx({
 		defaultValue: value,
 		defaultPlaceholder: placeholder,
@@ -72,7 +68,7 @@
 				placeholder = next;
 			}
 			return next;
-		}
+		},
 	});
 
 	const idValues = derived(
@@ -91,7 +87,7 @@
 			ids.dateField.timeZoneName,
 			ids.calendar.calendar,
 			ids.popover.content,
-			ids.popover.trigger
+			ids.popover.trigger,
 		],
 		([
 			$dayId,
@@ -107,7 +103,7 @@
 			$labelId,
 			$timeZoneNameId,
 			$calendarId,
-			$contentId
+			$contentId,
 		]) => ({
 			day: $dayId,
 			description: $descriptionId,
@@ -122,7 +118,7 @@
 			label: $labelId,
 			timeZoneName: $timeZoneNameId,
 			calendar: $calendarId,
-			content: $contentId
+			content: $contentId,
 		})
 	);
 

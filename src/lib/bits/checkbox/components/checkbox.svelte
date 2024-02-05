@@ -19,7 +19,7 @@
 		elements: { root },
 		states: { checked: localChecked },
 		updateOption,
-		getAttrs
+		getAttrs,
 	} = setCtx({
 		defaultChecked: checked,
 		disabled,
@@ -32,7 +32,7 @@
 				checked = next;
 			}
 			return next;
-		}
+		},
 	});
 
 	const dispatch = createDispatcher();

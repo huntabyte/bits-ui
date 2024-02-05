@@ -6,16 +6,8 @@
 </script>
 
 <main>
-	<Slider.Root
-		data-testid="root"
-		bind:value
-		{...$$restProps}
-		let:ticks
-		let:thumbs
-	>
-		<span
-			class="bg-primary/20 relative h-1.5 w-full grow overflow-hidden rounded-full"
-		>
+	<Slider.Root data-testid="root" bind:value {...$$restProps} let:ticks let:thumbs>
+		<span class="bg-primary/20 relative h-1.5 w-full grow overflow-hidden rounded-full">
 			<Slider.Range data-testid="range" class="bg-primary absolute h-full" />
 		</span>
 		{#each thumbs as thumb, i}

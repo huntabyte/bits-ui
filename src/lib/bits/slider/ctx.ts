@@ -8,7 +8,7 @@ function getSliderData() {
 
 	return {
 		NAME,
-		PARTS
+		PARTS,
 	};
 }
 
@@ -21,7 +21,7 @@ export function setCtx(props: CreateSliderProps) {
 	setContext(NAME, slider);
 	return {
 		...slider,
-		updateOption: getOptionUpdater(slider.options)
+		updateOption: getOptionUpdater(slider.options),
 	};
 }
 

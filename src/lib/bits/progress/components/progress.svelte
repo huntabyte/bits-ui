@@ -15,7 +15,7 @@
 		elements: { root },
 		states: { value: localValue },
 		updateOption,
-		getAttrs
+		getAttrs,
 	} = setCtx({
 		max,
 		defaultValue: value,
@@ -23,7 +23,7 @@
 			onValueChange?.(next);
 			value = next;
 			return next;
-		}
+		},
 	});
 
 	const attrs = getAttrs("root");

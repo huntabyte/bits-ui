@@ -2,7 +2,7 @@ import type { HTMLDivAttributes, Transition } from "$lib/internal/index.js";
 import type { CustomEventHandler } from "$lib/index.js";
 import type {
 	AccordionItemProps as _ItemProps,
-	AccordionHeadingProps as _HeadingProps
+	AccordionHeadingProps as _HeadingProps,
 } from "@melt-ui/svelte";
 import type { HTMLButtonAttributes } from "svelte/elements";
 import type * as I from "./_types.js";
@@ -33,5 +33,5 @@ export type {
 	TriggerProps,
 	ContentProps,
 	//
-	TriggerEvents
+	TriggerEvents,
 };

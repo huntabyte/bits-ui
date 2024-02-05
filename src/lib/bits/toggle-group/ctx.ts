@@ -7,7 +7,7 @@ function getToggleGroupData() {
 	const PARTS = ["root", "item"] as const;
 	return {
 		NAME,
-		PARTS
+		PARTS,
 	};
 }
 
@@ -21,7 +21,7 @@ export function setCtx<T extends "single" | "multiple">(props: CreateToggleGroup
 	setContext(NAME, toggleGroup);
 	return {
 		...toggleGroup,
-		updateOption: getOptionUpdater(toggleGroup.options)
+		updateOption: getOptionUpdater(toggleGroup.options),
 	};
 }
 

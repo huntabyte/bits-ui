@@ -2,7 +2,7 @@ import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal
 import {
 	createToolbar,
 	type CreateToolbarProps as ToolbarProps,
-	type CreateToolbarGroupProps as ToolbarGroupProps
+	type CreateToolbarGroupProps as ToolbarGroupProps,
 } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
 
@@ -13,7 +13,7 @@ function getToolbarData() {
 	return {
 		NAME,
 		GROUP_NAME,
-		PARTS
+		PARTS,
 	};
 }
 
@@ -27,21 +27,21 @@ export function setCtx(props: ToolbarProps) {
 	setContext(NAME, toolbar);
 	return {
 		...toolbar,
-		updateOption: getOptionUpdater(toolbar.options)
+		updateOption: getOptionUpdater(toolbar.options),
 	};
 }
 
 export function setGroupCtx<T extends "single" | "multiple">(props: ToolbarGroupProps<T>) {
 	const {
 		builders: { createToolbarGroup },
-		getAttrs
+		getAttrs,
 	} = getCtx();
 	const group = { ...createToolbarGroup(removeUndefined(props)), getAttrs };
 	const { GROUP_NAME } = getToolbarData();
 	setContext(GROUP_NAME, group);
 	return {
 		...group,
-		updateOption: getOptionUpdater(group.options)
+		updateOption: getOptionUpdater(group.options),
 	};
 }
 

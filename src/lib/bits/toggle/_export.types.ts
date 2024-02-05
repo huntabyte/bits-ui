@@ -1,5 +1,5 @@
 export type {
 	Props as ToggleProps,
 	//
-	Events as ToggleEvents
+	Events as ToggleEvents,
 } from "./types.js";

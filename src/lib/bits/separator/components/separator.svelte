@@ -13,7 +13,7 @@
 	const {
 		elements: { root },
 		updateOption,
-		getAttrs
+		getAttrs,
 	} = setCtx({ orientation, decorative });
 
 	const attrs = getAttrs("root");

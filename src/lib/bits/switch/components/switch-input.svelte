@@ -8,7 +8,7 @@
 
 	const {
 		elements: { input },
-		options: { value, name, disabled, required }
+		options: { value, name, disabled, required },
 	} = getCtx();
 
 	$: inputValue = $value === undefined || $value === "" ? "on" : $value;

@@ -7,7 +7,7 @@ function getSwitchData() {
 	const PARTS = ["root", "input", "thumb"] as const;
 	return {
 		NAME,
-		PARTS
+		PARTS,
 	};
 }
 
@@ -20,7 +20,7 @@ export function setCtx(props: CreateSwitchProps) {
 	setContext(NAME, Switch);
 	return {
 		...Switch,
-		updateOption: getOptionUpdater(Switch.options)
+		updateOption: getOptionUpdater(Switch.options),
 	};
 }
 

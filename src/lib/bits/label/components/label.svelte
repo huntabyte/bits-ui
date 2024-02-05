@@ -11,7 +11,7 @@
 	export let el: $$Props["el"] = undefined;
 
 	const {
-		elements: { root }
+		elements: { root },
 	} = createLabel();
 
 	const dispatch = createDispatcher();
@@ -25,12 +25,7 @@
 {#if asChild}
 	<slot {builder} />
 {:else}
-	<label
-		bind:this={el}
-		use:melt={builder}
-		{...$$restProps}
-		on:m-mousedown={dispatch}
-	>
+	<label bind:this={el} use:melt={builder} {...$$restProps} on:m-mousedown={dispatch}>
 		<slot {builder} />
 	</label>
 {/if}

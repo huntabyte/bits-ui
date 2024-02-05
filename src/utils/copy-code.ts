@@ -23,6 +23,6 @@ export function createCopyCodeButton() {
 	return {
 		copied: copied,
 		copyCode: copyCode,
-		setCodeString: setCodeString
+		setCodeString: setCodeString,
 	};
 }

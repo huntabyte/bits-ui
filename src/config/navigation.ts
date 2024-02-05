@@ -23,8 +23,8 @@ export const navigation: Navigation = {
 	main: [
 		{
 			title: "Docs",
-			href: "/docs"
-		}
+			href: "/docs",
+		},
 	],
 	sidebar: [
 		{
@@ -33,24 +33,24 @@ export const navigation: Navigation = {
 				{
 					title: "Introduction",
 					href: "/docs/introduction",
-					items: []
+					items: [],
 				},
 				{
 					title: "Getting Started",
 					href: "/docs/getting-started",
-					items: []
+					items: [],
 				},
 				{
 					title: "Delegation",
 					href: "/docs/delegation",
-					items: []
+					items: [],
 				},
 				{
 					title: "Styling",
 					href: "/docs/styling",
-					items: []
-				}
-			]
+					items: [],
+				},
+			],
 		},
 		{
 			title: "Components",
@@ -58,171 +58,171 @@ export const navigation: Navigation = {
 				{
 					title: "Accordion",
 					href: "/docs/components/accordion",
-					items: []
+					items: [],
 				},
 				{
 					title: "Alert Dialog",
 					href: "/docs/components/alert-dialog",
-					items: []
+					items: [],
 				},
 				{
 					title: "Aspect Ratio",
 					href: "/docs/components/aspect-ratio",
-					items: []
+					items: [],
 				},
 				{
 					title: "Avatar",
 					href: "/docs/components/avatar",
-					items: []
+					items: [],
 				},
 				{
 					title: "Button",
 					href: "/docs/components/button",
-					items: []
+					items: [],
 				},
 				{
 					title: "Calendar",
 					href: "/docs/components/calendar",
 					label: "New",
-					items: []
+					items: [],
 				},
 				{
 					title: "Checkbox",
 					href: "/docs/components/checkbox",
-					items: []
+					items: [],
 				},
 				{
 					title: "Collapsible",
 					href: "/docs/components/collapsible",
-					items: []
+					items: [],
 				},
 				{
 					title: "Context Menu",
 					href: "/docs/components/context-menu",
-					items: []
+					items: [],
 				},
 				{
 					title: "Date Field",
 					href: "/docs/components/date-field",
-					items: []
+					items: [],
 				},
 				{
 					title: "Date Picker",
 					href: "/docs/components/date-picker",
-					items: []
+					items: [],
 				},
 				{
 					title: "Date Range Field",
 					href: "/docs/components/date-range-field",
-					items: []
+					items: [],
 				},
 				{
 					title: "Date Range Picker",
 					href: "/docs/components/date-range-picker",
-					items: []
+					items: [],
 				},
 				{
 					title: "Dialog",
 					href: "/docs/components/dialog",
-					items: []
+					items: [],
 				},
 				{
 					title: "Dropdown Menu",
 					href: "/docs/components/dropdown-menu",
-					items: []
+					items: [],
 				},
 				{
 					title: "Label",
 					href: "/docs/components/label",
-					items: []
+					items: [],
 				},
 				{
 					title: "Link Preview",
 					href: "/docs/components/link-preview",
-					items: []
+					items: [],
 				},
 				{
 					title: "Menubar",
 					href: "/docs/components/menubar",
-					items: []
+					items: [],
 				},
 				{
 					title: "Pagination",
 					href: "/docs/components/pagination",
-					items: []
+					items: [],
 				},
 				{
 					title: "PIN Input",
 					href: "/docs/components/pin-input",
 					label: "New",
-					items: []
+					items: [],
 				},
 				{
 					title: "Popover",
 					href: "/docs/components/popover",
-					items: []
+					items: [],
 				},
 				{
 					title: "Progress",
 					href: "/docs/components/progress",
-					items: []
+					items: [],
 				},
 				{
 					title: "Radio Group",
 					href: "/docs/components/radio-group",
-					items: []
+					items: [],
 				},
 				{
 					title: "Range Calendar",
 					href: "/docs/components/range-calendar",
-					items: []
+					items: [],
 				},
 				{
 					title: "Select",
 					href: "/docs/components/select",
-					items: []
+					items: [],
 				},
 				{
 					title: "Separator",
 					href: "/docs/components/separator",
-					items: []
+					items: [],
 				},
 				{
 					title: "Slider",
 					href: "/docs/components/slider",
-					items: []
+					items: [],
 				},
 				{
 					title: "Switch",
 					href: "/docs/components/switch",
-					items: []
+					items: [],
 				},
 				{
 					title: "Tabs",
 					href: "/docs/components/tabs",
-					items: []
+					items: [],
 				},
 				{
 					title: "Toggle",
 					href: "/docs/components/toggle",
-					items: []
+					items: [],
 				},
 				{
 					title: "Toggle Group",
 					href: "/docs/components/toggle-group",
-					items: []
+					items: [],
 				},
 				{
 					title: "Toolbar",
 					href: "/docs/components/toolbar",
-					items: []
+					items: [],
 				},
 				{
 					title: "Tooltip",
 					href: "/docs/components/tooltip",
-					items: []
-				}
-			]
-		}
-	]
+					items: [],
+				},
+			],
+		},
+	],
 };

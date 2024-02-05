@@ -11,5 +11,5 @@ type Events<T extends Element = HTMLLabelElement> = {
 export type {
 	Props,
 	//
-	Events
+	Events,
 };

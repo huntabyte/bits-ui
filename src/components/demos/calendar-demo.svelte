@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Calendar } from "$lib";
-	import { CaretLeft, CaretRight } from "phosphor-svelte";
+	import { CaretLeft, CaretRight } from "$icons/index.js";
 
 	const isDateUnavailable: Calendar.Props["isDateUnavailable"] = (date) => {
 		return date.day === 17 || date.day === 18;
@@ -17,28 +17,24 @@
 >
 	<Calendar.Header class="flex items-center justify-between">
 		<Calendar.PrevButton
-			class="inline-flex items-center justify-center rounded-9px bg-background sq-10 hover:bg-muted active:scale-98 active:transition-all"
+			class="inline-flex size-10 items-center justify-center rounded-9px bg-background hover:bg-muted active:scale-98 active:transition-all"
 		>
-			<CaretLeft class="sq-6" />
+			<CaretLeft class="size-6" />
 		</Calendar.PrevButton>
 		<Calendar.Heading class="text-[15px] font-medium" />
 		<Calendar.NextButton
-			class="inline-flex items-center justify-center rounded-9px bg-background sq-10 hover:bg-muted active:scale-98 active:transition-all"
+			class="inline-flex size-10 items-center justify-center rounded-9px bg-background hover:bg-muted active:scale-98 active:transition-all"
 		>
-			<CaretRight class="sq-6" />
+			<CaretRight class="size-6" />
 		</Calendar.NextButton>
 	</Calendar.Header>
-	<div
-		class="flex flex-col space-y-4 pt-4 sm:flex-row sm:space-x-4 sm:space-y-0"
-	>
+	<div class="flex flex-col space-y-4 pt-4 sm:flex-row sm:space-x-4 sm:space-y-0">
 		{#each months as month, i (i)}
 			<Calendar.Grid class="w-full border-collapse select-none space-y-1">
 				<Calendar.GridHead>
 					<Calendar.GridRow class="mb-1 flex w-full justify-between">
 						{#each weekdays as day}
-							<Calendar.HeadCell
-								class="w-10 rounded-md text-xs !font-normal text-muted-foreground"
-							>
+							<Calendar.HeadCell class="w-10 rounded-md text-xs !font-normal text-muted-foreground">
 								<div>{day.slice(0, 2)}</div>
 							</Calendar.HeadCell>
 						{/each}
@@ -48,17 +44,14 @@
 					{#each month.weeks as weekDates}
 						<Calendar.GridRow class="flex w-full">
 							{#each weekDates as date}
-								<Calendar.Cell
-									{date}
-									class="relative !p-0 text-center text-sm sq-10"
-								>
+								<Calendar.Cell {date} class="relative size-10 !p-0 text-center text-sm">
 									<Calendar.Day
 										{date}
 										month={month.value}
-										class="group relative inline-flex items-center justify-center whitespace-nowrap rounded-9px border border-transparent bg-transparent p-0 text-sm font-normal text-foreground sq-10 hover:border-foreground data-[disabled]:pointer-events-none data-[outside-month]:pointer-events-none data-[selected]:bg-foreground data-[selected]:font-medium data-[disabled]:text-foreground/30 data-[selected]:text-background data-[unavailable]:text-muted-foreground data-[unavailable]:line-through"
+										class="group relative inline-flex size-10 items-center justify-center whitespace-nowrap rounded-9px border border-transparent bg-transparent p-0 text-sm font-normal text-foreground hover:border-foreground data-[disabled]:pointer-events-none data-[outside-month]:pointer-events-none data-[selected]:bg-foreground data-[selected]:font-medium data-[disabled]:text-foreground/30 data-[selected]:text-background data-[unavailable]:text-muted-foreground data-[unavailable]:line-through"
 									>
 										<div
-											class="absolute top-[5px] hidden rounded-full bg-foreground sq-1 group-data-[today]:block group-data-[selected]:bg-background"
+											class="absolute top-[5px] hidden size-1 rounded-full bg-foreground group-data-[today]:block group-data-[selected]:bg-background"
 										/>
 										{date.day}
 									</Calendar.Day>

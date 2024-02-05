@@ -12,7 +12,7 @@
 
 	const {
 		elements: { trigger },
-		getAttrs
+		getAttrs,
 	} = getCtx();
 
 	const dispatch = createDispatcher();
@@ -25,13 +25,7 @@
 {#if asChild}
 	<slot {builder} />
 {:else}
-	<button
-		bind:this={el}
-		use:melt={builder}
-		type="button"
-		{...$$restProps}
-		on:m-click={dispatch}
-	>
+	<button bind:this={el} use:melt={builder} type="button" {...$$restProps} on:m-click={dispatch}>
 		<slot {builder} />
 	</button>
 {/if}

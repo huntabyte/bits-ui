@@ -7,7 +7,7 @@ import type {
 	CreateContextMenuRadioGroupProps,
 	ContextMenuRadioItemProps,
 	CreateContextSubmenuProps,
-	CreateContextMenuProps
+	CreateContextMenuProps,
 } from "@melt-ui/svelte";
 import type { ArrowProps as FloatingArrowProps, ContentProps } from "$lib/bits/floating/_types.js";
 

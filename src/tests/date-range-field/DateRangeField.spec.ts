@@ -11,16 +11,16 @@ const kbd = getTestKbd();
 
 const calendarDate = {
 	start: new CalendarDate(2022, 1, 1),
-	end: new CalendarDate(2022, 3, 1)
+	end: new CalendarDate(2022, 3, 1),
 };
 
 const calendarDateTime = {
 	start: new CalendarDateTime(2022, 1, 1, 12, 30),
-	end: new CalendarDateTime(2022, 3, 1, 12, 30)
+	end: new CalendarDateTime(2022, 3, 1, 12, 30),
 };
 const zonedDateTime = {
 	start: toZoned(calendarDateTime.start, "America/New_York"),
-	end: toZoned(calendarDateTime.end, "America/New_York")
+	end: toZoned(calendarDateTime.end, "America/New_York"),
 };
 
 function setup(props: DateRangeField.Props = {}) {
@@ -31,14 +31,14 @@ function setup(props: DateRangeField.Props = {}) {
 		month: returned.getByTestId("start-month"),
 		day: returned.getByTestId("start-day"),
 		year: returned.getByTestId("start-year"),
-		value: returned.getByTestId("start-value")
+		value: returned.getByTestId("start-value"),
 	};
 
 	const end = {
 		month: returned.getByTestId("end-month"),
 		day: returned.getByTestId("end-day"),
 		year: returned.getByTestId("end-year"),
-		value: returned.getByTestId("end-value")
+		value: returned.getByTestId("end-value"),
 	};
 
 	const input = returned.getByTestId("input");
@@ -55,7 +55,7 @@ describe("Date Range Field", () => {
 
 	it("populates segment with value - `CalendarDate`", async () => {
 		const { start, end } = setup({
-			value: calendarDate
+			value: calendarDate,
 		});
 
 		expect(start.month).toHaveTextContent(String(calendarDate.start.month));
@@ -72,7 +72,7 @@ describe("Date Range Field", () => {
 	it("populates segment with value - `CalendarDateTime`", async () => {
 		const { start, end, getByTestId } = setup({
 			value: calendarDateTime,
-			granularity: "second"
+			granularity: "second",
 		});
 
 		expect(start.month).toHaveTextContent(String(calendarDateTime.start.month));
@@ -95,7 +95,7 @@ describe("Date Range Field", () => {
 	it("populates segment with value - `ZonedDateTime`", async () => {
 		const { start, end, getByTestId } = setup({
 			value: zonedDateTime,
-			granularity: "second"
+			granularity: "second",
 		});
 
 		expect(start.month).toHaveTextContent(String(calendarDateTime.start.month));
@@ -117,7 +117,7 @@ describe("Date Range Field", () => {
 
 	it("navigates between the fields", async () => {
 		const { getByTestId, user } = setup({
-			value: calendarDate
+			value: calendarDate,
 		});
 
 		const fields = ["start", "end"] as const;
@@ -148,7 +148,7 @@ describe("Date Range Field", () => {
 
 	it("navigates between the fields - right to left", async () => {
 		const { getByTestId, user } = setup({
-			value: calendarDate
+			value: calendarDate,
 		});
 
 		const fields = ["end", "start"] as const;
@@ -179,7 +179,7 @@ describe("Date Range Field", () => {
 
 	it("binds to the value", async () => {
 		const { start, end, user } = setup({
-			value: calendarDate
+			value: calendarDate,
 		});
 		expect(start.value).toHaveTextContent(calendarDate.start.toString());
 		expect(end.value).toHaveTextContent(calendarDate.end.toString());

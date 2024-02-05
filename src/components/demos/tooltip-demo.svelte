@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Tooltip } from "$lib/index.js";
 	import { flyAndScale } from "@/utils/index.js";
-	import { MagicWand } from "phosphor-svelte";
+	import { MagicWand } from "$icons/index.js";
 </script>
 
 <Tooltip.Root openDelay={0}>

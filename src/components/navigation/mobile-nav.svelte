@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { SquareHalf } from "phosphor-svelte";
+	import { SquareHalf } from "$icons/index.js";
 	import * as Sheet from "@/components/ui/sheet";
 	import { Button } from "@/components/ui/button";
 	import { navigation } from "@/config";

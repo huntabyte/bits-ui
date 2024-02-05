@@ -12,5 +12,5 @@ export type {
 	TriggerEvents as AlertDialogTriggerEvents,
 	CancelEvents as AlertDialogCancelEvents,
 	ActionEvents as AlertDialogActionEvents,
-	ContentEvents as AlertDialogContentEvents
+	ContentEvents as AlertDialogContentEvents,
 } from "./types.js";

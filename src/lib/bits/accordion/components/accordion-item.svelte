@@ -12,7 +12,7 @@
 	const {
 		elements: { item },
 		props,
-		getAttrs
+		getAttrs,
 	} = setItem({ value, disabled });
 	const attrs = getAttrs("item");
 

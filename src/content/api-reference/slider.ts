@@ -10,77 +10,77 @@ const root: APISchema<Slider.Props> = {
 		value: {
 			default: "[]",
 			type: "number[]",
-			description: "The current value of the slider."
+			description: "The current value of the slider.",
 		},
 		onValueChange: {
 			type: {
 				type: C.FUNCTION,
-				definition: "(value: number[]) => void"
+				definition: "(value: number[]) => void",
 			},
-			description: "A callback function called when the value state of the slider changes."
+			description: "A callback function called when the value state of the slider changes.",
 		},
 		disabled: {
 			default: C.FALSE,
 			type: C.BOOLEAN,
-			description: "Whether or not the switch is disabled."
+			description: "Whether or not the switch is disabled.",
 		},
 		max: {
 			default: "100",
 			type: C.NUMBER,
-			description: "The maximum value of the slider."
+			description: "The maximum value of the slider.",
 		},
 		min: {
 			default: "0",
 			type: C.NUMBER,
-			description: "The minimum value of the slider."
+			description: "The minimum value of the slider.",
 		},
 		orientation: {
 			default: '"horizontal"',
 			type: {
 				type: C.ENUM,
-				definition: enums("horizontal", "vertical")
+				definition: enums("horizontal", "vertical"),
 			},
-			description: "The orientation of the slider."
+			description: "The orientation of the slider.",
 		},
 		step: {
 			default: "1",
 			type: C.NUMBER,
-			description: "The step value of the slider."
+			description: "The step value of the slider.",
 		},
 		dir: {
 			default: '"ltr"',
 			type: {
 				type: C.ENUM,
-				definition: enums("ltr", "rtl")
+				definition: enums("ltr", "rtl"),
 			},
 			description:
-				"The reading direction of the slider. If set to 'rtl', the slider will be reversed for both `'horizontal'` and `'vertical'` orientations."
+				"The reading direction of the slider. If set to 'rtl', the slider will be reversed for both `'horizontal'` and `'vertical'` orientations.",
 		},
-		...domElProps("HTMLSpanElement")
+		...domElProps("HTMLSpanElement"),
 	},
 	slotProps: {
 		ticks: {
 			type: "Tick[]",
-			description: "The tick builders to pass to the individual `Slider.Tick` components."
+			description: "The tick builders to pass to the individual `Slider.Tick` components.",
 		},
 		thumbs: {
 			type: "Thumb[]",
-			description: "The thumb builders to pass to the individual `Slider.Thumb` components."
+			description: "The thumb builders to pass to the individual `Slider.Thumb` components.",
 		},
-		...builderAndAttrsSlotProps
+		...builderAndAttrsSlotProps,
 	},
 	dataAttributes: [
 		{
 			name: "orientation",
 			description: "The orientation of the slider.",
 			value: enums("horizontal", "vertical"),
-			isEnum: true
+			isEnum: true,
 		},
 		{
 			name: "slider-root",
-			description: "Present on the root element."
-		}
-	]
+			description: "Present on the root element.",
+		},
+	],
 };
 
 const thumb: APISchema<Slider.ThumbProps> = {
@@ -90,17 +90,17 @@ const thumb: APISchema<Slider.ThumbProps> = {
 		thumb: {
 			type: "Thumb",
 			description:
-				"An individual thumb builder from the `thumbs` slot prop provided by the `Slider.Root` component."
+				"An individual thumb builder from the `thumbs` slot prop provided by the `Slider.Root` component.",
 		},
-		...domElProps("HTMLSpanElement")
+		...domElProps("HTMLSpanElement"),
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "slider-thumb",
-			description: "Present on the thumb elements."
-		}
-	]
+			description: "Present on the thumb elements.",
+		},
+	],
 };
 
 const range: APISchema<Slider.RangeProps> = {
@@ -111,9 +111,9 @@ const range: APISchema<Slider.RangeProps> = {
 	dataAttributes: [
 		{
 			name: "slider-range",
-			description: "Present on the range elements."
-		}
-	]
+			description: "Present on the range elements.",
+		},
+	],
 };
 
 const tick: APISchema<Slider.TickProps> = {
@@ -123,21 +123,21 @@ const tick: APISchema<Slider.TickProps> = {
 		tick: {
 			type: "Tick",
 			description:
-				"An individual tick builder from the `ticks` slot prop provided by the `Slider.Root` component."
+				"An individual tick builder from the `ticks` slot prop provided by the `Slider.Root` component.",
 		},
-		...domElProps("HTMLSpanElement")
+		...domElProps("HTMLSpanElement"),
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "bounded",
-			description: "Present when the tick is bounded."
+			description: "Present when the tick is bounded.",
 		},
 		{
 			name: "slider-tick",
-			description: "Present on the tick elements."
-		}
-	]
+			description: "Present on the tick elements.",
+		},
+	],
 };
 
 export const slider = [root, range, thumb, tick];

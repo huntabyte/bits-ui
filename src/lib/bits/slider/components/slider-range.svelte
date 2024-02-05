@@ -10,7 +10,7 @@
 
 	const {
 		elements: { range },
-		getAttrs
+		getAttrs,
 	} = getCtx();
 
 	const attrs = getAttrs("range");

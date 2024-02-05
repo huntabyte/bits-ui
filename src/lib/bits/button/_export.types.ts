@@ -1,5 +1,5 @@
 export type {
 	Props as ButtonProps,
 	//
-	Events as ButtonEvents
+	Events as ButtonEvents,
 } from "./types.js";

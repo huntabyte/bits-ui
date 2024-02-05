@@ -19,7 +19,7 @@
 		elements: { root },
 		states: { value: localValue },
 		updateOption,
-		getAttrs
+		getAttrs,
 	} = setCtx({
 		multiple,
 		disabled,
@@ -40,7 +40,7 @@
 			}
 			return next;
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		}) as any
+		}) as any,
 	});
 
 	const attrs = getAttrs("root");

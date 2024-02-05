@@ -15,5 +15,5 @@ export type {
 	Events as CalendarEvents,
 	PrevButtonEvents as CalendarPrevButtonEvents,
 	NextButtonEvents as CalendarNextButtonEvents,
-	DayEvents as CalendarDayEvents
+	DayEvents as CalendarDayEvents,
 } from "./types.js";

@@ -9,12 +9,7 @@
 	export let slot = false;
 
 	$: propData = Object.entries(props).map(([name, prop]) => {
-		const {
-			type,
-			description,
-			default: defaultVal,
-			required
-		} = prop as PropSchema;
+		const { type, description, default: defaultVal, required } = prop as PropSchema;
 		return { name, type, description, default: defaultVal, required };
 	});
 </script>
@@ -22,9 +17,7 @@
 <Table.Root>
 	<Table.Header>
 		<Table.Row class="w-1/4">
-			<Table.Head class="w-[38%] whitespace-nowrap pr-1"
-				>{slot ? "Slot" : ""} Property</Table.Head
-			>
+			<Table.Head class="w-[38%] whitespace-nowrap pr-1">{slot ? "Slot" : ""} Property</Table.Head>
 			<Table.Head class="w-[22%] whitespace-nowrap pr-1">Type</Table.Head>
 			<Table.Head class="w-[40%] whitespace-nowrap">Description</Table.Head>
 		</Table.Row>

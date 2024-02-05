@@ -1,14 +1,12 @@
 <script lang="ts">
 	import { DatePicker } from "$lib";
 	import { flyAndScale } from "@/utils";
-	import { CaretLeft, CaretRight, CalendarBlank } from "phosphor-svelte";
+	import { CaretLeft, CaretRight, CalendarBlank } from "$icons/index.js";
 </script>
 
 <DatePicker.Root weekdayFormat="short" fixedWeeks={true}>
 	<div class="flex w-full max-w-[232px] flex-col gap-1.5">
-		<DatePicker.Label class="block select-none text-sm font-medium"
-			>Birthday</DatePicker.Label
-		>
+		<DatePicker.Label class="block select-none text-sm font-medium">Birthday</DatePicker.Label>
 		<DatePicker.Input
 			let:segments
 			class="flex h-input w-full max-w-[232px] select-none items-center rounded-input border border-border-input bg-background px-2 py-3 text-sm tracking-[0.01em] text-muted-foreground focus-within:border-border-input-hover focus-within:shadow-date-field-focus hover:border-border-input-hover"
@@ -30,9 +28,9 @@
 				</div>
 			{/each}
 			<DatePicker.Trigger
-				class="ml-auto inline-flex items-center justify-center rounded-[5px] text-foreground/60 transition-all sq-8 hover:bg-muted active:bg-dark-10"
+				class="ml-auto inline-flex size-8 items-center justify-center rounded-[5px] text-foreground/60 transition-all hover:bg-muted active:bg-dark-10"
 			>
-				<CalendarBlank class="sq-6" />
+				<CalendarBlank class="size-6" />
 			</DatePicker.Trigger>
 		</DatePicker.Input>
 		<DatePicker.Content
@@ -48,24 +46,20 @@
 			>
 				<DatePicker.Header class="flex items-center justify-between">
 					<DatePicker.PrevButton
-						class="inline-flex items-center justify-center rounded-9px bg-background transition-all sq-10 hover:bg-muted active:scale-98"
+						class="inline-flex size-10 items-center justify-center rounded-9px bg-background transition-all hover:bg-muted active:scale-98"
 					>
-						<CaretLeft class="sq-6" />
+						<CaretLeft class="size-6" />
 					</DatePicker.PrevButton>
 					<DatePicker.Heading class="text-[15px] font-medium" />
 					<DatePicker.NextButton
-						class="inline-flex items-center justify-center rounded-9px bg-background transition-all sq-10 hover:bg-muted active:scale-98"
+						class="inline-flex size-10 items-center justify-center rounded-9px bg-background transition-all hover:bg-muted active:scale-98"
 					>
-						<CaretRight class="sq-6" />
+						<CaretRight class="size-6" />
 					</DatePicker.NextButton>
 				</DatePicker.Header>
-				<div
-					class="flex flex-col space-y-4 pt-4 sm:flex-row sm:space-x-4 sm:space-y-0"
-				>
+				<div class="flex flex-col space-y-4 pt-4 sm:flex-row sm:space-x-4 sm:space-y-0">
 					{#each months as month}
-						<DatePicker.Grid
-							class="w-full border-collapse select-none space-y-1"
-						>
+						<DatePicker.Grid class="w-full border-collapse select-none space-y-1">
 							<DatePicker.GridHead>
 								<DatePicker.GridRow class="mb-1 flex w-full justify-between">
 									{#each weekdays as day}
@@ -81,17 +75,14 @@
 								{#each month.weeks as weekDates}
 									<DatePicker.GridRow class="flex w-full">
 										{#each weekDates as date}
-											<DatePicker.Cell
-												{date}
-												class="relative !p-0 text-center text-sm sq-10"
-											>
+											<DatePicker.Cell {date} class="relative size-10 !p-0 text-center text-sm">
 												<DatePicker.Day
 													{date}
 													month={month.value}
-													class="group relative inline-flex items-center justify-center whitespace-nowrap rounded-9px border border-transparent bg-transparent p-0 text-sm font-normal text-foreground transition-all sq-10 hover:border-foreground data-[disabled]:pointer-events-none data-[outside-month]:pointer-events-none data-[selected]:bg-foreground data-[selected]:font-medium data-[disabled]:text-foreground/30 data-[selected]:text-background data-[unavailable]:text-muted-foreground data-[unavailable]:line-through"
+													class="group relative inline-flex size-10 items-center justify-center whitespace-nowrap rounded-9px border border-transparent bg-transparent p-0 text-sm font-normal text-foreground transition-all hover:border-foreground data-[disabled]:pointer-events-none data-[outside-month]:pointer-events-none data-[selected]:bg-foreground data-[selected]:font-medium data-[disabled]:text-foreground/30 data-[selected]:text-background data-[unavailable]:text-muted-foreground data-[unavailable]:line-through"
 												>
 													<div
-														class="absolute top-[5px] hidden rounded-full bg-foreground transition-all sq-1 group-data-[today]:block group-data-[selected]:bg-background"
+														class="absolute top-[5px] hidden size-1 rounded-full bg-foreground transition-all group-data-[today]:block group-data-[selected]:bg-background"
 													/>
 													{date.day}
 												</DatePicker.Day>

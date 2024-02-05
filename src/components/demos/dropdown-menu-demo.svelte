@@ -8,8 +8,8 @@
 		GearSix,
 		UserCirclePlus,
 		DotsThree,
-		CaretRight
-	} from "phosphor-svelte";
+		CaretRight,
+	} from "$icons/index.js";
 </script>
 
 <DropdownMenu.Root>
@@ -27,17 +27,17 @@
 			class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted"
 		>
 			<div class="flex items-center">
-				<UserCircle class="mr-2 text-foreground-alt sq-5" />
+				<UserCircle class="mr-2 size-5 text-foreground-alt" />
 				Profile
 			</div>
 			<div class="ml-auto flex items-center gap-px">
 				<kbd
-					class="inline-flex items-center justify-center rounded-button border border-dark-10 bg-background text-xs text-muted-foreground shadow-kbd sq-5"
+					class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background text-xs text-muted-foreground shadow-kbd"
 				>
 					⌘
 				</kbd>
 				<kbd
-					class="inline-flex items-center justify-center rounded-button border border-dark-10 bg-background text-[10px] text-muted-foreground shadow-kbd sq-5"
+					class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background text-[10px] text-muted-foreground shadow-kbd"
 				>
 					P
 				</kbd>
@@ -47,17 +47,17 @@
 			class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted"
 		>
 			<div class="flex items-center">
-				<Cardholder class="mr-2 text-foreground-alt sq-5" />
+				<Cardholder class="mr-2 size-5 text-foreground-alt" />
 				Billing
 			</div>
 			<div class="ml-auto flex items-center gap-px">
 				<kbd
-					class="inline-flex items-center justify-center rounded-button border border-dark-10 bg-background text-xs text-muted-foreground shadow-kbd sq-5"
+					class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background text-xs text-muted-foreground shadow-kbd"
 				>
 					⌘
 				</kbd>
 				<kbd
-					class="inline-flex items-center justify-center rounded-button border border-dark-10 bg-background text-[10px] text-muted-foreground shadow-kbd sq-5"
+					class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background text-[10px] text-muted-foreground shadow-kbd"
 				>
 					B
 				</kbd>
@@ -67,17 +67,17 @@
 			class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted"
 		>
 			<div class="flex items-center">
-				<GearSix class="mr-2 text-foreground-alt sq-5" />
+				<GearSix class="mr-2 size-5 text-foreground-alt" />
 				Settings
 			</div>
 			<div class="ml-auto flex items-center gap-px">
 				<kbd
-					class="inline-flex items-center justify-center rounded-button border border-dark-10 bg-background text-xs text-muted-foreground shadow-kbd sq-5"
+					class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background text-xs text-muted-foreground shadow-kbd"
 				>
 					⌘
 				</kbd>
 				<kbd
-					class="inline-flex items-center justify-center rounded-button border border-dark-10 bg-background text-[10px] text-muted-foreground shadow-kbd sq-5"
+					class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background text-[10px] text-muted-foreground shadow-kbd"
 				>
 					S
 				</kbd>
@@ -89,11 +89,11 @@
 				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted data-[state=open]:bg-muted"
 			>
 				<div class="flex items-center">
-					<UserCirclePlus class="mr-2 text-foreground-alt sq-5" />
+					<UserCirclePlus class="mr-2 size-5 text-foreground-alt" />
 					Invite users
 				</div>
 				<div class="ml-auto flex items-center gap-px">
-					<CaretRight class="text-foreground-alt sq-5" />
+					<CaretRight class="size-5 text-foreground-alt" />
 				</div>
 			</DropdownMenu.SubTrigger>
 			<DropdownMenu.SubContent
@@ -105,7 +105,7 @@
 					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted"
 				>
 					<Avatar.Root
-						class="relative mr-3 flex shrink-0 overflow-hidden rounded-full border border-foreground/50 sq-5"
+						class="relative mr-3 flex size-5 shrink-0 overflow-hidden rounded-full border border-foreground/50"
 					>
 						<Avatar.Image
 							src="https://github.com/huntabyte.png"
@@ -123,7 +123,7 @@
 					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted"
 				>
 					<Avatar.Root
-						class="relative mr-3 flex shrink-0 overflow-hidden rounded-full border border-foreground/50 sq-5"
+						class="relative mr-3 flex size-5 shrink-0 overflow-hidden rounded-full border border-foreground/50"
 					>
 						<Avatar.Image
 							src="https://github.com/pavelstianko.png"
@@ -141,7 +141,7 @@
 					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted"
 				>
 					<Avatar.Root
-						class="relative mr-3 flex shrink-0 overflow-hidden rounded-full border border-foreground/50 sq-5"
+						class="relative mr-3 flex size-5 shrink-0 overflow-hidden rounded-full border border-foreground/50"
 					>
 						<Avatar.Image
 							src="https://github.com/adriangonz97.png"
@@ -159,7 +159,7 @@
 					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted"
 				>
 					<Avatar.Root
-						class="relative mr-3 flex shrink-0 overflow-hidden rounded-full border border-foreground/50 sq-5"
+						class="relative mr-3 flex size-5 shrink-0 overflow-hidden rounded-full border border-foreground/50"
 					>
 						<Avatar.Image
 							src="https://github.com/tglide.png"

@@ -2,7 +2,7 @@
 	import { Dialog, Separator, Label } from "$lib";
 	import { flyAndScale } from "@/utils";
 	import { fade } from "svelte/transition";
-	import { X, LockKeyOpen } from "phosphor-svelte";
+	import { X, LockKeyOpen } from "$icons/index.js";
 </script>
 
 <Dialog.Root>
@@ -29,12 +29,10 @@
 			>
 			<Separator.Root class="-mx-5 mb-6 mt-5 block h-px bg-muted" />
 			<Dialog.Description class="text-sm text-foreground-alt">
-				Create and manage API keys. You can create multiple keys to organize
-				your applications.
+				Create and manage API keys. You can create multiple keys to organize your applications.
 			</Dialog.Description>
 			<div class="flex flex-col items-start gap-1 pb-11 pt-7">
-				<Label.Root for="apiKey" class="text-sm font-medium">API Key</Label.Root
-				>
+				<Label.Root for="apiKey" class="text-sm font-medium">API Key</Label.Root>
 				<div class="relative w-full">
 					<input
 						id="apiKey"
@@ -43,9 +41,7 @@
 						type="password"
 						autocomplete="off"
 					/>
-					<LockKeyOpen
-						class="absolute right-4 top-[14px] text-dark/30 sq-[22px]"
-					/>
+					<LockKeyOpen class="absolute right-4 top-[14px] size-[22px] text-dark/30" />
 				</div>
 			</div>
 			<div class="flex w-full justify-end">
@@ -59,7 +55,7 @@
 				class="absolute right-5 top-5 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
 			>
 				<div>
-					<X class="text-foreground sq-5" />
+					<X class="size-5 text-foreground" />
 					<span class="sr-only">Close</span>
 				</div>
 			</Dialog.Close>

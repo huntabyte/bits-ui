@@ -19,12 +19,8 @@
 	export let readonly: $$Props["readonly"] = undefined;
 
 	const {
-		states: {
-			value: localValue,
-			placeholder: localPlaceholder,
-			isInvalid: localIsInvalid
-		},
-		updateOption
+		states: { value: localValue, placeholder: localPlaceholder, isInvalid: localIsInvalid },
+		updateOption,
 	} = setCtx({
 		defaultValue: value,
 		defaultPlaceholder: placeholder,
@@ -50,7 +46,7 @@
 				placeholder = next;
 			}
 			return next;
-		}
+		},
 	});
 
 	$: value !== undefined && localValue.set(value);

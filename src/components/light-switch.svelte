@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Sun, Moon } from "phosphor-svelte";
+	import { Sun, Moon } from "$icons/index.js";
 	import { Button } from "$lib";
 	import { toggleMode, mode } from "mode-watcher";
 	import { scale } from "svelte/transition";
@@ -21,10 +21,10 @@
 				delay: 50,
 				duration: 200,
 				start: 0.7,
-				easing: cubicOut
+				easing: cubicOut,
 			}}
 		>
-			<Moon class="sq-6" aria-label="Moon" />
+			<Moon class="size-6" aria-label="Moon" />
 		</div>
 	{:else}
 		<div
@@ -33,10 +33,10 @@
 				delay: 50,
 				duration: 200,
 				start: 0.7,
-				easing: cubicOut
+				easing: cubicOut,
 			}}
 		>
-			<Sun class="sq-6" aria-label="Sun" />
+			<Sun class="size-6" aria-label="Sun" />
 		</div>
 	{/if}
 </Button.Root>

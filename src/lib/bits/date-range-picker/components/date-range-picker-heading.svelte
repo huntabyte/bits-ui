@@ -11,7 +11,7 @@
 	const {
 		elements: { heading },
 		states: { headingValue },
-		getCalendarAttrs
+		getCalendarAttrs,
 	} = getCtx();
 
 	const attrs = getCalendarAttrs("heading");

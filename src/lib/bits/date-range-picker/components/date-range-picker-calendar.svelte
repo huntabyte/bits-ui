@@ -14,7 +14,7 @@
 		elements: { calendar },
 		states: { months: localMonths, weekdays },
 		ids,
-		getCalendarAttrs
+		getCalendarAttrs,
 	} = getCtx();
 
 	$: if (id) {

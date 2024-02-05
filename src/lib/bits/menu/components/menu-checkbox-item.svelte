@@ -17,7 +17,7 @@
 		elements: { checkboxItem },
 		states: { checked: localChecked },
 		updateOption,
-		getAttrs
+		getAttrs,
 	} = setCheckboxItem({
 		disabled,
 		defaultChecked: checked,
@@ -27,7 +27,7 @@
 				checked = next;
 			}
 			return next;
-		}
+		},
 	});
 
 	const dispatch = createDispatcher();
