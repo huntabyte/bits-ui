@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { LockKeyOpen } from "phosphor-svelte";
+	import { LockKeyOpen } from "$icons/index.js";
 	import { Toggle } from "$lib";
 
 	let unlocked = false;
@@ -18,9 +18,9 @@
 	</div>
 	<Toggle.Root
 		aria-label="toggle code visibility"
-		class="inline-flex items-center justify-center rounded-[9px] bg-background transition-all sq-10 hover:bg-muted active:scale-98 active:bg-dark-10 data-[state=on]:bg-muted data-[state=off]:text-foreground-alt data-[state=on]:text-foreground active:data-[state=on]:bg-dark-10"
+		class="inline-flex size-10 items-center justify-center rounded-[9px] bg-background transition-all hover:bg-muted active:scale-98 active:bg-dark-10 data-[state=on]:bg-muted data-[state=off]:text-foreground-alt data-[state=on]:text-foreground active:data-[state=on]:bg-dark-10"
 		bind:pressed={unlocked}
 	>
-		<LockKeyOpen class="sq-6" />
+		<LockKeyOpen class="size-6" />
 	</Toggle.Root>
 </div>

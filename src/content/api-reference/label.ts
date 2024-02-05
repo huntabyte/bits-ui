@@ -10,9 +10,9 @@ export const root: APISchema<Label.Props> = {
 	dataAttributes: [
 		{
 			name: "label-root",
-			description: "Present on the root element."
-		}
-	]
+			description: "Present on the root element.",
+		},
+	],
 };
 
 export const label = [root];

@@ -8,7 +8,7 @@ export function getDateFieldData() {
 
 	return {
 		NAME,
-		PARTS
+		PARTS,
 	};
 }
 
@@ -23,7 +23,7 @@ export function setCtx(props: CreateDateFieldProps) {
 
 	return {
 		...dateField,
-		updateOption: getOptionUpdater(dateField.options)
+		updateOption: getOptionUpdater(dateField.options),
 	};
 }
 

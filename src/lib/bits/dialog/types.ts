@@ -2,7 +2,7 @@ import type {
 	HTMLDivAttributes,
 	HTMLHeadingAttributes,
 	SvelteEvent,
-	Transition
+	Transition,
 } from "$lib/internal/index.js";
 import type { HTMLButtonAttributes } from "svelte/elements";
 import type { CustomEventHandler } from "$lib/index.js";
@@ -63,5 +63,5 @@ export type {
 	TriggerEvents,
 	CloseEvents,
 	ContentEvents,
-	OverlayEvents
+	OverlayEvents,
 };

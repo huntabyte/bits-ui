@@ -17,7 +17,7 @@
 		elements: { root },
 		states: { value: localValue },
 		updateOption,
-		getAttrs
+		getAttrs,
 	} = setCtx({
 		orientation,
 		activateOnFocus,
@@ -30,7 +30,7 @@
 				value = next;
 			}
 			return next;
-		}
+		},
 	});
 
 	const attrs = getAttrs("root");

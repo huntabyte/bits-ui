@@ -22,13 +22,9 @@
 	export let descriptionId: $$Props["descriptionId"] = undefined;
 
 	const {
-		states: {
-			value: localValue,
-			placeholder: localPlaceholder,
-			isInvalid: localIsInvalid
-		},
+		states: { value: localValue, placeholder: localPlaceholder, isInvalid: localIsInvalid },
 		updateOption,
-		ids
+		ids,
 	} = setCtx({
 		defaultValue: value,
 		defaultPlaceholder: placeholder,
@@ -54,7 +50,7 @@
 				placeholder = next;
 			}
 			return next;
-		}
+		},
 	});
 
 	const idValues = derived(
@@ -70,7 +66,7 @@
 			ids.dateField.year,
 			ids.dateField.validation,
 			ids.dateField.label,
-			ids.dateField.timeZoneName
+			ids.dateField.timeZoneName,
 		],
 		([
 			$dayId,
@@ -84,7 +80,7 @@
 			$yearId,
 			$validationId,
 			$labelId,
-			$timeZoneNameId
+			$timeZoneNameId,
 		]) => ({
 			day: $dayId,
 			description: $descriptionId,
@@ -97,7 +93,7 @@
 			year: $yearId,
 			validation: $validationId,
 			label: $labelId,
-			timeZoneName: $timeZoneNameId
+			timeZoneName: $timeZoneNameId,
 		})
 	);
 

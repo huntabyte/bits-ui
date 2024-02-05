@@ -9,11 +9,7 @@
 <main>
 	<p data-testid="binding">{checked}</p>
 	<Checkbox.Root data-testid="root" bind:checked {...$$restProps}>
-		<Checkbox.Indicator
-			data-testid="indicator"
-			let:isChecked
-			let:isIndeterminate
-		>
+		<Checkbox.Indicator data-testid="indicator" let:isChecked let:isIndeterminate>
 			{#if isIndeterminate}
 				indeterminate
 			{:else if isChecked}

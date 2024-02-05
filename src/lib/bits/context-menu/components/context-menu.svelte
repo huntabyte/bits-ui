@@ -14,14 +14,13 @@
 	export let dir: $$Props["dir"] = undefined;
 	export let typeahead: $$Props["typeahead"] = undefined;
 	export let closeFocus: $$Props["closeFocus"] = undefined;
-	export let disableFocusFirstItem: $$Props["disableFocusFirstItem"] =
-		undefined;
+	export let disableFocusFirstItem: $$Props["disableFocusFirstItem"] = undefined;
 	export let onOutsideClick: $$Props["onOutsideClick"] = undefined;
 
 	const {
 		states: { open: localOpen },
 		updateOption,
-		ids
+		ids,
 	} = setCtx({
 		closeOnOutsideClick,
 		closeOnEscape,
@@ -41,16 +40,13 @@
 				open = next;
 			}
 			return next;
-		}
+		},
 	});
 
-	const idValues = derived(
-		[ids.menu, ids.trigger],
-		([$menuId, $triggerId]) => ({
-			menu: $menuId,
-			trigger: $triggerId
-		})
-	);
+	const idValues = derived([ids.menu, ids.trigger], ([$menuId, $triggerId]) => ({
+		menu: $menuId,
+		trigger: $triggerId,
+	}));
 
 	$: open !== undefined && localOpen.set(open);
 

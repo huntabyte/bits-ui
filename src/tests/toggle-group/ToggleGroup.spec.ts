@@ -13,20 +13,20 @@ const kbd = getTestKbd();
 const items: Item[] = [
 	{
 		value: "1",
-		disabled: false
+		disabled: false,
 	},
 	{
 		value: "2",
-		disabled: false
+		disabled: false,
 	},
 	{
 		value: "3",
-		disabled: false
+		disabled: false,
 	},
 	{
 		value: "4",
-		disabled: false
-	}
+		disabled: false,
+	},
 ];
 
 function setupMultiple(props: ToggleGroup.Props<"multiple"> = {}) {
@@ -38,7 +38,7 @@ function setupMultiple(props: ToggleGroup.Props<"multiple"> = {}) {
 		root,
 		user,
 		binding,
-		...returned
+		...returned,
 	};
 }
 
@@ -51,7 +51,7 @@ function setup(props: ToggleGroup.Props<"single"> = {}) {
 		root,
 		user,
 		binding,
-		...returned
+		...returned,
 	};
 }
 
@@ -122,7 +122,7 @@ describe("ToggleGroup", () => {
 
 	it("respects the loop prop", async () => {
 		const { user, binding, getByTestId } = setup({
-			loop: false
+			loop: false,
 		});
 		expect(binding).toHaveTextContent("undefined");
 		const item1 = getByTestId("item-1");

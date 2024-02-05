@@ -5,5 +5,5 @@ export type {
 	TriggerProps as AccordionTriggerProps,
 	ContentProps as AccordionContentProps,
 	//
-	TriggerEvents as AccordionTriggerEvents
+	TriggerEvents as AccordionTriggerEvents,
 } from "./types.js";

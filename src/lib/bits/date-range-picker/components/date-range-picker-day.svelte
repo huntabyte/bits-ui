@@ -13,7 +13,7 @@
 	const {
 		elements: { cell },
 		helpers: { isDateDisabled, isDateUnavailable },
-		getCalendarAttrs
+		getCalendarAttrs,
 	} = getCtx();
 
 	const attrs = getCalendarAttrs("day");

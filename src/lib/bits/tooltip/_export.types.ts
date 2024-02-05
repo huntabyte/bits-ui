@@ -5,5 +5,5 @@ export type {
 	TriggerProps as TooltipTriggerProps,
 	//
 	TriggerEvents as TooltipTriggerEvents,
-	ContentEvents as TooltipContentEvents
+	ContentEvents as TooltipContentEvents,
 } from "./types.js";

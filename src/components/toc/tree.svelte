@@ -4,7 +4,7 @@
 		type TableOfContentsItem,
 		type TableOfContentsElements,
 		type TableOfContents,
-		melt
+		melt,
 	} from "@melt-ui/svelte";
 
 	export let tree: TableOfContentsItem[] = [];
@@ -29,7 +29,7 @@
 			destroy() {
 				node.removeEventListener("mouseenter", handleMouseEnter);
 				node.removeEventListener("mouseleave", handleMouseLeave);
-			}
+			},
 		};
 	}
 </script>

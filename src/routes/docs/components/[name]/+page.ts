@@ -7,6 +7,6 @@ export const load: PageLoad = async (event) => {
 		component,
 		title,
 		metadata,
-		schemas
+		schemas,
 	};
 };

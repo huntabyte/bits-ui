@@ -44,7 +44,7 @@ describe("Menubar", () => {
 			"checkbox-item",
 			"radio-group",
 			"radio-item",
-			"checkbox-indicator"
+			"checkbox-indicator",
 		];
 		const mappedParts = parts.map((part) => `${menuId}-${part}`);
 

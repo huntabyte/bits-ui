@@ -6,14 +6,12 @@
 	export let checked: Switch.Props["checked"] = false;
 
 	const inputAttrs = {
-		"data-testid": "input"
+		"data-testid": "input",
 	};
 </script>
 
 <main>
-	<button data-testid="binding" on:click={() => (checked = !checked)}
-		>{checked}</button
-	>
+	<button data-testid="binding" on:click={() => (checked = !checked)}>{checked}</button>
 	<Switch.Root
 		aria-label="airplane mode"
 		data-testid="root"

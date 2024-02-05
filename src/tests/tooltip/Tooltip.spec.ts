@@ -86,7 +86,7 @@ describe("Tooltip", () => {
 
 	it("respects the `closeOnPointerDown` prop", async () => {
 		const { content, user, queryByTestId, getByTestId } = await open({
-			closeOnPointerDown: false
+			closeOnPointerDown: false,
 		});
 		await user.click(content);
 		const outside = getByTestId("outside");

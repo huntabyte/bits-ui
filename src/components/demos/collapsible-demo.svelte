@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Collapsible } from "$lib";
-	import { CaretUpDown } from "phosphor-svelte";
+	import { CaretUpDown } from "$icons/index.js";
 	import { slide } from "svelte/transition";
 </script>
 
@@ -10,28 +10,19 @@
 		<Collapsible.Trigger
 			class="inline-flex h-10 w-10 items-center justify-center rounded-9px border border-border-input bg-background text-foreground shadow-btn transition-all hover:bg-muted active:scale-98"
 		>
-			<CaretUpDown class="sq-4 " weight="bold" />
+			<CaretUpDown class="size-4 " weight="bold" />
 			<span class="sr-only">Toggle</span>
 		</Collapsible.Trigger>
 	</div>
 
-	<Collapsible.Content
-		class="space-y-2 font-mono text-[15px] tracking-[0.01em]"
-		transition={slide}
-	>
-		<div
-			class="inline-flex h-12 w-full items-center rounded-9px bg-muted px-[18px] py-3"
-		>
+	<Collapsible.Content class="space-y-2 font-mono text-[15px] tracking-[0.01em]" transition={slide}>
+		<div class="inline-flex h-12 w-full items-center rounded-9px bg-muted px-[18px] py-3">
 			@huntabyte/bits-ui
 		</div>
-		<div
-			class="inline-flex h-12 w-full items-center rounded-9px bg-muted px-[18px] py-3"
-		>
+		<div class="inline-flex h-12 w-full items-center rounded-9px bg-muted px-[18px] py-3">
 			@huntabyte/shadcn-svelte
 		</div>
-		<div
-			class="inline-flex h-12 w-full items-center rounded-9px bg-muted px-[18px] py-3"
-		>
+		<div class="inline-flex h-12 w-full items-center rounded-9px bg-muted px-[18px] py-3">
 			@melt-ui/melt-ui
 		</div>
 	</Collapsible.Content>

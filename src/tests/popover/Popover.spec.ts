@@ -103,7 +103,7 @@ describe("Popover", () => {
 
 	it("respects the `closeOnOutsideClick` prop", async () => {
 		const { user, queryByTestId, getByTestId } = await open({
-			closeOnOutsideClick: false
+			closeOnOutsideClick: false,
 		});
 		const outside = getByTestId("outside");
 		await user.click(outside);

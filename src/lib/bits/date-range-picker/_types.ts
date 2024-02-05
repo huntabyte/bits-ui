@@ -9,7 +9,7 @@ import type {
 	OnChangeFn,
 	OmitDates,
 	OmitFloating,
-	DOMElement
+	DOMElement,
 } from "$lib/internal/index.js";
 import type { DateRange, SegmentPart } from "$lib/shared";
 import type { DateValue } from "@internationalized/date";

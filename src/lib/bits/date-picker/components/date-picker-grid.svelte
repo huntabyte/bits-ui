@@ -10,7 +10,7 @@
 
 	const {
 		elements: { grid },
-		getCalendarAttrs
+		getCalendarAttrs,
 	} = getCtx();
 
 	const attrs = getCalendarAttrs("grid");

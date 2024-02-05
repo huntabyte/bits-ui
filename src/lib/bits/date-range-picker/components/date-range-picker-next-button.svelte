@@ -10,7 +10,7 @@
 
 	const {
 		elements: { nextButton },
-		getCalendarAttrs
+		getCalendarAttrs,
 	} = getCtx();
 
 	const attrs = getCalendarAttrs("next-button");

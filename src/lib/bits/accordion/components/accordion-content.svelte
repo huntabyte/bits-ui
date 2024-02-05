@@ -13,8 +13,7 @@
 	export let transition: $$Props["transition"] = undefined;
 	export let transitionConfig: $$Props["transitionConfig"] = undefined;
 	export let inTransition: $$Props["inTransition"] = undefined;
-	export let inTransitionConfig: ContentProps<T>["inTransitionConfig"] =
-		undefined;
+	export let inTransitionConfig: ContentProps<T>["inTransitionConfig"] = undefined;
 	export let outTransition: $$Props["outTransition"] = undefined;
 	export let outTransitionConfig: $$Props["outTransitionConfig"] = undefined;
 	export let asChild: $$Props["asChild"] = false;
@@ -24,7 +23,7 @@
 		elements: { content },
 		helpers: { isSelected },
 		props,
-		getAttrs
+		getAttrs,
 	} = getContent();
 
 	const attrs = getAttrs("content");
@@ -36,12 +35,7 @@
 {#if asChild && $isSelected(props)}
 	<slot {builder} />
 {:else if transition && $isSelected(props)}
-	<div
-		bind:this={el}
-		transition:transition={transitionConfig}
-		use:melt={builder}
-		{...$$restProps}
-	>
+	<div bind:this={el} transition:transition={transitionConfig} use:melt={builder} {...$$restProps}>
 		<slot {builder} />
 	</div>
 {:else if inTransition && outTransition && $isSelected(props)}
@@ -55,21 +49,11 @@
 		<slot {builder} />
 	</div>
 {:else if inTransition && $isSelected(props)}
-	<div
-		bind:this={el}
-		in:inTransition={inTransitionConfig}
-		use:melt={builder}
-		{...$$restProps}
-	>
+	<div bind:this={el} in:inTransition={inTransitionConfig} use:melt={builder} {...$$restProps}>
 		<slot {builder} />
 	</div>
 {:else if outTransition && $isSelected(props)}
-	<div
-		bind:this={el}
-		out:outTransition={outTransitionConfig}
-		use:melt={builder}
-		{...$$restProps}
-	>
+	<div bind:this={el} out:outTransition={outTransitionConfig} use:melt={builder} {...$$restProps}>
 		<slot {builder} />
 	</div>
 {:else if $isSelected(props)}

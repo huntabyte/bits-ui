@@ -14,7 +14,7 @@
 
 	const {
 		elements: { item },
-		getAttrs
+		getAttrs,
 	} = getGroupCtx();
 
 	const dispatch = createDispatcher();

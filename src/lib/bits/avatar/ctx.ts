@@ -8,7 +8,7 @@ export function getAvatarData() {
 
 	return {
 		NAME,
-		PARTS
+		PARTS,
 	};
 }
 
@@ -22,7 +22,7 @@ export function setCtx(props: CreateAvatarProps) {
 	setContext(NAME, avatar);
 	return {
 		...avatar,
-		updateOption: getOptionUpdater(avatar.options)
+		updateOption: getOptionUpdater(avatar.options),
 	};
 }
 

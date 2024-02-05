@@ -16,7 +16,7 @@
 		elements: { calendar },
 		states: { months: localMonths, weekdays },
 		ids,
-		getCalendarAttrs
+		getCalendarAttrs,
 	} = getCtx();
 
 	$: if (id) {
@@ -35,12 +35,7 @@
 {#if asChild}
 	<slot {builder} {months} weekdays={$weekdays} />
 {:else}
-	<div
-		bind:this={el}
-		use:melt={builder}
-		{...$$restProps}
-		on:m-keydown={dispatch}
-	>
+	<div bind:this={el} use:melt={builder} {...$$restProps} on:m-keydown={dispatch}>
 		<slot {builder} {months} weekdays={$weekdays} />
 	</div>
 {/if}

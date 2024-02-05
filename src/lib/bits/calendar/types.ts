@@ -4,7 +4,7 @@ import type {
 	HTMLButtonAttributes,
 	HTMLTableAttributes,
 	HTMLTdAttributes,
-	HTMLThAttributes
+	HTMLThAttributes,
 } from "svelte/elements";
 import type * as I from "./_types.js";
 import type { CustomEventHandler } from "$lib/index.js";
@@ -71,5 +71,5 @@ export type {
 	Events,
 	PrevButtonEvents,
 	NextButtonEvents,
-	DayEvents
+	DayEvents,
 };

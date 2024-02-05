@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { SidebarNavItem } from "@/config";
-	import { Sticker, Compass, CodeBlock, Palette } from "phosphor-svelte";
+	import { Sticker, Compass, CodeBlock, Palette } from "$icons/index.js";
 	import { page } from "$app/stores";
 	import { cn } from "@/utils";
 
@@ -10,7 +10,7 @@
 		Introduction: Sticker,
 		"Getting Started": Compass,
 		Delegation: CodeBlock,
-		Styling: Palette
+		Styling: Palette,
 	} as const;
 
 	const iconMapKeys = Object.keys(iconMap) as (keyof typeof iconMap)[];
@@ -28,9 +28,7 @@
 					href={item.href}
 					class={cn(
 						"group flex w-full items-center gap-2.5 rounded-md px-2.5 py-1.5 text-sm font-semibold text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-						$page.url.pathname === item.href
-							? "bg-muted"
-							: "bg-transparent hover:bg-muted/50"
+						$page.url.pathname === item.href ? "bg-muted" : "bg-transparent hover:bg-muted/50"
 					)}
 					target={item.external ? "_blank" : ""}
 					rel={item.external ? "noreferrer" : ""}

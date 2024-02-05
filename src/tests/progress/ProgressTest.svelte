@@ -6,11 +6,6 @@
 </script>
 
 <main>
-	<Progress.Root
-		aria-label="progress"
-		data-testid="root"
-		bind:value
-		{...$$restProps}
-	/>
+	<Progress.Root aria-label="progress" data-testid="root" bind:value {...$$restProps} />
 	<button data-testid="binding" on:click={() => (value = 50)}>{value}</button>
 </main>

@@ -17,9 +17,12 @@ const config = {
 			"$lib/*": "src/lib/*",
 			$internal: "src/lib/internal",
 			"$internal/*": "src/lib/internal/*",
-			"@/*": "src/*"
-		}
-	}
+			"@/*": "src/*",
+			$icons: "src/components/icons",
+			"$icons/*": "src/components/icons/*",
+			"contentlayer/generated": ".contentlayer/generated",
+		},
+	},
 };
 
 export default config;

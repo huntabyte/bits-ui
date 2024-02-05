@@ -10,16 +10,16 @@ const root: APISchema<AspectRatio.Props> = {
 		ratio: {
 			type: C.NUMBER,
 			default: "1",
-			description: "The desired aspect ratio."
+			description: "The desired aspect ratio.",
 		},
-		...domElProps("HTMLDivElement")
+		...domElProps("HTMLDivElement"),
 	},
 	dataAttributes: [
 		{
 			name: "aspect-ratio-root",
-			description: "Present on the element."
-		}
-	]
+			description: "Present on the element.",
+		},
+	],
 };
 
 export const aspectRatio = [root];

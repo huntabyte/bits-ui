@@ -8,13 +8,7 @@
 </script>
 
 <main>
-	<Pagination.Root
-		data-testid="root"
-		let:pages
-		let:range
-		bind:count
-		bind:perPage
-	>
+	<Pagination.Root data-testid="root" let:pages let:range bind:count bind:perPage>
 		<p data-testid="range">Showing items {range.start} - {range.end}</p>
 		<div>
 			<Pagination.PrevButton data-testid="prev-button">

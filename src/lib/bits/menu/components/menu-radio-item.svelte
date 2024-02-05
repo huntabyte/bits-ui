@@ -13,7 +13,7 @@
 
 	const {
 		elements: { radioItem },
-		getAttrs
+		getAttrs,
 	} = setRadioItem(value);
 
 	const attrs = getAttrs("radio-item");

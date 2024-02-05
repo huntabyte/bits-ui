@@ -38,5 +38,5 @@ export type {
 	//
 	ButtonEvents,
 	LinkEvents,
-	GroupItemEvents
+	GroupItemEvents,
 };

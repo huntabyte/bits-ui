@@ -17,7 +17,7 @@
 		elements: { root },
 		states: { pressed: localPressed },
 		updateOption,
-		getAttrs
+		getAttrs,
 	} = setCtx({
 		disabled,
 		defaultPressed: pressed,
@@ -27,7 +27,7 @@
 				pressed = next;
 			}
 			return next;
-		}
+		},
 	});
 
 	const dispatch = createDispatcher();

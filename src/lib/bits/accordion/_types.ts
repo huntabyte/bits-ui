@@ -6,12 +6,12 @@ import type {
 	Expand,
 	OnChangeFn,
 	TransitionProps,
-	DOMElement
+	DOMElement,
 } from "$lib/internal/index.js";
 import type {
 	CreateAccordionProps,
 	AccordionItemProps,
-	AccordionHeadingProps
+	AccordionHeadingProps,
 } from "@melt-ui/svelte";
 
 type Props<Multiple extends boolean> = Expand<

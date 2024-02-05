@@ -19,30 +19,10 @@
 		td,
 		th,
 		tr,
-		ul
+		ul,
 	} from "@/components/markdown";
 
-	export {
-		a,
-		blockquote,
-		h1,
-		h2,
-		h3,
-		h4,
-		h5,
-		h6,
-		hr,
-		img,
-		li,
-		ol,
-		p,
-		pre,
-		table,
-		td,
-		th,
-		tr,
-		ul
-	};
+	export { a, blockquote, h1, h2, h3, h4, h5, h6, hr, img, li, ol, p, pre, table, td, th, tr, ul };
 </script>
 
 <script lang="ts">

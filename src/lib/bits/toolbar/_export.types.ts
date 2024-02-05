@@ -7,5 +7,5 @@ export type {
 	//
 	ButtonEvents as ToolbarButtonEvents,
 	LinkEvents as ToolbarLinkEvents,
-	GroupItemEvents as ToolbarItemEvents
+	GroupItemEvents as ToolbarItemEvents,
 } from "./types.js";

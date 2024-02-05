@@ -27,8 +27,8 @@
 					>Confirm your transaction</AlertDialog.Title
 				>
 				<AlertDialog.Description class="text-sm text-foreground-alt">
-					This action cannot be undone. This will initiate a monthly wire in the
-					amount of $10,000 to Huntabyte. Do you wish to continue?
+					This action cannot be undone. This will initiate a monthly wire in the amount of $10,000
+					to Huntabyte. Do you wish to continue?
 				</AlertDialog.Description>
 			</div>
 			<div class="flex w-full items-center justify-center gap-2">

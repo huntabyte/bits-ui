@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { LinkPreview, Avatar } from "$lib";
 	import { flyAndScale } from "@/utils";
-	import { MapPin, CalendarBlank } from "phosphor-svelte";
+	import { MapPin, CalendarBlank } from "$icons/index.js";
 	let loadingStatusTrigger: Avatar.Props["loadingStatus"] = undefined;
 	let loadingStatusContent: Avatar.Props["loadingStatus"] = undefined;
 </script>
@@ -50,15 +50,13 @@
 			<div class="space-y-1 text-sm">
 				<h4 class="font-medium">@huntabyte</h4>
 				<p>I do things on the internet.</p>
-				<div
-					class="flex items-center gap-[21px] pt-2 text-xs text-muted-foreground"
-				>
+				<div class="flex items-center gap-[21px] pt-2 text-xs text-muted-foreground">
 					<div class="flex items-center text-xs">
-						<MapPin class="mr-1 sq-4" />
+						<MapPin class="mr-1 size-4" />
 						<span> FL, USA </span>
 					</div>
 					<div class="flex items-center text-xs">
-						<CalendarBlank class="mr-1 sq-4" />
+						<CalendarBlank class="mr-1 size-4" />
 						<span> Joined May 2020</span>
 					</div>
 				</div>

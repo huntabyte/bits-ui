@@ -36,7 +36,7 @@
 		elements: { content },
 		states: { open },
 		ids,
-		getAttrs
+		getAttrs,
 	} = getCtx();
 
 	const dispatch = createDispatcher();
@@ -60,7 +60,7 @@
 			sameWidth,
 			fitViewport,
 			strategy,
-			overlap
+			overlap,
 		});
 	}
 </script>

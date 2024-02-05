@@ -8,7 +8,7 @@ export function getPaginationData() {
 
 	return {
 		NAME,
-		PARTS
+		PARTS,
 	};
 }
 
@@ -23,7 +23,7 @@ export function setCtx(props: CreatePaginationProps) {
 
 	return {
 		...pagination,
-		updateOption: getOptionUpdater(pagination.options)
+		updateOption: getOptionUpdater(pagination.options),
 	};
 }
 

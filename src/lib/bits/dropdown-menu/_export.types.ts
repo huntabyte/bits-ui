@@ -22,5 +22,5 @@ export type {
 	RadioItemEvents as DropdownMenuRadioItemEvents,
 	SubContentEvents as DropdownMenuSubContentEvents,
 	SubTriggerEvents as DropdownMenuSubTriggerEvents,
-	CheckboxItemEvents as DropdownMenuCheckboxItemEvents
+	CheckboxItemEvents as DropdownMenuCheckboxItemEvents,
 } from "./types.js";

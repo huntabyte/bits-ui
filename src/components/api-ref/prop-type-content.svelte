@@ -2,7 +2,7 @@
 	import { Popover } from "$lib";
 	import { flyAndScale, parseTypeDef } from "@/utils";
 	import { Code } from "@/components";
-	import { Info } from "phosphor-svelte";
+	import { Info } from "$icons/index.js";
 	import type { PropType } from "@/types";
 
 	export let type: PropType | string;
@@ -17,7 +17,7 @@
 			<Popover.Trigger
 				class="inline-flex items-center justify-center rounded-button text-muted-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
 			>
-				<Info class="sq-4" weight="bold" />
+				<Info class="size-4" weight="bold" />
 				<span class="sr-only">See type definition</span>
 			</Popover.Trigger>
 			<Popover.Content

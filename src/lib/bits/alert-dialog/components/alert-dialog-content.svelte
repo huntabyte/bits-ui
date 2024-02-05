@@ -24,7 +24,7 @@
 		elements: { content },
 		states: { open },
 		ids,
-		getAttrs
+		getAttrs,
 	} = getCtx();
 
 	const attrs = getAttrs("content");

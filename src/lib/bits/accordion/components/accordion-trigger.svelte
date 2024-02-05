@@ -13,7 +13,7 @@
 	const {
 		elements: { trigger },
 		props,
-		getAttrs
+		getAttrs,
 	} = getTrigger();
 	const dispatch = createDispatcher();
 	const attrs = getAttrs("trigger");

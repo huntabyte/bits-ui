@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { cn } from "@/utils";
-	import { CopySimple, Check } from "phosphor-svelte";
+	import { CopySimple, Check } from "$icons/index.js";
 	let className: string | undefined | null = undefined;
 
 	export let copyCode: () => void;

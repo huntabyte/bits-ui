@@ -6,7 +6,7 @@ function getSeparatorData() {
 	const PARTS = ["root"] as const;
 	return {
 		NAME,
-		PARTS
+		PARTS,
 	};
 }
 
@@ -16,6 +16,6 @@ export function setCtx(props: CreateSeparatorProps) {
 	const separator = { ...createSeparator(removeUndefined(props)), getAttrs };
 	return {
 		...separator,
-		updateOption: getOptionUpdater(separator.options)
+		updateOption: getOptionUpdater(separator.options),
 	};
 }

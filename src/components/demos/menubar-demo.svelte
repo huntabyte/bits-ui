@@ -2,7 +2,7 @@
 	import { Menubar } from "$lib";
 	import { flyAndScale } from "@/utils";
 	import { SwitchOn, SwitchOff } from "@/components/icons";
-	import { CaretRight, Cat, Check } from "phosphor-svelte";
+	import { CaretRight, Cat, Check } from "$icons/index.js";
 
 	let bookmarks = false;
 	let fullUrls = true;
@@ -16,7 +16,7 @@
 	class="flex h-12 items-center gap-1 rounded-10px border border-dark-10 bg-background px-[3px] shadow-mini"
 >
 	<div class="px-2.5">
-		<Cat class="sq-6" />
+		<Cat class="size-6" />
 	</div>
 	<Menubar.Menu>
 		<Menubar.Trigger
@@ -65,7 +65,7 @@
 				>
 					Table
 					<Menubar.RadioIndicator class="ml-auto">
-						<Check class="sq-5" />
+						<Check class="size-5" />
 					</Menubar.RadioIndicator>
 				</Menubar.RadioItem>
 				<Menubar.RadioItem
@@ -74,7 +74,7 @@
 				>
 					Board
 					<Menubar.RadioIndicator class="ml-auto">
-						<Check class="sq-5" />
+						<Check class="size-5" />
 					</Menubar.RadioIndicator>
 				</Menubar.RadioItem>
 				<Menubar.RadioItem
@@ -83,7 +83,7 @@
 				>
 					Gallery
 					<Menubar.RadioIndicator class="ml-auto">
-						<Check class="sq-5" />
+						<Check class="size-5" />
 					</Menubar.RadioIndicator>
 				</Menubar.RadioItem>
 			</Menubar.RadioGroup>
@@ -234,7 +234,7 @@
 				>
 					Hunter
 					<Menubar.RadioIndicator class="ml-auto">
-						<Check class="sq-5" />
+						<Check class="size-5" />
 					</Menubar.RadioIndicator>
 				</Menubar.RadioItem>
 				<Menubar.RadioItem
@@ -243,7 +243,7 @@
 				>
 					Pavel
 					<Menubar.RadioIndicator class="ml-auto">
-						<Check class="sq-5" />
+						<Check class="size-5" />
 					</Menubar.RadioIndicator>
 				</Menubar.RadioItem>
 				<Menubar.RadioItem
@@ -252,7 +252,7 @@
 				>
 					Adrian
 					<Menubar.RadioIndicator class="ml-auto">
-						<Check class="sq-5" />
+						<Check class="size-5" />
 					</Menubar.RadioIndicator>
 				</Menubar.RadioItem>
 			</Menubar.RadioGroup>

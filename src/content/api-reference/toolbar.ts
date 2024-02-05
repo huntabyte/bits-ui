@@ -3,7 +3,7 @@ import {
 	enums,
 	union,
 	builderAndAttrsSlotProps,
-	domElProps
+	domElProps,
 } from "@/content/api-reference/helpers.js";
 import type * as Toolbar from "$lib/bits/toolbar/_types.js";
 import * as C from "@/content/constants.js";
@@ -16,29 +16,29 @@ const root: APISchema<Toolbar.Props> = {
 		loop: {
 			default: C.TRUE,
 			type: C.BOOLEAN,
-			description: "Whether or not the toolbar should loop when navigating."
+			description: "Whether or not the toolbar should loop when navigating.",
 		},
 		orientation: {
 			default: C.HORIZONTAL,
 			type: {
 				type: C.ENUM,
-				definition: enums(C.HORIZONTAL, C.VERTICAL)
+				definition: enums(C.HORIZONTAL, C.VERTICAL),
 			},
-			description: "The orientation of the toolbar."
+			description: "The orientation of the toolbar.",
 		},
-		...domElProps("HTMLDivElement")
+		...domElProps("HTMLDivElement"),
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "orientation",
-			description: "The orientation of the toolbar."
+			description: "The orientation of the toolbar.",
 		},
 		{
 			name: "toolbar-root",
-			description: "Present on the root element."
-		}
-	]
+			description: "Present on the root element.",
+		},
+	],
 };
 
 const button: APISchema<Toolbar.ButtonProps> = {
@@ -49,9 +49,9 @@ const button: APISchema<Toolbar.ButtonProps> = {
 	dataAttributes: [
 		{
 			name: "toolbar-button",
-			description: "Present on the button element."
-		}
-	]
+			description: "Present on the button element.",
+		},
+	],
 };
 
 const link: APISchema<Toolbar.LinkProps> = {
@@ -62,9 +62,9 @@ const link: APISchema<Toolbar.LinkProps> = {
 	dataAttributes: [
 		{
 			name: "toolbar-link",
-			description: "Present on the link element."
-		}
-	]
+			description: "Present on the link element.",
+		},
+	],
 };
 
 const group: APISchema<Toolbar.GroupProps<"multiple">> = {
@@ -74,37 +74,37 @@ const group: APISchema<Toolbar.GroupProps<"multiple">> = {
 		value: {
 			type: {
 				type: C.UNION,
-				definition: union(C.STRING, "string[]")
+				definition: union(C.STRING, "string[]"),
 			},
 			description:
-				"The value of the toggle group. If the type is multiple, this will be an array of strings, otherwise it will be a string."
+				"The value of the toggle group. If the type is multiple, this will be an array of strings, otherwise it will be a string.",
 		},
 		onValueChange: {
 			type: C.FUNCTION,
-			description: "A callback function called when the value changes."
+			description: "A callback function called when the value changes.",
 		},
 		disabled: {
 			default: C.FALSE,
 			type: C.BOOLEAN,
-			description: "Whether or not the switch is disabled."
+			description: "Whether or not the switch is disabled.",
 		},
 		type: {
 			default: "single",
 			description: "The type of toggle group.",
 			type: {
 				type: C.ENUM,
-				definition: enums("single", "multiple")
-			}
+				definition: enums("single", "multiple"),
+			},
 		},
-		...domElProps("HTMLDivElement")
+		...domElProps("HTMLDivElement"),
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "toolbar-group",
-			description: "Present on the group element."
-		}
-	]
+			description: "Present on the group element.",
+		},
+	],
 };
 
 const groupItem: APISchema<Toolbar.GroupItemProps> = {
@@ -114,14 +114,14 @@ const groupItem: APISchema<Toolbar.GroupItemProps> = {
 		value: {
 			type: C.STRING,
 			description:
-				"The value of the toolbar toggle group item. When the toolbar toggle group item is selected, toolbar the toggle group's value will be set to this value if in single mode, or this value will be pushed to the toggle group's array value if in multiple mode."
+				"The value of the toolbar toggle group item. When the toolbar toggle group item is selected, toolbar the toggle group's value will be set to this value if in single mode, or this value will be pushed to the toggle group's array value if in multiple mode.",
 		},
 		disabled: {
 			default: C.FALSE,
 			type: C.BOOLEAN,
-			description: "Whether or not the item is disabled."
+			description: "Whether or not the item is disabled.",
 		},
-		...domElProps("HTMLButtonElement")
+		...domElProps("HTMLButtonElement"),
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
@@ -129,21 +129,21 @@ const groupItem: APISchema<Toolbar.GroupItemProps> = {
 			name: "state",
 			description: "Whether the toolbar toggle item is in the on or off state.",
 			value: enums("on", "off"),
-			isEnum: true
+			isEnum: true,
 		},
 		{
 			name: "value",
-			description: "The value of the toolbar toggle item."
+			description: "The value of the toolbar toggle item.",
 		},
 		{
 			name: "disabled",
-			description: "Present when the toolbar toggle item is disabled."
+			description: "Present when the toolbar toggle item is disabled.",
 		},
 		{
 			name: "toolbar-item",
-			description: "Present on the item element."
-		}
-	]
+			description: "Present on the item element.",
+		},
+	],
 };
 
 export const toolbar = [root, button, link, group, groupItem];

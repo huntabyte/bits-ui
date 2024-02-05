@@ -32,6 +32,6 @@ export function getKbd() {
 		SPACE: " ",
 		TAB: "Tab",
 		CTRL: "Control",
-		ASTERISK: "*"
+		ASTERISK: "*",
 	};
 }

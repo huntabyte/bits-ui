@@ -22,7 +22,7 @@ export function updatePositioning(store: Writable<FloatingConfig>, props: Floati
 		collisionPadding: 8,
 		fitViewport: false,
 		strategy: "absolute",
-		overlap: false
+		overlap: false,
 	} satisfies FloatingProps;
 
 	const withDefaults = { ...defaultPositioningProps, ...props } satisfies FloatingProps;
@@ -33,7 +33,7 @@ export function updatePositioning(store: Writable<FloatingConfig>, props: Floati
 			offset: {
 				...prev.offset,
 				mainAxis: withDefaults.sideOffset,
-				crossAxis: withDefaults.alignOffset
+				crossAxis: withDefaults.alignOffset,
 			},
 			gutter: 0,
 			sameWidth: withDefaults.sameWidth,
@@ -42,7 +42,7 @@ export function updatePositioning(store: Writable<FloatingConfig>, props: Floati
 			boundary: withDefaults.collisionBoundary,
 			fitViewport: withDefaults.fitViewport,
 			strategy: withDefaults.strategy,
-			overlap: withDefaults.overlap
+			overlap: withDefaults.overlap,
 		};
 	});
 }

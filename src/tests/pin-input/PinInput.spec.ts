@@ -29,7 +29,7 @@ function setup(props: PinInput.Props = {}) {
 		input5,
 		hiddenInput,
 		binding,
-		...returned
+		...returned,
 	};
 }
 
@@ -74,7 +74,7 @@ describe("PIN Input", () => {
 
 	it("respects binding to the `value` prop", async () => {
 		const { hiddenInput, binding, user } = setup({
-			value: ["1", "2", "3", "4", "5"]
+			value: ["1", "2", "3", "4", "5"],
 		});
 		expect(hiddenInput).toHaveValue("12345");
 		expect(binding).toHaveTextContent("1,2,3,4,5");
@@ -91,7 +91,7 @@ describe("PIN Input", () => {
 
 		const { user, input3 } = setup({
 			value: ["1", "2", "3", "4", "5"],
-			onValueChange: onValueChange
+			onValueChange: onValueChange,
 		});
 
 		input3.focus();
@@ -145,7 +145,7 @@ describe("PIN Input", () => {
 
 	it("deletes current input when pressing delete", async () => {
 		const { user, input1, input2, input3, input4, input5, hiddenInput } = setup({
-			value: ["1", "2", "3", "4", "5"]
+			value: ["1", "2", "3", "4", "5"],
 		});
 		expect(hiddenInput).toHaveValue("12345");
 		input1.focus();
@@ -182,7 +182,7 @@ describe("PIN Input", () => {
 
 	it("deletes current input when pressing backspace, if empty moves to previous input and deletes that value as well.", async () => {
 		const { user, input1, input2, input3, input4, input5, hiddenInput } = setup({
-			value: ["1", "2", "3", "4", "5"]
+			value: ["1", "2", "3", "4", "5"],
 		});
 		expect(hiddenInput).toHaveValue("12345");
 		input5.focus();

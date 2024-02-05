@@ -18,7 +18,7 @@ export function setCtx<Multiple extends boolean>(props: CreateAccordionProps<Mul
 	const accordion = {
 		...initAccordion,
 		getAttrs,
-		updateOption: getOptionUpdater(initAccordion.options)
+		updateOption: getOptionUpdater(initAccordion.options),
 	};
 
 	setContext(NAME, accordion);
@@ -47,7 +47,7 @@ export function getContent() {
 	const { value: props } = getItemProps();
 	return {
 		...ctx,
-		props
+		props,
 	};
 }
 
@@ -56,6 +56,6 @@ export function getTrigger() {
 	const { value, disabled } = getItemProps();
 	return {
 		...ctx,
-		props: { value, disabled }
+		props: { value, disabled },
 	};
 }
