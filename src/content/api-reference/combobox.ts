@@ -118,43 +118,20 @@ export const root: APISchema<Combobox.Props> = {
 
 export const content: APISchema<Combobox.ContentProps> = {
 	title: "Content",
-	description: "The div element which which wraps the combobox elements.",
-	props: domElProps("HTMLDivElement"),
-	slotProps: { ...builderAndAttrsSlotProps },
-	dataAttributes: [
-		{
-			name: "state",
-			value: enums("open", "closed"),
-			isEnum: true,
-			description: "The dropdown menu's open state.",
-		},
-		{
-			name: "disabled",
-			description: "Present when the input is disabled.",
-		},
-		{
-			name: "select-content",
-			description: "Present on the content element.",
-		},
-	],
-};
-
-export const menu: APISchema<Combobox.MenuProps> = {
-	title: "Menu",
-	description: "The menu/content element which contains the combobox menu's items.",
+	description: "The element which contains the combobox menu's items.",
 	props: { ...transitionProps, ...floatingPositioning, ...domElProps("HTMLDivElement") },
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
-			name: "combobox-menu",
-			description: "Present on the menu element.",
+			name: "combobox-content",
+			description: "Present on the content element.",
 		},
 	],
 };
 
 export const item: APISchema<Combobox.ItemProps> = {
 	title: "Item",
-	description: "A combobox item, which must be a child of the `Combobox.Menu` component.",
+	description: "A combobox item, which must be a child of the `Combobox.Content` component.",
 	props: {
 		label: {
 			type: C.STRING,
@@ -271,4 +248,4 @@ export const arrow: APISchema<Combobox.ArrowProps> = {
 	],
 };
 
-export const combobox = [root, content, menu, item, input, label, hiddenInput, arrow];
+export const combobox = [root, content, item, input, label, hiddenInput, arrow];

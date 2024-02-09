@@ -22,22 +22,18 @@ description: Enables users to pick from a list of options displayed in a dropdow
 </script>
 
 <Combobox.Root>
-	<Combobox.Content>
-		<Combobox.Input />
-		<Combobox.Label />
-	</Combobox.Content>
+	<Combobox.Input />
+	<Combobox.Label />
 
-	<Combobox.Menu>
+	<Combobox.Content>
 		<Combobox.Item>
 			<Combobox.ItemIndicator />
 		</Combobox.Item>
 		<Combobox.Separator>
-	</Combobox.Menu>
+	</Combobox.Content>
 	<Combobox.Arrow />
 	<Combobox.HiddenInput />
 </Combobox.Root>
 ```
 
 <APISection {schemas} />
-
-🚧 **UNDER CONSTRUCTION** 🚧
