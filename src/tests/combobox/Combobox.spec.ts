@@ -47,7 +47,7 @@ async function open(
 ) {
 	const returned = setup(props);
 	const { input, getByTestId, queryByTestId, user } = returned;
-	expect(queryByTestId("menu")).toBeNull();
+	expect(queryByTestId("content")).toBeNull();
 	if (openWith === "click") {
 		await user.click(input);
 	} else if (openWith === "type" && inputValue) {
@@ -56,8 +56,8 @@ async function open(
 		input.focus();
 		await user.keyboard(openWith);
 	}
-	await waitFor(() => expect(queryByTestId("menu")).not.toBeNull());
-	const menu = getByTestId("menu");
+	await waitFor(() => expect(queryByTestId("content")).not.toBeNull());
+	const menu = getByTestId("content");
 	return { menu, ...returned };
 }
 
@@ -71,7 +71,7 @@ describe("Combobox", () => {
 
 	it("has bits data attrs", async () => {
 		const { getByTestId } = await open();
-		const parts = ["content", "menu", "input", "group", "group-label"];
+		const parts = ["content", "input", "group", "group-label"];
 
 		parts.forEach((part) => {
 			const el = getByTestId(part);
@@ -100,7 +100,7 @@ describe("Combobox", () => {
 		const { user, queryByTestId, getByTestId } = await open();
 		await user.keyboard(kbd.ARROW_DOWN);
 		await user.keyboard(kbd.ENTER);
-		await waitFor(() => expect(queryByTestId("menu")).toBeNull());
+		await waitFor(() => expect(queryByTestId("content")).toBeNull());
 		expect(getByTestId("input")).toHaveValue("A");
 	});
 
@@ -127,14 +127,14 @@ describe("Combobox", () => {
 	it("closes on escape keydown", async () => {
 		const { user, queryByTestId } = await open();
 		await user.keyboard(kbd.ESCAPE);
-		expect(queryByTestId("menu")).toBeNull();
+		expect(queryByTestId("content")).toBeNull();
 	});
 
 	it("closes on outside click", async () => {
 		const { user, queryByTestId, getByTestId } = await open();
 		const outside = getByTestId("outside");
 		await user.click(outside);
-		expect(queryByTestId("menu")).toBeNull();
+		expect(queryByTestId("content")).toBeNull();
 	});
 
 	it("portals to the body by default", async () => {
@@ -157,7 +157,7 @@ describe("Combobox", () => {
 	it("respects the `closeOnEscape` prop", async () => {
 		const { user, queryByTestId } = await open({ closeOnEscape: false });
 		await user.keyboard(kbd.ESCAPE);
-		await waitFor(() => expect(queryByTestId("menu")).not.toBeNull());
+		await waitFor(() => expect(queryByTestId("content")).not.toBeNull());
 	});
 
 	it('respects the "closeOnOutsideClick" prop', async () => {
@@ -166,7 +166,7 @@ describe("Combobox", () => {
 		});
 		const outside = getByTestId("outside");
 		await user.click(outside);
-		await waitFor(() => expect(queryByTestId("menu")).not.toBeNull());
+		await waitFor(() => expect(queryByTestId("content")).not.toBeNull());
 	});
 
 	it("respects binding the `inputValue` prop", async () => {
@@ -183,10 +183,10 @@ describe("Combobox", () => {
 		expect(binding).toHaveTextContent("true");
 		await user.click(binding);
 		expect(binding).toHaveTextContent("false");
-		await waitFor(() => expect(queryByTestId("menu")).toBeNull());
+		await waitFor(() => expect(queryByTestId("content")).toBeNull());
 		await user.click(binding);
 		expect(binding).toHaveTextContent("true");
-		await waitFor(() => expect(queryByTestId("menu")).not.toBeNull());
+		await waitFor(() => expect(queryByTestId("content")).not.toBeNull());
 	});
 
 	it("respects binding the `selected` prop", async () => {
@@ -202,11 +202,11 @@ describe("Combobox", () => {
 		const item = getByTestId("1");
 		await waitFor(() => expect(queryByTestId("1-indicator")).toBeNull());
 		await user.click(item);
-		await waitFor(() => expect(queryByTestId("menu")).toBeNull());
+		await waitFor(() => expect(queryByTestId("content")).toBeNull());
 		expect(input).toHaveValue("A");
 		expect(hiddenInput).toHaveValue("1");
 		await user.click(input);
-		await waitFor(() => expect(queryByTestId("menu")).not.toBeNull());
+		await waitFor(() => expect(queryByTestId("content")).not.toBeNull());
 		expect(item).toHaveAttribute("aria-selected", "true");
 		expect(item).toHaveAttribute("data-selected");
 		await waitFor(() => expect(queryByTestId("1-indicator")).not.toBeNull());
@@ -246,11 +246,11 @@ describe("Combobox", () => {
 		await user.keyboard(kbd.ARROW_DOWN);
 		await user.keyboard(kbd.ARROW_DOWN);
 		await user.keyboard(kbd.ENTER);
-		await waitFor(() => expect(queryByTestId("menu")).toBeNull());
+		await waitFor(() => expect(queryByTestId("content")).toBeNull());
 		expect(input).toHaveValue("C");
 		expect(hiddenInput).toHaveValue("3");
 		await user.click(input);
-		await waitFor(() => expect(queryByTestId("menu")).not.toBeNull());
+		await waitFor(() => expect(queryByTestId("content")).not.toBeNull());
 		expect(item0).not.toHaveAttribute("data-selected");
 		expect(item1).not.toHaveAttribute("data-selected");
 		expect(item2).toHaveAttribute("data-selected");

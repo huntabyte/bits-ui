@@ -22,10 +22,8 @@
 
 <main data-testid="main">
 	<Combobox.Root bind:selected bind:open bind:inputValue {...$$restProps}>
-		<Combobox.Content data-testid="content" aria-label="open combobox">
-			<Combobox.Input data-testid="input" {placeholder} />
-		</Combobox.Content>
-		<Combobox.Menu data-testid="menu">
+		<Combobox.Input data-testid="input" {placeholder} aria-label="open combobox" />
+		<Combobox.Content data-testid="content">
 			<Combobox.Group data-testid="group">
 				<Combobox.GroupLabel data-testid="group-label">Options</Combobox.GroupLabel>
 				{#each options as { value, label, disabled }}
@@ -37,7 +35,7 @@
 					</Combobox.Item>
 				{/each}
 			</Combobox.Group>
-		</Combobox.Menu>
+		</Combobox.Content>
 		<Combobox.HiddenInput data-testid="hidden-input" />
 	</Combobox.Root>
 	<div data-testid="outside" />
