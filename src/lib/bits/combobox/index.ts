@@ -1,6 +1,5 @@
 export { default as Root } from "./components/combobox.svelte";
 export { default as Content } from "./components/combobox-content.svelte";
-export { default as Menu } from "./components/combobox-menu.svelte";
 export { default as Input } from "./components/combobox-input.svelte";
 export { default as Item } from "./components/combobox-item.svelte";
 export { default as Label } from "./components/combobox-label.svelte";

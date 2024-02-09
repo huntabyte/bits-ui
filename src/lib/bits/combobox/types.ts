@@ -5,13 +5,11 @@ import type * as I from "./_types.js";
 
 type Props<T, Multiple extends boolean = false> = I.Props<T, Multiple>;
 
-type MenuProps<
+type ContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
 	Out extends Transition = Transition
-> = I.MenuProps<T, In, Out> & HTMLDivAttributes;
-
-type ContentProps = I.ContentProps & HTMLDivAttributes;
+> = I.ContentProps<T, In, Out> & HTMLDivAttributes;
 
 type InputProps = I.InputProps & HTMLInputAttributes;
 type LabelProps = I.LabelProps & HTMLDivAttributes;
@@ -35,7 +33,7 @@ type ItemEvents<T extends Element = HTMLDivElement> = {
 	pointerleave: EventHandler<PointerEvent, T>;
 };
 
-type MenuEvents<T extends Element = HTMLDivElement> = {
+type ContentEvents<T extends Element = HTMLDivElement> = {
 	pointerleave: CustomEventHandler<PointerEvent, T>;
 	keydown: EventHandler<KeyboardEvent, T>;
 };
@@ -53,7 +51,6 @@ type InputEvents = {
 export type {
 	Props,
 	ContentProps,
-	MenuProps,
 	InputProps,
 	ItemProps,
 	LabelProps,
@@ -64,7 +61,7 @@ export type {
 	SeparatorProps,
 	IndicatorProps,
 	//
-	MenuEvents,
+	ContentEvents,
 	InputEvents,
 	ItemEvents,
 	GroupLabelEvents,

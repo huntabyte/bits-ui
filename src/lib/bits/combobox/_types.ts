@@ -5,7 +5,7 @@
  */
 import type { CreateComboboxProps, ComboboxOptionProps } from "@melt-ui/svelte";
 import type { DOMElement, Expand, OmitFloating, OnChangeFn } from "$lib/internal/index.js";
-import type { ContentProps as MenuProps, ArrowProps } from "$lib/bits/floating/_types.js";
+import type { ContentProps, ArrowProps } from "$lib/bits/floating/_types.js";
 import type { Selected } from "$lib";
 
 export type WhenTrue<TrueOrFalse, IfTrue, IfFalse, IfNeither = IfTrue | IfFalse> = [
@@ -69,7 +69,6 @@ type Props<T = unknown, Multiple extends boolean = false> = Expand<
 	}
 >;
 
-type ContentProps = DOMElement;
 
 type InputProps = DOMElement<HTMLInputElement>;
 type LabelProps = DOMElement<HTMLLabelElement>;
@@ -86,7 +85,6 @@ type IndicatorProps = DOMElement;
 export type {
 	Props,
 	ContentProps,
-	MenuProps,
 	InputProps,
 	ItemProps,
 	LabelProps,

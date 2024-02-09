@@ -5,7 +5,7 @@
 
 	const fruits = [
 		{ value: "mango", label: "Mango" },
-		{ value: "water melon", label: "Water Melon" },
+		{ value: "watermelon", label: "Watermelon" },
 		{ value: "apple", label: "Apple" },
 		{ value: "pineapple", label: "Pineapple" },
 		{ value: "orange", label: "Orange" },
@@ -19,16 +19,16 @@
 </script>
 
 <Combobox.Root items={filteredFruits} bind:inputValue>
-	<Combobox.Content class="relative" aria-label="Select a fruit">
+	<div class="relative" aria-label="Select a fruit">
 		<OrangeSlice class="absolute start-3 top-1/2 size-6 -translate-y-1/2 text-muted-foreground" />
 		<Combobox.Input
 			class="inline-flex h-input w-[296px] truncate rounded-9px border border-border-input bg-background px-11 text-sm transition-colors placeholder:text-foreground-alt/50 focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2 focus:ring-offset-background"
 			placeholder="Select a fruit"
 		/>
 		<CaretUpDown class="absolute end-3 top-1/2 size-6 -translate-y-1/2 text-muted-foreground" />
-	</Combobox.Content>
+	</div>
 
-	<Combobox.Menu
+	<Combobox.Content
 		class="w-full rounded-xl border border-muted bg-background px-1 py-3 shadow-popover outline-none"
 		transition={flyAndScale}
 		sideOffset={8}
@@ -47,6 +47,6 @@
 		{:else}
 			<span class="block px-5 py-2 text-sm text-muted-foreground"> No results found </span>
 		{/each}
-	</Combobox.Menu>
+	</Combobox.Content>
 	<Combobox.HiddenInput name="favoriteFruit" />
 </Combobox.Root>

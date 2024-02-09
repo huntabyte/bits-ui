@@ -1,6 +1,6 @@
 ---
 title: Combobox
-description: Provides users with the ability to pick from a list of options displayed in a dropdown.
+description: Enables users to pick from a list of options displayed in a dropdown.
 ---
 
 <script>

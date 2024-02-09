@@ -63,8 +63,6 @@
 			if (selected !== next) {
 				onSelectedChange?.(next);
 				selected = next;
-				// inputValue = next?.label ?? (typeof next?.value === "string" ? next?.value : "");
-				// localInputValue.set(inputValue);
 			}
 
 			inputValue = next?.label ?? (typeof next?.value === "string" ? next?.value : "");
