@@ -69,7 +69,6 @@ type Props<T = unknown, Multiple extends boolean = false> = Expand<
 	}
 >;
 
-
 type InputProps = DOMElement<HTMLInputElement>;
 type LabelProps = DOMElement<HTMLLabelElement>;
 
