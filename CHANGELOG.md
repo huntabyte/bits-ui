@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.18.0
+
+### Minor Changes
+
+- New Component: [Combobox](https://bits-ui.com/docs/components/combobox) ([#243](https://github.com/huntabyte/bits-ui/pull/243))
+
 ## 0.17.0
 
 ### Minor Changes
