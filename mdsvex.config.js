@@ -9,36 +9,55 @@ import { readFileSync } from "fs";
 import prettier from "prettier";
 import { u } from "unist-builder";
 import { codeBlockPrettierConfig } from "./other/code-block-prettier.js";
+import { getHighlighter } from "shiki";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
+
+/**
+ * @typedef {import('mdast').Root} MdastRoot
+ * @typedef {import('hast').Root} HastRoot
+ * @typedef {import('unified').Transformer<HastRoot, HastRoot>} HastTransformer
+ * @typedef {import('unified').Transformer<MdastRoot, MdastRoot>} MdastTransformer
+ */
 
 /**
  * @type {import('rehype-pretty-code').Options}
  */
 const prettyCodeOptions = {
+	getHighlighter: (options) => {
+		return getHighlighter({
+			...options,
+			langs: [
+				"plaintext",
+				import("shiki/langs/typescript.mjs"),
+				import("shiki/langs/svelte.mjs"),
+				import("shiki/langs/shellscript.mjs"),
+			],
+		});
+	},
 	theme: {
 		dark: JSON.parse(
-			readFileSync(resolve(__dirname, "./src/styles/themes/serendipity-midnight.json"))
+			String(readFileSync(resolve(__dirname, "./src/styles/themes/serendipity-midnight.json")))
 		),
 		light: JSON.parse(
-			readFileSync(resolve(__dirname, "./src/styles/themes/serendipity-morning.json"))
+			String(readFileSync(resolve(__dirname, "./src/styles/themes/serendipity-morning.json")))
 		),
 	},
 	keepBackground: false,
 	onVisitLine(node) {
 		if (node.children.length === 0) {
+			// @ts-expect-error - modifying the node type
 			node.children = { type: "text", value: " " };
 		}
 	},
 	onVisitHighlightedLine(node) {
 		node.properties.className = ["line--highlighted"];
 	},
-	onVisitHighlightedWord(node) {
-		node.properties.className = ["word--highlighted"];
+	onVisitHighlightedChars(node) {
+		node.properties.className = ["chars--highlighted"];
 	},
 };
 
-/** @type {import('@huntabyte/mdsvex').MdsvexOptions} */
 export const mdsvexOptions = {
 	extensions: [".md"],
 	layout: resolve(__dirname, "./src/components/markdown/layout.svelte"),
@@ -58,15 +77,22 @@ export const mdsvexOptions = {
 		rehypePreToComponentPre,
 	],
 };
+
+/**
+ *
+ * @returns {HastTransformer}
+ */
 export function rehypeComponentExample() {
 	return async (tree) => {
 		const nameRegex = /name="([^"]+)"/;
 		const compRegex = /comp="([^"]+)"/;
 		visit(tree, (node, index, parent) => {
+			// @ts-expect-error - we're using an untyped node here
 			if (node?.type === "raw" && node?.value?.startsWith("<ComponentPreview")) {
-				const nameMatch = node.value.match(nameRegex);
+				const currNode = /** @type NodeType */ (node);
+				const nameMatch = currNode.value.match(nameRegex);
 				const name = nameMatch ? nameMatch[1] : null;
-				const compMatch = node.value.match(compRegex);
+				const compMatch = currNode.value.match(compRegex);
 				const comp = compMatch ? compMatch[1] : null;
 
 				if (!name || !comp) {
@@ -109,11 +135,9 @@ export function rehypeComponentExample() {
 	};
 }
 
-function getComponentSourceFileContent(src = undefined) {
+function getComponentSourceFileContent(src = "") {
+	if (!src) return null;
 	const newSrc = `./src/components/demos/${src}.svelte`;
-	if (!newSrc) {
-		return null;
-	}
 
 	// Read the source file.
 	const filePath = path.join(process.cwd(), newSrc);
@@ -165,8 +189,8 @@ function rehypePreToComponentPre() {
 function rehypeHandleMetadata() {
 	return async (tree) => {
 		visit(tree, (node) => {
-			if (node?.type === "element" && node?.tagName === "div") {
-				if (!("data-rehype-pretty-code-fragment" in node.properties)) {
+			if (node?.type === "element" && node?.tagName === "figure") {
+				if (!("data-rehype-pretty-code-figure" in node.properties)) {
 					return;
 				}
 

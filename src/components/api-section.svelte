@@ -8,7 +8,7 @@
 	export let schemas: APISchema[] = [];
 </script>
 
-<H2>Component API</H2>
+<H2>API Reference</H2>
 
 <div class="flex flex-col gap-12 pt-8">
 	{#each schemas as schema}
