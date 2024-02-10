@@ -50,6 +50,7 @@ export { default as Compass } from "phosphor-svelte/lib/Compass";
 export { default as Sticker } from "phosphor-svelte/lib/Sticker";
 export { default as UserCircle } from "phosphor-svelte/lib/UserCircle";
 export { default as PlusCircle } from "phosphor-svelte/lib/PlusCircle";
+export { default as OrangeSlice } from "phosphor-svelte/lib/OrangeSlice";
 
 export type IconProps = Partial<HTMLAttributes<SVGElement>> & {
 	class?: string;
