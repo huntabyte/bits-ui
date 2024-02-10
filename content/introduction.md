@@ -17,7 +17,7 @@ Each component has a wide range of props that allow you to customize the behavio
 
 ## Accessible
 
-A ton of effort has been invested in making sure that the components are accessible by default. They've been designed following the best practices for accessibility with the goal of making them usable by as many people as possible.
+A ton of effort has been invested in making sure that the components are accessible by default. They've been designed following the best practices for accessibility with the goal of making them usable by as many people as possible. Keyboard navigation, screen reader support, and focus management are all built-in.
 
 ## Consistent
 
