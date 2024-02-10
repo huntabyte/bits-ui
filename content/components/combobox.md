@@ -29,7 +29,7 @@ description: Enables users to pick from a list of options displayed in a dropdow
 		<Combobox.Item>
 			<Combobox.ItemIndicator />
 		</Combobox.Item>
-		<Combobox.Separator>
+		<Combobox.Separator />
 	</Combobox.Content>
 	<Combobox.Arrow />
 	<Combobox.HiddenInput />
