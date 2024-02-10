@@ -1,7 +1,6 @@
 export type {
 	Props as ComboboxProps,
 	ContentProps as ComboboxContentProps,
-	MenuProps as ComboboxMenuProps,
 	InputProps as ComboboxInputProps,
 	ItemProps as ComboboxItemProps,
 	LabelProps as ComboboxLabelProps,
@@ -13,7 +12,6 @@ export type {
 	IndicatorProps as ComboboxIndicatorProps,
 	//
 	ItemEvents as ComboboxItemEvents,
-	MenuEvents as ComboboxMenuEvents,
 	InputEvents as ComboboxInputEvents,
 	GroupLabelEvents as ComboboxGroupLabelEvents,
 } from "./types.js";
