@@ -195,7 +195,7 @@ export const input: APISchema = {
 };
 
 export const hiddenInput: APISchema<Combobox.InputProps> = {
-	title: "hidden-input",
+	title: "HiddenInput",
 	description:
 		"A hidden input element which is used to store the combobox menu's value, used for form submission. It receives the same value as the `Select.Value` component and can receive any props that a normal input element can receive.",
 	props: domElProps("HTMLInputElement"),
