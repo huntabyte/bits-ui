@@ -3,13 +3,13 @@ title: Styling
 description: Learn how to style Bits UI components.
 ---
 
-We ship almost zero styles with Bits UI. This is intentional, as we want to give you the most flexibility possible when it comes to styling your components.
+We ship almost zero styles with Bits UI. This is intentional. We want to give you the most flexibility possible when it comes to styling your components.
 
-For each component that renders an HTML element, we provide a `class` prop that you can use to apply styles to the component. This is the recommended and most straightforward way to style them.
+For each component that renders an HTML element, we expose a `class` prop that you can use to apply styles to the component. This is the recommended and most straightforward way to style them.
 
 ## CSS frameworks
 
-If you're using a CSS framework like TailwindCSS or UnoCSS, you can simply pass the classes you need to the component, and they will be applied to the underlying HTML element it renders.
+If you're using a CSS framework like TailwindCSS or UnoCSS, you can simply pass the classes you need to the component, and they will be applied to the underlying HTML element.
 
 ```svelte
 <script lang="ts">
@@ -48,7 +48,7 @@ You can then use those data attributes like so:
 <slot />
 ```
 
-Now every `Button.Root` component will have the styles applied to it.
+Now every `<Button.Root />` component will have the styles applied to it.
 
 ## Global classes
 

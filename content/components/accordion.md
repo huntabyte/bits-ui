@@ -32,3 +32,40 @@ description: Organizes content into collapsible sections, allowing users to focu
 ```
 
 <APISection {schemas} />
+
+## Examples
+
+### Multiple
+
+Multiple accordion items open at the same time using the `multiple` prop.
+
+```svelte showLineNumbers {1}
+<Accordion.Root multiple>
+	<!-- ... -->
+</Accordion.Root>
+```
+
+### Controlled
+
+You can programmatically control the active of the accordion item(s) using the `value` prop.
+
+```svelte showLineNumbers
+<script lang="ts">
+	let value = "item-1";
+</script>
+
+<Accordion.Root bind:value>
+	<Accordion.Item value="item-1">
+		<Accordion.Header>
+			<Accordion.Trigger />
+		</Accordion.Header>
+		<Accordion.Content />
+	</Accordion.Item>
+	<Accordion.Item value="item-2">
+		<Accordion.Header>
+			<Accordion.Trigger />
+		</Accordion.Header>
+		<Accordion.Content />
+	</Accordion.Item>
+</Accordion.Root>
+```
