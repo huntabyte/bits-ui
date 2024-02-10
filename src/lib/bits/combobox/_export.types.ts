@@ -14,4 +14,5 @@ export type {
 	ItemEvents as ComboboxItemEvents,
 	InputEvents as ComboboxInputEvents,
 	GroupLabelEvents as ComboboxGroupLabelEvents,
+	ContentEvents as ComboboxContentEvents,
 } from "./types.js";
