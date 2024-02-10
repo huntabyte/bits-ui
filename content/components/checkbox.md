@@ -27,11 +27,15 @@ description: Allow users to switch between checked, unchecked, and indeterminate
 </Checkbox.Root>
 ```
 
-## Controlled Usage
+<APISection {schemas} />
 
-If you want to control or be aware of the `checked` state of the checkbox from outside of the component, you can bind to the `checked` prop.
+## Examples
 
-```svelte
+### Controlled Usage
+
+If you want to control or be aware of the `checked` state from outside the component, you can bind to the `checked` prop.
+
+```svelte showLineNumbers
 <script lang="ts">
 	import { Checkbox } from "bits-ui";
 	let myChecked = false;
@@ -43,5 +47,3 @@ If you want to control or be aware of the `checked` state of the checkbox from o
 	<Checkbox.Input />
 </Checkbox.Root>
 ```
-
-<APISection {schemas} />
