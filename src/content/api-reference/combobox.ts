@@ -17,7 +17,7 @@ import type * as Combobox from "$lib/bits/combobox/_types.js";
 
 export const root: APISchema<Combobox.Props> = {
 	title: "Root",
-	description: "The root combobox component which manages & scopes the state of the select.",
+	description: "The root combobox component which manages & scopes the state of the combobox.",
 	props: {
 		disabled: {
 			default: C.FALSE,
@@ -118,7 +118,7 @@ export const root: APISchema<Combobox.Props> = {
 
 export const content: APISchema<Combobox.ContentProps> = {
 	title: "Content",
-	description: "The element which contains the combobox menu's items.",
+	description: "The element which contains the combobox's items.",
 	props: { ...transitionProps, ...floatingPositioning, ...domElProps("HTMLDivElement") },
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
@@ -135,11 +135,11 @@ export const item: APISchema<Combobox.ItemProps> = {
 	props: {
 		label: {
 			type: C.STRING,
-			description: "The label of the select item, which is displayed in the menu.",
+			description: "The label of the item, which is displayed in the menu.",
 		},
 		value: {
 			type: C.UNKNOWN,
-			description: "The value of the select item.",
+			description: "The value of the item.",
 		},
 		disabled: {
 			type: C.BOOLEAN,
@@ -188,7 +188,7 @@ export const input: APISchema = {
 	},
 	dataAttributes: [
 		{
-			name: "select-input",
+			name: "combobox-input",
 			description: "Present on the input element.",
 		},
 	],
@@ -237,7 +237,7 @@ export const indicator: APISchema<Combobox.IndicatorProps> = {
 
 export const arrow: APISchema<Combobox.ArrowProps> = {
 	title: "Arrow",
-	description: "An optional arrow element which points to the selected item when menu open.",
+	description: "An optional arrow element which points to the content when open.",
 	props: arrowProps,
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
