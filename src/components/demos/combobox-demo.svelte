@@ -20,7 +20,9 @@
 
 <Combobox.Root items={filteredFruits} bind:inputValue>
 	<div class="relative">
-		<OrangeSlice class="absolute start-3 top-1/2 size-6 -translate-y-1/2 text-muted-foreground" />
+		<OrangeSlice
+			class="pointer-events-none absolute start-3 top-1/2 size-6 -translate-y-1/2 text-muted-foreground"
+		/>
 		<Combobox.Input
 			class="inline-flex h-input w-[296px] truncate rounded-9px border border-border-input bg-background px-11 text-sm transition-colors placeholder:text-foreground-alt/50 focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2 focus:ring-offset-background"
 			placeholder="Select a fruit"
