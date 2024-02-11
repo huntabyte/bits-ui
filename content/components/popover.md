@@ -30,9 +30,13 @@ description: Display supplementary content or information when users interact wi
 </Popover.Root>
 ```
 
-## Controlled Usage
+<APISection {schemas} />
 
-If you want to control or be aware of the `open` state of the popover from outside of the component, you can bind to the `open` prop.
+## Examples
+
+### Controlled
+
+If you want to control or be aware of the `open` state of the popover from outside of the component, bind to the `open` prop.
 
 ```svelte
 <script lang="ts">
@@ -49,5 +53,3 @@ If you want to control or be aware of the `open` state of the popover from outsi
 	</Popover.Content>
 </Popover.Root>
 ```
-
-<APISection {schemas} />
