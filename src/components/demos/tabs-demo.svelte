@@ -25,49 +25,44 @@
 		<Tabs.Content value="outbound" class="pt-3">
 			<div class="grid grid-cols-3 grid-rows-2 gap-0 p-4 pb-1">
 				<div class="text-left">
-					<h4 class="text-[20px] font-semibold leading-none tracking-[-0.01em] mb-2">
-						Prague
-					</h4>
+					<h4 class="mb-2 text-[20px] font-semibold leading-none tracking-[-0.01em]">Prague</h4>
 					<p class="text-sm font-medium text-muted-foreground">06:05</p>
 				</div>
-				<div class="text-center self-end">
+				<div class="self-end text-center">
 					<p class="text-sm font-medium text-muted-foreground">3h 30m</p>
 				</div>
 				<div class="text-right">
-					<h4 class="text-[20px] font-semibold leading-none tracking-[-0.01em] mb-2">
-						Malaga
-					</h4>
+					<h4 class="mb-2 text-[20px] font-semibold leading-none tracking-[-0.01em]">Malaga</h4>
 					<p class="text-sm font-medium text-muted-foreground">06:05</p>
 				</div>
-				<div class="col-span-3 relative">
-					<hr class="h-px border-dashed border-1 border-border-input relative top-4">
+				<div class="relative col-span-3">
+					<hr class="border-1 relative top-4 h-px border-dashed border-border-input" />
 
-					<div class="p-1 absolute left-1/2 -translate-x-1/2 bg-background"><Airplane class="size-6 text-muted-foreground rotate-90" /></div>
+					<div class="absolute left-1/2 -translate-x-1/2 bg-background p-1">
+						<Airplane class="size-6 rotate-90 text-muted-foreground" />
+					</div>
 				</div>
 			</div>
-			
 		</Tabs.Content>
 		<Tabs.Content value="inbound" class="pt-3">
 			<div class="grid grid-cols-3 grid-rows-2 gap-0 p-4 pb-1">
 				<div class="text-left">
-					<h4 class="text-[20px] font-semibold leading-none tracking-[-0.01em] mb-2">
-						Malaga
-					</h4>
+					<h4 class="mb-2 text-[20px] font-semibold leading-none tracking-[-0.01em]">Malaga</h4>
 					<p class="text-sm font-medium text-muted-foreground">07:25</p>
 				</div>
-				<div class="text-center self-end">
+				<div class="self-end text-center">
 					<p class="text-sm font-medium text-muted-foreground">3h 20m</p>
 				</div>
 				<div class="text-right">
-					<h4 class="text-[20px] font-semibold leading-none tracking-[-0.01em] mb-2">
-						Prague
-					</h4>
+					<h4 class="mb-2 text-[20px] font-semibold leading-none tracking-[-0.01em]">Prague</h4>
 					<p class="text-sm font-medium text-muted-foreground">10:45</p>
 				</div>
-				<div class="col-span-3 relative">
-					<hr class="h-px border-dashed border-1 border-border-input relative top-4">
+				<div class="relative col-span-3">
+					<hr class="border-1 relative top-4 h-px border-dashed border-border-input" />
 
-					<div class="p-1 absolute left-1/2 -translate-x-1/2 bg-background"><Airplane class="size-6 text-muted-foreground rotate-90" /></div>
+					<div class="absolute left-1/2 -translate-x-1/2 bg-background p-1">
+						<Airplane class="size-6 rotate-90 text-muted-foreground" />
+					</div>
 				</div>
 			</div>
 		</Tabs.Content>
