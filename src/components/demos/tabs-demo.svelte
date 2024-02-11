@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Tabs, Label, Button } from "$lib";
+	import { Tabs } from "$lib";
 	import { Airplane } from "$icons/index.js";
 </script>
 
