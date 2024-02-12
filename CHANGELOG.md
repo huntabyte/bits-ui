@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.18.1
+
+### Patch Changes
+
+- Export Combobox types ([#329](https://github.com/huntabyte/bits-ui/pull/329))
+
 ## 0.18.0
 
 ### Minor Changes
