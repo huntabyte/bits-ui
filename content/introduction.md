@@ -9,7 +9,7 @@ Under the hood, most of these components are powered by [Melt UI](https://melt-u
 
 ## Unstyled
 
-Bits UI components are unstyled by default. This means that they don't come with any styles out of the box. This is intentional, as it allows you to style them however you want. You can use the `class` prop to apply your own styles, or use the applied data attributes to target the components across your entire application. Check out the [styling](/styling) section for more information.
+Bits UI components are unstyled by default. This means that they don't come with any styles out of the box. This is intentional, as it allows you to style them however you want. You can use the `class` prop to apply your own styles, or use the applied data attributes to target the components across your entire application. Check out the [styling](/docs/styling) section for more information.
 
 ## Customizable
 
