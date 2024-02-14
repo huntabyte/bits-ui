@@ -14,11 +14,15 @@ body:
       placeholder: Bug description
     validations:
       required: true
-  - type: textarea
+  - type: input
     id: reproduction
     attributes:
       label: Reproduction
-      description: Please provide a link to a repo or Stackblitz that can reproduce the problem you ran into. If a report is vague (e.g. just a generic error message) and has no reproduction, it will receive a "needs reproduction" label. If no reproduction is provided within a reasonable time-frame, the issue will be closed.
+      description: |
+        Please provide a link to a repo or Stackblitz that can reproduce the problem you ran into. If a report is vague (e.g. just a generic error message) and has no reproduction, it will receive a "needs reproduction" label. If no reproduction is provided within a reasonable time-frame, the issue will be closed.
+
+        You can use the following template to get started:
+        https://bits-ui.com/repro
       placeholder: Reproduction
     validations:
       required: true
@@ -32,7 +36,7 @@ body:
     id: system-info
     attributes:
       label: System Info
-      description: Output of `npx envinfo --system --npmPackages svelte,bits-ui,@sveltejs/kit --binaries --browsers`
+      description: Output of `npx envinfo --system --npmPackages svelte,bits-ui,@sveltejs/kit --binaries --browsers` If you ignore this and the issue is related to the package itself, your issue will be closed without warning.
       render: bash
       placeholder: System, Binaries, Browsers
     validations:
