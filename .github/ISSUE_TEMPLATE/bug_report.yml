@@ -14,7 +14,7 @@ body:
       placeholder: Bug description
     validations:
       required: true
-  - type: textarea
+  - type: input
     id: reproduction
     attributes:
       label: Reproduction
@@ -32,7 +32,7 @@ body:
     id: system-info
     attributes:
       label: System Info
-      description: Output of `npx envinfo --system --npmPackages svelte,bits-ui,@sveltejs/kit --binaries --browsers`
+      description: Output of `npx envinfo --system --npmPackages svelte,bits-ui,@sveltejs/kit --binaries --browsers` If you ignore this and the issue is related to the package itself, your issue will be closed without warning.
       render: bash
       placeholder: System, Binaries, Browsers
     validations:
