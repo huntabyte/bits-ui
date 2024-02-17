@@ -1,34 +1,35 @@
 <script lang="ts">
 	import { PinInput } from "$lib";
 	import { Toggle } from "$lib";
-	import { LockKey, LockKeyOpen } from "$icons/index.js";
+	import { Eye, EyeSlash } from "$icons/index.js";
 
-	let value: string[] | undefined = ["5", "1", "3", "7"];
+	let value: string[] | undefined = [];
 
-	let unlocked = false;
+	let unlocked = true;
 	let pinInputType: "text" | "password" = "password";
 	$: pinInputType = unlocked ? "text" : "password";
 </script>
 
 <PinInput.Root
 	bind:value
-	class="min-h-input flex h-full w-[176px] items-center gap-2 rounded-card-sm border border-border bg-background py-1 pl-[18px] pr-1.5 shadow-mini"
+	class="flex items-center gap-2"
 	type={pinInputType}
+	placeholder=0
 >
-	<PinInput.Input class="w-5 bg-inherit text-center font-alt text-[19px] text-foreground" />
-	<PinInput.Input class="w-5 bg-inherit text-center font-alt text-[19px] text-foreground" />
-	<PinInput.Input class="w-5 bg-inherit text-center font-alt text-[19px] text-foreground" />
-	<PinInput.Input class="w-5 bg-inherit text-center font-alt text-[19px] text-foreground" />
+<PinInput.Input class="font-alt text-[17px] placeholder-shown:border-border-input w-10 text-center flex h-input select-none rounded-input border border-foreground bg-background px-2 py-3 tracking-[0.01em] text-foreground focus-within:border-border-input-hover focus-within:shadow-date-field-focus hover:border-border-input-hover" />
+	<PinInput.Input class="font-alt text-[17px] placeholder-shown:border-border-input w-10 text-center flex h-input select-none rounded-input border border-foreground bg-background px-2 py-3 tracking-[0.01em] text-foreground focus-within:border-border-input-hover focus-within:shadow-date-field-focus hover:border-border-input-hover" />
+	<PinInput.Input class="font-alt text-[17px] placeholder-shown:border-border-input w-10 text-center flex h-input select-none rounded-input border border-foreground bg-background px-2 py-3 tracking-[0.01em] text-foreground focus-within:border-border-input-hover focus-within:shadow-date-field-focus hover:border-border-input-hover" />
+	<PinInput.Input class="font-alt text-[17px] placeholder-shown:border-border-input w-10 text-center flex h-input select-none rounded-input border border-foreground bg-background px-2 py-3 tracking-[0.01em] text-foreground focus-within:border-border-input-hover focus-within:shadow-date-field-focus hover:border-border-input-hover" />
 	<PinInput.HiddenInput />
 	<Toggle.Root
 		aria-label="toggle code visibility"
-		class="inline-flex size-10 items-center justify-center rounded-[9px] bg-background transition-all hover:bg-muted active:scale-98 active:bg-dark-10 data-[state=on]:bg-muted active:data-[state=on]:bg-dark-10"
+		class="inline-flex size-10 items-center justify-center rounded-[9px] transition-all text-foreground/40 hover:bg-muted active:scale-98 active:bg-dark-10 active:data-[state=on]:bg-dark-10"
 		bind:pressed={unlocked}
 	>
 		{#if unlocked}
-			<LockKey class="size-6" />
+			<Eye class="size-5" />
 		{:else}
-			<LockKeyOpen class="size-6" />
+			<EyeSlash class="size-5" />
 		{/if}
 	</Toggle.Root>
 </PinInput.Root>

@@ -52,6 +52,8 @@ export { default as UserCircle } from "phosphor-svelte/lib/UserCircle";
 export { default as PlusCircle } from "phosphor-svelte/lib/PlusCircle";
 export { default as OrangeSlice } from "phosphor-svelte/lib/OrangeSlice";
 export { default as Airplane } from "phosphor-svelte/lib/Airplane";
+export { default as Eye } from "phosphor-svelte/lib/Eye";
+export { default as EyeSlash } from "phosphor-svelte/lib/EyeSlash";
 
 export type IconProps = Partial<HTMLAttributes<SVGElement>> & {
 	class?: string;
