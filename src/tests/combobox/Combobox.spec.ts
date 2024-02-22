@@ -6,6 +6,7 @@ import ComboboxTest from "./ComboboxTest.svelte";
 import type { Item } from "./ComboboxTest.svelte";
 import { getTestKbd } from "../utils.js";
 import type { Combobox } from "$lib";
+import { sleep } from "$lib/internal";
 
 const kbd = getTestKbd();
 
@@ -133,7 +134,9 @@ describe("Combobox", () => {
 	it("closes on outside click", async () => {
 		const { user, queryByTestId, getByTestId } = await open();
 		const outside = getByTestId("outside");
+		await sleep(100);
 		await user.click(outside);
+		await sleep(100);
 		expect(queryByTestId("content")).toBeNull();
 	});
 
