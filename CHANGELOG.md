@@ -1,5 +1,15 @@
 # @huntabyte/primitives
 
+## 0.18.2
+
+### Patch Changes
+
+- Toolbar: forward click events from buttons and links ([#343](https://github.com/huntabyte/bits-ui/pull/343))
+
+- Floating/Modal Components: improve handling of interact outside events ([#344](https://github.com/huntabyte/bits-ui/pull/344))
+
+- Dialogs: Fix bug where dragging outside of dialog would close it ([#344](https://github.com/huntabyte/bits-ui/pull/344))
+
 ## 0.18.1
 
 ### Patch Changes
