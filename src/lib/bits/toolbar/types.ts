@@ -16,12 +16,18 @@ type GroupItemProps = I.GroupItemProps & HTMLButtonAttributes;
 /**
  * Events
  */
-type ButtonEvents = {
-	keydown: CustomEventHandler<KeyboardEvent, HTMLButtonElement>;
+type HTMLEventHandler<T extends Event = Event, E extends Element = Element> = T & {
+	currentTarget: EventTarget & E;
 };
 
-type LinkEvents = {
-	keydown: CustomEventHandler<KeyboardEvent, HTMLAnchorElement>;
+type ButtonEvents<T extends Element = HTMLButtonElement> = {
+	click: HTMLEventHandler<MouseEvent, T>;
+	keydown: CustomEventHandler<KeyboardEvent, T>;
+};
+
+type LinkEvents<T extends Element = HTMLAnchorElement> = {
+	click: HTMLEventHandler<MouseEvent, T>;
+	keydown: CustomEventHandler<KeyboardEvent, T>;
 };
 
 type GroupItemEvents<T extends Element = HTMLButtonElement> = {

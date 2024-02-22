@@ -25,11 +25,13 @@
 {#if asChild}
 	<slot {builder} />
 {:else}
+	<!-- svelte-ignore a11y-no-static-element-interactions -->
 	<svelte:element
 		this={"a"}
 		bind:this={el}
 		use:melt={builder}
 		{...$$restProps}
+		on:click
 		on:m-keydown={dispatch}
 	>
 		<slot {builder} />

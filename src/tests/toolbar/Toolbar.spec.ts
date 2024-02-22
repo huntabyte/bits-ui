@@ -29,6 +29,7 @@ function setup(
 	const button = returned.getByTestId("button");
 	const styleBinding = returned.getByTestId("style-binding");
 	const alignBinding = returned.getByTestId("align-binding");
+	const clickedBinding = returned.getByTestId("clicked-binding");
 	return {
 		user,
 		root,
@@ -44,6 +45,7 @@ function setup(
 		button,
 		styleBinding,
 		alignBinding,
+		clickedBinding,
 		...returned,
 	};
 }
@@ -233,6 +235,26 @@ describe("Toolbar", () => {
 		expect(groupSingleItemCenter).toHaveAttribute("data-state", "on");
 		expect(groupSingleItemCenter).toHaveAttribute("aria-checked", "true");
 	});
+
+	it.each(["link", "button"])("toolbar %s forwards click event", async (kind) => {
+		const { user, clickedBinding, [kind as keyof ReturnType<typeof setup>]: el } = setup();
+
+		expect(clickedBinding).toHaveTextContent("undefined");
+		await user.click(el as Element);
+		expect(clickedBinding).toHaveTextContent(kind);
+	});
+
+	it.each([kbd.ENTER, kbd.SPACE])(
+		"toolbar button forwards click event when the %s key is pressed",
+		async (key) => {
+			const { user, button, clickedBinding } = setup();
+
+			button.focus();
+			expect(clickedBinding).toHaveTextContent("undefined");
+			await user.keyboard(key);
+			expect(clickedBinding).toHaveTextContent("button");
+		}
+	);
 
 	it.todo("`asChild` behavior");
 });

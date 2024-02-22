@@ -11,6 +11,8 @@
 
 	let style: string[] | undefined = ["bold"];
 	let align: string | undefined;
+
+	let clicked: string | undefined;
 </script>
 
 <main>
@@ -20,6 +22,10 @@
 
 	<button data-testid="align-binding" on:click={() => (align = "center")}>
 		{align}
+	</button>
+
+	<button data-testid="clicked-binding">
+		{clicked}
 	</button>
 
 	<Toolbar.Root data-testid="root" {...$$restProps}>
@@ -60,8 +66,10 @@
 			</Toolbar.GroupItem>
 		</Toolbar.Group>
 
-		<Toolbar.Link data-testid="link">Edited 2 hours ago</Toolbar.Link>
+		<Toolbar.Link data-testid="link" on:click={() => (clicked = "link")}
+			>Edited 2 hours ago</Toolbar.Link
+		>
 
-		<Toolbar.Button data-testid="button">Save</Toolbar.Button>
+		<Toolbar.Button data-testid="button" on:click={() => (clicked = "button")}>Save</Toolbar.Button>
 	</Toolbar.Root>
 </main>
