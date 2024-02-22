@@ -32,32 +32,49 @@
 	$: Object.assign(builder, attrs);
 </script>
 
-{#if asChild && $isSelected(props)}
-	<slot {builder} />
-{:else if transition && $isSelected(props)}
-	<div bind:this={el} transition:transition={transitionConfig} use:melt={builder} {...$$restProps}>
+{#if $isSelected(props)}
+	{#if asChild}
 		<slot {builder} />
-	</div>
-{:else if inTransition && outTransition && $isSelected(props)}
-	<div
-		bind:this={el}
-		in:inTransition={inTransitionConfig}
-		out:outTransition={outTransitionConfig}
-		use:melt={builder}
-		{...$$restProps}
-	>
-		<slot {builder} />
-	</div>
-{:else if inTransition && $isSelected(props)}
-	<div bind:this={el} in:inTransition={inTransitionConfig} use:melt={builder} {...$$restProps}>
-		<slot {builder} />
-	</div>
-{:else if outTransition && $isSelected(props)}
-	<div bind:this={el} out:outTransition={outTransitionConfig} use:melt={builder} {...$$restProps}>
-		<slot {builder} />
-	</div>
-{:else if $isSelected(props)}
-	<div bind:this={el} use:melt={builder} {...$$restProps}>
-		<slot {builder} />
-	</div>
+	{:else if transition}
+		<div
+			bind:this={el}
+			transition:transition|global={transitionConfig}
+			use:melt={builder}
+			{...$$restProps}
+		>
+			<slot {builder} />
+		</div>
+	{:else if inTransition && outTransition}
+		<div
+			bind:this={el}
+			in:inTransition|global={inTransitionConfig}
+			out:outTransition|global={outTransitionConfig}
+			use:melt={builder}
+			{...$$restProps}
+		>
+			<slot {builder} />
+		</div>
+	{:else if inTransition}
+		<div
+			bind:this={el}
+			in:inTransition|global={inTransitionConfig}
+			use:melt={builder}
+			{...$$restProps}
+		>
+			<slot {builder} />
+		</div>
+	{:else if outTransition}
+		<div
+			bind:this={el}
+			out:outTransition|global={outTransitionConfig}
+			use:melt={builder}
+			{...$$restProps}
+		>
+			<slot {builder} />
+		</div>
+	{:else}
+		<div bind:this={el} use:melt={builder} {...$$restProps}>
+			<slot {builder} />
+		</div>
+	{/if}
 {/if}
