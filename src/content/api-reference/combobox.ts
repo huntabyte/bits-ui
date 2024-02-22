@@ -162,6 +162,10 @@ export const item: APISchema<Combobox.ItemProps> = {
 			description: "Present when the item is disabled.",
 		},
 		{
+			name: "highlighted",
+			description: "Present when the item is highlighted, via keyboard navigation or hover.",
+		},
+		{
 			name: "combobox-item",
 			description: "Present on the item element.",
 		},

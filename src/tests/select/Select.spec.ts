@@ -6,6 +6,7 @@ import SelectTest from "./SelectTest.svelte";
 import type { Item } from "./SelectTest.svelte";
 import { getTestKbd } from "../utils.js";
 import type { Select } from "$lib";
+import { sleep } from "$lib/internal";
 
 const kbd = getTestKbd();
 
@@ -130,7 +131,9 @@ describe("Select", () => {
 	it("closes on outside click", async () => {
 		const { user, queryByTestId, getByTestId } = await open();
 		const outside = getByTestId("outside");
+		await sleep(100);
 		await user.click(outside);
+		await sleep(100);
 		expect(queryByTestId("content")).toBeNull();
 	});
 

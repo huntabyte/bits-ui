@@ -5,6 +5,7 @@ import { describe, it } from "vitest";
 import { getTestKbd } from "../utils.js";
 import PopoverTest from "./PopoverTest.svelte";
 import type { Popover } from "$lib";
+import { sleep } from "$lib/internal/sleep.js";
 
 const kbd = getTestKbd();
 
@@ -67,7 +68,10 @@ describe("Popover", () => {
 	it("closes on outside click", async () => {
 		const { user, queryByTestId, getByTestId } = await open();
 		const outside = getByTestId("outside");
+		await sleep(100);
 		await user.click(outside);
+		await sleep(100);
+
 		expect(queryByTestId("content")).toBeNull();
 	});
 

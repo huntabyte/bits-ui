@@ -188,6 +188,10 @@ export const item: APISchema<Select.ItemProps> = {
 			isEnum: true,
 		},
 		{
+			name: "highlighted",
+			description: "Present when the item is highlighted, via keyboard navigation or hover.",
+		},
+		{
 			name: "disabled",
 			description: "Present when the item is disabled.",
 		},
