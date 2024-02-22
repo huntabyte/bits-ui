@@ -66,71 +66,73 @@
 	}
 </script>
 
-{#if asChild && $open}
-	<slot {builder} />
-{:else if transition && $open}
-	<div
-		bind:this={el}
-		transition:transition={transitionConfig}
-		use:melt={builder}
-		{...$$restProps}
-		on:m-focusout={dispatch}
-		on:m-pointerdown={dispatch}
-		on:m-pointerenter={dispatch}
-		on:m-pointerleave={dispatch}
-	>
+{#if $open}
+	{#if asChild}
 		<slot {builder} />
-	</div>
-{:else if inTransition && outTransition && $open}
-	<div
-		bind:this={el}
-		in:inTransition={inTransitionConfig}
-		out:outTransition={outTransitionConfig}
-		use:melt={builder}
-		{...$$restProps}
-		on:m-focusout={dispatch}
-		on:m-pointerdown={dispatch}
-		on:m-pointerenter={dispatch}
-		on:m-pointerleave={dispatch}
-	>
-		<slot {builder} />
-	</div>
-{:else if inTransition && $open}
-	<div
-		bind:this={el}
-		in:inTransition={inTransitionConfig}
-		use:melt={builder}
-		{...$$restProps}
-		on:m-focusout={dispatch}
-		on:m-pointerdown={dispatch}
-		on:m-pointerenter={dispatch}
-		on:m-pointerleave={dispatch}
-	>
-		<slot {builder} />
-	</div>
-{:else if outTransition && $open}
-	<div
-		bind:this={el}
-		out:outTransition={outTransitionConfig}
-		use:melt={builder}
-		{...$$restProps}
-		on:m-focusout={dispatch}
-		on:m-pointerdown={dispatch}
-		on:m-pointerenter={dispatch}
-		on:m-pointerleave={dispatch}
-	>
-		<slot {builder} />
-	</div>
-{:else if $open}
-	<div
-		bind:this={el}
-		use:melt={builder}
-		{...$$restProps}
-		on:m-focusout={dispatch}
-		on:m-pointerdown={dispatch}
-		on:m-pointerenter={dispatch}
-		on:m-pointerleave={dispatch}
-	>
-		<slot {builder} />
-	</div>
+	{:else if transition}
+		<div
+			bind:this={el}
+			transition:transition|global={transitionConfig}
+			use:melt={builder}
+			{...$$restProps}
+			on:m-focusout={dispatch}
+			on:m-pointerdown={dispatch}
+			on:m-pointerenter={dispatch}
+			on:m-pointerleave={dispatch}
+		>
+			<slot {builder} />
+		</div>
+	{:else if inTransition && outTransition}
+		<div
+			bind:this={el}
+			in:inTransition|global={inTransitionConfig}
+			out:outTransition|global={outTransitionConfig}
+			use:melt={builder}
+			{...$$restProps}
+			on:m-focusout={dispatch}
+			on:m-pointerdown={dispatch}
+			on:m-pointerenter={dispatch}
+			on:m-pointerleave={dispatch}
+		>
+			<slot {builder} />
+		</div>
+	{:else if inTransition}
+		<div
+			bind:this={el}
+			in:inTransition|global={inTransitionConfig}
+			use:melt={builder}
+			{...$$restProps}
+			on:m-focusout={dispatch}
+			on:m-pointerdown={dispatch}
+			on:m-pointerenter={dispatch}
+			on:m-pointerleave={dispatch}
+		>
+			<slot {builder} />
+		</div>
+	{:else if outTransition}
+		<div
+			bind:this={el}
+			out:outTransition|global={outTransitionConfig}
+			use:melt={builder}
+			{...$$restProps}
+			on:m-focusout={dispatch}
+			on:m-pointerdown={dispatch}
+			on:m-pointerenter={dispatch}
+			on:m-pointerleave={dispatch}
+		>
+			<slot {builder} />
+		</div>
+	{:else}
+		<div
+			bind:this={el}
+			use:melt={builder}
+			{...$$restProps}
+			on:m-focusout={dispatch}
+			on:m-pointerdown={dispatch}
+			on:m-pointerenter={dispatch}
+			on:m-pointerleave={dispatch}
+		>
+			<slot {builder} />
+		</div>
+	{/if}
 {/if}
