@@ -30,6 +30,7 @@
 		bind:this={el}
 		use:melt={builder}
 		{...$$restProps}
+		on:click
 		on:m-keydown={dispatch}
 	>
 		<slot {builder} />
