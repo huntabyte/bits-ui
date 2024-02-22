@@ -37,86 +37,88 @@
 	$: Object.assign(builder, attrs);
 </script>
 
-{#if asChild && $open}
-	<slot {builder} />
-{:else if transition && $open}
-	<div
-		bind:this={el}
-		transition:transition={transitionConfig}
-		use:melt={builder}
-		{...$$restProps}
-		on:pointerdown
-		on:pointermove
-		on:pointerup
-		on:touchend
-		on:touchstart
-		on:touchcancel
-		on:touchmove
-	>
+{#if $open}
+	{#if asChild}
 		<slot {builder} />
-	</div>
-{:else if inTransition && outTransition && $open}
-	<div
-		bind:this={el}
-		in:inTransition={inTransitionConfig}
-		out:outTransition={outTransitionConfig}
-		use:melt={builder}
-		on:pointerdown
-		on:pointermove
-		on:pointerup
-		on:touchend
-		on:touchstart
-		on:touchcancel
-		on:touchmove
-		{...$$restProps}
-	>
-		<slot {builder} />
-	</div>
-{:else if inTransition && $open}
-	<div
-		bind:this={el}
-		in:inTransition={inTransitionConfig}
-		use:melt={builder}
-		on:pointerdown
-		on:pointermove
-		on:pointerup
-		on:touchend
-		on:touchstart
-		on:touchcancel
-		on:touchmove
-		{...$$restProps}
-	>
-		<slot {builder} />
-	</div>
-{:else if outTransition && $open}
-	<div
-		bind:this={el}
-		out:outTransition={outTransitionConfig}
-		use:melt={builder}
-		on:pointerdown
-		on:pointermove
-		on:pointerup
-		on:touchend
-		on:touchstart
-		on:touchcancel
-		on:touchmove
-		{...$$restProps}
-	>
-		<slot {builder} />
-	</div>
-{:else if $open}
-	<div
-		bind:this={el}
-		use:melt={builder}
-		on:pointerdown
-		on:pointermove
-		on:pointerup
-		on:touchend
-		on:touchstart
-		on:touchcancel
-		on:touchmove
-		{...$$restProps}
-	>
-		<slot {builder} />
-	</div>
+	{:else if transition}
+		<div
+			bind:this={el}
+			transition:transition|global={transitionConfig}
+			use:melt={builder}
+			{...$$restProps}
+			on:pointerdown
+			on:pointermove
+			on:pointerup
+			on:touchend
+			on:touchstart
+			on:touchcancel
+			on:touchmove
+		>
+			<slot {builder} />
+		</div>
+	{:else if inTransition && outTransition}
+		<div
+			bind:this={el}
+			in:inTransition|global={inTransitionConfig}
+			out:outTransition|global={outTransitionConfig}
+			use:melt={builder}
+			on:pointerdown
+			on:pointermove
+			on:pointerup
+			on:touchend
+			on:touchstart
+			on:touchcancel
+			on:touchmove
+			{...$$restProps}
+		>
+			<slot {builder} />
+		</div>
+	{:else if inTransition}
+		<div
+			bind:this={el}
+			in:inTransition|global={inTransitionConfig}
+			use:melt={builder}
+			on:pointerdown
+			on:pointermove
+			on:pointerup
+			on:touchend
+			on:touchstart
+			on:touchcancel
+			on:touchmove
+			{...$$restProps}
+		>
+			<slot {builder} />
+		</div>
+	{:else if outTransition}
+		<div
+			bind:this={el}
+			out:outTransition|global={outTransitionConfig}
+			use:melt={builder}
+			on:pointerdown
+			on:pointermove
+			on:pointerup
+			on:touchend
+			on:touchstart
+			on:touchcancel
+			on:touchmove
+			{...$$restProps}
+		>
+			<slot {builder} />
+		</div>
+	{:else}
+		<div
+			bind:this={el}
+			use:melt={builder}
+			on:pointerdown
+			on:pointermove
+			on:pointerup
+			on:touchend
+			on:touchstart
+			on:touchcancel
+			on:touchmove
+			{...$$restProps}
+		>
+			<slot {builder} />
+		</div>
+	{/if}
 {/if}

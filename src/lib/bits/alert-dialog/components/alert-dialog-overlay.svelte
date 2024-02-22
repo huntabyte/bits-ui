@@ -31,27 +31,39 @@
 	$: Object.assign(builder, attrs);
 </script>
 
-{#if asChild && $open}
-	<slot {builder} />
-{:else if transition && $open}
-	<div
-		bind:this={el}
-		transition:transition={transitionConfig}
-		use:melt={builder}
-		{...$$restProps}
-	/>
-{:else if inTransition && outTransition && $open}
-	<div
-		bind:this={el}
-		in:inTransition={inTransitionConfig}
-		out:outTransition={outTransitionConfig}
-		use:melt={builder}
-		{...$$restProps}
-	/>
-{:else if inTransition && $open}
-	<div bind:this={el} in:inTransition={inTransitionConfig} use:melt={builder} {...$$restProps} />
-{:else if outTransition && $open}
-	<div bind:this={el} out:outTransition={outTransitionConfig} use:melt={builder} {...$$restProps} />
-{:else if $open}
-	<div bind:this={el} use:melt={builder} {...$$restProps} />
+{#if $open}
+	{#if asChild}
+		<slot {builder} />
+	{:else if transition}
+		<div
+			bind:this={el}
+			transition:transition|global={transitionConfig}
+			use:melt={builder}
+			{...$$restProps}
+		/>
+	{:else if inTransition && outTransition}
+		<div
+			bind:this={el}
+			in:inTransition|global={inTransitionConfig}
+			out:outTransition|global={outTransitionConfig}
+			use:melt={builder}
+			{...$$restProps}
+		/>
+	{:else if inTransition}
+		<div
+			bind:this={el}
+			in:inTransition|global={inTransitionConfig}
+			use:melt={builder}
+			{...$$restProps}
+		/>
+	{:else if outTransition}
+		<div
+			bind:this={el}
+			out:outTransition|global={outTransitionConfig}
+			use:melt={builder}
+			{...$$restProps}
+		/>
+	{:else}
+		<div bind:this={el} use:melt={builder} {...$$restProps} />
+	{/if}
 {/if}

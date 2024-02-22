@@ -31,46 +31,48 @@
 	$: Object.assign(builder, attrs);
 </script>
 
-{#if asChild && $open}
-	<slot {builder} />
-{:else if transition && $open}
-	<!-- svelte-ignore a11y-no-static-element-interactions -->
-	<div
-		on:mouseup
-		bind:this={el}
-		transition:transition={transitionConfig}
-		use:melt={builder}
-		{...$$restProps}
-	/>
-{:else if inTransition && outTransition && $open}
-	<!-- svelte-ignore a11y-no-static-element-interactions -->
-	<div
-		bind:this={el}
-		in:inTransition={inTransitionConfig}
-		out:outTransition={outTransitionConfig}
-		use:melt={builder}
-		on:mouseup
-		{...$$restProps}
-	/>
-{:else if inTransition && $open}
-	<!-- svelte-ignore a11y-no-static-element-interactions -->
-	<div
-		bind:this={el}
-		in:inTransition={inTransitionConfig}
-		use:melt={builder}
-		on:mouseup
-		{...$$restProps}
-	/>
-{:else if outTransition && $open}
-	<!-- svelte-ignore a11y-no-static-element-interactions -->
-	<div
-		bind:this={el}
-		out:outTransition={outTransitionConfig}
-		use:melt={builder}
-		on:mouseup
-		{...$$restProps}
-	/>
-{:else if $open}
-	<!-- svelte-ignore a11y-no-static-element-interactions -->
-	<div bind:this={el} use:melt={builder} on:mouseup {...$$restProps} />
+{#if $open}
+	{#if asChild}
+		<slot {builder} />
+	{:else if transition}
+		<!-- svelte-ignore a11y-no-static-element-interactions -->
+		<div
+			on:mouseup
+			bind:this={el}
+			transition:transition|global={transitionConfig}
+			use:melt={builder}
+			{...$$restProps}
+		/>
+	{:else if inTransition && outTransition}
+		<!-- svelte-ignore a11y-no-static-element-interactions -->
+		<div
+			bind:this={el}
+			in:inTransition|global={inTransitionConfig}
+			out:outTransition|global={outTransitionConfig}
+			use:melt={builder}
+			on:mouseup
+			{...$$restProps}
+		/>
+	{:else if inTransition}
+		<!-- svelte-ignore a11y-no-static-element-interactions -->
+		<div
+			bind:this={el}
+			in:inTransition|global={inTransitionConfig}
+			use:melt={builder}
+			on:mouseup
+			{...$$restProps}
+		/>
+	{:else if outTransition}
+		<!-- svelte-ignore a11y-no-static-element-interactions -->
+		<div
+			bind:this={el}
+			out:outTransition|global={outTransitionConfig}
+			use:melt={builder}
+			on:mouseup
+			{...$$restProps}
+		/>
+	{:else}
+		<!-- svelte-ignore a11y-no-static-element-interactions -->
+		<div bind:this={el} use:melt={builder} on:mouseup {...$$restProps} />
+	{/if}
 {/if}
