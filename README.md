@@ -19,6 +19,16 @@ The headless components for Svelte.
 - [Radix UI](https://radix-ui.com) - The incredible headless component APIs that we've taken heavy inspiration from.
 - [React Spectrum](https://react-spectrum.adobe.com) - An incredible collection of headless components we've taken inspiration from.
 
+## Sponsors
+
+This project is supported by the following beautiful people/organizations:
+
+<p align="center">
+  <a href="https://github.com/sponsors/huntabyte">
+    <img src='https://cdn.jsdelivr.net/gh/huntabyte/static/sponsors.svg' alt="Logos from Sponsors" />
+  </a>
+</p>
+
 ## License
 
 <!-- automd:contributors license=MIT author="huntabyte" github="huntabyte/bits-ui" -->
