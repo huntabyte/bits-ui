@@ -34,7 +34,7 @@ This project is supported by the following beautiful people/organizations:
 <!-- automd:contributors license=MIT author="huntabyte" github="huntabyte/bits-ui" -->
 
 Published under the [MIT](https://github.com/huntabyte/bits-ui/blob/main/LICENSE) license.
-Made by [@huntabyte](https://github.com/huntabyte) and [community](https://github.com/huntabyte/bits-ui/graphs/contributors) 💛
+Built by [@huntabyte](https://github.com/huntabyte) and [community](https://github.com/huntabyte/bits-ui/graphs/contributors). Designed by [Pavel Stianko](https://x.com/pavel_stianko) 💛
 <br><br>
 <a href="https://github.com/huntabyte/bits-ui/graphs/contributors">
 <img src="https://contrib.rocks/image?repo=huntabyte/bits-ui" />
