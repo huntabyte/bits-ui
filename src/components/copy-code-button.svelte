@@ -10,7 +10,7 @@
 
 <button
 	class={cn(
-		"relative z-20 inline-flex h-6 w-6 items-center justify-center rounded-md border bg-background text-sm font-medium transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+		"relative z-20 inline-flex h-9 w-9 items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background",
 		className
 	)}
 	on:click={copyCode}
@@ -19,8 +19,8 @@
 	data-copy-code
 >
 	{#if copied}
-		<Check class="h-3 w-3" />
+		<Check class="h-5 w-5" />
 	{:else}
-		<CopySimple class="h-3 w-3" />
+		<CopySimple class="h-5 w-5" />
 	{/if}
 </button>

@@ -8,7 +8,7 @@
 <ToggleGroup.Root
 	bind:value
 	type="multiple"
-	class="flex h-input items-center gap-x-0.5 rounded-card-sm border border-border bg-background px-[5px] py-1 shadow-mini"
+	class="flex h-input items-center gap-x-0.5 rounded-card-sm border border-border bg-background px-[4px] py-1 shadow-mini"
 >
 	<ToggleGroup.Item
 		aria-label="toggle bold"

@@ -23,8 +23,8 @@
 		<OrangeSlice class="absolute start-3 top-1/2 size-6 -translate-y-1/2 text-muted-foreground" />
 		<Combobox.Input
 			class="inline-flex h-input w-[296px] truncate rounded-9px border border-border-input bg-background px-11 text-sm transition-colors placeholder:text-foreground-alt/50 focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2 focus:ring-offset-background"
-			placeholder="Select a fruit"
-			aria-label="Select a fruit"
+			placeholder="Search a fruit"
+			aria-label="Search a fruit"
 		/>
 		<CaretUpDown class="absolute end-3 top-1/2 size-6 -translate-y-1/2 text-muted-foreground" />
 	</div>

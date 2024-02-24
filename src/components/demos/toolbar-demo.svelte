@@ -15,7 +15,7 @@
 </script>
 
 <Toolbar.Root
-	class="flex h-12 min-w-max items-center justify-center rounded-10px border border-border bg-background p-1 shadow-mini"
+	class="flex h-12 min-w-max items-center justify-center rounded-10px border border-border bg-background px-[4px] py-1 shadow-mini"
 >
 	<Toolbar.Group bind:value={text} type="multiple" class="flex items-center gap-x-0.5">
 		<Toolbar.GroupItem
