@@ -7,7 +7,7 @@
 </script>
 
 <script lang="ts">
-	import { Combobox } from "$lib";
+	import { Combobox } from "$lib/index.js";
 
 	type $$Props = Combobox.Props<unknown> & {
 		options: Item[];

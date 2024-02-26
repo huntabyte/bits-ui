@@ -1,5 +1,5 @@
 <script>
-	import { Menubar } from "$lib";
+	import { Menubar } from "$lib/index.js";
 	let bookmarks = false;
 	let fullUrls = true;
 	const profileRadioValue = "benoit";

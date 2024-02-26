@@ -6,7 +6,7 @@
 </script>
 
 <script lang="ts">
-	import { ToggleGroup } from "$lib";
+	import { ToggleGroup } from "$lib/index.js";
 
 	type $$Props = ToggleGroup.Props<"multiple"> & {
 		items: Item[];

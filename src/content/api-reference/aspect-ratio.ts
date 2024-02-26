@@ -1,7 +1,7 @@
-import type { APISchema } from "@/types";
+import type { APISchema } from "@/types/index.js";
 import type * as AspectRatio from "$lib/bits/aspect-ratio/_types.js";
-import * as C from "@/content/constants";
-import { domElProps } from "./helpers";
+import * as C from "@/content/constants.js";
+import { domElProps } from "./helpers.js";
 
 const root: APISchema<AspectRatio.Props> = {
 	title: "Root",

@@ -1,11 +1,11 @@
 import { render, waitFor } from "@testing-library/svelte";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import RadioGroupTest from "./RadioGroupTest.svelte";
 import type { Item } from "./RadioGroupTest.svelte";
 import { getTestKbd } from "../utils.js";
-import type { RadioGroup } from "$lib";
+import type { RadioGroup } from "$lib/index.js";
 
 const kbd = getTestKbd();
 

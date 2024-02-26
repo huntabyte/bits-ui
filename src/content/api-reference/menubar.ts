@@ -1,10 +1,10 @@
-import type { APISchema } from "@/types";
+import type { APISchema } from "@/types/index.js";
 import { idsSlotProp } from "@/content/api-reference/helpers.js";
-import { menu as m } from "./menu";
-import type * as Menubar from "$lib/bits/menubar/_types";
-import type * as Menu from "$lib/bits/menu/_types";
-import * as C from "@/content/constants";
-import { builderAndAttrsSlotProps, domElProps } from "./helpers";
+import { menu as m } from "./menu.js";
+import type * as Menubar from "$lib/bits/menubar/_types.js";
+import type * as Menu from "$lib/bits/menu/_types.js";
+import * as C from "@/content/constants.js";
+import { builderAndAttrsSlotProps, domElProps } from "./helpers.js";
 
 export const root: APISchema<Menubar.Props> = {
 	title: "Root",

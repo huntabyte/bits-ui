@@ -1,10 +1,10 @@
-import type { APISchema } from "@/types";
-import { menu } from "./menu";
-import type * as Menu from "$lib/bits/menu/_types";
-import type * as ContextMenu from "$lib/bits/context-menu/_types";
+import type { APISchema } from "@/types/index.js";
+import { menu } from "./menu.js";
+import type * as Menu from "$lib/bits/menu/_types.js";
+import type * as ContextMenu from "$lib/bits/context-menu/_types.js";
 import * as C from "@/content/constants.js";
-import { domElProps } from "./helpers";
-import { transitionProps, union, builderAndAttrsSlotProps, enums, seeFloating } from "./helpers";
+import { domElProps } from "./helpers.js";
+import { transitionProps, union, builderAndAttrsSlotProps, enums, seeFloating } from "./helpers.js";
 
 export const root: APISchema<Menu.Props> = {
 	title: "Root",

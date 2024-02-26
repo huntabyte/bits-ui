@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { RangeCalendar } from "$lib";
+	import { RangeCalendar } from "$lib/index.js";
 
 	type $$Props = RangeCalendar.Props;
 

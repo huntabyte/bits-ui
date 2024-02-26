@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { Button } from "$lib";
-	import { LightSwitch, MobileNav } from "@/components";
-	import { siteConfig } from "@/config";
-	import { Logo } from "@/components/icons";
+	import { Button } from "$lib/index.js";
+	import { LightSwitch, MobileNav } from "@/components/index.js";
+	import { siteConfig } from "@/config/index.js";
+	import { Logo } from "$icons/index.js";
 </script>
 
 <header

@@ -1,6 +1,6 @@
-import type { APISchema } from "@/types";
+import type { APISchema } from "@/types/index.js";
 import { builderAndAttrsSlotProps, domElProps } from "@/content/api-reference/helpers.js";
-import type * as Label from "$lib/bits/label/_types";
+import type * as Label from "$lib/bits/label/_types.js";
 
 export const root: APISchema<Label.Props> = {
 	title: "Root",

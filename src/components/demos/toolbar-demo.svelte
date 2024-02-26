@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Separator, Toolbar } from "$lib";
+	import { Separator, Toolbar } from "$lib/index.js";
 	import {
 		TextB,
 		TextItalic,

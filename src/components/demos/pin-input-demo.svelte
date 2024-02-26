@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { PinInput } from "$lib";
-	import { Toggle } from "$lib";
+	import { PinInput, Toggle } from "$lib/index.js";
 	import { Eye, EyeSlash } from "$icons/index.js";
 
 	let value: string[] | undefined = [];

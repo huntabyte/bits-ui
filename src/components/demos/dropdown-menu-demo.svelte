@@ -1,7 +1,6 @@
 <script lang="ts">
-	import { DropdownMenu } from "$lib";
-	import { Avatar } from "$lib";
-	import { flyAndScale } from "@/utils";
+	import { Avatar, DropdownMenu } from "$lib/index.js";
+	import { flyAndScale } from "@/utils/index.js";
 	import {
 		UserCircle,
 		Cardholder,

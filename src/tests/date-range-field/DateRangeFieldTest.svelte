@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { DateRangeField } from "$lib";
+	import { DateRangeField } from "$lib/index.js";
 
 	type $$Props = DateRangeField.Props;
 	export let value: $$Props["value"] = undefined;

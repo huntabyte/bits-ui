@@ -23,7 +23,7 @@ import type {
 	ContextTriggerEvents as TriggerEvents,
 	SubContentEvents,
 } from "$lib/bits/menu/index.js";
-import type { HTMLDivAttributes, Transition } from "$lib/internal";
+import type { HTMLDivAttributes, Transition } from "$lib/internal/index.js";
 import type * as I from "./_types.js";
 
 type ContentProps<

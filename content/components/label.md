@@ -4,7 +4,7 @@ description: Identifies or describes associated UI elements.
 ---
 
 <script>
-	import { APISection, ComponentPreview, LabelDemo } from '@/components'
+	import { APISection, ComponentPreview, LabelDemo } from '@/components/index.js'
 	export let schemas;
 </script>
 

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { Select } from "$lib";
-	import { flyAndScale } from "@/utils";
+	import { Select } from "$lib/index.js";
+	import { flyAndScale } from "@/utils/index.js";
 	import { Check, Palette, CaretUpDown } from "$icons/index.js";
 
 	const themes = [

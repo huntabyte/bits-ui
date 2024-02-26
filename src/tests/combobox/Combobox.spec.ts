@@ -1,12 +1,12 @@
 import { render, waitFor } from "@testing-library/svelte";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import ComboboxTest from "./ComboboxTest.svelte";
 import type { Item } from "./ComboboxTest.svelte";
 import { getTestKbd } from "../utils.js";
-import type { Combobox } from "$lib";
-import { sleep } from "$lib/internal";
+import type { Combobox } from "$lib/index.js";
+import { sleep } from "$lib/internal/index.js";
 
 const kbd = getTestKbd();
 

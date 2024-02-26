@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Slider } from "$lib";
+	import { Slider } from "$lib/index.js";
 
 	let value = [50];
 </script>

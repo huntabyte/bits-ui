@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { DateRangeField } from "$lib";
+	import { DateRangeField } from "$lib/index.js";
 	import { CalendarDate } from "@internationalized/date";
 
 	let value = {

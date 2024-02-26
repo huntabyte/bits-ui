@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { LinkPreview } from "$lib";
+	import { LinkPreview } from "$lib/index.js";
 
 	type $$Props = LinkPreview.Props;
 

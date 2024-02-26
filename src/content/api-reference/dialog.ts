@@ -1,4 +1,4 @@
-import type { APISchema } from "@/types";
+import type { APISchema } from "@/types/index.js";
 import {
 	enums,
 	idsSlotProp,
@@ -6,10 +6,10 @@ import {
 	portalProp,
 	transitionProps,
 } from "@/content/api-reference/helpers.js";
-import type * as Dialog from "$lib/bits/dialog/_types";
-import { focusProp } from "./extended-types";
-import * as C from "@/content/constants";
-import { builderAndAttrsSlotProps, domElProps } from "./helpers";
+import type * as Dialog from "$lib/bits/dialog/_types.js";
+import { focusProp } from "./extended-types/index.js";
+import * as C from "@/content/constants.js";
+import { builderAndAttrsSlotProps, domElProps } from "./helpers.js";
 
 export const root: APISchema<Dialog.Props> = {
 	title: "Root",

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Checkbox } from "$lib";
+	import { Checkbox } from "$lib/index.js";
 
 	type $$Props = Checkbox.Props;
 

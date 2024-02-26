@@ -4,7 +4,7 @@ description: Facilitates the selection of dates through an input and calendar-ba
 ---
 
 <script>
-	import { APISection, ComponentPreview, DatePickerDemo } from '@/components'
+	import { APISection, ComponentPreview, DatePickerDemo } from '@/components/index.js'
 	export let schemas;
 </script>
 

@@ -1,6 +1,6 @@
-import type { APISchema } from "@/types";
-import { menu } from "./menu";
-import type * as Menu from "$lib/bits/menu/_types";
+import type { APISchema } from "@/types/index.js";
+import { menu } from "./menu.js";
+import type * as Menu from "$lib/bits/menu/_types.js";
 
 export const root: APISchema<Menu.Props> = {
 	title: "Root",

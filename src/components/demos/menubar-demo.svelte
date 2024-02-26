@@ -1,8 +1,7 @@
 <script lang="ts">
-	import { Menubar } from "$lib";
-	import { flyAndScale } from "@/utils";
-	import { SwitchOn, SwitchOff } from "@/components/icons";
-	import { CaretRight, Cat, Check } from "$icons/index.js";
+	import { Menubar } from "$lib/index.js";
+	import { flyAndScale } from "@/utils/index.js";
+	import { CaretRight, Cat, Check, SwitchOn, SwitchOff } from "$icons/index.js";
 
 	let bookmarks = false;
 	let fullUrls = true;

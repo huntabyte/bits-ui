@@ -4,7 +4,7 @@ description: Organizes and presents a collection of menu options or actions with
 ---
 
 <script>
-	import { APISection, ComponentPreview, MenubarDemo } from '@/components'
+	import { APISection, ComponentPreview, MenubarDemo } from '@/components/index.js'
 	export let schemas;
 </script>
 

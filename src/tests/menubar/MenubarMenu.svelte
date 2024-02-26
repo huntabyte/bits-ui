@@ -9,7 +9,7 @@
 </script>
 
 <script lang="ts">
-	import { Menubar } from "$lib";
+	import { Menubar } from "$lib/index.js";
 
 	export let id: string;
 </script>

@@ -1,8 +1,14 @@
 <script lang="ts">
-	import { Dialog as SheetPrimitive } from "@/lib";
-	import { SheetOverlay, SheetPortal, sheetVariants, sheetTransitions, type Side } from ".";
+	import { Dialog as SheetPrimitive } from "$lib/index.js";
+	import {
+		SheetOverlay,
+		SheetPortal,
+		sheetVariants,
+		sheetTransitions,
+		type Side,
+	} from "./index.js";
 	import { X } from "$icons/index.js";
-	import { cn } from "@/utils";
+	import { cn } from "@/utils/index.js";
 	import { fly } from "svelte/transition";
 
 	type $$Props = SheetPrimitive.ContentProps & {

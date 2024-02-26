@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Dialog } from "$lib";
+	import { Dialog } from "$lib/index.js";
 
 	type $$Props = Dialog.Props;
 

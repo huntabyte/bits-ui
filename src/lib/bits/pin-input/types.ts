@@ -1,5 +1,5 @@
 import type { HTMLDivAttributes } from "$lib/internal/index.js";
-import type { CustomEventHandler } from "$lib";
+import type { CustomEventHandler } from "$lib/index.js";
 import type { HTMLInputAttributes } from "svelte/elements";
 import type * as I from "./_types.js";
 

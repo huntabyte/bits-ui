@@ -142,7 +142,10 @@ function getComponentSourceFileContent(src = "") {
 	// Read the source file.
 	const filePath = path.join(process.cwd(), newSrc);
 
-	const formattedSource = prettier.format(readFileSync(filePath, "utf-8"), codeBlockPrettierConfig);
+	/** @type {string} */
+	let formattedSource = prettier.format(readFileSync(filePath, "utf-8"), codeBlockPrettierConfig);
+
+	formattedSource = formattedSource.replaceAll(`"$lib/index.js";`, `"bits-ui";`);
 
 	return formattedSource;
 }
