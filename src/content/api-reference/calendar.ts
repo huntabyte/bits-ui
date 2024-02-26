@@ -1,8 +1,8 @@
-import type { APISchema } from "@/types";
+import type { APISchema } from "@/types/index.js";
 import * as C from "@/content/constants.js";
 import { weekdaysSlotProp, enums, monthsSlotProp } from "@/content/api-reference/helpers.js";
 import type * as Calendar from "$lib/bits/calendar/_types.js";
-import { attrsSlotProp, builderAndAttrsSlotProps, domElProps } from "./helpers";
+import { attrsSlotProp, builderAndAttrsSlotProps, domElProps } from "./helpers.js";
 
 export const root: APISchema<Calendar.Props> = {
 	title: "Root",

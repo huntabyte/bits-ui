@@ -2,7 +2,7 @@ import type { APISchema } from "@/types/index.js";
 import { enums } from "@/content/api-reference/helpers.js";
 import * as C from "@/content/constants.js";
 import type * as Progress from "$lib/bits/progress/_types.js";
-import { builderAndAttrsSlotProps, domElProps } from "./helpers";
+import { builderAndAttrsSlotProps, domElProps } from "./helpers.js";
 
 export const root: APISchema<Progress.Props> = {
 	title: "Root",

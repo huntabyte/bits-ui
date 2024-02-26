@@ -1,4 +1,4 @@
-import type { APISchema } from "@/types";
+import type { APISchema } from "@/types/index.js";
 import * as C from "@/content/constants.js";
 import {
 	union,

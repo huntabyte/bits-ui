@@ -1,4 +1,4 @@
-import type { APISchema } from "@/types";
+import type { APISchema } from "@/types/index.js";
 import {
 	arrowProps,
 	domElProps,
@@ -10,8 +10,8 @@ import {
 	onOutsideClickProp,
 } from "@/content/api-reference/helpers.js";
 import { floatingPositioning } from "./floating.js";
-import type * as LinkPreview from "$lib/bits/link-preview/_types";
-import * as C from "@/content/constants";
+import type * as LinkPreview from "$lib/bits/link-preview/_types.js";
+import * as C from "@/content/constants.js";
 
 export const root: APISchema<LinkPreview.Props> = {
 	title: "Root",

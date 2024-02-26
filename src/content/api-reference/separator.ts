@@ -1,7 +1,7 @@
-import type { APISchema } from "@/types";
+import type { APISchema } from "@/types/index.js";
 import { enums, builderAndAttrsSlotProps, domElProps } from "@/content/api-reference/helpers.js";
-import * as C from "@/content/constants";
-import type * as Separator from "$lib/bits/separator/_types";
+import * as C from "@/content/constants.js";
+import type * as Separator from "$lib/bits/separator/_types.js";
 
 export const root: APISchema<Separator.Props> = {
 	title: "Root",
