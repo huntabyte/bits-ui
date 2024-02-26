@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Calendar } from "$lib";
+	import { Calendar } from "$lib/index.js";
 	import { CaretLeft, CaretRight } from "$icons/index.js";
 
 	const isDateUnavailable: Calendar.Props["isDateUnavailable"] = (date) => {

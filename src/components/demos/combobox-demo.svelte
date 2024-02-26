@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { Combobox } from "$lib";
-	import { flyAndScale } from "@/utils";
+	import { Combobox } from "$lib/index.js";
+	import { flyAndScale } from "@/utils/index.js";
 	import { Check, OrangeSlice, CaretUpDown } from "$icons/index.js";
 
 	const fruits = [

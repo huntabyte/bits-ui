@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { Popover } from "$lib";
-	import { flyAndScale } from "@/utils";
-	import { Code } from "@/components";
+	import { Popover } from "$lib/index.js";
+	import { flyAndScale } from "@/utils/index.js";
+	import { Code } from "@/components/index.js";
 
 	export let name: string;
 </script>
