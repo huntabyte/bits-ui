@@ -4,7 +4,7 @@ description: A toggle control enabling users to switch between "on" and "off" st
 ---
 
 <script>
-	import { APISection, ComponentPreview, SwitchDemo } from '@/components'
+	import { APISection, ComponentPreview, SwitchDemo } from '@/components/index.js'
 	export let schemas;
 </script>
 

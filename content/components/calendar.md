@@ -4,7 +4,7 @@ description: Displays dates and days of the week, facilitating date-related inte
 ---
 
 <script>
-	import { APISection, ComponentPreview, CalendarDemo } from '@/components'
+	import { APISection, ComponentPreview, CalendarDemo } from '@/components/index.js'
 	export let schemas;
 </script>
 

@@ -4,7 +4,7 @@ description: Allows users to select a value from a continuous range by sliding a
 ---
 
 <script>
-	import { APISection, ComponentPreview, SliderDemo } from '@/components'
+	import { APISection, ComponentPreview, SliderDemo } from '@/components/index.js'
 	export let schemas;
 </script>
 

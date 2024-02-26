@@ -4,7 +4,7 @@ description: Facilitates navigation between pages.
 ---
 
 <script>
-	import { APISection, ComponentPreview, PaginationDemo } from '@/components'
+	import { APISection, ComponentPreview, PaginationDemo } from '@/components/index.js'
 	export let schemas
 </script>
 

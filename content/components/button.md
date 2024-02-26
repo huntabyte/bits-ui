@@ -4,7 +4,7 @@ description: A special button component that can receive Melt UI builders for us
 ---
 
 <script>
-	import { APISection, ComponentPreview, ButtonDemo } from '@/components'
+	import { APISection, ComponentPreview, ButtonDemo } from '@/components/index.js'
 	export let schemas;
 </script>
 

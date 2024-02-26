@@ -4,7 +4,7 @@ description: Conceals or reveals content sections, enhancing space utilization a
 ---
 
 <script>
-	import { APISection, ComponentPreview, CollapsibleDemo } from '@/components'
+	import { APISection, ComponentPreview, CollapsibleDemo } from '@/components/index.js'
 	export let schemas;
 </script>
 

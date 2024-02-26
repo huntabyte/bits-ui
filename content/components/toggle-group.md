@@ -4,7 +4,7 @@ description: A control element that switches between two states, providing a bin
 ---
 
 <script>
-	import { APISection, ComponentPreview, ToggleGroupDemo } from '@/components'
+	import { APISection, ComponentPreview, ToggleGroupDemo } from '@/components/index.js'
 	export let schemas;
 </script>
 

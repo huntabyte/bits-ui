@@ -4,7 +4,7 @@ description: Displays options or actions relevant to a specific context or selec
 ---
 
 <script>
-	import { APISection, ComponentPreview, ContextMenuDemo } from '@/components'
+	import { APISection, ComponentPreview, ContextMenuDemo } from '@/components/index.js'
 	export let schemas;
 </script>
 
