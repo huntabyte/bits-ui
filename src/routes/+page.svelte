@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { PageHeader, PageHeaderHeading, PageHeaderDescription } from "@/components";
+	import { PageHeader, PageHeaderHeading, PageHeaderDescription } from "@/components/index.js";
 </script>
 
 <PageHeader>

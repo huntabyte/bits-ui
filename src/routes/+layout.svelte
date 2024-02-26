@@ -6,12 +6,12 @@
 		SiteHeader,
 		TableOfContents,
 		TailwindIndicator,
-	} from "@/components";
-	import { navigation } from "@/config";
+	} from "@/components/index.js";
+	import { navigation } from "@/config/index.js";
 	import { ModeWatcher } from "mode-watcher";
 	import "@/styles/app.postcss";
 	import { page } from "$app/stores";
-	import { cn } from "@/utils";
+	import { cn } from "@/utils/index.js";
 </script>
 
 <ModeWatcher />
