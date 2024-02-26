@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Accordion } from "$lib";
+	import { Accordion } from "$lib/index.js";
 </script>
 
 <Accordion.Root value="1" data-testid="root">

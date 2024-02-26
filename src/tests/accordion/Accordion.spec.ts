@@ -1,10 +1,10 @@
 import { render } from "@testing-library/svelte";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import AccordionTest from "./AccordionTest.svelte";
 import type { Item } from "./AccordionTest.svelte";
-import { getTestKbd } from "../utils";
+import { getTestKbd } from "../utils.js";
 import AccordionTestIsolated from "./AccordionTestIsolated.svelte";
 
 const kbd = getTestKbd();

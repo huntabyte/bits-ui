@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Pagination } from "$lib";
+	import { Pagination } from "$lib/index.js";
 
 	type $$Props = Pagination.Props;
 

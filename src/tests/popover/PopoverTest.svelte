@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Popover } from "$lib";
+	import { Popover } from "$lib/index.js";
 
 	type $$Props = Popover.Props;
 

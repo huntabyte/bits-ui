@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { AlertDialog } from "$lib";
+	import { AlertDialog } from "$lib/index.js";
 
 	type $$Props = AlertDialog.Props;
 

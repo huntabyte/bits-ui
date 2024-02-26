@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Toolbar } from "$lib";
+	import { Toolbar } from "$lib/index.js";
 
 	type $$Props = Toolbar.Props & {
 		multipleProps?: Toolbar.GroupProps<"multiple">;

@@ -1,11 +1,11 @@
 import { render } from "@testing-library/svelte";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import TabsTest from "./TabsTest.svelte";
 import type { Item } from "./TabsTest.svelte";
 import { getTestKbd } from "../utils.js";
-import type { Tabs } from "$lib";
+import type { Tabs } from "$lib/index.js";
 
 const kbd = getTestKbd();
 

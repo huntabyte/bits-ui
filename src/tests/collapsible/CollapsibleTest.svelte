@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Collapsible } from "$lib";
+	import { Collapsible } from "$lib/index.js";
 	type $$Props = Collapsible.Props;
 	export let open: Collapsible.Props["open"] = false;
 </script>

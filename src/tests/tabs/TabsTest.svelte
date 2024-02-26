@@ -6,7 +6,7 @@
 </script>
 
 <script lang="ts">
-	import { Tabs } from "$lib";
+	import { Tabs } from "$lib/index.js";
 
 	type $$Props = Tabs.Props & {
 		items?: Item[];

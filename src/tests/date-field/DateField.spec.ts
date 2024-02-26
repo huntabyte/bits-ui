@@ -1,10 +1,10 @@
 import { render } from "@testing-library/svelte";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import { getTestKbd } from "../utils.js";
 import DateFieldTest from "./DateFieldTest.svelte";
-import type { DateField } from "$lib";
+import type { DateField } from "$lib/index.js";
 import {
 	CalendarDate,
 	CalendarDateTime,
