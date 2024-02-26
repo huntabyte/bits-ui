@@ -1,6 +1,6 @@
 import { createPagination, type CreatePaginationProps } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
-import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal";
+import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 
 export function getPaginationData() {
 	const NAME = "pagination" as const;

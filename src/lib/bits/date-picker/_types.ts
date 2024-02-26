@@ -11,7 +11,7 @@ import type {
 	OmitFloating,
 	DOMElement,
 } from "$lib/internal/index.js";
-import type { SegmentPart } from "$lib/shared";
+import type { SegmentPart } from "$lib/shared/index.js";
 import type { DateValue } from "@internationalized/date";
 import type { CreateDatePickerProps } from "@melt-ui/svelte";
 
