@@ -6,19 +6,19 @@
 <div class="pt-6">
 	<Tabs.Root
 		value="outbound"
-		class="w-[390px] rounded-card border border-muted bg-background p-3 shadow-card"
+		class="w-[390px] rounded-card border border-muted bg-background-alt p-3 shadow-card"
 	>
 		<Tabs.List
-			class="grid w-full grid-cols-2 gap-1 rounded-9px bg-dark-10 p-1 text-sm font-semibold leading-[0.01em] shadow-mini-inset"
+			class="grid w-full grid-cols-2 gap-1 rounded-9px bg-dark-10 p-1 text-sm font-semibold leading-[0.01em] shadow-mini-inset dark:border dark:border-neutral-600/30 dark:bg-background"
 		>
 			<Tabs.Trigger
 				value="outbound"
-				class="h-8 rounded-[7px] bg-transparent py-2 data-[state=active]:bg-white data-[state=active]:shadow-mini dark:data-[state=active]:bg-background"
+				class="h-8 rounded-[7px] bg-transparent py-2 data-[state=active]:bg-white data-[state=active]:shadow-mini dark:data-[state=active]:bg-muted"
 				>Outbound</Tabs.Trigger
 			>
 			<Tabs.Trigger
 				value="inbound"
-				class="h-8 rounded-[7px] bg-transparent py-2 data-[state=active]:bg-white data-[state=active]:shadow-mini dark:data-[state=active]:bg-background"
+				class="h-8 rounded-[7px] bg-transparent py-2 data-[state=active]:bg-white data-[state=active]:shadow-mini dark:data-[state=active]:bg-muted"
 				>Inbound</Tabs.Trigger
 			>
 		</Tabs.List>
@@ -38,7 +38,7 @@
 				<div class="relative col-span-3">
 					<hr class="border-1 relative top-4 h-px border-dashed border-border-input" />
 
-					<div class="absolute left-1/2 -translate-x-1/2 bg-background p-1">
+					<div class="absolute left-1/2 -translate-x-1/2 bg-background-alt p-1">
 						<Airplane class="size-6 rotate-90 text-muted-foreground" />
 					</div>
 				</div>
@@ -60,7 +60,7 @@
 				<div class="relative col-span-3">
 					<hr class="border-1 relative top-4 h-px border-dashed border-border-input" />
 
-					<div class="absolute left-1/2 -translate-x-1/2 bg-background p-1">
+					<div class="absolute left-1/2 -translate-x-1/2 bg-background-alt p-1">
 						<Airplane class="size-6 rotate-90 text-muted-foreground" />
 					</div>
 				</div>

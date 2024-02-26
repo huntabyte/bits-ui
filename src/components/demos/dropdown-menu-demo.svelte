@@ -14,7 +14,7 @@
 
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger
-		class="focus-visible inline-flex h-10 w-10 items-center justify-center rounded-full border border-border-input bg-background text-sm font-medium text-foreground shadow-btn hover:bg-muted focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
+		class="focus-visible inline-flex h-10 w-10 items-center justify-center rounded-full border border-border-input bg-background-alt text-sm font-medium text-foreground shadow-btn hover:bg-muted focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
 	>
 		<DotsThree class="h-6 w-6 text-foreground" />
 	</DropdownMenu.Trigger>

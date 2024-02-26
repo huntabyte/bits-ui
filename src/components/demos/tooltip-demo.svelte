@@ -7,7 +7,7 @@
 <Tooltip.Root openDelay={0}>
 	<Tooltip.Trigger
 		class="inline-flex size-10 items-center justify-center rounded-full
-	border border-border-input bg-background shadow-btn ring-dark ring-offset-background hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dark focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+	border border-border-input bg-background-alt shadow-btn ring-dark ring-offset-background hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dark focus-visible:ring-offset-2 focus-visible:ring-offset-background"
 	>
 		<MagicWand class="size-5" />
 	</Tooltip.Trigger>

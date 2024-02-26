@@ -21,7 +21,7 @@
 >
 	<Tabs.Root class="relative mr-auto w-full" let:value>
 		<Tabs.List
-			class="absolute right-2.5 top-2.5 z-20 flex h-input-sm items-center justify-center rounded-card-sm bg-neutral-200 px-[5px] shadow-mini-inset dark:bg-neutral-800"
+			class="absolute right-2.5 top-2.5 z-20 flex h-input-sm items-center justify-center rounded-card-sm bg-neutral-200 px-[4px] shadow-mini-inset dark:border dark:border-neutral-600/30 dark:bg-neutral-950"
 		>
 			<Tabs.Trigger
 				value="preview"
@@ -40,7 +40,7 @@
 				</span>
 				{#if value === "preview"}
 					<div
-						class="absolute left-0 top-0 h-8 w-full rounded-[7px] bg-background"
+						class="absolute left-0 top-0 h-8 w-full rounded-[7px] bg-background dark:bg-muted"
 						in:send={{ key: "active" }}
 						out:receive={{ key: "active" }}
 					/>
@@ -63,7 +63,7 @@
 				</span>
 				{#if value === "code"}
 					<div
-						class="absolute left-0 top-0 h-8 w-full rounded-[7px] bg-background"
+						class="absolute left-0 top-0 h-8 w-full rounded-[7px] bg-background dark:bg-muted"
 						in:send={{ key: "active" }}
 						out:receive={{ key: "active" }}
 					/>

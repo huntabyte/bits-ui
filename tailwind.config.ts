@@ -21,6 +21,7 @@ export default {
 				},
 				background: {
 					DEFAULT: "hsl(var(--background) / <alpha-value>)",
+					alt: "hsl(var(--background-alt) / <alpha-value>)",
 				},
 				foreground: {
 					DEFAULT: "hsl(var(--foreground) / <alpha-value>)",
