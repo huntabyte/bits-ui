@@ -8,7 +8,7 @@
 </script>
 
 <Calendar.Root
-	class="mt-6 rounded-[15px] border border-dark-10 bg-background p-[22px] shadow-card"
+	class="mt-6 rounded-[15px] border border-dark-10 bg-background-alt p-[22px] shadow-card"
 	let:months
 	let:weekdays
 	{isDateUnavailable}
@@ -17,13 +17,13 @@
 >
 	<Calendar.Header class="flex items-center justify-between">
 		<Calendar.PrevButton
-			class="inline-flex size-10 items-center justify-center rounded-9px bg-background hover:bg-muted active:scale-98 active:transition-all"
+			class="inline-flex size-10 items-center justify-center rounded-9px bg-background-alt hover:bg-muted active:scale-98 active:transition-all"
 		>
 			<CaretLeft class="size-6" />
 		</Calendar.PrevButton>
 		<Calendar.Heading class="text-[15px] font-medium" />
 		<Calendar.NextButton
-			class="inline-flex size-10 items-center justify-center rounded-9px bg-background hover:bg-muted active:scale-98 active:transition-all"
+			class="inline-flex size-10 items-center justify-center rounded-9px bg-background-alt hover:bg-muted active:scale-98 active:transition-all"
 		>
 			<CaretRight class="size-6" />
 		</Calendar.NextButton>

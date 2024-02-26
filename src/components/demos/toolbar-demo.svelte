@@ -15,27 +15,27 @@
 </script>
 
 <Toolbar.Root
-	class="flex h-12 min-w-max items-center justify-center rounded-10px border border-border bg-background px-[4px] py-1 shadow-mini"
+	class="flex h-12 min-w-max items-center justify-center rounded-10px border border-border bg-background-alt px-[4px] py-1 shadow-mini"
 >
 	<Toolbar.Group bind:value={text} type="multiple" class="flex items-center gap-x-0.5">
 		<Toolbar.GroupItem
 			aria-label="toggle bold"
 			value="bold"
-			class="inline-flex size-10 items-center justify-center rounded-9px bg-background text-foreground/60 transition-all hover:bg-muted active:scale-98 active:bg-dark-10 data-[state=on]:bg-muted data-[state=on]:text-foreground/80 active:data-[state=on]:bg-dark-10"
+			class="inline-flex size-10 items-center justify-center rounded-9px bg-background-alt text-foreground/60 transition-all hover:bg-muted active:scale-98 active:bg-dark-10 data-[state=on]:bg-muted data-[state=on]:text-foreground/80 active:data-[state=on]:bg-dark-10"
 		>
 			<TextB class="size-6" />
 		</Toolbar.GroupItem>
 		<Toolbar.GroupItem
 			aria-label="toggle italic"
 			value="italic"
-			class="inline-flex size-10 items-center justify-center rounded-9px bg-background text-foreground/60 transition-all hover:bg-muted active:scale-98 active:bg-dark-10 data-[state=on]:bg-muted data-[state=on]:text-foreground/80 active:data-[state=on]:bg-dark-10"
+			class="inline-flex size-10 items-center justify-center rounded-9px bg-background-alt text-foreground/60 transition-all hover:bg-muted active:scale-98 active:bg-dark-10 data-[state=on]:bg-muted data-[state=on]:text-foreground/80 active:data-[state=on]:bg-dark-10"
 		>
 			<TextItalic class="size-6" />
 		</Toolbar.GroupItem>
 		<Toolbar.GroupItem
 			aria-label="toggle strikethrough"
 			value="strikethrough"
-			class="inline-flex size-10 items-center justify-center rounded-9px bg-background text-foreground/60 transition-all hover:bg-muted active:scale-98 active:bg-dark-10 data-[state=on]:bg-muted data-[state=on]:text-foreground/80 active:data-[state=on]:bg-dark-10"
+			class="inline-flex size-10 items-center justify-center rounded-9px bg-background-alt text-foreground/60 transition-all hover:bg-muted active:scale-98 active:bg-dark-10 data-[state=on]:bg-muted data-[state=on]:text-foreground/80 active:data-[state=on]:bg-dark-10"
 		>
 			<TextStrikethrough class="size-6" />
 		</Toolbar.GroupItem>
@@ -47,21 +47,21 @@
 		<Toolbar.GroupItem
 			aria-label="align left"
 			value="left"
-			class="inline-flex size-10 items-center justify-center rounded-9px bg-background text-foreground/60 transition-all hover:bg-muted active:scale-98 active:bg-dark-10 data-[state=on]:bg-muted data-[state=on]:text-foreground/80 active:data-[state=on]:bg-dark-10"
+			class="inline-flex size-10 items-center justify-center rounded-9px bg-background-alt text-foreground/60 transition-all hover:bg-muted active:scale-98 active:bg-dark-10 data-[state=on]:bg-muted data-[state=on]:text-foreground/80 active:data-[state=on]:bg-dark-10"
 		>
 			<TextAlignLeft class="size-6" />
 		</Toolbar.GroupItem>
 		<Toolbar.GroupItem
 			aria-label="align center"
 			value="center"
-			class="inline-flex size-10 items-center justify-center rounded-9px bg-background text-foreground/60 transition-all hover:bg-muted active:scale-98 active:bg-dark-10 data-[state=on]:bg-muted data-[state=on]:text-foreground/80 active:data-[state=on]:bg-dark-10"
+			class="inline-flex size-10 items-center justify-center rounded-9px bg-background-alt text-foreground/60 transition-all hover:bg-muted active:scale-98 active:bg-dark-10 data-[state=on]:bg-muted data-[state=on]:text-foreground/80 active:data-[state=on]:bg-dark-10"
 		>
 			<TextAlignCenter class="size-6" />
 		</Toolbar.GroupItem>
 		<Toolbar.GroupItem
 			aria-label="align right"
 			value="right"
-			class="inline-flex size-10 items-center justify-center rounded-9px bg-background text-foreground/60 transition-all hover:bg-muted active:scale-98 active:bg-dark-10 data-[state=on]:bg-muted data-[state=on]:text-foreground/80 active:data-[state=on]:bg-dark-10"
+			class="inline-flex size-10 items-center justify-center rounded-9px bg-background-alt text-foreground/60 transition-all hover:bg-muted active:scale-98 active:bg-dark-10 data-[state=on]:bg-muted data-[state=on]:text-foreground/80 active:data-[state=on]:bg-dark-10"
 		>
 			<TextAlignRight class="size-6" />
 		</Toolbar.GroupItem>

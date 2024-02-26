@@ -6,7 +6,7 @@
 <div class="pt-6">
 	<Tabs.Root
 		value="outbound"
-		class="w-[390px] rounded-card border border-muted bg-background p-3 shadow-card"
+		class="w-[390px] rounded-card border border-muted bg-background-alt p-3 shadow-card"
 	>
 		<Tabs.List
 			class="grid w-full grid-cols-2 gap-1 rounded-9px bg-dark-10 p-1 text-sm font-semibold leading-[0.01em] shadow-mini-inset"
@@ -38,7 +38,7 @@
 				<div class="relative col-span-3">
 					<hr class="border-1 relative top-4 h-px border-dashed border-border-input" />
 
-					<div class="absolute left-1/2 -translate-x-1/2 bg-background p-1">
+					<div class="absolute left-1/2 -translate-x-1/2 bg-background-alt p-1">
 						<Airplane class="size-6 rotate-90 text-muted-foreground" />
 					</div>
 				</div>
