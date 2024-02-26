@@ -39,7 +39,7 @@
     "@playwright/test": "^1.28.1",
     "@sveltejs/adapter-vercel": "^5.1.0",
     "@sveltejs/kit": "^2.5.0",
-    "@sveltejs/package": "^2.2.6",
+    "@sveltejs/package": "^2.2.7",
     "@sveltejs/vite-plugin-svelte": "^3.0.2",
     "@svitejs/changesets-changelog-github-compact": "^1.1.0",
     "@tailwindcss/typography": "^0.5.10",
