@@ -9,7 +9,7 @@
 		class="w-[390px] rounded-card border border-muted bg-background-alt p-3 shadow-card"
 	>
 		<Tabs.List
-			class="grid w-full grid-cols-2 gap-1 rounded-9px bg-dark-10 dark:bg-background dark:border-neutral-600/30 dark:border p-1 text-sm font-semibold leading-[0.01em] shadow-mini-inset"
+			class="grid w-full grid-cols-2 gap-1 rounded-9px bg-dark-10 p-1 text-sm font-semibold leading-[0.01em] shadow-mini-inset dark:border dark:border-neutral-600/30 dark:bg-background"
 		>
 			<Tabs.Trigger
 				value="outbound"
