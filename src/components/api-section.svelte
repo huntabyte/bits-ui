@@ -17,7 +17,7 @@
 				class="inline-flex h-[29px] items-center justify-center rounded-button bg-accent px-3 font-mono text-[17px] font-medium leading-tight tracking-tight dark:text-neutral-900"
 			>
 				<h3>
-					<span class="text-muted-foreground dark:text-neutral-900/40"
+					<span class="text-muted-foreground dark:text-neutral-900/50"
 						>{$page.data.title.replaceAll(" ", "")}.</span
 					>{schema.title}
 				</h3>
