@@ -31,3 +31,4 @@ export type * from "$lib/bits/tabs/_export.types.js";
 export type * from "$lib/bits/toggle/_export.types.js";
 export type * from "$lib/bits/toggle-group/_export.types.js";
 export type * from "$lib/bits/tooltip/_export.types.js";
+export type * from "$lib/bits/toolbar/_export.types.js";
