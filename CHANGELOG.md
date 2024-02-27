@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.18.4
+
+### Patch Changes
+
+- fix: Export types for PIN Input and Toolbar ([#355](https://github.com/huntabyte/bits-ui/pull/355))
+
 ## 0.18.3
 
 ### Patch Changes
