@@ -32,12 +32,12 @@
 			</div>
 			<div class="ml-auto flex items-center gap-px">
 				<kbd
-					class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background text-xs text-muted-foreground shadow-kbd"
+					class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background-alt text-xs text-muted-foreground shadow-kbd"
 				>
 					⌘
 				</kbd>
 				<kbd
-					class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background text-[10px] text-muted-foreground shadow-kbd"
+					class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background-alt text-[10px] text-muted-foreground shadow-kbd"
 				>
 					P
 				</kbd>
@@ -52,12 +52,12 @@
 			</div>
 			<div class="ml-auto flex items-center gap-px">
 				<kbd
-					class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background text-xs text-muted-foreground shadow-kbd"
+					class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background-alt text-xs text-muted-foreground shadow-kbd"
 				>
 					⌘
 				</kbd>
 				<kbd
-					class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background text-[10px] text-muted-foreground shadow-kbd"
+					class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background-alt text-[10px] text-muted-foreground shadow-kbd"
 				>
 					B
 				</kbd>
@@ -72,12 +72,12 @@
 			</div>
 			<div class="ml-auto flex items-center gap-px">
 				<kbd
-					class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background text-xs text-muted-foreground shadow-kbd"
+					class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background-alt text-xs text-muted-foreground shadow-kbd"
 				>
 					⌘
 				</kbd>
 				<kbd
-					class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background text-[10px] text-muted-foreground shadow-kbd"
+					class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background-alt text-[10px] text-muted-foreground shadow-kbd"
 				>
 					S
 				</kbd>
