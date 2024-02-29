@@ -40,19 +40,19 @@
 			class="z-50"
 		>
 			<DatePicker.Calendar
-				class="rounded-[15px] border border-dark-10 bg-background p-[22px] shadow-card"
+				class="rounded-[15px] border border-dark-10 bg-background-alt p-[22px] shadow-popover"
 				let:months
 				let:weekdays
 			>
 				<DatePicker.Header class="flex items-center justify-between">
 					<DatePicker.PrevButton
-						class="inline-flex size-10 items-center justify-center rounded-9px bg-background transition-all hover:bg-muted active:scale-98"
+						class="inline-flex size-10 items-center justify-center rounded-9px bg-background-alt transition-all hover:bg-muted active:scale-98"
 					>
 						<CaretLeft class="size-6" />
 					</DatePicker.PrevButton>
 					<DatePicker.Heading class="text-[15px] font-medium" />
 					<DatePicker.NextButton
-						class="inline-flex size-10 items-center justify-center rounded-9px bg-background transition-all hover:bg-muted active:scale-98"
+						class="inline-flex size-10 items-center justify-center rounded-9px bg-background-alt transition-all hover:bg-muted active:scale-98"
 					>
 						<CaretRight class="size-6" />
 					</DatePicker.NextButton>
