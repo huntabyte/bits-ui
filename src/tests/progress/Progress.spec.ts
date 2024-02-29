@@ -1,9 +1,9 @@
 import { render } from "@testing-library/svelte";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import ProgressTest from "./ProgressTest.svelte";
-import type { Progress } from "$lib";
+import type { Progress } from "$lib/index.js";
 
 function setup(props: Progress.Props = {}) {
 	const user = userEvent.setup();

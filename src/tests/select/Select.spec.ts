@@ -1,12 +1,12 @@
 import { render, waitFor } from "@testing-library/svelte";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import SelectTest from "./SelectTest.svelte";
 import type { Item } from "./SelectTest.svelte";
 import { getTestKbd } from "../utils.js";
-import type { Select } from "$lib";
-import { sleep } from "$lib/internal";
+import type { Select } from "$lib/index.js";
+import { sleep } from "$lib/internal/index.js";
 
 const kbd = getTestKbd();
 

@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { Popover } from "$lib";
-	import { flyAndScale, parseTypeDef } from "@/utils";
-	import { Code } from "@/components";
+	import { Popover } from "$lib/index.js";
+	import { flyAndScale, parseTypeDef } from "@/utils/index.js";
+	import { Code } from "@/components/index.js";
 	import { Info } from "$icons/index.js";
-	import type { PropType } from "@/types";
+	import type { PropType } from "@/types/index.js";
 
 	export let type: PropType | string;
 </script>

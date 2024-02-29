@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { ContextMenu } from "$lib";
-	import { flyAndScale } from "@/utils";
+	import { ContextMenu } from "$lib/index.js";
+	import { flyAndScale } from "@/utils/index.js";
 	import { PencilSimpleLine, PlusCircle, CopySimple, Trash, MouseSimple } from "$icons/index.js";
 </script>
 

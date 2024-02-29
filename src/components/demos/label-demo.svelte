@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { Checkbox } from "$lib";
-	import { Label } from "$lib";
+	import { Checkbox, Label } from "$lib/index.js";
 	import { Check, Minus } from "$icons/index.js";
 </script>
 

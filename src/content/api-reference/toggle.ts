@@ -1,4 +1,4 @@
-import type { APISchema } from "@/types";
+import type { APISchema } from "@/types/index.js";
 import { enums, builderAndAttrsSlotProps, domElProps } from "@/content/api-reference/helpers.js";
 import type * as Toggle from "$lib/bits/toggle/_types.js";
 import * as C from "@/content/constants.js";

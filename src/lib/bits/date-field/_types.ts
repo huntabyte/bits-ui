@@ -5,7 +5,7 @@
  */
 
 import type { Expand, OnChangeFn, OmitDates, DOMElement } from "$lib/internal/index.js";
-import type { SegmentPart } from "$lib/shared";
+import type { SegmentPart } from "$lib/shared/index.js";
 import type { DateValue } from "@internationalized/date";
 import type { CreateDateFieldProps } from "@melt-ui/svelte";
 

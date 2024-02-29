@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { DateField } from "$lib";
+	import { DateField } from "$lib/index.js";
 
 	type $$Props = DateField.Props;
 	export let placeholder: DateField.Props["placeholder"] = undefined;

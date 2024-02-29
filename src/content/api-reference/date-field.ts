@@ -1,8 +1,8 @@
 import * as C from "@/content/constants.js";
 import type * as DateField from "$lib/bits/date-field/_types.js";
-import type { APISchema } from "@/types";
+import type { APISchema } from "@/types/index.js";
 import { enums, idsSlotProp, union, domElProps } from "@/content/api-reference/helpers.js";
-import { builderAndAttrsSlotProps } from "./helpers";
+import { builderAndAttrsSlotProps } from "./helpers.js";
 
 export const root: APISchema<DateField.Props> = {
 	title: "Root",

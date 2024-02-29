@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ToggleGroup } from "$lib";
+	import { ToggleGroup } from "$lib/index.js";
 	import { TextB, TextItalic, TextStrikethrough } from "$icons/index.js";
 
 	let value: string[] | undefined = ["bold"];

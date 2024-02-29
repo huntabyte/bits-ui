@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { RadioGroup, Label } from "$lib";
+	import { RadioGroup, Label } from "$lib/index.js";
 </script>
 
 <RadioGroup.Root class="flex flex-col gap-4 text-sm font-medium">

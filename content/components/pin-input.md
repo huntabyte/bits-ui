@@ -4,7 +4,7 @@ description: Allows users to input a sequence of one-character alphanumeric inpu
 ---
 
 <script>
-	import { APISection, ComponentPreview, PinInputDemo } from '@/components'
+	import { APISection, ComponentPreview, PinInputDemo } from '@/components/index.js'
 	export let schemas;
 </script>
 

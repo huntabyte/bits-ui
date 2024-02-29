@@ -4,7 +4,7 @@ description: Displays content while maintaining a specified aspect ratio, ensuri
 ---
 
 <script>
-	import { APISection, ComponentPreview, AspectRatioDemo } from '@/components'
+	import { APISection, ComponentPreview, AspectRatioDemo } from '@/components/index.js'
 	export let schemas;
 </script>
 

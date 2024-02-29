@@ -1,4 +1,4 @@
-import type { APISchema, DataAttrSchema, PropObj } from "@/types";
+import type { APISchema, DataAttrSchema, PropObj } from "@/types/index.js";
 import { focusProp } from "./extended-types/index.js";
 import { floatingPositioning } from "./floating.js";
 import {
@@ -9,9 +9,9 @@ import {
 	idsSlotProp,
 	attrsSlotProp,
 } from "@/content/api-reference/helpers.js";
-import type * as Menu from "$lib/bits/menu/_types";
-import * as C from "@/content/constants";
-import { builderAndAttrsSlotProps, domElProps, onOutsideClickProp } from "./helpers";
+import type * as Menu from "$lib/bits/menu/_types.js";
+import * as C from "@/content/constants.js";
+import { builderAndAttrsSlotProps, domElProps, onOutsideClickProp } from "./helpers.js";
 
 const props = {
 	preventScroll: {

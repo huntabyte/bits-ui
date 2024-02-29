@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { Popover, Separator, Toggle } from "$lib";
+	import { Popover, Separator, Toggle } from "$lib/index.js";
+	import { flyAndScale } from "@/utils/index.js";
 	import { ImageSquare, LinkSimpleHorizontalBreak } from "$icons/index.js";
-	import { flyAndScale } from "@/utils";
 
 	let width = 1024;
 	let height = 768;

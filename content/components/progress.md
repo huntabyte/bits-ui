@@ -4,7 +4,7 @@ description: Visualizes the progress or completion status of a task or process.
 ---
 
 <script>
-	import { APISection, ComponentPreview, ProgressDemo } from '@/components'
+	import { APISection, ComponentPreview, ProgressDemo } from '@/components/index.js'
 	export let schemas;
 </script>
 

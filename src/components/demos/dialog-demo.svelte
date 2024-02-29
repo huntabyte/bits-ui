@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { Dialog, Separator, Label } from "$lib";
-	import { flyAndScale } from "@/utils";
-	import { fade } from "svelte/transition";
+	import { Dialog, Separator, Label } from "$lib/index.js";
+	import { flyAndScale } from "@/utils/index.js";
 	import { X, LockKeyOpen } from "$icons/index.js";
+	import { fade } from "svelte/transition";
 </script>
 
 <Dialog.Root>

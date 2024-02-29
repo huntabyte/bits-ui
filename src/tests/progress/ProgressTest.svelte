@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Progress } from "$lib";
+	import { Progress } from "$lib/index.js";
 
 	type $$Props = Progress.Props;
 	export let value: $$Props["value"] = 0;

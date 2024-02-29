@@ -4,7 +4,7 @@ description: Allow users to switch between checked, unchecked, and indeterminate
 ---
 
 <script>
-	import { APISection, ComponentPreview, CheckboxDemo } from '@/components'
+	import { APISection, ComponentPreview, CheckboxDemo } from '@/components/index.js'
 	export let schemas;
 </script>
 

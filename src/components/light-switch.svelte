@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Sun, Moon } from "$icons/index.js";
-	import { Button } from "$lib";
+	import { Button } from "$lib/index.js";
 	import { toggleMode, mode } from "mode-watcher";
 	import { scale } from "svelte/transition";
 	import { cubicOut } from "svelte/easing";

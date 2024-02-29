@@ -4,7 +4,7 @@ description: Enables users to pick from a list of options displayed in a dropdow
 ---
 
 <script>
-	import { APISection, ComponentPreview, ComboboxDemo } from '@/components'
+	import { APISection, ComponentPreview, ComboboxDemo } from '@/components/index.js'
 	export let schemas;
 </script>
 

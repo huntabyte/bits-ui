@@ -4,7 +4,7 @@ description: Represents a user or entity with a recognizable image or placeholde
 ---
 
 <script>
-	import { APISection, ComponentPreview, AvatarDemo } from '@/components'
+	import { APISection, ComponentPreview, AvatarDemo } from '@/components/index.js'
 	export let schemas;
 </script>
 

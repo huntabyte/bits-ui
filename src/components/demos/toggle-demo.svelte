@@ -1,6 +1,6 @@
 <script lang="ts">
+	import { Toggle } from "$lib/index.js";
 	import { LockKeyOpen } from "$icons/index.js";
-	import { Toggle } from "$lib";
 
 	let unlocked = false;
 	$: code = unlocked ? "B1T5" : "••••";

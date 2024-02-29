@@ -4,7 +4,7 @@ description: Enables users to input specific dates within a designated field.
 ---
 
 <script>
-	import { APISection, ComponentPreview, DateFieldDemo } from '@/components'
+	import { APISection, ComponentPreview, DateFieldDemo } from '@/components/index.js'
 	export let schemas;
 </script>
 

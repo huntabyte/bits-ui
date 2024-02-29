@@ -9,7 +9,7 @@
 </script>
 
 <script lang="ts">
-	import { ContextMenu } from "$lib";
+	import { ContextMenu } from "$lib/index.js";
 
 	export let checked = false;
 	export let subChecked = false;

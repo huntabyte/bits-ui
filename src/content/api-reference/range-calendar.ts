@@ -1,4 +1,4 @@
-import type { APISchema } from "@/types";
+import type { APISchema } from "@/types/index.js";
 import * as C from "@/content/constants.js";
 import {
 	attrsSlotProp,
@@ -8,7 +8,7 @@ import {
 	union,
 } from "@/content/api-reference/helpers.js";
 import type * as RangeCalendar from "$lib/bits/range-calendar/_types.js";
-import { builderAndAttrsSlotProps, domElProps } from "./helpers";
+import { builderAndAttrsSlotProps, domElProps } from "./helpers.js";
 
 export const root: APISchema<RangeCalendar.Props> = {
 	title: "Root",
