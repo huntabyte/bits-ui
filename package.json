@@ -96,7 +96,7 @@
   "type": "module",
   "dependencies": {
     "@internationalized/date": "^3.5.1",
-    "@melt-ui/svelte": "0.74.2",
+    "@melt-ui/svelte": "0.74.4",
     "nanoid": "^5.0.5"
   },
   "peerDependencies": {
