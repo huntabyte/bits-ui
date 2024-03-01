@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.18.6
+
+### Patch Changes
+
+- Menu Radio Group: fixed equality issue in change function condition ([#362](https://github.com/huntabyte/bits-ui/pull/362))
+
 ## 0.18.5
 
 ### Patch Changes
