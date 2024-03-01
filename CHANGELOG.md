@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.18.5
+
+### Patch Changes
+
+- Update Melt UI to [0.74.4](https://github.com/melt-ui/melt-ui/releases/tag/v0.74.4) ([#360](https://github.com/huntabyte/bits-ui/pull/360))
+
 ## 0.18.4
 
 ### Patch Changes
