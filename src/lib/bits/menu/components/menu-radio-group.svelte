@@ -17,7 +17,7 @@
 	} = setRadioGroupCtx({
 		defaultValue: value,
 		onValueChange: ({ next }) => {
-			if (next && next !== value) {
+			if (next != null && next !== value) {
 				onValueChange?.(next);
 				value = next;
 			}
