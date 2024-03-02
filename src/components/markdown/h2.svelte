@@ -7,7 +7,7 @@
 
 <h2
 	class={cn(
-		"mt-12 -scroll-m-36 text-[27px] font-semibold tracking-[-0.02em] first:mt-0",
+		"mt-12 -scroll-m-36 text-[27px] font-semibold tracking-[-0.01em] first:mt-0",
 		className
 	)}
 	{...$$restProps}
