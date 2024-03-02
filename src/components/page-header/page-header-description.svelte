@@ -6,7 +6,7 @@
 
 <p
 	class={cn(
-		"mt-3 text-balance text-[21px] font-semibold tracking-[-0.01em] text-foreground/40",
+		"mb-11 mt-3 text-balance text-[21px] font-semibold leading-7 tracking-[-0.01em] text-foreground/40",
 		className
 	)}
 >
