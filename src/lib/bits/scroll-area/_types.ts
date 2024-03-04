@@ -5,21 +5,14 @@ type Props = Expand<Omit<CreateScrollAreaProps, "ids">> & DOMElement<HTMLDivElem
 
 type BaseDivProps = DOMElement<HTMLDivElement>;
 
+type ScrollbarProps = BaseDivProps & {
+	orientation: "horizontal" | "vertical";
+};
+
+type ThumbProps = BaseDivProps;
+
 type ViewportProps = BaseDivProps;
 type ContentProps = BaseDivProps;
-type ScrollbarXProps = BaseDivProps;
-type ScrollbarYProps = BaseDivProps;
-type ThumbXProps = BaseDivProps;
-type ThumbYProps = BaseDivProps;
 type CornerProps = BaseDivProps;
 
-export type {
-	Props,
-	ViewportProps,
-	ContentProps,
-	ScrollbarXProps,
-	ScrollbarYProps,
-	ThumbXProps,
-	ThumbYProps,
-	CornerProps,
-};
+export type { Props, ViewportProps, ContentProps, ScrollbarProps, ThumbProps, CornerProps };

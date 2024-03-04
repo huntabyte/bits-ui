@@ -1,9 +1,9 @@
 <script lang="ts">
-	import type { ThumbYProps } from "../types.js";
+	import type { ThumbProps } from "../types.js";
 	import { getCtx } from "../ctx.js";
 	import { melt } from "@melt-ui/svelte";
 
-	type $$Props = ThumbYProps;
+	type $$Props = ThumbProps;
 
 	export let asChild: $$Props["asChild"] = false;
 	export let el: $$Props["el"] = undefined;

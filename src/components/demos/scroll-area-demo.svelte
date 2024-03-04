@@ -15,12 +15,11 @@
 			</div>
 		</ScrollArea.Content>
 	</ScrollArea.Viewport>
-	<ScrollArea.ScrollbarY
+	<ScrollArea.Scrollbar
+		orientation="vertical"
 		class="flex h-full w-2.5 touch-none select-none border-l border-l-transparent bg-dark-10 p-px"
 	>
-		<ScrollArea.ThumbY class="relative flex-1 rounded-full bg-muted-foreground">
-			<!-- ... -->
-		</ScrollArea.ThumbY>
-	</ScrollArea.ScrollbarY>
+		<ScrollArea.Thumb class="relative flex-1 rounded-full bg-muted-foreground" />
+	</ScrollArea.Scrollbar>
 	<ScrollArea.Corner />
 </ScrollArea.Root>

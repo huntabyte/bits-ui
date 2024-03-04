@@ -2,9 +2,7 @@ export type {
 	Props as ScrollAreaProps,
 	ViewportProps as ScrollAreaViewportProps,
 	ContentProps as ScrollAreaContentProps,
-	ScrollbarXProps as ScrollAreaScrollbarXProps,
-	ScrollbarYProps as ScrollAreaScrollbarYProps,
-	ThumbXProps as ScrollAreaThumbXProps,
-	ThumbYProps as ScrollAreaThumbYProps,
+	ScrollbarProps as ScrollAreaScrollbarProps,
+	ThumbProps as ScrollAreaThumbProps,
 	CornerProps as ScrollAreaCornerProps,
 } from "./types.js";
