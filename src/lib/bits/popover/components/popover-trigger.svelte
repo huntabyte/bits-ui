@@ -13,16 +13,23 @@
 
 	const {
 		elements: { trigger },
+		states: { open },
 		ids,
 		getAttrs,
 	} = getCtx();
 
 	const dispatch = createDispatcher();
-	const attrs = getAttrs("trigger");
+	const bitsAttrs = getAttrs("trigger");
 
 	$: if (id) {
 		ids.trigger.set(id);
 	}
+
+	$: attrs = {
+		...bitsAttrs,
+		"aria-controls": $open ? ids.content : undefined,
+	};
+
 	$: builder = $trigger;
 	$: Object.assign(builder, attrs);
 </script>

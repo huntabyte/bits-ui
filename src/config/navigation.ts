@@ -182,6 +182,11 @@ export const navigation: Navigation = {
 					items: [],
 				},
 				{
+					title: "Scroll Area",
+					href: "/docs/components/scroll-area",
+					items: [],
+				},
+				{
 					title: "Select",
 					href: "/docs/components/select",
 					items: [],
