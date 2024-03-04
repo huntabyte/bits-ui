@@ -24,6 +24,7 @@ export type * from "$lib/bits/popover/_export.types.js";
 export type * from "$lib/bits/progress/_export.types.js";
 export type * from "$lib/bits/radio-group/_export.types.js";
 export type * from "$lib/bits/range-calendar/_export.types.js";
+export type * from "$lib/bits/scroll-area/_export.types.js";
 export type * from "$lib/bits/select/_export.types.js";
 export type * from "$lib/bits/separator/_export.types.js";
 export type * from "$lib/bits/slider/_export.types.js";

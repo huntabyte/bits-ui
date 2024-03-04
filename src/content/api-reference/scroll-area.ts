@@ -5,7 +5,8 @@ import * as C from "@/content/constants.js";
 
 export const root: APISchema<ScrollArea.Props> = {
 	title: "Root",
-	description: "The container of all scroll area components.",
+	description:
+		"The container of all scroll area components. Overflow is hidden on this element to prevent double scrollbars.",
 	props: {
 		type: {
 			type: {

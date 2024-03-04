@@ -2,6 +2,7 @@
 	import { melt } from "@melt-ui/svelte";
 	import { setCtx } from "../ctx.js";
 	import type { Props } from "../types.js";
+	import { styleToString } from "$lib/internal/style.js";
 
 	type $$Props = Props;
 
@@ -28,10 +29,14 @@
 	$: updateOption("hideDelay", hideDelay);
 
 	const bitsAttrs = getAttrs("root");
+	const style = styleToString({
+		overflow: "hidden",
+	});
 
 	$: attrs = {
 		...$$restProps,
 		...bitsAttrs,
+		style,
 	};
 
 	$: Object.assign(builder, attrs);

@@ -2,7 +2,7 @@
 	import { ScrollArea } from "$lib/index.js";
 </script>
 
-<ScrollArea.Root class="relative h-72 w-56 overflow-hidden rounded-md border bg-muted shadow-lg">
+<ScrollArea.Root class="relative h-72 w-56 rounded-md border bg-muted shadow-lg">
 	<ScrollArea.Viewport class="h-full w-full">
 		<ScrollArea.Content>
 			<div class="p-4">
