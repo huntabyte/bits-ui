@@ -13,12 +13,8 @@ const config = {
 	kit: {
 		adapter: adapter(),
 		alias: {
-			$lib: "src/lib/index.js",
 			"$lib/*": "src/lib/*",
-			$internal: "src/lib/internal/index.js",
-			"$internal/*": "src/lib/internal/*",
 			"@/*": "src/*",
-			$icons: "src/components/icons/index.js",
 			"$icons/*": "src/components/icons/*",
 			"contentlayer/generated": ".contentlayer/generated",
 		},
