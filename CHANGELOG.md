@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.19.3
+
+### Patch Changes
+
+- fixed path aliases causing errors ([#374](https://github.com/huntabyte/bits-ui/pull/374))
+
 ## 0.19.2
 
 ### Patch Changes
