@@ -60,6 +60,7 @@ export const bits = [
 	"progress",
 	"radio-group",
 	"range-calendar",
+	"scroll-area",
 	"select",
 	"separator",
 	"slider",
@@ -105,6 +106,7 @@ export const apiSchemas: Record<Bit, APISchema[]> = {
 	progress,
 	"radio-group": radioGroup,
 	"range-calendar": rangeCalendar,
+	"scroll-area": rangeCalendar, // TODO: FIX ME
 	select,
 	separator,
 	slider,

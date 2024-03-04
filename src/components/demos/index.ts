@@ -23,6 +23,7 @@ export { default as PopoverDemo } from "./popover-demo.svelte";
 export { default as ProgressDemo } from "./progress-demo.svelte";
 export { default as RadioGroupDemo } from "./radio-group-demo.svelte";
 export { default as RangeCalendarDemo } from "./range-calendar-demo.svelte";
+export { default as ScrollAreaDemo } from "./scroll-area-demo.svelte";
 export { default as SelectDemo } from "./select-demo.svelte";
 export { default as SeparatorDemo } from "./separator-demo.svelte";
 export { default as SliderDemo } from "./slider-demo.svelte";

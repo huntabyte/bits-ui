@@ -23,6 +23,7 @@ export * as Popover from "./popover/index.js";
 export * as Progress from "./progress/index.js";
 export * as RadioGroup from "./radio-group/index.js";
 export * as RangeCalendar from "./range-calendar/index.js";
+export * as ScrollArea from "./scroll-area/index.js";
 export * as Select from "./select/index.js";
 export * as Separator from "./separator/index.js";
 export * as Slider from "./slider/index.js";
