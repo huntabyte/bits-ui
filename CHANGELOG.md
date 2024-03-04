@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.19.2
+
+### Patch Changes
+
+- fix: Adjusted internal import aliases to fix the malformed package build ([#371](https://github.com/huntabyte/bits-ui/pull/371))
+
 ## 0.19.1
 
 ### Patch Changes
