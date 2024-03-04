@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.19.1
+
+### Patch Changes
+
+- Scroll Area: simplify API ([#369](https://github.com/huntabyte/bits-ui/pull/369))
+
 ## 0.19.0
 
 ### Minor Changes
