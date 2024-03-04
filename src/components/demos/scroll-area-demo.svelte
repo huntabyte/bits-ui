@@ -16,9 +16,9 @@
 		</ScrollArea.Content>
 	</ScrollArea.Viewport>
 	<ScrollArea.ScrollbarY
-		class="flex h-full w-2.5 touch-none select-none border-l border-l-transparent bg-muted p-px"
+		class="flex h-full w-2.5 touch-none select-none border-l border-l-transparent bg-dark-10 p-px"
 	>
-		<ScrollArea.ThumbY class="relative flex-1 rounded-full bg-foreground">
+		<ScrollArea.ThumbY class="relative flex-1 rounded-full bg-muted-foreground">
 			<!-- ... -->
 		</ScrollArea.ThumbY>
 	</ScrollArea.ScrollbarY>

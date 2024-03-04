@@ -24,6 +24,7 @@ import { popover } from "./popover.js";
 import { progress } from "./progress.js";
 import { radioGroup } from "./radio-group.js";
 import { rangeCalendar } from "./range-calendar.js";
+import { scrollArea } from "./scroll-area.js";
 import { select } from "./select.js";
 import { separator } from "./separator.js";
 import { slider } from "./slider.js";
@@ -106,7 +107,7 @@ export const apiSchemas: Record<Bit, APISchema[]> = {
 	progress,
 	"radio-group": radioGroup,
 	"range-calendar": rangeCalendar,
-	"scroll-area": rangeCalendar, // TODO: FIX ME
+	"scroll-area": scrollArea,
 	select,
 	separator,
 	slider,
