@@ -10,7 +10,8 @@
 		"sourceMap": true,
 		"strict": true,
 		"moduleResolution": "NodeNext",
-		"module": "NodeNext"
+		"module": "NodeNext",
+		"verbatimModuleSyntax": true
 	},
 	"include": [
 		"./svelte-kit/ambient.d.ts",
