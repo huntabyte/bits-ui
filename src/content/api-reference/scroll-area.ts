@@ -66,10 +66,20 @@ export const content: APISchema<ScrollArea.ContentProps> = {
 	],
 };
 
-export const scrollbarX: APISchema<ScrollArea.ScrollbarXProps> = {
-	title: "ScrollbarX",
-	description: "The horizontal scrollbar of the scroll area.",
-	props: domElProps("HTMLDivElement"),
+export const scrollbar: APISchema<ScrollArea.ScrollbarProps> = {
+	title: "Scrollbar",
+	description: "A scrollbar of the scroll area.",
+	props: {
+		orientation: {
+			type: {
+				type: C.ENUM,
+				definition: enums("horizontal", "vertical"),
+			},
+			description: "The orientation of the scrollbar.",
+			required: true,
+		},
+		...domElProps("HTMLDivElement"),
+	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -80,33 +90,18 @@ export const scrollbarX: APISchema<ScrollArea.ScrollbarXProps> = {
 		},
 		{
 			name: "scroll-area-scrollbar-x",
-			description: "Present on the X scrollbar element.",
-		},
-	],
-};
-
-export const scrollbarY: APISchema<ScrollArea.ScrollbarYProps> = {
-	title: "ScrollbarY",
-	description: "The vertical scrollbar of the scroll area.",
-	props: domElProps("HTMLDivElement"),
-	slotProps: { ...builderAndAttrsSlotProps },
-	dataAttributes: [
-		{
-			name: "state",
-			description: "The visibility state of the scrollbar",
-			value: enums("visible", "hidden"),
-			isEnum: true,
+			description: "Present on `'horizontal'` scrollbar element.",
 		},
 		{
 			name: "scroll-area-scrollbar-y",
-			description: "Present on the Y scrollbar element.",
+			description: "Present on the `'vertical'` scrollbar element.",
 		},
 	],
 };
 
-export const thumbX: APISchema<ScrollArea.ThumbXProps> = {
-	title: "ThumbX",
-	description: "The thumb of the X scrollbar.",
+export const thumb: APISchema<ScrollArea.ThumbProps> = {
+	title: "Thumb",
+	description: "A thumb of a scrollbar in the scroll area.",
 	props: domElProps("HTMLDivElement"),
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
@@ -118,26 +113,11 @@ export const thumbX: APISchema<ScrollArea.ThumbXProps> = {
 		},
 		{
 			name: "scroll-area-thumb-x",
-			description: "Present on the X thumb element.",
-		},
-	],
-};
-
-export const thumbY: APISchema<ScrollArea.ThumbYProps> = {
-	title: "ThumbY",
-	description: "The thumb of the Y scrollbar.",
-	props: domElProps("HTMLDivElement"),
-	slotProps: { ...builderAndAttrsSlotProps },
-	dataAttributes: [
-		{
-			name: "state",
-			description: "The visibility state of the scrollbar",
-			value: enums("visible", "hidden"),
-			isEnum: true,
+			description: "Present on `'horizontal'` thumb element.",
 		},
 		{
 			name: "scroll-area-thumb-y",
-			description: "Present on the Y thumb element.",
+			description: "Present on the `'vertical'` thumb element.",
 		},
 	],
 };
@@ -155,4 +135,4 @@ export const corner: APISchema<ScrollArea.CornerProps> = {
 	],
 };
 
-export const scrollArea = [root, viewport, content, scrollbarX, scrollbarY, thumbX, thumbY, corner];
+export const scrollArea = [root, viewport, content, scrollbar, thumb, corner];

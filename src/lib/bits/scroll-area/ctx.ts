@@ -1,9 +1,11 @@
 import { type CreateScrollAreaProps, createScrollArea } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
 import { removeUndefined, getOptionUpdater, createBitAttrs } from "$lib/internal/index.js";
+import type { Writable } from "svelte/store";
 
 function getScrollAreaData() {
 	const NAME = "scroll-area" as const;
+	const SCROLLBAR_NAME = "scrollbar" as const;
 	const PARTS = [
 		"scrollbar-x",
 		"scrollbar-y",
@@ -15,7 +17,7 @@ function getScrollAreaData() {
 		"corner",
 	] as const;
 
-	return { NAME, PARTS };
+	return { NAME, PARTS, SCROLLBAR_NAME };
 }
 
 type GetReturn = Omit<ReturnType<typeof setCtx>, "updateOption">;
@@ -34,4 +36,14 @@ export function setCtx(props: CreateScrollAreaProps) {
 export function getCtx() {
 	const { NAME } = getScrollAreaData();
 	return getContext<GetReturn>(NAME);
+}
+
+export function setScrollbarOrientation(orientation: Writable<"horizontal" | "vertical">) {
+	const { SCROLLBAR_NAME } = getScrollAreaData();
+	return setContext(SCROLLBAR_NAME, orientation);
+}
+
+export function getScrollbarOrientation() {
+	const { SCROLLBAR_NAME } = getScrollAreaData();
+	return getContext<ReturnType<typeof setScrollbarOrientation>>(SCROLLBAR_NAME);
 }

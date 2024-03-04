@@ -1,9 +1,9 @@
 <script lang="ts">
-	import type { ScrollbarXProps } from "../types.js";
+	import type { ScrollbarProps } from "../types.js";
 	import { getCtx } from "../ctx.js";
 	import { melt } from "@melt-ui/svelte";
 
-	type $$Props = ScrollbarXProps;
+	type $$Props = Omit<ScrollbarProps, "orientation">;
 
 	export let asChild: $$Props["asChild"] = false;
 	export let el: $$Props["el"] = undefined;
