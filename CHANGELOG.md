@@ -1,5 +1,15 @@
 # @huntabyte/primitives
 
+## 0.19.0
+
+### Minor Changes
+
+- New Component: Scroll Area ([#367](https://github.com/huntabyte/bits-ui/pull/367))
+
+### Patch Changes
+
+- Popover: fixed bug where `aria-controls` was applied to trigger when content wasn't rendered yet ([#367](https://github.com/huntabyte/bits-ui/pull/367))
+
 ## 0.18.6
 
 ### Patch Changes
