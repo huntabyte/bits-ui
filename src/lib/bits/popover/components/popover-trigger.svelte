@@ -26,7 +26,6 @@
 	}
 
 	$: attrs = {
-		...$$restProps,
 		...bitsAttrs,
 		"aria-controls": $open ? ids.content : undefined,
 	};
