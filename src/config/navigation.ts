@@ -184,6 +184,7 @@ export const navigation: Navigation = {
 				{
 					title: "Scroll Area",
 					href: "/docs/components/scroll-area",
+					label: "New",
 					items: [],
 				},
 				{
