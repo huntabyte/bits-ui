@@ -12,4 +12,4 @@
 	} = getCtx();
 </script>
 
-<input bind:this={el} use:melt={$input} value={$value ?? "on"} {...$$restProps} />
+<input bind:this={el} use:melt={$input} value={$value} {...$$restProps} />

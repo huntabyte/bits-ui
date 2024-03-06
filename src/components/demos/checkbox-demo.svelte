@@ -21,6 +21,7 @@
 				<Minus class="size-[15px]" weight="bold" />
 			{/if}
 		</Checkbox.Indicator>
+		<Checkbox.Input />
 	</Checkbox.Root>
 	<Label.Root
 		id="terms-label"

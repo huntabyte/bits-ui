@@ -7,7 +7,7 @@ type Props = I.Props & HTMLButtonAttributes;
 
 type IndicatorProps = I.IndicatorProps & HTMLDivAttributes;
 
-type InputProps = Omit<HTMLInputAttributes, "value"> & DOMEl<HTMLInputElement>;
+type InputProps = HTMLInputAttributes & DOMEl<HTMLInputElement>;
 
 type Events = {
 	click: CustomEventHandler<MouseEvent, HTMLButtonElement>;
