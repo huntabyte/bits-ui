@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.19.5
+
+### Patch Changes
+
+- Button: fixed `Button.Props` type resolution issue ([#381](https://github.com/huntabyte/bits-ui/pull/381))
+
 ## 0.19.4
 
 ### Patch Changes
