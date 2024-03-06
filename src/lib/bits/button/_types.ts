@@ -6,11 +6,11 @@
 
 import type { Builder } from "$lib/internal/index.js";
 
-type Props = Expand<{
+type Props = {
 	/**
 	 * Melt UI builders to apply to the button component.
 	 */
 	builders?: Builder[];
-}>;
+};
 
 export type { Props };
