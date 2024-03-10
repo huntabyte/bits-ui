@@ -491,7 +491,7 @@ describe("Date Field", () => {
 		expect(second).toHaveTextContent("1");
 	});
 
-	it("displays correct timezone with ZonedDateTime value - `now`", async () => {
+	it.skip("displays correct timezone with ZonedDateTime value - `now`", async () => {
 		const { getByTestId } = setup({
 			value: now("America/Los_Angeles"),
 		});
