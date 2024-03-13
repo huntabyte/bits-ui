@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.19.7
+
+### Patch Changes
+
+- fix: Event type for `CustomEventHandler` (#389) ([#398](https://github.com/huntabyte/bits-ui/pull/398))
+
 ## 0.19.6
 
 ### Patch Changes
