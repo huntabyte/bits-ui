@@ -1,5 +1,5 @@
 ---
-"bits-ui": patch
+"bits-ui": minor
 ---
 
-Add `pointerenter` events to `Menu` items
+Forward `pointerenter` events from `Menu` items
