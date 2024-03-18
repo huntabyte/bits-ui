@@ -1,5 +1,17 @@
 # @huntabyte/primitives
 
+## 0.20.0
+
+### Minor Changes
+
+- Expose `open` and `onOpenChange` props to `DatePicker.Root` component ([#404](https://github.com/huntabyte/bits-ui/pull/404))
+
+- Forward `pointerenter` events from `Menu` items ([#403](https://github.com/huntabyte/bits-ui/pull/403))
+
+### Patch Changes
+
+- Change `contextmenu` event type to `MouseEvent` ([#402](https://github.com/huntabyte/bits-ui/pull/402))
+
 ## 0.19.7
 
 ### Patch Changes
