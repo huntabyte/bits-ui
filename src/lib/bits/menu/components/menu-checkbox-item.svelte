@@ -54,6 +54,7 @@
 		on:m-pointerdown={dispatch}
 		on:m-pointerleave={dispatch}
 		on:m-pointermove={dispatch}
+		on:pointerenter
 	>
 		<slot {builder} />
 	</div>
