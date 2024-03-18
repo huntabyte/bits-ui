@@ -71,7 +71,7 @@ type SubTriggerEvents = Omit<ItemEvents, "pointerdown">;
 // Trigger events used by the context menu
 type ContextTriggerEvents<T extends Element = HTMLDivElement> = {
 	pointerdown: CustomEventHandler<PointerEvent, T>;
-	contextmenu: CustomEventHandler<Event, T>;
+	contextmenu: CustomEventHandler<MouseEvent, T>;
 };
 
 // Trigger events used by the dropdown
