@@ -5,7 +5,7 @@ description: The headless components for Svelte.
 
 Bits UI is a collection of headless component primitives that enable you to build your own custom components. They have been thoughtfully designed to prioritize simplicity without compromising customizability.
 
-Under the hood, most of these components are powered by [Melt UI](https://melt-ui.com), which provides an even lower-level builder API for creating headless components. Bits takes that API and wrap it in a more familiar component interface, allowing us to handle some quality of life improvements for you.
+Under the hood, most of these components are powered by [Melt UI](https://melt-ui.com), which provides an even lower-level builder API for creating headless components. Bits takes that API and wraps it in a more familiar component interface, allowing us to handle some quality of life improvements for you.
 
 ## Unstyled
 
@@ -13,7 +13,7 @@ Bits UI components are unstyled by default. This means that they don't come with
 
 ## Customizable
 
-Each component has a wide range of props that allow you to customize the behavior of the component to fit your needs. Events are also dispatched for each interaction, allowing you to override the default functionality of the component.
+Each component offers a wide range of props for customizing behavior to fit your needs. Events are also dispatched for each interaction, allowing you to override the default functionality of the component.
 
 ## Accessible
 
