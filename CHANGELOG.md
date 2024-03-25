@@ -1,5 +1,15 @@
 # @huntabyte/primitives
 
+## 0.21.0
+
+### Minor Changes
+
+- feat: Combobox `touchedInput` ([#417](https://github.com/huntabyte/bits-ui/pull/417))
+
+### Patch Changes
+
+- fix: touched input default value ([#419](https://github.com/huntabyte/bits-ui/pull/419))
+
 ## 0.20.1
 
 ### Patch Changes
