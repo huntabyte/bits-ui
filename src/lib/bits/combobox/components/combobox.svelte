@@ -30,7 +30,12 @@
 	export let inputValue: $$Props["inputValue"] = "";
 
 	const {
-		states: { open: localOpen, selected: localSelected, inputValue: localInputValue, touchedInput },
+		states: {
+			open: localOpen,
+			selected: localSelected,
+			inputValue: localInputValue,
+			touchedInput: localTouchedInput,
+		},
 		updateOption,
 		ids,
 	} = setCtx<T, Multiple>({
@@ -89,7 +94,11 @@
 		})
 	);
 
-	$: if ($touchedInput) inputValue = $localInputValue;
+	export let touchedInput: boolean;
+
+	$: touchedInput = $localTouchedInput;
+
+	$: if ($localTouchedInput) inputValue = $localInputValue;
 	$: inputValue !== undefined && localInputValue.set(inputValue);
 
 	$: open !== undefined && localOpen.set(open);

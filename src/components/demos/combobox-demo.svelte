@@ -12,13 +12,15 @@
 	];
 
 	let inputValue = "";
+	let touchedInput = false;
 
-	$: filteredFruits = inputValue
-		? fruits.filter((fruit) => fruit.value.includes(inputValue.toLowerCase()))
-		: fruits;
+	$: filteredFruits =
+		inputValue && touchedInput
+			? fruits.filter((fruit) => fruit.value.includes(inputValue.toLowerCase()))
+			: fruits;
 </script>
 
-<Combobox.Root items={filteredFruits} bind:inputValue>
+<Combobox.Root items={filteredFruits} bind:inputValue bind:touchedInput>
 	<div class="relative">
 		<OrangeSlice class="absolute start-3 top-1/2 size-6 -translate-y-1/2 text-muted-foreground" />
 		<Combobox.Input

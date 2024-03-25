@@ -112,6 +112,12 @@ export const root: APISchema<Combobox.Props> = {
 			description: "An array of items to add type-safety to the `onSelectedChange` callback.",
 		},
 		onOutsideClick: onOutsideClickProp,
+		touchedInput: {
+			type: C.BOOLEAN,
+			default: C.FALSE,
+			description:
+				"The touched state of the input. When the menu closes, the state is reset to `false`. Whenever a key is pressed into the input, the state is set to `true`. You can bind to this to handle filtering the items only when the input has been touched.",
+		},
 	},
 	slotProps: { ids: idsSlotProp },
 };
