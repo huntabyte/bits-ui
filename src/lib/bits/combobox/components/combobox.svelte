@@ -28,6 +28,7 @@
 	export let items: $$Props["items"] = [];
 	export let onOutsideClick: $$Props["onOutsideClick"] = undefined;
 	export let inputValue: $$Props["inputValue"] = "";
+	export let touchedInput: boolean = false;
 
 	const {
 		states: {
@@ -93,8 +94,6 @@
 			label: $labelId,
 		})
 	);
-
-	export let touchedInput: boolean;
 
 	$: touchedInput = $localTouchedInput;
 
