@@ -66,6 +66,14 @@ type Props<T = unknown, Multiple extends boolean = false> = Expand<
 		 * type the `selected` and `onSelectedChange` props.
 		 */
 		items?: Selected<T>[];
+
+		/**
+		 * Whether the input has been touched or not. You can bind to this to
+		 * handle filtering the items only when the input has been touched.
+		 *
+		 * @defaultValue false
+		 */
+		touchedInput?: boolean;
 	}
 >;
 
