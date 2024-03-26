@@ -16,7 +16,7 @@
 	export let closeFocus: $$Props["closeFocus"] = undefined;
 	export let disableFocusFirstItem: $$Props["disableFocusFirstItem"] = undefined;
 	export let onOutsideClick: $$Props["onOutsideClick"] = undefined;
-	export let closeOnItemClick: $$Props["closeOnItemClick"] = undefined
+	export let closeOnItemClick: $$Props["closeOnItemClick"] = undefined;
 
 	const {
 		states: { open: localOpen },
@@ -52,7 +52,7 @@
 
 	$: open !== undefined && localOpen.set(open);
 
-	$: updateOption("closeOnItemClick", closeOnItemClick)
+	$: updateOption("closeOnItemClick", closeOnItemClick);
 	$: updateOption("closeOnOutsideClick", closeOnOutsideClick);
 	$: updateOption("closeOnEscape", closeOnEscape);
 	$: updateOption("portal", portal);
