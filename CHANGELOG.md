@@ -1,5 +1,11 @@
 # @huntabyte/primitives
 
+## 0.21.1
+
+### Patch Changes
+
+- fix: context menu closeOnItemClick ([#421](https://github.com/huntabyte/bits-ui/pull/421))
+
 ## 0.21.0
 
 ### Minor Changes
