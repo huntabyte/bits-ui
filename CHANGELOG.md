@@ -1,4 +1,4 @@
-# @huntabyte/primitives
+# bits-ui
 
 ## 0.21.1
 

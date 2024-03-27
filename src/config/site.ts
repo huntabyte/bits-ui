@@ -7,7 +7,7 @@ export const siteConfig = {
 		melt: "https://melt-ui.com",
 		meltGithub: "https://github.com/melt-ui/melt-ui",
 		twitter: "https://twitter.com/huntabyte",
-		github: "https://github.com/huntabyte/primitives",
+		github: "https://github.com/huntabyte/bits-ui",
 	},
 	keywords: `Svelte,SvelteKit,Svelte Components,Headless Svelte Components,Headless UI Svelte`,
 };
