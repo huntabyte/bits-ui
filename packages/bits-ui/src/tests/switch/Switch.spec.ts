@@ -2,8 +2,8 @@ import { render } from "@testing-library/svelte";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
-import SwitchTest from "./SwitchTest.svelte";
 import { getTestKbd } from "../utils.js";
+import SwitchTest from "./SwitchTest.svelte";
 import type { Switch } from "$lib/index.js";
 
 const kbd = getTestKbd();
@@ -21,7 +21,7 @@ function setup(props: Switch.Props = {}) {
 	};
 }
 
-describe("Switch", () => {
+describe("switch", () => {
 	it("has no accessibility violations", async () => {
 		const { container } = render(SwitchTest);
 		expect(await axe(container)).toHaveNoViolations();

@@ -3,9 +3,9 @@
  * such as `DropdownMenu`, `Menubar` & `ContextMenu`.
  */
 
+import type { HTMLAnchorAttributes, HTMLButtonAttributes } from "svelte/elements";
 import type { DOMEl, HTMLDivAttributes } from "$lib/internal/index.js";
 import type { CustomEventHandler } from "$lib/index.js";
-import type { HTMLAnchorAttributes, HTMLButtonAttributes } from "svelte/elements";
 import type * as I from "$lib/bits/menu/_types.js";
 import type { ContentProps } from "$lib/bits/floating/types.js";
 

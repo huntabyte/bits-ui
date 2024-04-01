@@ -1,5 +1,3 @@
-import * as C from "$lib/content/constants.js";
-import type { APISchema } from "$lib/types/index.js";
 import type {
 	PaginationNextButtonPropsWithoutHTML,
 	PaginationPagePropsWithoutHTML,
@@ -8,6 +6,8 @@ import type {
 } from "bits-ui";
 import { pageItemProp } from "./extended-types/index.js";
 import { builderAndAttrsSlotProps, domElProps } from "./helpers.js";
+import type { APISchema } from "$lib/types/index.js";
+import * as C from "$lib/content/constants.js";
 
 export const root: APISchema<PaginationPropsWithoutHTML> = {
 	title: "Root",

@@ -102,5 +102,5 @@ export type FloatingProps = {
 export type ContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
-	Out extends Transition = Transition
+	Out extends Transition = Transition,
 > = Expand<FloatingProps & TransitionProps<T, In, Out> & DOMElement>;

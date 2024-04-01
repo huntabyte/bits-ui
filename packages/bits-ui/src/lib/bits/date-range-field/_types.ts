@@ -4,10 +4,10 @@
  * but we don't want to document the HTML attributes.
  */
 
-import type { Expand, OnChangeFn, OmitDates, DOMElement } from "$lib/internal/index.js";
-import type { DateRange, SegmentPart } from "$lib/shared/index.js";
 import type { DateValue } from "@internationalized/date";
 import type { CreateDateRangeFieldProps as ICreateDateRangeFieldProps } from "@melt-ui/svelte";
+import type { DOMElement, Expand, OmitDates, OnChangeFn } from "$lib/internal/index.js";
+import type { DateRange, SegmentPart } from "$lib/shared/index.js";
 
 type CreateDateRangeFieldProps = Omit<
 	OmitDates<ICreateDateRangeFieldProps>,

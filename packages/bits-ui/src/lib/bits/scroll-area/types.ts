@@ -1,5 +1,5 @@
+import type * as I from "./_types.js";
 import type { HTMLDivAttributes } from "$lib/internal/types.js";
-import * as I from "./_types.js";
 
 export type Props = I.Props & HTMLDivAttributes;
 export type ViewportProps = I.ViewportProps & HTMLDivAttributes;

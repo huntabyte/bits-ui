@@ -1,5 +1,5 @@
-import type { Expand, DOMElement } from "$lib/internal/types.js";
 import type { CreateScrollAreaProps } from "@melt-ui/svelte";
+import type { DOMElement, Expand } from "$lib/internal/types.js";
 
 type Props = Expand<Omit<CreateScrollAreaProps, "ids">> & DOMElement<HTMLDivElement>;
 

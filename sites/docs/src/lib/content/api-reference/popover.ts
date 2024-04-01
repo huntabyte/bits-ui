@@ -1,3 +1,12 @@
+import type {
+	PopoverArrowPropsWithoutHTML,
+	PopoverClosePropsWithoutHTML,
+	PopoverContentPropsWithoutHTML,
+	PopoverPropsWithoutHTML,
+	PopoverTriggerPropsWithoutHTML,
+} from "bits-ui";
+import { focusProp } from "./extended-types/index.js";
+import { floatingPositioning } from "./floating.js";
 import {
 	arrowProps,
 	builderAndAttrsSlotProps,
@@ -10,15 +19,6 @@ import {
 } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
-import type {
-	PopoverArrowPropsWithoutHTML,
-	PopoverClosePropsWithoutHTML,
-	PopoverContentPropsWithoutHTML,
-	PopoverPropsWithoutHTML,
-	PopoverTriggerPropsWithoutHTML,
-} from "bits-ui";
-import { focusProp } from "./extended-types/index.js";
-import { floatingPositioning } from "./floating.js";
 
 export const root: APISchema<PopoverPropsWithoutHTML> = {
 	title: "Root",

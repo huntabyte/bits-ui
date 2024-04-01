@@ -1,16 +1,18 @@
+/* eslint-disable ts/ban-types */
+
 /**
  * We define prop types without the HTMLAttributes here so that we can use them
  * to type-check our API documentation, which requires we document each prop,
  * but we don't want to document the HTML attributes.
  */
+import type { CreateRadioGroupProps, RadioGroupItemProps } from "@melt-ui/svelte";
 import type {
+	DOMElement,
 	Expand,
+	ObjectVariation,
 	OmitValue,
 	OnChangeFn,
-	ObjectVariation,
-	DOMElement,
 } from "$lib/internal/index.js";
-import type { CreateRadioGroupProps, RadioGroupItemProps } from "@melt-ui/svelte";
 
 type Props = Expand<
 	OmitValue<CreateRadioGroupProps> & {
@@ -20,11 +22,13 @@ type Props = Expand<
 		 *
 		 * @defaultValue undefined
 		 */
+
 		value?: CreateRadioGroupProps["defaultValue"] & {};
 
 		/**
 		 * A callback function called when the value changes.
 		 */
+
 		onValueChange?: OnChangeFn<CreateRadioGroupProps["defaultValue"] & {}>;
 	} & DOMElement
 >;

@@ -1,6 +1,6 @@
+import type { ButtonPropsWithoutHTML } from "bits-ui";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
-import type { ButtonPropsWithoutHTML } from "bits-ui";
 
 export const root: APISchema<ButtonPropsWithoutHTML & { href: string }> = {
 	title: "Root",

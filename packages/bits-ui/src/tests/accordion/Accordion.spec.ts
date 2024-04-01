@@ -2,9 +2,9 @@ import { render } from "@testing-library/svelte";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
+import { getTestKbd } from "../utils.js";
 import AccordionTest from "./AccordionTest.svelte";
 import type { Item } from "./AccordionTest.svelte";
-import { getTestKbd } from "../utils.js";
 import AccordionTestIsolated from "./AccordionTestIsolated.svelte";
 
 const kbd = getTestKbd();
@@ -47,7 +47,7 @@ const itemsWithDisabled = items.map((item) => {
 	return item;
 });
 
-describe("Accordion", () => {
+describe("accordion", () => {
 	it("has no accessibility violations", async () => {
 		const { container } = render(AccordionTest, { items });
 		expect(await axe(container)).toHaveNoViolations();

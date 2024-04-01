@@ -1,4 +1,4 @@
-import { createProgress, type CreateProgressProps } from "@melt-ui/svelte";
+import { type CreateProgressProps, createProgress } from "@melt-ui/svelte";
 import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 
 function getProgressData() {

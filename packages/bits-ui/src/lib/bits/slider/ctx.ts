@@ -1,6 +1,6 @@
-import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
-import { createSlider, type CreateSliderProps } from "@melt-ui/svelte";
+import { type CreateSliderProps, createSlider } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
+import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 
 function getSliderData() {
 	const NAME = "slider" as const;

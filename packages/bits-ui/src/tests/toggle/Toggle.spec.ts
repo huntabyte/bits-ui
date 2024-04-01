@@ -2,8 +2,8 @@ import { render } from "@testing-library/svelte";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
-import ToggleTest from "./ToggleTest.svelte";
 import { getTestKbd } from "../utils.js";
+import ToggleTest from "./ToggleTest.svelte";
 import type { Toggle } from "$lib/index.js";
 
 const kbd = getTestKbd();
@@ -19,7 +19,7 @@ function setup(props: Toggle.Props = {}) {
 	};
 }
 
-describe("Toggle", () => {
+describe("toggle", () => {
 	it("has no accessibility violations", async () => {
 		const { container } = render(ToggleTest);
 		expect(await axe(container)).toHaveNoViolations();

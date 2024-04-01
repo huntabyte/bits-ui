@@ -1,12 +1,12 @@
-import { enums } from "$lib/content/api-reference/helpers.js";
-import * as C from "$lib/content/constants.js";
-import type { APISchema } from "$lib/types/index.js";
 import type {
 	PinInputHiddenInputPropsWithoutHTML,
 	PinInputInputPropsWithoutHTML,
 	PinInputPropsWithoutHTML,
 } from "bits-ui";
 import { builderAndAttrsSlotProps, domElProps, idsSlotProp } from "./helpers.js";
+import { enums } from "$lib/content/api-reference/helpers.js";
+import * as C from "$lib/content/constants.js";
+import type { APISchema } from "$lib/types/index.js";
 
 const root: APISchema<PinInputPropsWithoutHTML> = {
 	title: "Root",

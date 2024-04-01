@@ -1,3 +1,9 @@
+import type {
+	TabsContentPropsWithoutHTML,
+	TabsListPropsWithoutHTML,
+	TabsPropsWithoutHTML,
+	TabsTriggerPropsWithoutHTML,
+} from "bits-ui";
 import {
 	builderAndAttrsSlotProps,
 	domElProps,
@@ -6,12 +12,6 @@ import {
 } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
-import type {
-	TabsContentPropsWithoutHTML,
-	TabsListPropsWithoutHTML,
-	TabsPropsWithoutHTML,
-	TabsTriggerPropsWithoutHTML,
-} from "bits-ui";
 
 const root: APISchema<TabsPropsWithoutHTML> = {
 	title: "Root",

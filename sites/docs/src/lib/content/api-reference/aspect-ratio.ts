@@ -1,7 +1,7 @@
-import * as C from "$lib/content/constants.js";
-import type { APISchema } from "$lib/types/index.js";
 import type { AspectRatioPropsWithoutHTML } from "bits-ui";
 import { domElProps } from "./helpers.js";
+import * as C from "$lib/content/constants.js";
+import type { APISchema } from "$lib/types/index.js";
 
 const root: APISchema<AspectRatioPropsWithoutHTML> = {
 	title: "Root",

@@ -4,8 +4,8 @@
  * but we don't want to document the HTML attributes.
  */
 import type { CreateSliderProps, Slider } from "@melt-ui/svelte";
-import type { Expand, OmitValue, OnChangeFn, DOMElement } from "$lib/internal/index.js";
 import type { StoresValues } from "svelte/store";
+import type { DOMElement, Expand, OmitValue, OnChangeFn } from "$lib/internal/index.js";
 
 type Props = Expand<
 	OmitValue<CreateSliderProps> & {

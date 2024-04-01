@@ -1,10 +1,9 @@
 <script lang="ts">
-	import { createDispatcher } from "$lib/internal/events.js";
-
 	import { melt } from "@melt-ui/svelte";
-	import type { Transition } from "$lib/internal/types.js";
 	import { getCtx, updatePositioning } from "../ctx.js";
 	import type { ContentEvents, ContentProps } from "../types.js";
+	import type { Transition } from "$lib/internal/types.js";
+	import { createDispatcher } from "$lib/internal/events.js";
 
 	type T = $$Generic<Transition>;
 	type In = $$Generic<Transition>;
@@ -67,7 +66,7 @@
 	}
 </script>
 
-<!-- svelte-ignore a11y-no-static-element-interactions / applied by melt's builder-->
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 {#if asChild && $open}
 	<slot {builder} />
 {:else if transition && $open}

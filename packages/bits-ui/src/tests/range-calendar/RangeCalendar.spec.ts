@@ -2,12 +2,12 @@ import { render } from "@testing-library/svelte";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
+import { CalendarDate, CalendarDateTime, toZoned } from "@internationalized/date";
+import { tick } from "svelte";
 import { getTestKbd } from "../utils.js";
+import { getSelectedDays } from "../helpers/calendar.js";
 import RangeCalendarTest from "./RangeCalendarTest.svelte";
 import type { RangeCalendar } from "$lib/index.js";
-import { CalendarDate, CalendarDateTime, toZoned } from "@internationalized/date";
-import { getSelectedDays } from "../helpers/calendar.js";
-import { tick } from "svelte";
 
 const kbd = getTestKbd();
 
@@ -40,7 +40,7 @@ function setup(props: RangeCalendar.Props = {}) {
 	return { ...returned, user, calendar };
 }
 
-describe("Calendar", () => {
+describe("calendar", () => {
 	it("has no accessibility violations", async () => {
 		const { container } = render(RangeCalendarTest);
 		expect(await axe(container)).toHaveNoViolations();
@@ -108,7 +108,7 @@ describe("Calendar", () => {
 		const nextBtn = getByTestId("next-button");
 
 		for (const month of months) {
-			expect(heading).toHaveTextContent(month + " 1980");
+			expect(heading).toHaveTextContent(`${month} 1980`);
 			await user.click(nextBtn);
 		}
 		expect(heading).toHaveTextContent("January 1981");
@@ -126,7 +126,7 @@ describe("Calendar", () => {
 		await user.click(prevBtn);
 
 		for (const month of newMonths) {
-			expect(heading).toHaveTextContent(month + " 1979");
+			expect(heading).toHaveTextContent(`${month} 1979`);
 			await user.click(prevBtn);
 		}
 		expect(heading).toHaveTextContent("January 1979");

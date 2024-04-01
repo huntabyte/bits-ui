@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import { createDispatcher, type Transition } from "$lib/internal/index.js";
 	import { getCtx, updatePositioning } from "../ctx.js";
 	import type { ContentEvents, ContentProps } from "../types.js";
+	import { type Transition, createDispatcher } from "$lib/internal/index.js";
 
 	type T = $$Generic<Transition>;
 	type In = $$Generic<Transition>;

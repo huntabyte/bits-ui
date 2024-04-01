@@ -1,3 +1,10 @@
+import type {
+	ToolbarButtonPropsWithoutHTML,
+	ToolbarGroupPropsWithoutHTML,
+	ToolbarItemPropsWithoutHTML,
+	ToolbarLinkPropsWithoutHTML,
+	ToolbarPropsWithoutHTML,
+} from "bits-ui";
 import {
 	builderAndAttrsSlotProps,
 	domElProps,
@@ -6,13 +13,6 @@ import {
 } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
-import type {
-	ToolbarButtonPropsWithoutHTML,
-	ToolbarGroupPropsWithoutHTML,
-	ToolbarLinkPropsWithoutHTML,
-	ToolbarPropsWithoutHTML,
-	ToolbarItemPropsWithoutHTML,
-} from "bits-ui";
 
 const root: APISchema<ToolbarPropsWithoutHTML> = {
 	title: "Root",

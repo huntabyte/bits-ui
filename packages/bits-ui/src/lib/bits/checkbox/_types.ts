@@ -4,8 +4,8 @@
  * but we don't want to document the HTML attributes.
  */
 
-import type { Expand, OmitChecked, OnChangeFn, DOMElement } from "$lib/internal/index.js";
 import type { CreateCheckboxProps } from "@melt-ui/svelte";
+import type { DOMElement, Expand, OmitChecked, OnChangeFn } from "$lib/internal/index.js";
 
 type Props = Expand<
 	OmitChecked<CreateCheckboxProps> & {

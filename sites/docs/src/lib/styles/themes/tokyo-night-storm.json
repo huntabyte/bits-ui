@@ -1023,7 +1023,11 @@
 		},
 		{
 			"name": "Sub-methods",
-			"scope": ["entity.name.module.js", "variable.import.parameter.js", "variable.other.class.js"],
+			"scope": [
+				"entity.name.module.js",
+				"variable.import.parameter.js",
+				"variable.other.class.js"
+			],
 			"settings": {
 				"foreground": "#c0caf5"
 			}

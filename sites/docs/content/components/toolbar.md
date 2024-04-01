@@ -4,7 +4,7 @@ description: Displays frequently used actions or tools in a compact, easily acce
 ---
 
 <script>
-	import { APISection, ComponentPreview, ToolbarDemo } from '@/components/index.js'
+	import { APISection, ComponentPreview, ToolbarDemo } from '$lib/components/index.js'
 	export let schemas;
 </script>
 

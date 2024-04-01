@@ -1,6 +1,6 @@
+import type * as I from "./_types.js";
 import type { CustomEventHandler } from "$lib/index.js";
 import type { HTMLDivAttributes, HTMLSpanAttributes } from "$lib/internal/index.js";
-import type * as I from "./_types.js";
 
 type Props = I.Props;
 

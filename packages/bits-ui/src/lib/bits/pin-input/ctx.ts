@@ -1,6 +1,6 @@
-import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
-import { createPinInput, type CreatePinInputProps as PinInputProps } from "@melt-ui/svelte";
+import { type CreatePinInputProps as PinInputProps, createPinInput } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
+import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 
 export function getPinInputData() {
 	const NAME = "pin-input" as const;

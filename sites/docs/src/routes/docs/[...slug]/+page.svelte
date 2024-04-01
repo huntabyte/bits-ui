@@ -1,5 +1,5 @@
 <script lang="ts">
-	import "@/styles/markdown.postcss";
+	import "$lib/styles/markdown.postcss";
 	import type { SvelteComponent } from "svelte";
 	import type { PageData } from "./$types.js";
 	import { PageHeader, PageHeaderDescription, PageHeaderHeading } from "$lib/components/index.js";

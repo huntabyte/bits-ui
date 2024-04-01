@@ -1,12 +1,12 @@
-import { enums, transitionProps } from "$lib/content/api-reference/helpers.js";
-import * as C from "$lib/content/constants.js";
-import type { APISchema, PropObj } from "$lib/types/index.js";
 import type {
 	CollapsibleContentPropsWithoutHTML,
 	CollapsiblePropsWithoutHTML,
 	CollapsibleTriggerPropsWithoutHTML,
 } from "bits-ui";
 import { builderAndAttrsSlotProps, domElProps } from "./helpers.js";
+import { enums, transitionProps } from "$lib/content/api-reference/helpers.js";
+import * as C from "$lib/content/constants.js";
+import type { APISchema, PropObj } from "$lib/types/index.js";
 
 export const root: APISchema<CollapsiblePropsWithoutHTML> = {
 	title: "Root",

@@ -1,4 +1,4 @@
-import { createSwitch, type CreateSwitchProps } from "@melt-ui/svelte";
+import { type CreateSwitchProps, createSwitch } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
 import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 

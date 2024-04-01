@@ -1,3 +1,16 @@
+import type {
+	SelectArrowPropsWithoutHTML,
+	SelectContentPropsWithoutHTML,
+	SelectGroupPropsWithoutHTML,
+	SelectIndicatorPropsWithoutHTML,
+	SelectInputPropsWithoutHTML,
+	SelectItemPropsWithoutHTML,
+	SelectLabelPropsWithoutHTML,
+	SelectPropsWithoutHTML,
+	SelectSeparatorPropsWithoutHTML,
+	SelectTriggerPropsWithoutHTML,
+} from "bits-ui";
+import { floatingPositioning } from "./floating.js";
 import {
 	arrowProps,
 	asChild,
@@ -12,19 +25,6 @@ import {
 } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
-import type {
-	SelectArrowPropsWithoutHTML,
-	SelectContentPropsWithoutHTML,
-	SelectGroupPropsWithoutHTML,
-	SelectIndicatorPropsWithoutHTML,
-	SelectInputPropsWithoutHTML,
-	SelectItemPropsWithoutHTML,
-	SelectLabelPropsWithoutHTML,
-	SelectPropsWithoutHTML,
-	SelectSeparatorPropsWithoutHTML,
-	SelectTriggerPropsWithoutHTML,
-} from "bits-ui";
-import { floatingPositioning } from "./floating.js";
 
 export const root: APISchema<SelectPropsWithoutHTML> = {
 	title: "Root",

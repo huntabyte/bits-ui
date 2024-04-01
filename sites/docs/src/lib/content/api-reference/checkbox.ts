@@ -1,7 +1,7 @@
-import * as C from "$lib/content/constants.js";
-import type { APISchema } from "$lib/types/index.js";
 import type { CheckboxIndicatorPropsWithoutHTML, CheckboxPropsWithoutHTML } from "bits-ui";
 import { attrsSlotProp, builderAndAttrsSlotProps, domElProps, enums, union } from "./helpers.js";
+import * as C from "$lib/content/constants.js";
+import type { APISchema } from "$lib/types/index.js";
 
 export const root: APISchema<CheckboxPropsWithoutHTML> = {
 	title: "Root",

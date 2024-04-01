@@ -4,7 +4,7 @@ description: Provides additional information or context when users hover over or
 ---
 
 <script>
-	import { ComponentPreview, TooltipDemo, APISection } from '@/components/index.js'
+	import { ComponentPreview, TooltipDemo, APISection } from '$lib/components/index.js'
 	export let schemas;
 </script>
 

@@ -1,6 +1,3 @@
-import { idsSlotProp } from "$lib/content/api-reference/helpers.js";
-import * as C from "$lib/content/constants.js";
-import type { APISchema } from "$lib/types/index.js";
 import type {
 	MenubarArrowPropsWithoutHTML,
 	MenubarCheckboxIndicatorPropsWithoutHTML,
@@ -22,6 +19,9 @@ import type {
 } from "bits-ui";
 import { builderAndAttrsSlotProps, domElProps } from "./helpers.js";
 import { menu as m } from "./menu.js";
+import { idsSlotProp } from "$lib/content/api-reference/helpers.js";
+import * as C from "$lib/content/constants.js";
+import type { APISchema } from "$lib/types/index.js";
 
 export const root: APISchema<MenubarPropsWithoutHTML> = {
 	title: "Root",

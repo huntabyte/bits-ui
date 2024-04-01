@@ -2,8 +2,8 @@ import { render, screen, waitFor } from "@testing-library/svelte";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
-import DropdownMenuTest from "./DropdownMenuTest.svelte";
 import { getTestKbd } from "../utils.js";
+import DropdownMenuTest from "./DropdownMenuTest.svelte";
 import type { DropdownMenuTestProps } from "./DropdownMenuTest.svelte";
 
 const kbd = getTestKbd();
@@ -62,7 +62,7 @@ async function openSubmenu(props: Awaited<ReturnType<typeof openWithKbd>>) {
 	};
 }
 
-describe("Dropdown Menu", () => {
+describe("dropdown Menu", () => {
 	it("has no accessibility violations", async () => {
 		const { container } = render(DropdownMenuTest);
 		expect(await axe(container)).toHaveNoViolations();
@@ -97,11 +97,11 @@ describe("Dropdown Menu", () => {
 		expect(subContent).toHaveAttribute(`data-menu-sub-content`);
 	});
 
-	it.each(OPEN_KEYS)("Opens when %s is pressed & respects binding", async (key) => {
+	it.each(OPEN_KEYS)("opens when %s is pressed & respects binding", async (key) => {
 		await openWithKbd({}, key);
 	});
 
-	it("Opens when clicked & respects binding", async () => {
+	it("opens when clicked & respects binding", async () => {
 		const { getByTestId, queryByTestId, user, trigger } = setup();
 		const binding = getByTestId("binding");
 		expect(binding).toHaveTextContent("false");
@@ -110,7 +110,7 @@ describe("Dropdown Menu", () => {
 		expect(binding).toHaveTextContent("true");
 	});
 
-	it("Manages focus correctly when opened with pointer", async () => {
+	it("manages focus correctly when opened with pointer", async () => {
 		const { getByTestId, user } = await openWithPointer();
 
 		const item = getByTestId("item");
@@ -120,7 +120,7 @@ describe("Dropdown Menu", () => {
 		expect(item).toHaveFocus();
 	});
 
-	it("Manages focus correctly when opened with keyboard", async () => {
+	it("manages focus correctly when opened with keyboard", async () => {
 		const { user, getByTestId, queryByTestId, trigger } = setup();
 
 		expect(queryByTestId("content")).toBeNull();
@@ -133,7 +133,7 @@ describe("Dropdown Menu", () => {
 		await waitFor(() => expect(item).toHaveFocus());
 	});
 
-	it("Opens submenu with keyboard on subtrigger", async () => {
+	it("opens submenu with keyboard on subtrigger", async () => {
 		const { getByTestId, queryByTestId, user } = await openWithKbd();
 
 		await user.keyboard(kbd.ARROW_DOWN);
@@ -145,7 +145,7 @@ describe("Dropdown Menu", () => {
 		await waitFor(() => expect(getByTestId("sub-item")).toHaveFocus());
 	});
 
-	it("Toggles the checkbox item when clicked & respects binding", async () => {
+	it("toggles the checkbox item when clicked & respects binding", async () => {
 		const { getByTestId, user, trigger } = await openWithPointer();
 		const checkedBinding = getByTestId("checked-binding");
 		const indicator = getByTestId("checkbox-indicator");
@@ -165,7 +165,7 @@ describe("Dropdown Menu", () => {
 		expect(getByTestId("checkbox-indicator")).toHaveTextContent("checked");
 	});
 
-	it("Toggles checkbox items within submenus when clicked & respects binding", async () => {
+	it("toggles checkbox items within submenus when clicked & respects binding", async () => {
 		const props = await openWithKbd();
 		const { getByTestId, user, trigger } = props;
 		await openSubmenu(props);
@@ -191,7 +191,7 @@ describe("Dropdown Menu", () => {
 		expect(getByTestId("sub-checkbox-indicator")).toHaveTextContent("checked");
 	});
 
-	it("Checks the radio item when clicked & respects binding", async () => {
+	it("checks the radio item when clicked & respects binding", async () => {
 		const { getByTestId, queryByTestId, user, trigger } = await openWithPointer();
 		const radioBinding = getByTestId("radio-binding");
 		const indicator = queryByTestId("radio-indicator-1");
@@ -220,7 +220,7 @@ describe("Dropdown Menu", () => {
 		expect(queryByTestId("radio-indicator-2")).toBeNull();
 	});
 
-	it("Skips over disabled items when navigating with the keyboard", async () => {
+	it("skips over disabled items when navigating with the keyboard", async () => {
 		const { user, getByTestId } = await openWithKbd();
 		await user.keyboard(kbd.ARROW_DOWN);
 		await waitFor(() => expect(getByTestId("sub-trigger")).toHaveFocus());

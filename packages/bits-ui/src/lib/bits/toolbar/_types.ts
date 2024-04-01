@@ -3,7 +3,7 @@
  * to type-check our API documentation, which requires we document each prop,
  * but we don't want to document the HTML attributes.
  */
-import type { CreateToolbarProps, CreateToolbarGroupProps } from "@melt-ui/svelte";
+import type { CreateToolbarGroupProps, CreateToolbarProps } from "@melt-ui/svelte";
 import type { DOMElement, Expand, OmitValue, OnChangeFn } from "$lib/internal/index.js";
 
 type Props = Expand<CreateToolbarProps & DOMElement>;

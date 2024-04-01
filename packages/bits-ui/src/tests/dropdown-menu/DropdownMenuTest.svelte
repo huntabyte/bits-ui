@@ -1,4 +1,5 @@
 <script lang="ts" context="module">
+	import { DropdownMenu } from "$lib/index.js";
 	export type DropdownMenuTestProps = DropdownMenu.Props & {
 		checked?: boolean;
 		subChecked?: boolean;
@@ -9,8 +10,6 @@
 </script>
 
 <script lang="ts">
-	import { DropdownMenu } from "$lib/index.js";
-
 	export let checked = false;
 	export let subChecked = false;
 	export let radio = "";
@@ -40,7 +39,10 @@
 						<DropdownMenu.Item data-testid="sub-item">
 							<span>Email</span>
 						</DropdownMenu.Item>
-						<DropdownMenu.CheckboxItem bind:checked={subChecked} data-testid="sub-checkbox-item">
+						<DropdownMenu.CheckboxItem
+							bind:checked={subChecked}
+							data-testid="sub-checkbox-item"
+						>
 							<DropdownMenu.CheckboxIndicator data-testid="sub-checkbox-indicator">
 								checked
 							</DropdownMenu.CheckboxIndicator>
@@ -48,8 +50,11 @@
 						</DropdownMenu.CheckboxItem>
 					</DropdownMenu.SubContent>
 				</DropdownMenu.Sub>
-				<DropdownMenu.Item disabled data-testid="disabled-item">disabled item</DropdownMenu.Item>
-				<DropdownMenu.Item disabled data-testid="disabled-item-2">disabled item 2</DropdownMenu.Item
+				<DropdownMenu.Item disabled data-testid="disabled-item"
+					>disabled item</DropdownMenu.Item
+				>
+				<DropdownMenu.Item disabled data-testid="disabled-item-2"
+					>disabled item 2</DropdownMenu.Item
 				>
 				<DropdownMenu.CheckboxItem bind:checked data-testid="checkbox-item">
 					<DropdownMenu.CheckboxIndicator data-testid="checkbox-indicator">

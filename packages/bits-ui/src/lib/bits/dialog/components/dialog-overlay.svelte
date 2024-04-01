@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import type { Transition } from "$lib/internal/index.js";
 	import { getCtx } from "../ctx.js";
 	import type { OverlayEvents, OverlayProps } from "../types.js";
+	import type { Transition } from "$lib/internal/index.js";
 
 	type T = $$Generic<Transition>;
 	type In = $$Generic<Transition>;

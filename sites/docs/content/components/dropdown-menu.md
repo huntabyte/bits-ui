@@ -4,7 +4,7 @@ description: Displays a menu of items that users can select from when triggered.
 ---
 
 <script>
-	import { APISection, ComponentPreview, DropdownMenuDemo } from '@/components/index.js'
+	import { APISection, ComponentPreview, DropdownMenuDemo } from '$lib/components/index.js'
 	export let schemas;
 </script>
 

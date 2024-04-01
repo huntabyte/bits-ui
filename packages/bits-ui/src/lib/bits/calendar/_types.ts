@@ -4,9 +4,9 @@
  * but we don't want to document the HTML attributes.
  */
 
-import type { DOMElement, OnChangeFn } from "$lib/internal/index.js";
 import type { DateValue } from "@internationalized/date";
 import type { CreateCalendarProps } from "@melt-ui/svelte";
+import type { DOMElement, OnChangeFn } from "$lib/internal/index.js";
 
 type OmitCalendarProps<T> = Omit<
 	T,

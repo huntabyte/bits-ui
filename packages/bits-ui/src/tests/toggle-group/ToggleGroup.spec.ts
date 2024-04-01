@@ -2,11 +2,11 @@ import { render } from "@testing-library/svelte";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
-import ToggleGroupTest from "./ToggleGroupTest.svelte";
 import { getTestKbd } from "../utils.js";
-import type { ToggleGroup } from "$lib/index.js";
+import ToggleGroupTest from "./ToggleGroupTest.svelte";
 import type { Item } from "./ToggleGroupTest.svelte";
 import ToggleGroupMultipleTest from "./ToggleGroupMultipleTest.svelte";
+import type { ToggleGroup } from "$lib/index.js";
 
 const kbd = getTestKbd();
 
@@ -55,7 +55,7 @@ function setup(props: ToggleGroup.Props<"single"> = {}) {
 	};
 }
 
-describe("ToggleGroup", () => {
+describe("toggleGroup", () => {
 	it("has no accessibility violations", async () => {
 		const { container } = render(ToggleGroupTest);
 		expect(await axe(container)).toHaveNoViolations();
@@ -146,7 +146,7 @@ describe("ToggleGroup", () => {
 	});
 
 	it("should fire the `onChange` callback when changing", async () => {
-		let newValue = undefined;
+		let newValue;
 		function onValueChange(next: string | undefined) {
 			newValue = next;
 		}

@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { NextButtonEvents, NextButtonProps } from "../types.js";
-	import { createDispatcher } from "$lib/internal/events.js";
-	import { getCtx } from "../ctx.js";
 	import { melt } from "@melt-ui/svelte";
+	import type { NextButtonEvents, NextButtonProps } from "../types.js";
+	import { getCtx } from "../ctx.js";
+	import { createDispatcher } from "$lib/internal/events.js";
 
 	type $$Props = NextButtonProps;
 	type $$Events = NextButtonEvents;

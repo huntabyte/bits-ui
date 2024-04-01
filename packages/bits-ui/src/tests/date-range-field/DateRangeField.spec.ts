@@ -2,10 +2,10 @@ import { render } from "@testing-library/svelte";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
+import { CalendarDate, CalendarDateTime, toZoned } from "@internationalized/date";
 import { getTestKbd } from "../utils.js";
 import DateRangeFieldTest from "./DateRangeFieldTest.svelte";
 import type { DateRangeField } from "$lib/index.js";
-import { CalendarDate, CalendarDateTime, toZoned } from "@internationalized/date";
 
 const kbd = getTestKbd();
 
@@ -47,7 +47,7 @@ function setup(props: DateRangeField.Props = {}) {
 	return { ...returned, user, start, end, input, label };
 }
 
-describe("Date Range Field", () => {
+describe("date Range Field", () => {
 	it("has no axe violations", async () => {
 		const { container } = setup();
 		expect(await axe(container)).toHaveNoViolations();
@@ -79,8 +79,12 @@ describe("Date Range Field", () => {
 		expect(start.day).toHaveTextContent(String(calendarDateTime.start.day));
 		expect(start.year).toHaveTextContent(String(calendarDateTime.start.year));
 		expect(getByTestId("start-hour")).toHaveTextContent(String(calendarDateTime.start.hour));
-		expect(getByTestId("start-minute")).toHaveTextContent(String(calendarDateTime.start.minute));
-		expect(getByTestId("start-second")).toHaveTextContent(String(calendarDateTime.start.second));
+		expect(getByTestId("start-minute")).toHaveTextContent(
+			String(calendarDateTime.start.minute)
+		);
+		expect(getByTestId("start-second")).toHaveTextContent(
+			String(calendarDateTime.start.second)
+		);
 		expect(start.value).toHaveTextContent(calendarDateTime.start.toString());
 
 		expect(end.month).toHaveTextContent(String(calendarDateTime.end.month));
@@ -102,8 +106,12 @@ describe("Date Range Field", () => {
 		expect(start.day).toHaveTextContent(String(calendarDateTime.start.day));
 		expect(start.year).toHaveTextContent(String(calendarDateTime.start.year));
 		expect(getByTestId("start-hour")).toHaveTextContent(String(calendarDateTime.start.hour));
-		expect(getByTestId("start-minute")).toHaveTextContent(String(calendarDateTime.start.minute));
-		expect(getByTestId("start-second")).toHaveTextContent(String(calendarDateTime.start.second));
+		expect(getByTestId("start-minute")).toHaveTextContent(
+			String(calendarDateTime.start.minute)
+		);
+		expect(getByTestId("start-second")).toHaveTextContent(
+			String(calendarDateTime.start.second)
+		);
 		expect(start.value).toHaveTextContent(calendarDateTime.start.toString());
 
 		expect(end.month).toHaveTextContent(String(calendarDateTime.end.month));

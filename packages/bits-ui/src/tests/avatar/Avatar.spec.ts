@@ -6,7 +6,7 @@ import AvatarTest from "./AvatarTest.svelte";
 
 const src = "https://github.com/huntabyte.png";
 
-describe("Avatar", () => {
+describe("avatar", () => {
 	it("has no accessibility violations", async () => {
 		const { container } = render(AvatarTest, { src });
 		expect(await axe(container)).toHaveNoViolations();

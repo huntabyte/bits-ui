@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { createDispatcher } from "$lib/internal/events.js";
-	import { disabledAttrs } from "$lib/internal/index.js";
 	import { melt } from "@melt-ui/svelte";
 	import { getCtx } from "../ctx.js";
 	import type { ItemEvents, ItemProps } from "../types.js";
+	import { disabledAttrs } from "$lib/internal/index.js";
+	import { createDispatcher } from "$lib/internal/events.js";
 
 	type $$Props = ItemProps;
 	type $$Events = ItemEvents;

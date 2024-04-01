@@ -2,9 +2,9 @@ import { render, waitFor } from "@testing-library/svelte";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
+import { getTestKbd } from "../utils.js";
 import RadioGroupTest from "./RadioGroupTest.svelte";
 import type { Item } from "./RadioGroupTest.svelte";
-import { getTestKbd } from "../utils.js";
 import type { RadioGroup } from "$lib/index.js";
 
 const kbd = getTestKbd();
@@ -28,8 +28,8 @@ const testItems: Item[] = [
 	},
 ];
 
-const itemIds = testItems.map((item) => item.value + "-item");
-const indicatorIds = testItems.map((item) => item.value + "-indicator");
+const itemIds = testItems.map((item) => `${item.value}-item`);
+const indicatorIds = testItems.map((item) => `${item.value}-indicator`);
 
 function setup(props: RadioGroup.Props = {}, items: Item[] = testItems) {
 	const user = userEvent.setup();
@@ -44,7 +44,7 @@ function randItem() {
 	return Math.floor(Math.random() * 3);
 }
 
-describe("Radio Group", () => {
+describe("radio Group", () => {
 	it("has no accessibility violations", async () => {
 		const { container } = render(RadioGroupTest);
 		expect(await axe(container)).toHaveNoViolations();
@@ -56,7 +56,7 @@ describe("Radio Group", () => {
 			value: testItems[0].value,
 		});
 		const root = getByTestId("root");
-		const item = getByTestId(testItems[0].value + "-item");
+		const item = getByTestId(`${testItems[0].value}-item`);
 
 		expect(root).toHaveAttribute("data-radio-group-root");
 		expect(item).toHaveAttribute("data-radio-group-item");

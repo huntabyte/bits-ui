@@ -1,5 +1,5 @@
 import type { DateValue } from "@internationalized/date";
-import type { Month, Page, PageItem, Ellipsis, EditableSegmentPart } from "@melt-ui/svelte";
+import type { EditableSegmentPart, Ellipsis, Month, Page, PageItem } from "@melt-ui/svelte";
 
 export type Selected<Value> = {
 	value: Value;

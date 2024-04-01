@@ -4,7 +4,7 @@ import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import CollapsibleTest from "./CollapsibleTest.svelte";
 
-describe("Collapsible", () => {
+describe("collapsible", () => {
 	it("has no accessibility violations", async () => {
 		const { container } = render(CollapsibleTest);
 		expect(await axe(container)).toHaveNoViolations();

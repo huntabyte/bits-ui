@@ -2,9 +2,9 @@ import { render, waitFor } from "@testing-library/svelte";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
+import { getTestKbd } from "../utils.js";
 import ComboboxTest from "./ComboboxTest.svelte";
 import type { Item } from "./ComboboxTest.svelte";
-import { getTestKbd } from "../utils.js";
 import type { Combobox } from "$lib/index.js";
 import { sleep } from "$lib/internal/index.js";
 
@@ -43,6 +43,7 @@ function setup(props: Combobox.Props<unknown, false> = {}, options: Item[] = tes
 }
 async function open(
 	props: Combobox.Props<unknown, false> = {},
+	// eslint-disable-next-line ts/ban-types
 	openWith: "click" | "type" | (string & {}) = "click",
 	inputValue?: string
 ) {
@@ -64,7 +65,7 @@ async function open(
 
 const OPEN_KEYS = [kbd.ARROW_DOWN, kbd.ARROW_UP];
 
-describe("Combobox", () => {
+describe("combobox", () => {
 	it("has no accessibility violations", async () => {
 		const { container } = render(ComboboxTest);
 		expect(await axe(container)).toHaveNoViolations();
@@ -239,7 +240,10 @@ describe("Combobox", () => {
 	});
 
 	it("allows items to be selected using the keyboard", async () => {
-		const { getByTestId, user, queryByTestId, hiddenInput, input } = await open({}, kbd.ARROW_DOWN);
+		const { getByTestId, user, queryByTestId, hiddenInput, input } = await open(
+			{},
+			kbd.ARROW_DOWN
+		);
 
 		const item0 = getByTestId("1");
 		const item1 = getByTestId("2");

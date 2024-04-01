@@ -1,8 +1,8 @@
+import type { ProgressPropsWithoutHTML } from "bits-ui";
+import { builderAndAttrsSlotProps, domElProps } from "./helpers.js";
 import { enums } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
-import type { ProgressPropsWithoutHTML } from "bits-ui";
-import { builderAndAttrsSlotProps, domElProps } from "./helpers.js";
 
 export const root: APISchema<ProgressPropsWithoutHTML> = {
 	title: "Root",

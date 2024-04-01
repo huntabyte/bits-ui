@@ -1,6 +1,3 @@
-import { builderAndAttrsSlotProps, domElProps, enums } from "$lib/content/api-reference/helpers.js";
-import * as C from "$lib/content/constants.js";
-import type { APISchema } from "$lib/types/index.js";
 import type {
 	ScrollAreaContentPropsWithoutHTML,
 	ScrollAreaCornerPropsWithoutHTML,
@@ -9,6 +6,9 @@ import type {
 	ScrollAreaThumbPropsWithoutHTML,
 	ScrollAreaViewportPropsWithoutHTML,
 } from "bits-ui";
+import { builderAndAttrsSlotProps, domElProps, enums } from "$lib/content/api-reference/helpers.js";
+import * as C from "$lib/content/constants.js";
+import type { APISchema } from "$lib/types/index.js";
 
 export const root: APISchema<ScrollAreaPropsWithoutHTML> = {
 	title: "Root",

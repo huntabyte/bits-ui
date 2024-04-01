@@ -4,16 +4,16 @@
  * but we don't want to document the HTML attributes.
  */
 
-import type {
-	Transition,
-	OmitOpen,
-	OmitForceVisible,
-	Expand,
-	OnChangeFn,
-	TransitionProps,
-	DOMElement,
-} from "$lib/internal/index.js";
 import type { CreateCollapsibleProps } from "@melt-ui/svelte";
+import type {
+	DOMElement,
+	Expand,
+	OmitForceVisible,
+	OmitOpen,
+	OnChangeFn,
+	Transition,
+	TransitionProps,
+} from "$lib/internal/index.js";
 
 type Props = Expand<
 	OmitOpen<OmitForceVisible<CreateCollapsibleProps>> & {
@@ -35,7 +35,7 @@ type Props = Expand<
 type ContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
-	Out extends Transition = Transition
+	Out extends Transition = Transition,
 > = Expand<TransitionProps<T, In, Out> & DOMElement>;
 
 type TriggerProps = DOMElement<HTMLButtonElement>;

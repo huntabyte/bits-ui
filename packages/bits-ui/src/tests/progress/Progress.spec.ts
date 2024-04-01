@@ -13,7 +13,7 @@ function setup(props: Progress.Props = {}) {
 	return { root, user, ...returned };
 }
 
-describe("Progress", () => {
+describe("progress", () => {
 	it("has no accessibility violations", async () => {
 		const { container } = render(ProgressTest);
 		expect(await axe(container)).toHaveNoViolations();

@@ -4,7 +4,7 @@ description: Organizes content into distinct sections, allowing users to switch 
 ---
 
 <script>
-	import { APISection, ComponentPreview, TabsDemo } from '@/components/index.js'
+	import { APISection, ComponentPreview, TabsDemo } from '$lib/components/index.js'
 	export let schemas;
 </script>
 

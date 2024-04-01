@@ -16,9 +16,7 @@ If you're using a CSS framework like TailwindCSS or UnoCSS, you can simply pass 
 	import { Button } from "bits-ui";
 </script>
 
-<Button.Root class="h-12 w-full bg-blue-500 hover:bg-blue-600">
-	Click me
-</Button.Root>
+<Button.Root class="h-12 w-full bg-blue-500 hover:bg-blue-600">Click me</Button.Root>
 ```
 
 ## Data attributes

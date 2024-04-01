@@ -1,6 +1,6 @@
 import type { HTMLButtonAttributes } from "svelte/elements";
-import type { CustomEventHandler } from "$lib/index.js";
 import type * as I from "./_types.js";
+import type { CustomEventHandler } from "$lib/index.js";
 import type { HTMLDivAttributes } from "$lib/internal/types.js";
 
 type Props = I.Props & HTMLDivAttributes;

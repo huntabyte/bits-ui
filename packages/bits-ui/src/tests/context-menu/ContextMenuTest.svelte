@@ -1,4 +1,5 @@
 <script lang="ts" context="module">
+	import { ContextMenu } from "$lib/index.js";
 	export type ContextMenuTestProps = ContextMenu.Props & {
 		checked?: boolean;
 		subChecked?: boolean;
@@ -9,8 +10,6 @@
 </script>
 
 <script lang="ts">
-	import { ContextMenu } from "$lib/index.js";
-
 	export let checked = false;
 	export let subChecked = false;
 	export let radio = "";
@@ -45,7 +44,10 @@
 						<ContextMenu.Item data-testid="sub-item">
 							<span>Email</span>
 						</ContextMenu.Item>
-						<ContextMenu.CheckboxItem bind:checked={subChecked} data-testid="sub-checkbox-item">
+						<ContextMenu.CheckboxItem
+							bind:checked={subChecked}
+							data-testid="sub-checkbox-item"
+						>
 							<ContextMenu.CheckboxIndicator data-testid="sub-checkbox-indicator">
 								checked
 							</ContextMenu.CheckboxIndicator>
@@ -53,8 +55,12 @@
 						</ContextMenu.CheckboxItem>
 					</ContextMenu.SubContent>
 				</ContextMenu.Sub>
-				<ContextMenu.Item disabled data-testid="disabled-item">disabled item</ContextMenu.Item>
-				<ContextMenu.Item disabled data-testid="disabled-item-2">disabled item 2</ContextMenu.Item>
+				<ContextMenu.Item disabled data-testid="disabled-item"
+					>disabled item</ContextMenu.Item
+				>
+				<ContextMenu.Item disabled data-testid="disabled-item-2"
+					>disabled item 2</ContextMenu.Item
+				>
 				<ContextMenu.CheckboxItem bind:checked data-testid="checkbox-item">
 					<ContextMenu.CheckboxIndicator data-testid="checkbox-indicator">
 						checked

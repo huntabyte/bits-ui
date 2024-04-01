@@ -4,7 +4,7 @@ description: Allows users to input a range of dates within a designated field.
 ---
 
 <script>
-	import { APISection, ComponentPreview, DateRangeFieldDemo } from '@/components/index.js'
+	import { APISection, ComponentPreview, DateRangeFieldDemo } from '$lib/components/index.js'
 	export let schemas;
 </script>
 

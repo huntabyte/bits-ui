@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Action, ActionReturn } from "svelte/action";
 
 export type Builder<
 	Element = any,
 	Param = any,
-	Attributes extends Record<string, any> = Record<string, any>
+	Attributes extends Record<string, any> = Record<string, any>,
 > = Record<string, any> & {
 	action: Action<Element, Param, Attributes>;
 };

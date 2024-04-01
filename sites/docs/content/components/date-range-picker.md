@@ -4,7 +4,7 @@ description: Facilitates the selection of date ranges through an input and calen
 ---
 
 <script>
-	import { APISection, ComponentPreview, DateRangePickerDemo } from '@/components/index.js'
+	import { APISection, ComponentPreview, DateRangePickerDemo } from '$lib/components/index.js'
 	export let schemas;
 </script>
 

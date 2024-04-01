@@ -2,9 +2,9 @@ import { render, waitFor } from "@testing-library/svelte";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
+import { getTestKbd } from "../utils.js";
 import SelectTest from "./SelectTest.svelte";
 import type { Item } from "./SelectTest.svelte";
-import { getTestKbd } from "../utils.js";
 import type { Select } from "$lib/index.js";
 import { sleep } from "$lib/internal/index.js";
 
@@ -43,6 +43,7 @@ function setup(props: Select.Props<unknown, false> = {}, options: Item[] = testI
 }
 async function open(
 	props: Select.Props<unknown, false> = {},
+	// eslint-disable-next-line ts/ban-types
 	openWith: "click" | (string & {}) = "click"
 ) {
 	const returned = setup(props);
@@ -61,7 +62,7 @@ async function open(
 
 const OPEN_KEYS = [kbd.ENTER, kbd.SPACE, kbd.ARROW_DOWN, kbd.ARROW_UP];
 
-describe("Select", () => {
+describe("select", () => {
 	it("has no accessibility violations", async () => {
 		const { container } = render(SelectTest);
 		expect(await axe(container)).toHaveNoViolations();

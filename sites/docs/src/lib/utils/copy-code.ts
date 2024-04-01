@@ -1,5 +1,5 @@
 import { writable } from "svelte/store";
-import { isBrowser } from "$lib/internal/index.js";
+import { browser } from "$app/environment";
 
 export function createCopyCodeButton() {
 	let codeString = "";
@@ -7,7 +7,7 @@ export function createCopyCodeButton() {
 	let copyTimeout = 0;
 
 	function copyCode() {
-		if (!isBrowser) return;
+		if (!browser) return;
 		navigator.clipboard.writeText(codeString);
 		copied.set(true);
 		clearTimeout(copyTimeout);
@@ -21,8 +21,8 @@ export function createCopyCodeButton() {
 	}
 
 	return {
-		copied: copied,
-		copyCode: copyCode,
-		setCodeString: setCodeString,
+		copied,
+		copyCode,
+		setCodeString,
 	};
 }

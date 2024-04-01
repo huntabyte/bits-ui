@@ -4,10 +4,10 @@
  * but we don't want to document the HTML attributes.
  */
 
-import type { DOMElement, OnChangeFn } from "$lib/internal/index.js";
-import type { DateRange } from "$lib/shared/index.js";
 import type { DateValue } from "@internationalized/date";
 import type { CreateRangeCalendarProps } from "@melt-ui/svelte";
+import type { DOMElement, OnChangeFn } from "$lib/internal/index.js";
+import type { DateRange } from "$lib/shared/index.js";
 
 type Props = Expand<
 	Omit<

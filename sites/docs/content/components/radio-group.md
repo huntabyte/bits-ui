@@ -4,7 +4,7 @@ description: Allows users to select a single option from a list of mutually excl
 ---
 
 <script>
-	import { APISection, ComponentPreview, RadioGroupDemo } from '@/components/index.js'
+	import { APISection, ComponentPreview, RadioGroupDemo } from '$lib/components/index.js'
 	export let schemas;
 </script>
 

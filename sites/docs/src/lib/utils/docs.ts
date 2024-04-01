@@ -1,7 +1,7 @@
-import { getAPISchemas, isBit } from "$lib/content/api-reference/index.js";
-import type { APISchema } from "$lib/types/index.js";
 import { error, redirect } from "@sveltejs/kit";
 import type { Doc } from "contentlayer/generated/index.js";
+import { getAPISchemas, isBit } from "$lib/content/api-reference/index.js";
+import type { APISchema } from "$lib/types/index.js";
 
 export type FrontMatter = Pick<Doc, "title" | "description">;
 

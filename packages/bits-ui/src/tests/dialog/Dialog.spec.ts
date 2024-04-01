@@ -1,9 +1,9 @@
-import { render, screen, type Matcher, type MatcherOptions } from "@testing-library/svelte";
+import { type Matcher, type MatcherOptions, render, screen } from "@testing-library/svelte";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
-import DialogTest from "./DialogTest.svelte";
 import { getTestKbd } from "../utils.js";
+import DialogTest from "./DialogTest.svelte";
 import { sleep } from "$lib/internal/index.js";
 import type { Dialog } from "$lib/index.js";
 
@@ -44,7 +44,7 @@ async function open(props: Dialog.Props = {}) {
 	return { getByTestId, queryByTestId, user };
 }
 
-describe("Dialog", () => {
+describe("dialog", () => {
 	it("has no accessibility violations", async () => {
 		const { container } = render(DialogTest);
 		expect(await axe(container)).toHaveNoViolations();
@@ -123,21 +123,21 @@ describe("Dialog", () => {
 		expect(portalled.parentElement).toEqual(portalTarget);
 	});
 
-	it("Focuses first focusable item upon opening", async () => {
+	it("focuses first focusable item upon opening", async () => {
 		const { getByTestId } = await open();
 		// Testing focus-trap is a bit flaky. So the focusable element is
 		// always content here.
 		expect(document.activeElement).toBe(getByTestId("content"));
 	});
 
-	it("Doesnt close when content is clicked", async () => {
+	it("doesnt close when content is clicked", async () => {
 		const { user, getByTestId, queryByTestId } = await open();
 		const content = getByTestId("content");
 		await user.click(content);
 		expectIsOpen(queryByTestId);
 	});
 
-	it("Respects binding to the `open` prop", async () => {
+	it("respects binding to the `open` prop", async () => {
 		const { getByTestId, queryByTestId, user } = setup();
 
 		const trigger = getByTestId("trigger");

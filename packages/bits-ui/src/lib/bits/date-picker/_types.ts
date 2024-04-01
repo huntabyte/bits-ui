@@ -4,16 +4,16 @@
  * but we don't want to document the HTML attributes.
  */
 
-import type {
-	Expand,
-	OnChangeFn,
-	OmitDates,
-	OmitFloating,
-	DOMElement,
-} from "$lib/internal/index.js";
-import type { SegmentPart } from "$lib/shared/index.js";
 import type { DateValue } from "@internationalized/date";
 import type { CreateDatePickerProps } from "@melt-ui/svelte";
+import type {
+	DOMElement,
+	Expand,
+	OmitDates,
+	OmitFloating,
+	OnChangeFn,
+} from "$lib/internal/index.js";
+import type { SegmentPart } from "$lib/shared/index.js";
 
 type Props = Expand<
 	Omit<

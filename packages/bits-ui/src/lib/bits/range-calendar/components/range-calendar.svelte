@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { melt, type Month } from "@melt-ui/svelte";
+	import { type Month, melt } from "@melt-ui/svelte";
+	import { onMount } from "svelte";
+	import type { DateValue } from "@internationalized/date";
 	import { setCtx } from "../ctx.js";
 	import type { Events, Props } from "../types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
-	import { onMount } from "svelte";
 	import { handleCalendarInitialFocus } from "$lib/internal/focus.js";
-	import type { DateValue } from "@internationalized/date";
 
 	type $$Props = Props;
 	type $$Events = Events;

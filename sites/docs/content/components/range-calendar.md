@@ -4,7 +4,7 @@ description: Presents a calendar view tailored for selecting date ranges.
 ---
 
 <script>
-	import { APISection, ComponentPreview, RangeCalendarDemo } from '@/components/index.js'
+	import { APISection, ComponentPreview, RangeCalendarDemo } from '$lib/components/index.js'
 	export let schemas;
 </script>
 

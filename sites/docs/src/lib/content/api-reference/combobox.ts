@@ -1,3 +1,13 @@
+import type {
+	ComboboxArrowPropsWithoutHTML,
+	ComboboxContentPropsWithoutHTML,
+	ComboboxIndicatorPropsWithoutHTML,
+	ComboboxInputPropsWithoutHTML,
+	ComboboxItemPropsWithoutHTML,
+	ComboboxLabelPropsWithoutHTML,
+	ComboboxPropsWithoutHTML,
+} from "bits-ui";
+import { floatingPositioning } from "./floating.js";
 import {
 	arrowProps,
 	asChild,
@@ -12,16 +22,6 @@ import {
 } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
-import type {
-	ComboboxArrowPropsWithoutHTML,
-	ComboboxContentPropsWithoutHTML,
-	ComboboxIndicatorPropsWithoutHTML,
-	ComboboxInputPropsWithoutHTML,
-	ComboboxItemPropsWithoutHTML,
-	ComboboxLabelPropsWithoutHTML,
-	ComboboxPropsWithoutHTML,
-} from "bits-ui";
-import { floatingPositioning } from "./floating.js";
 
 export const root: APISchema<ComboboxPropsWithoutHTML> = {
 	title: "Root",

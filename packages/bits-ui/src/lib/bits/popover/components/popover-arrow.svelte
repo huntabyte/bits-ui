@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { setArrow } from "../ctx.js";
 	import { melt } from "@melt-ui/svelte";
+	import { setArrow } from "../ctx.js";
 	import type { ArrowProps } from "../types.js";
 
 	type $$Props = ArrowProps;

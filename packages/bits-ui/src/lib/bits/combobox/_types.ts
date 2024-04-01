@@ -3,18 +3,18 @@
  * to type-check our API documentation, which requires we document each prop,
  * but we don't want to document the HTML attributes.
  */
-import type { CreateComboboxProps, ComboboxOptionProps } from "@melt-ui/svelte";
+import type { ComboboxOptionProps, CreateComboboxProps } from "@melt-ui/svelte";
 import type { DOMElement, Expand, OmitFloating, OnChangeFn } from "$lib/internal/index.js";
-import type { ContentProps, ArrowProps } from "$lib/bits/floating/_types.js";
+import type { ArrowProps, ContentProps } from "$lib/bits/floating/_types.js";
 import type { Selected } from "$lib/index.js";
 
 export type WhenTrue<TrueOrFalse, IfTrue, IfFalse, IfNeither = IfTrue | IfFalse> = [
-	TrueOrFalse
+	TrueOrFalse,
 ] extends [true]
 	? IfTrue
 	: [TrueOrFalse] extends [false]
-	? IfFalse
-	: IfNeither;
+		? IfFalse
+		: IfNeither;
 
 type SelectValue<T, Multiple extends boolean> = WhenTrue<Multiple, T[] | undefined, T | undefined>;
 

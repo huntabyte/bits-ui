@@ -1,7 +1,7 @@
 <script lang="ts">
+	import { melt } from "@melt-ui/svelte";
 	import type { ViewportProps } from "../types.js";
 	import { getCtx } from "../ctx.js";
-	import { melt } from "@melt-ui/svelte";
 
 	type $$Props = ViewportProps;
 

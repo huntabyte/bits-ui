@@ -1,12 +1,12 @@
-import { builderAndAttrsSlotProps, domElProps, enums } from "$lib/content/api-reference/helpers.js";
-import * as C from "$lib/content/constants.js";
-import type { APISchema } from "$lib/types/index.js";
 import type {
 	SliderPropsWithoutHTML,
 	SliderRangePropsWithoutHTML,
 	SliderThumbPropsWithoutHTML,
 	SliderTickPropsWithoutHTML,
 } from "bits-ui";
+import { builderAndAttrsSlotProps, domElProps, enums } from "$lib/content/api-reference/helpers.js";
+import * as C from "$lib/content/constants.js";
+import type { APISchema } from "$lib/types/index.js";
 
 const root: APISchema<SliderPropsWithoutHTML> = {
 	title: "Root",

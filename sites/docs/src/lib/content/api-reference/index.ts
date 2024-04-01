@@ -1,4 +1,3 @@
-import type { APISchema } from "$lib/types/index.js";
 import { accordion } from "./accordion.js";
 import { alertDialog } from "./alert-dialog.js";
 import { aspectRatio } from "./aspect-ratio.js";
@@ -34,6 +33,7 @@ import { toggleGroup } from "./toggle-group.js";
 import { toggle } from "./toggle.js";
 import { toolbar } from "./toolbar.js";
 import { tooltip } from "./tooltip.js";
+import type { APISchema } from "$lib/types/index.js";
 
 export const bits = [
 	"accordion",
@@ -113,7 +113,7 @@ export const apiSchemas: Record<Bit, APISchema[]> = {
 	slider,
 	switch: switchData,
 	tabs,
-	toggle: toggle,
+	toggle,
 	"toggle-group": toggleGroup,
 	toolbar,
 	tooltip,

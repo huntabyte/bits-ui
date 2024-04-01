@@ -1,6 +1,6 @@
-import { createCheckbox, type CreateCheckboxProps } from "@melt-ui/svelte";
+import { type CreateCheckboxProps, createCheckbox } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
-import { removeUndefined, getOptionUpdater, createBitAttrs } from "$lib/internal/index.js";
+import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 
 export function getCheckboxData() {
 	const NAME = "checkbox" as const;

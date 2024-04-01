@@ -1,6 +1,6 @@
 import { type CreateRangeCalendarProps, createRangeCalendar } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
-import { removeUndefined, getOptionUpdater, createBitAttrs } from "$lib/internal/index.js";
+import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 
 function getRangeCalendarData() {
 	const NAME = "calendar" as const;

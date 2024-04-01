@@ -2,8 +2,8 @@ import { render, screen } from "@testing-library/svelte";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
-import MenubarTest from "./MenubarTest.svelte";
 import { getTestKbd } from "../utils.js";
+import MenubarTest from "./MenubarTest.svelte";
 import type { Menubar } from "$lib/index.js";
 
 const kbd = getTestKbd();
@@ -19,7 +19,7 @@ function setup(props: Menubar.Props = {}, menuId: string = "1") {
 	return { user, ...returned, trigger };
 }
 
-describe("Menubar", () => {
+describe("menubar", () => {
 	it("has no accessibility violations", async () => {
 		const { container } = render(MenubarTest);
 		expect(await axe(container)).toHaveNoViolations();

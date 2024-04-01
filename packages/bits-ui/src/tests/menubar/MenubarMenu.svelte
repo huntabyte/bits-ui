@@ -1,4 +1,5 @@
 <script lang="ts" context="module">
+	import { Menubar } from "$lib/index.js";
 	export type MenubarMenuProps = Menubar.MenuProps & {
 		checked?: boolean;
 		subChecked?: boolean;
@@ -9,8 +10,6 @@
 </script>
 
 <script lang="ts">
-	import { Menubar } from "$lib/index.js";
-
 	export let id: string;
 </script>
 

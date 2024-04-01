@@ -4,7 +4,7 @@ description: Organizes content into collapsible sections, allowing users to focu
 ---
 
 <script>
-	import { APISection, ComponentPreview, AccordionDemo } from '@/components/index.js'
+	import { APISection, ComponentPreview, AccordionDemo } from '$lib/components/index.js'
 	export let schemas
 </script>
 

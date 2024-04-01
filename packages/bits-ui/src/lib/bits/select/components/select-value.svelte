@@ -21,6 +21,6 @@
 	<slot {label} {attrs} />
 {:else}
 	<span bind:this={el} {...$$restProps} {...attrs} data-placeholder={!label ? "" : undefined}>
-		{label ? label : placeholder}
+		{label || placeholder}
 	</span>
 {/if}

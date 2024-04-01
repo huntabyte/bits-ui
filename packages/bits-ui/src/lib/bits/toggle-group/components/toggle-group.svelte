@@ -1,9 +1,8 @@
 <script lang="ts">
-	import { arraysAreEqual } from "$lib/internal/arrays.js";
-
 	import { melt } from "@melt-ui/svelte";
 	import { setCtx } from "../ctx.js";
 	import type { Props } from "../types.js";
+	import { arraysAreEqual } from "$lib/internal/arrays.js";
 
 	type T = $$Generic<"single" | "multiple">;
 	type $$Props = Props<T>;
@@ -43,7 +42,6 @@
 				value = next;
 			}
 			return next;
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		}) as any,
 	});
 

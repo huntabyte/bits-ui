@@ -1,7 +1,7 @@
 import { type CreateDateRangeFieldProps, createDateRangeField } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
-import { removeUndefined, getOptionUpdater, createBitAttrs } from "$lib/internal/index.js";
 import { getDateFieldData } from "../date-field/ctx.js";
+import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 
 type GetReturn = Omit<ReturnType<typeof setCtx>, "updateOption">;
 

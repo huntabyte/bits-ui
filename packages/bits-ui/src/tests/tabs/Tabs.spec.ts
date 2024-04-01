@@ -2,9 +2,9 @@ import { render } from "@testing-library/svelte";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
+import { getTestKbd } from "../utils.js";
 import TabsTest from "./TabsTest.svelte";
 import type { Item } from "./TabsTest.svelte";
-import { getTestKbd } from "../utils.js";
 import type { Tabs } from "$lib/index.js";
 
 const kbd = getTestKbd();
@@ -36,7 +36,7 @@ function setup(props: Props = {}) {
 	};
 }
 
-describe("Tabs", () => {
+describe("tabs", () => {
 	it("has no accessibility violations", async () => {
 		const { container } = render(TabsTest, {
 			items: [

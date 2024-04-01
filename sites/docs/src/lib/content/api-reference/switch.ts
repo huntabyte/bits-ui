@@ -1,8 +1,8 @@
+import type { SwitchPropsWithoutHTML, SwitchThumbPropsWithoutHTML } from "bits-ui";
+import { builderAndAttrsSlotProps, domElProps } from "./helpers.js";
 import { attrsSlotProp, enums } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
-import type { SwitchPropsWithoutHTML, SwitchThumbPropsWithoutHTML } from "bits-ui";
-import { builderAndAttrsSlotProps, domElProps } from "./helpers.js";
 
 const root: APISchema<SwitchPropsWithoutHTML> = {
 	title: "Root",

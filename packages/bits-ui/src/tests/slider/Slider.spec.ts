@@ -3,10 +3,10 @@ import { render } from "@testing-library/svelte";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
+import { getTestKbd } from "../utils.js";
 import SliderTest from "./SliderTest.svelte";
 import SliderRangeTest from "./SliderRangeTest.svelte";
 import type { Slider } from "$lib/index.js";
-import { getTestKbd } from "../utils.js";
 
 const kbd = getTestKbd();
 
@@ -19,7 +19,6 @@ function renderSliderRange(props: Slider.Props = {}) {
 
 function setup(props: Slider.Props = {}, kind: "default" | "range" = "default") {
 	const user = userEvent.setup();
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	let returned: any;
 	if (kind === "default") {
 		returned = renderSlider(props);
@@ -31,14 +30,14 @@ function setup(props: Slider.Props = {}, kind: "default" | "range" = "default") 
 	return { root, user, ...returned };
 }
 
-describe("Slider (Default)", () => {
-	it("No accessibility violations", async () => {
+describe("slider (Default)", () => {
+	it("no accessibility violations", async () => {
 		const { container } = render(SliderTest);
 
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
-	it("Has a thumb positioned at 30% of the container", async () => {
+	it("has a thumb positioned at 30% of the container", async () => {
 		const { getByTestId } = setup();
 
 		const thumb = getByTestId("thumb");
@@ -46,7 +45,7 @@ describe("Slider (Default)", () => {
 
 		expect(isCloseEnough(30, thumb.style.left)).toBeTruthy();
 	});
-	it("Has a range that covers from 0 to 30%", async () => {
+	it("has a range that covers from 0 to 30%", async () => {
 		const { getByTestId } = setup();
 
 		const range = getByTestId("range");
@@ -56,7 +55,7 @@ describe("Slider (Default)", () => {
 		expect(isCloseEnough(70, range.style.right)).toBeTruthy();
 	});
 
-	test.each([kbd.ARROW_RIGHT, kbd.ARROW_UP])("Change by 1% when pressing %s", async (key) => {
+	it.each([kbd.ARROW_RIGHT, kbd.ARROW_UP])("change by 1% when pressing %s", async (key) => {
 		const { getByTestId } = setup();
 		const user = userEvent.setup();
 
@@ -69,7 +68,7 @@ describe("Slider (Default)", () => {
 		expectPercentage({ percentage: 31, thumb, range });
 	});
 
-	test.each([kbd.ARROW_LEFT, kbd.ARROW_DOWN])("Change by 1% when pressing %s", async (key) => {
+	it.each([kbd.ARROW_LEFT, kbd.ARROW_DOWN])("change by 1% when pressing %s", async (key) => {
 		const { getByTestId } = setup();
 		const user = userEvent.setup();
 
@@ -82,7 +81,7 @@ describe("Slider (Default)", () => {
 		expectPercentage({ percentage: 29, thumb, range });
 	});
 
-	it("Goes to minimum when pressing Home", async () => {
+	it("goes to minimum when pressing Home", async () => {
 		const { getByTestId } = setup();
 		const user = userEvent.setup();
 
@@ -95,7 +94,7 @@ describe("Slider (Default)", () => {
 		expectPercentage({ percentage: 0, thumb, range });
 	});
 
-	it("Goes to maximum when pressing End", async () => {
+	it("goes to maximum when pressing End", async () => {
 		const { getByTestId } = setup();
 		const user = userEvent.setup();
 		const thumb = getByTestId("thumb");
@@ -108,14 +107,14 @@ describe("Slider (Default)", () => {
 	});
 });
 
-describe("Slider (Range)", () => {
-	it("No accessibility violations", async () => {
+describe("slider (Range)", () => {
+	it("no accessibility violations", async () => {
 		const { container } = setup({}, "range");
 
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
-	it("Has a thumb positioned at 20% of the container and one at 80%", async () => {
+	it("has a thumb positioned at 20% of the container and one at 80%", async () => {
 		const { getByTestId } = setup({}, "range");
 
 		const thumb0 = getByTestId("thumb-0");
@@ -126,7 +125,7 @@ describe("Slider (Range)", () => {
 		expect(isCloseEnough(20, thumb0.style.left)).toBeTruthy();
 		expect(isCloseEnough(80, thumb1.style.left)).toBeTruthy();
 	});
-	it("Has a range that covers from 20% to 80%", async () => {
+	it("has a range that covers from 20% to 80%", async () => {
 		const { getByTestId } = setup({}, "range");
 
 		const range = getByTestId("range");
@@ -136,8 +135,8 @@ describe("Slider (Range)", () => {
 		expect(isCloseEnough(20, range.style.right)).toBeTruthy();
 	});
 
-	test.each([kbd.ARROW_RIGHT, kbd.ARROW_UP])(
-		"Change by 1% when pressing %s (pressing on the first thumb)",
+	it.each([kbd.ARROW_RIGHT, kbd.ARROW_UP])(
+		"change by 1% when pressing %s (pressing on the first thumb)",
 		async (key) => {
 			const { getByTestId } = setup({}, "range");
 			const user = userEvent.setup();
@@ -153,8 +152,8 @@ describe("Slider (Range)", () => {
 		}
 	);
 
-	test.each([kbd.ARROW_RIGHT, kbd.ARROW_UP])(
-		"Change by 1% when pressing %s (pressing on the last thumb)",
+	it.each([kbd.ARROW_RIGHT, kbd.ARROW_UP])(
+		"change by 1% when pressing %s (pressing on the last thumb)",
 		async (key) => {
 			const { getByTestId } = setup({}, "range");
 			const user = userEvent.setup();
@@ -170,8 +169,8 @@ describe("Slider (Range)", () => {
 		}
 	);
 
-	test.each([kbd.ARROW_LEFT, kbd.ARROW_DOWN])(
-		"Change by 1% when pressing %s (pressing on the first thumb)",
+	it.each([kbd.ARROW_LEFT, kbd.ARROW_DOWN])(
+		"change by 1% when pressing %s (pressing on the first thumb)",
 		async (key) => {
 			const { getByTestId } = setup({}, "range");
 			const user = userEvent.setup();
@@ -187,8 +186,8 @@ describe("Slider (Range)", () => {
 		}
 	);
 
-	test.each([kbd.ARROW_LEFT, kbd.ARROW_DOWN])(
-		"Change by 1% when pressing %s (pressing on the last thumb)",
+	it.each([kbd.ARROW_LEFT, kbd.ARROW_DOWN])(
+		"change by 1% when pressing %s (pressing on the last thumb)",
 		async (key) => {
 			const { getByTestId } = setup({}, "range");
 			const user = userEvent.setup();
@@ -204,8 +203,8 @@ describe("Slider (Range)", () => {
 		}
 	);
 
-	test.each([kbd.ARROW_RIGHT, kbd.ARROW_UP])(
-		"The handlers swap places when they overlap pressing %s (going up)",
+	it.each([kbd.ARROW_RIGHT, kbd.ARROW_UP])(
+		"the handlers swap places when they overlap pressing %s (going up)",
 		async (key) => {
 			const { getByTestId } = setup(
 				{
@@ -229,8 +228,8 @@ describe("Slider (Range)", () => {
 		}
 	);
 
-	test.each([kbd.ARROW_LEFT, kbd.ARROW_DOWN])(
-		"The handlers swap places when they overlap pressing %s (going down)",
+	it.each([kbd.ARROW_LEFT, kbd.ARROW_DOWN])(
+		"the handlers swap places when they overlap pressing %s (going down)",
 		async (key) => {
 			const { getByTestId } = setup(
 				{
@@ -254,7 +253,7 @@ describe("Slider (Range)", () => {
 		}
 	);
 
-	it("Thumb 0 goes to minimum when pressing Home", async () => {
+	it("thumb 0 goes to minimum when pressing Home", async () => {
 		const { getByTestId } = setup({}, "range");
 		const user = userEvent.setup();
 
@@ -268,7 +267,7 @@ describe("Slider (Range)", () => {
 		expectPercentages({ percentages: [0, 80], thumbs: [thumb0, thumb1], range });
 	});
 
-	it("Thumb 1 goes to maximum when pressing End", async () => {
+	it("thumb 1 goes to maximum when pressing End", async () => {
 		const { getByTestId } = setup({}, "range");
 		const user = userEvent.setup();
 
@@ -282,7 +281,7 @@ describe("Slider (Range)", () => {
 		expectPercentages({ percentages: [20, 100], thumbs: [thumb0, thumb1], range });
 	});
 
-	it("Thumb 1 goes to minimum when pressing Home (thumbs swap places)", async () => {
+	it("thumb 1 goes to minimum when pressing Home (thumbs swap places)", async () => {
 		const { getByTestId } = setup({}, "range");
 		const user = userEvent.setup();
 
@@ -297,7 +296,7 @@ describe("Slider (Range)", () => {
 		expect(thumb0).toHaveFocus();
 	});
 
-	it("Thumb 0 goes to maximum when pressing End (thumbs swap places)", async () => {
+	it("thumb 0 goes to maximum when pressing End (thumbs swap places)", async () => {
 		const { getByTestId } = setup({}, "range");
 		const user = userEvent.setup();
 
@@ -313,8 +312,8 @@ describe("Slider (Range)", () => {
 	});
 });
 
-describe("Slider (Small min, max, step)", () => {
-	it("Has a thumb positioned at 50% of the container", async () => {
+describe("slider (Small min, max, step)", () => {
+	it("has a thumb positioned at 50% of the container", async () => {
 		const { getByTestId } = setup({
 			value: [0.5],
 			min: 0,
@@ -328,7 +327,7 @@ describe("Slider (Small min, max, step)", () => {
 		expect(isCloseEnough(50, thumb.style.left)).toBeTruthy();
 	});
 
-	test.each([kbd.ARROW_RIGHT, kbd.ARROW_UP])("Change by 1% when pressing %s", async (key) => {
+	it.each([kbd.ARROW_RIGHT, kbd.ARROW_UP])("change by 1% when pressing %s", async (key) => {
 		const { getByTestId } = setup({
 			value: [0.5],
 			min: 0,
@@ -347,7 +346,7 @@ describe("Slider (Small min, max, step)", () => {
 		expectPercentage({ percentage: 51, thumb, range });
 	});
 
-	test.each([kbd.ARROW_LEFT, kbd.ARROW_DOWN])("Change by 10% when pressing %s", async (key) => {
+	it.each([kbd.ARROW_LEFT, kbd.ARROW_DOWN])("change by 10% when pressing %s", async (key) => {
 		const { getByTestId } = setup({
 			value: [0.5],
 			min: 0,
@@ -366,8 +365,8 @@ describe("Slider (Small min, max, step)", () => {
 	});
 });
 
-describe("Slider (negative min)", () => {
-	it("Has a thumb positioned at 50% of the container", async () => {
+describe("slider (negative min)", () => {
+	it("has a thumb positioned at 50% of the container", async () => {
 		const { getByTestId } = setup({
 			value: [0],
 			min: -50,
@@ -381,7 +380,7 @@ describe("Slider (negative min)", () => {
 		expect(isCloseEnough(50, thumb.style.left)).toBeTruthy();
 	});
 
-	test.each([kbd.ARROW_RIGHT, kbd.ARROW_UP])("Change by 1% when pressing %s", async (key) => {
+	it.each([kbd.ARROW_RIGHT, kbd.ARROW_UP])("change by 1% when pressing %s", async (key) => {
 		const { getByTestId } = setup({
 			value: [0],
 			min: -50,
@@ -400,7 +399,7 @@ describe("Slider (negative min)", () => {
 		expectPercentage({ percentage: 51, thumb, range });
 	});
 
-	test.each([kbd.ARROW_LEFT, kbd.ARROW_DOWN])("Change by 10% when pressing %s", async (key) => {
+	it.each([kbd.ARROW_LEFT, kbd.ARROW_DOWN])("change by 10% when pressing %s", async (key) => {
 		const { getByTestId } = setup({
 			value: [0],
 			min: -50,
@@ -419,7 +418,7 @@ describe("Slider (negative min)", () => {
 	});
 });
 
-describe("Slider (value=[5], min=0, max=10, step=1)", () => {
+describe("slider (value=[5], min=0, max=10, step=1)", () => {
 	const props = {
 		value: [5],
 		min: 0,
@@ -452,7 +451,7 @@ describe("Slider (value=[5], min=0, max=10, step=1)", () => {
 	});
 });
 
-describe("Slider (min=0, max=8, step=3)", () => {
+describe("slider (min=0, max=8, step=3)", () => {
 	it("3 ticks are rendered", () => {
 		const { getAllByTestId } = setup({
 			min: 0,
@@ -464,7 +463,7 @@ describe("Slider (min=0, max=8, step=3)", () => {
 	});
 });
 
-describe("Slider (min=0, max=9, step=3)", () => {
+describe("slider (min=0, max=9, step=3)", () => {
 	it("4 ticks are rendered", () => {
 		const { getAllByTestId } = setup({
 			min: 0,
@@ -476,7 +475,7 @@ describe("Slider (min=0, max=9, step=3)", () => {
 	});
 });
 
-describe("Slider (value=[3,6], min=0, max=10, step=3)", () => {
+describe("slider (value=[3,6], min=0, max=10, step=3)", () => {
 	const props = {
 		value: [3, 6],
 		min: 0,
@@ -509,7 +508,7 @@ describe("Slider (value=[3,6], min=0, max=10, step=3)", () => {
 	});
 });
 
-describe("Slider changing options after building", () => {
+describe("slider changing options after building", () => {
 	const props = {
 		value: [5],
 		min: 0,
@@ -517,7 +516,7 @@ describe("Slider changing options after building", () => {
 		step: 1,
 	};
 
-	it("Changing min", async () => {
+	it("changing min", async () => {
 		const { getAllByTestId, rerender } = setup(props);
 
 		expect(getAllByTestId("tick")).toHaveLength(11);
@@ -527,7 +526,7 @@ describe("Slider changing options after building", () => {
 		expect(getAllByTestId("tick")).toHaveLength(9);
 	});
 
-	it("Changing max", async () => {
+	it("changing max", async () => {
 		const { getAllByTestId, rerender } = setup(props);
 
 		expect(getAllByTestId("tick")).toHaveLength(11);
@@ -537,7 +536,7 @@ describe("Slider changing options after building", () => {
 		expect(getAllByTestId("tick")).toHaveLength(9);
 	});
 
-	it("Changing step", async () => {
+	it("changing step", async () => {
 		const { getAllByTestId, rerender } = setup(props);
 
 		expect(getAllByTestId("tick")).toHaveLength(11);
@@ -555,7 +554,7 @@ const IS_ENOUGH_CLOSE = 0.0001;
  * so we need to check that we are close enough rather than precisely
  */
 function isCloseEnough(value: number, style: string) {
-	const numStyle = parseFloat(style.replace("%", ""));
+	const numStyle = Number.parseFloat(style.replace("%", ""));
 	return Math.abs(numStyle - value) < IS_ENOUGH_CLOSE;
 }
 
@@ -582,11 +581,11 @@ function expectPercentages({
 	thumbs: HTMLElement[];
 	range: HTMLElement;
 }) {
-	let lesserPercentage = Infinity;
-	let higherPercentage = -Infinity;
+	let lesserPercentage = Number.POSITIVE_INFINITY;
+	let higherPercentage = Number.NEGATIVE_INFINITY;
 	for (let i = 0; i < percentages.length; i++) {
-		const thumb = thumbs[i];
-		const percentage = percentages[i];
+		const thumb = thumbs[i] as HTMLElement;
+		const percentage = percentages[i] as number;
 		if (percentage > higherPercentage) {
 			higherPercentage = percentage;
 		}

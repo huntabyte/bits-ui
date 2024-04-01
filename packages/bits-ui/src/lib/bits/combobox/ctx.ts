@@ -1,15 +1,15 @@
 import { type CreateComboboxProps, createCombobox } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
+import type { Writable } from "svelte/store";
+import { getPositioningUpdater } from "../floating/helpers.js";
+import type { FloatingConfig } from "../floating/floating-config.js";
+import type { FloatingProps } from "../floating/_types.js";
 import {
 	createBitAttrs,
 	generateId,
 	getOptionUpdater,
 	removeUndefined,
 } from "$lib/internal/index.js";
-import { getPositioningUpdater } from "../floating/helpers.js";
-import type { Writable } from "svelte/store";
-import type { FloatingConfig } from "../floating/floating-config.js";
-import type { FloatingProps } from "../floating/_types.js";
 
 function getSelectData() {
 	const NAME = "combobox" as const;
@@ -53,10 +53,7 @@ type Props<T = unknown, M extends boolean = false> = CreateComboboxProps<T, M> &
 	items?: Items<T>[];
 };
 
-export function setCtx<T = unknown, M extends boolean = false>(
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	props: Props<T, M>
-) {
+export function setCtx<T = unknown, M extends boolean = false>(props: Props<T, M>) {
 	const { NAME, PARTS } = getSelectData();
 	const getAttrs = createBitAttrs(NAME, PARTS);
 

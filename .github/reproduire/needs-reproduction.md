@@ -21,7 +21,7 @@ Please ensure that the reproduction is as **minimal** as possible. If there is a
 
 You might also find these other articles interesting and/or helpful:
 
-- [The Importance of Reproductions](https://antfu.me/posts/why-reproductions-are-required)
-- [How to Generate a Minimal, Complete, and Verifiable Example](https://stackoverflow.com/help/mcve)
+-   [The Importance of Reproductions](https://antfu.me/posts/why-reproductions-are-required)
+-   [How to Generate a Minimal, Complete, and Verifiable Example](https://stackoverflow.com/help/mcve)
 
 </details>

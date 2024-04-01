@@ -1,15 +1,9 @@
 import {
-	createBitAttrs,
-	generateId,
-	getOptionUpdater,
-	removeUndefined,
-} from "$lib/internal/index.js";
-import {
-	type CreateDropdownSubmenuProps as DropdownSubmenuProps,
-	type CreateMenuRadioGroupProps as DropdownRadioGroupProps,
 	type Checkbox as CheckboxReturn,
-	type CreateDropdownMenuCheckboxItemProps as DropdownCheckboxItemProps,
 	type CreateDropdownMenuProps,
+	type CreateDropdownMenuCheckboxItemProps as DropdownCheckboxItemProps,
+	type CreateMenuRadioGroupProps as DropdownRadioGroupProps,
+	type CreateDropdownSubmenuProps as DropdownSubmenuProps,
 	createDropdownMenu,
 } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
@@ -17,6 +11,12 @@ import type { Writable } from "svelte/store";
 import { getPositioningUpdater } from "../floating/helpers.js";
 import type { FloatingConfig } from "../floating/floating-config.js";
 import type { FloatingProps } from "../floating/_types.js";
+import {
+	createBitAttrs,
+	generateId,
+	getOptionUpdater,
+	removeUndefined,
+} from "$lib/internal/index.js";
 
 export function getMenuData() {
 	const NAME = "menu" as const;

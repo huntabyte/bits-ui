@@ -1,10 +1,10 @@
-import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 import {
-	createToolbar,
-	type CreateToolbarProps as ToolbarProps,
 	type CreateToolbarGroupProps as ToolbarGroupProps,
+	type CreateToolbarProps as ToolbarProps,
+	createToolbar,
 } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
+import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 
 function getToolbarData() {
 	const NAME = "toolbar" as const;

@@ -11,7 +11,7 @@
 	} from "$lib/components/index.js";
 	import { navigation } from "$lib/config/index.js";
 	import { cn } from "$lib/utils/index.js";
-	import "@/styles/app.postcss";
+	import "$lib/styles/app.postcss";
 </script>
 
 <ModeWatcher />

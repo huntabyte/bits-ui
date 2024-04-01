@@ -1,13 +1,3 @@
-import {
-	domElProps,
-	enums,
-	monthsSlotProp,
-	onOutsideClickProp,
-	union,
-	weekdaysSlotProp,
-} from "$lib/content/api-reference/helpers.js";
-import * as C from "$lib/content/constants.js";
-import type { APISchema } from "$lib/types/index.js";
 import type {
 	DatePickerCalendarPropsWithoutHTML,
 	DatePickerInputPropsWithoutHTML,
@@ -30,6 +20,16 @@ import { label, segment } from "./date-field.js";
 import { focusProp } from "./extended-types/index.js";
 import { builderAndAttrsSlotProps, portalProp } from "./helpers.js";
 import { content, trigger } from "./popover.js";
+import type { APISchema } from "$lib/types/index.js";
+import * as C from "$lib/content/constants.js";
+import {
+	domElProps,
+	enums,
+	monthsSlotProp,
+	onOutsideClickProp,
+	union,
+	weekdaysSlotProp,
+} from "$lib/content/api-reference/helpers.js";
 
 const root: APISchema<DatePickerPropsWithoutHTML> = {
 	title: "Root",

@@ -1,6 +1,6 @@
-import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
-import { createToggle, type CreateToggleProps } from "@melt-ui/svelte";
+import { type CreateToggleProps, createToggle } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
+import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 
 function getToggleData() {
 	const NAME = "toggle" as const;

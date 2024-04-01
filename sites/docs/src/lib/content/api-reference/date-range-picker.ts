@@ -1,13 +1,3 @@
-import {
-	domElProps,
-	enums,
-	monthsSlotProp,
-	onOutsideClickProp,
-	union,
-	weekdaysSlotProp,
-} from "$lib/content/api-reference/helpers.js";
-import * as C from "$lib/content/constants.js";
-import type { APISchema } from "$lib/types/index.js";
 import type {
 	DateRangePickerCalendarPropsWithoutHTML,
 	DateRangePickerInputPropsWithoutHTML,
@@ -30,6 +20,16 @@ import {
 	nextButton,
 	prevButton,
 } from "./range-calendar.js";
+import type { APISchema } from "$lib/types/index.js";
+import * as C from "$lib/content/constants.js";
+import {
+	domElProps,
+	enums,
+	monthsSlotProp,
+	onOutsideClickProp,
+	union,
+	weekdaysSlotProp,
+} from "$lib/content/api-reference/helpers.js";
 
 const root: APISchema<DateRangePickerPropsWithoutHTML> = {
 	title: "Root",

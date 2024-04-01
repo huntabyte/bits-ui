@@ -4,11 +4,10 @@
 </script>
 
 <script lang="ts" generics="T, Multiple extends boolean = false">
-	import { arraysAreEqual } from "$lib/internal/arrays.js";
-
 	import { derived } from "svelte/store";
 	import { setCtx } from "../ctx.js";
 	import type { Props } from "../types.js";
+	import { arraysAreEqual } from "$lib/internal/arrays.js";
 
 	type $$Props = Props<T, Multiple>;
 
@@ -46,8 +45,7 @@
 		forceVisible: true,
 		defaultSelected: Array.isArray(selected)
 			? ([...selected] as $$Props["selected"])
-			: // eslint-disable-next-line @typescript-eslint/no-explicit-any
-			  (selected as any),
+			: (selected as any),
 		defaultOpen: open,
 		onSelectedChange: (({ next }: { next: $$Props["selected"] }) => {
 			if (Array.isArray(next)) {
@@ -64,7 +62,6 @@
 				selected = next;
 			}
 			return next;
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		}) as any,
 		onOpenChange: ({ next }) => {
 			if (open !== next) {
@@ -88,10 +85,7 @@
 	$: open !== undefined && localOpen.set(open);
 	$: selected !== undefined &&
 		localSelected.set(
-			Array.isArray(selected)
-				? ([...selected] as $$Props["selected"])
-				: // eslint-disable-next-line @typescript-eslint/no-explicit-any
-				  (selected as any)
+			Array.isArray(selected) ? ([...selected] as $$Props["selected"]) : (selected as any)
 		);
 
 	$: updateOption("required", required);

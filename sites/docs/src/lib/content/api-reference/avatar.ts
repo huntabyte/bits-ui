@@ -1,12 +1,12 @@
-import { attrsSlotProp, enums } from "$lib/content/api-reference/helpers.js";
-import * as C from "$lib/content/constants.js";
-import type { APISchema } from "$lib/types/index.js";
 import type {
 	AvatarFallbackPropsWithoutHTML,
 	AvatarImagePropsWithoutHTML,
 	AvatarPropsWithoutHTML,
 } from "bits-ui";
 import { builderAndAttrsSlotProps, domElProps } from "./helpers.js";
+import { attrsSlotProp, enums } from "$lib/content/api-reference/helpers.js";
+import * as C from "$lib/content/constants.js";
+import type { APISchema } from "$lib/types/index.js";
 
 export const root: APISchema<AvatarPropsWithoutHTML> = {
 	title: "Root",

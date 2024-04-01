@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { getCtx } from "../ctx.js";
-	import type { CloseProps, CloseEvents } from "../types.js";
+	import type { CloseEvents, CloseProps } from "../types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
 
 	type $$Props = CloseProps;

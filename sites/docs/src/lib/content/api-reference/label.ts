@@ -1,6 +1,6 @@
+import type { LabelPropsWithoutHTML } from "bits-ui";
 import { builderAndAttrsSlotProps, domElProps } from "$lib/content/api-reference/helpers.js";
 import type { APISchema } from "$lib/types/index.js";
-import type { LabelPropsWithoutHTML } from "bits-ui";
 
 export const root: APISchema<LabelPropsWithoutHTML> = {
 	title: "Root",

@@ -1,7 +1,7 @@
 import { type CreateScrollAreaProps, createScrollArea } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
-import { removeUndefined, getOptionUpdater, createBitAttrs } from "$lib/internal/index.js";
 import type { Writable } from "svelte/store";
+import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 
 function getScrollAreaData() {
 	const NAME = "scroll-area" as const;

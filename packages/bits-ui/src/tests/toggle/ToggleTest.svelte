@@ -7,5 +7,6 @@
 
 <main>
 	<button data-testid="binding" on:click={() => (pressed = !pressed)}>{pressed}</button>
-	<Toggle.Root bind:pressed aria-label="toggle" data-testid="root" {...$$restProps}>a</Toggle.Root>
+	<Toggle.Root bind:pressed aria-label="toggle" data-testid="root" {...$$restProps}>a</Toggle.Root
+	>
 </main>

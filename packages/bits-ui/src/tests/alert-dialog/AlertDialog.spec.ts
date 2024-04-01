@@ -1,9 +1,9 @@
-import { render, screen, type Matcher, type MatcherOptions } from "@testing-library/svelte";
+import { type Matcher, type MatcherOptions, render, screen } from "@testing-library/svelte";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
-import AlertDialogTest from "./AlertDialogTest.svelte";
 import { getTestKbd } from "../utils.js";
+import AlertDialogTest from "./AlertDialogTest.svelte";
 import { sleep } from "$lib/internal/index.js";
 import type { AlertDialog } from "$lib/index.js";
 
@@ -37,7 +37,7 @@ async function open(props: AlertDialog.Props = {}) {
 	return { getByTestId, queryByTestId, user };
 }
 
-describe("Alert Dialog", () => {
+describe("alert Dialog", () => {
 	it("has no accessibility violations", async () => {
 		const { container } = render(AlertDialogTest);
 		expect(await axe(container)).toHaveNoViolations();
@@ -145,7 +145,7 @@ describe("Alert Dialog", () => {
 		expect(portalled.parentElement).toEqual(portalTarget);
 	});
 
-	it("Focuses first focusable item upon opening", async () => {
+	it("focuses first focusable item upon opening", async () => {
 		const user = userEvent.setup();
 		const { getByTestId, queryByTestId } = render(AlertDialogTest);
 
@@ -161,7 +161,7 @@ describe("Alert Dialog", () => {
 		expect(document.activeElement).toBe(contentAfter);
 	});
 
-	it("Doesnt close when content is clicked", async () => {
+	it("doesnt close when content is clicked", async () => {
 		const user = userEvent.setup();
 		const { getByTestId, queryByTestId } = render(AlertDialogTest);
 
@@ -177,7 +177,7 @@ describe("Alert Dialog", () => {
 		expect(contentAfter2).not.toBeNull();
 	});
 
-	it("Respects binding to the `open` prop", async () => {
+	it("respects binding to the `open` prop", async () => {
 		const user = userEvent.setup();
 		const { getByTestId, queryByTestId } = render(AlertDialogTest);
 
@@ -197,7 +197,9 @@ describe("Alert Dialog", () => {
 
 	it("respects the `closeOnOutsideClick` prop", async () => {
 		const user = userEvent.setup();
-		const { getByTestId, queryByTestId } = render(AlertDialogTest, { closeOnOutsideClick: false });
+		const { getByTestId, queryByTestId } = render(AlertDialogTest, {
+			closeOnOutsideClick: false,
+		});
 
 		const trigger = getByTestId("trigger");
 		const content = queryByTestId("content");

@@ -13,7 +13,7 @@ function setup(props: Separator.Props = {}) {
 	return { root, user, ...returned };
 }
 
-describe("Separator", () => {
+describe("separator", () => {
 	it("has no accessibility violations", async () => {
 		const { container } = render(SeparatorTest);
 		expect(await axe(container)).toHaveNoViolations();

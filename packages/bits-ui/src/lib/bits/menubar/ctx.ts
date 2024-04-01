@@ -1,16 +1,16 @@
 import {
-	createMenubar,
-	type CreateMenubarProps as MenubarProps,
-	type CreateMenubarSubmenuProps,
 	type CreateMenubarMenuProps,
+	type CreateMenubarSubmenuProps,
+	type CreateMenubarProps as MenubarProps,
+	createMenubar,
 } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
-import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
-import { getPositioningUpdater } from "../floating/helpers.js";
 import type { Writable } from "svelte/store";
+import { getPositioningUpdater } from "../floating/helpers.js";
 import type { FloatingConfig } from "../floating/floating-config.js";
 import type { FloatingProps } from "../floating/_types.js";
 import { getSubmenuCtx } from "../menu/ctx.js";
+import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 
 function getMenubarData() {
 	const NAME = "menubar" as const;

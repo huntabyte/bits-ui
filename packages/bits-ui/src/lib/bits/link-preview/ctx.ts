@@ -1,10 +1,10 @@
-import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
-import { createLinkPreview, type CreateLinkPreviewProps } from "@melt-ui/svelte";
+import { type CreateLinkPreviewProps, createLinkPreview } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
+import type { Writable } from "svelte/store";
 import { getPositioningUpdater } from "../floating/helpers.js";
 import type { FloatingProps } from "../floating/_types.js";
-import type { Writable } from "svelte/store";
 import type { FloatingConfig } from "../floating/floating-config.js";
+import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 
 export function getLinkPreviewData() {
 	const NAME = "link-preview" as const;

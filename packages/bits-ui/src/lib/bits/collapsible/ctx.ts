@@ -1,6 +1,6 @@
-import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
-import { createCollapsible, type CreateCollapsibleProps } from "@melt-ui/svelte";
+import { type CreateCollapsibleProps, createCollapsible } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
+import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 
 export function getCollapsibleData() {
 	const NAME = "collapsible" as const;

@@ -1,13 +1,3 @@
-import {
-	attrsSlotProp,
-	enums,
-	idsSlotProp,
-	portalProp,
-	transitionProps,
-	union,
-} from "$lib/content/api-reference/helpers.js";
-import * as C from "$lib/content/constants.js";
-import type { APISchema, DataAttrSchema, PropObj } from "$lib/types/index.js";
 import type {
 	DropdownMenuArrowPropsWithoutHTML,
 	DropdownMenuCheckboxIndicatorPropsWithoutHTML,
@@ -29,6 +19,16 @@ import type {
 import { focusProp } from "./extended-types/index.js";
 import { floatingPositioning } from "./floating.js";
 import { builderAndAttrsSlotProps, domElProps, onOutsideClickProp } from "./helpers.js";
+import type { APISchema, DataAttrSchema, PropObj } from "$lib/types/index.js";
+import * as C from "$lib/content/constants.js";
+import {
+	attrsSlotProp,
+	enums,
+	idsSlotProp,
+	portalProp,
+	transitionProps,
+	union,
+} from "$lib/content/api-reference/helpers.js";
 
 const props = {
 	preventScroll: {

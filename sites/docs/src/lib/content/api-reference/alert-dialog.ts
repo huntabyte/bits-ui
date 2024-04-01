@@ -1,3 +1,14 @@
+import type {
+	AlertDialogActionPropsWithoutHTML,
+	AlertDialogCancelPropsWithoutHTML,
+	AlertDialogContentPropsWithoutHTML,
+	AlertDialogDescriptionPropsWithoutHTML,
+	AlertDialogOverlayPropsWithoutHTML,
+	AlertDialogPortalPropsWithoutHTML,
+	AlertDialogPropsWithoutHTML,
+	AlertDialogTitlePropsWithoutHTML,
+	AlertDialogTriggerPropsWithoutHTML,
+} from "bits-ui";
 import { focusProp } from "$lib/content/api-reference/extended-types/index.js";
 import {
 	builderAndAttrsSlotProps,
@@ -10,17 +21,6 @@ import {
 } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/api.js";
-import type {
-	AlertDialogActionPropsWithoutHTML,
-	AlertDialogCancelPropsWithoutHTML,
-	AlertDialogContentPropsWithoutHTML,
-	AlertDialogDescriptionPropsWithoutHTML,
-	AlertDialogOverlayPropsWithoutHTML,
-	AlertDialogPortalPropsWithoutHTML,
-	AlertDialogPropsWithoutHTML,
-	AlertDialogTitlePropsWithoutHTML,
-	AlertDialogTriggerPropsWithoutHTML,
-} from "bits-ui";
 
 const root: APISchema<AlertDialogPropsWithoutHTML> = {
 	title: "Root",

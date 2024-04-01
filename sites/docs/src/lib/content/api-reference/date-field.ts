@@ -1,6 +1,3 @@
-import { domElProps, enums, idsSlotProp, union } from "$lib/content/api-reference/helpers.js";
-import * as C from "$lib/content/constants.js";
-import type { APISchema } from "$lib/types/index.js";
 import type {
 	DateFieldInputPropsWithoutHTML,
 	DateFieldLabelPropsWithoutHTML,
@@ -8,6 +5,9 @@ import type {
 	DateFieldSegmentPropsWithoutHTML,
 } from "bits-ui";
 import { builderAndAttrsSlotProps } from "./helpers.js";
+import { domElProps, enums, idsSlotProp, union } from "$lib/content/api-reference/helpers.js";
+import * as C from "$lib/content/constants.js";
+import type { APISchema } from "$lib/types/index.js";
 
 export const root: APISchema<DateFieldPropsWithoutHTML> = {
 	title: "Root",

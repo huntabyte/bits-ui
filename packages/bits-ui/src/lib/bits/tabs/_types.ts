@@ -19,6 +19,7 @@ type Props = Expand<
 		 * The value of the currently active tab.
 		 * You can bind this to a string value to programmatically control the active tab.
 		 */
+		// eslint-disable-next-line ts/ban-types
 		value?: CreateTabsProps["defaultValue"] & {};
 
 		/**
@@ -31,6 +32,7 @@ type Props = Expand<
 		 *
 		 * @defaultValue "horizontal"
 		 */
+		// eslint-disable-next-line ts/ban-types
 		orientation?: CreateTabsProps["orientation"] & {};
 	} & DOMElement
 >;

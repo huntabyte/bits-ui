@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { melt, type Month } from "@melt-ui/svelte";
+	import { type Month, melt } from "@melt-ui/svelte";
+	import type { DateValue } from "@internationalized/date";
 	import { getCtx } from "../ctx.js";
 	import type { CalendarEvents, CalendarProps } from "../types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
-	import type { DateValue } from "@internationalized/date";
 
 	type $$Props = CalendarProps;
 	type $$Events = CalendarEvents;

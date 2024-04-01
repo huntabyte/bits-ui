@@ -4,7 +4,7 @@ import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import LabelTest from "./LabelTest.svelte";
 
-describe("Label", () => {
+describe("label", () => {
 	it("has no accessibility violations", async () => {
 		const { container } = render(LabelTest);
 		expect(await axe(container)).toHaveNoViolations();

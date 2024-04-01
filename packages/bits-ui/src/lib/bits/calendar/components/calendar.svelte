@@ -1,14 +1,13 @@
 <script lang="ts">
-	import { arraysAreEqual } from "$lib/internal/arrays.js";
-
 	import type { DateValue } from "@internationalized/date";
 
-	import { handleCalendarInitialFocus } from "$lib/internal/focus.js";
-	import { createDispatcher } from "$lib/internal/events.js";
-	import { melt, type Month } from "@melt-ui/svelte";
+	import { type Month, melt } from "@melt-ui/svelte";
 	import { onMount } from "svelte";
 	import { setCtx } from "../ctx.js";
 	import type { Props } from "../types.js";
+	import { createDispatcher } from "$lib/internal/events.js";
+	import { handleCalendarInitialFocus } from "$lib/internal/focus.js";
+	import { arraysAreEqual } from "$lib/internal/arrays.js";
 
 	type Multiple = $$Generic<boolean>;
 	type $$Props = Props<Multiple>;
@@ -95,11 +94,7 @@
 		ids.calendar.set(id);
 	}
 
-	$: value !== undefined &&
-		localValue.set(
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			Array.isArray(value) ? [...value] : (value as any)
-		);
+	$: value !== undefined && localValue.set(Array.isArray(value) ? [...value] : (value as any));
 	$: placeholder !== undefined && localPlaceholder.set(placeholder);
 
 	$: updateOption("preventDeselect", preventDeselect);

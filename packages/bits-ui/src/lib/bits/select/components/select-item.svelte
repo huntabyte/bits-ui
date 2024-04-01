@@ -27,8 +27,7 @@
 	$: isSelected = $isSelectedStore(value);
 </script>
 
-<!-- svelte-ignore a11y-no-static-element-interactions / applied by melt's builder-->
-
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 {#if asChild}
 	<slot {builder} {isSelected} />
 {:else}
@@ -44,7 +43,7 @@
 		on:pointerleave
 	>
 		<slot {builder} {isSelected}>
-			{label ? label : value}
+			{label || value}
 		</slot>
 	</div>
 {/if}

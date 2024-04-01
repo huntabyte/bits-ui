@@ -1,7 +1,7 @@
-import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
-import { createContextMenu, type CreateContextMenuProps } from "@melt-ui/svelte";
+import { type CreateContextMenuProps, createContextMenu } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
 import type { Writable } from "svelte/store";
+import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 import { getPositioningUpdater } from "$lib/bits/floating/helpers.js";
 import type { FloatingConfig } from "$lib/bits/floating/floating-config.js";
 import type { FloatingProps } from "$lib/bits/floating/_types.js";

@@ -1,12 +1,3 @@
-import {
-	attrsSlotProp,
-	enums,
-	monthsSlotProp,
-	union,
-	weekdaysSlotProp,
-} from "$lib/content/api-reference/helpers.js";
-import * as C from "$lib/content/constants.js";
-import type { APISchema } from "$lib/types/index.js";
 import type {
 	RangeCalendarCellPropsWithoutHTML,
 	RangeCalendarDayPropsWithoutHTML,
@@ -22,6 +13,15 @@ import type {
 	RangeCalendarPropsWithoutHTML,
 } from "bits-ui";
 import { builderAndAttrsSlotProps, domElProps } from "./helpers.js";
+import {
+	attrsSlotProp,
+	enums,
+	monthsSlotProp,
+	union,
+	weekdaysSlotProp,
+} from "$lib/content/api-reference/helpers.js";
+import * as C from "$lib/content/constants.js";
+import type { APISchema } from "$lib/types/index.js";
 
 export const root: APISchema<RangeCalendarPropsWithoutHTML> = {
 	title: "Root",

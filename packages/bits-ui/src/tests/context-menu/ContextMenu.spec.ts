@@ -2,8 +2,8 @@ import { render, screen, waitFor } from "@testing-library/svelte";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
-import ContextMenuTest from "./ContextMenuTest.svelte";
 import { getTestKbd } from "../utils.js";
+import ContextMenuTest from "./ContextMenuTest.svelte";
 import type { ContextMenuTestProps } from "./ContextMenuTest.svelte";
 
 const kbd = getTestKbd();
@@ -52,7 +52,7 @@ async function openSubmenu(props: Awaited<ReturnType<typeof open>>) {
 	};
 }
 
-describe("Context Menu", () => {
+describe("context Menu", () => {
 	it("has no accessibility violations", async () => {
 		const { container } = render(ContextMenuTest);
 		expect(await axe(container)).toHaveNoViolations();
@@ -87,7 +87,7 @@ describe("Context Menu", () => {
 		expect(subContent).toHaveAttribute(`data-menu-sub-content`);
 	});
 
-	it("Opens when right-clicked & respects binding", async () => {
+	it("opens when right-clicked & respects binding", async () => {
 		const { getByTestId, queryByTestId, user, trigger } = setup();
 		const binding = getByTestId("binding");
 		expect(binding).toHaveTextContent("false");
@@ -96,7 +96,7 @@ describe("Context Menu", () => {
 		expect(binding).toHaveTextContent("true");
 	});
 
-	it("Manages focus correctly when opened with pointer", async () => {
+	it("manages focus correctly when opened with pointer", async () => {
 		const { getByTestId, user } = await open();
 
 		const item = getByTestId("item");
@@ -106,7 +106,7 @@ describe("Context Menu", () => {
 		expect(item).toHaveFocus();
 	});
 
-	it("Opens submenu with keyboard on subtrigger", async () => {
+	it("opens submenu with keyboard on subtrigger", async () => {
 		const { getByTestId, queryByTestId, user } = await open();
 
 		await user.keyboard(kbd.ARROW_DOWN);
@@ -119,7 +119,7 @@ describe("Context Menu", () => {
 		await waitFor(() => expect(getByTestId("sub-item")).toHaveFocus());
 	});
 
-	it("Toggles the checkbox item when clicked & respects binding", async () => {
+	it("toggles the checkbox item when clicked & respects binding", async () => {
 		const { getByTestId, user, trigger } = await open();
 		const checkedBinding = getByTestId("checked-binding");
 		const indicator = getByTestId("checkbox-indicator");
@@ -139,7 +139,7 @@ describe("Context Menu", () => {
 		expect(getByTestId("checkbox-indicator")).toHaveTextContent("checked");
 	});
 
-	it("Toggles checkbox items within submenus when clicked & respects binding", async () => {
+	it("toggles checkbox items within submenus when clicked & respects binding", async () => {
 		const props = await open();
 		const { getByTestId, user, trigger } = props;
 		await openSubmenu(props);
@@ -163,7 +163,7 @@ describe("Context Menu", () => {
 		expect(getByTestId("sub-checkbox-indicator")).toHaveTextContent("checked");
 	});
 
-	it("Checks the radio item when clicked & respects binding", async () => {
+	it("checks the radio item when clicked & respects binding", async () => {
 		const { getByTestId, queryByTestId, user, trigger } = await open();
 		const radioBinding = getByTestId("radio-binding");
 		const indicator = queryByTestId("radio-indicator-1");
@@ -192,7 +192,7 @@ describe("Context Menu", () => {
 		expect(queryByTestId("radio-indicator-2")).toBeNull();
 	});
 
-	it("Skips over disabled items when navigating with the keyboard", async () => {
+	it("skips over disabled items when navigating with the keyboard", async () => {
 		const { user, getByTestId } = await open();
 		await user.keyboard(kbd.ARROW_DOWN);
 		await user.keyboard(kbd.ARROW_DOWN);

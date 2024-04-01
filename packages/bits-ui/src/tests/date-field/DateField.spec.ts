@@ -2,18 +2,18 @@ import { render } from "@testing-library/svelte";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
-import { getTestKbd } from "../utils.js";
-import DateFieldTest from "./DateFieldTest.svelte";
-import type { DateField } from "$lib/index.js";
 import {
 	CalendarDate,
 	CalendarDateTime,
-	toZoned,
-	type TimeFields,
 	type DateFields,
+	type TimeFields,
 	now,
 	parseAbsoluteToLocal,
+	toZoned,
 } from "@internationalized/date";
+import { getTestKbd } from "../utils.js";
+import DateFieldTest from "./DateFieldTest.svelte";
+import type { DateField } from "$lib/index.js";
 
 const kbd = getTestKbd();
 
@@ -34,7 +34,7 @@ function setup(props: DateField.Props = {}) {
 	return { ...returned, user, month, day, year, value, input, label };
 }
 
-describe("Date Field", () => {
+describe("date Field", () => {
 	it("has no axe violations", async () => {
 		const { container } = setup();
 		expect(await axe(container)).toHaveNoViolations();
@@ -278,7 +278,9 @@ describe("Date Field", () => {
 			expect(segment).toHaveFocus();
 			await user.keyboard(kbd.ARROW_UP);
 			expect(segment).toHaveTextContent(
-				String(zonedDateTime[segment.dataset.segment as keyof TimeFields | keyof DateFields])
+				String(
+					zonedDateTime[segment.dataset.segment as keyof TimeFields | keyof DateFields]
+				)
 			);
 		}
 	});
@@ -514,7 +516,6 @@ describe("Date Field", () => {
 	});
 });
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function getTimeSegments(getByTestId: (...args: any[]) => HTMLElement) {
 	return {
 		hour: getByTestId("hour"),

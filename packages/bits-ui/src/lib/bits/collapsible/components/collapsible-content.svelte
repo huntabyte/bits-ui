@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import type { Transition } from "$lib/internal/types.js";
 	import type { ContentProps } from "../types.js";
 	import { getCtx } from "../ctx.js";
+	import type { Transition } from "$lib/internal/types.js";
 
 	type T = $$Generic<Transition>;
 	type In = $$Generic<Transition>;
@@ -33,7 +33,12 @@
 {#if asChild && $open}
 	<slot {builder} />
 {:else if transition && $open}
-	<div bind:this={el} transition:transition={transitionConfig} use:melt={builder} {...$$restProps}>
+	<div
+		bind:this={el}
+		transition:transition={transitionConfig}
+		use:melt={builder}
+		{...$$restProps}
+	>
 		<slot {builder} />
 	</div>
 {:else if inTransition && outTransition && $open}

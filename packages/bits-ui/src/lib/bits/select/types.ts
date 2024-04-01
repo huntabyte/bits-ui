@@ -1,19 +1,19 @@
-import type { HTMLDivAttributes, Transition } from "$lib/internal/index.js";
 import type {
 	EventHandler,
 	HTMLAttributes,
 	HTMLButtonAttributes,
 	HTMLInputAttributes,
 } from "svelte/elements";
-import type { CustomEventHandler } from "$lib/index.js";
 import type * as I from "./_types.js";
+import type { HTMLDivAttributes, Transition } from "$lib/internal/index.js";
+import type { CustomEventHandler } from "$lib/index.js";
 
 type Props<T, Multiple extends boolean = false> = I.Props<T, Multiple>;
 
 type ContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
-	Out extends Transition = Transition
+	Out extends Transition = Transition,
 > = I.ContentProps<T, In, Out> & HTMLDivAttributes;
 
 type GroupProps = I.GroupProps & HTMLDivAttributes;

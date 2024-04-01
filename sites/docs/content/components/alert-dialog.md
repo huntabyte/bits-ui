@@ -4,7 +4,7 @@ description: A modal window that alerts users with important information and awa
 ---
 
 <script>
-	import { APISection, ComponentPreview, AlertDialogDemo } from '@/components/index.js'
+	import { APISection, ComponentPreview, AlertDialogDemo } from '$lib/components/index.js'
 	export let schemas;
 </script>
 

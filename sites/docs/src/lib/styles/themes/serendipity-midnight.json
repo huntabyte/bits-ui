@@ -620,7 +620,12 @@
 			}
 		},
 		{
-			"scope": ["variable.other", "variable.language", "variable.function", "variable.argument"],
+			"scope": [
+				"variable.other",
+				"variable.language",
+				"variable.function",
+				"variable.argument"
+			],
 			"settings": {
 				"foreground": "#DEE0EF"
 			}

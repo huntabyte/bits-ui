@@ -24,7 +24,7 @@ async function open(props: Tooltip.Props = {}) {
 	return { trigger, getByTestId, queryByTestId, user, content };
 }
 
-describe("Tooltip", () => {
+describe("tooltip", () => {
 	it("has no accessibility violations", async () => {
 		const { container } = render(TooltipTest);
 		expect(await axe(container)).toHaveNoViolations();

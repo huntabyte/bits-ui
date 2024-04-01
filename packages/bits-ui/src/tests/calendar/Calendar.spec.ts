@@ -2,12 +2,12 @@ import { render } from "@testing-library/svelte";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
-import { getTestKbd } from "../utils.js";
-import CalendarTest from "./CalendarTest.svelte";
-import type { Calendar } from "$lib/index.js";
 import { CalendarDate, CalendarDateTime, toZoned } from "@internationalized/date";
-import CalendarMultiTest from "./CalendarMultiTest.svelte";
+import { getTestKbd } from "../utils.js";
 import { getSelectedDay, getSelectedDays } from "../helpers/calendar.js";
+import CalendarTest from "./CalendarTest.svelte";
+import CalendarMultiTest from "./CalendarMultiTest.svelte";
+import type { Calendar } from "$lib/index.js";
 
 const kbd = getTestKbd();
 
@@ -37,7 +37,7 @@ function setupMulti(props: Calendar.Props<true> = {}) {
 	return { ...returned, user, calendar };
 }
 
-describe("Calendar", () => {
+describe("calendar", () => {
 	it("has no accessibility violations", async () => {
 		const { container } = render(CalendarTest);
 		expect(await axe(container)).toHaveNoViolations();
@@ -122,7 +122,7 @@ describe("Calendar", () => {
 		const nextBtn = getByTestId("next-button");
 
 		for (const month of months) {
-			expect(heading).toHaveTextContent(month + " 1980");
+			expect(heading).toHaveTextContent(`${month} 1980`);
 			await user.click(nextBtn);
 		}
 		expect(heading).toHaveTextContent("January 1981");
@@ -140,7 +140,7 @@ describe("Calendar", () => {
 		await user.click(prevBtn);
 
 		for (const month of newMonths) {
-			expect(heading).toHaveTextContent(month + " 1979");
+			expect(heading).toHaveTextContent(`${month} 1979`);
 			await user.click(prevBtn);
 		}
 		expect(heading).toHaveTextContent("January 1979");
@@ -204,7 +204,10 @@ describe("Calendar", () => {
 	});
 
 	it("displays multiple months when `numberOfMonths` is greater than 1", async () => {
-		const { getByTestId, calendar, user } = setup({ value: calendarDateTime, numberOfMonths: 2 });
+		const { getByTestId, calendar, user } = setup({
+			value: calendarDateTime,
+			numberOfMonths: 2,
+		});
 
 		const selectedDay = getSelectedDay(calendar);
 		expect(selectedDay).toHaveTextContent(String(calendarDateTime.day));
@@ -557,7 +560,7 @@ describe("Calendar", () => {
 	});
 });
 
-describe("Calendar - `multiple`", () => {
+describe("calendar - `multiple`", () => {
 	it("handles default value when `value` prop is provided - `CalendarDate[]`", async () => {
 		const d1 = new CalendarDate(1980, 1, 2);
 		const d2 = new CalendarDate(1980, 1, 5);

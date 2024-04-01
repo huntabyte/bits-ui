@@ -6,5 +6,5 @@ type ContextFloatingProps = Omit<FloatingProps, "sameWidth" | "side" | "sideOffs
 export type ContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
-	Out extends Transition = Transition
+	Out extends Transition = Transition,
 > = Expand<ContextFloatingProps & TransitionProps<T, In, Out> & DOMElement>;

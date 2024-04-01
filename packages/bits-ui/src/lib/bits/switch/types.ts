@@ -1,7 +1,7 @@
-import type { DOMEl, HTMLSpanAttributes } from "$lib/internal/index.js";
 import type { HTMLButtonAttributes, HTMLInputAttributes } from "svelte/elements";
-import type { CustomEventHandler } from "$lib/index.js";
 import type * as I from "./_types.js";
+import type { DOMEl, HTMLSpanAttributes } from "$lib/internal/index.js";
+import type { CustomEventHandler } from "$lib/index.js";
 
 type Props = I.Props & HTMLButtonAttributes;
 

@@ -1,6 +1,6 @@
-import type { CustomEventHandler } from "$lib/index.js";
 import type { HTMLLabelAttributes } from "svelte/elements";
 import type * as I from "./_types.js";
+import type { CustomEventHandler } from "$lib/index.js";
 
 type Props = I.Props & HTMLLabelAttributes;
 

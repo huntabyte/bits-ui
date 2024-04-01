@@ -3,8 +3,8 @@ import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import { getTestKbd } from "../utils.js";
-import type { PinInput } from "$lib/index.js";
 import PinInputTest from "./PinInputTest.svelte";
+import type { PinInput } from "$lib/index.js";
 
 const kbd = getTestKbd();
 
@@ -33,7 +33,7 @@ function setup(props: PinInput.Props = {}) {
 	};
 }
 
-describe("PIN Input", () => {
+describe("pIN Input", () => {
 	it("has no accessibility violations", async () => {
 		const { container } = render(PinInputTest);
 		expect(await axe(container)).toHaveNoViolations();
@@ -84,14 +84,14 @@ describe("PIN Input", () => {
 	});
 
 	it("inputs should fire the `onChange` callback when changing", async () => {
-		let newValue = undefined;
+		let newValue;
 		function onValueChange(next: string[] | undefined) {
 			newValue = next;
 		}
 
 		const { user, input3 } = setup({
 			value: ["1", "2", "3", "4", "5"],
-			onValueChange: onValueChange,
+			onValueChange,
 		});
 
 		input3.focus();

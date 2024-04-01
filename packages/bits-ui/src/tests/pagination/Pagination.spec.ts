@@ -2,9 +2,9 @@
 import { render } from "@testing-library/svelte";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
-import type { Pagination } from "$lib/index.js";
-import PaginationTest from "./PaginationTest.svelte";
 import { isHTMLElement } from "@melt-ui/svelte/internal/helpers";
+import PaginationTest from "./PaginationTest.svelte";
+import type { Pagination } from "$lib/index.js";
 
 function setup(props: Pagination.Props = { count: 100 }) {
 	const user = userEvent.setup();
@@ -37,13 +37,13 @@ function getValue(el: HTMLElement) {
 	return el.querySelector("[data-selected]")?.getAttribute("data-value");
 }
 
-describe("Pagination", () => {
-	test("No accessibility violations", async () => {
+describe("pagination", () => {
+	it("no accessibility violations", async () => {
 		const { container } = render(PaginationTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
-	test("Previous and Next button should work accordingly", async () => {
+	it("previous and Next button should work accordingly", async () => {
 		const { root, prev, next } = setup();
 
 		await expect(getValue(root)).toBe("1");
@@ -57,7 +57,7 @@ describe("Pagination", () => {
 		await expect(getValue(root)).toBe("2");
 	});
 
-	test("Should change on clicked button", async () => {
+	it("should change on clicked button", async () => {
 		const { getByTestId } = await render(PaginationTest);
 
 		const root = getByTestId("root");

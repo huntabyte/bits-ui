@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { createDispatcher } from "$lib/internal/events.js";
-	import { getCtx } from "../ctx.js";
 	import { melt } from "@melt-ui/svelte";
+	import { getCtx } from "../ctx.js";
 	import type { PageEvents, PageProps } from "../types.js";
+	import { createDispatcher } from "$lib/internal/events.js";
 
 	type $$Props = PageProps;
 	type $$Events = PageEvents;

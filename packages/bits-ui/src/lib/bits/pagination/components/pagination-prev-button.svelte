@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { PrevButtonEvents, PrevButtonProps } from "../types.js";
-	import { createDispatcher } from "$lib/internal/events.js";
-	import { getCtx } from "../ctx.js";
 	import { melt } from "@melt-ui/svelte";
+	import type { PrevButtonEvents, PrevButtonProps } from "../types.js";
+	import { getCtx } from "../ctx.js";
+	import { createDispatcher } from "$lib/internal/events.js";
 
 	type $$Props = PrevButtonProps;
 	type $$Events = PrevButtonEvents;

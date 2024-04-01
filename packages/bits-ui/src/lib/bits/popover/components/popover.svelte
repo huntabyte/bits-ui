@@ -1,7 +1,7 @@
 <script lang="ts">
+	import { derived } from "svelte/store";
 	import type { Props } from "../types.js";
 	import { setCtx } from "../ctx.js";
-	import { derived } from "svelte/store";
 
 	type $$Props = Props;
 	export let disableFocusTrap: $$Props["disableFocusTrap"] = undefined;

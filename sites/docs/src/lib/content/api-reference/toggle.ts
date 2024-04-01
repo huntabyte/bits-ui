@@ -1,7 +1,7 @@
+import type { TogglePropsWithoutHTML } from "bits-ui";
 import { builderAndAttrsSlotProps, domElProps, enums } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
-import type { TogglePropsWithoutHTML } from "bits-ui";
 
 const root: APISchema<TogglePropsWithoutHTML> = {
 	title: "Root",

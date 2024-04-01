@@ -4,8 +4,8 @@
  * but we don't want to document the HTML attributes.
  */
 
-import type { DOMElement, Expand, OmitIds } from "$lib/internal/index.js";
 import type { CreateMenubarProps } from "@melt-ui/svelte";
+import type { DOMElement, Expand, OmitIds } from "$lib/internal/index.js";
 
 type Props = Expand<OmitIds<CreateMenubarProps> & DOMElement>;
 

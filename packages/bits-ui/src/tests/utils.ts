@@ -1,5 +1,5 @@
-import { getKbd } from "$lib/internal/index.js";
 import type { Matcher, MatcherOptions } from "@testing-library/svelte";
+import { getKbd } from "$lib/internal/index.js";
 
 /**
  * A wrapper around the internal kbd object to make it easier to use in tests
@@ -10,10 +10,13 @@ export type KbdKeys = keyof ReturnType<typeof getKbd>;
 export function getTestKbd() {
 	const kbd = getKbd();
 
-	const initTestKbd: Record<KbdKeys, string> = Object.entries(kbd).reduce((acc, [key, value]) => {
-		acc[key as KbdKeys] = `{${value}}`;
-		return acc;
-	}, {} as Record<KbdKeys, string>);
+	const initTestKbd: Record<KbdKeys, string> = Object.entries(kbd).reduce(
+		(acc, [key, value]) => {
+			acc[key as KbdKeys] = `{${value}}`;
+			return acc;
+		},
+		{} as Record<KbdKeys, string>
+	);
 
 	return {
 		...initTestKbd,

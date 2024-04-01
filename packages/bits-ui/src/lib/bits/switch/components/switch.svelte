@@ -2,8 +2,8 @@
 	import { melt } from "@melt-ui/svelte";
 	import { setCtx } from "../ctx.js";
 	import type { Events, Props } from "../types.js";
-	import { createDispatcher } from "$lib/internal/events.js";
 	import SwitchInput from "./switch-input.svelte";
+	import { createDispatcher } from "$lib/internal/events.js";
 
 	type $$Props = Props;
 	type $$Events = Events;

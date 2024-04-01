@@ -4,9 +4,9 @@
  * but we don't want to document the HTML attributes.
  */
 
-import type { Expand, OnChangeFn, OmitFloating, DOMElement } from "$lib/internal/index.js";
-import type { ArrowProps, ContentProps } from "$lib/bits/floating/_types.js";
 import type { CreateLinkPreviewProps } from "@melt-ui/svelte";
+import type { DOMElement, Expand, OmitFloating, OnChangeFn } from "$lib/internal/index.js";
+import type { ArrowProps, ContentProps } from "$lib/bits/floating/_types.js";
 
 type Props = Expand<
 	OmitFloating<CreateLinkPreviewProps> & {

@@ -1,6 +1,6 @@
+import { URL, fileURLToPath } from "node:url";
 import { sveltekit } from "@sveltejs/kit/vite";
 import { defineConfig } from "vitest/config";
-import { fileURLToPath, URL } from "url";
 
 export default defineConfig({
 	plugins: [sveltekit()],

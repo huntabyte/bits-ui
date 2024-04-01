@@ -1,15 +1,16 @@
+/* eslint-disable ts/ban-types */
 /**
  * Shared internal types for the various menu components.
  */
-import type { DOMElement, OmitChecked, OmitFloating, OnChangeFn } from "$lib/internal/index.js";
 import type {
-	CreateContextMenuCheckboxItemProps,
-	CreateContextMenuRadioGroupProps,
 	ContextMenuRadioItemProps,
-	CreateContextSubmenuProps,
+	CreateContextMenuCheckboxItemProps,
 	CreateContextMenuProps,
+	CreateContextMenuRadioGroupProps,
+	CreateContextSubmenuProps,
 } from "@melt-ui/svelte";
-import type { ArrowProps as FloatingArrowProps, ContentProps } from "$lib/bits/floating/_types.js";
+import type { DOMElement, OmitChecked, OmitFloating, OnChangeFn } from "$lib/internal/index.js";
+import type { ContentProps, ArrowProps as FloatingArrowProps } from "$lib/bits/floating/_types.js";
 
 export type Props = Expand<
 	OmitFloating<CreateContextMenuProps> & {

@@ -4,7 +4,6 @@ import type { TransitionConfig } from "svelte/transition";
 import type { CreateDispatcher } from "./index.js";
 
 export type ObjectVariation<T> = T extends object ? T : never;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Transition = (node: Element, params?: any) => TransitionConfig;
 export type TransitionParams<T extends Transition> = Parameters<T>[1];
 
@@ -49,12 +48,11 @@ export type ExpandDeep<T> = T extends object
 
 export type Prettify<T> = {
 	[K in keyof T]: T[K];
-	// eslint-disable-next-line @typescript-eslint/ban-types
+	// eslint-disable-next-line ts/ban-types
 } & {};
 
 export type Builder = {
 	[x: PropertyKey]: unknown;
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	action: Action<HTMLElement, any, any>;
 };
 
@@ -98,7 +96,7 @@ export type AsChild = Expand<{
 export type TransitionProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
-	Out extends Transition = Transition
+	Out extends Transition = Transition,
 > = Expand<{
 	/**
 	 * A transition function to use during both the in and out transitions.

@@ -1,29 +1,29 @@
-import type { HTMLDivAttributes, HTMLSpanAttributes } from "$lib/internal/index.js";
 import type * as I from "./_types.js";
+import type { HTMLDivAttributes, HTMLSpanAttributes } from "$lib/internal/index.js";
 import type {
+	Events as CalendarEvents,
 	CellProps,
+	DayEvents,
 	DayProps,
 	GridBodyProps,
 	GridHeadProps,
-	GridRowProps,
 	GridProps,
+	GridRowProps,
 	HeadCellProps,
 	HeaderProps,
 	HeadingProps,
-	NextButtonProps,
-	PrevButtonProps,
 	NextButtonEvents,
+	NextButtonProps,
 	PrevButtonEvents,
-	DayEvents,
-	Events as CalendarEvents,
+	PrevButtonProps,
 } from "$lib/bits/range-calendar/types.js";
 import type {
-	TriggerProps,
-	ContentProps,
 	ArrowProps,
-	CloseProps,
 	CloseEvents,
+	CloseProps,
+	ContentProps,
 	TriggerEvents,
+	TriggerProps,
 } from "$lib/bits/popover/types.js";
 import type { SegmentEvents } from "$lib/bits/date-range-field/types.js";
 

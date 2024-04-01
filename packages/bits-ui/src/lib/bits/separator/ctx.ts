@@ -1,4 +1,4 @@
-import { createSeparator, type CreateSeparatorProps } from "@melt-ui/svelte";
+import { type CreateSeparatorProps, createSeparator } from "@melt-ui/svelte";
 import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 
 function getSeparatorData() {

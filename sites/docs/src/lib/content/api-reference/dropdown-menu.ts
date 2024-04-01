@@ -1,4 +1,3 @@
-import type { APISchema } from "$lib/types/index.js";
 import type {
 	DropdownMenuArrowPropsWithoutHTML,
 	DropdownMenuCheckboxIndicatorPropsWithoutHTML,
@@ -18,6 +17,7 @@ import type {
 	DropdownMenuTriggerPropsWithoutHTML,
 } from "bits-ui";
 import { menu } from "./menu.js";
+import type { APISchema } from "$lib/types/index.js";
 
 export const root: APISchema<DropdownMenuPropsWithoutHTML> = {
 	title: "Root",

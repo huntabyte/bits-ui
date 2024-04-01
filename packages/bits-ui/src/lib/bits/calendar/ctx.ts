@@ -1,6 +1,6 @@
-import { createCalendar, type CreateCalendarProps } from "@melt-ui/svelte";
+import { type CreateCalendarProps, createCalendar } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
-import { removeUndefined, getOptionUpdater, createBitAttrs } from "$lib/internal/index.js";
+import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 
 export function getCalendarData() {
 	const NAME = "calendar" as const;

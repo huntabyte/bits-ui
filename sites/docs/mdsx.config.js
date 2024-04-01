@@ -1,16 +1,16 @@
 // @ts-check
+import { readFileSync } from "node:fs";
+import path, { resolve } from "node:path";
+import process from "node:process";
+import { fileURLToPath } from "node:url";
 import prettier from "@prettier/sync";
-import { readFileSync } from "fs";
 import { defineConfig } from "mdsx";
-import path from "node:path";
-import { resolve } from "path";
 import rehypePrettyCode from "rehype-pretty-code";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 import { getHighlighter } from "shiki";
 import { u } from "unist-builder";
 import { visit } from "unist-util-visit";
-import { fileURLToPath } from "url";
 import { codeBlockPrettierConfig } from "./other/code-block-prettier.js";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
@@ -71,7 +71,12 @@ const prettyCodeOptions = {
 export const mdsxConfig = defineConfig({
 	extensions: [".md"],
 	remarkPlugins: [remarkGfm, remarkRemovePrettierIgnore],
-	rehypePlugins: [[rehypePrettyCode, prettyCodeOptions], rehypeHandleMetadata, rehypeSlug],
+	rehypePlugins: [
+		rehypeSlug,
+		rehypeComponentExample,
+		[rehypePrettyCode, prettyCodeOptions],
+		rehypeHandleMetadata,
+	],
 	blueprints: {
 		default: {
 			path: resolve(__dirname, "./src/lib/components/markdown/blueprint.svelte"),
@@ -92,7 +97,7 @@ export const mdsxConfig = defineConfig({
  * itself and checking for it in the code block, but that's not something we need
  * at the moment.
  *
- * @returns {MdastTransformer}
+ * @returns {MdastTransformer} - unified transformer
  *
  */
 function remarkRemovePrettierIgnore() {
@@ -110,7 +115,7 @@ function remarkRemovePrettierIgnore() {
  * We use this to style elements within the `<figure>` differently if a `<figcaption>`
  * is present.
  *
- * @returns {HastTransformer}
+ * @returns {HastTransformer} - unified transformer
  */
 function rehypeHandleMetadata() {
 	return async (tree) => {
@@ -142,7 +147,7 @@ function rehypeHandleMetadata() {
 /**
  * Adds the source code to component examples.
  *
- * @returns {HastTransformer}
+ * @returns {HastTransformer} - unified transformer
  */
 export function rehypeComponentExample() {
 	return async (tree) => {
@@ -162,11 +167,9 @@ export function rehypeComponentExample() {
 				if (!name || !comp) return null;
 
 				try {
-					let sourceCode = getComponentSourceFileContent(name);
+					const sourceCode = getComponentSourceFileContent(name);
 					if (!sourceCode)
 						throw new Error(`Could not find source code for component: ${name}`);
-
-					sourceCode = sourceCode.replaceAll(`@/components`, "@/components/");
 
 					const sourceCodeNode = u("element", {
 						tagName: "pre",
@@ -189,11 +192,10 @@ export function rehypeComponentExample() {
 							}),
 						],
 					});
-					if (!index || !sourceCodeNode || !parent) return;
+					if (!index) return;
 					// @ts-expect-error - we're using an untyped node here
 					parent.children.splice(index + 1, 0, sourceCodeNode);
 				} catch (e) {
-					// eslint-disable-next-line no-console
 					console.error(e);
 				}
 			}
@@ -205,9 +207,7 @@ function getComponentSourceFileContent(src = "") {
 	if (!src) return null;
 
 	// Read the source file.
-	const filePath = path.join(process.cwd(), `./src/components/demos/${src}.svelte`);
+	const filePath = path.join(process.cwd(), `./src/lib/components/demos/${src}.svelte`);
 
-	return prettier
-		.format(readFileSync(filePath, "utf-8"), codeBlockPrettierConfig)
-		.replaceAll(`"$lib/index.js";`, `"bits-ui";`);
+	return prettier.format(readFileSync(filePath, "utf-8"), codeBlockPrettierConfig);
 }

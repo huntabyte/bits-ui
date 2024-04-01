@@ -1,5 +1,5 @@
+import path from "node:path";
 import { defineDocumentType, makeSource } from "contentlayer/source-files";
-import path from "path";
 
 /** @type {import('contentlayer/source-files').ComputedFields} */
 const computedFields = {

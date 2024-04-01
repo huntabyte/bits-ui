@@ -1,9 +1,11 @@
+/* eslint-disable ts/ban-types */
 /**
  * We define prop types without the HTMLAttributes here so that we can use them
  * to type-check our API documentation, which requires we document each prop,
  * but we don't want to document the HTML attributes.
  */
 
+import type { CreateDialogProps } from "@melt-ui/svelte";
 import type { FocusProp } from "$lib/shared/index.js";
 import type {
 	DOMElement,
@@ -13,7 +15,6 @@ import type {
 	Transition,
 	TransitionProps,
 } from "$lib/internal/index.js";
-import type { CreateDialogProps } from "@melt-ui/svelte";
 
 type Props = Expand<
 	OmitOpen<
@@ -51,7 +52,7 @@ type CloseProps = TriggerProps;
 type ContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
-	Out extends Transition = Transition
+	Out extends Transition = Transition,
 > = Expand<TransitionProps<T, In, Out> & DOMElement>;
 
 type DescriptionProps = DOMElement;
@@ -59,7 +60,7 @@ type DescriptionProps = DOMElement;
 type OverlayProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
-	Out extends Transition = Transition
+	Out extends Transition = Transition,
 > = Expand<TransitionProps<T, In, Out> & DOMElement>;
 
 type PortalProps = DOMElement;

@@ -4,7 +4,7 @@
  * but we don't want to document the HTML attributes.
  */
 import type { CreateTooltipProps } from "@melt-ui/svelte";
-import type { Expand, OmitFloating, OnChangeFn, DOMElement } from "$lib/internal/index.js";
+import type { DOMElement, Expand, OmitFloating, OnChangeFn } from "$lib/internal/index.js";
 import type { ArrowProps, ContentProps } from "$lib/bits/floating/_types.js";
 
 type Props = Expand<OmitFloating<CreateTooltipProps>> & {
@@ -28,6 +28,7 @@ type Props = Expand<OmitFloating<CreateTooltipProps>> & {
 	 * </Tooltip.Root>
 	 * ```
 	 */
+	// eslint-disable-next-line ts/ban-types
 	open?: boolean & {};
 
 	/**

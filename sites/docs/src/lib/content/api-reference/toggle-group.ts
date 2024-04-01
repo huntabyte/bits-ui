@@ -1,3 +1,4 @@
+import type { ToggleGroupItemPropsWithoutHTML, ToggleGroupPropsWithoutHTML } from "bits-ui";
 import {
 	builderAndAttrsSlotProps,
 	domElProps,
@@ -6,7 +7,6 @@ import {
 } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
-import type { ToggleGroupItemPropsWithoutHTML, ToggleGroupPropsWithoutHTML } from "bits-ui";
 
 const root: APISchema<ToggleGroupPropsWithoutHTML<"multiple">> = {
 	title: "Root",

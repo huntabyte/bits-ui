@@ -1,5 +1,3 @@
-import * as C from "$lib/content/constants.js";
-import type { APISchema } from "$lib/types/index.js";
 import type {
 	ContextMenuArrowPropsWithoutHTML,
 	ContextMenuCheckboxIndicatorPropsWithoutHTML,
@@ -27,6 +25,8 @@ import {
 	union,
 } from "./helpers.js";
 import { menu } from "./menu.js";
+import type { APISchema } from "$lib/types/index.js";
+import * as C from "$lib/content/constants.js";
 
 export const root: APISchema<ContextMenuPropsWithoutHTML> = {
 	title: "Root",

@@ -1,35 +1,34 @@
+import type * as I from "./_types.js";
 import type {
 	ArrowProps,
-	CheckboxItemProps,
-	RadioGroupProps,
-	RadioItemProps,
-	GroupProps,
-	SubContentProps,
-	SubTriggerProps,
-	ContextTriggerProps as TriggerProps,
-	ItemProps,
 	CheckboxIndicatorProps,
-	SeparatorProps,
-	SubProps,
+	CheckboxItemEvents,
+	CheckboxItemProps,
+	ContentEvents,
+	GroupProps,
+	ItemEvents,
+	ItemProps,
 	LabelProps,
 	Props,
+	RadioGroupProps,
 	RadioIndicatorProps,
-	//
-	ContentEvents,
-	CheckboxItemEvents,
-	ItemEvents,
 	RadioItemEvents,
-	SubTriggerEvents,
-	ContextTriggerEvents as TriggerEvents,
+	RadioItemProps,
+	SeparatorProps,
 	SubContentEvents,
+	SubContentProps,
+	SubProps,
+	SubTriggerEvents,
+	SubTriggerProps,
+	ContextTriggerEvents as TriggerEvents,
+	ContextTriggerProps as TriggerProps,
 } from "$lib/bits/menu/index.js";
 import type { HTMLDivAttributes, Transition } from "$lib/internal/index.js";
-import type * as I from "./_types.js";
 
 type ContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
-	Out extends Transition = Transition
+	Out extends Transition = Transition,
 > = I.ContentProps<T, In, Out> & HTMLDivAttributes;
 
 export type {

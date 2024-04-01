@@ -1,3 +1,10 @@
+import type {
+	TooltipArrowPropsWithoutHTML,
+	TooltipContentPropsWithoutHTML,
+	TooltipPropsWithoutHTML,
+	TooltipTriggerPropsWithoutHTML,
+} from "bits-ui";
+import { floatingPositioning } from "./floating.js";
 import {
 	arrowProps,
 	builderAndAttrsSlotProps,
@@ -9,13 +16,6 @@ import {
 } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
-import type {
-	TooltipArrowPropsWithoutHTML,
-	TooltipContentPropsWithoutHTML,
-	TooltipPropsWithoutHTML,
-	TooltipTriggerPropsWithoutHTML,
-} from "bits-ui";
-import { floatingPositioning } from "./floating.js";
 
 export const root: APISchema<TooltipPropsWithoutHTML> = {
 	title: "Root",

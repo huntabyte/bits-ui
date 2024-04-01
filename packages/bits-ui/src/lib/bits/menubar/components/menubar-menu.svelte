@@ -1,7 +1,7 @@
 <script lang="ts">
+	import { derived } from "svelte/store";
 	import type { MenuProps } from "../types.js";
 	import { setMenuCtx } from "../ctx.js";
-	import { derived } from "svelte/store";
 	type $$Props = MenuProps;
 
 	export let closeOnOutsideClick: $$Props["closeOnOutsideClick"] = undefined;

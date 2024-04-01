@@ -1,7 +1,6 @@
-import { createBitAttrs, getOptionUpdater } from "$lib/internal/index.js";
-import { createRadioGroup, type CreateRadioGroupProps } from "@melt-ui/svelte";
+import { type CreateRadioGroupProps, createRadioGroup } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
-import { removeUndefined } from "$lib/internal/index.js";
+import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 
 function getRadioGroupData() {
 	const NAME = "radio-group" as const;

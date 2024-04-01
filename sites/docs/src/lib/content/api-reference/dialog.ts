@@ -1,12 +1,3 @@
-import {
-	enums,
-	idsSlotProp,
-	onOutsideClickProp,
-	portalProp,
-	transitionProps,
-} from "$lib/content/api-reference/helpers.js";
-import * as C from "$lib/content/constants.js";
-import type { APISchema } from "$lib/types/index.js";
 import type {
 	DialogClosePropsWithoutHTML,
 	DialogContentPropsWithoutHTML,
@@ -19,6 +10,15 @@ import type {
 } from "bits-ui";
 import { focusProp } from "./extended-types/index.js";
 import { builderAndAttrsSlotProps, domElProps } from "./helpers.js";
+import {
+	enums,
+	idsSlotProp,
+	onOutsideClickProp,
+	portalProp,
+	transitionProps,
+} from "$lib/content/api-reference/helpers.js";
+import * as C from "$lib/content/constants.js";
+import type { APISchema } from "$lib/types/index.js";
 
 export const root: APISchema<DialogPropsWithoutHTML> = {
 	title: "Root",

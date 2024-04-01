@@ -1,4 +1,4 @@
-import { createPagination, type CreatePaginationProps } from "@melt-ui/svelte";
+import { type CreatePaginationProps, createPagination } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
 import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 

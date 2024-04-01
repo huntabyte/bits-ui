@@ -1,5 +1,5 @@
-import * as C from "$lib/content/constants.js";
 import { enums, seeFloating, union } from "./helpers.js";
+import * as C from "$lib/content/constants.js";
 
 export const floatingPositioning = {
 	side: {

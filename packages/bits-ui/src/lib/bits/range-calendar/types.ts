@@ -1,4 +1,3 @@
-import type { HTMLDivAttributes } from "$lib/internal/index.js";
 import type {
 	HTMLAttributes,
 	HTMLButtonAttributes,
@@ -7,6 +6,7 @@ import type {
 	HTMLThAttributes,
 } from "svelte/elements";
 import type * as I from "./_types.js";
+import type { HTMLDivAttributes } from "$lib/internal/index.js";
 import type { CustomEventHandler } from "$lib/index.js";
 
 type Props = I.Props & Omit<HTMLDivAttributes, "placeholder">;

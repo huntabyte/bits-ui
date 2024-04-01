@@ -1,12 +1,12 @@
-import { attrsSlotProp, enums } from "$lib/content/api-reference/helpers.js";
-import * as C from "$lib/content/constants.js";
-import type { APISchema } from "$lib/types/index.js";
 import type {
 	RadioGroupInputPropsWithoutHTML,
 	RadioGroupItemPropsWithoutHTML,
 	RadioGroupPropsWithoutHTML,
 } from "bits-ui";
 import { builderAndAttrsSlotProps, domElProps } from "./helpers.js";
+import { attrsSlotProp, enums } from "$lib/content/api-reference/helpers.js";
+import * as C from "$lib/content/constants.js";
+import type { APISchema } from "$lib/types/index.js";
 
 export const root: APISchema<RadioGroupPropsWithoutHTML> = {
 	title: "Root",

@@ -35,7 +35,12 @@
 {#if asChild && $isSelected(props)}
 	<slot {builder} />
 {:else if transition && $isSelected(props)}
-	<div bind:this={el} transition:transition={transitionConfig} use:melt={builder} {...$$restProps}>
+	<div
+		bind:this={el}
+		transition:transition={transitionConfig}
+		use:melt={builder}
+		{...$$restProps}
+	>
 		<slot {builder} />
 	</div>
 {:else if inTransition && outTransition && $isSelected(props)}

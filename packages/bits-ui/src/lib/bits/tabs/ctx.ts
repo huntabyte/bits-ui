@@ -1,6 +1,6 @@
-import { createTabs, type CreateTabsProps } from "@melt-ui/svelte";
-import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
+import { type CreateTabsProps, createTabs } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
+import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 
 function getTabsData() {
 	const NAME = "tabs" as const;

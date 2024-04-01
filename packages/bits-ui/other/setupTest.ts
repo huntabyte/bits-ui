@@ -1,16 +1,13 @@
-// setupTest.ts
-/* eslint-disable @typescript-eslint/no-empty-function */
 import * as matchers from "@testing-library/jest-dom/matchers";
 import { expect, vi } from "vitest";
 import type { Navigation, Page } from "@sveltejs/kit";
 import { readable } from "svelte/store";
-import * as environment from "$app/environment";
-import * as navigation from "$app/navigation";
-import * as stores from "$app/stores";
 import { toHaveNoViolations } from "jest-axe";
 import { configure } from "@testing-library/dom";
+import type * as environment from "$app/environment";
+import type * as navigation from "$app/navigation";
+import type * as stores from "$app/stores";
 
-// Add custom jest matchers
 expect.extend(matchers);
 
 expect.extend(toHaveNoViolations as never);
@@ -88,5 +85,6 @@ vi.mock("$app/stores", (): typeof stores => {
 	};
 });
 
-global.ResizeObserver = require("resize-observer-polyfill");
+// eslint-disable-next-line ts/no-require-imports
+globalThis.ResizeObserver = require("resize-observer-polyfill");
 Element.prototype.scrollIntoView = () => {};

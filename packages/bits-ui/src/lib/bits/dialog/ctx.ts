@@ -1,4 +1,4 @@
-import { createDialog, type CreateDialogProps } from "@melt-ui/svelte";
+import { type CreateDialogProps, createDialog } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
 import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 

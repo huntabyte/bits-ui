@@ -3,8 +3,8 @@ import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import { getTestKbd } from "../utils.js";
-import type { Toolbar } from "$lib/index.js";
 import ToolbarTest from "./ToolbarTest.svelte";
+import type { Toolbar } from "$lib/index.js";
 
 const kbd = getTestKbd();
 
@@ -50,7 +50,7 @@ function setup(
 	};
 }
 
-describe("Toolbar", () => {
+describe("toolbar", () => {
 	it("has no accessibility violations", async () => {
 		const { container } = render(ToolbarTest);
 		expect(await axe(container)).toHaveNoViolations();
@@ -190,12 +190,12 @@ describe("Toolbar", () => {
 	});
 
 	it("toolbar toogle groups should fire the `onChange` callback when changing", async () => {
-		let newMultipleValue = undefined;
+		let newMultipleValue;
 		function multipleOnValueChange(next: string[] | undefined) {
 			newMultipleValue = next;
 		}
 
-		let newSingleValue = undefined;
+		let newSingleValue;
 		function singleOnValueChange(next: string | undefined) {
 			newSingleValue = next;
 		}
