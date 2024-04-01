@@ -85,7 +85,7 @@ jobs:
 
             - run: pnpm lint
 
-    Tests:
+    Test:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v3
@@ -93,4 +93,4 @@ jobs:
               with:
                   version: 8.6.3
                   run_install: true
-            - run: pnpm run test
+            - run: pnpm test

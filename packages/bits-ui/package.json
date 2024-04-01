@@ -3,6 +3,9 @@
 	"version": "0.21.1",
 	"license": "MIT",
 	"repository": "github:huntabyte/bits-ui",
+	"funding": "https://github.com/sponsors/huntabyte",
+	"author": "Hunter Johnston <https://github.com/huntabyte>",
+	"description": "The headless components for Svelte.",
 	"scripts": {
 		"build": "pnpm package",
 		"dev": "pnpm watch",
@@ -36,7 +39,6 @@
 		"@types/jest-axe": "^3.5.9",
 		"@types/testing-library__jest-dom": "^5.14.9",
 		"autoprefixer": "^10.4.17",
-		"esm-env": "^1.0.0",
 		"jest-axe": "^8.0.0",
 		"jsdom": "^24.0.0",
 		"publint": "^0.2.7",
