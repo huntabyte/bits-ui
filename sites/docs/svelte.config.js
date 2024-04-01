@@ -1,4 +1,3 @@
-// @ts-check
 import path from "node:path";
 import url from "node:url";
 import adapter from "@sveltejs/adapter-cloudflare";
