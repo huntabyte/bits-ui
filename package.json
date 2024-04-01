@@ -5,7 +5,7 @@
 	"scripts": {
 		"build": "pnpm -r build",
 		"build:packages": "pnpm -F \"./packages/**\" --parallel build",
-		"check": "pnpm -r check",
+		"check": "pnpm build:packages && pnpm -r check",
 		"ci:publish": "pnpm build:packages && changeset publish",
 		"dev": "pnpm -r --parallel dev",
 		"format": "prettier --write .",
