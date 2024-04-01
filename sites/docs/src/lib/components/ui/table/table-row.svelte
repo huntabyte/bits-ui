@@ -3,7 +3,7 @@
 	import { cn } from "$lib/utils/index.js";
 
 	type $$Props = HTMLAttributes<HTMLTableRowElement> & {
-		"data-state"?: any;
+		"data-state"?: unknown;
 	};
 
 	let className: $$Props["class"] = undefined;
