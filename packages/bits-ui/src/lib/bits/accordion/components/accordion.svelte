@@ -23,7 +23,7 @@
 		multiple,
 		disabled,
 		defaultValue: value,
-		onValueChange: (({ next }: { next: $$Props["value"] }) => {
+		onValueChange: ({ next }: { next: $$Props["value"] }) => {
 			if (Array.isArray(next)) {
 				if (!Array.isArray(value) || !arraysAreEqual(value, next)) {
 					onValueChange?.(next);
@@ -38,7 +38,7 @@
 				value = next;
 			}
 			return next;
-		}) as any,
+		},
 	});
 
 	const attrs = getAttrs("root");
