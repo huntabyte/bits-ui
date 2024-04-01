@@ -24,7 +24,7 @@ async function open(props: LinkPreview.Props = {}) {
 	return { trigger, getByTestId, queryByTestId, user, content };
 }
 
-describe("link Preview", () => {
+describe("link preview", () => {
 	it("has no accessibility violations", async () => {
 		const { container } = render(LinkPreviewTest);
 		expect(await axe(container)).toHaveNoViolations();

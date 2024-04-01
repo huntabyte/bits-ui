@@ -52,7 +52,7 @@ async function openSubmenu(props: Awaited<ReturnType<typeof open>>) {
 	};
 }
 
-describe("context Menu", () => {
+describe("context menu", () => {
 	it("has no accessibility violations", async () => {
 		const { container } = render(ContextMenuTest);
 		expect(await axe(container)).toHaveNoViolations();

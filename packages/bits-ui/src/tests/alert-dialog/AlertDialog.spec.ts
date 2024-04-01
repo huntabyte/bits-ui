@@ -37,7 +37,7 @@ async function open(props: AlertDialog.Props = {}) {
 	return { getByTestId, queryByTestId, user };
 }
 
-describe("alert Dialog", () => {
+describe("alert dialog", () => {
 	it("has no accessibility violations", async () => {
 		const { container } = render(AlertDialogTest);
 		expect(await axe(container)).toHaveNoViolations();

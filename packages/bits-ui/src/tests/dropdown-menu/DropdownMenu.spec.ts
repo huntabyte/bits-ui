@@ -62,7 +62,7 @@ async function openSubmenu(props: Awaited<ReturnType<typeof openWithKbd>>) {
 	};
 }
 
-describe("dropdown Menu", () => {
+describe("dropdown menu", () => {
 	it("has no accessibility violations", async () => {
 		const { container } = render(DropdownMenuTest);
 		expect(await axe(container)).toHaveNoViolations();

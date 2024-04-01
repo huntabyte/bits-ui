@@ -34,7 +34,7 @@ function setup(props: DateField.Props = {}) {
 	return { ...returned, user, month, day, year, value, input, label };
 }
 
-describe("date Field", () => {
+describe("date field", () => {
 	it("has no axe violations", async () => {
 		const { container } = setup();
 		expect(await axe(container)).toHaveNoViolations();

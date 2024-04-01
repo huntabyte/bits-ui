@@ -33,7 +33,7 @@ function setup(props: PinInput.Props = {}) {
 	};
 }
 
-describe("pIN Input", () => {
+describe("pin input", () => {
 	it("has no accessibility violations", async () => {
 		const { container } = render(PinInputTest);
 		expect(await axe(container)).toHaveNoViolations();

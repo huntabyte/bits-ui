@@ -30,7 +30,7 @@ function setup(props: Slider.Props = {}, kind: "default" | "range" = "default") 
 	return { root, user, ...returned };
 }
 
-describe("slider (Default)", () => {
+describe("slider (default)", () => {
 	it("no accessibility violations", async () => {
 		const { container } = render(SliderTest);
 
@@ -107,7 +107,7 @@ describe("slider (Default)", () => {
 	});
 });
 
-describe("slider (Range)", () => {
+describe("slider (range)", () => {
 	it("no accessibility violations", async () => {
 		const { container } = setup({}, "range");
 
@@ -312,7 +312,7 @@ describe("slider (Range)", () => {
 	});
 });
 
-describe("slider (Small min, max, step)", () => {
+describe("slider (small min, max, step)", () => {
 	it("has a thumb positioned at 50% of the container", async () => {
 		const { getByTestId } = setup({
 			value: [0.5],

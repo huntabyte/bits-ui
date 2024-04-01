@@ -44,7 +44,7 @@ function randItem() {
 	return Math.floor(Math.random() * 3);
 }
 
-describe("radio Group", () => {
+describe("radio group", () => {
 	it("has no accessibility violations", async () => {
 		const { container } = render(RadioGroupTest);
 		expect(await axe(container)).toHaveNoViolations();

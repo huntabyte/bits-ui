@@ -47,7 +47,7 @@ function setup(props: DateRangeField.Props = {}) {
 	return { ...returned, user, start, end, input, label };
 }
 
-describe("date Range Field", () => {
+describe("date range field", () => {
 	it("has no axe violations", async () => {
 		const { container } = setup();
 		expect(await axe(container)).toHaveNoViolations();
