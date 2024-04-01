@@ -102,9 +102,6 @@ importers:
       svelte-check:
         specifier: ^3.6.3
         version: 3.6.8(postcss-load-config@5.0.3)(postcss@8.4.38)(svelte@4.2.12)
-      svelte-sequential-preprocessor:
-        specifier: ^2.0.1
-        version: 2.0.1
       tslib:
         specifier: ^2.6.2
         version: 2.6.2
@@ -130,12 +127,6 @@ importers:
         specifier: workspace:*
         version: link:../../packages/bits-ui
     devDependencies:
-      '@changesets/cli':
-        specifier: ^2.27.1
-        version: 2.27.1
-      '@huntabyte/mdsvex':
-        specifier: 0.16.5
-        version: 0.16.5(svelte@4.2.12)
       '@prettier/sync':
         specifier: 0.3.0
         version: 0.3.0(prettier@3.2.5)
@@ -770,6 +761,10 @@ packages:
     peerDependencies:
       '@effect-ts/otel-node': '*'
     peerDependenciesMeta:
+      '@effect-ts/core':
+        optional: true
+      '@effect-ts/otel':
+        optional: true
       '@effect-ts/otel-node':
         optional: true
     dependencies:
@@ -1652,18 +1647,6 @@ packages:
       eslint: '*'
     dependencies:
       eslint: 8.57.0
-    dev: true
-
-  /@huntabyte/mdsvex@0.16.5(svelte@4.2.12):
-    resolution: {integrity: sha512-DnK/xrIKfowch7zN12LsdnAer1NNVeGhIZb9GDzoyct0i4OC7yejly6G3Py27a5f4WNopnxKjZBUEbNl/yMCag==}
-    peerDependencies:
-      svelte: '>=3 <5'
-    dependencies:
-      '@types/unist': 2.0.10
-      prism-svelte: 0.4.7
-      prismjs: 1.29.0
-      svelte: 4.2.12
-      vfile-message: 2.0.4
     dev: true
 
   /@internationalized/date@3.5.2:
@@ -7985,15 +7968,6 @@ packages:
     resolution: {integrity: sha512-dKp+C4iXWK4vVYZmYSd0KBH5F/h1HoZRsbJ82AVKRO3PEo8L4lBS/vLwhVtpwwuYcoIsVY+1JYKR268yn480uQ==}
     dev: true
 
-  /prism-svelte@0.4.7:
-    resolution: {integrity: sha512-yABh19CYbM24V7aS7TuPYRNMqthxwbvx6FF/Rw920YbyBWO3tnyPIqRMgHuSVsLmuHkkBS1Akyof463FVdkeDQ==}
-    dev: true
-
-  /prismjs@1.29.0:
-    resolution: {integrity: sha512-Kx/1w86q/epKcmte75LNrEoT+lX8pBpavuAbvJWRXar7Hz8jrtF+e3vY751p0R8H9HdArwaCTNDDzHg/ScJK1Q==}
-    engines: {node: '>=6'}
-    dev: true
-
   /property-information@6.4.1:
     resolution: {integrity: sha512-OHYtXfu5aI2sS2LWFSN5rgJjrQ4pCy8i1jubJLe2QvMF8JJ++HXTUIVWFLfXJoaOfvYYjk2SN8J2wFUWIGXT4w==}
     dev: true
@@ -8975,14 +8949,6 @@ packages:
       typescript: 5.4.3
     dev: true
 
-  /svelte-sequential-preprocessor@2.0.1:
-    resolution: {integrity: sha512-N5JqlBni6BzElxmuFrOPxOJnjsxh1cFDACLEVKs8OHBcx8ZNRO1p5SxuQex1m3qbLzAC8G99EHeWcxGkjyKjLQ==}
-    engines: {node: '>=16'}
-    dependencies:
-      svelte: 4.2.12
-      tslib: 2.6.2
-    dev: true
-
   /svelte2tsx@0.7.5(svelte@4.2.12)(typescript@5.4.3):
     resolution: {integrity: sha512-+y8z4YLGsCYN8yjkqPXrqg6yKa73IZfU2WC3MVxiM0YU2/HbGZ1Tiq1ceKCOhMQVBFWjOgC/C465wN/ux6FsDQ==}
     peerDependencies:
@@ -9556,13 +9522,6 @@ packages:
     dependencies:
       '@types/unist': 3.0.2
       vfile: 6.0.1
-    dev: true
-
-  /vfile-message@2.0.4:
-    resolution: {integrity: sha512-DjssxRGkMvifUOJre00juHoP9DPWuzjxKuMDrhNbk2TdaYYBNMStsNhEOt3idrtI12VQYM/1+iM0KOzXi4pxwQ==}
-    dependencies:
-      '@types/unist': 2.0.10
-      unist-util-stringify-position: 2.0.3
     dev: true
 
   /vfile-message@3.1.4:

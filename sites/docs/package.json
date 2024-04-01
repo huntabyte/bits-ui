@@ -15,8 +15,6 @@
 		"check": "pnpm build:content && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
 	},
 	"devDependencies": {
-		"@changesets/cli": "^2.27.1",
-		"@huntabyte/mdsvex": "0.16.5",
 		"@prettier/sync": "0.3.0",
 		"@sveltejs/adapter-cloudflare": "^4.2.0",
 		"@sveltejs/kit": "^2.5.0",
@@ -60,6 +58,5 @@
 		"@internationalized/date": "^3.5.1",
 		"@melt-ui/svelte": "0.76.2",
 		"bits-ui": "workspace:*"
-	},
-	"packageManager": "pnpm@8.6.3"
+	}
 }

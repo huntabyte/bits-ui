@@ -1,6 +1,6 @@
-import { preprocessMeltUI } from "@melt-ui/pp";
+// @ts-check
+import { preprocessMeltUI, sequence } from "@melt-ui/pp";
 import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";
-import sequence from "svelte-sequential-preprocessor";
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
