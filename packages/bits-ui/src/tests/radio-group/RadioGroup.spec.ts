@@ -52,11 +52,11 @@ describe("radio Group", () => {
 
 	it("has bits data attrs", async () => {
 		const { getByTestId } = render(RadioGroupTest, {
-			items: [testItems[0]],
-			value: testItems[0].value,
+			items: [testItems[0] as Item],
+			value: testItems[0]?.value,
 		});
 		const root = getByTestId("root");
-		const item = getByTestId(`${testItems[0].value}-item`);
+		const item = getByTestId(`${testItems[0]?.value}-item`);
 
 		expect(root).toHaveAttribute("data-radio-group-root");
 		expect(item).toHaveAttribute("data-radio-group-item");
@@ -69,9 +69,9 @@ describe("radio Group", () => {
 			expect(queryByTestId(indicator)).toBeNull();
 		}
 		const itemIdx = randItem();
-		const item = getByTestId(itemIds[itemIdx]);
+		const item = getByTestId(itemIds[itemIdx] as string);
 		await user.click(item);
-		await waitFor(() => expect(queryByTestId(indicatorIds[itemIdx])).not.toBeNull());
+		await waitFor(() => expect(queryByTestId(indicatorIds[itemIdx] as string)).not.toBeNull());
 	});
 
 	it("doesnt change the value when a disabled item is clicked", async () => {
@@ -88,10 +88,10 @@ describe("radio Group", () => {
 	it("navigates through the items using the keyboard", async () => {
 		const { getByTestId, user } = setup();
 
-		const item0 = getByTestId(itemIds[0]);
-		const item1 = getByTestId(itemIds[1]);
-		const item2 = getByTestId(itemIds[2]);
-		const item3 = getByTestId(itemIds[3]);
+		const item0 = getByTestId(itemIds[0] as string);
+		const item1 = getByTestId(itemIds[1] as string);
+		const item2 = getByTestId(itemIds[2] as string);
+		const item3 = getByTestId(itemIds[3] as string);
 		item0.focus();
 		await waitFor(() => expect(item0).toHaveFocus());
 		await user.keyboard(kbd.ARROW_DOWN);
@@ -113,8 +113,8 @@ describe("radio Group", () => {
 			loop: false,
 		});
 
-		const item0 = getByTestId(itemIds[0]);
-		const item3 = getByTestId(itemIds[3]);
+		const item0 = getByTestId(itemIds[0] as string);
+		const item3 = getByTestId(itemIds[3] as string);
 		item0.focus();
 		await waitFor(() => expect(item0).toHaveFocus());
 		await user.keyboard(kbd.ARROW_UP);
@@ -146,10 +146,10 @@ describe("radio Group", () => {
 			orientation: "horizontal",
 		});
 
-		const item0 = getByTestId(itemIds[0]);
-		const item1 = getByTestId(itemIds[1]);
-		const item2 = getByTestId(itemIds[2]);
-		const item3 = getByTestId(itemIds[3]);
+		const item0 = getByTestId(itemIds[0] as string);
+		const item1 = getByTestId(itemIds[1] as string);
+		const item2 = getByTestId(itemIds[2] as string);
+		const item3 = getByTestId(itemIds[3] as string);
 		item0.focus();
 		await waitFor(() => expect(item0).toHaveFocus());
 		await user.keyboard(kbd.ARROW_RIGHT);
@@ -174,8 +174,8 @@ describe("radio Group", () => {
 			orientation: "horizontal",
 		});
 
-		const item0 = getByTestId(itemIds[0]);
-		const item3 = getByTestId(itemIds[3]);
+		const item0 = getByTestId(itemIds[0] as string);
+		const item3 = getByTestId(itemIds[3] as string);
 		item0.focus();
 		await waitFor(() => expect(item0).toHaveFocus());
 		await user.keyboard(kbd.ARROW_LEFT);

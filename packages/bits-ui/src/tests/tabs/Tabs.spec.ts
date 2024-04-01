@@ -52,7 +52,7 @@ describe("tabs", () => {
 
 	it("has bits data attrs", async () => {
 		const { getByTestId } = render(TabsTest, {
-			items: [items[0]],
+			items: [items[0] as Item],
 		});
 
 		const root = getByTestId("root");

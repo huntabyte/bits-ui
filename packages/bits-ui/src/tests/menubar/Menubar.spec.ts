@@ -49,7 +49,7 @@ describe("menubar", () => {
 		const mappedParts = parts.map((part) => `${menuId}-${part}`);
 
 		for (const part in parts) {
-			const el = screen.getByTestId(mappedParts[part]);
+			const el = screen.getByTestId(mappedParts[part] as string);
 			expect(el).toHaveAttribute(`data-menu-${parts[part]}`);
 		}
 

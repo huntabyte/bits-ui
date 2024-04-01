@@ -14,7 +14,8 @@
 	function getValue(value: number[]) {
 		if (value.length === 1) {
 			return value[0];
-		} else {
+		} else if (value.length === 2) {
+			//@ts-expect-error - we know these two exist and are numbers
 			return value[1] - value[0];
 		}
 	}

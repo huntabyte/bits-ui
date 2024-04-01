@@ -625,7 +625,7 @@ describe("calendar - `multiple`", () => {
 		});
 		const selectedDays = getSelectedDays(calendar);
 		expect(selectedDays.length).toBe(2);
-		await user.click(selectedDays[0]);
+		await user.click(selectedDays[0] as HTMLElement);
 		expect(getSelectedDays(calendar).length).toBe(1);
 	});
 
@@ -637,10 +637,10 @@ describe("calendar - `multiple`", () => {
 			preventDeselect: true,
 		});
 		const selectedDays = getSelectedDays(calendar);
-		await user.click(selectedDays[0]);
+		await user.click(selectedDays[0] as HTMLElement);
 		const selectedDays2 = getSelectedDays(calendar);
 		expect(selectedDays2.length).toBe(1);
-		await user.click(selectedDays2[0]);
+		await user.click(selectedDays2[0] as HTMLElement);
 		expect(getSelectedDays(calendar).length).toBe(1);
 	});
 });

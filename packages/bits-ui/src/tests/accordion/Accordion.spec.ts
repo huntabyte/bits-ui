@@ -78,7 +78,7 @@ describe("accordion", () => {
 		expect(triggerEls[0]).toHaveAttribute("data-state", "closed");
 		expect(triggerEls[0]).not.toHaveAttribute("data-disabled");
 
-		await user.click(triggerEls[0]);
+		await user.click(triggerEls[0] as HTMLElement);
 		expect(itemEls[0]).toHaveAttribute("data-state", "open");
 		expect(triggerEls[0]).toHaveAttribute("data-state", "open");
 
@@ -191,7 +191,7 @@ describe("accordion", () => {
 		const { getByTestId } = render(AccordionTest, { items });
 
 		const triggers = items.map((item) => getByTestId(`${item.value}-trigger`));
-		triggers[0].focus();
+		triggers[0]?.focus();
 		await user.keyboard(kbd.ARROW_DOWN);
 		expect(triggers[1]).toHaveFocus();
 		await user.keyboard(kbd.ARROW_DOWN);
@@ -207,7 +207,7 @@ describe("accordion", () => {
 		const { getByTestId } = render(AccordionTest, { items });
 
 		const triggers = items.map((item) => getByTestId(`${item.value}-trigger`));
-		triggers[0].focus();
+		triggers[0]?.focus();
 		await user.keyboard(kbd.ARROW_UP);
 		expect(triggers[3]).toHaveFocus();
 		await user.keyboard(kbd.ARROW_UP);
@@ -249,7 +249,7 @@ describe("accordion", () => {
 		const { getByTestId } = render(AccordionTest, { items: itemsWithDisabled });
 
 		const triggers = items.map((item) => getByTestId(`${item.value}-trigger`));
-		await user.click(triggers[0]);
+		await user.click(triggers[0] as HTMLElement);
 
 		await user.keyboard(kbd.ARROW_DOWN);
 		expect(triggers[1]).not.toHaveFocus();
