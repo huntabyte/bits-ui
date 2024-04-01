@@ -84,9 +84,6 @@ importers:
       autoprefixer:
         specifier: ^10.4.17
         version: 10.4.19(postcss@8.4.38)
-      esm-env:
-        specifier: ^1.0.0
-        version: 1.0.0
       jest-axe:
         specifier: ^8.0.0
         version: 8.0.0
