@@ -28,9 +28,6 @@
 		"clsx": "^2.1.0",
 		"concurrently": "^8.2.2",
 		"contentlayer": "^0.3.4",
-		"hast-util-to-html": "^9.0.0",
-		"jest-axe": "^8.0.0",
-		"jsdom": "^24.0.0",
 		"mdsx": "^0.0.5",
 		"mode-watcher": "^0.2.0",
 		"phosphor-svelte": "^1.4.2",
@@ -50,8 +47,7 @@
 		"unified": "^11.0.4",
 		"unist-builder": "^4.0.0",
 		"unist-util-visit": "^5.0.0",
-		"vite": "^5.0.12",
-		"vitest": "^1.2.2"
+		"vite": "^5.0.12"
 	},
 	"type": "module",
 	"dependencies": {

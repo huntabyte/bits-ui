@@ -113,7 +113,7 @@ importers:
         version: 5.2.7(@types/node@20.12.2)
       vitest:
         specifier: ^1.2.2
-        version: 1.4.0(@types/node@20.12.2)(jsdom@24.0.0)
+        version: 1.4.0(jsdom@24.0.0)
 
   sites/docs:
     dependencies:
@@ -166,15 +166,6 @@ importers:
       contentlayer:
         specifier: ^0.3.4
         version: 0.3.4(esbuild@0.20.2)
-      hast-util-to-html:
-        specifier: ^9.0.0
-        version: 9.0.0
-      jest-axe:
-        specifier: ^8.0.0
-        version: 8.0.0
-      jsdom:
-        specifier: ^24.0.0
-        version: 24.0.0
       mdsx:
         specifier: ^0.0.5
         version: 0.0.5(svelte@4.2.12)
@@ -235,9 +226,6 @@ importers:
       vite:
         specifier: ^5.0.12
         version: 5.2.7(@types/node@20.12.2)
-      vitest:
-        specifier: ^1.2.2
-        version: 1.4.0(@types/node@20.12.2)(jsdom@24.0.0)
 
 packages:
 
@@ -2475,7 +2463,7 @@ packages:
       dom-accessibility-api: 0.6.3
       lodash: 4.17.21
       redent: 3.0.0
-      vitest: 1.4.0(@types/node@20.12.2)(jsdom@24.0.0)
+      vitest: 1.4.0(jsdom@24.0.0)
     dev: true
 
   /@testing-library/svelte@4.1.0(svelte@4.2.12):
@@ -9555,7 +9543,7 @@ packages:
       vfile-message: 4.0.2
     dev: true
 
-  /vite-node@1.4.0(@types/node@20.12.2):
+  /vite-node@1.4.0:
     resolution: {integrity: sha512-VZDAseqjrHgNd4Kh8icYHWzTKSCZMhia7GyHfhtzLW33fZlG9SwsB6CEhgyVOWkJfJ2pFLrp/Gj1FSfAiqH9Lw==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
@@ -9623,7 +9611,7 @@ packages:
       vite: 5.2.7(@types/node@20.12.2)
     dev: true
 
-  /vitest@1.4.0(@types/node@20.12.2)(jsdom@24.0.0):
+  /vitest@1.4.0(jsdom@24.0.0):
     resolution: {integrity: sha512-gujzn0g7fmwf83/WzrDTnncZt2UiXP41mHuFYFrdwaLRVQ6JYQEiME2IfEjU3vcFL3VKa75XhI3lFgn+hfVsQw==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
@@ -9648,7 +9636,6 @@ packages:
       jsdom:
         optional: true
     dependencies:
-      '@types/node': 20.12.2
       '@vitest/expect': 1.4.0
       '@vitest/runner': 1.4.0
       '@vitest/snapshot': 1.4.0
@@ -9668,7 +9655,7 @@ packages:
       tinybench: 2.6.0
       tinypool: 0.8.3
       vite: 5.2.7(@types/node@20.12.2)
-      vite-node: 1.4.0(@types/node@20.12.2)
+      vite-node: 1.4.0
       why-is-node-running: 2.2.2
     transitivePeerDependencies:
       - less

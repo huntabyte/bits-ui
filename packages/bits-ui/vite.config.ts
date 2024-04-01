@@ -1,4 +1,3 @@
-import { URL, fileURLToPath } from "node:url";
 import { sveltekit } from "@sveltejs/kit/vite";
 import { defineConfig } from "vitest/config";
 
@@ -18,19 +17,5 @@ export default defineConfig({
 		},
 		alias: [{ find: /^svelte$/, replacement: "svelte/internal" }],
 		retry: 3,
-	},
-	assetsInclude: ["**/*.md"],
-	server: {
-		fs: {
-			strict: false,
-		},
-	},
-	resolve: {
-		alias: [
-			{
-				find: "contentlayer/generated",
-				replacement: fileURLToPath(new URL("./.contentlayer/generated", import.meta.url)),
-			},
-		],
 	},
 });
