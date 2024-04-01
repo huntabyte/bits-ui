@@ -9,7 +9,6 @@
 	"scripts": {
 		"build": "pnpm package",
 		"dev": "pnpm watch",
-		"dev:content": "contentlayer dev",
 		"dev:svelte": "vite dev",
 		"package": "svelte-kit sync && svelte-package && publint",
 		"check": "svelte-check --tsconfig ./tsconfig.json",

@@ -9,13 +9,16 @@ const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
-	preprocess: [mdsx(mdsxConfig), vitePreprocess({
-		style: {
-			css: {
-				postcss: path.join(__dirname, "postcss.config.cjs"),
+	preprocess: [
+		mdsx(mdsxConfig),
+		vitePreprocess({
+			style: {
+				css: {
+					postcss: path.join(__dirname, "postcss.config.cjs"),
+				},
 			},
-		},
-	}),],
+		}),
+	],
 	extensions: [".svelte", ".md"],
 
 	kit: {
