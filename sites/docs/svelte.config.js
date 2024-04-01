@@ -21,7 +21,6 @@ const config = {
 	kit: {
 		adapter: adapter(),
 		alias: {
-			"$lib/*": "src/lib/*",
 			"$icons/*": "src/lib/components/icons/*",
 			"contentlayer/generated": ".contentlayer/generated",
 		},
