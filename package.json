@@ -30,7 +30,7 @@
 	},
 	"type": "module",
 	"engines": {
-		"pnpm": ">=8",
+		"pnpm": ">=8.7.0",
 		"node": ">=18"
 	},
 	"private": true
