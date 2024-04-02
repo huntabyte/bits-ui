@@ -17,6 +17,8 @@ package.json
 .contentlayer
 **/dist
 
+CHANGELOG.md
+
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
