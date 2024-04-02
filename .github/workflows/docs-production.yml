@@ -1,4 +1,4 @@
-name: Docs Production Deployment
+name: Docs - Production Deployment
 on:
     push:
         branches:
