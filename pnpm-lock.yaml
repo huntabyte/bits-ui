@@ -12,8 +12,8 @@ importers:
         specifier: ^2.27.1
         version: 2.27.1
       '@huntabyte/eslint-config':
-        specifier: ^0.0.2
-        version: 0.0.2(@vue/compiler-sfc@3.4.21)(eslint-plugin-svelte@2.35.1)(eslint@8.57.0)(svelte-eslint-parser@0.33.1)(svelte@4.2.12)(typescript@5.4.3)
+        specifier: ^0.1.1
+        version: 0.1.1(@vue/compiler-sfc@3.4.21)(eslint-plugin-svelte@2.35.1)(eslint@8.57.0)(svelte-eslint-parser@0.33.1)(svelte@4.2.12)(typescript@5.4.3)
       '@svitejs/changesets-changelog-github-compact':
         specifier: ^1.1.0
         version: 1.1.0
@@ -749,10 +749,6 @@ packages:
     peerDependencies:
       '@effect-ts/otel-node': '*'
     peerDependenciesMeta:
-      '@effect-ts/core':
-        optional: true
-      '@effect-ts/otel':
-        optional: true
       '@effect-ts/otel-node':
         optional: true
     dependencies:
@@ -1594,8 +1590,9 @@ packages:
     resolution: {integrity: sha512-6EwiSjwWYP7pTckG6I5eyFANjPhmPjUX9JRLUSfNPC7FX7zK9gyZAfUEaECL6ALTpGX5AjnBq3C9XmVWPitNpw==}
     dev: true
 
-  /@huntabyte/eslint-config@0.0.2(@vue/compiler-sfc@3.4.21)(eslint-plugin-svelte@2.35.1)(eslint@8.57.0)(svelte-eslint-parser@0.33.1)(svelte@4.2.12)(typescript@5.4.3):
-    resolution: {integrity: sha512-Lcr/cjQLvUAaiH7dNyNdRDPWIqNdeiOMWB6u3oPM7ZigwzODdJw46k73ILBQxTCCplqII2CjqiVQrfXYyYpG5w==}
+  /@huntabyte/eslint-config@0.1.1(@vue/compiler-sfc@3.4.21)(eslint-plugin-svelte@2.35.1)(eslint@8.57.0)(svelte-eslint-parser@0.33.1)(svelte@4.2.12)(typescript@5.4.3):
+    resolution: {integrity: sha512-asDHBTG4SF89RAVPtrlaPLr+EvUGKzeFV9IhXO0iSYGYiUkaq32qE1IbEvtAJojncaxMU9A2iEZAFjvE7msASg==}
+    hasBin: true
     peerDependencies:
       eslint: '>=8.40.0'
       eslint-plugin-svelte: ^2.35.1
@@ -1610,6 +1607,7 @@ packages:
       eslint-flat-config-utils: 0.1.2
       eslint-plugin-svelte: 2.35.1(eslint@8.57.0)(svelte@4.2.12)
       local-pkg: 0.5.0
+      parse-gitignore: 2.0.0
       svelte-eslint-parser: 0.33.1(svelte@4.2.12)
       yargs: 17.7.2
     transitivePeerDependencies:

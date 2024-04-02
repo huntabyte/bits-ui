@@ -43,7 +43,6 @@ function setup(props: Combobox.Props<unknown, false> = {}, options: Item[] = tes
 }
 async function open(
 	props: Combobox.Props<unknown, false> = {},
-	// eslint-disable-next-line ts/ban-types
 	openWith: "click" | "type" | (string & {}) = "click",
 	inputValue?: string
 ) {

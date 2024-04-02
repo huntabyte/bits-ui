@@ -18,7 +18,7 @@
 	"license": "MIT",
 	"devDependencies": {
 		"@changesets/cli": "^2.27.1",
-		"@huntabyte/eslint-config": "^0.0.2",
+		"@huntabyte/eslint-config": "^0.1.1",
 		"@svitejs/changesets-changelog-github-compact": "^1.1.0",
 		"eslint": "^8.56.0",
 		"eslint-plugin-svelte": "^2.35.1",

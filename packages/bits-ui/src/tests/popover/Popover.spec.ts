@@ -17,7 +17,6 @@ function setup(props: Popover.Props = {}) {
 	return { trigger, user, ...returned };
 }
 
-// eslint-disable-next-line ts/ban-types
 async function open(props: Popover.Props = {}, openWith: "click" | (string & {}) = "click") {
 	const { trigger, getByTestId, queryByTestId, user } = setup(props);
 	expect(queryByTestId("content")).toBeNull();

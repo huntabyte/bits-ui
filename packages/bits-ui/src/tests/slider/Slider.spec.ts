@@ -19,6 +19,7 @@ function renderSliderRange(props: Slider.Props = {}) {
 
 function setup(props: Slider.Props = {}, kind: "default" | "range" = "default") {
 	const user = userEvent.setup();
+	// eslint-disable-next-line ts/no-explicit-any
 	let returned: any;
 	if (kind === "default") {
 		returned = renderSlider(props);

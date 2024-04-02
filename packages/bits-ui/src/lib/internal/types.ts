@@ -4,6 +4,7 @@ import type { TransitionConfig } from "svelte/transition";
 import type { CreateDispatcher } from "./index.js";
 
 export type ObjectVariation<T> = T extends object ? T : never;
+// eslint-disable-next-line ts/no-explicit-any
 export type Transition = (node: Element, params?: any) => TransitionConfig;
 export type TransitionParams<T extends Transition> = Parameters<T>[1];
 
@@ -48,11 +49,11 @@ export type ExpandDeep<T> = T extends object
 
 export type Prettify<T> = {
 	[K in keyof T]: T[K];
-	// eslint-disable-next-line ts/ban-types
 } & {};
 
 export type Builder = {
 	[x: PropertyKey]: unknown;
+	// eslint-disable-next-line ts/no-explicit-any
 	action: Action<HTMLElement, any, any>;
 };
 

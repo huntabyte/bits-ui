@@ -28,7 +28,6 @@ type Props = Expand<OmitFloating<CreateTooltipProps>> & {
 	 * </Tooltip.Root>
 	 * ```
 	 */
-	// eslint-disable-next-line ts/ban-types
 	open?: boolean & {};
 
 	/**

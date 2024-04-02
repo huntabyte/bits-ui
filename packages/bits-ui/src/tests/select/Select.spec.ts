@@ -43,7 +43,6 @@ function setup(props: Select.Props<unknown, false> = {}, options: Item[] = testI
 }
 async function open(
 	props: Select.Props<unknown, false> = {},
-	// eslint-disable-next-line ts/ban-types
 	openWith: "click" | (string & {}) = "click"
 ) {
 	const returned = setup(props);

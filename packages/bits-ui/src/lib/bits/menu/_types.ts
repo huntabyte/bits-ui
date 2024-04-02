@@ -1,4 +1,3 @@
-/* eslint-disable ts/ban-types */
 /**
  * Shared internal types for the various menu components.
  */

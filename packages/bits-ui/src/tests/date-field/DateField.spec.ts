@@ -516,6 +516,7 @@ describe("date field", () => {
 	});
 });
 
+// eslint-disable-next-line ts/no-explicit-any
 function getTimeSegments(getByTestId: (...args: any[]) => HTMLElement) {
 	return {
 		hour: getByTestId("hour"),
