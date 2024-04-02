@@ -24,9 +24,9 @@ import type {
 
 export type { SelectArrowPropsWithoutHTML, SelectContentPropsWithoutHTML };
 
-export type WhenTrue<TrueOrFalse, IfTrue, IfFalse, IfNeither = IfTrue | IfFalse> = [
-	TrueOrFalse,
-] extends [true]
+type WhenTrue<TrueOrFalse, IfTrue, IfFalse, IfNeither = IfTrue | IfFalse> = [TrueOrFalse] extends [
+	true,
+]
 	? IfTrue
 	: [TrueOrFalse] extends [false]
 		? IfFalse

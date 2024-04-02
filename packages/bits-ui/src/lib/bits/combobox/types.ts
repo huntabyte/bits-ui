@@ -18,9 +18,9 @@ import type {
 	ContentProps as ComboboxContentPropsWithoutHTML,
 } from "$lib/bits/floating/_types.js";
 
-export type WhenTrue<TrueOrFalse, IfTrue, IfFalse, IfNeither = IfTrue | IfFalse> = [
-	TrueOrFalse,
-] extends [true]
+type WhenTrue<TrueOrFalse, IfTrue, IfFalse, IfNeither = IfTrue | IfFalse> = [TrueOrFalse] extends [
+	true,
+]
 	? IfTrue
 	: [TrueOrFalse] extends [false]
 		? IfFalse
