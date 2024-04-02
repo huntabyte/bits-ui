@@ -1,38 +1,37 @@
 import type { HTMLAnchorAttributes, HTMLButtonAttributes } from "svelte/elements";
-import type * as I from "./_types.js";
 import type { DOMEl } from "$lib/internal/types.js";
+import type { Builder } from "$lib/internal/index.js";
 
-type AnchorElement = I.Props &
+type ButtonPropsWithoutHTML = {
+	/**
+	 * Melt UI builders to apply to the button component.
+	 */
+	builders?: Builder[];
+};
+
+type AnchorElement = ButtonPropsWithoutHTML &
 	HTMLAnchorAttributes & {
 		href?: HTMLAnchorAttributes["href"];
 		type?: never;
 	} & DOMEl<HTMLAnchorElement>;
 
-type ButtonElement = I.Props &
+type ButtonElement = ButtonPropsWithoutHTML &
 	HTMLButtonAttributes & {
 		type?: HTMLButtonAttributes["type"];
 		href?: never;
 	} & DOMEl<HTMLButtonElement>;
 
-type Props = AnchorElement | ButtonElement;
+export type ButtonProps = AnchorElement | ButtonElement;
 
-type ButtonEventHandler<T extends Event = Event> = T & {
+export type ButtonEventHandler<T extends Event = Event> = T & {
 	currentTarget: EventTarget & HTMLButtonElement;
 };
 
-type Events = {
+export type ButtonEvents = {
 	click: ButtonEventHandler<MouseEvent>;
 	keydown: ButtonEventHandler<KeyboardEvent>;
 	change: ButtonEventHandler<Event>;
 	keyup: ButtonEventHandler<KeyboardEvent>;
 	mouseenter: ButtonEventHandler<MouseEvent>;
 	mouseleave: ButtonEventHandler<MouseEvent>;
-};
-
-export type {
-	Props,
-	//
-	Events,
-	//
-	ButtonEventHandler,
 };

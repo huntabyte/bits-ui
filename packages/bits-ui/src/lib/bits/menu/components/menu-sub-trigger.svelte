@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { getSubTrigger } from "../ctx.js";
-	import type { SubTriggerEvents, SubTriggerProps } from "../types.js";
+	import type { SubTriggerEvents, SubTriggerProps } from "../index.js";
 	import { disabledAttrs } from "$lib/internal/index.js";
 	import { createDispatcher } from "$lib/internal/events.js";
 

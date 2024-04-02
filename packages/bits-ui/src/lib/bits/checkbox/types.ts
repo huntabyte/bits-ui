@@ -1,23 +1,41 @@
 import type { HTMLButtonAttributes, HTMLInputAttributes } from "svelte/elements";
-import type * as I from "./_types.js";
-import type { DOMEl, HTMLDivAttributes } from "$lib/internal/index.js";
+import type { CreateCheckboxProps as MeltCheckboxProps } from "@melt-ui/svelte";
 import type { CustomEventHandler } from "$lib/index.js";
+import type {
+	DOMEl,
+	DOMElement,
+	Expand,
+	HTMLDivAttributes,
+	OmitChecked,
+	OnChangeFn,
+} from "$lib/internal/index.js";
 
-type Props = I.Props & HTMLButtonAttributes;
+export type CheckboxPropsWithoutHTML = Expand<
+	OmitChecked<MeltCheckboxProps> & {
+		/**
+		 * The state of the checkbox.
+		 * You can bind this to a boolean value to programmatically control the checked state.
+		 *
+		 * @defaultValue false
+		 */
+		checked?: boolean | "indeterminate";
 
-type IndicatorProps = I.IndicatorProps & HTMLDivAttributes;
+		/**
+		 * A callback function called when the checked state changes.
+		 */
+		onCheckedChange?: OnChangeFn<boolean | "indeterminate">;
+	} & DOMElement<HTMLButtonElement>
+>;
 
-type InputProps = Omit<HTMLInputAttributes, "value"> & DOMEl<HTMLInputElement>;
+export type CheckboxIndicatorPropsWithoutHTML = DOMElement;
 
-type Events = {
+export type CheckboxProps = CheckboxPropsWithoutHTML & HTMLButtonAttributes;
+
+export type CheckboxIndicatorProps = CheckboxIndicatorPropsWithoutHTML & HTMLDivAttributes;
+
+export type CheckboxInputProps = Omit<HTMLInputAttributes, "value"> & DOMEl<HTMLInputElement>;
+
+export type CheckboxEvents = {
 	click: CustomEventHandler<MouseEvent, HTMLButtonElement>;
 	keydown: CustomEventHandler<KeyboardEvent, HTMLButtonElement>;
-};
-
-export type {
-	Props,
-	IndicatorProps,
-	InputProps,
-	//
-	Events,
 };

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { createLabel, melt } from "@melt-ui/svelte";
 	import { getLabelData } from "../ctx.js";
-	import type { Events, Props } from "../types.js";
+	import type { Events, Props } from "../index.js";
 	import { createDispatcher } from "$lib/internal/events.js";
 
 	type $$Props = Props;

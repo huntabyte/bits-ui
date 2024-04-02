@@ -1,30 +1,131 @@
 import type { EventHandler, HTMLInputAttributes } from "svelte/elements";
-import type * as I from "./_types.js";
-import type { HTMLDivAttributes, Transition } from "$lib/internal/index.js";
-import type { CustomEventHandler } from "$lib/index.js";
+import type {
+	ComboboxOptionProps as MeltComboboxOptionProps,
+	CreateComboboxProps as MeltComboboxProps,
+} from "@melt-ui/svelte";
+import type {
+	DOMElement,
+	Expand,
+	HTMLDivAttributes,
+	OmitFloating,
+	OnChangeFn,
+	Transition,
+} from "$lib/internal/index.js";
+import type { CustomEventHandler, Selected } from "$lib/index.js";
 
-type Props<T, Multiple extends boolean = false> = I.Props<T, Multiple>;
+import type {
+	ArrowProps as ComboboxArrowPropsWithoutHTML,
+	ContentProps as ComboboxContentPropsWithoutHTML,
+} from "$lib/bits/floating/_types.js";
 
-type ContentProps<
+export type WhenTrue<TrueOrFalse, IfTrue, IfFalse, IfNeither = IfTrue | IfFalse> = [
+	TrueOrFalse,
+] extends [true]
+	? IfTrue
+	: [TrueOrFalse] extends [false]
+		? IfFalse
+		: IfNeither;
+
+type SelectValue<T, Multiple extends boolean> = WhenTrue<Multiple, T[] | undefined, T | undefined>;
+
+export type ComboboxPropsWithoutHTML<T = unknown, Multiple extends boolean = false> = Expand<
+	OmitFloating<
+		Omit<MeltComboboxProps, "selected" | "defaultSelected" | "onSelectedChange" | "multiple">
+	> & {
+		/**
+		 * The selected value of the combobox.
+		 * You can bind this to a value to programmatically control the selected value.
+		 *
+		 * @defaultValue undefined
+		 */
+		selected?: SelectValue<Selected<T>, Multiple> | undefined;
+
+		/**
+		 * A callback function called when the selected value changes.
+		 */
+		onSelectedChange?: OnChangeFn<SelectValue<Selected<T>, Multiple>>;
+
+		/**
+		 * The open state of the combobox menu.
+		 * You can bind this to a boolean value to programmatically control the open state.
+		 *
+		 * @defaultValue false
+		 */
+		open?: boolean;
+
+		/**
+		 * A callback function called when the open state changes.
+		 */
+		onOpenChange?: OnChangeFn<boolean>;
+
+		/**
+		 * Whether or not multiple values can be selected.
+		 */
+		multiple?: Multiple;
+
+		/**
+		 * The value of the input.
+		 * You can bind this to a value to programmatically control the input value.
+		 *
+		 * @defaultValue ""
+		 */
+		inputValue?: string;
+
+		/**
+		 * Optionally provide an array of `Selected<T>` objects to
+		 * type the `selected` and `onSelectedChange` props.
+		 */
+		items?: Selected<T>[];
+
+		/**
+		 * Whether the input has been touched or not. You can bind to this to
+		 * handle filtering the items only when the input has been touched.
+		 *
+		 * @defaultValue false
+		 */
+		touchedInput?: boolean;
+	}
+>;
+
+export type ComboboxInputPropsWithoutHTML = DOMElement<HTMLInputElement>;
+export type ComboboxLabelPropsWithoutHTML = DOMElement<HTMLLabelElement>;
+
+export type ComboboxGroupPropsWithoutHTML = DOMElement;
+export type ComboboxGroupLabelPropsWithoutHTML = DOMElement;
+
+export type ComboboxItemPropsWithoutHTML = Expand<MeltComboboxOptionProps & DOMElement>;
+
+export type ComboboxHiddenInputPropsWithoutHTML = DOMElement;
+export type ComboboxSeparatorPropsWithoutHTML = DOMElement;
+export type ComboboxIndicatorPropsWithoutHTML = DOMElement;
+
+//
+
+export type ComboboxProps<T, Multiple extends boolean = false> = ComboboxPropsWithoutHTML<
+	T,
+	Multiple
+>;
+
+export type ComboboxContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
 	Out extends Transition = Transition,
-> = I.ContentProps<T, In, Out> & HTMLDivAttributes;
+> = ComboboxContentPropsWithoutHTML<T, In, Out> & HTMLDivAttributes;
 
-type InputProps = I.InputProps & HTMLInputAttributes;
-type LabelProps = I.LabelProps & HTMLDivAttributes;
+export type ComboboxInputProps = ComboboxInputPropsWithoutHTML & HTMLInputAttributes;
+export type ComboboxLabelProps = ComboboxLabelPropsWithoutHTML & HTMLDivAttributes;
 
-type GroupProps = I.GroupProps & HTMLDivAttributes;
-type GroupLabelProps = I.GroupLabelProps & HTMLDivAttributes;
+export type ComboboxGroupProps = ComboboxGroupPropsWithoutHTML & HTMLDivAttributes;
+export type ComboboxGroupLabelProps = ComboboxGroupLabelPropsWithoutHTML & HTMLDivAttributes;
 
-type ItemProps = I.ItemProps & HTMLDivAttributes;
+export type ComboboxItemProps = ComboboxItemPropsWithoutHTML & HTMLDivAttributes;
 
-type HiddenInputProps = I.HiddenInputProps & HTMLInputAttributes;
-type SeparatorProps = I.SeparatorProps & HTMLDivAttributes;
-type IndicatorProps = I.IndicatorProps & HTMLDivAttributes;
-type ArrowProps = I.ArrowProps & HTMLDivAttributes;
+export type ComboboxHiddenInputProps = ComboboxHiddenInputPropsWithoutHTML & HTMLInputAttributes;
+export type ComboboxSeparatorProps = ComboboxSeparatorPropsWithoutHTML & HTMLDivAttributes;
+export type ComboboxIndicatorProps = ComboboxIndicatorPropsWithoutHTML & HTMLDivAttributes;
+export type ComboboxArrowProps = ComboboxArrowPropsWithoutHTML & HTMLDivAttributes;
 
-type ItemEvents<T extends Element = HTMLDivElement> = {
+export type ComboboxItemEvents<T extends Element = HTMLDivElement> = {
 	click: CustomEventHandler<MouseEvent, T>;
 	pointermove: CustomEventHandler<PointerEvent, T>;
 	focusin: EventHandler<FocusEvent, T>;
@@ -33,36 +134,19 @@ type ItemEvents<T extends Element = HTMLDivElement> = {
 	pointerleave: EventHandler<PointerEvent, T>;
 };
 
-type ContentEvents<T extends Element = HTMLDivElement> = {
+export type ComboboxContentEvents<T extends Element = HTMLDivElement> = {
 	pointerleave: CustomEventHandler<PointerEvent, T>;
 	keydown: EventHandler<KeyboardEvent, T>;
 };
 
-type GroupLabelEvents<T extends Element = HTMLSpanElement> = {
+export type ComboboxGroupLabelEvents<T extends Element = HTMLSpanElement> = {
 	click: CustomEventHandler<MouseEvent, T>;
 };
 
-type InputEvents = {
+export type ComboboxInputEvents = {
 	keydown: CustomEventHandler<KeyboardEvent, HTMLInputElement>;
 	input: CustomEventHandler<InputEvent, HTMLInputElement>;
 	click: CustomEventHandler<ClipboardEvent, HTMLInputElement>;
 };
 
-export type {
-	Props,
-	ContentProps,
-	InputProps,
-	ItemProps,
-	LabelProps,
-	GroupProps,
-	GroupLabelProps,
-	ArrowProps,
-	HiddenInputProps,
-	SeparatorProps,
-	IndicatorProps,
-	//
-	ContentEvents,
-	InputEvents,
-	ItemEvents,
-	GroupLabelEvents,
-};
+export type { ComboboxArrowPropsWithoutHTML, ComboboxContentPropsWithoutHTML };

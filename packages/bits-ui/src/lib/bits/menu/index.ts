@@ -15,4 +15,30 @@ export { default as SubContent } from "./components/menu-sub-content.svelte";
 export { default as SubTrigger } from "./components/menu-sub-trigger.svelte";
 export { default as Trigger } from "./components/menu-trigger.svelte";
 
-export * from "./types.js";
+export type {
+	MenuProps as Props,
+	MenuArrowProps as ArrowProps,
+	MenuCheckboxIndicatorProps as CheckboxIndicatorProps,
+	MenuCheckboxItemProps as CheckboxItemProps,
+	MenuCheckboxItemEvents as CheckboxItemEvents,
+	MenuContentEvents as ContentEvents,
+	MenuContentProps as ContentProps,
+	MenuGroupProps as GroupProps,
+	MenuItemProps as ItemProps,
+	MenuItemEvents as ItemEvents,
+	MenuLabelProps as LabelProps,
+	MenuRadioGroupProps as RadioGroupProps,
+	MenuRadioIndicatorProps as RadioIndicatorProps,
+	MenuRadioItemProps as RadioItemProps,
+	MenuRadioItemEvents as RadioItemEvents,
+	MenuSeparatorProps as SeparatorProps,
+	MenuSubProps as SubProps,
+	MenuSubTriggerProps as SubTriggerProps,
+	MenuSubContentProps as SubContentProps,
+	MenuSubContentEvents as SubContentEvents,
+	MenuSubTriggerEvents as SubTriggerEvents,
+	DropdownTriggerProps,
+	DropdownTriggerEvents,
+	ContextTriggerProps,
+	ContextTriggerEvents,
+} from "./types.js";

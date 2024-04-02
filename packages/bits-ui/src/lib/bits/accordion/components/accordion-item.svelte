@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { setItem } from "../ctx.js";
-	import type { ItemProps } from "../types.js";
+	import type { ItemProps } from "../index.js";
 	type $$Props = ItemProps;
 
 	export let value: $$Props["value"];

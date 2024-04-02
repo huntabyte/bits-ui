@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { setCheckboxItem } from "../ctx.js";
-	import type { CheckboxItemEvents, CheckboxItemProps } from "../types.js";
+	import type { CheckboxItemEvents, CheckboxItemProps } from "../index.js";
 	import { createDispatcher } from "$lib/internal/events.js";
 
 	type $$Props = CheckboxItemProps;

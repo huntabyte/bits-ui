@@ -4,4 +4,11 @@ export { default as Header } from "./components/accordion-header.svelte";
 export { default as Trigger } from "./components/accordion-trigger.svelte";
 export { default as Content } from "./components/accordion-content.svelte";
 
-export * from "./types.js";
+export type {
+	AccordionProps as Props,
+	AccordionItemProps as ItemProps,
+	AccordionHeaderProps as HeaderProps,
+	AccordionTriggerProps as TriggerProps,
+	AccordionContentProps as ContentProps,
+	AccordionTriggerEvents as TriggerEvents,
+} from "./types.js";

@@ -1,6 +1,9 @@
-import type * as I from "./_types.js";
-import type { HTMLDivAttributes } from "$lib/internal/index.js";
+import type { DOMEl, HTMLDivAttributes } from "$lib/internal/index.js";
 
-type Props = I.Props & HTMLDivAttributes;
+export type AspectRatioPropsWithoutHTML = Expand<
+	{
+		ratio?: number;
+	} & DOMEl
+>;
 
-export type { Props };
+export type AspectRatioProps = AspectRatioPropsWithoutHTML & HTMLDivAttributes;

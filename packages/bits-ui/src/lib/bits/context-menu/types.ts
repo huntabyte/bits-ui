@@ -1,59 +1,46 @@
-import type * as I from "./_types.js";
 import type {
-	ArrowProps,
-	CheckboxIndicatorProps,
-	CheckboxItemEvents,
-	CheckboxItemProps,
-	ContentEvents,
-	GroupProps,
-	ItemEvents,
-	ItemProps,
-	LabelProps,
-	Props,
-	RadioGroupProps,
-	RadioIndicatorProps,
-	RadioItemEvents,
-	RadioItemProps,
-	SeparatorProps,
-	SubContentEvents,
-	SubContentProps,
-	SubProps,
-	SubTriggerEvents,
-	SubTriggerProps,
-	ContextTriggerEvents as TriggerEvents,
-	ContextTriggerProps as TriggerProps,
-} from "$lib/bits/menu/index.js";
-import type { HTMLDivAttributes, Transition } from "$lib/internal/index.js";
+	DOMElement,
+	HTMLDivAttributes,
+	Transition,
+	TransitionProps,
+} from "$lib/internal/index.js";
+import type { FloatingProps } from "$lib/bits/floating/_types.js";
 
-type ContentProps<
+export type {
+	ArrowProps as ContextMenuArrowProps,
+	CheckboxIndicatorProps as ContextMenuCheckboxIndicatorProps,
+	CheckboxItemEvents as ContextMenuCheckboxItemEvents,
+	CheckboxItemProps as ContextMenuCheckboxItemProps,
+	ContentEvents as ContextMenuContentEvents,
+	GroupProps as ContextMenuGroupProps,
+	ItemEvents as ContextMenuItemEvents,
+	ItemProps as ContextMenuItemProps,
+	LabelProps as ContextMenuLabelProps,
+	Props as ContextMenuProps,
+	RadioGroupProps as ContextMenuRadioGroupProps,
+	RadioIndicatorProps as ContextMenuRadioIndicatorProps,
+	RadioItemEvents as ContextMenuRadioItemEvents,
+	RadioItemProps as ContextMenuRadioItemProps,
+	SeparatorProps as ContextMenuSeparatorProps,
+	SubContentEvents as ContextMenuSubContentEvents,
+	SubContentProps as ContextMenuSubContentProps,
+	SubProps as ContextMenuSubProps,
+	SubTriggerEvents as ContextMenuSubTriggerEvents,
+	SubTriggerProps as ContextMenuSubTriggerProps,
+	ContextTriggerEvents as ContextMenuTriggerEvents,
+	ContextTriggerProps as ContextMenuTriggerProps,
+} from "$lib/bits/menu/index.js";
+
+type ContextFloatingProps = Omit<FloatingProps, "sameWidth" | "side" | "sideOffset" | "align">;
+
+export type ContextMenuContentPropsWithoutHTML<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
 	Out extends Transition = Transition,
-> = I.ContentProps<T, In, Out> & HTMLDivAttributes;
+> = Expand<ContextFloatingProps & TransitionProps<T, In, Out> & DOMElement>;
 
-export type {
-	Props,
-	SubProps,
-	ItemProps,
-	ArrowProps,
-	GroupProps,
-	LabelProps,
-	ContentProps,
-	TriggerProps,
-	RadioItemProps,
-	SeparatorProps,
-	RadioGroupProps,
-	SubContentProps,
-	SubTriggerProps,
-	CheckboxItemProps,
-	CheckboxIndicatorProps,
-	RadioIndicatorProps,
-	//,
-	ItemEvents,
-	TriggerEvents,
-	ContentEvents,
-	RadioItemEvents,
-	SubContentEvents,
-	SubTriggerEvents,
-	CheckboxItemEvents,
-};
+export type ContextMenuContentProps<
+	T extends Transition = Transition,
+	In extends Transition = Transition,
+	Out extends Transition = Transition,
+> = ContextMenuContentPropsWithoutHTML<T, In, Out> & HTMLDivAttributes;

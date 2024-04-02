@@ -8,4 +8,17 @@ export { default as Overlay } from "./components/alert-dialog-overlay.svelte";
 export { default as Trigger } from "./components/alert-dialog-trigger.svelte";
 export { default as Description } from "./components/alert-dialog-description.svelte";
 
-export * from "./types.js";
+export type {
+	AlertDialogProps as Props,
+	AlertDialogTitleProps as TitleProps,
+	AlertDialogActionProps as ActionProps,
+	AlertDialogCancelProps as CancelProps,
+	AlertDialogPortalProps as PortalProps,
+	AlertDialogContentProps as ContentProps,
+	AlertDialogOverlayProps as OverlayProps,
+	AlertDialogTriggerProps as TriggerProps,
+	AlertDialogDescriptionProps as DescriptionProps,
+	AlertDialogTriggerEvents as TriggerEvents,
+	AlertDialogActionEvents as ActionEvents,
+	AlertDialogCancelEvents as CancelEvents,
+} from "./types.js";

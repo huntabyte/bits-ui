@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { getCtx } from "../ctx.js";
-	import type { FallbackProps } from "../types.js";
+	import type { FallbackProps } from "../index.js";
 
 	type $$Props = FallbackProps;
 

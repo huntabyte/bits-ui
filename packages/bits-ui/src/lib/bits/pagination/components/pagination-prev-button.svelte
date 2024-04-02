@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import type { PrevButtonEvents, PrevButtonProps } from "../types.js";
+	import type { PrevButtonEvents, PrevButtonProps } from "../index.js";
 	import { getCtx } from "../ctx.js";
 	import { createDispatcher } from "$lib/internal/events.js";
 

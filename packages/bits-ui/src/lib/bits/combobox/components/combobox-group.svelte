@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { setGroupCtx } from "../ctx.js";
-	import type { GroupProps } from "../types.js";
+	import type { GroupProps } from "../index.js";
 
 	type $$Props = GroupProps;
 	export let asChild: $$Props["asChild"] = false;

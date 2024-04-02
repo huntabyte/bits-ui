@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { derived } from "svelte/store";
-	import type { MenuProps } from "../types.js";
+	import type { MenuProps } from "../index.js";
 	import { setMenuCtx } from "../ctx.js";
 	type $$Props = MenuProps;
 

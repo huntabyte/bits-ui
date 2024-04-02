@@ -1,29 +1,77 @@
-import type * as I from "./_types.js";
+import type { DateValue } from "@internationalized/date";
+import type { CreateDateFieldProps as MeltDateFieldProps } from "@melt-ui/svelte";
 import type { CustomEventHandler } from "$lib/index.js";
-import type { HTMLDivAttributes, HTMLSpanAttributes } from "$lib/internal/index.js";
+import type {
+	DOMElement,
+	Expand,
+	HTMLDivAttributes,
+	HTMLSpanAttributes,
+	OmitDates,
+	OnChangeFn,
+} from "$lib/internal/index.js";
+import type { SegmentPart } from "$lib/shared/index.js";
 
-type Props = I.Props;
+export type DateFieldPropsWithoutHTML = Expand<
+	Omit<OmitDates<MeltDateFieldProps>, "required" | "name"> & {
+		/**
+		 * The value of the date field.
+		 * You can bind this to a `DateValue` object to programmatically control the value.
+		 */
+		value?: DateValue;
 
-type LabelProps = I.LabelProps & HTMLSpanAttributes;
+		/**
+		 * A callback function called when the value changes.
+		 */
+		onValueChange?: OnChangeFn<DateValue | undefined>;
 
-type SegmentProps = I.SegmentProps & HTMLDivAttributes;
+		/**
+		 * The placeholder date used to start the field.
+		 */
+		placeholder?: DateValue;
 
-type InputProps = I.InputProps & HTMLDivAttributes;
+		/**
+		 * A callback function called when the placeholder changes.
+		 */
+		onPlaceholderChange?: OnChangeFn<DateValue>;
 
-type DescriptionProps = I.DescriptionProps & HTMLDivAttributes;
+		/**
+		 * The id of the validation message element which is used to apply the
+		 * appropriate `aria-describedby` attribute to the input.
+		 */
+		validationId?: string;
 
-type SegmentEvents = {
+		/**
+		 * The id of the description element which is used to describe the input.
+		 * This is used to apply the appropriate `aria-describedby` attribute to the input.
+		 */
+		descriptionId?: string;
+	}
+>;
+
+export type DateFieldInputPropsWithoutHTML = DOMElement;
+
+export type DateFieldDescriptionPropsWithoutHTML = DOMElement;
+
+export type DateFieldLabelPropsWithoutHTML = DOMElement<HTMLSpanElement>;
+
+export type DateFieldSegmentPropsWithoutHTML = Expand<
+	{
+		part: SegmentPart;
+	} & DOMElement
+>;
+
+export type DateFieldProps = DateFieldPropsWithoutHTML;
+
+export type DateFieldLabelProps = DateFieldLabelPropsWithoutHTML & HTMLSpanAttributes;
+
+export type DateFieldSegmentProps = DateFieldSegmentPropsWithoutHTML & HTMLDivAttributes;
+
+export type DateFieldInputProps = DateFieldInputPropsWithoutHTML & HTMLDivAttributes;
+
+export type DateFieldDescriptionProps = DateFieldDescriptionPropsWithoutHTML & HTMLDivAttributes;
+
+export type DateFieldSegmentEvents = {
 	click: CustomEventHandler<MouseEvent, HTMLDivElement>;
 	focusout: CustomEventHandler<FocusEvent, HTMLDivElement>;
 	keydown: CustomEventHandler<KeyboardEvent, HTMLDivElement>;
-};
-
-export type {
-	Props,
-	LabelProps,
-	DescriptionProps,
-	InputProps,
-	SegmentProps,
-	//
-	SegmentEvents,
 };

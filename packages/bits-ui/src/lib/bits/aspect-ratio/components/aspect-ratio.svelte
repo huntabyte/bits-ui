@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Props } from "../types.js";
+	import type { Props } from "../index.js";
 
 	type $$Props = Props;
 	export let ratio: $$Props["ratio"] = 1 / 1;

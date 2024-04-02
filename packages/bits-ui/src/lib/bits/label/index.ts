@@ -1,2 +1,3 @@
 export { default as Root } from "./components/label.svelte";
-export * from "./types.js";
+
+export type { LabelProps as Props, LabelEvents as Events } from "./types.js";

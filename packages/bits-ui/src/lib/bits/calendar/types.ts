@@ -5,71 +5,143 @@ import type {
 	HTMLTdAttributes,
 	HTMLThAttributes,
 } from "svelte/elements";
-import type * as I from "./_types.js";
-import type { HTMLDivAttributes } from "$lib/internal/index.js";
+import type { DateValue } from "@internationalized/date";
+import type { CreateCalendarProps as MeltCalendarProps } from "@melt-ui/svelte";
+import type { DOMElement, HTMLDivAttributes, OnChangeFn } from "$lib/internal/index.js";
 import type { CustomEventHandler } from "$lib/index.js";
 
-type Props<Multiple extends boolean = false> = I.Props<Multiple> &
+type OmitCalendarProps<T> = Omit<
+	T,
+	| "placeholder"
+	| "defaultPlaceholder"
+	| "value"
+	| "defaultValue"
+	| "onPlaceholderChange"
+	| "onValueChange"
+	| "ids"
+>;
+
+export type CalendarPropsWithoutHTML<Multiple extends boolean = false> = Expand<
+	OmitCalendarProps<MeltCalendarProps<Multiple>> & {
+		/**
+		 * The selected date value. This updates as the user selects
+		 * date(s) in the calendar.
+		 *
+		 * You can bind this to a value to programmatically control the
+		 * value state.
+		 */
+		value?: MeltCalendarProps<Multiple>["defaultValue"];
+
+		/**
+		 * A callback function called when the value changes.
+		 */
+		onValueChange?: OnChangeFn<MeltCalendarProps<Multiple>["defaultValue"]>;
+
+		/**
+		 * The placeholder date, used to display the calendar when no
+		 * date is selected. This updates as the user navigates
+		 * the calendar.
+		 *
+		 * You can bind this to a value to programmatically control the
+		 * placeholder state.
+		 */
+		placeholder?: DateValue;
+
+		/**
+		 * A callback function called when the placeholder changes.
+		 */
+		onPlaceholderChange?: OnChangeFn<DateValue>;
+
+		/**
+		 * If `true`, the calendar will focus the selected day,
+		 * today, or the first day of the month in that order depending
+		 * on what is visible when the calendar is mounted.
+		 *
+		 * @default false
+		 */
+		initialFocus?: boolean;
+	} & DOMElement
+>;
+
+export type CalendarPrevButtonPropsWithoutHTML = DOMElement<HTMLButtonElement>;
+
+export type CalendarNextButtonPropsWithoutHTML = DOMElement<HTMLButtonElement>;
+
+export type CalendarHeadingPropsWithoutHTML = DOMElement;
+
+export type CalendarHeaderPropsWithoutHTML = DOMElement<HTMLElement>;
+
+export type CalendarGridHeadPropsWithoutHTML = DOMElement<HTMLTableSectionElement>;
+
+export type CalendarHeadCellPropsWithoutHTML = DOMElement<HTMLTableCellElement>;
+
+export type CalendarGridPropsWithoutHTML = DOMElement<HTMLTableElement>;
+
+export type CalendarGridBodyPropsWithoutHTML = DOMElement<HTMLTableSectionElement>;
+
+export type CalendarGridRowPropsWithoutHTML = DOMElement<HTMLTableRowElement>;
+
+export type CalendarBaseDayPropsWithoutHTML = Expand<{
+	/**
+	 * The date value of the cell.
+	 */
+	date: DateValue;
+
+	/**
+	 * The month value that the cell belongs to.
+	 */
+	month: DateValue;
+}>;
+
+export type CalendarCellPropsWithoutHTML = Expand<Omit<CalendarBaseDayPropsWithoutHTML, "month">> &
+	DOMElement<HTMLTableCellElement>;
+
+export type CalendarDayPropsWithoutHTML = Expand<CalendarBaseDayPropsWithoutHTML & DOMElement>;
+
+export type CalendarProps<Multiple extends boolean = false> = CalendarPropsWithoutHTML<Multiple> &
 	Omit<HTMLDivAttributes, "placeholder">;
 
-type PrevButtonProps = I.PrevButtonProps & HTMLButtonAttributes;
+export type CalendarPrevButtonProps = CalendarPrevButtonPropsWithoutHTML & HTMLButtonAttributes;
 
-type NextButtonProps = I.NextButtonProps & HTMLButtonAttributes;
+export type CalendarNextButtonProps = CalendarNextButtonPropsWithoutHTML & HTMLButtonAttributes;
 
-type HeadingProps = I.HeadingProps & HTMLDivAttributes;
+export type CalendarHeadingProps = CalendarHeadingPropsWithoutHTML & HTMLDivAttributes;
 
-type HeaderProps = I.HeaderProps & HTMLDivAttributes;
+export type CalendarHeaderProps = CalendarHeaderPropsWithoutHTML & HTMLDivAttributes;
 
-type GridProps = I.GridProps & HTMLTableAttributes;
+export type CalendarGridProps = CalendarGridPropsWithoutHTML & HTMLTableAttributes;
 
-type GridHeadProps = I.GridHeadProps & HTMLAttributes<HTMLTableSectionElement>;
+export type CalendarGridHeadProps = CalendarGridHeadPropsWithoutHTML &
+	HTMLAttributes<HTMLTableSectionElement>;
 
-type HeadCellProps = I.HeadCellProps & HTMLThAttributes;
+export type CalendarHeadCellProps = CalendarHeadCellPropsWithoutHTML & HTMLThAttributes;
 
-type GridBodyProps = I.GridBodyProps & HTMLAttributes<HTMLTableSectionElement>;
+export type CalendarGridBodyProps = CalendarGridBodyPropsWithoutHTML &
+	HTMLAttributes<HTMLTableSectionElement>;
 
-type GridRowProps = I.GridRowProps & HTMLAttributes<HTMLTableRowElement>;
+export type CalendarGridRowProps = CalendarGridRowPropsWithoutHTML &
+	HTMLAttributes<HTMLTableRowElement>;
 
-type CellProps = I.CellProps & HTMLTdAttributes;
+export type CalendarCellProps = CalendarCellPropsWithoutHTML & HTMLTdAttributes;
 
-type DayProps = I.DayProps & HTMLDivAttributes;
+export type CalendarDayProps = CalendarDayPropsWithoutHTML & HTMLDivAttributes;
 
 /**
  * Events
  */
 
-type ButtonEvents = {
+type CalendarButtonEvents = {
 	click: CustomEventHandler<MouseEvent, HTMLButtonElement>;
 };
 
-type PrevButtonEvents = ButtonEvents;
+export type CalendarPrevButtonEvents = CalendarButtonEvents;
 
-type NextButtonEvents = ButtonEvents;
+export type CalendarNextButtonEvents = CalendarButtonEvents;
 
-type DayEvents = {
+export type CalendarDayEvents = {
 	click: CustomEventHandler<MouseEvent, HTMLDivElement>;
 };
 
-type Events = {
+export type CalendarEvents = {
 	keydown: CustomEventHandler<KeyboardEvent, HTMLDivElement>;
-};
-
-export type {
-	Props,
-	PrevButtonProps,
-	NextButtonProps,
-	HeadingProps,
-	GridProps,
-	CellProps,
-	GridRowProps,
-	GridBodyProps,
-	HeadCellProps,
-	GridHeadProps,
-	HeaderProps,
-	DayProps,
-	//
-	Events,
-	PrevButtonEvents,
-	NextButtonEvents,
-	DayEvents,
 };

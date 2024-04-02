@@ -2,7 +2,7 @@
 	import { melt } from "@melt-ui/svelte";
 	import { derived } from "svelte/store";
 	import { setCtx } from "../ctx.js";
-	import type { Props } from "../types.js";
+	import type { Props } from "../index.js";
 
 	type $$Props = Props;
 

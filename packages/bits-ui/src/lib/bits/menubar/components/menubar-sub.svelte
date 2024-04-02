@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { derived } from "svelte/store";
 	import { setSubMenuCtx } from "../ctx.js";
-	import type { SubProps } from "../types.js";
+	import type { SubProps } from "../index.js";
 
 	type $$Props = SubProps;
 

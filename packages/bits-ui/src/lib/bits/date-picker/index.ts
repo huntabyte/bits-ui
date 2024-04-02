@@ -21,4 +21,32 @@ export { default as Heading } from "./components/date-picker-heading.svelte";
 export { default as NextButton } from "./components/date-picker-next-button.svelte";
 export { default as PrevButton } from "./components/date-picker-prev-button.svelte";
 
-export type * from "./types.js";
+export type {
+	DatePickerProps as Props,
+	DatePickerLabelProps as LabelProps,
+	DatePickerInputProps as InputProps,
+	DatePickerSegmentProps as SegmentProps,
+	DatePickerArrowProps as ArrowProps,
+	DatePickerCloseEvents as CloseEvents,
+	DatePickerCloseProps as CloseProps,
+	DatePickerContentProps as ContentProps,
+	DatePickerTriggerEvents as TriggerEvents,
+	DatePickerTriggerProps as TriggerProps,
+	DatePickerCalendarEvents as CalendarEvents,
+	DatePickerCalendarProps as CalendarProps,
+	DatePickerCellProps as CellProps,
+	DatePickerDayEvents as DayEvents,
+	DatePickerDayProps as DayProps,
+	DatePickerGridBodyProps as GridBodyProps,
+	DatePickerGridHeadProps as GridHeadProps,
+	DatePickerGridProps as GridProps,
+	DatePickerGridRowProps as GridRowProps,
+	DatePickerHeadCellProps as HeadCellProps,
+	DatePickerHeaderProps as HeaderProps,
+	DatePickerHeadingProps as HeadingProps,
+	DatePickerNextButtonEvents as NextButtonEvents,
+	DatePickerNextButtonProps as NextButtonProps,
+	DatePickerPrevButtonEvents as PrevButtonEvents,
+	DatePickerPrevButtonProps as PrevButtonProps,
+	DatePickerSegmentEvents as SegmentEvents,
+} from "./types.js";

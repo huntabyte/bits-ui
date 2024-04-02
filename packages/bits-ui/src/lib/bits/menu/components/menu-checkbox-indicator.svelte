@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { CheckboxIndicatorProps } from "../types.js";
+	import type { CheckboxIndicatorProps } from "../index.js";
 	import { getCheckboxIndicator, getCtx } from "../ctx.js";
 
 	type $$Props = CheckboxIndicatorProps;

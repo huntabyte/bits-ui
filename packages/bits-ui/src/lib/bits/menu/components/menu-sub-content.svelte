@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { getSubmenuCtx, updateSubPositioning } from "../ctx.js";
-	import type { SubContentEvents, SubContentProps } from "../types.js";
+	import type { SubContentEvents, SubContentProps } from "../index.js";
 	import { type Transition, createDispatcher } from "$lib/internal/index.js";
 
 	type T = $$Generic<Transition>;

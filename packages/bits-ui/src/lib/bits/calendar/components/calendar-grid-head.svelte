@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getCtx } from "../ctx.js";
-	import type { GridHeadProps } from "../types.js";
+	import type { GridHeadProps } from "../index.js";
 
 	type $$Props = GridHeadProps;
 	export let asChild: $$Props["asChild"] = false;

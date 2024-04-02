@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { setRadioItem } from "../ctx.js";
-	import type { RadioItemEvents, RadioItemProps } from "../types.js";
+	import type { RadioItemEvents, RadioItemProps } from "../index.js";
 	import { createDispatcher } from "$lib/internal/events.js";
 
 	type $$Props = RadioItemProps;

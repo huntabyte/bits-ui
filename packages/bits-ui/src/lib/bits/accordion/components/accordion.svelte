@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import type { Props } from "../types.js";
+	import type { Props } from "../index.js";
 	import { setCtx } from "../ctx.js";
 	import { arraysAreEqual } from "$lib/internal/arrays.js";
 

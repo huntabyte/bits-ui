@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { getCtx } from "../ctx.js";
-	import type { GridProps } from "../types.js";
+	import type { GridProps } from "../index.js";
 
 	type $$Props = GridProps;
 

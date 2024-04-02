@@ -1,26 +1,52 @@
 import type { HTMLButtonAttributes } from "svelte/elements";
-import type * as I from "./_types.js";
-import type { HTMLDivAttributes, Transition } from "$lib/internal/index.js";
+import type { CreateCollapsibleProps as MeltCollapsibleProps } from "@melt-ui/svelte";
 import type { CustomEventHandler } from "$lib/index.js";
+import type {
+	DOMElement,
+	Expand,
+	HTMLDivAttributes,
+	OmitForceVisible,
+	OmitOpen,
+	OnChangeFn,
+	Transition,
+	TransitionProps,
+} from "$lib/internal/index.js";
 
-type Props = I.Props & HTMLDivAttributes;
+export type CollapsiblePropsWithoutHTML = Expand<
+	OmitOpen<OmitForceVisible<MeltCollapsibleProps>> & {
+		/**
+		 * The open state of the collapsible.
+		 * You can bind this to a boolean value to programmatically control the open state.
+		 *
+		 * @defaultValue false
+		 */
+		open?: boolean;
 
-type ContentProps<
+		/**
+		 * A callback function called when the open state changes.
+		 */
+		onOpenChange?: OnChangeFn<boolean>;
+	} & DOMElement
+>;
+
+export type CollapsibleContentPropsWithoutHTML<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
 	Out extends Transition = Transition,
-> = I.ContentProps<T, In, Out> & HTMLDivAttributes;
+> = Expand<TransitionProps<T, In, Out> & DOMElement>;
 
-type TriggerProps = I.TriggerProps & HTMLButtonAttributes;
+export type CollapsibleTriggerPropsWithoutHTML = DOMElement<HTMLButtonElement>;
 
-type TriggerEvents = {
+export type CollapsibleProps = CollapsiblePropsWithoutHTML & HTMLDivAttributes;
+
+export type CollapsibleContentProps<
+	T extends Transition = Transition,
+	In extends Transition = Transition,
+	Out extends Transition = Transition,
+> = CollapsibleContentPropsWithoutHTML<T, In, Out> & HTMLDivAttributes;
+
+export type CollapsibleTriggerProps = CollapsibleTriggerPropsWithoutHTML & HTMLButtonAttributes;
+
+export type CollapsibleTriggerEvents = {
 	click: CustomEventHandler<MouseEvent, HTMLButtonElement>;
-};
-
-export type {
-	Props,
-	ContentProps,
-	TriggerProps,
-	//
-	TriggerEvents,
 };

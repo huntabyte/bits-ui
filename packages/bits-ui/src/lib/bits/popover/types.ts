@@ -1,31 +1,54 @@
 import type { HTMLButtonAttributes } from "svelte/elements";
-import type * as I from "./_types.js";
-import type { HTMLDivAttributes } from "$lib/internal/index.js";
+import type { CreatePopoverProps as MeltPopoverProps } from "@melt-ui/svelte";
+import type {
+	DOMElement,
+	Expand,
+	HTMLDivAttributes,
+	OmitFloating,
+	OnChangeFn,
+} from "$lib/internal/index.js";
 import type { CustomEventHandler } from "$lib/index.js";
-import type { ContentProps } from "$lib/bits/floating/types.js";
 
-type Props = I.Props;
+import type {
+	ArrowProps as PopoverArrowPropsWithoutHTML,
+	ContentProps as PopoverContentPropsWithoutHTML,
+} from "$lib/bits/floating/_types.js";
 
-type TriggerProps = I.TriggerProps & HTMLButtonAttributes;
+export type { ContentProps as PopoverContentProps } from "$lib/bits/floating/types.js";
 
-type CloseProps = I.CloseProps & HTMLButtonAttributes;
+export type { PopoverContentPropsWithoutHTML };
 
-type ArrowProps = I.ArrowProps & HTMLDivAttributes;
+export type PopoverPropsWithoutHTML = Expand<
+	OmitFloating<MeltPopoverProps> & {
+		/**
+		 * The open state of the popover.
+		 * You can bind this to a boolean value to programmatically control the open state.
+		 *
+		 * @defaultValue false
+		 */
+		open?: boolean;
 
-type TriggerEvents<T extends Element = HTMLButtonElement> = {
+		/**
+		 * A callback function called when the open state changes.
+		 */
+		onOpenChange?: OnChangeFn<boolean>;
+	}
+>;
+
+export type PopoverTriggerPropsWithoutHTML = DOMElement<HTMLButtonElement>;
+export type PopoverClosePropsWithoutHTML = DOMElement<HTMLButtonElement>;
+
+export type PopoverProps = PopoverPropsWithoutHTML;
+
+export type PopoverTriggerProps = PopoverTriggerPropsWithoutHTML & HTMLButtonAttributes;
+
+export type PopoverCloseProps = PopoverClosePropsWithoutHTML & HTMLButtonAttributes;
+
+export type PopoverArrowProps = PopoverArrowPropsWithoutHTML & HTMLDivAttributes;
+
+export type PopoverTriggerEvents<T extends Element = HTMLButtonElement> = {
 	click: CustomEventHandler<MouseEvent, T>;
 	keydown: CustomEventHandler<KeyboardEvent, T>;
 };
 
-type CloseEvents = TriggerEvents;
-
-export type {
-	Props,
-	CloseProps,
-	ArrowProps,
-	ContentProps,
-	TriggerProps,
-	//
-	TriggerEvents,
-	CloseEvents,
-};
+export type PopoverCloseEvents = PopoverTriggerEvents;

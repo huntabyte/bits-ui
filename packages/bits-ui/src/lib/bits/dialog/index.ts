@@ -7,4 +7,17 @@ export { default as Overlay } from "./components/dialog-overlay.svelte";
 export { default as Trigger } from "./components/dialog-trigger.svelte";
 export { default as Description } from "./components/dialog-description.svelte";
 
-export * from "./types.js";
+export type {
+	DialogProps as Props,
+	DialogTitleProps as TitleProps,
+	DialogCloseProps as CloseProps,
+	DialogPortalProps as PortalProps,
+	DialogContentProps as ContentProps,
+	DialogOverlayProps as OverlayProps,
+	DialogTriggerProps as TriggerProps,
+	DialogDescriptionProps as DescriptionProps,
+	DialogTriggerEvents as TriggerEvents,
+	DialogCloseEvents as CloseEvents,
+	DialogContentEvents as ContentEvents,
+	DialogOverlayEvents as OverlayEvents,
+} from "./types.js";

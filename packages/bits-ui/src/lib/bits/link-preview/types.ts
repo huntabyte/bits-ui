@@ -1,40 +1,62 @@
 import type { HTMLAnchorAttributes } from "svelte/elements";
-import type * as I from "./_types.js";
+import type { CreateLinkPreviewProps } from "@melt-ui/svelte";
 import type { CustomEventHandler } from "$lib/index.js";
-import type { HTMLDivAttributes, Transition } from "$lib/internal/index.js";
+import type {
+	DOMElement,
+	Expand,
+	HTMLDivAttributes,
+	OmitFloating,
+	OnChangeFn,
+	Transition,
+} from "$lib/internal/index.js";
+import type {
+	ArrowProps as LinkPreviewArrowPropsWithoutHTML,
+	ContentProps as LinkPreviewContentPropsWithoutHTML,
+} from "$lib/bits/floating/_types.js";
 
-type Props = I.Props;
+export type LinkPreviewPropsWithoutHTML = Expand<
+	OmitFloating<CreateLinkPreviewProps> & {
+		/**
+		 * The open state of the link preview.
+		 * You can bind this to a boolean value to programmatically control the open state.
+		 *
+		 * @defaultValue false
+		 */
+		open?: boolean;
 
-type TriggerProps = I.TriggerProps & HTMLAnchorAttributes;
+		/**
+		 * A callback function called when the open state changes.
+		 */
+		onOpenChange?: OnChangeFn<boolean>;
+	}
+>;
 
-type ContentProps<
+export type LinkPreviewTriggerPropsWithoutHTML = DOMElement<HTMLAnchorElement>;
+
+export type { LinkPreviewArrowPropsWithoutHTML, LinkPreviewContentPropsWithoutHTML };
+
+export type LinkPreviewProps = LinkPreviewPropsWithoutHTML;
+
+export type LinkPreviewTriggerProps = LinkPreviewTriggerPropsWithoutHTML & HTMLAnchorAttributes;
+
+export type LinkPreviewContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
 	Out extends Transition = Transition,
-> = I.ContentProps<T, In, Out> & HTMLDivAttributes;
+> = LinkPreviewContentPropsWithoutHTML<T, In, Out> & HTMLDivAttributes;
 
-type ArrowProps = I.ArrowProps & HTMLDivAttributes;
+export type LinkPreviewArrowProps = LinkPreviewArrowPropsWithoutHTML & HTMLDivAttributes;
 
-type TriggerEvents<T extends Element = HTMLAnchorElement> = {
+export type LinkPreviewTriggerEvents<T extends Element = HTMLAnchorElement> = {
 	click: CustomEventHandler<MouseEvent, T>;
 	blur: CustomEventHandler<FocusEvent, T>;
 	focus: CustomEventHandler<FocusEvent, T>;
 	pointerenter: CustomEventHandler<PointerEvent, T>;
 	pointerleave: CustomEventHandler<PointerEvent, T>;
 };
-type ContentEvents<T extends Element = HTMLDivElement> = {
+export type LinkPreviewContentEvents<T extends Element = HTMLDivElement> = {
 	focusout: CustomEventHandler<FocusEvent, T>;
 	pointerenter: CustomEventHandler<PointerEvent, T>;
 	pointerleave: CustomEventHandler<PointerEvent, T>;
 	pointerdown: CustomEventHandler<PointerEvent, T>;
-};
-
-export type {
-	Props,
-	ArrowProps,
-	TriggerProps,
-	ContentProps,
-	//
-	TriggerEvents,
-	ContentEvents,
 };

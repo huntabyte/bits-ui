@@ -15,4 +15,30 @@ export { default as RadioGroup } from "$lib/bits/menu/components/menu-radio-grou
 export { default as CheckboxItem } from "$lib/bits/menu/components/menu-checkbox-item.svelte";
 export { default as RadioIndicator } from "$lib/bits/menu/components/menu-radio-indicator.svelte";
 export { default as CheckboxIndicator } from "$lib/bits/menu/components/menu-checkbox-indicator.svelte";
-export * from "./types.js";
+
+export type {
+	MenubarProps as Props,
+	MenubarMenuArrowProps as MenuArrowProps,
+	MenubarMenuCheckboxIndicatorProps as MenuCheckboxIndicatorProps,
+	MenubarMenuCheckboxItemEvents as MenuCheckboxItemEvents,
+	MenubarMenuCheckboxItemProps as MenuCheckboxItemProps,
+	MenubarMenuContentEvents as MenuContentEvents,
+	MenubarMenuContentProps as MenuContentProps,
+	MenubarMenuGroupProps as MenuGroupProps,
+	MenubarMenuItemEvents as MenuItemEvents,
+	MenubarMenuItemProps as MenuItemProps,
+	MenubarMenuLabelProps as MenuLabelProps,
+	MenubarMenuProps as MenuProps,
+	MenubarMenuRadioGroupProps as MenuRadioGroupProps,
+	MenubarMenuRadioIndicatorProps as MenuRadioIndicatorProps,
+	MenubarMenuRadioItemEvents as MenuRadioItemEvents,
+	MenubarMenuRadioItemProps as MenuRadioItemProps,
+	MenubarMenuSeparatorProps as MenuSeparatorProps,
+	MenubarMenuSubContentEvents as MenuSubContentEvents,
+	MenubarMenuSubContentProps as MenuSubContentProps,
+	MenubarMenuSubProps as MenuSubProps,
+	MenubarMenuSubTriggerEvents as MenuSubTriggerEvents,
+	MenubarMenuSubTriggerProps as MenuSubTriggerProps,
+	MenubarTriggerEvents as TriggerEvents,
+	MenubarTriggerProps as TriggerProps,
+} from "./types.js";

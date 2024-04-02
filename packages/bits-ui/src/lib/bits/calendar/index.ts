@@ -11,4 +11,21 @@ export { default as Heading } from "./components/calendar-heading.svelte";
 export { default as NextButton } from "./components/calendar-next-button.svelte";
 export { default as PrevButton } from "./components/calendar-prev-button.svelte";
 
-export * from "./types.js";
+export type {
+	CalendarProps as Props,
+	CalendarPrevButtonProps as PrevButtonProps,
+	CalendarNextButtonProps as NextButtonProps,
+	CalendarHeadingProps as HeadingProps,
+	CalendarHeaderProps as HeaderProps,
+	CalendarGridProps as GridProps,
+	CalendarGridHeadProps as GridHeadProps,
+	CalendarHeadCellProps as HeadCellProps,
+	CalendarGridBodyProps as GridBodyProps,
+	CalendarGridRowProps as GridRowProps,
+	CalendarCellProps as CellProps,
+	CalendarDayProps as DayProps,
+	CalendarDayEvents as DayEvents,
+	CalendarPrevButtonEvents as PrevButtonEvents,
+	CalendarNextButtonEvents as NextButtonEvents,
+	CalendarEvents as Events,
+} from "./types.js";

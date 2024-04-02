@@ -1,33 +1,74 @@
 import type { HTMLButtonAttributes } from "svelte/elements";
-import type * as I from "./_types.js";
+import type {
+	AccordionHeadingProps as MeltAccordionHeadingProps,
+	AccordionItemProps as MeltAccordionItemProps,
+	CreateAccordionProps as MeltAccordionProps,
+} from "@melt-ui/svelte";
 import type { CustomEventHandler } from "$lib/index.js";
-import type { HTMLDivAttributes, Transition } from "$lib/internal/index.js";
+import type {
+	DOMElement,
+	Expand,
+	HTMLDivAttributes,
+	ObjectVariation,
+	OmitForceVisible,
+	OmitValue,
+	OnChangeFn,
+	Transition,
+	TransitionProps,
+} from "$lib/internal/index.js";
 
-type Props<Multiple extends boolean> = I.Props<Multiple> & Omit<HTMLDivAttributes, "type">;
+export type AccordionPropsWithoutHTML<Multiple extends boolean> = Expand<
+	OmitValue<OmitForceVisible<MeltAccordionProps<Multiple>>> & {
+		/**
+		 * The value of the accordion.
+		 * You can bind this to a value to programmatically control the open state.
+		 */
+		value?: MeltAccordionProps<Multiple>["defaultValue"];
 
-type ItemProps = I.ItemProps & HTMLDivAttributes;
+		/**
+		 * A callback function called when the value changes.
+		 */
+		onValueChange?: OnChangeFn<MeltAccordionProps<Multiple>["defaultValue"]>;
+	} & DOMElement
+>;
 
-type HeaderProps = I.HeaderProps & HTMLDivAttributes;
+export type AccordionItemPropsWithoutHTML = Expand<
+	ObjectVariation<MeltAccordionItemProps> & DOMElement
+>;
 
-type TriggerProps = I.TriggerProps & HTMLButtonAttributes;
+export type AccordionHeaderPropsWithoutHTML = Expand<
+	{
+		/**
+		 * The heading level of the accordion header.
+		 */
+		level?: ObjectVariation<MeltAccordionHeadingProps>["level"];
+	} & DOMElement
+>;
 
-type ContentProps<
+export type AccordionTriggerPropsWithoutHTML = DOMElement<HTMLButtonElement>;
+
+export type AccordionContentPropsWithoutHTML<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
 	Out extends Transition = Transition,
-> = I.ContentProps<T, In, Out> & HTMLDivAttributes;
+> = Expand<TransitionProps<T, In, Out> & DOMElement>;
 
-type TriggerEvents = {
+export type AccordionProps<Multiple extends boolean> = AccordionPropsWithoutHTML<Multiple> &
+	Omit<HTMLDivAttributes, "type">;
+
+export type AccordionItemProps = AccordionItemPropsWithoutHTML & HTMLDivAttributes;
+
+export type AccordionHeaderProps = AccordionHeaderPropsWithoutHTML & HTMLDivAttributes;
+
+export type AccordionTriggerProps = AccordionTriggerPropsWithoutHTML & HTMLButtonAttributes;
+
+export type AccordionContentProps<
+	T extends Transition = Transition,
+	In extends Transition = Transition,
+	Out extends Transition = Transition,
+> = AccordionContentPropsWithoutHTML<T, In, Out> & HTMLDivAttributes;
+
+export type AccordionTriggerEvents = {
 	click: CustomEventHandler<MouseEvent, HTMLButtonElement>;
 	keydown: CustomEventHandler<KeyboardEvent, HTMLButtonElement>;
-};
-
-export type {
-	ContentProps,
-	HeaderProps,
-	ItemProps,
-	Props,
-	//
-	TriggerEvents,
-	TriggerProps,
 };

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { getImage } from "../ctx.js";
-	import type { ImageProps } from "../types.js";
+	import type { ImageProps } from "../index.js";
 
 	type $$Props = ImageProps;
 

@@ -14,4 +14,29 @@ export { default as SubTrigger } from "$lib/bits/menu/components/menu-sub-trigge
 export { default as CheckboxItem } from "$lib/bits/menu/components/menu-checkbox-item.svelte";
 export { default as CheckboxIndicator } from "$lib/bits/menu/components/menu-checkbox-indicator.svelte";
 export { default as RadioIndicator } from "$lib/bits/menu/components/menu-radio-indicator.svelte";
-export * from "./types.js";
+
+export type {
+	DropdownMenuArrowProps as ArrowProps,
+	DropdownMenuCheckboxIndicatorProps as CheckboxIndicatorProps,
+	DropdownMenuCheckboxItemEvents as CheckboxItemEvents,
+	DropdownMenuCheckboxItemProps as CheckboxItemProps,
+	DropdownMenuContentEvents as ContentEvents,
+	DropdownMenuContentProps as ContentProps,
+	DropdownMenuGroupProps as GroupProps,
+	DropdownMenuItemEvents as ItemEvents,
+	DropdownMenuItemProps as ItemProps,
+	DropdownMenuLabelProps as LabelProps,
+	DropdownMenuProps as Props,
+	DropdownMenuRadioGroupProps as RadioGroupProps,
+	DropdownMenuRadioIndicatorProps as RadioIndicatorProps,
+	DropdownMenuRadioItemEvents as RadioItemEvents,
+	DropdownMenuRadioItemProps as RadioItemProps,
+	DropdownMenuSeparatorProps as SeparatorProps,
+	DropdownMenuSubContentEvents as SubContentEvents,
+	DropdownMenuSubContentProps as SubContentProps,
+	DropdownMenuSubProps as SubProps,
+	DropdownMenuSubTriggerEvents as SubTriggerEvents,
+	DropdownMenuSubTriggerProps as SubTriggerProps,
+	DropdownMenuTriggerEvents as DropdownTriggerEvents,
+	DropdownMenuTriggerProps as DropdownTriggerProps,
+} from "./types.js";

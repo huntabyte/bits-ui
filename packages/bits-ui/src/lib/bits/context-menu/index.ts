@@ -15,4 +15,28 @@ export { default as CheckboxItem } from "$lib/bits/menu/components/menu-checkbox
 export { default as RadioIndicator } from "$lib/bits/menu/components/menu-radio-indicator.svelte";
 export { default as CheckboxIndicator } from "$lib/bits/menu/components/menu-checkbox-indicator.svelte";
 
-export * from "./types.js";
+export type {
+	ContextMenuArrowProps as ArrowProps,
+	ContextMenuCheckboxIndicatorProps as CheckboxIndicatorProps,
+	ContextMenuCheckboxItemEvents as CheckboxItemEvents,
+	ContextMenuCheckboxItemProps as CheckboxItemProps,
+	ContextMenuContentEvents as ContentEvents,
+	ContextMenuGroupProps as GroupProps,
+	ContextMenuItemEvents as ItemEvents,
+	ContextMenuItemProps as ItemProps,
+	ContextMenuLabelProps as LabelProps,
+	ContextMenuProps as Props,
+	ContextMenuRadioGroupProps as RadioGroupProps,
+	ContextMenuRadioIndicatorProps as RadioIndicatorProps,
+	ContextMenuRadioItemEvents as RadioItemEvents,
+	ContextMenuRadioItemProps as RadioItemProps,
+	ContextMenuSeparatorProps as SeparatorProps,
+	ContextMenuSubContentEvents as SubContentEvents,
+	ContextMenuSubContentProps as SubContentProps,
+	ContextMenuSubProps as SubProps,
+	ContextMenuSubTriggerEvents as SubTriggerEvents,
+	ContextMenuSubTriggerProps as SubTriggerProps,
+	ContextMenuTriggerEvents as TriggerEvents,
+	ContextMenuTriggerProps as TriggerProps,
+	ContextMenuContentProps as ContentProps,
+} from "./types.js";

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { derived } from "svelte/store";
-	import type { Props } from "../types.js";
+	import type { Props } from "../index.js";
 	import { setCtx } from "../ctx.js";
 
 	type $$Props = Props;

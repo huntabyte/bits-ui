@@ -4,4 +4,12 @@ export { default as Content } from "./components/popover-content.svelte";
 export { default as Trigger } from "./components/popover-trigger.svelte";
 export { default as Close } from "./components/popover-close.svelte";
 
-export * from "./types.js";
+export type {
+	PopoverProps as Props,
+	PopoverArrowProps as ArrowProps,
+	PopoverContentProps as ContentProps,
+	PopoverTriggerProps as TriggerProps,
+	PopoverCloseProps as CloseProps,
+	PopoverTriggerEvents as TriggerEvents,
+	PopoverCloseEvents as CloseEvents,
+} from "./types.js";

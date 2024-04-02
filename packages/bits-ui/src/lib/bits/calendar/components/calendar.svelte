@@ -4,7 +4,7 @@
 	import { type Month, melt } from "@melt-ui/svelte";
 	import { onMount } from "svelte";
 	import { setCtx } from "../ctx.js";
-	import type { Props } from "../types.js";
+	import type { Props } from "../index.js";
 	import { createDispatcher } from "$lib/internal/events.js";
 	import { handleCalendarInitialFocus } from "$lib/internal/focus.js";
 	import { arraysAreEqual } from "$lib/internal/arrays.js";

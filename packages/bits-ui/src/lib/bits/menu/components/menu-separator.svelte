@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { getCtx } from "../ctx.js";
-	import type { SeparatorProps } from "../types.js";
+	import type { SeparatorProps } from "../index.js";
 
 	type $$Props = SeparatorProps;
 

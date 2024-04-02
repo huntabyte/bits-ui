@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { setRadioGroupCtx } from "../ctx.js";
-	import type { RadioGroupProps } from "../types.js";
+	import type { RadioGroupProps } from "../index.js";
 
 	type $$Props = RadioGroupProps;
 

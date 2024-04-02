@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { RadioIndicatorProps } from "../types.js";
+	import type { RadioIndicatorProps } from "../index.js";
 	import { getRadioIndicator } from "../ctx.js";
 
 	type $$Props = RadioIndicatorProps;
