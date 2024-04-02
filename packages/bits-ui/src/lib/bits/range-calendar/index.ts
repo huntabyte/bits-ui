@@ -11,4 +11,21 @@ export { default as Heading } from "./components/range-calendar-heading.svelte";
 export { default as NextButton } from "./components/range-calendar-next-button.svelte";
 export { default as PrevButton } from "./components/range-calendar-prev-button.svelte";
 
-export * from "./types.js";
+export type {
+	RangeCalendarProps as Props,
+	RangeCalendarPrevButtonProps as PrevButtonProps,
+	RangeCalendarNextButtonProps as NextButtonProps,
+	RangeCalendarHeadingProps as HeadingProps,
+	RangeCalendarHeaderProps as HeaderProps,
+	RangeCalendarGridProps as GridProps,
+	RangeCalendarGridHeadProps as GridHeadProps,
+	RangeCalendarHeadCellProps as HeadCellProps,
+	RangeCalendarGridBodyProps as GridBodyProps,
+	RangeCalendarCellProps as CellProps,
+	RangeCalendarGridRowProps as GridRowProps,
+	RangeCalendarDayProps as DayProps,
+	RangeCalendarEvents as Events,
+	RangeCalendarPrevButtonEvents as PrevButtonEvents,
+	RangeCalendarNextButtonEvents as NextButtonEvents,
+	RangeCalendarDayEvents as DayEvents,
+} from "./types.js";

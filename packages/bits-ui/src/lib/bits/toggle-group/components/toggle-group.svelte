@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { setCtx } from "../ctx.js";
-	import type { Props } from "../types.js";
+	import type { Props } from "../index.js";
 	import { arraysAreEqual } from "$lib/internal/arrays.js";
 
 	type T = $$Generic<"single" | "multiple">;

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getCtx } from "../ctx.js";
-	import type { InputProps } from "../types.js";
+	import type { InputProps } from "../index.js";
 	import { getSrOnlyStyles } from "$lib/internal/style.js";
 
 	type $$Props = InputProps;

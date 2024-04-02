@@ -1,6 +1,6 @@
-import type * as I from "./_types.js";
-import type { HTMLDivAttributes } from "$lib/internal/index.js";
+import type { CreateSeparatorProps as MeltSeparatorProps } from "@melt-ui/svelte";
+import type { DOMElement, Expand, HTMLDivAttributes } from "$lib/internal/index.js";
 
-type Props = I.Props & HTMLDivAttributes;
+export type SeparatorPropsWithoutHTML = Expand<MeltSeparatorProps & DOMElement>;
 
-export type { Props };
+export type SeparatorProps = SeparatorPropsWithoutHTML & HTMLDivAttributes;

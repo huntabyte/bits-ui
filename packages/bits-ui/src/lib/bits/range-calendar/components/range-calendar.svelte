@@ -3,7 +3,7 @@
 	import { onMount } from "svelte";
 	import type { DateValue } from "@internationalized/date";
 	import { setCtx } from "../ctx.js";
-	import type { Events, Props } from "../types.js";
+	import type { Events, Props } from "../index.js";
 	import { createDispatcher } from "$lib/internal/events.js";
 	import { handleCalendarInitialFocus } from "$lib/internal/focus.js";
 

@@ -10,4 +10,20 @@ export { default as Separator } from "../separator/components/separator.svelte";
 export { default as Trigger } from "./components/select-trigger.svelte";
 export { default as Value } from "./components/select-value.svelte";
 
-export * from "./types.js";
+export type {
+	SelectProps as Props,
+	SelectArrowProps as ArrowProps,
+	SelectContentProps as ContentProps,
+	SelectGroupProps as GroupProps,
+	SelectInputProps as InputProps,
+	SelectLabelProps as LabelProps,
+	SelectItemProps as ItemProps,
+	SelectIndicatorProps as IndicatorProps,
+	SelectSeparatorProps as SeparatorProps,
+	SelectTriggerProps as TriggerProps,
+	SelectValueProps as ValueProps,
+	SelectItemEvents as ItemEvents,
+	SelectContentEvents as ContentEvents,
+	SelectTriggerEvents as TriggerEvents,
+	SelectLabelEvents as LabelEvents,
+} from "./types.js";

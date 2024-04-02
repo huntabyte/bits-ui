@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { getCtx, getGroupLabel } from "../ctx.js";
-	import type { LabelEvents, LabelProps } from "../types.js";
+	import type { LabelEvents, LabelProps } from "../index.js";
 
 	type $$Props = LabelProps;
 	type $$Events = LabelEvents;

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import type { CornerProps } from "../types.js";
+	import type { CornerProps } from "../index.js";
 	import { getCtx } from "../ctx.js";
 
 	type $$Props = CornerProps;

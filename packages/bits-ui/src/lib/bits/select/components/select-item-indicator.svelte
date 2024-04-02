@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getItemIndicator } from "../ctx.js";
-	import type { IndicatorProps } from "../types.js";
+	import type { IndicatorProps } from "../index.js";
 
 	type $$Props = IndicatorProps;
 

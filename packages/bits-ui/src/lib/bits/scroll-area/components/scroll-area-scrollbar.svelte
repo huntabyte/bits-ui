@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { writable } from "svelte/store";
-	import type { ScrollbarProps } from "../types.js";
+	import type { ScrollbarProps } from "../index.js";
 	import { setScrollbarOrientation } from "../ctx.js";
 	import ScrollAreaScrollbarY from "./scroll-area-scrollbar-y.svelte";
 	import ScrollAreaScrollbarX from "./scroll-area-scrollbar-x.svelte";

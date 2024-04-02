@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import type { InputProps } from "../types.js";
+	import type { InputProps } from "../index.js";
 	import { getCtx } from "../ctx.js";
 
 	type $$Props = InputProps;

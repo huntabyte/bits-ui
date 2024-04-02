@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getCtx } from "../ctx.js";
-	import type { ThumbProps } from "../types.js";
+	import type { ThumbProps } from "../index.js";
 
 	type $$Props = ThumbProps;
 

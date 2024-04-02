@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getCtx } from "../ctx.js";
-	import type { ValueProps } from "../types.js";
+	import type { ValueProps } from "../index.js";
 
 	type $$Props = ValueProps;
 

@@ -4,32 +4,124 @@ import type {
 	HTMLButtonAttributes,
 	HTMLInputAttributes,
 } from "svelte/elements";
-import type * as I from "./_types.js";
-import type { HTMLDivAttributes, Transition } from "$lib/internal/index.js";
-import type { CustomEventHandler } from "$lib/index.js";
+import type {
+	SelectOptionProps as MeltSelectOptionProps,
+	CreateSelectProps as MeltSelectProps,
+} from "@melt-ui/svelte";
+import type {
+	DOMElement,
+	Expand,
+	HTMLDivAttributes,
+	OmitFloating,
+	OnChangeFn,
+	Transition,
+} from "$lib/internal/index.js";
+import type { CustomEventHandler, Selected } from "$lib/index.js";
+import type {
+	ArrowProps as SelectArrowPropsWithoutHTML,
+	ContentProps as SelectContentPropsWithoutHTML,
+} from "$lib/bits/floating/_types.js";
 
-type Props<T, Multiple extends boolean = false> = I.Props<T, Multiple>;
+export type { SelectArrowPropsWithoutHTML, SelectContentPropsWithoutHTML };
 
-type ContentProps<
+export type WhenTrue<TrueOrFalse, IfTrue, IfFalse, IfNeither = IfTrue | IfFalse> = [
+	TrueOrFalse,
+] extends [true]
+	? IfTrue
+	: [TrueOrFalse] extends [false]
+		? IfFalse
+		: IfNeither;
+
+type SelectValue<T, Multiple extends boolean> = WhenTrue<Multiple, T[] | undefined, T | undefined>;
+
+export type SelectPropsWithoutHTML<T = unknown, Multiple extends boolean = false> = Expand<
+	OmitFloating<
+		Omit<MeltSelectProps, "selected" | "defaultSelected" | "onSelectedChange" | "multiple">
+	> & {
+		/**
+		 * The selected value of the select.
+		 * You can bind this to a value to programmatically control the selected value.
+		 *
+		 * @defaultValue undefined
+		 */
+		selected?: SelectValue<Selected<T>, Multiple> | undefined;
+
+		/**
+		 * A callback function called when the selected value changes.
+		 */
+		onSelectedChange?: OnChangeFn<SelectValue<Selected<T>, Multiple>>;
+
+		/**
+		 * The open state of the select menu.
+		 * You can bind this to a boolean value to programmatically control the open state.
+		 *
+		 * @defaultValue false
+		 */
+		open?: boolean;
+
+		/**
+		 * A callback function called when the open state changes.
+		 */
+		onOpenChange?: OnChangeFn<boolean>;
+
+		/**
+		 * Whether or not multiple values can be selected.
+		 */
+		multiple?: Multiple;
+
+		/**
+		 * Optionally provide an array of `Selected<T>` objects to
+		 * type the `selected` and `onSelectedChange` props.
+		 */
+		items?: Selected<T>[];
+	}
+>;
+
+export type SelectGroupPropsWithoutHTML = DOMElement;
+export type SelectInputPropsWithoutHTML = DOMElement<HTMLInputElement>;
+export type SelectLabelPropsWithoutHTML = DOMElement;
+export type SelectItemPropsWithoutHTML = Expand<MeltSelectOptionProps & DOMElement>;
+export type SelectSeparatorPropsWithoutHTML = DOMElement;
+
+export type SelectIndicatorPropsWithoutHTML = DOMElement;
+
+export type SelectTriggerPropsWithoutHTML = DOMElement<HTMLButtonElement>;
+
+export type SelectValuePropsWithoutHTML = Expand<
+	{
+		/**
+		 * The placeholder text to display when there is no value.
+		 *
+		 * @defaultValue ""
+		 */
+		placeholder?: string;
+	} & DOMElement<HTMLSpanElement>
+>;
+
+//
+
+export type SelectProps<T, Multiple extends boolean = false> = SelectPropsWithoutHTML<T, Multiple>;
+
+export type SelectContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
 	Out extends Transition = Transition,
-> = I.ContentProps<T, In, Out> & HTMLDivAttributes;
+> = SelectContentPropsWithoutHTML<T, In, Out> & HTMLDivAttributes;
 
-type GroupProps = I.GroupProps & HTMLDivAttributes;
-type InputProps = I.InputProps & HTMLInputAttributes;
-type LabelProps = I.LabelProps & HTMLDivAttributes;
-type ItemProps = I.ItemProps & HTMLDivAttributes;
-type SeparatorProps = I.SeparatorProps & HTMLDivAttributes;
-type TriggerProps = I.TriggerProps & HTMLButtonAttributes;
+export type SelectGroupProps = SelectGroupPropsWithoutHTML & HTMLDivAttributes;
+export type SelectInputProps = SelectInputPropsWithoutHTML & HTMLInputAttributes;
+export type SelectLabelProps = SelectLabelPropsWithoutHTML & HTMLDivAttributes;
+export type SelectItemProps = SelectItemPropsWithoutHTML & HTMLDivAttributes;
+export type SelectSeparatorProps = SelectSeparatorPropsWithoutHTML & HTMLDivAttributes;
+export type SelectTriggerProps = SelectTriggerPropsWithoutHTML & HTMLButtonAttributes;
 
-type ValueProps = I.ValueProps & HTMLAttributes<HTMLSpanElement>;
+export type SelectValueProps = SelectValuePropsWithoutHTML & HTMLAttributes<HTMLSpanElement>;
 
-type ArrowProps = I.ArrowProps & HTMLDivAttributes;
+export type SelectArrowProps = SelectArrowPropsWithoutHTML & HTMLDivAttributes;
 
-type IndicatorProps = I.IndicatorProps & HTMLDivAttributes;
+export type SelectIndicatorProps = SelectIndicatorPropsWithoutHTML & HTMLDivAttributes;
 
-type ItemEvents<T extends Element = HTMLDivElement> = {
+export type SelectItemEvents<T extends Element = HTMLDivElement> = {
 	click: CustomEventHandler<MouseEvent, T>;
 	pointermove: CustomEventHandler<PointerEvent, T>;
 	focusin: EventHandler<FocusEvent, T>;
@@ -38,34 +130,15 @@ type ItemEvents<T extends Element = HTMLDivElement> = {
 	pointerleave: EventHandler<PointerEvent, T>;
 };
 
-type TriggerEvents<T extends Element = HTMLButtonElement> = {
+export type SelectTriggerEvents<T extends Element = HTMLButtonElement> = {
 	click: CustomEventHandler<MouseEvent, T>;
 	keydown: CustomEventHandler<KeyboardEvent, T>;
 };
 
-type LabelEvents<T extends Element = HTMLSpanElement> = {
+export type SelectLabelEvents<T extends Element = HTMLSpanElement> = {
 	click: CustomEventHandler<MouseEvent, T>;
 };
-type ContentEvents<T extends Element = HTMLDivElement> = {
+export type SelectContentEvents<T extends Element = HTMLDivElement> = {
 	pointerleave: CustomEventHandler<PointerEvent, T>;
 	keydown: EventHandler<KeyboardEvent, T>;
-};
-
-export type {
-	Props,
-	ArrowProps,
-	ContentProps,
-	GroupProps,
-	InputProps,
-	LabelProps,
-	ItemProps,
-	IndicatorProps,
-	SeparatorProps,
-	TriggerProps,
-	ValueProps,
-	//
-	ItemEvents,
-	ContentEvents,
-	TriggerEvents,
-	LabelEvents,
 };

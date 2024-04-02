@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { ThumbProps } from "../types.js";
+	import type { ThumbProps } from "../index.js";
 	import { getScrollbarOrientation } from "../ctx.js";
 	import ScrollAreaThumbY from "./scroll-area-thumb-y.svelte";
 	import ScrollAreaThumbX from "./scroll-area-thumb-x.svelte";

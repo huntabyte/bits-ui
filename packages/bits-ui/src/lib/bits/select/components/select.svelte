@@ -6,7 +6,7 @@
 <script lang="ts" generics="T, Multiple extends boolean = false">
 	import { derived } from "svelte/store";
 	import { setCtx } from "../ctx.js";
-	import type { Props } from "../types.js";
+	import type { Props } from "../index.js";
 	import { arraysAreEqual } from "$lib/internal/arrays.js";
 
 	type $$Props = Props<T, Multiple>;

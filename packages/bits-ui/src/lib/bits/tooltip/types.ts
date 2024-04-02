@@ -1,20 +1,66 @@
 import type { HTMLButtonAttributes } from "svelte/elements";
-import type * as I from "./_types.js";
-import type { HTMLDivAttributes, Transition } from "$lib/internal/index.js";
+import type { CreateTooltipProps as MeltTooltipProps } from "@melt-ui/svelte";
+import type {
+	DOMElement,
+	Expand,
+	HTMLDivAttributes,
+	OmitFloating,
+	OnChangeFn,
+	Transition,
+} from "$lib/internal/index.js";
 import type { CustomEventHandler } from "$lib/index.js";
 
-type Props = I.Props;
+import type {
+	ArrowProps as TooltipArrowPropsWithoutHTML,
+	ContentProps as TooltipContentPropsWithoutHTML,
+} from "$lib/bits/floating/_types.js";
 
-type ContentProps<
+export type { TooltipArrowPropsWithoutHTML, TooltipContentPropsWithoutHTML };
+
+export type TooltipPropsWithoutHTML = Expand<OmitFloating<MeltTooltipProps>> & {
+	/**
+	 * The open state of the tooltip.
+	 * You can bind this to a boolean value to programmatically control the open state.
+	 *
+	 * @example
+	 * ```svelte
+	 * <script>
+	 * 	import { Tooltip } from 'bits-ui';
+	 * 	let open = false;
+	 *
+	 * 	$: if (someCondition) {
+	 * 		open = true
+	 * 	}
+	 * </script>
+	 *
+	 * <Tooltip.Root bind:open>
+	 * 	<!-- ... -->
+	 * </Tooltip.Root>
+	 * ```
+	 */
+	open?: boolean & {};
+
+	/**
+	 * A callback function called when the open state changes.
+	 */
+	onOpenChange?: OnChangeFn<boolean>;
+};
+
+export type TooltipTriggerPropsWithoutHTML = DOMElement<HTMLButtonElement>;
+//
+
+export type TooltipProps = TooltipPropsWithoutHTML;
+
+export type TooltipContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
 	Out extends Transition = Transition,
-> = I.ContentProps<T, In, Out> & HTMLDivAttributes;
+> = TooltipContentPropsWithoutHTML<T, In, Out> & HTMLDivAttributes;
 
-type TriggerProps = I.TriggerProps & HTMLButtonAttributes;
-type ArrowProps = I.ArrowProps & HTMLDivAttributes;
+export type TooltipTriggerProps = TooltipTriggerPropsWithoutHTML & HTMLButtonAttributes;
+export type TooltipArrowProps = TooltipArrowPropsWithoutHTML & HTMLDivAttributes;
 
-type TriggerEvents<T extends Element = HTMLButtonElement> = {
+export type TooltipTriggerEvents<T extends Element = HTMLButtonElement> = {
 	blur: CustomEventHandler<FocusEvent, T>;
 	focus: CustomEventHandler<FocusEvent, T>;
 	keydown: CustomEventHandler<KeyboardEvent, T>;
@@ -23,17 +69,7 @@ type TriggerEvents<T extends Element = HTMLButtonElement> = {
 	pointerleave: CustomEventHandler<PointerEvent, T>;
 };
 
-type ContentEvents<T extends Element = HTMLDivElement> = {
+export type TooltipContentEvents<T extends Element = HTMLDivElement> = {
 	pointerdown: CustomEventHandler<PointerEvent, T>;
 	pointerenter: CustomEventHandler<PointerEvent, T>;
-};
-
-export type {
-	Props,
-	ArrowProps,
-	TriggerProps,
-	ContentProps,
-	//
-	TriggerEvents,
-	ContentEvents,
 };

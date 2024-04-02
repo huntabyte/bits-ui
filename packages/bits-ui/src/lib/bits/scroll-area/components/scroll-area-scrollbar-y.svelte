@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import type { ScrollbarProps } from "../types.js";
+	import type { ScrollbarProps } from "../index.js";
 	import { getCtx } from "../ctx.js";
 
 	type $$Props = Omit<ScrollbarProps, "orientation">;

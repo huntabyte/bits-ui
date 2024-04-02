@@ -1,27 +1,58 @@
 import type { HTMLButtonAttributes, HTMLInputAttributes } from "svelte/elements";
-import type * as I from "./_types.js";
-import type { HTMLDivAttributes } from "$lib/internal/index.js";
+import type {
+	RadioGroupItemProps as MeltRadioGroupItemProps,
+	CreateRadioGroupProps as MeltRadioGroupProps,
+} from "@melt-ui/svelte";
+import type {
+	DOMElement,
+	Expand,
+	HTMLDivAttributes,
+	ObjectVariation,
+	OmitValue,
+	OnChangeFn,
+} from "$lib/internal/index.js";
 import type { CustomEventHandler } from "$lib/index.js";
 
-type Props = I.Props & HTMLDivAttributes;
+export type RadioGroupPropsWithoutHTML = Expand<
+	OmitValue<MeltRadioGroupProps> & {
+		/**
+		 * The value of the radio group.
+		 * You can bind this to a value to programmatically control the value.
+		 *
+		 * @defaultValue undefined
+		 */
 
-type InputProps = I.InputProps & HTMLInputAttributes;
+		value?: MeltRadioGroupProps["defaultValue"] & {};
 
-type ItemProps = I.ItemProps & HTMLButtonAttributes;
+		/**
+		 * A callback function called when the value changes.
+		 */
 
-type ItemIndicatorProps = I.ItemIndicatorProps & HTMLDivAttributes;
+		onValueChange?: OnChangeFn<MeltRadioGroupProps["defaultValue"] & {}>;
+	} & DOMElement
+>;
 
-type ItemEvents<T extends Element = HTMLButtonElement> = {
+export type RadioGroupInputPropsWithoutHTML = DOMElement<HTMLInputElement>;
+
+export type RadioGroupItemPropsWithoutHTML = Expand<
+	ObjectVariation<MeltRadioGroupItemProps> & DOMElement<HTMLButtonElement>
+>;
+
+export type RadioGroupItemIndicatorPropsWithoutHTML = DOMElement;
+
+//
+
+export type RadioGroupProps = RadioGroupPropsWithoutHTML & HTMLDivAttributes;
+
+export type RadioGroupInputProps = RadioGroupInputPropsWithoutHTML & HTMLInputAttributes;
+
+export type RadioGroupItemProps = RadioGroupItemPropsWithoutHTML & HTMLButtonAttributes;
+
+export type RadioGroupItemIndicatorProps = RadioGroupItemIndicatorPropsWithoutHTML &
+	HTMLDivAttributes;
+
+export type RadioGroupItemEvents<T extends Element = HTMLButtonElement> = {
 	click: CustomEventHandler<MouseEvent, T>;
 	keydown: CustomEventHandler<KeyboardEvent, T>;
 	focus: CustomEventHandler<FocusEvent, T>;
-};
-
-export type {
-	Props,
-	InputProps,
-	ItemProps,
-	ItemIndicatorProps,
-	//
-	ItemEvents,
 };

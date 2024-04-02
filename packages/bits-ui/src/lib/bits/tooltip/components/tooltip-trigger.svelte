@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { getCtx } from "../ctx.js";
-	import type { TriggerEvents, TriggerProps } from "../types.js";
+	import type { TriggerEvents, TriggerProps } from "../index.js";
 	import { createDispatcher } from "$lib/internal/index.js";
 
 	type $$Props = TriggerProps;

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getCtx } from "../ctx.js";
-	import type { GridRowProps } from "../types.js";
+	import type { GridRowProps } from "../index.js";
 
 	type $$Props = GridRowProps;
 

@@ -4,4 +4,13 @@ export { default as Link } from "./components/toolbar-link.svelte";
 export { default as Group } from "./components/toolbar-group.svelte";
 export { default as GroupItem } from "./components/toolbar-group-item.svelte";
 
-export * from "./types.js";
+export type {
+	ToolbarProps as Props,
+	ToolbarButtonProps as ButtonProps,
+	ToolbarLinkProps as LinkProps,
+	ToolbarGroupProps as GroupProps,
+	ToolbarGroupItemProps as GroupItemProps,
+	ToolbarButtonEvents as ButtonEvents,
+	ToolbarLinkEvents as LinkEvents,
+	ToolbarGroupItemEvents as GroupItemEvents,
+} from "./types.js";
