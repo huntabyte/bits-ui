@@ -1,0 +1,166 @@
+@import url("https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+	:root {
+		/* Colors */
+		--background: 0 0% 100%;
+		--background-alt: 0 0% 100%;
+		--foreground: 0 0% 9%;
+		--foreground-alt: 0 0% 32%;
+		--muted: 240 5% 96%;
+		--muted-foreground: 0 0% 9% / 0.4;
+		--border: 240 6% 10%;
+		--border-input: 240 6% 10% / 0.17;
+		--border-input-hover: 240 6% 10% / 0.4;
+		--border-card: 240 6% 10% / 0.1;
+		--dark: 240 6% 10%;
+		--dark-10: 240 6% 10% / 0.1;
+		--dark-40: 240 6% 10% / 0.4;
+		--dark-04: 240 6% 10% / 0.04;
+		--accent: 204 94% 94%;
+		--accent-foreground: 204 80% 16%;
+		--destructive: 347 77% 50%;
+
+		/* black */
+		--constrast: 0 0% 0%;
+
+		/* Shadows */
+		--shadow-mini: 0px 1px 0px 1px rgba(0, 0, 0, 0.04);
+		--shadow-mini-inset: 0px 1px 0px 0px rgba(0, 0, 0, 0.04) inset;
+		--shadow-popover: 0px 7px 12px 3px hsla(var(--dark-10));
+		--shadow-kbd: 0px 2px 0px 0px rgba(0, 0, 0, 0.07);
+		--shadow-btn: 0px 1px 0px 1px rgba(0, 0, 0, 0.03);
+		--shadow-card: 0px 2px 0px 1px rgba(0, 0, 0, 0.04);
+		--shadow-date-field-focus: 0px 0px 0px 3px rgba(24, 24, 27, 0.17);
+	}
+
+	.dark {
+		/* Colors */
+		--background: 0 0% 5%;
+		--background-alt: 0 0% 8%;
+		--foreground: 0 0% 95%;
+		--foreground-alt: 0 0% 70%;
+		--muted: 240 4% 16%;
+		--muted-foreground: 0 0% 100% / 0.4;
+		--border: 0 0% 96%;
+		--border-input: 0 0% 96% / 0.17;
+		--border-input-hover: 0 0% 96% / 0.4;
+		--border-card: 0 0% 96% / 0.1;
+		--dark: 0 0% 96%;
+		--dark-40: 0 0% 96% / 0.4;
+		--dark-10: 0 0% 96% / 0.1;
+		--dark-04: 0 0% 96% / 0.04;
+		--accent: 204 90 90%;
+		--accent-foreground: 204 94% 94%;
+		--destructive: 350 89% 60%;
+
+		/* white */
+		--constrast: 0 0% 100%;
+
+		/* Shadows */
+		--shadow-mini: 0px 1px 0px 1px rgba(0, 0, 0, 0.3);
+		--shadow-mini-inset: 0px 1px 0px 0px rgba(0, 0, 0, 0.5) inset;
+		--shadow-popover: 0px 7px 12px 3px hsla(0deg 0% 0% / 30%);
+		--shadow-kbd: 0px 2px 0px 0px rgba(255, 255, 255, 0.07);
+		--shadow-btn: 0px 1px 0px 1px rgba(0, 0, 0, 0.2);
+		--shadow-card: 0px 2px 0px 1px rgba(0, 0, 0, 0.4);
+		--shadow-date-field-focus: 0px 0px 0px 3px rgba(244, 244, 245, 0.1);
+	}
+}
+
+@layer base {
+	* {
+		@apply border-border;
+	}
+	html {
+		-webkit-text-size-adjust: 100%;
+		font-variation-settings: normal;
+	}
+	body {
+		@apply bg-background text-foreground;
+		font-feature-settings:
+			"rlig" 1,
+			"calt" 1;
+	}
+
+	/* Mobile tap highlight */
+	/* https://developer.mozilla.org/en-US/docs/Web/CSS/-webkit-tap-highlight-color */
+	html {
+		-webkit-tap-highlight-color: rgba(128, 128, 128, 0.5);
+	}
+	::selection {
+		background: #fdffa4;
+		color: black;
+	}
+
+	/* === Scrollbars === */
+
+	::-webkit-scrollbar {
+		@apply w-2;
+		@apply h-2;
+	}
+
+	::-webkit-scrollbar-track {
+		@apply !bg-transparent;
+	}
+	::-webkit-scrollbar-thumb {
+		@apply rounded-card-lg !bg-dark-10;
+	}
+
+	::-webkit-scrollbar-corner {
+		background: rgba(0, 0, 0, 0);
+	}
+
+	/* Firefox */
+	/* https://developer.mozilla.org/en-US/docs/Web/CSS/scrollbar-color#browser_compatibility */
+
+	html {
+		scrollbar-color: var(--bg-muted);
+	}
+
+	.antialised {
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
+}
+
+@layer utilities {
+	.step {
+		counter-increment: step;
+	}
+
+	.step:before {
+		@apply absolute inline-flex h-9 w-9 items-center justify-center rounded-full border-4 border-background bg-muted text-center -indent-px font-mono text-base font-medium;
+		@apply ml-[-50px] mt-[-4px];
+		content: counter(step);
+	}
+}
+
+@layer components {
+	*:not(body) {
+		outline: none !important;
+		&:focus-visible {
+			@apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+		}
+	}
+
+	.link {
+		@apply inline-flex items-center gap-1 rounded-sm font-medium underline underline-offset-4 hover:text-foreground/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+	}
+
+	input::-webkit-outer-spin-button,
+	input::-webkit-inner-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
+
+	/* Firefox */
+	input[type="number"] {
+		-moz-appearance: textfield;
+	}
+}

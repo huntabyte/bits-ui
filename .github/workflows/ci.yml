@@ -1,96 +1,112 @@
 name: CI
 
 on:
-  push:
-    branches:
-      - main
-      - next
-  pull_request:
+    push:
+        branches:
+            - main
+            - next
+    pull_request:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.number || github.sha }}
-  cancel-in-progress: true
+    group: ${{ github.workflow }}-${{ github.event.number || github.sha }}
+    cancel-in-progress: true
 
 jobs:
-  Check:
-    name: Run svelte-check
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+    Check:
+        name: Run svelte-check
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: pnpm/action-setup@v3
+              with:
+                  version: 8
 
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 8
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 20
 
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
+            # PNPM Store cache setup
+            - name: Get pnpm store directory
+              id: pnpm-cache
+              run: |
+                  echo "pnpm_cache_dir=$(pnpm store path)" >> $GITHUB_OUTPUT
+            - name: Setup pnpm cache
+              uses: actions/cache@v4
+              with:
+                  path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
+                  key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+                  restore-keys: |
+                      ${{ runner.os }}-pnpm-store-
 
-      # PNPM Store cache setup
-      - name: Get pnpm store directory
-        id: pnpm-cache
-        run: |
-          echo "pnpm_cache_dir=$(pnpm store path)" >> $GITHUB_OUTPUT
-      - name: Setup pnpm cache
-        uses: actions/cache@v3
-        with:
-          path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+            - name: Install dependencies
+              run: pnpm install
 
-      - name: Install dependencies
-        run: pnpm install
+            - name: Run svelte-check
+              run: pnpm check
 
-      - name: Run svelte-check
-        run: pnpm check
+    Lint:
+        runs-on: ubuntu-latest
+        name: Lint
+        steps:
+            - uses: actions/checkout@v4
+            - name: Install Node.JS
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20
 
-  Lint:
-    runs-on: ubuntu-latest
-    name: Lint
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+            - uses: pnpm/action-setup@v3
+              name: Install pnpm
+              id: pnpm-install
+              with:
+                  version: 8
 
-      - name: Install Node.JS
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
+            # PNPM Store cache setup
+            - name: Get pnpm store directory
+              id: pnpm-cache
+              run: |
+                  echo "pnpm_cache_dir=$(pnpm store path)" >> $GITHUB_OUTPUT
+            - name: Setup pnpm cache
+              uses: actions/cache@v4
+              with:
+                  path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
+                  key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+                  restore-keys: |
+                      ${{ runner.os }}-pnpm-store-
 
-      - uses: pnpm/action-setup@v2
-        name: Install pnpm
-        id: pnpm-install
-        with:
-          version: 8
+            - name: Install dependencies
+              run: pnpm install
 
-      # PNPM Store cache setup
-      - name: Get pnpm store directory
-        id: pnpm-cache
-        run: |
-          echo "pnpm_cache_dir=$(pnpm store path)" >> $GITHUB_OUTPUT
+            - run: pnpm lint
 
-      - name: Setup pnpm cache
-        uses: actions/cache@v3
-        with:
-          path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+    Test:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - name: Install Node.JS
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20
 
-      - name: Install dependencies
-        run: pnpm install
+            - uses: pnpm/action-setup@v3
+              name: Install pnpm
+              id: pnpm-install
+              with:
+                  version: 8
 
-      - run: pnpm lint
+            # PNPM Store cache setup
+            - name: Get pnpm store directory
+              id: pnpm-cache
+              run: |
+                  echo "pnpm_cache_dir=$(pnpm store path)" >> $GITHUB_OUTPUT
+            - name: Setup pnpm cache
+              uses: actions/cache@v4
+              with:
+                  path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
+                  key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+                  restore-keys: |
+                      ${{ runner.os }}-pnpm-store-
 
-  Tests:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 8.6.3
-          run_install: true
-      - run: pnpm run test
+            - name: Install dependencies
+              run: pnpm install
+
+            - run: pnpm test

@@ -1,0 +1,65 @@
+---
+title: Alert Dialog
+description: A modal window that alerts users with important information and awaits their acknowledgment or action.
+---
+
+<script>
+	import { APISection, ComponentPreview, AlertDialogDemo } from '$lib/components/index.js'
+	export let schemas;
+</script>
+
+<ComponentPreview name="alert-dialog-demo" comp="AlertDialog">
+
+<AlertDialogDemo slot="preview" />
+
+</ComponentPreview>
+
+## Structure
+
+```svelte
+<script lang="ts">
+	import { AlertDialog } from "bits-ui";
+</script>
+
+<AlertDialog.Root>
+	<AlertDialog.Trigger />
+	<AlertDialog.Portal>
+		<AlertDialog.Overlay />
+		<AlertDialog.Content>
+			<AlertDialog.Title />
+			<AlertDialog.Description />
+			<AlertDialog.Cancel />
+			<AlertDialog.Action />
+		</AlertDialog.Content>
+	</AlertDialog.Portal>
+</AlertDialog.Root>
+```
+
+<APISection {schemas} />
+
+## Examples
+
+### Controlled
+
+If you want to control or be aware of the `open` state of the dialog from outside of the component, bind to the `open` prop.
+
+```svelte showLineNumbers
+<script lang="ts">
+	import { AlertDialog } from "bits-ui";
+	let dialogOpen = false;
+</script>
+
+<button on:click={() => (dialogOpen = true)}>Open Dialog</button>
+<AlertDialog.Root bind:open={dialogOpen}>
+	<AlertDialog.Trigger />
+	<AlertDialog.Portal>
+		<AlertDialog.Overlay />
+		<AlertDialog.Content>
+			<AlertDialog.Title />
+			<AlertDialog.Description />
+			<AlertDialog.Cancel />
+			<AlertDialog.Action />
+		</AlertDialog.Content>
+	</AlertDialog.Portal>
+</AlertDialog.Root>
+```
