@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { getCtx, updatePositioning } from "../ctx.js";
-	import type { ContentProps } from "../types.js";
+	import type { ContentProps } from "../index.js";
 	import type { Transition } from "$lib/internal/index.js";
 
 	type T = $$Generic<Transition>;

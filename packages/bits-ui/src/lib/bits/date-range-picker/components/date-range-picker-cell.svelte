@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getCtx } from "../ctx.js";
-	import type { CellProps } from "../types.js";
+	import type { CellProps } from "../index.js";
 
 	type $$Props = CellProps;
 

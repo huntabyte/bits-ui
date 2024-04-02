@@ -2,7 +2,7 @@
 	import { type Month, melt } from "@melt-ui/svelte";
 	import type { DateValue } from "@internationalized/date";
 	import { getCtx } from "../ctx.js";
-	import type { CalendarProps } from "../types.js";
+	import type { CalendarProps } from "../index.js";
 
 	type $$Props = CalendarProps;
 
