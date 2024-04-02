@@ -41,12 +41,6 @@ export type Expand<T> = T extends object
 		: never
 	: T;
 
-export type ExpandDeep<T> = T extends object
-	? T extends infer O
-		? { [K in keyof O]: ExpandDeep<O[K]> }
-		: never
-	: T;
-
 export type Prettify<T> = {
 	[K in keyof T]: T[K];
 } & {};
@@ -55,11 +49,6 @@ export type Builder = {
 	[x: PropertyKey]: unknown;
 	// eslint-disable-next-line ts/no-explicit-any
 	action: Action<HTMLElement, any, any>;
-};
-
-export type KeydownClickEvents = {
-	click: MouseEvent;
-	keydown: KeyboardEvent;
 };
 
 export type DOMEl<T extends Element = HTMLDivElement> = Expand<{
@@ -82,16 +71,6 @@ export type DOMElement<T extends Element = HTMLDivElement> = Expand<{
 	 * Bind to the underlying DOM element of the component.
 	 */
 	el?: T;
-}>;
-
-export type AsChild = Expand<{
-	/**
-	 * Whether to delegate rendering the element to your own
-	 * custom element.
-	 *
-	 * @see https://www.bits-ui.com/docs/delegation
-	 */
-	asChild?: boolean;
 }>;
 
 export type TransitionProps<
@@ -133,15 +112,3 @@ export type TransitionProps<
 	 */
 	outTransitionConfig?: TransitionParams<Out>;
 }>;
-
-export type WithDispatcher<T> = T & CreateDispatcher;
-
-export type Side = "left" | "right" | "top" | "bottom";
-export type Align = "start" | "center" | "end";
-
-export type SideAndAlign = {
-	side?: Side;
-	sideOffset?: number;
-	align?: Align;
-	alignOffset?: number;
-};
