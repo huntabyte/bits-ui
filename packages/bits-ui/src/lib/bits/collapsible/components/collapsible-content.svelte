@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
-	import type { ContentProps } from "../types.js";
+	import type { ContentProps } from "../index.js";
 	import { getCtx } from "../ctx.js";
 	import type { Transition } from "$lib/internal/types.js";
 

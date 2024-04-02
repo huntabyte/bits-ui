@@ -8,7 +8,7 @@
 		"dev": "concurrently \"pnpm:dev:content\" \"pnpm:dev:svelte\"",
 		"dev:content": "contentlayer dev",
 		"dev:svelte": "vite dev",
-		"build": "contentlayer build &&  vite build && pnpm run package",
+		"build": "contentlayer build && vite build",
 		"build:content": "contentlayer build",
 		"build:content-cachebust": "contentlayer build --clearCache",
 		"preview": "vite preview",

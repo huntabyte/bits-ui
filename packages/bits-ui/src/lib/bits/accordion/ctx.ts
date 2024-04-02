@@ -1,6 +1,6 @@
 import { type CreateAccordionProps, createAccordion } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
-import type { ItemProps } from "./types.js";
+import type { ItemProps } from "./index.js";
 import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 
 function getAccordionData() {

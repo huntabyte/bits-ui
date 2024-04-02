@@ -44,3 +44,21 @@ export type ContextMenuContentProps<
 	In extends Transition = Transition,
 	Out extends Transition = Transition,
 > = ContextMenuContentPropsWithoutHTML<T, In, Out> & HTMLDivAttributes;
+
+export type {
+	MenuTriggerPropsWithoutHTML as ContextMenuTriggerPropsWithoutHTML,
+	MenuArrowPropsWithoutHTML as ContextMenuArrowPropsWithoutHTML,
+	MenuCheckboxIndicatorPropsWithoutHTML as ContextMenuCheckboxIndicatorPropsWithoutHTML,
+	MenuCheckboxItemPropsWithoutHTML as ContextMenuCheckboxItemPropsWithoutHTML,
+	MenuGroupPropsWithoutHTML as ContextMenuGroupPropsWithoutHTML,
+	MenuItemPropsWithoutHTML as ContextMenuItemPropsWithoutHTML,
+	MenuLabelPropsWithoutHTML as ContextMenuLabelPropsWithoutHTML,
+	MenuPropsWithoutHTML as ContextMenuPropsWithoutHTML,
+	MenuRadioGroupPropsWithoutHTML as ContextMenuRadioGroupPropsWithoutHTML,
+	MenuRadioIndicatorPropsWithoutHTML as ContextMenuRadioIndicatorPropsWithoutHTML,
+	MenuRadioItemPropsWithoutHTML as ContextMenuRadioItemPropsWithoutHTML,
+	MenuSeparatorPropsWithoutHTML as ContextMenuSeparatorPropsWithoutHTML,
+	MenuSubContentPropsWithoutHTML as ContextMenuSubContentPropsWithoutHTML,
+	MenuSubPropsWithoutHTML as ContextMenuSubPropsWithoutHTML,
+	MenuSubTriggerPropsWithoutHTML as ContextMenuSubTriggerPropsWithoutHTML,
+} from "$lib/bits/menu/types.js";

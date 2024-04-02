@@ -1,7 +1,7 @@
 import type {
 	ToolbarButtonPropsWithoutHTML,
+	ToolbarGroupItemPropsWithoutHTML,
 	ToolbarGroupPropsWithoutHTML,
-	ToolbarItemPropsWithoutHTML,
 	ToolbarLinkPropsWithoutHTML,
 	ToolbarPropsWithoutHTML,
 } from "bits-ui";
@@ -112,7 +112,7 @@ const group: APISchema<ToolbarGroupPropsWithoutHTML<"multiple">> = {
 	],
 };
 
-const groupItem: APISchema<ToolbarItemPropsWithoutHTML> = {
+const groupItem: APISchema<ToolbarGroupItemPropsWithoutHTML> = {
 	title: "GroupItem",
 	description: "A toggle item in the toolbar toggle group.",
 	props: {

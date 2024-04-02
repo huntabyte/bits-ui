@@ -16,7 +16,7 @@ import type {
 
 export type { ContentProps as PopoverContentProps } from "$lib/bits/floating/types.js";
 
-export type { PopoverContentPropsWithoutHTML };
+export type { PopoverContentPropsWithoutHTML, PopoverArrowPropsWithoutHTML };
 
 export type PopoverPropsWithoutHTML = Expand<
 	OmitFloating<MeltPopoverProps> & {

@@ -2,7 +2,7 @@ import type { HTMLAnchorAttributes, HTMLButtonAttributes } from "svelte/elements
 import type { DOMEl } from "$lib/internal/types.js";
 import type { Builder } from "$lib/internal/index.js";
 
-type ButtonPropsWithoutHTML = {
+export type ButtonPropsWithoutHTML = {
 	/**
 	 * Melt UI builders to apply to the button component.
 	 */

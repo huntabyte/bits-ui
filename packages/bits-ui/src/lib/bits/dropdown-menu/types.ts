@@ -26,6 +26,7 @@ export type {
 
 export type {
 	MenuPropsWithoutHTML as DropdownMenuPropsWithoutHTML,
+	MenuArrowPropsWithoutHTML as DropdownMenuArrowPropsWithoutHTML,
 	MenuCheckboxIndicatorPropsWithoutHTML as DropdownMenuCheckboxIndicatorPropsWithoutHTML,
 	MenuCheckboxItemPropsWithoutHTML as DropdownMenuCheckboxItemPropsWithoutHTML,
 	MenuContentPropsWithoutHTML as DropdownMenuContentPropsWithoutHTML,
