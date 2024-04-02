@@ -75,3 +75,4 @@ jobs:
                   directory: ./.svelte-kit/cloudflare
                   workingDirectory: sites/docs
                   deploymentName: Preview
+                  wranglerVersion: 3.41.0
