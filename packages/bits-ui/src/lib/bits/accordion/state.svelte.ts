@@ -6,7 +6,6 @@ import {
 	dataDisabledAttrs,
 	kbd,
 	openClosedAttrs,
-	removeUndefined,
 	verifyContextDeps,
 } from "$lib/internal/index.js";
 
@@ -33,7 +32,7 @@ class AccordionBaseState {
 	constructor(props: AccordionBaseStateProps = {}) {
 		const mergedProps = {
 			...defaultAccordionRootBaseProps,
-			...removeUndefined(props),
+			...props,
 		} satisfies AccordionBaseStateProps;
 		this.el = mergedProps.el;
 		this.disabled = mergedProps.disabled;
@@ -64,7 +63,7 @@ export class AccordionSingleState extends AccordionBaseState {
 	constructor(props: AccordionSingleStateProps = {}) {
 		const mergedProps = {
 			...defaultAccordionRootSingleProps,
-			...removeUndefined(props),
+			...props,
 		} satisfies AccordionSingleStateProps;
 		super(mergedProps);
 		this.value = mergedProps.value;
@@ -98,7 +97,7 @@ export class AccordionMultiState extends AccordionBaseState {
 	constructor(props: AccordionMultiStateProps = {}) {
 		const mergedProps = {
 			...defaultAccordionRootMultiProps,
-			...removeUndefined(props),
+			...props,
 		} satisfies AccordionMultiStateProps;
 		super(mergedProps);
 
@@ -329,8 +328,7 @@ export function getAccordionRootState(): AccordionState {
 
 export function setAccordionItemState(props: Omit<AccordionItemStateProps, "rootState">) {
 	verifyContextDeps(ACCORDION_ROOT);
-	const rootState = getAccordionRootState();
-	const itemState = new AccordionItemState({ ...props, rootState });
+	const itemState = new AccordionItemState({ ...props, rootState: getAccordionRootState() });
 	setContext(ACCORDION_ITEM, itemState);
 	return itemState;
 }
@@ -341,12 +339,10 @@ export function getAccordionItemState(): AccordionItemState {
 
 export function getAccordionTriggerState(props: AccordionTriggerStateProps): AccordionTriggerState {
 	verifyContextDeps(ACCORDION_ITEM);
-	const itemState = getAccordionItemState();
-	return itemState.createTrigger(props);
+	return getAccordionItemState().createTrigger(props);
 }
 
 export function getAccordionContentState(): AccordionContentState {
 	verifyContextDeps(ACCORDION_ITEM);
-	const itemState = getAccordionItemState();
-	return itemState.createContent();
+	return getAccordionItemState().createContent();
 }

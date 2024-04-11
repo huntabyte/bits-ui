@@ -9,7 +9,7 @@
 		children,
 		child,
 		type,
-		value,
+		value = $bindable(),
 		el,
 		...restProps
 	}: AccordionRootProps = $props();
