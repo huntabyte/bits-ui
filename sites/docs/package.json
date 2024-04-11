@@ -15,6 +15,7 @@
 		"check": "pnpm build:content && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
 	},
 	"devDependencies": {
+		"@melt-ui/pp": "^0.3.0",
 		"@prettier/sync": "0.3.0",
 		"@sveltejs/adapter-cloudflare": "^4.2.0",
 		"@sveltejs/kit": "^2.5.0",

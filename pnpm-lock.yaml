@@ -130,6 +130,9 @@ importers:
         specifier: workspace:*
         version: link:../../packages/bits-ui
     devDependencies:
+      '@melt-ui/pp':
+        specifier: ^0.3.0
+        version: 0.3.0(@melt-ui/svelte@0.76.2)(svelte@4.2.12)
       '@prettier/sync':
         specifier: 0.3.0
         version: 0.3.0(prettier@3.2.5)
@@ -752,10 +755,6 @@ packages:
     peerDependencies:
       '@effect-ts/otel-node': '*'
     peerDependenciesMeta:
-      '@effect-ts/core':
-        optional: true
-      '@effect-ts/otel':
-        optional: true
       '@effect-ts/otel-node':
         optional: true
     dependencies:
