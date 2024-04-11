@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { verifyContextDeps } from "$lib/internal/index.js";
 	import { ACCORDION_ITEM } from "../state.svelte.js";
 	import type { AccordionHeaderProps } from "../types.js";
+	import { verifyContextDeps } from "$lib/internal/index.js";
 
 	let { asChild, level = 2, children, child, ...props }: AccordionHeaderProps = $props();
 

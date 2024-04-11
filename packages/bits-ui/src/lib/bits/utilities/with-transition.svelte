@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from "svelte";
-	import type { Transition } from "$lib/internal/index.js";
 	import type { TransitionConfig } from "svelte/transition";
+	import type { Transition } from "$lib/internal/index.js";
 
 	type Props = {
 		transition?: Transition;
