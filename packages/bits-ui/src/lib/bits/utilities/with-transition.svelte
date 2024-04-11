@@ -23,36 +23,40 @@
 		outTransitionConfig,
 		children,
 		condition,
-		...props
+		...restProps
 	}: Props = $props();
 </script>
 
 {#if transition && condition}
-	<div transition:transition={transitionConfig} {...props}>
+	<div transition:transition={transitionConfig} {...restProps}>
 		{#if children}
 			{@render children()}
 		{/if}
 	</div>
 {:else if inTransition && outTransition && condition}
-	<div in:inTransition={inTransitionConfig} out:outTransition={outTransitionConfig} {...props}>
+	<div
+		in:inTransition={inTransitionConfig}
+		out:outTransition={outTransitionConfig}
+		{...restProps}
+	>
 		{#if children}
 			{@render children()}
 		{/if}
 	</div>
 {:else if inTransition && condition}
-	<div in:inTransition={inTransitionConfig} {...props}>
+	<div in:inTransition={inTransitionConfig} {...restProps}>
 		{#if children}
 			{@render children()}
 		{/if}
 	</div>
 {:else if outTransition && condition}
-	<div out:outTransition={outTransitionConfig} {...props}>
+	<div out:outTransition={outTransitionConfig} {...restProps}>
 		{#if children}
 			{@render children()}
 		{/if}
 	</div>
 {:else if condition}
-	<div {...props}>
+	<div {...restProps}>
 		{#if children}
 			{@render children()}
 		{/if}
