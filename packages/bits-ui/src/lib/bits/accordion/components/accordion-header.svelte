@@ -3,12 +3,12 @@
 	import type { AccordionHeaderProps } from "../types.js";
 	import { verifyContextDeps } from "$lib/internal/index.js";
 
-	let { asChild, level = 2, children, child, ...props }: AccordionHeaderProps = $props();
+	let { asChild, level = 2, children, child, ...restProps }: AccordionHeaderProps = $props();
 
 	verifyContextDeps(ACCORDION_ITEM);
 
 	const mergedProps = $derived({
-		...props,
+		...restProps,
 		role: "heading",
 		"aria-level": level,
 		"data-heading-level": level,

@@ -48,6 +48,7 @@ export type Expand<T> = T extends object
 
 export type Prettify<T> = {
 	[K in keyof T]: T[K];
+	// eslint-disable-next-line ts/ban-types
 } & {};
 
 export type Builder = {
@@ -139,6 +140,7 @@ export type DefaultProps<T> = {
 	children?: Snippet;
 } & Omit<T, "child" | "asChild">;
 
+// eslint-disable-next-line ts/ban-types
 export type WithAsChild<T, U extends Record<PropertyKey, unknown> = {}> =
 	| DefaultProps<T>
 	| AsChildProps<T, U>;

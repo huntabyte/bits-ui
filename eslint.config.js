@@ -1,6 +1,4 @@
 import config, { DEFAULT_IGNORES } from "@huntabyte/eslint-config";
-import pluginSvelte from "eslint-plugin-svelte";
-import parserSvelte from "svelte-eslint-parser";
 
 const ignores = ["**/extended-types"];
 

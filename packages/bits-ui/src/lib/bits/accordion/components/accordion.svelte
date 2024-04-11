@@ -11,7 +11,7 @@
 		type,
 		value,
 		el,
-		...props
+		...restProps
 	}: AccordionRootProps = $props();
 
 	const rootState = setAccordionRootState({ type, value });
@@ -36,9 +36,9 @@
 </script>
 
 {#if asChild && child}
-	{@render child(props)}
+	{@render child(restProps)}
 {:else}
-	<div bind:this={el} {...props}>
+	<div bind:this={el} {...restProps}>
 		{#if children}
 			{@render children()}
 		{/if}

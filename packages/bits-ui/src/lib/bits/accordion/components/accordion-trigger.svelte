@@ -10,7 +10,7 @@
 		onclick = undefined,
 		children,
 		child,
-		...props
+		...restProps
 	}: AccordionTriggerProps = $props();
 
 	const trigger = getAccordionTriggerState({
@@ -33,7 +33,7 @@
 	});
 
 	const mergedProps = $derived({
-		...props,
+		...restProps,
 		...trigger.props,
 	});
 </script>

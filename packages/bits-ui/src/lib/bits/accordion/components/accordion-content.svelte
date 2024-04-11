@@ -10,12 +10,12 @@
 	import type { AccordionContentProps } from "../types.js";
 	import WithTransition from "$lib/bits/utilities/with-transition.svelte";
 
-	let { child, asChild, ...props }: AccordionContentProps<T, In, Out> = $props();
+	let { child, asChild, ...restProps }: AccordionContentProps<T, In, Out> = $props();
 
 	const content = getAccordionContentState();
 
 	const mergedProps = $derived({
-		...props,
+		...restProps,
 		...content.props,
 	});
 </script>
