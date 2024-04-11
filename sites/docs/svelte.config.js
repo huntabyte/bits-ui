@@ -3,6 +3,7 @@ import url from "node:url";
 import adapter from "@sveltejs/adapter-cloudflare";
 import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";
 import { mdsx } from "mdsx";
+import { preprocessMeltUI } from "@melt-ui/pp";
 import { mdsxConfig } from "./mdsx.config.js";
 
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
@@ -18,6 +19,7 @@ const config = {
 				},
 			},
 		}),
+		preprocessMeltUI(),
 	],
 	extensions: [".svelte", ".md"],
 

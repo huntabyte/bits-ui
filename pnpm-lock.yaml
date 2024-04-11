@@ -90,9 +90,6 @@ importers:
       '@types/testing-library__jest-dom':
         specifier: ^5.14.9
         version: 5.14.9
-      autoprefixer:
-        specifier: ^10.4.17
-        version: 10.4.19(postcss@8.4.38)
       jest-axe:
         specifier: ^8.0.0
         version: 8.0.0
@@ -136,6 +133,9 @@ importers:
         specifier: workspace:*
         version: link:../../packages/bits-ui
     devDependencies:
+      '@melt-ui/pp':
+        specifier: ^0.3.0
+        version: 0.3.0(@melt-ui/svelte@0.76.2)(svelte@5.0.0-next.100)
       '@prettier/sync':
         specifier: 0.3.0
         version: 0.3.0(prettier@3.2.5)
