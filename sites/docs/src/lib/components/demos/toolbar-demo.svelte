@@ -12,21 +12,12 @@
 
 	let text: string[] | undefined = ["bold"];
 	let align: string | undefined;
-
-	function onValueChange(v: any) {
-		console.log("value changed");
-	}
 </script>
 
 <Toolbar.Root
 	class="flex h-12 min-w-max items-center justify-center rounded-10px border border-border bg-background-alt px-[4px] py-1 shadow-mini"
 >
-	<Toolbar.Group
-		bind:value={text}
-		{onValueChange}
-		type="multiple"
-		class="flex items-center gap-x-0.5"
-	>
+	<Toolbar.Group bind:value={text} type="multiple" class="flex items-center gap-x-0.5">
 		<Toolbar.GroupItem
 			aria-label="toggle bold"
 			value="bold"
