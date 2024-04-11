@@ -1,8 +1,6 @@
 <script lang="ts" context="module">
+	// eslint-disable-next-line unused-imports/no-unused-imports, ts/no-unused-vars
 	import type { Transition } from "$lib/internal/index.js";
-	type T = Transition;
-	type In = Transition;
-	type Out = Transition;
 </script>
 
 <script lang="ts" generics="T extends Transition, In extends Transition, Out extends Transition">
