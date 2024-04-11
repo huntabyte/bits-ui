@@ -1,62 +1,46 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import type { Props } from "../index.js";
-	import { setCtx } from "../ctx.js";
-	import { arraysAreEqual } from "$lib/internal/arrays.js";
+	import { setAccordionRootState } from "../state.svelte.js";
+	import type { AccordionRootProps } from "../types.js";
 
-	type Multiple = $$Generic<boolean>;
-	type $$Props = Props<Multiple>;
+	let {
+		disabled = false,
+		forceVisible = false,
+		asChild,
+		children,
+		child,
+		type,
+		value,
+		el,
+		...props
+	}: AccordionRootProps = $props();
 
-	export let multiple: $$Props["multiple"] = false as Multiple;
-	export let value: $$Props["value"] = undefined;
-	export let onValueChange: $$Props["onValueChange"] = undefined;
-	export let disabled: $$Props["disabled"] = false;
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
+	const rootState = setAccordionRootState({ type, value });
 
-	const {
-		elements: { root },
-		states: { value: localValue },
-		updateOption,
-		getAttrs,
-	} = setCtx({
-		multiple,
-		disabled,
-		defaultValue: value,
-		onValueChange: ({ next }: { next: $$Props["value"] }) => {
-			if (Array.isArray(next)) {
-				if (!Array.isArray(value) || !arraysAreEqual(value, next)) {
-					onValueChange?.(next);
-					value = next;
-					return next;
-				}
-				return next;
-			}
-
-			if (value !== next) {
-				onValueChange?.(next);
-				value = next;
-			}
-			return next;
-		},
+	$effect.pre(() => {
+		if (value !== undefined) {
+			rootState.value = value;
+		}
 	});
-
-	const attrs = getAttrs("root");
-
-	// Svelte types get weird here saying set expects something that is both string and string[].
-	$: value !== undefined && localValue.set(Array.isArray(value) ? [...value] : (value as any));
-
-	$: updateOption("multiple", multiple);
-	$: updateOption("disabled", disabled);
-
-	$: builder = $root;
-	$: Object.assign(builder, attrs);
+	$effect.pre(() => {
+		value = rootState.value;
+	});
+	$effect.pre(() => {
+		rootState.el = el;
+	});
+	$effect.pre(() => {
+		rootState.disabled = disabled;
+	});
+	$effect.pre(() => {
+		rootState.forceVisible = forceVisible;
+	});
 </script>
 
-{#if asChild}
-	<slot {builder} />
+{#if asChild && child}
+	{@render child(props)}
 {:else}
-	<div bind:this={el} use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+	<div bind:this={el} {...props}>
+		{#if children}
+			{@render children()}
+		{/if}
 	</div>
 {/if}

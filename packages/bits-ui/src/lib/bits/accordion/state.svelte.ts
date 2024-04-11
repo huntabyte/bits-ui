@@ -3,7 +3,9 @@ import {
 	type EventCallback,
 	type OnChangeFn,
 	composeHandlers,
+	dataDisabledAttrs,
 	kbd,
+	openClosedAttrs,
 	removeUndefined,
 	verifyContextDeps,
 } from "$lib/internal/index.js";
@@ -186,8 +188,8 @@ const defaultAccordionTriggerProps = {
 class AccordionTriggerState {
 	disabled: boolean = $state(false);
 	el: HTMLElement | null | undefined = $state();
-	itemState: AccordionItemState;
-	root: AccordionState;
+	root: AccordionState = undefined as unknown as AccordionState;
+	itemState: AccordionItemState = undefined as unknown as AccordionItemState;
 	handlers: {
 		click: EventCallback<MouseEvent> | undefined;
 		keydown: EventCallback<KeyboardEvent> | undefined;
@@ -195,11 +197,16 @@ class AccordionTriggerState {
 	isDisabled: boolean = $state(false);
 	attrs: Record<string, unknown> = $derived({
 		disabled: this.disabled,
-		"aria-expanded": this.itemState ? this.itemState.isSelected : false,
+		"aria-expanded": this.itemState.isSelected ? "true" : "false",
+		"aria-disabled": this.isDisabled ? "true" : "false",
+		"data-disabled": this.isDisabled ? "" : undefined,
+		"data-value": this.itemState.value,
+		"data-state": openClosedAttrs(this.itemState.isSelected),
+		"data-accordion-trigger": "",
 	});
 
 	constructor(props: AccordionTriggerStateProps, itemState: AccordionItemState) {
-		this.disabled = props.disabled;
+		this.disabled = props.disabled || itemState.disabled || itemState.root.disabled;
 		this.itemState = itemState;
 		this.root = itemState.root;
 		this.handlers.click = props.onclick;
@@ -208,24 +215,10 @@ class AccordionTriggerState {
 		$effect(() => {
 			this.isDisabled = this.disabled || this.itemState.disabled || this.root.disabled;
 		});
-
-		$effect(() => {
-			this.attrs = {
-				disabled: this.isDisabled,
-				"aria-expanded": itemState.isSelected ? "true" : "false",
-				"aria-disabled": this.isDisabled ? "true" : "false",
-				"data-disabled": this.isDisabled ? "" : undefined,
-				"data-value": itemState.value,
-				"data-state": itemState.isSelected ? "open" : "closed",
-				"data-accordion-trigger": "",
-			};
-		});
 	}
 
 	onclick = composeHandlers<MouseEvent>(this.handlers.click, () => {
-		if (this.isDisabled) {
-			return;
-		}
+		if (this.isDisabled) return;
 		this.itemState.updateValue();
 	});
 
@@ -283,19 +276,16 @@ class AccordionTriggerState {
  */
 
 class AccordionContentState {
-	item: AccordionItemState;
-	attrs: Record<string, unknown> = $state({});
+	item: AccordionItemState = undefined as unknown as AccordionItemState;
+	attrs: Record<string, unknown> = $derived({
+		"data-state": openClosedAttrs(this.item.isSelected),
+		"data-disabled": dataDisabledAttrs(this.item.root.disabled || this.item.disabled),
+		"data-value": this.item.value,
+		"data-accordion-content": "",
+	});
 
 	constructor(item: AccordionItemState) {
 		this.item = item;
-		$effect.pre(() => {
-			this.attrs = {
-				"data-state": item.isSelected ? "open" : "closed",
-				"data-disabled": item.root.disabled || item.disabled ? "" : undefined,
-				"data-value": item.value,
-				"data-accordion-content": "",
-			};
-		});
 	}
 
 	get props() {
@@ -307,8 +297,8 @@ class AccordionContentState {
  * CONTEXT METHODS
  */
 
-export const ACCORDION_ROOT = "Accordion.Root";
-export const ACCORDION_ITEM = "Accordion.Item";
+export const ACCORDION_ROOT = Symbol("Accordion.Root");
+export const ACCORDION_ITEM = Symbol("Accordion.Item");
 
 type AccordionState = AccordionSingleState | AccordionMultiState;
 
@@ -322,9 +312,8 @@ type MultiInitAccordionProps = {
 	value?: string[];
 };
 
-type InitAccordionProps = SingleInitAccordionProps | MultiInitAccordionProps;
 
-export function setAccordionRootState(props: InitAccordionProps) {
+export function setAccordionRootState(props: SingleInitAccordionProps | MultiInitAccordionProps) {
 	const rootState =
 		props.type === "single" ? new AccordionSingleState(props) : new AccordionMultiState(props);
 	setContext(ACCORDION_ROOT, rootState);
