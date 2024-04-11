@@ -304,16 +304,19 @@ type AccordionState = AccordionSingleState | AccordionMultiState;
 
 type SingleInitAccordionProps = {
 	type: "single";
-	value?: string;
+	// eslint-disable-next-line ts/no-explicit-any
+	value?: any;
 };
 
 type MultiInitAccordionProps = {
 	type: "multiple";
-	value?: string[];
+	// eslint-disable-next-line ts/no-explicit-any
+	value?: any;
 };
 
+type InitAccordionProps = SingleInitAccordionProps | MultiInitAccordionProps;
 
-export function setAccordionRootState(props: SingleInitAccordionProps | MultiInitAccordionProps) {
+export function setAccordionRootState(props: InitAccordionProps) {
 	const rootState =
 		props.type === "single" ? new AccordionSingleState(props) : new AccordionMultiState(props);
 	setContext(ACCORDION_ROOT, rootState);

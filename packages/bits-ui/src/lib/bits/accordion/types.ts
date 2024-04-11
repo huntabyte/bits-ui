@@ -6,26 +6,26 @@ import type {
 	WithAsChild,
 } from "$lib/internal/index.js";
 
-type BaseAccordionProps = {
+interface BaseAccordionProps {
 	asChild?: boolean;
 	disabled?: boolean;
 	forceVisible?: boolean;
 	el?: HTMLElement | null;
-};
+}
 
-type SingleAccordionProps = {
+interface SingleAccordionProps extends BaseAccordionProps {
 	type: "single";
 	value?: string;
-} & Omit<BaseAccordionProps, "asChild">;
+}
 
-type MultipleAccordionProps = {
+interface MultipleAccordionProps extends BaseAccordionProps {
 	type: "multiple";
 	value?: string[];
-} & Omit<BaseAccordionProps, "asChild">;
+}
 
-export type AccordionRootPropsWithoutHTML =
-	| WithAsChild<SingleAccordionProps>
-	| WithAsChild<MultipleAccordionProps>;
+export type AccordionRootPropsWithoutHTML = WithAsChild<
+	SingleAccordionProps | MultipleAccordionProps
+>;
 
 export type AccordionRootProps = AccordionRootPropsWithoutHTML & PrimitiveDivAttributes;
 

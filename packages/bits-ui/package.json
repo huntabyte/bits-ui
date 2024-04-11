@@ -30,7 +30,7 @@
 		"@melt-ui/pp": "^0.3.0",
 		"@sveltejs/kit": "^2.5.0",
 		"@sveltejs/package": "^2.2.7",
-		"@sveltejs/vite-plugin-svelte": "^3.0.2",
+		"@sveltejs/vite-plugin-svelte": "^3.1.0",
 		"@testing-library/dom": "^9.3.4",
 		"@testing-library/jest-dom": "^6.4.1",
 		"@testing-library/svelte": "^4.1.0",

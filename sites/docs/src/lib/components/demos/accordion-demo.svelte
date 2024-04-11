@@ -21,7 +21,7 @@
 	];
 </script>
 
-<Accordion.Root class="w-full sm:max-w-[70%]" multiple>
+<Accordion.Root class="w-full sm:max-w-[70%]" type="multiple">
 	{#each items as item, i}
 		<Accordion.Item value="${i}" class="group border-b border-dark-10 px-1.5">
 			<Accordion.Header>
