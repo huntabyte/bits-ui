@@ -9,3 +9,4 @@ export * from "./style.js";
 export * from "./types.js";
 export * from "./updater.js";
 export * from "./focus.js";
+export * from "./context.js";
