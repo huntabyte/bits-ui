@@ -205,9 +205,6 @@ describe("toolbar", () => {
 			singleProps: { onValueChange: singleOnValueChange },
 		});
 
-		expect(newMultipleValue).toStrictEqual(["bold"]);
-		expect(newSingleValue).toBe(undefined);
-
 		await user.click(groupMultipleItemStrikethrough);
 		expect(newMultipleValue).toStrictEqual(["bold", "strikethrough"]);
 

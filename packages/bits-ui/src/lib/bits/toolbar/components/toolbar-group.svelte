@@ -2,6 +2,7 @@
 	import { melt } from "@melt-ui/svelte";
 	import { setGroupCtx } from "../ctx.js";
 	import type { GroupProps } from "../index.js";
+	import { arraysAreEqual } from "$lib/internal/arrays.js";
 
 	type T = $$Generic<"single" | "multiple">;
 	type $$Props = GroupProps<T>;
@@ -24,8 +25,11 @@
 		defaultValue: value,
 		onValueChange: (({ next }: { next: $$Props["value"] }) => {
 			if (Array.isArray(next)) {
-				onValueChange?.(next);
-				value = next;
+				if (!Array.isArray(value) || !arraysAreEqual(value, next)) {
+					onValueChange?.(next);
+					value = next;
+					return next;
+				}
 				return next;
 			}
 
@@ -39,7 +43,8 @@
 
 	const attrs = getAttrs("group");
 
-	$: value !== undefined && localValue.set(value);
+	$: value !== undefined &&
+		localValue.set(Array.isArray(value) ? ([...value] as $$Props["value"]) : (value as any));
 
 	$: updateOption("disabled", disabled);
 	$: updateOption("type", type);

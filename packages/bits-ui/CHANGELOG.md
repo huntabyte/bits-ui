@@ -1,5 +1,11 @@
 # bits-ui
 
+## 0.21.3
+
+### Patch Changes
+
+- fix: toolbar onValueChange firing ([#448](https://github.com/huntabyte/bits-ui/pull/448))
+
 ## 0.21.2
 
 ### Patch Changes
