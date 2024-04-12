@@ -14,7 +14,7 @@ import {
  * BASE
  */
 interface AccordionBaseStateProps {
-	id?: string;
+	id?: string | null;
 	disabled?: boolean;
 	forceVisible?: boolean;
 }
@@ -47,6 +47,7 @@ class AccordionBaseState {
 interface AccordionSingleStateProps extends AccordionBaseStateProps {
 	value?: string;
 	onValueChange?: OnChangeFn<string>;
+	id?: string | null;
 }
 
 export class AccordionSingleState extends AccordionBaseState {
@@ -295,13 +296,23 @@ type AccordionState = AccordionSingleState | AccordionMultiState;
 type InitAccordionProps = {
 	type: "single" | "multiple";
 	value?: string | string[];
+	id?: string | null;
+	onValueChange?: OnChangeFn<string> | OnChangeFn<string[]>;
 };
 
 export function setAccordionRootState(props: InitAccordionProps) {
 	const rootState =
 		props.type === "single"
-			? new AccordionSingleState({ value: props.value as string })
-			: new AccordionMultiState({ value: props.value as string[] });
+			? new AccordionSingleState({
+					value: props.value as string,
+					id: props.id,
+					onValueChange: props.onValueChange as OnChangeFn<string>,
+				})
+			: new AccordionMultiState({
+					value: props.value as string[],
+					id: props.id,
+					onValueChange: props.onValueChange as OnChangeFn<string[]>,
+				});
 	setContext(ACCORDION_ROOT_KEY, rootState);
 	return rootState;
 }

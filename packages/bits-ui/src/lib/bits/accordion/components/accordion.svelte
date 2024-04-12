@@ -12,10 +12,11 @@
 		value = $bindable(),
 		el = $bindable(),
 		id,
+		onValueChange,
 		...restProps
 	}: AccordionRootProps = $props();
 
-	const rootState = setAccordionRootState({ type, value });
+	const rootState = setAccordionRootState({ type, value, id, onValueChange });
 
 	$effect.pre(() => {
 		if (value !== undefined) {
