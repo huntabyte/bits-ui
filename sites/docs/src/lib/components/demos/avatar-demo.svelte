@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Avatar } from "bits-ui";
-	export let loadingStatus: Avatar.Props["loadingStatus"] = undefined;
+	export let loadingStatus: Avatar.RootProps["loadingStatus"] = undefined;
 </script>
 
 <Avatar.Root

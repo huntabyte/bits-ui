@@ -10,11 +10,13 @@
 		child,
 		type,
 		value = $bindable(),
-		el,
+		el = $bindable(),
+		id,
+		onValueChange,
 		...restProps
 	}: AccordionRootProps = $props();
 
-	const rootState = setAccordionRootState({ type, value });
+	const rootState = setAccordionRootState({ type, value, id, onValueChange });
 
 	$effect.pre(() => {
 		if (value !== undefined) {
@@ -25,7 +27,9 @@
 		value = rootState.value;
 	});
 	$effect.pre(() => {
-		rootState.el = el;
+		if (id) {
+			rootState.id = id;
+		}
 	});
 	$effect.pre(() => {
 		rootState.disabled = disabled;
@@ -35,12 +39,10 @@
 	});
 </script>
 
-{#if asChild && child}
-	{@render child(restProps)}
+{#if asChild}
+	{@render child?.(restProps)}
 {:else}
-	<div bind:this={el} {...restProps}>
-		{#if children}
-			{@render children()}
-		{/if}
+	<div bind:this={el} {...rootState.props} {...restProps}>
+		{@render children?.()}
 	</div>
 {/if}

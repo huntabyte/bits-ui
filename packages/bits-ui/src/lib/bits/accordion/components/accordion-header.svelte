@@ -1,7 +1,14 @@
 <script lang="ts">
 	import type { AccordionHeaderProps } from "../types.js";
 
-	let { asChild, level = 2, children, child, ...restProps }: AccordionHeaderProps = $props();
+	let {
+		asChild,
+		level = 2,
+		children,
+		child,
+		el = $bindable(),
+		...restProps
+	}: AccordionHeaderProps = $props();
 
 	const mergedProps = $derived({
 		...restProps,
@@ -11,12 +18,10 @@
 	});
 </script>
 
-{#if asChild && child}
-	{@render child(mergedProps)}
+{#if asChild}
+	{@render child?.(mergedProps)}
 {:else}
-	<div {...mergedProps}>
-		{#if children}
-			{@render children()}
-		{/if}
+	<div {...mergedProps} bind:this={el}>
+		{@render children?.()}
 	</div>
 {/if}

@@ -8,7 +8,12 @@
 	import type { AccordionContentProps } from "../types.js";
 	import WithTransition from "$lib/bits/utilities/with-transition.svelte";
 
-	let { child, asChild, ...restProps }: AccordionContentProps<T, In, Out> = $props();
+	let {
+		child,
+		asChild,
+		el = $bindable(),
+		...restProps
+	}: AccordionContentProps<T, In, Out> = $props();
 
 	const content = getAccordionContentState();
 
@@ -19,9 +24,7 @@
 </script>
 
 {#if asChild && content.item.isSelected}
-	{#if child}
-		{@render child(mergedProps)}
-	{/if}
+	{@render child?.(mergedProps)}
 {:else}
-	<WithTransition {...mergedProps} condition={content.item.isSelected} />
+	<WithTransition {...mergedProps} condition={content.item.isSelected} bind:el />
 {/if}

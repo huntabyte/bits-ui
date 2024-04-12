@@ -4,6 +4,7 @@ import {
 	type OnChangeFn,
 	composeHandlers,
 	dataDisabledAttrs,
+	generateId,
 	kbd,
 	openClosedAttrs,
 	verifyContextDeps,
@@ -13,20 +14,33 @@ import {
  * BASE
  */
 interface AccordionBaseStateProps {
-	el?: HTMLElement | null;
+	id?: string | null;
 	disabled?: boolean;
 	forceVisible?: boolean;
 }
 
+interface AccordionRootAttrs {
+	id: string;
+	"data-accordion-root": string;
+}
+
 class AccordionBaseState {
-	el: HTMLElement | null | undefined = $state(null);
+	id: string = $state(generateId());
 	disabled: boolean = $state(false);
 	forceVisible: boolean = $state(false);
+	attrs: AccordionRootAttrs = $derived({
+		id: this.id,
+		"data-accordion-root": "",
+	});
 
 	constructor(props: AccordionBaseStateProps) {
-		this.el = props.el ?? this.el;
+		this.id = props.id ?? this.id;
 		this.disabled = props.disabled ?? this.disabled;
 		this.forceVisible = props.forceVisible ?? this.forceVisible;
+	}
+
+	get props() {
+		return this.attrs;
 	}
 }
 
@@ -37,6 +51,7 @@ class AccordionBaseState {
 interface AccordionSingleStateProps extends AccordionBaseStateProps {
 	value?: string;
 	onValueChange?: OnChangeFn<string>;
+	id?: string | null;
 }
 
 export class AccordionSingleState extends AccordionBaseState {
@@ -91,11 +106,18 @@ type AccordionItemStateProps = {
 	rootState: AccordionState;
 };
 
+interface AccordionItemAttrs {
+	"data-accordion-item": string;
+}
+
 export class AccordionItemState {
 	value: string = $state("");
 	disabled: boolean = $state(false);
 	isSelected: boolean = $state(false);
 	root: AccordionState;
+	attrs: AccordionItemAttrs = {
+		"data-accordion-item": "",
+	};
 
 	constructor(props: AccordionItemStateProps) {
 		this.value = props.value;
@@ -127,6 +149,10 @@ export class AccordionItemState {
 		}
 	}
 
+	get props() {
+		return this.attrs;
+	}
+
 	createTrigger(props: AccordionTriggerStateProps) {
 		return new AccordionTriggerState(props, this);
 	}
@@ -143,29 +169,29 @@ export class AccordionItemState {
 type AccordionTriggerStateProps = {
 	onclick?: (e: MouseEvent) => void;
 	onkeydown?: (e: KeyboardEvent) => void;
-	disabled: boolean;
+	disabled?: boolean;
+	id?: string;
 };
 
-const defaultAccordionTriggerProps = {
-	disabled: false,
-	el: null,
-	handlers: {
-		click: undefined,
-		keydown: undefined,
-	},
+interface AccordionTriggerHandlers {
+	click?: EventCallback<MouseEvent>;
+	keydown?: EventCallback<KeyboardEvent>;
+}
+
+const defaultAccordionTriggerHandlers: AccordionTriggerHandlers = {
+	click: () => {},
+	keydown: () => {},
 };
 
 class AccordionTriggerState {
 	disabled: boolean = $state(false);
-	el: HTMLElement | null | undefined = $state();
+	id: string = $state(generateId());
 	root: AccordionState = undefined as unknown as AccordionState;
 	itemState: AccordionItemState = undefined as unknown as AccordionItemState;
-	handlers: {
-		click: EventCallback<MouseEvent> | undefined;
-		keydown: EventCallback<KeyboardEvent> | undefined;
-	} = $state(defaultAccordionTriggerProps.handlers);
+	handlers: AccordionTriggerHandlers = $state(defaultAccordionTriggerHandlers);
 	isDisabled: boolean = $state(false);
 	attrs: Record<string, unknown> = $derived({
+		id: this.id,
 		disabled: this.disabled,
 		"aria-expanded": this.itemState.isSelected ? "true" : "false",
 		"aria-disabled": this.isDisabled ? "true" : "false",
@@ -179,8 +205,9 @@ class AccordionTriggerState {
 		this.disabled = props.disabled || itemState.disabled || itemState.root.disabled;
 		this.itemState = itemState;
 		this.root = itemState.root;
-		this.handlers.click = props.onclick;
-		this.handlers.keydown = props.onkeydown;
+		this.handlers.click = props.onclick ?? this.onclick;
+		this.handlers.keydown = props.onkeydown ?? this.onkeydown;
+		this.id = props.id ?? this.id;
 
 		$effect(() => {
 			this.isDisabled = this.disabled || this.itemState.disabled || this.root.disabled;
@@ -198,22 +225,25 @@ class AccordionTriggerState {
 
 		e.preventDefault();
 
-		if ([kbd.SPACE, kbd.ENTER].includes(e.key)) {
+		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
 			this.itemState.updateValue();
 			return;
 		}
 
-		if (!this.root.el || !this.el) return;
+		if (!this.root.id || !this.id) return;
 
-		const items = Array.from(
-			this.root.el.querySelectorAll<HTMLElement>("[data-accordion-trigger]")
-		);
+		const rootEl = document.getElementById(this.root.id);
+		if (!rootEl) return;
+		const itemEl = document.getElementById(this.id);
+		if (!itemEl) return;
+
+		const items = Array.from(rootEl.querySelectorAll<HTMLElement>("[data-accordion-trigger]"));
 		if (!items.length) return;
 
 		const candidateItems = items.filter((item) => !item.dataset.disabled);
 		if (!candidateItems.length) return;
 
-		const currentIndex = candidateItems.indexOf(this.el);
+		const currentIndex = candidateItems.indexOf(itemEl);
 
 		switch (e.key) {
 			case kbd.ARROW_DOWN:
@@ -275,13 +305,23 @@ type AccordionState = AccordionSingleState | AccordionMultiState;
 type InitAccordionProps = {
 	type: "single" | "multiple";
 	value?: string | string[];
+	id?: string | null;
+	onValueChange?: OnChangeFn<string> | OnChangeFn<string[]>;
 };
 
 export function setAccordionRootState(props: InitAccordionProps) {
 	const rootState =
 		props.type === "single"
-			? new AccordionSingleState({ value: props.value as string })
-			: new AccordionMultiState({ value: props.value as string[] });
+			? new AccordionSingleState({
+					value: props.value as string,
+					id: props.id,
+					onValueChange: props.onValueChange as OnChangeFn<string>,
+				})
+			: new AccordionMultiState({
+					value: props.value as string[],
+					id: props.id,
+					onValueChange: props.onValueChange as OnChangeFn<string[]>,
+				});
 	setContext(ACCORDION_ROOT_KEY, rootState);
 	return rootState;
 }

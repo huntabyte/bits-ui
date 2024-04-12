@@ -7,7 +7,7 @@
 		value,
 		children,
 		child,
-		el,
+		el = $bindable(),
 		...restProps
 	}: AccordionItemProps = $props();
 
@@ -25,17 +25,16 @@
 
 	const mergedProps = $derived({
 		...restProps,
+		...item.props,
 		"data-state": item.isSelected ? "open" : "closed",
 		"data-disabled": isDisabled ? "" : undefined,
 	});
 </script>
 
-{#if asChild && child}
-	{@render child(mergedProps)}
+{#if asChild}
+	{@render child?.(mergedProps)}
 {:else}
 	<div {...mergedProps} bind:this={el}>
-		{#if children}
-			{@render children()}
-		{/if}
+		{@render children?.()}
 	</div>
 {/if}

@@ -56,8 +56,8 @@ export function disabledAttrs(disabled: boolean | undefined | null) {
 		: { "aria-disabled": undefined, "data-disabled": undefined };
 }
 
-export function openClosedAttrs(condition: boolean): "true" | "false" {
-	return condition ? "true" : "false";
+export function openClosedAttrs(condition: boolean): "open" | "closed" {
+	return condition ? "open" : "closed";
 }
 
 export function dataDisabledAttrs(condition: boolean): "" | undefined {
