@@ -1,27 +1,14 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { getImage } from "../ctx.js";
 	import type { ImageProps } from "../index.js";
+	import { getAvatarImageState } from "../state.svelte.js";
 
-	type $$Props = ImageProps;
+	let { src, alt, asChild, child, el = $bindable(), ...restProps }: ImageProps = $props();
 
-	export let src: $$Props["src"] = undefined;
-	export let alt: $$Props["alt"] = undefined;
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
-
-	const attrs = {
-		"data-bits-avatar-image": "",
-	};
-
-	$: image = getImage(src).elements.image;
-
-	$: builder = $image;
-	$: Object.assign(builder, attrs);
+	const imageState = getAvatarImageState(src);
 </script>
 
 {#if asChild}
-	<slot {builder} />
+	{@render child?.({ src, alt, ...restProps })}
 {:else}
-	<img bind:this={el} use:melt={builder} {alt} {...$$restProps} />
+	<img {src} bind:this={el} {alt} {...restProps} {...imageState.attrs} />
 {/if}

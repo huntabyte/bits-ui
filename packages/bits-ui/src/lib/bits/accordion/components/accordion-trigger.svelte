@@ -38,12 +38,10 @@
 	});
 </script>
 
-{#if asChild && child}
-	{@render child(mergedProps)}
+{#if asChild}
+	{@render child?.(mergedProps)}
 {:else}
 	<button bind:this={el} type="button" {...mergedProps}>
-		{#if children}
-			{@render children()}
-		{/if}
+		{@render children?.()}
 	</button>
 {/if}

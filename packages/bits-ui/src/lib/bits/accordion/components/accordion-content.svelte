@@ -19,9 +19,7 @@
 </script>
 
 {#if asChild && content.item.isSelected}
-	{#if child}
-		{@render child(mergedProps)}
-	{/if}
+	{@render child?.(mergedProps)}
 {:else}
 	<WithTransition {...mergedProps} condition={content.item.isSelected} />
 {/if}

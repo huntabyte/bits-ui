@@ -35,12 +35,10 @@
 	});
 </script>
 
-{#if asChild && child}
-	{@render child(restProps)}
+{#if asChild}
+	{@render child?.(restProps)}
 {:else}
 	<div bind:this={el} {...restProps}>
-		{#if children}
-			{@render children()}
-		{/if}
+		{@render children?.()}
 	</div>
 {/if}

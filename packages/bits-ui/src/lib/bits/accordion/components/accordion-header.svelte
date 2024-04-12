@@ -11,12 +11,10 @@
 	});
 </script>
 
-{#if asChild && child}
-	{@render child(mergedProps)}
+{#if asChild}
+	{@render child?.(mergedProps)}
 {:else}
 	<div {...mergedProps}>
-		{#if children}
-			{@render children()}
-		{/if}
+		{@render children?.()}
 	</div>
 {/if}

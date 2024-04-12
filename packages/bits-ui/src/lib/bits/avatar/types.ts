@@ -11,12 +11,6 @@ export type AvatarImageLoadingStatus = "loading" | "loaded" | "error";
 
 export type AvatarRootPropsWithoutHTML = WithAsChild<{
 	/**
-	 * The source of the image. If the image fails to load,
-	 * the `Avatar.Fallback` component will be rendered instead.
-	 */
-	src: string;
-
-	/**
 	 * The delay in milliseconds to wait before showing the avatar once
 	 * the image has loaded. This can be used to prevent sudden flickering
 	 * of the image if it loads quickly.
