@@ -1,13 +1,14 @@
 <script lang="ts">
 	import { setCtx } from "../ctx.js";
-	import type { Props } from "../index.js";
+	import type { RootProps } from "../index.js";
 
-	type $$Props = Props;
-	export let delayMs: $$Props["delayMs"] = undefined;
-	export let loadingStatus: $$Props["loadingStatus"] = undefined;
-	export let onLoadingStatusChange: $$Props["onLoadingStatusChange"] = undefined;
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
+	let {
+		delayMs,
+		loadingStatus = $bindable(),
+		onLoadingStatusChange,
+		asChild,
+		el = $bindable(),
+	}: RootProps = $props();
 
 	const {
 		states: { loadingStatus: localLoadingStatus },

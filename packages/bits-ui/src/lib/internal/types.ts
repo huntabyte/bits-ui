@@ -132,12 +132,14 @@ export type AsChildProps<T, U> = {
 	child: Snippet<[U]>;
 	children?: never;
 	asChild: true;
+	el?: HTMLElement;
 } & Omit<T, "children" | "asChild">;
 
 export type DefaultProps<T> = {
 	asChild?: never;
 	child?: never;
 	children?: Snippet;
+	el?: HTMLElement;
 } & Omit<T, "child" | "asChild">;
 
 // eslint-disable-next-line ts/ban-types

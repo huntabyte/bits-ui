@@ -7,20 +7,20 @@ import type {
 } from "$lib/internal/index.js";
 
 interface BaseAccordionProps {
-	asChild?: boolean;
 	disabled?: boolean;
 	forceVisible?: boolean;
-	el?: HTMLElement | null;
 }
 
 interface SingleAccordionProps extends BaseAccordionProps {
 	type: "single";
 	value?: string;
+	onValueChange?: (value: string) => void;
 }
 
 interface MultipleAccordionProps extends BaseAccordionProps {
 	type: "multiple";
 	value?: string[];
+	onValueChange?: (value: string[]) => void;
 }
 
 export type AccordionRootPropsWithoutHTML =
@@ -33,7 +33,6 @@ export type AccordionTriggerPropsWithoutHTML = WithAsChild<{
 	disabled?: boolean;
 	onclick?: (e: MouseEvent) => void;
 	onkeydown?: (e: KeyboardEvent) => void;
-	el?: HTMLElement | null;
 }>;
 
 export type AccordionTriggerProps = AccordionTriggerPropsWithoutHTML &
@@ -47,7 +46,6 @@ export type AccordionItemContext = {
 export type AccordionItemPropsWithoutHTML = WithAsChild<{
 	value: string;
 	disabled?: boolean;
-	el?: HTMLElement | null;
 }>;
 
 export type AccordionItemProps = AccordionItemPropsWithoutHTML & PrimitiveDivAttributes;
