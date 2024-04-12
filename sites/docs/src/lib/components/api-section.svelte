@@ -6,6 +6,9 @@
 	import { parseMarkdown } from "$lib/utils/index.js";
 
 	export let schemas: APISchema[] = [];
+
+	// eslint-disable-next-line no-unused-expressions, svelte/valid-compile
+	$page
 </script>
 
 <H2>API Reference</H2>
@@ -29,7 +32,7 @@
 					<PropsTable props={schema.props} />
 				{/if}
 				{#if schema.slotProps}
-					<PropsTable slot props={schema.slotProps} />
+					<PropsTable slotted props={schema.slotProps} />
 				{/if}
 				{#if schema.dataAttributes && schema.dataAttributes.length}
 					<DataAttrsTable dataAttrs={schema.dataAttributes} />

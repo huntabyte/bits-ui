@@ -55,3 +55,11 @@ export function disabledAttrs(disabled: boolean | undefined | null) {
 		? { "aria-disabled": "true", "data-disabled": "" }
 		: { "aria-disabled": undefined, "data-disabled": undefined };
 }
+
+export function openClosedAttrs(condition: boolean): "true" | "false" {
+	return condition ? "true" : "false";
+}
+
+export function dataDisabledAttrs(condition: boolean): "" | undefined {
+	return condition ? "" : undefined;
+}

@@ -5,10 +5,9 @@ export { default as Trigger } from "./components/accordion-trigger.svelte";
 export { default as Content } from "./components/accordion-content.svelte";
 
 export type {
-	AccordionProps as Props,
+	AccordionRootProps as Props,
 	AccordionItemProps as ItemProps,
 	AccordionHeaderProps as HeaderProps,
 	AccordionTriggerProps as TriggerProps,
 	AccordionContentProps as ContentProps,
-	AccordionTriggerEvents as TriggerEvents,
 } from "./types.js";

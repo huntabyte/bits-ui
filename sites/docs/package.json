@@ -19,7 +19,7 @@
 		"@prettier/sync": "0.3.0",
 		"@sveltejs/adapter-cloudflare": "^4.2.0",
 		"@sveltejs/kit": "^2.5.0",
-		"@sveltejs/vite-plugin-svelte": "^3.0.2",
+		"@sveltejs/vite-plugin-svelte": "^3.1.0",
 		"@tailwindcss/typography": "^0.5.10",
 		"@types/hast": "^3.0.4",
 		"@types/mdast": "^4.0.3",
@@ -38,8 +38,8 @@
 		"rehype-slug": "^6.0.0",
 		"remark-gfm": "^4.0.0",
 		"shiki": "^1.1.1",
-		"svelte": "^4.2.9",
-		"svelte-check": "^3.6.3",
+		"svelte": "5.0.0-next.100",
+		"svelte-check": "^3.6.9",
 		"tailwind-merge": "^2.2.1",
 		"tailwind-variants": "^0.1.20",
 		"tailwindcss": "^3.4.1",
@@ -48,7 +48,7 @@
 		"unified": "^11.0.4",
 		"unist-builder": "^4.0.0",
 		"unist-util-visit": "^5.0.0",
-		"vite": "^5.0.12"
+		"vite": "^5.2.8"
 	},
 	"type": "module",
 	"dependencies": {

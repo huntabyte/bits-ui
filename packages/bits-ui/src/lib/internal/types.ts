@@ -1,5 +1,11 @@
+import type { Snippet } from "svelte";
 import type { Action } from "svelte/action";
-import type { HTMLAttributes } from "svelte/elements";
+import type {
+	HTMLAttributes,
+	HTMLButtonAttributes,
+	HTMLImgAttributes,
+	HTMLInputAttributes,
+} from "svelte/elements";
 import type { TransitionConfig } from "svelte/transition";
 
 export type ObjectVariation<T> = T extends object ? T : never;
@@ -42,6 +48,7 @@ export type Expand<T> = T extends object
 
 export type Prettify<T> = {
 	[K in keyof T]: T[K];
+	// eslint-disable-next-line ts/ban-types
 } & {};
 
 export type Builder = {
@@ -111,3 +118,47 @@ export type TransitionProps<
 	 */
 	outTransitionConfig?: TransitionParams<Out>;
 }>;
+
+export type Primitive<T> = T;
+
+export type PrimitiveButtonAttributes = Primitive<HTMLButtonAttributes>;
+export type PrimitiveDivAttributes = Primitive<HTMLDivAttributes>;
+export type PrimitiveInputAttributes = Primitive<HTMLInputAttributes>;
+export type PrimitiveSpanAttributes = Primitive<HTMLSpanAttributes>;
+export type PrimitiveImgAttributes = Primitive<HTMLImgAttributes>;
+export type PrimitiveHeadingAttributes = Primitive<HTMLHeadingAttributes>;
+
+export type AsChildProps<T, U> = {
+	child: Snippet<[U]>;
+	children?: never;
+	asChild: true;
+	el?: HTMLElement;
+} & Omit<T, "children" | "asChild">;
+
+export type DefaultProps<T> = {
+	asChild?: never;
+	child?: never;
+	children?: Snippet;
+	el?: HTMLElement;
+} & Omit<T, "child" | "asChild">;
+
+// eslint-disable-next-line ts/ban-types
+export type WithAsChild<T, U extends Record<PropertyKey, unknown> = {}> =
+	| DefaultProps<T>
+	| AsChildProps<T, U>;
+
+/**
+ * Constructs a new type by omitting properties from type
+ * 'T' that exist in type 'U'.
+ *
+ * @template T - The base object type from which properties will be omitted.
+ * @template U - The object type whose properties will be omitted from 'T'.
+ * @example
+ * type Result = Without<{ a: number; b: string; }, { b: string; }>;
+ * // Result type will be { a: number; }
+ */
+export type Without<T extends object, U extends object> = Omit<T, keyof U>;
+
+export type ElementRef = { value?: HTMLElement | null | undefined };
+
+export type Ref<T> = { value: T };

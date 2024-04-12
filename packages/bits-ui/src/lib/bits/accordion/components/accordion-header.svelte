@@ -1,29 +1,22 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { getCtx } from "../ctx.js";
-	import type { HeaderProps } from "../index.js";
+	import type { AccordionHeaderProps } from "../types.js";
 
-	type $$Props = HeaderProps;
+	let { asChild, level = 2, children, child, ...restProps }: AccordionHeaderProps = $props();
 
-	export let level = 3;
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
-
-	const {
-		elements: { heading: header },
-		getAttrs,
-	} = getCtx();
-
-	const attrs = getAttrs("header");
-
-	$: builder = $header(level);
-	$: Object.assign(builder, attrs);
+	const mergedProps = $derived({
+		...restProps,
+		role: "heading",
+		"aria-level": level,
+		"data-heading-level": level,
+	});
 </script>
 
-{#if asChild}
-	<slot {builder} />
+{#if asChild && child}
+	{@render child(mergedProps)}
 {:else}
-	<div bind:this={el} use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+	<div {...mergedProps}>
+		{#if children}
+			{@render children()}
+		{/if}
 	</div>
 {/if}
