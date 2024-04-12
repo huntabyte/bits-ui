@@ -35,16 +35,18 @@ class AvatarRootState {
 
 		$effect.pre(() => {
 			if (!this.src) return;
-			window.clearTimeout(this.#imageTimerId);
 			this.#loadImage(this.src);
 		});
 	}
 
 	#loadImage(src: string) {
+		// clear any existing timers before creating a new one
+		window.clearTimeout(this.#imageTimerId);
 		const image = new Image();
 		image.src = src;
 		image.onload = () => {
-			if (this.delayMs) {
+			// if its 0 then we don't need to add a delay
+			if (this.delayMs !== 0) {
 				this.#imageTimerId = window.setTimeout(() => {
 					this.loadingStatus = "loaded";
 				}, this.delayMs);
