@@ -23,9 +23,9 @@ interface MultipleAccordionProps extends BaseAccordionProps {
 	value?: string[];
 }
 
-export type AccordionRootPropsWithoutHTML = WithAsChild<
-	SingleAccordionProps | MultipleAccordionProps
->;
+export type AccordionRootPropsWithoutHTML =
+	| WithAsChild<SingleAccordionProps>
+	| WithAsChild<MultipleAccordionProps>;
 
 export type AccordionRootProps = AccordionRootPropsWithoutHTML & PrimitiveDivAttributes;
 
