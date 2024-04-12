@@ -10,3 +10,4 @@ export * from "./types.js";
 export * from "./updater.js";
 export * from "./focus.js";
 export * from "./context.js";
+export * from "./box.svelte.js";
