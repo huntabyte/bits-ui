@@ -6,7 +6,6 @@ import {
 	dataDisabledAttrs,
 	kbd,
 	openClosedAttrs,
-	removeUndefined,
 	verifyContextDeps,
 } from "$lib/internal/index.js";
 
