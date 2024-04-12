@@ -25,7 +25,7 @@
 
 	const mergedProps = $derived({
 		...restProps,
-		...item.attrs,
+		...item.props,
 		"data-state": item.isSelected ? "open" : "closed",
 		"data-disabled": isDisabled ? "" : undefined,
 	});

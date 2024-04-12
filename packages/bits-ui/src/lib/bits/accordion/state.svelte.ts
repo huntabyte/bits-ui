@@ -38,6 +38,10 @@ class AccordionBaseState {
 		this.disabled = props.disabled ?? this.disabled;
 		this.forceVisible = props.forceVisible ?? this.forceVisible;
 	}
+
+	get props() {
+		return this.attrs;
+	}
 }
 
 /**
@@ -145,6 +149,10 @@ export class AccordionItemState {
 		}
 	}
 
+	get props() {
+		return this.attrs;
+	}
+
 	createTrigger(props: AccordionTriggerStateProps) {
 		return new AccordionTriggerState(props, this);
 	}
@@ -226,15 +234,16 @@ class AccordionTriggerState {
 
 		const rootEl = document.getElementById(this.root.id);
 		if (!rootEl) return;
+		const itemEl = document.getElementById(this.id);
+		if (!itemEl) return;
 
 		const items = Array.from(rootEl.querySelectorAll<HTMLElement>("[data-accordion-trigger]"));
-
 		if (!items.length) return;
 
 		const candidateItems = items.filter((item) => !item.dataset.disabled);
 		if (!candidateItems.length) return;
 
-		const currentIndex = candidateItems.indexOf(rootEl);
+		const currentIndex = candidateItems.indexOf(itemEl);
 
 		switch (e.key) {
 			case kbd.ARROW_DOWN:
