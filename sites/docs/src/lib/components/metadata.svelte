@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { dev } from "$app/environment";
 	import { page } from "$app/stores";
 	import { siteConfig } from "$lib/config/index.js";
 
@@ -29,4 +30,7 @@
 	<meta property="og:description" content={siteConfig.description} />
 	<meta property="og:site_name" content={siteConfig.name} />
 	<meta property="og:locale" content="EN_US" />
+	{#if !dev}
+		<script defer data-domain="bits-ui.com" src="https://server.hj.run/js/script.js"></script>
+	{/if}
 </svelte:head>
