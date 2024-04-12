@@ -12,31 +12,21 @@ import {
 /**
  * BASE
  */
-export type AccordionBaseStateProps = {
+interface AccordionBaseStateProps {
 	el?: HTMLElement | null;
 	disabled?: boolean;
 	forceVisible?: boolean;
-};
-
-const defaultAccordionRootBaseProps = {
-	el: null,
-	disabled: false,
-	forceVisible: false,
-} satisfies Required<AccordionBaseStateProps>;
+}
 
 class AccordionBaseState {
-	el: HTMLElement | null | undefined = $state();
+	el: HTMLElement | null | undefined = $state(null);
 	disabled: boolean = $state(false);
 	forceVisible: boolean = $state(false);
 
-	constructor(props: AccordionBaseStateProps = {}) {
-		const mergedProps = {
-			...defaultAccordionRootBaseProps,
-			...props,
-		} satisfies AccordionBaseStateProps;
-		this.el = mergedProps.el;
-		this.disabled = mergedProps.disabled;
-		this.forceVisible = mergedProps.forceVisible;
+	constructor(props: AccordionBaseStateProps) {
+		this.el = props.el ?? this.el;
+		this.disabled = props.disabled ?? this.disabled;
+		this.forceVisible = props.forceVisible ?? this.forceVisible;
 	}
 }
 
@@ -44,30 +34,21 @@ class AccordionBaseState {
  * SINGLE
  */
 
-export type AccordionSingleStateProps = {
+interface AccordionSingleStateProps extends AccordionBaseStateProps {
 	value?: string;
 	onValueChange?: OnChangeFn<string>;
-} & AccordionBaseStateProps;
-
-const defaultAccordionRootSingleProps: Required<AccordionSingleStateProps> = {
-	value: "",
-	onValueChange: () => {},
-	...defaultAccordionRootBaseProps,
-} satisfies Required<AccordionSingleStateProps>;
+}
 
 export class AccordionSingleState extends AccordionBaseState {
 	value: string = $state("");
-	onValueChange: OnChangeFn<string>;
+	onValueChange: OnChangeFn<string> = () => {};
 	isMulti = false as const;
 
-	constructor(props: AccordionSingleStateProps = {}) {
-		const mergedProps = {
-			...defaultAccordionRootSingleProps,
-			...props,
-		} satisfies AccordionSingleStateProps;
-		super(mergedProps);
-		this.value = mergedProps.value;
-		this.onValueChange = mergedProps.onValueChange;
+	constructor(props: AccordionSingleStateProps) {
+		super(props);
+
+		this.value = props.value ?? this.value;
+		this.onValueChange = props.onValueChange ?? this.onValueChange;
 
 		$effect.pre(() => {
 			this.onValueChange?.(this.value);
@@ -78,31 +59,21 @@ export class AccordionSingleState extends AccordionBaseState {
 /**
  * MULTIPLE
  */
-export type AccordionMultiStateProps = {
+interface AccordionMultiStateProps extends AccordionBaseStateProps {
 	value?: string[];
 	onValueChange?: OnChangeFn<string[]>;
-} & AccordionBaseStateProps;
-
-const defaultAccordionRootMultiProps = {
-	value: [],
-	onValueChange: () => {},
-	...defaultAccordionRootBaseProps,
-} satisfies Required<AccordionMultiStateProps>;
+}
 
 export class AccordionMultiState extends AccordionBaseState {
 	value: string[] = $state([]);
-	onValueChange?: (value: string[]) => void;
+	onValueChange: OnChangeFn<string[]> = () => {};
 	isMulti = true as const;
 
-	constructor(props: AccordionMultiStateProps = {}) {
-		const mergedProps = {
-			...defaultAccordionRootMultiProps,
-			...props,
-		} satisfies AccordionMultiStateProps;
-		super(mergedProps);
+	constructor(props: AccordionMultiStateProps) {
+		super(props);
 
-		this.value.push(...mergedProps.value);
-		this.onValueChange = mergedProps.onValueChange;
+		this.value = props.value ?? this.value;
+		this.onValueChange = props.onValueChange ?? this.onValueChange;
 
 		$effect.pre(() => {
 			this.onValueChange?.(this.value);
@@ -275,7 +246,7 @@ class AccordionTriggerState {
  */
 
 class AccordionContentState {
-	item: AccordionItemState = undefined as unknown as AccordionItemState;
+	item: AccordionItemState = $state() as AccordionItemState;
 	attrs: Record<string, unknown> = $derived({
 		"data-state": openClosedAttrs(this.item.isSelected),
 		"data-disabled": dataDisabledAttrs(this.item.root.disabled || this.item.disabled),
@@ -296,53 +267,49 @@ class AccordionContentState {
  * CONTEXT METHODS
  */
 
-export const ACCORDION_ROOT = Symbol("Accordion.Root");
-export const ACCORDION_ITEM = Symbol("Accordion.Item");
+export const ACCORDION_ROOT_KEY = Symbol("Accordion.Root");
+export const ACCORDION_ITEM_KEY = Symbol("Accordion.Item");
 
 type AccordionState = AccordionSingleState | AccordionMultiState;
 
-type SingleInitAccordionProps = {
-	type: "single";
-	// eslint-disable-next-line ts/no-explicit-any
-	value?: any;
+type InitAccordionProps = {
+	type: "single" | "multiple";
+	value?: string | string[];
 };
-
-type MultiInitAccordionProps = {
-	type: "multiple";
-	// eslint-disable-next-line ts/no-explicit-any
-	value?: any;
-};
-
-type InitAccordionProps = SingleInitAccordionProps | MultiInitAccordionProps;
 
 export function setAccordionRootState(props: InitAccordionProps) {
 	const rootState =
-		props.type === "single" ? new AccordionSingleState(props) : new AccordionMultiState(props);
-	setContext(ACCORDION_ROOT, rootState);
+		props.type === "single"
+			? new AccordionSingleState({ value: props.value as string })
+			: new AccordionMultiState({ value: props.value as string[] });
+	setContext(ACCORDION_ROOT_KEY, rootState);
 	return rootState;
 }
 
 export function getAccordionRootState(): AccordionState {
-	return getContext(ACCORDION_ROOT);
+	return getContext(ACCORDION_ROOT_KEY);
 }
 
 export function setAccordionItemState(props: Omit<AccordionItemStateProps, "rootState">) {
-	verifyContextDeps(ACCORDION_ROOT);
-	const itemState = new AccordionItemState({ ...props, rootState: getAccordionRootState() });
-	setContext(ACCORDION_ITEM, itemState);
+	verifyContextDeps(ACCORDION_ROOT_KEY);
+	const rootState = getAccordionRootState();
+	const itemState = new AccordionItemState({ ...props, rootState });
+	setContext(ACCORDION_ITEM_KEY, itemState);
 	return itemState;
 }
 
 export function getAccordionItemState(): AccordionItemState {
-	return getContext(ACCORDION_ITEM);
+	return getContext(ACCORDION_ITEM_KEY);
 }
 
 export function getAccordionTriggerState(props: AccordionTriggerStateProps): AccordionTriggerState {
-	verifyContextDeps(ACCORDION_ITEM);
-	return getAccordionItemState().createTrigger(props);
+	verifyContextDeps(ACCORDION_ITEM_KEY);
+	const itemState = getAccordionItemState();
+	return itemState.createTrigger(props);
 }
 
 export function getAccordionContentState(): AccordionContentState {
-	verifyContextDeps(ACCORDION_ITEM);
-	return getAccordionItemState().createContent();
+	verifyContextDeps(ACCORDION_ITEM_KEY);
+	const itemState = getAccordionItemState();
+	return itemState.createContent();
 }
