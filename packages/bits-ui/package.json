@@ -55,6 +55,7 @@
 	"dependencies": {
 		"@internationalized/date": "^3.5.1",
 		"@melt-ui/svelte": "0.76.2",
+		"esm-env": "^1.0.0",
 		"nanoid": "^5.0.5"
 	},
 	"peerDependencies": {
