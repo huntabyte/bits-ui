@@ -225,7 +225,7 @@ class AccordionTriggerState {
 
 		e.preventDefault();
 
-		if ([kbd.SPACE, kbd.ENTER].includes(e.key)) {
+		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
 			this.itemState.updateValue();
 			return;
 		}
