@@ -10,7 +10,8 @@
 		child,
 		type,
 		value = $bindable(),
-		el,
+		el = $bindable(),
+		id,
 		...restProps
 	}: AccordionRootProps = $props();
 
@@ -25,7 +26,9 @@
 		value = rootState.value;
 	});
 	$effect.pre(() => {
-		rootState.el = el;
+		if (id) {
+			rootState.id = id;
+		}
 	});
 	$effect.pre(() => {
 		rootState.disabled = disabled;

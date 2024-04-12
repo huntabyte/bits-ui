@@ -7,7 +7,7 @@
 		value,
 		children,
 		child,
-		el,
+		el = $bindable(),
 		...restProps
 	}: AccordionItemProps = $props();
 

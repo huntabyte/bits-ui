@@ -6,6 +6,7 @@
 		disabled = false,
 		asChild,
 		el,
+		id,
 		onkeydown = undefined,
 		onclick = undefined,
 		children,
@@ -23,7 +24,9 @@
 		trigger.disabled = disabled;
 	});
 	$effect.pre(() => {
-		trigger.el = el;
+		if (id) {
+			trigger.id = id;
+		}
 	});
 	$effect.pre(() => {
 		trigger.handlers.click = onclick;

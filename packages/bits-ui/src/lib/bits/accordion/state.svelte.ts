@@ -4,6 +4,7 @@ import {
 	type OnChangeFn,
 	composeHandlers,
 	dataDisabledAttrs,
+	generateId,
 	kbd,
 	openClosedAttrs,
 	verifyContextDeps,
@@ -13,18 +14,21 @@ import {
  * BASE
  */
 interface AccordionBaseStateProps {
-	el?: HTMLElement | null;
+	id?: string;
 	disabled?: boolean;
 	forceVisible?: boolean;
 }
 
 class AccordionBaseState {
-	el: HTMLElement | null | undefined = $state(null);
+	id: string = $state(generateId());
 	disabled: boolean = $state(false);
 	forceVisible: boolean = $state(false);
+	attrs = $derived({
+		id: this.id,
+	});
 
 	constructor(props: AccordionBaseStateProps) {
-		this.el = props.el ?? this.el;
+		this.id = props.id ?? this.id;
 		this.disabled = props.disabled ?? this.disabled;
 		this.forceVisible = props.forceVisible ?? this.forceVisible;
 	}
@@ -143,29 +147,29 @@ export class AccordionItemState {
 type AccordionTriggerStateProps = {
 	onclick?: (e: MouseEvent) => void;
 	onkeydown?: (e: KeyboardEvent) => void;
-	disabled: boolean;
+	disabled?: boolean;
+	id?: string;
 };
 
-const defaultAccordionTriggerProps = {
-	disabled: false,
-	el: null,
-	handlers: {
-		click: undefined,
-		keydown: undefined,
-	},
+interface AccordionTriggerHandlers {
+	click?: EventCallback<MouseEvent>;
+	keydown?: EventCallback<KeyboardEvent>;
+}
+
+const defaultAccordionTriggerHandlers: AccordionTriggerHandlers = {
+	click: () => {},
+	keydown: () => {},
 };
 
 class AccordionTriggerState {
 	disabled: boolean = $state(false);
-	el: HTMLElement | null | undefined = $state();
+	id: string = $state(generateId());
 	root: AccordionState = undefined as unknown as AccordionState;
 	itemState: AccordionItemState = undefined as unknown as AccordionItemState;
-	handlers: {
-		click: EventCallback<MouseEvent> | undefined;
-		keydown: EventCallback<KeyboardEvent> | undefined;
-	} = $state(defaultAccordionTriggerProps.handlers);
+	handlers: AccordionTriggerHandlers = $state(defaultAccordionTriggerHandlers);
 	isDisabled: boolean = $state(false);
 	attrs: Record<string, unknown> = $derived({
+		id: this.id,
 		disabled: this.disabled,
 		"aria-expanded": this.itemState.isSelected ? "true" : "false",
 		"aria-disabled": this.isDisabled ? "true" : "false",
@@ -179,8 +183,9 @@ class AccordionTriggerState {
 		this.disabled = props.disabled || itemState.disabled || itemState.root.disabled;
 		this.itemState = itemState;
 		this.root = itemState.root;
-		this.handlers.click = props.onclick;
-		this.handlers.keydown = props.onkeydown;
+		this.handlers.click = props.onclick ?? this.onclick;
+		this.handlers.keydown = props.onkeydown ?? this.onkeydown;
+		this.id = props.id ?? this.id;
 
 		$effect(() => {
 			this.isDisabled = this.disabled || this.itemState.disabled || this.root.disabled;
@@ -203,17 +208,19 @@ class AccordionTriggerState {
 			return;
 		}
 
-		if (!this.root.el || !this.el) return;
+		if (!this.root.id || !this.id) return;
 
-		const items = Array.from(
-			this.root.el.querySelectorAll<HTMLElement>("[data-accordion-trigger]")
-		);
+		const rootEl = document.getElementById(this.root.id);
+		if (!rootEl) return;
+
+		const items = Array.from(rootEl.querySelectorAll<HTMLElement>("[data-accordion-trigger]"));
+
 		if (!items.length) return;
 
 		const candidateItems = items.filter((item) => !item.dataset.disabled);
 		if (!candidateItems.length) return;
 
-		const currentIndex = candidateItems.indexOf(this.el);
+		const currentIndex = candidateItems.indexOf(rootEl);
 
 		switch (e.key) {
 			case kbd.ARROW_DOWN:

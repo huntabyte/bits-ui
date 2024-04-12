@@ -12,6 +12,7 @@
 		outTransitionConfig?: TransitionConfig;
 		condition?: boolean;
 		children?: Snippet;
+		el?: HTMLElement;
 	};
 
 	let {
@@ -23,32 +24,34 @@
 		outTransitionConfig,
 		children,
 		condition,
+		el = $bindable(),
 		...restProps
 	}: Props = $props();
 </script>
 
 {#if transition && condition}
-	<div transition:transition={transitionConfig} {...restProps}>
+	<div transition:transition={transitionConfig} {...restProps} bind:this={el}>
 		{@render children?.()}
 	</div>
 {:else if inTransition && outTransition && condition}
 	<div
 		in:inTransition={inTransitionConfig}
 		out:outTransition={outTransitionConfig}
+		bind:this={el}
 		{...restProps}
 	>
 		{@render children?.()}
 	</div>
 {:else if inTransition && condition}
-	<div in:inTransition={inTransitionConfig} {...restProps}>
+	<div in:inTransition={inTransitionConfig} {...restProps} bind:this={el}>
 		{@render children?.()}
 	</div>
 {:else if outTransition && condition}
-	<div out:outTransition={outTransitionConfig} {...restProps}>
+	<div out:outTransition={outTransitionConfig} {...restProps} bind:this={el}>
 		{@render children?.()}
 	</div>
 {:else if condition}
-	<div {...restProps}>
+	<div {...restProps} bind:this={el}>
 		{@render children?.()}
 	</div>
 {/if}
