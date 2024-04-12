@@ -41,7 +41,7 @@
 {#if asChild}
 	{@render child?.(restProps)}
 {:else}
-	<div bind:this={el} {...restProps}>
+	<div bind:this={el} {...rootState.attrs} {...restProps}>
 		{@render children?.()}
 	</div>
 {/if}

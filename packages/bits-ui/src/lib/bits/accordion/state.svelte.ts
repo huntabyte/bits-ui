@@ -19,12 +19,18 @@ interface AccordionBaseStateProps {
 	forceVisible?: boolean;
 }
 
+interface AccordionRootAttrs {
+	id: string;
+	"data-bits-accordion-root": string;
+}
+
 class AccordionBaseState {
 	id: string = $state(generateId());
 	disabled: boolean = $state(false);
 	forceVisible: boolean = $state(false);
-	attrs = $derived({
+	attrs: AccordionRootAttrs = $derived({
 		id: this.id,
+		"data-bits-accordion-root": "",
 	});
 
 	constructor(props: AccordionBaseStateProps) {
@@ -176,7 +182,7 @@ class AccordionTriggerState {
 		"data-disabled": this.isDisabled ? "" : undefined,
 		"data-value": this.itemState.value,
 		"data-state": openClosedAttrs(this.itemState.isSelected),
-		"data-accordion-trigger": "",
+		"data-bits-accordion-trigger": "",
 	});
 
 	constructor(props: AccordionTriggerStateProps, itemState: AccordionItemState) {

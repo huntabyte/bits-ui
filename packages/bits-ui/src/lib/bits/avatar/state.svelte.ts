@@ -13,7 +13,7 @@ interface AvatarStateProps {
 }
 
 interface AvatarRootAttrs {
-	"data-bits-avatar-root": string;
+	"data-avatar-root": string;
 }
 
 type AvatarImageSrc = string | null | undefined;
@@ -24,7 +24,7 @@ class AvatarRootState {
 	loadingStatus: AvatarImageLoadingStatus = $state("loading");
 	onLoadingStatusChange: AvatarStateProps["onLoadingStatusChange"] = $state(() => {});
 	attrs: AvatarRootAttrs = {
-		"data-bits-avatar-root": "",
+		"data-avatar-root": "",
 	};
 
 	#imageTimerId: number = 0;
@@ -74,7 +74,7 @@ class AvatarRootState {
 
 interface AvatarImageAttrs {
 	style: string;
-	"data-bits-avatar-image": string;
+	"data-avatar-image": string;
 }
 
 class AvatarImageState {
@@ -83,7 +83,7 @@ class AvatarImageState {
 		style: styleToString({
 			display: this.root.loadingStatus === "loaded" ? "block" : "none",
 		}),
-		"data-bits-avatar-image": "",
+		"data-avatar-image": "",
 	});
 
 	constructor(src: AvatarImageSrc, root: AvatarRootState) {
@@ -98,7 +98,7 @@ class AvatarImageState {
 
 interface AvatarFallbackAttrs {
 	style: string;
-	"data-bits-avatar-fallback": string;
+	"data-avatar-fallback": string;
 }
 
 class AvatarFallbackState {
@@ -107,7 +107,7 @@ class AvatarFallbackState {
 		style: styleToString({
 			display: this.root.loadingStatus === "loaded" ? "none" : "block",
 		}),
-		"data-bits-avatar-fallback": "",
+		"data-avatar-fallback": "",
 	});
 
 	constructor(root: AvatarRootState) {
