@@ -2,71 +2,49 @@
 	import { setAccordionRootState } from "../accordion.svelte.js";
 	import type { AccordionRootProps } from "../types.js";
 	import { box } from "$lib/internal/box.svelte.js";
+	import { generateId } from "$lib/internal/id.js";
 
 	let {
-		disabled = false,
-		forceVisible = false,
+		disabled: disabledProp = false,
+		forceVisible: forceVisibleProp = false,
 		asChild,
 		children,
 		child,
 		type,
-		value = $bindable(),
+		value: valueProp = $bindable(),
 		el = $bindable(),
-		id,
+		id: idProp = generateId(),
 		onValueChange,
 		...restProps
 	}: AccordionRootProps = $props();
 
 	function createValueState() {
 		if (type === "single") {
-			value === undefined && (value = "");
+			valueProp === undefined && (valueProp = "");
 			return box(
-				() => value as string,
+				() => valueProp as string,
 				(v) => {
-					value = v;
+					valueProp = v;
 					onValueChange?.(v as string[] & string);
 				}
 			);
 		}
-		value === undefined && (value = []);
+		valueProp === undefined && (valueProp = []);
 		return box(
-			() => value as string[],
+			() => valueProp as string[],
 			(v) => {
-				value = v;
+				valueProp = v;
 				onValueChange?.(v as string[] & string);
 			}
 		);
 	}
 
-	const valueState = createValueState();
+	const value = createValueState();
+	const id = box(() => idProp);
+	const disabled = box(() => disabledProp);
+	const forceVisible = box(() => forceVisibleProp);
 
-	const rootState = setAccordionRootState({ type, value: valueState, id });
-
-	$effect.pre(() => {
-		if (value !== undefined) {
-			rootState.value = value;
-		}
-	});
-
-	$effect.pre(() => {
-		value = rootState.value;
-	});
-
-	$effect.pre(() => {
-		if (id) {
-			rootState.id = id;
-		}
-	});
-
-	$effect.pre(() => {
-		rootState.disabled = disabled;
-	});
-
-	$effect.pre(() => {
-		rootState.forceVisible = forceVisible;
-	});
-
-	
+	const rootState = setAccordionRootState({ type, value, id, disabled, forceVisible });
 </script>
 
 {#if asChild}

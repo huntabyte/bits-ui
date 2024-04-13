@@ -1,4 +1,5 @@
 import type {
+	EventCallback,
 	PrimitiveButtonAttributes,
 	PrimitiveDivAttributes,
 	Transition,
@@ -9,6 +10,7 @@ import type {
 interface BaseAccordionProps {
 	disabled?: boolean;
 	forceVisible?: boolean;
+	id?: string;
 }
 
 interface SingleAccordionProps extends BaseAccordionProps {
@@ -27,16 +29,17 @@ export type AccordionRootPropsWithoutHTML =
 	| WithAsChild<SingleAccordionProps>
 	| WithAsChild<MultipleAccordionProps>;
 
-export type AccordionRootProps = AccordionRootPropsWithoutHTML & PrimitiveDivAttributes;
+export type AccordionRootProps = AccordionRootPropsWithoutHTML & Omit<PrimitiveDivAttributes, "id">;
 
 export type AccordionTriggerPropsWithoutHTML = WithAsChild<{
+	id?: string;
 	disabled?: boolean;
-	onclick?: (e: MouseEvent) => void;
-	onkeydown?: (e: KeyboardEvent) => void;
+	onclick?: EventCallback<MouseEvent>;
+	onkeydown?: EventCallback<KeyboardEvent>;
 }>;
 
 export type AccordionTriggerProps = AccordionTriggerPropsWithoutHTML &
-	Omit<PrimitiveButtonAttributes, "disabled">;
+	Omit<PrimitiveButtonAttributes, "disabled" | "id" | "onclick" | "onkeydown">;
 
 export type AccordionItemContext = {
 	value: string;

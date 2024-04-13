@@ -63,3 +63,26 @@ export function openClosedAttrs(condition: boolean): "open" | "closed" {
 export function dataDisabledAttrs(condition: boolean): "" | undefined {
 	return condition ? "" : undefined;
 }
+
+export function getAriaDisabled(condition: boolean): "true" | "false" {
+	return condition ? "true" : "false";
+}
+
+export function getAriaExpanded(condition: boolean): "true" | "false" {
+	return condition ? "true" : "false";
+}
+
+export function getDataDisabled(condition: boolean): "" | undefined {
+	return condition ? "" : undefined;
+}
+
+export function getAriaRequired(condition: boolean): "true" | "false" {
+	return condition ? "true" : "false";
+}
+
+export function getAriaChecked(condition: boolean | "indeterminate"): "true" | "false" | "mixed" {
+	if (condition === "indeterminate") {
+		return "mixed";
+	}
+	return condition ? "true" : "false";
+}

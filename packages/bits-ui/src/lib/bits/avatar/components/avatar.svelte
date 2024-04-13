@@ -1,10 +1,11 @@
 <script lang="ts">
 	import type { RootProps } from "../index.js";
-	import { setAvatarRootState } from "../state.svelte.js";
+	import { setAvatarRootState } from "../avatar.svelte.js";
+	import { box } from "$lib/internal/box.svelte.js";
 
 	let {
-		delayMs,
-		loadingStatus = $bindable(),
+		delayMs: delayMsProp = 0,
+		loadingStatus: loadingStatusProp = $bindable("loading"),
 		onLoadingStatusChange,
 		asChild,
 		child,
@@ -13,18 +14,19 @@
 		...restProps
 	}: RootProps = $props();
 
-	const rootState = setAvatarRootState({ delayMs, loadingStatus, onLoadingStatusChange });
-
-	$effect.pre(() => {
-		loadingStatus = rootState.loadingStatus;
-	});
-
-	$effect.pre(() => {
-		if (delayMs !== undefined) {
-			rootState.delayMs = delayMs;
-		} else {
-			rootState.delayMs = 0;
+	const loadingStatus = box(
+		() => loadingStatusProp,
+		(v) => {
+			loadingStatusProp = v;
+			onLoadingStatusChange?.(v);
 		}
+	);
+
+	const delayMs = box(() => delayMsProp);
+
+	const rootState = setAvatarRootState({
+		delayMs,
+		loadingStatus,
 	});
 </script>
 

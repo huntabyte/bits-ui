@@ -35,11 +35,11 @@ export type CreateDispatcher = {
 	createDispatcher: typeof createDispatcher;
 };
 
-export type EventCallback<E extends Event = Event, T extends EventTarget = Element> = (
+export type EventCallback<E extends Event = Event, T extends Element = Element> = (
 	event: E & { currentTarget: EventTarget & T }
 ) => void;
 
-export function composeHandlers<E extends Event = Event, T extends EventTarget = Element>(
+export function composeHandlers<E extends Event = Event, T extends Element = Element>(
 	...handlers: Array<EventCallback<E, T> | undefined>
 ): (e: E & { currentTarget: EventTarget & T }) => void {
 	return (e: E & { currentTarget: EventTarget & T }) => {

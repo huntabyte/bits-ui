@@ -1,38 +1,31 @@
 <script lang="ts">
 	import type { AccordionTriggerProps } from "../types.js";
 	import { getAccordionTriggerState } from "../accordion.svelte.js";
+	import { generateId } from "$lib/internal/id.js";
+	import { box } from "$lib/internal/box.svelte.js";
 
 	let {
-		disabled = false,
+		disabled: disabledProp = false,
 		asChild,
 		el,
-		id,
-		onkeydown = undefined,
-		onclick = undefined,
+		id: idProp = generateId(),
+		onkeydown: onkeydownProp = () => {},
+		onclick: onclickProp = () => {},
 		children,
 		child,
 		...restProps
 	}: AccordionTriggerProps = $props();
 
+	const disabled = box(() => disabledProp);
+	const id = box(() => idProp);
+	const onkeydown = box(() => onkeydownProp);
+	const onclick = box(() => onclickProp);
+
 	const trigger = getAccordionTriggerState({
 		disabled,
 		onkeydown,
 		onclick,
-	});
-
-	$effect.pre(() => {
-		trigger.disabled = disabled;
-	});
-	$effect.pre(() => {
-		if (id) {
-			trigger.id = id;
-		}
-	});
-	$effect.pre(() => {
-		trigger.handlers.click = onclick;
-	});
-	$effect.pre(() => {
-		trigger.handlers.keydown = onkeydown;
+		id,
 	});
 
 	const mergedProps = $derived({

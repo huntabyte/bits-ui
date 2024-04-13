@@ -1,15 +1,16 @@
 import { getContext, setContext } from "svelte";
+import type { ImageLoadingStatus } from "@melt-ui/svelte";
 import type { AvatarImageLoadingStatus } from "./types.js";
 import type { OnChangeFn } from "$lib/internal/types.js";
 import { styleToString } from "$lib/internal/style.js";
+import { type Box, box } from "$lib/internal/box.svelte.js";
 
 /**
  * ROOT
  */
-interface AvatarStateProps {
-	delayMs?: number;
-	loadingStatus?: AvatarImageLoadingStatus;
-	onLoadingStatusChange?: OnChangeFn<AvatarImageLoadingStatus>;
+interface AvatarRootStateProps {
+	delayMs: Box<number>;
+	loadingStatus: Box<AvatarImageLoadingStatus>;
 }
 
 interface AvatarRootAttrs {
@@ -20,18 +21,17 @@ type AvatarImageSrc = string | null | undefined;
 
 class AvatarRootState {
 	src: AvatarImageSrc = $state(null);
-	delayMs: number = $state(0);
-	loadingStatus: AvatarImageLoadingStatus = $state("loading");
-	onLoadingStatusChange: AvatarStateProps["onLoadingStatusChange"] = $state(() => {});
+	delayMs = box(() => 0);
+	loadingStatus = box<ImageLoadingStatus>(() => "loading");
 	attrs: AvatarRootAttrs = {
 		"data-avatar-root": "",
 	};
 
 	#imageTimerId: number = 0;
 
-	constructor(props: AvatarStateProps) {
+	constructor(props: AvatarRootStateProps) {
 		this.delayMs = props.delayMs ?? this.delayMs;
-		this.onLoadingStatusChange = props.onLoadingStatusChange ?? this.onLoadingStatusChange;
+		this.loadingStatus = props.loadingStatus;
 
 		$effect.pre(() => {
 			if (!this.src) return;
@@ -46,16 +46,16 @@ class AvatarRootState {
 		image.src = src;
 		image.onload = () => {
 			// if its 0 then we don't need to add a delay
-			if (this.delayMs !== 0) {
+			if (this.delayMs.value !== 0) {
 				this.#imageTimerId = window.setTimeout(() => {
-					this.loadingStatus = "loaded";
-				}, this.delayMs);
+					this.loadingStatus.value = "loaded";
+				}, this.delayMs.value);
 			} else {
-				this.loadingStatus = "loaded";
+				this.loadingStatus.value = "loaded";
 			}
 		};
 		image.onerror = () => {
-			this.loadingStatus = "error";
+			this.loadingStatus.value = "error";
 		};
 	}
 
@@ -81,7 +81,7 @@ class AvatarImageState {
 	root: AvatarRootState = undefined as unknown as AvatarRootState;
 	attrs: AvatarImageAttrs = $derived({
 		style: styleToString({
-			display: this.root.loadingStatus === "loaded" ? "block" : "none",
+			display: this.root.loadingStatus.value === "loaded" ? "block" : "none",
 		}),
 		"data-avatar-image": "",
 	});
@@ -105,7 +105,7 @@ class AvatarFallbackState {
 	root: AvatarRootState = undefined as unknown as AvatarRootState;
 	attrs: AvatarFallbackAttrs = $derived({
 		style: styleToString({
-			display: this.root.loadingStatus === "loaded" ? "none" : "block",
+			display: this.root.loadingStatus.value === "loaded" ? "none" : "block",
 		}),
 		"data-avatar-fallback": "",
 	});
@@ -121,7 +121,7 @@ class AvatarFallbackState {
 
 export const AVATAR_ROOT_KEY = Symbol("Avatar.Root");
 
-export function setAvatarRootState(props: AvatarStateProps) {
+export function setAvatarRootState(props: AvatarRootStateProps) {
 	return setContext(AVATAR_ROOT_KEY, new AvatarRootState(props));
 }
 

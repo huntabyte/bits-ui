@@ -1,27 +1,23 @@
 <script lang="ts">
 	import type { AccordionItemProps } from "../types.js";
 	import { setAccordionItemState } from "../accordion.svelte.js";
+	import { box } from "$lib/internal/box.svelte.js";
 	let {
 		asChild,
-		disabled = false,
-		value,
+		disabled: disabledProp = false,
+		value: valueProp,
 		children,
 		child,
 		el = $bindable(),
 		...restProps
 	}: AccordionItemProps = $props();
 
+	const disabled = box(() => disabledProp);
+	const value = box(() => valueProp);
+
 	const item = setAccordionItemState({ value, disabled });
 
-	let isDisabled = $derived(disabled || item.root.disabled);
-
-	$effect.pre(() => {
-		item.disabled = disabled;
-	});
-
-	$effect.pre(() => {
-		item.value = value;
-	});
+	const isDisabled = $derived(disabled || item.root.disabled);
 
 	const mergedProps = $derived({
 		...restProps,

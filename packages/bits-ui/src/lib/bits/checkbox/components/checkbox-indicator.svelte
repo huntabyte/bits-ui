@@ -1,34 +1,21 @@
 <script lang="ts">
-	import { getCtx } from "../ctx.js";
+	import { getCheckboxIndicatorState } from "../checkbox.svelte.js";
 	import type { IndicatorProps } from "../index.js";
 
-	type $$Props = IndicatorProps;
+	let { child, asChild, children, el = $bindable(), ...restProps }: IndicatorProps = $props();
 
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
+	const indicatorState = getCheckboxIndicatorState();
 
-	const {
-		helpers: { isChecked, isIndeterminate },
-		states: { checked },
-		getAttrs,
-	} = getCtx();
-
-	function getStateAttr(state: boolean | "indeterminate") {
-		if (state === "indeterminate") return "indeterminate";
-		if (state) return "checked";
-		return "unchecked";
-	}
-
-	$: attrs = {
-		...getAttrs("indicator"),
-		"data-state": getStateAttr($checked),
-	};
+	const mergedProps = $derived({
+		...indicatorState.attrs,
+		...restProps,
+	});
 </script>
 
 {#if asChild}
-	<slot {attrs} isChecked={$isChecked} isIndeterminate={$isIndeterminate} />
+	{@render child?.(mergedProps)}
 {:else}
-	<div bind:this={el} {...$$restProps} {...attrs}>
-		<slot {attrs} isChecked={$isChecked} isIndeterminate={$isIndeterminate} />
+	<div bind:this={el} {...mergedProps}>
+		{@render children?.()}
 	</div>
 {/if}

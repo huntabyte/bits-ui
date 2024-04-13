@@ -1,65 +1,58 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { setCtx } from "../ctx.js";
-	import type { Events, Props } from "../index.js";
-	import { createDispatcher } from "$lib/internal/events.js";
+	import type { RootProps } from "../index.js";
+	import { setCheckboxRootState } from "../checkbox.svelte.js";
+	import { box } from "$lib/internal/box.svelte.js";
 
-	type $$Props = Props;
-	type $$Events = Events;
-	export let checked: $$Props["checked"] = false;
-	export let disabled: $$Props["disabled"] = undefined;
-	export let name: $$Props["name"] = undefined;
-	export let required: $$Props["required"] = undefined;
-	export let value: $$Props["value"] = undefined;
-	export let onCheckedChange: $$Props["onCheckedChange"] = undefined;
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
+	let {
+		checked: checkedProp = $bindable(false),
+		onCheckedChange,
+		disabled: disabledProp = false,
+		required: requiredProp = false,
+		name: nameProp = undefined,
+		value: valueProp = undefined,
+		el = $bindable(),
+		onclick: onclickProp,
+		onkeydown: onkeydownProp,
+		asChild,
+		children,
+		child,
+		...restProps
+	}: RootProps = $props();
 
-	const {
-		elements: { root },
-		states: { checked: localChecked },
-		updateOption,
-		getAttrs,
-	} = setCtx({
-		defaultChecked: checked,
+	const checked = box(
+		() => checkedProp,
+		(v) => {
+			checkedProp = v;
+			onCheckedChange?.(v);
+		}
+	);
+	const disabled = box(() => disabledProp);
+	const required = box(() => requiredProp);
+	const name = box(() => nameProp);
+	const value = box(() => valueProp);
+	const onclick = box(() => onclickProp);
+	const onkeydown = box(() => onkeydownProp);
+
+	const checkboxState = setCheckboxRootState({
+		checked,
 		disabled,
-		name,
 		required,
+		name,
 		value,
-		onCheckedChange: ({ next }) => {
-			if (checked !== next) {
-				onCheckedChange?.(next);
-				checked = next;
-			}
-			return next;
-		},
+		onclick,
+		onkeydown,
 	});
 
-	const dispatch = createDispatcher();
-
-	$: attrs = { ...getAttrs("root"), disabled: disabled ? true : undefined };
-	$: checked !== undefined && localChecked.set(checked);
-
-	$: updateOption("disabled", disabled);
-	$: updateOption("name", name);
-	$: updateOption("required", required);
-	$: updateOption("value", value);
-
-	$: builder = $root;
-	$: Object.assign(builder, attrs);
+	const mergedProps = $derived({
+		...checkboxState.props,
+		...restProps,
+	});
 </script>
 
 {#if asChild}
-	<slot {builder} />
+	{@render child?.(mergedProps)}
 {:else}
-	<button
-		bind:this={el}
-		use:melt={builder}
-		type="button"
-		{...$$restProps}
-		on:m-click={dispatch}
-		on:m-keydown={dispatch}
-	>
-		<slot {builder} />
+	<button bind:this={el} {...mergedProps}>
+		{@render children?.()}
 	</button>
 {/if}

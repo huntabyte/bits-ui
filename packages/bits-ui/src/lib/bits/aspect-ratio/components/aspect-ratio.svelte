@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Props } from "../index.js";
 
-	let { ratio, el, ...restProps }: Props = $props();
+	let { ratio, el = $bindable(), ...restProps }: Props = $props();
 </script>
 
 <div style:position="relative" style:width="100%" style:padding-bottom="{ratio ? 100 / ratio : 0}%">
