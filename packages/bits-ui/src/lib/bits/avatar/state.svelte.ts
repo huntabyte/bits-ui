@@ -122,9 +122,7 @@ class AvatarFallbackState {
 export const AVATAR_ROOT_KEY = Symbol("Avatar.Root");
 
 export function setAvatarRootState(props: AvatarStateProps) {
-	const rootState = new AvatarRootState(props);
-	setContext(AVATAR_ROOT_KEY, rootState);
-	return rootState;
+	return setContext(AVATAR_ROOT_KEY, new AvatarRootState(props));
 }
 
 export function getAvatarRootState(): AvatarRootState {
