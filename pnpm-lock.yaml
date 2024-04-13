@@ -73,17 +73,17 @@ importers:
         specifier: ^3.1.0
         version: 3.1.0(svelte@5.0.0-next.101)(vite@5.2.8)
       '@testing-library/dom':
-        specifier: ^9.3.4
-        version: 9.3.4
+        specifier: ^10.0.0
+        version: 10.0.0
       '@testing-library/jest-dom':
-        specifier: ^6.4.1
-        version: 6.4.2(vitest@1.4.0)
+        specifier: ^6.4.2
+        version: 6.4.2(vitest@1.5.0)
       '@testing-library/svelte':
-        specifier: ^4.1.0
-        version: 4.1.0(svelte@5.0.0-next.101)
+        specifier: ^4.2.2
+        version: 4.2.2(svelte@5.0.0-next.101)
       '@testing-library/user-event':
         specifier: ^14.5.2
-        version: 14.5.2(@testing-library/dom@9.3.4)
+        version: 14.5.2(@testing-library/dom@10.0.0)
       '@types/jest-axe':
         specifier: ^3.5.9
         version: 3.5.9
@@ -121,8 +121,8 @@ importers:
         specifier: ^5.2.8
         version: 5.2.8(@types/node@20.12.2)
       vitest:
-        specifier: ^1.2.2
-        version: 1.4.0(@types/node@20.12.2)(jsdom@24.0.0)
+        specifier: ^1.5.0
+        version: 1.5.0(@types/node@20.12.2)(jsdom@24.0.0)
 
   sites/docs:
     dependencies:
@@ -2542,6 +2542,20 @@ packages:
       tailwindcss: 3.4.3
     dev: true
 
+  /@testing-library/dom@10.0.0:
+    resolution: {integrity: sha512-PmJPnogldqoVFf+EwbHvbBJ98MmqASV8kLrBYgsDNxQcFMeIS7JFL48sfyXvuMtgmWO/wMhh25odr+8VhDmn4g==}
+    engines: {node: '>=18'}
+    dependencies:
+      '@babel/code-frame': 7.24.2
+      '@babel/runtime': 7.24.1
+      '@types/aria-query': 5.0.4
+      aria-query: 5.3.0
+      chalk: 4.1.2
+      dom-accessibility-api: 0.5.16
+      lz-string: 1.5.0
+      pretty-format: 27.5.1
+    dev: true
+
   /@testing-library/dom@9.3.4:
     resolution: {integrity: sha512-FlS4ZWlp97iiNWig0Muq8p+3rVDjRiYE+YKGbAqXOu9nwJFFOdL00kFpz42M+4huzYi86vAK1sOOfyOG45muIQ==}
     engines: {node: '>=14'}
@@ -2556,7 +2570,7 @@ packages:
       pretty-format: 27.5.1
     dev: true
 
-  /@testing-library/jest-dom@6.4.2(vitest@1.4.0):
+  /@testing-library/jest-dom@6.4.2(vitest@1.5.0):
     resolution: {integrity: sha512-CzqH0AFymEMG48CpzXFriYYkOjk6ZGPCLMhW9e9jg3KMCn5OfJecF8GtGW7yGfR/IgCe3SX8BSwjdzI6BBbZLw==}
     engines: {node: '>=14', npm: '>=6', yarn: '>=1'}
     peerDependencies:
@@ -2585,26 +2599,26 @@ packages:
       dom-accessibility-api: 0.6.3
       lodash: 4.17.21
       redent: 3.0.0
-      vitest: 1.4.0(@types/node@20.12.2)(jsdom@24.0.0)
+      vitest: 1.5.0(@types/node@20.12.2)(jsdom@24.0.0)
     dev: true
 
-  /@testing-library/svelte@4.1.0(svelte@5.0.0-next.101):
-    resolution: {integrity: sha512-MJqe7x9WowkiAVdk9mvazEC2ktFZdmK2OqFVoO557PC37aBemQ4ozqdK3yrG34Zg9kuln3qgTVeLSh08e69AMw==}
+  /@testing-library/svelte@4.2.2(svelte@5.0.0-next.101):
+    resolution: {integrity: sha512-zl2V/39V/uIRe+FjXfeB7Nvg/2DBqAFlKbpqtbAogtyoYtdQ0Z/d8Was8ZdtXl3QCa8NBNd3J0QUKSTDaEQYCA==}
     engines: {node: '>= 10'}
     peerDependencies:
-      svelte: ^3 || ^4
+      svelte: ^3 || ^4 || ^5
     dependencies:
       '@testing-library/dom': 9.3.4
       svelte: 5.0.0-next.101
     dev: true
 
-  /@testing-library/user-event@14.5.2(@testing-library/dom@9.3.4):
+  /@testing-library/user-event@14.5.2(@testing-library/dom@10.0.0):
     resolution: {integrity: sha512-YAh82Wh4TIrxYLmfGcixwD18oIjyC1pFQC2Y01F2lzV2HTMiYrI0nze0FD0ocB//CKS/7jIUgae+adPqxK5yCQ==}
     engines: {node: '>=12', npm: '>=6'}
     peerDependencies:
       '@testing-library/dom': '>=7.21.4'
     dependencies:
-      '@testing-library/dom': 9.3.4
+      '@testing-library/dom': 10.0.0
     dev: true
 
   /@types/acorn@4.0.6:
@@ -2975,38 +2989,38 @@ packages:
     resolution: {integrity: sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==}
     dev: true
 
-  /@vitest/expect@1.4.0:
-    resolution: {integrity: sha512-Jths0sWCJZ8BxjKe+p+eKsoqev1/T8lYcrjavEaz8auEJ4jAVY0GwW3JKmdVU4mmNPLPHixh4GNXP7GFtAiDHA==}
+  /@vitest/expect@1.5.0:
+    resolution: {integrity: sha512-0pzuCI6KYi2SIC3LQezmxujU9RK/vwC1U9R0rLuGlNGcOuDWxqWKu6nUdFsX9tH1WU0SXtAxToOsEjeUn1s3hA==}
     dependencies:
-      '@vitest/spy': 1.4.0
-      '@vitest/utils': 1.4.0
+      '@vitest/spy': 1.5.0
+      '@vitest/utils': 1.5.0
       chai: 4.4.1
     dev: true
 
-  /@vitest/runner@1.4.0:
-    resolution: {integrity: sha512-EDYVSmesqlQ4RD2VvWo3hQgTJ7ZrFQ2VSJdfiJiArkCerDAGeyF1i6dHkmySqk573jLp6d/cfqCN+7wUB5tLgg==}
+  /@vitest/runner@1.5.0:
+    resolution: {integrity: sha512-7HWwdxXP5yDoe7DTpbif9l6ZmDwCzcSIK38kTSIt6CFEpMjX4EpCgT6wUmS0xTXqMI6E/ONmfgRKmaujpabjZQ==}
     dependencies:
-      '@vitest/utils': 1.4.0
+      '@vitest/utils': 1.5.0
       p-limit: 5.0.0
       pathe: 1.1.2
     dev: true
 
-  /@vitest/snapshot@1.4.0:
-    resolution: {integrity: sha512-saAFnt5pPIA5qDGxOHxJ/XxhMFKkUSBJmVt5VgDsAqPTX6JP326r5C/c9UuCMPoXNzuudTPsYDZCoJ5ilpqG2A==}
+  /@vitest/snapshot@1.5.0:
+    resolution: {integrity: sha512-qpv3fSEuNrhAO3FpH6YYRdaECnnRjg9VxbhdtPwPRnzSfHVXnNzzrpX4cJxqiwgRMo7uRMWDFBlsBq4Cr+rO3A==}
     dependencies:
       magic-string: 0.30.9
       pathe: 1.1.2
       pretty-format: 29.7.0
     dev: true
 
-  /@vitest/spy@1.4.0:
-    resolution: {integrity: sha512-Ywau/Qs1DzM/8Uc+yA77CwSegizMlcgTJuYGAi0jujOteJOUf1ujunHThYo243KG9nAyWT3L9ifPYZ5+As/+6Q==}
+  /@vitest/spy@1.5.0:
+    resolution: {integrity: sha512-vu6vi6ew5N5MMHJjD5PoakMRKYdmIrNJmyfkhRpQt5d9Ewhw9nZ5Aqynbi3N61bvk9UvZ5UysMT6ayIrZ8GA9w==}
     dependencies:
       tinyspy: 2.2.1
     dev: true
 
-  /@vitest/utils@1.4.0:
-    resolution: {integrity: sha512-mx3Yd1/6e2Vt/PUC98DcqTirtfxUyAZ32uK82r8rZzbtBeBo+nqgnjx/LvqQdWsrvNtm14VmurNgcf4nqY5gJg==}
+  /@vitest/utils@1.5.0:
+    resolution: {integrity: sha512-BDU0GNL8MWkRkSRdNFvCUCAVOeHaUlVJ9Tx0TYBZyXaaOTmGtUFObzchCivIBrIwKzvZA7A9sCejVhXM2aY98A==}
     dependencies:
       diff-sequences: 29.6.3
       estree-walker: 3.0.3
@@ -9676,8 +9690,8 @@ packages:
       vfile-message: 4.0.2
     dev: true
 
-  /vite-node@1.4.0(@types/node@20.12.2):
-    resolution: {integrity: sha512-VZDAseqjrHgNd4Kh8icYHWzTKSCZMhia7GyHfhtzLW33fZlG9SwsB6CEhgyVOWkJfJ2pFLrp/Gj1FSfAiqH9Lw==}
+  /vite-node@1.5.0(@types/node@20.12.2):
+    resolution: {integrity: sha512-tV8h6gMj6vPzVCa7l+VGq9lwoJjW8Y79vst8QZZGiuRAfijU+EEWuc0kFpmndQrWhMMhet1jdSF+40KSZUqIIw==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
     dependencies:
@@ -9744,15 +9758,15 @@ packages:
       vite: 5.2.8(@types/node@20.12.2)
     dev: true
 
-  /vitest@1.4.0(@types/node@20.12.2)(jsdom@24.0.0):
-    resolution: {integrity: sha512-gujzn0g7fmwf83/WzrDTnncZt2UiXP41mHuFYFrdwaLRVQ6JYQEiME2IfEjU3vcFL3VKa75XhI3lFgn+hfVsQw==}
+  /vitest@1.5.0(@types/node@20.12.2)(jsdom@24.0.0):
+    resolution: {integrity: sha512-d8UKgR0m2kjdxDWX6911uwxout6GHS0XaGH1cksSIVVG8kRlE7G7aBw7myKQCvDI5dT4j7ZMa+l706BIORMDLw==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
     peerDependencies:
       '@edge-runtime/vm': '*'
       '@types/node': ^18.0.0 || >=20.0.0
-      '@vitest/browser': 1.4.0
-      '@vitest/ui': 1.4.0
+      '@vitest/browser': 1.5.0
+      '@vitest/ui': 1.5.0
       happy-dom: '*'
       jsdom: '*'
     peerDependenciesMeta:
@@ -9770,11 +9784,11 @@ packages:
         optional: true
     dependencies:
       '@types/node': 20.12.2
-      '@vitest/expect': 1.4.0
-      '@vitest/runner': 1.4.0
-      '@vitest/snapshot': 1.4.0
-      '@vitest/spy': 1.4.0
-      '@vitest/utils': 1.4.0
+      '@vitest/expect': 1.5.0
+      '@vitest/runner': 1.5.0
+      '@vitest/snapshot': 1.5.0
+      '@vitest/spy': 1.5.0
+      '@vitest/utils': 1.5.0
       acorn-walk: 8.3.2
       chai: 4.4.1
       debug: 4.3.4
@@ -9789,7 +9803,7 @@ packages:
       tinybench: 2.6.0
       tinypool: 0.8.3
       vite: 5.2.8(@types/node@20.12.2)
-      vite-node: 1.4.0(@types/node@20.12.2)
+      vite-node: 1.5.0(@types/node@20.12.2)
       why-is-node-running: 2.2.2
     transitivePeerDependencies:
       - less
