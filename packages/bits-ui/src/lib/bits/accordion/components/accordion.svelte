@@ -22,13 +22,19 @@
 			value === undefined && (value = "");
 			return box(
 				() => value as string,
-				(v) => (value = v)
+				(v) => {
+					value = v;
+					onValueChange?.(v as string[] & string);
+				}
 			);
 		}
 		value === undefined && (value = []);
 		return box(
 			() => value as string[],
-			(v) => (value = v)
+			(v) => {
+				value = v;
+				onValueChange?.(v as string[] & string);
+			}
 		);
 	}
 
