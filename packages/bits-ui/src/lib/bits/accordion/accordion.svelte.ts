@@ -312,7 +312,6 @@ type InitAccordionProps = {
 	type: "single" | "multiple";
 	value: Box<string> | Box<string[]>;
 	id?: string | null;
-	onValueChange?: OnChangeFn<string> | OnChangeFn<string[]>;
 };
 
 export function setAccordionRootState(props: InitAccordionProps) {

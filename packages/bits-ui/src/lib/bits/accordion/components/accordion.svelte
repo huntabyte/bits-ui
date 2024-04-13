@@ -40,27 +40,33 @@
 
 	const valueState = createValueState();
 
-	const rootState = setAccordionRootState({ type, value: valueState, id, onValueChange });
+	const rootState = setAccordionRootState({ type, value: valueState, id });
 
 	$effect.pre(() => {
 		if (value !== undefined) {
 			rootState.value = value;
 		}
 	});
+
 	$effect.pre(() => {
 		value = rootState.value;
 	});
+
 	$effect.pre(() => {
 		if (id) {
 			rootState.id = id;
 		}
 	});
+
 	$effect.pre(() => {
 		rootState.disabled = disabled;
 	});
+
 	$effect.pre(() => {
 		rootState.forceVisible = forceVisible;
 	});
+
+	
 </script>
 
 {#if asChild}
