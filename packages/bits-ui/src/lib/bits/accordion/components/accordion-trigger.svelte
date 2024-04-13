@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { AccordionTriggerProps } from "../types.js";
-	import { getAccordionTriggerState } from "../state.svelte.js";
+	import { getAccordionTriggerState } from "../accordion.svelte.js";
 
 	let {
 		disabled = false,

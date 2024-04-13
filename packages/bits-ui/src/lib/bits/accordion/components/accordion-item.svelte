@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { AccordionItemProps } from "../types.js";
-	import { setAccordionItemState } from "../state.svelte.js";
+	import { setAccordionItemState } from "../accordion.svelte.js";
 	let {
 		asChild,
 		disabled = false,

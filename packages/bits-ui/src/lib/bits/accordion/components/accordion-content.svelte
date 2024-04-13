@@ -4,7 +4,7 @@
 </script>
 
 <script lang="ts" generics="T extends Transition, In extends Transition, Out extends Transition">
-	import { getAccordionContentState } from "../state.svelte.js";
+	import { getAccordionContentState } from "../accordion.svelte.js";
 	import type { AccordionContentProps } from "../types.js";
 	import WithTransition from "$lib/bits/utilities/with-transition.svelte";
 
