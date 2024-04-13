@@ -36,11 +36,12 @@ class CheckboxRootState {
 	#attrs = $derived({
 		"data-disabled": getDataDisabled(this.disabled.value),
 		"data-state": getCheckboxDataState(this.checked.value),
-		type: "button",
 		role: "checkbox",
+		type: "button",
 		"aria-checked": getAriaChecked(this.checked.value),
 		"aria-required": getAriaRequired(this.required.value),
 		"data-checkbox-root": "",
+		disabled: this.disabled.value,
 	} as const);
 
 	constructor(props: CheckboxRootStateProps) {
@@ -59,8 +60,11 @@ class CheckboxRootState {
 
 	onclick = composeHandlers(this.onclickProp.value, () => {
 		if (this.disabled.value) return;
-		if (this.checked.value === "indeterminate") return true;
-		return !this.checked.value;
+		if (this.checked.value === "indeterminate") {
+			this.checked.value = true;
+			return;
+		}
+		this.checked.value = !this.checked.value;
 	});
 
 	createIndicator() {

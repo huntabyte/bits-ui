@@ -5,5 +5,5 @@
 </script>
 
 {#if inputState.shouldRender}
-	<input {...inputState.props} style="display: none !important;" />
+	<input {...inputState.props} type="checkbox" style="display: none !important;" />
 {/if}

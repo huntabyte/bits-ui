@@ -7,7 +7,7 @@
 	const indicatorState = getCheckboxIndicatorState();
 
 	const mergedProps = $derived({
-		...indicatorState.attrs,
+		...indicatorState.props,
 		...restProps,
 	});
 </script>
@@ -16,6 +16,6 @@
 	{@render child?.(mergedProps)}
 {:else}
 	<div bind:this={el} {...mergedProps}>
-		{@render children?.()}
+		{@render children?.({ checked: indicatorState.root.checked })}
 	</div>
 {/if}

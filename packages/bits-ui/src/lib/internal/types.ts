@@ -135,16 +135,16 @@ export type AsChildProps<T, U> = {
 	el?: HTMLElement;
 } & Omit<T, "children" | "asChild">;
 
-export type DefaultProps<T> = {
+export type DefaultProps<T, U> = {
 	asChild?: never;
 	child?: never;
-	children?: Snippet;
+	children?: Snippet<[U]>;
 	el?: HTMLElement;
 } & Omit<T, "child" | "asChild">;
 
 // eslint-disable-next-line ts/ban-types
 export type WithAsChild<T, U extends Record<PropertyKey, unknown> = {}> =
-	| DefaultProps<T>
+	| DefaultProps<T, U>
 	| AsChildProps<T, U>;
 
 /**
