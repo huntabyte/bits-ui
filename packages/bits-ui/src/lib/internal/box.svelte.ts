@@ -19,6 +19,6 @@ export class Box<T> {
 	}
 }
 
-export function box<T>(get: Getter<T>, set: Setter<T>) {
+export function box<T>(get: Getter<T>, set: Setter<T> = () => {}) {
 	return new Box(get, set);
 }

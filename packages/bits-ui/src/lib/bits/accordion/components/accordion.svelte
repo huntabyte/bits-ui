@@ -1,6 +1,7 @@
 <script lang="ts">
-	import { setAccordionRootState } from "../state.svelte.js";
+	import { setAccordionRootState } from "../accordion.svelte.js";
 	import type { AccordionRootProps } from "../types.js";
+	import { box } from "$lib/internal/box.svelte.js";
 
 	let {
 		disabled = false,
@@ -16,7 +17,24 @@
 		...restProps
 	}: AccordionRootProps = $props();
 
-	const rootState = setAccordionRootState({ type, value, id, onValueChange });
+	function createValueState() {
+		if (type === "single") {
+			value === undefined && (value = "");
+			return box(
+				() => value as string,
+				(v) => (value = v)
+			);
+		}
+		value === undefined && (value = []);
+		return box(
+			() => value as string[],
+			(v) => (value = v)
+		);
+	}
+
+	const valueState = createValueState();
+
+	const rootState = setAccordionRootState({ type, value: valueState, id, onValueChange });
 
 	$effect.pre(() => {
 		if (value !== undefined) {

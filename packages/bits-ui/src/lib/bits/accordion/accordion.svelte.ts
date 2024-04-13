@@ -1,7 +1,9 @@
 import { getContext, setContext } from "svelte";
 import {
+	type Box,
 	type EventCallback,
 	type OnChangeFn,
+	box,
 	composeHandlers,
 	dataDisabledAttrs,
 	generateId,
@@ -49,25 +51,27 @@ class AccordionBaseState {
  */
 
 interface AccordionSingleStateProps extends AccordionBaseStateProps {
-	value?: string;
+	value?: Box<string>;
 	onValueChange?: OnChangeFn<string>;
 	id?: string | null;
 }
 
 export class AccordionSingleState extends AccordionBaseState {
-	value: string = $state("");
-	onValueChange: OnChangeFn<string> = () => {};
+	#value = box(() => "");
 	isMulti = false as const;
 
 	constructor(props: AccordionSingleStateProps) {
 		super(props);
 
-		this.value = props.value ?? this.value;
-		this.onValueChange = props.onValueChange ?? this.onValueChange;
+		this.#value = props.value ?? this.#value;
+	}
 
-		$effect.pre(() => {
-			this.onValueChange?.(this.value);
-		});
+	get value() {
+		return this.#value.value;
+	}
+
+	set value(v: string) {
+		this.#value.value = v;
 	}
 }
 
@@ -75,24 +79,26 @@ export class AccordionSingleState extends AccordionBaseState {
  * MULTIPLE
  */
 interface AccordionMultiStateProps extends AccordionBaseStateProps {
-	value?: string[];
-	onValueChange?: OnChangeFn<string[]>;
+	value?: Box<string[]>;
 }
 
 export class AccordionMultiState extends AccordionBaseState {
-	value: string[] = $state([]);
+	#value = box<string[]>(() => []);
 	onValueChange: OnChangeFn<string[]> = () => {};
 	isMulti = true as const;
 
 	constructor(props: AccordionMultiStateProps) {
 		super(props);
 
-		this.value = props.value ?? this.value;
-		this.onValueChange = props.onValueChange ?? this.onValueChange;
+		this.#value = props.value ?? this.#value;
+	}
 
-		$effect.pre(() => {
-			this.onValueChange?.(this.value);
-		});
+	get value() {
+		return this.#value.value;
+	}
+
+	set value(v: string[]) {
+		this.#value.value = v;
 	}
 }
 
@@ -138,7 +144,7 @@ export class AccordionItemState {
 			if (this.root.value.includes(this.value)) {
 				this.root.value = this.root.value.filter((v) => v !== this.value);
 			} else {
-				this.root.value.push(this.value);
+				this.root.value = [...this.root.value, this.value];
 			}
 		} else {
 			if (this.root.value === this.value) {
@@ -276,7 +282,7 @@ class AccordionTriggerState {
  */
 
 class AccordionContentState {
-	item: AccordionItemState = $state() as AccordionItemState;
+	item = undefined as unknown as AccordionItemState;
 	attrs: Record<string, unknown> = $derived({
 		"data-state": openClosedAttrs(this.item.isSelected),
 		"data-disabled": dataDisabledAttrs(this.item.root.disabled || this.item.disabled),
@@ -304,7 +310,7 @@ type AccordionState = AccordionSingleState | AccordionMultiState;
 
 type InitAccordionProps = {
 	type: "single" | "multiple";
-	value?: string | string[];
+	value: Box<string> | Box<string[]>;
 	id?: string | null;
 	onValueChange?: OnChangeFn<string> | OnChangeFn<string[]>;
 };
@@ -313,14 +319,12 @@ export function setAccordionRootState(props: InitAccordionProps) {
 	const rootState =
 		props.type === "single"
 			? new AccordionSingleState({
-					value: props.value as string,
+					value: props.value as Box<string>,
 					id: props.id,
-					onValueChange: props.onValueChange as OnChangeFn<string>,
 				})
 			: new AccordionMultiState({
-					value: props.value as string[],
+					value: props.value as Box<string[]>,
 					id: props.id,
-					onValueChange: props.onValueChange as OnChangeFn<string[]>,
 				});
 	setContext(ACCORDION_ROOT_KEY, rootState);
 	return rootState;
