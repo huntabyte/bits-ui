@@ -1,4 +1,4 @@
-import { getContext, setContext } from "svelte";
+import { getContext, onMount, setContext } from "svelte";
 import {
 	type Box,
 	type BoxedValues,
@@ -11,8 +11,9 @@ import {
 	getAriaDisabled,
 	getAriaExpanded,
 	getDataDisabled,
+	getDataOpenClosed,
 	kbd,
-	openClosedAttrs,
+	styleToString,
 	verifyContextDeps,
 } from "$lib/internal/index.js";
 
@@ -171,8 +172,8 @@ export class AccordionItemState {
 		return new AccordionTriggerState(props, this);
 	}
 
-	createContent() {
-		return new AccordionContentState(this);
+	createContent(props: AccordionContentStateProps) {
+		return new AccordionContentState(props, this);
 	}
 }
 
@@ -206,7 +207,7 @@ class AccordionTriggerState {
 		"aria-disabled": getAriaDisabled(this.isDisabled),
 		"data-disabled": getDataDisabled(this.isDisabled),
 		"data-value": this.itemState.value,
-		"data-state": openClosedAttrs(this.itemState.isSelected),
+		"data-state": getDataOpenClosed(this.itemState.isSelected),
 		"data-accordion-trigger": "",
 	});
 
@@ -280,21 +281,72 @@ class AccordionTriggerState {
  * CONTENT
  */
 
+type AccordionContentStateProps = BoxedValues<{
+	presentEl: HTMLElement | undefined;
+}>;
+
 class AccordionContentState {
 	item = undefined as unknown as AccordionItemState;
-	attrs: Record<string, unknown> = $derived({
-		"data-state": openClosedAttrs(this.item.isSelected),
+	currentStyle = box<Record<string, string>>({});
+	isMountAnimationPrevented = box(this.item.isSelected);
+	width = box(0);
+	height = box(0);
+	presentEl: Box<HTMLElement | undefined> = box<HTMLElement | undefined>(undefined);
+
+	#attrs: Record<string, unknown> = $derived({
+		"data-state": getDataOpenClosed(this.item.isSelected),
 		"data-disabled": dataDisabledAttrs(this.item.isDisabled),
 		"data-value": this.item.value,
 		"data-accordion-content": "",
+		style: styleToString({
+			"--bits-accordion-content-height": `${this.height.value}px`,
+			"--bits-accordion-content-width": `${this.width.value}px`,
+		}),
 	});
 
-	constructor(item: AccordionItemState) {
+	constructor(props: AccordionContentStateProps, item: AccordionItemState) {
+		this.presentEl = props.presentEl;
 		this.item = item;
+
+		onMount(() => {
+			requestAnimationFrame(() => {
+				this.isMountAnimationPrevented.value = false;
+			});
+		});
+
+		$effect(() => {
+			const node = this.presentEl.value;
+			if (!node) return;
+			this.currentStyle.value = this.currentStyle.value || {
+				transitionDuration: node.style.transitionDuration,
+				animationName: node.style.animationName,
+			};
+
+			// block any animations/transitions so the element renders at full dimensions
+			node.style.transitionDuration = "0s";
+			node.style.animationName = "none";
+
+			// get the dimensions of the element
+			const rect = node.getBoundingClientRect();
+			this.height.value = rect.height;
+			this.width.value = rect.width;
+
+			// unblock any animations/transitions that were originally set if not the initial render
+			if (!this.isMountAnimationPrevented.value) {
+				const transitionDuration = this.currentStyle.value.transitionDuration;
+				const animationName = this.currentStyle.value.animationName;
+				if (transitionDuration) {
+					node.style.transitionDuration = transitionDuration;
+				}
+				if (animationName) {
+					node.style.animationName = animationName;
+				}
+			}
+		});
 	}
 
 	get props() {
-		return this.attrs;
+		return this.#attrs;
 	}
 }
 
@@ -353,8 +405,8 @@ export function getAccordionTriggerState(props: AccordionTriggerStateProps): Acc
 	return itemState.createTrigger(props);
 }
 
-export function getAccordionContentState(): AccordionContentState {
+export function getAccordionContentState(props: AccordionContentStateProps): AccordionContentState {
 	verifyContextDeps(ACCORDION_ITEM_KEY);
 	const itemState = getAccordionItemState();
-	return itemState.createContent();
+	return itemState.createContent(props);
 }

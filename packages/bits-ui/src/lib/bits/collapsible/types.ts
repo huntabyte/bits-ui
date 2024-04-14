@@ -1,52 +1,51 @@
 import type { HTMLButtonAttributes } from "svelte/elements";
-import type { CreateCollapsibleProps as MeltCollapsibleProps } from "@melt-ui/svelte";
-import type { CustomEventHandler } from "$lib/index.js";
 import type {
-	DOMElement,
-	Expand,
+	EventCallback,
 	HTMLDivAttributes,
-	OmitForceVisible,
-	OmitOpen,
 	OnChangeFn,
-	Transition,
-	TransitionProps,
+	WithAsChild,
 } from "$lib/internal/index.js";
 
-export type CollapsiblePropsWithoutHTML = Expand<
-	OmitOpen<OmitForceVisible<MeltCollapsibleProps>> & {
-		/**
-		 * The open state of the collapsible.
-		 * You can bind this to a boolean value to programmatically control the open state.
-		 *
-		 * @defaultValue false
-		 */
-		open?: boolean;
+export type CollapsibleRootPropsWithoutHTML = WithAsChild<{
+	/**
+	 * Whether the collapsible is disabled.
+	 *
+	 * @defaultValue false
+	 */
+	disabled?: boolean;
 
-		/**
-		 * A callback function called when the open state changes.
-		 */
-		onOpenChange?: OnChangeFn<boolean>;
-	} & DOMElement
->;
+	/**
+	 * Whether the collapsible is open.
+	 *
+	 * @defaultValue false
+	 */
+	open?: boolean;
 
-export type CollapsibleContentPropsWithoutHTML<
-	T extends Transition = Transition,
-	In extends Transition = Transition,
-	Out extends Transition = Transition,
-> = Expand<TransitionProps<T, In, Out> & DOMElement>;
+	/**
+	 * A callback function called when the open state changes.
+	 */
+	onOpenChange?: OnChangeFn<boolean>;
+}>;
 
-export type CollapsibleTriggerPropsWithoutHTML = DOMElement<HTMLButtonElement>;
+export type CollapsibleRootProps = CollapsibleRootPropsWithoutHTML & HTMLDivAttributes;
 
-export type CollapsibleProps = CollapsiblePropsWithoutHTML & HTMLDivAttributes;
+export type CollapsibleContentPropsWithoutHTML = WithAsChild<{
+	/**
+	 * Whether to force mount the content to the DOM.
+	 *
+	 * @defaultValue false
+	 */
+	forceMount?: boolean;
+}>;
 
-export type CollapsibleContentProps<
-	T extends Transition = Transition,
-	In extends Transition = Transition,
-	Out extends Transition = Transition,
-> = CollapsibleContentPropsWithoutHTML<T, In, Out> & HTMLDivAttributes;
+export type CollapsibleContentProps = CollapsibleContentPropsWithoutHTML &
+	Omit<HTMLDivAttributes, "id"> & {
+		id?: string;
+	};
 
-export type CollapsibleTriggerProps = CollapsibleTriggerPropsWithoutHTML & HTMLButtonAttributes;
+export type CollapsibleTriggerPropsWithoutHTML = WithAsChild<{
+	onclick?: EventCallback<MouseEvent>;
+}>;
 
-export type CollapsibleTriggerEvents = {
-	click: CustomEventHandler<MouseEvent, HTMLButtonElement>;
-};
+export type CollapsibleTriggerProps = CollapsibleTriggerPropsWithoutHTML &
+	Omit<HTMLButtonAttributes, "onclick">;

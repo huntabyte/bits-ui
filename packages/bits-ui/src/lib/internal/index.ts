@@ -11,3 +11,5 @@ export * from "./updater.js";
 export * from "./focus.js";
 export * from "./context.js";
 export * from "./box.svelte.js";
+export * from "./use-state-machine.svelte.js";
+export * from "./use-presence.svelte.js";

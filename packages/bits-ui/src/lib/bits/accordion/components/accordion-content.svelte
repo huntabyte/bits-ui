@@ -1,21 +1,24 @@
-<script lang="ts" context="module">
-	// eslint-disable-next-line unused-imports/no-unused-imports, ts/no-unused-vars
-	import type { Transition } from "$lib/internal/index.js";
-</script>
-
-<script lang="ts" generics="T extends Transition, In extends Transition, Out extends Transition">
+<script lang="ts">
 	import { getAccordionContentState } from "../accordion.svelte.js";
 	import type { AccordionContentProps } from "../types.js";
-	import WithTransition from "$lib/bits/utilities/with-transition.svelte";
+	import Presence from "$lib/bits/utilities/presence.svelte";
+	import { box } from "$lib/internal/box.svelte.js";
 
 	let {
 		child,
 		asChild,
-		el = $bindable(),
+		el: elProp = $bindable(),
+		forceMount = false,
+		children,
 		...restProps
-	}: AccordionContentProps<T, In, Out> = $props();
+	}: AccordionContentProps & { forceMount?: boolean } = $props();
 
-	const content = getAccordionContentState();
+	const el = box(
+		() => elProp,
+		(v) => (elProp = v)
+	);
+
+	const content = getAccordionContentState({ presentEl: el });
 
 	const mergedProps = $derived({
 		...restProps,
@@ -23,8 +26,14 @@
 	});
 </script>
 
-{#if asChild && content.item.isSelected}
-	{@render child?.({ props: mergedProps })}
-{:else}
-	<WithTransition {...mergedProps} condition={content.item.isSelected} bind:el />
-{/if}
+<Presence present={forceMount || content.item.isSelected} bind:el={el.value}>
+	{#snippet presence({ node, present })}
+		{#if asChild}
+			{@render child?.({ props: { ...mergedProps, hidden: !present.value } })}
+		{:else}
+			<div {...mergedProps} hidden={!present.value} bind:this={node.value}>
+				{@render children?.()}
+			</div>
+		{/if}
+	{/snippet}
+</Presence>
