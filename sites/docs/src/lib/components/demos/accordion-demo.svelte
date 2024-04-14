@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { Accordion } from "bits-ui";
-	import { slide } from "svelte/transition";
 	import { CaretDown } from "$icons/index.js";
 
 	const items = [
@@ -39,9 +38,7 @@
 				</Accordion.Trigger>
 			</Accordion.Header>
 			<Accordion.Content
-				transition={slide}
-				transitionConfig={{ duration: 200 }}
-				class="pb-[25px] text-sm tracking-[-0.01em]"
+				class="data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down pb-[25px] text-sm tracking-[-0.01em]"
 			>
 				{item.content}
 			</Accordion.Content>

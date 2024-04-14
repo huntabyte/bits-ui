@@ -43,6 +43,7 @@
 		"tailwind-merge": "^2.2.1",
 		"tailwind-variants": "^0.1.20",
 		"tailwindcss": "^3.4.1",
+		"tailwindcss-animate": "^1.0.7",
 		"tslib": "^2.6.2",
 		"typescript": "^5.3.3",
 		"unified": "^11.0.4",
