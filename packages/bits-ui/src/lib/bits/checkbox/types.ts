@@ -55,7 +55,7 @@ export type CheckboxRootPropsWithoutHTML = WithAsChild<
 
 		indicator?: Snippet<[{ checked: boolean | "indeterminate" }]>;
 	},
-	{ props: Record<PropertyKey, unknown>; checked: boolean | "indeterminate" }
+	{ checked: boolean | "indeterminate" }
 >;
 
 export type CheckboxRootProps = CheckboxRootPropsWithoutHTML &

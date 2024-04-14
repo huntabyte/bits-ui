@@ -13,9 +13,9 @@
 </script>
 
 {#if asChild}
-	{@render child?.(mergedProps)}
+	{@render child?.({ props: mergedProps })}
 {:else}
 	<div bind:this={el} {...mergedProps}>
-		{@render children?.({ checked: indicatorState.root.checked })}
+		{@render children?.()}
 	</div>
 {/if}

@@ -35,7 +35,7 @@
 </script>
 
 {#if asChild}
-	{@render child?.(mergedProps)}
+	{@render child?.({ props: mergedProps })}
 {:else}
 	<button bind:this={el} type="button" {...mergedProps}>
 		{@render children?.()}

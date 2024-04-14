@@ -19,7 +19,7 @@
 </script>
 
 {#if asChild}
-	{@render child?.(mergedProps)}
+	{@render child?.({ props: mergedProps })}
 {:else}
 	<div {...mergedProps} bind:this={el}>
 		{@render children?.()}

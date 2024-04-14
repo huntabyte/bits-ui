@@ -45,12 +45,17 @@
 	const forceVisible = box(() => forceVisibleProp);
 
 	const rootState = setAccordionRootState({ type, value, id, disabled, forceVisible });
+
+	const mergedProps = {
+		...rootState.props,
+		...restProps,
+	};
 </script>
 
 {#if asChild}
-	{@render child?.(restProps)}
+	{@render child?.({ props: mergedProps })}
 {:else}
-	<div bind:this={el} {...rootState.props} {...restProps}>
+	<div bind:this={el} {...mergedProps}>
 		{@render children?.()}
 	</div>
 {/if}

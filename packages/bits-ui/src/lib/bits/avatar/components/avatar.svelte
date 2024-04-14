@@ -28,12 +28,17 @@
 		delayMs,
 		loadingStatus,
 	});
+
+	const mergedProps = {
+		...rootState.props,
+		...restProps,
+	};
 </script>
 
 {#if asChild}
-	{@render child?.(restProps)}
+	{@render child?.({ props: mergedProps })}
 {:else}
-	<div bind:this={el} {...restProps} {...rootState.attrs}>
+	<div bind:this={el} {...mergedProps}>
 		{@render children?.()}
 	</div>
 {/if}

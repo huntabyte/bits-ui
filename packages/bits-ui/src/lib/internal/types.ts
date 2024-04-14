@@ -129,7 +129,7 @@ export type PrimitiveImgAttributes = Primitive<HTMLImgAttributes>;
 export type PrimitiveHeadingAttributes = Primitive<HTMLHeadingAttributes>;
 
 export type AsChildProps<T, U> = {
-	child: Snippet<[U]>;
+	child: Snippet<[U & { props: Record<string, unknown> }]>;
 	children?: never;
 	asChild: true;
 	el?: HTMLElement;
