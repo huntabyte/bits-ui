@@ -14,7 +14,7 @@
 		 */
 		forceMount?: boolean;
 
-		presence?: Snippet<[{ present: Box<boolean>; node: Box<HTMLElement | undefined> }]>;
+		presence?: Snippet<[{ present: { value: boolean }; node: Box<HTMLElement | undefined> }]>;
 
 		el?: HTMLElement;
 	};
@@ -26,7 +26,10 @@
 		el = $bindable(),
 	}: Props = $props();
 
-	const present = box(() => presentProp);
+	const present = box(
+		() => presentProp,
+		(v) => (presentProp = v)
+	);
 	const forceMount = box(() => forceMountProp);
 
 	const node = box(
@@ -34,9 +37,12 @@
 		(v) => (el = v)
 	);
 
-	const { isPresent } = usePresence(present, node);
+	const isPresent = usePresence(present, node);
 
-	$inspect(el);
+	// $inspect(el);
+	// $inspect(isPresent.value);
+
+	$inspect(node.value);
 </script>
 
 {#if forceMount.value || present.value || isPresent.value}

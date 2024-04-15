@@ -3,6 +3,7 @@
 	import type { AccordionContentProps } from "../types.js";
 	import Presence from "$lib/bits/utilities/presence.svelte";
 	import { box } from "$lib/internal/box.svelte.js";
+	import { styleToString } from "$lib/internal/style.js";
 
 	let {
 		child,
@@ -26,12 +27,20 @@
 	});
 </script>
 
-<Presence present={forceMount || content.item.isSelected} bind:el={el.value}>
+<Presence forceMount={true} present={forceMount || content.item.isSelected} bind:el={el.value}>
 	{#snippet presence({ node, present })}
 		{#if asChild}
 			{@render child?.({ props: { ...mergedProps, hidden: !present.value } })}
 		{:else}
-			<div {...mergedProps} hidden={!present.value} bind:this={node.value}>
+			<div
+				{...mergedProps}
+				style={styleToString({
+					display: present.value ? undefined : "none",
+					"--bits-accordion-content-height": `${content.height.value}px`,
+					"--bits-accordion-content-width": `${content.width.value}px`,
+				})}
+				bind:this={node.value}
+			>
 				{@render children?.()}
 			</div>
 		{/if}

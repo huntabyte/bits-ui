@@ -1,4 +1,4 @@
-import { getContext, onMount, setContext } from "svelte";
+import { getContext, onMount, setContext, tick } from "svelte";
 import {
 	type Box,
 	type BoxedValues,
@@ -120,7 +120,7 @@ export class AccordionItemState {
 	#value: Box<string>;
 	disabled = box(() => false);
 	root: AccordionState = undefined as unknown as AccordionState;
-	attrs: AccordionItemAttrs = {
+	#attrs: AccordionItemAttrs = {
 		"data-accordion-item": "",
 	};
 	isDisabled = $derived(this.disabled.value || this.root.disabled.value);
@@ -165,7 +165,7 @@ export class AccordionItemState {
 	}
 
 	get props() {
-		return this.attrs;
+		return this.#attrs;
 	}
 
 	createTrigger(props: AccordionTriggerStateProps) {
@@ -288,7 +288,7 @@ type AccordionContentStateProps = BoxedValues<{
 class AccordionContentState {
 	item = undefined as unknown as AccordionItemState;
 	currentStyle = box<Record<string, string>>({});
-	isMountAnimationPrevented = box(this.item.isSelected);
+	isMountAnimationPrevented = box(false);
 	width = box(0);
 	height = box(0);
 	presentEl: Box<HTMLElement | undefined> = box<HTMLElement | undefined>(undefined);
@@ -305,11 +305,13 @@ class AccordionContentState {
 	});
 
 	constructor(props: AccordionContentStateProps, item: AccordionItemState) {
-		this.presentEl = props.presentEl;
 		this.item = item;
+		this.isMountAnimationPrevented.value = this.item.isSelected;
+		this.presentEl = props.presentEl;
 
 		onMount(() => {
 			requestAnimationFrame(() => {
+				console.log("calling animation frame");
 				this.isMountAnimationPrevented.value = false;
 			});
 		});
@@ -317,6 +319,7 @@ class AccordionContentState {
 		$effect(() => {
 			const node = this.presentEl.value;
 			if (!node) return;
+
 			this.currentStyle.value = this.currentStyle.value || {
 				transitionDuration: node.style.transitionDuration,
 				animationName: node.style.animationName,

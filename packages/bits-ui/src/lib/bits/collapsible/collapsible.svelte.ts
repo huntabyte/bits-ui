@@ -50,7 +50,7 @@ type CollapsibleContentStateProps = BoxedValues<{
 class CollapsibleContentState {
 	root = undefined as unknown as CollapsibleRootState;
 	currentStyle = box<Record<string, string>>({});
-	isMountAnimationPrevented = box(this.root.open.value);
+	isMountAnimationPrevented = box(false);
 	width = box(0);
 	height = box(0);
 	presentEl: Box<HTMLElement | undefined> = box<HTMLElement | undefined>(undefined);
@@ -67,6 +67,7 @@ class CollapsibleContentState {
 
 	constructor(props: CollapsibleContentStateProps, root: CollapsibleRootState) {
 		this.root = root;
+		this.isMountAnimationPrevented.value = root.open.value;
 		this.presentEl = props.presentEl;
 		this.root.contentId = props.id;
 

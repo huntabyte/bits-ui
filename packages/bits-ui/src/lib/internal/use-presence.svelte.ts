@@ -3,8 +3,8 @@ import { type Box, box, watch } from "./box.svelte.js";
 import { useStateMachine } from "$lib/internal/index.js";
 
 export function usePresence(present: Box<boolean>, node: Box<HTMLElement | undefined>) {
-	const styles = box<CSSStyleDeclaration>((() => {}) as unknown as () => CSSStyleDeclaration);
-	const prevAnimationNameState = box(() => "none");
+	const styles = box({}) as unknown as Box<CSSStyleDeclaration>;
+	const prevAnimationNameState = box("none");
 	const initialState = present.value ? "mounted" : "unmounted";
 
 	const { state, dispatch } = useStateMachine(initialState, {
@@ -31,10 +31,12 @@ export function usePresence(present: Box<boolean>, node: Box<HTMLElement | undef
 			const currAnimationName = getAnimationName(node.value);
 
 			if (currPresent) {
+				console.log("MOUNT");
 				dispatch("MOUNT");
 			} else if (currAnimationName === "none" || styles.value?.display === "none") {
 				// If there is no exit animation or the element is hidden, animations won't run
 				// so we unmount instantly
+				console.log("UNMOUNT");
 				dispatch("UNMOUNT");
 			} else {
 				/**
@@ -45,8 +47,10 @@ export function usePresence(present: Box<boolean>, node: Box<HTMLElement | undef
 				 */
 				const isAnimating = prevAnimationName !== currAnimationName;
 				if (prevPresent && isAnimating) {
+					console.log("ANIMATION_OUT");
 					dispatch("ANIMATION_OUT");
 				} else {
+					console.log("UNMOUNT");
 					dispatch("UNMOUNT");
 				}
 			}
@@ -61,18 +65,22 @@ export function usePresence(present: Box<boolean>, node: Box<HTMLElement | undef
 	 */
 
 	function handleAnimationEnd(event: AnimationEvent) {
+		console.log("handling animation end");
 		const currAnimationName = getAnimationName(node.value);
 		const isCurrentAnimation = currAnimationName.includes(event.animationName);
 
 		if (event.target === node.value && isCurrentAnimation) {
+			console.log("ANIMATION_END");
 			dispatch("ANIMATION_END");
 		}
 		if (event.target === node.value && currAnimationName === "none") {
+			console.log("ANIMATION_END");
 			dispatch("ANIMATION_END");
 		}
 	}
 
 	function handleAnimationStart(event: AnimationEvent) {
+		console.log("handling animation start");
 		if (event.target === node.value) {
 			prevAnimationNameState.value = getAnimationName(node.value);
 		}
@@ -87,6 +95,7 @@ export function usePresence(present: Box<boolean>, node: Box<HTMLElement | undef
 				currNode.addEventListener("animationcancel", handleAnimationEnd);
 				currNode.addEventListener("animationend", handleAnimationEnd);
 			} else {
+				console.log("ANIMATION_END");
 				dispatch("ANIMATION_END");
 				prevNode?.removeEventListener("animationstart", handleAnimationStart);
 				prevNode?.removeEventListener("animationcancel", handleAnimationEnd);
@@ -108,10 +117,10 @@ export function usePresence(present: Box<boolean>, node: Box<HTMLElement | undef
 
 	const isPresentDerived = $derived(["mounted", "unmountSuspended"].includes(state.value));
 
-	const isPresent = box(() => isPresentDerived);
-
 	return {
-		isPresent,
+		get value() {
+			return isPresentDerived;
+		},
 	};
 }
 

@@ -30,7 +30,7 @@ export function useStateMachine<M>(
 	initialState: MachineState<M>,
 	machine: M & Machine<MachineState<M>>
 ) {
-	const state = box(() => initialState);
+	const state = box(initialState);
 
 	function reducer(event: MachineEvent<M>) {
 		// @ts-expect-error  state.value is keyof M

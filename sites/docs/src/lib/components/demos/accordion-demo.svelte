@@ -38,7 +38,7 @@
 				</Accordion.Trigger>
 			</Accordion.Header>
 			<Accordion.Content
-				class="data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down pb-[25px] text-sm tracking-[-0.01em]"
+				class="pb-[25px] text-sm tracking-[-0.01em] data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
 			>
 				{item.content}
 			</Accordion.Content>
