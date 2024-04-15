@@ -1,46 +1,44 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { setCtx } from "../ctx.js";
-	import type { Props } from "../index.js";
+	import type { RootProps } from "../index.js";
+	import { setCollapsibleRootState } from "../collapsible.svelte.js";
+	import { box, readonlyBox } from "$lib/internal/box.svelte.js";
 
-	type $$Props = Props;
-	export let disabled: $$Props["disabled"] = undefined;
-	export let open: $$Props["open"] = undefined;
-	export let onOpenChange: $$Props["onOpenChange"] = undefined;
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
+	let {
+		asChild,
+		children,
+		child,
+		el = $bindable(),
+		open: openProp = $bindable(false),
+		disabled: disabledProp = false,
+		onOpenChange,
+		...restProps
+	}: RootProps = $props();
 
-	const {
-		elements: { root },
-		states: { open: localOpen },
-		updateOption,
-		getAttrs,
-	} = setCtx({
+	const open = box(
+		() => openProp,
+		(v) => {
+			openProp = v;
+			onOpenChange?.(v);
+		}
+	);
+
+	const disabled = readonlyBox(() => disabledProp);
+
+	const rootState = setCollapsibleRootState({
+		open,
 		disabled,
-		forceVisible: true,
-		defaultOpen: open,
-		onOpenChange: ({ next }) => {
-			if (open !== next) {
-				onOpenChange?.(next);
-				open = next;
-			}
-			return next;
-		},
 	});
-	const attrs = getAttrs("root");
 
-	$: open !== undefined && localOpen.set(open);
-
-	$: updateOption("disabled", disabled);
-
-	$: builder = $root;
-	$: Object.assign(builder, attrs);
+	const mergedProps = $derived({
+		...rootState.props,
+		...restProps,
+	});
 </script>
 
 {#if asChild}
-	<slot {builder} />
+	{@render child?.({ props: mergedProps })}
 {:else}
-	<div bind:this={el} use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+	<div bind:this={el} {...mergedProps}>
+		{@render children?.()}
 	</div>
 {/if}

@@ -7,6 +7,7 @@ import type {
 	HTMLInputAttributes,
 } from "svelte/elements";
 import type { TransitionConfig } from "svelte/transition";
+import type { StyleProperties } from "$lib/shared/index.js";
 
 export type ObjectVariation<T> = T extends object ? T : never;
 // eslint-disable-next-line ts/no-explicit-any
@@ -119,7 +120,7 @@ export type TransitionProps<
 	outTransitionConfig?: TransitionParams<Out>;
 }>;
 
-export type Primitive<T> = T;
+export type Primitive<T> = Omit<T, "style">;
 
 export type PrimitiveButtonAttributes = Primitive<HTMLButtonAttributes>;
 export type PrimitiveDivAttributes = Primitive<HTMLDivAttributes>;
@@ -129,22 +130,24 @@ export type PrimitiveImgAttributes = Primitive<HTMLImgAttributes>;
 export type PrimitiveHeadingAttributes = Primitive<HTMLHeadingAttributes>;
 
 export type AsChildProps<T, U> = {
-	child: Snippet<[U]>;
+	child: Snippet<[U & { props: Record<string, unknown> }]>;
 	children?: never;
 	asChild: true;
 	el?: HTMLElement;
+	style?: StyleProperties;
 } & Omit<T, "children" | "asChild">;
 
-export type DefaultProps<T> = {
+export type DefaultProps<T, U> = {
 	asChild?: never;
 	child?: never;
-	children?: Snippet;
+	children?: Snippet<[U]>;
 	el?: HTMLElement;
+	style?: StyleProperties;
 } & Omit<T, "child" | "asChild">;
 
 // eslint-disable-next-line ts/ban-types
 export type WithAsChild<T, U extends Record<PropertyKey, unknown> = {}> =
-	| DefaultProps<T>
+	| DefaultProps<T, U>
 	| AsChildProps<T, U>;
 
 /**

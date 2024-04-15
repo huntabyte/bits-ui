@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { Accordion } from "bits-ui";
-	import { slide } from "svelte/transition";
 	import { CaretDown } from "$icons/index.js";
 
 	const items = [
@@ -19,11 +18,13 @@
 			content: "Give them your time, attention, and love.",
 		},
 	];
+
+	let value = $state<string[]>([]);
 </script>
 
-<Accordion.Root class="w-full sm:max-w-[70%]" type="multiple">
+<Accordion.Root class="w-full sm:max-w-[70%]" type="multiple" bind:value>
 	{#each items as item, i}
-		<Accordion.Item value="${i}" class="group border-b border-dark-10 px-1.5">
+		<Accordion.Item value={`${i}`} class="group border-b border-dark-10 px-1.5">
 			<Accordion.Header>
 				<Accordion.Trigger
 					class="flex w-full flex-1 items-center justify-between py-5 text-[15px] font-medium transition-all [&[data-state=open]>span>svg]:rotate-180 "
@@ -37,11 +38,11 @@
 				</Accordion.Trigger>
 			</Accordion.Header>
 			<Accordion.Content
-				transition={slide}
-				transitionConfig={{ duration: 200 }}
-				class="pb-[25px] text-sm tracking-[-0.01em]"
+				class="overflow-hidden text-sm tracking-[-0.01em] data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
 			>
-				{item.content}
+				<div class="pb-[25px]">
+					{item.content}
+				</div>
 			</Accordion.Content>
 		</Accordion.Item>
 	{/each}

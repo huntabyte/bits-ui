@@ -1,31 +1,34 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { getCtx } from "../ctx.js";
-	import type { TriggerEvents, TriggerProps } from "../index.js";
-	import { createDispatcher } from "$lib/internal/events.js";
+	import type { TriggerProps } from "../index.js";
+	import { getCollapsibleTriggerState } from "../collapsible.svelte.js";
+	import { readonlyBox } from "$lib/internal/box.svelte.js";
+	import { styleToString } from "$lib/internal/style.js";
 
-	type $$Props = TriggerProps;
-	type $$Events = TriggerEvents;
+	let {
+		asChild,
+		children,
+		child,
+		el = $bindable(),
+		onclick: onclickProp = () => {},
+		style = {},
+		...restProps
+	}: TriggerProps = $props();
 
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
+	const onclick = readonlyBox(() => onclickProp);
 
-	const {
-		elements: { trigger },
-		getAttrs,
-	} = getCtx();
+	const triggerState = getCollapsibleTriggerState({ onclick });
 
-	const dispatch = createDispatcher();
-	const attrs = getAttrs("trigger");
-
-	$: builder = $trigger;
-	$: Object.assign(builder, attrs);
+	const mergedProps = $derived({
+		...triggerState.props,
+		...restProps,
+		style: styleToString(style),
+	});
 </script>
 
 {#if asChild}
-	<slot {builder} />
+	{@render child?.({ props: mergedProps })}
 {:else}
-	<button bind:this={el} use:melt={builder} type="button" {...$$restProps} on:m-click={dispatch}>
-		<slot {builder} />
+	<button bind:this={el} {...mergedProps}>
+		{@render children?.()}
 	</button>
 {/if}

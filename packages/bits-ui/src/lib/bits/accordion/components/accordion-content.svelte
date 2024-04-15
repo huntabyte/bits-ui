@@ -1,30 +1,45 @@
-<script lang="ts" context="module">
-	// eslint-disable-next-line unused-imports/no-unused-imports, ts/no-unused-vars
-	import type { Transition } from "$lib/internal/index.js";
-</script>
-
-<script lang="ts" generics="T extends Transition, In extends Transition, Out extends Transition">
-	import { getAccordionContentState } from "../state.svelte.js";
+<script lang="ts">
+	import { getAccordionContentState } from "../accordion.svelte.js";
 	import type { AccordionContentProps } from "../types.js";
-	import WithTransition from "$lib/bits/utilities/with-transition.svelte";
+	import Presence from "$lib/bits/utilities/presence.svelte";
+	import { box, readonlyBox } from "$lib/internal/box.svelte.js";
+	import { styleToString } from "$lib/internal/style.js";
 
 	let {
 		child,
 		asChild,
-		el = $bindable(),
+		el: elProp = $bindable(),
+		forceMount: forceMountProp = false,
+		children,
+		style: styleProp = {},
 		...restProps
-	}: AccordionContentProps<T, In, Out> = $props();
+	}: AccordionContentProps & { forceMount?: boolean } = $props();
 
-	const content = getAccordionContentState();
+	const el = box(
+		() => elProp,
+		(v) => (elProp = v)
+	);
 
-	const mergedProps = $derived({
-		...restProps,
-		...content.props,
-	});
+	const forceMount = readonlyBox(() => forceMountProp);
+	const content = getAccordionContentState({ presentEl: el, forceMount });
 </script>
 
-{#if asChild && content.item.isSelected}
-	{@render child?.(mergedProps)}
-{:else}
-	<WithTransition {...mergedProps} condition={content.item.isSelected} bind:el />
-{/if}
+<Presence forceMount={true} present={content.present} bind:el={el.value}>
+	{#snippet presence({ node, present })}
+		{@const mergedProps = {
+			...restProps,
+			...content.props,
+			style: styleToString({
+				...styleProp,
+				...content.style,
+			}),
+		}}
+		{#if asChild}
+			{@render child?.({ props: mergedProps })}
+		{:else}
+			<div {...mergedProps} bind:this={node.value} hidden={present.value ? undefined : true}>
+				{@render children?.()}
+			</div>
+		{/if}
+	{/snippet}
+</Presence>

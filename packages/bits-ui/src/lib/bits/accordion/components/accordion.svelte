@@ -1,48 +1,50 @@
 <script lang="ts">
-	import { setAccordionRootState } from "../state.svelte.js";
+	import { setAccordionRootState } from "../accordion.svelte.js";
 	import type { AccordionRootProps } from "../types.js";
+	import { Box, box, readonlyBox } from "$lib/internal/box.svelte.js";
+	import { generateId } from "$lib/internal/id.js";
+	import { styleToString } from "$lib/internal/style.js";
 
 	let {
-		disabled = false,
-		forceVisible = false,
+		disabled: disabledProp = false,
 		asChild,
 		children,
 		child,
 		type,
-		value = $bindable(),
+		value: valueProp = $bindable(),
 		el = $bindable(),
-		id,
+		id: idProp = generateId(),
+		style,
 		onValueChange,
 		...restProps
 	}: AccordionRootProps = $props();
 
-	const rootState = setAccordionRootState({ type, value, id, onValueChange });
+	valueProp === undefined && (valueProp = type === "single" ? "" : []);
 
-	$effect.pre(() => {
-		if (value !== undefined) {
-			rootState.value = value;
+	const value = box(
+		() => valueProp!,
+		(v) => {
+			valueProp = v;
+			onValueChange?.(v as any);
 		}
-	});
-	$effect.pre(() => {
-		value = rootState.value;
-	});
-	$effect.pre(() => {
-		if (id) {
-			rootState.id = id;
-		}
-	});
-	$effect.pre(() => {
-		rootState.disabled = disabled;
-	});
-	$effect.pre(() => {
-		rootState.forceVisible = forceVisible;
-	});
+	) as Box<string> | Box<string[]>;
+
+	const id = readonlyBox(() => idProp);
+	const disabled = readonlyBox(() => disabledProp);
+
+	const rootState = setAccordionRootState({ type, value, id, disabled });
+
+	const mergedProps = {
+		...rootState.props,
+		...restProps,
+		style: styleToString(style),
+	};
 </script>
 
 {#if asChild}
-	{@render child?.(restProps)}
+	{@render child?.({ props: mergedProps })}
 {:else}
-	<div bind:this={el} {...rootState.props} {...restProps}>
+	<div bind:this={el} {...mergedProps}>
 		{@render children?.()}
 	</div>
 {/if}

@@ -1,5 +1,6 @@
 import type { DateValue } from "@internationalized/date";
 import type { EditableSegmentPart, Ellipsis, Month, Page, PageItem } from "@melt-ui/svelte";
+import type * as CSS from "csstype";
 
 export type Selected<Value> = {
 	value: Value;
@@ -24,5 +25,7 @@ export type SegmentPart =
 
 export type FocusTarget = string | HTMLElement | SVGElement | null;
 export type FocusProp = FocusTarget | ((defaultEl?: HTMLElement | null) => FocusTarget);
+
+export type StyleProperties = CSS.PropertiesHyphen;
 
 export type { Month, Page, PageItem, Ellipsis, EditableSegmentPart };

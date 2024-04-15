@@ -1,14 +1,30 @@
 <script lang="ts">
 	import type { ImageProps } from "../index.js";
-	import { getAvatarImageState } from "../state.svelte.js";
+	import { getAvatarImageState } from "../avatar.svelte.js";
+	import { readonlyBox } from "$lib/internal/box.svelte.js";
 
-	let { src, alt, asChild, child, el = $bindable(), ...restProps }: ImageProps = $props();
+	let {
+		src: srcProp,
+		asChild,
+		child,
+		el = $bindable(),
+		style: styleProp = {},
+		...restProps
+	}: ImageProps = $props();
 
-	const imageState = getAvatarImageState(src);
+	const src = readonlyBox(() => srcProp);
+	const style = readonlyBox(() => styleProp);
+
+	const imageState = getAvatarImageState({ style, src });
+
+	const mergedProps = {
+		...imageState.props,
+		...restProps,
+	};
 </script>
 
 {#if asChild}
-	{@render child?.({ src, alt, ...restProps })}
+	{@render child?.({ props: mergedProps })}
 {:else}
-	<img {src} bind:this={el} {alt} {...restProps} {...imageState.attrs} />
+	<img bind:this={el} {...mergedProps} />
 {/if}

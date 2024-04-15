@@ -12,13 +12,13 @@ const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 const config = {
 	preprocess: [
 		mdsx(mdsxConfig),
-    vitePreprocess({
-      style: {
-        css: {
-            postcss: path.join(__dirname, "postcss.config.cjs"),
-          },
-        },
-    }),
+		vitePreprocess({
+			style: {
+				css: {
+					postcss: path.join(__dirname, "postcss.config.cjs"),
+				},
+			},
+		}),
 		preprocessMeltUI(),
 	],
 	extensions: [".svelte", ".md"],

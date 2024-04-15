@@ -3,6 +3,7 @@ import { defineConfig } from "vitest/config";
 
 export default defineConfig({
 	plugins: [sveltekit()],
+
 	test: {
 		include: ["src/**/*.{test,spec}.{js,ts}"],
 		// jest like globals
@@ -15,7 +16,6 @@ export default defineConfig({
 		coverage: {
 			exclude: ["setupTest.ts"],
 		},
-		alias: [{ find: /^svelte$/, replacement: "svelte/internal" }],
 		retry: 3,
 	},
 });

@@ -1,48 +1,44 @@
 <script lang="ts">
 	import type { AccordionTriggerProps } from "../types.js";
-	import { getAccordionTriggerState } from "../state.svelte.js";
+	import { getAccordionTriggerState } from "../accordion.svelte.js";
+	import { generateId } from "$lib/internal/id.js";
+	import { readonlyBox } from "$lib/internal/box.svelte.js";
+	import { styleToString } from "$lib/internal/style.js";
 
 	let {
-		disabled = false,
+		disabled: disabledProp = false,
 		asChild,
 		el,
-		id,
-		onkeydown = undefined,
-		onclick = undefined,
+		id: idProp = generateId(),
+		onkeydown: onkeydownProp = () => {},
+		onclick: onclickProp = () => {},
 		children,
 		child,
+		style,
 		...restProps
 	}: AccordionTriggerProps = $props();
+
+	const disabled = readonlyBox(() => disabledProp);
+	const id = readonlyBox(() => idProp);
+	const onkeydown = readonlyBox(() => onkeydownProp);
+	const onclick = readonlyBox(() => onclickProp);
 
 	const trigger = getAccordionTriggerState({
 		disabled,
 		onkeydown,
 		onclick,
-	});
-
-	$effect.pre(() => {
-		trigger.disabled = disabled;
-	});
-	$effect.pre(() => {
-		if (id) {
-			trigger.id = id;
-		}
-	});
-	$effect.pre(() => {
-		trigger.handlers.click = onclick;
-	});
-	$effect.pre(() => {
-		trigger.handlers.keydown = onkeydown;
+		id,
 	});
 
 	const mergedProps = $derived({
 		...restProps,
 		...trigger.props,
+		style: styleToString(style),
 	});
 </script>
 
 {#if asChild}
-	{@render child?.(mergedProps)}
+	{@render child?.({ props: mergedProps })}
 {:else}
 	<button bind:this={el} type="button" {...mergedProps}>
 		{@render children?.()}

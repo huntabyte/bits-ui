@@ -8,19 +8,17 @@
 		id="terms"
 		aria-labelledby="terms-label"
 		class="peer inline-flex size-[25px] items-center justify-center rounded-md border border-muted bg-foreground transition-all duration-150 ease-in-out active:scale-98 data-[state=unchecked]:border-border-input data-[state=unchecked]:bg-background data-[state=unchecked]:hover:border-dark-40"
-		checked="indeterminate"
+		name="hello"
 	>
-		<Checkbox.Indicator
-			let:isChecked
-			let:isIndeterminate
-			class="inline-flex items-center justify-center text-background"
-		>
-			{#if isChecked}
-				<Check class="size-[15px]" weight="bold" />
-			{:else if isIndeterminate}
-				<Minus class="size-[15px]" weight="bold" />
-			{/if}
-		</Checkbox.Indicator>
+		{#snippet indicator({ checked })}
+			<div class="inline-flex items-center justify-center text-background">
+				{#if checked === true}
+					<Check class="size-[15px]" weight="bold" />
+				{:else if checked === "indeterminate"}
+					<Minus class="size-[15px]" weight="bold" />
+				{/if}
+			</div>
+		{/snippet}
 	</Checkbox.Root>
 	<Label.Root
 		id="terms-label"
