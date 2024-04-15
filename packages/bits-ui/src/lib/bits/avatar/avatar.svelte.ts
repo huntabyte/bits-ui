@@ -12,21 +12,16 @@ type AvatarRootStateProps = {
 	loadingStatus: Box<AvatarImageLoadingStatus>;
 };
 
-interface AvatarRootAttrs {
-	"data-avatar-root": string;
-	"data-status": ImageLoadingStatus;
-}
-
 type AvatarImageSrc = string | null | undefined;
 
 class AvatarRootState {
 	src = readonlyBox<AvatarImageSrc>(() => null);
 	delayMs: ReadonlyBox<number>;
 	loadingStatus: Box<ImageLoadingStatus> = undefined as unknown as Box<ImageLoadingStatus>;
-	#attrs: AvatarRootAttrs = $derived({
+	#attrs = $derived({
 		"data-avatar-root": "",
 		"data-status": this.loadingStatus.value,
-	});
+	} as const);
 
 	#imageTimerId: NodeJS.Timeout | undefined = undefined;
 
@@ -72,21 +67,15 @@ class AvatarRootState {
  * IMAGE
  */
 
-interface AvatarImageAttrs {
-	style: string;
-	src: AvatarImageSrc;
-	"data-avatar-image": string;
-}
-
 class AvatarImageState {
 	root: AvatarRootState = undefined as unknown as AvatarRootState;
-	#attrs: AvatarImageAttrs = $derived({
+	#attrs = $derived({
 		style: styleToString({
 			display: this.root.loadingStatus.value === "loaded" ? "block" : "none",
 		}),
 		"data-avatar-image": "",
 		src: this.root.src.value,
-	});
+	} as const);
 
 	constructor(src: ReadonlyBox<AvatarImageSrc>, root: AvatarRootState) {
 		this.root = root;
@@ -102,19 +91,14 @@ class AvatarImageState {
  * FALLBACK
  */
 
-interface AvatarFallbackAttrs {
-	style: string;
-	"data-avatar-fallback": string;
-}
-
 class AvatarFallbackState {
 	root: AvatarRootState = undefined as unknown as AvatarRootState;
-	#attrs: AvatarFallbackAttrs = $derived({
+	#attrs = $derived({
 		style: styleToString({
 			display: this.root.loadingStatus.value === "loaded" ? "none" : "block",
 		}),
 		"data-avatar-fallback": "",
-	});
+	} as const);
 
 	constructor(root: AvatarRootState) {
 		this.root = root;
