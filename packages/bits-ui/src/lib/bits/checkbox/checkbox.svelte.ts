@@ -29,8 +29,8 @@ class CheckboxRootState {
 	checked = undefined as unknown as Box<boolean | "indeterminate">;
 	disabled = undefined as unknown as ReadonlyBox<boolean>;
 	required = undefined as unknown as ReadonlyBox<boolean>;
-	name = undefined as unknown as ReadonlyBox<string | undefined>;
-	value = undefined as unknown as ReadonlyBox<string | undefined>;
+	name: ReadonlyBox<string | undefined>;
+	value: ReadonlyBox<string | undefined>;
 	onclickProp = boxWithState<CheckboxRootStateProps["onclick"]>(readonlyBox(() => () => {}));
 	onkeydownProp = boxWithState<CheckboxRootStateProps["onkeydown"]>(readonlyBox(() => () => {}));
 	#attrs = $derived({

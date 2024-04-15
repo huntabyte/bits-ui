@@ -28,8 +28,8 @@ type AccordionBaseStateProps = ReadonlyBoxedValues<{
 
 class AccordionBaseState {
 	id = undefined as unknown as ReadonlyBox<string>;
-	disabled = undefined as unknown as ReadonlyBox<boolean>;
-	forceVisible = undefined as unknown as ReadonlyBox<boolean>;
+	disabled: ReadonlyBox<boolean>;
+	forceVisible: ReadonlyBox<boolean>;
 	#attrs = $derived({
 		id: this.id.value,
 		"data-accordion-root": "",
