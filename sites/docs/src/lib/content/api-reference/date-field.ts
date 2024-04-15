@@ -6,6 +6,7 @@ import type {
 } from "bits-ui";
 import { builderAndAttrsSlotProps } from "./helpers.js";
 import { domElProps, enums, idsSlotProp, union } from "$lib/content/api-reference/helpers.js";
+import { dateValueProp } from "$lib/content/api-reference/extended-types/index.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
 
@@ -14,7 +15,7 @@ export const root: APISchema<DateFieldPropsWithoutHTML> = {
 	description: "The root date field component.",
 	props: {
 		value: {
-			type: "DateValue",
+			type: dateValueProp,
 			description: "The selected date.",
 		},
 		onValueChange: {
@@ -25,7 +26,7 @@ export const root: APISchema<DateFieldPropsWithoutHTML> = {
 			description: "A function that is called when the selected date changes.",
 		},
 		placeholder: {
-			type: "DateValue",
+			type: dateValueProp,
 			description:
 				"The placeholder date, which is used to determine what date to start the segments from when no value exists.",
 		},
@@ -75,11 +76,11 @@ export const root: APISchema<DateFieldPropsWithoutHTML> = {
 				"The id of your description element, if any, which will be applied to the `aria-describedby` attribute of the appropriate elements.",
 		},
 		maxValue: {
-			type: "DateValue",
+			type: dateValueProp,
 			description: "The maximum valid date that can be entered.",
 		},
 		minValue: {
-			type: "DateValue",
+			type: dateValueProp,
 			description: "The minimum valid date that can be entered.",
 		},
 		locale: {

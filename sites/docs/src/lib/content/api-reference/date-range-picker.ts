@@ -4,7 +4,7 @@ import type {
 	DateRangePickerPropsWithoutHTML,
 } from "bits-ui";
 import { label, segment } from "./date-range-field.js";
-import { focusProp } from "./extended-types/index.js";
+import { dateValueProp, focusProp } from "./extended-types/index.js";
 import { builderAndAttrsSlotProps, portalProp } from "./helpers.js";
 import { content, trigger } from "./popover.js";
 import {
@@ -50,7 +50,7 @@ const root: APISchema<DateRangePickerPropsWithoutHTML> = {
 			description: "A function that is called when the selected date changes.",
 		},
 		placeholder: {
-			type: "DateValue",
+			type: dateValueProp,
 			description:
 				"The placeholder date, which is used to determine what month to display when no date is selected. This updates as the user navigates the calendar, and can be used to programatically control the calendar's view.",
 		},
@@ -112,11 +112,11 @@ const root: APISchema<DateRangePickerPropsWithoutHTML> = {
 			description: "A function that returns whether or not a date is unavailable.",
 		},
 		maxValue: {
-			type: "DateValue",
+			type: dateValueProp,
 			description: "The maximum date that can be selected.",
 		},
 		minValue: {
-			type: "DateValue",
+			type: dateValueProp,
 			description: "The minimum date that can be selected.",
 		},
 		locale: {
