@@ -3,23 +3,24 @@ import {
 	type Box,
 	type BoxedValues,
 	type EventCallback,
-	type OnChangeFn,
-	box,
+	type ReadonlyBox,
+	type ReadonlyBoxedValues,
+	boxWithState,
 	composeHandlers,
 	dataDisabledAttrs,
-	generateId,
 	getAriaDisabled,
 	getAriaExpanded,
 	getDataDisabled,
 	kbd,
 	openClosedAttrs,
+	readonlyBox,
 	verifyContextDeps,
 } from "$lib/internal/index.js";
 
 /**
  * BASE
  */
-type AccordionBaseStateProps = BoxedValues<{
+type AccordionBaseStateProps = ReadonlyBoxedValues<{
 	id: string;
 	disabled: boolean;
 	forceVisible: boolean;
@@ -31,18 +32,18 @@ interface AccordionRootAttrs {
 }
 
 class AccordionBaseState {
-	id = box(() => generateId());
-	disabled = box(() => false);
-	forceVisible = box(() => false);
+	id: ReadonlyBox<string> = undefined as unknown as ReadonlyBox<string>;
+	disabled: ReadonlyBox<boolean> = undefined as unknown as ReadonlyBox<boolean>;
+	forceVisible: ReadonlyBox<boolean> = undefined as unknown as ReadonlyBox<boolean>;
 	attrs: AccordionRootAttrs = $derived({
 		id: this.id.value,
 		"data-accordion-root": "",
 	});
 
 	constructor(props: AccordionBaseStateProps) {
-		this.id = props.id ?? this.id;
-		this.disabled = props.disabled ?? this.disabled;
-		this.forceVisible = props.forceVisible ?? this.forceVisible;
+		this.id = props.id;
+		this.disabled = props.disabled;
+		this.forceVisible = props.forceVisible;
 	}
 
 	get props() {
@@ -55,14 +56,13 @@ class AccordionBaseState {
  */
 
 type AccordionSingleStateProps = AccordionBaseStateProps & BoxedValues<{ value: string }>;
-
 export class AccordionSingleState extends AccordionBaseState {
-	#value = box(() => "");
+	#value: Box<string>;
 	isMulti = false as const;
 
 	constructor(props: AccordionSingleStateProps) {
 		super(props);
-		this.#value = props.value ?? this.#value;
+		this.#value = props.value;
 	}
 
 	get value() {
@@ -78,17 +78,16 @@ export class AccordionSingleState extends AccordionBaseState {
  * MULTIPLE
  */
 interface AccordionMultiStateProps extends AccordionBaseStateProps {
-	value?: Box<string[]>;
+	value: Box<string[]>;
 }
 
 export class AccordionMultiState extends AccordionBaseState {
-	#value = box<string[]>(() => []);
+	#value: Box<string[]>;
 	isMulti = true as const;
 
 	constructor(props: AccordionMultiStateProps) {
 		super(props);
-
-		this.#value = props.value ?? this.#value;
+		this.#value = props.value;
 	}
 
 	get value() {
@@ -104,7 +103,7 @@ export class AccordionMultiState extends AccordionBaseState {
  * ITEM
  */
 
-type AccordionItemStateProps = BoxedValues<{
+type AccordionItemStateProps = ReadonlyBoxedValues<{
 	value: string;
 	disabled: boolean;
 }> & {
@@ -116,31 +115,21 @@ interface AccordionItemAttrs {
 }
 
 export class AccordionItemState {
-	#value: Box<string>;
-	disabled = box(() => false);
+	#value: ReadonlyBox<string>;
+	disabled: ReadonlyBox<boolean> = undefined as unknown as ReadonlyBox<boolean>;
 	root: AccordionState = undefined as unknown as AccordionState;
 	attrs: AccordionItemAttrs = {
 		"data-accordion-item": "",
 	};
 	isDisabled = $derived(this.disabled.value || this.root.disabled.value);
-	isSelected = $state(false);
+	isSelected = $derived(
+		this.root.isMulti ? this.root.value.includes(this.value) : this.root.value === this.value
+	);
 
 	constructor(props: AccordionItemStateProps) {
 		this.#value = props.value;
 		this.disabled = props.disabled;
 		this.root = props.rootState;
-
-		this.isSelected = this.root.isMulti
-			? this.root.value.includes(this.value)
-			: this.root.value === this.value;
-
-		$effect.pre(() => {
-			if (this.root.isMulti) {
-				this.isSelected = this.root.value.includes(this.value);
-			} else {
-				this.isSelected = this.root.value === this.value;
-			}
-		});
 	}
 
 	get value() {
@@ -180,7 +169,7 @@ export class AccordionItemState {
  * TRIGGER
  */
 
-type AccordionTriggerStateProps = BoxedValues<{
+type AccordionTriggerStateProps = ReadonlyBoxedValues<{
 	onclick: EventCallback<MouseEvent>;
 	onkeydown: EventCallback<KeyboardEvent>;
 	disabled: boolean;
@@ -188,15 +177,17 @@ type AccordionTriggerStateProps = BoxedValues<{
 }>;
 
 class AccordionTriggerState {
-	disabled = box(() => false);
-	id = box(() => generateId());
+	disabled: ReadonlyBox<boolean> = undefined as unknown as ReadonlyBox<boolean>;
+	id: ReadonlyBox<string> = undefined as unknown as ReadonlyBox<string>;
 	root: AccordionState = undefined as unknown as AccordionState;
 	itemState: AccordionItemState = undefined as unknown as AccordionItemState;
-	onclickProp = box(() => () => {}) as unknown as AccordionTriggerStateProps["onclick"];
-	onkeydownProp = box(() => () => {}) as unknown as AccordionTriggerStateProps["onkeydown"];
+	onclickProp = boxWithState<AccordionTriggerStateProps["onclick"]>(readonlyBox(() => () => {}));
+	onkeydownProp = boxWithState<AccordionTriggerStateProps["onkeydown"]>(
+		readonlyBox(() => () => {})
+	);
 
 	// Disabled if the trigger itself, the item it belongs to, or the root is disabled
-	isDisabled: boolean = $derived(
+	isDisabled = $derived(
 		this.disabled.value || this.itemState.disabled.value || this.root.disabled.value
 	);
 	attrs: Record<string, unknown> = $derived({
@@ -214,17 +205,17 @@ class AccordionTriggerState {
 		this.disabled = props.disabled;
 		this.itemState = itemState;
 		this.root = itemState.root;
-		this.onclickProp = props.onclick;
-		this.onkeydownProp = props.onkeydown;
+		this.onclickProp.value = props.onclick;
+		this.onkeydownProp.value = props.onkeydown;
 		this.id = props.id;
 	}
 
-	onclick = composeHandlers(this.onclickProp.value, () => {
+	onclick = composeHandlers(this.onclickProp, () => {
 		if (this.isDisabled) return;
 		this.itemState.updateValue();
 	});
 
-	onkeydown = composeHandlers(this.onkeydownProp.value, (e: KeyboardEvent) => {
+	onkeydown = composeHandlers(this.onkeydownProp, (e: KeyboardEvent) => {
 		const handledKeys = [kbd.ARROW_DOWN, kbd.ARROW_UP, kbd.HOME, kbd.END, kbd.SPACE, kbd.ENTER];
 		if (this.isDisabled || !handledKeys.includes(e.key)) return;
 
@@ -310,9 +301,9 @@ type AccordionState = AccordionSingleState | AccordionMultiState;
 type InitAccordionProps = {
 	type: "single" | "multiple";
 	value: Box<string> | Box<string[]>;
-	id: Box<string>;
-	disabled: Box<boolean>;
-	forceVisible: Box<boolean>;
+	id: ReadonlyBox<string>;
+	disabled: ReadonlyBox<boolean>;
+	forceVisible: ReadonlyBox<boolean>;
 };
 
 export function setAccordionRootState(props: InitAccordionProps) {

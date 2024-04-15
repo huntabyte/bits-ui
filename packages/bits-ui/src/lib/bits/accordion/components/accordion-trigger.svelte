@@ -2,7 +2,7 @@
 	import type { AccordionTriggerProps } from "../types.js";
 	import { getAccordionTriggerState } from "../accordion.svelte.js";
 	import { generateId } from "$lib/internal/id.js";
-	import { box } from "$lib/internal/box.svelte.js";
+	import { readonlyBox } from "$lib/internal/box.svelte.js";
 
 	let {
 		disabled: disabledProp = false,
@@ -16,10 +16,10 @@
 		...restProps
 	}: AccordionTriggerProps = $props();
 
-	const disabled = box(() => disabledProp);
-	const id = box(() => idProp);
-	const onkeydown = box(() => onkeydownProp);
-	const onclick = box(() => onclickProp);
+	const disabled = readonlyBox(() => disabledProp);
+	const id = readonlyBox(() => idProp);
+	const onkeydown = readonlyBox(() => onkeydownProp);
+	const onclick = readonlyBox(() => onclickProp);
 
 	const trigger = getAccordionTriggerState({
 		disabled,

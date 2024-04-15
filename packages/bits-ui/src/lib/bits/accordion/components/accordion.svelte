@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { setAccordionRootState } from "../accordion.svelte.js";
 	import type { AccordionRootProps } from "../types.js";
-	import { box } from "$lib/internal/box.svelte.js";
+	import { box, readonlyBox } from "$lib/internal/box.svelte.js";
 	import { generateId } from "$lib/internal/id.js";
 
 	let {
@@ -40,9 +40,9 @@
 	}
 
 	const value = createValueState();
-	const id = box(() => idProp);
-	const disabled = box(() => disabledProp);
-	const forceVisible = box(() => forceVisibleProp);
+	const id = readonlyBox(() => idProp);
+	const disabled = readonlyBox(() => disabledProp);
+	const forceVisible = readonlyBox(() => forceVisibleProp);
 
 	const rootState = setAccordionRootState({ type, value, id, disabled, forceVisible });
 

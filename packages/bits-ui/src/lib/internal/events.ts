@@ -1,4 +1,5 @@
 import { createEventDispatcher } from "svelte";
+import type { Box, ReadonlyBox } from "./box.svelte.js";
 
 type MeltEvent<T extends Event = Event> = {
 	detail: {
@@ -40,12 +41,15 @@ export type EventCallback<E extends Event = Event, T extends Element = Element> 
 ) => void;
 
 export function composeHandlers<E extends Event = Event, T extends Element = Element>(
-	...handlers: Array<EventCallback<E, T> | undefined>
+	...handlers: Array<EventCallback<E, T> | Box<ReadonlyBox<EventCallback<E, T>>> | undefined>
 ): (e: E & { currentTarget: EventTarget & T }) => void {
-	return (e: E & { currentTarget: EventTarget & T }) => {
+	return function (this: T, e: E & { currentTarget: EventTarget & T }) {
 		for (const handler of handlers) {
-			if (handler && !e.defaultPrevented) {
-				handler(e);
+			if (!handler || e.defaultPrevented) return;
+			if (typeof handler === "function") {
+				handler.call(this, e);
+			} else {
+				handler.value.value.call(this, e);
 			}
 		}
 	};
