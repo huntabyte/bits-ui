@@ -287,11 +287,14 @@ type AccordionContentStateProps = BoxedValues<{
 
 class AccordionContentState {
 	item = undefined as unknown as AccordionItemState;
-	currentStyle = box<Record<string, string>>({});
-	isMountAnimationPrevented = box(false);
+	currentStyle = box<{ transitionDuration: string; animationName: string } | undefined>(
+		undefined
+	);
+	isMountAnimationPrevented = $state(false);
 	width = box(0);
 	height = box(0);
 	presentEl: Box<HTMLElement | undefined> = box<HTMLElement | undefined>(undefined);
+	present = $derived(this.item.isSelected);
 
 	#attrs: Record<string, unknown> = $derived({
 		"data-state": getDataOpenClosed(this.item.isSelected),
@@ -299,19 +302,23 @@ class AccordionContentState {
 		"data-value": this.item.value,
 		"data-accordion-content": "",
 		style: styleToString({
-			"--bits-accordion-content-height": `${this.height.value}px`,
-			"--bits-accordion-content-width": `${this.width.value}px`,
+			"--bits-accordion-content-height": this.height.value
+				? `${this.height.value}px`
+				: undefined,
+			"--bits-accordion-content-width": this.width.value
+				? `${this.width.value}px`
+				: undefined,
 		}),
 	});
 
 	constructor(props: AccordionContentStateProps, item: AccordionItemState) {
 		this.item = item;
-		this.isMountAnimationPrevented.value = this.item.isSelected;
+		this.isMountAnimationPrevented = this.item.isSelected;
 		this.presentEl = props.presentEl;
 
 		onMount(() => {
 			requestAnimationFrame(() => {
-				this.isMountAnimationPrevented.value = false;
+				this.isMountAnimationPrevented = false;
 			});
 		});
 
@@ -336,15 +343,10 @@ class AccordionContentState {
 			this.width.value = rect.width;
 
 			// unblock any animations/transitions that were originally set if not the initial render
-			if (!this.isMountAnimationPrevented.value) {
-				const transitionDuration = this.currentStyle.value.transitionDuration;
-				const animationName = this.currentStyle.value.animationName;
-				if (transitionDuration) {
-					node.style.transitionDuration = transitionDuration;
-				}
-				if (animationName) {
-					node.style.animationName = animationName;
-				}
+			if (!this.isMountAnimationPrevented) {
+				const { animationName, transitionDuration } = this.currentStyle.value;
+				node.style.transitionDuration = transitionDuration;
+				node.style.animationName = animationName;
 			}
 		});
 	}
