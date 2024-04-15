@@ -6,7 +6,8 @@ export function verifyContextDeps(...deps: symbol[]) {
 		const ctx = getAllContexts();
 		const missing = deps.filter((dep) => !ctx.has(dep));
 		if (missing.length > 0) {
-			throw new Error(`Missing context dependencies: ${missing.join(", ")}`);
+			// TODO: symbols break our ability to show the name of the missing context. :/
+			throw new Error(`Missing context dependencies`);
 		}
 	}
 }

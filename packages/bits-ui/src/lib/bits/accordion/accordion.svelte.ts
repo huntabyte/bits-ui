@@ -311,7 +311,6 @@ class AccordionContentState {
 
 		onMount(() => {
 			requestAnimationFrame(() => {
-				console.log("calling animation frame");
 				this.isMountAnimationPrevented.value = false;
 			});
 		});
@@ -338,6 +337,8 @@ class AccordionContentState {
 			if (!this.isMountAnimationPrevented.value) {
 				const transitionDuration = this.currentStyle.value.transitionDuration;
 				const animationName = this.currentStyle.value.animationName;
+				console.log("transitionDuration", transitionDuration);
+				console.log("animationName", animationName);
 				if (transitionDuration) {
 					node.style.transitionDuration = transitionDuration;
 				}
