@@ -2,6 +2,7 @@
 	import type { AccordionItemProps } from "../types.js";
 	import { setAccordionItemState } from "../accordion.svelte.js";
 	import { readonlyBox } from "$lib/internal/box.svelte.js";
+	import { styleToString } from "$lib/internal/style.js";
 	let {
 		asChild,
 		disabled: disabledProp = false,
@@ -9,6 +10,7 @@
 		children,
 		child,
 		el = $bindable(),
+		style,
 		...restProps
 	}: AccordionItemProps = $props();
 
@@ -24,6 +26,7 @@
 		...item.props,
 		"data-state": item.isSelected ? "open" : "closed",
 		"data-disabled": isDisabled ? "" : undefined,
+		style: styleToString(style),
 	});
 </script>
 

@@ -3,6 +3,7 @@
 	import type { AccordionRootProps } from "../types.js";
 	import { Box, box, readonlyBox } from "$lib/internal/box.svelte.js";
 	import { generateId } from "$lib/internal/id.js";
+	import { styleToString } from "$lib/internal/style.js";
 
 	let {
 		disabled: disabledProp = false,
@@ -13,6 +14,7 @@
 		value: valueProp = $bindable(),
 		el = $bindable(),
 		id: idProp = generateId(),
+		style,
 		onValueChange,
 		...restProps
 	}: AccordionRootProps = $props();
@@ -35,6 +37,7 @@
 	const mergedProps = {
 		...rootState.props,
 		...restProps,
+		style: styleToString(style),
 	};
 </script>
 

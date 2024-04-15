@@ -1,8 +1,9 @@
-import type { HTMLButtonAttributes } from "svelte/elements";
 import type {
 	EventCallback,
 	HTMLDivAttributes,
 	OnChangeFn,
+	PrimitiveButtonAttributes,
+	PrimitiveDivAttributes,
 	WithAsChild,
 } from "$lib/internal/index.js";
 
@@ -39,7 +40,7 @@ export type CollapsibleContentPropsWithoutHTML = WithAsChild<{
 }>;
 
 export type CollapsibleContentProps = CollapsibleContentPropsWithoutHTML &
-	Omit<HTMLDivAttributes, "id"> & {
+	Omit<PrimitiveDivAttributes, "id"> & {
 		id?: string;
 	};
 
@@ -48,4 +49,4 @@ export type CollapsibleTriggerPropsWithoutHTML = WithAsChild<{
 }>;
 
 export type CollapsibleTriggerProps = CollapsibleTriggerPropsWithoutHTML &
-	Omit<HTMLButtonAttributes, "onclick">;
+	Omit<PrimitiveButtonAttributes, "onclick">;

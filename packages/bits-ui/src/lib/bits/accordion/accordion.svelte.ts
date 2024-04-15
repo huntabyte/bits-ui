@@ -1,4 +1,4 @@
-import { getContext, onMount, setContext } from "svelte";
+import { getContext, onMount, setContext, untrack } from "svelte";
 import {
 	type Box,
 	type BoxedValues,
@@ -16,6 +16,7 @@ import {
 	styleToString,
 	verifyContextDeps,
 } from "$lib/internal/index.js";
+import type { StyleProperties } from "$lib/shared/index.js";
 
 /**
  * BASE
@@ -264,28 +265,24 @@ class AccordionContentState {
 	height = boxedState(0);
 	presentEl: Box<HTMLElement | undefined> = boxedState<HTMLElement | undefined>(undefined);
 	present = $derived(this.item.isSelected);
-
 	#attrs: Record<string, unknown> = $derived({
 		"data-state": getDataOpenClosed(this.item.isSelected),
 		"data-disabled": getDataDisabled(this.item.isDisabled),
 		"data-value": this.item.value,
 		"data-accordion-content": "",
-		style: styleToString({
-			"--bits-accordion-content-height": this.height.value
-				? `${this.height.value}px`
-				: undefined,
-			"--bits-accordion-content-width": this.width.value
-				? `${this.width.value}px`
-				: undefined,
-		}),
 	} as const);
+
+	style: StyleProperties = $derived({
+		"--bits-accordion-content-height": `${this.height.value}px`,
+		"--bits-accordion-content-width": `${this.width.value}px`,
+	});
 
 	constructor(props: AccordionContentStateProps, item: AccordionItemState) {
 		this.item = item;
 		this.isMountAnimationPrevented = this.item.isSelected;
 		this.presentEl = props.presentEl;
 
-		onMount(() => {
+		$effect.root(() => {
 			requestAnimationFrame(() => {
 				this.isMountAnimationPrevented = false;
 			});
@@ -312,7 +309,7 @@ class AccordionContentState {
 			this.width.value = rect.width;
 
 			// unblock any animations/transitions that were originally set if not the initial render
-			if (!this.isMountAnimationPrevented) {
+			if (!untrack(() => this.isMountAnimationPrevented)) {
 				const { animationName, transitionDuration } = this.currentStyle.value;
 				node.style.transitionDuration = transitionDuration;
 				node.style.animationName = animationName;

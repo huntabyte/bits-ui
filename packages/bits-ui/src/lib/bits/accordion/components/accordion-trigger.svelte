@@ -3,6 +3,7 @@
 	import { getAccordionTriggerState } from "../accordion.svelte.js";
 	import { generateId } from "$lib/internal/id.js";
 	import { readonlyBox } from "$lib/internal/box.svelte.js";
+	import { styleToString } from "$lib/internal/style.js";
 
 	let {
 		disabled: disabledProp = false,
@@ -13,6 +14,7 @@
 		onclick: onclickProp = () => {},
 		children,
 		child,
+		style,
 		...restProps
 	}: AccordionTriggerProps = $props();
 
@@ -31,6 +33,7 @@
 	const mergedProps = $derived({
 		...restProps,
 		...trigger.props,
+		style: styleToString(style),
 	});
 </script>
 

@@ -14,6 +14,7 @@ import {
 } from "$lib/internal/box.svelte.js";
 import { type EventCallback, composeHandlers } from "$lib/internal/events.js";
 import { kbd } from "$lib/internal/kbd.js";
+import type { StyleProperties } from "$lib/shared/index.js";
 
 type CheckboxRootStateProps = ReadonlyBoxedValues<{
 	disabled: boolean;

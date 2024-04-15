@@ -12,6 +12,7 @@
 		forceMount = false,
 		children,
 		id: idProp = generateId(),
+		style: styleProp = {},
 		...restProps
 	}: CollapsibleContentProps & { forceMount?: boolean } = $props();
 
@@ -20,7 +21,8 @@
 		() => elProp,
 		(v) => (elProp = v)
 	);
-	const content = getCollapsibleContentState({ id, presentEl: el });
+	const style = readonlyBox(() => styleProp);
+	const content = getCollapsibleContentState({ id, presentEl: el, style });
 
 	const mergedProps = $derived({
 		...restProps,

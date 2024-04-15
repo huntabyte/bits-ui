@@ -11,6 +11,7 @@
 		child,
 		children,
 		el = $bindable(),
+		style: styleProp = {},
 		...restProps
 	}: RootProps = $props();
 
@@ -22,11 +23,14 @@
 		}
 	);
 
+	const style = readonlyBox(() => styleProp);
+
 	const delayMs = readonlyBox(() => delayMsProp);
 
 	const rootState = setAvatarRootState({
 		delayMs,
 		loadingStatus,
+		style,
 	});
 
 	const mergedProps = {

@@ -3,6 +3,7 @@
 	import { setCheckboxRootState } from "../checkbox.svelte.js";
 	import CheckboxInput from "./checkbox-input.svelte";
 	import { box, readonlyBox } from "$lib/internal/box.svelte.js";
+	import { styleToString } from "$lib/internal/style.js";
 
 	let {
 		checked: checkedProp = $bindable(false),
@@ -14,6 +15,7 @@
 		el = $bindable(),
 		onclick: onclickProp = () => {},
 		onkeydown: onkeydownProp = () => {},
+		style,
 		asChild,
 		child,
 		indicator,
@@ -47,6 +49,7 @@
 	const mergedProps = $derived({
 		...checkboxState.props,
 		...restProps,
+		style: styleToString(style),
 	});
 </script>
 

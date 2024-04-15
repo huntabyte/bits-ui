@@ -2,7 +2,13 @@ import { getContext, setContext } from "svelte";
 import type { ImageLoadingStatus } from "@melt-ui/svelte";
 import type { AvatarImageLoadingStatus } from "./types.js";
 import { styleToString } from "$lib/internal/style.js";
-import { type Box, type ReadonlyBox, readonlyBox } from "$lib/internal/box.svelte.js";
+import {
+	type Box,
+	type ReadonlyBox,
+	type ReadonlyBoxedValues,
+	readonlyBox,
+} from "$lib/internal/box.svelte.js";
+import type { StyleProperties } from "$lib/shared/index.js";
 
 /**
  * ROOT
@@ -10,6 +16,7 @@ import { type Box, type ReadonlyBox, readonlyBox } from "$lib/internal/box.svelt
 type AvatarRootStateProps = {
 	delayMs: ReadonlyBox<number>;
 	loadingStatus: Box<AvatarImageLoadingStatus>;
+	style: ReadonlyBox<StyleProperties>;
 };
 
 interface AvatarRootAttrs {
@@ -23,9 +30,11 @@ class AvatarRootState {
 	src = readonlyBox<AvatarImageSrc>(() => null);
 	delayMs: ReadonlyBox<number>;
 	loadingStatus = undefined as unknown as Box<ImageLoadingStatus>;
+	styleProp = undefined as unknown as ReadonlyBox<StyleProperties>;
 	#attrs: AvatarRootAttrs = $derived({
 		"data-avatar-root": "",
 		"data-status": this.loadingStatus.value,
+		style: styleToString(this.styleProp.value),
 	});
 
 	#imageTimerId: NodeJS.Timeout | undefined = undefined;
@@ -60,12 +69,12 @@ class AvatarRootState {
 		};
 	}
 
-	createImage(src: ReadonlyBox<AvatarImageSrc>) {
-		return new AvatarImageState(src, this);
+	createImage(props: AvatarImageStateProps) {
+		return new AvatarImageState(props, this);
 	}
 
-	createFallback() {
-		return new AvatarFallbackState(this);
+	createFallback(props: AvatarFallbackStateProps) {
+		return new AvatarFallbackState(props, this);
 	}
 
 	get props() {
@@ -83,19 +92,27 @@ interface AvatarImageAttrs {
 	"data-avatar-image": string;
 }
 
+type AvatarImageStateProps = ReadonlyBoxedValues<{
+	src: AvatarImageSrc;
+	style: StyleProperties;
+}>;
+
 class AvatarImageState {
 	root = undefined as unknown as AvatarRootState;
+	styleProp = undefined as unknown as ReadonlyBox<StyleProperties>;
 	#attrs: AvatarImageAttrs = $derived({
 		style: styleToString({
+			...this.styleProp.value,
 			display: this.root.loadingStatus.value === "loaded" ? "block" : "none",
 		}),
 		"data-avatar-image": "",
 		src: this.root.src.value,
 	} as const);
 
-	constructor(src: ReadonlyBox<AvatarImageSrc>, root: AvatarRootState) {
+	constructor(props: AvatarImageStateProps, root: AvatarRootState) {
 		this.root = root;
-		root.src = src;
+		this.styleProp = props.style;
+		root.src = props.src;
 	}
 
 	get props() {
@@ -112,16 +129,23 @@ interface AvatarFallbackAttrs {
 	"data-avatar-fallback": string;
 }
 
+type AvatarFallbackStateProps = ReadonlyBoxedValues<{
+	style: StyleProperties;
+}>;
+
 class AvatarFallbackState {
 	root = undefined as unknown as AvatarRootState;
+	styleProp = undefined as unknown as ReadonlyBox<StyleProperties>;
 	#attrs: AvatarFallbackAttrs = $derived({
 		style: styleToString({
+			...this.styleProp.value,
 			display: this.root.loadingStatus.value === "loaded" ? "none" : "block",
 		}),
 		"data-avatar-fallback": "",
 	} as const);
 
-	constructor(root: AvatarRootState) {
+	constructor(props: AvatarFallbackStateProps, root: AvatarRootState) {
+		this.styleProp = props.style;
 		this.root = root;
 	}
 
@@ -144,10 +168,10 @@ export function getAvatarRootState(): AvatarRootState {
 	return getContext(AVATAR_ROOT_KEY);
 }
 
-export function getAvatarImageState(src: ReadonlyBox<AvatarImageSrc>) {
-	return getAvatarRootState().createImage(src);
+export function getAvatarImageState(props: AvatarImageStateProps) {
+	return getAvatarRootState().createImage(props);
 }
 
-export function getAvatarFallbackState() {
-	return getAvatarRootState().createFallback();
+export function getAvatarFallbackState(props: AvatarFallbackStateProps) {
+	return getAvatarRootState().createFallback(props);
 }

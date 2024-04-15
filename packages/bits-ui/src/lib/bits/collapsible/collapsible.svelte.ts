@@ -5,15 +5,14 @@ import {
 	type BoxedValues,
 	type ReadonlyBox,
 	type ReadonlyBoxedValues,
-	box,
 	boxedState,
 	readonlyBox,
 	readonlyBoxedState,
-	watch,
 } from "$lib/internal/box.svelte.js";
 import { generateId } from "$lib/internal/id.js";
 import { styleToString } from "$lib/internal/style.js";
 import { type EventCallback, composeHandlers } from "$lib/internal/events.js";
+import type { StyleProperties } from "$lib/shared/index.js";
 
 type CollapsibleRootStateProps = BoxedValues<{
 	open: boolean;
@@ -59,6 +58,7 @@ type CollapsibleContentStateProps = BoxedValues<{
 }> &
 	ReadonlyBoxedValues<{
 		id: string;
+		style: StyleProperties;
 	}>;
 
 class CollapsibleContentState {
@@ -66,6 +66,7 @@ class CollapsibleContentState {
 	currentStyle = boxedState<{ transitionDuration: string; animationName: string } | undefined>(
 		undefined
 	);
+	styleProp = undefined as unknown as ReadonlyBox<StyleProperties>;
 	isMountAnimationPrevented = $state(false);
 	width = boxedState(0);
 	height = boxedState(0);
@@ -77,6 +78,7 @@ class CollapsibleContentState {
 		"data-disabled": getDataDisabled(this.root.disabled.value),
 		"data-collapsible-content": "",
 		style: styleToString({
+			...this.styleProp.value,
 			"--bits-collapsible-content-height": this.height.value
 				? `${this.height.value}px`
 				: undefined,
@@ -91,6 +93,7 @@ class CollapsibleContentState {
 		this.isMountAnimationPrevented = root.open.value;
 		this.presentEl = props.presentEl;
 		this.root.contentId = props.id;
+		this.styleProp = props.style;
 
 		onMount(() => {
 			requestAnimationFrame(() => {

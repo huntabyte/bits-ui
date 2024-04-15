@@ -2,6 +2,7 @@
 	import type { TriggerProps } from "../index.js";
 	import { getCollapsibleTriggerState } from "../collapsible.svelte.js";
 	import { readonlyBox } from "$lib/internal/box.svelte.js";
+	import { styleToString } from "$lib/internal/style.js";
 
 	let {
 		asChild,
@@ -9,6 +10,7 @@
 		child,
 		el = $bindable(),
 		onclick: onclickProp = () => {},
+		style = {},
 		...restProps
 	}: TriggerProps = $props();
 
@@ -19,6 +21,7 @@
 	const mergedProps = $derived({
 		...triggerState.props,
 		...restProps,
+		style: styleToString(style),
 	});
 </script>
 

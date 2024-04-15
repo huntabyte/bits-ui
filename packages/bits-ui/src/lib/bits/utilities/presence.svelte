@@ -38,11 +38,6 @@
 	);
 
 	const isPresent = usePresence(present, node);
-
-	// $inspect(el);
-	// $inspect(isPresent.value);
-
-	$inspect(node.value);
 </script>
 
 {#if forceMount.value || present.value || isPresent.value}
