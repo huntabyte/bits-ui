@@ -3,7 +3,6 @@
 	import type { AccordionContentProps } from "../types.js";
 	import Presence from "$lib/bits/utilities/presence.svelte";
 	import { box } from "$lib/internal/box.svelte.js";
-	import { styleToString } from "$lib/internal/style.js";
 
 	let {
 		child,
@@ -32,19 +31,15 @@
 		{#if asChild}
 			{@render child?.({ props: { ...mergedProps, hidden: !present.value } })}
 		{:else}
-			<!-- HIDDEN DOESN'T WANT TO UPDATE!!! -->
-			<!-- eslint-disable-next-line -->
-			<div
-				hidden={!present.value}
-				{...mergedProps}
-				style={styleToString({
-					"--bits-accordion-content-height": `${content.height.value}px`,
-					"--bits-accordion-content-width": `${content.width.value}px`,
-				})}
-				bind:this={node.value}
-			>
+			<div hidden={!present.value} {...mergedProps} bind:this={node.value}>
 				{@render children?.()}
 			</div>
 		{/if}
 	{/snippet}
 </Presence>
+
+<style>
+	[hidden="false"] {
+		display: block !important;
+	}
+</style>
