@@ -1,8 +1,13 @@
-export function styleToString(style: Record<string, number | string | undefined>): string {
-	return Object.keys(style).reduce((str, key) => {
-		if (style[key] === undefined) return str;
-		return `${str}${key}:${style[key]};`;
-	}, "");
+import type { StyleProperties } from "$lib/shared/index.js";
+
+export function styleToString(style: StyleProperties = {}): string {
+	let styleString = "";
+	for (const key in style) {
+		const value = style[key as keyof StyleProperties];
+		if (value === undefined) continue;
+		styleString += `${key}:${value};`;
+	}
+	return styleString;
 }
 
 export function getSrOnlyStyles() {
@@ -14,7 +19,7 @@ export function getSrOnlyStyles() {
 		margin: "-1px",
 		overflow: "hidden",
 		clip: "rect(0, 0, 0, 0)",
-		whiteSpace: "nowrap",
-		borderWidth: "0",
+		"white-space": "nowrap",
+		"border-width": "0",
 	});
 }

@@ -1,9 +1,8 @@
-import type { HTMLImgAttributes } from "svelte/elements";
 import type {
-	DOMElement,
-	HTMLDivAttributes,
-	HTMLSpanAttributes,
 	OnChangeFn,
+	PrimitiveDivAttributes,
+	PrimitiveImgAttributes,
+	PrimitiveSpanAttributes,
 	WithAsChild,
 } from "$lib/internal/index.js";
 
@@ -30,10 +29,10 @@ export type AvatarRootPropsWithoutHTML = WithAsChild<{
 	onLoadingStatusChange?: OnChangeFn<AvatarImageLoadingStatus>;
 }>;
 
-export type AvatarRootProps = AvatarRootPropsWithoutHTML & HTMLDivAttributes;
+export type AvatarRootProps = AvatarRootPropsWithoutHTML & PrimitiveDivAttributes;
 
 export type AvatarImagePropsWithoutHTML = WithAsChild<object>;
-export type AvatarImageProps = AvatarImagePropsWithoutHTML & HTMLImgAttributes;
+export type AvatarImageProps = AvatarImagePropsWithoutHTML & PrimitiveImgAttributes;
 
 export type AvatarFallbackPropsWithoutHTML = WithAsChild<object>;
-export type AvatarFallbackProps = AvatarFallbackPropsWithoutHTML & HTMLSpanAttributes;
+export type AvatarFallbackProps = AvatarFallbackPropsWithoutHTML & PrimitiveSpanAttributes;

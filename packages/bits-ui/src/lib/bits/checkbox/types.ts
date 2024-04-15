@@ -4,6 +4,7 @@ import type {
 	EventCallback,
 	HTMLDivAttributes,
 	OnChangeFn,
+	PrimitiveButtonAttributes,
 	WithAsChild,
 } from "$lib/internal/index.js";
 
@@ -59,11 +60,9 @@ export type CheckboxRootPropsWithoutHTML = WithAsChild<
 >;
 
 export type CheckboxRootProps = CheckboxRootPropsWithoutHTML &
-	Omit<HTMLButtonAttributes, "value" | "disabled" | "name" | "onclick" | "onkeydown"> & {
+	Omit<PrimitiveButtonAttributes, "value" | "disabled" | "name" | "onclick" | "onkeydown"> & {
 		onclick?: EventCallback<MouseEvent>;
 		onkeydown?: EventCallback<KeyboardEvent>;
 	};
 
 export type CheckboxIndicatorPropsWithoutHTML = WithAsChild<{ checked: boolean | "indeterminate" }>;
-
-export type CheckboxIndicatorProps = CheckboxIndicatorPropsWithoutHTML & HTMLDivAttributes;

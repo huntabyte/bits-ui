@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { RootProps } from "../index.js";
 	import { setAvatarRootState } from "../avatar.svelte.js";
-	import { box } from "$lib/internal/box.svelte.js";
+	import { box, readonlyBox } from "$lib/internal/box.svelte.js";
 
 	let {
 		delayMs: delayMsProp = 0,
@@ -11,6 +11,7 @@
 		child,
 		children,
 		el = $bindable(),
+		style: styleProp = {},
 		...restProps
 	}: RootProps = $props();
 
@@ -22,11 +23,14 @@
 		}
 	);
 
-	const delayMs = box(() => delayMsProp);
+	const style = readonlyBox(() => styleProp);
+
+	const delayMs = readonlyBox(() => delayMsProp);
 
 	const rootState = setAvatarRootState({
 		delayMs,
 		loadingStatus,
+		style,
 	});
 
 	const mergedProps = {

@@ -9,7 +9,6 @@ import type {
 
 interface BaseAccordionProps {
 	disabled?: boolean;
-	forceVisible?: boolean;
 	id?: string;
 }
 

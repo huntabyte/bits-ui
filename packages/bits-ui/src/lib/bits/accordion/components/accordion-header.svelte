@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { AccordionHeaderProps } from "../types.js";
+	import { styleToString } from "$lib/internal/style.js";
 
 	let {
 		asChild,
@@ -7,6 +8,7 @@
 		children,
 		child,
 		el = $bindable(),
+		style = {},
 		...restProps
 	}: AccordionHeaderProps = $props();
 
@@ -15,6 +17,7 @@
 		role: "heading",
 		"aria-level": level,
 		"data-heading-level": level,
+		style: styleToString(style),
 	});
 </script>
 
