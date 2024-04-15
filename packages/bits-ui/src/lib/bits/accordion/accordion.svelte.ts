@@ -60,12 +60,12 @@ export class AccordionSingleState extends AccordionBaseState {
 		this.#value = props.value;
 	}
 
-	get value() {
-		return this.#value.value;
+	includesItem(item: string) {
+		return this.#value.value === item;
 	}
 
-	set value(v: string) {
-		this.#value.value = v;
+	toggleItem(item: string) {
+		this.#value.value = this.includesItem(item) ? "" : item;
 	}
 }
 
@@ -85,12 +85,16 @@ export class AccordionMultiState extends AccordionBaseState {
 		this.#value = props.value;
 	}
 
-	get value() {
-		return this.#value.value;
+	includesItem(item: string) {
+		return this.#value.value.includes(item);
 	}
 
-	set value(v: string[]) {
-		this.#value.value = v;
+	toggleItem(item: string) {
+		if (this.includesItem(item)) {
+			this.#value.value = this.#value.value.filter((v) => v !== item);
+		} else {
+			this.#value.value = [...this.#value.value, item];
+		}
 	}
 }
 
@@ -113,9 +117,7 @@ export class AccordionItemState {
 		"data-accordion-item": "",
 	} as const;
 	isDisabled = $derived(this.disabled.value || this.root.disabled.value);
-	isSelected = $derived(
-		this.root.isMulti ? this.root.value.includes(this.value) : this.root.value === this.value
-	);
+	isSelected = $derived(this.root.includesItem(this.value));
 
 	constructor(props: AccordionItemStateProps) {
 		this.#value = props.value;
@@ -128,19 +130,7 @@ export class AccordionItemState {
 	}
 
 	updateValue() {
-		if (this.root.isMulti) {
-			if (this.root.value.includes(this.value)) {
-				this.root.value = this.root.value.filter((v) => v !== this.value);
-			} else {
-				this.root.value = [...this.root.value, this.value];
-			}
-		} else {
-			if (this.root.value === this.value) {
-				this.root.value = "";
-			} else {
-				this.root.value = this.value;
-			}
-		}
+		this.root.toggleItem(this.value);
 	}
 
 	get props() {
