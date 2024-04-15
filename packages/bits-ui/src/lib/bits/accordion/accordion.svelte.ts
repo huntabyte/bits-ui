@@ -113,11 +113,13 @@ export class AccordionItemState {
 	#value: ReadonlyBox<string>;
 	disabled = undefined as unknown as ReadonlyBox<boolean>;
 	root = undefined as unknown as AccordionState;
-	#attrs = {
-		"data-accordion-item": "",
-	} as const;
 	isDisabled = $derived(this.disabled.value || this.root.disabled.value);
 	isSelected = $derived(this.root.includesItem(this.value));
+	#attrs = $derived({
+		"data-accordion-item": "",
+		"data-state": this.isSelected ? "open" : "closed",
+		"data-disabled": this.isDisabled ? "" : undefined,
+	} as const);
 
 	constructor(props: AccordionItemStateProps) {
 		this.#value = props.value;

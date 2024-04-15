@@ -17,13 +17,9 @@
 
 	const item = setAccordionItemState({ value, disabled });
 
-	const isDisabled = $derived(disabled || item.root.disabled);
-
 	const mergedProps = $derived({
 		...restProps,
 		...item.props,
-		"data-state": item.isSelected ? "open" : "closed",
-		"data-disabled": isDisabled ? "" : undefined,
 	});
 </script>
 
