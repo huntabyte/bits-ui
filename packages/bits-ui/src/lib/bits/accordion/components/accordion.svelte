@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { setAccordionRootState } from "../accordion.svelte.js";
 	import type { AccordionRootProps } from "../types.js";
-	import { box, readonlyBox } from "$lib/internal/box.svelte.js";
+	import { type Box, box, readonlyBox } from "$lib/internal/box.svelte.js";
 	import { generateId } from "$lib/internal/id.js";
 
 	let {
@@ -18,28 +18,15 @@
 		...restProps
 	}: AccordionRootProps = $props();
 
-	function createValueState() {
-		if (type === "single") {
-			valueProp === undefined && (valueProp = "");
-			return box(
-				() => valueProp as string,
-				(v) => {
-					valueProp = v;
-					onValueChange?.(v as string[] & string);
-				}
-			);
-		}
-		valueProp === undefined && (valueProp = []);
-		return box(
-			() => valueProp as string[],
-			(v) => {
-				valueProp = v;
-				onValueChange?.(v as string[] & string);
-			}
-		);
-	}
+	valueProp === undefined && (type === "single" ? (valueProp = "") : (valueProp = []));
 
-	const value = createValueState();
+	const value = box(
+		() => valueProp!,
+		(v) => {
+			valueProp = v;
+			onValueChange?.(v as any);
+		}
+	) as Box<string> | Box<string[]>;
 	const id = readonlyBox(() => idProp);
 	const disabled = readonlyBox(() => disabledProp);
 	const forceVisible = readonlyBox(() => forceVisibleProp);
