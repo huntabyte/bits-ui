@@ -28,7 +28,7 @@ class AvatarRootState {
 		"data-status": this.loadingStatus.value,
 	});
 
-	#imageTimerId: number = 0;
+	#imageTimerId: NodeJS.Timeout | undefined = undefined;
 
 	constructor(props: AvatarRootStateProps) {
 		this.delayMs = props.delayMs ?? this.delayMs;
@@ -42,18 +42,13 @@ class AvatarRootState {
 
 	#loadImage(src: string) {
 		// clear any existing timers before creating a new one
-		window.clearTimeout(this.#imageTimerId);
+		clearTimeout(this.#imageTimerId);
 		const image = new Image();
 		image.src = src;
 		image.onload = () => {
-			// if its 0 then we don't need to add a delay
-			if (this.delayMs.value !== 0) {
-				this.#imageTimerId = window.setTimeout(() => {
-					this.loadingStatus.value = "loaded";
-				}, this.delayMs.value);
-			} else {
+			this.#imageTimerId = setTimeout(() => {
 				this.loadingStatus.value = "loaded";
-			}
+			}, this.delayMs.value);
 		};
 		image.onerror = () => {
 			this.loadingStatus.value = "error";
