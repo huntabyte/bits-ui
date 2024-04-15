@@ -2,15 +2,15 @@ import { getContext, setContext } from "svelte";
 import type { ImageLoadingStatus } from "@melt-ui/svelte";
 import type { AvatarImageLoadingStatus } from "./types.js";
 import { styleToString } from "$lib/internal/style.js";
-import { type Box, type BoxedValues, box } from "$lib/internal/box.svelte.js";
+import { type Box, type ReadonlyBox, readonlyBox } from "$lib/internal/box.svelte.js";
 
 /**
  * ROOT
  */
-type AvatarRootStateProps = BoxedValues<{
-	delayMs: number;
-	loadingStatus: AvatarImageLoadingStatus;
-}>;
+type AvatarRootStateProps = {
+	delayMs: ReadonlyBox<number>;
+	loadingStatus: Box<AvatarImageLoadingStatus>;
+};
 
 interface AvatarRootAttrs {
 	"data-avatar-root": string;
@@ -20,9 +20,9 @@ interface AvatarRootAttrs {
 type AvatarImageSrc = string | null | undefined;
 
 class AvatarRootState {
-	src = box<AvatarImageSrc>(() => null);
-	delayMs = box(() => 0);
-	loadingStatus = box<ImageLoadingStatus>(() => "loading");
+	src = readonlyBox<AvatarImageSrc>(() => null);
+	delayMs: ReadonlyBox<number>;
+	loadingStatus: Box<ImageLoadingStatus> = undefined as unknown as Box<ImageLoadingStatus>;
 	#attrs: AvatarRootAttrs = $derived({
 		"data-avatar-root": "",
 		"data-status": this.loadingStatus.value,
@@ -31,7 +31,7 @@ class AvatarRootState {
 	#imageTimerId: NodeJS.Timeout | undefined = undefined;
 
 	constructor(props: AvatarRootStateProps) {
-		this.delayMs = props.delayMs ?? this.delayMs;
+		this.delayMs = props.delayMs;
 		this.loadingStatus = props.loadingStatus;
 
 		$effect.pre(() => {
@@ -55,7 +55,7 @@ class AvatarRootState {
 		};
 	}
 
-	createImage(src: Box<AvatarImageSrc>) {
+	createImage(src: ReadonlyBox<AvatarImageSrc>) {
 		return new AvatarImageState(src, this);
 	}
 
@@ -88,7 +88,7 @@ class AvatarImageState {
 		src: this.root.src.value,
 	});
 
-	constructor(src: Box<AvatarImageSrc>, root: AvatarRootState) {
+	constructor(src: ReadonlyBox<AvatarImageSrc>, root: AvatarRootState) {
 		this.root = root;
 		root.src = src;
 	}
@@ -139,7 +139,7 @@ export function getAvatarRootState(): AvatarRootState {
 	return getContext(AVATAR_ROOT_KEY);
 }
 
-export function getAvatarImageState(src: Box<AvatarImageSrc>) {
+export function getAvatarImageState(src: ReadonlyBox<AvatarImageSrc>) {
 	return getAvatarRootState().createImage(src);
 }
 
