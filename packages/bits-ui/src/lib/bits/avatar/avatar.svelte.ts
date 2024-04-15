@@ -1,7 +1,6 @@
 import { getContext, setContext } from "svelte";
 import type { ImageLoadingStatus } from "@melt-ui/svelte";
 import type { AvatarImageLoadingStatus } from "./types.js";
-import type { OnChangeFn } from "$lib/internal/types.js";
 import { styleToString } from "$lib/internal/style.js";
 import { type Box, type BoxedValues, box } from "$lib/internal/box.svelte.js";
 
