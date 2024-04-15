@@ -26,19 +26,14 @@ type AccordionBaseStateProps = ReadonlyBoxedValues<{
 	forceVisible: boolean;
 }>;
 
-interface AccordionRootAttrs {
-	id: string;
-	"data-accordion-root": string;
-}
-
 class AccordionBaseState {
 	id: ReadonlyBox<string> = undefined as unknown as ReadonlyBox<string>;
 	disabled: ReadonlyBox<boolean> = undefined as unknown as ReadonlyBox<boolean>;
 	forceVisible: ReadonlyBox<boolean> = undefined as unknown as ReadonlyBox<boolean>;
-	attrs: AccordionRootAttrs = $derived({
+	attrs = $derived({
 		id: this.id.value,
 		"data-accordion-root": "",
-	});
+	} as const);
 
 	constructor(props: AccordionBaseStateProps) {
 		this.id = props.id;
@@ -110,17 +105,13 @@ type AccordionItemStateProps = ReadonlyBoxedValues<{
 	rootState: AccordionState;
 };
 
-interface AccordionItemAttrs {
-	"data-accordion-item": string;
-}
-
 export class AccordionItemState {
 	#value: ReadonlyBox<string>;
 	disabled: ReadonlyBox<boolean> = undefined as unknown as ReadonlyBox<boolean>;
 	root: AccordionState = undefined as unknown as AccordionState;
-	attrs: AccordionItemAttrs = {
+	attrs = {
 		"data-accordion-item": "",
-	};
+	} as const;
 	isDisabled = $derived(this.disabled.value || this.root.disabled.value);
 	isSelected = $derived(
 		this.root.isMulti ? this.root.value.includes(this.value) : this.root.value === this.value
@@ -190,7 +181,7 @@ class AccordionTriggerState {
 	isDisabled = $derived(
 		this.disabled.value || this.itemState.disabled.value || this.root.disabled.value
 	);
-	attrs: Record<string, unknown> = $derived({
+	attrs = $derived({
 		id: this.id.value,
 		disabled: this.isDisabled,
 		"aria-expanded": getAriaExpanded(this.itemState.isSelected),
@@ -199,7 +190,7 @@ class AccordionTriggerState {
 		"data-value": this.itemState.value,
 		"data-state": openClosedAttrs(this.itemState.isSelected),
 		"data-accordion-trigger": "",
-	});
+	} as const);
 
 	constructor(props: AccordionTriggerStateProps, itemState: AccordionItemState) {
 		this.disabled = props.disabled;
@@ -264,12 +255,12 @@ class AccordionTriggerState {
 
 class AccordionContentState {
 	item = undefined as unknown as AccordionItemState;
-	attrs: Record<string, unknown> = $derived({
+	attrs = $derived({
 		"data-state": openClosedAttrs(this.item.isSelected),
 		"data-disabled": dataDisabledAttrs(this.item.isDisabled),
 		"data-value": this.item.value,
 		"data-accordion-content": "",
-	});
+	} as const);
 
 	constructor(item: AccordionItemState) {
 		this.item = item;
