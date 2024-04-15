@@ -240,22 +240,13 @@ class AccordionTriggerState {
 		if (!candidateItems.length) return;
 
 		const currentIndex = candidateItems.indexOf(itemEl);
-
-		switch (e.key) {
-			case kbd.ARROW_DOWN:
-				candidateItems[(currentIndex + 1) % candidateItems.length]?.focus();
-				return;
-			case kbd.ARROW_UP:
-				candidateItems[
-					(currentIndex - 1 + candidateItems.length) % candidateItems.length
-				]?.focus();
-				return;
-			case kbd.HOME:
-				candidateItems[0]?.focus();
-				return;
-			case kbd.END:
-				candidateItems[candidateItems.length - 1]?.focus();
-		}
+		const keyToIndex = {
+			[kbd.ARROW_DOWN]: (currentIndex + 1) % candidateItems.length,
+			[kbd.ARROW_UP]: (currentIndex - 1 + candidateItems.length) % candidateItems.length,
+			[kbd.HOME]: 0,
+			[kbd.END]: candidateItems.length - 1,
+		};
+		candidateItems[keyToIndex[e.key]!]?.focus();
 	});
 
 	get props() {
