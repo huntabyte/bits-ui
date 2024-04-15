@@ -17,7 +17,7 @@ type AvatarImageSrc = string | null | undefined;
 class AvatarRootState {
 	src = readonlyBox<AvatarImageSrc>(() => null);
 	delayMs: ReadonlyBox<number>;
-	loadingStatus: Box<ImageLoadingStatus> = undefined as unknown as Box<ImageLoadingStatus>;
+	loadingStatus = undefined as unknown as Box<ImageLoadingStatus>;
 	#attrs = $derived({
 		"data-avatar-root": "",
 		"data-status": this.loadingStatus.value,
@@ -68,7 +68,7 @@ class AvatarRootState {
  */
 
 class AvatarImageState {
-	root: AvatarRootState = undefined as unknown as AvatarRootState;
+	root = undefined as unknown as AvatarRootState;
 	#attrs = $derived({
 		style: styleToString({
 			display: this.root.loadingStatus.value === "loaded" ? "block" : "none",
@@ -92,7 +92,7 @@ class AvatarImageState {
  */
 
 class AvatarFallbackState {
-	root: AvatarRootState = undefined as unknown as AvatarRootState;
+	root = undefined as unknown as AvatarRootState;
 	#attrs = $derived({
 		style: styleToString({
 			display: this.root.loadingStatus.value === "loaded" ? "none" : "block",

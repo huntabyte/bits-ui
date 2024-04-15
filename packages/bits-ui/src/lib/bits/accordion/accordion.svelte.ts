@@ -27,9 +27,9 @@ type AccordionBaseStateProps = ReadonlyBoxedValues<{
 }>;
 
 class AccordionBaseState {
-	id: ReadonlyBox<string> = undefined as unknown as ReadonlyBox<string>;
-	disabled: ReadonlyBox<boolean> = undefined as unknown as ReadonlyBox<boolean>;
-	forceVisible: ReadonlyBox<boolean> = undefined as unknown as ReadonlyBox<boolean>;
+	id = undefined as unknown as ReadonlyBox<string>;
+	disabled = undefined as unknown as ReadonlyBox<boolean>;
+	forceVisible = undefined as unknown as ReadonlyBox<boolean>;
 	#attrs = $derived({
 		id: this.id.value,
 		"data-accordion-root": "",
@@ -111,8 +111,8 @@ type AccordionItemStateProps = ReadonlyBoxedValues<{
 
 export class AccordionItemState {
 	#value: ReadonlyBox<string>;
-	disabled: ReadonlyBox<boolean> = undefined as unknown as ReadonlyBox<boolean>;
-	root: AccordionState = undefined as unknown as AccordionState;
+	disabled = undefined as unknown as ReadonlyBox<boolean>;
+	root = undefined as unknown as AccordionState;
 	#attrs = {
 		"data-accordion-item": "",
 	} as const;
@@ -158,10 +158,10 @@ type AccordionTriggerStateProps = ReadonlyBoxedValues<{
 }>;
 
 class AccordionTriggerState {
-	disabled: ReadonlyBox<boolean> = undefined as unknown as ReadonlyBox<boolean>;
-	id: ReadonlyBox<string> = undefined as unknown as ReadonlyBox<string>;
-	root: AccordionState = undefined as unknown as AccordionState;
-	itemState: AccordionItemState = undefined as unknown as AccordionItemState;
+	disabled = undefined as unknown as ReadonlyBox<boolean>;
+	id = undefined as unknown as ReadonlyBox<string>;
+	root = undefined as unknown as AccordionState;
+	itemState = undefined as unknown as AccordionItemState;
 	onclickProp = boxWithState<AccordionTriggerStateProps["onclick"]>(readonlyBox(() => () => {}));
 	onkeydownProp = boxWithState<AccordionTriggerStateProps["onkeydown"]>(
 		readonlyBox(() => () => {})

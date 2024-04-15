@@ -26,15 +26,11 @@ function getCheckboxDataState(checked: boolean | "indeterminate") {
 }
 
 class CheckboxRootState {
-	checked: Box<boolean | "indeterminate"> = undefined as unknown as Box<
-		boolean | "indeterminate"
-	>;
-	disabled: ReadonlyBox<boolean> = undefined as unknown as ReadonlyBox<boolean>;
-	required: ReadonlyBox<boolean> = undefined as unknown as ReadonlyBox<boolean>;
-	name: ReadonlyBox<string | undefined> = undefined as unknown as ReadonlyBox<string | undefined>;
-	value: ReadonlyBox<string | undefined> = undefined as unknown as ReadonlyBox<
-		string | undefined
-	>;
+	checked = undefined as unknown as Box<boolean | "indeterminate">;
+	disabled = undefined as unknown as ReadonlyBox<boolean>;
+	required = undefined as unknown as ReadonlyBox<boolean>;
+	name = undefined as unknown as ReadonlyBox<string | undefined>;
+	value = undefined as unknown as ReadonlyBox<string | undefined>;
 	onclickProp = boxWithState<CheckboxRootStateProps["onclick"]>(readonlyBox(() => () => {}));
 	onkeydownProp = boxWithState<CheckboxRootStateProps["onkeydown"]>(readonlyBox(() => () => {}));
 	#attrs = $derived({
