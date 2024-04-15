@@ -30,7 +30,7 @@ class AccordionBaseState {
 	id: ReadonlyBox<string> = undefined as unknown as ReadonlyBox<string>;
 	disabled: ReadonlyBox<boolean> = undefined as unknown as ReadonlyBox<boolean>;
 	forceVisible: ReadonlyBox<boolean> = undefined as unknown as ReadonlyBox<boolean>;
-	attrs = $derived({
+	#attrs = $derived({
 		id: this.id.value,
 		"data-accordion-root": "",
 	} as const);
@@ -42,7 +42,7 @@ class AccordionBaseState {
 	}
 
 	get props() {
-		return this.attrs;
+		return this.#attrs;
 	}
 }
 
@@ -113,7 +113,7 @@ export class AccordionItemState {
 	#value: ReadonlyBox<string>;
 	disabled: ReadonlyBox<boolean> = undefined as unknown as ReadonlyBox<boolean>;
 	root: AccordionState = undefined as unknown as AccordionState;
-	attrs = {
+	#attrs = {
 		"data-accordion-item": "",
 	} as const;
 	isDisabled = $derived(this.disabled.value || this.root.disabled.value);
@@ -134,7 +134,7 @@ export class AccordionItemState {
 	}
 
 	get props() {
-		return this.attrs;
+		return this.#attrs;
 	}
 
 	createTrigger(props: AccordionTriggerStateProps) {
@@ -171,7 +171,7 @@ class AccordionTriggerState {
 	isDisabled = $derived(
 		this.disabled.value || this.itemState.disabled.value || this.root.disabled.value
 	);
-	attrs = $derived({
+	#attrs = $derived({
 		id: this.id.value,
 		disabled: this.isDisabled,
 		"aria-expanded": getAriaExpanded(this.itemState.isSelected),
@@ -232,7 +232,7 @@ class AccordionTriggerState {
 
 	get props() {
 		return {
-			...this.attrs,
+			...this.#attrs,
 			onclick: this.onclick,
 			onkeydown: this.onkeydown,
 		};
@@ -245,7 +245,7 @@ class AccordionTriggerState {
 
 class AccordionContentState {
 	item = undefined as unknown as AccordionItemState;
-	attrs = $derived({
+	#attrs = $derived({
 		"data-state": openClosedAttrs(this.item.isSelected),
 		"data-disabled": dataDisabledAttrs(this.item.isDisabled),
 		"data-value": this.item.value,
@@ -257,7 +257,7 @@ class AccordionContentState {
 	}
 
 	get props() {
-		return this.attrs;
+		return this.#attrs;
 	}
 }
 
