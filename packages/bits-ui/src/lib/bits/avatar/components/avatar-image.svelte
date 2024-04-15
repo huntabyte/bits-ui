@@ -1,11 +1,11 @@
 <script lang="ts">
 	import type { ImageProps } from "../index.js";
 	import { getAvatarImageState } from "../avatar.svelte.js";
-	import { box } from "$lib/internal/box.svelte.js";
+	import { readonlyBox } from "$lib/internal/box.svelte.js";
 
 	let { src: srcProp, asChild, child, el = $bindable(), ...restProps }: ImageProps = $props();
 
-	const src = box(() => srcProp);
+	const src = readonlyBox(() => srcProp);
 
 	const imageState = getAvatarImageState(src);
 

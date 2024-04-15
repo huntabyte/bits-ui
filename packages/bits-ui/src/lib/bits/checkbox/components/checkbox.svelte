@@ -2,18 +2,18 @@
 	import type { RootProps } from "../index.js";
 	import { setCheckboxRootState } from "../checkbox.svelte.js";
 	import CheckboxInput from "./checkbox-input.svelte";
-	import { box } from "$lib/internal/box.svelte.js";
+	import { box, readonlyBox } from "$lib/internal/box.svelte.js";
 
 	let {
 		checked: checkedProp = $bindable(false),
 		onCheckedChange,
 		disabled: disabledProp = false,
 		required: requiredProp = false,
-		name: nameProp = undefined,
-		value: valueProp = undefined,
+		name: nameProp,
+		value: valueProp,
 		el = $bindable(),
-		onclick: onclickProp,
-		onkeydown: onkeydownProp,
+		onclick: onclickProp = () => {},
+		onkeydown: onkeydownProp = () => {},
 		asChild,
 		child,
 		indicator,
@@ -27,12 +27,12 @@
 			onCheckedChange?.(v);
 		}
 	);
-	const disabled = box(() => disabledProp);
-	const required = box(() => requiredProp);
-	const name = box(() => nameProp);
-	const value = box(() => valueProp);
-	const onclick = box(() => onclickProp);
-	const onkeydown = box(() => onkeydownProp);
+	const disabled = readonlyBox(() => disabledProp);
+	const required = readonlyBox(() => requiredProp);
+	const name = readonlyBox(() => nameProp);
+	const value = readonlyBox(() => valueProp);
+	const onclick = readonlyBox(() => onclickProp);
+	const onkeydown = readonlyBox(() => onkeydownProp);
 
 	const checkboxState = setCheckboxRootState({
 		checked,

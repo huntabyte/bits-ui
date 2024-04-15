@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { TriggerProps } from "../index.js";
 	import { getCollapsibleTriggerState } from "../collapsible.svelte.js";
-	import { box } from "$lib/internal/box.svelte.js";
+	import { readonlyBox } from "$lib/internal/box.svelte.js";
 
 	let {
 		asChild,
@@ -12,7 +12,7 @@
 		...restProps
 	}: TriggerProps = $props();
 
-	const onclick = box(() => onclickProp);
+	const onclick = readonlyBox(() => onclickProp);
 
 	const triggerState = getCollapsibleTriggerState({ onclick });
 

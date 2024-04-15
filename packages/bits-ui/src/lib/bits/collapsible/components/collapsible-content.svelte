@@ -3,7 +3,7 @@
 	import type { CollapsibleContentProps } from "../types.js";
 	import Presence from "$lib/bits/utilities/presence.svelte";
 	import { generateId } from "$lib/internal/id.js";
-	import { box } from "$lib/internal/box.svelte.js";
+	import { box, readonlyBox } from "$lib/internal/box.svelte.js";
 
 	let {
 		child,
@@ -15,7 +15,7 @@
 		...restProps
 	}: CollapsibleContentProps & { forceMount?: boolean } = $props();
 
-	const id = box(() => idProp);
+	const id = readonlyBox(() => idProp);
 	const el = box(
 		() => elProp,
 		(v) => (elProp = v)
@@ -39,3 +39,9 @@
 		{/if}
 	{/snippet}
 </Presence>
+
+<style>
+	[hidden="false"] {
+		display: block !important;
+	}
+</style>

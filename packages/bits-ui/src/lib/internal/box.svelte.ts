@@ -1,9 +1,7 @@
 import { untrack } from "svelte";
-import { isFunction } from "./is.js";
 
 export type Setter<T> = (value: T) => void;
 export type Getter<T> = () => T;
-export type ValueOrGetter<T> = T | Getter<T>;
 
 type WatcherCallback<T> = (
 	curr: T,
@@ -22,21 +20,33 @@ type WatchOptions = {
 	once?: boolean;
 };
 
-export class Box<T> {
-	#set = (() => {}) as Setter<T>;
-	#get: ValueOrGetter<T> = $state() as Getter<T>;
+export class ReadonlyBox<T> {
+	#get: Getter<T> = $state() as Getter<T>;
 
-	constructor(get: ValueOrGetter<T>, set?: Setter<T>) {
-		this.#set = set ?? this.#set;
+	constructor(get: Getter<T>) {
 		this.#get = get;
 	}
 
 	get value() {
-		return isFunction(this.#get) ? this.#get() : this.#get;
+		return this.#get();
+	}
+}
+
+export class Box<T> {
+	#set = $state() as Setter<T>;
+	#get = $state() as Getter<T>;
+
+	constructor(get: Getter<T>, set: Setter<T>) {
+		this.#set = set;
+		this.#get = get;
+	}
+
+	get value() {
+		return this.#get();
 	}
 
 	set value(value: T) {
-		isFunction(this.#get) ? this.#set(value) : (this.#get = value);
+		this.#set(value);
 	}
 }
 
@@ -71,10 +81,31 @@ export function watch<T>(box: Box<T>, callback: WatcherCallback<T>, options: Wat
 	return watchEffect;
 }
 
-export function box<T>(get: ValueOrGetter<T>, set: Setter<T> = () => {}) {
+export function box<T>(get: Getter<T>, set: Setter<T>) {
 	return new Box(get, set);
+}
+
+export function readonlyBox<T>(get: Getter<T>) {
+	return new ReadonlyBox(get);
+}
+
+export function boxedState<T>(initialValue: T) {
+	let state = $state(initialValue);
+	return box(
+		() => state,
+		(value) => (state = value)
+	);
+}
+
+export function readonlyBoxedState<T>(initialValue: T) {
+	let state = $state(initialValue);
+	return readonlyBox(() => state);
 }
 
 export type BoxedValues<T> = {
 	[K in keyof T]: Box<T[K]>;
+};
+
+export type ReadonlyBoxedValues<T> = {
+	[K in keyof T]: ReadonlyBox<T[K]>;
 };

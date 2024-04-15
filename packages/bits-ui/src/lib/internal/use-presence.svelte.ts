@@ -1,10 +1,10 @@
 import { onDestroy, tick } from "svelte";
-import { type Box, box, watch } from "./box.svelte.js";
+import { type Box, box, boxedState, watch } from "./box.svelte.js";
 import { useStateMachine } from "$lib/internal/index.js";
 
 export function usePresence(present: Box<boolean>, node: Box<HTMLElement | undefined>) {
-	const styles = box({}) as unknown as Box<CSSStyleDeclaration>;
-	const prevAnimationNameState = box("none");
+	const styles = boxedState({}) as unknown as Box<CSSStyleDeclaration>;
+	const prevAnimationNameState = boxedState("none");
 	const initialState = present.value ? "mounted" : "unmounted";
 
 	const { state, dispatch } = useStateMachine(initialState, {

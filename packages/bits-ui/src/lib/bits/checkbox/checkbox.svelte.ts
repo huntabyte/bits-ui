@@ -4,19 +4,28 @@
 
 import { getContext, setContext } from "svelte";
 import { getAriaChecked, getAriaRequired, getDataDisabled } from "$lib/internal/attrs.js";
-import { type Box, type BoxedValues, box } from "$lib/internal/box.svelte.js";
+import {
+	type Box,
+	type BoxedValues,
+	type ReadonlyBox,
+	type ReadonlyBoxedValues,
+	boxedState,
+	readonlyBox,
+} from "$lib/internal/box.svelte.js";
 import { type EventCallback, composeHandlers } from "$lib/internal/events.js";
 import { kbd } from "$lib/internal/kbd.js";
 
-type CheckboxRootStateProps = BoxedValues<{
-	checked: boolean | "indeterminate";
+type CheckboxRootStateProps = ReadonlyBoxedValues<{
 	disabled: boolean;
 	required: boolean;
 	name: string | undefined;
 	value: string | undefined;
-	onclick?: EventCallback<MouseEvent>;
-	onkeydown?: EventCallback<KeyboardEvent>;
-}>;
+	onclick: EventCallback<MouseEvent>;
+	onkeydown: EventCallback<KeyboardEvent>;
+}> &
+	BoxedValues<{
+		checked: boolean | "indeterminate";
+	}>;
 
 function getCheckboxDataState(checked: boolean | "indeterminate") {
 	if (checked === "indeterminate") {
@@ -26,13 +35,13 @@ function getCheckboxDataState(checked: boolean | "indeterminate") {
 }
 
 class CheckboxRootState {
-	checked = box<boolean | "indeterminate">(() => false);
-	disabled = box(() => false);
-	required = box(() => false);
-	name = box<string | undefined>(() => undefined);
-	value = box<string | undefined>(() => undefined);
-	onclickProp = box(() => {}) as unknown as Box<EventCallback<MouseEvent> | undefined>;
-	onkeydownProp = box(() => {}) as unknown as Box<EventCallback<KeyboardEvent> | undefined>;
+	checked = undefined as unknown as Box<boolean | "indeterminate">;
+	disabled = undefined as unknown as ReadonlyBox<boolean>;
+	required = undefined as unknown as ReadonlyBox<boolean>;
+	name: ReadonlyBox<string | undefined>;
+	value: ReadonlyBox<string | undefined>;
+	onclickProp = boxedState<CheckboxRootStateProps["onclick"]>(readonlyBox(() => () => {}));
+	onkeydownProp = boxedState<CheckboxRootStateProps["onkeydown"]>(readonlyBox(() => () => {}));
 	#attrs = $derived({
 		"data-disabled": getDataDisabled(this.disabled.value),
 		"data-state": getCheckboxDataState(this.checked.value),
@@ -50,15 +59,15 @@ class CheckboxRootState {
 		this.required = props.required;
 		this.name = props.name;
 		this.value = props.value;
-		this.onclickProp = props.onclick ?? this.onclickProp;
-		this.onkeydownProp = props.onkeydown ?? this.onkeydownProp;
+		this.onclickProp.value = props.onclick;
+		this.onkeydownProp.value = props.onkeydown;
 	}
 
-	onkeydown = composeHandlers(this.onkeydownProp.value, (e) => {
+	onkeydown = composeHandlers(this.onkeydownProp, (e) => {
 		if (e.key === kbd.ENTER) e.preventDefault();
 	});
 
-	onclick = composeHandlers(this.onclickProp.value, () => {
+	onclick = composeHandlers(this.onclickProp, () => {
 		if (this.disabled.value) return;
 		if (this.checked.value === "indeterminate") {
 			this.checked.value = true;
@@ -135,7 +144,7 @@ class CheckboxInputState {
  * CONTEXT METHODS
  */
 
-export const CHECKBOX_ROOT_KEY = Symbol("Checkbox.Root");
+export const CHECKBOX_ROOT_KEY = "Checkbox.Root";
 
 export function setCheckboxRootState(props: CheckboxRootStateProps) {
 	return setContext(CHECKBOX_ROOT_KEY, new CheckboxRootState(props));

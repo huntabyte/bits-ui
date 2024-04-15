@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from "svelte";
-	import { Box, box } from "$lib/internal/box.svelte.js";
+	import { Box, box, readonlyBox } from "$lib/internal/box.svelte.js";
 	import { usePresence } from "$lib/internal/use-presence.svelte.js";
 
 	type Props = {
@@ -30,7 +30,7 @@
 		() => presentProp,
 		(v) => (presentProp = v)
 	);
-	const forceMount = box(() => forceMountProp);
+	const forceMount = readonlyBox(() => forceMountProp);
 
 	const node = box(
 		() => el,

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { RootProps } from "../index.js";
 	import { setCollapsibleRootState } from "../collapsible.svelte.js";
-	import { box } from "$lib/internal/box.svelte.js";
+	import { box, readonlyBox } from "$lib/internal/box.svelte.js";
 
 	let {
 		asChild,
@@ -22,7 +22,7 @@
 		}
 	);
 
-	const disabled = box(() => disabledProp);
+	const disabled = readonlyBox(() => disabledProp);
 
 	const rootState = setCollapsibleRootState({
 		open,

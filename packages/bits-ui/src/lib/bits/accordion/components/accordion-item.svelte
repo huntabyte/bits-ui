@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { AccordionItemProps } from "../types.js";
 	import { setAccordionItemState } from "../accordion.svelte.js";
-	import { box } from "$lib/internal/box.svelte.js";
+	import { readonlyBox } from "$lib/internal/box.svelte.js";
 	let {
 		asChild,
 		disabled: disabledProp = false,
@@ -12,8 +12,8 @@
 		...restProps
 	}: AccordionItemProps = $props();
 
-	const disabled = box(() => disabledProp);
-	const value = box(() => valueProp);
+	const disabled = readonlyBox(() => disabledProp);
+	const value = readonlyBox(() => valueProp);
 
 	const item = setAccordionItemState({ value, disabled });
 
