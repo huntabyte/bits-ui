@@ -1,4 +1,4 @@
-import { getContext, onMount, setContext, untrack } from "svelte";
+import { getContext, onMount, setContext, tick, untrack } from "svelte";
 import {
 	type Box,
 	type BoxedValues,
@@ -253,17 +253,21 @@ class AccordionTriggerState {
 
 type AccordionContentStateProps = BoxedValues<{
 	presentEl: HTMLElement | undefined;
-}>;
+}> &
+	ReadonlyBoxedValues<{
+		forceMount: boolean;
+	}>;
 
 class AccordionContentState {
 	item = undefined as unknown as AccordionItemState;
-	currentStyle = boxedState<{ transitionDuration: string; animationName: string } | undefined>(
+	originalStyles = boxedState<{ transitionDuration: string; animationName: string } | undefined>(
 		undefined
 	);
 	isMountAnimationPrevented = $state(false);
 	width = boxedState(0);
 	height = boxedState(0);
 	presentEl: Box<HTMLElement | undefined> = boxedState<HTMLElement | undefined>(undefined);
+	forceMount = undefined as unknown as ReadonlyBox<boolean>;
 	present = $derived(this.item.isSelected);
 	#attrs: Record<string, unknown> = $derived({
 		"data-state": getDataOpenClosed(this.item.isSelected),
@@ -279,41 +283,48 @@ class AccordionContentState {
 
 	constructor(props: AccordionContentStateProps, item: AccordionItemState) {
 		this.item = item;
+		this.forceMount = props.forceMount;
 		this.isMountAnimationPrevented = this.item.isSelected;
 		this.presentEl = props.presentEl;
 
-		$effect.root(() => {
-			requestAnimationFrame(() => {
+		$effect.pre(() => {
+			const rAF = requestAnimationFrame(() => {
 				this.isMountAnimationPrevented = false;
 			});
+
+			return () => {
+				cancelAnimationFrame(rAF);
+			};
 		});
 
-		$effect.pre(() => {
+		$effect(() => {
 			// eslint-disable-next-line no-unused-expressions
 			this.item.isSelected;
-			const node = this.presentEl.value;
+			const node = untrack(() => this.presentEl.value);
 			if (!node) return;
 
-			this.currentStyle.value = this.currentStyle.value || {
-				transitionDuration: node.style.transitionDuration,
-				animationName: node.style.animationName,
-			};
+			tick().then(() => {
+				// get the dimensions of the element
+				this.originalStyles.value = this.originalStyles.value || {
+					transitionDuration: node.style.transitionDuration,
+					animationName: node.style.animationName,
+				};
 
-			// block any animations/transitions so the element renders at full dimensions
-			node.style.transitionDuration = "0s";
-			node.style.animationName = "none";
+				// block any animations/transitions so the element renders at full dimensions
+				node.style.transitionDuration = "0s";
+				node.style.animationName = "none";
 
-			// get the dimensions of the element
-			const rect = node.getBoundingClientRect();
-			this.height.value = rect.height;
-			this.width.value = rect.width;
+				const rect = node.getBoundingClientRect();
+				this.height.value = rect.height;
+				this.width.value = rect.width;
 
-			// unblock any animations/transitions that were originally set if not the initial render
-			if (!untrack(() => this.isMountAnimationPrevented)) {
-				const { animationName, transitionDuration } = this.currentStyle.value;
-				node.style.transitionDuration = transitionDuration;
-				node.style.animationName = animationName;
-			}
+				// unblock any animations/transitions that were originally set if not the initial render
+				if (!untrack(() => this.isMountAnimationPrevented)) {
+					const { animationName, transitionDuration } = this.originalStyles.value;
+					node.style.transitionDuration = transitionDuration;
+					node.style.animationName = animationName;
+				}
+			});
 		});
 	}
 

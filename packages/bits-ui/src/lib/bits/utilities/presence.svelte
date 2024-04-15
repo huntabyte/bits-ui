@@ -26,10 +26,6 @@
 		el = $bindable(),
 	}: Props = $props();
 
-	const present = box(
-		() => presentProp,
-		(v) => (presentProp = v)
-	);
 	const forceMount = readonlyBox(() => forceMountProp);
 
 	const node = box(
@@ -37,6 +33,7 @@
 		(v) => (el = v)
 	);
 
+	const present = readonlyBox(() => presentProp);
 	const isPresent = usePresence(present, node);
 </script>
 

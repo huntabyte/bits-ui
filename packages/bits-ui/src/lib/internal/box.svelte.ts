@@ -50,7 +50,11 @@ export class Box<T> {
 	}
 }
 
-export function watch<T>(box: Box<T>, callback: WatcherCallback<T>, options: WatchOptions = {}) {
+export function watch<T>(
+	box: ReadonlyBox<T> | Box<T>,
+	callback: WatcherCallback<T>,
+	options: WatchOptions = {}
+) {
 	let prev = $state(box.value);
 	let ranOnce = false;
 

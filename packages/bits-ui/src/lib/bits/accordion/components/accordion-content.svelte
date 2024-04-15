@@ -2,14 +2,14 @@
 	import { getAccordionContentState } from "../accordion.svelte.js";
 	import type { AccordionContentProps } from "../types.js";
 	import Presence from "$lib/bits/utilities/presence.svelte";
-	import { box } from "$lib/internal/box.svelte.js";
+	import { box, readonlyBox } from "$lib/internal/box.svelte.js";
 	import { styleToString } from "$lib/internal/style.js";
 
 	let {
 		child,
 		asChild,
 		el: elProp = $bindable(),
-		forceMount = false,
+		forceMount: forceMountProp = false,
 		children,
 		style: styleProp = {},
 		...restProps
@@ -20,10 +20,11 @@
 		(v) => (elProp = v)
 	);
 
-	const content = getAccordionContentState({ presentEl: el });
+	const forceMount = readonlyBox(() => forceMountProp);
+	const content = getAccordionContentState({ presentEl: el, forceMount });
 </script>
 
-<Presence forceMount={true} present={forceMount || content.item.isSelected} bind:el={el.value}>
+<Presence forceMount={true} present={content.present} bind:el={el.value}>
 	{#snippet presence({ node, present })}
 		{@const mergedProps = {
 			...restProps,
