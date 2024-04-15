@@ -315,7 +315,9 @@ class AccordionContentState {
 			});
 		});
 
-		$effect(() => {
+		$effect.pre(() => {
+			// eslint-disable-next-line no-unused-expressions
+			this.item.isSelected;
 			const node = this.presentEl.value;
 			if (!node) return;
 
@@ -337,8 +339,6 @@ class AccordionContentState {
 			if (!this.isMountAnimationPrevented.value) {
 				const transitionDuration = this.currentStyle.value.transitionDuration;
 				const animationName = this.currentStyle.value.animationName;
-				console.log("transitionDuration", transitionDuration);
-				console.log("animationName", animationName);
 				if (transitionDuration) {
 					node.style.transitionDuration = transitionDuration;
 				}

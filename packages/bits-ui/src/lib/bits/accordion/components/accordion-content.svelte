@@ -32,10 +32,12 @@
 		{#if asChild}
 			{@render child?.({ props: { ...mergedProps, hidden: !present.value } })}
 		{:else}
+			<!-- HIDDEN DOESN'T WANT TO UPDATE!!! -->
+			<!-- eslint-disable-next-line -->
 			<div
+				hidden={!present.value}
 				{...mergedProps}
 				style={styleToString({
-					display: present.value ? undefined : "none",
 					"--bits-accordion-content-height": `${content.height.value}px`,
 					"--bits-accordion-content-width": `${content.width.value}px`,
 				})}
