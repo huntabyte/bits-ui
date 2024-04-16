@@ -253,7 +253,7 @@ type AccordionContentStateProps = BoxedValues<{
 
 class AccordionContentState {
 	item = undefined as unknown as AccordionItemState;
-	originalStyles = boxedState<{ transitionDuration: string; animationName: string } | undefined>(
+	originalStyles = $state<{ transitionDuration: string; animationName: string } | undefined>(
 		undefined
 	);
 	isMountAnimationPrevented = $state(false);
@@ -298,7 +298,7 @@ class AccordionContentState {
 
 			tick().then(() => {
 				// get the dimensions of the element
-				this.originalStyles.value = this.originalStyles.value || {
+				this.originalStyles = this.originalStyles || {
 					transitionDuration: node.style.transitionDuration,
 					animationName: node.style.animationName,
 				};
@@ -313,7 +313,7 @@ class AccordionContentState {
 
 				// unblock any animations/transitions that were originally set if not the initial render
 				if (!untrack(() => this.isMountAnimationPrevented)) {
-					const { animationName, transitionDuration } = this.originalStyles.value;
+					const { animationName, transitionDuration } = this.originalStyles;
 					node.style.transitionDuration = transitionDuration;
 					node.style.animationName = animationName;
 				}
