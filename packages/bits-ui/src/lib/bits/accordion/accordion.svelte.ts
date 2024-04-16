@@ -249,18 +249,21 @@ type AccordionContentStateProps = BoxedValues<{
 }> &
 	ReadonlyBoxedValues<{
 		forceMount: boolean;
+		id: string;
 	}>;
 
 class AccordionContentState {
 	item = undefined as unknown as AccordionItemState;
+	id = undefined as unknown as ReadonlyBox<string>;
+	node = boxedState<HTMLElement | null>(null);
 	originalStyles: { transitionDuration: string; animationName: string } | undefined = undefined;
 	isMountAnimationPrevented = false;
 	width = boxedState(0);
 	height = boxedState(0);
-	presentEl = boxedState<HTMLElement | undefined>(undefined);
 	forceMount = undefined as unknown as ReadonlyBox<boolean>;
-	present = $derived(this.item.isSelected);
+
 	#attrs = $derived({
+		id: this.id.value,
 		"data-state": getDataOpenClosed(this.item.isSelected),
 		"data-disabled": getDataDisabled(this.item.isDisabled),
 		"data-value": this.item.value,
@@ -276,7 +279,13 @@ class AccordionContentState {
 		this.item = item;
 		this.forceMount = props.forceMount;
 		this.isMountAnimationPrevented = this.item.isSelected;
-		this.presentEl = props.presentEl;
+		this.id = props.id;
+
+		$effect.root(() => {
+			tick().then(() => {
+				this.node.value = document.getElementById(this.id.value);
+			});
+		});
 
 		$effect.pre(() => {
 			const rAF = requestAnimationFrame(() => {
@@ -291,10 +300,11 @@ class AccordionContentState {
 		$effect(() => {
 			// eslint-disable-next-line no-unused-expressions
 			this.item.isSelected;
-			const node = untrack(() => this.presentEl.value);
+			const node = this.node.value;
 			if (!node) return;
 
 			tick().then(() => {
+				if (!this.node) return;
 				// get the dimensions of the element
 				this.originalStyles = this.originalStyles || {
 					transitionDuration: node.style.transitionDuration,

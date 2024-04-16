@@ -4,28 +4,30 @@
 	import Presence from "$lib/bits/utilities/presence.svelte";
 	import { box, readonlyBox } from "$lib/internal/box.svelte.js";
 	import { styleToString } from "$lib/internal/style.js";
+	import { generateId } from "$lib/internal/id.js";
 
 	let {
 		child,
 		asChild,
 		el: elProp = $bindable(),
+		id: idProp = generateId(),
 		forceMount: forceMountProp = false,
 		children,
 		style: styleProp = {},
 		...restProps
-	}: AccordionContentProps & { forceMount?: boolean } = $props();
+	}: AccordionContentProps = $props();
 
 	const el = box(
 		() => elProp,
 		(v) => (elProp = v)
 	);
-
+	const id = readonlyBox(() => idProp);
 	const forceMount = readonlyBox(() => forceMountProp);
-	const content = getAccordionContentState({ presentEl: el, forceMount });
+	const content = getAccordionContentState({ presentEl: el, forceMount, id });
 </script>
 
-<Presence forceMount={true} present={content.present} bind:el={el.value}>
-	{#snippet presence({ node, present })}
+<Presence forceMount={true} present={content.item.isSelected} node={content.node}>
+	{#snippet presence({ present })}
 		{@const mergedProps = {
 			...restProps,
 			...content.props,
@@ -37,7 +39,7 @@
 		{#if asChild}
 			{@render child?.({ props: mergedProps })}
 		{:else}
-			<div {...mergedProps} bind:this={node.value} hidden={present.value ? undefined : true}>
+			<div {...mergedProps} bind:this={el.value} hidden={present.value ? undefined : true}>
 				{@render children?.()}
 			</div>
 		{/if}

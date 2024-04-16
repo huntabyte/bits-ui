@@ -2,10 +2,17 @@ import { onDestroy, tick } from "svelte";
 import { type Box, type ReadonlyBox, box, boxedState, watch } from "./box.svelte.js";
 import { useStateMachine } from "$lib/internal/index.js";
 
-export function usePresence(present: ReadonlyBox<boolean>, node: Box<HTMLElement | undefined>) {
+export function usePresence(present: ReadonlyBox<boolean>, node: Box<HTMLElement | null>) {
 	const styles = boxedState({}) as unknown as Box<CSSStyleDeclaration>;
 	const prevAnimationNameState = boxedState("none");
 	const initialState = present.value ? "mounted" : "unmounted";
+
+	$effect.pre(() => {
+		// tick().then(() => {
+		// 	const el = document.getElementById(id.value);
+		// 	console.log(el);
+		// });
+	});
 
 	const { state, dispatch } = useStateMachine(initialState, {
 		mounted: {
@@ -24,6 +31,7 @@ export function usePresence(present: ReadonlyBox<boolean>, node: Box<HTMLElement
 	watch(
 		present,
 		async (currPresent, prevPresent) => {
+			if (!node.value) return;
 			const hasPresentChanged = currPresent !== prevPresent;
 			if (!hasPresentChanged) return;
 
@@ -61,6 +69,7 @@ export function usePresence(present: ReadonlyBox<boolean>, node: Box<HTMLElement
 	 */
 
 	function handleAnimationEnd(event: AnimationEvent) {
+		if (!node.value) return;
 		const currAnimationName = getAnimationName(node.value);
 		const isCurrentAnimation =
 			currAnimationName.includes(event.animationName) || currAnimationName === "none";
@@ -71,11 +80,13 @@ export function usePresence(present: ReadonlyBox<boolean>, node: Box<HTMLElement
 	}
 
 	function handleAnimationStart(event: AnimationEvent) {
+		if (!node.value) return;
 		if (event.target === node.value) {
 			prevAnimationNameState.value = getAnimationName(node.value);
 		}
 	}
 	const stateWatcher = watch(state, () => {
+		if (!node.value) return;
 		const currAnimationName = getAnimationName(node.value);
 		prevAnimationNameState.value = state.value === "mounted" ? currAnimationName : "none";
 	});
