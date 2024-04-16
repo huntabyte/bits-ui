@@ -32,31 +32,29 @@ class AvatarRootState {
 		style: styleToString(this.styleProp.value),
 	} as const);
 
-	#imageTimerId: NodeJS.Timeout | undefined = undefined;
-
 	constructor(props: AvatarRootStateProps) {
 		this.delayMs = props.delayMs;
 		this.loadingStatus = props.loadingStatus;
 
 		$effect.pre(() => {
 			if (!this.src.value) return;
-			this.#loadImage(this.src.value);
+			return this.#loadImage(this.src.value);
 		});
 	}
 
 	#loadImage(src: string) {
-		// clear any existing timers before creating a new one
-		clearTimeout(this.#imageTimerId);
+		let imageTimerId: NodeJS.Timeout;
 		const image = new Image();
 		image.src = src;
 		image.onload = () => {
-			this.#imageTimerId = setTimeout(() => {
+			imageTimerId = setTimeout(() => {
 				this.loadingStatus.value = "loaded";
 			}, this.delayMs.value);
 		};
 		image.onerror = () => {
 			this.loadingStatus.value = "error";
 		};
+		return () => clearTimeout(imageTimerId);
 	}
 
 	createImage(props: AvatarImageStateProps) {
