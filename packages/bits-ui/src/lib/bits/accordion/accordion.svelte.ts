@@ -330,8 +330,8 @@ class AccordionContentState {
  * CONTEXT METHODS
  */
 
-export const ACCORDION_ROOT_KEY = "Accordion.Root";
-export const ACCORDION_ITEM_KEY = "Accordion.Item";
+export const ACCORDION_ROOT_KEY = Symbol("Accordion.Root");
+export const ACCORDION_ITEM_KEY = Symbol("Accordion.Item");
 
 type AccordionState = AccordionSingleState | AccordionMultiState;
 

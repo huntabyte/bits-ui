@@ -170,7 +170,7 @@ class CollapsibleTriggerState {
 	}
 }
 
-export const COLLAPSIBLE_ROOT_KEY = "Collapsible.Root";
+export const COLLAPSIBLE_ROOT_KEY = Symbol("Collapsible.Root");
 
 export function setCollapsibleRootState(props: CollapsibleRootStateProps) {
 	return setContext(COLLAPSIBLE_ROOT_KEY, new CollapsibleRootState(props));
