@@ -13,6 +13,7 @@ import type {
 	RangeCalendarPropsWithoutHTML,
 } from "bits-ui";
 import { builderAndAttrsSlotProps, domElProps } from "./helpers.js";
+import { dateValueProp } from "$lib/content/api-reference/extended-types/index.js";
 import {
 	attrsSlotProp,
 	enums,
@@ -42,7 +43,7 @@ export const root: APISchema<RangeCalendarPropsWithoutHTML> = {
 			description: "A function that is called when the selected date range changes.",
 		},
 		placeholder: {
-			type: "DateValue",
+			type: dateValueProp,
 			description:
 				"The placeholder date, which is used to determine what month to display when no date range is selected. This updates as the user navigates the calendar, and can be used to programatically control the calendar's view.",
 		},
@@ -104,11 +105,11 @@ export const root: APISchema<RangeCalendarPropsWithoutHTML> = {
 			description: "A function that returns whether or not a date is unavailable.",
 		},
 		maxValue: {
-			type: "DateValue",
+			type: dateValueProp,
 			description: "The maximum date that can be selected.",
 		},
 		minValue: {
-			type: "DateValue",
+			type: dateValueProp,
 			description: "The minimum date that can be selected.",
 		},
 		locale: {
@@ -192,7 +193,7 @@ export const cell: APISchema<RangeCalendarCellPropsWithoutHTML> = {
 	description: "A cell in the calendar grid.",
 	props: {
 		date: {
-			type: "DateValue",
+			type: dateValueProp,
 			description: "The date for the cell.",
 		},
 		...domElProps("HTMLTableCellElement"),
@@ -217,11 +218,11 @@ export const day: APISchema<RangeCalendarDayPropsWithoutHTML> = {
 	description: "A day in the calendar grid.",
 	props: {
 		date: {
-			type: "DateValue",
+			type: dateValueProp,
 			description: "The date for the cell.",
 		},
 		month: {
-			type: "DateValue",
+			type: dateValueProp,
 			description: "The current month the date is being displayed in.",
 		},
 		...domElProps("HTMLDivElement"),
