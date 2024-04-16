@@ -1,4 +1,4 @@
-import { getContext, onMount, setContext } from "svelte";
+import { getContext, onMount, setContext, tick } from "svelte";
 import { getAriaExpanded, getDataDisabled, getDataOpenClosed } from "$lib/internal/attrs.js";
 import {
 	type Box,
@@ -53,30 +53,29 @@ class CollapsibleRootState {
 	}
 }
 
-type CollapsibleContentStateProps = BoxedValues<{
-	presentEl: HTMLElement | undefined;
-}> &
-	ReadonlyBoxedValues<{
-		id: string;
-		style: StyleProperties;
-	}>;
+type CollapsibleContentStateProps = ReadonlyBoxedValues<{
+	id: string;
+	style: StyleProperties;
+	forceMount: boolean;
+}>;
 
 class CollapsibleContentState {
 	root = undefined as unknown as CollapsibleRootState;
-	currentStyle = $state<{ transitionDuration: string; animationName: string }>();
-	styleProp = undefined as unknown as ReadonlyBox<StyleProperties>;
+	#originalStyles: { transitionDuration: string; animationName: string } | undefined = undefined;
+	#styleProp = undefined as unknown as ReadonlyBox<StyleProperties>;
+	node = boxedState<HTMLElement | null>(null);
 	#isMountAnimationPrevented = $state(false);
 	#width = $state(0);
 	#height = $state(0);
-	#presentEl: Box<HTMLElement | undefined>;
-	present = $derived(this.root.open);
+	#forceMount = undefined as unknown as ReadonlyBox<boolean>;
+	present = $derived(this.#forceMount.value || this.root.open.value);
 	#attrs = $derived({
 		id: this.root.contentId.value,
 		"data-state": getDataOpenClosed(this.root.open.value),
 		"data-disabled": getDataDisabled(this.root.disabled.value),
 		"data-collapsible-content": "",
 		style: styleToString({
-			...this.styleProp.value,
+			...this.#styleProp.value,
 			"--bits-collapsible-content-height": this.#height ? `${this.#height}px` : undefined,
 			"--bits-collapsible-content-width": this.#width ? `${this.#width}px` : undefined,
 		}),
@@ -85,42 +84,55 @@ class CollapsibleContentState {
 	constructor(props: CollapsibleContentStateProps, root: CollapsibleRootState) {
 		this.root = root;
 		this.#isMountAnimationPrevented = root.open.value;
-		this.#presentEl = props.presentEl;
+		this.#forceMount = props.forceMount;
 		this.root.contentId = props.id;
-		this.styleProp = props.style;
+		this.#styleProp = props.style;
 
-		onMount(() => {
-			requestAnimationFrame(() => {
-				this.#isMountAnimationPrevented = false;
+		$effect.root(() => {
+			tick().then(() => {
+				this.node.value = document.getElementById(this.root.contentId.value);
 			});
 		});
 
 		$effect.pre(() => {
+			const rAF = requestAnimationFrame(() => {
+				this.#isMountAnimationPrevented = false;
+			});
+
+			return () => {
+				cancelAnimationFrame(rAF);
+			};
+		});
+
+		$effect(() => {
 			// eslint-disable-next-line no-unused-expressions
-			this.root.open.value;
-			const node = this.#presentEl.value;
+			this.present;
+			const node = this.node.value;
 			if (!node) return;
 
-			this.currentStyle = this.currentStyle || {
-				transitionDuration: node.style.transitionDuration,
-				animationName: node.style.animationName,
-			};
+			tick().then(() => {
+				if (!this.node) return;
+				// get the dimensions of the element
+				this.#originalStyles = this.#originalStyles || {
+					transitionDuration: node.style.transitionDuration,
+					animationName: node.style.animationName,
+				};
 
-			// block any animations/transitions so the element renders at full dimensions
-			node.style.transitionDuration = "0s";
-			node.style.animationName = "none";
+				// block any animations/transitions so the element renders at full dimensions
+				node.style.transitionDuration = "0s";
+				node.style.animationName = "none";
 
-			// get the dimensions of the element
-			const rect = node.getBoundingClientRect();
-			this.#height = rect.height;
-			this.#width = rect.width;
+				const rect = node.getBoundingClientRect();
+				this.#height = rect.height;
+				this.#width = rect.width;
 
-			// unblock any animations/transitions that were originally set if not the initial render
-			if (!this.#isMountAnimationPrevented) {
-				const { animationName, transitionDuration } = this.currentStyle;
-				node.style.transitionDuration = transitionDuration;
-				node.style.animationName = animationName;
-			}
+				// unblock any animations/transitions that were originally set if not the initial render
+				if (!this.#isMountAnimationPrevented) {
+					const { animationName, transitionDuration } = this.#originalStyles;
+					node.style.transitionDuration = transitionDuration;
+					node.style.animationName = animationName;
+				}
+			});
 		});
 	}
 
@@ -136,7 +148,6 @@ type CollapsibleTriggerStateProps = ReadonlyBoxedValues<{
 class CollapsibleTriggerState {
 	#root = undefined as unknown as CollapsibleRootState;
 	#onclickProp = boxedState<CollapsibleTriggerStateProps["onclick"]>(readonlyBox(() => () => {}));
-
 	#attrs = $derived({
 		type: "button",
 		"aria-controls": this.#root.contentId.value,
