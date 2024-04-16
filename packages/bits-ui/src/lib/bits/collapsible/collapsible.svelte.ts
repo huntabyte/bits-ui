@@ -63,14 +63,12 @@ type CollapsibleContentStateProps = BoxedValues<{
 
 class CollapsibleContentState {
 	root = undefined as unknown as CollapsibleRootState;
-	currentStyle = boxedState<{ transitionDuration: string; animationName: string } | undefined>(
-		undefined
-	);
+	currentStyle = $state<{ transitionDuration: string; animationName: string }>();
 	styleProp = undefined as unknown as ReadonlyBox<StyleProperties>;
-	isMountAnimationPrevented = $state(false);
-	width = boxedState(0);
-	height = boxedState(0);
-	presentEl: Box<HTMLElement | undefined> = boxedState<HTMLElement | undefined>(undefined);
+	#isMountAnimationPrevented = $state(false);
+	#width = $state(0);
+	#height = $state(0);
+	#presentEl: Box<HTMLElement | undefined>;
 	present = $derived(this.root.open);
 	#attrs = $derived({
 		id: this.root.contentId.value,
@@ -79,35 +77,31 @@ class CollapsibleContentState {
 		"data-collapsible-content": "",
 		style: styleToString({
 			...this.styleProp.value,
-			"--bits-collapsible-content-height": this.height.value
-				? `${this.height.value}px`
-				: undefined,
-			"--bits-collapsible-content-width": this.width.value
-				? `${this.width.value}px`
-				: undefined,
+			"--bits-collapsible-content-height": this.#height ? `${this.#height}px` : undefined,
+			"--bits-collapsible-content-width": this.#width ? `${this.#width}px` : undefined,
 		}),
 	} as const);
 
 	constructor(props: CollapsibleContentStateProps, root: CollapsibleRootState) {
 		this.root = root;
-		this.isMountAnimationPrevented = root.open.value;
-		this.presentEl = props.presentEl;
+		this.#isMountAnimationPrevented = root.open.value;
+		this.#presentEl = props.presentEl;
 		this.root.contentId = props.id;
 		this.styleProp = props.style;
 
 		onMount(() => {
 			requestAnimationFrame(() => {
-				this.isMountAnimationPrevented = false;
+				this.#isMountAnimationPrevented = false;
 			});
 		});
 
 		$effect.pre(() => {
 			// eslint-disable-next-line no-unused-expressions
 			this.root.open.value;
-			const node = this.presentEl.value;
+			const node = this.#presentEl.value;
 			if (!node) return;
 
-			this.currentStyle.value = this.currentStyle.value || {
+			this.currentStyle = this.currentStyle || {
 				transitionDuration: node.style.transitionDuration,
 				animationName: node.style.animationName,
 			};
@@ -118,12 +112,12 @@ class CollapsibleContentState {
 
 			// get the dimensions of the element
 			const rect = node.getBoundingClientRect();
-			this.height.value = rect.height;
-			this.width.value = rect.width;
+			this.#height = rect.height;
+			this.#width = rect.width;
 
 			// unblock any animations/transitions that were originally set if not the initial render
-			if (!this.isMountAnimationPrevented) {
-				const { animationName, transitionDuration } = this.currentStyle.value;
+			if (!this.#isMountAnimationPrevented) {
+				const { animationName, transitionDuration } = this.currentStyle;
 				node.style.transitionDuration = transitionDuration;
 				node.style.animationName = animationName;
 			}
@@ -140,44 +134,44 @@ type CollapsibleTriggerStateProps = ReadonlyBoxedValues<{
 }>;
 
 class CollapsibleTriggerState {
-	root = undefined as unknown as CollapsibleRootState;
-	onclickProp = boxedState<CollapsibleTriggerStateProps["onclick"]>(readonlyBox(() => () => {}));
+	#root = undefined as unknown as CollapsibleRootState;
+	#onclickProp = boxedState<CollapsibleTriggerStateProps["onclick"]>(readonlyBox(() => () => {}));
 
 	#attrs = $derived({
 		type: "button",
-		"aria-controls": this.root.contentId.value,
-		"aria-expanded": getAriaExpanded(this.root.open.value),
-		"data-state": getDataOpenClosed(this.root.open.value),
-		"data-disabled": getDataDisabled(this.root.disabled.value),
-		disabled: this.root.disabled.value,
+		"aria-controls": this.#root.contentId.value,
+		"aria-expanded": getAriaExpanded(this.#root.open.value),
+		"data-state": getDataOpenClosed(this.#root.open.value),
+		"data-disabled": getDataDisabled(this.#root.disabled.value),
+		disabled: this.#root.disabled.value,
 		"data-collapsible-trigger": "",
 	} as const);
 
 	constructor(props: CollapsibleTriggerStateProps, root: CollapsibleRootState) {
-		this.root = root;
-		this.onclickProp.value = props.onclick;
+		this.#root = root;
+		this.#onclickProp.value = props.onclick;
 	}
 
-	onclick = composeHandlers(this.onclickProp, () => {
-		this.root.toggleOpen();
+	#onclick = composeHandlers(this.#onclickProp, () => {
+		this.#root.toggleOpen();
 	});
 
 	get props() {
 		return {
 			...this.#attrs,
-			onclick: this.onclick,
+			onclick: this.#onclick,
 		};
 	}
 }
 
-export const COLLAPSIBLE_ROOT_KEY = "Collapsible.Root";
+export const COLLAPSIBLE_ROOT_KEY = Symbol("Collapsible.Root");
 
 export function setCollapsibleRootState(props: CollapsibleRootStateProps) {
 	return setContext(COLLAPSIBLE_ROOT_KEY, new CollapsibleRootState(props));
 }
 
-export function getCollapsibleRootState(): CollapsibleRootState {
-	return getContext(COLLAPSIBLE_ROOT_KEY);
+export function getCollapsibleRootState() {
+	return getContext<CollapsibleRootState>(COLLAPSIBLE_ROOT_KEY);
 }
 
 export function getCollapsibleTriggerState(
