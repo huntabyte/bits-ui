@@ -46,6 +46,7 @@ class AvatarRootState {
 		let imageTimerId: NodeJS.Timeout;
 		const image = new Image();
 		image.src = src;
+		this.loadingStatus.value = "loading";
 		image.onload = () => {
 			imageTimerId = setTimeout(() => {
 				this.loadingStatus.value = "loaded";
