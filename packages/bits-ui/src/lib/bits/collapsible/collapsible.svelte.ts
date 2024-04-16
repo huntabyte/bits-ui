@@ -70,7 +70,7 @@ class CollapsibleContentState {
 	#isMountAnimationPrevented = $state(false);
 	#width = boxedState(0);
 	#height = boxedState(0);
-	#presentEl: Box<HTMLElement | undefined> = boxedState<HTMLElement | undefined>(undefined);
+	#presentEl = boxedState<HTMLElement | undefined>(undefined);
 	present = $derived(this.root.open);
 	#attrs = $derived({
 		id: this.root.contentId.value,
