@@ -158,60 +158,60 @@ type AccordionTriggerStateProps = ReadonlyBoxedValues<{
 }>;
 
 class AccordionTriggerState {
-	disabled = undefined as unknown as ReadonlyBox<boolean>;
-	id = undefined as unknown as ReadonlyBox<string>;
-	root = undefined as unknown as AccordionState;
-	itemState = undefined as unknown as AccordionItemState;
-	onclickProp = boxedState<AccordionTriggerStateProps["onclick"]>(readonlyBox(() => () => {}));
-	onkeydownProp = boxedState<AccordionTriggerStateProps["onkeydown"]>(
+	#disabled = undefined as unknown as ReadonlyBox<boolean>;
+	#id = undefined as unknown as ReadonlyBox<string>;
+	#root = undefined as unknown as AccordionState;
+	#itemState = undefined as unknown as AccordionItemState;
+	#onclickProp = boxedState<AccordionTriggerStateProps["onclick"]>(readonlyBox(() => () => {}));
+	#onkeydownProp = boxedState<AccordionTriggerStateProps["onkeydown"]>(
 		readonlyBox(() => () => {})
 	);
 
 	// Disabled if the trigger itself, the item it belongs to, or the root is disabled
-	isDisabled = $derived(
-		this.disabled.value || this.itemState.disabled.value || this.root.disabled.value
+	#isDisabled = $derived(
+		this.#disabled.value || this.#itemState.disabled.value || this.#root.disabled.value
 	);
 	#attrs = $derived({
-		id: this.id.value,
-		disabled: this.isDisabled,
-		"aria-expanded": getAriaExpanded(this.itemState.isSelected),
-		"aria-disabled": getAriaDisabled(this.isDisabled),
-		"data-disabled": getDataDisabled(this.isDisabled),
-		"data-value": this.itemState.value,
-		"data-state": getDataOpenClosed(this.itemState.isSelected),
+		id: this.#id.value,
+		disabled: this.#isDisabled,
+		"aria-expanded": getAriaExpanded(this.#itemState.isSelected),
+		"aria-disabled": getAriaDisabled(this.#isDisabled),
+		"data-disabled": getDataDisabled(this.#isDisabled),
+		"data-value": this.#itemState.value,
+		"data-state": getDataOpenClosed(this.#itemState.isSelected),
 		"data-accordion-trigger": "",
 	} as const);
 
 	constructor(props: AccordionTriggerStateProps, itemState: AccordionItemState) {
-		this.disabled = props.disabled;
-		this.itemState = itemState;
-		this.root = itemState.root;
-		this.onclickProp.value = props.onclick;
-		this.onkeydownProp.value = props.onkeydown;
-		this.id = props.id;
+		this.#disabled = props.disabled;
+		this.#itemState = itemState;
+		this.#root = itemState.root;
+		this.#onclickProp.value = props.onclick;
+		this.#onkeydownProp.value = props.onkeydown;
+		this.#id = props.id;
 	}
 
-	onclick = composeHandlers(this.onclickProp, () => {
-		if (this.isDisabled) return;
-		this.itemState.updateValue();
+	#onclick = composeHandlers(this.#onclickProp, () => {
+		if (this.#isDisabled) return;
+		this.#itemState.updateValue();
 	});
 
-	onkeydown = composeHandlers(this.onkeydownProp, (e: KeyboardEvent) => {
+	#onkeydown = composeHandlers(this.#onkeydownProp, (e: KeyboardEvent) => {
 		const handledKeys = [kbd.ARROW_DOWN, kbd.ARROW_UP, kbd.HOME, kbd.END, kbd.SPACE, kbd.ENTER];
-		if (this.isDisabled || !handledKeys.includes(e.key)) return;
+		if (this.#isDisabled || !handledKeys.includes(e.key)) return;
 
 		e.preventDefault();
 
 		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
-			this.itemState.updateValue();
+			this.#itemState.updateValue();
 			return;
 		}
 
-		if (!this.root.id.value || !this.id.value) return;
+		if (!this.#root.id.value || !this.#id.value) return;
 
-		const rootEl = document.getElementById(this.root.id.value);
+		const rootEl = document.getElementById(this.#root.id.value);
 		if (!rootEl) return;
-		const itemEl = document.getElementById(this.id.value);
+		const itemEl = document.getElementById(this.#id.value);
 		if (!itemEl) return;
 
 		const items = Array.from(rootEl.querySelectorAll<HTMLElement>("[data-accordion-trigger]"));
@@ -235,8 +235,8 @@ class AccordionTriggerState {
 	get props() {
 		return {
 			...this.#attrs,
-			onclick: this.onclick,
-			onkeydown: this.onkeydown,
+			onclick: this.#onclick,
+			onkeydown: this.#onkeydown,
 		};
 	}
 }
