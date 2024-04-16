@@ -176,8 +176,8 @@ export function setCollapsibleRootState(props: CollapsibleRootStateProps) {
 	return setContext(COLLAPSIBLE_ROOT_KEY, new CollapsibleRootState(props));
 }
 
-export function getCollapsibleRootState(): CollapsibleRootState {
-	return getContext(COLLAPSIBLE_ROOT_KEY);
+export function getCollapsibleRootState() {
+	return getContext<CollapsibleRootState>(COLLAPSIBLE_ROOT_KEY);
 }
 
 export function getCollapsibleTriggerState(
