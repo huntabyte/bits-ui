@@ -1,4 +1,4 @@
-import { getContext, onMount, setContext, tick, untrack } from "svelte";
+import { getContext, setContext, tick, untrack } from "svelte";
 import {
 	type Box,
 	type BoxedValues,
@@ -13,7 +13,6 @@ import {
 	getDataOpenClosed,
 	kbd,
 	readonlyBox,
-	styleToString,
 	verifyContextDeps,
 } from "$lib/internal/index.js";
 import type { StyleProperties } from "$lib/shared/index.js";
