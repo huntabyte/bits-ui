@@ -50,14 +50,9 @@ class AvatarRootState {
 		const image = new Image();
 		image.src = src;
 		image.onload = () => {
-			// if its 0 then we don't need to add a delay
-			if (this.delayMs.value !== 0) {
-				this.#imageTimerId = setTimeout(() => {
-					this.loadingStatus.value = "loaded";
-				}, this.delayMs.value);
-			} else {
+			this.#imageTimerId = setTimeout(() => {
 				this.loadingStatus.value = "loaded";
-			}
+			}, this.delayMs.value);
 		};
 		image.onerror = () => {
 			this.loadingStatus.value = "error";
