@@ -343,19 +343,12 @@ type InitAccordionProps = {
 };
 
 export function setAccordionRootState(props: InitAccordionProps) {
-	if (props.type === "single") {
-		const { value, type, ...rest } = props;
-		return setContext(
-			ACCORDION_ROOT_KEY,
-			new AccordionSingleState({ ...rest, value: value as Box<string> })
-		);
-	} else {
-		const { value, type, ...rest } = props;
-		return setContext(
-			ACCORDION_ROOT_KEY,
-			new AccordionMultiState({ ...rest, value: value as Box<string[]> })
-		);
-	}
+	const { type, ...rest } = props;
+	const rootState =
+		type === "single"
+			? new AccordionSingleState(rest as AccordionSingleStateProps)
+			: new AccordionMultiState(rest as AccordionMultiStateProps);
+	return setContext(ACCORDION_ROOT_KEY, rootState);
 }
 
 export function getAccordionRootState() {
