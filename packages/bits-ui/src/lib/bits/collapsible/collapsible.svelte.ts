@@ -63,14 +63,12 @@ type CollapsibleContentStateProps = BoxedValues<{
 
 class CollapsibleContentState {
 	root = undefined as unknown as CollapsibleRootState;
-	currentStyle = boxedState<{ transitionDuration: string; animationName: string } | undefined>(
-		undefined
-	);
+	currentStyle = $state<{ transitionDuration: string; animationName: string }>();
 	styleProp = undefined as unknown as ReadonlyBox<StyleProperties>;
 	#isMountAnimationPrevented = $state(false);
-	#width = boxedState(0);
-	#height = boxedState(0);
-	#presentEl = boxedState<HTMLElement | undefined>(undefined);
+	#width = $state(0);
+	#height = $state(0);
+	#presentEl: Box<HTMLElement | undefined>;
 	present = $derived(this.root.open);
 	#attrs = $derived({
 		id: this.root.contentId.value,
@@ -79,12 +77,8 @@ class CollapsibleContentState {
 		"data-collapsible-content": "",
 		style: styleToString({
 			...this.styleProp.value,
-			"--bits-collapsible-content-height": this.#height.value
-				? `${this.#height.value}px`
-				: undefined,
-			"--bits-collapsible-content-width": this.#width.value
-				? `${this.#width.value}px`
-				: undefined,
+			"--bits-collapsible-content-height": this.#height ? `${this.#height}px` : undefined,
+			"--bits-collapsible-content-width": this.#width ? `${this.#width}px` : undefined,
 		}),
 	} as const);
 
@@ -107,7 +101,7 @@ class CollapsibleContentState {
 			const node = this.#presentEl.value;
 			if (!node) return;
 
-			this.currentStyle.value = this.currentStyle.value || {
+			this.currentStyle = this.currentStyle || {
 				transitionDuration: node.style.transitionDuration,
 				animationName: node.style.animationName,
 			};
@@ -118,12 +112,12 @@ class CollapsibleContentState {
 
 			// get the dimensions of the element
 			const rect = node.getBoundingClientRect();
-			this.#height.value = rect.height;
-			this.#width.value = rect.width;
+			this.#height = rect.height;
+			this.#width = rect.width;
 
 			// unblock any animations/transitions that were originally set if not the initial render
 			if (!this.#isMountAnimationPrevented) {
-				const { animationName, transitionDuration } = this.currentStyle.value;
+				const { animationName, transitionDuration } = this.currentStyle;
 				node.style.transitionDuration = transitionDuration;
 				node.style.animationName = animationName;
 			}
