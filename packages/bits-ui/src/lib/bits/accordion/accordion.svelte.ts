@@ -25,15 +25,10 @@ type AccordionBaseStateProps = ReadonlyBoxedValues<{
 	disabled: boolean;
 }>;
 
-interface AccordionRootAttrs {
-	id: string;
-	"data-accordion-root": string;
-}
-
 class AccordionBaseState {
 	id = undefined as unknown as ReadonlyBox<string>;
 	disabled: ReadonlyBox<boolean>;
-	#attrs: AccordionRootAttrs = $derived({
+	#attrs = $derived({
 		id: this.id.value,
 		"data-accordion-root": "",
 	} as const);
@@ -176,7 +171,7 @@ class AccordionTriggerState {
 	isDisabled = $derived(
 		this.disabled.value || this.itemState.disabled.value || this.root.disabled.value
 	);
-	#attrs: Record<string, unknown> = $derived({
+	#attrs = $derived({
 		id: this.id.value,
 		disabled: this.isDisabled,
 		"aria-expanded": getAriaExpanded(this.itemState.isSelected),
@@ -268,7 +263,7 @@ class AccordionContentState {
 	presentEl: Box<HTMLElement | undefined> = boxedState<HTMLElement | undefined>(undefined);
 	forceMount = undefined as unknown as ReadonlyBox<boolean>;
 	present = $derived(this.item.isSelected);
-	#attrs: Record<string, unknown> = $derived({
+	#attrs = $derived({
 		"data-state": getDataOpenClosed(this.item.isSelected),
 		"data-disabled": getDataDisabled(this.item.isDisabled),
 		"data-value": this.item.value,
