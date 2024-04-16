@@ -144,7 +144,7 @@ class CheckboxInputState {
  * CONTEXT METHODS
  */
 
-export const CHECKBOX_ROOT_KEY = "Checkbox.Root";
+export const CHECKBOX_ROOT_KEY = Symbol("Checkbox.Root");
 
 export function setCheckboxRootState(props: CheckboxRootStateProps) {
 	return setContext(CHECKBOX_ROOT_KEY, new CheckboxRootState(props));
