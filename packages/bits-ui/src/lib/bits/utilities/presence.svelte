@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from "svelte";
-	import { Box, box, readonlyBox } from "$lib/internal/box.svelte.js";
+	import { Box, readonlyBox } from "$lib/internal/box.svelte.js";
 	import { usePresence } from "$lib/internal/use-presence.svelte.js";
 
 	type Props = {
@@ -14,29 +14,24 @@
 		 */
 		forceMount?: boolean;
 
-		presence?: Snippet<[{ present: { value: boolean }; node: Box<HTMLElement | undefined> }]>;
+		presence?: Snippet<[{ present: { value: boolean } }]>;
 
-		el?: HTMLElement;
+		node: Box<HTMLElement | null>;
 	};
 
 	let {
 		present: presentProp,
 		forceMount: forceMountProp = false,
 		presence,
-		el = $bindable(),
+		node,
 	}: Props = $props();
 
 	const forceMount = readonlyBox(() => forceMountProp);
-
-	const node = box(
-		() => el,
-		(v) => (el = v)
-	);
 
 	const present = readonlyBox(() => presentProp);
 	const isPresent = usePresence(present, node);
 </script>
 
 {#if forceMount.value || present.value || isPresent.value}
-	{@render presence?.({ present: isPresent, node })}
+	{@render presence?.({ present: isPresent })}
 {/if}

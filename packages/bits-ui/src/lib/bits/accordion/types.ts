@@ -63,13 +63,15 @@ export type AccordionContentPropsWithoutHTML<
 	inTransitionConfig?: TransitionParams<In>;
 	outTransition?: Out;
 	outTransitionConfig?: TransitionParams<Out>;
+	forceMount?: boolean;
+	id?: string;
 }>;
 
 export type AccordionContentProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,
 	Out extends Transition = Transition,
-> = AccordionContentPropsWithoutHTML<T, In, Out> & PrimitiveDivAttributes;
+> = AccordionContentPropsWithoutHTML<T, In, Out> & Omit<PrimitiveDivAttributes, "id">;
 
 export type AccordionHeaderPropsWithoutHTML = WithAsChild<{
 	asChild?: boolean;

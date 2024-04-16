@@ -3,13 +3,13 @@
 	import type { CollapsibleContentProps } from "../types.js";
 	import Presence from "$lib/bits/utilities/presence.svelte";
 	import { generateId } from "$lib/internal/id.js";
-	import { box, readonlyBox } from "$lib/internal/box.svelte.js";
+	import { readonlyBox } from "$lib/internal/box.svelte.js";
 
 	let {
 		child,
 		asChild,
-		el: elProp = $bindable(),
-		forceMount = false,
+		el = $bindable(),
+		forceMount: forceMountProp = false,
 		children,
 		id: idProp = generateId(),
 		style: styleProp = {},
@@ -17,33 +17,27 @@
 	}: CollapsibleContentProps & { forceMount?: boolean } = $props();
 
 	const id = readonlyBox(() => idProp);
-	const el = box(
-		() => elProp,
-		(v) => (elProp = v)
-	);
-	const style = readonlyBox(() => styleProp);
-	const content = getCollapsibleContentState({ id, presentEl: el, style });
+	const forceMount = readonlyBox(() => forceMountProp);
 
-	const mergedProps = $derived({
-		...restProps,
-		...content.props,
-	});
+	const style = readonlyBox(() => styleProp);
+	const content = getCollapsibleContentState({ id, style, forceMount });
 </script>
 
-<Presence present={forceMount || content.root.open.value} bind:el={el.value}>
-	{#snippet presence({ node, present })}
+<Presence forceMount={true} present={content.present} node={content.node}>
+	{#snippet presence({ present })}
+		{@const mergedProps = {
+			...restProps,
+			...content.props,
+			hidden: present.value ? undefined : true,
+		}}
 		{#if asChild}
-			{@render child?.({ props: { ...mergedProps, hidden: !present.value } })}
+			{@render child?.({
+				props: mergedProps,
+			})}
 		{:else}
-			<div {...mergedProps} hidden={!present.value} bind:this={node.value}>
+			<div {...mergedProps} bind:this={el}>
 				{@render children?.()}
 			</div>
 		{/if}
 	{/snippet}
 </Presence>
-
-<style>
-	[hidden="false"] {
-		display: block !important;
-	}
-</style>

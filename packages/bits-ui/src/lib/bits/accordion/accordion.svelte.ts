@@ -13,6 +13,7 @@ import {
 	getDataOpenClosed,
 	kbd,
 	readonlyBox,
+	styleToString,
 	verifyContextDeps,
 } from "$lib/internal/index.js";
 import type { StyleProperties } from "$lib/shared/index.js";
@@ -244,43 +245,52 @@ class AccordionTriggerState {
  * CONTENT
  */
 
-type AccordionContentStateProps = BoxedValues<{
-	presentEl: HTMLElement | undefined;
-}> &
-	ReadonlyBoxedValues<{
-		forceMount: boolean;
-	}>;
+type AccordionContentStateProps = ReadonlyBoxedValues<{
+	forceMount: boolean;
+	id: string;
+	style: StyleProperties;
+}>;
 
 class AccordionContentState {
 	item = undefined as unknown as AccordionItemState;
-	originalStyles: { transitionDuration: string; animationName: string } | undefined = undefined;
-	isMountAnimationPrevented = false;
-	width = boxedState(0);
-	height = boxedState(0);
-	presentEl = boxedState<HTMLElement | undefined>(undefined);
-	forceMount = undefined as unknown as ReadonlyBox<boolean>;
-	present = $derived(this.item.isSelected);
+	node = boxedState<HTMLElement | null>(null);
+	#id = undefined as unknown as ReadonlyBox<string>;
+	#originalStyles: { transitionDuration: string; animationName: string } | undefined = undefined;
+	#isMountAnimationPrevented = false;
+	#width = boxedState(0);
+	#height = boxedState(0);
+	#forceMount = undefined as unknown as ReadonlyBox<boolean>;
+	present = $derived(this.#forceMount.value || this.item.isSelected);
+	#styleProp = undefined as unknown as ReadonlyBox<StyleProperties>;
 	#attrs = $derived({
+		id: this.#id.value,
 		"data-state": getDataOpenClosed(this.item.isSelected),
 		"data-disabled": getDataDisabled(this.item.isDisabled),
 		"data-value": this.item.value,
 		"data-accordion-content": "",
+		style: styleToString({
+			...this.#styleProp.value,
+			"--bits-accordion-content-height": `${this.#height.value}px`,
+			"--bits-accordion-content-width": `${this.#width.value}px`,
+		}),
 	} as const);
-
-	style: StyleProperties = $derived({
-		"--bits-accordion-content-height": `${this.height.value}px`,
-		"--bits-accordion-content-width": `${this.width.value}px`,
-	});
 
 	constructor(props: AccordionContentStateProps, item: AccordionItemState) {
 		this.item = item;
-		this.forceMount = props.forceMount;
-		this.isMountAnimationPrevented = this.item.isSelected;
-		this.presentEl = props.presentEl;
+		this.#forceMount = props.forceMount;
+		this.#isMountAnimationPrevented = this.item.isSelected;
+		this.#id = props.id;
+		this.#styleProp = props.style;
+
+		$effect.root(() => {
+			tick().then(() => {
+				this.node.value = document.getElementById(this.#id.value);
+			});
+		});
 
 		$effect.pre(() => {
 			const rAF = requestAnimationFrame(() => {
-				this.isMountAnimationPrevented = false;
+				this.#isMountAnimationPrevented = false;
 			});
 
 			return () => {
@@ -290,13 +300,14 @@ class AccordionContentState {
 
 		$effect(() => {
 			// eslint-disable-next-line no-unused-expressions
-			this.item.isSelected;
-			const node = untrack(() => this.presentEl.value);
+			this.present;
+			const node = this.node.value;
 			if (!node) return;
 
 			tick().then(() => {
+				if (!this.node) return;
 				// get the dimensions of the element
-				this.originalStyles = this.originalStyles || {
+				this.#originalStyles = this.#originalStyles || {
 					transitionDuration: node.style.transitionDuration,
 					animationName: node.style.animationName,
 				};
@@ -306,12 +317,12 @@ class AccordionContentState {
 				node.style.animationName = "none";
 
 				const rect = node.getBoundingClientRect();
-				this.height.value = rect.height;
-				this.width.value = rect.width;
+				this.#height.value = rect.height;
+				this.#width.value = rect.width;
 
 				// unblock any animations/transitions that were originally set if not the initial render
-				if (!this.isMountAnimationPrevented) {
-					const { animationName, transitionDuration } = this.originalStyles;
+				if (!this.#isMountAnimationPrevented) {
+					const { animationName, transitionDuration } = this.#originalStyles;
 					node.style.transitionDuration = transitionDuration;
 					node.style.animationName = animationName;
 				}
