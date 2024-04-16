@@ -70,9 +70,8 @@ export class AccordionSingleState extends AccordionBaseState {
 /**
  * MULTIPLE
  */
-interface AccordionMultiStateProps extends AccordionBaseStateProps {
-	value: Box<string[]>;
-}
+
+type AccordionMultiStateProps = AccordionBaseStateProps & BoxedValues<{ value: string[] }>;
 
 export class AccordionMultiState extends AccordionBaseState {
 	#value: Box<string[]>;
@@ -110,7 +109,7 @@ type AccordionItemStateProps = ReadonlyBoxedValues<{
 export class AccordionItemState {
 	#value: ReadonlyBox<string>;
 	disabled = undefined as unknown as ReadonlyBox<boolean>;
-	root: AccordionState = undefined as unknown as AccordionState;
+	root = undefined as unknown as AccordionState;
 	isSelected = $derived(this.root.includesItem(this.value));
 	isDisabled = $derived(this.disabled.value || this.root.disabled.value);
 	#attrs = $derived({
@@ -260,7 +259,7 @@ class AccordionContentState {
 	isMountAnimationPrevented = $state(false);
 	width = boxedState(0);
 	height = boxedState(0);
-	presentEl: Box<HTMLElement | undefined> = boxedState<HTMLElement | undefined>(undefined);
+	presentEl = boxedState<HTMLElement | undefined>(undefined);
 	forceMount = undefined as unknown as ReadonlyBox<boolean>;
 	present = $derived(this.item.isSelected);
 	#attrs = $derived({
@@ -359,8 +358,8 @@ export function setAccordionRootState(props: InitAccordionProps) {
 	}
 }
 
-export function getAccordionRootState(): AccordionState {
-	return getContext(ACCORDION_ROOT_KEY);
+export function getAccordionRootState() {
+	return getContext<AccordionState>(ACCORDION_ROOT_KEY);
 }
 
 export function setAccordionItemState(props: Omit<AccordionItemStateProps, "rootState">) {
@@ -371,8 +370,8 @@ export function setAccordionItemState(props: Omit<AccordionItemStateProps, "root
 	return itemState;
 }
 
-export function getAccordionItemState(): AccordionItemState {
-	return getContext(ACCORDION_ITEM_KEY);
+export function getAccordionItemState() {
+	return getContext<AccordionItemState>(ACCORDION_ITEM_KEY);
 }
 
 export function getAccordionTriggerState(props: AccordionTriggerStateProps): AccordionTriggerState {
