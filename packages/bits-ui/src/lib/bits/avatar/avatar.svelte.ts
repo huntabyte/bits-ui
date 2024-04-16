@@ -19,11 +19,6 @@ type AvatarRootStateProps = {
 	style: ReadonlyBox<StyleProperties>;
 };
 
-interface AvatarRootAttrs {
-	"data-avatar-root": string;
-	"data-status": ImageLoadingStatus;
-}
-
 type AvatarImageSrc = string | null | undefined;
 
 class AvatarRootState {
@@ -31,11 +26,11 @@ class AvatarRootState {
 	delayMs: ReadonlyBox<number>;
 	loadingStatus = undefined as unknown as Box<ImageLoadingStatus>;
 	styleProp = undefined as unknown as ReadonlyBox<StyleProperties>;
-	#attrs: AvatarRootAttrs = $derived({
+	#attrs = $derived({
 		"data-avatar-root": "",
 		"data-status": this.loadingStatus.value,
 		style: styleToString(this.styleProp.value),
-	});
+	} as const);
 
 	#imageTimerId: NodeJS.Timeout | undefined = undefined;
 
@@ -86,12 +81,6 @@ class AvatarRootState {
  * IMAGE
  */
 
-interface AvatarImageAttrs {
-	style: string;
-	src: AvatarImageSrc;
-	"data-avatar-image": string;
-}
-
 type AvatarImageStateProps = ReadonlyBoxedValues<{
 	src: AvatarImageSrc;
 	style: StyleProperties;
@@ -100,7 +89,7 @@ type AvatarImageStateProps = ReadonlyBoxedValues<{
 class AvatarImageState {
 	root = undefined as unknown as AvatarRootState;
 	styleProp = undefined as unknown as ReadonlyBox<StyleProperties>;
-	#attrs: AvatarImageAttrs = $derived({
+	#attrs = $derived({
 		style: styleToString({
 			...this.styleProp.value,
 			display: this.root.loadingStatus.value === "loaded" ? "block" : "none",
@@ -124,11 +113,6 @@ class AvatarImageState {
  * FALLBACK
  */
 
-interface AvatarFallbackAttrs {
-	style: string;
-	"data-avatar-fallback": string;
-}
-
 type AvatarFallbackStateProps = ReadonlyBoxedValues<{
 	style: StyleProperties;
 }>;
@@ -136,7 +120,7 @@ type AvatarFallbackStateProps = ReadonlyBoxedValues<{
 class AvatarFallbackState {
 	root = undefined as unknown as AvatarRootState;
 	styleProp = undefined as unknown as ReadonlyBox<StyleProperties>;
-	#attrs: AvatarFallbackAttrs = $derived({
+	#attrs = $derived({
 		style: styleToString({
 			...this.styleProp.value,
 			display: this.root.loadingStatus.value === "loaded" ? "none" : "block",
