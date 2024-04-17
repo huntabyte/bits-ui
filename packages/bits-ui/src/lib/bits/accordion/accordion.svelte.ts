@@ -179,18 +179,16 @@ class AccordionTriggerState {
 	#node = boxedState<HTMLElement | null>(null);
 	#root: AccordionState;
 	#itemState: AccordionItemState;
-	#onclickProp = boxedState<AccordionTriggerStateProps["onclick"]>(readonlyBox(() => () => {}));
-	#onkeydownProp = boxedState<AccordionTriggerStateProps["onkeydown"]>(
-		readonlyBox(() => () => {})
-	);
+	#composedClick: EventCallback<MouseEvent>;
+	#composedKeydown: EventCallback<KeyboardEvent>;
 
 	constructor(props: AccordionTriggerStateProps, itemState: AccordionItemState) {
 		this.#disabled = props.disabled;
 		this.#itemState = itemState;
 		this.#root = itemState.root;
-		this.#onclickProp.value = props.onclick;
-		this.#onkeydownProp.value = props.onkeydown;
 		this.#id = props.id;
+		this.#composedClick = composeHandlers(props.onclick, this.#onclick);
+		this.#composedKeydown = composeHandlers(props.onkeydown, this.#onkeydown);
 
 		useNodeById(this.#id, this.#node);
 	}
@@ -199,12 +197,12 @@ class AccordionTriggerState {
 		return this.#disabled.value || this.#itemState.disabled.value || this.#root.disabled.value;
 	}
 
-	#onclick = composeHandlers(this.#onclickProp, () => {
+	#onclick = () => {
 		if (this.#isDisabled) return;
 		this.#itemState.updateValue();
-	});
+	};
 
-	#onkeydown = composeHandlers(this.#onkeydownProp, (e: KeyboardEvent) => {
+	#onkeydown = (e: KeyboardEvent) => {
 		const handledKeys = [kbd.ARROW_DOWN, kbd.ARROW_UP, kbd.HOME, kbd.END, kbd.SPACE, kbd.ENTER];
 		if (this.#isDisabled || !handledKeys.includes(e.key)) return;
 
@@ -230,7 +228,7 @@ class AccordionTriggerState {
 		};
 
 		candidateItems[keyToIndex[e.key]!]?.focus();
-	});
+	};
 
 	get props() {
 		return {
@@ -243,8 +241,8 @@ class AccordionTriggerState {
 			"data-state": getDataOpenClosed(this.#itemState.isSelected),
 			"data-accordion-trigger": "",
 			//
-			onclick: this.#onclick,
-			onkeydown: this.#onkeydown,
+			onclick: this.#composedClick,
+			onkeydown: this.#composedKeydown,
 		} as const;
 	}
 }

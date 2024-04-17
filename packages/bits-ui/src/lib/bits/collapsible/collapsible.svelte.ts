@@ -147,16 +147,16 @@ type CollapsibleTriggerStateProps = ReadonlyBoxedValues<{
 
 class CollapsibleTriggerState {
 	#root: CollapsibleRootState;
-	#onclickProp = boxedState<CollapsibleTriggerStateProps["onclick"]>(readonlyBox(() => () => {}));
+	#composedClick: EventCallback<MouseEvent>;
 
 	constructor(props: CollapsibleTriggerStateProps, root: CollapsibleRootState) {
 		this.#root = root;
-		this.#onclickProp.value = props.onclick;
+		this.#composedClick = composeHandlers(props.onclick, this.#onclick);
 	}
 
-	#onclick = composeHandlers(this.#onclickProp, () => {
+	#onclick = () => {
 		this.#root.toggleOpen();
-	});
+	};
 
 	get props() {
 		return {
@@ -168,7 +168,7 @@ class CollapsibleTriggerState {
 			disabled: this.#root.disabled.value,
 			"data-collapsible-trigger": "",
 			//
-			onclick: this.#onclick,
+			onclick: this.#composedClick,
 		} as const;
 	}
 }

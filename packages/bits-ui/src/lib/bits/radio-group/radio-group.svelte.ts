@@ -101,8 +101,8 @@ class RadioGroupItemState {
 	#root: RadioGroupRootState;
 	#disabled: RadioGroupItemStateProps["disabled"];
 	#value: RadioGroupItemStateProps["value"];
-	#onclickProp = boxedState<RadioGroupItemStateProps["onclick"]>(readonlyBox(() => () => {}));
-	#onkeydownProp = boxedState<RadioGroupItemStateProps["onkeydown"]>(readonlyBox(() => () => {}));
+	#composedClick: EventCallback<MouseEvent>;
+	#composedKeydown: EventCallback<KeyboardEvent>;
 
 	constructor(props: RadioGroupItemStateProps, root: RadioGroupRootState) {
 		this.#disabled = props.disabled;
@@ -110,14 +110,17 @@ class RadioGroupItemState {
 		this.#root = root;
 		this.#id = props.id;
 
+		this.#composedClick = composeHandlers(props.onclick, this.#onclick);
+		this.#composedKeydown = composeHandlers(props.onkeydown, this.#onkeydown);
+
 		useNodeById(this.#id, this.#node);
 	}
 
-	onclick = composeHandlers(this.#onclickProp, () => {
+	#onclick = () => {
 		this.#root.selectValue(this.#value.value);
-	});
+	};
 
-	onkeydown = composeHandlers(this.#onkeydownProp, (e) => {
+	#onkeydown = (e: KeyboardEvent) => {
 		if (!this.#root.node.value || !this.#node.value) return;
 		const items = this.#root.getRadioItemNodes();
 		if (!items.length) return;
@@ -165,7 +168,7 @@ class RadioGroupItemState {
 			itemToFocus.focus();
 			this.#root.selectValue(itemToFocus.dataset.value as string);
 		}
-	});
+	};
 
 	get #isDisabled() {
 		return this.#disabled.value || this.#root.disabled.value;
@@ -187,8 +190,8 @@ class RadioGroupItemState {
 			type: "button",
 			role: "radio",
 			//
-			onclick,
-			onkeydown,
+			onclick: this.#composedClick,
+			onkeydown: this.#composedKeydown,
 		} as const;
 	}
 }
