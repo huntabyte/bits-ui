@@ -1,4 +1,4 @@
-import type { BoxedValues, ReadonlyBoxedValues } from "$lib/internal/box.svelte.js";
+import type { ReadonlyBoxedValues } from "$lib/internal/box.svelte.js";
 
 type ProgressRootStateProps = ReadonlyBoxedValues<{
 	value: number | null;

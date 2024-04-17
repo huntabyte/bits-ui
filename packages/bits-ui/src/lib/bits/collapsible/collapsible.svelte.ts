@@ -1,4 +1,4 @@
-import { getContext, onMount, setContext, tick } from "svelte";
+import { getContext, setContext } from "svelte";
 import { getAriaExpanded, getDataDisabled, getDataOpenClosed } from "$lib/internal/attrs.js";
 import {
 	type Box,
