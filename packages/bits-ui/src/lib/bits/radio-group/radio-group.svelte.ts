@@ -4,7 +4,6 @@ import {
 	type BoxedValues,
 	type ReadonlyBoxedValues,
 	boxedState,
-	readonlyBox,
 } from "$lib/internal/box.svelte.js";
 import { useNodeById } from "$lib/internal/elements.svelte.js";
 import { type EventCallback, composeHandlers } from "$lib/internal/events.js";
