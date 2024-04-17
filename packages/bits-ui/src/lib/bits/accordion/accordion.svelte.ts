@@ -263,8 +263,8 @@ class AccordionContentState {
 	#id: ReadonlyBox<string>;
 	#originalStyles: { transitionDuration: string; animationName: string } | undefined = undefined;
 	#isMountAnimationPrevented = false;
-	#width = boxedState(0);
-	#height = boxedState(0);
+	#width = $state(0);
+	#height = $state(0);
 	#forceMount: ReadonlyBox<boolean>;
 	#styleProp: ReadonlyBox<StyleProperties>;
 
@@ -306,8 +306,8 @@ class AccordionContentState {
 				node.style.animationName = "none";
 
 				const rect = node.getBoundingClientRect();
-				this.#height.value = rect.height;
-				this.#width.value = rect.width;
+				this.#height = rect.height;
+				this.#width = rect.width;
 
 				// unblock any animations/transitions that were originally set if not the initial render
 				if (!this.#isMountAnimationPrevented) {
@@ -332,8 +332,8 @@ class AccordionContentState {
 			"data-accordion-content": "",
 			style: styleToString({
 				...this.#styleProp.value,
-				"--bits-accordion-content-height": `${this.#height.value}px`,
-				"--bits-accordion-content-width": `${this.#width.value}px`,
+				"--bits-accordion-content-height": `${this.#height}px`,
+				"--bits-accordion-content-width": `${this.#width}px`,
 			}),
 		} as const;
 	}
