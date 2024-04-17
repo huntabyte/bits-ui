@@ -4,7 +4,6 @@ import {
 	type BoxedValues,
 	type ReadonlyBoxedValues,
 	boxedState,
-	readonlyBox,
 } from "$lib/internal/box.svelte.js";
 import { useNodeById } from "$lib/internal/elements.svelte.js";
 import { type EventCallback, composeHandlers } from "$lib/internal/events.js";
@@ -25,21 +24,14 @@ type RadioGroupRootStateProps = ReadonlyBoxedValues<{
 	BoxedValues<{ value: string }>;
 
 class RadioGroupRootState {
-	id = undefined as unknown as RadioGroupRootStateProps["id"];
+	id: RadioGroupRootStateProps["id"];
 	node = boxedState<HTMLElement | null>(null);
-	disabled = undefined as unknown as RadioGroupRootStateProps["disabled"];
-	required = undefined as unknown as RadioGroupRootStateProps["required"];
-	loop = undefined as unknown as RadioGroupRootStateProps["loop"];
-	orientation = undefined as unknown as RadioGroupRootStateProps["orientation"];
-	name = undefined as unknown as RadioGroupRootStateProps["name"];
-	value = undefined as unknown as RadioGroupRootStateProps["value"];
-	#attrs = $derived({
-		role: "radiogroup",
-		"aria-required": getAriaRequired(this.required.value),
-		"data-disabled": getDataDisabled(this.disabled.value),
-		"data-orientation": this.orientation.value,
-		"data-bits-radio-group": "",
-	} as const);
+	disabled: RadioGroupRootStateProps["disabled"];
+	required: RadioGroupRootStateProps["required"];
+	loop: RadioGroupRootStateProps["loop"];
+	orientation: RadioGroupRootStateProps["orientation"];
+	name: RadioGroupRootStateProps["name"];
+	value: RadioGroupRootStateProps["value"];
 
 	constructor(props: RadioGroupRootStateProps) {
 		this.id = props.id;
@@ -80,7 +72,13 @@ class RadioGroupRootState {
 	}
 
 	get props() {
-		return this.#attrs;
+		return {
+			role: "radiogroup",
+			"aria-required": getAriaRequired(this.required.value),
+			"data-disabled": getDataDisabled(this.disabled.value),
+			"data-orientation": this.orientation.value,
+			"data-bits-radio-group": "",
+		} as const;
 	}
 }
 
@@ -97,27 +95,13 @@ type RadioGroupItemStateProps = ReadonlyBoxedValues<{
 }>;
 
 class RadioGroupItemState {
-	#id = undefined as unknown as RadioGroupItemStateProps["id"];
+	#id: RadioGroupItemStateProps["id"];
 	#node = boxedState<HTMLElement | null>(null);
-	#root = undefined as unknown as RadioGroupRootState;
-	#disabled = undefined as unknown as RadioGroupItemStateProps["disabled"];
-	#value = undefined as unknown as RadioGroupItemStateProps["value"];
-	#isDisabled = $derived(this.#disabled.value || this.#root.disabled.value);
-	#isChecked = $derived(this.#root.isChecked(this.#value.value));
-	#onclickProp = boxedState<RadioGroupItemStateProps["onclick"]>(readonlyBox(() => () => {}));
-	#onkeydownProp = boxedState<RadioGroupItemStateProps["onkeydown"]>(readonlyBox(() => () => {}));
-
-	#attrs = $derived({
-		disabled: this.#isDisabled ? true : undefined,
-		"data-value": this.#value.value,
-		"data-orientation": this.#root.orientation.value,
-		"data-disabled": getDataDisabled(this.#isDisabled),
-		"data-state": this.#isChecked ? "checked" : "unchecked",
-		"aria-checked": getAriaChecked(this.#isChecked),
-		"data-bits-radio-group-item": "",
-		type: "button",
-		role: "radio",
-	} as const);
+	#root: RadioGroupRootState;
+	#disabled: RadioGroupItemStateProps["disabled"];
+	#value: RadioGroupItemStateProps["value"];
+	#composedClick: EventCallback<MouseEvent>;
+	#composedKeydown: EventCallback<KeyboardEvent>;
 
 	constructor(props: RadioGroupItemStateProps, root: RadioGroupRootState) {
 		this.#disabled = props.disabled;
@@ -125,14 +109,17 @@ class RadioGroupItemState {
 		this.#root = root;
 		this.#id = props.id;
 
+		this.#composedClick = composeHandlers(props.onclick, this.#onclick);
+		this.#composedKeydown = composeHandlers(props.onkeydown, this.#onkeydown);
+
 		useNodeById(this.#id, this.#node);
 	}
 
-	onclick = composeHandlers(this.#onclickProp, () => {
+	#onclick = () => {
 		this.#root.selectValue(this.#value.value);
-	});
+	};
 
-	onkeydown = composeHandlers(this.#onkeydownProp, (e) => {
+	#onkeydown = (e: KeyboardEvent) => {
 		if (!this.#root.node.value || !this.#node.value) return;
 		const items = this.#root.getRadioItemNodes();
 		if (!items.length) return;
@@ -142,52 +129,51 @@ class RadioGroupItemState {
 		const dir = getElemDirection(this.#root.node.value);
 		const { nextKey, prevKey } = getDirectionalKeys(dir, this.#root.orientation.value);
 
-		let itemToFocus: HTMLElement | undefined;
 		const loop = this.#root.loop.value;
 
-		const keyMap = {
-			[nextKey]: () => {
-				e.preventDefault();
-				const nextIndex = currentIndex + 1;
-				if (nextIndex >= items.length && loop) {
-					itemToFocus = items[0];
-				} else {
-					itemToFocus = items[nextIndex];
-				}
-			},
-			[prevKey]: () => {
-				e.preventDefault();
-				const prevIndex = currentIndex - 1;
-				if (prevIndex < 0 && loop) {
-					itemToFocus = items[items.length - 1];
-				} else {
-					itemToFocus = items[prevIndex];
-				}
-			},
-			[kbd.HOME]: () => {
-				e.preventDefault();
-				itemToFocus = items[0];
-			},
-			[kbd.END]: () => {
-				e.preventDefault();
-				itemToFocus = items[items.length - 1];
-			},
+		const keyToIndex = {
+			[nextKey]: currentIndex + 1,
+			[prevKey]: currentIndex - 1,
+			[kbd.HOME]: 0,
+			[kbd.END]: items.length - 1,
 		};
 
-		keyMap[e.key]?.();
+		let itemIndex = keyToIndex[e.key];
+		if (itemIndex === undefined) return;
+		e.preventDefault();
 
-		if (itemToFocus) {
-			itemToFocus.focus();
-			this.#root.selectValue(itemToFocus.dataset.value as string);
-		}
-	});
+		if (itemIndex < 0 && loop) itemIndex = items.length - 1;
+		else if (itemIndex === items.length && loop) itemIndex = 0;
+
+		const itemToFocus = items[itemIndex];
+		if (!itemToFocus) return;
+		itemToFocus.focus();
+		this.#root.selectValue(itemToFocus.dataset.value as string);
+	};
+
+	get #isDisabled() {
+		return this.#disabled.value || this.#root.disabled.value;
+	}
+
+	get #isChecked() {
+		return this.#root.isChecked(this.#value.value);
+	}
 
 	get props() {
 		return {
-			...this.#attrs,
-			onclick,
-			onkeydown,
-		};
+			disabled: this.#isDisabled ? true : undefined,
+			"data-value": this.#value.value,
+			"data-orientation": this.#root.orientation.value,
+			"data-disabled": getDataDisabled(this.#isDisabled),
+			"data-state": this.#isChecked ? "checked" : "unchecked",
+			"aria-checked": getAriaChecked(this.#isChecked),
+			"data-bits-radio-group-item": "",
+			type: "button",
+			role: "radio",
+			//
+			onclick: this.#composedClick,
+			onkeydown: this.#composedKeydown,
+		} as const;
 	}
 }
 

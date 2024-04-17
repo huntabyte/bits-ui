@@ -1,4 +1,4 @@
-import { getContext, onMount, setContext, tick } from "svelte";
+import { getContext, setContext } from "svelte";
 import { getAriaExpanded, getDataDisabled, getDataOpenClosed } from "$lib/internal/attrs.js";
 import {
 	type Box,
@@ -25,13 +25,8 @@ type CollapsibleRootStateProps = BoxedValues<{
 	}>;
 
 class CollapsibleRootState {
-	open = undefined as unknown as Box<boolean>;
-	disabled = undefined as unknown as ReadonlyBox<boolean>;
-	#attrs = $derived({
-		"data-state": getDataOpenClosed(this.open.value),
-		"data-disabled": getDataDisabled(this.disabled.value),
-		"data-collapsible-root": "",
-	} as const);
+	open: Box<boolean>;
+	disabled: ReadonlyBox<boolean>;
 	contentId = readonlyBoxedState(generateId());
 
 	constructor(props: CollapsibleRootStateProps) {
@@ -40,7 +35,11 @@ class CollapsibleRootState {
 	}
 
 	get props() {
-		return this.#attrs;
+		return {
+			"data-state": getDataOpenClosed(this.open.value),
+			"data-disabled": getDataDisabled(this.disabled.value),
+			"data-collapsible-root": "",
+		} as const;
 	}
 
 	toggleOpen() {
@@ -63,26 +62,14 @@ type CollapsibleContentStateProps = ReadonlyBoxedValues<{
 }>;
 
 class CollapsibleContentState {
-	root = undefined as unknown as CollapsibleRootState;
-	#originalStyles: { transitionDuration: string; animationName: string } | undefined = undefined;
-	#styleProp = undefined as unknown as ReadonlyBox<StyleProperties>;
+	root: CollapsibleRootState;
+	#originalStyles: { transitionDuration: string; animationName: string } | undefined;
+	#styleProp: ReadonlyBox<StyleProperties>;
 	node = boxedState<HTMLElement | null>(null);
 	#isMountAnimationPrevented = $state(false);
 	#width = $state(0);
 	#height = $state(0);
-	#forceMount = undefined as unknown as ReadonlyBox<boolean>;
-	present = $derived(this.#forceMount.value || this.root.open.value);
-	#attrs = $derived({
-		id: this.root.contentId.value,
-		"data-state": getDataOpenClosed(this.root.open.value),
-		"data-disabled": getDataDisabled(this.root.disabled.value),
-		"data-collapsible-content": "",
-		style: styleToString({
-			...this.#styleProp.value,
-			"--bits-collapsible-content-height": this.#height ? `${this.#height}px` : undefined,
-			"--bits-collapsible-content-width": this.#width ? `${this.#width}px` : undefined,
-		}),
-	} as const);
+	#forceMount: ReadonlyBox<boolean>;
 
 	constructor(props: CollapsibleContentStateProps, root: CollapsibleRootState) {
 		this.root = root;
@@ -135,8 +122,22 @@ class CollapsibleContentState {
 		});
 	}
 
+	get present() {
+		return this.#forceMount.value || this.root.open.value;
+	}
+
 	get props() {
-		return this.#attrs;
+		return {
+			id: this.root.contentId.value,
+			"data-state": getDataOpenClosed(this.root.open.value),
+			"data-disabled": getDataDisabled(this.root.disabled.value),
+			"data-collapsible-content": "",
+			style: styleToString({
+				...this.#styleProp.value,
+				"--bits-collapsible-content-height": this.#height ? `${this.#height}px` : undefined,
+				"--bits-collapsible-content-width": this.#width ? `${this.#width}px` : undefined,
+			}),
+		} as const;
 	}
 }
 
@@ -145,32 +146,30 @@ type CollapsibleTriggerStateProps = ReadonlyBoxedValues<{
 }>;
 
 class CollapsibleTriggerState {
-	#root = undefined as unknown as CollapsibleRootState;
-	#onclickProp = boxedState<CollapsibleTriggerStateProps["onclick"]>(readonlyBox(() => () => {}));
-	#attrs = $derived({
-		type: "button",
-		"aria-controls": this.#root.contentId.value,
-		"aria-expanded": getAriaExpanded(this.#root.open.value),
-		"data-state": getDataOpenClosed(this.#root.open.value),
-		"data-disabled": getDataDisabled(this.#root.disabled.value),
-		disabled: this.#root.disabled.value,
-		"data-collapsible-trigger": "",
-	} as const);
+	#root: CollapsibleRootState;
+	#composedClick: EventCallback<MouseEvent>;
 
 	constructor(props: CollapsibleTriggerStateProps, root: CollapsibleRootState) {
 		this.#root = root;
-		this.#onclickProp.value = props.onclick;
+		this.#composedClick = composeHandlers(props.onclick, this.#onclick);
 	}
 
-	#onclick = composeHandlers(this.#onclickProp, () => {
+	#onclick = () => {
 		this.#root.toggleOpen();
-	});
+	};
 
 	get props() {
 		return {
-			...this.#attrs,
-			onclick: this.#onclick,
-		};
+			type: "button",
+			"aria-controls": this.#root.contentId.value,
+			"aria-expanded": getAriaExpanded(this.#root.open.value),
+			"data-state": getDataOpenClosed(this.#root.open.value),
+			"data-disabled": getDataDisabled(this.#root.disabled.value),
+			disabled: this.#root.disabled.value,
+			"data-collapsible-trigger": "",
+			//
+			onclick: this.#composedClick,
+		} as const;
 	}
 }
 
