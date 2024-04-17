@@ -5,6 +5,7 @@ import type {
 	HTMLButtonAttributes,
 	HTMLImgAttributes,
 	HTMLInputAttributes,
+	HTMLLabelAttributes,
 } from "svelte/elements";
 import type { TransitionConfig } from "svelte/transition";
 import type { StyleProperties } from "$lib/shared/index.js";
@@ -128,6 +129,7 @@ export type PrimitiveInputAttributes = Primitive<HTMLInputAttributes>;
 export type PrimitiveSpanAttributes = Primitive<HTMLSpanAttributes>;
 export type PrimitiveImgAttributes = Primitive<HTMLImgAttributes>;
 export type PrimitiveHeadingAttributes = Primitive<HTMLHeadingAttributes>;
+export type PrimitiveLabelAttributes = Primitive<HTMLLabelAttributes>;
 
 export type AsChildProps<T, U> = {
 	child: Snippet<[U & { props: Record<string, unknown> }]>;
