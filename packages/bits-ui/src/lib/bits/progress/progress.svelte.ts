@@ -1,4 +1,4 @@
-import type { BoxedValues, ReadonlyBoxedValues } from "$lib/internal/box.svelte.js";
+import type { ReadonlyBoxedValues } from "$lib/internal/box.svelte.js";
 
 type ProgressRootStateProps = ReadonlyBoxedValues<{
 	value: number | null;
@@ -6,21 +6,8 @@ type ProgressRootStateProps = ReadonlyBoxedValues<{
 }>;
 
 class ProgressRootState {
-	#value = undefined as unknown as ProgressRootStateProps["value"];
-	#max = undefined as unknown as ProgressRootStateProps["max"];
-
-	#attrs = $derived({
-		role: "meter",
-		value: this.#value.value,
-		max: this.#max.value,
-		"aria-valuemin": 0,
-		"aria-valuemax": this.#max.value,
-		"aria-valuenow": this.#value.value,
-		"data-value": this.#value.value,
-		"data-state": getProgressDataState(this.#value.value, this.#max.value),
-		"data-max": this.#max.value,
-		"data-bits-progress-root": "",
-	} as const);
+	#value: ProgressRootStateProps["value"];
+	#max: ProgressRootStateProps["max"];
 
 	constructor(props: ProgressRootStateProps) {
 		this.#value = props.value;
@@ -28,7 +15,18 @@ class ProgressRootState {
 	}
 
 	get props() {
-		return this.#attrs;
+		return {
+			role: "meter",
+			value: this.#value.value,
+			max: this.#max.value,
+			"aria-valuemin": 0,
+			"aria-valuemax": this.#max.value,
+			"aria-valuenow": this.#value.value,
+			"data-value": this.#value.value,
+			"data-state": getProgressDataState(this.#value.value, this.#max.value),
+			"data-max": this.#max.value,
+			"data-bits-progress-root": "",
+		} as const;
 	}
 }
 
