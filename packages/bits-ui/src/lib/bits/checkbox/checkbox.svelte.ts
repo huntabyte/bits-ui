@@ -35,9 +35,9 @@ function getCheckboxDataState(checked: boolean | "indeterminate") {
 }
 
 class CheckboxRootState {
-	checked = undefined as unknown as Box<boolean | "indeterminate">;
-	disabled = undefined as unknown as ReadonlyBox<boolean>;
-	required = undefined as unknown as ReadonlyBox<boolean>;
+	checked: Box<boolean | "indeterminate">;
+	disabled: ReadonlyBox<boolean>;
+	required: ReadonlyBox<boolean>;
 	name: ReadonlyBox<string | undefined>;
 	value: ReadonlyBox<string | undefined>;
 	#onclickProp = boxedState<CheckboxRootStateProps["onclick"]>(readonlyBox(() => () => {}));
@@ -96,7 +96,7 @@ class CheckboxRootState {
  */
 
 class CheckboxIndicatorState {
-	root = undefined as unknown as CheckboxRootState;
+	root: CheckboxRootState;
 
 	constructor(root: CheckboxRootState) {
 		this.root = root;
@@ -116,11 +116,14 @@ class CheckboxIndicatorState {
  */
 
 class CheckboxInputState {
-	root = undefined as unknown as CheckboxRootState;
-	shouldRender = $derived(this.root.name.value !== undefined);
+	root: CheckboxRootState;
 
 	constructor(root: CheckboxRootState) {
 		this.root = root;
+	}
+
+	get shouldRender() {
+		return this.root.name.value !== undefined;
 	}
 
 	get props() {

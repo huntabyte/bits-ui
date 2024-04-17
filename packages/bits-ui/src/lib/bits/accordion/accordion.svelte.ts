@@ -29,7 +29,7 @@ type AccordionBaseStateProps = ReadonlyBoxedValues<{
 }>;
 
 class AccordionBaseState {
-	id = undefined as unknown as ReadonlyBox<string>;
+	id: ReadonlyBox<string>;
 	node = boxedState<HTMLElement | null>(null);
 	disabled: ReadonlyBox<boolean>;
 
@@ -120,10 +120,8 @@ type AccordionItemStateProps = ReadonlyBoxedValues<{
 
 export class AccordionItemState {
 	#value: ReadonlyBox<string>;
-	disabled = undefined as unknown as ReadonlyBox<boolean>;
-	root = undefined as unknown as AccordionState;
-	isSelected = $derived(this.root.includesItem(this.value));
-	isDisabled = $derived(this.disabled.value || this.root.disabled.value);
+	disabled: ReadonlyBox<boolean>;
+	root: AccordionState;
 
 	constructor(props: AccordionItemStateProps) {
 		this.#value = props.value;
@@ -133,6 +131,14 @@ export class AccordionItemState {
 
 	get value() {
 		return this.#value.value;
+	}
+
+	get isSelected() {
+		return this.root.includesItem(this.value);
+	}
+
+	get isDisabled() {
+		return this.disabled.value || this.root.disabled.value;
 	}
 
 	updateValue() {
@@ -168,19 +174,14 @@ type AccordionTriggerStateProps = ReadonlyBoxedValues<{
 }>;
 
 class AccordionTriggerState {
-	#disabled = undefined as unknown as ReadonlyBox<boolean>;
-	#id = undefined as unknown as ReadonlyBox<string>;
+	#disabled: ReadonlyBox<boolean>;
+	#id: ReadonlyBox<string>;
 	#node = boxedState<HTMLElement | null>(null);
-	#root = undefined as unknown as AccordionState;
-	#itemState = undefined as unknown as AccordionItemState;
+	#root: AccordionState;
+	#itemState: AccordionItemState;
 	#onclickProp = boxedState<AccordionTriggerStateProps["onclick"]>(readonlyBox(() => () => {}));
 	#onkeydownProp = boxedState<AccordionTriggerStateProps["onkeydown"]>(
 		readonlyBox(() => () => {})
-	);
-
-	// Disabled if the trigger itself, the item it belongs to, or the root is disabled
-	#isDisabled = $derived(
-		this.#disabled.value || this.#itemState.disabled.value || this.#root.disabled.value
 	);
 
 	constructor(props: AccordionTriggerStateProps, itemState: AccordionItemState) {
@@ -192,6 +193,10 @@ class AccordionTriggerState {
 		this.#id = props.id;
 
 		useNodeById(this.#id, this.#node);
+	}
+
+	get #isDisabled() {
+		return this.#disabled.value || this.#itemState.disabled.value || this.#root.disabled.value;
 	}
 
 	#onclick = composeHandlers(this.#onclickProp, () => {
@@ -255,16 +260,15 @@ type AccordionContentStateProps = ReadonlyBoxedValues<{
 }>;
 
 class AccordionContentState {
-	item = undefined as unknown as AccordionItemState;
+	item: AccordionItemState;
 	node = boxedState<HTMLElement | null>(null);
-	#id = undefined as unknown as ReadonlyBox<string>;
+	#id: ReadonlyBox<string>;
 	#originalStyles: { transitionDuration: string; animationName: string } | undefined = undefined;
 	#isMountAnimationPrevented = false;
 	#width = boxedState(0);
 	#height = boxedState(0);
-	#forceMount = undefined as unknown as ReadonlyBox<boolean>;
-	present = $derived(this.#forceMount.value || this.item.isSelected);
-	#styleProp = undefined as unknown as ReadonlyBox<StyleProperties>;
+	#forceMount: ReadonlyBox<boolean>;
+	#styleProp: ReadonlyBox<StyleProperties>;
 
 	constructor(props: AccordionContentStateProps, item: AccordionItemState) {
 		this.item = item;
@@ -315,6 +319,10 @@ class AccordionContentState {
 				}
 			});
 		});
+	}
+
+	get present() {
+		return this.#forceMount.value || this.item.isSelected;
 	}
 
 	get props() {

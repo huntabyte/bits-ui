@@ -25,14 +25,14 @@ type RadioGroupRootStateProps = ReadonlyBoxedValues<{
 	BoxedValues<{ value: string }>;
 
 class RadioGroupRootState {
-	id = undefined as unknown as RadioGroupRootStateProps["id"];
+	id: RadioGroupRootStateProps["id"];
 	node = boxedState<HTMLElement | null>(null);
-	disabled = undefined as unknown as RadioGroupRootStateProps["disabled"];
-	required = undefined as unknown as RadioGroupRootStateProps["required"];
-	loop = undefined as unknown as RadioGroupRootStateProps["loop"];
-	orientation = undefined as unknown as RadioGroupRootStateProps["orientation"];
-	name = undefined as unknown as RadioGroupRootStateProps["name"];
-	value = undefined as unknown as RadioGroupRootStateProps["value"];
+	disabled: RadioGroupRootStateProps["disabled"];
+	required: RadioGroupRootStateProps["required"];
+	loop: RadioGroupRootStateProps["loop"];
+	orientation: RadioGroupRootStateProps["orientation"];
+	name: RadioGroupRootStateProps["name"];
+	value: RadioGroupRootStateProps["value"];
 
 	constructor(props: RadioGroupRootStateProps) {
 		this.id = props.id;
@@ -96,13 +96,11 @@ type RadioGroupItemStateProps = ReadonlyBoxedValues<{
 }>;
 
 class RadioGroupItemState {
-	#id = undefined as unknown as RadioGroupItemStateProps["id"];
+	#id: RadioGroupItemStateProps["id"];
 	#node = boxedState<HTMLElement | null>(null);
-	#root = undefined as unknown as RadioGroupRootState;
-	#disabled = undefined as unknown as RadioGroupItemStateProps["disabled"];
-	#value = undefined as unknown as RadioGroupItemStateProps["value"];
-	#isDisabled = $derived(this.#disabled.value || this.#root.disabled.value);
-	#isChecked = $derived(this.#root.isChecked(this.#value.value));
+	#root: RadioGroupRootState;
+	#disabled: RadioGroupItemStateProps["disabled"];
+	#value: RadioGroupItemStateProps["value"];
 	#onclickProp = boxedState<RadioGroupItemStateProps["onclick"]>(readonlyBox(() => () => {}));
 	#onkeydownProp = boxedState<RadioGroupItemStateProps["onkeydown"]>(readonlyBox(() => () => {}));
 
@@ -168,6 +166,14 @@ class RadioGroupItemState {
 			this.#root.selectValue(itemToFocus.dataset.value as string);
 		}
 	});
+
+	get #isDisabled() {
+		return this.#disabled.value || this.#root.disabled.value;
+	}
+
+	get #isChecked() {
+		return this.#root.isChecked(this.#value.value);
+	}
 
 	get props() {
 		return {

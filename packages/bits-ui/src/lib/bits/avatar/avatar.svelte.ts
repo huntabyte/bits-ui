@@ -24,12 +24,13 @@ type AvatarImageSrc = string | null | undefined;
 class AvatarRootState {
 	src = readonlyBox<AvatarImageSrc>(() => null);
 	delayMs: ReadonlyBox<number>;
-	loadingStatus = undefined as unknown as Box<ImageLoadingStatus>;
-	styleProp = undefined as unknown as ReadonlyBox<StyleProperties>;
+	loadingStatus: Box<ImageLoadingStatus>;
+	styleProp: ReadonlyBox<StyleProperties>;
 
 	constructor(props: AvatarRootStateProps) {
 		this.delayMs = props.delayMs;
 		this.loadingStatus = props.loadingStatus;
+		this.styleProp = props.style;
 
 		$effect.pre(() => {
 			if (!this.src.value) return;
@@ -80,8 +81,8 @@ type AvatarImageStateProps = ReadonlyBoxedValues<{
 }>;
 
 class AvatarImageState {
-	root = undefined as unknown as AvatarRootState;
-	styleProp = undefined as unknown as ReadonlyBox<StyleProperties>;
+	root: AvatarRootState;
+	styleProp: ReadonlyBox<StyleProperties>;
 
 	constructor(props: AvatarImageStateProps, root: AvatarRootState) {
 		this.root = root;
@@ -110,8 +111,8 @@ type AvatarFallbackStateProps = ReadonlyBoxedValues<{
 }>;
 
 class AvatarFallbackState {
-	root = undefined as unknown as AvatarRootState;
-	styleProp = undefined as unknown as ReadonlyBox<StyleProperties>;
+	root: AvatarRootState;
+	styleProp: ReadonlyBox<StyleProperties>;
 
 	constructor(props: AvatarFallbackStateProps, root: AvatarRootState) {
 		this.styleProp = props.style;

@@ -6,8 +6,8 @@ type ProgressRootStateProps = ReadonlyBoxedValues<{
 }>;
 
 class ProgressRootState {
-	#value = undefined as unknown as ProgressRootStateProps["value"];
-	#max = undefined as unknown as ProgressRootStateProps["max"];
+	#value: ProgressRootStateProps["value"];
+	#max: ProgressRootStateProps["max"];
 
 	constructor(props: ProgressRootStateProps) {
 		this.#value = props.value;

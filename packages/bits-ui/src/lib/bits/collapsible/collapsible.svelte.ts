@@ -25,8 +25,8 @@ type CollapsibleRootStateProps = BoxedValues<{
 	}>;
 
 class CollapsibleRootState {
-	open = undefined as unknown as Box<boolean>;
-	disabled = undefined as unknown as ReadonlyBox<boolean>;
+	open: Box<boolean>;
+	disabled: ReadonlyBox<boolean>;
 	contentId = readonlyBoxedState(generateId());
 
 	constructor(props: CollapsibleRootStateProps) {
@@ -62,15 +62,14 @@ type CollapsibleContentStateProps = ReadonlyBoxedValues<{
 }>;
 
 class CollapsibleContentState {
-	root = undefined as unknown as CollapsibleRootState;
-	#originalStyles: { transitionDuration: string; animationName: string } | undefined = undefined;
-	#styleProp = undefined as unknown as ReadonlyBox<StyleProperties>;
+	root: CollapsibleRootState;
+	#originalStyles: { transitionDuration: string; animationName: string } | undefined;
+	#styleProp: ReadonlyBox<StyleProperties>;
 	node = boxedState<HTMLElement | null>(null);
 	#isMountAnimationPrevented = $state(false);
 	#width = $state(0);
 	#height = $state(0);
-	#forceMount = undefined as unknown as ReadonlyBox<boolean>;
-	present = $derived(this.#forceMount.value || this.root.open.value);
+	#forceMount: ReadonlyBox<boolean>;
 
 	constructor(props: CollapsibleContentStateProps, root: CollapsibleRootState) {
 		this.root = root;
@@ -123,6 +122,10 @@ class CollapsibleContentState {
 		});
 	}
 
+	get present() {
+		return this.#forceMount.value || this.root.open.value;
+	}
+
 	get props() {
 		return {
 			id: this.root.contentId.value,
@@ -143,7 +146,7 @@ type CollapsibleTriggerStateProps = ReadonlyBoxedValues<{
 }>;
 
 class CollapsibleTriggerState {
-	#root = undefined as unknown as CollapsibleRootState;
+	#root: CollapsibleRootState;
 	#onclickProp = boxedState<CollapsibleTriggerStateProps["onclick"]>(readonlyBox(() => () => {}));
 
 	constructor(props: CollapsibleTriggerStateProps, root: CollapsibleRootState) {
