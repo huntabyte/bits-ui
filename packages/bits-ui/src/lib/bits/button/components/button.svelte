@@ -38,6 +38,7 @@
 	<!-- svelte-ignore a11y-no-static-element-interactions -->
 	<svelte:element
 		this={href ? "a" : "button"}
+		bind:this={el}
 		type={href ? undefined : type}
 		{href}
 		on:click
