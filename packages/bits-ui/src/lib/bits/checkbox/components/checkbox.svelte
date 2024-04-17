@@ -8,6 +8,7 @@
 	let {
 		checked: checkedProp = $bindable(false),
 		onCheckedChange,
+		children,
 		disabled: disabledProp = false,
 		required: requiredProp = false,
 		name: nameProp,
@@ -58,6 +59,7 @@
 {:else}
 	<button bind:this={el} {...mergedProps}>
 		{@render indicator?.({ checked: checkboxState.checked.value })}
+		{@render children?.()}
 	</button>
 {/if}
 

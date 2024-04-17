@@ -17,6 +17,8 @@ import {
 	verifyContextDeps,
 } from "$lib/internal/index.js";
 import type { StyleProperties } from "$lib/shared/index.js";
+import { withTick } from "$lib/internal/with-tick.js";
+import { useNodeById } from "$lib/internal/elements.svelte.js";
 
 /**
  * BASE
@@ -28,6 +30,7 @@ type AccordionBaseStateProps = ReadonlyBoxedValues<{
 
 class AccordionBaseState {
 	id = undefined as unknown as ReadonlyBox<string>;
+	node = boxedState<HTMLElement | null>(null);
 	disabled: ReadonlyBox<boolean>;
 	#attrs = $derived({
 		id: this.id.value,
@@ -37,6 +40,15 @@ class AccordionBaseState {
 	constructor(props: AccordionBaseStateProps) {
 		this.id = props.id;
 		this.disabled = props.disabled;
+
+		useNodeById(this.id, this.node);
+	}
+
+	getTriggerNodes() {
+		if (!this.node.value) return [];
+		return Array.from(
+			this.node.value.querySelectorAll<HTMLElement>("[data-accordion-trigger]")
+		).filter((el) => !el.dataset.disabled);
 	}
 
 	get props() {
@@ -160,6 +172,7 @@ type AccordionTriggerStateProps = ReadonlyBoxedValues<{
 class AccordionTriggerState {
 	#disabled = undefined as unknown as ReadonlyBox<boolean>;
 	#id = undefined as unknown as ReadonlyBox<string>;
+	#node = boxedState<HTMLElement | null>(null);
 	#root = undefined as unknown as AccordionState;
 	#itemState = undefined as unknown as AccordionItemState;
 	#onclickProp = boxedState<AccordionTriggerStateProps["onclick"]>(readonlyBox(() => () => {}));
@@ -189,6 +202,8 @@ class AccordionTriggerState {
 		this.#onclickProp.value = props.onclick;
 		this.#onkeydownProp.value = props.onkeydown;
 		this.#id = props.id;
+
+		useNodeById(this.#id, this.#node);
 	}
 
 	#onclick = composeHandlers(this.#onclickProp, () => {
@@ -207,20 +222,12 @@ class AccordionTriggerState {
 			return;
 		}
 
-		if (!this.#root.id.value || !this.#id.value) return;
+		if (!this.#root.node.value || !this.#node.value) return;
 
-		const rootEl = document.getElementById(this.#root.id.value);
-		if (!rootEl) return;
-		const itemEl = document.getElementById(this.#id.value);
-		if (!itemEl) return;
-
-		const items = Array.from(rootEl.querySelectorAll<HTMLElement>("[data-accordion-trigger]"));
-		if (!items.length) return;
-
-		const candidateItems = items.filter((item) => !item.dataset.disabled);
+		const candidateItems = this.#root.getTriggerNodes();
 		if (!candidateItems.length) return;
 
-		const currentIndex = candidateItems.indexOf(itemEl);
+		const currentIndex = candidateItems.indexOf(this.#node.value);
 
 		const keyToIndex = {
 			[kbd.ARROW_DOWN]: (currentIndex + 1) % candidateItems.length,
@@ -282,11 +289,7 @@ class AccordionContentState {
 		this.#id = props.id;
 		this.#styleProp = props.style;
 
-		$effect.root(() => {
-			tick().then(() => {
-				this.node.value = document.getElementById(this.#id.value);
-			});
-		});
+		useNodeById(this.#id, this.node);
 
 		$effect.pre(() => {
 			const rAF = requestAnimationFrame(() => {
@@ -304,7 +307,7 @@ class AccordionContentState {
 			const node = this.node.value;
 			if (!node) return;
 
-			tick().then(() => {
+			withTick(() => {
 				if (!this.node) return;
 				// get the dimensions of the element
 				this.#originalStyles = this.#originalStyles || {
@@ -335,9 +338,9 @@ class AccordionContentState {
 	}
 }
 
-/**
- * CONTEXT METHODS
- */
+//
+// CONTEXT METHODS
+//
 
 export const ACCORDION_ROOT_KEY = Symbol("Accordion.Root");
 export const ACCORDION_ITEM_KEY = Symbol("Accordion.Item");

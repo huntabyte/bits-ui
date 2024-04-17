@@ -1,41 +1,43 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { setItemCtx } from "../ctx.js";
-	import type { ItemEvents, ItemProps } from "../index.js";
-	import { createDispatcher } from "$lib/internal/events.js";
+	import type { ItemProps } from "../index.js";
+	import { setRadioGroupItemState } from "../radio-group.svelte.js";
+	import { generateId } from "$lib/internal/id.js";
+	import { readonlyBox } from "$lib/internal/box.svelte.js";
+	import { styleToString } from "$lib/internal/style.js";
 
-	type $$Props = ItemProps;
-	type $$Events = ItemEvents;
+	let {
+		id: idProp = generateId(),
+		asChild,
+		children,
+		child,
+		value: valueProp,
+		disabled: disabledProp = false,
+		onclick: onclickProp = () => {},
+		onkeydown: onkeydownProp = () => {},
+		el = $bindable(),
+		style = {},
+		...restProps
+	}: ItemProps = $props();
 
-	export let value: $$Props["value"];
-	export let disabled: $$Props["disabled"] = false;
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
+	const value = readonlyBox(() => valueProp);
+	const disabled = readonlyBox(() => disabledProp);
+	const id = readonlyBox(() => idProp);
+	const onclick = readonlyBox(() => onclickProp);
+	const onkeydown = readonlyBox(() => onkeydownProp);
 
-	const {
-		elements: { item },
-		getAttrs,
-	} = setItemCtx(value);
+	const item = setRadioGroupItemState({ value, disabled, id, onclick, onkeydown });
 
-	const dispatch = createDispatcher();
-	const attrs = getAttrs("item");
-
-	$: builder = $item({ value, disabled });
-	$: Object.assign(builder, attrs);
+	const mergedProps = $derived({
+		...restProps,
+		...item.props,
+		style: styleToString(style),
+	});
 </script>
 
 {#if asChild}
-	<slot {builder} />
+	{@render child?.({ props: mergedProps })}
 {:else}
-	<button
-		bind:this={el}
-		use:melt={builder}
-		type="button"
-		{...$$restProps}
-		on:m-click={dispatch}
-		on:m-focus={dispatch}
-		on:m-keydown={dispatch}
-	>
-		<slot {builder} />
+	<button bind:this={el} {...mergedProps}>
+		{@render children?.()}
 	</button>
 {/if}

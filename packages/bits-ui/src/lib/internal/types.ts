@@ -121,8 +121,7 @@ export type TransitionProps<
 	outTransitionConfig?: TransitionParams<Out>;
 }>;
 
-export type Primitive<T> = Omit<T, "style">;
-
+type Primitive<T> = Omit<T, "style" | "id"> & { id?: string };
 export type PrimitiveButtonAttributes = Primitive<HTMLButtonAttributes>;
 export type PrimitiveDivAttributes = Primitive<HTMLDivAttributes>;
 export type PrimitiveInputAttributes = Primitive<HTMLInputAttributes>;
@@ -163,7 +162,3 @@ export type WithAsChild<T, U extends Record<PropertyKey, unknown> = {}> =
  * // Result type will be { a: number; }
  */
 export type Without<T extends object, U extends object> = Omit<T, keyof U>;
-
-export type ElementRef = { value?: HTMLElement | null | undefined };
-
-export type Ref<T> = { value: T };

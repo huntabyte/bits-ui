@@ -1,58 +1,92 @@
-import type { HTMLButtonAttributes, HTMLInputAttributes } from "svelte/elements";
+import type { Snippet } from "svelte";
 import type {
-	RadioGroupItemProps as MeltRadioGroupItemProps,
-	CreateRadioGroupProps as MeltRadioGroupProps,
-} from "@melt-ui/svelte";
-import type {
-	DOMElement,
-	Expand,
-	HTMLDivAttributes,
-	ObjectVariation,
-	OmitValue,
+	EventCallback,
 	OnChangeFn,
+	PrimitiveButtonAttributes,
+	PrimitiveDivAttributes,
+	WithAsChild,
 } from "$lib/internal/index.js";
-import type { CustomEventHandler } from "$lib/index.js";
+import type { Orientation } from "$lib/index.js";
 
-export type RadioGroupPropsWithoutHTML = Expand<
-	OmitValue<MeltRadioGroupProps> & {
-		/**
-		 * The value of the radio group.
-		 * You can bind this to a value to programmatically control the value.
-		 *
-		 * @defaultValue undefined
-		 */
+export type RadioGroupRootPropsWithoutHTML = WithAsChild<{
+	/**
+	 * The orientation of the radio group. Used to determine
+	 * how keyboard navigation should work.
+	 *
+	 * @defaultValue "vertical"
+	 */
+	orientation?: Orientation;
 
-		value?: MeltRadioGroupProps["defaultValue"] & {};
+	/**
+	 * Whether to loop around the radio items when navigating
+	 * with the keyboard.
+	 *
+	 * @defaultValue true
+	 */
+	loop?: boolean;
 
-		/**
-		 * A callback function called when the value changes.
-		 */
+	/**
+	 * The value of the selected radio item.
+	 *
+	 * @defaultValue ""
+	 */
+	value?: string;
 
-		onValueChange?: OnChangeFn<MeltRadioGroupProps["defaultValue"] & {}>;
-	} & DOMElement
->;
+	/**
+	 * The callback to call when the selected radio item changes.
+	 */
+	onValueChange?: OnChangeFn<string>;
 
-export type RadioGroupInputPropsWithoutHTML = DOMElement<HTMLInputElement>;
+	/**
+	 * The name to apply to the radio group's input element for
+	 * form submission. If not provided, a hidden input will not
+	 * be rendered and the radio group will not be part of a form.
+	 *
+	 * @defaultValue undefined
+	 */
+	name?: string;
 
-export type RadioGroupItemPropsWithoutHTML = Expand<
-	ObjectVariation<MeltRadioGroupItemProps> & DOMElement<HTMLButtonElement>
->;
+	/**
+	 * Whether the radio group is disabled.
+	 *
+	 * @defaultValue false
+	 */
+	disabled?: boolean;
 
-export type RadioGroupItemIndicatorPropsWithoutHTML = DOMElement;
+	/**
+	 * Whether the radio group is required for form submission.
+	 * If `true`, ensure you provide a `name` prop so the hidden
+	 * input is rendered.
+	 */
+	required?: boolean;
+}>;
 
-//
+export type RadioGroupRootProps = RadioGroupRootPropsWithoutHTML & PrimitiveDivAttributes;
 
-export type RadioGroupProps = RadioGroupPropsWithoutHTML & HTMLDivAttributes;
+export type RadioGroupItemPropsWithoutHTML = WithAsChild<{
+	/**
+	 * The value of the radio item.
+	 */
+	value: string;
 
-export type RadioGroupInputProps = RadioGroupInputPropsWithoutHTML & HTMLInputAttributes;
+	/**
+	 * Whether the radio item is disabled.
+	 *
+	 * @defaultValue false
+	 */
+	disabled?: boolean;
 
-export type RadioGroupItemProps = RadioGroupItemPropsWithoutHTML & HTMLButtonAttributes;
+	onclick: EventCallback<MouseEvent>;
 
-export type RadioGroupItemIndicatorProps = RadioGroupItemIndicatorPropsWithoutHTML &
-	HTMLDivAttributes;
+	onkeydown: EventCallback<KeyboardEvent>;
 
-export type RadioGroupItemEvents<T extends Element = HTMLButtonElement> = {
-	click: CustomEventHandler<MouseEvent, T>;
-	keydown: CustomEventHandler<KeyboardEvent, T>;
-	focus: CustomEventHandler<FocusEvent, T>;
-};
+	/**
+	 * A snippet to render the radio item's indicator.
+	 * It receives the item's `checked` state as a prop
+	 * for conditional styling.
+	 */
+	indicator?: Snippet<[{ checked: boolean }]>;
+}>;
+
+export type RadioGroupItemProps = RadioGroupItemPropsWithoutHTML &
+	Omit<PrimitiveButtonAttributes, "value" | "disabled" | "onclick" | "onkeydown">;
