@@ -1,6 +1,7 @@
 import { getContext, setContext } from "svelte";
 import { getAriaChecked, getAriaRequired, getDataDisabled } from "$lib/internal/attrs.js";
 import {
+	type Box,
 	type BoxedValues,
 	type ReadonlyBoxedValues,
 	boxedState,
@@ -10,7 +11,6 @@ import { useNodeById } from "$lib/internal/elements.svelte.js";
 import { type EventCallback, composeHandlers } from "$lib/internal/events.js";
 import { getDirectionalKeys, kbd } from "$lib/internal/kbd.js";
 import { getElemDirection } from "$lib/internal/locale.js";
-import { withTick } from "$lib/internal/with-tick.js";
 import type { Orientation } from "$lib/shared/index.js";
 import { verifyContextDeps } from "$lib/internal/context.js";
 
@@ -26,7 +26,7 @@ type RadioGroupRootStateProps = ReadonlyBoxedValues<{
 
 class RadioGroupRootState {
 	id = undefined as unknown as RadioGroupRootStateProps["id"];
-	node = boxedState<HTMLElement | null>(null);
+	node: Box<HTMLElement | null>;
 	disabled = undefined as unknown as RadioGroupRootStateProps["disabled"];
 	required = undefined as unknown as RadioGroupRootStateProps["required"];
 	loop = undefined as unknown as RadioGroupRootStateProps["loop"];
@@ -49,15 +49,7 @@ class RadioGroupRootState {
 		this.orientation = props.orientation;
 		this.name = props.name;
 		this.value = props.value;
-
-		$effect.pre(() => {
-			// eslint-disable-next-line no-unused-expressions
-			this.id.value;
-
-			withTick(() => {
-				this.node.value = document.getElementById(this.id.value);
-			});
-		});
+		this.node = useNodeById(this.id);
 	}
 
 	isChecked(value: string) {
@@ -98,7 +90,7 @@ type RadioGroupItemStateProps = ReadonlyBoxedValues<{
 
 class RadioGroupItemState {
 	#id = undefined as unknown as RadioGroupItemStateProps["id"];
-	#node = boxedState<HTMLElement | null>(null);
+	#node: Box<HTMLElement | null>;
 	#root = undefined as unknown as RadioGroupRootState;
 	#disabled = undefined as unknown as RadioGroupItemStateProps["disabled"];
 	#value = undefined as unknown as RadioGroupItemStateProps["value"];
@@ -125,7 +117,7 @@ class RadioGroupItemState {
 		this.#root = root;
 		this.#id = props.id;
 
-		useNodeById(this.#id, this.#node);
+		this.#node = useNodeById(this.#id);
 	}
 
 	onclick = composeHandlers(this.#onclickProp, () => {

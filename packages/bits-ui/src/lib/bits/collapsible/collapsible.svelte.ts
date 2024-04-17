@@ -66,7 +66,7 @@ class CollapsibleContentState {
 	root = undefined as unknown as CollapsibleRootState;
 	#originalStyles: { transitionDuration: string; animationName: string } | undefined = undefined;
 	#styleProp = undefined as unknown as ReadonlyBox<StyleProperties>;
-	node = boxedState<HTMLElement | null>(null);
+	node: Box<HTMLElement | null>;
 	#isMountAnimationPrevented = $state(false);
 	#width = $state(0);
 	#height = $state(0);
@@ -91,7 +91,7 @@ class CollapsibleContentState {
 		this.root.contentId = props.id;
 		this.#styleProp = props.style;
 
-		useNodeById(this.root.contentId, this.node);
+		this.node = useNodeById(this.root.contentId);
 
 		$effect.pre(() => {
 			const rAF = requestAnimationFrame(() => {

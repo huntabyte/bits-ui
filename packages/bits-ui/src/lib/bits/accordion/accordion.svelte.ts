@@ -30,7 +30,7 @@ type AccordionBaseStateProps = ReadonlyBoxedValues<{
 
 class AccordionBaseState {
 	id = undefined as unknown as ReadonlyBox<string>;
-	node = boxedState<HTMLElement | null>(null);
+	node: Box<HTMLElement | null>;
 	disabled: ReadonlyBox<boolean>;
 	#attrs = $derived({
 		id: this.id.value,
@@ -41,7 +41,7 @@ class AccordionBaseState {
 		this.id = props.id;
 		this.disabled = props.disabled;
 
-		useNodeById(this.id, this.node);
+		this.node = useNodeById(this.id);
 	}
 
 	getTriggerNodes() {
@@ -172,7 +172,7 @@ type AccordionTriggerStateProps = ReadonlyBoxedValues<{
 class AccordionTriggerState {
 	#disabled = undefined as unknown as ReadonlyBox<boolean>;
 	#id = undefined as unknown as ReadonlyBox<string>;
-	#node = boxedState<HTMLElement | null>(null);
+	#node: Box<HTMLElement | null>;
 	#root = undefined as unknown as AccordionState;
 	#itemState = undefined as unknown as AccordionItemState;
 	#onclickProp = boxedState<AccordionTriggerStateProps["onclick"]>(readonlyBox(() => () => {}));
@@ -203,7 +203,7 @@ class AccordionTriggerState {
 		this.#onkeydownProp.value = props.onkeydown;
 		this.#id = props.id;
 
-		useNodeById(this.#id, this.#node);
+		this.#node = useNodeById(this.#id);
 	}
 
 	#onclick = composeHandlers(this.#onclickProp, () => {
@@ -260,7 +260,7 @@ type AccordionContentStateProps = ReadonlyBoxedValues<{
 
 class AccordionContentState {
 	item = undefined as unknown as AccordionItemState;
-	node = boxedState<HTMLElement | null>(null);
+	node: Box<HTMLElement | null>;
 	#id = undefined as unknown as ReadonlyBox<string>;
 	#originalStyles: { transitionDuration: string; animationName: string } | undefined = undefined;
 	#isMountAnimationPrevented = false;
@@ -289,7 +289,7 @@ class AccordionContentState {
 		this.#id = props.id;
 		this.#styleProp = props.style;
 
-		useNodeById(this.#id, this.node);
+		this.node = useNodeById(this.#id);
 
 		$effect.pre(() => {
 			const rAF = requestAnimationFrame(() => {
