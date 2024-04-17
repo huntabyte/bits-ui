@@ -1,6 +1,7 @@
 import { getContext, setContext } from "svelte";
 import { getAriaChecked, getAriaRequired, getDataDisabled } from "$lib/internal/attrs.js";
 import {
+	type Box,
 	type BoxedValues,
 	type ReadonlyBoxedValues,
 	boxedState,
@@ -9,7 +10,6 @@ import { useNodeById } from "$lib/internal/elements.svelte.js";
 import { type EventCallback, composeHandlers } from "$lib/internal/events.js";
 import { getDirectionalKeys, kbd } from "$lib/internal/kbd.js";
 import { getElemDirection } from "$lib/internal/locale.js";
-import { withTick } from "$lib/internal/with-tick.js";
 import type { Orientation } from "$lib/shared/index.js";
 import { verifyContextDeps } from "$lib/internal/context.js";
 
@@ -21,11 +21,11 @@ type RadioGroupRootStateProps = ReadonlyBoxedValues<{
 	orientation: Orientation;
 	name: string | undefined;
 }> &
-	BoxedValues<{ value: string }>;
+	BoxedValues<{ value: string; }>;
 
 class RadioGroupRootState {
 	id: RadioGroupRootStateProps["id"];
-	node = boxedState<HTMLElement | null>(null);
+	node: Box<HTMLElement | null>;
 	disabled: RadioGroupRootStateProps["disabled"];
 	required: RadioGroupRootStateProps["required"];
 	loop: RadioGroupRootStateProps["loop"];
@@ -41,15 +41,7 @@ class RadioGroupRootState {
 		this.orientation = props.orientation;
 		this.name = props.name;
 		this.value = props.value;
-
-		$effect.pre(() => {
-			// eslint-disable-next-line no-unused-expressions
-			this.id.value;
-
-			withTick(() => {
-				this.node.value = document.getElementById(this.id.value);
-			});
-		});
+		this.node = useNodeById(this.id);
 	}
 
 	isChecked(value: string) {
@@ -96,7 +88,7 @@ type RadioGroupItemStateProps = ReadonlyBoxedValues<{
 
 class RadioGroupItemState {
 	#id: RadioGroupItemStateProps["id"];
-	#node = boxedState<HTMLElement | null>(null);
+	#node: Box<HTMLElement | null>;
 	#root: RadioGroupRootState;
 	#disabled: RadioGroupItemStateProps["disabled"];
 	#value: RadioGroupItemStateProps["value"];
@@ -108,11 +100,10 @@ class RadioGroupItemState {
 		this.#value = props.value;
 		this.#root = root;
 		this.#id = props.id;
-
 		this.#composedClick = composeHandlers(props.onclick, this.#onclick);
 		this.#composedKeydown = composeHandlers(props.onkeydown, this.#onkeydown);
 
-		useNodeById(this.#id, this.#node);
+		this.#node = useNodeById(this.#id);
 	}
 
 	#onclick = () => {

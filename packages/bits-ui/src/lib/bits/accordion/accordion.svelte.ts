@@ -30,14 +30,14 @@ type AccordionBaseStateProps = ReadonlyBoxedValues<{
 
 class AccordionBaseState {
 	id: ReadonlyBox<string>;
-	node = boxedState<HTMLElement | null>(null);
+	node: Box<HTMLElement | null>;
 	disabled: ReadonlyBox<boolean>;
 
 	constructor(props: AccordionBaseStateProps) {
 		this.id = props.id;
 		this.disabled = props.disabled;
 
-		useNodeById(this.id, this.node);
+		this.node = useNodeById(this.id);
 	}
 
 	getTriggerNodes() {
@@ -59,7 +59,7 @@ class AccordionBaseState {
  * SINGLE
  */
 
-type AccordionSingleStateProps = AccordionBaseStateProps & BoxedValues<{ value: string }>;
+type AccordionSingleStateProps = AccordionBaseStateProps & BoxedValues<{ value: string; }>;
 
 export class AccordionSingleState extends AccordionBaseState {
 	#value: Box<string>;
@@ -83,7 +83,7 @@ export class AccordionSingleState extends AccordionBaseState {
  * MULTIPLE
  */
 
-type AccordionMultiStateProps = AccordionBaseStateProps & BoxedValues<{ value: string[] }>;
+type AccordionMultiStateProps = AccordionBaseStateProps & BoxedValues<{ value: string[]; }>;
 
 export class AccordionMultiState extends AccordionBaseState {
 	#value: Box<string[]>;
@@ -176,7 +176,7 @@ type AccordionTriggerStateProps = ReadonlyBoxedValues<{
 class AccordionTriggerState {
 	#disabled: ReadonlyBox<boolean>;
 	#id: ReadonlyBox<string>;
-	#node = boxedState<HTMLElement | null>(null);
+	#node: Box<HTMLElement | null>;
 	#root: AccordionState;
 	#itemState: AccordionItemState;
 	#composedClick: EventCallback<MouseEvent>;
@@ -190,7 +190,7 @@ class AccordionTriggerState {
 		this.#composedClick = composeHandlers(props.onclick, this.#onclick);
 		this.#composedKeydown = composeHandlers(props.onkeydown, this.#onkeydown);
 
-		useNodeById(this.#id, this.#node);
+		this.#node = useNodeById(this.#id);
 	}
 
 	get #isDisabled() {
@@ -259,9 +259,9 @@ type AccordionContentStateProps = ReadonlyBoxedValues<{
 
 class AccordionContentState {
 	item: AccordionItemState;
-	node = boxedState<HTMLElement | null>(null);
+	node: Box<HTMLElement | null>;
 	#id: ReadonlyBox<string>;
-	#originalStyles: { transitionDuration: string; animationName: string } | undefined = undefined;
+	#originalStyles: { transitionDuration: string; animationName: string; } | undefined = undefined;
 	#isMountAnimationPrevented = false;
 	#width = $state(0);
 	#height = $state(0);
@@ -275,7 +275,7 @@ class AccordionContentState {
 		this.#id = props.id;
 		this.#styleProp = props.style;
 
-		useNodeById(this.#id, this.node);
+		this.node = useNodeById(this.#id);
 
 		$effect.pre(() => {
 			const rAF = requestAnimationFrame(() => {
