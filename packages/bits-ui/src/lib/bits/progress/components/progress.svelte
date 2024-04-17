@@ -1,44 +1,36 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { setCtx } from "../ctx.js";
-	import type { Props } from "../index.js";
+	import type { RootProps } from "../index.js";
+	import { setProgressRootState } from "../progress.svelte.js";
+	import { readonlyBox } from "$lib/internal/box.svelte.js";
+	import { styleToString } from "$lib/internal/style.js";
 
-	type $$Props = Props;
+	let {
+		asChild,
+		child,
+		children,
+		value: valueProp = 0,
+		max: maxProp = 100,
+		el = $bindable(),
+		style = {},
+		...restProps
+	}: RootProps = $props();
 
-	export let max: $$Props["max"] = undefined;
-	export let value: $$Props["value"] = undefined;
-	export let onValueChange: $$Props["onValueChange"] = undefined;
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
+	const value = readonlyBox(() => valueProp);
+	const max = readonlyBox(() => maxProp);
 
-	const {
-		elements: { root },
-		states: { value: localValue },
-		updateOption,
-		getAttrs,
-	} = setCtx({
-		max,
-		defaultValue: value,
-		onValueChange: ({ next }) => {
-			onValueChange?.(next);
-			value = next;
-			return next;
-		},
-	});
+	const progress = setProgressRootState({ value, max });
 
-	const attrs = getAttrs("root");
-
-	$: value !== undefined && localValue.set(value);
-	$: updateOption("max", max);
-
-	$: builder = $root;
-	$: Object.assign(builder, attrs);
+	const mergedProps = {
+		...restProps,
+		...progress.props,
+		style: styleToString(style),
+	};
 </script>
 
 {#if asChild}
-	<slot {builder} />
+	{@render child?.({ props: mergedProps })}
 {:else}
-	<div bind:this={el} use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+	<div bind:this={el} {...mergedProps}>
+		{@render children?.()}
 	</div>
 {/if}
