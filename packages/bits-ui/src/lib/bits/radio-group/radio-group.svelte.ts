@@ -33,13 +33,6 @@ class RadioGroupRootState {
 	orientation = undefined as unknown as RadioGroupRootStateProps["orientation"];
 	name = undefined as unknown as RadioGroupRootStateProps["name"];
 	value = undefined as unknown as RadioGroupRootStateProps["value"];
-	#attrs = $derived({
-		role: "radiogroup",
-		"aria-required": getAriaRequired(this.required.value),
-		"data-disabled": getDataDisabled(this.disabled.value),
-		"data-orientation": this.orientation.value,
-		"data-bits-radio-group": "",
-	} as const);
 
 	constructor(props: RadioGroupRootStateProps) {
 		this.id = props.id;
@@ -80,7 +73,13 @@ class RadioGroupRootState {
 	}
 
 	get props() {
-		return this.#attrs;
+		return {
+			role: "radiogroup",
+			"aria-required": getAriaRequired(this.required.value),
+			"data-disabled": getDataDisabled(this.disabled.value),
+			"data-orientation": this.orientation.value,
+			"data-bits-radio-group": "",
+		} as const;
 	}
 }
 
@@ -106,18 +105,6 @@ class RadioGroupItemState {
 	#isChecked = $derived(this.#root.isChecked(this.#value.value));
 	#onclickProp = boxedState<RadioGroupItemStateProps["onclick"]>(readonlyBox(() => () => {}));
 	#onkeydownProp = boxedState<RadioGroupItemStateProps["onkeydown"]>(readonlyBox(() => () => {}));
-
-	#attrs = $derived({
-		disabled: this.#isDisabled ? true : undefined,
-		"data-value": this.#value.value,
-		"data-orientation": this.#root.orientation.value,
-		"data-disabled": getDataDisabled(this.#isDisabled),
-		"data-state": this.#isChecked ? "checked" : "unchecked",
-		"aria-checked": getAriaChecked(this.#isChecked),
-		"data-bits-radio-group-item": "",
-		type: "button",
-		role: "radio",
-	} as const);
 
 	constructor(props: RadioGroupItemStateProps, root: RadioGroupRootState) {
 		this.#disabled = props.disabled;
@@ -184,10 +171,19 @@ class RadioGroupItemState {
 
 	get props() {
 		return {
-			...this.#attrs,
+			disabled: this.#isDisabled ? true : undefined,
+			"data-value": this.#value.value,
+			"data-orientation": this.#root.orientation.value,
+			"data-disabled": getDataDisabled(this.#isDisabled),
+			"data-state": this.#isChecked ? "checked" : "unchecked",
+			"aria-checked": getAriaChecked(this.#isChecked),
+			"data-bits-radio-group-item": "",
+			type: "button",
+			role: "radio",
+			//
 			onclick,
 			onkeydown,
-		};
+		} as const;
 	}
 }
 

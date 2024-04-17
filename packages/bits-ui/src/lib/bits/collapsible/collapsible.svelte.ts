@@ -27,11 +27,6 @@ type CollapsibleRootStateProps = BoxedValues<{
 class CollapsibleRootState {
 	open = undefined as unknown as Box<boolean>;
 	disabled = undefined as unknown as ReadonlyBox<boolean>;
-	#attrs = $derived({
-		"data-state": getDataOpenClosed(this.open.value),
-		"data-disabled": getDataDisabled(this.disabled.value),
-		"data-collapsible-root": "",
-	} as const);
 	contentId = readonlyBoxedState(generateId());
 
 	constructor(props: CollapsibleRootStateProps) {
@@ -40,7 +35,11 @@ class CollapsibleRootState {
 	}
 
 	get props() {
-		return this.#attrs;
+		return {
+			"data-state": getDataOpenClosed(this.open.value),
+			"data-disabled": getDataDisabled(this.disabled.value),
+			"data-collapsible-root": "",
+		} as const;
 	}
 
 	toggleOpen() {
@@ -72,17 +71,6 @@ class CollapsibleContentState {
 	#height = $state(0);
 	#forceMount = undefined as unknown as ReadonlyBox<boolean>;
 	present = $derived(this.#forceMount.value || this.root.open.value);
-	#attrs = $derived({
-		id: this.root.contentId.value,
-		"data-state": getDataOpenClosed(this.root.open.value),
-		"data-disabled": getDataDisabled(this.root.disabled.value),
-		"data-collapsible-content": "",
-		style: styleToString({
-			...this.#styleProp.value,
-			"--bits-collapsible-content-height": this.#height ? `${this.#height}px` : undefined,
-			"--bits-collapsible-content-width": this.#width ? `${this.#width}px` : undefined,
-		}),
-	} as const);
 
 	constructor(props: CollapsibleContentStateProps, root: CollapsibleRootState) {
 		this.root = root;
@@ -136,7 +124,17 @@ class CollapsibleContentState {
 	}
 
 	get props() {
-		return this.#attrs;
+		return {
+			id: this.root.contentId.value,
+			"data-state": getDataOpenClosed(this.root.open.value),
+			"data-disabled": getDataDisabled(this.root.disabled.value),
+			"data-collapsible-content": "",
+			style: styleToString({
+				...this.#styleProp.value,
+				"--bits-collapsible-content-height": this.#height ? `${this.#height}px` : undefined,
+				"--bits-collapsible-content-width": this.#width ? `${this.#width}px` : undefined,
+			}),
+		} as const;
 	}
 }
 
@@ -147,15 +145,6 @@ type CollapsibleTriggerStateProps = ReadonlyBoxedValues<{
 class CollapsibleTriggerState {
 	#root = undefined as unknown as CollapsibleRootState;
 	#onclickProp = boxedState<CollapsibleTriggerStateProps["onclick"]>(readonlyBox(() => () => {}));
-	#attrs = $derived({
-		type: "button",
-		"aria-controls": this.#root.contentId.value,
-		"aria-expanded": getAriaExpanded(this.#root.open.value),
-		"data-state": getDataOpenClosed(this.#root.open.value),
-		"data-disabled": getDataDisabled(this.#root.disabled.value),
-		disabled: this.#root.disabled.value,
-		"data-collapsible-trigger": "",
-	} as const);
 
 	constructor(props: CollapsibleTriggerStateProps, root: CollapsibleRootState) {
 		this.#root = root;
@@ -168,9 +157,16 @@ class CollapsibleTriggerState {
 
 	get props() {
 		return {
-			...this.#attrs,
+			type: "button",
+			"aria-controls": this.#root.contentId.value,
+			"aria-expanded": getAriaExpanded(this.#root.open.value),
+			"data-state": getDataOpenClosed(this.#root.open.value),
+			"data-disabled": getDataDisabled(this.#root.disabled.value),
+			disabled: this.#root.disabled.value,
+			"data-collapsible-trigger": "",
+			//
 			onclick: this.#onclick,
-		};
+		} as const;
 	}
 }
 
