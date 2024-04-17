@@ -1,54 +1,54 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { setCtx } from "../ctx.js";
-	import type { Props } from "../index.js";
+	import type { RootProps } from "../index.js";
+	import { setRadioGroupRootState } from "../radio-group.svelte.js";
+	import { generateId } from "$lib/internal/id.js";
+	import { box, readonlyBox } from "$lib/internal/box.svelte.js";
+	import { styleToString } from "$lib/internal/style.js";
 
-	type $$Props = Props;
-	export let required: $$Props["required"] = undefined;
-	export let disabled: $$Props["disabled"] = undefined;
-	export let value: $$Props["value"] = undefined;
-	export let onValueChange: $$Props["onValueChange"] = undefined;
-	export let loop: $$Props["loop"] = undefined;
-	export let orientation: $$Props["orientation"] = undefined;
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
+	let {
+		disabled: disabledProp = false,
+		asChild,
+		children,
+		child,
+		style,
+		value: valueProp = $bindable(""),
+		el = $bindable(),
+		orientation: orientationProp = "vertical",
+		loop: loopProp = true,
+		name: nameProp = undefined,
+		required: requiredProp = false,
+		id: idProp = generateId(),
+		onValueChange,
+		...restProps
+	}: RootProps = $props();
 
-	const {
-		elements: { root },
-		states: { value: localValue },
-		updateOption,
-		getAttrs,
-	} = setCtx({
-		required,
-		disabled,
-		defaultValue: value,
-		loop,
-		orientation,
-		onValueChange: ({ next }) => {
-			if (value !== next) {
-				onValueChange?.(next);
-				value = next;
-			}
-			return next;
-		},
+	const disabled = readonlyBox(() => disabledProp);
+	const value = box(
+		() => valueProp,
+		(v) => {
+			valueProp = v;
+			onValueChange?.(v);
+		}
+	);
+	const orientation = readonlyBox(() => orientationProp);
+	const loop = readonlyBox(() => loopProp);
+	const name = readonlyBox(() => nameProp);
+	const required = readonlyBox(() => requiredProp);
+	const id = readonlyBox(() => idProp);
+
+	const root = setRadioGroupRootState({ orientation, disabled, loop, name, required, id, value });
+
+	const mergedProps = $derived({
+		...restProps,
+		...root.props,
+		style: styleToString(style),
 	});
-
-	const attrs = getAttrs("root");
-
-	$: value !== undefined && localValue.set(value);
-	$: updateOption("required", required);
-	$: updateOption("disabled", disabled);
-	$: updateOption("loop", loop);
-	$: updateOption("orientation", orientation);
-
-	$: builder = $root;
-	$: Object.assign(builder, attrs);
 </script>
 
 {#if asChild}
-	<slot {builder} />
+	{@render child?.({ props: mergedProps })}
 {:else}
-	<div bind:this={el} use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+	<div bind:this={el} {...mergedProps}>
+		{@render children?.()}
 	</div>
 {/if}

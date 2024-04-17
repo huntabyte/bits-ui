@@ -13,6 +13,9 @@ import { generateId } from "$lib/internal/id.js";
 import { styleToString } from "$lib/internal/style.js";
 import { type EventCallback, composeHandlers } from "$lib/internal/events.js";
 import type { StyleProperties } from "$lib/shared/index.js";
+import { withTick } from "$lib/internal/with-tick.js";
+import { useNodeById } from "$lib/internal/elements.svelte.js";
+import { verifyContextDeps } from "$lib/internal/context.js";
 
 type CollapsibleRootStateProps = BoxedValues<{
 	open: boolean;
@@ -88,11 +91,7 @@ class CollapsibleContentState {
 		this.root.contentId = props.id;
 		this.#styleProp = props.style;
 
-		$effect.root(() => {
-			tick().then(() => {
-				this.node.value = document.getElementById(this.root.contentId.value);
-			});
-		});
+		useNodeById(this.root.contentId, this.node);
 
 		$effect.pre(() => {
 			const rAF = requestAnimationFrame(() => {
@@ -110,7 +109,7 @@ class CollapsibleContentState {
 			const node = this.node.value;
 			if (!node) return;
 
-			tick().then(() => {
+			withTick(() => {
 				if (!this.node) return;
 				// get the dimensions of the element
 				this.#originalStyles = this.#originalStyles || {
@@ -182,6 +181,7 @@ export function setCollapsibleRootState(props: CollapsibleRootStateProps) {
 }
 
 export function getCollapsibleRootState() {
+	verifyContextDeps(COLLAPSIBLE_ROOT_KEY);
 	return getContext<CollapsibleRootState>(COLLAPSIBLE_ROOT_KEY);
 }
 
