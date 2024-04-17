@@ -130,44 +130,26 @@ class RadioGroupItemState {
 		const dir = getElemDirection(this.#root.node.value);
 		const { nextKey, prevKey } = getDirectionalKeys(dir, this.#root.orientation.value);
 
-		let itemToFocus: HTMLElement | undefined;
 		const loop = this.#root.loop.value;
 
-		const keyMap = {
-			[nextKey]: () => {
-				e.preventDefault();
-				const nextIndex = currentIndex + 1;
-				if (nextIndex >= items.length && loop) {
-					itemToFocus = items[0];
-				} else {
-					itemToFocus = items[nextIndex];
-				}
-			},
-			[prevKey]: () => {
-				e.preventDefault();
-				const prevIndex = currentIndex - 1;
-				if (prevIndex < 0 && loop) {
-					itemToFocus = items[items.length - 1];
-				} else {
-					itemToFocus = items[prevIndex];
-				}
-			},
-			[kbd.HOME]: () => {
-				e.preventDefault();
-				itemToFocus = items[0];
-			},
-			[kbd.END]: () => {
-				e.preventDefault();
-				itemToFocus = items[items.length - 1];
-			},
+		const keyToIndex = {
+			[nextKey]: currentIndex + 1,
+			[prevKey]: currentIndex - 1,
+			[kbd.HOME]: 0,
+			[kbd.END]: items.length - 1,
 		};
 
-		keyMap[e.key]?.();
+		let itemIndex = keyToIndex[e.key];
+		if (itemIndex === undefined) return;
+		e.preventDefault();
 
-		if (itemToFocus) {
-			itemToFocus.focus();
-			this.#root.selectValue(itemToFocus.dataset.value as string);
-		}
+		if (itemIndex < 0 && loop) itemIndex = items.length - 1;
+		else if (itemIndex === items.length && loop) itemIndex = 0;
+
+		const itemToFocus = items[itemIndex];
+		if (!itemToFocus) return;
+		itemToFocus.focus();
+		this.#root.selectValue(itemToFocus.dataset.value as string);
 	};
 
 	get #isDisabled() {
