@@ -1,5 +1,11 @@
 # bits-ui
 
+## 0.21.4
+
+### Patch Changes
+
+- Fix binding button element ([#473](https://github.com/huntabyte/bits-ui/pull/473))
+
 ## 0.21.3
 
 ### Patch Changes
