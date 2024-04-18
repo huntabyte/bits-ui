@@ -22,7 +22,6 @@
 		...restProps
 	}: RootProps = $props();
 
-	const disabled = readonlyBox(() => disabledProp);
 	const value = box(
 		() => valueProp,
 		(v) => {
@@ -30,6 +29,7 @@
 			onValueChange?.(v);
 		}
 	);
+	const disabled = readonlyBox(() => disabledProp);
 	const orientation = readonlyBox(() => orientationProp);
 	const loop = readonlyBox(() => loopProp);
 	const name = readonlyBox(() => nameProp);
