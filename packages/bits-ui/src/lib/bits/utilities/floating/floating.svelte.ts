@@ -57,7 +57,7 @@ class FloatingRootState {
 	}
 }
 
-type FloatingContentStateProps = ReadonlyBoxedValues<{
+export type FloatingContentStateProps = ReadonlyBoxedValues<{
 	id: string;
 	side: Side;
 	sideOffset: number;
@@ -165,6 +165,15 @@ class FloatingContentState {
 				position: this.strategy.value,
 			});
 		}
+
+		$effect(() => {
+			if (!this.root.anchorNode.value || !this.root.contentNode.value) return;
+			return autoUpdate(
+				this.root.anchorNode.value,
+				this.root.contentNode.value,
+				this.compute
+			);
+		});
 	}
 
 	compute() {
@@ -219,6 +228,7 @@ class FloatingContentState {
 					zIndex: "inherit",
 				});
 			}
+			this.onPlaced.value?.();
 			return data;
 		});
 	}

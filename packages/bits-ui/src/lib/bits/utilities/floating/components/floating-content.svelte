@@ -21,7 +21,7 @@
 		strategy = "absolute",
 	}: ContentProps = $props();
 
-	setFloatingContentState({
+	const state = setFloatingContentState({
 		side: readonlyBox(() => side),
 		sideOffset: readonlyBox(() => sideOffset),
 		align: readonlyBox(() => align),
@@ -39,4 +39,6 @@
 	});
 </script>
 
-{@render children?.()}
+<div>
+	{@render children?.()}
+</div>
