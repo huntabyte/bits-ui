@@ -10,7 +10,6 @@
 		asChild,
 		children,
 		indicator,
-		indicator,
 		child,
 		value: valueProp,
 		disabled: disabledProp = false,
