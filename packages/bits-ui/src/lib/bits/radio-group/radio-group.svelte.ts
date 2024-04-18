@@ -23,6 +23,7 @@ type RadioGroupRootStateProps = ReadonlyBoxedValues<{
 	name: string | undefined;
 }> &
 	BoxedValues<{ value: string }>;
+BoxedValues<{ value: string }>;
 
 class RadioGroupRootState {
 	id: RadioGroupRootStateProps["id"];
@@ -33,6 +34,7 @@ class RadioGroupRootState {
 	orientation: RadioGroupRootStateProps["orientation"];
 	name: RadioGroupRootStateProps["name"];
 	value: RadioGroupRootStateProps["value"];
+	activeTabIndexNode = boxedState<HTMLElement | null>(null);
 	activeTabIndexNode = boxedState<HTMLElement | null>(null);
 
 	constructor(props: RadioGroupRootStateProps) {
