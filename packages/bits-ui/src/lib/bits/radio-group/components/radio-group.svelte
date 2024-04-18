@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { RootProps } from "../index.js";
 	import { setRadioGroupRootState } from "../radio-group.svelte.js";
+	import RadioGroupInput from "./radio-group-input.svelte";
 	import { generateId } from "$lib/internal/id.js";
 	import { box, readonlyBox } from "$lib/internal/box.svelte.js";
 	import { styleToString } from "$lib/internal/style.js";
@@ -52,3 +53,5 @@
 		{@render children?.()}
 	</div>
 {/if}
+
+<RadioGroupInput />
