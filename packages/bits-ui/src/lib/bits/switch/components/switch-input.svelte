@@ -5,4 +5,6 @@
 	const inputState = getSwitchInputState();
 </script>
 
-<input {...inputState.props} style={styleToString(srOnlyStyles)} />
+{#if inputState.shouldRender}
+	<input {...inputState.props} style={styleToString(srOnlyStyles)} />
+{/if}
