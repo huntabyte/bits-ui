@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { RootProps } from "../index.js";
 	import { setSwitchRootState } from "../switch.svelte.js";
+	import SwitchInput from "./switch-input.svelte";
 	import { box, readonlyBox } from "$lib/internal/box.svelte.js";
 	import { styleToString } from "$lib/internal/style.js";
 
@@ -60,3 +61,5 @@
 		{@render children?.()}
 	</button>
 {/if}
+
+<SwitchInput />
