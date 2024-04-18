@@ -25,7 +25,7 @@ class ProgressRootState {
 			"data-value": this.#value.value,
 			"data-state": getProgressDataState(this.#value.value, this.#max.value),
 			"data-max": this.#max.value,
-			"data-bits-progress-root": "",
+			"data-progress-root": "",
 		} as const;
 	}
 }

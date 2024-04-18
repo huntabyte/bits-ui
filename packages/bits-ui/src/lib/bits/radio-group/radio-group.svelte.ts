@@ -57,7 +57,7 @@ class RadioGroupRootState {
 	getRadioItemNodes() {
 		if (!this.node.value) return [];
 
-		return Array.from(this.node.value.querySelectorAll("[data-bits-radio-group-item]")).filter(
+		return Array.from(this.node.value.querySelectorAll("[data-radio-group-item]")).filter(
 			(el): el is HTMLElement => el instanceof HTMLElement && !el.dataset.disabled
 		);
 	}
@@ -77,7 +77,7 @@ class RadioGroupRootState {
 			"aria-required": getAriaRequired(this.required.value),
 			"data-disabled": getDataDisabled(this.disabled.value),
 			"data-orientation": this.orientation.value,
-			"data-bits-radio-group": "",
+			"data-radio-group": "",
 		} as const;
 	}
 }
@@ -165,6 +165,14 @@ class RadioGroupItemState {
 		return this.#root.isChecked(this.#value.value);
 	}
 
+	get indicatorProps() {
+		return {
+			"data-disabled": getDataDisabled(this.#isDisabled),
+			"data-state": this.#isChecked ? "checked" : "unchecked",
+			"data-radio-group-item-indicator": "",
+		} as const;
+	}
+
 	get props() {
 		return {
 			id: this.#id.value,
@@ -174,7 +182,7 @@ class RadioGroupItemState {
 			"data-disabled": getDataDisabled(this.#isDisabled),
 			"data-state": this.#isChecked ? "checked" : "unchecked",
 			"aria-checked": getAriaChecked(this.#isChecked),
-			"data-bits-radio-group-item": "",
+			"data-radio-group-item": "",
 			type: "button",
 			role: "radio",
 			tabIndex: this.#root.activeTabIndexNode.value === this.#node.value ? 0 : -1,

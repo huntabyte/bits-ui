@@ -1,8 +1,6 @@
-import type { HTMLButtonAttributes } from "svelte/elements";
 import type { Snippet } from "svelte";
 import type {
 	EventCallback,
-	HTMLDivAttributes,
 	OnChangeFn,
 	PrimitiveButtonAttributes,
 	WithAsChild,
@@ -54,7 +52,9 @@ export type CheckboxRootPropsWithoutHTML = WithAsChild<
 		 */
 		onCheckedChange?: OnChangeFn<boolean | "indeterminate">;
 
-		indicator?: Snippet<[{ checked: boolean | "indeterminate" }]>;
+		indicator?: Snippet<
+			[{ checked: boolean | "indeterminate"; props: Record<string, unknown> }]
+		>;
 	},
 	{ checked: boolean | "indeterminate" }
 >;

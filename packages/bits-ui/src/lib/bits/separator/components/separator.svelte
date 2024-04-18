@@ -1,32 +1,36 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { setCtx } from "../ctx.js";
-	import type { Props } from "../index.js";
+	import { setSeparatorRootState } from "../separator.svelte.js";
+	import type { RootProps } from "../index.js";
+	import { readonlyBox } from "$lib/internal/box.svelte.js";
+	import { styleToString } from "$lib/internal/style.js";
 
-	type $$Props = Props;
+	let {
+		asChild,
+		child,
+		children,
+		decorative: decorativeProp = false,
+		orientation: orientationProp = "horizontal",
+		el = $bindable(),
+		style = {},
+		...restProps
+	}: RootProps = $props();
 
-	export let orientation: $$Props["orientation"] = "horizontal";
-	export let decorative: $$Props["decorative"] = true;
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
+	const decorative = readonlyBox(() => decorativeProp);
+	const orientation = readonlyBox(() => orientationProp);
 
-	const {
-		elements: { root },
-		updateOption,
-		getAttrs,
-	} = setCtx({ orientation, decorative });
+	const separator = setSeparatorRootState({ decorative, orientation });
 
-	const attrs = getAttrs("root");
-
-	$: updateOption("orientation", orientation);
-	$: updateOption("decorative", decorative);
-
-	$: builder = $root;
-	$: Object.assign(builder, attrs);
+	const mergedProps = $derived({
+		...restProps,
+		...separator.props,
+		style: styleToString(style),
+	});
 </script>
 
 {#if asChild}
-	<slot {builder} />
+	{@render child?.({ props: mergedProps })}
 {:else}
-	<div bind:this={el} use:melt={builder} {...$$restProps} />
+	<div bind:this={el} {...mergedProps}>
+		{@render children?.()}
+	</div>
 {/if}

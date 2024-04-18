@@ -18,6 +18,7 @@ class LabelRootState {
 
 	get props() {
 		return {
+			"data-label-root": "",
 			onmousedown: this.#composedMousedown,
 		};
 	}
