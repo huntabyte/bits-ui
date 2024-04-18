@@ -66,12 +66,16 @@ class CheckboxRootState {
 		this.checked.value = !this.checked.value;
 	};
 
-	createIndicator() {
-		return new CheckboxIndicatorState(this);
-	}
-
 	createInput() {
 		return new CheckboxInputState(this);
+	}
+
+	get indicatorProps() {
+		return {
+			"data-disabled": getDataDisabled(this.disabled.value),
+			"data-state": getCheckboxDataState(this.checked.value),
+			"data-checkbox-indicator": "",
+		} as const;
 	}
 
 	get props() {
@@ -87,26 +91,6 @@ class CheckboxRootState {
 			//
 			onclick: this.#composedClick,
 			onkeydown: this.#composedKeydown,
-		} as const;
-	}
-}
-
-/**
- * INDICATOR
- */
-
-class CheckboxIndicatorState {
-	root: CheckboxRootState;
-
-	constructor(root: CheckboxRootState) {
-		this.root = root;
-	}
-
-	get props() {
-		return {
-			"data-disabled": getDataDisabled(this.root.disabled.value),
-			"data-state": getCheckboxDataState(this.root.checked.value),
-			"data-checkbox-indicator": "",
 		} as const;
 	}
 }
@@ -151,10 +135,6 @@ export function setCheckboxRootState(props: CheckboxRootStateProps) {
 
 export function getCheckboxRootState(): CheckboxRootState {
 	return getContext(CHECKBOX_ROOT_KEY);
-}
-
-export function getCheckboxIndicatorState(): CheckboxIndicatorState {
-	return getCheckboxRootState().createIndicator();
 }
 
 export function getCheckboxInputState(): CheckboxInputState {

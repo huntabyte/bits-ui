@@ -36,11 +36,11 @@
 </script>
 
 {#if asChild}
-	{@render child?.({ props: mergedProps })}
+	{@render child?.({ props: mergedProps, checked: item.checked })}
 {:else}
 	<button bind:this={el} {...mergedProps}>
 		{#if indicator}
-			{@render indicator({ checked: item.checked })}
+			{@render indicator({ checked: item.checked, props: item.indicatorProps })}
 		{:else}
 			{@render children?.()}
 		{/if}

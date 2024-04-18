@@ -86,3 +86,19 @@ export function getAriaChecked(condition: boolean | "indeterminate"): "true" | "
 	}
 	return condition ? "true" : "false";
 }
+
+export function getAriaOrientation(
+	orientation: "horizontal" | "vertical"
+): "horizontal" | "vertical" {
+	return orientation;
+}
+
+export function getAriaHidden(condition: boolean): "true" | undefined {
+	return condition ? "true" : undefined;
+}
+
+export function getDataOrientation(
+	orientation: "horizontal" | "vertical"
+): "horizontal" | "vertical" {
+	return orientation;
+}
