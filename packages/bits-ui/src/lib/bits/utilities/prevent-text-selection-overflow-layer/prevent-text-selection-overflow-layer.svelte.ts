@@ -1,11 +1,18 @@
 import { onDestroy } from "svelte";
 import type { PreventTextSelectionOverflowLayerProps } from "./types.js";
-import type { Box, ReadonlyBox, ReadonlyBoxedValues } from "$lib/internal/box.svelte.js";
-import { useNodeById } from "$lib/internal/elements.svelte.js";
-import { type EventCallback, addEventListener, composeHandlers } from "$lib/internal/events.js";
-import { executeCallbacks, noop } from "$lib/helpers/callbacks.js";
-import { isHTMLElement } from "$lib/internal/is.js";
-import { isOrContainsTarget } from "$lib/helpers/elements.js";
+import {
+	type Box,
+	type EventCallback,
+	type ReadonlyBox,
+	type ReadonlyBoxedValues,
+	addEventListener,
+	composeHandlers,
+	executeCallbacks,
+	isHTMLElement,
+	isOrContainsTarget,
+	noop,
+	useNodeById,
+} from "$lib/internal/index.js";
 
 type StateProps = ReadonlyBoxedValues<
 	Required<Omit<PreventTextSelectionOverflowLayerProps, "children">>

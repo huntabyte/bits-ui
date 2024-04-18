@@ -1,5 +1,5 @@
 import { tick } from "svelte";
 
-export function withTick(cb: () => void) {
+export function afterTick(cb: () => void) {
 	tick().then(cb);
 }

@@ -1,8 +1,7 @@
 <script lang="ts">
 	import type { PreventTextSelectionOverflowLayerProps } from "./types.js";
 	import { usePreventTextSelectionOverflowLayer } from "./prevent-text-selection-overflow-layer.svelte.js";
-	import { readonlyBox } from "$lib/internal/box.svelte.js";
-	import { noop } from "$lib/index.js";
+	import { noop, readonlyBox } from "$lib/internal/index.js";
 
 	let {
 		enabled = true,

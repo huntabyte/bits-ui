@@ -5,13 +5,20 @@ import type {
 	InteractOutsideEvent,
 	InteractOutsideInterceptEventType,
 } from "./types.js";
-import type { Box, ReadonlyBox, ReadonlyBoxedValues } from "$lib/internal/box.svelte.js";
-import { useNodeById } from "$lib/internal/elements.svelte.js";
-import { type EventCallback, addEventListener, composeHandlers } from "$lib/internal/events.js";
-import { getOwnerDocument, isOrContainsTarget } from "$lib/helpers/elements.js";
-import { debounce } from "$lib/helpers/debounce.js";
-import { executeCallbacks } from "$lib/helpers/callbacks.js";
-import { isElement } from "$lib/internal/is.js";
+import {
+	type Box,
+	type EventCallback,
+	type ReadonlyBox,
+	type ReadonlyBoxedValues,
+	addEventListener,
+	composeHandlers,
+	debounce,
+	executeCallbacks,
+	getOwnerDocument,
+	isElement,
+	isOrContainsTarget,
+	useNodeById,
+} from "$lib/internal/index.js";
 
 const layers = new Map<DismissableLayerState, ReadonlyBox<InteractOutsideBehaviorType>>();
 

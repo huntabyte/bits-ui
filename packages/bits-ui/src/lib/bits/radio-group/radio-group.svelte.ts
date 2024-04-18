@@ -1,18 +1,23 @@
 import { getContext, setContext } from "svelte";
-import { getAriaChecked, getAriaRequired, getDataDisabled } from "$lib/internal/attrs.js";
 import {
 	type Box,
 	type BoxedValues,
+	type EventCallback,
 	type ReadonlyBoxedValues,
 	boxedState,
-} from "$lib/internal/box.svelte.js";
-import { useNodeById } from "$lib/internal/elements.svelte.js";
-import { type EventCallback, composeHandlers } from "$lib/internal/events.js";
-import { getDirectionalKeys, kbd } from "$lib/internal/kbd.js";
-import { getElemDirection } from "$lib/internal/locale.js";
+	composeHandlers,
+	getAriaChecked,
+	getAriaRequired,
+	getDataDisabled,
+	getDirectionalKeys,
+	getElemDirection,
+	kbd,
+	srOnlyStyles,
+	styleToString,
+	useNodeById,
+	verifyContextDeps,
+} from "$lib/internal/index.js";
 import type { Orientation } from "$lib/shared/index.js";
-import { verifyContextDeps } from "$lib/internal/context.js";
-import { srOnlyStyles, styleToString } from "$lib/internal/style.js";
 
 type RadioGroupRootStateProps = ReadonlyBoxedValues<{
 	id: string;

@@ -1,21 +1,23 @@
 import { getContext, setContext } from "svelte";
-import { getAriaExpanded, getDataDisabled, getDataOpenClosed } from "$lib/internal/attrs.js";
 import {
 	type Box,
 	type BoxedValues,
+	type EventCallback,
 	type ReadonlyBox,
 	type ReadonlyBoxedValues,
+	afterTick,
 	boxedState,
-	readonlyBox,
+	composeHandlers,
+	generateId,
+	getAriaExpanded,
+	getDataDisabled,
+	getDataOpenClosed,
 	readonlyBoxedState,
-} from "$lib/internal/box.svelte.js";
-import { generateId } from "$lib/internal/id.js";
-import { styleToString } from "$lib/internal/style.js";
-import { type EventCallback, composeHandlers } from "$lib/internal/events.js";
+	styleToString,
+	useNodeById,
+	verifyContextDeps,
+} from "$lib/internal/index.js";
 import type { StyleProperties } from "$lib/shared/index.js";
-import { withTick } from "$lib/internal/with-tick.js";
-import { useNodeById } from "$lib/internal/elements.svelte.js";
-import { verifyContextDeps } from "$lib/internal/context.js";
 
 type CollapsibleRootStateProps = BoxedValues<{
 	open: boolean;
@@ -105,7 +107,7 @@ class CollapsibleContentState {
 			const node = this.node.value;
 			if (!node) return;
 
-			withTick(() => {
+			afterTick(() => {
 				if (!this.node) return;
 				// get the dimensions of the element
 				this.#originalStyles = this.#originalStyles || {
