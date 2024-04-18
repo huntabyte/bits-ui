@@ -44,8 +44,7 @@ export class DismissableLayerState {
 		touchend: false,
 		click: false,
 	};
-	#isPointerDown = false;
-	#isPointerDownInside = false;
+	#isPointerDownOutside = false;
 	#isResponsibleLayer = false;
 	node: Box<HTMLElement | null>;
 	#documentObj: Document;
@@ -57,6 +56,7 @@ export class DismissableLayerState {
 		this.#interactOutsideStartProp = props.onInteractOutsideStart;
 		this.#interactOutsideProp = props.onInteractOutside;
 
+		layers.set(this, this.#behaviorType);
 		const unsubEvents = this.#addEventListeners();
 
 		onDestroy(() => {
@@ -64,6 +64,7 @@ export class DismissableLayerState {
 			this.#resetState.destroy();
 			this.#onInteractOutsideStart.destroy();
 			this.#onInteractOutside.destroy();
+			layers.delete(this);
 		});
 	}
 
@@ -113,7 +114,7 @@ export class DismissableLayerState {
 			 */
 			addEventListener(
 				this.#documentObj,
-				interactOutsideStartEvents,
+				interactOutsideEndEvents,
 				composeHandlers(this.#markNonInterceptedEvent, this.#onInteractOutside)
 			)
 		);
@@ -125,8 +126,7 @@ export class DismissableLayerState {
 			return;
 		this.#interactOutsideStartProp.value(e);
 		if (e.defaultPrevented) return;
-		this.#isPointerDownInside = true;
-		this.#isPointerDown = true;
+		this.#isPointerDownOutside = true;
 	}, 10);
 
 	#onInteractOutside = debounce((e: InteractOutsideEvent) => {
@@ -135,7 +135,7 @@ export class DismissableLayerState {
 		if (!this.#isResponsibleLayer || this.#isAnyEventIntercepted() || !isValidEvent(e, node))
 			return;
 		if (behaviorType !== "close" && behaviorType !== "defer-otherwise-close") return;
-		if (!this.#isPointerDown || this.#isPointerDownInside) return;
+		if (!this.#isPointerDownOutside) return;
 		this.#interactOutsideProp.value(e);
 	}, 10);
 
@@ -156,8 +156,7 @@ export class DismissableLayerState {
 		for (const eventType in this.#interceptedEvents) {
 			this.#interceptedEvents[eventType as InteractOutsideInterceptEventType] = false;
 		}
-		this.#isPointerDown = false;
-		this.#isPointerDownInside = false;
+		this.#isPointerDownOutside = false;
 		this.#isResponsibleLayer = false;
 	}, 20);
 
