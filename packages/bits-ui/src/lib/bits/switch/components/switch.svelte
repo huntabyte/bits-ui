@@ -10,41 +10,32 @@
 		asChild,
 		children,
 		el = $bindable(),
-		disabled: disabledProp = false,
-		required: requiredProp = false,
-		checked: checkedProp = false,
-		value: valueProp = "",
-		name: nameProp = undefined,
-		onclick: onclickProp = () => {},
-		onkeydown: onkeydownProp = () => {},
+		disabled = false,
+		required = false,
+		checked = false,
+		value = "",
+		name = undefined,
+		onclick = () => {},
+		onkeydown = () => {},
 		onCheckedChange,
 		style = {},
 		...restProps
 	}: RootProps = $props();
 
-	const checked = box(
-		() => checkedProp,
-		(v) => {
-			checkedProp = v;
-			onCheckedChange?.(v);
-		}
-	);
-
-	const disabled = readonlyBox(() => disabledProp);
-	const required = readonlyBox(() => requiredProp);
-	const value = readonlyBox(() => valueProp);
-	const name = readonlyBox(() => nameProp);
-	const onclick = readonlyBox(() => onclickProp);
-	const onkeydown = readonlyBox(() => onkeydownProp);
-
 	const rootState = setSwitchRootState({
-		checked,
-		disabled,
-		required,
-		value,
-		name,
-		onclick,
-		onkeydown,
+		checked: box(
+			() => checked,
+			(v) => {
+				checked = v;
+				onCheckedChange?.(v);
+			}
+		),
+		disabled: readonlyBox(() => disabled),
+		required: readonlyBox(() => required),
+		value: readonlyBox(() => value),
+		name: readonlyBox(() => name),
+		onclick: readonlyBox(() => onclick),
+		onkeydown: readonlyBox(() => onkeydown),
 	});
 
 	const mergedProps = $derived({

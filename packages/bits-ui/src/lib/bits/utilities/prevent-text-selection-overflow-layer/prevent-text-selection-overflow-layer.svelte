@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { PreventTextSelectionOverflowLayerProps } from "./types.js";
-	import { preventTextSelectionOverflowLayerState } from "./prevent-text-selection-overflow-layer.svelte.js";
+	import { usePreventTextSelectionOverflowLayer } from "./prevent-text-selection-overflow-layer.svelte.js";
 	import { readonlyBox } from "$lib/internal/box.svelte.js";
 	import { noop } from "$lib/index.js";
 
@@ -12,7 +12,7 @@
 		children,
 	}: PreventTextSelectionOverflowLayerProps = $props();
 
-	preventTextSelectionOverflowLayerState({
+	usePreventTextSelectionOverflowLayer({
 		id: readonlyBox(() => id),
 		enabled: readonlyBox(() => enabled),
 		onPointerDown: readonlyBox(() => onPointerDown),

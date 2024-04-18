@@ -8,17 +8,17 @@
 		asChild,
 		child,
 		children,
-		value: valueProp = 0,
-		max: maxProp = 100,
+		value = 0,
+		max = 100,
 		el = $bindable(),
 		style = {},
 		...restProps
 	}: RootProps = $props();
 
-	const value = readonlyBox(() => valueProp);
-	const max = readonlyBox(() => maxProp);
-
-	const progress = setProgressRootState({ value, max });
+	const progress = setProgressRootState({
+		value: readonlyBox(() => value),
+		max: readonlyBox(() => max),
+	});
 
 	const mergedProps = {
 		...restProps,

@@ -9,18 +9,18 @@
 		child,
 		asChild,
 		el = $bindable(),
-		forceMount: forceMountProp = false,
+		forceMount = false,
 		children,
-		id: idProp = generateId(),
-		style: styleProp = {},
+		id = generateId(),
+		style = {},
 		...restProps
 	}: CollapsibleContentProps & { forceMount?: boolean } = $props();
 
-	const id = readonlyBox(() => idProp);
-	const forceMount = readonlyBox(() => forceMountProp);
-
-	const style = readonlyBox(() => styleProp);
-	const content = getCollapsibleContentState({ id, style, forceMount });
+	const content = getCollapsibleContentState({
+		id: readonlyBox(() => id),
+		style: readonlyBox(() => style),
+		forceMount: readonlyBox(() => forceMount),
+	});
 </script>
 
 <Presence forceMount={true} present={content.present} node={content.node}>

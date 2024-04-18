@@ -5,8 +5,8 @@
 	import { styleToString } from "$lib/internal/style.js";
 	let {
 		asChild,
-		disabled: disabledProp = false,
-		value: valueProp,
+		disabled = false,
+		value,
 		children,
 		child,
 		el = $bindable(),
@@ -14,18 +14,16 @@
 		...restProps
 	}: AccordionItemProps = $props();
 
-	const disabled = readonlyBox(() => disabledProp);
-	const value = readonlyBox(() => valueProp);
-
-	const item = setAccordionItemState({ value, disabled });
-
-	const isDisabled = $derived(disabled || item.root.disabled);
+	const item = setAccordionItemState({
+		value: readonlyBox(() => value),
+		disabled: readonlyBox(() => disabled),
+	});
 
 	const mergedProps = $derived({
 		...restProps,
 		...item.props,
 		"data-state": item.isSelected ? "open" : "closed",
-		"data-disabled": isDisabled ? "" : undefined,
+		"data-disabled": item.isDisabled ? "" : undefined,
 		style: styleToString(style),
 	});
 </script>

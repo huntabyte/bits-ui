@@ -68,7 +68,7 @@ export class PreventTextSelectionOverflowLayerState {
 	};
 }
 
-export function preventTextSelectionOverflowLayerState(props: StateProps) {
+export function usePreventTextSelectionOverflowLayer(props: StateProps) {
 	return new PreventTextSelectionOverflowLayerState(props);
 }
 

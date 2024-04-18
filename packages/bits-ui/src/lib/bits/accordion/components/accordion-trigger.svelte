@@ -6,28 +6,23 @@
 	import { styleToString } from "$lib/internal/style.js";
 
 	let {
-		disabled: disabledProp = false,
+		disabled = false,
 		asChild,
 		el,
-		id: idProp = generateId(),
-		onkeydown: onkeydownProp = () => {},
-		onclick: onclickProp = () => {},
+		id = generateId(),
+		onkeydown = () => {},
+		onclick = () => {},
 		children,
 		child,
 		style,
 		...restProps
 	}: AccordionTriggerProps = $props();
 
-	const disabled = readonlyBox(() => disabledProp);
-	const id = readonlyBox(() => idProp);
-	const onkeydown = readonlyBox(() => onkeydownProp);
-	const onclick = readonlyBox(() => onclickProp);
-
 	const trigger = getAccordionTriggerState({
-		disabled,
-		onkeydown,
-		onclick,
-		id,
+		disabled: readonlyBox(() => disabled),
+		onkeydown: readonlyBox(() => onkeydown),
+		onclick: readonlyBox(() => onclick),
+		id: readonlyBox(() => id),
 	});
 
 	const mergedProps = $derived({
