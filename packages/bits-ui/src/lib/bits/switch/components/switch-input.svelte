@@ -1,25 +1,8 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { getCtx } from "../ctx.js";
-	import type { InputProps } from "../index.js";
+	import { getSwitchInputState } from "../switch.svelte.js";
+	import { srOnlyStyles, styleToString } from "$lib/internal/style.js";
 
-	type $$Props = InputProps;
-	export let el: $$Props["el"] = undefined;
-
-	const {
-		elements: { input },
-		options: { value, name, disabled, required },
-	} = getCtx();
-
-	$: inputValue = $value === undefined || $value === "" ? "on" : $value;
+	const inputState = getSwitchInputState();
 </script>
 
-<input
-	bind:this={el}
-	use:melt={$input}
-	name={$name}
-	disabled={$disabled}
-	required={$required}
-	value={inputValue}
-	{...$$restProps}
-/>
+<input {...inputState.props} style={styleToString(srOnlyStyles)} />

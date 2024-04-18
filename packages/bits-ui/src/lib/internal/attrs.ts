@@ -60,6 +60,10 @@ export function getDataOpenClosed(condition: boolean): "open" | "closed" {
 	return condition ? "open" : "closed";
 }
 
+export function getDataChecked(condition: boolean): "checked" | "unchecked" {
+	return condition ? "checked" : "unchecked";
+}
+
 export function dataDisabledAttrs(condition: boolean): "" | undefined {
 	return condition ? "" : undefined;
 }
@@ -101,4 +105,8 @@ export function getDataOrientation(
 	orientation: "horizontal" | "vertical"
 ): "horizontal" | "vertical" {
 	return orientation;
+}
+
+export function getDataRequired(condition: boolean): "" | undefined {
+	return condition ? "" : undefined;
 }
