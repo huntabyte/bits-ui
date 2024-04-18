@@ -8,17 +8,17 @@
 		asChild,
 		child,
 		children,
-		decorative: decorativeProp = false,
-		orientation: orientationProp = "horizontal",
+		decorative = false,
+		orientation = "horizontal",
 		el = $bindable(),
 		style = {},
 		...restProps
 	}: RootProps = $props();
 
-	const decorative = readonlyBox(() => decorativeProp);
-	const orientation = readonlyBox(() => orientationProp);
-
-	const separator = setSeparatorRootState({ decorative, orientation });
+	const separator = setSeparatorRootState({
+		decorative: readonlyBox(() => decorative),
+		orientation: readonlyBox(() => orientation),
+	});
 
 	const mergedProps = $derived({
 		...restProps,

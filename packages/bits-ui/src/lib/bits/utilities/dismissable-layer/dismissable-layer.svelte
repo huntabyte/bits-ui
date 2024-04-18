@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { DismissableLayerProps } from "./types.js";
-	import { dismissableLayerState } from "./dismissable-layer.svelte.js";
+	import { useDismissableLayer } from "./dismissable-layer.svelte.js";
 	import { readonlyBox } from "$lib/internal/box.svelte.js";
 	import { noop } from "$lib/index.js";
 
@@ -12,7 +12,7 @@
 		children,
 	}: DismissableLayerProps = $props();
 
-	dismissableLayerState({
+	useDismissableLayer({
 		id: readonlyBox(() => id),
 		behaviorType: readonlyBox(() => behaviorType),
 		onInteractOutside: readonlyBox(() => onInteractOutside),

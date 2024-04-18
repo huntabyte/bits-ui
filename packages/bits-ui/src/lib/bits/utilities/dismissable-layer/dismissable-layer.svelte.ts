@@ -165,7 +165,7 @@ export class DismissableLayerState {
 	}
 }
 
-export function dismissableLayerState(props: DismissableLayerStateProps) {
+export function useDismissableLayer(props: DismissableLayerStateProps) {
 	return new DismissableLayerState(props);
 }
 

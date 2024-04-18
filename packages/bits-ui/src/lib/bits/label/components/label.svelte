@@ -5,7 +5,7 @@
 	import { styleToString } from "$lib/internal/style.js";
 
 	let {
-		onmousedown: onmousedownProp = () => {},
+		onmousedown = () => {},
 		asChild,
 		children,
 		child,
@@ -15,9 +15,7 @@
 		...restProps
 	}: RootProps = $props();
 
-	const onmousedown = readonlyBox(() => onmousedownProp);
-
-	const rootState = setLabelRootState({ onmousedown });
+	const rootState = setLabelRootState({ onmousedown: readonlyBox(() => onmousedown) });
 	const mergedProps = $derived({
 		...restProps,
 		...rootState.props,

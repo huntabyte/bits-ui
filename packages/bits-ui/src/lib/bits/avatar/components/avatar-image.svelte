@@ -3,19 +3,12 @@
 	import { getAvatarImageState } from "../avatar.svelte.js";
 	import { readonlyBox } from "$lib/internal/box.svelte.js";
 
-	let {
-		src: srcProp,
-		asChild,
-		child,
-		el = $bindable(),
-		style: styleProp = {},
-		...restProps
-	}: ImageProps = $props();
+	let { src, asChild, child, el = $bindable(), style = {}, ...restProps }: ImageProps = $props();
 
-	const src = readonlyBox(() => srcProp);
-	const style = readonlyBox(() => styleProp);
-
-	const imageState = getAvatarImageState({ style, src });
+	const imageState = getAvatarImageState({
+		style: readonlyBox(() => style),
+		src: readonlyBox(() => src),
+	});
 
 	const mergedProps = {
 		...imageState.props,

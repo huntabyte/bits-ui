@@ -8,25 +8,21 @@
 		children,
 		child,
 		el = $bindable(),
-		open: openProp = $bindable(false),
-		disabled: disabledProp = false,
+		open = $bindable(false),
+		disabled = false,
 		onOpenChange,
 		...restProps
 	}: RootProps = $props();
 
-	const open = box(
-		() => openProp,
-		(v) => {
-			openProp = v;
-			onOpenChange?.(v);
-		}
-	);
-
-	const disabled = readonlyBox(() => disabledProp);
-
 	const rootState = setCollapsibleRootState({
-		open,
-		disabled,
+		open: box(
+			() => open,
+			(v) => {
+				open = v;
+				onOpenChange?.(v);
+			}
+		),
+		disabled: readonlyBox(() => disabled),
 	});
 
 	const mergedProps = $derived({

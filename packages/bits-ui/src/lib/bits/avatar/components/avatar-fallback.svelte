@@ -8,13 +8,11 @@
 		children,
 		child,
 		el = $bindable(),
-		style: styleProp = {},
+		style = {},
 		...restProps
 	}: FallbackProps = $props();
 
-	const style = readonlyBox(() => styleProp);
-
-	const fallbackState = getAvatarFallbackState({ style });
+	const fallbackState = getAvatarFallbackState({ style: readonlyBox(() => style) });
 
 	const mergedProps = {
 		...fallbackState.props,

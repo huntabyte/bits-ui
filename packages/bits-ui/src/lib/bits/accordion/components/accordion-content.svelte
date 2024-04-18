@@ -9,17 +9,18 @@
 		child,
 		asChild,
 		el = $bindable(),
-		id: idProp = generateId(),
-		forceMount: forceMountProp = false,
+		id = generateId(),
+		forceMount = false,
 		children,
-		style: styleProp = {},
+		style = {},
 		...restProps
 	}: AccordionContentProps = $props();
 
-	const id = readonlyBox(() => idProp);
-	const style = readonlyBox(() => styleProp);
-	const forceMount = readonlyBox(() => forceMountProp);
-	const content = getAccordionContentState({ forceMount, id, style });
+	const content = getAccordionContentState({
+		forceMount: readonlyBox(() => forceMount),
+		id: readonlyBox(() => id),
+		style: readonlyBox(() => style),
+	});
 </script>
 
 <Presence forceMount={true} present={content.present} node={content.node}>

@@ -36,7 +36,7 @@ export class EscapeLayerState {
 	};
 }
 
-export function escapeLayerState(props: EscapeLayerStateProps) {
+export function useEscapeLayer(props: EscapeLayerStateProps) {
 	return new EscapeLayerState(props);
 }
 

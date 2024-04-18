@@ -4,33 +4,27 @@
 	import { box, readonlyBox } from "$lib/internal/box.svelte.js";
 
 	let {
-		delayMs: delayMsProp = 0,
-		loadingStatus: loadingStatusProp = $bindable("loading"),
+		delayMs = 0,
+		loadingStatus = $bindable("loading"),
 		onLoadingStatusChange,
 		asChild,
 		child,
 		children,
 		el = $bindable(),
-		style: styleProp = {},
+		style = {},
 		...restProps
 	}: RootProps = $props();
 
-	const loadingStatus = box(
-		() => loadingStatusProp,
-		(v) => {
-			loadingStatusProp = v;
-			onLoadingStatusChange?.(v);
-		}
-	);
-
-	const style = readonlyBox(() => styleProp);
-
-	const delayMs = readonlyBox(() => delayMsProp);
-
 	const rootState = setAvatarRootState({
-		delayMs,
-		loadingStatus,
-		style,
+		delayMs: readonlyBox(() => delayMs),
+		loadingStatus: box(
+			() => loadingStatus,
+			(v) => {
+				loadingStatus = v;
+				onLoadingStatusChange?.(v);
+			}
+		),
+		style: readonlyBox(() => style),
 	});
 
 	const mergedProps = {

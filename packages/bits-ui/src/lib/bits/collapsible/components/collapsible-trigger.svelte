@@ -9,14 +9,12 @@
 		children,
 		child,
 		el = $bindable(),
-		onclick: onclickProp = () => {},
+		onclick = () => {},
 		style = {},
 		...restProps
 	}: TriggerProps = $props();
 
-	const onclick = readonlyBox(() => onclickProp);
-
-	const triggerState = getCollapsibleTriggerState({ onclick });
+	const triggerState = getCollapsibleTriggerState({ onclick: readonlyBox(() => onclick) });
 
 	const mergedProps = $derived({
 		...triggerState.props,

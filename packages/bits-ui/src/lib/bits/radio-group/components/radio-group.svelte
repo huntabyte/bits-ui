@@ -7,37 +7,37 @@
 	import { styleToString } from "$lib/internal/style.js";
 
 	let {
-		disabled: disabledProp = false,
+		disabled = false,
 		asChild,
 		children,
 		child,
 		style,
-		value: valueProp = $bindable(""),
+		value = $bindable(""),
 		el = $bindable(),
-		orientation: orientationProp = "vertical",
-		loop: loopProp = true,
-		name: nameProp = undefined,
-		required: requiredProp = false,
-		id: idProp = generateId(),
+		orientation = "vertical",
+		loop = true,
+		name = undefined,
+		required = false,
+		id = generateId(),
 		onValueChange,
 		...restProps
 	}: RootProps = $props();
 
-	const value = box(
-		() => valueProp,
-		(v) => {
-			valueProp = v;
-			onValueChange?.(v);
-		}
-	);
-	const disabled = readonlyBox(() => disabledProp);
-	const orientation = readonlyBox(() => orientationProp);
-	const loop = readonlyBox(() => loopProp);
-	const name = readonlyBox(() => nameProp);
-	const required = readonlyBox(() => requiredProp);
-	const id = readonlyBox(() => idProp);
-
-	const root = setRadioGroupRootState({ orientation, disabled, loop, name, required, id, value });
+	const root = setRadioGroupRootState({
+		orientation: readonlyBox(() => orientation),
+		disabled: readonlyBox(() => disabled),
+		loop: readonlyBox(() => loop),
+		name: readonlyBox(() => name),
+		required: readonlyBox(() => required),
+		id: readonlyBox(() => id),
+		value: box(
+			() => value,
+			(v) => {
+				value = v;
+				onValueChange?.(v);
+			}
+		),
+	});
 
 	const mergedProps = $derived({
 		...restProps,

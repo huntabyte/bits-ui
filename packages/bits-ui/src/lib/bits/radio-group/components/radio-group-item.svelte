@@ -6,27 +6,27 @@
 	import { styleToString } from "$lib/internal/style.js";
 
 	let {
-		id: idProp = generateId(),
+		id = generateId(),
 		asChild,
 		children,
 		indicator,
 		child,
-		value: valueProp,
-		disabled: disabledProp = false,
-		onclick: onclickProp = () => {},
-		onkeydown: onkeydownProp = () => {},
+		value,
+		disabled = false,
+		onclick = () => {},
+		onkeydown = () => {},
 		el = $bindable(),
 		style = {},
 		...restProps
 	}: ItemProps = $props();
 
-	const value = readonlyBox(() => valueProp);
-	const disabled = readonlyBox(() => disabledProp);
-	const id = readonlyBox(() => idProp);
-	const onclick = readonlyBox(() => onclickProp);
-	const onkeydown = readonlyBox(() => onkeydownProp);
-
-	const item = setRadioGroupItemState({ value, disabled, id, onclick, onkeydown });
+	const item = setRadioGroupItemState({
+		value: readonlyBox(() => value),
+		disabled: readonlyBox(() => disabled),
+		id: readonlyBox(() => id),
+		onclick: readonlyBox(() => onclick),
+		onkeydown: readonlyBox(() => onkeydown),
+	});
 
 	const mergedProps = $derived({
 		...restProps,

@@ -6,14 +6,14 @@
 	import { styleToString } from "$lib/internal/style.js";
 
 	let {
-		disabled: disabledProp = false,
+		disabled = false,
 		asChild,
 		children,
 		child,
 		type,
 		value: valueProp = $bindable(),
 		el = $bindable(),
-		id: idProp = generateId(),
+		id = generateId(),
 		style,
 		onValueChange,
 		...restProps
@@ -21,18 +21,18 @@
 
 	valueProp === undefined && (valueProp = type === "single" ? "" : []);
 
-	const value = box(
-		() => valueProp!,
-		(v) => {
-			valueProp = v;
-			onValueChange?.(v as any);
-		}
-	) as Box<string> | Box<string[]>;
-
-	const id = readonlyBox(() => idProp);
-	const disabled = readonlyBox(() => disabledProp);
-
-	const rootState = setAccordionRootState({ type, value, id, disabled });
+	const rootState = setAccordionRootState({
+		type,
+		value: box(
+			() => valueProp!,
+			(v) => {
+				valueProp = v;
+				onValueChange?.(v as any);
+			}
+		) as Box<string> | Box<string[]>,
+		id: readonlyBox(() => id),
+		disabled: readonlyBox(() => disabled),
+	});
 
 	const mergedProps = {
 		...rootState.props,
