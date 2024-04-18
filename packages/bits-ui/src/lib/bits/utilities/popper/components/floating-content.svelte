@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { ContentProps } from "../index.js";
-	import { setPopperContentState } from "../popper.svelte.js";
+	import { setFloatingContentState } from "../floating.svelte.js";
 	import { readonlyBox } from "$lib/internal/box.svelte.js";
 
 	let {
@@ -18,9 +18,10 @@
 		onPlaced = () => {},
 		sticky = "partial",
 		updatePositionStrategy = "optimized",
+		strategy = "absolute",
 	}: ContentProps = $props();
 
-	setPopperContentState({
+	setFloatingContentState({
 		side: readonlyBox(() => side),
 		sideOffset: readonlyBox(() => sideOffset),
 		align: readonlyBox(() => align),
@@ -34,6 +35,7 @@
 		onPlaced: readonlyBox(() => onPlaced),
 		sticky: readonlyBox(() => sticky),
 		updatePositionStrategy: readonlyBox(() => updatePositionStrategy),
+		strategy: readonlyBox(() => strategy),
 	});
 </script>
 

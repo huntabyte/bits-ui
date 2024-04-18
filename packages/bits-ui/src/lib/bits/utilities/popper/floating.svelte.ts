@@ -19,6 +19,7 @@ import {
 	type BoxedValues,
 	type ReadonlyBox,
 	type ReadonlyBoxedValues,
+	isHTMLElement,
 	useNodeById,
 } from "$lib/internal/index.js";
 import { useSize } from "$lib/internal/use-size.svelte.js";
@@ -26,30 +27,37 @@ import { useSize } from "$lib/internal/use-size.svelte.js";
 export const SIDE_OPTIONS = ["top", "right", "bottom", "left"] as const;
 export const ALIGN_OPTIONS = ["start", "center", "end"] as const;
 
+const ARROW_TRANSFORM = {
+	bottom: "rotate(45deg)",
+	left: "rotate(135deg)",
+	top: "rotate(225deg)",
+	right: "rotate(315deg)",
+};
+
 export type Side = (typeof SIDE_OPTIONS)[number];
 export type Align = (typeof ALIGN_OPTIONS)[number];
 
 export type Boundary = Element | null;
 
-class PopperRootState {
+class FloatingRootState {
 	contentNode = undefined as unknown as Box<HTMLElement | null>;
 	anchorNode = undefined as unknown as Box<HTMLElement | VirtualElement | null>;
 	arrowNode = undefined as unknown as Box<HTMLElement | null>;
 
-	createAnchor(props: PopperAnchorStateProps) {
-		return new PopperAnchorState(props, this);
+	createAnchor(props: FloatingAnchorStateProps) {
+		return new FloatingAnchorState(props, this);
 	}
 
-	createContent(props: PopperContentStateProps) {
-		return new PopperContentState(props, this);
+	createContent(props: FloatingContentStateProps) {
+		return new FloatingContentState(props, this);
 	}
 
-	createArrow(props: PopperArrowStateProps) {
-		return new PopperArrowState(props, this);
+	createArrow(props: FloatingArrowStateProps) {
+		return new FloatingArrowState(props, this);
 	}
 }
 
-type PopperContentStateProps = ReadonlyBoxedValues<{
+type FloatingContentStateProps = ReadonlyBoxedValues<{
 	id: string;
 	side: Side;
 	sideOffset: number;
@@ -62,25 +70,27 @@ type PopperContentStateProps = ReadonlyBoxedValues<{
 	sticky: "partial" | "always";
 	hideWhenDetached: boolean;
 	updatePositionStrategy: "optimized" | "always";
+	strategy: "fixed" | "absolute";
 	onPlaced: () => void;
 }>;
 
-class PopperContentState {
-	root = undefined as unknown as PopperRootState;
-	id = undefined as unknown as PopperContentStateProps["id"];
-	side = undefined as unknown as PopperContentStateProps["side"];
-	sideOffset = undefined as unknown as PopperContentStateProps["sideOffset"];
-	align = undefined as unknown as PopperContentStateProps["align"];
-	alignOffset = undefined as unknown as PopperContentStateProps["alignOffset"];
-	arrowPadding = undefined as unknown as PopperContentStateProps["arrowPadding"];
-	avoidCollisions = undefined as unknown as PopperContentStateProps["avoidCollisions"];
-	collisionBoundary = undefined as unknown as PopperContentStateProps["collisionBoundary"];
-	collisionPadding = undefined as unknown as PopperContentStateProps["collisionPadding"];
-	sticky = undefined as unknown as PopperContentStateProps["sticky"];
-	hideWhenDetached = undefined as unknown as PopperContentStateProps["hideWhenDetached"];
+class FloatingContentState {
+	root = undefined as unknown as FloatingRootState;
+	id = undefined as unknown as FloatingContentStateProps["id"];
+	side = undefined as unknown as FloatingContentStateProps["side"];
+	sideOffset = undefined as unknown as FloatingContentStateProps["sideOffset"];
+	align = undefined as unknown as FloatingContentStateProps["align"];
+	alignOffset = undefined as unknown as FloatingContentStateProps["alignOffset"];
+	arrowPadding = undefined as unknown as FloatingContentStateProps["arrowPadding"];
+	avoidCollisions = undefined as unknown as FloatingContentStateProps["avoidCollisions"];
+	collisionBoundary = undefined as unknown as FloatingContentStateProps["collisionBoundary"];
+	collisionPadding = undefined as unknown as FloatingContentStateProps["collisionPadding"];
+	sticky = undefined as unknown as FloatingContentStateProps["sticky"];
+	hideWhenDetached = undefined as unknown as FloatingContentStateProps["hideWhenDetached"];
+	strategy = undefined as unknown as FloatingContentStateProps["strategy"];
 	updatePositionStrategy =
-		undefined as unknown as PopperContentStateProps["updatePositionStrategy"];
-	onPlaced = undefined as unknown as PopperContentStateProps["onPlaced"];
+		undefined as unknown as FloatingContentStateProps["updatePositionStrategy"];
+	onPlaced = undefined as unknown as FloatingContentStateProps["onPlaced"];
 	arrowSize = useSize(this.root.arrowNode);
 	arrowWidth = $derived(this.arrowSize.value?.width ?? 0);
 	arrowHeight = $derived(this.arrowSize.value?.height ?? 0);
@@ -130,7 +140,7 @@ class PopperContentState {
 			hide({ strategy: "referenceHidden", ...this.detectOverflowOptions }),
 	]);
 
-	constructor(props: PopperContentStateProps, root: PopperRootState) {
+	constructor(props: FloatingContentStateProps, root: FloatingRootState) {
 		this.id = props.id;
 		this.side = props.side;
 		this.sideOffset = props.sideOffset;
@@ -144,34 +154,97 @@ class PopperContentState {
 		this.hideWhenDetached = props.hideWhenDetached;
 		this.updatePositionStrategy = props.updatePositionStrategy;
 		this.onPlaced = props.onPlaced;
+		this.strategy = props.strategy;
 
 		this.root = root;
 
 		this.root.contentNode = useNodeById(this.id);
+		const contentNode = this.root.contentNode.value;
+		if (contentNode) {
+			Object.assign(contentNode.style, {
+				position: this.strategy.value,
+			});
+		}
+	}
+
+	compute() {
+		if (!this.root.anchorNode.value || !this.root.contentNode.value) return;
+		// if the reference is no longer in the DOM, ignore it
+		if (
+			isHTMLElement(this.root.anchorNode.value) &&
+			!this.root.anchorNode.value.ownerDocument.documentElement.contains(
+				this.root.anchorNode.value
+			)
+		)
+			return;
+
+		computePosition(this.root.anchorNode.value, this.root.contentNode.value, {
+			placement: this.desiredPlacement,
+			strategy: "fixed",
+			middleware: this.middleware,
+		}).then((data) => {
+			const x = Math.round(data.x);
+			const y = Math.round(data.y);
+			const contentNode = this.root.contentNode.value;
+			if (!contentNode) return;
+
+			// get the chosen side and align from the placement
+			const [side, align] = getSideAndAlignFromPlacement(data.placement);
+
+			contentNode.setAttribute("data-side", side);
+			contentNode.setAttribute("data-align", align);
+
+			Object.assign(contentNode.style, {
+				position: this.strategy.value,
+				top: `${y}px`,
+				left: `${x}px`,
+			});
+
+			const arrowNode = this.root.arrowNode.value;
+
+			if (isHTMLElement(arrowNode) && data.middlewareData.arrow) {
+				const { x, y } = data.middlewareData.arrow;
+
+				const dir = data.placement.split("-")[0] as Side;
+
+				arrowNode.setAttribute("data-side", dir);
+
+				Object.assign(arrowNode.style, {
+					position: "absolute",
+					left: x != null ? `${x}px` : "",
+					top: y != null ? `${y}px` : "",
+					[dir]: `calc(100% - ${this.arrowPadding.value}px)`,
+					transform: ARROW_TRANSFORM[dir],
+					backgroundColor: "inherit",
+					zIndex: "inherit",
+				});
+			}
+			return data;
+		});
 	}
 }
 
-type PopperArrowStateProps = ReadonlyBoxedValues<{
+type FloatingArrowStateProps = ReadonlyBoxedValues<{
 	id: string;
 }>;
 
-class PopperArrowState {
-	root = undefined as unknown as PopperRootState;
+class FloatingArrowState {
+	root = undefined as unknown as FloatingRootState;
 	id = undefined as unknown as ReadonlyBox<string>;
 
-	constructor(props: PopperArrowStateProps, root: PopperRootState) {
+	constructor(props: FloatingArrowStateProps, root: FloatingRootState) {
 		this.id = props.id;
 		this.root = root;
 		this.root.arrowNode = useNodeById(this.id);
 	}
 }
 
-type PopperAnchorStateProps = BoxedValues<{
+type FloatingAnchorStateProps = BoxedValues<{
 	node: HTMLElement | VirtualElement | null;
 }>;
 
-class PopperAnchorState {
-	constructor(props: PopperAnchorStateProps, root: PopperRootState) {
+class FloatingAnchorState {
+	constructor(props: FloatingAnchorStateProps, root: FloatingRootState) {
 		root.anchorNode = props.node;
 	}
 }
@@ -180,26 +253,26 @@ class PopperAnchorState {
 // CONTEXT METHODS
 //
 
-const POPPER_ROOT_KEY = Symbol("Popper.Root");
+const FLOATING_ROOT_KEY = Symbol("Popper.Root");
 
-export function setPopperRootState() {
-	return setContext(POPPER_ROOT_KEY, new PopperRootState());
+export function setFloatingRootState() {
+	return setContext(FLOATING_ROOT_KEY, new FloatingRootState());
 }
 
-export function getPopperRootState(): PopperRootState {
-	return getContext(POPPER_ROOT_KEY);
+export function getFloatingRootState(): FloatingRootState {
+	return getContext(FLOATING_ROOT_KEY);
 }
 
-export function setPopperContentState(props: PopperContentStateProps) {
-	return getPopperRootState().createContent(props);
+export function setFloatingContentState(props: FloatingContentStateProps): FloatingContentState {
+	return getFloatingRootState().createContent(props);
 }
 
-export function setPopperArrowState(props: PopperArrowStateProps) {
-	return getPopperRootState().createArrow(props);
+export function setFloatingArrowState(props: FloatingArrowStateProps): FloatingArrowState {
+	return getFloatingRootState().createArrow(props);
 }
 
-export function setPopperAnchorState(props: PopperAnchorStateProps) {
-	return getPopperRootState().createAnchor(props);
+export function setFloatingAnchorState(props: FloatingAnchorStateProps): FloatingAnchorState {
+	return getFloatingRootState().createAnchor(props);
 }
 
 //

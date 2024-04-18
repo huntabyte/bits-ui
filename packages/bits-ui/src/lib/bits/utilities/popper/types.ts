@@ -1,10 +1,10 @@
 import type { Snippet } from "svelte";
 import type { VirtualElement } from "@floating-ui/core";
-import type { Align, Boundary, Side } from "./popper.svelte.js";
+import type { Align, Boundary, Side } from "./floating.svelte.js";
 import type { Arrayable } from "$lib/internal/types.js";
 import type { Box } from "$lib/internal/box.svelte.js";
 
-export type PopperContentProps = {
+export type FloatingContentProps = {
 	id: string;
 	side?: Side;
 	sideOffset?: number;
@@ -19,14 +19,15 @@ export type PopperContentProps = {
 	updatePositionStrategy?: "optimized" | "always";
 	onPlaced?: () => void;
 	children?: Snippet;
+	strategy?: "absolute" | "fixed";
 };
 
-export type PopperArrowProps = {
+export type FloatingArrowProps = {
 	id: string;
 	children?: Snippet;
 };
 
-export type PopperAnchorProps = {
+export type FloatingAnchorProps = {
 	node: Box<HTMLElement | VirtualElement | null>;
 	children?: Snippet;
 };

@@ -1,10 +1,10 @@
 <script lang="ts">
 	import type { AnchorProps } from "../index.js";
-	import { setPopperAnchorState } from "../popper.svelte.js";
+	import { setFloatingAnchorState } from "../floating.svelte.js";
 
 	let { node, children }: AnchorProps = $props();
 
-	setPopperAnchorState({ node });
+	setFloatingAnchorState({ node });
 </script>
 
 {@render children?.()}

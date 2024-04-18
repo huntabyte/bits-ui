@@ -1,10 +1,10 @@
 <script lang="ts">
 	import type { Snippet } from "svelte";
-	import { setPopperRootState } from "../popper.svelte.js";
+	import { setFloatingRootState } from "../floating.svelte.js";
 
 	let { children }: { children?: Snippet } = $props();
 
-	setPopperRootState();
+	setFloatingRootState();
 </script>
 
 {@render children?.()}

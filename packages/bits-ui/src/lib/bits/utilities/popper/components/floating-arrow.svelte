@@ -1,11 +1,11 @@
 <script lang="ts">
 	import type { ArrowProps } from "../index.js";
-	import { setPopperArrowState } from "../popper.svelte.js";
+	import { setFloatingArrowState } from "../floating.svelte.js";
 	import { readonlyBox } from "$lib/internal/box.svelte.js";
 
 	let { id, children }: ArrowProps = $props();
 
-	setPopperArrowState({ id: readonlyBox(() => id) });
+	setFloatingArrowState({ id: readonlyBox(() => id) });
 </script>
 
 {@render children?.()}
