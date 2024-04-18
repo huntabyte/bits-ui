@@ -1,5 +1,6 @@
 import { createEventDispatcher } from "svelte";
 import type { ReadonlyBox } from "./box.svelte.js";
+import type { Arrayable } from "$lib/internal/index.js";
 
 type MeltEvent<T extends Event = Event> = {
 	detail: {
@@ -36,14 +37,12 @@ export type CreateDispatcher = {
 	createDispatcher: typeof createDispatcher;
 };
 
-export type EventCallback<E extends Event = Event, T extends Element = Element> = (
-	event: E & { currentTarget: EventTarget & T }
-) => void;
+export type EventCallback<E extends Event = Event> = (event: E) => void;
 
 export function composeHandlers<E extends Event = Event, T extends Element = Element>(
-	...handlers: Array<EventCallback<E, T> | ReadonlyBox<EventCallback<E, T>> | undefined>
-): (e: E & { currentTarget: EventTarget & T }) => void {
-	return function (this: T, e: E & { currentTarget: EventTarget & T }) {
+	...handlers: Array<EventCallback<E> | ReadonlyBox<EventCallback<E>> | undefined>
+): (e: E) => void {
+	return function (this: T, e: E) {
 		for (const handler of handlers) {
 			if (!handler || e.defaultPrevented) return;
 			if (typeof handler === "function") {
@@ -57,23 +56,23 @@ export function composeHandlers<E extends Event = Event, T extends Element = Ele
 
 export type GeneralEventListener<E = Event> = (evt: E) => unknown;
 
-export function addEventListener<E extends keyof HTMLElementEventMap>(
+export function addEventListener<E extends keyof WindowEventMap>(
 	target: Window,
-	event: E,
-	handler: (this: Window, ev: HTMLElementEventMap[E]) => unknown,
+	event: Arrayable<E>,
+	handler: (this: Window, ev: WindowEventMap[E]) => unknown,
 	options?: boolean | AddEventListenerOptions
 ): VoidFunction;
 
-export function addEventListener<E extends keyof HTMLElementEventMap>(
+export function addEventListener<E extends keyof DocumentEventMap>(
 	target: Document,
-	event: E,
-	handler: (this: Document, ev: HTMLElementEventMap[E]) => unknown,
+	event: Arrayable<E>,
+	handler: (this: Document, ev: DocumentEventMap[E]) => unknown,
 	options?: boolean | AddEventListenerOptions
 ): VoidFunction;
 
 export function addEventListener<E extends keyof HTMLElementEventMap>(
 	target: EventTarget,
-	event: E,
+	event: Arrayable<E>,
 	handler: GeneralEventListener<HTMLElementEventMap[E]>,
 	options?: boolean | AddEventListenerOptions
 ): VoidFunction;
@@ -87,7 +86,7 @@ export function addEventListener<E extends keyof HTMLElementEventMap>(
  */
 export function addEventListener(
 	target: Window | Document | EventTarget,
-	event: string | string[],
+	event: Arrayable<string>,
 	handler: EventListenerOrEventListenerObject,
 	options?: boolean | AddEventListenerOptions
 ) {

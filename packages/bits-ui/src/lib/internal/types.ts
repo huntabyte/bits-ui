@@ -162,3 +162,9 @@ export type WithAsChild<T, U extends Record<PropertyKey, unknown> = {}> =
  * // Result type will be { a: number; }
  */
 export type Without<T extends object, U extends object> = Omit<T, keyof U>;
+
+export type Arrayable<T> = T[] | T;
+
+export type Fn = () => void;
+// eslint-disable-next-line ts/no-explicit-any
+export type AnyFn = (...args: any[]) => any;
