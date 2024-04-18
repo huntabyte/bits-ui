@@ -8,22 +8,19 @@ type SeparatorRootStateProps = ReadonlyBoxedValues<{
 }>;
 
 class SeparatorRootState {
-	#orientation: ReadonlyBox<Orientation>;
-	#decorative: ReadonlyBox<boolean>;
+	#orientation = undefined as unknown as ReadonlyBox<Orientation>;
+	#decorative = undefined as unknown as ReadonlyBox<boolean>;
+	props = $derived({
+		role: this.#decorative.value ? "none" : "separator",
+		"aria-orientation": getAriaOrientation(this.#orientation.value),
+		"aria-hidden": getAriaHidden(this.#decorative.value),
+		"data-orientation": getDataOrientation(this.#orientation.value),
+		"data-bits-separator-root": "",
+	} as const);
 
 	constructor(props: SeparatorRootStateProps) {
 		this.#orientation = props.orientation;
 		this.#decorative = props.decorative;
-	}
-
-	get props() {
-		return {
-			role: this.#decorative.value ? "none" : "separator",
-			"aria-orientation": getAriaOrientation(this.#orientation.value),
-			"aria-hidden": getAriaHidden(this.#decorative.value),
-			"data-orientation": getDataOrientation(this.#orientation.value),
-			"data-bits-separator-root": "",
-		};
 	}
 }
 

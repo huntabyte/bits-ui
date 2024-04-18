@@ -5,7 +5,6 @@ import {
 	type EventCallback,
 	type ReadonlyBox,
 	type ReadonlyBoxedValues,
-	boxedState,
 	composeHandlers,
 	getAriaDisabled,
 	getAriaExpanded,
@@ -28,9 +27,13 @@ type AccordionBaseStateProps = ReadonlyBoxedValues<{
 }>;
 
 class AccordionBaseState {
-	id: ReadonlyBox<string>;
+	id = undefined as unknown as ReadonlyBox<string>;
 	node: Box<HTMLElement | null>;
 	disabled: ReadonlyBox<boolean>;
+	props = $derived({
+		id: this.id.value,
+		"data-accordion-root": "",
+	} as const);
 
 	constructor(props: AccordionBaseStateProps) {
 		this.id = props.id;
@@ -44,13 +47,6 @@ class AccordionBaseState {
 		return Array.from(
 			this.node.value.querySelectorAll<HTMLElement>("[data-accordion-trigger]")
 		).filter((el) => !el.dataset.disabled);
-	}
-
-	get props() {
-		return {
-			id: this.id.value,
-			"data-accordion-root": "",
-		} as const;
 	}
 }
 
@@ -118,38 +114,25 @@ type AccordionItemStateProps = ReadonlyBoxedValues<{
 };
 
 export class AccordionItemState {
-	#value: ReadonlyBox<string>;
-	disabled: ReadonlyBox<boolean>;
-	root: AccordionState;
+	value = undefined as unknown as ReadonlyBox<string>;
+	disabled = undefined as unknown as ReadonlyBox<boolean>;
+	root = undefined as unknown as AccordionState;
+	isSelected = $derived(this.root.includesItem(this.value.value));
+	isDisabled = $derived(this.disabled.value || this.root.disabled.value);
+	props = $derived({
+		"data-accordion-item": "",
+		"data-state": getDataOpenClosed(this.isSelected),
+		"data-disabled": getDataDisabled(this.isDisabled),
+	} as const);
 
 	constructor(props: AccordionItemStateProps) {
-		this.#value = props.value;
+		this.value = props.value;
 		this.disabled = props.disabled;
 		this.root = props.rootState;
 	}
 
-	get value() {
-		return this.#value.value;
-	}
-
-	get isSelected() {
-		return this.root.includesItem(this.value);
-	}
-
-	get isDisabled() {
-		return this.disabled.value || this.root.disabled.value;
-	}
-
 	updateValue() {
-		this.root.toggleItem(this.value);
-	}
-
-	get props() {
-		return {
-			"data-accordion-item": "",
-			"data-state": getDataOpenClosed(this.isSelected),
-			"data-disabled": getDataDisabled(this.isDisabled),
-		} as const;
+		this.root.toggleItem(this.value.value);
 	}
 
 	createTrigger(props: AccordionTriggerStateProps) {
@@ -173,13 +156,29 @@ type AccordionTriggerStateProps = ReadonlyBoxedValues<{
 }>;
 
 class AccordionTriggerState {
-	#disabled: ReadonlyBox<boolean>;
-	#id: ReadonlyBox<string>;
+	#disabled = undefined as unknown as ReadonlyBox<boolean>;
+	#id = undefined as unknown as ReadonlyBox<string>;
 	#node: Box<HTMLElement | null>;
-	#root: AccordionState;
-	#itemState: AccordionItemState;
-	#composedClick: EventCallback<MouseEvent>;
-	#composedKeydown: EventCallback<KeyboardEvent>;
+	#root = undefined as unknown as AccordionState;
+	#itemState = undefined as unknown as AccordionItemState;
+	#composedClick = undefined as unknown as EventCallback<MouseEvent>;
+	#composedKeydown = undefined as unknown as EventCallback<KeyboardEvent>;
+	#isDisabled = $derived(
+		this.#disabled.value || this.#itemState.disabled.value || this.#root.disabled.value
+	);
+	props = $derived({
+		id: this.#id.value,
+		disabled: this.#isDisabled,
+		"aria-expanded": getAriaExpanded(this.#itemState.isSelected),
+		"aria-disabled": getAriaDisabled(this.#isDisabled),
+		"data-disabled": getDataDisabled(this.#isDisabled),
+		"data-value": this.#itemState.value,
+		"data-state": getDataOpenClosed(this.#itemState.isSelected),
+		"data-accordion-trigger": "",
+		//
+		onclick: this.#composedClick,
+		onkeydown: this.#composedKeydown,
+	} as const);
 
 	constructor(props: AccordionTriggerStateProps, itemState: AccordionItemState) {
 		this.#disabled = props.disabled;
@@ -190,10 +189,6 @@ class AccordionTriggerState {
 		this.#composedKeydown = composeHandlers(props.onkeydown, this.#onkeydown);
 
 		this.#node = useNodeById(this.#id);
-	}
-
-	get #isDisabled() {
-		return this.#disabled.value || this.#itemState.disabled.value || this.#root.disabled.value;
 	}
 
 	#onclick = () => {
@@ -228,22 +223,6 @@ class AccordionTriggerState {
 
 		candidateItems[keyToIndex[e.key]!]?.focus();
 	};
-
-	get props() {
-		return {
-			id: this.#id.value,
-			disabled: this.#isDisabled,
-			"aria-expanded": getAriaExpanded(this.#itemState.isSelected),
-			"aria-disabled": getAriaDisabled(this.#isDisabled),
-			"data-disabled": getDataDisabled(this.#isDisabled),
-			"data-value": this.#itemState.value,
-			"data-state": getDataOpenClosed(this.#itemState.isSelected),
-			"data-accordion-trigger": "",
-			//
-			onclick: this.#composedClick,
-			onkeydown: this.#composedKeydown,
-		} as const;
-	}
 }
 
 /**
@@ -257,15 +236,28 @@ type AccordionContentStateProps = ReadonlyBoxedValues<{
 }>;
 
 class AccordionContentState {
-	item: AccordionItemState;
+	item = undefined as unknown as AccordionItemState;
 	node: Box<HTMLElement | null>;
-	#id: ReadonlyBox<string>;
+	#id = undefined as unknown as ReadonlyBox<string>;
 	#originalStyles: { transitionDuration: string; animationName: string } | undefined = undefined;
 	#isMountAnimationPrevented = false;
 	#width = $state(0);
 	#height = $state(0);
-	#forceMount: ReadonlyBox<boolean>;
-	#styleProp: ReadonlyBox<StyleProperties>;
+	#forceMount = undefined as unknown as ReadonlyBox<boolean>;
+	#styleProp = undefined as unknown as ReadonlyBox<StyleProperties>;
+	props = $derived({
+		id: this.#id.value,
+		"data-state": getDataOpenClosed(this.item.isSelected),
+		"data-disabled": getDataDisabled(this.item.isDisabled),
+		"data-value": this.item.value,
+		"data-accordion-content": "",
+		style: styleToString({
+			...this.#styleProp.value,
+			"--bits-accordion-content-height": `${this.#height}px`,
+			"--bits-accordion-content-width": `${this.#width}px`,
+		}),
+	} as const);
+	present = $derived(this.#forceMount.value || this.item.isSelected);
 
 	constructor(props: AccordionContentStateProps, item: AccordionItemState) {
 		this.item = item;
@@ -316,25 +308,6 @@ class AccordionContentState {
 				}
 			});
 		});
-	}
-
-	get present() {
-		return this.#forceMount.value || this.item.isSelected;
-	}
-
-	get props() {
-		return {
-			id: this.#id.value,
-			"data-state": getDataOpenClosed(this.item.isSelected),
-			"data-disabled": getDataDisabled(this.item.isDisabled),
-			"data-value": this.item.value,
-			"data-accordion-content": "",
-			style: styleToString({
-				...this.#styleProp.value,
-				"--bits-accordion-content-height": `${this.#height}px`,
-				"--bits-accordion-content-width": `${this.#width}px`,
-			}),
-		} as const;
 	}
 }
 

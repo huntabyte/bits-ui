@@ -23,13 +23,26 @@ type SwitchRootStateProps = ReadonlyBoxedValues<{
 	}>;
 
 class SwitchRootState {
-	checked: SwitchRootStateProps["checked"];
-	disabled: SwitchRootStateProps["disabled"];
-	required: SwitchRootStateProps["required"];
+	checked = undefined as unknown as SwitchRootStateProps["checked"];
+	disabled = undefined as unknown as SwitchRootStateProps["disabled"];
+	required = undefined as unknown as SwitchRootStateProps["required"];
 	name: SwitchRootStateProps["name"];
 	value: SwitchRootStateProps["value"];
-	#composedClick: EventCallback<MouseEvent>;
-	#composedKeydown: EventCallback<KeyboardEvent>;
+	#composedClick = undefined as unknown as EventCallback<MouseEvent>;
+	#composedKeydown = undefined as unknown as EventCallback<KeyboardEvent>;
+	props = $derived({
+		"data-disabled": getDataDisabled(this.disabled.value),
+		"data-state": getDataChecked(this.checked.value),
+		"data-required": getDataRequired(this.required.value),
+		type: "button",
+		role: "switch",
+		"aria-checked": getAriaChecked(this.checked.value),
+		"aria-required": getAriaRequired(this.required.value),
+		"data-switch-root": "",
+		//
+		onclick: this.#composedClick,
+		onkeydown: this.#composedKeydown,
+	} as const);
 
 	constructor(props: SwitchRootStateProps) {
 		this.checked = props.checked;
@@ -56,22 +69,6 @@ class SwitchRootState {
 		this.#toggle();
 	};
 
-	get props() {
-		return {
-			"data-disabled": getDataDisabled(this.disabled.value),
-			"data-state": getDataChecked(this.checked.value),
-			"data-required": getDataRequired(this.required.value),
-			type: "button",
-			role: "switch",
-			"aria-checked": getAriaChecked(this.checked.value),
-			"aria-required": getAriaRequired(this.required.value),
-			"data-switch-root": "",
-			//
-			onclick: this.#composedClick,
-			onkeydown: this.#composedKeydown,
-		} as const;
-	}
-
 	createInput() {
 		return new SwitchInputState(this);
 	}
@@ -82,42 +79,33 @@ class SwitchRootState {
 }
 
 class SwitchInputState {
-	#root: SwitchRootState;
+	#root = undefined as unknown as SwitchRootState;
+	props = $derived({
+		type: "checkbox",
+		name: this.#root.name.value,
+		value: this.#root.value.value,
+		checked: this.#root.checked.value,
+		disabled: this.#root.disabled.value,
+		required: this.#root.required.value,
+	} as const);
+	shouldRender = $derived(this.#root.name.value !== undefined);
 
 	constructor(root: SwitchRootState) {
 		this.#root = root;
 	}
-
-	get shouldRender() {
-		return this.#root.name.value !== undefined;
-	}
-
-	get props() {
-		return {
-			type: "checkbox",
-			name: this.#root.name.value,
-			value: this.#root.value.value,
-			checked: this.#root.checked.value,
-			disabled: this.#root.disabled.value,
-			required: this.#root.required.value,
-		} as const;
-	}
 }
 
 class SwitchThumbState {
-	root: SwitchRootState;
+	root = undefined as unknown as SwitchRootState;
+	props = $derived({
+		"data-disabled": getDataDisabled(this.root.disabled.value),
+		"data-state": getDataChecked(this.root.checked.value),
+		"data-required": getDataRequired(this.root.required.value),
+		"data-switch-thumb": "",
+	} as const);
 
 	constructor(root: SwitchRootState) {
 		this.root = root;
-	}
-
-	get props() {
-		return {
-			"data-disabled": getDataDisabled(this.root.disabled.value),
-			"data-state": getDataChecked(this.root.checked.value),
-			"data-required": getDataRequired(this.root.required.value),
-			"data-switch-thumb": "",
-		} as const;
 	}
 }
 

@@ -6,7 +6,11 @@ type LabelRootStateProps = ReadonlyBoxedValues<{
 }>;
 
 class LabelRootState {
-	#composedMousedown: EventCallback<MouseEvent>;
+	#composedMousedown = undefined as unknown as EventCallback<MouseEvent>;
+	props = $derived({
+		"data-label-root": "",
+		onmousedown: this.#composedMousedown,
+	});
 
 	constructor(props: LabelRootStateProps) {
 		this.#composedMousedown = composeHandlers(props.onmousedown, this.#onmousedown);
@@ -15,13 +19,6 @@ class LabelRootState {
 	#onmousedown = (e: MouseEvent) => {
 		if (e.detail > 1) e.preventDefault();
 	};
-
-	get props() {
-		return {
-			"data-label-root": "",
-			onmousedown: this.#composedMousedown,
-		};
-	}
 }
 
 export function setLabelRootState(props: LabelRootStateProps) {
