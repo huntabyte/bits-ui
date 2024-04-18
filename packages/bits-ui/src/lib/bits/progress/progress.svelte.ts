@@ -6,27 +6,24 @@ type ProgressRootStateProps = ReadonlyBoxedValues<{
 }>;
 
 class ProgressRootState {
-	#value: ProgressRootStateProps["value"];
-	#max: ProgressRootStateProps["max"];
+	#value = undefined as unknown as ProgressRootStateProps["value"];
+	#max = undefined as unknown as ProgressRootStateProps["max"];
+	props = $derived({
+		role: "meter",
+		value: this.#value.value,
+		max: this.#max.value,
+		"aria-valuemin": 0,
+		"aria-valuemax": this.#max.value,
+		"aria-valuenow": this.#value.value,
+		"data-value": this.#value.value,
+		"data-state": getProgressDataState(this.#value.value, this.#max.value),
+		"data-max": this.#max.value,
+		"data-progress-root": "",
+	} as const);
 
 	constructor(props: ProgressRootStateProps) {
 		this.#value = props.value;
 		this.#max = props.max;
-	}
-
-	get props() {
-		return {
-			role: "meter",
-			value: this.#value.value,
-			max: this.#max.value,
-			"aria-valuemin": 0,
-			"aria-valuemax": this.#max.value,
-			"aria-valuenow": this.#value.value,
-			"data-value": this.#value.value,
-			"data-state": getProgressDataState(this.#value.value, this.#max.value),
-			"data-max": this.#max.value,
-			"data-progress-root": "",
-		} as const;
 	}
 }
 
