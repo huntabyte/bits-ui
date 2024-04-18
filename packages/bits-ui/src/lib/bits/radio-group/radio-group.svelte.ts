@@ -12,6 +12,7 @@ import { getDirectionalKeys, kbd } from "$lib/internal/kbd.js";
 import { getElemDirection } from "$lib/internal/locale.js";
 import type { Orientation } from "$lib/shared/index.js";
 import { verifyContextDeps } from "$lib/internal/context.js";
+import { srOnlyStyles, styleToString } from "$lib/internal/style.js";
 
 type RadioGroupRootStateProps = ReadonlyBoxedValues<{
 	id: string;
@@ -21,7 +22,7 @@ type RadioGroupRootStateProps = ReadonlyBoxedValues<{
 	orientation: Orientation;
 	name: string | undefined;
 }> &
-	BoxedValues<{ value: string; }>;
+	BoxedValues<{ value: string }>;
 
 class RadioGroupRootState {
 	id: RadioGroupRootStateProps["id"];
@@ -32,6 +33,7 @@ class RadioGroupRootState {
 	orientation: RadioGroupRootStateProps["orientation"];
 	name: RadioGroupRootStateProps["name"];
 	value: RadioGroupRootStateProps["value"];
+	activeTabIndexNode = boxedState<HTMLElement | null>(null);
 
 	constructor(props: RadioGroupRootStateProps) {
 		this.id = props.id;
@@ -54,6 +56,7 @@ class RadioGroupRootState {
 
 	getRadioItemNodes() {
 		if (!this.node.value) return [];
+
 		return Array.from(this.node.value.querySelectorAll("[data-bits-radio-group-item]")).filter(
 			(el): el is HTMLElement => el instanceof HTMLElement && !el.dataset.disabled
 		);
@@ -63,8 +66,13 @@ class RadioGroupRootState {
 		return new RadioGroupItemState(props, this);
 	}
 
+	createInput() {
+		return new RadioGroupInputState(this);
+	}
+
 	get props() {
 		return {
+			id: this.id.value,
 			role: "radiogroup",
 			"aria-required": getAriaRequired(this.required.value),
 			"data-disabled": getDataDisabled(this.disabled.value),
@@ -89,11 +97,12 @@ type RadioGroupItemStateProps = ReadonlyBoxedValues<{
 class RadioGroupItemState {
 	#id: RadioGroupItemStateProps["id"];
 	#node: Box<HTMLElement | null>;
-	#root: RadioGroupRootState;
+	#root = undefined as unknown as RadioGroupRootState;
 	#disabled: RadioGroupItemStateProps["disabled"];
-	#value: RadioGroupItemStateProps["value"];
+	#value = undefined as unknown as RadioGroupItemStateProps["value"];
 	#composedClick: EventCallback<MouseEvent>;
 	#composedKeydown: EventCallback<KeyboardEvent>;
+	checked = $derived(this.#root.value.value === this.#value.value);
 
 	constructor(props: RadioGroupItemStateProps, root: RadioGroupRootState) {
 		this.#disabled = props.disabled;
@@ -104,6 +113,12 @@ class RadioGroupItemState {
 		this.#composedKeydown = composeHandlers(props.onkeydown, this.#onkeydown);
 
 		this.#node = useNodeById(this.#id);
+
+		$effect(() => {
+			if (!this.#node.value) return;
+			if (!this.#root.isChecked(this.#value.value)) return;
+			this.#root.activeTabIndexNode.value = this.#node.value;
+		});
 	}
 
 	#onclick = () => {
@@ -152,6 +167,7 @@ class RadioGroupItemState {
 
 	get props() {
 		return {
+			id: this.#id.value,
 			disabled: this.#isDisabled ? true : undefined,
 			"data-value": this.#value.value,
 			"data-orientation": this.#root.orientation.value,
@@ -161,9 +177,36 @@ class RadioGroupItemState {
 			"data-bits-radio-group-item": "",
 			type: "button",
 			role: "radio",
+			tabIndex: this.#root.activeTabIndexNode.value === this.#node.value ? 0 : -1,
 			//
 			onclick: this.#composedClick,
 			onkeydown: this.#composedKeydown,
+		} as const;
+	}
+}
+
+//
+// INPUT
+//
+
+class RadioGroupInputState {
+	#root = undefined as unknown as RadioGroupRootState;
+	shouldRender = $derived(this.#root.name.value !== undefined);
+
+	constructor(root: RadioGroupRootState) {
+		this.#root = root;
+	}
+
+	get props() {
+		return {
+			name: this.#root.name.value,
+			value: this.#root.value.value,
+			required: this.#root.required.value,
+			disabled: this.#root.disabled.value,
+			"aria-hidden": "true",
+			hidden: true,
+			style: styleToString(srOnlyStyles),
+			tabIndex: -1,
 		} as const;
 	}
 }
@@ -185,4 +228,8 @@ export function getRadioGroupRootState() {
 
 export function setRadioGroupItemState(props: RadioGroupItemStateProps) {
 	return getRadioGroupRootState().createItem(props);
+}
+
+export function getRadioGroupInputState() {
+	return getRadioGroupRootState().createInput();
 }

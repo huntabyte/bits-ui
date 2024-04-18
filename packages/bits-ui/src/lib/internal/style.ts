@@ -10,16 +10,14 @@ export function styleToString(style: StyleProperties = {}): string {
 	return styleString;
 }
 
-export function getSrOnlyStyles() {
-	return styleToString({
-		position: "absolute",
-		width: "1px",
-		height: "1px",
-		padding: "0",
-		margin: "-1px",
-		overflow: "hidden",
-		clip: "rect(0, 0, 0, 0)",
-		"white-space": "nowrap",
-		"border-width": "0",
-	});
-}
+export const srOnlyStyles: StyleProperties = {
+	position: "absolute",
+	width: "1px",
+	height: "1px",
+	padding: "0",
+	margin: "-1px",
+	overflow: "hidden",
+	clip: "rect(0, 0, 0, 0)",
+	"white-space": "nowrap",
+	"border-width": "0",
+};

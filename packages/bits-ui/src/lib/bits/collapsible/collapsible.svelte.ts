@@ -63,9 +63,9 @@ type CollapsibleContentStateProps = ReadonlyBoxedValues<{
 
 class CollapsibleContentState {
 	root: CollapsibleRootState;
-	#originalStyles: { transitionDuration: string; animationName: string; } | undefined;
+	#originalStyles: { transitionDuration: string; animationName: string } | undefined;
 	#styleProp: ReadonlyBox<StyleProperties>;
-	node: Box<HTMLElement | null>;
+	node = boxedState<HTMLElement | null>(null);
 	#isMountAnimationPrevented = $state(false);
 	#width = $state(0);
 	#height = $state(0);

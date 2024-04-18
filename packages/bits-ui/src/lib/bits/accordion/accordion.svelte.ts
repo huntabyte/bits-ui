@@ -12,7 +12,6 @@ import {
 	getDataDisabled,
 	getDataOpenClosed,
 	kbd,
-	readonlyBox,
 	styleToString,
 	verifyContextDeps,
 } from "$lib/internal/index.js";
@@ -59,7 +58,7 @@ class AccordionBaseState {
  * SINGLE
  */
 
-type AccordionSingleStateProps = AccordionBaseStateProps & BoxedValues<{ value: string; }>;
+type AccordionSingleStateProps = AccordionBaseStateProps & BoxedValues<{ value: string }>;
 
 export class AccordionSingleState extends AccordionBaseState {
 	#value: Box<string>;
@@ -83,7 +82,7 @@ export class AccordionSingleState extends AccordionBaseState {
  * MULTIPLE
  */
 
-type AccordionMultiStateProps = AccordionBaseStateProps & BoxedValues<{ value: string[]; }>;
+type AccordionMultiStateProps = AccordionBaseStateProps & BoxedValues<{ value: string[] }>;
 
 export class AccordionMultiState extends AccordionBaseState {
 	#value: Box<string[]>;
@@ -261,7 +260,7 @@ class AccordionContentState {
 	item: AccordionItemState;
 	node: Box<HTMLElement | null>;
 	#id: ReadonlyBox<string>;
-	#originalStyles: { transitionDuration: string; animationName: string; } | undefined = undefined;
+	#originalStyles: { transitionDuration: string; animationName: string } | undefined = undefined;
 	#isMountAnimationPrevented = false;
 	#width = $state(0);
 	#height = $state(0);

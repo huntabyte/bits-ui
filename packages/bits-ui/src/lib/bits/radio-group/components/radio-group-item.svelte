@@ -9,6 +9,7 @@
 		id: idProp = generateId(),
 		asChild,
 		children,
+		indicator,
 		child,
 		value: valueProp,
 		disabled: disabledProp = false,
@@ -38,6 +39,10 @@
 	{@render child?.({ props: mergedProps })}
 {:else}
 	<button bind:this={el} {...mergedProps}>
-		{@render children?.()}
+		{#if indicator}
+			{@render indicator({ checked: item.checked })}
+		{:else}
+			{@render children?.()}
+		{/if}
 	</button>
 {/if}
