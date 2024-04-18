@@ -76,9 +76,9 @@ export type RadioGroupItemPropsWithoutHTML = WithAsChild<{
 	 */
 	disabled?: boolean;
 
-	onclick: EventCallback<MouseEvent>;
+	onclick?: EventCallback<MouseEvent>;
 
-	onkeydown: EventCallback<KeyboardEvent>;
+	onkeydown?: EventCallback<KeyboardEvent>;
 
 	/**
 	 * A snippet to render the radio item's indicator.
