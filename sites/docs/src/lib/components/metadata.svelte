@@ -29,5 +29,4 @@
 	<meta property="og:description" content={siteConfig.description} />
 	<meta property="og:site_name" content={siteConfig.name} />
 	<meta property="og:locale" content="EN_US" />
-	<script defer data-domain="bits-ui.com" src="https://server.hj.run/js/script.js"></script>
 </svelte:head>
