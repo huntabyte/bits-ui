@@ -16,10 +16,14 @@ export class EscapeLayerState {
 		this.#behaviorType = props.behaviorType;
 		this.#onEscapeProp = props.onEscape;
 		layers.set(this, this.#behaviorType);
-		const unsubEvents = this.#addEventListener();
-		onDestroy(() => {
-			unsubEvents();
-			layers.delete(this);
+
+		$effect.root(() => {
+			const unsubEvents = this.#addEventListener();
+
+			return () => {
+				unsubEvents();
+				layers.delete(this);
+			};
 		});
 	}
 

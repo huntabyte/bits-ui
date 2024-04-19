@@ -34,12 +34,15 @@ export class PreventTextSelectionOverflowLayerState {
 		this.#onPointerUpProp = props.onPointerUp;
 
 		layers.set(this, this.#enabled);
-		const unsubEvents = this.#addEventListeners();
 
-		onDestroy(() => {
-			unsubEvents();
-			this.#resetSelectionLock();
-			layers.delete(this);
+		$effect.root(() => {
+			const unsubEvents = this.#addEventListeners();
+
+			return () => {
+				unsubEvents();
+				this.#resetSelectionLock();
+				layers.delete(this);
+			};
 		});
 	}
 
@@ -57,7 +60,7 @@ export class PreventTextSelectionOverflowLayerState {
 	#pointerdown = (e: PointerEvent) => {
 		const node = this.#node.value;
 		const target = e.target;
-		if (!node || !isHTMLElement(target) || !this.#enabled.value) return;
+		if (!isHTMLElement(node) || !isHTMLElement(target) || !this.#enabled.value) return;
 		/**
 		 * We only lock user-selection overflow if layer is the top most layer and
 		 * pointerdown occured inside the node. You are still allowed to select text

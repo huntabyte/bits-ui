@@ -54,24 +54,28 @@ export class DismissableLayerState {
 	#isPointerDownOutside = false;
 	#isResponsibleLayer = false;
 	node: Box<HTMLElement | null>;
-	#documentObj: Document;
+	#documentObj = undefined as unknown as Document;
 
 	constructor(props: DismissableLayerStateProps) {
 		this.node = useNodeById(props.id);
-		this.#documentObj = getOwnerDocument(this.node.value);
 		this.#behaviorType = props.behaviorType;
 		this.#interactOutsideStartProp = props.onInteractOutsideStart;
 		this.#interactOutsideProp = props.onInteractOutside;
 
 		layers.set(this, this.#behaviorType);
-		const unsubEvents = this.#addEventListeners();
 
-		onDestroy(() => {
-			unsubEvents();
-			this.#resetState.destroy();
-			this.#onInteractOutsideStart.destroy();
-			this.#onInteractOutside.destroy();
-			layers.delete(this);
+		$effect(() => {
+			this.#documentObj = getOwnerDocument(this.node.value);
+
+			const unsubEvents = this.#addEventListeners();
+
+			return () => {
+				unsubEvents();
+				this.#resetState.destroy();
+				this.#onInteractOutsideStart.destroy();
+				this.#onInteractOutside.destroy();
+				layers.delete(this);
+			};
 		});
 	}
 

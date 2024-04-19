@@ -1,10 +1,9 @@
 <script lang="ts">
 	import type { ContentProps } from "../index.js";
 	import { setPopoverContentState } from "../popover.svelte.js";
-	import { FloatingLayer } from "$lib/bits/utilities/index.js";
+	import { FloatingLayer, PresenceLayer } from "$lib/bits/utilities/index.js";
 	import { readonlyBox } from "$lib/internal/box.svelte.js";
 	import { generateId } from "$lib/internal/id.js";
-	import Presence from "$lib/bits/utilities/presence.svelte";
 
 	let {
 		asChild,
@@ -22,7 +21,7 @@
 	});
 </script>
 
-<Presence forceMount={true} present={state.root.open.value || forceMount} node={state.node}>
+<PresenceLayer.Root forceMount={true} present={state.root.open.value || forceMount} {id}>
 	{#snippet presence({ present })}
 		<FloatingLayer.Content {id} {style} {...restProps}>
 			{#snippet content({ props })}
@@ -42,4 +41,4 @@
 			{/snippet}
 		</FloatingLayer.Content>
 	{/snippet}
-</Presence>
+</PresenceLayer.Root>
