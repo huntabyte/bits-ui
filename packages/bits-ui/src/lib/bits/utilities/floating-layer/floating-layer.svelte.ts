@@ -30,12 +30,12 @@ import type { StyleProperties, TextDirection } from "$lib/shared/index.js";
 export const SIDE_OPTIONS = ["top", "right", "bottom", "left"] as const;
 export const ALIGN_OPTIONS = ["start", "center", "end"] as const;
 
-const ARROW_TRANSFORM = {
-	bottom: "rotate(45deg)",
-	left: "rotate(135deg)",
-	top: "rotate(225deg)",
-	right: "rotate(315deg)",
-};
+// const ARROW_TRANSFORM = {
+// 	bottom: "rotate(45deg)",
+// 	left: "rotate(135deg)",
+// 	top: "rotate(225deg)",
+// 	right: "rotate(315deg)",
+// };
 
 export type Side = (typeof SIDE_OPTIONS)[number];
 export type Align = (typeof ALIGN_OPTIONS)[number];
