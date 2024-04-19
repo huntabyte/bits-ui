@@ -1,50 +1,40 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { getCtx } from "../ctx.js";
-	import type { TriggerEvents, TriggerProps } from "../index.js";
-	import { createDispatcher } from "$lib/internal/events.js";
+	import type { TriggerProps } from "../index.js";
+	import { setPopoverTriggerState } from "../popover.svelte.js";
+	import { generateId, noop, readonlyBox, styleToString } from "$lib/internal/index.js";
+	import { FloatingLayer } from "$lib/bits/utilities/index.js";
 
-	type $$Props = TriggerProps;
-	type $$Events = TriggerEvents;
+	let {
+		asChild,
+		children,
+		child,
+		id = generateId(),
+		el = $bindable(),
+		onclick = noop,
+		onkeydown = noop,
+		style = {},
+		...restProps
+	}: TriggerProps = $props();
 
-	export let asChild: $$Props["asChild"] = false;
-	export let id: $$Props["id"] = undefined;
-	export let el: $$Props["el"] = undefined;
+	const popoverTriggerState = setPopoverTriggerState({
+		id: readonlyBox(() => id),
+		onclick: readonlyBox(() => onclick),
+		onkeydown: readonlyBox(() => onkeydown),
+	});
 
-	const {
-		elements: { trigger },
-		states: { open },
-		ids,
-		getAttrs,
-	} = getCtx();
-
-	const dispatch = createDispatcher();
-	const bitsAttrs = getAttrs("trigger");
-
-	$: if (id) {
-		ids.trigger.set(id);
-	}
-
-	$: attrs = {
-		...bitsAttrs,
-		"aria-controls": $open ? ids.content : undefined,
-	};
-
-	$: builder = $trigger;
-	$: Object.assign(builder, attrs);
+	const mergedProps = $derived({
+		...restProps,
+		...popoverTriggerState.props,
+		style: styleToString(style),
+	});
 </script>
 
-{#if asChild}
-	<slot {builder} />
-{:else}
-	<button
-		bind:this={el}
-		use:melt={builder}
-		type="button"
-		{...$$restProps}
-		on:m-click={dispatch}
-		on:m-keydown={dispatch}
-	>
-		<slot {builder} />
-	</button>
-{/if}
+<FloatingLayer.Anchor {id}>
+	{#if asChild}
+		{@render child?.({ props: mergedProps })}
+	{:else}
+		<button {...mergedProps} bind:this={el}>
+			{@render children?.()}
+		</button>
+	{/if}
+</FloatingLayer.Anchor>

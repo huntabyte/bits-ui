@@ -8,18 +8,18 @@ import type {
 	WithAsChild,
 } from "$lib/internal/index.js";
 import type { CustomEventHandler } from "$lib/index.js";
-import type * as Floating from "$lib/bits/utilities/floating/index.js";
+import type * as Floating from "$lib/bits/utilities/floating-layer/index.js";
 
 export type PopoverRootPropsWithoutHTML = {
 	/**
 	 * The open state of the popover.
 	 */
-	open: boolean;
+	open?: boolean;
 
 	/**
 	 * A callback that is called when the popover's open state changes.
 	 */
-	onChange?: OnChangeFn<boolean>;
+	onOpenChange?: OnChangeFn<boolean>;
 
 	/**
 	 * The children content of the popover.
@@ -29,13 +29,17 @@ export type PopoverRootPropsWithoutHTML = {
 
 export type PopoverRootProps = PopoverRootPropsWithoutHTML & PrimitiveDivAttributes;
 
-export type PopoverContentPropsWithoutHTML = WithAsChild<Floating.ContentProps>;
+export type PopoverContentPropsWithoutHTML = WithAsChild<
+	Partial<Omit<Floating.ContentProps, "content">> & {
+		forceMount?: boolean;
+	}
+>;
 
 export type PopoverContentProps = PopoverContentPropsWithoutHTML & PrimitiveDivAttributes;
 
 export type PopoverTriggerPropsWithoutHTML = WithAsChild<{
-	onclick: EventCallback<MouseEvent>;
-	onkeydown: EventCallback<KeyboardEvent>;
+	onclick?: EventCallback<MouseEvent>;
+	onkeydown?: EventCallback<KeyboardEvent>;
 }>;
 
 export type PopoverTriggerProps = PopoverTriggerPropsWithoutHTML &

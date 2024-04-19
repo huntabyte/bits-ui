@@ -1,99 +1,44 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { getCtx, updatePositioning } from "../ctx.js";
 	import type { ContentProps } from "../index.js";
-	import type { Transition } from "$lib/internal/index.js";
+	import { setPopoverContentState } from "../popover.svelte.js";
+	import { FloatingLayer } from "$lib/bits/utilities/index.js";
+	import { readonlyBox } from "$lib/internal/box.svelte.js";
+	import { generateId } from "$lib/internal/id.js";
+	import Presence from "$lib/bits/utilities/presence.svelte";
 
-	type T = $$Generic<Transition>;
-	type In = $$Generic<Transition>;
-	type Out = $$Generic<Transition>;
+	let {
+		asChild,
+		child,
+		children,
+		el = $bindable(),
+		style = {},
+		id = generateId(),
+		forceMount = false,
+		...restProps
+	}: ContentProps = $props();
 
-	type $$Props = ContentProps<T, In, Out>;
-
-	export let transition: $$Props["transition"] = undefined;
-	export let transitionConfig: $$Props["transitionConfig"] = undefined;
-	export let inTransition: $$Props["inTransition"] = undefined;
-	export let inTransitionConfig: $$Props["inTransitionConfig"] = undefined;
-	export let outTransition: $$Props["outTransition"] = undefined;
-	export let outTransitionConfig: $$Props["outTransitionConfig"] = undefined;
-	export let asChild: $$Props["asChild"] = false;
-	export let id: $$Props["id"] = undefined;
-	export let side: $$Props["side"] = "bottom";
-	export let align: $$Props["align"] = "center";
-	export let sideOffset: $$Props["sideOffset"] = 0;
-	export let alignOffset: $$Props["alignOffset"] = 0;
-	export let collisionPadding: $$Props["collisionPadding"] = 8;
-	export let avoidCollisions: $$Props["avoidCollisions"] = true;
-	export let collisionBoundary: $$Props["collisionBoundary"] = undefined;
-	export let sameWidth: $$Props["sameWidth"] = false;
-	export let fitViewport: $$Props["fitViewport"] = false;
-	export let strategy: $$Props["strategy"] = "absolute";
-	export let overlap: $$Props["overlap"] = false;
-	export let el: $$Props["el"] = undefined;
-
-	const {
-		elements: { content },
-		states: { open },
-		ids,
-		getAttrs,
-	} = getCtx();
-
-	const attrs = getAttrs("content");
-
-	$: if (id) {
-		ids.content.set(id);
-	}
-	$: builder = $content;
-	$: Object.assign(builder, attrs);
-
-	$: if ($open) {
-		updatePositioning({
-			side,
-			align,
-			sideOffset,
-			alignOffset,
-			collisionPadding,
-			avoidCollisions,
-			collisionBoundary,
-			sameWidth,
-			fitViewport,
-			strategy,
-			overlap,
-		});
-	}
+	const state = setPopoverContentState({
+		id: readonlyBox(() => id),
+	});
 </script>
 
-{#if asChild && $open}
-	<slot {builder} />
-{:else if transition && $open}
-	<div
-		bind:this={el}
-		transition:transition={transitionConfig}
-		use:melt={builder}
-		{...$$restProps}
-	>
-		<slot {builder} />
-	</div>
-{:else if inTransition && outTransition && $open}
-	<div
-		bind:this={el}
-		in:inTransition={inTransitionConfig}
-		out:outTransition={outTransitionConfig}
-		use:melt={builder}
-		{...$$restProps}
-	>
-		<slot {builder} />
-	</div>
-{:else if inTransition && $open}
-	<div bind:this={el} in:inTransition={inTransitionConfig} use:melt={builder} {...$$restProps}>
-		<slot {builder} />
-	</div>
-{:else if outTransition && $open}
-	<div bind:this={el} out:outTransition={outTransitionConfig} use:melt={builder} {...$$restProps}>
-		<slot {builder} />
-	</div>
-{:else if $open}
-	<div bind:this={el} use:melt={builder} {...$$restProps}>
-		<slot {builder} />
-	</div>
-{/if}
+<FloatingLayer.Content {id} {style} {...restProps}>
+	{#snippet content({ props })}
+		<Presence forceMount={true} present={state.root.open.value || forceMount} node={state.node}>
+			{#snippet presence({ present })}
+				{@const mergedProps = {
+					...state.props,
+					...props,
+					hidden: present.value ? undefined : true,
+				}}
+				{#if asChild}
+					{@render child?.({ props: mergedProps })}
+				{:else}
+					<div {...mergedProps} bind:this={el}>
+						{@render children?.()}
+					</div>
+				{/if}
+			{/snippet}
+		</Presence>
+	{/snippet}
+</FloatingLayer.Content>

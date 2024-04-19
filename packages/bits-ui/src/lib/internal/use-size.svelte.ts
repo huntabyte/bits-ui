@@ -47,7 +47,10 @@ export function useSize(node: Box<HTMLElement | null>) {
 
 		resizeObserver.observe(currNode, { box: "border-box" });
 
-		return () => resizeObserver.unobserve(currNode);
+		return () => {
+			if (!currNode) return;
+			resizeObserver.unobserve(currNode);
+		};
 	});
 
 	return {

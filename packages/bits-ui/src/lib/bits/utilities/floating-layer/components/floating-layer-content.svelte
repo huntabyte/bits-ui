@@ -1,10 +1,10 @@
 <script lang="ts">
 	import type { ContentProps } from "../index.js";
-	import { setFloatingContentState } from "../floating.svelte.js";
+	import { setFloatingContentState } from "../floating-layer.svelte.js";
 	import { readonlyBox } from "$lib/internal/box.svelte.js";
 
 	let {
-		children,
+		content,
 		side = "bottom",
 		sideOffset = 0,
 		align = "center",
@@ -18,7 +18,9 @@
 		onPlaced = () => {},
 		sticky = "partial",
 		updatePositionStrategy = "optimized",
-		strategy = "absolute",
+		strategy = "fixed",
+		dir = "ltr",
+		style = {},
 	}: ContentProps = $props();
 
 	const state = setFloatingContentState({
@@ -36,9 +38,11 @@
 		sticky: readonlyBox(() => sticky),
 		updatePositionStrategy: readonlyBox(() => updatePositionStrategy),
 		strategy: readonlyBox(() => strategy),
+		dir: readonlyBox(() => dir),
+		style: readonlyBox(() => style),
 	});
 </script>
 
-<div>
-	{@render children?.()}
+<div {...state.wrapperProps}>
+	{@render content?.({ props: state.props })}
 </div>

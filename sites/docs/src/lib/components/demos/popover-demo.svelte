@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { Popover, Separator, Toggle } from "bits-ui";
 	import { ImageSquare, LinkSimpleHorizontalBreak } from "$icons/index.js";
-	import { flyAndScale } from "$lib/utils/index.js";
 
 	let width = 1024;
 	let height = 768;
@@ -16,7 +15,6 @@
 	</Popover.Trigger>
 	<Popover.Content
 		class="z-30 w-full max-w-[328px] rounded-[12px] border border-dark-10 bg-background p-4 shadow-popover"
-		transition={flyAndScale}
 		sideOffset={8}
 	>
 		<div class="flex items-center">

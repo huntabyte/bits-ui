@@ -1,8 +1,9 @@
 import type { Snippet } from "svelte";
 import type { VirtualElement } from "@floating-ui/core";
-import type { Align, Boundary, Side } from "./floating.svelte.js";
+import type { Align, Boundary, Side } from "./floating-layer.svelte.js";
 import type { Arrayable } from "$lib/internal/types.js";
-import type { Box } from "$lib/internal/box.svelte.js";
+import type { Box, ReadonlyBox } from "$lib/internal/box.svelte.js";
+import type { StyleProperties, TextDirection } from "$lib/shared/index.js";
 
 export type FloatingContentProps = {
 	id: string;
@@ -18,16 +19,19 @@ export type FloatingContentProps = {
 	hideWhenDetached?: boolean;
 	updatePositionStrategy?: "optimized" | "always";
 	onPlaced?: () => void;
-	children?: Snippet;
+	content?: Snippet<[{ props: Record<string, unknown> }]>;
 	strategy?: "absolute" | "fixed";
+	dir?: TextDirection;
+	style?: StyleProperties;
 };
 
 export type FloatingArrowProps = {
 	id: string;
 	children?: Snippet;
+	style: StyleProperties;
 };
 
 export type FloatingAnchorProps = {
-	node: Box<HTMLElement | VirtualElement | null>;
+	id: string;
 	children?: Snippet;
 };
