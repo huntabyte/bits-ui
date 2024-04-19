@@ -224,10 +224,10 @@ class FloatingContentState {
 		this.style = props.style;
 		this.root = root;
 		this.floating = useFloating({
-			strategy: () => this.strategy?.value,
+			strategy: () => this.strategy.value,
 			placement: () => this.desiredPlacement,
 			middleware: () => this.middleware,
-			reference: () => this.root?.anchorNode?.value,
+			reference: this.root.anchorNode,
 			whileElementsMounted: (...args) => {
 				const cleanup = autoUpdate(...args, {
 					animationFrame: this.updatePositionStrategy?.value === "always",
@@ -256,8 +256,7 @@ class FloatingContentState {
 		});
 
 		$effect(() => {
-			const f = untrack(() => this.floating);
-			f.floating = this.root.wrapperNode;
+			this.floating.floating.value = this.root.wrapperNode.value;
 		});
 	}
 }

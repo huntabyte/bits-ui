@@ -45,7 +45,7 @@ export type UseFloatingOptions = {
 	/**
 	 * Reference / Anchor element to position the floating element relative to
 	 */
-	reference?: ValueOrGetValue<ReferenceType | null>;
+	reference: Box<HTMLElement | null>;
 
 	/**
 	 * Callback to handle mounting/unmounting of the elements.
@@ -62,7 +62,7 @@ export type UseFloatingReturn = {
 	/**
 	 * The action used to obtain the reference element.
 	 */
-	reference: ReferenceType | null;
+	reference: Box<HTMLElement | null>;
 	/**
 	 * The action used to obtain the floating element.
 	 */

@@ -22,14 +22,15 @@
 	});
 </script>
 
-<FloatingLayer.Content {id} {style} {...restProps}>
-	{#snippet content({ props })}
-		<Presence forceMount={true} present={state.root.open.value || forceMount} node={state.node}>
-			{#snippet presence({ present })}
+<Presence forceMount={true} present={state.root.open.value || forceMount} node={state.node}>
+	{#snippet presence({ present })}
+		<FloatingLayer.Content {id} {style} {...restProps}>
+			{#snippet content({ props })}
 				{@const mergedProps = {
 					...state.props,
 					...props,
 					hidden: present.value ? undefined : true,
+					...restProps,
 				}}
 				{#if asChild}
 					{@render child?.({ props: mergedProps })}
@@ -39,6 +40,6 @@
 					</div>
 				{/if}
 			{/snippet}
-		</Presence>
+		</FloatingLayer.Content>
 	{/snippet}
-</FloatingLayer.Content>
+</Presence>

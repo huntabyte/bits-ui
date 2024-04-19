@@ -1,9 +1,9 @@
 import { computePosition } from "@floating-ui/dom";
-import { box } from "../box.svelte.js";
+import { box, boxedState } from "../box.svelte.js";
 import type { UseFloatingOptions, UseFloatingReturn } from "./types.js";
 import { get, getDPR, roundByDPR } from "./utils.js";
 
-export function useFloating(options: UseFloatingOptions = {}): UseFloatingReturn {
+export function useFloating(options: UseFloatingOptions): UseFloatingReturn {
 	/** Options */
 	const whileElementsMountedOption = options.whileElementsMounted;
 	const openOption = $derived(get(options.open) ?? true);
@@ -11,17 +11,14 @@ export function useFloating(options: UseFloatingOptions = {}): UseFloatingReturn
 	const transformOption = $derived(get(options.transform) ?? true);
 	const placementOption = $derived(get(options.placement) ?? "bottom");
 	const strategyOption = $derived(get(options.strategy) ?? "absolute");
-	const referenceElement = $derived(get(options.reference) ?? null);
+	const reference = options.reference;
 
 	/** State */
 	let x = $state(0);
 	let y = $state(0);
 
-	let floatingElement = $state<HTMLElement | null>(null);
-	const floating = box(
-		() => floatingElement,
-		(node) => (floatingElement = node)
-	);
+	const floating = boxedState<HTMLElement | null>(null);
+
 	let strategy = $state(strategyOption);
 	let placement = $state(placementOption);
 	let middlewareData = $state({});
@@ -33,18 +30,18 @@ export function useFloating(options: UseFloatingOptions = {}): UseFloatingReturn
 			top: "0",
 		};
 
-		if (!floatingElement) {
+		if (!floating.value) {
 			return initialStyles;
 		}
 
-		const xVal = roundByDPR(floatingElement, x);
-		const yVal = roundByDPR(floatingElement, y);
+		const xVal = roundByDPR(floating.value, x);
+		const yVal = roundByDPR(floating.value, y);
 
 		if (transformOption) {
 			return {
 				...initialStyles,
 				transform: `translate(${xVal}px, ${yVal}px)`,
-				...(getDPR(floatingElement) >= 1.5 && {
+				...(getDPR(floating.value) >= 1.5 && {
 					willChange: "transform",
 				}),
 			};
@@ -61,9 +58,9 @@ export function useFloating(options: UseFloatingOptions = {}): UseFloatingReturn
 	let whileElementsMountedCleanup: (() => void) | undefined;
 
 	function update() {
-		if (referenceElement === null || floatingElement === null) return;
+		if (reference.value === null || floating.value === null) return;
 
-		computePosition(referenceElement, floatingElement, {
+		computePosition(reference.value, floating.value, {
 			middleware: middlewareOption,
 			placement: placementOption,
 			strategy: strategyOption,
@@ -92,13 +89,11 @@ export function useFloating(options: UseFloatingOptions = {}): UseFloatingReturn
 			return;
 		}
 
-		if (referenceElement === null || floatingElement === null) {
-			return;
-		}
+		if (reference.value === null || floating.value === null) return;
 
 		whileElementsMountedCleanup = whileElementsMountedOption(
-			referenceElement,
-			floatingElement,
+			reference.value,
+			floating.value,
 			update
 		);
 	}
@@ -116,9 +111,7 @@ export function useFloating(options: UseFloatingOptions = {}): UseFloatingReturn
 
 	return {
 		floating,
-		get reference() {
-			return referenceElement;
-		},
+		reference,
 		get strategy() {
 			return strategy;
 		},

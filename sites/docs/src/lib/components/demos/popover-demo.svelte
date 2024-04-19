@@ -2,8 +2,8 @@
 	import { Popover, Separator, Toggle } from "bits-ui";
 	import { ImageSquare, LinkSimpleHorizontalBreak } from "$icons/index.js";
 
-	let width = 1024;
-	let height = 768;
+	let width = $state(1024);
+	let height = $state(768);
 </script>
 
 <Popover.Root>
