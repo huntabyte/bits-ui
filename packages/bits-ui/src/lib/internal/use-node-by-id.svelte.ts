@@ -1,5 +1,5 @@
 import { type Box, type ReadonlyBox, boxedState } from "./box.svelte.js";
-import { withTick } from "./with-tick.js";
+import { afterTick } from "./after-tick.js";
 
 /**
  * Finds the node with that ID and sets it to the boxed node.
@@ -14,7 +14,7 @@ export function useNodeById(id: ReadonlyBox<string> | Box<string>) {
 	$effect.pre(() => {
 		// eslint-disable-next-line no-unused-expressions
 		id.value;
-		withTick(() => {
+		afterTick(() => {
 			node.value = document.getElementById(id.value);
 		});
 	});

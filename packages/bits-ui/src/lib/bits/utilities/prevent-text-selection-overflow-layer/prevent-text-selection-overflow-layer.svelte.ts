@@ -1,11 +1,18 @@
 import { onDestroy } from "svelte";
 import type { PreventTextSelectionOverflowLayerProps } from "./types.js";
-import type { Box, ReadonlyBox, ReadonlyBoxedValues } from "$lib/internal/box.svelte.js";
-import { useNodeById } from "$lib/internal/elements.svelte.js";
-import { type EventCallback, addEventListener, composeHandlers } from "$lib/internal/events.js";
-import { executeCallbacks, noop } from "$lib/helpers/callbacks.js";
-import { isHTMLElement } from "$lib/internal/is.js";
-import { isOrContainsTarget } from "$lib/helpers/elements.js";
+import {
+	type Box,
+	type EventCallback,
+	type ReadonlyBox,
+	type ReadonlyBoxedValues,
+	addEventListener,
+	composeHandlers,
+	executeCallbacks,
+	isHTMLElement,
+	isOrContainsTarget,
+	noop,
+	useNodeById,
+} from "$lib/internal/index.js";
 
 type StateProps = ReadonlyBoxedValues<
 	Required<Omit<PreventTextSelectionOverflowLayerProps, "children">>
@@ -27,12 +34,15 @@ export class PreventTextSelectionOverflowLayerState {
 		this.#onPointerUpProp = props.onPointerUp;
 
 		layers.set(this, this.#enabled);
-		const unsubEvents = this.#addEventListeners();
 
-		onDestroy(() => {
-			unsubEvents();
-			this.#resetSelectionLock();
-			layers.delete(this);
+		$effect.root(() => {
+			const unsubEvents = this.#addEventListeners();
+
+			return () => {
+				unsubEvents();
+				this.#resetSelectionLock();
+				layers.delete(this);
+			};
 		});
 	}
 
@@ -50,7 +60,7 @@ export class PreventTextSelectionOverflowLayerState {
 	#pointerdown = (e: PointerEvent) => {
 		const node = this.#node.value;
 		const target = e.target;
-		if (!node || !isHTMLElement(target) || !this.#enabled.value) return;
+		if (!isHTMLElement(node) || !isHTMLElement(target) || !this.#enabled.value) return;
 		/**
 		 * We only lock user-selection overflow if layer is the top most layer and
 		 * pointerdown occured inside the node. You are still allowed to select text

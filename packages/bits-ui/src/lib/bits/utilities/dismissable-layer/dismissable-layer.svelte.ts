@@ -5,13 +5,20 @@ import type {
 	InteractOutsideEvent,
 	InteractOutsideInterceptEventType,
 } from "./types.js";
-import type { Box, ReadonlyBox, ReadonlyBoxedValues } from "$lib/internal/box.svelte.js";
-import { useNodeById } from "$lib/internal/elements.svelte.js";
-import { type EventCallback, addEventListener, composeHandlers } from "$lib/internal/events.js";
-import { getOwnerDocument, isOrContainsTarget } from "$lib/helpers/elements.js";
-import { debounce } from "$lib/helpers/debounce.js";
-import { executeCallbacks } from "$lib/helpers/callbacks.js";
-import { isElement } from "$lib/internal/is.js";
+import {
+	type Box,
+	type EventCallback,
+	type ReadonlyBox,
+	type ReadonlyBoxedValues,
+	addEventListener,
+	composeHandlers,
+	debounce,
+	executeCallbacks,
+	getOwnerDocument,
+	isElement,
+	isOrContainsTarget,
+	useNodeById,
+} from "$lib/internal/index.js";
 
 const layers = new Map<DismissableLayerState, ReadonlyBox<InteractOutsideBehaviorType>>();
 
@@ -47,24 +54,28 @@ export class DismissableLayerState {
 	#isPointerDownOutside = false;
 	#isResponsibleLayer = false;
 	node: Box<HTMLElement | null>;
-	#documentObj: Document;
+	#documentObj = undefined as unknown as Document;
 
 	constructor(props: DismissableLayerStateProps) {
 		this.node = useNodeById(props.id);
-		this.#documentObj = getOwnerDocument(this.node.value);
 		this.#behaviorType = props.behaviorType;
 		this.#interactOutsideStartProp = props.onInteractOutsideStart;
 		this.#interactOutsideProp = props.onInteractOutside;
 
 		layers.set(this, this.#behaviorType);
-		const unsubEvents = this.#addEventListeners();
 
-		onDestroy(() => {
-			unsubEvents();
-			this.#resetState.destroy();
-			this.#onInteractOutsideStart.destroy();
-			this.#onInteractOutside.destroy();
-			layers.delete(this);
+		$effect(() => {
+			this.#documentObj = getOwnerDocument(this.node.value);
+
+			const unsubEvents = this.#addEventListeners();
+
+			return () => {
+				unsubEvents();
+				this.#resetState.destroy();
+				this.#onInteractOutsideStart.destroy();
+				this.#onInteractOutside.destroy();
+				layers.delete(this);
+			};
 		});
 	}
 

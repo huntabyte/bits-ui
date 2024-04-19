@@ -12,11 +12,11 @@ import {
 	getDataOpenClosed,
 	kbd,
 	styleToString,
+	useNodeById,
 	verifyContextDeps,
 } from "$lib/internal/index.js";
 import type { StyleProperties } from "$lib/shared/index.js";
-import { withTick } from "$lib/internal/with-tick.js";
-import { useNodeById } from "$lib/internal/elements.svelte.js";
+import { afterTick } from "$lib/internal/after-tick.js";
 
 /**
  * BASE
@@ -284,7 +284,7 @@ class AccordionContentState {
 			const node = this.node.value;
 			if (!node) return;
 
-			withTick(() => {
+			afterTick(() => {
 				if (!this.node) return;
 				// get the dimensions of the element
 				this.#originalStyles = this.#originalStyles || {

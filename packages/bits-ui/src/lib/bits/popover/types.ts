@@ -1,48 +1,59 @@
-import type { HTMLButtonAttributes } from "svelte/elements";
-import type { CreatePopoverProps as MeltPopoverProps } from "@melt-ui/svelte";
+import type { Snippet } from "svelte";
 import type {
-	DOMElement,
-	Expand,
+	EventCallback,
 	HTMLDivAttributes,
-	OmitFloating,
 	OnChangeFn,
+	PrimitiveButtonAttributes,
+	PrimitiveDivAttributes,
+	WithAsChild,
 } from "$lib/internal/index.js";
 import type { CustomEventHandler } from "$lib/index.js";
+import type * as Floating from "$lib/bits/utilities/floating-layer/index.js";
 
-import type {
-	ArrowProps as PopoverArrowPropsWithoutHTML,
-	ContentProps as PopoverContentPropsWithoutHTML,
-} from "$lib/bits/floating/_types.js";
+export type PopoverRootPropsWithoutHTML = {
+	/**
+	 * The open state of the popover.
+	 */
+	open?: boolean;
 
-export type { ContentProps as PopoverContentProps } from "$lib/bits/floating/types.js";
+	/**
+	 * A callback that is called when the popover's open state changes.
+	 */
+	onOpenChange?: OnChangeFn<boolean>;
 
-export type { PopoverContentPropsWithoutHTML, PopoverArrowPropsWithoutHTML };
+	/**
+	 * The children content of the popover.
+	 */
+	children?: Snippet;
+};
 
-export type PopoverPropsWithoutHTML = Expand<
-	OmitFloating<MeltPopoverProps> & {
-		/**
-		 * The open state of the popover.
-		 * You can bind this to a boolean value to programmatically control the open state.
-		 *
-		 * @defaultValue false
-		 */
-		open?: boolean;
+export type PopoverRootProps = PopoverRootPropsWithoutHTML & PrimitiveDivAttributes;
 
-		/**
-		 * A callback function called when the open state changes.
-		 */
-		onOpenChange?: OnChangeFn<boolean>;
+export type PopoverContentPropsWithoutHTML = WithAsChild<
+	Partial<Omit<Floating.ContentProps, "content">> & {
+		forceMount?: boolean;
 	}
 >;
 
-export type PopoverTriggerPropsWithoutHTML = DOMElement<HTMLButtonElement>;
-export type PopoverClosePropsWithoutHTML = DOMElement<HTMLButtonElement>;
+export type PopoverContentProps = PopoverContentPropsWithoutHTML & PrimitiveDivAttributes;
 
-export type PopoverProps = PopoverPropsWithoutHTML;
+export type PopoverTriggerPropsWithoutHTML = WithAsChild<{
+	onclick?: EventCallback<MouseEvent>;
+	onkeydown?: EventCallback<KeyboardEvent>;
+}>;
 
-export type PopoverTriggerProps = PopoverTriggerPropsWithoutHTML & HTMLButtonAttributes;
+export type PopoverTriggerProps = PopoverTriggerPropsWithoutHTML &
+	Omit<PrimitiveButtonAttributes, "onclick" | "onkeydown">;
 
-export type PopoverCloseProps = PopoverClosePropsWithoutHTML & HTMLButtonAttributes;
+export type PopoverClosePropsWithoutHTML = WithAsChild<{
+	onclick: EventCallback<MouseEvent>;
+	onkeydown: EventCallback<KeyboardEvent>;
+}>;
+
+export type PopoverCloseProps = PopoverClosePropsWithoutHTML &
+	Omit<PrimitiveButtonAttributes, "onclick" | "onkeydown">;
+
+export type PopoverArrowPropsWithoutHTML = WithAsChild<object>;
 
 export type PopoverArrowProps = PopoverArrowPropsWithoutHTML & HTMLDivAttributes;
 

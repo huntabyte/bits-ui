@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getAccordionContentState } from "../accordion.svelte.js";
 	import type { AccordionContentProps } from "../types.js";
-	import Presence from "$lib/bits/utilities/presence.svelte";
+	import Presence from "$lib/bits/utilities/presence-layer/presence-layer.svelte";
 	import { readonlyBox } from "$lib/internal/box.svelte.js";
 	import { generateId } from "$lib/internal/id.js";
 
@@ -23,7 +23,7 @@
 	});
 </script>
 
-<Presence forceMount={true} present={content.present} node={content.node}>
+<Presence forceMount={true} present={content.present} {id}>
 	{#snippet presence({ present })}
 		{@const mergedProps = {
 			...restProps,

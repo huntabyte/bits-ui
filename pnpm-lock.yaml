@@ -47,6 +47,12 @@ importers:
 
   packages/bits-ui:
     dependencies:
+      '@floating-ui/core':
+        specifier: ^1.6.0
+        version: 1.6.0
+      '@floating-ui/dom':
+        specifier: ^1.6.3
+        version: 1.6.3
       '@internationalized/date':
         specifier: ^3.5.1
         version: 3.5.2
@@ -93,6 +99,9 @@ importers:
       '@types/node':
         specifier: ^20.12.2
         version: 20.12.2
+      '@types/resize-observer-browser':
+        specifier: ^0.1.11
+        version: 0.1.11
       '@types/testing-library__jest-dom':
         specifier: ^5.14.9
         version: 5.14.9
@@ -2673,6 +2682,10 @@ packages:
 
   /@types/pug@2.0.10:
     resolution: {integrity: sha512-Sk/uYFOBAB7mb74XcpizmH0KOR2Pv3D2Hmrh1Dmy5BmK3MpdSa5kqZcg6EKBdklU0bFXX9gCfzvpnyUehrPIuA==}
+    dev: true
+
+  /@types/resize-observer-browser@0.1.11:
+    resolution: {integrity: sha512-cNw5iH8JkMkb3QkCoe7DaZiawbDQEUX8t7iuQaRTyLOyQCR2h+ibBD4GJt7p5yhUHrlOeL7ZtbxNHeipqNsBzQ==}
     dev: true
 
   /@types/resolve@1.20.6:

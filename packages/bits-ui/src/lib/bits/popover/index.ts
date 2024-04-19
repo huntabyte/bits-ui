@@ -5,7 +5,7 @@ export { default as Trigger } from "./components/popover-trigger.svelte";
 export { default as Close } from "./components/popover-close.svelte";
 
 export type {
-	PopoverProps as Props,
+	PopoverRootProps as RootProps,
 	PopoverArrowProps as ArrowProps,
 	PopoverContentProps as ContentProps,
 	PopoverTriggerProps as TriggerProps,
