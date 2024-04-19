@@ -29,6 +29,12 @@ class PopoverRootState {
 		this.open.value = !this.open.value;
 	}
 
+	close = () => {
+		console.log("closing!");
+		if (!this.open.value) return;
+		this.open.value = false;
+	};
+
 	createTrigger(props: PopoverTriggerStateProps) {
 		return new PopoverTriggerState(props, this);
 	}

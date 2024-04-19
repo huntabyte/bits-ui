@@ -1,4 +1,4 @@
-<script lang="ts">
+<!-- <script lang="ts">
 	import { type DateRange, DateRangePicker } from "bits-ui";
 	import { CalendarBlank, CaretLeft, CaretRight } from "$icons/index.js";
 	import { cn, flyAndScale } from "$lib/utils/index.js";
@@ -128,4 +128,4 @@
 			</DateRangePicker.Calendar>
 		</DateRangePicker.Content>
 	</div>
-</DateRangePicker.Root>
+</DateRangePicker.Root> -->

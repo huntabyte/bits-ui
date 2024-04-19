@@ -1,4 +1,3 @@
-import { onDestroy } from "svelte";
 import type {
 	DismissableLayerProps,
 	InteractOutsideBehaviorType,
@@ -141,10 +140,16 @@ export class DismissableLayerState {
 	}, 10);
 
 	#onInteractOutside = debounce((e: InteractOutsideEvent) => {
-		const node = this.node.value!;
+		if (!this.node.value) return;
+
 		const behaviorType = this.#behaviorType.value;
-		if (!this.#isResponsibleLayer || this.#isAnyEventIntercepted() || !isValidEvent(e, node))
+		if (
+			!this.#isResponsibleLayer ||
+			this.#isAnyEventIntercepted() ||
+			!isValidEvent(e, this.node.value)
+		) {
 			return;
+		}
 		if (behaviorType !== "close" && behaviorType !== "defer-otherwise-close") return;
 		if (!this.#isPointerDownOutside) return;
 		this.#interactOutsideProp.value(e);
@@ -159,8 +164,8 @@ export class DismissableLayerState {
 	};
 
 	#markResponsibleLayer = () => {
-		const node = this.node.value!;
-		this.#isResponsibleLayer = isResponsibleLayer(node);
+		if (!this.node.value) return;
+		this.#isResponsibleLayer = isResponsibleLayer(this.node.value);
 	};
 
 	#resetState = debounce(() => {
@@ -181,6 +186,7 @@ export function useDismissableLayer(props: DismissableLayerStateProps) {
 }
 
 function isResponsibleLayer(node: HTMLElement): boolean {
+	console.log(layers);
 	const layersArr = [...layers];
 	/**
 	 * We first check if we can find a top layer with `close` or `ignore`.
