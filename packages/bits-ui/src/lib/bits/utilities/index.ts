@@ -6,3 +6,4 @@ export * as DismissableLayer from "./dismissable-layer/index.js";
 export * as PreventTextSelectionOverflowLayer from "./prevent-text-selection-overflow-layer/index.js";
 export * as PresenceLayer from "./presence-layer/index.js";
 export * as PopperLayer from "./popper-layer/index.js";
+export * as Portal from "./portal/index.js";
