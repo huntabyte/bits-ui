@@ -16,7 +16,6 @@ import {
 	type Box,
 	type ReadonlyBox,
 	type ReadonlyBoxedValues,
-	afterTick,
 	boxedState,
 	generateId,
 	styleToString,
