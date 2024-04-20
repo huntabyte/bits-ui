@@ -21,6 +21,7 @@
 		strategy = "fixed",
 		dir = "ltr",
 		style = {},
+		present,
 	}: ContentProps = $props();
 
 	const state = setFloatingContentState({
@@ -40,6 +41,7 @@
 		strategy: readonlyBox(() => strategy),
 		dir: readonlyBox(() => dir),
 		style: readonlyBox(() => style),
+		present: readonlyBox(() => present),
 	});
 </script>
 

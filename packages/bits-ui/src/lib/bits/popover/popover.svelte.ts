@@ -29,6 +29,11 @@ class PopoverRootState {
 		this.open.value = !this.open.value;
 	}
 
+	close = () => {
+		if (!this.open.value) return;
+		this.open.value = false;
+	};
+
 	createTrigger(props: PopoverTriggerStateProps) {
 		return new PopoverTriggerState(props, this);
 	}
@@ -82,6 +87,7 @@ class PopoverTriggerState {
 
 	#onkeydown = (e: KeyboardEvent) => {
 		if (!(e.key === kbd.ENTER || e.key === kbd.SPACE)) return;
+		e.preventDefault();
 		this.root.toggleOpen();
 	};
 }

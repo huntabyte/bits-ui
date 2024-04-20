@@ -1,6 +1,6 @@
-import { onDestroy } from "svelte";
+import { onDestroy, untrack } from "svelte";
 import { type Box, type ReadonlyBox, boxedState, watch } from "./box.svelte.js";
-import { useNodeById, useStateMachine } from "$lib/internal/index.js";
+import { afterTick, useNodeById, useStateMachine } from "$lib/internal/index.js";
 
 export function usePresence(present: ReadonlyBox<boolean>, id: ReadonlyBox<string>) {
 	const styles = boxedState({}) as unknown as Box<CSSStyleDeclaration>;
@@ -34,7 +34,7 @@ export function usePresence(present: ReadonlyBox<boolean>, id: ReadonlyBox<strin
 
 			if (currPresent) {
 				dispatch("MOUNT");
-			} else if (currAnimationName === "none" || styles.value?.display === "none") {
+			} else if (currAnimationName === "none" || styles.value.display === "none") {
 				// If there is no exit animation or the element is hidden, animations won't run
 				// so we unmount instantly
 				dispatch("UNMOUNT");
@@ -46,6 +46,7 @@ export function usePresence(present: ReadonlyBox<boolean>, id: ReadonlyBox<strin
 				 * fires after `animation-delay` has expired which would be too late.
 				 */
 				const isAnimating = prevAnimationName !== currAnimationName;
+
 				if (prevPresent && isAnimating) {
 					dispatch("ANIMATION_OUT");
 				} else {
@@ -53,7 +54,7 @@ export function usePresence(present: ReadonlyBox<boolean>, id: ReadonlyBox<strin
 				}
 			}
 		},
-		{ immediate: false }
+		{ immediate: true }
 	);
 
 	/**
@@ -85,23 +86,19 @@ export function usePresence(present: ReadonlyBox<boolean>, id: ReadonlyBox<strin
 		prevAnimationNameState.value = state.value === "mounted" ? currAnimationName : "none";
 	});
 
-	const watcher = watch(
-		node,
-		(currNode, prevNode) => {
-			if (currNode) {
-				styles.value = getComputedStyle(currNode);
-				currNode.addEventListener("animationstart", handleAnimationStart);
-				currNode.addEventListener("animationcancel", handleAnimationEnd);
-				currNode.addEventListener("animationend", handleAnimationEnd);
-			} else {
-				dispatch("ANIMATION_END");
-				prevNode?.removeEventListener("animationstart", handleAnimationStart);
-				prevNode?.removeEventListener("animationcancel", handleAnimationEnd);
-				prevNode?.removeEventListener("animationend", handleAnimationEnd);
-			}
-		},
-		{ immediate: true }
-	);
+	const watcher = watch(node, (currNode, prevNode) => {
+		if (currNode) {
+			styles.value = getComputedStyle(currNode);
+			currNode.addEventListener("animationstart", handleAnimationStart);
+			currNode.addEventListener("animationcancel", handleAnimationEnd);
+			currNode.addEventListener("animationend", handleAnimationEnd);
+		} else {
+			dispatch("ANIMATION_END");
+			prevNode?.removeEventListener("animationstart", handleAnimationStart);
+			prevNode?.removeEventListener("animationcancel", handleAnimationEnd);
+			prevNode?.removeEventListener("animationend", handleAnimationEnd);
+		}
+	});
 
 	onDestroy(() => {
 		watcher();

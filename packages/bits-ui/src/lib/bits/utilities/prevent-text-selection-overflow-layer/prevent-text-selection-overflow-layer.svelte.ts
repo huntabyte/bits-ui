@@ -1,4 +1,4 @@
-import { onDestroy } from "svelte";
+import { untrack } from "svelte";
 import type { PreventTextSelectionOverflowLayerProps } from "./types.js";
 import {
 	type Box,
@@ -26,18 +26,25 @@ export class PreventTextSelectionOverflowLayerState {
 	#enabled: ReadonlyBox<boolean>;
 	#unsubSelectionLock = noop;
 	#node: Box<HTMLElement | null>;
+	#present: ReadonlyBox<boolean>;
 
 	constructor(props: StateProps) {
 		this.#node = useNodeById(props.id);
 		this.#enabled = props.enabled;
 		this.#onPointerDownProp = props.onPointerDown;
 		this.#onPointerUpProp = props.onPointerUp;
+		this.#present = props.present;
 
-		layers.set(this, this.#enabled);
+		let unsubEvents = noop;
 
-		$effect.root(() => {
-			const unsubEvents = this.#addEventListeners();
-
+		$effect(() => {
+			if (this.#present.value) {
+				layers.set(
+					this,
+					untrack(() => this.#enabled)
+				);
+				unsubEvents = this.#addEventListeners();
+			}
 			return () => {
 				unsubEvents();
 				this.#resetSelectionLock();
@@ -102,6 +109,9 @@ function setUserSelect(node: HTMLElement, value: string) {
 }
 
 function isHighestLayer(instance: PreventTextSelectionOverflowLayerState) {
-	const [topLayer] = [...layers].at(-1)!;
-	return topLayer === instance;
+	const layersArr = [...layers];
+	if (!layersArr.length) return false;
+	const highestLayer = layersArr.at(-1);
+	if (!highestLayer) return false;
+	return highestLayer[0] === instance;
 }

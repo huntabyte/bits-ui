@@ -1,4 +1,3 @@
-import type { VirtualElement } from "@floating-ui/core";
 import { getContext, setContext, untrack } from "svelte";
 import {
 	type Middleware,
@@ -17,6 +16,7 @@ import {
 	type Box,
 	type ReadonlyBox,
 	type ReadonlyBoxedValues,
+	afterTick,
 	boxedState,
 	generateId,
 	styleToString,
@@ -83,6 +83,7 @@ export type FloatingContentStateProps = ReadonlyBoxedValues<{
 	onPlaced: () => void;
 	dir: TextDirection;
 	style: StyleProperties;
+	present: boolean;
 }>;
 
 class FloatingContentState {
@@ -104,6 +105,7 @@ class FloatingContentState {
 	updatePositionStrategy =
 		undefined as unknown as FloatingContentStateProps["updatePositionStrategy"];
 	onPlaced = undefined as unknown as FloatingContentStateProps["onPlaced"];
+	present = undefined as unknown as FloatingContentStateProps["present"];
 	arrowSize: {
 		readonly value:
 			| {
@@ -201,7 +203,7 @@ class FloatingContentState {
 			...this.style.value,
 			// if the FloatingContent hasn't been placed yet (not all measurements done)
 			// we prevent animations so that users's animation don't kick in too early referring wrong sides
-			animation: !this.floating.isPositioned ? "none" : undefined,
+			// animation: !this.floating.isPositioned ? "none" : undefined,
 		}),
 	});
 
@@ -223,6 +225,9 @@ class FloatingContentState {
 		this.dir = props.dir;
 		this.style = props.style;
 		this.root = root;
+		this.present = props.present;
+		this.arrowSize = useSize(this.root.arrowNode);
+		this.root.contentNode = useNodeById(this.id);
 		this.floating = useFloating({
 			strategy: () => this.strategy.value,
 			placement: () => this.desiredPlacement,
@@ -234,11 +239,8 @@ class FloatingContentState {
 				});
 				return cleanup;
 			},
+			open: () => this.present.value,
 		});
-
-		this.arrowSize = useSize(this.root.arrowNode);
-
-		this.root.contentNode = useNodeById(this.id);
 
 		$effect(() => {
 			if (this.floating.isPositioned) {

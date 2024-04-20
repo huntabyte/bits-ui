@@ -9,6 +9,7 @@
 		onPointerUp = noop,
 		id,
 		children,
+		present,
 	}: PreventTextSelectionOverflowLayerProps = $props();
 
 	usePreventTextSelectionOverflowLayer({
@@ -16,6 +17,7 @@
 		enabled: readonlyBox(() => enabled),
 		onPointerDown: readonlyBox(() => onPointerDown),
 		onPointerUp: readonlyBox(() => onPointerUp),
+		present: readonlyBox(() => present),
 	});
 </script>
 
