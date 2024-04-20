@@ -17,7 +17,6 @@ import {
 	type ReadonlyBox,
 	type ReadonlyBoxedValues,
 	boxedState,
-	generateId,
 	styleToString,
 	useNodeById,
 } from "$lib/internal/index.js";
@@ -42,15 +41,11 @@ export type Align = (typeof ALIGN_OPTIONS)[number];
 export type Boundary = Element | null;
 
 class FloatingRootState {
-	wrapperId = boxedState(generateId());
-	wrapperNode = undefined as unknown as Box<HTMLElement | null>;
+	wrapperId = undefined as unknown as ReadonlyBox<string>;
 	contentNode = undefined as unknown as Box<HTMLElement | null>;
 	anchorNode = undefined as unknown as Box<HTMLElement | null>;
 	arrowNode = boxedState<HTMLElement | null>(null);
-
-	constructor() {
-		this.wrapperNode = useNodeById(this.wrapperId);
-	}
+	wrapperNode = undefined as unknown as Box<HTMLElement | null>;
 
 	createAnchor(props: FloatingAnchorStateProps) {
 		return new FloatingAnchorState(props, this);
@@ -67,6 +62,7 @@ class FloatingRootState {
 
 export type FloatingContentStateProps = ReadonlyBoxedValues<{
 	id: string;
+	wrapperId: string;
 	side: Side;
 	sideOffset: number;
 	align: Align;
@@ -226,6 +222,8 @@ class FloatingContentState {
 		this.root = root;
 		this.present = props.present;
 		this.arrowSize = useSize(this.root.arrowNode);
+		this.root.wrapperId = props.wrapperId;
+		this.root.wrapperNode = useNodeById(this.root.wrapperId);
 		this.root.contentNode = useNodeById(this.id);
 		this.floating = useFloating({
 			strategy: () => this.strategy.value,

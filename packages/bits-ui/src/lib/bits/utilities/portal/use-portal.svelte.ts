@@ -1,13 +1,16 @@
 import { untrack } from "svelte";
-import { afterTick } from "$lib/internal/after-tick.js";
 import type { ReadonlyBox } from "$lib/internal/box.svelte.js";
 import { useNodeById } from "$lib/internal/use-node-by-id.svelte.js";
 
 export function usePortal(id: ReadonlyBox<string>, to: ReadonlyBox<HTMLElement | string>) {
 	const node = useNodeById(id);
 
+	const props = $derived({
+		id: id.value,
+		"data-portal": "",
+	});
+
 	$effect.pre(() => {
-		if (!node.value) return;
 		if (!node.value) return;
 		let target: HTMLElement | null = null;
 		if (typeof to.value === "string") {
@@ -32,4 +35,10 @@ export function usePortal(id: ReadonlyBox<string>, to: ReadonlyBox<HTMLElement |
 			untrack(() => node.value?.remove());
 		};
 	});
+
+	return {
+		get props() {
+			return props;
+		},
+	};
 }

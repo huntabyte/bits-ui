@@ -4,7 +4,6 @@
 	import { PopperLayer } from "$lib/bits/utilities/index.js";
 	import { readonlyBox } from "$lib/internal/box.svelte.js";
 	import { generateId } from "$lib/internal/id.js";
-	import Portal from "$lib/bits/utilities/portal/portal.svelte";
 
 	let {
 		asChild,
@@ -40,11 +39,9 @@
 		{#if asChild}
 			{@render child?.({ props: mergedProps })}
 		{:else}
-			<Portal {...mergedProps} forceMount={true}>
-				<div {...mergedProps} bind:this={el}>
-					{@render children?.()}
-				</div>
-			</Portal>
+			<div {...mergedProps} bind:this={el}>
+				{@render children?.()}
+			</div>
 		{/if}
 	{/snippet}
 </PopperLayer.Root>
