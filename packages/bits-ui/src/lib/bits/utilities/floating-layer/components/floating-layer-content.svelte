@@ -22,6 +22,7 @@
 		dir = "ltr",
 		style = {},
 		present,
+		wrapperId,
 	}: ContentProps = $props();
 
 	const state = setFloatingContentState({
@@ -42,6 +43,7 @@
 		dir: readonlyBox(() => dir),
 		style: readonlyBox(() => style),
 		present: readonlyBox(() => present),
+		wrapperId: readonlyBox(() => wrapperId),
 	});
 </script>
 
