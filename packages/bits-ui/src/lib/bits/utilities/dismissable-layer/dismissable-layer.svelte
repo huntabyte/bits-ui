@@ -9,6 +9,7 @@
 		onInteractOutsideStart = noop,
 		id,
 		children,
+		present,
 	}: DismissableLayerProps = $props();
 
 	useDismissableLayer({
@@ -16,6 +17,7 @@
 		behaviorType: readonlyBox(() => behaviorType),
 		onInteractOutside: readonlyBox(() => onInteractOutside),
 		onInteractOutsideStart: readonlyBox(() => onInteractOutsideStart),
+		present: readonlyBox(() => present),
 	});
 </script>
 

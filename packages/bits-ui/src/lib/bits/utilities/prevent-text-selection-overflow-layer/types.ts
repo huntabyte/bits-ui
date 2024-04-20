@@ -27,4 +27,10 @@ export type PreventTextSelectionOverflowLayerProps = {
 	 * @defaultValue `true`
 	 */
 	enabled?: boolean;
+
+	/**
+	 * Whether the layer is enabled. Currently, we determine this with the
+	 * `presence` returned from the `presence` layer.
+	 */
+	present: boolean;
 };

@@ -97,6 +97,7 @@ export function addEventListener(
 
 	// Return a function that removes the event listener from the target element(s).
 	return () => {
+		console.log("removing event listeners");
 		events.forEach((_event) => target.removeEventListener(_event, handler, options));
 	};
 }

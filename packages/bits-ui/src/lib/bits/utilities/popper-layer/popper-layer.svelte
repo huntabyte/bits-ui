@@ -15,9 +15,12 @@
 	{#snippet presence({ present })}
 		<FloatingLayer.Content {...restProps}>
 			{#snippet content({ props })}
-				<EscapeLayer.Root {...restProps}>
-					<DismissableLayer.Root {...restProps}>
-						<PreventTextSelectionOverflowLayer.Root {...restProps}>
+				<EscapeLayer.Root {...restProps} present={present.value}>
+					<DismissableLayer.Root {...restProps} present={present.value}>
+						<PreventTextSelectionOverflowLayer.Root
+							{...restProps}
+							present={present.value}
+						>
 							{@render popper?.({
 								props: { ...props, hidden: present.value ? undefined : true },
 							})}

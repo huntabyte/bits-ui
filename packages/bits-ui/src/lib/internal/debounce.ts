@@ -8,6 +8,8 @@ export function debounce<T extends (...args: any[]) => any>(fn: T, wait = 500) {
 		timeout = setTimeout(later, wait);
 	};
 
-	debounced.destroy = () => clearTimeout(timeout);
+	debounced.destroy = () => {
+		clearTimeout(timeout);
+	};
 	return debounced;
 }

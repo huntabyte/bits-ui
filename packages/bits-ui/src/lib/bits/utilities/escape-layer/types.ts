@@ -24,4 +24,10 @@ export type EscapeLayerProps = {
 	 * @defaultValue `close`
 	 */
 	behaviorType?: EscapeBehaviorType;
+
+	/**
+	 * Whether the layer is enabled. Currently, we determine this with the
+	 * `presence` returned from the `presence` layer.
+	 */
+	present: boolean;
 };

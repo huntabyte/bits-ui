@@ -30,7 +30,6 @@ class PopoverRootState {
 	}
 
 	close = () => {
-		console.log("closing!");
 		if (!this.open.value) return;
 		this.open.value = false;
 	};

@@ -45,6 +45,12 @@ export type DismissableLayerProps = {
 	 * @defaultValue `close`
 	 */
 	behaviorType?: InteractOutsideBehaviorType;
+
+	/**
+	 * Whether the layer is active. Currently, we determine this with the
+	 * `presence` returned from the `presence` layer.
+	 */
+	present: boolean;
 };
 
 export type InteractOutsideInterceptEventType =
