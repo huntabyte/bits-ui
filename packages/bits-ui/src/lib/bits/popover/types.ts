@@ -1,14 +1,14 @@
 import type { Snippet } from "svelte";
+import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
 import type {
 	EventCallback,
-	HTMLDivAttributes,
 	OnChangeFn,
 	PrimitiveButtonAttributes,
 	PrimitiveDivAttributes,
 	WithAsChild,
 } from "$lib/internal/index.js";
 import type { CustomEventHandler } from "$lib/index.js";
-import type * as Floating from "$lib/bits/utilities/floating-layer/index.js";
+import type { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 
 export type PopoverRootPropsWithoutHTML = {
 	/**
@@ -30,7 +30,7 @@ export type PopoverRootPropsWithoutHTML = {
 export type PopoverRootProps = PopoverRootPropsWithoutHTML & PrimitiveDivAttributes;
 
 export type PopoverContentPropsWithoutHTML = WithAsChild<
-	Partial<Omit<Floating.ContentProps, "content">> & {
+	Partial<Omit<FloatingLayer.ContentProps, "content">> & {
 		forceMount?: boolean;
 	}
 >;
@@ -53,9 +53,9 @@ export type PopoverClosePropsWithoutHTML = WithAsChild<{
 export type PopoverCloseProps = PopoverClosePropsWithoutHTML &
 	Omit<PrimitiveButtonAttributes, "onclick" | "onkeydown">;
 
-export type PopoverArrowPropsWithoutHTML = WithAsChild<object>;
+export type PopoverArrowPropsWithoutHTML = ArrowPropsWithoutHTML;
 
-export type PopoverArrowProps = PopoverArrowPropsWithoutHTML & HTMLDivAttributes;
+export type PopoverArrowProps = ArrowProps;
 
 export type PopoverTriggerEvents<T extends Element = HTMLButtonElement> = {
 	click: CustomEventHandler<MouseEvent, T>;

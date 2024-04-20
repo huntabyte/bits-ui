@@ -1,5 +1,5 @@
 import { untrack } from "svelte";
-import type { PreventTextSelectionOverflowLayerProps } from "./types.js";
+import type { TextSelectionLayerProps } from "./types.js";
 import {
 	type Box,
 	type EventCallback,
@@ -14,13 +14,11 @@ import {
 	useNodeById,
 } from "$lib/internal/index.js";
 
-type StateProps = ReadonlyBoxedValues<
-	Required<Omit<PreventTextSelectionOverflowLayerProps, "children">>
->;
+type StateProps = ReadonlyBoxedValues<Required<Omit<TextSelectionLayerProps, "children">>>;
 
-const layers = new Map<PreventTextSelectionOverflowLayerState, ReadonlyBox<boolean>>();
+const layers = new Map<TextSelectionLayerState, ReadonlyBox<boolean>>();
 
-export class PreventTextSelectionOverflowLayerState {
+export class TextSelectionLayerState {
 	#onPointerDownProp: ReadonlyBox<EventCallback<PointerEvent>>;
 	#onPointerUpProp: ReadonlyBox<EventCallback<PointerEvent>>;
 	#enabled: ReadonlyBox<boolean>;
@@ -85,8 +83,8 @@ export class PreventTextSelectionOverflowLayerState {
 	};
 }
 
-export function usePreventTextSelectionOverflowLayer(props: StateProps) {
-	return new PreventTextSelectionOverflowLayerState(props);
+export function useTextSelectionLayer(props: StateProps) {
+	return new TextSelectionLayerState(props);
 }
 
 const getUserSelect = (node: HTMLElement) => node.style.userSelect || node.style.webkitUserSelect;
@@ -108,7 +106,7 @@ function setUserSelect(node: HTMLElement, value: string) {
 	node.style.webkitUserSelect = value;
 }
 
-function isHighestLayer(instance: PreventTextSelectionOverflowLayerState) {
+function isHighestLayer(instance: TextSelectionLayerState) {
 	const layersArr = [...layers];
 	if (!layersArr.length) return false;
 	const highestLayer = layersArr.at(-1);

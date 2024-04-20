@@ -33,7 +33,3 @@ export * as Toggle from "./toggle/index.js";
 export * as ToggleGroup from "./toggle-group/index.js";
 export * as Toolbar from "./toolbar/index.js";
 export * as Tooltip from "./tooltip/index.js";
-export * as EscapeLayer from "./utilities/escape-layer/index.js";
-export * as PreventTextSelectionOverflowLayer from "./utilities/prevent-text-selection-overflow-layer/index.js";
-export * as DismissableLayer from "./utilities/dismissable-layer/index.js";
-export * as Portal from "./utilities/portal/index.js";
