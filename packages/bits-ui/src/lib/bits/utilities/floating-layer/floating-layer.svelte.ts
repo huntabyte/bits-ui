@@ -17,6 +17,8 @@ import {
 	type ReadonlyBox,
 	type ReadonlyBoxedValues,
 	boxedState,
+	generateId,
+	readonlyBoxedState,
 	styleToString,
 	useNodeById,
 } from "$lib/internal/index.js";
@@ -41,7 +43,6 @@ export type Align = (typeof ALIGN_OPTIONS)[number];
 export type Boundary = Element | null;
 
 class FloatingRootState {
-	wrapperId = undefined as unknown as ReadonlyBox<string>;
 	contentNode = undefined as unknown as Box<HTMLElement | null>;
 	anchorNode = undefined as unknown as Box<HTMLElement | null>;
 	arrowNode = boxedState<HTMLElement | null>(null);
@@ -62,7 +63,6 @@ class FloatingRootState {
 
 export type FloatingContentStateProps = ReadonlyBoxedValues<{
 	id: string;
-	wrapperId: string;
 	side: Side;
 	sideOffset: number;
 	align: Align;
@@ -84,6 +84,7 @@ export type FloatingContentStateProps = ReadonlyBoxedValues<{
 class FloatingContentState {
 	root = undefined as unknown as FloatingRootState;
 	id = undefined as unknown as FloatingContentStateProps["id"];
+	contentId = readonlyBoxedState<string>(generateId());
 	style = undefined as unknown as FloatingContentStateProps["style"];
 	dir = undefined as unknown as FloatingContentStateProps["dir"];
 	side = undefined as unknown as FloatingContentStateProps["side"];
@@ -171,7 +172,7 @@ class FloatingContentState {
 	cannotCenterArrow = $derived(this.floating.middlewareData.arrow?.centerOffset !== 0);
 	contentZIndex = $state<string>();
 	wrapperProps = $derived({
-		id: this.root.wrapperId.value,
+		id: this.id.value,
 		"data-bits-floating-content-wrapper": "",
 		style: styleToString({
 			...this.floating.floatingStyles,
@@ -192,6 +193,7 @@ class FloatingContentState {
 		dir: this.dir.value,
 	} as const);
 	props = $derived({
+		id: this.contentId.value,
 		"data-side": this.placedSide,
 		"data-align": this.placedAlign,
 		style: styleToString({
@@ -222,9 +224,8 @@ class FloatingContentState {
 		this.root = root;
 		this.present = props.present;
 		this.arrowSize = useSize(this.root.arrowNode);
-		this.root.wrapperId = props.wrapperId;
-		this.root.wrapperNode = useNodeById(this.root.wrapperId);
-		this.root.contentNode = useNodeById(this.id);
+		this.root.wrapperNode = useNodeById(this.id);
+		this.root.contentNode = useNodeById(this.contentId);
 		this.floating = useFloating({
 			strategy: () => this.strategy.value,
 			placement: () => this.desiredPlacement,

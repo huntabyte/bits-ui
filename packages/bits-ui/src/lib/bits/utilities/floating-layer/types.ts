@@ -103,11 +103,6 @@ export type FloatingLayerContentProps = {
 	 * Whether the floating layer is present.
 	 */
 	present: boolean;
-
-	/**
-	 * The ID of the content wrapper element.
-	 */
-	wrapperId?: string;
 };
 
 export type FloatingLayerArrowProps = {

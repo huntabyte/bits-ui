@@ -4,14 +4,14 @@
 	import { readonlyBox } from "$lib/internal/box.svelte.js";
 	import { generateId } from "$lib/internal/id.js";
 
-	let { id = generateId(), to = "body", forceMount, portal }: PortalProps = $props();
+	let { id = generateId(), to = "body", forceMount, children }: PortalProps = $props();
 
-	const state = usePortal(
+	usePortal(
 		readonlyBox(() => id),
 		readonlyBox(() => to)
 	);
 </script>
 
 {#if forceMount}
-	{@render portal?.({ portalProps: state.props })}
+	{@render children?.()}
 {/if}

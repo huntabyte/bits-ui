@@ -29,5 +29,5 @@ export type PortalProps = {
 	 */
 	id?: string;
 
-	portal?: Snippet<[{ portalProps: { id: string; "data-portal": string } }]>;
+	children?: Snippet;
 };
