@@ -1,6 +1,6 @@
-import { onDestroy, untrack } from "svelte";
+import { onDestroy } from "svelte";
 import { type Box, type ReadonlyBox, boxedState, watch } from "./box.svelte.js";
-import { afterTick, useNodeById, useStateMachine } from "$lib/internal/index.js";
+import { useNodeById, useStateMachine } from "$lib/internal/index.js";
 
 export function usePresence(present: ReadonlyBox<boolean>, id: ReadonlyBox<string>) {
 	const styles = boxedState({}) as unknown as Box<CSSStyleDeclaration>;

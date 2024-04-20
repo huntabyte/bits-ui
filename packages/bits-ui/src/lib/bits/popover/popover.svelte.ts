@@ -41,6 +41,10 @@ class PopoverRootState {
 	createContent(props: PopoverContentStateProps) {
 		return new PopoverContentState(props, this);
 	}
+
+	createClose(props: PopoverCloseStateProps) {
+		return new PopoverCloseState(props, this);
+	}
 }
 
 type PopoverTriggerStateProps = ReadonlyBoxedValues<{
@@ -66,6 +70,7 @@ class PopoverTriggerState {
 			this.root.open.value && this.root.contentId.value
 				? this.root.contentId.value
 				: undefined,
+		"data-popover-trigger": "",
 		//
 		onclick: this.#composedClick,
 		onkeydown: this.#composedKeydown,
@@ -105,6 +110,7 @@ class PopoverContentState {
 		tabindex: -1,
 		hidden: !this.root.open.value ? true : undefined,
 		"data-state": getDataOpenClosed(this.root.open.value),
+		"data-popover-content": "",
 	});
 
 	constructor(props: PopoverContentStateProps, root: PopoverRootState) {
@@ -112,6 +118,39 @@ class PopoverContentState {
 		this.node = useNodeById(this.id);
 		this.root = root;
 	}
+}
+
+type PopoverCloseStateProps = ReadonlyBoxedValues<{
+	onclick: EventCallback<MouseEvent>;
+	onkeydown: EventCallback<KeyboardEvent>;
+}>;
+
+class PopoverCloseState {
+	root = undefined as unknown as PopoverRootState;
+	#composedClick = undefined as unknown as EventCallback<MouseEvent>;
+	#composedKeydown = undefined as unknown as EventCallback<KeyboardEvent>;
+	props = $derived({
+		onclick: this.#composedClick,
+		onkeydown: this.#composedKeydown,
+		type: "button",
+		"data-popover-close": "",
+	} as const);
+
+	constructor(props: PopoverCloseStateProps, root: PopoverRootState) {
+		this.root = root;
+		this.#composedClick = composeHandlers(props.onclick, this.#onclick);
+		this.#composedKeydown = composeHandlers(props.onkeydown, this.#onkeydown);
+	}
+
+	#onclick = () => {
+		this.root.close();
+	};
+
+	#onkeydown = (e: KeyboardEvent) => {
+		if (!(e.key === kbd.ENTER || e.key === kbd.SPACE)) return;
+		e.preventDefault();
+		this.root.close();
+	};
 }
 
 //
@@ -135,4 +174,8 @@ export function setPopoverTriggerState(props: PopoverTriggerStateProps) {
 
 export function setPopoverContentState(props: PopoverContentStateProps) {
 	return getPopoverRootState().createContent(props);
+}
+
+export function setPopoverCloseState(props: PopoverCloseStateProps) {
+	return getPopoverRootState().createClose(props);
 }

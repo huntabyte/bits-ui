@@ -1,6 +1,6 @@
 /// <reference types="resize-observer-browser" />
 
-import { tick, untrack } from "svelte";
+import { untrack } from "svelte";
 import type { Box } from "./box.svelte.js";
 import { afterTick } from "./after-tick.js";
 

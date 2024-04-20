@@ -1,4 +1,4 @@
-import { box, boxedState } from "./box.svelte.js";
+import { boxedState } from "./box.svelte.js";
 
 interface Machine<S> {
 	[k: string]: { [k: string]: S };
