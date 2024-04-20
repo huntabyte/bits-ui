@@ -1,3 +1,3 @@
-export { default as Root } from "./escape-layer.svelte";
+export { default as EscapeLayer } from "./escape-layer.svelte";
 
-export type { EscapeLayerProps as Props } from "./types.js";
+export type { EscapeLayerProps } from "./types.js";

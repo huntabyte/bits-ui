@@ -8,7 +8,7 @@ import type {
 	WithAsChild,
 } from "$lib/internal/index.js";
 import type { CustomEventHandler } from "$lib/index.js";
-import type * as Floating from "$lib/bits/utilities/floating-layer/index.js";
+import type { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 
 export type PopoverRootPropsWithoutHTML = {
 	/**
@@ -30,7 +30,7 @@ export type PopoverRootPropsWithoutHTML = {
 export type PopoverRootProps = PopoverRootPropsWithoutHTML & PrimitiveDivAttributes;
 
 export type PopoverContentPropsWithoutHTML = WithAsChild<
-	Partial<Omit<Floating.ContentProps, "content">> & {
+	Partial<Omit<FloatingLayer.ContentProps, "content">> & {
 		forceMount?: boolean;
 	}
 >;

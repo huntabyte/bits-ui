@@ -2,7 +2,7 @@
 	import type { TriggerProps } from "../index.js";
 	import { setPopoverTriggerState } from "../popover.svelte.js";
 	import { generateId, noop, readonlyBox, styleToString } from "$lib/internal/index.js";
-	import { FloatingLayer } from "$lib/bits/utilities/index.js";
+	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 
 	let {
 		asChild,

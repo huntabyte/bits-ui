@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { ContentProps } from "../index.js";
 	import { setFloatingContentState } from "../floating-layer.svelte.js";
+	import type { ContentProps } from "./index.js";
 	import { readonlyBox } from "$lib/internal/box.svelte.js";
 	import { generateId } from "$lib/internal/id.js";
 

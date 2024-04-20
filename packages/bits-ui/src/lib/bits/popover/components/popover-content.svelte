@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { ContentProps } from "../index.js";
 	import { setPopoverContentState } from "../popover.svelte.js";
-	import { PopperLayer } from "$lib/bits/utilities/index.js";
+	import { PopperLayer } from "$lib/bits/utilities/popper-layer/index.js";
 	import { readonlyBox } from "$lib/internal/box.svelte.js";
 	import { generateId } from "$lib/internal/id.js";
 
@@ -21,7 +21,7 @@
 	});
 </script>
 
-<PopperLayer.Root
+<PopperLayer
 	{...restProps}
 	forceMount={true}
 	present={state.root.open.value || forceMount}
@@ -44,4 +44,4 @@
 			</div>
 		{/if}
 	{/snippet}
-</PopperLayer.Root>
+</PopperLayer>

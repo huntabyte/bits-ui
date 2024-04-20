@@ -1,2 +1,2 @@
-export { default as Root } from "./popper-layer.svelte";
-export type { PopperLayerProps as Props } from "./types.js";
+export { default as PopperLayer } from "./popper-layer.svelte";
+export type { PopperLayerProps } from "./types.js";
