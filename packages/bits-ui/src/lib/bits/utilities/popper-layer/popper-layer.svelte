@@ -13,7 +13,7 @@
 
 <PresenceLayer.Root {...restProps}>
 	{#snippet presence({ present })}
-		<FloatingLayer.Content {...restProps}>
+		<FloatingLayer.Content {...restProps} present={present.value}>
 			{#snippet content({ props })}
 				<EscapeLayer.Root {...restProps} present={present.value}>
 					<DismissableLayer.Root {...restProps} present={present.value}>

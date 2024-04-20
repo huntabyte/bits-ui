@@ -87,6 +87,7 @@ class PopoverTriggerState {
 
 	#onkeydown = (e: KeyboardEvent) => {
 		if (!(e.key === kbd.ENTER || e.key === kbd.SPACE)) return;
+		e.preventDefault();
 		this.root.toggleOpen();
 	};
 }

@@ -98,6 +98,11 @@ export type FloatingLayerContentProps = {
 	 * The style properties to apply to the content.
 	 */
 	style?: StyleProperties;
+
+	/**
+	 * Whether the floating layer is present.
+	 */
+	present: boolean;
 };
 
 export type FloatingLayerArrowProps = {

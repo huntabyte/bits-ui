@@ -22,19 +22,19 @@
 </script>
 
 <PopperLayer.Root
+	{...restProps}
 	forceMount={true}
 	present={state.root.open.value || forceMount}
 	{id}
-	{...restProps}
 	{style}
 	onInteractOutside={state.root.close}
 	onEscape={state.root.close}
 >
 	{#snippet popper({ props })}
 		{@const mergedProps = {
-			...props,
-			...state.props,
 			...restProps,
+			...state.props,
+			...props,
 		}}
 		{#if asChild}
 			{@render child?.({ props: mergedProps })}

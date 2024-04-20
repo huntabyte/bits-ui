@@ -1,5 +1,6 @@
 import { computePosition } from "@floating-ui/dom";
 import { box, boxedState } from "../box.svelte.js";
+import { afterTick } from "../after-tick.js";
 import type { UseFloatingOptions, UseFloatingReturn } from "./types.js";
 import { get, getDPR, roundByDPR } from "./utils.js";
 
@@ -59,7 +60,6 @@ export function useFloating(options: UseFloatingOptions): UseFloatingReturn {
 
 	function update() {
 		if (reference.value === null || floating.value === null) return;
-
 		computePosition(reference.value, floating.value, {
 			middleware: middlewareOption,
 			placement: placementOption,
