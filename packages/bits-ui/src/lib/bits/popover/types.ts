@@ -1,7 +1,7 @@
 import type { Snippet } from "svelte";
+import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
 import type {
 	EventCallback,
-	HTMLDivAttributes,
 	OnChangeFn,
 	PrimitiveButtonAttributes,
 	PrimitiveDivAttributes,
@@ -53,9 +53,9 @@ export type PopoverClosePropsWithoutHTML = WithAsChild<{
 export type PopoverCloseProps = PopoverClosePropsWithoutHTML &
 	Omit<PrimitiveButtonAttributes, "onclick" | "onkeydown">;
 
-export type PopoverArrowPropsWithoutHTML = WithAsChild<object>;
+export type PopoverArrowPropsWithoutHTML = ArrowPropsWithoutHTML;
 
-export type PopoverArrowProps = PopoverArrowPropsWithoutHTML & HTMLDivAttributes;
+export type PopoverArrowProps = ArrowProps;
 
 export type PopoverTriggerEvents<T extends Element = HTMLButtonElement> = {
 	click: CustomEventHandler<MouseEvent, T>;

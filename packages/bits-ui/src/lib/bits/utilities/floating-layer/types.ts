@@ -110,12 +110,6 @@ export type FloatingLayerContentProps = {
 	wrapperId?: string;
 };
 
-export type FloatingLayerArrowProps = {
-	id: string;
-	children?: Snippet;
-	style: StyleProperties;
-};
-
 export type FloatingLayerAnchorProps = {
 	id: string;
 	children?: Snippet;

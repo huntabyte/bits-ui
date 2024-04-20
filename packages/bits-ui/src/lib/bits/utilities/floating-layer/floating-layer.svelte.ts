@@ -35,17 +35,20 @@ export const ALIGN_OPTIONS = ["start", "center", "end"] as const;
 // 	right: "rotate(315deg)",
 // };
 
+const OPPOSITE_SIDE: Record<Side, Side> = {
+	top: "bottom",
+	right: "left",
+	bottom: "top",
+	left: "right",
+};
+
 export type Side = (typeof SIDE_OPTIONS)[number];
 export type Align = (typeof ALIGN_OPTIONS)[number];
 
 export type Boundary = Element | null;
 
 class FloatingRootState {
-	wrapperId = undefined as unknown as ReadonlyBox<string>;
-	contentNode = undefined as unknown as Box<HTMLElement | null>;
 	anchorNode = undefined as unknown as Box<HTMLElement | null>;
-	arrowNode = boxedState<HTMLElement | null>(null);
-	wrapperNode = undefined as unknown as Box<HTMLElement | null>;
 
 	createAnchor(props: FloatingAnchorStateProps) {
 		return new FloatingAnchorState(props, this);
@@ -53,10 +56,6 @@ class FloatingRootState {
 
 	createContent(props: FloatingContentStateProps) {
 		return new FloatingContentState(props, this);
-	}
-
-	createArrow(props: FloatingArrowStateProps) {
-		return new FloatingArrowState(props, this);
 	}
 }
 
@@ -82,8 +81,19 @@ export type FloatingContentStateProps = ReadonlyBoxedValues<{
 }>;
 
 class FloatingContentState {
+	// state
 	root = undefined as unknown as FloatingRootState;
+
+	// nodes
+	contentNode = undefined as unknown as Box<HTMLElement | null>;
+	wrapperNode = undefined as unknown as Box<HTMLElement | null>;
+	arrowNode = boxedState<HTMLElement | null>(null);
+
+	// ids
+	arrowId = undefined as unknown as ReadonlyBox<string>;
 	id = undefined as unknown as FloatingContentStateProps["id"];
+	wrapperId = undefined as unknown as FloatingContentStateProps["wrapperId"];
+
 	style = undefined as unknown as FloatingContentStateProps["style"];
 	dir = undefined as unknown as FloatingContentStateProps["dir"];
 	side = undefined as unknown as FloatingContentStateProps["side"];
@@ -156,8 +166,8 @@ class FloatingContentState {
 					contentStyle.setProperty("--bits-popper-anchor-height", `${anchorHeight}px`);
 				},
 			}),
-			this.root.arrowNode.value &&
-				arrow({ element: this.root.arrowNode.value, padding: this.arrowPadding.value }),
+			this.arrowNode.value &&
+				arrow({ element: this.arrowNode.value, padding: this.arrowPadding.value }),
 			transformOrigin({ arrowWidth: this.arrowWidth, arrowHeight: this.arrowHeight }),
 			this.hideWhenDetached.value &&
 				hide({ strategy: "referenceHidden", ...this.detectOverflowOptions }),
@@ -170,8 +180,9 @@ class FloatingContentState {
 	arrowY = $derived(this.floating.middlewareData.arrow?.y ?? 0);
 	cannotCenterArrow = $derived(this.floating.middlewareData.arrow?.centerOffset !== 0);
 	contentZIndex = $state<string>();
+	arrowBaseSide = $derived(OPPOSITE_SIDE[this.placedSide]);
 	wrapperProps = $derived({
-		id: this.root.wrapperId.value,
+		id: this.wrapperId.value,
 		"data-bits-floating-content-wrapper": "",
 		style: styleToString({
 			...this.floating.floatingStyles,
@@ -200,7 +211,27 @@ class FloatingContentState {
 			// we prevent animations so that users's animation don't kick in too early referring wrong sides
 			// animation: !this.floating.isPositioned ? "none" : undefined,
 		}),
-	});
+	} as const);
+
+	arrowStyle = $derived({
+		position: "absolute",
+		left: this.arrowX ? `${this.arrowX}px` : undefined,
+		top: this.arrowY ? `${this.arrowY}px` : undefined,
+		[this.arrowBaseSide]: 0,
+		"transform-origin": {
+			top: "",
+			right: "0 0",
+			bottom: "center 0",
+			left: "100% 0",
+		}[this.placedSide],
+		transform: {
+			top: "translateY(100%)",
+			right: "translateY(50%) rotate(90deg) translateX(-50%)",
+			bottom: "rotate(180deg)",
+			left: "translateY(50%) rotate(-90deg) translateX(50%)",
+		}[this.placedSide],
+		visibility: this.cannotCenterArrow ? "hidden" : undefined,
+	} as const);
 
 	constructor(props: FloatingContentStateProps, root: FloatingRootState) {
 		this.id = props.id;
@@ -221,10 +252,10 @@ class FloatingContentState {
 		this.style = props.style;
 		this.root = root;
 		this.present = props.present;
-		this.arrowSize = useSize(this.root.arrowNode);
-		this.root.wrapperId = props.wrapperId;
-		this.root.wrapperNode = useNodeById(this.root.wrapperId);
-		this.root.contentNode = useNodeById(this.id);
+		this.arrowSize = useSize(this.arrowNode);
+		this.wrapperId = props.wrapperId;
+		this.wrapperNode = useNodeById(this.wrapperId);
+		this.contentNode = useNodeById(this.id);
 		this.floating = useFloating({
 			strategy: () => this.strategy.value,
 			placement: () => this.desiredPlacement,
@@ -240,13 +271,12 @@ class FloatingContentState {
 		});
 
 		$effect(() => {
-			if (this.floating.isPositioned) {
-				this.onPlaced?.value();
-			}
+			if (!this.floating.isPositioned) return;
+			this.onPlaced?.value();
 		});
 
 		$effect(() => {
-			const contentNode = this.root.contentNode.value;
+			const contentNode = this.contentNode.value;
 			if (!contentNode) return;
 
 			untrack(() => {
@@ -255,8 +285,12 @@ class FloatingContentState {
 		});
 
 		$effect(() => {
-			this.floating.floating.value = this.root.wrapperNode.value;
+			this.floating.floating.value = this.wrapperNode.value;
 		});
+	}
+
+	createArrow(props: FloatingArrowStateProps) {
+		return new FloatingArrowState(props, this);
 	}
 }
 
@@ -266,13 +300,22 @@ type FloatingArrowStateProps = ReadonlyBoxedValues<{
 }>;
 
 class FloatingArrowState {
-	root = undefined as unknown as FloatingRootState;
+	content = undefined as unknown as FloatingContentState;
 	id = undefined as unknown as ReadonlyBox<string>;
+	style = undefined as unknown as FloatingArrowStateProps["style"];
+	props = $derived({
+		id: this.id.value,
+		style: {
+			...this.style.value,
+			...this.content.arrowStyle,
+		},
+	});
 
-	constructor(props: FloatingArrowStateProps, root: FloatingRootState) {
+	constructor(props: FloatingArrowStateProps, content: FloatingContentState) {
+		this.content = content;
 		this.id = props.id;
-		this.root = root;
-		this.root.arrowNode = useNodeById(this.id);
+		this.style = props.style;
+		this.content.arrowNode = useNodeById(this.id);
 	}
 }
 
@@ -290,7 +333,8 @@ class FloatingAnchorState {
 // CONTEXT METHODS
 //
 
-const FLOATING_ROOT_KEY = Symbol("Popper.Root");
+const FLOATING_ROOT_KEY = Symbol("Floating.Root");
+const FLOATING_CONTENT_KEY = Symbol("Floating.Content");
 
 export function setFloatingRootState() {
 	return setContext(FLOATING_ROOT_KEY, new FloatingRootState());
@@ -301,11 +345,15 @@ export function getFloatingRootState(): FloatingRootState {
 }
 
 export function setFloatingContentState(props: FloatingContentStateProps): FloatingContentState {
-	return getFloatingRootState().createContent(props);
+	return setContext(FLOATING_CONTENT_KEY, getFloatingRootState().createContent(props));
+}
+
+export function getFloatingContentState(): FloatingContentState {
+	return getContext(FLOATING_CONTENT_KEY);
 }
 
 export function setFloatingArrowState(props: FloatingArrowStateProps): FloatingArrowState {
-	return getFloatingRootState().createArrow(props);
+	return getFloatingContentState().createArrow(props);
 }
 
 export function setFloatingAnchorState(props: FloatingAnchorStateProps): FloatingAnchorState {
@@ -315,6 +363,7 @@ export function setFloatingAnchorState(props: FloatingAnchorStateProps): Floatin
 //
 // HELPERS
 //
+
 function isNotNull<T>(value: T | null): value is T {
 	return value !== null;
 }
