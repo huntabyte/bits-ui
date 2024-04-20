@@ -1,8 +1,9 @@
-import { onDestroy } from "svelte";
+import { untrack } from "svelte";
 import type { EscapeBehaviorType, EscapeLayerProps } from "./types.js";
 import type { ReadonlyBox, ReadonlyBoxedValues } from "$lib/internal/box.svelte.js";
 import { type EventCallback, addEventListener } from "$lib/internal/events.js";
 import { kbd } from "$lib/internal/kbd.js";
+import { noop } from "$lib/internal/callbacks.js";
 
 const layers = new Map<EscapeLayerState, ReadonlyBox<EscapeBehaviorType>>();
 
@@ -11,14 +12,23 @@ type EscapeLayerStateProps = ReadonlyBoxedValues<Required<Omit<EscapeLayerProps,
 export class EscapeLayerState {
 	#onEscapeProp: ReadonlyBox<EventCallback<KeyboardEvent>>;
 	#behaviorType: ReadonlyBox<EscapeBehaviorType>;
+	#present: ReadonlyBox<boolean>;
 
 	constructor(props: EscapeLayerStateProps) {
 		this.#behaviorType = props.behaviorType;
 		this.#onEscapeProp = props.onEscape;
-		layers.set(this, this.#behaviorType);
+		this.#present = props.present;
 
-		$effect.root(() => {
-			const unsubEvents = this.#addEventListener();
+		let unsubEvents = noop;
+
+		$effect(() => {
+			if (this.#present.value) {
+				layers.set(
+					this,
+					untrack(() => this.#behaviorType)
+				);
+				unsubEvents = this.#addEventListener();
+			}
 
 			return () => {
 				unsubEvents();

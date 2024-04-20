@@ -1,4 +1,4 @@
-import { onDestroy, onMount, untrack } from "svelte";
+import { untrack } from "svelte";
 import type {
 	DismissableLayerProps,
 	InteractOutsideBehaviorType,
@@ -66,10 +66,6 @@ export class DismissableLayerState {
 		this.#present = props.present;
 
 		$effect(() => {
-			console.log("present", this.#present.value);
-		});
-
-		$effect(() => {
 			this.#documentObj = getOwnerDocument(this.node.value);
 		});
 
@@ -107,7 +103,6 @@ export class DismissableLayerState {
 	}
 
 	#addEventListeners() {
-		console.log("adding event listeners");
 		return executeCallbacks(
 			/**
 			 * CAPTURE INTERACTION START
@@ -160,7 +155,6 @@ export class DismissableLayerState {
 	}
 
 	#onInteractOutsideStart = debounce((e: InteractOutsideEvent) => {
-		console.log("onInteractOutsideStart");
 		if (!this.node.value) return;
 		if (
 			!this.#isResponsibleLayer ||
@@ -174,7 +168,6 @@ export class DismissableLayerState {
 	}, 10);
 
 	#onInteractOutside = debounce((e: InteractOutsideEvent) => {
-		console.log("onInteractOutside");
 		if (!this.node.value) return;
 
 		const behaviorType = this.#behaviorType.value;
@@ -191,23 +184,19 @@ export class DismissableLayerState {
 	}, 10);
 
 	#markInterceptedEvent = (e: HTMLElementEventMap[InteractOutsideInterceptEventType]) => {
-		console.log("markInterceptedEvent", e.type);
 		this.#interceptedEvents[e.type as InteractOutsideInterceptEventType] = true;
 	};
 
 	#markNonInterceptedEvent = (e: HTMLElementEventMap[InteractOutsideInterceptEventType]) => {
-		console.log("markNonInterceptedEvent", e.type);
 		this.#interceptedEvents[e.type as InteractOutsideInterceptEventType] = false;
 	};
 
 	#markResponsibleLayer = () => {
-		console.log("markResponsibleLayer");
 		if (!this.node.value) return;
 		this.#isResponsibleLayer = isResponsibleLayer(this.node.value);
 	};
 
 	#resetState = debounce(() => {
-		console.log("resetState");
 		for (const eventType in this.#interceptedEvents) {
 			this.#interceptedEvents[eventType as InteractOutsideInterceptEventType] = false;
 		}
@@ -216,7 +205,6 @@ export class DismissableLayerState {
 	}, 20);
 
 	#isAnyEventIntercepted() {
-		console.log("isAnyEventIntercepted");
 		return Object.values(this.#interceptedEvents).some(Boolean);
 	}
 }
@@ -226,7 +214,6 @@ export function useDismissableLayer(props: DismissableLayerStateProps) {
 }
 
 function isResponsibleLayer(node: HTMLElement): boolean {
-	console.log("isResponsibleLayer");
 	const layersArr = [...layers];
 	/**
 	 * We first check if we can find a top layer with `close` or `ignore`.
@@ -243,7 +230,6 @@ function isResponsibleLayer(node: HTMLElement): boolean {
 }
 
 function isValidEvent(e: InteractOutsideEvent, node: HTMLElement): boolean {
-	console.log("isValidEvent");
 	if ("button" in e && e.button > 0) return false;
 	const target = e.target;
 	if (!isElement(target)) return false;

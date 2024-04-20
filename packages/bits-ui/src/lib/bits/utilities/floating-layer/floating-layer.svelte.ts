@@ -1,4 +1,3 @@
-import type { VirtualElement } from "@floating-ui/core";
 import { getContext, setContext, untrack } from "svelte";
 import {
 	type Middleware,
