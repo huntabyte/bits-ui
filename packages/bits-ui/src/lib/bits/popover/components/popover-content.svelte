@@ -23,7 +23,7 @@
 
 <PopperLayer.Root
 	{...restProps}
-	forceMount={true}
+	{forceMount}
 	present={state.root.open.value || forceMount}
 	{id}
 	{style}

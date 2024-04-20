@@ -12,9 +12,9 @@
 	let { popper, ...restProps }: Props = $props();
 </script>
 
-<Portal.Root {...restProps} forceMount={true}>
-	<PresenceLayer.Root {...restProps}>
-		{#snippet presence({ present })}
+<PresenceLayer.Root {...restProps}>
+	{#snippet presence({ present })}
+		<Portal.Root {...restProps}>
 			<FloatingLayer.Content {...restProps} present={present.value}>
 				{#snippet content({ props })}
 					<EscapeLayer.Root {...restProps} present={present.value}>
@@ -34,6 +34,6 @@
 					</EscapeLayer.Root>
 				{/snippet}
 			</FloatingLayer.Content>
-		{/snippet}
-	</PresenceLayer.Root>
-</Portal.Root>
+		</Portal.Root>
+	{/snippet}
+</PresenceLayer.Root>

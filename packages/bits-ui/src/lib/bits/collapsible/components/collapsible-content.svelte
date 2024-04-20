@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getCollapsibleContentState } from "../collapsible.svelte.js";
 	import type { CollapsibleContentProps } from "../types.js";
-	import Presence from "$lib/bits/utilities/presence-layer/presence-layer.svelte";
+	import Presence from "$lib/bits/utilities/presence/presence.svelte";
 	import { generateId } from "$lib/internal/id.js";
 	import { readonlyBox } from "$lib/internal/box.svelte.js";
 
@@ -23,7 +23,7 @@
 	});
 </script>
 
-<Presence forceMount={true} present={content.present} {id}>
+<Presence forceMount={true} present={content.present || forceMount} {id}>
 	{#snippet presence({ present })}
 		{@const mergedProps = {
 			...restProps,
