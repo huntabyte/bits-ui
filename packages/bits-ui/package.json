@@ -33,7 +33,7 @@
 		"@sveltejs/vite-plugin-svelte": "^3.1.0",
 		"@testing-library/dom": "^10.0.0",
 		"@testing-library/jest-dom": "^6.4.2",
-		"@testing-library/svelte": "^4.2.2",
+		"@testing-library/svelte": "^5.0.1",
 		"@testing-library/user-event": "^14.5.2",
 		"@types/jest-axe": "^3.5.9",
 		"@types/node": "^20.12.2",
