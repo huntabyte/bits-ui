@@ -1,23 +1,27 @@
-<script lang="ts" context="module">
-	export type Item = {
+<script lang="ts">
+	import { Accordion } from "$lib/index.js";
+
+	type Item = {
 		value: string;
 		title: string;
 		disabled: boolean;
 		content: string;
 		level: 1 | 2 | 3 | 4 | 5 | 6;
 	};
+
+	let {
+		disabled = false,
+		items = [],
+		value = "",
+	}: Omit<
+		Accordion.RootProps & {
+			items: Item[];
+		},
+		"type"
+	> = $props();
 </script>
 
-<script lang="ts">
-	import { Accordion } from "$lib/index.js";
-
-	export let multiple = false;
-	export let disabled: Accordion.Props<false>["disabled"] = false;
-	export let items: Item[];
-	export let value: string | undefined = undefined;
-</script>
-
-<Accordion.Root {multiple} {value} {disabled} data-testid="root">
+<Accordion.Root type="single" value={value as string} {disabled} data-testid="root">
 	{#each items as { value, title, disabled, content, level }}
 		<Accordion.Item {value} {disabled} data-testid="{value}-item">
 			<Accordion.Header {level} data-testid="{value}-header">

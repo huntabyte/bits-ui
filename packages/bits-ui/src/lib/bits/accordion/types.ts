@@ -12,23 +12,23 @@ interface BaseAccordionProps {
 	id?: string;
 }
 
-interface SingleAccordionProps extends BaseAccordionProps {
+export type SingleAccordionProps = BaseAccordionProps & {
 	type: "single";
 	value?: string;
 	onValueChange?: (value: string) => void;
-}
+};
 
-interface MultipleAccordionProps extends BaseAccordionProps {
+export type MultipleAccordionProps = BaseAccordionProps & {
 	type: "multiple";
 	value?: string[];
 	onValueChange?: (value: string[]) => void;
-}
+};
 
 export type AccordionRootPropsWithoutHTML =
 	| WithAsChild<SingleAccordionProps>
 	| WithAsChild<MultipleAccordionProps>;
 
-export type AccordionRootProps = AccordionRootPropsWithoutHTML & Omit<PrimitiveDivAttributes, "id">;
+export type AccordionRootProps = AccordionRootPropsWithoutHTML & PrimitiveDivAttributes;
 
 export type AccordionTriggerPropsWithoutHTML = WithAsChild<{
 	id?: string;
@@ -38,7 +38,7 @@ export type AccordionTriggerPropsWithoutHTML = WithAsChild<{
 }>;
 
 export type AccordionTriggerProps = AccordionTriggerPropsWithoutHTML &
-	Omit<PrimitiveButtonAttributes, "disabled" | "id" | "onclick" | "onkeydown">;
+	Omit<PrimitiveButtonAttributes, "disabled" | "onclick" | "onkeydown">;
 
 export type AccordionItemContext = {
 	value: string;

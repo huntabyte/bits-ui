@@ -122,7 +122,7 @@ export type TransitionProps<
 	outTransitionConfig?: TransitionParams<Out>;
 }>;
 
-type Primitive<T> = Omit<T, "style" | "id"> & { id?: string };
+type Primitive<T> = Omit<T, "style" | "id" | "children"> & { id?: string };
 export type PrimitiveButtonAttributes = Primitive<HTMLButtonAttributes>;
 export type PrimitiveDivAttributes = Primitive<HTMLDivAttributes>;
 export type PrimitiveInputAttributes = Primitive<HTMLInputAttributes>;
@@ -140,10 +140,10 @@ export type AsChildProps<Props, SnippetProps, El> = {
 	style?: StyleProperties;
 } & Omit<Props, "children" | "asChild">;
 
-export type DefaultProps<Props, SnippetProps, El> = {
+export type DefaultProps<Props, El> = {
 	asChild?: never;
 	child?: never;
-	children?: Snippet<[SnippetProps]>;
+	children?: Snippet;
 	el?: El;
 	style?: StyleProperties;
 } & Omit<Props, "child" | "asChild">;
@@ -153,7 +153,7 @@ export type WithAsChild<
 	// eslint-disable-next-line ts/ban-types
 	SnippetProps extends Record<PropertyKey, unknown> = {},
 	El = HTMLElement,
-> = DefaultProps<Props, SnippetProps, El> | AsChildProps<Props, SnippetProps, El>;
+> = DefaultProps<Props, El> | AsChildProps<Props, SnippetProps, El>;
 
 /**
  * Constructs a new type by omitting properties from type

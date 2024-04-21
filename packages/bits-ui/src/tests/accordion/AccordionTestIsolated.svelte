@@ -2,7 +2,7 @@
 	import { Accordion } from "$lib/index.js";
 </script>
 
-<Accordion.Root value="1" data-testid="root">
+<Accordion.Root type="single" value="1" data-testid="root">
 	<Accordion.Item value="1" data-testid="item">
 		<Accordion.Header data-testid="header">
 			<Accordion.Trigger data-testid="trigger">open</Accordion.Trigger>

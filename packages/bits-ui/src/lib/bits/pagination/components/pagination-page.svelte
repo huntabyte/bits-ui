@@ -1,35 +1,48 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { getCtx } from "../ctx.js";
-	import type { PageEvents, PageProps } from "../index.js";
-	import { createDispatcher } from "$lib/internal/events.js";
+	import type { PageProps } from "../index.js";
+	import { setPaginationPageState } from "../pagination.svelte.js";
+	import { readonlyBox } from "$lib/internal/box.svelte.js";
+	import { noop } from "$lib/internal/callbacks.js";
+	import { generateId } from "$lib/internal/id.js";
+	import { styleToString } from "$lib/internal/style.js";
 
-	type $$Props = PageProps;
-	type $$Events = PageEvents;
+	let {
+		id = generateId(),
+		page,
+		asChild,
+		child,
+		children,
+		type = "button",
+		el = $bindable(),
+		onclick = noop,
+		onkeydown = noop,
+		style = {},
+		...restProps
+	}: PageProps = $props();
 
-	export let asChild: $$Props["asChild"] = undefined;
-	export let page: $$Props["page"];
-	export let el: $$Props["el"] = undefined;
+	const state = setPaginationPageState({
+		id: readonlyBox(() => id),
+		page: readonlyBox(() => page),
+		onclick: readonlyBox(() => onclick),
+		onkeydown: readonlyBox(() => onkeydown),
+	});
 
-	const {
-		elements: { pageTrigger },
-		getAttrs,
-	} = getCtx();
-
-	const attrs = getAttrs("page");
-
-	$: builder = $pageTrigger(page);
-	$: Object.assign(builder, attrs);
-
-	const dispatch = createDispatcher();
+	const mergedProps = $derived({
+		...restProps,
+		...state.props,
+		type,
+		style: styleToString(style),
+	});
 </script>
 
 {#if asChild}
-	<slot {builder} />
+	{@render child?.({ props: mergedProps })}
 {:else}
-	<button bind:this={el} type="button" use:melt={builder} on:m-click={dispatch} {...$$restProps}>
-		<slot {builder}>
-			{page.value}
-		</slot>
+	<button bind:this={el} {...mergedProps}>
+		{#if children}
+			{@render children?.()}
+		{:else}
+			{page}
+		{/if}
 	</button>
 {/if}

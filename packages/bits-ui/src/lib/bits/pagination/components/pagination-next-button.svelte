@@ -1,32 +1,43 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import type { NextButtonEvents, NextButtonProps } from "../index.js";
-	import { getCtx } from "../ctx.js";
-	import { createDispatcher } from "$lib/internal/events.js";
+	import type { NextButtonProps } from "../index.js";
+	import { setPaginationButtonState } from "../pagination.svelte.js";
+	import { readonlyBox } from "$lib/internal/box.svelte.js";
+	import { noop } from "$lib/internal/callbacks.js";
+	import { generateId } from "$lib/internal/id.js";
+	import { styleToString } from "$lib/internal/style.js";
 
-	type $$Props = NextButtonProps;
-	type $$Events = NextButtonEvents;
+	let {
+		id = generateId(),
+		asChild,
+		child,
+		children,
+		el = $bindable(),
+		onclick = noop,
+		onkeydown = noop,
+		style = {},
+		type = "button",
+		...restProps
+	}: NextButtonProps = $props();
 
-	export let asChild: $$Props["asChild"] = undefined;
-	export let el: $$Props["el"] = undefined;
+	const state = setPaginationButtonState({
+		type: "next",
+		id: readonlyBox(() => id),
+		onclick: readonlyBox(() => onclick),
+		onkeydown: readonlyBox(() => onkeydown),
+	});
 
-	const {
-		elements: { nextButton },
-		getAttrs,
-	} = getCtx();
-
-	const attrs = getAttrs("next-button");
-
-	$: builder = $nextButton;
-	$: Object.assign(builder, attrs);
-
-	const dispatch = createDispatcher();
+	const mergedProps = $derived({
+		...restProps,
+		...state.props,
+		type,
+		style: styleToString(style),
+	});
 </script>
 
 {#if asChild}
-	<slot {builder} />
+	{@render child?.({ props: mergedProps })}
 {:else}
-	<button bind:this={el} use:melt={builder} type="button" {...$$restProps} on:m-click={dispatch}>
-		<slot {builder} />
+	<button bind:this={el} {...mergedProps}>
+		{@render children?.()}
 	</button>
 {/if}

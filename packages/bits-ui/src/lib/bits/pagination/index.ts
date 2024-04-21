@@ -4,13 +4,8 @@ export { default as NextButton } from "./components/pagination-next-button.svelt
 export { default as Page } from "./components/pagination-page.svelte";
 
 export type {
-	PaginationProps as Props,
+	PaginationRootProps as RootProps,
 	PaginationPrevButtonProps as PrevButtonProps,
 	PaginationNextButtonProps as NextButtonProps,
 	PaginationPageProps as PageProps,
-	//
-	PaginationEvents as Events,
-	PaginationPrevButtonEvents as PrevButtonEvents,
-	PaginationNextButtonEvents as NextButtonEvents,
-	PaginationPageEvents as PageEvents,
 } from "./types.js";
