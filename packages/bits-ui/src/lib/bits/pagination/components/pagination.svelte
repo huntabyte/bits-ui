@@ -1,54 +1,54 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { setCtx } from "../ctx.js";
-	import type { Props } from "../index.js";
+	import type { RootProps } from "../index.js";
+	import { setPaginationRootState } from "../pagination.svelte.js";
+	import { box, readonlyBox } from "$lib/internal/box.svelte.js";
+	import { generateId } from "$lib/internal/id.js";
+	import { styleToString } from "$lib/internal/style.js";
 
-	type $$Props = Props;
-
-	export let count: $$Props["count"];
-	export let page: $$Props["page"] = undefined;
-	export let onPageChange: $$Props["onPageChange"] = undefined;
-	export let perPage: $$Props["perPage"] = undefined;
-	export let siblingCount: $$Props["siblingCount"] = undefined;
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
-
-	const {
-		elements: { root },
-		states: { pages, range, page: localPage },
-		getAttrs,
-		updateOption,
-	} = setCtx({
+	let {
+		id = generateId(),
 		count,
-		perPage,
-		siblingCount,
-		defaultPage: page,
-		onPageChange: ({ next }) => {
-			if (page !== next) {
-				onPageChange?.(next);
-				page = next;
-			}
+		perPage = 1,
+		page = $bindable(1),
+		el = $bindable(),
+		siblingCount = 1,
+		onPageChange,
+		asChild,
+		loop = false,
+		orientation = "horizontal",
+		child,
+		children,
+		style = {},
+		...restProps
+	}: RootProps = $props();
 
-			return next;
-		},
+	const state = setPaginationRootState({
+		id: readonlyBox(() => id),
+		count: readonlyBox(() => count),
+		perPage: readonlyBox(() => perPage),
+		page: box(
+			() => page,
+			(v) => {
+				page = v;
+				onPageChange?.(v);
+			}
+		),
+		loop: readonlyBox(() => loop),
+		siblingCount: readonlyBox(() => siblingCount),
+		orientation: readonlyBox(() => orientation),
 	});
 
-	$: page !== undefined && localPage.set(page);
-
-	const attrs = getAttrs("root");
-
-	$: builder = $root;
-	$: Object.assign(builder, attrs);
-
-	$: updateOption("count", count);
-	$: updateOption("perPage", perPage);
-	$: updateOption("siblingCount", siblingCount);
+	const mergedProps = $derived({
+		...restProps,
+		...state.props,
+		style: styleToString(style),
+	});
 </script>
 
 {#if asChild}
-	<slot {builder} pages={$pages} range={$range} />
+	{@render child?.({ props: mergedProps, pages: state.pages, range: state.range })}
 {:else}
-	<div bind:this={el} use:melt={builder} {...$$restProps}>
-		<slot {builder} pages={$pages} range={$range} />
+	<div bind:this={el} {...mergedProps}>
+		{@render children?.({ pages: state.pages, range: state.range })}
 	</div>
 {/if}

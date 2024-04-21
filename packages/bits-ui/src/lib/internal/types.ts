@@ -122,7 +122,7 @@ export type TransitionProps<
 	outTransitionConfig?: TransitionParams<Out>;
 }>;
 
-type Primitive<T> = Omit<T, "style" | "id"> & { id?: string };
+type Primitive<T> = Omit<T, "style" | "id" | "children"> & { id?: string };
 export type PrimitiveButtonAttributes = Primitive<HTMLButtonAttributes>;
 export type PrimitiveDivAttributes = Primitive<HTMLDivAttributes>;
 export type PrimitiveInputAttributes = Primitive<HTMLInputAttributes>;
