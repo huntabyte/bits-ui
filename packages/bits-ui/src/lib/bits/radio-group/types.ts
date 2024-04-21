@@ -63,33 +63,36 @@ export type RadioGroupRootPropsWithoutHTML = WithAsChild<{
 
 export type RadioGroupRootProps = RadioGroupRootPropsWithoutHTML & PrimitiveDivAttributes;
 
-export type RadioGroupItemPropsWithoutHTML = WithAsChild<
-	{
-		/**
-		 * The value of the radio item.
-		 */
-		value: string;
+export type RadioGroupItemPropsWithoutHTML = Omit<
+	WithAsChild<
+		{
+			/**
+			 * The value of the radio item.
+			 */
+			value: string;
 
-		/**
-		 * Whether the radio item is disabled.
-		 *
-		 * @defaultValue false
-		 */
-		disabled?: boolean;
+			/**
+			 * Whether the radio item is disabled.
+			 *
+			 * @defaultValue false
+			 */
+			disabled?: boolean;
 
-		onclick?: EventCallback<MouseEvent>;
+			onclick?: EventCallback<MouseEvent>;
 
-		onkeydown?: EventCallback<KeyboardEvent>;
-
-		/**
-		 * A snippet to render the radio item's indicator.
-		 * It receives the item's `checked` state as a prop
-		 * for conditional styling.
-		 */
-		indicator?: Snippet<[{ checked: boolean; props: Record<string, unknown> }]>;
-	},
-	{ checked: boolean }
->;
+			onkeydown?: EventCallback<KeyboardEvent>;
+		},
+		{ checked: boolean }
+	>,
+	"children"
+> & {
+	/**
+	 * The children snippet to render inside the radio item.
+	 * It provides the `checked` state of the item for conditionally
+	 * rendering/styling the indicator.
+	 */
+	children?: Snippet<[{ checked: boolean }]>;
+};
 
 export type RadioGroupItemProps = RadioGroupItemPropsWithoutHTML &
 	Omit<PrimitiveButtonAttributes, "value" | "disabled" | "onclick" | "onkeydown">;

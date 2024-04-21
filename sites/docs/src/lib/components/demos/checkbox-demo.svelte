@@ -10,7 +10,7 @@
 		class="peer inline-flex size-[25px] items-center justify-center rounded-md border border-muted bg-foreground transition-all duration-150 ease-in-out active:scale-98 data-[state=unchecked]:border-border-input data-[state=unchecked]:bg-background data-[state=unchecked]:hover:border-dark-40"
 		name="hello"
 	>
-		{#snippet indicator({ checked })}
+		{#snippet children({ checked })}
 			<div class="inline-flex items-center justify-center text-background">
 				{#if checked === true}
 					<Check class="size-[15px]" weight="bold" />
