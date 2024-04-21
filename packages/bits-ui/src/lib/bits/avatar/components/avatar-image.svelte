@@ -10,14 +10,14 @@
 		src: readonlyBox(() => src),
 	});
 
-	const mergedProps = {
-		...imageState.props,
+	const mergedProps = $derived({
 		...restProps,
-	};
+		...imageState.props,
+	});
 </script>
 
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<img bind:this={el} {...mergedProps} />
+	<img bind:this={el} {...mergedProps} {src} />
 {/if}

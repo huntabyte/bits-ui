@@ -14,10 +14,10 @@
 
 	const fallbackState = getAvatarFallbackState({ style: readonlyBox(() => style) });
 
-	const mergedProps = {
-		...fallbackState.props,
+	const mergedProps = $derived({
 		...restProps,
-	};
+		...fallbackState.props,
+	});
 </script>
 
 {#if asChild}

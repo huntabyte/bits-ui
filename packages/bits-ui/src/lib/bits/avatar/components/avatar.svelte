@@ -20,17 +20,19 @@
 		loadingStatus: box(
 			() => loadingStatus,
 			(v) => {
-				loadingStatus = v;
-				onLoadingStatusChange?.(v);
+				if (loadingStatus !== v) {
+					loadingStatus = v;
+					onLoadingStatusChange?.(v);
+				}
 			}
 		),
 		style: readonlyBox(() => style),
 	});
 
-	const mergedProps = {
+	const mergedProps = $derived({
 		...rootState.props,
 		...restProps,
-	};
+	});
 </script>
 
 {#if asChild}
