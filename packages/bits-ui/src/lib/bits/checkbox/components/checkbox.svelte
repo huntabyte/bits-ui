@@ -19,7 +19,6 @@
 		style,
 		asChild,
 		child,
-		indicator,
 		...restProps
 	}: RootProps = $props();
 
@@ -58,11 +57,9 @@
 	{@render child?.({ props: mergedProps, checked: checkboxState.checked.value })}
 {:else}
 	<button bind:this={el} {...mergedProps}>
-		{@render indicator?.({
+		{@render children?.({
 			checked: checkboxState.checked.value,
-			props: checkboxState.indicatorProps,
 		})}
-		{@render children?.()}
 	</button>
 {/if}
 
