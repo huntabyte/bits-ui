@@ -5,7 +5,7 @@ export { default as Trigger } from "./components/accordion-trigger.svelte";
 export { default as Content } from "./components/accordion-content.svelte";
 
 export type {
-	AccordionRootProps as Props,
+	AccordionRootProps as RootProps,
 	AccordionItemProps as ItemProps,
 	AccordionHeaderProps as HeaderProps,
 	AccordionTriggerProps as TriggerProps,

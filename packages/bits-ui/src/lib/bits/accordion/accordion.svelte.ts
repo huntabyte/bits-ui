@@ -46,7 +46,7 @@ class AccordionBaseState {
 		if (!this.node.value) return [];
 		return Array.from(
 			this.node.value.querySelectorAll<HTMLElement>("[data-accordion-trigger]")
-		).filter((el) => !el.dataset.disabled);
+		).filter((el) => !el.hasAttribute("data-disabled"));
 	}
 }
 

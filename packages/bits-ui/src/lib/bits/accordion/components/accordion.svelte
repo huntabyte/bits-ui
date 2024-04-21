@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { setAccordionRootState } from "../accordion.svelte.js";
-	import type { AccordionRootProps } from "../types.js";
+	import type { RootProps } from "../index.js";
 	import { Box, box, readonlyBox } from "$lib/internal/box.svelte.js";
 	import { generateId } from "$lib/internal/id.js";
 	import { styleToString } from "$lib/internal/style.js";
@@ -17,7 +17,7 @@
 		style,
 		onValueChange,
 		...restProps
-	}: AccordionRootProps = $props();
+	}: RootProps = $props();
 
 	valueProp === undefined && (valueProp = type === "single" ? "" : []);
 

@@ -18,6 +18,7 @@
 		"aria-level": level,
 		"data-heading-level": level,
 		style: styleToString(style),
+		"data-accordion-header": "",
 	});
 </script>
 
