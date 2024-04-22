@@ -128,3 +128,7 @@ export function getHiddenAttr(condition: boolean): true | undefined {
 export function getDisabledAttr(condition: boolean): true | undefined {
 	return condition ? true : undefined;
 }
+
+export function getAriaPressed(condition: boolean): "true" | "false" {
+	return condition ? "true" : "false";
+}
