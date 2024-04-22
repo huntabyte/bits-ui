@@ -74,24 +74,24 @@ type ToggleGroupSingleStateProps = ToggleGroupBaseStateProps &
 	}>;
 
 class ToggleGroupSingleState extends ToggleGroupBaseState {
-	value = undefined as unknown as ToggleGroupSingleStateProps["value"];
+	#value = undefined as unknown as ToggleGroupSingleStateProps["value"];
 	isMulti = false;
-	anyPressed = $derived(this.value.value !== "");
+	anyPressed = $derived(this.#value.value !== "");
 
 	constructor(props: ToggleGroupSingleStateProps) {
 		super(props);
-		this.value = props.value;
+		this.#value = props.value;
 	}
 
 	includesItem(item: string) {
-		return this.value.value === item;
+		return this.#value.value === item;
 	}
 
 	toggleItem(item: string, id: string) {
 		if (this.includesItem(item)) {
-			this.value.value = "";
+			this.#value.value = "";
 		} else {
-			this.value.value = item;
+			this.#value.value = item;
 			this.activeTabId.value = id;
 		}
 	}
@@ -107,24 +107,24 @@ type ToggleGroupMultipleStateProps = ToggleGroupBaseStateProps &
 	}>;
 
 class ToggleGroupMultipleState extends ToggleGroupBaseState {
-	value = undefined as unknown as ToggleGroupMultipleStateProps["value"];
+	#value = undefined as unknown as ToggleGroupMultipleStateProps["value"];
 	isMulti = true;
-	anyPressed = $derived(this.value.value.length > 0);
+	anyPressed = $derived(this.#value.value.length > 0);
 
 	constructor(props: ToggleGroupMultipleStateProps) {
 		super(props);
-		this.value = props.value;
+		this.#value = props.value;
 	}
 
 	includesItem(item: string) {
-		return this.value.value.includes(item);
+		return this.#value.value.includes(item);
 	}
 
 	toggleItem(item: string, id: string) {
 		if (this.includesItem(item)) {
-			this.value.value = this.value.value.filter((v) => v !== item);
+			this.#value.value = this.#value.value.filter((v) => v !== item);
 		} else {
-			this.value.value = [...this.value.value, item];
+			this.#value.value = [...this.#value.value, item];
 			this.activeTabId.value = id;
 		}
 	}
@@ -211,21 +211,17 @@ class ToggleGroupItemState {
 		this.#root.activeTabId.value = itemToFocus.id;
 	};
 
-	isPressed = $derived(this.#root.includesItem(this.#value.value));
+	#isPressed = $derived(this.#root.includesItem(this.#value.value));
 
-	getAriaPressed() {
-		return this.#root.isMulti
-			? getAriaPressed(this.#root.includesItem(this.#value.value))
-			: undefined;
-	}
+	#ariaChecked = $derived.by(() => {
+		return this.#root.isMulti ? undefined : getAriaChecked(this.#isPressed);
+	});
 
-	getAriaChecked() {
-		return this.#root.isMulti
-			? undefined
-			: getAriaChecked(this.#root.includesItem(this.#value.value));
-	}
+	#ariaPressed = $derived.by(() => {
+		return this.#root.isMulti ? undefined : getAriaPressed(this.#isPressed);
+	});
 
-	tabIndex = $derived.by(() => this.getTabIndex());
+	#tabIndex = $derived.by(() => this.getTabIndex());
 
 	getTabIndex() {
 		const node = this.#node.value;
@@ -253,13 +249,13 @@ class ToggleGroupItemState {
 	props = $derived({
 		id: this.#id.value,
 		role: this.#root.isMulti ? undefined : "radio",
-		tabindex: this.tabIndex,
+		tabindex: this.#tabIndex,
 		"data-orientation": getDataOrientation(this.#root.orientation.value),
 		"data-disabled": getDataDisabled(this.#isDisabled),
-		"data-state": getToggleItemDataState(this.isPressed),
+		"data-state": getToggleItemDataState(this.#isPressed),
 		"data-value": this.#value.value,
-		"aria-pressed": this.getAriaPressed(),
-		"aria-checked": this.getAriaChecked(),
+		"aria-pressed": this.#ariaPressed,
+		"aria-checked": this.#ariaChecked,
 		[ITEM_ATTR]: "",
 		//
 		onclick: this.#onclick,
