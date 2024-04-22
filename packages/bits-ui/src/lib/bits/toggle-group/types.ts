@@ -1,68 +1,74 @@
-import type { HTMLButtonAttributes } from "svelte/elements";
-import type { CreateToggleGroupProps as MeltToggleGroupProps } from "@melt-ui/svelte";
 import type {
-	DOMElement,
-	Expand,
-	HTMLDivAttributes,
-	OmitValue,
 	OnChangeFn,
+	PrimitiveButtonAttributes,
+	PrimitiveDivAttributes,
+	WithAsChild,
 } from "$lib/internal/index.js";
-import type { CustomEventHandler } from "$lib/index.js";
+import type { Orientation } from "$lib/index.js";
 
-export type ToggleGroupPropsWithoutHTML<T extends "single" | "multiple"> = Expand<
-	OmitValue<MeltToggleGroupProps<T>> & {
-		/**
-		 * The value of the toggle group, which is a string or an array of strings,
-		 * depending on the type of the toggle group.
-		 *
-		 * You can bind to this to programmatically control the value.
-		 */
-		value?: MeltToggleGroupProps<T>["defaultValue"];
+type BaseToggleGroupProps = {
+	/**
+	 * Whether the toggle group is disabled or not.
+	 *
+	 * @defaultValue false
+	 */
+	disabled?: boolean;
 
-		/**
-		 * A callback function called when the value changes.
-		 */
-		onValueChange?: OnChangeFn<MeltToggleGroupProps<T>["defaultValue"]>;
+	/**
+	 * Whether to loop through the items when reaching the end
+	 * when using the keyboard.
+	 *
+	 * @defaultValue true
+	 */
+	loop?: boolean;
 
-		/**
-		 * The type of the toggle group.
-		 *
-		 * If the type is `"single"`, the toggle group allows only one item to be selected
-		 * at a time. If the type is `"multiple"`, the toggle group allows multiple items
-		 * to be selected at a time.
-		 */
-		type?: T;
-	} & DOMElement
->;
+	/**
+	 * The orientation of the toggle group. Used to handle keyboard
+	 * navigation between items.
+	 *
+	 * @defaultValue 'horizontal'
+	 */
+	orientation?: Orientation;
 
-export type ToggleGroupItemPropsWithoutHTML = Expand<
-	{
-		/**
-		 * The value of the toggle group item. When the toggle group item is selected,
-		 * the toggle group's value will be set to this value if in `"single"` mode,
-		 * or this value will be pushed to the toggle group's array value if in `"multiple"` mode.
-		 *
-		 * @required
-		 */
-		value: string;
-
-		/**
-		 * Whether the toggle group item is disabled.
-		 *
-		 * @defaultValue false
-		 */
-		disabled?: boolean;
-	} & DOMElement<HTMLButtonElement>
->;
-
-//
-
-export type ToggleGroupProps<T extends "single" | "multiple"> = ToggleGroupPropsWithoutHTML<T> &
-	HTMLDivAttributes;
-
-export type ToggleGroupItemProps = ToggleGroupItemPropsWithoutHTML & HTMLButtonAttributes;
-
-export type ToggleGroupItemEvents<T extends Element = HTMLButtonElement> = {
-	click: CustomEventHandler<MouseEvent, T>;
-	keydown: CustomEventHandler<KeyboardEvent, T>;
+	/**
+	 * Whether to enable roving focus or not. When enabled, users
+	 * navigate between the items using the arrow keys. When disabled,
+	 * users navigate between the items using the tab key.
+	 */
+	rovingFocus?: boolean;
 };
+
+export type SingleToggleGroupProps = BaseToggleGroupProps & {
+	type: "single";
+	value?: string;
+	onValueChange?: OnChangeFn<string>;
+};
+
+export type MultipleToggleGroupProps = BaseToggleGroupProps & {
+	type: "multiple";
+	value?: string[];
+	onValueChange?: OnChangeFn<string[]>;
+};
+
+export type ToggleGroupRootPropsWithoutHTML =
+	| WithAsChild<SingleToggleGroupProps>
+	| WithAsChild<MultipleToggleGroupProps>;
+
+export type ToggleGroupRootProps = ToggleGroupRootPropsWithoutHTML & PrimitiveDivAttributes;
+
+export type ToggleGroupItemPropsWithoutHTML = WithAsChild<{
+	/**
+	 * Whether the toggle item is disabled or not.
+	 *
+	 * @defaultValue false
+	 */
+	disabled?: boolean;
+
+	/**
+	 * The value of the toggle item.
+	 */
+	value: string;
+}>;
+
+export type ToggleGroupItemProps = ToggleGroupItemPropsWithoutHTML &
+	Omit<PrimitiveButtonAttributes, "disabled" | "onclick" | "onkeydown">;

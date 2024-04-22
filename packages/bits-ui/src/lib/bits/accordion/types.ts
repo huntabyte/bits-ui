@@ -1,5 +1,6 @@
 import type {
 	EventCallback,
+	OnChangeFn,
 	PrimitiveButtonAttributes,
 	PrimitiveDivAttributes,
 	Transition,
@@ -7,21 +8,20 @@ import type {
 	WithAsChild,
 } from "$lib/internal/index.js";
 
-interface BaseAccordionProps {
+type BaseAccordionProps = {
 	disabled?: boolean;
-	id?: string;
-}
+};
 
 export type SingleAccordionProps = BaseAccordionProps & {
 	type: "single";
 	value?: string;
-	onValueChange?: (value: string) => void;
+	onValueChange?: OnChangeFn<string>;
 };
 
 export type MultipleAccordionProps = BaseAccordionProps & {
 	type: "multiple";
 	value?: string[];
-	onValueChange?: (value: string[]) => void;
+	onValueChange?: OnChangeFn<string[]>;
 };
 
 export type AccordionRootPropsWithoutHTML =
