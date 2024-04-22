@@ -2,6 +2,7 @@ import { clsx } from "clsx";
 import { type EventCallback, composeHandlers } from "./events.js";
 import { styleToString } from "./style.js";
 import { cssToStyleObj } from "./css-to-style-obj.js";
+import { executeCallbacks } from "./callbacks.js";
 import type { StyleProperties } from "$lib/shared/index.js";
 
 type Props = Record<string, unknown>;
@@ -55,6 +56,9 @@ export function mergeProps<T extends PropsArg[]>(
 				const aHandler = a as EventCallback;
 				const bHandler = b as EventCallback;
 				result[key] = composeHandlers(aHandler, bHandler);
+			} else if (typeof a === "function" && typeof b === "function") {
+				// chain non-event handler functions
+				result[key] = executeCallbacks(a, b);
 			} else if (key === "class" && typeof a === "string" && typeof b === "string") {
 				// handle merging class strings
 				result[key] = clsx(a, b);
@@ -95,6 +99,11 @@ export function mergeProps<T extends PropsArg[]>(
 	// handle weird svelte bug where `hidden` is not removed when set to `false`
 	if ("hidden" in result && result.hidden !== true) {
 		result.hidden = undefined;
+	}
+
+	// handle weird svelte bug where `disabled` is not removed when set to `false`
+	if ("disabled" in result && result.disabled !== true) {
+		result.disabled = undefined;
 	}
 
 	return result as UnionToIntersection<TupleTypes<T>> & { style?: string };
