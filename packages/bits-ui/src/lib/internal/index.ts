@@ -21,3 +21,4 @@ export * from "./debounce.js";
 export * from "./callbacks.js";
 export * from "./use-id.svelte.js";
 export * from "./merge-props.js";
+export * from "./get-directional-keys.js";
