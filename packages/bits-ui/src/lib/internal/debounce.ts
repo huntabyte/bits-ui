@@ -1,15 +1,22 @@
 // eslint-disable-next-line ts/no-explicit-any
 export function debounce<T extends (...args: any[]) => any>(fn: T, wait = 500) {
-	let timeout: NodeJS.Timeout;
+	let timeout: NodeJS.Timeout | null = null;
 
 	const debounced = (...args: Parameters<T>) => {
-		clearTimeout(timeout);
-		const later = () => fn(...args);
-		timeout = setTimeout(later, wait);
+		if (timeout !== null) {
+			clearTimeout(timeout);
+		}
+		timeout = setTimeout(() => {
+			fn(...args);
+		}, wait);
 	};
 
 	debounced.destroy = () => {
-		clearTimeout(timeout);
+		if (timeout !== null) {
+			clearTimeout(timeout);
+			timeout = null;
+		}
 	};
+
 	return debounced;
 }
