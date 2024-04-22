@@ -1,67 +1,51 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { setCtx } from "../ctx.js";
-	import type { Props } from "../index.js";
-	import { arraysAreEqual } from "$lib/internal/arrays.js";
+	import type { RootProps } from "../index.js";
+	import { setToggleGroupRootState } from "../toggle-group.svelte.js";
+	import { Box, box, readonlyBox } from "$lib/internal/box.svelte.js";
+	import { useId } from "$lib/internal/use-id.svelte.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 
-	type T = $$Generic<"single" | "multiple">;
-	type $$Props = Props<T>;
-
-	export let type: $$Props["type"] = "single" as T;
-	export let disabled: $$Props["disabled"] = undefined;
-	export let loop: $$Props["loop"] = undefined;
-	export let value: $$Props["value"] = undefined;
-	export let orientation: $$Props["orientation"] = undefined;
-	export let onValueChange: $$Props["onValueChange"] = undefined;
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
-
-	const {
-		elements: { root },
-		states: { value: localValue },
-		updateOption,
-		getAttrs,
-	} = setCtx<T>({
-		disabled,
+	let {
+		asChild,
+		child,
+		children,
+		el = $bindable(),
+		id = useId(),
+		value = $bindable(),
+		onValueChange,
 		type,
-		defaultValue: value,
-		loop,
-		orientation,
-		onValueChange: (({ next }: { next: $$Props["value"] }) => {
-			if (Array.isArray(next)) {
-				if (!Array.isArray(value) || !arraysAreEqual(value, next)) {
-					onValueChange?.(next);
-					value = next;
-					return next;
-				}
-				return next;
-			}
+		disabled = false,
+		loop = true,
+		orientation = "horizontal",
+		rovingFocus = true,
+		...restProps
+	}: RootProps = $props();
 
-			if (value !== next) {
-				onValueChange?.(next);
-				value = next;
+	value === undefined && (value = type === "single" ? "" : []);
+
+	const state = setToggleGroupRootState({
+		id: readonlyBox(() => id),
+		value: box(
+			() => value!,
+			(v) => {
+				value = v;
+				onValueChange?.(v as any);
 			}
-			return next;
-		}) as any,
+		) as Box<string> | Box<string[]>,
+		disabled: readonlyBox(() => disabled),
+		loop: readonlyBox(() => loop),
+		orientation: readonlyBox(() => orientation),
+		rovingFocus: readonlyBox(() => rovingFocus),
+		type,
 	});
 
-	const attrs = getAttrs("root");
-
-	$: value !== undefined && localValue.set(Array.isArray(value) ? [...value] : value);
-
-	$: updateOption("disabled", disabled);
-	$: updateOption("loop", loop);
-	$: updateOption("type", type);
-	$: updateOption("orientation", orientation);
-
-	$: builder = $root;
-	$: Object.assign(builder, attrs);
+	const mergedProps = $derived(mergeProps(restProps, state.props));
 </script>
 
 {#if asChild}
-	<slot {builder} />
+	{@render child?.({ props: mergedProps })}
 {:else}
-	<div bind:this={el} use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+	<div bind:this={el} {...mergedProps}>
+		{@render children?.()}
 	</div>
 {/if}
