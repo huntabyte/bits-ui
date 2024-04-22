@@ -50,10 +50,6 @@ class AccordionBaseState {
 		);
 	}
 
-	createHeader(props: AccordionHeaderStateProps) {
-		return new AccordionHeaderState(props);
-	}
-
 	props = $derived({
 		id: this.id.value,
 		[ROOT_ATTR]: "",
@@ -107,7 +103,7 @@ export class AccordionMultiState extends AccordionBaseState {
 		if (this.includesItem(item)) {
 			this.#value.value = this.#value.value.filter((v) => v !== item);
 		} else {
-			this.#value.value.push(item);
+			this.#value.value = [...this.#value.value, item];
 		}
 	}
 }
@@ -146,6 +142,10 @@ export class AccordionItemState {
 
 	createContent(props: AccordionContentStateProps) {
 		return new AccordionContentState(props, this);
+	}
+
+	createHeader(props: AccordionHeaderStateProps) {
+		return new AccordionHeaderState(props, this);
 	}
 
 	props = $derived({
@@ -320,16 +320,18 @@ type AccordionHeaderStateProps = ReadonlyBoxedValues<{
 }>;
 
 class AccordionHeaderState {
+	#item = undefined as unknown as AccordionItemState;
 	#level = undefined as unknown as AccordionHeaderStateProps["level"];
-
-	constructor(props: AccordionHeaderStateProps) {
+	constructor(props: AccordionHeaderStateProps, item: AccordionItemState) {
 		this.#level = props.level;
+		this.#item = item;
 	}
 
 	props = $derived({
 		role: "heading",
 		"aria-level": this.#level.value,
 		"data-heading-level": this.#level.value,
+		"data-state": getDataOpenClosed(this.#item.isSelected),
 		[HEADER_ATTR]: "",
 	});
 }
@@ -360,11 +362,11 @@ export function setAccordionRootState(props: InitAccordionProps) {
 }
 
 export function getAccordionRootState() {
+	verifyContextDeps(ACCORDION_ROOT_KEY);
 	return getContext<AccordionState>(ACCORDION_ROOT_KEY);
 }
 
 export function setAccordionItemState(props: Omit<AccordionItemStateProps, "rootState">) {
-	verifyContextDeps(ACCORDION_ROOT_KEY);
 	const rootState = getAccordionRootState();
 	const itemState = new AccordionItemState({ ...props, rootState });
 	setContext(ACCORDION_ITEM_KEY, itemState);
@@ -372,21 +374,20 @@ export function setAccordionItemState(props: Omit<AccordionItemStateProps, "root
 }
 
 export function getAccordionItemState() {
+	verifyContextDeps(ACCORDION_ITEM_KEY);
 	return getContext<AccordionItemState>(ACCORDION_ITEM_KEY);
 }
 
 export function getAccordionTriggerState(props: AccordionTriggerStateProps): AccordionTriggerState {
-	verifyContextDeps(ACCORDION_ITEM_KEY);
 	const itemState = getAccordionItemState();
 	return itemState.createTrigger(props);
 }
 
 export function getAccordionContentState(props: AccordionContentStateProps): AccordionContentState {
-	verifyContextDeps(ACCORDION_ITEM_KEY);
 	const itemState = getAccordionItemState();
 	return itemState.createContent(props);
 }
 
 export function getAccordionHeaderState(props: AccordionHeaderStateProps): AccordionHeaderState {
-	return getAccordionRootState().createHeader(props);
+	return getAccordionItemState().createHeader(props);
 }

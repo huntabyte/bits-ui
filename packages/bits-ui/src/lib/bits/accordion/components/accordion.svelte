@@ -9,21 +9,21 @@
 		children,
 		child,
 		type,
-		value: valueProp = $bindable(),
+		value = $bindable(),
 		el = $bindable(),
 		id = useId(),
 		onValueChange,
 		...restProps
 	}: RootProps = $props();
 
-	valueProp === undefined && (valueProp = type === "single" ? "" : []);
+	value === undefined && (value = type === "single" ? "" : []);
 
 	const rootState = setAccordionRootState({
 		type,
 		value: box(
-			() => valueProp!,
+			() => value!,
 			(v) => {
-				valueProp = v;
+				value = v;
 				onValueChange?.(v as any);
 			}
 		) as Box<string> | Box<string[]>,

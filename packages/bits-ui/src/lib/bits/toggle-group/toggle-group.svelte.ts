@@ -12,7 +12,8 @@ import {
 	type ReadonlyBoxedValues,
 	boxedState,
 } from "$lib/internal/box.svelte.js";
-import { getDirectionalKeys, kbd } from "$lib/internal/kbd.js";
+import { kbd } from "$lib/internal/kbd.js";
+import { getDirectionalKeys } from "$lib/internal/get-directional-keys.js";
 import { getElemDirection } from "$lib/internal/locale.js";
 import { useNodeById } from "$lib/internal/use-node-by-id.svelte.js";
 import type { Orientation } from "$lib/shared/index.js";
