@@ -1,4 +1,4 @@
-import { getContext, setContext } from "svelte";
+import { getContext, setContext, untrack } from "svelte";
 import {
 	getAriaChecked,
 	getAriaPressed,
@@ -6,7 +6,12 @@ import {
 	getDataDisabled,
 	getDataOrientation,
 } from "$lib/internal/attrs.js";
-import type { Box, BoxedValues, ReadonlyBoxedValues } from "$lib/internal/box.svelte.js";
+import {
+	type Box,
+	type BoxedValues,
+	type ReadonlyBoxedValues,
+	boxedState,
+} from "$lib/internal/box.svelte.js";
 import { getDirectionalKeys, kbd } from "$lib/internal/kbd.js";
 import { getElemDirection } from "$lib/internal/locale.js";
 import { useNodeById } from "$lib/internal/use-node-by-id.svelte.js";
@@ -31,6 +36,7 @@ class ToggleGroupBaseState {
 	rovingFocus = undefined as unknown as ToggleGroupBaseStateProps["rovingFocus"];
 	loop = undefined as unknown as ToggleGroupBaseStateProps["loop"];
 	orientation = undefined as unknown as ToggleGroupBaseStateProps["orientation"];
+	activeTabId = boxedState("");
 
 	constructor(props: ToggleGroupBaseStateProps) {
 		this.id = props.id;
@@ -70,6 +76,7 @@ type ToggleGroupSingleStateProps = ToggleGroupBaseStateProps &
 class ToggleGroupSingleState extends ToggleGroupBaseState {
 	value = undefined as unknown as ToggleGroupSingleStateProps["value"];
 	isMulti = false;
+	anyPressed = $derived(this.value.value !== "");
 
 	constructor(props: ToggleGroupSingleStateProps) {
 		super(props);
@@ -80,12 +87,13 @@ class ToggleGroupSingleState extends ToggleGroupBaseState {
 		return this.value.value === item;
 	}
 
-	toggleItem(item: string) {
-		this.value.value = this.includesItem(item) ? "" : item;
-	}
-
-	anyPressed() {
-		return this.value.value !== "";
+	toggleItem(item: string, id: string) {
+		if (this.includesItem(item)) {
+			this.value.value = "";
+		} else {
+			this.value.value = item;
+			this.activeTabId.value = id;
+		}
 	}
 }
 
@@ -101,6 +109,7 @@ type ToggleGroupMultipleStateProps = ToggleGroupBaseStateProps &
 class ToggleGroupMultipleState extends ToggleGroupBaseState {
 	value = undefined as unknown as ToggleGroupMultipleStateProps["value"];
 	isMulti = true;
+	anyPressed = $derived(this.value.value.length > 0);
 
 	constructor(props: ToggleGroupMultipleStateProps) {
 		super(props);
@@ -111,16 +120,13 @@ class ToggleGroupMultipleState extends ToggleGroupBaseState {
 		return this.value.value.includes(item);
 	}
 
-	toggleItem(item: string) {
+	toggleItem(item: string, id: string) {
 		if (this.includesItem(item)) {
 			this.value.value = this.value.value.filter((v) => v !== item);
 		} else {
-			this.value.value.push(item);
+			this.value.value = [...this.value.value, item];
+			this.activeTabId.value = id;
 		}
-	}
-
-	anyPressed() {
-		return this.value.value.length > 0;
 	}
 }
 
@@ -152,28 +158,22 @@ class ToggleGroupItemState {
 		this.#root = props.rootState;
 		this.#id = props.id;
 		this.#node = useNodeById(this.#id);
+	}
 
-		$effect(() => {
-			const node = this.#node.value;
-			if (!node) return;
-			const items = this.#root.getItemNodes();
-			const anyPressed = this.#root.anyPressed();
-			if (!anyPressed && items[0] === node) {
-				node.tabIndex = 0;
-			}
-		});
+	toggleItem() {
+		if (this.#isDisabled) return;
+		this.#root.toggleItem(this.#value.value, this.#id.value);
 	}
 
 	#onclick = () => {
-		if (this.#isDisabled) return;
-		this.#root.toggleItem(this.#value.value);
+		this.toggleItem();
 	};
 
 	#onkeydown = (e: KeyboardEvent) => {
 		if (this.#isDisabled) return;
 		if (e.key === kbd.ENTER || e.key === kbd.SPACE) {
 			e.preventDefault();
-			this.#root.toggleItem(this.#value.value);
+			this.toggleItem();
 			return;
 		}
 		if (!this.#root.rovingFocus.value) return;
@@ -208,11 +208,10 @@ class ToggleGroupItemState {
 		const itemToFocus = items[itemIndex];
 		if (!itemToFocus) return;
 		itemToFocus.focus();
+		this.#root.activeTabId.value = itemToFocus.id;
 	};
 
-	isPressed() {
-		return this.#root.includesItem(this.#value.value);
-	}
+	isPressed = $derived(this.#root.includesItem(this.#value.value));
 
 	getAriaPressed() {
 		return this.#root.isMulti
@@ -226,9 +225,27 @@ class ToggleGroupItemState {
 			: getAriaChecked(this.#root.includesItem(this.#value.value));
 	}
 
+	tabIndex = $derived.by(() => this.getTabIndex());
+
 	getTabIndex() {
+		const node = this.#node.value;
+		if (!node) return;
+		const items = this.#root.getItemNodes();
+		const anyPressed = this.#root.anyPressed;
+		if (!anyPressed && items[0] === node) {
+			this.#root.activeTabId.value = this.#id.value;
+			return 0;
+		}
 		if (this.#root.rovingFocus.value) {
-			return this.isPressed() ? 0 : -1;
+			if (!this.#root.activeTabId.value && items[0] === node) {
+				this.#root.activeTabId.value = this.#id.value;
+				return 0;
+			}
+
+			if (this.#id.value === this.#root.activeTabId.value) {
+				return 0;
+			}
+			return -1;
 		}
 		return 0;
 	}
@@ -236,10 +253,10 @@ class ToggleGroupItemState {
 	props = $derived({
 		id: this.#id.value,
 		role: this.#root.isMulti ? undefined : "radio",
-		tabindex: this.getTabIndex(),
+		tabindex: this.tabIndex,
 		"data-orientation": getDataOrientation(this.#root.orientation.value),
 		"data-disabled": getDataDisabled(this.#isDisabled),
-		"data-state": getToggleItemDataState(this.isPressed()),
+		"data-state": getToggleItemDataState(this.isPressed),
 		"data-value": this.#value.value,
 		"aria-pressed": this.getAriaPressed(),
 		"aria-checked": this.getAriaChecked(),
