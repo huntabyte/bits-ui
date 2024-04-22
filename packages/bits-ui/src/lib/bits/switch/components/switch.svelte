@@ -3,7 +3,7 @@
 	import { setSwitchRootState } from "../switch.svelte.js";
 	import SwitchInput from "./switch-input.svelte";
 	import { box, readonlyBox } from "$lib/internal/box.svelte.js";
-	import { styleToString } from "$lib/internal/style.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 
 	let {
 		child,
@@ -15,10 +15,8 @@
 		checked = false,
 		value = "",
 		name = undefined,
-		onclick = () => {},
-		onkeydown = () => {},
+		type = "button",
 		onCheckedChange,
-		style = {},
 		...restProps
 	}: RootProps = $props();
 
@@ -34,15 +32,9 @@
 		required: readonlyBox(() => required),
 		value: readonlyBox(() => value),
 		name: readonlyBox(() => name),
-		onclick: readonlyBox(() => onclick),
-		onkeydown: readonlyBox(() => onkeydown),
 	});
 
-	const mergedProps = $derived({
-		...restProps,
-		...rootState.props,
-		style: styleToString(style),
-	});
+	const mergedProps = $derived(mergeProps(restProps, rootState.props, { type }));
 </script>
 
 {#if asChild}

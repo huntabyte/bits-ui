@@ -1,13 +1,8 @@
+import styleToCSS from "style-object-to-css-string";
 import type { StyleProperties } from "$lib/shared/index.js";
 
 export function styleToString(style: StyleProperties = {}): string {
-	let styleString = "";
-	for (const key in style) {
-		const value = style[key as keyof StyleProperties];
-		if (value === undefined) continue;
-		styleString += `${key}:${value};`;
-	}
-	return styleString;
+	return styleToCSS(style);
 }
 
 export const srOnlyStyles: StyleProperties = {
@@ -18,6 +13,6 @@ export const srOnlyStyles: StyleProperties = {
 	margin: "-1px",
 	overflow: "hidden",
 	clip: "rect(0, 0, 0, 0)",
-	"white-space": "nowrap",
-	"border-width": "0",
+	whiteSpace: "nowrap",
+	borderWidth: "0",
 };

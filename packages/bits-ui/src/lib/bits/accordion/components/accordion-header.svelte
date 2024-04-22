@@ -1,6 +1,8 @@
 <script lang="ts">
 	import type { AccordionHeaderProps } from "../types.js";
-	import { styleToString } from "$lib/internal/style.js";
+	import { getAccordionHeaderState } from "../accordion.svelte.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
+	import { readonlyBox } from "$lib/internal/box.svelte.js";
 
 	let {
 		asChild,
@@ -8,18 +10,14 @@
 		children,
 		child,
 		el = $bindable(),
-		style = {},
 		...restProps
 	}: AccordionHeaderProps = $props();
 
-	const mergedProps = $derived({
-		...restProps,
-		role: "heading",
-		"aria-level": level,
-		"data-heading-level": level,
-		style: styleToString(style),
-		"data-accordion-header": "",
+	const state = getAccordionHeaderState({
+		level: readonlyBox(() => level),
 	});
+
+	const mergedProps = $derived(mergeProps(restProps, state.props));
 </script>
 
 {#if asChild}

@@ -6,6 +6,7 @@
 	import { TextSelectionLayer } from "$lib/bits/utilities/text-selection-layer/index.js";
 	import { Portal } from "$lib/bits/utilities/portal/index.js";
 	import { PresenceLayer } from "$lib/bits/utilities/presence-layer/index.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 
 	let { popper, ...restProps }: PopperLayerProps = $props();
 </script>
@@ -24,10 +25,7 @@
 							<DismissableLayer {...restProps} present={present.value}>
 								<TextSelectionLayer {...restProps} present={present.value}>
 									{@render popper?.({
-										props: {
-											...props,
-											hidden: present.value ? undefined : true,
-										},
+										props: mergeProps(props, { hidden: !present.value }),
 									})}
 								</TextSelectionLayer>
 							</DismissableLayer>

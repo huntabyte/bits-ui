@@ -51,7 +51,6 @@ export type Expand<T> = T extends object
 
 export type Prettify<T> = {
 	[K in keyof T]: T[K];
-	// eslint-disable-next-line ts/ban-types
 } & {};
 
 export type Builder = {
@@ -150,7 +149,6 @@ export type DefaultProps<Props, El> = {
 
 export type WithAsChild<
 	Props,
-	// eslint-disable-next-line ts/ban-types
 	SnippetProps extends Record<PropertyKey, unknown> = {},
 	El = HTMLElement,
 > = DefaultProps<Props, El> | AsChildProps<Props, SnippetProps, El>;

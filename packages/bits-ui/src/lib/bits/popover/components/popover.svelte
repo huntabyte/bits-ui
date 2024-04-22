@@ -10,8 +10,10 @@
 		open: box(
 			() => open,
 			(v) => {
-				open = v;
-				onOpenChange?.(v);
+				if (open !== v) {
+					open = v;
+					onOpenChange?.(v);
+				}
 			}
 		),
 	});

@@ -3,54 +3,39 @@
 	import { setCheckboxRootState } from "../checkbox.svelte.js";
 	import CheckboxInput from "./checkbox-input.svelte";
 	import { box, readonlyBox } from "$lib/internal/box.svelte.js";
-	import { styleToString } from "$lib/internal/style.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 
 	let {
-		checked: checkedProp = $bindable(false),
+		checked = $bindable(false),
 		onCheckedChange,
 		children,
-		disabled: disabledProp = false,
-		required: requiredProp = false,
-		name: nameProp,
-		value: valueProp,
+		disabled = false,
+		required = false,
+		name,
+		value,
 		el = $bindable(),
-		onclick: onclickProp = () => {},
-		onkeydown: onkeydownProp = () => {},
-		style,
 		asChild,
 		child,
 		...restProps
 	}: RootProps = $props();
 
-	const checked = box(
-		() => checkedProp,
-		(v) => {
-			checkedProp = v;
-			onCheckedChange?.(v);
-		}
-	);
-	const disabled = readonlyBox(() => disabledProp);
-	const required = readonlyBox(() => requiredProp);
-	const name = readonlyBox(() => nameProp);
-	const value = readonlyBox(() => valueProp);
-	const onclick = readonlyBox(() => onclickProp);
-	const onkeydown = readonlyBox(() => onkeydownProp);
-
 	const checkboxState = setCheckboxRootState({
-		checked,
-		disabled,
-		required,
-		name,
-		value,
-		onclick,
-		onkeydown,
+		checked: box(
+			() => checked,
+			(v) => {
+				if (checked !== v) {
+					checked = v;
+					onCheckedChange?.(v);
+				}
+			}
+		),
+		disabled: readonlyBox(() => disabled),
+		required: readonlyBox(() => required),
+		name: readonlyBox(() => name),
+		value: readonlyBox(() => value),
 	});
 
-	const mergedProps = $derived({
-		...checkboxState.props,
-		...restProps,
-		style: styleToString(style),
-	});
+	const mergedProps = $derived(mergeProps({ ...restProps }, checkboxState.props));
 </script>
 
 {#if asChild}

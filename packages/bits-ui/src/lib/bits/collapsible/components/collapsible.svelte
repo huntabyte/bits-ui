@@ -2,6 +2,7 @@
 	import type { RootProps } from "../index.js";
 	import { setCollapsibleRootState } from "../collapsible.svelte.js";
 	import { box, readonlyBox } from "$lib/internal/box.svelte.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 
 	let {
 		asChild,
@@ -14,7 +15,7 @@
 		...restProps
 	}: RootProps = $props();
 
-	const rootState = setCollapsibleRootState({
+	const state = setCollapsibleRootState({
 		open: box(
 			() => open,
 			(v) => {
@@ -25,10 +26,7 @@
 		disabled: readonlyBox(() => disabled),
 	});
 
-	const mergedProps = $derived({
-		...rootState.props,
-		...restProps,
-	});
+	const mergedProps = $derived(mergeProps(restProps, state.props));
 </script>
 
 {#if asChild}

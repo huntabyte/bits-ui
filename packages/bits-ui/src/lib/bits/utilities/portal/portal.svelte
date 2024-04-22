@@ -1,10 +1,9 @@
 <script lang="ts">
 	import { usePortal } from "./use-portal.svelte.js";
 	import type { PortalProps } from "./types.js";
-	import { readonlyBox } from "$lib/internal/box.svelte.js";
-	import { generateId } from "$lib/internal/id.js";
+	import { readonlyBox, useId } from "$lib/internal/index.js";
 
-	let { id = generateId(), to = "body", forceMount, portal }: PortalProps = $props();
+	let { id = useId(), to = "body", forceMount, portal }: PortalProps = $props();
 
 	const state = usePortal(
 		readonlyBox(() => id),

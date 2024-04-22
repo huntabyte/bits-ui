@@ -2,25 +2,29 @@ import { getContext, setContext } from "svelte";
 import {
 	type Box,
 	type BoxedValues,
-	type EventCallback,
 	type ReadonlyBox,
 	type ReadonlyBoxedValues,
-	composeHandlers,
+	afterTick,
 	getAriaDisabled,
 	getAriaExpanded,
+	getAttrAndSelector,
 	getDataDisabled,
 	getDataOpenClosed,
 	kbd,
-	styleToString,
 	useNodeById,
 	verifyContextDeps,
 } from "$lib/internal/index.js";
-import type { StyleProperties } from "$lib/shared/index.js";
-import { afterTick } from "$lib/internal/after-tick.js";
 
-/**
- * BASE
- */
+const [ROOT_ATTR] = getAttrAndSelector("accordion-root");
+const [TRIGGER_ATTR, TRIGGER_SELECTOR] = getAttrAndSelector("accordion-trigger");
+const [CONTENT_ATTR] = getAttrAndSelector("accordion-content");
+const [ITEM_ATTR] = getAttrAndSelector("accordion-item");
+const [HEADER_ATTR] = getAttrAndSelector("accordion-header");
+
+//
+// BASE
+//
+
 type AccordionBaseStateProps = ReadonlyBoxedValues<{
 	id: string;
 	disabled: boolean;
@@ -30,10 +34,6 @@ class AccordionBaseState {
 	id = undefined as unknown as ReadonlyBox<string>;
 	node: Box<HTMLElement | null>;
 	disabled: ReadonlyBox<boolean>;
-	props = $derived({
-		id: this.id.value,
-		"data-accordion-root": "",
-	} as const);
 
 	constructor(props: AccordionBaseStateProps) {
 		this.id = props.id;
@@ -43,16 +43,26 @@ class AccordionBaseState {
 	}
 
 	getTriggerNodes() {
-		if (!this.node.value) return [];
-		return Array.from(
-			this.node.value.querySelectorAll<HTMLElement>("[data-accordion-trigger]")
-		).filter((el) => !el.hasAttribute("data-disabled"));
+		const node = this.node.value;
+		if (!node) return [];
+		return Array.from(node.querySelectorAll<HTMLElement>(TRIGGER_SELECTOR)).filter(
+			(el) => !el.hasAttribute("data-disabled")
+		);
 	}
+
+	createHeader(props: AccordionHeaderStateProps) {
+		return new AccordionHeaderState(props);
+	}
+
+	props = $derived({
+		id: this.id.value,
+		[ROOT_ATTR]: "",
+	} as const);
 }
 
-/**
- * SINGLE
- */
+//
+// SINGLE
+//
 
 type AccordionSingleStateProps = AccordionBaseStateProps & BoxedValues<{ value: string }>;
 
@@ -74,9 +84,9 @@ export class AccordionSingleState extends AccordionBaseState {
 	}
 }
 
-/**
- * MULTIPLE
- */
+//
+// MULTIPLE
+//
 
 type AccordionMultiStateProps = AccordionBaseStateProps & BoxedValues<{ value: string[] }>;
 
@@ -102,9 +112,9 @@ export class AccordionMultiState extends AccordionBaseState {
 	}
 }
 
-/**
- * ITEM
- */
+//
+// ITEM
+//
 
 type AccordionItemStateProps = ReadonlyBoxedValues<{
 	value: string;
@@ -119,11 +129,6 @@ export class AccordionItemState {
 	root = undefined as unknown as AccordionState;
 	isSelected = $derived(this.root.includesItem(this.value.value));
 	isDisabled = $derived(this.disabled.value || this.root.disabled.value);
-	props = $derived({
-		"data-accordion-item": "",
-		"data-state": getDataOpenClosed(this.isSelected),
-		"data-disabled": getDataDisabled(this.isDisabled),
-	} as const);
 
 	constructor(props: AccordionItemStateProps) {
 		this.value = props.value;
@@ -142,15 +147,19 @@ export class AccordionItemState {
 	createContent(props: AccordionContentStateProps) {
 		return new AccordionContentState(props, this);
 	}
+
+	props = $derived({
+		[ITEM_ATTR]: "",
+		"data-state": getDataOpenClosed(this.isSelected),
+		"data-disabled": getDataDisabled(this.isDisabled),
+	} as const);
 }
 
-/**
- * TRIGGER
- */
+//
+// TRIGGER
+//
 
 type AccordionTriggerStateProps = ReadonlyBoxedValues<{
-	onclick: EventCallback<MouseEvent>;
-	onkeydown: EventCallback<KeyboardEvent>;
 	disabled: boolean;
 	id: string;
 }>;
@@ -161,32 +170,15 @@ class AccordionTriggerState {
 	#node: Box<HTMLElement | null>;
 	#root = undefined as unknown as AccordionState;
 	#itemState = undefined as unknown as AccordionItemState;
-	#composedClick = undefined as unknown as EventCallback<MouseEvent>;
-	#composedKeydown = undefined as unknown as EventCallback<KeyboardEvent>;
 	#isDisabled = $derived(
 		this.#disabled.value || this.#itemState.disabled.value || this.#root.disabled.value
 	);
-	props = $derived({
-		id: this.#id.value,
-		disabled: this.#isDisabled,
-		"aria-expanded": getAriaExpanded(this.#itemState.isSelected),
-		"aria-disabled": getAriaDisabled(this.#isDisabled),
-		"data-disabled": getDataDisabled(this.#isDisabled),
-		"data-value": this.#itemState.value,
-		"data-state": getDataOpenClosed(this.#itemState.isSelected),
-		"data-accordion-trigger": "",
-		//
-		onclick: this.#composedClick,
-		onkeydown: this.#composedKeydown,
-	} as const);
 
 	constructor(props: AccordionTriggerStateProps, itemState: AccordionItemState) {
 		this.#disabled = props.disabled;
 		this.#itemState = itemState;
 		this.#root = itemState.root;
 		this.#id = props.id;
-		this.#composedClick = composeHandlers(props.onclick, this.#onclick);
-		this.#composedKeydown = composeHandlers(props.onkeydown, this.#onkeydown);
 
 		this.#node = useNodeById(this.#id);
 	}
@@ -223,16 +215,29 @@ class AccordionTriggerState {
 
 		candidateItems[keyToIndex[e.key]!]?.focus();
 	};
+
+	props = $derived({
+		id: this.#id.value,
+		disabled: this.#isDisabled,
+		"aria-expanded": getAriaExpanded(this.#itemState.isSelected),
+		"aria-disabled": getAriaDisabled(this.#isDisabled),
+		"data-disabled": getDataDisabled(this.#isDisabled),
+		"data-value": this.#itemState.value,
+		"data-state": getDataOpenClosed(this.#itemState.isSelected),
+		[TRIGGER_ATTR]: "",
+		//
+		onclick: this.#onclick,
+		onkeydown: this.#onkeydown,
+	} as const);
 }
 
-/**
- * CONTENT
- */
+//
+// CONTENT
+//
 
 type AccordionContentStateProps = ReadonlyBoxedValues<{
 	forceMount: boolean;
 	id: string;
-	style: StyleProperties;
 }>;
 
 class AccordionContentState {
@@ -244,19 +249,7 @@ class AccordionContentState {
 	#width = $state(0);
 	#height = $state(0);
 	#forceMount = undefined as unknown as ReadonlyBox<boolean>;
-	#styleProp = undefined as unknown as ReadonlyBox<StyleProperties>;
-	props = $derived({
-		id: this.#id.value,
-		"data-state": getDataOpenClosed(this.item.isSelected),
-		"data-disabled": getDataDisabled(this.item.isDisabled),
-		"data-value": this.item.value,
-		"data-accordion-content": "",
-		style: styleToString({
-			...this.#styleProp.value,
-			"--bits-accordion-content-height": `${this.#height}px`,
-			"--bits-accordion-content-width": `${this.#width}px`,
-		}),
-	} as const);
+
 	present = $derived(this.#forceMount.value || this.item.isSelected);
 
 	constructor(props: AccordionContentStateProps, item: AccordionItemState) {
@@ -264,7 +257,6 @@ class AccordionContentState {
 		this.#forceMount = props.forceMount;
 		this.#isMountAnimationPrevented = this.item.isSelected;
 		this.#id = props.id;
-		this.#styleProp = props.style;
 
 		this.node = useNodeById(this.#id);
 
@@ -309,6 +301,37 @@ class AccordionContentState {
 			});
 		});
 	}
+
+	props = $derived({
+		id: this.#id.value,
+		"data-state": getDataOpenClosed(this.item.isSelected),
+		"data-disabled": getDataDisabled(this.item.isDisabled),
+		"data-value": this.item.value,
+		[CONTENT_ATTR]: "",
+		style: {
+			"--bits-accordion-content-height": `${this.#height}px`,
+			"--bits-accordion-content-width": `${this.#width}px`,
+		},
+	} as const);
+}
+
+type AccordionHeaderStateProps = ReadonlyBoxedValues<{
+	level: 1 | 2 | 3 | 4 | 5 | 6;
+}>;
+
+class AccordionHeaderState {
+	#level = undefined as unknown as AccordionHeaderStateProps["level"];
+
+	constructor(props: AccordionHeaderStateProps) {
+		this.#level = props.level;
+	}
+
+	props = $derived({
+		role: "heading",
+		"aria-level": this.#level.value,
+		"data-heading-level": this.#level.value,
+		[HEADER_ATTR]: "",
+	});
 }
 
 //
@@ -362,4 +385,8 @@ export function getAccordionContentState(props: AccordionContentStateProps): Acc
 	verifyContextDeps(ACCORDION_ITEM_KEY);
 	const itemState = getAccordionItemState();
 	return itemState.createContent(props);
+}
+
+export function getAccordionHeaderState(props: AccordionHeaderStateProps): AccordionHeaderState {
+	return getAccordionRootState().createHeader(props);
 }

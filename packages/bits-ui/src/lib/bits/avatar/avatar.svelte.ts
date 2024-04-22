@@ -10,7 +10,6 @@ import type { StyleProperties } from "$lib/shared/index.js";
 type AvatarRootStateProps = {
 	delayMs: ReadonlyBox<number>;
 	loadingStatus: Box<AvatarImageLoadingStatus>;
-	style: ReadonlyBox<StyleProperties>;
 };
 
 type AvatarImageSrc = string | null | undefined;
@@ -18,17 +17,14 @@ type AvatarImageSrc = string | null | undefined;
 class AvatarRootState {
 	delayMs = undefined as unknown as AvatarRootStateProps["delayMs"];
 	loadingStatus = undefined as unknown as AvatarRootStateProps["loadingStatus"];
-	styleProp = undefined as unknown as AvatarRootStateProps["style"];
 	props = $derived({
 		"data-avatar-root": "",
 		"data-status": this.loadingStatus.value,
-		style: styleToString(this.styleProp.value),
 	} as const);
 
 	constructor(props: AvatarRootStateProps) {
 		this.delayMs = props.delayMs;
 		this.loadingStatus = props.loadingStatus;
-		this.styleProp = props.style;
 	}
 
 	loadImage(src: string) {
@@ -53,8 +49,8 @@ class AvatarRootState {
 		return new AvatarImageState(props, this);
 	}
 
-	createFallback(props: AvatarFallbackStateProps) {
-		return new AvatarFallbackState(props, this);
+	createFallback() {
+		return new AvatarFallbackState(this);
 	}
 }
 
@@ -64,25 +60,21 @@ class AvatarRootState {
 
 type AvatarImageStateProps = ReadonlyBoxedValues<{
 	src: AvatarImageSrc;
-	style: StyleProperties;
 }>;
 
 class AvatarImageState {
 	src = undefined as unknown as AvatarImageStateProps["src"];
 	root = undefined as unknown as AvatarRootState;
-	styleProp = undefined as unknown as ReadonlyBox<StyleProperties>;
 	props = $derived({
-		style: styleToString({
-			...this.styleProp.value,
+		style: {
 			display: this.root.loadingStatus.value === "loaded" ? "block" : "none",
-		}),
+		},
 		"data-avatar-image": "",
 		src: this.src.value,
 	});
 
 	constructor(props: AvatarImageStateProps, root: AvatarRootState) {
 		this.root = root;
-		this.styleProp = props.style;
 		this.src = props.src;
 
 		$effect.pre(() => {
@@ -96,24 +88,17 @@ class AvatarImageState {
  * FALLBACK
  */
 
-type AvatarFallbackStateProps = ReadonlyBoxedValues<{
-	style: StyleProperties;
-}>;
-
 class AvatarFallbackState {
 	root = undefined as unknown as AvatarRootState;
-	styleProp = undefined as unknown as AvatarFallbackStateProps["style"];
 	props = $derived({
-		style: styleToString({
-			...this.styleProp.value,
+		style: {
 			display: this.root.loadingStatus.value === "loaded" ? "none" : "block",
-		}),
+		},
 		"data-avatar-fallback": "",
 	} as const);
 
-	constructor(props: AvatarFallbackStateProps, root: AvatarRootState) {
+	constructor(root: AvatarRootState) {
 		this.root = root;
-		this.styleProp = props.style;
 	}
 }
 
@@ -135,6 +120,6 @@ export function getAvatarImageState(props: AvatarImageStateProps) {
 	return getAvatarRootState().createImage(props);
 }
 
-export function getAvatarFallbackState(props: AvatarFallbackStateProps) {
-	return getAvatarRootState().createFallback(props);
+export function getAvatarFallbackState() {
+	return getAvatarRootState().createFallback();
 }

@@ -2,22 +2,18 @@ import { getContext, setContext } from "svelte";
 import {
 	type Box,
 	type BoxedValues,
-	type EventCallback,
 	type ReadonlyBox,
 	type ReadonlyBoxedValues,
 	afterTick,
 	boxedState,
-	composeHandlers,
-	generateId,
 	getAriaExpanded,
 	getDataDisabled,
 	getDataOpenClosed,
 	readonlyBoxedState,
-	styleToString,
+	useId,
 	useNodeById,
 	verifyContextDeps,
 } from "$lib/internal/index.js";
-import type { StyleProperties } from "$lib/shared/index.js";
 
 type CollapsibleRootStateProps = BoxedValues<{
 	open: boolean;
@@ -29,7 +25,7 @@ type CollapsibleRootStateProps = BoxedValues<{
 class CollapsibleRootState {
 	open = undefined as unknown as Box<boolean>;
 	disabled = undefined as unknown as ReadonlyBox<boolean>;
-	contentId = readonlyBoxedState(generateId());
+	contentId = readonlyBoxedState(useId());
 	props = $derived({
 		"data-state": getDataOpenClosed(this.open.value),
 		"data-disabled": getDataDisabled(this.disabled.value),
@@ -49,21 +45,19 @@ class CollapsibleRootState {
 		return new CollapsibleContentState(props, this);
 	}
 
-	createTrigger(props: CollapsibleTriggerStateProps) {
-		return new CollapsibleTriggerState(props, this);
+	createTrigger() {
+		return new CollapsibleTriggerState(this);
 	}
 }
 
 type CollapsibleContentStateProps = ReadonlyBoxedValues<{
 	id: string;
-	style: StyleProperties;
 	forceMount: boolean;
 }>;
 
 class CollapsibleContentState {
 	root = undefined as unknown as CollapsibleRootState;
 	#originalStyles: { transitionDuration: string; animationName: string } | undefined;
-	#styleProp = undefined as unknown as ReadonlyBox<StyleProperties>;
 	node = boxedState<HTMLElement | null>(null);
 	#isMountAnimationPrevented = $state(false);
 	#width = $state(0);
@@ -74,11 +68,10 @@ class CollapsibleContentState {
 		"data-state": getDataOpenClosed(this.root.open.value),
 		"data-disabled": getDataDisabled(this.root.disabled.value),
 		"data-collapsible-content": "",
-		style: styleToString({
-			...this.#styleProp.value,
+		style: {
 			"--bits-collapsible-content-height": this.#height ? `${this.#height}px` : undefined,
 			"--bits-collapsible-content-width": this.#width ? `${this.#width}px` : undefined,
-		}),
+		},
 	} as const);
 	present = $derived(this.#forceMount.value || this.root.open.value);
 
@@ -87,7 +80,6 @@ class CollapsibleContentState {
 		this.#isMountAnimationPrevented = root.open.value;
 		this.#forceMount = props.forceMount;
 		this.root.contentId = props.id;
-		this.#styleProp = props.style;
 
 		this.node = useNodeById(this.root.contentId);
 
@@ -134,13 +126,17 @@ class CollapsibleContentState {
 	}
 }
 
-type CollapsibleTriggerStateProps = ReadonlyBoxedValues<{
-	onclick: EventCallback<MouseEvent>;
-}>;
-
 class CollapsibleTriggerState {
 	#root = undefined as unknown as CollapsibleRootState;
-	#composedClick = undefined as unknown as EventCallback<MouseEvent>;
+
+	constructor(root: CollapsibleRootState) {
+		this.#root = root;
+	}
+
+	#onclick = () => {
+		this.#root.toggleOpen();
+	};
+
 	props = $derived({
 		type: "button",
 		"aria-controls": this.#root.contentId.value,
@@ -150,17 +146,8 @@ class CollapsibleTriggerState {
 		disabled: this.#root.disabled.value,
 		"data-collapsible-trigger": "",
 		//
-		onclick: this.#composedClick,
+		onclick: this.#onclick,
 	} as const);
-
-	constructor(props: CollapsibleTriggerStateProps, root: CollapsibleRootState) {
-		this.#root = root;
-		this.#composedClick = composeHandlers(props.onclick, this.#onclick);
-	}
-
-	#onclick = () => {
-		this.#root.toggleOpen();
-	};
 }
 
 export const COLLAPSIBLE_ROOT_KEY = Symbol("Collapsible.Root");
@@ -174,10 +161,8 @@ export function getCollapsibleRootState() {
 	return getContext<CollapsibleRootState>(COLLAPSIBLE_ROOT_KEY);
 }
 
-export function getCollapsibleTriggerState(
-	props: CollapsibleTriggerStateProps
-): CollapsibleTriggerState {
-	return getCollapsibleRootState().createTrigger(props);
+export function getCollapsibleTriggerState(): CollapsibleTriggerState {
+	return getCollapsibleRootState().createTrigger();
 }
 
 export function getCollapsibleContentState(

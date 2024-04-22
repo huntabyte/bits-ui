@@ -190,8 +190,8 @@ class FloatingContentState {
 			transform: this.floating.isPositioned
 				? this.floating.floatingStyles.transform
 				: "translate(0, -200%)",
-			"min-width": "max-content",
-			"z-index": this.contentZIndex,
+			minWidth: "max-content",
+			zIndex: this.contentZIndex,
 			"--bits-floating-transform-origin": `${this.floating.middlewareData.transformOrigin?.x} ${this.floating.middlewareData.transformOrigin?.y}`,
 			// hide the content if using the hide middleware and should be hidden
 			...(this.floating.middlewareData.hide?.referenceHidden && {
@@ -231,7 +231,7 @@ class FloatingContentState {
 			left: "translateY(50%) rotate(-90deg) translateX(50%)",
 		}[this.placedSide],
 		visibility: this.cannotCenterArrow ? "hidden" : undefined,
-	} as const);
+	});
 
 	constructor(props: FloatingContentStateProps, root: FloatingRootState) {
 		this.id = props.id;
@@ -296,26 +296,21 @@ class FloatingContentState {
 
 type FloatingArrowStateProps = ReadonlyBoxedValues<{
 	id: string;
-	style: StyleProperties;
 }>;
 
 class FloatingArrowState {
-	content = undefined as unknown as FloatingContentState;
-	id = undefined as unknown as ReadonlyBox<string>;
-	style = undefined as unknown as FloatingArrowStateProps["style"];
+	#content = undefined as unknown as FloatingContentState;
+	#id = undefined as unknown as ReadonlyBox<string>;
+
 	props = $derived({
-		id: this.id.value,
-		style: {
-			...this.style.value,
-			...this.content.arrowStyle,
-		},
+		id: this.#id.value,
+		style: this.#content.arrowStyle,
 	});
 
 	constructor(props: FloatingArrowStateProps, content: FloatingContentState) {
-		this.content = content;
-		this.id = props.id;
-		this.style = props.style;
-		this.content.arrowNode = useNodeById(this.id);
+		this.#content = content;
+		this.#id = props.id;
+		this.#content.arrowNode = useNodeById(this.#id);
 	}
 }
 
