@@ -1,39 +1,35 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { getCtx } from "../ctx.js";
-	import type { ItemEvents, ItemProps } from "../index.js";
-	import { createDispatcher } from "$lib/internal/index.js";
+	import type { ItemProps } from "../index.js";
+	import { setToggleGroupItemState } from "../toggle-group.svelte.js";
+	import { readonlyBox } from "$lib/internal/box.svelte.js";
+	import { useId } from "$lib/internal/use-id.svelte.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 
-	type $$Props = ItemProps;
-	type $$Events = ItemEvents;
+	let {
+		asChild,
+		children,
+		child,
+		el = $bindable(),
+		value,
+		disabled = false,
+		id = useId(),
+		type = "button",
+		...restProps
+	}: ItemProps = $props();
 
-	export let value: $$Props["value"];
-	export let disabled: $$Props["disabled"] = false;
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
+	const state = setToggleGroupItemState({
+		id: readonlyBox(() => id),
+		value: readonlyBox(() => value),
+		disabled: readonlyBox(() => disabled),
+	});
 
-	const {
-		elements: { item },
-		getAttrs,
-	} = getCtx();
-
-	const dispatch = createDispatcher();
-	const attrs = getAttrs("item");
-
-	$: builder = $item({ value, disabled });
-	$: Object.assign(builder, attrs);
+	const mergedProps = $derived(mergeProps(restProps, state.props, { type }));
 </script>
 
 {#if asChild}
-	<slot {builder} />
+	{@render child?.({ props: mergedProps })}
 {:else}
-	<button
-		bind:this={el}
-		use:melt={builder}
-		{...$$restProps}
-		on:m-click={dispatch}
-		on:m-keydown={dispatch}
-	>
-		<slot {builder} />
+	<button bind:this={el} {...mergedProps}>
+		{@render children?.()}
 	</button>
 {/if}

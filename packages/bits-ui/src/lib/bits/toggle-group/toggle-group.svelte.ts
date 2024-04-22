@@ -289,7 +289,7 @@ export function getToggleGroupRootState(): ToggleGroupState {
 	return getContext(TOGGLE_GROUP_ROOT_KEY);
 }
 
-export function setToggleGroupItemState(props: ToggleGroupItemStateProps) {
+export function setToggleGroupItemState(props: Omit<ToggleGroupItemStateProps, "rootState">) {
 	const rootState = getToggleGroupRootState();
 	return new ToggleGroupItemState({ ...props, rootState });
 }

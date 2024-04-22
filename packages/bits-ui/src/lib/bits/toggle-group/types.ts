@@ -1,4 +1,5 @@
 import type {
+	EventCallback,
 	OnChangeFn,
 	PrimitiveButtonAttributes,
 	PrimitiveDivAttributes,
@@ -68,6 +69,9 @@ export type ToggleGroupItemPropsWithoutHTML = WithAsChild<{
 	 * The value of the toggle item.
 	 */
 	value: string;
+
+	onclick?: EventCallback<MouseEvent>;
+	onkeydown?: EventCallback<KeyboardEvent>;
 }>;
 
 export type ToggleGroupItemProps = ToggleGroupItemPropsWithoutHTML &
