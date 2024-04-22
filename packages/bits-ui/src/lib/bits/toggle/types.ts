@@ -1,30 +1,41 @@
-import type { HTMLButtonAttributes } from "svelte/elements";
-import type { CreateToggleProps as MeltToggleProps } from "@melt-ui/svelte";
-import type { CustomEventHandler } from "$lib/index.js";
-import type { DOMElement, Expand, OmitPressed, OnChangeFn } from "$lib/internal/index.js";
+import type {
+	EventCallback,
+	OnChangeFn,
+	PrimitiveButtonAttributes,
+	WithAsChild,
+} from "$lib/internal/index.js";
 
-export type TogglePropsWithoutHTML = Expand<
-	OmitPressed<MeltToggleProps> & {
+export type ToggleRootPropsWithoutHTML = WithAsChild<
+	{
 		/**
-		 * The pressed state of the toggle.
-		 * You can bind this to a boolean value to programmatically control the pressed state.
+		 * Whether the toggle is pressed or not.
 		 *
 		 * @defaultValue false
 		 */
 		pressed?: boolean;
 
 		/**
-		 * A callback function called when the pressed state changes.
+		 * A callback function called when the toggle is pressed.
 		 */
 		onPressedChange?: OnChangeFn<boolean>;
-	} & DOMElement<HTMLButtonElement>
+
+		/**
+		 * Whether the toggle is disabled or not.
+		 *
+		 * @defaultValue false
+		 */
+		disabled?: boolean;
+
+		onclick?: EventCallback<MouseEvent>;
+		onkeydown?: EventCallback<KeyboardEvent>;
+	},
+	{
+		/**
+		 * The pressed state of the toggle.
+		 */
+		pressed: boolean;
+	}
 >;
 
-//
-
-export type ToggleProps = TogglePropsWithoutHTML & HTMLButtonAttributes;
-
-export type ToggleEvents<T extends Element = HTMLButtonElement> = {
-	click: CustomEventHandler<MouseEvent, T>;
-	keydown: CustomEventHandler<KeyboardEvent, T>;
-};
+export type ToggleRootProps = ToggleRootPropsWithoutHTML &
+	Omit<PrimitiveButtonAttributes, "onclick" | "onkeydown" | "disabled">;

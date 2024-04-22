@@ -1,56 +1,41 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { setCtx } from "../ctx.js";
-	import type { Events, Props } from "../index.js";
-	import { createDispatcher } from "$lib/internal/events.js";
+	import type { RootProps } from "../index.js";
+	import { setToggleRootState } from "../toggle.svelte.js";
+	import { box, readonlyBox } from "$lib/internal/box.svelte.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 
-	type $$Props = Props;
-	type $$Events = Events;
+	let {
+		asChild,
+		child,
+		children,
+		el = $bindable(),
+		pressed = $bindable(false),
+		onPressedChange,
+		disabled = false,
+		type = "button",
+		...restProps
+	}: RootProps = $props();
 
-	export let disabled: $$Props["disabled"] = undefined;
-	export let pressed: $$Props["pressed"] = undefined;
-	export let onPressedChange: $$Props["onPressedChange"] = undefined;
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
-
-	const {
-		elements: { root },
-		states: { pressed: localPressed },
-		updateOption,
-		getAttrs,
-	} = setCtx({
-		disabled,
-		defaultPressed: pressed,
-		onPressedChange: ({ next }) => {
-			if (pressed !== next) {
-				onPressedChange?.(next);
-				pressed = next;
+	const state = setToggleRootState({
+		pressed: box(
+			() => pressed,
+			(v) => {
+				if (pressed !== v) {
+					pressed = v;
+					onPressedChange?.(v);
+				}
 			}
-			return next;
-		},
+		),
+		disabled: readonlyBox(() => disabled),
 	});
 
-	const dispatch = createDispatcher();
-	const attrs = getAttrs("root");
-
-	$: pressed !== undefined && localPressed.set(pressed);
-	$: updateOption("disabled", disabled);
-
-	$: builder = $root;
-	$: Object.assign(builder, attrs);
+	const mergedProps = $derived(mergeProps(restProps, state.props, { type }));
 </script>
 
 {#if asChild}
-	<slot {builder} />
+	{@render child?.({ props: mergedProps, pressed: state.pressed.value })}
 {:else}
-	<button
-		bind:this={el}
-		use:melt={builder}
-		type="button"
-		{...$$restProps}
-		on:m-click={dispatch}
-		on:m-keydown={dispatch}
-	>
-		<slot {builder} />
+	<button bind:this={el} {...mergedProps}>
+		{@render children?.()}
 	</button>
 {/if}
