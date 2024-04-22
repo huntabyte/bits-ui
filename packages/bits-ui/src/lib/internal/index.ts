@@ -19,3 +19,5 @@ export * from "./locale.js";
 export * from "./elements.js";
 export * from "./debounce.js";
 export * from "./callbacks.js";
+export * from "./use-id.svelte.js";
+export * from "./merge-props.js";

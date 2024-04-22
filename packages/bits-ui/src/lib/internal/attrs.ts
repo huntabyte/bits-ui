@@ -36,6 +36,10 @@ export const bits = [
 	"tooltip",
 ] as const;
 
+export function getAttrAndSelector<const T extends string>(str: T) {
+	return [`data-${str}`, `[data-${str}]`] as const;
+}
+
 export function createBitAttrs<T extends readonly string[]>(
 	bit: (typeof bits)[number] | "menu",
 	parts: T
@@ -109,4 +113,18 @@ export function getDataOrientation(
 
 export function getDataRequired(condition: boolean): "" | undefined {
 	return condition ? "" : undefined;
+}
+
+/**
+ * Returns the hidden attribute if the condition is true.
+ */
+export function getHiddenAttr(condition: boolean): true | undefined {
+	return condition ? true : undefined;
+}
+
+/**
+ * Returns the `disabled` attribute if the condition is true.
+ */
+export function getDisabledAttr(condition: boolean): true | undefined {
+	return condition ? true : undefined;
 }

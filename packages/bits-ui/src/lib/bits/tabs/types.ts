@@ -1,63 +1,82 @@
-import type { HTMLButtonAttributes } from "svelte/elements";
 import type {
-	CreateTabsProps as MeltTabsProps,
-	TabsTriggerProps as MeltTabsTriggerProps,
-} from "@melt-ui/svelte";
-import type {
-	DOMElement,
-	Expand,
-	HTMLDivAttributes,
-	ObjectVariation,
-	OmitValue,
+	EventCallback,
 	OnChangeFn,
+	PrimitiveButtonAttributes,
+	PrimitiveDivAttributes,
+	WithAsChild,
 } from "$lib/internal/index.js";
-import type { CustomEventHandler } from "$lib/index.js";
+import type { Orientation } from "$lib/index.js";
 
-export type TabsPropsWithoutHTML = Expand<
-	OmitValue<MeltTabsProps> & {
-		/**
-		 * The value of the currently active tab.
-		 * You can bind this to a string value to programmatically control the active tab.
-		 */
-		value?: MeltTabsProps["defaultValue"] & {};
+export type TabsActivationMode = "manual" | "automatic";
 
-		/**
-		 * A callback function called when the value changes.
-		 */
-		onValueChange?: OnChangeFn<MeltTabsProps["defaultValue"]>;
+export type TabsRootPropsWithoutHTML = WithAsChild<{
+	/**
+	 * The value of the selected tab.
+	 */
+	value?: string;
 
-		/**
-		 * The orientation of the tabs, which determines how keyboard navigation works.
-		 *
-		 * @defaultValue "horizontal"
-		 */
-		orientation?: MeltTabsProps["orientation"] & {};
-	} & DOMElement
->;
+	/**
+	 * A callback function called when the selected tab changes.
+	 */
+	onValueChange?: OnChangeFn<string>;
 
-export type TabsContentPropsWithoutHTML = Expand<
-	{
-		value: string;
-	} & DOMElement
->;
+	/**
+	 * The orientation of the tabs.
+	 *
+	 * @defaultValue "horizontal"
+	 */
+	orientation?: Orientation;
 
-export type TabsTriggerPropsWithoutHTML = Expand<
-	ObjectVariation<MeltTabsTriggerProps> & DOMElement<HTMLButtonElement>
->;
+	/**
+	 * Whether to loop through the tabs when reaching the end
+	 * when using the keyboard.
+	 *
+	 * @defaultValue false
+	 */
+	loop?: boolean;
 
-export type TabsListPropsWithoutHTML = DOMElement;
-//
+	/**
+	 * How the tabs should be activated. If set to `'automatic'`, the tabs
+	 * will be activated when the trigger is focused. If set to `'manual'`,
+	 * the tabs will be activated when the trigger is pressed.
+	 *
+	 * @defaultValue true
+	 */
+	activationMode?: TabsActivationMode;
+}>;
 
-export type TabsProps = TabsPropsWithoutHTML & HTMLDivAttributes;
+export type TabsRootProps = TabsRootPropsWithoutHTML & PrimitiveDivAttributes;
 
-export type TabsContentProps = TabsContentPropsWithoutHTML & HTMLDivAttributes;
+export type TabsListPropsWithoutHTML = WithAsChild<object>;
 
-export type TabsTriggerProps = TabsTriggerPropsWithoutHTML & HTMLButtonAttributes;
+export type TabsListProps = TabsListPropsWithoutHTML & PrimitiveDivAttributes;
 
-export type TabsListProps = TabsListPropsWithoutHTML & HTMLDivAttributes;
+export type TabsTriggerPropsWithoutHTML = WithAsChild<{
+	/**
+	 * The value of the tab associated with this trigger.
+	 */
+	value: string;
 
-export type TabsTriggerEvents<T extends Element = HTMLButtonElement> = {
-	click: CustomEventHandler<MouseEvent, T>;
-	keydown: CustomEventHandler<KeyboardEvent, T>;
-	focus: CustomEventHandler<FocusEvent, T>;
-};
+	/**
+	 * Whether the trigger is disabled or not.
+	 *
+	 * @defaultValue false
+	 */
+	disabled?: boolean;
+
+	onclick?: EventCallback<MouseEvent>;
+	onkeydown?: EventCallback<KeyboardEvent>;
+	onfocus?: EventCallback<FocusEvent>;
+}>;
+
+export type TabsTriggerProps = TabsTriggerPropsWithoutHTML &
+	Omit<PrimitiveButtonAttributes, "disabled" | "value" | "onclick" | "onkeydown" | "onfocus">;
+
+export type TabsContentPropsWithoutHTML = WithAsChild<{
+	/**
+	 * The value of the tab associated with this content.
+	 */
+	value: string;
+}>;
+
+export type TabsContentProps = TabsContentPropsWithoutHTML & PrimitiveDivAttributes;

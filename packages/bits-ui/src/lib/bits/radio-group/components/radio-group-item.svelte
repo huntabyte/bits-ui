@@ -1,12 +1,10 @@
 <script lang="ts">
 	import type { ItemProps } from "../index.js";
 	import { setRadioGroupItemState } from "../radio-group.svelte.js";
-	import { generateId } from "$lib/internal/id.js";
-	import { readonlyBox } from "$lib/internal/box.svelte.js";
-	import { styleToString } from "$lib/internal/style.js";
+	import { readonlyBox, styleToString, useId } from "$lib/internal/index.js";
 
 	let {
-		id = generateId(),
+		id = useId(),
 		asChild,
 		children,
 		child,

@@ -1,9 +1,7 @@
 <script lang="ts">
 	import { setAccordionRootState } from "../accordion.svelte.js";
 	import type { RootProps } from "../index.js";
-	import { Box, box, readonlyBox } from "$lib/internal/box.svelte.js";
-	import { generateId } from "$lib/internal/id.js";
-	import { styleToString } from "$lib/internal/style.js";
+	import { type Box, box, mergeProps, readonlyBox, useId } from "$lib/internal/index.js";
 
 	let {
 		disabled = false,
@@ -13,8 +11,7 @@
 		type,
 		value: valueProp = $bindable(),
 		el = $bindable(),
-		id = generateId(),
-		style,
+		id = useId(),
 		onValueChange,
 		...restProps
 	}: RootProps = $props();
@@ -34,11 +31,7 @@
 		disabled: readonlyBox(() => disabled),
 	});
 
-	const mergedProps = {
-		...rootState.props,
-		...restProps,
-		style: styleToString(style),
-	};
+	const mergedProps = $derived(mergeProps(restProps, rootState.props));
 </script>
 
 {#if asChild}

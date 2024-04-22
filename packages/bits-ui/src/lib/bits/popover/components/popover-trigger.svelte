@@ -1,32 +1,24 @@
 <script lang="ts">
 	import type { TriggerProps } from "../index.js";
 	import { setPopoverTriggerState } from "../popover.svelte.js";
-	import { generateId, noop, readonlyBox, styleToString } from "$lib/internal/index.js";
+	import { mergeProps, readonlyBox, useId } from "$lib/internal/index.js";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 
 	let {
 		asChild,
 		children,
 		child,
-		id = generateId(),
+		id = useId(),
 		el = $bindable(),
-		onclick = noop,
-		onkeydown = noop,
-		style = {},
+		type = "button",
 		...restProps
 	}: TriggerProps = $props();
 
-	const popoverTriggerState = setPopoverTriggerState({
+	const state = setPopoverTriggerState({
 		id: readonlyBox(() => id),
-		onclick: readonlyBox(() => onclick),
-		onkeydown: readonlyBox(() => onkeydown),
 	});
 
-	const mergedProps = $derived({
-		...restProps,
-		...popoverTriggerState.props,
-		style: styleToString(style),
-	});
+	const mergedProps = $derived(mergeProps(restProps, state.props, { type }));
 </script>
 
 <FloatingLayer.Anchor {id}>

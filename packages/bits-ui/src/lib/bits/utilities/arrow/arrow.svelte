@@ -1,25 +1,19 @@
 <script lang="ts">
 	import type { ArrowProps } from "./types.js";
-	import { generateId } from "$lib/internal/id.js";
-	import { styleToString } from "$lib/internal/style.js";
+	import { mergeProps, useId } from "$lib/internal/index.js";
 
 	let {
-		id = generateId(),
+		id = useId(),
 		el = $bindable(),
 		children,
 		asChild,
 		child,
-		style = {},
 		height = 5,
 		width = 10,
 		...restProps
 	}: ArrowProps = $props();
 
-	const mergedProps = $derived({
-		...restProps,
-		style: styleToString(style),
-		id,
-	});
+	const mergedProps = $derived(mergeProps(restProps, { id }));
 </script>
 
 {#if asChild}

@@ -2,7 +2,7 @@
 	import type { AccordionItemProps } from "../types.js";
 	import { setAccordionItemState } from "../accordion.svelte.js";
 	import { readonlyBox } from "$lib/internal/box.svelte.js";
-	import { styleToString } from "$lib/internal/style.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 	let {
 		asChild,
 		disabled = false,
@@ -10,7 +10,6 @@
 		children,
 		child,
 		el = $bindable(),
-		style,
 		...restProps
 	}: AccordionItemProps = $props();
 
@@ -19,13 +18,7 @@
 		disabled: readonlyBox(() => disabled),
 	});
 
-	const mergedProps = $derived({
-		...restProps,
-		...item.props,
-		"data-state": item.isSelected ? "open" : "closed",
-		"data-disabled": item.isDisabled ? "" : undefined,
-		style: styleToString(style),
-	});
+	const mergedProps = $derived(mergeProps(restProps, item.props));
 </script>
 
 {#if asChild}

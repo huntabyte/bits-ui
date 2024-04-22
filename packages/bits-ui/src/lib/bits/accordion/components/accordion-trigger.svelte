@@ -1,35 +1,24 @@
 <script lang="ts">
 	import type { AccordionTriggerProps } from "../types.js";
 	import { getAccordionTriggerState } from "../accordion.svelte.js";
-	import { generateId } from "$lib/internal/id.js";
-	import { readonlyBox } from "$lib/internal/box.svelte.js";
-	import { styleToString } from "$lib/internal/style.js";
+	import { mergeProps, readonlyBox, useId } from "$lib/internal/index.js";
 
 	let {
 		disabled = false,
 		asChild,
-		el,
-		id = generateId(),
-		onkeydown = () => {},
-		onclick = () => {},
+		el = $bindable(),
+		id = useId(),
 		children,
 		child,
-		style,
 		...restProps
 	}: AccordionTriggerProps = $props();
 
 	const trigger = getAccordionTriggerState({
 		disabled: readonlyBox(() => disabled),
-		onkeydown: readonlyBox(() => onkeydown),
-		onclick: readonlyBox(() => onclick),
 		id: readonlyBox(() => id),
 	});
 
-	const mergedProps = $derived({
-		...restProps,
-		...trigger.props,
-		style: styleToString(style),
-	});
+	const mergedProps = $derived(mergeProps(restProps, trigger.props));
 </script>
 
 {#if asChild}

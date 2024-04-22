@@ -1,27 +1,19 @@
 <script lang="ts">
 	import type { RootProps } from "../index.js";
 	import { setLabelRootState } from "../label.svelte.js";
-	import { readonlyBox } from "$lib/internal/box.svelte.js";
-	import { styleToString } from "$lib/internal/style.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 
 	let {
-		onmousedown = () => {},
 		asChild,
 		children,
 		child,
 		el = $bindable(),
-		style,
 		for: forProp,
 		...restProps
 	}: RootProps = $props();
 
-	const rootState = setLabelRootState({ onmousedown: readonlyBox(() => onmousedown) });
-	const mergedProps = $derived({
-		...restProps,
-		...rootState.props,
-		style: styleToString(style),
-		for: forProp,
-	} as const);
+	const state = setLabelRootState();
+	const mergedProps = $derived(mergeProps(restProps, state.props, { for: forProp }));
 </script>
 
 {#if asChild}

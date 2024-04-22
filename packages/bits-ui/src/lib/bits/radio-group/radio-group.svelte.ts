@@ -152,13 +152,15 @@ class RadioGroupItemState {
 	};
 
 	#onkeydown = (e: KeyboardEvent) => {
-		if (!this.#root.node.value || !this.#node.value) return;
+		const node = this.#node.value;
+		const rootNode = this.#root.node.value;
+		if (!node || !rootNode) return;
 		const items = this.#root.getRadioItemNodes();
 		if (!items.length) return;
 
-		const currentIndex = items.indexOf(this.#node.value);
+		const currentIndex = items.indexOf(node);
 
-		const dir = getElemDirection(this.#root.node.value);
+		const dir = getElemDirection(rootNode);
 		const { nextKey, prevKey } = getDirectionalKeys(dir, this.#root.orientation.value);
 
 		const loop = this.#root.loop.value;

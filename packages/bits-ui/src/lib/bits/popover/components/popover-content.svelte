@@ -2,8 +2,7 @@
 	import type { ContentProps } from "../index.js";
 	import { setPopoverContentState } from "../popover.svelte.js";
 	import { PopperLayer } from "$lib/bits/utilities/popper-layer/index.js";
-	import { readonlyBox } from "$lib/internal/box.svelte.js";
-	import { generateId } from "$lib/internal/id.js";
+	import { readonlyBox, useId } from "$lib/internal/index.js";
 
 	let {
 		asChild,
@@ -11,7 +10,7 @@
 		children,
 		el = $bindable(),
 		style = {},
-		id = generateId(),
+		id = useId(),
 		forceMount = false,
 		...restProps
 	}: ContentProps = $props();

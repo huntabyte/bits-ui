@@ -1,53 +1,26 @@
 import { getContext, setContext } from "svelte";
 import type { Page, PageItem } from "./types.js";
 import {
-	type Box,
 	type BoxedValues,
 	type ReadonlyBoxedValues,
 	boxedState,
-} from "$lib/internal/box.svelte.js";
-import { type EventCallback, composeHandlers } from "$lib/internal/events.js";
-import { useNodeById } from "$lib/internal/use-node-by-id.svelte.js";
+	getDataOrientation,
+	getDirectionalKeys,
+	getElemDirection,
+	kbd,
+	useNodeById,
+} from "$lib/internal/index.js";
 import type { Orientation } from "$lib/shared/index.js";
-import { getDataOrientation } from "$lib/internal/attrs.js";
-import { getElemDirection } from "$lib/internal/locale.js";
-import { getDirectionalKeys, kbd } from "$lib/internal/kbd.js";
 
 type PaginationRootStateProps = ReadonlyBoxedValues<{
 	id: string;
-
-	/**
-	 * The total number of items to be paginated.
-	 */
 	count: number;
-
-	/**
-	 * The number of items per page.
-	 */
 	perPage: number;
-
-	/**
-	 * The number of visible items before and after the current page.
-	 */
 	siblingCount: number;
-
-	/**
-	 * The orientation of the pagination component. Used to
-	 * determine how keyboard navigation should work between
-	 * pages.
-	 */
 	orientation: Orientation;
-
-	/**
-	 * Whether keyboard navigation should loop back to the
-	 * first or last page trigger when reaching either end.
-	 */
 	loop: boolean;
 }> &
 	BoxedValues<{
-		/**
-		 * The current page number.
-		 */
 		page: number;
 	}>;
 
@@ -73,11 +46,6 @@ class PaginationRootState {
 			siblingCount: this.siblingCount.value,
 		})
 	);
-	props = $derived({
-		id: this.id.value,
-		"data-pagination-root": "",
-		"data-orientation": getDataOrientation(this.orientation.value),
-	});
 
 	constructor(props: PaginationRootStateProps) {
 		this.id = props.id;
@@ -121,6 +89,12 @@ class PaginationRootState {
 	createButton(props: PaginationButtonStateProps) {
 		return new PaginationButtonState(props, this);
 	}
+
+	props = $derived({
+		id: this.id.value,
+		"data-pagination-root": "",
+		"data-orientation": getDataOrientation(this.orientation.value),
+	});
 }
 
 //
@@ -130,8 +104,6 @@ class PaginationRootState {
 type PaginationPageStateProps = ReadonlyBoxedValues<{
 	id: string;
 	page: Page;
-	onclick: EventCallback<MouseEvent>;
-	onkeydown: EventCallback<KeyboardEvent>;
 }>;
 
 class PaginationPage {
@@ -139,26 +111,12 @@ class PaginationPage {
 	#root = undefined as unknown as PaginationRootState;
 	#node = boxedState<HTMLElement | null>(null);
 	page = undefined as unknown as PaginationPageStateProps["page"];
-	#composedClick = undefined as unknown as EventCallback<MouseEvent>;
-	#composedKeydown = undefined as unknown as EventCallback<KeyboardEvent>;
-	props = $derived({
-		id: this.#id.value,
-		"aria-label": `Page ${this.page.value}`,
-		"data-value": `${this.page.value}`,
-		"data-pagination-page": "",
-		"data-selected": this.page.value.value === this.#root.page.value ? "" : undefined,
-		//
-		onclick: this.#composedClick,
-		onkeydown: this.#composedKeydown,
-	} as const);
 
 	constructor(props: PaginationPageStateProps, root: PaginationRootState) {
 		this.#root = root;
 		this.#id = props.id;
 		this.page = props.page;
 		this.#node = useNodeById(this.#id);
-		this.#composedClick = composeHandlers(props.onclick, this.#onclick);
-		this.#composedKeydown = composeHandlers(props.onkeydown, this.#onkeydown);
 	}
 
 	#onclick = () => {
@@ -168,6 +126,17 @@ class PaginationPage {
 	#onkeydown = (e: KeyboardEvent) => {
 		handleTriggerKeydown(e, this.#node.value, this.#root);
 	};
+
+	props = $derived({
+		id: this.#id.value,
+		"aria-label": `Page ${this.page.value}`,
+		"data-value": `${this.page.value}`,
+		"data-pagination-page": "",
+		"data-selected": this.page.value.value === this.#root.page.value ? "" : undefined,
+		//
+		onclick: this.#onclick,
+		onkeydown: this.#onkeydown,
+	} as const);
 }
 
 //
@@ -176,8 +145,6 @@ class PaginationPage {
 
 type PaginationButtonStateProps = ReadonlyBoxedValues<{
 	id: string;
-	onclick: EventCallback<MouseEvent>;
-	onkeydown: EventCallback<KeyboardEvent>;
 }> & {
 	type: "prev" | "next";
 };
@@ -187,37 +154,30 @@ class PaginationButtonState {
 	#root = undefined as unknown as PaginationRootState;
 	node = boxedState<HTMLElement | null>(null);
 	type = $state() as PaginationButtonStateProps["type"];
-	#composedClick = undefined as unknown as EventCallback<MouseEvent>;
-	#composedKeydown = undefined as unknown as EventCallback<KeyboardEvent>;
-	props = $derived({
-		id: this.id.value,
-		"data-pagination-prev": this.type === "prev" ? "" : undefined,
-		"data-pagination-next": this.type === "next" ? "" : undefined,
-		//
-		onclick: this.#composedClick,
-		onkeydown: this.#composedKeydown,
-	} as const);
 
 	constructor(props: PaginationButtonStateProps, root: PaginationRootState) {
 		this.#root = root;
 		this.id = props.id;
 		this.node = useNodeById(this.id);
 		this.type = props.type;
-		this.#composedClick = composeHandlers(props.onclick, this.#onclick);
-		this.#composedKeydown = composeHandlers(props.onkeydown, this.#onkeydown);
 	}
 
 	#onclick = () => {
-		if (this.type === "prev") {
-			this.#root.prevPage();
-		} else {
-			this.#root.nextPage();
-		}
+		this.type === "prev" ? this.#root.prevPage() : this.#root.nextPage();
 	};
 
 	#onkeydown = (e: KeyboardEvent) => {
 		handleTriggerKeydown(e, this.node.value, this.#root);
 	};
+
+	props = $derived({
+		id: this.id.value,
+		"data-pagination-prev": this.type === "prev" ? "" : undefined,
+		"data-pagination-next": this.type === "next" ? "" : undefined,
+		//
+		onclick: this.#onclick,
+		onkeydown: this.#onkeydown,
+	} as const);
 }
 
 //

@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { setFloatingContentState } from "../floating-layer.svelte.js";
 	import type { ContentProps } from "./index.js";
-	import { readonlyBox } from "$lib/internal/box.svelte.js";
-	import { generateId } from "$lib/internal/id.js";
+	import { readonlyBox, useId } from "$lib/internal/index.js";
 
 	let {
 		content,
@@ -10,7 +9,7 @@
 		sideOffset = 0,
 		align = "center",
 		alignOffset = 0,
-		id = generateId(),
+		id = useId(),
 		arrowPadding = 0,
 		avoidCollisions = true,
 		collisionBoundary = [],
@@ -23,7 +22,7 @@
 		dir = "ltr",
 		style = {},
 		present,
-		wrapperId = generateId(),
+		wrapperId = useId(),
 	}: ContentProps = $props();
 
 	const state = setFloatingContentState({

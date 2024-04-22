@@ -2,8 +2,8 @@
 	import { Avatar, LinkPreview } from "bits-ui";
 	import { CalendarBlank, MapPin } from "$icons/index.js";
 	import { flyAndScale } from "$lib/utils/index.js";
-	let loadingStatusTrigger: Avatar.Props["loadingStatus"] = undefined;
-	let loadingStatusContent: Avatar.Props["loadingStatus"] = undefined;
+	let loadingStatusTrigger: Avatar.RootProps["loadingStatus"] = "loading";
+	let loadingStatusContent: Avatar.RootProps["loadingStatus"] = "loading";
 </script>
 
 <LinkPreview.Root>

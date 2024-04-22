@@ -1,9 +1,8 @@
 <script lang="ts">
 	import { getCollapsibleContentState } from "../collapsible.svelte.js";
 	import type { CollapsibleContentProps } from "../types.js";
-	import Presence from "$lib/bits/utilities/presence-layer/presence-layer.svelte";
-	import { generateId } from "$lib/internal/id.js";
-	import { readonlyBox } from "$lib/internal/box.svelte.js";
+	import { PresenceLayer } from "$lib/bits/utilities/presence-layer/index.js";
+	import { mergeProps, readonlyBox, useId } from "$lib/internal/index.js";
 
 	let {
 		child,
@@ -11,25 +10,21 @@
 		el = $bindable(),
 		forceMount = false,
 		children,
-		id = generateId(),
-		style = {},
+		id = useId(),
 		...restProps
 	}: CollapsibleContentProps & { forceMount?: boolean } = $props();
 
-	const content = getCollapsibleContentState({
+	const state = getCollapsibleContentState({
 		id: readonlyBox(() => id),
-		style: readonlyBox(() => style),
 		forceMount: readonlyBox(() => forceMount),
 	});
 </script>
 
-<Presence forceMount={true} present={content.present} {id}>
+<PresenceLayer forceMount={true} present={state.present} {id}>
 	{#snippet presence({ present })}
-		{@const mergedProps = {
-			...restProps,
-			...content.props,
-			hidden: present.value ? undefined : true,
-		}}
+		{@const mergedProps = mergeProps(restProps, state.props, {
+			hidden: !present.value,
+		})}
 		{#if asChild}
 			{@render child?.({
 				props: mergedProps,
@@ -40,4 +35,4 @@
 			</div>
 		{/if}
 	{/snippet}
-</Presence>
+</PresenceLayer>

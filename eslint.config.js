@@ -7,6 +7,14 @@ export default config({ svelte: true, ignores: [...DEFAULT_IGNORES, ...ignores] 
 	{
 		rules: {
 			"ts/consistent-type-definitions": "off",
+			"ts/ban-types": [
+				"error",
+				{
+					types: {
+						"{}": false,
+					},
+				},
+			],
 		},
 	}
 );

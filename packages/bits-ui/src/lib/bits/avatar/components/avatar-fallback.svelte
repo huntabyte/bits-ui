@@ -1,23 +1,13 @@
 <script lang="ts">
 	import type { FallbackProps } from "../index.js";
 	import { getAvatarFallbackState } from "../avatar.svelte.js";
-	import { readonlyBox } from "$lib/internal/box.svelte.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 
-	let {
-		asChild,
-		children,
-		child,
-		el = $bindable(),
-		style = {},
-		...restProps
-	}: FallbackProps = $props();
+	let { asChild, children, child, el = $bindable(), ...restProps }: FallbackProps = $props();
 
-	const fallbackState = getAvatarFallbackState({ style: readonlyBox(() => style) });
+	const fallbackState = getAvatarFallbackState();
 
-	const mergedProps = {
-		...fallbackState.props,
-		...restProps,
-	};
+	const mergedProps = $derived(mergeProps(restProps, fallbackState.props));
 </script>
 
 {#if asChild}

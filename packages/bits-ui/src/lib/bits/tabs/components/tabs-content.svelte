@@ -1,28 +1,29 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { getCtx } from "../ctx.js";
 	import type { ContentProps } from "../index.js";
+	import { setTabsContentState } from "../tabs.svelte.js";
+	import { readonlyBox } from "$lib/internal/box.svelte.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 
-	type $$Props = ContentProps;
+	let {
+		asChild,
+		children,
+		child,
+		el = $bindable(),
+		value,
+		...restProps
+	}: ContentProps = $props();
 
-	export let value: $$Props["value"];
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
+	const state = setTabsContentState({
+		value: readonlyBox(() => value),
+	});
 
-	const {
-		elements: { content },
-		getAttrs,
-	} = getCtx();
-	const attrs = getAttrs("content");
-
-	$: builder = $content(value);
-	$: Object.assign(builder, attrs);
+	const mergedProps = $derived(mergeProps(restProps, state.props));
 </script>
 
 {#if asChild}
-	<slot {builder} />
+	{@render child?.({ props: mergedProps })}
 {:else}
-	<div bind:this={el} use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+	<div bind:this={el} {...mergedProps}>
+		{@render children?.()}
 	</div>
 {/if}

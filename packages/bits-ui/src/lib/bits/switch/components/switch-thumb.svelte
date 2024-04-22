@@ -1,21 +1,17 @@
 <script lang="ts">
 	import type { ThumbProps } from "../index.js";
 	import { getSwitchThumbState } from "../switch.svelte.js";
-	import { styleToString } from "$lib/internal/style.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 
-	let { asChild, child, el = $bindable(), style = {}, ...restProps }: ThumbProps = $props();
+	let { asChild, child, el = $bindable(), ...restProps }: ThumbProps = $props();
 
-	const thumbState = getSwitchThumbState();
+	const state = getSwitchThumbState();
 
-	const mergedProps = $derived({
-		...restProps,
-		...thumbState.props,
-		style: styleToString(style),
-	});
+	const mergedProps = $derived(mergeProps(restProps, state.props));
 </script>
 
 {#if asChild}
-	{@render child?.({ props: mergedProps, checked: thumbState.root.checked.value })}
+	{@render child?.({ props: mergedProps, checked: state.root.checked.value })}
 {:else}
-	<span bind:this={el} {...mergedProps} />
+	<span bind:this={el} {...mergedProps}></span>
 {/if}

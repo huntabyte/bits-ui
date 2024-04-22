@@ -1,12 +1,10 @@
 <script lang="ts">
 	import type { RootProps } from "../index.js";
 	import { setPaginationRootState } from "../pagination.svelte.js";
-	import { box, readonlyBox } from "$lib/internal/box.svelte.js";
-	import { generateId } from "$lib/internal/id.js";
-	import { styleToString } from "$lib/internal/style.js";
+	import { box, readonlyBox, styleToString, useId } from "$lib/internal/index.js";
 
 	let {
-		id = generateId(),
+		id = useId(),
 		count,
 		perPage = 1,
 		page = $bindable(1),

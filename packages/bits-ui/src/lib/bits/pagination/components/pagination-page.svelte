@@ -1,38 +1,25 @@
 <script lang="ts">
 	import type { PageProps } from "../index.js";
 	import { setPaginationPageState } from "../pagination.svelte.js";
-	import { readonlyBox } from "$lib/internal/box.svelte.js";
-	import { noop } from "$lib/internal/callbacks.js";
-	import { generateId } from "$lib/internal/id.js";
-	import { styleToString } from "$lib/internal/style.js";
+	import { mergeProps, readonlyBox, useId } from "$lib/internal/index.js";
 
 	let {
-		id = generateId(),
+		id = useId(),
 		page,
 		asChild,
 		child,
 		children,
 		type = "button",
 		el = $bindable(),
-		onclick = noop,
-		onkeydown = noop,
-		style = {},
 		...restProps
 	}: PageProps = $props();
 
 	const state = setPaginationPageState({
 		id: readonlyBox(() => id),
 		page: readonlyBox(() => page),
-		onclick: readonlyBox(() => onclick),
-		onkeydown: readonlyBox(() => onkeydown),
 	});
 
-	const mergedProps = $derived({
-		...restProps,
-		...state.props,
-		type,
-		style: styleToString(style),
-	});
+	const mergedProps = $derived(mergeProps(restProps, state.props, { type }));
 </script>
 
 {#if asChild}
@@ -42,7 +29,7 @@
 		{#if children}
 			{@render children?.()}
 		{:else}
-			{page}
+			{page.value}
 		{/if}
 	</button>
 {/if}

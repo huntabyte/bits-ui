@@ -1,13 +1,7 @@
-import { getContext, setContext } from "svelte";
-import type { ImageLoadingStatus } from "@melt-ui/svelte";
+import { getContext, setContext, untrack } from "svelte";
 import type { AvatarImageLoadingStatus } from "./types.js";
 import { styleToString } from "$lib/internal/style.js";
-import {
-	type Box,
-	type ReadonlyBox,
-	type ReadonlyBoxedValues,
-	readonlyBox,
-} from "$lib/internal/box.svelte.js";
+import type { Box, ReadonlyBox, ReadonlyBoxedValues } from "$lib/internal/box.svelte.js";
 import type { StyleProperties } from "$lib/shared/index.js";
 
 /**
@@ -16,29 +10,24 @@ import type { StyleProperties } from "$lib/shared/index.js";
 type AvatarRootStateProps = {
 	delayMs: ReadonlyBox<number>;
 	loadingStatus: Box<AvatarImageLoadingStatus>;
-	style: ReadonlyBox<StyleProperties>;
 };
 
 type AvatarImageSrc = string | null | undefined;
 
 class AvatarRootState {
-	src = readonlyBox<AvatarImageSrc>(() => null);
-	delayMs: ReadonlyBox<number>;
-	loadingStatus: Box<ImageLoadingStatus>;
-	styleProp: ReadonlyBox<StyleProperties>;
+	delayMs = undefined as unknown as AvatarRootStateProps["delayMs"];
+	loadingStatus = undefined as unknown as AvatarRootStateProps["loadingStatus"];
+	props = $derived({
+		"data-avatar-root": "",
+		"data-status": this.loadingStatus.value,
+	} as const);
 
 	constructor(props: AvatarRootStateProps) {
 		this.delayMs = props.delayMs;
 		this.loadingStatus = props.loadingStatus;
-		this.styleProp = props.style;
-
-		$effect.pre(() => {
-			if (!this.src.value) return;
-			return this.#loadImage(this.src.value);
-		});
 	}
 
-	#loadImage(src: string) {
+	loadImage(src: string) {
 		let imageTimerId: NodeJS.Timeout;
 		const image = new Image();
 		image.src = src;
@@ -51,23 +40,17 @@ class AvatarRootState {
 		image.onerror = () => {
 			this.loadingStatus.value = "error";
 		};
-		return () => clearTimeout(imageTimerId);
+		return () => {
+			clearTimeout(imageTimerId);
+		};
 	}
 
 	createImage(props: AvatarImageStateProps) {
 		return new AvatarImageState(props, this);
 	}
 
-	createFallback(props: AvatarFallbackStateProps) {
-		return new AvatarFallbackState(props, this);
-	}
-
-	get props() {
-		return {
-			"data-avatar-root": "",
-			"data-status": this.loadingStatus.value,
-			style: styleToString(this.styleProp.value),
-		} as const;
+	createFallback() {
+		return new AvatarFallbackState(this);
 	}
 }
 
@@ -77,28 +60,27 @@ class AvatarRootState {
 
 type AvatarImageStateProps = ReadonlyBoxedValues<{
 	src: AvatarImageSrc;
-	style: StyleProperties;
 }>;
 
 class AvatarImageState {
-	root: AvatarRootState;
-	styleProp: ReadonlyBox<StyleProperties>;
+	src = undefined as unknown as AvatarImageStateProps["src"];
+	root = undefined as unknown as AvatarRootState;
+	props = $derived({
+		style: {
+			display: this.root.loadingStatus.value === "loaded" ? "block" : "none",
+		},
+		"data-avatar-image": "",
+		src: this.src.value,
+	});
 
 	constructor(props: AvatarImageStateProps, root: AvatarRootState) {
 		this.root = root;
-		this.styleProp = props.style;
-		root.src = props.src;
-	}
+		this.src = props.src;
 
-	get props() {
-		return {
-			style: styleToString({
-				...this.styleProp.value,
-				display: this.root.loadingStatus.value === "loaded" ? "block" : "none",
-			}),
-			"data-avatar-image": "",
-			src: this.root.src.value,
-		} as const;
+		$effect.pre(() => {
+			if (!this.src.value) return;
+			untrack(() => this.root.loadImage(this.src.value ?? ""));
+		});
 	}
 }
 
@@ -106,27 +88,17 @@ class AvatarImageState {
  * FALLBACK
  */
 
-type AvatarFallbackStateProps = ReadonlyBoxedValues<{
-	style: StyleProperties;
-}>;
-
 class AvatarFallbackState {
-	root: AvatarRootState;
-	styleProp: ReadonlyBox<StyleProperties>;
+	root = undefined as unknown as AvatarRootState;
+	props = $derived({
+		style: {
+			display: this.root.loadingStatus.value === "loaded" ? "none" : "block",
+		},
+		"data-avatar-fallback": "",
+	} as const);
 
-	constructor(props: AvatarFallbackStateProps, root: AvatarRootState) {
-		this.styleProp = props.style;
+	constructor(root: AvatarRootState) {
 		this.root = root;
-	}
-
-	get props() {
-		return {
-			style: styleToString({
-				...this.styleProp.value,
-				display: this.root.loadingStatus.value === "loaded" ? "none" : "block",
-			}),
-			"data-avatar-fallback": "",
-		} as const;
 	}
 }
 
@@ -148,6 +120,6 @@ export function getAvatarImageState(props: AvatarImageStateProps) {
 	return getAvatarRootState().createImage(props);
 }
 
-export function getAvatarFallbackState(props: AvatarFallbackStateProps) {
-	return getAvatarRootState().createFallback(props);
+export function getAvatarFallbackState() {
+	return getAvatarRootState().createFallback();
 }

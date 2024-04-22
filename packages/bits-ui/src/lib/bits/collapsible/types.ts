@@ -28,7 +28,7 @@ export type CollapsibleRootPropsWithoutHTML = WithAsChild<{
 	onOpenChange?: OnChangeFn<boolean>;
 }>;
 
-export type CollapsibleRootProps = CollapsibleRootPropsWithoutHTML & HTMLDivAttributes;
+export type CollapsibleRootProps = CollapsibleRootPropsWithoutHTML & PrimitiveDivAttributes;
 
 export type CollapsibleContentPropsWithoutHTML = WithAsChild<{
 	/**

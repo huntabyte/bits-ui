@@ -2,9 +2,7 @@
 	import type { RootProps } from "../index.js";
 	import { setRadioGroupRootState } from "../radio-group.svelte.js";
 	import RadioGroupInput from "./radio-group-input.svelte";
-	import { generateId } from "$lib/internal/id.js";
-	import { box, readonlyBox } from "$lib/internal/box.svelte.js";
-	import { styleToString } from "$lib/internal/style.js";
+	import { box, readonlyBox, styleToString, useId } from "$lib/internal/index.js";
 
 	let {
 		disabled = false,
@@ -18,7 +16,7 @@
 		loop = true,
 		name = undefined,
 		required = false,
-		id = generateId(),
+		id = useId(),
 		onValueChange,
 		...restProps
 	}: RootProps = $props();
