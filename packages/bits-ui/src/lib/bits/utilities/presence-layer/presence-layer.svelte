@@ -4,7 +4,7 @@
 	import { usePresence } from "$lib/internal/use-presence.svelte.js";
 
 	let {
-		present: presentProp,
+		present,
 		forceMount: forceMountProp = false,
 		presence,
 		id,
@@ -12,13 +12,12 @@
 
 	const forceMount = readonlyBox(() => forceMountProp);
 
-	const present = readonlyBox(() => presentProp);
 	const isPresent = usePresence(
-		present,
+		readonlyBox(() => present),
 		readonlyBox(() => id)
 	);
 </script>
 
-{#if forceMount.value || present.value || isPresent.value}
+{#if forceMount.value || present || isPresent.value}
 	{@render presence?.({ present: isPresent })}
 {/if}

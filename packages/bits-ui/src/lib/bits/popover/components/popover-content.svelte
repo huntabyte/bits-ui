@@ -2,7 +2,8 @@
 	import type { ContentProps } from "../index.js";
 	import { setPopoverContentState } from "../popover.svelte.js";
 	import { PopperLayer } from "$lib/bits/utilities/popper-layer/index.js";
-	import { readonlyBox, useId } from "$lib/internal/index.js";
+	import { mergeProps, readonlyBox, useId } from "$lib/internal/index.js";
+	import Portal from "$lib/bits/utilities/portal/portal.svelte";
 
 	let {
 		asChild,
@@ -12,6 +13,8 @@
 		style = {},
 		id = useId(),
 		forceMount = false,
+		// eslint-disable-next-line ts/no-unused-vars, unused-imports/no-unused-vars
+		hidden: hiddenProp = undefined,
 		...restProps
 	}: ContentProps = $props();
 
@@ -20,27 +23,25 @@
 	});
 </script>
 
-<PopperLayer
-	{...restProps}
-	forceMount={true}
-	present={state.root.open.value || forceMount}
-	{id}
-	{style}
-	onInteractOutside={state.root.close}
-	onEscape={state.root.close}
->
-	{#snippet popper({ props })}
-		{@const mergedProps = {
-			...restProps,
-			...state.props,
-			...props,
-		}}
-		{#if asChild}
-			{@render child?.({ props: mergedProps })}
-		{:else}
-			<div {...mergedProps} bind:this={el}>
-				{@render children?.()}
-			</div>
-		{/if}
-	{/snippet}
-</PopperLayer>
+<Portal>
+	<PopperLayer
+		{...restProps}
+		present={state.root.open.value || forceMount}
+		{id}
+		{style}
+		onInteractOutside={state.root.close}
+		onEscape={state.root.close}
+	>
+		{#snippet popper({ props })}
+			{@const mergedProps = mergeProps(restProps, state.props, props)}
+			{mergedProps.hidden}
+			{#if asChild}
+				{@render child?.({ props: mergedProps })}
+			{:else}
+				<div {...mergedProps} bind:this={el}>
+					{@render children?.()}
+				</div>
+			{/if}
+		{/snippet}
+	</PopperLayer>
+</Portal>

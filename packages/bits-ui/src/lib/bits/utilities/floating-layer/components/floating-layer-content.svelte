@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { setFloatingContentState } from "../floating-layer.svelte.js";
 	import type { ContentProps } from "./index.js";
-	import { readonlyBox, useId } from "$lib/internal/index.js";
+	import { mergeProps, readonlyBox, useId } from "$lib/internal/index.js";
 
 	let {
 		content,
@@ -45,8 +45,10 @@
 		present: readonlyBox(() => present),
 		wrapperId: readonlyBox(() => wrapperId),
 	});
+
+	const mergedProps = $derived(mergeProps(state.wrapperProps));
 </script>
 
-<div {...state.wrapperProps}>
+<div {...mergedProps}>
 	{@render content?.({ props: state.props })}
 </div>

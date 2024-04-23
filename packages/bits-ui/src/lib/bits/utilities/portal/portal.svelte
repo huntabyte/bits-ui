@@ -1,16 +1,46 @@
 <script lang="ts">
-	import { usePortal } from "./use-portal.svelte.js";
+	import { getAllContexts, mount, unmount } from "svelte";
+	import PortalConsumer from "./portal-consumer.svelte";
 	import type { PortalProps } from "./types.js";
-	import { readonlyBox, useId } from "$lib/internal/index.js";
+	import { isBrowser } from "$lib/internal/is.js";
 
-	let { id = useId(), to = "body", forceMount, portal }: PortalProps = $props();
+	let { to = "body", children }: PortalProps = $props();
 
-	const state = usePortal(
-		readonlyBox(() => id),
-		readonlyBox(() => to)
-	);
+	const context = getAllContexts();
+
+	let target = $derived(getTarget());
+
+	function getTarget() {
+		if (!isBrowser) return null;
+		let target: HTMLElement | null;
+		if (typeof to === "string") {
+			target = document.querySelector(to);
+			if (target === null) {
+				throw new Error(`Target element "${to}" not found.`);
+			}
+		} else if (to instanceof HTMLElement) {
+			target = to;
+		} else {
+			throw new TypeError(
+				`Unknown portal target type: ${
+					to === null ? "null" : typeof to
+				}. Allowed types: string (CSS selector) or HTMLElement.`
+			);
+		}
+
+		return target;
+	}
+
+	let instance: any;
+
+	$effect(() => {
+		if (!target) {
+			return unmount(instance);
+		}
+		instance = mount(PortalConsumer, { target, props: { children }, context });
+
+		return () => {
+			unmount(instance);
+		};
+	});
 </script>
-
-{#if forceMount}
-	{@render portal?.({ portalProps: state.props })}
-{/if}

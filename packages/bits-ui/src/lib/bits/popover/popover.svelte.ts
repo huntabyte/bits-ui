@@ -107,7 +107,6 @@ class PopoverContentState {
 	props = $derived({
 		id: this.id.value,
 		tabindex: -1,
-		hidden: getHiddenAttr(!this.root.open.value),
 		"data-state": getDataOpenClosed(this.root.open.value),
 		"data-popover-content": "",
 	});
