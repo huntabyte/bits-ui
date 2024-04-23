@@ -1,38 +1,33 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { getCtx } from "../ctx.js";
-	import type { ButtonEvents, ButtonProps } from "../index.js";
-	import { createDispatcher } from "$lib/internal/events.js";
+	import type { ButtonProps } from "../index.js";
+	import { setToolbarButtonState } from "../toolbar.svelte.js";
+	import { useId } from "$lib/internal/use-id.svelte.js";
+	import { readonlyBox } from "$lib/internal/box.svelte.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 
-	type $$Props = ButtonProps;
-	type $$Events = ButtonEvents;
+	let {
+		asChild,
+		child,
+		children,
+		disabled = false,
+		type = "button",
+		id = useId(),
+		el = $bindable(),
+		...restProps
+	}: ButtonProps = $props();
 
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
+	const state = setToolbarButtonState({
+		id: readonlyBox(() => id),
+		disabled: readonlyBox(() => disabled),
+	});
 
-	const {
-		elements: { button },
-		getAttrs,
-	} = getCtx();
-
-	const dispatch = createDispatcher();
-	const attrs = getAttrs("button");
-
-	$: builder = $button;
-	$: Object.assign(builder, attrs);
+	const mergedProps = $derived(mergeProps(restProps, state.props, { type }));
 </script>
 
 {#if asChild}
-	<slot {builder} />
+	{@render child?.({ props: mergedProps })}
 {:else}
-	<button
-		bind:this={el}
-		use:melt={builder}
-		type="button"
-		{...$$restProps}
-		on:click
-		on:m-keydown={dispatch}
-	>
-		<slot {builder} />
+	<button bind:this={el} {...mergedProps}>
+		{@render children?.()}
 	</button>
 {/if}

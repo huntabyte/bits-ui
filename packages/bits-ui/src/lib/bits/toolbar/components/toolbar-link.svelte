@@ -1,39 +1,31 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { getCtx } from "../ctx.js";
-	import type { LinkEvents, LinkProps } from "../index.js";
-	import { createDispatcher } from "$lib/internal/events.js";
+	import { setToolbarLinkState } from "../toolbar.svelte.js";
+	import type { LinkProps } from "../index.js";
+	import { readonlyBox } from "$lib/internal/box.svelte.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
+	import { useId } from "$lib/internal/use-id.svelte.js";
 
-	type $$Props = LinkProps;
-	type $$Events = LinkEvents;
+	let {
+		asChild,
+		children,
+		href,
+		child,
+		el = $bindable(),
+		id = useId(),
+		...restProps
+	}: LinkProps = $props();
 
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
+	const state = setToolbarLinkState({
+		id: readonlyBox(() => id),
+	});
 
-	const {
-		elements: { link },
-		getAttrs,
-	} = getCtx();
-
-	const dispatch = createDispatcher();
-	const attrs = getAttrs("link");
-
-	$: builder = $link;
-	$: Object.assign(builder, attrs);
+	const mergedProps = $derived(mergeProps(restProps, state.props));
 </script>
 
 {#if asChild}
-	<slot {builder} />
+	{@render child?.({ props: mergedProps })}
 {:else}
-	<!-- svelte-ignore a11y-no-static-element-interactions -->
-	<svelte:element
-		this={"a"}
-		bind:this={el}
-		use:melt={builder}
-		{...$$restProps}
-		on:click
-		on:m-keydown={dispatch}
-	>
-		<slot {builder} />
-	</svelte:element>
+	<a {href} {...mergedProps} bind:this={el}>
+		{@render children?.()}
+	</a>
 {/if}

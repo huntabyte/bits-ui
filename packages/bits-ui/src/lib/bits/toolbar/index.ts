@@ -5,12 +5,9 @@ export { default as Group } from "./components/toolbar-group.svelte";
 export { default as GroupItem } from "./components/toolbar-group-item.svelte";
 
 export type {
-	ToolbarProps as Props,
+	ToolbarRootProps as RootProps,
 	ToolbarButtonProps as ButtonProps,
 	ToolbarLinkProps as LinkProps,
 	ToolbarGroupProps as GroupProps,
 	ToolbarGroupItemProps as GroupItemProps,
-	ToolbarButtonEvents as ButtonEvents,
-	ToolbarLinkEvents as LinkEvents,
-	ToolbarGroupItemEvents as GroupItemEvents,
 } from "./types.js";
