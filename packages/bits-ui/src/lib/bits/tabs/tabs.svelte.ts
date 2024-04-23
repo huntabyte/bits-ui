@@ -18,11 +18,15 @@ import {
 	verifyContextDeps,
 } from "$lib/internal/index.js";
 import type { Orientation } from "$lib/shared/index.js";
+import {
+	type UseRovingFocusReturn,
+	useRovingFocus,
+} from "$lib/internal/use-roving-focus.svelte.js";
 
-const [ROOT_ATTR] = getAttrAndSelector("tabs-root");
-const [LIST_ATTR] = getAttrAndSelector("tabs-list");
-const [TRIGGER_ATTR, TRIGGER_SELECTOR] = getAttrAndSelector("tabs-trigger");
-const [CONTENT_ATTR] = getAttrAndSelector("tabs-content");
+const ROOT_ATTR = "tabs-root";
+const LIST_ATTR = "tabs-list";
+const TRIGGER_ATTR = "tabs-trigger";
+const CONTENT_ATTR = "tabs-content";
 
 type TabsRootStateProps = ReadonlyBoxedValues<{
 	id: string;
@@ -42,9 +46,8 @@ class TabsRootState {
 	loop = undefined as unknown as TabsRootStateProps["loop"];
 	activationMode = undefined as unknown as TabsRootStateProps["activationMode"];
 	value = undefined as unknown as TabsRootStateProps["value"];
-	activeTabId = boxedState("");
-	anyActive = $derived(this.value.value !== "");
 	disabled = undefined as unknown as TabsRootStateProps["disabled"];
+	rovingFocusGroup = undefined as unknown as UseRovingFocusReturn;
 
 	constructor(props: TabsRootStateProps) {
 		this.id = props.id;
@@ -54,14 +57,12 @@ class TabsRootState {
 		this.value = props.value;
 		this.disabled = props.disabled;
 		this.node = useNodeById(this.id);
-	}
-
-	getTriggerNodes() {
-		const node = this.node.value;
-		if (!node) return [];
-		return Array.from(node.querySelectorAll<HTMLElement>(TRIGGER_SELECTOR)).filter(
-			(el) => !el.hasAttribute("data-disabled")
-		);
+		this.rovingFocusGroup = useRovingFocus({
+			candidateSelector: TRIGGER_ATTR,
+			rootNode: this.node,
+			loop: this.loop,
+			orientation: this.orientation,
+		});
 	}
 
 	setValue(v: string) {
@@ -160,59 +161,10 @@ class TabsTriggerState {
 			this.activate();
 			return;
 		}
-
-		const node = this.#node.value;
-		const rootNode = this.#root.node.value;
-		if (!node || !rootNode) return;
-
-		const items = this.#root.getTriggerNodes();
-		if (!items.length) return;
-		const currentIndex = items.indexOf(node);
-		const dir = getElemDirection(rootNode);
-		const { nextKey, prevKey } = getDirectionalKeys(dir, this.#root.orientation.value);
-
-		const loop = this.#root.loop.value;
-
-		const keyToIndex = {
-			[nextKey]: currentIndex + 1,
-			[prevKey]: currentIndex - 1,
-			[kbd.HOME]: 0,
-			[kbd.END]: items.length - 1,
-		};
-
-		let itemIndex = keyToIndex[e.key];
-		if (itemIndex === undefined) return;
-		e.preventDefault();
-
-		if (itemIndex < 0 && loop) {
-			itemIndex = items.length - 1;
-		} else if (itemIndex === items.length && loop) {
-			itemIndex = 0;
-		}
-
-		const itemToFocus = items[itemIndex];
-		if (!itemToFocus) return;
-		itemToFocus.focus();
-		this.#root.activeTabId.value = itemToFocus.id;
+		this.#root.rovingFocusGroup.handleKeydown(this.#node.value, e);
 	};
 
-	#tabIndex = $derived.by(() => {
-		const node = this.#node.value;
-		if (!node) return -1;
-		const items = this.#root.getTriggerNodes();
-		const anyActive = this.#root.anyActive;
-		if (!anyActive && items[0] === node) {
-			this.#root.activeTabId.value = this.#id.value;
-			return 0;
-		} else if (!this.#root.activeTabId.value && items[0] === node) {
-			this.#root.activeTabId.value = this.#id.value;
-			return 0;
-		} else if (this.#id.value === this.#root.activeTabId.value) {
-			return 0;
-		}
-
-		return -1;
-	});
+	#tabIndex = $derived(this.#root.rovingFocusGroup.getTabIndex(this.#node.value).value);
 
 	props = $derived({
 		id: this.#id.value,

@@ -7,9 +7,12 @@ import type {
 	TransitionParams,
 	WithAsChild,
 } from "$lib/internal/index.js";
+import type { Orientation } from "$lib/shared/index.js";
 
 type BaseAccordionProps = {
 	disabled?: boolean;
+	loop?: boolean;
+	orientation?: Orientation;
 };
 
 export type SingleAccordionProps = BaseAccordionProps & {
