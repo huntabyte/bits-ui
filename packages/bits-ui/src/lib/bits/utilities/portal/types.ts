@@ -15,19 +15,5 @@ export type PortalProps = {
 	 */
 	disabled?: boolean;
 
-	/**
-	 * Whether to force mount the portal content for more
-	 * advanced animation control
-	 *
-	 * @defaultValue false
-	 *
-	 */
-	forceMount?: boolean;
-
-	/**
-	 * The id of the portal content
-	 */
-	id?: string;
-
-	portal?: Snippet<[{ portalProps: { id: string; "data-portal": string } }]>;
+	children?: Snippet;
 };

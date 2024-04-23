@@ -184,7 +184,7 @@ class FloatingContentState {
 	wrapperProps = $derived({
 		id: this.wrapperId.value,
 		"data-bits-floating-content-wrapper": "",
-		style: styleToString({
+		style: {
 			...this.floating.floatingStyles,
 			// keep off page when measuring
 			transform: this.floating.isPositioned
@@ -198,7 +198,7 @@ class FloatingContentState {
 				visibility: "hidden",
 				"pointer-events": "none",
 			}),
-		}),
+		},
 		// Floating UI calculates logical alignment based the `dir` attribute
 		dir: this.dir.value,
 	} as const);
