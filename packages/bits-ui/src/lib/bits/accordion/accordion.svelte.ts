@@ -222,7 +222,6 @@ class AccordionTriggerState {
 		"aria-expanded": getAriaExpanded(this.#itemState.isSelected),
 		"aria-disabled": getAriaDisabled(this.#isDisabled),
 		"data-disabled": getDataDisabled(this.#isDisabled),
-		"data-value": this.#itemState.value,
 		"data-state": getDataOpenClosed(this.#itemState.isSelected),
 		[TRIGGER_ATTR]: "",
 		//
@@ -306,7 +305,6 @@ class AccordionContentState {
 		id: this.#id.value,
 		"data-state": getDataOpenClosed(this.item.isSelected),
 		"data-disabled": getDataDisabled(this.item.isDisabled),
-		"data-value": this.item.value,
 		[CONTENT_ATTR]: "",
 		style: {
 			"--bits-accordion-content-height": `${this.#height}px`,
@@ -333,7 +331,7 @@ class AccordionHeaderState {
 		"data-heading-level": this.#level.value,
 		"data-state": getDataOpenClosed(this.#item.isSelected),
 		[HEADER_ATTR]: "",
-	});
+	} as const);
 }
 
 //

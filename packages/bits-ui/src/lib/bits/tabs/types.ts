@@ -43,6 +43,13 @@ export type TabsRootPropsWithoutHTML = WithAsChild<{
 	 * @defaultValue true
 	 */
 	activationMode?: TabsActivationMode;
+
+	/**
+	 * Whether the tabs are disabled or not.
+	 *
+	 * @defaultValue false
+	 */
+	disabled?: boolean;
 }>;
 
 export type TabsRootProps = TabsRootPropsWithoutHTML & PrimitiveDivAttributes;
