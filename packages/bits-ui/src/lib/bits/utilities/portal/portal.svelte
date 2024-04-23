@@ -4,7 +4,7 @@
 	import type { PortalProps } from "./types.js";
 	import { isBrowser } from "$lib/internal/is.js";
 
-	let { to = "body", children }: PortalProps = $props();
+	let { to = "body", children, disabled }: PortalProps = $props();
 
 	const context = getAllContexts();
 
@@ -34,7 +34,7 @@
 	let instance: any;
 
 	$effect(() => {
-		if (!target) {
+		if (!target || disabled) {
 			return unmount(instance);
 		}
 		instance = mount(PortalConsumer, { target, props: { children }, context });
@@ -44,3 +44,7 @@
 		};
 	});
 </script>
+
+{#if disabled}
+	{@render children?.()}
+{/if}
