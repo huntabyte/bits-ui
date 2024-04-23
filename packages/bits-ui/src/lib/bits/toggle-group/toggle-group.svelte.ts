@@ -1,8 +1,7 @@
-import { getContext, setContext, untrack } from "svelte";
+import { getContext, setContext } from "svelte";
 import {
 	getAriaChecked,
 	getAriaPressed,
-	getAttrAndSelector,
 	getDataDisabled,
 	getDataOrientation,
 } from "$lib/internal/attrs.js";
@@ -13,14 +12,16 @@ import {
 	boxedState,
 } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
-import { getDirectionalKeys } from "$lib/internal/get-directional-keys.js";
-import { getElemDirection } from "$lib/internal/locale.js";
 import { useNodeById } from "$lib/internal/use-node-by-id.svelte.js";
 import type { Orientation } from "$lib/shared/index.js";
 import { verifyContextDeps } from "$lib/internal/context.js";
+import {
+	type UseRovingFocusReturn,
+	useRovingFocus,
+} from "$lib/internal/use-roving-focus.svelte.js";
 
-const [ROOT_ATTR] = getAttrAndSelector("toggle-group-root");
-const [ITEM_ATTR, ITEM_SELECTOR] = getAttrAndSelector("toggle-group-item");
+const ROOT_ATTR = "toggle-group-root";
+const ITEM_ATTR = "toggle-group-item";
 
 type ToggleGroupBaseStateProps = ReadonlyBoxedValues<{
 	id: string;
@@ -37,7 +38,7 @@ class ToggleGroupBaseState {
 	rovingFocus = undefined as unknown as ToggleGroupBaseStateProps["rovingFocus"];
 	loop = undefined as unknown as ToggleGroupBaseStateProps["loop"];
 	orientation = undefined as unknown as ToggleGroupBaseStateProps["orientation"];
-	activeTabId = boxedState("");
+	rovingFocusGroup = undefined as unknown as UseRovingFocusReturn;
 
 	constructor(props: ToggleGroupBaseStateProps) {
 		this.id = props.id;
@@ -46,14 +47,12 @@ class ToggleGroupBaseState {
 		this.rovingFocus = props.rovingFocus;
 		this.loop = props.loop;
 		this.orientation = props.orientation;
-	}
-
-	getItemNodes() {
-		const node = this.node.value;
-		if (!node) return [];
-		return Array.from(node.querySelectorAll<HTMLElement>(ITEM_SELECTOR)).filter(
-			(el) => !el.hasAttribute("data-disabled")
-		);
+		this.rovingFocusGroup = useRovingFocus({
+			candidateSelector: ITEM_ATTR,
+			rootNode: this.node,
+			loop: this.loop,
+			orientation: this.orientation,
+		});
 	}
 
 	props = $derived({
@@ -93,7 +92,7 @@ class ToggleGroupSingleState extends ToggleGroupBaseState {
 			this.#value.value = "";
 		} else {
 			this.#value.value = item;
-			this.activeTabId.value = id;
+			this.rovingFocusGroup.setCurrentTabStopId(id);
 		}
 	}
 }
@@ -126,7 +125,7 @@ class ToggleGroupMultipleState extends ToggleGroupBaseState {
 			this.#value.value = this.#value.value.filter((v) => v !== item);
 		} else {
 			this.#value.value = [...this.#value.value, item];
-			this.activeTabId.value = id;
+			this.rovingFocusGroup.setCurrentTabStopId(id);
 		}
 	}
 }
@@ -149,7 +148,7 @@ class ToggleGroupItemState {
 	#id = undefined as unknown as ToggleGroupItemStateProps["id"];
 	#root = undefined as unknown as ToggleGroupItemStateProps["rootState"];
 	#value = undefined as unknown as ToggleGroupItemStateProps["value"];
-	#node: Box<HTMLElement | null>;
+	#node = boxedState<HTMLElement | null>(null);
 	#disabled = undefined as unknown as ToggleGroupItemStateProps["disabled"];
 	#isDisabled = $derived(this.#disabled.value || this.#root.disabled.value);
 
@@ -179,37 +178,7 @@ class ToggleGroupItemState {
 		}
 		if (!this.#root.rovingFocus.value) return;
 
-		const node = this.#node.value;
-		if (!node) return;
-		const items = this.#root.getItemNodes();
-
-		const currentIndex = items.indexOf(node);
-
-		const dir = getElemDirection(node);
-		const { nextKey, prevKey } = getDirectionalKeys(dir, this.#root.orientation.value);
-
-		const keyToIndex = {
-			[nextKey]: currentIndex + 1,
-			[prevKey]: currentIndex - 1,
-			[kbd.HOME]: 0,
-			[kbd.END]: items.length - 1,
-		};
-
-		let itemIndex = keyToIndex[e.key];
-		if (itemIndex === undefined) return;
-		e.preventDefault();
-		const loop = this.#root.loop.value;
-
-		if (itemIndex < 0 && loop) {
-			itemIndex = items.length - 1;
-		} else if (itemIndex === items.length && loop) {
-			itemIndex = 0;
-		}
-
-		const itemToFocus = items[itemIndex];
-		if (!itemToFocus) return;
-		itemToFocus.focus();
-		this.#root.activeTabId.value = itemToFocus.id;
+		this.#root.rovingFocusGroup.handleKeydown(this.#node.value, e);
 	};
 
 	#isPressed = $derived(this.#root.includesItem(this.#value.value));
@@ -222,30 +191,11 @@ class ToggleGroupItemState {
 		return this.#root.isMulti ? undefined : getAriaPressed(this.#isPressed);
 	});
 
-	#tabIndex = $derived.by(() => this.getTabIndex());
-
-	getTabIndex() {
-		const node = this.#node.value;
-		if (!node) return;
-		const items = this.#root.getItemNodes();
-		const anyPressed = this.#root.anyPressed;
-		if (!anyPressed && items[0] === node) {
-			this.#root.activeTabId.value = this.#id.value;
-			return 0;
-		}
-		if (this.#root.rovingFocus.value) {
-			if (!this.#root.activeTabId.value && items[0] === node) {
-				this.#root.activeTabId.value = this.#id.value;
-				return 0;
-			}
-
-			if (this.#id.value === this.#root.activeTabId.value) {
-				return 0;
-			}
-			return -1;
-		}
-		return 0;
-	}
+	#tabIndex = $derived(
+		!this.#root.rovingFocus.value
+			? 0
+			: this.#root.rovingFocusGroup.getTabIndex(this.#node.value).value
+	);
 
 	props = $derived({
 		id: this.#id.value,

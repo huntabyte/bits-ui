@@ -16,6 +16,7 @@
 		orientation = "horizontal",
 		loop = false,
 		activationMode = "automatic",
+		disabled = false,
 		...restProps
 	}: RootProps = $props();
 
@@ -33,6 +34,7 @@
 		orientation: readonlyBox(() => orientation),
 		loop: readonlyBox(() => loop),
 		activationMode: readonlyBox(() => activationMode),
+		disabled: readonlyBox(() => disabled),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, state.props));

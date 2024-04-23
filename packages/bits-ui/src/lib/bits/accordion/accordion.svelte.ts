@@ -7,19 +7,25 @@ import {
 	afterTick,
 	getAriaDisabled,
 	getAriaExpanded,
-	getAttrAndSelector,
+	getAriaOrientation,
 	getDataDisabled,
 	getDataOpenClosed,
+	getDataOrientation,
 	kbd,
 	useNodeById,
 	verifyContextDeps,
 } from "$lib/internal/index.js";
+import {
+	type UseRovingFocusReturn,
+	useRovingFocus,
+} from "$lib/internal/use-roving-focus.svelte.js";
+import type { Orientation } from "$lib/shared/index.js";
 
-const [ROOT_ATTR] = getAttrAndSelector("accordion-root");
-const [TRIGGER_ATTR, TRIGGER_SELECTOR] = getAttrAndSelector("accordion-trigger");
-const [CONTENT_ATTR] = getAttrAndSelector("accordion-content");
-const [ITEM_ATTR] = getAttrAndSelector("accordion-item");
-const [HEADER_ATTR] = getAttrAndSelector("accordion-header");
+const ROOT_ATTR = "accordion-root";
+const TRIGGER_ATTR = "accordion-trigger";
+const CONTENT_ATTR = "accordion-content";
+const ITEM_ATTR = "accordion-item";
+const HEADER_ATTR = "accordion-header";
 
 //
 // BASE
@@ -28,30 +34,37 @@ const [HEADER_ATTR] = getAttrAndSelector("accordion-header");
 type AccordionBaseStateProps = ReadonlyBoxedValues<{
 	id: string;
 	disabled: boolean;
+	orientation: Orientation;
+	loop: boolean;
 }>;
 
 class AccordionBaseState {
 	id = undefined as unknown as ReadonlyBox<string>;
 	node: Box<HTMLElement | null>;
-	disabled: ReadonlyBox<boolean>;
+	disabled = undefined as unknown as ReadonlyBox<boolean>;
+	#loop = undefined as unknown as AccordionBaseStateProps["loop"];
+	orientation = undefined as unknown as AccordionBaseStateProps["orientation"];
+	rovingFocusGroup = undefined as unknown as UseRovingFocusReturn;
 
 	constructor(props: AccordionBaseStateProps) {
 		this.id = props.id;
 		this.disabled = props.disabled;
-
 		this.node = useNodeById(this.id);
-	}
-
-	getTriggerNodes() {
-		const node = this.node.value;
-		if (!node) return [];
-		return Array.from(node.querySelectorAll<HTMLElement>(TRIGGER_SELECTOR)).filter(
-			(el) => !el.hasAttribute("data-disabled")
-		);
+		this.orientation = props.orientation;
+		this.#loop = props.loop;
+		this.rovingFocusGroup = useRovingFocus({
+			rootNode: this.node,
+			candidateSelector: TRIGGER_ATTR,
+			loop: this.#loop,
+			orientation: this.orientation,
+		});
 	}
 
 	props = $derived({
 		id: this.id.value,
+		"data-orientation": getDataOrientation(this.orientation.value),
+		"data-disabled": getDataDisabled(this.disabled.value),
+		"aria-orientation": getAriaOrientation(this.orientation.value),
 		[ROOT_ATTR]: "",
 	} as const);
 }
@@ -189,31 +202,13 @@ class AccordionTriggerState {
 	};
 
 	#onkeydown = (e: KeyboardEvent) => {
-		const handledKeys = [kbd.ARROW_DOWN, kbd.ARROW_UP, kbd.HOME, kbd.END, kbd.SPACE, kbd.ENTER];
-		if (this.#isDisabled || !handledKeys.includes(e.key)) return;
-
-		e.preventDefault();
-
 		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
+			e.preventDefault();
 			this.#itemState.updateValue();
 			return;
 		}
 
-		if (!this.#root.node.value || !this.#node.value) return;
-
-		const candidateItems = this.#root.getTriggerNodes();
-		if (!candidateItems.length) return;
-
-		const currentIndex = candidateItems.indexOf(this.#node.value);
-
-		const keyToIndex = {
-			[kbd.ARROW_DOWN]: (currentIndex + 1) % candidateItems.length,
-			[kbd.ARROW_UP]: (currentIndex - 1 + candidateItems.length) % candidateItems.length,
-			[kbd.HOME]: 0,
-			[kbd.END]: candidateItems.length - 1,
-		};
-
-		candidateItems[keyToIndex[e.key]!]?.focus();
+		this.#root.rovingFocusGroup.handleKeydown(this.#node.value, e);
 	};
 
 	props = $derived({
@@ -222,9 +217,10 @@ class AccordionTriggerState {
 		"aria-expanded": getAriaExpanded(this.#itemState.isSelected),
 		"aria-disabled": getAriaDisabled(this.#isDisabled),
 		"data-disabled": getDataDisabled(this.#isDisabled),
-		"data-value": this.#itemState.value,
 		"data-state": getDataOpenClosed(this.#itemState.isSelected),
+		"data-orientation": getDataOrientation(this.#root.orientation.value),
 		[TRIGGER_ATTR]: "",
+		tabindex: 0,
 		//
 		onclick: this.#onclick,
 		onkeydown: this.#onkeydown,
@@ -306,7 +302,7 @@ class AccordionContentState {
 		id: this.#id.value,
 		"data-state": getDataOpenClosed(this.item.isSelected),
 		"data-disabled": getDataDisabled(this.item.isDisabled),
-		"data-value": this.item.value,
+		"data-orientation": getDataOrientation(this.item.root.orientation.value),
 		[CONTENT_ATTR]: "",
 		style: {
 			"--bits-accordion-content-height": `${this.#height}px`,
@@ -332,8 +328,9 @@ class AccordionHeaderState {
 		"aria-level": this.#level.value,
 		"data-heading-level": this.#level.value,
 		"data-state": getDataOpenClosed(this.#item.isSelected),
+		"data-orientation": getDataOrientation(this.#item.root.orientation.value),
 		[HEADER_ATTR]: "",
-	});
+	} as const);
 }
 
 //
@@ -348,9 +345,12 @@ type AccordionState = AccordionSingleState | AccordionMultiState;
 type InitAccordionProps = {
 	type: "single" | "multiple";
 	value: Box<string> | Box<string[]>;
-	id: ReadonlyBox<string>;
-	disabled: ReadonlyBox<boolean>;
-};
+} & ReadonlyBoxedValues<{
+	id: string;
+	disabled: boolean;
+	orientation: Orientation;
+	loop: boolean;
+}>;
 
 export function setAccordionRootState(props: InitAccordionProps) {
 	const { type, ...rest } = props;

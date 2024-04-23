@@ -13,6 +13,8 @@
 		el = $bindable(),
 		id = useId(),
 		onValueChange,
+		loop = true,
+		orientation = "vertical",
 		...restProps
 	}: RootProps = $props();
 
@@ -29,6 +31,8 @@
 		) as Box<string> | Box<string[]>,
 		id: readonlyBox(() => id),
 		disabled: readonlyBox(() => disabled),
+		loop: readonlyBox(() => loop),
+		orientation: readonlyBox(() => orientation),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, rootState.props));

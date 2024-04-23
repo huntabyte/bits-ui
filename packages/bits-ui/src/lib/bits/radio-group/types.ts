@@ -81,6 +81,8 @@ export type RadioGroupItemPropsWithoutHTML = Omit<
 			onclick?: EventCallback<MouseEvent>;
 
 			onkeydown?: EventCallback<KeyboardEvent>;
+
+			onfocus?: EventCallback<FocusEvent>;
 		},
 		{ checked: boolean }
 	>,
