@@ -1,6 +1,7 @@
 import type { Snippet } from "svelte";
 import type { Action } from "svelte/action";
 import type {
+	HTMLAnchorAttributes,
 	HTMLAttributes,
 	HTMLButtonAttributes,
 	HTMLImgAttributes,
@@ -130,6 +131,7 @@ export type PrimitiveImgAttributes = Primitive<HTMLImgAttributes>;
 export type PrimitiveHeadingAttributes = Primitive<HTMLHeadingAttributes>;
 export type PrimitiveLabelAttributes = Primitive<HTMLLabelAttributes>;
 export type PrimitiveSVGAttributes = Primitive<SVGAttributes<SVGElement>>;
+export type PrimitiveAnchorAttributes = Primitive<HTMLAnchorAttributes>;
 
 export type AsChildProps<Props, SnippetProps, El> = {
 	child: Snippet<[SnippetProps & { props: Record<string, unknown> }]>;

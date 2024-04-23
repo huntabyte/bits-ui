@@ -1,11 +1,16 @@
-import type { ToggleGroupItemProps } from "@melt-ui/svelte";
 import type {
+	ToggleGroupItemProps,
 	ToggleGroupItemPropsWithoutHTML,
-	ToggleGroupRootProps,
 	ToggleGroupRootPropsWithoutHTML,
 } from "../toggle-group/types.js";
 import type { Orientation } from "$lib/shared/index.js";
-import type { PrimitiveDivAttributes, WithAsChild } from "$lib/internal/types.js";
+import type {
+	PrimitiveAnchorAttributes,
+	PrimitiveButtonAttributes,
+	PrimitiveDivAttributes,
+	WithAsChild,
+} from "$lib/internal/types.js";
+import type { EventCallback } from "$lib/internal/events.js";
 
 export type ToolbarRootPropsWithoutHTML = WithAsChild<{
 	orientation?: Orientation;
@@ -14,10 +19,29 @@ export type ToolbarRootPropsWithoutHTML = WithAsChild<{
 
 export type ToolbarRootProps = ToolbarRootPropsWithoutHTML & PrimitiveDivAttributes;
 
-export type ToolbarGroupPropsWithoutHTML = ToggleGroupRootPropsWithoutHTML;
+export type ToolbarGroupPropsWithoutHTML = Omit<
+	ToggleGroupRootPropsWithoutHTML,
+	"orientation" | "loop" | "rovingFocus"
+>;
 
-export type ToolbarGroupProps = ToggleGroupRootProps;
+export type ToolbarGroupProps = ToolbarGroupPropsWithoutHTML &
+	Omit<PrimitiveDivAttributes, "value" | "disabled">;
 
-export type ToolbarItemPropsWithoutHTML = ToggleGroupItemPropsWithoutHTML;
+export type ToolbarGroupItemPropsWithoutHTML = ToggleGroupItemPropsWithoutHTML;
 
-export type ToolbarItemProps = ToggleGroupItemProps;
+export type ToolbarGroupItemProps = ToggleGroupItemProps;
+
+export type ToolbarButtonPropsWithoutHTML = WithAsChild<{
+	disabled?: boolean;
+	onkeydown?: EventCallback<KeyboardEvent>;
+}>;
+
+export type ToolbarButtonProps = ToolbarButtonPropsWithoutHTML &
+	Omit<PrimitiveButtonAttributes, "onkeydown" | "disabled">;
+
+export type ToolbarLinkPropsWithoutHTML = WithAsChild<{
+	onkeydown?: EventCallback<KeyboardEvent>;
+}>;
+
+export type ToolbarLinkProps = ToolbarLinkPropsWithoutHTML &
+	Omit<PrimitiveAnchorAttributes, "onkeydown">;

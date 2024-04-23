@@ -4,6 +4,7 @@ import {
 	getAriaPressed,
 	getDataDisabled,
 	getDataOrientation,
+	getDisabledAttr,
 } from "$lib/internal/attrs.js";
 import {
 	type Box,
@@ -207,6 +208,7 @@ class ToggleGroupItemState {
 		"data-value": this.#value.value,
 		"aria-pressed": this.#ariaPressed,
 		"aria-checked": this.#ariaChecked,
+		disabled: getDisabledAttr(this.#isDisabled),
 		[ITEM_ATTR]: "",
 		//
 		onclick: this.#onclick,
