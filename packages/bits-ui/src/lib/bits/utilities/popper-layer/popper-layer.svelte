@@ -6,7 +6,7 @@
 	import { TextSelectionLayer } from "$lib/bits/utilities/text-selection-layer/index.js";
 	import { PresenceLayer } from "$lib/bits/utilities/presence-layer/index.js";
 	import { FocusScope } from "$lib/bits/utilities/focus-scope/index.js";
-	import { mergeProps } from "$lib/internal/merge-props.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let { popper, ...restProps }: PopperLayerProps = $props();
 </script>

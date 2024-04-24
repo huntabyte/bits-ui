@@ -3,7 +3,7 @@
 	import { setSwitchRootState } from "../switch.svelte.js";
 	import SwitchInput from "./switch-input.svelte";
 	import { box, readonlyBox } from "$lib/internal/box.svelte.js";
-	import { mergeProps } from "$lib/internal/merge-props.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {
 		child,

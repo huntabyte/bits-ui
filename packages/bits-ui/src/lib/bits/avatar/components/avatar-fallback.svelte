@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { FallbackProps } from "../index.js";
 	import { getAvatarFallbackState } from "../avatar.svelte.js";
-	import { mergeProps } from "$lib/internal/merge-props.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let { asChild, children, child, el = $bindable(), ...restProps }: FallbackProps = $props();
 

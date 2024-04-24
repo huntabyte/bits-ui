@@ -2,8 +2,8 @@
 	import { setToolbarLinkState } from "../toolbar.svelte.js";
 	import type { LinkProps } from "../index.js";
 	import { readonlyBox } from "$lib/internal/box.svelte.js";
-	import { mergeProps } from "$lib/internal/merge-props.js";
-	import { useId } from "$lib/internal/use-id.svelte.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
 
 	let {
 		asChild,

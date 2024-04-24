@@ -1,7 +1,7 @@
 import type { Snippet } from "svelte";
 import type { Align, Boundary, Side } from "./floating-layer.svelte.js";
 import type { Arrayable } from "$lib/internal/types.js";
-import type { StyleProperties, TextDirection } from "$lib/shared/index.js";
+import type { StyleProperties, Direction } from "$lib/shared/index.js";
 
 export type FloatingLayerContentProps = {
 	id: string;
@@ -92,7 +92,7 @@ export type FloatingLayerContentProps = {
 	/**
 	 * The text direction of the content.
 	 */
-	dir?: TextDirection;
+	dir?: Direction;
 
 	/**
 	 * The style properties to apply to the content.

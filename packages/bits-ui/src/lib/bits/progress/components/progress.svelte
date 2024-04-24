@@ -2,7 +2,7 @@
 	import type { RootProps } from "../index.js";
 	import { setProgressRootState } from "../progress.svelte.js";
 	import { readonlyBox } from "$lib/internal/box.svelte.js";
-	import { mergeProps } from "$lib/internal/merge-props.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {
 		asChild,

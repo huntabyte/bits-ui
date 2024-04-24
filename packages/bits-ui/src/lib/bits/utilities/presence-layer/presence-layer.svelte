@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { PresenceLayerProps } from "./types.js";
 	import { readonlyBox } from "$lib/internal/box.svelte.js";
-	import { usePresence } from "$lib/internal/use-presence.svelte.js";
+	import { usePresence } from "$lib/internal/usePresence.svelte.js";
 
 	let {
 		present,

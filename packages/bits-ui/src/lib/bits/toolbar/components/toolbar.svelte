@@ -2,8 +2,8 @@
 	import type { RootProps } from "../index.js";
 	import { setToolbarRootState } from "../toolbar.svelte.js";
 	import { readonlyBox } from "$lib/internal/box.svelte.js";
-	import { mergeProps } from "$lib/internal/merge-props.js";
-	import { useId } from "$lib/internal/use-id.svelte.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
 
 	let {
 		asChild,
@@ -14,16 +14,15 @@
 		orientation = "horizontal",
 		loop = true,
 		...restProps
-	}: RootProps = $props()
+	}: RootProps = $props();
 
 	const state = setToolbarRootState({
 		id: readonlyBox(() => id),
 		orientation: readonlyBox(() => orientation),
 		loop: readonlyBox(() => loop),
-	})
+	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props))
-
+	const mergedProps = $derived(mergeProps(restProps, state.props));
 </script>
 
 {#if asChild}

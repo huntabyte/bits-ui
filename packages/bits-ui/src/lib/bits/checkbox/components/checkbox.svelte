@@ -3,7 +3,7 @@
 	import { setCheckboxRootState } from "../checkbox.svelte.js";
 	import CheckboxInput from "./checkbox-input.svelte";
 	import { box, readonlyBox } from "$lib/internal/box.svelte.js";
-	import { mergeProps } from "$lib/internal/merge-props.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {
 		checked = $bindable(false),

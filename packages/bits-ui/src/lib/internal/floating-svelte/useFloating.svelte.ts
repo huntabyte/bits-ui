@@ -1,9 +1,7 @@
 import { computePosition } from "@floating-ui/dom";
-import { box, boxedState } from "../box.svelte.js";
-import { afterTick } from "../after-tick.js";
+import { boxedState } from "../box.svelte.js";
 import type { UseFloatingOptions, UseFloatingReturn } from "./types.js";
 import { get, getDPR, roundByDPR } from "./utils.js";
-import type { Side } from "$lib/bits/utilities/floating-layer/floating-layer.svelte.js";
 
 export function useFloating(options: UseFloatingOptions): UseFloatingReturn {
 	/** Options */

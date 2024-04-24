@@ -35,6 +35,13 @@ export type PopoverContentPropsWithoutHTML = WithAsChild<
 	} & {
 		onMountAutoFocus?: EventCallback;
 		onDestroyAutoFocus?: EventCallback;
+	} & {
+		/**
+		 * Whether to prevent scrolling the body when the popover is open or not.
+		 *
+		 * @defaultValue true
+		 */
+		preventScroll?: boolean;
 	}
 >;
 
