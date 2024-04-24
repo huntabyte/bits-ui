@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { EscapeLayerProps } from "./types.js";
-	import { useEscapeLayer } from "./use-escape-layer.svelte.js";
+	import { useEscapeLayer } from "./useEscapeLayer.svelte.js";
 	import { noop, readonlyBox } from "$lib/internal/index.js";
 
 	let { behaviorType = "close", onEscape = noop, children, present }: EscapeLayerProps = $props();

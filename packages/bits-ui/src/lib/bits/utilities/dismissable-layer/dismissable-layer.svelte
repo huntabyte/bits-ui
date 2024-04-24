@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { DismissableLayerProps } from "./types.js";
-	import { useDismissableLayer } from "./use-dismissable-layer.svelte.js";
+	import { useDismissableLayer } from "./useDismissableLayer.svelte.js";
 	import { noop, readonlyBox } from "$lib/internal/index.js";
 
 	let {

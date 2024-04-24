@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { TextSelectionLayerProps } from "./types.js";
-	import { useTextSelectionLayer } from "./use-text-selection-layer.svelte.js";
+	import { useTextSelectionLayer } from "./useTextSelectionLayer.svelte.js";
 	import { noop, readonlyBox } from "$lib/internal/index.js";
 
 	let {

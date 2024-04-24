@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { FocusScopeProps } from "./types.js";
-	import { useFocusScope } from "./use-focus-scope.svelte.js";
+	import { useFocusScope } from "./useFocusScope.svelte.js";
 	import { readonlyBox } from "$lib/internal/box.svelte.js";
 	import { noop } from "$lib/internal/callbacks.js";
 

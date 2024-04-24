@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { setFloatingAnchorState } from "../floating-layer.svelte.js";
+	import { setFloatingAnchorState } from "../useFloatingLayer.svelte.js";
 	import type { AnchorProps } from "./index.js";
 	import { readonlyBox } from "$lib/internal/box.svelte.js";
 
