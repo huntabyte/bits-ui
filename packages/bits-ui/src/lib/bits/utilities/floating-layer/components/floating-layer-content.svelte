@@ -2,6 +2,7 @@
 	import { setFloatingContentState } from "../floating-layer.svelte.js";
 	import type { ContentProps } from "./index.js";
 	import { mergeProps, readonlyBox, useId } from "$lib/internal/index.js";
+	import { useBodyScrollLock } from "$lib/internal/use-body-scroll-lock.svelte.js";
 
 	let {
 		content,
@@ -47,6 +48,8 @@
 	});
 
 	const mergedProps = $derived(mergeProps(state.wrapperProps));
+
+	useBodyScrollLock(true);
 </script>
 
 <div {...mergedProps}>

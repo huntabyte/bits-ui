@@ -9,11 +9,8 @@
 		child,
 		children,
 		el = $bindable(),
-		style = {},
 		id = useId(),
 		forceMount = false,
-		// eslint-disable-next-line ts/no-unused-vars, unused-imports/no-unused-vars
-		hidden: hiddenProp = undefined,
 		onDestroyAutoFocus = noop,
 		...restProps
 	}: ContentProps = $props();
@@ -27,7 +24,6 @@
 	{...restProps}
 	present={state.root.open.value || forceMount}
 	{id}
-	{style}
 	onInteractOutside={state.root.close}
 	onEscape={state.root.close}
 	onDestroyAutoFocus={(e) => {
