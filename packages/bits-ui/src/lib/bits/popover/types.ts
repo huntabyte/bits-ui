@@ -32,6 +32,9 @@ export type PopoverRootProps = PopoverRootPropsWithoutHTML & PrimitiveDivAttribu
 export type PopoverContentPropsWithoutHTML = WithAsChild<
 	Partial<Omit<FloatingLayer.ContentProps, "content">> & {
 		forceMount?: boolean;
+	} & {
+		onMountAutoFocus?: EventCallback;
+		onDestroyAutoFocus?: EventCallback;
 	}
 >;
 

@@ -285,8 +285,8 @@ class ToolbarLinkState {
 
 	#role = $derived.by(() => {
 		if (!this.#node.value) return undefined;
-		const tagName = this.#node.value.tagName.toLowerCase();
-		if (tagName !== "a") return "link" as const;
+		const tagName = this.#node.value.tagName;
+		if (tagName !== "A") return "link" as const;
 		return undefined;
 	});
 
@@ -330,8 +330,8 @@ class ToolbarButtonState {
 
 	#role = $derived.by(() => {
 		if (!this.#node.value) return undefined;
-		const tagName = this.#node.value.tagName.toLowerCase();
-		if (tagName !== "button") return "button" as const;
+		const tagName = this.#node.value.tagName;
+		if (tagName !== "BUTTON") return "button" as const;
 		return undefined;
 	});
 
