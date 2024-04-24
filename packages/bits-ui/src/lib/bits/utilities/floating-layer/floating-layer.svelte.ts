@@ -20,8 +20,8 @@ import {
 	styleToString,
 	useNodeById,
 } from "$lib/internal/index.js";
-import { useSize } from "$lib/internal/use-size.svelte.js";
-import { useFloating } from "$lib/internal/floating-svelte/use-floating.svelte.js";
+import { useSize } from "$lib/internal/useSize.svelte.js";
+import { useFloating } from "$lib/internal/floating-svelte/useFloating.svelte.js";
 import type { UseFloatingReturn } from "$lib/internal/floating-svelte/types.js";
 import type { StyleProperties, TextDirection } from "$lib/shared/index.js";
 

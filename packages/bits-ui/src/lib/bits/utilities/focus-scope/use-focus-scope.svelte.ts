@@ -15,7 +15,7 @@ import {
 } from "./utils.js";
 import { type ReadonlyBoxedValues, boxedState } from "$lib/internal/box.svelte.js";
 import { type EventCallback, addEventListener } from "$lib/internal/events.js";
-import { useNodeById } from "$lib/internal/use-node-by-id.svelte.js";
+import { useNodeById } from "$lib/internal/useNodeById.svelte.js";
 import { isHTMLElement } from "$lib/internal/is.js";
 import { executeCallbacks } from "$lib/internal/callbacks.js";
 import { kbd } from "$lib/internal/kbd.js";

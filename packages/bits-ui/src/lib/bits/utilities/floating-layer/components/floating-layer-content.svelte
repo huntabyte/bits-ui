@@ -2,7 +2,7 @@
 	import { setFloatingContentState } from "../floating-layer.svelte.js";
 	import type { ContentProps } from "./index.js";
 	import { mergeProps, readonlyBox, useId } from "$lib/internal/index.js";
-	import { useBodyScrollLock } from "$lib/internal/use-body-scroll-lock.svelte.js";
+	import { useBodyScrollLock } from "$lib/internal/useBodyScrollLock.svelte.js";
 
 	let {
 		content,

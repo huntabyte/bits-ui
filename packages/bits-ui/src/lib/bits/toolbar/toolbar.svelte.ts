@@ -14,11 +14,8 @@ import {
 } from "$lib/internal/box.svelte.js";
 import { verifyContextDeps } from "$lib/internal/context.js";
 import { kbd } from "$lib/internal/kbd.js";
-import { useNodeById } from "$lib/internal/use-node-by-id.svelte.js";
-import {
-	type UseRovingFocusReturn,
-	useRovingFocus,
-} from "$lib/internal/use-roving-focus.svelte.js";
+import { useNodeById } from "$lib/internal/useNodeById.svelte.js";
+import { type UseRovingFocusReturn, useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
 import type { Orientation } from "$lib/shared/index.js";
 
 const ROOT_ATTR = "data-toolbar-root";

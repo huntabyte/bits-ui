@@ -2,7 +2,7 @@
 	import type { AccordionItemProps } from "../types.js";
 	import { setAccordionItemState } from "../accordion.svelte.js";
 	import { readonlyBox } from "$lib/internal/box.svelte.js";
-	import { mergeProps } from "$lib/internal/merge-props.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
 	let {
 		asChild,
 		disabled = false,

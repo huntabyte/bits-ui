@@ -1,7 +1,7 @@
 import { clsx } from "clsx";
 import { type EventCallback, composeHandlers } from "./events.js";
 import { styleToString } from "./style.js";
-import { cssToStyleObj } from "./css-to-style-obj.js";
+import { cssToStyleObj } from "./cssToStyleObj.js";
 import { executeCallbacks } from "./callbacks.js";
 import type { StyleProperties } from "$lib/shared/index.js";
 

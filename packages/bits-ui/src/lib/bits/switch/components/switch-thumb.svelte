@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { ThumbProps } from "../index.js";
 	import { getSwitchThumbState } from "../switch.svelte.js";
-	import { mergeProps } from "$lib/internal/merge-props.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let { asChild, child, el = $bindable(), ...restProps }: ThumbProps = $props();
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getDirectionalKeys } from "./get-directional-keys.js";
+import { getDirectionalKeys } from "./getDirectionalKeys.js";
 import { kbd } from "./kbd.js";
 
 describe("getDirectionalKeys", () => {

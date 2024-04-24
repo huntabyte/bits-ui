@@ -1,6 +1,6 @@
 import { untrack } from "svelte";
 import type { ReadonlyBox } from "$lib/internal/box.svelte.js";
-import { useNodeById } from "$lib/internal/use-node-by-id.svelte.js";
+import { useNodeById } from "$lib/internal/useNodeById.svelte.js";
 
 export function usePortal(id: ReadonlyBox<string>, to: ReadonlyBox<HTMLElement | string>) {
 	const node = useNodeById(id);

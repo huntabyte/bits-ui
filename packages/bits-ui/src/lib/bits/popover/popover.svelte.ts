@@ -6,7 +6,7 @@ import {
 	boxedState,
 	readonlyBoxedState,
 } from "$lib/internal/box.svelte.js";
-import { useNodeById } from "$lib/internal/use-node-by-id.svelte.js";
+import { useNodeById } from "$lib/internal/useNodeById.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { getAriaExpanded, getDataOpenClosed, getHiddenAttr } from "$lib/internal/attrs.js";
 import { verifyContextDeps } from "$lib/internal/context.js";

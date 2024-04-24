@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { AccordionHeaderProps } from "../types.js";
 	import { getAccordionHeaderState } from "../accordion.svelte.js";
-	import { mergeProps } from "$lib/internal/merge-props.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { readonlyBox } from "$lib/internal/box.svelte.js";
 
 	let {

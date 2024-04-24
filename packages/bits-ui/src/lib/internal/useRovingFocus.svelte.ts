@@ -1,6 +1,6 @@
 import { type Box, type ReadonlyBox, box, boxedState } from "./box.svelte.js";
 import { getElemDirection } from "./locale.js";
-import { getDirectionalKeys } from "./get-directional-keys.js";
+import { getDirectionalKeys } from "./getDirectionalKeys.js";
 import { kbd } from "./kbd.js";
 import type { Orientation } from "$lib/shared/index.js";
 

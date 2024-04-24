@@ -15,10 +15,7 @@ import {
 	useNodeById,
 	verifyContextDeps,
 } from "$lib/internal/index.js";
-import {
-	type UseRovingFocusReturn,
-	useRovingFocus,
-} from "$lib/internal/use-roving-focus.svelte.js";
+import { type UseRovingFocusReturn, useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
 import type { Orientation } from "$lib/shared/index.js";
 
 const ROOT_ATTR = "accordion-root";
