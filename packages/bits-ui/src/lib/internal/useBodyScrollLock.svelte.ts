@@ -8,6 +8,11 @@ import { afterTick } from "./after-tick.js";
 import { useId } from "./useId.svelte.js";
 import { createSharedHook } from "./createSharedHook.svelte.js";
 
+export type ScrollBodyOption = {
+	padding?: boolean | number;
+	margin?: boolean | number;
+};
+
 const useBodyLockStackCount = createSharedHook(() => {
 	const map = new Map<string, boolean>();
 	let initialOverflow = $state<string | undefined>();

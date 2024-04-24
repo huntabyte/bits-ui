@@ -23,17 +23,10 @@ import {
 import { useSize } from "$lib/internal/useSize.svelte.js";
 import { useFloating } from "$lib/internal/floating-svelte/useFloating.svelte.js";
 import type { UseFloatingReturn } from "$lib/internal/floating-svelte/types.js";
-import type { StyleProperties, TextDirection } from "$lib/shared/index.js";
+import type { Direction, StyleProperties } from "$lib/shared/index.js";
 
 export const SIDE_OPTIONS = ["top", "right", "bottom", "left"] as const;
 export const ALIGN_OPTIONS = ["start", "center", "end"] as const;
-
-// const ARROW_TRANSFORM = {
-// 	bottom: "rotate(45deg)",
-// 	left: "rotate(135deg)",
-// 	top: "rotate(225deg)",
-// 	right: "rotate(315deg)",
-// };
 
 const OPPOSITE_SIDE: Record<Side, Side> = {
 	top: "bottom",
@@ -75,7 +68,7 @@ export type FloatingContentStateProps = ReadonlyBoxedValues<{
 	updatePositionStrategy: "optimized" | "always";
 	strategy: "fixed" | "absolute";
 	onPlaced: () => void;
-	dir: TextDirection;
+	dir: Direction;
 	style: StyleProperties;
 	present: boolean;
 }>;

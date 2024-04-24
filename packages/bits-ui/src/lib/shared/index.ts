@@ -29,6 +29,6 @@ export type FocusProp = FocusTarget | ((defaultEl?: HTMLElement | null) => Focus
 export type StyleProperties = CSS.Properties;
 
 export type Orientation = "horizontal" | "vertical";
-export type TextDirection = "ltr" | "rtl";
+export type Direction = "ltr" | "rtl";
 
 export type { Month, Page, PageItem, Ellipsis, EditableSegmentPart };
