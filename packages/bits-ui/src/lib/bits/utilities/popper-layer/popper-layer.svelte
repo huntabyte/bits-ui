@@ -5,6 +5,7 @@
 	import { DismissableLayer } from "$lib/bits/utilities/dismissable-layer/index.js";
 	import { TextSelectionLayer } from "$lib/bits/utilities/text-selection-layer/index.js";
 	import { PresenceLayer } from "$lib/bits/utilities/presence-layer/index.js";
+	import { FocusScope } from "$lib/bits/utilities/focus-scope/index.js";
 	import { mergeProps } from "$lib/internal/merge-props.js";
 
 	let { popper, ...restProps }: PopperLayerProps = $props();
@@ -14,15 +15,19 @@
 	{#snippet presence({ present })}
 		<FloatingLayer.Content {...restProps} present={present.value}>
 			{#snippet content({ props })}
-				<EscapeLayer {...restProps} present={present.value}>
-					<DismissableLayer {...restProps} present={present.value}>
-						<TextSelectionLayer {...restProps} present={present.value}>
-							{@render popper?.({
-								props: mergeProps(props),
-							})}
-						</TextSelectionLayer>
-					</DismissableLayer>
-				</EscapeLayer>
+				<FocusScope {...restProps}>
+					{#snippet focusScope({ props: focusScopeProps })}
+						<EscapeLayer {...restProps} present={present.value}>
+							<DismissableLayer {...restProps} present={present.value}>
+								<TextSelectionLayer {...restProps} present={present.value}>
+									{@render popper?.({
+										props: mergeProps(props, focusScopeProps),
+									})}
+								</TextSelectionLayer>
+							</DismissableLayer>
+						</EscapeLayer>
+					{/snippet}
+				</FocusScope>
 			{/snippet}
 		</FloatingLayer.Content>
 	{/snippet}
