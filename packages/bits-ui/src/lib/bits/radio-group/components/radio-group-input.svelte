@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { getRadioGroupInputState } from "../radio-group.svelte.js";
+	import { useRadioGroupInput } from "../radio-group.svelte.js";
 
-	const inputState = getRadioGroupInputState();
+	const state = useRadioGroupInput();
 </script>
 
-{#if inputState.shouldRender}
-	<input {...inputState.props} />
+{#if state.shouldRender}
+	<input {...state.props} />
 {/if}

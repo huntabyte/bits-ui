@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getAccordionContentState } from "../accordion.svelte.js";
+	import { useAccordionContent } from "../accordion.svelte.js";
 	import type { AccordionContentProps } from "../types.js";
 	import { PresenceLayer } from "$lib/bits/utilities/presence-layer/index.js";
 	import { mergeProps, readonlyBox, useId } from "$lib/internal/index.js";
@@ -14,15 +14,15 @@
 		...restProps
 	}: AccordionContentProps = $props();
 
-	const content = getAccordionContentState({
+	const state = useAccordionContent({
 		forceMount: readonlyBox(() => forceMount),
 		id: readonlyBox(() => id),
 	});
 </script>
 
-<PresenceLayer forceMount={true} present={content.present} {id}>
+<PresenceLayer forceMount={true} present={state.present} {id}>
 	{#snippet presence({ present })}
-		{@const mergedProps = mergeProps(restProps, content.props, {
+		{@const mergedProps = mergeProps(restProps, state.props, {
 			hidden: !present.value,
 		})}
 		{#if asChild}

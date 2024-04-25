@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { setDialogContentState } from "../dialog.svelte.js";
+	import { useDialogContent } from "../dialog.svelte.js";
 	import type { ContentProps } from "../index.js";
 	import DismissableLayer from "$lib/bits/utilities/dismissable-layer/dismissable-layer.svelte";
 	import EscapeLayer from "$lib/bits/utilities/escape-layer/escape-layer.svelte";
@@ -25,7 +25,7 @@
 		...restProps
 	}: ContentProps = $props();
 
-	const state = setDialogContentState({
+	const state = useDialogContent({
 		id: readonlyBox(() => id),
 	});
 

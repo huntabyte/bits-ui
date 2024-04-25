@@ -1,6 +1,4 @@
-import { getContext, setContext } from "svelte";
 import {
-	type Box,
 	type BoxedValues,
 	type ReadonlyBoxedValues,
 	boxedState,
@@ -9,7 +7,7 @@ import {
 import { useNodeById } from "$lib/internal/useNodeById.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
-import { verifyContextDeps } from "$lib/internal/context.js";
+import { createContext } from "$lib/internal/createContext.js";
 
 type PopoverRootStateProps = BoxedValues<{
 	open: boolean;
@@ -140,25 +138,21 @@ class PopoverCloseState {
 // CONTEXT METHODS
 //
 
-const POPOVER_ROOT_KEY = Symbol("Popover.Root");
+const [setPopoverRootContext, getPopoverRootContext] =
+	createContext<PopoverRootState>("Popover.Root");
 
-export function setPopoverRootState(props: PopoverRootStateProps) {
-	return setContext(POPOVER_ROOT_KEY, new PopoverRootState(props));
+export function usePopoverRoot(props: PopoverRootStateProps) {
+	return setPopoverRootContext(new PopoverRootState(props));
 }
 
-export function getPopoverRootState(): PopoverRootState {
-	verifyContextDeps(POPOVER_ROOT_KEY);
-	return getContext(POPOVER_ROOT_KEY);
+export function usePopoverTrigger(props: PopoverTriggerStateProps) {
+	return getPopoverRootContext().createTrigger(props);
 }
 
-export function setPopoverTriggerState(props: PopoverTriggerStateProps) {
-	return getPopoverRootState().createTrigger(props);
+export function usePopoverContent(props: PopoverContentStateProps) {
+	return getPopoverRootContext().createContent(props);
 }
 
-export function setPopoverContentState(props: PopoverContentStateProps) {
-	return getPopoverRootState().createContent(props);
-}
-
-export function setPopoverCloseState() {
-	return getPopoverRootState().createClose();
+export function usePopoverClose() {
+	return getPopoverRootContext().createClose();
 }

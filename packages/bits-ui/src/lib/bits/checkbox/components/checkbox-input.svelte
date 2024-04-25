@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { getCheckboxInputState } from "../checkbox.svelte.js";
+	import { useCheckboxInput } from "../checkbox.svelte.js";
 
-	const inputState = getCheckboxInputState();
+	const state = useCheckboxInput();
 </script>
 
-{#if inputState.shouldRender}
-	<input {...inputState.props} type="checkbox" style="display: none !important;" />
+{#if state.shouldRender}
+	<input {...state.props} type="checkbox" style="display: none !important;" />
 {/if}

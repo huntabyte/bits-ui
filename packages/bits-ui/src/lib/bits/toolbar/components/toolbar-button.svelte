@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { ButtonProps } from "../index.js";
-	import { setToolbarButtonState } from "../toolbar.svelte.js";
+	import { useToolbarButton } from "../toolbar.svelte.js";
 	import { useId } from "$lib/internal/useId.svelte.js";
 	import { readonlyBox } from "$lib/internal/box.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
@@ -16,7 +16,7 @@
 		...restProps
 	}: ButtonProps = $props();
 
-	const state = setToolbarButtonState({
+	const state = useToolbarButton({
 		id: readonlyBox(() => id),
 		disabled: readonlyBox(() => disabled),
 	});

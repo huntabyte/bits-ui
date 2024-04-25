@@ -56,7 +56,7 @@ class ToggleRootState {
 // METHODS
 //
 
-export function setToggleRootState(props: ToggleRootStateProps) {
+export function useToggleRoot(props: ToggleRootStateProps) {
 	return new ToggleRootState(props);
 }
 

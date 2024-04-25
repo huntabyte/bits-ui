@@ -1,4 +1,3 @@
-import { getContext, setContext } from "svelte";
 import {
 	getAriaChecked,
 	getAriaRequired,
@@ -8,6 +7,7 @@ import {
 } from "$lib/internal/attrs.js";
 import type { BoxedValues, ReadonlyBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
+import { createContext } from "$lib/internal/createContext.js";
 
 type SwitchRootStateProps = ReadonlyBoxedValues<{
 	disabled: boolean;
@@ -108,20 +108,16 @@ class SwitchThumbState {
 // CONTEXT METHODS
 //
 
-const SWITCH_ROOT_KEY = Symbol("Switch.Root");
+const [setSwitchRootContext, getSwitchRootContext] = createContext<SwitchRootState>("Switch.Root");
 
-export function setSwitchRootState(props: SwitchRootStateProps) {
-	return setContext(SWITCH_ROOT_KEY, new SwitchRootState(props));
+export function useSwitchRoot(props: SwitchRootStateProps) {
+	return setSwitchRootContext(new SwitchRootState(props));
 }
 
-export function getSwitchRootState(): SwitchRootState {
-	return getContext(SWITCH_ROOT_KEY);
+export function useSwitchInput(): SwitchInputState {
+	return getSwitchRootContext().createInput();
 }
 
-export function getSwitchInputState(): SwitchInputState {
-	return getSwitchRootState().createInput();
-}
-
-export function getSwitchThumbState(): SwitchThumbState {
-	return getSwitchRootState().createThumb();
+export function useSwitchThumb(): SwitchThumbState {
+	return getSwitchRootContext().createThumb();
 }

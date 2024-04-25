@@ -1,11 +1,11 @@
 <script lang="ts">
 	import type { TriggerProps } from "../index.js";
-	import { getCollapsibleTriggerState } from "../collapsible.svelte.js";
+	import { useCollapsibleTrigger } from "../collapsible.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let { asChild, children, child, el = $bindable(), ...restProps }: TriggerProps = $props();
 
-	const state = getCollapsibleTriggerState();
+	const state = useCollapsibleTrigger();
 	const mergedProps = $derived(mergeProps(restProps, state.props));
 </script>
 

@@ -1,8 +1,7 @@
-import { getContext, setContext, untrack } from "svelte";
+import { untrack } from "svelte";
 import type { AvatarImageLoadingStatus } from "./types.js";
-import { styleToString } from "$lib/internal/style.js";
 import type { Box, ReadonlyBox, ReadonlyBoxedValues } from "$lib/internal/box.svelte.js";
-import type { StyleProperties } from "$lib/shared/index.js";
+import { createContext } from "$lib/internal/createContext.js";
 
 /**
  * ROOT
@@ -106,20 +105,16 @@ class AvatarFallbackState {
  * CONTEXT METHODS
  */
 
-export const AVATAR_ROOT_KEY = Symbol("Avatar.Root");
+const [setAvatarRootContext, getAvatarRootContext] = createContext<AvatarRootState>("Avatar.Root");
 
-export function setAvatarRootState(props: AvatarRootStateProps) {
-	return setContext(AVATAR_ROOT_KEY, new AvatarRootState(props));
+export function useAvatarRoot(props: AvatarRootStateProps) {
+	return setAvatarRootContext(new AvatarRootState(props));
 }
 
-export function getAvatarRootState(): AvatarRootState {
-	return getContext(AVATAR_ROOT_KEY);
+export function useAvatarImage(props: AvatarImageStateProps) {
+	return getAvatarRootContext().createImage(props);
 }
 
-export function getAvatarImageState(props: AvatarImageStateProps) {
-	return getAvatarRootState().createImage(props);
-}
-
-export function getAvatarFallbackState() {
-	return getAvatarRootState().createFallback();
+export function useAvatarFallback() {
+	return getAvatarRootContext().createFallback();
 }

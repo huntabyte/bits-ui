@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { TriggerProps } from "../index.js";
-	import { setTabsTriggerState } from "../tabs.svelte.js";
+	import { useTabsTrigger } from "../tabs.svelte.js";
 	import { readonlyBox } from "$lib/internal/box.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { useId } from "$lib/internal/useId.svelte.js";
@@ -17,7 +17,7 @@
 		...restProps
 	}: TriggerProps = $props();
 
-	const state = setTabsTriggerState({
+	const state = useTabsTrigger({
 		id: readonlyBox(() => id),
 		disabled: readonlyBox(() => disabled),
 		value: readonlyBox(() => value),

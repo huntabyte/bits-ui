@@ -18,6 +18,7 @@ import {
 } from "$lib/internal/index.js";
 import type { Orientation } from "$lib/shared/index.js";
 import { type UseRovingFocusReturn, useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
+import { createContext } from "$lib/internal/createContext.js";
 
 const ROOT_ATTR = "radio-group-root";
 const ITEM_ATTR = "radio-group-item";
@@ -177,21 +178,17 @@ class RadioGroupInputState {
 // CONTEXT METHODS
 //
 
-const RADIO_GROUP_ROOT_KEY = Symbol("RadioGroup.Root");
+const [setRadioGroupRootContext, getRadioGroupRootContext] =
+	createContext<RadioGroupRootState>("RadioGroup.Root");
 
-export function setRadioGroupRootState(props: RadioGroupRootStateProps) {
-	return setContext(RADIO_GROUP_ROOT_KEY, new RadioGroupRootState(props));
+export function useRadioGroupRoot(props: RadioGroupRootStateProps) {
+	return setRadioGroupRootContext(new RadioGroupRootState(props));
 }
 
-export function getRadioGroupRootState() {
-	verifyContextDeps(RADIO_GROUP_ROOT_KEY);
-	return getContext<RadioGroupRootState>(RADIO_GROUP_ROOT_KEY);
+export function useRadioGroupItem(props: RadioGroupItemStateProps) {
+	return getRadioGroupRootContext().createItem(props);
 }
 
-export function setRadioGroupItemState(props: RadioGroupItemStateProps) {
-	return getRadioGroupRootState().createItem(props);
-}
-
-export function getRadioGroupInputState() {
-	return getRadioGroupRootState().createInput();
+export function useRadioGroupInput() {
+	return getRadioGroupRootContext().createInput();
 }

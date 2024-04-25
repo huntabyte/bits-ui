@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { setDialogTitleState } from "../dialog.svelte.js";
+	import { useDialogTitle } from "../dialog.svelte.js";
 	import type { TitleProps } from "../index.js";
 	import { readonlyBox } from "$lib/internal/box.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
@@ -15,7 +15,7 @@
 		...restProps
 	}: TitleProps = $props();
 
-	const state = setDialogTitleState({
+	const state = useDialogTitle({
 		id: readonlyBox(() => id),
 		level: readonlyBox(() => level),
 	});

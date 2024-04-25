@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { setAccordionRootState } from "../accordion.svelte.js";
+	import { useAccordionRoot } from "../accordion.svelte.js";
 	import type { RootProps } from "../index.js";
 	import { type Box, box, mergeProps, readonlyBox, useId } from "$lib/internal/index.js";
 
@@ -20,7 +20,7 @@
 
 	value === undefined && (value = type === "single" ? "" : []);
 
-	const rootState = setAccordionRootState({
+	const state = useAccordionRoot({
 		type,
 		value: box(
 			() => value!,
@@ -35,7 +35,7 @@
 		orientation: readonlyBox(() => orientation),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, rootState.props));
+	const mergedProps = $derived(mergeProps(restProps, state.props));
 </script>
 
 {#if asChild}

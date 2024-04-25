@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { RootProps } from "../index.js";
-	import { setRadioGroupRootState } from "../radio-group.svelte.js";
+	import { useRadioGroupRoot } from "../radio-group.svelte.js";
 	import RadioGroupInput from "./radio-group-input.svelte";
 	import { box, readonlyBox, styleToString, useId } from "$lib/internal/index.js";
 
@@ -21,7 +21,7 @@
 		...restProps
 	}: RootProps = $props();
 
-	const root = setRadioGroupRootState({
+	const state = useRadioGroupRoot({
 		orientation: readonlyBox(() => orientation),
 		disabled: readonlyBox(() => disabled),
 		loop: readonlyBox(() => loop),
@@ -39,7 +39,7 @@
 
 	const mergedProps = $derived({
 		...restProps,
-		...root.props,
+		...state.props,
 		style: styleToString(style),
 	});
 </script>

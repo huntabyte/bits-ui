@@ -1,11 +1,11 @@
 <script lang="ts">
 	import type { CloseProps } from "../index.js";
-	import { setPopoverCloseState } from "../popover.svelte.js";
+	import { usePopoverClose } from "../popover.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let { asChild, child, children, el = $bindable(), ...restProps }: CloseProps = $props();
 
-	const state = setPopoverCloseState();
+	const state = usePopoverClose();
 
 	const mergedProps = $derived(mergeProps(restProps, state.props));
 </script>

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { RootProps } from "../index.js";
-	import { setToggleGroupRootState } from "../toggle-group.svelte.js";
+	import { useToggleGroupRoot } from "../toggle-group.svelte.js";
 	import { Box, box, readonlyBox } from "$lib/internal/box.svelte.js";
 	import { useId } from "$lib/internal/useId.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
@@ -23,7 +23,7 @@
 
 	value === undefined && (value = type === "single" ? "" : []);
 
-	const state = setToggleGroupRootState({
+	const state = useToggleGroupRoot({
 		id: readonlyBox(() => id),
 		value: box(
 			() => value!,

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { setDialogDescriptionState } from "../dialog.svelte.js";
+	import { useDialogDescription } from "../dialog.svelte.js";
 	import type { DescriptionProps } from "../index.js";
 	import { readonlyBox } from "$lib/internal/box.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
@@ -14,7 +14,7 @@
 		...restProps
 	}: DescriptionProps = $props();
 
-	const state = setDialogDescriptionState({
+	const state = useDialogDescription({
 		id: readonlyBox(() => id),
 	});
 

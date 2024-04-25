@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { setDialogRootState } from "../dialog.svelte.js";
+	import { useDialogRoot } from "../dialog.svelte.js";
 	import type { RootProps } from "../index.js";
 	import { box } from "$lib/internal/box.svelte.js";
 
 	let { open = $bindable(false), onOpenChange, children }: RootProps = $props();
 
-	setDialogRootState({
+	useDialogRoot({
 		open: box(
 			() => open,
 			(v) => {

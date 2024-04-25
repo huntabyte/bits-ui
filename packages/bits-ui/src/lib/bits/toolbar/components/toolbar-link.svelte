@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { setToolbarLinkState } from "../toolbar.svelte.js";
+	import { useToolbarLink } from "../toolbar.svelte.js";
 	import type { LinkProps } from "../index.js";
 	import { readonlyBox } from "$lib/internal/box.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
@@ -15,7 +15,7 @@
 		...restProps
 	}: LinkProps = $props();
 
-	const state = setToolbarLinkState({
+	const state = useToolbarLink({
 		id: readonlyBox(() => id),
 	});
 

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { RootProps } from "../index.js";
-	import { setSwitchRootState } from "../switch.svelte.js";
+	import { useSwitchRoot } from "../switch.svelte.js";
 	import SwitchInput from "./switch-input.svelte";
 	import { box, readonlyBox } from "$lib/internal/box.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
@@ -20,7 +20,7 @@
 		...restProps
 	}: RootProps = $props();
 
-	const rootState = setSwitchRootState({
+	const state = useSwitchRoot({
 		checked: box(
 			() => checked,
 			(v) => {
@@ -34,11 +34,11 @@
 		name: readonlyBox(() => name),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, rootState.props, { type }));
+	const mergedProps = $derived(mergeProps(restProps, state.props, { type }));
 </script>
 
 {#if asChild}
-	{@render child?.({ props: mergedProps, checked: rootState.checked.value })}
+	{@render child?.({ props: mergedProps, checked: state.checked.value })}
 {:else}
 	<button bind:this={el} {...mergedProps}>
 		{@render children?.()}

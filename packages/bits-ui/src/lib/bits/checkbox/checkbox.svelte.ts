@@ -1,4 +1,3 @@
-import { getContext, setContext } from "svelte";
 import {
 	type Box,
 	type BoxedValues,
@@ -9,6 +8,7 @@ import {
 	getDataDisabled,
 	kbd,
 } from "$lib/internal/index.js";
+import { createContext } from "$lib/internal/createContext.js";
 
 type CheckboxRootStateProps = ReadonlyBoxedValues<{
 	disabled: boolean;
@@ -111,16 +111,13 @@ function getCheckboxDataState(checked: boolean | "indeterminate") {
 // CONTEXT METHODS
 //
 
-export const CHECKBOX_ROOT_KEY = Symbol("Checkbox.Root");
+const [setCheckboxRootContext, getCheckboxRootContext] =
+	createContext<CheckboxRootState>("Checkbox.Root");
 
-export function setCheckboxRootState(props: CheckboxRootStateProps) {
-	return setContext(CHECKBOX_ROOT_KEY, new CheckboxRootState(props));
+export function useCheckboxRoot(props: CheckboxRootStateProps) {
+	return setCheckboxRootContext(new CheckboxRootState(props));
 }
 
-export function getCheckboxRootState(): CheckboxRootState {
-	return getContext(CHECKBOX_ROOT_KEY);
-}
-
-export function getCheckboxInputState(): CheckboxInputState {
-	return getCheckboxRootState().createInput();
+export function useCheckboxInput(): CheckboxInputState {
+	return getCheckboxRootContext().createInput();
 }

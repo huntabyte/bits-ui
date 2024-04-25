@@ -1,12 +1,11 @@
-import { getContext, setContext } from "svelte";
 import { getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
 import {
 	type BoxedValues,
 	type ReadonlyBoxedValues,
 	boxedState,
-	readonlyBoxedState,
 } from "$lib/internal/box.svelte.js";
 import { useNodeById } from "$lib/internal/useNodeById.svelte.js";
+import { createContext } from "$lib/internal/createContext.js";
 
 const CONTENT_ATTR = "data-dialog-content";
 const TITLE_ATTR = "data-dialog-title";
@@ -213,36 +212,32 @@ class DialogOverlayState {
 	} as const);
 }
 
-const DIALOG_ROOT_KEY = Symbol("Dialog.Root");
+const [setDialogRootContext, getDialogRootContext] = createContext<DialogRootState>("Dialog.Root");
 
-export function setDialogRootState(props: DialogRootStateProps) {
-	return setContext(DIALOG_ROOT_KEY, new DialogRootState(props));
+export function useDialogRoot(props: DialogRootStateProps) {
+	return setDialogRootContext(new DialogRootState(props));
 }
 
-export function getDialogRootState(): DialogRootState {
-	return getContext(DIALOG_ROOT_KEY);
+export function useDialogTrigger(props: DialogTriggerStateProps) {
+	return getDialogRootContext().createTrigger(props);
 }
 
-export function setDialogTriggerState(props: DialogTriggerStateProps) {
-	return getDialogRootState().createTrigger(props);
+export function useDialogTitle(props: DialogTitleStateProps) {
+	return getDialogRootContext().createTitle(props);
 }
 
-export function setDialogTitleState(props: DialogTitleStateProps) {
-	return getDialogRootState().createTitle(props);
+export function useDialogContent(props: DialogContentStateProps) {
+	return getDialogRootContext().createContent(props);
 }
 
-export function setDialogContentState(props: DialogContentStateProps) {
-	return getDialogRootState().createContent(props);
+export function useDialogOverlay(props: DialogOverlayStateProps) {
+	return getDialogRootContext().createOverlay(props);
 }
 
-export function setDialogOverlayState(props: DialogOverlayStateProps) {
-	return getDialogRootState().createOverlay(props);
+export function useDialogDescription(props: DialogDescriptionStateProps) {
+	return getDialogRootContext().createDescription(props);
 }
 
-export function setDialogDescriptionState(props: DialogDescriptionStateProps) {
-	return getDialogRootState().createDescription(props);
-}
-
-export function setDialogCloseState() {
-	return getDialogRootState().createClose();
+export function useDialogClose() {
+	return getDialogRootContext().createClose();
 }

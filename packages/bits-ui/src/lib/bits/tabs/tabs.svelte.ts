@@ -1,24 +1,19 @@
-import { getContext, setContext } from "svelte";
 import type { TabsActivationMode } from "./types.js";
 import {
 	type Box,
 	type BoxedValues,
 	type ReadonlyBoxedValues,
-	boxedState,
 	getAriaOrientation,
-	getAttrAndSelector,
 	getDataDisabled,
 	getDataOrientation,
-	getDirectionalKeys,
 	getDisabledAttr,
-	getElemDirection,
 	getHiddenAttr,
 	kbd,
 	useNodeById,
-	verifyContextDeps,
 } from "$lib/internal/index.js";
 import type { Orientation } from "$lib/shared/index.js";
 import { type UseRovingFocusReturn, useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
+import { createContext } from "$lib/internal/createContext.js";
 
 const ROOT_ATTR = "tabs-root";
 const LIST_ATTR = "tabs-list";
@@ -212,27 +207,22 @@ class TabsContentState {
 // CONTEXT METHODS
 //
 
-const TABS_ROOT_KEY = Symbol("Tabs.Root");
+const [setTabsRootContext, getTabsRootContext] = createContext<TabsRootState>("Tabs.Root");
 
-export function setTabsRootState(props: TabsRootStateProps) {
-	return setContext(TABS_ROOT_KEY, new TabsRootState(props));
+export function useTabsRoot(props: TabsRootStateProps) {
+	return setTabsRootContext(new TabsRootState(props));
 }
 
-export function getTabsRootState(): TabsRootState {
-	verifyContextDeps(TABS_ROOT_KEY);
-	return getContext(TABS_ROOT_KEY);
+export function useTabsTrigger(props: TabsTriggerStateProps) {
+	return getTabsRootContext().createTrigger(props);
 }
 
-export function setTabsTriggerState(props: TabsTriggerStateProps) {
-	return getTabsRootState().createTrigger(props);
+export function useTabsList() {
+	return getTabsRootContext().createList();
 }
 
-export function setTabsListState() {
-	return getTabsRootState().createList();
-}
-
-export function setTabsContentState(props: TabsContentStateProps) {
-	return getTabsRootState().createContent(props);
+export function useTabsContent(props: TabsContentStateProps) {
+	return getTabsRootContext().createContent(props);
 }
 
 //

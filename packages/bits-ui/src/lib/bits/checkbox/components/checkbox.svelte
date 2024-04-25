@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { RootProps } from "../index.js";
-	import { setCheckboxRootState } from "../checkbox.svelte.js";
+	import { useCheckboxRoot } from "../checkbox.svelte.js";
 	import CheckboxInput from "./checkbox-input.svelte";
 	import { box, readonlyBox } from "$lib/internal/box.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
@@ -19,7 +19,7 @@
 		...restProps
 	}: RootProps = $props();
 
-	const checkboxState = setCheckboxRootState({
+	const state = useCheckboxRoot({
 		checked: box(
 			() => checked,
 			(v) => {
@@ -35,15 +35,15 @@
 		value: readonlyBox(() => value),
 	});
 
-	const mergedProps = $derived(mergeProps({ ...restProps }, checkboxState.props));
+	const mergedProps = $derived(mergeProps({ ...restProps }, state.props));
 </script>
 
 {#if asChild}
-	{@render child?.({ props: mergedProps, checked: checkboxState.checked.value })}
+	{@render child?.({ props: mergedProps, checked: state.checked.value })}
 {:else}
 	<button bind:this={el} {...mergedProps}>
 		{@render children?.({
-			checked: checkboxState.checked.value,
+			checked: state.checked.value,
 		})}
 	</button>
 {/if}

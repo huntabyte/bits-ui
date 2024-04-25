@@ -24,6 +24,6 @@ class SeparatorRootState {
 	}
 }
 
-export function setSeparatorRootState(props: SeparatorRootStateProps) {
+export function useSeparatorRoot(props: SeparatorRootStateProps) {
 	return new SeparatorRootState(props);
 }

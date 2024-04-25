@@ -1,12 +1,12 @@
 <script lang="ts">
 	import type { RootProps } from "../index.js";
-	import { setPopoverRootState } from "../popover.svelte.js";
+	import { usePopoverRoot } from "../popover.svelte.js";
 	import { box } from "$lib/internal/box.svelte.js";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 
 	let { open = $bindable(false), children, onOpenChange }: RootProps = $props();
 
-	setPopoverRootState({
+	usePopoverRoot({
 		open: box(
 			() => open,
 			(v) => {

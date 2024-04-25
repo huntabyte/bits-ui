@@ -1,4 +1,3 @@
-import { getContext, setContext } from "svelte";
 import {
 	getAriaChecked,
 	getAriaPressed,
@@ -15,8 +14,8 @@ import {
 import { kbd } from "$lib/internal/kbd.js";
 import { useNodeById } from "$lib/internal/useNodeById.svelte.js";
 import type { Orientation } from "$lib/shared/index.js";
-import { verifyContextDeps } from "$lib/internal/context.js";
 import { type UseRovingFocusReturn, useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
+import { createContext } from "$lib/internal/createContext.js";
 
 const ROOT_ATTR = "toggle-group-root";
 const ITEM_ATTR = "toggle-group-item";
@@ -225,7 +224,8 @@ function getToggleItemDataState(condition: boolean) {
 // CONTEXT METHODS
 //
 
-const TOGGLE_GROUP_ROOT_KEY = Symbol("ToggleGroup.Root");
+const [setToggleGroupRootContext, getToggleGroupRootContext] =
+	createContext<ToggleGroupState>("ToggleGroup.Root");
 
 type InitToggleGroupProps = {
 	type: "single" | "multiple";
@@ -238,21 +238,16 @@ type InitToggleGroupProps = {
 	orientation: Orientation;
 }>;
 
-export function setToggleGroupRootState(props: InitToggleGroupProps) {
+export function useToggleGroupRoot(props: InitToggleGroupProps) {
 	const { type, ...rest } = props;
 	const rootState =
 		type === "single"
 			? new ToggleGroupSingleState(rest as ToggleGroupSingleStateProps)
 			: new ToggleGroupMultipleState(rest as ToggleGroupMultipleStateProps);
-	return setContext(TOGGLE_GROUP_ROOT_KEY, rootState);
+	return setToggleGroupRootContext(rootState);
 }
 
-export function getToggleGroupRootState(): ToggleGroupState {
-	verifyContextDeps(TOGGLE_GROUP_ROOT_KEY);
-	return getContext(TOGGLE_GROUP_ROOT_KEY);
-}
-
-export function setToggleGroupItemState(props: Omit<ToggleGroupItemStateProps, "rootState">) {
-	const rootState = getToggleGroupRootState();
+export function useToggleGroupItem(props: Omit<ToggleGroupItemStateProps, "rootState">) {
+	const rootState = getToggleGroupRootContext();
 	return new ToggleGroupItemState({ ...props, rootState });
 }
