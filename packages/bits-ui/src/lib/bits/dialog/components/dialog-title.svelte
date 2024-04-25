@@ -1,35 +1,32 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { getCtx } from "../ctx.js";
+	import { setDialogTitleState } from "../dialog.svelte.js";
 	import type { TitleProps } from "../index.js";
+	import { readonlyBox } from "$lib/internal/box.svelte.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
 
-	type $$Props = TitleProps;
+	let {
+		id = useId(),
+		el = $bindable(),
+		asChild,
+		child,
+		children,
+		level = 2,
+		...restProps
+	}: TitleProps = $props();
 
-	export let level: $$Props["level"] = "h2";
-	export let asChild: $$Props["asChild"] = false;
-	export let id: $$Props["id"] = undefined;
-	export let el: $$Props["el"] = undefined;
+	const state = setDialogTitleState({
+		id: readonlyBox(() => id),
+		level: readonlyBox(() => level),
+	});
 
-	const {
-		elements: { title },
-		ids,
-		getAttrs,
-	} = getCtx();
-
-	const attrs = getAttrs("title");
-
-	$: if (id) {
-		ids.title.set(id);
-	}
-
-	$: builder = $title;
-	$: Object.assign(builder, attrs);
+	const mergedProps = $derived(mergeProps(restProps, state.props));
 </script>
 
 {#if asChild}
-	<slot {builder} />
+	{@render child?.({ props: mergedProps })}
 {:else}
-	<svelte:element this={level} bind:this={el} use:melt={builder} {...$$restProps}>
-		<slot {builder} />
-	</svelte:element>
+	<div {...mergedProps} bind:this={el}>
+		{@render children?.()}
+	</div>
 {/if}

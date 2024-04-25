@@ -19,6 +19,7 @@ import { useNodeById } from "$lib/internal/useNodeById.svelte.js";
 import { isHTMLElement } from "$lib/internal/is.js";
 import { executeCallbacks } from "$lib/internal/callbacks.js";
 import { kbd } from "$lib/internal/kbd.js";
+import { afterTick } from "$lib/internal/after-tick.js";
 
 type UseFocusScopeProps = ReadonlyBoxedValues<{
 	/**
@@ -72,6 +73,7 @@ export function useFocusScope({
 
 	$effect(() => {
 		const container = node.value;
+		if (!container) return;
 		if (!trapped.value) return;
 
 		function handleFocusIn(event: FocusEvent) {
@@ -154,11 +156,13 @@ export function useFocusScope({
 			container.dispatchEvent(mountEvent);
 
 			if (!mountEvent.defaultPrevented) {
-				focusFirst(removeLinks(getTabbableCandidates(container)), { select: true });
+				afterTick(() => {
+					focusFirst(removeLinks(getTabbableCandidates(container)), { select: true });
 
-				if (document.activeElement === previouslyFocusedElement) {
-					focus(container);
-				}
+					if (document.activeElement === previouslyFocusedElement) {
+						focus(container);
+					}
+				});
 			}
 		}
 
@@ -195,9 +199,9 @@ export function useFocusScope({
 		const focusedElement = document.activeElement as HTMLElement | null;
 
 		if (!(isTabKey && focusedElement)) return;
+		const container = node.value;
+		if (!container) return;
 
-		const container = e.currentTarget;
-		if (!isHTMLElement(container)) return;
 		const [first, last] = getTabbableEdges(container);
 		const hasTabbableElementsInside = first && last;
 

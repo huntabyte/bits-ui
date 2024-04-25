@@ -1,76 +1,36 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { getCtx } from "../ctx.js";
-	import type { OverlayEvents, OverlayProps } from "../index.js";
-	import type { Transition } from "$lib/internal/index.js";
+	import { setDialogOverlayState } from "../dialog.svelte.js";
+	import type { OverlayProps } from "../index.js";
+	import { readonlyBox } from "$lib/internal/box.svelte.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import PresenceLayer from "$lib/bits/utilities/presence-layer/presence-layer.svelte";
 
-	type T = $$Generic<Transition>;
-	type In = $$Generic<Transition>;
-	type Out = $$Generic<Transition>;
+	let {
+		id = useId(),
+		forceMount = false,
+		asChild,
+		child,
+		children,
+		el = $bindable(),
+		...restProps
+	}: OverlayProps = $props();
 
-	type $$Props = OverlayProps<T, In, Out>;
-	type $$Events = OverlayEvents;
+	const state = setDialogOverlayState({
+		id: readonlyBox(() => id),
+	});
 
-	export let transition: $$Props["transition"] = undefined;
-	export let transitionConfig: $$Props["transitionConfig"] = undefined;
-	export let inTransition: $$Props["inTransition"] = undefined;
-	export let inTransitionConfig: $$Props["inTransitionConfig"] = undefined;
-	export let outTransition: $$Props["outTransition"] = undefined;
-	export let outTransitionConfig: $$Props["outTransitionConfig"] = undefined;
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
-
-	const {
-		elements: { overlay },
-		states: { open },
-		getAttrs,
-	} = getCtx();
-	const attrs = getAttrs("overlay");
-
-	$: builder = $overlay;
-	$: Object.assign(builder, attrs);
+	const mergedProps = $derived(mergeProps(restProps, state.props));
 </script>
 
-{#if asChild && $open}
-	<slot {builder} />
-{:else if transition && $open}
-	<!-- svelte-ignore a11y-no-static-element-interactions -->
-	<div
-		on:mouseup
-		bind:this={el}
-		transition:transition={transitionConfig}
-		use:melt={builder}
-		{...$$restProps}
-	/>
-{:else if inTransition && outTransition && $open}
-	<!-- svelte-ignore a11y-no-static-element-interactions -->
-	<div
-		bind:this={el}
-		in:inTransition={inTransitionConfig}
-		out:outTransition={outTransitionConfig}
-		use:melt={builder}
-		on:mouseup
-		{...$$restProps}
-	/>
-{:else if inTransition && $open}
-	<!-- svelte-ignore a11y-no-static-element-interactions -->
-	<div
-		bind:this={el}
-		in:inTransition={inTransitionConfig}
-		use:melt={builder}
-		on:mouseup
-		{...$$restProps}
-	/>
-{:else if outTransition && $open}
-	<!-- svelte-ignore a11y-no-static-element-interactions -->
-	<div
-		bind:this={el}
-		out:outTransition={outTransitionConfig}
-		use:melt={builder}
-		on:mouseup
-		{...$$restProps}
-	/>
-{:else if $open}
-	<!-- svelte-ignore a11y-no-static-element-interactions -->
-	<div bind:this={el} use:melt={builder} on:mouseup {...$$restProps} />
-{/if}
+<PresenceLayer {id} present={state.root.open.value || forceMount}>
+	{#snippet presence({ present })}
+		{#if asChild}
+			{@render child?.({ props: mergeProps(mergedProps, { hidden: !present.value }) })}
+		{:else}
+			<div {...mergeProps(mergedProps, { hidden: !present.value })} bind:this={el}>
+				{@render children?.()}
+			</div>
+		{/if}
+	{/snippet}
+</PresenceLayer>

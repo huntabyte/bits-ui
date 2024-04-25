@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { FocusScopeProps } from "./types.js";
-	import { useFocusScope } from "./use-focus-scope.svelte.js";
+	import type { FocusScopeImplProps } from "./types.js";
+	import { useFocusScope } from "./useFocusScope.svelte.js";
 	import { readonlyBox } from "$lib/internal/box.svelte.js";
 	import { noop } from "$lib/internal/callbacks.js";
 
@@ -11,7 +11,7 @@
 		onDestroyAutoFocus = noop,
 		onMountAutoFocus = noop,
 		focusScope,
-	}: FocusScopeProps = $props();
+	}: FocusScopeImplProps = $props();
 
 	const state = useFocusScope({
 		trapped: readonlyBox(() => trapped),

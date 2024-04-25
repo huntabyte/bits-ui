@@ -1,5 +1,6 @@
 import { untrack } from "svelte";
 import type {
+	DismissableLayerImplProps,
 	DismissableLayerProps,
 	InteractOutsideBehaviorType,
 	InteractOutsideEvent,
@@ -36,7 +37,7 @@ const interactOutsideEndEvents = [
 ] satisfies InteractOutsideInterceptEventType[];
 
 type DismissableLayerStateProps = ReadonlyBoxedValues<
-	Required<Omit<DismissableLayerProps, "children">>
+	Required<Omit<DismissableLayerImplProps, "children">>
 >;
 
 export class DismissableLayerState {
@@ -60,7 +61,7 @@ export class DismissableLayerState {
 
 	constructor(props: DismissableLayerStateProps) {
 		this.node = useNodeById(props.id);
-		this.#behaviorType = props.behaviorType;
+		this.#behaviorType = props.interactOutsideBehavior;
 		this.#interactOutsideStartProp = props.onInteractOutsideStart;
 		this.#interactOutsideProp = props.onInteractOutside;
 		this.#present = props.present;

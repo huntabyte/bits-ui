@@ -2,16 +2,17 @@ import type { Snippet } from "svelte";
 
 export type PresenceLayerProps = {
 	/**
+	 * Whether to force mount the component.
+	 */
+	forceMount?: boolean;
+};
+
+export type PresenceLayerImplProps = PresenceLayerProps & {
+	id: string;
+	/**
 	 * The presence status.
 	 */
 	present: boolean;
 
-	/**
-	 * Whether to force mount the component.
-	 */
-	forceMount?: boolean;
-
 	presence?: Snippet<[{ present: { value: boolean } }]>;
-
-	id: string;
 };

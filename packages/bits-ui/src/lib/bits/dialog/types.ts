@@ -1,113 +1,69 @@
-import type { HTMLButtonAttributes } from "svelte/elements";
-import type { CreateDialogProps as MeltDialogProps } from "@melt-ui/svelte";
+import type { Snippet } from "svelte";
+import type { EscapeLayerProps } from "../utilities/escape-layer/types.js";
+import type { DismissableLayerProps } from "../utilities/dismissable-layer/types.js";
+import type { PresenceLayerProps } from "../utilities/presence-layer/types.js";
+import type { FocusScopeProps } from "../utilities/focus-scope/types.js";
+import type { TextSelectionLayerProps } from "../utilities/text-selection-layer/types.js";
 import type {
-	DOMElement,
-	Expand,
-	HTMLDivAttributes,
-	HTMLHeadingAttributes,
-	OmitOpen,
 	OnChangeFn,
-	SvelteEvent,
-	Transition,
-	TransitionProps,
-} from "$lib/internal/index.js";
-import type { CustomEventHandler } from "$lib/index.js";
+	PrimitiveButtonAttributes,
+	PrimitiveDivAttributes,
+	WithAsChild,
+} from "$lib/internal/types.js";
+import type { PortalProps } from "$lib/bits/utilities/portal/index.js";
+import type { EventCallback } from "$lib/internal/events.js";
 
-import type { FocusProp } from "$lib/shared/index.js";
+export type DialogRootPropsWithoutHTML = {
+	/**
+	 * The open state of the dialog.
+	 */
+	open?: boolean;
 
-export type DialogPropsWithoutHTML = Expand<
-	OmitOpen<
-		Omit<MeltDialogProps, "role" | "ids" | "forceVisible" | "openFocus" | "closeFocus">
-	> & {
-		/**
-		 * The open state of the dialog.
-		 * You can bind this to a boolean value to programmatically control the open state.
-		 *
-		 * @defaultValue false
-		 */
-		open?: MeltDialogProps["defaultOpen"] & {};
+	/**
+	 * A callback that is called when the popover's open state changes.
+	 */
+	onOpenChange?: OnChangeFn<boolean>;
 
-		/**
-		 * A callback function called when the open state changes.
-		 */
-		onOpenChange?: OnChangeFn<boolean>;
+	children?: Snippet;
+};
 
-		/**
-		 * Override the default autofocus behavior of the dialog when it opens
-		 */
-		openFocus?: FocusProp;
+export type DialogRootProps = DialogRootPropsWithoutHTML;
 
-		/**
-		 * Override the default autofocus behavior of the dialog after close
-		 */
-		closeFocus?: FocusProp;
-	}
+export type DialogContentPropsWithoutHTML = WithAsChild<
+	EscapeLayerProps &
+		DismissableLayerProps &
+		PresenceLayerProps &
+		FocusScopeProps &
+		TextSelectionLayerProps & {
+			preventScroll?: boolean;
+		}
 >;
 
-export type DialogTriggerPropsWithoutHTML = DOMElement<HTMLButtonElement>;
+export type DialogContentProps = DialogContentPropsWithoutHTML & PrimitiveDivAttributes;
+
+export type DialogOverlayPropsWithoutHTML = WithAsChild<PresenceLayerProps>;
+export type DialogOverlayProps = DialogOverlayPropsWithoutHTML & PrimitiveDivAttributes;
+
+export type DialogPortalPropsWithoutHTML = PortalProps;
+export type DialogPortalProps = DialogPortalPropsWithoutHTML;
+
+export type DialogTriggerPropsWithoutHTML = WithAsChild<{
+	onclick?: EventCallback<MouseEvent>;
+}>;
+
+export type DialogTriggerProps = DialogTriggerPropsWithoutHTML & PrimitiveButtonAttributes;
+
+export type DialogTitlePropsWithoutHTML = WithAsChild<{
+	/**
+	 * The heading level of the dialog title.
+	 */
+	level?: 1 | 2 | 3 | 4 | 5 | 6;
+}>;
+
+export type DialogTitleProps = DialogTitlePropsWithoutHTML & PrimitiveDivAttributes;
 
 export type DialogClosePropsWithoutHTML = DialogTriggerPropsWithoutHTML;
-
-export type DialogContentPropsWithoutHTML<
-	T extends Transition = Transition,
-	In extends Transition = Transition,
-	Out extends Transition = Transition,
-> = Expand<TransitionProps<T, In, Out> & DOMElement>;
-
-export type DialogDescriptionPropsWithoutHTML = DOMElement;
-
-export type DialogOverlayPropsWithoutHTML<
-	T extends Transition = Transition,
-	In extends Transition = Transition,
-	Out extends Transition = Transition,
-> = Expand<TransitionProps<T, In, Out> & DOMElement>;
-
-export type DialogPortalPropsWithoutHTML = DOMElement;
-
-export type DialogTitlePropsWithoutHTML = Expand<
-	{
-		level?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
-	} & DOMElement<HTMLHeadingElement>
->;
-
-export type DialogProps = DialogPropsWithoutHTML;
-
-export type DialogTriggerProps = DialogTriggerPropsWithoutHTML & HTMLButtonAttributes;
 export type DialogCloseProps = DialogTriggerProps;
 
-export type DialogContentProps<
-	T extends Transition = Transition,
-	In extends Transition = Transition,
-	Out extends Transition = Transition,
-> = DialogContentPropsWithoutHTML<T, In, Out> & HTMLDivAttributes;
-
-export type DialogDescriptionProps = DialogDescriptionPropsWithoutHTML & HTMLDivAttributes;
-
-export type DialogOverlayProps<
-	T extends Transition = Transition,
-	In extends Transition = Transition,
-	Out extends Transition = Transition,
-> = DialogOverlayPropsWithoutHTML<T, In, Out> & HTMLDivAttributes;
-
-export type DialogPortalProps = DialogPortalPropsWithoutHTML & HTMLDivAttributes;
-export type DialogTitleProps = DialogTitlePropsWithoutHTML & HTMLHeadingAttributes;
-
-export type DialogOverlayEvents<T extends Element = HTMLElement> = {
-	mouseup: SvelteEvent<MouseEvent, T>;
-};
-
-export type DialogContentEvents<T extends Element = HTMLElement> = {
-	pointerdown: SvelteEvent<PointerEvent, T>;
-	pointerup: SvelteEvent<PointerEvent, T>;
-	pointermove: SvelteEvent<PointerEvent, T>;
-	touchend: SvelteEvent<TouchEvent, T>;
-	touchstart: SvelteEvent<TouchEvent, T>;
-	touchcancel: SvelteEvent<TouchEvent, T>;
-	touchmove: SvelteEvent<TouchEvent, T>;
-};
-
-export type DialogTriggerEvents<T extends Element = HTMLButtonElement> = {
-	click: CustomEventHandler<MouseEvent, T>;
-	keydown: CustomEventHandler<KeyboardEvent, T>;
-};
-export type DialogCloseEvents = DialogTriggerEvents;
+export type DialogDescriptionPropsWithoutHTML = WithAsChild<{}>;
+export type DialogDescriptionProps = DialogDescriptionPropsWithoutHTML & PrimitiveDivAttributes;

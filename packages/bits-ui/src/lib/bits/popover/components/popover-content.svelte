@@ -12,6 +12,9 @@
 		id = useId(),
 		forceMount = false,
 		onDestroyAutoFocus = noop,
+		onEscapeKeydown = noop,
+		onInteractOutside = noop,
+		loop = true,
 		...restProps
 	}: ContentProps = $props();
 
@@ -24,8 +27,16 @@
 	{...restProps}
 	present={state.root.open.value || forceMount}
 	{id}
-	onInteractOutside={state.root.close}
-	onEscape={state.root.close}
+	onInteractOutside={(e) => {
+		onInteractOutside(e);
+		if (e.defaultPrevented) return;
+		state.root.close();
+	}}
+	onEscapeKeydown={(e) => {
+		// TODO: users should be able to cancel this
+		onEscapeKeydown(e);
+		state.root.close();
+	}}
 	onDestroyAutoFocus={(e) => {
 		onDestroyAutoFocus(e);
 		if (e.defaultPrevented) return;
@@ -33,7 +44,7 @@
 		state.root.triggerNode?.value?.focus();
 	}}
 	trapped
-	loop
+	{loop}
 >
 	{#snippet popper({ props })}
 		{@const mergedProps = mergeProps(restProps, state.props, props)}

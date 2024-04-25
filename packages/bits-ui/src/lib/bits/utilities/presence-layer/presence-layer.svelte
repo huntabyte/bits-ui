@@ -1,16 +1,9 @@
 <script lang="ts">
-	import type { PresenceLayerProps } from "./types.js";
+	import type { PresenceLayerImplProps } from "./types.js";
 	import { readonlyBox } from "$lib/internal/box.svelte.js";
-	import { usePresence } from "$lib/internal/usePresence.svelte.js";
+	import { usePresence } from "$lib/bits/utilities/presence-layer/usePresence.svelte.js";
 
-	let {
-		present,
-		forceMount: forceMountProp = false,
-		presence,
-		id,
-	}: PresenceLayerProps = $props();
-
-	const forceMount = readonlyBox(() => forceMountProp);
+	let { present, forceMount = false, presence, id }: PresenceLayerImplProps = $props();
 
 	const isPresent = usePresence(
 		readonlyBox(() => present),
@@ -18,6 +11,6 @@
 	);
 </script>
 
-{#if forceMount.value || present || isPresent.value}
+{#if forceMount || present || isPresent.value}
 	{@render presence?.({ present: isPresent })}
 {/if}

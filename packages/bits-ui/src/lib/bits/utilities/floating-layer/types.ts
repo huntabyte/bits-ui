@@ -1,10 +1,9 @@
 import type { Snippet } from "svelte";
-import type { Align, Boundary, Side } from "./floating-layer.svelte.js";
+import type { Align, Boundary, Side } from "./useFloatingLayer.svelte.js";
 import type { Arrayable } from "$lib/internal/types.js";
-import type { StyleProperties, Direction } from "$lib/shared/index.js";
+import type { Direction, StyleProperties } from "$lib/shared/index.js";
 
 export type FloatingLayerContentProps = {
-	id: string;
 	/**
 	 * The preferred side of the anchor to render against when open.
 	 * Will be reversed when collisions occur.
@@ -76,11 +75,6 @@ export type FloatingLayerContentProps = {
 
 	updatePositionStrategy?: "optimized" | "always";
 
-	/**
-	 * Callback that is called when the floating element is placed.
-	 */
-	onPlaced?: () => void;
-
 	content?: Snippet<[{ props: Record<string, unknown> }]>;
 
 	/**
@@ -95,10 +89,13 @@ export type FloatingLayerContentProps = {
 	dir?: Direction;
 
 	/**
-	 * The style properties to apply to the content.
+	 * Whether to prevent scrolling the body when the content is open.
 	 */
-	style?: StyleProperties;
+	preventScroll?: boolean;
+};
 
+export type FloatingLayerContentImplProps = {
+	id: string;
 	/**
 	 * Whether the floating layer is present.
 	 */
@@ -108,7 +105,17 @@ export type FloatingLayerContentProps = {
 	 * The ID of the content wrapper element.
 	 */
 	wrapperId?: string;
-};
+
+	/**
+	 * The style properties to apply to the content.
+	 */
+	style?: StyleProperties;
+
+	/**
+	 * Callback that is called when the floating element is placed.
+	 */
+	onPlaced?: () => void;
+} & FloatingLayerContentProps;
 
 export type FloatingLayerAnchorProps = {
 	id: string;

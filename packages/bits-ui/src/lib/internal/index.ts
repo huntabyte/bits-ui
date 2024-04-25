@@ -12,7 +12,7 @@ export * from "./focus.js";
 export * from "./context.js";
 export * from "./box.svelte.js";
 export * from "./useStateMachine.svelte.js";
-export * from "./usePresence.svelte.js";
+export * from "../bits/utilities/presence-layer/usePresence.svelte.js";
 export * from "./useNodeById.svelte.js";
 export * from "./after-tick.js";
 export * from "./locale.js";

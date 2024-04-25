@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { setFloatingArrowState } from "../floating-layer.svelte.js";
+	import { setFloatingArrowState } from "../useFloatingLayer.svelte.js";
 	import { Arrow, type ArrowProps } from "$lib/bits/utilities/arrow/index.js";
 	import { mergeProps, readonlyBox, useId } from "$lib/internal/index.js";
 
