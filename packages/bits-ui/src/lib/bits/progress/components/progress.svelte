@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { RootProps } from "../index.js";
-	import { setProgressRootState } from "../progress.svelte.js";
+	import { useProgressRootState } from "../progress.svelte.js";
 	import { readonlyBox } from "$lib/internal/box.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
@@ -14,7 +14,7 @@
 		...restProps
 	}: RootProps = $props();
 
-	const state = setProgressRootState({
+	const state = useProgressRootState({
 		value: readonlyBox(() => value),
 		max: readonlyBox(() => max),
 	});

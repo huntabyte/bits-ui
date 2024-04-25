@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { ItemProps } from "../index.js";
-	import { setRadioGroupItemState } from "../radio-group.svelte.js";
+	import { useRadioGroupItem } from "../radio-group.svelte.js";
 	import { readonlyBox, styleToString, useId } from "$lib/internal/index.js";
 
 	let {
@@ -17,7 +17,7 @@
 		...restProps
 	}: ItemProps = $props();
 
-	const item = setRadioGroupItemState({
+	const state = useRadioGroupItem({
 		value: readonlyBox(() => value),
 		disabled: readonlyBox(() => disabled),
 		id: readonlyBox(() => id),
@@ -27,15 +27,15 @@
 
 	const mergedProps = $derived({
 		...restProps,
-		...item.props,
+		...state.props,
 		style: styleToString(style),
 	});
 </script>
 
 {#if asChild}
-	{@render child?.({ props: mergedProps, checked: item.checked })}
+	{@render child?.({ props: mergedProps, checked: state.checked })}
 {:else}
 	<button bind:this={el} {...mergedProps}>
-		{@render children?.({ checked: item.checked })}
+		{@render children?.({ checked: state.checked })}
 	</button>
 {/if}

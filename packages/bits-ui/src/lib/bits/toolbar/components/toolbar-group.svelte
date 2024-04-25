@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { GroupProps } from "../index.js";
-	import { setToolbarGroupState } from "../toolbar.svelte.js";
+	import { useToolbarGroup } from "../toolbar.svelte.js";
 	import { useId } from "$lib/internal/useId.svelte.js";
 	import { Box, box, readonlyBox } from "$lib/internal/box.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
@@ -20,7 +20,7 @@
 
 	value === undefined && (value = type === "single" ? "" : []);
 
-	const state = setToolbarGroupState({
+	const state = useToolbarGroup({
 		id: readonlyBox(() => id),
 		disabled: readonlyBox(() => disabled),
 		type,

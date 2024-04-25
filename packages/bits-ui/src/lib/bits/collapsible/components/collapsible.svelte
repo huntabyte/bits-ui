@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { RootProps } from "../index.js";
-	import { setCollapsibleRootState } from "../collapsible.svelte.js";
+	import { useCollapsibleRoot } from "../collapsible.svelte.js";
 	import { box, readonlyBox } from "$lib/internal/box.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
@@ -15,7 +15,7 @@
 		...restProps
 	}: RootProps = $props();
 
-	const state = setCollapsibleRootState({
+	const state = useCollapsibleRoot({
 		open: box(
 			() => open,
 			(v) => {

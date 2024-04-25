@@ -17,6 +17,7 @@ import {
 } from "$lib/internal/index.js";
 import { type UseRovingFocusReturn, useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
 import type { Orientation } from "$lib/shared/index.js";
+import { createContext } from "$lib/internal/createContext.js";
 
 const ROOT_ATTR = "accordion-root";
 const TRIGGER_ATTR = "accordion-trigger";
@@ -334,9 +335,6 @@ class AccordionHeaderState {
 // CONTEXT METHODS
 //
 
-export const ACCORDION_ROOT_KEY = Symbol("Accordion.Root");
-export const ACCORDION_ITEM_KEY = Symbol("Accordion.Item");
-
 type AccordionState = AccordionSingleState | AccordionMultiState;
 
 type InitAccordionProps = {
@@ -349,42 +347,33 @@ type InitAccordionProps = {
 	loop: boolean;
 }>;
 
-export function setAccordionRootState(props: InitAccordionProps) {
+const [setAccordionRootContext, getAccordionRootContext] =
+	createContext<AccordionState>("Accordion.Root");
+const [setAccordionItemContext, getAccordionItemContext] =
+	createContext<AccordionItemState>("Accordion.Item");
+
+export function useAccordionRoot(props: InitAccordionProps) {
 	const { type, ...rest } = props;
 	const rootState =
 		type === "single"
 			? new AccordionSingleState(rest as AccordionSingleStateProps)
 			: new AccordionMultiState(rest as AccordionMultiStateProps);
-	return setContext(ACCORDION_ROOT_KEY, rootState);
+	return setAccordionRootContext(rootState);
 }
 
-export function getAccordionRootState() {
-	verifyContextDeps(ACCORDION_ROOT_KEY);
-	return getContext<AccordionState>(ACCORDION_ROOT_KEY);
+export function useAccordionItem(props: Omit<AccordionItemStateProps, "rootState">) {
+	const rootState = getAccordionRootContext();
+	return setAccordionItemContext(new AccordionItemState({ ...props, rootState }));
 }
 
-export function setAccordionItemState(props: Omit<AccordionItemStateProps, "rootState">) {
-	const rootState = getAccordionRootState();
-	const itemState = new AccordionItemState({ ...props, rootState });
-	setContext(ACCORDION_ITEM_KEY, itemState);
-	return itemState;
+export function useAccordionTrigger(props: AccordionTriggerStateProps): AccordionTriggerState {
+	return getAccordionItemContext().createTrigger(props);
 }
 
-export function getAccordionItemState() {
-	verifyContextDeps(ACCORDION_ITEM_KEY);
-	return getContext<AccordionItemState>(ACCORDION_ITEM_KEY);
+export function useAccordionContent(props: AccordionContentStateProps): AccordionContentState {
+	return getAccordionItemContext().createContent(props);
 }
 
-export function getAccordionTriggerState(props: AccordionTriggerStateProps): AccordionTriggerState {
-	const itemState = getAccordionItemState();
-	return itemState.createTrigger(props);
-}
-
-export function getAccordionContentState(props: AccordionContentStateProps): AccordionContentState {
-	const itemState = getAccordionItemState();
-	return itemState.createContent(props);
-}
-
-export function getAccordionHeaderState(props: AccordionHeaderStateProps): AccordionHeaderState {
-	return getAccordionItemState().createHeader(props);
+export function useAccordionHeader(props: AccordionHeaderStateProps): AccordionHeaderState {
+	return getAccordionItemContext().createHeader(props);
 }

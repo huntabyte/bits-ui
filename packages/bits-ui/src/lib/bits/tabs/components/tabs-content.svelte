@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { ContentProps } from "../index.js";
-	import { setTabsContentState } from "../tabs.svelte.js";
+	import { useTabsContent } from "../tabs.svelte.js";
 	import { readonlyBox } from "$lib/internal/box.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
@@ -13,7 +13,7 @@
 		...restProps
 	}: ContentProps = $props();
 
-	const state = setTabsContentState({
+	const state = useTabsContent({
 		value: readonlyBox(() => value),
 	});
 

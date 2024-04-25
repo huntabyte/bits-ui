@@ -1,4 +1,4 @@
-import { getContext, setContext, untrack } from "svelte";
+import { untrack } from "svelte";
 import {
 	type Middleware,
 	type Placement,
@@ -24,6 +24,7 @@ import { useSize } from "$lib/internal/useSize.svelte.js";
 import { useFloating } from "$lib/internal/floating-svelte/useFloating.svelte.js";
 import type { UseFloatingReturn } from "$lib/internal/floating-svelte/types.js";
 import type { Direction, StyleProperties } from "$lib/shared/index.js";
+import { createContext } from "$lib/internal/createContext.js";
 
 export const SIDE_OPTIONS = ["top", "right", "bottom", "left"] as const;
 export const ALIGN_OPTIONS = ["start", "center", "end"] as const;
@@ -321,31 +322,26 @@ class FloatingAnchorState {
 // CONTEXT METHODS
 //
 
-const FLOATING_ROOT_KEY = Symbol("Floating.Root");
-const FLOATING_CONTENT_KEY = Symbol("Floating.Content");
+const [setFloatingRootContext, getFloatingRootContext] =
+	createContext<FloatingRootState>("Floating.Root");
 
-export function setFloatingRootState() {
-	return setContext(FLOATING_ROOT_KEY, new FloatingRootState());
+const [setFloatingContentContext, getFloatingContentContext] =
+	createContext<FloatingContentState>("Floating.Content");
+
+export function useFloatingRootState() {
+	return setFloatingRootContext(new FloatingRootState());
 }
 
-export function getFloatingRootState(): FloatingRootState {
-	return getContext(FLOATING_ROOT_KEY);
+export function useFloatingContentState(props: FloatingContentStateProps): FloatingContentState {
+	return setFloatingContentContext(getFloatingRootContext().createContent(props));
 }
 
-export function setFloatingContentState(props: FloatingContentStateProps): FloatingContentState {
-	return setContext(FLOATING_CONTENT_KEY, getFloatingRootState().createContent(props));
+export function useFloatingArrowState(props: FloatingArrowStateProps): FloatingArrowState {
+	return getFloatingContentContext().createArrow(props);
 }
 
-export function getFloatingContentState(): FloatingContentState {
-	return getContext(FLOATING_CONTENT_KEY);
-}
-
-export function setFloatingArrowState(props: FloatingArrowStateProps): FloatingArrowState {
-	return getFloatingContentState().createArrow(props);
-}
-
-export function setFloatingAnchorState(props: FloatingAnchorStateProps): FloatingAnchorState {
-	return getFloatingRootState().createAnchor(props);
+export function useFloatingAnchorState(props: FloatingAnchorStateProps): FloatingAnchorState {
+	return getFloatingRootContext().createAnchor(props);
 }
 
 //

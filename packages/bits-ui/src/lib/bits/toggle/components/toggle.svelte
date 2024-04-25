@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { RootProps } from "../index.js";
-	import { setToggleRootState } from "../toggle.svelte.js";
+	import { useToggleRoot } from "../toggle.svelte.js";
 	import { box, readonlyBox } from "$lib/internal/box.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
@@ -16,7 +16,7 @@
 		...restProps
 	}: RootProps = $props();
 
-	const state = setToggleRootState({
+	const state = useToggleRoot({
 		pressed: box(
 			() => pressed,
 			(v) => {

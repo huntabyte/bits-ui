@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { RootProps } from "../index.js";
-	import { setAvatarRootState } from "../avatar.svelte.js";
+	import { useAvatarRoot } from "../avatar.svelte.js";
 	import { box, readonlyBox } from "$lib/internal/box.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
@@ -15,7 +15,7 @@
 		...restProps
 	}: RootProps = $props();
 
-	const rootState = setAvatarRootState({
+	const state = useAvatarRoot({
 		delayMs: readonlyBox(() => delayMs),
 		loadingStatus: box(
 			() => loadingStatus,
@@ -28,7 +28,7 @@
 		),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, rootState.props));
+	const mergedProps = $derived(mergeProps(restProps, state.props));
 </script>
 
 {#if asChild}

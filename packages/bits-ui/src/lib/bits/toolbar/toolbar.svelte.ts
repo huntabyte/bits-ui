@@ -17,6 +17,7 @@ import { kbd } from "$lib/internal/kbd.js";
 import { useNodeById } from "$lib/internal/useNodeById.svelte.js";
 import { type UseRovingFocusReturn, useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
 import type { Orientation } from "$lib/shared/index.js";
+import { createContext } from "$lib/internal/createContext.js";
 
 const ROOT_ATTR = "data-toolbar-root";
 // all links, buttons, and items must have the ITEM_ATTR for roving focus
@@ -358,16 +359,13 @@ function getToggleItemDataState(condition: boolean) {
 // CONTEXT METHODS
 //
 
-const TOOLBAR_ROOT_KEY = Symbol("Toolbar.Root");
-const TOOLBAR_GROUP_KEY = Symbol("Toolbar.Group");
+const [setToolbarRootContext, getToolbarRootContext] =
+	createContext<ToolbarRootState>("Toolbar.Root");
+const [setToolbarGroupContext, getToolbarGroupContext] =
+	createContext<ToolbarGroupState>("Toolbar.Group");
 
-export function setToolbarRootState(props: ToolbarRootStateProps) {
-	return setContext(TOOLBAR_ROOT_KEY, new ToolbarRootState(props));
-}
-
-export function getToolbarRootState(): ToolbarRootState {
-	verifyContextDeps(TOOLBAR_ROOT_KEY);
-	return getContext(TOOLBAR_ROOT_KEY);
+export function useToolbarRoot(props: ToolbarRootStateProps) {
+	return setToolbarRootContext(new ToolbarRootState(props));
 }
 
 type InitToolbarGroupProps = {
@@ -378,24 +376,18 @@ type InitToolbarGroupProps = {
 	disabled: boolean;
 }>;
 
-export function setToolbarGroupState(props: InitToolbarGroupProps) {
-	const groupState = getToolbarRootState().createGroup(props);
-	return setContext(TOOLBAR_GROUP_KEY, groupState);
+export function useToolbarGroup(props: InitToolbarGroupProps) {
+	return setToolbarGroupContext(getToolbarRootContext().createGroup(props));
 }
 
-export function getToolbarGroupState(): ToolbarGroupState {
-	verifyContextDeps(TOOLBAR_GROUP_KEY);
-	return getContext(TOOLBAR_GROUP_KEY);
+export function useToolbarGroupItem(props: ToolbarGroupItemStateProps) {
+	return getToolbarGroupContext().createItem(props);
 }
 
-export function setToolbarGroupItemState(props: ToolbarGroupItemStateProps) {
-	return getToolbarGroupState().createItem(props);
+export function useToolbarButton(props: ToolbarButtonStateProps) {
+	return getToolbarRootContext().createButton(props);
 }
 
-export function setToolbarButtonState(props: ToolbarButtonStateProps) {
-	return getToolbarRootState().createButton(props);
-}
-
-export function setToolbarLinkState(props: ToolbarLinkStateProps) {
-	return getToolbarRootState().createLink(props);
+export function useToolbarLink(props: ToolbarLinkStateProps) {
+	return getToolbarRootContext().createLink(props);
 }

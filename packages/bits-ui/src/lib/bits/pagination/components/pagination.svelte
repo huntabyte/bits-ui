@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { RootProps } from "../index.js";
-	import { setPaginationRootState } from "../pagination.svelte.js";
+	import { usePaginationRoot } from "../pagination.svelte.js";
 	import { box, readonlyBox, styleToString, useId } from "$lib/internal/index.js";
 
 	let {
@@ -20,7 +20,7 @@
 		...restProps
 	}: RootProps = $props();
 
-	const state = setPaginationRootState({
+	const state = usePaginationRoot({
 		id: readonlyBox(() => id),
 		count: readonlyBox(() => count),
 		perPage: readonlyBox(() => perPage),

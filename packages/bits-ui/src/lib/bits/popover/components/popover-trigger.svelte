@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { TriggerProps } from "../index.js";
-	import { setPopoverTriggerState } from "../popover.svelte.js";
+	import { usePopoverTrigger } from "../popover.svelte.js";
 	import { mergeProps, readonlyBox, useId } from "$lib/internal/index.js";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 
@@ -14,7 +14,7 @@
 		...restProps
 	}: TriggerProps = $props();
 
-	const state = setPopoverTriggerState({
+	const state = usePopoverTrigger({
 		id: readonlyBox(() => id),
 	});
 

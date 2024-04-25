@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { setDialogTriggerState } from "../dialog.svelte.js";
+	import { useDialogTrigger } from "../dialog.svelte.js";
 	import type { TriggerProps } from "../index.js";
 	import { readonlyBox } from "$lib/internal/box.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
@@ -14,7 +14,7 @@
 		...restProps
 	}: TriggerProps = $props();
 
-	const state = setDialogTriggerState({
+	const state = useDialogTrigger({
 		id: readonlyBox(() => id),
 	});
 

@@ -1,4 +1,3 @@
-import { getContext, setContext } from "svelte";
 import type { Page, PageItem } from "./types.js";
 import {
 	type BoxedValues,
@@ -11,6 +10,7 @@ import {
 	useNodeById,
 } from "$lib/internal/index.js";
 import type { Orientation } from "$lib/shared/index.js";
+import { createContext } from "$lib/internal/createContext.js";
 
 type PaginationRootStateProps = ReadonlyBoxedValues<{
 	id: string;
@@ -306,20 +306,17 @@ function getPageItems({ page = 1, totalPages, siblingCount = 1 }: GetPageItemsPr
 // CONTEXT METHODS
 //
 
-const PAGINATION_ROOT_KEY = Symbol("Pagination.Root");
+const [setPaginationRootContext, getPaginationRootContext] =
+	createContext<PaginationRootState>("Pagination.Root");
 
-export function setPaginationRootState(props: PaginationRootStateProps) {
-	return setContext(PAGINATION_ROOT_KEY, new PaginationRootState(props));
+export function usePaginationRoot(props: PaginationRootStateProps) {
+	return setPaginationRootContext(new PaginationRootState(props));
 }
 
-export function getPaginationRootState(): PaginationRootState {
-	return getContext(PAGINATION_ROOT_KEY);
+export function usePaginationPage(props: PaginationPageStateProps) {
+	return getPaginationRootContext().createPage(props);
 }
 
-export function setPaginationPageState(props: PaginationPageStateProps) {
-	return getPaginationRootState().createPage(props);
-}
-
-export function setPaginationButtonState(props: PaginationButtonStateProps) {
-	return getPaginationRootState().createButton(props);
+export function usePaginationButton(props: PaginationButtonStateProps) {
+	return getPaginationRootContext().createButton(props);
 }

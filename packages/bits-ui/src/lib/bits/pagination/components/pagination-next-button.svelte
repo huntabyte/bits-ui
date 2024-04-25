@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { NextButtonProps } from "../index.js";
-	import { setPaginationButtonState } from "../pagination.svelte.js";
+	import { usePaginationButton } from "../pagination.svelte.js";
 	import { mergeProps, readonlyBox, useId } from "$lib/internal/index.js";
 
 	let {
@@ -13,7 +13,7 @@
 		...restProps
 	}: NextButtonProps = $props();
 
-	const state = setPaginationButtonState({
+	const state = usePaginationButton({
 		type: "next",
 		id: readonlyBox(() => id),
 	});

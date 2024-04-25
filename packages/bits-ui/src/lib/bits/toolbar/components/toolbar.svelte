@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { RootProps } from "../index.js";
-	import { setToolbarRootState } from "../toolbar.svelte.js";
+	import { useToolbarRoot } from "../toolbar.svelte.js";
 	import { readonlyBox } from "$lib/internal/box.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { useId } from "$lib/internal/useId.svelte.js";
@@ -16,7 +16,7 @@
 		...restProps
 	}: RootProps = $props();
 
-	const state = setToolbarRootState({
+	const state = useToolbarRoot({
 		id: readonlyBox(() => id),
 		orientation: readonlyBox(() => orientation),
 		loop: readonlyBox(() => loop),

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { setDialogOverlayState } from "../dialog.svelte.js";
+	import { useDialogOverlay } from "../dialog.svelte.js";
 	import type { OverlayProps } from "../index.js";
 	import { readonlyBox } from "$lib/internal/box.svelte.js";
 	import { useId } from "$lib/internal/useId.svelte.js";
@@ -16,7 +16,7 @@
 		...restProps
 	}: OverlayProps = $props();
 
-	const state = setDialogOverlayState({
+	const state = useDialogOverlay({
 		id: readonlyBox(() => id),
 	});
 

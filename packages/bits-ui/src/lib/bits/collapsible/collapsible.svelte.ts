@@ -1,4 +1,3 @@
-import { getContext, setContext } from "svelte";
 import {
 	type Box,
 	type BoxedValues,
@@ -12,8 +11,8 @@ import {
 	readonlyBoxedState,
 	useId,
 	useNodeById,
-	verifyContextDeps,
 } from "$lib/internal/index.js";
+import { createContext } from "$lib/internal/createContext.js";
 
 type CollapsibleRootStateProps = BoxedValues<{
 	open: boolean;
@@ -150,23 +149,19 @@ class CollapsibleTriggerState {
 	} as const);
 }
 
-export const COLLAPSIBLE_ROOT_KEY = Symbol("Collapsible.Root");
+const [setCollapsibleRootContext, getCollapsibleRootContext] =
+	createContext<CollapsibleRootState>("Collapsible.Root");
 
-export function setCollapsibleRootState(props: CollapsibleRootStateProps) {
-	return setContext(COLLAPSIBLE_ROOT_KEY, new CollapsibleRootState(props));
+export function useCollapsibleRoot(props: CollapsibleRootStateProps) {
+	return setCollapsibleRootContext(new CollapsibleRootState(props));
 }
 
-export function getCollapsibleRootState() {
-	verifyContextDeps(COLLAPSIBLE_ROOT_KEY);
-	return getContext<CollapsibleRootState>(COLLAPSIBLE_ROOT_KEY);
+export function useCollapsibleTrigger(): CollapsibleTriggerState {
+	return getCollapsibleRootContext().createTrigger();
 }
 
-export function getCollapsibleTriggerState(): CollapsibleTriggerState {
-	return getCollapsibleRootState().createTrigger();
-}
-
-export function getCollapsibleContentState(
+export function useCollapsibleContent(
 	props: CollapsibleContentStateProps
 ): CollapsibleContentState {
-	return getCollapsibleRootState().createContent(props);
+	return getCollapsibleRootContext().createContent(props);
 }

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { RootProps } from "../index.js";
-	import { setTabsRootState } from "../tabs.svelte.js";
+	import { useTabsRoot } from "../tabs.svelte.js";
 	import { useId } from "$lib/internal/useId.svelte.js";
 	import { box, readonlyBox } from "$lib/internal/box.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
@@ -20,7 +20,7 @@
 		...restProps
 	}: RootProps = $props();
 
-	const state = setTabsRootState({
+	const state = useTabsRoot({
 		id: readonlyBox(() => id),
 		value: box(
 			() => value,

@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { setDialogCloseState } from "../dialog.svelte.js";
+	import { useDialogClose } from "../dialog.svelte.js";
 	import type { CloseProps } from "../index.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let { asChild, children, child, el = $bindable(), ...restProps }: CloseProps = $props();
 
-	const state = setDialogCloseState();
+	const state = useDialogClose();
 
 	const mergedProps = $derived(mergeProps(restProps, state.props));
 </script>

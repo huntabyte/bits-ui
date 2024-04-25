@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { PageProps } from "../index.js";
-	import { setPaginationPageState } from "../pagination.svelte.js";
+	import { usePaginationPage } from "../pagination.svelte.js";
 	import { mergeProps, readonlyBox, useId } from "$lib/internal/index.js";
 
 	let {
@@ -14,7 +14,7 @@
 		...restProps
 	}: PageProps = $props();
 
-	const state = setPaginationPageState({
+	const state = usePaginationPage({
 		id: readonlyBox(() => id),
 		page: readonlyBox(() => page),
 	});

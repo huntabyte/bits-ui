@@ -1,11 +1,11 @@
 <script lang="ts">
 	import type { ListProps } from "../index.js";
-	import { setTabsListState } from "../tabs.svelte.js";
+	import { useTabsList } from "../tabs.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let { asChild, child, children, el = $bindable(), ...restProps }: ListProps = $props();
 
-	const state = setTabsListState();
+	const state = useTabsList();
 
 	const mergedProps = $derived(mergeProps(restProps, state.props));
 </script>
