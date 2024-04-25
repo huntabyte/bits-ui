@@ -1,38 +1,19 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { getCtx } from "../ctx.js";
-	import type { CloseEvents, CloseProps } from "../index.js";
-	import { createDispatcher } from "$lib/internal/events.js";
+	import { setDialogCloseState } from "../dialog.svelte.js";
+	import type { CloseProps } from "../index.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
 
-	type $$Props = CloseProps;
-	type $$Events = CloseEvents;
+	let { asChild, children, child, el = $bindable(), ...restProps }: CloseProps = $props();
 
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
+	const state = setDialogCloseState();
 
-	const {
-		elements: { close },
-		getAttrs,
-	} = getCtx();
-
-	const dispatch = createDispatcher();
-	const attrs = getAttrs("close");
-
-	$: builder = $close;
-	$: Object.assign(builder, attrs);
+	const mergedProps = $derived(mergeProps(restProps, state.props));
 </script>
 
 {#if asChild}
-	<slot {builder} />
+	{@render child?.({ props: mergedProps })}
 {:else}
-	<button
-		bind:this={el}
-		use:melt={builder}
-		type="button"
-		{...$$restProps}
-		on:m-click={dispatch}
-		on:m-keydown={dispatch}
-	>
-		<slot {builder} />
+	<button {...mergedProps} bind:this={el}>
+		{@render children?.()}
 	</button>
 {/if}

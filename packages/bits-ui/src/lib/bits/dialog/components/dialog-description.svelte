@@ -1,32 +1,30 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { getCtx } from "../ctx.js";
+	import { setDialogDescriptionState } from "../dialog.svelte.js";
 	import type { DescriptionProps } from "../index.js";
+	import { readonlyBox } from "$lib/internal/box.svelte.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
 
-	type $$Props = DescriptionProps;
+	let {
+		id = useId(),
+		asChild,
+		children,
+		child,
+		el = $bindable(),
+		...restProps
+	}: DescriptionProps = $props();
 
-	export let asChild: $$Props["asChild"] = false;
-	export let id: $$Props["id"] = undefined;
-	export let el: $$Props["el"] = undefined;
+	const state = setDialogDescriptionState({
+		id: readonlyBox(() => id),
+	});
 
-	const {
-		elements: { description },
-		ids,
-		getAttrs,
-	} = getCtx();
-	const attrs = getAttrs("description");
-
-	$: if (id) {
-		ids.description.set(id);
-	}
-	$: builder = $description;
-	$: Object.assign(builder, attrs);
+	const mergedProps = $derived(mergeProps(restProps, state.props));
 </script>
 
 {#if asChild}
-	<slot {builder} />
+	{@render child?.({ props: mergedProps })}
 {:else}
-	<div bind:this={el} use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+	<div {...mergedProps} bind:this={el}>
+		{@render children?.()}
 	</div>
 {/if}

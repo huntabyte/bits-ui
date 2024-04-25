@@ -8,7 +8,7 @@ import {
 } from "$lib/internal/box.svelte.js";
 import { useNodeById } from "$lib/internal/useNodeById.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
-import { getAriaExpanded, getDataOpenClosed, getHiddenAttr } from "$lib/internal/attrs.js";
+import { getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
 import { verifyContextDeps } from "$lib/internal/context.js";
 
 type PopoverRootStateProps = BoxedValues<{
@@ -96,12 +96,10 @@ type PopoverContentStateProps = ReadonlyBoxedValues<{
 
 class PopoverContentState {
 	#id = undefined as unknown as PopoverContentStateProps["id"];
-	#node = undefined as unknown as Box<HTMLElement | null>;
 	root = undefined as unknown as PopoverRootState;
 
 	constructor(props: PopoverContentStateProps, root: PopoverRootState) {
 		this.#id = props.id;
-		this.#node = useNodeById(this.#id);
 		this.root = root;
 	}
 
@@ -114,20 +112,20 @@ class PopoverContentState {
 }
 
 class PopoverCloseState {
-	root = undefined as unknown as PopoverRootState;
+	#root = undefined as unknown as PopoverRootState;
 
 	constructor(root: PopoverRootState) {
-		this.root = root;
+		this.#root = root;
 	}
 
 	#onclick = () => {
-		this.root.close();
+		this.#root.close();
 	};
 
 	#onkeydown = (e: KeyboardEvent) => {
 		if (!(e.key === kbd.ENTER || e.key === kbd.SPACE)) return;
 		e.preventDefault();
-		this.root.close();
+		this.#root.close();
 	};
 
 	props = $derived({
