@@ -195,9 +195,9 @@ export function useFocusScope({
 		const focusedElement = document.activeElement as HTMLElement | null;
 
 		if (!(isTabKey && focusedElement)) return;
+		const container = node.value;
+		if (!container) return;
 
-		const container = e.currentTarget;
-		if (!isHTMLElement(container)) return;
 		const [first, last] = getTabbableEdges(container);
 		const hasTabbableElementsInside = first && last;
 
