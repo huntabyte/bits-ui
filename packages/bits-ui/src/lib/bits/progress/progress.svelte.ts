@@ -43,6 +43,6 @@ function getProgressDataState(
 // STATE PROVIDERS
 //
 
-export function setProgressRootState(props: ProgressRootStateProps) {
+export function useProgressRootState(props: ProgressRootStateProps) {
 	return new ProgressRootState(props);
 }

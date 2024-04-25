@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { setFloatingContentState } from "../useFloatingLayer.svelte.js";
+	import { useFloatingContentState } from "../useFloatingLayer.svelte.js";
 	import type { ContentImplProps } from "./index.js";
 	import { mergeProps, readonlyBox, useId } from "$lib/internal/index.js";
 	import { useBodyScrollLock } from "$lib/internal/useBodyScrollLock.svelte.js";
@@ -27,7 +27,7 @@
 		preventScroll = true,
 	}: ContentImplProps = $props();
 
-	const state = setFloatingContentState({
+	const state = useFloatingContentState({
 		side: readonlyBox(() => side),
 		sideOffset: readonlyBox(() => sideOffset),
 		align: readonlyBox(() => align),

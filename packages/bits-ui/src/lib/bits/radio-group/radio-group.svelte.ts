@@ -1,20 +1,14 @@
-import { getContext, setContext } from "svelte";
 import {
 	type Box,
 	type BoxedValues,
 	type EventCallback,
 	type ReadonlyBoxedValues,
-	boxedState,
 	getAriaChecked,
 	getAriaRequired,
 	getDataDisabled,
-	getDirectionalKeys,
-	getElemDirection,
-	kbd,
 	srOnlyStyles,
 	styleToString,
 	useNodeById,
-	verifyContextDeps,
 } from "$lib/internal/index.js";
 import type { Orientation } from "$lib/shared/index.js";
 import { type UseRovingFocusReturn, useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";

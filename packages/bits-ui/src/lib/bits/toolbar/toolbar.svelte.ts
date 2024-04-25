@@ -379,6 +379,7 @@ type InitToolbarGroupProps = {
 export function useToolbarGroup(props: InitToolbarGroupProps) {
 	return setToolbarGroupContext(getToolbarRootContext().createGroup(props));
 }
+
 export function useToolbarGroupItem(props: ToolbarGroupItemStateProps) {
 	return getToolbarGroupContext().createItem(props);
 }

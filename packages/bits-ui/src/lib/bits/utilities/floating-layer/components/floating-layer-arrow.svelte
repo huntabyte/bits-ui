@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { setFloatingArrowState } from "../useFloatingLayer.svelte.js";
+	import { useFloatingArrowState } from "../useFloatingLayer.svelte.js";
 	import { Arrow, type ArrowProps } from "$lib/bits/utilities/arrow/index.js";
 	import { mergeProps, readonlyBox, useId } from "$lib/internal/index.js";
 
 	let { id = useId(), el = $bindable(), ...restProps }: ArrowProps = $props();
 
-	const state = setFloatingArrowState({
+	const state = useFloatingArrowState({
 		id: readonlyBox(() => id),
 	});
 
