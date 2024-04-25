@@ -1,8 +1,8 @@
+import type { WritableBox } from "runed";
 import {
-	type Box,
-	type BoxedValues,
 	type EventCallback,
-	type ReadonlyBoxedValues,
+	type ReadableBoxedValues,
+	type WritableBoxedValues,
 	getAriaChecked,
 	getAriaRequired,
 	getDataDisabled,
@@ -17,7 +17,7 @@ import { createContext } from "$lib/internal/createContext.js";
 const ROOT_ATTR = "radio-group-root";
 const ITEM_ATTR = "radio-group-item";
 
-type RadioGroupRootStateProps = ReadonlyBoxedValues<{
+type RadioGroupRootStateProps = ReadableBoxedValues<{
 	id: string;
 	disabled: boolean;
 	required: boolean;
@@ -25,11 +25,11 @@ type RadioGroupRootStateProps = ReadonlyBoxedValues<{
 	orientation: Orientation;
 	name: string | undefined;
 }> &
-	BoxedValues<{ value: string }>;
+	WritableBoxedValues<{ value: string }>;
 
 class RadioGroupRootState {
 	id = undefined as unknown as RadioGroupRootStateProps["id"];
-	node: Box<HTMLElement | null>;
+	node: WritableBox<HTMLElement | null>;
 	disabled = undefined as unknown as RadioGroupRootStateProps["disabled"];
 	required = undefined as unknown as RadioGroupRootStateProps["required"];
 	loop: RadioGroupRootStateProps["loop"];
@@ -85,7 +85,7 @@ class RadioGroupRootState {
 // RADIO GROUP ITEM
 //
 
-type RadioGroupItemStateProps = ReadonlyBoxedValues<{
+type RadioGroupItemStateProps = ReadableBoxedValues<{
 	disabled: boolean;
 	value: string;
 	onclick: EventCallback<MouseEvent>;
@@ -95,7 +95,7 @@ type RadioGroupItemStateProps = ReadonlyBoxedValues<{
 
 class RadioGroupItemState {
 	#id = undefined as unknown as RadioGroupItemStateProps["id"];
-	#node = undefined as unknown as Box<HTMLElement | null>;
+	#node = undefined as unknown as WritableBox<HTMLElement | null>;
 	#root = undefined as unknown as RadioGroupRootState;
 	#disabled = undefined as unknown as RadioGroupItemStateProps["disabled"];
 	#value = undefined as unknown as RadioGroupItemStateProps["value"];

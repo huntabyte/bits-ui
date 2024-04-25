@@ -1,7 +1,7 @@
 <script lang="ts">
+	import { box } from "runed";
 	import type { RootProps } from "../index.js";
 	import { useProgressRootState } from "../progress.svelte.js";
-	import { readonlyBox } from "$lib/internal/box.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {
@@ -15,8 +15,8 @@
 	}: RootProps = $props();
 
 	const state = useProgressRootState({
-		value: readonlyBox(() => value),
-		max: readonlyBox(() => max),
+		value: box.with(() => value),
+		max: box.with(() => max),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, state.props));

@@ -1,15 +1,16 @@
 import { getAriaHidden, getAriaOrientation, getDataOrientation } from "$lib/internal/attrs.js";
-import type { ReadonlyBox, ReadonlyBoxedValues } from "$lib/internal/box.svelte.js";
+import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { Orientation } from "$lib/shared/index.js";
 
-type SeparatorRootStateProps = ReadonlyBoxedValues<{
+type SeparatorRootStateProps = ReadableBoxedValues<{
 	orientation: Orientation;
 	decorative: boolean;
 }>;
 
 class SeparatorRootState {
-	#orientation = undefined as unknown as ReadonlyBox<Orientation>;
-	#decorative = undefined as unknown as ReadonlyBox<boolean>;
+	#orientation = undefined as unknown as SeparatorRootStateProps["orientation"];
+	#decorative = undefined as unknown as SeparatorRootStateProps["decorative"];
+
 	props = $derived({
 		role: this.#decorative.value ? "none" : "separator",
 		"aria-orientation": getAriaOrientation(this.#orientation.value),

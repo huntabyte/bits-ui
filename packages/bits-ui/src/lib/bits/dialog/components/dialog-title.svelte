@@ -1,7 +1,7 @@
 <script lang="ts">
+	import { box } from "runed";
 	import { useDialogTitle } from "../dialog.svelte.js";
 	import type { TitleProps } from "../index.js";
-	import { readonlyBox } from "$lib/internal/box.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { useId } from "$lib/internal/useId.svelte.js";
 
@@ -16,8 +16,8 @@
 	}: TitleProps = $props();
 
 	const state = useDialogTitle({
-		id: readonlyBox(() => id),
-		level: readonlyBox(() => level),
+		id: box.with(() => id),
+		level: box.with(() => level),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, state.props));

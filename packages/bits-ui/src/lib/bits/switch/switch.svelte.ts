@@ -5,17 +5,17 @@ import {
 	getDataDisabled,
 	getDataRequired,
 } from "$lib/internal/attrs.js";
-import type { BoxedValues, ReadonlyBoxedValues } from "$lib/internal/box.svelte.js";
+import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { createContext } from "$lib/internal/createContext.js";
 
-type SwitchRootStateProps = ReadonlyBoxedValues<{
+type SwitchRootStateProps = ReadableBoxedValues<{
 	disabled: boolean;
 	required: boolean;
 	name: string | undefined;
 	value: string;
 }> &
-	BoxedValues<{
+	WritableBoxedValues<{
 		checked: boolean;
 	}>;
 

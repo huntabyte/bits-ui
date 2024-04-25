@@ -1,10 +1,11 @@
 import { onDestroy } from "svelte";
-import { type Box, type ReadonlyBox, boxedState, watch } from "../../../internal/box.svelte.js";
+import { type ReadableBox, type WritableBox, box } from "runed";
+import { watch } from "$lib/internal/box.svelte.js";
 import { afterTick, useStateMachine } from "$lib/internal/index.js";
 
-export function usePresence(present: ReadonlyBox<boolean>, id: ReadonlyBox<string>) {
-	const styles = boxedState({}) as unknown as Box<CSSStyleDeclaration>;
-	const prevAnimationNameState = boxedState("none");
+export function usePresence(present: ReadableBox<boolean>, id: ReadableBox<string>) {
+	const styles = box({}) as unknown as WritableBox<CSSStyleDeclaration>;
+	const prevAnimationNameState = box("none");
 	const initialState = present.value ? "mounted" : "unmounted";
 	let node = $state<HTMLElement | null>(null);
 

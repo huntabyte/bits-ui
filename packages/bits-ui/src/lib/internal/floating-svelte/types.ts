@@ -7,7 +7,7 @@ import type {
 	Strategy,
 } from "@floating-ui/dom";
 import type { VirtualElement } from "@floating-ui/core";
-import type { Box } from "../box.svelte.js";
+import type { WritableBox } from "runed";
 
 type ValueOrGetValue<T> = T | (() => T);
 
@@ -45,7 +45,7 @@ export type UseFloatingOptions = {
 	/**
 	 * Reference / Anchor element to position the floating element relative to
 	 */
-	reference: Box<HTMLElement | null>;
+	reference: WritableBox<HTMLElement | null>;
 
 	/**
 	 * Callback to handle mounting/unmounting of the elements.
@@ -62,11 +62,11 @@ export type UseFloatingReturn = {
 	/**
 	 * The action used to obtain the reference element.
 	 */
-	reference: Box<HTMLElement | null>;
+	reference: WritableBox<HTMLElement | null>;
 	/**
 	 * The action used to obtain the floating element.
 	 */
-	floating: Box<HTMLElement | null>;
+	floating: WritableBox<HTMLElement | null>;
 	/**
 	 * The stateful placement, which can be different from the initial `placement` passed as options.
 	 */

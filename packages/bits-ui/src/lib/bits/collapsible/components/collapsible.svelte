@@ -1,7 +1,7 @@
 <script lang="ts">
+	import { box } from "runed";
 	import type { RootProps } from "../index.js";
 	import { useCollapsibleRoot } from "../collapsible.svelte.js";
-	import { box, readonlyBox } from "$lib/internal/box.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {
@@ -16,14 +16,14 @@
 	}: RootProps = $props();
 
 	const state = useCollapsibleRoot({
-		open: box(
+		open: box.with(
 			() => open,
 			(v) => {
 				open = v;
 				onOpenChange?.(v);
 			}
 		),
-		disabled: readonlyBox(() => disabled),
+		disabled: box.with(() => disabled),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, state.props));

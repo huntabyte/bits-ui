@@ -1,7 +1,7 @@
 <script lang="ts">
+	import { box } from "runed";
 	import type { AccordionItemProps } from "../types.js";
 	import { useAccordionItem } from "../accordion.svelte.js";
-	import { readonlyBox } from "$lib/internal/box.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	let {
 		asChild,
@@ -14,8 +14,8 @@
 	}: AccordionItemProps = $props();
 
 	const state = useAccordionItem({
-		value: readonlyBox(() => value),
-		disabled: readonlyBox(() => disabled),
+		value: box.with(() => value),
+		disabled: box.with(() => disabled),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, state.props));

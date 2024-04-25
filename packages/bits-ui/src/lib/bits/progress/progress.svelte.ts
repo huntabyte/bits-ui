@@ -1,6 +1,6 @@
-import type { ReadonlyBoxedValues } from "$lib/internal/box.svelte.js";
+import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 
-type ProgressRootStateProps = ReadonlyBoxedValues<{
+type ProgressRootStateProps = ReadableBoxedValues<{
 	value: number | null;
 	max: number;
 }>;

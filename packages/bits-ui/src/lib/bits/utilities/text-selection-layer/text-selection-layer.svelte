@@ -1,7 +1,8 @@
 <script lang="ts">
+	import { box } from "runed";
 	import type { TextSelectionLayerImplProps } from "./types.js";
 	import { useTextSelectionLayer } from "./useTextSelectionLayer.svelte.js";
-	import { noop, readonlyBox } from "$lib/internal/index.js";
+	import { noop } from "$lib/internal/index.js";
 
 	let {
 		preventOverflowTextSelection = true,
@@ -13,11 +14,11 @@
 	}: TextSelectionLayerImplProps = $props();
 
 	useTextSelectionLayer({
-		id: readonlyBox(() => id),
-		preventOverflowTextSelection: readonlyBox(() => preventOverflowTextSelection),
-		onPointerDown: readonlyBox(() => onPointerDown),
-		onPointerUp: readonlyBox(() => onPointerUp),
-		present: readonlyBox(() => present),
+		id: box.with(() => id),
+		preventOverflowTextSelection: box.with(() => preventOverflowTextSelection),
+		onPointerDown: box.with(() => onPointerDown),
+		onPointerUp: box.with(() => onPointerUp),
+		present: box.with(() => present),
 	});
 </script>
 

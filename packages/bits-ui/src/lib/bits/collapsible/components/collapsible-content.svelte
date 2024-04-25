@@ -1,8 +1,9 @@
 <script lang="ts">
+	import { box } from "runed";
 	import { useCollapsibleContent } from "../collapsible.svelte.js";
 	import type { CollapsibleContentProps } from "../types.js";
 	import { PresenceLayer } from "$lib/bits/utilities/presence-layer/index.js";
-	import { mergeProps, readonlyBox, useId } from "$lib/internal/index.js";
+	import { mergeProps, useId } from "$lib/internal/index.js";
 
 	let {
 		child,
@@ -15,8 +16,8 @@
 	}: CollapsibleContentProps & { forceMount?: boolean } = $props();
 
 	const state = useCollapsibleContent({
-		id: readonlyBox(() => id),
-		forceMount: readonlyBox(() => forceMount),
+		id: box.with(() => id),
+		forceMount: box.with(() => forceMount),
 	});
 </script>
 

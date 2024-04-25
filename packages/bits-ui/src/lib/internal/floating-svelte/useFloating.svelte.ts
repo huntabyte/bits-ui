@@ -1,5 +1,5 @@
 import { computePosition } from "@floating-ui/dom";
-import { boxedState } from "../box.svelte.js";
+import { box } from "runed";
 import type { UseFloatingOptions, UseFloatingReturn } from "./types.js";
 import { get, getDPR, roundByDPR } from "./utils.js";
 
@@ -17,7 +17,7 @@ export function useFloating(options: UseFloatingOptions): UseFloatingReturn {
 	let x = $state(0);
 	let y = $state(0);
 
-	const floating = boxedState<HTMLElement | null>(null);
+	const floating = box<HTMLElement | null>(null);
 
 	let strategy = $state(strategyOption);
 	let placement = $state(placementOption);

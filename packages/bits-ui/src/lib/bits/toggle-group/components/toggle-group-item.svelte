@@ -1,7 +1,7 @@
 <script lang="ts">
+	import { box } from "runed";
 	import type { ItemProps } from "../index.js";
 	import { useToggleGroupItem } from "../toggle-group.svelte.js";
-	import { readonlyBox } from "$lib/internal/box.svelte.js";
 	import { useId } from "$lib/internal/useId.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
@@ -18,9 +18,9 @@
 	}: ItemProps = $props();
 
 	const state = useToggleGroupItem({
-		id: readonlyBox(() => id),
-		value: readonlyBox(() => value),
-		disabled: readonlyBox(() => disabled),
+		id: box.with(() => id),
+		value: box.with(() => value),
+		disabled: box.with(() => disabled),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, state.props, { type }));

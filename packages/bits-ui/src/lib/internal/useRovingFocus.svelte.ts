@@ -1,4 +1,4 @@
-import { type Box, type ReadonlyBox, box, boxedState } from "./box.svelte.js";
+import type { ReadableBox, WritableBox } from "runed";
 import { getElemDirection } from "./locale.js";
 import { getDirectionalKeys } from "./getDirectionalKeys.js";
 import { kbd } from "./kbd.js";
@@ -13,18 +13,18 @@ type UseRovingFocusProps = {
 	/**
 	 * The root node which contains the focusable candidates.
 	 */
-	rootNode: Box<HTMLElement | null>;
+	rootNode: WritableBox<HTMLElement | null>;
 
 	/**
 	 * Whether to loop through the candidates when reaching the end.
 	 */
-	loop: ReadonlyBox<boolean>;
+	loop: ReadableBox<boolean>;
 
 	/**
 	 * The orientation of the roving focus group. Used
 	 * to determine how keyboard navigation should work.
 	 */
-	orientation: ReadonlyBox<Orientation>;
+	orientation: ReadableBox<Orientation>;
 
 	/**
 	 * A callback function called when a candidate is focused.

@@ -1,8 +1,8 @@
 <script lang="ts">
+	import { type WritableBox, box } from "runed";
 	import type { GroupProps } from "../index.js";
 	import { useToolbarGroup } from "../toolbar.svelte.js";
 	import { useId } from "$lib/internal/useId.svelte.js";
-	import { Box, box, readonlyBox } from "$lib/internal/box.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {
@@ -21,16 +21,16 @@
 	value === undefined && (value = type === "single" ? "" : []);
 
 	const state = useToolbarGroup({
-		id: readonlyBox(() => id),
-		disabled: readonlyBox(() => disabled),
+		id: box.with(() => id),
+		disabled: box.with(() => disabled),
 		type,
-		value: box(
+		value: box.with(
 			() => value!,
 			(v) => {
 				value = v;
 				onValueChange?.(v as any);
 			}
-		) as Box<string> | Box<string[]>,
+		) as WritableBox<string> | WritableBox<string[]>,
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, state.props));

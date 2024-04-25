@@ -1,8 +1,8 @@
 <script lang="ts">
+	import { box } from "runed";
 	import type { AccordionHeaderProps } from "../types.js";
 	import { useAccordionHeader } from "../accordion.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
-	import { readonlyBox } from "$lib/internal/box.svelte.js";
 
 	let {
 		asChild,
@@ -14,7 +14,7 @@
 	}: AccordionHeaderProps = $props();
 
 	const state = useAccordionHeader({
-		level: readonlyBox(() => level),
+		level: box.with(() => level),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, state.props));

@@ -1,7 +1,7 @@
 <script lang="ts">
+	import { type WritableBox, box } from "runed";
 	import type { RootProps } from "../index.js";
 	import { useToggleGroupRoot } from "../toggle-group.svelte.js";
-	import { Box, box, readonlyBox } from "$lib/internal/box.svelte.js";
 	import { useId } from "$lib/internal/useId.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
@@ -24,18 +24,18 @@
 	value === undefined && (value = type === "single" ? "" : []);
 
 	const state = useToggleGroupRoot({
-		id: readonlyBox(() => id),
-		value: box(
+		id: box.with(() => id),
+		value: box.with(
 			() => value!,
 			(v) => {
 				value = v;
 				onValueChange?.(v as any);
 			}
-		) as Box<string> | Box<string[]>,
-		disabled: readonlyBox(() => disabled),
-		loop: readonlyBox(() => loop),
-		orientation: readonlyBox(() => orientation),
-		rovingFocus: readonlyBox(() => rovingFocus),
+		) as WritableBox<string> | WritableBox<string[]>,
+		disabled: box.with(() => disabled),
+		loop: box.with(() => loop),
+		orientation: box.with(() => orientation),
+		rovingFocus: box.with(() => rovingFocus),
 		type,
 	});
 

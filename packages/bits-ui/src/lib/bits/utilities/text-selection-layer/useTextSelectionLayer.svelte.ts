@@ -1,10 +1,9 @@
 import { untrack } from "svelte";
+import type { ReadableBox, WritableBox } from "runed";
 import type { TextSelectionLayerImplProps, TextSelectionLayerProps } from "./types.js";
 import {
-	type Box,
 	type EventCallback,
-	type ReadonlyBox,
-	type ReadonlyBoxedValues,
+	type ReadableBoxedValues,
 	addEventListener,
 	composeHandlers,
 	executeCallbacks,
@@ -14,17 +13,17 @@ import {
 	useNodeById,
 } from "$lib/internal/index.js";
 
-type StateProps = ReadonlyBoxedValues<Required<Omit<TextSelectionLayerImplProps, "children">>>;
+type StateProps = ReadableBoxedValues<Required<Omit<TextSelectionLayerImplProps, "children">>>;
 
-const layers = new Map<TextSelectionLayerState, ReadonlyBox<boolean>>();
+const layers = new Map<TextSelectionLayerState, ReadableBox<boolean>>();
 
 export class TextSelectionLayerState {
-	#onPointerDownProp: ReadonlyBox<EventCallback<PointerEvent>>;
-	#onPointerUpProp: ReadonlyBox<EventCallback<PointerEvent>>;
-	#enabled: ReadonlyBox<boolean>;
+	#onPointerDownProp: ReadableBox<EventCallback<PointerEvent>>;
+	#onPointerUpProp: ReadableBox<EventCallback<PointerEvent>>;
+	#enabled: ReadableBox<boolean>;
 	#unsubSelectionLock = noop;
-	#node: Box<HTMLElement | null>;
-	#present: ReadonlyBox<boolean>;
+	#node: WritableBox<HTMLElement | null>;
+	#present: ReadableBox<boolean>;
 
 	constructor(props: StateProps) {
 		this.#node = useNodeById(props.id);

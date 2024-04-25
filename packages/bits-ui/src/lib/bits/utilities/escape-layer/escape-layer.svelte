@@ -1,7 +1,8 @@
 <script lang="ts">
+	import { box } from "runed";
 	import type { EscapeLayerImplProps } from "./types.js";
 	import { useEscapeLayer } from "./useEscapeLayer.svelte.js";
-	import { noop, readonlyBox } from "$lib/internal/index.js";
+	import { noop } from "$lib/internal/index.js";
 
 	let {
 		behaviorType = "close",
@@ -11,9 +12,9 @@
 	}: EscapeLayerImplProps = $props();
 
 	useEscapeLayer({
-		behaviorType: readonlyBox(() => behaviorType),
-		onEscapeKeydown: readonlyBox(() => onEscapeKeydown),
-		present: readonlyBox(() => present),
+		behaviorType: box.with(() => behaviorType),
+		onEscapeKeydown: box.with(() => onEscapeKeydown),
+		present: box.with(() => present),
 	});
 </script>
 

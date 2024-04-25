@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { box } from "runed";
 	import { useDialogContent } from "../dialog.svelte.js";
 	import type { ContentProps } from "../index.js";
 	import DismissableLayer from "$lib/bits/utilities/dismissable-layer/dismissable-layer.svelte";
@@ -6,7 +7,6 @@
 	import FocusScope from "$lib/bits/utilities/focus-scope/focus-scope.svelte";
 	import PresenceLayer from "$lib/bits/utilities/presence-layer/presence-layer.svelte";
 	import TextSelectionLayer from "$lib/bits/utilities/text-selection-layer/text-selection-layer.svelte";
-	import { readonlyBox } from "$lib/internal/box.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { useId } from "$lib/internal/useId.svelte.js";
 	import { noop } from "$lib/internal/callbacks.js";
@@ -26,7 +26,7 @@
 	}: ContentProps = $props();
 
 	const state = useDialogContent({
-		id: readonlyBox(() => id),
+		id: box.with(() => id),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, state.props));

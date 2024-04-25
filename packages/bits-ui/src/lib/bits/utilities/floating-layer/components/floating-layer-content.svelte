@@ -1,7 +1,8 @@
 <script lang="ts">
+	import { box } from "runed";
 	import { useFloatingContentState } from "../useFloatingLayer.svelte.js";
 	import type { ContentImplProps } from "./index.js";
-	import { mergeProps, readonlyBox, useId } from "$lib/internal/index.js";
+	import { mergeProps, useId } from "$lib/internal/index.js";
 	import { useBodyScrollLock } from "$lib/internal/useBodyScrollLock.svelte.js";
 
 	let {
@@ -28,24 +29,24 @@
 	}: ContentImplProps = $props();
 
 	const state = useFloatingContentState({
-		side: readonlyBox(() => side),
-		sideOffset: readonlyBox(() => sideOffset),
-		align: readonlyBox(() => align),
-		alignOffset: readonlyBox(() => alignOffset),
-		id: readonlyBox(() => id),
-		arrowPadding: readonlyBox(() => arrowPadding),
-		avoidCollisions: readonlyBox(() => avoidCollisions),
-		collisionBoundary: readonlyBox(() => collisionBoundary),
-		collisionPadding: readonlyBox(() => collisionPadding),
-		hideWhenDetached: readonlyBox(() => hideWhenDetached),
-		onPlaced: readonlyBox(() => onPlaced),
-		sticky: readonlyBox(() => sticky),
-		updatePositionStrategy: readonlyBox(() => updatePositionStrategy),
-		strategy: readonlyBox(() => strategy),
-		dir: readonlyBox(() => dir),
-		style: readonlyBox(() => style),
-		present: readonlyBox(() => present),
-		wrapperId: readonlyBox(() => wrapperId),
+		side: box.with(() => side),
+		sideOffset: box.with(() => sideOffset),
+		align: box.with(() => align),
+		alignOffset: box.with(() => alignOffset),
+		id: box.with(() => id),
+		arrowPadding: box.with(() => arrowPadding),
+		avoidCollisions: box.with(() => avoidCollisions),
+		collisionBoundary: box.with(() => collisionBoundary),
+		collisionPadding: box.with(() => collisionPadding),
+		hideWhenDetached: box.with(() => hideWhenDetached),
+		onPlaced: box.with(() => onPlaced),
+		sticky: box.with(() => sticky),
+		updatePositionStrategy: box.with(() => updatePositionStrategy),
+		strategy: box.with(() => strategy),
+		dir: box.with(() => dir),
+		style: box.with(() => style),
+		present: box.with(() => present),
+		wrapperId: box.with(() => wrapperId),
 	});
 
 	const mergedProps = $derived(

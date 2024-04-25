@@ -1,4 +1,5 @@
 import { untrack } from "svelte";
+import type { ReadableBox } from "runed";
 import type {
 	DismissableLayerImplProps,
 	DismissableLayerProps,
@@ -9,8 +10,7 @@ import type {
 import {
 	type Box,
 	type EventCallback,
-	type ReadonlyBox,
-	type ReadonlyBoxedValues,
+	type ReadableBoxedValues,
 	addEventListener,
 	composeHandlers,
 	debounce,
@@ -22,7 +22,7 @@ import {
 	useNodeById,
 } from "$lib/internal/index.js";
 
-const layers = new Map<DismissableLayerState, ReadonlyBox<InteractOutsideBehaviorType>>();
+const layers = new Map<DismissableLayerState, ReadableBox<InteractOutsideBehaviorType>>();
 
 const interactOutsideStartEvents = [
 	"pointerdown",
@@ -36,14 +36,14 @@ const interactOutsideEndEvents = [
 	"click",
 ] satisfies InteractOutsideInterceptEventType[];
 
-type DismissableLayerStateProps = ReadonlyBoxedValues<
+type DismissableLayerStateProps = ReadableBoxedValues<
 	Required<Omit<DismissableLayerImplProps, "children">>
 >;
 
 export class DismissableLayerState {
-	#interactOutsideStartProp: ReadonlyBox<EventCallback<InteractOutsideEvent>>;
-	#interactOutsideProp: ReadonlyBox<EventCallback<InteractOutsideEvent>>;
-	#behaviorType: ReadonlyBox<InteractOutsideBehaviorType>;
+	#interactOutsideStartProp: ReadableBox<EventCallback<InteractOutsideEvent>>;
+	#interactOutsideProp: ReadableBox<EventCallback<InteractOutsideEvent>>;
+	#behaviorType: ReadableBox<InteractOutsideBehaviorType>;
 	#interceptedEvents: Record<InteractOutsideInterceptEventType, boolean> = {
 		pointerdown: false,
 		pointerup: false,
@@ -57,7 +57,7 @@ export class DismissableLayerState {
 	#isResponsibleLayer = false;
 	node: Box<HTMLElement | null>;
 	#documentObj = undefined as unknown as Document;
-	#present: ReadonlyBox<boolean>;
+	#present: ReadableBox<boolean>;
 
 	constructor(props: DismissableLayerStateProps) {
 		this.node = useNodeById(props.id);

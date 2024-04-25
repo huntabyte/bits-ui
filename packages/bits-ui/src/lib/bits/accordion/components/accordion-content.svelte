@@ -1,8 +1,9 @@
 <script lang="ts">
+	import { box } from "runed";
 	import { useAccordionContent } from "../accordion.svelte.js";
 	import type { AccordionContentProps } from "../types.js";
 	import { PresenceLayer } from "$lib/bits/utilities/presence-layer/index.js";
-	import { mergeProps, readonlyBox, useId } from "$lib/internal/index.js";
+	import { mergeProps, useId } from "$lib/internal/index.js";
 
 	let {
 		child,
@@ -15,8 +16,8 @@
 	}: AccordionContentProps = $props();
 
 	const state = useAccordionContent({
-		forceMount: readonlyBox(() => forceMount),
-		id: readonlyBox(() => id),
+		forceMount: box.with(() => forceMount),
+		id: box.with(() => id),
 	});
 </script>
 

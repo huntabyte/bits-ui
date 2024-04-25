@@ -1,7 +1,8 @@
 <script lang="ts">
+	import { box } from "runed";
 	import type { TriggerProps } from "../index.js";
 	import { usePopoverTrigger } from "../popover.svelte.js";
-	import { mergeProps, readonlyBox, useId } from "$lib/internal/index.js";
+	import { mergeProps, useId } from "$lib/internal/index.js";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 
 	let {
@@ -15,7 +16,7 @@
 	}: TriggerProps = $props();
 
 	const state = usePopoverTrigger({
-		id: readonlyBox(() => id),
+		id: box.with(() => id),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, state.props, { type }));

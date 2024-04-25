@@ -1,9 +1,8 @@
-import { getContext, setContext } from "svelte";
+import type { WritableBox } from "runed";
 import {
 	type Box,
-	type BoxedValues,
-	type ReadonlyBox,
-	type ReadonlyBoxedValues,
+	type ReadableBoxedValues,
+	type WritableBoxedValues,
 	afterTick,
 	getAriaDisabled,
 	getAriaExpanded,
@@ -13,7 +12,6 @@ import {
 	getDataOrientation,
 	kbd,
 	useNodeById,
-	verifyContextDeps,
 } from "$lib/internal/index.js";
 import { type UseRovingFocusReturn, useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
 import type { Orientation } from "$lib/shared/index.js";
@@ -29,7 +27,7 @@ const HEADER_ATTR = "accordion-header";
 // BASE
 //
 
-type AccordionBaseStateProps = ReadonlyBoxedValues<{
+type AccordionBaseStateProps = ReadableBoxedValues<{
 	id: string;
 	disabled: boolean;
 	orientation: Orientation;
@@ -37,9 +35,9 @@ type AccordionBaseStateProps = ReadonlyBoxedValues<{
 }>;
 
 class AccordionBaseState {
-	id = undefined as unknown as ReadonlyBox<string>;
-	node: Box<HTMLElement | null>;
-	disabled = undefined as unknown as ReadonlyBox<boolean>;
+	id = undefined as unknown as AccordionBaseStateProps["id"];
+	node: WritableBox<HTMLElement | null>;
+	disabled = undefined as unknown as AccordionBaseStateProps["disabled"];
 	#loop = undefined as unknown as AccordionBaseStateProps["loop"];
 	orientation = undefined as unknown as AccordionBaseStateProps["orientation"];
 	rovingFocusGroup = undefined as unknown as UseRovingFocusReturn;
@@ -71,10 +69,10 @@ class AccordionBaseState {
 // SINGLE
 //
 
-type AccordionSingleStateProps = AccordionBaseStateProps & BoxedValues<{ value: string }>;
+type AccordionSingleStateProps = AccordionBaseStateProps & WritableBoxedValues<{ value: string }>;
 
 export class AccordionSingleState extends AccordionBaseState {
-	#value: Box<string>;
+	#value: AccordionSingleStateProps["value"];
 	isMulti = false as const;
 
 	constructor(props: AccordionSingleStateProps) {
@@ -95,10 +93,10 @@ export class AccordionSingleState extends AccordionBaseState {
 // MULTIPLE
 //
 
-type AccordionMultiStateProps = AccordionBaseStateProps & BoxedValues<{ value: string[] }>;
+type AccordionMultiStateProps = AccordionBaseStateProps & WritableBoxedValues<{ value: string[] }>;
 
 export class AccordionMultiState extends AccordionBaseState {
-	#value: Box<string[]>;
+	#value: AccordionMultiStateProps["value"];
 	isMulti = true as const;
 
 	constructor(props: AccordionMultiStateProps) {
@@ -123,7 +121,7 @@ export class AccordionMultiState extends AccordionBaseState {
 // ITEM
 //
 
-type AccordionItemStateProps = ReadonlyBoxedValues<{
+type AccordionItemStateProps = ReadableBoxedValues<{
 	value: string;
 	disabled: boolean;
 }> & {
@@ -131,8 +129,8 @@ type AccordionItemStateProps = ReadonlyBoxedValues<{
 };
 
 export class AccordionItemState {
-	value = undefined as unknown as ReadonlyBox<string>;
-	disabled = undefined as unknown as ReadonlyBox<boolean>;
+	value = undefined as unknown as AccordionItemStateProps["value"];
+	disabled = undefined as unknown as AccordionItemStateProps["disabled"];
 	root = undefined as unknown as AccordionState;
 	isSelected = $derived(this.root.includesItem(this.value.value));
 	isDisabled = $derived(this.disabled.value || this.root.disabled.value);
@@ -170,14 +168,14 @@ export class AccordionItemState {
 // TRIGGER
 //
 
-type AccordionTriggerStateProps = ReadonlyBoxedValues<{
+type AccordionTriggerStateProps = ReadableBoxedValues<{
 	disabled: boolean;
 	id: string;
 }>;
 
 class AccordionTriggerState {
-	#disabled = undefined as unknown as ReadonlyBox<boolean>;
-	#id = undefined as unknown as ReadonlyBox<string>;
+	#disabled = undefined as unknown as AccordionTriggerStateProps["disabled"];
+	#id = undefined as unknown as AccordionTriggerStateProps["id"];
 	#node: Box<HTMLElement | null>;
 	#root = undefined as unknown as AccordionState;
 	#itemState = undefined as unknown as AccordionItemState;
@@ -229,20 +227,20 @@ class AccordionTriggerState {
 // CONTENT
 //
 
-type AccordionContentStateProps = ReadonlyBoxedValues<{
+type AccordionContentStateProps = ReadableBoxedValues<{
 	forceMount: boolean;
 	id: string;
 }>;
 
 class AccordionContentState {
 	item = undefined as unknown as AccordionItemState;
-	node: Box<HTMLElement | null>;
-	#id = undefined as unknown as ReadonlyBox<string>;
+	node: WritableBox<HTMLElement | null>;
+	#id = undefined as unknown as AccordionContentStateProps["id"];
 	#originalStyles: { transitionDuration: string; animationName: string } | undefined = undefined;
 	#isMountAnimationPrevented = false;
 	#width = $state(0);
 	#height = $state(0);
-	#forceMount = undefined as unknown as ReadonlyBox<boolean>;
+	#forceMount = undefined as unknown as AccordionContentStateProps["forceMount"];
 
 	present = $derived(this.#forceMount.value || this.item.isSelected);
 
@@ -309,7 +307,7 @@ class AccordionContentState {
 	} as const);
 }
 
-type AccordionHeaderStateProps = ReadonlyBoxedValues<{
+type AccordionHeaderStateProps = ReadableBoxedValues<{
 	level: 1 | 2 | 3 | 4 | 5 | 6;
 }>;
 
@@ -340,7 +338,7 @@ type AccordionState = AccordionSingleState | AccordionMultiState;
 type InitAccordionProps = {
 	type: "single" | "multiple";
 	value: Box<string> | Box<string[]>;
-} & ReadonlyBoxedValues<{
+} & ReadableBoxedValues<{
 	id: string;
 	disabled: boolean;
 	orientation: Orientation;

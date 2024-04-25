@@ -4,15 +4,15 @@ import {
 	getDataDisabled,
 	getDisabledAttr,
 } from "$lib/internal/attrs.js";
-import type { BoxedValues, ReadonlyBoxedValues } from "$lib/internal/box.svelte.js";
+import type { WritableBoxedValues, ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 
 const [ROOT_ATTR] = getAttrAndSelector("toggle-root");
 
-type ToggleRootStateProps = ReadonlyBoxedValues<{
+type ToggleRootStateProps = ReadableBoxedValues<{
 	disabled: boolean;
 }> &
-	BoxedValues<{
+	WritableBoxedValues<{
 		pressed: boolean;
 	}>;
 

@@ -1,8 +1,9 @@
 <script lang="ts">
+	import { box } from "runed";
 	import type { ContentProps } from "../index.js";
 	import { usePopoverContent } from "../popover.svelte.js";
 	import { PopperLayer } from "$lib/bits/utilities/popper-layer/index.js";
-	import { mergeProps, noop, readonlyBox, useId } from "$lib/internal/index.js";
+	import { mergeProps, noop, useId } from "$lib/internal/index.js";
 
 	let {
 		asChild,
@@ -19,7 +20,7 @@
 	}: ContentProps = $props();
 
 	const state = usePopoverContent({
-		id: readonlyBox(() => id),
+		id: box.with(() => id),
 	});
 </script>
 

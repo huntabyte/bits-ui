@@ -1,4 +1,4 @@
-import { getContext, setContext } from "svelte";
+import { type WritableBox, box } from "runed";
 import {
 	getAriaChecked,
 	getAriaPressed,
@@ -6,13 +6,7 @@ import {
 	getDataOrientation,
 	getDisabledAttr,
 } from "$lib/internal/attrs.js";
-import {
-	type Box,
-	type BoxedValues,
-	type ReadonlyBoxedValues,
-	boxedState,
-} from "$lib/internal/box.svelte.js";
-import { verifyContextDeps } from "$lib/internal/context.js";
+import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { useNodeById } from "$lib/internal/useNodeById.svelte.js";
 import { type UseRovingFocusReturn, useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
@@ -27,7 +21,7 @@ const GROUP_ITEM_ATTR = "data-toolbar-group-item";
 const LINK_ATTR = "data-toolbar-link";
 const BUTTON_ATTR = "data-toolbar-button";
 
-type ToolbarRootStateProps = ReadonlyBoxedValues<{
+type ToolbarRootStateProps = ReadableBoxedValues<{
 	orientation: Orientation;
 	loop: boolean;
 	id: string;
@@ -37,7 +31,7 @@ class ToolbarRootState {
 	#id = undefined as unknown as ToolbarRootStateProps["id"];
 	orientation = undefined as unknown as ToolbarRootStateProps["orientation"];
 	#loop = undefined as unknown as ToolbarRootStateProps["loop"];
-	#node = boxedState<HTMLElement | null>(null);
+	#node = box<HTMLElement | null>(null);
 	rovingFocusGroup = undefined as unknown as UseRovingFocusReturn;
 
 	constructor(props: ToolbarRootStateProps) {
@@ -78,14 +72,14 @@ class ToolbarRootState {
 	} as const);
 }
 
-type ToolbarGroupBaseStateProps = ReadonlyBoxedValues<{
+type ToolbarGroupBaseStateProps = ReadableBoxedValues<{
 	id: string;
 	disabled: boolean;
 }>;
 
 class ToolbarGroupBaseState {
 	id = undefined as unknown as ToolbarGroupBaseStateProps["id"];
-	node = boxedState<HTMLElement | null>(null);
+	node = box<HTMLElement | null>(null);
 	disabled = undefined as unknown as ToolbarGroupBaseStateProps["disabled"];
 	root = undefined as unknown as ToolbarRootState;
 
@@ -110,7 +104,7 @@ class ToolbarGroupBaseState {
 //
 
 type ToolbarGroupSingleStateProps = ToolbarGroupBaseStateProps &
-	BoxedValues<{
+	WritableBoxedValues<{
 		value: string;
 	}>;
 
@@ -146,7 +140,7 @@ class ToolbarGroupSingleState extends ToolbarGroupBaseState {
 //
 
 type ToolbarGroupMultipleStateProps = ToolbarGroupBaseStateProps &
-	BoxedValues<{
+	WritableBoxedValues<{
 		value: string[];
 	}>;
 
@@ -183,7 +177,7 @@ type ToolbarGroupState = ToolbarGroupSingleState | ToolbarGroupMultipleState;
 // ITEM
 //
 
-type ToolbarGroupItemStateProps = ReadonlyBoxedValues<{
+type ToolbarGroupItemStateProps = ReadableBoxedValues<{
 	id: string;
 	value: string;
 	disabled: boolean;
@@ -194,7 +188,7 @@ class ToolbarGroupItemState {
 	#group = undefined as unknown as ToolbarGroupState;
 	#root = undefined as unknown as ToolbarRootState;
 	#value = undefined as unknown as ToolbarGroupItemStateProps["value"];
-	#node = boxedState<HTMLElement | null>(null);
+	#node = box<HTMLElement | null>(null);
 	#disabled = undefined as unknown as ToolbarGroupItemStateProps["disabled"];
 	#isDisabled = $derived(this.#disabled.value || this.#group.disabled.value);
 
@@ -262,13 +256,13 @@ class ToolbarGroupItemState {
 	});
 }
 
-type ToolbarLinkStateProps = ReadonlyBoxedValues<{
+type ToolbarLinkStateProps = ReadableBoxedValues<{
 	id: string;
 }>;
 
 class ToolbarLinkState {
 	#id = undefined as unknown as ToolbarLinkStateProps["id"];
-	#node = boxedState<HTMLElement | null>(null);
+	#node = box<HTMLElement | null>(null);
 	#root = undefined as unknown as ToolbarRootState;
 
 	constructor(props: ToolbarLinkStateProps, root: ToolbarRootState) {
@@ -302,7 +296,7 @@ class ToolbarLinkState {
 	});
 }
 
-type ToolbarButtonStateProps = ReadonlyBoxedValues<{
+type ToolbarButtonStateProps = ReadableBoxedValues<{
 	id: string;
 	disabled: boolean;
 }>;
@@ -310,7 +304,7 @@ type ToolbarButtonStateProps = ReadonlyBoxedValues<{
 class ToolbarButtonState {
 	#id = undefined as unknown as ToolbarButtonStateProps["id"];
 	#root = undefined as unknown as ToolbarRootState;
-	#node = boxedState<HTMLElement | null>(null);
+	#node = box<HTMLElement | null>(null);
 	#disabled = undefined as unknown as ToolbarButtonStateProps["disabled"];
 
 	constructor(props: ToolbarButtonStateProps, root: ToolbarRootState) {
@@ -370,8 +364,8 @@ export function useToolbarRoot(props: ToolbarRootStateProps) {
 
 type InitToolbarGroupProps = {
 	type: "single" | "multiple";
-	value: Box<string> | Box<string[]>;
-} & ReadonlyBoxedValues<{
+	value: WritableBox<string> | WritableBox<string[]>;
+} & ReadableBoxedValues<{
 	id: string;
 	disabled: boolean;
 }>;

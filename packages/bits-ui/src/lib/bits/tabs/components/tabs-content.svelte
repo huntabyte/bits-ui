@@ -1,7 +1,7 @@
 <script lang="ts">
+	import { box } from "runed";
 	import type { ContentProps } from "../index.js";
 	import { useTabsContent } from "../tabs.svelte.js";
-	import { readonlyBox } from "$lib/internal/box.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {
@@ -14,7 +14,7 @@
 	}: ContentProps = $props();
 
 	const state = useTabsContent({
-		value: readonlyBox(() => value),
+		value: box.with(() => value),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, state.props));

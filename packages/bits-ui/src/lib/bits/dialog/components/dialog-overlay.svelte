@@ -1,7 +1,7 @@
 <script lang="ts">
+	import { box } from "runed";
 	import { useDialogOverlay } from "../dialog.svelte.js";
 	import type { OverlayProps } from "../index.js";
-	import { readonlyBox } from "$lib/internal/box.svelte.js";
 	import { useId } from "$lib/internal/useId.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import PresenceLayer from "$lib/bits/utilities/presence-layer/presence-layer.svelte";
@@ -17,7 +17,7 @@
 	}: OverlayProps = $props();
 
 	const state = useDialogOverlay({
-		id: readonlyBox(() => id),
+		id: box.with(() => id),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, state.props));

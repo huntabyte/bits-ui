@@ -1,7 +1,8 @@
 <script lang="ts">
+	import { box } from "runed";
 	import type { AccordionTriggerProps } from "../types.js";
 	import { useAccordionTrigger } from "../accordion.svelte.js";
-	import { mergeProps, readonlyBox, useId } from "$lib/internal/index.js";
+	import { mergeProps, useId } from "$lib/internal/index.js";
 
 	let {
 		disabled = false,
@@ -14,8 +15,8 @@
 	}: AccordionTriggerProps = $props();
 
 	const state = useAccordionTrigger({
-		disabled: readonlyBox(() => disabled),
-		id: readonlyBox(() => id),
+		disabled: box.with(() => disabled),
+		id: box.with(() => id),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, state.props));

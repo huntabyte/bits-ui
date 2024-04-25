@@ -1,7 +1,7 @@
 <script lang="ts">
+	import { box } from "runed";
 	import { useDialogTrigger } from "../dialog.svelte.js";
 	import type { TriggerProps } from "../index.js";
-	import { readonlyBox } from "$lib/internal/box.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { useId } from "$lib/internal/useId.svelte.js";
 
@@ -15,7 +15,7 @@
 	}: TriggerProps = $props();
 
 	const state = useDialogTrigger({
-		id: readonlyBox(() => id),
+		id: box.with(() => id),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, state.props));

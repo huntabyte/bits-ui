@@ -1,7 +1,7 @@
 <script lang="ts">
+	import { box } from "runed";
 	import type { RootProps } from "../index.js";
 	import { useAvatarRoot } from "../avatar.svelte.js";
-	import { box, readonlyBox } from "$lib/internal/box.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {
@@ -16,8 +16,8 @@
 	}: RootProps = $props();
 
 	const state = useAvatarRoot({
-		delayMs: readonlyBox(() => delayMs),
-		loadingStatus: box(
+		delayMs: box.with(() => delayMs),
+		loadingStatus: box.with(
 			() => loadingStatus,
 			(v) => {
 				if (loadingStatus !== v) {
