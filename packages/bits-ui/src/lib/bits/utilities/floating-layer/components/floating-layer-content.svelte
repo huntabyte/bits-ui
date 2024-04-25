@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { setFloatingContentState } from "../useFloatingLayer.svelte.js";
-	import type { ContentProps } from "./index.js";
+	import type { ContentImplProps } from "./index.js";
 	import { mergeProps, readonlyBox, useId } from "$lib/internal/index.js";
 	import { useBodyScrollLock } from "$lib/internal/useBodyScrollLock.svelte.js";
 
@@ -24,7 +24,8 @@
 		style = {},
 		present,
 		wrapperId = useId(),
-	}: ContentProps = $props();
+		preventScroll = true,
+	}: ContentImplProps = $props();
 
 	const state = setFloatingContentState({
 		side: readonlyBox(() => side),
@@ -47,9 +48,15 @@
 		wrapperId: readonlyBox(() => wrapperId),
 	});
 
-	const mergedProps = $derived(mergeProps(state.wrapperProps));
+	const mergedProps = $derived(
+		mergeProps(state.wrapperProps, {
+			style: {
+				pointerEvents: "auto",
+			},
+		})
+	);
 
-	useBodyScrollLock(true);
+	useBodyScrollLock(preventScroll);
 </script>
 
 <div {...mergedProps}>

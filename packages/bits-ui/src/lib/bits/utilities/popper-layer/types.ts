@@ -1,15 +1,32 @@
 import type { Snippet } from "svelte";
-import type { EscapeLayerProps } from "../escape-layer/types.js";
-import type { DismissableLayerProps } from "../dismissable-layer/types.js";
-import type { FloatingLayerContentProps } from "../floating-layer/types.js";
-import type { TextSelectionLayerProps } from "../text-selection-layer/types.js";
-import type { PresenceLayerProps } from "../presence-layer/types.js";
-import type { FocusScopeProps } from "../focus-scope/types.js";
+import type { EscapeLayerImplProps, EscapeLayerProps } from "../escape-layer/types.js";
+import type {
+	DismissableLayerImplProps,
+	DismissableLayerProps,
+} from "../dismissable-layer/types.js";
+import type {
+	FloatingLayerContentImplProps,
+	FloatingLayerContentProps,
+} from "../floating-layer/types.js";
+import type {
+	TextSelectionLayerImplProps,
+	TextSelectionLayerProps,
+} from "../text-selection-layer/types.js";
+import type { PresenceLayerImplProps, PresenceLayerProps } from "../presence-layer/types.js";
+import type { FocusScopeImplProps, FocusScopeProps } from "../focus-scope/types.js";
 
 export type PopperLayerProps = EscapeLayerProps &
 	DismissableLayerProps &
 	FloatingLayerContentProps &
 	PresenceLayerProps &
-	TextSelectionLayerProps & {
+	TextSelectionLayerProps &
+	FocusScopeProps;
+
+export type PopperLayerImplProps = EscapeLayerImplProps &
+	DismissableLayerImplProps &
+	FloatingLayerContentImplProps &
+	PresenceLayerImplProps &
+	TextSelectionLayerImplProps &
+	FocusScopeImplProps & {
 		popper: Snippet<[{ props: Record<string, unknown> }]>;
-	} & FocusScopeProps;
+	};

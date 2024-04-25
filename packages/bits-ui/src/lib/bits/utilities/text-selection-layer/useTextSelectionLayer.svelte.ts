@@ -1,5 +1,5 @@
 import { untrack } from "svelte";
-import type { TextSelectionLayerProps } from "./types.js";
+import type { TextSelectionLayerImplProps, TextSelectionLayerProps } from "./types.js";
 import {
 	type Box,
 	type EventCallback,
@@ -14,7 +14,7 @@ import {
 	useNodeById,
 } from "$lib/internal/index.js";
 
-type StateProps = ReadonlyBoxedValues<Required<Omit<TextSelectionLayerProps, "children">>>;
+type StateProps = ReadonlyBoxedValues<Required<Omit<TextSelectionLayerImplProps, "children">>>;
 
 const layers = new Map<TextSelectionLayerState, ReadonlyBox<boolean>>();
 
@@ -28,7 +28,7 @@ export class TextSelectionLayerState {
 
 	constructor(props: StateProps) {
 		this.#node = useNodeById(props.id);
-		this.#enabled = props.enabled;
+		this.#enabled = props.preventOverflowTextSelection;
 		this.#onPointerDownProp = props.onPointerDown;
 		this.#onPointerUpProp = props.onPointerUp;
 		this.#present = props.present;

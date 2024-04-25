@@ -11,13 +11,6 @@ export type InteractOutsideBehaviorType =
 
 export type DismissableLayerProps = {
 	/**
-	 * DOM ID of the node.
-	 */
-	id: string;
-
-	children?: Snippet;
-
-	/**
 	 * Callback fired when an outside interaction event completes,
 	 * which is either a `pointerup`, `mouseup`, or `touchend`
 	 * event, depending on the user's input device.
@@ -44,14 +37,23 @@ export type DismissableLayerProps = {
 	 *
 	 * @defaultValue `close`
 	 */
-	behaviorType?: InteractOutsideBehaviorType;
+	interactOutsideBehavior?: InteractOutsideBehaviorType;
+};
 
+export type DismissableLayerImplProps = {
 	/**
 	 * Whether the layer is active. Currently, we determine this with the
 	 * `presence` returned from the `presence` layer.
 	 */
 	present: boolean;
-};
+
+	/**
+	 * ID of the layer.
+	 */
+	id: string;
+
+	children?: Snippet;
+} & DismissableLayerProps;
 
 export type InteractOutsideInterceptEventType =
 	| "pointerdown"

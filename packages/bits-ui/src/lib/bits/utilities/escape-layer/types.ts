@@ -7,12 +7,10 @@ export type EscapeBehaviorType =
 	| "ignore";
 
 export type EscapeLayerProps = {
-	children?: Snippet;
-
 	/**
 	 * Callback fired when escape is pressed.
 	 */
-	onEscape?: (e: KeyboardEvent) => void;
+	onEscapeKeydown?: (e: KeyboardEvent) => void;
 
 	/**
 	 * Escape behavior type.
@@ -24,10 +22,15 @@ export type EscapeLayerProps = {
 	 * @defaultValue `close`
 	 */
 	behaviorType?: EscapeBehaviorType;
+};
 
+// internal props not exposed to the user but used in the implementation
+export type EscapeLayerImplProps = {
 	/**
 	 * Whether the layer is enabled. Currently, we determine this with the
 	 * `presence` returned from the `presence` layer.
 	 */
 	present: boolean;
-};
+
+	children?: Snippet;
+} & EscapeLayerProps;

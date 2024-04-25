@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { PopperLayerProps } from "./index.js";
+	import type { PopperLayerImplProps } from "./types.js";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 	import { EscapeLayer } from "$lib/bits/utilities/escape-layer/index.js";
 	import { DismissableLayer } from "$lib/bits/utilities/dismissable-layer/index.js";
@@ -8,7 +8,7 @@
 	import { FocusScope } from "$lib/bits/utilities/focus-scope/index.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
-	let { popper, ...restProps }: PopperLayerProps = $props();
+	let { popper, ...restProps }: PopperLayerImplProps = $props();
 </script>
 
 <PresenceLayer {...restProps}>
