@@ -1,9 +1,6 @@
+import { box } from "runed";
 import { getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
-import {
-	type BoxedValues,
-	type ReadonlyBoxedValues,
-	boxedState,
-} from "$lib/internal/box.svelte.js";
+import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { useNodeById } from "$lib/internal/useNodeById.svelte.js";
 import { createContext } from "$lib/internal/createContext.js";
 
@@ -14,19 +11,19 @@ const OVERLAY_ATTR = "data-dialog-overlay";
 const DESCRIPTION_ATTR = "data-dialog-description";
 const CLOSE_ATTR = "data-dialog-close";
 
-type DialogRootStateProps = BoxedValues<{
+type DialogRootStateProps = WritableBoxedValues<{
 	open: boolean;
 }>;
 
 class DialogRootState {
 	open = undefined as unknown as DialogRootStateProps["open"];
-	triggerNode = boxedState<HTMLElement | null>(null);
-	titleNode = boxedState<HTMLElement | null>(null);
-	contentNode = boxedState<HTMLElement | null>(null);
+	triggerNode = box<HTMLElement | null>(null);
+	titleNode = box<HTMLElement | null>(null);
+	contentNode = box<HTMLElement | null>(null);
 	contentId = $derived(this.contentNode.value ? this.contentNode.value.id : undefined);
 	titleId = $derived(this.titleNode.value ? this.titleNode.value.id : undefined);
 	triggerId = $derived(this.triggerNode.value ? this.triggerNode.value.id : undefined);
-	descriptionNode = boxedState<HTMLElement | null>(null);
+	descriptionNode = box<HTMLElement | null>(null);
 	descriptionId = $derived(
 		this.descriptionNode.value ? this.descriptionNode.value.id : undefined
 	);
@@ -74,7 +71,7 @@ class DialogRootState {
 	});
 }
 
-type DialogTriggerStateProps = ReadonlyBoxedValues<{
+type DialogTriggerStateProps = ReadableBoxedValues<{
 	id: string;
 }>;
 
@@ -121,7 +118,7 @@ class DialogCloseState {
 	} as const);
 }
 
-type DialogTitleStateProps = ReadonlyBoxedValues<{
+type DialogTitleStateProps = ReadableBoxedValues<{
 	id: string;
 	level: 1 | 2 | 3 | 4 | 5 | 6;
 }>;
@@ -147,7 +144,7 @@ class DialogTitleState {
 	} as const);
 }
 
-type DialogDescriptionStateProps = ReadonlyBoxedValues<{
+type DialogDescriptionStateProps = ReadableBoxedValues<{
 	id: string;
 }>;
 
@@ -168,7 +165,7 @@ class DialogDescriptionState {
 	} as const);
 }
 
-type DialogContentStateProps = ReadonlyBoxedValues<{
+type DialogContentStateProps = ReadableBoxedValues<{
 	id: string;
 }>;
 
@@ -192,7 +189,7 @@ class DialogContentState {
 	} as const);
 }
 
-type DialogOverlayStateProps = ReadonlyBoxedValues<{
+type DialogOverlayStateProps = ReadableBoxedValues<{
 	id: string;
 }>;
 

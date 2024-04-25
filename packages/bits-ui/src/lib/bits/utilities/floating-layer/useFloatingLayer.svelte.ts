@@ -11,12 +11,11 @@ import {
 	shift,
 	size,
 } from "@floating-ui/dom";
+import { type ReadableBox, type WritableBox, box } from "runed";
 import {
 	type Arrayable,
 	type Box,
-	type ReadonlyBox,
-	type ReadonlyBoxedValues,
-	boxedState,
+	type ReadableBoxedValues,
 	styleToString,
 	useNodeById,
 } from "$lib/internal/index.js";
@@ -42,7 +41,7 @@ export type Align = (typeof ALIGN_OPTIONS)[number];
 export type Boundary = Element | null;
 
 class FloatingRootState {
-	anchorNode = undefined as unknown as Box<HTMLElement | null>;
+	anchorNode = undefined as unknown as WritableBox<HTMLElement | null>;
 
 	createAnchor(props: FloatingAnchorStateProps) {
 		return new FloatingAnchorState(props, this);
@@ -53,7 +52,7 @@ class FloatingRootState {
 	}
 }
 
-export type FloatingContentStateProps = ReadonlyBoxedValues<{
+export type FloatingContentStateProps = ReadableBoxedValues<{
 	id: string;
 	wrapperId: string;
 	side: Side;
@@ -81,10 +80,10 @@ class FloatingContentState {
 	// nodes
 	contentNode = undefined as unknown as Box<HTMLElement | null>;
 	wrapperNode = undefined as unknown as Box<HTMLElement | null>;
-	arrowNode = boxedState<HTMLElement | null>(null);
+	arrowNode = box<HTMLElement | null>(null);
 
 	// ids
-	arrowId = undefined as unknown as ReadonlyBox<string>;
+	arrowId = undefined as unknown as ReadableBox<string>;
 	id = undefined as unknown as FloatingContentStateProps["id"];
 	wrapperId = undefined as unknown as FloatingContentStateProps["wrapperId"];
 
@@ -288,13 +287,13 @@ class FloatingContentState {
 	}
 }
 
-type FloatingArrowStateProps = ReadonlyBoxedValues<{
+type FloatingArrowStateProps = ReadableBoxedValues<{
 	id: string;
 }>;
 
 class FloatingArrowState {
 	#content = undefined as unknown as FloatingContentState;
-	#id = undefined as unknown as ReadonlyBox<string>;
+	#id = undefined as unknown as FloatingArrowStateProps["id"];
 
 	props = $derived({
 		id: this.#id.value,
@@ -308,7 +307,7 @@ class FloatingArrowState {
 	}
 }
 
-type FloatingAnchorStateProps = ReadonlyBoxedValues<{
+type FloatingAnchorStateProps = ReadableBoxedValues<{
 	id: string;
 }>;
 

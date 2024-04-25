@@ -1,4 +1,4 @@
-import { boxedState } from "./box.svelte.js";
+import { box } from "runed";
 
 interface Machine<S> {
 	[k: string]: { [k: string]: S };
@@ -30,7 +30,7 @@ export function useStateMachine<M>(
 	initialState: MachineState<M>,
 	machine: M & Machine<MachineState<M>>
 ) {
-	const state = boxedState(initialState);
+	const state = box(initialState);
 
 	function reducer(event: MachineEvent<M>) {
 		// @ts-expect-error  state.value is keyof M

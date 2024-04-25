@@ -1,7 +1,7 @@
 import type { Derivable, Middleware, Padding } from "@floating-ui/dom";
 import { arrow as arrowCore } from "@floating-ui/dom";
 import type { MiddlewareState } from "@floating-ui/core";
-import type { Box } from "../box.svelte.js";
+import { type WritableBox, box } from "runed";
 import { isElement } from "../is.js";
 
 export type ArrowOptions = {
@@ -9,7 +9,7 @@ export type ArrowOptions = {
 	 * The arrow element to be positioned.
 	 * @default undefined
 	 */
-	element: Box<Element | null> | Element | null;
+	element: WritableBox<Element | null> | Element | null;
 
 	/**
 	 * The padding between the arrow element and the floating element edges.
@@ -28,17 +28,13 @@ export type ArrowOptions = {
  */
 
 export function arrow(options: ArrowOptions | Derivable<ArrowOptions>): Middleware {
-	function isBox(value: unknown): value is Box<HTMLElement | null> {
-		return {}.hasOwnProperty.call(value, "value");
-	}
-
 	return {
 		name: "arrow",
 		options,
 		fn(state: MiddlewareState) {
 			const { element, padding } = typeof options === "function" ? options(state) : options;
 
-			if (element && isBox(element)) {
+			if (element && box.isBox(element)) {
 				if (element.value !== null) {
 					return arrowCore({ element: element.value, padding }).fn(state);
 				}

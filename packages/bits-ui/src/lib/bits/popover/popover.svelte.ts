@@ -1,22 +1,18 @@
-import {
-	type BoxedValues,
-	type ReadonlyBoxedValues,
-	boxedState,
-	readonlyBoxedState,
-} from "$lib/internal/box.svelte.js";
+import { box } from "runed";
+import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { useNodeById } from "$lib/internal/useNodeById.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
 import { createContext } from "$lib/internal/createContext.js";
 
-type PopoverRootStateProps = BoxedValues<{
+type PopoverRootStateProps = WritableBoxedValues<{
 	open: boolean;
 }>;
 
 class PopoverRootState {
 	open = undefined as unknown as PopoverRootStateProps["open"];
-	contentId = readonlyBoxedState<string | undefined>(undefined);
-	triggerNode = boxedState<HTMLElement | null>(null);
+	contentId = box.with<string | undefined>(() => undefined);
+	triggerNode = box<HTMLElement | null>(null);
 
 	constructor(props: PopoverRootStateProps) {
 		this.open = props.open;
@@ -44,7 +40,7 @@ class PopoverRootState {
 	}
 }
 
-type PopoverTriggerStateProps = ReadonlyBoxedValues<{
+type PopoverTriggerStateProps = ReadableBoxedValues<{
 	id: string;
 }>;
 
@@ -88,10 +84,9 @@ class PopoverTriggerState {
 	} as const);
 }
 
-type PopoverContentStateProps = ReadonlyBoxedValues<{
+type PopoverContentStateProps = ReadableBoxedValues<{
 	id: string;
 }>;
-
 class PopoverContentState {
 	#id = undefined as unknown as PopoverContentStateProps["id"];
 	root = undefined as unknown as PopoverRootState;

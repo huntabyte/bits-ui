@@ -1,7 +1,8 @@
 <script lang="ts">
+	import { box } from "runed";
 	import type { ItemProps } from "../index.js";
 	import { useRadioGroupItem } from "../radio-group.svelte.js";
-	import { readonlyBox, styleToString, useId } from "$lib/internal/index.js";
+	import { styleToString, useId } from "$lib/internal/index.js";
 
 	let {
 		id = useId(),
@@ -18,11 +19,11 @@
 	}: ItemProps = $props();
 
 	const state = useRadioGroupItem({
-		value: readonlyBox(() => value),
-		disabled: readonlyBox(() => disabled),
-		id: readonlyBox(() => id),
-		onclick: readonlyBox(() => onclick),
-		onkeydown: readonlyBox(() => onkeydown),
+		value: box.with(() => value),
+		disabled: box.with(() => disabled),
+		id: box.with(() => id),
+		onclick: box.with(() => onclick),
+		onkeydown: box.with(() => onkeydown),
 	});
 
 	const mergedProps = $derived({

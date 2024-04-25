@@ -1,7 +1,7 @@
 <script lang="ts">
+	import { box } from "runed";
 	import type { RootProps } from "../index.js";
 	import { useToolbarRoot } from "../toolbar.svelte.js";
-	import { readonlyBox } from "$lib/internal/box.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { useId } from "$lib/internal/useId.svelte.js";
 
@@ -17,9 +17,9 @@
 	}: RootProps = $props();
 
 	const state = useToolbarRoot({
-		id: readonlyBox(() => id),
-		orientation: readonlyBox(() => orientation),
-		loop: readonlyBox(() => loop),
+		id: box.with(() => id),
+		orientation: box.with(() => orientation),
+		loop: box.with(() => loop),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, state.props));

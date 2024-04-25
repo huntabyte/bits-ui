@@ -1,8 +1,9 @@
 import { Map } from "svelte/reactivity";
 import { onDestroy } from "svelte";
+import { box } from "runed";
 import type { Fn } from "./types.js";
 import { isBrowser, isIOS } from "./is.js";
-import { box, readonlyBox, watch } from "./box.svelte.js";
+import { watch } from "./box.svelte.js";
 import { addEventListener } from "./events.js";
 import { afterTick } from "./after-tick.js";
 import { useId } from "./useId.svelte.js";
@@ -39,7 +40,7 @@ const useBodyLockStackCount = createSharedHook(() => {
 	}
 
 	watch(
-		readonlyBox(() => locked),
+		box.with(() => locked),
 		(curr, prev) => {
 			if (!curr) {
 				if (prev) {
@@ -104,7 +105,7 @@ export function useBodyScrollLock(initialState?: boolean | undefined) {
 
 	map.set(id, initialState ?? false);
 
-	const locked = box(
+	const locked = box.with(
 		() => map.get(id) ?? false,
 		(v) => map.set(id, v)
 	);

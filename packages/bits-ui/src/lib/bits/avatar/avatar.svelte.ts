@@ -1,14 +1,15 @@
 import { untrack } from "svelte";
+import type { ReadableBox, WritableBox } from "runed";
 import type { AvatarImageLoadingStatus } from "./types.js";
-import type { Box, ReadonlyBox, ReadonlyBoxedValues } from "$lib/internal/box.svelte.js";
 import { createContext } from "$lib/internal/createContext.js";
+import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 
 /**
  * ROOT
  */
 type AvatarRootStateProps = {
-	delayMs: ReadonlyBox<number>;
-	loadingStatus: Box<AvatarImageLoadingStatus>;
+	delayMs: ReadableBox<number>;
+	loadingStatus: WritableBox<AvatarImageLoadingStatus>;
 };
 
 type AvatarImageSrc = string | null | undefined;
@@ -57,7 +58,7 @@ class AvatarRootState {
  * IMAGE
  */
 
-type AvatarImageStateProps = ReadonlyBoxedValues<{
+type AvatarImageStateProps = ReadableBoxedValues<{
 	src: AvatarImageSrc;
 }>;
 

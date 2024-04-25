@@ -1,13 +1,13 @@
 <script lang="ts">
+	import { box } from "runed";
 	import type { PresenceLayerImplProps } from "./types.js";
-	import { readonlyBox } from "$lib/internal/box.svelte.js";
 	import { usePresence } from "$lib/bits/utilities/presence-layer/usePresence.svelte.js";
 
 	let { present, forceMount = false, presence, id }: PresenceLayerImplProps = $props();
 
 	const isPresent = usePresence(
-		readonlyBox(() => present),
-		readonlyBox(() => id)
+		box.with(() => present),
+		box.with(() => id)
 	);
 </script>
 

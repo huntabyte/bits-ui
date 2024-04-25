@@ -1,8 +1,8 @@
+import type { WritableBox } from "runed";
 import type { TabsActivationMode } from "./types.js";
 import {
-	type Box,
-	type BoxedValues,
-	type ReadonlyBoxedValues,
+	type ReadableBoxedValues,
+	type WritableBoxedValues,
 	getAriaOrientation,
 	getDataDisabled,
 	getDataOrientation,
@@ -20,20 +20,20 @@ const LIST_ATTR = "tabs-list";
 const TRIGGER_ATTR = "tabs-trigger";
 const CONTENT_ATTR = "tabs-content";
 
-type TabsRootStateProps = ReadonlyBoxedValues<{
+type TabsRootStateProps = ReadableBoxedValues<{
 	id: string;
 	orientation: Orientation;
 	loop: boolean;
 	activationMode: TabsActivationMode;
 	disabled: boolean;
 }> &
-	BoxedValues<{
+	WritableBoxedValues<{
 		value: string;
 	}>;
 
 class TabsRootState {
 	id = undefined as unknown as TabsRootStateProps["id"];
-	node = undefined as unknown as Box<HTMLElement | null>;
+	node = undefined as unknown as WritableBox<HTMLElement | null>;
 	orientation = undefined as unknown as TabsRootStateProps["orientation"];
 	loop = undefined as unknown as TabsRootStateProps["loop"];
 	activationMode = undefined as unknown as TabsRootStateProps["activationMode"];
@@ -105,7 +105,7 @@ class TabsListState {
 // TRIGGER
 //
 
-type TabsTriggerStateProps = ReadonlyBoxedValues<{
+type TabsTriggerStateProps = ReadableBoxedValues<{
 	id: string;
 	value: string;
 	disabled: boolean;
@@ -114,7 +114,7 @@ type TabsTriggerStateProps = ReadonlyBoxedValues<{
 class TabsTriggerState {
 	#root = undefined as unknown as TabsRootState;
 	#id = undefined as unknown as TabsTriggerStateProps["id"];
-	#node = undefined as unknown as Box<HTMLElement | null>;
+	#node = undefined as unknown as WritableBox<HTMLElement | null>;
 	#disabled = undefined as unknown as TabsTriggerStateProps["disabled"];
 	#value = undefined as unknown as TabsTriggerStateProps["value"];
 	#isActive = $derived(this.#root.value.value === this.#value.value);
@@ -179,7 +179,7 @@ class TabsTriggerState {
 // CONTENT
 //
 
-type TabsContentStateProps = ReadonlyBoxedValues<{
+type TabsContentStateProps = ReadableBoxedValues<{
 	value: string;
 }>;
 

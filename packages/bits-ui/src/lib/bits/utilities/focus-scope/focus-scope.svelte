@@ -1,7 +1,7 @@
 <script lang="ts">
+	import { box } from "runed";
 	import type { FocusScopeImplProps } from "./types.js";
 	import { useFocusScope } from "./useFocusScope.svelte.js";
-	import { readonlyBox } from "$lib/internal/box.svelte.js";
 	import { noop } from "$lib/internal/callbacks.js";
 
 	let {
@@ -14,11 +14,11 @@
 	}: FocusScopeImplProps = $props();
 
 	const state = useFocusScope({
-		trapped: readonlyBox(() => trapped),
-		loop: readonlyBox(() => loop),
-		onDestroyAutoFocus: readonlyBox(() => onDestroyAutoFocus),
-		onMountAutoFocus: readonlyBox(() => onMountAutoFocus),
-		id: readonlyBox(() => id),
+		trapped: box.with(() => trapped),
+		loop: box.with(() => loop),
+		onDestroyAutoFocus: box.with(() => onDestroyAutoFocus),
+		onMountAutoFocus: box.with(() => onMountAutoFocus),
+		id: box.with(() => id),
 	});
 </script>
 

@@ -1,8 +1,8 @@
+import { box } from "runed";
 import type { Page, PageItem } from "./types.js";
 import {
-	type BoxedValues,
-	type ReadonlyBoxedValues,
-	boxedState,
+	type ReadableBoxedValues,
+	type WritableBoxedValues,
 	getDataOrientation,
 	getDirectionalKeys,
 	getElemDirection,
@@ -12,7 +12,7 @@ import {
 import type { Orientation } from "$lib/shared/index.js";
 import { createContext } from "$lib/internal/createContext.js";
 
-type PaginationRootStateProps = ReadonlyBoxedValues<{
+type PaginationRootStateProps = ReadableBoxedValues<{
 	id: string;
 	count: number;
 	perPage: number;
@@ -20,14 +20,14 @@ type PaginationRootStateProps = ReadonlyBoxedValues<{
 	orientation: Orientation;
 	loop: boolean;
 }> &
-	BoxedValues<{
+	WritableBoxedValues<{
 		page: number;
 	}>;
 
 class PaginationRootState {
 	id = undefined as unknown as PaginationRootStateProps["id"];
 	orientation = undefined as unknown as PaginationRootStateProps["orientation"];
-	node = boxedState<HTMLElement | null>(null);
+	node = box<HTMLElement | null>(null);
 	count = undefined as unknown as PaginationRootStateProps["count"];
 	perPage = undefined as unknown as PaginationRootStateProps["perPage"];
 	siblingCount = undefined as unknown as PaginationRootStateProps["siblingCount"];
@@ -101,7 +101,7 @@ class PaginationRootState {
 // PAGE
 //
 
-type PaginationPageStateProps = ReadonlyBoxedValues<{
+type PaginationPageStateProps = ReadableBoxedValues<{
 	id: string;
 	page: Page;
 }>;
@@ -109,7 +109,7 @@ type PaginationPageStateProps = ReadonlyBoxedValues<{
 class PaginationPage {
 	#id = undefined as unknown as PaginationPageStateProps["id"];
 	#root = undefined as unknown as PaginationRootState;
-	#node = boxedState<HTMLElement | null>(null);
+	#node = box<HTMLElement | null>(null);
 	page = undefined as unknown as PaginationPageStateProps["page"];
 
 	constructor(props: PaginationPageStateProps, root: PaginationRootState) {
@@ -143,7 +143,7 @@ class PaginationPage {
 // NEXT/PREV BUTTON
 //
 
-type PaginationButtonStateProps = ReadonlyBoxedValues<{
+type PaginationButtonStateProps = ReadableBoxedValues<{
 	id: string;
 }> & {
 	type: "prev" | "next";
@@ -152,7 +152,7 @@ type PaginationButtonStateProps = ReadonlyBoxedValues<{
 class PaginationButtonState {
 	id = undefined as unknown as PaginationButtonStateProps["id"];
 	#root = undefined as unknown as PaginationRootState;
-	node = boxedState<HTMLElement | null>(null);
+	node = box<HTMLElement | null>(null);
 	type = $state() as PaginationButtonStateProps["type"];
 
 	constructor(props: PaginationButtonStateProps, root: PaginationRootState) {

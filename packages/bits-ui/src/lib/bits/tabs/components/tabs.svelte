@@ -1,8 +1,8 @@
 <script lang="ts">
+	import { box } from "runed";
 	import type { RootProps } from "../index.js";
 	import { useTabsRoot } from "../tabs.svelte.js";
 	import { useId } from "$lib/internal/useId.svelte.js";
-	import { box, readonlyBox } from "$lib/internal/box.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {
@@ -21,8 +21,8 @@
 	}: RootProps = $props();
 
 	const state = useTabsRoot({
-		id: readonlyBox(() => id),
-		value: box(
+		id: box.with(() => id),
+		value: box.with(
 			() => value,
 			(v) => {
 				if (value !== v) {
@@ -31,10 +31,10 @@
 				}
 			}
 		),
-		orientation: readonlyBox(() => orientation),
-		loop: readonlyBox(() => loop),
-		activationMode: readonlyBox(() => activationMode),
-		disabled: readonlyBox(() => disabled),
+		orientation: box.with(() => orientation),
+		loop: box.with(() => loop),
+		activationMode: box.with(() => activationMode),
+		disabled: box.with(() => disabled),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, state.props));

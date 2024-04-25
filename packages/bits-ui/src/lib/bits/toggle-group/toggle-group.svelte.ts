@@ -1,3 +1,4 @@
+import { type WritableBox, box } from "runed";
 import {
 	getAriaChecked,
 	getAriaPressed,
@@ -5,12 +6,7 @@ import {
 	getDataOrientation,
 	getDisabledAttr,
 } from "$lib/internal/attrs.js";
-import {
-	type Box,
-	type BoxedValues,
-	type ReadonlyBoxedValues,
-	boxedState,
-} from "$lib/internal/box.svelte.js";
+import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { useNodeById } from "$lib/internal/useNodeById.svelte.js";
 import type { Orientation } from "$lib/shared/index.js";
@@ -20,7 +16,7 @@ import { createContext } from "$lib/internal/createContext.js";
 const ROOT_ATTR = "toggle-group-root";
 const ITEM_ATTR = "toggle-group-item";
 
-type ToggleGroupBaseStateProps = ReadonlyBoxedValues<{
+type ToggleGroupBaseStateProps = ReadableBoxedValues<{
 	id: string;
 	disabled: boolean;
 	rovingFocus: boolean;
@@ -30,7 +26,7 @@ type ToggleGroupBaseStateProps = ReadonlyBoxedValues<{
 
 class ToggleGroupBaseState {
 	id = undefined as unknown as ToggleGroupBaseStateProps["id"];
-	node: Box<HTMLElement | null>;
+	node: WritableBox<HTMLElement | null>;
 	disabled = undefined as unknown as ToggleGroupBaseStateProps["disabled"];
 	rovingFocus = undefined as unknown as ToggleGroupBaseStateProps["rovingFocus"];
 	loop = undefined as unknown as ToggleGroupBaseStateProps["loop"];
@@ -66,7 +62,7 @@ class ToggleGroupBaseState {
 //
 
 type ToggleGroupSingleStateProps = ToggleGroupBaseStateProps &
-	BoxedValues<{
+	WritableBoxedValues<{
 		value: string;
 	}>;
 
@@ -99,7 +95,7 @@ class ToggleGroupSingleState extends ToggleGroupBaseState {
 //
 
 type ToggleGroupMultipleStateProps = ToggleGroupBaseStateProps &
-	BoxedValues<{
+	WritableBoxedValues<{
 		value: string[];
 	}>;
 
@@ -133,7 +129,7 @@ type ToggleGroupState = ToggleGroupSingleState | ToggleGroupMultipleState;
 // ITEM
 //
 
-type ToggleGroupItemStateProps = ReadonlyBoxedValues<{
+type ToggleGroupItemStateProps = ReadableBoxedValues<{
 	id: string;
 	value: string;
 	disabled: boolean;
@@ -145,7 +141,7 @@ class ToggleGroupItemState {
 	#id = undefined as unknown as ToggleGroupItemStateProps["id"];
 	#root = undefined as unknown as ToggleGroupItemStateProps["rootState"];
 	#value = undefined as unknown as ToggleGroupItemStateProps["value"];
-	#node = boxedState<HTMLElement | null>(null);
+	#node = box<HTMLElement | null>(null);
 	#disabled = undefined as unknown as ToggleGroupItemStateProps["disabled"];
 	#isDisabled = $derived(this.#disabled.value || this.#root.disabled.value);
 
@@ -229,8 +225,8 @@ const [setToggleGroupRootContext, getToggleGroupRootContext] =
 
 type InitToggleGroupProps = {
 	type: "single" | "multiple";
-	value: Box<string> | Box<string[]>;
-} & ReadonlyBoxedValues<{
+	value: WritableBox<string> | WritableBox<string[]>;
+} & ReadableBoxedValues<{
 	id: string;
 	disabled: boolean;
 	rovingFocus: boolean;

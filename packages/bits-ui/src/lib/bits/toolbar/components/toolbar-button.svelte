@@ -1,8 +1,8 @@
 <script lang="ts">
+	import { box } from "runed";
 	import type { ButtonProps } from "../index.js";
 	import { useToolbarButton } from "../toolbar.svelte.js";
 	import { useId } from "$lib/internal/useId.svelte.js";
-	import { readonlyBox } from "$lib/internal/box.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {
@@ -17,8 +17,8 @@
 	}: ButtonProps = $props();
 
 	const state = useToolbarButton({
-		id: readonlyBox(() => id),
-		disabled: readonlyBox(() => disabled),
+		id: box.with(() => id),
+		disabled: box.with(() => disabled),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, state.props, { type }));

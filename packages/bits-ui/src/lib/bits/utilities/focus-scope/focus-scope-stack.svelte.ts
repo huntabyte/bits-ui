@@ -1,4 +1,4 @@
-import { boxedState } from "$lib/internal/box.svelte.js";
+import { box } from "runed";
 
 export type FocusScopeAPI = {
 	paused: boolean;
@@ -6,7 +6,7 @@ export type FocusScopeAPI = {
 	resume: () => void;
 };
 
-const focusStack = boxedState<FocusScopeAPI[]>([]);
+const focusStack = box<FocusScopeAPI[]>([]);
 
 export function createFocusScopeStack() {
 	const stack = focusStack;

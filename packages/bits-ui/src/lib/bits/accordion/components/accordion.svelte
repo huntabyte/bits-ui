@@ -1,7 +1,9 @@
 <script lang="ts">
+	import { type WritableBox, box } from "runed";
 	import { useAccordionRoot } from "../accordion.svelte.js";
 	import type { RootProps } from "../index.js";
-	import { type Box, box, mergeProps, readonlyBox, useId } from "$lib/internal/index.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
 
 	let {
 		disabled = false,
@@ -22,17 +24,17 @@
 
 	const state = useAccordionRoot({
 		type,
-		value: box(
+		value: box.with(
 			() => value!,
 			(v) => {
 				value = v;
 				onValueChange?.(v as any);
 			}
-		) as Box<string> | Box<string[]>,
-		id: readonlyBox(() => id),
-		disabled: readonlyBox(() => disabled),
-		loop: readonlyBox(() => loop),
-		orientation: readonlyBox(() => orientation),
+		) as WritableBox<string> | WritableBox<string[]>,
+		id: box.with(() => id),
+		disabled: box.with(() => disabled),
+		loop: box.with(() => loop),
+		orientation: box.with(() => orientation),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, state.props));

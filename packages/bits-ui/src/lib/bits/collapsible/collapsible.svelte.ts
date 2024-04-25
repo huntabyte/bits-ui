@@ -1,30 +1,27 @@
+import { box } from "runed";
 import {
-	type Box,
-	type BoxedValues,
-	type ReadonlyBox,
-	type ReadonlyBoxedValues,
+	type ReadableBoxedValues,
+	type WritableBoxedValues,
 	afterTick,
-	boxedState,
 	getAriaExpanded,
 	getDataDisabled,
 	getDataOpenClosed,
-	readonlyBoxedState,
 	useId,
 	useNodeById,
 } from "$lib/internal/index.js";
 import { createContext } from "$lib/internal/createContext.js";
 
-type CollapsibleRootStateProps = BoxedValues<{
+type CollapsibleRootStateProps = WritableBoxedValues<{
 	open: boolean;
 }> &
-	ReadonlyBoxedValues<{
+	ReadableBoxedValues<{
 		disabled: boolean;
 	}>;
 
 class CollapsibleRootState {
-	open = undefined as unknown as Box<boolean>;
-	disabled = undefined as unknown as ReadonlyBox<boolean>;
-	contentId = readonlyBoxedState(useId());
+	open = undefined as unknown as CollapsibleRootStateProps["open"];
+	disabled = undefined as unknown as CollapsibleRootStateProps["disabled"];
+	contentId = box.with(() => useId());
 	props = $derived({
 		"data-state": getDataOpenClosed(this.open.value),
 		"data-disabled": getDataDisabled(this.disabled.value),
@@ -49,7 +46,7 @@ class CollapsibleRootState {
 	}
 }
 
-type CollapsibleContentStateProps = ReadonlyBoxedValues<{
+type CollapsibleContentStateProps = ReadableBoxedValues<{
 	id: string;
 	forceMount: boolean;
 }>;
@@ -57,11 +54,11 @@ type CollapsibleContentStateProps = ReadonlyBoxedValues<{
 class CollapsibleContentState {
 	root = undefined as unknown as CollapsibleRootState;
 	#originalStyles: { transitionDuration: string; animationName: string } | undefined;
-	node = boxedState<HTMLElement | null>(null);
+	node = box<HTMLElement | null>(null);
 	#isMountAnimationPrevented = $state(false);
 	#width = $state(0);
 	#height = $state(0);
-	#forceMount = undefined as unknown as ReadonlyBox<boolean>;
+	#forceMount = undefined as unknown as CollapsibleContentStateProps["forceMount"];
 	props = $derived({
 		id: this.root.contentId.value,
 		"data-state": getDataOpenClosed(this.root.open.value),

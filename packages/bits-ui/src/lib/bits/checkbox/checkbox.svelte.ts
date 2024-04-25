@@ -1,8 +1,6 @@
 import {
-	type Box,
-	type BoxedValues,
-	type ReadonlyBox,
-	type ReadonlyBoxedValues,
+	type ReadableBoxedValues,
+	type WritableBoxedValues,
 	getAriaChecked,
 	getAriaRequired,
 	getDataDisabled,
@@ -10,22 +8,22 @@ import {
 } from "$lib/internal/index.js";
 import { createContext } from "$lib/internal/createContext.js";
 
-type CheckboxRootStateProps = ReadonlyBoxedValues<{
+type CheckboxRootStateProps = ReadableBoxedValues<{
 	disabled: boolean;
 	required: boolean;
 	name: string | undefined;
 	value: string | undefined;
 }> &
-	BoxedValues<{
+	WritableBoxedValues<{
 		checked: boolean | "indeterminate";
 	}>;
 
 class CheckboxRootState {
-	checked = undefined as unknown as Box<boolean | "indeterminate">;
-	disabled = undefined as unknown as ReadonlyBox<boolean>;
-	required = undefined as unknown as ReadonlyBox<boolean>;
-	name: ReadonlyBox<string | undefined>;
-	value: ReadonlyBox<string | undefined>;
+	checked = undefined as unknown as CheckboxRootStateProps["checked"];
+	disabled = undefined as unknown as CheckboxRootStateProps["disabled"];
+	required = undefined as unknown as CheckboxRootStateProps["required"];
+	name: CheckboxRootStateProps["name"];
+	value: CheckboxRootStateProps["value"];
 
 	indicatorprops = $derived({
 		"data-disabled": getDataDisabled(this.disabled.value),

@@ -1,7 +1,8 @@
 <script lang="ts">
+	import { box } from "runed";
 	import type { RootProps } from "../index.js";
 	import { usePaginationRoot } from "../pagination.svelte.js";
-	import { box, readonlyBox, styleToString, useId } from "$lib/internal/index.js";
+	import { styleToString, useId } from "$lib/internal/index.js";
 
 	let {
 		id = useId(),
@@ -21,19 +22,19 @@
 	}: RootProps = $props();
 
 	const state = usePaginationRoot({
-		id: readonlyBox(() => id),
-		count: readonlyBox(() => count),
-		perPage: readonlyBox(() => perPage),
-		page: box(
+		id: box.with(() => id),
+		count: box.with(() => count),
+		perPage: box.with(() => perPage),
+		page: box.with(
 			() => page,
 			(v) => {
 				page = v;
 				onPageChange?.(v);
 			}
 		),
-		loop: readonlyBox(() => loop),
-		siblingCount: readonlyBox(() => siblingCount),
-		orientation: readonlyBox(() => orientation),
+		loop: box.with(() => loop),
+		siblingCount: box.with(() => siblingCount),
+		orientation: box.with(() => orientation),
 	});
 
 	const mergedProps = $derived({

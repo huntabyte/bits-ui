@@ -1,5 +1,6 @@
 class Counter {
-	value = $state(0);
+	value = 0;
+
 	constructor(initialValue: number = 0) {
 		this.value = initialValue;
 	}

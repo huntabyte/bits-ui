@@ -1,7 +1,7 @@
 <script lang="ts">
+	import { box } from "runed";
 	import { useSeparatorRoot } from "../separator.svelte.js";
 	import type { RootProps } from "../index.js";
-	import { readonlyBox } from "$lib/internal/box.svelte.js";
 	import { styleToString } from "$lib/internal/style.js";
 
 	let {
@@ -16,8 +16,8 @@
 	}: RootProps = $props();
 
 	const state = useSeparatorRoot({
-		decorative: readonlyBox(() => decorative),
-		orientation: readonlyBox(() => orientation),
+		decorative: box.with(() => decorative),
+		orientation: box.with(() => orientation),
 	});
 
 	const mergedProps = $derived({

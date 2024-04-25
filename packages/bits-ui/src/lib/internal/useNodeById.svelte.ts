@@ -1,4 +1,4 @@
-import { type Box, type ReadonlyBox, boxedState } from "./box.svelte.js";
+import { type ReadableBox, type WritableBox, box } from "runed";
 import { afterTick } from "./after-tick.js";
 
 /**
@@ -8,8 +8,8 @@ import { afterTick } from "./after-tick.js";
  *
  * @param id The boxed ID of the node to find.
  */
-export function useNodeById(id: ReadonlyBox<string> | Box<string>) {
-	const node = boxedState<HTMLElement | null>(null);
+export function useNodeById(id: ReadableBox<string> | WritableBox<string>) {
+	const node = box<HTMLElement | null>(null);
 
 	$effect.pre(() => {
 		// eslint-disable-next-line no-unused-expressions

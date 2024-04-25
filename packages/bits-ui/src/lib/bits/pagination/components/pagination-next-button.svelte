@@ -1,7 +1,8 @@
 <script lang="ts">
+	import { box } from "runed";
 	import type { NextButtonProps } from "../index.js";
 	import { usePaginationButton } from "../pagination.svelte.js";
-	import { mergeProps, readonlyBox, useId } from "$lib/internal/index.js";
+	import { mergeProps, useId } from "$lib/internal/index.js";
 
 	let {
 		id = useId(),
@@ -15,7 +16,7 @@
 
 	const state = usePaginationButton({
 		type: "next",
-		id: readonlyBox(() => id),
+		id: box.with(() => id),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, state.props, { type }));
