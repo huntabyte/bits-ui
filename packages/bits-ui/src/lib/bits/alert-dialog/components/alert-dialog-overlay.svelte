@@ -39,7 +39,7 @@
 		transition:transition={transitionConfig}
 		use:melt={builder}
 		{...$$restProps}
-	/>
+	></div>
 {:else if inTransition && outTransition && $open}
 	<div
 		bind:this={el}
@@ -47,16 +47,21 @@
 		out:outTransition={outTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
-	/>
+	></div>
 {:else if inTransition && $open}
-	<div bind:this={el} in:inTransition={inTransitionConfig} use:melt={builder} {...$$restProps} />
+	<div
+		bind:this={el}
+		in:inTransition={inTransitionConfig}
+		use:melt={builder}
+		{...$$restProps}
+	></div>
 {:else if outTransition && $open}
 	<div
 		bind:this={el}
 		out:outTransition={outTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
-	/>
+	></div>
 {:else if $open}
-	<div bind:this={el} use:melt={builder} {...$$restProps} />
+	<div bind:this={el} use:melt={builder} {...$$restProps}></div>
 {/if}

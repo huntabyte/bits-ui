@@ -57,4 +57,4 @@
 		{/if}
 	</button>
 </main>
-<div data-testid="portal-target" id="portal-target" />
+<div data-testid="portal-target" id="portal-target"></div>
