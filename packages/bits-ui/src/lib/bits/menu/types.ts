@@ -79,7 +79,7 @@ export type MenuRadioGroupPropsWithoutHTML = Expand<
 		 *
 		 * @defaultValue undefined
 		 */
-		value?: MeltContextMenuRadioGroupProps["defaultValue"] & {};
+		value?: (MeltContextMenuRadioGroupProps["defaultValue"] & {}) | undefined;
 
 		/**
 		 * A callback function called when the value changes.
