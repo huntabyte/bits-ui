@@ -63,7 +63,7 @@ export type MenuCheckboxItemPropsWithoutHTML = Expand<
 		 *
 		 * @defaultValue false
 		 */
-		checked?: boolean | "indeterminate";
+		checked?: boolean | "indeterminate" | undefined;
 
 		/**
 		 * A callback function called when the checked state changes.
