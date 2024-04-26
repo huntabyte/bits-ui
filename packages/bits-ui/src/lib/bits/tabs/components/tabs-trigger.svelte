@@ -1,41 +1,35 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { getCtx } from "../ctx.js";
-	import type { TriggerEvents, TriggerProps } from "../index.js";
-	import { createDispatcher } from "$lib/internal/events.js";
+	import { box } from "runed";
+	import type { TriggerProps } from "../index.js";
+	import { useTabsTrigger } from "../tabs.svelte.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
 
-	type $$Props = TriggerProps;
-	type $$Events = TriggerEvents;
+	let {
+		asChild,
+		child,
+		children,
+		disabled = false,
+		id = useId(),
+		type = "button",
+		value,
+		el = $bindable(),
+		...restProps
+	}: TriggerProps = $props();
 
-	export let value: $$Props["value"];
-	export let disabled: $$Props["disabled"] = undefined;
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
+	const state = useTabsTrigger({
+		id: box.with(() => id),
+		disabled: box.with(() => disabled),
+		value: box.with(() => value),
+	});
 
-	const {
-		elements: { trigger },
-		getAttrs,
-	} = getCtx();
-
-	const dispatch = createDispatcher();
-	const attrs = getAttrs("trigger");
-
-	$: builder = $trigger({ value, disabled });
-	$: Object.assign(builder, attrs);
+	const mergedProps = $derived(mergeProps(restProps, state.props, { type }));
 </script>
 
 {#if asChild}
-	<slot {builder} />
+	{@render child?.({ props: mergedProps })}
 {:else}
-	<button
-		bind:this={el}
-		use:melt={builder}
-		type="button"
-		{...$$restProps}
-		on:m-click={dispatch}
-		on:m-focus={dispatch}
-		on:m-keydown={dispatch}
-	>
-		<slot {builder} />
+	<button bind:this={el} {...mergedProps}>
+		{@render children?.()}
 	</button>
 {/if}

@@ -1,99 +1,60 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { getCtx, updatePositioning } from "../ctx.js";
+	import { box } from "runed";
 	import type { ContentProps } from "../index.js";
-	import type { Transition } from "$lib/internal/index.js";
+	import { usePopoverContent } from "../popover.svelte.js";
+	import { PopperLayer } from "$lib/bits/utilities/popper-layer/index.js";
+	import { mergeProps, noop, useId } from "$lib/internal/index.js";
 
-	type T = $$Generic<Transition>;
-	type In = $$Generic<Transition>;
-	type Out = $$Generic<Transition>;
+	let {
+		asChild,
+		child,
+		children,
+		el = $bindable(),
+		id = useId(),
+		forceMount = false,
+		onDestroyAutoFocus = noop,
+		onEscapeKeydown = noop,
+		onInteractOutside = noop,
+		loop = true,
+		...restProps
+	}: ContentProps = $props();
 
-	type $$Props = ContentProps<T, In, Out>;
-
-	export let transition: $$Props["transition"] = undefined;
-	export let transitionConfig: $$Props["transitionConfig"] = undefined;
-	export let inTransition: $$Props["inTransition"] = undefined;
-	export let inTransitionConfig: $$Props["inTransitionConfig"] = undefined;
-	export let outTransition: $$Props["outTransition"] = undefined;
-	export let outTransitionConfig: $$Props["outTransitionConfig"] = undefined;
-	export let asChild: $$Props["asChild"] = false;
-	export let id: $$Props["id"] = undefined;
-	export let side: $$Props["side"] = "bottom";
-	export let align: $$Props["align"] = "center";
-	export let sideOffset: $$Props["sideOffset"] = 0;
-	export let alignOffset: $$Props["alignOffset"] = 0;
-	export let collisionPadding: $$Props["collisionPadding"] = 8;
-	export let avoidCollisions: $$Props["avoidCollisions"] = true;
-	export let collisionBoundary: $$Props["collisionBoundary"] = undefined;
-	export let sameWidth: $$Props["sameWidth"] = false;
-	export let fitViewport: $$Props["fitViewport"] = false;
-	export let strategy: $$Props["strategy"] = "absolute";
-	export let overlap: $$Props["overlap"] = false;
-	export let el: $$Props["el"] = undefined;
-
-	const {
-		elements: { content },
-		states: { open },
-		ids,
-		getAttrs,
-	} = getCtx();
-
-	const attrs = getAttrs("content");
-
-	$: if (id) {
-		ids.content.set(id);
-	}
-	$: builder = $content;
-	$: Object.assign(builder, attrs);
-
-	$: if ($open) {
-		updatePositioning({
-			side,
-			align,
-			sideOffset,
-			alignOffset,
-			collisionPadding,
-			avoidCollisions,
-			collisionBoundary,
-			sameWidth,
-			fitViewport,
-			strategy,
-			overlap,
-		});
-	}
+	const state = usePopoverContent({
+		id: box.with(() => id),
+	});
 </script>
 
-{#if asChild && $open}
-	<slot {builder} />
-{:else if transition && $open}
-	<div
-		bind:this={el}
-		transition:transition={transitionConfig}
-		use:melt={builder}
-		{...$$restProps}
-	>
-		<slot {builder} />
-	</div>
-{:else if inTransition && outTransition && $open}
-	<div
-		bind:this={el}
-		in:inTransition={inTransitionConfig}
-		out:outTransition={outTransitionConfig}
-		use:melt={builder}
-		{...$$restProps}
-	>
-		<slot {builder} />
-	</div>
-{:else if inTransition && $open}
-	<div bind:this={el} in:inTransition={inTransitionConfig} use:melt={builder} {...$$restProps}>
-		<slot {builder} />
-	</div>
-{:else if outTransition && $open}
-	<div bind:this={el} out:outTransition={outTransitionConfig} use:melt={builder} {...$$restProps}>
-		<slot {builder} />
-	</div>
-{:else if $open}
-	<div bind:this={el} use:melt={builder} {...$$restProps}>
-		<slot {builder} />
-	</div>
-{/if}
+<PopperLayer
+	{...restProps}
+	present={state.root.open.value || forceMount}
+	{id}
+	onInteractOutside={(e) => {
+		onInteractOutside(e);
+		if (e.defaultPrevented) return;
+		state.root.close();
+	}}
+	onEscapeKeydown={(e) => {
+		// TODO: users should be able to cancel this
+		onEscapeKeydown(e);
+		state.root.close();
+	}}
+	onDestroyAutoFocus={(e) => {
+		onDestroyAutoFocus(e);
+		if (e.defaultPrevented) return;
+		e.preventDefault();
+		state.root.triggerNode?.value?.focus();
+	}}
+	trapped
+	{loop}
+>
+	{#snippet popper({ props })}
+		{@const mergedProps = mergeProps(restProps, state.props, props)}
+		{#if asChild}
+			{@render child?.({ props: mergedProps })}
+		{:else}
+			<div {...mergedProps} bind:this={el}>
+				{@render children?.()}
+			</div>
+		{/if}
+	{/snippet}
+</PopperLayer>

@@ -1,29 +1,30 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { setItem } from "../ctx.js";
-	import type { ItemProps } from "../index.js";
-	type $$Props = ItemProps;
+	import { box } from "runed";
+	import type { AccordionItemProps } from "../types.js";
+	import { useAccordionItem } from "../accordion.svelte.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
+	let {
+		asChild,
+		disabled = false,
+		value,
+		children,
+		child,
+		el = $bindable(),
+		...restProps
+	}: AccordionItemProps = $props();
 
-	export let value: $$Props["value"];
-	export let disabled: $$Props["disabled"] = undefined;
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
+	const state = useAccordionItem({
+		value: box.with(() => value),
+		disabled: box.with(() => disabled),
+	});
 
-	const {
-		elements: { item },
-		props,
-		getAttrs,
-	} = setItem({ value, disabled });
-	const attrs = getAttrs("item");
-
-	$: builder = $item(props);
-	$: Object.assign(builder, attrs);
+	const mergedProps = $derived(mergeProps(restProps, state.props));
 </script>
 
 {#if asChild}
-	<slot {builder} />
+	{@render child?.({ props: mergedProps })}
 {:else}
-	<div bind:this={el} use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+	<div {...mergedProps} bind:this={el}>
+		{@render children?.()}
 	</div>
 {/if}

@@ -6,7 +6,7 @@
 	import { parseMarkdown } from "$lib/utils/index.js";
 
 	export let props: PropObj<Record<string, unknown>>;
-	export let slot = false;
+	export let slotted = false;
 
 	$: propData = Object.entries(props).map(([name, prop]) => {
 		const { type, description, default: defaultVal, required } = prop as PropSchema;
@@ -18,7 +18,7 @@
 	<Table.Header>
 		<Table.Row class="w-1/4">
 			<Table.Head class="w-[38%] whitespace-nowrap pr-1"
-				>{slot ? "Slot" : ""} Property</Table.Head
+				>{slotted ? "Slot" : ""} Property</Table.Head
 			>
 			<Table.Head class="w-[22%] whitespace-nowrap pr-1">Type</Table.Head>
 			<Table.Head class="w-[40%] whitespace-nowrap">Description</Table.Head>
@@ -42,7 +42,7 @@
 						<!--  eslint-disable-next-line svelte/no-at-html-tags -->
 						{@html parseMarkdown(description)}
 					</p>
-					{#if !slot}
+					{#if !slotted}
 						<div class="mt-2">
 							<Code class="h-auto bg-background px-0">
 								Default:

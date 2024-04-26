@@ -1,19 +1,16 @@
 <script lang="ts">
 	import "$lib/styles/markdown.postcss";
-	import type { SvelteComponent } from "svelte";
-	import type { PageData } from "./$types.js";
+	import type { ComponentType } from "svelte";
 	import { PageHeader, PageHeaderDescription, PageHeaderHeading } from "$lib/components/index.js";
-	type Component = $$Generic<typeof SvelteComponent>;
 
-	export let data: PageData;
-	$: component = data.component as unknown as Component;
-	$: doc = data.metadata;
+	let { data } = $props();
+	const component = $derived(data.component) as unknown as ComponentType;
 </script>
 
 <div class="markdown pb-24">
 	<PageHeader>
-		<PageHeaderHeading>{doc.title}</PageHeaderHeading>
-		<PageHeaderDescription>{doc.description}</PageHeaderDescription>
+		<PageHeaderHeading>{data.metadata.title}</PageHeaderHeading>
+		<PageHeaderDescription>{data.metadata.description}</PageHeaderDescription>
 	</PageHeader>
 	<svelte:component this={component} />
 </div>

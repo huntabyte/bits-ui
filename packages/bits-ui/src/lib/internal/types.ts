@@ -1,6 +1,16 @@
+import type { Snippet } from "svelte";
 import type { Action } from "svelte/action";
-import type { HTMLAttributes } from "svelte/elements";
+import type {
+	HTMLAnchorAttributes,
+	HTMLAttributes,
+	HTMLButtonAttributes,
+	HTMLImgAttributes,
+	HTMLInputAttributes,
+	HTMLLabelAttributes,
+	SVGAttributes,
+} from "svelte/elements";
 import type { TransitionConfig } from "svelte/transition";
+import type { StyleProperties } from "$lib/shared/index.js";
 
 export type ObjectVariation<T> = T extends object ? T : never;
 // eslint-disable-next-line ts/no-explicit-any
@@ -111,3 +121,54 @@ export type TransitionProps<
 	 */
 	outTransitionConfig?: TransitionParams<Out>;
 }>;
+
+type Primitive<T> = Omit<T, "style" | "id" | "children"> & { id?: string };
+export type PrimitiveButtonAttributes = Primitive<HTMLButtonAttributes>;
+export type PrimitiveDivAttributes = Primitive<HTMLDivAttributes>;
+export type PrimitiveInputAttributes = Primitive<HTMLInputAttributes>;
+export type PrimitiveSpanAttributes = Primitive<HTMLSpanAttributes>;
+export type PrimitiveImgAttributes = Primitive<HTMLImgAttributes>;
+export type PrimitiveHeadingAttributes = Primitive<HTMLHeadingAttributes>;
+export type PrimitiveLabelAttributes = Primitive<HTMLLabelAttributes>;
+export type PrimitiveSVGAttributes = Primitive<SVGAttributes<SVGElement>>;
+export type PrimitiveAnchorAttributes = Primitive<HTMLAnchorAttributes>;
+
+export type AsChildProps<Props, SnippetProps, El> = {
+	child: Snippet<[SnippetProps & { props: Record<string, unknown> }]>;
+	children?: never;
+	asChild: true;
+	el?: El;
+	style?: StyleProperties;
+} & Omit<Props, "children" | "asChild">;
+
+export type DefaultProps<Props, El> = {
+	asChild?: never;
+	child?: never;
+	children?: Snippet;
+	el?: El;
+	style?: StyleProperties;
+} & Omit<Props, "child" | "asChild">;
+
+export type WithAsChild<
+	Props,
+	SnippetProps extends Record<PropertyKey, unknown> = {},
+	El = HTMLElement,
+> = DefaultProps<Props, El> | AsChildProps<Props, SnippetProps, El>;
+
+/**
+ * Constructs a new type by omitting properties from type
+ * 'T' that exist in type 'U'.
+ *
+ * @template T - The base object type from which properties will be omitted.
+ * @template U - The object type whose properties will be omitted from 'T'.
+ * @example
+ * type Result = Without<{ a: number; b: string; }, { b: string; }>;
+ * // Result type will be { a: number; }
+ */
+export type Without<T extends object, U extends object> = Omit<T, keyof U>;
+
+export type Arrayable<T> = T[] | T;
+
+export type Fn = () => void;
+// eslint-disable-next-line ts/no-explicit-any
+export type AnyFn = (...args: any[]) => any;

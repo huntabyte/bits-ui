@@ -1,3 +1,5 @@
+import "@testing-library/svelte/vitest";
+import "@testing-library/jest-dom/vitest";
 import * as matchers from "@testing-library/jest-dom/matchers";
 import { expect, vi } from "vitest";
 import type { Navigation, Page } from "@sveltejs/kit";

@@ -1,34 +1,38 @@
-import type { HTMLImgAttributes } from "svelte/elements";
-import type { CreateAvatarProps as MeltAvatarProps } from "@melt-ui/svelte";
 import type {
-	DOMElement,
-	Expand,
-	HTMLDivAttributes,
-	HTMLSpanAttributes,
 	OnChangeFn,
+	PrimitiveDivAttributes,
+	PrimitiveImgAttributes,
+	PrimitiveSpanAttributes,
+	WithAsChild,
 } from "$lib/internal/index.js";
 
-export type AvatarPropsWithoutHTML = Expand<
-	Omit<MeltAvatarProps, "onLoadingStatusChange" | "loadingStatus" | "src"> & {
-		/**
-		 * The loading state of the image.
-		 * You can bind this to a boolean value to programmatically control the loading state.
-		 */
-		loadingStatus?: "loading" | "loaded" | "error";
+export type AvatarImageLoadingStatus = "loading" | "loaded" | "error";
 
-		/**
-		 * A callback function called when the loading state changes.
-		 */
-		onLoadingStatusChange?: OnChangeFn<"loading" | "loaded" | "error">;
-	} & DOMElement
->;
+export type AvatarRootPropsWithoutHTML = WithAsChild<{
+	/**
+	 * The delay in milliseconds to wait before showing the avatar once
+	 * the image has loaded. This can be used to prevent sudden flickering
+	 * of the image if it loads quickly.
+	 *
+	 * @default 0
+	 */
+	delayMs?: number;
 
-export type AvatarImagePropsWithoutHTML = DOMElement<HTMLImageElement>;
+	/**
+	 * The loading status of the image.
+	 */
+	loadingStatus?: AvatarImageLoadingStatus;
 
-export type AvatarFallbackPropsWithoutHTML = DOMElement<HTMLSpanElement>;
+	/**
+	 * A callback invoked when the loading status of the image changes.
+	 */
+	onLoadingStatusChange?: OnChangeFn<AvatarImageLoadingStatus>;
+}>;
 
-export type AvatarProps = AvatarPropsWithoutHTML & HTMLDivAttributes;
+export type AvatarRootProps = AvatarRootPropsWithoutHTML & PrimitiveDivAttributes;
 
-export type AvatarImageProps = AvatarImagePropsWithoutHTML & HTMLImgAttributes;
+export type AvatarImagePropsWithoutHTML = WithAsChild<object>;
+export type AvatarImageProps = AvatarImagePropsWithoutHTML & PrimitiveImgAttributes;
 
-export type AvatarFallbackProps = AvatarFallbackPropsWithoutHTML & HTMLSpanAttributes;
+export type AvatarFallbackPropsWithoutHTML = WithAsChild<object>;
+export type AvatarFallbackProps = AvatarFallbackPropsWithoutHTML & PrimitiveSpanAttributes;

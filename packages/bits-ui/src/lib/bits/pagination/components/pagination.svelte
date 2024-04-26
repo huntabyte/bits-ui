@@ -1,54 +1,53 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { setCtx } from "../ctx.js";
-	import type { Props } from "../index.js";
+	import { box } from "runed";
+	import type { RootProps } from "../index.js";
+	import { usePaginationRoot } from "../pagination.svelte.js";
+	import { styleToString, useId } from "$lib/internal/index.js";
 
-	type $$Props = Props;
-
-	export let count: $$Props["count"];
-	export let page: $$Props["page"] = undefined;
-	export let onPageChange: $$Props["onPageChange"] = undefined;
-	export let perPage: $$Props["perPage"] = undefined;
-	export let siblingCount: $$Props["siblingCount"] = undefined;
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
-
-	const {
-		elements: { root },
-		states: { pages, range, page: localPage },
-		getAttrs,
-		updateOption,
-	} = setCtx({
+	let {
+		id = useId(),
 		count,
-		perPage,
-		siblingCount,
-		defaultPage: page,
-		onPageChange: ({ next }) => {
-			if (page !== next) {
-				onPageChange?.(next);
-				page = next;
-			}
+		perPage = 1,
+		page = $bindable(1),
+		el = $bindable(),
+		siblingCount = 1,
+		onPageChange,
+		asChild,
+		loop = false,
+		orientation = "horizontal",
+		child,
+		children,
+		style = {},
+		...restProps
+	}: RootProps = $props();
 
-			return next;
-		},
+	const state = usePaginationRoot({
+		id: box.with(() => id),
+		count: box.with(() => count),
+		perPage: box.with(() => perPage),
+		page: box.with(
+			() => page,
+			(v) => {
+				page = v;
+				onPageChange?.(v);
+			}
+		),
+		loop: box.with(() => loop),
+		siblingCount: box.with(() => siblingCount),
+		orientation: box.with(() => orientation),
 	});
 
-	$: page !== undefined && localPage.set(page);
-
-	const attrs = getAttrs("root");
-
-	$: builder = $root;
-	$: Object.assign(builder, attrs);
-
-	$: updateOption("count", count);
-	$: updateOption("perPage", perPage);
-	$: updateOption("siblingCount", siblingCount);
+	const mergedProps = $derived({
+		...restProps,
+		...state.props,
+		style: styleToString(style),
+	});
 </script>
 
 {#if asChild}
-	<slot {builder} pages={$pages} range={$range} />
+	{@render child?.({ props: mergedProps, pages: state.pages, range: state.range })}
 {:else}
-	<div bind:this={el} use:melt={builder} {...$$restProps}>
-		<slot {builder} pages={$pages} range={$range} />
+	<div bind:this={el} {...mergedProps}>
+		{@render children?.({ pages: state.pages, range: state.range })}
 	</div>
 {/if}

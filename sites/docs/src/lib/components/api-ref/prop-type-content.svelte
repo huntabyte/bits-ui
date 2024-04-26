@@ -3,7 +3,7 @@
 	import { Info } from "$icons/index.js";
 	import { Code } from "$lib/components/index.js";
 	import type { PropType } from "$lib/types/index.js";
-	import { flyAndScale, parseTypeDef } from "$lib/utils/index.js";
+	import { parseTypeDef } from "$lib/utils/index.js";
 
 	export let type: PropType | string;
 </script>
@@ -23,8 +23,6 @@
 			<Popover.Content
 				side="top"
 				sideOffset={10}
-				transition={flyAndScale}
-				transitionConfig={{ y: 8 }}
 				class="z-50 max-h-[400px] overflow-auto rounded-input border border-border bg-background p-4 shadow-popover"
 			>
 				<Code class="h-auto bg-transparent px-0 tracking-tight text-foreground">

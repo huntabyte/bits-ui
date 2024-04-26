@@ -1,37 +1,40 @@
 <script lang="ts">
-	import { setCtx } from "../ctx.js";
-	import type { Props } from "../index.js";
+	import { box } from "runed";
+	import type { RootProps } from "../index.js";
+	import { useAvatarRoot } from "../avatar.svelte.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
 
-	type $$Props = Props;
-	export let delayMs: $$Props["delayMs"] = undefined;
-	export let loadingStatus: $$Props["loadingStatus"] = undefined;
-	export let onLoadingStatusChange: $$Props["onLoadingStatusChange"] = undefined;
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
+	let {
+		delayMs = 0,
+		loadingStatus = $bindable("loading"),
+		onLoadingStatusChange,
+		asChild,
+		child,
+		children,
+		el = $bindable(),
+		...restProps
+	}: RootProps = $props();
 
-	const {
-		states: { loadingStatus: localLoadingStatus },
-		updateOption,
-		getAttrs,
-	} = setCtx({
-		src: "",
-		delayMs,
-		onLoadingStatusChange: ({ next }) => {
-			loadingStatus = next;
-			onLoadingStatusChange?.(next);
-			return next;
-		},
+	const state = useAvatarRoot({
+		delayMs: box.with(() => delayMs),
+		loadingStatus: box.with(
+			() => loadingStatus,
+			(v) => {
+				if (loadingStatus !== v) {
+					loadingStatus = v;
+					onLoadingStatusChange?.(v);
+				}
+			}
+		),
 	});
-	const attrs = getAttrs("root");
 
-	$: loadingStatus !== undefined && localLoadingStatus.set(loadingStatus);
-	$: updateOption("delayMs", delayMs);
+	const mergedProps = $derived(mergeProps(restProps, state.props));
 </script>
 
 {#if asChild}
-	<slot {attrs} />
+	{@render child?.({ props: mergedProps })}
 {:else}
-	<div bind:this={el} {...$$restProps} {...attrs}>
-		<slot {attrs} />
+	<div bind:this={el} {...mergedProps}>
+		{@render children?.()}
 	</div>
 {/if}

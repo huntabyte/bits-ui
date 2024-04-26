@@ -1,41 +1,42 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { setItemCtx } from "../ctx.js";
-	import type { ItemEvents, ItemProps } from "../index.js";
-	import { createDispatcher } from "$lib/internal/events.js";
+	import { box } from "runed";
+	import type { ItemProps } from "../index.js";
+	import { useRadioGroupItem } from "../radio-group.svelte.js";
+	import { styleToString, useId } from "$lib/internal/index.js";
 
-	type $$Props = ItemProps;
-	type $$Events = ItemEvents;
+	let {
+		id = useId(),
+		asChild,
+		children,
+		child,
+		value,
+		disabled = false,
+		onclick = () => {},
+		onkeydown = () => {},
+		el = $bindable(),
+		style = {},
+		...restProps
+	}: ItemProps = $props();
 
-	export let value: $$Props["value"];
-	export let disabled: $$Props["disabled"] = false;
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
+	const state = useRadioGroupItem({
+		value: box.with(() => value),
+		disabled: box.with(() => disabled),
+		id: box.with(() => id),
+		onclick: box.with(() => onclick),
+		onkeydown: box.with(() => onkeydown),
+	});
 
-	const {
-		elements: { item },
-		getAttrs,
-	} = setItemCtx(value);
-
-	const dispatch = createDispatcher();
-	const attrs = getAttrs("item");
-
-	$: builder = $item({ value, disabled });
-	$: Object.assign(builder, attrs);
+	const mergedProps = $derived({
+		...restProps,
+		...state.props,
+		style: styleToString(style),
+	});
 </script>
 
 {#if asChild}
-	<slot {builder} />
+	{@render child?.({ props: mergedProps, checked: state.checked })}
 {:else}
-	<button
-		bind:this={el}
-		use:melt={builder}
-		type="button"
-		{...$$restProps}
-		on:m-click={dispatch}
-		on:m-focus={dispatch}
-		on:m-keydown={dispatch}
-	>
-		<slot {builder} />
+	<button bind:this={el} {...mergedProps}>
+		{@render children?.({ checked: state.checked })}
 	</button>
 {/if}

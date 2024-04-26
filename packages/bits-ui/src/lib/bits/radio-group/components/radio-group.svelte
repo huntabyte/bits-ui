@@ -1,54 +1,56 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { setCtx } from "../ctx.js";
-	import type { Props } from "../index.js";
+	import { box } from "runed";
+	import type { RootProps } from "../index.js";
+	import { useRadioGroupRoot } from "../radio-group.svelte.js";
+	import RadioGroupInput from "./radio-group-input.svelte";
+	import { styleToString, useId } from "$lib/internal/index.js";
 
-	type $$Props = Props;
-	export let required: $$Props["required"] = undefined;
-	export let disabled: $$Props["disabled"] = undefined;
-	export let value: $$Props["value"] = undefined;
-	export let onValueChange: $$Props["onValueChange"] = undefined;
-	export let loop: $$Props["loop"] = undefined;
-	export let orientation: $$Props["orientation"] = undefined;
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
+	let {
+		disabled = false,
+		asChild,
+		children,
+		child,
+		style,
+		value = $bindable(""),
+		el = $bindable(),
+		orientation = "vertical",
+		loop = true,
+		name = undefined,
+		required = false,
+		id = useId(),
+		onValueChange,
+		...restProps
+	}: RootProps = $props();
 
-	const {
-		elements: { root },
-		states: { value: localValue },
-		updateOption,
-		getAttrs,
-	} = setCtx({
-		required,
-		disabled,
-		defaultValue: value,
-		loop,
-		orientation,
-		onValueChange: ({ next }) => {
-			if (value !== next) {
-				onValueChange?.(next);
-				value = next;
+	const state = useRadioGroupRoot({
+		orientation: box.with(() => orientation),
+		disabled: box.with(() => disabled),
+		loop: box.with(() => loop),
+		name: box.with(() => name),
+		required: box.with(() => required),
+		id: box.with(() => id),
+		value: box.with(
+			() => value,
+			(v) => {
+				value = v;
+				onValueChange?.(v);
 			}
-			return next;
-		},
+		),
 	});
 
-	const attrs = getAttrs("root");
-
-	$: value !== undefined && localValue.set(value);
-	$: updateOption("required", required);
-	$: updateOption("disabled", disabled);
-	$: updateOption("loop", loop);
-	$: updateOption("orientation", orientation);
-
-	$: builder = $root;
-	$: Object.assign(builder, attrs);
+	const mergedProps = $derived({
+		...restProps,
+		...state.props,
+		style: styleToString(style),
+	});
 </script>
 
 {#if asChild}
-	<slot {builder} />
+	{@render child?.({ props: mergedProps })}
 {:else}
-	<div bind:this={el} use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+	<div bind:this={el} {...mergedProps}>
+		{@render children?.()}
 	</div>
 {/if}
+
+<RadioGroupInput />
