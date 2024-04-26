@@ -1,5 +1,11 @@
 # bits-ui
 
+## 0.21.5
+
+### Patch Changes
+
+- chore: Replaced all self-closing non-void elements ([#518](https://github.com/huntabyte/bits-ui/pull/518))
+
 ## 0.21.4
 
 ### Patch Changes
