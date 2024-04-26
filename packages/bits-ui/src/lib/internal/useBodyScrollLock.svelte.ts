@@ -58,16 +58,14 @@ const useBodyLockStackCount = createSharedHook(() => {
 				initialBodyStyle.pointerEvents = bodyStyle.pointerEvents;
 			});
 
+			// TODO: account for RTL direction, etc.
 			const verticalScrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
 			const paddingRight = Number.parseInt(initialBodyStyle.paddingRight ?? "0", 10);
 
-			const defaultConfig = {
+			const config = {
 				padding: paddingRight + verticalScrollbarWidth,
-				margin: 0,
+				margin: Number.parseInt(initialBodyStyle.marginRight ?? "0", 10),
 			};
-
-			// TODO: give user ability to customize the config via global context
-			const config = defaultConfig;
 
 			if (verticalScrollbarWidth > 0) {
 				document.body.style.paddingRight = `${config.padding}px`;
