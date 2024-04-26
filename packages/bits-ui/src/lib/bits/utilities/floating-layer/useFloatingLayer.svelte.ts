@@ -148,15 +148,15 @@ class FloatingContentState {
 					const { width: anchorWidth, height: anchorHeight } = rects.reference;
 					const contentStyle = elements.floating.style;
 					contentStyle.setProperty(
-						"--bits-popper-available-width",
+						"--bits-floating-available-width",
 						`${availableWidth}px`
 					);
 					contentStyle.setProperty(
-						"--bits-popper-available-height",
+						"--bits-floating-available-height",
 						`${availableHeight}px`
 					);
-					contentStyle.setProperty("--bits-popper-anchor-width", `${anchorWidth}px`);
-					contentStyle.setProperty("--bits-popper-anchor-height", `${anchorHeight}px`);
+					contentStyle.setProperty("--bits-floating-anchor-width", `${anchorWidth}px`);
+					contentStyle.setProperty("--bits-floating-anchor-height", `${anchorHeight}px`);
 				},
 			}),
 			this.arrowNode.value &&
