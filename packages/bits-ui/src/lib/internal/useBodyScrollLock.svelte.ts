@@ -1,5 +1,5 @@
 import { Map } from "svelte/reactivity";
-import { onDestroy } from "svelte";
+import { onDestroy, untrack } from "svelte";
 import { box } from "runed";
 import type { Fn } from "./types.js";
 import { isBrowser, isIOS } from "./is.js";
@@ -16,7 +16,6 @@ export type ScrollBodyOption = {
 
 const useBodyLockStackCount = createSharedHook(() => {
 	const map = new Map<string, boolean>();
-	let initialOverflow = $state<string | undefined>();
 
 	const locked = $derived.by(() => {
 		for (const value of map.values()) {
@@ -27,15 +26,17 @@ const useBodyLockStackCount = createSharedHook(() => {
 		return false;
 	});
 
+	let initialBodyStyle: Partial<CSSStyleDeclaration> = $state<Partial<CSSStyleDeclaration>>({});
+
 	let stopTouchMoveListener: Fn | null = null;
 
 	function resetBodyStyle() {
 		if (!isBrowser) return;
-		document.body.style.paddingRight = "";
-		document.body.style.marginRight = "";
-		document.body.style.pointerEvents = "";
+		document.body.style.paddingRight = initialBodyStyle.paddingRight ?? "";
+		document.body.style.marginRight = initialBodyStyle.marginRight ?? "";
+		document.body.style.pointerEvents = initialBodyStyle.pointerEvents ?? "";
 		document.body.style.removeProperty("--scrollbar-width");
-		document.body.style.overflow = initialOverflow ?? "";
+		document.body.style.overflow = initialBodyStyle.overflow ?? "";
 		isIOS && stopTouchMoveListener?.();
 	}
 
@@ -49,13 +50,19 @@ const useBodyLockStackCount = createSharedHook(() => {
 				return;
 			}
 
-			if (initialOverflow === undefined) {
-				initialOverflow = document.body.style.overflow;
-			}
+			untrack(() => {
+				const bodyStyle = getComputedStyle(document.body);
+				initialBodyStyle.overflow = bodyStyle.overflow;
+				initialBodyStyle.paddingRight = bodyStyle.paddingRight;
+				initialBodyStyle.marginRight = bodyStyle.marginRight;
+				initialBodyStyle.pointerEvents = bodyStyle.pointerEvents;
+			});
 
 			const verticalScrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+			const paddingRight = Number.parseInt(initialBodyStyle.paddingRight ?? "0", 10);
+
 			const defaultConfig = {
-				padding: verticalScrollbarWidth,
+				padding: paddingRight + verticalScrollbarWidth,
 				margin: 0,
 			};
 
