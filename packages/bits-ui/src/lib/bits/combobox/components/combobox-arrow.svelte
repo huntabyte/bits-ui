@@ -23,5 +23,5 @@
 {#if asChild}
 	<slot {builder} />
 {:else}
-	<div bind:this={el} use:melt={builder} {...$$restProps} />
+	<div bind:this={el} use:melt={builder} {...$$restProps}></div>
 {/if}

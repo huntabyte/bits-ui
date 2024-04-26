@@ -23,5 +23,5 @@
 {#if asChild}
 	<slot {builder} />
 {:else}
-	<span bind:this={el} use:melt={builder} {...$$restProps} on:m-keydown={dispatch} />
+	<span bind:this={el} use:melt={builder} {...$$restProps} on:m-keydown={dispatch}></span>
 {/if}

@@ -22,5 +22,5 @@
 {#if asChild}
 	<slot {attrs} checked={$checked} />
 {:else}
-	<span bind:this={el} {...$$restProps} {...attrs} />
+	<span bind:this={el} {...$$restProps} {...attrs}></span>
 {/if}

@@ -14,4 +14,4 @@
 	<button data-testid="binding" on:click={() => (open = !open)}>{open}</button>
 	<div data-testid="outside">outside</div>
 </main>
-<div data-testid="portal-target" id="portal-target" />
+<div data-testid="portal-target" id="portal-target"></div>
