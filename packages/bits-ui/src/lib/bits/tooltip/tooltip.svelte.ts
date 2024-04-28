@@ -289,6 +289,7 @@ class TooltipContentState {
 		this.#id = props.id;
 		const contentNode = useNodeById(this.#id);
 		this.root.contentNode = contentNode;
+		this.root.contentId = this.#id;
 		$effect(() => {
 			console.log(contentNode.value);
 		});
