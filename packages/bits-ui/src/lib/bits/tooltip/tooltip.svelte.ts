@@ -1,5 +1,4 @@
 import { type ReadableBox, box, useEventListener } from "runed";
-import { untrack } from "svelte";
 import { TOOLTIP_OPEN_EVENT } from "./utils.js";
 import {
 	type ReadableBoxedValues,
@@ -12,7 +11,6 @@ import { isElementOrSVGElement } from "$lib/internal/is.js";
 import { useGraceArea } from "$lib/internal/useGraceArea.svelte.js";
 import { createContext } from "$lib/internal/createContext.js";
 import { getDataDisabled } from "$lib/internal/attrs.js";
-import { afterTick } from "$lib/internal/afterTick.js";
 
 type TooltipProviderStateProps = ReadableBoxedValues<{
 	delayDuration: number;
