@@ -1,5 +1,5 @@
 import { createEventDispatcher } from "svelte";
-import type { ReadonlyBox } from "./box.svelte.js";
+import type { ReadableBox } from "runed";
 import type { Arrayable } from "$lib/internal/index.js";
 
 type MeltEvent<T extends Event = Event> = {
@@ -40,7 +40,7 @@ export type CreateDispatcher = {
 export type EventCallback<E extends Event = Event> = (event: E) => void;
 
 export function composeHandlers<E extends Event = Event, T extends Element = Element>(
-	...handlers: Array<EventCallback<E> | ReadonlyBox<EventCallback<E>> | undefined>
+	...handlers: Array<EventCallback<E> | ReadableBox<EventCallback<E>> | undefined>
 ): (e: E) => void {
 	return function (this: T, e: E) {
 		for (const handler of handlers) {

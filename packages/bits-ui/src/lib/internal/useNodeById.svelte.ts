@@ -1,5 +1,5 @@
 import { type ReadableBox, type WritableBox, box } from "runed";
-import { afterTick } from "./after-tick.js";
+import { afterTick } from "./afterTick.js";
 
 /**
  * Finds the node with that ID and sets it to the boxed node.
@@ -11,7 +11,7 @@ import { afterTick } from "./after-tick.js";
 export function useNodeById(id: ReadableBox<string> | WritableBox<string>) {
 	const node = box<HTMLElement | null>(null);
 
-	$effect.pre(() => {
+	$effect(() => {
 		// eslint-disable-next-line no-unused-expressions
 		id.value;
 		afterTick(() => {

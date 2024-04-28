@@ -2,7 +2,7 @@
 
 import { untrack } from "svelte";
 import type { WritableBox } from "runed";
-import { afterTick } from "./after-tick.js";
+import { afterTick } from "./afterTick.js";
 
 export function useSize(node: WritableBox<HTMLElement | null>) {
 	let size = $state<{ width: number; height: number } | undefined>(undefined);

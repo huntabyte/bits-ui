@@ -1,27 +1,8 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { setArrow } from "../ctx.js";
 	import type { ArrowProps } from "../index.js";
+	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 
-	type $$Props = ArrowProps;
-
-	export let size = 8;
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
-
-	const {
-		elements: { arrow },
-		getAttrs,
-	} = setArrow(size);
-
-	const attrs = getAttrs("arrow");
-
-	$: builder = $arrow;
-	$: Object.assign(builder, attrs);
+	let { el = $bindable(), ...restProps }: ArrowProps = $props();
 </script>
 
-{#if asChild}
-	<slot {builder} />
-{:else}
-	<div bind:this={el} use:melt={builder} {...$$restProps} />
-{/if}
+<FloatingLayer.Arrow bind:el {...restProps} />
