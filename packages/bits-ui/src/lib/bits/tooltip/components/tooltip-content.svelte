@@ -57,9 +57,8 @@
 		onEscapeKeydown?.(e);
 		state.root.handleClose();
 	}}
-	onDestroyAutoFocus={(e) => {
-		e.preventDefault();
-	}}
+	onMountAutoFocus={(e) => e.preventDefault()}
+	onDestroyAutoFocus={(e) => e.preventDefault()}
 	trapped={false}
 	loop={false}
 	preventScroll={false}

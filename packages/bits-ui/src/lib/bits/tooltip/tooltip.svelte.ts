@@ -337,8 +337,6 @@ const [setTooltipProviderContext, getTooltipProviderContext] =
 const [setTooltipRootContext, getTooltipRootContext] =
 	createContext<TooltipRootState>("Tooltip.Root");
 
-const [setTooltipTriggerContext] = createContext<TooltipTriggerState>("Tooltip.Trigger");
-
 export function useTooltipProvider(props: TooltipProviderStateProps) {
 	return setTooltipProviderContext(new TooltipProviderState(props));
 }
@@ -348,7 +346,7 @@ export function useTooltipRoot(props: TooltipRootStateProps) {
 }
 
 export function useTooltipTrigger(props: TooltipTriggerStateProps) {
-	return setTooltipTriggerContext(getTooltipRootContext().createTrigger(props));
+	return getTooltipRootContext().createTrigger(props);
 }
 
 export function useTooltipContent(props: TooltipContentStateProps) {
