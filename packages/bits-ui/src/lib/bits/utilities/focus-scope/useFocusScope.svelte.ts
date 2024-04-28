@@ -19,7 +19,7 @@ import { useNodeById } from "$lib/internal/useNodeById.svelte.js";
 import { isHTMLElement } from "$lib/internal/is.js";
 import { executeCallbacks } from "$lib/internal/callbacks.js";
 import { kbd } from "$lib/internal/kbd.js";
-import { afterTick } from "$lib/internal/after-tick.js";
+import { afterTick } from "$lib/internal/afterTick.js";
 
 type UseFocusScopeProps = ReadableBoxedValues<{
 	/**

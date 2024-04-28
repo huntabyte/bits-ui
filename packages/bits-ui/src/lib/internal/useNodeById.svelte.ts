@@ -1,5 +1,5 @@
 import { type ReadableBox, type WritableBox, box } from "runed";
-import { afterTick } from "./after-tick.js";
+import { afterTick } from "./afterTick.js";
 
 /**
  * Finds the node with that ID and sets it to the boxed node.

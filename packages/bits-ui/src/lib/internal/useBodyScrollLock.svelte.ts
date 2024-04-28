@@ -5,7 +5,7 @@ import type { Fn } from "./types.js";
 import { isBrowser, isIOS } from "./is.js";
 import { watch } from "./box.svelte.js";
 import { addEventListener } from "./events.js";
-import { afterTick } from "./after-tick.js";
+import { afterTick } from "./afterTick.js";
 import { useId } from "./useId.svelte.js";
 import { createSharedHook } from "./createSharedHook.svelte.js";
 
