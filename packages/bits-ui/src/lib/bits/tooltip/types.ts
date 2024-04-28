@@ -1,6 +1,15 @@
 import type { Snippet } from "svelte";
 import type { FloatingLayerContentProps } from "../utilities/floating-layer/types.js";
-import type { OnChangeFn, WithAsChild } from "$lib/internal/types.js";
+import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
+import type {
+	OnChangeFn,
+	PrimitiveButtonAttributes,
+	PrimitiveDivAttributes,
+	WithAsChild,
+	Without,
+} from "$lib/internal/types.js";
+import type { PortalProps } from "$lib/bits/utilities/portal/types.js";
+import type { EventCallback } from "$lib/internal/events.js";
 
 export type TooltipRootPropsWithoutHTML = {
 	/**
@@ -71,3 +80,24 @@ export type TooltipContentPropsWithoutHTML = WithAsChild<
 		| "hideWhenDetached"
 	>
 >;
+
+export type TooltipContentProps = TooltipContentPropsWithoutHTML & PrimitiveDivAttributes;
+
+export type TooltipArrowPropsWithoutHTML = ArrowPropsWithoutHTML;
+export type TooltipArrowProps = ArrowProps;
+
+export type TooltipPortalPropsWithoutHTML = PortalProps;
+export type TooltipPortalProps = PortalProps;
+
+export type TooltipTriggerPropsWithoutHTML = WithAsChild<{
+	onclick?: EventCallback<MouseEvent>;
+	onfocus?: EventCallback<FocusEvent>;
+	onblur?: EventCallback<FocusEvent>;
+	onpointermove?: EventCallback<PointerEvent>;
+	onpointerleave?: EventCallback<PointerEvent>;
+	onpointerdown?: EventCallback<PointerEvent>;
+	disabled?: boolean;
+}>;
+
+export type TooltipTriggerProps = TooltipTriggerPropsWithoutHTML &
+	Without<PrimitiveButtonAttributes, TooltipTriggerPropsWithoutHTML>;

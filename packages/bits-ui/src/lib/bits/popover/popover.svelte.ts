@@ -10,7 +10,7 @@ type PopoverRootStateProps = WritableBoxedValues<{
 }>;
 
 class PopoverRootState {
-	open = undefined as unknown as PopoverRootStateProps["open"];
+	open: PopoverRootStateProps["open"];
 	contentId = box.with<string | undefined>(() => undefined);
 	triggerNode = box<HTMLElement | null>(null);
 
@@ -45,8 +45,8 @@ type PopoverTriggerStateProps = ReadableBoxedValues<{
 }>;
 
 class PopoverTriggerState {
-	#id = undefined as unknown as PopoverTriggerStateProps["id"];
-	#root = undefined as unknown as PopoverRootState;
+	#id: PopoverTriggerStateProps["id"];
+	#root: PopoverRootState;
 
 	constructor(props: PopoverTriggerStateProps, root: PopoverRootState) {
 		this.#id = props.id;
@@ -71,41 +71,44 @@ class PopoverTriggerState {
 		return undefined;
 	}
 
-	props = $derived({
-		id: this.#id.value,
-		"aria-haspopup": "dialog",
-		"aria-expanded": getAriaExpanded(this.#root.open.value),
-		"data-state": getDataOpenClosed(this.#root.open.value),
-		"aria-controls": this.#getAriaControls(),
-		"data-popover-trigger": "",
-		//
-		onclick: this.#onclick,
-		onkeydown: this.#onkeydown,
-	} as const);
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.value,
+				"aria-haspopup": "dialog",
+				"aria-expanded": getAriaExpanded(this.#root.open.value),
+				"data-state": getDataOpenClosed(this.#root.open.value),
+				"aria-controls": this.#getAriaControls(),
+				"data-popover-trigger": "",
+				//
+				onclick: this.#onclick,
+				onkeydown: this.#onkeydown,
+			}) as const
+	);
 }
 
 type PopoverContentStateProps = ReadableBoxedValues<{
 	id: string;
 }>;
 class PopoverContentState {
-	#id = undefined as unknown as PopoverContentStateProps["id"];
-	root = undefined as unknown as PopoverRootState;
+	#id: PopoverContentStateProps["id"];
+	root: PopoverRootState;
 
 	constructor(props: PopoverContentStateProps, root: PopoverRootState) {
 		this.#id = props.id;
 		this.root = root;
 	}
 
-	props = $derived({
+	props = $derived.by(() => ({
 		id: this.#id.value,
 		tabindex: -1,
 		"data-state": getDataOpenClosed(this.root.open.value),
 		"data-popover-content": "",
-	});
+	}));
 }
 
 class PopoverCloseState {
-	#root = undefined as unknown as PopoverRootState;
+	#root: PopoverRootState;
 
 	constructor(root: PopoverRootState) {
 		this.#root = root;
