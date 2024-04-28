@@ -1,6 +1,8 @@
 import type { Snippet } from "svelte";
 import type { FloatingLayerContentProps } from "../utilities/floating-layer/types.js";
 import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
+import type { DismissableLayerProps } from "../utilities/dismissable-layer/types.js";
+import type { EscapeLayerProps } from "../utilities/escape-layer/types.js";
 import type {
 	OnChangeFn,
 	PrimitiveButtonAttributes,
@@ -54,7 +56,11 @@ export type TooltipProviderPropsWithoutHTML = {
 	 * @defaultValue false
 	 */
 	ignoreNonKeyboardFocus?: boolean;
+
+	children?: Snippet;
 };
+
+export type TooltipProviderProps = TooltipProviderPropsWithoutHTML;
 
 export type TooltipRootPropsWithoutHTML = {
 	/**
@@ -123,7 +129,17 @@ export type TooltipContentPropsWithoutHTML = WithAsChild<
 		| "arrowPadding"
 		| "sticky"
 		| "hideWhenDetached"
-	>
+		| "dir"
+	> &
+		DismissableLayerProps &
+		EscapeLayerProps & {
+			/**
+			 * When `true`, the tooltip will be forced to mount in the DOM.
+			 *
+			 * Useful for more control over the transition behavior.
+			 */
+			forceMount?: boolean;
+		}
 >;
 
 export type TooltipContentProps = TooltipContentPropsWithoutHTML & PrimitiveDivAttributes;

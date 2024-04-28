@@ -1,3 +1,4 @@
+import { type ReadableBox, useMounted } from "runed";
 import type { Box } from "./box.svelte.js";
 import { boxAutoReset } from "./boxAutoReset.svelte.js";
 import { createEventHook } from "./createEventHook.svelte.js";
@@ -6,19 +7,23 @@ import { executeCallbacks } from "./callbacks.js";
 import { addEventListener } from "./events.js";
 import type { Side } from "$lib/bits/utilities/floating-layer/useFloatingLayer.svelte.js";
 
-export function useGraceArea(
-	triggerNode: Box<HTMLElement | null>,
-	contentNode: Box<HTMLElement | null>
-) {
+export function useGraceArea(triggerId: ReadableBox<string>, contentId: ReadableBox<string>) {
 	const isPointerInTransit = boxAutoReset(false, 300);
 
-	let pointerGraceArea = $state<Polygon | null>();
+	let contentNode = $state((() => document.getElementById(contentId.value))());
+	let triggerNode = $state((() => document.getElementById(triggerId.value))());
+
+	let pointerGraceArea = $state<Polygon | null>(null);
 	const pointerExit = createEventHook<void>();
 
 	function handleRemoveGraceArea() {
 		pointerGraceArea = null;
 		isPointerInTransit.value = false;
 	}
+
+	$effect(() => {
+		console.log(contentNode);
+	});
 
 	function handleCreateGraceArea(e: PointerEvent, hoverTarget: HTMLElement) {
 		const currentTarget = e.currentTarget;
@@ -33,14 +38,22 @@ export function useGraceArea(
 	}
 
 	$effect(() => {
-		if (!triggerNode.value || !contentNode.value) return;
-		const handleTriggerLeave = (e: PointerEvent) =>
-			handleCreateGraceArea(e, contentNode.value!);
+		const tNode = triggerNode;
+		let cNode = contentNode;
+		if (!tNode) return;
+		if (!cNode) {
+			cNode = document.getElementById(contentId.value);
+			if (!cNode) return;
+			contentNode = cNode;
+		}
+
+		if (!triggerNode || !cNode) return;
+		const handleTriggerLeave = (e: PointerEvent) => handleCreateGraceArea(e, cNode!);
 		const handleContentLeave = () => handleRemoveGraceArea();
 
 		const unsub = executeCallbacks(
-			addEventListener(triggerNode.value, "pointerleave", handleTriggerLeave),
-			addEventListener(contentNode.value, "pointerleave", handleContentLeave)
+			addEventListener(triggerNode, "pointerleave", handleTriggerLeave),
+			addEventListener(cNode, "pointerleave", handleContentLeave)
 		);
 
 		return unsub;
@@ -53,8 +66,7 @@ export function useGraceArea(
 			const target = e.target;
 			if (!isElementOrSVGElement(target)) return;
 			const pointerPosition = { x: e.clientX, y: e.clientY };
-			const hasEnteredTarget =
-				triggerNode.value?.contains(target) || contentNode.value?.contains(target);
+			const hasEnteredTarget = triggerNode?.contains(target) || contentNode?.contains(target);
 			const isPointerOutsideGraceArea = !isPointInPolygon(pointerPosition, pointerGraceArea);
 
 			if (hasEnteredTarget) {

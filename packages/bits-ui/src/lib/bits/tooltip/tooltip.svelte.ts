@@ -1,4 +1,5 @@
-import { box } from "runed";
+import { type ReadableBox, box, useEventListener } from "runed";
+import { untrack } from "svelte";
 import { TOOLTIP_OPEN_EVENT } from "./utils.js";
 import {
 	type ReadableBoxedValues,
@@ -6,6 +7,12 @@ import {
 	watch,
 } from "$lib/internal/box.svelte.js";
 import { useTimeoutFn } from "$lib/internal/useTimeoutFn.svelte.js";
+import { useNodeById } from "$lib/internal/useNodeById.svelte.js";
+import { isElementOrSVGElement } from "$lib/internal/is.js";
+import { useGraceArea } from "$lib/internal/useGraceArea.svelte.js";
+import { createContext } from "$lib/internal/createContext.js";
+import { getDataDisabled } from "$lib/internal/attrs.js";
+import { afterTick } from "$lib/internal/afterTick.js";
 
 type TooltipProviderStateProps = ReadableBoxedValues<{
 	delayDuration: number;
@@ -59,6 +66,10 @@ class TooltipProviderState {
 	onClose() {
 		this.#startTimer();
 	}
+
+	createRoot(props: TooltipRootStateProps) {
+		return new TooltipRootState(props, this);
+	}
 }
 
 type TooltipRootStateProps = ReadableBoxedValues<{
@@ -80,19 +91,23 @@ class TooltipRootState {
 	_disabled: TooltipRootStateProps["disabled"];
 	_ignoreNonKeyboardFocus: TooltipRootStateProps["ignoreNonKeyboardFocus"];
 	provider: TooltipProviderState;
-	delayDuration = box.with(() => this._delayDuration.value ?? this.provider.delayDuration.value);
-	disableHoverableContent = box.with(
+	delayDuration = $derived.by(
+		() => this._delayDuration.value ?? this.provider.delayDuration.value
+	);
+	disableHoverableContent = $derived.by(
 		() => this._disableHoverableContent.value ?? this.provider.disableHoverableContent.value
 	);
-	disableCloseOnTriggerClick = box.with(
+	disableCloseOnTriggerClick = $derived.by(
 		() =>
 			this._disableCloseOnTriggerClick.value ?? this.provider.disableCloseOnTriggerClick.value
 	);
-	disabled = box.with(() => this._disabled.value ?? this.provider.disabled.value);
-	ignoreNonKeyboardFocus = box.with(
+	disabled = $derived.by(() => this._disabled.value ?? this.provider.disabled.value);
+	ignoreNonKeyboardFocus = $derived.by(
 		() => this._ignoreNonKeyboardFocus.value ?? this.provider.ignoreNonKeyboardFocus.value
 	);
 	contentNode = box<HTMLElement | null>(null);
+	contentId: ReadableBox<string> = box.with(() => "");
+	triggerId: ReadableBox<string> = box.with(() => "");
 	triggerNode = box<HTMLElement | null>(null);
 	#wasOpenDelayed = $state(false);
 	#timerFn: ReturnType<typeof useTimeoutFn>;
@@ -150,10 +165,193 @@ class TooltipRootState {
 	}
 
 	onTriggerLeave() {
-		if (this._disableHoverableContent.value) {
+		if (this.disableHoverableContent) {
 			this.handleClose();
 		} else {
 			this.#timerFn.stop();
 		}
 	}
+
+	createTrigger(props: TooltipTriggerStateProps) {
+		return new TooltipTriggerState(props, this);
+	}
+
+	createContent(props: TooltipContentStateProps) {
+		return new TooltipContentState(props, this);
+	}
+}
+
+type TooltipTriggerStateProps = ReadableBoxedValues<{
+	id: string;
+	disabled: boolean;
+}>;
+
+class TooltipTriggerState {
+	#id: TooltipTriggerStateProps["id"];
+	#root: TooltipRootState;
+	isPointerDown = box(false);
+	#hasPointerMoveOpened = $state(false);
+	#disabled: TooltipTriggerStateProps["disabled"];
+	#isDisabled = $derived.by(() => this.#disabled.value || this.#root.disabled);
+
+	constructor(props: TooltipTriggerStateProps, root: TooltipRootState) {
+		this.#id = props.id;
+		this.#root = root;
+		this.#disabled = props.disabled;
+		this.#root.triggerNode = useNodeById(this.#id);
+		this.#root.triggerId = props.id;
+		this.isPointerDown = box(false);
+	}
+
+	handlePointerUp() {
+		this.isPointerDown.value = false;
+	}
+
+	#onpointerup = () => {
+		if (this.#isDisabled) return;
+		this.isPointerDown.value = false;
+	};
+
+	#onpointerdown = () => {
+		if (this.#isDisabled) return;
+		this.isPointerDown.value = true;
+		document.addEventListener(
+			"pointerup",
+			() => {
+				this.handlePointerUp();
+			},
+			{ once: true }
+		);
+	};
+
+	#onpointermove = (e: PointerEvent) => {
+		if (this.#isDisabled) return;
+		if (e.pointerType === "touch") return;
+		if (this.#hasPointerMoveOpened || this.#root.provider.isPointerInTransit.value) return;
+		this.#root.onTriggerEnter();
+		this.#hasPointerMoveOpened = true;
+	};
+
+	#onpointerleave = () => {
+		if (this.#isDisabled) return;
+		this.#root.onTriggerLeave();
+		this.#hasPointerMoveOpened = false;
+	};
+
+	#onfocus = (e: FocusEvent) => {
+		if (this.isPointerDown || this.#isDisabled) return;
+
+		if (
+			this.#root.ignoreNonKeyboardFocus &&
+			!(e.target as HTMLElement).matches(":focus-visible")
+		)
+			return;
+
+		this.#root.handleOpen();
+	};
+
+	#onblur = () => {
+		if (this.#isDisabled) return;
+		this.#root.handleClose();
+	};
+
+	#onclick = () => {
+		if (this.#root.disableCloseOnTriggerClick || this.#isDisabled) return;
+		this.#root.handleClose();
+	};
+
+	props = $derived.by(() => ({
+		id: this.#id.value,
+		"aria-describedby": this.#root.open.value ? this.#root.contentNode.value?.id : undefined,
+		"data-state": this.#root.stateAttr,
+		"data-disabled": getDataDisabled(this.#isDisabled),
+		"data-tooltip-trigger": "",
+		onpointerup: this.#onpointerup,
+		onpointerdown: this.#onpointerdown,
+		onpointermove: this.#onpointermove,
+		onpointerleave: this.#onpointerleave,
+		onfocus: this.#onfocus,
+		onblur: this.#onblur,
+		onclick: this.#onclick,
+	}));
+}
+
+type TooltipContentStateProps = ReadableBoxedValues<{
+	id: string;
+}>;
+
+class TooltipContentState {
+	root: TooltipRootState;
+	#id: TooltipContentStateProps["id"];
+
+	constructor(props: TooltipContentStateProps, root: TooltipRootState) {
+		this.root = root;
+		this.#id = props.id;
+		const contentNode = useNodeById(this.#id);
+		this.root.contentNode = contentNode;
+		$effect(() => {
+			console.log(contentNode.value);
+		});
+
+		$effect(() => {
+			if (!this.root.open.value) return;
+			if (this.root.disableHoverableContent) return;
+			const { isPointerInTransit, onPointerExit } = useGraceArea(
+				box.with(() => this.root.triggerId?.value),
+				box.with(() => this.root.contentId?.value)
+			);
+
+			this.root.provider.isPointerInTransit = isPointerInTransit;
+			onPointerExit(() => {
+				this.root.handleClose();
+			});
+		});
+
+		$effect(() => {
+			useEventListener(window, "scroll", (e) => {
+				const target = e.target;
+				if (!isElementOrSVGElement(target)) return;
+				if (target.contains(this.root.triggerNode.value)) {
+					this.root.handleClose();
+				}
+			});
+
+			useEventListener(window, TOOLTIP_OPEN_EVENT, this.root.handleClose);
+		});
+	}
+
+	props = $derived.by(() => ({
+		id: this.#id.value,
+		"data-state": this.root.stateAttr,
+		"data-disabled": getDataDisabled(this.root.disabled),
+		"data-tooltip-content": "",
+	}));
+}
+
+//
+// CONTEXT METHODS
+//
+
+const [setTooltipProviderContext, getTooltipProviderContext] =
+	createContext<TooltipProviderState>("Tooltip.Provider");
+
+const [setTooltipRootContext, getTooltipRootContext] =
+	createContext<TooltipRootState>("Tooltip.Root");
+
+const [setTooltipTriggerContext] = createContext<TooltipTriggerState>("Tooltip.Trigger");
+
+export function useTooltipProvider(props: TooltipProviderStateProps) {
+	return setTooltipProviderContext(new TooltipProviderState(props));
+}
+
+export function useTooltipRoot(props: TooltipRootStateProps) {
+	return setTooltipRootContext(getTooltipProviderContext().createRoot(props));
+}
+
+export function useTooltipTrigger(props: TooltipTriggerStateProps) {
+	return setTooltipTriggerContext(getTooltipRootContext().createTrigger(props));
+}
+
+export function useTooltipContent(props: TooltipContentStateProps) {
+	return getTooltipRootContext().createContent(props);
 }

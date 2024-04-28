@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box } from "runed";
+	import { box, useMounted } from "runed";
 	import { useFloatingContentState } from "../useFloatingLayer.svelte.js";
 	import type { ContentImplProps } from "./index.js";
 	import { mergeProps, useId } from "$lib/internal/index.js";
@@ -57,7 +57,11 @@
 		})
 	);
 
-	useBodyScrollLock(preventScroll);
+	const isMounted = useMounted();
+
+	if (isMounted.value) {
+		useBodyScrollLock(preventScroll);
+	}
 </script>
 
 <div {...mergedProps}>

@@ -1,4 +1,5 @@
 import { box } from "runed";
+import { onDestroy } from "svelte";
 import type { Box } from "./box.svelte.js";
 import type { AnyFn, Fn } from "./types.js";
 import { isBrowser } from "./is.js";
@@ -68,8 +69,8 @@ export function useTimeoutFn<T extends AnyFn>(
 		if (isBrowser) start();
 	}
 
-	$effect(() => {
-		return stop;
+	onDestroy(() => {
+		stop();
 	});
 
 	return {

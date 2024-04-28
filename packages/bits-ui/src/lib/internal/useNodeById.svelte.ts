@@ -11,7 +11,7 @@ import { afterTick } from "./afterTick.js";
 export function useNodeById(id: ReadableBox<string> | WritableBox<string>) {
 	const node = box<HTMLElement | null>(null);
 
-	$effect.pre(() => {
+	$effect(() => {
 		// eslint-disable-next-line no-unused-expressions
 		id.value;
 		afterTick(() => {
