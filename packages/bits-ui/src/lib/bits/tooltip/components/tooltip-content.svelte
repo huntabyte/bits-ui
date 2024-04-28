@@ -62,6 +62,7 @@
 	}}
 	trapped={false}
 	loop={false}
+	preventScroll={false}
 >
 	{#snippet popper({ props })}
 		{@const mergedProps = mergeProps(restProps, state.props, props)}

@@ -189,7 +189,7 @@ type TooltipTriggerStateProps = ReadableBoxedValues<{
 class TooltipTriggerState {
 	#id: TooltipTriggerStateProps["id"];
 	#root: TooltipRootState;
-	isPointerDown = box(false);
+	#isPointerDown = box(false);
 	#hasPointerMoveOpened = $state(false);
 	#disabled: TooltipTriggerStateProps["disabled"];
 	#isDisabled = $derived.by(() => this.#disabled.value || this.#root.disabled);
@@ -200,21 +200,20 @@ class TooltipTriggerState {
 		this.#disabled = props.disabled;
 		this.#root.triggerNode = useNodeById(this.#id);
 		this.#root.triggerId = props.id;
-		this.isPointerDown = box(false);
 	}
 
 	handlePointerUp() {
-		this.isPointerDown.value = false;
+		this.#isPointerDown.value = false;
 	}
 
 	#onpointerup = () => {
 		if (this.#isDisabled) return;
-		this.isPointerDown.value = false;
+		this.#isPointerDown.value = false;
 	};
 
 	#onpointerdown = () => {
 		if (this.#isDisabled) return;
-		this.isPointerDown.value = true;
+		this.#isPointerDown.value = true;
 		document.addEventListener(
 			"pointerup",
 			() => {
@@ -239,13 +238,16 @@ class TooltipTriggerState {
 	};
 
 	#onfocus = (e: FocusEvent) => {
-		if (this.isPointerDown || this.#isDisabled) return;
+		if (this.#isPointerDown.value || this.#isDisabled) {
+			return;
+		}
 
 		if (
 			this.#root.ignoreNonKeyboardFocus &&
 			!(e.target as HTMLElement).matches(":focus-visible")
-		)
+		) {
 			return;
+		}
 
 		this.#root.handleOpen();
 	};
@@ -266,6 +268,7 @@ class TooltipTriggerState {
 		"data-state": this.#root.stateAttr,
 		"data-disabled": getDataDisabled(this.#isDisabled),
 		"data-tooltip-trigger": "",
+		tabindex: this.#isDisabled ? undefined : 0,
 		onpointerup: this.#onpointerup,
 		onpointerdown: this.#onpointerdown,
 		onpointermove: this.#onpointermove,
@@ -290,9 +293,6 @@ class TooltipContentState {
 		const contentNode = useNodeById(this.#id);
 		this.root.contentNode = contentNode;
 		this.root.contentId = this.#id;
-		$effect(() => {
-			console.log(contentNode.value);
-		});
 
 		$effect(() => {
 			if (!this.root.open.value) return;

@@ -1,5 +1,4 @@
-import { type ReadableBox, useMounted } from "runed";
-import type { Box } from "./box.svelte.js";
+import type { ReadableBox } from "runed";
 import { boxAutoReset } from "./boxAutoReset.svelte.js";
 import { createEventHook } from "./createEventHook.svelte.js";
 import { isElementOrSVGElement, isHTMLElement } from "./is.js";
@@ -20,10 +19,6 @@ export function useGraceArea(triggerId: ReadableBox<string>, contentId: Readable
 		pointerGraceArea = null;
 		isPointerInTransit.value = false;
 	}
-
-	$effect(() => {
-		console.log(contentNode);
-	});
 
 	function handleCreateGraceArea(e: PointerEvent, hoverTarget: HTMLElement) {
 		const currentTarget = e.currentTarget;

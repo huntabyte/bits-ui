@@ -115,8 +115,10 @@ export function useBodyScrollLock(initialState?: boolean | undefined) {
 		(v) => map.set(id, v)
 	);
 
-	onDestroy(() => {
-		map.delete(id);
+	$effect(() => {
+		return () => {
+			map.delete(id);
+		};
 	});
 
 	return locked;
