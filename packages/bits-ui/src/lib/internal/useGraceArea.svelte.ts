@@ -38,29 +38,25 @@ export function useGraceArea(triggerId: ReadableBox<string>, contentId: Readable
 	}
 
 	$effect(() => {
-		const tNode = triggerNode;
-		let cNode = contentNode;
-		if (!tNode) return;
-		if (!cNode) {
-			cNode = document.getElementById(contentId.value);
-			if (!cNode) return;
-			contentNode = cNode;
-		}
+		contentNode = document.getElementById(contentId.value);
+		if (!triggerNode || !contentNode) return;
 
-		if (!triggerNode || !cNode) return;
-		const handleTriggerLeave = (e: PointerEvent) => handleCreateGraceArea(e, cNode!);
-		const handleContentLeave = () => handleRemoveGraceArea();
+		const handleTriggerLeave = (e: PointerEvent) => {
+			handleCreateGraceArea(e, contentNode!);
+		};
 
-		const unsub = executeCallbacks(
+		const handleContentLeave = (e: PointerEvent) => {
+			handleCreateGraceArea(e, triggerNode!);
+		};
+		return executeCallbacks(
 			addEventListener(triggerNode, "pointerleave", handleTriggerLeave),
-			addEventListener(cNode, "pointerleave", handleContentLeave)
+			addEventListener(contentNode, "pointerleave", handleContentLeave)
 		);
-
-		return unsub;
 	});
 
 	$effect(() => {
 		if (!pointerGraceArea) return;
+
 		function handleTrackPointerGrace(e: PointerEvent) {
 			if (!pointerGraceArea) return;
 			const target = e.target;
@@ -77,9 +73,7 @@ export function useGraceArea(triggerId: ReadableBox<string>, contentId: Readable
 			}
 		}
 
-		const unsub = addEventListener(document, "pointermove", handleTrackPointerGrace);
-
-		return unsub;
+		return addEventListener(document, "pointermove", handleTrackPointerGrace);
 	});
 
 	return {
