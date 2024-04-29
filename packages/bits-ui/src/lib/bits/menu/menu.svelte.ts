@@ -1,4 +1,5 @@
 import { type WritableBox, box } from "runed";
+import { tick } from "svelte";
 import { focusFirst } from "../utilities/focus-scope/utils.js";
 import {
 	FIRST_LAST_KEYS,
@@ -18,6 +19,7 @@ import { onDestroyEffect } from "$lib/internal/onDestroyEffect.svelte.js";
 import { isElementOrSVGElement, isHTMLElement } from "$lib/internal/is.js";
 import { useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
+import { getAriaDisabled, getDataDisabled } from "$lib/internal/attrs.js";
 
 const TRIGGER_ATTR = "data-menu-trigger";
 const CONTENT_ATTR = "data-menu-content";
@@ -218,12 +220,64 @@ class MenuItemState {
 	#content: MenuContentState;
 	#id: MenuItemStateProps["id"];
 	#disabled: MenuItemStateProps["disabled"];
-	#node: WritableBox<HTMLElement | null> = box(null);
+	#isFocused = $state(false);
 
 	constructor(props: MenuItemStateProps, content: MenuContentState) {
 		this.#content = content;
 		this.#id = props.id;
 		this.#disabled = props.disabled;
-		this.#node = useNodeById(this.#id);
 	}
+
+	#onpointermove = (e: PointerEvent) => {
+		if (e.defaultPrevented) return;
+		if (!isMouseEvent(e)) return;
+
+		if (this.#disabled.value) {
+			this.#content.onItemLeave(e);
+		} else {
+			const defaultPrevented = this.#content.onItemEnter(e);
+			if (defaultPrevented) return;
+			const item = e.currentTarget;
+			if (!isHTMLElement(item)) return;
+			item.focus();
+		}
+	};
+
+	#onpointerleave = async (e: PointerEvent) => {
+		await tick();
+		if (e.defaultPrevented) return;
+		if (!isMouseEvent(e)) return;
+
+		this.#content.onItemLeave(e);
+	};
+
+	#onfocus = async (e: FocusEvent) => {
+		await tick();
+		if (e.defaultPrevented || this.#disabled.value) return;
+		this.#isFocused = true;
+	};
+
+	#onblur = async (e: FocusEvent) => {
+		await tick();
+		if (e.defaultPrevented) return;
+		this.#isFocused = false;
+	};
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.value,
+				tabindex: -1,
+				role: "menuitem",
+				"aria-disabled": getAriaDisabled(this.#disabled.value),
+				"data-disabled": getDataDisabled(this.#disabled.value),
+				"data-highlighted": this.#isFocused ? "" : undefined,
+
+				//
+				onpointermove: this.#onpointermove,
+				onpointerleave: this.#onpointerleave,
+				onfocus: this.#onfocus,
+				onblur: this.#onblur,
+			}) as const
+	);
 }
