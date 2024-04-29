@@ -1,6 +1,7 @@
 import type { PopperLayerProps } from "../utilities/popper-layer/types.js";
 import type {
 	OnChangeFn,
+	PrimitiveButtonAttributes,
 	PrimitiveDivAttributes,
 	WithAsChild,
 	Without,
@@ -49,3 +50,15 @@ export type MenuItemPropsWithoutHTML = WithAsChild<{
 
 export type MenuItemProps = MenuItemPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, MenuItemPropsWithoutHTML>;
+
+export type MenuTriggerPropsWithoutHTML = WithAsChild<{
+	/**
+	 * Whether the trigger is disabled.
+	 *
+	 * @defaultValue false
+	 */
+	disabled?: boolean;
+}>;
+
+export type MenuTriggerProps = MenuTriggerPropsWithoutHTML &
+	Without<PrimitiveButtonAttributes, MenuTriggerPropsWithoutHTML>;

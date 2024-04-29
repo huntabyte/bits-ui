@@ -19,4 +19,5 @@ export type {
 	MenuRootPropsWithoutHTML as RootProps,
 	MenuContentProps as ContentProps,
 	MenuItemProps as ItemProps,
+	MenuTriggerProps as TriggerProps,
 } from "./types.js";

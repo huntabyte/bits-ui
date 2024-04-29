@@ -246,24 +246,24 @@ class MenuContentState {
 		onpointermove: this.#onpointermove,
 	}));
 
-	createItem(props: MenuItemImplStateProps & MenuItemStateProps) {
-		const item = new MenuItemImplState(props, this);
+	createItem(props: MenuItemSharedStateProps & MenuItemStateProps) {
+		const item = new MenuItemSharedState(props, this);
 		return new MenuItemState(props, item);
 	}
 }
 
-type MenuItemImplStateProps = ReadableBoxedValues<{
+type MenuItemSharedStateProps = ReadableBoxedValues<{
 	disabled: boolean;
 	id: string;
 }>;
 
-class MenuItemImplState {
+class MenuItemSharedState {
 	content: MenuContentState;
-	#id: MenuItemImplStateProps["id"];
-	disabled: MenuItemImplStateProps["disabled"];
+	#id: MenuItemSharedStateProps["id"];
+	disabled: MenuItemSharedStateProps["disabled"];
 	#isFocused = $state(false);
 
-	constructor(props: MenuItemImplStateProps, content: MenuContentState) {
+	constructor(props: MenuItemSharedStateProps, content: MenuContentState) {
 		this.content = content;
 		this.#id = props.id;
 		this.disabled = props.disabled;
@@ -328,11 +328,11 @@ type MenuItemStateProps = ReadableBoxedValues<{
 }>;
 
 class MenuItemState {
-	#item: MenuItemImplState;
+	#item: MenuItemSharedState;
 	#onSelect: MenuItemStateProps["onSelect"];
 	#isPointerDown = $state(false);
 
-	constructor(props: MenuItemStateProps, item: MenuItemImplState) {
+	constructor(props: MenuItemStateProps, item: MenuItemSharedState) {
 		this.#item = item;
 		this.#onSelect = props.onSelect;
 	}
@@ -456,6 +456,6 @@ export function useMenuContent(props: MenuContentStateProps) {
 	return setMenuContentContext(getMenuRootContext().createContent(props));
 }
 
-export function useMenuItem(props: MenuItemImplStateProps & MenuItemStateProps) {
+export function useMenuItem(props: MenuItemSharedStateProps & MenuItemStateProps) {
 	return getMenuContentContext().createItem(props);
 }
