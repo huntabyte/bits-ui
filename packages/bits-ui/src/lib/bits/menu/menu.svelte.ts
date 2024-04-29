@@ -111,9 +111,10 @@ type MenuContentStateProps = ReadableBoxedValues<{
 }>;
 
 class MenuContentState {
+	#id: MenuContentStateProps["id"];
 	root: MenuRootState;
 	search = $state("");
-	#node: WritableBox<HTMLElement | null> = box(null);
+	#node: WritableBox<HTMLElement | null>;
 	#loop: MenuContentStateProps["loop"];
 	#timer = $state(0);
 	pointerGraceTimer = $state(0);
@@ -125,9 +126,10 @@ class MenuContentState {
 
 	constructor(props: MenuContentStateProps, root: MenuRootState) {
 		this.root = root;
-		this.root.contentId = props.id;
+		this.#id = props.id;
+		this.#node = useNodeById(this.#id);
 		this.#loop = props.loop;
-		this.#node = useNodeById(props.id);
+		this.root.contentId = props.id;
 
 		onDestroyEffect(() => {
 			window.clearTimeout(this.#timer);
@@ -145,9 +147,10 @@ class MenuContentState {
 	getCandidateNodes() {
 		const node = this.#node.value;
 		if (!node) return [];
-		return Array.from(
+		const candidates = Array.from(
 			node.querySelectorAll<HTMLElement>(`[${ITEM_ATTR}]:not([data-disabled])`)
 		);
+		return candidates;
 	}
 
 	isPointerMovingToSubmenu(e: PointerEvent) {
@@ -160,9 +163,9 @@ class MenuContentState {
 		if (e.defaultPrevented) return;
 
 		const target = e.target;
-		if (!isElementOrSVGElement(target)) return;
+		if (!isHTMLElement(target)) return;
 
-		const isKeydownInside = target.closest(CONTENT_ATTR) === e.currentTarget;
+		const isKeydownInside = target.closest(`[CONTENT_ATTR]`) === e.currentTarget;
 		const isModifierKey = e.ctrlKey || e.altKey || e.metaKey;
 		const isCharacterKey = e.key.length === 1;
 
@@ -172,21 +175,26 @@ class MenuContentState {
 		// prevent space from being considered with typeahead
 		if (e.code === "Space") return;
 
+		const candidateNodes = this.getCandidateNodes();
+
 		if (isKeydownInside) {
 			// menus do not respect the tab key
 			if (e.key === kbd.TAB) e.preventDefault();
 			if (!isModifierKey && isCharacterKey) {
-				this.#handleTypeaheadSearch(e.key, this.getCandidateNodes());
+				this.#handleTypeaheadSearch(e.key, candidateNodes);
 			}
 		}
 
 		// focus first/last based on key pressed
-		if (e.target !== this.#node.value) return;
+		if (e.target !== this.#node.value) {
+			console.log("target", e.target);
+			console.log("this node", this.#node.value);
+			return;
+		}
 
 		if (!FIRST_LAST_KEYS.includes(e.key)) return;
 		e.preventDefault();
 
-		const candidateNodes = this.getCandidateNodes();
 		if (LAST_KEYS.includes(e.key)) {
 			candidateNodes.reverse();
 		}
@@ -236,15 +244,19 @@ class MenuContentState {
 		return false;
 	}
 
-	props = $derived.by(() => ({
-		role: "menu",
-		"aria-orientation": getAriaOrientation("vertical"),
-		[CONTENT_ATTR]: "",
-		"data-state": getDataOpenClosed(this.root.open.value),
-		onkeydown: this.#onkeydown,
-		onblur: this.#onblur,
-		onpointermove: this.#onpointermove,
-	}));
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.value,
+				role: "menu",
+				"aria-orientation": getAriaOrientation("vertical"),
+				[CONTENT_ATTR]: "",
+				"data-state": getDataOpenClosed(this.root.open.value),
+				onkeydown: this.#onkeydown,
+				onblur: this.#onblur,
+				onpointermove: this.#onpointermove,
+			}) as const
+	);
 
 	createItem(props: MenuItemSharedStateProps & MenuItemStateProps) {
 		const item = new MenuItemSharedState(props, this);
@@ -285,7 +297,6 @@ class MenuItemSharedState {
 	};
 
 	#onpointerleave = async (e: PointerEvent) => {
-		await tick();
 		if (e.defaultPrevented) return;
 		if (!isMouseEvent(e)) return;
 
@@ -293,13 +304,11 @@ class MenuItemSharedState {
 	};
 
 	#onfocus = async (e: FocusEvent) => {
-		await tick();
 		if (e.defaultPrevented || this.disabled.value) return;
 		this.#isFocused = true;
 	};
 
 	#onblur = async (e: FocusEvent) => {
-		await tick();
 		if (e.defaultPrevented) return;
 		this.#isFocused = false;
 	};
@@ -359,7 +368,6 @@ class MenuItemState {
 	};
 
 	#onpointerup = async (e: PointerEvent) => {
-		await tick();
 		if (e.defaultPrevented) return;
 		if (!this.#isPointerDown) {
 			if (!isHTMLElement(e.currentTarget)) return;
@@ -398,7 +406,6 @@ class DropdownMenuTriggerState {
 	#onclick = async (e: MouseEvent) => {
 		if (!this.#disabled.value && e.button === 0 && e.ctrlKey === false) {
 			this.#root.toggleOpen();
-			await tick();
 			// prevent trigger focusing when opening
 			// allowing the content to be given focus without competition
 			if (this.#root.open.value) e.preventDefault();

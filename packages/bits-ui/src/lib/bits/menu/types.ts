@@ -1,3 +1,4 @@
+import type { Snippet } from "svelte";
 import type { PopperLayerProps } from "../utilities/popper-layer/types.js";
 import type {
 	OnChangeFn,
@@ -6,7 +7,6 @@ import type {
 	WithAsChild,
 	Without,
 } from "$lib/internal/types.js";
-import type { Direction } from "$lib/shared/index.js";
 
 export type MenuRootPropsWithoutHTML = {
 	/**
@@ -18,6 +18,8 @@ export type MenuRootPropsWithoutHTML = {
 	 * A callback that is called when the menu is opened or closed.
 	 */
 	onOpenChange?: OnChangeFn<boolean>;
+
+	children?: Snippet;
 };
 
 export type MenuContentPropsWithoutHTML = WithAsChild<PopperLayerProps>;

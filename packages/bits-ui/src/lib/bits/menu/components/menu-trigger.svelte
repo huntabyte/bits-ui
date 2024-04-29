@@ -4,6 +4,7 @@
 	import { useMenuDropdownTrigger } from "../menu.svelte.js";
 	import { useId } from "$lib/internal/useId.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 
 	let {
 		id = useId(),
@@ -23,10 +24,12 @@
 	const mergedProps = $derived(mergeProps(restProps, state.props));
 </script>
 
-{#if asChild}
-	{@render child?.({ props: mergedProps })}
-{:else}
-	<button {...mergedProps} bind:this={el}>
-		{@render children?.()}
-	</button>
-{/if}
+<FloatingLayer.Anchor {id}>
+	{#if asChild}
+		{@render child?.({ props: mergedProps })}
+	{:else}
+		<button {...mergedProps} bind:this={el}>
+			{@render children?.()}
+		</button>
+	{/if}
+</FloatingLayer.Anchor>
