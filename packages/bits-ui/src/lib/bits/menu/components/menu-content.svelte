@@ -24,12 +24,10 @@
 		id: box.with(() => id),
 		loop: box.with(() => loop),
 	});
-
-	const mergedProps = $derived(mergeProps(restProps, state.props));
 </script>
 
 <PopperLayer
-	{...mergedProps}
+	{...restProps}
 	present={state.root.open.value || forceMount}
 	{id}
 	onInteractOutside={(e) => {
@@ -46,7 +44,7 @@
 	{loop}
 >
 	{#snippet popper({ props })}
-		{@const mergedProps = mergeProps(state.props, props)}
+		{@const mergedProps = mergeProps(restProps, state.props, props)}
 		{#if asChild}
 			{@render child?.({ props: mergedProps })}
 		{:else}
