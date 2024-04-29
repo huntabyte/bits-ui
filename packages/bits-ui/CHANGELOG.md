@@ -1,5 +1,11 @@
 # bits-ui
 
+## 0.21.6
+
+### Patch Changes
+
+- chore: update peer deps to include Svelte 5 ([#525](https://github.com/huntabyte/bits-ui/pull/525))
+
 ## 0.21.5
 
 ### Patch Changes
