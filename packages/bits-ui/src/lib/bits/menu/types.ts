@@ -17,14 +17,9 @@ export type MenuRootPropsWithoutHTML = {
 	 * A callback that is called when the menu is opened or closed.
 	 */
 	onOpenChange?: OnChangeFn<boolean>;
-
-	/**
-	 * The reading direction of the menu.
-	 */
-	dir?: Direction;
 };
 
-export type MenuContentPropsWithoutHTML = WithAsChild<Omit<PopperLayerProps, "dir">>;
+export type MenuContentPropsWithoutHTML = WithAsChild<PopperLayerProps>;
 
 export type MenuContentProps = MenuContentPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, MenuContentPropsWithoutHTML>;
@@ -45,6 +40,11 @@ export type MenuItemPropsWithoutHTML = WithAsChild<{
 	 * @defaultValue undefined
 	 */
 	textValue?: string;
+
+	/**
+	 * A callback fired when the menu item is selected.
+	 */
+	onSelect?: () => void;
 }>;
 
 export type MenuItemProps = MenuItemPropsWithoutHTML &

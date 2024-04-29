@@ -20,7 +20,15 @@ import { onDestroyEffect } from "$lib/internal/onDestroyEffect.svelte.js";
 import { isElementOrSVGElement, isHTMLElement } from "$lib/internal/is.js";
 import { useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
-import { getAriaDisabled, getDataDisabled } from "$lib/internal/attrs.js";
+import {
+	getAriaDisabled,
+	getAriaExpanded,
+	getAriaOrientation,
+	getDataDisabled,
+	getDataOpenClosed,
+} from "$lib/internal/attrs.js";
+import { mergeProps } from "$lib/internal/mergeProps.js";
+import { createContext } from "$lib/internal/createContext.js";
 
 const TRIGGER_ATTR = "data-menu-trigger";
 const CONTENT_ATTR = "data-menu-content";
@@ -33,6 +41,7 @@ export type MenuRootStateProps = WritableBoxedValues<{
 class MenuRootState {
 	open: MenuRootStateProps["open"];
 	contentId = box.with<string | undefined>(() => undefined);
+	triggerId = box.with<string | undefined>(() => undefined);
 	isUsingKeyboard = box(false);
 
 	constructor(props: MenuRootStateProps) {
@@ -77,6 +86,22 @@ class MenuRootState {
 
 	onClose() {
 		this.open.value = false;
+	}
+
+	onOpen() {
+		this.open.value = true;
+	}
+
+	toggleOpen() {
+		this.open.value = !this.open.value;
+	}
+
+	createContent(props: MenuContentStateProps) {
+		return new MenuContentState(props, this);
+	}
+
+	createDropdownTrigger(props: DropdownMenuTriggerStateProps) {
+		return new DropdownMenuTriggerState(props, this);
 	}
 }
 
@@ -210,37 +235,48 @@ class MenuContentState {
 		if (this.isPointerMovingToSubmenu(e)) return true;
 		return false;
 	}
+
+	props = $derived.by(() => ({
+		role: "menu",
+		"aria-orientation": getAriaOrientation("vertical"),
+		[CONTENT_ATTR]: "",
+		"data-state": getDataOpenClosed(this.root.open.value),
+		onkeydown: this.#onkeydown,
+		onblur: this.#onblur,
+		onpointermove: this.#onpointermove,
+	}));
+
+	createItem(props: MenuItemImplStateProps & MenuItemStateProps) {
+		const item = new MenuItemImplState(props, this);
+		return new MenuItemState(props, item);
+	}
 }
 
-type MenuItemStateProps = ReadableBoxedValues<{
+type MenuItemImplStateProps = ReadableBoxedValues<{
 	disabled: boolean;
 	id: string;
-	onSelect: () => void;
 }>;
 
-class MenuItemState {
-	#content: MenuContentState;
-	#id: MenuItemStateProps["id"];
-	#disabled: MenuItemStateProps["disabled"];
+class MenuItemImplState {
+	content: MenuContentState;
+	#id: MenuItemImplStateProps["id"];
+	disabled: MenuItemImplStateProps["disabled"];
 	#isFocused = $state(false);
-	#isPointerDown = $state(false);
-	#onSelect: MenuItemStateProps["onSelect"];
 
-	constructor(props: MenuItemStateProps, content: MenuContentState) {
-		this.#content = content;
+	constructor(props: MenuItemImplStateProps, content: MenuContentState) {
+		this.content = content;
 		this.#id = props.id;
-		this.#disabled = props.disabled;
-		this.#onSelect = props.onSelect;
+		this.disabled = props.disabled;
 	}
 
 	#onpointermove = (e: PointerEvent) => {
 		if (e.defaultPrevented) return;
 		if (!isMouseEvent(e)) return;
 
-		if (this.#disabled.value) {
-			this.#content.onItemLeave(e);
+		if (this.disabled.value) {
+			this.content.onItemLeave(e);
 		} else {
-			const defaultPrevented = this.#content.onItemEnter(e);
+			const defaultPrevented = this.content.onItemEnter(e);
 			if (defaultPrevented) return;
 			const item = e.currentTarget;
 			if (!isHTMLElement(item)) return;
@@ -253,12 +289,12 @@ class MenuItemState {
 		if (e.defaultPrevented) return;
 		if (!isMouseEvent(e)) return;
 
-		this.#content.onItemLeave(e);
+		this.content.onItemLeave(e);
 	};
 
 	#onfocus = async (e: FocusEvent) => {
 		await tick();
-		if (e.defaultPrevented || this.#disabled.value) return;
+		if (e.defaultPrevented || this.disabled.value) return;
 		this.#isFocused = true;
 	};
 
@@ -268,18 +304,42 @@ class MenuItemState {
 		this.#isFocused = false;
 	};
 
-	#onpointerup = async (e: PointerEvent) => {
-		await tick();
-		if (e.defaultPrevented) return;
-		if (!this.#isPointerDown) {
-			if (!isHTMLElement(e.currentTarget)) return;
-			e.currentTarget?.click();
-		}
-	};
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.value,
+				tabindex: -1,
+				role: "menuitem",
+				"aria-disabled": getAriaDisabled(this.disabled.value),
+				"data-disabled": getDataDisabled(this.disabled.value),
+				"data-highlighted": this.#isFocused ? "" : undefined,
+				[ITEM_ATTR]: "",
+				//
+				onpointermove: this.#onpointermove,
+				onpointerleave: this.#onpointerleave,
+				onfocus: this.#onfocus,
+				onblur: this.#onblur,
+			}) as const
+	);
+}
+
+type MenuItemStateProps = ReadableBoxedValues<{
+	onSelect: AnyFn;
+}>;
+
+class MenuItemState {
+	#item: MenuItemImplState;
+	#onSelect: MenuItemStateProps["onSelect"];
+	#isPointerDown = $state(false);
+
+	constructor(props: MenuItemStateProps, item: MenuItemImplState) {
+		this.#item = item;
+		this.#onSelect = props.onSelect;
+	}
 
 	#onkeydown = (e: KeyboardEvent) => {
-		const isTypingAhead = this.#content.search !== "";
-		if (this.#disabled.value || (isTypingAhead && e.key === kbd.SPACE)) return;
+		const isTypingAhead = this.#item.content.search !== "";
+		if (this.#item.disabled.value || (isTypingAhead && e.key === kbd.SPACE)) return;
 		if (SELECTION_KEYS.includes(e.key)) {
 			if (!isHTMLElement(e.currentTarget)) return;
 			e.currentTarget.click();
@@ -294,28 +354,108 @@ class MenuItemState {
 	};
 
 	#onclick = () => {
-		if (this.#disabled.value) return;
+		if (this.#item.disabled.value) return;
 		this.#onSelect.value();
+	};
+
+	#onpointerup = async (e: PointerEvent) => {
+		await tick();
+		if (e.defaultPrevented) return;
+		if (!this.#isPointerDown) {
+			if (!isHTMLElement(e.currentTarget)) return;
+			e.currentTarget?.click();
+		}
+	};
+
+	#onpointerdown = () => {
+		this.#isPointerDown = true;
+	};
+
+	props = $derived.by(() =>
+		mergeProps(this.#item.props, {
+			onclick: this.#onclick,
+			onpointerdown: this.#onpointerdown,
+			onpointerup: this.#onpointerup,
+			onkeydown: this.#onkeydown,
+		})
+	);
+}
+
+type DropdownMenuTriggerStateProps = ReadableBoxedValues<{
+	id: string;
+	disabled: boolean;
+}>;
+
+class DropdownMenuTriggerState {
+	#root: MenuRootState;
+	#disabled: DropdownMenuTriggerStateProps["disabled"];
+	constructor(props: DropdownMenuTriggerStateProps, root: MenuRootState) {
+		this.#root = root;
+		this.#disabled = props.disabled;
+		this.#root.triggerId = props.id;
+	}
+
+	#onclick = async (e: MouseEvent) => {
+		if (!this.#disabled.value && e.button === 0 && e.ctrlKey === false) {
+			this.#root.toggleOpen();
+			await tick();
+			// prevent trigger focusing when opening
+			// allowing the content to be given focus without competition
+			if (this.#root.open.value) e.preventDefault();
+		}
+	};
+
+	#onkeydown = (e: KeyboardEvent) => {
+		if (this.#disabled.value) return;
+		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
+			this.#root.toggleOpen();
+			e.preventDefault();
+			return;
+		}
+		if (e.key === kbd.ARROW_DOWN) {
+			this.#root.onOpen();
+			e.preventDefault();
+		}
 	};
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
-				tabindex: -1,
-				role: "menuitem",
-				"aria-disabled": getAriaDisabled(this.#disabled.value),
+				id: this.#root.triggerId.value,
+				disabled: this.#disabled.value,
+				"aria-haspopup": "menu",
+				"aria-expanded": getAriaExpanded(this.#root.open.value),
+				"aria-controls": this.#root.open.value ? this.#root.contentId.value : undefined,
 				"data-disabled": getDataDisabled(this.#disabled.value),
-				"data-highlighted": this.#isFocused ? "" : undefined,
-
+				"data-state": getDataOpenClosed(this.#root.open.value),
+				[TRIGGER_ATTR]: "",
 				//
-				onpointermove: this.#onpointermove,
-				onpointerleave: this.#onpointerleave,
-				onfocus: this.#onfocus,
-				onblur: this.#onblur,
-				onpointerup: this.#onpointerup,
-				onkeydown: this.#onkeydown,
 				onclick: this.#onclick,
+				onkeydown: this.#onkeydown,
 			}) as const
 	);
+}
+
+//
+// CONTEXT METHODS
+//
+
+const [setMenuRootContext, getMenuRootContext] = createContext<MenuRootState>("Menu.Root");
+const [setMenuContentContext, getMenuContentContext] =
+	createContext<MenuContentState>("Menu.Content");
+
+export function useMenuRoot(props: MenuRootStateProps) {
+	return setMenuRootContext(new MenuRootState(props));
+}
+
+export function useMenuDropdownTrigger(props: DropdownMenuTriggerStateProps) {
+	return getMenuRootContext().createDropdownTrigger(props);
+}
+
+export function useMenuContent(props: MenuContentStateProps) {
+	return setMenuContentContext(getMenuRootContext().createContent(props));
+}
+
+export function useMenuItem(props: MenuItemImplStateProps & MenuItemStateProps) {
+	return getMenuContentContext().createItem(props);
 }

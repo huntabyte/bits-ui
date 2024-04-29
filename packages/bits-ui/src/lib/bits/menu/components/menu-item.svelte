@@ -1,47 +1,35 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { getCtx } from "../ctx.js";
-	import type { ItemEvents, ItemProps } from "../index.js";
-	import { disabledAttrs } from "$lib/internal/index.js";
-	import { createDispatcher } from "$lib/internal/events.js";
+	import { box } from "runed";
+	import type { ItemProps } from "../index.js";
+	import { useMenuItem } from "../menu.svelte.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
+	import { noop } from "$lib/internal/callbacks.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
 
-	type $$Props = ItemProps;
-	type $$Events = ItemEvents;
+	let {
+		asChild,
+		child,
+		children,
+		el = $bindable(),
+		id = useId(),
+		disabled = false,
+		onSelect = noop,
+		...restProps
+	}: ItemProps = $props();
 
-	export let href: $$Props["href"] = undefined;
-	export let asChild: $$Props["asChild"] = false;
-	export let disabled: $$Props["disabled"] = false;
-	export let el: $$Props["el"] = undefined;
+	const state = useMenuItem({
+		id: box.with(() => id),
+		disabled: box.with(() => disabled),
+		onSelect: box.with(() => onSelect),
+	});
 
-	const {
-		elements: { item },
-		getAttrs,
-	} = getCtx();
-	const dispatch = createDispatcher();
-
-	$: builder = $item;
-	$: attrs = { ...getAttrs("item"), ...disabledAttrs(disabled) };
-	$: Object.assign(builder, attrs);
+	const mergedProps = $derived(mergeProps(restProps, state.props));
 </script>
 
 {#if asChild}
-	<slot {builder} />
+	{@render child?.({ props: mergedProps })}
 {:else}
-	<svelte:element
-		this={href ? "a" : "div"}
-		bind:this={el}
-		{href}
-		use:melt={builder}
-		{...$$restProps}
-		on:m-click={dispatch}
-		on:m-focusin={dispatch}
-		on:m-focusout={dispatch}
-		on:m-keydown={dispatch}
-		on:m-pointerdown={dispatch}
-		on:m-pointerleave={dispatch}
-		on:m-pointermove={dispatch}
-		on:pointerenter
-	>
-		<slot {builder} />
-	</svelte:element>
+	<div {...mergedProps} bind:this={el}>
+		{@render children?.()}
+	</div>
 {/if}
