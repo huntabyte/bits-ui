@@ -80,6 +80,7 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 		itemToFocus.focus();
 		currentTabStopId = itemToFocus.id;
 		props.onCandidateFocus?.(itemToFocus);
+		return itemToFocus;
 	}
 
 	function getTabIndex(node: HTMLElement | null) {

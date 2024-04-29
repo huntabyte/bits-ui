@@ -40,7 +40,7 @@ class AccordionBaseState {
 	disabled = undefined as unknown as AccordionBaseStateProps["disabled"];
 	#loop = undefined as unknown as AccordionBaseStateProps["loop"];
 	orientation = undefined as unknown as AccordionBaseStateProps["orientation"];
-	rovingFocusGroup = undefined as unknown as UseRovingFocusReturn;
+	rovingFocusGroup: UseRovingFocusReturn;
 
 	constructor(props: AccordionBaseStateProps) {
 		this.id = props.id;
