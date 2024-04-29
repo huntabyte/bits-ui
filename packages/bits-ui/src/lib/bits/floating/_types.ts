@@ -22,7 +22,7 @@ export type FloatingProps = {
 	 *
 	 * @see https://floating-ui.com/docs/computePosition#placement
 	 */
-	side?: "top" | "right" | "bottom" | "left";
+	side?: "top" | "top-start" | "top-end" | "right" | "right-start" | "right-end" | "bottom" | "bottom-start" | "bottom-end" | "left" | "left-start" | "left-end";
 
 	/**
 	 * The preferred alignment of the anchor to render against when open.
