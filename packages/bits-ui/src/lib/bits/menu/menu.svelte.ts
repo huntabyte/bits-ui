@@ -1,5 +1,4 @@
 import { type WritableBox, box } from "runed";
-import { tick } from "svelte";
 import { focusFirst } from "../utilities/focus-scope/utils.js";
 import {
 	FIRST_LAST_KEYS,
@@ -10,7 +9,7 @@ import {
 	isMouseEvent,
 	isPointerInGraceArea,
 } from "./utils.js";
-import type { Box, ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
+import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { addEventListener } from "$lib/internal/events.js";
 import type { AnyFn } from "$lib/internal/types.js";
 import { executeCallbacks } from "$lib/internal/callbacks.js";
@@ -127,7 +126,7 @@ class MenuContentState {
 	constructor(props: MenuContentStateProps, root: MenuRootState) {
 		this.root = root;
 		this.#id = props.id;
-		this.#node = useNodeById(this.#id);
+		this.#node = useNodeById(props.id);
 		this.#loop = props.loop;
 		this.root.contentId = props.id;
 
@@ -145,7 +144,7 @@ class MenuContentState {
 	}
 
 	getCandidateNodes() {
-		const node = this.#node.value;
+		const node = document.getElementById(this.#id.value);
 		if (!node) return [];
 		const candidates = Array.from(
 			node.querySelectorAll<HTMLElement>(`[${ITEM_ATTR}]:not([data-disabled])`)
@@ -186,11 +185,8 @@ class MenuContentState {
 		}
 
 		// focus first/last based on key pressed
-		if (e.target !== this.#node.value) {
-			console.log("target", e.target);
-			console.log("this node", this.#node.value);
-			return;
-		}
+		const thisNode = document.getElementById(this.#id.value);
+		if (e.target !== thisNode) return;
 
 		if (!FIRST_LAST_KEYS.includes(e.key)) return;
 		e.preventDefault();
