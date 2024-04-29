@@ -5,6 +5,7 @@ import {
 	FIRST_LAST_KEYS,
 	type GraceIntent,
 	LAST_KEYS,
+	SELECTION_KEYS,
 	type Side,
 	isMouseEvent,
 	isPointerInGraceArea,
@@ -214,6 +215,7 @@ class MenuContentState {
 type MenuItemStateProps = ReadableBoxedValues<{
 	disabled: boolean;
 	id: string;
+	onSelect: () => void;
 }>;
 
 class MenuItemState {
@@ -221,11 +223,14 @@ class MenuItemState {
 	#id: MenuItemStateProps["id"];
 	#disabled: MenuItemStateProps["disabled"];
 	#isFocused = $state(false);
+	#isPointerDown = $state(false);
+	#onSelect: MenuItemStateProps["onSelect"];
 
 	constructor(props: MenuItemStateProps, content: MenuContentState) {
 		this.#content = content;
 		this.#id = props.id;
 		this.#disabled = props.disabled;
+		this.#onSelect = props.onSelect;
 	}
 
 	#onpointermove = (e: PointerEvent) => {
@@ -263,6 +268,36 @@ class MenuItemState {
 		this.#isFocused = false;
 	};
 
+	#onpointerup = async (e: PointerEvent) => {
+		await tick();
+		if (e.defaultPrevented) return;
+		if (!this.#isPointerDown) {
+			if (!isHTMLElement(e.currentTarget)) return;
+			e.currentTarget?.click();
+		}
+	};
+
+	#onkeydown = (e: KeyboardEvent) => {
+		const isTypingAhead = this.#content.search !== "";
+		if (this.#disabled.value || (isTypingAhead && e.key === kbd.SPACE)) return;
+		if (SELECTION_KEYS.includes(e.key)) {
+			if (!isHTMLElement(e.currentTarget)) return;
+			e.currentTarget.click();
+			/**
+			 * We prevent default browser behaviour for selection keys as they should trigger
+			 * a selection only:
+			 * - prevents space from scrolling the page.
+			 * - if keydown causes focus to move, prevents keydown from firing on the new target.
+			 */
+			e.preventDefault();
+		}
+	};
+
+	#onclick = () => {
+		if (this.#disabled.value) return;
+		this.#onSelect.value();
+	};
+
 	props = $derived.by(
 		() =>
 			({
@@ -278,6 +313,9 @@ class MenuItemState {
 				onpointerleave: this.#onpointerleave,
 				onfocus: this.#onfocus,
 				onblur: this.#onblur,
+				onpointerup: this.#onpointerup,
+				onkeydown: this.#onkeydown,
+				onclick: this.#onclick,
 			}) as const
 	);
 }
