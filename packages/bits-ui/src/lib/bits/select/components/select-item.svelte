@@ -28,6 +28,7 @@
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
 {#if asChild}
 	<slot {builder} {isSelected} />
 {:else}
