@@ -26,5 +26,5 @@
 	</Dialog.Root>
 	<p data-testid="binding">{open}</p>
 	<button data-testid="toggle" on:click={() => (open = !open)}>toggle</button>
-	<div id="portalTarget" data-testid="portalTarget" />
+	<div id="portalTarget" data-testid="portalTarget"></div>
 </main>

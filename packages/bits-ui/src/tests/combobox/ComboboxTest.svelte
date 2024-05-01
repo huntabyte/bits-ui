@@ -38,7 +38,7 @@
 		</Combobox.Content>
 		<Combobox.HiddenInput data-testid="hidden-input" />
 	</Combobox.Root>
-	<div data-testid="outside" />
+	<div data-testid="outside"></div>
 	<button data-testid="input-binding" on:click={() => (inputValue = "")}>
 		{#if inputValue === ""}
 			empty

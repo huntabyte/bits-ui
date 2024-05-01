@@ -43,7 +43,7 @@
 						class="absolute left-0 top-0 h-8 w-full rounded-[7px] bg-background dark:bg-muted"
 						in:send={{ key: "active" }}
 						out:receive={{ key: "active" }}
-					/>
+					></div>
 				{/if}
 			</Tabs.Trigger>
 			<Tabs.Trigger
@@ -66,7 +66,7 @@
 						class="absolute left-0 top-0 h-8 w-full rounded-[7px] bg-background dark:bg-muted"
 						in:send={{ key: "active" }}
 						out:receive={{ key: "active" }}
-					/>
+					></div>
 				{/if}
 			</Tabs.Trigger>
 		</Tabs.List>

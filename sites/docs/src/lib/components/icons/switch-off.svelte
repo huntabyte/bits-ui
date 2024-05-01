@@ -3,5 +3,5 @@
 >
 	<span
 		class="pointer-events-none block size-[13px] shrink-0 translate-x-0 rounded-full bg-background shadow-mini transition-transform dark:border dark:border-border-input dark:shadow-mini"
-	/>
+	></span>
 </div>

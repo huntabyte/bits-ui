@@ -93,5 +93,5 @@
 	<button aria-label="radio-sub" data-testid="sub-radio-binding" on:click={() => (subRadio = "")}
 		>{subRadio}</button
 	>
-	<div id="portal-target" data-testid="portal-target" />
+	<div id="portal-target" data-testid="portal-target"></div>
 </main>
