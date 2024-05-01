@@ -1,5 +1,11 @@
 # bits-ui
 
+## 0.21.7
+
+### Patch Changes
+
+- chore: Updated a11y warnings for better Svelte 5 compatibility ([#529](https://github.com/huntabyte/bits-ui/pull/529))
+
 ## 0.21.6
 
 ### Patch Changes
