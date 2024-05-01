@@ -25,10 +25,8 @@
 {#if asChild}
 	<slot {builder} />
 {:else}
-	<!-- svelte-ignore a11y-no-static-element-interactions -->
-	<!-- svelte-ignore a11y_no_static_element_interactions -->
-	<!-- svelte-ignore a11y-missing-attribute -->
-	<!-- svelte-ignore a11y_missing_attribute -->
+	<!-- svelte-ignore a11y-no-static-element-interactions a11y_no_static_element_interactions -->
+	<!-- svelte-ignore a11y-missing-attribute a11y_missing_attribute -->
 	<a bind:this={el} use:melt={builder} {...$$restProps} on:click on:m-keydown={dispatch}>
 		<slot {builder} />
 	</a>
