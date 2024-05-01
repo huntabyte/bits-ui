@@ -33,8 +33,9 @@
 			<div class="mr-2 flex items-center">
 				<div class="relative mr-2">
 					<span class="sr-only">Width</span>
-					<span aria-hidden class="absolute left-5 top-4 text-xxs text-muted-foreground"
-						>W</span
+					<span
+						aria-hidden="true"
+						class="absolute left-5 top-4 text-xxs text-muted-foreground">W</span
 					>
 					<input
 						type="number"
@@ -44,8 +45,9 @@
 				</div>
 				<div class="relative">
 					<span class="sr-only">Height</span>
-					<span aria-hidden class="absolute left-5 top-4 text-xxs text-muted-foreground"
-						>H</span
+					<span
+						aria-hidden="true"
+						class="absolute left-5 top-4 text-xxs text-muted-foreground">H</span
 					>
 					<input
 						type="number"

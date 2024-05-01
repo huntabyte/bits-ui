@@ -36,7 +36,7 @@
 					{/if}
 				</div>
 			{/each}
-			<div aria-hidden class="px-1 text-muted-foreground">–</div>
+			<div aria-hidden="true" class="px-1 text-muted-foreground">–</div>
 			{#each segments.end as { part, value }}
 				<div class="inline-block select-none">
 					{#if part === "literal"}
@@ -114,7 +114,7 @@
 												>
 													<div
 														class="absolute top-[5px] hidden size-1 rounded-full bg-foreground transition-all group-data-[today]:block group-data-[selected]:bg-background"
-													/>
+													></div>
 													{date.day}
 												</DateRangePicker.Day>
 											</DateRangePicker.Cell>

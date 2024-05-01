@@ -29,7 +29,7 @@
 					<PropsTable props={schema.props} />
 				{/if}
 				{#if schema.slotProps}
-					<PropsTable slot props={schema.slotProps} />
+					<PropsTable slotted props={schema.slotProps} />
 				{/if}
 				{#if schema.dataAttributes && schema.dataAttributes.length}
 					<DataAttrsTable dataAttrs={schema.dataAttributes} />

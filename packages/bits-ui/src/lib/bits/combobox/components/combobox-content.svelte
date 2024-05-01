@@ -61,7 +61,7 @@
 		});
 </script>
 
-<!-- svelte-ignore a11y-no-static-element-interactions -->
+<!-- svelte-ignore a11y-no-static-element-interactions a11y_no_static_element_interactions -->
 {#if asChild && $open}
 	<slot {builder} />
 {:else if transition && $open}

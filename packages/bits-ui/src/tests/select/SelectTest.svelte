@@ -38,7 +38,7 @@
 		</Select.Content>
 		<Select.Input data-testid="input" />
 	</Select.Root>
-	<div data-testid="outside" />
+	<div data-testid="outside"></div>
 	<button data-testid="open-binding" on:click={() => (open = !open)}>
 		{open}
 	</button>

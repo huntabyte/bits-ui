@@ -14,7 +14,7 @@
 </script>
 
 {#if builders && builders.length}
-	<!-- svelte-ignore a11y-no-static-element-interactions -->
+	<!-- svelte-ignore a11y-no-static-element-interactions a11y_no_static_element_interactions -->
 	<svelte:element
 		this={href ? "a" : "button"}
 		bind:this={el}
@@ -35,7 +35,7 @@
 		<slot />
 	</svelte:element>
 {:else}
-	<!-- svelte-ignore a11y-no-static-element-interactions -->
+	<!-- svelte-ignore a11y-no-static-element-interactions a11y_no_static_element_interactions -->
 	<svelte:element
 		this={href ? "a" : "button"}
 		bind:this={el}

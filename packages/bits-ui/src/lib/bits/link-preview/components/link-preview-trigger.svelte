@@ -30,8 +30,8 @@
 {#if asChild}
 	<slot {builder} />
 {:else}
-	<svelte:element
-		this={"a"}
+	<!-- svelte-ignore a11y-missing-attribute a11y_missing_attribute -->
+	<a
 		bind:this={el}
 		use:melt={builder}
 		{...$$restProps}
@@ -42,5 +42,5 @@
 		on:m-pointerleave={dispatch}
 	>
 		<slot {builder} />
-	</svelte:element>
+	</a>
 {/if}
