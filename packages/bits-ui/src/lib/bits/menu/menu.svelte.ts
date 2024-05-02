@@ -162,7 +162,7 @@ class MenuContentState {
 		const currentTarget = e.currentTarget;
 		if (!isHTMLElement(target) || !isHTMLElement(currentTarget)) return;
 
-		const isKeydownInside = target.closest(`[CONTENT_ATTR]`) === this.root.contentNode.value;
+		const isKeydownInside = target.closest(`[${CONTENT_ATTR}]`) === this.root.contentNode.value;
 		const isModifierKey = e.ctrlKey || e.altKey || e.metaKey;
 		const isCharacterKey = e.key.length === 1;
 
