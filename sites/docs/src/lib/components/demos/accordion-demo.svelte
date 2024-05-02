@@ -19,9 +19,10 @@
 			content: "Give them your time, attention, and love.",
 		},
 	];
+	let value: string | undefined = undefined;
 </script>
 
-<Accordion.Root class="w-full sm:max-w-[70%]" multiple>
+<Accordion.Root class="w-full sm:max-w-[70%]" bind:value>
 	{#each items as item, i}
 		<Accordion.Item value="${i}" class="group border-b border-dark-10 px-1.5">
 			<Accordion.Header>
@@ -46,3 +47,5 @@
 		</Accordion.Item>
 	{/each}
 </Accordion.Root>
+
+<button on:click={() => (value = undefined)}>Collapse {value}</button>
