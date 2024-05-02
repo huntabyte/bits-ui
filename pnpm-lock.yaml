@@ -69,8 +69,8 @@ importers:
         specifier: ^5.0.5
         version: 5.0.6
       runed:
-        specifier: ^0.4.1
-        version: 0.4.1(svelte@5.0.0-next.109)
+        specifier: ^0.5.0
+        version: 0.5.0(svelte@5.0.0-next.109)
       scule:
         specifier: ^1.3.0
         version: 1.3.0
@@ -8395,8 +8395,8 @@ packages:
       queue-microtask: 1.2.3
     dev: true
 
-  /runed@0.4.1(svelte@5.0.0-next.109):
-    resolution: {integrity: sha512-EgYwuTrLG/7YxR0MU4MYR7STc3xUU7Z5UGHfhXi2zuZvohdLGzNB84cOxkUmg/WO/KyAkABRMX2P3GozFj+tSw==}
+  /runed@0.5.0(svelte@5.0.0-next.109):
+    resolution: {integrity: sha512-nJ/36UhthXG1KNieQhxtvuoK0eHrgEesTkEwV/Tbo7HNka2QqQfoL5vq755ngisrufZl6oQVPJKPdan6msMDGw==}
     peerDependencies:
       svelte: ^5.0.0
     dependencies:

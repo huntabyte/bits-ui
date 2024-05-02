@@ -33,7 +33,11 @@ export function createContext<ContextValue>(
 		const context = getContext<T>(contextKey, fallback);
 		if (context === undefined) {
 			throw new Error(
-				`Missing context dependency: ${contextKey.description} and no fallback was provided.`
+				`Context \`${contextKey.description}\` not found. Component must be used within ${
+					Array.isArray(providerComponentName)
+						? `one of the following components: ${providerComponentName.join(", ")}`
+						: `\`${providerComponentName}\``
+				}`
 			);
 		}
 		// eslint-disable-next-line ts/no-explicit-any

@@ -1,9 +1,8 @@
 import { Map } from "svelte/reactivity";
-import { onDestroy, untrack } from "svelte";
-import { box } from "runed";
+import { untrack } from "svelte";
+import { box, watch } from "runed";
 import type { Fn } from "./types.js";
 import { isBrowser, isIOS } from "./is.js";
-import { watch } from "./box.svelte.js";
 import { addEventListener } from "./events.js";
 import { afterTick } from "./afterTick.js";
 import { useId } from "./useId.svelte.js";

@@ -1,10 +1,11 @@
-import { box } from "runed";
+import { box, watch } from "runed";
 import { focusFirst } from "../utilities/focus-scope/utils.js";
 import {
 	FIRST_LAST_KEYS,
 	type GraceIntent,
 	LAST_KEYS,
 	SELECTION_KEYS,
+	SUB_OPEN_KEYS,
 	type Side,
 	isMouseEvent,
 	isPointerInGraceArea,
@@ -28,23 +29,37 @@ import {
 } from "$lib/internal/attrs.js";
 import { mergeProps } from "$lib/internal/mergeProps.js";
 import { createContext } from "$lib/internal/createContext.js";
+import type { Direction } from "$lib/shared/index.js";
+import { afterTick } from "$lib/internal/afterTick.js";
 
 const TRIGGER_ATTR = "data-menu-trigger";
 const CONTENT_ATTR = "data-menu-content";
 const ITEM_ATTR = "data-menu-item";
+const SUB_TRIGGER_ATTR = "data-menu-subtrigger";
 
-export type MenuRootStateProps = WritableBoxedValues<{
-	open: boolean;
+const [setMenuRootContext] = createContext<MenuRootState>("Menu.Root");
+
+const [setMenuMenuContext, getMenuMenuContext] = createContext<MenuMenuState>(
+	["Menu.Root", "Menu.Sub"],
+	"MenuContext"
+);
+
+const [setMenuContentContext, getMenuContentContext] =
+	createContext<MenuContentState>("Menu.Content");
+
+export type MenuRootStateProps = ReadableBoxedValues<{
+	onClose: AnyFn;
+	dir: Direction;
 }>;
 
 class MenuRootState {
-	open: MenuRootStateProps["open"];
-	contentNode = box<HTMLElement | null>(null);
-	triggerId = box.with<string | undefined>(() => undefined);
+	onClose: MenuRootStateProps["onClose"];
 	isUsingKeyboard = box(false);
+	dir: MenuRootStateProps["dir"];
 
 	constructor(props: MenuRootStateProps) {
-		this.open = props.open;
+		this.onClose = props.onClose;
+		this.dir = props.dir;
 
 		$effect(() => {
 			const callbacksToDispose: AnyFn[] = [];
@@ -83,20 +98,52 @@ class MenuRootState {
 		});
 	}
 
-	onClose() {
-		this.open.value = false;
+	createMenu(props: MenuMenuStateProps) {
+		return new MenuMenuState(props, this);
 	}
+}
 
-	onOpen() {
-		this.open.value = true;
+type MenuMenuStateProps = WritableBoxedValues<{
+	open: boolean;
+}>;
+
+class MenuMenuState {
+	root: MenuRootState;
+	open: MenuMenuStateProps["open"];
+	contentNode = box<HTMLElement | null>(null);
+	triggerId = box.with<string | undefined>(() => undefined);
+	parentMenu?: MenuMenuState;
+
+	constructor(props: MenuMenuStateProps, root: MenuRootState, parentMenu?: MenuMenuState) {
+		this.root = root;
+		this.open = props.open;
+		this.parentMenu = parentMenu;
+
+		if (parentMenu) {
+			watch(parentMenu.open, (v) => {
+				if (!v) this.open.value = false;
+			});
+		}
 	}
 
 	toggleOpen() {
 		this.open.value = !this.open.value;
 	}
 
+	onOpen() {
+		this.open.value = true;
+	}
+
+	onClose() {
+		this.open.value = false;
+	}
+
 	createContent(props: MenuContentStateProps) {
 		return new MenuContentState(props, this);
+	}
+
+	createSubmenu(props: MenuMenuStateProps) {
+		return new MenuMenuState(props, this.root, this);
 	}
 
 	createDropdownTrigger(props: DropdownMenuTriggerStateProps) {
@@ -111,7 +158,7 @@ type MenuContentStateProps = ReadableBoxedValues<{
 
 class MenuContentState {
 	#id: MenuContentStateProps["id"];
-	root: MenuRootState;
+	parentMenu: MenuMenuState;
 	search = $state("");
 	#loop: MenuContentStateProps["loop"];
 	#timer = $state(0);
@@ -122,11 +169,11 @@ class MenuContentState {
 	#handleTypeaheadSearch: ReturnType<typeof useTypeahead>["handleTypeaheadSearch"];
 	rovingFocusGroup: ReturnType<typeof useRovingFocus>;
 
-	constructor(props: MenuContentStateProps, root: MenuRootState) {
-		this.root = root;
+	constructor(props: MenuContentStateProps, parentMenu: MenuMenuState) {
 		this.#id = props.id;
 		this.#loop = props.loop;
-		this.root.contentNode = useNodeById(this.#id, this.root.open);
+		this.parentMenu = parentMenu;
+		this.parentMenu.contentNode = useNodeById(this.#id, this.parentMenu.open);
 
 		onDestroyEffect(() => {
 			window.clearTimeout(this.#timer);
@@ -134,7 +181,7 @@ class MenuContentState {
 
 		this.#handleTypeaheadSearch = useTypeahead().handleTypeaheadSearch;
 		this.rovingFocusGroup = useRovingFocus({
-			rootNode: this.root.contentNode,
+			rootNode: this.parentMenu.contentNode,
 			candidateSelector: ITEM_ATTR,
 			loop: this.#loop,
 			orientation: box.with(() => "vertical"),
@@ -142,7 +189,7 @@ class MenuContentState {
 	}
 
 	getCandidateNodes() {
-		const node = this.root.contentNode.value;
+		const node = this.parentMenu.contentNode.value;
 		if (!node) return [];
 		const candidates = Array.from(
 			node.querySelectorAll<HTMLElement>(`[${ITEM_ATTR}]:not([data-disabled])`)
@@ -155,6 +202,10 @@ class MenuContentState {
 		return isMovingTowards && isPointerInGraceArea(e, this.#pointerGraceIntent?.area);
 	}
 
+	onPointerGraceIntentChange(intent: GraceIntent | null) {
+		this.#pointerGraceIntent = intent;
+	}
+
 	#onkeydown = (e: KeyboardEvent) => {
 		if (e.defaultPrevented) return;
 
@@ -162,7 +213,8 @@ class MenuContentState {
 		const currentTarget = e.currentTarget;
 		if (!isHTMLElement(target) || !isHTMLElement(currentTarget)) return;
 
-		const isKeydownInside = target.closest(`[${CONTENT_ATTR}]`) === this.root.contentNode.value;
+		const isKeydownInside =
+			target.closest(`[${CONTENT_ATTR}]`) === this.parentMenu.contentNode.value;
 		const isModifierKey = e.ctrlKey || e.altKey || e.metaKey;
 		const isCharacterKey = e.key.length === 1;
 
@@ -183,7 +235,7 @@ class MenuContentState {
 		}
 
 		// focus first/last based on key pressed
-		if (e.target !== this.root.contentNode.value) return;
+		if (e.target !== this.parentMenu.contentNode.value) return;
 
 		if (!FIRST_LAST_KEYS.includes(e.key)) return;
 		e.preventDefault();
@@ -228,7 +280,7 @@ class MenuContentState {
 
 	onItemLeave(e: PointerEvent) {
 		if (this.isPointerMovingToSubmenu(e)) return;
-		this.root.contentNode.value?.focus();
+		this.parentMenu.contentNode.value?.focus();
 		this.rovingFocusGroup.setCurrentTabStopId("");
 	}
 
@@ -244,7 +296,7 @@ class MenuContentState {
 				role: "menu",
 				"aria-orientation": getAriaOrientation("vertical"),
 				[CONTENT_ATTR]: "",
-				"data-state": getDataOpenClosed(this.root.open.value),
+				"data-state": getDataOpenClosed(this.parentMenu.open.value),
 				onkeydown: this.#onkeydown,
 				onblur: this.#onblur,
 				onpointermove: this.#onpointermove,
@@ -255,6 +307,13 @@ class MenuContentState {
 		const item = new MenuItemSharedState(props, this);
 		return new MenuItemState(props, item);
 	}
+
+	createSubTrigger(props: MenuItemSharedStateProps) {
+		const item = new MenuItemSharedState(props, this);
+		const submenu = getMenuMenuContext();
+		submenu.triggerId = props.id;
+		return new MenuSubTriggerState(item, this, submenu);
+	}
 }
 
 type MenuItemSharedStateProps = ReadableBoxedValues<{
@@ -264,13 +323,13 @@ type MenuItemSharedStateProps = ReadableBoxedValues<{
 
 class MenuItemSharedState {
 	content: MenuContentState;
-	#id: MenuItemSharedStateProps["id"];
+	id: MenuItemSharedStateProps["id"];
 	disabled: MenuItemSharedStateProps["disabled"];
 	#isFocused = $state(false);
 
 	constructor(props: MenuItemSharedStateProps, content: MenuContentState) {
 		this.content = content;
-		this.#id = props.id;
+		this.id = props.id;
 		this.disabled = props.disabled;
 	}
 
@@ -309,7 +368,7 @@ class MenuItemSharedState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
+				id: this.id.value,
 				tabindex: -1,
 				role: "menuitem",
 				"aria-disabled": getAriaDisabled(this.disabled.value),
@@ -382,58 +441,181 @@ class MenuItemState {
 	);
 }
 
+class MenuSubTriggerState {
+	#item: MenuItemSharedState;
+	// The menu this subtrigger item belongs within
+	#content: MenuContentState;
+	// the menu this subtrigger item opens
+	#submenu: MenuMenuState;
+	#openTimer = $state<number | null>(null);
+
+	constructor(item: MenuItemSharedState, content: MenuContentState, submenu: MenuMenuState) {
+		this.#item = item;
+		this.#content = content;
+		this.#submenu = submenu;
+		this.#submenu.triggerId = item.id;
+
+		onDestroyEffect(() => {
+			this.#clearOpenTimer();
+		});
+	}
+
+	#clearOpenTimer() {
+		if (this.#openTimer === null) return;
+		window.clearTimeout(this.#openTimer);
+		this.#openTimer = null;
+	}
+
+	#onpointermove = (e: PointerEvent) => {
+		if (!isMouseEvent(e)) return;
+		const defaultPrevented = this.#content.onItemEnter(e);
+		if (defaultPrevented) return;
+		if (!this.#item.disabled.value && !this.#submenu.open.value && !this.#openTimer) {
+			this.#content.onPointerGraceIntentChange(null);
+			this.#openTimer = window.setTimeout(() => {
+				this.#submenu.onOpen();
+				this.#clearOpenTimer();
+			}, 100);
+		}
+	};
+
+	#onpointerleave = (e: PointerEvent) => {
+		if (!isMouseEvent(e)) return;
+		this.#clearOpenTimer();
+
+		const contentRect = this.#submenu.contentNode.value?.getBoundingClientRect();
+		if (contentRect?.width) {
+			const side = this.#submenu.contentNode.value?.dataset.side as Side;
+
+			const rightSide = side === "right";
+			const bleed = rightSide ? -5 : +5;
+			const contentNearEdge = contentRect[rightSide ? "left" : "right"];
+			const contentFarEdge = contentRect[rightSide ? "right" : "left"];
+
+			this.#content.onPointerGraceIntentChange({
+				area: [
+					// Apply a bleed on clientX to ensure that our exit point is
+					// consistently within polygon bounds
+					{ x: e.clientX + bleed, y: e.clientY },
+					{ x: contentNearEdge, y: contentRect.top },
+					{ x: contentFarEdge, y: contentRect.top },
+					{ x: contentFarEdge, y: contentRect.bottom },
+					{ x: contentNearEdge, y: contentRect.bottom },
+				],
+				side,
+			});
+
+			window.clearTimeout(this.#content.pointerGraceTimer);
+			this.#content.pointerGraceTimer = window.setTimeout(
+				() => this.#content.onPointerGraceIntentChange(null),
+				300
+			);
+		} else {
+			const defaultPrevented = this.#content.onTriggerLeave(e);
+			if (defaultPrevented) return;
+
+			// There's 100ms where the user may leave an item before the submenu was opened.
+			this.#content.onPointerGraceIntentChange(null);
+		}
+	};
+
+	#onkeydown = (e: KeyboardEvent) => {
+		const isTypingAhead = this.#content.search !== "";
+		if (this.#item.disabled.value || (isTypingAhead && e.key === kbd.SPACE)) return;
+
+		if (SUB_OPEN_KEYS[this.#submenu.root.dir.value].includes(e.key)) {
+			this.#submenu.onOpen();
+
+			afterTick(() => {
+				this.#submenu.contentNode.value?.focus();
+				e.preventDefault();
+			});
+		}
+	};
+
+	#onclick = (e: MouseEvent) => {
+		if (this.#item.disabled.value) return;
+		/**
+		 * We manually focus because iOS Safari doesn't always focus on click (e.g. buttons)
+		 * and we rely heavily on `onFocusOutside` for submenus to close when switching
+		 * between separate submenus.
+		 */
+		if (!isHTMLElement(e.currentTarget)) return;
+		e.currentTarget.focus();
+		if (!this.#submenu.open.value) {
+			this.#submenu.onOpen();
+		}
+	};
+
+	props = $derived.by(() =>
+		mergeProps(this.#item.props, {
+			"aria-haspopup": "menu",
+			"aria-expanded": getAriaExpanded(this.#submenu.open.value),
+			"data-state": getDataOpenClosed(this.#content.parentMenu.open.value),
+			"aria-controls": this.#submenu.open.value
+				? this.#submenu.contentNode.value?.id
+				: undefined,
+			[SUB_TRIGGER_ATTR]: "",
+			onclick: this.#onclick,
+			onpointermove: this.#onpointermove,
+			onpointerleave: this.#onpointerleave,
+			onkeydown: this.#onkeydown,
+		})
+	);
+}
+
 type DropdownMenuTriggerStateProps = ReadableBoxedValues<{
 	id: string;
 	disabled: boolean;
 }>;
 
 class DropdownMenuTriggerState {
-	#root: MenuRootState;
+	#parentMenu: MenuMenuState;
 	#disabled: DropdownMenuTriggerStateProps["disabled"];
-	constructor(props: DropdownMenuTriggerStateProps, root: MenuRootState) {
-		this.#root = root;
+	constructor(props: DropdownMenuTriggerStateProps, parentMenu: MenuMenuState) {
+		this.#parentMenu = parentMenu;
 		this.#disabled = props.disabled;
-		this.#root.triggerId = props.id;
+		this.#parentMenu.triggerId = props.id;
 	}
 
 	#onclick = async (e: MouseEvent) => {
 		if (!this.#disabled.value && e.button === 0 && e.ctrlKey === false) {
-			this.#root.toggleOpen();
+			this.#parentMenu.toggleOpen();
 			// prevent trigger focusing when opening
 			// allowing the content to be given focus without competition
-			if (this.#root.open.value) e.preventDefault();
+			if (this.#parentMenu.open.value) e.preventDefault();
 		}
 	};
 
 	#onkeydown = (e: KeyboardEvent) => {
 		if (this.#disabled.value) return;
 		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
-			this.#root.toggleOpen();
+			this.#parentMenu.toggleOpen();
 			e.preventDefault();
 			return;
 		}
 		if (e.key === kbd.ARROW_DOWN) {
-			this.#root.onOpen();
+			this.#parentMenu.onOpen();
 			e.preventDefault();
 		}
 	};
 
 	#ariaControls = $derived.by(() => {
-		if (this.#root.open.value && this.#root.contentNode.value)
-			return this.#root.contentNode.value.id;
+		if (this.#parentMenu.open.value && this.#parentMenu.contentNode.value)
+			return this.#parentMenu.contentNode.value.id;
 		return undefined;
 	});
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.#root.triggerId.value,
+				id: this.#parentMenu.triggerId.value,
 				disabled: this.#disabled.value,
 				"aria-haspopup": "menu",
-				"aria-expanded": getAriaExpanded(this.#root.open.value),
+				"aria-expanded": getAriaExpanded(this.#parentMenu.open.value),
 				"aria-controls": this.#ariaControls,
 				"data-disabled": getDataDisabled(this.#disabled.value),
-				"data-state": getDataOpenClosed(this.#root.open.value),
+				"data-state": getDataOpenClosed(this.#parentMenu.open.value),
 				[TRIGGER_ATTR]: "",
 				//
 				onclick: this.#onclick,
@@ -446,20 +628,24 @@ class DropdownMenuTriggerState {
 // CONTEXT METHODS
 //
 
-const [setMenuRootContext, getMenuRootContext] = createContext<MenuRootState>("Menu.Root");
-const [setMenuContentContext, getMenuContentContext] =
-	createContext<MenuContentState>("Menu.Content");
-
 export function useMenuRoot(props: MenuRootStateProps) {
 	return setMenuRootContext(new MenuRootState(props));
 }
 
+export function useMenuMenu(root: MenuRootState, props: MenuMenuStateProps) {
+	return setMenuMenuContext(root.createMenu(props));
+}
+
+export function useMenuSubmenu(props: MenuMenuStateProps) {
+	return getMenuMenuContext().createSubmenu(props);
+}
+
 export function useMenuDropdownTrigger(props: DropdownMenuTriggerStateProps) {
-	return getMenuRootContext().createDropdownTrigger(props);
+	return getMenuMenuContext().createDropdownTrigger(props);
 }
 
 export function useMenuContent(props: MenuContentStateProps) {
-	return setMenuContentContext(getMenuRootContext().createContent(props));
+	return setMenuContentContext(getMenuMenuContext().createContent(props));
 }
 
 export function useMenuItem(props: MenuItemSharedStateProps & MenuItemStateProps) {
