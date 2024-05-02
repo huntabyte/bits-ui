@@ -44,7 +44,7 @@
 	const attrs = getAttrs("root");
 
 	// Svelte types get weird here saying set expects something that is both string and string[].
-	$: value !== undefined && localValue.set(Array.isArray(value) ? [...value] : (value as any));
+	$: localValue.set(Array.isArray(value) ? [...value] : (value as any));
 
 	$: updateOption("multiple", multiple);
 	$: updateOption("disabled", disabled);
