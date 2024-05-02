@@ -8,16 +8,29 @@ import { afterTick } from "./afterTick.js";
  *
  * @param id The boxed ID of the node to find.
  */
-export function useNodeById(id: ReadableBox<string> | WritableBox<string>) {
+export function useNodeById(
+	id: ReadableBox<string> | WritableBox<string>,
+	mounted?: ReadableBox<boolean>
+) {
 	const node = box<HTMLElement | null>(null);
 
-	$effect(() => {
-		// eslint-disable-next-line no-unused-expressions
-		id.value;
-		afterTick(() => {
+	if (mounted) {
+		$effect(() => {
+			// eslint-disable-next-line no-unused-expressions
+			mounted.value;
+			// eslint-disable-next-line no-unused-expressions
+			id.value;
+			afterTick(() => {
+				node.value = document.getElementById(id.value);
+			});
+		});
+	} else {
+		$effect(() => {
+			// eslint-disable-next-line no-unused-expressions
+			id.value;
 			node.value = document.getElementById(id.value);
 		});
-	});
+	}
 
 	return node;
 }

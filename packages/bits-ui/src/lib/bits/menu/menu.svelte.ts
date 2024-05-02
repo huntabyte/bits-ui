@@ -16,7 +16,7 @@ import { executeCallbacks } from "$lib/internal/callbacks.js";
 import { useNodeById } from "$lib/internal/useNodeById.svelte.js";
 import { useTypeahead } from "$lib/internal/useTypeahead.svelte.js";
 import { onDestroyEffect } from "$lib/internal/onDestroyEffect.svelte.js";
-import { isElementOrSVGElement, isHTMLElement } from "$lib/internal/is.js";
+import { isElement, isHTMLElement } from "$lib/internal/is.js";
 import { useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import {
@@ -39,7 +39,7 @@ export type MenuRootStateProps = WritableBoxedValues<{
 
 class MenuRootState {
 	open: MenuRootStateProps["open"];
-	contentId = box.with<string | undefined>(() => undefined);
+	contentNode = box<HTMLElement | null>(null);
 	triggerId = box.with<string | undefined>(() => undefined);
 	isUsingKeyboard = box(false);
 
@@ -113,7 +113,6 @@ class MenuContentState {
 	#id: MenuContentStateProps["id"];
 	root: MenuRootState;
 	search = $state("");
-	#node: WritableBox<HTMLElement | null>;
 	#loop: MenuContentStateProps["loop"];
 	#timer = $state(0);
 	pointerGraceTimer = $state(0);
@@ -126,9 +125,8 @@ class MenuContentState {
 	constructor(props: MenuContentStateProps, root: MenuRootState) {
 		this.root = root;
 		this.#id = props.id;
-		this.#node = useNodeById(props.id);
 		this.#loop = props.loop;
-		this.root.contentId = props.id;
+		this.root.contentNode = useNodeById(this.#id, this.root.open);
 
 		onDestroyEffect(() => {
 			window.clearTimeout(this.#timer);
@@ -136,7 +134,7 @@ class MenuContentState {
 
 		this.#handleTypeaheadSearch = useTypeahead().handleTypeaheadSearch;
 		this.rovingFocusGroup = useRovingFocus({
-			rootNode: this.#node,
+			rootNode: this.root.contentNode,
 			candidateSelector: ITEM_ATTR,
 			loop: this.#loop,
 			orientation: box.with(() => "vertical"),
@@ -144,7 +142,7 @@ class MenuContentState {
 	}
 
 	getCandidateNodes() {
-		const node = document.getElementById(this.#id.value);
+		const node = this.root.contentNode.value;
 		if (!node) return [];
 		const candidates = Array.from(
 			node.querySelectorAll<HTMLElement>(`[${ITEM_ATTR}]:not([data-disabled])`)
@@ -154,7 +152,6 @@ class MenuContentState {
 
 	isPointerMovingToSubmenu(e: PointerEvent) {
 		const isMovingTowards = this.#pointerDir === this.#pointerGraceIntent?.side;
-
 		return isMovingTowards && isPointerInGraceArea(e, this.#pointerGraceIntent?.area);
 	}
 
@@ -162,13 +159,14 @@ class MenuContentState {
 		if (e.defaultPrevented) return;
 
 		const target = e.target;
-		if (!isHTMLElement(target)) return;
+		const currentTarget = e.currentTarget;
+		if (!isHTMLElement(target) || !isHTMLElement(currentTarget)) return;
 
-		const isKeydownInside = target.closest(`[CONTENT_ATTR]`) === e.currentTarget;
+		const isKeydownInside = target.closest(`[CONTENT_ATTR]`) === this.root.contentNode.value;
 		const isModifierKey = e.ctrlKey || e.altKey || e.metaKey;
 		const isCharacterKey = e.key.length === 1;
 
-		const kbdFocusedEl = this.rovingFocusGroup.handleKeydown(this.#node.value, e);
+		const kbdFocusedEl = this.rovingFocusGroup.handleKeydown(target, e);
 		if (kbdFocusedEl) return;
 
 		// prevent space from being considered with typeahead
@@ -185,8 +183,7 @@ class MenuContentState {
 		}
 
 		// focus first/last based on key pressed
-		const thisNode = document.getElementById(this.#id.value);
-		if (e.target !== thisNode) return;
+		if (e.target !== this.root.contentNode.value) return;
 
 		if (!FIRST_LAST_KEYS.includes(e.key)) return;
 		e.preventDefault();
@@ -198,8 +195,8 @@ class MenuContentState {
 	};
 
 	#onblur = (e: FocusEvent) => {
-		if (!isElementOrSVGElement(e.currentTarget)) return;
-		if (!isElementOrSVGElement(e.target)) return;
+		if (!isElement(e.currentTarget)) return;
+		if (!isElement(e.target)) return;
 		// clear search buffer when leaving the menu
 		if (!e.currentTarget.contains?.(e.target)) {
 			window.clearTimeout(this.#timer);
@@ -210,10 +207,10 @@ class MenuContentState {
 	#onpointermove = (e: PointerEvent) => {
 		if (!isMouseEvent(e)) return;
 		const target = e.target;
-		if (!isElementOrSVGElement(target)) return;
+		if (!isElement(target)) return;
 		const pointerXHasChanged = this.#lastPointerX !== e.clientX;
 		const currTarget = e.currentTarget;
-		if (!isElementOrSVGElement(currTarget)) return;
+		if (!isElement(currTarget)) return;
 
 		// We don't use `event.movementX` for this check because Safari will
 		// always return `0` on a pointer event.
@@ -231,7 +228,7 @@ class MenuContentState {
 
 	onItemLeave(e: PointerEvent) {
 		if (this.isPointerMovingToSubmenu(e)) return;
-		this.#node.value?.focus();
+		this.root.contentNode.value?.focus();
 		this.rovingFocusGroup.setCurrentTabStopId("");
 	}
 
@@ -421,6 +418,12 @@ class DropdownMenuTriggerState {
 		}
 	};
 
+	#ariaControls = $derived.by(() => {
+		if (this.#root.open.value && this.#root.contentNode.value)
+			return this.#root.contentNode.value.id;
+		return undefined;
+	});
+
 	props = $derived.by(
 		() =>
 			({
@@ -428,7 +431,7 @@ class DropdownMenuTriggerState {
 				disabled: this.#disabled.value,
 				"aria-haspopup": "menu",
 				"aria-expanded": getAriaExpanded(this.#root.open.value),
-				"aria-controls": this.#root.open.value ? this.#root.contentId.value : undefined,
+				"aria-controls": this.#ariaControls,
 				"data-disabled": getDataDisabled(this.#disabled.value),
 				"data-state": getDataOpenClosed(this.#root.open.value),
 				[TRIGGER_ATTR]: "",

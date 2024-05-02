@@ -21,7 +21,7 @@
 							<DismissableLayer {...restProps} present={present.value}>
 								<TextSelectionLayer {...restProps} present={present.value}>
 									{@render popper?.({
-										props: mergeProps(props, focusScopeProps, {
+										props: mergeProps(restProps, props, focusScopeProps, {
 											style: {
 												pointerEvents: "auto",
 											},

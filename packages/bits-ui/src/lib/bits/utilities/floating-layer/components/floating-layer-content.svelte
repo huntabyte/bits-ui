@@ -11,7 +11,7 @@
 		sideOffset = 0,
 		align = "center",
 		alignOffset = 0,
-		id = useId(),
+		id,
 		arrowPadding = 0,
 		avoidCollisions = true,
 		collisionBoundary = [],

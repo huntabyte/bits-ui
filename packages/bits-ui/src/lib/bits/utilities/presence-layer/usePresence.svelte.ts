@@ -32,7 +32,7 @@ export function usePresence(present: ReadableBox<boolean>, id: ReadableBox<strin
 		},
 	});
 
-	watch(present, async (currPresent, prevPresent) => {
+	watch(present, (currPresent, prevPresent) => {
 		if (!node) {
 			node = document.getElementById(id.value);
 		}
