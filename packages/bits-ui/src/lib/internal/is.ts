@@ -24,7 +24,3 @@ export function isHTMLElement(element: unknown): element is HTMLElement {
 export function isElement(element: unknown): element is Element {
 	return element instanceof Element;
 }
-
-export function isElementOrSVGElement(element: unknown): element is Element | SVGElement {
-	return element instanceof Element || element instanceof SVGElement;
-}

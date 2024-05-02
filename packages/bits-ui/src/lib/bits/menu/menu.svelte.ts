@@ -1,4 +1,4 @@
-import { type WritableBox, box } from "runed";
+import { box } from "runed";
 import { focusFirst } from "../utilities/focus-scope/utils.js";
 import {
 	FIRST_LAST_KEYS,
@@ -209,12 +209,12 @@ class MenuContentState {
 		const target = e.target;
 		if (!isElement(target)) return;
 		const pointerXHasChanged = this.#lastPointerX !== e.clientX;
-		const currTarget = e.currentTarget;
-		if (!isElement(currTarget)) return;
+		const currentTarget = e.currentTarget;
+		if (!isElement(currentTarget)) return;
 
 		// We don't use `event.movementX` for this check because Safari will
 		// always return `0` on a pointer event.
-		if ((e?.currentTarget as HTMLElement)?.contains(target) && pointerXHasChanged) {
+		if (currentTarget.contains(target) && pointerXHasChanged) {
 			const newDir = e.clientX > this.#lastPointerX ? "right" : "left";
 			this.#pointerDir = newDir;
 			this.#lastPointerX = e.clientX;
