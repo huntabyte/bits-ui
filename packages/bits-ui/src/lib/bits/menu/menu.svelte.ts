@@ -362,20 +362,25 @@ class MenuItemSharedState {
 	};
 
 	#onpointerleave = async (e: PointerEvent) => {
-		if (e.defaultPrevented) return;
-		if (!isMouseEvent(e)) return;
-
-		this.content.onItemLeave(e);
+		afterTick(() => {
+			if (e.defaultPrevented) return;
+			if (!isMouseEvent(e)) return;
+			this.content.onItemLeave(e);
+		});
 	};
 
 	#onfocus = async (e: FocusEvent) => {
-		if (e.defaultPrevented || this.disabled.value) return;
-		this.#isFocused = true;
+		afterTick(() => {
+			if (e.defaultPrevented || this.disabled.value) return;
+			this.#isFocused = true;
+		});
 	};
 
 	#onblur = async (e: FocusEvent) => {
-		if (e.defaultPrevented) return;
-		this.#isFocused = false;
+		afterTick(() => {
+			if (e.defaultPrevented) return;
+			this.#isFocused = false;
+		});
 	};
 
 	props = $derived.by(
