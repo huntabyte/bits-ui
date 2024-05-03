@@ -20,4 +20,6 @@ export type {
 	MenuContentProps as ContentProps,
 	MenuItemProps as ItemProps,
 	MenuTriggerProps as TriggerProps,
+	MenuSubPropsWithoutHTML as SubProps,
+	MenuSubContentProps as SubContentProps,
 } from "./types.js";

@@ -1,4 +1,4 @@
-import { box, watch } from "runed";
+import { box } from "runed";
 import { focusFirst } from "../utilities/focus-scope/utils.js";
 import {
 	FIRST_LAST_KEYS,
@@ -10,7 +10,11 @@ import {
 	isMouseEvent,
 	isPointerInGraceArea,
 } from "./utils.js";
-import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
+import {
+	type ReadableBoxedValues,
+	type WritableBoxedValues,
+	watch,
+} from "$lib/internal/box.svelte.js";
 import { addEventListener } from "$lib/internal/events.js";
 import type { AnyFn } from "$lib/internal/types.js";
 import { executeCallbacks } from "$lib/internal/callbacks.js";
@@ -48,9 +52,10 @@ const [setMenuContentContext, getMenuContentContext] =
 	createContext<MenuContentState>("Menu.Content");
 
 export type MenuRootStateProps = ReadableBoxedValues<{
-	onClose: AnyFn;
 	dir: Direction;
-}>;
+}> & {
+	onClose: AnyFn;
+};
 
 class MenuRootState {
 	onClose: MenuRootStateProps["onClose"];
@@ -638,6 +643,10 @@ export function useMenuMenu(root: MenuRootState, props: MenuMenuStateProps) {
 
 export function useMenuSubmenu(props: MenuMenuStateProps) {
 	return getMenuMenuContext().createSubmenu(props);
+}
+
+export function useMenuSubTrigger(props: MenuItemSharedStateProps) {
+	return getMenuContentContext().createSubTrigger(props);
 }
 
 export function useMenuDropdownTrigger(props: DropdownMenuTriggerStateProps) {

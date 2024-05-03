@@ -1,5 +1,5 @@
-import { type ReadableBox, type WritableBox, box, watch } from "runed";
-import { afterTick, useStateMachine } from "$lib/internal/index.js";
+import { type ReadableBox, type WritableBox, box } from "runed";
+import { afterTick, useStateMachine, watch } from "$lib/internal/index.js";
 
 export function usePresence(present: ReadableBox<boolean>, id: ReadableBox<string>) {
 	const styles = box({}) as unknown as WritableBox<CSSStyleDeclaration>;

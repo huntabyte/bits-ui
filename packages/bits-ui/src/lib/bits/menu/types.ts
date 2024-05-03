@@ -7,6 +7,7 @@ import type {
 	WithAsChild,
 	Without,
 } from "$lib/internal/types.js";
+import type { Direction } from "$lib/shared/index.js";
 
 export type MenuRootPropsWithoutHTML = {
 	/**
@@ -18,6 +19,13 @@ export type MenuRootPropsWithoutHTML = {
 	 * A callback that is called when the menu is opened or closed.
 	 */
 	onOpenChange?: OnChangeFn<boolean>;
+
+	/**
+	 * The direction of the site.
+	 *
+	 * @defaultValue "ltr"
+	 */
+	dir?: Direction;
 
 	children?: Snippet;
 };
@@ -64,3 +72,22 @@ export type MenuTriggerPropsWithoutHTML = WithAsChild<{
 
 export type MenuTriggerProps = MenuTriggerPropsWithoutHTML &
 	Without<PrimitiveButtonAttributes, MenuTriggerPropsWithoutHTML>;
+
+export type MenuSubPropsWithoutHTML = {
+	/**
+	 * The open state of the menu.
+	 */
+	open?: boolean;
+
+	/**
+	 * A callback that is called when the menu is opened or closed.
+	 */
+	onOpenChange?: OnChangeFn<boolean>;
+
+	children?: Snippet;
+};
+
+export type MenuSubContentPropsWithoutHTML = WithAsChild<PopperLayerProps>;
+
+export type MenuSubContentProps = MenuSubContentPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, MenuSubContentPropsWithoutHTML>;

@@ -25,21 +25,21 @@
 		loop: box.with(() => loop),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props, { id }));
+	const mergedProps = $derived(mergeProps(restProps, state.props));
 </script>
 
 <PopperLayer
 	{...mergedProps}
-	present={state.root.open.value || forceMount}
+	present={state.parentMenu.open.value || forceMount}
 	onInteractOutside={(e) => {
 		onInteractOutside(e);
 		if (e.defaultPrevented) return;
-		state.root.onClose();
+		state.parentMenu.onClose();
 	}}
 	onEscapeKeydown={(e) => {
 		// TODO: users should be able to cancel this
 		onEscapeKeydown(e);
-		state.root.onClose();
+		state.parentMenu.onClose();
 	}}
 	trapped
 	{loop}
