@@ -46,6 +46,7 @@
 	$: updateOption("max", max);
 	$: updateOption("step", step);
 	$: updateOption("orientation", orientation);
+	$: updateOption("dir", dir);
 
 	$: builder = $root;
 	$: Object.assign(builder, attrs);
