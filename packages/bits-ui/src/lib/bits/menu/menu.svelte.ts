@@ -438,11 +438,13 @@ class MenuItemState {
 	};
 
 	#onpointerup = async (e: PointerEvent) => {
-		if (e.defaultPrevented) return;
-		if (!this.#isPointerDown) {
-			if (!isHTMLElement(e.currentTarget)) return;
-			e.currentTarget?.click();
-		}
+		afterTick(() => {
+			if (e.defaultPrevented) return;
+			if (!this.#isPointerDown) {
+				if (!isHTMLElement(e.currentTarget)) return;
+				e.currentTarget?.click();
+			}
+		});
 	};
 
 	#onpointerdown = () => {
