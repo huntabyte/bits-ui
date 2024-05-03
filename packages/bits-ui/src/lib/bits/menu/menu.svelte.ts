@@ -556,7 +556,7 @@ class MenuSubTriggerState {
 		mergeProps(this.#item.props, {
 			"aria-haspopup": "menu",
 			"aria-expanded": getAriaExpanded(this.#submenu.open.value),
-			"data-state": getDataOpenClosed(this.#content.parentMenu.open.value),
+			"data-state": getDataOpenClosed(this.#submenu.open.value),
 			"aria-controls": this.#submenu.open.value
 				? this.#submenu.contentNode.value?.id
 				: undefined,
@@ -642,7 +642,7 @@ export function useMenuMenu(root: MenuRootState, props: MenuMenuStateProps) {
 }
 
 export function useMenuSubmenu(props: MenuMenuStateProps) {
-	return getMenuMenuContext().createSubmenu(props);
+	return setMenuMenuContext(getMenuMenuContext().createSubmenu(props));
 }
 
 export function useMenuSubTrigger(props: MenuItemSharedStateProps) {

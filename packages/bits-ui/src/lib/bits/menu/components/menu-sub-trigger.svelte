@@ -4,7 +4,7 @@
 	import { useMenuSubTrigger } from "../menu.svelte.js";
 	import { useId } from "$lib/internal/useId.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
-
+	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 	let {
 		id = useId(),
 		disabled = false,
@@ -23,10 +23,12 @@
 	const mergedProps = $derived(mergeProps(restProps, state.props));
 </script>
 
-{#if asChild}
-	{@render child?.({ props: mergedProps })}
-{:else}
-	<div {...mergedProps} bind:this={el}>
-		{@render children?.()}
-	</div>
-{/if}
+<FloatingLayer.Anchor {id}>
+	{#if asChild}
+		{@render child?.({ props: mergedProps })}
+	{:else}
+		<div {...mergedProps} bind:this={el}>
+			{@render children?.()}
+		</div>
+	{/if}
+</FloatingLayer.Anchor>

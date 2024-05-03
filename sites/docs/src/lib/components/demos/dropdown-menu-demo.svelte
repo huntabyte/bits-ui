@@ -1,6 +1,13 @@
 <script lang="ts">
-	import { DropdownMenu } from "bits-ui";
-	import { Cardholder, DotsThree, GearSix, UserCircle } from "$icons/index.js";
+	import { Avatar, DropdownMenu } from "bits-ui";
+	import {
+		Cardholder,
+		CaretRight,
+		DotsThree,
+		GearSix,
+		UserCircle,
+		UserCirclePlus,
+	} from "$icons/index.js";
 </script>
 
 <DropdownMenu.Root>
@@ -73,7 +80,6 @@
 				</kbd>
 			</div>
 		</DropdownMenu.Item>
-		<!-- <DropdownMenu.Separator class="my-1 -ml-1 -mr-1 block h-px bg-muted" />
 		<DropdownMenu.Sub>
 			<DropdownMenu.SubTrigger
 				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted data-[state=open]:bg-muted"
@@ -88,7 +94,6 @@
 			</DropdownMenu.SubTrigger>
 			<DropdownMenu.SubContent
 				class="w-full max-w-[209px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover !ring-0 !ring-transparent"
-				transition={flyAndScale}
 				sideOffset={10}
 			>
 				<DropdownMenu.Item
@@ -164,6 +169,6 @@
 					@thomasglopes
 				</DropdownMenu.Item>
 			</DropdownMenu.SubContent>
-		</DropdownMenu.Sub> -->
+		</DropdownMenu.Sub>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>

@@ -2,6 +2,7 @@
 	import { box } from "runed";
 	import type { SubContentProps } from "../index.js";
 	import { useMenuContent } from "../menu.svelte.js";
+	import { SUB_CLOSE_KEYS } from "../utils.js";
 	import { useId } from "$lib/internal/useId.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
@@ -17,6 +18,7 @@
 		onInteractOutside = noop,
 		forceMount = false,
 		onEscapeKeydown = noop,
+		side = "right",
 		...restProps
 	}: SubContentProps = $props();
 
@@ -25,7 +27,31 @@
 		loop: box.with(() => loop),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	function onkeydown(e: KeyboardEvent) {
+		const isKeyDownInside = (e.currentTarget as HTMLElement).contains(e.target as HTMLElement);
+		const isCloseKey = SUB_CLOSE_KEYS[state.parentMenu.root.dir.value].includes(e.key);
+		if (isKeyDownInside && isCloseKey) {
+			state.parentMenu.onClose();
+			const triggerNode = document.getElementById(state.parentMenu.triggerId.value ?? "");
+			triggerNode?.focus();
+			e.preventDefault();
+		}
+	}
+
+	const mergedProps = $derived(
+		mergeProps(restProps, state.props, { onOpenAutoFocus, onCloseAutoFocus, side, onkeydown })
+	);
+
+	function onOpenAutoFocus(e: Event) {
+		e.preventDefault();
+		if (state.parentMenu.root.isUsingKeyboard.value) {
+			state.parentMenu.contentNode.value?.focus();
+		}
+	}
+
+	function onCloseAutoFocus(e: Event) {
+		e.preventDefault();
+	}
 </script>
 
 <PopperLayer
@@ -41,7 +67,7 @@
 		onEscapeKeydown(e);
 		state.parentMenu.onClose();
 	}}
-	trapped
+	preventScroll={false}
 	{loop}
 >
 	{#snippet popper({ props })}
