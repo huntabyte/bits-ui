@@ -7,6 +7,7 @@
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
 	import { noop } from "$lib/internal/callbacks.js";
+	import { isHTMLElement } from "$lib/internal/is.js";
 
 	let {
 		id = useId(),
@@ -66,6 +67,25 @@
 		// TODO: users should be able to cancel this
 		onEscapeKeydown(e);
 		state.parentMenu.onClose();
+	}}
+	onMountAutoFocus={(e) => {
+		e.preventDefault();
+		if (state.parentMenu.root.isUsingKeyboard.value) {
+			state.parentMenu.contentNode.value?.focus();
+		}
+	}}
+	onDestroyAutoFocus={(e) => {
+		e.preventDefault();
+	}}
+	onFocusOutside={(e) => {
+		if (e.defaultPrevented) return;
+		// We prevent closing when the trigger is focused to avoid triggering a re-open animation
+		// on pointer interaction.
+		if (!isHTMLElement(e.target)) return;
+
+		if (e.target.id !== state.parentMenu.triggerId.value) {
+			state.parentMenu.onClose();
+		}
 	}}
 	preventScroll={false}
 	{loop}

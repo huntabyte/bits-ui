@@ -8,18 +8,20 @@
 		interactOutsideBehavior = "close",
 		onInteractOutside = noop,
 		onInteractOutsideStart = noop,
+		onFocusOutside = noop,
 		id,
 		children,
 		present,
 	}: DismissableLayerImplProps = $props();
 
-	useDismissableLayer({
+	const state = useDismissableLayer({
 		id: box.with(() => id),
 		interactOutsideBehavior: box.with(() => interactOutsideBehavior),
 		onInteractOutside: box.with(() => onInteractOutside),
 		onInteractOutsideStart: box.with(() => onInteractOutsideStart),
 		present: box.with(() => present),
+		onFocusOutside: box.with(() => onFocusOutside),
 	});
 </script>
 
-{@render children?.()}
+{@render children?.({ props: state.props })}

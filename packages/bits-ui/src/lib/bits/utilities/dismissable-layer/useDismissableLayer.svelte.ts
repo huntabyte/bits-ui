@@ -2,7 +2,6 @@ import { untrack } from "svelte";
 import type { ReadableBox } from "runed";
 import type {
 	DismissableLayerImplProps,
-	DismissableLayerProps,
 	InteractOutsideBehaviorType,
 	InteractOutsideEvent,
 	InteractOutsideInterceptEventType,
@@ -12,6 +11,7 @@ import {
 	type EventCallback,
 	type ReadableBoxedValues,
 	addEventListener,
+	afterTick,
 	composeHandlers,
 	debounce,
 	executeCallbacks,
@@ -58,6 +58,8 @@ export class DismissableLayerState {
 	node: Box<HTMLElement | null>;
 	#documentObj = undefined as unknown as Document;
 	#present: ReadableBox<boolean>;
+	#isFocusInsideDOMTree = $state(false);
+	#onFocusOutside: DismissableLayerStateProps["onFocusOutside"];
 
 	constructor(props: DismissableLayerStateProps) {
 		this.node = useNodeById(props.id);
@@ -65,6 +67,7 @@ export class DismissableLayerState {
 		this.#interactOutsideStartProp = props.onInteractOutsideStart;
 		this.#interactOutsideProp = props.onInteractOutside;
 		this.#present = props.present;
+		this.#onFocusOutside = props.onFocusOutside;
 
 		$effect(() => {
 			this.#documentObj = getOwnerDocument(this.node.value);
@@ -102,6 +105,17 @@ export class DismissableLayerState {
 			};
 		});
 	}
+
+	#handleFocus = (event: FocusEvent) => {
+		if (!this.node.value) return;
+		afterTick(() => {
+			if (!this.node.value || this.#isTargetWithinLayer(event.target as HTMLElement)) return;
+
+			if (event.target && !this.#isFocusInsideDOMTree) {
+				this.#onFocusOutside.value?.(event);
+			}
+		});
+	};
 
 	#addEventListeners() {
 		return executeCallbacks(
@@ -151,7 +165,12 @@ export class DismissableLayerState {
 				this.#documentObj,
 				interactOutsideEndEvents,
 				composeHandlers(this.#markNonInterceptedEvent, this.#onInteractOutside)
-			)
+			),
+
+			/**
+			 * HANDLE FOCUS OUTSIDE
+			 */
+			addEventListener(this.#documentObj, "focusin", this.#handleFocus)
 		);
 	}
 
@@ -197,6 +216,11 @@ export class DismissableLayerState {
 		this.#isResponsibleLayer = isResponsibleLayer(this.node.value);
 	};
 
+	#isTargetWithinLayer = (target: HTMLElement) => {
+		if (!this.node.value) return false;
+		return isOrContainsTarget(this.node.value, target);
+	};
+
 	#resetState = debounce(() => {
 		for (const eventType in this.#interceptedEvents) {
 			this.#interceptedEvents[eventType as InteractOutsideInterceptEventType] = false;
@@ -208,10 +232,31 @@ export class DismissableLayerState {
 	#isAnyEventIntercepted() {
 		return Object.values(this.#interceptedEvents).some(Boolean);
 	}
+
+	#onfocuscapture = () => {
+		this.#isFocusInsideDOMTree = true;
+	};
+
+	#onblurcapture = () => {
+		this.#isFocusInsideDOMTree = false;
+	};
+
+	props = {
+		onfocuscapture: this.#onfocuscapture,
+		onblurcapture: this.#onblurcapture,
+	};
 }
 
 export function useDismissableLayer(props: DismissableLayerStateProps) {
 	return new DismissableLayerState(props);
+}
+
+function getTopMostLayer(
+	layersArr: [DismissableLayerState, ReadableBox<InteractOutsideBehaviorType>][]
+) {
+	return layersArr.findLast(
+		([_, { value: behaviorType }]) => behaviorType === "close" || behaviorType === "ignore"
+	);
 }
 
 function isResponsibleLayer(node: HTMLElement): boolean {
@@ -222,9 +267,7 @@ function isResponsibleLayer(node: HTMLElement): boolean {
 	 * responsible for the outside interaction. Otherwise, we know that all layers defer so
 	 * the first layer is the responsible one.
 	 */
-	const topMostLayer = layersArr.findLast(
-		([_, { value: behaviorType }]) => behaviorType === "close" || behaviorType === "ignore"
-	);
+	const topMostLayer = getTopMostLayer(layersArr);
 	if (topMostLayer) return topMostLayer[0].node.value === node;
 	const [firstLayerNode] = layersArr[0]!;
 	return firstLayerNode.node.value === node;
@@ -237,3 +280,5 @@ function isValidEvent(e: InteractOutsideEvent, node: HTMLElement): boolean {
 	const ownerDocument = getOwnerDocument(target);
 	return ownerDocument.documentElement.contains(target) && !isOrContainsTarget(node, target);
 }
+
+export type FocusOutsideEvent = CustomEvent<{ originalEvent: FocusEvent }>;

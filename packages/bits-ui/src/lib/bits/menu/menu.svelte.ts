@@ -294,6 +294,14 @@ class MenuContentState {
 		return false;
 	}
 
+	onMountAutoFocus(e: Event) {
+		if (e.defaultPrevented) return;
+		e.preventDefault();
+		afterTick(() => {
+			this.parentMenu.contentNode.value?.focus();
+		});
+	}
+
 	props = $derived.by(
 		() =>
 			({
