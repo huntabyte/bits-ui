@@ -5,14 +5,14 @@
 	import { noop } from "$lib/internal/index.js";
 
 	let {
-		behaviorType = "close",
+		escapeKeydownBehavior = "close",
 		onEscapeKeydown = noop,
 		children,
 		present,
 	}: EscapeLayerImplProps = $props();
 
 	useEscapeLayer({
-		behaviorType: box.with(() => behaviorType),
+		escapeKeydownBehavior: box.with(() => escapeKeydownBehavior),
 		onEscapeKeydown: box.with(() => onEscapeKeydown),
 		present: box.with(() => present),
 	});

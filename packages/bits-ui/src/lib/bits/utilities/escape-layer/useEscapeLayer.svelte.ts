@@ -16,7 +16,7 @@ export class EscapeLayerState {
 	#present: ReadableBox<boolean>;
 
 	constructor(props: EscapeLayerStateProps) {
-		this.#behaviorType = props.behaviorType;
+		this.#behaviorType = props.escapeKeydownBehavior;
 		this.#onEscapeProp = props.onEscapeKeydown;
 		this.#present = props.present;
 

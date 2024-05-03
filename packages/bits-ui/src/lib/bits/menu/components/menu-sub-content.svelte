@@ -19,6 +19,8 @@
 		onInteractOutside = noop,
 		forceMount = false,
 		onEscapeKeydown = noop,
+		interactOutsideBehavior = "defer-otherwise-close",
+		escapeKeydownBehavior = "defer-otherwise-close",
 		side = "right",
 		...restProps
 	}: SubContentProps = $props();
@@ -57,6 +59,8 @@
 
 <PopperLayer
 	{...mergedProps}
+	{interactOutsideBehavior}
+	{escapeKeydownBehavior}
 	present={state.parentMenu.open.value || forceMount}
 	onInteractOutside={(e) => {
 		onInteractOutside(e);
