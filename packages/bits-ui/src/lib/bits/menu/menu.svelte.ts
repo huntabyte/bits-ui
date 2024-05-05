@@ -1,4 +1,5 @@
 import { box } from "runed";
+import { tick } from "svelte";
 import { focusFirst } from "../utilities/focus-scope/utils.js";
 import {
 	FIRST_LAST_KEYS,
@@ -439,9 +440,21 @@ class MenuItemState {
 		}
 	};
 
-	#onclick = (e: MouseEvent) => {
+	#handleSelect = async () => {
 		if (this.#item.disabled.value) return;
-		this.#onSelect.value(e);
+		const selectEvent = new CustomEvent("menuitem.select", { bubbles: true, cancelable: true });
+		this.#onSelect.value(selectEvent);
+		await tick();
+		if (selectEvent.defaultPrevented) {
+			this.#item.content.parentMenu.root.isUsingKeyboard.value = false;
+		} else {
+			this.#item.content.parentMenu.root.onClose();
+		}
+	};
+
+	#onclick = () => {
+		if (this.#item.disabled.value) return;
+		this.#handleSelect();
 	};
 
 	#onpointerup = async (e: PointerEvent) => {
