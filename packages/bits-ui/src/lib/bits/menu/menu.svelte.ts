@@ -605,7 +605,7 @@ class DropdownMenuTriggerState {
 		this.#parentMenu.triggerId = props.id;
 	}
 
-	#onclick = async (e: MouseEvent) => {
+	#onclick = (e: MouseEvent) => {
 		if (!this.#disabled.value && e.button === 0 && e.ctrlKey === false) {
 			this.#parentMenu.toggleOpen();
 			// prevent trigger focusing when opening

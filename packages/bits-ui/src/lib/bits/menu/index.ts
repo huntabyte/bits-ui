@@ -22,4 +22,5 @@ export type {
 	MenuTriggerProps as TriggerProps,
 	MenuSubPropsWithoutHTML as SubProps,
 	MenuSubContentProps as SubContentProps,
+	MenuSeparatorProps as SeparatorProps,
 } from "./types.js";

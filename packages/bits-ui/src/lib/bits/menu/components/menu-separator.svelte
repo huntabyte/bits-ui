@@ -1,26 +1,18 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { getCtx } from "../ctx.js";
 	import type { SeparatorProps } from "../index.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
 
-	type $$Props = SeparatorProps;
+	let { el = $bindable(), asChild, child, children, ...restProps }: SeparatorProps = $props();
 
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
-
-	const {
-		elements: { separator },
-		getAttrs,
-	} = getCtx();
-
-	const attrs = getAttrs("separator");
-
-	$: builder = $separator;
-	$: Object.assign(builder, attrs);
+	const mergedProps = $derived(
+		mergeProps(restProps, { role: "separator", "aria-orientation": "horizontal" })
+	);
 </script>
 
 {#if asChild}
-	<slot {builder} />
+	{@render child?.({ props: mergedProps })}
 {:else}
-	<div bind:this={el} use:melt={$separator} {...$$restProps} />
+	<div {...mergedProps} bind:this={el}>
+		{@render children?.()}
+	</div>
 {/if}
