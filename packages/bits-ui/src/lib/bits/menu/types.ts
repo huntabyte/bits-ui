@@ -1,5 +1,6 @@
 import type { Snippet } from "svelte";
 import type { PopperLayerProps } from "../utilities/popper-layer/types.js";
+import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
 import type {
 	OnChangeFn,
 	PrimitiveButtonAttributes,
@@ -96,3 +97,7 @@ export type MenuSeparatorPropsWithoutHTML = WithAsChild<{}>;
 
 export type MenuSeparatorProps = MenuSeparatorPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, MenuSeparatorPropsWithoutHTML>;
+
+export type MenuArrowPropsWithoutHTML = ArrowPropsWithoutHTML;
+
+export type MenuArrowProps = ArrowProps;

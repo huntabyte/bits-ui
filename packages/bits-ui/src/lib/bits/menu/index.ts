@@ -23,4 +23,5 @@ export type {
 	MenuSubPropsWithoutHTML as SubProps,
 	MenuSubContentProps as SubContentProps,
 	MenuSeparatorProps as SeparatorProps,
+	MenuArrowProps as ArrowProps,
 } from "./types.js";
