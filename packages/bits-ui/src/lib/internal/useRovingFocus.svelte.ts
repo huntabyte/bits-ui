@@ -46,6 +46,13 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 		);
 	}
 
+	function focusFirstCandidate() {
+		const items = getCandidateNodes();
+		if (items.length) {
+			items[0]?.focus();
+		}
+	}
+
 	function handleKeydown(node: HTMLElement | null, e: KeyboardEvent) {
 		const rootNode = props.rootNode.value;
 		if (!rootNode || !node) return;
@@ -112,5 +119,6 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 		},
 		getTabIndex,
 		handleKeydown,
+		focusFirstCandidate,
 	};
 }

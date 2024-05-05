@@ -261,6 +261,12 @@ class MenuContentState {
 		}
 	};
 
+	#onfocus = () => {
+		if (!this.parentMenu.root.isUsingKeyboard.value) return;
+
+		afterTick(() => this.rovingFocusGroup.focusFirstCandidate());
+	};
+
 	#onpointermove = (e: PointerEvent) => {
 		if (!isMouseEvent(e)) return;
 		const target = e.target;
@@ -313,6 +319,7 @@ class MenuContentState {
 				onkeydown: this.#onkeydown,
 				onblur: this.#onblur,
 				onpointermove: this.#onpointermove,
+				onfocus: this.#onfocus,
 			}) as const
 	);
 
@@ -432,9 +439,9 @@ class MenuItemState {
 		}
 	};
 
-	#onclick = () => {
+	#onclick = (e: MouseEvent) => {
 		if (this.#item.disabled.value) return;
-		this.#onSelect.value();
+		this.#onSelect.value(e);
 	};
 
 	#onpointerup = async (e: PointerEvent) => {

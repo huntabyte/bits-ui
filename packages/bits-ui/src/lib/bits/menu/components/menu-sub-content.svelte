@@ -8,6 +8,7 @@
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
 	import { noop } from "$lib/internal/callbacks.js";
 	import { isHTMLElement } from "$lib/internal/is.js";
+	import { afterTick } from "$lib/internal/afterTick.js";
 
 	let {
 		id = useId(),
@@ -42,17 +43,25 @@
 	}
 
 	const mergedProps = $derived(
-		mergeProps(restProps, state.props, { onOpenAutoFocus, onCloseAutoFocus, side, onkeydown })
+		mergeProps(restProps, state.props, {
+			onMountAutoFocus,
+			onDestroyAutoFocus,
+			side,
+			onkeydown,
+		})
 	);
 
-	function onOpenAutoFocus(e: Event) {
-		e.preventDefault();
-		if (state.parentMenu.root.isUsingKeyboard.value) {
-			state.parentMenu.contentNode.value?.focus();
-		}
+	function onMountAutoFocus(e: Event) {
+		afterTick(() => {
+			e.preventDefault();
+			if (state.parentMenu.root.isUsingKeyboard.value) {
+				const subContentEl = document.getElementById(id);
+				subContentEl?.focus();
+			}
+		});
 	}
 
-	function onCloseAutoFocus(e: Event) {
+	function onDestroyAutoFocus(e: Event) {
 		e.preventDefault();
 	}
 </script>
@@ -71,15 +80,6 @@
 		// TODO: users should be able to cancel this
 		onEscapeKeydown(e);
 		state.parentMenu.onClose();
-	}}
-	onMountAutoFocus={(e) => {
-		e.preventDefault();
-		if (state.parentMenu.root.isUsingKeyboard.value) {
-			state.parentMenu.contentNode.value?.focus();
-		}
-	}}
-	onDestroyAutoFocus={(e) => {
-		e.preventDefault();
 	}}
 	onFocusOutside={(e) => {
 		if (e.defaultPrevented) return;
