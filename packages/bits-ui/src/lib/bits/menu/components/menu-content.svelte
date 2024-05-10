@@ -6,6 +6,7 @@
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { noop } from "$lib/internal/callbacks.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
+	import { isHTMLElement } from "$lib/internal/is.js";
 
 	let {
 		id = useId(),
@@ -32,6 +33,10 @@
 	{...mergedProps}
 	present={state.parentMenu.open.value || forceMount}
 	onInteractOutside={(e) => {
+		if (isHTMLElement(e.target) && e.target.id === state.parentMenu.triggerId.value) {
+			e.preventDefault();
+			return;
+		}
 		onInteractOutside(e);
 		if (e.defaultPrevented) return;
 		state.parentMenu.onClose();

@@ -391,6 +391,12 @@ class MenuItemSharedState {
 		});
 	};
 
+	#onpointerup = (e: PointerEvent) => {
+		if (!this.content.parentMenu.root.isUsingKeyboard.value && isHTMLElement(e.currentTarget)) {
+			e.currentTarget?.click();
+		}
+	};
+
 	props = $derived.by(
 		() =>
 			({
@@ -406,6 +412,7 @@ class MenuItemSharedState {
 				onpointerleave: this.#onpointerleave,
 				onfocus: this.#onfocus,
 				onblur: this.#onblur,
+				onpointerup: this.#onpointerup,
 			}) as const
 	);
 }
@@ -458,13 +465,11 @@ class MenuItemState {
 	};
 
 	#onpointerup = async (e: PointerEvent) => {
-		afterTick(() => {
-			if (e.defaultPrevented) return;
-			if (!this.#isPointerDown) {
-				if (!isHTMLElement(e.currentTarget)) return;
-				e.currentTarget?.click();
-			}
-		});
+		if (e.defaultPrevented) return;
+		if (!this.#isPointerDown) {
+			if (!isHTMLElement(e.currentTarget)) return;
+			e.currentTarget?.click();
+		}
 	};
 
 	#onpointerdown = () => {
@@ -618,12 +623,14 @@ class DropdownMenuTriggerState {
 		this.#parentMenu.triggerId = props.id;
 	}
 
-	#onclick = (e: MouseEvent) => {
+	#onpointerdown = (e: PointerEvent) => {
 		if (!this.#disabled.value && e.button === 0 && e.ctrlKey === false) {
 			this.#parentMenu.toggleOpen();
-			// prevent trigger focusing when opening
-			// allowing the content to be given focus without competition
-			if (this.#parentMenu.open.value) e.preventDefault();
+			// prevent trigger focusing when opening to allow
+			// the content to be given focus without competition
+			afterTick(() => {
+				if (!this.#parentMenu.open.value) e.preventDefault();
+			});
 		}
 	};
 
@@ -658,7 +665,7 @@ class DropdownMenuTriggerState {
 				"data-state": getDataOpenClosed(this.#parentMenu.open.value),
 				[TRIGGER_ATTR]: "",
 				//
-				onclick: this.#onclick,
+				onpointerdown: this.#onpointerdown,
 				onkeydown: this.#onkeydown,
 			}) as const
 	);
