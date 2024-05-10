@@ -41,7 +41,9 @@
 		transition:transition={transitionConfig}
 		use:melt={builder}
 		{...$$restProps}
-	></div>
+	>
+		<slot />
+	</div>
 {:else if inTransition && outTransition && $open}
 	<!-- svelte-ignore a11y-no-static-element-interactions a11y_no_static_element_interactions -->
 	<div
@@ -51,7 +53,9 @@
 		use:melt={builder}
 		on:mouseup
 		{...$$restProps}
-	></div>
+	>
+		<slot />
+	</div>
 {:else if inTransition && $open}
 	<!-- svelte-ignore a11y-no-static-element-interactions a11y_no_static_element_interactions -->
 	<div
@@ -60,7 +64,9 @@
 		use:melt={builder}
 		on:mouseup
 		{...$$restProps}
-	></div>
+	>
+		<slot />
+	</div>
 {:else if outTransition && $open}
 	<!-- svelte-ignore a11y-no-static-element-interactions a11y_no_static_element_interactions -->
 	<div
@@ -69,8 +75,10 @@
 		use:melt={builder}
 		on:mouseup
 		{...$$restProps}
-	></div>
+	>
+		<slot />
+	</div>
 {:else if $open}
 	<!-- svelte-ignore a11y-no-static-element-interactions a11y_no_static_element_interactions -->
-	<div bind:this={el} use:melt={builder} on:mouseup {...$$restProps}></div>
+	<div bind:this={el} use:melt={builder} on:mouseup {...$$restProps}><slot /></div>
 {/if}

@@ -42,7 +42,7 @@
 {:else if transition && $open}
 	<div
 		bind:this={el}
-		transition:transition={transitionConfig}
+		transition:transition|global={transitionConfig}
 		use:melt={builder}
 		{...$$restProps}
 		on:pointerdown
@@ -58,8 +58,8 @@
 {:else if inTransition && outTransition && $open}
 	<div
 		bind:this={el}
-		in:inTransition={inTransitionConfig}
-		out:outTransition={outTransitionConfig}
+		in:inTransition|global={inTransitionConfig}
+		out:outTransition|global={outTransitionConfig}
 		use:melt={builder}
 		on:pointerdown
 		on:pointermove
@@ -75,7 +75,7 @@
 {:else if inTransition && $open}
 	<div
 		bind:this={el}
-		in:inTransition={inTransitionConfig}
+		in:inTransition|global={inTransitionConfig}
 		use:melt={builder}
 		on:pointerdown
 		on:pointermove
@@ -91,7 +91,7 @@
 {:else if outTransition && $open}
 	<div
 		bind:this={el}
-		out:outTransition={outTransitionConfig}
+		out:outTransition|global={outTransitionConfig}
 		use:melt={builder}
 		on:pointerdown
 		on:pointermove
