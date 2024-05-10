@@ -17,6 +17,8 @@
 		<DotsThree class="h-6 w-6 text-foreground" />
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content
+		onInteractOutsideStart={(e) => console.log("interactOutsideStart", e)}
+		onInteractOutside={(e) => console.log("interactOutisde", e)}
 		class="w-full max-w-[229px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover"
 		sideOffset={8}
 	>

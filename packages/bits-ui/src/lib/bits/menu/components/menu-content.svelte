@@ -6,7 +6,8 @@
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { noop } from "$lib/internal/callbacks.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
-	import { isHTMLElement } from "$lib/internal/is.js";
+	import { isElement } from "$lib/internal/is.js";
+	import type { InteractOutsideEvent } from "$lib/bits/utilities/dismissable-layer/types.js";
 
 	let {
 		id = useId(),
@@ -26,17 +27,26 @@
 		loop: box.with(() => loop),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	function handleInteractOutsideStart(e: InteractOutsideEvent) {
+		if (!isElement(e.target)) return;
+		if (e.target.id === state.parentMenu.triggerId.value) {
+			e.preventDefault();
+			return;
+		}
+		if (e.target.closest(`#${state.parentMenu.triggerId.value}`)) {
+			e.preventDefault();
+		}
+	}
+
+	const mergedProps = $derived(
+		mergeProps(restProps, state.props, { onInteractOutsideStart: handleInteractOutsideStart })
+	);
 </script>
 
 <PopperLayer
 	{...mergedProps}
 	present={state.parentMenu.open.value || forceMount}
 	onInteractOutside={(e) => {
-		if (isHTMLElement(e.target) && e.target.id === state.parentMenu.triggerId.value) {
-			e.preventDefault();
-			return;
-		}
 		onInteractOutside(e);
 		if (e.defaultPrevented) return;
 		state.parentMenu.onClose();
