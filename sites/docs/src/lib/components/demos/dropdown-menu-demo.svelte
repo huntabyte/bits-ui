@@ -8,6 +8,8 @@
 		UserCircle,
 		UserCirclePlus,
 	} from "$icons/index.js";
+
+	let checked = $state(false);
 </script>
 
 <DropdownMenu.Root>
@@ -80,6 +82,24 @@
 				</kbd>
 			</div>
 		</DropdownMenu.Item>
+		<DropdownMenu.CheckboxItem
+			bind:checked
+			class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted"
+		>
+			{#snippet children({ checked })}
+				<div class="flex items-center">
+					<GearSix class="mr-2 size-5 text-foreground-alt" />
+					Settings
+				</div>
+				<div class="ml-auto flex items-center gap-px">
+					{#if checked}
+						checked
+					{:else}
+						unchecked
+					{/if}
+				</div>
+			{/snippet}
+		</DropdownMenu.CheckboxItem>
 		<DropdownMenu.Sub>
 			<DropdownMenu.SubTrigger
 				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted data-[state=open]:bg-muted"

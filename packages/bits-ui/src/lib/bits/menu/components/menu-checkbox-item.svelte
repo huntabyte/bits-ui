@@ -1,61 +1,51 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { setCheckboxItem } from "../ctx.js";
-	import type { CheckboxItemEvents, CheckboxItemProps } from "../index.js";
-	import { createDispatcher } from "$lib/internal/events.js";
+	import { box } from "runed";
+	import type { CheckboxItemProps } from "../index.js";
+	import { useMenuCheckboxItem } from "../menu.svelte.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { noop } from "$lib/internal/callbacks.js";
 
-	type $$Props = CheckboxItemProps;
-	type $$Events = CheckboxItemEvents;
+	let {
+		asChild,
+		child,
+		children,
+		el = $bindable(),
+		checked = $bindable(false),
+		id = useId(),
+		onCheckedChange = noop,
+		disabled = false,
+		onSelect = noop,
+		...restProps
+	}: CheckboxItemProps = $props();
 
-	export let checked: $$Props["checked"] = undefined;
-	export let onCheckedChange: $$Props["onCheckedChange"] = undefined;
-	export let disabled: $$Props["disabled"] = undefined;
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
-
-	const {
-		elements: { checkboxItem },
-		states: { checked: localChecked },
-		updateOption,
-		getAttrs,
-	} = setCheckboxItem({
-		disabled,
-		defaultChecked: checked,
-		onCheckedChange: ({ next }) => {
-			if (checked !== next) {
-				onCheckedChange?.(next);
-				checked = next;
+	const state = useMenuCheckboxItem({
+		checked: box.with(
+			() => checked,
+			(v) => {
+				if (checked !== v) {
+					checked = v;
+					onCheckedChange(v);
+				}
 			}
-			return next;
-		},
+		),
+		id: box.with(() => id),
+		disabled: box.with(() => disabled),
+		onSelect: box.with(() => handleSelect),
 	});
 
-	const dispatch = createDispatcher();
-	const attrs = getAttrs("checkbox-item");
+	function handleSelect() {
+		onSelect();
+		state.toggleChecked();
+	}
 
-	$: checked !== undefined && localChecked.set(checked);
-	$: updateOption("disabled", disabled);
-
-	$: builder = $checkboxItem;
-	$: Object.assign(builder, attrs);
+	const mergedProps = $derived(mergeProps(restProps, state.props));
 </script>
 
 {#if asChild}
-	<slot {builder} />
+	{@render child?.({ props: mergedProps })}
 {:else}
-	<div
-		bind:this={el}
-		use:melt={builder}
-		{...$$restProps}
-		on:m-click={dispatch}
-		on:m-focusin={dispatch}
-		on:m-focusout={dispatch}
-		on:m-keydown={dispatch}
-		on:m-pointerdown={dispatch}
-		on:m-pointerleave={dispatch}
-		on:m-pointermove={dispatch}
-		on:pointerenter
-	>
-		<slot {builder} />
+	<div {...mergedProps} bind:this={el}>
+		{@render children?.({ checked })}
 	</div>
 {/if}

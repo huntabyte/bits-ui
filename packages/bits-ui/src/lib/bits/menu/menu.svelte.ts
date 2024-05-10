@@ -8,6 +8,7 @@ import {
 	SELECTION_KEYS,
 	SUB_OPEN_KEYS,
 	type Side,
+	getCheckedState,
 	isMouseEvent,
 	isPointerInGraceArea,
 } from "./utils.js";
@@ -26,6 +27,7 @@ import { isElement, isHTMLElement } from "$lib/internal/is.js";
 import { useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import {
+	getAriaChecked,
 	getAriaDisabled,
 	getAriaExpanded,
 	getAriaOrientation,
@@ -41,6 +43,7 @@ const TRIGGER_ATTR = "data-menu-trigger";
 const CONTENT_ATTR = "data-menu-content";
 const ITEM_ATTR = "data-menu-item";
 const SUB_TRIGGER_ATTR = "data-menu-subtrigger";
+const CHECKBOX_ITEM_ATTR = "data-menu-checkbox-item";
 
 const [setMenuRootContext] = createContext<MenuRootState>("Menu.Root");
 
@@ -329,6 +332,13 @@ class MenuContentState {
 		return new MenuItemState(props, item);
 	}
 
+	createCheckboxItem(
+		props: MenuItemSharedStateProps & MenuItemStateProps & MenuCheckboxItemStateProps
+	) {
+		const item = new MenuItemState(props, new MenuItemSharedState(props, this));
+		return new MenuCheckboxItemState(props, item);
+	}
+
 	createSubTrigger(props: MenuItemSharedStateProps) {
 		const item = new MenuItemSharedState(props, this);
 		const submenu = getMenuMenuContext();
@@ -394,6 +404,7 @@ class MenuItemSharedState {
 	#onpointerup = (e: PointerEvent) => {
 		if (!this.content.parentMenu.root.isUsingKeyboard.value && isHTMLElement(e.currentTarget)) {
 			e.currentTarget?.click();
+			e.preventDefault();
 		}
 	};
 
@@ -609,6 +620,41 @@ class MenuSubTriggerState {
 	);
 }
 
+type MenuCheckboxItemStateProps = WritableBoxedValues<{
+	checked: boolean | "indeterminate";
+}>;
+
+class MenuCheckboxItemState {
+	#item: MenuItemState;
+	#checked: MenuCheckboxItemStateProps["checked"];
+
+	constructor(props: MenuCheckboxItemStateProps, item: MenuItemState) {
+		this.#item = item;
+		this.#checked = props.checked;
+	}
+
+	toggleChecked() {
+		if (this.#checked.value === true) {
+			this.#checked.value = false;
+		} else if (this.#checked.value === false) {
+			this.#checked.value = true;
+		} else if (this.#checked.value === "indeterminate") {
+			this.#checked.value = true;
+		}
+	}
+
+	props = $derived.by(
+		() =>
+			({
+				...this.#item.props,
+				role: "menuitemcheckbox",
+				"aria-checked": getAriaChecked(this.#checked.value),
+				"data-state": getCheckedState(this.#checked.value),
+				[CHECKBOX_ITEM_ATTR]: "",
+			}) as const
+	);
+}
+
 type DropdownMenuTriggerStateProps = ReadableBoxedValues<{
 	id: string;
 	disabled: boolean;
@@ -701,4 +747,10 @@ export function useMenuContent(props: MenuContentStateProps) {
 
 export function useMenuItem(props: MenuItemSharedStateProps & MenuItemStateProps) {
 	return getMenuContentContext().createItem(props);
+}
+
+export function useMenuCheckboxItem(
+	props: MenuItemSharedStateProps & MenuItemStateProps & MenuCheckboxItemStateProps
+) {
+	return getMenuContentContext().createCheckboxItem(props);
 }

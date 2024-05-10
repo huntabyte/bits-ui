@@ -62,6 +62,16 @@ export type MenuItemPropsWithoutHTML = WithAsChild<{
 export type MenuItemProps = MenuItemPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, MenuItemPropsWithoutHTML>;
 
+export type MenuCheckboxItemPropsWithoutHTML = Omit<MenuItemPropsWithoutHTML, "children"> & {
+	checked?: boolean | "indeterminate";
+	onCheckedChange?: OnChangeFn<boolean | "indeterminate">;
+} & {
+	children?: Snippet<[{ checked: boolean | "indeterminate" }]>;
+};
+
+export type MenucheckboxItemProps = MenuCheckboxItemPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, MenuCheckboxItemPropsWithoutHTML>;
+
 export type MenuTriggerPropsWithoutHTML = WithAsChild<{
 	/**
 	 * Whether the trigger is disabled.
