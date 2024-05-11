@@ -24,5 +24,9 @@ export type {
 	MenuSubContentProps as SubContentProps,
 	MenuSeparatorProps as SeparatorProps,
 	MenuArrowProps as ArrowProps,
-	MenucheckboxItemProps as CheckboxItemProps,
+	MenuCheckboxItemProps as CheckboxItemProps,
+	MenuLabelProps as LabelProps,
+	MenuGroupProps as GroupProps,
+	MenuRadioGroupProps as RadioGroupProps,
+	MenuRadioItemProps as RadioItemProps,
 } from "./types.js";

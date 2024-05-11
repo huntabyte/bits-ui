@@ -10,6 +10,7 @@
 	} from "$icons/index.js";
 
 	let checked = $state(false);
+	let invited = $state("");
 </script>
 
 <DropdownMenu.Root>
@@ -116,78 +117,104 @@
 				class="w-full max-w-[209px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover !ring-0 !ring-transparent"
 				sideOffset={10}
 			>
-				<DropdownMenu.Item
-					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted"
-				>
-					<Avatar.Root
-						class="relative mr-3 flex size-5 shrink-0 overflow-hidden rounded-full border border-foreground/50"
+				<DropdownMenu.RadioGroup bind:value={invited}>
+					<DropdownMenu.RadioItem
+						value="huntabyte"
+						class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted"
 					>
-						<Avatar.Image
-							src="https://github.com/huntabyte.png"
-							alt="@huntabyte"
-							class="aspect-square h-full w-full"
-						/>
-						<Avatar.Fallback
-							class="flex h-full w-full items-center justify-center rounded-full bg-muted text-xxs"
-							>HJ</Avatar.Fallback
-						>
-					</Avatar.Root>
-					@huntabyte
-				</DropdownMenu.Item>
-				<DropdownMenu.Item
-					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted"
-				>
-					<Avatar.Root
-						class="relative mr-3 flex size-5 shrink-0 overflow-hidden rounded-full border border-foreground/50"
+						{#snippet children({ checked })}
+							<Avatar.Root
+								class="relative mr-3 flex size-5 shrink-0 overflow-hidden rounded-full border border-foreground/50"
+							>
+								<Avatar.Image
+									src="https://github.com/huntabyte.png"
+									alt="@huntabyte"
+									class="aspect-square h-full w-full"
+								/>
+								<Avatar.Fallback
+									class="flex h-full w-full items-center justify-center rounded-full bg-muted text-xxs"
+									>HJ</Avatar.Fallback
+								>
+							</Avatar.Root>
+							@huntabyte
+							{#if checked}
+								×
+							{/if}
+						{/snippet}
+					</DropdownMenu.RadioItem>
+					<DropdownMenu.RadioItem
+						value="pavel"
+						class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted"
 					>
-						<Avatar.Image
-							src="https://github.com/pavelstianko.png"
-							alt="@pavel_stianko"
-							class="aspect-square h-full w-full"
-						/>
-						<Avatar.Fallback
-							class="flex h-full w-full items-center justify-center rounded-full bg-muted text-xs"
-							>PS</Avatar.Fallback
-						>
-					</Avatar.Root>
-					@pavel_stianko
-				</DropdownMenu.Item>
-				<DropdownMenu.Item
-					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted"
-				>
-					<Avatar.Root
-						class="relative mr-3 flex size-5 shrink-0 overflow-hidden rounded-full border border-foreground/50"
+						{#snippet children({ checked })}
+							<Avatar.Root
+								class="relative mr-3 flex size-5 shrink-0 overflow-hidden rounded-full border border-foreground/50"
+							>
+								<Avatar.Image
+									src="https://github.com/pavelstianko.png"
+									alt="@pavel_stianko"
+									class="aspect-square h-full w-full"
+								/>
+								<Avatar.Fallback
+									class="flex h-full w-full items-center justify-center rounded-full bg-muted text-xs"
+									>PS</Avatar.Fallback
+								>
+							</Avatar.Root>
+							@pavel_stianko
+							{#if checked}
+								×
+							{/if}
+						{/snippet}
+					</DropdownMenu.RadioItem>
+					<DropdownMenu.RadioItem
+						value="cokakoala"
+						class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted"
 					>
-						<Avatar.Image
-							src="https://github.com/adriangonz97.png"
-							alt="@cokakoala_"
-							class="aspect-square h-full w-full"
-						/>
-						<Avatar.Fallback
-							class="flex h-full w-full items-center justify-center rounded-full bg-muted text-xs"
-							>CK</Avatar.Fallback
-						>
-					</Avatar.Root>
-					@cokakoala_
-				</DropdownMenu.Item>
-				<DropdownMenu.Item
-					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted"
-				>
-					<Avatar.Root
-						class="relative mr-3 flex size-5 shrink-0 overflow-hidden rounded-full border border-foreground/50"
+						{#snippet children({ checked })}
+							<Avatar.Root
+								class="relative mr-3 flex size-5 shrink-0 overflow-hidden rounded-full border border-foreground/50"
+							>
+								<Avatar.Image
+									src="https://github.com/adriangonz97.png"
+									alt="@cokakoala_"
+									class="aspect-square h-full w-full"
+								/>
+								<Avatar.Fallback
+									class="flex h-full w-full items-center justify-center rounded-full bg-muted text-xs"
+									>CK</Avatar.Fallback
+								>
+							</Avatar.Root>
+							@cokakoala_
+							{#if checked}
+								×
+							{/if}
+						{/snippet}
+					</DropdownMenu.RadioItem>
+					<DropdownMenu.RadioItem
+						value="tglide"
+						class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted"
 					>
-						<Avatar.Image
-							src="https://github.com/tglide.png"
-							alt="@tglide"
-							class="aspect-square h-full w-full"
-						/>
-						<Avatar.Fallback
-							class="flex h-full w-full items-center justify-center rounded-full bg-muted text-xs"
-							>TL</Avatar.Fallback
-						>
-					</Avatar.Root>
-					@thomasglopes
-				</DropdownMenu.Item>
+						{#snippet children({ checked })}
+							<Avatar.Root
+								class="relative mr-3 flex size-5 shrink-0 overflow-hidden rounded-full border border-foreground/50"
+							>
+								<Avatar.Image
+									src="https://github.com/tglide.png"
+									alt="@tglide"
+									class="aspect-square h-full w-full"
+								/>
+								<Avatar.Fallback
+									class="flex h-full w-full items-center justify-center rounded-full bg-muted text-xs"
+									>TL</Avatar.Fallback
+								>
+							</Avatar.Root>
+							@thomasglopes
+							{#if checked}
+								×
+							{/if}
+						{/snippet}
+					</DropdownMenu.RadioItem>
+				</DropdownMenu.RadioGroup>
 			</DropdownMenu.SubContent>
 		</DropdownMenu.Sub>
 	</DropdownMenu.Content>

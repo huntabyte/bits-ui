@@ -42,12 +42,14 @@ import { afterTick } from "$lib/internal/afterTick.js";
 const TRIGGER_ATTR = "data-menu-trigger";
 const CONTENT_ATTR = "data-menu-content";
 const ITEM_ATTR = "data-menu-item";
+const SEPARATOR_ATTR = "data-menu-separator";
 const SUB_TRIGGER_ATTR = "data-menu-subtrigger";
 const CHECKBOX_ITEM_ATTR = "data-menu-checkbox-item";
 const GROUP_ATTR = "data-menu-group";
 const LABEL_ATTR = "data-menu-label";
 const RADIO_GROUP_ATTR = "data-menu-radio-group";
 const RADIO_ITEM_ATTR = "data-menu-radio-item";
+const ARROW_ATTR = "data-menu-arrow";
 
 const [setMenuRootContext] = createContext<MenuRootState>("Menu.Root");
 
@@ -667,22 +669,30 @@ class MenuCheckboxItemState {
 }
 
 class MenuGroupState {
-	props = $derived.by(
-		() =>
-			({
-				role: "group",
-				[GROUP_ATTR]: "",
-			}) as const
-	);
+	props = {
+		role: "group",
+		[GROUP_ATTR]: "",
+	} as const;
 }
 
 class MenuLabelState {
-	props = $derived.by(
-		() =>
-			({
-				[LABEL_ATTR]: "",
-			}) as const
-	);
+	props = {
+		[LABEL_ATTR]: "",
+	} as const;
+}
+
+class MenuSeparatorState {
+	props = {
+		[SEPARATOR_ATTR]: "",
+		role: "separator",
+		"aria-orientation": "horizontal",
+	} as const;
+}
+
+class MenuArrowState {
+	props = {
+		[ARROW_ATTR]: "",
+	} as const;
 }
 
 type MenuRadioGroupStateProps = WritableBoxedValues<{
@@ -726,7 +736,7 @@ class MenuRadioItemState {
 	#item: MenuItemState;
 	#value: MenuRadioItemStateProps["value"];
 	#group: MenuRadioGroupState;
-	#isChecked = $derived.by(() => this.#group.value.value === this.#value.value);
+	isChecked = $derived.by(() => this.#group.value.value === this.#value.value);
 
 	constructor(props: MenuRadioItemStateProps, item: MenuItemState, group: MenuRadioGroupState) {
 		this.#item = item;
@@ -744,8 +754,8 @@ class MenuRadioItemState {
 				[RADIO_ITEM_ATTR]: "",
 				...this.#item.props,
 				role: "menuitemradio",
-				"aria-checked": getAriaChecked(this.#isChecked),
-				"data-state": getCheckedState(this.#isChecked),
+				"aria-checked": getAriaChecked(this.isChecked),
+				"data-state": getCheckedState(this.isChecked),
 			}) as const
 	);
 }
@@ -868,4 +878,12 @@ export function useMenuGroup() {
 
 export function useMenuLabel() {
 	return new MenuLabelState();
+}
+
+export function useMenuSeparator() {
+	return new MenuSeparatorState();
+}
+
+export function useMenuArrow() {
+	return new MenuArrowState();
 }

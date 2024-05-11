@@ -34,8 +34,8 @@
 		onSelect: box.with(() => handleSelect),
 	});
 
-	function handleSelect() {
-		onSelect();
+	function handleSelect(e: Event) {
+		onSelect(e);
 		state.toggleChecked();
 	}
 

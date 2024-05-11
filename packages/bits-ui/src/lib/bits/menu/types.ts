@@ -55,21 +55,32 @@ export type MenuItemPropsWithoutHTML = WithAsChild<{
 
 	/**
 	 * A callback fired when the menu item is selected.
+	 *
+	 * Prevent default behavior of selection with `event.preventDefault()`.
 	 */
-	onSelect?: () => void;
+	onSelect?: (event: Event) => void;
 }>;
 
 export type MenuItemProps = MenuItemPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, MenuItemPropsWithoutHTML>;
 
 export type MenuCheckboxItemPropsWithoutHTML = Omit<MenuItemPropsWithoutHTML, "children"> & {
+	/**
+	 * The checked state of the checkbox item.
+	 *
+	 * Supports two-way binding with `bind:checked`.
+	 */
 	checked?: boolean | "indeterminate";
+
+	/**
+	 * A callback that is fired when the checked state changes.
+	 */
 	onCheckedChange?: OnChangeFn<boolean | "indeterminate">;
 } & {
 	children?: Snippet<[{ checked: boolean | "indeterminate" }]>;
 };
 
-export type MenucheckboxItemProps = MenuCheckboxItemPropsWithoutHTML &
+export type MenuCheckboxItemProps = MenuCheckboxItemPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, MenuCheckboxItemPropsWithoutHTML>;
 
 export type MenuTriggerPropsWithoutHTML = WithAsChild<{
@@ -99,15 +110,49 @@ export type MenuSubPropsWithoutHTML = {
 };
 
 export type MenuSubContentPropsWithoutHTML = WithAsChild<PopperLayerProps>;
-
 export type MenuSubContentProps = MenuSubContentPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, MenuSubContentPropsWithoutHTML>;
 
 export type MenuSeparatorPropsWithoutHTML = WithAsChild<{}>;
-
 export type MenuSeparatorProps = MenuSeparatorPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, MenuSeparatorPropsWithoutHTML>;
 
 export type MenuArrowPropsWithoutHTML = ArrowPropsWithoutHTML;
-
 export type MenuArrowProps = ArrowProps;
+
+export type MenuGroupPropsWithoutHTML = WithAsChild<{}>;
+export type MenuGroupProps = MenuGroupPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, MenuGroupPropsWithoutHTML>;
+
+export type MenuLabelPropsWithoutHTML = WithAsChild<{}>;
+export type MenuLabelProps = MenuLabelPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, MenuLabelPropsWithoutHTML>;
+
+export type MenuRadioGroupPropsWithoutHTML = WithAsChild<{
+	/**
+	 * The value of the selected radio item.
+	 *
+	 * Supports two-way binding with `bind:value`.
+	 */
+	value?: string;
+
+	/**
+	 * A callback that is fired when the selected radio item changes.
+	 */
+	onValueChange?: OnChangeFn<string>;
+}>;
+
+export type MenuRadioGroupProps = MenuRadioGroupPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, MenuRadioGroupPropsWithoutHTML>;
+
+export type MenuRadioItemPropsWithoutHTML = Omit<MenuItemPropsWithoutHTML, "children"> & {
+	/**
+	 * The value of the radio item.
+	 */
+	value: string;
+} & {
+	children?: Snippet<[{ checked: boolean }]>;
+};
+
+export type MenuRadioItemProps = MenuRadioItemPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, MenuRadioItemPropsWithoutHTML>;
