@@ -826,6 +826,103 @@ class DropdownMenuTriggerState {
 	);
 }
 
+type ContextMenuTriggerStateProps = ReadableBoxedValues<{
+	id: string;
+	disabled: boolean;
+}>;
+
+class ContextMenuTriggerState {
+	#parentMenu: MenuMenuState;
+	#disabled: ContextMenuTriggerStateProps["disabled"];
+	#point = $state({ x: 0, y: 0 });
+	#virtual = box.with(() => ({
+		getBoundingClientRect: () => DOMRect.fromRect({ width: 0, height: 0, ...this.#point }),
+	}));
+	#longPressTimer = $state<number | null>(null);
+
+	constructor(props: ContextMenuTriggerStateProps, parentMenu: MenuMenuState) {
+		this.#parentMenu = parentMenu;
+		this.#disabled = props.disabled;
+		this.#parentMenu.triggerId = props.id;
+
+		$effect(() => {
+			if (this.#disabled.value) {
+				this.#clearLongPressTimer();
+			}
+		});
+
+		$effect(() => {
+			return () => {
+				this.#clearLongPressTimer();
+			};
+		});
+	}
+
+	#clearLongPressTimer() {
+		if (this.#longPressTimer === null) return;
+		window.clearTimeout(this.#longPressTimer);
+	}
+
+	#handleOpen = (e: MouseEvent | PointerEvent) => {
+		this.#point = { x: e.clientX, y: e.clientY };
+		this.#parentMenu.onOpen();
+	};
+
+	#oncontextmenu = (e: MouseEvent) => {
+		if (this.#disabled.value) return;
+		this.#clearLongPressTimer();
+		this.#handleOpen(e);
+		e.preventDefault();
+	};
+
+	#onpointerdown = (e: PointerEvent) => {
+		if (this.#disabled.value || isMouseEvent(e)) return;
+		this.#clearLongPressTimer();
+		this.#longPressTimer = window.setTimeout(() => this.#handleOpen(e), 700);
+	};
+
+	#onpointermove = (e: PointerEvent) => {
+		if (this.#disabled.value || isMouseEvent(e)) return;
+		this.#clearLongPressTimer();
+	};
+
+	#onpointercancel = (e: PointerEvent) => {
+		if (this.#disabled.value || isMouseEvent(e)) return;
+		this.#clearLongPressTimer();
+	};
+
+	#onpointerup = (e: PointerEvent) => {
+		if (this.#disabled.value || isMouseEvent(e)) return;
+		this.#clearLongPressTimer();
+	};
+
+	#ariaControls = $derived.by(() => {
+		if (this.#parentMenu.open.value && this.#parentMenu.contentNode.value)
+			return this.#parentMenu.contentNode.value.id;
+		return undefined;
+	});
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.#parentMenu.triggerId.value,
+				disabled: this.#disabled.value,
+				"aria-haspopup": "menu",
+				"aria-expanded": getAriaExpanded(this.#parentMenu.open.value),
+				"aria-controls": this.#ariaControls,
+				"data-disabled": getDataDisabled(this.#disabled.value),
+				"data-state": getDataOpenClosed(this.#parentMenu.open.value),
+				[TRIGGER_ATTR]: "",
+				//
+				onpointerdown: this.#onpointerdown,
+				onpointermove: this.#onpointermove,
+				onpointercancel: this.#onpointercancel,
+				onpointerup: this.#onpointerup,
+				oncontextmenu: this.#oncontextmenu,
+			}) as const
+	);
+}
+
 type MenuItemCombinedProps = MenuItemSharedStateProps & MenuItemStateProps;
 
 //

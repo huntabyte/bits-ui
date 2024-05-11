@@ -1,3 +1,4 @@
+import type { EventCallback } from "$lib/internal/events.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type { Direction } from "$lib/shared/index.js";
 

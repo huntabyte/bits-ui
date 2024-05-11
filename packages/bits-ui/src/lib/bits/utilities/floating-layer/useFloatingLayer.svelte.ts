@@ -21,7 +21,7 @@ import {
 } from "$lib/internal/index.js";
 import { useSize } from "$lib/internal/useSize.svelte.js";
 import { useFloating } from "$lib/internal/floating-svelte/useFloating.svelte.js";
-import type { UseFloatingReturn } from "$lib/internal/floating-svelte/types.js";
+import type { Measurable, UseFloatingReturn } from "$lib/internal/floating-svelte/types.js";
 import type { Direction, StyleProperties } from "$lib/shared/index.js";
 import { createContext } from "$lib/internal/createContext.js";
 
@@ -41,7 +41,7 @@ export type Align = (typeof ALIGN_OPTIONS)[number];
 export type Boundary = Element | null;
 
 class FloatingRootState {
-	anchorNode = undefined as unknown as WritableBox<HTMLElement | null>;
+	anchorNode = undefined as unknown as WritableBox<Measurable | HTMLElement | null>;
 
 	createAnchor(props: FloatingAnchorStateProps) {
 		return new FloatingAnchorState(props, this);
