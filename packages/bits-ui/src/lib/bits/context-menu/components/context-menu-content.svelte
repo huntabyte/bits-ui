@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { melt } from "@melt-ui/svelte";
 	import { getCtx, updatePositioning } from "../ctx.js";
-	import type { ContentEvents, ContentProps } from "../index.js";
+	import type { ContentProps } from "../index.js";
 	import type { Transition } from "$lib/internal/types.js";
 	import { createDispatcher } from "$lib/internal/events.js";
 
@@ -9,7 +9,6 @@
 	type In = $$Generic<Transition>;
 	type Out = $$Generic<Transition>;
 	type $$Props = ContentProps<T, In, Out>;
-	type $$Events = ContentEvents;
 
 	export let transition: $$Props["transition"] = undefined;
 	export let transitionConfig: $$Props["transitionConfig"] = undefined;

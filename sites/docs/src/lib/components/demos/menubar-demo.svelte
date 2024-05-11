@@ -1,4 +1,4 @@
-<script lang="ts">
+<!-- <script lang="ts">
 	import { Menubar } from "bits-ui";
 	import { CaretRight, Cat, Check, SwitchOff, SwitchOn } from "$icons/index.js";
 	import { flyAndScale } from "$lib/utils/index.js";
@@ -267,4 +267,4 @@
 			>
 		</Menubar.Content>
 	</Menubar.Menu>
-</Menubar.Root>
+</Menubar.Root> -->

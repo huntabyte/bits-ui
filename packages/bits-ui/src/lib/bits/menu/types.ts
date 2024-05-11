@@ -113,6 +113,9 @@ export type MenuSubContentPropsWithoutHTML = WithAsChild<PopperLayerProps>;
 export type MenuSubContentProps = MenuSubContentPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, MenuSubContentPropsWithoutHTML>;
 
+export type MenuSubTriggerPropsWithoutHTML = MenuItemPropsWithoutHTML;
+export type MenuSubTriggerProps = MenuItemProps;
+
 export type MenuSeparatorPropsWithoutHTML = WithAsChild<{}>;
 export type MenuSeparatorProps = MenuSeparatorPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, MenuSeparatorPropsWithoutHTML>;

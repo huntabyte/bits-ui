@@ -1,4 +1,4 @@
-<script lang="ts">
+<!-- <script lang="ts">
 	import { ContextMenu } from "bits-ui";
 	import { CopySimple, MouseSimple, PencilSimpleLine, PlusCircle, Trash } from "$icons/index.js";
 	import { flyAndScale } from "$lib/utils/index.js";
@@ -120,4 +120,4 @@
 			</div>
 		</ContextMenu.Item>
 	</ContextMenu.Content>
-</ContextMenu.Root>
+</ContextMenu.Root> -->
