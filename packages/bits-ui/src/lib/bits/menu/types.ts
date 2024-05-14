@@ -31,6 +31,8 @@ export type MenuRootPropsWithoutHTML = {
 	children?: Snippet;
 };
 
+export type MenuRootProps = MenuRootPropsWithoutHTML;
+
 export type MenuContentPropsWithoutHTML = WithAsChild<PopperLayerProps>;
 
 export type MenuContentProps = MenuContentPropsWithoutHTML &

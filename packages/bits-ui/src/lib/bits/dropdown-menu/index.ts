@@ -4,7 +4,7 @@ export { default as Item } from "$lib/bits/menu/components/menu-item.svelte";
 export { default as Group } from "$lib/bits/menu/components/menu-group.svelte";
 export { default as Label } from "$lib/bits/menu/components/menu-label.svelte";
 export { default as Arrow } from "$lib/bits/menu/components/menu-arrow.svelte";
-export { default as Content } from "$lib/bits/menu/components/menu-content.svelte";
+export { default as Content } from "./components/dropdown-menu-content.svelte";
 export { default as Trigger } from "$lib/bits/menu/components/menu-trigger.svelte";
 export { default as RadioItem } from "$lib/bits/menu/components/menu-radio-item.svelte";
 export { default as Separator } from "$lib/bits/menu/components/menu-separator.svelte";

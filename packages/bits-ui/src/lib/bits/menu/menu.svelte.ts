@@ -1,5 +1,5 @@
 import { box } from "runed";
-import { tick } from "svelte";
+import { tick, untrack } from "svelte";
 import { focusFirst } from "../utilities/focus-scope/utils.js";
 import {
 	FIRST_LAST_KEYS,
@@ -166,6 +166,10 @@ class MenuMenuState {
 
 	createDropdownTrigger(props: DropdownMenuTriggerStateProps) {
 		return new DropdownMenuTriggerState(props, this);
+	}
+
+	createContextTrigger(props: ContextMenuTriggerStateProps) {
+		return new ContextMenuTriggerState(props, this);
 	}
 }
 
@@ -835,15 +839,24 @@ class ContextMenuTriggerState {
 	#parentMenu: MenuMenuState;
 	#disabled: ContextMenuTriggerStateProps["disabled"];
 	#point = $state({ x: 0, y: 0 });
-	#virtual = box.with(() => ({
+
+	virtualElement = box({
 		getBoundingClientRect: () => DOMRect.fromRect({ width: 0, height: 0, ...this.#point }),
-	}));
+	});
+
 	#longPressTimer = $state<number | null>(null);
 
 	constructor(props: ContextMenuTriggerStateProps, parentMenu: MenuMenuState) {
 		this.#parentMenu = parentMenu;
 		this.#disabled = props.disabled;
 		this.#parentMenu.triggerId = props.id;
+
+		$effect(() => {
+			const point = this.#point;
+			this.virtualElement.value = {
+				getBoundingClientRect: () => DOMRect.fromRect({ width: 0, height: 0, ...point }),
+			};
+		});
 
 		$effect(() => {
 			if (this.#disabled.value) {
@@ -947,6 +960,10 @@ export function useMenuSubTrigger(props: MenuItemSharedStateProps) {
 
 export function useMenuDropdownTrigger(props: DropdownMenuTriggerStateProps) {
 	return getMenuMenuContext().createDropdownTrigger(props);
+}
+
+export function useMenuContextTrigger(props: ContextMenuTriggerStateProps) {
+	return getMenuMenuContext().createContextTrigger(props);
 }
 
 export function useMenuContent(props: MenuContentStateProps) {

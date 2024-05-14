@@ -6,7 +6,7 @@ import type {
 	ReferenceElement,
 	Strategy,
 } from "@floating-ui/dom";
-import type { WritableBox } from "runed";
+import type { ReadableBox, WritableBox } from "runed";
 
 type ValueOrGetValue<T> = T | (() => T);
 
@@ -46,7 +46,7 @@ export type UseFloatingOptions = {
 	/**
 	 * Reference / Anchor element to position the floating element relative to
 	 */
-	reference: WritableBox<Measurable | HTMLElement | null>;
+	reference: ReadableBox<Measurable | HTMLElement | null>;
 
 	/**
 	 * Callback to handle mounting/unmounting of the elements.
@@ -63,7 +63,7 @@ export type UseFloatingReturn = {
 	/**
 	 * The reference element to position the floating element relative to.
 	 */
-	reference: WritableBox<Measurable | HTMLElement | null>;
+	reference: ReadableBox<Measurable | HTMLElement | null>;
 
 	/**
 	 * The floating element to position.

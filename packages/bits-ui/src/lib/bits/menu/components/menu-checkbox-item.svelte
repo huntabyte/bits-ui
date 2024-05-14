@@ -36,6 +36,7 @@
 
 	function handleSelect(e: Event) {
 		onSelect(e);
+		if (e.defaultPrevented) return;
 		state.toggleChecked();
 	}
 

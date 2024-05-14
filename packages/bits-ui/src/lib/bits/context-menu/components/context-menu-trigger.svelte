@@ -1,46 +1,37 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { getCtx } from "../ctx.js";
-	import type { TriggerEvents, TriggerProps } from "../index.js";
-	import { createDispatcher } from "$lib/internal/events.js";
+	import { box } from "runed";
+	import type { TriggerProps } from "../index.js";
+	import { useMenuContextTrigger } from "$lib/bits/menu/menu.svelte.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 
-	type $$Props = TriggerProps;
-	type $$Events = TriggerEvents;
+	let {
+		id = useId(),
+		el = $bindable(),
+		asChild,
+		child,
+		children,
+		disabled = false,
+		...restProps
+	}: TriggerProps = $props();
 
-	export let asChild: $$Props["asChild"] = false;
-	export let id: $$Props["id"] = undefined;
-	export let el: $$Props["el"] = undefined;
+	const state = useMenuContextTrigger({
+		id: box.with(() => id),
+		disabled: box.with(() => disabled),
+	});
 
-	const {
-		elements: { trigger },
-		ids,
-		getAttrs,
-	} = getCtx();
-
-	const dispatch = createDispatcher();
-	const attrs = getAttrs("trigger");
-
-	$: if (id) {
-		ids.trigger.set(id);
-	}
-
-	$: builder = $trigger;
-	$: Object.assign(builder, attrs);
+	const mergedProps = $derived(
+		mergeProps(restProps, state.props, { style: { pointerEvents: "auto" } })
+	);
 </script>
 
-{#if asChild}
-	<slot {builder} />
-{:else}
-	<div
-		bind:this={el}
-		use:melt={builder}
-		{...$$restProps}
-		on:m-contextmenu={dispatch}
-		on:m-pointercancel={dispatch}
-		on:m-pointerdown={dispatch}
-		on:m-pointermove={dispatch}
-		on:m-pointerup={dispatch}
-	>
-		<slot {builder} />
-	</div>
-{/if}
+<FloatingLayer.Anchor {id} virtualEl={state.virtualElement}>
+	{#if asChild}
+		{@render child?.({ props: mergedProps })}
+	{:else}
+		<div {...mergedProps} bind:this={el}>
+			{@render children?.()}
+		</div>
+	{/if}
+</FloatingLayer.Anchor>

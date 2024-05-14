@@ -43,14 +43,14 @@
 			onInteractOutsideStart: handleInteractOutsideStart,
 			style: {
 				outline: "none",
-				"--bits-context-menu-content-transform-origin":
+				"--bits-dropdown-menu-content-transform-origin":
 					"var(--bits-floating-transform-origin)",
-				"--bits-context-menu-content-available-width":
+				"--bits-dropdown-menu-content-available-width":
 					"var(--bits-floating-available-width)",
-				"--bits-context-menu-content-available-height":
+				"--bits-dropdown-menu-content-available-height":
 					"var(--bits-floating-available-height)",
-				"--bits-context-menu-trigger-width": "var(--bits-floating-anchor-width)",
-				"--bits-context-menu-trigger-height": "var(--bits-floating-anchor-height)",
+				"--bits-dropdown-menu-trigger-width": "var(--bits-floating-anchor-width)",
+				"--bits-dropdown-menu-trigger-height": "var(--bits-floating-anchor-height)",
 			},
 		})
 	);
@@ -58,15 +58,8 @@
 
 <PopperLayer
 	{...mergedProps}
-	side="right"
-	sideOffset={2}
-	align="start"
 	present={state.parentMenu.open.value || forceMount}
-	onInteractOutsideStart={(e) => {
-		console.log("interactoutsidestart", e);
-	}}
 	onInteractOutside={(e) => {
-		console.log(e);
 		onInteractOutside(e);
 		if (e.defaultPrevented) return;
 		state.parentMenu.onClose();

@@ -1,7 +1,6 @@
-<!-- <script lang="ts">
+<script lang="ts">
 	import { ContextMenu } from "bits-ui";
 	import { CopySimple, MouseSimple, PencilSimpleLine, PlusCircle, Trash } from "$icons/index.js";
-	import { flyAndScale } from "$lib/utils/index.js";
 </script>
 
 <ContextMenu.Root>
@@ -15,7 +14,6 @@
 	</ContextMenu.Trigger>
 	<ContextMenu.Content
 		class="z-50 w-full max-w-[229px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover outline-none"
-		transition={flyAndScale}
 	>
 		<ContextMenu.Item
 			class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none !ring-0 !ring-transparent data-[highlighted]:bg-muted"
@@ -60,7 +58,6 @@
 			</ContextMenu.SubTrigger>
 			<ContextMenu.SubContent
 				class="z-50 w-full max-w-[209px] select-none rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover outline-none"
-				transition={flyAndScale}
 				sideOffset={10}
 			>
 				<ContextMenu.Item
@@ -120,4 +117,4 @@
 			</div>
 		</ContextMenu.Item>
 	</ContextMenu.Content>
-</ContextMenu.Root> -->
+</ContextMenu.Root>

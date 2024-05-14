@@ -1,4 +1,4 @@
-export { default as Root } from "./components/context-menu.svelte";
+export { default as Root } from "$lib/bits/menu/components/menu.svelte";
 export { default as Sub } from "$lib/bits/menu/components/menu-sub.svelte";
 export { default as Item } from "$lib/bits/menu/components/menu-item.svelte";
 export { default as Group } from "$lib/bits/menu/components/menu-group.svelte";
@@ -19,7 +19,7 @@ export type {
 	ContextMenuGroupProps as GroupProps,
 	ContextMenuItemProps as ItemProps,
 	ContextMenuLabelProps as LabelProps,
-	ContextMenuProps as Props,
+	ContextMenuRootProps as RootProps,
 	ContextMenuRadioGroupProps as RadioGroupProps,
 	ContextMenuRadioItemProps as RadioItemProps,
 	ContextMenuSeparatorProps as SeparatorProps,
@@ -27,4 +27,5 @@ export type {
 	ContextMenuSubProps as SubProps,
 	ContextMenuSubTriggerProps as SubTriggerProps,
 	ContextMenuContentProps as ContentProps,
+	ContextMenuTriggerProps as TriggerProps,
 } from "./types.js";
