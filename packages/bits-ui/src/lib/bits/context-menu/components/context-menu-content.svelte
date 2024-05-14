@@ -62,11 +62,7 @@
 	sideOffset={2}
 	align="start"
 	present={state.parentMenu.open.value || forceMount}
-	onInteractOutsideStart={(e) => {
-		console.log("interactoutsidestart", e);
-	}}
 	onInteractOutside={(e) => {
-		console.log(e);
 		onInteractOutside(e);
 		if (e.defaultPrevented) return;
 		state.parentMenu.onClose();

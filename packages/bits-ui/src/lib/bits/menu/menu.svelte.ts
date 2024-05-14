@@ -852,9 +852,11 @@ class ContextMenuTriggerState {
 		this.#parentMenu.triggerId = props.id;
 
 		$effect(() => {
-			const point = this.#point;
+			// eslint-disable-next-line no-unused-expressions
+			this.#point;
 			this.virtualElement.value = {
-				getBoundingClientRect: () => DOMRect.fromRect({ width: 0, height: 0, ...point }),
+				getBoundingClientRect: () =>
+					DOMRect.fromRect({ width: 0, height: 0, ...this.#point }),
 			};
 		});
 
