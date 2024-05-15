@@ -1,4 +1,4 @@
-import type { EventHandler, HTMLInputAttributes } from "svelte/elements";
+import type { EventHandler, HTMLInputAttributes, HTMLLabelAttributes } from "svelte/elements";
 import type {
 	ComboboxOptionProps as MeltComboboxOptionProps,
 	CreateComboboxProps as MeltComboboxProps,
@@ -113,7 +113,7 @@ export type ComboboxContentProps<
 > = ComboboxContentPropsWithoutHTML<T, In, Out> & HTMLDivAttributes;
 
 export type ComboboxInputProps = ComboboxInputPropsWithoutHTML & HTMLInputAttributes;
-export type ComboboxLabelProps = ComboboxLabelPropsWithoutHTML & HTMLDivAttributes;
+export type ComboboxLabelProps = ComboboxLabelPropsWithoutHTML & HTMLLabelAttributes;
 
 export type ComboboxGroupProps = ComboboxGroupPropsWithoutHTML & HTMLDivAttributes;
 export type ComboboxGroupLabelProps = ComboboxGroupLabelPropsWithoutHTML & HTMLDivAttributes;
