@@ -1,9 +1,4 @@
-import type {
-	EventHandler,
-	HTMLAttributes,
-	HTMLButtonAttributes,
-	HTMLInputAttributes,
-} from "svelte/elements";
+import type { HTMLAttributes, HTMLButtonAttributes, HTMLInputAttributes } from "svelte/elements";
 import type {
 	SelectOptionProps as MeltSelectOptionProps,
 	CreateSelectProps as MeltSelectProps,
@@ -124,10 +119,10 @@ export type SelectIndicatorProps = SelectIndicatorPropsWithoutHTML & HTMLDivAttr
 export type SelectItemEvents<T extends Element = HTMLDivElement> = {
 	click: CustomEventHandler<MouseEvent, T>;
 	pointermove: CustomEventHandler<PointerEvent, T>;
-	focusin: EventHandler<FocusEvent, T>;
-	keydown: EventHandler<KeyboardEvent, T>;
-	focusout: EventHandler<FocusEvent, T>;
-	pointerleave: EventHandler<PointerEvent, T>;
+	focusin: CustomEventHandler<FocusEvent, T>;
+	keydown: CustomEventHandler<KeyboardEvent, T>;
+	focusout: CustomEventHandler<FocusEvent, T>;
+	pointerleave: CustomEventHandler<PointerEvent, T>;
 };
 
 export type SelectTriggerEvents<T extends Element = HTMLButtonElement> = {
@@ -140,5 +135,5 @@ export type SelectLabelEvents<T extends Element = HTMLSpanElement> = {
 };
 export type SelectContentEvents<T extends Element = HTMLDivElement> = {
 	pointerleave: CustomEventHandler<PointerEvent, T>;
-	keydown: EventHandler<KeyboardEvent, T>;
+	keydown: CustomEventHandler<KeyboardEvent, T>;
 };
