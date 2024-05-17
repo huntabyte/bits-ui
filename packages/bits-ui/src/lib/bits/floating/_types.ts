@@ -1,4 +1,4 @@
-import type { DOMElement, Transition, TransitionProps } from "$lib/internal/index.js";
+import type { DOMElement, Expand, Transition, TransitionProps } from "$lib/internal/index.js";
 
 export type ArrowProps = Expand<
 	{
