@@ -1,5 +1,13 @@
 # bits-ui
 
+## 0.21.8
+
+### Patch Changes
+
+- fix: Updated `ComboboxLabelProps` to use `HTMLLabelAttributes` ([#544](https://github.com/huntabyte/bits-ui/pull/544))
+
+- fix: ContentProps type ([#545](https://github.com/huntabyte/bits-ui/pull/545))
+
 ## 0.21.7
 
 ### Patch Changes
