@@ -34,4 +34,8 @@ export type ButtonEvents = {
 	keyup: ButtonEventHandler<KeyboardEvent>;
 	mouseenter: ButtonEventHandler<MouseEvent>;
 	mouseleave: ButtonEventHandler<MouseEvent>;
+	mousedown: ButtonEventHandler<MouseEvent>;
+	mouseup: ButtonEventHandler<MouseEvent>;
+	pointerdown: ButtonEventHandler<PointerEvent>;
+	pointerup: ButtonEventHandler<PointerEvent>;
 };
