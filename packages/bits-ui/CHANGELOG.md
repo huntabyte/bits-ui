@@ -1,5 +1,11 @@
 # bits-ui
 
+## 0.21.9
+
+### Patch Changes
+
+- feat: forward additional events from `<Button>` ([#550](https://github.com/huntabyte/bits-ui/pull/550))
+
 ## 0.21.8
 
 ### Patch Changes
