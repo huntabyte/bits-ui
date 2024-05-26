@@ -37,7 +37,7 @@
 			placeholder: localPlaceholder,
 			isInvalid: localIsInvalid,
 			startValue: localStartValue,
-			endValue,
+			endValue: localEndValue,
 		},
 		updateOption,
 		ids,
@@ -188,7 +188,14 @@
 	}
 
 	$: startValue = $localStartValue;
-	$: value !== undefined && localValue.set(value);
+
+	$: if (value !== $localValue) {
+		const nextValue = { start: value?.start, end: value?.end };
+
+		if (nextValue.start !== $localStartValue) localStartValue.set(nextValue.start);
+		if (nextValue.end !== $localEndValue) localEndValue.set(nextValue.end);
+		localValue.set(nextValue);
+	}
 	$: placeholder !== undefined && localPlaceholder.set(placeholder);
 
 	$: updateOption("disabled", disabled);
@@ -215,5 +222,5 @@
 	ids={$idValues}
 	isInvalid={$localIsInvalid}
 	startValue={$localStartValue}
-	endValue={$endValue}
+	endValue={$localEndValue}
 />

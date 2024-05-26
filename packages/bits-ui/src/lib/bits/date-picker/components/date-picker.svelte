@@ -145,7 +145,7 @@
 		ids.dateField.description.set(descriptionId);
 	}
 
-	$: value !== undefined && localValue.set(value);
+	$: value !== $localValue && localValue.set(value);
 	$: placeholder !== undefined && localPlaceholder.set(placeholder);
 	$: open !== undefined && localOpen.set(open);
 
