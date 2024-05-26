@@ -10,14 +10,20 @@
 	export let asChild: $$Props["asChild"] = false;
 	export let placeholder: $$Props["placeholder"] = undefined;
 	export let el: $$Props["el"] = undefined;
+	export let id: $$Props["id"] = undefined;
 
 	const {
 		elements: { input },
+		ids,
 		getAttrs,
 	} = getCtx();
 
 	const dispatch = createDispatcher();
 	const attrs = getAttrs("input");
+
+	$: if (id) {
+		ids.trigger.set(id);
+	}
 
 	$: builder = $input;
 	$: Object.assign(builder, attrs);
