@@ -1,5 +1,11 @@
 # bits-ui
 
+## 0.21.10
+
+### Patch Changes
+
+- fix: allow overriding the combobox input id ([#553](https://github.com/huntabyte/bits-ui/pull/553))
+
 ## 0.21.9
 
 ### Patch Changes
