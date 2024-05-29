@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box } from "runed";
+	import { box } from "svelte-toolbelt";
 	import type { SubProps } from "../index.js";
 	import { useMenuSubmenu } from "../menu.svelte.js";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box } from "runed";
+	import { box } from "svelte-toolbelt";
 	import type { RadioGroupProps } from "../index.js";
 	import { useMenuRadioGroup } from "../menu.svelte.js";
 	import { noop } from "$lib/internal/callbacks.js";

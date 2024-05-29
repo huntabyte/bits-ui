@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box } from "runed";
+	import { box } from "svelte-toolbelt";
 	import type { PageProps } from "../index.js";
 	import { usePaginationPage } from "../pagination.svelte.js";
 	import { mergeProps, useId } from "$lib/internal/index.js";

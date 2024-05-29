@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box } from "runed";
+	import { box } from "svelte-toolbelt";
 	import type { GroupItemProps } from "../index.js";
 	import { useToolbarGroupItem } from "../toolbar.svelte.js";
 	import { useId } from "$lib/internal/useId.svelte.js";

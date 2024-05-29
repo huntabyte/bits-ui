@@ -1,8 +1,7 @@
-import type { ReadableBox, WritableBox } from "runed";
+import type { ReadableBox, WritableBox } from "svelte-toolbelt";
 import { getElemDirection } from "./locale.js";
 import { getDirectionalKeys } from "./getDirectionalKeys.js";
 import { kbd } from "./kbd.js";
-import { afterTick } from "./afterTick.js";
 import type { Orientation } from "$lib/shared/index.js";
 
 type UseRovingFocusProps = {

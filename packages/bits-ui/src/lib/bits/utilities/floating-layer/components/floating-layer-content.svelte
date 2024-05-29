@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box } from "runed";
+	import { box } from "svelte-toolbelt";
 	import { useFloatingContentState } from "../useFloatingLayer.svelte.js";
 	import type { ContentImplProps } from "./index.js";
 	import { mergeProps, useId } from "$lib/internal/index.js";

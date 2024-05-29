@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box } from "runed";
+	import { box } from "svelte-toolbelt";
 	import type { DismissableLayerImplProps } from "./types.js";
 	import { useDismissableLayer } from "./useDismissableLayer.svelte.js";
 	import { noop } from "$lib/internal/index.js";

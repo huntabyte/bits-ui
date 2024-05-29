@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box } from "runed";
+	import { box } from "svelte-toolbelt";
 	import type { TriggerProps } from "../index.js";
 	import { useMenuContextTrigger } from "$lib/bits/menu/menu.svelte.js";
 	import { useId } from "$lib/internal/useId.svelte.js";

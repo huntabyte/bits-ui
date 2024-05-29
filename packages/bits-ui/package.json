@@ -45,7 +45,7 @@
 		"jsdom": "^24.0.0",
 		"publint": "^0.2.7",
 		"resize-observer-polyfill": "^1.5.1",
-		"svelte": "5.0.0-next.126",
+		"svelte": "5.0.0-next.144",
 		"svelte-check": "^3.6.9",
 		"tslib": "^2.6.2",
 		"typescript": "^5.3.3",
@@ -66,7 +66,8 @@
 		"runed": "^0.5.0",
 		"scule": "^1.3.0",
 		"style-object-to-css-string": "^1.1.3",
-		"style-to-object": "^1.0.6"
+		"style-to-object": "^1.0.6",
+		"svelte-toolbelt": "^0.0.2"
 	},
 	"peerDependencies": {
 		"svelte": "^5.0.0"

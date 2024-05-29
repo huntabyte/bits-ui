@@ -1,4 +1,4 @@
-import { box } from "runed";
+import { box } from "svelte-toolbelt";
 
 interface Machine<S> {
 	[k: string]: { [k: string]: S };

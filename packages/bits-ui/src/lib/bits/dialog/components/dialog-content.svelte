@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box } from "runed";
+	import { box } from "svelte-toolbelt";
 	import { useDialogContent } from "../dialog.svelte.js";
 	import type { ContentProps } from "../index.js";
 	import DismissableLayer from "$lib/bits/utilities/dismissable-layer/dismissable-layer.svelte";

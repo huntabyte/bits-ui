@@ -1,5 +1,5 @@
 import { Map } from "svelte/reactivity";
-import { box } from "runed";
+import { box } from "svelte-toolbelt";
 import type { Fn } from "./types.js";
 import { isBrowser, isIOS } from "./is.js";
 import { addEventListener } from "./events.js";

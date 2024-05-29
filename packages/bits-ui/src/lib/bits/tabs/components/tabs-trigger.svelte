@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box } from "runed";
+	import { box } from "svelte-toolbelt";
 	import type { TriggerProps } from "../index.js";
 	import { useTabsTrigger } from "../tabs.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";

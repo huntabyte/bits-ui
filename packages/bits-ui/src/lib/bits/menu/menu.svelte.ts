@@ -1,5 +1,5 @@
-import { box } from "runed";
-import { tick, untrack } from "svelte";
+import { box } from "svelte-toolbelt";
+import { tick } from "svelte";
 import { focusFirst } from "../utilities/focus-scope/utils.js";
 import {
 	FIRST_LAST_KEYS,
@@ -418,12 +418,12 @@ class MenuItemSharedState {
 		});
 	};
 
-	#onpointerup = (e: PointerEvent) => {
-		if (!this.content.parentMenu.root.isUsingKeyboard.value && isHTMLElement(e.currentTarget)) {
-			e.currentTarget?.click();
-			e.preventDefault();
-		}
-	};
+	// #onpointerup = (e: PointerEvent) => {
+	// 	if (!this.content.parentMenu.root.isUsingKeyboard.value && isHTMLElement(e.currentTarget)) {
+	// 		e.currentTarget?.click();
+	// 		e.preventDefault();
+	// 	}
+	// };
 
 	props = $derived.by(
 		() =>
@@ -440,7 +440,6 @@ class MenuItemSharedState {
 				onpointerleave: this.#onpointerleave,
 				onfocus: this.#onfocus,
 				onblur: this.#onblur,
-				onpointerup: this.#onpointerup,
 			}) as const
 	);
 }
@@ -477,7 +476,7 @@ class MenuItemState {
 
 	#handleSelect = async () => {
 		if (this.#item.disabled.value) return;
-		const selectEvent = new CustomEvent("menuitem.select", { bubbles: true, cancelable: true });
+		const selectEvent = new CustomEvent("menuitemselect", { bubbles: true, cancelable: true });
 		this.#onSelect.value(selectEvent);
 		await tick();
 		if (selectEvent.defaultPrevented) {

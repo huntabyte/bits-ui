@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box } from "runed";
+	import { box } from "svelte-toolbelt";
 	import { useDialogTitle } from "../dialog.svelte.js";
 	import type { TitleProps } from "../index.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";

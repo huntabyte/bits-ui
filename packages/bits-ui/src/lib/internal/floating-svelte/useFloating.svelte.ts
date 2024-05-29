@@ -1,5 +1,5 @@
 import { computePosition } from "@floating-ui/dom";
-import { box } from "runed";
+import { box } from "svelte-toolbelt";
 import type { UseFloatingOptions, UseFloatingReturn } from "./types.js";
 import { get, getDPR, roundByDPR } from "./utils.js";
 

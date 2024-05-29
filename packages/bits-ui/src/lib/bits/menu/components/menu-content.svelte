@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box } from "runed";
+	import { box } from "svelte-toolbelt";
 	import type { ContentProps } from "../index.js";
 	import { useMenuContent } from "../menu.svelte.js";
 	import { useId } from "$lib/internal/useId.svelte.js";

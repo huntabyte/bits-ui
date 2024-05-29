@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box } from "runed";
+	import { box } from "svelte-toolbelt";
 	import { useSeparatorRoot } from "../separator.svelte.js";
 	import type { RootProps } from "../index.js";
 	import { styleToString } from "$lib/internal/style.js";
