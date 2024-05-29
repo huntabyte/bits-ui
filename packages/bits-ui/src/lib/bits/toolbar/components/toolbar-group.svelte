@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { type WritableBox, box } from "runed";
+	import { type WritableBox, box } from "svelte-toolbelt";
 	import type { GroupProps } from "../index.js";
 	import { useToolbarGroup } from "../toolbar.svelte.js";
 	import { useId } from "$lib/internal/useId.svelte.js";

@@ -1,4 +1,4 @@
-import type { WritableBox } from "runed";
+import type { WritableBox } from "svelte-toolbelt";
 import {
 	type Box,
 	type ReadableBoxedValues,

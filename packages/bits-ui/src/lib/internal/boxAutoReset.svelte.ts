@@ -1,4 +1,4 @@
-import { type WritableBox, box } from "runed";
+import { type WritableBox, box } from "svelte-toolbelt";
 
 /**
  * Creates a box which will be reset to the default value after some time.

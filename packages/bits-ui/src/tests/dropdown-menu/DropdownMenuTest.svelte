@@ -1,6 +1,6 @@
 <script lang="ts" context="module">
 	import { DropdownMenu } from "$lib/index.js";
-	export type DropdownMenuTestProps = DropdownMenu.Props & {
+	export type DropdownMenuTestProps = DropdownMenu.RootProps & {
 		checked?: boolean;
 		subChecked?: boolean;
 		radio?: string;
@@ -10,17 +10,20 @@
 </script>
 
 <script lang="ts">
-	export let checked = false;
-	export let subChecked = false;
-	export let radio = "";
-	export let subRadio = "";
-	export let open = false;
+	let {
+		checked = false,
+		subChecked = false,
+		radio = "",
+		subRadio = "",
+		open = false,
+		...restProps
+	}: DropdownMenuTestProps = $props();
 </script>
 
 <main>
 	<div data-testid="outside">outside</div>
 	<div data-testid="non-portal-container">
-		<DropdownMenu.Root bind:open {...$$restProps}>
+		<DropdownMenu.Root bind:open {...restProps}>
 			<DropdownMenu.Trigger data-testid="trigger">open</DropdownMenu.Trigger>
 			<DropdownMenu.Content data-testid="content">
 				<DropdownMenu.Separator data-testid="separator" />
@@ -43,10 +46,12 @@
 							bind:checked={subChecked}
 							data-testid="sub-checkbox-item"
 						>
-							<DropdownMenu.CheckboxIndicator data-testid="sub-checkbox-indicator">
-								checked
-							</DropdownMenu.CheckboxIndicator>
-							sub checkbox
+							{#snippet children({ checked })}
+								<span data-testid="sub-checkbox-indicator">
+									{checked}
+								</span>
+								sub checkbox
+							{/snippet}
 						</DropdownMenu.CheckboxItem>
 					</DropdownMenu.SubContent>
 				</DropdownMenu.Sub>
@@ -57,24 +62,26 @@
 					>disabled item 2</DropdownMenu.Item
 				>
 				<DropdownMenu.CheckboxItem bind:checked data-testid="checkbox-item">
-					<DropdownMenu.CheckboxIndicator data-testid="checkbox-indicator">
-						checked
-					</DropdownMenu.CheckboxIndicator>
-					Checkbox Item
+					{#snippet children({ checked })}
+						<span data-testid="checkbox-indicator">
+							{checked}
+						</span>
+						Checkbox Item
+					{/snippet}
 				</DropdownMenu.CheckboxItem>
 				<DropdownMenu.Item data-testid="item-2">item 2</DropdownMenu.Item>
 				<DropdownMenu.RadioGroup bind:value={radio} data-testid="radio-group">
 					<DropdownMenu.RadioItem value="1" data-testid="radio-item">
-						<DropdownMenu.RadioIndicator>
-							<span data-testid="radio-indicator-1"> checked </span>
-						</DropdownMenu.RadioIndicator>
-						<span>Radio Item 1</span>
+						{#snippet children({ checked })}
+							<span data-testid="radio-indicator-1"> {checked} </span>
+							<span>Radio Item 1</span>
+						{/snippet}
 					</DropdownMenu.RadioItem>
 					<DropdownMenu.RadioItem value="2" data-testid="radio-item-2">
-						<DropdownMenu.RadioIndicator>
-							<span data-testid="radio-indicator-2"> checked </span>
-						</DropdownMenu.RadioIndicator>
-						<span>Radio Item 2</span>
+						{#snippet children({ checked })}
+							<span data-testid="radio-indicator-2"> {checked} </span>
+							<span>Radio Item 2</span>
+						{/snippet}
 					</DropdownMenu.RadioItem>
 				</DropdownMenu.RadioGroup>
 			</DropdownMenu.Content>
@@ -82,16 +89,16 @@
 	</div>
 
 	<!-- Buttons to test binding -->
-	<button data-testid="binding" on:click={() => (open = !open)}>{open}</button>
-	<button data-testid="checked-binding" on:click={() => (checked = !checked)}>{checked}</button>
-	<button data-testid="sub-checked-binding" on:click={() => (subChecked = !subChecked)}
+	<button data-testid="binding" onclick={() => (open = !open)}>{open}</button>
+	<button data-testid="checked-binding" onclick={() => (checked = !checked)}>{checked}</button>
+	<button data-testid="sub-checked-binding" onclick={() => (subChecked = !subChecked)}
 		>{subChecked}</button
 	>
-	<button aria-label="radio-main" data-testid="radio-binding" on:click={() => (radio = "")}
+	<button aria-label="radio-main" data-testid="radio-binding" onclick={() => (radio = "")}
 		>{radio}</button
 	>
-	<button aria-label="radio-sub" data-testid="sub-radio-binding" on:click={() => (subRadio = "")}
+	<button aria-label="radio-sub" data-testid="sub-radio-binding" onclick={() => (subRadio = "")}
 		>{subRadio}</button
 	>
-	<div id="portal-target" data-testid="portal-target" />
+	<div id="portal-target" data-testid="portal-target"></div>
 </main>

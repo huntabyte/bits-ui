@@ -1,5 +1,7 @@
-import { type ReadableBox, box, useEventListener, watch } from "runed";
+import { type ReadableBox, box } from "svelte-toolbelt";
+import { useEventListener } from "runed";
 import { TOOLTIP_OPEN_EVENT } from "./utils.js";
+import { watch } from "$lib/internal/box.svelte.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { useTimeoutFn } from "$lib/internal/useTimeoutFn.svelte.js";
 import { useNodeById } from "$lib/internal/useNodeById.svelte.js";

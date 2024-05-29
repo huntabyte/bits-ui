@@ -1,5 +1,5 @@
 import { untrack } from "svelte";
-import type { ReadableBox } from "runed";
+import type { ReadableBox } from "svelte-toolbelt";
 import type {
 	DismissableLayerImplProps,
 	InteractOutsideBehaviorType,

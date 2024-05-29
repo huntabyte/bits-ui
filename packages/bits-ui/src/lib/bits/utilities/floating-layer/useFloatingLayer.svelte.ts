@@ -11,7 +11,7 @@ import {
 	shift,
 	size,
 } from "@floating-ui/dom";
-import { type ReadableBox, type WritableBox, box } from "runed";
+import { type ReadableBox, type WritableBox, box } from "svelte-toolbelt";
 import {
 	type Arrayable,
 	type Box,

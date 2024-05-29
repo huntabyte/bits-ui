@@ -1,4 +1,4 @@
-import { type ReadableBox, type WritableBox, box } from "runed";
+import { type ReadableBox, type WritableBox, box } from "svelte-toolbelt";
 import { afterTick, useStateMachine, watch } from "$lib/internal/index.js";
 
 export function usePresence(present: ReadableBox<boolean>, id: ReadableBox<string>) {

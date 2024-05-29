@@ -1,4 +1,4 @@
-import type { ReadableBox, WritableBox } from "runed";
+import type { ReadableBox, WritableBox } from "svelte-toolbelt";
 import { untrack } from "svelte";
 
 export type Box<T> = ReadableBox<T> | WritableBox<T>;

@@ -1,4 +1,4 @@
-import { type ReadableBox, type WritableBox, box } from "runed";
+import { type ReadableBox, type WritableBox, box } from "svelte-toolbelt";
 import { afterTick } from "./afterTick.js";
 
 /**

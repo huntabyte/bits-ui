@@ -1,5 +1,5 @@
 import { untrack } from "svelte";
-import type { ReadableBox } from "runed";
+import type { ReadableBox } from "svelte-toolbelt";
 import type { EscapeBehaviorType, EscapeLayerImplProps } from "./types.js";
 import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import { type EventCallback, addEventListener } from "$lib/internal/events.js";

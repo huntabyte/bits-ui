@@ -1,5 +1,5 @@
 import { untrack } from "svelte";
-import type { ReadableBox, WritableBox } from "runed";
+import type { ReadableBox, WritableBox } from "svelte-toolbelt";
 import type { TextSelectionLayerImplProps, TextSelectionLayerProps } from "./types.js";
 import {
 	type EventCallback,

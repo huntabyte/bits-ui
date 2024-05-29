@@ -1,7 +1,7 @@
 import type { Derivable, Middleware, Padding } from "@floating-ui/dom";
 import { arrow as arrowCore } from "@floating-ui/dom";
 import type { MiddlewareState } from "@floating-ui/core";
-import { type WritableBox, box } from "runed";
+import { type WritableBox, box } from "svelte-toolbelt";
 import { isElement } from "../is.js";
 
 export type ArrowOptions = {

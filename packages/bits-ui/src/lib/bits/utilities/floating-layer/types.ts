@@ -1,5 +1,5 @@
 import type { Snippet } from "svelte";
-import type { WritableBox } from "runed";
+import type { WritableBox } from "svelte-toolbelt";
 import type { Align, Boundary, Side } from "./useFloatingLayer.svelte.js";
 import type { Arrayable } from "$lib/internal/types.js";
 import type { Direction, StyleProperties } from "$lib/shared/index.js";

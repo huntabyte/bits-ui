@@ -6,7 +6,7 @@ import type {
 	ReferenceElement,
 	Strategy,
 } from "@floating-ui/dom";
-import type { ReadableBox, WritableBox } from "runed";
+import type { ReadableBox, WritableBox } from "svelte-toolbelt";
 
 type ValueOrGetValue<T> = T | (() => T);
 

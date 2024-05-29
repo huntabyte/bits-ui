@@ -1,4 +1,4 @@
-import type { ReadableBox } from "runed";
+import type { ReadableBox } from "svelte-toolbelt";
 import { boxAutoReset } from "./boxAutoReset.svelte.js";
 import { createEventHook } from "./createEventHook.svelte.js";
 import { isElement, isHTMLElement } from "./is.js";
