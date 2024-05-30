@@ -1,37 +1,24 @@
 <script lang="ts">
-	import { derived } from "svelte/store";
-	import { setSubMenuCtx } from "../ctx.js";
+	import { box } from "svelte-toolbelt";
 	import type { SubProps } from "../index.js";
+	import { useMenuSubmenu } from "../menu.svelte.js";
+	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 
-	type $$Props = SubProps;
+	let { open = $bindable(false), onOpenChange, children }: SubProps = $props();
 
-	export let disabled: $$Props["disabled"] = undefined;
-	export let open: $$Props["open"] = undefined;
-	export let onOpenChange: $$Props["onOpenChange"] = undefined;
-
-	const {
-		updateOption,
-		ids,
-		states: { subOpen },
-	} = setSubMenuCtx({
-		disabled,
-		onOpenChange: ({ next }) => {
-			if (open !== next) {
-				onOpenChange?.(next);
-				open = next;
+	useMenuSubmenu({
+		open: box.with(
+			() => open,
+			(v) => {
+				if (v !== open) {
+					open = v;
+					onOpenChange?.(v);
+				}
 			}
-			return next;
-		},
+		),
 	});
-
-	const idValues = derived([ids.menu, ids.trigger], ([$menuId, $triggerId]) => ({
-		menu: $menuId,
-		trigger: $triggerId,
-	}));
-
-	$: open !== undefined && subOpen.set(open);
-
-	$: updateOption("disabled", disabled);
 </script>
 
-<slot subIds={$idValues} />
+<FloatingLayer.Root>
+	{@render children?.()}
+</FloatingLayer.Root>

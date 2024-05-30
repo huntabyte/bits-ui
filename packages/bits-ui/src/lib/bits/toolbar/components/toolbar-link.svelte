@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box } from "runed";
+	import { box } from "svelte-toolbelt";
 	import { useToolbarLink } from "../toolbar.svelte.js";
 	import type { LinkProps } from "../index.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";

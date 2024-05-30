@@ -1,4 +1,4 @@
-import type { ReadableBox, WritableBox } from "runed";
+import type { ReadableBox, WritableBox } from "svelte-toolbelt";
 import { getElemDirection } from "./locale.js";
 import { getDirectionalKeys } from "./getDirectionalKeys.js";
 import { kbd } from "./kbd.js";
@@ -45,6 +45,13 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 		);
 	}
 
+	function focusFirstCandidate() {
+		const items = getCandidateNodes();
+		if (items.length) {
+			items[0]?.focus();
+		}
+	}
+
 	function handleKeydown(node: HTMLElement | null, e: KeyboardEvent) {
 		const rootNode = props.rootNode.value;
 		if (!rootNode || !node) return;
@@ -80,6 +87,7 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 		itemToFocus.focus();
 		currentTabStopId = itemToFocus.id;
 		props.onCandidateFocus?.(itemToFocus);
+		return itemToFocus;
 	}
 
 	function getTabIndex(node: HTMLElement | null) {
@@ -110,5 +118,6 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 		},
 		getTabIndex,
 		handleKeydown,
+		focusFirstCandidate,
 	};
 }

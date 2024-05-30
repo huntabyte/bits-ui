@@ -1,7 +1,7 @@
-import type { ReadableBox } from "runed";
+import type { ReadableBox } from "svelte-toolbelt";
 import { boxAutoReset } from "./boxAutoReset.svelte.js";
 import { createEventHook } from "./createEventHook.svelte.js";
-import { isElementOrSVGElement, isHTMLElement } from "./is.js";
+import { isElement, isHTMLElement } from "./is.js";
 import { executeCallbacks } from "./callbacks.js";
 import { addEventListener } from "./events.js";
 import type { Side } from "$lib/bits/utilities/floating-layer/useFloatingLayer.svelte.js";
@@ -55,7 +55,7 @@ export function useGraceArea(triggerId: ReadableBox<string>, contentId: Readable
 		function handleTrackPointerGrace(e: PointerEvent) {
 			if (!pointerGraceArea) return;
 			const target = e.target;
-			if (!isElementOrSVGElement(target)) return;
+			if (!isElement(target)) return;
 			const pointerPosition = { x: e.clientX, y: e.clientY };
 			const hasEnteredTarget = triggerNode?.contains(target) || contentNode?.contains(target);
 			const isPointerOutsideGraceArea = !isPointInPolygon(pointerPosition, pointerGraceArea);

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box } from "runed";
+	import { box } from "svelte-toolbelt";
 	import type { TriggerProps } from "../index.js";
 	import { usePopoverTrigger } from "../popover.svelte.js";
 	import { mergeProps, useId } from "$lib/internal/index.js";

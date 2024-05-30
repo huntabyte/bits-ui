@@ -1,13 +1,11 @@
-import { type ReadableBox, box, useEventListener } from "runed";
+import { type ReadableBox, box } from "svelte-toolbelt";
+import { useEventListener } from "runed";
 import { TOOLTIP_OPEN_EVENT } from "./utils.js";
-import {
-	type ReadableBoxedValues,
-	type WritableBoxedValues,
-	watch,
-} from "$lib/internal/box.svelte.js";
+import { watch } from "$lib/internal/box.svelte.js";
+import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { useTimeoutFn } from "$lib/internal/useTimeoutFn.svelte.js";
 import { useNodeById } from "$lib/internal/useNodeById.svelte.js";
-import { isElementOrSVGElement } from "$lib/internal/is.js";
+import { isElement } from "$lib/internal/is.js";
 import { useGraceArea } from "$lib/internal/useGraceArea.svelte.js";
 import { createContext } from "$lib/internal/createContext.js";
 import { getDataDisabled } from "$lib/internal/attrs.js";
@@ -309,7 +307,7 @@ class TooltipContentState {
 		$effect(() => {
 			useEventListener(window, "scroll", (e) => {
 				const target = e.target;
-				if (!isElementOrSVGElement(target)) return;
+				if (!isElement(target)) return;
 				if (target.contains(this.root.triggerNode.value)) {
 					this.root.handleClose();
 				}

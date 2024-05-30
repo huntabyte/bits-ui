@@ -6,12 +6,13 @@ import type {
 	ReferenceElement,
 	Strategy,
 } from "@floating-ui/dom";
-import type { VirtualElement } from "@floating-ui/core";
-import type { WritableBox } from "runed";
+import type { ReadableBox, WritableBox } from "svelte-toolbelt";
 
 type ValueOrGetValue<T> = T | (() => T);
 
-export type ReferenceType = Element | VirtualElement;
+export type Measurable = {
+	getBoundingClientRect: () => DOMRect;
+};
 
 export type UseFloatingOptions = {
 	/**
@@ -45,7 +46,7 @@ export type UseFloatingOptions = {
 	/**
 	 * Reference / Anchor element to position the floating element relative to
 	 */
-	reference: WritableBox<HTMLElement | null>;
+	reference: ReadableBox<Measurable | HTMLElement | null>;
 
 	/**
 	 * Callback to handle mounting/unmounting of the elements.
@@ -60,29 +61,35 @@ export type UseFloatingOptions = {
 
 export type UseFloatingReturn = {
 	/**
-	 * The action used to obtain the reference element.
+	 * The reference element to position the floating element relative to.
 	 */
-	reference: WritableBox<HTMLElement | null>;
+	reference: ReadableBox<Measurable | HTMLElement | null>;
+
 	/**
-	 * The action used to obtain the floating element.
+	 * The floating element to position.
 	 */
 	floating: WritableBox<HTMLElement | null>;
+
 	/**
 	 * The stateful placement, which can be different from the initial `placement` passed as options.
 	 */
 	placement: Readonly<Placement>;
+
 	/**
 	 * The type of CSS position property to use.
 	 */
 	strategy: Readonly<Strategy>;
+
 	/**
 	 * Additional data from middleware.
 	 */
 	middlewareData: Readonly<MiddlewareData>;
+
 	/**
 	 * The boolean that let you know if the floating element has been positioned.
 	 */
 	isPositioned: Readonly<boolean>;
+
 	/**
 	 * CSS styles to apply to the floating element to position it.
 	 */
@@ -93,6 +100,7 @@ export type UseFloatingReturn = {
 		transform?: string;
 		willChange?: string;
 	}>;
+
 	/**
 	 * The function to update floating position manually.
 	 */

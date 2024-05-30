@@ -8,7 +8,7 @@
 	export let schemas: APISchema[] = [];
 
 	// eslint-disable-next-line no-unused-expressions, svelte/valid-compile
-	$page
+	$page;
 </script>
 
 <H2>API Reference</H2>

@@ -55,7 +55,7 @@
 									>
 										<div
 											class="absolute top-[5px] hidden size-1 rounded-full bg-foreground group-data-[today]:block group-data-[selected]:bg-background"
-										/>
+										></div>
 										{date.day}
 									</RangeCalendar.Day>
 								</RangeCalendar.Cell>

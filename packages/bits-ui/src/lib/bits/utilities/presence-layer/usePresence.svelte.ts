@@ -1,7 +1,5 @@
-import { onDestroy } from "svelte";
-import { type ReadableBox, type WritableBox, box } from "runed";
-import { watch } from "$lib/internal/box.svelte.js";
-import { afterTick, useStateMachine } from "$lib/internal/index.js";
+import { type ReadableBox, type WritableBox, box } from "svelte-toolbelt";
+import { afterTick, useStateMachine, watch } from "$lib/internal/index.js";
 
 export function usePresence(present: ReadableBox<boolean>, id: ReadableBox<string>) {
 	const styles = box({}) as unknown as WritableBox<CSSStyleDeclaration>;
@@ -32,7 +30,7 @@ export function usePresence(present: ReadableBox<boolean>, id: ReadableBox<strin
 		},
 	});
 
-	watch(present, async (currPresent, prevPresent) => {
+	watch(present, (currPresent, prevPresent) => {
 		if (!node) {
 			node = document.getElementById(id.value);
 		}
@@ -95,7 +93,8 @@ export function usePresence(present: ReadableBox<boolean>, id: ReadableBox<strin
 			prevAnimationNameState.value = getAnimationName(node);
 		}
 	}
-	const stateWatcher = watch(state, () => {
+
+	watch(state, () => {
 		if (!node) {
 			node = document.getElementById(id.value);
 		}
@@ -118,10 +117,6 @@ export function usePresence(present: ReadableBox<boolean>, id: ReadableBox<strin
 			node.removeEventListener("animationcancel", handleAnimationEnd);
 			node.removeEventListener("animationend", handleAnimationEnd);
 		};
-	});
-
-	onDestroy(() => {
-		stateWatcher();
 	});
 
 	const isPresentDerived = $derived(["mounted", "unmountSuspended"].includes(state.value));

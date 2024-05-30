@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box } from "runed";
+	import { box } from "svelte-toolbelt";
 	import type { RootProps } from "../index.js";
 	import { useRadioGroupRoot } from "../radio-group.svelte.js";
 	import RadioGroupInput from "./radio-group-input.svelte";

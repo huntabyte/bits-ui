@@ -31,7 +31,7 @@
 	<slot {builder} />
 {:else}
 	<svelte:element
-		this={"a"}
+		this="a"
 		bind:this={el}
 		use:melt={builder}
 		{...$$restProps}

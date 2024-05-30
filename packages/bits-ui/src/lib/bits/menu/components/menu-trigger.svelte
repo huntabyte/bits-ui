@@ -1,43 +1,35 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { getCtx } from "../ctx.js";
-	import type { DropdownTriggerEvents, DropdownTriggerProps } from "../index.js";
-	import { createDispatcher } from "$lib/internal/events.js";
+	import { box } from "svelte-toolbelt";
+	import type { TriggerProps } from "../index.js";
+	import { useMenuDropdownTrigger } from "../menu.svelte.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 
-	type $$Props = DropdownTriggerProps;
-	type $$Events = DropdownTriggerEvents;
+	let {
+		id = useId(),
+		el = $bindable(),
+		asChild,
+		child,
+		children,
+		disabled = false,
+		...restProps
+	}: TriggerProps = $props();
 
-	export let asChild: $$Props["asChild"] = false;
-	export let id: $$Props["id"] = undefined;
-	export let el: $$Props["el"] = undefined;
+	const state = useMenuDropdownTrigger({
+		id: box.with(() => id),
+		disabled: box.with(() => disabled),
+	});
 
-	const {
-		elements: { trigger },
-		ids,
-		getAttrs,
-	} = getCtx();
-
-	const dispatch = createDispatcher();
-	const attrs = getAttrs("trigger");
-
-	$: if (id) {
-		ids.trigger.set(id);
-	}
-	$: builder = $trigger;
-	$: Object.assign(builder, attrs);
+	const mergedProps = $derived(mergeProps(restProps, state.props));
 </script>
 
-{#if asChild}
-	<slot {builder} />
-{:else}
-	<button
-		bind:this={el}
-		use:melt={builder}
-		type="button"
-		{...$$restProps}
-		on:m-keydown={dispatch}
-		on:m-pointerdown={dispatch}
-	>
-		<slot {builder} />
-	</button>
-{/if}
+<FloatingLayer.Anchor {id}>
+	{#if asChild}
+		{@render child?.({ props: mergedProps })}
+	{:else}
+		<button {...mergedProps} bind:this={el}>
+			{@render children?.()}
+		</button>
+	{/if}
+</FloatingLayer.Anchor>

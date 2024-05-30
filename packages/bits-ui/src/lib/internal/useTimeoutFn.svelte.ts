@@ -1,4 +1,4 @@
-import { box } from "runed";
+import { box } from "svelte-toolbelt";
 import { onDestroy } from "svelte";
 import type { Box } from "./box.svelte.js";
 import type { AnyFn, Fn } from "./types.js";

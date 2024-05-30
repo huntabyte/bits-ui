@@ -139,34 +139,38 @@ export function useFocusScope({
 
 	$effect(() => {
 		let container = untrack(() => node.value);
-		if (!container) {
-			container = document.getElementById(untrack(() => id.value));
-		}
-		if (!container) return;
-		untrack(() => focusScopeStack.add(focusScope));
 		const previouslyFocusedElement = document.activeElement as HTMLElement | null;
-		const hasFocusedCandidate = container.contains(previouslyFocusedElement);
-
-		if (!hasFocusedCandidate) {
-			const mountEvent = new CustomEvent(AUTOFOCUS_ON_MOUNT, EVENT_OPTIONS);
-			container.addEventListener(
-				AUTOFOCUS_ON_MOUNT,
-				untrack(() => onMountAutoFocus.value)
-			);
-			container.dispatchEvent(mountEvent);
-
-			if (!mountEvent.defaultPrevented) {
-				afterTick(() => {
-					focusFirst(removeLinks(getTabbableCandidates(container)), { select: true });
-
-					if (document.activeElement === previouslyFocusedElement) {
-						focus(container);
-					}
-				});
+		untrack(() => {
+			if (!container) {
+				container = document.getElementById(untrack(() => id.value));
 			}
-		}
+			if (!container) return;
+			untrack(() => focusScopeStack.add(focusScope));
+			const hasFocusedCandidate = container.contains(previouslyFocusedElement);
+
+			if (!hasFocusedCandidate) {
+				const mountEvent = new CustomEvent(AUTOFOCUS_ON_MOUNT, EVENT_OPTIONS);
+				container.addEventListener(
+					AUTOFOCUS_ON_MOUNT,
+					untrack(() => onMountAutoFocus.value)
+				);
+				container.dispatchEvent(mountEvent);
+
+				if (!mountEvent.defaultPrevented) {
+					afterTick(() => {
+						if (!container) return;
+						focusFirst(removeLinks(getTabbableCandidates(container)), { select: true });
+
+						if (document.activeElement === previouslyFocusedElement) {
+							focus(container);
+						}
+					});
+				}
+			}
+		});
 
 		return () => {
+			if (!container) return;
 			container.removeEventListener(
 				AUTOFOCUS_ON_MOUNT,
 				untrack(() => onMountAutoFocus.value)
@@ -180,11 +184,11 @@ export function useFocusScope({
 			container.dispatchEvent(destroyEvent);
 
 			setTimeout(() => {
-				if (!destroyEvent.defaultPrevented) {
+				if (!destroyEvent.defaultPrevented && previouslyFocusedElement) {
 					focus(previouslyFocusedElement ?? document.body, { select: true });
 				}
 
-				container.removeEventListener(AUTOFOCUS_ON_DESTROY, onDestroyAutoFocus.value);
+				container?.removeEventListener(AUTOFOCUS_ON_DESTROY, onDestroyAutoFocus.value);
 
 				focusScopeStack.remove(focusScope);
 			}, 0);

@@ -38,7 +38,7 @@
 					<div class="relative mr-2">
 						<span class="sr-only">Width</span>
 						<span
-							aria-hidden
+							aria-hidden="true"
 							class="absolute left-5 top-4 text-xxs text-muted-foreground">W</span
 						>
 						<input
@@ -50,7 +50,7 @@
 					<div class="relative">
 						<span class="sr-only">Height</span>
 						<span
-							aria-hidden
+							aria-hidden="true"
 							class="absolute left-5 top-4 text-xxs text-muted-foreground">H</span
 						>
 						<input

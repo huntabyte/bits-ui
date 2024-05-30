@@ -1,5 +1,5 @@
 import { untrack } from "svelte";
-import type { ReadableBox, WritableBox } from "runed";
+import type { ReadableBox, WritableBox } from "svelte-toolbelt";
 import type { AvatarImageLoadingStatus } from "./types.js";
 import { createContext } from "$lib/internal/createContext.js";
 import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box } from "runed";
+	import { box } from "svelte-toolbelt";
 	import { useDialogDescription } from "../dialog.svelte.js";
 	import type { DescriptionProps } from "../index.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";

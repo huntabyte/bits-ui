@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box } from "runed";
+	import { box } from "svelte-toolbelt";
 	import { useFloatingContentState } from "../useFloatingLayer.svelte.js";
 	import type { ContentImplProps } from "./index.js";
 	import { mergeProps, useId } from "$lib/internal/index.js";
@@ -11,7 +11,7 @@
 		sideOffset = 0,
 		align = "center",
 		alignOffset = 0,
-		id = useId(),
+		id,
 		arrowPadding = 0,
 		avoidCollisions = true,
 		collisionBoundary = [],

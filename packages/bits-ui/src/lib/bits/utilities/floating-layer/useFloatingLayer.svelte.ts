@@ -11,7 +11,7 @@ import {
 	shift,
 	size,
 } from "@floating-ui/dom";
-import { type ReadableBox, type WritableBox, box } from "runed";
+import { type ReadableBox, type WritableBox, box } from "svelte-toolbelt";
 import {
 	type Arrayable,
 	type Box,
@@ -21,7 +21,7 @@ import {
 } from "$lib/internal/index.js";
 import { useSize } from "$lib/internal/useSize.svelte.js";
 import { useFloating } from "$lib/internal/floating-svelte/useFloating.svelte.js";
-import type { UseFloatingReturn } from "$lib/internal/floating-svelte/types.js";
+import type { Measurable, UseFloatingReturn } from "$lib/internal/floating-svelte/types.js";
 import type { Direction, StyleProperties } from "$lib/shared/index.js";
 import { createContext } from "$lib/internal/createContext.js";
 
@@ -41,7 +41,7 @@ export type Align = (typeof ALIGN_OPTIONS)[number];
 export type Boundary = Element | null;
 
 class FloatingRootState {
-	anchorNode = undefined as unknown as WritableBox<HTMLElement | null>;
+	anchorNode = undefined as unknown as ReadableBox<Measurable | HTMLElement | null>;
 
 	createAnchor(props: FloatingAnchorStateProps) {
 		return new FloatingAnchorState(props, this);
@@ -309,11 +309,16 @@ class FloatingArrowState {
 
 type FloatingAnchorStateProps = ReadableBoxedValues<{
 	id: string;
+	virtualEl?: Measurable;
 }>;
 
 class FloatingAnchorState {
 	constructor(props: FloatingAnchorStateProps, root: FloatingRootState) {
-		root.anchorNode = useNodeById(props.id);
+		if (props.virtualEl && props.virtualEl.value) {
+			root.anchorNode = box.from(props.virtualEl.value);
+		} else {
+			root.anchorNode = useNodeById(props.id);
+		}
 	}
 }
 

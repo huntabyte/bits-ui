@@ -20,7 +20,8 @@ export type PopperLayerProps = EscapeLayerProps &
 	FloatingLayerContentProps &
 	PresenceLayerProps &
 	TextSelectionLayerProps &
-	FocusScopeProps;
+	FocusScopeProps &
+	EscapeLayerProps;
 
 export type PopperLayerImplProps = EscapeLayerImplProps &
 	DismissableLayerImplProps &

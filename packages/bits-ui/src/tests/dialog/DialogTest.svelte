@@ -1,20 +1,30 @@
-<script lang="ts">
+<script lang="ts" context="module">
 	import { Dialog } from "$lib/index.js";
+	export type DialogTestProps = Dialog.RootProps & {
+		contentProps?: Omit<Dialog.ContentProps, "asChild" | "child" | "children">;
+		portalProps?: Dialog.PortalProps;
+	};
+</script>
 
-	type $$Props = Dialog.Props;
-
-	export let open: Dialog.Props["open"] = false;
+<script lang="ts">
+	let {
+		open = false,
+		contentProps = {},
+		portalProps = {},
+		...restProps
+	}: DialogTestProps = $props();
 </script>
 
 <main>
-	<Dialog.Root bind:open {...$$restProps}>
+	<Dialog.Root bind:open {...restProps}>
 		<Dialog.Trigger data-testid="trigger">open</Dialog.Trigger>
-		<Dialog.Portal data-testid="portal">
+		<Dialog.Portal {...portalProps}>
 			<Dialog.Overlay
 				data-testid="overlay"
 				class="fixed inset-0 h-[100vh] w-[100vw] bg-black"
 			/>
 			<Dialog.Content
+				{...contentProps}
 				data-testid="content"
 				class="tranlate-x-[50%] fixed left-[50%] top-[50%] translate-y-[50%] bg-white p-1"
 			>
@@ -25,6 +35,6 @@
 		</Dialog.Portal>
 	</Dialog.Root>
 	<p data-testid="binding">{open}</p>
-	<button data-testid="toggle" on:click={() => (open = !open)}>toggle</button>
-	<div id="portalTarget" data-testid="portalTarget" />
+	<button data-testid="toggle" onclick={() => (open = !open)}>toggle</button>
+	<div id="portalTarget" data-testid="portalTarget"></div>
 </main>

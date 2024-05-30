@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box } from "runed";
+	import { box } from "svelte-toolbelt";
 	import type { ProviderProps } from "../index.js";
 	import { useTooltipProvider } from "../tooltip.svelte.js";
 

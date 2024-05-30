@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { box } from "runed";
+	import { box } from "svelte-toolbelt";
 	import { useFloatingAnchorState } from "../useFloatingLayer.svelte.js";
 	import type { AnchorProps } from "./index.js";
 
-	let { id, children }: AnchorProps = $props();
+	let { id, children, virtualEl }: AnchorProps = $props();
 
-	useFloatingAnchorState({ id: box.with(() => id) });
+	useFloatingAnchorState({ id: box.with(() => id), virtualEl: box.with(() => virtualEl) });
 </script>
 
 {@render children?.()}

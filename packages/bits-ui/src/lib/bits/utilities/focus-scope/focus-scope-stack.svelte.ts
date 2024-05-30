@@ -1,4 +1,4 @@
-import { box } from "runed";
+import { box } from "svelte-toolbelt";
 
 export type FocusScopeAPI = {
 	paused: boolean;

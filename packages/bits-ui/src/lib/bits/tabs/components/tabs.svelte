@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box } from "runed";
+	import { box } from "svelte-toolbelt";
 	import type { RootProps } from "../index.js";
 	import { useTabsRoot } from "../tabs.svelte.js";
 	import { useId } from "$lib/internal/useId.svelte.js";

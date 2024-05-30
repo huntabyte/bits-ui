@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box } from "runed";
+	import { box } from "svelte-toolbelt";
 	import { useDialogOverlay } from "../dialog.svelte.js";
 	import type { OverlayProps } from "../index.js";
 	import { useId } from "$lib/internal/useId.svelte.js";

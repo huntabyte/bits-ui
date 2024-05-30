@@ -1,7 +1,7 @@
 <script lang="ts">
-	import PopoverDemo from "$lib/components/demos/popover-demo.svelte";
+	import DropdownMenuDemo from "$lib/components/demos/dropdown-menu-demo.svelte";
 </script>
 
 <div class="flex items-center justify-center">
-	<PopoverDemo />
+	<DropdownMenuDemo />
 </div>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box } from "runed";
+	import { box } from "svelte-toolbelt";
 	import type { AccordionHeaderProps } from "../types.js";
 	import { useAccordionHeader } from "../accordion.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";

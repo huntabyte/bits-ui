@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box } from "runed";
+	import { box } from "svelte-toolbelt";
 	import type { RootProps } from "../index.js";
 	import { usePaginationRoot } from "../pagination.svelte.js";
 	import { styleToString, useId } from "$lib/internal/index.js";

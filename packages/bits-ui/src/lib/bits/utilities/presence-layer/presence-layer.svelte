@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box } from "runed";
+	import { box } from "svelte-toolbelt";
 	import type { PresenceLayerImplProps } from "./types.js";
 	import { usePresence } from "$lib/bits/utilities/presence-layer/usePresence.svelte.js";
 

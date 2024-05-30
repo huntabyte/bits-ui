@@ -1,13 +1,12 @@
 import { Map } from "svelte/reactivity";
-import { onDestroy, untrack } from "svelte";
-import { box } from "runed";
+import { box } from "svelte-toolbelt";
 import type { Fn } from "./types.js";
 import { isBrowser, isIOS } from "./is.js";
-import { watch } from "./box.svelte.js";
 import { addEventListener } from "./events.js";
 import { afterTick } from "./afterTick.js";
 import { useId } from "./useId.svelte.js";
 import { createSharedHook } from "./createSharedHook.svelte.js";
+import { watch } from "$lib/internal/box.svelte.js";
 
 export type ScrollBodyOption = {
 	padding?: boolean | number;
@@ -50,13 +49,11 @@ const useBodyLockStackCount = createSharedHook(() => {
 				return;
 			}
 
-			untrack(() => {
-				const bodyStyle = getComputedStyle(document.body);
-				initialBodyStyle.overflow = bodyStyle.overflow;
-				initialBodyStyle.paddingRight = bodyStyle.paddingRight;
-				initialBodyStyle.marginRight = bodyStyle.marginRight;
-				initialBodyStyle.pointerEvents = bodyStyle.pointerEvents;
-			});
+			const bodyStyle = getComputedStyle(document.body);
+			initialBodyStyle.overflow = bodyStyle.overflow;
+			initialBodyStyle.paddingRight = bodyStyle.paddingRight;
+			initialBodyStyle.marginRight = bodyStyle.marginRight;
+			initialBodyStyle.pointerEvents = bodyStyle.pointerEvents;
 
 			// TODO: account for RTL direction, etc.
 			const verticalScrollbarWidth = window.innerWidth - document.documentElement.clientWidth;

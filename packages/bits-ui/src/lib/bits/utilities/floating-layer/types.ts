@@ -1,7 +1,9 @@
 import type { Snippet } from "svelte";
+import type { WritableBox } from "svelte-toolbelt";
 import type { Align, Boundary, Side } from "./useFloatingLayer.svelte.js";
 import type { Arrayable } from "$lib/internal/types.js";
 import type { Direction, StyleProperties } from "$lib/shared/index.js";
+import type { Measurable } from "$lib/internal/floating-svelte/types.js";
 
 export type FloatingLayerContentProps = {
 	/**
@@ -120,4 +122,5 @@ export type FloatingLayerContentImplProps = {
 export type FloatingLayerAnchorProps = {
 	id: string;
 	children?: Snippet;
+	virtualEl?: Measurable;
 };

@@ -1,56 +1,34 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { getSubTrigger } from "../ctx.js";
-	import type { SubTriggerEvents, SubTriggerProps } from "../index.js";
-	import { disabledAttrs } from "$lib/internal/index.js";
-	import { createDispatcher } from "$lib/internal/events.js";
+	import { box } from "svelte-toolbelt";
+	import type { ItemProps } from "../index.js";
+	import { useMenuSubTrigger } from "../menu.svelte.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
+	let {
+		id = useId(),
+		disabled = false,
+		el = $bindable(),
+		asChild,
+		children,
+		child,
+		...restProps
+	}: ItemProps = $props();
 
-	type $$Props = SubTriggerProps & {
-		disabled?: boolean;
-	};
-	type $$Events = SubTriggerEvents;
-	export let disabled: $$Props["disabled"] = false;
-	export let asChild: $$Props["asChild"] = false;
-	export let id: $$Props["id"] = undefined;
-	export let el: $$Props["el"] = undefined;
+	const state = useMenuSubTrigger({
+		disabled: box.with(() => disabled),
+		id: box.with(() => id),
+	});
 
-	const {
-		elements: { subTrigger },
-		ids,
-		getAttrs,
-		options,
-	} = getSubTrigger();
-	const { disabled: disabledStore } = options;
-
-	const dispatch = createDispatcher();
-
-	$: if (id) {
-		ids.trigger.set(id);
-	}
-
-	$: builder = $subTrigger;
-	$: attrs = {
-		...getAttrs("sub-trigger"),
-		...disabledAttrs(disabled || $disabledStore),
-	};
-	$: Object.assign(builder, attrs);
+	const mergedProps = $derived(mergeProps(restProps, state.props));
 </script>
 
-{#if asChild}
-	<slot {builder} />
-{:else}
-	<div
-		bind:this={el}
-		use:melt={builder}
-		{...$$restProps}
-		on:m-click={dispatch}
-		on:m-focusin={dispatch}
-		on:m-focusout={dispatch}
-		on:m-keydown={dispatch}
-		on:m-pointerleave={dispatch}
-		on:m-pointermove={dispatch}
-		on:pointerenter
-	>
-		<slot {builder} />
-	</div>
-{/if}
+<FloatingLayer.Anchor {id}>
+	{#if asChild}
+		{@render child?.({ props: mergedProps })}
+	{:else}
+		<div {...mergedProps} bind:this={el}>
+			{@render children?.()}
+		</div>
+	{/if}
+</FloatingLayer.Anchor>

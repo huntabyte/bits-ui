@@ -1,5 +1,5 @@
 import { createEventDispatcher } from "svelte";
-import type { ReadableBox } from "runed";
+import type { ReadableBox } from "svelte-toolbelt";
 import type { Arrayable } from "$lib/internal/index.js";
 
 type MeltEvent<T extends Event = Event> = {

@@ -1,4 +1,4 @@
-import { box } from "runed";
+import { box } from "svelte-toolbelt";
 import type { Page, PageItem } from "./types.js";
 import {
 	type ReadableBoxedValues,

@@ -1,10 +1,15 @@
+import type { ReadableBox, WritableBox } from "svelte-toolbelt";
 import { untrack } from "svelte";
-import type { ReadableBox, WritableBox } from "runed";
 
 export type Box<T> = ReadableBox<T> | WritableBox<T>;
 
-export type Setter<T> = (value: T) => void;
-export type Getter<T> = () => T;
+export type WritableBoxedValues<T> = {
+	[K in keyof T]: WritableBox<T[K]>;
+};
+
+export type ReadableBoxedValues<T> = {
+	[K in keyof T]: ReadableBox<T[K]>;
+};
 
 type WatcherCallback<T> = (
 	curr: T,
@@ -53,11 +58,3 @@ export function watch<T>(box: Box<T>, callback: WatcherCallback<T>, options: Wat
 	});
 	return watchEffect;
 }
-
-export type WritableBoxedValues<T> = {
-	[K in keyof T]: WritableBox<T[K]>;
-};
-
-export type ReadableBoxedValues<T> = {
-	[K in keyof T]: ReadableBox<T[K]>;
-};

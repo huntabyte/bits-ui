@@ -21,7 +21,7 @@ export type EscapeLayerProps = {
 	 *
 	 * @defaultValue `close`
 	 */
-	behaviorType?: EscapeBehaviorType;
+	escapeKeydownBehavior?: EscapeBehaviorType;
 };
 
 // internal props not exposed to the user but used in the implementation

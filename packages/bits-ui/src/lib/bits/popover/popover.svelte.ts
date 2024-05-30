@@ -1,4 +1,4 @@
-import { box } from "runed";
+import { box } from "svelte-toolbelt";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { useNodeById } from "$lib/internal/useNodeById.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";

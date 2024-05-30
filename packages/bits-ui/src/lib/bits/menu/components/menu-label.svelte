@@ -1,24 +1,18 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { getGroupLabel } from "../ctx.js";
 	import type { LabelProps } from "../index.js";
+	import { useMenuLabel } from "../menu.svelte.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
 
-	type $$Props = LabelProps;
+	let { asChild, children, child, el = $bindable(), ...restProps }: LabelProps = $props();
 
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
-
-	const { groupLabel, id, getAttrs } = getGroupLabel();
-	const attrs = getAttrs("label");
-
-	$: builder = $groupLabel(id);
-	$: Object.assign(builder, attrs);
+	const state = useMenuLabel();
+	const mergedProps = $derived(mergeProps(restProps, state.props));
 </script>
 
 {#if asChild}
-	<slot {builder} />
+	{@render child?.({ props: mergedProps })}
 {:else}
-	<div bind:this={el} use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+	<div {...mergedProps} bind:this={el}>
+		{@render children?.()}
 	</div>
 {/if}

@@ -1,4 +1,4 @@
-import { type WritableBox, box } from "runed";
+import { type WritableBox, box } from "svelte-toolbelt";
 import {
 	getAriaChecked,
 	getAriaPressed,
