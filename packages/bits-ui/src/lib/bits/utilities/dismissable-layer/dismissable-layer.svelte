@@ -14,6 +14,8 @@
 		present,
 	}: DismissableLayerImplProps = $props();
 
+	$inspect(onInteractOutsideStart);
+
 	const state = useDismissableLayer({
 		id: box.with(() => id),
 		interactOutsideBehavior: box.with(() => interactOutsideBehavior),
