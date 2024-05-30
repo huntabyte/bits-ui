@@ -9,6 +9,7 @@ import type {
 	Without,
 } from "$lib/internal/types.js";
 import type { Direction } from "$lib/shared/index.js";
+import type { PortalProps } from "$lib/bits/utilities/portal/types.js";
 
 export type MenuRootPropsWithoutHTML = {
 	/**
@@ -161,3 +162,6 @@ export type MenuRadioItemPropsWithoutHTML = Omit<MenuItemPropsWithoutHTML, "chil
 
 export type MenuRadioItemProps = MenuRadioItemPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, MenuRadioItemPropsWithoutHTML>;
+
+export type MenuPortalPropsWithoutHTML = PortalProps;
+export type MenuPortalProps = MenuPortalPropsWithoutHTML;

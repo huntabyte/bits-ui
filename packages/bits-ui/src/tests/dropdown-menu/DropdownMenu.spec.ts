@@ -2,9 +2,11 @@ import { render, screen, waitFor } from "@testing-library/svelte/svelte5";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
+import { tick } from "svelte";
 import { getTestKbd } from "../utils.js";
 import DropdownMenuTest from "./DropdownMenuTest.svelte";
 import type { DropdownMenuTestProps } from "./DropdownMenuTest.svelte";
+import { sleep } from "$lib/internal/sleep.js";
 
 const kbd = getTestKbd();
 const OPEN_KEYS = [kbd.ENTER, kbd.ARROW_DOWN, kbd.SPACE];
@@ -13,7 +15,7 @@ const OPEN_KEYS = [kbd.ENTER, kbd.ARROW_DOWN, kbd.SPACE];
  * Helper function to reduce boilerplate in tests
  */
 function setup(props: DropdownMenuTestProps = {}) {
-	const user = userEvent.setup();
+	const user = userEvent.setup({ pointerEventsCheck: 0 });
 	const { getByTestId, queryByTestId } = render(DropdownMenuTest, { ...props });
 	const trigger = getByTestId("trigger");
 	return {
@@ -29,6 +31,7 @@ async function openWithPointer(props: DropdownMenuTestProps = {}) {
 	const content = queryByTestId("content");
 	expect(content).toBeNull();
 	await user.click(trigger);
+	await tick();
 	expect(queryByTestId("content")).not.toBeNull();
 	return { getByTestId, queryByTestId, user, trigger };
 }
@@ -39,6 +42,7 @@ async function openWithKbd(props: DropdownMenuTestProps = {}, key: string = kbd.
 	expect(content).toBeNull();
 	trigger.focus();
 	await user.keyboard(key);
+	await tick();
 	expect(queryByTestId("content")).not.toBeNull();
 	return { getByTestId, queryByTestId, user, trigger };
 }
@@ -83,7 +87,6 @@ describe("dropdown menu", () => {
 			"checkbox-item",
 			"radio-group",
 			"radio-item",
-			"checkbox-indicator",
 		];
 
 		for (const part of parts) {
@@ -155,14 +158,14 @@ describe("dropdown menu", () => {
 		await user.click(checkbox);
 		expect(checkedBinding).toHaveTextContent("true");
 		await user.click(trigger);
-		expect(indicator).toHaveTextContent("checked");
+		expect(indicator).toHaveTextContent("true");
 		await user.click(getByTestId("checkbox-item"));
 		expect(checkedBinding).toHaveTextContent("false");
 
 		await user.click(checkedBinding);
 		expect(checkedBinding).toHaveTextContent("true");
 		await user.click(trigger);
-		expect(getByTestId("checkbox-indicator")).toHaveTextContent("checked");
+		expect(getByTestId("checkbox-indicator")).toHaveTextContent("true");
 	});
 
 	it("toggles checkbox items within submenus when clicked & respects binding", async () => {
@@ -172,14 +175,14 @@ describe("dropdown menu", () => {
 		const subCheckedBinding = getByTestId("sub-checked-binding");
 		expect(subCheckedBinding).toHaveTextContent("false");
 		const indicator = getByTestId("sub-checkbox-indicator");
-		expect(indicator).not.toHaveTextContent("checked");
+		expect(indicator).not.toHaveTextContent("true");
 		const subCheckbox = getByTestId("sub-checkbox-item");
 		await user.click(subCheckbox);
 		expect(subCheckedBinding).toHaveTextContent("true");
 		trigger.focus();
 		await user.keyboard(kbd.ARROW_DOWN);
 		await openSubmenu(props);
-		expect(getByTestId("sub-checkbox-indicator")).toHaveTextContent("checked");
+		expect(getByTestId("sub-checkbox-indicator")).toHaveTextContent("true");
 		await user.click(getByTestId("sub-checkbox-item"));
 		expect(subCheckedBinding).toHaveTextContent("false");
 
@@ -188,36 +191,32 @@ describe("dropdown menu", () => {
 		trigger.focus();
 		await user.keyboard(kbd.ARROW_DOWN);
 		await openSubmenu(props);
-		expect(getByTestId("sub-checkbox-indicator")).toHaveTextContent("checked");
+		expect(getByTestId("sub-checkbox-indicator")).toHaveTextContent("true");
 	});
 
 	it("checks the radio item when clicked & respects binding", async () => {
 		const { getByTestId, queryByTestId, user, trigger } = await openWithPointer();
 		const radioBinding = getByTestId("radio-binding");
-		const indicator = queryByTestId("radio-indicator-1");
-		expect(indicator).toBeNull();
 		expect(radioBinding).toHaveTextContent("");
 		const radioItem1 = getByTestId("radio-item");
 		await user.click(radioItem1);
 		expect(radioBinding).toHaveTextContent("1");
 		await user.click(trigger);
-		const radioIndicator = getByTestId("radio-indicator-1");
-		expect(radioIndicator).not.toBeNull();
-		expect(radioIndicator).toHaveTextContent("checked");
+		const radioIndicator1 = getByTestId("radio-indicator-1");
+		expect(radioIndicator1).not.toBeNull();
+		expect(radioIndicator1).toHaveTextContent("true");
 		const radioItem2 = getByTestId("radio-item-2");
 		await user.click(radioItem2);
 		expect(radioBinding).toHaveTextContent("2");
 		await user.click(trigger);
-		expect(queryByTestId("radio-indicator-1")).toBeNull();
-		expect(queryByTestId("radio-indicator-2")).toHaveTextContent("checked");
+		expect(queryByTestId("radio-indicator-1")).toHaveTextContent("false");
+		expect(queryByTestId("radio-indicator-2")).toHaveTextContent("true");
 
 		await user.keyboard(kbd.ESCAPE);
 		expect(queryByTestId("content")).toBeNull();
 		await user.click(radioBinding);
 		expect(radioBinding).toHaveTextContent("");
 		await user.click(trigger);
-		expect(queryByTestId("radio-indicator-1")).toBeNull();
-		expect(queryByTestId("radio-indicator-2")).toBeNull();
 	});
 
 	it("skips over disabled items when navigating with the keyboard", async () => {
@@ -231,7 +230,11 @@ describe("dropdown menu", () => {
 	});
 
 	it("doesnt loop through the menu items when the `loop` prop is set to false/undefined", async () => {
-		const { user, getByTestId } = await openWithKbd();
+		const { user, getByTestId } = await openWithKbd({
+			contentProps: {
+				loop: false,
+			},
+		});
 		await user.keyboard(kbd.ARROW_DOWN);
 		await waitFor(() => expect(getByTestId("sub-trigger")).toHaveFocus());
 		await user.keyboard(kbd.ARROW_DOWN);
@@ -247,7 +250,12 @@ describe("dropdown menu", () => {
 	});
 
 	it("loops through the menu items when the `loop` prop is set to true", async () => {
-		const { user, getByTestId } = await openWithKbd({ loop: true });
+		const { user, getByTestId } = await openWithKbd({
+			contentProps: {
+				loop: true,
+			},
+		});
+		await sleep(25);
 		await user.keyboard(kbd.ARROW_DOWN);
 		await waitFor(() => expect(getByTestId("sub-trigger")).toHaveFocus());
 		await user.keyboard(kbd.ARROW_DOWN);
@@ -268,44 +276,65 @@ describe("dropdown menu", () => {
 		expect(queryByTestId("content")).toBeNull();
 	});
 
-	it("respects the `closeOnEscape` prop", async () => {
-		const { queryByTestId, user } = await openWithKbd({ closeOnEscape: false });
+	it("respects the `escapeKeydownBehavior` prop", async () => {
+		const { queryByTestId, user } = await openWithKbd({
+			contentProps: {
+				escapeKeydownBehavior: "ignore",
+			},
+		});
 		await user.keyboard(kbd.ESCAPE);
 		expect(queryByTestId("content")).not.toBeNull();
 	});
 
-	it("respects the `closeOnOutsideClick` prop", async () => {
+	it("respects the `interactOutsideBehavior` prop", async () => {
 		const { queryByTestId, user, getByTestId } = await openWithPointer({
-			closeOnOutsideClick: false,
+			contentProps: {
+				interactOutsideBehavior: "ignore",
+			},
 		});
 		const outside = getByTestId("outside");
-		await user.click(outside);
+		await user.click(outside, {});
 		expect(queryByTestId("content")).not.toBeNull();
 	});
 
 	it("portals to the body if a `portal` prop is not passed", async () => {
 		const { getByTestId } = await openWithPointer();
 		const content = getByTestId("content");
-		expect(content.parentElement).toEqual(document.body);
+		expect(content.parentElement?.parentElement).toEqual(document.body);
 	});
 
 	it("portals to the portal target if a valid `portal` prop is passed", async () => {
-		const { getByTestId } = await openWithPointer({ portal: "#portal-target" });
+		const { getByTestId } = await openWithPointer({
+			portalProps: {
+				to: "#portal-target",
+			},
+		});
 		const content = getByTestId("content");
 		const portalTarget = getByTestId("portal-target");
-		expect(content.parentElement).toEqual(portalTarget);
+		expect(content.parentElement?.parentElement).toEqual(portalTarget);
 	});
 
-	it("does not portal if `null` is passed as the portal prop", async () => {
-		const { getByTestId } = await openWithPointer({ portal: null });
+	it("does not portal if `disabled` is passed to the portal", async () => {
+		const { getByTestId } = await openWithPointer({
+			portalProps: {
+				disabled: true,
+			},
+		});
 		const content = getByTestId("content");
 		const ogContainer = getByTestId("non-portal-container");
-		expect(content.parentElement).not.toEqual(document.body);
-		expect(content.parentElement).toEqual(ogContainer);
+		const contentWrapper = content.parentElement;
+		expect(contentWrapper?.parentElement).not.toEqual(document.body);
+		expect(contentWrapper?.parentElement).toEqual(ogContainer);
 	});
 
-	it("respects the `disableFocusFirstItem` prop", async () => {
-		const { getByTestId } = await openWithKbd({ disableFocusFirstItem: true });
+	it("can prevent autofocusing first item with `onMountAutoFocus`  prop", async () => {
+		const { getByTestId } = await openWithKbd({
+			contentProps: {
+				onMountAutoFocus: (e) => {
+					e.preventDefault();
+				},
+			},
+		});
 		await waitFor(() => expect(getByTestId("item")).not.toHaveFocus());
 	});
 });

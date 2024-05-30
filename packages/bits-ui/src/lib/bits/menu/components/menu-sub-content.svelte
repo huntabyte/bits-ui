@@ -48,6 +48,7 @@
 			onDestroyAutoFocus,
 			side,
 			onkeydown,
+			"data-menu-sub-content": "",
 		})
 	);
 

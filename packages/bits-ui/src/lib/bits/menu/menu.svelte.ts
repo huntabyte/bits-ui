@@ -43,7 +43,7 @@ const TRIGGER_ATTR = "data-menu-trigger";
 const CONTENT_ATTR = "data-menu-content";
 const ITEM_ATTR = "data-menu-item";
 const SEPARATOR_ATTR = "data-menu-separator";
-const SUB_TRIGGER_ATTR = "data-menu-subtrigger";
+const SUB_TRIGGER_ATTR = "data-menu-sub-trigger";
 const CHECKBOX_ITEM_ATTR = "data-menu-checkbox-item";
 const GROUP_ATTR = "data-menu-group";
 const LABEL_ATTR = "data-menu-label";
@@ -961,6 +961,10 @@ export function useMenuSubTrigger(props: MenuItemSharedStateProps) {
 
 export function useMenuDropdownTrigger(props: DropdownMenuTriggerStateProps) {
 	return getMenuMenuContext().createDropdownTrigger(props);
+}
+
+export function useMenuPortal() {
+	return getMenuMenuContext();
 }
 
 export function useMenuContextTrigger(props: ContextMenuTriggerStateProps) {

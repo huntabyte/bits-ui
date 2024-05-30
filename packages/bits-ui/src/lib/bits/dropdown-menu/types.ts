@@ -13,6 +13,7 @@ export type {
 	SubProps as DropdownMenuSubProps,
 	SubTriggerProps as DropdownMenuSubTriggerProps,
 	TriggerProps as DropdownMenuTriggerProps,
+	PortalProps as DropdownMenuPortalProps,
 } from "$lib/bits/menu/index.js";
 
 export type {
@@ -30,4 +31,5 @@ export type {
 	MenuSubTriggerPropsWithoutHTML as DropdownMenuSubTriggerPropsWithoutHTML,
 	MenuSubContentPropsWithoutHTML as DropdownMenuSubContentPropsWithoutHTML,
 	MenuTriggerPropsWithoutHTML as DropdownMenuTriggerPropsWithoutHTML,
+	MenuPortalPropsWithoutHTML as DropdownMenuPortalPropsWithoutHTML,
 } from "$lib/bits/menu/types.js";
