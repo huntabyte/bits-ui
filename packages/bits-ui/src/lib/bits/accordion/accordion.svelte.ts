@@ -17,11 +17,11 @@ import { type UseRovingFocusReturn, useRovingFocus } from "$lib/internal/useRovi
 import type { Orientation } from "$lib/shared/index.js";
 import { createContext } from "$lib/internal/createContext.js";
 
-const ROOT_ATTR = "accordion-root";
-const TRIGGER_ATTR = "accordion-trigger";
-const CONTENT_ATTR = "accordion-content";
-const ITEM_ATTR = "accordion-item";
-const HEADER_ATTR = "accordion-header";
+const ROOT_ATTR = "data-accordion-root";
+const TRIGGER_ATTR = "data-accordion-trigger";
+const CONTENT_ATTR = "data-accordion-content";
+const ITEM_ATTR = "data-accordion-item";
+const HEADER_ATTR = "data-accordion-header";
 
 //
 // BASE
@@ -60,7 +60,6 @@ class AccordionBaseState {
 		id: this.id.value,
 		"data-orientation": getDataOrientation(this.orientation.value),
 		"data-disabled": getDataDisabled(this.disabled.value),
-		"aria-orientation": getAriaOrientation(this.orientation.value),
 		[ROOT_ATTR]: "",
 	} as const);
 }
