@@ -293,7 +293,7 @@ describe("dropdown menu", () => {
 			},
 		});
 		const outside = getByTestId("outside");
-		await user.click(outside, {});
+		await user.click(outside);
 		expect(queryByTestId("content")).not.toBeNull();
 	});
 

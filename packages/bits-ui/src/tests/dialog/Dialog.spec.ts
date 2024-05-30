@@ -1,11 +1,17 @@
-import { type Matcher, type MatcherOptions, render, screen } from "@testing-library/svelte";
+import {
+	type Matcher,
+	type MatcherOptions,
+	render,
+	screen,
+	waitFor,
+} from "@testing-library/svelte/svelte5";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
+import { tick } from "svelte";
 import { getTestKbd } from "../utils.js";
-import DialogTest from "./DialogTest.svelte";
+import DialogTest, { type DialogTestProps } from "./DialogTest.svelte";
 import { sleep } from "$lib/internal/index.js";
-import type { Dialog } from "$lib/index.js";
 
 const kbd = getTestKbd();
 
@@ -16,15 +22,15 @@ function expectIsClosed(
 	expect(content).toBeNull();
 }
 
-function expectIsOpen(
+async function expectIsOpen(
 	queryByTestId: (id: Matcher, options?: MatcherOptions | undefined) => HTMLElement | null
 ) {
 	const content = queryByTestId("content");
-	expect(content).not.toBeNull();
+	await waitFor(() => expect(content).not.toBeNull());
 }
 
-function setup(props: Dialog.Props = {}) {
-	const user = userEvent.setup();
+function setup(props: DialogTestProps = {}) {
+	const user = userEvent.setup({ pointerEventsCheck: 0 });
 	const { getByTestId, queryByTestId } = render(DialogTest, { ...props });
 	return {
 		getByTestId,
@@ -33,7 +39,7 @@ function setup(props: Dialog.Props = {}) {
 	};
 }
 
-async function open(props: Dialog.Props = {}) {
+async function open(props: DialogTestProps = {}) {
 	const { getByTestId, queryByTestId, user } = setup(props);
 	const trigger = getByTestId("trigger");
 	const content = queryByTestId("content");
@@ -52,7 +58,7 @@ describe("dialog", () => {
 
 	it("has bits data attrs", async () => {
 		const { getByTestId } = render(DialogTest, { open: true });
-		const parts = ["trigger", "overlay", "portal", "close", "title", "description", "content"];
+		const parts = ["trigger", "overlay", "close", "title", "description", "content"];
 
 		for (const part of parts) {
 			const el = getByTestId(part);
@@ -67,8 +73,6 @@ describe("dialog", () => {
 		expect(overlay).toHaveAttribute("data-state", "open");
 		const content = getByTestId("content");
 		expect(content).toHaveAttribute("data-state", "open");
-		const portal = getByTestId("portal");
-		expect(portal).toHaveAttribute("data-portal");
 	});
 
 	it("opens when the trigger is clicked", async () => {
@@ -96,6 +100,7 @@ describe("dialog", () => {
 
 		const overlay = getByTestId("overlay");
 		await user.click(overlay);
+		await sleep(25);
 
 		const contentAfter2 = queryByTestId("content");
 		expect(contentAfter2).toBeNull();
@@ -104,37 +109,44 @@ describe("dialog", () => {
 	it("attaches to body when using portal element", async () => {
 		await open();
 
-		const portalled = screen.getByTestId("portal");
-
-		expect(portalled.parentElement).toEqual(document.body);
+		const content = screen.getByTestId("content");
+		expect(content.parentElement).toEqual(document.body);
 	});
 
-	it("doesnt attached to body when portal prop is null", async () => {
-		await open({ portal: null });
-		const portalled = screen.getByTestId("portal");
-
-		expect(portalled.parentElement).not.toEqual(document.body);
+	it("doesnt attached to body when portal is disabled", async () => {
+		await open({
+			portalProps: {
+				disabled: true,
+			},
+		});
+		const content = screen.getByTestId("content");
+		expect(content.parentElement).not.toEqual(document.body);
 	});
 
 	it("portals to the target if passed as a prop", async () => {
-		await open({ portal: "#portalTarget" });
+		await open({
+			portalProps: {
+				to: "#portalTarget",
+			},
+		});
 		const portalTarget = screen.getByTestId("portalTarget");
-		const portalled = screen.getByTestId("portal");
-		expect(portalled.parentElement).toEqual(portalTarget);
+		const content = screen.getByTestId("content");
+		expect(content.parentElement).toEqual(portalTarget);
 	});
 
 	it("focuses first focusable item upon opening", async () => {
 		const { getByTestId } = await open();
 		// Testing focus-trap is a bit flaky. So the focusable element is
 		// always content here.
-		expect(document.activeElement).toBe(getByTestId("content"));
+		const closeButton = getByTestId("close");
+		expect(document.activeElement).toBe(closeButton);
 	});
 
 	it("doesnt close when content is clicked", async () => {
 		const { user, getByTestId, queryByTestId } = await open();
 		const content = getByTestId("content");
 		await user.click(content);
-		expectIsOpen(queryByTestId);
+		await expectIsOpen(queryByTestId);
 	});
 
 	it("respects binding to the `open` prop", async () => {
@@ -151,7 +163,7 @@ describe("dialog", () => {
 		const toggle = getByTestId("toggle");
 		expectIsClosed(queryByTestId);
 		await user.click(toggle);
-		expectIsOpen(queryByTestId);
+		await expectIsOpen(queryByTestId);
 	});
 
 	it("respects the `closeOnOutsideClick` prop", async () => {
@@ -161,16 +173,18 @@ describe("dialog", () => {
 		const overlay = getByTestId("overlay");
 		await user.click(overlay);
 
-		expectIsOpen(queryByTestId);
+		await expectIsOpen(queryByTestId);
 	});
 
-	it("respects the the `closeOnEscape` prop", async () => {
+	it("respects the the `escapeKeydownBehavior: 'ignore'` prop", async () => {
 		const { user, getByTestId, queryByTestId } = await open({
-			closeOnEscape: false,
+			contentProps: {
+				escapeKeydownBehavior: "ignore",
+			},
 		});
 
 		await user.keyboard(kbd.ESCAPE);
-		expectIsOpen(queryByTestId);
+		await expectIsOpen(queryByTestId);
 		expect(getByTestId("trigger")).not.toHaveFocus();
 	});
 });
