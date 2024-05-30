@@ -122,5 +122,5 @@ export type FloatingLayerContentImplProps = {
 export type FloatingLayerAnchorProps = {
 	id: string;
 	children?: Snippet;
-	virtualEl?: Measurable;
+	virtualEl?: Measurable | null;
 };

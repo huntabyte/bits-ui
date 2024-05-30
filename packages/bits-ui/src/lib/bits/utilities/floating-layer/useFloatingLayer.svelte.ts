@@ -309,7 +309,7 @@ class FloatingArrowState {
 
 type FloatingAnchorStateProps = ReadableBoxedValues<{
 	id: string;
-	virtualEl?: Measurable;
+	virtualEl?: Measurable | null;
 }>;
 
 class FloatingAnchorState {

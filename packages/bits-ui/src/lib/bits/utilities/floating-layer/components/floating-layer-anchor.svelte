@@ -3,7 +3,7 @@
 	import { useFloatingAnchorState } from "../useFloatingLayer.svelte.js";
 	import type { AnchorProps } from "./index.js";
 
-	let { id, children, virtualEl }: AnchorProps = $props();
+	let { id, children, virtualEl = null }: AnchorProps = $props();
 
 	useFloatingAnchorState({ id: box.with(() => id), virtualEl: box.with(() => virtualEl) });
 </script>
