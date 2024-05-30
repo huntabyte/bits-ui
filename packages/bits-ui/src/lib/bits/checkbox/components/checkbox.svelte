@@ -12,7 +12,7 @@
 		disabled = false,
 		required = false,
 		name,
-		value,
+		value = "on",
 		el = $bindable(),
 		asChild,
 		child,

@@ -1,4 +1,4 @@
-import { render } from "@testing-library/svelte";
+import { render } from "@testing-library/svelte/svelte5";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
@@ -9,11 +9,11 @@ import type { Checkbox } from "$lib/index.js";
 
 const kbd = getTestKbd();
 
-function setup(props?: Checkbox.Props) {
+function setup(props?: Checkbox.RootProps) {
 	const user = userEvent.setup();
 	const returned = render(CheckboxTest, props);
 	const root = returned.getByTestId("root");
-	const input = returned.getByTestId("input") as HTMLInputElement;
+	const input = document.querySelector("input") as HTMLInputElement;
 	return {
 		...returned,
 		root,
@@ -29,10 +29,18 @@ describe("checkbox", () => {
 	});
 
 	it("has bits data attrs", async () => {
-		const { getByTestId, root } = setup();
-		const indicator = getByTestId("indicator");
+		const { root } = setup();
 		expect(root).toHaveAttribute("data-checkbox-root");
-		expect(indicator).toHaveAttribute("data-checkbox-indicator");
+	});
+
+	it("doesn't render the checkbox input if a name prop isnt passed", async () => {
+		const { input } = setup();
+		expect(input).not.toBeInTheDocument();
+	});
+
+	it("renders the checkbox input if a name prop is passed", async () => {
+		const { input } = setup({ name: "checkbox" });
+		expect(input).toBeInTheDocument();
 	});
 
 	it('defaults the value to "on", when no value prop is passed', async () => {
