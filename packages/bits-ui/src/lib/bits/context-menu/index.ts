@@ -12,6 +12,7 @@ export { default as RadioGroup } from "$lib/bits/menu/components/menu-radio-grou
 export { default as SubContent } from "$lib/bits/menu/components/menu-sub-content.svelte";
 export { default as SubTrigger } from "$lib/bits/menu/components/menu-sub-trigger.svelte";
 export { default as CheckboxItem } from "$lib/bits/menu/components/menu-checkbox-item.svelte";
+export { default as Portal } from "$lib/bits/utilities/portal/portal.svelte";
 
 export type {
 	ContextMenuArrowProps as ArrowProps,
@@ -28,4 +29,5 @@ export type {
 	ContextMenuSubTriggerProps as SubTriggerProps,
 	ContextMenuContentProps as ContentProps,
 	ContextMenuTriggerProps as TriggerProps,
+	ContextMenuPortalProps as PortalProps,
 } from "./types.js";
