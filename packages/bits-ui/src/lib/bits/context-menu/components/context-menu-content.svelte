@@ -17,6 +17,9 @@
 		el = $bindable(),
 		loop = true,
 		onInteractOutside = noop,
+		// we need to explicitly pass this prop to the PopperLayer to override
+		// the default menu behavior of handling outside interactions on the trigger
+		onInteractOutsideStart = noop,
 		onEscapeKeydown = noop,
 		forceMount = false,
 		...restProps
@@ -62,6 +65,7 @@
 	sideOffset={2}
 	align="start"
 	present={state.parentMenu.open.value || forceMount}
+	{onInteractOutsideStart}
 	onInteractOutside={(e) => {
 		onInteractOutside(e);
 		if (e.defaultPrevented) return;

@@ -20,11 +20,11 @@ export function createFocusScopeStack() {
 			}
 
 			// remove in case it already exists because it'll be added to the top
-			stack.value = removeFromArray(stack.value, focusScope);
+			stack.value = removeFromArray($state.snapshot(stack.value), focusScope);
 			stack.value.unshift(focusScope);
 		},
 		remove(focusScope: FocusScopeAPI) {
-			stack.value = removeFromArray(stack.value, focusScope);
+			stack.value = removeFromArray($state.snapshot(stack.value), focusScope);
 			stack.value[0]?.resume();
 		},
 	};

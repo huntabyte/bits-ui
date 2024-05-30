@@ -910,20 +910,11 @@ class ContextMenuTriggerState {
 		this.#clearLongPressTimer();
 	};
 
-	#ariaControls = $derived.by(() => {
-		if (this.#parentMenu.open.value && this.#parentMenu.contentNode.value)
-			return this.#parentMenu.contentNode.value.id;
-		return undefined;
-	});
-
 	props = $derived.by(
 		() =>
 			({
 				id: this.#parentMenu.triggerId.value,
 				disabled: this.#disabled.value,
-				"aria-haspopup": "menu",
-				"aria-expanded": getAriaExpanded(this.#parentMenu.open.value),
-				"aria-controls": this.#ariaControls,
 				"data-disabled": getDataDisabled(this.#disabled.value),
 				"data-state": getDataOpenClosed(this.#parentMenu.open.value),
 				[TRIGGER_ATTR]: "",
