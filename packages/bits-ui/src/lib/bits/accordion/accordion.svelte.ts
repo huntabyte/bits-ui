@@ -6,7 +6,6 @@ import {
 	afterTick,
 	getAriaDisabled,
 	getAriaExpanded,
-	getAriaOrientation,
 	getDataDisabled,
 	getDataOpenClosed,
 	getDataOrientation,
@@ -35,11 +34,11 @@ type AccordionBaseStateProps = ReadableBoxedValues<{
 }>;
 
 class AccordionBaseState {
-	id = undefined as unknown as AccordionBaseStateProps["id"];
+	id: AccordionBaseStateProps["id"];
 	node: WritableBox<HTMLElement | null>;
-	disabled = undefined as unknown as AccordionBaseStateProps["disabled"];
-	#loop = undefined as unknown as AccordionBaseStateProps["loop"];
-	orientation = undefined as unknown as AccordionBaseStateProps["orientation"];
+	disabled: AccordionBaseStateProps["disabled"];
+	#loop: AccordionBaseStateProps["loop"];
+	orientation: AccordionBaseStateProps["orientation"];
 	rovingFocusGroup: UseRovingFocusReturn;
 
 	constructor(props: AccordionBaseStateProps) {
@@ -56,12 +55,15 @@ class AccordionBaseState {
 		});
 	}
 
-	props = $derived({
-		id: this.id.value,
-		"data-orientation": getDataOrientation(this.orientation.value),
-		"data-disabled": getDataDisabled(this.disabled.value),
-		[ROOT_ATTR]: "",
-	} as const);
+	props = $derived.by(
+		() =>
+			({
+				id: this.id.value,
+				"data-orientation": getDataOrientation(this.orientation.value),
+				"data-disabled": getDataDisabled(this.disabled.value),
+				[ROOT_ATTR]: "",
+			}) as const
+	);
 }
 
 //
@@ -128,11 +130,11 @@ type AccordionItemStateProps = ReadableBoxedValues<{
 };
 
 export class AccordionItemState {
-	value = undefined as unknown as AccordionItemStateProps["value"];
-	disabled = undefined as unknown as AccordionItemStateProps["disabled"];
-	root = undefined as unknown as AccordionState;
-	isSelected = $derived(this.root.includesItem(this.value.value));
-	isDisabled = $derived(this.disabled.value || this.root.disabled.value);
+	value: AccordionItemStateProps["value"];
+	disabled: AccordionItemStateProps["disabled"];
+	root: AccordionState;
+	isSelected = $derived.by(() => this.root.includesItem(this.value.value));
+	isDisabled = $derived.by(() => this.disabled.value || this.root.disabled.value);
 
 	constructor(props: AccordionItemStateProps) {
 		this.value = props.value;
@@ -156,11 +158,14 @@ export class AccordionItemState {
 		return new AccordionHeaderState(props, this);
 	}
 
-	props = $derived({
-		[ITEM_ATTR]: "",
-		"data-state": getDataOpenClosed(this.isSelected),
-		"data-disabled": getDataDisabled(this.isDisabled),
-	} as const);
+	props = $derived.by(
+		() =>
+			({
+				[ITEM_ATTR]: "",
+				"data-state": getDataOpenClosed(this.isSelected),
+				"data-disabled": getDataDisabled(this.isDisabled),
+			}) as const
+	);
 }
 
 //
@@ -173,13 +178,13 @@ type AccordionTriggerStateProps = ReadableBoxedValues<{
 }>;
 
 class AccordionTriggerState {
-	#disabled = undefined as unknown as AccordionTriggerStateProps["disabled"];
-	#id = undefined as unknown as AccordionTriggerStateProps["id"];
+	#disabled: AccordionTriggerStateProps["disabled"];
+	#id: AccordionTriggerStateProps["id"];
 	#node: Box<HTMLElement | null>;
-	#root = undefined as unknown as AccordionState;
-	#itemState = undefined as unknown as AccordionItemState;
-	#isDisabled = $derived(
-		this.#disabled.value || this.#itemState.disabled.value || this.#root.disabled.value
+	#root: AccordionState;
+	#itemState: AccordionItemState;
+	#isDisabled = $derived.by(
+		() => this.#disabled.value || this.#itemState.disabled.value || this.#root.disabled.value
 	);
 
 	constructor(props: AccordionTriggerStateProps, itemState: AccordionItemState) {
@@ -206,20 +211,23 @@ class AccordionTriggerState {
 		this.#root.rovingFocusGroup.handleKeydown(this.#node.value, e);
 	};
 
-	props = $derived({
-		id: this.#id.value,
-		disabled: this.#isDisabled,
-		"aria-expanded": getAriaExpanded(this.#itemState.isSelected),
-		"aria-disabled": getAriaDisabled(this.#isDisabled),
-		"data-disabled": getDataDisabled(this.#isDisabled),
-		"data-state": getDataOpenClosed(this.#itemState.isSelected),
-		"data-orientation": getDataOrientation(this.#root.orientation.value),
-		[TRIGGER_ATTR]: "",
-		tabindex: 0,
-		//
-		onclick: this.#onclick,
-		onkeydown: this.#onkeydown,
-	} as const);
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.value,
+				disabled: this.#isDisabled,
+				"aria-expanded": getAriaExpanded(this.#itemState.isSelected),
+				"aria-disabled": getAriaDisabled(this.#isDisabled),
+				"data-disabled": getDataDisabled(this.#isDisabled),
+				"data-state": getDataOpenClosed(this.#itemState.isSelected),
+				"data-orientation": getDataOrientation(this.#root.orientation.value),
+				[TRIGGER_ATTR]: "",
+				tabindex: 0,
+				//
+				onclick: this.#onclick,
+				onkeydown: this.#onkeydown,
+			}) as const
+	);
 }
 
 //
@@ -232,16 +240,16 @@ type AccordionContentStateProps = ReadableBoxedValues<{
 }>;
 
 class AccordionContentState {
-	item = undefined as unknown as AccordionItemState;
+	item: AccordionItemState;
 	node: WritableBox<HTMLElement | null>;
-	#id = undefined as unknown as AccordionContentStateProps["id"];
+	#id: AccordionContentStateProps["id"];
 	#originalStyles: { transitionDuration: string; animationName: string } | undefined = undefined;
 	#isMountAnimationPrevented = false;
 	#width = $state(0);
 	#height = $state(0);
-	#forceMount = undefined as unknown as AccordionContentStateProps["forceMount"];
+	#forceMount: AccordionContentStateProps["forceMount"];
 
-	present = $derived(this.#forceMount.value || this.item.isSelected);
+	present = $derived.by(() => this.#forceMount.value || this.item.isSelected);
 
 	constructor(props: AccordionContentStateProps, item: AccordionItemState) {
 		this.item = item;
@@ -293,17 +301,20 @@ class AccordionContentState {
 		});
 	}
 
-	props = $derived({
-		id: this.#id.value,
-		"data-state": getDataOpenClosed(this.item.isSelected),
-		"data-disabled": getDataDisabled(this.item.isDisabled),
-		"data-orientation": getDataOrientation(this.item.root.orientation.value),
-		[CONTENT_ATTR]: "",
-		style: {
-			"--bits-accordion-content-height": `${this.#height}px`,
-			"--bits-accordion-content-width": `${this.#width}px`,
-		},
-	} as const);
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.value,
+				"data-state": getDataOpenClosed(this.item.isSelected),
+				"data-disabled": getDataDisabled(this.item.isDisabled),
+				"data-orientation": getDataOrientation(this.item.root.orientation.value),
+				[CONTENT_ATTR]: "",
+				style: {
+					"--bits-accordion-content-height": `${this.#height}px`,
+					"--bits-accordion-content-width": `${this.#width}px`,
+				},
+			}) as const
+	);
 }
 
 type AccordionHeaderStateProps = ReadableBoxedValues<{
@@ -311,21 +322,24 @@ type AccordionHeaderStateProps = ReadableBoxedValues<{
 }>;
 
 class AccordionHeaderState {
-	#item = undefined as unknown as AccordionItemState;
-	#level = undefined as unknown as AccordionHeaderStateProps["level"];
+	#item: AccordionItemState;
+	#level: AccordionHeaderStateProps["level"];
 	constructor(props: AccordionHeaderStateProps, item: AccordionItemState) {
 		this.#level = props.level;
 		this.#item = item;
 	}
 
-	props = $derived({
-		role: "heading",
-		"aria-level": this.#level.value,
-		"data-heading-level": this.#level.value,
-		"data-state": getDataOpenClosed(this.#item.isSelected),
-		"data-orientation": getDataOrientation(this.#item.root.orientation.value),
-		[HEADER_ATTR]: "",
-	} as const);
+	props = $derived.by(
+		() =>
+			({
+				role: "heading",
+				"aria-level": this.#level.value,
+				"data-heading-level": this.#level.value,
+				"data-state": getDataOpenClosed(this.#item.isSelected),
+				"data-orientation": getDataOrientation(this.#item.root.orientation.value),
+				[HEADER_ATTR]: "",
+			}) as const
+	);
 }
 
 //

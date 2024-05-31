@@ -14,8 +14,8 @@ import type { Orientation } from "$lib/shared/index.js";
 import { type UseRovingFocusReturn, useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
 import { createContext } from "$lib/internal/createContext.js";
 
-const ROOT_ATTR = "radio-group-root";
-const ITEM_ATTR = "radio-group-item";
+const ROOT_ATTR = "data-radio-group-root";
+const ITEM_ATTR = "data-radio-group-item";
 
 type RadioGroupRootStateProps = ReadableBoxedValues<{
 	id: string;

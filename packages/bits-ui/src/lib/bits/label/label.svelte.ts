@@ -1,3 +1,5 @@
+const ROOT_ATTR = "data-label-root";
+
 class LabelRootState {
 	constructor() {}
 
@@ -6,7 +8,7 @@ class LabelRootState {
 	};
 
 	props = $derived({
-		"data-label-root": "",
+		[ROOT_ATTR]: "",
 		onmousedown: this.#onmousedown,
 	});
 }

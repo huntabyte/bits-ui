@@ -8,7 +8,6 @@ import {
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
-import { tick } from "svelte";
 import { getTestKbd } from "../utils.js";
 import DialogTest, { type DialogTestProps } from "./DialogTest.svelte";
 import { sleep } from "$lib/internal/index.js";
@@ -31,17 +30,18 @@ async function expectIsOpen(
 
 function setup(props: DialogTestProps = {}) {
 	const user = userEvent.setup({ pointerEventsCheck: 0 });
-	const { getByTestId, queryByTestId } = render(DialogTest, { ...props });
+	const returned = render(DialogTest, { ...props });
+	const trigger = returned.getByTestId("trigger");
+
 	return {
-		getByTestId,
-		queryByTestId,
+		...returned,
+		trigger,
 		user,
 	};
 }
 
 async function open(props: DialogTestProps = {}) {
-	const { getByTestId, queryByTestId, user } = setup(props);
-	const trigger = getByTestId("trigger");
+	const { getByTestId, queryByTestId, user, trigger } = setup(props);
 	const content = queryByTestId("content");
 	expect(content).toBeNull();
 	await user.click(trigger);
@@ -136,8 +136,6 @@ describe("dialog", () => {
 
 	it("focuses first focusable item upon opening", async () => {
 		const { getByTestId } = await open();
-		// Testing focus-trap is a bit flaky. So the focusable element is
-		// always content here.
 		const closeButton = getByTestId("close");
 		expect(document.activeElement).toBe(closeButton);
 	});
@@ -166,8 +164,12 @@ describe("dialog", () => {
 		await expectIsOpen(queryByTestId);
 	});
 
-	it("respects the `closeOnOutsideClick` prop", async () => {
-		const { getByTestId, queryByTestId, user } = await open({ closeOnOutsideClick: false });
+	it("respects the `interactOutsideBehavior: 'ignore'` prop", async () => {
+		const { getByTestId, queryByTestId, user } = await open({
+			contentProps: {
+				interactOutsideBehavior: "ignore",
+			},
+		});
 		await sleep(100);
 
 		const overlay = getByTestId("overlay");

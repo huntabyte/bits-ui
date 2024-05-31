@@ -11,6 +11,10 @@ import {
 } from "$lib/internal/index.js";
 import { createContext } from "$lib/internal/createContext.js";
 
+const ROOT_ATTR = "data-collapsible-root";
+const CONTENT_ATTR = "data-collapsible-content";
+const TRIGGER_ATTR = "data-collapsible-trigger";
+
 type CollapsibleRootStateProps = WritableBoxedValues<{
 	open: boolean;
 }> &
@@ -22,11 +26,14 @@ class CollapsibleRootState {
 	open = undefined as unknown as CollapsibleRootStateProps["open"];
 	disabled = undefined as unknown as CollapsibleRootStateProps["disabled"];
 	contentId = box.with(() => useId());
-	props = $derived({
-		"data-state": getDataOpenClosed(this.open.value),
-		"data-disabled": getDataDisabled(this.disabled.value),
-		"data-collapsible-root": "",
-	} as const);
+	props = $derived.by(
+		() =>
+			({
+				"data-state": getDataOpenClosed(this.open.value),
+				"data-disabled": getDataDisabled(this.disabled.value),
+				[ROOT_ATTR]: "",
+			}) as const
+	);
 
 	constructor(props: CollapsibleRootStateProps) {
 		this.open = props.open;
@@ -59,16 +66,23 @@ class CollapsibleContentState {
 	#width = $state(0);
 	#height = $state(0);
 	#forceMount = undefined as unknown as CollapsibleContentStateProps["forceMount"];
-	props = $derived({
-		id: this.root.contentId.value,
-		"data-state": getDataOpenClosed(this.root.open.value),
-		"data-disabled": getDataDisabled(this.root.disabled.value),
-		"data-collapsible-content": "",
-		style: {
-			"--bits-collapsible-content-height": this.#height ? `${this.#height}px` : undefined,
-			"--bits-collapsible-content-width": this.#width ? `${this.#width}px` : undefined,
-		},
-	} as const);
+	props = $derived.by(
+		() =>
+			({
+				id: this.root.contentId.value,
+				"data-state": getDataOpenClosed(this.root.open.value),
+				"data-disabled": getDataDisabled(this.root.disabled.value),
+				style: {
+					"--bits-collapsible-content-height": this.#height
+						? `${this.#height}px`
+						: undefined,
+					"--bits-collapsible-content-width": this.#width
+						? `${this.#width}px`
+						: undefined,
+				},
+				[CONTENT_ATTR]: "",
+			}) as const
+	);
 	present = $derived(this.#forceMount.value || this.root.open.value);
 
 	constructor(props: CollapsibleContentStateProps, root: CollapsibleRootState) {
@@ -133,17 +147,20 @@ class CollapsibleTriggerState {
 		this.#root.toggleOpen();
 	};
 
-	props = $derived({
-		type: "button",
-		"aria-controls": this.#root.contentId.value,
-		"aria-expanded": getAriaExpanded(this.#root.open.value),
-		"data-state": getDataOpenClosed(this.#root.open.value),
-		"data-disabled": getDataDisabled(this.#root.disabled.value),
-		disabled: this.#root.disabled.value,
-		"data-collapsible-trigger": "",
-		//
-		onclick: this.#onclick,
-	} as const);
+	props = $derived.by(
+		() =>
+			({
+				type: "button",
+				"aria-controls": this.#root.contentId.value,
+				"aria-expanded": getAriaExpanded(this.#root.open.value),
+				"data-state": getDataOpenClosed(this.#root.open.value),
+				"data-disabled": getDataDisabled(this.#root.disabled.value),
+				disabled: this.#root.disabled.value,
+				[TRIGGER_ATTR]: "",
+				//
+				onclick: this.#onclick,
+			}) as const
+	);
 }
 
 const [setCollapsibleRootContext, getCollapsibleRootContext] =

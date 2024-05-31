@@ -145,6 +145,4 @@ describe("checkbox", () => {
 		await tick();
 		expect(binding).toHaveTextContent("true");
 	});
-
-	it.todo("`asChild` behavior");
 });

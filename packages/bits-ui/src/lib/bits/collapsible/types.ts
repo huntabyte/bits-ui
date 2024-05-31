@@ -5,6 +5,7 @@ import type {
 	PrimitiveButtonAttributes,
 	PrimitiveDivAttributes,
 	WithAsChild,
+	Without,
 } from "$lib/internal/index.js";
 
 export type CollapsibleRootPropsWithoutHTML = WithAsChild<{
@@ -28,7 +29,8 @@ export type CollapsibleRootPropsWithoutHTML = WithAsChild<{
 	onOpenChange?: OnChangeFn<boolean>;
 }>;
 
-export type CollapsibleRootProps = CollapsibleRootPropsWithoutHTML & PrimitiveDivAttributes;
+export type CollapsibleRootProps = CollapsibleRootPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, CollapsibleRootPropsWithoutHTML>;
 
 export type CollapsibleContentPropsWithoutHTML = WithAsChild<{
 	/**

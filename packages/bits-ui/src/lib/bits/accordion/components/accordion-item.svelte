@@ -3,6 +3,7 @@
 	import type { AccordionItemProps } from "../types.js";
 	import { useAccordionItem } from "../accordion.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
+
 	let {
 		asChild,
 		disabled = false,
