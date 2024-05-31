@@ -31,4 +31,6 @@ export type StyleProperties = CSS.Properties;
 export type Orientation = "horizontal" | "vertical";
 export type Direction = "ltr" | "rtl";
 
+export type WithoutChildren<T> = Omit<T, "children" | "asChild" | "child">;
+
 export type { Month, Page, PageItem, Ellipsis, EditableSegmentPart };
