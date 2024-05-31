@@ -1,13 +1,8 @@
-import {
-	getAriaPressed,
-	getAttrAndSelector,
-	getDataDisabled,
-	getDisabledAttr,
-} from "$lib/internal/attrs.js";
-import type { WritableBoxedValues, ReadableBoxedValues } from "$lib/internal/box.svelte.js";
+import { getAriaPressed, getDataDisabled, getDisabledAttr } from "$lib/internal/attrs.js";
+import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 
-const [ROOT_ATTR] = getAttrAndSelector("toggle-root");
+const ROOT_ATTR = "data-toggle-root";
 
 type ToggleRootStateProps = ReadableBoxedValues<{
 	disabled: boolean;
@@ -17,8 +12,8 @@ type ToggleRootStateProps = ReadableBoxedValues<{
 	}>;
 
 class ToggleRootState {
-	#disabled = undefined as unknown as ToggleRootStateProps["disabled"];
-	pressed = undefined as unknown as ToggleRootStateProps["pressed"];
+	#disabled: ToggleRootStateProps["disabled"];
+	pressed: ToggleRootStateProps["pressed"];
 
 	constructor(props: ToggleRootStateProps) {
 		this.#disabled = props.disabled;
@@ -41,15 +36,18 @@ class ToggleRootState {
 		this.#togglePressed();
 	};
 
-	props = $derived({
-		[ROOT_ATTR]: "",
-		"data-disabled": getDataDisabled(this.#disabled.value),
-		"aria-pressed": getAriaPressed(this.pressed.value),
-		"data-state": getToggleDataState(this.pressed.value),
-		disabled: getDisabledAttr(this.#disabled.value),
-		onclick: this.#onclick,
-		onkeydown: this.#onkeydown,
-	} as const);
+	props = $derived.by(
+		() =>
+			({
+				[ROOT_ATTR]: "",
+				"data-disabled": getDataDisabled(this.#disabled.value),
+				"aria-pressed": getAriaPressed(this.pressed.value),
+				"data-state": getToggleDataState(this.pressed.value),
+				disabled: getDisabledAttr(this.#disabled.value),
+				onclick: this.#onclick,
+				onkeydown: this.#onkeydown,
+			}) as const
+	);
 }
 
 //

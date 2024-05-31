@@ -1,4 +1,4 @@
-import { render } from "@testing-library/svelte";
+import { render } from "@testing-library/svelte/svelte5";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
@@ -8,7 +8,7 @@ import type { Toggle } from "$lib/index.js";
 
 const kbd = getTestKbd();
 
-function setup(props: Toggle.Props = {}) {
+function setup(props: Toggle.RootProps = {}) {
 	const user = userEvent.setup();
 	const returned = render(ToggleTest, { ...props });
 	const root = returned.getByTestId("root");
@@ -75,6 +75,4 @@ describe("toggle", () => {
 		expect(binding).toHaveTextContent("true");
 		expect(root).toHaveAttribute("data-state", "on");
 	});
-
-	it.todo("`asChild` behavior");
 });
