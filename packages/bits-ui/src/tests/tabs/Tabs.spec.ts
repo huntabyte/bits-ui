@@ -1,15 +1,12 @@
-import { render } from "@testing-library/svelte";
+import { render } from "@testing-library/svelte/svelte5";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import { getTestKbd } from "../utils.js";
 import TabsTest from "./TabsTest.svelte";
-import type { Item } from "./TabsTest.svelte";
-import type { Tabs } from "$lib/index.js";
+import type { Item, TabsTestProps } from "./TabsTest.svelte";
 
 const kbd = getTestKbd();
-
-type Props = Tabs.Props & { items?: Item[] };
 
 const items: Item[] = [
 	{
@@ -26,7 +23,7 @@ const items: Item[] = [
 	},
 ];
 
-function setup(props: Props = {}) {
+function setup(props: Partial<TabsTestProps> = {}) {
 	const user = userEvent.setup();
 	const withDefaults = { ...{ items }, ...props };
 	const returned = render(TabsTest, withDefaults);
@@ -156,9 +153,9 @@ describe("tabs", () => {
 		expect(trigger3).toHaveFocus();
 	});
 
-	it("respects the `activateOnFocus` prop", async () => {
+	it("respects the `activationMode: 'manual'` prop", async () => {
 		const { getByTestId, user } = setup({
-			activateOnFocus: false,
+			activationMode: "manual",
 		});
 
 		const trigger1 = getByTestId("trigger-1");
@@ -180,6 +177,7 @@ describe("tabs", () => {
 		expect(content3).not.toBeVisible();
 		expect(content1).toBeVisible();
 	});
+
 	it("navigates using up & down when orientation is vertical", async () => {
 		const { getByTestId, user } = setup({
 			orientation: "vertical",
@@ -223,6 +221,4 @@ describe("tabs", () => {
 		expect(content1).not.toBeVisible();
 		expect(content3).toBeVisible();
 	});
-
-	it.todo("`asChild` behavior");
 });

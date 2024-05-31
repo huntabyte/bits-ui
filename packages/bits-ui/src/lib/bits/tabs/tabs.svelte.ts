@@ -15,10 +15,10 @@ import type { Orientation } from "$lib/shared/index.js";
 import { type UseRovingFocusReturn, useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
 import { createContext } from "$lib/internal/createContext.js";
 
-const ROOT_ATTR = "tabs-root";
-const LIST_ATTR = "tabs-list";
-const TRIGGER_ATTR = "tabs-trigger";
-const CONTENT_ATTR = "tabs-content";
+const ROOT_ATTR = "data-tabs-root";
+const LIST_ATTR = "data-tabs-list";
+const TRIGGER_ATTR = "data-tabs-trigger";
+const CONTENT_ATTR = "data-tabs-content";
 
 type TabsRootStateProps = ReadableBoxedValues<{
 	id: string;
