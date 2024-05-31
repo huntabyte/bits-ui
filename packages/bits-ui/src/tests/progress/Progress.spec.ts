@@ -1,11 +1,11 @@
-import { render } from "@testing-library/svelte";
+import { render } from "@testing-library/svelte/svelte5";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import ProgressTest from "./ProgressTest.svelte";
 import type { Progress } from "$lib/index.js";
 
-function setup(props: Progress.Props = {}) {
+function setup(props: Progress.RootProps = {}) {
 	const user = userEvent.setup();
 	const returned = render(ProgressTest, { ...props });
 	const { getByTestId } = returned;
@@ -34,7 +34,7 @@ describe("progress", () => {
 		expect(root).toHaveAttribute("aria-valuemax", "20");
 	});
 
-	it("respects binding the value prop", async () => {
+	it("reacts to updates to the value prop", async () => {
 		const user = userEvent.setup();
 		const { getByTestId } = render(ProgressTest);
 		const root = getByTestId("root");

@@ -1,4 +1,4 @@
-import type { PrimitiveDivAttributes, WithAsChild } from "$lib/internal/index.js";
+import type { PrimitiveDivAttributes, WithAsChild, Without } from "$lib/internal/index.js";
 
 export type ProgressRootPropsWithoutHTML = WithAsChild<{
 	/**
@@ -14,4 +14,5 @@ export type ProgressRootPropsWithoutHTML = WithAsChild<{
 	max?: number;
 }>;
 
-export type ProgressRootProps = ProgressRootPropsWithoutHTML & PrimitiveDivAttributes;
+export type ProgressRootProps = ProgressRootPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, ProgressRootPropsWithoutHTML>;
