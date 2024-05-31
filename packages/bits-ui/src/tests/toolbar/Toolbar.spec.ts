@@ -1,19 +1,14 @@
-import { render } from "@testing-library/svelte";
+import { render } from "@testing-library/svelte/svelte5";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import { getTestKbd } from "../utils.js";
 import ToolbarTest from "./ToolbarTest.svelte";
-import type { Toolbar } from "$lib/index.js";
+import type { ToolbarTestProps } from "./ToolbarTest.svelte";
 
 const kbd = getTestKbd();
 
-function setup(
-	props: Toolbar.Props & {
-		multipleProps?: Toolbar.GroupProps<"multiple">;
-		singleProps?: Toolbar.GroupProps<"single">;
-	} = {}
-) {
+function setup(props: Partial<ToolbarTestProps> = {}) {
 	const user = userEvent.setup();
 	const returned = render(ToolbarTest, { ...props });
 	const root = returned.getByTestId("root");
@@ -114,7 +109,7 @@ describe("toolbar", () => {
 		expect(groupMultipleItemBold).toHaveFocus();
 	});
 
-	it("respects the loop prop", async () => {
+	it("respects the loop: false prop", async () => {
 		const { user, groupMultipleItemBold, button } = setup({
 			loop: false,
 		});
@@ -130,7 +125,7 @@ describe("toolbar", () => {
 
 	it("toolbar toogle group, type `'single'`, toggles when clicked", async () => {
 		const { user, groupSingleItemLeft, groupSingleItemCenter, alignBinding } = setup();
-		expect(alignBinding).toHaveTextContent("undefined");
+		expect(alignBinding).toHaveTextContent("");
 		await user.click(groupSingleItemLeft);
 		expect(alignBinding).toHaveTextContent("left");
 		await user.click(groupSingleItemCenter);
@@ -141,7 +136,7 @@ describe("toolbar", () => {
 		"toolbar toogle group, type `'single'`, toggles when the %s key is pressed",
 		async (key) => {
 			const { user, groupSingleItemLeft, groupSingleItemCenter, alignBinding } = setup();
-			expect(alignBinding).toHaveTextContent("undefined");
+			expect(alignBinding).toHaveTextContent("");
 			groupSingleItemLeft.focus();
 			await user.keyboard(key);
 			expect(alignBinding).toHaveTextContent("left");
@@ -180,7 +175,10 @@ describe("toolbar", () => {
 			groupSingleItemLeft,
 			groupSingleItemCenter,
 			groupSingleItemRight,
-		} = setup({ multipleProps: { disabled: true }, singleProps: { disabled: true } });
+		} = setup({
+			multipleProps: { disabled: true },
+			singleProps: { disabled: true },
+		});
 		expect(groupMultipleItemBold).toBeDisabled();
 		expect(groupMultipleItemItalic).toBeDisabled();
 		expect(groupMultipleItemStrikethrough).toBeDisabled();
@@ -216,7 +214,7 @@ describe("toolbar", () => {
 		const { user, groupMultipleItemItalic, groupSingleItemCenter, styleBinding, alignBinding } =
 			setup();
 		expect(styleBinding).toHaveTextContent("bold");
-		expect(alignBinding).toHaveTextContent("undefined");
+		expect(alignBinding).toHaveTextContent("");
 		expect(groupMultipleItemItalic).toHaveAttribute("data-state", "off");
 		expect(groupMultipleItemItalic).toHaveAttribute("aria-pressed", "false");
 		expect(groupSingleItemCenter).toHaveAttribute("data-state", "off");
@@ -236,7 +234,7 @@ describe("toolbar", () => {
 	it.each(["link", "button"])("toolbar %s forwards click event", async (kind) => {
 		const { user, clickedBinding, [kind as keyof ReturnType<typeof setup>]: el } = setup();
 
-		expect(clickedBinding).toHaveTextContent("undefined");
+		expect(clickedBinding).toHaveTextContent("");
 		await user.click(el as Element);
 		expect(clickedBinding).toHaveTextContent(kind);
 	});
@@ -247,11 +245,9 @@ describe("toolbar", () => {
 			const { user, button, clickedBinding } = setup();
 
 			button.focus();
-			expect(clickedBinding).toHaveTextContent("undefined");
+			expect(clickedBinding).toHaveTextContent("");
 			await user.keyboard(key);
 			expect(clickedBinding).toHaveTextContent("button");
 		}
 	);
-
-	it.todo("`asChild` behavior");
 });

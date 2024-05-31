@@ -1,34 +1,34 @@
-<script lang="ts">
-	import { Toolbar } from "$lib/index.js";
-
-	type $$Props = Toolbar.Props & {
-		multipleProps?: Toolbar.GroupProps<"multiple">;
-		singleProps?: Toolbar.GroupProps<"single">;
+<script lang="ts" context="module">
+	import { Toolbar, type WithoutChildren } from "$lib/index.js";
+	export type ToolbarTestProps = WithoutChildren<Toolbar.RootProps> & {
+		multipleProps?: Partial<Toolbar.GroupProps>;
+		singleProps?: Partial<Toolbar.GroupProps>;
 	};
+</script>
 
-	export let multipleProps: $$Props["multipleProps"] = undefined;
-	export let singleProps: $$Props["singleProps"] = undefined;
+<script lang="ts">
+	let { multipleProps, singleProps, ...restProps }: ToolbarTestProps = $props();
 
-	let style: string[] | undefined = ["bold"];
-	let align: string | undefined;
+	let style: string[] = $state(["bold"]);
+	let align: string = $state("");
 
-	let clicked: string | undefined;
+	let clicked: string | undefined = $state();
 </script>
 
 <main>
-	<button data-testid="style-binding" on:click={() => (style = ["italic"])}>
+	<button aria-label="style" data-testid="style-binding" onclick={() => (style = ["italic"])}>
 		{style}
 	</button>
 
-	<button data-testid="align-binding" on:click={() => (align = "center")}>
+	<button aria-label="align" data-testid="align-binding" onclick={() => (align = "center")}>
 		{align}
 	</button>
 
-	<button data-testid="clicked-binding">
+	<span data-testid="clicked-binding">
 		{clicked}
-	</button>
+	</span>
 
-	<Toolbar.Root data-testid="root" {...$$restProps}>
+	<Toolbar.Root data-testid="root" {...restProps}>
 		<Toolbar.Group
 			data-testid="group-multiple"
 			bind:value={style}
@@ -78,11 +78,11 @@
 			</Toolbar.GroupItem>
 		</Toolbar.Group>
 
-		<Toolbar.Link data-testid="link" on:click={() => (clicked = "link")}
+		<Toolbar.Link data-testid="link" onclick={() => (clicked = "link")}
 			>Edited 2 hours ago</Toolbar.Link
 		>
 
-		<Toolbar.Button data-testid="button" on:click={() => (clicked = "button")}
+		<Toolbar.Button data-testid="button" onclick={() => (clicked = "button")}
 			>Save</Toolbar.Button
 		>
 	</Toolbar.Root>

@@ -28,11 +28,11 @@ type ToolbarRootStateProps = ReadableBoxedValues<{
 }>;
 
 class ToolbarRootState {
-	#id = undefined as unknown as ToolbarRootStateProps["id"];
-	orientation = undefined as unknown as ToolbarRootStateProps["orientation"];
-	#loop = undefined as unknown as ToolbarRootStateProps["loop"];
+	#id: ToolbarRootStateProps["id"];
+	orientation: ToolbarRootStateProps["orientation"];
+	#loop: ToolbarRootStateProps["loop"];
 	#node = box<HTMLElement | null>(null);
-	rovingFocusGroup = undefined as unknown as UseRovingFocusReturn;
+	rovingFocusGroup: UseRovingFocusReturn;
 
 	constructor(props: ToolbarRootStateProps) {
 		this.#id = props.id;
@@ -64,12 +64,15 @@ class ToolbarRootState {
 		return new ToolbarButtonState(props, this);
 	}
 
-	props = $derived({
-		id: this.#id.value,
-		role: "toolbar",
-		"data-orientation": this.orientation.value,
-		[ROOT_ATTR]: "",
-	} as const);
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.value,
+				role: "toolbar",
+				"data-orientation": this.orientation.value,
+				[ROOT_ATTR]: "",
+			}) as const
+	);
 }
 
 type ToolbarGroupBaseStateProps = ReadableBoxedValues<{
@@ -78,10 +81,10 @@ type ToolbarGroupBaseStateProps = ReadableBoxedValues<{
 }>;
 
 class ToolbarGroupBaseState {
-	id = undefined as unknown as ToolbarGroupBaseStateProps["id"];
+	id: ToolbarGroupBaseStateProps["id"];
 	node = box<HTMLElement | null>(null);
-	disabled = undefined as unknown as ToolbarGroupBaseStateProps["disabled"];
-	root = undefined as unknown as ToolbarRootState;
+	disabled: ToolbarGroupBaseStateProps["disabled"];
+	root: ToolbarRootState;
 
 	constructor(props: ToolbarGroupBaseStateProps, root: ToolbarRootState) {
 		this.id = props.id;
@@ -90,13 +93,16 @@ class ToolbarGroupBaseState {
 		this.root = root;
 	}
 
-	props = $derived({
-		id: this.id.value,
-		[GROUP_ATTR]: "",
-		role: "group",
-		"data-orientation": getDataOrientation(this.root.orientation.value),
-		"data-disabled": getDataDisabled(this.disabled.value),
-	} as const);
+	props = $derived.by(
+		() =>
+			({
+				id: this.id.value,
+				[GROUP_ATTR]: "",
+				role: "group",
+				"data-orientation": getDataOrientation(this.root.orientation.value),
+				"data-disabled": getDataDisabled(this.disabled.value),
+			}) as const
+	);
 }
 
 //
@@ -109,9 +115,9 @@ type ToolbarGroupSingleStateProps = ToolbarGroupBaseStateProps &
 	}>;
 
 class ToolbarGroupSingleState extends ToolbarGroupBaseState {
-	#value = undefined as unknown as ToolbarGroupSingleStateProps["value"];
+	#value: ToolbarGroupSingleStateProps["value"];
 	isMulti = false;
-	anyPressed = $derived(this.#value.value !== "");
+	anyPressed = $derived.by(() => this.#value.value !== "");
 
 	constructor(props: ToolbarGroupSingleStateProps, root: ToolbarRootState) {
 		super(props, root);
@@ -145,9 +151,9 @@ type ToolbarGroupMultipleStateProps = ToolbarGroupBaseStateProps &
 	}>;
 
 class ToolbarGroupMultipleState extends ToolbarGroupBaseState {
-	#value = undefined as unknown as ToolbarGroupMultipleStateProps["value"];
+	#value: ToolbarGroupMultipleStateProps["value"];
 	isMulti = true;
-	anyPressed = $derived(this.#value.value.length > 0);
+	anyPressed = $derived.by(() => this.#value.value.length > 0);
 
 	constructor(props: ToolbarGroupMultipleStateProps, root: ToolbarRootState) {
 		super(props, root);
@@ -184,13 +190,13 @@ type ToolbarGroupItemStateProps = ReadableBoxedValues<{
 }>;
 
 class ToolbarGroupItemState {
-	#id = undefined as unknown as ToolbarGroupItemStateProps["id"];
-	#group = undefined as unknown as ToolbarGroupState;
-	#root = undefined as unknown as ToolbarRootState;
-	#value = undefined as unknown as ToolbarGroupItemStateProps["value"];
+	#id: ToolbarGroupItemStateProps["id"];
+	#group: ToolbarGroupState;
+	#root: ToolbarRootState;
+	#value: ToolbarGroupItemStateProps["value"];
 	#node = box<HTMLElement | null>(null);
-	#disabled = undefined as unknown as ToolbarGroupItemStateProps["disabled"];
-	#isDisabled = $derived(this.#disabled.value || this.#group.disabled.value);
+	#disabled: ToolbarGroupItemStateProps["disabled"];
+	#isDisabled = $derived.by(() => this.#disabled.value || this.#group.disabled.value);
 
 	constructor(
 		props: ToolbarGroupItemStateProps,
@@ -225,35 +231,38 @@ class ToolbarGroupItemState {
 		this.#root.rovingFocusGroup.handleKeydown(this.#node.value, e);
 	};
 
-	#isPressed = $derived(this.#group.includesItem(this.#value.value));
+	#isPressed = $derived.by(() => this.#group.includesItem(this.#value.value));
 
 	#ariaChecked = $derived.by(() => {
 		return this.#group.isMulti ? undefined : getAriaChecked(this.#isPressed);
 	});
 
 	#ariaPressed = $derived.by(() => {
-		return this.#group.isMulti ? undefined : getAriaPressed(this.#isPressed);
+		return this.#group.isMulti ? getAriaPressed(this.#isPressed) : undefined;
 	});
 
-	#tabIndex = $derived(this.#root.rovingFocusGroup.getTabIndex(this.#node.value).value);
+	#tabIndex = $derived.by(() => this.#root.rovingFocusGroup.getTabIndex(this.#node.value).value);
 
-	props = $derived({
-		id: this.#id.value,
-		role: this.#group.isMulti ? undefined : "radio",
-		tabindex: this.#tabIndex,
-		"data-orientation": getDataOrientation(this.#root.orientation.value),
-		"data-disabled": getDataDisabled(this.#isDisabled),
-		"data-state": getToggleItemDataState(this.#isPressed),
-		"data-value": this.#value.value,
-		"aria-pressed": this.#ariaPressed,
-		"aria-checked": this.#ariaChecked,
-		[ITEM_ATTR]: "",
-		[GROUP_ITEM_ATTR]: "",
-		disabled: getDisabledAttr(this.#isDisabled),
-		//
-		onclick: this.#onclick,
-		onkeydown: this.#onkeydown,
-	});
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.value,
+				role: this.#group.isMulti ? undefined : "radio",
+				tabindex: this.#tabIndex,
+				"data-orientation": getDataOrientation(this.#root.orientation.value),
+				"data-disabled": getDataDisabled(this.#isDisabled),
+				"data-state": getToggleItemDataState(this.#isPressed),
+				"data-value": this.#value.value,
+				"aria-pressed": this.#ariaPressed,
+				"aria-checked": this.#ariaChecked,
+				[ITEM_ATTR]: "",
+				[GROUP_ITEM_ATTR]: "",
+				disabled: getDisabledAttr(this.#isDisabled),
+				//
+				onclick: this.#onclick,
+				onkeydown: this.#onkeydown,
+			}) as const
+	);
 }
 
 type ToolbarLinkStateProps = ReadableBoxedValues<{
