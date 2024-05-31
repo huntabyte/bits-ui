@@ -1,12 +1,13 @@
-import { render } from "@testing-library/svelte";
+import { render } from "@testing-library/svelte/svelte5";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import { getTestKbd } from "../utils.js";
 import ToggleGroupTest from "./ToggleGroupTest.svelte";
-import type { Item } from "./ToggleGroupTest.svelte";
-import ToggleGroupMultipleTest from "./ToggleGroupMultipleTest.svelte";
-import type { ToggleGroup } from "$lib/index.js";
+import type { Item, SingleToggleGroupTestProps } from "./ToggleGroupTest.svelte";
+import ToggleGroupMultipleTest, {
+	type MultipleToggleGroupTestProps,
+} from "./ToggleGroupMultipleTest.svelte";
 
 const kbd = getTestKbd();
 
@@ -29,9 +30,10 @@ const items: Item[] = [
 	},
 ];
 
-function setupMultiple(props: ToggleGroup.Props<"multiple"> = {}) {
+function setupMultiple(props: Partial<MultipleToggleGroupTestProps> = {}) {
 	const user = userEvent.setup();
-	const returned = render(ToggleGroupMultipleTest, { ...props, items });
+	// eslint-disable-next-line ts/no-explicit-any
+	const returned = render(ToggleGroupMultipleTest, { ...props, items } as any);
 	const root = returned.getByTestId("root");
 	const binding = returned.getByTestId("binding");
 	return {
@@ -42,9 +44,10 @@ function setupMultiple(props: ToggleGroup.Props<"multiple"> = {}) {
 	};
 }
 
-function setup(props: ToggleGroup.Props<"single"> = {}) {
+function setup(props: Partial<SingleToggleGroupTestProps> = {}) {
 	const user = userEvent.setup();
-	const returned = render(ToggleGroupTest, { ...props, items });
+	// eslint-disable-next-line ts/no-explicit-any
+	const returned = render(ToggleGroupTest, { ...props, items } as any);
 	const root = returned.getByTestId("root");
 	const binding = returned.getByTestId("binding");
 	return {
@@ -57,7 +60,7 @@ function setup(props: ToggleGroup.Props<"single"> = {}) {
 
 describe("toggleGroup", () => {
 	it("has no accessibility violations", async () => {
-		const { container } = render(ToggleGroupTest);
+		const { container } = setup();
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
@@ -70,7 +73,7 @@ describe("toggleGroup", () => {
 
 	it("toggles when clicked", async () => {
 		const { user, binding, getByTestId } = setup();
-		expect(binding).toHaveTextContent("undefined");
+		expect(binding).toHaveTextContent("");
 		const item = getByTestId("item-1");
 		await user.click(item);
 		expect(binding).toHaveTextContent("1");
@@ -81,7 +84,7 @@ describe("toggleGroup", () => {
 
 	it.each([kbd.ENTER, kbd.SPACE])("toggles when the %s key is pressed", async (key) => {
 		const { user, binding, getByTestId } = setup();
-		expect(binding).toHaveTextContent("undefined");
+		expect(binding).toHaveTextContent("");
 		const item = getByTestId("item-1");
 		item.focus();
 		await user.keyboard(key);
@@ -94,7 +97,7 @@ describe("toggleGroup", () => {
 
 	it("navigates between the items using the arrow keys", async () => {
 		const { user, binding, getByTestId } = setup();
-		expect(binding).toHaveTextContent("undefined");
+		expect(binding).toHaveTextContent("");
 		const item1 = getByTestId("item-1");
 		const item2 = getByTestId("item-2");
 		const item3 = getByTestId("item-3");
@@ -110,7 +113,7 @@ describe("toggleGroup", () => {
 
 	it("loops around when navigating with the arrow keys", async () => {
 		const { user, binding, getByTestId } = setup();
-		expect(binding).toHaveTextContent("undefined");
+		expect(binding).toHaveTextContent("");
 		const item1 = getByTestId("item-1");
 		const item4 = getByTestId("item-4");
 		item1.focus();
@@ -124,7 +127,7 @@ describe("toggleGroup", () => {
 		const { user, binding, getByTestId } = setup({
 			loop: false,
 		});
-		expect(binding).toHaveTextContent("undefined");
+		expect(binding).toHaveTextContent("");
 		const item1 = getByTestId("item-1");
 		const item4 = getByTestId("item-4");
 		item1.focus();
@@ -146,13 +149,13 @@ describe("toggleGroup", () => {
 	});
 
 	it("should fire the `onChange` callback when changing", async () => {
-		let newValue;
-		function onValueChange(next: string | undefined) {
+		let newValue = "";
+		function onValueChange(next: string) {
 			newValue = next;
 		}
 
 		const { user, getByTestId } = setup({ onValueChange });
-		expect(newValue).toBe(undefined);
+		expect(newValue).toBe("");
 		await user.click(getByTestId("item-2"));
 		expect(newValue).toBe("2");
 	});
@@ -160,7 +163,7 @@ describe("toggleGroup", () => {
 	it("respects binding to the `value` prop", async () => {
 		const { getByTestId, user } = setup();
 		const binding = getByTestId("binding");
-		expect(binding).toHaveTextContent("undefined");
+		expect(binding).toHaveTextContent("");
 		await user.click(binding);
 		expect(binding).toHaveTextContent("4");
 		const item4 = getByTestId("item-4");
@@ -191,6 +194,4 @@ describe("toggleGroup", () => {
 		await user.click(item4);
 		expect(binding).toHaveTextContent("");
 	});
-
-	it.todo("`asChild` behavior");
 });

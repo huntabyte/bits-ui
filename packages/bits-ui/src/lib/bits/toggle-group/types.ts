@@ -4,6 +4,7 @@ import type {
 	PrimitiveButtonAttributes,
 	PrimitiveDivAttributes,
 	WithAsChild,
+	Without,
 } from "$lib/internal/index.js";
 import type { Orientation } from "$lib/index.js";
 
@@ -39,21 +40,29 @@ type BaseToggleGroupProps = {
 	rovingFocus?: boolean;
 };
 
-export type SingleToggleGroupProps = BaseToggleGroupProps & {
-	type: "single";
-	value?: string;
-	onValueChange?: OnChangeFn<string>;
-};
+export type SingleToggleGroupPropsWithoutHTML = WithAsChild<
+	BaseToggleGroupProps & {
+		type: "single";
+		value?: string;
+		onValueChange?: OnChangeFn<string>;
+	}
+>;
 
-export type MultipleToggleGroupProps = BaseToggleGroupProps & {
+export type SingleToggleGroupRootProps = SingleToggleGroupPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, SingleToggleGroupPropsWithoutHTML>;
+
+export type MultipleToggleGroupPropsWithoutHTML = WithAsChild<BaseToggleGroupProps> & {
 	type: "multiple";
 	value?: string[];
 	onValueChange?: OnChangeFn<string[]>;
 };
 
+export type MultipleToggleGroupRootProps = MultipleToggleGroupPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, MultipleToggleGroupPropsWithoutHTML>;
+
 export type ToggleGroupRootPropsWithoutHTML =
-	| WithAsChild<SingleToggleGroupProps>
-	| WithAsChild<MultipleToggleGroupProps>;
+	| SingleToggleGroupPropsWithoutHTML
+	| MultipleToggleGroupPropsWithoutHTML;
 
 export type ToggleGroupRootProps = ToggleGroupRootPropsWithoutHTML & PrimitiveDivAttributes;
 

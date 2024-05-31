@@ -1,23 +1,25 @@
 <script lang="ts" context="module">
+	import type { SingleToggleGroupRootProps, WithoutChildren } from "$lib/index.js";
+	import { ToggleGroup } from "$lib/index.js";
 	export type Item = {
 		value: string;
 		disabled?: boolean;
 	};
+
+	export type SingleToggleGroupTestProps = WithoutChildren<SingleToggleGroupRootProps> & {
+		items: Item[];
+	};
 </script>
 
 <script lang="ts">
-	import { ToggleGroup } from "$lib/index.js";
-
-	type $$Props = ToggleGroup.Props<"single"> & {
-		items: Item[];
-	};
-	export let value: $$Props["value"] = undefined;
-	export let items: $$Props["items"] = [];
+	let { value = "", items, ...restProps }: SingleToggleGroupTestProps = $props();
 </script>
 
 <main>
-	<button data-testid="binding" on:click={() => (value = "4")}>{value}</button>
-	<ToggleGroup.Root data-testid="root" bind:value {...$$restProps}>
+	<button data-testid="binding" aria-label="binding" onclick={() => (value = "4")}>
+		{value}
+	</button>
+	<ToggleGroup.Root data-testid="root" bind:value {...restProps} type="single">
 		{#each items as { value, disabled }}
 			<ToggleGroup.Item {value} {disabled} data-testid="item-{value}">
 				{value}

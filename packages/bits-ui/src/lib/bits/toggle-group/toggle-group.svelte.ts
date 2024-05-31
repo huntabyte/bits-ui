@@ -13,8 +13,8 @@ import type { Orientation } from "$lib/shared/index.js";
 import { type UseRovingFocusReturn, useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
 import { createContext } from "$lib/internal/createContext.js";
 
-const ROOT_ATTR = "toggle-group-root";
-const ITEM_ATTR = "toggle-group-item";
+const ROOT_ATTR = "data-toggle-group-root";
+const ITEM_ATTR = "data-toggle-group-item";
 
 type ToggleGroupBaseStateProps = ReadableBoxedValues<{
 	id: string;
@@ -25,13 +25,13 @@ type ToggleGroupBaseStateProps = ReadableBoxedValues<{
 }>;
 
 class ToggleGroupBaseState {
-	id = undefined as unknown as ToggleGroupBaseStateProps["id"];
+	id: ToggleGroupBaseStateProps["id"];
 	node: WritableBox<HTMLElement | null>;
-	disabled = undefined as unknown as ToggleGroupBaseStateProps["disabled"];
-	rovingFocus = undefined as unknown as ToggleGroupBaseStateProps["rovingFocus"];
-	loop = undefined as unknown as ToggleGroupBaseStateProps["loop"];
-	orientation = undefined as unknown as ToggleGroupBaseStateProps["orientation"];
-	rovingFocusGroup = undefined as unknown as UseRovingFocusReturn;
+	disabled: ToggleGroupBaseStateProps["disabled"];
+	rovingFocus: ToggleGroupBaseStateProps["rovingFocus"];
+	loop: ToggleGroupBaseStateProps["loop"];
+	orientation: ToggleGroupBaseStateProps["orientation"];
+	rovingFocusGroup: UseRovingFocusReturn;
 
 	constructor(props: ToggleGroupBaseStateProps) {
 		this.id = props.id;
@@ -48,13 +48,16 @@ class ToggleGroupBaseState {
 		});
 	}
 
-	props = $derived({
-		id: this.id.value,
-		[ROOT_ATTR]: "",
-		role: "group",
-		"data-orientation": getDataOrientation(this.orientation.value),
-		"data-disabled": getDataDisabled(this.disabled.value),
-	} as const);
+	props = $derived.by(
+		() =>
+			({
+				id: this.id.value,
+				[ROOT_ATTR]: "",
+				role: "group",
+				"data-orientation": getDataOrientation(this.orientation.value),
+				"data-disabled": getDataDisabled(this.disabled.value),
+			}) as const
+	);
 }
 
 //
@@ -67,9 +70,9 @@ type ToggleGroupSingleStateProps = ToggleGroupBaseStateProps &
 	}>;
 
 class ToggleGroupSingleState extends ToggleGroupBaseState {
-	#value = undefined as unknown as ToggleGroupSingleStateProps["value"];
+	#value: ToggleGroupSingleStateProps["value"];
 	isMulti = false;
-	anyPressed = $derived(this.#value.value !== "");
+	anyPressed = $derived.by(() => this.#value.value !== "");
 
 	constructor(props: ToggleGroupSingleStateProps) {
 		super(props);
@@ -100,9 +103,9 @@ type ToggleGroupMultipleStateProps = ToggleGroupBaseStateProps &
 	}>;
 
 class ToggleGroupMultipleState extends ToggleGroupBaseState {
-	#value = undefined as unknown as ToggleGroupMultipleStateProps["value"];
+	#value: ToggleGroupMultipleStateProps["value"];
 	isMulti = true;
-	anyPressed = $derived(this.#value.value.length > 0);
+	anyPressed = $derived.by(() => this.#value.value.length > 0);
 
 	constructor(props: ToggleGroupMultipleStateProps) {
 		super(props);
@@ -138,12 +141,12 @@ type ToggleGroupItemStateProps = ReadableBoxedValues<{
 };
 
 class ToggleGroupItemState {
-	#id = undefined as unknown as ToggleGroupItemStateProps["id"];
-	#root = undefined as unknown as ToggleGroupItemStateProps["rootState"];
-	#value = undefined as unknown as ToggleGroupItemStateProps["value"];
+	#id: ToggleGroupItemStateProps["id"];
+	#root: ToggleGroupItemStateProps["rootState"];
+	#value: ToggleGroupItemStateProps["value"];
 	#node = box<HTMLElement | null>(null);
-	#disabled = undefined as unknown as ToggleGroupItemStateProps["disabled"];
-	#isDisabled = $derived(this.#disabled.value || this.#root.disabled.value);
+	#disabled: ToggleGroupItemStateProps["disabled"];
+	#isDisabled = $derived.by(() => this.#disabled.value || this.#root.disabled.value);
 
 	constructor(props: ToggleGroupItemStateProps) {
 		this.#value = props.value;
@@ -174,38 +177,41 @@ class ToggleGroupItemState {
 		this.#root.rovingFocusGroup.handleKeydown(this.#node.value, e);
 	};
 
-	#isPressed = $derived(this.#root.includesItem(this.#value.value));
+	#isPressed = $derived.by(() => this.#root.includesItem(this.#value.value));
 
 	#ariaChecked = $derived.by(() => {
 		return this.#root.isMulti ? undefined : getAriaChecked(this.#isPressed);
 	});
 
 	#ariaPressed = $derived.by(() => {
-		return this.#root.isMulti ? undefined : getAriaPressed(this.#isPressed);
+		return this.#root.isMulti ? getAriaPressed(this.#isPressed) : undefined;
 	});
 
-	#tabIndex = $derived(
+	#tabIndex = $derived.by(() =>
 		!this.#root.rovingFocus.value
 			? 0
 			: this.#root.rovingFocusGroup.getTabIndex(this.#node.value).value
 	);
 
-	props = $derived({
-		id: this.#id.value,
-		role: this.#root.isMulti ? undefined : "radio",
-		tabindex: this.#tabIndex,
-		"data-orientation": getDataOrientation(this.#root.orientation.value),
-		"data-disabled": getDataDisabled(this.#isDisabled),
-		"data-state": getToggleItemDataState(this.#isPressed),
-		"data-value": this.#value.value,
-		"aria-pressed": this.#ariaPressed,
-		"aria-checked": this.#ariaChecked,
-		disabled: getDisabledAttr(this.#isDisabled),
-		[ITEM_ATTR]: "",
-		//
-		onclick: this.#onclick,
-		onkeydown: this.#onkeydown,
-	});
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.value,
+				role: this.#root.isMulti ? undefined : "radio",
+				tabindex: this.#tabIndex,
+				"data-orientation": getDataOrientation(this.#root.orientation.value),
+				"data-disabled": getDataDisabled(this.#isDisabled),
+				"data-state": getToggleItemDataState(this.#isPressed),
+				"data-value": this.#value.value,
+				"aria-pressed": this.#ariaPressed,
+				"aria-checked": this.#ariaChecked,
+				disabled: getDisabledAttr(this.#isDisabled),
+				[ITEM_ATTR]: "",
+				//
+				onclick: this.#onclick,
+				onkeydown: this.#onkeydown,
+			}) as const
+	);
 }
 
 //
