@@ -8,6 +8,8 @@ import {
 } from "$lib/internal/index.js";
 import { createContext } from "$lib/internal/createContext.js";
 
+const ROOT_ATTR = "data-checkbox-root";
+
 type CheckboxRootStateProps = ReadableBoxedValues<{
 	disabled: boolean;
 	required: boolean;
@@ -19,17 +21,11 @@ type CheckboxRootStateProps = ReadableBoxedValues<{
 	}>;
 
 class CheckboxRootState {
-	checked = undefined as unknown as CheckboxRootStateProps["checked"];
-	disabled = undefined as unknown as CheckboxRootStateProps["disabled"];
-	required = undefined as unknown as CheckboxRootStateProps["required"];
+	checked: CheckboxRootStateProps["checked"];
+	disabled: CheckboxRootStateProps["disabled"];
+	required: CheckboxRootStateProps["required"];
 	name: CheckboxRootStateProps["name"];
 	value: CheckboxRootStateProps["value"];
-
-	indicatorprops = $derived({
-		"data-disabled": getDataDisabled(this.disabled.value),
-		"data-state": getCheckboxDataState(this.checked.value),
-		"data-checkbox-indicator": "",
-	} as const);
 
 	constructor(props: CheckboxRootStateProps) {
 		this.checked = props.checked;
@@ -56,19 +52,22 @@ class CheckboxRootState {
 		return new CheckboxInputState(this);
 	}
 
-	props = $derived({
-		"data-disabled": getDataDisabled(this.disabled.value),
-		"data-state": getCheckboxDataState(this.checked.value),
-		role: "checkbox",
-		type: "button",
-		"aria-checked": getAriaChecked(this.checked.value),
-		"aria-required": getAriaRequired(this.required.value),
-		"data-checkbox-root": "",
-		disabled: this.disabled.value,
-		//
-		onclick: this.#onclick,
-		onkeydown: this.#onkeydown,
-	} as const);
+	props = $derived.by(
+		() =>
+			({
+				"data-disabled": getDataDisabled(this.disabled.value),
+				"data-state": getCheckboxDataState(this.checked.value),
+				role: "checkbox",
+				type: "button",
+				"aria-checked": getAriaChecked(this.checked.value),
+				"aria-required": getAriaRequired(this.required.value),
+				disabled: this.disabled.value,
+				[ROOT_ATTR]: "",
+				//
+				onclick: this.#onclick,
+				onkeydown: this.#onkeydown,
+			}) as const
+	);
 }
 
 //
@@ -76,22 +75,25 @@ class CheckboxRootState {
 //
 
 class CheckboxInputState {
-	root = undefined as unknown as CheckboxRootState;
-	shouldRender = $derived(this.root.name.value !== undefined);
+	root: CheckboxRootState;
+	shouldRender = $derived.by(() => this.root.name.value !== undefined);
 
 	constructor(root: CheckboxRootState) {
 		this.root = root;
 	}
 
-	props = $derived({
-		type: "checkbox",
-		checked: this.root.checked.value === true,
-		disabled: this.root.disabled.value,
-		required: this.root.required.value,
-		name: this.root.name.value,
-		value: this.root.value.value,
-		"data-checkbox-input": "",
-	} as const);
+	props = $derived.by(
+		() =>
+			({
+				type: "checkbox",
+				checked: this.root.checked.value === true,
+				disabled: this.root.disabled.value,
+				required: this.root.required.value,
+				name: this.root.name.value,
+				value: this.root.value.value,
+				"data-checkbox-input": "",
+			}) as const
+	);
 }
 
 //

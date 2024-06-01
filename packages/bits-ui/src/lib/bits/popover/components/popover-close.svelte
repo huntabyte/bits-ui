@@ -6,7 +6,6 @@
 	let { asChild, child, children, el = $bindable(), ...restProps }: CloseProps = $props();
 
 	const state = usePopoverClose();
-
 	const mergedProps = $derived(mergeProps(restProps, state.props));
 </script>
 

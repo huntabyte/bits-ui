@@ -9,6 +9,7 @@ import type {
 	PrimitiveButtonAttributes,
 	PrimitiveDivAttributes,
 	WithAsChild,
+	Without,
 } from "$lib/internal/types.js";
 import type { EventCallback } from "$lib/internal/events.js";
 
@@ -25,7 +26,7 @@ export type ToolbarGroupPropsWithoutHTML = Omit<
 >;
 
 export type ToolbarGroupProps = ToolbarGroupPropsWithoutHTML &
-	Omit<PrimitiveDivAttributes, "value" | "disabled">;
+	Without<PrimitiveDivAttributes, ToolbarGroupPropsWithoutHTML>;
 
 export type ToolbarGroupItemPropsWithoutHTML = ToggleGroupItemPropsWithoutHTML;
 
@@ -37,11 +38,11 @@ export type ToolbarButtonPropsWithoutHTML = WithAsChild<{
 }>;
 
 export type ToolbarButtonProps = ToolbarButtonPropsWithoutHTML &
-	Omit<PrimitiveButtonAttributes, "onkeydown" | "disabled">;
+	Without<PrimitiveButtonAttributes, ToolbarButtonPropsWithoutHTML>;
 
 export type ToolbarLinkPropsWithoutHTML = WithAsChild<{
 	onkeydown?: EventCallback<KeyboardEvent>;
 }>;
 
 export type ToolbarLinkProps = ToolbarLinkPropsWithoutHTML &
-	Omit<PrimitiveAnchorAttributes, "onkeydown">;
+	Without<PrimitiveAnchorAttributes, ToolbarLinkPropsWithoutHTML>;

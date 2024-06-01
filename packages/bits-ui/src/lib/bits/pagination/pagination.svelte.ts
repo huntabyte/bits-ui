@@ -12,6 +12,11 @@ import {
 import type { Orientation } from "$lib/shared/index.js";
 import { createContext } from "$lib/internal/createContext.js";
 
+const ROOT_ATTR = "data-pagination-root";
+const PAGE_ATTR = "data-pagination-page";
+const PREV_ATTR = "data-pagination-prev";
+const NEXT_ATTR = "data-pagination-next";
+
 type PaginationRootStateProps = ReadableBoxedValues<{
 	id: string;
 	count: number;
@@ -25,21 +30,21 @@ type PaginationRootStateProps = ReadableBoxedValues<{
 	}>;
 
 class PaginationRootState {
-	id = undefined as unknown as PaginationRootStateProps["id"];
-	orientation = undefined as unknown as PaginationRootStateProps["orientation"];
+	id: PaginationRootStateProps["id"];
+	orientation: PaginationRootStateProps["orientation"];
 	node = box<HTMLElement | null>(null);
-	count = undefined as unknown as PaginationRootStateProps["count"];
-	perPage = undefined as unknown as PaginationRootStateProps["perPage"];
-	siblingCount = undefined as unknown as PaginationRootStateProps["siblingCount"];
-	page = undefined as unknown as PaginationRootStateProps["page"];
-	loop = undefined as unknown as PaginationRootStateProps["loop"];
-	totalPages = $derived(Math.ceil(this.count.value / this.perPage.value));
+	count: PaginationRootStateProps["count"];
+	perPage: PaginationRootStateProps["perPage"];
+	siblingCount: PaginationRootStateProps["siblingCount"];
+	page: PaginationRootStateProps["page"];
+	loop: PaginationRootStateProps["loop"];
+	totalPages = $derived.by(() => Math.ceil(this.count.value / this.perPage.value));
 	range = $derived.by(() => {
 		const start = (this.page.value - 1) * this.perPage.value;
 		const end = Math.min(start + this.perPage.value, this.count.value);
 		return { start, end };
 	});
-	pages = $derived(
+	pages = $derived.by(() =>
 		getPageItems({
 			page: this.page.value,
 			totalPages: this.totalPages,
@@ -90,11 +95,14 @@ class PaginationRootState {
 		return new PaginationButtonState(props, this);
 	}
 
-	props = $derived({
-		id: this.id.value,
-		"data-pagination-root": "",
-		"data-orientation": getDataOrientation(this.orientation.value),
-	});
+	props = $derived.by(
+		() =>
+			({
+				id: this.id.value,
+				"data-orientation": getDataOrientation(this.orientation.value),
+				[ROOT_ATTR]: "",
+			}) as const
+	);
 }
 
 //
@@ -107,10 +115,10 @@ type PaginationPageStateProps = ReadableBoxedValues<{
 }>;
 
 class PaginationPage {
-	#id = undefined as unknown as PaginationPageStateProps["id"];
-	#root = undefined as unknown as PaginationRootState;
+	#id: PaginationPageStateProps["id"];
+	#root: PaginationRootState;
 	#node = box<HTMLElement | null>(null);
-	page = undefined as unknown as PaginationPageStateProps["page"];
+	page: PaginationPageStateProps["page"];
 
 	constructor(props: PaginationPageStateProps, root: PaginationRootState) {
 		this.#root = root;
@@ -127,16 +135,19 @@ class PaginationPage {
 		handleTriggerKeydown(e, this.#node.value, this.#root);
 	};
 
-	props = $derived({
-		id: this.#id.value,
-		"aria-label": `Page ${this.page.value}`,
-		"data-value": `${this.page.value}`,
-		"data-pagination-page": "",
-		"data-selected": this.page.value.value === this.#root.page.value ? "" : undefined,
-		//
-		onclick: this.#onclick,
-		onkeydown: this.#onkeydown,
-	} as const);
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.value,
+				"aria-label": `Page ${this.page.value}`,
+				"data-value": `${this.page.value}`,
+				"data-selected": this.page.value.value === this.#root.page.value ? "" : undefined,
+				[PAGE_ATTR]: "",
+				//
+				onclick: this.#onclick,
+				onkeydown: this.#onkeydown,
+			}) as const
+	);
 }
 
 //
@@ -150,8 +161,8 @@ type PaginationButtonStateProps = ReadableBoxedValues<{
 };
 
 class PaginationButtonState {
-	id = undefined as unknown as PaginationButtonStateProps["id"];
-	#root = undefined as unknown as PaginationRootState;
+	id: PaginationButtonStateProps["id"];
+	#root: PaginationRootState;
 	node = box<HTMLElement | null>(null);
 	type = $state() as PaginationButtonStateProps["type"];
 
@@ -170,14 +181,17 @@ class PaginationButtonState {
 		handleTriggerKeydown(e, this.node.value, this.#root);
 	};
 
-	props = $derived({
-		id: this.id.value,
-		"data-pagination-prev": this.type === "prev" ? "" : undefined,
-		"data-pagination-next": this.type === "next" ? "" : undefined,
-		//
-		onclick: this.#onclick,
-		onkeydown: this.#onkeydown,
-	} as const);
+	props = $derived.by(
+		() =>
+			({
+				id: this.id.value,
+				[PREV_ATTR]: this.type === "prev" ? "" : undefined,
+				[NEXT_ATTR]: this.type === "next" ? "" : undefined,
+				//
+				onclick: this.#onclick,
+				onkeydown: this.#onkeydown,
+			}) as const
+	);
 }
 
 //

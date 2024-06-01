@@ -15,10 +15,10 @@ import type { Orientation } from "$lib/shared/index.js";
 import { type UseRovingFocusReturn, useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
 import { createContext } from "$lib/internal/createContext.js";
 
-const ROOT_ATTR = "tabs-root";
-const LIST_ATTR = "tabs-list";
-const TRIGGER_ATTR = "tabs-trigger";
-const CONTENT_ATTR = "tabs-content";
+const ROOT_ATTR = "data-tabs-root";
+const LIST_ATTR = "data-tabs-list";
+const TRIGGER_ATTR = "data-tabs-trigger";
+const CONTENT_ATTR = "data-tabs-content";
 
 type TabsRootStateProps = ReadableBoxedValues<{
 	id: string;
@@ -32,14 +32,14 @@ type TabsRootStateProps = ReadableBoxedValues<{
 	}>;
 
 class TabsRootState {
-	id = undefined as unknown as TabsRootStateProps["id"];
-	node = undefined as unknown as WritableBox<HTMLElement | null>;
-	orientation = undefined as unknown as TabsRootStateProps["orientation"];
-	loop = undefined as unknown as TabsRootStateProps["loop"];
-	activationMode = undefined as unknown as TabsRootStateProps["activationMode"];
-	value = undefined as unknown as TabsRootStateProps["value"];
-	disabled = undefined as unknown as TabsRootStateProps["disabled"];
-	rovingFocusGroup = undefined as unknown as UseRovingFocusReturn;
+	id: TabsRootStateProps["id"];
+	node: WritableBox<HTMLElement | null>;
+	orientation: TabsRootStateProps["orientation"];
+	loop: TabsRootStateProps["loop"];
+	activationMode: TabsRootStateProps["activationMode"];
+	value: TabsRootStateProps["value"];
+	disabled: TabsRootStateProps["disabled"];
+	rovingFocusGroup: UseRovingFocusReturn;
 
 	constructor(props: TabsRootStateProps) {
 		this.id = props.id;
@@ -73,11 +73,14 @@ class TabsRootState {
 		return new TabsContentState(props, this);
 	}
 
-	props = $derived({
-		id: this.id.value,
-		"data-orientation": getDataOrientation(this.orientation.value),
-		[ROOT_ATTR]: "",
-	} as const);
+	props = $derived.by(
+		() =>
+			({
+				id: this.id.value,
+				"data-orientation": getDataOrientation(this.orientation.value),
+				[ROOT_ATTR]: "",
+			}) as const
+	);
 }
 
 //
@@ -85,20 +88,23 @@ class TabsRootState {
 //
 
 class TabsListState {
-	#root = undefined as unknown as TabsRootState;
-	#isDisabled = $derived(this.#root.disabled.value);
+	#root: TabsRootState;
+	#isDisabled = $derived.by(() => this.#root.disabled.value);
 
 	constructor(root: TabsRootState) {
 		this.#root = root;
 	}
 
-	props = $derived({
-		role: "tablist",
-		"aria-orientation": getAriaOrientation(this.#root.orientation.value),
-		"data-orientation": getDataOrientation(this.#root.orientation.value),
-		[LIST_ATTR]: "",
-		"data-disabled": getDataDisabled(this.#isDisabled),
-	} as const);
+	props = $derived.by(
+		() =>
+			({
+				role: "tablist",
+				"aria-orientation": getAriaOrientation(this.#root.orientation.value),
+				"data-orientation": getDataOrientation(this.#root.orientation.value),
+				[LIST_ATTR]: "",
+				"data-disabled": getDataDisabled(this.#isDisabled),
+			}) as const
+	);
 }
 
 //
@@ -112,13 +118,13 @@ type TabsTriggerStateProps = ReadableBoxedValues<{
 }>;
 
 class TabsTriggerState {
-	#root = undefined as unknown as TabsRootState;
-	#id = undefined as unknown as TabsTriggerStateProps["id"];
-	#node = undefined as unknown as WritableBox<HTMLElement | null>;
-	#disabled = undefined as unknown as TabsTriggerStateProps["disabled"];
-	#value = undefined as unknown as TabsTriggerStateProps["value"];
-	#isActive = $derived(this.#root.value.value === this.#value.value);
-	#isDisabled = $derived(this.#disabled.value || this.#root.disabled.value);
+	#root: TabsRootState;
+	#id: TabsTriggerStateProps["id"];
+	#node: WritableBox<HTMLElement | null>;
+	#disabled: TabsTriggerStateProps["disabled"];
+	#value: TabsTriggerStateProps["value"];
+	#isActive = $derived.by(() => this.#root.value.value === this.#value.value);
+	#isDisabled = $derived.by(() => this.#disabled.value || this.#root.disabled.value);
 
 	constructor(props: TabsTriggerStateProps, root: TabsRootState) {
 		this.#root = root;
@@ -156,25 +162,27 @@ class TabsTriggerState {
 		this.#root.rovingFocusGroup.handleKeydown(this.#node.value, e);
 	};
 
-	#tabIndex = $derived(this.#root.rovingFocusGroup.getTabIndex(this.#node.value).value);
+	#tabIndex = $derived.by(() => this.#root.rovingFocusGroup.getTabIndex(this.#node.value).value);
 
-	props = $derived({
-		id: this.#id.value,
-		role: "tab",
-		"data-state": getTabDataState(this.#isActive),
-		"data-value": this.#value.value,
-		"data-orientation": getDataOrientation(this.#root.orientation.value),
-		"data-disabled": getDataDisabled(this.#disabled.value),
-		[TRIGGER_ATTR]: "",
-		disabled: getDisabledAttr(this.#disabled.value),
-		tabindex: this.#tabIndex,
-		//
-		onclick: this.#onclick,
-		onfocus: this.#onfocus,
-		onkeydown: this.#onkeydown,
-	} as const);
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.value,
+				role: "tab",
+				"data-state": getTabDataState(this.#isActive),
+				"data-value": this.#value.value,
+				"data-orientation": getDataOrientation(this.#root.orientation.value),
+				"data-disabled": getDataDisabled(this.#disabled.value),
+				[TRIGGER_ATTR]: "",
+				disabled: getDisabledAttr(this.#disabled.value),
+				tabindex: this.#tabIndex,
+				//
+				onclick: this.#onclick,
+				onfocus: this.#onfocus,
+				onkeydown: this.#onkeydown,
+			}) as const
+	);
 }
-
 //
 // CONTENT
 //
@@ -184,23 +192,26 @@ type TabsContentStateProps = ReadableBoxedValues<{
 }>;
 
 class TabsContentState {
-	#root = undefined as unknown as TabsRootState;
-	#value = undefined as unknown as TabsContentStateProps["value"];
-	#isActive = $derived(this.#root.value.value === this.#value.value);
+	#root: TabsRootState;
+	#value: TabsContentStateProps["value"];
+	#isActive = $derived.by(() => this.#root.value.value === this.#value.value);
 
 	constructor(props: TabsContentStateProps, root: TabsRootState) {
 		this.#root = root;
 		this.#value = props.value;
 	}
 
-	props = $derived({
-		role: "tabpanel",
-		hidden: getHiddenAttr(!this.#isActive),
-		tabindex: 0,
-		"data-value": this.#value.value,
-		"data-state": getTabDataState(this.#isActive),
-		[CONTENT_ATTR]: "",
-	} as const);
+	props = $derived.by(
+		() =>
+			({
+				role: "tabpanel",
+				hidden: getHiddenAttr(!this.#isActive),
+				tabindex: 0,
+				"data-value": this.#value.value,
+				"data-state": getTabDataState(this.#isActive),
+				[CONTENT_ATTR]: "",
+			}) as const
+	);
 }
 
 //

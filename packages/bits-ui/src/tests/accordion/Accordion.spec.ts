@@ -330,20 +330,6 @@ describe("accordion - multiple", () => {
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
-	it("has bits data attrs", async () => {
-		const { getByTestId } = render(AccordionTestIsolated);
-		const root = getByTestId("root");
-		const trigger = getByTestId("trigger");
-		const item = getByTestId("item");
-		const header = getByTestId("header");
-		const content = getByTestId("content");
-		expect(root).toHaveAttribute("data-accordion-root");
-		expect(item).toHaveAttribute("data-accordion-item");
-		expect(header).toHaveAttribute("data-accordion-header");
-		expect(content).toHaveAttribute("data-accordion-content");
-		expect(trigger).toHaveAttribute("data-accordion-trigger");
-	});
-
 	it("has expected data attributes", async () => {
 		const user = userEvent.setup();
 		const { getByTestId } = render(AccordionMultiTest as any, { items: itemsWithDisabled });

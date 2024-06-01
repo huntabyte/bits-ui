@@ -14,7 +14,7 @@
 		value = $bindable(""),
 		onValueChange,
 		orientation = "horizontal",
-		loop = false,
+		loop = true,
 		activationMode = "automatic",
 		disabled = false,
 		...restProps

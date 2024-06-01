@@ -14,8 +14,8 @@ import type { Orientation } from "$lib/shared/index.js";
 import { type UseRovingFocusReturn, useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
 import { createContext } from "$lib/internal/createContext.js";
 
-const ROOT_ATTR = "radio-group-root";
-const ITEM_ATTR = "radio-group-item";
+const ROOT_ATTR = "data-radio-group-root";
+const ITEM_ATTR = "data-radio-group-item";
 
 type RadioGroupRootStateProps = ReadableBoxedValues<{
 	id: string;
@@ -28,15 +28,15 @@ type RadioGroupRootStateProps = ReadableBoxedValues<{
 	WritableBoxedValues<{ value: string }>;
 
 class RadioGroupRootState {
-	id = undefined as unknown as RadioGroupRootStateProps["id"];
+	id: RadioGroupRootStateProps["id"];
 	node: WritableBox<HTMLElement | null>;
-	disabled = undefined as unknown as RadioGroupRootStateProps["disabled"];
-	required = undefined as unknown as RadioGroupRootStateProps["required"];
+	disabled: RadioGroupRootStateProps["disabled"];
+	required: RadioGroupRootStateProps["required"];
 	loop: RadioGroupRootStateProps["loop"];
-	orientation = undefined as unknown as RadioGroupRootStateProps["orientation"];
+	orientation: RadioGroupRootStateProps["orientation"];
 	name: RadioGroupRootStateProps["name"];
 	value: RadioGroupRootStateProps["value"];
-	rovingFocusGroup = undefined as unknown as UseRovingFocusReturn;
+	rovingFocusGroup: UseRovingFocusReturn;
 
 	constructor(props: RadioGroupRootStateProps) {
 		this.id = props.id;
@@ -71,14 +71,17 @@ class RadioGroupRootState {
 		return new RadioGroupInputState(this);
 	}
 
-	props = $derived({
-		id: this.id.value,
-		role: "radiogroup",
-		"aria-required": getAriaRequired(this.required.value),
-		"data-disabled": getDataDisabled(this.disabled.value),
-		"data-orientation": this.orientation.value,
-		[ROOT_ATTR]: "",
-	} as const);
+	props = $derived.by(
+		() =>
+			({
+				id: this.id.value,
+				role: "radiogroup",
+				"aria-required": getAriaRequired(this.required.value),
+				"data-disabled": getDataDisabled(this.disabled.value),
+				"data-orientation": this.orientation.value,
+				[ROOT_ATTR]: "",
+			}) as const
+	);
 }
 
 //
@@ -88,20 +91,18 @@ class RadioGroupRootState {
 type RadioGroupItemStateProps = ReadableBoxedValues<{
 	disabled: boolean;
 	value: string;
-	onclick: EventCallback<MouseEvent>;
-	onkeydown: EventCallback<KeyboardEvent>;
 	id: string;
 }>;
 
 class RadioGroupItemState {
-	#id = undefined as unknown as RadioGroupItemStateProps["id"];
-	#node = undefined as unknown as WritableBox<HTMLElement | null>;
-	#root = undefined as unknown as RadioGroupRootState;
-	#disabled = undefined as unknown as RadioGroupItemStateProps["disabled"];
-	#value = undefined as unknown as RadioGroupItemStateProps["value"];
-	checked = $derived(this.#root.value.value === this.#value.value);
-	#isDisabled = $derived(this.#disabled.value || this.#root.disabled.value);
-	#isChecked = $derived(this.#root.isChecked(this.#value.value));
+	#id: RadioGroupItemStateProps["id"];
+	#node: WritableBox<HTMLElement | null>;
+	#root: RadioGroupRootState;
+	#disabled: RadioGroupItemStateProps["disabled"];
+	#value: RadioGroupItemStateProps["value"];
+	checked = $derived.by(() => this.#root.value.value === this.#value.value);
+	#isDisabled = $derived.by(() => this.#disabled.value || this.#root.disabled.value);
+	#isChecked = $derived.by(() => this.#root.isChecked(this.#value.value));
 
 	constructor(props: RadioGroupItemStateProps, root: RadioGroupRootState) {
 		this.#disabled = props.disabled;
@@ -124,25 +125,28 @@ class RadioGroupItemState {
 		this.#root.rovingFocusGroup.handleKeydown(this.#node.value, e);
 	};
 
-	#tabIndex = $derived(this.#root.rovingFocusGroup.getTabIndex(this.#node.value).value);
+	#tabIndex = $derived.by(() => this.#root.rovingFocusGroup.getTabIndex(this.#node.value).value);
 
-	props = $derived({
-		id: this.#id.value,
-		disabled: this.#isDisabled ? true : undefined,
-		"data-value": this.#value.value,
-		"data-orientation": this.#root.orientation.value,
-		"data-disabled": getDataDisabled(this.#isDisabled),
-		"data-state": this.#isChecked ? "checked" : "unchecked",
-		"aria-checked": getAriaChecked(this.#isChecked),
-		[ITEM_ATTR]: "",
-		type: "button",
-		role: "radio",
-		tabindex: this.#tabIndex,
-		//
-		onclick: this.#onclick,
-		onkeydown: this.#onkeydown,
-		onfocus: this.#onfocus,
-	} as const);
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.value,
+				disabled: this.#isDisabled ? true : undefined,
+				"data-value": this.#value.value,
+				"data-orientation": this.#root.orientation.value,
+				"data-disabled": getDataDisabled(this.#isDisabled),
+				"data-state": this.#isChecked ? "checked" : "unchecked",
+				"aria-checked": getAriaChecked(this.#isChecked),
+				[ITEM_ATTR]: "",
+				type: "button",
+				role: "radio",
+				tabindex: this.#tabIndex,
+				//
+				onclick: this.#onclick,
+				onkeydown: this.#onkeydown,
+				onfocus: this.#onfocus,
+			}) as const
+	);
 }
 
 //
@@ -150,18 +154,21 @@ class RadioGroupItemState {
 //
 
 class RadioGroupInputState {
-	#root = undefined as unknown as RadioGroupRootState;
-	shouldRender = $derived(this.#root.name.value !== undefined);
-	props = $derived({
-		name: this.#root.name.value,
-		value: this.#root.value.value,
-		required: this.#root.required.value,
-		disabled: this.#root.disabled.value,
-		"aria-hidden": "true",
-		hidden: true,
-		style: styleToString(srOnlyStyles),
-		tabIndex: -1,
-	} as const);
+	#root: RadioGroupRootState;
+	shouldRender = $derived.by(() => this.#root.name.value !== undefined);
+	props = $derived.by(
+		() =>
+			({
+				name: this.#root.name.value,
+				value: this.#root.value.value,
+				required: this.#root.required.value,
+				disabled: this.#root.disabled.value,
+				"aria-hidden": "true",
+				hidden: true,
+				style: styleToString(srOnlyStyles),
+				tabIndex: -1,
+			}) as const
+	);
 
 	constructor(root: RadioGroupRootState) {
 		this.#root = root;

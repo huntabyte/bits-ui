@@ -10,6 +10,9 @@ import { useGraceArea } from "$lib/internal/useGraceArea.svelte.js";
 import { createContext } from "$lib/internal/createContext.js";
 import { getDataDisabled } from "$lib/internal/attrs.js";
 
+const CONTENT_ATTR = "data-tooltip-content";
+const TRIGGER_ATTR = "data-tooltip-trigger";
+
 type TooltipProviderStateProps = ReadableBoxedValues<{
 	delayDuration: number;
 	disableHoverableContent: boolean;
@@ -263,7 +266,7 @@ class TooltipTriggerState {
 		"aria-describedby": this.#root.open.value ? this.#root.contentNode.value?.id : undefined,
 		"data-state": this.#root.stateAttr,
 		"data-disabled": getDataDisabled(this.#isDisabled),
-		"data-tooltip-trigger": "",
+		[TRIGGER_ATTR]: "",
 		tabindex: this.#isDisabled ? undefined : 0,
 		onpointerup: this.#onpointerup,
 		onpointerdown: this.#onpointerdown,
@@ -321,7 +324,7 @@ class TooltipContentState {
 		id: this.#id.value,
 		"data-state": this.root.stateAttr,
 		"data-disabled": getDataDisabled(this.root.disabled),
-		"data-tooltip-content": "",
+		[CONTENT_ATTR]: "",
 	}));
 }
 

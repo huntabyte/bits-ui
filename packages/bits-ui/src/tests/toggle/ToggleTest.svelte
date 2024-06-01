@@ -1,12 +1,10 @@
 <script lang="ts">
-	import { Toggle } from "$lib/index.js";
+	import { Toggle, type WithoutChildren } from "$lib/index.js";
 
-	type $$Props = Toggle.Props;
-	export let pressed: $$Props["pressed"] = false;
+	let { pressed = false, ...restProps }: WithoutChildren<Toggle.RootProps> = $props();
 </script>
 
 <main>
-	<button data-testid="binding" on:click={() => (pressed = !pressed)}>{pressed}</button>
-	<Toggle.Root bind:pressed aria-label="toggle" data-testid="root" {...$$restProps}>a</Toggle.Root
-	>
+	<button data-testid="binding" onclick={() => (pressed = !pressed)}>{pressed}</button>
+	<Toggle.Root bind:pressed aria-label="toggle" data-testid="root" {...restProps}>a</Toggle.Root>
 </main>

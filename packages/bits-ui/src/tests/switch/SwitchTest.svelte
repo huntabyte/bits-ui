@@ -1,24 +1,12 @@
 <script lang="ts">
-	import { Switch } from "$lib/index.js";
+	import { Switch, type WithoutChildren } from "$lib/index.js";
 
-	type $$Props = Switch.Props;
-
-	export let checked: Switch.Props["checked"] = false;
-
-	const inputAttrs = {
-		"data-testid": "input",
-	};
+	let { checked = false, ...restProps }: WithoutChildren<Switch.RootProps> = $props();
 </script>
 
 <main>
-	<button data-testid="binding" on:click={() => (checked = !checked)}>{checked}</button>
-	<Switch.Root
-		aria-label="airplane mode"
-		data-testid="root"
-		bind:checked
-		{...$$restProps}
-		{inputAttrs}
-	>
+	<button data-testid="binding" onclick={() => (checked = !checked)}>{checked}</button>
+	<Switch.Root aria-label="airplane mode" data-testid="root" bind:checked {...restProps}>
 		<Switch.Thumb data-testid="thumb" />
 	</Switch.Root>
 </main>

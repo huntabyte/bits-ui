@@ -1,11 +1,11 @@
-import { render } from "@testing-library/svelte";
+import { render } from "@testing-library/svelte/svelte5";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import SeparatorTest from "./SeparatorTest.svelte";
 import type { Separator } from "$lib/index.js";
 
-function setup(props: Separator.Props = {}) {
+function setup(props: Separator.RootProps = {}) {
 	const user = userEvent.setup();
 	const returned = render(SeparatorTest, { ...props });
 	const { getByTestId } = returned;

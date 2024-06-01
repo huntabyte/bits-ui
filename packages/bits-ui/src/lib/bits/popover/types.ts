@@ -7,6 +7,7 @@ import type {
 	PrimitiveButtonAttributes,
 	PrimitiveDivAttributes,
 	WithAsChild,
+	Without,
 } from "$lib/internal/index.js";
 import type { CustomEventHandler } from "$lib/index.js";
 
@@ -39,15 +40,15 @@ export type PopoverTriggerPropsWithoutHTML = WithAsChild<{
 }>;
 
 export type PopoverTriggerProps = PopoverTriggerPropsWithoutHTML &
-	Omit<PrimitiveButtonAttributes, "onclick" | "onkeydown">;
+	Without<PrimitiveButtonAttributes, PopoverTriggerPropsWithoutHTML>;
 
 export type PopoverClosePropsWithoutHTML = WithAsChild<{
-	onclick: EventCallback<MouseEvent>;
-	onkeydown: EventCallback<KeyboardEvent>;
+	onclick?: EventCallback<MouseEvent>;
+	onkeydown?: EventCallback<KeyboardEvent>;
 }>;
 
 export type PopoverCloseProps = PopoverClosePropsWithoutHTML &
-	Omit<PrimitiveButtonAttributes, "onclick" | "onkeydown">;
+	Without<PrimitiveButtonAttributes, PopoverClosePropsWithoutHTML>;
 
 export type PopoverArrowPropsWithoutHTML = ArrowPropsWithoutHTML;
 

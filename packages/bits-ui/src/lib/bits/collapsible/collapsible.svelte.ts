@@ -11,6 +11,10 @@ import {
 } from "$lib/internal/index.js";
 import { createContext } from "$lib/internal/createContext.js";
 
+const ROOT_ATTR = "data-collapsible-root";
+const CONTENT_ATTR = "data-collapsible-content";
+const TRIGGER_ATTR = "data-collapsible-trigger";
+
 type CollapsibleRootStateProps = WritableBoxedValues<{
 	open: boolean;
 }> &
@@ -19,14 +23,9 @@ type CollapsibleRootStateProps = WritableBoxedValues<{
 	}>;
 
 class CollapsibleRootState {
-	open = undefined as unknown as CollapsibleRootStateProps["open"];
-	disabled = undefined as unknown as CollapsibleRootStateProps["disabled"];
+	open: CollapsibleRootStateProps["open"];
+	disabled: CollapsibleRootStateProps["disabled"];
 	contentId = box.with(() => useId());
-	props = $derived({
-		"data-state": getDataOpenClosed(this.open.value),
-		"data-disabled": getDataDisabled(this.disabled.value),
-		"data-collapsible-root": "",
-	} as const);
 
 	constructor(props: CollapsibleRootStateProps) {
 		this.open = props.open;
@@ -44,6 +43,15 @@ class CollapsibleRootState {
 	createTrigger() {
 		return new CollapsibleTriggerState(this);
 	}
+
+	props = $derived.by(
+		() =>
+			({
+				"data-state": getDataOpenClosed(this.open.value),
+				"data-disabled": getDataDisabled(this.disabled.value),
+				[ROOT_ATTR]: "",
+			}) as const
+	);
 }
 
 type CollapsibleContentStateProps = ReadableBoxedValues<{
@@ -52,24 +60,31 @@ type CollapsibleContentStateProps = ReadableBoxedValues<{
 }>;
 
 class CollapsibleContentState {
-	root = undefined as unknown as CollapsibleRootState;
+	root: CollapsibleRootState;
 	#originalStyles: { transitionDuration: string; animationName: string } | undefined;
 	node = box<HTMLElement | null>(null);
 	#isMountAnimationPrevented = $state(false);
 	#width = $state(0);
 	#height = $state(0);
-	#forceMount = undefined as unknown as CollapsibleContentStateProps["forceMount"];
-	props = $derived({
-		id: this.root.contentId.value,
-		"data-state": getDataOpenClosed(this.root.open.value),
-		"data-disabled": getDataDisabled(this.root.disabled.value),
-		"data-collapsible-content": "",
-		style: {
-			"--bits-collapsible-content-height": this.#height ? `${this.#height}px` : undefined,
-			"--bits-collapsible-content-width": this.#width ? `${this.#width}px` : undefined,
-		},
-	} as const);
-	present = $derived(this.#forceMount.value || this.root.open.value);
+	#forceMount: CollapsibleContentStateProps["forceMount"];
+	props = $derived.by(
+		() =>
+			({
+				id: this.root.contentId.value,
+				"data-state": getDataOpenClosed(this.root.open.value),
+				"data-disabled": getDataDisabled(this.root.disabled.value),
+				style: {
+					"--bits-collapsible-content-height": this.#height
+						? `${this.#height}px`
+						: undefined,
+					"--bits-collapsible-content-width": this.#width
+						? `${this.#width}px`
+						: undefined,
+				},
+				[CONTENT_ATTR]: "",
+			}) as const
+	);
+	present = $derived.by(() => this.#forceMount.value || this.root.open.value);
 
 	constructor(props: CollapsibleContentStateProps, root: CollapsibleRootState) {
 		this.root = root;
@@ -123,7 +138,7 @@ class CollapsibleContentState {
 }
 
 class CollapsibleTriggerState {
-	#root = undefined as unknown as CollapsibleRootState;
+	#root: CollapsibleRootState;
 
 	constructor(root: CollapsibleRootState) {
 		this.#root = root;
@@ -133,17 +148,20 @@ class CollapsibleTriggerState {
 		this.#root.toggleOpen();
 	};
 
-	props = $derived({
-		type: "button",
-		"aria-controls": this.#root.contentId.value,
-		"aria-expanded": getAriaExpanded(this.#root.open.value),
-		"data-state": getDataOpenClosed(this.#root.open.value),
-		"data-disabled": getDataDisabled(this.#root.disabled.value),
-		disabled: this.#root.disabled.value,
-		"data-collapsible-trigger": "",
-		//
-		onclick: this.#onclick,
-	} as const);
+	props = $derived.by(
+		() =>
+			({
+				type: "button",
+				"aria-controls": this.#root.contentId.value,
+				"aria-expanded": getAriaExpanded(this.#root.open.value),
+				"data-state": getDataOpenClosed(this.#root.open.value),
+				"data-disabled": getDataDisabled(this.#root.disabled.value),
+				disabled: this.#root.disabled.value,
+				[TRIGGER_ATTR]: "",
+				//
+				onclick: this.#onclick,
+			}) as const
+	);
 }
 
 const [setCollapsibleRootContext, getCollapsibleRootContext] =

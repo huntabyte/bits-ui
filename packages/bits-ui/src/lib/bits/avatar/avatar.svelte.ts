@@ -4,6 +4,10 @@ import type { AvatarImageLoadingStatus } from "./types.js";
 import { createContext } from "$lib/internal/createContext.js";
 import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 
+const ROOT_ATTR = "data-avatar-root";
+const IMAGE_ATTR = "data-avatar-image";
+const FALLBACK_ATTR = "data-avatar-fallback";
+
 /**
  * ROOT
  */
@@ -15,12 +19,15 @@ type AvatarRootStateProps = {
 type AvatarImageSrc = string | null | undefined;
 
 class AvatarRootState {
-	delayMs = undefined as unknown as AvatarRootStateProps["delayMs"];
-	loadingStatus = undefined as unknown as AvatarRootStateProps["loadingStatus"];
-	props = $derived({
-		"data-avatar-root": "",
-		"data-status": this.loadingStatus.value,
-	} as const);
+	delayMs: AvatarRootStateProps["delayMs"];
+	loadingStatus: AvatarRootStateProps["loadingStatus"];
+	props = $derived.by(
+		() =>
+			({
+				[ROOT_ATTR]: "",
+				"data-status": this.loadingStatus.value,
+			}) as const
+	);
 
 	constructor(props: AvatarRootStateProps) {
 		this.delayMs = props.delayMs;
@@ -63,15 +70,18 @@ type AvatarImageStateProps = ReadableBoxedValues<{
 }>;
 
 class AvatarImageState {
-	src = undefined as unknown as AvatarImageStateProps["src"];
-	root = undefined as unknown as AvatarRootState;
-	props = $derived({
-		style: {
-			display: this.root.loadingStatus.value === "loaded" ? "block" : "none",
-		},
-		"data-avatar-image": "",
-		src: this.src.value,
-	});
+	src: AvatarImageStateProps["src"];
+	root: AvatarRootState;
+	props = $derived.by(
+		() =>
+			({
+				style: {
+					display: this.root.loadingStatus.value === "loaded" ? "block" : "none",
+				},
+				[IMAGE_ATTR]: "",
+				src: this.src.value,
+			}) as const
+	);
 
 	constructor(props: AvatarImageStateProps, root: AvatarRootState) {
 		this.root = root;
@@ -89,13 +99,16 @@ class AvatarImageState {
  */
 
 class AvatarFallbackState {
-	root = undefined as unknown as AvatarRootState;
-	props = $derived({
-		style: {
-			display: this.root.loadingStatus.value === "loaded" ? "none" : "block",
-		},
-		"data-avatar-fallback": "",
-	} as const);
+	root: AvatarRootState;
+	props = $derived.by(
+		() =>
+			({
+				style: {
+					display: this.root.loadingStatus.value === "loaded" ? "none" : "block",
+				},
+				[FALLBACK_ATTR]: "",
+			}) as const
+	);
 
 	constructor(root: AvatarRootState) {
 		this.root = root;

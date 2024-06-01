@@ -1,23 +1,22 @@
-import { render, waitFor } from "@testing-library/svelte";
+import { render, waitFor } from "@testing-library/svelte/svelte5";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import { getTestKbd } from "../utils.js";
-import PopoverTest from "./PopoverTest.svelte";
-import type { Popover } from "$lib/index.js";
+import PopoverTest, { type PopoverTestProps } from "./PopoverTest.svelte";
 import { sleep } from "$lib/internal/sleep.js";
 
 const kbd = getTestKbd();
 
-function setup(props: Popover.Props = {}) {
-	const user = userEvent.setup();
+function setup(props: PopoverTestProps = {}) {
+	const user = userEvent.setup({ pointerEventsCheck: 0 });
 	const returned = render(PopoverTest, { ...props });
 	const { getByTestId } = returned;
 	const trigger = getByTestId("trigger");
 	return { trigger, user, ...returned };
 }
 
-async function open(props: Popover.Props = {}, openWith: "click" | (string & {}) = "click") {
+async function open(props: PopoverTestProps = {}, openWith: "click" | (string & {}) = "click") {
 	const { trigger, getByTestId, queryByTestId, user } = setup(props);
 	expect(queryByTestId("content")).toBeNull();
 	if (openWith === "click") {
@@ -39,7 +38,7 @@ describe("popover", () => {
 
 	it("has bits data attrs", async () => {
 		const { getByTestId } = await open();
-		const parts = ["trigger", "content", "close"];
+		const parts = ["trigger", "content", "close", "arrow"];
 
 		for (const part of parts) {
 			const el = getByTestId(part);
@@ -59,13 +58,13 @@ describe("popover", () => {
 		await open({}, kbd.SPACE);
 	});
 
-	it("closes on escape keydown", async () => {
+	it("closes on escape keydown by default", async () => {
 		const { user, queryByTestId } = await open();
 		await user.keyboard(kbd.ESCAPE);
 		expect(queryByTestId("content")).toBeNull();
 	});
 
-	it("closes on outside click", async () => {
+	it("closes on outside click by default", async () => {
 		const { user, queryByTestId, getByTestId } = await open();
 		const outside = getByTestId("outside");
 		await sleep(100);
@@ -84,30 +83,43 @@ describe("popover", () => {
 
 	it("portals to the body by default", async () => {
 		const { content } = await open();
-		expect(content.parentElement).toBe(document.body);
+		const contentWrapper = content.parentElement;
+		expect(contentWrapper?.parentElement).toBe(document.body);
 	});
 
 	it("portals to a custom element if specified", async () => {
-		const { content, getByTestId } = await open({ portal: "#portal-target" });
+		const { content, getByTestId } = await open({ portalProps: { to: "#portal-target" } });
 		const portalTarget = getByTestId("portal-target");
-		expect(content.parentElement).toBe(portalTarget);
+		const contentWrapper = content.parentElement;
+		expect(contentWrapper?.parentElement).toBe(portalTarget);
 	});
 
-	it("does not portal if `null` is passed as portal prop", async () => {
-		const { content, getByTestId } = await open({ portal: null });
+	it("does not portal if `disabled` is passed to the portal ", async () => {
+		const { content, getByTestId } = await open({
+			portalProps: {
+				disabled: true,
+			},
+		});
 		const main = getByTestId("main");
-		expect(content.parentElement).toBe(main);
+		const contentWrapper = content.parentElement;
+		expect(contentWrapper?.parentElement).toBe(main);
 	});
 
-	it("respects the `closeOnEscape` prop", async () => {
-		const { user, queryByTestId } = await open({ closeOnEscape: false });
+	it("allows ignoring the escapeKeydownBehavior ", async () => {
+		const { user, queryByTestId } = await open({
+			contentProps: {
+				escapeKeydownBehavior: "ignore",
+			},
+		});
 		await user.keyboard(kbd.ESCAPE);
 		expect(queryByTestId("content")).not.toBeNull();
 	});
 
-	it("respects the `closeOnOutsideClick` prop", async () => {
+	it("allows ignoring the interactOutsideBehavior", async () => {
 		const { user, queryByTestId, getByTestId } = await open({
-			closeOnOutsideClick: false,
+			contentProps: {
+				interactOutsideBehavior: "ignore",
+			},
 		});
 		const outside = getByTestId("outside");
 		await user.click(outside);
@@ -115,7 +127,11 @@ describe("popover", () => {
 	});
 
 	it("respects binding the `open` prop", async () => {
-		const { queryByTestId, getByTestId, user } = await open({ closeOnOutsideClick: false });
+		const { queryByTestId, getByTestId, user } = await open({
+			contentProps: {
+				interactOutsideBehavior: "ignore",
+			},
+		});
 		const binding = getByTestId("binding");
 		expect(binding).toHaveTextContent("true");
 		await user.click(binding);

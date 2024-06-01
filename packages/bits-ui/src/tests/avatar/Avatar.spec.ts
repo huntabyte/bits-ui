@@ -12,6 +12,16 @@ describe("avatar", () => {
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
+	it("has bits data attrs", async () => {
+		const { getByTestId } = render(AvatarTest);
+		const root = getByTestId("root");
+		const image = getByTestId("image");
+		const fallback = getByTestId("fallback");
+		expect(root).toHaveAttribute("data-avatar-root");
+		expect(image).toHaveAttribute("data-avatar-image");
+		expect(fallback).toHaveAttribute("data-avatar-fallback");
+	});
+
 	it("renders the image with the correct src", async () => {
 		const { getByAltText } = render(AvatarTest, { src });
 		const avatar = getByAltText("huntabyte");

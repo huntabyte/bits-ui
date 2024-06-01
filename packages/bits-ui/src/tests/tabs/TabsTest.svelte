@@ -1,22 +1,21 @@
 <script lang="ts" context="module">
+	import { Tabs, type WithoutChildren } from "$lib/index.js";
 	export type Item = {
 		value: string;
 		disabled: boolean;
 	};
+
+	export type TabsTestProps = WithoutChildren<Tabs.RootProps> & {
+		items: Item[];
+	};
 </script>
 
 <script lang="ts">
-	import { Tabs } from "$lib/index.js";
-
-	type $$Props = Tabs.Props & {
-		items?: Item[];
-	};
-	export let value: $$Props["value"] = undefined;
-	export let items: Item[] = [];
+	let { value = "1", items, ...restProps }: TabsTestProps = $props();
 </script>
 
 <main>
-	<Tabs.Root aria-label="airplane mode" data-testid="root" bind:value {...$$restProps}>
+	<Tabs.Root aria-label="airplane mode" data-testid="root" bind:value {...restProps}>
 		<Tabs.List data-testid="list">
 			{#each items as { value, disabled }}
 				<Tabs.Trigger {value} {disabled} data-testid="trigger-{value}">
@@ -30,5 +29,5 @@
 			</Tabs.Content>
 		{/each}
 	</Tabs.Root>
-	<button data-testid="binding" on:click={() => (value = undefined)}>{value}</button>
+	<button data-testid="binding" onclick={() => (value = "1")}>{value}</button>
 </main>

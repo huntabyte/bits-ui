@@ -16,7 +16,7 @@ type DialogRootStateProps = WritableBoxedValues<{
 }>;
 
 class DialogRootState {
-	open = undefined as unknown as DialogRootStateProps["open"];
+	open: DialogRootStateProps["open"];
 	triggerNode = box<HTMLElement | null>(null);
 	titleNode = box<HTMLElement | null>(null);
 	contentNode = box<HTMLElement | null>(null);
@@ -66,9 +66,12 @@ class DialogRootState {
 		return new DialogCloseState(this);
 	}
 
-	sharedProps = $derived({
-		"data-state": getDataOpenClosed(this.open.value),
-	});
+	sharedProps = $derived.by(
+		() =>
+			({
+				"data-state": getDataOpenClosed(this.open.value),
+			}) as const
+	);
 }
 
 type DialogTriggerStateProps = ReadableBoxedValues<{
@@ -76,8 +79,8 @@ type DialogTriggerStateProps = ReadableBoxedValues<{
 }>;
 
 class DialogTriggerState {
-	#id = undefined as unknown as DialogTriggerStateProps["id"];
-	#root = undefined as unknown as DialogRootState;
+	#id: DialogTriggerStateProps["id"];
+	#root: DialogRootState;
 
 	constructor(props: DialogTriggerStateProps, root: DialogRootState) {
 		this.#id = props.id;
@@ -89,19 +92,22 @@ class DialogTriggerState {
 		this.#root.openDialog();
 	};
 
-	props = $derived({
-		id: this.#id.value,
-		"aria-haspopup": "dialog",
-		"aria-expanded": getAriaExpanded(this.#root.open.value),
-		"aria-controls": this.#root.contentId,
-		[TRIGGER_ATTR]: "",
-		onclick: this.#onclick,
-		...this.#root.sharedProps,
-	} as const);
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.value,
+				"aria-haspopup": "dialog",
+				"aria-expanded": getAriaExpanded(this.#root.open.value),
+				"aria-controls": this.#root.contentId,
+				[TRIGGER_ATTR]: "",
+				onclick: this.#onclick,
+				...this.#root.sharedProps,
+			}) as const
+	);
 }
 
 class DialogCloseState {
-	#root = undefined as unknown as DialogRootState;
+	#root: DialogRootState;
 
 	constructor(root: DialogRootState) {
 		this.#root = root;
@@ -111,11 +117,14 @@ class DialogCloseState {
 		this.#root.closeDialog();
 	};
 
-	props = $derived({
-		[CLOSE_ATTR]: "",
-		onclick: this.#onclick,
-		...this.#root.sharedProps,
-	} as const);
+	props = $derived.by(
+		() =>
+			({
+				[CLOSE_ATTR]: "",
+				onclick: this.#onclick,
+				...this.#root.sharedProps,
+			}) as const
+	);
 }
 
 type DialogTitleStateProps = ReadableBoxedValues<{
@@ -124,9 +133,9 @@ type DialogTitleStateProps = ReadableBoxedValues<{
 }>;
 
 class DialogTitleState {
-	#id = undefined as unknown as DialogTitleStateProps["id"];
-	#root = undefined as unknown as DialogRootState;
-	#level = undefined as unknown as DialogTitleStateProps["level"];
+	#id: DialogTitleStateProps["id"];
+	#root: DialogRootState;
+	#level: DialogTitleStateProps["level"];
 
 	constructor(props: DialogTitleStateProps, root: DialogRootState) {
 		this.#id = props.id;
@@ -135,13 +144,16 @@ class DialogTitleState {
 		this.#level = props.level;
 	}
 
-	props = $derived({
-		id: this.#id.value,
-		role: "heading",
-		"aria-level": String(this.#level),
-		[TITLE_ATTR]: "",
-		...this.#root.sharedProps,
-	} as const);
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.value,
+				role: "heading",
+				"aria-level": String(this.#level),
+				[TITLE_ATTR]: "",
+				...this.#root.sharedProps,
+			}) as const
+	);
 }
 
 type DialogDescriptionStateProps = ReadableBoxedValues<{
@@ -149,8 +161,8 @@ type DialogDescriptionStateProps = ReadableBoxedValues<{
 }>;
 
 class DialogDescriptionState {
-	#id = undefined as unknown as DialogDescriptionStateProps["id"];
-	#root = undefined as unknown as DialogRootState;
+	#id: DialogDescriptionStateProps["id"];
+	#root: DialogRootState;
 
 	constructor(props: DialogDescriptionStateProps, root: DialogRootState) {
 		this.#id = props.id;
@@ -158,11 +170,14 @@ class DialogDescriptionState {
 		this.#root.descriptionNode = useNodeById(this.#id);
 	}
 
-	props = $derived({
-		id: this.#id.value,
-		[DESCRIPTION_ATTR]: "",
-		...this.#root.sharedProps,
-	} as const);
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.value,
+				[DESCRIPTION_ATTR]: "",
+				...this.#root.sharedProps,
+			}) as const
+	);
 }
 
 type DialogContentStateProps = ReadableBoxedValues<{
@@ -170,8 +185,8 @@ type DialogContentStateProps = ReadableBoxedValues<{
 }>;
 
 class DialogContentState {
-	#id = undefined as unknown as DialogContentStateProps["id"];
-	root = undefined as unknown as DialogRootState;
+	#id: DialogContentStateProps["id"];
+	root: DialogRootState;
 
 	constructor(props: DialogContentStateProps, root: DialogRootState) {
 		this.#id = props.id;
@@ -179,14 +194,17 @@ class DialogContentState {
 		this.root.contentNode = useNodeById(this.#id);
 	}
 
-	props = $derived({
-		id: this.#id.value,
-		role: "dialog",
-		"aria-describedby": this.root.descriptionId,
-		"aria-labelledby": this.root.titleId,
-		[CONTENT_ATTR]: "",
-		...this.root.sharedProps,
-	} as const);
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.value,
+				role: "dialog",
+				"aria-describedby": this.root.descriptionId,
+				"aria-labelledby": this.root.titleId,
+				[CONTENT_ATTR]: "",
+				...this.root.sharedProps,
+			}) as const
+	);
 }
 
 type DialogOverlayStateProps = ReadableBoxedValues<{
@@ -194,19 +212,22 @@ type DialogOverlayStateProps = ReadableBoxedValues<{
 }>;
 
 class DialogOverlayState {
-	#id = undefined as unknown as DialogOverlayStateProps["id"];
-	root = undefined as unknown as DialogRootState;
+	#id: DialogOverlayStateProps["id"];
+	root: DialogRootState;
 
 	constructor(props: DialogOverlayStateProps, root: DialogRootState) {
 		this.#id = props.id;
 		this.root = root;
 	}
 
-	props = $derived({
-		id: this.#id.value,
-		[OVERLAY_ATTR]: "",
-		...this.root.sharedProps,
-	} as const);
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.value,
+				[OVERLAY_ATTR]: "",
+				...this.root.sharedProps,
+			}) as const
+	);
 }
 
 const [setDialogRootContext, getDialogRootContext] = createContext<DialogRootState>("Dialog.Root");
