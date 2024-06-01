@@ -23,17 +23,9 @@ type CollapsibleRootStateProps = WritableBoxedValues<{
 	}>;
 
 class CollapsibleRootState {
-	open = undefined as unknown as CollapsibleRootStateProps["open"];
-	disabled = undefined as unknown as CollapsibleRootStateProps["disabled"];
+	open: CollapsibleRootStateProps["open"];
+	disabled: CollapsibleRootStateProps["disabled"];
 	contentId = box.with(() => useId());
-	props = $derived.by(
-		() =>
-			({
-				"data-state": getDataOpenClosed(this.open.value),
-				"data-disabled": getDataDisabled(this.disabled.value),
-				[ROOT_ATTR]: "",
-			}) as const
-	);
 
 	constructor(props: CollapsibleRootStateProps) {
 		this.open = props.open;
@@ -51,6 +43,15 @@ class CollapsibleRootState {
 	createTrigger() {
 		return new CollapsibleTriggerState(this);
 	}
+
+	props = $derived.by(
+		() =>
+			({
+				"data-state": getDataOpenClosed(this.open.value),
+				"data-disabled": getDataDisabled(this.disabled.value),
+				[ROOT_ATTR]: "",
+			}) as const
+	);
 }
 
 type CollapsibleContentStateProps = ReadableBoxedValues<{
@@ -59,13 +60,13 @@ type CollapsibleContentStateProps = ReadableBoxedValues<{
 }>;
 
 class CollapsibleContentState {
-	root = undefined as unknown as CollapsibleRootState;
+	root: CollapsibleRootState;
 	#originalStyles: { transitionDuration: string; animationName: string } | undefined;
 	node = box<HTMLElement | null>(null);
 	#isMountAnimationPrevented = $state(false);
 	#width = $state(0);
 	#height = $state(0);
-	#forceMount = undefined as unknown as CollapsibleContentStateProps["forceMount"];
+	#forceMount: CollapsibleContentStateProps["forceMount"];
 	props = $derived.by(
 		() =>
 			({
@@ -83,7 +84,7 @@ class CollapsibleContentState {
 				[CONTENT_ATTR]: "",
 			}) as const
 	);
-	present = $derived(this.#forceMount.value || this.root.open.value);
+	present = $derived.by(() => this.#forceMount.value || this.root.open.value);
 
 	constructor(props: CollapsibleContentStateProps, root: CollapsibleRootState) {
 		this.root = root;
@@ -137,7 +138,7 @@ class CollapsibleContentState {
 }
 
 class CollapsibleTriggerState {
-	#root = undefined as unknown as CollapsibleRootState;
+	#root: CollapsibleRootState;
 
 	constructor(root: CollapsibleRootState) {
 		this.#root = root;

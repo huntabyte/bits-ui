@@ -418,13 +418,6 @@ class MenuItemSharedState {
 		});
 	};
 
-	// #onpointerup = (e: PointerEvent) => {
-	// 	if (!this.content.parentMenu.root.isUsingKeyboard.value && isHTMLElement(e.currentTarget)) {
-	// 		e.currentTarget?.click();
-	// 		e.preventDefault();
-	// 	}
-	// };
-
 	props = $derived.by(
 		() =>
 			({
@@ -632,7 +625,7 @@ class MenuSubTriggerState {
 			onpointermove: this.#onpointermove,
 			onpointerleave: this.#onpointerleave,
 			onkeydown: this.#onkeydown,
-		})
+		} as const)
 	);
 }
 

@@ -11,8 +11,6 @@
 		child,
 		value,
 		disabled = false,
-		onclick = () => {},
-		onkeydown = () => {},
 		el = $bindable(),
 		style = {},
 		...restProps
@@ -22,8 +20,6 @@
 		value: box.with(() => value),
 		disabled: box.with(() => disabled),
 		id: box.with(() => id),
-		onclick: box.with(() => onclick),
-		onkeydown: box.with(() => onkeydown),
 	});
 
 	const mergedProps = $derived({
