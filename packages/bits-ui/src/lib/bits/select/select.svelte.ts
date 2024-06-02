@@ -3,6 +3,8 @@ import { Set } from "svelte/reactivity";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { useId } from "$lib/internal/useId.svelte.js";
 import type { Direction } from "$lib/shared/index.js";
+import { createContext } from "$lib/internal/createContext.js";
+import { useFormControl } from "$lib/internal/useFormControl.svelte.js";
 
 type SelectRootStateProps = WritableBoxedValues<{
 	open: boolean;
@@ -10,8 +12,6 @@ type SelectRootStateProps = WritableBoxedValues<{
 }> &
 	ReadableBoxedValues<{
 		dir: Direction;
-		name: string;
-		autocomplete: string;
 		disabled: boolean;
 		required: boolean;
 	}>;
@@ -27,8 +27,6 @@ class SelectRootState {
 	open: SelectRootStateProps["open"];
 	value: SelectRootStateProps["value"];
 	dir: SelectRootStateProps["dir"];
-	name: SelectRootStateProps["name"];
-	autocomplete: SelectRootStateProps["autocomplete"];
 	disabled: SelectRootStateProps["disabled"];
 	required: SelectRootStateProps["required"];
 	triggerNode = box<HTMLElement | null>(null);
@@ -45,6 +43,18 @@ class SelectRootState {
 			.join(";");
 	});
 
+	nativeOptionsArr = $derived.by(() => Array.from(this.nativeOptionsSet));
+
+	isFormControl = useFormControl(this.triggerNode);
+
+	constructor(props: SelectRootStateProps) {
+		this.open = props.open;
+		this.value = props.value;
+		this.dir = props.dir;
+		this.disabled = props.disabled;
+		this.required = props.required;
+	}
+
 	onNativeOptionAdd(option: SelectNativeOption) {
 		this.nativeOptionsSet.add(option);
 	}
@@ -52,4 +62,10 @@ class SelectRootState {
 	onNativeOptionRemove(option: SelectNativeOption) {
 		this.nativeOptionsSet.delete(option);
 	}
+}
+
+const [setSelectRootContext, getSelectRootContext] = createContext<SelectRootState>("Select.Root");
+
+export function useSelectRoot(props: SelectRootStateProps) {
+	return setSelectRootContext(new SelectRootState(props));
 }
