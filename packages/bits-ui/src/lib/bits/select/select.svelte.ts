@@ -5,6 +5,7 @@ import { useId } from "$lib/internal/useId.svelte.js";
 import type { Direction } from "$lib/shared/index.js";
 import { createContext } from "$lib/internal/createContext.js";
 import { useFormControl } from "$lib/internal/useFormControl.svelte.js";
+import { useNodeById } from "$lib/internal/useNodeById.svelte.js";
 
 type SelectRootStateProps = WritableBoxedValues<{
 	open: boolean;
@@ -61,6 +62,22 @@ class SelectRootState {
 
 	onNativeOptionRemove(option: SelectNativeOption) {
 		this.nativeOptionsSet.delete(option);
+	}
+}
+
+type SelectTriggerStateProps = ReadableBoxedValues<{
+	id: string;
+	disabled: boolean;
+}>;
+
+class SelectTriggerState {
+	root: SelectRootState;
+	id: SelectTriggerStateProps["id"];
+
+	constructor(props: SelectTriggerStateProps, root: SelectRootState) {
+		this.id = props.id;
+		this.root = root;
+		this.root.triggerNode = useNodeById(this.id);
 	}
 }
 

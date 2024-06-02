@@ -1,5 +1,6 @@
-import type { Box } from "./box.svelte.js";
 import { boxAutoReset } from "./boxAutoReset.svelte.js";
+
+export type Typeahead = ReturnType<typeof useTypeahead>;
 
 export function useTypeahead() {
 	// Reset `search` 1 second after it was last updated

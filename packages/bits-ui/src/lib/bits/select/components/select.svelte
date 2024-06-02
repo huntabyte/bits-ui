@@ -45,7 +45,6 @@
 
 <FloatingLayer.Root>
 	{@render children?.()}
-
 	{#if state.isFormControl.value}
 		{#key state.nativeSelectKey}
 			<SelectNative
