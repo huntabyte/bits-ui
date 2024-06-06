@@ -24,7 +24,7 @@ type SelectNativeOption = {
 	innerHTML: string;
 };
 
-class SelectRootState {
+export class SelectRootState {
 	open: SelectRootStateProps["open"];
 	value: SelectRootStateProps["value"];
 	dir: SelectRootStateProps["dir"];
@@ -81,7 +81,27 @@ class SelectTriggerState {
 	}
 }
 
-const [setSelectRootContext, getSelectRootContext] = createContext<SelectRootState>("Select.Root");
+class SelectContentState {
+	root: SelectRootState;
+	fragment = box<DocumentFragment | null>(null);
+
+	constructor(root: SelectRootState) {
+		this.root = root;
+
+		$effect(() => {
+			this.fragment.value = new DocumentFragment();
+		});
+	}
+}
+
+class SelectContentImplState {
+	contentNode = box<HTMLElement | null>(null);
+	viewportNode = box<HTMLElement | null>(null);
+	selectedItem = box<HTMLElement | null>(null);
+}
+
+export const [setSelectRootContext, getSelectRootContext] =
+	createContext<SelectRootState>("Select.Root");
 
 export function useSelectRoot(props: SelectRootStateProps) {
 	return setSelectRootContext(new SelectRootState(props));
