@@ -56,12 +56,11 @@ export class SelectRootState {
 	disabled: SelectRootStateProps["disabled"];
 	required: SelectRootStateProps["required"];
 	triggerId = box<string>(useId());
-	triggerNode = box<HTMLElement | null>(null);
 	valueId = box<string>(useId());
 	valueNodeHasChildren = box(false);
 	contentId = box<string>(useId());
 	triggerPointerDownPos = box<{ x: number; y: number } | null>({ x: 0, y: 0 });
-	contentFragment = box<DocumentFragment | null>(null);
+	contentFragment = $state<DocumentFragment | null>(null);
 
 	// A set of all the native options we'll use to render the native select element under the hood
 	nativeOptionsSet = new Set<ReadableBox<SelectNativeOption>>();
@@ -74,7 +73,7 @@ export class SelectRootState {
 
 	nativeOptionsArr = $derived.by(() => Array.from(this.nativeOptionsSet));
 
-	isFormControl = useFormControl(this.triggerNode);
+	isFormControl = useFormControl(() => this.triggerId.value);
 
 	constructor(props: SelectRootStateProps) {
 		this.open = props.open;
@@ -99,7 +98,7 @@ export class SelectRootState {
 	}
 
 	getTriggerTypeaheadCandidateNodes() {
-		const node = this.contentFragment.value;
+		const node = this.contentFragment;
 		if (!node) return [];
 		const candidates = Array.from(
 			node.querySelectorAll<HTMLElement>(`[${ITEM_ATTR}]:not([data-disabled])`)
@@ -150,7 +149,6 @@ class SelectTriggerState {
 	constructor(props: SelectTriggerStateProps, root: SelectRootState) {
 		this.#id = props.id;
 		this.#root = root;
-		this.#root.triggerNode = useNodeById(this.#id);
 		this.#disabled = props.disabled;
 
 		$effect(() => {
@@ -289,7 +287,6 @@ type SelectContentFragStateProps = ReadableBoxedValues<{
 
 class SelectContentFragState {
 	root: SelectRootState;
-	fragment = box<DocumentFragment | null>(null);
 
 	constructor(props: SelectContentFragStateProps, root: SelectRootState) {
 		this.root = root;
@@ -300,12 +297,9 @@ class SelectContentFragState {
 		});
 
 		$effect(() => {
-			this.fragment.value = new DocumentFragment();
+			this.root.contentFragment = new DocumentFragment();
 		});
 
-		$effect(() => {
-			this.root.contentFragment.value = this.fragment.value;
-		});
 	}
 }
 

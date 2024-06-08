@@ -40,8 +40,8 @@
 			/>
 		{/snippet}
 	</PresenceLayer>
-{:else if state.fragment.value}
-	<Portal to={state.fragment.value}>
+{:else if state.root.contentFragment}
+	<Portal to={state.root.contentFragment}>
 		<div {id}>
 			<SelectProvider rootContext={state.root}>
 				{@render restProps.children?.()}

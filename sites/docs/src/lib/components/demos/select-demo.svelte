@@ -14,7 +14,7 @@
 	<div>
 		<Select.Root>
 			<Select.Trigger
-				class="inline-flex h-input w-[296px] items-center rounded-9px border border-border-input bg-background px-[11px] text-sm transition-colors placeholder:text-foreground-alt/50 focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2 focus:ring-offset-background"
+				class="inline-flex h-input w-[296px] items-center rounded-9px border border-border-input bg-background px-[11px] text-sm transition-colors placeholder:text-foreground-alt/50 "
 				aria-label="Select a theme"
 			>
 				<Palette class="mr-[9px] size-6 text-muted-foreground" />

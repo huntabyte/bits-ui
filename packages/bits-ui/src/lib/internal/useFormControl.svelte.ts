@@ -1,9 +1,12 @@
-import type { Box } from "./box.svelte.js";
+import type { Getter } from "svelte-toolbelt";
+import { isBrowser } from "./is.js";
 
-export function useFormControl(node: Box<HTMLElement | null>) {
+export function useFormControl(id: Getter<string>) {
 	const isInForm = $derived.by(() => {
-		if (!node.value) return false;
-		return Boolean(node.value.closest("form"));
+		if (!isBrowser) return false;
+		const node = document.getElementById(id());
+		if (!node) return false;
+		return Boolean(node.closest("form"));
 	});
 
 	return {
