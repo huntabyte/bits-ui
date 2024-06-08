@@ -8,22 +8,11 @@
 		{ value: "svelte-orange", label: "Svelte Orange" },
 		{ value: "punk-pink", label: "Punk Pink" },
 	];
-
-	let value = $state("dark-green");
-
-	function setToPunkPink() {
-		value = "punk-pink";
-	}
 </script>
 
-<button onclick={setToPunkPink}> Set to punk pink </button>
-
 <div class="flex flex-col gap-4">
-	<div class="block">
-		Value: {value}
-	</div>
 	<div>
-		<Select.Root bind:value>
+		<Select.Root>
 			<Select.Trigger
 				class="inline-flex h-input w-[296px] items-center rounded-9px border border-border-input bg-background px-[11px] text-sm transition-colors placeholder:text-foreground-alt/50  focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2 focus:ring-offset-background"
 				aria-label="Select a theme"
