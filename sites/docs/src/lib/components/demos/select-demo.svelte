@@ -14,7 +14,7 @@
 	<div>
 		<Select.Root>
 			<Select.Trigger
-				class="inline-flex h-input w-[296px] items-center rounded-9px border border-border-input bg-background px-[11px] text-sm transition-colors placeholder:text-foreground-alt/50  focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2 focus:ring-offset-background"
+				class="inline-flex h-input w-[296px] items-center rounded-9px border border-border-input bg-background px-[11px] text-sm transition-colors placeholder:text-foreground-alt/50 focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2 focus:ring-offset-background"
 				aria-label="Select a theme"
 			>
 				<Palette class="mr-[9px] size-6 text-muted-foreground" />
@@ -28,7 +28,7 @@
 			>
 				{#each themes as theme}
 					<Select.Item
-						class="flex h-10 w-full select-none items-center rounded-button py-3 pl-5 pr-1.5 text-sm outline-none transition-all duration-75 data-[highlighted]:bg-muted"
+						class="focus-override flex h-10 w-full select-none items-center rounded-button py-3 pl-5 pr-1.5 text-sm outline-none transition-all duration-75 focus:outline-none focus-visible:outline-none data-[highlighted]:bg-muted"
 						value={theme.value}
 					>
 						<Select.ItemText>

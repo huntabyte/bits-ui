@@ -1,12 +1,7 @@
 import { type ReadableBox, box } from "svelte-toolbelt";
 import { Set } from "svelte/reactivity";
 import { tick, untrack } from "svelte";
-import {
-	type Box,
-	type ReadableBoxedValues,
-	type WritableBoxedValues,
-	watch,
-} from "$lib/internal/box.svelte.js";
+import type { Box, ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { useId } from "$lib/internal/useId.svelte.js";
 import type { Direction } from "$lib/shared/index.js";
 import { createContext } from "$lib/internal/createContext.js";
@@ -23,7 +18,6 @@ import {
 	getDataOpenClosed,
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
-import { useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
 import { afterTick } from "$lib/internal/afterTick.js";
 
 export const OPEN_KEYS = [kbd.SPACE, kbd.ENTER, kbd.ARROW_UP, kbd.ARROW_DOWN];
@@ -314,7 +308,7 @@ class SelectContentImplState {
 	root: SelectRootState;
 	contentNode = box<HTMLElement | null>(null);
 	viewportNode = box<HTMLElement | null>(null);
-	selectedItem = box<HTMLElement | null>(null);
+
 	selectedItemText = box<HTMLElement | null>(null);
 	position: SelectContentImplStateProps["position"];
 	isPositioned = box(true);
@@ -327,10 +321,6 @@ class SelectContentImplState {
 		this.root = root;
 		this.typeahead = useTypeahead();
 		this.contentNode = useNodeById(this.id);
-
-		$effect(() => {
-			console.log(this.selectedItem.value);
-		});
 
 		$effect(() => {
 			this.isPositioned.value = this.root.open.value;
@@ -382,8 +372,7 @@ class SelectContentImplState {
 			};
 		});
 
-		$effect.pre(() => {
-			this.selectedItem.value;
+		$effect(() => {
 			if (this.isPositioned.value) {
 				this.focusSelectedItem();
 			}
@@ -391,28 +380,27 @@ class SelectContentImplState {
 	}
 
 	focusFirst(candidates: Array<HTMLElement | null>) {
-		afterTick(() => {
-			const [firstItem, ...restItems] = this.root.getCandidateNodes();
-			const [lastItem] = restItems.slice(-1);
+		const [firstItem, ...restItems] = this.root.getCandidateNodes();
+		const [lastItem] = restItems.slice(-1);
 
-			const PREV_FOCUSED_ELEMENT = document.activeElement;
+		const PREV_FOCUSED_ELEMENT = document.activeElement;
 
-			for (const candidate of candidates) {
-				if (candidate === PREV_FOCUSED_ELEMENT) return;
-				candidate?.scrollIntoView({ block: "nearest" });
-				// viewport might have padding so scroll to the edge when focusing first/last
-				const viewport = this.viewportNode.value;
-				if (candidate === firstItem && viewport) {
-					viewport.scrollTop = 0;
-				}
-				if (candidate === lastItem && viewport) {
-					viewport.scrollTop = viewport.scrollHeight;
-				}
-				candidate?.focus();
-
-				if (document.activeElement !== PREV_FOCUSED_ELEMENT) return;
+		for (const candidate of candidates) {
+			if (candidate === PREV_FOCUSED_ELEMENT) return;
+			candidate?.scrollIntoView({ block: "nearest" });
+			// viewport might have padding so scroll to the edge when focusing first/last
+			const viewport = this.viewportNode.value;
+			if (candidate === firstItem && viewport) {
+				viewport.scrollTop = 0;
 			}
-		});
+			if (candidate === lastItem && viewport) {
+				viewport.scrollTop = viewport.scrollHeight;
+			}
+
+			candidate?.focus();
+
+			if (document.activeElement !== PREV_FOCUSED_ELEMENT) return;
+		}
 	}
 
 	onItemLeave() {
@@ -421,18 +409,21 @@ class SelectContentImplState {
 
 	focusSelectedItem() {
 		afterTick(() => {
-			this.focusFirst([this.selectedItem.value, this.contentNode.value]);
+			const candidates = this.root.getCandidateNodes();
+			const selected =
+				candidates.find((node) => node?.dataset.value === this.root.value.value) ?? null;
+			const first = candidates[0] ?? null;
+
+			this.focusFirst([selected, first]);
 		});
 	}
 
-	itemRegister(node: HTMLElement | null, value: string, disabled: boolean) {
+	itemRegister(value: string, disabled: boolean) {
 		const isFirstValidItem = !this.firstValidItemFound.value && !disabled;
 		const isSelectedItem =
 			this.root.value.value !== undefined && this.root.value.value === value;
 
 		if (isSelectedItem || isFirstValidItem) {
-			this.selectedItem.value = node;
-
 			if (isFirstValidItem) {
 				this.firstValidItemFound.value = true;
 			}
@@ -533,7 +524,7 @@ class SelectItemState {
 		$effect(() => {
 			const node = document.getElementById(this.#id.value);
 			if (!node) return;
-			this.content.itemRegister(node, this.value.value, this.disabled.value);
+			this.content.itemRegister(this.value.value, this.disabled.value);
 		});
 	}
 
