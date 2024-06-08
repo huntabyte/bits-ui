@@ -1,7 +1,6 @@
 import { type ReadableBox, box } from "svelte-toolbelt";
 import { Set } from "svelte/reactivity";
 import { tick, untrack } from "svelte";
-import { focusFirst } from "../utilities/focus-scope/utils.js";
 import {
 	type Box,
 	type ReadableBoxedValues,
@@ -24,6 +23,8 @@ import {
 	getDataOpenClosed,
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
+import { useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
+import { afterTick } from "$lib/internal/afterTick.js";
 
 export const OPEN_KEYS = [kbd.SPACE, kbd.ENTER, kbd.ARROW_UP, kbd.ARROW_DOWN];
 export const SELECTION_KEYS = [" ", kbd.ENTER];
@@ -325,9 +326,14 @@ class SelectContentImplState {
 		this.id = props.id;
 		this.root = root;
 		this.typeahead = useTypeahead();
+		this.contentNode = useNodeById(this.id);
 
-		watch(this.isPositioned, () => {
-			this.focusSelectedItem();
+		$effect(() => {
+			console.log(this.selectedItem.value);
+		});
+
+		$effect(() => {
+			this.isPositioned.value = this.root.open.value;
 		});
 
 		$effect(() => {
@@ -375,6 +381,38 @@ class SelectContentImplState {
 				});
 			};
 		});
+
+		$effect.pre(() => {
+			this.selectedItem.value;
+			if (this.isPositioned.value) {
+				this.focusSelectedItem();
+			}
+		});
+	}
+
+	focusFirst(candidates: Array<HTMLElement | null>) {
+		afterTick(() => {
+			const [firstItem, ...restItems] = this.root.getCandidateNodes();
+			const [lastItem] = restItems.slice(-1);
+
+			const PREV_FOCUSED_ELEMENT = document.activeElement;
+
+			for (const candidate of candidates) {
+				if (candidate === PREV_FOCUSED_ELEMENT) return;
+				candidate?.scrollIntoView({ block: "nearest" });
+				// viewport might have padding so scroll to the edge when focusing first/last
+				const viewport = this.viewportNode.value;
+				if (candidate === firstItem && viewport) {
+					viewport.scrollTop = 0;
+				}
+				if (candidate === lastItem && viewport) {
+					viewport.scrollTop = viewport.scrollHeight;
+				}
+				candidate?.focus();
+
+				if (document.activeElement !== PREV_FOCUSED_ELEMENT) return;
+			}
+		});
 	}
 
 	onItemLeave() {
@@ -382,12 +420,9 @@ class SelectContentImplState {
 	}
 
 	focusSelectedItem() {
-		if (!this.selectedItem.value && this.contentNode.value) {
-			focusFirst([this.contentNode.value])
-		}
-		if (this.selectedItem.value && this.contentNode.value) {
-			focusFirst([this.selectedItem.value, this.contentNode.value]);
-		}
+		afterTick(() => {
+			this.focusFirst([this.selectedItem.value, this.contentNode.value]);
+		});
 	}
 
 	itemRegister(node: HTMLElement | null, value: string, disabled: boolean) {
@@ -436,7 +471,7 @@ class SelectContentImplState {
 				candidateNodes = candidateNodes.slice(currIndex + 1);
 			}
 
-			setTimeout(() => focusFirst(candidateNodes));
+			setTimeout(() => this.focusFirst(candidateNodes));
 			e.preventDefault();
 		}
 	};
