@@ -57,7 +57,7 @@ export class DismissableLayerState {
 	#isResponsibleLayer = false;
 	node: Box<HTMLElement | null>;
 	#documentObj = undefined as unknown as Document;
-	#present: ReadableBox<boolean>;
+	#enabled: ReadableBox<boolean>;
 	#isFocusInsideDOMTree = $state(false);
 	#onFocusOutside: DismissableLayerStateProps["onFocusOutside"];
 
@@ -66,7 +66,7 @@ export class DismissableLayerState {
 		this.#behaviorType = props.interactOutsideBehavior;
 		this.#interactOutsideStartProp = props.onInteractOutsideStart;
 		this.#interactOutsideProp = props.onInteractOutside;
-		this.#present = props.present;
+		this.#enabled = props.enabled;
 		this.#onFocusOutside = props.onFocusOutside;
 
 		$effect(() => {
@@ -76,7 +76,7 @@ export class DismissableLayerState {
 		let unsubEvents = noop;
 
 		$effect(() => {
-			if (this.#present.value) {
+			if (this.#enabled.value) {
 				layers.set(
 					this,
 					untrack(() => this.#behaviorType)

@@ -18,4 +18,5 @@ export type {
 	SelectTriggerProps as TriggerProps,
 	SelectValueProps as ValueProps,
 	SelectItemTextProps as ItemTextProps,
+	SelectContentImplProps as ContentImplProps,
 } from "./types.js";

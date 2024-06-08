@@ -19,6 +19,7 @@ import {
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { afterTick } from "$lib/internal/afterTick.js";
+import { clamp } from "$lib/internal/clamp.js";
 
 export const OPEN_KEYS = [kbd.SPACE, kbd.ENTER, kbd.ARROW_UP, kbd.ARROW_DOWN];
 export const SELECTION_KEYS = [" ", kbd.ENTER];
@@ -54,6 +55,7 @@ export class SelectRootState {
 	dir: SelectRootStateProps["dir"];
 	disabled: SelectRootStateProps["disabled"];
 	required: SelectRootStateProps["required"];
+	triggerId = box<string>(useId());
 	triggerNode = box<HTMLElement | null>(null);
 	valueId = box<string>(useId());
 	valueNodeHasChildren = box(false);
@@ -80,6 +82,12 @@ export class SelectRootState {
 		this.dir = props.dir;
 		this.disabled = props.disabled;
 		this.required = props.required;
+	}
+
+
+	focusTriggerNode(preventScroll: boolean = true) {
+		const node = document.getElementById(this.triggerId.value);
+		if (node) node.focus({ preventScroll })
 	}
 
 	onNativeOptionAdd(option: ReadableBox<SelectNativeOption>) {
@@ -116,12 +124,12 @@ export class SelectRootState {
 		return new SelectValueState(this);
 	}
 
-	createContent(props: SelectContentStateProps) {
-		return new SelectContentState(props, this);
+	createContent(props: SelectContentFragStateProps) {
+		return new SelectContentFragState(props, this);
 	}
 
-	createContentImpl(props: SelectContentImplStateProps) {
-		return new SelectContentImplState(props, this);
+	createContentImpl(props: SelectContentStateProps) {
+		return new SelectContentState(props, this);
 	}
 }
 
@@ -135,7 +143,6 @@ class SelectTriggerState {
 	#id: SelectTriggerStateProps["id"];
 	#disabled: SelectTriggerStateProps["disabled"];
 	#typeahead: Typeahead;
-	#node: Box<HTMLElement | null>;
 	#isDisabled = $derived.by(() => {
 		return this.#root.disabled.value || this.#disabled.value;
 	});
@@ -144,8 +151,11 @@ class SelectTriggerState {
 		this.#id = props.id;
 		this.#root = root;
 		this.#root.triggerNode = useNodeById(this.#id);
-		this.#node = useNodeById(this.#id);
 		this.#disabled = props.disabled;
+
+		$effect(() => {
+			this.#root.triggerId.value = this.#id.value;
+		});
 
 		this.#typeahead = useTypeahead();
 	}
@@ -253,6 +263,7 @@ class SelectTriggerState {
 class SelectValueState {
 	root: SelectRootState;
 	showPlaceholder = $derived.by(() => shouldShowPlaceholder(this.root.value.value));
+	id = box<string>(useId());
 
 	constructor(root: SelectRootState) {
 		this.root = root;
@@ -272,15 +283,15 @@ class SelectValueState {
 	);
 }
 
-type SelectContentStateProps = ReadableBoxedValues<{
+type SelectContentFragStateProps = ReadableBoxedValues<{
 	id: string;
 }>;
 
-class SelectContentState {
+class SelectContentFragState {
 	root: SelectRootState;
 	fragment = box<DocumentFragment | null>(null);
 
-	constructor(props: SelectContentStateProps, root: SelectRootState) {
+	constructor(props: SelectContentFragStateProps, root: SelectRootState) {
 		this.root = root;
 		this.root.contentId.value = props.id.value;
 
@@ -298,24 +309,25 @@ class SelectContentState {
 	}
 }
 
-type SelectContentImplStateProps = ReadableBoxedValues<{
+type SelectContentStateProps = ReadableBoxedValues<{
 	id: string;
 	position: "item-aligned" | "floating";
 }>;
 
-class SelectContentImplState {
-	id: SelectContentImplStateProps["id"];
+export class SelectContentState {
+	id: SelectContentStateProps["id"];
 	root: SelectRootState;
 	contentNode = box<HTMLElement | null>(null);
-	viewportNode = box<HTMLElement | null>(null);
-
+	viewportId = box<string>(useId());
+	selectedItemId = box<string>(useId());
+	selectedItemTextId = box<string>(useId());
 	selectedItemText = box<HTMLElement | null>(null);
-	position: SelectContentImplStateProps["position"];
+	position: SelectContentStateProps["position"];
 	isPositioned = box(true);
 	firstValidItemFound = box(false);
 	typeahead: Typeahead;
 
-	constructor(props: SelectContentImplStateProps, root: SelectRootState) {
+	constructor(props: SelectContentStateProps, root: SelectRootState) {
 		this.position = props.position;
 		this.id = props.id;
 		this.root = root;
@@ -389,7 +401,7 @@ class SelectContentImplState {
 			if (candidate === PREV_FOCUSED_ELEMENT) return;
 			candidate?.scrollIntoView({ block: "nearest" });
 			// viewport might have padding so scroll to the edge when focusing first/last
-			const viewport = this.viewportNode.value;
+			const viewport = document.getElementById(this.viewportId.value);
 			if (candidate === firstItem && viewport) {
 				viewport.scrollTop = 0;
 			}
@@ -405,6 +417,32 @@ class SelectContentImplState {
 
 	onItemLeave() {
 		this.contentNode.value?.focus();
+	}
+
+
+	getSelectedItem() {
+		const candidates = this.root.getCandidateNodes()
+		const selectedItemNode = candidates.find((node) => node?.dataset.value === this.root.value.value) ?? null;
+		const first = candidates[0] ?? null;
+		if (selectedItemNode) {
+			const selectedItemTextNode = selectedItemNode.querySelector<HTMLElement>(`[${ITEM_TEXT_ATTR}]`);
+			return {
+				selectedItemNode,
+				selectedItemTextNode,
+			}
+		} else {
+			if (first) {
+				const firstItemText = first.querySelector<HTMLElement>(`[${ITEM_TEXT_ATTR}]`);
+				return {
+					selectedItemNode: first,
+					selectedItemTextNode: firstItemText,
+				}	
+			}
+		}
+		return {
+			selectedItemNode: null,
+			selectedItemTextNode: null
+		}
 	}
 
 	focusSelectedItem() {
@@ -491,6 +529,14 @@ class SelectContentImplState {
 	createItem(props: SelectItemStateProps) {
 		return new SelectItemState(props, this);
 	}
+
+	createItemAlignedPosition(props: SelectItemAlignedPositionStateProps) {
+		return new SelectItemAlignedPositionState(props, this);
+	}
+
+	createFloatingPosition() {
+		return new SelectFloatingPositionState(this);
+	}
 }
 
 type SelectItemStateProps = ReadableBoxedValues<{
@@ -503,7 +549,7 @@ type SelectItemStateProps = ReadableBoxedValues<{
 class SelectItemState {
 	#id: SelectItemStateProps["id"];
 	root: SelectRootState;
-	content: SelectContentImplState;
+	content: SelectContentState;
 	textId = box<string | undefined>(undefined);
 	value: SelectItemStateProps["value"];
 	disabled: SelectItemStateProps["disabled"];
@@ -513,7 +559,7 @@ class SelectItemState {
 	node = box<HTMLElement | null>(null);
 	trueTextValue = box<string>("");
 
-	constructor(props: SelectItemStateProps, content: SelectContentImplState) {
+	constructor(props: SelectItemStateProps, content: SelectContentState) {
 		this.#id = props.id;
 		this.root = content.root;
 		this.content = content;
@@ -688,27 +734,239 @@ class SelectItemTextState {
 	);
 }
 
+type SelectItemAlignedPositionStateProps = ReadableBoxedValues<{
+	onPlaced: () => void;
+}>;
+
+class SelectItemAlignedPositionState {
+	root: SelectRootState;
+	content: SelectContentState;
+	shouldExpandOnScroll = $state(false);
+	shouldReposition = $state(false);
+	contentWrapperId = $state(useId());
+	onPlaced: SelectItemAlignedPositionStateProps["onPlaced"];
+	contentZIndex = $state("");
+
+	constructor(props: SelectItemAlignedPositionStateProps, content: SelectContentState) {
+		this.root = content.root;
+		this.content = content;
+		this.onPlaced = props.onPlaced;
+
+		$effect(() => {
+			this.position();
+			const contentNode = document.getElementById(this.content.id.value);
+			if (contentNode) {
+				this.contentZIndex = window.getComputedStyle(contentNode).zIndex;
+			}
+		});
+	}
+
+	position() {
+		const { selectedItemNode, selectedItemTextNode } = this.content.getSelectedItem()
+		const contentNode = document.getElementById(this.content.id.value);
+		const contentWrapperNode = document.getElementById(this.contentWrapperId);
+		const viewportNode = document.getElementById(this.content.viewportId.value);
+		const triggerNode = document.getElementById(this.root.triggerId.value);
+		const valueNode = document.getElementById(this.root.valueId.value);
+
+		if (
+			!contentNode ||
+			!contentWrapperNode ||
+			!viewportNode ||
+			!selectedItemNode ||
+			!selectedItemTextNode ||
+			!triggerNode ||
+			!valueNode
+		) {
+			return;
+		}
+
+		const triggerRect = triggerNode.getBoundingClientRect();
+
+		// horizontal positioning
+		const contentRect = contentNode.getBoundingClientRect();
+		const valueRect = valueNode.getBoundingClientRect();
+		const itemTextRect = selectedItemTextNode.getBoundingClientRect();
+
+		if (this.root.dir.value === "rtl") {
+			const itemTextOffset = itemTextRect.left - contentRect.left;
+			const left = valueRect.left - itemTextOffset;
+			const leftDelta = triggerRect.left - left;
+			const minContentWidth = triggerRect.width + leftDelta;
+			const contentWidth = Math.max(minContentWidth, contentRect.width);
+			const rightEdge = window.innerWidth - CONTENT_MARGIN;
+			const clampedLeft = clamp(left, CONTENT_MARGIN, rightEdge - contentWidth);
+
+			contentWrapperNode.style.minWidth = `${minContentWidth}px`;
+			contentWrapperNode.style.left = `${clampedLeft}px`;
+		} else {
+			const itemTextOffset = contentRect.right - itemTextRect.right;
+			const right = window.innerWidth - valueRect.right - itemTextOffset;
+			const rightDelta = window.innerWidth - triggerRect.right - right;
+			const minContentWidth = triggerRect.width + rightDelta;
+			const contentWidth = Math.max(minContentWidth, contentRect.width);
+			const leftEdge = window.innerWidth - CONTENT_MARGIN;
+			const clampedRight = clamp(right, CONTENT_MARGIN, leftEdge - contentWidth);
+
+			contentWrapperNode.style.minWidth = `${minContentWidth}px`;
+			contentWrapperNode.style.right = `${clampedRight}px`;
+		}
+
+		// vertical positioning
+		const items = this.root.getCandidateNodes();
+		const availableHeight = window.innerHeight - CONTENT_MARGIN * 2;
+		const itemsHeight = viewportNode.scrollHeight;
+
+		const contentStyles = window.getComputedStyle(contentNode);
+		const contentBorderTopWidth = Number.parseInt(contentStyles.borderTopWidth, 10);
+		const contentPaddingTop = Number.parseInt(contentStyles.paddingTop, 10);
+		const contentBorderBottomWidth = Number.parseInt(contentStyles.borderBottomWidth, 10);
+		const contentPaddingBottom = Number.parseInt(contentStyles.paddingBottom, 10);
+
+		const fullContentHeight =
+			contentBorderTopWidth +
+			contentPaddingTop +
+			itemsHeight +
+			contentPaddingBottom +
+			contentBorderBottomWidth;
+		const minContentHeight = Math.min(selectedItemNode.offsetHeight * 5, fullContentHeight);
+
+		const viewportStyles = window.getComputedStyle(viewportNode);
+		const viewportPaddingTop = Number.parseInt(viewportStyles.paddingTop, 10);
+		const viewportPaddingBottom = Number.parseInt(viewportStyles.paddingBottom, 10);
+
+		const topEdgeToTriggerMiddle = triggerRect.top + triggerRect.height / 2 - CONTENT_MARGIN;
+		const triggerMiddleToBottomEdge = availableHeight - topEdgeToTriggerMiddle;
+
+		const selectedItemHalfHeight = selectedItemNode.offsetHeight / 2;
+		const itemOffsetMiddle = selectedItemNode.offsetTop + selectedItemHalfHeight;
+
+		const contentTopToItemMiddle = contentBorderTopWidth + contentPaddingTop + itemOffsetMiddle;
+		const itemMiddleToContentBottom = fullContentHeight - contentTopToItemMiddle;
+
+		const willAlignWithoutTopOverflow = contentTopToItemMiddle <= topEdgeToTriggerMiddle;
+
+		if (willAlignWithoutTopOverflow) {
+			const isLastItem = selectedItemNode === items[items.length - 1];
+			contentWrapperNode.style.bottom = `${0}px`;
+			const viewportOffsetBottom =
+				contentNode.clientHeight - viewportNode.offsetTop - viewportNode.offsetHeight;
+			const clampedTriggerMiddleToBottomEdge = Math.max(
+				triggerMiddleToBottomEdge,
+				selectedItemHalfHeight +
+					// viewport migth have padding bottom, include to avoid overflow
+					(isLastItem ? viewportPaddingBottom : 0) +
+					viewportOffsetBottom +
+					contentBorderBottomWidth
+			);
+			const height = contentTopToItemMiddle + clampedTriggerMiddleToBottomEdge;
+			contentWrapperNode.style.height = `${height}px`;
+		} else {
+			const isFirstItem = selectedItemNode === items[0];
+			contentWrapperNode.style.top = `${0}px`;
+			const clampedTopEdgeToTriggerMiddle = Math.max(
+				topEdgeToTriggerMiddle,
+				contentBorderTopWidth +
+					viewportNode.offsetTop +
+					(isFirstItem ? viewportPaddingTop : 0) +
+					selectedItemHalfHeight
+			);
+			const height = clampedTopEdgeToTriggerMiddle + itemMiddleToContentBottom;
+			contentWrapperNode.style.height = `${height}px`;
+			viewportNode.scrollTop =
+				contentTopToItemMiddle - topEdgeToTriggerMiddle + viewportNode.offsetTop;
+		}
+
+		contentWrapperNode.style.margin = `${CONTENT_MARGIN}px`;
+		contentWrapperNode.style.minHeight = `${minContentHeight}px`;
+		contentWrapperNode.style.maxHeight = `${availableHeight}px`;
+	}
+
+	handleScrollButtonChange(id: string) {
+		const node = document.getElementById(id);
+		if (!node) return;
+		if (!this.shouldReposition) return;
+		this.position();
+		this.content.focusSelectedItem();
+		this.shouldReposition = false;
+	}
+
+	wrapperProps = $derived.by(
+		() =>
+			({
+				id: this.contentWrapperId,
+				style: {
+					display: "flex",
+					flexDirection: "column",
+					position: "fixed",
+					zIndex: this.contentZIndex,
+				},
+			}) as const
+	);
+
+	props = $derived.by(
+		() =>
+			({
+				style: {
+					boxSizing: "border-box",
+					maxHeight: "100%",
+				},
+			}) as const
+	);
+}
+
+class SelectFloatingPositionState {
+	root: SelectRootState;
+	content: SelectContentState;
+
+	constructor(content: SelectContentState) {
+		this.root = content.root;
+		this.content = content;
+	}
+
+	props = {
+		style: {
+			boxSizing: "border-box",
+			"--bits-select-content-transform-origin": "var(--bits-floating-transform-origin)",
+			"--bits-select-content-available-width": "var(--bits-floating-available-width)",
+			"--bits-select-content-available-height": "var(--bits-floating-available-height)",
+			"--bits-select-trigger-width": "var(--bits-floating-anchor-width)",
+			"--bits-select-trigger-height": "var(--bits-floating-anchor-height)",
+		},
+	} as const;
+}
+
 export const [setSelectRootContext, getSelectRootContext] =
 	createContext<SelectRootState>("Select.Root");
 
 export const [setSelectTriggerContext] = createContext<SelectTriggerState>("Select.Trigger");
 
-export const [setSelectContentImplContext, getSelectContentImplContext] =
-	createContext<SelectContentImplState>("Select.Content");
+export const [setSelectContentContext, getSelectContentContext] =
+	createContext<SelectContentState>("Select.Content");
 
 export const [setSelectItemContext, getSelectItemContext] =
 	createContext<SelectItemState>("Select.Item");
+
+export const [setSelectContentItemAlignedContext, getSelectContentItemAlignedContext] = createContext<SelectItemAlignedPositionState>("Select.ContentItemAligned")
 
 export function useSelectRoot(props: SelectRootStateProps) {
 	return setSelectRootContext(new SelectRootState(props));
 }
 
-export function useSelectContent(props: SelectContentStateProps) {
+export function useSelectContentFrag(props: SelectContentFragStateProps) {
 	return getSelectRootContext().createContent(props);
 }
 
-export function useSelectContentImpl(props: SelectContentImplStateProps) {
-	return setSelectContentImplContext(getSelectRootContext().createContentImpl(props));
+export function useSelectContent(props: SelectContentStateProps) {
+	return setSelectContentContext(getSelectRootContext().createContentImpl(props));
+}
+
+export function useSelectItemAlignedPosition(props: SelectItemAlignedPositionStateProps) {
+	return setSelectContentItemAlignedContext(getSelectContentContext().createItemAlignedPosition(props))
+}
+
+export function useSelectFloatingPosition() {
+	return getSelectContentContext().createFloatingPosition();
 }
 
 export function useSelectTrigger(props: SelectTriggerStateProps) {
@@ -720,7 +978,7 @@ export function useSelectValue() {
 }
 
 export function useSelectItem(props: SelectItemStateProps) {
-	return setSelectItemContext(getSelectContentImplContext().createItem(props));
+	return setSelectItemContext(getSelectContentContext().createItem(props));
 }
 
 export function useSelectItemText(props: SelectItemTextStateProps) {
