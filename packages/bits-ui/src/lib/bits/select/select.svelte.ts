@@ -95,8 +95,17 @@ export class SelectRootState {
 		this.nativeOptionsSet.delete(option);
 	}
 
-	getCandidateNodes() {
+	getTriggerTypeaheadCandidateNodes() {
 		const node = this.contentFragment.value;
+		if (!node) return [];
+		const candidates = Array.from(
+			node.querySelectorAll<HTMLElement>(`[${ITEM_ATTR}]:not([data-disabled])`)
+		);
+		return candidates;
+	}
+
+	getCandidateNodes() {
+		const node = document.getElementById(this.contentId.value);
 		if (!node) return [];
 		const candidates = Array.from(
 			node.querySelectorAll<HTMLElement>(`[${ITEM_ATTR}]:not([data-disabled])`)
@@ -205,7 +214,7 @@ class SelectTriggerState {
 		}
 		const newItem = this.#typeahead.handleTypeaheadSearch(
 			e.key,
-			this.#root.getCandidateNodes()
+			this.#root.getTriggerTypeaheadCandidateNodes()
 		);
 
 		if (newItem && newItem.dataset.value) {
@@ -307,7 +316,7 @@ class SelectContentImplState {
 	selectedItem = box<HTMLElement | null>(null);
 	selectedItemText = box<HTMLElement | null>(null);
 	position: SelectContentImplStateProps["position"];
-	isPositioned = box(false);
+	isPositioned = box(true);
 	firstValidItemFound = box(false);
 	typeahead: Typeahead;
 
@@ -373,6 +382,9 @@ class SelectContentImplState {
 	}
 
 	focusSelectedItem() {
+		if (!this.selectedItem.value && this.contentNode.value) {
+			focusFirst([this.contentNode.value])
+		}
 		if (this.selectedItem.value && this.contentNode.value) {
 			focusFirst([this.selectedItem.value, this.contentNode.value]);
 		}
@@ -509,7 +521,6 @@ class SelectItemState {
 	}
 
 	#onpointermove = async (e: PointerEvent) => {
-		await tick();
 		if (e.defaultPrevented) return;
 		if (this.disabled.value) {
 			this.content.onItemLeave();
@@ -519,7 +530,6 @@ class SelectItemState {
 	};
 
 	#onpointerleave = async (e: PointerEvent) => {
-		await tick();
 		if (e.defaultPrevented) return;
 		if (e.currentTarget === document.activeElement) {
 			this.content.onItemLeave();
@@ -535,7 +545,6 @@ class SelectItemState {
 	};
 
 	#onkeydown = async (e: KeyboardEvent) => {
-		await tick();
 		if (e.defaultPrevented) return;
 
 		const isTypingAhead = this.content.typeahead.search.value !== "";
