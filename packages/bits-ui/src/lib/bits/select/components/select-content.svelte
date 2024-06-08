@@ -1,121 +1,68 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { getCtx, updatePositioning } from "../ctx.js";
-	import type { ContentEvents, ContentProps } from "../index.js";
-	import type { Transition } from "$lib/internal/types.js";
-	import { createDispatcher } from "$lib/internal/events.js";
+	import { box } from "svelte-toolbelt";
+	import type { ContentProps } from "../index.js";
+	import { useSelectContent, useSelectContentImpl } from "../select.svelte.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
+	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { noop } from "$lib/internal/callbacks.js";
 
-	type T = $$Generic<Transition>;
-	type In = $$Generic<Transition>;
-	type Out = $$Generic<Transition>;
-	type $$Props = ContentProps<T, In, Out>;
-	type $$Events = ContentEvents;
+	let {
+		id = useId(),
+		el = $bindable(),
+		forceMount = false,
+		children,
+		asChild,
+		child,
+		onInteractOutside = noop,
+		onEscapeKeydown = noop,
+		onMountAutoFocus = noop,
+		onDestroyAutoFocus = noop,
+		...restProps
+	}: ContentProps = $props();
 
-	export let transition: $$Props["transition"] = undefined;
-	export let transitionConfig: $$Props["transitionConfig"] = undefined;
-	export let inTransition: $$Props["inTransition"] = undefined;
-	export let inTransitionConfig: $$Props["inTransitionConfig"] = undefined;
-	export let outTransition: $$Props["outTransition"] = undefined;
-	export let outTransitionConfig: $$Props["outTransitionConfig"] = undefined;
-	export let asChild: $$Props["asChild"] = false;
-	export let id: $$Props["id"] = undefined;
-	export let side: $$Props["side"] = "bottom";
-	export let align: $$Props["align"] = "center";
-	export let sideOffset: $$Props["sideOffset"] = 0;
-	export let alignOffset: $$Props["alignOffset"] = 0;
-	export let collisionPadding: $$Props["collisionPadding"] = 8;
-	export let avoidCollisions: $$Props["avoidCollisions"] = true;
-	export let collisionBoundary: $$Props["collisionBoundary"] = undefined;
-	export let sameWidth: $$Props["sameWidth"] = true;
-	export let fitViewport: $$Props["fitViewport"] = false;
-	export let strategy: $$Props["strategy"] = "absolute";
-	export let overlap: $$Props["overlap"] = false;
-	export let el: $$Props["el"] = undefined;
+	useSelectContent();
+	const state = useSelectContentImpl({
+		id: box.with(() => id),
+		position: box.with(() => "item-aligned"),
+	});
 
-	const {
-		elements: { menu },
-		states: { open },
-		ids,
-		getAttrs,
-	} = getCtx();
-
-	const dispatch = createDispatcher();
-	const attrs = getAttrs("content");
-
-	$: if (id) {
-		ids.menu.set(id);
-	}
-
-	$: builder = $menu;
-	$: Object.assign(builder, attrs);
-
-	$: if ($open) {
-		updatePositioning({
-			side,
-			align,
-			sideOffset,
-			alignOffset,
-			collisionPadding,
-			avoidCollisions,
-			collisionBoundary,
-			sameWidth,
-			fitViewport,
-			strategy,
-			overlap,
-		});
-	}
+	const mergedProps = $derived(mergeProps(restProps, state.props));
 </script>
 
-<!-- svelte-ignore a11y-no-static-element-interactions -->
-{#if asChild && $open}
-	<slot {builder} />
-{:else if transition && $open}
-	<div
-		bind:this={el}
-		transition:transition={transitionConfig}
-		use:melt={builder}
-		{...$$restProps}
-		on:m-pointerleave={dispatch}
-		on:keydown
-	>
-		<slot {builder} />
-	</div>
-{:else if inTransition && outTransition && $open}
-	<div
-		bind:this={el}
-		in:inTransition={inTransitionConfig}
-		out:outTransition={outTransitionConfig}
-		use:melt={builder}
-		{...$$restProps}
-		on:m-pointerleave={dispatch}
-		on:keydown
-	>
-		<slot {builder} />
-	</div>
-{:else if inTransition && $open}
-	<div
-		bind:this={el}
-		in:inTransition={inTransitionConfig}
-		use:melt={builder}
-		{...$$restProps}
-		on:m-pointerleave={dispatch}
-		on:keydown
-	>
-		<slot {builder} />
-	</div>
-{:else if outTransition && $open}
-	<div
-		bind:this={el}
-		out:outTransition={outTransitionConfig}
-		use:melt={builder}
-		{...$$restProps}
-		on:m-pointerleave={dispatch}
-		on:keydown
-	>
-		<slot {builder} />
-	</div>
-{:else if $open}
-	<div bind:this={el} use:melt={builder} {...$$restProps} on:m-pointerleave={dispatch} on:keydown>
-		<slot {builder} />
-	</div>
-{/if}
+<PopperLayer
+	{...mergedProps}
+	present={state.root.open.value || forceMount}
+	onInteractOutside={(e) => {
+		onInteractOutside(e);
+		if (e.defaultPrevented) return;
+		state.root.open.value = false;
+	}}
+	onEscapeKeydown={(e) => {
+		// TODO: users should be able to cancel this
+		onEscapeKeydown(e);
+		state.root.open.value = false;
+	}}
+	trapped
+	onMountAutoFocus={(e) => {
+		onMountAutoFocus(e);
+		e.preventDefault();
+	}}
+	onDestroyAutoFocus={(e) => {
+		onDestroyAutoFocus(e);
+		if (e.defaultPrevented) return;
+		state.root.triggerNode.value?.focus({ preventScroll: true });
+		e.preventDefault();
+	}}
+>
+	{#snippet popper({ props })}
+		{@const finalProps = mergeProps(props, mergedProps)}
+		{#if asChild}
+			{@render child?.({ props: finalProps })}
+		{:else}
+			<div {...finalProps} bind:this={el}>
+				{@render children?.()}
+			</div>
+		{/if}
+	{/snippet}
+</PopperLayer>

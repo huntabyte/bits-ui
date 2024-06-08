@@ -31,7 +31,6 @@ export function useCollection(key?: string, name = ITEM_DATA_ATTR) {
 
 		$effect(() => {
 			if (!sourceNode?.value) return;
-
 			setCollection();
 		});
 

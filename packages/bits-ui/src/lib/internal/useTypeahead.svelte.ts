@@ -2,7 +2,7 @@ import { boxAutoReset } from "./boxAutoReset.svelte.js";
 
 export type Typeahead = ReturnType<typeof useTypeahead>;
 
-export function useTypeahead() {
+export function useTypeahead(onSearchChange?: (search: string) => void) {
 	// Reset `search` 1 second after it was last updated
 	const search = boxAutoReset("", 1000);
 
@@ -10,6 +10,7 @@ export function useTypeahead() {
 		if (!candidates.length) return;
 
 		search.value = search.value + key;
+		onSearchChange?.(search.value);
 		const currentItem = document.activeElement;
 		const currentMatch =
 			candidates.find((item) => item === currentItem)?.textContent?.trim() ?? "";

@@ -10,4 +10,4 @@ export { default as Separator } from "../separator/components/separator.svelte";
 export { default as Trigger } from "./components/select-trigger.svelte";
 export { default as Value } from "./components/select-value.svelte";
 
-export type { SelectRootProps as RootProps } from "./types.js";
+export type { SelectRootProps as RootProps, SelectContentProps as ContentProps } from "./types.js";

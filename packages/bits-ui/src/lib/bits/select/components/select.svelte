@@ -60,9 +60,10 @@
 				{#if value === ""}
 					<option value=""></option>
 				{/if}
-				{#each state.nativeOptionsArr as opt (opt.key)}
-					<option value={opt.value} disabled={opt.disabled}>
-						{opt.innerHTML}
+				{#each state.nativeOptionsArr as opt (opt.value.key)}
+					<option value={opt.value.value} disabled={opt.value.disabled}>
+						<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+						{@html opt.value.innerHTML}
 					</option>
 				{/each}
 			</SelectNative>
