@@ -12,6 +12,9 @@
 	import { navigation } from "$lib/config/index.js";
 	import { cn } from "$lib/utils/index.js";
 	import "$lib/styles/app.postcss";
+
+	// eslint-disable-next-line no-unused-expressions, svelte/valid-compile
+	$page;
 </script>
 
 <ModeWatcher />

@@ -12,13 +12,13 @@
 
 	function getTarget() {
 		if (!isBrowser) return null;
-		let target: HTMLElement | null;
+		let target: HTMLElement | null | DocumentFragment | Element = null;
 		if (typeof to === "string") {
 			target = document.querySelector(to);
 			if (target === null) {
 				throw new Error(`Target element "${to}" not found.`);
 			}
-		} else if (to instanceof HTMLElement) {
+		} else if (to instanceof HTMLElement || to instanceof DocumentFragment) {
 			target = to;
 		} else {
 			throw new TypeError(
@@ -37,7 +37,7 @@
 		if (!target || disabled) {
 			return unmount(instance);
 		}
-		instance = mount(PortalConsumer, { target, props: { children }, context });
+		instance = mount(PortalConsumer, { target: target as any, props: { children }, context });
 
 		return () => {
 			unmount(instance);

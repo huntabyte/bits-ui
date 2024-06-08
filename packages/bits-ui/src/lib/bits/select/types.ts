@@ -1,7 +1,9 @@
 import type { PopperLayerProps } from "../utilities/popper-layer/types.js";
 import type {
 	OnChangeFn,
+	PrimitiveButtonAttributes,
 	PrimitiveDivAttributes,
+	PrimitiveSpanAttributes,
 	WithAsChild,
 	WithChildren,
 	Without,
@@ -79,3 +81,55 @@ export type SelectContentPropsWithoutHTML = SelectContentImplPropsWithoutHTML & 
 
 export type SelectContentProps = SelectContentPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, SelectContentPropsWithoutHTML>;
+
+export type SelectItemPropsWithoutHTML = WithAsChild<{
+	/**
+	 * The value of the item.
+	 */
+	value: string;
+
+	/**
+	 * Whether the item is disabled.
+	 *
+	 * @defaultValue false
+	 */
+	disabled?: boolean;
+
+	/**
+	 * Optionally provide text to use for typeahead purposes.
+	 *
+	 * By default, the typeahead behavior will use the `textContent` of the `SelectItemText`
+	 * component. Use this prop if the text content is not suitable for typeahead.
+	 */
+	textValue?: string;
+}>;
+
+export type SelectItemProps = SelectItemPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, SelectItemPropsWithoutHTML>;
+
+export type SelectTriggerPropsWithoutHTML = WithAsChild<{
+	/**
+	 * Whether the trigger is disabled.
+	 *
+	 * @defaultValue false
+	 */
+	disabled?: boolean;
+}>;
+
+export type SelectTriggerProps = SelectTriggerPropsWithoutHTML &
+	Without<PrimitiveButtonAttributes, SelectTriggerPropsWithoutHTML>;
+
+export type SelectValuePropsWithoutHTML = WithAsChild<{
+	/**
+	 * The content to render inside the `Select.Value` when no `value` is set.
+	 */
+	placeholder?: string;
+}>;
+
+export type SelectValueProps = SelectValuePropsWithoutHTML &
+	Without<Omit<PrimitiveSpanAttributes, "id">, SelectValuePropsWithoutHTML>;
+
+export type SelectItemTextPropsWithoutHTML = WithAsChild<{}>;
+
+export type SelectItemTextProps = SelectItemTextPropsWithoutHTML &
+	Without<PrimitiveSpanAttributes, SelectItemTextPropsWithoutHTML>;

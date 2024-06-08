@@ -1,5 +1,4 @@
-<script lang="ts">
-,
+<!-- <script lang="ts">
 
 	import { CONTENT_MARGIN } from "../select.svelte.js";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
@@ -27,4 +26,4 @@
 		"--bits-select-trigger-width": "var(--bits-floating-trigger-width)",
 		"--bits-select-trigger-height": "var(--bits-floating-trigger-height)",
 	}}
-></FloatingLayer.Content>
+></FloatingLayer.Content> -->

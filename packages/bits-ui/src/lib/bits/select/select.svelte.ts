@@ -34,6 +34,7 @@ const CONTENT_ATTR = "data-select-content";
 const ITEM_ATTR = "data-select-item";
 const VIEWPORT_ATTR = "data-select-viewport";
 const VALUE_ATTR = "data-select-value";
+const ITEM_TEXT_ATTR = "data-select-item-text";
 
 type SelectRootStateProps = WritableBoxedValues<{
 	open: boolean;
@@ -59,10 +60,11 @@ export class SelectRootState {
 	disabled: SelectRootStateProps["disabled"];
 	required: SelectRootStateProps["required"];
 	triggerNode = box<HTMLElement | null>(null);
-	valueNode = box<HTMLElement | null>(null);
-	contentNode = box<HTMLElement | null>(null);
-	contentId = box.with(() => useId());
+	valueId = box<string>(useId());
+	valueNodeHasChildren = box(false);
+	contentId = box<string>(useId());
 	triggerPointerDownPos = box<{ x: number; y: number } | null>({ x: 0, y: 0 });
+	contentFragment = box<DocumentFragment | null>(null);
 
 	// A set of all the native options we'll use to render the native select element under the hood
 	nativeOptionsSet = new Set<ReadableBox<SelectNativeOption>>();
@@ -94,7 +96,7 @@ export class SelectRootState {
 	}
 
 	getCandidateNodes() {
-		const node = this.contentNode.value;
+		const node = this.contentFragment.value;
 		if (!node) return [];
 		const candidates = Array.from(
 			node.querySelectorAll<HTMLElement>(`[${ITEM_ATTR}]:not([data-disabled])`)
@@ -110,8 +112,8 @@ export class SelectRootState {
 		return new SelectValueState(this);
 	}
 
-	createContent() {
-		return new SelectContentState(this);
+	createContent(props: SelectContentStateProps) {
+		return new SelectContentState(props, this);
 	}
 
 	createContentImpl(props: SelectContentImplStateProps) {
@@ -201,8 +203,15 @@ class SelectTriggerState {
 		if (!isModifierKey && e.key.length === 1) {
 			if (isTypingAhead && e.key === " ") return;
 		}
-		// TODO: populate with the appropriate items :)
-		this.#typeahead.handleTypeaheadSearch(e.key, []);
+		const newItem = this.#typeahead.handleTypeaheadSearch(
+			e.key,
+			this.#root.getCandidateNodes()
+		);
+
+		if (newItem && newItem.dataset.value) {
+			this.#root.value.value = newItem.dataset.value;
+		}
+
 		if (OPEN_KEYS.includes(e.key)) {
 			this.#handleOpen();
 			e.preventDefault();
@@ -248,6 +257,7 @@ class SelectValueState {
 	props = $derived.by(
 		() =>
 			({
+				id: this.root.valueId.value,
 				"data-state": getDataOpenClosed(this.root.open.value),
 				"data-disabled": getDataDisabled(this.root.disabled.value),
 				[VALUE_ATTR]: "",
@@ -258,15 +268,28 @@ class SelectValueState {
 	);
 }
 
+type SelectContentStateProps = ReadableBoxedValues<{
+	id: string;
+}>;
+
 class SelectContentState {
 	root: SelectRootState;
 	fragment = box<DocumentFragment | null>(null);
 
-	constructor(root: SelectRootState) {
+	constructor(props: SelectContentStateProps, root: SelectRootState) {
 		this.root = root;
+		this.root.contentId.value = props.id.value;
+
+		$effect(() => {
+			this.root.contentId.value = props.id.value;
+		});
 
 		$effect(() => {
 			this.fragment.value = new DocumentFragment();
+		});
+
+		$effect(() => {
+			this.root.contentFragment.value = this.fragment.value;
 		});
 	}
 }
@@ -471,6 +494,10 @@ class SelectItemState {
 		this.trueTextValue.value = ((this.textValue?.value || node?.textContent) ?? "").trim();
 	}
 
+	setTextId(id: string) {
+		this.textId.value = id;
+	}
+
 	async handleSelect(e?: PointerEvent) {
 		await tick();
 		if (e?.defaultPrevented) return;
@@ -546,6 +573,7 @@ class SelectItemState {
 				"data-state": getDataChecked(this.isSelected),
 				"aria-disabled": getAriaDisabled(this.disabled.value),
 				"data-disabled": getDataDisabled(this.disabled.value),
+				"data-value": this.value.value,
 				tabindex: this.disabled.value ? undefined : -1,
 				[ITEM_ATTR]: "",
 				//
@@ -559,6 +587,10 @@ class SelectItemState {
 				ontouchend: this.#ontouchend,
 			}) as const
 	);
+
+	createText(props: SelectItemTextStateProps) {
+		return new SelectItemTextState(props, this);
+	}
 }
 
 type SelectItemTextStateProps = ReadableBoxedValues<{
@@ -584,6 +616,11 @@ class SelectItemTextState {
 		this.#id = props.id;
 		this.node = useNodeById(this.#id);
 		this.item = item;
+		this.item.setTextId(this.#id.value);
+
+		$effect(() => {
+			this.item.setTextId(this.#id.value);
+		});
 
 		$effect(() => {
 			untrack(() => {
@@ -606,6 +643,14 @@ class SelectItemTextState {
 			};
 		});
 	}
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.value,
+				[ITEM_TEXT_ATTR]: "",
+			}) as const
+	);
 }
 
 export const [setSelectRootContext, getSelectRootContext] =
@@ -616,16 +661,19 @@ export const [setSelectTriggerContext] = createContext<SelectTriggerState>("Sele
 export const [setSelectContentImplContext, getSelectContentImplContext] =
 	createContext<SelectContentImplState>("Select.Content");
 
+export const [setSelectItemContext, getSelectItemContext] =
+	createContext<SelectItemState>("Select.Item");
+
 export function useSelectRoot(props: SelectRootStateProps) {
 	return setSelectRootContext(new SelectRootState(props));
 }
 
-export function useSelectContent() {
-	return getSelectRootContext().createContent();
+export function useSelectContent(props: SelectContentStateProps) {
+	return getSelectRootContext().createContent(props);
 }
 
 export function useSelectContentImpl(props: SelectContentImplStateProps) {
-	return getSelectRootContext().createContentImpl(props);
+	return setSelectContentImplContext(getSelectRootContext().createContentImpl(props));
 }
 
 export function useSelectTrigger(props: SelectTriggerStateProps) {
@@ -637,7 +685,11 @@ export function useSelectValue() {
 }
 
 export function useSelectItem(props: SelectItemStateProps) {
-	return getSelectContentImplContext().createItem(props);
+	return setSelectItemContext(getSelectContentImplContext().createItem(props));
+}
+
+export function useSelectItemText(props: SelectItemTextStateProps) {
+	return getSelectItemContext().createText(props);
 }
 
 //
