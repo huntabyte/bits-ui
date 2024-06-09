@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Select } from "bits-ui";
-	import { CaretUpDown, Palette } from "$icons/index.js";
+	import { CaretUpDown, Check, Palette } from "$icons/index.js";
 
 	const themes = [
 		{ value: "light-monochrome", label: "Light Monochrome" },
@@ -52,9 +52,16 @@
 								class="focus-override flex h-10 w-full select-none items-center rounded-button py-3 pl-5 pr-1.5 text-sm outline-none transition-all duration-75 focus:outline-none focus-visible:outline-none data-[highlighted]:bg-muted"
 								value={theme.value}
 							>
-								<Select.ItemText>
-									{theme.label}
-								</Select.ItemText>
+								{#snippet children({ selected })}
+									<Select.ItemText>
+										{theme.label}
+									</Select.ItemText>
+									{#if selected}
+										<span class="ml-auto">
+											<Check />
+										</span>
+									{/if}
+								{/snippet}
 							</Select.Item>
 						{/each}
 					</Select.Viewport>

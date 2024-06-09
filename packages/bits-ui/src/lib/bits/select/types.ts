@@ -1,3 +1,4 @@
+import type { Snippet } from "svelte";
 import type { PopperLayerProps } from "../utilities/popper-layer/types.js";
 import type {
 	OnChangeFn,
@@ -83,27 +84,35 @@ export type SelectContentPropsWithoutHTML = SelectContentImplPropsWithoutHTML & 
 export type SelectContentProps = SelectContentPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, SelectContentPropsWithoutHTML>;
 
-export type SelectItemPropsWithoutHTML = WithAsChild<{
-	/**
-	 * The value of the item.
-	 */
-	value: string;
+export type SelectItemPropsWithoutHTML = Omit<
+	WithAsChild<
+		{
+			/**
+			 * The value of the item.
+			 */
+			value: string;
 
-	/**
-	 * Whether the item is disabled.
-	 *
-	 * @defaultValue false
-	 */
-	disabled?: boolean;
+			/**
+			 * Whether the item is disabled.
+			 *
+			 * @defaultValue false
+			 */
+			disabled?: boolean;
 
-	/**
-	 * Optionally provide text to use for typeahead purposes.
-	 *
-	 * By default, the typeahead behavior will use the `textContent` of the `SelectItemText`
-	 * component. Use this prop if the text content is not suitable for typeahead.
-	 */
-	textValue?: string;
-}>;
+			/**
+			 * Optionally provide text to use for typeahead purposes.
+			 *
+			 * By default, the typeahead behavior will use the `textContent` of the `SelectItemText`
+			 * component. Use this prop if the text content is not suitable for typeahead.
+			 */
+			textValue?: string;
+		},
+		{ selected: boolean }
+	>,
+	"children"
+> & {
+	children?: Snippet<[{ selected: boolean }]>;
+};
 
 export type SelectItemProps = SelectItemPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, SelectItemPropsWithoutHTML>;
