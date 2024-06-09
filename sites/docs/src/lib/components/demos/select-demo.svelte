@@ -21,24 +21,26 @@
 				<Select.Value class="text-sm" placeholder="Select a theme" />
 				<CaretUpDown class="ml-auto size-6 text-muted-foreground" />
 			</Select.Trigger>
-			<Select.Content
-				class="w-full min-w-[296px] rounded-xl border border-muted bg-background px-1 py-3 shadow-popover outline-none"
-				sideOffset={8}
-				sameWidth={true}
-			>
-				<Select.Viewport>
-					{#each themes as theme}
-						<Select.Item
-							class="focus-override flex h-10 w-full select-none items-center rounded-button py-3 pl-5 pr-1.5 text-sm outline-none transition-all duration-75 focus:outline-none focus-visible:outline-none data-[highlighted]:bg-muted"
-							value={theme.value}
-						>
-							<Select.ItemText>
-								{theme.label}
-							</Select.ItemText>
-						</Select.Item>
-					{/each}
-				</Select.Viewport>
-			</Select.Content>
+			<Select.Portal>
+				<Select.Content
+					class="w-full min-w-[296px] rounded-xl border border-muted bg-background px-1 py-3 shadow-popover outline-none"
+					sideOffset={8}
+					sameWidth={true}
+				>
+					<Select.Viewport>
+						{#each themes as theme}
+							<Select.Item
+								class="focus-override flex h-10 w-full select-none items-center rounded-button py-3 pl-5 pr-1.5 text-sm outline-none transition-all duration-75 focus:outline-none focus-visible:outline-none data-[highlighted]:bg-muted"
+								value={theme.value}
+							>
+								<Select.ItemText>
+									{theme.label}
+								</Select.ItemText>
+							</Select.Item>
+						{/each}
+					</Select.Viewport>
+				</Select.Content>
+			</Select.Portal>
 		</Select.Root>
 	</div>
 </div>
