@@ -546,6 +546,7 @@ export class SelectContentState {
 				},
 				oncontextmenu: this.#oncontextmenu,
 				onkeydown: this.#onkeydown,
+				tabIndex: -1,
 				[CONTENT_ATTR]: "",
 			}) as const
 	);
@@ -929,9 +930,8 @@ class SelectItemAlignedPositionState {
 			contentWrapperNode.style.maxHeight = `${availableHeight}px`;
 
 			this.onPlaced.value();
-
-			requestAnimationFrame(() => (this.shouldExpandOnScroll = true));
 		});
+		requestAnimationFrame(() => (this.shouldExpandOnScroll = true));
 	}
 
 	handleScrollButtonChange(id: string) {
@@ -1086,10 +1086,12 @@ class SelectScrollButtonImplState {
 		this.mounted = props.mounted;
 
 		$effect(() => {
-			const activeItem = this.content.root
-				.getCandidateNodes()
-				.find((node) => node === document.activeElement);
-			activeItem?.scrollIntoView({ block: "nearest" });
+			if (this.mounted.value) {
+				const activeItem = this.content.root
+					.getCandidateNodes()
+					.find((node) => node === document.activeElement);
+				activeItem?.scrollIntoView({ block: "nearest" });
+			}
 		});
 
 		$effect(() => {
@@ -1182,13 +1184,12 @@ class SelectScrollDownButtonState {
 
 		$effect(() => {
 			if (!this.state.mounted.value) {
-				this.state.clearAutoScrollTimer()
+				this.state.clearAutoScrollTimer();
 			}
-		})
+		});
 	}
 
 	handleAutoScroll() {
-		console.log("down button autoscroll");
 		afterTick(() => {
 			const viewport = document.getElementById(this.content.viewportId);
 			const selectedItem = this.content.getSelectedItem().selectedItemNode;
@@ -1242,9 +1243,9 @@ class SelectScrollUpButtonState {
 
 		$effect(() => {
 			if (!this.state.mounted.value) {
-				this.state.clearAutoScrollTimer()
+				this.state.clearAutoScrollTimer();
 			}
-		})
+		});
 	}
 
 	handleAutoScroll() {

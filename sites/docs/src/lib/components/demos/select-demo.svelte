@@ -24,9 +24,33 @@
 		{ value: "turquoise-blue", label: "Turquoise Blue" },
 		{ value: "burnt-orange", label: "Burnt Orange" },
 	];
+
+	let positionMode = $state<"item-aligned" | "floating">("item-aligned");
 </script>
 
 <div class="flex flex-col gap-4">
+	<label for="item-aligned">
+		item aligned
+		<input
+			type="checkbox"
+			name=""
+			id="item-aligned"
+			checked={positionMode === "item-aligned"}
+			onchange={() => (positionMode = "item-aligned")}
+		/>
+	</label>
+
+	<label for="item-aligned">
+		floating
+		<input
+			type="checkbox"
+			name=""
+			id="item-aligned"
+			checked={positionMode === "floating"}
+			onchange={() => (positionMode = "floating")}
+		/>
+	</label>
+
 	<div>
 		<Select.Root>
 			<Select.Trigger
@@ -39,14 +63,15 @@
 			</Select.Trigger>
 			<Select.Portal>
 				<Select.Content
-					class="z-50 w-full min-w-[296px] rounded-xl border border-muted bg-background px-1 py-3 shadow-popover outline-none"
+					class="z-50 max-h-96 w-full min-w-[296px] rounded-xl border border-muted bg-background px-1 py-3 shadow-popover outline-none"
 					sideOffset={8}
 					sameWidth={true}
+					position={positionMode}
 				>
 					<Select.ScrollUpButton class="flex w-full items-center justify-center"
 						>up</Select.ScrollUpButton
 					>
-					<Select.Viewport>
+					<Select.Viewport class="p-1">
 						{#each themes as theme}
 							<Select.Item
 								class="focus-override flex h-10 w-full select-none items-center rounded-button py-3 pl-5 pr-1.5 text-sm outline-none transition-all duration-75 focus:outline-none focus-visible:outline-none data-[highlighted]:bg-muted"
