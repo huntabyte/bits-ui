@@ -59,6 +59,7 @@
 <PopperLayer
 	{...mergedProps}
 	present={state.parentMenu.open.value || forceMount}
+	enabled={state.parentMenu.open.value || forceMount}
 	onInteractOutside={(e) => {
 		onInteractOutside(e);
 		if (e.defaultPrevented) return;
