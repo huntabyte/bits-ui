@@ -48,7 +48,7 @@
 			{#snippet focusScope({ props: focusScopeProps })}
 				<EscapeLayer
 					{...mergedProps}
-					present={present.value}
+					enabled={present.value}
 					onEscapeKeydown={(e) => {
 						onEscapeKeydown(e);
 						state.root.closeDialog();
@@ -56,14 +56,14 @@
 				>
 					<DismissableLayer
 						{...mergedProps}
-						present={present.value}
+						enabled={present.value}
 						onInteractOutside={(e) => {
 							onInteractOutside(e);
 							if (e.defaultPrevented) return;
 							state.root.closeDialog();
 						}}
 					>
-						<TextSelectionLayer {...mergedProps} present={present.value}>
+						<TextSelectionLayer {...mergedProps} enabled={present.value}>
 							{#if asChild}
 								{@render child?.({
 									props: mergeProps(mergedProps, focusScopeProps, {
