@@ -39,11 +39,11 @@
 			</Select.Trigger>
 			<Select.Portal>
 				<Select.Content
-					class="w-full min-w-[296px] rounded-xl border border-muted bg-background px-1 py-3 shadow-popover outline-none"
+					class="z-50 w-full min-w-[296px] rounded-xl border border-muted bg-background px-1 py-3 shadow-popover outline-none"
 					sideOffset={8}
 					sameWidth={true}
 				>
-					<Select.ScrollUpButton class="flex items-center justify-center"
+					<Select.ScrollUpButton class="flex w-full items-center justify-center"
 						>up</Select.ScrollUpButton
 					>
 					<Select.Viewport>
@@ -58,7 +58,7 @@
 							</Select.Item>
 						{/each}
 					</Select.Viewport>
-					<Select.ScrollDownButton class="flex items-center justify-center"
+					<Select.ScrollDownButton class="flex w-full items-center justify-center"
 						>down</Select.ScrollDownButton
 					>
 				</Select.Content>

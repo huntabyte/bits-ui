@@ -348,50 +348,57 @@ export class SelectContentState {
 		this.contentNode = useNodeById(this.id);
 
 		watch(this.root.open, () => {
-			const node = document.getElementById(this.id.value);
-			if (!node) return;
+			let cleanup = [noop];
 
-			let pointerMoveDelta = { x: 0, y: 0 };
+			afterTick(() => {
+				const node = document.getElementById(this.id.value);
+				if (!node) return;
 
-			const handlePointerMove = (e: PointerEvent) => {
-				pointerMoveDelta = {
-					x: Math.abs(
-						Math.round(e.pageX) - (this.root.triggerPointerDownPos.value?.x ?? 0)
-					),
-					y: Math.abs(
-						Math.round(e.pageY) - (this.root.triggerPointerDownPos.value?.y ?? 0)
-					),
+				let pointerMoveDelta = { x: 0, y: 0 };
+
+				const handlePointerMove = (e: PointerEvent) => {
+					pointerMoveDelta = {
+						x: Math.abs(
+							Math.round(e.pageX) - (this.root.triggerPointerDownPos.value?.x ?? 0)
+						),
+						y: Math.abs(
+							Math.round(e.pageY) - (this.root.triggerPointerDownPos.value?.y ?? 0)
+						),
+					};
 				};
-			};
 
-			const handlePointerUp = (e: PointerEvent) => {
-				if (e.pointerType === "touch") return;
+				const handlePointerUp = (e: PointerEvent) => {
+					if (e.pointerType === "touch") return;
 
-				if (pointerMoveDelta.x <= 10 && pointerMoveDelta.y <= 10) {
-					e.preventDefault();
-				} else {
-					if (!this.contentNode.value?.contains(e.target as HTMLElement)) {
-						this.root.open.value = false;
+					if (pointerMoveDelta.x <= 10 && pointerMoveDelta.y <= 10) {
+						e.preventDefault();
+					} else {
+						if (!this.contentNode.value?.contains(e.target as HTMLElement)) {
+							this.root.open.value = false;
+						}
 					}
+					document.removeEventListener("pointermove", handlePointerMove);
+					this.root.triggerPointerDownPos.value = null;
+				};
+
+				if (this.root.triggerPointerDownPos.value !== null) {
+					const pointerMove = addEventListener(
+						document,
+						"pointermove",
+						handlePointerMove
+					);
+					const pointerUp = addEventListener(document, "pointerup", handlePointerUp, {
+						capture: true,
+						once: true,
+					});
+					for (const cleanupFn of cleanup) cleanupFn();
+					cleanup = [pointerMove, pointerUp];
 				}
-				document.removeEventListener("pointermove", handlePointerMove);
-				this.root.triggerPointerDownPos.value = null;
-			};
 
-			if (this.root.triggerPointerDownPos.value !== null) {
-				document.addEventListener("pointermove", handlePointerMove);
-				document.addEventListener("pointerup", handlePointerUp, {
-					capture: true,
-					once: true,
-				});
-			}
-
-			return () => {
-				document.removeEventListener("pointermove", handlePointerMove);
-				document.removeEventListener("pointerup", handlePointerUp, {
-					capture: true,
-				});
-			};
+				return () => {
+					for (const cleanupFn of cleanup) cleanupFn();
+				};
+			});
 		});
 
 		$effect(() => {
@@ -928,12 +935,14 @@ class SelectItemAlignedPositionState {
 	}
 
 	handleScrollButtonChange(id: string) {
-		const node = document.getElementById(id);
-		if (!node) return;
-		if (!this.shouldReposition) return;
-		this.position();
-		this.content.focusSelectedItem();
-		this.shouldReposition = false;
+		afterTick(() => {
+			const node = document.getElementById(id);
+			if (!node) return;
+			if (!this.shouldReposition) return;
+			this.position();
+			this.content.focusSelectedItem();
+			this.shouldReposition = false;
+		});
 	}
 
 	wrapperProps = $derived.by(
@@ -1004,35 +1013,38 @@ class SelectViewportState {
 	}
 
 	#onscroll = (e: WheelEvent) => {
-		const viewport = e.currentTarget as HTMLElement;
-		const shouldExpandOnScroll =
-			this.content.alignedPositionState?.shouldExpandOnScroll ?? undefined;
-		const contentWrapper = document.getElementById(
-			this.content.alignedPositionState?.contentWrapperId ?? ""
-		);
+		afterTick(() => {
+			const viewport = e.currentTarget as HTMLElement;
+			const shouldExpandOnScroll =
+				this.content.alignedPositionState?.shouldExpandOnScroll ?? undefined;
 
-		if (shouldExpandOnScroll && contentWrapper) {
-			const scrolledBy = Math.abs(this.prevScrollTop - viewport.scrollTop);
-			if (scrolledBy > 0) {
-				const availableHeight = window.innerHeight - CONTENT_MARGIN * 2;
-				const cssMinHeight = Number.parseFloat(contentWrapper.style.minHeight);
-				const cssHeight = Number.parseFloat(contentWrapper.style.height);
-				const prevHeight = Math.max(cssMinHeight, cssHeight);
+			const contentWrapper = document.getElementById(
+				this.content.alignedPositionState?.contentWrapperId ?? ""
+			);
 
-				if (prevHeight < availableHeight) {
-					const nextHeight = prevHeight + scrolledBy;
-					const clampedNextHeight = Math.min(availableHeight, nextHeight);
-					const heightDiff = nextHeight - clampedNextHeight;
+			if (shouldExpandOnScroll && contentWrapper) {
+				const scrolledBy = Math.abs(this.prevScrollTop - viewport.scrollTop);
+				if (scrolledBy > 0) {
+					const availableHeight = window.innerHeight - CONTENT_MARGIN * 2;
+					const cssMinHeight = Number.parseFloat(contentWrapper.style.minHeight);
+					const cssHeight = Number.parseFloat(contentWrapper.style.height);
+					const prevHeight = Math.max(cssMinHeight, cssHeight);
 
-					contentWrapper.style.height = `${clampedNextHeight}px`;
-					if (contentWrapper.style.bottom === "0px") {
-						viewport.scrollTop = heightDiff > 0 ? heightDiff : 0;
-						contentWrapper.style.justifyContent = "flex-end";
+					if (prevHeight < availableHeight) {
+						const nextHeight = prevHeight + scrolledBy;
+						const clampedNextHeight = Math.min(availableHeight, nextHeight);
+						const heightDiff = nextHeight - clampedNextHeight;
+
+						contentWrapper.style.height = `${clampedNextHeight}px`;
+						if (contentWrapper.style.bottom === "0px") {
+							viewport.scrollTop = heightDiff > 0 ? heightDiff : 0;
+							contentWrapper.style.justifyContent = "flex-end";
+						}
 					}
 				}
 			}
-		}
-		this.prevScrollTop = viewport.scrollTop;
+			this.prevScrollTop = viewport.scrollTop;
+		});
 	};
 
 	props = $derived.by(
@@ -1056,6 +1068,7 @@ class SelectViewportState {
 
 type SelectScrollButtonImplStateProps = ReadableBoxedValues<{
 	id: string;
+	mounted: boolean;
 }>;
 
 class SelectScrollButtonImplState {
@@ -1064,11 +1077,13 @@ class SelectScrollButtonImplState {
 	alignedPositionState: SelectItemAlignedPositionState | null;
 	autoScrollTimer = $state<number | null>(null);
 	onAutoScroll: () => void = noop;
+	mounted: SelectScrollButtonImplStateProps["mounted"];
 
 	constructor(props: SelectScrollButtonImplStateProps, content: SelectContentState) {
 		this.content = content;
 		this.alignedPositionState = content.alignedPositionState;
 		this.id = props.id;
+		this.mounted = props.mounted;
 
 		$effect(() => {
 			const activeItem = this.content.root
@@ -1079,12 +1094,12 @@ class SelectScrollButtonImplState {
 
 		$effect(() => {
 			return () => {
-				this.#clearAutoScrollTimer();
+				this.clearAutoScrollTimer();
 			};
 		});
 	}
 
-	#clearAutoScrollTimer() {
+	clearAutoScrollTimer() {
 		if (this.autoScrollTimer !== null) {
 			window.clearInterval(this.autoScrollTimer);
 			this.autoScrollTimer = null;
@@ -1107,7 +1122,7 @@ class SelectScrollButtonImplState {
 	};
 
 	#onpointerleave = () => {
-		this.#clearAutoScrollTimer();
+		this.clearAutoScrollTimer();
 	};
 
 	props = $derived.by(
@@ -1139,23 +1154,41 @@ class SelectScrollDownButtonState {
 		$effect(() => {
 			const viewport = document.getElementById(this.content.viewportId);
 			const isPositioned = this.content.isPositioned.value;
+
 			if (!viewport || !isPositioned) return;
 
-			const handleScroll = () => {
-				const maxScroll = viewport.scrollHeight - viewport.clientHeight;
-				this.canScrollDown = Math.ceil(viewport.scrollTop) < maxScroll;
-			};
-			handleScroll();
+			let cleanup = noop;
 
-			const cleanup = addEventListener(viewport, "scroll", handleScroll);
+			untrack(() => {
+				const handleScroll = () => {
+					const maxScroll = viewport.scrollHeight - viewport.clientHeight;
+					this.canScrollDown = Math.ceil(viewport.scrollTop) < maxScroll;
+				};
+				handleScroll();
+
+				cleanup = addEventListener(viewport, "scroll", handleScroll);
+			});
 
 			return () => {
 				cleanup();
 			};
 		});
+
+		$effect(() => {
+			if (this.state.mounted.value) {
+				this.state.alignedPositionState?.handleScrollButtonChange(this.state.id.value);
+			}
+		});
+
+		$effect(() => {
+			if (!this.state.mounted.value) {
+				this.state.clearAutoScrollTimer()
+			}
+		})
 	}
 
 	handleAutoScroll() {
+		console.log("down button autoscroll");
 		afterTick(() => {
 			const viewport = document.getElementById(this.content.viewportId);
 			const selectedItem = this.content.getSelectedItem().selectedItemNode;
@@ -1181,8 +1214,12 @@ class SelectScrollUpButtonState {
 		this.state.onAutoScroll = this.handleAutoScroll;
 
 		$effect(() => {
+			let cleanup = noop;
+
+			cleanup();
 			const viewport = document.getElementById(this.content.viewportId);
 			const isPositioned = this.content.isPositioned.value;
+
 			if (!viewport || !isPositioned) return;
 
 			const handleScroll = () => {
@@ -1190,19 +1227,33 @@ class SelectScrollUpButtonState {
 			};
 			handleScroll();
 
-			const cleanup = addEventListener(viewport, "scroll", handleScroll);
+			cleanup = addEventListener(viewport, "scroll", handleScroll);
 
 			return () => {
 				cleanup();
 			};
 		});
+
+		$effect(() => {
+			if (this.state.mounted.value) {
+				this.state.alignedPositionState?.handleScrollButtonChange(this.state.id.value);
+			}
+		});
+
+		$effect(() => {
+			if (!this.state.mounted.value) {
+				this.state.clearAutoScrollTimer()
+			}
+		})
 	}
 
 	handleAutoScroll() {
-		const viewport = document.getElementById(this.content.viewportId);
-		const selectedItem = document.getElementById(this.content.selectedItemId.value);
-		if (!viewport || !selectedItem) return;
-		viewport.scrollTop = viewport.scrollTop - selectedItem.offsetHeight;
+		afterTick(() => {
+			const viewport = document.getElementById(this.content.viewportId);
+			const selectedItem = this.content.getSelectedItem().selectedItemNode;
+			if (!viewport || !selectedItem) return;
+			viewport.scrollTop = viewport.scrollTop - selectedItem.offsetHeight;
+		});
 	}
 
 	props = $derived.by(() => ({ ...this.state.props, [SCROLL_UP_BUTTON_ATTR]: "" }) as const);
