@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { ModeWatcher } from "mode-watcher";
-	import { onMount } from "svelte";
 	import { dev } from "$app/environment";
 	import { page } from "$app/stores";
 	import {
@@ -14,10 +13,12 @@
 	import { cn } from "$lib/utils/index.js";
 	import "$lib/styles/app.postcss";
 
-	onMount(async () => {
-		const eruda = (await import("eruda")).default;
-		eruda.init();
-	});
+	// onMount(async () => {
+	// 	if (dev) {
+	// 		const eruda = (await import("eruda")).default;
+	// 		eruda.init();
+	// 	}
+	// });
 
 	// eslint-disable-next-line no-unused-expressions, svelte/valid-compile
 	$page;

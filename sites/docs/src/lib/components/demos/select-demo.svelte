@@ -27,8 +27,14 @@
 </script>
 
 <div class="flex flex-col gap-4">
-	<div>
-		<Select.Root>
+	<form
+		onsubmit={(e) => {
+			e.preventDefault();
+			const formData = new FormData(e.currentTarget);
+			console.log(Object.fromEntries(formData));
+		}}
+	>
+		<Select.Root name="hello">
 			<Select.Trigger
 				class="inline-flex h-input w-[296px] items-center rounded-9px border border-border-input bg-background px-[11px] text-sm transition-colors placeholder:text-foreground-alt/50 "
 				aria-label="Select a theme"
@@ -71,5 +77,6 @@
 				</Select.Content>
 			</Select.Portal>
 		</Select.Root>
-	</div>
+		<button> Submit form </button>
+	</form>
 </div>

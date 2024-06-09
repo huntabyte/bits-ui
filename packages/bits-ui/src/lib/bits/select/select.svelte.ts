@@ -101,7 +101,6 @@ export class SelectRootState {
 	});
 
 	nativeOptionsArr = $derived.by(() => Array.from(this.nativeOptionsSet));
-
 	isFormControl = useFormControl(() => this.triggerId);
 
 	constructor(props: SelectRootStateProps) {
@@ -753,7 +752,7 @@ class SelectItemTextState {
 
 		$effect(() => {
 			untrack(() => {
-				const textNode = document.getElementById(this.#id.value);
+				const textNode = this.item.root.contentFragment?.getElementById(this.#id.value);
 				if (!textNode) return;
 				this.item.onItemTextChange(textNode);
 				this.item.content.itemTextRegister(
