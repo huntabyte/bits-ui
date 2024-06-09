@@ -64,8 +64,8 @@ export type SelectContentImplPropsWithoutHTML = WithAsChild<PopperLayerProps> & 
 	/**
 	 *  The positioning mode to use
 	 *
-	 *  `item-aligned (default)` - behaves similarly to a native MacOS menu by positioning content relative to the active item. <br>
-	 *  `floating` - positions content in the same way as our other primitives, for example `Popover` or `DropdownMenu`.
+	 *  `item-aligned` - behaves similarly to a native MacOS menu by positioning content relative to the active item. <br>
+	 *  `floating  (default)` - positions content in the same way as our other primitives, for example `Popover` or `DropdownMenu`.
 	 */
 	position?: "item-aligned" | "floating";
 };

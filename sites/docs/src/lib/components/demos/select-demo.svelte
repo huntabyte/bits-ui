@@ -24,33 +24,9 @@
 		{ value: "turquoise-blue", label: "Turquoise Blue" },
 		{ value: "burnt-orange", label: "Burnt Orange" },
 	];
-
-	let positionMode = $state<"item-aligned" | "floating">("item-aligned");
 </script>
 
 <div class="flex flex-col gap-4">
-	<label for="item-aligned">
-		item aligned
-		<input
-			type="checkbox"
-			name=""
-			id="item-aligned"
-			checked={positionMode === "item-aligned"}
-			onchange={() => (positionMode = "item-aligned")}
-		/>
-	</label>
-
-	<label for="item-aligned">
-		floating
-		<input
-			type="checkbox"
-			name=""
-			id="item-aligned"
-			checked={positionMode === "floating"}
-			onchange={() => (positionMode = "floating")}
-		/>
-	</label>
-
 	<div>
 		<Select.Root>
 			<Select.Trigger
@@ -66,7 +42,6 @@
 					class="z-50 max-h-96 w-full min-w-[296px] rounded-xl border border-muted bg-background px-1 py-3 shadow-popover outline-none"
 					sideOffset={8}
 					sameWidth={true}
-					position={positionMode}
 				>
 					<Select.ScrollUpButton class="flex w-full items-center justify-center"
 						>up</Select.ScrollUpButton

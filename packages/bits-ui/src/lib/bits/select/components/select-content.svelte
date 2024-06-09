@@ -12,7 +12,7 @@
 		id = useId(),
 		el = $bindable(),
 		forceMount = false,
-		position = "item-aligned",
+		position = "floating",
 		...restProps
 	}: ContentProps = $props();
 

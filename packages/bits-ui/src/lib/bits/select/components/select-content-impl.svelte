@@ -17,7 +17,7 @@
 		onMountAutoFocus = noop,
 		onDestroyAutoFocus = noop,
 		present,
-		position = "item-aligned",
+		position = "floating",
 		context,
 		onEscapeKeydown = noop,
 		onInteractOutside = noop,
