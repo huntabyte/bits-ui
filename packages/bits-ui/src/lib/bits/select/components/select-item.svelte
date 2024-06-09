@@ -28,7 +28,7 @@
 </script>
 
 {#if asChild}
-	{@render child?.({ props: mergedProps })}
+	{@render child?.({ props: mergedProps, selected: state.isSelected })}
 {:else}
 	<div bind:this={el} {...mergedProps}>
 		{@render children?.({ selected: state.isSelected })}
