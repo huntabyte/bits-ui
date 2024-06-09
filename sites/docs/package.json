@@ -29,6 +29,7 @@
 		"clsx": "^2.1.0",
 		"concurrently": "^8.2.2",
 		"contentlayer": "^0.3.4",
+		"eruda": "^3.0.1",
 		"mdsx": "^0.0.5",
 		"mode-watcher": "^0.2.0",
 		"phosphor-svelte": "^1.4.2",

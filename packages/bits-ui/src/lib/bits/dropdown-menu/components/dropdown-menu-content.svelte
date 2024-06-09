@@ -6,8 +6,7 @@
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { noop } from "$lib/internal/callbacks.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
-	import { isElement } from "$lib/internal/is.js";
-	import type { InteractOutsideEvent } from "$lib/bits/utilities/dismissable-layer/types.js";
+	import { isElementOrSVGElement } from "$lib/internal/is.js";
 
 	let {
 		id = useId(),
@@ -22,25 +21,13 @@
 		...restProps
 	}: ContentProps = $props();
 
-	const state = useMenuContent({
+	const contentState = useMenuContent({
 		id: box.with(() => id),
 		loop: box.with(() => loop),
 	});
 
-	function handleInteractOutsideStart(e: InteractOutsideEvent) {
-		if (!isElement(e.target)) return;
-		if (e.target.id === state.parentMenu.triggerId.value) {
-			e.preventDefault();
-			return;
-		}
-		if (e.target.closest(`#${state.parentMenu.triggerId.value}`)) {
-			e.preventDefault();
-		}
-	}
-
 	const mergedProps = $derived(
-		mergeProps(restProps, state.props, {
-			onInteractOutsideStart: handleInteractOutsideStart,
+		mergeProps(restProps, contentState.props, {
 			style: {
 				outline: "none",
 				"--bits-dropdown-menu-content-transform-origin":
@@ -58,17 +45,44 @@
 
 <PopperLayer
 	{...mergedProps}
-	present={state.parentMenu.open.value || forceMount}
-	enabled={state.parentMenu.open.value || forceMount}
+	present={contentState.parentMenu.open.value || forceMount}
+	enabled={contentState.parentMenu.open.value || forceMount}
+	onInteractOutsideStart={(e) => {
+		if (!isElementOrSVGElement(e.target)) return;
+		if (e.target.id === contentState.parentMenu.triggerId.value) {
+			console.log("start: is trigger, should not be closing");
+			e.preventDefault();
+			return;
+		}
+		if (e.target.closest(`#${contentState.parentMenu.triggerId.value}`)) {
+			e.preventDefault();
+			console.log("start: is within trigger, should not be closing");
+		}
+	}}
 	onInteractOutside={(e) => {
-		onInteractOutside(e);
 		if (e.defaultPrevented) return;
-		state.parentMenu.onClose();
+
+		if (!isElementOrSVGElement(e.target)) return;
+		if (e.target.id === contentState.parentMenu.triggerId.value) {
+			console.log("is trigger, should not be closing");
+			e.preventDefault();
+			return;
+		}
+		if (e.target.closest(`#${contentState.parentMenu.triggerId.value}`)) {
+			e.preventDefault();
+			console.log("is within trigger, should not be closing");
+			return;
+		}
+
+		console.log("target", e.target);
+
+		console.log("it should not make it here!", e);
+		contentState.parentMenu.onClose();
 	}}
 	onEscapeKeydown={(e) => {
 		// TODO: users should be able to cancel this
 		onEscapeKeydown(e);
-		state.parentMenu.onClose();
+		contentState.parentMenu.onClose();
 	}}
 	trapped
 	{loop}

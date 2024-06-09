@@ -21,17 +21,16 @@ import {
 	noop,
 	useNodeById,
 } from "$lib/internal/index.js";
+import { eventLogs } from "$lib/bits/index.js";
 
 const layers = new Map<DismissableLayerState, ReadableBox<InteractOutsideBehaviorType>>();
 
 const interactOutsideStartEvents = [
 	"pointerdown",
-	"mousedown",
 	"touchstart",
 ] satisfies InteractOutsideInterceptEventType[];
 const interactOutsideEndEvents = [
 	"pointerup",
-	"mouseup",
 	"touchend",
 	"click",
 ] satisfies InteractOutsideInterceptEventType[];
@@ -230,7 +229,8 @@ export class DismissableLayerState {
 	}, 20);
 
 	#isAnyEventIntercepted() {
-		return Object.values(this.#interceptedEvents).some(Boolean);
+		const i = Object.values(this.#interceptedEvents).some(Boolean);
+		return i;
 	}
 
 	#onfocuscapture = () => {
@@ -278,7 +278,9 @@ function isValidEvent(e: InteractOutsideEvent, node: HTMLElement): boolean {
 	const target = e.target;
 	if (!isElement(target)) return false;
 	const ownerDocument = getOwnerDocument(target);
-	return ownerDocument.documentElement.contains(target) && !isOrContainsTarget(node, target);
+	const isValid =
+		ownerDocument.documentElement.contains(target) && !isOrContainsTarget(node, target);
+	return isValid;
 }
 
 export type FocusOutsideEvent = CustomEvent<{ originalEvent: FocusEvent }>;
