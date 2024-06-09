@@ -111,6 +111,13 @@ export class SelectRootState {
 		this.required = props.required;
 	}
 
+	handleClose() {
+		this.open.value = false;
+		afterTick(() => {
+			this.focusTriggerNode();
+		});
+	}
+
 	focusTriggerNode(preventScroll: boolean = true) {
 		const node = document.getElementById(this.triggerId);
 		if (node) node.focus({ preventScroll });
@@ -382,7 +389,7 @@ export class SelectContentState {
 						e.preventDefault();
 					} else {
 						if (!this.contentNode.value?.contains(e.target as HTMLElement)) {
-							this.root.open.value = false;
+							this.root.handleClose();
 						}
 					}
 					document.removeEventListener("pointermove", handlePointerMove);
@@ -635,7 +642,7 @@ class SelectItemState {
 
 		if (!this.disabled.value) {
 			this.root.value.value = this.value.value;
-			this.root.open.value = false;
+			this.root.handleClose();
 		}
 	}
 
