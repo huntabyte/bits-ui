@@ -21,6 +21,8 @@ import {
 import { kbd } from "$lib/internal/kbd.js";
 import { afterTick } from "$lib/internal/afterTick.js";
 import { clamp } from "$lib/internal/clamp.js";
+import { noop } from "$lib/internal/callbacks.js";
+import { addEventListener } from "$lib/internal/events.js";
 
 export const OPEN_KEYS = [kbd.SPACE, kbd.ENTER, kbd.ARROW_UP, kbd.ARROW_DOWN];
 export const SELECTION_KEYS = [" ", kbd.ENTER];
@@ -33,6 +35,8 @@ const VIEWPORT_ATTR = "data-select-viewport";
 const VALUE_ATTR = "data-select-value";
 const ITEM_TEXT_ATTR = "data-select-item-text";
 const CONTENT_WRAPPER_ATTR = "data-select-content-wrapper";
+const SCROLL_UP_BUTTON_ATTR = "data-select-scroll-up-button";
+const SCROLL_DOWN_BUTTON_ATTR = "data-select-scroll-down-button";
 
 export const [setSelectRootContext, getSelectRootContext] =
 	createContext<SelectRootState>("Select.Root");
@@ -554,6 +558,16 @@ export class SelectContentState {
 	createFloatingPosition() {
 		return new SelectFloatingPositionState(this);
 	}
+
+	createScrollDownButton(props: SelectScrollButtonImplStateProps) {
+		const state = new SelectScrollButtonImplState(props, this);
+		return new SelectScrollDownButtonState(state);
+	}
+
+	createScrollUpButton(props: SelectScrollButtonImplStateProps) {
+		const state = new SelectScrollButtonImplState(props, this);
+		return new SelectScrollUpButtonState(state);
+	}
 }
 
 type SelectItemStateProps = ReadableBoxedValues<{
@@ -1040,6 +1054,160 @@ class SelectViewportState {
 	);
 }
 
+type SelectScrollButtonImplStateProps = ReadableBoxedValues<{
+	id: string;
+}>;
+
+class SelectScrollButtonImplState {
+	id: SelectScrollButtonImplStateProps["id"];
+	content: SelectContentState;
+	alignedPositionState: SelectItemAlignedPositionState | null;
+	autoScrollTimer = $state<number | null>(null);
+	onAutoScroll: () => void = noop;
+
+	constructor(props: SelectScrollButtonImplStateProps, content: SelectContentState) {
+		this.content = content;
+		this.alignedPositionState = content.alignedPositionState;
+		this.id = props.id;
+
+		$effect(() => {
+			const activeItem = this.content.root
+				.getCandidateNodes()
+				.find((node) => node === document.activeElement);
+			activeItem?.scrollIntoView({ block: "nearest" });
+		});
+
+		$effect(() => {
+			return () => {
+				this.#clearAutoScrollTimer();
+			};
+		});
+	}
+
+	#clearAutoScrollTimer() {
+		if (this.autoScrollTimer !== null) {
+			window.clearInterval(this.autoScrollTimer);
+			this.autoScrollTimer = null;
+		}
+	}
+
+	#onpointerdown = () => {
+		if (this.autoScrollTimer !== null) return;
+		this.autoScrollTimer = window.setInterval(() => {
+			this.onAutoScroll();
+		}, 50);
+	};
+
+	#onpointermove = () => {
+		this.content.onItemLeave?.();
+		if (this.autoScrollTimer !== null) return;
+		this.autoScrollTimer = window.setInterval(() => {
+			this.onAutoScroll();
+		}, 50);
+	};
+
+	#onpointerleave = () => {
+		this.#clearAutoScrollTimer();
+	};
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.id.value,
+				"aria-hidden": "true",
+				style: {
+					flexShrink: 0,
+				},
+				onpointerdown: this.#onpointerdown,
+				onpointermove: this.#onpointermove,
+				onpointerleave: this.#onpointerleave,
+			}) as const
+	);
+}
+
+class SelectScrollDownButtonState {
+	state: SelectScrollButtonImplState;
+	content: SelectContentState;
+	canScrollDown = $state(false);
+	node = $state<HTMLElement | null>(null);
+
+	constructor(state: SelectScrollButtonImplState) {
+		this.state = state;
+		this.content = state.content;
+		this.state.onAutoScroll = this.handleAutoScroll;
+
+		$effect(() => {
+			const viewport = document.getElementById(this.content.viewportId);
+			const isPositioned = this.content.isPositioned.value;
+			if (!viewport || !isPositioned) return;
+
+			const handleScroll = () => {
+				const maxScroll = viewport.scrollHeight - viewport.clientHeight;
+				this.canScrollDown = Math.ceil(viewport.scrollTop) < maxScroll;
+			};
+			handleScroll();
+
+			const cleanup = addEventListener(viewport, "scroll", handleScroll);
+
+			return () => {
+				cleanup();
+			};
+		});
+	}
+
+	handleAutoScroll() {
+		afterTick(() => {
+			const viewport = document.getElementById(this.content.viewportId);
+			const selectedItem = this.content.getSelectedItem().selectedItemNode;
+			if (!viewport || !selectedItem) {
+				return;
+			}
+			viewport.scrollTop = viewport.scrollTop + selectedItem.offsetHeight;
+		});
+	}
+
+	props = $derived.by(() => ({ ...this.state.props, [SCROLL_DOWN_BUTTON_ATTR]: "" }) as const);
+}
+
+class SelectScrollUpButtonState {
+	state: SelectScrollButtonImplState;
+	content: SelectContentState;
+	canScrollUp = $state(false);
+	node = $state<HTMLElement | null>(null);
+
+	constructor(state: SelectScrollButtonImplState) {
+		this.state = state;
+		this.content = state.content;
+		this.state.onAutoScroll = this.handleAutoScroll;
+
+		$effect(() => {
+			const viewport = document.getElementById(this.content.viewportId);
+			const isPositioned = this.content.isPositioned.value;
+			if (!viewport || !isPositioned) return;
+
+			const handleScroll = () => {
+				this.canScrollUp = viewport.scrollTop > 0;
+			};
+			handleScroll();
+
+			const cleanup = addEventListener(viewport, "scroll", handleScroll);
+
+			return () => {
+				cleanup();
+			};
+		});
+	}
+
+	handleAutoScroll() {
+		const viewport = document.getElementById(this.content.viewportId);
+		const selectedItem = document.getElementById(this.content.selectedItemId.value);
+		if (!viewport || !selectedItem) return;
+		viewport.scrollTop = viewport.scrollTop - selectedItem.offsetHeight;
+	}
+
+	props = $derived.by(() => ({ ...this.state.props, [SCROLL_UP_BUTTON_ATTR]: "" }) as const);
+}
+
 export function useSelectRoot(props: SelectRootStateProps) {
 	return setSelectRootContext(new SelectRootState(props));
 }
@@ -1081,6 +1249,14 @@ export function useSelectItemText(props: SelectItemTextStateProps) {
 
 export function useSelectViewport(props: SelectViewportStateProps) {
 	return getSelectContentContext().createViewport(props);
+}
+
+export function useSelectScrollUpButton(props: SelectScrollButtonImplStateProps) {
+	return getSelectContentContext().createScrollUpButton(props);
+}
+
+export function useSelectScrollDownButton(props: SelectScrollButtonImplStateProps) {
+	return getSelectContentContext().createScrollDownButton(props);
 }
 
 //

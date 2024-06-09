@@ -141,3 +141,8 @@ export type SelectViewportProps = SelectViewportPropsWithoutHTML &
 
 export type SelectPortalPropsWithoutHTML = PortalProps;
 export type SelectPortalProps = SelectPortalPropsWithoutHTML;
+
+export type SelectScrollButtonPropsWithoutHTML = WithAsChild<{}>;
+
+export type SelectScrollButtonProps = SelectScrollButtonPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, SelectScrollButtonPropsWithoutHTML>;

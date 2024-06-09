@@ -11,6 +11,8 @@ export { default as Separator } from "../separator/components/separator.svelte";
 export { default as Trigger } from "./components/select-trigger.svelte";
 export { default as Value } from "./components/select-value.svelte";
 export { default as Viewport } from "./components/select-viewport.svelte";
+export { default as ScrollUpButton } from "./components/select-scroll-up-button.svelte";
+export { default as ScrollDownButton } from "./components/select-scroll-down-button.svelte";
 export { default as Portal } from "$lib/bits/utilities/portal/portal.svelte";
 
 export type {
@@ -23,4 +25,6 @@ export type {
 	SelectContentImplProps as ContentImplProps,
 	SelectViewportProps as ViewportProps,
 	SelectPortalProps as PortalProps,
+	SelectScrollButtonProps as ScrollDownButtonProps,
+	SelectScrollButtonProps as ScrollUpButtonProps,
 } from "./types.js";

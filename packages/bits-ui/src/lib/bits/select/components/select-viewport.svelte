@@ -31,12 +31,12 @@
 
 <style>
 	/* Hide scrollbars cross browser and enable momentum scroll for touch devices */
-	:global([data-bits-select-viewport]) {
-		scrollbar-width: none;
-		-ms-overflow-style: none;
-		-webkit-overflow-scrolling: touch;
+	:global([data-select-viewport]) {
+		scrollbar-width: none !important;
+		-ms-overflow-style: none !important;
+		-webkit-overflow-scrolling: touch !important;
 	}
-	:global([data-bits-select-viewport])::-webkit-scrollbar {
-		display: none;
+	:global([data-select-viewport])::-webkit-scrollbar {
+		display: none !important;
 	}
 </style>
