@@ -24,6 +24,7 @@ import { afterTick } from "$lib/internal/afterTick.js";
 import { clamp } from "$lib/internal/clamp.js";
 import { noop } from "$lib/internal/callbacks.js";
 import { addEventListener } from "$lib/internal/events.js";
+import { sleep } from "$lib/internal/sleep.js";
 
 export const OPEN_KEYS = [kbd.SPACE, kbd.ENTER, kbd.ARROW_UP, kbd.ARROW_DOWN];
 export const SELECTION_KEYS = [" ", kbd.ENTER];
@@ -113,14 +114,16 @@ export class SelectRootState {
 
 	handleClose() {
 		this.open.value = false;
-		afterTick(() => {
-			this.focusTriggerNode();
-		});
+		this.focusTriggerNode();
 	}
 
 	focusTriggerNode(preventScroll: boolean = true) {
 		const node = document.getElementById(this.triggerId);
-		if (node) node.focus({ preventScroll });
+		if (node) {
+			sleep(1).then(() => {
+				node.focus({ preventScroll });
+			});
+		}
 	}
 
 	onNativeOptionAdd(option: ReadableBox<SelectNativeOption>) {
@@ -637,7 +640,6 @@ class SelectItemState {
 	}
 
 	async handleSelect(e?: PointerEvent) {
-		await tick();
 		if (e?.defaultPrevented) return;
 
 		if (!this.disabled.value) {

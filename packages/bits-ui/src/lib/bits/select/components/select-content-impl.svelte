@@ -39,8 +39,6 @@
 	}}
 	onDestroyAutoFocus={(e) => {
 		onDestroyAutoFocus(e);
-		if (e.defaultPrevented) return;
-		state.root.focusTriggerNode();
 	}}
 >
 	{#snippet focusScope({ props: focusScopeProps })}
@@ -50,7 +48,7 @@
 			onEscapeKeydown={(e) => {
 				// TODO: users should be able to cancel this
 				onEscapeKeydown(e);
-				state.root.open.value = false;
+				state.root.handleClose();
 			}}
 		>
 			<DismissableLayer
@@ -60,7 +58,7 @@
 				onInteractOutside={(e) => {
 					onInteractOutside(e);
 					if (e.defaultPrevented) return;
-					state.root.open.value = false;
+					state.root.handleClose();
 				}}
 			>
 				{#snippet children({ props: dismissableProps })}
