@@ -1,7 +1,7 @@
 import { type ReadableBox, box } from "svelte-toolbelt";
 import { Set } from "svelte/reactivity";
 import { tick, untrack } from "svelte";
-import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
+import type { Box, ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { watch } from "$lib/internal/box.svelte.js";
 import { useId } from "$lib/internal/useId.svelte.js";
 import type { Direction } from "$lib/shared/index.js";
@@ -12,6 +12,7 @@ import { type Typeahead, useTypeahead } from "$lib/internal/useTypeahead.svelte.
 import {
 	getAriaDisabled,
 	getAriaExpanded,
+	getAriaHidden,
 	getAriaRequired,
 	getAriaSelected,
 	getDataChecked,
@@ -37,6 +38,11 @@ const ITEM_TEXT_ATTR = "data-select-item-text";
 const CONTENT_WRAPPER_ATTR = "data-select-content-wrapper";
 const SCROLL_UP_BUTTON_ATTR = "data-select-scroll-up-button";
 const SCROLL_DOWN_BUTTON_ATTR = "data-select-scroll-down-button";
+const GROUP_ATTR = "data-select-group";
+const GROUP_TITLE_ATTR = "data-select-group-title";
+const SEPARATOR_ATTR = "data-select-separator";
+const ARROW_ATTR = "data-select-arrow";
+const ICON_ATTR = "data-select-icon";
 
 export const [setSelectRootContext, getSelectRootContext] =
 	createContext<SelectRootState>("Select.Root");
@@ -51,6 +57,9 @@ export const [setSelectItemContext, getSelectItemContext] =
 
 export const [setSelectContentItemAlignedContext, getSelectContentItemAlignedContext] =
 	createContext<SelectItemAlignedPositionState>("Select.ContentItemAligned");
+
+const [setSelectGroupContext, getSelectGroupContext] =
+	createContext<SelectGroupState>("Select.Group");
 
 type SelectRootStateProps = WritableBoxedValues<{
 	open: boolean;
@@ -1260,6 +1269,65 @@ class SelectScrollUpButtonState {
 	props = $derived.by(() => ({ ...this.state.props, [SCROLL_UP_BUTTON_ATTR]: "" }) as const);
 }
 
+class SelectGroupState {
+	labelId = box.with<string | undefined>(() => undefined);
+
+	props = $derived.by(
+		() =>
+			({
+				role: "group",
+				"aria-labelledby": this.labelId.value ?? undefined,
+				[GROUP_ATTR]: "",
+			}) as const
+	);
+
+	createGroupLabel(props: SelectGroupLabelStateProps) {
+		return new SelectGroupLabel(props, this);
+	}
+}
+
+type SelectGroupLabelStateProps = ReadableBoxedValues<{
+	id: string;
+}>;
+
+class SelectGroupLabel {
+	group: SelectGroupState;
+
+	constructor(props: SelectGroupLabelStateProps, group: SelectGroupState) {
+		this.group = group;
+		this.group.labelId = props.id;
+	}
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.group.labelId.value,
+				[GROUP_TITLE_ATTR]: "",
+			}) as const
+	);
+}
+
+class SelectSeparatorState {
+	props = {
+		[SEPARATOR_ATTR]: "",
+		"aria-hidden": getAriaHidden(true),
+	} as const;
+}
+
+class SelectArrowState {
+	props = {
+		[ARROW_ATTR]: "",
+		"aria-hidden": getAriaHidden(true),
+	} as const;
+}
+
+class SelectIconState {
+	props = {
+		[ICON_ATTR]: "",
+		"aria-hidden": getAriaHidden(true),
+	} as const;
+}
+
 export function useSelectRoot(props: SelectRootStateProps) {
 	return setSelectRootContext(new SelectRootState(props));
 }
@@ -1309,6 +1377,26 @@ export function useSelectScrollUpButton(props: SelectScrollButtonImplStateProps)
 
 export function useSelectScrollDownButton(props: SelectScrollButtonImplStateProps) {
 	return getSelectContentContext().createScrollDownButton(props);
+}
+
+export function useSelectGroup() {
+	return setSelectGroupContext(new SelectGroupState());
+}
+
+export function useSelectGroupLabel(props: SelectGroupLabelStateProps) {
+	return getSelectGroupContext().createGroupLabel(props);
+}
+
+export function useSelectArrow() {
+	return new SelectArrowState();
+}
+
+export function useSelectSeparator() {
+	return new SelectSeparatorState();
+}
+
+export function useSelectIcon() {
+	return new SelectIconState();
 }
 
 //

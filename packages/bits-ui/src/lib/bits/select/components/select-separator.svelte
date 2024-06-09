@@ -1,11 +1,12 @@
 <script lang="ts">
-	import type { GroupProps } from "../index.js";
-	import { useSelectGroup } from "../select.svelte.js";
+	import type { SeparatorProps } from "../index.js";
+	import { useSelectSeparator } from "../select.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
-	let { asChild, children, child, el = $bindable(), ...restProps }: GroupProps = $props();
+	let { asChild, child, children, el = $bindable(), ...restProps }: SeparatorProps = $props();
 
-	const state = useSelectGroup();
+	const state = useSelectSeparator();
+
 	const mergedProps = $derived(mergeProps(restProps, state.props));
 </script>
 

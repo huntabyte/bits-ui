@@ -1,5 +1,6 @@
 import type { Snippet } from "svelte";
 import type { PopperLayerProps } from "../utilities/popper-layer/types.js";
+import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
 import type {
 	OnChangeFn,
 	PrimitiveButtonAttributes,
@@ -155,3 +156,27 @@ export type SelectScrollButtonPropsWithoutHTML = WithAsChild<{}>;
 
 export type SelectScrollButtonProps = SelectScrollButtonPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, SelectScrollButtonPropsWithoutHTML>;
+
+export type SelectIconPropsWithoutHTML = WithAsChild<{}>;
+
+export type SelectIconProps = SelectIconPropsWithoutHTML &
+	Without<PrimitiveSpanAttributes, SelectIconPropsWithoutHTML>;
+
+export type SelectGroupPropsWithoutHTML = WithAsChild<{}>;
+
+export type SelectGroupProps = SelectGroupPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, SelectGroupPropsWithoutHTML>;
+
+export type SelectGroupLabelPropsWithoutHTML = WithAsChild<{}>;
+
+export type SelectGroupLabelProps = SelectGroupLabelPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, SelectGroupLabelPropsWithoutHTML>;
+
+export type SelectSeparatorPropsWithoutHTML = WithAsChild<{}>;
+
+export type SelectSeparatorProps = SelectSeparatorPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, SelectSeparatorPropsWithoutHTML>;
+
+export type SelectArrowPropsWithoutHTML = ArrowPropsWithoutHTML;
+
+export type SelectArrowProps = ArrowProps;
