@@ -73,9 +73,19 @@
 							{ style: { pointerEvents: "auto" } }
 						) as any}
 						{#if position === "floating"}
-							<SelectContentFloating {...restProps} {...mergedProps} bind:el />
+							<SelectContentFloating
+								{...restProps}
+								{...mergedProps}
+								bind:el
+								onPlaced={() => (state.isPositioned.value = true)}
+							/>
 						{:else}
-							<SelectContentItemAligned {...restProps} {...mergedProps} bind:el />
+							<SelectContentItemAligned
+								{...restProps}
+								{...mergedProps}
+								bind:el
+								onPlaced={() => (state.isPositioned.value = true)}
+							/>
 						{/if}
 					</TextSelectionLayer>
 				{/snippet}

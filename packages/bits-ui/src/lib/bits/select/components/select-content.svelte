@@ -42,7 +42,7 @@
 	</PresenceLayer>
 {:else if state.root.contentFragment}
 	<Portal to={state.root.contentFragment}>
-		<div {id}>
+		<div>
 			<SelectProvider rootContext={state.root}>
 				{@render restProps.children?.()}
 			</SelectProvider>

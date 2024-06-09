@@ -1,7 +1,8 @@
 import { type ReadableBox, box } from "svelte-toolbelt";
 import { Set } from "svelte/reactivity";
 import { tick, untrack } from "svelte";
-import type { Box, ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
+import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
+import { watch } from "$lib/internal/box.svelte.js";
 import { useId } from "$lib/internal/useId.svelte.js";
 import type { Direction } from "$lib/shared/index.js";
 import { createContext } from "$lib/internal/createContext.js";
@@ -31,6 +32,21 @@ const ITEM_ATTR = "data-select-item";
 const VIEWPORT_ATTR = "data-select-viewport";
 const VALUE_ATTR = "data-select-value";
 const ITEM_TEXT_ATTR = "data-select-item-text";
+const CONTENT_WRAPPER_ATTR = "data-select-content-wrapper";
+
+export const [setSelectRootContext, getSelectRootContext] =
+	createContext<SelectRootState>("Select.Root");
+
+export const [setSelectTriggerContext] = createContext<SelectTriggerState>("Select.Trigger");
+
+export const [setSelectContentContext, getSelectContentContext] =
+	createContext<SelectContentState>("Select.Content");
+
+export const [setSelectItemContext, getSelectItemContext] =
+	createContext<SelectItemState>("Select.Item");
+
+export const [setSelectContentItemAlignedContext, getSelectContentItemAlignedContext] =
+	createContext<SelectItemAlignedPositionState>("Select.ContentItemAligned");
 
 type SelectRootStateProps = WritableBoxedValues<{
 	open: boolean;
@@ -55,7 +71,7 @@ export class SelectRootState {
 	dir: SelectRootStateProps["dir"];
 	disabled: SelectRootStateProps["disabled"];
 	required: SelectRootStateProps["required"];
-	triggerId = box<string>(useId());
+	triggerId = $state(useId());
 	valueId = box<string>(useId());
 	valueNodeHasChildren = box(false);
 	contentId = box<string>(useId());
@@ -73,7 +89,7 @@ export class SelectRootState {
 
 	nativeOptionsArr = $derived.by(() => Array.from(this.nativeOptionsSet));
 
-	isFormControl = useFormControl(() => this.triggerId.value);
+	isFormControl = useFormControl(() => this.triggerId);
 
 	constructor(props: SelectRootStateProps) {
 		this.open = props.open;
@@ -83,10 +99,9 @@ export class SelectRootState {
 		this.required = props.required;
 	}
 
-
 	focusTriggerNode(preventScroll: boolean = true) {
-		const node = document.getElementById(this.triggerId.value);
-		if (node) node.focus({ preventScroll })
+		const node = document.getElementById(this.triggerId);
+		if (node) node.focus({ preventScroll });
 	}
 
 	onNativeOptionAdd(option: ReadableBox<SelectNativeOption>) {
@@ -152,7 +167,7 @@ class SelectTriggerState {
 		this.#disabled = props.disabled;
 
 		$effect(() => {
-			this.#root.triggerId.value = this.#id.value;
+			this.#root.triggerId = this.#id.value;
 		});
 
 		this.#typeahead = useTypeahead();
@@ -299,7 +314,6 @@ class SelectContentFragState {
 		$effect(() => {
 			this.root.contentFragment = new DocumentFragment();
 		});
-
 	}
 }
 
@@ -312,14 +326,15 @@ export class SelectContentState {
 	id: SelectContentStateProps["id"];
 	root: SelectRootState;
 	contentNode = box<HTMLElement | null>(null);
-	viewportId = box<string>(useId());
+	viewportId = $state(useId());
 	selectedItemId = box<string>(useId());
 	selectedItemTextId = box<string>(useId());
 	selectedItemText = box<HTMLElement | null>(null);
 	position: SelectContentStateProps["position"];
-	isPositioned = box(true);
+	isPositioned = box(false);
 	firstValidItemFound = box(false);
 	typeahead: Typeahead;
+	alignedPositionState: SelectItemAlignedPositionState | null = null;
 
 	constructor(props: SelectContentStateProps, root: SelectRootState) {
 		this.position = props.position;
@@ -328,12 +343,9 @@ export class SelectContentState {
 		this.typeahead = useTypeahead();
 		this.contentNode = useNodeById(this.id);
 
-		$effect(() => {
-			this.isPositioned.value = this.root.open.value;
-		});
-
-		$effect(() => {
-			if (!this.contentNode.value) return;
+		watch(this.root.open, () => {
+			const node = document.getElementById(this.id.value);
+			if (!node) return;
 
 			let pointerMoveDelta = { x: 0, y: 0 };
 
@@ -383,6 +395,12 @@ export class SelectContentState {
 				this.focusSelectedItem();
 			}
 		});
+
+		$effect(() => {
+			if (this.root.open.value === false) {
+				this.isPositioned.value = false;
+			}
+		});
 	}
 
 	focusFirst(candidates: Array<HTMLElement | null>) {
@@ -395,7 +413,7 @@ export class SelectContentState {
 			if (candidate === PREV_FOCUSED_ELEMENT) return;
 			candidate?.scrollIntoView({ block: "nearest" });
 			// viewport might have padding so scroll to the edge when focusing first/last
-			const viewport = document.getElementById(this.viewportId.value);
+			const viewport = document.getElementById(this.viewportId);
 			if (candidate === firstItem && viewport) {
 				viewport.scrollTop = 0;
 			}
@@ -413,30 +431,32 @@ export class SelectContentState {
 		this.contentNode.value?.focus();
 	}
 
-
 	getSelectedItem() {
-		const candidates = this.root.getCandidateNodes()
-		const selectedItemNode = candidates.find((node) => node?.dataset.value === this.root.value.value) ?? null;
+		const candidates = this.root.getCandidateNodes();
+		const selectedItemNode =
+			candidates.find((node) => node?.dataset.value === this.root.value.value) ?? null;
 		const first = candidates[0] ?? null;
 		if (selectedItemNode) {
-			const selectedItemTextNode = selectedItemNode.querySelector<HTMLElement>(`[${ITEM_TEXT_ATTR}]`);
+			const selectedItemTextNode = selectedItemNode.querySelector<HTMLElement>(
+				`[${ITEM_TEXT_ATTR}]`
+			);
 			return {
 				selectedItemNode,
 				selectedItemTextNode,
-			}
+			};
 		} else {
 			if (first) {
 				const firstItemText = first.querySelector<HTMLElement>(`[${ITEM_TEXT_ATTR}]`);
 				return {
 					selectedItemNode: first,
 					selectedItemTextNode: firstItemText,
-				}	
+				};
 			}
 		}
 		return {
 			selectedItemNode: null,
-			selectedItemTextNode: null
-		}
+			selectedItemTextNode: null,
+		};
 	}
 
 	focusSelectedItem() {
@@ -445,7 +465,6 @@ export class SelectContentState {
 			const selected =
 				candidates.find((node) => node?.dataset.value === this.root.value.value) ?? null;
 			const first = candidates[0] ?? null;
-
 			this.focusFirst([selected, first]);
 		});
 	}
@@ -522,6 +541,10 @@ export class SelectContentState {
 
 	createItem(props: SelectItemStateProps) {
 		return new SelectItemState(props, this);
+	}
+
+	createViewport(props: SelectViewportStateProps) {
+		return new SelectViewportState(props, this);
 	}
 
 	createItemAlignedPosition(props: SelectItemAlignedPositionStateProps) {
@@ -652,12 +675,12 @@ class SelectItemState {
 				tabindex: this.disabled.value ? undefined : -1,
 				[ITEM_ATTR]: "",
 				//
+				onfocus: this.#onfocus,
 				onpointermove: this.#onpointermove,
 				onpointerleave: this.#onpointerleave,
 				onpointerdown: this.#onpointerdown,
 				onpointerup: this.#onpointerup,
 				onkeydown: this.#onkeydown,
-				onfocus: this.#onfocus,
 				onblur: this.#onblur,
 				ontouchend: this.#ontouchend,
 			}) as const
@@ -747,133 +770,147 @@ class SelectItemAlignedPositionState {
 		this.onPlaced = props.onPlaced;
 
 		$effect(() => {
-			this.position();
-			const contentNode = document.getElementById(this.content.id.value);
-			if (contentNode) {
-				this.contentZIndex = window.getComputedStyle(contentNode).zIndex;
-			}
+			afterTick(() => {
+				this.position();
+				const contentNode = document.getElementById(this.content.id.value);
+				if (contentNode) {
+					this.contentZIndex = window.getComputedStyle(contentNode).zIndex;
+				}
+			});
 		});
 	}
 
 	position() {
-		const { selectedItemNode, selectedItemTextNode } = this.content.getSelectedItem()
-		const contentNode = document.getElementById(this.content.id.value);
-		const contentWrapperNode = document.getElementById(this.contentWrapperId);
-		const viewportNode = document.getElementById(this.content.viewportId.value);
-		const triggerNode = document.getElementById(this.root.triggerId.value);
-		const valueNode = document.getElementById(this.root.valueId.value);
+		afterTick(() => {
+			const { selectedItemNode, selectedItemTextNode } = this.content.getSelectedItem();
+			const contentNode = document.getElementById(this.content.id.value);
+			const contentWrapperNode = document.getElementById(this.contentWrapperId);
+			const viewportNode = document.getElementById(this.content.viewportId);
+			const triggerNode = document.getElementById(this.root.triggerId);
+			const valueNode = document.getElementById(this.root.valueId.value);
 
-		if (
-			!contentNode ||
-			!contentWrapperNode ||
-			!viewportNode ||
-			!selectedItemNode ||
-			!selectedItemTextNode ||
-			!triggerNode ||
-			!valueNode
-		) {
-			return;
-		}
+			if (
+				!contentNode ||
+				!contentWrapperNode ||
+				!viewportNode ||
+				!selectedItemNode ||
+				!selectedItemTextNode ||
+				!triggerNode ||
+				!valueNode
+			) {
+				return;
+			}
 
-		const triggerRect = triggerNode.getBoundingClientRect();
+			const triggerRect = triggerNode.getBoundingClientRect();
 
-		// horizontal positioning
-		const contentRect = contentNode.getBoundingClientRect();
-		const valueRect = valueNode.getBoundingClientRect();
-		const itemTextRect = selectedItemTextNode.getBoundingClientRect();
+			// horizontal positioning
+			const contentRect = contentNode.getBoundingClientRect();
+			const valueRect = valueNode.getBoundingClientRect();
+			const itemTextRect = selectedItemTextNode.getBoundingClientRect();
 
-		if (this.root.dir.value === "rtl") {
-			const itemTextOffset = itemTextRect.left - contentRect.left;
-			const left = valueRect.left - itemTextOffset;
-			const leftDelta = triggerRect.left - left;
-			const minContentWidth = triggerRect.width + leftDelta;
-			const contentWidth = Math.max(minContentWidth, contentRect.width);
-			const rightEdge = window.innerWidth - CONTENT_MARGIN;
-			const clampedLeft = clamp(left, CONTENT_MARGIN, rightEdge - contentWidth);
+			if (this.root.dir.value === "rtl") {
+				const itemTextOffset = itemTextRect.left - contentRect.left;
+				const left = valueRect.left - itemTextOffset;
+				const leftDelta = triggerRect.left - left;
+				const minContentWidth = triggerRect.width + leftDelta;
+				const contentWidth = Math.max(minContentWidth, contentRect.width);
+				const rightEdge = window.innerWidth - CONTENT_MARGIN;
+				const clampedLeft = clamp(left, CONTENT_MARGIN, rightEdge - contentWidth);
 
-			contentWrapperNode.style.minWidth = `${minContentWidth}px`;
-			contentWrapperNode.style.left = `${clampedLeft}px`;
-		} else {
-			const itemTextOffset = contentRect.right - itemTextRect.right;
-			const right = window.innerWidth - valueRect.right - itemTextOffset;
-			const rightDelta = window.innerWidth - triggerRect.right - right;
-			const minContentWidth = triggerRect.width + rightDelta;
-			const contentWidth = Math.max(minContentWidth, contentRect.width);
-			const leftEdge = window.innerWidth - CONTENT_MARGIN;
-			const clampedRight = clamp(right, CONTENT_MARGIN, leftEdge - contentWidth);
+				contentWrapperNode.style.minWidth = `${minContentWidth}px`;
+				contentWrapperNode.style.left = `${clampedLeft}px`;
+			} else {
+				const itemTextOffset = contentRect.right - itemTextRect.right;
+				const right = window.innerWidth - valueRect.right - itemTextOffset;
+				const rightDelta = window.innerWidth - triggerRect.right - right;
+				const minContentWidth = triggerRect.width + rightDelta;
+				const contentWidth = Math.max(minContentWidth, contentRect.width);
+				const leftEdge = window.innerWidth - CONTENT_MARGIN;
+				const clampedRight = clamp(right, CONTENT_MARGIN, leftEdge - contentWidth);
 
-			contentWrapperNode.style.minWidth = `${minContentWidth}px`;
-			contentWrapperNode.style.right = `${clampedRight}px`;
-		}
+				contentWrapperNode.style.minWidth = `${minContentWidth}px`;
+				contentWrapperNode.style.right = `${clampedRight}px`;
+			}
 
-		// vertical positioning
-		const items = this.root.getCandidateNodes();
-		const availableHeight = window.innerHeight - CONTENT_MARGIN * 2;
-		const itemsHeight = viewportNode.scrollHeight;
+			// vertical positioning
+			const items = this.root.getCandidateNodes();
 
-		const contentStyles = window.getComputedStyle(contentNode);
-		const contentBorderTopWidth = Number.parseInt(contentStyles.borderTopWidth, 10);
-		const contentPaddingTop = Number.parseInt(contentStyles.paddingTop, 10);
-		const contentBorderBottomWidth = Number.parseInt(contentStyles.borderBottomWidth, 10);
-		const contentPaddingBottom = Number.parseInt(contentStyles.paddingBottom, 10);
+			const availableHeight = window.innerHeight - CONTENT_MARGIN * 2;
+			const itemsHeight = viewportNode.scrollHeight;
 
-		const fullContentHeight =
-			contentBorderTopWidth +
-			contentPaddingTop +
-			itemsHeight +
-			contentPaddingBottom +
-			contentBorderBottomWidth;
-		const minContentHeight = Math.min(selectedItemNode.offsetHeight * 5, fullContentHeight);
+			const contentStyles = window.getComputedStyle(contentNode);
 
-		const viewportStyles = window.getComputedStyle(viewportNode);
-		const viewportPaddingTop = Number.parseInt(viewportStyles.paddingTop, 10);
-		const viewportPaddingBottom = Number.parseInt(viewportStyles.paddingBottom, 10);
+			const contentBorderTopWidth = Number.parseInt(contentStyles.borderTopWidth, 10);
+			const contentPaddingTop = Number.parseInt(contentStyles.paddingTop, 10);
 
-		const topEdgeToTriggerMiddle = triggerRect.top + triggerRect.height / 2 - CONTENT_MARGIN;
-		const triggerMiddleToBottomEdge = availableHeight - topEdgeToTriggerMiddle;
+			const contentBorderBottomWidth = Number.parseInt(contentStyles.borderBottomWidth, 10);
+			const contentPaddingBottom = Number.parseInt(contentStyles.paddingBottom, 10);
 
-		const selectedItemHalfHeight = selectedItemNode.offsetHeight / 2;
-		const itemOffsetMiddle = selectedItemNode.offsetTop + selectedItemHalfHeight;
-
-		const contentTopToItemMiddle = contentBorderTopWidth + contentPaddingTop + itemOffsetMiddle;
-		const itemMiddleToContentBottom = fullContentHeight - contentTopToItemMiddle;
-
-		const willAlignWithoutTopOverflow = contentTopToItemMiddle <= topEdgeToTriggerMiddle;
-
-		if (willAlignWithoutTopOverflow) {
-			const isLastItem = selectedItemNode === items[items.length - 1];
-			contentWrapperNode.style.bottom = `${0}px`;
-			const viewportOffsetBottom =
-				contentNode.clientHeight - viewportNode.offsetTop - viewportNode.offsetHeight;
-			const clampedTriggerMiddleToBottomEdge = Math.max(
-				triggerMiddleToBottomEdge,
-				selectedItemHalfHeight +
-					// viewport migth have padding bottom, include to avoid overflow
-					(isLastItem ? viewportPaddingBottom : 0) +
-					viewportOffsetBottom +
-					contentBorderBottomWidth
-			);
-			const height = contentTopToItemMiddle + clampedTriggerMiddleToBottomEdge;
-			contentWrapperNode.style.height = `${height}px`;
-		} else {
-			const isFirstItem = selectedItemNode === items[0];
-			contentWrapperNode.style.top = `${0}px`;
-			const clampedTopEdgeToTriggerMiddle = Math.max(
-				topEdgeToTriggerMiddle,
+			const fullContentHeight =
 				contentBorderTopWidth +
-					viewportNode.offsetTop +
-					(isFirstItem ? viewportPaddingTop : 0) +
-					selectedItemHalfHeight
-			);
-			const height = clampedTopEdgeToTriggerMiddle + itemMiddleToContentBottom;
-			contentWrapperNode.style.height = `${height}px`;
-			viewportNode.scrollTop =
-				contentTopToItemMiddle - topEdgeToTriggerMiddle + viewportNode.offsetTop;
-		}
+				contentPaddingTop +
+				itemsHeight +
+				contentPaddingBottom +
+				contentBorderBottomWidth;
 
-		contentWrapperNode.style.margin = `${CONTENT_MARGIN}px`;
-		contentWrapperNode.style.minHeight = `${minContentHeight}px`;
-		contentWrapperNode.style.maxHeight = `${availableHeight}px`;
+			const minContentHeight = Math.min(selectedItemNode.offsetHeight * 5, fullContentHeight);
+
+			const viewportStyles = window.getComputedStyle(viewportNode);
+			const viewportPaddingTop = Number.parseInt(viewportStyles.paddingTop, 10);
+			const viewportPaddingBottom = Number.parseInt(viewportStyles.paddingBottom, 10);
+
+			const topEdgeToTriggerMiddle =
+				triggerRect.top + triggerRect.height / 2 - CONTENT_MARGIN;
+			const triggerMiddleToBottomEdge = availableHeight - topEdgeToTriggerMiddle;
+
+			const selectedItemHalfHeight = selectedItemNode.offsetHeight / 2;
+			const itemOffsetMiddle = selectedItemNode.offsetTop + selectedItemHalfHeight;
+			const contentTopToItemMiddle =
+				contentBorderTopWidth + contentPaddingTop + itemOffsetMiddle;
+			const itemMiddleToContentBottom = fullContentHeight - contentTopToItemMiddle;
+
+			const willAlignWithoutTopOverflow = contentTopToItemMiddle <= topEdgeToTriggerMiddle;
+
+			if (willAlignWithoutTopOverflow) {
+				const isLastItem = selectedItemNode === items[items.length - 1];
+				contentWrapperNode.style.bottom = `${0}px`;
+				const viewportOffsetBottom =
+					contentNode.clientHeight - viewportNode.offsetTop - viewportNode.offsetHeight;
+				const clampedTriggerMiddleToBottomEdge = Math.max(
+					triggerMiddleToBottomEdge,
+					selectedItemHalfHeight +
+						// viewport might have padding bottom, include it to avoid a scrollable viewport
+						(isLastItem ? viewportPaddingBottom : 0) +
+						viewportOffsetBottom +
+						contentBorderBottomWidth
+				);
+				const height = contentTopToItemMiddle + clampedTriggerMiddleToBottomEdge;
+				contentWrapperNode.style.height = `${height}px`;
+			} else {
+				const isFirstItem = selectedItemNode === items[0];
+				contentWrapperNode.style.top = `${0}px`;
+				const clampedTopEdgeToTriggerMiddle = Math.max(
+					topEdgeToTriggerMiddle,
+					contentBorderTopWidth +
+						viewportNode.offsetTop +
+						// viewport might have padding top, include it to avoid a scrollable viewport
+						(isFirstItem ? viewportPaddingTop : 0) +
+						selectedItemHalfHeight
+				);
+				const height = clampedTopEdgeToTriggerMiddle + itemMiddleToContentBottom;
+				contentWrapperNode.style.height = `${height}px`;
+				viewportNode.scrollTop =
+					contentTopToItemMiddle - topEdgeToTriggerMiddle + viewportNode.offsetTop;
+			}
+
+			contentWrapperNode.style.margin = `${CONTENT_MARGIN}px 0`;
+			contentWrapperNode.style.minHeight = `${minContentHeight}px`;
+			contentWrapperNode.style.maxHeight = `${availableHeight}px`;
+
+			this.onPlaced.value();
+
+			requestAnimationFrame(() => (this.shouldExpandOnScroll = true));
+		});
 	}
 
 	handleScrollButtonChange(id: string) {
@@ -895,12 +932,14 @@ class SelectItemAlignedPositionState {
 					position: "fixed",
 					zIndex: this.contentZIndex,
 				},
+				[CONTENT_WRAPPER_ATTR]: "",
 			}) as const
 	);
 
 	props = $derived.by(
 		() =>
 			({
+				id: this.content.id.value,
 				style: {
 					boxSizing: "border-box",
 					maxHeight: "100%",
@@ -930,18 +969,76 @@ class SelectFloatingPositionState {
 	} as const;
 }
 
-export const [setSelectRootContext, getSelectRootContext] =
-	createContext<SelectRootState>("Select.Root");
+type SelectViewportStateProps = ReadableBoxedValues<{
+	id: string;
+}>;
 
-export const [setSelectTriggerContext] = createContext<SelectTriggerState>("Select.Trigger");
+class SelectViewportState {
+	id: SelectViewportStateProps["id"];
+	content: SelectContentState;
+	prevScrollTop = $state(0);
 
-export const [setSelectContentContext, getSelectContentContext] =
-	createContext<SelectContentState>("Select.Content");
+	constructor(props: SelectViewportStateProps, content: SelectContentState) {
+		this.id = props.id;
+		this.content = content;
+		this.content.viewportId = props.id.value;
+		$effect(() => {
+			if (this.content.viewportId !== props.id.value) {
+				this.content.viewportId = props.id.value;
+			}
+		});
+	}
 
-export const [setSelectItemContext, getSelectItemContext] =
-	createContext<SelectItemState>("Select.Item");
+	#onscroll = (e: WheelEvent) => {
+		const viewport = e.currentTarget as HTMLElement;
+		const shouldExpandOnScroll =
+			this.content.alignedPositionState?.shouldExpandOnScroll ?? undefined;
+		const contentWrapper = document.getElementById(
+			this.content.alignedPositionState?.contentWrapperId ?? ""
+		);
 
-export const [setSelectContentItemAlignedContext, getSelectContentItemAlignedContext] = createContext<SelectItemAlignedPositionState>("Select.ContentItemAligned")
+		if (shouldExpandOnScroll && contentWrapper) {
+			const scrolledBy = Math.abs(this.prevScrollTop - viewport.scrollTop);
+			if (scrolledBy > 0) {
+				const availableHeight = window.innerHeight - CONTENT_MARGIN * 2;
+				const cssMinHeight = Number.parseFloat(contentWrapper.style.minHeight);
+				const cssHeight = Number.parseFloat(contentWrapper.style.height);
+				const prevHeight = Math.max(cssMinHeight, cssHeight);
+
+				if (prevHeight < availableHeight) {
+					const nextHeight = prevHeight + scrolledBy;
+					const clampedNextHeight = Math.min(availableHeight, nextHeight);
+					const heightDiff = nextHeight - clampedNextHeight;
+
+					contentWrapper.style.height = `${clampedNextHeight}px`;
+					if (contentWrapper.style.bottom === "0px") {
+						viewport.scrollTop = heightDiff > 0 ? heightDiff : 0;
+						contentWrapper.style.justifyContent = "flex-end";
+					}
+				}
+			}
+		}
+		this.prevScrollTop = viewport.scrollTop;
+	};
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.id.value,
+				role: "presentation",
+				[VIEWPORT_ATTR]: "",
+				style: {
+					// we use position: 'relative' here on the `viewport` so that when we call
+					// `selectedItem.offsetTop` in calculations, the offset is relative to the viewport
+					// (independent of the scrollUpButton).
+					position: "relative",
+					flex: 1,
+					overflow: "auto",
+				},
+				onscroll: this.#onscroll,
+			}) as const
+	);
+}
 
 export function useSelectRoot(props: SelectRootStateProps) {
 	return setSelectRootContext(new SelectRootState(props));
@@ -956,7 +1053,10 @@ export function useSelectContent(props: SelectContentStateProps) {
 }
 
 export function useSelectItemAlignedPosition(props: SelectItemAlignedPositionStateProps) {
-	return setSelectContentItemAlignedContext(getSelectContentContext().createItemAlignedPosition(props))
+	const contentContext = getSelectContentContext();
+	const alignedPositionState = contentContext.createItemAlignedPosition(props);
+	contentContext.alignedPositionState = alignedPositionState;
+	return setSelectContentItemAlignedContext(alignedPositionState);
 }
 
 export function useSelectFloatingPosition() {
@@ -977,6 +1077,10 @@ export function useSelectItem(props: SelectItemStateProps) {
 
 export function useSelectItemText(props: SelectItemTextStateProps) {
 	return getSelectItemContext().createText(props);
+}
+
+export function useSelectViewport(props: SelectViewportStateProps) {
+	return getSelectContentContext().createViewport(props);
 }
 
 //

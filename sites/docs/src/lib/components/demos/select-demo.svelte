@@ -26,16 +26,18 @@
 				sideOffset={8}
 				sameWidth={true}
 			>
-				{#each themes as theme}
-					<Select.Item
-						class="focus-override flex h-10 w-full select-none items-center rounded-button py-3 pl-5 pr-1.5 text-sm outline-none transition-all duration-75 focus:outline-none focus-visible:outline-none data-[highlighted]:bg-muted"
-						value={theme.value}
-					>
-						<Select.ItemText>
-							{theme.label}
-						</Select.ItemText>
-					</Select.Item>
-				{/each}
+				<Select.Viewport>
+					{#each themes as theme}
+						<Select.Item
+							class="focus-override flex h-10 w-full select-none items-center rounded-button py-3 pl-5 pr-1.5 text-sm outline-none transition-all duration-75 focus:outline-none focus-visible:outline-none data-[highlighted]:bg-muted"
+							value={theme.value}
+						>
+							<Select.ItemText>
+								{theme.label}
+							</Select.ItemText>
+						</Select.Item>
+					{/each}
+				</Select.Viewport>
 			</Select.Content>
 		</Select.Root>
 	</div>

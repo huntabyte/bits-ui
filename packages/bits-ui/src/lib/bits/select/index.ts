@@ -10,6 +10,8 @@ export { default as Label } from "./components/select-label.svelte";
 export { default as Separator } from "../separator/components/separator.svelte";
 export { default as Trigger } from "./components/select-trigger.svelte";
 export { default as Value } from "./components/select-value.svelte";
+export { default as Viewport } from "./components/select-viewport.svelte";
+export { default as Portal } from "$lib/bits/utilities/portal/portal.svelte";
 
 export type {
 	SelectRootProps as RootProps,
@@ -19,4 +21,6 @@ export type {
 	SelectValueProps as ValueProps,
 	SelectItemTextProps as ItemTextProps,
 	SelectContentImplProps as ContentImplProps,
+	SelectViewportProps as ViewportProps,
+	SelectPortalProps as PortalProps,
 } from "./types.js";

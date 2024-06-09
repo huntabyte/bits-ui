@@ -9,6 +9,7 @@ import type {
 	Without,
 } from "$lib/internal/types.js";
 import type { Direction } from "$lib/shared/index.js";
+import type { PortalProps } from "$lib/bits/utilities/portal/index.js";
 
 export type SelectRootPropsWithoutHTML = WithChildren<{
 	/**
@@ -133,3 +134,10 @@ export type SelectItemTextPropsWithoutHTML = WithAsChild<{}>;
 
 export type SelectItemTextProps = SelectItemTextPropsWithoutHTML &
 	Without<PrimitiveSpanAttributes, SelectItemTextPropsWithoutHTML>;
+
+export type SelectViewportPropsWithoutHTML = WithAsChild<{}>;
+export type SelectViewportProps = SelectViewportPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, SelectViewportPropsWithoutHTML>;
+
+export type SelectPortalPropsWithoutHTML = PortalProps;
+export type SelectPortalProps = SelectPortalPropsWithoutHTML;
