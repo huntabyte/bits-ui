@@ -30,7 +30,7 @@
 <VisuallyHidden asChild>
 	{#snippet child({ props })}
 		{@const mergedProps = mergeProps(props, restProps)}
-		<select bind:value {...mergedProps}>
+		<select bind:value {...mergedProps} data-value={value}>
 			{@render children?.()}
 		</select>
 	{/snippet}

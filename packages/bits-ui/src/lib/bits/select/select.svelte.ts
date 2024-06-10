@@ -40,7 +40,7 @@ const CONTENT_WRAPPER_ATTR = "data-select-content-wrapper";
 const SCROLL_UP_BUTTON_ATTR = "data-select-scroll-up-button";
 const SCROLL_DOWN_BUTTON_ATTR = "data-select-scroll-down-button";
 const GROUP_ATTR = "data-select-group";
-const GROUP_TITLE_ATTR = "data-select-group-title";
+const GROUP_LABEL_ATTR = "data-select-group-label";
 const SEPARATOR_ATTR = "data-select-separator";
 const ARROW_ATTR = "data-select-arrow";
 const ICON_ATTR = "data-select-icon";
@@ -226,8 +226,8 @@ class SelectTriggerState {
 
 		// prevent implicit pointer capture
 		const target = e.target as HTMLElement;
-		if (target.hasPointerCapture(e.pointerId)) {
-			target.releasePointerCapture(e.pointerId);
+		if (target?.hasPointerCapture(e.pointerId)) {
+			target?.releasePointerCapture(e.pointerId);
 		}
 
 		// only call the handle if it's a left click, since pointerdown is triggered
@@ -706,10 +706,11 @@ class SelectItemState {
 				role: "option",
 				"aria-labelledby": this.textId.value ?? undefined,
 				"data-highlighted": this.isFocused.value ? "" : undefined,
-				"aria-selected": getAriaSelected(this.isSelected && this.isFocused.value),
+				"aria-selected": getAriaSelected(this.isSelected),
 				"data-state": getDataChecked(this.isSelected),
 				"aria-disabled": getAriaDisabled(this.disabled.value),
 				"data-disabled": getDataDisabled(this.disabled.value),
+				"data-selected": this.isSelected ? "" : undefined,
 				"data-value": this.value.value,
 				tabindex: this.disabled.value ? undefined : -1,
 				[ITEM_ATTR]: "",
@@ -1310,7 +1311,7 @@ class SelectGroupLabel {
 		() =>
 			({
 				id: this.group.labelId.value,
-				[GROUP_TITLE_ATTR]: "",
+				[GROUP_LABEL_ATTR]: "",
 			}) as const
 	);
 }

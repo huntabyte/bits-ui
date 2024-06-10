@@ -1,11 +1,10 @@
-import { render, waitFor } from "@testing-library/svelte";
+import { render, waitFor } from "@testing-library/svelte/svelte5";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import { getTestKbd } from "../utils.js";
 import SelectTest from "./SelectTest.svelte";
-import type { Item } from "./SelectTest.svelte";
-import type { Select } from "$lib/index.js";
+import type { Item, SelectTestProps } from "./SelectTest.svelte";
 import { sleep } from "$lib/internal/index.js";
 
 const kbd = getTestKbd();
@@ -29,33 +28,37 @@ const testItems: Item[] = [
 	},
 ];
 
-function setup(props: Select.Props<unknown, false> = {}, options: Item[] = testItems) {
-	const user = userEvent.setup();
+function setup(props: Partial<SelectTestProps> = {}, options: Item[] = testItems) {
+	const user = userEvent.setup({ pointerEventsCheck: 0 });
 	const returned = render(SelectTest, { ...props, options });
 	const trigger = returned.getByTestId("trigger");
-	const input = returned.getByTestId("input");
+	const select = returned.container.querySelector("select");
 	return {
 		trigger,
 		user,
-		input,
+		select,
 		...returned,
 	};
 }
 async function open(
-	props: Select.Props<unknown, false> = {},
+	props: Partial<SelectTestProps> = {},
 	openWith: "click" | (string & {}) = "click"
 ) {
 	const returned = setup(props);
-	const { trigger, getByTestId, queryByTestId, user } = returned;
-	expect(queryByTestId("content")).toBeNull();
+	const { trigger, queryByTestId, user } = returned;
+	const contentInit = queryByTestId("content");
+	expect(contentInit).toBeNull();
 	if (openWith === "click") {
 		await user.click(trigger);
 	} else {
 		trigger.focus();
 		await user.keyboard(openWith);
 	}
-	await waitFor(() => expect(queryByTestId("content")).not.toBeNull());
-	const content = getByTestId("content");
+	await sleep(50);
+	const content = queryByTestId("content");
+	await waitFor(() => expect(content).not.toBeNull());
+	expect(content).toHaveAttribute("data-state", "open");
+
 	return { content, ...returned };
 }
 
@@ -69,7 +72,7 @@ describe("select", () => {
 
 	it("has bits data attrs", async () => {
 		const { getByTestId } = await open();
-		const parts = ["content", "trigger", "value", "label", "group"];
+		const parts = ["content", "trigger", "value", "group-label", "group", "viewport"];
 
 		parts.forEach((part) => {
 			const el = getByTestId(part);
@@ -78,7 +81,9 @@ describe("select", () => {
 
 		const item = getByTestId("1");
 		expect(item).toHaveAttribute("data-select-item");
-		1;
+
+		const itemText = getByTestId("1-item-text");
+		expect(itemText).toHaveAttribute("data-select-item-text");
 	});
 
 	it("opens on click", async () => {
@@ -89,37 +94,39 @@ describe("select", () => {
 		await open({}, key);
 	});
 
-	it("doesnt display the hidden input", async () => {
-		const { input } = await open();
-		expect(input).not.toBeVisible();
-	});
-
 	it.each([kbd.SPACE, kbd.ENTER])("selects item with the %s key", async (key) => {
 		const { user, queryByTestId, getByTestId } = await open();
 		await user.keyboard(kbd.ARROW_DOWN);
 		await user.keyboard(key);
 		await waitFor(() => expect(queryByTestId("content")).toBeNull());
-		expect(getByTestId("value")).toHaveTextContent("A");
+		expect(getByTestId("value")).toHaveTextContent("B");
 	});
 
-	it("syncs the name prop to the hidden input", async () => {
-		const { input } = setup({ name: "test" });
-		expect(input).toHaveAttribute("name", "test");
+	it("renders a `select` element when used within a form", async () => {});
+
+	it("syncs the name with the hidden select", async () => {
+		const { select } = setup({ name: "test" });
+		expect(select).toBeInTheDocument();
 	});
 
-	it("syncs the value prop to the hidden input", async () => {
-		const { input } = setup({ selected: { value: "test" } });
-		expect(input).toHaveValue("test");
+	it("syncs the name prop to the hidden select", async () => {
+		const { select } = setup({ name: "test" });
+		expect(select).toHaveAttribute("name", "test");
 	});
 
-	it("syncs the required prop to the hidden input", async () => {
-		const { input } = setup({ required: true });
-		expect(input).toHaveAttribute("required");
+	it("syncs the value prop to the hidden select", async () => {
+		const { select } = setup({ value: "test" });
+		expect(select).toHaveAttribute("data-value", "test");
 	});
 
-	it("syncs the disabled prop to the hidden input", async () => {
-		const { input } = setup({ disabled: true });
-		await waitFor(() => expect(input).toHaveAttribute("disabled", ""));
+	it("syncs the required prop to the hidden select", async () => {
+		const { select } = setup({ required: true });
+		expect(select).toHaveAttribute("required");
+	});
+
+	it("syncs the disabled prop to the hidden select", async () => {
+		const { select } = setup({ disabled: true });
+		expect(select).toHaveAttribute("disabled");
 	});
 
 	it("closes on escape keydown", async () => {
@@ -133,122 +140,133 @@ describe("select", () => {
 		const outside = getByTestId("outside");
 		await sleep(100);
 		await user.click(outside);
+		await user.click(outside);
 		await sleep(100);
-		expect(queryByTestId("content")).toBeNull();
+		await waitFor(() => expect(queryByTestId("content")).toBeNull());
 	});
 
 	it("portals to the body by default", async () => {
 		const { content } = await open();
-		expect(content.parentElement).toBe(document.body);
+		const contentWrapper = content?.parentElement;
+		expect(contentWrapper?.parentElement).toBe(document.body);
 	});
 
 	it("portals to a custom element if specified", async () => {
-		const { content, getByTestId } = await open({ portal: "#portal-target" });
+		const { content, getByTestId } = await open({
+			portalProps: {
+				to: "#portal-target",
+			},
+		});
 		const portalTarget = getByTestId("portal-target");
-		expect(content.parentElement).toBe(portalTarget);
+		const contentWrapper = content?.parentElement;
+		expect(contentWrapper?.parentElement).toBe(portalTarget);
 	});
 
-	it("does not portal if `null` is passed as portal prop", async () => {
-		const { content, getByTestId } = await open({ portal: null });
-		const main = getByTestId("main");
-		expect(content.parentElement).toBe(main);
+	it("does not portal if `disabled` is passed to the portal", async () => {
+		const { content, getByTestId } = await open({ portalProps: { disabled: true } });
+		const form = getByTestId("form");
+		const contentWrapper = content?.parentElement;
+		expect(contentWrapper?.parentElement).toBe(form);
 	});
 
-	it("respects the `closeOnEscape` prop", async () => {
-		const { user, queryByTestId } = await open({ closeOnEscape: false });
+	it("respects the `escapeKeydownBehavior` prop", async () => {
+		const { user, queryByTestId } = await open({
+			contentProps: {
+				escapeKeydownBehavior: "ignore",
+			},
+		});
 		await user.keyboard(kbd.ESCAPE);
 		await waitFor(() => expect(queryByTestId("content")).not.toBeNull());
 	});
 
-	it('respects the "closeOnOutsideClick" prop', async () => {
+	it("respects the `interactOutsideBehavior` prop", async () => {
 		const { user, queryByTestId, getByTestId } = await open({
-			closeOnOutsideClick: false,
+			contentProps: {
+				interactOutsideBehavior: "ignore",
+			},
 		});
 		const outside = getByTestId("outside");
+		await user.click(outside);
 		await user.click(outside);
 		await waitFor(() => expect(queryByTestId("content")).not.toBeNull());
 	});
 
 	it("respects binding the `open` prop", async () => {
-		const { queryByTestId, getByTestId, user } = await open({ closeOnOutsideClick: false });
+		const { queryByTestId, getByTestId, user } = await open({
+			contentProps: {
+				interactOutsideBehavior: "ignore",
+			},
+		});
 		const binding = getByTestId("open-binding");
 		expect(binding).toHaveTextContent("true");
 		await user.click(binding);
-		expect(binding).toHaveTextContent("false");
+		await waitFor(() => expect(binding).toHaveTextContent("false"));
 		await waitFor(() => expect(queryByTestId("content")).toBeNull());
 		await user.click(binding);
-		expect(binding).toHaveTextContent("true");
+		await waitFor(() => expect(binding).toHaveTextContent("true"));
 		await waitFor(() => expect(queryByTestId("content")).not.toBeNull());
 	});
 
-	it("respects binding the `selected` prop", async () => {
-		const { getByTestId, user } = await open({ selected: { value: "1" } });
-		const binding = getByTestId("selected-binding");
+	it("respects binding the `value` prop", async () => {
+		const { getByTestId, user } = await open({ value: "1" });
+		const binding = getByTestId("value-binding");
 		expect(binding).toHaveTextContent("1");
 		await user.click(binding);
-		expect(binding).toHaveTextContent("undefined");
+		await waitFor(() => expect(binding).toHaveTextContent(""));
 	});
 
 	it("selects items when clicked", async () => {
-		const { getByTestId, user, queryByTestId, input, trigger } = await open();
-		const item = getByTestId("1");
+		const { user, queryByTestId, trigger, container } = await open();
+		const item = queryByTestId("1") as HTMLElement;
 		await waitFor(() => expect(queryByTestId("1-indicator")).toBeNull());
 		await user.click(item);
-		await waitFor(() => expect(queryByTestId("content")).toBeNull());
-		const value = getByTestId("value");
-		expect(value).toHaveTextContent("A");
-		expect(input).toHaveValue("1");
+		await user.click(item);
+		const value = queryByTestId("value");
+		await waitFor(() => expect(value).toHaveTextContent("A"));
+		await waitFor(() =>
+			expect(container.querySelector("select")).toHaveAttribute("data-value", "1")
+		);
 		await user.click(trigger);
 		await waitFor(() => expect(queryByTestId("content")).not.toBeNull());
-		expect(item).toHaveAttribute("aria-selected", "true");
-		expect(item).toHaveAttribute("data-selected");
+		await waitFor(() => expect(queryByTestId("1")).toHaveAttribute("aria-selected", "true"));
+		await waitFor(() => expect(queryByTestId("1")).toHaveAttribute("data-selected"));
 		await waitFor(() => expect(queryByTestId("1-indicator")).not.toBeNull());
 	});
 
 	it("navigates through the items using the keyboard", async () => {
-		const { getByTestId, user } = await open({}, kbd.ENTER);
+		const { user, queryByTestId } = await open({}, kbd.ENTER);
 
-		const item0 = getByTestId("1");
-		const item1 = getByTestId("2");
-		const item2 = getByTestId("3");
-		const item3 = getByTestId("4");
+		await waitFor(() => expect(queryByTestId("1")).toHaveAttribute("data-highlighted"));
 		await user.keyboard(kbd.ARROW_DOWN);
-		await waitFor(() => expect(item0).toHaveAttribute("data-highlighted"));
+		await waitFor(() => expect(queryByTestId("2")).toHaveAttribute("data-highlighted"));
 		await user.keyboard(kbd.ARROW_DOWN);
-		await waitFor(() => expect(item1).toHaveAttribute("data-highlighted"));
+		await waitFor(() => expect(queryByTestId("3")).toHaveAttribute("data-highlighted"));
 		await user.keyboard(kbd.ARROW_DOWN);
-		await waitFor(() => expect(item2).toHaveAttribute("data-highlighted"));
-		await user.keyboard(kbd.ARROW_DOWN);
-		await waitFor(() => expect(item3).toHaveAttribute("data-highlighted"));
+		await waitFor(() => expect(queryByTestId("4")).toHaveAttribute("data-highlighted"));
 		await user.keyboard(kbd.ARROW_UP);
-		await waitFor(() => expect(item2).toHaveAttribute("data-highlighted"));
+		await waitFor(() => expect(queryByTestId("3")).toHaveAttribute("data-highlighted"));
 		await user.keyboard(kbd.ARROW_UP);
-		await waitFor(() => expect(item1).toHaveAttribute("data-highlighted"));
+		await waitFor(() => expect(queryByTestId("2")).toHaveAttribute("data-highlighted"));
 		await user.keyboard(kbd.ARROW_UP);
-		await waitFor(() => expect(item0).toHaveAttribute("data-highlighted"));
+		await waitFor(() => expect(queryByTestId("1")).toHaveAttribute("data-highlighted"));
 	});
 
 	it("allows items to be selected using the keyboard", async () => {
-		const { getByTestId, user, queryByTestId, input, trigger } = await open({}, kbd.ENTER);
+		const { getByTestId, user, queryByTestId, trigger } = await open({}, kbd.ENTER);
 
-		const item0 = getByTestId("1");
-		const item1 = getByTestId("2");
-		const item2 = getByTestId("3");
-		const item3 = getByTestId("4");
 		await user.keyboard(kbd.ARROW_DOWN);
 		await user.keyboard(kbd.ARROW_DOWN);
 		await user.keyboard(kbd.ARROW_DOWN);
 		await user.keyboard(kbd.ENTER);
 		await waitFor(() => expect(queryByTestId("content")).toBeNull());
 		const value = getByTestId("value");
-		expect(value).toHaveTextContent("C");
-		expect(input).toHaveValue("3");
+		expect(value).toHaveTextContent("D");
 		await user.click(trigger);
 		await waitFor(() => expect(queryByTestId("content")).not.toBeNull());
-		expect(item0).not.toHaveAttribute("data-selected");
-		expect(item1).not.toHaveAttribute("data-selected");
-		expect(item2).toHaveAttribute("data-selected");
-		expect(item3).not.toHaveAttribute("data-selected");
+		expect(queryByTestId("1")).not.toHaveAttribute("data-selected");
+		expect(queryByTestId("2")).not.toHaveAttribute("data-selected");
+		expect(queryByTestId("3")).not.toHaveAttribute("data-selected");
+		expect(queryByTestId("4")).toHaveAttribute("data-selected");
 	});
 
 	it("applies the `data-highlighted` attribute on mouseover", async () => {
@@ -263,13 +281,13 @@ describe("select", () => {
 	});
 
 	it("selects a default item when provided", async () => {
-		const { getByTestId, queryByTestId, input } = await open({
-			selected: { value: "2", label: "B" },
+		const { getByTestId, queryByTestId, container } = await open({
+			value: "2",
 		});
 		expect(queryByTestId("2-indicator")).not.toBeNull();
 		const value = getByTestId("value");
 		expect(value).toHaveTextContent("B");
-		expect(input).toHaveValue("2");
+		expect(container.querySelector("select")).toHaveAttribute("data-value", "2");
 		const item = getByTestId("2");
 		expect(item).toHaveAttribute("aria-selected", "true");
 		expect(item).toHaveAttribute("data-selected");

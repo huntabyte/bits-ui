@@ -1,53 +1,74 @@
 <script lang="ts" context="module">
+	import { Select } from "$lib/index.js";
 	export type Item = {
-		value: unknown;
+		value: string;
 		label: string;
 		disabled?: boolean;
+	};
+
+	export type SelectTestProps = Select.RootProps & {
+		options: Item[];
+		placeholder?: string;
+		portalProps?: Select.PortalProps;
+		contentProps?: Omit<Select.ContentProps, "children" | "asChild" | "child">;
 	};
 </script>
 
 <script lang="ts">
-	import { Select } from "$lib/index.js";
-
-	type $$Props = Select.Props<unknown> & {
-		options: Item[];
-	};
-	export let selected: $$Props["selected"] = undefined;
-	export let open: $$Props["open"] = false;
-	export let options: Item[] = [];
-	export let placeholder = "Select something";
+	let {
+		value = "",
+		open = false,
+		placeholder = "select something",
+		options = [],
+		portalProps = {},
+		contentProps = {},
+		...restProps
+	}: SelectTestProps = $props();
 </script>
 
 <main data-testid="main">
-	<Select.Root bind:selected bind:open {...$$restProps}>
-		<Select.Trigger data-testid="trigger" aria-label="open select">
-			<Select.Value data-testid="value" {placeholder} />
-		</Select.Trigger>
-		<Select.Content data-testid="content">
-			<Select.Group data-testid="group">
-				<Select.Label data-testid="label">Options</Select.Label>
-				{#each options as { value, label, disabled }}
-					<Select.Item data-testid={value} {disabled} {value} {label}>
-						<Select.ItemIndicator>
-							<span data-testid="{value}-indicator">x</span>
-						</Select.ItemIndicator>
-						{label}
-					</Select.Item>
-				{/each}
-			</Select.Group>
-		</Select.Content>
-		<Select.Input data-testid="input" />
-	</Select.Root>
-	<div data-testid="outside" />
-	<button data-testid="open-binding" on:click={() => (open = !open)}>
-		{open}
-	</button>
-	<button data-testid="selected-binding" on:click={() => (selected = undefined)}>
-		{#if selected === undefined}
-			undefined
-		{:else}
-			{selected.label} - {selected.value}
-		{/if}
-	</button>
+	<form data-testid="form">
+		<Select.Root bind:value bind:open {...restProps}>
+			<Select.Trigger data-testid="trigger" aria-label="open select">
+				<Select.Value data-testid="value" {placeholder} />
+			</Select.Trigger>
+			<Select.Portal {...portalProps}>
+				<Select.Content data-testid="content" {...contentProps}>
+					<Select.ScrollUpButton data-testid="scroll-up-button" />
+					<Select.Viewport data-testid="viewport">
+						<Select.Separator data-testid="separator" />
+						<Select.Group data-testid="group">
+							<Select.GroupLabel data-testid="group-label">Options</Select.GroupLabel>
+							{#each options as { value, label, disabled }}
+								<Select.Item data-testid={value} {disabled} {value}>
+									{#snippet children({ selected })}
+										{#if selected}
+											<span data-testid="{value}-indicator">x</span>
+										{/if}
+										<Select.ItemText data-testid="{value}-item-text">
+											{label}
+										</Select.ItemText>
+									{/snippet}
+								</Select.Item>
+							{/each}
+						</Select.Group>
+					</Select.Viewport>
+					<Select.ScrollDownButton data-testid="scroll-down-button" />
+				</Select.Content>
+			</Select.Portal>
+		</Select.Root>
+		<div data-testid="outside"></div>
+		<button type="button" data-testid="open-binding" onclick={() => (open = !open)}>
+			{open}
+		</button>
+		<button
+			type="button"
+			data-testid="value-binding"
+			aria-label="value binding"
+			onclick={() => (value = "")}
+		>
+			{value}
+		</button>
+	</form>
 </main>
-<div data-testid="portal-target" id="portal-target" />
+<div data-testid="portal-target" id="portal-target"></div>
