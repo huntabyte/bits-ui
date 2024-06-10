@@ -1,144 +1,182 @@
+import type { Snippet } from "svelte";
+import type { PopperLayerProps } from "../utilities/popper-layer/types.js";
+import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
 import type {
-	EventHandler,
-	HTMLAttributes,
-	HTMLButtonAttributes,
-	HTMLInputAttributes,
-} from "svelte/elements";
-import type {
-	SelectOptionProps as MeltSelectOptionProps,
-	CreateSelectProps as MeltSelectProps,
-} from "@melt-ui/svelte";
-import type {
-	DOMElement,
-	Expand,
-	HTMLDivAttributes,
-	OmitFloating,
 	OnChangeFn,
-	Transition,
-} from "$lib/internal/index.js";
-import type { CustomEventHandler, Selected } from "$lib/index.js";
-import type {
-	ArrowProps as SelectArrowPropsWithoutHTML,
-	ContentProps as SelectContentPropsWithoutHTML,
-} from "$lib/bits/floating/_types.js";
+	PrimitiveButtonAttributes,
+	PrimitiveDivAttributes,
+	PrimitiveSpanAttributes,
+	WithAsChild,
+	WithChildren,
+	Without,
+} from "$lib/internal/types.js";
+import type { Direction } from "$lib/shared/index.js";
+import type { PortalProps } from "$lib/bits/utilities/portal/index.js";
 
-export type { SelectArrowPropsWithoutHTML, SelectContentPropsWithoutHTML };
+export type SelectRootPropsWithoutHTML = WithChildren<{
+	/**
+	 * The open state of the select.
+	 */
+	open?: boolean;
 
-type WhenTrue<TrueOrFalse, IfTrue, IfFalse, IfNeither = IfTrue | IfFalse> = [TrueOrFalse] extends [
-	true,
-]
-	? IfTrue
-	: [TrueOrFalse] extends [false]
-		? IfFalse
-		: IfNeither;
+	/**
+	 * A callback that is called when the select's open state changes.
+	 */
+	onOpenChange?: OnChangeFn<boolean>;
 
-type SelectValue<T, Multiple extends boolean> = WhenTrue<Multiple, T[] | undefined, T | undefined>;
+	/**
+	 * The value of the select.
+	 */
+	value?: string;
 
-export type SelectPropsWithoutHTML<T = unknown, Multiple extends boolean = false> = Expand<
-	OmitFloating<
-		Omit<MeltSelectProps, "selected" | "defaultSelected" | "onSelectedChange" | "multiple">
-	> & {
-		/**
-		 * The selected value of the select.
-		 * You can bind this to a value to programmatically control the selected value.
-		 *
-		 * @defaultValue undefined
-		 */
-		selected?: SelectValue<Selected<T>, Multiple> | undefined;
+	/**
+	 * A callback that is called when the select's value changes.
+	 */
+	onValueChange?: OnChangeFn<string>;
 
-		/**
-		 * A callback function called when the selected value changes.
-		 */
-		onSelectedChange?: OnChangeFn<SelectValue<Selected<T>, Multiple>>;
+	/**
+	 * The reading direction of the select.
+	 */
+	dir?: Direction;
 
-		/**
-		 * The open state of the select menu.
-		 * You can bind this to a boolean value to programmatically control the open state.
-		 *
-		 * @defaultValue false
-		 */
-		open?: boolean;
+	/**
+	 * The name of the select used in form submission.
+	 */
+	name?: string;
 
-		/**
-		 * A callback function called when the open state changes.
-		 */
-		onOpenChange?: OnChangeFn<boolean>;
+	/**
+	 * The native HTML select autocomplete attribute.
+	 */
+	autocomplete?: string;
 
-		/**
-		 * Whether or not multiple values can be selected.
-		 */
-		multiple?: Multiple;
+	/**
+	 * Whether the select is disabled.
+	 */
+	disabled?: boolean;
 
-		/**
-		 * Optionally provide an array of `Selected<T>` objects to
-		 * type the `selected` and `onSelectedChange` props.
-		 */
-		items?: Selected<T>[];
-	}
->;
+	/**
+	 * Whether the select is required.
+	 */
+	required?: boolean;
+}>;
 
-export type SelectGroupPropsWithoutHTML = DOMElement;
-export type SelectInputPropsWithoutHTML = DOMElement<HTMLInputElement>;
-export type SelectLabelPropsWithoutHTML = DOMElement;
-export type SelectItemPropsWithoutHTML = Expand<MeltSelectOptionProps & DOMElement>;
-export type SelectSeparatorPropsWithoutHTML = DOMElement;
+export type SelectRootProps = SelectRootPropsWithoutHTML;
 
-export type SelectIndicatorPropsWithoutHTML = DOMElement;
-
-export type SelectTriggerPropsWithoutHTML = DOMElement<HTMLButtonElement>;
-
-export type SelectValuePropsWithoutHTML = Expand<
-	{
-		/**
-		 * The placeholder text to display when there is no value.
-		 *
-		 * @defaultValue ""
-		 */
-		placeholder?: string;
-	} & DOMElement<HTMLSpanElement>
->;
-
-//
-
-export type SelectProps<T, Multiple extends boolean = false> = SelectPropsWithoutHTML<T, Multiple>;
-
-export type SelectContentProps<
-	T extends Transition = Transition,
-	In extends Transition = Transition,
-	Out extends Transition = Transition,
-> = SelectContentPropsWithoutHTML<T, In, Out> & HTMLDivAttributes;
-
-export type SelectGroupProps = SelectGroupPropsWithoutHTML & HTMLDivAttributes;
-export type SelectInputProps = SelectInputPropsWithoutHTML & HTMLInputAttributes;
-export type SelectLabelProps = SelectLabelPropsWithoutHTML & HTMLDivAttributes;
-export type SelectItemProps = SelectItemPropsWithoutHTML & HTMLDivAttributes;
-export type SelectSeparatorProps = SelectSeparatorPropsWithoutHTML & HTMLDivAttributes;
-export type SelectTriggerProps = SelectTriggerPropsWithoutHTML & HTMLButtonAttributes;
-
-export type SelectValueProps = SelectValuePropsWithoutHTML & HTMLAttributes<HTMLSpanElement>;
-
-export type SelectArrowProps = SelectArrowPropsWithoutHTML & HTMLDivAttributes;
-
-export type SelectIndicatorProps = SelectIndicatorPropsWithoutHTML & HTMLDivAttributes;
-
-export type SelectItemEvents<T extends Element = HTMLDivElement> = {
-	click: CustomEventHandler<MouseEvent, T>;
-	pointermove: CustomEventHandler<PointerEvent, T>;
-	focusin: EventHandler<FocusEvent, T>;
-	keydown: EventHandler<KeyboardEvent, T>;
-	focusout: EventHandler<FocusEvent, T>;
-	pointerleave: EventHandler<PointerEvent, T>;
+export type SelectContentImplPropsWithoutHTML = WithAsChild<PopperLayerProps> & {
+	/**
+	 *  The positioning mode to use
+	 *
+	 *  `item-aligned` - behaves similarly to a native MacOS menu by positioning content relative to the active item. <br>
+	 *  `floating  (default)` - positions content in the same way as our other primitives, for example `Popover` or `DropdownMenu`.
+	 */
+	position?: "item-aligned" | "floating";
 };
 
-export type SelectTriggerEvents<T extends Element = HTMLButtonElement> = {
-	click: CustomEventHandler<MouseEvent, T>;
-	keydown: CustomEventHandler<KeyboardEvent, T>;
+export type SelectContentImplProps = SelectContentImplPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, SelectContentImplPropsWithoutHTML>;
+
+export type SelectContentPropsWithoutHTML = SelectContentImplPropsWithoutHTML & {
+	/**
+	 * Whether to force mount the content for use with certain animation libraries.
+	 */
+	forceMount?: boolean;
 };
 
-export type SelectLabelEvents<T extends Element = HTMLSpanElement> = {
-	click: CustomEventHandler<MouseEvent, T>;
+export type SelectContentProps = SelectContentPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, SelectContentPropsWithoutHTML>;
+
+export type SelectItemPropsWithoutHTML = Omit<
+	WithAsChild<
+		{
+			/**
+			 * The value of the item.
+			 */
+			value: string;
+
+			/**
+			 * Whether the item is disabled.
+			 *
+			 * @defaultValue false
+			 */
+			disabled?: boolean;
+
+			/**
+			 * Optionally provide text to use for typeahead purposes.
+			 *
+			 * By default, the typeahead behavior will use the `textContent` of the `SelectItemText`
+			 * component. Use this prop if the text content is not suitable for typeahead.
+			 */
+			textValue?: string;
+		},
+		{ selected: boolean }
+	>,
+	"children"
+> & {
+	children?: Snippet<[{ selected: boolean }]>;
 };
-export type SelectContentEvents<T extends Element = HTMLDivElement> = {
-	pointerleave: CustomEventHandler<PointerEvent, T>;
-	keydown: EventHandler<KeyboardEvent, T>;
-};
+
+export type SelectItemProps = SelectItemPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, SelectItemPropsWithoutHTML>;
+
+export type SelectTriggerPropsWithoutHTML = WithAsChild<{
+	/**
+	 * Whether the trigger is disabled.
+	 *
+	 * @defaultValue false
+	 */
+	disabled?: boolean;
+}>;
+
+export type SelectTriggerProps = SelectTriggerPropsWithoutHTML &
+	Without<PrimitiveButtonAttributes, SelectTriggerPropsWithoutHTML>;
+
+export type SelectValuePropsWithoutHTML = WithAsChild<{
+	/**
+	 * The content to render inside the `Select.Value` when no `value` is set.
+	 */
+	placeholder?: string;
+}>;
+
+export type SelectValueProps = SelectValuePropsWithoutHTML &
+	Without<Omit<PrimitiveSpanAttributes, "id">, SelectValuePropsWithoutHTML>;
+
+export type SelectItemTextPropsWithoutHTML = WithAsChild<{}>;
+
+export type SelectItemTextProps = SelectItemTextPropsWithoutHTML &
+	Without<PrimitiveSpanAttributes, SelectItemTextPropsWithoutHTML>;
+
+export type SelectViewportPropsWithoutHTML = WithAsChild<{}>;
+export type SelectViewportProps = SelectViewportPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, SelectViewportPropsWithoutHTML>;
+
+export type SelectPortalPropsWithoutHTML = PortalProps;
+export type SelectPortalProps = SelectPortalPropsWithoutHTML;
+
+export type SelectScrollButtonPropsWithoutHTML = WithAsChild<{}>;
+
+export type SelectScrollButtonProps = SelectScrollButtonPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, SelectScrollButtonPropsWithoutHTML>;
+
+export type SelectIconPropsWithoutHTML = WithAsChild<{}>;
+
+export type SelectIconProps = SelectIconPropsWithoutHTML &
+	Without<PrimitiveSpanAttributes, SelectIconPropsWithoutHTML>;
+
+export type SelectGroupPropsWithoutHTML = WithAsChild<{}>;
+
+export type SelectGroupProps = SelectGroupPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, SelectGroupPropsWithoutHTML>;
+
+export type SelectGroupLabelPropsWithoutHTML = WithAsChild<{}>;
+
+export type SelectGroupLabelProps = SelectGroupLabelPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, SelectGroupLabelPropsWithoutHTML>;
+
+export type SelectSeparatorPropsWithoutHTML = WithAsChild<{}>;
+
+export type SelectSeparatorProps = SelectSeparatorPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, SelectSeparatorPropsWithoutHTML>;
+
+export type SelectArrowPropsWithoutHTML = ArrowPropsWithoutHTML;
+
+export type SelectArrowProps = ArrowProps;

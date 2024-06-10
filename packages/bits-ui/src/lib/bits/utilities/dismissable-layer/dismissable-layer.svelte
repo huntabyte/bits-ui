@@ -11,7 +11,7 @@
 		onFocusOutside = noop,
 		id,
 		children,
-		present,
+		enabled,
 	}: DismissableLayerImplProps = $props();
 
 	const state = useDismissableLayer({
@@ -19,7 +19,7 @@
 		interactOutsideBehavior: box.with(() => interactOutsideBehavior),
 		onInteractOutside: box.with(() => onInteractOutside),
 		onInteractOutsideStart: box.with(() => onInteractOutsideStart),
-		present: box.with(() => present),
+		enabled: box.with(() => enabled),
 		onFocusOutside: box.with(() => onFocusOutside),
 	});
 </script>

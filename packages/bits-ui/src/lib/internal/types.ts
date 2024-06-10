@@ -155,6 +155,10 @@ export type WithAsChild<
 	El = HTMLElement,
 > = DefaultProps<Props, El> | AsChildProps<Props, SnippetProps, El>;
 
+export type WithChildren<Props> = Props & {
+	children?: Snippet;
+};
+
 /**
  * Constructs a new type by omitting properties from type
  * 'T' that exist in type 'U'.

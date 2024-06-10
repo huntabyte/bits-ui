@@ -11,12 +11,13 @@ import {
 	shift,
 	size,
 } from "@floating-ui/dom";
-import { type ReadableBox, type WritableBox, box } from "svelte-toolbelt";
+import { type ReadableBox, box } from "svelte-toolbelt";
 import {
 	type Arrayable,
 	type Box,
 	type ReadableBoxedValues,
 	styleToString,
+	useId,
 	useNodeById,
 } from "$lib/internal/index.js";
 import { useSize } from "$lib/internal/useSize.svelte.js";
@@ -70,40 +71,40 @@ export type FloatingContentStateProps = ReadableBoxedValues<{
 	onPlaced: () => void;
 	dir: Direction;
 	style: StyleProperties;
-	present: boolean;
+	enabled: boolean;
 }>;
 
 class FloatingContentState {
 	// state
-	root = undefined as unknown as FloatingRootState;
+	root: FloatingRootState;
 
 	// nodes
-	contentNode = undefined as unknown as Box<HTMLElement | null>;
-	wrapperNode = undefined as unknown as Box<HTMLElement | null>;
+	contentNode: Box<HTMLElement | null>;
+	wrapperNode: Box<HTMLElement | null>;
 	arrowNode = box<HTMLElement | null>(null);
 
 	// ids
-	arrowId = undefined as unknown as ReadableBox<string>;
-	id = undefined as unknown as FloatingContentStateProps["id"];
-	wrapperId = undefined as unknown as FloatingContentStateProps["wrapperId"];
+	arrowId: Box<string> = box(useId());
+	id: FloatingContentStateProps["id"];
+	wrapperId: FloatingContentStateProps["wrapperId"];
 
-	style = undefined as unknown as FloatingContentStateProps["style"];
-	dir = undefined as unknown as FloatingContentStateProps["dir"];
-	side = undefined as unknown as FloatingContentStateProps["side"];
-	sideOffset = undefined as unknown as FloatingContentStateProps["sideOffset"];
-	align = undefined as unknown as FloatingContentStateProps["align"];
-	alignOffset = undefined as unknown as FloatingContentStateProps["alignOffset"];
-	arrowPadding = undefined as unknown as FloatingContentStateProps["arrowPadding"];
-	avoidCollisions = undefined as unknown as FloatingContentStateProps["avoidCollisions"];
-	collisionBoundary = undefined as unknown as FloatingContentStateProps["collisionBoundary"];
-	collisionPadding = undefined as unknown as FloatingContentStateProps["collisionPadding"];
-	sticky = undefined as unknown as FloatingContentStateProps["sticky"];
-	hideWhenDetached = undefined as unknown as FloatingContentStateProps["hideWhenDetached"];
-	strategy = undefined as unknown as FloatingContentStateProps["strategy"];
+	style: FloatingContentStateProps["style"];
+	dir: FloatingContentStateProps["dir"];
+	side: FloatingContentStateProps["side"];
+	sideOffset: FloatingContentStateProps["sideOffset"];
+	align: FloatingContentStateProps["align"];
+	alignOffset: FloatingContentStateProps["alignOffset"];
+	arrowPadding: FloatingContentStateProps["arrowPadding"];
+	avoidCollisions: FloatingContentStateProps["avoidCollisions"];
+	collisionBoundary: FloatingContentStateProps["collisionBoundary"];
+	collisionPadding: FloatingContentStateProps["collisionPadding"];
+	sticky: FloatingContentStateProps["sticky"];
+	hideWhenDetached: FloatingContentStateProps["hideWhenDetached"];
+	strategy: FloatingContentStateProps["strategy"];
 	updatePositionStrategy =
 		undefined as unknown as FloatingContentStateProps["updatePositionStrategy"];
-	onPlaced = undefined as unknown as FloatingContentStateProps["onPlaced"];
-	present = undefined as unknown as FloatingContentStateProps["present"];
+	onPlaced: FloatingContentStateProps["onPlaced"];
+	enabled: FloatingContentStateProps["enabled"];
 	arrowSize: {
 		readonly value:
 			| {
@@ -114,97 +115,112 @@ class FloatingContentState {
 	} = { value: undefined };
 	arrowWidth = $derived(this.arrowSize.value?.width ?? 0);
 	arrowHeight = $derived(this.arrowSize.value?.height ?? 0);
-	desiredPlacement = $derived(
-		this.side?.value + (this.align.value !== "center" ? `-${this.align.value}` : "")
-	) as Placement;
-	boundary = $derived(
+	desiredPlacement = $derived.by(
+		() =>
+			(this.side?.value +
+				(this.align.value !== "center" ? `-${this.align.value}` : "")) as Placement
+	);
+	boundary = $derived.by(() =>
 		Array.isArray(this.collisionBoundary.value)
 			? this.collisionBoundary.value
 			: [this.collisionBoundary.value]
 	);
 	hasExplicitBoundaries = $derived(this.boundary.length > 0);
-	detectOverflowOptions = $derived({
+	detectOverflowOptions = $derived.by(() => ({
 		padding: this.collisionPadding.value,
 		boundary: this.boundary.filter(isNotNull),
 		altBoundary: this.hasExplicitBoundaries,
-	});
-	middleware: Middleware[] = $derived(
-		[
-			offset({
-				mainAxis: this.sideOffset.value + this.arrowHeight,
-				alignmentAxis: this.alignOffset.value,
-			}),
-			this.avoidCollisions &&
-				shift({
-					mainAxis: true,
-					crossAxis: false,
-					limiter: this.sticky.value === "partial" ? limitShift() : undefined,
-					...this.detectOverflowOptions,
+	}));
+	middleware: Middleware[] = $derived.by(
+		() =>
+			[
+				offset({
+					mainAxis: this.sideOffset.value + this.arrowHeight,
+					alignmentAxis: this.alignOffset.value,
 				}),
-			this.avoidCollisions && flip({ ...this.detectOverflowOptions }),
-			size({
-				...this.detectOverflowOptions,
-				apply: ({ elements, rects, availableWidth, availableHeight }) => {
-					const { width: anchorWidth, height: anchorHeight } = rects.reference;
-					const contentStyle = elements.floating.style;
-					contentStyle.setProperty(
-						"--bits-floating-available-width",
-						`${availableWidth}px`
-					);
-					contentStyle.setProperty(
-						"--bits-floating-available-height",
-						`${availableHeight}px`
-					);
-					contentStyle.setProperty("--bits-floating-anchor-width", `${anchorWidth}px`);
-					contentStyle.setProperty("--bits-floating-anchor-height", `${anchorHeight}px`);
-				},
-			}),
-			this.arrowNode.value &&
-				arrow({ element: this.arrowNode.value, padding: this.arrowPadding.value }),
-			transformOrigin({ arrowWidth: this.arrowWidth, arrowHeight: this.arrowHeight }),
-			this.hideWhenDetached.value &&
-				hide({ strategy: "referenceHidden", ...this.detectOverflowOptions }),
-		].filter(Boolean) as Middleware[]
+				this.avoidCollisions &&
+					shift({
+						mainAxis: true,
+						crossAxis: false,
+						limiter: this.sticky.value === "partial" ? limitShift() : undefined,
+						...this.detectOverflowOptions,
+					}),
+				this.avoidCollisions && flip({ ...this.detectOverflowOptions }),
+				size({
+					...this.detectOverflowOptions,
+					apply: ({ elements, rects, availableWidth, availableHeight }) => {
+						const { width: anchorWidth, height: anchorHeight } = rects.reference;
+						const contentStyle = elements.floating.style;
+						contentStyle.setProperty(
+							"--bits-floating-available-width",
+							`${availableWidth}px`
+						);
+						contentStyle.setProperty(
+							"--bits-floating-available-height",
+							`${availableHeight}px`
+						);
+						contentStyle.setProperty(
+							"--bits-floating-anchor-width",
+							`${anchorWidth}px`
+						);
+						contentStyle.setProperty(
+							"--bits-floating-anchor-height",
+							`${anchorHeight}px`
+						);
+					},
+				}),
+				this.arrowNode.value &&
+					arrow({ element: this.arrowNode.value, padding: this.arrowPadding.value }),
+				transformOrigin({ arrowWidth: this.arrowWidth, arrowHeight: this.arrowHeight }),
+				this.hideWhenDetached.value &&
+					hide({ strategy: "referenceHidden", ...this.detectOverflowOptions }),
+			].filter(Boolean) as Middleware[]
 	);
-	floating = undefined as unknown as UseFloatingReturn;
-	placedSide = $derived(getSideFromPlacement(this.floating.placement));
-	placedAlign = $derived(getAlignFromPlacement(this.floating.placement));
-	arrowX = $derived(this.floating.middlewareData.arrow?.x ?? 0);
-	arrowY = $derived(this.floating.middlewareData.arrow?.y ?? 0);
-	cannotCenterArrow = $derived(this.floating.middlewareData.arrow?.centerOffset !== 0);
+	floating: UseFloatingReturn;
+	placedSide = $derived.by(() => getSideFromPlacement(this.floating.placement));
+	placedAlign = $derived.by(() => getAlignFromPlacement(this.floating.placement));
+	arrowX = $derived.by(() => this.floating.middlewareData.arrow?.x ?? 0);
+	arrowY = $derived.by(() => this.floating.middlewareData.arrow?.y ?? 0);
+	cannotCenterArrow = $derived.by(() => this.floating.middlewareData.arrow?.centerOffset !== 0);
 	contentZIndex = $state<string>();
 	arrowBaseSide = $derived(OPPOSITE_SIDE[this.placedSide]);
-	wrapperProps = $derived({
-		id: this.wrapperId.value,
-		"data-bits-floating-content-wrapper": "",
-		style: {
-			...this.floating.floatingStyles,
-			// keep off page when measuring
-			transform: this.floating.isPositioned
-				? this.floating.floatingStyles.transform
-				: "translate(0, -200%)",
-			minWidth: "max-content",
-			zIndex: this.contentZIndex,
-			"--bits-floating-transform-origin": `${this.floating.middlewareData.transformOrigin?.x} ${this.floating.middlewareData.transformOrigin?.y}`,
-			// hide the content if using the hide middleware and should be hidden
-			...(this.floating.middlewareData.hide?.referenceHidden && {
-				visibility: "hidden",
-				"pointer-events": "none",
-			}),
-		},
-		// Floating UI calculates logical alignment based the `dir` attribute
-		dir: this.dir.value,
-	} as const);
-	props = $derived({
-		"data-side": this.placedSide,
-		"data-align": this.placedAlign,
-		style: styleToString({
-			...this.style.value,
-			// if the FloatingContent hasn't been placed yet (not all measurements done)
-			// we prevent animations so that users's animation don't kick in too early referring wrong sides
-			// animation: !this.floating.isPositioned ? "none" : undefined,
-		}),
-	} as const);
+	wrapperProps = $derived.by(
+		() =>
+			({
+				id: this.wrapperId.value,
+				"data-bits-floating-content-wrapper": "",
+				style: {
+					...this.floating.floatingStyles,
+					// keep off page when measuring
+					transform: this.floating.isPositioned
+						? this.floating.floatingStyles.transform
+						: "translate(0, -200%)",
+					minWidth: "max-content",
+					zIndex: this.contentZIndex,
+					"--bits-floating-transform-origin": `${this.floating.middlewareData.transformOrigin?.x} ${this.floating.middlewareData.transformOrigin?.y}`,
+					// hide the content if using the hide middleware and should be hidden
+					...(this.floating.middlewareData.hide?.referenceHidden && {
+						visibility: "hidden",
+						"pointer-events": "none",
+					}),
+				},
+				// Floating UI calculates logical alignment based the `dir` attribute
+				dir: this.dir.value,
+			}) as const
+	);
+	props = $derived.by(
+		() =>
+			({
+				"data-side": this.placedSide,
+				"data-align": this.placedAlign,
+				style: styleToString({
+					...this.style.value,
+					// if the FloatingContent hasn't been placed yet (not all measurements done)
+					// we prevent animations so that users's animation don't kick in too early referring wrong sides
+					// animation: !this.floating.isPositioned ? "none" : undefined,
+				}),
+			}) as const
+	);
 
 	arrowStyle = $derived({
 		position: "absolute",
@@ -244,7 +260,7 @@ class FloatingContentState {
 		this.dir = props.dir;
 		this.style = props.style;
 		this.root = root;
-		this.present = props.present;
+		this.enabled = props.enabled;
 		this.arrowSize = useSize(this.arrowNode);
 		this.wrapperId = props.wrapperId;
 		this.wrapperNode = useNodeById(this.wrapperId);
@@ -260,7 +276,7 @@ class FloatingContentState {
 				});
 				return cleanup;
 			},
-			open: () => this.present.value,
+			open: () => this.enabled.value,
 		});
 
 		$effect(() => {

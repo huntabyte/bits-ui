@@ -101,7 +101,7 @@ export type FloatingLayerContentImplProps = {
 	/**
 	 * Whether the floating layer is present.
 	 */
-	present: boolean;
+	enabled: boolean;
 
 	/**
 	 * The ID of the content wrapper element.

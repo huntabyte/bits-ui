@@ -23,7 +23,7 @@
 		strategy = "fixed",
 		dir = "ltr",
 		style = {},
-		present,
+		enabled,
 		wrapperId = useId(),
 		preventScroll = true,
 	}: ContentImplProps = $props();
@@ -45,7 +45,7 @@
 		strategy: box.with(() => strategy),
 		dir: box.with(() => dir),
 		style: box.with(() => style),
-		present: box.with(() => present),
+		enabled: box.with(() => enabled),
 		wrapperId: box.with(() => wrapperId),
 	});
 

@@ -1,3 +1,5 @@
+import { writable } from "svelte/store";
+
 export * as Accordion from "./accordion/index.js";
 export * as AlertDialog from "./alert-dialog/index.js";
 export * as AspectRatio from "./aspect-ratio/index.js";
@@ -33,3 +35,5 @@ export * as Toggle from "./toggle/index.js";
 export * as ToggleGroup from "./toggle-group/index.js";
 export * as Toolbar from "./toolbar/index.js";
 export * as Tooltip from "./tooltip/index.js";
+
+export const eventLogs = writable([]);

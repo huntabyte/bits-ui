@@ -6,6 +6,7 @@ function getIsIOS() {
 	return (
 		isBrowser &&
 		window?.navigator?.userAgent &&
+		// eslint-disable-next-line regexp/no-unused-capturing-group
 		(/iP(ad|hone|od)/.test(window.navigator.userAgent) ||
 			// The new iPad Pro Gen3 does not identify itself as iPad, but as Macintosh.
 			(window?.navigator?.maxTouchPoints > 2 &&

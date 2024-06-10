@@ -23,19 +23,17 @@ export class TextSelectionLayerState {
 	#enabled: ReadableBox<boolean>;
 	#unsubSelectionLock = noop;
 	#node: WritableBox<HTMLElement | null>;
-	#present: ReadableBox<boolean>;
 
 	constructor(props: StateProps) {
 		this.#node = useNodeById(props.id);
 		this.#enabled = props.preventOverflowTextSelection;
 		this.#onPointerDownProp = props.onPointerDown;
 		this.#onPointerUpProp = props.onPointerUp;
-		this.#present = props.present;
 
 		let unsubEvents = noop;
 
 		$effect(() => {
-			if (this.#present.value) {
+			if (this.#enabled.value) {
 				layers.set(
 					this,
 					untrack(() => this.#enabled)

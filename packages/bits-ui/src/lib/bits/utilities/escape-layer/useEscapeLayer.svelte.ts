@@ -13,17 +13,17 @@ type EscapeLayerStateProps = ReadableBoxedValues<Required<Omit<EscapeLayerImplPr
 export class EscapeLayerState {
 	#onEscapeProp: ReadableBox<EventCallback<KeyboardEvent>>;
 	#behaviorType: ReadableBox<EscapeBehaviorType>;
-	#present: ReadableBox<boolean>;
+	#enabled: ReadableBox<boolean>;
 
 	constructor(props: EscapeLayerStateProps) {
 		this.#behaviorType = props.escapeKeydownBehavior;
 		this.#onEscapeProp = props.onEscapeKeydown;
-		this.#present = props.present;
+		this.#enabled = props.enabled;
 
 		let unsubEvents = noop;
 
 		$effect(() => {
-			if (this.#present.value) {
+			if (this.#enabled.value) {
 				layers.set(
 					this,
 					untrack(() => this.#behaviorType)

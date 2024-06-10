@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { Button } from "bits-ui";
 	import { Logo } from "$icons/index.js";
-	import { LightSwitch, MobileNav } from "$lib/components/index.js";
+	import { LightSwitch } from "$lib/components/index.js";
+	import MobileNav from "$lib/components/navigation/mobile-nav.svelte";
 	import { siteConfig } from "$lib/config/index.js";
 </script>
 

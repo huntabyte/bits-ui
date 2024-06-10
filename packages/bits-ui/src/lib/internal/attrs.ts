@@ -88,6 +88,10 @@ export function getAriaRequired(condition: boolean): "true" | "false" {
 	return condition ? "true" : "false";
 }
 
+export function getAriaSelected(condition: boolean): "true" | "false" {
+	return condition ? "true" : "false";
+}
+
 export function getAriaChecked(condition: boolean | "indeterminate"): "true" | "false" | "mixed" {
 	if (condition === "indeterminate") {
 		return "mixed";

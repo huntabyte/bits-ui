@@ -145,14 +145,17 @@ class MenuMenuState {
 	}
 
 	toggleOpen() {
+		console.log("calling toggle open");
 		this.open.value = !this.open.value;
 	}
 
 	onOpen() {
+		console.log("calling onOpen");
 		this.open.value = true;
 	}
 
 	onClose() {
+		console.log("calling onClose");
 		this.open.value = false;
 	}
 
@@ -779,9 +782,7 @@ class DropdownMenuTriggerState {
 			this.#parentMenu.toggleOpen();
 			// prevent trigger focusing when opening to allow
 			// the content to be given focus without competition
-			afterTick(() => {
-				if (!this.#parentMenu.open.value) e.preventDefault();
-			});
+			if (!this.#parentMenu.open.value) e.preventDefault();
 		}
 	};
 
