@@ -50,33 +50,25 @@
 	onInteractOutsideStart={(e) => {
 		if (!isElementOrSVGElement(e.target)) return;
 		if (e.target.id === contentState.parentMenu.triggerId.value) {
-			console.log("start: is trigger, should not be closing");
 			e.preventDefault();
 			return;
 		}
 		if (e.target.closest(`#${contentState.parentMenu.triggerId.value}`)) {
 			e.preventDefault();
-			console.log("start: is within trigger, should not be closing");
 		}
 	}}
 	onInteractOutside={(e) => {
-		if (e.defaultPrevented) return;
-
 		if (!isElementOrSVGElement(e.target)) return;
 		if (e.target.id === contentState.parentMenu.triggerId.value) {
-			console.log("is trigger, should not be closing");
 			e.preventDefault();
 			return;
 		}
 		if (e.target.closest(`#${contentState.parentMenu.triggerId.value}`)) {
 			e.preventDefault();
-			console.log("is within trigger, should not be closing");
 			return;
 		}
-
-		console.log("target", e.target);
-
-		console.log("it should not make it here!", e);
+		if (e.defaultPrevented) return;
+		onInteractOutside(e);
 		contentState.parentMenu.onClose();
 	}}
 	onEscapeKeydown={(e) => {

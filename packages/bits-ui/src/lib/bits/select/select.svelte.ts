@@ -739,7 +739,6 @@ class SelectItemTextState {
 	item: SelectItemState;
 	#id: SelectItemTextStateProps["id"];
 	node = box<HTMLElement | null>(null);
-
 	nativeOption = box.with(
 		() =>
 			({
@@ -771,7 +770,14 @@ class SelectItemTextState {
 					this.item.disabled.value
 				);
 
-				this.item.root.onNativeOptionAdd(this.nativeOption);
+				this.item.root.onNativeOptionAdd(
+					box.with(() => ({
+						key: this.item.value.value,
+						value: this.item.value.value,
+						disabled: this.item.disabled.value,
+						innerHTML: textNode?.textContent,
+					}))
+				);
 			});
 		});
 

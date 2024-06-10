@@ -145,17 +145,14 @@ class MenuMenuState {
 	}
 
 	toggleOpen() {
-		console.log("calling toggle open");
 		this.open.value = !this.open.value;
 	}
 
 	onOpen() {
-		console.log("calling onOpen");
 		this.open.value = true;
 	}
 
 	onClose() {
-		console.log("calling onClose");
 		this.open.value = false;
 	}
 
