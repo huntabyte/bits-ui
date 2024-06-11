@@ -16,14 +16,14 @@
 		...restProps
 	}: ContentProps = $props();
 
-	const state = useSelectContentFrag({ id: box.with(() => id) });
+	const contentState = useSelectContentFrag({ id: box.with(() => id) });
 
 	const contentContext = useSelectContent({
 		id: box.with(() => id),
 		position: box.with(() => position),
 	});
 
-	const isPresent = $derived(state.root.open.value || forceMount);
+	const isPresent = $derived(contentState.root.open.value || forceMount);
 </script>
 
 {#if isPresent}
@@ -40,10 +40,10 @@
 			/>
 		{/snippet}
 	</PresenceLayer>
-{:else if state.root.contentFragment}
-	<Portal to={state.root.contentFragment}>
+{:else if contentState.root.contentFragment}
+	<Portal to={contentState.root.contentFragment}>
 		<div>
-			<SelectProvider rootContext={state.root}>
+			<SelectProvider rootContext={contentState.root}>
 				{@render restProps.children?.()}
 			</SelectProvider>
 		</div>

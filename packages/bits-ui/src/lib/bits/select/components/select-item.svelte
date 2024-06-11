@@ -17,20 +17,20 @@
 		...restProps
 	}: ItemProps = $props();
 
-	const state = useSelectItem({
+	const itemState = useSelectItem({
 		id: box.with(() => id),
 		disabled: box.with(() => disabled),
 		value: box.with(() => value),
 		textValue: box.with(() => textValue),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, itemState.props));
 </script>
 
 {#if asChild}
-	{@render child?.({ props: mergedProps, selected: state.isSelected })}
+	{@render child?.({ props: mergedProps, selected: itemState.isSelected })}
 {:else}
 	<div bind:this={el} {...mergedProps}>
-		{@render children?.({ selected: state.isSelected })}
+		{@render children?.({ selected: itemState.isSelected })}
 	</div>
 {/if}

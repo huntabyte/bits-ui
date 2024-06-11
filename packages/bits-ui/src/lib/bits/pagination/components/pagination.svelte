@@ -21,7 +21,7 @@
 		...restProps
 	}: RootProps = $props();
 
-	const state = usePaginationRoot({
+	const rootState = usePaginationRoot({
 		id: box.with(() => id),
 		count: box.with(() => count),
 		perPage: box.with(() => perPage),
@@ -39,15 +39,15 @@
 
 	const mergedProps = $derived({
 		...restProps,
-		...state.props,
+		...rootState.props,
 		style: styleToString(style),
 	});
 </script>
 
 {#if asChild}
-	{@render child?.({ props: mergedProps, pages: state.pages, range: state.range })}
+	{@render child?.({ props: mergedProps, pages: rootState.pages, range: rootState.range })}
 {:else}
 	<div bind:this={el} {...mergedProps}>
-		{@render children?.({ pages: state.pages, range: state.range })}
+		{@render children?.({ pages: rootState.pages, range: rootState.range })}
 	</div>
 {/if}

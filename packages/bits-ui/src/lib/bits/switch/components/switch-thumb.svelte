@@ -5,12 +5,12 @@
 
 	let { asChild, child, el = $bindable(), ...restProps }: ThumbProps = $props();
 
-	const state = useSwitchThumb();
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const thumbState = useSwitchThumb();
+	const mergedProps = $derived(mergeProps(restProps, thumbState.props));
 </script>
 
 {#if asChild}
-	{@render child?.({ props: mergedProps, checked: state.root.checked.value })}
+	{@render child?.({ props: mergedProps, checked: thumbState.root.checked.value })}
 {:else}
 	<span bind:this={el} {...mergedProps}></span>
 {/if}

@@ -14,12 +14,12 @@
 		...restProps
 	}: AccordionTriggerProps = $props();
 
-	const state = useAccordionTrigger({
+	const triggerState = useAccordionTrigger({
 		disabled: box.with(() => disabled),
 		id: box.with(() => id),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, triggerState.props));
 </script>
 
 {#if asChild}

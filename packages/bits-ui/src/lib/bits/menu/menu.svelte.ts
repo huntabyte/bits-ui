@@ -128,8 +128,8 @@ type MenuMenuStateProps = WritableBoxedValues<{
 class MenuMenuState {
 	root: MenuRootState;
 	open: MenuMenuStateProps["open"];
-	contentNode = box<HTMLElement | null>(null);
-	triggerId = box.with<string | undefined>(() => undefined);
+	contentId = box.with<string>(() => "");
+	triggerId = box.with<string>(() => "");
 	parentMenu?: MenuMenuState;
 
 	constructor(props: MenuMenuStateProps, root: MenuRootState, parentMenu?: MenuMenuState) {
@@ -195,7 +195,7 @@ class MenuContentState {
 		this.#id = props.id;
 		this.#loop = props.loop;
 		this.parentMenu = parentMenu;
-		this.parentMenu.contentNode = useNodeById(this.#id, this.parentMenu.open);
+		this.parentMenu.contentId = props.id;
 
 		onDestroyEffect(() => {
 			window.clearTimeout(this.#timer);
@@ -203,7 +203,7 @@ class MenuContentState {
 
 		this.#handleTypeaheadSearch = useTypeahead().handleTypeaheadSearch;
 		this.rovingFocusGroup = useRovingFocus({
-			rootNode: this.parentMenu.contentNode,
+			rootNodeId: this.parentMenu.contentId,
 			candidateSelector: ITEM_ATTR,
 			loop: this.#loop,
 			orientation: box.with(() => "vertical"),
@@ -211,7 +211,7 @@ class MenuContentState {
 	}
 
 	getCandidateNodes() {
-		const node = this.parentMenu.contentNode.value;
+		const node = document.getElementById(this.parentMenu.contentId.value);
 		if (!node) return [];
 		const candidates = Array.from(
 			node.querySelectorAll<HTMLElement>(`[${ITEM_ATTR}]:not([data-disabled])`)
@@ -236,7 +236,7 @@ class MenuContentState {
 		if (!isHTMLElement(target) || !isHTMLElement(currentTarget)) return;
 
 		const isKeydownInside =
-			target.closest(`[${CONTENT_ATTR}]`) === this.parentMenu.contentNode.value;
+			target.closest(`[${CONTENT_ATTR}]`)?.id === this.parentMenu.contentId.value;
 		const isModifierKey = e.ctrlKey || e.altKey || e.metaKey;
 		const isCharacterKey = e.key.length === 1;
 
@@ -257,7 +257,7 @@ class MenuContentState {
 		}
 
 		// focus first/last based on key pressed
-		if (e.target !== this.parentMenu.contentNode.value) return;
+		if ((e.target as HTMLElement)?.id !== this.parentMenu.contentId.value) return;
 
 		if (!FIRST_LAST_KEYS.includes(e.key)) return;
 		e.preventDefault();
@@ -308,7 +308,8 @@ class MenuContentState {
 
 	onItemLeave(e: PointerEvent) {
 		if (this.isPointerMovingToSubmenu(e)) return;
-		this.parentMenu.contentNode.value?.focus();
+		const contentNode = document.getElementById(this.parentMenu.contentId.value);
+		contentNode?.focus();
 		this.rovingFocusGroup.setCurrentTabStopId("");
 	}
 
@@ -321,7 +322,8 @@ class MenuContentState {
 		if (e.defaultPrevented) return;
 		e.preventDefault();
 		afterTick(() => {
-			this.parentMenu.contentNode.value?.focus();
+			const contentNode = document.getElementById(this.parentMenu.contentId.value);
+			contentNode?.focus();
 		});
 	}
 
@@ -547,10 +549,11 @@ class MenuSubTriggerState {
 	#onpointerleave = (e: PointerEvent) => {
 		if (!isMouseEvent(e)) return;
 		this.#clearOpenTimer();
+		const contentNode = document.getElementById(this.#content.parentMenu.contentId.value);
 
-		const contentRect = this.#submenu.contentNode.value?.getBoundingClientRect();
+		const contentRect = contentNode?.getBoundingClientRect();
 		if (contentRect?.width) {
-			const side = this.#submenu.contentNode.value?.dataset.side as Side;
+			const side = contentNode?.dataset.side as Side;
 
 			const rightSide = side === "right";
 			const bleed = rightSide ? -5 : +5;
@@ -592,7 +595,8 @@ class MenuSubTriggerState {
 			this.#submenu.onOpen();
 
 			afterTick(() => {
-				this.#submenu.contentNode.value?.focus();
+				const contentNode = document.getElementById(this.#submenu.contentId.value);
+				contentNode?.focus();
 				e.preventDefault();
 			});
 		}
@@ -617,9 +621,7 @@ class MenuSubTriggerState {
 			"aria-haspopup": "menu",
 			"aria-expanded": getAriaExpanded(this.#submenu.open.value),
 			"data-state": getDataOpenClosed(this.#submenu.open.value),
-			"aria-controls": this.#submenu.open.value
-				? this.#submenu.contentNode.value?.id
-				: undefined,
+			"aria-controls": this.#submenu.open.value ? this.#submenu.contentId.value : undefined,
 			[SUB_TRIGGER_ATTR]: "",
 			onclick: this.#onclick,
 			onpointermove: this.#onpointermove,
@@ -797,8 +799,8 @@ class DropdownMenuTriggerState {
 	};
 
 	#ariaControls = $derived.by(() => {
-		if (this.#parentMenu.open.value && this.#parentMenu.contentNode.value)
-			return this.#parentMenu.contentNode.value.id;
+		if (this.#parentMenu.open.value && this.#parentMenu.contentId.value)
+			return this.#parentMenu.contentId.value;
 		return undefined;
 	});
 

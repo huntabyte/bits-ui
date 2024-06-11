@@ -17,13 +17,13 @@
 		...restProps
 	}: GroupItemProps = $props();
 
-	const state = useToolbarGroupItem({
+	const groupItemState = useToolbarGroupItem({
 		id: box.with(() => id),
 		value: box.with(() => value),
 		disabled: box.with(() => disabled),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props, { type }));
+	const mergedProps = $derived(mergeProps(restProps, groupItemState.props, { type }));
 </script>
 
 {#if asChild}

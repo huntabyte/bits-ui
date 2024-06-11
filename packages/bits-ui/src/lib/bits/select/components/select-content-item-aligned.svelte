@@ -18,12 +18,12 @@
 		onPlaced: () => void;
 	} = $props();
 
-	const state = useSelectItemAlignedPosition({
+	const contentItemAlignedState = useSelectItemAlignedPosition({
 		onPlaced: box.with(() => onPlaced),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
-	const mergedWrapperProps = $derived(mergeProps(state.wrapperProps, {}));
+	const mergedProps = $derived(mergeProps(restProps, contentItemAlignedState.props));
+	const mergedWrapperProps = $derived(mergeProps(contentItemAlignedState.wrapperProps, {}));
 
 	useBodyScrollLock(preventScroll);
 </script>

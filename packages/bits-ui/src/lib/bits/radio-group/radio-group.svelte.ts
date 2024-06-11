@@ -48,7 +48,7 @@ class RadioGroupRootState {
 		this.value = props.value;
 		this.node = useNodeById(this.id);
 		this.rovingFocusGroup = useRovingFocus({
-			rootNode: this.node,
+			rootNodeId: this.id,
 			candidateSelector: ITEM_ATTR,
 			loop: this.loop,
 			orientation: this.orientation,

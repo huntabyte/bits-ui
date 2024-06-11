@@ -46,7 +46,6 @@
 <PopperLayer
 	{...mergedProps}
 	present={contentState.parentMenu.open.value || forceMount}
-	enabled={contentState.parentMenu.open.value || forceMount}
 	onInteractOutsideStart={(e) => {
 		if (!isElementOrSVGElement(e.target)) return;
 		if (e.target.id === contentState.parentMenu.triggerId.value) {

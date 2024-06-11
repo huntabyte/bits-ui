@@ -18,7 +18,7 @@
 		dir = "ltr",
 	}: RootProps = $props();
 
-	const state = useSelectRoot({
+	const rootState = useSelectRoot({
 		open: box.with(
 			() => open,
 			(v) => {
@@ -45,8 +45,8 @@
 
 <FloatingLayer.Root>
 	{@render children?.()}
-	{#if state.isFormControl.value}
-		{#key state.nativeSelectKey}
+	{#if rootState.isFormControl.value}
+		{#key rootState.nativeSelectKey}
 			<SelectNative
 				bind:value
 				aria-hidden="true"
@@ -60,11 +60,11 @@
 				{#if value === ""}
 					<option value=""></option>
 				{/if}
-				{#each state.nativeOptionsArr as opt (opt.value.key)}
+				{#each rootState.nativeOptionsArr as opt (opt.value.key)}
 					<option
 						value={opt.value.value}
 						disabled={opt.value.disabled}
-						selected={opt.value.value === state.value.value}
+						selected={opt.value.value === rootState.value.value}
 					>
 						<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 						{@html opt.value.innerHTML}

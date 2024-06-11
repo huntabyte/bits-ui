@@ -13,11 +13,11 @@
 		...restProps
 	}: AccordionHeaderProps = $props();
 
-	const state = useAccordionHeader({
+	const headerState = useAccordionHeader({
 		level: box.with(() => level),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, headerState.props));
 </script>
 
 {#if asChild}

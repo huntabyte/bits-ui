@@ -5,8 +5,8 @@
 
 	let { asChild, children, child, el = $bindable(), ...restProps }: LabelProps = $props();
 
-	const state = useMenuLabel();
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const labelState = useMenuLabel();
+	const mergedProps = $derived(mergeProps(restProps, labelState.props));
 </script>
 
 {#if asChild}

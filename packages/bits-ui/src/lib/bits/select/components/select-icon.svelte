@@ -5,9 +5,9 @@
 
 	let { asChild, children, child, el = $bindable(), ...restProps }: IconProps = $props();
 
-	const state = useSelectIcon();
+	const iconState = useSelectIcon();
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, iconState.props));
 </script>
 
 {#if asChild}

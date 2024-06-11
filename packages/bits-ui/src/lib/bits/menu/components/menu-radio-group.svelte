@@ -15,7 +15,7 @@
 		...restProps
 	}: RadioGroupProps = $props();
 
-	const state = useMenuRadioGroup({
+	const radioGroupState = useMenuRadioGroup({
 		value: box.with(
 			() => value,
 			(v) => {
@@ -27,7 +27,7 @@
 		),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, radioGroupState.props));
 </script>
 
 {#if asChild}

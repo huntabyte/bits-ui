@@ -17,13 +17,13 @@
 		...restProps
 	}: ItemProps = $props();
 
-	const state = useMenuItem({
+	const itemState = useMenuItem({
 		id: box.with(() => id),
 		disabled: box.with(() => disabled),
 		onSelect: box.with(() => onSelect),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, itemState.props));
 </script>
 
 {#if asChild}

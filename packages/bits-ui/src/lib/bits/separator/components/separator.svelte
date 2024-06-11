@@ -15,14 +15,14 @@
 		...restProps
 	}: RootProps = $props();
 
-	const state = useSeparatorRoot({
+	const rootState = useSeparatorRoot({
 		decorative: box.with(() => decorative),
 		orientation: box.with(() => orientation),
 	});
 
 	const mergedProps = $derived({
 		...restProps,
-		...state.props,
+		...rootState.props,
 		style: styleToString(style),
 	});
 </script>

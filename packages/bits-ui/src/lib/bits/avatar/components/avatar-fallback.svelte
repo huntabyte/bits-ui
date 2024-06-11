@@ -5,9 +5,9 @@
 
 	let { asChild, children, child, el = $bindable(), ...restProps }: FallbackProps = $props();
 
-	const state = useAvatarFallback();
+	const fallbackState = useAvatarFallback();
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, fallbackState.props));
 </script>
 
 {#if asChild}

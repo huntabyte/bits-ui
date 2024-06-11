@@ -6,12 +6,12 @@
 
 	let { id = useId(), el = $bindable(), ...restProps }: ArrowProps = $props();
 
-	const state = useFloatingArrowState({
+	const arrowState = useFloatingArrowState({
 		id: box.with(() => id),
 	});
 
 	// explicit any here because the `asChild` and `child` are causing this to never out
-	const mergedProps = $derived<any>(mergeProps(restProps, state.props));
+	const mergedProps = $derived<any>(mergeProps(restProps, arrowState.props));
 </script>
 
 <Arrow {...mergedProps} bind:el />

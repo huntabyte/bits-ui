@@ -17,12 +17,12 @@
 		...restProps
 	}: TriggerProps = $props();
 
-	const state = useTooltipTrigger({
+	const triggerState = useTooltipTrigger({
 		id: box.with(() => id),
 		disabled: box.with(() => disabled),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props, { type }));
+	const mergedProps = $derived(mergeProps(restProps, triggerState.props, { type }));
 </script>
 
 <FloatingLayer.Anchor {id}>

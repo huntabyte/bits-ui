@@ -15,12 +15,12 @@
 		...restProps
 	}: PageProps = $props();
 
-	const state = usePaginationPage({
+	const pageState = usePaginationPage({
 		id: box.with(() => id),
 		page: box.with(() => page),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props, { type }));
+	const mergedProps = $derived(mergeProps(restProps, pageState.props, { type }));
 </script>
 
 {#if asChild}

@@ -5,9 +5,9 @@
 
 	let { asChild, children, child, el = $bindable(), ...restProps }: CloseProps = $props();
 
-	const state = useDialogClose();
+	const closeState = useDialogClose();
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, closeState.props));
 </script>
 
 {#if asChild}

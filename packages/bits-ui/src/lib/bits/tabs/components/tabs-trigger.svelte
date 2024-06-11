@@ -17,13 +17,13 @@
 		...restProps
 	}: TriggerProps = $props();
 
-	const state = useTabsTrigger({
+	const triggerState = useTabsTrigger({
 		id: box.with(() => id),
 		disabled: box.with(() => disabled),
 		value: box.with(() => value),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props, { type }));
+	const mergedProps = $derived(mergeProps(restProps, triggerState.props, { type }));
 </script>
 
 {#if asChild}

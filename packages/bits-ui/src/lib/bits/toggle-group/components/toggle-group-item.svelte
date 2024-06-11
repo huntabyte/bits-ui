@@ -17,13 +17,13 @@
 		...restProps
 	}: ItemProps = $props();
 
-	const state = useToggleGroupItem({
+	const itemState = useToggleGroupItem({
 		id: box.with(() => id),
 		value: box.with(() => value),
 		disabled: box.with(() => disabled),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props, { type }));
+	const mergedProps = $derived(mergeProps(restProps, itemState.props, { type }));
 </script>
 
 {#if asChild}

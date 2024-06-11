@@ -6,9 +6,9 @@
 
 	let { el = $bindable(), ...restProps }: ArrowProps = $props();
 
-	const state = useSelectArrow();
+	const arrowState = useSelectArrow();
 
-	const mergedProps = $derived(mergeProps(restProps, state.props as any));
+	const mergedProps = $derived(mergeProps(restProps, arrowState.props as any));
 </script>
 
 <FloatingLayer.Arrow bind:el {...mergedProps} />

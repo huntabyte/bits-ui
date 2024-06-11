@@ -16,12 +16,12 @@
 		...restProps
 	}: TriggerProps = $props();
 
-	const state = useMenuDropdownTrigger({
+	const triggerState = useMenuDropdownTrigger({
 		id: box.with(() => id),
 		disabled: box.with(() => disabled),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, triggerState.props));
 </script>
 
 <FloatingLayer.Anchor {id}>

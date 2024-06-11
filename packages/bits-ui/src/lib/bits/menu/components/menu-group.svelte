@@ -5,8 +5,8 @@
 
 	let { asChild, children, child, el = $bindable(), ...restProps }: GroupProps = $props();
 
-	const state = useMenuGroup();
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const groupState = useMenuGroup();
+	const mergedProps = $derived(mergeProps(restProps, groupState.props));
 </script>
 
 {#if asChild}

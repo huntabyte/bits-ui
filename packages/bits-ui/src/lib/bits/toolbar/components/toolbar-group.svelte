@@ -20,7 +20,7 @@
 
 	value === undefined && (value = type === "single" ? "" : []);
 
-	const state = useToolbarGroup({
+	const groupState = useToolbarGroup({
 		id: box.with(() => id),
 		disabled: box.with(() => disabled),
 		type,
@@ -33,7 +33,7 @@
 		) as WritableBox<string> | WritableBox<string[]>,
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, groupState.props));
 </script>
 
 {#if asChild}

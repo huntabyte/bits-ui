@@ -12,8 +12,8 @@
 		...restProps
 	}: RootProps = $props();
 
-	const state = setLabelRootState();
-	const mergedProps = $derived(mergeProps(restProps, state.props, { for: forProp }));
+	const rootState = setLabelRootState();
+	const mergedProps = $derived(mergeProps(restProps, rootState.props, { for: forProp }));
 </script>
 
 {#if asChild}

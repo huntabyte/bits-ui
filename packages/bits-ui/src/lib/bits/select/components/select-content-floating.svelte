@@ -16,11 +16,14 @@
 		el = $bindable(),
 		enabled = false,
 		...restProps
-	}: WithoutChildren<PopperLayerImplProps> & WithAsChild<ContentProps> = $props();
+	}: WithoutChildren<PopperLayerImplProps> &
+		WithAsChild<ContentProps> & { enabled: boolean } = $props();
 
-	const state = useSelectFloatingPosition();
+	const contentFloatingState = useSelectFloatingPosition();
 
-	const mergedProps = $derived(mergeProps(restProps, state.content.props, state.props));
+	const mergedProps = $derived(
+		mergeProps(restProps, contentFloatingState.content.props, contentFloatingState.props)
+	);
 </script>
 
 <FloatingLayer.Content {...restProps} {enabled} {align} {collisionPadding}>

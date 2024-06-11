@@ -5,8 +5,8 @@
 
 	let { asChild, children, child, el = $bindable(), ...restProps }: TriggerProps = $props();
 
-	const state = useCollapsibleTrigger();
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const triggerState = useCollapsibleTrigger();
+	const mergedProps = $derived(mergeProps(restProps, triggerState.props));
 </script>
 
 {#if asChild}

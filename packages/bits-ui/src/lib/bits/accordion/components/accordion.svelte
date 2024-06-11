@@ -22,7 +22,7 @@
 
 	value === undefined && (value = type === "single" ? "" : []);
 
-	const state = useAccordionRoot({
+	const rootState = useAccordionRoot({
 		type,
 		value: box.with(
 			() => value!,
@@ -37,7 +37,7 @@
 		orientation: box.with(() => orientation),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, rootState.props));
 </script>
 
 {#if asChild}

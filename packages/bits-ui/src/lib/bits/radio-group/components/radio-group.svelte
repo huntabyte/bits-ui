@@ -22,7 +22,7 @@
 		...restProps
 	}: RootProps = $props();
 
-	const state = useRadioGroupRoot({
+	const rootState = useRadioGroupRoot({
 		orientation: box.with(() => orientation),
 		disabled: box.with(() => disabled),
 		loop: box.with(() => loop),
@@ -40,7 +40,7 @@
 
 	const mergedProps = $derived({
 		...restProps,
-		...state.props,
+		...rootState.props,
 		style: styleToString(style),
 	});
 </script>

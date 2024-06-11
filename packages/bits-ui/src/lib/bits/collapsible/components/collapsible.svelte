@@ -15,7 +15,7 @@
 		...restProps
 	}: RootProps = $props();
 
-	const state = useCollapsibleRoot({
+	const rootState = useCollapsibleRoot({
 		open: box.with(
 			() => open,
 			(v) => {
@@ -26,7 +26,7 @@
 		disabled: box.with(() => disabled),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, rootState.props));
 </script>
 
 {#if asChild}

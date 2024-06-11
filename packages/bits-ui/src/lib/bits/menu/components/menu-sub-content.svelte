@@ -26,24 +26,28 @@
 		...restProps
 	}: SubContentProps = $props();
 
-	const state = useMenuContent({
+	const subContentState = useMenuContent({
 		id: box.with(() => id),
 		loop: box.with(() => loop),
 	});
 
 	function onkeydown(e: KeyboardEvent) {
 		const isKeyDownInside = (e.currentTarget as HTMLElement).contains(e.target as HTMLElement);
-		const isCloseKey = SUB_CLOSE_KEYS[state.parentMenu.root.dir.value].includes(e.key);
+		const isCloseKey = SUB_CLOSE_KEYS[subContentState.parentMenu.root.dir.value].includes(
+			e.key
+		);
 		if (isKeyDownInside && isCloseKey) {
-			state.parentMenu.onClose();
-			const triggerNode = document.getElementById(state.parentMenu.triggerId.value ?? "");
+			subContentState.parentMenu.onClose();
+			const triggerNode = document.getElementById(
+				subContentState.parentMenu.triggerId.value ?? ""
+			);
 			triggerNode?.focus();
 			e.preventDefault();
 		}
 	}
 
 	const mergedProps = $derived(
-		mergeProps(restProps, state.props, {
+		mergeProps(restProps, subContentState.props, {
 			onMountAutoFocus,
 			onDestroyAutoFocus,
 			side,
@@ -55,7 +59,7 @@
 	function onMountAutoFocus(e: Event) {
 		afterTick(() => {
 			e.preventDefault();
-			if (state.parentMenu.root.isUsingKeyboard.value) {
+			if (subContentState.parentMenu.root.isUsingKeyboard.value) {
 				const subContentEl = document.getElementById(id);
 				subContentEl?.focus();
 			}
@@ -71,16 +75,16 @@
 	{...mergedProps}
 	{interactOutsideBehavior}
 	{escapeKeydownBehavior}
-	present={state.parentMenu.open.value || forceMount}
+	present={subContentState.parentMenu.open.value || forceMount}
 	onInteractOutside={(e) => {
 		onInteractOutside(e);
 		if (e.defaultPrevented) return;
-		state.parentMenu.onClose();
+		subContentState.parentMenu.onClose();
 	}}
 	onEscapeKeydown={(e) => {
 		// TODO: users should be able to cancel this
 		onEscapeKeydown(e);
-		state.parentMenu.onClose();
+		subContentState.parentMenu.onClose();
 	}}
 	onFocusOutside={(e) => {
 		if (e.defaultPrevented) return;
@@ -88,8 +92,8 @@
 		// on pointer interaction.
 		if (!isHTMLElement(e.target)) return;
 
-		if (e.target.id !== state.parentMenu.triggerId.value) {
-			state.parentMenu.onClose();
+		if (e.target.id !== subContentState.parentMenu.triggerId.value) {
+			subContentState.parentMenu.onClose();
 		}
 	}}
 	preventScroll={false}

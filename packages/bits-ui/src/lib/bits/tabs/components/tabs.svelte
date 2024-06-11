@@ -20,7 +20,7 @@
 		...restProps
 	}: RootProps = $props();
 
-	const state = useTabsRoot({
+	const rootState = useTabsRoot({
 		id: box.with(() => id),
 		value: box.with(
 			() => value,
@@ -37,7 +37,7 @@
 		disabled: box.with(() => disabled),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, rootState.props));
 </script>
 
 {#if asChild}

@@ -28,7 +28,7 @@
 		preventScroll = true,
 	}: ContentImplProps = $props();
 
-	const state = useFloatingContentState({
+	const contentState = useFloatingContentState({
 		side: box.with(() => side),
 		sideOffset: box.with(() => sideOffset),
 		align: box.with(() => align),
@@ -50,7 +50,7 @@
 	});
 
 	const mergedProps = $derived(
-		mergeProps(state.wrapperProps, {
+		mergeProps(contentState.wrapperProps, {
 			style: {
 				pointerEvents: "auto",
 			},
@@ -61,5 +61,5 @@
 </script>
 
 <div {...mergedProps}>
-	{@render content?.({ props: state.props })}
+	{@render content?.({ props: contentState.props })}
 </div>

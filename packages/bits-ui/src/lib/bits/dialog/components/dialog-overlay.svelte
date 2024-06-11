@@ -16,14 +16,14 @@
 		...restProps
 	}: OverlayProps = $props();
 
-	const state = useDialogOverlay({
+	const overlayState = useDialogOverlay({
 		id: box.with(() => id),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, overlayState.props));
 </script>
 
-<PresenceLayer {id} present={state.root.open.value || forceMount}>
+<PresenceLayer {id} present={overlayState.root.open.value || forceMount}>
 	{#snippet presence({ present })}
 		{#if asChild}
 			{@render child?.({ props: mergeProps(mergedProps, { hidden: !present.value }) })}

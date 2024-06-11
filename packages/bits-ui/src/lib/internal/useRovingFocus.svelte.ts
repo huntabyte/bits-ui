@@ -1,7 +1,8 @@
-import type { ReadableBox, WritableBox } from "svelte-toolbelt";
+import { type ReadableBox, type WritableBox, box } from "svelte-toolbelt";
 import { getElemDirection } from "./locale.js";
 import { getDirectionalKeys } from "./getDirectionalKeys.js";
 import { kbd } from "./kbd.js";
+import type { WritableBoxedValues } from "./box.svelte.js";
 import type { Orientation } from "$lib/shared/index.js";
 
 type UseRovingFocusProps = {
@@ -9,11 +10,10 @@ type UseRovingFocusProps = {
 	 * The selector used to find the focusable candidates.
 	 */
 	candidateSelector: string;
-
 	/**
-	 * The root node which contains the focusable candidates.
+	 * The id of the root node
 	 */
-	rootNode: WritableBox<HTMLElement | null>;
+	rootNodeId: ReadableBox<string>;
 
 	/**
 	 * Whether to loop through the candidates when reaching the end.
@@ -30,15 +30,22 @@ type UseRovingFocusProps = {
 	 * A callback function called when a candidate is focused.
 	 */
 	onCandidateFocus?: (node: HTMLElement) => void;
+
+	/**
+	 * The current tab stop id.
+	 */
+	currentTabStopId?: WritableBox<string | null>;
 };
 
 export type UseRovingFocusReturn = ReturnType<typeof useRovingFocus>;
 
 export function useRovingFocus(props: UseRovingFocusProps) {
-	let currentTabStopId = $state<string | null>(null);
+	const currentTabStopId: WritableBox<string | null> = props.currentTabStopId
+		? props.currentTabStopId
+		: box<string | null>(null);
 
 	function getCandidateNodes() {
-		const node = props.rootNode.value;
+		const node = document.getElementById(props.rootNodeId.value);
 		if (!node) return [];
 		return Array.from(
 			node.querySelectorAll<HTMLElement>(`[${props.candidateSelector}]:not([data-disabled])`)
@@ -53,7 +60,7 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 	}
 
 	function handleKeydown(node: HTMLElement | null, e: KeyboardEvent) {
-		const rootNode = props.rootNode.value;
+		const rootNode = document.getElementById(props.rootNodeId.value);
 		if (!rootNode || !node) return;
 
 		const items = getCandidateNodes();
@@ -85,7 +92,7 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 		const itemToFocus = items[itemIndex];
 		if (!itemToFocus) return;
 		itemToFocus.focus();
-		currentTabStopId = itemToFocus.id;
+		currentTabStopId.value = itemToFocus.id;
 		props.onCandidateFocus?.(itemToFocus);
 		return itemToFocus;
 	}
@@ -94,11 +101,11 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 		const value = $derived.by(() => {
 			if (!node) return -1;
 			const items = getCandidateNodes();
-			const anyActive = currentTabStopId !== null;
+			const anyActive = currentTabStopId.value !== null;
 			if (!anyActive && items[0] === node) {
-				currentTabStopId = node.id;
+				currentTabStopId.value = node.id;
 				return 0;
-			} else if (node.id === currentTabStopId) {
+			} else if (node.id === currentTabStopId.value) {
 				return 0;
 			}
 
@@ -114,7 +121,7 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 
 	return {
 		setCurrentTabStopId(id: string) {
-			currentTabStopId = id;
+			currentTabStopId.value = id;
 		},
 		getTabIndex,
 		handleKeydown,

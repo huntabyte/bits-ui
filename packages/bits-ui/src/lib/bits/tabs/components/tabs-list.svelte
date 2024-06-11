@@ -5,9 +5,9 @@
 
 	let { asChild, child, children, el = $bindable(), ...restProps }: ListProps = $props();
 
-	const state = useTabsList();
+	const listState = useTabsList();
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, listState.props));
 </script>
 
 {#if asChild}

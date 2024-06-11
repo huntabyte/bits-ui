@@ -14,7 +14,7 @@
 		enabled,
 	}: DismissableLayerImplProps = $props();
 
-	const state = useDismissableLayer({
+	const dismissableLayerState = useDismissableLayer({
 		id: box.with(() => id),
 		interactOutsideBehavior: box.with(() => interactOutsideBehavior),
 		onInteractOutside: box.with(() => onInteractOutside),
@@ -24,4 +24,4 @@
 	});
 </script>
 
-{@render children?.({ props: state.props })}
+{@render children?.({ props: dismissableLayerState.props })}

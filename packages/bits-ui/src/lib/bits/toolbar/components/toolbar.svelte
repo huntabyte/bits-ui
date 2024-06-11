@@ -16,13 +16,13 @@
 		...restProps
 	}: RootProps = $props();
 
-	const state = useToolbarRoot({
+	const rootState = useToolbarRoot({
 		id: box.with(() => id),
 		orientation: box.with(() => orientation),
 		loop: box.with(() => loop),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, rootState.props));
 </script>
 
 {#if asChild}

@@ -14,12 +14,12 @@
 		...restProps
 	}: AccordionItemProps = $props();
 
-	const state = useAccordionItem({
+	const itemState = useAccordionItem({
 		value: box.with(() => value),
 		disabled: box.with(() => disabled),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, itemState.props));
 </script>
 
 {#if asChild}

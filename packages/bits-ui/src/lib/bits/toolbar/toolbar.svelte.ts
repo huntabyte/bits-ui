@@ -42,7 +42,7 @@ class ToolbarRootState {
 		this.rovingFocusGroup = useRovingFocus({
 			orientation: this.orientation,
 			loop: this.#loop,
-			rootNode: this.#node,
+			rootNodeId: this.#id,
 			candidateSelector: ITEM_ATTR,
 		});
 	}

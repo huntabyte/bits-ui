@@ -5,9 +5,9 @@
 
 	let { el = $bindable(), asChild, child, children, ...restProps }: SeparatorProps = $props();
 
-	const state = useMenuSeparator();
+	const separatorState = useMenuSeparator();
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, separatorState.props));
 </script>
 
 {#if asChild}

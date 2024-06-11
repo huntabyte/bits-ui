@@ -5,8 +5,8 @@
 
 	let { asChild, children, child, el = $bindable(), ...restProps }: GroupProps = $props();
 
-	const state = useSelectGroup();
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const groupState = useSelectGroup();
+	const mergedProps = $derived(mergeProps(restProps, groupState.props));
 </script>
 
 {#if asChild}

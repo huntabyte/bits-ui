@@ -16,12 +16,12 @@
 		...restProps
 	}: ButtonProps = $props();
 
-	const state = useToolbarButton({
+	const buttonState = useToolbarButton({
 		id: box.with(() => id),
 		disabled: box.with(() => disabled),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props, { type }));
+	const mergedProps = $derived(mergeProps(restProps, buttonState.props, { type }));
 </script>
 
 {#if asChild}

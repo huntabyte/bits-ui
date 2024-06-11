@@ -15,7 +15,7 @@
 		...restProps
 	}: RootProps = $props();
 
-	const state = useAvatarRoot({
+	const rootState = useAvatarRoot({
 		delayMs: box.with(() => delayMs),
 		loadingStatus: box.with(
 			() => loadingStatus,
@@ -28,7 +28,7 @@
 		),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, rootState.props));
 </script>
 
 {#if asChild}

@@ -14,11 +14,11 @@
 		...restProps
 	}: TriggerProps = $props();
 
-	const state = useDialogTrigger({
+	const triggerState = useDialogTrigger({
 		id: box.with(() => id),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, triggerState.props));
 </script>
 
 {#if asChild}

@@ -16,17 +16,17 @@
 		...restProps
 	}: TriggerProps = $props();
 
-	const state = useMenuContextTrigger({
+	const triggerState = useMenuContextTrigger({
 		id: box.with(() => id),
 		disabled: box.with(() => disabled),
 	});
 
 	const mergedProps = $derived(
-		mergeProps(restProps, state.props, { style: { pointerEvents: "auto" } })
+		mergeProps(restProps, triggerState.props, { style: { pointerEvents: "auto" } })
 	);
 </script>
 
-<FloatingLayer.Anchor {id} virtualEl={state.virtualElement}>
+<FloatingLayer.Anchor {id} virtualEl={triggerState.virtualElement}>
 	{#if asChild}
 		{@render child?.({ props: mergedProps })}
 	{:else}

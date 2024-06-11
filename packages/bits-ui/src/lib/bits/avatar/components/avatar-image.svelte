@@ -6,11 +6,11 @@
 
 	let { src, asChild, child, el = $bindable(), ...restProps }: ImageProps = $props();
 
-	const state = useAvatarImage({
+	const imageState = useAvatarImage({
 		src: box.with(() => src),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, imageState.props));
 </script>
 
 {#if asChild}
