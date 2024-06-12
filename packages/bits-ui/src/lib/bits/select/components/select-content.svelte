@@ -33,7 +33,7 @@
 			<SelectContentImpl
 				{present}
 				{...finalProps}
-				{el}
+				{ref}
 				{id}
 				{position}
 				context={contentContext}
