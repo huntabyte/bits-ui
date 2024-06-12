@@ -42,21 +42,28 @@ class AccordionBaseState {
 	#loop: AccordionBaseStateProps["loop"];
 	orientation: AccordionBaseStateProps["orientation"];
 	rovingFocusGroup: UseRovingFocusReturn;
-	ref: AccordionBaseStateProps["ref"];
+	triggerIds = $state<string[]>([]);
 
 	constructor(props: AccordionBaseStateProps) {
 		this.id = props.id;
-		this.ref = props.ref;
 		this.disabled = props.disabled;
 		this.node = useNodeById(this.id);
 		this.orientation = props.orientation;
 		this.#loop = props.loop;
 		this.rovingFocusGroup = useRovingFocus({
-			rootNodeRef: this.ref,
+			rootNodeId: this.id,
 			candidateSelector: TRIGGER_ATTR,
 			loop: this.#loop,
 			orientation: this.orientation,
 		});
+	}
+
+	registerTrigger(id: string) {
+		this.triggerIds.push(id);
+	}
+
+	deRegisterTrigger(id: string) {
+		this.triggerIds = this.triggerIds.filter((v) => v !== id);
 	}
 
 	props = $derived.by(
