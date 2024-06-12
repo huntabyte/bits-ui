@@ -1,4 +1,5 @@
 import type { WritableBox } from "svelte-toolbelt";
+import { untrack } from "svelte";
 import type { TabsActivationMode } from "./types.js";
 import {
 	type ReadableBoxedValues,
@@ -57,6 +58,14 @@ class TabsRootState {
 			loop: this.loop,
 			orientation: this.orientation,
 		});
+	}
+
+	registerTrigger(id: string) {
+		this.triggerIds.push(id);
+	}
+
+	deRegisterTrigger(id: string) {
+		this.triggerIds = this.triggerIds.filter((triggerId) => triggerId !== id);
 	}
 
 	setValue(v: string) {
@@ -133,6 +142,18 @@ class TabsTriggerState {
 		this.#id = props.id;
 		this.#value = props.value;
 		this.#disabled = props.disabled;
+
+		$effect(() => {
+			// we want to track the value
+			const id = this.#id.value;
+			// on mount register the trigger
+			untrack(() => this.#root.registerTrigger(id));
+
+			return () => {
+				// deregister on ID change or unmount
+				this.#root.deRegisterTrigger(id);
+			};
+		});
 
 		$effect(() => {
 			if (this.#root.triggerIds.length) {
