@@ -1,7 +1,6 @@
 import type { WritableBox } from "svelte-toolbelt";
 import {
 	type Box,
-	type ElementRef,
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
 	afterTick,
@@ -42,7 +41,6 @@ class AccordionBaseState {
 	#loop: AccordionBaseStateProps["loop"];
 	orientation: AccordionBaseStateProps["orientation"];
 	rovingFocusGroup: UseRovingFocusReturn;
-	triggerIds = $state<string[]>([]);
 
 	constructor(props: AccordionBaseStateProps) {
 		this.id = props.id;
@@ -56,14 +54,6 @@ class AccordionBaseState {
 			loop: this.#loop,
 			orientation: this.orientation,
 		});
-	}
-
-	registerTrigger(id: string) {
-		this.triggerIds.push(id);
-	}
-
-	deRegisterTrigger(id: string) {
-		this.triggerIds = this.triggerIds.filter((v) => v !== id);
 	}
 
 	props = $derived.by(
