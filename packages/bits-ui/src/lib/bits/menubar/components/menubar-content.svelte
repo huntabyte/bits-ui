@@ -30,7 +30,7 @@
 	{...mergedProps}
 	preventScroll={false}
 	onInteractOutside={contentState.onInteractOutside}
-	onMountAutoFocus={contentState.onMountAutoFocus}
 	onFocusOutside={contentState.onFocusOutside}
 	onDestroyAutoFocus={contentState.onDestroyAutoFocus}
+	onMountAutoFocus={contentState.onMountAutoFocus}
 />

@@ -128,7 +128,7 @@ class MenuMenuState {
 	root: MenuRootState;
 	open: MenuMenuStateProps["open"];
 	contentId = box.with<string>(() => "");
-	triggerRef = box.with<HTMLElement | undefined>(() => undefined);
+	triggerId = box.with<string>(() => "");
 	parentMenu?: MenuMenuState;
 
 	constructor(props: MenuMenuStateProps, root: MenuRootState, parentMenu?: MenuMenuState) {
@@ -360,7 +360,7 @@ class MenuContentState {
 	createSubTrigger(props: MenuItemSharedStateProps) {
 		const item = new MenuItemSharedState(props, this);
 		const submenu = getMenuMenuContext();
-		submenu.triggerRef = props.ref;
+		submenu.triggerId = props.id;
 		return new MenuSubTriggerState(item, this, submenu);
 	}
 }
@@ -368,7 +368,6 @@ class MenuContentState {
 type MenuItemSharedStateProps = ReadableBoxedValues<{
 	disabled: boolean;
 	id: string;
-	ref: HTMLElement | undefined;
 }>;
 
 class MenuItemSharedState {
@@ -376,13 +375,11 @@ class MenuItemSharedState {
 	id: MenuItemSharedStateProps["id"];
 	disabled: MenuItemSharedStateProps["disabled"];
 	#isFocused = $state(false);
-	ref: MenuItemSharedStateProps["ref"];
 
 	constructor(props: MenuItemSharedStateProps, content: MenuContentState) {
 		this.content = content;
 		this.id = props.id;
 		this.disabled = props.disabled;
-		this.ref = props.ref;
 	}
 
 	#onpointermove = (e: PointerEvent) => {
@@ -522,7 +519,7 @@ class MenuSubTriggerState {
 		this.#item = item;
 		this.#content = content;
 		this.#submenu = submenu;
-		this.#submenu.triggerRef = item.ref;
+		this.#submenu.triggerId = item.id;
 
 		onDestroyEffect(() => {
 			this.#clearOpenTimer();
@@ -767,19 +764,15 @@ class MenuRadioItemState {
 type DropdownMenuTriggerStateProps = ReadableBoxedValues<{
 	id: string;
 	disabled: boolean;
-	ref: HTMLElement | undefined;
 }>;
 
 class DropdownMenuTriggerState {
 	#parentMenu: MenuMenuState;
 	#disabled: DropdownMenuTriggerStateProps["disabled"];
-	#ref: DropdownMenuTriggerStateProps["ref"];
 	constructor(props: DropdownMenuTriggerStateProps, parentMenu: MenuMenuState) {
 		this.#parentMenu = parentMenu;
 		this.#disabled = props.disabled;
-		this.#parentMenu.triggerRef = props.ref;
-		this.#ref = props.ref;
-		this.#ref = props.ref;
+		this.#parentMenu.triggerId = props.id;
 	}
 
 	#onpointerdown = (e: PointerEvent) => {
@@ -813,7 +806,7 @@ class DropdownMenuTriggerState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#ref.value?.id,
+				id: this.#parentMenu.triggerId.value,
 				disabled: this.#disabled.value,
 				"aria-haspopup": "menu",
 				"aria-expanded": getAriaExpanded(this.#parentMenu.open.value),

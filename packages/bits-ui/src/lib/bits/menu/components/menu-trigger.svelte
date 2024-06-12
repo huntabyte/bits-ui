@@ -19,7 +19,6 @@
 	const triggerState = useMenuDropdownTrigger({
 		id: box.with(() => id),
 		disabled: box.with(() => disabled),
-		ref: box.with(() => ref),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, triggerState.props));

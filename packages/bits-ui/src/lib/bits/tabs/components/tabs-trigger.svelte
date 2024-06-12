@@ -21,7 +21,6 @@
 		id: box.with(() => id),
 		disabled: box.with(() => disabled),
 		value: box.with(() => value),
-		ref: box.with(() => ref),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, triggerState.props, { type }));

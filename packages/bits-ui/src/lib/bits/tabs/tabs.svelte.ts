@@ -8,6 +8,7 @@ import {
 	getDataOrientation,
 	getDisabledAttr,
 	getHiddenAttr,
+	isBrowser,
 	kbd,
 	useNodeById,
 } from "$lib/internal/index.js";
@@ -26,7 +27,6 @@ type TabsRootStateProps = ReadableBoxedValues<{
 	loop: boolean;
 	activationMode: TabsActivationMode;
 	disabled: boolean;
-	ref: HTMLElement | null | undefined;
 }> &
 	WritableBoxedValues<{
 		value: string;
@@ -41,7 +41,7 @@ class TabsRootState {
 	value: TabsRootStateProps["value"];
 	disabled: TabsRootStateProps["disabled"];
 	rovingFocusGroup: UseRovingFocusReturn;
-	ref: TabsRootStateProps["ref"];
+	triggerIds = $state<string[]>([]);
 
 	constructor(props: TabsRootStateProps) {
 		this.id = props.id;
@@ -51,10 +51,9 @@ class TabsRootState {
 		this.value = props.value;
 		this.disabled = props.disabled;
 		this.node = useNodeById(this.id);
-		this.ref = props.ref;
 		this.rovingFocusGroup = useRovingFocus({
 			candidateSelector: TRIGGER_ATTR,
-			rootNodeRef: this.ref,
+			rootNodeId: this.id,
 			loop: this.loop,
 			orientation: this.orientation,
 		});
@@ -118,24 +117,33 @@ type TabsTriggerStateProps = ReadableBoxedValues<{
 	id: string;
 	value: string;
 	disabled: boolean;
-	ref: HTMLElement | null | undefined;
 }>;
 
 class TabsTriggerState {
 	#root: TabsRootState;
 	#id: TabsTriggerStateProps["id"];
-	#ref: TabsTriggerStateProps["ref"];
 	#disabled: TabsTriggerStateProps["disabled"];
 	#value: TabsTriggerStateProps["value"];
 	#isActive = $derived.by(() => this.#root.value.value === this.#value.value);
 	#isDisabled = $derived.by(() => this.#disabled.value || this.#root.disabled.value);
+	#tabIndex = $state(0);
 
 	constructor(props: TabsTriggerStateProps, root: TabsRootState) {
 		this.#root = root;
 		this.#id = props.id;
 		this.#value = props.value;
-		this.#ref = props.ref;
 		this.#disabled = props.disabled;
+
+		$effect(() => {
+			if (this.#root.triggerIds.length) {
+				this.#tabIndex = this.#root.rovingFocusGroup.getTabIndex(this.#getNode());
+			}
+		});
+	}
+
+	#getNode() {
+		if (!isBrowser) return null;
+		return document.getElementById(this.#id.value);
 	}
 
 	activate() {
@@ -150,9 +158,10 @@ class TabsTriggerState {
 	};
 
 	#onclick = (e: MouseEvent) => {
-		if (!this.#ref.value || this.#isDisabled) return;
+		const node = document.getElementById(this.#id.value);
+		if (!node || this.#isDisabled) return;
 		e.preventDefault();
-		this.#ref.value.focus();
+		node.focus();
 		this.activate();
 	};
 
@@ -163,10 +172,8 @@ class TabsTriggerState {
 			this.activate();
 			return;
 		}
-		this.#root.rovingFocusGroup.handleKeydown(this.#ref.value, e);
+		this.#root.rovingFocusGroup.handleKeydown(this.#getNode(), e);
 	};
-
-	#tabIndex = $derived.by(() => this.#root.rovingFocusGroup.getTabIndex(this.#ref.value).value);
 
 	props = $derived.by(
 		() =>

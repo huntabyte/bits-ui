@@ -31,7 +31,6 @@
 		),
 		dir: box.with(() => dir),
 		loop: box.with(() => loop),
-		ref: box.with(() => ref),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, rootState.props));

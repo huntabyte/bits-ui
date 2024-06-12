@@ -71,7 +71,7 @@
 			View
 		</Menubar.Trigger>
 		<Menubar.Content
-			class="z-50 w-full max-w-[220px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover !ring-0 !ring-transparent "
+			class="focus-override z-50 w-full max-w-[220px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover focus-visible:outline-none"
 			align="start"
 			sideOffset={3}
 		>
@@ -116,7 +116,7 @@
 			>Edit</Menubar.Trigger
 		>
 		<Menubar.Content
-			class="z-50 w-full max-w-[220px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover"
+			class="focus-override z-50 w-full max-w-[220px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover focus-visible:outline-none"
 			align="start"
 			sideOffset={3}
 		>
@@ -139,7 +139,7 @@
 					</div>
 				</Menubar.SubTrigger>
 				<Menubar.SubContent
-					class="w-full max-w-[209px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover"
+					class="focus-override w-full max-w-[209px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover focus-visible:outline-none"
 				>
 					<Menubar.Item
 						class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted"
@@ -181,7 +181,7 @@
 			>View</Menubar.Trigger
 		>
 		<Menubar.Content
-			class="z-50 w-full max-w-[220px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover"
+			class="focus-override z-50 w-full max-w-[220px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover focus-visible:outline-none"
 			align="start"
 			sideOffset={3}
 		>
@@ -229,7 +229,7 @@
 			>Profiles</Menubar.Trigger
 		>
 		<Menubar.Content
-			class="z-50 w-full max-w-[220px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover"
+			class="focus-override z-50 w-full max-w-[220px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover focus-visible:outline-none"
 			align="start"
 			sideOffset={3}
 		>

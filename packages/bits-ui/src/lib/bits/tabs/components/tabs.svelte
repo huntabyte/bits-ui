@@ -35,7 +35,6 @@
 		loop: box.with(() => loop),
 		activationMode: box.with(() => activationMode),
 		disabled: box.with(() => disabled),
-		ref: box.with(() => ref),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, rootState.props));

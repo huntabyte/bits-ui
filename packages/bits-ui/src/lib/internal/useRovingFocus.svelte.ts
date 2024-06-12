@@ -3,6 +3,7 @@ import { getElemDirection } from "./locale.js";
 import { getDirectionalKeys } from "./getDirectionalKeys.js";
 import { kbd } from "./kbd.js";
 import type { ElementRef } from "./types.js";
+import { isBrowser } from "./is.js";
 import type { Orientation } from "$lib/shared/index.js";
 
 type UseRovingFocusProps = {
@@ -13,7 +14,7 @@ type UseRovingFocusProps = {
 	/**
 	 * The id of the root node
 	 */
-	rootNodeRef: ElementRef;
+	rootNodeId: ReadableBox<string>;
 
 	/**
 	 * Whether to loop through the candidates when reaching the end.
@@ -45,7 +46,8 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 		: box<string | null>(null);
 
 	function getCandidateNodes() {
-		const node = props.rootNodeRef.value;
+		if (!isBrowser) return [];
+		const node = document.getElementById(props.rootNodeId.value);
 		if (!node) return [];
 		return Array.from(
 			node.querySelectorAll<HTMLElement>(`[${props.candidateSelector}]:not([data-disabled])`)
@@ -60,7 +62,7 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 	}
 
 	function handleKeydown(node: HTMLElement | null | undefined, e: KeyboardEvent) {
-		const rootNode = props.rootNodeRef.value;
+		const rootNode = document.getElementById(props.rootNodeId.value);
 		if (!rootNode || !node) return;
 
 		const items = getCandidateNodes();
@@ -98,24 +100,16 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 	}
 
 	function getTabIndex(node: HTMLElement | null | undefined) {
-		const value = $derived.by(() => {
-			const items = getCandidateNodes();
-			const anyActive = currentTabStopId.value !== null;
-			if (node && !anyActive && items[0] === node) {
-				currentTabStopId.value = node.id;
-				return 0;
-			} else if (node?.id === currentTabStopId.value) {
-				return 0;
-			}
+		const items = getCandidateNodes();
+		const anyActive = currentTabStopId.value !== null;
+		if (node && !anyActive && items[0] === node) {
+			currentTabStopId.value = node.id;
+			return 0;
+		} else if (node?.id === currentTabStopId.value) {
+			return 0;
+		}
 
-			return -1;
-		});
-
-		return {
-			get value() {
-				return value;
-			},
-		};
+		return -1;
 	}
 
 	return {

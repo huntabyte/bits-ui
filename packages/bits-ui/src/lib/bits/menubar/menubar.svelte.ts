@@ -1,4 +1,4 @@
-import { box } from "svelte-toolbelt";
+import { type ReadableBox, box } from "svelte-toolbelt";
 import { untrack } from "svelte";
 import type { InteractOutsideEvent } from "@melt-ui/svelte";
 import type { InteractOutsideBehaviorType } from "../utilities/dismissable-layer/types.js";
@@ -10,6 +10,7 @@ import { getAriaExpanded, getDataDisabled, getDataOpenClosed } from "$lib/intern
 import { kbd } from "$lib/internal/kbd.js";
 import { wrapArray } from "$lib/internal/useTypeahead.svelte.js";
 import { isBrowser } from "$lib/internal/is.js";
+import { afterTick } from "$lib/internal/afterTick.js";
 
 const ROOT_ATTR = "data-menubar-root";
 const TRIGGER_ATTR = "data-menubar-trigger";
@@ -18,7 +19,6 @@ type MenubarRootStateProps = ReadableBoxedValues<{
 	id: string;
 	dir: Direction;
 	loop: boolean;
-	ref: HTMLElement | null | undefined;
 }> &
 	WritableBoxedValues<{
 		value: string;
@@ -32,21 +32,29 @@ class MenubarRootState {
 	rovingFocusGroup: UseRovingFocusReturn;
 	currentTabStopId = box<string | null>(null);
 	wasOpenedByKeyboard = $state(false);
-	ref: MenubarRootStateProps["ref"];
+	triggerIds = $state<string[]>([]);
+	valueToContentId = new Map<string, ReadableBox<string>>();
 
 	constructor(props: MenubarRootStateProps) {
 		this.value = props.value;
-		this.ref = props.ref;
 		this.dir = props.dir;
 		this.loop = props.loop;
 		this.id = props.id;
 		this.rovingFocusGroup = useRovingFocus({
-			rootNodeRef: this.ref,
+			rootNodeId: this.id,
 			candidateSelector: TRIGGER_ATTR,
 			loop: this.loop,
 			orientation: box.with(() => "horizontal"),
 			currentTabStopId: this.currentTabStopId,
 		});
+	}
+
+	registerTrigger(id: string) {
+		this.triggerIds.push(id);
+	}
+
+	deRegisterTrigger(id: string) {
+		this.triggerIds = this.triggerIds.filter((triggerId) => triggerId !== id);
 	}
 
 	getNode() {
@@ -109,6 +117,18 @@ class MenubarMenuState {
 				});
 			}
 		});
+
+		// register content id to value map on mount
+		$effect(() => {
+			untrack(() => {
+				this.root.valueToContentId.set(this.value.value, this.contentId);
+			});
+
+			// unregister on unmount
+			return () => {
+				this.root.valueToContentId.delete(this.value.value);
+			};
+		});
 	}
 
 	createTrigger(props: MenubarTriggerStateProps) {
@@ -139,21 +159,40 @@ class MenubarTriggerState {
 	menu: MenubarMenuState;
 	root: MenubarRootState;
 	isFocused = $state(false);
+	#tabIndex = $state(0);
 
 	constructor(props: MenubarTriggerStateProps, menu: MenubarMenuState) {
 		this.disabled = props.disabled;
 		this.menu = menu;
 		this.menu.triggerId = props.id;
 		this.root = menu.root;
+
+		$effect(() => {
+			untrack(() => {
+				this.root.registerTrigger(props.id.value);
+			});
+
+			return () => {
+				this.root.deRegisterTrigger(props.id.value);
+			};
+		});
+
+		$effect(() => {
+			if (this.root.triggerIds.length) {
+				this.#tabIndex = this.root.rovingFocusGroup.getTabIndex(this.menu.getTriggerNode());
+			}
+		});
 	}
 
 	#onpointerdown = (e: PointerEvent) => {
 		// only call if the left button but not when the CTRL key is pressed
 		if (!this.disabled.value && e.button === 0 && e.ctrlKey === false) {
-			this.root.onMenuOpen(this.menu.value.value);
 			// prevent trigger from focusing when opening
 			// which allows the content to focus withut competition
-			if (!this.menu.open) e.preventDefault();
+			if (!this.menu.open) {
+				e.preventDefault();
+			}
+			this.root.onMenuOpen(this.menu.value.value);
 		}
 	};
 
@@ -191,10 +230,6 @@ class MenubarTriggerState {
 		this.isFocused = false;
 	};
 
-	#tabIndex = $derived.by(
-		() => this.root.rovingFocusGroup.getTabIndex(this.menu.getTriggerNode()).value
-	);
-
 	props = $derived.by(
 		() =>
 			({
@@ -226,17 +261,21 @@ type MenubarContentStateProps = ReadableBoxedValues<{
 }>;
 
 class MenubarContentState {
-	id: MenubarContentStateProps["id"];
 	menu: MenubarMenuState;
 	root: MenubarRootState;
 	hasInteractedOutside = $state(false);
 	interactOutsideBehavior: MenubarContentStateProps["interactOutsideBehavior"];
 
 	constructor(props: MenubarContentStateProps, menu: MenubarMenuState) {
-		this.id = props.id;
 		this.interactOutsideBehavior = props.interactOutsideBehavior;
 		this.menu = menu;
+		this.menu.contentId = props.id;
 		this.root = menu.root;
+	}
+
+	#getNode() {
+		if (!isBrowser) return null;
+		return document.getElementById(this.menu.contentId.value);
 	}
 
 	onDestroyAutoFocus = (e: Event) => {
@@ -261,10 +300,8 @@ class MenubarContentState {
 		this.hasInteractedOutside = true;
 	};
 
-	onMountAutoFocus = (e: Event) => {
-		if (!this.menu.wasOpenedByKeyboard) {
-			e.preventDefault();
-		}
+	onMountAutoFocus = () => {
+		afterTick(() => this.#getNode()?.focus());
 	};
 
 	#onkeydown = (e: KeyboardEvent) => {
@@ -297,7 +334,7 @@ class MenubarContentState {
 	};
 
 	props = $derived.by(() => ({
-		id: this.id.value,
+		id: this.menu.contentId.value,
 		"aria-labelledby": this.menu.triggerId.value,
 		style: {
 			"--bits-menubar-content-transform-origin": "var(--bits-floating-transform-origin)",
