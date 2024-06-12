@@ -12,7 +12,7 @@
 		child,
 		style,
 		value = $bindable(""),
-		el = $bindable(),
+		ref = $bindable(),
 		orientation = "vertical",
 		loop = true,
 		name = undefined,
@@ -48,7 +48,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<div bind:this={el} {...mergedProps}>
+	<div bind:this={ref} {...mergedProps}>
 		{@render children?.()}
 	</div>
 {/if}

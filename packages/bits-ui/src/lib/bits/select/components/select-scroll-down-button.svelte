@@ -6,7 +6,7 @@
 	import { useId } from "$lib/internal/useId.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
-	let { id = useId(), el = $bindable(), ...restProps }: ScrollUpButtonProps = $props();
+	let { id = useId(), ref = $bindable(), ...restProps }: ScrollUpButtonProps = $props();
 
 	const mounted = box(false);
 
@@ -23,5 +23,5 @@
 </script>
 
 {#if scrollDownButtonState.canScrollDown}
-	<SelectScrollDownButtonMounted bind:el {mounted} {...restWithoutStyle} {...mergedProps} />
+	<SelectScrollDownButtonMounted bind:ref {mounted} {...restWithoutStyle} {...mergedProps} />
 {/if}

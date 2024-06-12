@@ -12,7 +12,7 @@
 		disabled = false,
 		type = "button",
 		id = useId(),
-		el = $bindable(),
+		ref = $bindable(),
 		...restProps
 	}: ButtonProps = $props();
 
@@ -27,7 +27,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<button bind:this={el} {...mergedProps}>
+	<button bind:this={ref} {...mergedProps}>
 		{@render children?.()}
 	</button>
 {/if}

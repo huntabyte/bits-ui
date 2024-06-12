@@ -28,4 +28,4 @@
 	$: inputValue = getValue($value);
 </script>
 
-<input bind:this={el} {...$$restProps} value={inputValue} {...attrs} />
+<input bind:this={ref} {...$$restProps} value={inputValue} {...attrs} />

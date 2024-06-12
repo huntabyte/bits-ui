@@ -26,6 +26,7 @@ type TabsRootStateProps = ReadableBoxedValues<{
 	loop: boolean;
 	activationMode: TabsActivationMode;
 	disabled: boolean;
+	ref: HTMLElement | null | undefined;
 }> &
 	WritableBoxedValues<{
 		value: string;
@@ -40,6 +41,7 @@ class TabsRootState {
 	value: TabsRootStateProps["value"];
 	disabled: TabsRootStateProps["disabled"];
 	rovingFocusGroup: UseRovingFocusReturn;
+	ref: TabsRootStateProps["ref"];
 
 	constructor(props: TabsRootStateProps) {
 		this.id = props.id;
@@ -49,9 +51,10 @@ class TabsRootState {
 		this.value = props.value;
 		this.disabled = props.disabled;
 		this.node = useNodeById(this.id);
+		this.ref = props.ref;
 		this.rovingFocusGroup = useRovingFocus({
 			candidateSelector: TRIGGER_ATTR,
-			rootNodeId: this.id,
+			rootNodeRef: this.ref,
 			loop: this.loop,
 			orientation: this.orientation,
 		});
@@ -115,12 +118,13 @@ type TabsTriggerStateProps = ReadableBoxedValues<{
 	id: string;
 	value: string;
 	disabled: boolean;
+	ref: HTMLElement | null | undefined;
 }>;
 
 class TabsTriggerState {
 	#root: TabsRootState;
 	#id: TabsTriggerStateProps["id"];
-	#node: WritableBox<HTMLElement | null>;
+	#ref: TabsTriggerStateProps["ref"];
 	#disabled: TabsTriggerStateProps["disabled"];
 	#value: TabsTriggerStateProps["value"];
 	#isActive = $derived.by(() => this.#root.value.value === this.#value.value);
@@ -130,7 +134,7 @@ class TabsTriggerState {
 		this.#root = root;
 		this.#id = props.id;
 		this.#value = props.value;
-		this.#node = useNodeById(this.#id);
+		this.#ref = props.ref;
 		this.#disabled = props.disabled;
 	}
 
@@ -146,9 +150,9 @@ class TabsTriggerState {
 	};
 
 	#onclick = (e: MouseEvent) => {
-		if (!this.#node.value || this.#isDisabled) return;
+		if (!this.#ref.value || this.#isDisabled) return;
 		e.preventDefault();
-		this.#node.value.focus();
+		this.#ref.value.focus();
 		this.activate();
 	};
 
@@ -159,10 +163,10 @@ class TabsTriggerState {
 			this.activate();
 			return;
 		}
-		this.#root.rovingFocusGroup.handleKeydown(this.#node.value, e);
+		this.#root.rovingFocusGroup.handleKeydown(this.#ref.value, e);
 	};
 
-	#tabIndex = $derived.by(() => this.#root.rovingFocusGroup.getTabIndex(this.#node.value).value);
+	#tabIndex = $derived.by(() => this.#root.rovingFocusGroup.getTabIndex(this.#ref.value).value);
 
 	props = $derived.by(
 		() =>

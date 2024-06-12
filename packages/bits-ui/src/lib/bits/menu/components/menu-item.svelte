@@ -10,7 +10,7 @@
 		asChild,
 		child,
 		children,
-		el = $bindable(),
+		ref = $bindable(),
 		id = useId(),
 		disabled = false,
 		onSelect = noop,
@@ -29,7 +29,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<div {...mergedProps} bind:this={el}>
+	<div {...mergedProps} bind:this={ref}>
 		{@render children?.()}
 	</div>
 {/if}

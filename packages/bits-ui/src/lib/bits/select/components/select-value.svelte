@@ -8,7 +8,7 @@
 		asChild,
 		children,
 		child,
-		el = $bindable(),
+		ref = $bindable(),
 		...restProps
 	}: ValueProps = $props();
 
@@ -26,7 +26,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<span {...mergedProps} bind:this={el}>
+	<span {...mergedProps} bind:this={ref}>
 		{#if valueState.showPlaceholder}
 			{placeholder}
 		{:else}

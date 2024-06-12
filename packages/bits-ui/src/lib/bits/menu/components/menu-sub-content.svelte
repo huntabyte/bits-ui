@@ -12,7 +12,7 @@
 
 	let {
 		id = useId(),
-		el = $bindable(),
+		ref = $bindable(),
 		asChild,
 		children,
 		child,
@@ -104,7 +104,7 @@
 		{#if asChild}
 			{@render child?.({ props: finalProps })}
 		{:else}
-			<div {...finalProps} bind:this={el}>
+			<div {...finalProps} bind:this={ref}>
 				{@render children?.()}
 			</div>
 		{/if}

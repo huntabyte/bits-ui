@@ -22,7 +22,7 @@
 {#if asChild}
 	<slot {builder} />
 {:else}
-	<table bind:this={el} use:melt={builder} {...$$restProps}>
+	<table bind:this={ref} use:melt={builder} {...$$restProps}>
 		<slot {builder} />
 	</table>
 {/if}

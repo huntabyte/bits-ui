@@ -11,7 +11,7 @@
 		child,
 		children,
 		type = "button",
-		el = $bindable(),
+		ref = $bindable(),
 		...restProps
 	}: PageProps = $props();
 
@@ -26,7 +26,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<button bind:this={el} {...mergedProps}>
+	<button bind:this={ref} {...mergedProps}>
 		{#if children}
 			{@render children?.()}
 		{:else}

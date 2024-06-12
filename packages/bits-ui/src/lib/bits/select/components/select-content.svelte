@@ -10,7 +10,7 @@
 
 	let {
 		id = useId(),
-		el = $bindable(),
+		ref = $bindable(),
 		forceMount = false,
 		position = "floating",
 		...restProps

@@ -7,7 +7,7 @@
 		asChild,
 		children,
 		child,
-		el = $bindable(),
+		ref = $bindable(),
 		for: forProp,
 		...restProps
 	}: RootProps = $props();
@@ -19,7 +19,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<label bind:this={el} {...mergedProps} for={forProp}>
+	<label bind:this={ref} {...mergedProps} for={forProp}>
 		{@render children?.()}
 	</label>
 {/if}

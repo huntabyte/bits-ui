@@ -10,7 +10,7 @@
 		asChild,
 		child,
 		children,
-		el = $bindable(),
+		ref = $bindable(),
 		checked = $bindable(false),
 		id = useId(),
 		onCheckedChange = noop,
@@ -46,7 +46,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<div {...mergedProps} bind:this={el}>
+	<div {...mergedProps} bind:this={ref}>
 		{@render children?.({ checked })}
 	</div>
 {/if}

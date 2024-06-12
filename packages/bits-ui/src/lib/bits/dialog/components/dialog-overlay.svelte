@@ -12,7 +12,7 @@
 		asChild,
 		child,
 		children,
-		el = $bindable(),
+		ref = $bindable(),
 		...restProps
 	}: OverlayProps = $props();
 
@@ -28,7 +28,7 @@
 		{#if asChild}
 			{@render child?.({ props: mergeProps(mergedProps, { hidden: !present.value }) })}
 		{:else}
-			<div {...mergeProps(mergedProps, { hidden: !present.value })} bind:this={el}>
+			<div {...mergeProps(mergedProps, { hidden: !present.value })} bind:this={ref}>
 				{@render children?.()}
 			</div>
 		{/if}

@@ -9,7 +9,7 @@
 		child,
 		asChild,
 		children,
-		el = $bindable(),
+		ref = $bindable(),
 		disabled = false,
 		required = false,
 		checked = $bindable(false),
@@ -20,7 +20,7 @@
 		...restProps
 	}: RootProps = $props();
 
-	const state = useSwitchRoot({
+	const rootState = useSwitchRoot({
 		checked: box.with(
 			() => checked,
 			(v) => {
@@ -34,13 +34,13 @@
 		name: box.with(() => name),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props, { type }));
+	const mergedProps = $derived(mergeProps(restProps, rootState.props, { type }));
 </script>
 
 {#if asChild}
-	{@render child?.({ props: mergedProps, checked: state.checked.value })}
+	{@render child?.({ props: mergedProps, checked: rootState.checked.value })}
 {:else}
-	<button bind:this={el} {...mergedProps}>
+	<button bind:this={ref} {...mergedProps}>
 		{@render children?.()}
 	</button>
 {/if}

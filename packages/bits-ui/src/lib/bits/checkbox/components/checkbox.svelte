@@ -13,7 +13,7 @@
 		required = false,
 		name,
 		value = "on",
-		el = $bindable(),
+		ref = $bindable(),
 		asChild,
 		child,
 		...restProps
@@ -41,7 +41,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps, checked: rootState.checked.value })}
 {:else}
-	<button bind:this={el} {...mergedProps}>
+	<button bind:this={ref} {...mergedProps}>
 		{@render children?.({
 			checked: rootState.checked.value,
 		})}

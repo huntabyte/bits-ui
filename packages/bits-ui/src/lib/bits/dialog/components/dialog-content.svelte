@@ -17,7 +17,7 @@
 		asChild,
 		children,
 		child,
-		el = $bindable(),
+		ref = $bindable(),
 		forceMount = false,
 		onDestroyAutoFocus = noop,
 		onEscapeKeydown = noop,
@@ -78,7 +78,7 @@
 											pointerEvents: "auto",
 										},
 									})}
-									bind:this={el}
+									bind:this={ref}
 								>
 									{@render children?.()}
 								</div>

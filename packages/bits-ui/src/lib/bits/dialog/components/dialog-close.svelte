@@ -3,7 +3,7 @@
 	import type { CloseProps } from "../index.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
-	let { asChild, children, child, el = $bindable(), ...restProps }: CloseProps = $props();
+	let { asChild, children, child, ref = $bindable(), ...restProps }: CloseProps = $props();
 
 	const closeState = useDialogClose();
 
@@ -13,7 +13,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<button {...mergedProps} bind:this={el}>
+	<button {...mergedProps} bind:this={ref}>
 		{@render children?.()}
 	</button>
 {/if}

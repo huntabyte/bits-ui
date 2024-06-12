@@ -32,7 +32,7 @@
 {#if asChild}
 	<slot {builder} {months} weekdays={$weekdays} />
 {:else}
-	<div bind:this={el} use:melt={builder} {...$$restProps}>
+	<div bind:this={ref} use:melt={builder} {...$$restProps}>
 		<slot {builder} {months} weekdays={$weekdays} />
 	</div>
 {/if}

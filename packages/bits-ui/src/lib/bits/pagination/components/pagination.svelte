@@ -9,7 +9,7 @@
 		count,
 		perPage = 1,
 		page = $bindable(1),
-		el = $bindable(),
+		ref = $bindable(),
 		siblingCount = 1,
 		onPageChange,
 		asChild,
@@ -47,7 +47,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps, pages: rootState.pages, range: rootState.range })}
 {:else}
-	<div bind:this={el} {...mergedProps}>
+	<div bind:this={ref} {...mergedProps}>
 		{@render children?.({ pages: rootState.pages, range: rootState.range })}
 	</div>
 {/if}

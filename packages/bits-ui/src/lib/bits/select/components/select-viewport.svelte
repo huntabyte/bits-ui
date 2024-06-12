@@ -7,7 +7,7 @@
 
 	let {
 		id = useId(),
-		el = $bindable(),
+		ref = $bindable(),
 		asChild,
 		children,
 		child,
@@ -24,7 +24,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<div bind:this={el} {...mergedProps}>
+	<div bind:this={ref} {...mergedProps}>
 		{@render children?.()}
 	</div>
 {/if}

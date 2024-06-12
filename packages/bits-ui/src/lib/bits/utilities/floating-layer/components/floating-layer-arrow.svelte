@@ -4,7 +4,7 @@
 	import { Arrow, type ArrowProps } from "$lib/bits/utilities/arrow/index.js";
 	import { mergeProps, useId } from "$lib/internal/index.js";
 
-	let { id = useId(), el = $bindable(), ...restProps }: ArrowProps = $props();
+	let { id = useId(), ref = $bindable(), ...restProps }: ArrowProps = $props();
 
 	const arrowState = useFloatingArrowState({
 		id: box.with(() => id),
@@ -14,4 +14,4 @@
 	const mergedProps = $derived<any>(mergeProps(restProps, arrowState.props));
 </script>
 
-<Arrow {...mergedProps} bind:el />
+<Arrow {...mergedProps} bind:ref />

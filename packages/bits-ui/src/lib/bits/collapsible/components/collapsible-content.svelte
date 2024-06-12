@@ -8,7 +8,7 @@
 	let {
 		child,
 		asChild,
-		el = $bindable(),
+		ref = $bindable(),
 		forceMount = false,
 		children,
 		id = useId(),
@@ -31,7 +31,7 @@
 				props: mergedProps,
 			})}
 		{:else}
-			<div {...mergedProps} bind:this={el}>
+			<div {...mergedProps} bind:this={ref}>
 				{@render children?.()}
 			</div>
 		{/if}

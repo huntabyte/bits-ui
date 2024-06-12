@@ -14,7 +14,7 @@
 		asChild,
 		child,
 		children,
-		el = $bindable(),
+		ref = $bindable(),
 		loop = true,
 		onInteractOutside = noop,
 		// we need to explicitly pass this prop to the PopperLayer to override
@@ -84,7 +84,7 @@
 		{#if asChild}
 			{@render child?.({ props: finalProps })}
 		{:else}
-			<div {...finalProps} bind:this={el}>
+			<div {...finalProps} bind:this={ref}>
 				{@render children?.()}
 			</div>
 		{/if}

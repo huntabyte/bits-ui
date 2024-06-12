@@ -12,7 +12,7 @@
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {
-		el = $bindable(),
+		ref = $bindable(),
 		id = useId(),
 		onMountAutoFocus = noop,
 		onDestroyAutoFocus = noop,
@@ -74,14 +74,14 @@
 							<SelectContentFloating
 								{...restProps}
 								{...mergedProps}
-								bind:el
+								bind:ref
 								onPlaced={() => (contentState.isPositioned.value = true)}
 							/>
 						{:else}
 							<SelectContentItemAligned
 								{...restProps}
 								{...mergedProps}
-								bind:el
+								bind:ref
 								onPlaced={() => (contentState.isPositioned.value = true)}
 							/>
 						{/if}

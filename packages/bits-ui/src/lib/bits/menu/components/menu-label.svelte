@@ -3,7 +3,7 @@
 	import { useMenuLabel } from "../menu.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
-	let { asChild, children, child, el = $bindable(), ...restProps }: LabelProps = $props();
+	let { asChild, children, child, ref = $bindable(), ...restProps }: LabelProps = $props();
 
 	const labelState = useMenuLabel();
 	const mergedProps = $derived(mergeProps(restProps, labelState.props));
@@ -12,7 +12,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<div {...mergedProps} bind:this={el}>
+	<div {...mergedProps} bind:this={ref}>
 		{@render children?.()}
 	</div>
 {/if}

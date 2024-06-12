@@ -3,7 +3,7 @@
 	import { usePopoverClose } from "../popover.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
-	let { asChild, child, children, el = $bindable(), ...restProps }: CloseProps = $props();
+	let { asChild, child, children, ref = $bindable(), ...restProps }: CloseProps = $props();
 
 	const closeState = usePopoverClose();
 	const mergedProps = $derived(mergeProps(restProps, closeState.props));
@@ -12,7 +12,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<button {...mergedProps} bind:this={el}>
+	<button {...mergedProps} bind:this={ref}>
 		{@render children?.()}
 	</button>
 {/if}

@@ -2,7 +2,7 @@ import { type ReadableBox, type WritableBox, box } from "svelte-toolbelt";
 import { getElemDirection } from "./locale.js";
 import { getDirectionalKeys } from "./getDirectionalKeys.js";
 import { kbd } from "./kbd.js";
-import type { WritableBoxedValues } from "./box.svelte.js";
+import type { ElementRef } from "./types.js";
 import type { Orientation } from "$lib/shared/index.js";
 
 type UseRovingFocusProps = {
@@ -13,7 +13,7 @@ type UseRovingFocusProps = {
 	/**
 	 * The id of the root node
 	 */
-	rootNodeId: ReadableBox<string>;
+	rootNodeRef: ElementRef;
 
 	/**
 	 * Whether to loop through the candidates when reaching the end.
@@ -45,7 +45,7 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 		: box<string | null>(null);
 
 	function getCandidateNodes() {
-		const node = document.getElementById(props.rootNodeId.value);
+		const node = props.rootNodeRef.value;
 		if (!node) return [];
 		return Array.from(
 			node.querySelectorAll<HTMLElement>(`[${props.candidateSelector}]:not([data-disabled])`)
@@ -59,8 +59,8 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 		}
 	}
 
-	function handleKeydown(node: HTMLElement | null, e: KeyboardEvent) {
-		const rootNode = document.getElementById(props.rootNodeId.value);
+	function handleKeydown(node: HTMLElement | null | undefined, e: KeyboardEvent) {
+		const rootNode = props.rootNodeRef.value;
 		if (!rootNode || !node) return;
 
 		const items = getCandidateNodes();
@@ -97,15 +97,14 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 		return itemToFocus;
 	}
 
-	function getTabIndex(node: HTMLElement | null) {
+	function getTabIndex(node: HTMLElement | null | undefined) {
 		const value = $derived.by(() => {
-			if (!node) return -1;
 			const items = getCandidateNodes();
 			const anyActive = currentTabStopId.value !== null;
-			if (!anyActive && items[0] === node) {
+			if (node && !anyActive && items[0] === node) {
 				currentTabStopId.value = node.id;
 				return 0;
-			} else if (node.id === currentTabStopId.value) {
+			} else if (node?.id === currentTabStopId.value) {
 				return 0;
 			}
 

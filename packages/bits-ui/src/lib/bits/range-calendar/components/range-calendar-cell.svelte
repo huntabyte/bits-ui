@@ -23,7 +23,7 @@
 {#if asChild}
 	<slot {attrs} />
 {:else}
-	<td bind:this={el} {...$$restProps} {...attrs}>
+	<td bind:this={ref} {...$$restProps} {...attrs}>
 		<slot {attrs} />
 	</td>
 {/if}

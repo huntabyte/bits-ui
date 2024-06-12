@@ -9,7 +9,7 @@
 		asChild,
 		children,
 		child,
-		el = $bindable(),
+		ref = $bindable(),
 		id = useId(),
 		value = $bindable(""),
 		onValueChange,
@@ -35,6 +35,7 @@
 		loop: box.with(() => loop),
 		activationMode: box.with(() => activationMode),
 		disabled: box.with(() => disabled),
+		ref: box.with(() => ref),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, rootState.props));
@@ -43,7 +44,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<div {...mergedProps} bind:this={el}>
+	<div {...mergedProps} bind:this={ref}>
 		{@render children?.()}
 	</div>
 {/if}

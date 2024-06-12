@@ -10,7 +10,7 @@
 		children,
 		value = 0,
 		max = 100,
-		el = $bindable(),
+		ref = $bindable(),
 		...restProps
 	}: RootProps = $props();
 
@@ -25,7 +25,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<div bind:this={el} {...mergedProps}>
+	<div bind:this={ref} {...mergedProps}>
 		{@render children?.()}
 	</div>
 {/if}

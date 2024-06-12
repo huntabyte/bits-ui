@@ -8,7 +8,7 @@
 		asChild,
 		child,
 		children,
-		el = $bindable(),
+		ref = $bindable(),
 		pressed = $bindable(false),
 		onPressedChange,
 		disabled = false,
@@ -35,7 +35,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps, pressed: toggleState.pressed.value })}
 {:else}
-	<button bind:this={el} {...mergedProps}>
+	<button bind:this={ref} {...mergedProps}>
 		{@render children?.()}
 	</button>
 {/if}

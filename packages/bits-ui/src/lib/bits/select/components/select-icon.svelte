@@ -3,7 +3,7 @@
 	import { useSelectIcon } from "../select.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
-	let { asChild, children, child, el = $bindable(), ...restProps }: IconProps = $props();
+	let { asChild, children, child, ref = $bindable(), ...restProps }: IconProps = $props();
 
 	const iconState = useSelectIcon();
 
@@ -13,7 +13,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<span {...mergedProps} bind:this={el}>
+	<span {...mergedProps} bind:this={ref}>
 		{#if children}
 			{@render children()}
 		{:else}

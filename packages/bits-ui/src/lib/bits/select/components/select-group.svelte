@@ -3,7 +3,7 @@
 	import { useSelectGroup } from "../select.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
-	let { asChild, children, child, el = $bindable(), ...restProps }: GroupProps = $props();
+	let { asChild, children, child, ref = $bindable(), ...restProps }: GroupProps = $props();
 
 	const groupState = useSelectGroup();
 	const mergedProps = $derived(mergeProps(restProps, groupState.props));
@@ -12,7 +12,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<div {...mergedProps} bind:this={el}>
+	<div {...mergedProps} bind:this={ref}>
 		{@render children?.()}
 	</div>
 {/if}

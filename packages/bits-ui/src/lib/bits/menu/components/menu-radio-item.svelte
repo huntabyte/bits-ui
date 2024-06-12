@@ -10,7 +10,7 @@
 		asChild,
 		children,
 		child,
-		el = $bindable(),
+		ref = $bindable(),
 		value,
 		onSelect = noop,
 		id = useId(),
@@ -37,7 +37,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<div {...mergedProps} bind:this={el}>
+	<div {...mergedProps} bind:this={ref}>
 		{@render children?.({ checked: radioItemState.isChecked })}
 	</div>
 {/if}

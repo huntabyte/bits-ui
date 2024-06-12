@@ -11,7 +11,7 @@
 		child,
 		value,
 		disabled = false,
-		el = $bindable(),
+		ref = $bindable(),
 		style = {},
 		...restProps
 	}: ItemProps = $props();
@@ -32,7 +32,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps, checked: itemState.checked })}
 {:else}
-	<button bind:this={el} {...mergedProps}>
+	<button bind:this={ref} {...mergedProps}>
 		{@render children?.({ checked: itemState.checked })}
 	</button>
 {/if}

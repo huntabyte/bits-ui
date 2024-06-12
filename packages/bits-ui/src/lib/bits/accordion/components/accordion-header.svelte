@@ -9,7 +9,7 @@
 		level = 2,
 		children,
 		child,
-		el = $bindable(),
+		ref = $bindable(),
 		...restProps
 	}: AccordionHeaderProps = $props();
 
@@ -23,7 +23,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<div {...mergedProps} bind:this={el}>
+	<div {...mergedProps} bind:this={ref}>
 		{@render children?.()}
 	</div>
 {/if}

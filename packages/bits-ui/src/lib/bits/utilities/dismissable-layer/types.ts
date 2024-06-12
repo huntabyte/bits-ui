@@ -38,6 +38,11 @@ export type DismissableLayerProps = {
 	 * @defaultValue `close`
 	 */
 	interactOutsideBehavior?: InteractOutsideBehaviorType;
+
+	/**
+	 *
+	 */
+	onFocusOutside?: (event: FocusEvent) => void;
 };
 
 export type DismissableLayerImplProps = {

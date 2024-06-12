@@ -29,7 +29,7 @@
 {#if asChild}
 	<slot {builder} />
 {:else}
-	<svelte:element this={level} bind:this={el} use:melt={builder} {...$$restProps}>
+	<svelte:element this={level} bind:this={ref} use:melt={builder} {...$$restProps}>
 		<slot {builder} />
 	</svelte:element>
 {/if}

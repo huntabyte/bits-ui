@@ -3,7 +3,7 @@
 	import { useMenuSeparator } from "../menu.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
-	let { el = $bindable(), asChild, child, children, ...restProps }: SeparatorProps = $props();
+	let { ref = $bindable(), asChild, child, children, ...restProps }: SeparatorProps = $props();
 
 	const separatorState = useMenuSeparator();
 
@@ -13,7 +13,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<div {...mergedProps} bind:this={el}>
+	<div {...mergedProps} bind:this={ref}>
 		{@render children?.()}
 	</div>
 {/if}

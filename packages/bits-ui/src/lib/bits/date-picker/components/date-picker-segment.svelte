@@ -33,7 +33,7 @@
 	<slot {builder} />
 {:else}
 	<div
-		bind:this={el}
+		bind:this={ref}
 		use:melt={builder}
 		{...$$restProps}
 		on:m-click={dispatch}

@@ -13,7 +13,7 @@
 		id = useId(),
 		type = "button",
 		value,
-		el = $bindable(),
+		ref = $bindable(),
 		...restProps
 	}: TriggerProps = $props();
 
@@ -21,6 +21,7 @@
 		id: box.with(() => id),
 		disabled: box.with(() => disabled),
 		value: box.with(() => value),
+		ref: box.with(() => ref),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, triggerState.props, { type }));
@@ -29,7 +30,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<button bind:this={el} {...mergedProps}>
+	<button bind:this={ref} {...mergedProps}>
 		{@render children?.()}
 	</button>
 {/if}

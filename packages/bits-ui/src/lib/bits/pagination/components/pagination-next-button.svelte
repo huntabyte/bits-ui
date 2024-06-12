@@ -9,7 +9,7 @@
 		asChild,
 		child,
 		children,
-		el = $bindable(),
+		ref = $bindable(),
 		type = "button",
 		...restProps
 	}: NextButtonProps = $props();
@@ -25,7 +25,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<button bind:this={el} {...mergedProps}>
+	<button bind:this={ref} {...mergedProps}>
 		{@render children?.()}
 	</button>
 {/if}

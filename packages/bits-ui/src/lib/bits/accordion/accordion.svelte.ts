@@ -1,6 +1,7 @@
 import type { WritableBox } from "svelte-toolbelt";
 import {
 	type Box,
+	type ElementRef,
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
 	afterTick,
@@ -31,6 +32,7 @@ type AccordionBaseStateProps = ReadableBoxedValues<{
 	disabled: boolean;
 	orientation: Orientation;
 	loop: boolean;
+	ref: HTMLElement | null | undefined;
 }>;
 
 class AccordionBaseState {
@@ -40,15 +42,17 @@ class AccordionBaseState {
 	#loop: AccordionBaseStateProps["loop"];
 	orientation: AccordionBaseStateProps["orientation"];
 	rovingFocusGroup: UseRovingFocusReturn;
+	ref: AccordionBaseStateProps["ref"];
 
 	constructor(props: AccordionBaseStateProps) {
 		this.id = props.id;
+		this.ref = props.ref;
 		this.disabled = props.disabled;
 		this.node = useNodeById(this.id);
 		this.orientation = props.orientation;
 		this.#loop = props.loop;
 		this.rovingFocusGroup = useRovingFocus({
-			rootNodeId: this.id,
+			rootNodeRef: this.ref,
 			candidateSelector: TRIGGER_ATTR,
 			loop: this.#loop,
 			orientation: this.orientation,
@@ -356,6 +360,7 @@ type InitAccordionProps = {
 	disabled: boolean;
 	orientation: Orientation;
 	loop: boolean;
+	ref: HTMLElement | null | undefined;
 }>;
 
 const [setAccordionRootContext, getAccordionRootContext] =

@@ -20,7 +20,6 @@ import {
 import { addEventListener } from "$lib/internal/events.js";
 import type { AnyFn } from "$lib/internal/types.js";
 import { executeCallbacks } from "$lib/internal/callbacks.js";
-import { useNodeById } from "$lib/internal/useNodeById.svelte.js";
 import { useTypeahead } from "$lib/internal/useTypeahead.svelte.js";
 import { onDestroyEffect } from "$lib/internal/onDestroyEffect.svelte.js";
 import { isElement, isHTMLElement } from "$lib/internal/is.js";
@@ -129,7 +128,7 @@ class MenuMenuState {
 	root: MenuRootState;
 	open: MenuMenuStateProps["open"];
 	contentId = box.with<string>(() => "");
-	triggerId = box.with<string>(() => "");
+	triggerRef = box.with<HTMLElement | undefined>(() => undefined);
 	parentMenu?: MenuMenuState;
 
 	constructor(props: MenuMenuStateProps, root: MenuRootState, parentMenu?: MenuMenuState) {
@@ -361,7 +360,7 @@ class MenuContentState {
 	createSubTrigger(props: MenuItemSharedStateProps) {
 		const item = new MenuItemSharedState(props, this);
 		const submenu = getMenuMenuContext();
-		submenu.triggerId = props.id;
+		submenu.triggerRef = props.ref;
 		return new MenuSubTriggerState(item, this, submenu);
 	}
 }
@@ -369,6 +368,7 @@ class MenuContentState {
 type MenuItemSharedStateProps = ReadableBoxedValues<{
 	disabled: boolean;
 	id: string;
+	ref: HTMLElement | undefined;
 }>;
 
 class MenuItemSharedState {
@@ -376,11 +376,13 @@ class MenuItemSharedState {
 	id: MenuItemSharedStateProps["id"];
 	disabled: MenuItemSharedStateProps["disabled"];
 	#isFocused = $state(false);
+	ref: MenuItemSharedStateProps["ref"];
 
 	constructor(props: MenuItemSharedStateProps, content: MenuContentState) {
 		this.content = content;
 		this.id = props.id;
 		this.disabled = props.disabled;
+		this.ref = props.ref;
 	}
 
 	#onpointermove = (e: PointerEvent) => {
@@ -520,7 +522,7 @@ class MenuSubTriggerState {
 		this.#item = item;
 		this.#content = content;
 		this.#submenu = submenu;
-		this.#submenu.triggerId = item.id;
+		this.#submenu.triggerRef = item.ref;
 
 		onDestroyEffect(() => {
 			this.#clearOpenTimer();
@@ -765,15 +767,19 @@ class MenuRadioItemState {
 type DropdownMenuTriggerStateProps = ReadableBoxedValues<{
 	id: string;
 	disabled: boolean;
+	ref: HTMLElement | undefined;
 }>;
 
 class DropdownMenuTriggerState {
 	#parentMenu: MenuMenuState;
 	#disabled: DropdownMenuTriggerStateProps["disabled"];
+	#ref: DropdownMenuTriggerStateProps["ref"];
 	constructor(props: DropdownMenuTriggerStateProps, parentMenu: MenuMenuState) {
 		this.#parentMenu = parentMenu;
 		this.#disabled = props.disabled;
-		this.#parentMenu.triggerId = props.id;
+		this.#parentMenu.triggerRef = props.ref;
+		this.#ref = props.ref;
+		this.#ref = props.ref;
 	}
 
 	#onpointerdown = (e: PointerEvent) => {
@@ -807,7 +813,7 @@ class DropdownMenuTriggerState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#parentMenu.triggerId.value,
+				id: this.#ref.value?.id,
 				disabled: this.#disabled.value,
 				"aria-haspopup": "menu",
 				"aria-expanded": getAriaExpanded(this.#parentMenu.open.value),

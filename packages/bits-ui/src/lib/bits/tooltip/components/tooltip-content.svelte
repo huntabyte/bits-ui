@@ -11,7 +11,7 @@
 		children,
 		child,
 		id = useId(),
-		el = $bindable(),
+		ref = $bindable(),
 		side = "top",
 		sideOffset = 0,
 		align = "center",
@@ -68,7 +68,7 @@
 		{#if asChild}
 			{@render child?.({ props: mergedProps })}
 		{:else}
-			<div {...mergedProps} bind:this={el}>
+			<div {...mergedProps} bind:this={ref}>
 				{@render children?.()}
 			</div>
 		{/if}

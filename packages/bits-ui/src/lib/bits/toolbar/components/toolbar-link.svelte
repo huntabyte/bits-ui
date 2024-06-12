@@ -10,7 +10,7 @@
 		children,
 		href,
 		child,
-		el = $bindable(),
+		ref = $bindable(),
 		id = useId(),
 		...restProps
 	}: LinkProps = $props();
@@ -25,7 +25,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<a {href} {...mergedProps} bind:this={el}>
+	<a {href} {...mergedProps} bind:this={ref}>
 		{@render children?.()}
 	</a>
 {/if}

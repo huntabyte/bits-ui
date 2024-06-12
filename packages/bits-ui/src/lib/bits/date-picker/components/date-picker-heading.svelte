@@ -22,7 +22,7 @@
 {#if asChild}
 	<slot {builder} headingValue={$headingValue} />
 {:else}
-	<div bind:this={el} use:melt={builder} {...$$restProps}>
+	<div bind:this={ref} use:melt={builder} {...$$restProps}>
 		<slot {builder} headingValue={$headingValue}>
 			{$headingValue}
 		</slot>

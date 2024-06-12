@@ -10,6 +10,7 @@ import type {
 	SVGAttributes,
 } from "svelte/elements";
 import type { TransitionConfig } from "svelte/transition";
+import type { Box } from "./box.svelte.js";
 import type { StyleProperties } from "$lib/shared/index.js";
 
 export type ObjectVariation<T> = T extends object ? T : never;
@@ -133,27 +134,29 @@ export type PrimitiveLabelAttributes = Primitive<HTMLLabelAttributes>;
 export type PrimitiveSVGAttributes = Primitive<SVGAttributes<SVGElement>>;
 export type PrimitiveAnchorAttributes = Primitive<HTMLAnchorAttributes>;
 
-export type AsChildProps<Props, SnippetProps, El> = {
+export type AsChildProps<Props, SnippetProps, Ref> = {
 	child: Snippet<[SnippetProps & { props: Record<string, unknown> }]>;
 	children?: never;
 	asChild: true;
-	el?: El;
+	ref?: Ref;
 	style?: StyleProperties;
 } & Omit<Props, "children" | "asChild">;
 
-export type DefaultProps<Props, El> = {
+export type DefaultProps<Props, Ref> = {
 	asChild?: never;
 	child?: never;
 	children?: Snippet;
-	el?: El;
+	ref?: Ref;
 	style?: StyleProperties;
 } & Omit<Props, "child" | "asChild">;
+
+export type ElementRef = Box<HTMLElement | undefined>;
 
 export type WithAsChild<
 	Props,
 	SnippetProps extends Record<PropertyKey, unknown> = {},
-	El = HTMLElement,
-> = DefaultProps<Props, El> | AsChildProps<Props, SnippetProps, El>;
+	Ref = HTMLElement,
+> = DefaultProps<Props, Ref> | AsChildProps<Props, SnippetProps, Ref>;
 
 export type WithChildren<Props> = Props & {
 	children?: Snippet;
@@ -176,3 +179,5 @@ export type Arrayable<T> = T[] | T;
 export type Fn = () => void;
 // eslint-disable-next-line ts/no-explicit-any
 export type AnyFn = (...args: any[]) => any;
+
+export type ValueOf<T> = T[keyof T];

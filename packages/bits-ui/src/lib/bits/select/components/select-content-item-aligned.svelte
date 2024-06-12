@@ -9,7 +9,7 @@
 		child,
 		children,
 		asChild,
-		el = $bindable(),
+		ref = $bindable(),
 		preventScroll = true,
 		onPlaced,
 		...restProps
@@ -32,7 +32,7 @@
 	{#if asChild}
 		{@render child?.({ props: mergedProps })}
 	{:else}
-		<div bind:this={el} {...mergedProps}>
+		<div bind:this={ref} {...mergedProps}>
 			{@render children?.()}
 		</div>
 	{/if}
