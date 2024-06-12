@@ -9,26 +9,26 @@
 		asChild,
 		child,
 		children,
-		el = $bindable(),
+		ref = $bindable(),
 		id = useId(),
 		orientation = "horizontal",
 		loop = true,
 		...restProps
 	}: RootProps = $props();
 
-	const state = useToolbarRoot({
+	const rootState = useToolbarRoot({
 		id: box.with(() => id),
 		orientation: box.with(() => orientation),
 		loop: box.with(() => loop),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, rootState.props));
 </script>
 
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<div {...mergedProps} bind:this={el}>
+	<div {...mergedProps} bind:this={ref}>
 		{@render children?.()}
 	</div>
 {/if}

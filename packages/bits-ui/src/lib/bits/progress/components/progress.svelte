@@ -10,22 +10,22 @@
 		children,
 		value = 0,
 		max = 100,
-		el = $bindable(),
+		ref = $bindable(),
 		...restProps
 	}: RootProps = $props();
 
-	const state = useProgressRootState({
+	const rootState = useProgressRootState({
 		value: box.with(() => value),
 		max: box.with(() => max),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, rootState.props));
 </script>
 
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<div bind:this={el} {...mergedProps}>
+	<div bind:this={ref} {...mergedProps}>
 		{@render children?.()}
 	</div>
 {/if}

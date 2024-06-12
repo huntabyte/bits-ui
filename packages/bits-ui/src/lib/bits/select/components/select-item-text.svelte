@@ -8,22 +8,22 @@
 
 	let {
 		id = useId(),
-		el = $bindable(),
+		ref = $bindable(),
 		asChild,
 		children,
 		child,
 		...restProps
 	}: ItemTextProps = $props();
 
-	const state = useSelectItemText({
+	const itemTextState = useSelectItemText({
 		id: box.with(() => id),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, itemTextState.props));
 </script>
 
-{#if state.item.isSelected && state.item.root.valueId.value && !state.item.root.valueNodeHasChildren.value}
-	<Portal to={`#${state.item.root.valueId.value}`}>
+{#if itemTextState.item.isSelected && itemTextState.item.root.valueId.value && !itemTextState.item.root.valueNodeHasChildren.value}
+	<Portal to={`#${itemTextState.item.root.valueId.value}`}>
 		{@render children?.()}
 	</Portal>
 {/if}
@@ -31,7 +31,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<span {...mergedProps} bind:this={el}>
+	<span {...mergedProps} bind:this={ref}>
 		{@render children?.()}
 	</span>
 {/if}

@@ -14,4 +14,4 @@ description: Displays a menu of items that users can select from when triggered.
 
 </ComponentPreview>
 
-<!-- <APISection {schemas} /> -->
+<APISection {schemas} />

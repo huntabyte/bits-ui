@@ -14,7 +14,7 @@
 		asChild,
 		child,
 		children,
-		el = $bindable(),
+		ref = $bindable(),
 		loop = true,
 		onInteractOutside = noop,
 		// we need to explicitly pass this prop to the PopperLayer to override
@@ -25,24 +25,24 @@
 		...restProps
 	}: ContentProps = $props();
 
-	const state = useMenuContent({
+	const contentState = useMenuContent({
 		id: box.with(() => id),
 		loop: box.with(() => loop),
 	});
 
 	function handleInteractOutsideStart(e: InteractOutsideEvent) {
 		if (!isElement(e.target)) return;
-		if (e.target.id === state.parentMenu.triggerId.value) {
+		if (e.target.id === contentState.parentMenu.triggerId.value) {
 			e.preventDefault();
 			return;
 		}
-		if (e.target.closest(`#${state.parentMenu.triggerId.value}`)) {
+		if (e.target.closest(`#${contentState.parentMenu.triggerId.value}`)) {
 			e.preventDefault();
 		}
 	}
 
 	const mergedProps = $derived(
-		mergeProps(restProps, state.props, {
+		mergeProps(restProps, contentState.props, {
 			onInteractOutsideStart: handleInteractOutsideStart,
 			style: {
 				outline: "none",
@@ -64,17 +64,17 @@
 	side="right"
 	sideOffset={2}
 	align="start"
-	present={state.parentMenu.open.value || forceMount}
+	present={contentState.parentMenu.open.value || forceMount}
 	{onInteractOutsideStart}
 	onInteractOutside={(e) => {
 		onInteractOutside(e);
 		if (e.defaultPrevented) return;
-		state.parentMenu.onClose();
+		contentState.parentMenu.onClose();
 	}}
 	onEscapeKeydown={(e) => {
 		// TODO: users should be able to cancel this
 		onEscapeKeydown(e);
-		state.parentMenu.onClose();
+		contentState.parentMenu.onClose();
 	}}
 	trapped
 	{loop}
@@ -84,7 +84,7 @@
 		{#if asChild}
 			{@render child?.({ props: finalProps })}
 		{:else}
-			<div {...finalProps} bind:this={el}>
+			<div {...finalProps} bind:this={ref}>
 				{@render children?.()}
 			</div>
 		{/if}

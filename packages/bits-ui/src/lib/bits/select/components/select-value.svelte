@@ -8,26 +8,26 @@
 		asChild,
 		children,
 		child,
-		el = $bindable(),
+		ref = $bindable(),
 		...restProps
 	}: ValueProps = $props();
 
-	const state = useSelectValue();
+	const valueState = useSelectValue();
 
 	if (children) {
-		state.root.valueNodeHasChildren.value = true;
+		valueState.root.valueNodeHasChildren.value = true;
 	}
 
 	const mergedProps = $derived(
-		mergeProps(restProps, state.props, { style: { pointerEvents: "none" } })
+		mergeProps(restProps, valueState.props, { style: { pointerEvents: "none" } })
 	);
 </script>
 
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<span {...mergedProps} bind:this={el}>
-		{#if state.showPlaceholder}
+	<span {...mergedProps} bind:this={ref}>
+		{#if valueState.showPlaceholder}
 			{placeholder}
 		{:else}
 			{@render children?.()}

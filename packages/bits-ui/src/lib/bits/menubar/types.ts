@@ -1,51 +1,59 @@
-import type { CreateMenubarProps } from "@melt-ui/svelte";
-import type { DOMElement, Expand, HTMLDivAttributes, OmitIds } from "$lib/internal/index.js";
+import type { Snippet } from "svelte";
+import type { MenuContentProps, MenuContentPropsWithoutHTML } from "../menu/types.js";
+import type {
+	OnChangeFn,
+	PrimitiveButtonAttributes,
+	PrimitiveDivAttributes,
+	WithAsChild,
+	Without,
+} from "$lib/internal/types.js";
+import type { Direction } from "$lib/shared/index.js";
 
-export type {
-	MenuArrowProps as MenubarArrowProps,
-	MenuCheckboxIndicatorProps as MenubarCheckboxIndicatorProps,
-	MenuCheckboxItemEvents as MenubarCheckboxItemEvents,
-	MenuCheckboxItemProps as MenubarCheckboxItemProps,
-	MenuContentEvents as MenubarContentEvents,
-	MenuContentProps as MenubarContentProps,
-	MenuGroupProps as MenubarGroupProps,
-	MenuItemEvents as MenubarItemEvents,
-	MenuItemProps as MenubarItemProps,
-	MenuLabelProps as MenubarLabelProps,
-	MenuProps as MenubarMenuProps,
-	MenuRadioGroupProps as MenubarRadioGroupProps,
-	MenuRadioIndicatorProps as MenubarRadioIndicatorProps,
-	MenuRadioItemEvents as MenubarRadioItemEvents,
-	MenuRadioItemProps as MenubarRadioItemProps,
-	MenuSeparatorProps as MenubarSeparatorProps,
-	MenuSubContentEvents as MenubarSubContentEvents,
-	MenuSubContentProps as MenubarSubContentProps,
-	MenuSubProps as MenubarSubProps,
-	MenuSubTriggerEvents as MenubarSubTriggerEvents,
-	MenuSubTriggerProps as MenubarSubTriggerProps,
-	MenubarTriggerEvents,
-	MenubarTriggerProps,
-} from "$lib/bits/menu/types.js";
+export type MenubarRootPropsWithoutHTML = WithAsChild<{
+	/**
+	 * The reading direction of the menubar.
+	 */
+	dir?: Direction;
 
-export type {
-	MenuTriggerPropsWithoutHTML as MenubarTriggerPropsWithoutHTML,
-	MenuArrowPropsWithoutHTML as MenubarArrowPropsWithoutHTML,
-	MenuCheckboxIndicatorPropsWithoutHTML as MenubarCheckboxIndicatorPropsWithoutHTML,
-	MenuCheckboxItemPropsWithoutHTML as MenubarCheckboxItemPropsWithoutHTML,
-	MenuContentPropsWithoutHTML as MenubarContentPropsWithoutHTML,
-	MenuGroupPropsWithoutHTML as MenubarGroupPropsWithoutHTML,
-	MenuItemPropsWithoutHTML as MenubarItemPropsWithoutHTML,
-	MenuLabelPropsWithoutHTML as MenubarLabelPropsWithoutHTML,
-	MenuPropsWithoutHTML as MenubarMenuPropsWithoutHTML,
-	MenuRadioGroupPropsWithoutHTML as MenubarRadioGroupPropsWithoutHTML,
-	MenuRadioIndicatorPropsWithoutHTML as MenubarRadioIndicatorPropsWithoutHTML,
-	MenuRadioItemPropsWithoutHTML as MenubarRadioItemPropsWithoutHTML,
-	MenuSeparatorPropsWithoutHTML as MenubarSeparatorPropsWithoutHTML,
-	MenuSubContentPropsWithoutHTML as MenubarSubContentPropsWithoutHTML,
-	MenuSubPropsWithoutHTML as MenubarSubPropsWithoutHTML,
-	MenuSubTriggerPropsWithoutHTML as MenubarSubTriggerPropsWithoutHTML,
-} from "$lib/bits/menu/types.js";
+	/**
+	 * When `true`, the roving focus will loop back to the first menu item when the last
+	 * menu item is reached and vice verse.
+	 */
+	loop?: boolean;
 
-export type MenubarPropsWithoutHTML = Expand<OmitIds<CreateMenubarProps> & DOMElement>;
+	/**
+	 * The 'value' assigned to the currently active menu in the menubar.
+	 */
+	value?: string;
 
-export type MenubarProps = MenubarPropsWithoutHTML & HTMLDivAttributes;
+	/**
+	 * A callback that is called when the active menu changes.
+	 */
+	onValueChange?: OnChangeFn<string>;
+}>;
+
+export type MenubarRootProps = MenubarRootPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, MenubarRootPropsWithoutHTML>;
+
+export type MenubarMenuPropsWithoutHTML = {
+	/**
+	 * The `value` assigned to the menu. Used to programmatically control the menu's open state
+	 * within the menubar.
+	 */
+	value?: string;
+
+	children?: Snippet;
+};
+
+export type MenubarMenuProps = MenubarMenuPropsWithoutHTML;
+
+export type MenubarTriggerPropsWithoutHTML = WithAsChild<{
+	disabled?: boolean;
+}>;
+
+export type MenubarTriggerProps = MenubarTriggerPropsWithoutHTML &
+	Without<PrimitiveButtonAttributes, MenubarTriggerPropsWithoutHTML>;
+
+export type MenubarContentPropsWithoutHTML = MenuContentPropsWithoutHTML;
+
+export type MenubarContentProps = MenuContentProps;

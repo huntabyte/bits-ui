@@ -6,22 +6,22 @@
 	import { useId } from "$lib/internal/useId.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
-	let { id = useId(), el = $bindable(), ...restProps }: ScrollUpButtonProps = $props();
+	let { id = useId(), ref = $bindable(), ...restProps }: ScrollUpButtonProps = $props();
 
 	const mounted = box(false);
 
-	const state = useSelectScrollDownButton({
+	const scrollDownButtonState = useSelectScrollDownButton({
 		id: box.with(() => id),
 		mounted: box.from(mounted),
 	});
 
 	// eslint-disable-next-line unused-imports/no-unused-vars, ts/no-unused-vars
 	const { asChild, child, children, ...restWithoutChildren } = restProps;
-	const mergedProps = $derived(mergeProps(restWithoutChildren, state.props));
+	const mergedProps = $derived(mergeProps(restWithoutChildren, scrollDownButtonState.props));
 	// eslint-disable-next-line unused-imports/no-unused-vars, ts/no-unused-vars
 	const { style, ...restWithoutStyle } = restProps;
 </script>
 
-{#if state.canScrollDown}
-	<SelectScrollDownButtonMounted bind:el {mounted} {...restWithoutStyle} {...mergedProps} />
+{#if scrollDownButtonState.canScrollDown}
+	<SelectScrollDownButtonMounted bind:ref {mounted} {...restWithoutStyle} {...mergedProps} />
 {/if}

@@ -13,23 +13,23 @@
 		id = useId(),
 		type = "button",
 		value,
-		el = $bindable(),
+		ref = $bindable(),
 		...restProps
 	}: TriggerProps = $props();
 
-	const state = useTabsTrigger({
+	const triggerState = useTabsTrigger({
 		id: box.with(() => id),
 		disabled: box.with(() => disabled),
 		value: box.with(() => value),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props, { type }));
+	const mergedProps = $derived(mergeProps(restProps, triggerState.props, { type }));
 </script>
 
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<button bind:this={el} {...mergedProps}>
+	<button bind:this={ref} {...mergedProps}>
 		{@render children?.()}
 	</button>
 {/if}

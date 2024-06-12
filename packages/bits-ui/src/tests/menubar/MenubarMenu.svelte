@@ -10,10 +10,10 @@
 </script>
 
 <script lang="ts">
-	export let id: string;
+	let { id, ...restProps }: { id: string } = $props();
 </script>
 
-<Menubar.Menu {...$$restProps}>
+<Menubar.Menu {...restProps}>
 	<Menubar.Trigger data-testid="{id}-trigger">open</Menubar.Trigger>
 	<Menubar.Content data-testid="{id}-content">
 		<Menubar.Separator data-testid="{id}-separator" />
@@ -33,34 +33,42 @@
 					<span>Email</span>
 				</Menubar.Item>
 				<Menubar.CheckboxItem data-testid="{id}-sub-checkbox-item">
-					<Menubar.CheckboxIndicator data-testid="{id}-sub-checkbox-indicator">
-						checked
-					</Menubar.CheckboxIndicator>
-					sub checkbox
+					{#snippet children({ checked })}
+						{#if checked}
+							<span data-testid="{id}-sub-checkbox-indicator"> checked </span>
+						{/if}
+						sub checkbox
+					{/snippet}
 				</Menubar.CheckboxItem>
 			</Menubar.SubContent>
 		</Menubar.Sub>
 		<Menubar.Item disabled data-testid="{id}-disabled-item">disabled item</Menubar.Item>
 		<Menubar.Item disabled data-testid="{id}-disabled-item-2">disabled item 2</Menubar.Item>
 		<Menubar.CheckboxItem data-testid="{id}-checkbox-item">
-			<Menubar.CheckboxIndicator data-testid="{id}-checkbox-indicator">
-				checked
-			</Menubar.CheckboxIndicator>
-			Checkbox Item
+			{#snippet children({ checked })}
+				{#if checked}
+					<span data-testid="{id}-checkbox-indicator"> checked </span>
+				{/if}
+				Checkbox Item
+			{/snippet}
 		</Menubar.CheckboxItem>
 		<Menubar.Item data-testid="{id}-item-2">item 2</Menubar.Item>
 		<Menubar.RadioGroup data-testid="{id}-radio-group">
 			<Menubar.RadioItem value="1" data-testid="{id}-radio-item">
-				<Menubar.RadioIndicator>
-					<span data-testid="{id}-radio-indicator-1"> checked </span>
-				</Menubar.RadioIndicator>
-				<span>Radio Item 1</span>
+				{#snippet children({ checked })}
+					{#if checked}
+						<span data-testid="{id}-radio-indicator-1"> checked </span>
+					{/if}
+					<span>Radio Item 1</span>
+				{/snippet}
 			</Menubar.RadioItem>
 			<Menubar.RadioItem value="2" data-testid="{id}-radio-item-2">
-				<Menubar.RadioIndicator>
-					<span data-testid="{id}-radio-indicator-2"> checked </span>
-				</Menubar.RadioIndicator>
-				<span>Radio Item 2</span>
+				{#snippet children({ checked })}
+					{#if checked}
+						<span data-testid="{id}-radio-indicator-2"> checked </span>
+					{/if}
+					<span>Radio Item 2</span>
+				{/snippet}
 			</Menubar.RadioItem>
 		</Menubar.RadioGroup>
 	</Menubar.Content>

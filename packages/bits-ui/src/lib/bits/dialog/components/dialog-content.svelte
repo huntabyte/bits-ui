@@ -17,7 +17,7 @@
 		asChild,
 		children,
 		child,
-		el = $bindable(),
+		ref = $bindable(),
 		forceMount = false,
 		onDestroyAutoFocus = noop,
 		onEscapeKeydown = noop,
@@ -25,14 +25,14 @@
 		...restProps
 	}: ContentProps = $props();
 
-	const state = useDialogContent({
+	const contentState = useDialogContent({
 		id: box.with(() => id),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, contentState.props));
 </script>
 
-<PresenceLayer {...mergedProps} present={state.root.open.value || forceMount}>
+<PresenceLayer {...mergedProps} present={contentState.root.open.value || forceMount}>
 	{#snippet presence({ present })}
 		<ScrollLock {...mergedProps} />
 		<FocusScope
@@ -42,7 +42,7 @@
 			onDestroyAutoFocus={(e) => {
 				onDestroyAutoFocus(e);
 				if (e.defaultPrevented) return;
-				state.root.triggerNode?.value?.focus();
+				contentState.root.triggerNode?.value?.focus();
 			}}
 		>
 			{#snippet focusScope({ props: focusScopeProps })}
@@ -51,7 +51,7 @@
 					enabled={present.value}
 					onEscapeKeydown={(e) => {
 						onEscapeKeydown(e);
-						state.root.closeDialog();
+						contentState.root.closeDialog();
 					}}
 				>
 					<DismissableLayer
@@ -60,7 +60,7 @@
 						onInteractOutside={(e) => {
 							onInteractOutside(e);
 							if (e.defaultPrevented) return;
-							state.root.closeDialog();
+							contentState.root.closeDialog();
 						}}
 					>
 						<TextSelectionLayer {...mergedProps} enabled={present.value}>
@@ -78,7 +78,7 @@
 											pointerEvents: "auto",
 										},
 									})}
-									bind:this={el}
+									bind:this={ref}
 								>
 									{@render children?.()}
 								</div>

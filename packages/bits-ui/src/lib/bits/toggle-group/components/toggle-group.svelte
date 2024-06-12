@@ -9,7 +9,7 @@
 		asChild,
 		child,
 		children,
-		el = $bindable(),
+		ref = $bindable(),
 		id = useId(),
 		value = $bindable(),
 		onValueChange,
@@ -23,7 +23,7 @@
 
 	value === undefined && (value = type === "single" ? "" : []);
 
-	const state = useToggleGroupRoot({
+	const rootState = useToggleGroupRoot({
 		id: box.with(() => id),
 		value: box.with(
 			() => value!,
@@ -39,13 +39,13 @@
 		type,
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, rootState.props));
 </script>
 
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<div bind:this={el} {...mergedProps}>
+	<div bind:this={ref} {...mergedProps}>
 		{@render children?.()}
 	</div>
 {/if}

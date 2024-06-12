@@ -31,6 +31,7 @@ type AccordionBaseStateProps = ReadableBoxedValues<{
 	disabled: boolean;
 	orientation: Orientation;
 	loop: boolean;
+	ref: HTMLElement | null | undefined;
 }>;
 
 class AccordionBaseState {
@@ -48,7 +49,7 @@ class AccordionBaseState {
 		this.orientation = props.orientation;
 		this.#loop = props.loop;
 		this.rovingFocusGroup = useRovingFocus({
-			rootNode: this.node,
+			rootNodeId: this.id,
 			candidateSelector: TRIGGER_ATTR,
 			loop: this.#loop,
 			orientation: this.orientation,
@@ -356,6 +357,7 @@ type InitAccordionProps = {
 	disabled: boolean;
 	orientation: Orientation;
 	loop: boolean;
+	ref: HTMLElement | null | undefined;
 }>;
 
 const [setAccordionRootContext, getAccordionRootContext] =

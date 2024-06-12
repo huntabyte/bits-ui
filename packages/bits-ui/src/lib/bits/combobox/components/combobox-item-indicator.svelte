@@ -14,7 +14,7 @@
 {#if asChild}
 	<slot {attrs} isSelected={$isSelected(value)} />
 {:else}
-	<div bind:this={el} {...$$restProps} {...attrs}>
+	<div bind:this={ref} {...$$restProps} {...attrs}>
 		{#if $isSelected(value)}
 			<slot {attrs} isSelected={$isSelected(value)} />
 		{/if}

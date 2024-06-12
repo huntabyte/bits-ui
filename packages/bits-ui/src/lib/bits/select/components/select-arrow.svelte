@@ -4,11 +4,11 @@
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
-	let { el = $bindable(), ...restProps }: ArrowProps = $props();
+	let { ref = $bindable(), ...restProps }: ArrowProps = $props();
 
-	const state = useSelectArrow();
+	const arrowState = useSelectArrow();
 
-	const mergedProps = $derived(mergeProps(restProps, state.props as any));
+	const mergedProps = $derived(mergeProps(restProps, arrowState.props as any));
 </script>
 
-<FloatingLayer.Arrow bind:el {...mergedProps} />
+<FloatingLayer.Arrow bind:ref {...mergedProps} />

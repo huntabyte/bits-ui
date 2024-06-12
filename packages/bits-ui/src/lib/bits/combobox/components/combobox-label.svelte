@@ -22,7 +22,7 @@
 {#if asChild}
 	<slot {builder} />
 {:else}
-	<label bind:this={el} use:melt={builder} {...$$restProps} for={builder.id}>
+	<label bind:this={ref} use:melt={builder} {...$$restProps} for={builder.id}>
 		<slot />
 	</label>
 {/if}

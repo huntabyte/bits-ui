@@ -52,7 +52,7 @@
 {#if asChild}
 	<slot {builder} ticks={$ticks} thumbs={$thumbs} />
 {:else}
-	<span bind:this={el} use:melt={builder} {...$$restProps}>
+	<span bind:this={ref} use:melt={builder} {...$$restProps}>
 		<slot {builder} ticks={$ticks} thumbs={$thumbs} />
 	</span>
 {/if}

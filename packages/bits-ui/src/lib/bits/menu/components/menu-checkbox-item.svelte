@@ -10,7 +10,7 @@
 		asChild,
 		child,
 		children,
-		el = $bindable(),
+		ref = $bindable(),
 		checked = $bindable(false),
 		id = useId(),
 		onCheckedChange = noop,
@@ -19,7 +19,7 @@
 		...restProps
 	}: CheckboxItemProps = $props();
 
-	const state = useMenuCheckboxItem({
+	const checkboxItemState = useMenuCheckboxItem({
 		checked: box.with(
 			() => checked,
 			(v) => {
@@ -37,16 +37,16 @@
 	function handleSelect(e: Event) {
 		onSelect(e);
 		if (e.defaultPrevented) return;
-		state.toggleChecked();
+		checkboxItemState.toggleChecked();
 	}
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, checkboxItemState.props));
 </script>
 
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<div {...mergedProps} bind:this={el}>
+	<div {...mergedProps} bind:this={ref}>
 		{@render children?.({ checked })}
 	</div>
 {/if}

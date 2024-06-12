@@ -27,7 +27,7 @@
 	<slot {builder} {placeholder} />
 {:else}
 	<input
-		bind:this={el}
+		bind:this={ref}
 		use:melt={builder}
 		{...$$restProps}
 		{placeholder}

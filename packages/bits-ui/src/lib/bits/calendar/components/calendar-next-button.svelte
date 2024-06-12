@@ -26,7 +26,7 @@
 {#if asChild}
 	<slot {builder} />
 {:else}
-	<button bind:this={el} use:melt={builder} type="button" {...$$restProps} on:m-click={dispatch}>
+	<button bind:this={ref} use:melt={builder} type="button" {...$$restProps} on:m-click={dispatch}>
 		<slot {builder} />
 	</button>
 {/if}

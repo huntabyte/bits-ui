@@ -26,7 +26,7 @@
 	<slot {builder} />
 {:else}
 	<input
-		bind:this={el}
+		bind:this={ref}
 		use:melt={builder}
 		{...$$restProps}
 		on:m-keydown={dispatch}

@@ -13,14 +13,17 @@
 		child,
 		align = "start",
 		collisionPadding = CONTENT_MARGIN,
-		el = $bindable(),
+		ref = $bindable(),
 		enabled = false,
 		...restProps
-	}: WithoutChildren<PopperLayerImplProps> & WithAsChild<ContentProps> = $props();
+	}: WithoutChildren<PopperLayerImplProps> &
+		WithAsChild<ContentProps> & { enabled: boolean } = $props();
 
-	const state = useSelectFloatingPosition();
+	const contentFloatingState = useSelectFloatingPosition();
 
-	const mergedProps = $derived(mergeProps(restProps, state.content.props, state.props));
+	const mergedProps = $derived(
+		mergeProps(restProps, contentFloatingState.content.props, contentFloatingState.props)
+	);
 </script>
 
 <FloatingLayer.Content {...restProps} {enabled} {align} {collisionPadding}>
@@ -29,7 +32,7 @@
 		{#if asChild}
 			{@render child?.({ props: finalProps })}
 		{:else}
-			<div {...finalProps} bind:this={el}>
+			<div {...finalProps} bind:this={ref}>
 				{@render children?.()}
 			</div>
 		{/if}

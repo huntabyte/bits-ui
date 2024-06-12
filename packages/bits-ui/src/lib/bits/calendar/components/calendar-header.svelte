@@ -14,7 +14,7 @@
 {#if asChild}
 	<slot {attrs} />
 {:else}
-	<header bind:this={el} {...$$restProps} {...attrs}>
+	<header bind:this={ref} {...$$restProps} {...attrs}>
 		<slot {attrs} />
 	</header>
 {/if}

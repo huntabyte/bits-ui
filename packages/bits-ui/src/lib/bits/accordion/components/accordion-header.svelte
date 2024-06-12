@@ -9,21 +9,21 @@
 		level = 2,
 		children,
 		child,
-		el = $bindable(),
+		ref = $bindable(),
 		...restProps
 	}: AccordionHeaderProps = $props();
 
-	const state = useAccordionHeader({
+	const headerState = useAccordionHeader({
 		level: box.with(() => level),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, headerState.props));
 </script>
 
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<div {...mergedProps} bind:this={el}>
+	<div {...mergedProps} bind:this={ref}>
 		{@render children?.()}
 	</div>
 {/if}

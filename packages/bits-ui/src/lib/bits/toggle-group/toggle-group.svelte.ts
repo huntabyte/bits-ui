@@ -42,7 +42,7 @@ class ToggleGroupBaseState {
 		this.orientation = props.orientation;
 		this.rovingFocusGroup = useRovingFocus({
 			candidateSelector: ITEM_ATTR,
-			rootNode: this.node,
+			rootNodeId: this.id,
 			loop: this.loop,
 			orientation: this.orientation,
 		});

@@ -8,22 +8,22 @@
 	let {
 		child,
 		asChild,
-		el = $bindable(),
+		ref = $bindable(),
 		id = useId(),
 		forceMount = false,
 		children,
 		...restProps
 	}: AccordionContentProps = $props();
 
-	const state = useAccordionContent({
+	const contentState = useAccordionContent({
 		forceMount: box.with(() => forceMount),
 		id: box.with(() => id),
 	});
 </script>
 
-<PresenceLayer forceMount={true} present={state.present} {id}>
+<PresenceLayer forceMount={true} present={contentState.present} {id}>
 	{#snippet presence({ present })}
-		{@const mergedProps = mergeProps(restProps, state.props, {
+		{@const mergedProps = mergeProps(restProps, contentState.props, {
 			hidden: !present.value,
 		})}
 		{#if asChild}
@@ -31,7 +31,7 @@
 				props: mergedProps,
 			})}
 		{:else}
-			<div {...mergedProps} bind:this={el}>
+			<div {...mergedProps} bind:this={ref}>
 				{@render children?.()}
 			</div>
 		{/if}

@@ -1,44 +1,41 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { getMenuCtx } from "../ctx.js";
-	import type { TriggerEvents, TriggerProps } from "../index.js";
-	import { createDispatcher } from "$lib/internal/events.js";
+	import { box } from "svelte-toolbelt";
+	import type { TriggerProps } from "../index.js";
+	import { useMenubarTrigger } from "../menubar.svelte.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import FloatingLayerAnchor from "$lib/bits/utilities/floating-layer/components/floating-layer-anchor.svelte";
+	import { useMenuDropdownTrigger } from "$lib/bits/menu/menu.svelte.js";
 
-	type $$Props = TriggerProps;
-	type $$Events = TriggerEvents;
+	let {
+		id = useId(),
+		disabled = false,
+		asChild,
+		children,
+		child,
+		ref = $bindable(),
+		...restProps
+	}: TriggerProps = $props();
 
-	export let asChild: $$Props["asChild"] = false;
-	export let id: $$Props["id"] = undefined;
-	export let el: $$Props["el"] = undefined;
+	const triggerState = useMenubarTrigger({
+		id: box.with(() => id),
+		disabled: box.with(() => disabled),
+	});
 
-	const {
-		elements: { trigger },
-		ids,
-		getAttrs,
-	} = getMenuCtx();
+	useMenuDropdownTrigger({
+		id: box.with(() => id),
+		disabled: box.with(() => disabled),
+	});
 
-	const dispatch = createDispatcher();
-	const attrs = getAttrs("trigger");
-
-	$: if (id) {
-		ids.trigger.set(id);
-	}
-	$: builder = $trigger;
-	$: Object.assign(builder, attrs);
+	const mergedProps = $derived(mergeProps(restProps, triggerState.props));
 </script>
 
-{#if asChild}
-	<slot {builder} />
-{:else}
-	<button
-		bind:this={el}
-		use:melt={builder}
-		type="button"
-		{...$$restProps}
-		on:m-click={dispatch}
-		on:m-keydown={dispatch}
-		on:m-pointerenter={dispatch}
-	>
-		<slot {builder} />
-	</button>
-{/if}
+<FloatingLayerAnchor {id}>
+	{#if asChild}
+		{@render child?.({ props: mergedProps })}
+	{:else}
+		<button bind:this={ref} {...mergedProps}>
+			{@render children?.()}
+		</button>
+	{/if}
+</FloatingLayerAnchor>

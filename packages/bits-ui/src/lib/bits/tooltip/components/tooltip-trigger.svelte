@@ -13,23 +13,23 @@
 		id = useId(),
 		disabled = false,
 		type = "button",
-		el = $bindable(),
+		ref = $bindable(),
 		...restProps
 	}: TriggerProps = $props();
 
-	const state = useTooltipTrigger({
+	const triggerState = useTooltipTrigger({
 		id: box.with(() => id),
 		disabled: box.with(() => disabled),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props, { type }));
+	const mergedProps = $derived(mergeProps(restProps, triggerState.props, { type }));
 </script>
 
 <FloatingLayer.Anchor {id}>
 	{#if asChild}
 		{@render child?.({ props: mergedProps })}
 	{:else}
-		<button {...mergedProps} bind:this={el}>
+		<button {...mergedProps} bind:this={ref}>
 			{@render children?.()}
 		</button>
 	{/if}

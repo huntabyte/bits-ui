@@ -8,26 +8,26 @@
 	let {
 		id = useId(),
 		disabled = false,
-		el = $bindable(),
+		ref = $bindable(),
 		asChild,
 		children,
 		child,
 		...restProps
 	}: ItemProps = $props();
 
-	const state = useMenuSubTrigger({
+	const subTriggerState = useMenuSubTrigger({
 		disabled: box.with(() => disabled),
 		id: box.with(() => id),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, subTriggerState.props));
 </script>
 
 <FloatingLayer.Anchor {id}>
 	{#if asChild}
 		{@render child?.({ props: mergedProps })}
 	{:else}
-		<div {...mergedProps} bind:this={el}>
+		<div {...mergedProps} bind:this={ref}>
 			{@render children?.()}
 		</div>
 	{/if}

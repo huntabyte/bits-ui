@@ -33,7 +33,7 @@
 {#if asChild}
 	<slot {builder} {segments} />
 {:else}
-	<div bind:this={el} use:melt={builder} {...$$restProps}>
+	<div bind:this={ref} use:melt={builder} {...$$restProps}>
 		<slot {builder} {segments} />
 	</div>
 {/if}

@@ -3,17 +3,17 @@
 	import { useTabsList } from "../tabs.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
-	let { asChild, child, children, el = $bindable(), ...restProps }: ListProps = $props();
+	let { asChild, child, children, ref = $bindable(), ...restProps }: ListProps = $props();
 
-	const state = useTabsList();
+	const listState = useTabsList();
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, listState.props));
 </script>
 
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<div bind:this={el} {...mergedProps}>
+	<div bind:this={ref} {...mergedProps}>
 		{@render children?.()}
 	</div>
 {/if}

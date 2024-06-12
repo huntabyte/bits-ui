@@ -12,7 +12,7 @@
 		child,
 		style,
 		value = $bindable(""),
-		el = $bindable(),
+		ref = $bindable(),
 		orientation = "vertical",
 		loop = true,
 		name = undefined,
@@ -22,7 +22,7 @@
 		...restProps
 	}: RootProps = $props();
 
-	const state = useRadioGroupRoot({
+	const rootState = useRadioGroupRoot({
 		orientation: box.with(() => orientation),
 		disabled: box.with(() => disabled),
 		loop: box.with(() => loop),
@@ -40,7 +40,7 @@
 
 	const mergedProps = $derived({
 		...restProps,
-		...state.props,
+		...rootState.props,
 		style: styleToString(style),
 	});
 </script>
@@ -48,7 +48,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<div bind:this={el} {...mergedProps}>
+	<div bind:this={ref} {...mergedProps}>
 		{@render children?.()}
 	</div>
 {/if}

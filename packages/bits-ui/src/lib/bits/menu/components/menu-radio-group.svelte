@@ -9,13 +9,13 @@
 		asChild,
 		children,
 		child,
-		el = $bindable(),
+		ref = $bindable(),
 		value = $bindable(""),
 		onValueChange = noop,
 		...restProps
 	}: RadioGroupProps = $props();
 
-	const state = useMenuRadioGroup({
+	const radioGroupState = useMenuRadioGroup({
 		value: box.with(
 			() => value,
 			(v) => {
@@ -27,13 +27,13 @@
 		),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, radioGroupState.props));
 </script>
 
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<div {...mergedProps} bind:this={el}>
+	<div {...mergedProps} bind:this={ref}>
 		{@render children?.()}
 	</div>
 {/if}

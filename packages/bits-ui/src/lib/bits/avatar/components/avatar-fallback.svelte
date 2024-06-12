@@ -3,17 +3,17 @@
 	import { useAvatarFallback } from "../avatar.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
-	let { asChild, children, child, el = $bindable(), ...restProps }: FallbackProps = $props();
+	let { asChild, children, child, ref = $bindable(), ...restProps }: FallbackProps = $props();
 
-	const state = useAvatarFallback();
+	const fallbackState = useAvatarFallback();
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, fallbackState.props));
 </script>
 
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<span bind:this={el} {...mergedProps}>
+	<span bind:this={ref} {...mergedProps}>
 		{@render children?.()}
 	</span>
 {/if}

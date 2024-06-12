@@ -127,7 +127,7 @@
 		endValue={$endValue}
 	/>
 {:else}
-	<div use:melt={builder} {...$$restProps} on:m-keydown={dispatch} bind:this={el}>
+	<div use:melt={builder} {...$$restProps} on:m-keydown={dispatch} bind:this={ref}>
 		<slot
 			{builder}
 			{months}

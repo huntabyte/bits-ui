@@ -2,9 +2,9 @@
 	import { useSwitchInput } from "../switch.svelte.js";
 	import { srOnlyStyles, styleToString } from "$lib/internal/style.js";
 
-	const state = useSwitchInput();
+	const inputState = useSwitchInput();
 </script>
 
-{#if state.shouldRender}
-	<input {...state.props} style={styleToString(srOnlyStyles)} />
+{#if inputState.shouldRender}
+	<input {...inputState.props} style={styleToString(srOnlyStyles)} />
 {/if}

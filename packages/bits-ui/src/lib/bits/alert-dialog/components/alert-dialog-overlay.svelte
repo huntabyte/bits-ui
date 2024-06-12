@@ -35,28 +35,28 @@
 	<slot {builder} />
 {:else if transition && $open}
 	<div
-		bind:this={el}
+		bind:this={ref}
 		transition:transition={transitionConfig}
 		use:melt={builder}
 		{...$$restProps}
 	/>
 {:else if inTransition && outTransition && $open}
 	<div
-		bind:this={el}
+		bind:this={ref}
 		in:inTransition={inTransitionConfig}
 		out:outTransition={outTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
 	/>
 {:else if inTransition && $open}
-	<div bind:this={el} in:inTransition={inTransitionConfig} use:melt={builder} {...$$restProps} />
+	<div bind:this={ref} in:inTransition={inTransitionConfig} use:melt={builder} {...$$restProps} />
 {:else if outTransition && $open}
 	<div
-		bind:this={el}
+		bind:this={ref}
 		out:outTransition={outTransitionConfig}
 		use:melt={builder}
 		{...$$restProps}
 	/>
 {:else if $open}
-	<div bind:this={el} use:melt={builder} {...$$restProps} />
+	<div bind:this={ref} use:melt={builder} {...$$restProps} />
 {/if}

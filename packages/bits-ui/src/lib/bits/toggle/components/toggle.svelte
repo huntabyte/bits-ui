@@ -8,7 +8,7 @@
 		asChild,
 		child,
 		children,
-		el = $bindable(),
+		ref = $bindable(),
 		pressed = $bindable(false),
 		onPressedChange,
 		disabled = false,
@@ -16,7 +16,7 @@
 		...restProps
 	}: RootProps = $props();
 
-	const state = useToggleRoot({
+	const toggleState = useToggleRoot({
 		pressed: box.with(
 			() => pressed,
 			(v) => {
@@ -29,13 +29,13 @@
 		disabled: box.with(() => disabled),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props, { type }));
+	const mergedProps = $derived(mergeProps(restProps, toggleState.props, { type }));
 </script>
 
 {#if asChild}
-	{@render child?.({ props: mergedProps, pressed: state.pressed.value })}
+	{@render child?.({ props: mergedProps, pressed: toggleState.pressed.value })}
 {:else}
-	<button bind:this={el} {...mergedProps}>
+	<button bind:this={ref} {...mergedProps}>
 		{@render children?.()}
 	</button>
 {/if}

@@ -15,7 +15,7 @@
 {#if asChild}
 	<slot {attrs} />
 {:else}
-	<tr bind:this={el} {...$$restProps} {...attrs}>
+	<tr bind:this={ref} {...$$restProps} {...attrs}>
 		<slot {attrs} />
 	</tr>
 {/if}

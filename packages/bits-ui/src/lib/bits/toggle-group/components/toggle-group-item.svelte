@@ -9,7 +9,7 @@
 		asChild,
 		children,
 		child,
-		el = $bindable(),
+		ref = $bindable(),
 		value,
 		disabled = false,
 		id = useId(),
@@ -17,19 +17,19 @@
 		...restProps
 	}: ItemProps = $props();
 
-	const state = useToggleGroupItem({
+	const itemState = useToggleGroupItem({
 		id: box.with(() => id),
 		value: box.with(() => value),
 		disabled: box.with(() => disabled),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props, { type }));
+	const mergedProps = $derived(mergeProps(restProps, itemState.props, { type }));
 </script>
 
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<button bind:this={el} {...mergedProps}>
+	<button bind:this={ref} {...mergedProps}>
 		{@render children?.()}
 	</button>
 {/if}

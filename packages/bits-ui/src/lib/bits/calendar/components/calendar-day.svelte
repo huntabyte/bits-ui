@@ -31,7 +31,7 @@
 {#if asChild}
 	<slot {builder} {disabled} {unavailable} {selected} />
 {:else}
-	<div bind:this={el} use:melt={builder} {...$$restProps} on:m-click={dispatch}>
+	<div bind:this={ref} use:melt={builder} {...$$restProps} on:m-click={dispatch}>
 		<slot {builder} {disabled} {unavailable} {selected}>
 			{date.day}
 		</slot>

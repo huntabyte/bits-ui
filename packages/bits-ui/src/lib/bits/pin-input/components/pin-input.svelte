@@ -66,7 +66,7 @@
 {#if asChild}
 	<slot {...slotProps} />
 {:else}
-	<div bind:this={el} use:melt={builder} {...$$restProps}>
+	<div bind:this={ref} use:melt={builder} {...$$restProps}>
 		<slot {...slotProps} />
 	</div>
 {/if}

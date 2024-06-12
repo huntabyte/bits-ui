@@ -11,12 +11,12 @@
 		child,
 		value,
 		disabled = false,
-		el = $bindable(),
+		ref = $bindable(),
 		style = {},
 		...restProps
 	}: ItemProps = $props();
 
-	const state = useRadioGroupItem({
+	const itemState = useRadioGroupItem({
 		value: box.with(() => value),
 		disabled: box.with(() => disabled),
 		id: box.with(() => id),
@@ -24,15 +24,15 @@
 
 	const mergedProps = $derived({
 		...restProps,
-		...state.props,
+		...itemState.props,
 		style: styleToString(style),
 	});
 </script>
 
 {#if asChild}
-	{@render child?.({ props: mergedProps, checked: state.checked })}
+	{@render child?.({ props: mergedProps, checked: itemState.checked })}
 {:else}
-	<button bind:this={el} {...mergedProps}>
-		{@render children?.({ checked: state.checked })}
+	<button bind:this={ref} {...mergedProps}>
+		{@render children?.({ checked: itemState.checked })}
 	</button>
 {/if}

@@ -8,7 +8,7 @@
 
 	let {
 		id = useId(),
-		el = $bindable(),
+		ref = $bindable(),
 		asChild,
 		child,
 		children,
@@ -16,19 +16,19 @@
 		...restProps
 	}: TriggerProps = $props();
 
-	const state = useMenuDropdownTrigger({
+	const triggerState = useMenuDropdownTrigger({
 		id: box.with(() => id),
 		disabled: box.with(() => disabled),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, triggerState.props));
 </script>
 
 <FloatingLayer.Anchor {id}>
 	{#if asChild}
 		{@render child?.({ props: mergedProps })}
 	{:else}
-		<button {...mergedProps} bind:this={el}>
+		<button {...mergedProps} bind:this={ref}>
 			{@render children?.()}
 		</button>
 	{/if}

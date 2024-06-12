@@ -32,7 +32,7 @@
 {:else}
 	<svelte:element
 		this="a"
-		bind:this={el}
+		bind:this={ref}
 		use:melt={builder}
 		{...$$restProps}
 		{...attrs}

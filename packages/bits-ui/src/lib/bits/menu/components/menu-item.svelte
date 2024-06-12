@@ -10,26 +10,26 @@
 		asChild,
 		child,
 		children,
-		el = $bindable(),
+		ref = $bindable(),
 		id = useId(),
 		disabled = false,
 		onSelect = noop,
 		...restProps
 	}: ItemProps = $props();
 
-	const state = useMenuItem({
+	const itemState = useMenuItem({
 		id: box.with(() => id),
 		disabled: box.with(() => disabled),
 		onSelect: box.with(() => onSelect),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, itemState.props));
 </script>
 
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<div {...mergedProps} bind:this={el}>
+	<div {...mergedProps} bind:this={ref}>
 		{@render children?.()}
 	</div>
 {/if}

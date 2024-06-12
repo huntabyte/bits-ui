@@ -13,13 +13,13 @@
 		required = false,
 		name,
 		value = "on",
-		el = $bindable(),
+		ref = $bindable(),
 		asChild,
 		child,
 		...restProps
 	}: RootProps = $props();
 
-	const state = useCheckboxRoot({
+	const rootState = useCheckboxRoot({
 		checked: box.with(
 			() => checked,
 			(v) => {
@@ -35,15 +35,15 @@
 		value: box.with(() => value),
 	});
 
-	const mergedProps = $derived(mergeProps({ ...restProps }, state.props));
+	const mergedProps = $derived(mergeProps({ ...restProps }, rootState.props));
 </script>
 
 {#if asChild}
-	{@render child?.({ props: mergedProps, checked: state.checked.value })}
+	{@render child?.({ props: mergedProps, checked: rootState.checked.value })}
 {:else}
-	<button bind:this={el} {...mergedProps}>
+	<button bind:this={ref} {...mergedProps}>
 		{@render children?.({
-			checked: state.checked.value,
+			checked: rootState.checked.value,
 		})}
 	</button>
 {/if}

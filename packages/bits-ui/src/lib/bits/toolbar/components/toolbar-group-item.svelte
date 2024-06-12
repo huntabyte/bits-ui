@@ -13,23 +13,23 @@
 		disabled = false,
 		type = "button",
 		id = useId(),
-		el = $bindable(),
+		ref = $bindable(),
 		...restProps
 	}: GroupItemProps = $props();
 
-	const state = useToolbarGroupItem({
+	const groupItemState = useToolbarGroupItem({
 		id: box.with(() => id),
 		value: box.with(() => value),
 		disabled: box.with(() => disabled),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props, { type }));
+	const mergedProps = $derived(mergeProps(restProps, groupItemState.props, { type }));
 </script>
 
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<button bind:this={el} {...mergedProps}>
+	<button bind:this={ref} {...mergedProps}>
 		{@render children?.()}
 	</button>
 {/if}

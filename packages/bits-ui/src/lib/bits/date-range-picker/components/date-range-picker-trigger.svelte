@@ -32,7 +32,7 @@
 	<slot {builder} />
 {:else}
 	<button
-		bind:this={el}
+		bind:this={ref}
 		use:melt={builder}
 		type="button"
 		{...$$restProps}

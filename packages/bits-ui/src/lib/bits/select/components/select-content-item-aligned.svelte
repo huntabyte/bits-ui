@@ -9,7 +9,7 @@
 		child,
 		children,
 		asChild,
-		el = $bindable(),
+		ref = $bindable(),
 		preventScroll = true,
 		onPlaced,
 		...restProps
@@ -18,12 +18,12 @@
 		onPlaced: () => void;
 	} = $props();
 
-	const state = useSelectItemAlignedPosition({
+	const contentItemAlignedState = useSelectItemAlignedPosition({
 		onPlaced: box.with(() => onPlaced),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
-	const mergedWrapperProps = $derived(mergeProps(state.wrapperProps, {}));
+	const mergedProps = $derived(mergeProps(restProps, contentItemAlignedState.props));
+	const mergedWrapperProps = $derived(mergeProps(contentItemAlignedState.wrapperProps, {}));
 
 	useBodyScrollLock(preventScroll);
 </script>
@@ -32,7 +32,7 @@
 	{#if asChild}
 		{@render child?.({ props: mergedProps })}
 	{:else}
-		<div bind:this={el} {...mergedProps}>
+		<div bind:this={ref} {...mergedProps}>
 			{@render children?.()}
 		</div>
 	{/if}

@@ -7,19 +7,19 @@
 		asChild,
 		children,
 		child,
-		el = $bindable(),
+		ref = $bindable(),
 		for: forProp,
 		...restProps
 	}: RootProps = $props();
 
-	const state = setLabelRootState();
-	const mergedProps = $derived(mergeProps(restProps, state.props, { for: forProp }));
+	const rootState = setLabelRootState();
+	const mergedProps = $derived(mergeProps(restProps, rootState.props, { for: forProp }));
 </script>
 
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<label bind:this={el} {...mergedProps} for={forProp}>
+	<label bind:this={ref} {...mergedProps} for={forProp}>
 		{@render children?.()}
 	</label>
 {/if}

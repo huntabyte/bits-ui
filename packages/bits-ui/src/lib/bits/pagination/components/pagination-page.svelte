@@ -11,22 +11,22 @@
 		child,
 		children,
 		type = "button",
-		el = $bindable(),
+		ref = $bindable(),
 		...restProps
 	}: PageProps = $props();
 
-	const state = usePaginationPage({
+	const pageState = usePaginationPage({
 		id: box.with(() => id),
 		page: box.with(() => page),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props, { type }));
+	const mergedProps = $derived(mergeProps(restProps, pageState.props, { type }));
 </script>
 
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<button bind:this={el} {...mergedProps}>
+	<button bind:this={ref} {...mergedProps}>
 		{#if children}
 			{@render children?.()}
 		{:else}
