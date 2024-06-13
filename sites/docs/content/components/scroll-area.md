@@ -18,7 +18,7 @@ description: Consistent scroll area across platforms.
 
 ```svelte
 <script lang="ts">
-	import { ScrollArea } from "$lib/index.js";
+	import { ScrollArea } from 'bits-ui';
 </script>
 
 <ScrollArea.Root>
