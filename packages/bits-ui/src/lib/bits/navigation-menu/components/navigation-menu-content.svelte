@@ -31,7 +31,7 @@
 		const node = document.getElementById(viewportId ?? "");
 		if (!node) return undefined;
 	});
-	const portalDisabled = $derived(!Boolean(contentState.menu.viewportId.value));
+	const portalDisabled = $derived(!Boolean(viewportNode));
 	const mounted = new IsMounted();
 </script>
 
@@ -39,21 +39,13 @@
 	<Portal to={viewportNode} disabled={portalDisabled}>
 		<PresenceLayer {id} present={forceMount || contentState.open}>
 			{#snippet presence({ present })}
-				<EscapeLayer enabled={present.value}>
-					<DismissableLayer {id} enabled={present.value}>
-						{#snippet children({ props: dismissableProps })}
-							{@const finalProps = mergeProps(mergedProps, dismissableProps)}
-
-							{#if asChild}
-								{@render child?.({ props: finalProps })}
-							{:else}
-								<div bind:this={ref} {...finalProps}>
-									{@render children?.()}
-								</div>
-							{/if}
-						{/snippet}
-					</DismissableLayer>
-				</EscapeLayer>
+				{#if asChild}
+					{@render child?.({ props: mergedProps })}
+				{:else}
+					<div bind:this={ref} {...mergedProps}>
+						{@render children?.()}
+					</div>
+				{/if}
 			{/snippet}
 		</PresenceLayer>
 	</Portal>

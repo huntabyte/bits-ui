@@ -571,84 +571,84 @@ class NavigationMenuContentState {
 	prevMotionAttribute = $state<MotionAttribute | null>(null);
 	motionAttribute = $state<MotionAttribute | null>(null);
 	open = $derived.by(() => this.menu.value.value === this.item.value.value);
-	// isLastActiveValue = $derived.by(() => {
-	// 	if (!isBrowser) return false;
-	// 	if (this.menu.viewportId.value) {
-	// 		const viewportNode = document.getElementById(this.menu.viewportId.value);
-	// 		if (viewportNode) {
-	// 			if (!this.menu.value.value && this.menu.previousValue.current) {
-	// 				return this.menu.previousValue.current === this.item.value.value;
-	// 			}
-	// 		}
-	// 	}
-	// 	return false;
-	// });
+	isLastActiveValue = $derived.by(() => {
+		if (!isBrowser) return false;
+		if (this.menu.viewportId.value) {
+			const viewportNode = document.getElementById(this.menu.viewportId.value);
+			if (viewportNode) {
+				if (!this.menu.value.value && this.menu.previousValue.current) {
+					return this.menu.previousValue.current === this.item.value.value;
+				}
+			}
+		}
+		return false;
+	});
 
 	constructor(props: NavigationMenuContentStateProps, item: NavigationMenuItemState) {
 		this.id = props.id;
 		this.item = item;
 		this.menu = item.menu;
 
-		// $effect(() => {
-		// 	console.log("1");
-		// 	const contentNode = this.getNode();
-		// 	if (this.menu.isRoot && contentNode) {
-		// 		// bubble dimiss to the root content node and focus its trigger
-		// 		const handleClose = () => {
-		// 			this.menu.onItemDismiss();
-		// 			this.item.onRootContentClose();
-		// 			if (contentNode.contains(document.activeElement)) {
-		// 				this.item.getTriggerNode()?.focus();
-		// 			}
-		// 		};
+		$effect(() => {
+			console.log("1");
+			const contentNode = this.getNode();
+			if (this.menu.isRoot && contentNode) {
+				// bubble dimiss to the root content node and focus its trigger
+				const handleClose = () => {
+					this.menu.onItemDismiss();
+					this.item.onRootContentClose();
+					if (contentNode.contains(document.activeElement)) {
+						this.item.getTriggerNode()?.focus();
+					}
+				};
 
-		// 		contentNode.addEventListener(EVENT_ROOT_CONTENT_DISMISS, handleClose);
+				contentNode.addEventListener(EVENT_ROOT_CONTENT_DISMISS, handleClose);
 
-		// 		return () => {
-		// 			contentNode.removeEventListener(EVENT_ROOT_CONTENT_DISMISS, handleClose);
-		// 		};
-		// 	}
-		// });
+				return () => {
+					contentNode.removeEventListener(EVENT_ROOT_CONTENT_DISMISS, handleClose);
+				};
+			}
+		});
 
-		// $effect(() => {
-		// 	const items = untrack(() => this.menu.getTriggerNodes());
-		// 	const prev = untrack(() => this.menu.previousValue.value);
-		// 	const values = items
-		// 		.map((item) => item.dataset.value)
-		// 		.filter((v): v is string => Boolean(v));
-		// 	if (this.menu.dir.value === "rtl") values.reverse();
-		// 	const index = values.indexOf(this.menu.value.value);
-		// 	const prevIndex = values.indexOf(prev ?? "");
-		// 	const isSelected = untrack(() => this.item.value.value === this.menu.value.value);
-		// 	const wasSelected = untrack(() => prevIndex === values.indexOf(this.item.value.value));
+		$effect(() => {
+			const items = untrack(() => this.menu.getTriggerNodes());
+			const prev = untrack(() => this.menu.previousValue.current);
+			const values = items
+				.map((item) => item.dataset.value)
+				.filter((v): v is string => Boolean(v));
+			if (this.menu.dir.value === "rtl") values.reverse();
+			const index = values.indexOf(this.menu.value.value);
+			const prevIndex = values.indexOf(prev ?? "");
+			const isSelected = untrack(() => this.item.value.value === this.menu.value.value);
+			const wasSelected = untrack(() => prevIndex === values.indexOf(this.item.value.value));
 
-		// 	// We only want to update selected and the last selected content
-		// 	// this avoids animations being interrupted outside of that range
-		// 	if (!isSelected && !wasSelected) {
-		// 		untrack(() => (this.motionAttribute = this.prevMotionAttribute));
-		// 	}
+			// We only want to update selected and the last selected content
+			// this avoids animations being interrupted outside of that range
+			if (!isSelected && !wasSelected) {
+				untrack(() => (this.motionAttribute = this.prevMotionAttribute));
+			}
 
-		// 	untrack(() => {
-		// 		const attribute = (() => {
-		// 			// Don't provide a direction on the initial open
-		// 			if (index !== prevIndex) {
-		// 				// If we're moving to this item from another
-		// 				if (isSelected && prevIndex !== -1) {
-		// 					return index > prevIndex ? "from-end" : "from-start";
-		// 				}
-		// 				// If we're leaving this item for another
-		// 				if (wasSelected && index !== -1) {
-		// 					return index > prevIndex ? "to-start" : "to-end";
-		// 				}
-		// 			}
-		// 			// Otherwise we're entering from closed or leaving the list
-		// 			// entirely and should not animate in any direction
-		// 			return null;
-		// 		})();
-		// 		this.prevMotionAttribute = attribute;
-		// 		this.motionAttribute = attribute;
-		// 	});
-		// });
+			untrack(() => {
+				const attribute = (() => {
+					// Don't provide a direction on the initial open
+					if (index !== prevIndex) {
+						// If we're moving to this item from another
+						if (isSelected && prevIndex !== -1) {
+							return index > prevIndex ? "from-end" : "from-start";
+						}
+						// If we're leaving this item for another
+						if (wasSelected && index !== -1) {
+							return index > prevIndex ? "to-start" : "to-end";
+						}
+					}
+					// Otherwise we're entering from closed or leaving the list
+					// entirely and should not animate in any direction
+					return null;
+				})();
+				this.prevMotionAttribute = attribute;
+				this.motionAttribute = attribute;
+			});
+		});
 	}
 
 	getNode = () => {
@@ -766,12 +766,14 @@ class NavigationMenuViewportState {
 		useResizeObserver(
 			() => this.contentNode,
 			() => {
-				if (this.contentNode) {
-					this.size = {
-						width: this.contentNode.offsetWidth,
-						height: this.contentNode.offsetHeight,
-					};
-				}
+				untrack(() => {
+					if (this.contentNode) {
+						this.size = {
+							width: this.contentNode.offsetWidth,
+							height: this.contentNode.offsetHeight,
+						};
+					}
+				});
 			}
 		);
 	}
