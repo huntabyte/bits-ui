@@ -10,19 +10,24 @@
 		asChild,
 		children,
 		child,
-		ref = $bindable(),
+		ref = $bindable(null),
 		...restProps
 	}: ListProps = $props();
 
 	const listState = useNavigationMenuList({
 		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
+		indicatorTrackRef: box(null),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, listState.props));
-	const indicatorProps = $derived(mergeProps(listState.indicatorProps, {}));
+	const indicatorTrackProps = $derived(mergeProps(listState.indicatorTrackProps, {}));
 </script>
 
-<div {...indicatorProps}>
+<div {...indicatorTrackProps}>
 	{#if asChild}
 		{@render child?.({ props: mergedProps })}
 	{:else}

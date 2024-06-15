@@ -142,7 +142,7 @@ export type AsChildProps<Props, SnippetProps, Ref> = {
 	child: Snippet<[SnippetProps & { props: Record<string, unknown> }]>;
 	children?: never;
 	asChild: true;
-	ref?: Ref;
+	ref?: Ref | null;
 	style?: StyleProperties;
 } & Omit<Props, "children" | "asChild">;
 
@@ -154,7 +154,7 @@ export type DefaultProps<Props, Ref> = {
 	style?: StyleProperties;
 } & Omit<Props, "child" | "asChild">;
 
-export type ElementRef = Box<HTMLElement | undefined>;
+export type ElementRef = Box<HTMLElement | null>;
 
 export type WithAsChild<
 	Props,

@@ -11,7 +11,7 @@
 		child,
 		children,
 		id = useId(),
-		ref = $bindable(),
+		ref = $bindable(null),
 		value = $bindable(""),
 		onValueChange = noop,
 		delayDuration = 200,
@@ -36,6 +36,10 @@
 		skipDelayDuration: box.with(() => skipDelayDuration),
 		dir: box.with(() => dir),
 		orientation: box.with(() => orientation),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
 	const mergedProps = $derived(mergeProps({ "aria-label": "main" }, restProps, rootState.props));
@@ -44,7 +48,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<nav {...mergedProps} bind:this={ref}>
+	<nav {...mergedProps}>
 		{@render children?.()}
 	</nav>
 {/if}

@@ -9,7 +9,7 @@
 
 	let {
 		id = useId(),
-		ref = $bindable(),
+		ref = $bindable(null),
 		asChild,
 		children,
 		child,
@@ -19,19 +19,23 @@
 
 	const indicatorState = useNavigationMenuIndicator({
 		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, indicatorState.props));
 </script>
 
-{#if indicatorState.indicatorTrackNode}
-	<Portal to={`#${indicatorState.indicatorTrackNode.id}`}>
+{#if indicatorState.menu.indicatorTrackNode}
+	<Portal to={indicatorState.menu.indicatorTrackNode}>
 		<PresenceLayer {id} present={forceMount || indicatorState.isVisible}>
 			{#snippet presence()}
 				{#if asChild}
 					{@render child?.({ props: mergedProps })}
 				{:else}
-					<div bind:this={ref} {...mergedProps}>
+					<div {...mergedProps}>
 						{@render children?.()}
 					</div>
 				{/if}

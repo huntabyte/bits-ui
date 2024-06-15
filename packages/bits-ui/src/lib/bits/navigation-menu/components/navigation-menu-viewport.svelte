@@ -4,27 +4,37 @@
 	import { useNavigationMenuViewport } from "../navigation-menu.svelte.js";
 	import { useId } from "$lib/internal/useId.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import PresenceLayer from "$lib/bits/utilities/presence-layer/presence-layer.svelte";
 
 	let {
 		id = useId(),
-		ref = $bindable(),
+		ref = $bindable(null),
 		asChild,
 		children,
 		child,
+		forceMount = false,
 		...restProps
 	}: ViewportProps = $props();
 
 	const viewportState = useNavigationMenuViewport({
 		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, viewportState.props));
 </script>
 
-{#if asChild}
-	{@render child?.({ props: mergedProps })}
-{:else}
-	<div {...mergedProps} bind:this={ref}>
-		{@render children?.()}
-	</div>
-{/if}
+<PresenceLayer {id} present={forceMount || viewportState.open}>
+	{#snippet presence({ present })}
+		{#if asChild}
+			{@render child?.({ props: mergedProps })}
+		{:else}
+			<div {...mergedProps}>
+				{@render children?.()}
+			</div>
+		{/if}
+	{/snippet}
+</PresenceLayer>
