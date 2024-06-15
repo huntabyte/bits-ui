@@ -1,6 +1,6 @@
 import { untrack } from "svelte";
 import { box, type WritableBox } from "svelte-toolbelt";
-import { useDebounce } from "runed";
+import { Previous, useDebounce } from "runed";
 import { getTabbableCandidates } from "../utilities/focus-scope/utils.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { Direction, Orientation } from "$lib/shared/index.js";
@@ -55,19 +55,19 @@ class NavigationMenuRootState {
 	orientation: NavigationMenuRootStateProps["orientation"];
 	dir: NavigationMenuRootStateProps["dir"];
 	value: NavigationMenuRootStateProps["value"];
-	previousValue = box("");
-	isOpenDelayed = $state(true);
+	previousValue = new Previous(() => this.value.value);
 	triggerIds = new Set<string>();
 	isDelaySkipped: WritableBox<boolean>;
 	derivedDelay = $derived.by(() => {
-		const isOpen = this.value.value !== "";
-		if (isOpen || this.isDelaySkipped.value) return 150;
+		const isOpen = this.value?.value !== "";
+		if (isOpen || this.isDelaySkipped?.value) return 150;
 		return this.delayDuration.value;
 	});
+
 	setValue = useDebounce((v: string) => {
-		this.previousValue.value = this.value.value;
+		if (this.value.value === v) return;
 		this.value.value = v;
-	}, 1000);
+	}, this.derivedDelay);
 
 	constructor(props: NavigationMenuRootStateProps) {
 		this.id = props.id;
@@ -115,12 +115,10 @@ class NavigationMenuRootState {
 	};
 
 	onItemSelect = (itemValue: string) => {
-		this.previousValue.value = this.value.value;
 		this.value.value = itemValue;
 	};
 
 	onItemDismiss = () => {
-		this.previousValue.value = this.value.value;
 		this.value.value = "";
 	};
 
@@ -136,65 +134,6 @@ class NavigationMenuRootState {
 	}
 }
 
-type NavigationMenuSubStateProps = ReadableBoxedValues<{
-	id: string;
-	orientation: Orientation;
-	dir: Direction;
-}> &
-	WritableBoxedValues<{ value: string }>;
-
-class NavigationMenuSubState {
-	id: NavigationMenuSubStateProps["id"];
-	orientation: NavigationMenuSubStateProps["orientation"];
-	dir: NavigationMenuSubStateProps["dir"];
-	value: NavigationMenuSubStateProps["value"];
-	triggerIds = new Set<string>();
-	root: NavigationMenuRootState;
-
-	constructor(props: NavigationMenuSubStateProps, root: NavigationMenuRootState) {
-		this.id = props.id;
-		this.orientation = props.orientation;
-		this.dir = props.dir;
-		this.value = props.value;
-		this.root = root;
-	}
-
-	registerTriggerId = (triggerId: string) => {
-		this.triggerIds.add(triggerId);
-	};
-
-	deRegisterTriggerId = (triggerId: string) => {
-		this.triggerIds.delete(triggerId);
-	};
-
-	getTriggerNodes = () => {
-		return Array.from(this.triggerIds)
-			.map((triggerId) => document.getElementById(triggerId))
-			.filter((node): node is HTMLElement => Boolean(node));
-	};
-
-	setValue = (v: string) => {
-		this.value.value = v;
-	};
-
-	onTriggerEnter = (itemValue: string) => {
-		this.setValue(itemValue);
-	};
-
-	onItemSelect = (itemValue: string) => {
-		this.setValue(itemValue);
-	};
-
-	onItemDismiss = () => {
-		this.setValue("");
-	};
-
-	props = $derived.by(() => ({
-		"data-orientation": getDataOrientation(this.orientation.value),
-		[SUB_ATTR]: "",
-	}));
-}
-
 type NavigationMenuMenuStateProps = ReadableBoxedValues<{
 	rootNavigationId: string;
 	dir: Direction;
@@ -202,7 +141,6 @@ type NavigationMenuMenuStateProps = ReadableBoxedValues<{
 }> &
 	WritableBoxedValues<{
 		value: string;
-		previousValue: string;
 	}> & {
 		isRoot: boolean;
 		onTriggerEnter: (itemValue: string) => void;
@@ -214,6 +152,7 @@ type NavigationMenuMenuStateProps = ReadableBoxedValues<{
 		getTriggerNodes: () => HTMLElement[];
 		registerTriggerId: (triggerId: string) => void;
 		deRegisterTriggerId: (triggerId: string) => void;
+		previousValue: Previous<string>;
 	};
 
 class NavigationMenuMenuState {
@@ -243,7 +182,6 @@ class NavigationMenuMenuState {
 		this.dir = props.dir;
 		this.orientation = props.orientation;
 		this.value = props.value;
-		console.log(props.onTriggerEnter);
 		this.onTriggerEnter = props.onTriggerEnter;
 		this.onTriggerLeave = props.onTriggerLeave;
 		this.onContentEnter = props.onContentEnter;
@@ -434,7 +372,7 @@ class NavigationMenuTriggerState {
 		this.hasPointerMoveOpened.value = false;
 	};
 
-	#onclick = () => {
+	#onclick = (e: PointerEvent) => {
 		// if opened via pointer move, we prevent clicke event
 		if (this.hasPointerMoveOpened.value) return;
 		if (this.open) {
@@ -556,10 +494,9 @@ class NavigationMenuIndicatorState {
 		this.menu = menu;
 
 		$effect(() => {
-			console.log("3");
 			const triggerNodes = this.menu.getTriggerNodes();
 			const triggerNode = triggerNodes.find(
-				(node) => node.dataset.value === this.menu.value.value
+				(node) => node.dataset.value === untrack(() => this.menu.value.value)
 			);
 			if (triggerNode) {
 				untrack(() => {
@@ -569,7 +506,6 @@ class NavigationMenuIndicatorState {
 		});
 
 		$effect(() => {
-			console.log("4");
 			const indicatorTrackNode = document.getElementById(
 				this.menu.indicatorTrackId.value ?? ""
 			);
@@ -581,15 +517,17 @@ class NavigationMenuIndicatorState {
 	}
 
 	handlePositionChange = () => {
-		if (!this.activeTrigger) return;
-		this.position = {
-			size: this.isHorizontal
-				? this.activeTrigger.offsetWidth
-				: this.activeTrigger.offsetHeight,
-			offset: this.isHorizontal
-				? this.activeTrigger.offsetLeft
-				: this.activeTrigger.offsetTop,
-		};
+		untrack(() => {
+			if (!this.activeTrigger) return;
+			this.position = {
+				size: this.isHorizontal
+					? this.activeTrigger.offsetWidth
+					: this.activeTrigger.offsetHeight,
+				offset: this.isHorizontal
+					? this.activeTrigger.offsetLeft
+					: this.activeTrigger.offsetTop,
+			};
+		});
 	};
 
 	props = $derived.by(
@@ -633,91 +571,84 @@ class NavigationMenuContentState {
 	prevMotionAttribute = $state<MotionAttribute | null>(null);
 	motionAttribute = $state<MotionAttribute | null>(null);
 	open = $derived.by(() => this.menu.value.value === this.item.value.value);
-	isLastActiveValue = $derived.by(() => {
-		if (!isBrowser) return false;
-		if (this.menu.viewportId.value) {
-			const viewportNode = document.getElementById(this.menu.viewportId.value);
-			if (viewportNode) {
-				if (!this.menu.value.value && this.menu.previousValue.value) {
-					return this.menu.previousValue.value === this.item.value.value;
-				}
-			}
-		}
-		return false;
-	});
+	// isLastActiveValue = $derived.by(() => {
+	// 	if (!isBrowser) return false;
+	// 	if (this.menu.viewportId.value) {
+	// 		const viewportNode = document.getElementById(this.menu.viewportId.value);
+	// 		if (viewportNode) {
+	// 			if (!this.menu.value.value && this.menu.previousValue.current) {
+	// 				return this.menu.previousValue.current === this.item.value.value;
+	// 			}
+	// 		}
+	// 	}
+	// 	return false;
+	// });
 
 	constructor(props: NavigationMenuContentStateProps, item: NavigationMenuItemState) {
 		this.id = props.id;
 		this.item = item;
 		this.menu = item.menu;
 
-		$effect(() => {
-			console.log("1");
-			const contentNode = this.getNode();
-			if (this.menu.isRoot && contentNode) {
-				// bubble dimiss to the root content node and focus its trigger
-				const handleClose = () => {
-					this.menu.onItemDismiss();
-					this.item.onRootContentClose();
-					if (contentNode.contains(document.activeElement)) {
-						this.item.getTriggerNode()?.focus();
-					}
-				};
+		// $effect(() => {
+		// 	console.log("1");
+		// 	const contentNode = this.getNode();
+		// 	if (this.menu.isRoot && contentNode) {
+		// 		// bubble dimiss to the root content node and focus its trigger
+		// 		const handleClose = () => {
+		// 			this.menu.onItemDismiss();
+		// 			this.item.onRootContentClose();
+		// 			if (contentNode.contains(document.activeElement)) {
+		// 				this.item.getTriggerNode()?.focus();
+		// 			}
+		// 		};
 
-				contentNode.addEventListener(EVENT_ROOT_CONTENT_DISMISS, handleClose);
+		// 		contentNode.addEventListener(EVENT_ROOT_CONTENT_DISMISS, handleClose);
 
-				return () => {
-					contentNode.removeEventListener(EVENT_ROOT_CONTENT_DISMISS, handleClose);
-				};
-			}
-		});
+		// 		return () => {
+		// 			contentNode.removeEventListener(EVENT_ROOT_CONTENT_DISMISS, handleClose);
+		// 		};
+		// 	}
+		// });
 
-		$effect(() => {
-			console.log("menu.value.value", this.menu.value.value);
-		});
-		$effect(() => {
-			console.log("item.value.value", this.item.value.value);
-		});
+		// $effect(() => {
+		// 	const items = untrack(() => this.menu.getTriggerNodes());
+		// 	const prev = untrack(() => this.menu.previousValue.value);
+		// 	const values = items
+		// 		.map((item) => item.dataset.value)
+		// 		.filter((v): v is string => Boolean(v));
+		// 	if (this.menu.dir.value === "rtl") values.reverse();
+		// 	const index = values.indexOf(this.menu.value.value);
+		// 	const prevIndex = values.indexOf(prev ?? "");
+		// 	const isSelected = untrack(() => this.item.value.value === this.menu.value.value);
+		// 	const wasSelected = untrack(() => prevIndex === values.indexOf(this.item.value.value));
 
-		$effect(() => {
-			const items = untrack(() => this.menu.getTriggerNodes());
-			const prev = untrack(() => this.menu.previousValue.value);
-			const values = items
-				.map((item) => item.dataset.value)
-				.filter((v): v is string => Boolean(v));
-			if (this.menu.dir.value === "rtl") values.reverse();
-			const index = values.indexOf(this.menu.value.value);
-			const prevIndex = values.indexOf(prev ?? "");
-			const isSelected = untrack(() => this.item.value.value === this.menu.value.value);
-			const wasSelected = untrack(() => prevIndex === values.indexOf(this.item.value.value));
+		// 	// We only want to update selected and the last selected content
+		// 	// this avoids animations being interrupted outside of that range
+		// 	if (!isSelected && !wasSelected) {
+		// 		untrack(() => (this.motionAttribute = this.prevMotionAttribute));
+		// 	}
 
-			// We only want to update selected and the last selected content
-			// this avoids animations being interrupted outside of that range
-			if (!isSelected && !wasSelected) {
-				untrack(() => (this.motionAttribute = this.prevMotionAttribute));
-			}
-
-			untrack(() => {
-				const attribute = (() => {
-					// Don't provide a direction on the initial open
-					if (index !== prevIndex) {
-						// If we're moving to this item from another
-						if (isSelected && prevIndex !== -1) {
-							return index > prevIndex ? "from-end" : "from-start";
-						}
-						// If we're leaving this item for another
-						if (wasSelected && index !== -1) {
-							return index > prevIndex ? "to-start" : "to-end";
-						}
-					}
-					// Otherwise we're entering from closed or leaving the list
-					// entirely and should not animate in any direction
-					return null;
-				})();
-				this.prevMotionAttribute = attribute;
-				this.motionAttribute = attribute;
-			});
-		});
+		// 	untrack(() => {
+		// 		const attribute = (() => {
+		// 			// Don't provide a direction on the initial open
+		// 			if (index !== prevIndex) {
+		// 				// If we're moving to this item from another
+		// 				if (isSelected && prevIndex !== -1) {
+		// 					return index > prevIndex ? "from-end" : "from-start";
+		// 				}
+		// 				// If we're leaving this item for another
+		// 				if (wasSelected && index !== -1) {
+		// 					return index > prevIndex ? "to-start" : "to-end";
+		// 				}
+		// 			}
+		// 			// Otherwise we're entering from closed or leaving the list
+		// 			// entirely and should not animate in any direction
+		// 			return null;
+		// 		})();
+		// 		this.prevMotionAttribute = attribute;
+		// 		this.motionAttribute = attribute;
+		// 	});
+		// });
 	}
 
 	getNode = () => {
@@ -881,37 +812,37 @@ class NavigationMenuViewportState {
 
 // Context Methods
 
-export function useNavigationMenuSub(props: NavigationMenuSubStateProps) {
-	const rootState = getNavigationMenuRootContext();
-	const menuState = rootState.createMenu({
-		getTriggerNodes: rootState.getTriggerNodes,
-		rootNavigationId: rootState.id,
-		dir: rootState.dir,
-		orientation: rootState.orientation,
-		value: rootState.value,
-		isRoot: false,
-		deRegisterTriggerId: rootState.deRegisterTriggerId,
-		registerTriggerId: rootState.registerTriggerId,
-		onTriggerEnter: rootState.onTriggerEnter,
-		onItemSelect: rootState.onItemSelect,
-		onItemDismiss: rootState.onItemDismiss,
-		onContentEnter: rootState.onContentEnter,
-		onContentLeave: rootState.onContentLeave,
-		onTriggerLeave: rootState.onTriggerLeave,
-		previousValue: box(""),
-	});
+// export function useNavigationMenuSub(props: NavigationMenuSubStateProps) {
+// 	const rootState = getNavigationMenuRootContext();
+// 	const menuState = rootState.createMenu({
+// 		getTriggerNodes: rootState.getTriggerNodes,
+// 		rootNavigationId: rootState.id,
+// 		dir: rootState.dir,
+// 		orientation: rootState.orientation,
+// 		value: rootState.value,
+// 		isRoot: false,
+// 		deRegisterTriggerId: rootState.deRegisterTriggerId,
+// 		registerTriggerId: rootState.registerTriggerId,
+// 		onTriggerEnter: rootState.onTriggerEnter,
+// 		onItemSelect: rootState.onItemSelect,
+// 		onItemDismiss: rootState.onItemDismiss,
+// 		onContentEnter: rootState.onContentEnter,
+// 		onContentLeave: rootState.onContentLeave,
+// 		onTriggerLeave: rootState.onTriggerLeave,
+// 		previousValue: new Previous,
+// 	});
 
-	setNavigationMenuMenuContext(menuState);
-	return new NavigationMenuSubState(
-		{
-			dir: props.dir,
-			id: props.id,
-			orientation: props.orientation,
-			value: props.value,
-		},
-		rootState
-	);
-}
+// 	setNavigationMenuMenuContext(menuState);
+// 	return new NavigationMenuSubState(
+// 		{
+// 			dir: props.dir,
+// 			id: props.id,
+// 			orientation: props.orientation,
+// 			value: props.value,
+// 		},
+// 		rootState
+// 	);
+// }
 
 export function useNavigationMenuRoot(props: NavigationMenuRootStateProps) {
 	const rootState = new NavigationMenuRootState(props);

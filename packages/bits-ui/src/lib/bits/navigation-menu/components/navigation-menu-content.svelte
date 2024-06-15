@@ -8,7 +8,6 @@
 	import { PresenceLayer } from "$lib/bits/utilities/presence-layer/index.js";
 	import EscapeLayer from "$lib/bits/utilities/escape-layer/escape-layer.svelte";
 	import DismissableLayer from "$lib/bits/utilities/dismissable-layer/dismissable-layer.svelte";
-	import TextSelectionLayer from "$lib/bits/utilities/text-selection-layer/text-selection-layer.svelte";
 	import { IsMounted } from "runed";
 	import { isBrowser } from "$lib/internal/is.js";
 
@@ -33,30 +32,25 @@
 		if (!node) return undefined;
 	});
 	const portalDisabled = $derived(!Boolean(contentState.menu.viewportId.value));
-
-	const isMounted = new IsMounted();
+	const mounted = new IsMounted();
 </script>
 
-{#if isMounted.current}
+{#if mounted.current}
 	<Portal to={viewportNode} disabled={portalDisabled}>
-		<PresenceLayer
-			{id}
-			present={forceMount || contentState.open || contentState.isLastActiveValue}
-		>
+		<PresenceLayer {id} present={forceMount || contentState.open}>
 			{#snippet presence({ present })}
 				<EscapeLayer enabled={present.value}>
 					<DismissableLayer {id} enabled={present.value}>
 						{#snippet children({ props: dismissableProps })}
-							<TextSelectionLayer {id} enabled={present.value}>
-								{@const finalProps = mergeProps(mergedProps, dismissableProps)}
-								{#if asChild}
-									{@render child?.({ props: finalProps })}
-								{:else}
-									<div bind:this={ref} {...finalProps}>
-										{@render children?.()}
-									</div>
-								{/if}
-							</TextSelectionLayer>
+							{@const finalProps = mergeProps(mergedProps, dismissableProps)}
+
+							{#if asChild}
+								{@render child?.({ props: finalProps })}
+							{:else}
+								<div bind:this={ref} {...finalProps}>
+									{@render children?.()}
+								</div>
+							{/if}
 						{/snippet}
 					</DismissableLayer>
 				</EscapeLayer>
