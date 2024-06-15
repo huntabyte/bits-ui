@@ -18,6 +18,7 @@ import { kbd } from "$lib/internal/kbd.js";
 import { isBrowser } from "$lib/internal/is.js";
 import { useArrowNavigation } from "$lib/internal/useArrowNavigation.js";
 import { boxAutoReset } from "$lib/internal/boxAutoReset.svelte.js";
+import { afterTick } from "$lib/internal/afterTick.js";
 
 const [setNavigationMenuRootContext, getNavigationMenuRootContext] =
 	createContext<NavigationMenuRootState>("NavigationMenu.Root");
@@ -171,7 +172,8 @@ class NavigationMenuMenuState {
 	getTriggerNodes: NavigationMenuMenuStateProps["getTriggerNodes"];
 	registerTriggerId: NavigationMenuMenuStateProps["registerTriggerId"];
 	deRegisterTriggerId: NavigationMenuMenuStateProps["deRegisterTriggerId"];
-	viewportId = box.with<string | undefined>(() => undefined);
+	viewportId = box("");
+	viewportNode = $state<HTMLElement | null>(null);
 	viewportContentId = box.with<string | undefined>(() => undefined);
 	indicatorTrackId = box.with<string | undefined>(() => undefined);
 	root: NavigationMenuRootState;
@@ -193,6 +195,14 @@ class NavigationMenuMenuState {
 		this.getTriggerNodes = props.getTriggerNodes;
 		this.root = root;
 		this.previousValue = props.previousValue;
+
+		$effect(() => {
+			if (this.viewportId.value) {
+				afterTick(() => {
+					this.viewportNode = document.getElementById(this.viewportId.value ?? "");
+				});
+			}
+		});
 	}
 
 	getViewportNode = () => {
@@ -750,7 +760,10 @@ class NavigationMenuViewportState {
 	constructor(props: NavigationMenuViewportStateProps, menu: NavigationMenuMenuState) {
 		this.id = props.id;
 		this.menu = menu;
-		this.menu.viewportId = props.id;
+
+		$effect(() => {
+			this.menu.viewportId.value = props.id.value;
+		});
 
 		$effect(() => {
 			this.open;

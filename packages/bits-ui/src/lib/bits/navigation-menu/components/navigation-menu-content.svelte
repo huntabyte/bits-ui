@@ -26,18 +26,16 @@
 	});
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));
 	const viewportId = $derived(contentState.menu.viewportId.value);
-	const viewportNode = $derived.by(() => {
-		if (!isBrowser) return undefined;
-		const node = document.getElementById(viewportId ?? "");
-		if (!node) return undefined;
-	});
-	const portalDisabled = $derived(!Boolean(viewportNode));
+	const portalDisabled = $derived(!Boolean(contentState.menu.viewportNode));
 	const mounted = new IsMounted();
 </script>
 
-{#if mounted.current}
-	<Portal to={viewportNode} disabled={portalDisabled}>
-		<PresenceLayer {id} present={forceMount || contentState.open}>
+{#if mounted.current && contentState.menu.viewportNode}
+	<Portal to={contentState.menu.viewportNode} disabled={portalDisabled}>
+		<PresenceLayer
+			{id}
+			present={forceMount || contentState.open || contentState.isLastActiveValue}
+		>
 			{#snippet presence({ present })}
 				{#if asChild}
 					{@render child?.({ props: mergedProps })}
@@ -49,4 +47,16 @@
 			{/snippet}
 		</PresenceLayer>
 	</Portal>
+{:else}
+	<PresenceLayer {id} present={forceMount || contentState.open || contentState.isLastActiveValue}>
+		{#snippet presence({ present })}
+			{#if asChild}
+				{@render child?.({ props: mergedProps })}
+			{:else}
+				<div bind:this={ref} {...mergedProps}>
+					{@render children?.()}
+				</div>
+			{/if}
+		{/snippet}
+	</PresenceLayer>
 {/if}
