@@ -506,7 +506,7 @@ class NavigationMenuIndicatorState {
 		$effect(() => {
 			const triggerNodes = this.menu.getTriggerNodes();
 			const triggerNode = triggerNodes.find(
-				(node) => node.dataset.value === untrack(() => this.menu.value.value)
+				(node) => node.dataset.value === this.menu.value.value
 			);
 			if (triggerNode) {
 				untrack(() => {
@@ -527,17 +527,15 @@ class NavigationMenuIndicatorState {
 	}
 
 	handlePositionChange = () => {
-		untrack(() => {
-			if (!this.activeTrigger) return;
-			this.position = {
-				size: this.isHorizontal
-					? this.activeTrigger.offsetWidth
-					: this.activeTrigger.offsetHeight,
-				offset: this.isHorizontal
-					? this.activeTrigger.offsetLeft
-					: this.activeTrigger.offsetTop,
-			};
-		});
+		if (!this.activeTrigger) return;
+		this.position = {
+			size: this.isHorizontal
+				? this.activeTrigger.offsetWidth
+				: this.activeTrigger.offsetHeight,
+			offset: this.isHorizontal
+				? this.activeTrigger.offsetLeft
+				: this.activeTrigger.offsetTop,
+		};
 	};
 
 	props = $derived.by(
@@ -583,12 +581,10 @@ class NavigationMenuContentState {
 	open = $derived.by(() => this.menu.value.value === this.item.value.value);
 	isLastActiveValue = $derived.by(() => {
 		if (!isBrowser) return false;
-		if (this.menu.viewportId.value) {
-			const viewportNode = document.getElementById(this.menu.viewportId.value);
-			if (viewportNode) {
-				if (!this.menu.value.value && this.menu.previousValue.current) {
-					return this.menu.previousValue.current === this.item.value.value;
-				}
+		if (this.menu.viewportNode) {
+			console.log("this.menu.viewportNode", this.menu.viewportNode);
+			if (!this.menu.value.value && this.menu.previousValue.current) {
+				return this.menu.previousValue.current === this.item.value.value;
 			}
 		}
 		return false;
@@ -600,7 +596,13 @@ class NavigationMenuContentState {
 		this.menu = item.menu;
 
 		$effect(() => {
-			console.log("1");
+			console.log("open", this.open);
+		});
+		$effect(() => {
+			console.log("isLastActiveValue", this.isLastActiveValue);
+		});
+
+		$effect(() => {
 			const contentNode = this.getNode();
 			if (this.menu.isRoot && contentNode) {
 				// bubble dimiss to the root content node and focus its trigger
@@ -621,43 +623,41 @@ class NavigationMenuContentState {
 		});
 
 		$effect(() => {
-			const items = untrack(() => this.menu.getTriggerNodes());
-			const prev = untrack(() => this.menu.previousValue.current);
+			const items = this.menu.getTriggerNodes();
+			const prev = this.menu.previousValue.current;
 			const values = items
 				.map((item) => item.dataset.value)
 				.filter((v): v is string => Boolean(v));
 			if (this.menu.dir.value === "rtl") values.reverse();
 			const index = values.indexOf(this.menu.value.value);
 			const prevIndex = values.indexOf(prev ?? "");
-			const isSelected = untrack(() => this.item.value.value === this.menu.value.value);
-			const wasSelected = untrack(() => prevIndex === values.indexOf(this.item.value.value));
+			const isSelected = this.item.value.value === this.menu.value.value;
+			const wasSelected = prevIndex === values.indexOf(this.item.value.value);
 
 			// We only want to update selected and the last selected content
 			// this avoids animations being interrupted outside of that range
 			if (!isSelected && !wasSelected) {
-				untrack(() => (this.motionAttribute = this.prevMotionAttribute));
+				this.motionAttribute = this.prevMotionAttribute;
 			}
 
-			untrack(() => {
-				const attribute = (() => {
-					// Don't provide a direction on the initial open
-					if (index !== prevIndex) {
-						// If we're moving to this item from another
-						if (isSelected && prevIndex !== -1) {
-							return index > prevIndex ? "from-end" : "from-start";
-						}
-						// If we're leaving this item for another
-						if (wasSelected && index !== -1) {
-							return index > prevIndex ? "to-start" : "to-end";
-						}
+			const attribute = (() => {
+				// Don't provide a direction on the initial open
+				if (index !== prevIndex) {
+					// If we're moving to this item from another
+					if (isSelected && prevIndex !== -1) {
+						return index > prevIndex ? "from-end" : "from-start";
 					}
-					// Otherwise we're entering from closed or leaving the list
-					// entirely and should not animate in any direction
-					return null;
-				})();
-				this.prevMotionAttribute = attribute;
-				this.motionAttribute = attribute;
-			});
+					// If we're leaving this item for another
+					if (wasSelected && index !== -1) {
+						return index > prevIndex ? "to-start" : "to-end";
+					}
+				}
+				// Otherwise we're entering from closed or leaving the list
+				// entirely and should not animate in any direction
+				return null;
+			})();
+			this.prevMotionAttribute = attribute;
+			this.motionAttribute = attribute;
 		});
 	}
 
@@ -679,7 +679,7 @@ class NavigationMenuContentState {
 		if (e.defaultPrevented) return;
 		const target = e.target as HTMLElement;
 		const isTrigger = this.menu.getTriggerNodes().some((node) => node.contains(target));
-		const isRootViewport = this.menu.isRoot && this.menu.getViewportNode()?.contains(target);
+		const isRootViewport = this.menu.isRoot && this.menu.viewportNode?.contains(target);
 
 		if (isTrigger || isRootViewport || !this.menu.isRoot) {
 			e.preventDefault();
@@ -779,14 +779,12 @@ class NavigationMenuViewportState {
 		useResizeObserver(
 			() => this.contentNode,
 			() => {
-				untrack(() => {
-					if (this.contentNode) {
-						this.size = {
-							width: this.contentNode.offsetWidth,
-							height: this.contentNode.offsetHeight,
-						};
-					}
-				});
+				if (this.contentNode) {
+					this.size = {
+						width: this.contentNode.offsetWidth,
+						height: this.contentNode.offsetHeight,
+					};
+				}
 			}
 		);
 	}
@@ -880,7 +878,7 @@ export function useNavigationMenuRoot(props: NavigationMenuRootStateProps) {
 	});
 
 	setNavigationMenuMenuContext(menuState);
-	return setNavigationMenuRootContext(new NavigationMenuRootState(props));
+	return setNavigationMenuRootContext(rootState);
 }
 
 export function useNavigationMenuList(props: NavigationMenuListStateProps) {

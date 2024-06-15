@@ -6,14 +6,13 @@
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import Portal from "$lib/bits/utilities/portal/portal.svelte";
 	import { PresenceLayer } from "$lib/bits/utilities/presence-layer/index.js";
-	import EscapeLayer from "$lib/bits/utilities/escape-layer/escape-layer.svelte";
-	import DismissableLayer from "$lib/bits/utilities/dismissable-layer/dismissable-layer.svelte";
 	import { IsMounted } from "runed";
-	import { isBrowser } from "$lib/internal/is.js";
+	import { untrack } from "svelte";
+	import DismissableLayer from "$lib/bits/utilities/dismissable-layer/dismissable-layer.svelte";
 
 	let {
 		asChild,
-		children,
+		children: contentChildren,
 		child,
 		ref = $bindable(),
 		id = useId(),
@@ -25,38 +24,54 @@
 		id: box.with(() => id),
 	});
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));
-	const viewportId = $derived(contentState.menu.viewportId.value);
 	const portalDisabled = $derived(!Boolean(contentState.menu.viewportNode));
 	const mounted = new IsMounted();
+
+	const isPresent = $derived(forceMount || contentState.open || contentState.isLastActiveValue);
 </script>
 
 {#if mounted.current && contentState.menu.viewportNode}
 	<Portal to={contentState.menu.viewportNode} disabled={portalDisabled}>
-		<PresenceLayer
-			{id}
-			present={forceMount || contentState.open || contentState.isLastActiveValue}
-		>
+		<PresenceLayer {id} present={isPresent}>
 			{#snippet presence({ present })}
-				{#if asChild}
-					{@render child?.({ props: mergedProps })}
-				{:else}
-					<div bind:this={ref} {...mergedProps}>
-						{@render children?.()}
-					</div>
-				{/if}
+				<DismissableLayer
+					enabled={present.value}
+					{id}
+					onInteractOutside={contentState.onInteractOutside}
+					onFocusOutside={contentState.onFocusOutside}
+				>
+					{#snippet children({ props: dismissableProps })}
+						{#if asChild}
+							{@render child?.({ props: mergeProps(mergedProps, dismissableProps) })}
+						{:else}
+							<div bind:this={ref} {...mergeProps(mergedProps, dismissableProps)}>
+								{@render contentChildren?.()}
+							</div>
+						{/if}
+					{/snippet}
+				</DismissableLayer>
 			{/snippet}
 		</PresenceLayer>
 	</Portal>
 {:else}
-	<PresenceLayer {id} present={forceMount || contentState.open || contentState.isLastActiveValue}>
+	<PresenceLayer {id} present={isPresent}>
 		{#snippet presence({ present })}
-			{#if asChild}
-				{@render child?.({ props: mergedProps })}
-			{:else}
-				<div bind:this={ref} {...mergedProps}>
-					{@render children?.()}
-				</div>
-			{/if}
+			<DismissableLayer
+				enabled={present.value}
+				{id}
+				onFocusOutside={contentState.onFocusOutside}
+				onInteractOutside={contentState.onInteractOutside}
+			>
+				{#snippet children({ props: dismissableProps })}
+					{#if asChild}
+						{@render child?.({ props: mergeProps(mergedProps, dismissableProps) })}
+					{:else}
+						<div bind:this={ref} {...mergeProps(mergedProps, dismissableProps)}>
+							{@render contentChildren?.()}
+						</div>
+					{/if}
+				{/snippet}
+			</DismissableLayer>
 		{/snippet}
 	</PresenceLayer>
 {/if}

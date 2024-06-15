@@ -112,7 +112,7 @@
 				</ul>
 			</NavigationMenu.Content>
 		</NavigationMenu.Item>
-		<NavigationMenu.Item>
+		<!-- <NavigationMenu.Item>
 			<NavigationMenu.Trigger
 				class="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-accent-foreground focus:bg-muted focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-muted/50 data-[state=open]:bg-muted/50"
 			>
@@ -135,7 +135,7 @@
 					{/each}
 				</ul>
 			</NavigationMenu.Content>
-		</NavigationMenu.Item>
+		</NavigationMenu.Item> -->
 		<NavigationMenu.Item>
 			<NavigationMenu.Link
 				class="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-accent-foreground focus:bg-muted focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-muted/50 data-[state=open]:bg-muted/50"

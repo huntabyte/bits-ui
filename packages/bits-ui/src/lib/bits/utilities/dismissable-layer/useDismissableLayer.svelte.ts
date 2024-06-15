@@ -21,7 +21,6 @@ import {
 	noop,
 	useNodeById,
 } from "$lib/internal/index.js";
-import { eventLogs } from "$lib/bits/index.js";
 
 const layers = new Map<DismissableLayerState, ReadableBox<InteractOutsideBehaviorType>>();
 
