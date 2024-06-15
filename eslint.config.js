@@ -2,9 +2,8 @@ import config, { DEFAULT_IGNORES } from "@huntabyte/eslint-config";
 
 const ignores = ["**/extended-types"];
 
-export default config({ svelte: true, ignores: [...DEFAULT_IGNORES, ...ignores] }).override(
-	"antfu/typescript/rules",
-	{
+export default config({ svelte: true, ignores: [...DEFAULT_IGNORES, ...ignores] })
+	.override("antfu/typescript/rules", {
 		rules: {
 			"ts/consistent-type-definitions": "off",
 			"ts/ban-types": [
@@ -16,5 +15,9 @@ export default config({ svelte: true, ignores: [...DEFAULT_IGNORES, ...ignores] 
 				},
 			],
 		},
-	}
-);
+	})
+	.override("antfu/js/rules", {
+		rules: {
+			"no-unused-expressions": "off",
+		},
+	});

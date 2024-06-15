@@ -18,6 +18,7 @@ export type * from "$lib/bits/dropdown-menu/types.js";
 export type * from "$lib/bits/label/types.js";
 export type * from "$lib/bits/link-preview/types.js";
 export type * from "$lib/bits/menubar/types.js";
+export type * from "$lib/bits/navigation-menu/types.js";
 export type * from "$lib/bits/pagination/types.js";
 export type * from "$lib/bits/pin-input/types.js";
 export type * from "$lib/bits/popover/types.js";

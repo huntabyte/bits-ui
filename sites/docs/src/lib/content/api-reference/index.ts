@@ -54,6 +54,7 @@ export const bits = [
 	"label",
 	"link-preview",
 	"menubar",
+	"navigation-menu",
 	"pagination",
 	"pin-input",
 	"popover",
