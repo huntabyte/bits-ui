@@ -96,7 +96,7 @@
 			<Menubar.RadioGroup bind:value={selectedView}>
 				{#each views as view}
 					<Menubar.RadioItem
-						value="table"
+						value={view.value}
 						class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted"
 					>
 						{#snippet children({ checked })}
