@@ -1,7 +1,6 @@
-import { untrack } from "svelte";
-import { box, type WritableBox } from "svelte-toolbelt";
-import { Previous, useDebounce } from "runed";
-import { getTabbableCandidates } from "../utilities/focus-scope/utils.js";
+import { tick, untrack } from "svelte";
+import { box } from "svelte-toolbelt";
+import { Previous } from "runed";
 import {
 	watch,
 	type ReadableBoxedValues,
@@ -24,6 +23,8 @@ import { boxAutoReset } from "$lib/internal/boxAutoReset.svelte.js";
 import { useRefById } from "$lib/internal/useNodeById.svelte.js";
 import type { ElementRef } from "$lib/internal/types.js";
 import { afterTick } from "$lib/internal/afterTick.js";
+import { getTabbableCandidates } from "../utilities/focus-scope/utils.js";
+import { sleep } from "$lib/internal/sleep.js";
 
 const [setNavigationMenuRootContext, getNavigationMenuRootContext] =
 	createContext<NavigationMenuRootState>("NavigationMenu.Root");
@@ -65,7 +66,6 @@ class NavigationMenuRootState {
 	previousValue = new Previous(() => this.value.value);
 	triggerIds = new Set<string>();
 	triggerRefs = new Set<ElementRef>();
-	isDelaySkipped: WritableBox<boolean> = box(false);
 	openTimer = 0;
 	closeTimer = 0;
 	skipDelayTimer = 0;
@@ -82,7 +82,6 @@ class NavigationMenuRootState {
 		this.orientation = props.orientation;
 		this.dir = props.dir;
 		this.value = props.value;
-		this.isDelaySkipped = boxAutoReset(false, this.skipDelayDuration.value);
 		this.rootRef = props.ref;
 
 		useRefById({
@@ -339,7 +338,9 @@ class NavigationMenuItemState {
 	value: NavigationMenuItemStateProps["value"];
 	contentNode = $state<HTMLElement | null>(null);
 	triggerNode = $state<HTMLElement | null>(null);
-	focusProxyId = box.with<string | undefined>(() => useId());
+	focusProxyRef = box<HTMLElement | null>(null);
+	focusProxyNode = $state<HTMLElement | null>(null);
+	focusProxyId = box.with<string>(() => useId());
 	restoreContentTabOrder = $state(() => {});
 	wasEscapeClose = $state(false);
 	menu: NavigationMenuMenuState;
@@ -348,18 +349,26 @@ class NavigationMenuItemState {
 		this.id = props.id;
 		this.value = props.value;
 		this.menu = menu;
+
+		useRefById({
+			id: this.focusProxyId,
+			ref: this.focusProxyRef,
+			onRefChange: (node) => {
+				this.focusProxyNode = node;
+			},
+		});
 	}
 
-	getFocusProxyNode = () => {
-		return document.getElementById(this.focusProxyId.value ?? "");
-	};
-
 	#handleContentEntry = (side: "start" | "end" = "start") => {
-		if (!this.contentNode) return;
-		this.restoreContentTabOrder();
-		const candidates = getTabbableCandidates(this.contentNode);
+		const contentNode = document.getElementById(this.contentNode?.id ?? "");
+		if (!contentNode) return;
+		const candidates = getTabbableCandidates(contentNode);
 		if (candidates.length) {
-			focusFirst(side === "start" ? candidates : candidates.reverse());
+			if (side === "start") {
+				candidates[0]?.focus();
+			} else {
+				candidates[candidates.length - 1]?.focus();
+			}
 		}
 	};
 
@@ -482,7 +491,6 @@ class NavigationMenuTriggerState {
 		if (this.open && e.key === entryKey) {
 			this.item.onEntryKeydown();
 			e.preventDefault();
-			e.stopPropagation();
 		}
 	};
 
@@ -510,12 +518,14 @@ class NavigationMenuTriggerState {
 			({
 				id: this.item.focusProxyId.value,
 				"aria-hidden": "true",
+				tabindex: 0,
 				tabIndex: 0,
 				onfocus: (e: FocusEvent) => {
-					const contentNode = this.item.contentNode;
+					const contentNode = document.getElementById(this.item.contentNode?.id ?? "");
 					const prevFocusedElement = e.relatedTarget as HTMLElement | null;
-					const wasTriggerFocused = prevFocusedElement === this.item.getFocusProxyNode();
+					const wasTriggerFocused = prevFocusedElement === this.item.triggerNode;
 					const wasFocusFromContent = contentNode?.contains(prevFocusedElement);
+					console.log("wasFocusFromContent", wasFocusFromContent);
 
 					if (wasTriggerFocused || !wasFocusFromContent) {
 						this.item.onFocusProxyEnter(wasTriggerFocused ? "start" : "end");
@@ -562,6 +572,9 @@ class NavigationMenuLinkState {
 				"data-active": this.active.value ? "" : undefined,
 				"aria-current": this.active.value ? "page" : undefined,
 				onclick: this.#onclick,
+				onfocus: (e: FocusEvent) => {
+					console.log("focused link!");
+				},
 			}) as const
 	);
 }
@@ -687,6 +700,15 @@ class NavigationMenuContentState {
 		this.menu = item.menu;
 		this.contentRef = props.ref;
 
+		useRefById({
+			id: this.id,
+			ref: this.contentRef,
+			onRefChange: (node) => {
+				this.item.contentNode = node;
+			},
+			condition: () => this.isPresent,
+		});
+
 		$effect(() => {
 			const items = this.menu.getTriggerNodes();
 			const prev = this.menu.previousValue.current;
@@ -732,18 +754,22 @@ class NavigationMenuContentState {
 		this.item.onContentFocusOutside();
 		const target = e.target as HTMLElement;
 		// only dismiss content when focus moves outside the menu
-		if (this.menu.root.rootRef.value?.contains(target)) {
-			e.preventDefault();
-		}
+		// if (this.menu.root.rootRef.value?.contains(target)) {
+		// 	e.preventDefault();
+		// }
 	};
 
 	onInteractOutside = (e: Event) => {
 		if (e.defaultPrevented) return;
 		const target = e.target as HTMLElement;
 		const isTrigger = this.menu.getTriggerNodes().some((node) => node.contains(target));
+		console.log("is Trigger", isTrigger);
+
 		const isRootViewport = this.menu.isRoot && this.menu.viewportNode?.contains(target);
+		console.log("is Root Viewport", isRootViewport);
 
 		if (isTrigger || isRootViewport || !this.menu.isRoot) {
+			console.log("prevent default");
 			e.preventDefault();
 		}
 	};
@@ -775,7 +801,7 @@ class NavigationMenuContentState {
 				// If we can't focus that means we're at the edges
 				// so focus the proxy and let browser handle
 				// tab/shift+tab keypress on the proxy instead
-				this.item.getFocusProxyNode()?.focus();
+				this.item.focusProxyNode?.focus();
 			}
 		}
 		const newSelectedElement = useArrowNavigation(

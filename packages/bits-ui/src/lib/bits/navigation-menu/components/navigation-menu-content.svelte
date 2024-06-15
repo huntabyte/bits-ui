@@ -6,8 +6,8 @@
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import Portal from "$lib/bits/utilities/portal/portal.svelte";
 	import { PresenceLayer } from "$lib/bits/utilities/presence-layer/index.js";
-	import { IsMounted } from "runed";
 	import DismissableLayer from "$lib/bits/utilities/dismissable-layer/dismissable-layer.svelte";
+	import EscapeLayer from "$lib/bits/utilities/escape-layer/escape-layer.svelte";
 
 	let {
 		asChild,
@@ -32,28 +32,29 @@
 
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));
 	const portalDisabled = $derived(!Boolean(contentState.menu.viewportNode));
-	const mounted = new IsMounted();
 </script>
 
-<Portal to={contentState.menu.viewportNode} disabled={portalDisabled}>
+<Portal to={contentState.menu.viewportNode ?? undefined} disabled={portalDisabled}>
 	<PresenceLayer {id} present={contentState.isPresent}>
 		{#snippet presence({ present })}
-			<DismissableLayer
-				enabled={present.value}
-				{id}
-				onInteractOutside={contentState.onInteractOutside}
-				onFocusOutside={contentState.onFocusOutside}
-			>
-				{#snippet children({ props: dismissableProps })}
-					{#if asChild}
-						{@render child?.({ props: mergeProps(mergedProps, dismissableProps) })}
-					{:else}
-						<div bind:this={ref} {...mergeProps(mergedProps, dismissableProps)}>
-							{@render contentChildren?.()}
-						</div>
-					{/if}
-				{/snippet}
-			</DismissableLayer>
+			<EscapeLayer enabled={present.value} onEscapeKeydown={contentState.onEscapeKeydown}>
+				<DismissableLayer
+					enabled={present.value}
+					{id}
+					onInteractOutside={contentState.onInteractOutside}
+					onFocusOutside={contentState.onFocusOutside}
+				>
+					{#snippet children({ props: dismissableProps })}
+						{#if asChild}
+							{@render child?.({ props: mergeProps(mergedProps, dismissableProps) })}
+						{:else}
+							<div {...mergeProps(mergedProps, dismissableProps)}>
+								{@render contentChildren?.()}
+							</div>
+						{/if}
+					{/snippet}
+				</DismissableLayer>
+			</EscapeLayer>
 		{/snippet}
 	</PresenceLayer>
 </Portal>
