@@ -356,6 +356,14 @@ class NavigationMenuTriggerState {
 		this.menu = item.menu;
 		this.item.triggerId = props.id;
 		this.disabled = props.disabled;
+
+		$effect(() => {
+			this.menu.registerTriggerId(props.id.value);
+
+			return () => {
+				this.menu.deRegisterTriggerId(props.id.value);
+			};
+		});
 	}
 
 	#onpointerenter = () => {
@@ -582,7 +590,6 @@ class NavigationMenuContentState {
 	isLastActiveValue = $derived.by(() => {
 		if (!isBrowser) return false;
 		if (this.menu.viewportNode) {
-			console.log("this.menu.viewportNode", this.menu.viewportNode);
 			if (!this.menu.value.value && this.menu.previousValue.current) {
 				return this.menu.previousValue.current === this.item.value.value;
 			}
@@ -594,13 +601,6 @@ class NavigationMenuContentState {
 		this.id = props.id;
 		this.item = item;
 		this.menu = item.menu;
-
-		$effect(() => {
-			console.log("open", this.open);
-		});
-		$effect(() => {
-			console.log("isLastActiveValue", this.isLastActiveValue);
-		});
 
 		$effect(() => {
 			const contentNode = this.getNode();
@@ -656,6 +656,7 @@ class NavigationMenuContentState {
 				// entirely and should not animate in any direction
 				return null;
 			})();
+
 			this.prevMotionAttribute = attribute;
 			this.motionAttribute = attribute;
 		});
