@@ -2,7 +2,11 @@ import { untrack } from "svelte";
 import { box, type WritableBox } from "svelte-toolbelt";
 import { Previous, useDebounce } from "runed";
 import { getTabbableCandidates } from "../utilities/focus-scope/utils.js";
-import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
+import {
+	watch,
+	type ReadableBoxedValues,
+	type WritableBoxedValues,
+} from "$lib/internal/box.svelte.js";
 import type { Direction, Orientation } from "$lib/shared/index.js";
 import {
 	getAriaExpanded,
@@ -15,7 +19,6 @@ import {
 import { createContext } from "$lib/internal/createContext.js";
 import { useId } from "$lib/internal/useId.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
-import { isBrowser } from "$lib/internal/is.js";
 import { useArrowNavigation } from "$lib/internal/useArrowNavigation.js";
 import { boxAutoReset } from "$lib/internal/boxAutoReset.svelte.js";
 import { useRefById } from "$lib/internal/useNodeById.svelte.js";
@@ -63,16 +66,14 @@ class NavigationMenuRootState {
 	triggerIds = new Set<string>();
 	triggerRefs = new Set<ElementRef>();
 	isDelaySkipped: WritableBox<boolean> = box(false);
+	openTimer = 0;
+	closeTimer = 0;
+	skipDelayTimer = 0;
+	isOpenDelayed = $state<boolean>(false);
 
-	derivedDelay = $derived.by(() => {
-		const isOpen = this.value?.value !== "";
-		if (isOpen || this.isDelaySkipped?.value) return 150;
-		return this.delayDuration.value;
-	});
-
-	setValue = useDebounce((v: string) => {
+	setValue = (v: string) => {
 		this.value.value = v;
-	}, this.derivedDelay);
+	};
 
 	constructor(props: NavigationMenuRootStateProps) {
 		this.id = props.id;
@@ -88,7 +89,55 @@ class NavigationMenuRootState {
 			id: this.id,
 			ref: this.rootRef,
 		});
+
+		watch(this.value, (curr) => {
+			const isOpen = curr !== "";
+			const hasSkipDelayDuration = this.skipDelayDuration.value > 0;
+
+			if (isOpen) {
+				window.clearTimeout(this.skipDelayTimer);
+				if (hasSkipDelayDuration) this.isOpenDelayed = false;
+			} else {
+				window.clearTimeout(this.skipDelayTimer);
+				this.skipDelayTimer = window.setTimeout(
+					() => (this.isOpenDelayed = true),
+					this.skipDelayDuration.value
+				);
+			}
+		});
+
+		$effect(() => {
+			return () => {
+				window.clearTimeout(this.openTimer);
+				window.clearTimeout(this.closeTimer);
+				window.clearTimeout(this.skipDelayTimer);
+			};
+		});
 	}
+
+	startCloseTimer = () => {
+		window.clearTimeout(this.closeTimer);
+		this.closeTimer = window.setTimeout(() => this.setValue(""), 150);
+	};
+
+	handleOpen = (itemValue: string) => {
+		window.clearTimeout(this.closeTimer);
+		this.setValue(itemValue);
+	};
+
+	handleDelayedOpen = (itemValue: string) => {
+		const isOpenItem = this.value.value === itemValue;
+		if (isOpenItem) {
+			// If the item is already open (e.g. we're transitioning from the content to the trigger)
+			// then we want to clear the close timer immediately.
+			window.clearTimeout(this.closeTimer);
+		} else {
+			this.openTimer = window.setTimeout(() => {
+				window.clearTimeout(this.closeTimer);
+				this.setValue(itemValue);
+			}, this.delayDuration.value);
+		}
+	};
 
 	registerTrigger = (ref: ElementRef) => {
 		this.triggerRefs.add(ref);
@@ -105,28 +154,34 @@ class NavigationMenuRootState {
 	};
 
 	onTriggerEnter = (itemValue: string) => {
-		this.setValue(itemValue);
+		window.clearTimeout(this.openTimer);
+		if (this.isOpenDelayed) {
+			this.handleDelayedOpen(itemValue);
+		} else {
+			this.handleOpen(itemValue);
+		}
 	};
 
 	onTriggerLeave = () => {
-		this.isDelaySkipped.value = false;
-		this.setValue("");
+		window.clearTimeout(this.openTimer);
+		this.startCloseTimer();
 	};
 
 	onContentEnter = (itemValue: string) => {
-		this.setValue(itemValue);
+		window.clearTimeout(this.closeTimer);
 	};
 
 	onContentLeave = () => {
-		this.setValue("");
+		this.startCloseTimer();
 	};
 
 	onItemSelect = (itemValue: string) => {
-		this.value.value = itemValue;
+		const prevValue = this.value.value;
+		this.setValue(prevValue === itemValue ? "" : itemValue);
 	};
 
 	onItemDismiss = () => {
-		this.value.value = "";
+		this.setValue("");
 	};
 
 	props = $derived.by(() => ({
@@ -355,7 +410,7 @@ class NavigationMenuTriggerState {
 	menu: NavigationMenuMenuState;
 	item: NavigationMenuItemState;
 	disabled: NavigationMenuTriggerStateProps["disabled"];
-	hasPointerMoveOpened = boxAutoReset(false, 300);
+	hasPointerMoveOpened = boxAutoReset(false, 150);
 	wasClickClose = $state(false);
 	open = $derived.by(() => this.item.value.value === this.menu.value.value);
 	triggerRef: NavigationMenuTriggerStateProps["ref"];
