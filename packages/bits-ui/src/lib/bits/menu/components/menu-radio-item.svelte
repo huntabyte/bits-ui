@@ -10,7 +10,7 @@
 		asChild,
 		children,
 		child,
-		ref = $bindable(),
+		ref = $bindable(null),
 		value,
 		onSelect = noop,
 		id = useId(),
@@ -23,6 +23,10 @@
 		id: box.with(() => id),
 		disabled: box.with(() => disabled),
 		onSelect: box.with(() => handleSelect),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
 	function handleSelect(e: Event) {

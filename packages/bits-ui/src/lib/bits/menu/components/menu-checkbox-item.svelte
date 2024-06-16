@@ -10,7 +10,7 @@
 		asChild,
 		child,
 		children,
-		ref = $bindable(),
+		ref = $bindable(null),
 		checked = $bindable(false),
 		id = useId(),
 		onCheckedChange = noop,
@@ -32,6 +32,10 @@
 		id: box.with(() => id),
 		disabled: box.with(() => disabled),
 		onSelect: box.with(() => handleSelect),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
 	function handleSelect(e: Event) {

@@ -4,12 +4,14 @@
 	import { useMenuRadioGroup } from "../menu.svelte.js";
 	import { noop } from "$lib/internal/callbacks.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
 
 	let {
+		id = useId(),
 		asChild,
 		children,
 		child,
-		ref = $bindable(),
+		ref = $bindable(null),
 		value = $bindable(""),
 		onValueChange = noop,
 		...restProps
@@ -25,6 +27,11 @@
 				}
 			}
 		),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
+		id: box.with(() => id),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, radioGroupState.props));

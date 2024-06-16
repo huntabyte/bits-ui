@@ -9,10 +9,11 @@
 	import { noop } from "$lib/internal/callbacks.js";
 	import { isHTMLElement } from "$lib/internal/is.js";
 	import { afterTick } from "$lib/internal/afterTick.js";
+	import Mounted from "$lib/bits/utilities/mounted.svelte";
 
 	let {
 		id = useId(),
-		ref = $bindable(),
+		ref = $bindable(null),
 		asChild,
 		children,
 		child,
@@ -26,9 +27,16 @@
 		...restProps
 	}: SubContentProps = $props();
 
+	let isMounted = $state(false);
+
 	const subContentState = useMenuContent({
 		id: box.with(() => id),
 		loop: box.with(() => loop),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
+		isMounted: box.with(() => isMounted),
 	});
 
 	function onkeydown(e: KeyboardEvent) {
@@ -38,9 +46,7 @@
 		);
 		if (isKeyDownInside && isCloseKey) {
 			subContentState.parentMenu.onClose();
-			const triggerNode = document.getElementById(
-				subContentState.parentMenu.triggerId.value ?? ""
-			);
+			const triggerNode = subContentState.parentMenu.triggerNode;
 			triggerNode?.focus();
 			e.preventDefault();
 		}
@@ -92,7 +98,7 @@
 		// on pointer interaction.
 		if (!isHTMLElement(e.target)) return;
 
-		if (e.target.id !== subContentState.parentMenu.triggerId.value) {
+		if (e.target.id !== subContentState.parentMenu.triggerNode?.id) {
 			subContentState.parentMenu.onClose();
 		}
 	}}
@@ -108,5 +114,6 @@
 				{@render children?.()}
 			</div>
 		{/if}
+		<Mounted bind:isMounted />
 	{/snippet}
 </PopperLayer>
