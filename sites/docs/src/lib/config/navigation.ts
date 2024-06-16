@@ -152,6 +152,11 @@ export const navigation: Navigation = {
 					items: [],
 				},
 				{
+					title: "Navigation Menu",
+					href: "/docs/components/navigation-menu",
+					items: [],
+				},
+				{
 					title: "Pagination",
 					href: "/docs/components/pagination",
 					items: [],
