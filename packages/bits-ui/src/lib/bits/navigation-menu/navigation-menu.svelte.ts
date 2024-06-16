@@ -437,7 +437,6 @@ class NavigationMenuTriggerState {
 			id: this.item.focusProxyId,
 			ref: this.item.focusProxyRef,
 			onRefChange: (node) => {
-				console.log("ref changed", node);
 				this.item.focusProxyNode = node;
 			},
 			condition: () => this.focusProxyMounted.value,
@@ -793,8 +792,6 @@ class NavigationMenuContentState {
 				? candidates.slice(0, index).reverse()
 				: candidates.slice(index + 1, candidates.length);
 
-			console.log("nextCandidates", nextCandidates);
-
 			if (focusFirst(nextCandidates)) {
 				// prevent browser tab keydown because we've handled focus
 				e.preventDefault();
@@ -802,7 +799,6 @@ class NavigationMenuContentState {
 				// If we can't focus that means we're at the edges
 				// so focus the proxy and let browser handle
 				// tab/shift+tab keypress on the proxy instead
-				console.log("focusProxyNode", this.item.focusProxyNode);
 				this.item.focusProxyNode?.focus();
 			}
 		}
