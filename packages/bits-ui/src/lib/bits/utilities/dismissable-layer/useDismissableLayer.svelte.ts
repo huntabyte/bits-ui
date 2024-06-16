@@ -81,12 +81,6 @@ export class DismissableLayerState {
 			this.#documentObj = getOwnerDocument(this.currNode);
 		});
 
-		$effect(() => {
-			if (props.id.value === "123") {
-				console.log("enabled", this.#enabled.value);
-			}
-		});
-
 		let unsubEvents = noop;
 
 		const cleanup = () => {
@@ -103,7 +97,6 @@ export class DismissableLayerState {
 					this,
 					untrack(() => this.#behaviorType)
 				);
-				console.log("adding event listeners");
 				untrack(() => {
 					unsubEvents();
 					unsubEvents = this.#addEventListeners();

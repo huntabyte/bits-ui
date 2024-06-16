@@ -12,7 +12,7 @@
 </script>
 
 <PresenceLayer {present} {...restProps}>
-	{#snippet presence({})}
+	{#snippet presence()}
 		<FloatingLayer.Content {...restProps} enabled={present}>
 			{#snippet content({ props: floatingProps })}
 				<FocusScope {...restProps}>
