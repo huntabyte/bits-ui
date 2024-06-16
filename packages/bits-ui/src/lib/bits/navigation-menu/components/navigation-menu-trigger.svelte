@@ -5,6 +5,7 @@
 	import { useId } from "$lib/internal/useId.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import VisuallyHidden from "$lib/bits/utilities/visually-hidden/visually-hidden.svelte";
+	import Mounted from "$lib/bits/utilities/mounted.svelte";
 
 	let {
 		id = useId(),
@@ -16,6 +17,8 @@
 		...restProps
 	}: TriggerProps = $props();
 
+	let focusProxyMounted = $state(false);
+
 	const triggerState = useNavigationMenuTrigger({
 		id: box.with(() => id),
 		disabled: box.with(() => disabled),
@@ -23,6 +26,7 @@
 			() => ref,
 			(v) => (ref = v)
 		),
+		focusProxyMounted: box.with(() => focusProxyMounted),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, triggerState.props));
@@ -37,6 +41,7 @@
 {/if}
 
 {#if triggerState.open}
+	<Mounted bind:isMounted={focusProxyMounted} />
 	<VisuallyHidden {...triggerState.visuallyHiddenProps} />
 	{#if triggerState.menu.viewportNode}
 		<span aria-owns={triggerState.item.contentNode?.id ?? undefined}></span>

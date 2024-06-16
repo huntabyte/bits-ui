@@ -8,6 +8,7 @@
 	import { PresenceLayer } from "$lib/bits/utilities/presence-layer/index.js";
 	import DismissableLayer from "$lib/bits/utilities/dismissable-layer/dismissable-layer.svelte";
 	import EscapeLayer from "$lib/bits/utilities/escape-layer/escape-layer.svelte";
+	import Mounted from "$lib/bits/utilities/mounted.svelte";
 
 	let {
 		asChild,
@@ -19,6 +20,8 @@
 		...restProps
 	}: ContentProps = $props();
 
+	let isMounted = $state(false);
+
 	const contentState = useNavigationMenuContent({
 		id: box.with(() => id),
 		ref: box.with(
@@ -28,6 +31,7 @@
 			}
 		),
 		forceMount: box.with(() => forceMount),
+		isMounted: box.with(() => isMounted),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));
@@ -49,6 +53,7 @@
 							{@render child?.({ props: mergeProps(mergedProps, dismissableProps) })}
 						{:else}
 							<div {...mergeProps(mergedProps, dismissableProps)}>
+								<Mounted bind:isMounted />
 								{@render contentChildren?.()}
 							</div>
 						{/if}

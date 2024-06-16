@@ -1,5 +1,5 @@
 import { tick, untrack } from "svelte";
-import { box } from "svelte-toolbelt";
+import { box, type WritableBox } from "svelte-toolbelt";
 import { Previous } from "runed";
 import {
 	watch,
@@ -340,7 +340,7 @@ class NavigationMenuItemState {
 	triggerNode = $state<HTMLElement | null>(null);
 	focusProxyRef = box<HTMLElement | null>(null);
 	focusProxyNode = $state<HTMLElement | null>(null);
-	focusProxyId = box.with<string>(() => useId());
+	focusProxyId = box(useId());
 	restoreContentTabOrder = $state(() => {});
 	wasEscapeClose = $state(false);
 	menu: NavigationMenuMenuState;
@@ -349,20 +349,11 @@ class NavigationMenuItemState {
 		this.id = props.id;
 		this.value = props.value;
 		this.menu = menu;
-
-		useRefById({
-			id: this.focusProxyId,
-			ref: this.focusProxyRef,
-			onRefChange: (node) => {
-				this.focusProxyNode = node;
-			},
-		});
 	}
 
 	#handleContentEntry = (side: "start" | "end" = "start") => {
-		const contentNode = document.getElementById(this.contentNode?.id ?? "");
-		if (!contentNode) return;
-		const candidates = getTabbableCandidates(contentNode);
+		if (!this.contentNode) return;
+		const candidates = getTabbableCandidates(this.contentNode);
 		if (candidates.length) {
 			if (side === "start") {
 				candidates[0]?.focus();
@@ -409,6 +400,7 @@ class NavigationMenuItemState {
 type NavigationMenuTriggerStateProps = ReadableBoxedValues<{
 	id: string;
 	disabled: boolean;
+	focusProxyMounted: boolean;
 }> &
 	WritableBoxedValues<{
 		ref: HTMLElement | null;
@@ -416,6 +408,7 @@ type NavigationMenuTriggerStateProps = ReadableBoxedValues<{
 
 class NavigationMenuTriggerState {
 	id: NavigationMenuTriggerStateProps["id"];
+	focusProxyMounted: NavigationMenuTriggerStateProps["focusProxyMounted"];
 	menu: NavigationMenuMenuState;
 	item: NavigationMenuItemState;
 	disabled: NavigationMenuTriggerStateProps["disabled"];
@@ -430,6 +423,7 @@ class NavigationMenuTriggerState {
 		this.item = item;
 		this.menu = item.menu;
 		this.disabled = props.disabled;
+		this.focusProxyMounted = props.focusProxyMounted;
 
 		useRefById({
 			id: this.id,
@@ -437,6 +431,16 @@ class NavigationMenuTriggerState {
 			onRefChange: (node) => {
 				this.item.triggerNode = node;
 			},
+		});
+
+		useRefById({
+			id: this.item.focusProxyId,
+			ref: this.item.focusProxyRef,
+			onRefChange: (node) => {
+				console.log("ref changed", node);
+				this.item.focusProxyNode = node;
+			},
+			condition: () => this.focusProxyMounted.value,
 		});
 
 		$effect(() => {
@@ -518,14 +522,11 @@ class NavigationMenuTriggerState {
 			({
 				id: this.item.focusProxyId.value,
 				"aria-hidden": "true",
-				tabindex: 0,
 				tabIndex: 0,
 				onfocus: (e: FocusEvent) => {
-					const contentNode = document.getElementById(this.item.contentNode?.id ?? "");
 					const prevFocusedElement = e.relatedTarget as HTMLElement | null;
 					const wasTriggerFocused = prevFocusedElement === this.item.triggerNode;
-					const wasFocusFromContent = contentNode?.contains(prevFocusedElement);
-					console.log("wasFocusFromContent", wasFocusFromContent);
+					const wasFocusFromContent = this.item.contentNode?.contains(prevFocusedElement);
 
 					if (wasTriggerFocused || !wasFocusFromContent) {
 						this.item.onFocusProxyEnter(wasTriggerFocused ? "start" : "end");
@@ -553,7 +554,7 @@ class NavigationMenuLinkState {
 	}
 
 	#onclick = (e: MouseEvent) => {
-		const linkSelectEvent = new CustomEvent(" navigationMenu.linkSelect", {
+		const linkSelectEvent = new CustomEvent("navigationMenu.linkSelect", {
 			bubbles: true,
 			cancelable: true,
 		});
@@ -572,9 +573,7 @@ class NavigationMenuLinkState {
 				"data-active": this.active.value ? "" : undefined,
 				"aria-current": this.active.value ? "page" : undefined,
 				onclick: this.#onclick,
-				onfocus: (e: FocusEvent) => {
-					console.log("focused link!");
-				},
+				onfocus: (e: FocusEvent) => {},
 			}) as const
 	);
 }
@@ -667,6 +666,7 @@ class NavigationMenuIndicatorState {
 type NavigationMenuContentStateProps = ReadableBoxedValues<{
 	id: string;
 	forceMount: boolean;
+	isMounted: boolean;
 }> &
 	WritableBoxedValues<{
 		ref: HTMLElement | null;
@@ -677,6 +677,7 @@ type MotionAttribute = "to-start" | "to-end" | "from-start" | "from-end";
 class NavigationMenuContentState {
 	id: NavigationMenuContentStateProps["id"];
 	forceMount: NavigationMenuContentStateProps["forceMount"];
+	isMounted: NavigationMenuContentStateProps["isMounted"];
 	contentRef: NavigationMenuContentStateProps["ref"];
 	menu: NavigationMenuMenuState;
 	item: NavigationMenuItemState;
@@ -696,6 +697,7 @@ class NavigationMenuContentState {
 	constructor(props: NavigationMenuContentStateProps, item: NavigationMenuItemState) {
 		this.id = props.id;
 		this.forceMount = props.forceMount;
+		this.isMounted = props.isMounted;
 		this.item = item;
 		this.menu = item.menu;
 		this.contentRef = props.ref;
@@ -706,7 +708,7 @@ class NavigationMenuContentState {
 			onRefChange: (node) => {
 				this.item.contentNode = node;
 			},
-			condition: () => this.isPresent,
+			condition: () => this.isMounted.value,
 		});
 
 		$effect(() => {
@@ -754,22 +756,19 @@ class NavigationMenuContentState {
 		this.item.onContentFocusOutside();
 		const target = e.target as HTMLElement;
 		// only dismiss content when focus moves outside the menu
-		// if (this.menu.root.rootRef.value?.contains(target)) {
-		// 	e.preventDefault();
-		// }
+		if (this.menu.root.rootRef.value?.contains(target)) {
+			e.preventDefault();
+		}
 	};
 
 	onInteractOutside = (e: Event) => {
 		if (e.defaultPrevented) return;
 		const target = e.target as HTMLElement;
 		const isTrigger = this.menu.getTriggerNodes().some((node) => node.contains(target));
-		console.log("is Trigger", isTrigger);
 
 		const isRootViewport = this.menu.isRoot && this.menu.viewportNode?.contains(target);
-		console.log("is Root Viewport", isRootViewport);
 
 		if (isTrigger || isRootViewport || !this.menu.isRoot) {
-			console.log("prevent default");
 			e.preventDefault();
 		}
 	};
@@ -794,6 +793,8 @@ class NavigationMenuContentState {
 				? candidates.slice(0, index).reverse()
 				: candidates.slice(index + 1, candidates.length);
 
+			console.log("nextCandidates", nextCandidates);
+
 			if (focusFirst(nextCandidates)) {
 				// prevent browser tab keydown because we've handled focus
 				e.preventDefault();
@@ -801,6 +802,7 @@ class NavigationMenuContentState {
 				// If we can't focus that means we're at the edges
 				// so focus the proxy and let browser handle
 				// tab/shift+tab keypress on the proxy instead
+				console.log("focusProxyNode", this.item.focusProxyNode);
 				this.item.focusProxyNode?.focus();
 			}
 		}

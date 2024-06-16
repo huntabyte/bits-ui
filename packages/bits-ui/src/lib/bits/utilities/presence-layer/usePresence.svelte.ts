@@ -7,7 +7,7 @@ export function usePresence(present: ReadableBox<boolean>, id: ReadableBox<strin
 	const initialState = present.value ? "mounted" : "unmounted";
 	let node = $state<HTMLElement | null>(null);
 
-	$effect.pre(() => {
+	$effect(() => {
 		if (!id.value) return;
 		if (!present.value) return;
 

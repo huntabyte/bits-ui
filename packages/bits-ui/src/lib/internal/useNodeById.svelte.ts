@@ -78,8 +78,10 @@ export function useRefById({
 		id.value;
 		condition();
 		// re-run when the condition changes.
-		const node = document.getElementById(id.value);
-		untrack(() => (ref.value = node));
-		untrack(() => onRefChange(node));
+		untrack(() => {
+			const node = document.getElementById(id.value);
+			ref.value = node;
+			onRefChange(ref.value);
+		});
 	});
 }
