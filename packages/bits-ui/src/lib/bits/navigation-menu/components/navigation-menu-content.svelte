@@ -41,7 +41,10 @@
 <Portal to={contentState.menu.viewportNode ?? undefined} disabled={portalDisabled}>
 	<PresenceLayer {id} present={contentState.isPresent}>
 		{#snippet presence({ present })}
-			<EscapeLayer enabled={present.value} onEscapeKeydown={contentState.onEscapeKeydown}>
+			<EscapeLayer
+				enabled={present.value}
+				onEscapeKeydown={(e) => contentState.onEscapeKeydown(e)}
+			>
 				<DismissableLayer
 					enabled={present.value}
 					{id}

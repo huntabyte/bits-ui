@@ -25,6 +25,7 @@ import type { ElementRef } from "$lib/internal/types.js";
 import { afterTick } from "$lib/internal/afterTick.js";
 import { getTabbableCandidates } from "../utilities/focus-scope/utils.js";
 import { sleep } from "$lib/internal/sleep.js";
+import { noop } from "$lib/internal/callbacks.js";
 
 const [setNavigationMenuRootContext, getNavigationMenuRootContext] =
 	createContext<NavigationMenuRootState>("NavigationMenu.Root");
@@ -168,7 +169,7 @@ class NavigationMenuRootState {
 		this.startCloseTimer();
 	};
 
-	onContentEnter = (itemValue: string) => {
+	onContentEnter = () => {
 		window.clearTimeout(this.closeTimer);
 	};
 
@@ -209,7 +210,7 @@ type NavigationMenuMenuStateProps = ReadableBoxedValues<{
 		isRoot: boolean;
 		onTriggerEnter: (itemValue: string) => void;
 		onTriggerLeave?: () => void;
-		onContentEnter?: (itemValue: string) => void;
+		onContentEnter?: () => void;
 		onContentLeave?: () => void;
 		onItemSelect: (itemValue: string) => void;
 		onItemDismiss: () => void;
@@ -344,7 +345,7 @@ class NavigationMenuItemState {
 	focusProxyRef = box<HTMLElement | null>(null);
 	focusProxyNode = $state<HTMLElement | null>(null);
 	focusProxyId = box(useId());
-	restoreContentTabOrder = $state(() => {});
+	restoreContentTabOrder = noop;
 	wasEscapeClose = $state(false);
 	menu: NavigationMenuMenuState;
 
@@ -356,6 +357,7 @@ class NavigationMenuItemState {
 
 	#handleContentEntry = (side: "start" | "end" = "start") => {
 		if (!this.contentNode) return;
+		this.restoreContentTabOrder();
 		const candidates = getTabbableCandidates(this.contentNode);
 		if (candidates.length) {
 			if (side === "start") {
@@ -753,13 +755,9 @@ class NavigationMenuContentState {
 	}
 
 	onFocusOutside = (e: Event) => {
-		console.log("focus outside");
-		if (e.defaultPrevented) return;
 		this.item.onContentFocusOutside();
 		const target = e.target as HTMLElement;
 		// only dismiss content when focus moves outside the menu
-		console.log("target", target);
-		console.log(this.menu.root.rootRef.value);
 
 		if (this.menu.root.rootRef.value?.contains(target)) {
 			e.preventDefault();
@@ -781,17 +779,20 @@ class NavigationMenuContentState {
 	};
 
 	onEscapeKeydown = (e: KeyboardEvent) => {
-		if (e.defaultPrevented) return;
-		this.menu.onItemDismiss();
-		this.item.triggerNode?.focus();
+		this.menu.root.handleClose();
+		const target = e.target as HTMLElement;
+
+		if (this.contentRef.value?.contains(target)) {
+			this.item.triggerNode?.focus();
+		}
 		this.item.wasEscapeClose = true;
 	};
 
 	#onkeydown = (e: KeyboardEvent) => {
 		const isMetaKey = e.altKey || e.ctrlKey || e.metaKey;
 		const isTabKey = e.key === kbd.TAB && !isMetaKey;
-		const candidates = getTabbableCandidates(e.currentTarget as HTMLElement);
 
+		const candidates = getTabbableCandidates(e.currentTarget as HTMLElement);
 		if (isTabKey) {
 			const focusedElement = document.activeElement;
 			const index = candidates.findIndex((candidate) => candidate === focusedElement);
@@ -803,11 +804,13 @@ class NavigationMenuContentState {
 			if (focusFirst(nextCandidates)) {
 				// prevent browser tab keydown because we've handled focus
 				e.preventDefault();
+				return;
 			} else {
 				// If we can't focus that means we're at the edges
 				// so focus the proxy and let browser handle
 				// tab/shift+tab keypress on the proxy instead
 				this.item.focusProxyNode?.focus();
+				return;
 			}
 		}
 		const newSelectedElement = useArrowNavigation(
@@ -898,7 +901,7 @@ class NavigationMenuViewportState {
 	}
 
 	#onpointerenter = () => {
-		this.menu.onContentEnter?.(this.menu.value.value);
+		this.menu.onContentEnter?.();
 	};
 
 	#onpointerleave = (e: PointerEvent) => {
@@ -1033,9 +1036,11 @@ function removeFromTabOrder(candidates: HTMLElement[]) {
 		candidate.setAttribute("tabindex", "-1");
 	});
 	return () => {
+		console.log("restoring tab order");
 		candidates.forEach((candidate) => {
 			const prevTabIndex = candidate.dataset.tabindex as string;
 			candidate.setAttribute("tabindex", prevTabIndex);
+			console.log(candidate.getAttribute("tabindex"));
 		});
 	};
 }
