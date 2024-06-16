@@ -8,7 +8,7 @@
 
 	let {
 		id = useId(),
-		ref = $bindable(),
+		ref = $bindable(null),
 		asChild,
 		child,
 		children,
@@ -19,6 +19,10 @@
 	const triggerState = useMenuDropdownTrigger({
 		id: box.with(() => id),
 		disabled: box.with(() => disabled),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, triggerState.props));

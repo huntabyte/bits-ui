@@ -8,13 +8,14 @@
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
 	import { isElement } from "$lib/internal/is.js";
 	import type { InteractOutsideEvent } from "$lib/bits/utilities/dismissable-layer/types.js";
+	import Mounted from "$lib/bits/utilities/mounted.svelte";
 
 	let {
 		id = useId(),
 		asChild,
 		child,
 		children,
-		ref = $bindable(),
+		ref = $bindable(null),
 		loop = true,
 		onInteractOutside = noop,
 		onEscapeKeydown = noop,
@@ -22,18 +23,25 @@
 		...restProps
 	}: ContentProps = $props();
 
+	let isMounted = $state(false);
+
 	const contentState = useMenuContent({
 		id: box.with(() => id),
 		loop: box.with(() => loop),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
+		isMounted: box.with(() => isMounted),
 	});
 
 	function handleInteractOutsideStart(e: InteractOutsideEvent) {
 		if (!isElement(e.target)) return;
-		if (e.target.id === contentState.parentMenu.triggerId.value) {
+		if (e.target.id === contentState.parentMenu.triggerNode?.id) {
 			e.preventDefault();
 			return;
 		}
-		if (e.target.closest(`#${contentState.parentMenu.triggerId.value}`)) {
+		if (e.target.closest(`#${contentState.parentMenu.triggerNode?.id}`)) {
 			e.preventDefault();
 		}
 	}
@@ -71,5 +79,6 @@
 				{@render children?.()}
 			</div>
 		{/if}
+		<Mounted bind:isMounted />
 	{/snippet}
 </PopperLayer>

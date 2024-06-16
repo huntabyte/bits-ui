@@ -7,13 +7,14 @@
 	import { noop } from "$lib/internal/callbacks.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
 	import { isElementOrSVGElement } from "$lib/internal/is.js";
+	import Mounted from "$lib/bits/utilities/mounted.svelte";
 
 	let {
 		id = useId(),
 		asChild,
 		child,
 		children,
-		ref = $bindable(),
+		ref = $bindable(null),
 		loop = true,
 		onInteractOutside = noop,
 		onEscapeKeydown = noop,
@@ -21,9 +22,16 @@
 		...restProps
 	}: ContentProps = $props();
 
+	let isMounted = $state(false);
+
 	const contentState = useMenuContent({
 		id: box.with(() => id),
 		loop: box.with(() => loop),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
+		isMounted: box.with(() => isMounted),
 	});
 
 	const mergedProps = $derived(
@@ -48,21 +56,21 @@
 	present={contentState.parentMenu.open.value || forceMount}
 	onInteractOutsideStart={(e) => {
 		if (!isElementOrSVGElement(e.target)) return;
-		if (e.target.id === contentState.parentMenu.triggerId.value) {
+		if (e.target.id === contentState.parentMenu.triggerNode?.id) {
 			e.preventDefault();
 			return;
 		}
-		if (e.target.closest(`#${contentState.parentMenu.triggerId.value}`)) {
+		if (e.target.closest(`#${contentState.parentMenu.triggerNode?.id}`)) {
 			e.preventDefault();
 		}
 	}}
 	onInteractOutside={(e) => {
 		if (!isElementOrSVGElement(e.target)) return;
-		if (e.target.id === contentState.parentMenu.triggerId.value) {
+		if (e.target.id === contentState.parentMenu.triggerNode?.id) {
 			e.preventDefault();
 			return;
 		}
-		if (e.target.closest(`#${contentState.parentMenu.triggerId.value}`)) {
+		if (e.target.closest(`#${contentState.parentMenu.triggerNode?.id}`)) {
 			e.preventDefault();
 			return;
 		}
@@ -87,5 +95,6 @@
 				{@render children?.()}
 			</div>
 		{/if}
+		<Mounted bind:isMounted />
 	{/snippet}
 </PopperLayer>

@@ -10,7 +10,7 @@
 		asChild,
 		child,
 		children,
-		ref = $bindable(),
+		ref = $bindable(null),
 		id = useId(),
 		disabled = false,
 		onSelect = noop,
@@ -21,6 +21,10 @@
 		id: box.with(() => id),
 		disabled: box.with(() => disabled),
 		onSelect: box.with(() => onSelect),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, itemState.props));

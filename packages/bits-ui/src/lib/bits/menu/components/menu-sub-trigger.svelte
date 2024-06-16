@@ -8,7 +8,7 @@
 	let {
 		id = useId(),
 		disabled = false,
-		ref = $bindable(),
+		ref = $bindable(null),
 		asChild,
 		children,
 		child,
@@ -18,6 +18,10 @@
 	const subTriggerState = useMenuSubTrigger({
 		disabled: box.with(() => disabled),
 		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, subTriggerState.props));

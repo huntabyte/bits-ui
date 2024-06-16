@@ -12,15 +12,15 @@
 </script>
 
 <PresenceLayer {present} {...restProps}>
-	{#snippet presence()}
-		<FloatingLayer.Content {...restProps} enabled={present}>
+	{#snippet presence({ present })}
+		<FloatingLayer.Content {...restProps} enabled={present.value}>
 			{#snippet content({ props: floatingProps })}
 				<FocusScope {...restProps}>
 					{#snippet focusScope({ props: focusScopeProps })}
-						<EscapeLayer {...restProps} enabled={present}>
-							<DismissableLayer {...restProps} enabled={present}>
+						<EscapeLayer {...restProps} enabled={present.value}>
+							<DismissableLayer {...restProps} enabled={present.value}>
 								{#snippet children({ props: dismissableProps })}
-									<TextSelectionLayer {...restProps} enabled={present}>
+									<TextSelectionLayer {...restProps} enabled={present.value}>
 										{@render popper?.({
 											props: mergeProps(
 												restProps,
