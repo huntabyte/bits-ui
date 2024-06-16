@@ -533,6 +533,7 @@ class NavigationMenuTriggerState {
 					const wasFocusFromContent = this.item.contentNode?.contains(prevFocusedElement);
 
 					if (wasTriggerFocused || !wasFocusFromContent) {
+						e.preventDefault();
 						this.item.onFocusProxyEnter(wasTriggerFocused ? "start" : "end");
 					}
 				},
@@ -695,7 +696,7 @@ class NavigationMenuContentState {
 		}
 		return false;
 	});
-	isPresent = $derived.by(() => this.open || this.isLastActiveValue || this.forceMount.value);
+	isPresent = $derived.by(() => this.open || this.forceMount.value);
 
 	constructor(props: NavigationMenuContentStateProps, item: NavigationMenuItemState) {
 		this.id = props.id;
@@ -1036,11 +1037,9 @@ function removeFromTabOrder(candidates: HTMLElement[]) {
 		candidate.setAttribute("tabindex", "-1");
 	});
 	return () => {
-		console.log("restoring tab order");
 		candidates.forEach((candidate) => {
 			const prevTabIndex = candidate.dataset.tabindex as string;
 			candidate.setAttribute("tabindex", prevTabIndex);
-			console.log(candidate.getAttribute("tabindex"));
 		});
 	};
 }

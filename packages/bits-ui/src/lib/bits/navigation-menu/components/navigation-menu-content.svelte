@@ -42,21 +42,22 @@
 	<PresenceLayer {id} present={contentState.isPresent}>
 		{#snippet presence({ present })}
 			<EscapeLayer
-				enabled={present.value}
+				enabled={contentState.isPresent}
 				onEscapeKeydown={(e) => contentState.onEscapeKeydown(e)}
 			>
 				<DismissableLayer
-					enabled={present.value}
+					enabled={contentState.isPresent}
 					{id}
 					onInteractOutside={contentState.onInteractOutside}
 					onFocusOutside={contentState.onFocusOutside}
 				>
 					{#snippet children({ props: dismissableProps })}
 						{#if asChild}
-							{@render child?.({ props: mergeProps(mergedProps, dismissableProps) })}
+							<Mounted bind:isMounted />
+							{@render child?.({ props: mergeProps(dismissableProps, mergedProps) })}
 						{:else}
-							<div {...mergeProps(mergedProps, dismissableProps)}>
-								<Mounted bind:isMounted />
+							<Mounted bind:isMounted />
+							<div {...mergeProps(dismissableProps, mergedProps)}>
 								{@render contentChildren?.()}
 							</div>
 						{/if}

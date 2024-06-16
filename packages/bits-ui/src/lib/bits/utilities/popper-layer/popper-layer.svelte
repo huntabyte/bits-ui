@@ -8,19 +8,19 @@
 	import { FocusScope } from "$lib/bits/utilities/focus-scope/index.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
-	let { popper, ...restProps }: PopperLayerImplProps = $props();
+	let { popper, present, ...restProps }: PopperLayerImplProps = $props();
 </script>
 
-<PresenceLayer {...restProps}>
-	{#snippet presence({ present })}
-		<FloatingLayer.Content {...restProps} enabled={present.value}>
+<PresenceLayer {present} {...restProps}>
+	{#snippet presence({})}
+		<FloatingLayer.Content {...restProps} enabled={present}>
 			{#snippet content({ props: floatingProps })}
 				<FocusScope {...restProps}>
 					{#snippet focusScope({ props: focusScopeProps })}
-						<EscapeLayer {...restProps} enabled={present.value}>
-							<DismissableLayer {...restProps} enabled={present.value}>
+						<EscapeLayer {...restProps} enabled={present}>
+							<DismissableLayer {...restProps} enabled={present}>
 								{#snippet children({ props: dismissableProps })}
-									<TextSelectionLayer {...restProps} enabled={present.value}>
+									<TextSelectionLayer {...restProps} enabled={present}>
 										{@render popper?.({
 											props: mergeProps(
 												restProps,

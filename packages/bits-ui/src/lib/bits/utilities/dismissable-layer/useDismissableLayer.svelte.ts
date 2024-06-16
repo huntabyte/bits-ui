@@ -1,5 +1,5 @@
 import { untrack } from "svelte";
-import type { ReadableBox } from "svelte-toolbelt";
+import { box, type ReadableBox, type WritableBox } from "svelte-toolbelt";
 import type {
 	DismissableLayerImplProps,
 	InteractOutsideBehaviorType,
@@ -19,7 +19,7 @@ import {
 	isElement,
 	isOrContainsTarget,
 	noop,
-	useNodeById,
+	useRefById,
 } from "$lib/internal/index.js";
 
 const layers = new Map<DismissableLayerState, ReadableBox<InteractOutsideBehaviorType>>();
@@ -53,25 +53,49 @@ export class DismissableLayerState {
 	};
 	#isPointerDownOutside = false;
 	#isResponsibleLayer = false;
-	node: Box<HTMLElement | null>;
+	node: WritableBox<HTMLElement | null> = box(null);
 	#documentObj = undefined as unknown as Document;
 	#enabled: ReadableBox<boolean>;
 	#isFocusInsideDOMTree = $state(false);
 	#onFocusOutside: DismissableLayerStateProps["onFocusOutside"];
+	currNode = $state<HTMLElement | null>(null);
 
 	constructor(props: DismissableLayerStateProps) {
-		this.node = useNodeById(props.id);
+		this.#enabled = props.enabled;
+
+		useRefById({
+			id: props.id,
+			ref: this.node,
+			condition: () => this.#enabled.value,
+			onRefChange: (node) => {
+				this.currNode = node;
+			},
+		});
+
 		this.#behaviorType = props.interactOutsideBehavior;
 		this.#interactOutsideStartProp = props.onInteractOutsideStart;
 		this.#interactOutsideProp = props.onInteractOutside;
-		this.#enabled = props.enabled;
 		this.#onFocusOutside = props.onFocusOutside;
 
 		$effect(() => {
-			this.#documentObj = getOwnerDocument(this.node.value);
+			this.#documentObj = getOwnerDocument(this.currNode);
+		});
+
+		$effect(() => {
+			if (props.id.value === "123") {
+				console.log("enabled", this.#enabled.value);
+			}
 		});
 
 		let unsubEvents = noop;
+
+		const cleanup = () => {
+			this.#resetState();
+			layers.delete(this);
+			this.#onInteractOutsideStart.destroy();
+			this.#onInteractOutside.destroy();
+			unsubEvents();
+		};
 
 		$effect(() => {
 			if (this.#enabled.value) {
@@ -79,14 +103,14 @@ export class DismissableLayerState {
 					this,
 					untrack(() => this.#behaviorType)
 				);
-				unsubEvents = this.#addEventListeners();
+				console.log("adding event listeners");
+				untrack(() => {
+					unsubEvents();
+					unsubEvents = this.#addEventListeners();
+				});
 			}
 			return () => {
-				this.#resetState();
-				layers.delete(this);
-				this.#onInteractOutsideStart.destroy();
-				this.#onInteractOutside.destroy();
-				unsubEvents();
+				cleanup();
 			};
 		});
 
@@ -105,9 +129,10 @@ export class DismissableLayerState {
 	}
 
 	#handleFocus = (event: FocusEvent) => {
-		if (!this.node.value) return;
+		if (event.defaultPrevented) return;
+		if (!this.currNode) return;
 		afterTick(() => {
-			if (!this.node.value || this.#isTargetWithinLayer(event.target as HTMLElement)) return;
+			if (!this.currNode || this.#isTargetWithinLayer(event.target as HTMLElement)) return;
 
 			if (event.target && !this.#isFocusInsideDOMTree) {
 				this.#onFocusOutside.value?.(event);
@@ -173,11 +198,11 @@ export class DismissableLayerState {
 	}
 
 	#onInteractOutsideStart = debounce((e: InteractOutsideEvent) => {
-		if (!this.node.value) return;
+		if (!this.currNode) return;
 		if (
 			!this.#isResponsibleLayer ||
 			this.#isAnyEventIntercepted() ||
-			!isValidEvent(e, this.node.value)
+			!isValidEvent(e, this.currNode)
 		)
 			return;
 		this.#interactOutsideStartProp.value(e);
@@ -186,13 +211,13 @@ export class DismissableLayerState {
 	}, 10);
 
 	#onInteractOutside = debounce((e: InteractOutsideEvent) => {
-		if (!this.node.value) return;
+		if (!this.currNode) return;
 
 		const behaviorType = this.#behaviorType.value;
 		if (
 			!this.#isResponsibleLayer ||
 			this.#isAnyEventIntercepted() ||
-			!isValidEvent(e, this.node.value)
+			!isValidEvent(e, this.currNode)
 		) {
 			return;
 		}
