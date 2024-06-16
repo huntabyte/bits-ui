@@ -35,8 +35,6 @@ const [setNavigationMenuMenuContext, getNavigationMenuMenuContext] =
 const [setNavigationMenuItemContext, getNavigationMenuItemContext] =
 	createContext<NavigationMenuItemState>("NavigationMenu.Item");
 
-const EVENT_ROOT_CONTENT_DISMISS = "navigationMenu.rootContentDismiss";
-
 const ROOT_ATTR = "data-navigation-menu-root";
 const SUB_ATTR = "data-navigation-menu-sub";
 const ITEM_ATTR = "data-navigation-menu-item";
@@ -64,7 +62,6 @@ class NavigationMenuRootState {
 	dir: NavigationMenuRootStateProps["dir"];
 	value: NavigationMenuRootStateProps["value"];
 	previousValue = new Previous(() => this.value.value);
-	triggerIds = new Set<string>();
 	triggerRefs = new Set<ElementRef>();
 	openTimer = 0;
 	closeTimer = 0;
@@ -122,6 +119,11 @@ class NavigationMenuRootState {
 	handleOpen = (itemValue: string) => {
 		window.clearTimeout(this.closeTimer);
 		this.setValue(itemValue);
+	};
+
+	handleClose = () => {
+		this.onItemDismiss();
+		this.onContentLeave();
 	};
 
 	handleDelayedOpen = (itemValue: string) => {
@@ -184,6 +186,7 @@ class NavigationMenuRootState {
 	};
 
 	props = $derived.by(() => ({
+		id: this.id.value,
 		"aria-label": "Main",
 		"data-orientation": getDataOrientation(this.orientation.value),
 		dir: this.dir.value,
@@ -393,7 +396,7 @@ class NavigationMenuItemState {
 	}
 
 	createLink(props: NavigationMenuLinkStateProps) {
-		return new NavigationMenuLinkState(props);
+		return new NavigationMenuLinkState(props, this.menu.root);
 	}
 }
 
@@ -546,7 +549,7 @@ class NavigationMenuLinkState {
 	active: NavigationMenuLinkStateProps["active"];
 	onSelect: NavigationMenuLinkStateProps["onSelect"];
 
-	constructor(props: NavigationMenuLinkStateProps) {
+	constructor(props: NavigationMenuLinkStateProps, root: NavigationMenuRootState) {
 		this.id = props.id;
 		this.active = props.active;
 		this.onSelect = props.onSelect;
@@ -561,7 +564,6 @@ class NavigationMenuLinkState {
 		this.onSelect.value(linkSelectEvent);
 
 		if (!linkSelectEvent.defaultPrevented && !e.metaKey) {
-			// TODO: handle dismiss
 		}
 	};
 
@@ -751,12 +753,18 @@ class NavigationMenuContentState {
 	}
 
 	onFocusOutside = (e: Event) => {
+		console.log("focus outside");
 		if (e.defaultPrevented) return;
 		this.item.onContentFocusOutside();
 		const target = e.target as HTMLElement;
 		// only dismiss content when focus moves outside the menu
+		console.log("target", target);
+		console.log(this.menu.root.rootRef.value);
+
 		if (this.menu.root.rootRef.value?.contains(target)) {
 			e.preventDefault();
+		} else {
+			this.menu.root.handleClose();
 		}
 	};
 
@@ -1004,7 +1012,7 @@ export function useNavigationMenuIndicator(props: NavigationMenuIndicatorStatePr
 }
 
 export function useNavigationMenuLink(props: NavigationMenuLinkStateProps) {
-	return new NavigationMenuLinkState(props);
+	return getNavigationMenuItemContext().createLink(props);
 }
 
 /// Utils
