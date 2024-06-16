@@ -9,7 +9,6 @@ export { default as Viewport } from "./components/navigation-menu-viewport.svelt
 
 export type {
 	NavigationMenuRootProps as RootProps,
-	NavigationMenuSubProps as SubProps,
 	NavigationMenuItemProps as ItemProps,
 	NavigationMenuListProps as ListProps,
 	NavigationMenuTriggerProps as TriggerProps,

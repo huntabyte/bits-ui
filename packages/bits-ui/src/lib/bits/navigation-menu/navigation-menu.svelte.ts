@@ -1,5 +1,5 @@
-import { tick, untrack } from "svelte";
-import { box, type WritableBox } from "svelte-toolbelt";
+import { untrack } from "svelte";
+import { box } from "svelte-toolbelt";
 import { Previous } from "runed";
 import {
 	watch,
@@ -24,14 +24,14 @@ import { useRefById } from "$lib/internal/useNodeById.svelte.js";
 import type { ElementRef } from "$lib/internal/types.js";
 import { afterTick } from "$lib/internal/afterTick.js";
 import { getTabbableCandidates } from "../utilities/focus-scope/utils.js";
-import { sleep } from "$lib/internal/sleep.js";
 import { noop } from "$lib/internal/callbacks.js";
 
 const [setNavigationMenuRootContext, getNavigationMenuRootContext] =
 	createContext<NavigationMenuRootState>("NavigationMenu.Root");
 
-const [setNavigationMenuMenuContext, getNavigationMenuMenuContext] =
-	createContext<NavigationMenuMenuState>("NavigationMenu.Root or NavigationMenu.Sub");
+const [setNavigationMenuMenuContext, getNavigationMenuMenuContext] = createContext<
+	NavigationMenuMenuState | NavigationMenuSubState
+>("NavigationMenu.Root or NavigationMenu.Sub");
 
 const [setNavigationMenuItemContext, getNavigationMenuItemContext] =
 	createContext<NavigationMenuItemState>("NavigationMenu.Item");
@@ -63,7 +63,6 @@ class NavigationMenuRootState {
 	dir: NavigationMenuRootStateProps["dir"];
 	value: NavigationMenuRootStateProps["value"];
 	previousValue = new Previous(() => this.value.value);
-	triggerRefs = new Set<ElementRef>();
 	openTimer = 0;
 	closeTimer = 0;
 	skipDelayTimer = 0;
@@ -141,20 +140,6 @@ class NavigationMenuRootState {
 		}
 	};
 
-	registerTrigger = (ref: ElementRef) => {
-		this.triggerRefs.add(ref);
-	};
-
-	deRegisterTrigger = (ref: ElementRef) => {
-		this.triggerRefs.delete(ref);
-	};
-
-	getTriggerNodes = () => {
-		return Array.from(this.triggerRefs)
-			.map((ref) => ref.value)
-			.filter((node): node is HTMLElement => Boolean(node));
-	};
-
 	onTriggerEnter = (itemValue: string) => {
 		window.clearTimeout(this.openTimer);
 		if (this.isOpenDelayed) {
@@ -214,9 +199,6 @@ type NavigationMenuMenuStateProps = ReadableBoxedValues<{
 		onContentLeave?: () => void;
 		onItemSelect: (itemValue: string) => void;
 		onItemDismiss: () => void;
-		getTriggerNodes: () => HTMLElement[];
-		registerTrigger: (ref: ElementRef) => void;
-		deRegisterTrigger: (ref: ElementRef) => void;
 		previousValue: Previous<string>;
 	};
 
@@ -233,13 +215,11 @@ class NavigationMenuMenuState {
 	onContentLeave: NavigationMenuMenuStateProps["onContentLeave"];
 	onItemSelect: NavigationMenuMenuStateProps["onItemSelect"];
 	onItemDismiss: NavigationMenuMenuStateProps["onItemDismiss"];
-	getTriggerNodes: NavigationMenuMenuStateProps["getTriggerNodes"];
-	registerTrigger: NavigationMenuMenuStateProps["registerTrigger"];
-	deRegisterTrigger: NavigationMenuMenuStateProps["deRegisterTrigger"];
 	viewportNode = $state<HTMLElement | null>(null);
 	indicatorTrackNode = $state<HTMLElement | null>(null);
 	viewportContentId = box.with<string | undefined>(() => undefined);
 	root: NavigationMenuRootState;
+	triggerRefs = new Set<ElementRef>();
 
 	constructor(props: NavigationMenuMenuStateProps, root: NavigationMenuRootState) {
 		this.isRoot = props.isRoot;
@@ -253,12 +233,23 @@ class NavigationMenuMenuState {
 		this.onContentLeave = props.onContentLeave;
 		this.onItemSelect = props.onItemSelect;
 		this.onItemDismiss = props.onItemDismiss;
-		this.deRegisterTrigger = props.deRegisterTrigger;
-		this.registerTrigger = props.registerTrigger;
-		this.getTriggerNodes = props.getTriggerNodes;
 		this.root = root;
 		this.previousValue = props.previousValue;
 	}
+
+	registerTrigger = (ref: ElementRef) => {
+		this.triggerRefs.add(ref);
+	};
+
+	deRegisterTrigger = (ref: ElementRef) => {
+		this.triggerRefs.delete(ref);
+	};
+
+	getTriggerNodes = () => {
+		return Array.from(this.triggerRefs)
+			.map((ref) => ref.value)
+			.filter((node): node is HTMLElement => Boolean(node));
+	};
 
 	createList(props: NavigationMenuListStateProps) {
 		return new NavigationMenuListState(props, this);
@@ -275,6 +266,101 @@ class NavigationMenuMenuState {
 	createViewport(props: NavigationMenuViewportStateProps) {
 		return new NavigationMenuViewportState(props, this);
 	}
+
+	createSubMenu(props: NavigationMenuSubStateProps) {
+		return new NavigationMenuSubState(props, this.root);
+	}
+}
+
+type NavigationMenuSubStateProps = ReadableBoxedValues<{
+	id: string;
+	orientation: Orientation;
+}> &
+	WritableBoxedValues<{
+		value: string;
+		ref: HTMLElement | null;
+	}>;
+
+class NavigationMenuSubState {
+	id: NavigationMenuSubStateProps["id"];
+	isRoot = false;
+	rootNavigationId: NavigationMenuMenuStateProps["rootNavigationId"];
+	dir: NavigationMenuMenuStateProps["dir"];
+	orientation: NavigationMenuMenuStateProps["orientation"];
+	value: NavigationMenuMenuStateProps["value"];
+	previousValue = new Previous(() => this.value.value);
+	onTriggerLeave: NavigationMenuMenuStateProps["onTriggerLeave"];
+	onContentEnter: NavigationMenuMenuStateProps["onContentEnter"];
+	onContentLeave: NavigationMenuMenuStateProps["onContentLeave"];
+	viewportNode = $state<HTMLElement | null>(null);
+	indicatorTrackNode = $state<HTMLElement | null>(null);
+	viewportContentId = box.with<string | undefined>(() => undefined);
+	root: NavigationMenuRootState;
+	triggerRefs = new Set<ElementRef>();
+	ref: NavigationMenuSubStateProps["ref"];
+
+	constructor(props: NavigationMenuSubStateProps, root: NavigationMenuRootState) {
+		this.id = props.id;
+		this.rootNavigationId = root.id;
+		this.dir = root.dir;
+		this.orientation = props.orientation;
+		this.value = props.value;
+		this.root = root;
+		this.ref = props.ref;
+
+		useRefById({
+			id: this.id,
+			ref: this.ref,
+		});
+	}
+
+	onTriggerEnter = (itemValue: string) => {
+		this.value.value = itemValue;
+	};
+
+	onItemSelect = (itemValue: string) => {
+		this.value.value = itemValue;
+	};
+
+	onItemDismiss = () => {
+		this.value.value = "";
+	};
+
+	registerTrigger = (ref: ElementRef) => {
+		this.triggerRefs.add(ref);
+	};
+
+	deRegisterTrigger = (ref: ElementRef) => {
+		this.triggerRefs.delete(ref);
+	};
+
+	getTriggerNodes = () => {
+		return Array.from(this.triggerRefs)
+			.map((ref) => ref.value)
+			.filter((node): node is HTMLElement => Boolean(node));
+	};
+
+	createList(props: NavigationMenuListStateProps) {
+		return new NavigationMenuListState(props, this);
+	}
+
+	createItem(props: NavigationMenuItemStateProps) {
+		return new NavigationMenuItemState(props, this);
+	}
+
+	createIndicator(props: NavigationMenuIndicatorStateProps) {
+		return new NavigationMenuIndicatorState(props, this);
+	}
+
+	createViewport(props: NavigationMenuViewportStateProps) {
+		return new NavigationMenuViewportState(props, this);
+	}
+
+	props = $derived.by(() => ({
+		id: this.id.value,
+		"data-orientation": getDataOrientation(this.orientation.value),
+		[SUB_ATTR]: "",
+	}));
 }
 
 type NavigationMenuListStateProps = ReadableBoxedValues<{
@@ -293,7 +379,7 @@ class NavigationMenuListState {
 
 	constructor(
 		props: NavigationMenuListStateProps,
-		private menu: NavigationMenuMenuState
+		private menu: NavigationMenuMenuState | NavigationMenuSubState
 	) {
 		this.id = props.id;
 		this.listRef = props.ref;
@@ -347,9 +433,12 @@ class NavigationMenuItemState {
 	focusProxyId = box(useId());
 	restoreContentTabOrder = noop;
 	wasEscapeClose = $state(false);
-	menu: NavigationMenuMenuState;
+	menu: NavigationMenuMenuState | NavigationMenuSubState;
 
-	constructor(props: NavigationMenuItemStateProps, menu: NavigationMenuMenuState) {
+	constructor(
+		props: NavigationMenuItemStateProps,
+		menu: NavigationMenuMenuState | NavigationMenuSubState
+	) {
 		this.id = props.id;
 		this.value = props.value;
 		this.menu = menu;
@@ -398,7 +487,7 @@ class NavigationMenuItemState {
 	}
 
 	createLink(props: NavigationMenuLinkStateProps) {
-		return new NavigationMenuLinkState(props, this.menu.root);
+		return new NavigationMenuLinkState(props);
 	}
 }
 
@@ -414,7 +503,7 @@ type NavigationMenuTriggerStateProps = ReadableBoxedValues<{
 class NavigationMenuTriggerState {
 	id: NavigationMenuTriggerStateProps["id"];
 	focusProxyMounted: NavigationMenuTriggerStateProps["focusProxyMounted"];
-	menu: NavigationMenuMenuState;
+	menu: NavigationMenuMenuState | NavigationMenuSubState;
 	item: NavigationMenuItemState;
 	disabled: NavigationMenuTriggerStateProps["disabled"];
 	hasPointerMoveOpened = boxAutoReset(false, 150);
@@ -552,7 +641,7 @@ class NavigationMenuLinkState {
 	active: NavigationMenuLinkStateProps["active"];
 	onSelect: NavigationMenuLinkStateProps["onSelect"];
 
-	constructor(props: NavigationMenuLinkStateProps, root: NavigationMenuRootState) {
+	constructor(props: NavigationMenuLinkStateProps) {
 		this.id = props.id;
 		this.active = props.active;
 		this.onSelect = props.onSelect;
@@ -591,14 +680,17 @@ type NavigationMenuIndicatorStateProps = ReadableBoxedValues<{
 
 class NavigationMenuIndicatorState {
 	id: NavigationMenuIndicatorStateProps["id"];
-	menu: NavigationMenuMenuState;
+	menu: NavigationMenuMenuState | NavigationMenuSubState;
 	activeTrigger = $state<HTMLElement | null>(null);
 	position = $state<{ size: number; offset: number } | null>(null);
 	isHorizontal = $derived.by(() => this.menu.orientation.value === "horizontal");
 	isVisible = $derived.by(() => Boolean(this.menu.value.value));
 	indicatorRef: NavigationMenuIndicatorStateProps["ref"];
 
-	constructor(props: NavigationMenuIndicatorStateProps, menu: NavigationMenuMenuState) {
+	constructor(
+		props: NavigationMenuIndicatorStateProps,
+		menu: NavigationMenuMenuState | NavigationMenuSubState
+	) {
 		this.id = props.id;
 		this.indicatorRef = props.ref;
 		this.menu = menu;
@@ -683,19 +775,11 @@ class NavigationMenuContentState {
 	forceMount: NavigationMenuContentStateProps["forceMount"];
 	isMounted: NavigationMenuContentStateProps["isMounted"];
 	contentRef: NavigationMenuContentStateProps["ref"];
-	menu: NavigationMenuMenuState;
+	menu: NavigationMenuMenuState | NavigationMenuSubState;
 	item: NavigationMenuItemState;
 	prevMotionAttribute = $state<MotionAttribute | null>(null);
 	motionAttribute = $state<MotionAttribute | null>(null);
 	open = $derived.by(() => this.menu.value.value === this.item.value.value);
-	isLastActiveValue = $derived.by(() => {
-		if (this.menu.viewportNode) {
-			if (!this.menu.value.value && this.menu.previousValue.current) {
-				return this.menu.previousValue.current === this.item.value.value;
-			}
-		}
-		return false;
-	});
 	isPresent = $derived.by(() => this.open || this.forceMount.value);
 
 	constructor(props: NavigationMenuContentStateProps, item: NavigationMenuItemState) {
@@ -855,14 +939,17 @@ type NavigationMenuViewportStateProps = ReadableBoxedValues<{
 
 class NavigationMenuViewportState {
 	id: NavigationMenuViewportStateProps["id"];
-	menu: NavigationMenuMenuState;
+	menu: NavigationMenuMenuState | NavigationMenuSubState;
 	size = $state<{ width: number; height: number } | null>(null);
 	open = $derived.by(() => this.menu.value.value !== "");
 	activeContentValue = $derived.by(() => this.menu.value.value);
 	viewportRef: NavigationMenuViewportStateProps["ref"];
 	contentNode = $state<HTMLElement | null>();
 
-	constructor(props: NavigationMenuViewportStateProps, menu: NavigationMenuMenuState) {
+	constructor(
+		props: NavigationMenuViewportStateProps,
+		menu: NavigationMenuMenuState | NavigationMenuSubState
+	) {
 		this.id = props.id;
 		this.menu = menu;
 		this.viewportRef = props.ref;
@@ -931,51 +1018,14 @@ class NavigationMenuViewportState {
 	);
 }
 
-// Context Methods
-
-// export function useNavigationMenuSub(props: NavigationMenuSubStateProps) {
-// 	const rootState = getNavigationMenuRootContext();
-// 	const menuState = rootState.createMenu({
-// 		getTriggerNodes: rootState.getTriggerNodes,
-// 		rootNavigationId: rootState.id,
-// 		dir: rootState.dir,
-// 		orientation: rootState.orientation,
-// 		value: rootState.value,
-// 		isRoot: false,
-// 		deRegisterTriggerId: rootState.deRegisterTriggerId,
-// 		registerTriggerId: rootState.registerTriggerId,
-// 		onTriggerEnter: rootState.onTriggerEnter,
-// 		onItemSelect: rootState.onItemSelect,
-// 		onItemDismiss: rootState.onItemDismiss,
-// 		onContentEnter: rootState.onContentEnter,
-// 		onContentLeave: rootState.onContentLeave,
-// 		onTriggerLeave: rootState.onTriggerLeave,
-// 		previousValue: new Previous,
-// 	});
-
-// 	setNavigationMenuMenuContext(menuState);
-// 	return new NavigationMenuSubState(
-// 		{
-// 			dir: props.dir,
-// 			id: props.id,
-// 			orientation: props.orientation,
-// 			value: props.value,
-// 		},
-// 		rootState
-// 	);
-// }
-
 export function useNavigationMenuRoot(props: NavigationMenuRootStateProps) {
 	const rootState = new NavigationMenuRootState(props);
 	const menuState = rootState.createMenu({
-		getTriggerNodes: rootState.getTriggerNodes,
 		rootNavigationId: rootState.id,
 		dir: rootState.dir,
 		orientation: rootState.orientation,
 		value: rootState.value,
 		isRoot: true,
-		deRegisterTrigger: rootState.deRegisterTrigger,
-		registerTrigger: rootState.registerTrigger,
 		onTriggerEnter: rootState.onTriggerEnter,
 		onItemSelect: rootState.onItemSelect,
 		onItemDismiss: rootState.onItemDismiss,
@@ -987,6 +1037,16 @@ export function useNavigationMenuRoot(props: NavigationMenuRootStateProps) {
 
 	setNavigationMenuMenuContext(menuState);
 	return setNavigationMenuRootContext(rootState);
+}
+
+export function useNavigationMenuSub(props: NavigationMenuSubStateProps) {
+	const parentMenu = getNavigationMenuMenuContext();
+	if (parentMenu instanceof NavigationMenuMenuState) {
+		return setNavigationMenuMenuContext(
+			parentMenu.createSubMenu(props)
+		) as NavigationMenuSubState;
+	}
+	throw new Error("useNavigationMenuSub must be used within a NavigationMenuMenu");
 }
 
 export function useNavigationMenuList(props: NavigationMenuListStateProps) {
