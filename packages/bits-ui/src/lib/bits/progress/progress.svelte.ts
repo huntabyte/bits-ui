@@ -1,6 +1,6 @@
 import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { WithRefProps } from "$lib/internal/types.js";
-import { useRefById } from "$lib/internal/useNodeById.svelte.js";
+import { useRefById } from "$lib/internal/useRefById.svelte.js";
 
 const ROOT_ATTR = "data-progress-root";
 

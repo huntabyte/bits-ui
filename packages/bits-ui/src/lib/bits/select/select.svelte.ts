@@ -7,7 +7,7 @@ import { useId } from "$lib/internal/useId.svelte.js";
 import type { Direction } from "$lib/shared/index.js";
 import { createContext } from "$lib/internal/createContext.js";
 import { useFormControl } from "$lib/internal/useFormControl.svelte.js";
-import { useRefById } from "$lib/internal/useNodeById.svelte.js";
+import { useRefById } from "$lib/internal/useRefById.svelte.js";
 import { type Typeahead, useTypeahead } from "$lib/internal/useTypeahead.svelte.js";
 import {
 	getAriaDisabled,

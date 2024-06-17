@@ -36,7 +36,7 @@ import { mergeProps } from "$lib/internal/mergeProps.js";
 import { createContext } from "$lib/internal/createContext.js";
 import type { Direction } from "$lib/shared/index.js";
 import { afterTick } from "$lib/internal/afterTick.js";
-import { useRefById } from "$lib/internal/useNodeById.svelte.js";
+import { useRefById } from "$lib/internal/useRefById.svelte.js";
 import { isPointerInGraceArea, makeHullFromElements } from "$lib/internal/polygon.js";
 
 const TRIGGER_ATTR = "data-menu-trigger";

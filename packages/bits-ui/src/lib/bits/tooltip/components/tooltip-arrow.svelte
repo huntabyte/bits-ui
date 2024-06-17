@@ -5,4 +5,4 @@
 	let { ref = $bindable(), ...restProps }: ArrowProps = $props();
 </script>
 
-<FloatingLayer.Arrow bind:ref {...restProps} />
+<FloatingLayer.Arrow {...restProps} />

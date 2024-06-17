@@ -4,7 +4,7 @@ import { TOOLTIP_OPEN_EVENT } from "./utils.js";
 import { watch } from "$lib/internal/box.svelte.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { useTimeoutFn } from "$lib/internal/useTimeoutFn.svelte.js";
-import { useRefById } from "$lib/internal/useNodeById.svelte.js";
+import { useRefById } from "$lib/internal/useRefById.svelte.js";
 import { isElement } from "$lib/internal/is.js";
 import { useGraceArea } from "$lib/internal/useGraceArea.svelte.js";
 import { createContext } from "$lib/internal/createContext.js";

@@ -20,7 +20,7 @@ import { useId } from "$lib/internal/useId.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { useArrowNavigation } from "$lib/internal/useArrowNavigation.js";
 import { boxAutoReset } from "$lib/internal/boxAutoReset.svelte.js";
-import { useRefById } from "$lib/internal/useNodeById.svelte.js";
+import { useRefById } from "$lib/internal/useRefById.svelte.js";
 import type { ElementRef } from "$lib/internal/types.js";
 import { afterTick } from "$lib/internal/afterTick.js";
 import { getTabbableCandidates } from "../utilities/focus-scope/utils.js";
