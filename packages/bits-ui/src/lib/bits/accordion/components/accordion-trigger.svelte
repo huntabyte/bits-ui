@@ -7,7 +7,7 @@
 	let {
 		disabled = false,
 		asChild,
-		ref = $bindable(),
+		ref = $bindable(null),
 		id = useId(),
 		children,
 		child,
@@ -17,6 +17,10 @@
 	const triggerState = useAccordionTrigger({
 		disabled: box.with(() => disabled),
 		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, triggerState.props));
@@ -25,7 +29,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<button bind:this={ref} type="button" {...mergedProps}>
+	<button type="button" {...mergedProps}>
 		{@render children?.()}
 	</button>
 {/if}

@@ -1,5 +1,5 @@
 /* eslint-disable ts/no-explicit-any */
-import { render, waitFor } from "@testing-library/svelte/svelte5";
+import { queryByTestId, render, waitFor } from "@testing-library/svelte/svelte5";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
@@ -10,6 +10,7 @@ import AccordionMultiTest from "./AccordionMultiTest.svelte";
 import AccordionTestIsolated from "./AccordionTestIsolated.svelte";
 import AccordionSingleTestControlledSvelte from "./AccordionSingleTestControlled.svelte";
 import AccordionMultiTestControlled from "./AccordionMultiTestControlled.svelte";
+import { sleep } from "$lib/internal/sleep.js";
 
 export type Item = {
 	value: string;
@@ -133,6 +134,7 @@ describe("accordion - single", () => {
 			expect(content).not.toBeVisible();
 			await user.click(trigger);
 			const contentAfter = getByTestId(`${item.value}-content`);
+			await sleep(20);
 			expect(contentAfter).toHaveTextContent(item.content);
 			expect(itemEl).toHaveAttribute("data-state", "open");
 		}
@@ -150,6 +152,7 @@ describe("accordion - single", () => {
 			expect(itemEl).toHaveAttribute("data-state", "closed");
 			expect(content).not.toBeVisible();
 			await user.click(trigger);
+			await sleep(20);
 			const contentAfter = getByTestId(`${item.value}-content`);
 			expect(contentAfter).toHaveTextContent(item.content);
 			expect(itemEl).toHaveAttribute("data-state", "open");
@@ -176,6 +179,7 @@ describe("accordion - single", () => {
 			trigger.focus();
 			await user.keyboard(kbd.ENTER);
 			const contentAfter = getByTestId(`${item.value}-content`);
+			await sleep(20);
 			expect(contentAfter).toHaveTextContent(item.content);
 			expect(itemEl).toHaveAttribute("data-state", "open");
 		}
@@ -196,6 +200,7 @@ describe("accordion - single", () => {
 			expect(content).not.toBeVisible();
 			trigger.focus();
 			await user.keyboard(kbd.SPACE);
+			await sleep(20);
 			const contentAfter = getByTestId(`${item.value}-content`);
 			expect(contentAfter).toHaveTextContent(item.content);
 			expect(itemEl).toHaveAttribute("data-state", "open");
@@ -299,6 +304,7 @@ describe("accordion - single", () => {
 
 		await user.click(trigger);
 
+		await sleep(20);
 		expect(value).toHaveTextContent("item-1");
 	});
 
@@ -314,7 +320,7 @@ describe("accordion - single", () => {
 		expect(itemTwoItem).toHaveAttribute("data-state", "closed");
 
 		await user.click(updateButton);
-
+		await sleep(20);
 		expect(value).toHaveTextContent("item-2");
 		expect(itemTwoItem).toHaveAttribute("data-state", "open");
 	});
@@ -384,7 +390,8 @@ describe("accordion - multiple", () => {
 			await user.click(trigger);
 			const contentAfter = getByTestId(`${item.value}-content`);
 			expect(contentAfter).toHaveTextContent(item.content);
-			expect(itemEl).toHaveAttribute("data-state", "open");
+
+			await waitFor(() => expect(itemEl).toHaveAttribute("data-state", "open"));
 		}
 	});
 
@@ -402,6 +409,7 @@ describe("accordion - multiple", () => {
 			expect(content).not.toBeVisible();
 			await user.click(trigger);
 			const contentAfter = getByTestId(`${item.value}-content`);
+			await sleep(20);
 			expect(contentAfter).toHaveTextContent(item.content);
 			expect(itemEl).toHaveAttribute("data-state", "open");
 		}
@@ -427,6 +435,7 @@ describe("accordion - multiple", () => {
 			trigger.focus();
 			await user.keyboard(kbd.ENTER);
 			const contentAfter = getByTestId(`${item.value}-content`);
+			await sleep(20);
 			expect(contentAfter).toHaveTextContent(item.content);
 			expect(itemEl).toHaveAttribute("data-state", "open");
 		}
@@ -447,6 +456,7 @@ describe("accordion - multiple", () => {
 			expect(content).not.toBeVisible();
 			trigger.focus();
 			await user.keyboard(kbd.SPACE);
+			await sleep(19);
 			const contentAfter = getByTestId(`${item.value}-content`);
 			expect(contentAfter).toHaveTextContent(item.content);
 			expect(itemEl).toHaveAttribute("data-state", "open");
@@ -541,7 +551,9 @@ describe("accordion - multiple", () => {
 
 	it("updates the `bind:value` prop when the value changes", async () => {
 		const user = userEvent.setup();
-		const { getByTestId } = render(AccordionMultiTestControlled as any, { items });
+		const { getByTestId, queryByTestId } = render(AccordionMultiTestControlled as any, {
+			items,
+		});
 		const trigger = getByTestId("item-1-trigger");
 
 		const value = getByTestId("value");
@@ -549,13 +561,15 @@ describe("accordion - multiple", () => {
 		expect(value).toHaveTextContent("");
 
 		await user.click(trigger);
-
-		expect(value).toHaveTextContent("item-1");
+		await sleep(20);
+		expect(queryByTestId("value")).toHaveTextContent("item-1");
 	});
 
 	it('handles programatic changes to the "value" prop', async () => {
 		const user = userEvent.setup();
-		const { getByTestId } = render(AccordionMultiTestControlled as any, { items });
+		const { getByTestId, queryByTestId } = render(AccordionMultiTestControlled as any, {
+			items,
+		});
 		const updateButton = getByTestId("update-value");
 		const value = getByTestId("value");
 
@@ -565,8 +579,9 @@ describe("accordion - multiple", () => {
 		expect(itemTwoItem).toHaveAttribute("data-state", "closed");
 
 		await user.click(updateButton);
+		await sleep(20);
 
-		expect(value).toHaveTextContent("item-2");
+		expect(queryByTestId("value")).toHaveTextContent("item-2");
 		expect(itemTwoItem).toHaveAttribute("data-state", "open");
 	});
 });
