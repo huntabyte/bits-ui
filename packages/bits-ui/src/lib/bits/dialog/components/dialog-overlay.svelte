@@ -12,12 +12,16 @@
 		asChild,
 		child,
 		children,
-		ref = $bindable(),
+		ref = $bindable(null),
 		...restProps
 	}: OverlayProps = $props();
 
 	const overlayState = useDialogOverlay({
 		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, overlayState.props));
@@ -28,7 +32,7 @@
 		{#if asChild}
 			{@render child?.({ props: mergeProps(mergedProps, { hidden: !present.value }) })}
 		{:else}
-			<div {...mergeProps(mergedProps, { hidden: !present.value })} bind:this={ref}>
+			<div {...mergeProps(mergedProps, { hidden: !present.value })}>
 				{@render children?.()}
 			</div>
 		{/if}

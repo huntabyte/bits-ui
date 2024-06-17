@@ -17,7 +17,7 @@
 		asChild,
 		children,
 		child,
-		ref = $bindable(),
+		ref = $bindable(null),
 		forceMount = false,
 		onDestroyAutoFocus = noop,
 		onEscapeKeydown = noop,
@@ -27,6 +27,10 @@
 
 	const contentState = useDialogContent({
 		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));
@@ -42,7 +46,7 @@
 			onDestroyAutoFocus={(e) => {
 				onDestroyAutoFocus(e);
 				if (e.defaultPrevented) return;
-				contentState.root.triggerNode?.value?.focus();
+				contentState.root.triggerNode?.focus();
 			}}
 		>
 			{#snippet focusScope({ props: focusScopeProps })}
@@ -78,7 +82,6 @@
 											pointerEvents: "auto",
 										},
 									})}
-									bind:this={ref}
 								>
 									{@render children?.()}
 								</div>

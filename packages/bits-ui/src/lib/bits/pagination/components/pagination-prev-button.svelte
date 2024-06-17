@@ -9,7 +9,7 @@
 		asChild,
 		child,
 		children,
-		ref = $bindable(),
+		ref = $bindable(null),
 		type = "button",
 		...restProps
 	}: PrevButtonProps = $props();
@@ -17,6 +17,10 @@
 	const prevButtonState = usePaginationButton({
 		type: "prev",
 		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, prevButtonState.props, { type }));
@@ -25,7 +29,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<button bind:this={ref} {...mergedProps}>
+	<button {...mergedProps}>
 		{@render children?.()}
 	</button>
 {/if}

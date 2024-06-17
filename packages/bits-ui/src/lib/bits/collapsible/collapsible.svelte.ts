@@ -1,4 +1,3 @@
-import { box } from "svelte-toolbelt";
 import {
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
@@ -6,8 +5,6 @@ import {
 	getAriaExpanded,
 	getDataDisabled,
 	getDataOpenClosed,
-	useId,
-	useNodeById,
 	useRefById,
 } from "$lib/internal/index.js";
 import { createContext } from "$lib/internal/createContext.js";

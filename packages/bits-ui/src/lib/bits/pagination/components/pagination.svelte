@@ -9,7 +9,7 @@
 		count,
 		perPage = 1,
 		page = $bindable(1),
-		ref = $bindable(),
+		ref = $bindable(null),
 		siblingCount = 1,
 		onPageChange,
 		asChild,
@@ -35,6 +35,10 @@
 		loop: box.with(() => loop),
 		siblingCount: box.with(() => siblingCount),
 		orientation: box.with(() => orientation),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
 	const mergedProps = $derived({
@@ -47,7 +51,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps, pages: rootState.pages, range: rootState.range })}
 {:else}
-	<div bind:this={ref} {...mergedProps}>
+	<div {...mergedProps}>
 		{@render children?.({ pages: rootState.pages, range: rootState.range })}
 	</div>
 {/if}

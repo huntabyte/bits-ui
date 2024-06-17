@@ -11,7 +11,7 @@
 		child,
 		value,
 		disabled = false,
-		ref = $bindable(),
+		ref = $bindable(null),
 		style = {},
 		...restProps
 	}: ItemProps = $props();
@@ -20,6 +20,10 @@
 		value: box.with(() => value),
 		disabled: box.with(() => disabled),
 		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
 	const mergedProps = $derived({
@@ -32,7 +36,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps, checked: itemState.checked })}
 {:else}
-	<button bind:this={ref} {...mergedProps}>
+	<button {...mergedProps}>
 		{@render children?.({ checked: itemState.checked })}
 	</button>
 {/if}

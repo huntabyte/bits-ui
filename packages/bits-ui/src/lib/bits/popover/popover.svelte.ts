@@ -1,9 +1,10 @@
 import { box } from "svelte-toolbelt";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import { useNodeById } from "$lib/internal/useNodeById.svelte.js";
+import { useRefById } from "$lib/internal/useNodeById.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
 import { createContext } from "$lib/internal/createContext.js";
+import type { WithRefProps } from "$lib/internal/types.js";
 
 type PopoverRootStateProps = WritableBoxedValues<{
 	open: boolean;
@@ -11,8 +12,8 @@ type PopoverRootStateProps = WritableBoxedValues<{
 
 class PopoverRootState {
 	open: PopoverRootStateProps["open"];
-	contentId = box.with<string | undefined>(() => undefined);
-	triggerNode = box<HTMLElement | null>(null);
+	contentNode = $state<HTMLElement | null>(null);
+	triggerNode = $state<HTMLElement | null>(null);
 
 	constructor(props: PopoverRootStateProps) {
 		this.open = props.open;
@@ -35,23 +36,30 @@ class PopoverRootState {
 		return new PopoverContentState(props, this);
 	}
 
-	createClose() {
-		return new PopoverCloseState(this);
+	createClose(props: PopoverCloseStateProps) {
+		return new PopoverCloseState(props, this);
 	}
 }
 
-type PopoverTriggerStateProps = ReadableBoxedValues<{
-	id: string;
-}>;
+type PopoverTriggerStateProps = WithRefProps;
 
 class PopoverTriggerState {
 	#id: PopoverTriggerStateProps["id"];
+	#ref: PopoverTriggerStateProps["ref"];
 	#root: PopoverRootState;
 
 	constructor(props: PopoverTriggerStateProps, root: PopoverRootState) {
 		this.#id = props.id;
 		this.#root = root;
-		this.#root.triggerNode = useNodeById(this.#id);
+		this.#ref = props.ref;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+			onRefChange: (node) => {
+				this.#root.triggerNode = node;
+			},
+		});
 	}
 
 	#onclick = () => {
@@ -65,8 +73,8 @@ class PopoverTriggerState {
 	};
 
 	#getAriaControls() {
-		if (this.#root.open.value && this.#root.contentId.value) {
-			return this.#root.contentId.value;
+		if (this.#root.open.value && this.#root.contentNode?.id) {
+			return this.#root.contentNode.id;
 		}
 		return undefined;
 	}
@@ -87,16 +95,22 @@ class PopoverTriggerState {
 	);
 }
 
-type PopoverContentStateProps = ReadableBoxedValues<{
-	id: string;
-}>;
+type PopoverContentStateProps = WithRefProps;
 class PopoverContentState {
 	#id: PopoverContentStateProps["id"];
+	#ref: PopoverContentStateProps["ref"];
 	root: PopoverRootState;
 
 	constructor(props: PopoverContentStateProps, root: PopoverRootState) {
 		this.#id = props.id;
 		this.root = root;
+		this.#ref = props.ref;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+			condition: () => this.root.open.value,
+		});
 	}
 
 	props = $derived.by(() => ({
@@ -107,11 +121,23 @@ class PopoverContentState {
 	}));
 }
 
+type PopoverCloseStateProps = WithRefProps;
+
 class PopoverCloseState {
+	#id: PopoverCloseStateProps["id"];
+	#ref: PopoverCloseStateProps["ref"];
 	#root: PopoverRootState;
 
-	constructor(root: PopoverRootState) {
+	constructor(props: PopoverCloseStateProps, root: PopoverRootState) {
 		this.#root = root;
+		this.#id = props.id;
+		this.#ref = props.ref;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+			condition: () => this.#root.open.value,
+		});
 	}
 
 	#onclick = () => {
@@ -124,12 +150,16 @@ class PopoverCloseState {
 		this.#root.close();
 	};
 
-	props = $derived({
-		onclick: this.#onclick,
-		onkeydown: this.#onkeydown,
-		type: "button",
-		"data-popover-close": "",
-	} as const);
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.value,
+				onclick: this.#onclick,
+				onkeydown: this.#onkeydown,
+				type: "button",
+				"data-popover-close": "",
+			}) as const
+	);
 }
 
 //
@@ -151,6 +181,6 @@ export function usePopoverContent(props: PopoverContentStateProps) {
 	return getPopoverRootContext().createContent(props);
 }
 
-export function usePopoverClose() {
-	return getPopoverRootContext().createClose();
+export function usePopoverClose(props: PopoverCloseStateProps) {
+	return getPopoverRootContext().createClose(props);
 }

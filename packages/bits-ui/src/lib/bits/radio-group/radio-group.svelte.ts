@@ -1,14 +1,13 @@
-import type { WritableBox } from "svelte-toolbelt";
 import {
-	type EventCallback,
 	type ReadableBoxedValues,
+	type WithRefProps,
 	type WritableBoxedValues,
 	getAriaChecked,
 	getAriaRequired,
 	getDataDisabled,
 	srOnlyStyles,
 	styleToString,
-	useNodeById,
+	useRefById,
 } from "$lib/internal/index.js";
 import type { Orientation } from "$lib/shared/index.js";
 import { type UseRovingFocusReturn, useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
@@ -17,19 +16,19 @@ import { createContext } from "$lib/internal/createContext.js";
 const ROOT_ATTR = "data-radio-group-root";
 const ITEM_ATTR = "data-radio-group-item";
 
-type RadioGroupRootStateProps = ReadableBoxedValues<{
-	id: string;
-	disabled: boolean;
-	required: boolean;
-	loop: boolean;
-	orientation: Orientation;
-	name: string | undefined;
-}> &
-	WritableBoxedValues<{ value: string }>;
-
+type RadioGroupRootStateProps = WithRefProps<
+	ReadableBoxedValues<{
+		disabled: boolean;
+		required: boolean;
+		loop: boolean;
+		orientation: Orientation;
+		name: string | undefined;
+	}> &
+		WritableBoxedValues<{ value: string }>
+>;
 class RadioGroupRootState {
 	id: RadioGroupRootStateProps["id"];
-	node: WritableBox<HTMLElement | null>;
+	ref: RadioGroupRootStateProps["ref"];
 	disabled: RadioGroupRootStateProps["disabled"];
 	required: RadioGroupRootStateProps["required"];
 	loop: RadioGroupRootStateProps["loop"];
@@ -46,12 +45,17 @@ class RadioGroupRootState {
 		this.orientation = props.orientation;
 		this.name = props.name;
 		this.value = props.value;
-		this.node = useNodeById(this.id);
+		this.ref = props.ref;
 		this.rovingFocusGroup = useRovingFocus({
 			rootNodeId: this.id,
 			candidateSelector: ITEM_ATTR,
 			loop: this.loop,
 			orientation: this.orientation,
+		});
+
+		useRefById({
+			id: this.id,
+			ref: this.ref,
 		});
 	}
 
@@ -88,15 +92,16 @@ class RadioGroupRootState {
 // RADIO GROUP ITEM
 //
 
-type RadioGroupItemStateProps = ReadableBoxedValues<{
-	disabled: boolean;
-	value: string;
-	id: string;
-}>;
+type RadioGroupItemStateProps = WithRefProps<
+	ReadableBoxedValues<{
+		disabled: boolean;
+		value: string;
+	}>
+>;
 
 class RadioGroupItemState {
 	#id: RadioGroupItemStateProps["id"];
-	#node: WritableBox<HTMLElement | null>;
+	#ref: RadioGroupItemStateProps["ref"];
 	#root: RadioGroupRootState;
 	#disabled: RadioGroupItemStateProps["disabled"];
 	#value: RadioGroupItemStateProps["value"];
@@ -109,8 +114,12 @@ class RadioGroupItemState {
 		this.#value = props.value;
 		this.#root = root;
 		this.#id = props.id;
+		this.#ref = props.ref;
 
-		this.#node = useNodeById(this.#id);
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+		});
 	}
 
 	#onclick = () => {
@@ -122,10 +131,10 @@ class RadioGroupItemState {
 	};
 
 	#onkeydown = (e: KeyboardEvent) => {
-		this.#root.rovingFocusGroup.handleKeydown(this.#node.value, e);
+		this.#root.rovingFocusGroup.handleKeydown(this.#ref.value, e);
 	};
 
-	#tabIndex = $derived.by(() => this.#root.rovingFocusGroup.getTabIndex(this.#node.value).value);
+	#tabIndex = $derived.by(() => this.#root.rovingFocusGroup.getTabIndex(this.#ref.value));
 
 	props = $derived.by(
 		() =>

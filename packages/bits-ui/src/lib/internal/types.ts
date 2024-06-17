@@ -11,7 +11,7 @@ import type {
 	SVGAttributes,
 } from "svelte/elements";
 import type { TransitionConfig } from "svelte/transition";
-import type { Box } from "./box.svelte.js";
+import type { Box, ReadableBoxedValues, WritableBoxedValues } from "./box.svelte.js";
 import type { StyleProperties } from "$lib/shared/index.js";
 
 export type ObjectVariation<T> = T extends object ? T : never;
@@ -185,3 +185,7 @@ export type Fn = () => void;
 export type AnyFn = (...args: any[]) => any;
 
 export type ValueOf<T> = T[keyof T];
+
+export type WithRefProps<T = {}> = T &
+	ReadableBoxedValues<{ id: string }> &
+	WritableBoxedValues<{ ref: HTMLElement | null }>;

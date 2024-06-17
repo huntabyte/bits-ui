@@ -3,6 +3,7 @@
 	import type { RootProps } from "../index.js";
 	import { useProgressRootState } from "../progress.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
 
 	let {
 		asChild,
@@ -10,13 +11,19 @@
 		children,
 		value = 0,
 		max = 100,
-		ref = $bindable(),
+		id = useId(),
+		ref = $bindable(null),
 		...restProps
 	}: RootProps = $props();
 
 	const rootState = useProgressRootState({
 		value: box.with(() => value),
 		max: box.with(() => max),
+		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, rootState.props));
@@ -25,7 +32,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<div bind:this={ref} {...mergedProps}>
+	<div {...mergedProps}>
 		{@render children?.()}
 	</div>
 {/if}
