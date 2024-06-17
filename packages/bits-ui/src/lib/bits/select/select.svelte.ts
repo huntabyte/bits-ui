@@ -94,15 +94,15 @@ export class SelectRootState {
 	contentFragment = $state<DocumentFragment | null>(null);
 
 	// A set of all the native options we'll use to render the native select element under the hood
-	nativeOptionsSet = new Set<ReadableBox<SelectNativeOption>>();
+	#nativeOptionsSet = new Set<ReadableBox<SelectNativeOption>>();
 	// A key we'll use to rerender the native select when the options change to keep it in sync
 	nativeSelectKey = $derived.by(() => {
-		return Array.from(this.nativeOptionsSet)
+		return Array.from(this.#nativeOptionsSet)
 			.map((opt) => opt.value.value)
 			.join(";");
 	});
 
-	nativeOptionsArr = $derived.by(() => Array.from(this.nativeOptionsSet));
+	nativeOptionsArr = $derived.by(() => Array.from(this.#nativeOptionsSet));
 	isFormControl = useFormControl(() => this.triggerNode);
 
 	constructor(props: SelectRootStateProps) {
@@ -128,11 +128,11 @@ export class SelectRootState {
 	}
 
 	onNativeOptionAdd(option: ReadableBox<SelectNativeOption>) {
-		this.nativeOptionsSet.add(option);
+		this.#nativeOptionsSet.add(option);
 	}
 
 	onNativeOptionRemove(option: ReadableBox<SelectNativeOption>) {
-		this.nativeOptionsSet.delete(option);
+		this.#nativeOptionsSet.delete(option);
 	}
 
 	getTriggerTypeaheadCandidateNodes() {
@@ -325,10 +325,6 @@ class SelectValueState {
 			}) as const
 	);
 }
-
-type SelectContentFragStateProps = ReadableBoxedValues<{
-	id: string;
-}>;
 
 class SelectContentFragState {
 	root: SelectRootState;
