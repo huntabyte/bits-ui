@@ -9,7 +9,7 @@
 		asChild,
 		child,
 		children,
-		ref = $bindable(),
+		ref = $bindable(null),
 		id = useId(),
 		orientation = "horizontal",
 		loop = true,
@@ -20,6 +20,10 @@
 		id: box.with(() => id),
 		orientation: box.with(() => orientation),
 		loop: box.with(() => loop),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, rootState.props));
@@ -28,7 +32,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<div {...mergedProps} bind:this={ref}>
+	<div {...mergedProps}>
 		{@render children?.()}
 	</div>
 {/if}

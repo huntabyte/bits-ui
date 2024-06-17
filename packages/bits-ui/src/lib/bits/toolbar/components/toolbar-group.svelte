@@ -9,7 +9,7 @@
 		asChild,
 		child,
 		children,
-		ref = $bindable(),
+		ref = $bindable(null),
 		id = useId(),
 		value = $bindable(),
 		onValueChange,
@@ -31,6 +31,10 @@
 				onValueChange?.(v as any);
 			}
 		) as WritableBox<string> | WritableBox<string[]>,
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, groupState.props));
@@ -39,7 +43,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<div bind:this={ref} {...mergedProps}>
+	<div {...mergedProps}>
 		{@render children?.()}
 	</div>
 {/if}

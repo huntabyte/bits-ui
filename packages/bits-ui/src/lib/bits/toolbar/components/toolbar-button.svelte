@@ -12,13 +12,17 @@
 		disabled = false,
 		type = "button",
 		id = useId(),
-		ref = $bindable(),
+		ref = $bindable(null),
 		...restProps
 	}: ButtonProps = $props();
 
 	const buttonState = useToolbarButton({
 		id: box.with(() => id),
 		disabled: box.with(() => disabled),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, buttonState.props, { type }));
@@ -27,7 +31,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<button bind:this={ref} {...mergedProps}>
+	<button {...mergedProps}>
 		{@render children?.()}
 	</button>
 {/if}

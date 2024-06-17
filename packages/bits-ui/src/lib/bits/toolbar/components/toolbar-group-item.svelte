@@ -13,7 +13,7 @@
 		disabled = false,
 		type = "button",
 		id = useId(),
-		ref = $bindable(),
+		ref = $bindable(null),
 		...restProps
 	}: GroupItemProps = $props();
 
@@ -21,6 +21,10 @@
 		id: box.with(() => id),
 		value: box.with(() => value),
 		disabled: box.with(() => disabled),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, groupItemState.props, { type }));
@@ -29,7 +33,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<button bind:this={ref} {...mergedProps}>
+	<button {...mergedProps}>
 		{@render children?.()}
 	</button>
 {/if}
