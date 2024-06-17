@@ -10,12 +10,16 @@
 		asChild,
 		children,
 		child,
-		ref = $bindable(),
+		ref = $bindable(null),
 		...restProps
 	}: DescriptionProps = $props();
 
 	const descriptionState = useDialogDescription({
 		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, descriptionState.props));
@@ -24,7 +28,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<div {...mergedProps} bind:this={ref}>
+	<div {...mergedProps}>
 		{@render children?.()}
 	</div>
 {/if}

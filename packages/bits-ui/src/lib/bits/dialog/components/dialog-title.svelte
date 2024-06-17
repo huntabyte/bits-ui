@@ -7,7 +7,7 @@
 
 	let {
 		id = useId(),
-		ref = $bindable(),
+		ref = $bindable(null),
 		asChild,
 		child,
 		children,
@@ -18,6 +18,10 @@
 	const titleState = useDialogTitle({
 		id: box.with(() => id),
 		level: box.with(() => level),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, titleState.props));
@@ -26,7 +30,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<div {...mergedProps} bind:this={ref}>
+	<div {...mergedProps}>
 		{@render children?.()}
 	</div>
 {/if}

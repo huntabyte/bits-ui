@@ -1,8 +1,7 @@
-import { render, screen, waitFor } from "@testing-library/svelte/svelte5";
-import { userEvent } from "@testing-library/user-event";
+import { render, screen, waitFor, cleanup } from "@testing-library/svelte/svelte5";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
-import { getTestKbd } from "../utils.js";
+import { getTestKbd, setupUserEvents } from "../utils.js";
 import ContextMenuTest from "./ContextMenuTest.svelte";
 import type { ContextMenuTestProps } from "./ContextMenuTest.svelte";
 
@@ -12,7 +11,7 @@ const kbd = getTestKbd();
  * Helper function to reduce boilerplate in tests
  */
 function setup(props: ContextMenuTestProps = {}) {
-	const user = userEvent.setup({ pointerEventsCheck: 0 });
+	const user = setupUserEvents();
 	const { getByTestId, queryByTestId } = render(ContextMenuTest, { ...props });
 	const trigger = getByTestId("trigger");
 	return {
@@ -36,9 +35,8 @@ async function openSubmenu(props: Awaited<ReturnType<typeof open>>) {
 	const { user, queryByTestId, getByTestId, trigger } = props;
 	await user.keyboard(kbd.ARROW_DOWN);
 	await user.keyboard(kbd.ARROW_DOWN);
-	const subtrigger = getByTestId("sub-trigger");
 
-	await waitFor(() => expect(subtrigger).toHaveFocus());
+	await waitFor(() => expect(queryByTestId("sub-trigger")).toHaveFocus());
 	expect(queryByTestId("sub-content")).toBeNull();
 	await user.keyboard(kbd.ARROW_RIGHT);
 	expect(queryByTestId("sub-content")).not.toBeNull();
@@ -96,12 +94,14 @@ describe("context menu", () => {
 	});
 
 	it("manages focus correctly when opened with pointer", async () => {
-		const { getByTestId, user } = await open();
+		cleanup();
+		const { queryByTestId, user } = await open();
 
-		const item = getByTestId("item");
+		const item = queryByTestId("item");
 		expect(item).not.toHaveFocus();
 
 		await user.keyboard(kbd.ARROW_DOWN);
+
 		expect(item).toHaveFocus();
 	});
 
@@ -186,35 +186,35 @@ describe("context menu", () => {
 	});
 
 	it("skips over disabled items when navigating with the keyboard", async () => {
-		const { user, getByTestId } = await open();
+		const { user, getByTestId, queryByTestId } = await open();
 		await user.keyboard(kbd.ARROW_DOWN);
 		await user.keyboard(kbd.ARROW_DOWN);
-		await waitFor(() => expect(getByTestId("sub-trigger")).toHaveFocus());
+		await waitFor(() => expect(queryByTestId("sub-trigger")).toHaveFocus());
 		await user.keyboard(kbd.ARROW_DOWN);
-		await waitFor(() => expect(getByTestId("checkbox-item")).toHaveFocus());
-		expect(getByTestId("disabled-item")).not.toHaveFocus();
-		expect(getByTestId("disabled-item-2")).not.toHaveFocus();
+		await waitFor(() => expect(queryByTestId("checkbox-item")).toHaveFocus());
+		expect(queryByTestId("disabled-item")).not.toHaveFocus();
+		expect(queryByTestId("disabled-item-2")).not.toHaveFocus();
 	});
 
 	it("doesnt loop through the menu items when the `loop` prop is set to false", async () => {
-		const { user, getByTestId } = await open({
+		const { user, queryByTestId } = await open({
 			contentProps: {
 				loop: false,
 			},
 		});
 		await user.keyboard(kbd.ARROW_DOWN);
 		await user.keyboard(kbd.ARROW_DOWN);
-		await waitFor(() => expect(getByTestId("sub-trigger")).toHaveFocus());
+		await waitFor(() => expect(queryByTestId("sub-trigger")).toHaveFocus());
 		await user.keyboard(kbd.ARROW_DOWN);
-		await waitFor(() => expect(getByTestId("checkbox-item")).toHaveFocus());
+		await waitFor(() => expect(queryByTestId("checkbox-item")).toHaveFocus());
 		await user.keyboard(kbd.ARROW_DOWN);
-		await waitFor(() => expect(getByTestId("item-2")).toHaveFocus());
+		await waitFor(() => expect(queryByTestId("item-2")).toHaveFocus());
 		await user.keyboard(kbd.ARROW_DOWN);
-		await waitFor(() => expect(getByTestId("radio-item")).toHaveFocus());
+		await waitFor(() => expect(queryByTestId("radio-item")).toHaveFocus());
 		await user.keyboard(kbd.ARROW_DOWN);
-		await waitFor(() => expect(getByTestId("radio-item-2")).toHaveFocus());
+		await waitFor(() => expect(queryByTestId("radio-item-2")).toHaveFocus());
 		await user.keyboard(kbd.ARROW_DOWN);
-		await waitFor(() => expect(getByTestId("item")).not.toHaveFocus());
+		await waitFor(() => expect(queryByTestId("item")).not.toHaveFocus());
 	});
 
 	it("loops through the menu items when the `loop` prop is set to true", async () => {

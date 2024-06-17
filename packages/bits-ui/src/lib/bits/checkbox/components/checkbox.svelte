@@ -11,7 +11,7 @@
 		children,
 		disabled = false,
 		required = false,
-		name,
+		name = undefined,
 		value = "on",
 		ref = $bindable(),
 		asChild,

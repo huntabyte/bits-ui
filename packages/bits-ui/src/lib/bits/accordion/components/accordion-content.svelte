@@ -8,7 +8,7 @@
 	let {
 		child,
 		asChild,
-		ref = $bindable(),
+		ref = $bindable(null),
 		id = useId(),
 		forceMount = false,
 		children,
@@ -18,6 +18,10 @@
 	const contentState = useAccordionContent({
 		forceMount: box.with(() => forceMount),
 		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 </script>
 
@@ -31,7 +35,7 @@
 				props: mergedProps,
 			})}
 		{:else}
-			<div {...mergedProps} bind:this={ref}>
+			<div {...mergedProps}>
 				{@render children?.()}
 			</div>
 		{/if}

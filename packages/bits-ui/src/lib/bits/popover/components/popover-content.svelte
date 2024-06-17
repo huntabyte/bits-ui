@@ -9,7 +9,7 @@
 		asChild,
 		child,
 		children,
-		ref = $bindable(),
+		ref = $bindable(null),
 		id = useId(),
 		forceMount = false,
 		onDestroyAutoFocus = noop,
@@ -21,6 +21,10 @@
 
 	const contentState = usePopoverContent({
 		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 </script>
 
@@ -42,7 +46,7 @@
 		onDestroyAutoFocus(e);
 		if (e.defaultPrevented) return;
 		e.preventDefault();
-		contentState.root.triggerNode?.value?.focus();
+		contentState.root.triggerNode?.focus();
 	}}
 	trapped
 	{loop}
@@ -52,7 +56,7 @@
 		{#if asChild}
 			{@render child?.({ props: mergedProps })}
 		{:else}
-			<div {...mergedProps} bind:this={ref}>
+			<div {...mergedProps}>
 				{@render children?.()}
 			</div>
 		{/if}

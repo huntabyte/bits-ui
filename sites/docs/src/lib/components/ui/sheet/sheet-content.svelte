@@ -9,7 +9,7 @@
 		class: className,
 		children,
 		...restProps
-	}: Omit<SheetPrimitive.ContentProps & { side?: Side }, "child" | "asChild"> = $props();
+	}: Omit<SheetPrimitive.ContentProps & { side?: Side }, "child" | "asChild" | "ref"> = $props();
 </script>
 
 <SheetPortal>

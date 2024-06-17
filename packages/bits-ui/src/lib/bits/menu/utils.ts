@@ -38,30 +38,6 @@ export interface GraceIntent {
 	side: Side;
 }
 
-// Determine if a point is inside of a polygon.
-// Based on https://github.com/substack/point-in-polygon
-export function isPointInPolygon(point: Point, polygon: Polygon) {
-	const { x, y } = point;
-	let inside = false;
-	for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-		const xi = polygon[i]!.x;
-		const yi = polygon[i]!.y;
-		const xj = polygon[j]!.x;
-		const yj = polygon[j]!.y;
-
-		const intersect = yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
-		if (intersect) inside = !inside;
-	}
-
-	return inside;
-}
-
-export function isPointerInGraceArea(event: PointerEvent, area?: Polygon) {
-	if (!area) return false;
-	const cursorPos = { x: event.clientX, y: event.clientY };
-	return isPointInPolygon(cursorPos, area);
-}
-
 export function isMouseEvent(event: PointerEvent) {
 	return event.pointerType === "mouse";
 }

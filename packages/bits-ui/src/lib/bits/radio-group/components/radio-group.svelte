@@ -3,16 +3,15 @@
 	import type { RootProps } from "../index.js";
 	import { useRadioGroupRoot } from "../radio-group.svelte.js";
 	import RadioGroupInput from "./radio-group-input.svelte";
-	import { styleToString, useId } from "$lib/internal/index.js";
+	import { mergeProps, styleToString, useId } from "$lib/internal/index.js";
 
 	let {
 		disabled = false,
 		asChild,
 		children,
 		child,
-		style,
 		value = $bindable(""),
-		ref = $bindable(),
+		ref = $bindable(null),
 		orientation = "vertical",
 		loop = true,
 		name = undefined,
@@ -36,19 +35,19 @@
 				onValueChange?.(v);
 			}
 		),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
-	const mergedProps = $derived({
-		...restProps,
-		...rootState.props,
-		style: styleToString(style),
-	});
+	const mergedProps = $derived(mergeProps(restProps, rootState.props));
 </script>
 
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<div bind:this={ref} {...mergedProps}>
+	<div {...mergedProps}>
 		{@render children?.()}
 	</div>
 {/if}

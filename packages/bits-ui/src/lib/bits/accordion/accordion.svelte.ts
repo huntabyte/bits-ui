@@ -1,4 +1,3 @@
-import type { WritableBox } from "svelte-toolbelt";
 import {
 	type Box,
 	type ReadableBoxedValues,
@@ -10,7 +9,7 @@ import {
 	getDataOpenClosed,
 	getDataOrientation,
 	kbd,
-	useNodeById,
+	useRefById,
 } from "$lib/internal/index.js";
 import { type UseRovingFocusReturn, useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
 import type { Orientation } from "$lib/shared/index.js";
@@ -31,25 +30,33 @@ type AccordionBaseStateProps = ReadableBoxedValues<{
 	disabled: boolean;
 	orientation: Orientation;
 	loop: boolean;
-	ref: HTMLElement | null | undefined;
-}>;
+}> &
+	WritableBoxedValues<{
+		ref: HTMLElement | null;
+	}>;
 
 class AccordionBaseState {
-	id: AccordionBaseStateProps["id"];
-	node: WritableBox<HTMLElement | null>;
+	#id: AccordionBaseStateProps["id"];
+	#ref: AccordionBaseStateProps["ref"];
 	disabled: AccordionBaseStateProps["disabled"];
 	#loop: AccordionBaseStateProps["loop"];
 	orientation: AccordionBaseStateProps["orientation"];
 	rovingFocusGroup: UseRovingFocusReturn;
 
 	constructor(props: AccordionBaseStateProps) {
-		this.id = props.id;
+		this.#id = props.id;
 		this.disabled = props.disabled;
-		this.node = useNodeById(this.id);
+		this.#ref = props.ref;
+
+		useRefById({
+			id: props.id,
+			ref: this.#ref,
+		});
+
 		this.orientation = props.orientation;
 		this.#loop = props.loop;
 		this.rovingFocusGroup = useRovingFocus({
-			rootNodeId: this.id,
+			rootNodeId: this.#id,
 			candidateSelector: TRIGGER_ATTR,
 			loop: this.#loop,
 			orientation: this.orientation,
@@ -59,7 +66,7 @@ class AccordionBaseState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.value,
+				id: this.#id.value,
 				"data-orientation": getDataOrientation(this.orientation.value),
 				"data-disabled": getDataDisabled(this.disabled.value),
 				[ROOT_ATTR]: "",
@@ -126,11 +133,16 @@ export class AccordionMultiState extends AccordionBaseState {
 type AccordionItemStateProps = ReadableBoxedValues<{
 	value: string;
 	disabled: boolean;
+	id: string;
 }> & {
 	rootState: AccordionState;
-};
+} & WritableBoxedValues<{
+		ref: HTMLElement | null;
+	}>;
 
 export class AccordionItemState {
+	#id: AccordionItemStateProps["id"];
+	#ref: AccordionItemStateProps["ref"];
 	value: AccordionItemStateProps["value"];
 	disabled: AccordionItemStateProps["disabled"];
 	root: AccordionState;
@@ -141,6 +153,13 @@ export class AccordionItemState {
 		this.value = props.value;
 		this.disabled = props.disabled;
 		this.root = props.rootState;
+		this.#id = props.id;
+		this.#ref = props.ref;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+		});
 	}
 
 	updateValue() {
@@ -162,6 +181,7 @@ export class AccordionItemState {
 	props = $derived.by(
 		() =>
 			({
+				id: this.#id.value,
 				[ITEM_ATTR]: "",
 				"data-state": getDataOpenClosed(this.isSelected),
 				"data-disabled": getDataDisabled(this.isDisabled),
@@ -176,12 +196,15 @@ export class AccordionItemState {
 type AccordionTriggerStateProps = ReadableBoxedValues<{
 	disabled: boolean;
 	id: string;
-}>;
+}> &
+	WritableBoxedValues<{
+		ref: HTMLElement | null;
+	}>;
 
 class AccordionTriggerState {
+	#ref: AccordionTriggerStateProps["ref"];
 	#disabled: AccordionTriggerStateProps["disabled"];
 	#id: AccordionTriggerStateProps["id"];
-	#node: Box<HTMLElement | null>;
 	#root: AccordionState;
 	#itemState: AccordionItemState;
 	#isDisabled = $derived.by(
@@ -193,8 +216,12 @@ class AccordionTriggerState {
 		this.#itemState = itemState;
 		this.#root = itemState.root;
 		this.#id = props.id;
+		this.#ref = props.ref;
 
-		this.#node = useNodeById(this.#id);
+		useRefById({
+			id: props.id,
+			ref: this.#ref,
+		});
 	}
 
 	#onclick = () => {
@@ -209,7 +236,7 @@ class AccordionTriggerState {
 			return;
 		}
 
-		this.#root.rovingFocusGroup.handleKeydown(this.#node.value, e);
+		this.#root.rovingFocusGroup.handleKeydown(this.#ref.value, e);
 	};
 
 	props = $derived.by(
@@ -238,11 +265,14 @@ class AccordionTriggerState {
 type AccordionContentStateProps = ReadableBoxedValues<{
 	forceMount: boolean;
 	id: string;
-}>;
+}> &
+	WritableBoxedValues<{
+		ref: HTMLElement | null;
+	}>;
 
 class AccordionContentState {
 	item: AccordionItemState;
-	node: WritableBox<HTMLElement | null>;
+	#ref: AccordionContentStateProps["ref"];
 	#id: AccordionContentStateProps["id"];
 	#originalStyles: { transitionDuration: string; animationName: string } | undefined = undefined;
 	#isMountAnimationPrevented = false;
@@ -257,8 +287,12 @@ class AccordionContentState {
 		this.#forceMount = props.forceMount;
 		this.#isMountAnimationPrevented = this.item.isSelected;
 		this.#id = props.id;
+		this.#ref = props.ref;
 
-		this.node = useNodeById(this.#id);
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+		});
 
 		$effect.pre(() => {
 			const rAF = requestAnimationFrame(() => {
@@ -273,11 +307,11 @@ class AccordionContentState {
 		$effect(() => {
 			// eslint-disable-next-line no-unused-expressions
 			this.present;
-			const node = this.node.value;
+			const node = this.#ref.value;
 			if (!node) return;
 
 			afterTick(() => {
-				if (!this.node) return;
+				if (!this.#ref.value) return;
 				// get the dimensions of the element
 				this.#originalStyles = this.#originalStyles || {
 					transitionDuration: node.style.transitionDuration,
@@ -320,19 +354,34 @@ class AccordionContentState {
 
 type AccordionHeaderStateProps = ReadableBoxedValues<{
 	level: 1 | 2 | 3 | 4 | 5 | 6;
-}>;
+	id: string;
+}> &
+	WritableBoxedValues<{
+		ref: HTMLElement | null;
+	}>;
 
 class AccordionHeaderState {
-	#item: AccordionItemState;
+	#id: AccordionHeaderStateProps["id"];
+	#ref: AccordionHeaderStateProps["ref"];
 	#level: AccordionHeaderStateProps["level"];
+	#item: AccordionItemState;
 	constructor(props: AccordionHeaderStateProps, item: AccordionItemState) {
 		this.#level = props.level;
+		this.#id = props.id;
+		this.#ref = props.ref;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+		});
+
 		this.#item = item;
 	}
 
 	props = $derived.by(
 		() =>
 			({
+				id: this.#id.value,
 				role: "heading",
 				"aria-level": this.#level.value,
 				"data-heading-level": this.#level.value,
@@ -357,8 +406,10 @@ type InitAccordionProps = {
 	disabled: boolean;
 	orientation: Orientation;
 	loop: boolean;
-	ref: HTMLElement | null | undefined;
-}>;
+}> &
+	WritableBoxedValues<{
+		ref: HTMLElement | null;
+	}>;
 
 const [setAccordionRootContext, getAccordionRootContext] =
 	createContext<AccordionState>("Accordion.Root");

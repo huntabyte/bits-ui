@@ -7,7 +7,7 @@
 
 	let {
 		id = useId(),
-		ref = $bindable(),
+		ref = $bindable(null),
 		asChild,
 		children,
 		child,
@@ -16,6 +16,10 @@
 
 	const triggerState = useDialogTrigger({
 		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, triggerState.props));
@@ -24,7 +28,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<button {...mergedProps} bind:this={ref}>
+	<button {...mergedProps}>
 		{@render children?.()}
 	</button>
 {/if}

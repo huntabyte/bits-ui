@@ -115,6 +115,7 @@
 					</div>
 				</DropdownMenu.SubTrigger>
 				<DropdownMenu.SubContent
+					id="subcontent"
 					class="w-full max-w-[209px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover !ring-0 !ring-transparent"
 					sideOffset={10}
 				>

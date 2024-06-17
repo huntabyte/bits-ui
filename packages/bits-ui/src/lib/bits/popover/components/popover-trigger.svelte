@@ -10,13 +10,17 @@
 		children,
 		child,
 		id = useId(),
-		ref = $bindable(),
+		ref = $bindable(null),
 		type = "button",
 		...restProps
 	}: TriggerProps = $props();
 
 	const triggerState = usePopoverTrigger({
 		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, triggerState.props, { type }));
@@ -26,7 +30,7 @@
 	{#if asChild}
 		{@render child?.({ props: mergedProps })}
 	{:else}
-		<button {...mergedProps} bind:this={ref}>
+		<button {...mergedProps}>
 			{@render children?.()}
 		</button>
 	{/if}
