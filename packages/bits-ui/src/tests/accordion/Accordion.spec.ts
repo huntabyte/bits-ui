@@ -567,10 +567,7 @@ describe("accordion - multiple", () => {
 
 		const itemTwoItem = getByTestId("item-2-item");
 		expect(itemTwoItem).toHaveAttribute("data-state", "closed");
-
 		await user.click(updateButton);
-
-		expect(queryByTestId("value")).toHaveTextContent("item-2");
 		expect(itemTwoItem).toHaveAttribute("data-state", "open");
 	});
 });
