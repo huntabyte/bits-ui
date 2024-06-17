@@ -10,7 +10,7 @@
 		asChild,
 		children,
 		child,
-		ref = $bindable(),
+		ref = $bindable(null),
 		value = "",
 		dir = "ltr",
 		loop = true,
@@ -31,6 +31,10 @@
 		),
 		dir: box.with(() => dir),
 		loop: box.with(() => loop),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, rootState.props));
