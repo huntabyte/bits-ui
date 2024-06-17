@@ -10,6 +10,7 @@ const TRIGGER_ATTR = "data-dialog-trigger";
 const OVERLAY_ATTR = "data-dialog-overlay";
 const DESCRIPTION_ATTR = "data-dialog-description";
 const CLOSE_ATTR = "data-dialog-close";
+const CANCEL_ATTR = "data-dialog-cancel";
 
 type DialogRootStateProps = WritableBoxedValues<{
 	open: boolean;
@@ -25,6 +26,7 @@ class DialogRootState {
 	titleId = $derived(this.titleNode ? this.titleNode.id : undefined);
 	triggerId = $derived(this.triggerNode ? this.triggerNode.id : undefined);
 	descriptionId = $derived(this.descriptionNode ? this.descriptionNode.id : undefined);
+	cancelNode = $state<HTMLElement | null>(null);
 
 	constructor(props: DialogRootStateProps) {
 		this.open = props.open;
@@ -62,6 +64,10 @@ class DialogRootState {
 
 	createClose(props: DialogCloseStateProps) {
 		return new DialogCloseState(props, this);
+	}
+
+	createCancel(props: AlertDialogCancelStateProps) {
+		return new AlertDialogCancelState(props, this);
 	}
 
 	sharedProps = $derived.by(
@@ -279,6 +285,43 @@ class DialogOverlayState {
 	);
 }
 
+type AlertDialogCancelStateProps = WithRefProps;
+
+class AlertDialogCancelState {
+	#id: AlertDialogCancelStateProps["id"];
+	#ref: AlertDialogCancelStateProps["ref"];
+	#root: DialogRootState;
+
+	constructor(props: AlertDialogCancelStateProps, root: DialogRootState) {
+		this.#id = props.id;
+		this.#ref = props.ref;
+		this.#root = root;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+			condition: () => this.#root.open.value,
+			onRefChange: (node) => {
+				this.#root.cancelNode = node;
+			},
+		});
+	}
+
+	#onclick = () => {
+		this.#root.closeDialog();
+	};
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.value,
+				[CANCEL_ATTR]: "",
+				onclick: this.#onclick,
+				...this.#root.sharedProps,
+			}) as const
+	);
+}
+
 const [setDialogRootContext, getDialogRootContext] = createContext<DialogRootState>("Dialog.Root");
 
 export function useDialogRoot(props: DialogRootStateProps) {
@@ -307,4 +350,8 @@ export function useDialogDescription(props: DialogDescriptionStateProps) {
 
 export function useDialogClose(props: DialogCloseStateProps) {
 	return getDialogRootContext().createClose(props);
+}
+
+export function useAlertDialogCancel(props: AlertDialogCancelStateProps) {
+	return getDialogRootContext().createCancel(props);
 }
