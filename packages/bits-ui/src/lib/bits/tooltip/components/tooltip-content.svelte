@@ -11,7 +11,7 @@
 		children,
 		child,
 		id = useId(),
-		ref = $bindable(),
+		ref = $bindable(null),
 		side = "top",
 		sideOffset = 0,
 		align = "center",
@@ -28,6 +28,10 @@
 
 	const contentState = useTooltipContent({
 		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
 	const floatingProps = $derived({

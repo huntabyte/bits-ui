@@ -4,11 +4,12 @@ import { TOOLTIP_OPEN_EVENT } from "./utils.js";
 import { watch } from "$lib/internal/box.svelte.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { useTimeoutFn } from "$lib/internal/useTimeoutFn.svelte.js";
-import { useNodeById } from "$lib/internal/useNodeById.svelte.js";
+import { useRefById } from "$lib/internal/useNodeById.svelte.js";
 import { isElement } from "$lib/internal/is.js";
 import { useGraceArea } from "$lib/internal/useGraceArea.svelte.js";
 import { createContext } from "$lib/internal/createContext.js";
 import { getDataDisabled } from "$lib/internal/attrs.js";
+import type { WithRefProps } from "$lib/internal/types.js";
 
 const CONTENT_ATTR = "data-tooltip-content";
 const TRIGGER_ATTR = "data-tooltip-trigger";
@@ -29,7 +30,7 @@ class TooltipProviderState {
 	disabled: TooltipProviderStateProps["disabled"];
 	ignoreNonKeyboardFocus: TooltipProviderStateProps["ignoreNonKeyboardFocus"];
 	skipDelayDuration: TooltipProviderStateProps["skipDelayDuration"];
-	isOpenDelayed = box(true);
+	isOpenDelayed = $state<boolean>(true);
 	isPointerInTransit = box(false);
 	#timerFn: ReturnType<typeof useTimeoutFn>;
 
@@ -42,7 +43,7 @@ class TooltipProviderState {
 		this.skipDelayDuration = props.skipDelayDuration;
 		this.#timerFn = useTimeoutFn(
 			() => {
-				this.isOpenDelayed.value = true;
+				this.isOpenDelayed = true;
 			},
 			this.skipDelayDuration.value,
 			{ immediate: false }
@@ -59,7 +60,7 @@ class TooltipProviderState {
 
 	onOpen() {
 		this.#clearTimer();
-		this.isOpenDelayed.value = false;
+		this.isOpenDelayed = false;
 	}
 
 	onClose() {
@@ -104,10 +105,8 @@ class TooltipRootState {
 	ignoreNonKeyboardFocus = $derived.by(
 		() => this._ignoreNonKeyboardFocus.value ?? this.provider.ignoreNonKeyboardFocus.value
 	);
-	contentNode = box<HTMLElement | null>(null);
-	contentId: ReadableBox<string> = box.with(() => "");
-	triggerId: ReadableBox<string> = box.with(() => "");
-	triggerNode = box<HTMLElement | null>(null);
+	contentNode = $state<HTMLElement | null>(null);
+	triggerNode = $state<HTMLElement | null>(null);
 	#wasOpenDelayed = $state(false);
 	#timerFn: ReturnType<typeof useTimeoutFn>;
 	stateAttr = $derived.by(() => {
@@ -180,13 +179,15 @@ class TooltipRootState {
 	}
 }
 
-type TooltipTriggerStateProps = ReadableBoxedValues<{
-	id: string;
-	disabled: boolean;
-}>;
+type TooltipTriggerStateProps = WithRefProps<
+	ReadableBoxedValues<{
+		disabled: boolean;
+	}>
+>;
 
 class TooltipTriggerState {
 	#id: TooltipTriggerStateProps["id"];
+	#ref: TooltipTriggerStateProps["ref"];
 	#root: TooltipRootState;
 	#isPointerDown = box(false);
 	#hasPointerMoveOpened = $state(false);
@@ -195,10 +196,17 @@ class TooltipTriggerState {
 
 	constructor(props: TooltipTriggerStateProps, root: TooltipRootState) {
 		this.#id = props.id;
-		this.#root = root;
+		this.#ref = props.ref;
 		this.#disabled = props.disabled;
-		this.#root.triggerNode = useNodeById(this.#id);
-		this.#root.triggerId = props.id;
+		this.#root = root;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+			onRefChange: (node) => {
+				this.#root.triggerNode = node;
+			},
+		});
 	}
 
 	handlePointerUp() {
@@ -263,7 +271,7 @@ class TooltipTriggerState {
 
 	props = $derived.by(() => ({
 		id: this.#id.value,
-		"aria-describedby": this.#root.open.value ? this.#root.contentNode.value?.id : undefined,
+		"aria-describedby": this.#root.open.value ? this.#root.contentNode?.id : undefined,
 		"data-state": this.#root.stateAttr,
 		"data-disabled": getDataDisabled(this.#isDisabled),
 		[TRIGGER_ATTR]: "",
@@ -278,27 +286,33 @@ class TooltipTriggerState {
 	}));
 }
 
-type TooltipContentStateProps = ReadableBoxedValues<{
-	id: string;
-}>;
+type TooltipContentStateProps = WithRefProps;
 
 class TooltipContentState {
 	root: TooltipRootState;
 	#id: TooltipContentStateProps["id"];
+	#ref: TooltipContentStateProps["ref"];
 
 	constructor(props: TooltipContentStateProps, root: TooltipRootState) {
 		this.root = root;
 		this.#id = props.id;
-		const contentNode = useNodeById(this.#id);
-		this.root.contentNode = contentNode;
-		this.root.contentId = this.#id;
+		this.#ref = props.ref;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+			onRefChange: (node) => {
+				this.root.contentNode = node;
+			},
+			condition: () => this.root.open.value,
+		});
 
 		$effect(() => {
 			if (!this.root.open.value) return;
 			if (this.root.disableHoverableContent) return;
 			const { isPointerInTransit, onPointerExit } = useGraceArea(
-				box.with(() => this.root.triggerId?.value),
-				box.with(() => this.root.contentId?.value)
+				box.with(() => this.root.triggerNode),
+				box.with(() => this.root.contentNode)
 			);
 
 			this.root.provider.isPointerInTransit = isPointerInTransit;
@@ -311,7 +325,7 @@ class TooltipContentState {
 			useEventListener(window, "scroll", (e) => {
 				const target = e.target;
 				if (!isElement(target)) return;
-				if (target.contains(this.root.triggerNode.value)) {
+				if (target.contains(this.root.triggerNode)) {
 					this.root.handleClose();
 				}
 			});
