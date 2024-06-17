@@ -32,7 +32,7 @@
 	{#if asChild}
 		{@render child?.({ props: mergedProps })}
 	{:else}
-		<button {...mergedProps} bind:this={ref}>
+		<button {...mergedProps}>
 			{@render children?.()}
 		</button>
 	{/if}

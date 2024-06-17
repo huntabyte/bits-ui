@@ -75,7 +75,7 @@
 		{#if asChild}
 			{@render child?.({ props: finalProps })}
 		{:else}
-			<div {...finalProps} bind:this={ref}>
+			<div {...finalProps}>
 				{@render children?.()}
 			</div>
 		{/if}

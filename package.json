@@ -7,7 +7,7 @@
 		"build:packages": "pnpm -F \"./packages/**\" --parallel build",
 		"check": "pnpm build:packages && pnpm -r check",
 		"ci:publish": "pnpm build:packages && changeset publish",
-		"dev": "pnpm -r --parallel dev",
+		"dev": "pnpm -F \"./packages/**\" svelte-kit sync && pnpm -r --parallel dev",
 		"format": "prettier --write .",
 		"lint": "prettier --check . && eslint .",
 		"lint:fix": "eslint --fix .",

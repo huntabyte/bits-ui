@@ -10,7 +10,6 @@ import {
 	type Side,
 	getCheckedState,
 	isMouseEvent,
-	isPointerInGraceArea,
 } from "./utils.js";
 import {
 	type ReadableBoxedValues,
@@ -38,6 +37,7 @@ import { createContext } from "$lib/internal/createContext.js";
 import type { Direction } from "$lib/shared/index.js";
 import { afterTick } from "$lib/internal/afterTick.js";
 import { useRefById } from "$lib/internal/useNodeById.svelte.js";
+import { isPointerInGraceArea, makeHullFromElements } from "$lib/internal/polygon.js";
 
 const TRIGGER_ATTR = "data-menu-trigger";
 const CONTENT_ATTR = "data-menu-content";
@@ -209,7 +209,12 @@ class MenuContentState {
 		useRefById({
 			id: this.#id,
 			ref: this.contentRef,
-			condition: () => this.isMounted.value,
+			condition: () => this.parentMenu.open.value,
+			onRefChange: (node) => {
+				if (this.parentMenu.contentNode !== node) {
+					this.parentMenu.contentNode = node;
+				}
+			},
 		});
 
 		onDestroyEffect(() => {
@@ -295,7 +300,6 @@ class MenuContentState {
 
 	#onfocus = () => {
 		if (!this.parentMenu.root.isUsingKeyboard.value) return;
-
 		afterTick(() => this.rovingFocusGroup.focusFirstCandidate());
 	};
 
@@ -547,6 +551,14 @@ class MenuSubTriggerState {
 		onDestroyEffect(() => {
 			this.#clearOpenTimer();
 		});
+
+		useRefById({
+			id: this.#item.id,
+			ref: this.#item.ref,
+			onRefChange: (node) => {
+				this.#submenu.triggerNode = node;
+			},
+		});
 	}
 
 	#clearOpenTimer() {
@@ -572,27 +584,15 @@ class MenuSubTriggerState {
 		if (!isMouseEvent(e)) return;
 		this.#clearOpenTimer();
 
-		const contentNode = this.#content.parentMenu.contentNode;
+		const contentNode = this.#submenu.contentNode;
+		const subTriggerNode = this.#item.ref.value;
 
-		const contentRect = contentNode?.getBoundingClientRect();
-		if (contentRect?.width) {
+		if (contentNode && subTriggerNode) {
+			const polygon = makeHullFromElements([subTriggerNode, contentNode]);
 			const side = contentNode?.dataset.side as Side;
 
-			const rightSide = side === "right";
-			const bleed = rightSide ? -5 : +5;
-			const contentNearEdge = contentRect[rightSide ? "left" : "right"];
-			const contentFarEdge = contentRect[rightSide ? "right" : "left"];
-
 			this.#content.onPointerGraceIntentChange({
-				area: [
-					// Apply a bleed on clientX to ensure that our exit point is
-					// consistently within polygon bounds
-					{ x: e.clientX + bleed, y: e.clientY },
-					{ x: contentNearEdge, y: contentRect.top },
-					{ x: contentFarEdge, y: contentRect.top },
-					{ x: contentFarEdge, y: contentRect.bottom },
-					{ x: contentNearEdge, y: contentRect.bottom },
-				],
+				area: polygon,
 				side,
 			});
 
@@ -639,44 +639,36 @@ class MenuSubTriggerState {
 	};
 
 	props = $derived.by(() =>
-		mergeProps(this.#item.props, {
-			"aria-haspopup": "menu",
-			"aria-expanded": getAriaExpanded(this.#submenu.open.value),
-			"data-state": getDataOpenClosed(this.#submenu.open.value),
-			"aria-controls": this.#submenu.open.value ? this.#submenu.contentId.value : undefined,
-			[SUB_TRIGGER_ATTR]: "",
-			onclick: this.#onclick,
-			onpointermove: this.#onpointermove,
-			onpointerleave: this.#onpointerleave,
-			onkeydown: this.#onkeydown,
-		} as const)
+		mergeProps(
+			{
+				"aria-haspopup": "menu",
+				"aria-expanded": getAriaExpanded(this.#submenu.open.value),
+				"data-state": getDataOpenClosed(this.#submenu.open.value),
+				"aria-controls": this.#submenu.open.value
+					? this.#submenu.contentId.value
+					: undefined,
+				[SUB_TRIGGER_ATTR]: "",
+				onclick: this.#onclick,
+				onpointermove: this.#onpointermove,
+				onpointerleave: this.#onpointerleave,
+				onkeydown: this.#onkeydown,
+			},
+			this.#item.props
+		)
 	);
 }
 
 type MenuCheckboxItemStateProps = WritableBoxedValues<{
 	checked: boolean | "indeterminate";
-	ref: HTMLElement | null;
-}> &
-	ReadableBoxedValues<{
-		id: string;
-	}>;
+}>;
 
 class MenuCheckboxItemState {
-	#id: MenuCheckboxItemStateProps["id"];
 	#item: MenuItemState;
 	#checked: MenuCheckboxItemStateProps["checked"];
-	#ref: MenuCheckboxItemStateProps["ref"];
 
 	constructor(props: MenuCheckboxItemStateProps, item: MenuItemState) {
 		this.#item = item;
 		this.#checked = props.checked;
-		this.#ref = props.ref;
-		this.#id = props.id;
-
-		useRefById({
-			id: this.#id,
-			ref: this.#ref,
-		});
 	}
 
 	toggleChecked() {

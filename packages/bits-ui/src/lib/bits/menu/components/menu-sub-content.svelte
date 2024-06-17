@@ -7,9 +7,10 @@
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
 	import { noop } from "$lib/internal/callbacks.js";
-	import { isHTMLElement } from "$lib/internal/is.js";
+	import { isElement, isHTMLElement } from "$lib/internal/is.js";
 	import { afterTick } from "$lib/internal/afterTick.js";
 	import Mounted from "$lib/bits/utilities/mounted.svelte";
+	import { activeElement } from "runed";
 
 	let {
 		id = useId(),
@@ -62,11 +63,13 @@
 		})
 	);
 
+	const { onMountAutoFocus: _, ...rest } = $derived(mergedProps);
+
 	function onMountAutoFocus(e: Event) {
 		afterTick(() => {
 			e.preventDefault();
 			if (subContentState.parentMenu.root.isUsingKeyboard.value) {
-				const subContentEl = document.getElementById(id);
+				const subContentEl = subContentState.parentMenu.contentNode;
 				subContentEl?.focus();
 			}
 		});
@@ -81,6 +84,7 @@
 	{...mergedProps}
 	{interactOutsideBehavior}
 	{escapeKeydownBehavior}
+	{onMountAutoFocus}
 	present={subContentState.parentMenu.open.value || forceMount}
 	onInteractOutside={(e) => {
 		onInteractOutside(e);
@@ -97,7 +101,6 @@
 		// We prevent closing when the trigger is focused to avoid triggering a re-open animation
 		// on pointer interaction.
 		if (!isHTMLElement(e.target)) return;
-
 		if (e.target.id !== subContentState.parentMenu.triggerNode?.id) {
 			subContentState.parentMenu.onClose();
 		}
@@ -110,7 +113,7 @@
 		{#if asChild}
 			{@render child?.({ props: finalProps })}
 		{:else}
-			<div {...finalProps} bind:this={ref}>
+			<div {...finalProps}>
 				{@render children?.()}
 			</div>
 		{/if}
