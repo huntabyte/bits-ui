@@ -8,7 +8,7 @@
 	let {
 		child,
 		asChild,
-		ref = $bindable(),
+		ref = $bindable(null),
 		forceMount = false,
 		children,
 		id = useId(),
@@ -18,6 +18,10 @@
 	const contentState = useCollapsibleContent({
 		id: box.with(() => id),
 		forceMount: box.with(() => forceMount),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 </script>
 

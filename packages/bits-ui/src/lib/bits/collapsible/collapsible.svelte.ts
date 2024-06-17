@@ -8,6 +8,7 @@ import {
 	getDataOpenClosed,
 	useId,
 	useNodeById,
+	useRefById,
 } from "$lib/internal/index.js";
 import { createContext } from "$lib/internal/createContext.js";
 
@@ -17,19 +18,30 @@ const TRIGGER_ATTR = "data-collapsible-trigger";
 
 type CollapsibleRootStateProps = WritableBoxedValues<{
 	open: boolean;
+	ref: HTMLElement | null;
 }> &
 	ReadableBoxedValues<{
 		disabled: boolean;
+		id: string;
 	}>;
 
 class CollapsibleRootState {
+	#id: CollapsibleRootStateProps["id"];
+	#ref: CollapsibleRootStateProps["ref"];
 	open: CollapsibleRootStateProps["open"];
 	disabled: CollapsibleRootStateProps["disabled"];
-	contentId = box.with(() => useId());
+	contentNode = $state<HTMLElement | null>(null);
 
 	constructor(props: CollapsibleRootStateProps) {
 		this.open = props.open;
 		this.disabled = props.disabled;
+		this.#id = props.id;
+		this.#ref = props.ref;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+		});
 	}
 
 	toggleOpen() {
@@ -40,13 +52,14 @@ class CollapsibleRootState {
 		return new CollapsibleContentState(props, this);
 	}
 
-	createTrigger() {
-		return new CollapsibleTriggerState(this);
+	createTrigger(props: CollapsibleTriggerStateProps) {
+		return new CollapsibleTriggerState(props, this);
 	}
 
 	props = $derived.by(
 		() =>
 			({
+				id: this.#id.value,
 				"data-state": getDataOpenClosed(this.open.value),
 				"data-disabled": getDataDisabled(this.disabled.value),
 				[ROOT_ATTR]: "",
@@ -57,42 +70,38 @@ class CollapsibleRootState {
 type CollapsibleContentStateProps = ReadableBoxedValues<{
 	id: string;
 	forceMount: boolean;
-}>;
+}> &
+	WritableBoxedValues<{
+		ref: HTMLElement | null;
+	}>;
 
 class CollapsibleContentState {
+	#id: CollapsibleContentStateProps["id"];
+	#ref: CollapsibleContentStateProps["ref"];
 	root: CollapsibleRootState;
 	#originalStyles: { transitionDuration: string; animationName: string } | undefined;
-	node = box<HTMLElement | null>(null);
 	#isMountAnimationPrevented = $state(false);
 	#width = $state(0);
 	#height = $state(0);
 	#forceMount: CollapsibleContentStateProps["forceMount"];
-	props = $derived.by(
-		() =>
-			({
-				id: this.root.contentId.value,
-				"data-state": getDataOpenClosed(this.root.open.value),
-				"data-disabled": getDataDisabled(this.root.disabled.value),
-				style: {
-					"--bits-collapsible-content-height": this.#height
-						? `${this.#height}px`
-						: undefined,
-					"--bits-collapsible-content-width": this.#width
-						? `${this.#width}px`
-						: undefined,
-				},
-				[CONTENT_ATTR]: "",
-			}) as const
-	);
+
 	present = $derived.by(() => this.#forceMount.value || this.root.open.value);
 
 	constructor(props: CollapsibleContentStateProps, root: CollapsibleRootState) {
 		this.root = root;
 		this.#isMountAnimationPrevented = root.open.value;
 		this.#forceMount = props.forceMount;
-		this.root.contentId = props.id;
+		this.#id = props.id;
+		this.#ref = props.ref;
 
-		this.node = useNodeById(this.root.contentId);
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+			condition: () => this.present,
+			onRefChange: (node) => {
+				this.root.contentNode = node;
+			},
+		});
 
 		$effect.pre(() => {
 			const rAF = requestAnimationFrame(() => {
@@ -107,11 +116,11 @@ class CollapsibleContentState {
 		$effect(() => {
 			// eslint-disable-next-line no-unused-expressions
 			this.present;
-			const node = this.node.value;
+			const node = this.#ref.value;
 			if (!node) return;
 
 			afterTick(() => {
-				if (!this.node) return;
+				if (!this.#ref.value) return;
 				// get the dimensions of the element
 				this.#originalStyles = this.#originalStyles || {
 					transitionDuration: node.style.transitionDuration,
@@ -135,13 +144,47 @@ class CollapsibleContentState {
 			});
 		});
 	}
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.value,
+				"data-state": getDataOpenClosed(this.root.open.value),
+				"data-disabled": getDataDisabled(this.root.disabled.value),
+				style: {
+					"--bits-collapsible-content-height": this.#height
+						? `${this.#height}px`
+						: undefined,
+					"--bits-collapsible-content-width": this.#width
+						? `${this.#width}px`
+						: undefined,
+				},
+				[CONTENT_ATTR]: "",
+			}) as const
+	);
 }
+
+type CollapsibleTriggerStateProps = ReadableBoxedValues<{
+	id: string;
+}> &
+	WritableBoxedValues<{
+		ref: HTMLElement | null;
+	}>;
 
 class CollapsibleTriggerState {
 	#root: CollapsibleRootState;
+	#ref: CollapsibleTriggerStateProps["ref"];
+	#id: CollapsibleTriggerStateProps["id"];
 
-	constructor(root: CollapsibleRootState) {
+	constructor(props: CollapsibleTriggerStateProps, root: CollapsibleRootState) {
 		this.#root = root;
+		this.#id = props.id;
+		this.#ref = props.ref;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+		});
 	}
 
 	#onclick = () => {
@@ -151,8 +194,9 @@ class CollapsibleTriggerState {
 	props = $derived.by(
 		() =>
 			({
+				id: this.#id.value,
 				type: "button",
-				"aria-controls": this.#root.contentId.value,
+				"aria-controls": this.#root.contentNode?.id,
 				"aria-expanded": getAriaExpanded(this.#root.open.value),
 				"data-state": getDataOpenClosed(this.#root.open.value),
 				"data-disabled": getDataDisabled(this.#root.disabled.value),
@@ -171,8 +215,10 @@ export function useCollapsibleRoot(props: CollapsibleRootStateProps) {
 	return setCollapsibleRootContext(new CollapsibleRootState(props));
 }
 
-export function useCollapsibleTrigger(): CollapsibleTriggerState {
-	return getCollapsibleRootContext().createTrigger();
+export function useCollapsibleTrigger(
+	props: CollapsibleTriggerStateProps
+): CollapsibleTriggerState {
+	return getCollapsibleRootContext().createTrigger(props);
 }
 
 export function useCollapsibleContent(

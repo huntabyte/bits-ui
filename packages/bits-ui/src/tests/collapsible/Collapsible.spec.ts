@@ -1,13 +1,12 @@
 import { render } from "@testing-library/svelte/svelte5";
-import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
-import { getTestKbd } from "../utils.js";
+import { setupUserEvents } from "../utils.js";
 import CollapsibleTest from "./CollapsibleTest.svelte";
 import type { Collapsible } from "$lib/index.js";
 
 function setup(props?: Collapsible.RootProps) {
-	const user = userEvent.setup();
+	const user = setupUserEvents();
 	const returned = render(CollapsibleTest, props);
 	const root = returned.getByTestId("root");
 	const trigger = returned.getByTestId("trigger");

@@ -1,16 +1,15 @@
 import { render } from "@testing-library/svelte/svelte5";
-import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import { tick } from "svelte";
-import { getTestKbd } from "../utils.js";
+import { getTestKbd, setupUserEvents } from "../utils.js";
 import CheckboxTest from "./CheckboxTest.svelte";
 import type { Checkbox } from "$lib/index.js";
 
 const kbd = getTestKbd();
 
 function setup(props?: Checkbox.RootProps) {
-	const user = userEvent.setup();
+	const user = setupUserEvents();
 	const returned = render(CheckboxTest, props);
 	const root = returned.getByTestId("root");
 	const input = document.querySelector("input") as HTMLInputElement;
@@ -34,7 +33,7 @@ describe("checkbox", () => {
 	});
 
 	it("doesn't render the checkbox input if a name prop isnt passed", async () => {
-		const { input } = setup();
+		const { input } = setup({ name: "" });
 		expect(input).not.toBeInTheDocument();
 	});
 

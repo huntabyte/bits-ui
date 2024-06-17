@@ -150,7 +150,7 @@ export type DefaultProps<Props, Ref> = {
 	asChild?: never;
 	child?: never;
 	children?: Snippet;
-	ref?: Ref;
+	ref?: Ref | null;
 	style?: StyleProperties;
 } & Omit<Props, "child" | "asChild">;
 
