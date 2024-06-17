@@ -7,7 +7,7 @@ import { useId } from "$lib/internal/useId.svelte.js";
 import type { Direction } from "$lib/shared/index.js";
 import { createContext } from "$lib/internal/createContext.js";
 import { useFormControl } from "$lib/internal/useFormControl.svelte.js";
-import { useNodeById } from "$lib/internal/useNodeById.svelte.js";
+import { useRefById } from "$lib/internal/useNodeById.svelte.js";
 import { type Typeahead, useTypeahead } from "$lib/internal/useTypeahead.svelte.js";
 import {
 	getAriaDisabled,
@@ -25,6 +25,7 @@ import { clamp } from "$lib/internal/clamp.js";
 import { noop } from "$lib/internal/callbacks.js";
 import { addEventListener } from "$lib/internal/events.js";
 import { sleep } from "$lib/internal/sleep.js";
+import type { WithRefProps } from "$lib/internal/types.js";
 
 export const OPEN_KEYS = [kbd.SPACE, kbd.ENTER, kbd.ARROW_UP, kbd.ARROW_DOWN];
 export const SELECTION_KEYS = [" ", kbd.ENTER];
@@ -85,10 +86,10 @@ export class SelectRootState {
 	dir: SelectRootStateProps["dir"];
 	disabled: SelectRootStateProps["disabled"];
 	required: SelectRootStateProps["required"];
-	triggerId = $state(useId());
+	triggerNode = $state<HTMLElement | null>(null);
 	valueId = box<string>(useId());
 	valueNodeHasChildren = box(false);
-	contentId = box<string>(useId());
+	contentNode = $state<HTMLElement | null>(null);
 	triggerPointerDownPos = box<{ x: number; y: number } | null>({ x: 0, y: 0 });
 	contentFragment = $state<DocumentFragment | null>(null);
 
@@ -102,7 +103,7 @@ export class SelectRootState {
 	});
 
 	nativeOptionsArr = $derived.by(() => Array.from(this.nativeOptionsSet));
-	isFormControl = useFormControl(() => this.triggerId);
+	isFormControl = useFormControl(() => this.triggerNode);
 
 	constructor(props: SelectRootStateProps) {
 		this.open = props.open;
@@ -118,7 +119,7 @@ export class SelectRootState {
 	}
 
 	focusTriggerNode(preventScroll: boolean = true) {
-		const node = document.getElementById(this.triggerId);
+		const node = this.triggerNode;
 		if (node) {
 			sleep(1).then(() => {
 				node.focus({ preventScroll });
@@ -144,7 +145,7 @@ export class SelectRootState {
 	}
 
 	getCandidateNodes() {
-		const node = document.getElementById(this.contentId.value);
+		const node = this.contentNode;
 		if (!node) return [];
 		const candidates = Array.from(
 			node.querySelectorAll<HTMLElement>(`[${ITEM_ATTR}]:not([data-disabled])`)
@@ -160,8 +161,8 @@ export class SelectRootState {
 		return new SelectValueState(this);
 	}
 
-	createContent(props: SelectContentFragStateProps) {
-		return new SelectContentFragState(props, this);
+	createContent() {
+		return new SelectContentFragState(this);
 	}
 
 	createContentImpl(props: SelectContentStateProps) {
@@ -169,14 +170,16 @@ export class SelectRootState {
 	}
 }
 
-type SelectTriggerStateProps = ReadableBoxedValues<{
-	id: string;
-	disabled: boolean;
-}>;
+type SelectTriggerStateProps = WithRefProps<
+	ReadableBoxedValues<{
+		disabled: boolean;
+	}>
+>;
 
 class SelectTriggerState {
 	#root: SelectRootState;
 	#id: SelectTriggerStateProps["id"];
+	#ref: SelectTriggerStateProps["ref"];
 	#disabled: SelectTriggerStateProps["disabled"];
 	#typeahead: Typeahead;
 	#isDisabled = $derived.by(() => {
@@ -185,11 +188,16 @@ class SelectTriggerState {
 
 	constructor(props: SelectTriggerStateProps, root: SelectRootState) {
 		this.#id = props.id;
+		this.#ref = props.ref;
 		this.#root = root;
 		this.#disabled = props.disabled;
 
-		$effect(() => {
-			this.#root.triggerId = this.#id.value;
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+			onRefChange: (node) => {
+				this.#root.triggerNode = node;
+			},
 		});
 
 		this.#typeahead = useTypeahead();
@@ -268,7 +276,7 @@ class SelectTriggerState {
 	};
 
 	#ariaControls = $derived.by(() => {
-		return this.#root.contentId.value ?? undefined;
+		return this.#root.contentNode?.id ?? undefined;
 	});
 
 	props = $derived.by(
@@ -325,13 +333,8 @@ type SelectContentFragStateProps = ReadableBoxedValues<{
 class SelectContentFragState {
 	root: SelectRootState;
 
-	constructor(props: SelectContentFragStateProps, root: SelectRootState) {
+	constructor(root: SelectRootState) {
 		this.root = root;
-		this.root.contentId.value = props.id.value;
-
-		$effect(() => {
-			this.root.contentId.value = props.id.value;
-		});
 
 		$effect(() => {
 			this.root.contentFragment = new DocumentFragment();
@@ -339,16 +342,17 @@ class SelectContentFragState {
 	}
 }
 
-type SelectContentStateProps = ReadableBoxedValues<{
-	id: string;
-	position: "item-aligned" | "floating";
-}>;
+type SelectContentStateProps = WithRefProps<
+	ReadableBoxedValues<{
+		position: "item-aligned" | "floating";
+	}>
+>;
 
 export class SelectContentState {
 	id: SelectContentStateProps["id"];
+	ref: SelectContentStateProps["ref"];
 	root: SelectRootState;
-	contentNode = box<HTMLElement | null>(null);
-	viewportId = $state(useId());
+	viewportNode = $state<HTMLElement | null>(null);
 	selectedItemId = box<string>(useId());
 	selectedItemTextId = box<string>(useId());
 	selectedItemText = box<HTMLElement | null>(null);
@@ -361,9 +365,18 @@ export class SelectContentState {
 	constructor(props: SelectContentStateProps, root: SelectRootState) {
 		this.position = props.position;
 		this.id = props.id;
+		this.ref = props.ref;
 		this.root = root;
 		this.typeahead = useTypeahead();
-		this.contentNode = useNodeById(this.id);
+
+		useRefById({
+			id: this.id,
+			ref: this.ref,
+			condition: () => this.root.open.value,
+			onRefChange: (node) => {
+				this.root.contentNode = node;
+			},
+		});
 
 		watch(this.root.open, () => {
 			let cleanup = [noop];
@@ -391,7 +404,7 @@ export class SelectContentState {
 					if (pointerMoveDelta.x <= 10 && pointerMoveDelta.y <= 10) {
 						e.preventDefault();
 					} else {
-						if (!this.contentNode.value?.contains(e.target as HTMLElement)) {
+						if (!this.root.contentNode?.contains(e.target as HTMLElement)) {
 							this.root.handleClose();
 						}
 					}
@@ -442,7 +455,7 @@ export class SelectContentState {
 			if (candidate === PREV_FOCUSED_ELEMENT) return;
 			candidate?.scrollIntoView({ block: "nearest" });
 			// viewport might have padding so scroll to the edge when focusing first/last
-			const viewport = document.getElementById(this.viewportId);
+			const viewport = this.viewportNode;
 			if (candidate === firstItem && viewport) {
 				viewport.scrollTop = 0;
 			}
@@ -457,7 +470,7 @@ export class SelectContentState {
 	}
 
 	onItemLeave() {
-		this.contentNode.value?.focus();
+		this.root.contentNode?.focus();
 	}
 
 	getSelectedItem() {
@@ -596,15 +609,17 @@ export class SelectContentState {
 	}
 }
 
-type SelectItemStateProps = ReadableBoxedValues<{
-	value: string;
-	disabled: boolean;
-	textValue?: string;
-	id: string;
-}>;
+type SelectItemStateProps = WithRefProps<
+	ReadableBoxedValues<{
+		value: string;
+		disabled: boolean;
+		textValue?: string;
+	}>
+>;
 
 class SelectItemState {
 	#id: SelectItemStateProps["id"];
+	#ref: SelectItemStateProps["ref"];
 	root: SelectRootState;
 	content: SelectContentState;
 	textId = box<string | undefined>(undefined);
@@ -618,14 +633,20 @@ class SelectItemState {
 
 	constructor(props: SelectItemStateProps, content: SelectContentState) {
 		this.#id = props.id;
+		this.#ref = props.ref;
 		this.root = content.root;
 		this.content = content;
 		this.value = props.value;
 		this.disabled = props.disabled;
 		this.textValue = props.textValue;
 
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+		});
+
 		$effect(() => {
-			const node = document.getElementById(this.#id.value);
+			const node = this.#ref.value;
 			if (!node) return;
 			this.content.itemRegister(this.value.value, this.disabled.value);
 		});
@@ -731,13 +752,12 @@ class SelectItemState {
 	}
 }
 
-type SelectItemTextStateProps = ReadableBoxedValues<{
-	id: string;
-}>;
+type SelectItemTextStateProps = WithRefProps;
 
 class SelectItemTextState {
 	item: SelectItemState;
 	#id: SelectItemTextStateProps["id"];
+	#ref: SelectItemTextStateProps["ref"];
 	node = box<HTMLElement | null>(null);
 	nativeOption = box.with(
 		() =>
@@ -751,9 +771,14 @@ class SelectItemTextState {
 
 	constructor(props: SelectItemTextStateProps, item: SelectItemState) {
 		this.#id = props.id;
-		this.node = useNodeById(this.#id);
+		this.#ref = props.ref;
 		this.item = item;
 		this.item.setTextId(this.#id.value);
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+		});
 
 		$effect(() => {
 			this.item.setTextId(this.#id.value);
@@ -829,10 +854,10 @@ class SelectItemAlignedPositionState {
 	position() {
 		afterTick(() => {
 			const { selectedItemNode, selectedItemTextNode } = this.content.getSelectedItem();
-			const contentNode = document.getElementById(this.content.id.value);
+			const contentNode = this.root.contentNode;
 			const contentWrapperNode = document.getElementById(this.contentWrapperId);
-			const viewportNode = document.getElementById(this.content.viewportId);
-			const triggerNode = document.getElementById(this.root.triggerId);
+			const viewportNode = this.content.viewportNode;
+			const triggerNode = this.root.triggerNode;
 			const valueNode = document.getElementById(this.root.valueId.value);
 
 			if (
@@ -1016,23 +1041,26 @@ class SelectFloatingPositionState {
 	} as const;
 }
 
-type SelectViewportStateProps = ReadableBoxedValues<{
-	id: string;
-}>;
+type SelectViewportStateProps = WithRefProps;
 
 class SelectViewportState {
 	id: SelectViewportStateProps["id"];
+	ref: SelectViewportStateProps["ref"];
 	content: SelectContentState;
 	prevScrollTop = $state(0);
 
 	constructor(props: SelectViewportStateProps, content: SelectContentState) {
 		this.id = props.id;
 		this.content = content;
-		this.content.viewportId = props.id.value;
-		$effect(() => {
-			if (this.content.viewportId !== props.id.value) {
-				this.content.viewportId = props.id.value;
-			}
+		this.ref = props.ref;
+
+		useRefById({
+			id: this.id,
+			ref: this.ref,
+			onRefChange: (node) => {
+				this.content.viewportNode = node;
+			},
+			condition: () => this.content.root.open.value,
 		});
 	}
 
@@ -1090,13 +1118,15 @@ class SelectViewportState {
 	);
 }
 
-type SelectScrollButtonImplStateProps = ReadableBoxedValues<{
-	id: string;
-	mounted: boolean;
-}>;
+type SelectScrollButtonImplStateProps = WithRefProps<
+	ReadableBoxedValues<{
+		mounted: boolean;
+	}>
+>;
 
 class SelectScrollButtonImplState {
 	id: SelectScrollButtonImplStateProps["id"];
+	ref: SelectScrollButtonImplStateProps["ref"];
 	content: SelectContentState;
 	alignedPositionState: SelectItemAlignedPositionState | null;
 	autoScrollTimer = $state<number | null>(null);
@@ -1105,9 +1135,16 @@ class SelectScrollButtonImplState {
 
 	constructor(props: SelectScrollButtonImplStateProps, content: SelectContentState) {
 		this.content = content;
+		this.ref = props.ref;
 		this.alignedPositionState = content.alignedPositionState;
 		this.id = props.id;
 		this.mounted = props.mounted;
+
+		useRefById({
+			id: this.id,
+			ref: this.ref,
+			condition: () => this.mounted.value,
+		});
 
 		$effect(() => {
 			if (this.mounted.value) {
@@ -1170,7 +1207,6 @@ class SelectScrollDownButtonState {
 	state: SelectScrollButtonImplState;
 	content: SelectContentState;
 	canScrollDown = $state(false);
-	node = $state<HTMLElement | null>(null);
 
 	constructor(state: SelectScrollButtonImplState) {
 		this.state = state;
@@ -1178,7 +1214,7 @@ class SelectScrollDownButtonState {
 		this.state.onAutoScroll = this.handleAutoScroll;
 
 		$effect(() => {
-			const viewport = document.getElementById(this.content.viewportId);
+			const viewport = this.content.viewportNode;
 			const isPositioned = this.content.isPositioned.value;
 
 			if (!viewport || !isPositioned) return;
@@ -1215,7 +1251,7 @@ class SelectScrollDownButtonState {
 
 	handleAutoScroll() {
 		afterTick(() => {
-			const viewport = document.getElementById(this.content.viewportId);
+			const viewport = this.content.viewportNode;
 			const selectedItem = this.content.getSelectedItem().selectedItemNode;
 			if (!viewport || !selectedItem) {
 				return;
@@ -1231,7 +1267,6 @@ class SelectScrollUpButtonState {
 	state: SelectScrollButtonImplState;
 	content: SelectContentState;
 	canScrollUp = $state(false);
-	node = $state<HTMLElement | null>(null);
 
 	constructor(state: SelectScrollButtonImplState) {
 		this.state = state;
@@ -1242,7 +1277,7 @@ class SelectScrollUpButtonState {
 			let cleanup = noop;
 
 			cleanup();
-			const viewport = document.getElementById(this.content.viewportId);
+			const viewport = this.content.viewportNode;
 			const isPositioned = this.content.isPositioned.value;
 
 			if (!viewport || !isPositioned) return;
@@ -1274,7 +1309,7 @@ class SelectScrollUpButtonState {
 
 	handleAutoScroll() {
 		afterTick(() => {
-			const viewport = document.getElementById(this.content.viewportId);
+			const viewport = this.content.viewportNode;
 			const selectedItem = this.content.getSelectedItem().selectedItemNode;
 			if (!viewport || !selectedItem) return;
 			viewport.scrollTop = viewport.scrollTop - selectedItem.offsetHeight;
@@ -1284,14 +1319,29 @@ class SelectScrollUpButtonState {
 	props = $derived.by(() => ({ ...this.state.props, [SCROLL_UP_BUTTON_ATTR]: "" }) as const);
 }
 
+type SelectGroupStateProps = WithRefProps;
+
 class SelectGroupState {
-	labelId = box.with<string | undefined>(() => undefined);
+	#id: SelectGroupStateProps["id"];
+	#ref: SelectGroupStateProps["ref"];
+	labelNode = $state<HTMLElement | null>(null);
+
+	constructor(props: SelectGroupStateProps) {
+		this.#id = props.id;
+		this.#ref = props.ref;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+		});
+	}
 
 	props = $derived.by(
 		() =>
 			({
+				id: this.#id.value,
 				role: "group",
-				"aria-labelledby": this.labelId.value ?? undefined,
+				"aria-labelledby": this.labelNode?.id ?? undefined,
 				[GROUP_ATTR]: "",
 			}) as const
 	);
@@ -1301,54 +1351,120 @@ class SelectGroupState {
 	}
 }
 
-type SelectGroupLabelStateProps = ReadableBoxedValues<{
-	id: string;
-}>;
+type SelectGroupLabelStateProps = WithRefProps;
 
 class SelectGroupLabel {
+	#id: SelectGroupLabelStateProps["id"];
+	#ref: SelectGroupLabelStateProps["ref"];
 	group: SelectGroupState;
 
 	constructor(props: SelectGroupLabelStateProps, group: SelectGroupState) {
+		this.#ref = props.ref;
+		this.#id = props.id;
 		this.group = group;
-		this.group.labelId = props.id;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+			onRefChange: (node) => {
+				this.group.labelNode = node;
+			},
+		});
 	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.group.labelId.value,
+				id: this.#id.value,
 				[GROUP_LABEL_ATTR]: "",
 			}) as const
 	);
 }
 
+type SelectSeparatorStateProps = WithRefProps;
+
 class SelectSeparatorState {
-	props = {
-		[SEPARATOR_ATTR]: "",
-		"aria-hidden": getAriaHidden(true),
-	} as const;
+	#id: SelectSeparatorStateProps["id"];
+	#ref: SelectSeparatorStateProps["ref"];
+
+	constructor(props: SelectSeparatorStateProps) {
+		this.#id = props.id;
+		this.#ref = props.ref;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+		});
+	}
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.value,
+				[SEPARATOR_ATTR]: "",
+				"aria-hidden": getAriaHidden(true),
+			}) as const
+	);
 }
+
+type SelectArrowStateProps = WithRefProps;
 
 class SelectArrowState {
-	props = {
-		[ARROW_ATTR]: "",
-		"aria-hidden": getAriaHidden(true),
-	} as const;
+	#id: SelectArrowStateProps["id"];
+	#ref: SelectArrowStateProps["ref"];
+
+	constructor(props: SelectArrowStateProps) {
+		this.#id = props.id;
+		this.#ref = props.ref;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+		});
+	}
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.value,
+				[ARROW_ATTR]: "",
+				"aria-hidden": getAriaHidden(true),
+			}) as const
+	);
 }
 
+type SelectIconStateProps = WithRefProps;
+
 class SelectIconState {
-	props = {
-		[ICON_ATTR]: "",
-		"aria-hidden": getAriaHidden(true),
-	} as const;
+	#id: SelectIconStateProps["id"];
+	#ref: SelectIconStateProps["ref"];
+
+	constructor(props: SelectIconStateProps) {
+		this.#id = props.id;
+		this.#ref = props.ref;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+		});
+	}
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.value,
+				[ICON_ATTR]: "",
+				"aria-hidden": getAriaHidden(true),
+			}) as const
+	);
 }
 
 export function useSelectRoot(props: SelectRootStateProps) {
 	return setSelectRootContext(new SelectRootState(props));
 }
 
-export function useSelectContentFrag(props: SelectContentFragStateProps) {
-	return getSelectRootContext().createContent(props);
+export function useSelectContentFrag() {
+	return getSelectRootContext().createContent();
 }
 
 export function useSelectContent(props: SelectContentStateProps) {
@@ -1394,24 +1510,24 @@ export function useSelectScrollDownButton(props: SelectScrollButtonImplStateProp
 	return getSelectContentContext().createScrollDownButton(props);
 }
 
-export function useSelectGroup() {
-	return setSelectGroupContext(new SelectGroupState());
+export function useSelectGroup(props: SelectGroupStateProps) {
+	return setSelectGroupContext(new SelectGroupState(props));
 }
 
 export function useSelectGroupLabel(props: SelectGroupLabelStateProps) {
 	return getSelectGroupContext().createGroupLabel(props);
 }
 
-export function useSelectArrow() {
-	return new SelectArrowState();
+export function useSelectArrow(props: SelectArrowStateProps) {
+	return new SelectArrowState(props);
 }
 
-export function useSelectSeparator() {
-	return new SelectSeparatorState();
+export function useSelectSeparator(props: SelectSeparatorStateProps) {
+	return new SelectSeparatorState(props);
 }
 
-export function useSelectIcon() {
-	return new SelectIconState();
+export function useSelectIcon(props: SelectIconStateProps) {
+	return new SelectIconState(props);
 }
 
 //

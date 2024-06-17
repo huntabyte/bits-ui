@@ -10,17 +10,21 @@
 
 	let {
 		id = useId(),
-		ref = $bindable(),
+		ref = $bindable(null),
 		forceMount = false,
 		position = "floating",
 		...restProps
 	}: ContentProps = $props();
 
-	const contentState = useSelectContentFrag({ id: box.with(() => id) });
+	const contentState = useSelectContentFrag();
 
 	const contentContext = useSelectContent({
 		id: box.with(() => id),
 		position: box.with(() => position),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
 	const isPresent = $derived(contentState.root.open.value || forceMount);

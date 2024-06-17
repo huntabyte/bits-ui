@@ -7,7 +7,6 @@
 		asChild,
 		children,
 		child,
-		ref = $bindable(),
 		mounted,
 		...restProps
 	}: ScrollDownButtonProps & {
@@ -29,7 +28,7 @@
 {#if asChild}
 	{@render child?.({ props: restProps })}
 {:else}
-	<div {...restProps} bind:this={ref}>
+	<div {...restProps}>
 		{@render children?.()}
 	</div>
 {/if}

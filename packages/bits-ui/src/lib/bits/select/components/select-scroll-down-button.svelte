@@ -6,13 +6,17 @@
 	import { useId } from "$lib/internal/useId.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
-	let { id = useId(), ref = $bindable(), ...restProps }: ScrollUpButtonProps = $props();
+	let { id = useId(), ref = $bindable(null), ...restProps }: ScrollUpButtonProps = $props();
 
 	const mounted = box(false);
 
 	const scrollDownButtonState = useSelectScrollDownButton({
 		id: box.with(() => id),
 		mounted: box.from(mounted),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
 	// eslint-disable-next-line unused-imports/no-unused-vars, ts/no-unused-vars
@@ -23,5 +27,5 @@
 </script>
 
 {#if scrollDownButtonState.canScrollDown}
-	<SelectScrollDownButtonMounted bind:ref {mounted} {...restWithoutStyle} {...mergedProps} />
+	<SelectScrollDownButtonMounted {mounted} {...restWithoutStyle} {...mergedProps} />
 {/if}

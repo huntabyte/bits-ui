@@ -2,17 +2,32 @@
 	import type { GroupProps } from "../index.js";
 	import { useSelectGroup } from "../select.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
+	import { box } from "svelte-toolbelt";
 
-	let { asChild, children, child, ref = $bindable(), ...restProps }: GroupProps = $props();
+	let {
+		asChild,
+		children,
+		child,
+		id = useId(),
+		ref = $bindable(null),
+		...restProps
+	}: GroupProps = $props();
 
-	const groupState = useSelectGroup();
+	const groupState = useSelectGroup({
+		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
+	});
 	const mergedProps = $derived(mergeProps(restProps, groupState.props));
 </script>
 
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<div {...mergedProps} bind:this={ref}>
+	<div {...mergedProps}>
 		{@render children?.()}
 	</div>
 {/if}

@@ -13,7 +13,6 @@
 		child,
 		align = "start",
 		collisionPadding = CONTENT_MARGIN,
-		ref = $bindable(),
 		enabled = false,
 		...restProps
 	}: WithoutChildren<PopperLayerImplProps> &
@@ -32,7 +31,7 @@
 		{#if asChild}
 			{@render child?.({ props: finalProps })}
 		{:else}
-			<div {...finalProps} bind:this={ref}>
+			<div {...finalProps}>
 				{@render children?.()}
 			</div>
 		{/if}

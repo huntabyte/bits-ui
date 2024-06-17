@@ -74,14 +74,12 @@
 							<SelectContentFloating
 								{...restProps}
 								{...mergedProps}
-								bind:ref
 								onPlaced={() => (contentState.isPositioned.value = true)}
 							/>
 						{:else}
 							<SelectContentItemAligned
 								{...restProps}
 								{...mergedProps}
-								bind:ref
 								onPlaced={() => (contentState.isPositioned.value = true)}
 							/>
 						{/if}
