@@ -35,7 +35,7 @@
 				props: mergedProps,
 			})}
 		{:else}
-			<div {...mergedProps} bind:this={ref}>
+			<div {...mergedProps}>
 				{@render children?.()}
 			</div>
 		{/if}

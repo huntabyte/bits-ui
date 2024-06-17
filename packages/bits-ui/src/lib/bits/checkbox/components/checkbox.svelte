@@ -4,6 +4,7 @@
 	import { useCheckboxRoot } from "../checkbox.svelte.js";
 	import CheckboxInput from "./checkbox-input.svelte";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
 
 	let {
 		checked = $bindable(false),
@@ -13,7 +14,8 @@
 		required = false,
 		name = undefined,
 		value = "on",
-		ref = $bindable(),
+		id = useId(),
+		ref = $bindable(null),
 		asChild,
 		child,
 		...restProps
@@ -33,6 +35,11 @@
 		required: box.with(() => required),
 		name: box.with(() => name),
 		value: box.with(() => value),
+		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
 	const mergedProps = $derived(mergeProps({ ...restProps }, rootState.props));
@@ -41,7 +48,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps, checked: rootState.checked.value })}
 {:else}
-	<button bind:this={ref} {...mergedProps}>
+	<button {...mergedProps}>
 		{@render children?.({
 			checked: rootState.checked.value,
 		})}
