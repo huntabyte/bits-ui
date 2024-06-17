@@ -1,6 +1,5 @@
 import { type ReadableBox, box } from "svelte-toolbelt";
 import { untrack } from "svelte";
-import type { InteractOutsideEvent } from "@melt-ui/svelte";
 import type { InteractOutsideBehaviorType } from "../utilities/dismissable-layer/types.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { type UseRovingFocusReturn, useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
@@ -11,21 +10,25 @@ import { kbd } from "$lib/internal/kbd.js";
 import { wrapArray } from "$lib/internal/useTypeahead.svelte.js";
 import { isBrowser } from "$lib/internal/is.js";
 import { afterTick } from "$lib/internal/afterTick.js";
+import type { WithRefProps } from "$lib/internal/types.js";
+import { useRefById } from "$lib/internal/useRefById.svelte.js";
 
 const ROOT_ATTR = "data-menubar-root";
 const TRIGGER_ATTR = "data-menubar-trigger";
 
-type MenubarRootStateProps = ReadableBoxedValues<{
-	id: string;
-	dir: Direction;
-	loop: boolean;
-}> &
-	WritableBoxedValues<{
-		value: string;
-	}>;
+type MenubarRootStateProps = WithRefProps<
+	ReadableBoxedValues<{
+		dir: Direction;
+		loop: boolean;
+	}> &
+		WritableBoxedValues<{
+			value: string;
+		}>
+>;
 
 class MenubarRootState {
 	id: MenubarRootStateProps["id"];
+	ref: MenubarRootStateProps["ref"];
 	value: MenubarRootStateProps["value"];
 	dir: MenubarRootStateProps["dir"];
 	loop: MenubarRootStateProps["loop"];
@@ -40,6 +43,12 @@ class MenubarRootState {
 		this.dir = props.dir;
 		this.loop = props.loop;
 		this.id = props.id;
+		this.ref = props.ref;
+
+		useRefById({
+			id: this.id,
+			ref: this.ref,
+		});
 		this.rovingFocusGroup = useRovingFocus({
 			rootNodeId: this.id,
 			candidateSelector: TRIGGER_ATTR,
@@ -57,12 +66,8 @@ class MenubarRootState {
 		this.triggerIds = this.triggerIds.filter((triggerId) => triggerId !== id);
 	}
 
-	getNode() {
-		return document.getElementById(this.id.value);
-	}
-
 	getTriggers() {
-		const node = this.getNode();
+		const node = this.ref.value;
 		if (!node) return [];
 		return Array.from(node.querySelectorAll<HTMLButtonElement>(`[${TRIGGER_ATTR}]`));
 	}
@@ -103,8 +108,8 @@ class MenubarMenuState {
 	value: MenubarMenuStateProps["value"];
 	open = $derived.by(() => this.root.value.value === this.value.value);
 	wasOpenedByKeyboard = $state(false);
-	triggerId = box.with(() => "");
-	contentId = box.with(() => "");
+	triggerNode = $state<HTMLElement | null>(null);
+	contentNode = $state<HTMLElement | null>(null);
 
 	constructor(props: MenubarMenuStateProps, root: MenubarRootState) {
 		this.value = props.value;
@@ -121,7 +126,10 @@ class MenubarMenuState {
 		// register content id to value map on mount
 		$effect(() => {
 			untrack(() => {
-				this.root.valueToContentId.set(this.value.value, this.contentId);
+				this.root.valueToContentId.set(
+					this.value.value,
+					box.with(() => this.contentNode?.id ?? "")
+				);
 			});
 
 			// unregister on unmount
@@ -141,20 +149,23 @@ class MenubarMenuState {
 
 	getTriggerNode() {
 		if (!isBrowser) return null;
-		return document.getElementById(this.triggerId.value);
+		return this.triggerNode;
 	}
 
 	getContentNode() {
-		return document.getElementById(this.contentId.value);
+		return this.contentNode;
 	}
 }
 
-type MenubarTriggerStateProps = ReadableBoxedValues<{
-	id: string;
-	disabled: boolean;
-}>;
+type MenubarTriggerStateProps = WithRefProps<
+	ReadableBoxedValues<{
+		disabled: boolean;
+	}>
+>;
 
 class MenubarTriggerState {
+	id: MenubarTriggerStateProps["id"];
+	ref: MenubarTriggerStateProps["ref"];
 	disabled: MenubarTriggerStateProps["disabled"];
 	menu: MenubarMenuState;
 	root: MenubarRootState;
@@ -164,8 +175,17 @@ class MenubarTriggerState {
 	constructor(props: MenubarTriggerStateProps, menu: MenubarMenuState) {
 		this.disabled = props.disabled;
 		this.menu = menu;
-		this.menu.triggerId = props.id;
+		this.id = props.id;
+		this.ref = props.ref;
 		this.root = menu.root;
+
+		useRefById({
+			id: this.id,
+			ref: this.ref,
+			onRefChange: (node) => {
+				this.menu.triggerNode = node;
+			},
+		});
 
 		$effect(() => {
 			untrack(() => {
@@ -235,10 +255,10 @@ class MenubarTriggerState {
 			({
 				type: "button",
 				role: "menuitem",
-				id: this.menu.triggerId.value,
+				id: this.id.value,
 				"aria-haspopup": "menu",
 				"aria-expanded": getAriaExpanded(this.menu.open),
-				"aria-controls": this.menu.open ? this.menu.contentId.value : undefined,
+				"aria-controls": this.menu.open ? this.menu.contentNode?.id : undefined,
 				"data-highlighted": this.isFocused ? "" : undefined,
 				"data-state": getDataOpenClosed(this.menu.open),
 				"data-disabled": getDataDisabled(this.disabled.value),
@@ -255,12 +275,15 @@ class MenubarTriggerState {
 	);
 }
 
-type MenubarContentStateProps = ReadableBoxedValues<{
-	id: string;
-	interactOutsideBehavior: InteractOutsideBehaviorType;
-}>;
+type MenubarContentStateProps = WithRefProps<
+	ReadableBoxedValues<{
+		interactOutsideBehavior: InteractOutsideBehaviorType;
+	}>
+>;
 
 class MenubarContentState {
+	id: MenubarContentStateProps["id"];
+	ref: MenubarContentStateProps["ref"];
 	menu: MenubarMenuState;
 	root: MenubarRootState;
 	hasInteractedOutside = $state(false);
@@ -269,13 +292,18 @@ class MenubarContentState {
 	constructor(props: MenubarContentStateProps, menu: MenubarMenuState) {
 		this.interactOutsideBehavior = props.interactOutsideBehavior;
 		this.menu = menu;
-		this.menu.contentId = props.id;
+		this.id = props.id;
+		this.ref = props.ref;
 		this.root = menu.root;
-	}
 
-	#getNode() {
-		if (!isBrowser) return null;
-		return document.getElementById(this.menu.contentId.value);
+		useRefById({
+			id: this.id,
+			ref: this.ref,
+			onRefChange: (node) => {
+				this.menu.contentNode = node;
+			},
+			condition: () => this.menu.open,
+		});
 	}
 
 	onDestroyAutoFocus = (e: Event) => {
@@ -301,7 +329,7 @@ class MenubarContentState {
 	};
 
 	onMountAutoFocus = () => {
-		afterTick(() => this.#getNode()?.focus());
+		afterTick(() => this.ref.value?.focus());
 	};
 
 	#onkeydown = (e: KeyboardEvent) => {
@@ -334,8 +362,8 @@ class MenubarContentState {
 	};
 
 	props = $derived.by(() => ({
-		id: this.menu.contentId.value,
-		"aria-labelledby": this.menu.triggerId.value,
+		id: this.id.value,
+		"aria-labelledby": this.menu.triggerNode?.id,
 		style: {
 			"--bits-menubar-content-transform-origin": "var(--bits-floating-transform-origin)",
 			"--bits-menubar-content-available-width": "var(--bits-floating-available-width)",

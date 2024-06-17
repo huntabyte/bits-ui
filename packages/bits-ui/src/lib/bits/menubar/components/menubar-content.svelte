@@ -7,7 +7,7 @@
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {
-		ref = $bindable(),
+		ref = $bindable(null),
 		interactOutsideBehavior = "close",
 		id = useId(),
 		...restProps
@@ -16,6 +16,10 @@
 	const contentState = useMenubarContent({
 		id: box.with(() => id),
 		interactOutsideBehavior: box.with(() => interactOutsideBehavior),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, contentState.props)) as Record<
