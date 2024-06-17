@@ -1,4 +1,4 @@
-import { box, type WritableBox } from "svelte-toolbelt";
+import { box } from "svelte-toolbelt";
 import { tick } from "svelte";
 import { focusFirst } from "../utilities/focus-scope/utils.js";
 import {
