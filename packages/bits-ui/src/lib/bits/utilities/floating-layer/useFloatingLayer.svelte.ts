@@ -18,7 +18,8 @@ import {
 	type ReadableBoxedValues,
 	styleToString,
 	useId,
-	useNodeById,
+	useRefById,
+	type WithRefProps,
 } from "$lib/internal/index.js";
 import { useSize } from "$lib/internal/useSize.svelte.js";
 import { useFloating } from "$lib/internal/floating-svelte/useFloating.svelte.js";
@@ -42,7 +43,7 @@ export type Align = (typeof ALIGN_OPTIONS)[number];
 export type Boundary = Element | null;
 
 class FloatingRootState {
-	anchorNode = undefined as unknown as ReadableBox<Measurable | HTMLElement | null>;
+	anchorNode = box<Measurable | HTMLElement | null>(null);
 
 	createAnchor(props: FloatingAnchorStateProps) {
 		return new FloatingAnchorState(props, this);
@@ -79,9 +80,9 @@ class FloatingContentState {
 	root: FloatingRootState;
 
 	// nodes
-	contentNode: Box<HTMLElement | null>;
-	wrapperNode: Box<HTMLElement | null>;
-	arrowNode = box<HTMLElement | null>(null);
+	contentRef = box<HTMLElement | null>(null);
+	wrapperRef = box<HTMLElement | null>(null);
+	arrowRef = box<HTMLElement | null>(null);
 
 	// ids
 	arrowId: Box<string> = box(useId());
@@ -169,8 +170,8 @@ class FloatingContentState {
 						);
 					},
 				}),
-				this.arrowNode.value &&
-					arrow({ element: this.arrowNode.value, padding: this.arrowPadding.value }),
+				this.arrowRef.value &&
+					arrow({ element: this.arrowRef.value, padding: this.arrowPadding.value }),
 				transformOrigin({ arrowWidth: this.arrowWidth, arrowHeight: this.arrowHeight }),
 				this.hideWhenDetached.value &&
 					hide({ strategy: "referenceHidden", ...this.detectOverflowOptions }),
@@ -261,10 +262,19 @@ class FloatingContentState {
 		this.style = props.style;
 		this.root = root;
 		this.enabled = props.enabled;
-		this.arrowSize = useSize(this.arrowNode);
+		this.arrowSize = useSize(this.arrowRef);
 		this.wrapperId = props.wrapperId;
-		this.wrapperNode = useNodeById(this.wrapperId);
-		this.contentNode = useNodeById(this.id);
+
+		useRefById({
+			id: this.wrapperId,
+			ref: this.wrapperRef,
+		});
+
+		useRefById({
+			id: this.id,
+			ref: this.contentRef,
+		});
+
 		this.floating = useFloating({
 			strategy: () => this.strategy.value,
 			placement: () => this.desiredPlacement,
@@ -285,7 +295,7 @@ class FloatingContentState {
 		});
 
 		$effect(() => {
-			const contentNode = this.contentNode.value;
+			const contentNode = this.contentRef.value;
 			if (!contentNode) return;
 
 			untrack(() => {
@@ -294,7 +304,7 @@ class FloatingContentState {
 		});
 
 		$effect(() => {
-			this.floating.floating.value = this.wrapperNode.value;
+			this.floating.floating.value = this.wrapperRef.value;
 		});
 	}
 
@@ -303,24 +313,35 @@ class FloatingContentState {
 	}
 }
 
-type FloatingArrowStateProps = ReadableBoxedValues<{
-	id: string;
-}>;
+type FloatingArrowStateProps = WithRefProps;
 
 class FloatingArrowState {
-	#content = undefined as unknown as FloatingContentState;
-	#id = undefined as unknown as FloatingArrowStateProps["id"];
-
-	props = $derived({
-		id: this.#id.value,
-		style: this.#content.arrowStyle,
-	});
+	#id: FloatingArrowStateProps["id"];
+	#ref: FloatingArrowStateProps["ref"];
+	#content: FloatingContentState;
 
 	constructor(props: FloatingArrowStateProps, content: FloatingContentState) {
 		this.#content = content;
 		this.#id = props.id;
-		this.#content.arrowNode = useNodeById(this.#id);
+		this.#ref = props.ref;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+			onRefChange: (node) => {
+				this.#content.arrowRef.value = node;
+			},
+			condition: () => this.#content.enabled.value,
+		});
 	}
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.value,
+				style: this.#content.arrowStyle,
+			}) as const
+	);
 }
 
 type FloatingAnchorStateProps = ReadableBoxedValues<{
@@ -329,11 +350,19 @@ type FloatingAnchorStateProps = ReadableBoxedValues<{
 }>;
 
 class FloatingAnchorState {
+	ref = box<HTMLElement | null>(null);
+
 	constructor(props: FloatingAnchorStateProps, root: FloatingRootState) {
 		if (props.virtualEl && props.virtualEl.value) {
 			root.anchorNode = box.from(props.virtualEl.value);
 		} else {
-			root.anchorNode = useNodeById(props.id);
+			useRefById({
+				id: props.id,
+				ref: this.ref,
+				onRefChange: (node) => {
+					root.anchorNode.value = node;
+				},
+			});
 		}
 	}
 }

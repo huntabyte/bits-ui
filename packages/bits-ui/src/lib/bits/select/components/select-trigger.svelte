@@ -9,7 +9,7 @@
 	let {
 		id = useId(),
 		disabled = false,
-		ref = $bindable(),
+		ref = $bindable(null),
 		asChild,
 		children,
 		child,
@@ -19,6 +19,10 @@
 	const triggerState = useSelectTrigger({
 		id: box.with(() => id),
 		disabled: box.with(() => disabled),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, triggerState.props));
@@ -28,7 +32,7 @@
 	{#if asChild}
 		{@render child?.({ props: mergedProps })}
 	{:else}
-		<button {...mergedProps} bind:this={ref}>
+		<button {...mergedProps}>
 			{@render children?.()}
 		</button>
 	{/if}

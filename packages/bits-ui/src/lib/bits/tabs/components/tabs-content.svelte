@@ -3,18 +3,25 @@
 	import type { ContentProps } from "../index.js";
 	import { useTabsContent } from "../tabs.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
 
 	let {
 		asChild,
 		children,
 		child,
-		ref = $bindable(),
+		id = useId(),
+		ref = $bindable(null),
 		value,
 		...restProps
 	}: ContentProps = $props();
 
 	const contentState = useTabsContent({
 		value: box.with(() => value),
+		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));
@@ -23,7 +30,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<div bind:this={ref} {...mergedProps}>
+	<div {...mergedProps}>
 		{@render children?.()}
 	</div>
 {/if}

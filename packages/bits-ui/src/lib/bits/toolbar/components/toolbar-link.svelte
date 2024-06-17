@@ -10,13 +10,17 @@
 		children,
 		href,
 		child,
-		ref = $bindable(),
+		ref = $bindable(null),
 		id = useId(),
 		...restProps
 	}: LinkProps = $props();
 
 	const linkState = useToolbarLink({
 		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, linkState.props));
@@ -25,7 +29,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<a {href} {...mergedProps} bind:this={ref}>
+	<a {href} {...mergedProps}>
 		{@render children?.()}
 	</a>
 {/if}

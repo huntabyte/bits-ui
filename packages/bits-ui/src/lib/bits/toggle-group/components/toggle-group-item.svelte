@@ -9,7 +9,7 @@
 		asChild,
 		children,
 		child,
-		ref = $bindable(),
+		ref = $bindable(null),
 		value,
 		disabled = false,
 		id = useId(),
@@ -21,6 +21,10 @@
 		id: box.with(() => id),
 		value: box.with(() => value),
 		disabled: box.with(() => disabled),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, itemState.props, { type }));

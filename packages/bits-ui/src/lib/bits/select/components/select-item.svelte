@@ -9,7 +9,7 @@
 		id = useId(),
 		value,
 		textValue = "",
-		ref = $bindable(),
+		ref = $bindable(null),
 		asChild,
 		children,
 		child,
@@ -22,6 +22,10 @@
 		disabled: box.with(() => disabled),
 		value: box.with(() => value),
 		textValue: box.with(() => textValue),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, itemState.props));
@@ -30,7 +34,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps, selected: itemState.isSelected })}
 {:else}
-	<div bind:this={ref} {...mergedProps}>
+	<div {...mergedProps}>
 		{@render children?.({ selected: itemState.isSelected })}
 	</div>
 {/if}
