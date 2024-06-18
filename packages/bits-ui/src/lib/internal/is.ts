@@ -29,3 +29,11 @@ export function isElement(element: unknown): element is Element {
 export function isElementOrSVGElement(element: unknown): element is Element | SVGElement {
 	return element instanceof Element || element instanceof SVGElement;
 }
+
+export function isNumberString(value: string) {
+	return !isNaN(Number(value)) && !isNaN(parseFloat(value));
+}
+
+export function isNull(value: unknown): value is null {
+	return value === null;
+}
