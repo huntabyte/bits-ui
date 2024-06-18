@@ -1,16 +1,22 @@
 <script lang="ts">
 	import { PinInput, Toggle, type PinInputRootSnippetProps } from "bits-ui";
 	import { cn } from "$lib/utils/styles.js";
-
+	import { toast } from "svelte-sonner";
 	let value = $state("");
 
 	type CellProps = PinInputRootSnippetProps["cells"][0];
+
+	function onComplete() {
+		toast.success("Completed with value " + value);
+		value = "";
+	}
 </script>
 
 <PinInput.Root
 	bind:value
-	class="group flex items-center text-foreground has-[:disabled]:opacity-30"
+	class="group/pininput flex items-center text-foreground has-[:disabled]:opacity-30"
 	maxlength={6}
+	{onComplete}
 >
 	{#snippet children({ cells })}
 		<div class="flex">
@@ -34,13 +40,15 @@
 {#snippet Cell(props: CellProps )}
 	<div
 		class={cn(
+			// Custom class to override global focus styles
+			"focus-override",
 			"relative h-14 w-10 text-[2rem]",
 			"flex items-center justify-center",
-			"transition-all duration-300",
-			"border-y border-r border-border first:rounded-l-md first:border-l last:rounded-r-md",
-			"text-foreground group-focus-within:border-accent-foreground/20 group-hover:border-accent-foreground/20",
-			"outline outline-0 outline-accent-foreground/20",
-			{ "outline-4 outline-accent-foreground": props.isActive }
+			"transition-all duration-200",
+			"border-y border-r border-foreground/20 first:rounded-l-md first:border-l last:rounded-r-md",
+			"text-foreground group-focus-within/pininput:border-foreground/40 group-hover/pininput:border-foreground/40",
+			"outline outline-0",
+			props.isActive && "outline-1 outline-white"
 		)}
 	>
 		{#if props.char !== null}

@@ -442,7 +442,6 @@ class PinInputRootState {
 
 	#cells = $derived.by(() =>
 		Array.from({ length: this.#maxLength.value }).map((_, idx) => {
-			console.log("value", this.value.value);
 			const isActive =
 				this.#isFocused.value &&
 				this.#mirrorSelectionStart !== null &&
@@ -450,6 +449,8 @@ class PinInputRootState {
 				((this.#mirrorSelectionStart === this.#mirrorSelectionEnd &&
 					idx === this.#mirrorSelectionStart) ||
 					(idx >= this.#mirrorSelectionStart && idx < this.#mirrorSelectionEnd));
+
+			console.log("isActive", isActive);
 			const char = this.value.value[idx] !== undefined ? this.value.value[idx] : null;
 
 			return {
