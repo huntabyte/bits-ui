@@ -20,4 +20,24 @@ description: A list of links that allow users to navigate between pages of a web
 <script lang="ts">
 	import { NavigationMenu } from "bits-ui";
 </script>
+
+<NavigationMenu.Root>
+	<NavigationMenu.List>
+		<NavigationMenu.Item>
+			<NavigationMenu.Trigger />
+			<NavigationMenu.Content />
+		</NavigationMenu.Item>
+		<NavigationMenu.Item>
+			<NavigationMenu.Trigger />
+			<NavigationMenu.Content>
+				<NavigationMenu.Link />
+			</NavigationMenu.Content>
+		</NavigationMenu.Item>
+		<NavigationMenu.Item>
+			<NavigationMenu.Link />
+		</NavigationMenu.Item>
+		<NavigationMenu.Indicator />
+	</NavigationMenu.List>
+	<NavigationMenu.Viewport />
+</NavigationMenu.Root>
 ```
