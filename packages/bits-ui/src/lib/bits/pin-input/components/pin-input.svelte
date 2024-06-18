@@ -1,72 +1,70 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { derived } from "svelte/store";
-	import { setCtx } from "../ctx.js";
-	import type { Props } from "../index.js";
+	import { noop } from "$lib/internal/callbacks.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
+	import { box } from "svelte-toolbelt";
+	import type { RootProps } from "../index.js";
+	import { REGEXP_ONLY_DIGITS, usePinInput } from "../pin-input.svelte.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
 
-	type $$Props = Props;
+	let {
+		inputId = useId(),
+		containerId = useId(),
+		containerRef = $bindable(null),
+		inputRef = $bindable(null),
+		maxlength = 6,
+		textalign = "left",
+		pattern = REGEXP_ONLY_DIGITS,
+		inputmode = "numeric",
+		onComplete = noop,
+		pushPasswordManagerStrategy = "increase-width",
+		class: containerClass = "",
+		children,
+		autocomplete = "one-time-code",
+		disabled = false,
+		value = $bindable(""),
+		onValueChange = noop,
+		...restProps
+	}: RootProps = $props();
 
-	export let placeholder: $$Props["placeholder"] = undefined;
-	export let value: $$Props["value"] = undefined;
-	export let name: $$Props["name"] = undefined;
-	export let disabled: $$Props["disabled"] = undefined;
-	export let type: $$Props["type"] = "text";
-	export let onValueChange: $$Props["onValueChange"] = undefined;
-	export let id: $$Props["id"] = undefined;
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
-
-	const {
-		elements: { root },
-		states: { value: localValue },
-		updateOption,
-		ids,
-		getAttrs,
-	} = setCtx({
-		placeholder,
-		defaultValue: value,
-		name,
-		disabled,
-		type,
-		onValueChange: ({ next }) => {
-			if (value !== next) {
-				onValueChange?.(next);
-				value = next;
+	const rootState = usePinInput({
+		id: box.with(() => containerId),
+		inputRef: box.with(
+			() => inputRef,
+			(v) => (inputRef = v)
+		),
+		ref: box.with(
+			() => containerRef,
+			(v) => (containerRef = v)
+		),
+		inputId: box.with(() => inputId),
+		autocomplete: box.with(() => autocomplete),
+		maxLength: box.with(() => maxlength),
+		textAlign: box.with(() => textalign),
+		disabled: box.with(() => disabled),
+		inputmode: box.with(() => inputmode),
+		pattern: box.with(() => pattern),
+		onComplete: box.with(() => onComplete),
+		value: box.with(
+			() => value,
+			(v) => {
+				if (value !== v) {
+					value = v;
+					onValueChange(v);
+				}
 			}
-			return next;
-		},
+		),
+		pushPasswordManagerStrategy: box.with(() => pushPasswordManagerStrategy),
 	});
 
-	$: value !== undefined && localValue.set(value);
-
-	const attrs = getAttrs("root");
-
-	$: updateOption("placeholder", placeholder);
-	$: updateOption("name", name);
-	$: updateOption("disabled", disabled);
-	$: updateOption("type", type);
-
-	$: builder = $root;
-	$: Object.assign(builder, attrs);
-
-	const idValues = derived([ids.root], ([$menubarId]) => ({
-		menubar: $menubarId,
-	}));
-
-	$: if (id) {
-		ids.root.set(id);
-	}
-
-	$: slotProps = {
-		builder,
-		ids: $idValues,
-	};
+	const mergedInputProps = $derived(mergeProps(restProps, rootState.inputProps));
+	const mergedRootProps = $derived(mergeProps(rootState.rootProps, { class: containerClass }));
+	const mergedInputWrapperProps = $derived(mergeProps(rootState.inputWrapperProps, {}));
 </script>
 
-{#if asChild}
-	<slot {...slotProps} />
-{:else}
-	<div bind:this={ref} use:melt={builder} {...$$restProps}>
-		<slot {...slotProps} />
+<div {...mergedRootProps}>
+	{@render children?.(rootState.snippetProps)}
+
+	<div {...mergedInputWrapperProps}>
+		<input {...mergedInputProps} />
 	</div>
-{/if}
+</div>

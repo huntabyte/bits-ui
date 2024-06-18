@@ -1,49 +1,106 @@
-import type { HTMLInputAttributes } from "svelte/elements";
-import type { CreatePinInputProps as MeltPinInputProps } from "@melt-ui/svelte";
 import type {
-	DOMElement,
-	Expand,
-	HTMLDivAttributes,
-	OmitIds,
-	OmitValue,
 	OnChangeFn,
-} from "$lib/internal/index.js";
-import type { CustomEventHandler } from "$lib/index.js";
+	PrimitiveInputAttributes,
+	WithAsChild,
+	Without,
+} from "$lib/internal/types.js";
+import type { Snippet } from "svelte";
 
-export type PinInputPropsWithoutHTML = Expand<
-	OmitIds<
-		OmitValue<MeltPinInputProps> & {
-			/**
-			 * The value pin-input, which is an array of strings.
-			 *
-			 * You can bind to this to programmatically control the value.
-			 */
-			value?: MeltPinInputProps["defaultValue"];
+export type PinInputRootPropsWithoutHTML = {
+	/**
+	 * The value of the input.
+	 *
+	 * @bindable
+	 */
+	value?: string;
 
-			/**
-			 * A callback function called when the value changes.
-			 */
-			onValueChange?: OnChangeFn<MeltPinInputProps["defaultValue"]>;
-		} & DOMElement
-	>
->;
+	/**
+	 * A callback function that is called when the value of the input changes.
+	 */
+	onValueChange?: OnChangeFn<string>;
 
-export type PinInputInputPropsWithoutHTML = DOMElement<HTMLInputElement>;
+	/**
+	 * The max length of the input.
+	 */
+	maxlength: number;
 
-export type PinInputHiddenInputPropsWithoutHTML = DOMElement<HTMLInputElement>;
-//
+	/**
+	 * Customize the alignment of the text within in the input.
+	 *
+	 * @default "left"
+	 */
+	textalign?: "left" | "center" | "right";
 
-export type PinInputProps = PinInputPropsWithoutHTML & HTMLDivAttributes;
+	/**
+	 * A callback function that is called when the input is completely filled.
+	 *
+	 */
+	onComplete?: (...args: any[]) => void;
 
-export type PinInputInputProps = PinInputInputPropsWithoutHTML & HTMLInputAttributes;
+	/**
+	 * How to handle the input when a password manager is detected.
+	 */
+	pushPasswordManagerStrategy?: "increase-width" | "none";
 
-export type PinInputHiddenInputProps = PinInputHiddenInputPropsWithoutHTML & HTMLInputAttributes;
+	/**
+	 * Whether the input is disabled
+	 */
+	disabled?: boolean;
 
-export type PinInputInputEvents = {
-	keydown: CustomEventHandler<KeyboardEvent, HTMLInputElement>;
-	input: CustomEventHandler<InputEvent, HTMLInputElement>;
-	paste: CustomEventHandler<ClipboardEvent, HTMLInputElement>;
-	change: CustomEventHandler<Event, HTMLInputElement>;
-	focus: CustomEventHandler<FocusEvent, HTMLInputElement>;
-	blur: CustomEventHandler<FocusEvent, HTMLInputElement>;
+	/**
+	 * A reference to the container element.
+	 */
+	containerRef?: HTMLElement | null;
+
+	/**
+	 * A reference to the input element.
+	 */
+	inputRef?: HTMLInputElement | null;
+
+	/**
+	 * Id of the input element.
+	 */
+	inputId?: string;
+
+	/**
+	 * Id of the container element.
+	 */
+	containerId?: string;
+
+	/**
+	 * The children snippet used to render the individual cells.
+	 */
+	children: Snippet<[PinInputRootSnippetProps]>;
+};
+
+export type PinInputRootProps = PinInputRootPropsWithoutHTML &
+	Without<Omit<PrimitiveInputAttributes, "id">, PinInputRootPropsWithoutHTML>;
+
+export type PinInputCellProps = {
+	/**
+	 * Whether the cell is active.
+	 */
+	isActive: boolean;
+
+	/**
+	 * The character displayed in the cell.
+	 */
+	char: string;
+
+	/**
+	 * Whether the cell has a fake caret.
+	 */
+	hasFakeCaret: boolean;
+};
+
+export type PinInputCell = {
+	char: string | null | undefined;
+	isActive: boolean;
+	hasFakeCaret: boolean;
+};
+
+export type PinInputRootSnippetProps = {
+	cells: PinInputCell[];
+	isFocused: boolean;
+	isHovering: boolean;
 };
