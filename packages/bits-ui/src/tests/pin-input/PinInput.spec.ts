@@ -105,7 +105,7 @@ describe("Pin Input", () => {
 
 	it("fires the `onComplete` callback when the input is complete", async () => {
 		const mockComplete = vi.fn();
-		const { user, hiddenInput, cells } = setup({
+		const { user, hiddenInput } = setup({
 			onComplete: mockComplete,
 		});
 
