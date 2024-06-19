@@ -6,7 +6,7 @@ import {
 	isZonedDateTime,
 	hasTime,
 	getSegments,
-} from "../date-utils/index.js";
+} from "../index.js";
 import type { DateValue } from "@internationalized/date";
 import type {
 	DateSegmentPart,
@@ -224,9 +224,9 @@ export function isAnySegmentPart(part: unknown): part is SegmentPart {
  * the date picker, which is when all the segments have
  * been filled.
  */
-function getUsedSegments(id: string) {
-	if (!isBrowser) return [];
-	const usedSegments = getSegments(id)
+function getUsedSegments(fieldNode: HTMLElement | null) {
+	if (!isBrowser || !fieldNode) return [];
+	const usedSegments = getSegments(fieldNode)
 		.map((el) => el.dataset.segment)
 		.filter((part): part is EditableSegmentPart => {
 			return EDITABLE_SEGMENT_PARTS.includes(part as EditableSegmentPart);
@@ -236,13 +236,13 @@ function getUsedSegments(id: string) {
 
 type GetValueFromSegments = {
 	segmentObj: SegmentValueObj;
-	id: string;
+	fieldNode: HTMLElement | null;
 	dateRef: DateValue;
 };
 
 export function getValueFromSegments(props: GetValueFromSegments) {
-	const { segmentObj, id, dateRef } = props;
-	const usedSegments = getUsedSegments(id);
+	const { segmentObj, fieldNode, dateRef } = props;
+	const usedSegments = getUsedSegments(fieldNode);
 	let date = dateRef;
 	usedSegments.forEach((part) => {
 		if ("hour" in segmentObj) {
@@ -266,19 +266,26 @@ export function getValueFromSegments(props: GetValueFromSegments) {
  * store of the date field(s).
  *
  * @param segmentValues - The current `SegmentValueObj`
- * @param id  - The id of the date field
+ * @param fieldNode  - The id of the date field
  */
-export function areAllSegmentsFilled(segmentValues: SegmentValueObj, id: string) {
-	const usedSegments = getUsedSegments(id);
-	return usedSegments.every((part) => {
+export function areAllSegmentsFilled(
+	segmentValues: SegmentValueObj,
+	fieldNode: HTMLElement | null
+) {
+	const usedSegments = getUsedSegments(fieldNode);
+	for (const part of usedSegments) {
 		if ("hour" in segmentValues) {
-			return segmentValues[part] !== null;
+			if (segmentValues[part] === null) {
+				return false;
+			}
 		} else if (isDateSegmentPart(part)) {
-			return segmentValues[part] !== null;
+			if (segmentValues[part] === null) {
+				return false;
+			}
 		}
-	});
+	}
+	return true;
 }
-
 /**
  * Extracts the segment part from the provided node,
  * if it exists, otherwise returns null.
@@ -388,11 +395,11 @@ export function syncSegmentValues(props: SyncSegmentValuesProps) {
  * segment in the date field with the provided fieldId.
  *
  * @param id - The id of the element to check if it's the first segment
- * @param fieldId - The id of the date field associated with the segment
+ * @param fieldNode - The id of the date field associated with the segment
  */
-export function isFirstSegment(id: string, fieldId: string) {
+export function isFirstSegment(id: string, fieldNode: HTMLElement | null) {
 	if (!isBrowser) return false;
-	const segments = getSegments(fieldId);
+	const segments = getSegments(fieldNode);
 	return segments.length ? segments[0]!.id === id : false;
 }
 

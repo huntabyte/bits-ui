@@ -76,6 +76,10 @@ export function getAriaDisabled(condition: boolean): "true" | "false" {
 	return condition ? "true" : "false";
 }
 
+export function getAriaReadonly(condition: boolean): "true" | "false" {
+	return condition ? "true" : "false";
+}
+
 export function getAriaExpanded(condition: boolean): "true" | "false" {
 	return condition ? "true" : "false";
 }
