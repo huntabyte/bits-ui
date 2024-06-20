@@ -95,6 +95,7 @@ class DateFieldRootState {
 	segmentValues = $state() as SegmentValueObj;
 	announcer: Announcer;
 	updatingDayPeriod = $state<DayPeriod | null>(null);
+	updatingYear = $state<string | null>(null);
 	readonlySegmentsSet = $derived.by(() => new Set(this.readonlySegments.value));
 	segmentStates = initSegmentStates();
 	fieldNode = $state<HTMLElement | null>(null);
@@ -183,7 +184,9 @@ class DateFieldRootState {
 			}
 
 			if (part === "year") {
-				console.log("partValue in syncSegvals", String(partValue));
+				if (this.updatingYear) {
+					return [part, this.updatingYear];
+				}
 				const valueDigits = String(partValue).length;
 				const diff = 4 - valueDigits;
 				if (diff > 0) {
@@ -206,7 +209,6 @@ class DateFieldRootState {
 			});
 
 			const mergedSegmentValues = [...dateValues, ...timeValues];
-			console.log("mergedSegmentValues", mergedSegmentValues);
 			this.segmentValues = Object.fromEntries(mergedSegmentValues);
 			this.updatingDayPeriod = null;
 			return;
@@ -324,6 +326,10 @@ class DateFieldRootState {
 						prev.dayPeriod = dayPeriod;
 					}
 				}
+				newSegmentValues = { ...prev, [part]: next };
+			} else if (part === "year") {
+				const next = castCb(pVal) as DateAndTimeSegmentObj["year"];
+				this.updatingYear = next;
 				newSegmentValues = { ...prev, [part]: next };
 			} else {
 				const next = castCb(pVal);
@@ -701,6 +707,7 @@ class DateFieldDaySegmentState {
 		if (isBackspace(e.key)) {
 			let moveToPrev = false;
 			this.#updateSegment("day", (prev) => {
+				this.#root.states.day.hasLeftFocus = false;
 				if (prev === null) {
 					moveToPrev = true;
 					return null;
@@ -1081,6 +1088,7 @@ class DateFieldYearSegmentState {
 			let moveToNext = false;
 			const num = parseInt(e.key);
 			this.#updateSegment("year", (prev) => {
+				console.log("prev", prev);
 				if (this.#root.states.year.hasLeftFocus) {
 					prev = null;
 					this.#root.states.year.hasLeftFocus = false;
@@ -1092,21 +1100,17 @@ class DateFieldYearSegmentState {
 				}
 
 				const str = prev.toString() + num.toString();
-				console.log("str", str);
+				const mergedInt = parseInt(str);
+				const mergedIntDigits = String(mergedInt).length;
 
-				if (str.length > 4) {
-					this.#announcer.announce(num);
-					console.log("num", num);
-					return `000${num}`;
-				}
-				if (str.length === 4) {
-					moveToNext = true;
+				if (mergedIntDigits < 4) {
+					this.#announcer.announce(mergedInt);
+					return prependYearZeros(mergedInt);
 				}
 
-				const int = parseInt(str);
-				this.#announcer.announce(int);
-				console.log("int", int);
-				return `${int}`;
+				this.#announcer.announce(mergedInt);
+				moveToNext = true;
+				return `${mergedInt}`;
 			});
 
 			if (moveToNext) {
@@ -1117,6 +1121,7 @@ class DateFieldYearSegmentState {
 		if (isBackspace(e.key)) {
 			let moveToPrev = false;
 			this.#updateSegment("year", (prev) => {
+				this.#root.states.year.hasLeftFocus = false;
 				if (prev === null) {
 					moveToPrev = true;
 					this.#announcer.announce(null);
@@ -2018,4 +2023,10 @@ function segmentPartToInstance(props: SegmentPartToInstanceProps) {
 		case "timeZoneName":
 			return new DateFieldTimeZoneSegmentState(segmentProps, root);
 	}
+}
+
+function prependYearZeros(year: number) {
+	const digits = String(year).length;
+	const diff = 4 - digits;
+	return `${"0".repeat(diff)}${year}`;
 }
