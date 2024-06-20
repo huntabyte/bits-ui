@@ -16,10 +16,10 @@ export type AnyExceptLiteral = Exclude<SegmentPart, "literal">;
 
 export type DayPeriod = "AM" | "PM" | null;
 export type DateSegmentObj = {
-	[K in DateSegmentPart]: number | null;
+	[K in DateSegmentPart]: string | null;
 };
 export type TimeSegmentObj = {
-	[K in TimeSegmentPart]: K extends "dayPeriod" ? DayPeriod : number | null;
+	[K in TimeSegmentPart]: K extends "dayPeriod" ? DayPeriod : string | null;
 };
 export type DateAndTimeSegmentObj = DateSegmentObj & TimeSegmentObj;
 export type SegmentValueObj = DateSegmentObj | DateAndTimeSegmentObj;

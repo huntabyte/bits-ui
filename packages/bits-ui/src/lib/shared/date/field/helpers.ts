@@ -93,18 +93,32 @@ function createContentObj(props: CreateContentObjProps) {
 	function getPartContent(part: DateSegmentPart | TimeSegmentPart) {
 		if ("hour" in segmentValues) {
 			const value = segmentValues[part];
-			if (!isNull(value)) {
-				return formatter.part(dateRef.set({ [part]: value }), part, {
+			const leadingZero = typeof value === "string" && value?.startsWith("0");
+			if (value === "0") {
+				return "0";
+			} else if (!isNull(value)) {
+				const formatted = formatter.part(dateRef.set({ [part]: value }), part, {
 					hourCycle: props.hourCycle === 24 ? "h24" : undefined,
 				});
+				if (leadingZero && formatted.length === 1) {
+					return `0${formatted}`;
+				}
+				return formatted;
 			} else {
 				return getPlaceholder(part, "", locale);
 			}
 		} else {
 			if (isDateSegmentPart(part)) {
 				const value = segmentValues[part];
-				if (!isNull(value)) {
-					return formatter.part(dateRef.set({ [part]: value }), part);
+				const leadingZero = typeof value === "string" && value?.startsWith("0");
+				if (value === "0") {
+					return "0";
+				} else if (!isNull(value)) {
+					const formatted = formatter.part(dateRef.set({ [part]: value }), part);
+					if (leadingZero && formatted.length === 1) {
+						return `0${formatted}`;
+					}
+					return formatted;
 				} else {
 					return getPlaceholder(part, "", locale);
 				}
