@@ -46,6 +46,7 @@ import {
 	handleSegmentNavigation,
 	isSegmentNavigationKey,
 	moveToNextSegment,
+	moveToPrevSegment,
 } from "$lib/shared/date/field.js";
 import type { SegmentPart } from "$lib/shared/index.js";
 import { DATE_SEGMENT_PARTS, TIME_SEGMENT_PARTS } from "$lib/shared/date/field/parts.js";
@@ -653,12 +654,20 @@ class DateFieldDaySegmentState {
 		}
 
 		if (isBackspace(e.key)) {
+			let moveToPrev = false;
 			this.#updateSegment("day", (prev) => {
-				if (prev === null) return null;
+				if (prev === null) {
+					moveToPrev = true;
+					return null;
+				}
 				const str = prev.toString();
 				if (str.length === 1) return null;
 				return str.slice(0, -1);
 			});
+
+			if (moveToPrev) {
+				moveToPrevSegment(e, fieldNode);
+			}
 		}
 
 		if (isSegmentNavigationKey(e.key)) {
@@ -850,9 +859,11 @@ class DateFieldMonthSegmentState {
 
 		if (isBackspace(e.key)) {
 			this.#root.states.month.hasLeftFocus = false;
+			let moveToPrev = false;
 			this.#updateSegment("month", (prev) => {
 				if (prev === null) {
 					this.#announcer.announce(null);
+					moveToPrev = true;
 					return null;
 				}
 
@@ -865,6 +876,10 @@ class DateFieldMonthSegmentState {
 				this.#announcer.announce(this.getAnnouncement(next));
 				return `${next}`;
 			});
+
+			if (moveToPrev) {
+				moveToPrevSegment(e, this.#root.fieldNode);
+			}
 		}
 
 		if (isSegmentNavigationKey(e.key)) {

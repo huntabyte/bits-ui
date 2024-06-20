@@ -83,6 +83,19 @@ export function moveToNextSegment(e: KeyboardEvent, fieldNode: HTMLElement | nul
 	next.focus();
 }
 
+/**
+ * Shifts the focus to the previous segment in the list of segments
+ * within the field identified by the provided ID. If this is the first
+ * segment, focus will not be shifted.
+ */
+export function moveToPrevSegment(e: KeyboardEvent, fieldNode: HTMLElement | null) {
+	const node = e.currentTarget;
+	if (!isHTMLElement(node)) return;
+	const { prev } = getPrevNextSegments(node, fieldNode);
+	if (!prev) return;
+	prev.focus();
+}
+
 export function isSegmentNavigationKey(key: string) {
 	if (key === kbd.ARROW_RIGHT || key === kbd.ARROW_LEFT) return true;
 	return false;
