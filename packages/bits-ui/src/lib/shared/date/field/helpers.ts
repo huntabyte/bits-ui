@@ -315,6 +315,7 @@ export function getPartFromNode(node: HTMLElement) {
  * by checking if it has the correct keys and values for each key.
  */
 export function isDateAndTimeSegmentObj(obj: unknown): obj is DateAndTimeSegmentObj {
+	console.log("isDateAndTimeSegmentObj", obj);
 	if (typeof obj !== "object" || obj === null) {
 		return false;
 	}
@@ -325,7 +326,7 @@ export function isDateAndTimeSegmentObj(obj: unknown): obj is DateAndTimeSegment
 		const validValue =
 			key === "dayPeriod"
 				? value === "AM" || value === "PM" || value === null
-				: typeof value === "number" || value === null;
+				: typeof value === "string" || value === null;
 
 		return validKey && validValue;
 	});

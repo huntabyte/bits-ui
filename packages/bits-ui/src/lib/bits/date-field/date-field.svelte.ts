@@ -123,6 +123,12 @@ class DateFieldRootState {
 		this.segmentValues = this.initialSegments;
 
 		$effect(() => {
+			untrack(() => {
+				this.initialSegments = initializeSegmentValues(this.inferredGranularity);
+			});
+		});
+
+		$effect(() => {
 			this.announcer = getAnnouncer();
 			return () => {
 				removeDescriptionElement(this.descriptionId);
@@ -187,7 +193,6 @@ class DateFieldRootState {
 			});
 
 			const mergedSegmentValues = [...dateValues, ...timeValues];
-			console.log("mergedSegmentValues", mergedSegmentValues);
 			this.segmentValues = Object.fromEntries(mergedSegmentValues);
 			this.updatingDayPeriod = null;
 			return;
@@ -210,7 +215,9 @@ class DateFieldRootState {
 	inferredGranularity = $derived.by(() => {
 		const granularity = this.granularity.value;
 		if (granularity) return granularity;
-		return inferGranularity(this.placeholder.value, this.granularity.value);
+		const inferred = inferGranularity(this.placeholder.value, this.granularity.value);
+		console.log("inferred", inferred);
+		return inferred;
 	});
 
 	allSegmentContent = $derived.by(() =>
@@ -258,7 +265,10 @@ class DateFieldRootState {
 		if (disabled || readonly || readonlySegmentsSet.has(part)) return;
 
 		const prev = this.segmentValues;
+
 		let newSegmentValues: SegmentValueObj = prev;
+
+		console.log("isDateAndTimeSegmentObj", isDateAndTimeSegmentObj(prev));
 
 		const dateRef = this.placeholder.value;
 		if (isDateAndTimeSegmentObj(prev)) {
@@ -563,7 +573,6 @@ class DateFieldDaySegmentState {
 
 		if (isNumberString(e.key)) {
 			const num = parseInt(e.key);
-			console.log("num", num);
 			let moveToNext = false;
 			this.#updateSegment("day", (prev) => {
 				const max = daysInMonth;
@@ -588,6 +597,7 @@ class DateFieldDaySegmentState {
 					 */
 					if (num === 0) {
 						states.day.lastKeyZero = true;
+						this.#announcer.announce("0");
 						return "0";
 					}
 
@@ -601,6 +611,16 @@ class DateFieldDaySegmentState {
 						moveToNext = true;
 					}
 					states.day.lastKeyZero = false;
+
+					/**
+					 * If we're moving to the next segment and the number is less than
+					 * two digits, we want to announce the number and return it with a
+					 * leading zero to follow the placeholder format of `MM/DD/YYYY`.
+					 */
+					if (moveToNext && String(num).length === 1) {
+						this.#announcer.announce(num);
+						return `0${num}`;
+					}
 
 					/**
 					 * If none of the above conditions are met, then we can just
@@ -641,10 +661,24 @@ class DateFieldDaySegmentState {
 						return `0${num}`;
 					}
 					this.#announcer.announce(num);
+
+					/**
+					 * If we're moving to the next segment and the number is less than
+					 * two digits, we want to announce the number and return it with a
+					 * leading zero to follow the placeholder format of `MM/DD/YYYY`.
+					 */
+					if (moveToNext && String(total).length === 1) {
+						return `0${num}`;
+					}
+
 					return `${num}`;
 				}
 				moveToNext = true;
 				this.#announcer.announce(total);
+
+				if (moveToNext && String(total).length === 1) {
+					return `0${total}`;
+				}
 				return `${total}`;
 			});
 
@@ -813,12 +847,22 @@ class DateFieldMonthSegmentState {
 					}
 					this.#root.states.month.lastKeyZero = false;
 
+					this.#announcer.announce(num);
+
+					/**
+					 * If we're moving to the next segment and the number is less than
+					 * two digits, we want to announce the number and return it with a
+					 * leading zero to follow the placeholder format of `MM/DD/YYYY`.
+					 */
+					if (moveToNext && String(num).length === 1) {
+						return `0${num}`;
+					}
+
 					/**
 					 * If none of the above conditions are met, then we can just
 					 * return the number as the segment value and continue typing
 					 * in this segment.
 					 */
-					this.#announcer.announce(num);
 					return `${num}`;
 				}
 
@@ -849,6 +893,15 @@ class DateFieldMonthSegmentState {
 				}
 				moveToNext = true;
 				this.#announcer.announce(total);
+
+				/**
+				 * If we're moving to the next segment and the number is less than
+				 * two digits, we want to return it with a leading zero to follow the
+				 * placeholder format of `MM/DD/YYYY`.
+				 */
+				if (moveToNext && String(total).length === 1) {
+					return `0${total}`;
+				}
 				return `${total}`;
 			});
 
@@ -1011,8 +1064,10 @@ class DateFieldYearSegmentState {
 		}
 
 		if (isBackspace(e.key)) {
+			let moveToPrev = false;
 			this.#updateSegment("year", (prev) => {
 				if (prev === null) {
+					moveToPrev = true;
 					this.#announcer.announce(null);
 					return null;
 				}
@@ -1025,6 +1080,10 @@ class DateFieldYearSegmentState {
 				this.#announcer.announce(next);
 				return `${next}`;
 			});
+
+			if (moveToPrev) {
+				moveToPrevSegment(e, this.#root.fieldNode);
+			}
 		}
 
 		if (isSegmentNavigationKey(e.key)) {
