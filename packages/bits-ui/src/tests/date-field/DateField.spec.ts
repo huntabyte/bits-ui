@@ -343,6 +343,7 @@ describe("date field", () => {
 			expect(seg).toBeVisible();
 		}
 	});
+
 	it("overrides the default displayed segments with the `granularity` prop - `'minute'`", async () => {
 		const { queryByTestId, getByTestId, month, day, year } = setup({
 			value: calendarDateTime,
@@ -489,6 +490,21 @@ describe("date field", () => {
 		expect(second).toHaveTextContent(String(zonedDateTime.second));
 		await user.keyboard(`{1}`);
 		expect(second).toHaveTextContent("1");
+	});
+
+	it.only("moves to the previous segment when backspace is pressed while empty - `day`", async () => {
+		const { user, day } = setup({
+			value: zonedDateTime,
+			granularity: "second",
+		});
+
+		await user.click(day);
+		expect(day).toHaveFocus();
+		expect(day).toHaveTextContent(String(zonedDateTime.day));
+		await user.keyboard(kbd.BACKSPACE);
+		expect(day).toHaveTextContent("02");
+		await user.keyboard(kbd.BACKSPACE);
+		expect(day).toHaveTextContent("dd");
 	});
 
 	it.skip("displays correct timezone with ZonedDateTime value - `now`", async () => {

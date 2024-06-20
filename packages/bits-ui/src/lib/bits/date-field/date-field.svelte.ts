@@ -67,7 +67,7 @@ type DateFieldRootStateProps = WritableBoxedValues<{
 		disabled: boolean;
 		readonly: boolean;
 		granularity: Granularity | undefined;
-		hourCycle: 12 | 24;
+		hourCycle: 12 | 24 | undefined;
 		locale: string;
 		hideTimeZone: boolean;
 		name: string;
@@ -216,7 +216,6 @@ class DateFieldRootState {
 		const granularity = this.granularity.value;
 		if (granularity) return granularity;
 		const inferred = inferGranularity(this.placeholder.value, this.granularity.value);
-		console.log("inferred", inferred);
 		return inferred;
 	});
 
@@ -267,8 +266,6 @@ class DateFieldRootState {
 		const prev = this.segmentValues;
 
 		let newSegmentValues: SegmentValueObj = prev;
-
-		console.log("isDateAndTimeSegmentObj", isDateAndTimeSegmentObj(prev));
 
 		const dateRef = this.placeholder.value;
 		if (isDateAndTimeSegmentObj(prev)) {
@@ -690,7 +687,7 @@ class DateFieldDaySegmentState {
 		if (isBackspace(e.key)) {
 			let moveToPrev = false;
 			this.#updateSegment("day", (prev) => {
-				if (prev === null) {
+				if (prev === null || (prev.length === 2 && prev.startsWith("0"))) {
 					moveToPrev = true;
 					return null;
 				}
@@ -774,7 +771,6 @@ class DateFieldMonthSegmentState {
 		if (!isAcceptableSegmentKey(e.key)) return;
 
 		const placeholder = this.#root.placeholder.value;
-
 		const max = 12;
 
 		this.#root.states.month.hasTouched = true;
@@ -784,10 +780,18 @@ class DateFieldMonthSegmentState {
 				if (prev === null) {
 					const next = placeholder.month;
 					this.#announcer.announce(this.getAnnouncement(next));
+
+					if (String(next).length === 1) {
+						return `0${next}`;
+					}
+
 					return `${next}`;
 				}
 				const next = placeholder.set({ month: parseInt(prev) }).cycle("month", 1).month;
 				this.#announcer.announce(this.getAnnouncement(next));
+				if (String(next).length === 1) {
+					return `0${next}`;
+				}
 				return `${next}`;
 			});
 			return;
@@ -798,10 +802,16 @@ class DateFieldMonthSegmentState {
 				if (prev === null) {
 					const next = placeholder.month;
 					this.#announcer.announce(this.getAnnouncement(next));
+					if (String(next).length === 1) {
+						return `0${next}`;
+					}
 					return `${next}`;
 				}
 				const next = placeholder.set({ month: parseInt(prev) }).cycle("month", -1).month;
 				this.#announcer.announce(this.getAnnouncement(next));
+				if (String(next).length === 1) {
+					return `0${next}`;
+				}
 				return `${next}`;
 			});
 			return;
@@ -889,6 +899,10 @@ class DateFieldMonthSegmentState {
 						moveToNext = true;
 						return `0${num}`;
 					}
+
+					if (String(num).length === 1) {
+						return `0${num}`;
+					}
 					return `${num}`;
 				}
 				moveToNext = true;
@@ -914,7 +928,7 @@ class DateFieldMonthSegmentState {
 			this.#root.states.month.hasLeftFocus = false;
 			let moveToPrev = false;
 			this.#updateSegment("month", (prev) => {
-				if (prev === null) {
+				if (prev === null || (prev.length === 2 && prev.startsWith("0"))) {
 					this.#announcer.announce(null);
 					moveToPrev = true;
 					return null;
@@ -1148,8 +1162,13 @@ class DateFieldHourSegmentState {
 	#onkeydown = (e: KeyboardEvent) => {
 		if (e.key !== kbd.TAB) e.preventDefault();
 		const placeholder = this.#root.placeholder.value;
-		if (this.#root.disabled.value || !isAcceptableSegmentKey(e.key) || !("hour" in placeholder))
+		if (
+			this.#root.disabled.value ||
+			!isAcceptableSegmentKey(e.key) ||
+			!("hour" in placeholder)
+		) {
 			return;
+		}
 
 		this.#root.states.hour.hasTouched = true;
 
@@ -1267,9 +1286,11 @@ class DateFieldHourSegmentState {
 
 		if (isBackspace(e.key)) {
 			this.#root.states.hour.hasLeftFocus = false;
+			let moveToPrev = false;
 			this.#updateSegment("hour", (prev) => {
 				if (prev === null) {
 					this.#announcer.announce(null);
+					moveToPrev = true;
 					return null;
 				}
 				const str = prev.toString();
@@ -1281,6 +1302,10 @@ class DateFieldHourSegmentState {
 				this.#announcer.announce(next);
 				return `${next}`;
 			});
+
+			if (moveToPrev) {
+				moveToPrevSegment(e, this.#root.fieldNode);
+			}
 		}
 
 		if (isSegmentNavigationKey(e.key)) {
@@ -1433,8 +1458,8 @@ class DateFieldMinuteSegmentState {
 					return `${num}`;
 				}
 
-				const digits = prev.toString().length;
-				const total = parseInt(prev.toString() + num.toString());
+				const digits = prev.length;
+				const total = parseInt(prev + num.toString());
 
 				/**
 				 * If the number of digits is 2, or if the total with the existing digit
@@ -1466,8 +1491,10 @@ class DateFieldMinuteSegmentState {
 
 		if (isBackspace(e.key)) {
 			this.#root.states.minute.hasLeftFocus = false;
+			let moveToPrev = false;
 			this.#updateSegment("minute", (prev) => {
 				if (prev === null) {
+					moveToPrev = true;
 					this.#announcer.announce("Empty");
 					return null;
 				}
@@ -1480,6 +1507,10 @@ class DateFieldMinuteSegmentState {
 				this.#announcer.announce(next);
 				return `${next}`;
 			});
+
+			if (moveToPrev) {
+				moveToPrevSegment(e, this.#root.fieldNode);
+			}
 			return;
 		}
 
@@ -1531,7 +1562,7 @@ class DateFieldSecondSegmentState {
 	#announcer: Announcer;
 	#updateSegment: DateFieldRootState["updateSegment"];
 
-	constructor(props: DateFieldMinuteSegmentStateProps, root: DateFieldRootState) {
+	constructor(props: DateFieldSecondSegmentStateProps, root: DateFieldRootState) {
 		this.#id = props.id;
 		this.#ref = props.ref;
 		this.#root = root;
@@ -1663,8 +1694,10 @@ class DateFieldSecondSegmentState {
 
 		if (isBackspace(e.key)) {
 			this.#root.states.second.hasLeftFocus = false;
+			let moveToPrev = false;
 			this.#updateSegment("second", (prev) => {
 				if (prev === null) {
+					moveToPrev = true;
 					this.#announcer.announce(null);
 					return null;
 				}
@@ -1677,6 +1710,10 @@ class DateFieldSecondSegmentState {
 				this.#announcer.announce(next);
 				return `${next}`;
 			});
+
+			if (moveToPrev) {
+				moveToPrevSegment(e, this.#root.fieldNode);
+			}
 		}
 
 		if (isSegmentNavigationKey(e.key)) {

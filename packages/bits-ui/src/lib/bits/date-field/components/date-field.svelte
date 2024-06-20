@@ -11,7 +11,7 @@
 		disabled = false,
 		granularity,
 		hideTimeZone = false,
-		hourCycle = 12,
+		hourCycle,
 		locale = "en",
 		maxValue,
 		minValue,
