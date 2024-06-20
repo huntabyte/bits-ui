@@ -1,4 +1,4 @@
-<script lang="ts">
+<!-- <script lang="ts">
 	import { DateRangeField } from "bits-ui";
 	import { CalendarDate } from "@internationalized/date";
 
@@ -62,4 +62,4 @@
 			{/each}
 		</DateRangeField.Input>
 	</div>
-</DateRangeField.Root>
+</DateRangeField.Root> -->

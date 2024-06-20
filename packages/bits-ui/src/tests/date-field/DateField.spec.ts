@@ -1,5 +1,4 @@
-import { render } from "@testing-library/svelte";
-import { userEvent } from "@testing-library/user-event";
+import { render } from "@testing-library/svelte/svelte5";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import {
@@ -11,9 +10,8 @@ import {
 	parseAbsoluteToLocal,
 	toZoned,
 } from "@internationalized/date";
-import { getTestKbd } from "../utils.js";
-import DateFieldTest from "./DateFieldTest.svelte";
-import type { DateField } from "$lib/index.js";
+import { getTestKbd, setupUserEvents } from "../utils.js";
+import DateFieldTest, { type DateFieldTestProps } from "./DateFieldTest.svelte";
 
 const kbd = getTestKbd();
 
@@ -21,8 +19,8 @@ const calendarDate = new CalendarDate(1980, 1, 20);
 const calendarDateTime = new CalendarDateTime(1980, 1, 20, 12, 30, 0, 0);
 const zonedDateTime = toZoned(calendarDateTime, "America/New_York");
 
-function setup(props: DateField.Props = {}) {
-	const user = userEvent.setup();
+function setup(props: DateFieldTestProps = {}) {
+	const user = setupUserEvents();
 	const returned = render(DateFieldTest, { ...props });
 	const month = returned.getByTestId("month");
 	const day = returned.getByTestId("day");
@@ -110,9 +108,9 @@ describe("date field", () => {
 	});
 
 	it("focuses first segment on label click", async () => {
-		const { user, label, input } = setup();
+		const { user, label, month } = setup();
 		await user.click(label);
-		expect(input.firstChild).toHaveFocus();
+		expect(month).toHaveFocus();
 	});
 
 	it("focuses segments on click", async () => {

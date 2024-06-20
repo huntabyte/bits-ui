@@ -70,4 +70,6 @@ export const kbd = {
 	TAB: "Tab",
 	CTRL: "Control",
 	ASTERISK: "*",
+	A: "a",
+	P: "p",
 };

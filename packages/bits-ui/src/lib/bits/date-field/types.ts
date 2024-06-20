@@ -1,9 +1,17 @@
-import type { OnChangeFn, WithAsChild } from "$lib/internal/types.js";
+import type {
+	OnChangeFn,
+	PrimitiveDivAttributes,
+	PrimitiveSpanAttributes,
+	WithAsChild,
+	Without,
+} from "$lib/internal/types.js";
 import type { EditableSegmentPart } from "$lib/shared/date/field/types.js";
 import type { Granularity, Matcher } from "$lib/shared/date/types.js";
 import type { DateValue } from "@internationalized/date";
+import type { SegmentPart } from "@melt-ui/svelte";
+import type { Snippet } from "svelte";
 
-export type DateFieldRootPropsWithoutHTML = WithAsChild<{
+export type DateFieldRootPropsWithoutHTML = {
 	/**
 	 * The value of the date field.
 	 *
@@ -15,7 +23,7 @@ export type DateFieldRootPropsWithoutHTML = WithAsChild<{
 	 * A callback that is called when the date field value changes.
 	 *
 	 */
-	onValueChange?: OnChangeFn<DateValue>;
+	onValueChange?: OnChangeFn<DateValue | undefined>;
 
 	/**
 	 * The placeholder value of the date field. This determines the format
@@ -28,7 +36,7 @@ export type DateFieldRootPropsWithoutHTML = WithAsChild<{
 	/**
 	 * A callback that is called when the date field's placeholder value changes.
 	 */
-	onPlaceholderChange?: OnChangeFn<DateValue>;
+	onPlaceholderChange?: OnChangeFn<DateValue | undefined>;
 
 	/**
 	 * A function that returns true if the given date is unavailable,
@@ -40,13 +48,13 @@ export type DateFieldRootPropsWithoutHTML = WithAsChild<{
 	 * The minimum acceptable date. When provided, the date field
 	 * will be marked as invalid if the user enters a date before this date.
 	 */
-	minValue?: DateValue;
+	minValue?: DateValue | undefined;
 
 	/**
 	 * The maximum acceptable date. When provided, the date field
 	 * will be marked as invalid if the user enters a date after this date.
 	 */
-	maxValue?: DateValue;
+	maxValue?: DateValue | undefined;
 
 	/**
 	 * If true, the date field will be disabled and users will not be able
@@ -127,4 +135,30 @@ export type DateFieldRootPropsWithoutHTML = WithAsChild<{
 	 * @defaultValue false
 	 */
 	required?: boolean;
+
+	children?: Snippet;
+};
+
+export type DateFieldRootProps = DateFieldRootPropsWithoutHTML;
+
+export type DateFieldInputPropsWithoutHTML = Omit<
+	WithAsChild<{}, { segments: Array<{ part: SegmentPart; value: string }> }>,
+	"children"
+> & {
+	children?: Snippet<[{ segments: Array<{ part: SegmentPart; value: string }> }]>;
+};
+
+export type DateFieldInputProps = DateFieldInputPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, DateFieldInputPropsWithoutHTML>;
+
+export type DateFieldSegmentPropsWithoutHTML = WithAsChild<{
+	part: SegmentPart;
 }>;
+
+export type DateFieldSegmentProps = DateFieldSegmentPropsWithoutHTML &
+	Without<PrimitiveSpanAttributes, DateFieldSegmentPropsWithoutHTML>;
+
+export type DateFieldLabelPropsWithoutHTML = WithAsChild<{}>;
+
+export type DateFieldLabelProps = DateFieldLabelPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, DateFieldLabelPropsWithoutHTML>;
