@@ -93,13 +93,26 @@ function createContentObj(props: CreateContentObjProps) {
 	function getPartContent(part: DateSegmentPart | TimeSegmentPart) {
 		if ("hour" in segmentValues) {
 			const value = segmentValues[part];
+
 			const leadingZero = typeof value === "string" && value?.startsWith("0");
-			if (value === "0") {
+			if (value === "0" && part !== "year") {
 				return "0";
 			} else if (!isNull(value)) {
 				const formatted = formatter.part(dateRef.set({ [part]: value }), part, {
 					hourCycle: props.hourCycle === 24 ? "h24" : undefined,
 				});
+				if (part === "year") {
+					if (value.startsWith("0")) {
+						const valueDigits = String(value).length;
+						console.log("value digits", valueDigits);
+						const diff = 4 - valueDigits;
+						if (diff > 0) {
+							return `${"0".repeat(diff)}${value}`;
+						}
+					}
+					console.log("value in getPartcontent", String(value));
+					return String(value);
+				}
 				if (leadingZero && formatted.length === 1) {
 					return `0${formatted}`;
 				}
