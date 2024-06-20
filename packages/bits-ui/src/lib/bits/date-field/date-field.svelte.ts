@@ -156,6 +156,10 @@ class DateFieldRootState {
 			}
 		});
 
+		if (this.value.value) {
+			this.syncSegmentValues(this.value.value);
+		}
+
 		$effect(() => {
 			this.locale.value;
 			if (this.value.value) {
@@ -687,8 +691,11 @@ class DateFieldDaySegmentState {
 		if (isBackspace(e.key)) {
 			let moveToPrev = false;
 			this.#updateSegment("day", (prev) => {
-				if (prev === null || (prev.length === 2 && prev.startsWith("0"))) {
+				if (prev === null) {
 					moveToPrev = true;
+					return null;
+				}
+				if (prev.length === 2 && prev.startsWith("0")) {
 					return null;
 				}
 				const str = prev.toString();
@@ -928,9 +935,14 @@ class DateFieldMonthSegmentState {
 			this.#root.states.month.hasLeftFocus = false;
 			let moveToPrev = false;
 			this.#updateSegment("month", (prev) => {
-				if (prev === null || (prev.length === 2 && prev.startsWith("0"))) {
+				if (prev === null) {
 					this.#announcer.announce(null);
 					moveToPrev = true;
+					return null;
+				}
+
+				if (prev.length === 2 && prev.startsWith("0")) {
+					this.#announcer.announce(null);
 					return null;
 				}
 

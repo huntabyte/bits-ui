@@ -492,8 +492,8 @@ describe("date field", () => {
 		expect(second).toHaveTextContent("1");
 	});
 
-	it.only("moves to the previous segment when backspace is pressed while empty - `day`", async () => {
-		const { user, day } = setup({
+	it("moves to the previous segment when backspace is pressed while empty - `day`", async () => {
+		const { user, day, month } = setup({
 			value: zonedDateTime,
 			granularity: "second",
 		});
@@ -505,6 +505,30 @@ describe("date field", () => {
 		expect(day).toHaveTextContent("02");
 		await user.keyboard(kbd.BACKSPACE);
 		expect(day).toHaveTextContent("dd");
+		expect(day).toHaveFocus();
+		await user.keyboard(kbd.BACKSPACE);
+		expect(month).toHaveFocus();
+	});
+
+	it("moves to the previous segment when backspace is pressed while empty - `year`", async () => {
+		const { user, year, day } = setup({
+			value: zonedDateTime,
+			granularity: "second",
+		});
+
+		await user.click(year);
+		expect(year).toHaveFocus();
+		await user.keyboard(kbd.BACKSPACE);
+		expect(year).toHaveTextContent("198");
+		await user.keyboard(kbd.BACKSPACE);
+		expect(year).toHaveTextContent("19");
+		await user.keyboard(kbd.BACKSPACE);
+		expect(year).toHaveTextContent("1");
+		await user.keyboard(kbd.BACKSPACE);
+		expect(year).toHaveTextContent("yyyy");
+		expect(year).toHaveFocus();
+		await user.keyboard(kbd.BACKSPACE);
+		expect(day).toHaveFocus();
 	});
 
 	it.skip("displays correct timezone with ZonedDateTime value - `now`", async () => {
