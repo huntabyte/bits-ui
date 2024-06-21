@@ -94,8 +94,6 @@ class DateFieldRootState {
 	initialSegments: SegmentValueObj;
 	segmentValues = $state() as SegmentValueObj;
 	announcer: Announcer;
-	updatingDayPeriod = $state<DayPeriod | null>(null);
-	updatingYear = $state<string | null>(null);
 	readonlySegmentsSet = $derived.by(() => new Set(this.readonlySegments.value));
 	segmentStates = initSegmentStates();
 	fieldNode = $state<HTMLElement | null>(null);
@@ -177,15 +175,22 @@ class DateFieldRootState {
 		const dateValues = DATE_SEGMENT_PARTS.map((part) => {
 			const partValue = value[part];
 
-			if (part === "month" || part === "day") {
+			if (part === "month") {
 				if (partValue < 10) {
 					return [part, `0${partValue}`];
 				}
 			}
 
+			if (part === "day") {
+				if (this.states.day.updating) {
+					return [part, this.states.day.updating];
+				}
+				return [part, String(partValue)];
+			}
+
 			if (part === "year") {
-				if (this.updatingYear) {
-					return [part, this.updatingYear];
+				if (this.states.year.updating) {
+					return [part, this.states.year.updating];
 				}
 				const valueDigits = String(partValue).length;
 				const diff = 4 - valueDigits;
@@ -199,8 +204,8 @@ class DateFieldRootState {
 		if ("hour" in value) {
 			const timeValues = TIME_SEGMENT_PARTS.map((part) => {
 				if (part === "dayPeriod") {
-					if (this.updatingDayPeriod) {
-						return [part, this.updatingDayPeriod];
+					if (this.states.dayPeriod.updating) {
+						return [part, this.states.dayPeriod.updating];
 					} else {
 						return [part, this.formatter.dayPeriod(toDate(value))];
 					}
@@ -210,7 +215,7 @@ class DateFieldRootState {
 
 			const mergedSegmentValues = [...dateValues, ...timeValues];
 			this.segmentValues = Object.fromEntries(mergedSegmentValues);
-			this.updatingDayPeriod = null;
+			this.states.dayPeriod.updating = null;
 			return;
 		}
 
@@ -300,11 +305,10 @@ class DateFieldRootState {
 				newSegmentValues = { ...prev, [part]: next };
 			} else if (part === "dayPeriod") {
 				const next = castCb(pVal) as DateAndTimeSegmentObj["dayPeriod"];
-				this.updatingDayPeriod = next;
-				const date = this.placeholder.value;
-				if ("hour" in date) {
+				this.states.dayPeriod.updating = next;
+				const date = this.value.value;
+				if (date && "hour" in date) {
 					const trueHour = date.hour;
-
 					if (next === "AM") {
 						if (trueHour >= 12) {
 							prev.hour = `${trueHour - 12}`;
@@ -329,7 +333,15 @@ class DateFieldRootState {
 				newSegmentValues = { ...prev, [part]: next };
 			} else if (part === "year") {
 				const next = castCb(pVal) as DateAndTimeSegmentObj["year"];
-				this.updatingYear = next;
+				this.states.year.updating = next;
+				newSegmentValues = { ...prev, [part]: next };
+			} else if (part === "day") {
+				const next = castCb(pVal) as DateAndTimeSegmentObj["day"];
+				this.states.day.updating = next;
+				newSegmentValues = { ...prev, [part]: next };
+			} else if (part === "month") {
+				const next = castCb(pVal) as DateAndTimeSegmentObj["month"];
+				this.states.month.updating = next;
 				newSegmentValues = { ...prev, [part]: next };
 			} else {
 				const next = castCb(pVal);
@@ -357,7 +369,10 @@ class DateFieldRootState {
 					dateRef: this.placeholder.value,
 				})
 			);
-			this.updatingDayPeriod = null;
+			this.states.year.updating = null;
+			this.states.month.updating = null;
+			this.states.dayPeriod.updating = null;
+			this.states.day.updating = null;
 		} else {
 			this.setValue(undefined);
 			this.segmentValues = newSegmentValues;
@@ -1088,7 +1103,6 @@ class DateFieldYearSegmentState {
 			let moveToNext = false;
 			const num = parseInt(e.key);
 			this.#updateSegment("year", (prev) => {
-				console.log("prev", prev);
 				if (this.#root.states.year.hasLeftFocus) {
 					prev = null;
 					this.#root.states.year.hasLeftFocus = false;
@@ -1250,10 +1264,10 @@ class DateFieldHourSegmentState {
 
 		if (isNumberString(e.key)) {
 			const num = parseInt(e.key);
+			const max = 24;
+			const maxStart = Math.floor(max / 10);
 			let moveToNext = false;
 			this.#updateSegment("hour", (prev) => {
-				const maxStart = Math.floor(24 / 10);
-
 				/**
 				 * If the user has left the segment, we want to reset the
 				 * `prev` value so that we can start the segment over again
@@ -1305,7 +1319,7 @@ class DateFieldHourSegmentState {
 				 * reset the segment as if the user had pressed the backspace key and then
 				 * typed a number.
 				 */
-				if (digits === 2 || total > 24) {
+				if (digits === 2 || total > max) {
 					/**
 					 * As we're doing elsewhere, we're checking if the number is greater
 					 * than the max start digit, and if so, we're moving to the next segment.

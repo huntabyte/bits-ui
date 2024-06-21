@@ -30,7 +30,11 @@ export type queryByTestId = (
 	options?: MatcherOptions | undefined
 ) => HTMLElement | null;
 
-export function setupUserEvents() {
+type CustomUserEvents = typeof userEvent & {
+	pointerDownUp: (target: HTMLElement | null) => Promise<void>;
+};
+
+export function setupUserEvents(): CustomUserEvents {
 	const user = userEvent.setup({ pointerEventsCheck: 0 });
 	const originalClick = user.click;
 	const originalKeyboard = user.keyboard;
@@ -51,7 +55,13 @@ export function setupUserEvents() {
 		await sleep(20);
 	};
 
-	Object.assign(user, { click, keyboard, pointer });
+	const pointerDownUp = async (target: HTMLElement | null) => {
+		if (!target) return;
+		await originalPointer({ target, keys: "[MouseLeft]" });
+		await sleep(20);
+	};
 
-	return user;
+	Object.assign(user, { click, keyboard, pointer, pointerDownUp });
+
+	return user as unknown as CustomUserEvents;
 }

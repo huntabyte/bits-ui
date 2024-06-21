@@ -29,6 +29,7 @@ export type SegmentState = {
 	lastKeyZero: boolean;
 	hasLeftFocus: boolean;
 	hasTouched: boolean;
+	updating: string | null;
 };
 
 export type SegmentStateMap = {

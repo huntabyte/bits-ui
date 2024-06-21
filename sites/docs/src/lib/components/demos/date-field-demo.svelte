@@ -1,14 +1,20 @@
 <script lang="ts">
-	import { CalendarDate, CalendarDateTime, toZoned } from "@internationalized/date";
+	import {
+		CalendarDate,
+		CalendarDateTime,
+		type DateValue,
+		toZoned,
+	} from "@internationalized/date";
 	import { DateField } from "bits-ui";
 
-	const calendarDate = new CalendarDate(1980, 1, 20);
-	const calendarDateTime = new CalendarDateTime(1980, 1, 20, 12, 30, 0, 0);
-	const zonedDateTime = toZoned(calendarDateTime, "America/New_York");
+	// const calendarDate = new CalendarDate(1980, 1, 20);
+	// const calendarDateTime = new CalendarDateTime(1980, 1, 20, 12, 30, 0, 0);
+	// const zonedDateTime = toZoned(calendarDateTime, "America/New_York");
 
-	let value = $state(zonedDateTime);
+	let value = $state<DateValue>();
 </script>
 
+{value?.toString()}
 <DateField.Root bind:value granularity="minute">
 	<div class="flex w-full flex-col gap-1.5">
 		<DateField.Label class="block select-none text-sm font-medium">Birthday</DateField.Label>

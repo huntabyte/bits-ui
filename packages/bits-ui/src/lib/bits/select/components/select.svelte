@@ -60,7 +60,7 @@
 				{#if value === ""}
 					<option value=""></option>
 				{/if}
-				{#each rootState.nativeOptionsArr as opt (opt.value.key)}
+				{#each rootState.nativeOptionsArr as opt, idx (opt.value.key + idx)}
 					<option
 						value={opt.value.value}
 						disabled={opt.value.disabled}

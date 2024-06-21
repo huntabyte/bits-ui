@@ -26,7 +26,7 @@
 	];
 </script>
 
-<div class="flex flex-col gap-4">
+<form class="flex flex-col gap-4">
 	<Select.Root name="hello">
 		<Select.Trigger
 			class="inline-flex h-input w-[296px] items-center rounded-9px border border-border-input bg-background px-[11px] text-sm transition-colors placeholder:text-foreground-alt/50 "
@@ -70,4 +70,4 @@
 			</Select.Content>
 		</Select.Portal>
 	</Select.Root>
-</div>
+</form>

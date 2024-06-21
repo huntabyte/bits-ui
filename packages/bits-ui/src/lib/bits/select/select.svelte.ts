@@ -1,7 +1,7 @@
 import { type ReadableBox, box } from "svelte-toolbelt";
-import { Set } from "svelte/reactivity";
-import { tick, untrack } from "svelte";
-import type { Box, ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
+import { Map } from "svelte/reactivity";
+import { untrack } from "svelte";
+import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { watch } from "$lib/internal/box.svelte.js";
 import { useId } from "$lib/internal/useId.svelte.js";
 import type { Direction } from "$lib/shared/index.js";
@@ -94,15 +94,15 @@ export class SelectRootState {
 	contentFragment = $state<DocumentFragment | null>(null);
 
 	// A set of all the native options we'll use to render the native select element under the hood
-	#nativeOptionsSet = new Set<ReadableBox<SelectNativeOption>>();
+	#nativeOptionsSet = new Map<string, ReadableBox<SelectNativeOption>>();
 	// A key we'll use to rerender the native select when the options change to keep it in sync
 	nativeSelectKey = $derived.by(() => {
-		return Array.from(this.#nativeOptionsSet)
+		return Array.from(this.#nativeOptionsSet.values())
 			.map((opt) => opt.value.value)
 			.join(";");
 	});
 
-	nativeOptionsArr = $derived.by(() => Array.from(this.#nativeOptionsSet));
+	nativeOptionsArr = $derived.by(() => Array.from(this.#nativeOptionsSet.values()));
 	isFormControl = useFormControl(() => this.triggerNode);
 
 	constructor(props: SelectRootStateProps) {
@@ -111,6 +111,10 @@ export class SelectRootState {
 		this.dir = props.dir;
 		this.disabled = props.disabled;
 		this.required = props.required;
+
+		$effect(() => {
+			console.log($state.snapshot(this.nativeOptionsArr));
+		});
 	}
 
 	handleClose() {
@@ -128,11 +132,11 @@ export class SelectRootState {
 	}
 
 	onNativeOptionAdd(option: ReadableBox<SelectNativeOption>) {
-		this.#nativeOptionsSet.add(option);
+		this.#nativeOptionsSet.set(option.value.value, option);
 	}
 
 	onNativeOptionRemove(option: ReadableBox<SelectNativeOption>) {
-		this.#nativeOptionsSet.delete(option);
+		this.#nativeOptionsSet.delete(option.value.value);
 	}
 
 	getTriggerTypeaheadCandidateNodes() {
@@ -306,7 +310,6 @@ class SelectTriggerState {
 class SelectValueState {
 	root: SelectRootState;
 	showPlaceholder = $derived.by(() => shouldShowPlaceholder(this.root.value.value));
-	id = box<string>(useId());
 
 	constructor(root: SelectRootState) {
 		this.root = root;
@@ -645,6 +648,10 @@ class SelectItemState {
 			const node = this.#ref.value;
 			if (!node) return;
 			this.content.itemRegister(this.value.value, this.disabled.value);
+		});
+
+		$effect(() => {
+			console.log("isSelected", this.isSelected, this.value.value);
 		});
 	}
 

@@ -93,6 +93,9 @@ function createContentObj(props: CreateContentObjProps) {
 	function getPartContent(part: DateSegmentPart | TimeSegmentPart) {
 		if ("hour" in segmentValues) {
 			const value = segmentValues[part];
+			if (part === "day") {
+				console.log("value", value);
+			}
 
 			const leadingZero = typeof value === "string" && value?.startsWith("0");
 			if (value === "0" && part !== "year") {
@@ -110,7 +113,6 @@ function createContentObj(props: CreateContentObjProps) {
 							return `${"0".repeat(diff)}${value}`;
 						}
 					}
-					console.log("value in getPartcontent", String(value));
 					return String(value);
 				}
 				if (leadingZero && formatted.length === 1) {
@@ -220,6 +222,7 @@ export function initSegmentStates() {
 			lastKeyZero: false,
 			hasLeftFocus: true,
 			hasTouched: false,
+			updating: null,
 		};
 		return acc;
 	}, {} as SegmentStateMap);
