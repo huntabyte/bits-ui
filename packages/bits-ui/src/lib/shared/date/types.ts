@@ -1,5 +1,4 @@
 import type { DateValue } from "@internationalized/date";
-import type { getAnnouncer } from "./announcer.js";
 
 export type Granularity = "day" | "hour" | "minute" | "second";
 
