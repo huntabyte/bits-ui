@@ -127,10 +127,6 @@ class DateFieldRootState {
 		});
 
 		$effect(() => {
-			console.log($state.snapshot(this.segmentValues));
-		});
-
-		$effect(() => {
 			this.announcer = getAnnouncer();
 			return () => {
 				removeDescriptionElement(this.descriptionId);
@@ -194,7 +190,6 @@ class DateFieldRootState {
 			}
 
 			if (part === "day") {
-				console.log("day updating", this.states.day.updating);
 				if (this.states.day.updating) {
 					return [part, this.states.day.updating];
 				}
@@ -346,7 +341,6 @@ class DateFieldRootState {
 				newSegmentValues = { ...prev, [part]: next };
 			} else if (part === "year") {
 				const next = castCb(pVal) as DateAndTimeSegmentObj["year"];
-				console.log("next", next);
 				this.states.year.updating = next;
 				newSegmentValues = { ...prev, [part]: next };
 			} else if (part === "day") {
@@ -1090,7 +1084,6 @@ class DateFieldYearSegmentState {
 	 */
 	#backspaceCount = 0;
 
-
 	constructor(props: DateFieldYearSegmentStateProps, root: DateFieldRootState) {
 		this.#id = props.id;
 		this.#ref = props.ref;
@@ -1175,7 +1168,8 @@ class DateFieldYearSegmentState {
 					 */
 					if (
 						this.#backspaceCount > 0 &&
-						this.#pressedKeys.length <= this.#backspaceCount
+						this.#pressedKeys.length <= this.#backspaceCount &&
+						str.length <= 4
 					) {
 						this.#announcer.announce(mergedInt);
 						return str;
@@ -1208,11 +1202,11 @@ class DateFieldYearSegmentState {
 		}
 
 		if (isBackspace(e.key)) {
+			this.#pressedKeys = [];
 			this.#incrementBackspaceCount();
 			let moveToPrev = false;
 			this.#updateSegment("year", (prev) => {
 				this.#root.states.year.hasLeftFocus = false;
-				console.log("prev", prev);
 				if (prev === null) {
 					moveToPrev = true;
 					this.#announcer.announce(null);

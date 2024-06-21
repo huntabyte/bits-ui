@@ -533,7 +533,7 @@ describe("date field", () => {
 		expect(day).toHaveFocus();
 		expect(day).toHaveTextContent(String(zonedDateTime.day));
 		await user.keyboard(kbd.BACKSPACE);
-		expect(day).toHaveTextContent("02");
+		expect(day).toHaveTextContent("2");
 		await user.keyboard(kbd.BACKSPACE);
 		expect(day).toHaveTextContent("dd");
 		expect(day).toHaveFocus();
@@ -594,6 +594,35 @@ describe("date field", () => {
 		await user.click(getDayPeriod());
 		await user.keyboard(kbd.ARROW_UP);
 		expect(getHour()).toHaveTextContent("––");
+	});
+
+	it("should handle backspacing the year segment appropriately", async () => {
+		const { getByTestId, user, year } = setup({
+			granularity: "hour",
+		});
+
+		year.focus();
+
+		await user.keyboard(`{0}`);
+		await user.keyboard(`{0}`);
+		await user.keyboard(`{9}`);
+		await user.keyboard(`{8}`);
+
+		const { getHour } = getTimeSegments(getByTestId);
+		const hour = getHour();
+		expect(hour).toHaveFocus();
+
+		await user.keyboard(kbd.ARROW_LEFT);
+		expect(year).toHaveFocus();
+
+		await user.keyboard(kbd.BACKSPACE);
+		expect(year).toHaveTextContent("009");
+		await user.keyboard(kbd.BACKSPACE);
+		expect(year).toHaveTextContent("00");
+		await user.keyboard(`{8}`);
+		await user.keyboard(`{7}`);
+		expect(year).toHaveTextContent("0087");
+		expect(hour).toHaveFocus();
 	});
 });
 
