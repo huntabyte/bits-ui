@@ -10,7 +10,6 @@ export type DayOfWeek = {
 };
 
 export type Matcher = (date: DateValue) => boolean;
-export type Announcer = ReturnType<typeof getAnnouncer>;
 export type DateRange = {
 	start: DateValue | undefined;
 	end: DateValue | undefined;
