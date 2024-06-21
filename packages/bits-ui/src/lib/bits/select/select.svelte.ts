@@ -111,10 +111,6 @@ export class SelectRootState {
 		this.dir = props.dir;
 		this.disabled = props.disabled;
 		this.required = props.required;
-
-		$effect(() => {
-			console.log($state.snapshot(this.nativeOptionsArr));
-		});
 	}
 
 	handleClose() {
@@ -648,10 +644,6 @@ class SelectItemState {
 			const node = this.#ref.value;
 			if (!node) return;
 			this.content.itemRegister(this.value.value, this.disabled.value);
-		});
-
-		$effect(() => {
-			console.log("isSelected", this.isSelected, this.value.value);
 		});
 	}
 

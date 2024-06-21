@@ -20,7 +20,6 @@ import {
 	type DateAndTimeSegmentObj,
 	type DateSegmentObj,
 	type DateSegmentPart,
-	type DayPeriod,
 	type SegmentValueObj,
 	type TimeSegmentObj,
 	type TimeSegmentPart,
@@ -128,6 +127,10 @@ class DateFieldRootState {
 		});
 
 		$effect(() => {
+			console.log($state.snapshot(this.segmentValues));
+		});
+
+		$effect(() => {
 			this.announcer = getAnnouncer();
 			return () => {
 				removeDescriptionElement(this.descriptionId);
@@ -164,7 +167,16 @@ class DateFieldRootState {
 			if (this.value.value) {
 				this.syncSegmentValues(this.value.value);
 			}
+
+			this.clearUpdating();
 		});
+	}
+
+	clearUpdating() {
+		this.states.day.updating = null;
+		this.states.month.updating = null;
+		this.states.year.updating = null;
+		this.states.dayPeriod.updating = null;
 	}
 
 	setValue(value: DateValue | undefined) {
@@ -182,6 +194,7 @@ class DateFieldRootState {
 			}
 
 			if (part === "day") {
+				console.log("day updating", this.states.day.updating);
 				if (this.states.day.updating) {
 					return [part, this.states.day.updating];
 				}
@@ -333,6 +346,7 @@ class DateFieldRootState {
 				newSegmentValues = { ...prev, [part]: next };
 			} else if (part === "year") {
 				const next = castCb(pVal) as DateAndTimeSegmentObj["year"];
+				console.log("next", next);
 				this.states.year.updating = next;
 				newSegmentValues = { ...prev, [part]: next };
 			} else if (part === "day") {
@@ -369,10 +383,6 @@ class DateFieldRootState {
 					dateRef: this.placeholder.value,
 				})
 			);
-			this.states.year.updating = null;
-			this.states.month.updating = null;
-			this.states.dayPeriod.updating = null;
-			this.states.day.updating = null;
 		} else {
 			this.setValue(undefined);
 			this.segmentValues = newSegmentValues;
@@ -1052,6 +1062,35 @@ class DateFieldYearSegmentState {
 	#announcer: Announcer;
 	#updateSegment: DateFieldRootState["updateSegment"];
 
+	/**
+	 * When typing a year, a user may want to type `0090` to represent `90`.
+	 * So we track the keys they've pressed in this specific interaction to
+	 * determine once they've pressed four to move to the next segment.
+	 *
+	 * On `focusout` this is reset to an empty array.
+	 */
+	#pressedKeys: string[] = [];
+
+	/**
+	 * When a user re-enters a completed segment and backspaces, if they have
+	 * leading zeroes on the year, they won't automatically be sent to the next
+	 * segment even if they complete all 4 digits. This is because the leading zeroes
+	 * get stripped out for the digit count.
+	 *
+	 * This lets us keep track of how many times the user has backspaced in a row
+	 * to determine how many additional keypresses should move them to the next segment.
+	 *
+	 * For example, if the user has `0098` in the year segment and backspaces once,
+	 * the segment will contain `009` and if the user types `7`, the segment should
+	 * contain `0097` and move to the next segment.
+	 *
+	 * If the segment contains `0100` and the user backspaces twice, the segment will
+	 * contain `01` and if the user types `2`, the segment should contain `012` and
+	 * it should _not_ move to the next segment until the user types another digit.
+	 */
+	#backspaceCount = 0;
+
+
 	constructor(props: DateFieldYearSegmentStateProps, root: DateFieldRootState) {
 		this.#id = props.id;
 		this.#ref = props.ref;
@@ -1065,6 +1104,14 @@ class DateFieldYearSegmentState {
 		});
 	}
 
+	#resetBackspaceCount() {
+		this.#backspaceCount = 0;
+	}
+
+	#incrementBackspaceCount() {
+		this.#backspaceCount++;
+	}
+
 	#onkeydown = (e: KeyboardEvent) => {
 		if (e.key !== kbd.TAB) e.preventDefault();
 		if (this.#root.disabled.value || !isAcceptableSegmentKey(e.key)) return;
@@ -1073,6 +1120,7 @@ class DateFieldYearSegmentState {
 		const placeholder = this.#root.placeholder.value;
 
 		if (isArrowUp(e.key)) {
+			this.#resetBackspaceCount();
 			this.#updateSegment("year", (prev) => {
 				if (prev === null) {
 					const next = placeholder.year;
@@ -1086,6 +1134,7 @@ class DateFieldYearSegmentState {
 			return;
 		}
 		if (isArrowDown(e.key)) {
+			this.#resetBackspaceCount();
 			this.#updateSegment("year", (prev) => {
 				if (prev === null) {
 					const next = placeholder.year;
@@ -1100,6 +1149,7 @@ class DateFieldYearSegmentState {
 		}
 
 		if (isNumberString(e.key)) {
+			this.#pressedKeys.push(e.key);
 			let moveToNext = false;
 			const num = parseInt(e.key);
 			this.#updateSegment("year", (prev) => {
@@ -1118,6 +1168,24 @@ class DateFieldYearSegmentState {
 				const mergedIntDigits = String(mergedInt).length;
 
 				if (mergedIntDigits < 4) {
+					/**
+					 * If the user has backspaced and hasn't typed enough digits to make up
+					 * for the amount of backspaces, then we want to keep them in the segment
+					 * and not prepend any zeroes to the number.
+					 */
+					if (
+						this.#backspaceCount > 0 &&
+						this.#pressedKeys.length <= this.#backspaceCount
+					) {
+						this.#announcer.announce(mergedInt);
+						return str;
+					}
+
+					/**
+					 * If the mergedInt is less than 4 digits and we haven't backspaced,
+					 * then we want to prepend zeroes to the number to keep the format
+					 * of `YYYY`
+					 */
 					this.#announcer.announce(mergedInt);
 					return prependYearZeros(mergedInt);
 				}
@@ -1127,15 +1195,24 @@ class DateFieldYearSegmentState {
 				return `${mergedInt}`;
 			});
 
+			if (
+				this.#pressedKeys.length === 4 ||
+				this.#pressedKeys.length === this.#backspaceCount
+			) {
+				moveToNext = true;
+			}
+
 			if (moveToNext) {
 				moveToNextSegment(e, this.#root.fieldNode);
 			}
 		}
 
 		if (isBackspace(e.key)) {
+			this.#incrementBackspaceCount();
 			let moveToPrev = false;
 			this.#updateSegment("year", (prev) => {
 				this.#root.states.year.hasLeftFocus = false;
+				console.log("prev", prev);
 				if (prev === null) {
 					moveToPrev = true;
 					this.#announcer.announce(null);
@@ -1146,8 +1223,9 @@ class DateFieldYearSegmentState {
 					this.#announcer.announce(null);
 					return null;
 				}
-				const next = parseInt(str.slice(0, -1));
+				const next = str.slice(0, -1);
 				this.#announcer.announce(next);
+
 				return `${next}`;
 			});
 
@@ -1163,6 +1241,8 @@ class DateFieldYearSegmentState {
 
 	#onfocusout = () => {
 		this.#root.states.year.hasLeftFocus = true;
+		this.#pressedKeys = [];
+		this.#resetBackspaceCount();
 	};
 
 	props = $derived.by(() => {
