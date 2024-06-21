@@ -1,6 +1,7 @@
-import type { Matcher, MatcherOptions } from "@testing-library/svelte";
+import { fireEvent, type Matcher, type MatcherOptions } from "@testing-library/svelte";
 import { getKbd, sleep } from "$lib/internal/index.js";
 import { userEvent } from "@testing-library/user-event";
+import { vi } from "vitest";
 
 /**
  * A wrapper around the internal kbd object to make it easier to use in tests
@@ -35,7 +36,7 @@ type CustomUserEvents = typeof userEvent & {
 };
 
 export function setupUserEvents(): CustomUserEvents {
-	const user = userEvent.setup({ pointerEventsCheck: 0 });
+	const user = userEvent.setup({ pointerEventsCheck: 0, delay: null });
 	const originalClick = user.click;
 	const originalKeyboard = user.keyboard;
 	const originalPointer = user.pointer;
@@ -57,7 +58,9 @@ export function setupUserEvents(): CustomUserEvents {
 
 	const pointerDownUp = async (target: HTMLElement | null) => {
 		if (!target) return;
-		await originalPointer({ target, keys: "[MouseLeft]" });
+		await fireEvent.pointerDown(target);
+		await fireEvent.pointerUp(target);
+		await fireEvent.click(target);
 		await sleep(20);
 	};
 

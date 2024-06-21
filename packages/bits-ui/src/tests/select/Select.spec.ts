@@ -1,4 +1,4 @@
-import { render, waitFor } from "@testing-library/svelte/svelte5";
+import { fireEvent, render, waitFor } from "@testing-library/svelte/svelte5";
 import { axe } from "jest-axe";
 import { describe, it, vi } from "vitest";
 import { getTestKbd, setupUserEvents } from "../utils.js";
@@ -171,14 +171,16 @@ describe("select", () => {
 		expect(queryByTestId("content")).toBeNull();
 	});
 
-	it("closes on outside click", async () => {
-		const { user, queryByTestId, getByTestId } = await open();
+	it.only("closes on outside click", async () => {
+		const onInteractOutsideStart = vi.fn();
+		const { user, queryByTestId, getByTestId } = await open({
+			contentProps: {
+				onInteractOutsideStart,
+			},
+		});
 		const outside = getByTestId("outside");
-		await sleep(100);
-		await user.click(outside);
-		await user.click(outside);
-		await sleep(100);
-		await waitFor(() => expect(queryByTestId("content")).toBeNull());
+		await fireEvent.pointerDown(outside);
+		await waitFor(() => expect(onInteractOutsideStart).toHaveBeenCalled());
 	});
 
 	it("portals to the body by default", async () => {

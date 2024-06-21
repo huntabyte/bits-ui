@@ -7,7 +7,6 @@ import type {
 	InteractOutsideInterceptEventType,
 } from "./types.js";
 import {
-	type Box,
 	type EventCallback,
 	type ReadableBoxedValues,
 	addEventListener,
@@ -191,31 +190,45 @@ export class DismissableLayerState {
 	}
 
 	#onInteractOutsideStart = debounce((e: InteractOutsideEvent) => {
-		if (!this.currNode) return;
+		console.log("interact outside start");
+		if (!this.currNode) {
+			console.log("no node");
+			return;
+		}
 		if (
 			!this.#isResponsibleLayer ||
 			this.#isAnyEventIntercepted() ||
 			!isValidEvent(e, this.currNode)
-		)
+		) {
+			console.log("returning early here");
 			return;
+		}
 		this.#interactOutsideStartProp.value(e);
 		if (e.defaultPrevented) return;
 		this.#isPointerDownOutside = true;
 	}, 10);
 
 	#onInteractOutside = debounce((e: InteractOutsideEvent) => {
+		console.log("interacting outside");
 		if (!this.currNode) return;
 
 		const behaviorType = this.#behaviorType.value;
+
+		console.log("this.#isResponsibleLayer", this.#isResponsibleLayer);
+		console.log("this.#isAnyEventIntercepted()", this.#isAnyEventIntercepted());
+		console.log("isValidEvent", isValidEvent(e, this.currNode));
 		if (
 			!this.#isResponsibleLayer ||
 			this.#isAnyEventIntercepted() ||
 			!isValidEvent(e, this.currNode)
 		) {
+			console.log("returning early here");
 			return;
 		}
 		if (behaviorType !== "close" && behaviorType !== "defer-otherwise-close") return;
+		console.log("this.#isPointerDownOutside", this.#isPointerDownOutside);
 		if (!this.#isPointerDownOutside) return;
+		console.log("calling interact outside prop");
 		this.#interactOutsideProp.value(e);
 	}, 10);
 

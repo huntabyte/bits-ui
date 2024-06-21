@@ -29,7 +29,7 @@
 	}: SelectTestProps = $props();
 </script>
 
-<main data-testid="main">
+<main data-testid="main" class="relative">
 	<form
 		data-testid="form"
 		onsubmit={(e) => {
@@ -67,7 +67,7 @@
 				</Select.Content>
 			</Select.Portal>
 		</Select.Root>
-		<div data-testid="outside"></div>
+		<div data-testid="outside" class="absolute left-0 top-0 size-10"></div>
 		<button type="button" data-testid="open-binding" onclick={() => (open = !open)}>
 			{open}
 		</button>
