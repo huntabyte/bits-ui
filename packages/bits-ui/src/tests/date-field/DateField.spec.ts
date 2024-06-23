@@ -12,8 +12,6 @@ import {
 } from "@internationalized/date";
 import { getTestKbd, setupUserEvents } from "../utils.js";
 import DateFieldTest, { type DateFieldTestProps } from "./DateFieldTest.svelte";
-import { tick } from "svelte";
-import { sleep } from "$lib/internal/sleep.js";
 
 const kbd = getTestKbd();
 

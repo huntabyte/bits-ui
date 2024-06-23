@@ -187,7 +187,6 @@ class DateFieldRootState {
 
 			if (part === "month") {
 				if (this.states.month.updating) {
-					console.log("this.states.month.updating", this.states.month.updating);
 					return [part, this.states.month.updating];
 				}
 				if (partValue < 10) {
@@ -376,7 +375,7 @@ class DateFieldRootState {
 			const castCb = cb as Updater<DateSegmentObj[DateSegmentPart]>;
 			const next = castCb(pVal);
 			if (part === "month" && next !== null && prev.day !== null) {
-				this.states.month.updating = next
+				this.states.month.updating = next;
 				const date = dateRef.set({ month: parseInt(next) });
 				const daysInMonth = getDaysInMonth(toDate(date));
 				if (parseInt(prev.day) > daysInMonth) {
@@ -1274,7 +1273,6 @@ class DateFieldYearSegmentState {
 		this.#pressedKeys = [];
 		this.#resetBackspaceCount();
 		this.#updateSegment("year", (prev) => {
-			console.log("prev", prev);
 			if (prev && prev.length !== 4) {
 				return prependYearZeros(parseInt(prev));
 			}
