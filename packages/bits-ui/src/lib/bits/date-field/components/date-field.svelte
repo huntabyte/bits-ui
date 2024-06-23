@@ -1,125 +1,71 @@
 <script lang="ts">
-	import { derived } from "svelte/store";
-	import { setCtx } from "../ctx.js";
-	import type { Props } from "../index.js";
+	import { noop } from "$lib/internal/callbacks.js";
+	import { box } from "svelte-toolbelt";
+	import { useDateFieldRoot } from "../date-field.svelte.js";
+	import type { RootProps } from "../index.js";
+	import { getDefaultDate } from "$lib/shared/date/utils.js";
+	import type { DateValue } from "@internationalized/date";
 
-	type $$Props = Props;
-
-	export let value: $$Props["value"] = undefined;
-	export let onValueChange: $$Props["onValueChange"] = undefined;
-	export let placeholder: $$Props["placeholder"] = undefined;
-	export let onPlaceholderChange: $$Props["onPlaceholderChange"] = undefined;
-	export let disabled: $$Props["disabled"] = undefined;
-	export let isDateUnavailable: $$Props["isDateUnavailable"] = undefined;
-	export let granularity: $$Props["granularity"] = undefined;
-	export let hideTimeZone: $$Props["hideTimeZone"] = undefined;
-	export let hourCycle: $$Props["hourCycle"] = undefined;
-	export let locale: $$Props["locale"] = undefined;
-	export let maxValue: $$Props["maxValue"] = undefined;
-	export let minValue: $$Props["minValue"] = undefined;
-	export let readonly: $$Props["readonly"] = undefined;
-	export let validationId: $$Props["validationId"] = undefined;
-	export let descriptionId: $$Props["descriptionId"] = undefined;
-	export let readonlySegments: $$Props["readonlySegments"] = undefined;
-
-	const {
-		states: { value: localValue, placeholder: localPlaceholder, isInvalid: localIsInvalid },
-		updateOption,
-		ids,
-	} = setCtx({
-		defaultValue: value,
-		defaultPlaceholder: placeholder,
-		disabled,
+	let {
+		isDateUnavailable,
+		disabled = false,
 		granularity,
-		hideTimeZone,
+		hideTimeZone = false,
 		hourCycle,
-		locale,
+		locale = "en",
 		maxValue,
 		minValue,
-		readonly,
-		readonlySegments,
-		isDateUnavailable,
-		onValueChange: ({ next }) => {
-			if (value !== next) {
-				onValueChange?.(next);
-				value = next;
+		name = "",
+		onPlaceholderChange = noop,
+		onValueChange = noop,
+		placeholder = $bindable(),
+		value = $bindable(),
+		readonly = false,
+		readonlySegments = [],
+		required = false,
+		children,
+	}: RootProps = $props();
+
+	if (placeholder === undefined) {
+		placeholder = getDefaultDate({
+			granularity,
+			defaultPlaceholder: undefined,
+			defaultValue: value,
+		});
+	}
+
+	useDateFieldRoot({
+		value: box.with(
+			() => value,
+			(v) => {
+				if (value !== v) {
+					value = v;
+					onValueChange(v);
+				}
 			}
-			return next;
-		},
-		onPlaceholderChange: ({ next }) => {
-			if (placeholder !== next) {
-				onPlaceholderChange?.(next);
-				placeholder = next;
+		),
+		placeholder: box.with(
+			() => placeholder as DateValue,
+			(v) => {
+				if (placeholder !== v) {
+					placeholder = v;
+					onPlaceholderChange(v);
+				}
 			}
-			return next;
-		},
+		),
+		disabled: box.with(() => disabled),
+		granularity: box.with(() => granularity),
+		hideTimeZone: box.with(() => hideTimeZone),
+		hourCycle: box.with(() => hourCycle),
+		locale: box.with(() => locale),
+		maxValue: box.with(() => maxValue),
+		minValue: box.with(() => minValue),
+		isDateUnavailable: box.with(() => isDateUnavailable),
+		readonly: box.with(() => readonly),
+		readonlySegments: box.with(() => readonlySegments),
+		required: box.with(() => required),
+		name: box.with(() => name),
 	});
-
-	const idValues = derived(
-		[
-			ids.day,
-			ids.description,
-			ids.dayPeriod,
-			ids.field,
-			ids.hour,
-			ids.minute,
-			ids.month,
-			ids.second,
-			ids.year,
-			ids.validation,
-			ids.label,
-			ids.timeZoneName,
-		],
-		([
-			$dayId,
-			$descriptionId,
-			$dayPeriodId,
-			$fieldId,
-			$hourId,
-			$minuteId,
-			$monthId,
-			$secondId,
-			$yearId,
-			$validationId,
-			$labelId,
-			$timeZoneNameId,
-		]) => ({
-			day: $dayId,
-			description: $descriptionId,
-			dayPeriod: $dayPeriodId,
-			field: $fieldId,
-			hour: $hourId,
-			minute: $minuteId,
-			month: $monthId,
-			second: $secondId,
-			year: $yearId,
-			validation: $validationId,
-			label: $labelId,
-			timeZoneName: $timeZoneNameId,
-		})
-	);
-
-	$: if (validationId) {
-		ids.validation.set(validationId);
-	}
-
-	$: if (descriptionId) {
-		ids.description.set(descriptionId);
-	}
-
-	$: value !== undefined && localValue.set(value);
-	$: placeholder !== undefined && localPlaceholder.set(placeholder);
-
-	$: updateOption("disabled", disabled);
-	$: updateOption("isDateUnavailable", isDateUnavailable);
-	$: updateOption("granularity", granularity);
-	$: updateOption("hideTimeZone", hideTimeZone);
-	$: updateOption("hourCycle", hourCycle);
-	$: updateOption("locale", locale);
-	$: updateOption("maxValue", maxValue);
-	$: updateOption("minValue", minValue);
-	$: updateOption("readonly", readonly);
-	$: updateOption("readonlySegments", readonlySegments);
 </script>
 
-<slot isInvalid={$localIsInvalid} ids={$idValues} />
+{@render children?.()}

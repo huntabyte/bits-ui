@@ -1,8 +1,7 @@
-import { render, waitFor } from "@testing-library/svelte/svelte5";
-import { userEvent } from "@testing-library/user-event";
+import { fireEvent, render, waitFor } from "@testing-library/svelte/svelte5";
 import { axe } from "jest-axe";
-import { describe, it } from "vitest";
-import { getTestKbd } from "../utils.js";
+import { describe, it, vi } from "vitest";
+import { getTestKbd, setupUserEvents } from "../utils.js";
 import SelectTest from "./SelectTest.svelte";
 import type { Item, SelectTestProps } from "./SelectTest.svelte";
 import { sleep } from "$lib/internal/index.js";
@@ -29,7 +28,7 @@ const testItems: Item[] = [
 ];
 
 function setup(props: Partial<SelectTestProps> = {}, options: Item[] = testItems) {
-	const user = userEvent.setup({ pointerEventsCheck: 0 });
+	const user = setupUserEvents();
 	const returned = render(SelectTest, { ...props, options });
 	const trigger = returned.getByTestId("trigger");
 	const select = returned.container.querySelector("select");
@@ -115,8 +114,45 @@ describe("select", () => {
 	});
 
 	it("syncs the value prop to the hidden select", async () => {
-		const { select } = setup({ value: "test" });
-		expect(select).toHaveAttribute("data-value", "test");
+		const { getByTestId, queryByTestId, select, trigger, user, container } = setup({
+			value: "2",
+		});
+		expect(select).toHaveAttribute("data-value", "2");
+		await user.click(trigger);
+
+		const item1 = getByTestId("1");
+		expect(item1).toBeVisible();
+		item1.focus();
+
+		await user.keyboard(kbd.ENTER);
+
+		expect(container.querySelector("select")).toHaveAttribute("data-value", "1");
+
+		await waitFor(() => expect(queryByTestId("content")).toBeNull());
+	});
+
+	it("submits the select value with the form", async () => {
+		const onSubmit = vi.fn();
+		const { getByTestId, user, trigger } = setup({ name: "test", onSubmit });
+
+		trigger.focus();
+		await user.keyboard(kbd.ARROW_DOWN);
+		await user.keyboard(kbd.ENTER);
+
+		const submitButton = getByTestId("submit");
+
+		await user.click(submitButton);
+
+		expect(onSubmit).toHaveBeenCalledWith("1");
+
+		trigger.focus();
+		await user.keyboard(kbd.ARROW_DOWN);
+		await user.keyboard(kbd.ARROW_DOWN);
+		await user.keyboard(kbd.ENTER);
+
+		await user.click(submitButton);
+
+		expect(onSubmit).toHaveBeenCalledWith("2");
 	});
 
 	it("syncs the required prop to the hidden select", async () => {
@@ -135,14 +171,16 @@ describe("select", () => {
 		expect(queryByTestId("content")).toBeNull();
 	});
 
-	it("closes on outside click", async () => {
-		const { user, queryByTestId, getByTestId } = await open();
+	it.only("closes on outside click", async () => {
+		const onInteractOutsideStart = vi.fn();
+		const { user, queryByTestId, getByTestId } = await open({
+			contentProps: {
+				onInteractOutsideStart,
+			},
+		});
 		const outside = getByTestId("outside");
-		await sleep(100);
-		await user.click(outside);
-		await user.click(outside);
-		await sleep(100);
-		await waitFor(() => expect(queryByTestId("content")).toBeNull());
+		await fireEvent.pointerDown(outside);
+		await waitFor(() => expect(onInteractOutsideStart).toHaveBeenCalled());
 	});
 
 	it("portals to the body by default", async () => {

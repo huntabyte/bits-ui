@@ -76,6 +76,10 @@ export function getAriaDisabled(condition: boolean): "true" | "false" {
 	return condition ? "true" : "false";
 }
 
+export function getAriaReadonly(condition: boolean): "true" | "false" {
+	return condition ? "true" : "false";
+}
+
 export function getAriaExpanded(condition: boolean): "true" | "false" {
 	return condition ? "true" : "false";
 }
@@ -109,13 +113,25 @@ export function getAriaHidden(condition: boolean): "true" | undefined {
 	return condition ? "true" : undefined;
 }
 
+export function getAriaInvalid(condition: boolean): "true" | undefined {
+	return condition ? "true" : undefined;
+}
+
 export function getDataOrientation(
 	orientation: "horizontal" | "vertical"
 ): "horizontal" | "vertical" {
 	return orientation;
 }
 
+export function getDataInvalid(condition: boolean): "" | undefined {
+	return condition ? "" : undefined;
+}
+
 export function getDataRequired(condition: boolean): "" | undefined {
+	return condition ? "" : undefined;
+}
+
+export function getDataReadonly(condition: boolean): "" | undefined {
 	return condition ? "" : undefined;
 }
 

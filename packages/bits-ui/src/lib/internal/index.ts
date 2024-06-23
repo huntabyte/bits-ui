@@ -1,4 +1,5 @@
 export * from "./attrs.js";
+export * from "./arrays.js";
 export * from "./events.js";
 export * from "./id.js";
 export * from "./is.js";

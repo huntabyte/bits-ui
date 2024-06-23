@@ -11,6 +11,7 @@
 		placeholder?: string;
 		portalProps?: Select.PortalProps;
 		contentProps?: Omit<Select.ContentProps, "children" | "asChild" | "child">;
+		onSubmit?: (value: string) => void;
 	};
 </script>
 
@@ -22,13 +23,22 @@
 		options = [],
 		portalProps = {},
 		contentProps = {},
+		name = "theme",
+		onSubmit,
 		...restProps
 	}: SelectTestProps = $props();
 </script>
 
-<main data-testid="main">
-	<form data-testid="form">
-		<Select.Root bind:value bind:open {...restProps}>
+<main data-testid="main" class="relative">
+	<form
+		data-testid="form"
+		onsubmit={(e) => {
+			e.preventDefault();
+			const fd = new FormData(e.currentTarget);
+			onSubmit?.(String(fd.get(name)));
+		}}
+	>
+		<Select.Root bind:value bind:open {...restProps} {name}>
 			<Select.Trigger data-testid="trigger" aria-label="open select">
 				<Select.Value data-testid="value" {placeholder} />
 			</Select.Trigger>
@@ -57,7 +67,7 @@
 				</Select.Content>
 			</Select.Portal>
 		</Select.Root>
-		<div data-testid="outside"></div>
+		<div data-testid="outside" class="absolute left-0 top-0 size-10"></div>
 		<button type="button" data-testid="open-binding" onclick={() => (open = !open)}>
 			{open}
 		</button>
@@ -69,6 +79,8 @@
 		>
 			{value}
 		</button>
+
+		<button data-testid="submit"> submit </button>
 	</form>
 </main>
 <div data-testid="portal-target" id="portal-target"></div>

@@ -339,7 +339,6 @@ class PinInputRootState {
 	};
 
 	#oninput = (e: Event & { currentTarget: HTMLInputElement }) => {
-		console.log("new value", e.currentTarget.value);
 		const newValue = e.currentTarget.value.slice(0, this.#maxLength.value);
 		if (newValue.length > 0 && this.#regexPattern && !this.#regexPattern.test(newValue)) {
 			e.preventDefault();
@@ -369,7 +368,6 @@ class PinInputRootState {
 			this.#mirrorSelectionStart = start;
 			this.#mirrorSelectionEnd = end;
 		}
-		console.log("input focus!");
 		this.#isFocused.value = true;
 	};
 
@@ -450,7 +448,6 @@ class PinInputRootState {
 					idx === this.#mirrorSelectionStart) ||
 					(idx >= this.#mirrorSelectionStart && idx < this.#mirrorSelectionEnd));
 
-			console.log("isActive", isActive);
 			const char = this.value.value[idx] !== undefined ? this.value.value[idx] : null;
 
 			return {

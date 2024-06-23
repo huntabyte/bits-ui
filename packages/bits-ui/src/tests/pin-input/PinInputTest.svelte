@@ -5,16 +5,21 @@
 	let {
 		onComplete = noop,
 		maxlength = 6,
+		value = "",
 		...restProps
 	}: Omit<PinInput.RootProps, "children"> = $props();
-
-	let value = $state("");
 
 	type CellProps = PinInputRootSnippetProps["cells"][0];
 </script>
 
 <main>
+	<button aria-label="binding" data-testid="binding" onclick={() => (value = "999999")}>
+		{value}
+	</button>
+
 	<PinInput.Root
+		aria-label="my input"
+		inputId="myInput"
 		bind:value
 		class="group/pininput flex items-center text-foreground has-[:disabled]:opacity-30"
 		{maxlength}

@@ -14,6 +14,8 @@ description: Enables users to input specific dates within a designated field.
 
 </ComponentPreview>
 
+-   add docs about leap years/birthdays and placeholder date
+
 ## Structure
 
 ```svelte

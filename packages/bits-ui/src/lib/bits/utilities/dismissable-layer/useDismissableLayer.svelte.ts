@@ -7,7 +7,6 @@ import type {
 	InteractOutsideInterceptEventType,
 } from "./types.js";
 import {
-	type Box,
 	type EventCallback,
 	type ReadableBoxedValues,
 	addEventListener,
@@ -191,13 +190,16 @@ export class DismissableLayerState {
 	}
 
 	#onInteractOutsideStart = debounce((e: InteractOutsideEvent) => {
-		if (!this.currNode) return;
+		if (!this.currNode) {
+			return;
+		}
 		if (
 			!this.#isResponsibleLayer ||
 			this.#isAnyEventIntercepted() ||
 			!isValidEvent(e, this.currNode)
-		)
+		) {
 			return;
+		}
 		this.#interactOutsideStartProp.value(e);
 		if (e.defaultPrevented) return;
 		this.#isPointerDownOutside = true;
@@ -207,6 +209,7 @@ export class DismissableLayerState {
 		if (!this.currNode) return;
 
 		const behaviorType = this.#behaviorType.value;
+
 		if (
 			!this.#isResponsibleLayer ||
 			this.#isAnyEventIntercepted() ||

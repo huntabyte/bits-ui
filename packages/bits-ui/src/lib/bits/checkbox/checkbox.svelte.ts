@@ -94,10 +94,6 @@ class CheckboxInputState {
 
 	constructor(root: CheckboxRootState) {
 		this.root = root;
-
-		$effect(() => {
-			console.log("shouldRender", this.shouldRender);
-		});
 	}
 
 	props = $derived.by(
