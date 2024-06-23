@@ -74,21 +74,23 @@ type CreateContentArrProps = SharedContentProps & {
 function createContentObj(props: CreateContentObjProps) {
 	const { segmentValues, formatter, locale, dateRef } = props;
 
-	const content = Object.keys(segmentValues).reduce((obj, part) => {
-		if (!isSegmentPart(part)) return obj;
+	// @ts-expect-error - we're populating the object with the keys in the loop
+	const content: SegmentContentObj = {};
+
+	for (const part of Object.keys(segmentValues)) {
+		if (!isSegmentPart(part)) continue;
+
 		if ("hour" in segmentValues && part === "dayPeriod") {
 			const value = segmentValues[part];
 			if (!isNull(value)) {
-				obj[part] = value;
+				content[part] = value;
 			} else {
-				obj[part] = getPlaceholder(part, "AM", locale);
+				content[part] = getPlaceholder(part, "AM", locale);
 			}
 		} else {
-			obj[part] = getPartContent(part);
+			content[part] = getPartContent(part);
 		}
-
-		return obj;
-	}, {} as SegmentContentObj);
+	}
 
 	function getPartContent(part: DateSegmentPart | TimeSegmentPart) {
 		if ("hour" in segmentValues) {
@@ -208,15 +210,19 @@ function getOptsByGranularity(granularity: Granularity, hourCycle: HourCycle) {
 	return opts;
 }
 
-export function initSegmentStates() {
-	return EDITABLE_SEGMENT_PARTS.reduce((acc, key) => {
-		acc[key] = {
+export function initSegmentStates(): SegmentStateMap {
+	// @ts-expect-error - we're populating the object with the keys in the loop
+	const segmentStates: SegmentStateMap = {};
+
+	for (const key of EDITABLE_SEGMENT_PARTS) {
+		segmentStates[key] = {
 			lastKeyZero: false,
 			hasLeftFocus: true,
 			updating: null,
 		};
-		return acc;
-	}, {} as SegmentStateMap);
+	}
+
+	return segmentStates;
 }
 
 export function initSegmentIds() {
