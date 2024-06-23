@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { CalendarDateTime, type DateValue } from "@internationalized/date";
+	import { CalendarDate, CalendarDateTime, type DateValue } from "@internationalized/date";
 	import { DateField } from "bits-ui";
 
 	const v = new CalendarDateTime(2020, 4, 20, 12, 30, 0);
 
-	let value = $state<DateValue>(v);
+	let value = $state<DateValue>(new CalendarDate(2023, 10, 12));
 </script>
 
 <div class="absolute top-4">

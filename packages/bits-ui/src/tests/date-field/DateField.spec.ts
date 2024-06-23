@@ -12,6 +12,8 @@ import {
 } from "@internationalized/date";
 import { getTestKbd, setupUserEvents } from "../utils.js";
 import DateFieldTest, { type DateFieldTestProps } from "./DateFieldTest.svelte";
+import { tick } from "svelte";
+import { sleep } from "$lib/internal/sleep.js";
 
 const kbd = getTestKbd();
 
@@ -669,6 +671,28 @@ describe("date field", () => {
 		await user.keyboard(kbd.ARROW_DOWN);
 		expect(getHour()).toHaveTextContent("12");
 		expect(getDayPeriod()).toHaveTextContent("AM");
+	});
+
+	it("should add missing leading zeroes to the day,month, and year segments on focusout", async () => {
+		const { user, month, day, year } = setup({
+			value: new CalendarDate(2023, 10, 12),
+		});
+
+		await user.click(month);
+		await user.keyboard(`{1}`);
+		await user.keyboard(kbd.ARROW_RIGHT);
+		expect(day).toHaveFocus();
+		expect(month).toHaveTextContent("01");
+
+		await user.keyboard(`{1}`);
+		await user.keyboard(kbd.ARROW_RIGHT);
+		expect(year).toHaveFocus();
+		expect(day).toHaveTextContent("01");
+		await user.keyboard(kbd.BACKSPACE);
+		expect(year).toHaveTextContent("202");
+		await user.keyboard(kbd.ARROW_LEFT);
+		expect(day).toHaveFocus();
+		expect(year).toHaveTextContent("0202");
 	});
 });
 

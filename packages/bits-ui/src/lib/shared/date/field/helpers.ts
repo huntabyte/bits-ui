@@ -102,14 +102,7 @@ function createContentObj(props: CreateContentObjProps) {
 				});
 
 				if (part === "year") {
-					// if (value.startsWith("0")) {
-					// 	const valueDigits = String(value).length;
-					// 	const diff = 4 - valueDigits;
-					// 	if (diff > 0) {
-					// 		return `${"0".repeat(diff)}${value}`;
-					// 	}
-					// }
-					return String(value);
+					return `${value}`;
 				}
 				if (leadingZero && formatted.length === 1) {
 					return `0${formatted}`;
@@ -126,6 +119,9 @@ function createContentObj(props: CreateContentObjProps) {
 					return "0";
 				} else if (!isNull(value)) {
 					const formatted = formatter.part(dateRef.set({ [part]: value }), part);
+					if (part === "year") {
+						return `${value}`;
+					}
 					if (leadingZero && formatted.length === 1) {
 						return `0${formatted}`;
 					}

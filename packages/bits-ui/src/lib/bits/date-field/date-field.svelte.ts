@@ -376,13 +376,24 @@ class DateFieldRootState {
 			const castCb = cb as Updater<DateSegmentObj[DateSegmentPart]>;
 			const next = castCb(pVal);
 			if (part === "month" && next !== null && prev.day !== null) {
+				this.states.month.updating = next
 				const date = dateRef.set({ month: parseInt(next) });
 				const daysInMonth = getDaysInMonth(toDate(date));
 				if (parseInt(prev.day) > daysInMonth) {
 					prev.day = `${daysInMonth}`;
 				}
+				newSegmentValues = { ...prev, [part]: next };
+			} else if (part === "year") {
+				const next = castCb(pVal) as DateAndTimeSegmentObj["year"];
+				this.states.year.updating = next;
+				newSegmentValues = { ...prev, [part]: next };
+			} else if (part === "day") {
+				const next = castCb(pVal) as DateAndTimeSegmentObj["day"];
+				this.states.day.updating = next;
+				newSegmentValues = { ...prev, [part]: next };
+			} else {
+				newSegmentValues = { ...prev, [part]: next };
 			}
-			newSegmentValues = { ...prev, [part]: next };
 		}
 		this.segmentValues = newSegmentValues;
 		if (areAllSegmentsFilled(newSegmentValues, this.fieldNode)) {
@@ -767,6 +778,12 @@ class DateFieldDaySegmentState {
 
 	#onfocusout = () => {
 		this.#root.states.day.hasLeftFocus = true;
+		this.#updateSegment("month", (prev) => {
+			if (prev && prev.length === 1) {
+				return `0${prev}`;
+			}
+			return prev;
+		});
 	};
 
 	props = $derived.by(() => {
@@ -1028,6 +1045,12 @@ class DateFieldMonthSegmentState {
 
 	#onfocusout = () => {
 		this.#root.states.month.hasLeftFocus = true;
+		this.#updateSegment("month", (prev) => {
+			if (prev && prev.length === 1) {
+				return `0${prev}`;
+			}
+			return prev;
+		});
 	};
 
 	props = $derived.by(() => {
@@ -1250,6 +1273,13 @@ class DateFieldYearSegmentState {
 		this.#root.states.year.hasLeftFocus = true;
 		this.#pressedKeys = [];
 		this.#resetBackspaceCount();
+		this.#updateSegment("year", (prev) => {
+			console.log("prev", prev);
+			if (prev && prev.length !== 4) {
+				return prependYearZeros(parseInt(prev));
+			}
+			return prev;
+		});
 	};
 
 	props = $derived.by(() => {
