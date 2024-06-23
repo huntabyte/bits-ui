@@ -186,6 +186,10 @@ class DateFieldRootState {
 			const partValue = value[part];
 
 			if (part === "month") {
+				if (this.states.month.updating) {
+					console.log("this.states.month.updating", this.states.month.updating);
+					return [part, this.states.month.updating];
+				}
 				if (partValue < 10) {
 					return [part, `0${partValue}`];
 				}
@@ -195,21 +199,24 @@ class DateFieldRootState {
 				if (this.states.day.updating) {
 					return [part, this.states.day.updating];
 				}
-				return [part, String(partValue)];
+
+				if (partValue < 10) {
+					return [part, `0${partValue}`];
+				}
 			}
 
 			if (part === "year") {
 				if (this.states.year.updating) {
 					return [part, this.states.year.updating];
 				}
-				const valueDigits = String(partValue).length;
+				const valueDigits = `${partValue}`.length;
 				const diff = 4 - valueDigits;
 				if (diff > 0) {
 					return [part, `${"0".repeat(diff)}${partValue}`];
 				}
 			}
 
-			return [part, String(value[part])];
+			return [part, `${partValue}`];
 		});
 		if ("hour" in value) {
 			const timeValues = TIME_SEGMENT_PARTS.map((part) => {
@@ -314,6 +321,7 @@ class DateFieldRootState {
 			const castCb = cb as Updater<DateAndTimeSegmentObj[T]>;
 			if (part === "month") {
 				const next = castCb(pVal) as DateAndTimeSegmentObj["month"];
+				this.states.month.updating = next;
 				if (next !== null && prev.day !== null) {
 					const date = dateRef.set({ month: parseInt(next) });
 					const daysInMonth = getDaysInMonth(toDate(date));
@@ -358,10 +366,6 @@ class DateFieldRootState {
 			} else if (part === "day") {
 				const next = castCb(pVal) as DateAndTimeSegmentObj["day"];
 				this.states.day.updating = next;
-				newSegmentValues = { ...prev, [part]: next };
-			} else if (part === "month") {
-				const next = castCb(pVal) as DateAndTimeSegmentObj["month"];
-				this.states.month.updating = next;
 				newSegmentValues = { ...prev, [part]: next };
 			} else {
 				const next = castCb(pVal);
@@ -692,7 +696,7 @@ class DateFieldDaySegmentState {
 				 * month, then we will reset the segment as if the user had pressed the
 				 * backspace key and then typed the number.
 				 */
-				const total = parseInt(prev.toString() + num.toString());
+				const total = parseInt(prev + num.toString());
 
 				if (this.#root.states.day.lastKeyZero) {
 					/**
@@ -944,7 +948,7 @@ class DateFieldMonthSegmentState {
 				 * month, then we will reset the segment as if the user had pressed the
 				 * backspace key and then typed the number.
 				 */
-				const total = parseInt(prev.toString() + num.toString());
+				const total = parseInt(prev + num.toString());
 
 				if (this.#root.states.month.lastKeyZero) {
 					/**
