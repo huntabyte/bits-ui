@@ -36,6 +36,11 @@ import {
 } from "$lib/internal/index.js";
 import { get, type Writable } from "svelte/store";
 
+/**
+ * Initializes the segment values object which keeps track of the inputs
+ * for each segment in the field. This is then input into the formatter
+ * to generate the formatted strings to render in the field.
+ */
 export function initializeSegmentValues(granularity: Granularity) {
 	const calendarDateTimeGranularities = ["hour", "minute", "second"];
 	const initialParts = EDITABLE_SEGMENT_PARTS.map((part) => {
@@ -71,6 +76,7 @@ type CreateContentArrProps = SharedContentProps & {
 	contentObj: SegmentContentObj;
 };
 
+// TODO: clean me up
 function createContentObj(props: CreateContentObjProps) {
 	const { segmentValues, formatter, locale, dateRef } = props;
 
@@ -181,6 +187,10 @@ export function createContent(props: CreateContentProps) {
 	};
 }
 
+/**
+ * Get the options to use for the `Intl.DateTimeFormat` constructor based on
+ * the granularity and hour cycle of the field.
+ */
 function getOptsByGranularity(granularity: Granularity, hourCycle: HourCycle) {
 	const opts: Intl.DateTimeFormatOptions = {
 		year: "numeric",
@@ -210,6 +220,10 @@ function getOptsByGranularity(granularity: Granularity, hourCycle: HourCycle) {
 	return opts;
 }
 
+/**
+ * Initializes the segment states object which keeps track of state
+ * necessary to manage the behavior of the segments.
+ */
 export function initSegmentStates(): SegmentStateMap {
 	// @ts-expect-error - we're populating the object with the keys in the loop
 	const segmentStates: SegmentStateMap = {};
@@ -223,14 +237,6 @@ export function initSegmentStates(): SegmentStateMap {
 	}
 
 	return segmentStates;
-}
-
-export function initSegmentIds() {
-	return Object.fromEntries(
-		ALL_SEGMENT_PARTS.map((part) => {
-			return [part, generateId()];
-		}).filter(([key]) => key !== "literal")
-	);
 }
 
 export function isDateSegmentPart(part: unknown): part is DateSegmentPart {
@@ -267,6 +273,9 @@ type GetValueFromSegments = {
 	dateRef: DateValue;
 };
 
+/**
+ * Creates a new `DateValue` object based on the state of the field.
+ */
 export function getValueFromSegments(props: GetValueFromSegments) {
 	const { segmentObj, fieldNode, dateRef } = props;
 	const usedSegments = getUsedSegments(fieldNode);

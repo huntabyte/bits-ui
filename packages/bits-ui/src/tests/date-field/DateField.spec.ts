@@ -692,6 +692,10 @@ describe("date field", () => {
 		expect(day).toHaveFocus();
 		expect(year).toHaveTextContent("0202");
 	});
+
+	it.todo(
+		"if a user enters something like `15` into the hour segment and a 12 hour cycle is being used, the value should not be changed to `3` and should instead be `5`"
+	);
 });
 
 // eslint-disable-next-line ts/no-explicit-any
