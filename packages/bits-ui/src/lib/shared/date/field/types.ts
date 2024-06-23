@@ -28,7 +28,6 @@ export type SegmentContentObj = Record<EditableSegmentPart, string>;
 export type SegmentState = {
 	lastKeyZero: boolean;
 	hasLeftFocus: boolean;
-	hasTouched: boolean;
 	updating: string | null;
 };
 

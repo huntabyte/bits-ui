@@ -100,6 +100,7 @@ class DateFieldRootState {
 	descriptionNode = $state<HTMLElement | null>(null);
 	validationNode = $state<HTMLElement | null>(null);
 	states = initSegmentStates();
+	dayPeriodNode = $state<HTMLElement | null>(null);
 
 	constructor(props: DateFieldRootStateProps) {
 		this.value = props.value;
@@ -172,6 +173,7 @@ class DateFieldRootState {
 		this.states.day.updating = null;
 		this.states.month.updating = null;
 		this.states.year.updating = null;
+		this.states.hour.updating = null;
 		this.states.dayPeriod.updating = null;
 	}
 
@@ -217,8 +219,18 @@ class DateFieldRootState {
 					} else {
 						return [part, this.formatter.dayPeriod(toDate(value))];
 					}
+				} else if (part === "hour") {
+					if (value[part] === 0) {
+						/**
+						 * If we're rendering a `dayPeriod` segment, we're operating in a
+						 * 12-hour clock, so we never allow the displayed hour to be 0.
+						 */
+						if (this.dayPeriodNode) {
+							return [part, "12"];
+						}
+					}
 				}
-				return [part, String(value[part])];
+				return [part, `${value[part]}`];
 			});
 
 			const mergedSegmentValues = [...dateValues, ...timeValues];
@@ -816,8 +828,6 @@ class DateFieldMonthSegmentState {
 		const placeholder = this.#root.placeholder.value;
 		const max = 12;
 
-		this.#root.states.month.hasTouched = true;
-
 		if (isArrowUp(e.key)) {
 			this.#updateSegment("month", (prev) => {
 				if (prev === null) {
@@ -1109,7 +1119,6 @@ class DateFieldYearSegmentState {
 		if (e.key !== kbd.TAB) e.preventDefault();
 		if (this.#root.disabled.value || !isAcceptableSegmentKey(e.key)) return;
 
-		this.#root.states.year.hasTouched = true;
 		const placeholder = this.#root.placeholder.value;
 
 		if (isArrowUp(e.key)) {
@@ -1299,8 +1308,6 @@ class DateFieldHourSegmentState {
 		) {
 			return;
 		}
-
-		this.#root.states.hour.hasTouched = true;
 
 		const hourCycle = this.#root.hourCycle.value;
 
@@ -1509,8 +1516,6 @@ class DateFieldMinuteSegmentState {
 		)
 			return;
 
-		this.#root.states.minute.hasTouched = true;
-
 		const min = 0;
 		const max = 59;
 
@@ -1709,8 +1714,6 @@ class DateFieldSecondSegmentState {
 		if (e.key !== kbd.TAB) e.preventDefault();
 		if (!isAcceptableSegmentKey(e.key) || this.#root.disabled.value) return;
 
-		this.#root.states.second.hasTouched = true;
-
 		const min = 0;
 		const max = 59;
 
@@ -1903,6 +1906,9 @@ class DateFieldDayPeriodSegmentState {
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
+			onRefChange: (node) => {
+				this.#root.dayPeriodNode = node;
+			},
 		});
 	}
 

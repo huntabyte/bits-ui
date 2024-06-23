@@ -217,7 +217,6 @@ export function initSegmentStates() {
 		acc[key] = {
 			lastKeyZero: false,
 			hasLeftFocus: true,
-			hasTouched: false,
 			updating: null,
 		};
 		return acc;

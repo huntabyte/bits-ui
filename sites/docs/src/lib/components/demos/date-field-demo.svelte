@@ -1,19 +1,22 @@
 <script lang="ts">
-	import { CalendarDate, type DateValue } from "@internationalized/date";
+	import { CalendarDateTime, type DateValue } from "@internationalized/date";
 	import { DateField } from "bits-ui";
 
-	const v = new CalendarDate(2020, 4, 20);
+	const v = new CalendarDateTime(2020, 4, 20, 12, 30, 0);
 
-	let value = $state<DateValue>();
+	let value = $state<DateValue>(v);
 </script>
 
-<button
+<div class="absolute top-4">
+	{value?.toString()}
+</div>
+<!-- <button
 	onclick={() => {
 		value = v;
 	}}
 >
 	set value
-</button>
+</button> -->
 <DateField.Root bind:value granularity="minute">
 	<div class="flex w-full flex-col gap-1.5">
 		<DateField.Label class="block select-none text-sm font-medium">Birthday</DateField.Label>

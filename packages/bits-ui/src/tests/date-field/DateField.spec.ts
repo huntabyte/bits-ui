@@ -15,6 +15,8 @@ import DateFieldTest, { type DateFieldTestProps } from "./DateFieldTest.svelte";
 
 const kbd = getTestKbd();
 
+const TIME_PLACEHOLDER = "––";
+
 const calendarDate = new CalendarDate(1980, 1, 20);
 const calendarDateTime = new CalendarDateTime(1980, 1, 20, 12, 30, 0, 0);
 const zonedDateTime = toZoned(calendarDateTime, "America/New_York");
@@ -590,10 +592,10 @@ describe("date field", () => {
 		});
 		const { getDayPeriod, getHour } = getTimeSegments(getByTestId);
 
-		expect(getHour()).toHaveTextContent("––");
+		expect(getHour()).toHaveTextContent(TIME_PLACEHOLDER);
 		await user.click(getDayPeriod());
 		await user.keyboard(kbd.ARROW_UP);
-		expect(getHour()).toHaveTextContent("––");
+		expect(getHour()).toHaveTextContent(TIME_PLACEHOLDER);
 	});
 
 	it("should handle backspacing the year segment appropriately", async () => {
@@ -623,6 +625,50 @@ describe("date field", () => {
 		await user.keyboard(`{7}`);
 		expect(year).toHaveTextContent("0087");
 		expect(hour).toHaveFocus();
+	});
+
+	it("should allow going from 12PM -> 12AM without changing the display hour to 0", async () => {
+		const { getByTestId, user } = setup({
+			value: new CalendarDateTime(2023, 10, 12, 12, 30, 0, 0),
+		});
+		const { getHour, getDayPeriod } = getTimeSegments(getByTestId);
+
+		expect(getHour()).toHaveTextContent("12");
+
+		await user.click(getDayPeriod());
+		await user.keyboard(kbd.ARROW_UP);
+
+		expect(getHour()).toHaveTextContent("12");
+		expect(getDayPeriod()).toHaveTextContent("AM");
+	});
+
+	it("should never allow the hour to be 0 when in a 12 hour cycle", async () => {
+		const { getByTestId, user } = setup({
+			value: new CalendarDateTime(2023, 10, 12, 12, 30, 0, 0),
+		});
+		const { getHour, getDayPeriod } = getTimeSegments(getByTestId);
+
+		expect(getHour()).toHaveTextContent("12");
+
+		await user.click(getDayPeriod());
+		await user.keyboard(kbd.ARROW_UP);
+
+		expect(getHour()).toHaveTextContent("12");
+		expect(getDayPeriod()).toHaveTextContent("AM");
+
+		await user.click(getHour());
+		await user.keyboard(kbd.ARROW_UP);
+		expect(getHour()).toHaveTextContent("1");
+		expect(getHour()).not.toHaveTextContent("12");
+		expect(getDayPeriod()).toHaveTextContent("PM");
+		await user.click(getDayPeriod());
+		await user.keyboard(kbd.ARROW_UP);
+		expect(getHour()).toHaveTextContent("1");
+		expect(getDayPeriod()).toHaveTextContent("AM");
+		await user.click(getHour());
+		await user.keyboard(kbd.ARROW_DOWN);
+		expect(getHour()).toHaveTextContent("12");
+		expect(getDayPeriod()).toHaveTextContent("AM");
 	});
 });
 

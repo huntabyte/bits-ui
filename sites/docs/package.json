@@ -39,7 +39,7 @@
 		"rehype-slug": "^6.0.0",
 		"remark-gfm": "^4.0.0",
 		"shiki": "^1.1.1",
-		"svelte": "5.0.0-next.157",
+		"svelte": "5.0.0-next.164",
 		"svelte-check": "^3.6.9",
 		"svelte-sonner": "^0.3.24",
 		"tailwind-merge": "^2.2.1",
