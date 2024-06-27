@@ -12,6 +12,7 @@ import {
 } from "@internationalized/date";
 import { getTestKbd, setupUserEvents } from "../utils.js";
 import DateFieldTest, { type DateFieldTestProps } from "./DateFieldTest.svelte";
+import { tick } from "svelte";
 
 const kbd = getTestKbd();
 
@@ -658,17 +659,17 @@ describe("date field", () => {
 
 		await user.click(getHour());
 		await user.keyboard(kbd.ARROW_UP);
-		expect(getHour()).toHaveTextContent("1");
+		expect(getHour()).toHaveTextContent("01");
 		expect(getHour()).not.toHaveTextContent("12");
-		expect(getDayPeriod()).toHaveTextContent("PM");
+		expect(getDayPeriod()).toHaveTextContent("AM");
 		await user.click(getDayPeriod());
 		await user.keyboard(kbd.ARROW_UP);
-		expect(getHour()).toHaveTextContent("1");
-		expect(getDayPeriod()).toHaveTextContent("AM");
+		expect(getHour()).toHaveTextContent("01");
+		expect(getDayPeriod()).toHaveTextContent("PM");
 		await user.click(getHour());
 		await user.keyboard(kbd.ARROW_DOWN);
 		expect(getHour()).toHaveTextContent("12");
-		expect(getDayPeriod()).toHaveTextContent("AM");
+		expect(getDayPeriod()).toHaveTextContent("PM");
 	});
 
 	it("should add missing leading zeroes to the day,month, and year segments on focusout", async () => {
@@ -691,6 +692,26 @@ describe("date field", () => {
 		await user.keyboard(kbd.ARROW_LEFT);
 		expect(day).toHaveFocus();
 		expect(year).toHaveTextContent("0202");
+	});
+
+	it("should not intercept number keys when the ctrl or meta key is pressed, allowing default browser behavior", async () => {
+		const { user, month } = setup({
+			value: new CalendarDate(2023, 10, 12),
+		});
+
+		await user.click(month);
+		await user.keyboard(`{1}`);
+		await user.keyboard(`{2}`);
+		expect(month).toHaveTextContent("12");
+
+		await user.keyboard(`{Shift>}1{/Shift}`);
+		expect(month).toHaveTextContent("12");
+
+		await user.keyboard(`{Ctrl>}2{/Ctrl}`);
+		expect(month).toHaveTextContent("12");
+
+		await user.keyboard(`{Meta>}2{/Meta}`);
+		expect(month).toHaveTextContent("12");
 	});
 });
 

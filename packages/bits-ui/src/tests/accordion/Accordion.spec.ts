@@ -1,6 +1,5 @@
 /* eslint-disable ts/no-explicit-any */
-import { queryByTestId, render, waitFor } from "@testing-library/svelte/svelte5";
-import { userEvent } from "@testing-library/user-event";
+import { render, waitFor } from "@testing-library/svelte/svelte5";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import { tick } from "svelte";

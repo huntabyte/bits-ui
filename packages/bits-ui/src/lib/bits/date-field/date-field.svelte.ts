@@ -226,6 +226,14 @@ class DateFieldRootState {
 						return [part, this.formatter.dayPeriod(toDate(value))];
 					}
 				} else if (part === "hour") {
+					if (this.states.hour.updating) {
+						return [part, this.states.hour.updating];
+					}
+
+					if (value[part] !== undefined && value[part] < 10) {
+						return [part, `0${value[part]}`];
+					}
+
 					if (value[part] === 0) {
 						/**
 						 * If we're rendering a `dayPeriod` segment, we're operating in a
@@ -349,6 +357,7 @@ class DateFieldRootState {
 				newSegmentValues = { ...prev, [part]: next };
 			} else if (part === "hour") {
 				const next = castCb(pVal) as DateAndTimeSegmentObj["hour"];
+				this.states.hour.updating = next;
 				if (next !== null && prev.dayPeriod !== null) {
 					const dayPeriod = this.formatter.dayPeriod(
 						toDate(dateRef.set({ hour: parseInt(next) }))
@@ -592,8 +601,8 @@ class DateFieldDaySegmentState {
 	}
 
 	#onkeydown = (e: KeyboardEvent) => {
+		if (e.ctrlKey || e.metaKey || this.#root.disabled.value) return;
 		if (e.key !== kbd.TAB) e.preventDefault();
-		if (this.#root.disabled.value) return;
 		if (!isAcceptableSegmentKey(e.key)) return;
 
 		const segmentMonthValue = this.#root.segmentValues.month;
@@ -841,8 +850,8 @@ class DateFieldMonthSegmentState {
 	};
 
 	#onkeydown = (e: KeyboardEvent) => {
+		if (e.ctrlKey || e.metaKey || this.#root.disabled.value) return;
 		if (e.key !== kbd.TAB) e.preventDefault();
-		if (this.#root.disabled.value) return;
 		if (!isAcceptableSegmentKey(e.key)) return;
 
 		const placeholder = this.#root.placeholder.value;
@@ -1142,8 +1151,9 @@ class DateFieldYearSegmentState {
 	}
 
 	#onkeydown = (e: KeyboardEvent) => {
+		if (e.ctrlKey || e.metaKey || this.#root.disabled.value || !isAcceptableSegmentKey(e.key))
+			return;
 		if (e.key !== kbd.TAB) e.preventDefault();
-		if (this.#root.disabled.value || !isAcceptableSegmentKey(e.key)) return;
 
 		const placeholder = this.#root.placeholder.value;
 
@@ -1331,15 +1341,16 @@ class DateFieldHourSegmentState {
 	}
 
 	#onkeydown = (e: KeyboardEvent) => {
-		if (e.key !== kbd.TAB) e.preventDefault();
 		const placeholder = this.#root.placeholder.value;
 		if (
+			e.ctrlKey ||
+			e.metaKey ||
 			this.#root.disabled.value ||
 			!isAcceptableSegmentKey(e.key) ||
 			!("hour" in placeholder)
-		) {
+		)
 			return;
-		}
+		if (e.key !== kbd.TAB) e.preventDefault();
 
 		const hourCycle = this.#root.hourCycle.value;
 
@@ -1380,41 +1391,60 @@ class DateFieldHourSegmentState {
 			const max = 24;
 			const maxStart = Math.floor(max / 10);
 			let moveToNext = false;
+			const numIsZero = num === 0;
 			this.#updateSegment("hour", (prev) => {
 				/**
 				 * If the user has left the segment, we want to reset the
 				 * `prev` value so that we can start the segment over again
 				 * when the user types a number.
 				 */
-				if (this.#root.states.hour.hasLeftFocus) {
+				if (this.#root.states.day.hasLeftFocus) {
 					prev = null;
-					this.#root.states.hour.hasLeftFocus = false;
+					this.#root.states.day.hasLeftFocus = false;
 				}
 
+				/**
+				 * We are starting over in the segment if prev is null, which could
+				 * happen in one of two scenarios:
+				 * - the user has left the segment and then comes back to it
+				 * - the segment was empty and the user begins typing a number
+				 */
 				if (prev === null) {
 					/**
 					 * If the user types a 0 as the first number, we want
 					 * to keep track of that so that when they type the next
 					 * number, we can move to the next segment.
 					 */
-					if (num === 0) {
-						this.#root.states.hour.lastKeyZero = true;
-						this.#announcer.announce(null);
-						return null;
+					if (numIsZero) {
+						this.#root.states.day.lastKeyZero = true;
+						this.#announcer.announce("0");
+						return "0";
 					}
+
+					///////////////////////////
 
 					/**
 					 * If the last key was a 0, or if the first number is
-					 * greater than the max start digit, then we want to move
-					 * to the next segment, since it's not possible to continue
-					 * typing a valid number in this segment.
+					 * greater than the max start digit (0-3 in most cases), then
+					 * we want to move to the next segment, since it's not possible
+					 * to continue typing a valid number in this segment.
 					 */
-					if (this.#root.states.hour.lastKeyZero || num > maxStart) {
+					if (this.#root.states.day.lastKeyZero || num > maxStart) {
 						moveToNext = true;
 					}
 
-					this.#root.states.hour.lastKeyZero = false;
-					this.#announcer.announce(num);
+					this.#root.states.day.lastKeyZero = false;
+
+					/**
+					 * If we're moving to the next segment and the number is less than
+					 * two digits, we want to announce the number and return it with a
+					 * leading zero to follow the placeholder format of `MM/DD/YYYY`.
+					 */
+					if (moveToNext && String(num).length === 1) {
+						this.#announcer.announce(num);
+						return `0${num}`;
+					}
+
 					/**
 					 * If none of the above conditions are met, then we can just
 					 * return the number as the segment value and continue typing
@@ -1423,28 +1453,47 @@ class DateFieldHourSegmentState {
 					return `${num}`;
 				}
 
-				const digits = prev.toString().length;
-				const total = parseInt(prev.toString() + num.toString());
-
 				/**
 				 * If the number of digits is 2, or if the total with the existing digit
-				 * and the pressed digit is greater than the maximum value, then we will
-				 * reset the segment as if the user had pressed the backspace key and then
-				 * typed a number.
+				 * and the pressed digit is greater than the maximum value for this
+				 * hour, then we will reset the segment as if the user had pressed the
+				 * backspace key and then typed the number.
 				 */
-				if (digits === 2 || total > max) {
+				const total = parseInt(prev + num.toString());
+
+				if (this.#root.states.day.lastKeyZero) {
 					/**
-					 * As we're doing elsewhere, we're checking if the number is greater
-					 * than the max start digit, and if so, we're moving to the next segment.
+					 * If the new number is not 0, then we reset the lastKeyZero state and
+					 * move to the next segment, returning the new number with a leading 0.
 					 */
-					if (num > maxStart) {
+					if (num !== 0) {
 						moveToNext = true;
+						this.#root.states.day.lastKeyZero = false;
+						return `0${num}`;
 					}
-					this.#announcer.announce(num);
-					return `${num}`;
+
+					/**
+					 * If the new number is 0, then we simply return the previous value, since
+					 * they didn't actually type a new number.
+					 */
+					return prev;
 				}
+
+				/**
+				 * If the total is greater than the max day value possible for this month, then
+				 * we want to move to the next segment, trimming the first digit from the total,
+				 * replacing it with a 0.
+				 */
+				if (total > max) {
+					moveToNext = true;
+					return `0${num}`;
+				}
+
+				/**
+				 * If the total has two digits and is less than or equal to the max day value,
+				 * we will move to the next segment and return the total as the segment value.
+				 */
 				moveToNext = true;
-				this.#announcer.announce(total);
 				return `${total}`;
 			});
 
@@ -1539,14 +1588,17 @@ class DateFieldMinuteSegmentState {
 	}
 
 	#onkeydown = (e: KeyboardEvent) => {
-		if (e.key !== kbd.TAB) e.preventDefault();
 		const placeholder = this.#root.placeholder.value;
 		if (
+			e.ctrlKey ||
+			e.metaKey ||
 			this.#root.disabled.value ||
 			!isAcceptableSegmentKey(e.key) ||
 			!("minute" in placeholder)
 		)
 			return;
+
+		if (e.key !== kbd.TAB) e.preventDefault();
 
 		const min = 0;
 		const max = 59;
@@ -1743,15 +1795,20 @@ class DateFieldSecondSegmentState {
 	}
 
 	#onkeydown = (e: KeyboardEvent) => {
+		const placeholder = this.#root.placeholder.value;
+		if (
+			e.ctrlKey ||
+			e.metaKey ||
+			this.#root.disabled.value ||
+			!isAcceptableSegmentKey(e.key) ||
+			!("second" in placeholder)
+		)
+			return;
 		if (e.key !== kbd.TAB) e.preventDefault();
 		if (!isAcceptableSegmentKey(e.key) || this.#root.disabled.value) return;
 
 		const min = 0;
 		const max = 59;
-
-		const placeholder = this.#root.placeholder.value;
-
-		if (!("second" in placeholder)) return;
 
 		if (isArrowUp(e.key)) {
 			this.#updateSegment("second", (prev) => {
@@ -1945,8 +2002,10 @@ class DateFieldDayPeriodSegmentState {
 	}
 
 	#onkeydown = (e: KeyboardEvent) => {
+		if (e.ctrlKey || e.metaKey || this.#root.disabled.value || !isAcceptableDayPeriodKey(e.key))
+			return;
+
 		if (e.key !== kbd.TAB) e.preventDefault();
-		if (!isAcceptableDayPeriodKey(e.key) || this.#root.disabled.value) return;
 
 		if (isArrowUp(e.key) || isArrowDown(e.key)) {
 			this.#updateSegment("dayPeriod", (prev) => {

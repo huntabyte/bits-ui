@@ -2,7 +2,7 @@
 	import { CalendarDateTime, type DateValue } from "@internationalized/date";
 	import { DateField } from "bits-ui";
 
-	const v = new CalendarDateTime(2020, 4, 20, 12, 30, 0);
+	const v = new CalendarDateTime(2023, 10, 12, 12, 30, 0, 0);
 
 	let value = $state<DateValue>(v);
 </script>
