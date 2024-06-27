@@ -11,7 +11,7 @@
 	{value?.toString()}
 </div>
 
-<DateField.Root bind:value granularity="minute">
+<DateField.Root bind:value granularity="second">
 	<div class="flex w-full flex-col gap-1.5">
 		<DateField.Label class="block select-none text-sm font-medium">Birthday</DateField.Label>
 		<DateField.Input
