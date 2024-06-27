@@ -97,6 +97,7 @@ function createContentObj(props: CreateContentObjProps) {
 			const intValue = value !== null ? parseInt(value) : null;
 
 			if (value === "0" && part !== "year") {
+				console.log('returning "0" for part', part);
 				return "0";
 			} else if (!isNull(value) && !isNull(intValue)) {
 				const formatted = formatter.part(dateRef.set({ [part]: value }), part, {
@@ -146,6 +147,7 @@ function createContentObj(props: CreateContentObjProps) {
 				if (part === "year") {
 					return `${value}`;
 				}
+
 				if (leadingZero && formatted.length === 1) {
 					return `0${formatted}`;
 				}

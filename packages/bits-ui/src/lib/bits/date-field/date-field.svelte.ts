@@ -174,6 +174,7 @@ class DateFieldRootState {
 		this.states.month.updating = null;
 		this.states.year.updating = null;
 		this.states.hour.updating = null;
+		this.states.minute.updating = null;
 		this.states.dayPeriod.updating = null;
 	}
 
@@ -243,13 +244,29 @@ class DateFieldRootState {
 							return [part, "12"];
 						}
 					}
+				} else if (part === "minute") {
+					if (this.states.minute.updating) {
+						return [part, this.states.minute.updating];
+					}
+
+					if (value[part] !== undefined && value[part] < 10) {
+						return [part, `0${value[part]}`];
+					}
+				} else if (part === "second") {
+					if (this.states.second.updating) {
+						return [part, this.states.second.updating];
+					}
+
+					if (value[part] !== undefined && value[part] < 10) {
+						return [part, `0${value[part]}`];
+					}
 				}
 				return [part, `${value[part]}`];
 			});
 
 			const mergedSegmentValues = [...dateValues, ...timeValues];
 			this.segmentValues = Object.fromEntries(mergedSegmentValues);
-			this.states.dayPeriod.updating = null;
+			this.clearUpdating();
 			return;
 		}
 
@@ -290,7 +307,7 @@ class DateFieldRootState {
 
 	sharedSegmentAttrs = {
 		role: "spinbutton",
-		contenteditable: true,
+		contenteditable: "true",
 		tabindex: 0,
 		spellcheck: false,
 		inputmode: "numeric",
@@ -366,6 +383,14 @@ class DateFieldRootState {
 						prev.dayPeriod = dayPeriod;
 					}
 				}
+				newSegmentValues = { ...prev, [part]: next };
+			} else if (part === "minute") {
+				const next = castCb(pVal) as DateAndTimeSegmentObj["minute"];
+				this.states.minute.updating = next;
+				newSegmentValues = { ...prev, [part]: next };
+			} else if (part === "second") {
+				const next = castCb(pVal) as DateAndTimeSegmentObj["second"];
+				this.states.second.updating = next;
 				newSegmentValues = { ...prev, [part]: next };
 			} else if (part === "year") {
 				const next = castCb(pVal) as DateAndTimeSegmentObj["year"];
@@ -447,12 +472,12 @@ class DateFieldRootState {
 			: undefined;
 
 		const contenteditable =
-			this.readonly.value || inReadonlySegments || this.disabled.value ? false : undefined;
+			this.readonly.value || inReadonlySegments || this.disabled.value ? false : true;
 
 		return {
 			...defaultAttrs,
 			"aria-labelledby": this.getLabelledBy(segmentId),
-			contenteditable,
+			contenteditable: contenteditable ? "true" : undefined,
 			"aria-describedby": describedBy,
 			tabindex: this.disabled.value ? undefined : 0,
 		};
@@ -633,6 +658,7 @@ class DateFieldDaySegmentState {
 					return `${next}`;
 				}
 				const next = placeholder.set({ day: parseInt(prev) }).cycle("day", -1).day;
+
 				this.#announcer.announce(next);
 				return `${next}`;
 			});
@@ -1079,7 +1105,7 @@ class DateFieldMonthSegmentState {
 			...this.#root.sharedSegmentAttrs,
 			id: this.#id.value,
 			"aria-label": "month, ",
-			contenteditable: true,
+			contenteditable: "true",
 			"aria-valuemin": valueMin,
 			"aria-valuemax": valueMax,
 			"aria-valuenow": valueNow,
@@ -1364,6 +1390,16 @@ class DateFieldHourSegmentState {
 				const next = placeholder
 					.set({ hour: parseInt(prev) })
 					.cycle("hour", 1, { hourCycle }).hour;
+
+				if (
+					next === 0 &&
+					"dayPeriod" in this.#root.segmentValues &&
+					this.#root.segmentValues.dayPeriod !== null &&
+					this.#root.hourCycle.value !== 24
+				) {
+					this.#announcer.announce("12");
+					return "12";
+				}
 				this.#announcer.announce(next);
 				return `${next}`;
 			});
@@ -1380,6 +1416,16 @@ class DateFieldHourSegmentState {
 				const next = placeholder
 					.set({ hour: parseInt(prev) })
 					.cycle("hour", -1, { hourCycle }).hour;
+
+				if (
+					next === 0 &&
+					"dayPeriod" in this.#root.segmentValues &&
+					this.#root.segmentValues.dayPeriod !== null &&
+					this.#root.hourCycle.value !== 24
+				) {
+					this.#announcer.announce("12");
+					return "12";
+				}
 				this.#announcer.announce(next);
 				return `${next}`;
 			});
@@ -1388,7 +1434,12 @@ class DateFieldHourSegmentState {
 
 		if (isNumberString(e.key)) {
 			const num = parseInt(e.key);
-			const max = 24;
+			const max =
+				"dayPeriod" in this.#root.segmentValues &&
+				this.#root.segmentValues.dayPeriod !== null
+					? 12
+					: 23;
+			console.log("max", max);
 			const maxStart = Math.floor(max / 10);
 			let moveToNext = false;
 			const numIsZero = num === 0;
@@ -1398,9 +1449,9 @@ class DateFieldHourSegmentState {
 				 * `prev` value so that we can start the segment over again
 				 * when the user types a number.
 				 */
-				if (this.#root.states.day.hasLeftFocus) {
+				if (this.#root.states.hour.hasLeftFocus) {
 					prev = null;
-					this.#root.states.day.hasLeftFocus = false;
+					this.#root.states.hour.hasLeftFocus = false;
 				}
 
 				/**
@@ -1416,7 +1467,7 @@ class DateFieldHourSegmentState {
 					 * number, we can move to the next segment.
 					 */
 					if (numIsZero) {
-						this.#root.states.day.lastKeyZero = true;
+						this.#root.states.hour.lastKeyZero = true;
 						this.#announcer.announce("0");
 						return "0";
 					}
@@ -1429,11 +1480,11 @@ class DateFieldHourSegmentState {
 					 * we want to move to the next segment, since it's not possible
 					 * to continue typing a valid number in this segment.
 					 */
-					if (this.#root.states.day.lastKeyZero || num > maxStart) {
+					if (this.#root.states.hour.lastKeyZero || num > maxStart) {
 						moveToNext = true;
 					}
 
-					this.#root.states.day.lastKeyZero = false;
+					this.#root.states.hour.lastKeyZero = false;
 
 					/**
 					 * If we're moving to the next segment and the number is less than
@@ -1461,14 +1512,14 @@ class DateFieldHourSegmentState {
 				 */
 				const total = parseInt(prev + num.toString());
 
-				if (this.#root.states.day.lastKeyZero) {
+				if (this.#root.states.hour.lastKeyZero) {
 					/**
 					 * If the new number is not 0, then we reset the lastKeyZero state and
 					 * move to the next segment, returning the new number with a leading 0.
 					 */
 					if (num !== 0) {
 						moveToNext = true;
-						this.#root.states.day.lastKeyZero = false;
+						this.#root.states.hour.lastKeyZero = false;
 						return `0${num}`;
 					}
 
@@ -1632,6 +1683,7 @@ class DateFieldMinuteSegmentState {
 		if (isNumberString(e.key)) {
 			const num = parseInt(e.key);
 			let moveToNext = false;
+			const numIsZero = num === 0;
 			this.#updateSegment("minute", (prev) => {
 				const maxStart = Math.floor(max / 10);
 
@@ -1645,30 +1697,48 @@ class DateFieldMinuteSegmentState {
 					this.#root.states.minute.hasLeftFocus = false;
 				}
 
+				/**
+				 * We are starting over in the segment if prev is null, which could
+				 * happen in one of two scenarios:
+				 * - the user has left the segment and then comes back to it
+				 * - the segment was empty and the user begins typing a number
+				 */
 				if (prev === null) {
 					/**
 					 * If the user types a 0 as the first number, we want
 					 * to keep track of that so that when they type the next
 					 * number, we can move to the next segment.
 					 */
-					if (num === 0) {
+					if (numIsZero) {
 						this.#root.states.minute.lastKeyZero = true;
-						this.#announcer.announce(null);
+						this.#announcer.announce("0");
 						return "0";
 					}
 
+					///////////////////////////
+
 					/**
 					 * If the last key was a 0, or if the first number is
-					 * greater than the max start digit, then we want to move
-					 * to the next segment, since it's not possible to continue
-					 * typing a valid number in this segment.
+					 * greater than the max start digit (0-3 in most cases), then
+					 * we want to move to the next segment, since it's not possible
+					 * to continue typing a valid number in this segment.
 					 */
 					if (this.#root.states.minute.lastKeyZero || num > maxStart) {
 						moveToNext = true;
 					}
 
 					this.#root.states.minute.lastKeyZero = false;
-					this.#announcer.announce(num);
+
+					/**
+					 * If we're moving to the next segment and the number is less than
+					 * two digits, we want to announce the number and return it with a
+					 * leading zero to follow the placeholder format of `MM/DD/YYYY`.
+					 */
+					if (moveToNext && String(num).length === 1) {
+						this.#announcer.announce(num);
+						return `0${num}`;
+					}
+
 					/**
 					 * If none of the above conditions are met, then we can just
 					 * return the number as the segment value and continue typing
@@ -1677,28 +1747,49 @@ class DateFieldMinuteSegmentState {
 					return `${num}`;
 				}
 
-				const digits = prev.length;
-				const total = parseInt(prev + num.toString());
-
 				/**
 				 * If the number of digits is 2, or if the total with the existing digit
-				 * and the pressed digit is greater than the maximum value, then we will
-				 * reset the segment as if the user had pressed the backspace key and then
-				 * typed a number.
+				 * and the pressed digit is greater than the maximum value for this
+				 * minute, then we will reset the segment as if the user had pressed the
+				 * backspace key and then typed the number.
 				 */
-				if (digits === 2 || total > max) {
+				const total = parseInt(prev + num.toString());
+
+				if (this.#root.states.minute.lastKeyZero) {
 					/**
-					 * As we're doing elsewhere, we're checking if the number is greater
-					 * than the max start digit, and if so, we're moving to the next segment.
+					 * If the new number is not 0, then we reset the lastKeyZero state and
+					 * move to the next segment, returning the new number with a leading 0.
 					 */
-					if (num > maxStart) {
+					if (num !== 0) {
 						moveToNext = true;
+						this.#root.states.minute.lastKeyZero = false;
+						return `0${num}`;
 					}
-					this.#announcer.announce(num);
-					return `${num}`;
+
+					/**
+					 * If the new number is 0, then we simply return `00` since that is
+					 * an acceptable minute value.
+					 */
+					moveToNext = true;
+					this.#root.states.minute.lastKeyZero = false;
+					return "00";
 				}
+
+				/**
+				 * If the total is greater than the max day value possible for this month, then
+				 * we want to move to the next segment, trimming the first digit from the total,
+				 * replacing it with a 0.
+				 */
+				if (total > max) {
+					moveToNext = true;
+					return `0${num}`;
+				}
+
+				/**
+				 * If the total has two digits and is less than or equal to the max day value,
+				 * we will move to the next segment and return the total as the segment value.
+				 */
 				moveToNext = true;
-				this.#announcer.announce(total);
 				return `${total}`;
 			});
 
@@ -1838,6 +1929,7 @@ class DateFieldSecondSegmentState {
 
 		if (isNumberString(e.key)) {
 			const num = parseInt(e.key);
+			const numIsZero = num === 0;
 			let moveToNext = false;
 			this.#updateSegment("second", (prev) => {
 				const maxStart = Math.floor(max / 10);
@@ -1852,60 +1944,99 @@ class DateFieldSecondSegmentState {
 					this.#root.states.second.hasLeftFocus = false;
 				}
 
+				/**
+				 * We are starting over in the segment if prev is null, which could
+				 * happen in one of two scenarios:
+				 * - the user has left the segment and then comes back to it
+				 * - the segment was empty and the user begins typing a number
+				 */
 				if (prev === null) {
 					/**
 					 * If the user types a 0 as the first number, we want
 					 * to keep track of that so that when they type the next
 					 * number, we can move to the next segment.
 					 */
-					if (num === 0) {
+					if (numIsZero) {
 						this.#root.states.second.lastKeyZero = true;
-						this.#announcer.announce(null);
+						this.#announcer.announce("0");
 						return "0";
 					}
 
+					///////////////////////////
+
 					/**
 					 * If the last key was a 0, or if the first number is
-					 * greater than the max start digit, then we want to move
-					 * to the next segment, since it's not possible to continue
-					 * typing a valid number in this segment.
+					 * greater than the max start digit (0-3 in most cases), then
+					 * we want to move to the next segment, since it's not possible
+					 * to continue typing a valid number in this segment.
 					 */
 					if (this.#root.states.second.lastKeyZero || num > maxStart) {
 						moveToNext = true;
 					}
+
 					this.#root.states.second.lastKeyZero = false;
+
+					/**
+					 * If we're moving to the next segment and the number is less than
+					 * two digits, we want to announce the number and return it with a
+					 * leading zero to follow the placeholder format of `MM/DD/YYYY`.
+					 */
+					if (moveToNext && String(num).length === 1) {
+						this.#announcer.announce(num);
+						return `0${num}`;
+					}
 
 					/**
 					 * If none of the above conditions are met, then we can just
 					 * return the number as the segment value and continue typing
 					 * in this segment.
 					 */
-					this.#announcer.announce(num);
 					return `${num}`;
 				}
-
-				const digits = prev.toString().length;
-				const total = parseInt(prev.toString() + num.toString());
 
 				/**
 				 * If the number of digits is 2, or if the total with the existing digit
-				 * and the pressed digit is greater than the maximum value, then we will
-				 * reset the segment as if the user had pressed the backspace key and then
-				 * typed a number.
+				 * and the pressed digit is greater than the maximum value for this
+				 * second, then we will reset the segment as if the user had pressed the
+				 * backspace key and then typed the number.
 				 */
-				if (digits === 2 || total > max) {
+				const total = parseInt(prev + num.toString());
+
+				if (this.#root.states.second.lastKeyZero) {
 					/**
-					 * As we're doing elsewhere, we're checking if the number is greater
-					 * than the max start digit, and if so, we're moving to the next segment.
+					 * If the new number is not 0, then we reset the lastKeyZero state and
+					 * move to the next segment, returning the new number with a leading 0.
 					 */
-					if (num > maxStart) {
+					if (num !== 0) {
 						moveToNext = true;
+						this.#root.states.second.lastKeyZero = false;
+						return `0${num}`;
 					}
-					this.#announcer.announce(num);
-					return `${num}`;
+
+					/**
+					 * If the new number is 0, then we simply return `00` since that is
+					 * an acceptable second value.
+					 */
+					moveToNext = true;
+					this.#root.states.second.lastKeyZero = false;
+					return "00";
 				}
+
+				/**
+				 * If the total is greater than the max day value possible for this month, then
+				 * we want to move to the next segment, trimming the first digit from the total,
+				 * replacing it with a 0.
+				 */
+				if (total > max) {
+					moveToNext = true;
+					return `0${num}`;
+				}
+
+				/**
+				 * If the total has two digits and is less than or equal to the max day value,
+				 * we will move to the next segment and return the total as the segment value.
+				 */
 				moveToNext = true;
-				this.#announcer.announce(total);
 				return `${total}`;
 			});
 
@@ -1985,7 +2116,7 @@ class DateFieldDayPeriodSegmentState {
 	#announcer: Announcer;
 	#updateSegment: DateFieldRootState["updateSegment"];
 
-	constructor(props: DateFieldMinuteSegmentStateProps, root: DateFieldRootState) {
+	constructor(props: DateFieldDayPeriodSegmentStateProps, root: DateFieldRootState) {
 		this.#id = props.id;
 		this.#ref = props.ref;
 		this.#root = root;
@@ -2068,14 +2199,14 @@ class DateFieldDayPeriodSegmentState {
 	});
 }
 
-type DateFieldDayLiteralSegmentStateProps = WithRefProps;
+type DateFieldLiteralSegmentStateProps = WithRefProps;
 
 class DateFieldDayLiteralSegmentState {
-	#id: DateFieldDayLiteralSegmentStateProps["id"];
-	#ref: DateFieldDayLiteralSegmentStateProps["ref"];
+	#id: DateFieldLiteralSegmentStateProps["id"];
+	#ref: DateFieldLiteralSegmentStateProps["ref"];
 	#root: DateFieldRootState;
 
-	constructor(props: DateFieldMinuteSegmentStateProps, root: DateFieldRootState) {
+	constructor(props: DateFieldLiteralSegmentStateProps, root: DateFieldRootState) {
 		this.#id = props.id;
 		this.#ref = props.ref;
 		this.#root = root;
