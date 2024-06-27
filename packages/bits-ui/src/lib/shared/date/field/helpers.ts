@@ -94,16 +94,60 @@ function createContentObj(props: CreateContentObjProps) {
 		if ("hour" in segmentValues) {
 			const value = segmentValues[part];
 			const leadingZero = typeof value === "string" && value?.startsWith("0");
+			const intValue = value !== null ? parseInt(value) : null;
+
 			if (value === "0" && part !== "year") {
+				console.log('returning "0" for part', part);
 				return "0";
-			} else if (!isNull(value)) {
+			} else if (!isNull(value) && !isNull(intValue)) {
 				const formatted = formatter.part(dateRef.set({ [part]: value }), part, {
 					hourCycle: props.hourCycle === 24 ? "h24" : undefined,
 				});
 
+				/**
+				 * If we're operating in a 12 hour clock and the part is an hour, we handle
+				 * the conversion to 12 hour format with 2 digit hours and leading zeros here.
+				 */
+				if (part === "hour" && "dayPeriod" in segmentValues && props.hourCycle !== 24) {
+					/**
+					 * If the value is over 12, we convert to 12 hour format and add leading
+					 * zeroes if the value is less than 10.
+					 */
+					if (intValue > 12) {
+						const hour = intValue - 12;
+						if (hour === 0) {
+							return "12";
+						} else if (hour < 10) {
+							return `0${hour}`;
+						} else {
+							return `${hour}`;
+						}
+					}
+
+					/**
+					 * If the value is 0, we convert to 12, since 0 is not a valid 12 hour time.
+					 */
+					if (intValue === 0) {
+						return "12";
+					}
+
+					/**
+					 * If the value is less than 10, we add a leading zero to the value.
+					 */
+					if (intValue < 10) {
+						return `0${intValue}`;
+					}
+
+					/**
+					 * Otherwise, we don't need to do anything to the value.
+					 */
+					return `${intValue}`;
+				}
+
 				if (part === "year") {
 					return `${value}`;
 				}
+
 				if (leadingZero && formatted.length === 1) {
 					return `0${formatted}`;
 				}

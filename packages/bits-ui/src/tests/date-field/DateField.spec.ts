@@ -658,17 +658,17 @@ describe("date field", () => {
 
 		await user.click(getHour());
 		await user.keyboard(kbd.ARROW_UP);
-		expect(getHour()).toHaveTextContent("1");
+		expect(getHour()).toHaveTextContent("01");
 		expect(getHour()).not.toHaveTextContent("12");
-		expect(getDayPeriod()).toHaveTextContent("PM");
+		expect(getDayPeriod()).toHaveTextContent("AM");
 		await user.click(getDayPeriod());
 		await user.keyboard(kbd.ARROW_UP);
-		expect(getHour()).toHaveTextContent("1");
-		expect(getDayPeriod()).toHaveTextContent("AM");
+		expect(getHour()).toHaveTextContent("01");
+		expect(getDayPeriod()).toHaveTextContent("PM");
 		await user.click(getHour());
 		await user.keyboard(kbd.ARROW_DOWN);
 		expect(getHour()).toHaveTextContent("12");
-		expect(getDayPeriod()).toHaveTextContent("AM");
+		expect(getDayPeriod()).toHaveTextContent("PM");
 	});
 
 	it("should add missing leading zeroes to the day,month, and year segments on focusout", async () => {
@@ -692,8 +692,144 @@ describe("date field", () => {
 		expect(day).toHaveFocus();
 		expect(year).toHaveTextContent("0202");
 	});
+
+	it("should not intercept number keys when the ctrl or meta key is pressed, allowing default browser behavior", async () => {
+		const { user, month } = setup({
+			value: new CalendarDate(2023, 10, 12),
+		});
+
+		await user.click(month);
+		await user.keyboard(`{1}`);
+		await user.keyboard(`{2}`);
+		expect(month).toHaveTextContent("12");
+
+		await user.keyboard(`{Shift>}1{/Shift}`);
+		expect(month).toHaveTextContent("12");
+
+		await user.keyboard(`{Ctrl>}2{/Ctrl}`);
+		expect(month).toHaveTextContent("12");
+
+		await user.keyboard(`{Meta>}2{/Meta}`);
+		expect(month).toHaveTextContent("12");
+	});
+
+	it("should not allow typing 24 hour cycle hours when the hourcycle is 12", async () => {
+		const { getByTestId, user } = setup({
+			value: new CalendarDateTime(2023, 10, 12, 12, 30, 0, 0),
+		});
+		const { getHour, getMinute } = getTimeSegments(getByTestId);
+
+		expect(getHour()).toHaveTextContent("12");
+		await user.click(getHour());
+		await user.keyboard(`{1}{4}`);
+		expect(getMinute()).toHaveFocus();
+		expect(getHour()).toHaveTextContent("04");
+	});
+
+	it("should not go to zero on arrow navigation with a 12 hour cycle", async () => {
+		const { getByTestId, user } = setup({
+			value: new CalendarDateTime(2023, 10, 12, 12, 30, 0, 0),
+		});
+		const { getHour, getMinute } = getTimeSegments(getByTestId);
+
+		expect(getHour()).toHaveTextContent("12");
+		await user.click(getHour());
+		await user.keyboard(`{1}{4}`);
+		expect(getMinute()).toHaveFocus();
+		expect(getHour()).toHaveTextContent("04");
+		await user.click(getHour());
+		await user.keyboard(kbd.ARROW_DOWN);
+		await user.keyboard(kbd.ARROW_DOWN);
+		await user.keyboard(kbd.ARROW_DOWN);
+		await user.keyboard(kbd.ARROW_DOWN);
+		expect(getHour()).toHaveTextContent("12");
+	});
+
+	it("should allow double zeroes to be set in the minute segment", async () => {
+		const { getByTestId, user } = setup({
+			value: new CalendarDateTime(2023, 10, 12, 12, 30, 0, 0),
+		});
+		const { getHour, getMinute } = getTimeSegments(getByTestId);
+
+		expect(getHour()).toHaveTextContent("12");
+		await user.click(getMinute());
+		await user.keyboard(`{0}{0}`);
+		expect(getMinute()).toHaveTextContent("00");
+	});
+
+	it("should advance to the next segment when typing two zeroes into the minute segment", async () => {
+		const { getByTestId, user } = setup({
+			value: new CalendarDateTime(2023, 10, 12, 12, 30, 0, 0),
+		});
+		const { getHour, getMinute, getDayPeriod } = getTimeSegments(getByTestId);
+
+		expect(getHour()).toHaveTextContent("12");
+		await user.click(getMinute());
+		await user.keyboard(`{0}{0}`);
+		expect(getDayPeriod()).toHaveFocus();
+	});
+
+	it("should allow double zeroes to be set in the second segment", async () => {
+		const { getByTestId, user } = setup({
+			value: new CalendarDateTime(2023, 10, 12, 12, 30, 30, 0),
+			granularity: "second",
+		});
+		const { getSecond } = getTimeSegments(getByTestId);
+
+		expect(getSecond()).toHaveTextContent("30");
+		await user.click(getSecond());
+		await user.keyboard(`{0}{0}`);
+		expect(getSecond()).toHaveTextContent("00");
+	});
+
+	it("should advance to the next segment when typing two zeroes into the second segment", async () => {
+		const { getByTestId, user } = setup({
+			value: new CalendarDateTime(2023, 10, 12, 12, 30, 30, 0),
+			granularity: "second",
+		});
+		const { getSecond, getDayPeriod } = getTimeSegments(getByTestId);
+
+		expect(getSecond()).toHaveTextContent("30");
+		await user.click(getSecond());
+		await user.keyboard(`{0}{0}`);
+		expect(getDayPeriod()).toHaveFocus();
+	});
+
+	it("should not allow typing characters that are not `a` or `p` into the dayPeriod segment", async () => {
+		const { getByTestId, user } = setup({
+			value: new CalendarDateTime(2023, 10, 12, 12, 30, 30, 0),
+			granularity: "second",
+		});
+		const { getDayPeriod } = getTimeSegments(getByTestId);
+
+		expect(getDayPeriod()).toHaveTextContent("PM");
+		await user.click(getDayPeriod());
+		await user.keyboard("{i}{d}{k}");
+		expect(getDayPeriod().textContent).toBe("PM");
+	});
+
+	it("should not allow typing non-numeric characters into the date/time segments", async () => {
+		const { getByTestId, user, day, month, year } = setup({
+			value: new CalendarDateTime(2023, 10, 12, 12, 30, 30, 0),
+			granularity: "second",
+		});
+		const { getHour, getMinute, getSecond } = getTimeSegments(getByTestId);
+
+		const segments = [day, month, year, getHour(), getMinute(), getSecond()];
+
+		for (const seg of segments) {
+			await user.click(seg);
+			await user.keyboard("{i}{d}{k}");
+			expect(seg).not.toHaveTextContent("idk");
+		}
+	});
 });
 
+/**
+ * Since the time segments are not always present, this function returns an
+ * object with functions that return the time segments if they exist, so they
+ * can be used on an as-needed basis without invoking errors.
+ */
 // eslint-disable-next-line ts/no-explicit-any
 function getTimeSegments(getByTestId: (...args: any[]) => HTMLElement) {
 	return {
