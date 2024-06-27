@@ -626,12 +626,12 @@ class DateFieldDaySegmentState {
 	}
 
 	#onkeydown = (e: KeyboardEvent) => {
+		const placeholder = this.#root.placeholder.value;
 		if (e.ctrlKey || e.metaKey || this.#root.disabled.value) return;
 		if (e.key !== kbd.TAB) e.preventDefault();
 		if (!isAcceptableSegmentKey(e.key)) return;
 
 		const segmentMonthValue = this.#root.segmentValues.month;
-		const placeholder = this.#root.placeholder.value;
 
 		const daysInMonth = segmentMonthValue
 			? getDaysInMonth(placeholder.set({ month: parseInt(segmentMonthValue) }))
@@ -876,11 +876,11 @@ class DateFieldMonthSegmentState {
 	};
 
 	#onkeydown = (e: KeyboardEvent) => {
+		const placeholder = this.#root.placeholder.value;
 		if (e.ctrlKey || e.metaKey || this.#root.disabled.value) return;
 		if (e.key !== kbd.TAB) e.preventDefault();
 		if (!isAcceptableSegmentKey(e.key)) return;
 
-		const placeholder = this.#root.placeholder.value;
 		const max = 12;
 
 		if (isArrowUp(e.key)) {
@@ -1177,11 +1177,10 @@ class DateFieldYearSegmentState {
 	}
 
 	#onkeydown = (e: KeyboardEvent) => {
-		if (e.ctrlKey || e.metaKey || this.#root.disabled.value || !isAcceptableSegmentKey(e.key))
-			return;
-		if (e.key !== kbd.TAB) e.preventDefault();
-
 		const placeholder = this.#root.placeholder.value;
+		if (e.ctrlKey || e.metaKey || this.#root.disabled.value) return;
+		if (e.key !== kbd.TAB) e.preventDefault();
+		if (!isAcceptableSegmentKey(e.key)) return;
 
 		if (isArrowUp(e.key)) {
 			this.#resetBackspaceCount();
@@ -1368,15 +1367,9 @@ class DateFieldHourSegmentState {
 
 	#onkeydown = (e: KeyboardEvent) => {
 		const placeholder = this.#root.placeholder.value;
-		if (
-			e.ctrlKey ||
-			e.metaKey ||
-			this.#root.disabled.value ||
-			!isAcceptableSegmentKey(e.key) ||
-			!("hour" in placeholder)
-		)
-			return;
+		if (e.ctrlKey || e.metaKey || this.#root.disabled.value || !("hour" in placeholder)) return;
 		if (e.key !== kbd.TAB) e.preventDefault();
+		if (!isAcceptableSegmentKey(e.key)) return;
 
 		const hourCycle = this.#root.hourCycle.value;
 
@@ -1640,16 +1633,10 @@ class DateFieldMinuteSegmentState {
 
 	#onkeydown = (e: KeyboardEvent) => {
 		const placeholder = this.#root.placeholder.value;
-		if (
-			e.ctrlKey ||
-			e.metaKey ||
-			this.#root.disabled.value ||
-			!isAcceptableSegmentKey(e.key) ||
-			!("minute" in placeholder)
-		)
+		if (e.ctrlKey || e.metaKey || this.#root.disabled.value || !("minute" in placeholder))
 			return;
-
 		if (e.key !== kbd.TAB) e.preventDefault();
+		if (!isAcceptableSegmentKey(e.key)) return;
 
 		const min = 0;
 		const max = 59;
@@ -1887,16 +1874,10 @@ class DateFieldSecondSegmentState {
 
 	#onkeydown = (e: KeyboardEvent) => {
 		const placeholder = this.#root.placeholder.value;
-		if (
-			e.ctrlKey ||
-			e.metaKey ||
-			this.#root.disabled.value ||
-			!isAcceptableSegmentKey(e.key) ||
-			!("second" in placeholder)
-		)
+		if (e.ctrlKey || e.metaKey || this.#root.disabled.value || !("second" in placeholder))
 			return;
 		if (e.key !== kbd.TAB) e.preventDefault();
-		if (!isAcceptableSegmentKey(e.key) || this.#root.disabled.value) return;
+		if (!isAcceptableSegmentKey(e.key)) return;
 
 		const min = 0;
 		const max = 59;
@@ -2133,10 +2114,10 @@ class DateFieldDayPeriodSegmentState {
 	}
 
 	#onkeydown = (e: KeyboardEvent) => {
-		if (e.ctrlKey || e.metaKey || this.#root.disabled.value || !isAcceptableDayPeriodKey(e.key))
-			return;
+		if (e.ctrlKey || e.metaKey || this.#root.disabled.value) return;
 
 		if (e.key !== kbd.TAB) e.preventDefault();
+		if (!isAcceptableDayPeriodKey(e.key)) return;
 
 		if (isArrowUp(e.key) || isArrowDown(e.key)) {
 			this.#updateSegment("dayPeriod", (prev) => {

@@ -794,6 +794,35 @@ describe("date field", () => {
 		await user.keyboard(`{0}{0}`);
 		expect(getDayPeriod()).toHaveFocus();
 	});
+
+	it("should not allow typing characters that are not `a` or `p` into the dayPeriod segment", async () => {
+		const { getByTestId, user } = setup({
+			value: new CalendarDateTime(2023, 10, 12, 12, 30, 30, 0),
+			granularity: "second",
+		});
+		const { getDayPeriod } = getTimeSegments(getByTestId);
+
+		expect(getDayPeriod()).toHaveTextContent("PM");
+		await user.click(getDayPeriod());
+		await user.keyboard("{i}{d}{k}");
+		expect(getDayPeriod().textContent).toBe("PM");
+	});
+
+	it("should not allow typing non-numeric characters into the date/time segments", async () => {
+		const { getByTestId, user, day, month, year } = setup({
+			value: new CalendarDateTime(2023, 10, 12, 12, 30, 30, 0),
+			granularity: "second",
+		});
+		const { getHour, getMinute, getSecond } = getTimeSegments(getByTestId);
+
+		const segments = [day, month, year, getHour(), getMinute(), getSecond()];
+
+		for (const seg of segments) {
+			await user.click(seg);
+			await user.keyboard("{i}{d}{k}");
+			expect(seg).not.toHaveTextContent("idk");
+		}
+	});
 });
 
 /**
