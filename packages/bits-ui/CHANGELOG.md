@@ -1,5 +1,11 @@
 # bits-ui
 
+## 0.21.11
+
+### Patch Changes
+
+- fix: use the `dir` props for rtl support ([#531](https://github.com/huntabyte/bits-ui/pull/531))
+
 ## 0.21.10
 
 ### Patch Changes
