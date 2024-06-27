@@ -796,6 +796,11 @@ describe("date field", () => {
 	});
 });
 
+/**
+ * Since the time segments are not always present, this function returns an
+ * object with functions that return the time segments if they exist, so they
+ * can be used on an as-needed basis without invoking errors.
+ */
 // eslint-disable-next-line ts/no-explicit-any
 function getTimeSegments(getByTestId: (...args: any[]) => HTMLElement) {
 	return {
