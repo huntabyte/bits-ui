@@ -49,10 +49,11 @@ import {
 } from "$lib/shared/date/field.js";
 import type { SegmentPart } from "$lib/shared/index.js";
 import { DATE_SEGMENT_PARTS, TIME_SEGMENT_PARTS } from "$lib/shared/date/field/parts.js";
-import { untrack } from "svelte";
+import { onDestroy, onMount, untrack } from "svelte";
 import { createContext } from "$lib/internal/createContext.js";
 import { useId } from "$lib/internal/useId.svelte.js";
 import type { Granularity, Matcher } from "$lib/shared/date/types.js";
+import type { DateRangeFieldRootState } from "../date-range-field/date-range-field.svelte.js";
 
 type DateFieldRootStateProps = WritableBoxedValues<{
 	value: DateValue | undefined;
@@ -102,24 +103,30 @@ class DateFieldRootState {
 	states = initSegmentStates();
 	dayPeriodNode = $state<HTMLElement | null>(null);
 
-	constructor(props: DateFieldRootStateProps) {
+	constructor(props: DateFieldRootStateProps, rangeRoot?: DateRangeFieldRootState) {
+		/**
+		 * Since the `DateFieldRootState` can be used in two contexts, as a standalone
+		 * field or as a field within a `DateRangeField` component, we handle assigning
+		 * the props based on that context.
+		 */
 		this.value = props.value;
-		this.placeholder = props.placeholder;
-		this.isDateUnavailable = props.isDateUnavailable;
-		this.minValue = props.minValue;
-		this.maxValue = props.maxValue;
-		this.disabled = props.disabled;
-		this.readonly = props.readonly;
-		this.granularity = props.granularity;
-		this.readonlySegments = props.readonlySegments;
-		this.hourCycle = props.hourCycle;
-		this.locale = props.locale;
-		this.hideTimeZone = props.hideTimeZone;
+		this.placeholder = rangeRoot ? rangeRoot.placeholder : props.placeholder;
+		this.isDateUnavailable = rangeRoot ? rangeRoot.isDateUnavailable : props.isDateUnavailable;
+		this.minValue = rangeRoot ? rangeRoot.minValue : props.minValue;
+		this.maxValue = rangeRoot ? rangeRoot.maxValue : props.maxValue;
+		this.disabled = rangeRoot ? rangeRoot.disabled : props.disabled;
+		this.readonly = rangeRoot ? rangeRoot.readonly : props.readonly;
+		this.granularity = rangeRoot ? rangeRoot.granularity : props.granularity;
+		this.readonlySegments = rangeRoot ? rangeRoot.readonlySegments : props.readonlySegments;
+		this.hourCycle = rangeRoot ? rangeRoot.hourCycle : props.hourCycle;
+		this.locale = rangeRoot ? rangeRoot.locale : props.locale;
+		this.hideTimeZone = rangeRoot ? rangeRoot.hideTimeZone : props.hideTimeZone;
+		this.required = rangeRoot ? rangeRoot.required : props.required;
 		this.name = props.name;
-		this.required = props.required;
 		this.formatter = createFormatter(this.locale.value);
 		this.initialSegments = initializeSegmentValues(this.inferredGranularity);
 		this.segmentValues = this.initialSegments;
+		this.announcer = getAnnouncer();
 
 		$effect(() => {
 			untrack(() => {
@@ -127,20 +134,23 @@ class DateFieldRootState {
 			});
 		});
 
-		$effect(() => {
+		onMount(() => {
 			this.announcer = getAnnouncer();
-			return () => {
-				removeDescriptionElement(this.descriptionId);
-			};
 		});
-		this.announcer = getAnnouncer();
+
+		onDestroy(() => {
+			if (rangeRoot) return;
+			removeDescriptionElement(this.descriptionId);
+		});
 
 		$effect(() => {
+			if (rangeRoot) return;
 			if (this.formatter.getLocale() === this.locale.value) return;
 			this.formatter.setLocale(this.locale.value);
 		});
 
 		$effect(() => {
+			if (rangeRoot) return;
 			if (this.value.value) {
 				const descriptionId = untrack(() => this.descriptionId);
 				setDescription(descriptionId, this.formatter, this.value.value);
