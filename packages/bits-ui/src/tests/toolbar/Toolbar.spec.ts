@@ -128,7 +128,7 @@ describe("toolbar", () => {
 		expect(button).toHaveFocus();
 	});
 
-	it("toolbar toogle group, type `'single'`, toggles when clicked", async () => {
+	it("toolbar toggle group, type `'single'`, toggles when clicked", async () => {
 		const { user, groupSingleItemLeft, groupSingleItemCenter, alignBinding } = setup();
 		expect(alignBinding).toHaveTextContent("undefined");
 		await user.click(groupSingleItemLeft);
@@ -138,7 +138,7 @@ describe("toolbar", () => {
 	});
 
 	it.each([kbd.ENTER, kbd.SPACE])(
-		"toolbar toogle group, type `'single'`, toggles when the %s key is pressed",
+		"toolbar toggle group, type `'single'`, toggles when the %s key is pressed",
 		async (key) => {
 			const { user, groupSingleItemLeft, groupSingleItemCenter, alignBinding } = setup();
 			expect(alignBinding).toHaveTextContent("undefined");
@@ -172,7 +172,7 @@ describe("toolbar", () => {
 		expect(styleBinding).toHaveTextContent("");
 	});
 
-	it("toolbar toogle group items should be disabled then the `disabled` prop is set to true", async () => {
+	it("toolbar toggle group items should be disabled then the `disabled` prop is set to true", async () => {
 		const {
 			groupMultipleItemBold,
 			groupMultipleItemItalic,
@@ -189,7 +189,7 @@ describe("toolbar", () => {
 		expect(groupSingleItemRight).toBeDisabled();
 	});
 
-	it("toolbar toogle groups should fire the `onChange` callback when changing", async () => {
+	it("toolbar toggle groups should fire the `onChange` callback when changing", async () => {
 		let newMultipleValue;
 		function multipleOnValueChange(next: string[] | undefined) {
 			newMultipleValue = next;
@@ -212,7 +212,7 @@ describe("toolbar", () => {
 		expect(newSingleValue).toBe("right");
 	});
 
-	it("toolbar toogle groups respects binding to the `value` prop", async () => {
+	it("toolbar toggle groups respects binding to the `value` prop", async () => {
 		const { user, groupMultipleItemItalic, groupSingleItemCenter, styleBinding, alignBinding } =
 			setup();
 		expect(styleBinding).toHaveTextContent("bold");

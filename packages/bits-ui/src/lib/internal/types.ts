@@ -52,7 +52,7 @@ export type Builder = {
 
 export type DOMEl<T extends Element = HTMLDivElement> = Expand<{
 	/**
-	 * Wheter to expose the underlying DOM element.
+	 * Whether to expose the underlying DOM element.
 	 */
 	el?: T;
 }>;

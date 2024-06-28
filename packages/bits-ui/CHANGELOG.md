@@ -292,7 +292,7 @@
 
 ### Patch Changes
 
-- fix: Set aspect ratio prop optional as default value is setted ([#238](https://github.com/huntabyte/bits-ui/pull/238))
+- fix: Set aspect ratio prop optional as default value is set ([#238](https://github.com/huntabyte/bits-ui/pull/238))
 
 ## 0.12.0
 

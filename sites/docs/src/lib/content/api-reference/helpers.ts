@@ -33,7 +33,7 @@ export function domElProps(elType: ElementKind) {
 		el: {
 			type: elType,
 			description:
-				"The underlying DOM element being rendered. You can bind to this to programatically interact with the element.",
+				"The underlying DOM element being rendered. You can bind to this to programmatically interact with the element.",
 		},
 	};
 }

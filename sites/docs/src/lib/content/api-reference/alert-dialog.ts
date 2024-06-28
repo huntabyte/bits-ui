@@ -117,7 +117,7 @@ const content: APISchema<AlertDialogContentPropsWithoutHTML> = {
 
 const title: APISchema<AlertDialogTitlePropsWithoutHTML> = {
 	title: "Title",
-	description: "An accessibile title for the alert dialog.",
+	description: "An accessible title for the alert dialog.",
 	props: {
 		...domElProps("HTMLHeadingElement"),
 		level: {
@@ -139,7 +139,7 @@ const title: APISchema<AlertDialogTitlePropsWithoutHTML> = {
 
 const description: APISchema<AlertDialogDescriptionPropsWithoutHTML> = {
 	title: "Description",
-	description: "An accessibile description for the alert dialog.",
+	description: "An accessible description for the alert dialog.",
 	props: domElProps("HTMLDivElement"),
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
