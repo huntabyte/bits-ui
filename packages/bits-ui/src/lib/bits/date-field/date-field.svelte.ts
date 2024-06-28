@@ -97,7 +97,7 @@ class DateFieldRootState {
 	readonlySegmentsSet = $derived.by(() => new Set(this.readonlySegments.value));
 	segmentStates = initSegmentStates();
 	#fieldNode = $state<HTMLElement | null>(null);
-	labelNode = $state<HTMLElement | null>(null);
+	#labelNode = $state<HTMLElement | null>(null);
 	descriptionNode = $state<HTMLElement | null>(null);
 	validationNode = $state<HTMLElement | null>(null);
 	states = initSegmentStates();
@@ -204,6 +204,27 @@ class DateFieldRootState {
 			 */
 			return this.rangeRoot.fieldNode;
 		}
+	}
+
+	/**
+	 * Sets the label node for the `DateFieldRootState` instance. We use this method so we can
+	 * keep `#labelNode` private to prevent accidental usage of the incorrect label node.
+	 */
+	setLabelNode(node: HTMLElement | null) {
+		this.#labelNode = node;
+	}
+
+	/**
+	 * Gets the correct label node for the date field regardless of whether it's being used in
+	 * a standalone context or within a `DateRangeField` component.
+	 */
+	getLabelNode() {
+		/** If we're not within a DateRangeField, we return this field. */
+		if (!this.rangeRoot) {
+			return this.#labelNode;
+		}
+		/** Otherwise we return the rangeRoot's label node. */
+		return this.rangeRoot.labelNode;
 	}
 
 	clearUpdating() {
@@ -356,7 +377,7 @@ class DateFieldRootState {
 	};
 
 	getLabelledBy = (segmentId: string) => {
-		return `${segmentId} ${this.labelNode?.id ?? ""}`;
+		return `${segmentId} ${this.getLabelNode()?.id ?? ""}`;
 	};
 
 	updateSegment = <T extends keyof DateAndTimeSegmentObj>(
@@ -574,7 +595,7 @@ class DateFieldInputState {
 			({
 				id: this.#id.value,
 				role: "group",
-				"aria-labelledby": this.root.labelNode?.id ?? undefined,
+				"aria-labelledby": this.root.getLabelNode()?.id ?? undefined,
 				"aria-describedby": this.#ariaDescribedBy,
 				"aria-disabled": getAriaDisabled(this.root.disabled.value),
 				"data-invalid": this.root.isInvalid ? "" : undefined,
@@ -617,7 +638,7 @@ class DateFieldLabelState {
 			id: this.#id,
 			ref: this.#ref,
 			onRefChange: (node) => {
-				this.#root.labelNode = node;
+				this.#root.setLabelNode(node);
 			},
 		});
 	}

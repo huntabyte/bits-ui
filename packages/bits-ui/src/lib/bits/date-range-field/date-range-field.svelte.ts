@@ -95,4 +95,9 @@ export class DateRangeFieldRootState {
 			}
 		});
 	}
+
+	/**
+	 * These props are used to override those of the child fields.
+	 */
+	childFieldPropOverrides = {};
 }
