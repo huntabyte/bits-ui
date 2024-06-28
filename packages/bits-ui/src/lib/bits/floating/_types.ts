@@ -42,7 +42,7 @@ export type FloatingProps = {
 	 * The distance in pixels from the anchor to the floating element.
 	 * @see https://floating-ui.com/docs/offset#options
 	 */
-	sideOffset?: number;
+	sideOffset?: number | undefined;
 
 	/**
 	 * Whether the content should be the same width as the trigger.

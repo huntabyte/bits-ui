@@ -80,7 +80,7 @@ export type TransitionProps<
 	/**
 	 * A transition function to use during both the in and out transitions.
 	 */
-	transition?: T;
+	transition?: T | undefined;
 
 	/**
 	 * The configuration to pass to the `transition` function.
