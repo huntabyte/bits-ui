@@ -42,7 +42,7 @@ export const trigger: APISchema<ContextMenuTriggerPropsWithoutHTML> = {
 		...menu.trigger.props,
 		el: {
 			type: "HTMLDivElement",
-			description: "You can bind to this prop to programatically interact with the element.",
+			description: "You can bind to this prop to programmatically interact with the element.",
 		},
 	},
 };
