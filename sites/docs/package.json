@@ -53,7 +53,7 @@
 	"type": "module",
 	"dependencies": {
 		"@internationalized/date": "^3.5.1",
-		"@melt-ui/svelte": "0.76.2",
+		"@melt-ui/svelte": "0.81.0",
 		"bits-ui": "workspace:*"
 	}
 }
