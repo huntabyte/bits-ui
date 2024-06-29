@@ -55,7 +55,7 @@ import { useId } from "$lib/internal/useId.svelte.js";
 import type { Granularity, Matcher } from "$lib/shared/date/types.js";
 import type { DateRangeFieldRootState } from "../date-range-field/date-range-field.svelte.js";
 
-type DateFieldRootStateProps = WritableBoxedValues<{
+export type DateFieldRootStateProps = WritableBoxedValues<{
 	value: DateValue | undefined;
 	placeholder: DateValue;
 }> &
@@ -2200,9 +2200,9 @@ class DateFieldDayPeriodSegmentState {
 			});
 		}
 
-		if (e.key === kbd.A || e.key === kbd.P) {
+		if (e.key === kbd.A || e.key === kbd.P || kbd.a || kbd.p) {
 			this.#updateSegment("dayPeriod", () => {
-				const next = e.key === kbd.A ? "AM" : "PM";
+				const next = e.key === kbd.A || e.key === kbd.a ? "AM" : "PM";
 				this.#announcer.announce(next);
 				return next;
 			});
@@ -2312,7 +2312,13 @@ class DateFieldTimeZoneSegmentState {
 // Utils/helpers
 
 function isAcceptableDayPeriodKey(key: string) {
-	return isAcceptableSegmentKey(key) || key === kbd.A || key === kbd.P;
+	return (
+		isAcceptableSegmentKey(key) ||
+		key === kbd.A ||
+		key === kbd.P ||
+		key === kbd.a ||
+		key === kbd.p
+	);
 }
 
 function isArrowUp(key: string) {
@@ -2330,8 +2336,11 @@ function isBackspace(key: string) {
 const [setDateFieldRootContext, getDateFieldRootContext] =
 	createContext<DateFieldRootState>("DateField.Root");
 
-export function useDateFieldRoot(props: DateFieldRootStateProps) {
-	return setDateFieldRootContext(new DateFieldRootState(props));
+export function useDateFieldRoot(
+	props: DateFieldRootStateProps,
+	rangeRoot?: DateRangeFieldRootState
+) {
+	return setDateFieldRootContext(new DateFieldRootState(props, rangeRoot));
 }
 
 export function useDateFieldInput(props: DateFieldInputStateProps) {

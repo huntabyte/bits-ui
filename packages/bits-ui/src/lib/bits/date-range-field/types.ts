@@ -1,4 +1,10 @@
-import type { OnChangeFn, WithAsChild } from "$lib/internal/types.js";
+import type {
+	OnChangeFn,
+	PrimitiveDivAttributes,
+	PrimitiveSpanAttributes,
+	WithAsChild,
+	Without,
+} from "$lib/internal/types.js";
 import type { Granularity, Matcher } from "$lib/shared/date/types.js";
 import type { DateRange, EditableSegmentPart } from "$lib/shared/index.js";
 import type { DateValue } from "@internationalized/date";
@@ -65,6 +71,15 @@ export type DateRangeFieldRootPropsWithoutHTML = WithAsChild<{
 	readonly?: boolean;
 
 	/**
+	 * If true, the date field will be required, which is useful when used within
+	 * a form. If the date field is empty when the form is submitted, the form
+	 * will not be valid.
+	 *
+	 * @defaultValue false
+	 */
+	required?: boolean;
+
+	/**
 	 * An array of segment names that should be readonly. If provided, only the
 	 * segments not in this array will be editable.
 	 */
@@ -111,3 +126,34 @@ export type DateRangeFieldRootPropsWithoutHTML = WithAsChild<{
 	 */
 	hideTimeZone?: boolean;
 }>;
+
+export type DateRangeFieldRootProps = DateRangeFieldRootPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, DateRangeFieldRootPropsWithoutHTML>;
+
+export type DateRangeFieldLabelPropsWithoutHTML = WithAsChild<{}>;
+
+export type DateRangeFieldLabelProps = DateRangeFieldLabelPropsWithoutHTML &
+	Without<PrimitiveSpanAttributes, DateRangeFieldLabelPropsWithoutHTML>;
+
+export type DateRangeFieldInputPropsWithoutHTML = WithAsChild<{
+	/**
+	 * The value of the specific date field within the date range field.
+	 *
+	 * @bindable
+	 */
+	value?: DateValue;
+
+	/**
+	 * A callback that is called when the value of the specific date field changes.
+	 */
+	onValueChange?: OnChangeFn<DateValue | undefined>;
+
+	/**
+	 * The name to use for the hidden input element associated with this input
+	 * used for form submission.
+	 */
+	name?: string;
+}>;
+
+export type DateRangeFieldInputProps = DateRangeFieldInputPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, DateRangeFieldInputPropsWithoutHTML>;

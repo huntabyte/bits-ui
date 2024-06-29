@@ -1,33 +1,41 @@
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { useId } from "$lib/internal/useId.svelte.js";
-import { getAnnouncer, type Announcer } from "$lib/shared/date/announcer.js";
 import { removeDescriptionElement } from "$lib/shared/date/field/helpers.js";
 import { createFormatter, type Formatter } from "$lib/shared/date/formatter.js";
 import type { Granularity, Matcher } from "$lib/shared/date/types.js";
 import type { DateRange, SegmentPart } from "$lib/shared/index.js";
 import type { DateValue } from "@internationalized/date";
 import { onDestroy, untrack } from "svelte";
-import { box, type WritableBox } from "svelte-toolbelt";
+import { useDateFieldRoot, type DateFieldRootStateProps } from "../date-field/date-field.svelte.js";
+import type { WithRefProps } from "$lib/internal/types.js";
+import { useRefById } from "$lib/internal/useRefById.svelte.js";
+import { createContext } from "$lib/internal/createContext.js";
+import { getFirstSegment } from "$lib/shared/date/field.js";
+import { getDataDisabled, getDataInvalid } from "$lib/internal/attrs.js";
 
-type DateRangeFieldRootStateProps = WritableBoxedValues<{
-	value: DateRange;
-	placeholder: DateValue;
-}> &
-	ReadableBoxedValues<{
-		readonlySegments: SegmentPart[];
-		isDateUnavailable: Matcher | undefined;
-		minValue: DateValue | undefined;
-		maxValue: DateValue | undefined;
-		disabled: boolean;
-		readonly: boolean;
-		granularity: Granularity | undefined;
-		hourCycle: 12 | 24 | undefined;
-		locale: string;
-		hideTimeZone: boolean;
-		required: boolean;
-	}>;
+type DateRangeFieldRootStateProps = WithRefProps<
+	WritableBoxedValues<{
+		value: DateRange;
+		placeholder: DateValue;
+	}> &
+		ReadableBoxedValues<{
+			readonlySegments: SegmentPart[];
+			isDateUnavailable: Matcher | undefined;
+			minValue: DateValue | undefined;
+			maxValue: DateValue | undefined;
+			disabled: boolean;
+			readonly: boolean;
+			granularity: Granularity | undefined;
+			hourCycle: 12 | 24 | undefined;
+			locale: string;
+			hideTimeZone: boolean;
+			required: boolean;
+		}>
+>;
 
 export class DateRangeFieldRootState {
+	ref: DateRangeFieldRootStateProps["ref"];
+	id: DateRangeFieldRootStateProps["id"];
 	value: DateRangeFieldRootStateProps["value"];
 	placeholder: DateRangeFieldRootStateProps["placeholder"];
 	readonlySegments: DateRangeFieldRootStateProps["readonlySegments"];
@@ -70,6 +78,16 @@ export class DateRangeFieldRootState {
 		this.hideTimeZone = props.hideTimeZone;
 		this.required = props.required;
 		this.formatter = createFormatter(this.locale.value);
+		this.id = props.id;
+		this.ref = props.ref;
+
+		useRefById({
+			id: this.id,
+			ref: this.ref,
+			onRefChange: (node) => {
+				this.fieldNode = node;
+			},
+		});
 
 		onDestroy(() => {
 			removeDescriptionElement(this.descriptionId);
@@ -100,4 +118,69 @@ export class DateRangeFieldRootState {
 	 * These props are used to override those of the child fields.
 	 */
 	childFieldPropOverrides = {};
+
+	createField(props: DateFieldRootStateProps) {
+		return useDateFieldRoot(props, this);
+	}
+
+	createLabel(props: DateRangeFieldLabelStateProps) {
+		return new DateFieldLabelState(props, this);
+	}
+
+	props = $derived.by(() => ({
+		id: this.id.value,
+		role: "group",
+	}));
 }
+
+type DateRangeFieldLabelStateProps = WithRefProps;
+
+class DateFieldLabelState {
+	#id: DateRangeFieldLabelStateProps["id"];
+	#ref: DateRangeFieldLabelStateProps["ref"];
+	#root: DateRangeFieldRootState;
+
+	constructor(props: DateRangeFieldLabelStateProps, root: DateRangeFieldRootState) {
+		this.#id = props.id;
+		this.#ref = props.ref;
+		this.#root = root;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+			onRefChange: (node) => {
+				this.#root.labelNode = node;
+			},
+		});
+	}
+
+	#onclick = () => {
+		if (this.#root.disabled.value) return;
+		const firstSegment = getFirstSegment(this.#root.fieldNode);
+		if (!firstSegment) return;
+		firstSegment.focus();
+	};
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.value,
+				// "data-invalid": getDataInvalid(this.#root.isInvalid),
+				"data-disabled": getDataDisabled(this.#root.disabled.value),
+				onclick: this.#onclick,
+			}) as const
+	);
+}
+
+const [setDateRangeFieldRootContext, getDateRangeFieldRootContext] =
+	createContext<DateRangeFieldRootState>("DateRangeField.Root");
+
+export function useDateRangeFieldRoot(props: DateRangeFieldRootStateProps) {
+	return setDateRangeFieldRootContext(new DateRangeFieldRootState(props));
+}
+
+export function useDateRangeFieldLabel(props: DateRangeFieldLabelStateProps) {
+	return getDateRangeFieldRootContext().createLabel(props);
+}
+
+export { getDateRangeFieldRootContext };

@@ -823,6 +823,27 @@ describe("date field", () => {
 			expect(seg).not.toHaveTextContent("idk");
 		}
 	});
+
+	it("should allow changing the day period with capital or lowercase `a` and `p`", async () => {
+		const { getByTestId, user } = setup({
+			value: new CalendarDateTime(2023, 10, 12, 12, 30, 30, 0),
+			granularity: "second",
+		});
+
+		const { getDayPeriod } = getTimeSegments(getByTestId);
+		const dp = getDayPeriod();
+
+		expect(dp).toHaveTextContent("PM");
+		await user.click(dp);
+		await user.keyboard("{Shift>}a{/Shift}");
+		expect(dp).toHaveTextContent("AM");
+		await user.keyboard("{Shift>}p{/Shift}");
+		expect(dp).toHaveTextContent("PM");
+		await user.keyboard("a");
+		expect(dp).toHaveTextContent("AM");
+		await user.keyboard("p");
+		expect(dp).toHaveTextContent("PM");
+	});
 });
 
 /**
