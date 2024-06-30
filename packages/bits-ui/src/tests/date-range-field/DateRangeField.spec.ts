@@ -199,4 +199,17 @@ describe("date range field", () => {
 		expect(start.value).toHaveTextContent("2022-02-01");
 		expect(end.value).toHaveTextContent(calendarDate.end.toString());
 	});
+
+	it("renders an input for the start and end", async () => {
+		const { container } = setup({
+			startProps: {
+				name: "start-hidden-input",
+			},
+			endProps: {
+				name: "end-hidden-input",
+			},
+		});
+		expect(container.querySelector('input[name="start-hidden-input"]')).toBeInTheDocument();
+		expect(container.querySelector('input[name="end-hidden-input"]')).toBeInTheDocument();
+	});
 });

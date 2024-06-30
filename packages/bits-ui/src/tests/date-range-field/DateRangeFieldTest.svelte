@@ -1,14 +1,19 @@
 <script lang="ts" context="module">
-	export type DateRangeFieldTestProps = WithoutChildren<DateRangeFieldRootProps>;
+	export type DateRangeFieldTestProps = WithoutChildren<DateRangeFieldRootProps> & {
+		startProps?: Omit<DateRangeFieldInputProps, "type">;
+		endProps?: Omit<DateRangeFieldInputProps, "type">;
+	};
 </script>
 
 <script lang="ts">
 	import {
 		DateRangeField,
+		type DateRangeFieldInputProps,
 		type DateRangeFieldRootProps,
 		type WithoutChildren,
 	} from "$lib/index.js";
-	let { value, placeholder, ...restProps }: DateRangeFieldTestProps = $props();
+	let { value, placeholder, startProps, endProps, ...restProps }: DateRangeFieldTestProps =
+		$props();
 </script>
 
 <main>
@@ -18,7 +23,8 @@
 	<DateRangeField.Root bind:value bind:placeholder {...restProps} data-testid="root">
 		<DateRangeField.Label data-testid="label">Label</DateRangeField.Label>
 		{#each ["start", "end"] as const as type}
-			<DateRangeField.Input data-testid="{type}-input" {type}>
+			{@const inputProps = type === "start" ? startProps : endProps}
+			<DateRangeField.Input data-testid="{type}-input" {type} {...inputProps}>
 				{#snippet children({ segments })}
 					{#each segments as { part, value }}
 						<DateRangeField.Segment
