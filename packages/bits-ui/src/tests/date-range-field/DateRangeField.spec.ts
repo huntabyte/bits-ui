@@ -40,14 +40,17 @@ function setup(props: DateRangeFieldTestProps = {}) {
 		value: returned.getByTestId("end-value"),
 	};
 
-	const input = returned.getByTestId("input");
+	const root = returned.getByTestId("root");
+	const startInput = returned.getByTestId("start-input");
+	const endInput = returned.getByTestId("end-input");
+
 	const label = returned.getByTestId("label");
 
-	return { ...returned, user, start, end, input, label };
+	return { ...returned, user, start, end, root, startInput, endInput, label };
 }
 
-describe.only("date range field", () => {
-	it.only("has no axe violations", async () => {
+describe("date range field", () => {
+	it("has no axe violations", async () => {
 		const { container } = setup();
 		expect(await axe(container)).toHaveNoViolations();
 	});
