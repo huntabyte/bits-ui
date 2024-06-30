@@ -618,6 +618,7 @@ class DateFieldHiddenInputState {
 			name: this.#root.name.value,
 			value: this.isoValue,
 			required: this.#root.required.value,
+			"aria-hidden": getAriaHidden(true),
 		};
 	});
 }

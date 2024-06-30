@@ -845,7 +845,7 @@ describe("date field", () => {
 		expect(dp).toHaveTextContent("PM");
 	});
 
-	it.only("should not allow more than 4 digits in the year segment, even if the user types more", async () => {
+	it("should not allow more than 4 digits in the year segment, even if the user types more", async () => {
 		const { user, year } = setup({
 			value: new CalendarDate(2023, 10, 12),
 		});
@@ -860,6 +860,36 @@ describe("date field", () => {
 		}
 		expect(year).not.toHaveTextContent("222222");
 		expect(year).toHaveTextContent("2222");
+	});
+
+	it("should render a hidden input if the `name` prop is passed", async () => {
+		const { container } = setup({
+			name: "date-field",
+		});
+		const input = container.querySelector("input");
+		expect(input).not.toBeNull();
+		expect(input).toHaveAttribute("name", "date-field");
+		expect(input).toHaveAttribute("aria-hidden", "true");
+	});
+
+	it("should not render a hidden input if the name prop isn't passed", async () => {
+		const { container } = setup();
+		const input = container.querySelector("input");
+		expect(input).toBeNull();
+	});
+
+	it("should keep the value of the hidden input in sync with the fields value", async () => {
+		const value = new CalendarDateTime(2023, 10, 12, 12, 30, 30, 0);
+		const { container, year, user } = setup({
+			name: "hello",
+			value,
+		});
+		const input = container.querySelector("input");
+		expect(input).toHaveValue(value.toString());
+
+		await user.click(year);
+		await user.keyboard(kbd.ARROW_UP);
+		expect(input).toHaveValue(value.add({ years: 1 }).toString());
 	});
 });
 

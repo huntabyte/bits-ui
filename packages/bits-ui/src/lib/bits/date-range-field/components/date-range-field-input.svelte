@@ -54,7 +54,7 @@
 		),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, inputState.props));
+	const mergedProps = $derived(mergeProps(restProps, inputState.props, { role: "presentation" }));
 </script>
 
 {#if asChild}

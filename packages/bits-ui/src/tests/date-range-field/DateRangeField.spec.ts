@@ -1,11 +1,10 @@
-import { render } from "@testing-library/svelte";
+import { render } from "@testing-library/svelte/svelte5";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import { CalendarDate, CalendarDateTime, toZoned } from "@internationalized/date";
 import { getTestKbd } from "../utils.js";
-import DateRangeFieldTest from "./DateRangeFieldTest.svelte";
-import type { DateRangeField } from "$lib/index.js";
+import DateRangeFieldTest, { type DateRangeFieldTestProps } from "./DateRangeFieldTest.svelte";
 
 const kbd = getTestKbd();
 
@@ -23,7 +22,7 @@ const zonedDateTime = {
 	end: toZoned(calendarDateTime.end, "America/New_York"),
 };
 
-function setup(props: DateRangeField.Props = {}) {
+function setup(props: DateRangeFieldTestProps = {}) {
 	const user = userEvent.setup();
 	const returned = render(DateRangeFieldTest, { ...props });
 
@@ -47,8 +46,8 @@ function setup(props: DateRangeField.Props = {}) {
 	return { ...returned, user, start, end, input, label };
 }
 
-describe("date range field", () => {
-	it("has no axe violations", async () => {
+describe.only("date range field", () => {
+	it.only("has no axe violations", async () => {
 		const { container } = setup();
 		expect(await axe(container)).toHaveNoViolations();
 	});

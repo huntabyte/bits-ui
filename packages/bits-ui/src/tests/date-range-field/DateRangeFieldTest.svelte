@@ -1,36 +1,35 @@
-<script lang="ts">
-	import { DateRangeField } from "$lib/index.js";
+<script lang="ts" context="module">
+	export type DateRangeFieldTestProps = WithoutChildren<DateRangeFieldRootProps>;
+</script>
 
-	type $$Props = DateRangeField.Props;
-	export let value: $$Props["value"] = undefined;
-	export let placeholder: $$Props["placeholder"] = undefined;
+<script lang="ts">
+	import {
+		DateRangeField,
+		type DateRangeFieldRootProps,
+		type WithoutChildren,
+	} from "$lib/index.js";
+	let { value, placeholder, ...restProps }: DateRangeFieldTestProps = $props();
 </script>
 
 <main>
 	<div data-testid="value">{value}</div>
 	<div data-testid="start-value">{value?.start}</div>
 	<div data-testid="end-value">{value?.end}</div>
-	<DateRangeField.Root bind:value bind:placeholder {...$$restProps}>
-		<DateRangeField.Label data-testid="label">Hotel dates</DateRangeField.Label>
-		<DateRangeField.Input let:segments data-testid="input">
-			{#each segments.start as { part, value }}
-				<DateRangeField.Segment
-					type="start"
-					data-testid={part === "literal" ? undefined : `start-${part}`}
-					{part}
-				>
-					{value}
-				</DateRangeField.Segment>
-			{/each}
-			{#each segments.end as { part, value }}
-				<DateRangeField.Segment
-					type="end"
-					data-testid={part === "literal" ? undefined : `end-${part}`}
-					{part}
-				>
-					{value}
-				</DateRangeField.Segment>
-			{/each}
-		</DateRangeField.Input>
+	<DateRangeField.Root bind:value bind:placeholder {...restProps} data-testid="root">
+		<DateRangeField.Label data-testid="label">Label</DateRangeField.Label>
+		{#each ["start", "end"] as const as type}
+			<DateRangeField.Input data-testid="{type}-input" {type}>
+				{#snippet children({ segments })}
+					{#each segments as { part, value }}
+						<DateRangeField.Segment
+							{part}
+							data-testid={part === "literal" ? undefined : `${type}-${part}`}
+						>
+							{value}
+						</DateRangeField.Segment>
+					{/each}
+				{/snippet}
+			</DateRangeField.Input>
+		{/each}
 	</DateRangeField.Root>
 </main>
