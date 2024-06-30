@@ -49,12 +49,13 @@ import {
 } from "$lib/shared/date/field.js";
 import type { SegmentPart } from "$lib/shared/index.js";
 import { DATE_SEGMENT_PARTS, TIME_SEGMENT_PARTS } from "$lib/shared/date/field/parts.js";
-import { untrack } from "svelte";
+import { onDestroy, onMount, untrack } from "svelte";
 import { createContext } from "$lib/internal/createContext.js";
 import { useId } from "$lib/internal/useId.svelte.js";
 import type { Granularity, Matcher } from "$lib/shared/date/types.js";
+import type { DateRangeFieldRootState } from "../date-range-field/date-range-field.svelte.js";
 
-type DateFieldRootStateProps = WritableBoxedValues<{
+export type DateFieldRootStateProps = WritableBoxedValues<{
 	value: DateValue | undefined;
 	placeholder: DateValue;
 }> &
@@ -95,31 +96,39 @@ class DateFieldRootState {
 	announcer: Announcer;
 	readonlySegmentsSet = $derived.by(() => new Set(this.readonlySegments.value));
 	segmentStates = initSegmentStates();
-	fieldNode = $state<HTMLElement | null>(null);
-	labelNode = $state<HTMLElement | null>(null);
+	#fieldNode = $state<HTMLElement | null>(null);
+	#labelNode = $state<HTMLElement | null>(null);
 	descriptionNode = $state<HTMLElement | null>(null);
 	validationNode = $state<HTMLElement | null>(null);
 	states = initSegmentStates();
 	dayPeriodNode = $state<HTMLElement | null>(null);
+	rangeRoot: DateRangeFieldRootState | undefined = undefined;
 
-	constructor(props: DateFieldRootStateProps) {
+	constructor(props: DateFieldRootStateProps, rangeRoot?: DateRangeFieldRootState) {
+		this.rangeRoot = rangeRoot;
+		/**
+		 * Since the `DateFieldRootState` can be used in two contexts, as a standalone
+		 * field or as a field within a `DateRangeField` component, we handle assigning
+		 * the props based on that context.
+		 */
 		this.value = props.value;
-		this.placeholder = props.placeholder;
-		this.isDateUnavailable = props.isDateUnavailable;
-		this.minValue = props.minValue;
-		this.maxValue = props.maxValue;
-		this.disabled = props.disabled;
-		this.readonly = props.readonly;
-		this.granularity = props.granularity;
-		this.readonlySegments = props.readonlySegments;
-		this.hourCycle = props.hourCycle;
-		this.locale = props.locale;
-		this.hideTimeZone = props.hideTimeZone;
+		this.placeholder = rangeRoot ? rangeRoot.placeholder : props.placeholder;
+		this.isDateUnavailable = rangeRoot ? rangeRoot.isDateUnavailable : props.isDateUnavailable;
+		this.minValue = rangeRoot ? rangeRoot.minValue : props.minValue;
+		this.maxValue = rangeRoot ? rangeRoot.maxValue : props.maxValue;
+		this.disabled = rangeRoot ? rangeRoot.disabled : props.disabled;
+		this.readonly = rangeRoot ? rangeRoot.readonly : props.readonly;
+		this.granularity = rangeRoot ? rangeRoot.granularity : props.granularity;
+		this.readonlySegments = rangeRoot ? rangeRoot.readonlySegments : props.readonlySegments;
+		this.hourCycle = rangeRoot ? rangeRoot.hourCycle : props.hourCycle;
+		this.locale = rangeRoot ? rangeRoot.locale : props.locale;
+		this.hideTimeZone = rangeRoot ? rangeRoot.hideTimeZone : props.hideTimeZone;
+		this.required = rangeRoot ? rangeRoot.required : props.required;
 		this.name = props.name;
-		this.required = props.required;
 		this.formatter = createFormatter(this.locale.value);
 		this.initialSegments = initializeSegmentValues(this.inferredGranularity);
 		this.segmentValues = this.initialSegments;
+		this.announcer = getAnnouncer();
 
 		$effect(() => {
 			untrack(() => {
@@ -127,20 +136,23 @@ class DateFieldRootState {
 			});
 		});
 
-		$effect(() => {
+		onMount(() => {
 			this.announcer = getAnnouncer();
-			return () => {
-				removeDescriptionElement(this.descriptionId);
-			};
 		});
-		this.announcer = getAnnouncer();
+
+		onDestroy(() => {
+			if (rangeRoot) return;
+			removeDescriptionElement(this.descriptionId);
+		});
 
 		$effect(() => {
+			if (rangeRoot) return;
 			if (this.formatter.getLocale() === this.locale.value) return;
 			this.formatter.setLocale(this.locale.value);
 		});
 
 		$effect(() => {
+			if (rangeRoot) return;
 			if (this.value.value) {
 				const descriptionId = untrack(() => this.descriptionId);
 				setDescription(descriptionId, this.formatter, this.value.value);
@@ -167,6 +179,52 @@ class DateFieldRootState {
 
 			this.clearUpdating();
 		});
+	}
+
+	/**
+	 * Sets the field node for the `DateFieldRootState` instance. We use this method so we can
+	 * keep `#fieldNode` private to prevent accidental usage of the incorrect field node.
+	 */
+	setFieldNode(node: HTMLElement | null) {
+		this.#fieldNode = node;
+	}
+
+	/**
+	 * Gets the correct field node for the date field regardless of whether it's being
+	 * used in a standalone context or within a `DateRangeField` component.
+	 */
+	getFieldNode() {
+		/** If we're not within a DateRangeField, we return this field. */
+		if (!this.rangeRoot) {
+			return this.#fieldNode;
+		} else {
+			/**
+			 * Otherwise, we return the rangeRoot's field node which
+			 * contains both start and end fields.
+			 */
+			return this.rangeRoot.fieldNode;
+		}
+	}
+
+	/**
+	 * Sets the label node for the `DateFieldRootState` instance. We use this method so we can
+	 * keep `#labelNode` private to prevent accidental usage of the incorrect label node.
+	 */
+	setLabelNode(node: HTMLElement | null) {
+		this.#labelNode = node;
+	}
+
+	/**
+	 * Gets the correct label node for the date field regardless of whether it's being used in
+	 * a standalone context or within a `DateRangeField` component.
+	 */
+	getLabelNode() {
+		/** If we're not within a DateRangeField, we return this field. */
+		if (!this.rangeRoot) {
+			return this.#labelNode;
+		}
+		/** Otherwise we return the rangeRoot's label node. */
+		return this.rangeRoot.labelNode;
 	}
 
 	clearUpdating() {
@@ -312,14 +370,14 @@ class DateFieldRootState {
 		spellcheck: false,
 		inputmode: "numeric",
 		autocorrect: "off",
-		eterkeyhint: "next",
+		enterkeyhint: "next",
 		style: {
 			caretColor: "transparent",
 		},
 	};
 
 	getLabelledBy = (segmentId: string) => {
-		return `${segmentId} ${this.labelNode?.id ?? ""}`;
+		return `${segmentId} ${this.getLabelNode()?.id ?? ""}`;
 	};
 
 	updateSegment = <T extends keyof DateAndTimeSegmentObj>(
@@ -429,11 +487,11 @@ class DateFieldRootState {
 			}
 		}
 		this.segmentValues = newSegmentValues;
-		if (areAllSegmentsFilled(newSegmentValues, this.fieldNode)) {
+		if (areAllSegmentsFilled(newSegmentValues, this.#fieldNode)) {
 			this.setValue(
 				getValueFromSegments({
 					segmentObj: newSegmentValues,
-					fieldNode: this.fieldNode,
+					fieldNode: this.#fieldNode,
 					dateRef: this.placeholder.value,
 				})
 			);
@@ -464,7 +522,7 @@ class DateFieldRootState {
 		if (part === "literal") return defaultAttrs;
 
 		const descriptionId = this.descriptionNode?.id;
-		const hasDescription = isFirstSegment(segmentId, this.fieldNode) && descriptionId;
+		const hasDescription = isFirstSegment(segmentId, this.#fieldNode) && descriptionId;
 		const validationId = this.validationNode?.id;
 
 		const describedBy = hasDescription
@@ -520,7 +578,7 @@ class DateFieldInputState {
 			id: this.#id,
 			ref: this.#ref,
 			onRefChange: (node) => {
-				this.root.fieldNode = node;
+				this.root.setFieldNode(node);
 			},
 		});
 	}
@@ -537,7 +595,7 @@ class DateFieldInputState {
 			({
 				id: this.#id.value,
 				role: "group",
-				"aria-labelledby": this.root.labelNode?.id ?? undefined,
+				"aria-labelledby": this.root.getLabelNode()?.id ?? undefined,
 				"aria-describedby": this.#ariaDescribedBy,
 				"aria-disabled": getAriaDisabled(this.root.disabled.value),
 				"data-invalid": this.root.isInvalid ? "" : undefined,
@@ -560,6 +618,7 @@ class DateFieldHiddenInputState {
 			name: this.#root.name.value,
 			value: this.isoValue,
 			required: this.#root.required.value,
+			"aria-hidden": getAriaHidden(true),
 		};
 	});
 }
@@ -580,14 +639,14 @@ class DateFieldLabelState {
 			id: this.#id,
 			ref: this.#ref,
 			onRefChange: (node) => {
-				this.#root.labelNode = node;
+				this.#root.setLabelNode(node);
 			},
 		});
 	}
 
 	#onclick = () => {
 		if (this.#root.disabled.value) return;
-		const firstSegment = getFirstSegment(this.#root.fieldNode);
+		const firstSegment = getFirstSegment(this.#root.getFieldNode());
 		if (!firstSegment) return;
 		firstSegment.focus();
 	};
@@ -665,7 +724,7 @@ class DateFieldDaySegmentState {
 			return;
 		}
 
-		const fieldNode = this.#root.fieldNode;
+		const fieldNode = this.#root.getFieldNode();
 
 		if (isNumberString(e.key)) {
 			const num = parseInt(e.key);
@@ -1038,7 +1097,7 @@ class DateFieldMonthSegmentState {
 			});
 
 			if (moveToNext) {
-				moveToNextSegment(e, this.#root.fieldNode);
+				moveToNextSegment(e, this.#root.getFieldNode());
 			}
 		}
 
@@ -1068,12 +1127,12 @@ class DateFieldMonthSegmentState {
 			});
 
 			if (moveToPrev) {
-				moveToPrevSegment(e, this.#root.fieldNode);
+				moveToPrevSegment(e, this.#root.getFieldNode());
 			}
 		}
 
 		if (isSegmentNavigationKey(e.key)) {
-			handleSegmentNavigation(e, this.#root.fieldNode);
+			handleSegmentNavigation(e, this.#root.getFieldNode());
 		}
 	};
 
@@ -1143,7 +1202,7 @@ class DateFieldYearSegmentState {
 	 * get stripped out for the digit count.
 	 *
 	 * This lets us keep track of how many times the user has backspaced in a row
-	 * to determine how many additional keypresses should move them to the next segment.
+	 * to determine how many additional key presses should move them to the next segment.
 	 *
 	 * For example, if the user has `0098` in the year segment and backspaces once,
 	 * the segment will contain `009` and if the user types `7`, the segment should
@@ -1174,6 +1233,12 @@ class DateFieldYearSegmentState {
 
 	#incrementBackspaceCount() {
 		this.#backspaceCount++;
+	}
+
+	#decrementBackspaceCount() {
+		if (this.#backspaceCount > 0) {
+			this.#backspaceCount--;
+		}
 	}
 
 	#onkeydown = (e: KeyboardEvent) => {
@@ -1256,7 +1321,14 @@ class DateFieldYearSegmentState {
 
 				this.#announcer.announce(mergedInt);
 				moveToNext = true;
-				return `${mergedInt}`;
+
+				const mergedIntStr = `${mergedInt}`;
+
+				if (mergedIntStr.length > 4) {
+					return mergedIntStr.slice(0, 4);
+				}
+
+				return mergedIntStr;
 			});
 
 			if (
@@ -1267,7 +1339,7 @@ class DateFieldYearSegmentState {
 			}
 
 			if (moveToNext) {
-				moveToNextSegment(e, this.#root.fieldNode);
+				moveToNextSegment(e, this.#root.getFieldNode());
 			}
 		}
 
@@ -1294,12 +1366,12 @@ class DateFieldYearSegmentState {
 			});
 
 			if (moveToPrev) {
-				moveToPrevSegment(e, this.#root.fieldNode);
+				moveToPrevSegment(e, this.#root.getFieldNode());
 			}
 		}
 
 		if (isSegmentNavigationKey(e.key)) {
-			handleSegmentNavigation(e, this.#root.fieldNode);
+			handleSegmentNavigation(e, this.#root.getFieldNode());
 		}
 	};
 
@@ -1432,7 +1504,6 @@ class DateFieldHourSegmentState {
 				this.#root.segmentValues.dayPeriod !== null
 					? 12
 					: 23;
-			console.log("max", max);
 			const maxStart = Math.floor(max / 10);
 			let moveToNext = false;
 			const numIsZero = num === 0;
@@ -1542,7 +1613,7 @@ class DateFieldHourSegmentState {
 			});
 
 			if (moveToNext) {
-				moveToNextSegment(e, this.#root.fieldNode);
+				moveToNextSegment(e, this.#root.getFieldNode());
 			}
 		}
 
@@ -1566,12 +1637,12 @@ class DateFieldHourSegmentState {
 			});
 
 			if (moveToPrev) {
-				moveToPrevSegment(e, this.#root.fieldNode);
+				moveToPrevSegment(e, this.#root.getFieldNode());
 			}
 		}
 
 		if (isSegmentNavigationKey(e.key)) {
-			handleSegmentNavigation(e, this.#root.fieldNode);
+			handleSegmentNavigation(e, this.#root.getFieldNode());
 		}
 	};
 
@@ -1781,7 +1852,7 @@ class DateFieldMinuteSegmentState {
 			});
 
 			if (moveToNext) {
-				moveToNextSegment(e, this.#root.fieldNode);
+				moveToNextSegment(e, this.#root.getFieldNode());
 			}
 			return;
 		}
@@ -1806,13 +1877,13 @@ class DateFieldMinuteSegmentState {
 			});
 
 			if (moveToPrev) {
-				moveToPrevSegment(e, this.#root.fieldNode);
+				moveToPrevSegment(e, this.#root.getFieldNode());
 			}
 			return;
 		}
 
 		if (isSegmentNavigationKey(e.key)) {
-			handleSegmentNavigation(e, this.#root.fieldNode);
+			handleSegmentNavigation(e, this.#root.getFieldNode());
 		}
 	};
 
@@ -2022,7 +2093,7 @@ class DateFieldSecondSegmentState {
 			});
 
 			if (moveToNext) {
-				moveToNextSegment(e, this.#root.fieldNode);
+				moveToNextSegment(e, this.#root.getFieldNode());
 			}
 		}
 
@@ -2046,12 +2117,12 @@ class DateFieldSecondSegmentState {
 			});
 
 			if (moveToPrev) {
-				moveToPrevSegment(e, this.#root.fieldNode);
+				moveToPrevSegment(e, this.#root.getFieldNode());
 			}
 		}
 
 		if (isSegmentNavigationKey(e.key)) {
-			handleSegmentNavigation(e, this.#root.fieldNode);
+			handleSegmentNavigation(e, this.#root.getFieldNode());
 		}
 	};
 
@@ -2142,16 +2213,16 @@ class DateFieldDayPeriodSegmentState {
 			});
 		}
 
-		if (e.key === kbd.A || e.key === kbd.P) {
+		if (e.key === kbd.A || e.key === kbd.P || kbd.a || kbd.p) {
 			this.#updateSegment("dayPeriod", () => {
-				const next = e.key === kbd.A ? "AM" : "PM";
+				const next = e.key === kbd.A || e.key === kbd.a ? "AM" : "PM";
 				this.#announcer.announce(next);
 				return next;
 			});
 		}
 
 		if (isSegmentNavigationKey(e.key)) {
-			handleSegmentNavigation(e, this.#root.fieldNode);
+			handleSegmentNavigation(e, this.#root.getFieldNode());
 		}
 	};
 
@@ -2230,7 +2301,7 @@ class DateFieldTimeZoneSegmentState {
 		if (e.key !== kbd.TAB) e.preventDefault();
 		if (this.#root.disabled.value) return;
 		if (isSegmentNavigationKey(e.key)) {
-			handleSegmentNavigation(e, this.#root.fieldNode);
+			handleSegmentNavigation(e, this.#root.getFieldNode());
 		}
 	};
 
@@ -2254,7 +2325,13 @@ class DateFieldTimeZoneSegmentState {
 // Utils/helpers
 
 function isAcceptableDayPeriodKey(key: string) {
-	return isAcceptableSegmentKey(key) || key === kbd.A || key === kbd.P;
+	return (
+		isAcceptableSegmentKey(key) ||
+		key === kbd.A ||
+		key === kbd.P ||
+		key === kbd.a ||
+		key === kbd.p
+	);
 }
 
 function isArrowUp(key: string) {
@@ -2272,8 +2349,11 @@ function isBackspace(key: string) {
 const [setDateFieldRootContext, getDateFieldRootContext] =
 	createContext<DateFieldRootState>("DateField.Root");
 
-export function useDateFieldRoot(props: DateFieldRootStateProps) {
-	return setDateFieldRootContext(new DateFieldRootState(props));
+export function useDateFieldRoot(
+	props: DateFieldRootStateProps,
+	rangeRoot?: DateRangeFieldRootState
+) {
+	return setDateFieldRootContext(new DateFieldRootState(props, rangeRoot));
 }
 
 export function useDateFieldInput(props: DateFieldInputStateProps) {

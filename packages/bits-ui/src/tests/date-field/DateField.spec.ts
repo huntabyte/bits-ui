@@ -823,6 +823,74 @@ describe("date field", () => {
 			expect(seg).not.toHaveTextContent("idk");
 		}
 	});
+
+	it("should allow changing the day period with capital or lowercase `a` and `p`", async () => {
+		const { getByTestId, user } = setup({
+			value: new CalendarDateTime(2023, 10, 12, 12, 30, 30, 0),
+			granularity: "second",
+		});
+
+		const { getDayPeriod } = getTimeSegments(getByTestId);
+		const dp = getDayPeriod();
+
+		expect(dp).toHaveTextContent("PM");
+		await user.click(dp);
+		await user.keyboard("{Shift>}a{/Shift}");
+		expect(dp).toHaveTextContent("AM");
+		await user.keyboard("{Shift>}p{/Shift}");
+		expect(dp).toHaveTextContent("PM");
+		await user.keyboard("a");
+		expect(dp).toHaveTextContent("AM");
+		await user.keyboard("p");
+		expect(dp).toHaveTextContent("PM");
+	});
+
+	it("should not allow more than 4 digits in the year segment, even if the user types more", async () => {
+		const { user, year } = setup({
+			value: new CalendarDate(2023, 10, 12),
+		});
+		await user.click(year);
+		await user.keyboard(kbd.BACKSPACE);
+		await user.keyboard(kbd.BACKSPACE);
+		await user.keyboard(kbd.BACKSPACE);
+		await user.keyboard(kbd.BACKSPACE);
+		expect(year).toHaveTextContent("yyyy");
+		for (const i of "222222") {
+			await user.keyboard(i);
+		}
+		expect(year).not.toHaveTextContent("222222");
+		expect(year).toHaveTextContent("2222");
+	});
+
+	it("should render a hidden input if the `name` prop is passed", async () => {
+		const { container } = setup({
+			name: "date-field",
+		});
+		const input = container.querySelector("input");
+		expect(input).not.toBeNull();
+		expect(input).toHaveAttribute("name", "date-field");
+		expect(input).toHaveAttribute("aria-hidden", "true");
+	});
+
+	it("should not render a hidden input if the name prop isn't passed", async () => {
+		const { container } = setup();
+		const input = container.querySelector("input");
+		expect(input).toBeNull();
+	});
+
+	it("should keep the value of the hidden input in sync with the fields value", async () => {
+		const value = new CalendarDateTime(2023, 10, 12, 12, 30, 30, 0);
+		const { container, year, user } = setup({
+			name: "hello",
+			value,
+		});
+		const input = container.querySelector("input");
+		expect(input).toHaveValue(value.toString());
+
+		await user.click(year);
+		await user.keyboard(kbd.ARROW_UP);
+		expect(input).toHaveValue(value.add({ years: 1 }).toString());
+	});
 });
 
 /**

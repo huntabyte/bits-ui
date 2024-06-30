@@ -4,6 +4,7 @@
 	import { useDateFieldInput } from "../date-field.svelte.js";
 	import type { InputProps } from "../index.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import DateFieldHiddenInput from "./date-field-hidden-input.svelte";
 
 	let {
 		id = useId(),
@@ -32,3 +33,5 @@
 		{@render children?.({ segments: inputState.root.segmentContents })}
 	</div>
 {/if}
+
+<DateFieldHiddenInput />
