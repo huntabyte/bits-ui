@@ -6,8 +6,10 @@ import type {
 	Without,
 } from "$lib/internal/types.js";
 import type { Granularity, Matcher } from "$lib/shared/date/types.js";
-import type { DateRange, EditableSegmentPart } from "$lib/shared/index.js";
+import type { DateRange, EditableSegmentPart, SegmentPart } from "$lib/shared/index.js";
+import type { DateFieldSegmentProps, DateFieldSegmentPropsWithoutHTML } from "$lib/types.js";
 import type { DateValue } from "@internationalized/date";
+import type { Snippet } from "svelte";
 
 export type DateRangeFieldRootPropsWithoutHTML = WithAsChild<{
 	/**
@@ -135,25 +137,37 @@ export type DateRangeFieldLabelPropsWithoutHTML = WithAsChild<{}>;
 export type DateRangeFieldLabelProps = DateRangeFieldLabelPropsWithoutHTML &
 	Without<PrimitiveSpanAttributes, DateRangeFieldLabelPropsWithoutHTML>;
 
-export type DateRangeFieldInputPropsWithoutHTML = WithAsChild<{
-	/**
-	 * The value of the specific date field within the date range field.
-	 *
-	 * @bindable
-	 */
-	value?: DateValue;
+export type DateRangeFieldInputPropsWithoutHTML = Omit<
+	WithAsChild<
+		{
+			/**
+			 * A callback that is called when the value of the specific date field changes.
+			 */
+			onValueChange?: OnChangeFn<DateValue | undefined>;
 
-	/**
-	 * A callback that is called when the value of the specific date field changes.
-	 */
-	onValueChange?: OnChangeFn<DateValue | undefined>;
+			/**
+			 * The name to use for the hidden input element associated with this input
+			 * used for form submission.
+			 */
+			name?: string;
 
-	/**
-	 * The name to use for the hidden input element associated with this input
-	 * used for form submission.
-	 */
-	name?: string;
-}>;
+			/**
+			 * Whether this input represents the start or end of the date range.
+			 */
+			type: "start" | "end";
+		},
+		{
+			segments: Array<{ part: SegmentPart; value: string }>;
+		}
+	>,
+	"children"
+> & {
+	children?: Snippet<[{ segments: Array<{ part: SegmentPart; value: string }> }]>;
+};
 
 export type DateRangeFieldInputProps = DateRangeFieldInputPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, DateRangeFieldInputPropsWithoutHTML>;
+
+export type DateRangeFieldSegmentPropsWithoutHTML = DateFieldSegmentPropsWithoutHTML;
+
+export type DateRangeFieldSegmentProps = DateFieldSegmentProps;

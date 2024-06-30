@@ -6,12 +6,13 @@ import type { Granularity, Matcher } from "$lib/shared/date/types.js";
 import type { DateRange, SegmentPart } from "$lib/shared/index.js";
 import type { DateValue } from "@internationalized/date";
 import { onDestroy, untrack } from "svelte";
-import { useDateFieldRoot, type DateFieldRootStateProps } from "../date-field/date-field.svelte.js";
+import { useDateFieldRoot } from "../date-field/date-field.svelte.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
 import { createContext } from "$lib/internal/createContext.js";
 import { getFirstSegment } from "$lib/shared/date/field.js";
-import { getDataDisabled, getDataInvalid } from "$lib/internal/attrs.js";
+import { getDataDisabled } from "$lib/internal/attrs.js";
+import type { ReadableBox, WritableBox } from "svelte-toolbelt";
 
 type DateRangeFieldRootStateProps = WithRefProps<
 	WritableBoxedValues<{
@@ -60,6 +61,19 @@ export class DateRangeFieldRootState {
 	startValueComplete = $derived.by(() => this.startValue !== undefined);
 	endValueComplete = $derived.by(() => this.endValue !== undefined);
 	rangeComplete = $derived(this.startValueComplete && this.endValueComplete);
+	mergedValues = $derived.by(() => {
+		if (this.startValue === undefined || this.endValue === undefined) {
+			return {
+				start: undefined,
+				end: undefined,
+			};
+		} else {
+			return {
+				start: this.startValue,
+				end: this.endValue,
+			};
+		}
+	});
 
 	constructor(props: DateRangeFieldRootStateProps) {
 		this.value = props.value;
@@ -112,19 +126,42 @@ export class DateRangeFieldRootState {
 				});
 			}
 		});
+
+		$effect(() => {
+			this.value.value = this.mergedValues;
+		});
 	}
 
 	/**
 	 * These props are used to override those of the child fields.
+	 * TODO:
 	 */
 	childFieldPropOverrides = {};
 
-	createField(props: DateFieldRootStateProps) {
-		return useDateFieldRoot(props, this);
+	createField(props: DateRangeFieldInputStateProps) {
+		return useDateFieldRoot(
+			{
+				value: props.value,
+				name: props.name,
+				disabled: this.disabled,
+				readonly: this.readonly,
+				readonlySegments: this.readonlySegments,
+				isDateUnavailable: this.isDateUnavailable,
+				minValue: this.minValue,
+				maxValue: this.maxValue,
+				hourCycle: this.hourCycle,
+				locale: this.locale,
+				hideTimeZone: this.hideTimeZone,
+				required: this.required,
+				granularity: this.granularity,
+				placeholder: this.placeholder,
+			},
+			this
+		);
 	}
 
 	createLabel(props: DateRangeFieldLabelStateProps) {
-		return new DateFieldLabelState(props, this);
+		return new DateRangeFieldLabelState(props, this);
 	}
 
 	props = $derived.by(() => ({
@@ -135,7 +172,7 @@ export class DateRangeFieldRootState {
 
 type DateRangeFieldLabelStateProps = WithRefProps;
 
-class DateFieldLabelState {
+class DateRangeFieldLabelState {
 	#id: DateRangeFieldLabelStateProps["id"];
 	#ref: DateRangeFieldLabelStateProps["ref"];
 	#root: DateRangeFieldRootState;
@@ -172,6 +209,11 @@ class DateFieldLabelState {
 	);
 }
 
+type DateRangeFieldInputStateProps = {
+	value: WritableBox<DateValue | undefined>;
+	name: ReadableBox<string>;
+};
+
 const [setDateRangeFieldRootContext, getDateRangeFieldRootContext] =
 	createContext<DateRangeFieldRootState>("DateRangeField.Root");
 
@@ -181,6 +223,10 @@ export function useDateRangeFieldRoot(props: DateRangeFieldRootStateProps) {
 
 export function useDateRangeFieldLabel(props: DateRangeFieldLabelStateProps) {
 	return getDateRangeFieldRootContext().createLabel(props);
+}
+
+export function useDateRangeFieldInput(props: DateRangeFieldInputStateProps) {
+	return getDateRangeFieldRootContext().createField(props);
 }
 
 export { getDateRangeFieldRootContext };

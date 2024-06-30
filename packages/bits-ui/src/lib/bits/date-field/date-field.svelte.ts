@@ -1234,6 +1234,12 @@ class DateFieldYearSegmentState {
 		this.#backspaceCount++;
 	}
 
+	#decrementBackspaceCount() {
+		if (this.#backspaceCount > 0) {
+			this.#backspaceCount--;
+		}
+	}
+
 	#onkeydown = (e: KeyboardEvent) => {
 		const placeholder = this.#root.placeholder.value;
 		if (e.ctrlKey || e.metaKey || this.#root.disabled.value) return;
@@ -1314,7 +1320,14 @@ class DateFieldYearSegmentState {
 
 				this.#announcer.announce(mergedInt);
 				moveToNext = true;
-				return `${mergedInt}`;
+
+				const mergedIntStr = `${mergedInt}`;
+
+				if (mergedIntStr.length > 4) {
+					return mergedIntStr.slice(0, 4);
+				}
+
+				return mergedIntStr;
 			});
 
 			if (
@@ -1490,7 +1503,6 @@ class DateFieldHourSegmentState {
 				this.#root.segmentValues.dayPeriod !== null
 					? 12
 					: 23;
-			console.log("max", max);
 			const maxStart = Math.floor(max / 10);
 			let moveToNext = false;
 			const numIsZero = num === 0;

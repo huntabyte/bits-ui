@@ -844,6 +844,23 @@ describe("date field", () => {
 		await user.keyboard("p");
 		expect(dp).toHaveTextContent("PM");
 	});
+
+	it.only("should not allow more than 4 digits in the year segment, even if the user types more", async () => {
+		const { user, year } = setup({
+			value: new CalendarDate(2023, 10, 12),
+		});
+		await user.click(year);
+		await user.keyboard(kbd.BACKSPACE);
+		await user.keyboard(kbd.BACKSPACE);
+		await user.keyboard(kbd.BACKSPACE);
+		await user.keyboard(kbd.BACKSPACE);
+		expect(year).toHaveTextContent("yyyy");
+		for (const i of "222222") {
+			await user.keyboard(i);
+		}
+		expect(year).not.toHaveTextContent("222222");
+		expect(year).toHaveTextContent("2222");
+	});
 });
 
 /**
