@@ -18,8 +18,6 @@ export default defineConfig({
 	plugins: [vitestBrowserConditionPlugin, sveltekit(), svelteTesting()],
 	test: {
 		include: ["src/**/*.{test,spec}.{js,ts}"],
-		// jest like globals
-		globals: true,
 		environment: "jsdom",
 		// in-source testing
 		includeSource: ["src/**/*.{js,ts,svelte}"],
