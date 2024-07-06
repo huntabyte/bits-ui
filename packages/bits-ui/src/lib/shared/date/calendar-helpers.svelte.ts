@@ -7,7 +7,7 @@ import {
 	getNextLastDayOfWeek,
 	parseStringToDateValue,
 } from "./index.js";
-import { get, type Writable } from "svelte/store";
+import type { WritableBox } from "svelte-toolbelt";
 
 /**
  * Checks if a given node is a calendar cell element.
@@ -16,7 +16,7 @@ import { get, type Writable } from "svelte/store";
  */
 export function isCalendarCell(node: unknown): node is HTMLElement {
 	if (!isHTMLElement(node)) return false;
-	if (!node.hasAttribute("data-melt-calendar-cell")) return false;
+	if (!node.hasAttribute("data-calendar-cell")) return false;
 	return true;
 }
 
@@ -159,7 +159,7 @@ export function createMonths(props: SetMonthProps) {
 export function getSelectableCells(calendarId: string) {
 	const node = document.getElementById(calendarId);
 	if (!node) return [];
-	const selectableSelector = `[data-melt-calendar-cell]:not([data-disabled]):not([data-outside-visible-months])`;
+	const selectableSelector = `[data-calendar-cell]:not([data-disabled]):not([data-outside-visible-months])`;
 
 	return Array.from(node.querySelectorAll(selectableSelector)).filter((el): el is HTMLElement =>
 		isHTMLElement(el)
@@ -175,8 +175,8 @@ export function getSelectableCells(calendarId: string) {
  * @param node - The node to extract the date from.
  * @param placeholder - The placeholder value store which will be set to the extracted date.
  */
-export function setPlaceholderToNodeValue(node: HTMLElement, placeholder: Writable<DateValue>) {
+export function setPlaceholderToNodeValue(node: HTMLElement, placeholder: WritableBox<DateValue>) {
 	const cellValue = node.getAttribute("data-value");
 	if (!cellValue) return;
-	placeholder.set(parseStringToDateValue(cellValue, get(placeholder)));
+	placeholder.value = parseStringToDateValue(cellValue, placeholder.value);
 }
