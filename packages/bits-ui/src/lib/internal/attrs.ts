@@ -135,6 +135,14 @@ export function getDataReadonly(condition: boolean): "" | undefined {
 	return condition ? "" : undefined;
 }
 
+export function getDataSelected(condition: boolean): "" | undefined {
+	return condition ? "" : undefined;
+}
+
+export function getDataUnavailable(condition: boolean): "" | undefined {
+	return condition ? "" : undefined;
+}
+
 /**
  * Returns the hidden attribute if the condition is true.
  */

@@ -1,6 +1,20 @@
 import { afterTick } from "$lib/internal/afterTick.js";
 import { isValidIndex } from "$lib/internal/arrays.js";
-import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
+import {
+	getAriaDisabled,
+	getAriaHidden,
+	getAriaSelected,
+	getDataDisabled,
+	getDataInvalid,
+	getDataReadonly,
+	getDataSelected,
+	getDataUnavailable,
+} from "$lib/internal/attrs.js";
+import {
+	watch,
+	type ReadableBoxedValues,
+	type WritableBoxedValues,
+} from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { styleToString } from "$lib/internal/style.js";
 import type { WithRefProps } from "$lib/internal/types.js";
@@ -16,13 +30,20 @@ import {
 import { createFormatter, type Formatter } from "$lib/shared/date/formatter.js";
 import type { Month } from "$lib/shared/date/types.js";
 import { isAfter, isBefore, parseStringToDateValue, toDate } from "$lib/shared/date/utils.js";
-import { isSameDay, type DateValue } from "@internationalized/date";
+import {
+	getLocalTimeZone,
+	isSameDay,
+	isSameMonth,
+	isToday,
+	type DateValue,
+} from "@internationalized/date";
 import { DEV } from "esm-env";
+import { untrack } from "svelte";
 
 const ARROW_KEYS = [kbd.ARROW_DOWN, kbd.ARROW_UP, kbd.ARROW_LEFT, kbd.ARROW_RIGHT];
 const SELECT_KEYS = [kbd.ENTER, kbd.SPACE];
 
-type CalendarBaseStateProps = WithRefProps<
+type CalendarRootStateProps = WithRefProps<
 	WritableBoxedValues<{
 		value: DateValue | undefined | DateValue[];
 		placeholder: DateValue;
@@ -46,33 +67,33 @@ type CalendarBaseStateProps = WithRefProps<
 		}>
 >;
 
-class CalendarBaseState {
-	ref: CalendarBaseStateProps["ref"];
-	id: CalendarBaseStateProps["id"];
-	value: CalendarBaseStateProps["value"];
-	placeholder: CalendarBaseStateProps["placeholder"];
-	preventDeselect: CalendarBaseStateProps["preventDeselect"];
-	minValue: CalendarBaseStateProps["minValue"];
-	maxValue: CalendarBaseStateProps["maxValue"];
-	disabled: CalendarBaseStateProps["disabled"];
-	pagedNavigation: CalendarBaseStateProps["pagedNavigation"];
-	weekStartsOn: CalendarBaseStateProps["weekStartsOn"];
-	weekdayFormat: CalendarBaseStateProps["weekdayFormat"];
-	isDateDisabled: CalendarBaseStateProps["isDateDisabled"];
-	isDateUnavailable: CalendarBaseStateProps["isDateUnavailable"];
-	fixedWeeks: CalendarBaseStateProps["fixedWeeks"];
-	numberOfMonths: CalendarBaseStateProps["numberOfMonths"];
-	locale: CalendarBaseStateProps["locale"];
-	calendarLabel: CalendarBaseStateProps["calendarLabel"];
-	type: CalendarBaseStateProps["type"];
-	readonly: CalendarBaseStateProps["readonly"];
+class CalendarRootState {
+	ref: CalendarRootStateProps["ref"];
+	id: CalendarRootStateProps["id"];
+	value: CalendarRootStateProps["value"];
+	placeholder: CalendarRootStateProps["placeholder"];
+	preventDeselect: CalendarRootStateProps["preventDeselect"];
+	minValue: CalendarRootStateProps["minValue"];
+	maxValue: CalendarRootStateProps["maxValue"];
+	disabled: CalendarRootStateProps["disabled"];
+	pagedNavigation: CalendarRootStateProps["pagedNavigation"];
+	weekStartsOn: CalendarRootStateProps["weekStartsOn"];
+	weekdayFormat: CalendarRootStateProps["weekdayFormat"];
+	isDateDisabledProp: CalendarRootStateProps["isDateDisabled"];
+	isDateUnavailableProp: CalendarRootStateProps["isDateUnavailable"];
+	fixedWeeks: CalendarRootStateProps["fixedWeeks"];
+	numberOfMonths: CalendarRootStateProps["numberOfMonths"];
+	locale: CalendarRootStateProps["locale"];
+	calendarLabel: CalendarRootStateProps["calendarLabel"];
+	type: CalendarRootStateProps["type"];
+	readonly: CalendarRootStateProps["readonly"];
 	months: Month<DateValue>[] = $state([]);
 	visibleMonths = $derived.by(() => this.months.map((month) => month.value));
 	announcer: Announcer;
 	formatter: Formatter;
 	accessibleHeadingId = useId();
 
-	constructor(props: CalendarBaseStateProps) {
+	constructor(props: CalendarRootStateProps) {
 		this.value = props.value;
 		this.placeholder = props.placeholder;
 		this.preventDeselect = props.preventDeselect;
@@ -82,8 +103,8 @@ class CalendarBaseState {
 		this.pagedNavigation = props.pagedNavigation;
 		this.weekStartsOn = props.weekStartsOn;
 		this.weekdayFormat = props.weekdayFormat;
-		this.isDateDisabled = props.isDateDisabled;
-		this.isDateUnavailable = props.isDateUnavailable;
+		this.isDateDisabledProp = props.isDateDisabled;
+		this.isDateUnavailableProp = props.isDateUnavailable;
 		this.fixedWeeks = props.fixedWeeks;
 		this.numberOfMonths = props.numberOfMonths;
 		this.locale = props.locale;
@@ -117,6 +138,163 @@ class CalendarBaseState {
 			);
 			return removeHeading;
 		});
+
+		$effect(() => {
+			if (this.formatter.getLocale() === this.locale.value) return;
+			this.formatter.setLocale(this.locale.value);
+		});
+
+		watch(this.placeholder, () => {
+			/**
+			 * If the placeholder's month is already in this visible months,
+			 * we don't need to do anything.
+			 */
+			if (this.visibleMonths.some((month) => isSameMonth(month, this.placeholder.value))) {
+				return;
+			}
+
+			const defaultMonthProps = {
+				weekStartsOn: this.weekStartsOn.value,
+				locale: this.locale.value,
+				fixedWeeks: this.fixedWeeks.value,
+				numberOfMonths: this.numberOfMonths.value,
+			};
+
+			this.months = createMonths({ ...defaultMonthProps, dateObj: this.placeholder.value });
+		});
+
+		/**
+		 * Updates the displayed months based on changes in the options values,
+		 * which determines the month to show in the calendar.
+		 */
+		$effect(() => {
+			const weekStartsOn = this.weekStartsOn.value;
+			const locale = this.locale.value;
+			const fixedWeeks = this.fixedWeeks.value;
+			const numberOfMonths = this.numberOfMonths.value;
+
+			untrack(() => {
+				const placeholder = this.placeholder.value;
+				if (!placeholder) return;
+				const defaultMonthProps = {
+					weekStartsOn,
+					locale,
+					fixedWeeks,
+					numberOfMonths,
+				};
+
+				this.months = createMonths({ ...defaultMonthProps, dateObj: placeholder });
+			});
+		});
+
+		/**
+		 * Update the accessible heading's text content when the `fullCalendarLabel`
+		 * changes.
+		 */
+		$effect(() => {
+			const node = document.getElementById(this.accessibleHeadingId);
+			if (!node) return;
+			node.textContent = this.fullCalendarLabel;
+		});
+
+		/**
+		 * Synchronize the placeholder value with the current value.
+		 */
+		watch(this.value, () => {
+			const value = this.value.value;
+			if (Array.isArray(value) && value.length) {
+				const lastValue = value[value.length - 1];
+				if (lastValue && this.placeholder.value !== lastValue) {
+					this.placeholder.value = lastValue;
+				}
+			} else if (!Array.isArray(value) && value && this.placeholder.value !== value) {
+				this.placeholder.value = value;
+			}
+		});
+	}
+
+	/**
+	 * This derived store holds an array of localized day names for the current
+	 * locale and calendar view. It dynamically syncs with the 'weekStartsOn' option,
+	 * updating its content when the option changes. Using this store to render the
+	 * calendar's days of the week is strongly recommended, as it guarantees that
+	 * the days are correctly formatted for the current locale and calendar view.
+	 */
+	weekdays = $derived.by(() => {
+		if (!this.months.length) return [];
+		const firstMonth = this.months[0];
+		if (!firstMonth) return [];
+		const firstWeek = firstMonth.weeks[0];
+		if (!firstWeek) return [];
+		return firstWeek.map((date) =>
+			this.formatter.dayOfWeek(toDate(date), this.weekdayFormat.value)
+		);
+	});
+
+	/**
+	 * Navigates to the next page of the calendar.
+	 */
+	nextPage() {
+		const months = this.months;
+		const numberOfMonths = this.numberOfMonths.value;
+		const pagedNavigation = this.pagedNavigation.value;
+		const firstMonth = months[0]?.value;
+		if (!firstMonth) return;
+		if (pagedNavigation) {
+			this.placeholder.value = firstMonth.add({ months: numberOfMonths });
+		} else {
+			const newMonths = createMonths({
+				dateObj: firstMonth.add({ months: 1 }),
+				weekStartsOn: this.weekStartsOn.value,
+				locale: this.locale.value,
+				fixedWeeks: this.fixedWeeks.value,
+				numberOfMonths,
+			});
+
+			this.months = newMonths;
+			this.placeholder.value = firstMonth.set({ day: 1 });
+		}
+	}
+
+	/**
+	 * Navigates to the previous page of the calendar.
+	 */
+	prevPage() {
+		const months = this.months;
+		const numberOfMonths = this.numberOfMonths.value;
+		const pagedNavigation = this.pagedNavigation.value;
+		const firstMonth = months[0]?.value;
+		if (!firstMonth) return;
+		if (pagedNavigation) {
+			this.placeholder.value = firstMonth.subtract({ months: numberOfMonths });
+		} else {
+			const newMonths = createMonths({
+				dateObj: firstMonth.subtract({ months: 1 }),
+				weekStartsOn: this.weekStartsOn.value,
+				locale: this.locale.value,
+				fixedWeeks: this.fixedWeeks.value,
+				numberOfMonths,
+			});
+
+			this.months = newMonths;
+			this.placeholder.value = firstMonth.set({ day: 1 });
+		}
+	}
+
+	nextYear() {
+		this.placeholder.value = this.placeholder.value.add({ years: 1 });
+	}
+
+	prevYear() {
+		this.placeholder.value = this.placeholder.value.subtract({ years: 1 });
+	}
+
+	setYear(year: number) {
+		this.placeholder.value = this.placeholder.value.set({ year });
+	}
+
+	setMonth(month: number) {
+		this.placeholder.value = this.placeholder.value.set({ month });
 	}
 
 	#createAccessibleHeading(node: HTMLElement, label: string) {
@@ -170,18 +348,18 @@ class CalendarBaseState {
 
 	isInvalid = $derived.by(() => {
 		const value = this.value.value;
-		const isDateDisabled = this.isDateDisabled.value;
-		const isDateUnavailable = this.isDateUnavailable.value;
+		const isDateDisabled = this.isDateDisabledProp.value;
+		const isDateUnavailable = this.isDateUnavailableProp.value;
 		if (Array.isArray(value)) {
 			if (!value.length) return false;
 			for (const date of value) {
-				if (isDateDisabled?.(date)) return true;
-				if (isDateUnavailable?.(date)) return true;
+				if (isDateDisabled(date)) return true;
+				if (isDateUnavailable(date)) return true;
 			}
 		} else {
 			if (!value) return false;
-			if (isDateDisabled?.(value)) return true;
-			if (isDateUnavailable?.(value)) return true;
+			if (isDateDisabled(value)) return true;
+			if (isDateUnavailable(value)) return true;
 		}
 		return false;
 	});
@@ -219,6 +397,30 @@ class CalendarBaseState {
 	fullCalendarLabel = $derived.by(() => {
 		return `${this.calendarLabel.value} ${this.headingValue}`;
 	});
+
+	isOutsideVisibleMonths(date: DateValue) {
+		return !this.visibleMonths.some((month) => isSameMonth(date, month));
+	}
+
+	isDateDisabled(date: DateValue) {
+		if (this.isDateDisabledProp.value(date) || this.disabled.value) return true;
+		const minValue = this.minValue.value;
+		const maxValue = this.maxValue.value;
+		if (minValue && isBefore(date, minValue)) return true;
+		if (maxValue && isBefore(maxValue, date)) return true;
+		return false;
+	}
+
+	isDateSelected(date: DateValue) {
+		const value = this.value.value;
+		if (Array.isArray(value)) {
+			return value.some((d) => isSameDay(d, date));
+		} else if (!value) {
+			return false;
+		} else {
+			return isSameDay(value, date);
+		}
+	}
 
 	#shiftFocus(node: HTMLElement, add: number) {
 		const candidateCells = getSelectableCells(this.id.value);
@@ -319,8 +521,8 @@ class CalendarBaseState {
 	handleCellClick = (date: DateValue) => {
 		const readonly = this.readonly.value;
 		if (readonly) return;
-		const isDateDisabled = this.isDateDisabled.value;
-		const isDateUnavailable = this.isDateUnavailable.value;
+		const isDateDisabled = this.isDateDisabledProp.value;
+		const isDateUnavailable = this.isDateUnavailableProp.value;
 		if (isDateDisabled?.(date) || isDateUnavailable?.(date)) return;
 
 		const prev = this.value.value;
@@ -408,4 +610,208 @@ class CalendarBaseState {
 			this.handleCellClick(parseStringToDateValue(cellValue, this.placeholder.value));
 		}
 	};
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.id.value,
+				role: "application",
+				"aria-label": this.fullCalendarLabel,
+				"data-invalid": getDataInvalid(this.isInvalid),
+				"data-disabled": getDataDisabled(this.disabled.value),
+				"data-readonly": getDataReadonly(this.readonly.value),
+				//
+				onkeydown: this.#onkeydown,
+			}) as const
+	);
+
+	createHeading(props: CalendarHeadingStateProps) {
+		return new CalendarHeadingState(props, this);
+	}
+}
+
+type CalendarHeadingStateProps = WithRefProps;
+class CalendarHeadingState {
+	id: CalendarHeadingStateProps["id"];
+	ref: CalendarHeadingStateProps["ref"];
+
+	constructor(
+		props: CalendarHeadingStateProps,
+		readonly root: CalendarRootState
+	) {
+		this.id = props.id;
+		this.ref = props.ref;
+
+		useRefById({
+			id: this.id,
+			ref: this.ref,
+		});
+	}
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.id.value,
+				"aria-hidden": getAriaHidden(true),
+				"data-disabled": getDataDisabled(this.root.disabled.value),
+			}) as const
+	);
+}
+
+type CalendarCellStateProps = WithRefProps<
+	ReadableBoxedValues<{
+		value: DateValue;
+		month: DateValue;
+	}>
+>;
+
+class CalendarCellState {
+	id: CalendarCellStateProps["id"];
+	ref: CalendarCellStateProps["ref"];
+	value: CalendarCellStateProps["value"];
+	month: CalendarCellStateProps["month"];
+	cellDate = $derived.by(() => toDate(this.value.value));
+	isDisabled = $derived.by(() => this.root.isDateDisabledProp.value(this.value.value));
+	isUnvailable = $derived.by(() => this.root.isDateUnavailableProp.value(this.value.value));
+	isDateToday = $derived.by(() => isToday(this.value.value, getLocalTimeZone()));
+	isOutsideMonth = $derived.by(() => !isSameMonth(this.value.value, this.month.value));
+	isOutsideVisibleMonths = $derived.by(() => this.root.isOutsideVisibleMonths(this.value.value));
+	isFocusedDate = $derived.by(() => isSameDay(this.value.value, this.root.placeholder.value));
+	isSelectedDate = $derived.by(() => this.root.isDateSelected(this.value.value));
+	labelText = $derived.by(() =>
+		this.root.formatter.custom(this.cellDate, {
+			weekday: "long",
+			month: "long",
+			day: "numeric",
+			year: "numeric",
+		})
+	);
+
+	constructor(
+		props: CalendarCellStateProps,
+		readonly root: CalendarRootState
+	) {
+		this.id = props.id;
+		this.ref = props.ref;
+		this.value = props.value;
+		this.month = props.month;
+
+		useRefById({
+			id: this.id,
+			ref: this.ref,
+		});
+	}
+
+	#tabindex = $derived.by(() =>
+		this.isFocusedDate ? 0 : this.isOutsideMonth || this.isDisabled ? undefined : -1
+	);
+
+	#onclick = () => {
+		if (this.isDisabled) return;
+		this.root.handleCellClick(this.value.value);
+	};
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.id.value,
+				role: "button",
+				"aria-label": this.labelText,
+				"aria-selected": getAriaSelected(this.isSelectedDate),
+				"aria-disabled": getAriaDisabled(
+					this.isDisabled || this.isOutsideMonth || this.isUnvailable
+				),
+				"data-selected": getDataSelected(this.isSelectedDate),
+				"data-value": this.value.value.toString(),
+				"data-disabled": getDataDisabled(this.isDisabled),
+				"data-unavailable": getDataUnavailable(this.isUnvailable),
+				"data-today": this.isDateToday ? "" : undefined,
+				"data-outside-month": this.isOutsideMonth ? "" : undefined,
+				"data-outside-visible-months": this.isOutsideVisibleMonths ? "" : undefined,
+				"data-focused": this.isFocusedDate ? "" : undefined,
+				tabindex: this.#tabindex,
+				//
+				onclick: this.#onclick,
+			}) as const
+	);
+}
+
+type CalendarNextButtonStateProps = WithRefProps;
+
+class CalendarNextButtonState {
+	id: CalendarNextButtonStateProps["id"];
+	ref: CalendarNextButtonStateProps["ref"];
+	isDisabled = $derived.by(() => this.root.isNextButtonDisabled);
+
+	constructor(
+		props: CalendarNextButtonStateProps,
+		readonly root: CalendarRootState
+	) {
+		this.id = props.id;
+		this.ref = props.ref;
+
+		useRefById({
+			id: this.id,
+			ref: this.ref,
+		});
+	}
+
+	#onclick = () => {
+		if (this.isDisabled) return;
+		this.root.nextPage();
+	};
+
+	props = $derived.by(
+		() =>
+			({
+				role: "button",
+				type: "button",
+				"aria-label": "Next",
+				"aria-disabled": getAriaDisabled(this.isDisabled),
+				"data-disabled": getDataDisabled(this.isDisabled),
+				disabled: this.isDisabled,
+				//
+				onclick: this.#onclick,
+			}) as const
+	);
+}
+
+type CalendarPrevButtonStateProps = WithRefProps;
+
+class CalendarPrevButtonState {
+	id: CalendarPrevButtonStateProps["id"];
+	ref: CalendarPrevButtonStateProps["ref"];
+	isDisabled = $derived.by(() => this.root.isPrevButtonDisabled);
+
+	constructor(
+		props: CalendarPrevButtonStateProps,
+		readonly root: CalendarRootState
+	) {
+		this.id = props.id;
+		this.ref = props.ref;
+
+		useRefById({
+			id: this.id,
+			ref: this.ref,
+		});
+	}
+
+	#onclick = () => {
+		if (this.isDisabled) return;
+		this.root.prevPage();
+	};
+
+	props = $derived.by(
+		() =>
+			({
+				role: "button",
+				type: "button",
+				"aria-label": "Previous",
+				"aria-disabled": getAriaDisabled(this.isDisabled),
+				"data-disabled": getDataDisabled(this.isDisabled),
+				disabled: this.isDisabled,
+				//
+				onclick: this.#onclick,
+			}) as const
+	);
 }
