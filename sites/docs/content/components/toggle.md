@@ -21,7 +21,7 @@ description: A control element that switches between two states, providing a bin
 	import { Toggle } from "bits-ui";
 </script>
 
-<Toggle.Root/>
+<Toggle.Root />
 ```
 
 <APISection {schemas} />
