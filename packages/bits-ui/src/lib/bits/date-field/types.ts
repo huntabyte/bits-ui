@@ -6,7 +6,7 @@ import type {
 	Without,
 } from "$lib/internal/types.js";
 import type { EditableSegmentPart } from "$lib/shared/date/field/types.js";
-import type { Granularity, Matcher } from "$lib/shared/date/types.js";
+import type { Granularity, DateMatcher } from "$lib/shared/date/types.js";
 import type { DateValue } from "@internationalized/date";
 import type { SegmentPart } from "@melt-ui/svelte";
 import type { Snippet } from "svelte";
@@ -42,7 +42,7 @@ export type DateFieldRootPropsWithoutHTML = {
 	 * A function that returns true if the given date is unavailable,
 	 * where if selected, the date field will be marked as invalid.
 	 */
-	isDateUnavailable?: Matcher;
+	isDateUnavailable?: DateMatcher;
 
 	/**
 	 * The minimum acceptable date. When provided, the date field

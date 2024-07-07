@@ -2,7 +2,7 @@ import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box
 import { useId } from "$lib/internal/useId.svelte.js";
 import { removeDescriptionElement } from "$lib/shared/date/field/helpers.js";
 import { createFormatter, type Formatter } from "$lib/shared/date/formatter.js";
-import type { Granularity, Matcher } from "$lib/shared/date/types.js";
+import type { Granularity, DateMatcher } from "$lib/shared/date/types.js";
 import type { DateRange, SegmentPart } from "$lib/shared/index.js";
 import type { DateValue } from "@internationalized/date";
 import { onDestroy, untrack } from "svelte";
@@ -21,7 +21,7 @@ type DateRangeFieldRootStateProps = WithRefProps<
 	}> &
 		ReadableBoxedValues<{
 			readonlySegments: SegmentPart[];
-			isDateUnavailable: Matcher | undefined;
+			isDateUnavailable: DateMatcher | undefined;
 			minValue: DateValue | undefined;
 			maxValue: DateValue | undefined;
 			disabled: boolean;
