@@ -33,6 +33,7 @@
 	present={contentState.root.open.value || forceMount}
 	{id}
 	onInteractOutside={(e) => {
+		console.log("interactoutside");
 		onInteractOutside(e);
 		if (e.defaultPrevented) return;
 		contentState.root.close();

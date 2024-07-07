@@ -1,5 +1,4 @@
-import { box } from "svelte-toolbelt";
-import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
+import type { WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
@@ -19,9 +18,9 @@ class PopoverRootState {
 		this.open = props.open;
 	}
 
-	toggleOpen() {
+	toggleOpen = () => {
 		this.open.value = !this.open.value;
-	}
+	};
 
 	close = () => {
 		if (!this.open.value) return;

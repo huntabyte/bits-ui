@@ -4,7 +4,7 @@
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
-	let { ref = $bindable(), ...restProps }: ArrowProps = $props();
+	let { ref = $bindable(null), ...restProps }: ArrowProps = $props();
 
 	const arrowState = useMenuArrow();
 
