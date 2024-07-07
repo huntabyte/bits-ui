@@ -7,6 +7,7 @@ import {
 	isHTMLElement,
 	isValidIndex,
 	kbd,
+	sleep,
 	styleToString,
 	watch,
 } from "$lib/internal/index.js";
@@ -295,6 +296,7 @@ export function shiftCalendarFocus({
 
 		afterTick(() => {
 			const newCandidateCells = getSelectableCells(calendarNode);
+			console.log("new candidate cells", newCandidateCells);
 			if (!newCandidateCells.length) return;
 
 			/**
@@ -328,6 +330,7 @@ export function shiftCalendarFocus({
 
 		afterTick(() => {
 			const newCandidateCells = getSelectableCells(calendarNode);
+			console.log("new candidate cells", newCandidateCells);
 			if (!newCandidateCells.length) return;
 
 			/**
