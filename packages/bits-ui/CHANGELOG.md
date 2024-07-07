@@ -1,5 +1,11 @@
 # bits-ui
 
+## 0.21.12
+
+### Patch Changes
+
+- Add `nonpassive` modifier to `touchmove` and `touchstart` events ([#591](https://github.com/huntabyte/bits-ui/pull/591))
+
 ## 0.21.11
 
 ### Patch Changes
