@@ -14,9 +14,9 @@ import type { WritableBox } from "svelte-toolbelt";
  *
  * @param node - The node to check.
  */
-export function isCalendarCell(node: unknown): node is HTMLElement {
+export function isCalendarDayNode(node: unknown): node is HTMLElement {
 	if (!isHTMLElement(node)) return false;
-	if (!node.hasAttribute("data-calendar-cell")) return false;
+	if (!node.hasAttribute("data-calendar-day")) return false;
 	return true;
 }
 

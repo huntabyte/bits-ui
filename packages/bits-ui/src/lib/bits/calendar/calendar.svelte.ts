@@ -26,7 +26,7 @@ import { getAnnouncer, type Announcer } from "$lib/shared/date/announcer.js";
 import {
 	createMonths,
 	getSelectableCells,
-	isCalendarCell,
+	isCalendarDayNode,
 	setPlaceholderToNodeValue,
 } from "$lib/shared/date/calendar-helpers.svelte.js";
 import { createFormatter, type Formatter } from "$lib/shared/date/formatter.js";
@@ -79,6 +79,7 @@ type CalendarRootStateProps = WithRefProps<
 			calendarLabel: string;
 			type: "single" | "multiple";
 			readonly: boolean;
+			disableDaysOutsideMonth: boolean;
 		}>
 >;
 
@@ -102,6 +103,7 @@ class CalendarRootState {
 	calendarLabel: CalendarRootStateProps["calendarLabel"];
 	type: CalendarRootStateProps["type"];
 	readonly: CalendarRootStateProps["readonly"];
+	disableDaysOutsideMonth: CalendarRootStateProps["disableDaysOutsideMonth"];
 	months: Month<DateValue>[] = $state([]);
 	visibleMonths = $derived.by(() => this.months.map((month) => month.value));
 	announcer: Announcer;
@@ -128,6 +130,7 @@ class CalendarRootState {
 		this.readonly = props.readonly;
 		this.id = props.id;
 		this.ref = props.ref;
+		this.disableDaysOutsideMonth = props.disableDaysOutsideMonth;
 
 		this.announcer = getAnnouncer();
 		this.formatter = createFormatter(this.locale.value);
@@ -600,7 +603,7 @@ class CalendarRootState {
 
 	#onkeydown = (e: KeyboardEvent) => {
 		const currentCell = e.target;
-		if (!isCalendarCell(currentCell)) return;
+		if (!isCalendarDayNode(currentCell)) return;
 		if (!ARROW_KEYS.includes(e.key) && !SELECT_KEYS.includes(e.key)) return;
 
 		e.preventDefault();
@@ -774,7 +777,10 @@ class CalendarCellState {
 				role: "gridcell",
 				"data-selected": getDataSelected(this.isSelectedDate),
 				"data-value": this.date.value.toString(),
-				"data-disabled": getDataDisabled(this.isDisabled),
+				"data-disabled": getDataDisabled(
+					this.isDisabled ||
+						(this.isOutsideMonth && this.root.disableDaysOutsideMonth.value)
+				),
 				"data-unavailable": getDataUnavailable(this.isUnvailable),
 				"data-today": this.isDateToday ? "" : undefined,
 				"data-outside-month": this.isOutsideMonth ? "" : undefined,
@@ -811,7 +817,8 @@ class CalendarDayState {
 	#tabindex = $derived.by(() =>
 		this.cell.isFocusedDate
 			? 0
-			: this.cell.isOutsideMonth || this.cell.isDisabled
+			: (this.cell.isOutsideMonth && this.cell.root.disableDaysOutsideMonth.value) ||
+				  this.cell.isDisabled
 				? undefined
 				: -1
 	);
@@ -828,6 +835,14 @@ class CalendarDayState {
 		day: `${this.cell.date.value.day}`,
 	}));
 
+	#ariaDisabled = $derived.by(() => {
+		return (
+			this.cell.isDisabled ||
+			(this.cell.isOutsideMonth && this.cell.root.disableDaysOutsideMonth.value) ||
+			this.cell.isUnvailable
+		);
+	});
+
 	props = $derived.by(
 		() =>
 			({
@@ -835,12 +850,13 @@ class CalendarDayState {
 				role: "button",
 				"aria-label": this.cell.labelText,
 				"aria-selected": getAriaSelected(this.cell.isSelectedDate),
-				"aria-disabled": getAriaDisabled(
-					this.cell.isDisabled || this.cell.isOutsideMonth || this.cell.isUnvailable
-				),
+				"aria-disabled": getAriaDisabled(this.#ariaDisabled),
 				"data-selected": getDataSelected(this.cell.isSelectedDate),
 				"data-value": this.cell.date.value.toString(),
-				"data-disabled": getDataDisabled(this.cell.isDisabled),
+				"data-disabled": getDataDisabled(
+					this.cell.isDisabled ||
+						(this.cell.isOutsideMonth && this.cell.root.disableDaysOutsideMonth.value)
+				),
 				"data-unavailable": getDataUnavailable(this.cell.isUnvailable),
 				"data-today": this.cell.isDateToday ? "" : undefined,
 				"data-outside-month": this.cell.isOutsideMonth ? "" : undefined,

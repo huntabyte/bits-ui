@@ -32,7 +32,7 @@
 		{#if children}
 			{@render children?.({ headingValue: headingState.headingValue })}
 		{:else}
-			{mergedProps}
+			{headingState.headingValue}
 		{/if}
 	</div>
 {/if}

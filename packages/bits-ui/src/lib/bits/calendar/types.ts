@@ -30,7 +30,7 @@ type CalendarBaseRootPropsWithoutHTML = Omit<
 			 *
 			 * @defaultValue the current date
 			 */
-			placeholder: DateValue;
+			placeholder?: DateValue;
 
 			/**
 			 * A callback function called when the placeholder value
@@ -97,7 +97,7 @@ type CalendarBaseRootPropsWithoutHTML = Omit<
 			 * - "narrow": "S", "M", "T", etc.
 			 *```
 			 *
-			 * @default "narrow"
+			 * @defaultValue "narrow"
 			 *
 			 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#weekday
 			 */
@@ -113,7 +113,6 @@ type CalendarBaseRootPropsWithoutHTML = Omit<
 			 *
 			 * `[data-disabled]` - applied to disabled dates
 			 *
-			 * @default undefined;
 			 */
 			isDateDisabled?: Matcher;
 
@@ -128,7 +127,6 @@ type CalendarBaseRootPropsWithoutHTML = Omit<
 			 *
 			 * `[data-unavailable]` - applied to unavailable dates
 			 *
-			 * @default undefined;
 			 */
 			isDateUnavailable?: Matcher;
 
@@ -140,7 +138,7 @@ type CalendarBaseRootPropsWithoutHTML = Omit<
 			 * To display 6 weeks per month, you will need to render out the previous
 			 * and next month's dates in the calendar as well.
 			 *
-			 * @default false
+			 * @defaultValue false
 			 */
 			fixedWeeks?: boolean;
 
@@ -148,7 +146,7 @@ type CalendarBaseRootPropsWithoutHTML = Omit<
 			 * Determines the number of months to display on the calendar simultaneously.
 			 * For navigation between months, refer to the `pagedNavigation` prop.
 			 *
-			 * @default 1
+			 * @defaultValue 1
 			 */
 			numberOfMonths?: number;
 
@@ -167,7 +165,7 @@ type CalendarBaseRootPropsWithoutHTML = Omit<
 			/**
 			 * The default locale setting.
 			 *
-			 * @default 'en'
+			 * @defaultValue 'en'
 			 */
 			locale?: string;
 
@@ -177,9 +175,18 @@ type CalendarBaseRootPropsWithoutHTML = Omit<
 			 * dates. @see disabled for a similar prop that prevents focusing
 			 * and selecting dates.
 			 *
-			 * @default false
+			 * @defaultValue false
 			 */
 			readonly?: boolean;
+
+			/**
+			 * Whether to disable the selection of days outside the current month. By default,
+			 * days outside the current month are rendered to fill the calendar grid, but they
+			 * are not selectable. Setting this prop to `true` will disable this behavior.
+			 *
+			 * @defaultValue false
+			 */
+			disableDaysOutsideMonth?: boolean;
 		},
 		CalendarRootSnippetProps
 	>,

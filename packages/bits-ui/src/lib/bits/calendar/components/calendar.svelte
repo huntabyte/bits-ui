@@ -6,6 +6,7 @@
 	import { noop } from "$lib/internal/callbacks.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { getDefaultDate } from "$lib/shared/date/utils.js";
+	import type { DateValue } from "@internationalized/date";
 
 	let {
 		asChild,
@@ -32,6 +33,7 @@
 		maxValue = undefined,
 		preventDeselect = false,
 		type,
+		disableDaysOutsideMonth = true,
 		...restProps
 	}: RootProps = $props();
 
@@ -63,12 +65,13 @@
 		disabled: box.with(() => disabled),
 		minValue: box.with(() => minValue),
 		maxValue: box.with(() => maxValue),
+		disableDaysOutsideMonth: box.with(() => disableDaysOutsideMonth),
 		placeholder: box.with(
-			() => placeholder,
+			() => placeholder as DateValue,
 			(v) => {
 				if (placeholder !== v) {
 					placeholder = v;
-					onPlaceholderChange(v);
+					onPlaceholderChange(v as DateValue);
 				}
 			}
 		),
