@@ -1,21 +1,34 @@
 <script lang="ts">
-	import { getCtx } from "../ctx.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
+	import { box } from "svelte-toolbelt";
+	import { useCalendarGridRow } from "../calendar.svelte.js";
 	import type { GridRowProps } from "../index.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
 
-	type $$Props = GridRowProps;
+	let {
+		asChild,
+		children,
+		child,
+		ref = $bindable(null),
+		id = useId(),
+		...restProps
+	}: GridRowProps = $props();
 
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
+	const gridRowState = useCalendarGridRow({
+		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
+	});
 
-	const { getCalendarAttrs } = getCtx();
-
-	const attrs = getCalendarAttrs("grid-row");
+	const mergedProps = $derived(mergeProps(restProps, gridRowState.props));
 </script>
 
 {#if asChild}
-	<slot {attrs} />
+	{@render child?.({ props: mergedProps })}
 {:else}
-	<tr bind:this={ref} {...$$restProps} {...attrs}>
-		<slot {attrs} />
+	<tr {...mergedProps}>
+		{@render children?.()}
 	</tr>
 {/if}

@@ -8,6 +8,9 @@ import type {
 	HTMLInputAttributes,
 	HTMLLabelAttributes,
 	HTMLLiAttributes,
+	HTMLTableAttributes,
+	HTMLTdAttributes,
+	HTMLThAttributes,
 	SVGAttributes,
 } from "svelte/elements";
 import type { TransitionConfig } from "svelte/transition";
@@ -137,6 +140,13 @@ export type PrimitiveAnchorAttributes = Primitive<HTMLAnchorAttributes>;
 export type PrimitiveLiAttributes = Primitive<HTMLLiAttributes>;
 export type PrimitiveElementAttributes = Primitive<HTMLAttributes<HTMLElement>>;
 export type PrimitiveUListAttributes = Primitive<HTMLAttributes<HTMLUListElement>>;
+export type PrimitiveTdAttributes = Primitive<HTMLTdAttributes>;
+export type PrimitiveThAttributes = Primitive<HTMLThAttributes>;
+export type PrimitiveTableAttributes = Primitive<HTMLTableAttributes>;
+export type PrimitiveTbodyAttributes = Primitive<HTMLAttributes<HTMLTableSectionElement>>;
+export type PrimitiveTrAttributes = Primitive<HTMLAttributes<HTMLTableRowElement>>;
+export type PrimitiveTheadAttrbutes = Primitive<HTMLAttributes<HTMLTableSectionElement>>;
+export type PrimitiveHeaderAttributes = Primitive<HTMLAttributes<HTMLElement>>;
 
 export type AsChildProps<Props, SnippetProps, Ref> = {
 	child: Snippet<[SnippetProps & { props: Record<string, unknown> }]>;

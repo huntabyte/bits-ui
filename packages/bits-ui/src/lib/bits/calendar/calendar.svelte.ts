@@ -3,6 +3,7 @@ import { isValidIndex } from "$lib/internal/arrays.js";
 import {
 	getAriaDisabled,
 	getAriaHidden,
+	getAriaReadonly,
 	getAriaSelected,
 	getDataDisabled,
 	getDataInvalid,
@@ -15,6 +16,7 @@ import {
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
 } from "$lib/internal/box.svelte.js";
+import { createContext } from "$lib/internal/createContext.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { styleToString } from "$lib/internal/style.js";
 import type { WithRefProps } from "$lib/internal/types.js";
@@ -42,6 +44,19 @@ import { untrack } from "svelte";
 
 const ARROW_KEYS = [kbd.ARROW_DOWN, kbd.ARROW_UP, kbd.ARROW_LEFT, kbd.ARROW_RIGHT];
 const SELECT_KEYS = [kbd.ENTER, kbd.SPACE];
+
+const ROOT_ATTR = "data-calendar-root";
+const GRID_ATTR = "data-calendar-grid";
+const CELL_ATTR = "data-calendar-cell";
+const NEXT_BUTTON_ATTR = "data-calendar-next-button";
+const PREV_BUTTON_ATTR = "data-calendar-prev-button";
+const DAY_ATTR = "data-calendar-day";
+const GRID_BODY_ATTR = "data-calendar-grid-body";
+const GRID_HEAD_ATTR = "data-calendar-grid-head";
+const GRID_ROW_ATTR = "data-calendar-grid-row";
+const HEAD_CELL_ATTR = "data-calendar-head-cell";
+const HEADER_ATTR = "data-calendar-header";
+const HEADING_ATTR = "data-calendar-heading";
 
 type CalendarRootStateProps = WithRefProps<
 	WritableBoxedValues<{
@@ -611,6 +626,11 @@ class CalendarRootState {
 		}
 	};
 
+	snippetProps = $derived.by(() => ({
+		months: this.months,
+		weekdays: this.weekdays,
+	}));
+
 	props = $derived.by(
 		() =>
 			({
@@ -620,6 +640,7 @@ class CalendarRootState {
 				"data-invalid": getDataInvalid(this.isInvalid),
 				"data-disabled": getDataDisabled(this.disabled.value),
 				"data-readonly": getDataReadonly(this.readonly.value),
+				[ROOT_ATTR]: "",
 				//
 				onkeydown: this.#onkeydown,
 			}) as const
@@ -628,12 +649,49 @@ class CalendarRootState {
 	createHeading(props: CalendarHeadingStateProps) {
 		return new CalendarHeadingState(props, this);
 	}
+
+	createGrid(props: CalendarGridStateProps) {
+		return new CalendarGridState(props, this);
+	}
+
+	createCell(props: CalendarCellStateProps) {
+		return new CalendarCellState(props, this);
+	}
+
+	createNextButton(props: CalendarNextButtonStateProps) {
+		return new CalendarNextButtonState(props, this);
+	}
+
+	createPrevButton(props: CalendarPrevButtonStateProps) {
+		return new CalendarPrevButtonState(props, this);
+	}
+
+	createGridBody(props: CalendarGridBodyStateProps) {
+		return new CalendarGridBodyState(props, this);
+	}
+
+	createGridHead(props: CalendarGridHeadStateProps) {
+		return new CalendarGridHeadState(props, this);
+	}
+
+	createGridRow(props: CalendarGridRowStateProps) {
+		return new CalendarGridRowState(props, this);
+	}
+
+	createHeadCell(props: CalendarHeadCellStateProps) {
+		return new CalendarHeadCellState(props, this);
+	}
+
+	createHeader(props: CalendarHeaderStateProps) {
+		return new CalendarHeaderState(props, this);
+	}
 }
 
 type CalendarHeadingStateProps = WithRefProps;
 class CalendarHeadingState {
 	id: CalendarHeadingStateProps["id"];
 	ref: CalendarHeadingStateProps["ref"];
+	headingValue = $derived.by(() => this.root.headingValue);
 
 	constructor(
 		props: CalendarHeadingStateProps,
@@ -654,13 +712,14 @@ class CalendarHeadingState {
 				id: this.id.value,
 				"aria-hidden": getAriaHidden(true),
 				"data-disabled": getDataDisabled(this.root.disabled.value),
+				[HEADING_ATTR]: "",
 			}) as const
 	);
 }
 
 type CalendarCellStateProps = WithRefProps<
 	ReadableBoxedValues<{
-		value: DateValue;
+		date: DateValue;
 		month: DateValue;
 	}>
 >;
@@ -668,16 +727,16 @@ type CalendarCellStateProps = WithRefProps<
 class CalendarCellState {
 	id: CalendarCellStateProps["id"];
 	ref: CalendarCellStateProps["ref"];
-	value: CalendarCellStateProps["value"];
+	date: CalendarCellStateProps["date"];
 	month: CalendarCellStateProps["month"];
-	cellDate = $derived.by(() => toDate(this.value.value));
-	isDisabled = $derived.by(() => this.root.isDateDisabledProp.value(this.value.value));
-	isUnvailable = $derived.by(() => this.root.isDateUnavailableProp.value(this.value.value));
-	isDateToday = $derived.by(() => isToday(this.value.value, getLocalTimeZone()));
-	isOutsideMonth = $derived.by(() => !isSameMonth(this.value.value, this.month.value));
-	isOutsideVisibleMonths = $derived.by(() => this.root.isOutsideVisibleMonths(this.value.value));
-	isFocusedDate = $derived.by(() => isSameDay(this.value.value, this.root.placeholder.value));
-	isSelectedDate = $derived.by(() => this.root.isDateSelected(this.value.value));
+	cellDate = $derived.by(() => toDate(this.date.value));
+	isDisabled = $derived.by(() => this.root.isDateDisabledProp.value(this.date.value));
+	isUnvailable = $derived.by(() => this.root.isDateUnavailableProp.value(this.date.value));
+	isDateToday = $derived.by(() => isToday(this.date.value, getLocalTimeZone()));
+	isOutsideMonth = $derived.by(() => !isSameMonth(this.date.value, this.month.value));
+	isOutsideVisibleMonths = $derived.by(() => this.root.isOutsideVisibleMonths(this.date.value));
+	isFocusedDate = $derived.by(() => isSameDay(this.date.value, this.root.placeholder.value));
+	isSelectedDate = $derived.by(() => this.root.isDateSelected(this.date.value));
 	labelText = $derived.by(() =>
 		this.root.formatter.custom(this.cellDate, {
 			weekday: "long",
@@ -693,7 +752,7 @@ class CalendarCellState {
 	) {
 		this.id = props.id;
 		this.ref = props.ref;
-		this.value = props.value;
+		this.date = props.date;
 		this.month = props.month;
 
 		useRefById({
@@ -702,34 +761,93 @@ class CalendarCellState {
 		});
 	}
 
-	#tabindex = $derived.by(() =>
-		this.isFocusedDate ? 0 : this.isOutsideMonth || this.isDisabled ? undefined : -1
-	);
-
-	#onclick = () => {
-		if (this.isDisabled) return;
-		this.root.handleCellClick(this.value.value);
-	};
+	snippetProps = $derived.by(() => ({
+		disabled: this.isDisabled,
+		unavailable: this.isUnvailable,
+		selected: this.isSelectedDate,
+	}));
 
 	props = $derived.by(
 		() =>
 			({
 				id: this.id.value,
-				role: "button",
-				"aria-label": this.labelText,
-				"aria-selected": getAriaSelected(this.isSelectedDate),
-				"aria-disabled": getAriaDisabled(
-					this.isDisabled || this.isOutsideMonth || this.isUnvailable
-				),
+				role: "gridcell",
 				"data-selected": getDataSelected(this.isSelectedDate),
-				"data-value": this.value.value.toString(),
+				"data-value": this.date.value.toString(),
 				"data-disabled": getDataDisabled(this.isDisabled),
 				"data-unavailable": getDataUnavailable(this.isUnvailable),
 				"data-today": this.isDateToday ? "" : undefined,
 				"data-outside-month": this.isOutsideMonth ? "" : undefined,
 				"data-outside-visible-months": this.isOutsideVisibleMonths ? "" : undefined,
 				"data-focused": this.isFocusedDate ? "" : undefined,
+				[CELL_ATTR]: "",
+			}) as const
+	);
+
+	createDay(props: CalendarDayStateProps) {
+		return new CalendarDayState(props, this);
+	}
+}
+
+type CalendarDayStateProps = WithRefProps;
+
+class CalendarDayState {
+	id: CalendarCellStateProps["id"];
+	ref: CalendarCellStateProps["ref"];
+
+	constructor(
+		props: CalendarDayStateProps,
+		readonly cell: CalendarCellState
+	) {
+		this.id = props.id;
+		this.ref = props.ref;
+
+		useRefById({
+			id: this.id,
+			ref: this.ref,
+		});
+	}
+
+	#tabindex = $derived.by(() =>
+		this.cell.isFocusedDate
+			? 0
+			: this.cell.isOutsideMonth || this.cell.isDisabled
+				? undefined
+				: -1
+	);
+
+	#onclick = () => {
+		if (this.cell.isDisabled) return;
+		this.cell.root.handleCellClick(this.cell.date.value);
+	};
+
+	snippetProps = $derived.by(() => ({
+		disabled: this.cell.isDisabled,
+		unavailable: this.cell.isUnvailable,
+		selected: this.cell.isSelectedDate,
+		day: `${this.cell.date.value.day}`,
+	}));
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.id.value,
+				role: "button",
+				"aria-label": this.cell.labelText,
+				"aria-selected": getAriaSelected(this.cell.isSelectedDate),
+				"aria-disabled": getAriaDisabled(
+					this.cell.isDisabled || this.cell.isOutsideMonth || this.cell.isUnvailable
+				),
+				"data-selected": getDataSelected(this.cell.isSelectedDate),
+				"data-value": this.cell.date.value.toString(),
+				"data-disabled": getDataDisabled(this.cell.isDisabled),
+				"data-unavailable": getDataUnavailable(this.cell.isUnvailable),
+				"data-today": this.cell.isDateToday ? "" : undefined,
+				"data-outside-month": this.cell.isOutsideMonth ? "" : undefined,
+				"data-outside-visible-months": this.cell.isOutsideVisibleMonths ? "" : undefined,
+				"data-focused": this.cell.isFocusedDate ? "" : undefined,
 				tabindex: this.#tabindex,
+				[DAY_ATTR]: "",
 				//
 				onclick: this.#onclick,
 			}) as const
@@ -764,12 +882,14 @@ class CalendarNextButtonState {
 	props = $derived.by(
 		() =>
 			({
+				id: this.id.value,
 				role: "button",
 				type: "button",
 				"aria-label": "Next",
 				"aria-disabled": getAriaDisabled(this.isDisabled),
 				"data-disabled": getDataDisabled(this.isDisabled),
 				disabled: this.isDisabled,
+				[NEXT_BUTTON_ATTR]: "",
 				//
 				onclick: this.#onclick,
 			}) as const
@@ -804,14 +924,251 @@ class CalendarPrevButtonState {
 	props = $derived.by(
 		() =>
 			({
+				id: this.id.value,
 				role: "button",
 				type: "button",
 				"aria-label": "Previous",
 				"aria-disabled": getAriaDisabled(this.isDisabled),
 				"data-disabled": getDataDisabled(this.isDisabled),
 				disabled: this.isDisabled,
+				[PREV_BUTTON_ATTR]: "",
 				//
 				onclick: this.#onclick,
 			}) as const
 	);
+}
+
+type CalendarGridStateProps = WithRefProps;
+
+class CalendarGridState {
+	id: CalendarGridStateProps["id"];
+	ref: CalendarGridStateProps["ref"];
+
+	constructor(
+		props: CalendarGridStateProps,
+		readonly root: CalendarRootState
+	) {
+		this.id = props.id;
+		this.ref = props.ref;
+
+		useRefById({
+			id: this.id,
+			ref: this.ref,
+		});
+	}
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.id.value,
+				tabindex: -1,
+				role: "grid",
+				"aria-readonly": getAriaReadonly(this.root.readonly.value),
+				"aria-disabled": getAriaDisabled(this.root.disabled.value),
+				"data-readonly": getDataReadonly(this.root.readonly.value),
+				"data-disabled": getDataDisabled(this.root.disabled.value),
+				[GRID_ATTR]: "",
+			}) as const
+	);
+}
+
+type CalendarGridBodyStateProps = WithRefProps;
+
+class CalendarGridBodyState {
+	id: CalendarGridBodyStateProps["id"];
+	ref: CalendarGridBodyStateProps["ref"];
+
+	constructor(
+		props: CalendarGridBodyStateProps,
+		readonly root: CalendarRootState
+	) {
+		this.id = props.id;
+		this.ref = props.ref;
+
+		useRefById({
+			id: this.id,
+			ref: this.ref,
+		});
+	}
+
+	props = $derived.by(() => ({
+		id: this.id.value,
+		"data-disabled": getDataDisabled(this.root.disabled.value),
+		"data-readonly": getDataReadonly(this.root.readonly.value),
+		[GRID_BODY_ATTR]: "",
+	}));
+}
+
+type CalendarGridHeadStateProps = WithRefProps;
+
+class CalendarGridHeadState {
+	id: CalendarGridHeadStateProps["id"];
+	ref: CalendarGridHeadStateProps["ref"];
+
+	constructor(
+		props: CalendarGridHeadStateProps,
+		readonly root: CalendarRootState
+	) {
+		this.id = props.id;
+		this.ref = props.ref;
+
+		useRefById({
+			id: this.id,
+			ref: this.ref,
+		});
+	}
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.id.value,
+				"data-disabled": getDataDisabled(this.root.disabled.value),
+				"data-readonly": getDataReadonly(this.root.readonly.value),
+				[GRID_HEAD_ATTR]: "",
+			}) as const
+	);
+}
+
+type CalendarGridRowStateProps = WithRefProps;
+
+class CalendarGridRowState {
+	id: CalendarGridRowStateProps["id"];
+	ref: CalendarGridRowStateProps["ref"];
+
+	constructor(
+		props: CalendarGridRowStateProps,
+		readonly root: CalendarRootState
+	) {
+		this.id = props.id;
+		this.ref = props.ref;
+
+		useRefById({
+			id: this.id,
+			ref: this.ref,
+		});
+	}
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.id.value,
+				"data-disabled": getDataDisabled(this.root.disabled.value),
+				"data-readonly": getDataReadonly(this.root.readonly.value),
+				[GRID_ROW_ATTR]: "",
+			}) as const
+	);
+}
+
+type CalendarHeadCellStateProps = WithRefProps;
+
+class CalendarHeadCellState {
+	id: CalendarHeadCellStateProps["id"];
+	ref: CalendarHeadCellStateProps["ref"];
+
+	constructor(
+		props: CalendarHeadCellStateProps,
+		readonly root: CalendarRootState
+	) {
+		this.id = props.id;
+		this.ref = props.ref;
+
+		useRefById({
+			id: this.id,
+			ref: this.ref,
+		});
+	}
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.id.value,
+				"data-disabled": getDataDisabled(this.root.disabled.value),
+				"data-readonly": getDataReadonly(this.root.readonly.value),
+				[HEAD_CELL_ATTR]: "",
+			}) as const
+	);
+}
+
+type CalendarHeaderStateProps = WithRefProps;
+
+class CalendarHeaderState {
+	id: CalendarHeaderStateProps["id"];
+	ref: CalendarHeaderStateProps["ref"];
+
+	constructor(
+		props: CalendarHeaderStateProps,
+		readonly root: CalendarRootState
+	) {
+		this.id = props.id;
+		this.ref = props.ref;
+
+		useRefById({
+			id: this.id,
+			ref: this.ref,
+		});
+	}
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.id.value,
+				"data-disabled": getDataDisabled(this.root.disabled.value),
+				"data-readonly": getDataReadonly(this.root.readonly.value),
+				[HEADER_ATTR]: "",
+			}) as const
+	);
+}
+
+const [setCalendarRootContext, getCalendarRootContext] =
+	createContext<CalendarRootState>("Calendar.Root");
+
+const [setCalendarCellContext, getCalendarCellContext] =
+	createContext<CalendarCellState>("Calendar.Cell");
+
+export function useCalendarRoot(props: CalendarRootStateProps) {
+	return setCalendarRootContext(new CalendarRootState(props));
+}
+
+export function useCalendarGrid(props: CalendarGridStateProps) {
+	return getCalendarRootContext().createGrid(props);
+}
+
+export function useCalendarCell(props: CalendarCellStateProps) {
+	return setCalendarCellContext(getCalendarRootContext().createCell(props));
+}
+
+export function useCalendarNextButton(props: CalendarNextButtonStateProps) {
+	return getCalendarRootContext().createNextButton(props);
+}
+
+export function useCalendarPrevButton(props: CalendarPrevButtonStateProps) {
+	return getCalendarRootContext().createPrevButton(props);
+}
+
+export function useCalendarDay(props: CalendarDayStateProps) {
+	return getCalendarCellContext().createDay(props);
+}
+
+export function useCalendarGridBody(props: CalendarGridBodyStateProps) {
+	return getCalendarRootContext().createGridBody(props);
+}
+
+export function useCalendarGridHead(props: CalendarGridHeadStateProps) {
+	return getCalendarRootContext().createGridHead(props);
+}
+
+export function useCalendarGridRow(props: CalendarGridRowStateProps) {
+	return getCalendarRootContext().createGridRow(props);
+}
+
+export function useCalendarHeadCell(props: CalendarHeadCellStateProps) {
+	return getCalendarRootContext().createHeadCell(props);
+}
+
+export function useCalendarHeader(props: CalendarHeaderStateProps) {
+	return getCalendarRootContext().createHeader(props);
+}
+
+export function useCalendarHeading(props: CalendarHeadingStateProps) {
+	return getCalendarRootContext().createHeading(props);
 }

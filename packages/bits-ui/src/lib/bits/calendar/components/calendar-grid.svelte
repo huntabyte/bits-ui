@@ -1,28 +1,34 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { getCtx } from "../ctx.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
+	import { box } from "svelte-toolbelt";
+	import { useCalendarGrid } from "../calendar.svelte.js";
 	import type { GridProps } from "../index.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
 
-	type $$Props = GridProps;
+	let {
+		asChild,
+		children,
+		child,
+		ref = $bindable(null),
+		id = useId(),
+		...restProps
+	}: GridProps = $props();
 
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
+	const gridState = useCalendarGrid({
+		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
+	});
 
-	const {
-		elements: { grid },
-		getCalendarAttrs,
-	} = getCtx();
-
-	const attrs = getCalendarAttrs("grid");
-
-	$: builder = $grid;
-	$: Object.assign(builder, attrs);
+	const mergedProps = $derived(mergeProps(restProps, gridState.props));
 </script>
 
 {#if asChild}
-	<slot {builder} />
+	{@render child?.({ props: mergedProps })}
 {:else}
-	<table bind:this={ref} use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+	<table {...mergedProps}>
+		{@render children?.()}
 	</table>
 {/if}
