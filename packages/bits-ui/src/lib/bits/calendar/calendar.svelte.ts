@@ -270,7 +270,9 @@ class CalendarRootState {
 			});
 
 			this.months = newMonths;
-			this.placeholder.value = firstMonth.set({ day: 1 });
+			const firstNewMonth = newMonths[0];
+			if (!firstNewMonth) return;
+			this.placeholder.value = firstNewMonth.value.set({ day: 1 });
 		}
 	}
 
@@ -295,7 +297,9 @@ class CalendarRootState {
 			});
 
 			this.months = newMonths;
-			this.placeholder.value = firstMonth.set({ day: 1 });
+			const firstNewMonth = newMonths[0];
+			if (!firstNewMonth) return;
+			this.placeholder.value = firstNewMonth.value.set({ day: 1 });
 		}
 	}
 
@@ -329,7 +333,7 @@ class CalendarRootState {
 			whiteSpace: "nowrap",
 			width: "1px",
 		});
-		const h2 = document.createElement("h2");
+		const h2 = document.createElement("div");
 		h2.textContent = label;
 		h2.id = this.accessibleHeadingId;
 		h2.role = "heading";
@@ -358,9 +362,11 @@ class CalendarRootState {
 	isPrevButtonDisabled = $derived.by(() => {
 		if (!this.minValue.value || !this.months.length) return false;
 		if (this.disabled.value) return true;
+
 		const firstMonthInView = this.months[0]?.value;
 		if (firstMonthInView === undefined) return false;
-		const lastMonthOfPrevPage = firstMonthInView.subtract({ months: 1 }).set({ day: 1 });
+
+		const lastMonthOfPrevPage = firstMonthInView.subtract({ months: 1 }).set({ day: 35 });
 		return isBefore(lastMonthOfPrevPage, this.minValue.value);
 	});
 
@@ -594,6 +600,7 @@ class CalendarRootState {
 		}
 		if (!prev) return date;
 		const preventDeselect = this.preventDeselect.value;
+		console.log("preventDeselect", preventDeselect);
 		if (!preventDeselect && isSameDay(prev, date)) {
 			this.placeholder.value = date;
 			return undefined;
@@ -733,7 +740,7 @@ class CalendarCellState {
 	date: CalendarCellStateProps["date"];
 	month: CalendarCellStateProps["month"];
 	cellDate = $derived.by(() => toDate(this.date.value));
-	isDisabled = $derived.by(() => this.root.isDateDisabledProp.value(this.date.value));
+	isDisabled = $derived.by(() => this.root.isDateDisabled(this.date.value));
 	isUnvailable = $derived.by(() => this.root.isDateUnavailableProp.value(this.date.value));
 	isDateToday = $derived.by(() => isToday(this.date.value, getLocalTimeZone()));
 	isOutsideMonth = $derived.by(() => !isSameMonth(this.date.value, this.month.value));
@@ -770,6 +777,14 @@ class CalendarCellState {
 		selected: this.isSelectedDate,
 	}));
 
+	ariaDisabled = $derived.by(() => {
+		return (
+			this.isDisabled ||
+			(this.isOutsideMonth && this.root.disableDaysOutsideMonth.value) ||
+			this.isUnvailable
+		);
+	});
+
 	props = $derived.by(
 		() =>
 			({
@@ -781,6 +796,8 @@ class CalendarCellState {
 					this.isDisabled ||
 						(this.isOutsideMonth && this.root.disableDaysOutsideMonth.value)
 				),
+				"aria-selected": getAriaSelected(this.isSelectedDate),
+				"aria-disabled": getAriaDisabled(this.ariaDisabled),
 				"data-unavailable": getDataUnavailable(this.isUnvailable),
 				"data-today": this.isDateToday ? "" : undefined,
 				"data-outside-month": this.isOutsideMonth ? "" : undefined,
@@ -835,22 +852,13 @@ class CalendarDayState {
 		day: `${this.cell.date.value.day}`,
 	}));
 
-	#ariaDisabled = $derived.by(() => {
-		return (
-			this.cell.isDisabled ||
-			(this.cell.isOutsideMonth && this.cell.root.disableDaysOutsideMonth.value) ||
-			this.cell.isUnvailable
-		);
-	});
-
 	props = $derived.by(
 		() =>
 			({
 				id: this.id.value,
 				role: "button",
 				"aria-label": this.cell.labelText,
-				"aria-selected": getAriaSelected(this.cell.isSelectedDate),
-				"aria-disabled": getAriaDisabled(this.#ariaDisabled),
+				"aria-disabled": getAriaDisabled(this.cell.ariaDisabled),
 				"data-selected": getDataSelected(this.cell.isSelectedDate),
 				"data-value": this.cell.date.value.toString(),
 				"data-disabled": getDataDisabled(

@@ -1,10 +1,13 @@
 <script lang="ts">
 	import { Calendar } from "bits-ui";
 	import { CaretLeft, CaretRight } from "$icons/index.js";
+	import { getLocalTimeZone, today } from "@internationalized/date";
 
 	const isDateUnavailable: Calendar.RootProps["isDateUnavailable"] = (date) => {
 		return date.day === 17 || date.day === 18;
 	};
+
+	let value = $state(today(getLocalTimeZone()));
 </script>
 
 <Calendar.Root
@@ -13,6 +16,7 @@
 	weekdayFormat="short"
 	fixedWeeks={true}
 	type="single"
+	bind:value
 >
 	{#snippet children({ months, weekdays })}
 		<Calendar.Header class="flex items-center justify-between">

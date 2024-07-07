@@ -1,13 +1,12 @@
-import { render } from "@testing-library/svelte";
+import { render } from "@testing-library/svelte/svelte5";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import { CalendarDate, CalendarDateTime, toZoned } from "@internationalized/date";
 import { getTestKbd } from "../utils.js";
 import { getSelectedDay, getSelectedDays } from "../helpers/calendar.js";
-import CalendarTest from "./CalendarTest.svelte";
-import CalendarMultiTest from "./CalendarMultiTest.svelte";
-import type { Calendar } from "$lib/index.js";
+import CalendarTest, { type CalendarSingleTestProps } from "./CalendarTest.svelte";
+import CalendarMultiTest, { type CalendarMultiTestProps } from "./CalendarMultiTest.svelte";
 
 const kbd = getTestKbd();
 
@@ -21,17 +20,17 @@ const longWeekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "F
 // prettier-ignore
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October" ,"November", "December"];
 
-function setup(props: Calendar.Props = {}) {
+function setup(props: Partial<CalendarSingleTestProps> = {}) {
 	const user = userEvent.setup();
-	const returned = render(CalendarTest, { ...props });
+	const returned = render(CalendarTest, { ...props, type: "single" });
 	const calendar = returned.getByTestId("calendar");
 	expect(calendar).toBeVisible();
 	return { ...returned, user, calendar };
 }
 
-function setupMulti(props: Calendar.Props<true> = {}) {
+function setupMulti(props: Partial<CalendarMultiTestProps> = {}) {
 	const user = userEvent.setup();
-	const returned = render(CalendarMultiTest, { ...props, multiple: true });
+	const returned = render(CalendarMultiTest, { ...props, type: "multiple" });
 	const calendar = returned.getByTestId("calendar");
 	expect(calendar).toBeVisible();
 	return { ...returned, user, calendar };
