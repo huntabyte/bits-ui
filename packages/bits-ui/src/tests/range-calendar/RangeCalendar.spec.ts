@@ -1,4 +1,4 @@
-import { render } from "@testing-library/svelte";
+import { render } from "@testing-library/svelte/svelte5";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
@@ -6,8 +6,7 @@ import { CalendarDate, CalendarDateTime, toZoned } from "@internationalized/date
 import { tick } from "svelte";
 import { getTestKbd } from "../utils.js";
 import { getSelectedDays } from "../helpers/calendar.js";
-import RangeCalendarTest from "./RangeCalendarTest.svelte";
-import type { RangeCalendar } from "$lib/index.js";
+import RangeCalendarTest, { type RangeCalendarTestProps } from "./RangeCalendarTest.svelte";
 
 const kbd = getTestKbd();
 
@@ -32,13 +31,16 @@ const longWeekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "F
 // prettier-ignore
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October" ,"November", "December"];
 
-function setup(props: RangeCalendar.Props = {}) {
+function setup(props: Partial<RangeCalendarTestProps> = {}) {
 	const user = userEvent.setup();
 	const returned = render(RangeCalendarTest, { ...props });
 	const calendar = returned.getByTestId("calendar");
 	expect(calendar).toBeVisible();
 	return { ...returned, user, calendar };
 }
+
+const SELECTED_DAY_SELECTOR = "[data-bits-day][data-selected]";
+const SELECTED_ATTR = "data-selected";
 
 describe("calendar", () => {
 	it("has no accessibility violations", async () => {
@@ -49,7 +51,7 @@ describe("calendar", () => {
 	it("respects a default value if provided - `CalendarDate`", async () => {
 		const { calendar, getByTestId } = setup({ value: calendarDateRange });
 
-		const selectedDays = calendar.querySelectorAll<HTMLElement>("[data-selected]");
+		const selectedDays = calendar.querySelectorAll<HTMLElement>(SELECTED_DAY_SELECTOR);
 		expect(selectedDays).toHaveLength(6);
 
 		const heading = getByTestId("heading");
@@ -59,7 +61,7 @@ describe("calendar", () => {
 	it("respects a default value if provided - `CalendarDateTime`", async () => {
 		const { calendar, getByTestId } = setup({ value: calendarDateTimeRange });
 
-		const selectedDays = calendar.querySelectorAll<HTMLElement>("[data-selected]");
+		const selectedDays = calendar.querySelectorAll<HTMLElement>(SELECTED_DAY_SELECTOR);
 		expect(selectedDays).toHaveLength(6);
 
 		const heading = getByTestId("heading");
@@ -69,7 +71,7 @@ describe("calendar", () => {
 	it("respects a default value if provided - `ZonedDateTime`", async () => {
 		const { calendar, getByTestId } = setup({ value: zonedDateTimeRange });
 
-		const selectedDays = calendar.querySelectorAll<HTMLElement>("[data-selected]");
+		const selectedDays = calendar.querySelectorAll<HTMLElement>(SELECTED_DAY_SELECTOR);
 		expect(selectedDays).toHaveLength(6);
 
 		const heading = getByTestId("heading");
@@ -291,7 +293,7 @@ describe("calendar", () => {
 		expect(thirdDayInMonth).toHaveAttribute("data-unavailable");
 		expect(thirdDayInMonth).toHaveAttribute("aria-disabled", "true");
 		await user.click(thirdDayInMonth);
-		expect(thirdDayInMonth).not.toHaveAttribute("data-selected");
+		expect(thirdDayInMonth).not.toHaveAttribute(SELECTED_ATTR);
 	});
 
 	it("formats the weekday labels correctly - `'narrow'`", async () => {

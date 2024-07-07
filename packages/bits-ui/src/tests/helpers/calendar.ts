@@ -1,7 +1,7 @@
 export function getSelectedDays(calendar: HTMLElement) {
-	return Array.from(calendar.querySelectorAll<HTMLElement>("[data-calendar-day][data-selected]"));
+	return Array.from(calendar.querySelectorAll<HTMLElement>("[data-bits-day][data-selected]"));
 }
 
 export function getSelectedDay(calendar: HTMLElement) {
-	return calendar.querySelector<HTMLElement>("[data-calendar-day][data-selected]") as HTMLElement;
+	return calendar.querySelector<HTMLElement>("[data-bits-day][data-selected]") as HTMLElement;
 }
