@@ -205,10 +205,6 @@ export class RangeCalendarRootState {
 			node.textContent = this.fullCalendarLabel;
 		});
 
-		$effect(() => {
-			console.log(this.highlightedRange);
-		});
-
 		/**
 		 * Synchronize the placeholder value with the current value.
 		 */
@@ -226,7 +222,6 @@ export class RangeCalendarRootState {
 			untrack(() => {
 				const value = this.value.value;
 				if (value && value.start === startValue && value.end === endValue) {
-					console.log("values in sync");
 					return;
 				}
 
@@ -449,7 +444,6 @@ export class RangeCalendarRootState {
 			isSameDay(this.endValue, date) &&
 			!this.preventDeselect.value
 		) {
-			console.log("start end same day and not prevent deselect");
 			this.startValue = undefined;
 			this.endValue = undefined;
 			this.placeholder.value = date;
@@ -458,16 +452,12 @@ export class RangeCalendarRootState {
 		}
 
 		if (!this.startValue) {
-			console.log("no start value");
 			this.#announceSelectedDate(date);
 			this.startValue = date;
 		} else if (!this.endValue) {
-			console.log("no end value");
 			this.#announceSelectedRange(this.startValue, date);
-			console.log("setting end value");
 			this.endValue = date;
 		} else if (this.endValue && this.startValue) {
-			console.log("start and end value");
 			this.endValue = undefined;
 			this.#announceSelectedDate(date);
 			this.startValue = date;
