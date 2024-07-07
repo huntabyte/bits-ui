@@ -1,5 +1,4 @@
 import type { HTMLAttributes } from "svelte/elements";
-
 export { default as GitHub } from "./github.svelte";
 export { default as Xcom } from "./x-com.svelte";
 export { default as Tailwind } from "./tailwind.svelte";

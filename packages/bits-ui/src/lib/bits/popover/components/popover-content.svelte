@@ -26,10 +26,16 @@
 			(v) => (ref = v)
 		),
 	});
+
+	const mergedProps = $derived(mergeProps(restProps, contentState.props))
+
+	$effect(() => {
+		console.log("open", contentState.root.open.value);
+	});
 </script>
 
 <PopperLayer
-	{...restProps}
+	{...mergedProps}
 	present={contentState.root.open.value || forceMount}
 	{id}
 	onInteractOutside={(e) => {
@@ -39,6 +45,7 @@
 		contentState.root.close();
 	}}
 	onEscapeKeydown={(e) => {
+		console.log("escape keydown");
 		// TODO: users should be able to cancel this
 		onEscapeKeydown(e);
 		contentState.root.close();
@@ -51,13 +58,14 @@
 	}}
 	trapped
 	{loop}
+	{forceMount}
 >
 	{#snippet popper({ props })}
-		{@const mergedProps = mergeProps(restProps, contentState.props, props)}
+		{@const finalProps = mergeProps(props, mergedProps)}
 		{#if asChild}
-			{@render child?.({ props: mergedProps })}
+			{@render child?.({ props: finalProps })}
 		{:else}
-			<div {...mergedProps}>
+			<div {...finalProps}>
 				{@render children?.()}
 			</div>
 		{/if}
