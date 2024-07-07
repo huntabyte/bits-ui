@@ -1143,11 +1143,15 @@ class CalendarHeaderState {
 	);
 }
 
-const [setCalendarRootContext, getCalendarRootContext] =
-	createContext<CalendarRootState>("Calendar.Root");
+const [setCalendarRootContext, getCalendarRootContext] = createContext<CalendarRootState>(
+	["Calendar.Root", "RangeCalendar.Root"],
+	"Calendar.Root"
+);
 
-const [setCalendarCellContext, getCalendarCellContext] =
-	createContext<CalendarCellState>("Calendar.Cell");
+const [setCalendarCellContext, getCalendarCellContext] = createContext<CalendarCellState>(
+	["Calendar.Cell", "RangeCalendar.Cell"],
+	"Calendar.Cell"
+);
 
 export function useCalendarRoot(props: CalendarRootStateProps) {
 	return setCalendarRootContext(new CalendarRootState(props));

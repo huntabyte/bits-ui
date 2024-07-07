@@ -5,7 +5,7 @@ import type {
 	WithAsChild,
 	Without,
 } from "$lib/internal/types.js";
-import type { Granularity, Matcher } from "$lib/shared/date/types.js";
+import type { Granularity, DateMatcher } from "$lib/shared/date/types.js";
 import type { DateRange, EditableSegmentPart, SegmentPart } from "$lib/shared/index.js";
 import type { DateFieldSegmentProps, DateFieldSegmentPropsWithoutHTML } from "$lib/types.js";
 import type { DateValue } from "@internationalized/date";
@@ -41,7 +41,7 @@ export type DateRangeFieldRootPropsWithoutHTML = WithAsChild<{
 	 * A function that returns true if the given date is unavailable,
 	 * where if selected, the date field will be marked as invalid.
 	 */
-	isDateUnavailable?: Matcher;
+	isDateUnavailable?: DateMatcher;
 
 	/**
 	 * The minimum acceptable date. When provided, the date field

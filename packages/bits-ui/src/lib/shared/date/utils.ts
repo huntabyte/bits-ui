@@ -1,4 +1,4 @@
-import type { Granularity, Matcher } from "./types.js";
+import type { Granularity, DateMatcher } from "./types.js";
 import {
 	CalendarDate,
 	CalendarDateTime,
@@ -237,8 +237,8 @@ export function getNextLastDayOfWeek<T extends DateValue = DateValue>(
 export function areAllDaysBetweenValid(
 	start: DateValue,
 	end: DateValue,
-	isUnavailable: Matcher | undefined,
-	isDisabled: Matcher | undefined
+	isUnavailable: DateMatcher | undefined,
+	isDisabled: DateMatcher | undefined
 ) {
 	if (isUnavailable === undefined && isDisabled === undefined) {
 		return true;

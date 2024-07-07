@@ -52,7 +52,7 @@ import { DATE_SEGMENT_PARTS, TIME_SEGMENT_PARTS } from "$lib/shared/date/field/p
 import { onDestroy, onMount, untrack } from "svelte";
 import { createContext } from "$lib/internal/createContext.js";
 import { useId } from "$lib/internal/useId.svelte.js";
-import type { Granularity, Matcher } from "$lib/shared/date/types.js";
+import type { Granularity, DateMatcher } from "$lib/shared/date/types.js";
 import type { DateRangeFieldRootState } from "../date-range-field/date-range-field.svelte.js";
 
 export type DateFieldRootStateProps = WritableBoxedValues<{
@@ -61,7 +61,7 @@ export type DateFieldRootStateProps = WritableBoxedValues<{
 }> &
 	ReadableBoxedValues<{
 		readonlySegments: SegmentPart[];
-		isDateUnavailable: Matcher | undefined;
+		isDateUnavailable: DateMatcher | undefined;
 		minValue: DateValue | undefined;
 		maxValue: DateValue | undefined;
 		disabled: boolean;

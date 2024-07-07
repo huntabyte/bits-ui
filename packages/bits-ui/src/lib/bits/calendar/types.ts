@@ -12,7 +12,7 @@ import type {
 	WithAsChild,
 	Without,
 } from "$lib/internal/types.js";
-import type { Matcher, Month } from "$lib/shared/date/types.js";
+import type { DateMatcher, Month } from "$lib/shared/date/types.js";
 import type { DateValue } from "@internationalized/date";
 import type { Snippet } from "svelte";
 
@@ -114,7 +114,7 @@ type CalendarBaseRootPropsWithoutHTML = Omit<
 			 * `[data-disabled]` - applied to disabled dates
 			 *
 			 */
-			isDateDisabled?: Matcher;
+			isDateDisabled?: DateMatcher;
 
 			/**
 			 * Dates matching the provided matchers are marked as "unavailable." Unlike disabled dates,
@@ -128,7 +128,7 @@ type CalendarBaseRootPropsWithoutHTML = Omit<
 			 * `[data-unavailable]` - applied to unavailable dates
 			 *
 			 */
-			isDateUnavailable?: Matcher;
+			isDateUnavailable?: DateMatcher;
 
 			/**
 			 * Display 6 weeks per month, regardless the month's number of weeks.

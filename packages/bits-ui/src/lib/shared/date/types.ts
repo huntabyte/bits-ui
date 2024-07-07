@@ -8,7 +8,7 @@ export type DayOfWeek = {
 	daysOfWeek: (typeof daysOfWeek)[number][];
 };
 
-export type Matcher = (date: DateValue) => boolean;
+export type DateMatcher = (date: DateValue) => boolean;
 export type DateRange = {
 	start: DateValue | undefined;
 	end: DateValue | undefined;
