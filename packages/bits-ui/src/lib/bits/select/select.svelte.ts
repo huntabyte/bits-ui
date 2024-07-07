@@ -1,5 +1,5 @@
 import { type ReadableBox, box } from "svelte-toolbelt";
-import { Map } from "svelte/reactivity";
+import { SvelteMap } from "svelte/reactivity";
 import { untrack } from "svelte";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { watch } from "$lib/internal/box.svelte.js";
@@ -94,7 +94,7 @@ export class SelectRootState {
 	contentFragment = $state<DocumentFragment | null>(null);
 
 	// A set of all the native options we'll use to render the native select element under the hood
-	#nativeOptionsSet = new Map<string, ReadableBox<SelectNativeOption>>();
+	#nativeOptionsSet = new SvelteMap<string, ReadableBox<SelectNativeOption>>();
 	// A key we'll use to rerender the native select when the options change to keep it in sync
 	nativeSelectKey = $derived.by(() => {
 		return Array.from(this.#nativeOptionsSet.values())

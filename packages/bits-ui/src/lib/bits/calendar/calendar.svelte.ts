@@ -414,7 +414,6 @@ export class CalendarRootState {
 		}
 		if (!prev) return date;
 		const preventDeselect = this.preventDeselect.value;
-		console.log("preventDeselect", preventDeselect);
 		if (!preventDeselect && isSameDay(prev, date)) {
 			this.placeholder.value = date;
 			return undefined;
