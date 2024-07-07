@@ -1,6 +1,11 @@
 import type { DateValue } from "@internationalized/date";
 import type { DateMatcher, Month } from "$lib/shared/date/types.js";
-import type { OnChangeFn, WithAsChild } from "$lib/internal/types.js";
+import type {
+	OnChangeFn,
+	PrimitiveDivAttributes,
+	WithAsChild,
+	Without,
+} from "$lib/internal/types.js";
 import type { DateRange } from "$lib/shared/index.js";
 import type { Snippet } from "svelte";
 
@@ -193,3 +198,41 @@ export type RangeCalendarRootPropsWithoutHTML = Omit<
 > & {
 	children?: Snippet<[RangeCalendarRootSnippetProps]>;
 };
+
+export type RangeCalendarRootProps = RangeCalendarRootPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, RangeCalendarRootPropsWithoutHTML>;
+
+export type {
+	CalendarPrevButtonProps as RangeCalendarPrevButtonProps,
+	CalendarPrevButtonPropsWithoutHTML as RangeCalendarPrevButtonPropsWithoutHTML,
+	//
+	CalendarNextButtonProps as RangeCalendarNextButtonProps,
+	CalendarNextButtonPropsWithoutHTML as RangeCalendarNextButtonPropsWithoutHTML,
+	//
+	CalendarHeadingProps as RangeCalendarHeadingProps,
+	CalendarHeadingPropsWithoutHTML as RangeCalendarHeadingPropsWithoutHTML,
+	//
+	CalendarGridProps as RangeCalendarGridProps,
+	CalendarGridPropsWithoutHTML as RangeCalendarGridPropsWithoutHTML,
+	//
+	CalendarCellProps as RangeCalendarCellProps,
+	CalendarCellPropsWithoutHTML as RangeCalendarCellPropsWithoutHTML,
+	//
+	CalendarDayProps as RangeCalendarDayProps,
+	CalendarDayPropsWithoutHTML as RangeCalendarDayPropsWithoutHTML,
+	//
+	CalendarGridBodyProps as RangeCalendarGridBodyProps,
+	CalendarGridBodyPropsWithoutHTML as RangeCalendarGridBodyPropsWithoutHTML,
+	//
+	CalendarGridHeadProps as RangeCalendarGridHeadProps,
+	CalendarGridHeadPropsWithoutHTML as RangeCalendarGridHeadPropsWithoutHTML,
+	//
+	CalendarGridRowProps as RangeCalendarGridRowProps,
+	CalendarGridRowPropsWithoutHTML as RangeCalendarGridRowPropsWithoutHTML,
+	//
+	CalendarHeadCellProps as RangeCalendarHeadCellProps,
+	CalendarHeadCellPropsWithoutHTML as RangeCalendarHeadCellPropsWithoutHTML,
+	//
+	CalendarHeaderProps as RangeCalendarHeaderProps,
+	CalendarHeaderPropsWithoutHTML as RangeCalendarHeaderPropsWithoutHTML,
+} from "../calendar/types.js";
