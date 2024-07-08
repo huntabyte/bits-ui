@@ -1,44 +1,8 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { getCtx } from "../ctx.js";
-	import type { TriggerEvents, TriggerProps } from "../index.js";
-	import { createDispatcher } from "$lib/internal/events.js";
+	import type { TriggerProps } from "../index.js";
+	import PopoverTrigger from "$lib/bits/popover/components/popover-trigger.svelte";
 
-	type $$Props = TriggerProps;
-	type $$Events = TriggerEvents;
-
-	export let asChild: $$Props["asChild"] = false;
-	export let id: $$Props["id"] = undefined;
-	export let el: $$Props["el"] = undefined;
-
-	const {
-		elements: { trigger },
-		ids,
-		getPopoverAttrs,
-	} = getCtx();
-
-	const dispatch = createDispatcher();
-	const attrs = getPopoverAttrs("trigger");
-
-	$: if (id) {
-		ids.popover.trigger.set(id);
-	}
-
-	$: builder = $trigger;
-	$: Object.assign(builder, attrs);
+	let { ref = $bindable(null), ...restProps }: TriggerProps = $props();
 </script>
 
-{#if asChild}
-	<slot {builder} />
-{:else}
-	<button
-		bind:this={ref}
-		use:melt={builder}
-		type="button"
-		{...$$restProps}
-		on:m-click={dispatch}
-		on:m-keydown={dispatch}
-	>
-		<slot {builder} />
-	</button>
-{/if}
+<PopoverTrigger {...restProps} bind:ref data-segment="trigger" />

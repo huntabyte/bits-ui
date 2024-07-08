@@ -12,7 +12,7 @@ import type {
 	WithAsChild,
 	Without,
 } from "$lib/internal/types.js";
-import type { DateMatcher, Month } from "$lib/shared/date/types.js";
+import type { DateMatcher, Month, WeekStartsOn } from "$lib/shared/date/types.js";
 import type { DateValue } from "@internationalized/date";
 import type { Snippet } from "svelte";
 
@@ -85,7 +85,7 @@ type CalendarBaseRootPropsWithoutHTML = Omit<
 			 *
 			 * @defaultValue 0 (Sunday)
 			 */
-			weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6;
+			weekStartsOn?: WeekStartsOn;
 
 			/**
 			 * How the string representation of the weekdays provided via the `weekdays` state store

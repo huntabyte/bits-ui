@@ -1,6 +1,8 @@
 import type { DateValue } from "@internationalized/date";
 
 export type Granularity = "day" | "hour" | "minute" | "second";
+export type HourCycle = 12 | 24;
+export type WeekStartsOn = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
 // Days of the week, starting with Sunday
 const daysOfWeek = [0, 1, 2, 3, 4, 5, 6] as const;

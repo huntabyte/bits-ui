@@ -723,3 +723,11 @@ export function getCalendarBitsAttr(
 	const prefix = isRange ? "data-range-calendar-" : "data-calendar-";
 	return `${prefix}${part}`;
 }
+
+export function pickerOpenFocus(e: Event) {
+	const nodeToFocus = document.querySelector<HTMLElement>("[data-bits-day][data-focused]");
+	if (nodeToFocus) {
+		e.preventDefault();
+		nodeToFocus?.focus();
+	}
+}

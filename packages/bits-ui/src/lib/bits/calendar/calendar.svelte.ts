@@ -36,7 +36,7 @@ import {
 	type CalendarParts,
 } from "$lib/shared/date/calendar-helpers.svelte.js";
 import { createFormatter, type Formatter } from "$lib/shared/date/formatter.js";
-import type { Month } from "$lib/shared/date/types.js";
+import type { DateMatcher, Month } from "$lib/shared/date/types.js";
 import { isBefore, toDate } from "$lib/shared/date/utils.js";
 import {
 	getLocalTimeZone,
@@ -64,8 +64,8 @@ type CalendarRootStateProps = WithRefProps<
 			pagedNavigation: boolean;
 			weekStartsOn: 0 | 1 | 2 | 3 | 4 | 5 | 6;
 			weekdayFormat: Intl.DateTimeFormatOptions["weekday"];
-			isDateDisabled: (date: DateValue) => boolean;
-			isDateUnavailable: (date: DateValue) => boolean;
+			isDateDisabled: DateMatcher;
+			isDateUnavailable: DateMatcher;
 			fixedWeeks: boolean;
 			numberOfMonths: number;
 			locale: string;

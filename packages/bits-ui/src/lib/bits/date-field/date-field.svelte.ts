@@ -52,7 +52,7 @@ import { DATE_SEGMENT_PARTS, TIME_SEGMENT_PARTS } from "$lib/shared/date/field/p
 import { onDestroy, onMount, untrack } from "svelte";
 import { createContext } from "$lib/internal/createContext.js";
 import { useId } from "$lib/internal/useId.svelte.js";
-import type { Granularity, DateMatcher } from "$lib/shared/date/types.js";
+import type { Granularity, DateMatcher, HourCycle } from "$lib/shared/date/types.js";
 import type { DateRangeFieldRootState } from "../date-range-field/date-range-field.svelte.js";
 
 export type DateFieldRootStateProps = WritableBoxedValues<{
@@ -67,7 +67,7 @@ export type DateFieldRootStateProps = WritableBoxedValues<{
 		disabled: boolean;
 		readonly: boolean;
 		granularity: Granularity | undefined;
-		hourCycle: 12 | 24 | undefined;
+		hourCycle: HourCycle | undefined;
 		locale: string;
 		hideTimeZone: boolean;
 		name: string;
