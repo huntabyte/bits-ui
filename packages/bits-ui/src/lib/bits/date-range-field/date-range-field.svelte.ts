@@ -114,6 +114,26 @@ export class DateRangeFieldRootState {
 			this.formatter.setLocale(this.locale.value);
 		});
 
+		$effect(() => {
+			console.log("value in date range field", this.value.value);
+		});
+
+		/**
+		 * Sync values set programatically with the `startValue` and `endValue`
+		 */
+		$effect(() => {
+			const value = this.value.value;
+
+			untrack(() => {
+				if (value && value.start !== this.startValue) {
+					this.startValue = value.start;
+				}
+				if (value && value.end !== this.endValue) {
+					this.endValue = value.end;
+				}
+			});
+		});
+
 		// TODO: Handle description element
 
 		$effect(() => {

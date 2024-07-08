@@ -32,17 +32,10 @@
 	const fieldState = useDateRangeFieldInput({
 		name: box.with(() => name),
 		value: box.with(
-			() => value,
+			() => (type === "start" ? rootState.startValue : rootState.endValue),
 			(v) => {
-				if (value !== v) {
-					value = v;
-					if (type === "start") {
-						rootState.startValue = v;
-					} else {
-						rootState.endValue = v;
-					}
-					onValueChange(v);
-				}
+				type === "start" ? (rootState.startValue = v) : (rootState.endValue = v);
+				onValueChange(v);
 			}
 		),
 	});
