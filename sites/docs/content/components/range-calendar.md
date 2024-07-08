@@ -21,36 +21,38 @@ description: Presents a calendar view tailored for selecting date ranges.
 	import { RangeCalendar } from "bits-ui";
 </script>
 
-<RangeCalendar.Root let:months let:weekdays>
-	<RangeCalendar.Header>
-		<RangeCalendar.PrevButton />
-		<RangeCalendar.Heading />
-		<RangeCalendar.NextButton />
-	</RangeCalendar.Header>
-	{#each months as month}
-		<RangeCalendar.Grid>
-			<RangeCalendar.GridHead>
-				<RangeCalendar.GridRow>
-					{#each weekdays as day}
-						<RangeCalendar.HeadCell>
-							{day}
-						</RangeCalendar.HeadCell>
-					{/each}
-				</RangeCalendar.GridRow>
-			</RangeCalendar.GridHead>
-			<RangeCalendar.GridBody>
-				{#each month.weeks as weekDates}
+<RangeCalendar.Root>
+	{#snippet children({ months, weekdays })}
+		<RangeCalendar.Header>
+			<RangeCalendar.PrevButton />
+			<RangeCalendar.Heading />
+			<RangeCalendar.NextButton />
+		</RangeCalendar.Header>
+		{#each months as month}
+			<RangeCalendar.Grid>
+				<RangeCalendar.GridHead>
 					<RangeCalendar.GridRow>
-						{#each weekDates as date}
-							<RangeCalendar.Cell {date}>
-								<RangeCalendar.Day {date} month={month.value} />
-							</RangeCalendar.Cell>
+						{#each weekdays as day}
+							<RangeCalendar.HeadCell>
+								{day}
+							</RangeCalendar.HeadCell>
 						{/each}
 					</RangeCalendar.GridRow>
-				{/each}
-			</RangeCalendar.GridBody>
-		</RangeCalendar.Grid>
-	{/each}
+				</RangeCalendar.GridHead>
+				<RangeCalendar.GridBody>
+					{#each month.weeks as weekDates}
+						<RangeCalendar.GridRow>
+							{#each weekDates as date}
+								<RangeCalendar.Cell {date} month={month.value}>
+									<RangeCalendar.Day />
+								</RangeCalendar.Cell>
+							{/each}
+						</RangeCalendar.GridRow>
+					{/each}
+				</RangeCalendar.GridBody>
+			</RangeCalendar.Grid>
+		{/each}
+	{/snippet}
 </RangeCalendar.Root>
 ```
 

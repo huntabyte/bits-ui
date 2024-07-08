@@ -9,7 +9,6 @@ import type {
 	WithAsChild,
 	Without,
 } from "$lib/internal/index.js";
-import type { CustomEventHandler } from "$lib/index.js";
 
 export type PopoverRootPropsWithoutHTML = {
 	/**
@@ -53,10 +52,3 @@ export type PopoverCloseProps = PopoverClosePropsWithoutHTML &
 export type PopoverArrowPropsWithoutHTML = ArrowPropsWithoutHTML;
 
 export type PopoverArrowProps = ArrowProps;
-
-export type PopoverTriggerEvents<T extends Element = HTMLButtonElement> = {
-	click: CustomEventHandler<MouseEvent, T>;
-	keydown: CustomEventHandler<KeyboardEvent, T>;
-};
-
-export type PopoverCloseEvents = PopoverTriggerEvents;

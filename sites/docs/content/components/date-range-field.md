@@ -21,16 +21,20 @@ description: Allows users to input a range of dates within a designated field.
 	import { DateField } from "$lib";
 </script>
 
-<DateField.Root>
-	<DateField.Label>Check-in date</DateField.Label>
-	<DateField.Input let:segments>
-		{#each segments as { part, value }}
-			<DateField.Segment {part}>
-				{value}
-			</DateField.Segment>
-		{/each}
-	</DateField.Input>
-</DateField.Root>
+<DateRangeField.Root>
+	<DateRangeField.Label>Check-in date</DateRangeField.Label>
+	{#each ["start", "end"] as const as type}
+		<DateRangeField.Input {type}>
+			{#snippet children({ segments })}
+				{#each segments as { part, value }}
+					<DateRangeField.Segment {part}>
+						{value}
+					</DateRangeField.Segment>
+				{/each}
+			{/snippet}
+		</DateRangeField.Input>
+	{/each}
+</DateRangeField.Root>
 ```
 
 <APISection {schemas} />

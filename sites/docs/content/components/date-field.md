@@ -25,12 +25,14 @@ description: Enables users to input specific dates within a designated field.
 
 <DateField.Root>
 	<DateField.Label>Check-in date</DateField.Label>
-	<DateField.Input let:segments>
-		{#each segments as { part, value }}
-			<DateField.Segment {part}>
-				{value}
-			</DateField.Segment>
-		{/each}
+	<DateField.Input>
+		{#snippet children({ segments })}
+			{#each segments as { part, value }}
+				<DateField.Segment {part}>
+					{value}
+				</DateField.Segment>
+			{/each}
+		{/snippet}
 	</DateField.Input>
 </DateField.Root>
 ```

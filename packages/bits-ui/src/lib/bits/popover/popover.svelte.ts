@@ -1,5 +1,4 @@
-import { box } from "svelte-toolbelt";
-import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
+import type { WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
@@ -19,26 +18,26 @@ class PopoverRootState {
 		this.open = props.open;
 	}
 
-	toggleOpen() {
+	toggleOpen = () => {
 		this.open.value = !this.open.value;
-	}
+	};
 
 	close = () => {
 		if (!this.open.value) return;
 		this.open.value = false;
 	};
 
-	createTrigger(props: PopoverTriggerStateProps) {
+	createTrigger = (props: PopoverTriggerStateProps) => {
 		return new PopoverTriggerState(props, this);
-	}
+	};
 
-	createContent(props: PopoverContentStateProps) {
+	createContent = (props: PopoverContentStateProps) => {
 		return new PopoverContentState(props, this);
-	}
+	};
 
-	createClose(props: PopoverCloseStateProps) {
+	createClose = (props: PopoverCloseStateProps) => {
 		return new PopoverCloseState(props, this);
-	}
+	};
 }
 
 type PopoverTriggerStateProps = WithRefProps;
@@ -72,12 +71,12 @@ class PopoverTriggerState {
 		this.#root.toggleOpen();
 	};
 
-	#getAriaControls() {
+	#getAriaControls = () => {
 		if (this.#root.open.value && this.#root.contentNode?.id) {
 			return this.#root.contentNode.id;
 		}
 		return undefined;
-	}
+	};
 
 	props = $derived.by(
 		() =>

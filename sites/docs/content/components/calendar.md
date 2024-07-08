@@ -21,37 +21,39 @@ description: Displays dates and days of the week, facilitating date-related inte
 	import { Calendar } from "bits-ui";
 </script>
 
-<Calendar.Root let:months let:weekdays>
-	<Calendar.Header>
-		<Calendar.PrevButton />
-		<Calendar.Heading />
-		<Calendar.NextButton />
-	</Calendar.Header>
+<Calendar.Root>
+	{#snippet children({ months, weekdays })}
+		<Calendar.Header>
+			<Calendar.PrevButton />
+			<Calendar.Heading />
+			<Calendar.NextButton />
+		</Calendar.Header>
 
-	{#each months as month}
-		<Calendar.Grid>
-			<Calendar.GridHead>
-				<Calendar.GridRow>
-					{#each weekdays as day}
-						<Calendar.HeadCell>
-							{day}
-						</Calendar.HeadCell>
-					{/each}
-				</Calendar.GridRow>
-			</Calendar.GridHead>
-			<Calendar.GridBody>
-				{#each month.weeks as weekDates}
+		{#each months as month}
+			<Calendar.Grid>
+				<Calendar.GridHead>
 					<Calendar.GridRow>
-						{#each weekDates as date}
-							<Calendar.Cell {date}>
-								<Calendar.Day {date} month={month.value} />
-							</Calendar.Cell>
+						{#each weekdays as day}
+							<Calendar.HeadCell>
+								{day}
+							</Calendar.HeadCell>
 						{/each}
 					</Calendar.GridRow>
-				{/each}
-			</Calendar.GridBody>
-		</Calendar.Grid>
-	{/each}
+				</Calendar.GridHead>
+				<Calendar.GridBody>
+					{#each month.weeks as weekDates}
+						<Calendar.GridRow>
+							{#each weekDates as date}
+								<Calendar.Cell {date} month={month.value}>
+									<Calendar.Day />
+								</Calendar.Cell>
+							{/each}
+						</Calendar.GridRow>
+					{/each}
+				</Calendar.GridBody>
+			</Calendar.Grid>
+		{/each}
+	{/snippet}
 </Calendar.Root>
 ```
 
