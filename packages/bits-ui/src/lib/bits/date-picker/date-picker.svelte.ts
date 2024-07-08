@@ -31,6 +31,7 @@ type DatePickerRootStateProps = WritableBoxedValues<{
 		numberOfMonths: number;
 		calendarLabel: string;
 		disableDaysOutsideMonth: boolean;
+		onDateSelect?: () => void;
 	}>;
 
 class DatePickerRootState {

@@ -600,6 +600,7 @@ class DateFieldInputState {
 				"aria-disabled": getAriaDisabled(this.root.disabled.value),
 				"data-invalid": this.root.isInvalid ? "" : undefined,
 				"data-disabled": getDataDisabled(this.root.disabled.value),
+				"data-date-field-input": "",
 			}) as const
 	);
 }

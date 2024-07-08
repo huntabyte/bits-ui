@@ -240,6 +240,13 @@ export type DatePickerRootPropsWithoutHTML = {
 	 */
 	preventDeselect?: boolean;
 
+	/**
+	 * Whether to close the popover when a date is selected.
+	 *
+	 * @defaultValue true
+	 */
+	closeOnDateSelect?: boolean;
+
 	children?: Snippet;
 };
 

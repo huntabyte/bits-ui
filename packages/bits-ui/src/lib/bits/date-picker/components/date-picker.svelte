@@ -38,6 +38,7 @@
 		isDateDisabled = () => false,
 		fixedWeeks = false,
 		numberOfMonths = 1,
+		closeOnDateSelect = true,
 		children,
 	}: RootProps = $props();
 
@@ -47,6 +48,12 @@
 			defaultPlaceholder: undefined,
 			defaultValue: value,
 		});
+	}
+
+	function onDateSelect() {
+		if (closeOnDateSelect) {
+			open = false;
+		}
 	}
 
 	const pickerRootState = useDatePickerRoot({
@@ -98,6 +105,7 @@
 		isDateDisabled: box.with(() => isDateDisabled),
 		fixedWeeks: box.with(() => fixedWeeks),
 		numberOfMonths: box.with(() => numberOfMonths),
+		onDateSelect: box.with(() => onDateSelect),
 	});
 
 	usePopoverRoot({

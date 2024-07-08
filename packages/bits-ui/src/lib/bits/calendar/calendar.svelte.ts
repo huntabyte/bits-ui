@@ -73,6 +73,11 @@ type CalendarRootStateProps = WithRefProps<
 			type: "single" | "multiple";
 			readonly: boolean;
 			disableDaysOutsideMonth: boolean;
+			/**
+			 * This is strictly used by the `DatePicker` component to close the popover when a date
+			 * is selected. It is not intended to be used by the user.
+			 */
+			onDateSelect?: () => void;
 		}>
 >;
 
@@ -97,6 +102,7 @@ export class CalendarRootState {
 	type: CalendarRootStateProps["type"];
 	readonly: CalendarRootStateProps["readonly"];
 	disableDaysOutsideMonth: CalendarRootStateProps["disableDaysOutsideMonth"];
+	onDateSelect: CalendarRootStateProps["onDateSelect"];
 	months: Month<DateValue>[] = $state([]);
 	visibleMonths = $derived.by(() => this.months.map((month) => month.value));
 	announcer: Announcer;
@@ -124,6 +130,7 @@ export class CalendarRootState {
 		this.id = props.id;
 		this.ref = props.ref;
 		this.disableDaysOutsideMonth = props.disableDaysOutsideMonth;
+		this.onDateSelect = props.onDateSelect;
 
 		this.announcer = getAnnouncer();
 		this.formatter = createFormatter(this.locale.value);
@@ -382,6 +389,9 @@ export class CalendarRootState {
 					);
 				}
 				this.value.value = next;
+				if (next !== undefined) {
+					this.onDateSelect?.value?.();
+				}
 			}
 		}
 	};
