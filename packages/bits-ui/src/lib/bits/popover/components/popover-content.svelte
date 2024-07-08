@@ -27,11 +27,7 @@
 		),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, contentState.props))
-
-	$effect(() => {
-		console.log("open", contentState.root.open.value);
-	});
+	const mergedProps = $derived(mergeProps(restProps, contentState.props));
 </script>
 
 <PopperLayer
@@ -39,13 +35,11 @@
 	present={contentState.root.open.value || forceMount}
 	{id}
 	onInteractOutside={(e) => {
-		console.log("interactoutside");
 		onInteractOutside(e);
 		if (e.defaultPrevented) return;
 		contentState.root.close();
 	}}
 	onEscapeKeydown={(e) => {
-		console.log("escape keydown");
 		// TODO: users should be able to cancel this
 		onEscapeKeydown(e);
 		contentState.root.close();
