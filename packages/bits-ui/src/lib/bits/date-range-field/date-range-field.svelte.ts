@@ -114,10 +114,6 @@ export class DateRangeFieldRootState {
 			this.formatter.setLocale(this.locale.value);
 		});
 
-		$effect(() => {
-			console.log("value in date range field", this.value.value);
-		});
-
 		/**
 		 * Sync values set programatically with the `startValue` and `endValue`
 		 */
