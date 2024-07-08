@@ -13,7 +13,7 @@ export * as ContextMenu from "./context-menu/index.js";
 export * as DateField from "./date-field/index.js";
 export * as DatePicker from "./date-picker/index.js";
 export * as DateRangeField from "./date-range-field/index.js";
-// export * as DateRangePicker from "./date-range-picker/index.js";
+export * as DateRangePicker from "./date-range-picker/index.js";
 export * as Dialog from "./dialog/index.js";
 export * as DropdownMenu from "./dropdown-menu/index.js";
 export * as Label from "./label/index.js";

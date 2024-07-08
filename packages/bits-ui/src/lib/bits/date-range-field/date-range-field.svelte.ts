@@ -14,6 +14,8 @@ import { getFirstSegment } from "$lib/shared/date/field.js";
 import { getDataDisabled } from "$lib/internal/attrs.js";
 import type { ReadableBox, WritableBox } from "svelte-toolbelt";
 
+export const DATE_RANGE_FIELD_ROOT_ATTR = "data-date-range-field-root";
+
 type DateRangeFieldRootStateProps = WithRefProps<
 	WritableBoxedValues<{
 		value: DateRange;
@@ -167,6 +169,7 @@ export class DateRangeFieldRootState {
 	props = $derived.by(() => ({
 		id: this.id.value,
 		role: "group",
+		[DATE_RANGE_FIELD_ROOT_ATTR]: "",
 	}));
 }
 
