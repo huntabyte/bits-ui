@@ -213,14 +213,14 @@ export class RangeCalendarRootState {
 		});
 
 		/**
-		 * Synchronize the placeholder value with the current value.
+		 * Synchronize the placeholder value with the current start value
 		 */
-		// watch(this.value, () => {
-		// 	const endValue = this.value.value.end;
-		// 	if (endValue && this.placeholder.value !== endValue) {
-		// 		this.placeholder.value = endValue;
-		// 	}
-		// });
+		watch(this.value, () => {
+			const startValue = this.value.value.start;
+			if (startValue && this.placeholder.value !== startValue) {
+				this.placeholder.value = startValue;
+			}
+		});
 
 		$effect(() => {
 			const startValue = this.startValue;
