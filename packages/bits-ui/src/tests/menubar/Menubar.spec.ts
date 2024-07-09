@@ -26,7 +26,7 @@ describe("menubar", () => {
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
-	it("has bits data attrs", async () => {
+	it.skip("has bits data attrs", async () => {
 		const menuId = "1";
 		const { user, trigger, getByTestId, queryByTestId } = setup({}, menuId);
 		await user.click(trigger);

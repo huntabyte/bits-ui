@@ -114,6 +114,20 @@ export class DateRangeFieldRootState {
 			this.formatter.setLocale(this.locale.value);
 		});
 
+		$effect(() => {
+			const startValue = this.value.value.start;
+			untrack(() => {
+				if (startValue) this.placeholder.value = startValue;
+			});
+		});
+
+		$effect(() => {
+			const endValue = this.value.value.end;
+			untrack(() => {
+				if (endValue) this.placeholder.value = endValue;
+			});
+		});
+
 		/**
 		 * Sync values set programatically with the `startValue` and `endValue`
 		 */

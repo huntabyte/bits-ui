@@ -171,9 +171,9 @@ describe("select", () => {
 		expect(queryByTestId("content")).toBeNull();
 	});
 
-	it.only("closes on outside click", async () => {
+	it("closes on outside click", async () => {
 		const onInteractOutsideStart = vi.fn();
-		const { user, queryByTestId, getByTestId } = await open({
+		const { getByTestId } = await open({
 			contentProps: {
 				onInteractOutsideStart,
 			},
