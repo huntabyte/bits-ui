@@ -55,6 +55,8 @@ import { useId } from "$lib/internal/useId.svelte.js";
 import type { Granularity, DateMatcher, HourCycle } from "$lib/shared/date/types.js";
 import type { DateRangeFieldRootState } from "../date-range-field/date-range-field.svelte.js";
 
+export const DATE_FIELD_INPUT_ATTR = "data-date-field-input";
+
 export type DateFieldRootStateProps = WritableBoxedValues<{
 	value: DateValue | undefined;
 	placeholder: DateValue;
@@ -600,7 +602,7 @@ class DateFieldInputState {
 				"aria-disabled": getAriaDisabled(this.root.disabled.value),
 				"data-invalid": this.root.isInvalid ? "" : undefined,
 				"data-disabled": getDataDisabled(this.root.disabled.value),
-				"data-date-field-input": "",
+				[DATE_FIELD_INPUT_ATTR]: "",
 			}) as const
 	);
 }

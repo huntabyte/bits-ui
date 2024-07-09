@@ -22,10 +22,6 @@
 		enabled: box.with(() => enabled),
 		onFocusOutside: box.with(() => onFocusOutside),
 	});
-
-	$effect(() => {
-		console.log("dismissable layer enabled", enabled);
-	});
 </script>
 
 {@render children?.({ props: dismissableLayerState.props })}

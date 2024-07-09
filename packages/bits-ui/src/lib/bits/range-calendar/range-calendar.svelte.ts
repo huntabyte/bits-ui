@@ -90,6 +90,11 @@ type RangeCalendarRootStateProps = WithRefProps<
 			calendarLabel: string;
 			readonly: boolean;
 			disableDaysOutsideMonth: boolean;
+			/**
+			 * This is strictly used by the `DateRangePicker` component to close the popover when a date range
+			 * is selected. It is not intended to be used by the user.
+			 */
+			onRangeSelect?: () => void;
 		}>
 >;
 
@@ -113,6 +118,7 @@ export class RangeCalendarRootState {
 	calendarLabel: RangeCalendarRootStateProps["calendarLabel"];
 	readonly: RangeCalendarRootStateProps["readonly"];
 	disableDaysOutsideMonth: RangeCalendarRootStateProps["disableDaysOutsideMonth"];
+	onRangeSelect: RangeCalendarRootStateProps["onRangeSelect"];
 	months: Month<DateValue>[] = $state([]);
 	visibleMonths = $derived.by(() => this.months.map((month) => month.value));
 	announcer: Announcer;
@@ -143,6 +149,7 @@ export class RangeCalendarRootState {
 		this.disableDaysOutsideMonth = props.disableDaysOutsideMonth;
 		this.id = props.id;
 		this.ref = props.ref;
+		this.onRangeSelect = props.onRangeSelect;
 
 		this.announcer = getAnnouncer();
 		this.formatter = createFormatter(this.locale.value);
@@ -206,14 +213,14 @@ export class RangeCalendarRootState {
 		});
 
 		/**
-		 * Synchronize the placeholder value with the current value.
+		 * Synchronize the placeholder value with the current start value
 		 */
-		// watch(this.value, () => {
-		// 	const endValue = this.value.value.end;
-		// 	if (endValue && this.placeholder.value !== endValue) {
-		// 		this.placeholder.value = endValue;
-		// 	}
-		// });
+		watch(this.value, () => {
+			const startValue = this.value.value.start;
+			if (startValue && this.placeholder.value !== startValue) {
+				this.placeholder.value = startValue;
+			}
+		});
 
 		$effect(() => {
 			const startValue = this.startValue;
@@ -255,6 +262,9 @@ export class RangeCalendarRootState {
 		const value = this.value.value;
 		const newValue = cb(value);
 		this.value.value = newValue;
+		if (newValue.start && newValue.end) {
+			this.onRangeSelect?.value?.();
+		}
 	};
 
 	#setMonths = (months: Month<DateValue>[]) => (this.months = months);

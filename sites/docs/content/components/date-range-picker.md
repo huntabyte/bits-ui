@@ -23,45 +23,53 @@ description: Facilitates the selection of date ranges through an input and calen
 
 <DateRangePicker.Root>
 	<DateRangePicker.Label />
-	<DateRangePicker.Input let:segments>
-		{#each segments as { part, value }}
-			<DateRangePicker.Segment {part}>
-				{value}
-			</DateRangePicker.Segment>
-		{/each}
-		<DateRangePicker.Trigger />
-	</DateRangePicker.Input>
+	{#each ["start", "end"] as const as type}
+		<DateRangePicker.Input {type}>
+			{#snippet children({ segments })}
+				{#each segments as { part, value }}
+					<DateRangePicker.Segment {part}>
+						{value}
+					</DateRangePicker.Segment>
+				{/each}
+			{/snippet}
+		</DateRangePicker.Input>
+	{/each}
+	<DateRangePicker.Trigger />
 	<DateRangePicker.Content>
-		<DateRangePicker.Calendar let:months let:weekdays>
-			<DateRangePicker.Header>
-				<DateRangePicker.PrevButton />
-				<DateRangePicker.Heading />
-				<DateRangePicker.NextButton />
-			</DateRangePicker.Header>
-			{#each months as month}
-				<DateRangePicker.Grid>
-					<DateRangePicker.GridHead>
-						<DateRangePicker.GridRow>
-							{#each weekdays as day}
-								<DateRangePicker.HeadCell>
-									{day}
-								</DateRangePicker.HeadCell>
-							{/each}
-						</DateRangePicker.GridRow>
-					</DateRangePicker.GridHead>
-					<DateRangePicker.GridBody>
-						{#each month.weeks as weekDates}
+		<DateRangePicker.Calendar>
+			{#snippet children({ months, weekdays })}
+				<DateRangePicker.Header>
+					<DateRangePicker.PrevButton />
+					<DateRangePicker.Heading />
+					<DateRangePicker.NextButton />
+				</DateRangePicker.Header>
+				{#each months as month}
+					<DateRangePicker.Grid>
+						<DateRangePicker.GridHead>
 							<DateRangePicker.GridRow>
-								{#each weekDates as date}
-									<DateRangePicker.Cell {date}>
-										<DateRangePicker.Day {date} month={month.value} />
-									</DateRangePicker.Cell>
+								{#each weekdays as day}
+									<DateRangePicker.HeadCell>
+										{day}
+									</DateRangePicker.HeadCell>
 								{/each}
 							</DateRangePicker.GridRow>
-						{/each}
-					</DateRangePicker.GridBody>
-				</DateRangePicker.Grid>
-			{/each}
+						</DateRangePicker.GridHead>
+						<DateRangePicker.GridBody>
+							{#each month.weeks as weekDates}
+								<DateRangePicker.GridRow>
+									{#each weekDates as date}
+										<DateRangePicker.Cell {date} month={month.value}>
+											<DateRangePicker.Day>
+												{date.day}
+											</DateRangePicker.Day>
+										</DateRangePicker.Cell>
+									{/each}
+								</DateRangePicker.GridRow>
+							{/each}
+						</DateRangePicker.GridBody>
+					</DateRangePicker.Grid>
+				{/each}
+			{/snippet}
 		</DateRangePicker.Calendar>
 	</DateRangePicker.Content>
 </DateRangePicker.Root>

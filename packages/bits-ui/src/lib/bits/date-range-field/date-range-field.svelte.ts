@@ -14,6 +14,8 @@ import { getFirstSegment } from "$lib/shared/date/field.js";
 import { getDataDisabled } from "$lib/internal/attrs.js";
 import type { ReadableBox, WritableBox } from "svelte-toolbelt";
 
+export const DATE_RANGE_FIELD_ROOT_ATTR = "data-date-range-field-root";
+
 type DateRangeFieldRootStateProps = WithRefProps<
 	WritableBoxedValues<{
 		value: DateRange;
@@ -112,6 +114,36 @@ export class DateRangeFieldRootState {
 			this.formatter.setLocale(this.locale.value);
 		});
 
+		$effect(() => {
+			const startValue = this.value.value.start;
+			untrack(() => {
+				if (startValue) this.placeholder.value = startValue;
+			});
+		});
+
+		$effect(() => {
+			const endValue = this.value.value.end;
+			untrack(() => {
+				if (endValue) this.placeholder.value = endValue;
+			});
+		});
+
+		/**
+		 * Sync values set programatically with the `startValue` and `endValue`
+		 */
+		$effect(() => {
+			const value = this.value.value;
+
+			untrack(() => {
+				if (value && value.start !== this.startValue) {
+					this.startValue = value.start;
+				}
+				if (value && value.end !== this.endValue) {
+					this.endValue = value.end;
+				}
+			});
+		});
+
 		// TODO: Handle description element
 
 		$effect(() => {
@@ -167,6 +199,7 @@ export class DateRangeFieldRootState {
 	props = $derived.by(() => ({
 		id: this.id.value,
 		role: "group",
+		[DATE_RANGE_FIELD_ROOT_ATTR]: "",
 	}));
 }
 
