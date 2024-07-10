@@ -31,41 +31,90 @@ description: Organizes content into collapsible sections, allowing users to focu
 </Accordion.Root>
 ```
 
-<APISection {schemas} />
+## Usage
 
-## Examples
+### Single
 
-### Multiple
+Set the `type` prop to `"single"` to allow only one accordion item to be open at a time.
 
-Multiple accordion items open at the same time using the `multiple` prop.
-
-```svelte showLineNumbers {1}
-<Accordion.Root multiple>
+```svelte {1}
+<Accordion.Root type="single">
 	<!-- ... -->
 </Accordion.Root>
 ```
 
-### Controlled
+### Multiple
 
-You can programmatically control the active of the accordion item(s) using the `value` prop.
+Set the `type` prop to `"multiple"` to allow multiple accordion items to be open at the same time.
 
-```svelte showLineNumbers
-<script lang="ts">
-	let value = "item-1";
-</script>
+```svelte {1}
+<Accordion.Root type="multiple">
+	<!-- ... -->
+</Accordion.Root>
+```
 
-<Accordion.Root bind:value>
-	<Accordion.Item value="item-1">
-		<Accordion.Header>
-			<Accordion.Trigger />
-		</Accordion.Header>
-		<Accordion.Content />
-	</Accordion.Item>
-	<Accordion.Item value="item-2">
-		<Accordion.Header>
-			<Accordion.Trigger />
-		</Accordion.Header>
-		<Accordion.Content />
+### Disable Items
+
+To disable an individual accordion item, set the `disabled` prop to `true`. This will prevent users from interacting with the item.
+
+```svelte {2}
+<Accordion.Root type="single">
+	<Accordion.Item value="item-1" disabled>
+		<!-- ... -->
 	</Accordion.Item>
 </Accordion.Root>
 ```
+
+### Controlled Value
+
+You can programmatically control the active of the accordion item(s) using the `value` prop.
+
+```svelte
+<script lang="ts">
+	let value = $state("item-1");
+</script>
+
+<button onclick={() => (value = "item-2")}>Change value</button>
+
+<Accordion.Root bind:value>
+	<!-- ... -->
+</Accordion.Root>
+```
+
+### Value Change Side Effects
+
+#### onValueChange
+
+You can use the `onValueChange` prop to handle side effects when the value of the accordion changes.
+
+```svelte
+<Accordion.Root
+	onValueChange={(value) => {
+		doSomething(value);
+	}}
+>
+	<!-- ... -->
+</Accordion.Root>
+```
+
+#### $effect
+
+You can use `bind:value` with an `$effect` block to handle side effects when the value of the accordion changes.
+
+```svelte
+<script lang="ts">
+	import { Accordion } from "bits-ui";
+
+	let value = $state("item-1")
+
+	$effect(() => {
+		doSomething(value);
+	})
+</script>
+
+<Accordion.Root bind:value>
+	<!-- ... -->
+</Accordion.Item>
+```
+
+<APISection {schemas} />
