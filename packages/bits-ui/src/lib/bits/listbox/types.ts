@@ -5,6 +5,7 @@ import type {
 	Without,
 } from "$lib/internal/types.js";
 import type { Orientation } from "$lib/shared/index.js";
+import type { Snippet } from "svelte";
 
 export type ListboxRootBasePropsWithoutHTML = {
 	/**
@@ -29,9 +30,17 @@ export type ListboxRootBasePropsWithoutHTML = {
 	 * @defaultValue false
 	 */
 	autoFocus?: boolean | "first" | "last";
+
+	/**
+	 * Whether the listbox is disabled.
+	 */
+
+	disabled?: boolean;
+
+	children?: Snippet;
 };
 
-export type ListboxSingleRootPropsWithoutHTML = {
+export type ListboxSingleRootPropsWithoutHTML = ListboxRootBasePropsWithoutHTML & {
 	/**
 	 * The value of the selected listbox item.
 	 */
@@ -48,7 +57,7 @@ export type ListboxSingleRootPropsWithoutHTML = {
 	type: "single";
 };
 
-export type ListboxMultipleRootPropsWithoutHTML = {
+export type ListboxMultipleRootPropsWithoutHTML = ListboxRootBasePropsWithoutHTML & {
 	/**
 	 * The value of the selected listbox items.
 	 */
@@ -88,7 +97,15 @@ export type ListboxItemPropsWithoutHTML = WithAsChild<{
 	 * by default. If a child is provided, this will only be used for typeahead purposes.
 	 */
 	label?: string;
+
+	/**
+	 * Whether the listbox item is disabled, which prevents users from interacting with it.
+	 */
+	disabled?: boolean;
 }>;
+
+export type ListboxItemProps = ListboxItemPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, ListboxItemPropsWithoutHTML>;
 
 export type ListboxGroupPropsWithoutHTML = WithAsChild<{}>;
 
@@ -99,3 +116,8 @@ export type ListboxGroupLabelPropsWithoutHTML = WithAsChild<{}>;
 
 export type ListboxGroupLabelProps = ListboxGroupLabelPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, ListboxGroupLabelPropsWithoutHTML>;
+
+export type ListboxLabelPropsWithoutHTML = WithAsChild<{}>;
+
+export type ListboxLabelProps = ListboxLabelPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, ListboxLabelPropsWithoutHTML>;
