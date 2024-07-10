@@ -49,7 +49,7 @@
 								{#if defaultVal}
 									{` ${defaultVal}`}
 								{:else}
-									<span aria-hidden> &nbsp;—— </span>
+									<span aria-hidden="true"> &nbsp;—— </span>
 									<span class="sr-only"> undefined </span>
 								{/if}
 							</Code>

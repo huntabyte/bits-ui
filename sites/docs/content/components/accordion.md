@@ -153,4 +153,41 @@ If you're going to be using the same accordion component multiple places through
 
 ### Individual Item
 
+```svelte title="CustomAcccordionItem.svelte"
+<script lang="ts">
+	import { Accordion, type WithoutChildren } from "bits-ui";
+
+	type Props = WithoutChildren<Accordion.ItemProps> & {
+		title: string;
+		content: string;
+	};
+
+	let { title, content, ...restProps }: Props = $props();
+</script>
+
+<Accordion.Item {...restProps}>
+	<Accordion.Header>
+		<Accordion.Trigger>
+			{title}
+		</Accordion.Trigger>
+	</Accordion.Header>
+	<Accordion.Content>
+		{content}
+	</Accordion.Content>
+</Accordion.Item>
+```
+
+```svelte title="+page.svelte"
+<script lang="ts">
+	import { Accordion } from "bits-ui";
+	import CustomAccordionItem from "$lib/components/CustomAccordionItem.svelte";
+</script>
+
+<Accordion.Root type="single">
+	<CustomAccordionItem title="Item 1" content="Content 1" />
+	<CustomAccordionItem title="Item 2" content="Content 2" />
+	<CustomAccordionItem title="Item 3" content="Content 3" />
+</Accordion.Root>
+```
+
 <APISection {schemas} />
