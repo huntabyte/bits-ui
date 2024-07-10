@@ -327,6 +327,12 @@ export class ListboxItemState {
 		});
 	};
 
+	#onpointermove = () => {
+		if (this.#isFocused) return;
+		this.#isFocused = true;
+		this.ref.value?.focus();
+	};
+
 	props = $derived.by(
 		() =>
 			({
@@ -344,6 +350,7 @@ export class ListboxItemState {
 				onkeydown: this.#onkeydown,
 				onfocus: this.#onfocus,
 				onblur: this.#onblur,
+				onpointermove: this.#onpointermove,
 			}) as const
 	);
 }
