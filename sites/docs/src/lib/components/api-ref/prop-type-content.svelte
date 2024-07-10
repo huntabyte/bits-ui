@@ -21,12 +21,12 @@
 				<span class="sr-only">See type definition</span>
 			</Popover.Trigger>
 			<Popover.Content
+				preventScroll={false}
 				side="top"
 				sideOffset={10}
 				class="z-50 max-h-[400px] overflow-auto rounded-input border border-border bg-background p-4 shadow-popover"
 			>
 				<Code class="h-auto bg-transparent px-0 tracking-tight text-foreground">
-					<!--  eslint-disable-next-line svelte/no-at-html-tags -->
 					{@html parseTypeDef(type.definition)}
 				</Code>
 			</Popover.Content>

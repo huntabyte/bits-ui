@@ -28,6 +28,7 @@ const config = {
 		alias: {
 			"$icons/*": "src/lib/components/icons/*",
 			"contentlayer/generated": ".contentlayer/generated",
+			"$contentlayer/*": "../.contentlayer/*",
 		},
 	},
 };
