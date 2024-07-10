@@ -83,8 +83,6 @@ You can programmatically control the active of the accordion item(s) using the `
 
 ### Value Change Side Effects
 
-#### onValueChange
-
 You can use the `onValueChange` prop to handle side effects when the value of the accordion changes.
 
 ```svelte
@@ -97,9 +95,7 @@ You can use the `onValueChange` prop to handle side effects when the value of th
 </Accordion.Root>
 ```
 
-#### $effect
-
-You can use `bind:value` with an `$effect` block to handle side effects when the value of the accordion changes.
+Alternatively, you can use `bind:value` with an `$effect` block to handle side effects when the value of the accordion changes.
 
 ```svelte
 <script lang="ts">
@@ -152,6 +148,8 @@ If you're going to be using the same accordion component multiple places through
 ```
 
 ### Individual Item
+
+For each invidual item, you need an `Accordion.Item`, `Accordion.Header`, `Accordion.Trigger` and `Accordion.Content` component. You can make a reusable wrapper to reduce the amount of code you need to write each time.
 
 ```svelte title="CustomAcccordionItem.svelte"
 <script lang="ts">
