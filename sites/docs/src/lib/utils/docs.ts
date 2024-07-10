@@ -63,9 +63,7 @@ export async function getComponentDoc(slug: string): Promise<ComponentDoc> {
 		redirect(303, "/docs/components/accordion");
 	}
 
-	if (!isBit(slug)) {
-		error(404);
-	}
+	if (!isBit(slug)) error(404);
 
 	const modules = import.meta.glob("/content/**/*.md");
 
@@ -79,9 +77,7 @@ export async function getComponentDoc(slug: string): Promise<ComponentDoc> {
 	}
 
 	const doc = await match?.resolver?.();
-	if (!doc || !doc.metadata) {
-		error(404);
-	}
+	if (!doc || !doc.metadata) error(404);
 
 	return {
 		component: doc.default,

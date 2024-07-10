@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from "$app/stores";
-	import { CodeBlock, Compass, Palette, Sticker } from "$icons/index.js";
+	import { CalendarBlank, CodeBlock, Compass, Palette, Sticker } from "$icons/index.js";
 	import type { SidebarNavItem } from "$lib/config/index.js";
 	import { cn } from "$lib/utils/index.js";
 
@@ -11,6 +11,7 @@
 		"Getting Started": Compass,
 		Delegation: CodeBlock,
 		Styling: Palette,
+		Dates: CalendarBlank,
 	} as const;
 
 	const iconMapKeys = Object.keys(iconMap) as (keyof typeof iconMap)[];

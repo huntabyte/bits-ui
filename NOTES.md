@@ -26,3 +26,7 @@ We need to determine the ideal approach for managing the `data-<component>` attr
 Since other components depend on these attributes for selectors, we'll need to put them in a place where they can be easily accessed and if changed, those changes will propagate to everywhere the attribute is used.
 
 They also need to be flexible enough to allow for reusing the same component while swapping the `data-component` prefix, for example, in the menus we have `data-menubar-*`, `data-dropdown-menu-*`, `data-context-menu-*`, etc. The easy button is of course to just consolidate these into just a single `data-menu` attribute, but that's not ideal and hinders the ability to apply different styles on a global level to the different components.
+
+---
+
+Should we embrace the [ValidityState](https://developer.mozilla.org/en-US/docs/Web/API/ValidityState) API? Something to think about.
