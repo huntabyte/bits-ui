@@ -85,24 +85,34 @@ export type ListboxContentPropsWithoutHTML = WithAsChild<{}>;
 export type ListboxContentProps = ListboxContentPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, ListboxContentPropsWithoutHTML>;
 
-export type ListboxItemPropsWithoutHTML = WithAsChild<{
-	/**
-	 * The value of the listbox item. This is used to populate the `value` prop of the
-	 * `Listbox.Root` component.
-	 */
-	value: string;
+export type ListboxItemSnippetProps = { selected: boolean };
 
-	/**
-	 * The label of the listbox item. This will be rendered as the text content of the listbox item
-	 * by default. If a child is provided, this will only be used for typeahead purposes.
-	 */
-	label?: string;
+export type ListboxItemPropsWithoutHTML = Omit<
+	WithAsChild<
+		{
+			/**
+			 * The value of the listbox item. This is used to populate the `value` prop of the
+			 * `Listbox.Root` component.
+			 */
+			value: string;
 
-	/**
-	 * Whether the listbox item is disabled, which prevents users from interacting with it.
-	 */
-	disabled?: boolean;
-}>;
+			/**
+			 * The label of the listbox item. This will be rendered as the text content of the listbox item
+			 * by default. If a child is provided, this will only be used for typeahead purposes.
+			 */
+			label?: string;
+
+			/**
+			 * Whether the listbox item is disabled, which prevents users from interacting with it.
+			 */
+			disabled?: boolean;
+		},
+		ListboxItemSnippetProps
+	>,
+	"children"
+> & {
+	children?: Snippet<[ListboxItemSnippetProps]>;
+};
 
 export type ListboxItemProps = ListboxItemPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, ListboxItemPropsWithoutHTML>;

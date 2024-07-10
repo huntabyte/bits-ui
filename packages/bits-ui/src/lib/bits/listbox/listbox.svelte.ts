@@ -14,7 +14,9 @@ import { useRefById } from "$lib/internal/useRefById.svelte.js";
 import { useRovingFocus, type UseRovingFocusReturn } from "$lib/internal/useRovingFocus.svelte.js";
 import { useTypeahead } from "$lib/internal/useTypeahead.svelte.js";
 import type { Orientation } from "$lib/shared/index.js";
+import { onMount } from "svelte";
 import { focusFirst } from "../utilities/focus-scope/utils.js";
+import { afterTick } from "$lib/internal/afterTick.js";
 
 const LISTBOX_ITEM_ATTR = "data-listbox-item";
 const LISTBOX_CONTENT_ATTR = "data-listbox-content";
@@ -127,6 +129,7 @@ export class ListboxContentState {
 	root: ListboxRootState;
 	rovingFocusGroup: UseRovingFocusReturn;
 	#handleTypeaheadSearch: ReturnType<typeof useTypeahead>["handleTypeaheadSearch"];
+	focusedItemId = $state("");
 
 	constructor(props: ListboxContentStateProps, root: ListboxRootState) {
 		this.id = props.id;
@@ -143,13 +146,31 @@ export class ListboxContentState {
 
 		this.rovingFocusGroup = useRovingFocus({
 			rootNodeId: this.id,
-			candidateSelector: "[data-listbox-item]",
+			candidateSelector: "data-listbox-item",
 			loop: this.root.loop,
 			orientation: this.root.orientation,
+			onCandidateFocus: (node) => {
+				if (node) {
+					this.focusedItemId = node.id;
+				} else {
+					this.focusedItemId = "";
+				}
+			},
 		});
 
 		this.#handleTypeaheadSearch = useTypeahead().handleTypeaheadSearch;
+
+		onMount(() => {
+			if (!this.focusedItemId) {
+				const firstCandidate = this.getCandidateNodes()[0];
+				if (firstCandidate) [(this.focusedItemId = firstCandidate.id)];
+			}
+		});
 	}
+
+	isFocusedItem = (id: string) => {
+		return this.focusedItemId === id;
+	};
 
 	getCandidateNodes = () => {
 		const node = this.ref.value;
@@ -179,7 +200,7 @@ export class ListboxContentState {
 
 		if (isKeydownInside) {
 			// listboxes do not respect the tab key
-			if (e.key === kbd.TAB) e.preventDefault();
+			if (e.key === kbd.TAB) return;
 			if (!isModifierKey && isCharacterKey) {
 				this.#handleTypeaheadSearch(e.key, candidateNodes);
 			}
@@ -259,6 +280,8 @@ export class ListboxItemState {
 	disabled: ListboxItemStateProps["disabled"];
 	content: ListboxContentState;
 	isSelected = $derived.by(() => this.content.root.includesItem(this.value.value));
+	isTabIndexTarget = $derived.by(() => this.content.isFocusedItem(this.id.value));
+	#isFocused = $state(false);
 
 	constructor(props: ListboxItemStateProps, content: ListboxContentState) {
 		this.id = props.id;
@@ -274,9 +297,34 @@ export class ListboxItemState {
 		});
 	}
 
-	#onpointerup = () => {
+	handleSelect = () => {
 		if (this.disabled.value) return;
 		this.content.root.toggleItem(this.value.value);
+	};
+
+	#onpointerup = () => {
+		this.handleSelect();
+	};
+
+	#onkeydown = (e: KeyboardEvent) => {
+		if (SELECTION_KEYS.includes(e.key)) {
+			e.preventDefault();
+			this.handleSelect();
+		}
+	};
+
+	#onfocus = async (e: FocusEvent) => {
+		afterTick(() => {
+			if (e.defaultPrevented || this.disabled.value) return;
+			this.#isFocused = true;
+		});
+	};
+
+	#onblur = async (e: FocusEvent) => {
+		afterTick(() => {
+			if (e.defaultPrevented) return;
+			this.#isFocused = false;
+		});
 	};
 
 	props = $derived.by(
@@ -289,8 +337,13 @@ export class ListboxItemState {
 				"data-disabled": getDataDisabled(this.disabled.value),
 				"aria-selected": getAriaSelected(this.isSelected),
 				"data-selected": getDataSelected(this.isSelected),
+				"data-highlighted": this.#isFocused ? "" : undefined,
+				tabindex: this.isTabIndexTarget ? 0 : -1,
 				[LISTBOX_ITEM_ATTR]: "",
 				onpointerup: this.#onpointerup,
+				onkeydown: this.#onkeydown,
+				onfocus: this.#onfocus,
+				onblur: this.#onblur,
 			}) as const
 	);
 }
