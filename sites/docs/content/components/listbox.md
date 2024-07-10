@@ -15,3 +15,19 @@ description: A list of options that can be selected by the user.
 </ComponentPreview>
 
 ## Structure
+
+```svelte
+<script lang="ts">
+	import { Listbox } from "bits-ui";
+</script>
+
+<Listbox.Root>
+	<Listbox.Label />
+	<Listbox.Content>
+		<Listbox.Group>
+			<Listbox.GroupLabel />
+			<Listbox.Item />
+		</Listbox.Group>
+	</Listbox.Content>
+</Listbox.Root>
+```

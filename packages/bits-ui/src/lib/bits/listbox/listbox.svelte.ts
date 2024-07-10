@@ -6,7 +6,6 @@ import {
 	getDataSelected,
 } from "$lib/internal/attrs.js";
 import {
-	watch,
 	type Box,
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
