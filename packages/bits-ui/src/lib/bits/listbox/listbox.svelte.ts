@@ -51,20 +51,20 @@ type ListboxRootSingleStateProps = ListboxRootBaseStateProps &
 	}>;
 
 export class ListboxRootSingleState extends ListboxRootBaseState {
-	#value: ListboxRootSingleStateProps["value"];
+	value: ListboxRootSingleStateProps["value"];
 	isMulti = false as const;
 
 	constructor(props: ListboxRootSingleStateProps) {
 		super(props);
-		this.#value = props.value;
+		this.value = props.value;
 	}
 
 	includesItem = (itemValue: string) => {
-		return this.#value.value === itemValue;
+		return this.value.value === itemValue;
 	};
 
 	toggleItem = (itemValue: string) => {
-		this.#value.value = this.includesItem(itemValue) ? "" : itemValue;
+		this.value.value = this.includesItem(itemValue) ? "" : itemValue;
 	};
 
 	createContent = (props: ListboxContentStateProps) => {
@@ -86,23 +86,23 @@ type ListboxRootMultipleStateProps = ListboxRootBaseStateProps &
 	}>;
 
 export class ListboxRootMultipleState extends ListboxRootBaseState {
-	#value: ListboxRootMultipleStateProps["value"];
+	value: ListboxRootMultipleStateProps["value"];
 	isMulti = true as const;
 
 	constructor(props: ListboxRootMultipleStateProps) {
 		super(props);
-		this.#value = props.value;
+		this.value = props.value;
 	}
 
 	includesItem = (itemValue: string) => {
-		return this.#value.value.includes(itemValue);
+		return this.value.value.includes(itemValue);
 	};
 
 	toggleItem = (itemValue: string) => {
 		if (this.includesItem(itemValue)) {
-			this.#value.value = this.#value.value.filter((v) => v !== itemValue);
+			this.value.value = this.value.value.filter((v) => v !== itemValue);
 		} else {
-			this.#value.value = [...this.#value.value, itemValue];
+			this.value.value = [...this.value.value, itemValue];
 		}
 	};
 
@@ -162,7 +162,29 @@ export class ListboxContentState {
 
 		onMount(() => {
 			if (!this.focusedItemId) {
-				const firstCandidate = this.getCandidateNodes()[0];
+				const candidateNodes = this.getCandidateNodes();
+				if (this.root.isMulti && this.root.value.value.length) {
+					const firstValue = this.root.value.value[0];
+					if (firstValue) {
+						const candidateNode = candidateNodes.find(
+							(node) => node.dataset.value === firstValue
+						);
+						if (candidateNode) {
+							this.focusedItemId = candidateNode.id;
+							return;
+						}
+					}
+				} else if (!this.root.isMulti && this.root.value.value) {
+					console.log(candidateNodes);
+					const candidateNode = candidateNodes.find(
+						(node) => node.dataset.value === this.root.value.value
+					);
+					if (candidateNode) {
+						this.focusedItemId = candidateNode.id;
+						return;
+					}
+				}
+				const firstCandidate = candidateNodes[0];
 				if (firstCandidate) [(this.focusedItemId = firstCandidate.id)];
 			}
 		});
@@ -338,7 +360,7 @@ export class ListboxItemState {
 			({
 				id: this.id.value,
 				role: "option",
-				"data-value": this.value,
+				"data-value": this.value.value,
 				"aria-disabled": getAriaDisabled(this.disabled.value),
 				"data-disabled": getDataDisabled(this.disabled.value),
 				"aria-selected": getAriaSelected(this.isSelected),
