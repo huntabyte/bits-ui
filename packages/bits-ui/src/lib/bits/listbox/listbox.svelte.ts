@@ -5,7 +5,12 @@ import {
 	getDataOrientation,
 	getDataSelected,
 } from "$lib/internal/attrs.js";
-import type { Box, ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
+import {
+	watch,
+	type Box,
+	type ReadableBoxedValues,
+	type WritableBoxedValues,
+} from "$lib/internal/box.svelte.js";
 import { createContext } from "$lib/internal/createContext.js";
 import { isHTMLElement } from "$lib/internal/is.js";
 import { kbd } from "$lib/internal/kbd.js";
@@ -14,9 +19,10 @@ import { useRefById } from "$lib/internal/useRefById.svelte.js";
 import { useRovingFocus, type UseRovingFocusReturn } from "$lib/internal/useRovingFocus.svelte.js";
 import { useTypeahead } from "$lib/internal/useTypeahead.svelte.js";
 import type { Orientation } from "$lib/shared/index.js";
-import { onMount } from "svelte";
+import { onDestroy, onMount } from "svelte";
 import { focusFirst } from "../utilities/focus-scope/utils.js";
 import { afterTick } from "$lib/internal/afterTick.js";
+import { SvelteSet } from "svelte/reactivity";
 
 const LISTBOX_ITEM_ATTR = "data-listbox-item";
 const LISTBOX_CONTENT_ATTR = "data-listbox-content";
@@ -37,11 +43,16 @@ class ListboxRootBaseState {
 	autoFocus: ListboxRootBaseStateProps["autoFocus"];
 	labelNode = $state<HTMLElement | null>(null);
 	contentNode = $state<HTMLElement | null>(null);
+	valueOptions = new SvelteSet<string>();
 
 	constructor(props: ListboxRootBaseStateProps) {
 		this.loop = props.loop;
 		this.orientation = props.orientation;
 		this.autoFocus = props.autoFocus;
+
+		$effect(() => {
+			console.log([...this.valueOptions]);
+		});
 	}
 }
 
@@ -104,6 +115,10 @@ export class ListboxRootMultipleState extends ListboxRootBaseState {
 		} else {
 			this.value.value = [...this.value.value, itemValue];
 		}
+	};
+
+	selectAll = () => {
+		this.value.value = [...this.valueOptions];
 	};
 
 	createContent = (props: ListboxContentStateProps) => {
@@ -228,6 +243,20 @@ export class ListboxContentState {
 			}
 		}
 
+		if (e.key === "a" && (e.ctrlKey || e.metaKey) && this.root.isMulti) {
+			this.root.selectAll();
+			e.preventDefault();
+			return;
+		}
+
+		if (e.key === kbd.ESCAPE) {
+			if (this.root.isMulti) {
+				this.root.value.value = [];
+			} else {
+				this.root.value.value = "";
+			}
+		}
+
 		// focus first/last based on key pressed;
 		if (target.id !== this.id.value) return;
 
@@ -313,6 +342,18 @@ export class ListboxItemState {
 		this.disabled = props.disabled;
 		this.content = content;
 
+		$effect(() => {
+			this.content.root.valueOptions.add(this.value.value);
+
+			return () => {
+				this.content.root.valueOptions.delete(this.value.value);
+			};
+		});
+
+		onDestroy(() => {
+			this.content.root.valueOptions.delete(this.value.value);
+		});
+
 		useRefById({
 			id: this.id,
 			ref: this.ref,
@@ -368,6 +409,7 @@ export class ListboxItemState {
 				"data-highlighted": this.#isFocused ? "" : undefined,
 				tabindex: this.isTabIndexTarget ? 0 : -1,
 				[LISTBOX_ITEM_ATTR]: "",
+				//
 				onpointerup: this.#onpointerup,
 				onkeydown: this.#onkeydown,
 				onfocus: this.#onfocus,

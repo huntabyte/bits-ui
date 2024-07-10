@@ -25,11 +25,11 @@
 		{ value: "burnt-orange", label: "Burnt Orange" },
 	];
 
-	let value = $state("dark-green");
+	let value = $state<string[]>([]);
 </script>
 
 <div class="flex flex-col gap-4">
-	<Listbox.Root type="single" bind:value>
+	<Listbox.Root type="multiple" bind:value>
 		<Listbox.Content
 			class="max-h-80 w-full min-w-[296px] max-w-[296px] overflow-y-scroll rounded-xl border border-muted bg-background px-1 py-3 shadow-popover outline-none"
 		>
@@ -52,7 +52,7 @@
 		</Listbox.Content>
 	</Listbox.Root>
 
-	<div>
+	<div class="max-w-[200px]">
 		Selected: {value}
 	</div>
 </div>
