@@ -28,6 +28,10 @@
 		@apply mb-4 mt-6 w-full overflow-x-auto rounded-card px-2.5 py-5 text-sm font-semibold;
 	}
 
+	& pre[data-metadata] {
+		@apply mt-0 rounded-tl-none rounded-tr-none;
+	}
+
 	& code {
 		@apply grid min-w-full break-words rounded-none border-0 bg-transparent p-0;
 		counter-reset: line;

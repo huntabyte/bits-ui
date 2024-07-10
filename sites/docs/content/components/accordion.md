@@ -117,4 +117,40 @@ You can use `bind:value` with an `$effect` block to handle side effects when the
 </Accordion.Item>
 ```
 
+## Reusable Wrappers
+
+### Entire Component
+
+If you're going to be using the same accordion component multiple places throughout your app, you can create a reusable wrapper to reduce the amount of code you need to write each time.
+
+```svelte title="CustomAccordion.svelte"
+<script lang="ts">
+	import { Accordion, type WithoutChildren } from "bits-ui";
+
+	type Props = WithoutChildren<Accordion.RootProps> & {
+		items: Array<{
+			value: string;
+			disabled?: boolean;
+			title: string;
+			content: string;
+		}>;
+	};
+
+	let { items, value = $bindable(""), ...restProps }: Props = $props();
+</script>
+
+<Accordion.Root bind:value {...restProps}>
+	{#each items as item}
+		<Accordion.Item value={item.value} disabled={item.disabled}>
+			<Accordion.Header>
+				<Accordion.Trigger>{item.title}</Accordion.Trigger>
+			</Accordion.Header>
+			<Accordion.Content>{item.content}</Accordion.Content>
+		</Accordion.Item>
+	{/each}
+</Accordion.Root>
+```
+
+### Individual Item
+
 <APISection {schemas} />
