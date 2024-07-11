@@ -1,4 +1,3 @@
-import type { Snippet } from "svelte";
 import type { EscapeLayerProps } from "../utilities/escape-layer/types.js";
 import type { DismissableLayerProps } from "../utilities/dismissable-layer/types.js";
 import type { PresenceLayerProps } from "../utilities/presence-layer/types.js";
@@ -8,13 +7,11 @@ import type {
 	OnChangeFn,
 	PrimitiveButtonAttributes,
 	PrimitiveDivAttributes,
-	WithAsChild,
 	WithChild,
 	WithChildren,
 	Without,
 } from "$lib/internal/types.js";
 import type { PortalProps } from "$lib/bits/utilities/portal/index.js";
-import type { EventCallback } from "$lib/internal/events.js";
 
 export type DialogRootPropsWithoutHTML = WithChildren<{
 	/**

@@ -3,7 +3,6 @@ import type {
 	OnChangeFn,
 	PrimitiveButtonAttributes,
 	PrimitiveSpanAttributes,
-	WithAsChild,
 	WithChild,
 	Without,
 } from "$lib/internal/index.js";

@@ -148,29 +148,7 @@ export type PrimitiveTrAttributes = Primitive<HTMLAttributes<HTMLTableRowElement
 export type PrimitiveTheadAttrbutes = Primitive<HTMLAttributes<HTMLTableSectionElement>>;
 export type PrimitiveHeaderAttributes = Primitive<HTMLAttributes<HTMLElement>>;
 
-export type AsChildProps<Props, SnippetProps, Ref> = {
-	child: Snippet<[SnippetProps & { props: Record<string, unknown> }]>;
-	children?: never;
-	asChild: true;
-	ref?: Ref | null;
-	style?: StyleProperties;
-} & Omit<Props, "children" | "asChild">;
-
-export type DefaultProps<Props, Ref> = {
-	asChild?: never;
-	child?: never;
-	children?: Snippet;
-	ref?: Ref | null;
-	style?: StyleProperties;
-} & Omit<Props, "child" | "asChild">;
-
 export type ElementRef = Box<HTMLElement | null>;
-
-export type WithAsChild<
-	Props,
-	SnippetProps extends Record<PropertyKey, unknown> = {},
-	Ref = HTMLElement,
-> = DefaultProps<Props, Ref> | AsChildProps<Props, SnippetProps, Ref>;
 
 export type WithChild<
 	/**

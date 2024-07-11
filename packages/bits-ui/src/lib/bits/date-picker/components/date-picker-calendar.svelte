@@ -7,7 +7,6 @@
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {
-		asChild,
 		children,
 		child,
 		id = useId(),
@@ -47,7 +46,7 @@
 	const mergedProps = $derived(mergeProps(restProps, calendarState.props));
 </script>
 
-{#if asChild}
+{#if child}
 	{@render child?.({ props: mergedProps, ...calendarState.snippetProps })}
 {:else}
 	<div {...mergedProps}>

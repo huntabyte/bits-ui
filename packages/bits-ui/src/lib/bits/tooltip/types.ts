@@ -1,4 +1,3 @@
-import type { Snippet } from "svelte";
 import type { FloatingLayerContentProps } from "../utilities/floating-layer/types.js";
 import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
 import type { DismissableLayerProps } from "../utilities/dismissable-layer/types.js";
@@ -7,15 +6,13 @@ import type {
 	OnChangeFn,
 	PrimitiveButtonAttributes,
 	PrimitiveDivAttributes,
-	WithAsChild,
 	WithChild,
 	WithChildren,
 	Without,
 } from "$lib/internal/types.js";
 import type { PortalProps } from "$lib/bits/utilities/portal/types.js";
-import type { EventCallback } from "$lib/internal/events.js";
 
-export type TooltipProviderPropsWithoutHTML = {
+export type TooltipProviderPropsWithoutHTML = WithChildren<{
 	/**
 	 * The delay in milliseconds before the tooltip opens.
 	 *
@@ -58,9 +55,7 @@ export type TooltipProviderPropsWithoutHTML = {
 	 * @defaultValue false
 	 */
 	ignoreNonKeyboardFocus?: boolean;
-
-	children?: Snippet;
-};
+}>;
 
 export type TooltipProviderProps = TooltipProviderPropsWithoutHTML;
 

@@ -1,17 +1,15 @@
-import type { Snippet } from "svelte";
 import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
 import type { PopperLayerProps } from "../utilities/popper-layer/types.js";
 import type {
-	EventCallback,
 	OnChangeFn,
 	PrimitiveButtonAttributes,
 	PrimitiveDivAttributes,
-	WithAsChild,
 	WithChild,
+	WithChildren,
 	Without,
 } from "$lib/internal/index.js";
 
-export type PopoverRootPropsWithoutHTML = {
+export type PopoverRootPropsWithoutHTML = WithChildren<{
 	/**
 	 * The open state of the popover.
 	 */
@@ -21,12 +19,7 @@ export type PopoverRootPropsWithoutHTML = {
 	 * A callback that is called when the popover's open state changes.
 	 */
 	onOpenChange?: OnChangeFn<boolean>;
-
-	/**
-	 * The children content of the popover.
-	 */
-	children?: Snippet;
-};
+}>;
 
 export type PopoverRootProps = PopoverRootPropsWithoutHTML;
 

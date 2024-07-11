@@ -1,9 +1,6 @@
-import type { Snippet } from "svelte";
 import type {
-	EventCallback,
 	OnChangeFn,
 	PrimitiveButtonAttributes,
-	WithAsChild,
 	WithChild,
 	Without,
 } from "$lib/internal/index.js";

@@ -1,12 +1,10 @@
-import type { Snippet } from "svelte";
 import type {
 	PrimitiveButtonAttributes,
 	PrimitiveDivAttributes,
-	WithAsChild,
 	WithChild,
 	Without,
 } from "$lib/internal/types.js";
-import type { EventCallback, OnChangeFn } from "$lib/internal/index.js";
+import type { OnChangeFn } from "$lib/internal/index.js";
 
 type PaginationSnippetProps = {
 	pages: PageItem[];

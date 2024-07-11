@@ -8,11 +8,9 @@ import type {
 	PrimitiveAnchorAttributes,
 	PrimitiveButtonAttributes,
 	PrimitiveDivAttributes,
-	WithAsChild,
 	WithChild,
 	Without,
 } from "$lib/internal/types.js";
-import type { EventCallback } from "$lib/internal/events.js";
 
 export type ToolbarRootPropsWithoutHTML = WithChild<{
 	/**

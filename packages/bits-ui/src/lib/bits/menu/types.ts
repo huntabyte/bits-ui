@@ -1,18 +1,17 @@
-import type { Snippet } from "svelte";
 import type { PopperLayerProps } from "../utilities/popper-layer/types.js";
 import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
 import type {
 	OnChangeFn,
 	PrimitiveButtonAttributes,
 	PrimitiveDivAttributes,
-	WithAsChild,
 	WithChild,
+	WithChildren,
 	Without,
 } from "$lib/internal/types.js";
 import type { Direction } from "$lib/shared/index.js";
 import type { PortalProps } from "$lib/bits/utilities/portal/types.js";
 
-export type MenuRootPropsWithoutHTML = {
+export type MenuRootPropsWithoutHTML = WithChildren<{
 	/**
 	 * The open state of the menu.
 	 */
@@ -29,9 +28,7 @@ export type MenuRootPropsWithoutHTML = {
 	 * @defaultValue "ltr"
 	 */
 	dir?: Direction;
-
-	children?: Snippet;
-};
+}>;
 
 export type MenuRootProps = MenuRootPropsWithoutHTML;
 
@@ -104,7 +101,7 @@ export type MenuTriggerPropsWithoutHTML = WithChild<{
 export type MenuTriggerProps = MenuTriggerPropsWithoutHTML &
 	Without<PrimitiveButtonAttributes, MenuTriggerPropsWithoutHTML>;
 
-export type MenuSubPropsWithoutHTML = {
+export type MenuSubPropsWithoutHTML = WithChildren<{
 	/**
 	 * The open state of the menu.
 	 */
@@ -114,9 +111,7 @@ export type MenuSubPropsWithoutHTML = {
 	 * A callback that is called when the menu is opened or closed.
 	 */
 	onOpenChange?: OnChangeFn<boolean>;
-
-	children?: Snippet;
-};
+}>;
 
 export type MenuSubContentPropsWithoutHTML = WithChild<PopperLayerProps>;
 export type MenuSubContentProps = MenuSubContentPropsWithoutHTML &

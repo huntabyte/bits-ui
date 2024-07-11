@@ -1,3 +1,3 @@
-import type { PrimitiveSpanAttributes, WithAsChild } from "$lib/internal/types.js";
+import type { PrimitiveSpanAttributes, WithChild } from "$lib/internal/types.js";
 
-export type VisuallyHiddenProps = WithAsChild<PrimitiveSpanAttributes>;
+export type VisuallyHiddenProps = WithChild<PrimitiveSpanAttributes>;

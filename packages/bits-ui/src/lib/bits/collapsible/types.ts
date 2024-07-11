@@ -1,10 +1,7 @@
 import type {
-	EventCallback,
-	HTMLDivAttributes,
 	OnChangeFn,
 	PrimitiveButtonAttributes,
 	PrimitiveDivAttributes,
-	WithAsChild,
 	WithChild,
 	Without,
 } from "$lib/internal/index.js";

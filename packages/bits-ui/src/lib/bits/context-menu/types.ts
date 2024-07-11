@@ -1,10 +1,5 @@
 import type { MenuContentProps, MenuContentPropsWithoutHTML } from "../menu/types.js";
-import type {
-	PrimitiveDivAttributes,
-	WithAsChild,
-	WithChild,
-	Without,
-} from "$lib/internal/types.js";
+import type { PrimitiveDivAttributes, WithChild, Without } from "$lib/internal/types.js";
 
 export type ContextMenuContentPropsWithoutHTML = MenuContentPropsWithoutHTML;
 

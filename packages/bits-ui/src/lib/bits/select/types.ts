@@ -1,4 +1,3 @@
-import type { Snippet } from "svelte";
 import type { PopperLayerProps } from "../utilities/popper-layer/types.js";
 import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
 import type {
@@ -6,7 +5,6 @@ import type {
 	PrimitiveButtonAttributes,
 	PrimitiveDivAttributes,
 	PrimitiveSpanAttributes,
-	WithAsChild,
 	WithChild,
 	WithChildren,
 	Without,
