@@ -6,7 +6,6 @@
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {
-		asChild,
 		child,
 		children,
 		disabled = false,
@@ -28,7 +27,7 @@
 	const mergedProps = $derived(mergeProps(restProps, buttonState.props, { type }));
 </script>
 
-{#if asChild}
+{#if child}
 	{@render child?.({ props: mergedProps })}
 {:else}
 	<button {...mergedProps}>

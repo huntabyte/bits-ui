@@ -3,12 +3,13 @@ import type {
 	PrimitiveDivAttributes,
 	PrimitiveImgAttributes,
 	PrimitiveSpanAttributes,
-	WithAsChild,
+	WithChild,
+	Without,
 } from "$lib/internal/index.js";
 
 export type AvatarImageLoadingStatus = "loading" | "loaded" | "error";
 
-export type AvatarRootPropsWithoutHTML = WithAsChild<{
+export type AvatarRootPropsWithoutHTML = WithChild<{
 	/**
 	 * The delay in milliseconds to wait before showing the avatar once
 	 * the image has loaded. This can be used to prevent sudden flickering
@@ -29,10 +30,13 @@ export type AvatarRootPropsWithoutHTML = WithAsChild<{
 	onLoadingStatusChange?: OnChangeFn<AvatarImageLoadingStatus>;
 }>;
 
-export type AvatarRootProps = AvatarRootPropsWithoutHTML & PrimitiveDivAttributes;
+export type AvatarRootProps = AvatarRootPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, AvatarRootPropsWithoutHTML>;
 
-export type AvatarImagePropsWithoutHTML = WithAsChild<object>;
-export type AvatarImageProps = AvatarImagePropsWithoutHTML & PrimitiveImgAttributes;
+export type AvatarImagePropsWithoutHTML = WithChild;
+export type AvatarImageProps = AvatarImagePropsWithoutHTML &
+	Without<PrimitiveImgAttributes, AvatarImagePropsWithoutHTML>;
 
-export type AvatarFallbackPropsWithoutHTML = WithAsChild<object>;
-export type AvatarFallbackProps = AvatarFallbackPropsWithoutHTML & PrimitiveSpanAttributes;
+export type AvatarFallbackPropsWithoutHTML = WithChild;
+export type AvatarFallbackProps = AvatarFallbackPropsWithoutHTML &
+	Without<PrimitiveSpanAttributes, AvatarFallbackPropsWithoutHTML>;

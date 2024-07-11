@@ -1,7 +1,7 @@
-import type { PrimitiveDivAttributes, WithAsChild } from "$lib/internal/index.js";
+import type { PrimitiveDivAttributes, WithChild, Without } from "$lib/internal/index.js";
 import type { Orientation } from "$lib/shared/index.js";
 
-export type SeparatorRootPropsWithoutHTML = WithAsChild<{
+export type SeparatorRootPropsWithoutHTML = WithChild<{
 	/**
 	 * The orientation of the separator.
 	 *
@@ -17,4 +17,5 @@ export type SeparatorRootPropsWithoutHTML = WithAsChild<{
 	decorative?: boolean;
 }>;
 
-export type SeparatorRootProps = SeparatorRootPropsWithoutHTML & PrimitiveDivAttributes;
+export type SeparatorRootProps = SeparatorRootPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, SeparatorRootPropsWithoutHTML>;

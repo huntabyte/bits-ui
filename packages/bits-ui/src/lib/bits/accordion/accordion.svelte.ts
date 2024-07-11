@@ -15,11 +15,11 @@ import { type UseRovingFocusReturn, useRovingFocus } from "$lib/internal/useRovi
 import type { Orientation } from "$lib/shared/index.js";
 import { createContext } from "$lib/internal/createContext.js";
 
-const ROOT_ATTR = "data-accordion-root";
-const TRIGGER_ATTR = "data-accordion-trigger";
-const CONTENT_ATTR = "data-accordion-content";
-const ITEM_ATTR = "data-accordion-item";
-const HEADER_ATTR = "data-accordion-header";
+const ACCORDION_ROOT_ATTR = "data-accordion-root";
+const ACCORDION_TRIGGER_ATTR = "data-accordion-trigger";
+const ACCORDION_CONTENT_ATTR = "data-accordion-content";
+const ACCORDION_ITEM_ATTR = "data-accordion-item";
+const ACCORDION_HEADER_ATTR = "data-accordion-header";
 
 //
 // BASE
@@ -57,7 +57,7 @@ class AccordionBaseState {
 		this.#loop = props.loop;
 		this.rovingFocusGroup = useRovingFocus({
 			rootNodeId: this.#id,
-			candidateSelector: TRIGGER_ATTR,
+			candidateSelector: ACCORDION_TRIGGER_ATTR,
 			loop: this.#loop,
 			orientation: this.orientation,
 		});
@@ -69,7 +69,7 @@ class AccordionBaseState {
 				id: this.#id.value,
 				"data-orientation": getDataOrientation(this.orientation.value),
 				"data-disabled": getDataDisabled(this.disabled.value),
-				[ROOT_ATTR]: "",
+				[ACCORDION_ROOT_ATTR]: "",
 			}) as const
 	);
 }
@@ -178,15 +178,12 @@ export class AccordionItemState {
 		return new AccordionHeaderState(props, this);
 	}
 
-	props = $derived.by(
-		() =>
-			({
-				id: this.#id.value,
-				[ITEM_ATTR]: "",
-				"data-state": getDataOpenClosed(this.isSelected),
-				"data-disabled": getDataDisabled(this.isDisabled),
-			}) as const
-	);
+	props = $derived.by(() => ({
+		id: this.#id.value,
+		[ACCORDION_ITEM_ATTR]: "",
+		"data-state": getDataOpenClosed(this.isSelected),
+		"data-disabled": getDataDisabled(this.isDisabled),
+	}));
 }
 
 //
@@ -249,7 +246,7 @@ class AccordionTriggerState {
 				"data-disabled": getDataDisabled(this.#isDisabled),
 				"data-state": getDataOpenClosed(this.#itemState.isSelected),
 				"data-orientation": getDataOrientation(this.#root.orientation.value),
-				[TRIGGER_ATTR]: "",
+				[ACCORDION_TRIGGER_ATTR]: "",
 				tabindex: 0,
 				//
 				onclick: this.#onclick,
@@ -305,7 +302,6 @@ class AccordionContentState {
 		});
 
 		$effect(() => {
-			// eslint-disable-next-line no-unused-expressions
 			this.present;
 			const node = this.#ref.value;
 			if (!node) return;
@@ -343,7 +339,7 @@ class AccordionContentState {
 				"data-state": getDataOpenClosed(this.item.isSelected),
 				"data-disabled": getDataDisabled(this.item.isDisabled),
 				"data-orientation": getDataOrientation(this.item.root.orientation.value),
-				[CONTENT_ATTR]: "",
+				[ACCORDION_CONTENT_ATTR]: "",
 				style: {
 					"--bits-accordion-content-height": `${this.#height}px`,
 					"--bits-accordion-content-width": `${this.#width}px`,
@@ -387,7 +383,7 @@ class AccordionHeaderState {
 				"data-heading-level": this.#level.value,
 				"data-state": getDataOpenClosed(this.#item.isSelected),
 				"data-orientation": getDataOrientation(this.#item.root.orientation.value),
-				[HEADER_ATTR]: "",
+				[ACCORDION_HEADER_ATTR]: "",
 			}) as const
 	);
 }

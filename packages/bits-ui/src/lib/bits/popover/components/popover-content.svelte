@@ -6,7 +6,6 @@
 	import { mergeProps, noop, useId } from "$lib/internal/index.js";
 
 	let {
-		asChild,
 		child,
 		children,
 		ref = $bindable(null),
@@ -56,7 +55,7 @@
 >
 	{#snippet popper({ props })}
 		{@const finalProps = mergeProps(props, mergedProps)}
-		{#if asChild}
+		{#if child}
 			{@render child?.({ props: finalProps })}
 		{:else}
 			<div {...finalProps}>

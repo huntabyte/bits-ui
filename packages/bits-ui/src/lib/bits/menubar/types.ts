@@ -5,11 +5,12 @@ import type {
 	PrimitiveButtonAttributes,
 	PrimitiveDivAttributes,
 	WithAsChild,
+	WithChild,
 	Without,
 } from "$lib/internal/types.js";
 import type { Direction } from "$lib/shared/index.js";
 
-export type MenubarRootPropsWithoutHTML = WithAsChild<{
+export type MenubarRootPropsWithoutHTML = WithChild<{
 	/**
 	 * The reading direction of the menubar.
 	 */
@@ -47,7 +48,12 @@ export type MenubarMenuPropsWithoutHTML = {
 
 export type MenubarMenuProps = MenubarMenuPropsWithoutHTML;
 
-export type MenubarTriggerPropsWithoutHTML = WithAsChild<{
+export type MenubarTriggerPropsWithoutHTML = WithChild<{
+	/**
+	 * Whether the trigger for the menubar item is disabled.
+	 *
+	 * @defaultValue false
+	 */
 	disabled?: boolean;
 }>;
 

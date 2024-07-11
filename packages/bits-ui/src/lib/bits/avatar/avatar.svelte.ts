@@ -6,9 +6,9 @@ import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
 
-const ROOT_ATTR = "data-avatar-root";
-const IMAGE_ATTR = "data-avatar-image";
-const FALLBACK_ATTR = "data-avatar-fallback";
+const AVATAR_ROOT_ATTR = "data-avatar-root";
+const AVATAR_IMAGE_ATTR = "data-avatar-image";
+const AVATAR_FALLBACK_ATTR = "data-avatar-fallback";
 
 /**
  * ROOT
@@ -60,7 +60,7 @@ class AvatarRootState {
 		() =>
 			({
 				id: this.#id.value,
-				[ROOT_ATTR]: "",
+				[AVATAR_ROOT_ATTR]: "",
 				"data-status": this.loadingStatus.value,
 			}) as const
 	);
@@ -114,7 +114,7 @@ class AvatarImageState {
 				style: {
 					display: this.root.loadingStatus.value === "loaded" ? "block" : "none",
 				},
-				[IMAGE_ATTR]: "",
+				[AVATAR_IMAGE_ATTR]: "",
 				src: this.src.value,
 			}) as const
 	);
@@ -148,7 +148,7 @@ class AvatarFallbackState {
 				style: {
 					display: this.root.loadingStatus.value === "loaded" ? "none" : "block",
 				},
-				[FALLBACK_ATTR]: "",
+				[AVATAR_FALLBACK_ATTR]: "",
 			}) as const
 	);
 }

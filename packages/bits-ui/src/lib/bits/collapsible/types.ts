@@ -5,10 +5,11 @@ import type {
 	PrimitiveButtonAttributes,
 	PrimitiveDivAttributes,
 	WithAsChild,
+	WithChild,
 	Without,
 } from "$lib/internal/index.js";
 
-export type CollapsibleRootPropsWithoutHTML = WithAsChild<{
+export type CollapsibleRootPropsWithoutHTML = WithChild<{
 	/**
 	 * Whether the collapsible is disabled.
 	 *
@@ -32,7 +33,7 @@ export type CollapsibleRootPropsWithoutHTML = WithAsChild<{
 export type CollapsibleRootProps = CollapsibleRootPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, CollapsibleRootPropsWithoutHTML>;
 
-export type CollapsibleContentPropsWithoutHTML = WithAsChild<{
+export type CollapsibleContentPropsWithoutHTML = WithChild<{
 	/**
 	 * Whether to force mount the content to the DOM.
 	 *
@@ -42,13 +43,9 @@ export type CollapsibleContentPropsWithoutHTML = WithAsChild<{
 }>;
 
 export type CollapsibleContentProps = CollapsibleContentPropsWithoutHTML &
-	Omit<PrimitiveDivAttributes, "id"> & {
-		id?: string;
-	};
+	Without<PrimitiveDivAttributes, CollapsibleContentPropsWithoutHTML>;
 
-export type CollapsibleTriggerPropsWithoutHTML = WithAsChild<{
-	onclick?: EventCallback<MouseEvent>;
-}>;
+export type CollapsibleTriggerPropsWithoutHTML = WithChild;
 
 export type CollapsibleTriggerProps = CollapsibleTriggerPropsWithoutHTML &
-	Omit<PrimitiveButtonAttributes, "onclick">;
+	Without<PrimitiveButtonAttributes, CollapsibleTriggerPropsWithoutHTML>;

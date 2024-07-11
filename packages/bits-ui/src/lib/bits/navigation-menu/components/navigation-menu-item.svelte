@@ -8,7 +8,6 @@
 	let {
 		id = useId(),
 		value = useId(),
-		asChild,
 		child,
 		children,
 		ref = $bindable(),
@@ -23,8 +22,8 @@
 	const mergedProps = $derived(mergeProps(restProps, itemState.props));
 </script>
 
-{#if asChild}
-	{@render child?.({ props: mergedProps })}
+{#if child}
+	{@render child({ props: mergedProps })}
 {:else}
 	<li {...mergedProps} bind:this={ref}>
 		{@render children?.()}

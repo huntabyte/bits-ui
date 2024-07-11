@@ -172,6 +172,30 @@ export type WithAsChild<
 	Ref = HTMLElement,
 > = DefaultProps<Props, Ref> | AsChildProps<Props, SnippetProps, Ref>;
 
+export type WithChild<
+	/**
+	 * The props that the component accepts.
+	 */
+	Props extends Record<PropertyKey, unknown> = {},
+	/**
+	 * The props that are passed to the `child` and `children` snippets. The `ElementProps` are
+	 * merged with these props for the `child` snippet.
+	 */
+	SnippetProps extends Record<PropertyKey, unknown> = { _default: never },
+	/**
+	 * The underlying DOM element being rendered. You can bind to this prop to
+	 * programatically interact with the element.
+	 */
+	Ref = HTMLElement,
+> = Omit<Props, "child" | "children"> & {
+	child?: SnippetProps extends { _default: never }
+		? Snippet<[{ props: Record<string, unknown> }]>
+		: Snippet<[Expand<SnippetProps> & { props: Record<string, unknown> }]>;
+	children?: SnippetProps extends { _default: never } ? Snippet : Snippet<[Expand<SnippetProps>]>;
+	style?: StyleProperties;
+	ref?: Ref | null;
+};
+
 export type WithChildren<Props> = Props & {
 	children?: Snippet;
 };

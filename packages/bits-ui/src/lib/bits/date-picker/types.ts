@@ -1,3 +1,5 @@
+import type { DateValue } from "@internationalized/date";
+import type { Snippet } from "svelte";
 import type {
 	OnChangeFn,
 	PrimitiveDivAttributes,
@@ -7,8 +9,6 @@ import type {
 import type { EditableSegmentPart } from "$lib/shared/date/field/types.js";
 import type { DateMatcher, Granularity, WeekStartsOn } from "$lib/shared/date/types.js";
 import type { CalendarRootSnippetProps } from "$lib/types.js";
-import type { DateValue } from "@internationalized/date";
-import type { Snippet } from "svelte";
 
 export type DatePickerRootPropsWithoutHTML = {
 	/**

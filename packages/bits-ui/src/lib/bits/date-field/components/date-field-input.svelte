@@ -1,15 +1,14 @@
 <script lang="ts">
-	import { useId } from "$lib/internal/useId.svelte.js";
 	import { box } from "svelte-toolbelt";
 	import { useDateFieldInput } from "../date-field.svelte.js";
 	import type { InputProps } from "../index.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import DateFieldHiddenInput from "./date-field-hidden-input.svelte";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
 
 	let {
 		id = useId(),
 		ref = $bindable(null),
-		asChild,
 		children,
 		child,
 		...restProps
@@ -26,8 +25,8 @@
 	const mergedProps = $derived(mergeProps(restProps, inputState.props));
 </script>
 
-{#if asChild}
-	{@render child?.({ props: mergedProps, segments: inputState.root.segmentContents })}
+{#if child}
+	{@render child({ props: mergedProps, segments: inputState.root.segmentContents })}
 {:else}
 	<div {...mergedProps}>
 		{@render children?.({ segments: inputState.root.segmentContents })}

@@ -8,7 +8,6 @@
 
 	let {
 		id = useId(),
-		asChild,
 		children,
 		child,
 		ref = $bindable(null),
@@ -37,8 +36,8 @@
 	const mergedProps = $derived(mergeProps(restProps, radioGroupState.props));
 </script>
 
-{#if asChild}
-	{@render child?.({ props: mergedProps })}
+{#if child}
+	{@render child({ props: mergedProps })}
 {:else}
 	<div {...mergedProps}>
 		{@render children?.()}

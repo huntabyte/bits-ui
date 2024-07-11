@@ -1,12 +1,11 @@
 <script lang="ts">
-	import { useId } from "$lib/internal/useId.svelte.js";
 	import { box } from "svelte-toolbelt";
 	import { useCalendarGridHead } from "../calendar.svelte.js";
 	import type { GridHeadProps } from "../index.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {
-		asChild,
 		children,
 		child,
 		ref = $bindable(null),
@@ -25,8 +24,8 @@
 	const mergedProps = $derived(mergeProps(restProps, gridHeadState.props));
 </script>
 
-{#if asChild}
-	{@render child?.({ props: mergedProps })}
+{#if child}
+	{@render child({ props: mergedProps })}
 {:else}
 	<thead {...mergedProps}>
 		{@render children?.()}

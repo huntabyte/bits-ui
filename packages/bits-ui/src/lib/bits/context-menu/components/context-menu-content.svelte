@@ -12,7 +12,6 @@
 
 	let {
 		id = useId(),
-		asChild,
 		child,
 		children,
 		ref = $bindable(null),
@@ -89,8 +88,8 @@
 >
 	{#snippet popper({ props })}
 		{@const finalProps = mergeProps(props, mergedProps)}
-		{#if asChild}
-			{@render child?.({ props: finalProps })}
+		{#if child}
+			{@render child({ props: finalProps })}
 		{:else}
 			<div {...finalProps}>
 				{@render children?.()}

@@ -8,6 +8,8 @@ import type {
 	PrimitiveButtonAttributes,
 	PrimitiveDivAttributes,
 	WithAsChild,
+	WithChild,
+	WithChildren,
 	Without,
 } from "$lib/internal/types.js";
 import type { PortalProps } from "$lib/bits/utilities/portal/types.js";
@@ -62,7 +64,7 @@ export type TooltipProviderPropsWithoutHTML = {
 
 export type TooltipProviderProps = TooltipProviderPropsWithoutHTML;
 
-export type TooltipRootPropsWithoutHTML = {
+export type TooltipRootPropsWithoutHTML = WithChildren<{
 	/**
 	 * The open state of the tooltip.
 	 *
@@ -110,13 +112,11 @@ export type TooltipRootPropsWithoutHTML = {
 	 * @defaultValue false
 	 */
 	ignoreNonKeyboardFocus?: boolean;
-
-	children?: Snippet;
-};
+}>;
 
 export type TooltipRootProps = TooltipRootPropsWithoutHTML;
 
-export type TooltipContentPropsWithoutHTML = WithAsChild<
+export type TooltipContentPropsWithoutHTML = WithChild<
 	Pick<
 		FloatingLayerContentProps,
 		| "side"
@@ -142,7 +142,8 @@ export type TooltipContentPropsWithoutHTML = WithAsChild<
 		}
 >;
 
-export type TooltipContentProps = TooltipContentPropsWithoutHTML & PrimitiveDivAttributes;
+export type TooltipContentProps = TooltipContentPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, TooltipContentPropsWithoutHTML>;
 
 export type TooltipArrowPropsWithoutHTML = ArrowPropsWithoutHTML;
 export type TooltipArrowProps = ArrowProps;
@@ -150,13 +151,12 @@ export type TooltipArrowProps = ArrowProps;
 export type TooltipPortalPropsWithoutHTML = PortalProps;
 export type TooltipPortalProps = PortalProps;
 
-export type TooltipTriggerPropsWithoutHTML = WithAsChild<{
-	onclick?: EventCallback<MouseEvent>;
-	onfocus?: EventCallback<FocusEvent>;
-	onblur?: EventCallback<FocusEvent>;
-	onpointermove?: EventCallback<PointerEvent>;
-	onpointerleave?: EventCallback<PointerEvent>;
-	onpointerdown?: EventCallback<PointerEvent>;
+export type TooltipTriggerPropsWithoutHTML = WithChild<{
+	/**
+	 * Whether the tooltip trigger is disabled or not.
+	 *
+	 * @defaultValue false
+	 */
 	disabled?: boolean;
 }>;
 

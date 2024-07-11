@@ -4,12 +4,13 @@
 	import { useSwitchRoot } from "../switch.svelte.js";
 	import SwitchInput from "./switch-input.svelte";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
 
 	let {
 		child,
-		asChild,
 		children,
-		ref = $bindable(),
+		ref = $bindable(null),
+		id = useId(),
 		disabled = false,
 		required = false,
 		checked = $bindable(false),
@@ -32,16 +33,21 @@
 		required: box.with(() => required),
 		value: box.with(() => value),
 		name: box.with(() => name),
+		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, rootState.props, { type }));
 </script>
 
-{#if asChild}
+{#if child}
 	{@render child?.({ props: mergedProps, checked: rootState.checked.value })}
 {:else}
 	<button bind:this={ref} {...mergedProps}>
-		{@render children?.()}
+		{@render children?.({ checked: rootState.checked.value })}
 	</button>
 {/if}
 

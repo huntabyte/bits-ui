@@ -1,20 +1,18 @@
-import type { HTMLButtonAttributes, HTMLInputAttributes } from "svelte/elements";
-import type { CreateSwitchProps as MeltSwitchProps } from "@melt-ui/svelte";
 import type {
-	DOMEl,
-	DOMElement,
 	EventCallback,
-	Expand,
-	HTMLSpanAttributes,
-	OmitChecked,
 	OnChangeFn,
 	PrimitiveButtonAttributes,
 	PrimitiveSpanAttributes,
 	WithAsChild,
+	WithChild,
+	Without,
 } from "$lib/internal/index.js";
-import type { CustomEventHandler } from "$lib/index.js";
 
-export type SwitchRootPropsWithoutHTML = WithAsChild<
+type SwitchRootSnippetProps = {
+	checked: boolean;
+};
+
+export type SwitchRootPropsWithoutHTML = WithChild<
 	{
 		/**
 		 * Whether the switch is disabled.
@@ -61,17 +59,15 @@ export type SwitchRootPropsWithoutHTML = WithAsChild<
 
 		onkeydown?: EventCallback<KeyboardEvent>;
 	},
-	{
-		/**
-		 * The checked state of the switch.
-		 */
-		checked: boolean;
-	}
+	SwitchRootSnippetProps
 >;
 
 export type SwitchRootProps = SwitchRootPropsWithoutHTML &
-	Omit<PrimitiveButtonAttributes, "value" | "disabled" | "onclick" | "onkeydown">;
+	Without<PrimitiveButtonAttributes, SwitchRootPropsWithoutHTML>;
 
-export type SwitchThumbPropsWithoutHTML = WithAsChild<object, { checked: boolean }>;
+export type SwitchThumbSnippetProps = SwitchRootSnippetProps;
 
-export type SwitchThumbProps = SwitchThumbPropsWithoutHTML & PrimitiveSpanAttributes;
+export type SwitchThumbPropsWithoutHTML = WithChild<{}, SwitchThumbSnippetProps>;
+
+export type SwitchThumbProps = SwitchThumbPropsWithoutHTML &
+	Without<PrimitiveSpanAttributes, SwitchThumbPropsWithoutHTML>;

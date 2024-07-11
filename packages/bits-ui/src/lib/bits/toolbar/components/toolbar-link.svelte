@@ -6,7 +6,6 @@
 	import { useId } from "$lib/internal/useId.svelte.js";
 
 	let {
-		asChild,
 		children,
 		href,
 		child,
@@ -26,7 +25,7 @@
 	const mergedProps = $derived(mergeProps(restProps, linkState.props));
 </script>
 
-{#if asChild}
+{#if child}
 	{@render child?.({ props: mergedProps })}
 {:else}
 	<a {href} {...mergedProps}>

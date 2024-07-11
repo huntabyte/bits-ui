@@ -6,7 +6,6 @@
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 
 	let {
-		asChild,
 		children,
 		child,
 		id = useId(),
@@ -27,7 +26,7 @@
 </script>
 
 <FloatingLayer.Anchor {id}>
-	{#if asChild}
+	{#if child}
 		{@render child?.({ props: mergedProps })}
 	{:else}
 		<button {...mergedProps}>

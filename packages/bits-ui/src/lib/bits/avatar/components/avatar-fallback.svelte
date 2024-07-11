@@ -1,12 +1,11 @@
 <script lang="ts">
+	import { box } from "svelte-toolbelt";
 	import type { FallbackProps } from "../index.js";
 	import { useAvatarFallback } from "../avatar.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { useId } from "$lib/internal/useId.svelte.js";
-	import { box } from "svelte-toolbelt";
 
 	let {
-		asChild,
 		children,
 		child,
 		id = useId(),
@@ -25,8 +24,8 @@
 	const mergedProps = $derived(mergeProps(restProps, fallbackState.props));
 </script>
 
-{#if asChild}
-	{@render child?.({ props: mergedProps })}
+{#if child}
+	{@render child({ props: mergedProps })}
 {:else}
 	<span {...mergedProps}>
 		{@render children?.()}

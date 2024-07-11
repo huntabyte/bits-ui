@@ -7,7 +7,6 @@
 
 	let {
 		id = useId(),
-		asChild,
 		children,
 		child,
 		ref = $bindable(null),
@@ -28,8 +27,8 @@
 </script>
 
 <div {...indicatorTrackProps}>
-	{#if asChild}
-		{@render child?.({ props: mergedProps })}
+	{#if child}
+		{@render child({ props: mergedProps })}
 	{:else}
 		<ul {...mergedProps}>
 			{@render children?.()}

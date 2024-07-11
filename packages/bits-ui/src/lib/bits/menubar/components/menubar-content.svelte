@@ -22,15 +22,11 @@
 		),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, contentState.props)) as Record<
-		string,
-		unknown
-	>;
+	const mergedProps = $derived(mergeProps(restProps, contentState.props));
 </script>
 
 <MenuContent
 	bind:ref
-	{id}
 	{...mergedProps}
 	preventScroll={false}
 	onInteractOutside={contentState.onInteractOutside}

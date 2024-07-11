@@ -6,7 +6,6 @@
 
 	let {
 		id = useId(),
-		asChild,
 		child,
 		children,
 		ref = $bindable(null),
@@ -26,7 +25,7 @@
 	const mergedProps = $derived(mergeProps(restProps, nextButtonState.props, { type }));
 </script>
 
-{#if asChild}
+{#if child}
 	{@render child?.({ props: mergedProps })}
 {:else}
 	<button {...mergedProps}>

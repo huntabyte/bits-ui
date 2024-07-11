@@ -9,7 +9,6 @@
 	let {
 		id = useId(),
 		ref = $bindable(null),
-		asChild,
 		children,
 		child,
 		forceMount = false,
@@ -28,8 +27,8 @@
 </script>
 
 <PresenceLayer {id} present={forceMount || viewportState.open}>
-	{#snippet presence({ present })}
-		{#if asChild}
+	{#snippet presence()}
+		{#if child}
 			{@render child?.({ props: mergedProps })}
 		{:else}
 			<div {...mergedProps}>

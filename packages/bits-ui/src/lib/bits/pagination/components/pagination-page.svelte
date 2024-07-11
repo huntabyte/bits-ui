@@ -7,7 +7,6 @@
 	let {
 		id = useId(),
 		page,
-		asChild,
 		child,
 		children,
 		type = "button",
@@ -27,7 +26,7 @@
 	const mergedProps = $derived(mergeProps(restProps, pageState.props, { type }));
 </script>
 
-{#if asChild}
+{#if child}
 	{@render child?.({ props: mergedProps })}
 {:else}
 	<button {...mergedProps}>

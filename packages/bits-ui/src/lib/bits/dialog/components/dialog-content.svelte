@@ -14,7 +14,6 @@
 
 	let {
 		id = useId(),
-		asChild,
 		children,
 		child,
 		ref = $bindable(null),
@@ -68,7 +67,7 @@
 						}}
 					>
 						<TextSelectionLayer {...mergedProps} enabled={present.value}>
-							{#if asChild}
+							{#if child}
 								{@render child?.({
 									props: mergeProps(mergedProps, focusScopeProps, {
 										hidden: !present.value,

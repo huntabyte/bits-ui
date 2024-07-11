@@ -1,23 +1,36 @@
 import { getAriaPressed, getDataDisabled, getDisabledAttr } from "$lib/internal/attrs.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
+import type { WithRefProps } from "$lib/internal/types.js";
+import { useRefById } from "$lib/internal/useRefById.svelte.js";
 
 const ROOT_ATTR = "data-toggle-root";
 
-type ToggleRootStateProps = ReadableBoxedValues<{
-	disabled: boolean;
-}> &
-	WritableBoxedValues<{
-		pressed: boolean;
-	}>;
+type ToggleRootStateProps = WithRefProps<
+	ReadableBoxedValues<{
+		disabled: boolean;
+	}> &
+		WritableBoxedValues<{
+			pressed: boolean;
+		}>
+>;
 
 class ToggleRootState {
+	#id: ToggleRootStateProps["id"];
+	#ref: ToggleRootStateProps["ref"];
 	#disabled: ToggleRootStateProps["disabled"];
 	pressed: ToggleRootStateProps["pressed"];
 
 	constructor(props: ToggleRootStateProps) {
 		this.#disabled = props.disabled;
 		this.pressed = props.pressed;
+		this.#id = props.id;
+		this.#ref = props.ref;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+		});
 	}
 
 	#togglePressed() {

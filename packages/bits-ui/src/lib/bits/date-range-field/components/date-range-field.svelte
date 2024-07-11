@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { useId } from "$lib/internal/useId.svelte.js";
 	import { box } from "svelte-toolbelt";
+	import type { DateValue } from "@internationalized/date";
 	import { useDateRangeFieldRoot } from "../date-range-field.svelte.js";
 	import type { RootProps } from "../index.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
 	import { noop } from "$lib/internal/callbacks.js";
 	import { getDefaultDate } from "$lib/shared/date/utils.js";
-	import type { DateValue } from "@internationalized/date";
 	import type { DateRange } from "$lib/shared/index.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
@@ -27,7 +27,6 @@
 		maxValue,
 		minValue,
 		readonlySegments = [],
-		asChild,
 		children,
 		child,
 		...restProps
@@ -85,8 +84,8 @@
 	const mergedProps = $derived(mergeProps(restProps, rootState.props));
 </script>
 
-{#if asChild}
-	{@render child?.({ props: mergedProps })}
+{#if child}
+	{@render child({ props: mergedProps })}
 {:else}
 	<div {...mergedProps}>
 		{@render children?.()}

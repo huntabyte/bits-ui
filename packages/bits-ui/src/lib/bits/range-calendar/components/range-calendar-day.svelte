@@ -1,18 +1,11 @@
 <script lang="ts">
-	import { useId } from "$lib/internal/useId.svelte.js";
 	import { box } from "svelte-toolbelt";
 	import type { DayProps } from "../index.js";
 	import { useRangeCalendarDay } from "../range-calendar.svelte.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
-	let {
-		asChild,
-		children,
-		child,
-		id = useId(),
-		ref = $bindable(null),
-		...restProps
-	}: DayProps = $props();
+	let { children, child, id = useId(), ref = $bindable(null), ...restProps }: DayProps = $props();
 
 	const dayState = useRangeCalendarDay({
 		id: box.with(() => id),
@@ -25,7 +18,7 @@
 	const mergedProps = $derived(mergeProps(restProps, dayState.props));
 </script>
 
-{#if asChild}
+{#if child}
 	{@render child?.({ props: mergedProps, ...dayState.snippetProps })}
 {:else}
 	<div {...mergedProps}>

@@ -2,7 +2,7 @@
 	import type { ArrowProps } from "../index.js";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 
-	let { ref = $bindable(), ...restProps }: ArrowProps = $props();
+	let { ref = $bindable(null), ...restProps }: ArrowProps = $props();
 </script>
 
-<FloatingLayer.Arrow {...restProps} />
+<FloatingLayer.Arrow bind:ref {...restProps} />

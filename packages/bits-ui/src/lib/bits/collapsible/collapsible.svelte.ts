@@ -111,7 +111,6 @@ class CollapsibleContentState {
 		});
 
 		$effect(() => {
-			// eslint-disable-next-line no-unused-expressions
 			this.present;
 			const node = this.#ref.value;
 			if (!node) return;

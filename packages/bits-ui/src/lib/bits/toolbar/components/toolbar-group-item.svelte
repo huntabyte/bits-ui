@@ -6,7 +6,6 @@
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {
-		asChild,
 		child,
 		children,
 		value,
@@ -30,10 +29,10 @@
 	const mergedProps = $derived(mergeProps(restProps, groupItemState.props, { type }));
 </script>
 
-{#if asChild}
-	{@render child?.({ props: mergedProps })}
+{#if child}
+	{@render child?.({ props: mergedProps, pressed: groupItemState.isPressed })}
 {:else}
 	<button {...mergedProps}>
-		{@render children?.()}
+		{@render children?.({ pressed: groupItemState.isPressed })}
 	</button>
 {/if}

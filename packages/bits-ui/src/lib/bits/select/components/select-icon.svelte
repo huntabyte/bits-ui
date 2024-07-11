@@ -1,12 +1,11 @@
 <script lang="ts">
+	import { box } from "svelte-toolbelt";
 	import type { IconProps } from "../index.js";
 	import { useSelectIcon } from "../select.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { useId } from "$lib/internal/useId.svelte.js";
-	import { box } from "svelte-toolbelt";
 
 	let {
-		asChild,
 		children,
 		child,
 		id = useId(),
@@ -25,7 +24,7 @@
 	const mergedProps = $derived(mergeProps(restProps, iconState.props));
 </script>
 
-{#if asChild}
+{#if child}
 	{@render child?.({ props: mergedProps })}
 {:else}
 	<span {...mergedProps} bind:this={ref}>

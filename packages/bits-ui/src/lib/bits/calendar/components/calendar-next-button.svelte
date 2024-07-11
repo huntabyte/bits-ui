@@ -1,12 +1,11 @@
 <script lang="ts">
-	import { useId } from "$lib/internal/useId.svelte.js";
 	import { box } from "svelte-toolbelt";
 	import { useCalendarNextButton } from "../calendar.svelte.js";
 	import type { NextButtonProps } from "../index.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {
-		asChild,
 		children,
 		child,
 		id = useId(),
@@ -25,8 +24,8 @@
 	const mergedProps = $derived(mergeProps(restProps, nextButtonState.props));
 </script>
 
-{#if asChild}
-	{@render child?.({ props: mergedProps })}
+{#if child}
+	{@render child({ props: mergedProps })}
 {:else}
 	<button {...mergedProps}>
 		{@render children?.()}

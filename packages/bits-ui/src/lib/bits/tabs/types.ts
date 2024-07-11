@@ -1,15 +1,15 @@
 import type {
-	EventCallback,
 	OnChangeFn,
 	PrimitiveButtonAttributes,
 	PrimitiveDivAttributes,
-	WithAsChild,
+	WithChild,
+	Without,
 } from "$lib/internal/index.js";
 import type { Orientation } from "$lib/index.js";
 
 export type TabsActivationMode = "manual" | "automatic";
 
-export type TabsRootPropsWithoutHTML = WithAsChild<{
+export type TabsRootPropsWithoutHTML = WithChild<{
 	/**
 	 * The value of the selected tab.
 	 */
@@ -52,13 +52,15 @@ export type TabsRootPropsWithoutHTML = WithAsChild<{
 	disabled?: boolean;
 }>;
 
-export type TabsRootProps = TabsRootPropsWithoutHTML & PrimitiveDivAttributes;
+export type TabsRootProps = TabsRootPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, TabsRootPropsWithoutHTML>;
 
-export type TabsListPropsWithoutHTML = WithAsChild<object>;
+export type TabsListPropsWithoutHTML = WithChild;
 
-export type TabsListProps = TabsListPropsWithoutHTML & PrimitiveDivAttributes;
+export type TabsListProps = TabsListPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, TabsListPropsWithoutHTML>;
 
-export type TabsTriggerPropsWithoutHTML = WithAsChild<{
+export type TabsTriggerPropsWithoutHTML = WithChild<{
 	/**
 	 * The value of the tab associated with this trigger.
 	 */
@@ -70,20 +72,17 @@ export type TabsTriggerPropsWithoutHTML = WithAsChild<{
 	 * @defaultValue false
 	 */
 	disabled?: boolean;
-
-	onclick?: EventCallback<MouseEvent>;
-	onkeydown?: EventCallback<KeyboardEvent>;
-	onfocus?: EventCallback<FocusEvent>;
 }>;
 
 export type TabsTriggerProps = TabsTriggerPropsWithoutHTML &
-	Omit<PrimitiveButtonAttributes, "disabled" | "value" | "onclick" | "onkeydown" | "onfocus">;
+	Without<PrimitiveButtonAttributes, TabsTriggerPropsWithoutHTML>;
 
-export type TabsContentPropsWithoutHTML = WithAsChild<{
+export type TabsContentPropsWithoutHTML = WithChild<{
 	/**
 	 * The value of the tab associated with this content.
 	 */
 	value: string;
 }>;
 
-export type TabsContentProps = TabsContentPropsWithoutHTML & PrimitiveDivAttributes;
+export type TabsContentProps = TabsContentPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, TabsContentPropsWithoutHTML>;
