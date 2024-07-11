@@ -6,7 +6,6 @@
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {
-		asChild,
 		children,
 		child,
 		ref = $bindable(null),
@@ -25,7 +24,7 @@
 	const mergedProps = $derived(mergeProps(restProps, groupLabelState.props));
 </script>
 
-{#if asChild}
+{#if child}
 	{@render child?.({ props: mergedProps })}
 {:else}
 	<div {...mergedProps}>

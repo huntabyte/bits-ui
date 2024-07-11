@@ -12,7 +12,6 @@
 		ref = $bindable(null),
 		siblingCount = 1,
 		onPageChange,
-		asChild,
 		loop = false,
 		orientation = "horizontal",
 		child,
@@ -48,7 +47,7 @@
 	});
 </script>
 
-{#if asChild}
+{#if child}
 	{@render child?.({ props: mergedProps, pages: rootState.pages, range: rootState.range })}
 {:else}
 	<div {...mergedProps}>

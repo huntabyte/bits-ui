@@ -7,7 +7,6 @@
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {
-		asChild,
 		children,
 		child,
 		ref = $bindable(null),
@@ -38,8 +37,8 @@
 	const mergedProps = $derived(mergeProps(restProps, radioItemState.props));
 </script>
 
-{#if asChild}
-	{@render child?.({ props: mergedProps })}
+{#if child}
+	{@render child({ props: mergedProps, checked: radioItemState.isChecked })}
 {:else}
 	<div {...mergedProps} bind:this={ref}>
 		{@render children?.({ checked: radioItemState.isChecked })}

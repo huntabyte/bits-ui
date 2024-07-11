@@ -1,15 +1,14 @@
 <script lang="ts">
-	import { useId } from "$lib/internal/useId.svelte.js";
 	import { box } from "svelte-toolbelt";
 	import { useDateRangeFieldLabel } from "../date-range-field.svelte.js";
 	import type { LabelProps } from "../index.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {
 		id = useId(),
 		ref = $bindable(null),
 		children,
-		asChild,
 		child,
 		...restProps
 	}: LabelProps = $props();
@@ -25,8 +24,8 @@
 	const mergedProps = $derived(mergeProps(restProps, labelState.props));
 </script>
 
-{#if asChild}
-	{@render child?.({ props: mergedProps })}
+{#if child}
+	{@render child({ props: mergedProps })}
 {:else}
 	<span {...mergedProps}>
 		{@render children?.()}

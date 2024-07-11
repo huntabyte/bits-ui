@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { getDefaultDate } from "$lib/shared/date/utils.js";
 	import { box } from "svelte-toolbelt";
+	import type { DateValue } from "@internationalized/date";
 	import { useDateRangePickerRoot } from "../date-range-picker.svelte.js";
 	import type { RootProps } from "../index.js";
+	import { getDefaultDate } from "$lib/shared/date/utils.js";
 	import { noop } from "$lib/internal/callbacks.js";
-	import type { DateValue } from "@internationalized/date";
 	import { usePopoverRoot } from "$lib/bits/popover/popover.svelte.js";
 	import { useDateRangeFieldRoot } from "$lib/bits/date-range-field/date-range-field.svelte.js";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
@@ -42,7 +42,6 @@
 		fixedWeeks = false,
 		numberOfMonths = 1,
 		closeOnRangeSelect = true,
-		asChild,
 		child,
 		children,
 		...restProps
@@ -146,7 +145,7 @@
 </script>
 
 <FloatingLayer.Root>
-	{#if asChild}
+	{#if child}
 		{@render child?.({ props: mergedProps })}
 	{:else}
 		<div {...mergedProps}>

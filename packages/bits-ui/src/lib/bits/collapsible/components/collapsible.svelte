@@ -6,7 +6,6 @@
 	import { useId } from "$lib/internal/useId.svelte.js";
 
 	let {
-		asChild,
 		children,
 		child,
 		id = useId(),
@@ -36,8 +35,8 @@
 	const mergedProps = $derived(mergeProps(restProps, rootState.props));
 </script>
 
-{#if asChild}
-	{@render child?.({ props: mergedProps })}
+{#if child}
+	{@render child({ props: mergedProps })}
 {:else}
 	<div {...mergedProps}>
 		{@render children?.()}

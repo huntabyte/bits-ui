@@ -1,11 +1,11 @@
 <script lang="ts">
 	// Date Picker composes the DateField, Popover, and Calendar components
-	import { getDefaultDate } from "$lib/shared/date/utils.js";
 	import { box } from "svelte-toolbelt";
+	import type { DateValue } from "@internationalized/date";
 	import { useDatePickerRoot } from "../date-picker.svelte.js";
 	import type { RootProps } from "../index.js";
+	import { getDefaultDate } from "$lib/shared/date/utils.js";
 	import { noop } from "$lib/internal/callbacks.js";
-	import type { DateValue } from "@internationalized/date";
 	import { usePopoverRoot } from "$lib/bits/popover/popover.svelte.js";
 	import { useDateFieldRoot } from "$lib/bits/date-field/date-field.svelte.js";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";

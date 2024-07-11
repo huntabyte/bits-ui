@@ -1,4 +1,3 @@
-import type { WritableBox } from "svelte-toolbelt";
 import { untrack } from "svelte";
 import type { TabsActivationMode } from "./types.js";
 import {

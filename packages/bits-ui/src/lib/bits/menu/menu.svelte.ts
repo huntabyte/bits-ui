@@ -17,7 +17,7 @@ import {
 	watch,
 } from "$lib/internal/box.svelte.js";
 import { addEventListener } from "$lib/internal/events.js";
-import type { AnyFn } from "$lib/internal/types.js";
+import type { AnyFn, WithRefProps } from "$lib/internal/types.js";
 import { executeCallbacks } from "$lib/internal/callbacks.js";
 import { useTypeahead } from "$lib/internal/useTypeahead.svelte.js";
 import { onDestroyEffect } from "$lib/internal/onDestroyEffect.svelte.js";
@@ -693,25 +693,81 @@ class MenuCheckboxItemState {
 	);
 }
 
+type MenuGroupStateProps = WithRefProps;
+
 class MenuGroupState {
-	props = {
-		role: "group",
-		[GROUP_ATTR]: "",
-	} as const;
+	#id: MenuGroupStateProps["id"];
+	#ref: MenuGroupStateProps["ref"];
+
+	constructor(props: MenuGroupStateProps) {
+		this.#id = props.id;
+		this.#ref = props.ref;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+		});
+	}
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.value,
+				role: "group",
+				[GROUP_ATTR]: "",
+			}) as const
+	);
 }
 
+type MenuLabelStateProps = WithRefProps;
 class MenuLabelState {
-	props = {
-		[LABEL_ATTR]: "",
-	} as const;
+	#id: MenuLabelStateProps["id"];
+	#ref: MenuLabelStateProps["ref"];
+
+	constructor(props: MenuLabelStateProps) {
+		this.#id = props.id;
+		this.#ref = props.ref;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+		});
+	}
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.value,
+				role: "group",
+				[LABEL_ATTR]: "",
+			}) as const
+	);
 }
+
+type MenuSeparatorStateProps = WithRefProps;
 
 class MenuSeparatorState {
-	props = {
-		[SEPARATOR_ATTR]: "",
-		role: "separator",
-		"aria-orientation": "horizontal",
-	} as const;
+	#id: MenuSeparatorStateProps["id"];
+	#ref: MenuSeparatorStateProps["ref"];
+
+	constructor(props: MenuSeparatorStateProps) {
+		this.#id = props.id;
+		this.#ref = props.ref;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+		});
+	}
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.value,
+				role: "group",
+				[SEPARATOR_ATTR]: "",
+			}) as const
+	);
 }
 
 class MenuArrowState {
@@ -760,6 +816,7 @@ class MenuRadioGroupState {
 	props = $derived.by(
 		() =>
 			({
+				id: this.#id.value,
 				[RADIO_GROUP_ATTR]: "",
 				role: "group",
 			}) as const
@@ -926,7 +983,6 @@ class ContextMenuTriggerState {
 		});
 
 		$effect(() => {
-			// eslint-disable-next-line no-unused-expressions
 			this.#point;
 			this.virtualElement.value = {
 				getBoundingClientRect: () =>
@@ -1057,16 +1113,16 @@ export function useMenuRadioItem(props: MenuRadioItemStateProps & MenuItemCombin
 	return getMenuRadioGroupContext().createRadioItem(props);
 }
 
-export function useMenuGroup() {
-	return new MenuGroupState();
+export function useMenuGroup(props: MenuGroupStateProps) {
+	return new MenuGroupState(props);
 }
 
-export function useMenuLabel() {
-	return new MenuLabelState();
+export function useMenuLabel(props: MenuLabelStateProps) {
+	return new MenuLabelState(props);
 }
 
-export function useMenuSeparator() {
-	return new MenuSeparatorState();
+export function useMenuSeparator(props: MenuSeparatorStateProps) {
+	return new MenuSeparatorState(props);
 }
 
 export function useMenuArrow() {

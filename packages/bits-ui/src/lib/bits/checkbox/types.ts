@@ -1,69 +1,60 @@
-import type { Snippet } from "svelte";
 import type {
-	EventCallback,
 	OnChangeFn,
 	PrimitiveButtonAttributes,
-	WithAsChild,
+	WithChild,
+	Without,
 } from "$lib/internal/index.js";
 
-export type CheckboxRootPropsWithoutHTML = Omit<
-	WithAsChild<
-		{
-			/**
-			 * Whether the checkbox is disabled.
-			 *
-			 * @defaultValue false
-			 */
-			disabled?: boolean;
+export type CheckboxRootSnippetProps = { checked: boolean | "indeterminate" };
 
-			/**
-			 * Whether the checkbox is required (for form validation).
-			 *
-			 * @defaultValue false
-			 */
-			required?: boolean;
+export type CheckboxRootPropsWithoutHTML = WithChild<
+	{
+		/**
+		 * Whether the checkbox is disabled.
+		 *
+		 * @defaultValue false
+		 */
+		disabled?: boolean;
 
-			/**
-			 * The name of the checkbox used in form submission.
-			 * If not provided, the hidden input will not be rendered.
-			 *
-			 * @defaultValue undefined
-			 */
-			name?: string;
+		/**
+		 * Whether the checkbox is required (for form validation).
+		 *
+		 * @defaultValue false
+		 */
+		required?: boolean;
 
-			/**
-			 * The value of the checkbox used in form submission.
-			 *
-			 * @defaultValue undefined
-			 */
-			value?: string;
+		/**
+		 * The name of the checkbox used in form submission.
+		 * If not provided, the hidden input will not be rendered.
+		 *
+		 * @defaultValue undefined
+		 */
+		name?: string;
 
-			/**
-			 * The checked state of the checkbox. It can be one of:
-			 * - `true` for checked
-			 * - `false` for unchecked
-			 * - `"indeterminate"` for indeterminate
-			 *
-			 * @defaultValue false
-			 */
-			checked?: boolean | "indeterminate";
+		/**
+		 * The value of the checkbox used in form submission.
+		 *
+		 * @defaultValue undefined
+		 */
+		value?: string;
 
-			/**
-			 * A callback function called when the checked state changes.
-			 */
-			onCheckedChange?: OnChangeFn<boolean | "indeterminate">;
-		},
-		{ checked: boolean | "indeterminate" }
-	>,
-	"children"
-> & {
-	children?: Snippet<[{ checked: boolean | "indeterminate" }]>;
-};
+		/**
+		 * The checked state of the checkbox. It can be one of:
+		 * - `true` for checked
+		 * - `false` for unchecked
+		 * - `"indeterminate"` for indeterminate
+		 *
+		 * @defaultValue false
+		 */
+		checked?: boolean | "indeterminate";
+
+		/**
+		 * A callback function called when the checked state changes.
+		 */
+		onCheckedChange?: OnChangeFn<boolean | "indeterminate">;
+	},
+	CheckboxRootSnippetProps
+>;
 
 export type CheckboxRootProps = CheckboxRootPropsWithoutHTML &
-	Omit<PrimitiveButtonAttributes, "value" | "disabled" | "name" | "onclick" | "onkeydown"> & {
-		onclick?: EventCallback<MouseEvent>;
-		onkeydown?: EventCallback<KeyboardEvent>;
-	};
-
-export type CheckboxIndicatorPropsWithoutHTML = WithAsChild<{ checked: boolean | "indeterminate" }>;
+	Without<PrimitiveButtonAttributes, CheckboxRootPropsWithoutHTML>;

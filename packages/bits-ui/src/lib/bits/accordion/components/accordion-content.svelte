@@ -7,7 +7,6 @@
 
 	let {
 		child,
-		asChild,
 		ref = $bindable(null),
 		id = useId(),
 		forceMount = false,
@@ -30,8 +29,8 @@
 		{@const mergedProps = mergeProps(restProps, contentState.props, {
 			hidden: !present.value,
 		})}
-		{#if asChild}
-			{@render child?.({
+		{#if child}
+			{@render child({
 				props: mergedProps,
 			})}
 		{:else}

@@ -3,20 +3,19 @@
 	import type { ContentProps } from "../index.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import type { WithoutChildren } from "$lib/shared/index.js";
-	import type { WithAsChild } from "$lib/internal/types.js";
+	import type { WithChild } from "$lib/internal/types.js";
 	import type { PopperLayerImplProps } from "$lib/bits/utilities/popper-layer/types.js";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 
 	let {
 		children,
-		asChild,
 		child,
 		align = "start",
 		collisionPadding = CONTENT_MARGIN,
 		enabled = false,
 		...restProps
 	}: WithoutChildren<PopperLayerImplProps> &
-		WithAsChild<ContentProps> & { enabled: boolean } = $props();
+		WithChild<ContentProps> & { enabled: boolean } = $props();
 
 	const contentFloatingState = useSelectFloatingPosition();
 
@@ -28,7 +27,7 @@
 <FloatingLayer.Content {...restProps} {enabled} {align} {collisionPadding}>
 	{#snippet content({ props })}
 		{@const finalProps = mergeProps(props, mergedProps)}
-		{#if asChild}
+		{#if child}
 			{@render child?.({ props: finalProps })}
 		{:else}
 			<div {...finalProps}>

@@ -5,7 +5,6 @@
 
 	let {
 		placeholder = "",
-		asChild,
 		children,
 		child,
 		ref = $bindable(),
@@ -23,7 +22,7 @@
 	);
 </script>
 
-{#if asChild}
+{#if child}
 	{@render child?.({ props: mergedProps })}
 {:else}
 	<span {...mergedProps} bind:this={ref}>

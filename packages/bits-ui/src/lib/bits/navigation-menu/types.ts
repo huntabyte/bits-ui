@@ -1,3 +1,4 @@
+import type { InteractOutsideEvent } from "@melt-ui/svelte";
 import type {
 	OnChangeFn,
 	PrimitiveAnchorAttributes,
@@ -6,13 +7,12 @@ import type {
 	PrimitiveElementAttributes,
 	PrimitiveLiAttributes,
 	PrimitiveUListAttributes,
-	WithAsChild,
+	WithChild,
 	Without,
 } from "$lib/internal/types.js";
 import type { Direction, Orientation } from "$lib/shared/index.js";
-import type { InteractOutsideEvent } from "@melt-ui/svelte";
 
-export type NavigationMenuRootPropsWithoutHTML = WithAsChild<{
+export type NavigationMenuRootPropsWithoutHTML = WithChild<{
 	/**
 	 * The value of the currently open menu item.
 	 *
@@ -49,7 +49,7 @@ export type NavigationMenuRootPropsWithoutHTML = WithAsChild<{
 export type NavigationMenuRootProps = NavigationMenuRootPropsWithoutHTML &
 	Without<PrimitiveElementAttributes, NavigationMenuRootPropsWithoutHTML>;
 
-export type NavigationMenuSubPropsWithoutHTML = WithAsChild<{
+export type NavigationMenuSubPropsWithoutHTML = WithChild<{
 	/**
 	 * The value of the currently open menu item within the menu.
 	 *
@@ -71,12 +71,12 @@ export type NavigationMenuSubPropsWithoutHTML = WithAsChild<{
 export type NavigationMenuSubProps = NavigationMenuSubPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, NavigationMenuSubPropsWithoutHTML>;
 
-export type NavigationMenuListPropsWithoutHTML = WithAsChild<{}>;
+export type NavigationMenuListPropsWithoutHTML = WithChild;
 
 export type NavigationMenuListProps = NavigationMenuListPropsWithoutHTML &
 	Without<PrimitiveUListAttributes, NavigationMenuListPropsWithoutHTML>;
 
-export type NavigationMenuItemPropsWithoutHTML = WithAsChild<{
+export type NavigationMenuItemPropsWithoutHTML = WithChild<{
 	/**
 	 * The value of the menu item.
 	 */
@@ -86,7 +86,7 @@ export type NavigationMenuItemPropsWithoutHTML = WithAsChild<{
 export type NavigationMenuItemProps = NavigationMenuItemPropsWithoutHTML &
 	Without<PrimitiveLiAttributes, NavigationMenuItemPropsWithoutHTML>;
 
-export type NavigationMenuTriggerPropsWithoutHTML = WithAsChild<{
+export type NavigationMenuTriggerPropsWithoutHTML = WithChild<{
 	/**
 	 * Whether the trigger is disabled.
 	 * @defaultValue false
@@ -97,7 +97,7 @@ export type NavigationMenuTriggerPropsWithoutHTML = WithAsChild<{
 export type NavigationMenuTriggerProps = NavigationMenuTriggerPropsWithoutHTML &
 	Without<PrimitiveButtonAttributes, NavigationMenuTriggerPropsWithoutHTML>;
 
-export type NavigationMenuContentPropsWithoutHTML = WithAsChild<{
+export type NavigationMenuContentPropsWithoutHTML = WithChild<{
 	/**
 	 * Callback fired when an interaction occurs outside the content.
 	 * Default behavior can be prevented with `event.preventDefault()`
@@ -130,7 +130,7 @@ export type NavigationMenuContentPropsWithoutHTML = WithAsChild<{
 export type NavigationMenuContentProps = NavigationMenuContentPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, NavigationMenuContentPropsWithoutHTML>;
 
-export type NavigationMenuLinkPropsWithoutHTML = WithAsChild<{
+export type NavigationMenuLinkPropsWithoutHTML = WithChild<{
 	/**
 	 * Whether the link is the current active page
 	 */
@@ -146,7 +146,7 @@ export type NavigationMenuLinkPropsWithoutHTML = WithAsChild<{
 export type NavigationMenuLinkProps = NavigationMenuLinkPropsWithoutHTML &
 	Without<PrimitiveAnchorAttributes, NavigationMenuLinkPropsWithoutHTML>;
 
-export type NavigationMenuIndicatorPropsWithoutHTML = WithAsChild<{
+export type NavigationMenuIndicatorPropsWithoutHTML = WithChild<{
 	/**
 	 * Whether to forcefully mount the content, regardless of the open state.
 	 * This is useful when wanting to use more custom transition and animation
@@ -160,7 +160,7 @@ export type NavigationMenuIndicatorPropsWithoutHTML = WithAsChild<{
 export type NavigationMenuIndicatorProps = NavigationMenuIndicatorPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, NavigationMenuIndicatorPropsWithoutHTML>;
 
-export type NavigationMenuViewportPropsWithoutHTML = WithAsChild<{
+export type NavigationMenuViewportPropsWithoutHTML = WithChild<{
 	/**
 	 * Whether to forcefully mount the content, regardless of the open state.
 	 * This is useful when wanting to use more custom transition and animation

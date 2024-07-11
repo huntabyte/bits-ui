@@ -10,7 +10,6 @@
 		value,
 		textValue = "",
 		ref = $bindable(null),
-		asChild,
 		children,
 		child,
 		disabled = false,
@@ -31,7 +30,7 @@
 	const mergedProps = $derived(mergeProps(restProps, itemState.props));
 </script>
 
-{#if asChild}
+{#if child}
 	{@render child?.({ props: mergedProps, selected: itemState.isSelected })}
 {:else}
 	<div {...mergedProps}>

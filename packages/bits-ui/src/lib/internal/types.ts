@@ -148,29 +148,31 @@ export type PrimitiveTrAttributes = Primitive<HTMLAttributes<HTMLTableRowElement
 export type PrimitiveTheadAttrbutes = Primitive<HTMLAttributes<HTMLTableSectionElement>>;
 export type PrimitiveHeaderAttributes = Primitive<HTMLAttributes<HTMLElement>>;
 
-export type AsChildProps<Props, SnippetProps, Ref> = {
-	child: Snippet<[SnippetProps & { props: Record<string, unknown> }]>;
-	children?: never;
-	asChild: true;
-	ref?: Ref | null;
-	style?: StyleProperties;
-} & Omit<Props, "children" | "asChild">;
-
-export type DefaultProps<Props, Ref> = {
-	asChild?: never;
-	child?: never;
-	children?: Snippet;
-	ref?: Ref | null;
-	style?: StyleProperties;
-} & Omit<Props, "child" | "asChild">;
-
 export type ElementRef = Box<HTMLElement | null>;
 
-export type WithAsChild<
-	Props,
-	SnippetProps extends Record<PropertyKey, unknown> = {},
+export type WithChild<
+	/**
+	 * The props that the component accepts.
+	 */
+	Props extends Record<PropertyKey, unknown> = {},
+	/**
+	 * The props that are passed to the `child` and `children` snippets. The `ElementProps` are
+	 * merged with these props for the `child` snippet.
+	 */
+	SnippetProps extends Record<PropertyKey, unknown> = { _default: never },
+	/**
+	 * The underlying DOM element being rendered. You can bind to this prop to
+	 * programatically interact with the element.
+	 */
 	Ref = HTMLElement,
-> = DefaultProps<Props, Ref> | AsChildProps<Props, SnippetProps, Ref>;
+> = Omit<Props, "child" | "children"> & {
+	child?: SnippetProps extends { _default: never }
+		? Snippet<[{ props: Record<string, unknown> }]>
+		: Snippet<[Expand<SnippetProps> & { props: Record<string, unknown> }]>;
+	children?: SnippetProps extends { _default: never } ? Snippet : Snippet<[Expand<SnippetProps>]>;
+	style?: StyleProperties;
+	ref?: Ref | null;
+};
 
 export type WithChildren<Props> = Props & {
 	children?: Snippet;

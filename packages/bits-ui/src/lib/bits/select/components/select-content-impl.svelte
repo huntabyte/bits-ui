@@ -12,7 +12,7 @@
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {
-		ref = $bindable(),
+		ref: _ref = $bindable(null),
 		id = useId(),
 		onMountAutoFocus = noop,
 		onDestroyAutoFocus = noop,
@@ -27,7 +27,7 @@
 	const contentState = context;
 
 	// eslint-disable-next-line unused-imports/no-unused-vars, ts/no-unused-vars
-	const { children, child, asChild, ...restWithoutChildren } = restProps;
+	const { children, child, ...restWithoutChildren } = restProps;
 </script>
 
 <FocusScope

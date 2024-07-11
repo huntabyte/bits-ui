@@ -1,4 +1,4 @@
-import { type ReadableBox, box } from "svelte-toolbelt";
+import { box } from "svelte-toolbelt";
 import { useEventListener } from "runed";
 import { TOOLTIP_OPEN_EVENT } from "./utils.js";
 import { watch } from "$lib/internal/box.svelte.js";

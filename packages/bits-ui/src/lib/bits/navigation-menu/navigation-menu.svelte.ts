@@ -1,10 +1,11 @@
 import { untrack } from "svelte";
 import { box } from "svelte-toolbelt";
 import { Previous } from "runed";
+import { getTabbableCandidates } from "../utilities/focus-scope/utils.js";
 import {
-	watch,
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
+	watch,
 } from "$lib/internal/box.svelte.js";
 import type { Direction, Orientation } from "$lib/shared/index.js";
 import {
@@ -23,10 +24,9 @@ import { boxAutoReset } from "$lib/internal/boxAutoReset.svelte.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
 import type { ElementRef } from "$lib/internal/types.js";
 import { afterTick } from "$lib/internal/afterTick.js";
-import { getTabbableCandidates } from "../utilities/focus-scope/utils.js";
 import { noop } from "$lib/internal/callbacks.js";
 
-const [setNavigationMenuRootContext, getNavigationMenuRootContext] =
+const [setNavigationMenuRootContext] =
 	createContext<NavigationMenuRootState>("NavigationMenu.Root");
 
 const [setNavigationMenuMenuContext, getNavigationMenuMenuContext] = createContext<
@@ -568,7 +568,7 @@ class NavigationMenuTriggerState {
 		this.hasPointerMoveOpened.value = false;
 	};
 
-	#onclick = (e: PointerEvent) => {
+	#onclick = (_: PointerEvent) => {
 		// if opened via pointer move, we prevent clicke event
 		if (this.hasPointerMoveOpened.value) return;
 		if (this.open) {
@@ -656,6 +656,7 @@ class NavigationMenuLinkState {
 		this.onSelect.value(linkSelectEvent);
 
 		if (!linkSelectEvent.defaultPrevented && !e.metaKey) {
+			//
 		}
 	};
 
@@ -666,7 +667,7 @@ class NavigationMenuLinkState {
 				"data-active": this.active.value ? "" : undefined,
 				"aria-current": this.active.value ? "page" : undefined,
 				onclick: this.#onclick,
-				onfocus: (e: FocusEvent) => {},
+				onfocus: (_: FocusEvent) => {},
 			}) as const
 	);
 }
@@ -755,6 +756,7 @@ class NavigationMenuIndicatorState {
 									: undefined,
 							}),
 				},
+				[INDICATOR_ATTR]: "",
 			}) as const
 	);
 }

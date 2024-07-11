@@ -1,4 +1,3 @@
-import type { Snippet } from "svelte";
 import type { EscapeLayerProps } from "../utilities/escape-layer/types.js";
 import type { DismissableLayerProps } from "../utilities/dismissable-layer/types.js";
 import type { PresenceLayerProps } from "../utilities/presence-layer/types.js";
@@ -8,12 +7,13 @@ import type {
 	OnChangeFn,
 	PrimitiveButtonAttributes,
 	PrimitiveDivAttributes,
-	WithAsChild,
+	WithChild,
+	WithChildren,
+	Without,
 } from "$lib/internal/types.js";
 import type { PortalProps } from "$lib/bits/utilities/portal/index.js";
-import type { EventCallback } from "$lib/internal/events.js";
 
-export type DialogRootPropsWithoutHTML = {
+export type DialogRootPropsWithoutHTML = WithChildren<{
 	/**
 	 * The open state of the dialog.
 	 */
@@ -23,13 +23,11 @@ export type DialogRootPropsWithoutHTML = {
 	 * A callback that is called when the popover's open state changes.
 	 */
 	onOpenChange?: OnChangeFn<boolean>;
-
-	children?: Snippet;
-};
+}>;
 
 export type DialogRootProps = DialogRootPropsWithoutHTML;
 
-export type DialogContentPropsWithoutHTML = WithAsChild<
+export type DialogContentPropsWithoutHTML = WithChild<
 	EscapeLayerProps &
 		DismissableLayerProps &
 		PresenceLayerProps &
@@ -39,31 +37,34 @@ export type DialogContentPropsWithoutHTML = WithAsChild<
 		}
 >;
 
-export type DialogContentProps = DialogContentPropsWithoutHTML & PrimitiveDivAttributes;
+export type DialogContentProps = DialogContentPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, DialogContentPropsWithoutHTML>;
 
-export type DialogOverlayPropsWithoutHTML = WithAsChild<PresenceLayerProps>;
-export type DialogOverlayProps = DialogOverlayPropsWithoutHTML & PrimitiveDivAttributes;
+export type DialogOverlayPropsWithoutHTML = WithChild<PresenceLayerProps>;
+export type DialogOverlayProps = DialogOverlayPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, DialogOverlayPropsWithoutHTML>;
 
 export type DialogPortalPropsWithoutHTML = PortalProps;
 export type DialogPortalProps = DialogPortalPropsWithoutHTML;
 
-export type DialogTriggerPropsWithoutHTML = WithAsChild<{
-	onclick?: EventCallback<MouseEvent>;
-}>;
+export type DialogTriggerPropsWithoutHTML = WithChild;
 
-export type DialogTriggerProps = DialogTriggerPropsWithoutHTML & PrimitiveButtonAttributes;
+export type DialogTriggerProps = DialogTriggerPropsWithoutHTML &
+	Without<PrimitiveButtonAttributes, DialogTriggerPropsWithoutHTML>;
 
-export type DialogTitlePropsWithoutHTML = WithAsChild<{
+export type DialogTitlePropsWithoutHTML = WithChild<{
 	/**
 	 * The heading level of the dialog title.
 	 */
 	level?: 1 | 2 | 3 | 4 | 5 | 6;
 }>;
 
-export type DialogTitleProps = DialogTitlePropsWithoutHTML & PrimitiveDivAttributes;
+export type DialogTitleProps = DialogTitlePropsWithoutHTML &
+	Without<PrimitiveDivAttributes, DialogTitlePropsWithoutHTML>;
 
 export type DialogClosePropsWithoutHTML = DialogTriggerPropsWithoutHTML;
 export type DialogCloseProps = DialogTriggerProps;
 
-export type DialogDescriptionPropsWithoutHTML = WithAsChild<{}>;
-export type DialogDescriptionProps = DialogDescriptionPropsWithoutHTML & PrimitiveDivAttributes;
+export type DialogDescriptionPropsWithoutHTML = WithChild;
+export type DialogDescriptionProps = DialogDescriptionPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, DialogDescriptionPropsWithoutHTML>;

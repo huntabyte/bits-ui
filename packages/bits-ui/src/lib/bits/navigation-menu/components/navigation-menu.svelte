@@ -1,13 +1,12 @@
 <script lang="ts">
-	import { useId } from "$lib/internal/useId.svelte.js";
 	import { box } from "svelte-toolbelt";
 	import type { RootProps } from "../index.js";
 	import { useNavigationMenuRoot } from "../navigation-menu.svelte.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
 	import { noop } from "$lib/internal/callbacks.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {
-		asChild,
 		child,
 		children,
 		id = useId(),
@@ -45,8 +44,8 @@
 	const mergedProps = $derived(mergeProps({ "aria-label": "main" }, restProps, rootState.props));
 </script>
 
-{#if asChild}
-	{@render child?.({ props: mergedProps })}
+{#if child}
+	{@render child({ props: mergedProps })}
 {:else}
 	<nav {...mergedProps}>
 		{@render children?.()}

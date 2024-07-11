@@ -1,4 +1,3 @@
-import type { Snippet } from "svelte";
 import type { FloatingLayerContentProps } from "../utilities/floating-layer/types.js";
 import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
 import type { DismissableLayerProps } from "../utilities/dismissable-layer/types.js";
@@ -7,13 +6,13 @@ import type {
 	OnChangeFn,
 	PrimitiveButtonAttributes,
 	PrimitiveDivAttributes,
-	WithAsChild,
+	WithChild,
+	WithChildren,
 	Without,
 } from "$lib/internal/types.js";
 import type { PortalProps } from "$lib/bits/utilities/portal/types.js";
-import type { EventCallback } from "$lib/internal/events.js";
 
-export type TooltipProviderPropsWithoutHTML = {
+export type TooltipProviderPropsWithoutHTML = WithChildren<{
 	/**
 	 * The delay in milliseconds before the tooltip opens.
 	 *
@@ -56,13 +55,11 @@ export type TooltipProviderPropsWithoutHTML = {
 	 * @defaultValue false
 	 */
 	ignoreNonKeyboardFocus?: boolean;
-
-	children?: Snippet;
-};
+}>;
 
 export type TooltipProviderProps = TooltipProviderPropsWithoutHTML;
 
-export type TooltipRootPropsWithoutHTML = {
+export type TooltipRootPropsWithoutHTML = WithChildren<{
 	/**
 	 * The open state of the tooltip.
 	 *
@@ -110,13 +107,11 @@ export type TooltipRootPropsWithoutHTML = {
 	 * @defaultValue false
 	 */
 	ignoreNonKeyboardFocus?: boolean;
-
-	children?: Snippet;
-};
+}>;
 
 export type TooltipRootProps = TooltipRootPropsWithoutHTML;
 
-export type TooltipContentPropsWithoutHTML = WithAsChild<
+export type TooltipContentPropsWithoutHTML = WithChild<
 	Pick<
 		FloatingLayerContentProps,
 		| "side"
@@ -142,7 +137,8 @@ export type TooltipContentPropsWithoutHTML = WithAsChild<
 		}
 >;
 
-export type TooltipContentProps = TooltipContentPropsWithoutHTML & PrimitiveDivAttributes;
+export type TooltipContentProps = TooltipContentPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, TooltipContentPropsWithoutHTML>;
 
 export type TooltipArrowPropsWithoutHTML = ArrowPropsWithoutHTML;
 export type TooltipArrowProps = ArrowProps;
@@ -150,13 +146,12 @@ export type TooltipArrowProps = ArrowProps;
 export type TooltipPortalPropsWithoutHTML = PortalProps;
 export type TooltipPortalProps = PortalProps;
 
-export type TooltipTriggerPropsWithoutHTML = WithAsChild<{
-	onclick?: EventCallback<MouseEvent>;
-	onfocus?: EventCallback<FocusEvent>;
-	onblur?: EventCallback<FocusEvent>;
-	onpointermove?: EventCallback<PointerEvent>;
-	onpointerleave?: EventCallback<PointerEvent>;
-	onpointerdown?: EventCallback<PointerEvent>;
+export type TooltipTriggerPropsWithoutHTML = WithChild<{
+	/**
+	 * Whether the tooltip trigger is disabled or not.
+	 *
+	 * @defaultValue false
+	 */
 	disabled?: boolean;
 }>;
 

@@ -1,18 +1,17 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
 	import { useSelectItemAlignedPosition } from "../select.svelte.js";
-	import type { PrimitiveDivAttributes, WithAsChild } from "$lib/internal/types.js";
+	import type { PrimitiveDivAttributes, WithChild } from "$lib/internal/types.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { useBodyScrollLock } from "$lib/internal/useBodyScrollLock.svelte.js";
 
 	let {
 		child,
 		children,
-		asChild,
 		preventScroll = true,
 		onPlaced,
 		...restProps
-	}: WithAsChild<PrimitiveDivAttributes> & {
+	}: WithChild<PrimitiveDivAttributes> & {
 		preventScroll?: boolean;
 		onPlaced: () => void;
 	} = $props();
@@ -28,7 +27,7 @@
 </script>
 
 <div {...mergedWrapperProps}>
-	{#if asChild}
+	{#if child}
 		{@render child?.({ props: mergedProps })}
 	{:else}
 		<div {...mergedProps}>

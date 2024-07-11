@@ -251,14 +251,14 @@ class ToolbarGroupItemState {
 		this.#root.rovingFocusGroup.handleKeydown(this.#ref.value, e);
 	};
 
-	#isPressed = $derived.by(() => this.#group.includesItem(this.#value.value));
+	isPressed = $derived.by(() => this.#group.includesItem(this.#value.value));
 
 	#ariaChecked = $derived.by(() => {
-		return this.#group.isMulti ? undefined : getAriaChecked(this.#isPressed);
+		return this.#group.isMulti ? undefined : getAriaChecked(this.isPressed);
 	});
 
 	#ariaPressed = $derived.by(() => {
-		return this.#group.isMulti ? getAriaPressed(this.#isPressed) : undefined;
+		return this.#group.isMulti ? getAriaPressed(this.isPressed) : undefined;
 	});
 
 	#tabIndex = $derived.by(() => this.#root.rovingFocusGroup.getTabIndex(this.#ref.value));
@@ -271,7 +271,7 @@ class ToolbarGroupItemState {
 				tabindex: this.#tabIndex,
 				"data-orientation": getDataOrientation(this.#root.orientation.value),
 				"data-disabled": getDataDisabled(this.#isDisabled),
-				"data-state": getToggleItemDataState(this.#isPressed),
+				"data-state": getToggleItemDataState(this.isPressed),
 				"data-value": this.#value.value,
 				"aria-pressed": this.#ariaPressed,
 				"aria-checked": this.#ariaChecked,

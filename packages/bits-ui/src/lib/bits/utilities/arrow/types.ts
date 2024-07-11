@@ -1,6 +1,6 @@
-import type { PrimitiveSpanAttributes, WithAsChild } from "$lib/internal/types.js";
+import type { PrimitiveSpanAttributes, WithChild } from "$lib/internal/types.js";
 
-export type ArrowPropsWithoutHTML = WithAsChild<{
+export type ArrowPropsWithoutHTML = WithChild<{
 	/**
 	 * The width of the arrow in pixels.
 	 *

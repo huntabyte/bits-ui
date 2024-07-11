@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { useId } from "$lib/internal/useId.svelte.js";
 	import { box } from "svelte-toolbelt";
 	import type { ContentProps } from "../index.js";
 	import { useNavigationMenuContent } from "../navigation-menu.svelte.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import Portal from "$lib/bits/utilities/portal/portal.svelte";
 	import { PresenceLayer } from "$lib/bits/utilities/presence-layer/index.js";
@@ -11,7 +11,6 @@
 	import Mounted from "$lib/bits/utilities/mounted.svelte";
 
 	let {
-		asChild,
 		children: contentChildren,
 		child,
 		ref = $bindable(null),
@@ -35,12 +34,12 @@
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));
-	const portalDisabled = $derived(!Boolean(contentState.menu.viewportNode));
+	const portalDisabled = $derived(!contentState.menu.viewportNode);
 </script>
 
 <Portal to={contentState.menu.viewportNode ?? undefined} disabled={portalDisabled}>
 	<PresenceLayer {id} present={contentState.isPresent}>
-		{#snippet presence({ present })}
+		{#snippet presence()}
 			<EscapeLayer
 				enabled={contentState.isPresent}
 				onEscapeKeydown={(e) => contentState.onEscapeKeydown(e)}
@@ -52,9 +51,9 @@
 					onFocusOutside={contentState.onFocusOutside}
 				>
 					{#snippet children({ props: dismissableProps })}
-						{#if asChild}
+						{#if child}
 							<Mounted bind:isMounted />
-							{@render child?.({ props: mergeProps(dismissableProps, mergedProps) })}
+							{@render child({ props: mergeProps(dismissableProps, mergedProps) })}
 						{:else}
 							<Mounted bind:isMounted />
 							<div {...mergeProps(dismissableProps, mergedProps)}>

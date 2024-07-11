@@ -9,7 +9,6 @@
 	let {
 		id = useId(),
 		ref = $bindable(null),
-		asChild,
 		child,
 		children,
 		disabled = false,
@@ -31,8 +30,8 @@
 </script>
 
 <FloatingLayer.Anchor {id} virtualEl={triggerState.virtualElement}>
-	{#if asChild}
-		{@render child?.({ props: mergedProps })}
+	{#if child}
+		{@render child({ props: mergedProps })}
 	{:else}
 		<div {...mergedProps}>
 			{@render children?.()}

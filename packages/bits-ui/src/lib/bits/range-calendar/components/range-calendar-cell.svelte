@@ -1,12 +1,11 @@
 <script lang="ts">
-	import { useId } from "$lib/internal/useId.svelte.js";
 	import { box } from "svelte-toolbelt";
 	import type { CellProps } from "../index.js";
 	import { useRangeCalendarCell } from "../range-calendar.svelte.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {
-		asChild,
 		children,
 		child,
 		id = useId(),
@@ -29,7 +28,7 @@
 	const mergedProps = $derived(mergeProps(restProps, cellState.props));
 </script>
 
-{#if asChild}
+{#if child}
 	{@render child?.({ props: mergedProps, ...cellState.snippetProps })}
 {:else}
 	<td {...mergedProps}>

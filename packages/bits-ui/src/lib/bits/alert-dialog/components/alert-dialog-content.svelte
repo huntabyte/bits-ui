@@ -10,11 +10,10 @@
 	import { useId } from "$lib/internal/useId.svelte.js";
 	import { noop } from "$lib/internal/callbacks.js";
 	import ScrollLock from "$lib/bits/utilities/scroll-lock/scroll-lock.svelte";
-	import { useDialogContent } from "$lib/bits/dialog/dialog.svelte.js";
+	import { useDialogContent } from "$lib/bits/date-range-picker/dialog/dialog.svelte.js";
 
 	let {
 		id = useId(),
-		asChild,
 		children,
 		child,
 		ref = $bindable(null),
@@ -38,7 +37,7 @@
 
 <PresenceLayer {...mergedProps} present={contentState.root.open.value || forceMount}>
 	{#snippet presence({ present })}
-		<ScrollLock {...mergedProps} />
+		<ScrollLock preventScroll={true} />
 		<FocusScope
 			loop
 			trapped={present.value}
@@ -66,7 +65,7 @@
 				>
 					<DismissableLayer {...mergedProps} enabled={present.value}>
 						<TextSelectionLayer {...mergedProps} enabled={present.value}>
-							{#if asChild}
+							{#if child}
 								{@render child?.({
 									props: mergeProps(mergedProps, focusScopeProps, {
 										hidden: !present.value,

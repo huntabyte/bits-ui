@@ -7,15 +7,13 @@
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
 	import { noop } from "$lib/internal/callbacks.js";
-	import { isElement, isHTMLElement } from "$lib/internal/is.js";
+	import { isHTMLElement } from "$lib/internal/is.js";
 	import { afterTick } from "$lib/internal/afterTick.js";
 	import Mounted from "$lib/bits/utilities/mounted.svelte";
-	import { activeElement } from "runed";
 
 	let {
 		id = useId(),
 		ref = $bindable(null),
-		asChild,
 		children,
 		child,
 		loop = true,
@@ -63,8 +61,6 @@
 		})
 	);
 
-	const { onMountAutoFocus: _, ...rest } = $derived(mergedProps);
-
 	function onMountAutoFocus(e: Event) {
 		afterTick(() => {
 			e.preventDefault();
@@ -110,8 +106,8 @@
 >
 	{#snippet popper({ props })}
 		{@const finalProps = mergeProps(props, mergedProps)}
-		{#if asChild}
-			{@render child?.({ props: finalProps })}
+		{#if child}
+			{@render child({ props: finalProps })}
 		{:else}
 			<div {...finalProps}>
 				{@render children?.()}
