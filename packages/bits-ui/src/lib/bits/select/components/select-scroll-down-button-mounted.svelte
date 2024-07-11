@@ -4,7 +4,6 @@
 	import type { ScrollDownButtonProps } from "../index.js";
 
 	let {
-		asChild,
 		children,
 		child,
 		mounted,
@@ -25,7 +24,7 @@
 	});
 </script>
 
-{#if asChild}
+{#if child}
 	{@render child?.({ props: restProps })}
 {:else}
 	<div {...restProps}>

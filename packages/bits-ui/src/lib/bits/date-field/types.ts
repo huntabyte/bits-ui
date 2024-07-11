@@ -1,15 +1,15 @@
+import type { DateValue } from "@internationalized/date";
+import type { SegmentPart } from "@melt-ui/svelte";
+import type { Snippet } from "svelte";
 import type {
 	OnChangeFn,
 	PrimitiveDivAttributes,
 	PrimitiveSpanAttributes,
-	WithAsChild,
+	WithChild,
 	Without,
 } from "$lib/internal/types.js";
 import type { EditableSegmentPart } from "$lib/shared/date/field/types.js";
-import type { Granularity, DateMatcher } from "$lib/shared/date/types.js";
-import type { DateValue } from "@internationalized/date";
-import type { SegmentPart } from "@melt-ui/svelte";
-import type { Snippet } from "svelte";
+import type { DateMatcher, Granularity } from "$lib/shared/date/types.js";
 
 export type DateFieldRootPropsWithoutHTML = {
 	/**
@@ -141,24 +141,21 @@ export type DateFieldRootPropsWithoutHTML = {
 
 export type DateFieldRootProps = DateFieldRootPropsWithoutHTML;
 
-export type DateFieldInputPropsWithoutHTML = Omit<
-	WithAsChild<{}, { segments: Array<{ part: SegmentPart; value: string }> }>,
-	"children"
-> & {
-	children?: Snippet<[{ segments: Array<{ part: SegmentPart; value: string }> }]>;
-};
+export type DateFieldInputSnippetProps = { segments: Array<{ part: SegmentPart; value: string }> };
+
+export type DateFieldInputPropsWithoutHTML = WithChild<{}, DateFieldInputSnippetProps>;
 
 export type DateFieldInputProps = DateFieldInputPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, DateFieldInputPropsWithoutHTML>;
 
-export type DateFieldSegmentPropsWithoutHTML = WithAsChild<{
+export type DateFieldSegmentPropsWithoutHTML = WithChild<{
 	part: SegmentPart;
 }>;
 
 export type DateFieldSegmentProps = DateFieldSegmentPropsWithoutHTML &
 	Without<PrimitiveSpanAttributes, DateFieldSegmentPropsWithoutHTML>;
 
-export type DateFieldLabelPropsWithoutHTML = WithAsChild<{}>;
+export type DateFieldLabelPropsWithoutHTML = WithChild;
 
 export type DateFieldLabelProps = DateFieldLabelPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, DateFieldLabelPropsWithoutHTML>;

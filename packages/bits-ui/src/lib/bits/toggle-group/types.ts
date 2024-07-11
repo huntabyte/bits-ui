@@ -1,9 +1,8 @@
 import type {
-	EventCallback,
 	OnChangeFn,
 	PrimitiveButtonAttributes,
 	PrimitiveDivAttributes,
-	WithAsChild,
+	WithChild,
 	Without,
 } from "$lib/internal/index.js";
 import type { Orientation } from "$lib/index.js";
@@ -40,7 +39,7 @@ type BaseToggleGroupProps = {
 	rovingFocus?: boolean;
 };
 
-export type SingleToggleGroupPropsWithoutHTML = WithAsChild<
+export type SingleToggleGroupPropsWithoutHTML = WithChild<
 	BaseToggleGroupProps & {
 		type: "single";
 		value?: string;
@@ -51,7 +50,7 @@ export type SingleToggleGroupPropsWithoutHTML = WithAsChild<
 export type SingleToggleGroupRootProps = SingleToggleGroupPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, SingleToggleGroupPropsWithoutHTML>;
 
-export type MultipleToggleGroupPropsWithoutHTML = WithAsChild<BaseToggleGroupProps> & {
+export type MultipleToggleGroupPropsWithoutHTML = WithChild<BaseToggleGroupProps> & {
 	type: "multiple";
 	value?: string[];
 	onValueChange?: OnChangeFn<string[]>;
@@ -64,24 +63,29 @@ export type ToggleGroupRootPropsWithoutHTML =
 	| SingleToggleGroupPropsWithoutHTML
 	| MultipleToggleGroupPropsWithoutHTML;
 
-export type ToggleGroupRootProps = ToggleGroupRootPropsWithoutHTML & PrimitiveDivAttributes;
+export type ToggleGroupRootProps = ToggleGroupRootPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, ToggleGroupRootPropsWithoutHTML>;
 
-export type ToggleGroupItemPropsWithoutHTML = WithAsChild<{
-	/**
-	 * Whether the toggle item is disabled or not.
-	 *
-	 * @defaultValue false
-	 */
-	disabled?: boolean;
+export type ToggleGroupItemSnippetProps = {
+	pressed: boolean;
+};
 
-	/**
-	 * The value of the toggle item.
-	 */
-	value: string;
+export type ToggleGroupItemPropsWithoutHTML = WithChild<
+	{
+		/**
+		 * Whether the toggle item is disabled or not.
+		 *
+		 * @defaultValue false
+		 */
+		disabled?: boolean;
 
-	onclick?: EventCallback<MouseEvent>;
-	onkeydown?: EventCallback<KeyboardEvent>;
-}>;
+		/**
+		 * The value of the toggle item.
+		 */
+		value: string;
+	},
+	ToggleGroupItemSnippetProps
+>;
 
 export type ToggleGroupItemProps = ToggleGroupItemPropsWithoutHTML &
-	Omit<PrimitiveButtonAttributes, "disabled" | "onclick" | "onkeydown">;
+	Without<PrimitiveButtonAttributes, ToggleGroupItemPropsWithoutHTML>;

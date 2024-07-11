@@ -1,4 +1,16 @@
 import {
+	type DateValue,
+	getLocalTimeZone,
+	isSameDay,
+	isSameMonth,
+	isToday,
+} from "@internationalized/date";
+import { DEV } from "esm-env";
+import type {
+	RangeCalendarCellState,
+	RangeCalendarRootState,
+} from "../range-calendar/range-calendar.svelte.js";
+import {
 	getAriaDisabled,
 	getAriaHidden,
 	getAriaReadonly,
@@ -9,16 +21,17 @@ import {
 	getDataUnavailable,
 } from "$lib/internal/attrs.js";
 import {
-	watch,
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
+	watch,
 } from "$lib/internal/box.svelte.js";
 import { createContext } from "$lib/internal/createContext.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { useId } from "$lib/internal/useId.svelte.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
-import { getAnnouncer, type Announcer } from "$lib/shared/date/announcer.js";
+import { type Announcer, getAnnouncer } from "$lib/shared/date/announcer.js";
 import {
+	type CalendarParts,
 	createAccessibleHeading,
 	createMonths,
 	getCalendarBitsAttr,
@@ -33,23 +46,10 @@ import {
 	shiftCalendarFocus,
 	useMonthViewOptionsSync,
 	useMonthViewPlaceholderSync,
-	type CalendarParts,
 } from "$lib/shared/date/calendar-helpers.svelte.js";
-import { createFormatter, type Formatter } from "$lib/shared/date/formatter.js";
+import { type Formatter, createFormatter } from "$lib/shared/date/formatter.js";
 import type { DateMatcher, Month } from "$lib/shared/date/types.js";
 import { isBefore, toDate } from "$lib/shared/date/utils.js";
-import {
-	getLocalTimeZone,
-	isSameDay,
-	isSameMonth,
-	isToday,
-	type DateValue,
-} from "@internationalized/date";
-import { DEV } from "esm-env";
-import type {
-	RangeCalendarCellState,
-	RangeCalendarRootState,
-} from "../range-calendar/range-calendar.svelte.js";
 
 type CalendarRootStateProps = WithRefProps<
 	WritableBoxedValues<{
@@ -376,7 +376,6 @@ export class CalendarRootState {
 			if (Array.isArray(prev) || prev === undefined) {
 				this.value.value = this.#handleMultipleUpdate(prev, date);
 			}
-			return;
 		} else {
 			if (!Array.isArray(prev)) {
 				const next = this.#handleSingleUpdate(prev, date);

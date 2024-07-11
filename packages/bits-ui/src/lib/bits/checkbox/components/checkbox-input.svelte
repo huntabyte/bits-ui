@@ -1,6 +1,6 @@
 <script lang="ts">
-	import VisuallyHidden from "$lib/bits/utilities/visually-hidden/visually-hidden.svelte";
 	import { useCheckboxInput } from "../checkbox.svelte.js";
+	import VisuallyHidden from "$lib/bits/utilities/visually-hidden/visually-hidden.svelte";
 
 	const inputState = useCheckboxInput();
 </script>

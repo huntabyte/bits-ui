@@ -1,14 +1,13 @@
 <script lang="ts">
-	import { useAlertDialogCancel } from "$lib/bits/dialog/dialog.svelte.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
 	import { box } from "svelte-toolbelt";
 	import type { CancelProps } from "../index.js";
+	import { useAlertDialogCancel } from "$lib/bits/date-range-picker/dialog/dialog.svelte.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {
 		id = useId(),
 		ref = $bindable(null),
-		asChild,
 		children,
 		child,
 		...restProps
@@ -25,8 +24,8 @@
 	const mergedProps = $derived(mergeProps(restProps, cancelState.props));
 </script>
 
-{#if asChild}
-	{@render child?.({ props: mergedProps })}
+{#if child}
+	{@render child({ props: mergedProps })}
 {:else}
 	<button {...mergedProps}>
 		{@render children?.()}

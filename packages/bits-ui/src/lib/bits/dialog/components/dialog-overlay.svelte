@@ -9,7 +9,6 @@
 	let {
 		id = useId(),
 		forceMount = false,
-		asChild,
 		child,
 		children,
 		ref = $bindable(null),
@@ -29,7 +28,7 @@
 
 <PresenceLayer {id} present={overlayState.root.open.value || forceMount}>
 	{#snippet presence({ present })}
-		{#if asChild}
+		{#if child}
 			{@render child?.({ props: mergeProps(mergedProps, { hidden: !present.value }) })}
 		{:else}
 			<div {...mergeProps(mergedProps, { hidden: !present.value })}>

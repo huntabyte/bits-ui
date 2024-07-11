@@ -1,14 +1,13 @@
 <script lang="ts">
-	import { useId } from "$lib/internal/useId.svelte.js";
 	import { box } from "svelte-toolbelt";
 	import { useDateFieldSegment } from "../date-field.svelte.js";
 	import type { SegmentProps } from "../index.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {
 		id = useId(),
 		ref = $bindable(null),
-		asChild,
 		children,
 		child,
 		part,
@@ -28,8 +27,8 @@
 	);
 </script>
 
-{#if asChild}
-	{@render child?.({ props: mergedProps })}
+{#if child}
+	{@render child({ props: mergedProps })}
 {:else}
 	<span {...mergedProps}>
 		{@render children?.()}

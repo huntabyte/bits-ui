@@ -1,14 +1,13 @@
-import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import type { OnChangeFn, WithRefProps } from "$lib/internal/types.js";
-import { useId } from "$lib/internal/useId.svelte.js";
-import { useRefById } from "$lib/internal/useRefById.svelte.js";
 import { Previous } from "runed";
-import { onMount, untrack } from "svelte";
-import { box, type ReadableBox, type WritableBox } from "svelte-toolbelt";
+import { untrack } from "svelte";
+import { type WritableBox, box } from "svelte-toolbelt";
 import { usePasswordManagerBadge } from "./usePasswordManager.svelte.js";
+import type { PinInputRootProps as RootComponentProps } from "./types.js";
+import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
+import type { WithRefProps } from "$lib/internal/types.js";
+import { useRefById } from "$lib/internal/useRefById.svelte.js";
 import { noop } from "$lib/internal/callbacks.js";
 import { addEventListener } from "$lib/internal/events.js";
-import type { PinInputRootProps as RootComponentProps } from "./types.js";
 import { getDisabledAttr } from "$lib/internal/attrs.js";
 
 export const REGEXP_ONLY_DIGITS = "^\\d+$";
@@ -23,7 +22,9 @@ type PinInputRootStateProps = WithRefProps<
 		ReadableBoxedValues<{
 			inputId: string;
 			disabled: boolean;
+			// eslint-disable-next-line ts/no-explicit-any
 			onComplete: (...args: any[]) => void;
+			// eslint-disable-next-line ts/no-explicit-any
 			pattern: any;
 			maxLength: number;
 			pushPasswordManagerStrategy: "increase-width" | "none";
@@ -294,7 +295,7 @@ class PinInputRootState {
 
 		let start = -1;
 		let end = -1;
-		let direction: "forward" | "backward" | "none" | undefined = undefined;
+		let direction: "forward" | "backward" | "none" | undefined;
 		if (val.length !== 0 && selStart !== null && selEnd !== null) {
 			const isSingleCaret = selStart === selEnd;
 			const isInsertMode = selStart === val.length && val.length < maxLength;
@@ -359,7 +360,7 @@ class PinInputRootState {
 		this.value.value = newValue;
 	};
 
-	#onfocus = (e: FocusEvent & { currentTarget: HTMLInputElement }) => {
+	#onfocus = (_: FocusEvent & { currentTarget: HTMLInputElement }) => {
 		const input = this.#inputRef.value;
 		if (input) {
 			const start = Math.min(input.value.length, this.#maxLength.value - 1);
@@ -465,6 +466,7 @@ class PinInputRootState {
 	}));
 }
 
+// eslint-disable-next-line ts/no-explicit-any
 export function syncTimeouts(cb: (...args: any[]) => unknown): number[] {
 	const t1 = setTimeout(cb, 0); // For faster machines
 	const t2 = setTimeout(cb, 1_0);

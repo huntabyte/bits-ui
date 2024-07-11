@@ -7,7 +7,6 @@
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
 
 	let {
-		asChild,
 		children,
 		child,
 		id = useId(),
@@ -69,7 +68,7 @@
 >
 	{#snippet popper({ props })}
 		{@const mergedProps = mergeProps(restProps, contentState.props, props)}
-		{#if asChild}
+		{#if child}
 			{@render child?.({ props: mergedProps })}
 		{:else}
 			<div {...mergedProps} bind:this={ref}>

@@ -1,4 +1,4 @@
-import type { DialogContentPropsWithoutHTML, DialogContentProps } from "$lib/types.js";
+import type { DialogContentProps, DialogContentPropsWithoutHTML } from "$lib/types.js";
 
 export type {
 	DialogRootPropsWithoutHTML as AlertDialogRootPropsWithoutHTML,

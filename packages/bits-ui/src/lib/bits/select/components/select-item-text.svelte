@@ -9,7 +9,6 @@
 	let {
 		id = useId(),
 		ref = $bindable(null),
-		asChild,
 		children,
 		child,
 		...restProps
@@ -32,7 +31,7 @@
 	</Portal>
 {/if}
 
-{#if asChild}
+{#if child}
 	{@render child?.({ props: mergedProps })}
 {:else}
 	<span {...mergedProps}>

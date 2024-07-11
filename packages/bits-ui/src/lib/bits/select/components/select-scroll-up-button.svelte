@@ -19,11 +19,9 @@
 		),
 	});
 
-	// eslint-disable-next-line unused-imports/no-unused-vars, ts/no-unused-vars
-	const { asChild, child, children, ...restWithoutChildren } = restProps;
+	const { child: _child, children: _children, ...restWithoutChildren } = restProps;
 	const mergedProps = $derived(mergeProps(restWithoutChildren, scrollUpButtonState.props));
-	// eslint-disable-next-line unused-imports/no-unused-vars, ts/no-unused-vars
-	const { style, ...restWithoutStyle } = restProps;
+	const { style: _style, ...restWithoutStyle } = restProps;
 </script>
 
 {#if scrollUpButtonState.canScrollUp}

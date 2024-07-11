@@ -1,69 +1,61 @@
 ---
 title: Render Delegation
-description: Learn how to use the asChild prop to render your own elements.
+description: Learn how to use the `child` snippet to render your own elements.
 ---
 
 ## Usage
 
-For certain components, we set a default underlying HTML element to wrap the `<slot/>` with. As a high level example, the `AccordionTrigger`, looks something like this:
+For certain components, we set a default underlying HTML element to wrap the `children` with. As a high level example, the `Accordion.Trigger`, looks something like this:
 
 ```svelte
 <button>
-	<slot />
+	{@render children()}
 </button>
 ```
 
-While we do allow you to set any attribute that you normally could on a button, let's say you're one of those `<div role="button" />` people and want to use a `div` or some other element instead of the button we provide out of the box. That's when render delegation comes into play.
+While we do allow you to set any attribute that you normally could on a button, let's say you want to apply a [Svelte Transition](https://svelte.dev/docs#transition) or [Svelte Action](https://svelte.dev/docs#use_action) to the button, or use a custom component you've made, that's when render delegation comes into play.
 
-Each of the components that support render delegation have an optional prop called `asChild`. When set to `true`, the component will pass the `builder` as a slot prop, which you can then apply to the element of your choosing.
+Each of the components that support render delegation accept an optional prop called `child`, which is a [Snippet](https://svelte.dev). When used, the component will pass the attributes as a snippet prop, which you can then apply to the element of your choosing. Note, if you use `child` any other children that aren't within that `child` snippet will be ignored.
 
-Let's take a look at an example using the `AccordionTrigger` component:
+Let's take a look at an example using the `Accordion.Trigger` component:
 
 ```svelte
-<AccordionTrigger asChild let:builder>
-	<div use:builder.action {...builder}>Open accordion item</div>
-</AccordionTrigger>
+<Accordion.Trigger>
+	{#snippet child({ props })}
+		<div {...props}>Open accordion item</div>
+	{/snippet}
+</Accordion.Trigger>
 ```
 
-We're passing the Melt UI builder we would normally apply to the `<button>` as a prop which can then be applied to any element we want. Keep in mind, you will need to `use:builder.action`, as well as spread the builder props onto the element you're using to retain all functionality.
+We're passing all the props/attribute we would normally apply to th `<button>` within the component to whatever element we want. These props include event handlers, aria attributes, and any other attributes you passed into the `Accordion.Trigger` component.
+
+NOTE: If you wish to use a custom ID with a custom element, you must pass it to the component first. A lot of Bits UI internals rely on the ID so you'll need to do something like this:
+
+```svelte
+<Accordion.Trigger id="my-custom-id">
+	<!-- your custom ID is now inside the `props` object -->
+	{#snippet child({ props })}
+		<div {...props}>Open accordion item</div>
+	{/snippet}
+</Accordion.Trigger>
+```
 
 So behind the scenes this is what's happening (pseudo):
 
 ```svelte
 <script lang="ts">
 	// other imports/props/logic omitted for brevity
-	const trigger = getTrigger();
-	export let asChild = false;
+	let { child, children, ...restProps } = $props();
+	const trigger = makeTrigger();
+
+	const mergedProps = $derived(mergeProps(restProps, trigger.props));
 </script>
 
-{#if asChild}
-	<slot builder={$trigger} />
+{#if child}
+	{@render child({ props: mergedProps })}
 {:else}
-	<button use:trigger.action {...trigger}>
-		<slot />
+	<button {...mergedProps}>
+		{@render children?.()}
 	</button>
 {/if}
 ```
-
-## Use with components
-
-Unfortunately, wanting to delegate rendering to a component isn't as simple as an element, since we can't apply actions directly to components. While still possible, there's some work that has to be done to each component you intend to use render delegation with.
-
-At the time of writing this, we're still working on refined type / helpers functions on the Melt UI side for this exact purpose, but for the time being, we expose a few helper functions and types to make this easier.
-
-Let's create a custom `<Button />` component that could be used with this pattern. This is a simplified version of the [Button](/docs/components/button) component we provide as a part of Bits, but it should give you an idea of how to implement this pattern.
-
-```svelte
-<script lang="ts">
-	import { builderActions, getAttrs, type Builder } from "bits-ui";
-	export let builders: Builder[] = [];
-</script>
-
-<button use:builderActions={{ builders }} {...getAttrs(builders)}>
-	<slot />
-</button>
-```
-
-We're using the `builderActions` and `getAttrs` helpers to apply the actions and attributes to the button. We're also using the `Builder` type to type the `builders` prop we'd receive from whatever component we're using this with. We use an array here to cover the case where we may want to apply multiple builders to the button. The helper functions handle applying all the actions and attributes to the button for us.
-
-If you do plan to pass multiple builders, the order in which you pass them matters. Certain actions/attributes may override others, so be sure to test your implementation to ensure it's working as expected.

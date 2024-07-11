@@ -1,17 +1,16 @@
+import type { DateValue } from "@internationalized/date";
 import type {
 	OnChangeFn,
 	PrimitiveDivAttributes,
 	PrimitiveSpanAttributes,
-	WithAsChild,
+	WithChild,
 	Without,
 } from "$lib/internal/types.js";
-import type { Granularity, DateMatcher } from "$lib/shared/date/types.js";
+import type { DateMatcher, Granularity } from "$lib/shared/date/types.js";
 import type { DateRange, EditableSegmentPart, SegmentPart } from "$lib/shared/index.js";
 import type { DateFieldSegmentProps, DateFieldSegmentPropsWithoutHTML } from "$lib/types.js";
-import type { DateValue } from "@internationalized/date";
-import type { Snippet } from "svelte";
 
-export type DateRangeFieldRootPropsWithoutHTML = WithAsChild<{
+export type DateRangeFieldRootPropsWithoutHTML = WithChild<{
 	/**
 	 * The value of the date range field.
 	 *
@@ -132,38 +131,35 @@ export type DateRangeFieldRootPropsWithoutHTML = WithAsChild<{
 export type DateRangeFieldRootProps = DateRangeFieldRootPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, DateRangeFieldRootPropsWithoutHTML>;
 
-export type DateRangeFieldLabelPropsWithoutHTML = WithAsChild<{}>;
+export type DateRangeFieldLabelPropsWithoutHTML = WithChild;
 
 export type DateRangeFieldLabelProps = DateRangeFieldLabelPropsWithoutHTML &
 	Without<PrimitiveSpanAttributes, DateRangeFieldLabelPropsWithoutHTML>;
 
-export type DateRangeFieldInputPropsWithoutHTML = Omit<
-	WithAsChild<
-		{
-			/**
-			 * A callback that is called when the value of the specific date field changes.
-			 */
-			onValueChange?: OnChangeFn<DateValue | undefined>;
-
-			/**
-			 * The name to use for the hidden input element associated with this input
-			 * used for form submission.
-			 */
-			name?: string;
-
-			/**
-			 * Whether this input represents the start or end of the date range.
-			 */
-			type: "start" | "end";
-		},
-		{
-			segments: Array<{ part: SegmentPart; value: string }>;
-		}
-	>,
-	"children"
-> & {
-	children?: Snippet<[{ segments: Array<{ part: SegmentPart; value: string }> }]>;
+export type DateRangeFieldInputSnippetProps = {
+	segments: Array<{ part: SegmentPart; value: string }>;
 };
+
+export type DateRangeFieldInputPropsWithoutHTML = WithChild<
+	{
+		/**
+		 * A callback that is called when the value of the specific date field changes.
+		 */
+		onValueChange?: OnChangeFn<DateValue | undefined>;
+
+		/**
+		 * The name to use for the hidden input element associated with this input
+		 * used for form submission.
+		 */
+		name?: string;
+
+		/**
+		 * Whether this input represents the start or end of the date range.
+		 */
+		type: "start" | "end";
+	},
+	DateRangeFieldInputSnippetProps
+>;
 
 export type DateRangeFieldInputProps = DateRangeFieldInputPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, DateRangeFieldInputPropsWithoutHTML>;

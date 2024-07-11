@@ -16,7 +16,6 @@
 		value = "on",
 		id = useId(),
 		ref = $bindable(null),
-		asChild,
 		child,
 		...restProps
 	}: RootProps = $props();
@@ -45,8 +44,8 @@
 	const mergedProps = $derived(mergeProps({ ...restProps }, rootState.props));
 </script>
 
-{#if asChild}
-	{@render child?.({ props: mergedProps, checked: rootState.checked.value })}
+{#if child}
+	{@render child({ props: mergedProps, checked: rootState.checked.value })}
 {:else}
 	<button {...mergedProps}>
 		{@render children?.({

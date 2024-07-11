@@ -1,4 +1,4 @@
-import { type WritableBox, box } from "svelte-toolbelt";
+import type { WritableBox } from "svelte-toolbelt";
 import {
 	getAriaChecked,
 	getAriaPressed,
@@ -190,14 +190,14 @@ class ToggleGroupItemState {
 		this.#root.rovingFocusGroup.handleKeydown(this.#ref.value, e);
 	};
 
-	#isPressed = $derived.by(() => this.#root.includesItem(this.#value.value));
+	isPressed = $derived.by(() => this.#root.includesItem(this.#value.value));
 
 	#ariaChecked = $derived.by(() => {
-		return this.#root.isMulti ? undefined : getAriaChecked(this.#isPressed);
+		return this.#root.isMulti ? undefined : getAriaChecked(this.isPressed);
 	});
 
 	#ariaPressed = $derived.by(() => {
-		return this.#root.isMulti ? getAriaPressed(this.#isPressed) : undefined;
+		return this.#root.isMulti ? getAriaPressed(this.isPressed) : undefined;
 	});
 
 	#tabIndex = $derived.by(() =>
@@ -212,7 +212,7 @@ class ToggleGroupItemState {
 				tabindex: this.#tabIndex,
 				"data-orientation": getDataOrientation(this.#root.orientation.value),
 				"data-disabled": getDataDisabled(this.#isDisabled),
-				"data-state": getToggleItemDataState(this.#isPressed),
+				"data-state": getToggleItemDataState(this.isPressed),
 				"data-value": this.#value.value,
 				"aria-pressed": this.#ariaPressed,
 				"aria-checked": this.#ariaChecked,

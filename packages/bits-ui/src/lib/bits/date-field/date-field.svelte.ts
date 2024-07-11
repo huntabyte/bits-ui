@@ -1,14 +1,19 @@
+import type { Updater } from "svelte/store";
+import type { DateValue } from "@internationalized/date";
+import type { WritableBox } from "svelte-toolbelt";
+import { onDestroy, onMount, untrack } from "svelte";
+import type { DateRangeFieldRootState } from "../date-range-field/date-range-field.svelte.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
-import { getAnnouncer, type Announcer } from "$lib/shared/date/announcer.js";
+import { type Announcer, getAnnouncer } from "$lib/shared/date/announcer.js";
 import {
 	areAllSegmentsFilled,
 	createContent,
 	getValueFromSegments,
 	inferGranularity,
-	initializeSegmentValues,
 	initSegmentStates,
+	initializeSegmentValues,
 	isAcceptableSegmentKey,
 	isDateAndTimeSegmentObj,
 	isDateSegmentPart,
@@ -16,19 +21,16 @@ import {
 	removeDescriptionElement,
 	setDescription,
 } from "$lib/shared/date/field/helpers.js";
-import {
-	type DateAndTimeSegmentObj,
-	type DateSegmentObj,
-	type DateSegmentPart,
-	type SegmentValueObj,
-	type TimeSegmentObj,
-	type TimeSegmentPart,
+import type {
+	DateAndTimeSegmentObj,
+	DateSegmentObj,
+	DateSegmentPart,
+	SegmentValueObj,
+	TimeSegmentObj,
+	TimeSegmentPart,
 } from "$lib/shared/date/field/types.js";
-import { createFormatter, type Formatter } from "$lib/shared/date/formatter.js";
+import { type Formatter, createFormatter } from "$lib/shared/date/formatter.js";
 import { getDaysInMonth, isBefore, toDate } from "$lib/shared/date/utils.js";
-import type { Updater } from "svelte/store";
-import type { DateValue } from "@internationalized/date";
-import type { WritableBox } from "svelte-toolbelt";
 import {
 	getAriaDisabled,
 	getAriaHidden,
@@ -49,11 +51,9 @@ import {
 } from "$lib/shared/date/field.js";
 import type { SegmentPart } from "$lib/shared/index.js";
 import { DATE_SEGMENT_PARTS, TIME_SEGMENT_PARTS } from "$lib/shared/date/field/parts.js";
-import { onDestroy, onMount, untrack } from "svelte";
 import { createContext } from "$lib/internal/createContext.js";
 import { useId } from "$lib/internal/useId.svelte.js";
-import type { Granularity, DateMatcher, HourCycle } from "$lib/shared/date/types.js";
-import type { DateRangeFieldRootState } from "../date-range-field/date-range-field.svelte.js";
+import type { DateMatcher, Granularity, HourCycle } from "$lib/shared/date/types.js";
 
 export const DATE_FIELD_INPUT_ATTR = "data-date-field-input";
 
@@ -407,9 +407,9 @@ class DateFieldRootState {
 				const next = castCb(pVal) as DateAndTimeSegmentObj["month"];
 				this.states.month.updating = next;
 				if (next !== null && prev.day !== null) {
-					const date = dateRef.set({ month: parseInt(next) });
+					const date = dateRef.set({ month: Number.parseInt(next) });
 					const daysInMonth = getDaysInMonth(toDate(date));
-					const prevDay = parseInt(prev.day);
+					const prevDay = Number.parseInt(prev.day);
 					if (prevDay > daysInMonth) {
 						prev.day = `${daysInMonth}`;
 					}
@@ -437,7 +437,7 @@ class DateFieldRootState {
 				this.states.hour.updating = next;
 				if (next !== null && prev.dayPeriod !== null) {
 					const dayPeriod = this.formatter.dayPeriod(
-						toDate(dateRef.set({ hour: parseInt(next) }))
+						toDate(dateRef.set({ hour: Number.parseInt(next) }))
 					);
 					if (dayPeriod === "AM" || dayPeriod === "PM") {
 						prev.dayPeriod = dayPeriod;
@@ -470,9 +470,9 @@ class DateFieldRootState {
 			const next = castCb(pVal);
 			if (part === "month" && next !== null && prev.day !== null) {
 				this.states.month.updating = next;
-				const date = dateRef.set({ month: parseInt(next) });
+				const date = dateRef.set({ month: Number.parseInt(next) });
 				const daysInMonth = getDaysInMonth(toDate(date));
-				if (parseInt(prev.day) > daysInMonth) {
+				if (Number.parseInt(prev.day) > daysInMonth) {
 					prev.day = `${daysInMonth}`;
 				}
 				newSegmentValues = { ...prev, [part]: next };
@@ -506,7 +506,6 @@ class DateFieldRootState {
 	handleSegmentClick = (e: MouseEvent) => {
 		if (this.disabled.value) {
 			e.preventDefault();
-			return;
 		}
 	};
 
@@ -531,8 +530,7 @@ class DateFieldRootState {
 			? `${descriptionId} ${this.isInvalid && validationId ? validationId : ""}`
 			: undefined;
 
-		const contenteditable =
-			this.readonly.value || inReadonlySegments || this.disabled.value ? false : true;
+		const contenteditable = !(this.readonly.value || inReadonlySegments || this.disabled.value);
 
 		return {
 			...defaultAttrs,
@@ -696,7 +694,7 @@ class DateFieldDaySegmentState {
 		const segmentMonthValue = this.#root.segmentValues.month;
 
 		const daysInMonth = segmentMonthValue
-			? getDaysInMonth(placeholder.set({ month: parseInt(segmentMonthValue) }))
+			? getDaysInMonth(placeholder.set({ month: Number.parseInt(segmentMonthValue) }))
 			: getDaysInMonth(placeholder);
 
 		if (isArrowUp(e.key)) {
@@ -706,7 +704,7 @@ class DateFieldDaySegmentState {
 					this.#announcer.announce(next);
 					return `${next}`;
 				}
-				const next = placeholder.set({ day: parseInt(prev) }).cycle("day", 1).day;
+				const next = placeholder.set({ day: Number.parseInt(prev) }).cycle("day", 1).day;
 				this.#announcer.announce(next);
 				return `${next}`;
 			});
@@ -719,7 +717,7 @@ class DateFieldDaySegmentState {
 					this.#announcer.announce(next);
 					return `${next}`;
 				}
-				const next = placeholder.set({ day: parseInt(prev) }).cycle("day", -1).day;
+				const next = placeholder.set({ day: Number.parseInt(prev) }).cycle("day", -1).day;
 
 				this.#announcer.announce(next);
 				return `${next}`;
@@ -730,7 +728,7 @@ class DateFieldDaySegmentState {
 		const fieldNode = this.#root.getFieldNode();
 
 		if (isNumberString(e.key)) {
-			const num = parseInt(e.key);
+			const num = Number.parseInt(e.key);
 			let moveToNext = false;
 			this.#updateSegment("day", (prev) => {
 				const max = daysInMonth;
@@ -803,7 +801,7 @@ class DateFieldDaySegmentState {
 				 * month, then we will reset the segment as if the user had pressed the
 				 * backspace key and then typed the number.
 				 */
-				const total = parseInt(prev + num.toString());
+				const total = Number.parseInt(prev + num.toString());
 
 				if (this.#root.states.day.lastKeyZero) {
 					/**
@@ -887,7 +885,7 @@ class DateFieldDaySegmentState {
 		const isEmpty = segmentValues.day === null;
 		const placeholder = this.#root.placeholder.value;
 		const date = segmentValues.day
-			? placeholder.set({ day: parseInt(segmentValues.day) })
+			? placeholder.set({ day: Number.parseInt(segmentValues.day) })
 			: placeholder;
 
 		const valueNow = date.day;
@@ -957,7 +955,9 @@ class DateFieldMonthSegmentState {
 
 					return `${next}`;
 				}
-				const next = placeholder.set({ month: parseInt(prev) }).cycle("month", 1).month;
+				const next = placeholder
+					.set({ month: Number.parseInt(prev) })
+					.cycle("month", 1).month;
 				this.#announcer.announce(this.getAnnouncement(next));
 				if (String(next).length === 1) {
 					return `0${next}`;
@@ -977,7 +977,9 @@ class DateFieldMonthSegmentState {
 					}
 					return `${next}`;
 				}
-				const next = placeholder.set({ month: parseInt(prev) }).cycle("month", -1).month;
+				const next = placeholder
+					.set({ month: Number.parseInt(prev) })
+					.cycle("month", -1).month;
 				this.#announcer.announce(this.getAnnouncement(next));
 				if (String(next).length === 1) {
 					return `0${next}`;
@@ -988,7 +990,7 @@ class DateFieldMonthSegmentState {
 		}
 
 		if (isNumberString(e.key)) {
-			const num = parseInt(e.key);
+			const num = Number.parseInt(e.key);
 			let moveToNext = false;
 
 			this.#updateSegment("month", (prev) => {
@@ -1061,7 +1063,7 @@ class DateFieldMonthSegmentState {
 				 * month, then we will reset the segment as if the user had pressed the
 				 * backspace key and then typed the number.
 				 */
-				const total = parseInt(prev + num.toString());
+				const total = Number.parseInt(prev + num.toString());
 
 				if (this.#root.states.month.lastKeyZero) {
 					/**
@@ -1124,7 +1126,7 @@ class DateFieldMonthSegmentState {
 					this.#announcer.announce(null);
 					return null;
 				}
-				const next = parseInt(str.slice(0, -1));
+				const next = Number.parseInt(str.slice(0, -1));
 				this.#announcer.announce(this.getAnnouncement(next));
 				return `${next}`;
 			});
@@ -1154,7 +1156,7 @@ class DateFieldMonthSegmentState {
 		const placeholder = this.#root.placeholder.value;
 		const isEmpty = segmentValues.month === null;
 		const date = segmentValues.month
-			? placeholder.set({ month: parseInt(segmentValues.month) })
+			? placeholder.set({ month: Number.parseInt(segmentValues.month) })
 			: placeholder;
 		const valueNow = date.month;
 		const valueMin = 1;
@@ -1258,7 +1260,7 @@ class DateFieldYearSegmentState {
 					this.#announcer.announce(next);
 					return `${next}`;
 				}
-				const next = placeholder.set({ year: parseInt(prev) }).cycle("year", 1).year;
+				const next = placeholder.set({ year: Number.parseInt(prev) }).cycle("year", 1).year;
 				this.#announcer.announce(next);
 				return `${next}`;
 			});
@@ -1272,7 +1274,9 @@ class DateFieldYearSegmentState {
 					this.#announcer.announce(next);
 					return `${next}`;
 				}
-				const next = placeholder.set({ year: parseInt(prev) }).cycle("year", -1).year;
+				const next = placeholder
+					.set({ year: Number.parseInt(prev) })
+					.cycle("year", -1).year;
 				this.#announcer.announce(next);
 				return `${next}`;
 			});
@@ -1282,7 +1286,7 @@ class DateFieldYearSegmentState {
 		if (isNumberString(e.key)) {
 			this.#pressedKeys.push(e.key);
 			let moveToNext = false;
-			const num = parseInt(e.key);
+			const num = Number.parseInt(e.key);
 			this.#updateSegment("year", (prev) => {
 				if (this.#root.states.year.hasLeftFocus) {
 					prev = null;
@@ -1295,7 +1299,7 @@ class DateFieldYearSegmentState {
 				}
 
 				const str = prev.toString() + num.toString();
-				const mergedInt = parseInt(str);
+				const mergedInt = Number.parseInt(str);
 				const mergedIntDigits = String(mergedInt).length;
 
 				if (mergedIntDigits < 4) {
@@ -1384,7 +1388,7 @@ class DateFieldYearSegmentState {
 		this.#resetBackspaceCount();
 		this.#updateSegment("year", (prev) => {
 			if (prev && prev.length !== 4) {
-				return prependYearZeros(parseInt(prev));
+				return prependYearZeros(Number.parseInt(prev));
 			}
 			return prev;
 		});
@@ -1395,7 +1399,7 @@ class DateFieldYearSegmentState {
 		const placeholder = this.#root.placeholder.value;
 		const isEmpty = segmentValues.year === null;
 		const date = segmentValues.year
-			? placeholder.set({ year: parseInt(segmentValues.year) })
+			? placeholder.set({ year: Number.parseInt(segmentValues.year) })
 			: placeholder;
 		const valueMin = 1;
 		const valueMax = 9999;
@@ -1456,7 +1460,7 @@ class DateFieldHourSegmentState {
 					return `${next}`;
 				}
 				const next = placeholder
-					.set({ hour: parseInt(prev) })
+					.set({ hour: Number.parseInt(prev) })
 					.cycle("hour", 1, { hourCycle }).hour;
 
 				if (
@@ -1482,7 +1486,7 @@ class DateFieldHourSegmentState {
 					return `${next}`;
 				}
 				const next = placeholder
-					.set({ hour: parseInt(prev) })
+					.set({ hour: Number.parseInt(prev) })
 					.cycle("hour", -1, { hourCycle }).hour;
 
 				if (
@@ -1501,7 +1505,7 @@ class DateFieldHourSegmentState {
 		}
 
 		if (isNumberString(e.key)) {
-			const num = parseInt(e.key);
+			const num = Number.parseInt(e.key);
 			const max =
 				"dayPeriod" in this.#root.segmentValues &&
 				this.#root.segmentValues.dayPeriod !== null
@@ -1577,7 +1581,7 @@ class DateFieldHourSegmentState {
 				 * hour, then we will reset the segment as if the user had pressed the
 				 * backspace key and then typed the number.
 				 */
-				const total = parseInt(prev + num.toString());
+				const total = Number.parseInt(prev + num.toString());
 
 				if (this.#root.states.hour.lastKeyZero) {
 					/**
@@ -1634,7 +1638,7 @@ class DateFieldHourSegmentState {
 					this.#announcer.announce(null);
 					return null;
 				}
-				const next = parseInt(str.slice(0, -1));
+				const next = Number.parseInt(str.slice(0, -1));
 				this.#announcer.announce(next);
 				return `${next}`;
 			});
@@ -1660,7 +1664,7 @@ class DateFieldHourSegmentState {
 		if (!("hour" in segmentValues) || !("hour" in placeholder)) return {};
 		const isEmpty = segmentValues.hour === null;
 		const date = segmentValues.hour
-			? placeholder.set({ hour: parseInt(segmentValues.hour) })
+			? placeholder.set({ hour: Number.parseInt(segmentValues.hour) })
 			: placeholder;
 		const valueMin = hourCycle === 12 ? 1 : 0;
 		const valueMax = hourCycle === 12 ? 12 : 23;
@@ -1721,7 +1725,9 @@ class DateFieldMinuteSegmentState {
 					this.#announcer.announce(min);
 					return `${min}`;
 				}
-				const next = placeholder.set({ minute: parseInt(prev) }).cycle("minute", 1).minute;
+				const next = placeholder
+					.set({ minute: Number.parseInt(prev) })
+					.cycle("minute", 1).minute;
 				this.#announcer.announce(next);
 				return `${next}`;
 			});
@@ -1734,7 +1740,9 @@ class DateFieldMinuteSegmentState {
 					this.#announcer.announce(max);
 					return `${max}`;
 				}
-				const next = placeholder.set({ minute: parseInt(prev) }).cycle("minute", -1).minute;
+				const next = placeholder
+					.set({ minute: Number.parseInt(prev) })
+					.cycle("minute", -1).minute;
 				this.#announcer.announce(next);
 				return `${next}`;
 			});
@@ -1742,7 +1750,7 @@ class DateFieldMinuteSegmentState {
 		}
 
 		if (isNumberString(e.key)) {
-			const num = parseInt(e.key);
+			const num = Number.parseInt(e.key);
 			let moveToNext = false;
 			const numIsZero = num === 0;
 			this.#updateSegment("minute", (prev) => {
@@ -1814,7 +1822,7 @@ class DateFieldMinuteSegmentState {
 				 * minute, then we will reset the segment as if the user had pressed the
 				 * backspace key and then typed the number.
 				 */
-				const total = parseInt(prev + num.toString());
+				const total = Number.parseInt(prev + num.toString());
 
 				if (this.#root.states.minute.lastKeyZero) {
 					/**
@@ -1874,7 +1882,7 @@ class DateFieldMinuteSegmentState {
 					this.#announcer.announce("Empty");
 					return null;
 				}
-				const next = parseInt(str.slice(0, -1));
+				const next = Number.parseInt(str.slice(0, -1));
 				this.#announcer.announce(next);
 				return `${next}`;
 			});
@@ -1901,7 +1909,7 @@ class DateFieldMinuteSegmentState {
 		if (!("minute" in segmentValues) || !("minute" in placeholder)) return {};
 		const isEmpty = segmentValues.minute === null;
 		const date = segmentValues.minute
-			? placeholder.set({ minute: parseInt(segmentValues.minute) })
+			? placeholder.set({ minute: Number.parseInt(segmentValues.minute) })
 			: placeholder;
 		const valueNow = date.minute;
 		const valueMin = 0;
@@ -1962,7 +1970,9 @@ class DateFieldSecondSegmentState {
 					this.#announcer.announce(min);
 					return `${min}`;
 				}
-				const next = placeholder.set({ second: parseInt(prev) }).cycle("second", 1).second;
+				const next = placeholder
+					.set({ second: Number.parseInt(prev) })
+					.cycle("second", 1).second;
 				this.#announcer.announce(next);
 				return `${next}`;
 			});
@@ -1975,7 +1985,9 @@ class DateFieldSecondSegmentState {
 					this.#announcer.announce(max);
 					return `${max}`;
 				}
-				const next = placeholder.set({ second: parseInt(prev) }).cycle("second", -1).second;
+				const next = placeholder
+					.set({ second: Number.parseInt(prev) })
+					.cycle("second", -1).second;
 				this.#announcer.announce(next);
 				return `${next}`;
 			});
@@ -1983,7 +1995,7 @@ class DateFieldSecondSegmentState {
 		}
 
 		if (isNumberString(e.key)) {
-			const num = parseInt(e.key);
+			const num = Number.parseInt(e.key);
 			const numIsZero = num === 0;
 			let moveToNext = false;
 			this.#updateSegment("second", (prev) => {
@@ -2055,7 +2067,7 @@ class DateFieldSecondSegmentState {
 				 * second, then we will reset the segment as if the user had pressed the
 				 * backspace key and then typed the number.
 				 */
-				const total = parseInt(prev + num.toString());
+				const total = Number.parseInt(prev + num.toString());
 
 				if (this.#root.states.second.lastKeyZero) {
 					/**
@@ -2114,7 +2126,7 @@ class DateFieldSecondSegmentState {
 					this.#announcer.announce(null);
 					return null;
 				}
-				const next = parseInt(str.slice(0, -1));
+				const next = Number.parseInt(str.slice(0, -1));
 				this.#announcer.announce(next);
 				return `${next}`;
 			});
@@ -2139,7 +2151,7 @@ class DateFieldSecondSegmentState {
 		if (!("second" in segmentValues) || !("second" in placeholder)) return {};
 		const isEmpty = segmentValues.second === null;
 		const date = segmentValues.second
-			? placeholder.set({ second: parseInt(segmentValues.second) })
+			? placeholder.set({ second: Number.parseInt(segmentValues.second) })
 			: placeholder;
 		const valueNow = date.second;
 		const valueMin = 0;

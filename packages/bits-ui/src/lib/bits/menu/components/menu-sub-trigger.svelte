@@ -9,7 +9,6 @@
 		id = useId(),
 		disabled = false,
 		ref = $bindable(null),
-		asChild,
 		children,
 		child,
 		...restProps
@@ -28,8 +27,8 @@
 </script>
 
 <FloatingLayer.Anchor {id}>
-	{#if asChild}
-		{@render child?.({ props: mergedProps })}
+	{#if child}
+		{@render child({ props: mergedProps })}
 	{:else}
 		<div {...mergedProps}>
 			{@render children?.()}

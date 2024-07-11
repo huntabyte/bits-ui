@@ -1,10 +1,5 @@
-import type {
-	OnChangeFn,
-	PrimitiveInputAttributes,
-	WithAsChild,
-	Without,
-} from "$lib/internal/types.js";
 import type { Snippet } from "svelte";
+import type { OnChangeFn, PrimitiveInputAttributes, Without } from "$lib/internal/types.js";
 
 export type PinInputRootPropsWithoutHTML = {
 	/**
@@ -35,6 +30,7 @@ export type PinInputRootPropsWithoutHTML = {
 	 * A callback function that is called when the input is completely filled.
 	 *
 	 */
+	// eslint-disable-next-line ts/no-explicit-any
 	onComplete?: (...args: any[]) => void;
 
 	/**

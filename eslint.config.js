@@ -16,7 +16,7 @@ export default config({ svelte: true, ignores: [...DEFAULT_IGNORES, ...ignores] 
 			],
 		},
 	})
-	.override("antfu/js/rules", {
+	.override("antfu/javascript/rules", {
 		rules: {
 			"no-unused-expressions": "off",
 		},

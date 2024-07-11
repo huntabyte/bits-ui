@@ -1,16 +1,16 @@
+import type { DateValue } from "@internationalized/date";
 import type {
 	OnChangeFn,
 	PrimitiveDivAttributes,
-	WithAsChild,
+	WithChild,
+	WithChildren,
 	Without,
 } from "$lib/internal/types.js";
 import type { EditableSegmentPart } from "$lib/shared/date/field/types.js";
 import type { DateMatcher, Granularity, WeekStartsOn } from "$lib/shared/date/types.js";
 import type { CalendarRootSnippetProps } from "$lib/types.js";
-import type { DateValue } from "@internationalized/date";
-import type { Snippet } from "svelte";
 
-export type DatePickerRootPropsWithoutHTML = {
+export type DatePickerRootPropsWithoutHTML = WithChildren<{
 	/**
 	 * The value of the date picker.
 	 *
@@ -246,9 +246,7 @@ export type DatePickerRootPropsWithoutHTML = {
 	 * @defaultValue true
 	 */
 	closeOnDateSelect?: boolean;
-
-	children?: Snippet;
-};
+}>;
 
 export type DatePickerRootProps = DatePickerRootPropsWithoutHTML;
 
@@ -272,12 +270,7 @@ export type {
 	DateFieldSegmentProps as DatePickerSegmentProps,
 } from "$lib/bits/date-field/types.js";
 
-export type DatePickerCalendarPropsWithoutHTML = Omit<
-	WithAsChild<{}, CalendarRootSnippetProps>,
-	"children"
-> & {
-	children?: Snippet<[CalendarRootSnippetProps]>;
-};
+export type DatePickerCalendarPropsWithoutHTML = WithChild<{}, CalendarRootSnippetProps>;
 
 export type DatePickerCalendarProps = DatePickerCalendarPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, DatePickerCalendarPropsWithoutHTML>;

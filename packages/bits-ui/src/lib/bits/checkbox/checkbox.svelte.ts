@@ -10,7 +10,7 @@ import {
 } from "$lib/internal/index.js";
 import { createContext } from "$lib/internal/createContext.js";
 
-const ROOT_ATTR = "data-checkbox-root";
+const CHECKBOX_ROOT_ATTR = "data-checkbox-root";
 
 type CheckboxRootStateProps = WithRefProps<
 	ReadableBoxedValues<{
@@ -76,7 +76,7 @@ class CheckboxRootState {
 				"aria-checked": getAriaChecked(this.checked.value),
 				"aria-required": getAriaRequired(this.required.value),
 				disabled: this.disabled.value,
-				[ROOT_ATTR]: "",
+				[CHECKBOX_ROOT_ATTR]: "",
 				//
 				onclick: this.#onclick,
 				onkeydown: this.#onkeydown,

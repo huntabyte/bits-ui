@@ -1,4 +1,4 @@
-import type { Getter, ReadableBox, WritableBox } from "svelte-toolbelt";
+import type { ReadableBox, WritableBox } from "svelte-toolbelt";
 import type { PinInputRootPropsWithoutHTML } from "./types.js";
 
 const PWM_BADGE_MARGIN_RIGHT = 18;

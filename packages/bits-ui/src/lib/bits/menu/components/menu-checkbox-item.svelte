@@ -7,7 +7,6 @@
 	import { noop } from "$lib/internal/callbacks.js";
 
 	let {
-		asChild,
 		child,
 		children,
 		ref = $bindable(null),
@@ -47,8 +46,8 @@
 	const mergedProps = $derived(mergeProps(restProps, checkboxItemState.props));
 </script>
 
-{#if asChild}
-	{@render child?.({ props: mergedProps })}
+{#if child}
+	{@render child?.({ props: mergedProps, checked })}
 {:else}
 	<div {...mergedProps}>
 		{@render children?.({ checked })}

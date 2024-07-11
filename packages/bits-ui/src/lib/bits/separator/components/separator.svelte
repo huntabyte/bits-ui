@@ -5,7 +5,6 @@
 	import { styleToString } from "$lib/internal/style.js";
 
 	let {
-		asChild,
 		child,
 		children,
 		decorative = false,
@@ -27,7 +26,7 @@
 	});
 </script>
 
-{#if asChild}
+{#if child}
 	{@render child?.({ props: mergedProps })}
 {:else}
 	<div bind:this={ref} {...mergedProps}>

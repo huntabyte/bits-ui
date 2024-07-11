@@ -8,17 +8,30 @@ import type {
 	PrimitiveAnchorAttributes,
 	PrimitiveButtonAttributes,
 	PrimitiveDivAttributes,
-	WithAsChild,
+	WithChild,
 	Without,
 } from "$lib/internal/types.js";
-import type { EventCallback } from "$lib/internal/events.js";
 
-export type ToolbarRootPropsWithoutHTML = WithAsChild<{
+export type ToolbarRootPropsWithoutHTML = WithChild<{
+	/**
+	 * The orientation of the toolbar. This determines how keyboard navigation
+	 * will work within the toolbar.
+	 *
+	 * @defaultValue "horizontal"
+	 */
 	orientation?: Orientation;
+
+	/**
+	 * Whether or not to loop through the toolbar items when navigating with the
+	 * keyboard.
+	 *
+	 * @defaultValue true
+	 */
 	loop?: boolean;
 }>;
 
-export type ToolbarRootProps = ToolbarRootPropsWithoutHTML & PrimitiveDivAttributes;
+export type ToolbarRootProps = ToolbarRootPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, ToolbarRootPropsWithoutHTML>;
 
 export type ToolbarGroupPropsWithoutHTML = Omit<
 	ToggleGroupRootPropsWithoutHTML,
@@ -32,17 +45,17 @@ export type ToolbarGroupItemPropsWithoutHTML = ToggleGroupItemPropsWithoutHTML;
 
 export type ToolbarGroupItemProps = ToggleGroupItemProps;
 
-export type ToolbarButtonPropsWithoutHTML = WithAsChild<{
+export type ToolbarButtonPropsWithoutHTML = WithChild<{
+	/**
+	 * Whether the button is disabled or not.
+	 */
 	disabled?: boolean;
-	onkeydown?: EventCallback<KeyboardEvent>;
 }>;
 
 export type ToolbarButtonProps = ToolbarButtonPropsWithoutHTML &
 	Without<PrimitiveButtonAttributes, ToolbarButtonPropsWithoutHTML>;
 
-export type ToolbarLinkPropsWithoutHTML = WithAsChild<{
-	onkeydown?: EventCallback<KeyboardEvent>;
-}>;
+export type ToolbarLinkPropsWithoutHTML = WithChild;
 
 export type ToolbarLinkProps = ToolbarLinkPropsWithoutHTML &
 	Without<PrimitiveAnchorAttributes, ToolbarLinkPropsWithoutHTML>;

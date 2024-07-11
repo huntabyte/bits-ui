@@ -6,7 +6,6 @@
 
 	let {
 		id = useId(),
-		asChild,
 		children,
 		child,
 		value,
@@ -33,7 +32,7 @@
 	});
 </script>
 
-{#if asChild}
+{#if child}
 	{@render child?.({ props: mergedProps, checked: itemState.checked })}
 {:else}
 	<button {...mergedProps}>

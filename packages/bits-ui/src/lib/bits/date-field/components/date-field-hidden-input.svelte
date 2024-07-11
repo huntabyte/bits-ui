@@ -1,6 +1,6 @@
 <script lang="ts">
-	import VisuallyHidden from "$lib/bits/utilities/visually-hidden/visually-hidden.svelte";
 	import { useDateFieldHiddenInput } from "../date-field.svelte.js";
+	import VisuallyHidden from "$lib/bits/utilities/visually-hidden/visually-hidden.svelte";
 
 	const hiddenInputState = useDateFieldHiddenInput();
 </script>

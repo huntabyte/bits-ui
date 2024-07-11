@@ -1,15 +1,15 @@
-import type { Snippet } from "svelte";
 import type { MenuContentProps, MenuContentPropsWithoutHTML } from "../menu/types.js";
 import type {
 	OnChangeFn,
 	PrimitiveButtonAttributes,
 	PrimitiveDivAttributes,
-	WithAsChild,
+	WithChild,
+	WithChildren,
 	Without,
 } from "$lib/internal/types.js";
 import type { Direction } from "$lib/shared/index.js";
 
-export type MenubarRootPropsWithoutHTML = WithAsChild<{
+export type MenubarRootPropsWithoutHTML = WithChild<{
 	/**
 	 * The reading direction of the menubar.
 	 */
@@ -35,19 +35,22 @@ export type MenubarRootPropsWithoutHTML = WithAsChild<{
 export type MenubarRootProps = MenubarRootPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, MenubarRootPropsWithoutHTML>;
 
-export type MenubarMenuPropsWithoutHTML = {
+export type MenubarMenuPropsWithoutHTML = WithChildren<{
 	/**
 	 * The `value` assigned to the menu. Used to programmatically control the menu's open state
 	 * within the menubar.
 	 */
 	value?: string;
-
-	children?: Snippet;
-};
+}>;
 
 export type MenubarMenuProps = MenubarMenuPropsWithoutHTML;
 
-export type MenubarTriggerPropsWithoutHTML = WithAsChild<{
+export type MenubarTriggerPropsWithoutHTML = WithChild<{
+	/**
+	 * Whether the trigger for the menubar item is disabled.
+	 *
+	 * @defaultValue false
+	 */
 	disabled?: boolean;
 }>;
 

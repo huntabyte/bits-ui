@@ -1,4 +1,3 @@
-import type { Snippet } from "svelte";
 import type { PopperLayerProps } from "../utilities/popper-layer/types.js";
 import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
 import type {
@@ -6,7 +5,7 @@ import type {
 	PrimitiveButtonAttributes,
 	PrimitiveDivAttributes,
 	PrimitiveSpanAttributes,
-	WithAsChild,
+	WithChild,
 	WithChildren,
 	Without,
 } from "$lib/internal/types.js";
@@ -62,15 +61,17 @@ export type SelectRootPropsWithoutHTML = WithChildren<{
 
 export type SelectRootProps = SelectRootPropsWithoutHTML;
 
-export type SelectContentImplPropsWithoutHTML = WithAsChild<PopperLayerProps> & {
-	/**
-	 *  The positioning mode to use
-	 *
-	 *  `item-aligned` - behaves similarly to a native MacOS menu by positioning content relative to the active item. <br>
-	 *  `floating  (default)` - positions content in the same way as our other primitives, for example `Popover` or `DropdownMenu`.
-	 */
-	position?: "item-aligned" | "floating";
-};
+export type SelectContentImplPropsWithoutHTML = WithChild<
+	PopperLayerProps & {
+		/**
+		 *  The positioning mode to use
+		 *
+		 *  `item-aligned` - behaves similarly to a native MacOS menu by positioning content relative to the active item. <br>
+		 *  `floating  (default)` - positions content in the same way as our other primitives, for example `Popover` or `DropdownMenu`.
+		 */
+		position?: "item-aligned" | "floating";
+	}
+>;
 
 export type SelectContentImplProps = SelectContentImplPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, SelectContentImplPropsWithoutHTML>;
@@ -85,40 +86,37 @@ export type SelectContentPropsWithoutHTML = SelectContentImplPropsWithoutHTML & 
 export type SelectContentProps = SelectContentPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, SelectContentPropsWithoutHTML>;
 
-export type SelectItemPropsWithoutHTML = Omit<
-	WithAsChild<
-		{
-			/**
-			 * The value of the item.
-			 */
-			value: string;
+export type SelectItemSnippetProps = { selected: boolean };
 
-			/**
-			 * Whether the item is disabled.
-			 *
-			 * @defaultValue false
-			 */
-			disabled?: boolean;
+export type SelectItemPropsWithoutHTML = WithChild<
+	{
+		/**
+		 * The value of the item.
+		 */
+		value: string;
 
-			/**
-			 * Optionally provide text to use for typeahead purposes.
-			 *
-			 * By default, the typeahead behavior will use the `textContent` of the `SelectItemText`
-			 * component. Use this prop if the text content is not suitable for typeahead.
-			 */
-			textValue?: string;
-		},
-		{ selected: boolean }
-	>,
-	"children"
-> & {
-	children?: Snippet<[{ selected: boolean }]>;
-};
+		/**
+		 * Whether the item is disabled.
+		 *
+		 * @defaultValue false
+		 */
+		disabled?: boolean;
+
+		/**
+		 * Optionally provide text to use for typeahead purposes.
+		 *
+		 * By default, the typeahead behavior will use the `textContent` of the `SelectItemText`
+		 * component. Use this prop if the text content is not suitable for typeahead.
+		 */
+		textValue?: string;
+	},
+	SelectItemSnippetProps
+>;
 
 export type SelectItemProps = SelectItemPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, SelectItemPropsWithoutHTML>;
 
-export type SelectTriggerPropsWithoutHTML = WithAsChild<{
+export type SelectTriggerPropsWithoutHTML = WithChild<{
 	/**
 	 * Whether the trigger is disabled.
 	 *
@@ -130,7 +128,7 @@ export type SelectTriggerPropsWithoutHTML = WithAsChild<{
 export type SelectTriggerProps = SelectTriggerPropsWithoutHTML &
 	Without<PrimitiveButtonAttributes, SelectTriggerPropsWithoutHTML>;
 
-export type SelectValuePropsWithoutHTML = WithAsChild<{
+export type SelectValuePropsWithoutHTML = WithChild<{
 	/**
 	 * The content to render inside the `Select.Value` when no `value` is set.
 	 */
@@ -140,39 +138,39 @@ export type SelectValuePropsWithoutHTML = WithAsChild<{
 export type SelectValueProps = SelectValuePropsWithoutHTML &
 	Without<Omit<PrimitiveSpanAttributes, "id">, SelectValuePropsWithoutHTML>;
 
-export type SelectItemTextPropsWithoutHTML = WithAsChild<{}>;
+export type SelectItemTextPropsWithoutHTML = WithChild;
 
 export type SelectItemTextProps = SelectItemTextPropsWithoutHTML &
 	Without<PrimitiveSpanAttributes, SelectItemTextPropsWithoutHTML>;
 
-export type SelectViewportPropsWithoutHTML = WithAsChild<{}>;
+export type SelectViewportPropsWithoutHTML = WithChild;
 export type SelectViewportProps = SelectViewportPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, SelectViewportPropsWithoutHTML>;
 
 export type SelectPortalPropsWithoutHTML = PortalProps;
 export type SelectPortalProps = SelectPortalPropsWithoutHTML;
 
-export type SelectScrollButtonPropsWithoutHTML = WithAsChild<{}>;
+export type SelectScrollButtonPropsWithoutHTML = WithChild;
 
 export type SelectScrollButtonProps = SelectScrollButtonPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, SelectScrollButtonPropsWithoutHTML>;
 
-export type SelectIconPropsWithoutHTML = WithAsChild<{}>;
+export type SelectIconPropsWithoutHTML = WithChild;
 
 export type SelectIconProps = SelectIconPropsWithoutHTML &
 	Without<PrimitiveSpanAttributes, SelectIconPropsWithoutHTML>;
 
-export type SelectGroupPropsWithoutHTML = WithAsChild<{}>;
+export type SelectGroupPropsWithoutHTML = WithChild;
 
 export type SelectGroupProps = SelectGroupPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, SelectGroupPropsWithoutHTML>;
 
-export type SelectGroupLabelPropsWithoutHTML = WithAsChild<{}>;
+export type SelectGroupLabelPropsWithoutHTML = WithChild;
 
 export type SelectGroupLabelProps = SelectGroupLabelPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, SelectGroupLabelPropsWithoutHTML>;
 
-export type SelectSeparatorPropsWithoutHTML = WithAsChild<{}>;
+export type SelectSeparatorPropsWithoutHTML = WithChild;
 
 export type SelectSeparatorProps = SelectSeparatorPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, SelectSeparatorPropsWithoutHTML>;
