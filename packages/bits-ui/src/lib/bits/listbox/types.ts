@@ -1,13 +1,13 @@
 import type {
 	OnChangeFn,
 	PrimitiveDivAttributes,
-	WithAsChild,
+	WithChild,
+	WithChildren,
 	Without,
 } from "$lib/internal/types.js";
 import type { Orientation } from "$lib/shared/index.js";
-import type { Snippet } from "svelte";
 
-export type ListboxRootBasePropsWithoutHTML = {
+export type ListboxRootBasePropsWithoutHTML = WithChildren<{
 	/**
 	 * Whether to loop through the listbox items when reaching the end via keyboard.
 	 *
@@ -34,11 +34,8 @@ export type ListboxRootBasePropsWithoutHTML = {
 	/**
 	 * Whether the listbox is disabled.
 	 */
-
 	disabled?: boolean;
-
-	children?: Snippet;
-};
+}>;
 
 export type ListboxSingleRootPropsWithoutHTML = ListboxRootBasePropsWithoutHTML & {
 	/**
@@ -80,54 +77,49 @@ export type ListboxRootPropsWithoutHTML =
 
 export type ListboxRootProps = ListboxRootPropsWithoutHTML;
 
-export type ListboxContentPropsWithoutHTML = WithAsChild<{}>;
+export type ListboxContentPropsWithoutHTML = WithChild;
 
 export type ListboxContentProps = ListboxContentPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, ListboxContentPropsWithoutHTML>;
 
 export type ListboxItemSnippetProps = { selected: boolean };
 
-export type ListboxItemPropsWithoutHTML = Omit<
-	WithAsChild<
-		{
-			/**
-			 * The value of the listbox item. This is used to populate the `value` prop of the
-			 * `Listbox.Root` component.
-			 */
-			value: string;
+export type ListboxItemPropsWithoutHTML = WithChild<
+	{
+		/**
+		 * The value of the listbox item. This is used to populate the `value` prop of the
+		 * `Listbox.Root` component.
+		 */
+		value: string;
 
-			/**
-			 * The label of the listbox item. This will be rendered as the text content of the listbox item
-			 * by default. If a child is provided, this will only be used for typeahead purposes.
-			 */
-			label?: string;
+		/**
+		 * The label of the listbox item. This will be rendered as the text content of the listbox item
+		 * by default. If a child is provided, this will only be used for typeahead purposes.
+		 */
+		label?: string;
 
-			/**
-			 * Whether the listbox item is disabled, which prevents users from interacting with it.
-			 */
-			disabled?: boolean;
-		},
-		ListboxItemSnippetProps
-	>,
-	"children"
-> & {
-	children?: Snippet<[ListboxItemSnippetProps]>;
-};
+		/**
+		 * Whether the listbox item is disabled, which prevents users from interacting with it.
+		 */
+		disabled?: boolean;
+	},
+	ListboxItemSnippetProps
+>;
 
 export type ListboxItemProps = ListboxItemPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, ListboxItemPropsWithoutHTML>;
 
-export type ListboxGroupPropsWithoutHTML = WithAsChild<{}>;
+export type ListboxGroupPropsWithoutHTML = WithChild;
 
 export type ListboxGroupProps = ListboxGroupPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, ListboxGroupPropsWithoutHTML>;
 
-export type ListboxGroupLabelPropsWithoutHTML = WithAsChild<{}>;
+export type ListboxGroupLabelPropsWithoutHTML = WithChild;
 
 export type ListboxGroupLabelProps = ListboxGroupLabelPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, ListboxGroupLabelPropsWithoutHTML>;
 
-export type ListboxLabelPropsWithoutHTML = WithAsChild<{}>;
+export type ListboxLabelPropsWithoutHTML = WithChild;
 
 export type ListboxLabelProps = ListboxLabelPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, ListboxLabelPropsWithoutHTML>;

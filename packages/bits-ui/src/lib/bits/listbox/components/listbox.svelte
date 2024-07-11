@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { noop } from "$lib/internal/callbacks.js";
-	import { box, type WritableBox } from "svelte-toolbelt";
+	import { type WritableBox, box } from "svelte-toolbelt";
 	import type { RootProps } from "../index.js";
 	import { useListboxRoot } from "../listbox.svelte.js";
+	import { noop } from "$lib/internal/callbacks.js";
 
 	let {
 		type,
@@ -17,7 +17,7 @@
 
 	value === undefined && (value = type === "single" ? "" : []);
 
-	const rootState = useListboxRoot({
+	useListboxRoot({
 		type,
 		value: box.with(
 			() => value!,
@@ -26,7 +26,7 @@
 				onValueChange(v as any);
 			}
 		) as WritableBox<string> | WritableBox<string[]>,
-		disabled: box.with(() => false),
+		disabled: box.with(() => disabled),
 		autoFocus: box.with(() => autoFocus),
 		loop: box.with(() => loop),
 		orientation: box.with(() => orientation),

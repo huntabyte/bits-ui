@@ -1,12 +1,11 @@
 <script lang="ts">
-	import { useId } from "$lib/internal/useId.svelte.js";
 	import { box } from "svelte-toolbelt";
 	import type { ItemProps } from "../index.js";
 	import { useListboxItem } from "../listbox.svelte.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {
-		asChild,
 		children,
 		child,
 		id = useId(),
@@ -36,7 +35,7 @@
 	const mergedProps = $derived(mergeProps(restProps, itemState.props));
 </script>
 
-{#if asChild}
+{#if child}
 	{@render child?.({ props: mergedProps, selected: itemState.isSelected })}
 {:else}
 	<div {...mergedProps}>

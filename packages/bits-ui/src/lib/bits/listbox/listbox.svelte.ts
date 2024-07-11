@@ -1,3 +1,6 @@
+import { onDestroy, onMount } from "svelte";
+import { SvelteSet } from "svelte/reactivity";
+import { focusFirst } from "../utilities/focus-scope/utils.js";
 import {
 	getAriaDisabled,
 	getAriaSelected,
@@ -5,23 +8,16 @@ import {
 	getDataOrientation,
 	getDataSelected,
 } from "$lib/internal/attrs.js";
-import {
-	type Box,
-	type ReadableBoxedValues,
-	type WritableBoxedValues,
-} from "$lib/internal/box.svelte.js";
+import type { Box, ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { createContext } from "$lib/internal/createContext.js";
 import { isHTMLElement } from "$lib/internal/is.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
-import { useRovingFocus, type UseRovingFocusReturn } from "$lib/internal/useRovingFocus.svelte.js";
+import { type UseRovingFocusReturn, useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
 import { useTypeahead } from "$lib/internal/useTypeahead.svelte.js";
 import type { Orientation } from "$lib/shared/index.js";
-import { onDestroy, onMount } from "svelte";
-import { focusFirst } from "../utilities/focus-scope/utils.js";
 import { afterTick } from "$lib/internal/afterTick.js";
-import { SvelteSet } from "svelte/reactivity";
 
 const LISTBOX_ITEM_ATTR = "data-listbox-item";
 const LISTBOX_CONTENT_ATTR = "data-listbox-content";
@@ -48,10 +44,6 @@ class ListboxRootBaseState {
 		this.loop = props.loop;
 		this.orientation = props.orientation;
 		this.autoFocus = props.autoFocus;
-
-		$effect(() => {
-			console.log([...this.valueOptions]);
-		});
 	}
 }
 
@@ -189,7 +181,6 @@ export class ListboxContentState {
 						}
 					}
 				} else if (!this.root.isMulti && this.root.value.value) {
-					console.log(candidateNodes);
 					const candidateNode = candidateNodes.find(
 						(node) => node.dataset.value === this.root.value.value
 					);
