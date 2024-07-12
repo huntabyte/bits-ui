@@ -7,7 +7,7 @@ import type {
 } from "$lib/internal/index.js";
 import type { Orientation } from "$lib/index.js";
 
-type BaseToggleGroupProps = {
+export type BaseToggleGroupRootProps = {
 	/**
 	 * Whether the toggle group is disabled or not.
 	 *
@@ -39,29 +39,29 @@ type BaseToggleGroupProps = {
 	rovingFocus?: boolean;
 };
 
-export type SingleToggleGroupPropsWithoutHTML = WithChild<
-	BaseToggleGroupProps & {
+export type SingleToggleGroupRootPropsWithoutHTML = WithChild<
+	BaseToggleGroupRootProps & {
 		type: "single";
 		value?: string;
 		onValueChange?: OnChangeFn<string>;
 	}
 >;
 
-export type SingleToggleGroupRootProps = SingleToggleGroupPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, SingleToggleGroupPropsWithoutHTML>;
+export type SingleToggleGroupRootProps = SingleToggleGroupRootPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, SingleToggleGroupRootPropsWithoutHTML>;
 
-export type MultipleToggleGroupPropsWithoutHTML = WithChild<BaseToggleGroupProps> & {
+export type MultipleToggleGroupRootPropsWithoutHTML = WithChild<BaseToggleGroupRootProps> & {
 	type: "multiple";
 	value?: string[];
 	onValueChange?: OnChangeFn<string[]>;
 };
 
-export type MultipleToggleGroupRootProps = MultipleToggleGroupPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, MultipleToggleGroupPropsWithoutHTML>;
+export type MultipleToggleGroupRootProps = MultipleToggleGroupRootPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, MultipleToggleGroupRootPropsWithoutHTML>;
 
 export type ToggleGroupRootPropsWithoutHTML =
-	| SingleToggleGroupPropsWithoutHTML
-	| MultipleToggleGroupPropsWithoutHTML;
+	| SingleToggleGroupRootPropsWithoutHTML
+	| MultipleToggleGroupRootPropsWithoutHTML;
 
 export type ToggleGroupRootProps = ToggleGroupRootPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, ToggleGroupRootPropsWithoutHTML>;

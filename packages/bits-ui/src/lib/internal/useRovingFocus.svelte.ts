@@ -118,5 +118,6 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 		getTabIndex,
 		handleKeydown,
 		focusFirstCandidate,
+		currentTabStopId,
 	};
 }
