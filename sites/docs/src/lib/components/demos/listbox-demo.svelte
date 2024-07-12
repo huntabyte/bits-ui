@@ -31,7 +31,7 @@
 <div class="flex flex-col gap-4">
 	<Listbox.Root type="multiple" bind:value>
 		<Listbox.Content
-			class="max-h-80 w-full min-w-[296px] max-w-[296px] overflow-y-scroll rounded-xl border border-muted bg-background px-1 py-3 shadow-popover outline-none"
+			class="max-h-80 w-full min-w-[296px] max-w-[296px] overflow-y-scroll rounded-xl border border-muted bg-background px-1 py-3 shadow-card outline-none"
 		>
 			{#each themes as item}
 				<Listbox.Item
