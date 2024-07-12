@@ -1,53 +1,60 @@
-<script lang="ts">
+<script lang="ts" context="module">
 	import { Slider } from "$lib/index.js";
 
-	type $$Props = Slider.Props;
-	export let value: $$Props["value"] = [30];
-	export let min = 0;
-	export let max = 100;
-	export let step = 1;
-	export let resetMin: number | undefined = undefined;
-	export let resetMax: number | undefined = undefined;
-	export let resetStep: number | undefined = undefined;
+	export type SliderTestProps = Slider.RootProps & {
+		resetMin?: number;
+		resetMax?: number;
+		resetStep?: number;
+	};
+</script>
 
-	$: if (resetMin) {
-		min = resetMin;
-	}
+<script lang="ts">
+	let {
+		value = [30],
+		min = 0,
+		max = 100,
+		step = 1,
+		resetMin,
+		resetMax,
+		resetStep,
+		...restProps
+	}: SliderTestProps = $props();
 
-	$: if (resetMax) {
-		max = resetMax;
-	}
+	$effect(() => {
+		if (resetMin !== undefined) {
+			min = resetMin;
+		}
+	});
 
-	$: if (resetStep) {
-		step = resetStep;
-	}
+	$effect(() => {
+		if (resetMax !== undefined) [(max = resetMax)];
+	});
+
+	$effect(() => {
+		if (resetStep !== undefined) {
+			step = resetStep;
+		}
+	});
 </script>
 
 <main>
-	<Slider.Root
-		data-testid="root"
-		bind:value
-		{...$$restProps}
-		let:ticks
-		let:thumbs
-		{min}
-		{max}
-		{step}
-	>
-		<span class="bg-primary/20 relative h-1.5 w-full grow overflow-hidden rounded-full">
-			<Slider.Range data-testid="range" class="bg-primary absolute h-full" />
-		</span>
-		{#each thumbs as thumb}
-			<Slider.Thumb
-				{thumb}
-				aria-label="age"
-				data-testid="thumb"
-				class="border-primary/50 focus-visible:ring-ring block h-4 w-4 rounded-full border bg-background shadow transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50"
-			/>
-		{/each}
+	<Slider.Root data-testid="root" bind:value {...restProps} {min} {max} {step}>
+		{#snippet children({ thumbs, ticks })}
+			<span class="bg-primary/20 relative h-1.5 w-full grow overflow-hidden rounded-full">
+				<Slider.Range data-testid="range" class="bg-primary absolute h-full" />
+			</span>
+			{#each thumbs as thumb}
+				<Slider.Thumb
+					index={thumb}
+					aria-label="age"
+					data-testid="thumb"
+					class="border-primary/50 focus-visible:ring-ring block h-4 w-4 rounded-full border bg-background shadow transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50"
+				/>
+			{/each}
 
-		{#each ticks as tick}
-			<Slider.Tick data-testid="tick" {tick} />
-		{/each}
+			{#each ticks as tick}
+				<Slider.Tick data-testid="tick" index={tick} />
+			{/each}
+		{/snippet}
 	</Slider.Root>
 </main>

@@ -1,26 +1,32 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { getCtx } from "../ctx.js";
+	import { box } from "svelte-toolbelt";
 	import type { RangeProps } from "../index.js";
+	import { useSliderRange } from "../slider.svelte.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
 
-	type $$Props = RangeProps;
+	let {
+		children,
+		child,
+		ref = $bindable(null),
+		id = useId(),
+		...restProps
+	}: RangeProps = $props();
 
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
-
-	const {
-		elements: { range },
-		getAttrs,
-	} = getCtx();
-
-	const attrs = getAttrs("range");
-
-	$: builder = $range;
-	$: Object.assign(builder, attrs);
+	const rangeState = useSliderRange({
+		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
+	});
+	const mergedProps = $derived(mergeProps(restProps, rangeState.props));
 </script>
 
-{#if asChild}
-	<slot {builder} />
+{#if child}
+	{@render child?.({ props: mergedProps })}
 {:else}
-	<span bind:this={ref} use:melt={builder} {...$$restProps} />
+	<span {...mergedProps}>
+		{@render children?.()}
+	</span>
 {/if}
