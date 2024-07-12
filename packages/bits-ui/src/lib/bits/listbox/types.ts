@@ -75,6 +75,10 @@ export type ListboxRootPropsWithoutHTML =
 	| ListboxSingleRootPropsWithoutHTML
 	| ListboxMultipleRootPropsWithoutHTML;
 
+export type ListboxSingleRootProps = ListboxSingleRootPropsWithoutHTML;
+
+export type ListboxMultipleRootProps = ListboxMultipleRootPropsWithoutHTML;
+
 export type ListboxRootProps = ListboxRootPropsWithoutHTML;
 
 export type ListboxContentPropsWithoutHTML = WithChild;
