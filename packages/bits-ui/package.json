@@ -63,7 +63,7 @@
 		"clsx": "^2.1.0",
 		"esm-env": "^1.0.0",
 		"nanoid": "^5.0.5",
-		"runed": "^0.12.1",
+		"runed": "^0.15.0",
 		"scule": "^1.3.0",
 		"style-object-to-css-string": "^1.1.3",
 		"style-to-object": "^1.0.6",

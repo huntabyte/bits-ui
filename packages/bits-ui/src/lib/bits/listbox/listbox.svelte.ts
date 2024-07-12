@@ -1,5 +1,6 @@
 import { onDestroy, onMount } from "svelte";
 import { SvelteSet } from "svelte/reactivity";
+import { IsFocusWithin } from "runed";
 import { focusFirst } from "../utilities/focus-scope/utils.js";
 import {
 	getAriaDisabled,
@@ -136,6 +137,7 @@ export class ListboxContentState {
 	rovingFocusGroup: UseRovingFocusReturn;
 	#handleTypeaheadSearch: ReturnType<typeof useTypeahead>["handleTypeaheadSearch"];
 	focusedItemId = $state("");
+	focusWithin = new IsFocusWithin(() => this.ref.value ?? undefined);
 
 	constructor(props: ListboxContentStateProps, root: ListboxRootState) {
 		this.id = props.id;
@@ -190,10 +192,52 @@ export class ListboxContentState {
 					}
 				}
 				const firstCandidate = candidateNodes[0];
-				if (firstCandidate) [(this.focusedItemId = firstCandidate.id)];
+				if (firstCandidate) {
+					this.focusedItemId = firstCandidate.id;
+				}
+			}
+		});
+
+		$effect(() => {
+			if (!this.focusWithin.current) {
+				this.focusedItemId = this.getNodeIdToFocus() ?? "";
 			}
 		});
 	}
+
+	/**
+	 * Get the node to focus when the listbox loses focus and then
+	 * regains focus. In the case of a single-select listbox, if an item is
+	 * selected, we want to focus that item. If no item is selected, we want to
+	 * focus the first item in the list.
+	 *
+	 * In the case of a multi-select listbox, if at least one or more items are
+	 * selected, we want to focus the first selected item. If no items are selected,
+	 * we want to focus the first item in the list.
+	 */
+	getNodeIdToFocus = () => {
+		const candidateNodes = this.getCandidateNodes();
+		if (this.root.isMulti && this.root.value.value.length) {
+			const firstValue = this.root.value.value[0];
+			if (firstValue !== undefined) {
+				const candidateNode = candidateNodes.find(
+					(node) => node.dataset.value === firstValue
+				);
+				if (candidateNode) {
+					return candidateNode.id;
+				}
+			}
+		} else if (!this.root.isMulti && this.root.value.value) {
+			const candidateNode = candidateNodes.find(
+				(node) => node.dataset.value === this.root.value.value
+			);
+			if (candidateNode) {
+				return candidateNode.id;
+			}
+		}
+		const firstCandidate = candidateNodes[0];
+		return firstCandidate?.id;
+	};
 
 	isFocusedItem = (id: string) => {
 		return this.focusedItemId === id;
