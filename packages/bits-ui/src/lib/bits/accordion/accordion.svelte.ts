@@ -1,6 +1,7 @@
 import {
 	type Box,
 	type ReadableBoxedValues,
+	type WithRefProps,
 	type WritableBoxedValues,
 	afterTick,
 	getAriaDisabled,
@@ -25,15 +26,13 @@ const ACCORDION_HEADER_ATTR = "data-accordion-header";
 // BASE
 //
 
-type AccordionBaseStateProps = ReadableBoxedValues<{
-	id: string;
-	disabled: boolean;
-	orientation: Orientation;
-	loop: boolean;
-}> &
-	WritableBoxedValues<{
-		ref: HTMLElement | null;
-	}>;
+type AccordionBaseStateProps = WithRefProps<
+	ReadableBoxedValues<{
+		disabled: boolean;
+		orientation: Orientation;
+		loop: boolean;
+	}>
+>;
 
 class AccordionBaseState {
 	#id: AccordionBaseStateProps["id"];
@@ -130,15 +129,14 @@ export class AccordionMultiState extends AccordionBaseState {
 // ITEM
 //
 
-type AccordionItemStateProps = ReadableBoxedValues<{
-	value: string;
-	disabled: boolean;
-	id: string;
-}> & {
-	rootState: AccordionState;
-} & WritableBoxedValues<{
-		ref: HTMLElement | null;
-	}>;
+type AccordionItemStateProps = WithRefProps<
+	ReadableBoxedValues<{
+		value: string;
+		disabled: boolean;
+	}> & {
+		rootState: AccordionState;
+	}
+>;
 
 export class AccordionItemState {
 	#id: AccordionItemStateProps["id"];
@@ -190,13 +188,11 @@ export class AccordionItemState {
 // TRIGGER
 //
 
-type AccordionTriggerStateProps = ReadableBoxedValues<{
-	disabled: boolean;
-	id: string;
-}> &
-	WritableBoxedValues<{
-		ref: HTMLElement | null;
-	}>;
+type AccordionTriggerStateProps = WithRefProps<
+	ReadableBoxedValues<{
+		disabled: boolean;
+	}>
+>;
 
 class AccordionTriggerState {
 	#ref: AccordionTriggerStateProps["ref"];
@@ -259,14 +255,11 @@ class AccordionTriggerState {
 // CONTENT
 //
 
-type AccordionContentStateProps = ReadableBoxedValues<{
-	forceMount: boolean;
-	id: string;
-}> &
-	WritableBoxedValues<{
-		ref: HTMLElement | null;
-	}>;
-
+type AccordionContentStateProps = WithRefProps<
+	ReadableBoxedValues<{
+		forceMount: boolean;
+	}>
+>;
 class AccordionContentState {
 	item: AccordionItemState;
 	#ref: AccordionContentStateProps["ref"];
@@ -348,13 +341,11 @@ class AccordionContentState {
 	);
 }
 
-type AccordionHeaderStateProps = ReadableBoxedValues<{
-	level: 1 | 2 | 3 | 4 | 5 | 6;
-	id: string;
-}> &
-	WritableBoxedValues<{
-		ref: HTMLElement | null;
-	}>;
+type AccordionHeaderStateProps = WithRefProps<
+	ReadableBoxedValues<{
+		level: 1 | 2 | 3 | 4 | 5 | 6;
+	}>
+>;
 
 class AccordionHeaderState {
 	#id: AccordionHeaderStateProps["id"];
@@ -394,18 +385,16 @@ class AccordionHeaderState {
 
 type AccordionState = AccordionSingleState | AccordionMultiState;
 
-type InitAccordionProps = {
-	type: "single" | "multiple";
-	value: Box<string> | Box<string[]>;
-} & ReadableBoxedValues<{
-	id: string;
-	disabled: boolean;
-	orientation: Orientation;
-	loop: boolean;
-}> &
-	WritableBoxedValues<{
-		ref: HTMLElement | null;
-	}>;
+type InitAccordionProps = WithRefProps<
+	{
+		type: "single" | "multiple";
+		value: Box<string> | Box<string[]>;
+	} & ReadableBoxedValues<{
+		disabled: boolean;
+		orientation: Orientation;
+		loop: boolean;
+	}>
+>;
 
 const [setAccordionRootContext, getAccordionRootContext] =
 	createContext<AccordionState>("Accordion.Root");

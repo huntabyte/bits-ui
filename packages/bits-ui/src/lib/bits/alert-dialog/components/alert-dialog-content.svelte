@@ -10,7 +10,7 @@
 	import { useId } from "$lib/internal/useId.svelte.js";
 	import { noop } from "$lib/internal/callbacks.js";
 	import ScrollLock from "$lib/bits/utilities/scroll-lock/scroll-lock.svelte";
-	import { useDialogContent } from "$lib/bits/date-range-picker/dialog/dialog.svelte.js";
+	import { useDialogContent } from "$lib/bits/dialog/dialog.svelte.js";
 
 	let {
 		id = useId(),

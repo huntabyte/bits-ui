@@ -1,3 +1,6 @@
+/**
+ * Modified from https://github.com/adobe/react-spectrum/blob/main/packages/%40react-aria/utils/src/mergeProps.ts (see NOTICE.txt for source)
+ */
 import { clsx } from "clsx";
 import { type EventCallback, composeHandlers } from "./events.js";
 import { styleToString } from "./style.js";
@@ -14,6 +17,7 @@ type TupleTypes<T> = { [P in keyof T]: T[P] } extends { [key: number]: infer V }
 	? NullToObject<V>
 	: never;
 type NullToObject<T> = T extends null | undefined ? {} : T;
+// eslint-disable-next-line ts/no-explicit-any
 type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (k: infer I) => void
 	? I
 	: never;
@@ -27,7 +31,6 @@ type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
  * - Handles a bug with Svelte where setting the `hidden` attribute to `false` doesn't remove it
  * - Overrides other values with the last one
  *
- * Modified from https://github.com/adobe/react-spectrum/blob/main/packages/%40react-aria/utils/src/mergeProps.ts
  */
 export function mergeProps<T extends PropsArg[]>(
 	...args: T
