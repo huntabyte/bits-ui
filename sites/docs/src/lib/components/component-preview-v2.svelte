@@ -6,24 +6,14 @@
 	type Props = {
 		preview: Snippet;
 		children: Snippet;
-		invert?: boolean;
 	};
 
-	let { preview, children, invert = false }: Props = $props();
+	let { preview, children }: Props = $props();
 </script>
 
-{#if invert}
-	<DemoCodeContainer>
-		{@render children()}
-	</DemoCodeContainer>
-	<DemoContainer>
-		{@render preview()}
-	</DemoContainer>
-{:else}
-	<DemoContainer>
-		{@render preview()}
-	</DemoContainer>
-	<DemoCodeContainer>
-		{@render children()}
-	</DemoCodeContainer>
-{/if}
+<DemoContainer>
+	{@render preview()}
+</DemoContainer>
+<DemoCodeContainer>
+	{@render children()}
+</DemoCodeContainer>

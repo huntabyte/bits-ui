@@ -4,15 +4,17 @@ description: Allows users to select a single option from a list of mutually excl
 ---
 
 <script>
-	import { APISection, ComponentPreview, RadioGroupDemo } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, RadioGroupDemo } from '$lib/components/index.js'
 	export let schemas;
 </script>
 
-<ComponentPreview name="radio-group-demo" comp="RadioGroup">
+<ComponentPreviewV2 name="radio-group-demo" comp="RadioGroup">
 
-<RadioGroupDemo slot="preview" />
+{#snippet preview()}
+<RadioGroupDemo />
+{/snippet}
 
-</ComponentPreview>
+</ComponentPreviewV2>
 
 ## Structure
 

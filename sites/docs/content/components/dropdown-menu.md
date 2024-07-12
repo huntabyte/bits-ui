@@ -4,14 +4,16 @@ description: Displays a menu of items that users can select from when triggered.
 ---
 
 <script>
-	import { APISection, ComponentPreview, DropdownMenuDemo } from '$lib/components'
+	import { APISection, ComponentPreviewV2, DropdownMenuDemo } from '$lib/components'
 	export let schemas;
 </script>
 
-<ComponentPreview name="dropdown-menu-demo" comp="DropdownMenu">
+<ComponentPreviewV2 name="dropdown-menu-demo" comp="DropdownMenu">
 
-<DropdownMenuDemo slot="preview" />
+{#snippet preview()}
+<DropdownMenuDemo />
+{/snippet}
 
-</ComponentPreview>
+</ComponentPreviewV2>
 
 <APISection {schemas} />

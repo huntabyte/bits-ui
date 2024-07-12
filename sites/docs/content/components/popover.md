@@ -4,15 +4,17 @@ description: Display supplementary content or information when users interact wi
 ---
 
 <script>
-	import { APISection, ComponentPreview, PopoverDemo } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, PopoverDemo } from '$lib/components/index.js'
 	export let schemas;
 </script>
 
-<ComponentPreview name="popover-demo" comp="Popover">
+<ComponentPreviewV2 name="popover-demo" comp="Popover">
 
-<PopoverDemo slot="preview" />
+{#snippet preview()}
+<PopoverDemo />
+{/snippet}
 
-</ComponentPreview>
+</ComponentPreviewV2>
 
 ## Structure
 

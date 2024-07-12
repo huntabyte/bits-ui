@@ -4,15 +4,17 @@ description: Enables users to input specific dates within a designated field.
 ---
 
 <script>
-	import { APISection, ComponentPreview, DateFieldDemo } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, DateFieldDemo } from '$lib/components/index.js'
 	export let schemas;
 </script>
 
-<ComponentPreview name="date-field-demo" comp="Date Field">
+<ComponentPreviewV2 name="date-field-demo" comp="Date Field">
 
-<DateFieldDemo slot="preview" />
+{#snippet preview()}
+<DateFieldDemo />
+{/snippet}
 
-</ComponentPreview>
+</ComponentPreviewV2>
 
 -   add docs about leap years/birthdays and placeholder date
 

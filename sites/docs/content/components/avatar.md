@@ -4,15 +4,17 @@ description: Represents a user or entity with a recognizable image or placeholde
 ---
 
 <script>
-	import { APISection, ComponentPreview, AvatarDemo } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, AvatarDemo } from '$lib/components/index.js'
 	export let schemas;
 </script>
 
-<ComponentPreview name="avatar-demo" comp="Avatar">
+<ComponentPreviewV2 name="avatar-demo" comp="Avatar">
 
-<AvatarDemo slot="preview" />
+{#snippet preview()}
+<AvatarDemo />
+{/snippet}
 
-</ComponentPreview>
+</ComponentPreviewV2>
 
 ## Structure
 

@@ -4,15 +4,17 @@ description: Facilitates the selection of date ranges through an input and calen
 ---
 
 <script>
-	import { APISection, ComponentPreview, DateRangePickerDemo } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, DateRangePickerDemo } from '$lib/components/index.js'
 	export let schemas;
 </script>
 
-<ComponentPreview name="date-range-picker-demo" comp="Date Range Picker">
+<ComponentPreviewV2 name="date-range-picker-demo" comp="Date Range Picker">
 
-<DateRangePickerDemo slot="preview" />
+{#snippet preview()}
+<DateRangePickerDemo />
+{/snippet}
 
-</ComponentPreview>
+</ComponentPreviewV2>
 
 ## Structure
 
