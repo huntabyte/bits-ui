@@ -1,6 +1,6 @@
-import { fireEvent, type Matcher, type MatcherOptions } from "@testing-library/svelte";
-import { getKbd, sleep } from "$lib/internal/index.js";
+import { type Matcher, type MatcherOptions, fireEvent } from "@testing-library/svelte";
 import { userEvent } from "@testing-library/user-event";
+import { getKbd, sleep } from "$lib/internal/index.js";
 
 /**
  * A wrapper around the internal kbd object to make it easier to use in tests
@@ -66,4 +66,9 @@ export function setupUserEvents(): CustomUserEvents {
 	Object.assign(user, { click, keyboard, pointer, pointerDownUp });
 
 	return user as unknown as CustomUserEvents;
+}
+
+export async function fireFocus(node: HTMLElement) {
+	node.focus();
+	await sleep(20);
 }

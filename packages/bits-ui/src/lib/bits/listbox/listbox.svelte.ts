@@ -22,6 +22,10 @@ import { afterTick } from "$lib/internal/afterTick.js";
 
 const LISTBOX_ITEM_ATTR = "data-listbox-item";
 const LISTBOX_CONTENT_ATTR = "data-listbox-content";
+const LISTOX_LABEL_ATTR = "data-listbox-label";
+const LISTBOX_GROUP_ATTR = "data-listbox-group";
+const LISTBOX_GROUP_LABEL_ATTR = "data-listbox-group-label";
+
 export const SELECTION_KEYS = [kbd.ENTER, kbd.SPACE];
 export const FIRST_KEYS = [kbd.ARROW_DOWN, kbd.PAGE_UP, kbd.HOME];
 export const LAST_KEYS = [kbd.ARROW_UP, kbd.PAGE_DOWN, kbd.END];
@@ -138,6 +142,7 @@ export class ListboxContentState {
 	#handleTypeaheadSearch: ReturnType<typeof useTypeahead>["handleTypeaheadSearch"];
 	focusedItemId = $state("");
 	focusWithin = new IsFocusWithin(() => this.ref.value ?? undefined);
+	#labelledBy = $derived.by(() => this.root.labelNode?.id ?? undefined);
 
 	constructor(props: ListboxContentStateProps, root: ListboxRootState) {
 		this.id = props.id;
@@ -308,6 +313,7 @@ export class ListboxContentState {
 			({
 				id: this.id.value,
 				"data-orientation": getDataOrientation(this.root.orientation.value),
+				"aria-labelledby": this.#labelledBy,
 				role: "listbox",
 				[LISTBOX_CONTENT_ATTR]: "",
 				onkeydown: this.#onkeydown,
@@ -345,6 +351,7 @@ export class ListboxLabelState {
 			({
 				id: this.id.value,
 				"data-orientation": getDataOrientation(this.root.orientation.value),
+				[LISTOX_LABEL_ATTR]: "",
 			}) as const
 	);
 }
@@ -484,6 +491,7 @@ export class ListboxGroupState {
 				"data-orientation": getDataOrientation(this.root.orientation.value),
 				role: "group",
 				"aria-labelledby": this.#ariaLabelledBy,
+				[LISTBOX_GROUP_ATTR]: "",
 			}) as const
 	);
 
@@ -519,6 +527,7 @@ export class ListboxGroupLabelState {
 			({
 				id: this.id.value,
 				"data-orientation": getDataOrientation(this.group.root.orientation.value),
+				[LISTBOX_GROUP_LABEL_ATTR]: "",
 			}) as const
 	);
 }
