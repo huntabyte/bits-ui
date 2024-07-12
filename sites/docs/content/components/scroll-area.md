@@ -4,15 +4,17 @@ description: Consistent scroll area across platforms.
 ---
 
 <script>
-	import { APISection, ComponentPreview, ScrollAreaDemo } from '$lib/components'
+	import { APISection, ComponentPreviewV2, ScrollAreaDemo } from '$lib/components'
 	export let schemas;
 </script>
 
-<ComponentPreview name="scroll-area-demo" comp="Scroll Area">
+<ComponentPreviewV2 name="scroll-area-demo" comp="Scroll Area">
 
-<ScrollAreaDemo slot="preview" />
+{#snippet preview()}
+<ScrollAreaDemo />
+{/snippet}
 
-</ComponentPreview>
+</ComponentPreviewV2>
 
 ## Structure
 

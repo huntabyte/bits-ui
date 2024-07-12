@@ -4,15 +4,17 @@ description: Enables users to choose from a list of options presented in a dropd
 ---
 
 <script>
-	import { APISection, ComponentPreview, SelectDemo } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, SelectDemo } from '$lib/components/index.js'
 	export let schemas;
 </script>
 
-<ComponentPreview name="select-demo" comp="Select">
+<ComponentPreviewV2 name="select-demo" comp="Select">
 
-<SelectDemo slot="preview" />
+{#snippet preview()}
+<SelectDemo />
+{/snippet}
 
-</ComponentPreview>
+</ComponentPreviewV2>
 
 ## Structure
 

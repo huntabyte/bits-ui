@@ -4,15 +4,17 @@ description: Allows users to input a sequence of one-character alphanumeric inpu
 ---
 
 <script>
-	import { APISection, ComponentPreview, PinInputDemo } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, PinInputDemo } from '$lib/components/index.js'
 	export let schemas;
 </script>
 
-<ComponentPreview name="pin-input-demo" comp="PinInput">
+<ComponentPreviewV2 name="pin-input-demo" comp="PinInput">
 
-<PinInputDemo slot="preview" />
+{#snippet preview()}
+<PinInputDemo />
+{/snippet}
 
-</ComponentPreview>
+</ComponentPreviewV2>
 
 This component is derived from and would not have been possible without the work done by [Input OTP](https://github.com/guilhermerodz/input-otp) by [Guilherme Rodz](https://x.com/guilhermerodz).
 

@@ -4,15 +4,17 @@ description: Organizes content into collapsible sections, allowing users to focu
 ---
 
 <script>
-	import { APISection, ComponentPreview, AccordionDemo } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, AccordionDemo } from '$lib/components/index.js'
 	export let schemas
 </script>
 
-<ComponentPreview name="accordion-demo" comp="Accordion">
+<ComponentPreviewV2 name="accordion-demo" comp="Accordion">
 
-<AccordionDemo slot="preview" />
+{#snippet preview()}
+<AccordionDemo />
+{/snippet}
 
-</ComponentPreview>
+</ComponentPreviewV2>
 
 ## Structure
 

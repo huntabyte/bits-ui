@@ -4,15 +4,17 @@ description: Provides additional information or context when users hover over or
 ---
 
 <script>
-	import { ComponentPreview, TooltipDemo, APISection } from '$lib/components/index.js'
+	import { ComponentPreviewV2, TooltipDemo, APISection } from '$lib/components/index.js'
 	export let schemas;
 </script>
 
-<ComponentPreview name="tooltip-demo" comp="Tooltip">
+<ComponentPreviewV2 name="tooltip-demo" comp="Tooltip">
 
-<TooltipDemo slot="preview" />
+{#snippet preview()}
+<TooltipDemo />
+{/snippet}
 
-</ComponentPreview>
+</ComponentPreviewV2>
 
 ## Structure
 

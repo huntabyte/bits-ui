@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Calendar } from "bits-ui";
-	import { CaretLeft, CaretRight } from "$icons/index.js";
+	import CaretLeft from "phosphor-svelte/lib/CaretLeft";
+	import CaretRight from "phosphor-svelte/lib/CaretRight";
 	import { getLocalTimeZone, today } from "@internationalized/date";
 
 	const isDateUnavailable: Calendar.RootProps["isDateUnavailable"] = (date) => {
