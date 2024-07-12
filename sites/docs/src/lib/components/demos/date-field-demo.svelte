@@ -1,18 +1,9 @@
 <script lang="ts">
-	import { CalendarDateTime, type DateValue } from "@internationalized/date";
 	import { DateField } from "bits-ui";
-
-	const v = new CalendarDateTime(2023, 10, 12, 12, 30, 0, 0);
-
-	let value = $state<DateValue>(v);
 </script>
 
-<div class="absolute top-4">
-	{value?.toString()}
-</div>
-
-<DateField.Root bind:value granularity="second">
-	<div class="flex w-full flex-col gap-1.5">
+<DateField.Root>
+	<div class="flex w-full max-w-[280px] flex-col gap-1.5">
 		<DateField.Label class="block select-none text-sm font-medium">Birthday</DateField.Label>
 		<DateField.Input
 			class="flex h-input w-full select-none items-center rounded-input border border-border-input bg-background px-2 py-3 text-sm tracking-[0.01em] text-foreground focus-within:border-border-input-hover focus-within:shadow-date-field-focus hover:border-border-input-hover"

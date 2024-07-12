@@ -4,15 +4,19 @@ description: Displays dates and days of the week, facilitating date-related inte
 ---
 
 <script>
-	import { APISection, ComponentPreview, CalendarDemo } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, CalendarDemo } from '$lib/components'
 	export let schemas;
 </script>
 
-<ComponentPreview name="calendar-demo" comp="Calendar">
+<ComponentPreviewV2 name="calendar-demo" comp="Calendar">
 
-<CalendarDemo slot="preview" />
+{#snippet preview()}
 
-</ComponentPreview>
+<CalendarDemo />
+
+{/snippet}
+
+</ComponentPreviewV2>
 
 ## Structure
 

@@ -4,15 +4,17 @@ description: Enables users to pick from a list of options displayed in a dropdow
 ---
 
 <script>
-	import { APISection, ComponentPreview, ComboboxDemo } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, ComboboxDemo } from '$lib/components/index.js'
 	export let schemas;
 </script>
 
-<ComponentPreview name="combobox-demo" comp="combobox">
+<ComponentPreviewV2 name="combobox-demo" comp="Combobox">
 
-<ComboboxDemo slot="preview" />
+{#snippet preview()}
+<ComboboxDemo />
+{/snippet}
 
-</ComponentPreview>
+</ComponentPreviewV2>
 
 ## Structure
 

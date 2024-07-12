@@ -4,15 +4,17 @@ description: A control element that switches between two states, providing a bin
 ---
 
 <script>
-	import { APISection, ComponentPreview, ToggleGroupDemo } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, ToggleGroupDemo } from '$lib/components/index.js'
 	export let schemas;
 </script>
 
-<ComponentPreview name="toggle-group-demo" comp="ToggleGroup">
+<ComponentPreviewV2 name="toggle-group-demo" comp="ToggleGroup">
 
-<ToggleGroupDemo slot="preview" />
+{#snippet preview()}
+<ToggleGroupDemo />
+{/snippet}
 
-</ComponentPreview>
+</ComponentPreviewV2>
 
 ## Structure
 

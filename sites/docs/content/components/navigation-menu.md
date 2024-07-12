@@ -4,15 +4,17 @@ description: A list of links that allow users to navigate between pages of a web
 ---
 
 <script>
-	import { APISection, ComponentPreview, NavigationMenuDemo } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, NavigationMenuDemo } from '$lib/components/index.js'
 	export let schemas;
 </script>
 
-<ComponentPreview name="navigation-menu-demo" comp="Navigation Menu">
+<ComponentPreviewV2 name="navigation-menu-demo" comp="Navigation Menu">
 
-<NavigationMenuDemo slot="preview" />
+{#snippet preview()}
+<NavigationMenuDemo />
+{/snippet}
 
-</ComponentPreview>
+</ComponentPreviewV2>
 
 ## Structure
 

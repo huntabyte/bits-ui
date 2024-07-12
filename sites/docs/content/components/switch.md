@@ -4,15 +4,17 @@ description: A toggle control enabling users to switch between "on" and "off" st
 ---
 
 <script>
-	import { APISection, ComponentPreview, SwitchDemo } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, SwitchDemo } from '$lib/components/index.js'
 	export let schemas;
 </script>
 
-<ComponentPreview name="switch-demo" comp="Switch">
+<ComponentPreviewV2 name="switch-demo" comp="Switch">
 
-<SwitchDemo slot="preview" />
+{#snippet preview()}
+<SwitchDemo />
+{/snippet}
 
-</ComponentPreview>
+</ComponentPreviewV2>
 
 ## Structure
 

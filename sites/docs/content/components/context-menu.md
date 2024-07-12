@@ -4,15 +4,17 @@ description: Displays options or actions relevant to a specific context or selec
 ---
 
 <script>
-	import { APISection, ComponentPreview, ContextMenuDemo } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, ContextMenuDemo } from '$lib/components/index.js'
 	export let schemas;
 </script>
 
-<ComponentPreview name="context-menu-demo" comp="ContextMenu">
+<ComponentPreviewV2 name="context-menu-demo" comp="ContextMenu">
 
-<ContextMenuDemo slot="preview" />
+{#snippet preview()}
+<ContextMenuDemo />
+{/snippet}
 
-</ComponentPreview>
+</ComponentPreviewV2>
 
 ## Structure
 

@@ -4,15 +4,17 @@ description: A list of options that can be selected by the user.
 ---
 
 <script>
-	import { APISection, ComponentPreview, ListboxDemo } from '$lib/components'
+	import { APISection, ComponentPreviewV2, ListboxDemo } from '$lib/components'
 	export let schemas;
 </script>
 
-<ComponentPreview name="listbox-demo" comp="Listbox">
+<ComponentPreviewV2 name="listbox-demo" comp="Listbox">
 
-<ListboxDemo slot="preview" />
+{#snippet preview()}
+<ListboxDemo />
+{/snippet}
 
-</ComponentPreview>
+</ComponentPreviewV2>
 
 ## Structure
 
