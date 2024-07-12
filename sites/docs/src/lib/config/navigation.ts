@@ -21,13 +21,15 @@ export type Navigation = {
 	sidebar: SidebarNavItem[];
 };
 
+const filteredComponents = allComponentDocs.filter((comp) => comp.title !== "Listbox");
+
 /**
  * Generates the navigation items for the components section of the sidebar.
  */
 function generateComponentsNav() {
 	const componentNavItems: SidebarNavItem[] = [];
 
-	for (const comp of allComponentDocs) {
+	for (const comp of filteredComponents) {
 		componentNavItems.push({
 			title: comp.title,
 			href: `/docs/components/${comp.slug}`,
