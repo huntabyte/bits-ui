@@ -168,8 +168,8 @@ export type WithChild<
 > = Omit<Props, "child" | "children"> & {
 	child?: SnippetProps extends { _default: never }
 		? Snippet<[{ props: Record<string, unknown> }]>
-		: Snippet<[Expand<SnippetProps> & { props: Record<string, unknown> }]>;
-	children?: SnippetProps extends { _default: never } ? Snippet : Snippet<[Expand<SnippetProps>]>;
+		: Snippet<[SnippetProps & { props: Record<string, unknown> }]>;
+	children?: SnippetProps extends { _default: never } ? Snippet : Snippet<[SnippetProps]>;
 	style?: StyleProperties;
 	ref?: Ref | null;
 };

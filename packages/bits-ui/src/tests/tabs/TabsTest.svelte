@@ -1,11 +1,11 @@
 <script lang="ts" context="module">
-	import { Tabs, type WithoutChildren } from "$lib/index.js";
+	import { Tabs, type WithoutChildrenOrChild } from "$lib/index.js";
 	export type Item = {
 		value: string;
 		disabled: boolean;
 	};
 
-	export type TabsTestProps = WithoutChildren<Tabs.RootProps> & {
+	export type TabsTestProps = WithoutChildrenOrChild<Tabs.RootProps> & {
 		items: Item[];
 	};
 </script>

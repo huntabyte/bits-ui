@@ -1,9 +1,9 @@
 <script lang="ts" context="module">
-	import { Calendar, type WithoutChildren } from "$lib/index.js";
+	import { Calendar, type WithoutChildrenOrChild } from "$lib/index.js";
 	import type { DateValue } from "@internationalized/date";
 
 	export type CalendarMultiTestProps = Omit<
-		WithoutChildren<Calendar.RootProps>,
+		WithoutChildrenOrChild<Calendar.RootProps>,
 		"value" | "onValueChange"
 	> & {
 		value?: DateValue[] | undefined;

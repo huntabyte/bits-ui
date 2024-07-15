@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { Toggle, type WithoutChildren } from "$lib/index.js";
+	import { Toggle, type WithoutChildrenOrChild } from "$lib/index.js";
 
-	let { pressed = false, ...restProps }: WithoutChildren<Toggle.RootProps> = $props();
+	let { pressed = false, ...restProps }: WithoutChildrenOrChild<Toggle.RootProps> = $props();
 </script>
 
 <main>

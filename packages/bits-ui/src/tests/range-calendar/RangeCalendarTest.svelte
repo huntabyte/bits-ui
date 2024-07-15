@@ -1,7 +1,7 @@
 <script lang="ts" context="module">
-	import { RangeCalendar, type WithoutChildren } from "$lib/index.js";
+	import { RangeCalendar, type WithoutChildrenOrChild } from "$lib/index.js";
 
-	export type RangeCalendarTestProps = WithoutChildren<RangeCalendar.RootProps>;
+	export type RangeCalendarTestProps = WithoutChildrenOrChild<RangeCalendar.RootProps>;
 </script>
 
 <script lang="ts">

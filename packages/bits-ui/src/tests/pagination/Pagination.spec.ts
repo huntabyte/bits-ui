@@ -2,9 +2,9 @@
 import { render } from "@testing-library/svelte";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
-import { isHTMLElement } from "@melt-ui/svelte/internal/helpers";
 import PaginationTest from "./PaginationTest.svelte";
 import type { Pagination } from "$lib/index.js";
+import { isHTMLElement } from "$lib/internal/is.js";
 
 function setup(props: Pagination.Props = { count: 100 }) {
 	const user = userEvent.setup();

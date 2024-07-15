@@ -1,5 +1,5 @@
 import type { DateValue } from "@internationalized/date";
-import type { EditableSegmentPart, Month } from "@melt-ui/svelte";
+
 import type * as CSS from "csstype";
 
 export type Selected<Value> = {
@@ -31,6 +31,10 @@ export type StyleProperties = CSS.Properties;
 export type Orientation = "horizontal" | "vertical";
 export type Direction = "ltr" | "rtl";
 
-export type WithoutChildren<T> = Omit<T, "children" | "asChild" | "child">;
-
-export type { Month, EditableSegmentPart };
+export type WithoutChildrenOrChild<T> = Omit<T, "children" | "child">;
+export type WithoutChildren<T> = Omit<T, "children">;
+export type WithoutChild<T> = Omit<T, "child">;
+export type WithElementRef<T, U extends HTMLElement = HTMLElement> = T & { ref?: U | null };
+export type { EditableSegmentPart } from "./date/field/types.js";
+export type { Month } from "./date/types.js";
+export type { WithChild, Expand, Without } from "$lib/internal/types.js";
