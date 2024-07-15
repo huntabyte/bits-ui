@@ -26,7 +26,11 @@ export type SegmentPart =
 export type FocusTarget = string | HTMLElement | SVGElement | null;
 export type FocusProp = FocusTarget | ((defaultEl?: HTMLElement | null) => FocusTarget);
 
-export type StyleProperties = CSS.Properties;
+export type StyleProperties = CSS.Properties & {
+	// Allow any CSS Custom Properties
+	// eslint-disable-next-line ts/no-explicit-any
+	[str: `--${string}`]: any;
+};
 
 export type Orientation = "horizontal" | "vertical";
 export type Direction = "ltr" | "rtl";
