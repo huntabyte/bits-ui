@@ -29,8 +29,13 @@
 		readonlySegments = [],
 		children,
 		child,
+		onStartValueChange = noop,
+		onEndValueChange = noop,
 		...restProps
 	}: RootProps = $props();
+
+	let startValue = $state<DateValue | undefined>(value?.start);
+	let endValue = $state<DateValue | undefined>(value?.end);
 
 	if (placeholder === undefined) {
 		placeholder = getDefaultDate({
@@ -77,6 +82,20 @@
 					value = v;
 					onValueChange(v);
 				}
+			}
+		),
+		startValue: box.with(
+			() => startValue,
+			(v) => {
+				startValue = v;
+				onStartValueChange(v);
+			}
+		),
+		endValue: box.with(
+			() => endValue,
+			(v) => {
+				endValue = v;
+				onEndValueChange(v);
 			}
 		),
 	});

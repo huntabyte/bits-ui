@@ -204,6 +204,7 @@ class FloatingContentState {
 						visibility: "hidden",
 						"pointer-events": "none",
 					}),
+					...this.style.value,
 				},
 				// Floating UI calculates logical alignment based the `dir` attribute
 				dir: this.dir.value,

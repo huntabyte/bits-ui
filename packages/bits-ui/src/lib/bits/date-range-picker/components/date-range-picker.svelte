@@ -42,10 +42,15 @@
 		fixedWeeks = false,
 		numberOfMonths = 1,
 		closeOnRangeSelect = true,
+		onStartValueChange = noop,
+		onEndValueChange = noop,
 		child,
 		children,
 		...restProps
 	}: RootProps = $props();
+
+	let startValue = $state<DateValue | undefined>(value?.start);
+	let endValue = $state<DateValue | undefined>(value?.end);
 
 	if (value === undefined) {
 		value = { start: undefined, end: undefined };
@@ -114,6 +119,20 @@
 		fixedWeeks: box.with(() => fixedWeeks),
 		numberOfMonths: box.with(() => numberOfMonths),
 		onRangeSelect: box.with(() => onRangeSelect),
+		startValue: box.with(
+			() => startValue,
+			(v) => {
+				startValue = v;
+				onStartValueChange(v);
+			}
+		),
+		endValue: box.with(
+			() => endValue,
+			(v) => {
+				endValue = v;
+				onEndValueChange(v);
+			}
+		),
 	});
 
 	usePopoverRoot({
@@ -139,6 +158,8 @@
 			() => ref,
 			(v) => (ref = v)
 		),
+		startValue: pickerRootState.props.startValue,
+		endValue: pickerRootState.props.endValue,
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, fieldRootState.props));

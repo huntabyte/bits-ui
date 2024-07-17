@@ -146,7 +146,7 @@ class AvatarFallbackState {
 		() =>
 			({
 				style: {
-					display: this.root.loadingStatus.value === "loaded" ? "none" : "block",
+					display: this.root.loadingStatus.value === "loaded" ? "none" : undefined,
 				},
 				[AVATAR_FALLBACK_ATTR]: "",
 			}) as const

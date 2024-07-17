@@ -6,6 +6,8 @@ import type { DateValue } from "@internationalized/date";
 
 type DateRangePickerRootStateProps = WritableBoxedValues<{
 	value: DateRange;
+	startValue: DateValue | undefined;
+	endValue: DateValue | undefined;
 	open: boolean;
 	placeholder: DateValue;
 }> &

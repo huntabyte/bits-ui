@@ -35,10 +35,11 @@ export type StyleProperties = CSS.Properties & {
 export type Orientation = "horizontal" | "vertical";
 export type Direction = "ltr" | "rtl";
 
-export type WithoutChildrenOrChild<T> = Omit<T, "children" | "child">;
-export type WithoutChildren<T> = Omit<T, "children">;
-export type WithoutChild<T> = Omit<T, "child">;
+export type WithoutChildrenOrChild<T> = WithoutChildren<WithoutChild<T>>;
+export type WithoutChildren<T> = T extends { children?: any } ? Omit<T, "children"> : T;
+export type WithoutChild<T> = T extends { child?: any } ? Omit<T, "child"> : T;
 export type WithElementRef<T, U extends HTMLElement = HTMLElement> = T & { ref?: U | null };
 export type { EditableSegmentPart } from "./date/field/types.js";
 export type { Month } from "./date/types.js";
 export type { WithChild, Expand, Without } from "$lib/internal/types.js";
+export { useId } from "$lib/internal/useId.svelte.js";

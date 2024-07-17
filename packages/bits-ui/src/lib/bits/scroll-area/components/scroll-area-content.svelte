@@ -6,7 +6,7 @@
 	type $$Props = ContentProps;
 
 	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
+	export let ref: $$Props["el"] = undefined;
 
 	const {
 		elements: { content },

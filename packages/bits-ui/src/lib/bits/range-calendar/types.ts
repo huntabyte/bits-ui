@@ -189,6 +189,20 @@ export type RangeCalendarRootPropsWithoutHTML = WithChild<
 		 * @defaultValue false
 		 */
 		disableDaysOutsideMonth?: boolean;
+
+		/**
+		 * A callback function called when the start value changes. This doesn't necessarily mean
+		 * the `value` has updated and should be used to apply cosmetic changes to the calendar when
+		 * only part of the value is changed/completed.
+		 */
+		onStartValueChange?: OnChangeFn<DateValue | undefined>;
+
+		/**
+		 * A callback function called when the end value changes. This doesn't necessarily mean
+		 * the `value` has updated and should be used to apply cosmetic changes to the calendar when
+		 * only part of the value is changed/completed.
+		 */
+		onEndValueChange?: OnChangeFn<DateValue | undefined>;
 	},
 	RangeCalendarRootSnippetProps
 >;

@@ -19,14 +19,20 @@
 
 	const contentFloatingState = useSelectFloatingPosition();
 
-	const mergedProps = $derived(
-		mergeProps(restProps, contentFloatingState.content.props, contentFloatingState.props)
-	);
+	const mergedProps = $derived(mergeProps(restProps, contentFloatingState.content.props));
 </script>
 
-<FloatingLayer.Content {...restProps} {enabled} {align} {collisionPadding}>
+<FloatingLayer.Content
+	style={contentFloatingState.props.style}
+	{...restProps}
+	{enabled}
+	{align}
+	{collisionPadding}
+>
 	{#snippet content({ props })}
-		{@const finalProps = mergeProps(props, mergedProps)}
+		{@const finalProps = mergeProps(props, mergedProps, {
+			style: contentFloatingState.props.style,
+		})}
 		{#if child}
 			{@render child?.({ props: finalProps })}
 		{:else}

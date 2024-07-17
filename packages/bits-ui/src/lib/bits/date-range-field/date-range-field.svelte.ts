@@ -7,7 +7,7 @@ import type { DateRange, SegmentPart } from "$lib/shared/index.js";
 import type { DateValue } from "@internationalized/date";
 import { onDestroy, untrack } from "svelte";
 import { useDateFieldRoot } from "../date-field/date-field.svelte.js";
-import type { WithRefProps } from "$lib/internal/types.js";
+import type { OnChangeFn, WithRefProps } from "$lib/internal/types.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
 import { createContext } from "$lib/internal/createContext.js";
 import { getFirstSegment } from "$lib/shared/date/field.js";
@@ -20,6 +20,8 @@ type DateRangeFieldRootStateProps = WithRefProps<
 	WritableBoxedValues<{
 		value: DateRange;
 		placeholder: DateValue;
+		startValue: DateValue | undefined;
+		endValue: DateValue | undefined;
 	}> &
 		ReadableBoxedValues<{
 			readonlySegments: SegmentPart[];
@@ -52,35 +54,35 @@ export class DateRangeFieldRootState {
 	locale: DateRangeFieldRootStateProps["locale"];
 	hideTimeZone: DateRangeFieldRootStateProps["hideTimeZone"];
 	required: DateRangeFieldRootStateProps["required"];
+	startValue: DateRangeFieldRootStateProps["startValue"];
+	endValue: DateRangeFieldRootStateProps["endValue"];
 	descriptionId = useId();
 	formatter: Formatter;
 	fieldNode = $state<HTMLElement | null>(null);
 	labelNode = $state<HTMLElement | null>(null);
 	descriptionNode = $state<HTMLElement | null>(null);
 	validationNode = $state<HTMLElement | null>(null);
-	startValue = $state<DateValue | undefined>(undefined);
-	endValue = $state<DateValue | undefined>(undefined);
 	startValueComplete = $derived.by(() => this.startValue !== undefined);
 	endValueComplete = $derived.by(() => this.endValue !== undefined);
 	rangeComplete = $derived(this.startValueComplete && this.endValueComplete);
 	mergedValues = $derived.by(() => {
-		if (this.startValue === undefined || this.endValue === undefined) {
+		if (this.startValue.value === undefined || this.endValue.value === undefined) {
 			return {
 				start: undefined,
 				end: undefined,
 			};
 		} else {
 			return {
-				start: this.startValue,
-				end: this.endValue,
+				start: this.startValue.value,
+				end: this.endValue.value,
 			};
 		}
 	});
 
 	constructor(props: DateRangeFieldRootStateProps) {
 		this.value = props.value;
-		this.startValue = this.value.value.start;
-		this.endValue = this.value.value.end;
+		this.startValue = props.startValue;
+		this.endValue = props.endValue;
 		this.placeholder = props.placeholder;
 		this.isDateUnavailable = props.isDateUnavailable;
 		this.minValue = props.minValue;
@@ -135,11 +137,11 @@ export class DateRangeFieldRootState {
 			const value = this.value.value;
 
 			untrack(() => {
-				if (value && value.start !== this.startValue) {
-					this.startValue = value.start;
+				if (value && value.start !== this.startValue.value) {
+					this.setStartValue(value.start);
 				}
-				if (value && value.end !== this.endValue) {
-					this.endValue = value.end;
+				if (value && value.end !== this.endValue.value) {
+					this.setEndValue(value.end);
 				}
 			});
 		});
@@ -148,7 +150,7 @@ export class DateRangeFieldRootState {
 
 		$effect(() => {
 			const placeholder = untrack(() => this.placeholder.value);
-			const startValue = untrack(() => this.startValue);
+			const startValue = untrack(() => this.startValue.value);
 
 			if (this.startValueComplete && placeholder !== startValue) {
 				untrack(() => {
@@ -162,6 +164,14 @@ export class DateRangeFieldRootState {
 		$effect(() => {
 			this.value.value = this.mergedValues;
 		});
+	}
+
+	setStartValue(value: DateValue | undefined) {
+		this.startValue.value = value;
+	}
+
+	setEndValue(value: DateValue | undefined) {
+		this.endValue.value = value;
 	}
 
 	/**

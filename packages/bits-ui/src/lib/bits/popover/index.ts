@@ -11,8 +11,6 @@ export type {
 	PopoverContentProps as ContentProps,
 	PopoverTriggerProps as TriggerProps,
 	PopoverCloseProps as CloseProps,
-	PopoverTriggerEvents as TriggerEvents,
-	PopoverCloseEvents as CloseEvents,
 } from "./types.js";
 
 export type { PortalProps } from "$lib/bits/utilities/portal/types.js";

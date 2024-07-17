@@ -10,7 +10,7 @@
 	export let dir: $$Props["dir"] = "ltr";
 	export let hideDelay: $$Props["hideDelay"] = 600;
 	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
+	export let ref: $$Props["el"] = undefined;
 
 	const {
 		elements: { root },
