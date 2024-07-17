@@ -1,4 +1,4 @@
-import { type ReadableBox, box } from "svelte-toolbelt";
+import { type ReadableBox, type WritableBox, box } from "svelte-toolbelt";
 import { SvelteMap } from "svelte/reactivity";
 import { untrack } from "svelte";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
@@ -89,6 +89,7 @@ export class SelectRootState {
 	triggerNode = $state<HTMLElement | null>(null);
 	valueId = box<string>(useId());
 	valueNodeHasChildren = box(false);
+	valueNode = $state<HTMLElement | null>(null);
 	contentNode = $state<HTMLElement | null>(null);
 	triggerPointerDownPos = box<{ x: number; y: number } | null>({ x: 0, y: 0 });
 	contentFragment = $state<DocumentFragment | null>(null);
@@ -306,9 +307,18 @@ class SelectTriggerState {
 class SelectValueState {
 	root: SelectRootState;
 	showPlaceholder = $derived.by(() => shouldShowPlaceholder(this.root.value.value));
+	ref: WritableBox<HTMLElement | null> = box(null);
 
 	constructor(root: SelectRootState) {
 		this.root = root;
+
+		useRefById({
+			id: this.root.valueId,
+			ref: this.ref,
+			onRefChange: (node) => {
+				this.root.valueNode = node;
+			},
+		});
 	}
 
 	props = $derived.by(
