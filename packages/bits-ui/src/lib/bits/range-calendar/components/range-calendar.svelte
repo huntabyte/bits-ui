@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
+	import type { DateValue } from "@internationalized/date";
 	import type { RootProps } from "../index.js";
 	import { useRangeCalendarRoot } from "../range-calendar.svelte.js";
 	import { noop } from "$lib/internal/callbacks.js";
@@ -31,8 +32,13 @@
 		maxValue = undefined,
 		preventDeselect = false,
 		disableDaysOutsideMonth = true,
+		onStartValueChange = noop,
+		onEndValueChange = noop,
 		...restProps
 	}: RootProps = $props();
+
+	let startValue = $state<DateValue | undefined>(value?.start);
+	let endValue = $state<DateValue | undefined>(value?.end);
 
 	if (placeholder === undefined) {
 		placeholder = getDefaultDate({
@@ -95,6 +101,20 @@
 		calendarLabel: box.with(() => calendarLabel),
 		fixedWeeks: box.with(() => fixedWeeks),
 		disableDaysOutsideMonth: box.with(() => disableDaysOutsideMonth),
+		startValue: box.with(
+			() => startValue,
+			(v) => {
+				startValue = v;
+				onStartValueChange(v);
+			}
+		),
+		endValue: box.with(
+			() => endValue,
+			(v) => {
+				endValue = v;
+				onEndValueChange(v);
+			}
+		),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, rootState.props));

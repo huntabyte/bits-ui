@@ -1,12 +1,12 @@
 <script lang="ts" context="module">
-	import type { MultipleToggleGroupRootProps, WithoutChildren } from "$lib/index.js";
+	import type { MultipleToggleGroupRootProps, WithoutChildrenOrChild } from "$lib/index.js";
 	import { ToggleGroup } from "$lib/index.js";
 	export type Item = {
 		value: string;
 		disabled?: boolean;
 	};
 
-	export type MultipleToggleGroupTestProps = WithoutChildren<MultipleToggleGroupRootProps> & {
+	export type MultipleToggleGroupTestProps = WithoutChildrenOrChild<MultipleToggleGroupRootProps> & {
 		items: Item[];
 	};
 </script>

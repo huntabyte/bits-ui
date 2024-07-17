@@ -1,9 +1,9 @@
 <script lang="ts" context="module">
-	import { Tooltip, type WithoutChildren } from "$lib/index.js";
+	import { Tooltip, type WithoutChildrenOrChild } from "$lib/index.js";
 
-	export type TooltipTestProps = WithoutChildren<Tooltip.RootProps> & {
-		contentProps?: WithoutChildren<Tooltip.ContentProps>;
-		portalProps?: WithoutChildren<Tooltip.PortalProps>;
+	export type TooltipTestProps = WithoutChildrenOrChild<Tooltip.RootProps> & {
+		contentProps?: WithoutChildrenOrChild<Tooltip.ContentProps>;
+		portalProps?: WithoutChildrenOrChild<Tooltip.PortalProps>;
 	};
 </script>
 

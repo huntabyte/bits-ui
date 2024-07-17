@@ -6,7 +6,7 @@
 	type $$Props = Omit<ScrollbarProps, "orientation">;
 
 	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
+	export let ref: $$Props["el"] = undefined;
 
 	const {
 		elements: { scrollbarX },

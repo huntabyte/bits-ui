@@ -1,5 +1,5 @@
 <script lang="ts" context="module">
-	export type DateRangeFieldTestProps = WithoutChildren<DateRangeFieldRootProps> & {
+	export type DateRangeFieldTestProps = WithoutChildrenOrChild<DateRangeFieldRootProps> & {
 		startProps?: Omit<DateRangeFieldInputProps, "type">;
 		endProps?: Omit<DateRangeFieldInputProps, "type">;
 	};
@@ -10,7 +10,7 @@
 		DateRangeField,
 		type DateRangeFieldInputProps,
 		type DateRangeFieldRootProps,
-		type WithoutChildren,
+		type WithoutChildrenOrChild,
 	} from "$lib/index.js";
 	let { value, placeholder, startProps, endProps, ...restProps }: DateRangeFieldTestProps =
 		$props();

@@ -1,6 +1,6 @@
 <script lang="ts" context="module">
-	import { Toolbar, type WithoutChildren } from "$lib/index.js";
-	export type ToolbarTestProps = WithoutChildren<Toolbar.RootProps> & {
+	import { Toolbar, type WithoutChildrenOrChild } from "$lib/index.js";
+	export type ToolbarTestProps = WithoutChildrenOrChild<Toolbar.RootProps> & {
 		multipleProps?: Partial<Toolbar.GroupProps>;
 		singleProps?: Partial<Toolbar.GroupProps>;
 	};

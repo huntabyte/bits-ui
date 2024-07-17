@@ -25,7 +25,7 @@
 	const mergedProps = $derived(mergeProps(restProps, itemTextState.props));
 </script>
 
-{#if itemTextState.item.isSelected && itemTextState.item.root.valueId.value && !itemTextState.item.root.valueNodeHasChildren.value}
+{#if itemTextState.item.isSelected && itemTextState.item.root.valueId.value && !itemTextState.item.root.valueNodeHasChildren.value && itemTextState.item.root.valueNode}
 	<Portal to={`#${itemTextState.item.root.valueId.value}`}>
 		{@render children?.()}
 	</Portal>

@@ -40,6 +40,8 @@
 		placeholder: dateRangePickerRootState.props.placeholder,
 		value: dateRangePickerRootState.props.value,
 		onRangeSelect: dateRangePickerRootState.props.onRangeSelect,
+		startValue: dateRangePickerRootState.props.startValue,
+		endValue: dateRangePickerRootState.props.endValue,
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, rangeCalendarState.props));

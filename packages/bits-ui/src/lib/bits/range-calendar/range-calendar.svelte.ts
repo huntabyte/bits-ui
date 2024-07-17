@@ -4,7 +4,7 @@ import {
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
 } from "$lib/internal/box.svelte.js";
-import type { WithRefProps } from "$lib/internal/types.js";
+import type { OnChangeFn, WithRefProps } from "$lib/internal/types.js";
 import {
 	getLocalTimeZone,
 	isSameDay,
@@ -73,6 +73,8 @@ type RangeCalendarRootStateProps = WithRefProps<
 	WritableBoxedValues<{
 		value: DateRange;
 		placeholder: DateValue;
+		startValue: DateValue | undefined;
+		endValue: DateValue | undefined;
 	}> &
 		ReadableBoxedValues<{
 			preventDeselect: boolean;
@@ -119,13 +121,13 @@ export class RangeCalendarRootState {
 	readonly: RangeCalendarRootStateProps["readonly"];
 	disableDaysOutsideMonth: RangeCalendarRootStateProps["disableDaysOutsideMonth"];
 	onRangeSelect: RangeCalendarRootStateProps["onRangeSelect"];
+	startValue: RangeCalendarRootStateProps["startValue"];
+	endValue: RangeCalendarRootStateProps["endValue"];
 	months: Month<DateValue>[] = $state([]);
 	visibleMonths = $derived.by(() => this.months.map((month) => month.value));
 	announcer: Announcer;
 	formatter: Formatter;
 	accessibleHeadingId = useId();
-	startValue = $state<DateValue | undefined>(undefined);
-	endValue = $state<DateValue | undefined>(undefined);
 	focusedValue = $state<DateValue | undefined>(undefined);
 	lastPressedDateValue = $state<DateValue | undefined>(undefined);
 
@@ -150,6 +152,8 @@ export class RangeCalendarRootState {
 		this.id = props.id;
 		this.ref = props.ref;
 		this.onRangeSelect = props.onRangeSelect;
+		this.startValue = props.startValue;
+		this.endValue = props.endValue;
 
 		this.announcer = getAnnouncer();
 		this.formatter = createFormatter(this.locale.value);
@@ -166,9 +170,6 @@ export class RangeCalendarRootState {
 			fixedWeeks: this.fixedWeeks.value,
 			numberOfMonths: this.numberOfMonths.value,
 		});
-
-		this.startValue = this.value.value.start;
-		this.endValue = this.value.value.end;
 
 		$effect(() => {
 			if (this.formatter.getLocale() === this.locale.value) return;
@@ -223,8 +224,8 @@ export class RangeCalendarRootState {
 		});
 
 		$effect(() => {
-			const startValue = this.startValue;
-			const endValue = this.endValue;
+			const startValue = this.startValue.value;
+			const endValue = this.endValue.value;
 
 			untrack(() => {
 				const value = this.value.value;
@@ -238,8 +239,8 @@ export class RangeCalendarRootState {
 						if (isBefore(endValue, startValue)) {
 							const start = startValue;
 							const end = endValue;
-							this.startValue = end;
-							this.endValue = start;
+							this.startValue.value = end;
+							this.endValue.value = start;
 							return { start: endValue, end: startValue };
 						} else {
 							return {
@@ -303,19 +304,28 @@ export class RangeCalendarRootState {
 	};
 
 	isStartInvalid = $derived.by(() => {
-		if (!this.startValue) return false;
-		return this.isDateUnavailable(this.startValue) || this.isDateDisabled(this.startValue);
+		if (!this.startValue.value) return false;
+		return (
+			this.isDateUnavailable(this.startValue.value) ||
+			this.isDateDisabled(this.startValue.value)
+		);
 	});
 
 	isEndInvalid = $derived.by(() => {
-		if (!this.endValue) return false;
-		return this.isDateUnavailable(this.endValue) || this.isDateDisabled(this.endValue);
+		if (!this.endValue.value) return false;
+		return (
+			this.isDateUnavailable(this.endValue.value) || this.isDateDisabled(this.endValue.value)
+		);
 	});
 
 	isInvalid = $derived.by(() => {
 		if (this.isStartInvalid || this.isEndInvalid) return true;
 
-		if (this.endValue && this.startValue && isBefore(this.endValue, this.startValue))
+		if (
+			this.endValue.value &&
+			this.startValue.value &&
+			isBefore(this.endValue.value, this.startValue.value)
+		)
 			return true;
 
 		return false;
@@ -348,32 +358,32 @@ export class RangeCalendarRootState {
 	fullCalendarLabel = $derived.by(() => `${this.calendarLabel.value} ${this.headingValue}`);
 
 	isSelectionStart = (date: DateValue) => {
-		if (!this.startValue) return false;
-		return isSameDay(date, this.startValue);
+		if (!this.startValue.value) return false;
+		return isSameDay(date, this.startValue.value);
 	};
 
 	isSelectionEnd = (date: DateValue) => {
-		if (!this.endValue) return false;
-		return isSameDay(date, this.endValue);
+		if (!this.endValue.value) return false;
+		return isSameDay(date, this.endValue.value);
 	};
 
 	isSelected = (date: DateValue) => {
-		if (this.startValue && isSameDay(this.startValue, date)) return true;
-		if (this.endValue && isSameDay(this.endValue, date)) return true;
-		if (this.startValue && this.endValue) {
-			return isBetweenInclusive(date, this.startValue, this.endValue);
+		if (this.startValue.value && isSameDay(this.startValue.value, date)) return true;
+		if (this.endValue.value && isSameDay(this.endValue.value, date)) return true;
+		if (this.startValue.value && this.endValue.value) {
+			return isBetweenInclusive(date, this.startValue.value, this.endValue.value);
 		}
 		return false;
 	};
 
 	highlightedRange = $derived.by(() => {
-		if (this.startValue && this.endValue) return null;
-		if (!this.startValue || !this.focusedValue) return null;
+		if (this.startValue.value && this.endValue.value) return null;
+		if (!this.startValue.value || !this.focusedValue) return null;
 
-		const isStartBeforeFocused = isBefore(this.startValue, this.focusedValue);
-		const start = isStartBeforeFocused ? this.startValue : this.focusedValue;
+		const isStartBeforeFocused = isBefore(this.startValue.value, this.focusedValue);
+		const start = isStartBeforeFocused ? this.startValue.value : this.focusedValue;
 
-		const end = isStartBeforeFocused ? this.focusedValue : this.startValue;
+		const end = isStartBeforeFocused ? this.focusedValue : this.startValue.value;
 
 		if (isSameDay(start.add({ days: 1 }), end)) {
 			return {
@@ -433,44 +443,48 @@ export class RangeCalendarRootState {
 		const prevLastPressedDate = this.lastPressedDateValue;
 		this.lastPressedDateValue = date;
 
-		if (this.startValue && this.highlightedRange === null) {
-			if (isSameDay(this.startValue, date) && !this.preventDeselect.value && !this.endValue) {
-				this.startValue = undefined;
+		if (this.startValue.value && this.highlightedRange === null) {
+			if (
+				isSameDay(this.startValue.value, date) &&
+				!this.preventDeselect.value &&
+				!this.endValue.value
+			) {
+				this.startValue.value = undefined;
 				this.placeholder.value = date;
 				this.#announceEmpty();
 				return;
 			} else if (!this.endValue) {
 				e.preventDefault();
 				if (prevLastPressedDate && isSameDay(prevLastPressedDate, date)) {
-					this.startValue = date;
+					this.startValue.value = date;
 					this.#announceSelectedDate(date);
 				}
 			}
 		}
 
 		if (
-			this.startValue &&
-			this.endValue &&
-			isSameDay(this.endValue, date) &&
+			this.startValue.value &&
+			this.endValue.value &&
+			isSameDay(this.endValue.value, date) &&
 			!this.preventDeselect.value
 		) {
-			this.startValue = undefined;
-			this.endValue = undefined;
+			this.startValue.value = undefined;
+			this.endValue.value = undefined;
 			this.placeholder.value = date;
 			this.#announceEmpty();
 			return;
 		}
 
-		if (!this.startValue) {
+		if (!this.startValue.value) {
 			this.#announceSelectedDate(date);
-			this.startValue = date;
-		} else if (!this.endValue) {
-			this.#announceSelectedRange(this.startValue, date);
-			this.endValue = date;
-		} else if (this.endValue && this.startValue) {
-			this.endValue = undefined;
+			this.startValue.value = date;
+		} else if (!this.endValue.value) {
+			this.#announceSelectedRange(this.startValue.value, date);
+			this.endValue.value = date;
+		} else if (this.endValue.value && this.startValue.value) {
+			this.endValue.value = undefined;
 			this.#announceSelectedDate(date);
-			this.startValue = date;
+			this.startValue.value = date;
 		}
 	};
 
