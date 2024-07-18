@@ -27,4 +27,4 @@ jobs:
 
             - name: publish preview
               run: |
-                  pnpx pkg-pr-new@0.0 publish --pnpm './packages/*'
+                  pnpx pkg-pr-new@0.0 publish --pnpm --compact './packages/*'
