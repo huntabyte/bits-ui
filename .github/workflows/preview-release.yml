@@ -1,12 +1,12 @@
 name: Publish Preview Release
 on:
-    label:
     pull_request:
+        types: [ready_for_review, synchronize, opened, labeled]
         paths: packages/**
 
 jobs:
     preview-release:
-        if: github.repository == 'huntabyte/bits-ui'
+        if: github.repository == 'huntabyte/bits-ui' && (!github.event.pull_request.draft && github.event.pull_request.labels.name == 'publish:preview')
         timeout-minutes: 5
         runs-on: ubuntu-latest
         steps:
