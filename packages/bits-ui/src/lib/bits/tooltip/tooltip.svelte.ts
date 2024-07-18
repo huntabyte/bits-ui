@@ -308,8 +308,8 @@ class TooltipContentState {
 			if (!this.root.open.value) return;
 			if (this.root.disableHoverableContent) return;
 			const { isPointerInTransit, onPointerExit } = useGraceArea(
-				box.with(() => this.root.triggerNode),
-				box.with(() => this.root.contentNode)
+				() => this.root.triggerNode,
+				() => this.root.contentNode
 			);
 
 			this.root.provider.isPointerInTransit = isPointerInTransit;
