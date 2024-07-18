@@ -1,4 +1,5 @@
 export * from "./attrs.js";
+export * from "./arrays.js";
 export * from "./events.js";
 export * from "./id.js";
 export * from "./is.js";
@@ -13,7 +14,7 @@ export * from "./context.js";
 export * from "./box.svelte.js";
 export * from "./useStateMachine.svelte.js";
 export * from "../bits/utilities/presence-layer/usePresence.svelte.js";
-export * from "./useNodeById.svelte.js";
+export * from "./useRefById.svelte.js";
 export * from "./afterTick.js";
 export * from "./locale.js";
 export * from "./elements.js";

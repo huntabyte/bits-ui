@@ -38,14 +38,18 @@ export type DismissableLayerProps = {
 	 * @defaultValue `close`
 	 */
 	interactOutsideBehavior?: InteractOutsideBehaviorType;
+
+	/**
+	 *
+	 */
+	onFocusOutside?: (event: FocusEvent) => void;
 };
 
 export type DismissableLayerImplProps = {
 	/**
-	 * Whether the layer is active. Currently, we determine this with the
-	 * `presence` returned from the `presence` layer.
+	 * Whether the layer is enabled.
 	 */
-	present: boolean;
+	enabled: boolean;
 
 	/**
 	 * ID of the layer.

@@ -1,0 +1,40 @@
+<script lang="ts">
+	import { box } from "svelte-toolbelt";
+	import type { ItemTextProps } from "../index.js";
+	import { useSelectItemText } from "../select.svelte.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import Portal from "$lib/bits/utilities/portal/portal.svelte";
+
+	let {
+		id = useId(),
+		ref = $bindable(null),
+		children,
+		child,
+		...restProps
+	}: ItemTextProps = $props();
+
+	const itemTextState = useSelectItemText({
+		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
+	});
+
+	const mergedProps = $derived(mergeProps(restProps, itemTextState.props));
+</script>
+
+{#if itemTextState.item.isSelected && itemTextState.item.root.valueId.value && !itemTextState.item.root.valueNodeHasChildren.value && itemTextState.item.root.valueNode}
+	<Portal to={`#${itemTextState.item.root.valueId.value}`}>
+		{@render children?.()}
+	</Portal>
+{/if}
+
+{#if child}
+	{@render child?.({ props: mergedProps })}
+{:else}
+	<span {...mergedProps}>
+		{@render children?.()}
+	</span>
+{/if}

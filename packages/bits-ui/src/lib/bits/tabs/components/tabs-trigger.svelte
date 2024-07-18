@@ -6,30 +6,33 @@
 	import { useId } from "$lib/internal/useId.svelte.js";
 
 	let {
-		asChild,
 		child,
 		children,
 		disabled = false,
 		id = useId(),
 		type = "button",
 		value,
-		el = $bindable(),
+		ref = $bindable(null),
 		...restProps
 	}: TriggerProps = $props();
 
-	const state = useTabsTrigger({
+	const triggerState = useTabsTrigger({
 		id: box.with(() => id),
 		disabled: box.with(() => disabled),
 		value: box.with(() => value),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props, { type }));
+	const mergedProps = $derived(mergeProps(restProps, triggerState.props, { type }));
 </script>
 
-{#if asChild}
+{#if child}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<button bind:this={el} {...mergedProps}>
+	<button {...mergedProps}>
 		{@render children?.()}
 	</button>
 {/if}

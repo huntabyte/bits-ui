@@ -4,7 +4,6 @@
 
 	let {
 		id = useId(),
-		el = $bindable(),
 		children,
 		asChild,
 		child,
@@ -19,7 +18,7 @@
 {#if asChild}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<span {...mergedProps} bind:this={el}>
+	<span {...mergedProps}>
 		{#if children}
 			{@render children?.()}
 		{:else}

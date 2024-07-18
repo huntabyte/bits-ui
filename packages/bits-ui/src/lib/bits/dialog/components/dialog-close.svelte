@@ -1,19 +1,33 @@
 <script lang="ts">
+	import { box } from "svelte-toolbelt";
 	import { useDialogClose } from "../dialog.svelte.js";
 	import type { CloseProps } from "../index.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
 
-	let { asChild, children, child, el = $bindable(), ...restProps }: CloseProps = $props();
+	let {
+		children,
+		child,
+		id = useId(),
+		ref = $bindable(null),
+		...restProps
+	}: CloseProps = $props();
 
-	const state = useDialogClose();
+	const closeState = useDialogClose({
+		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
+	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, closeState.props));
 </script>
 
-{#if asChild}
+{#if child}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<button {...mergedProps} bind:this={el}>
+	<button {...mergedProps}>
 		{@render children?.()}
 	</button>
 {/if}

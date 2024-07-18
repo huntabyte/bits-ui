@@ -28,6 +28,10 @@
 		@apply mb-4 mt-6 w-full overflow-x-auto rounded-card px-2.5 py-5 text-sm font-semibold;
 	}
 
+	& pre[data-metadata] {
+		@apply mt-0 rounded-tl-none rounded-tr-none;
+	}
+
 	& code {
 		@apply grid min-w-full break-words rounded-none border-0 bg-transparent p-0;
 		counter-reset: line;
@@ -74,7 +78,7 @@
 }
 
 [data-rehype-pretty-code-title] {
-	@apply mt-4 rounded-t-xl bg-muted px-4 py-4 text-sm font-medium text-foreground/70;
+	@apply mt-4 rounded-t-xl bg-muted px-4 py-2.5 text-sm  tracking-wide text-foreground/70;
 }
 
 [data-rehype-pretty-code-title] + pre {

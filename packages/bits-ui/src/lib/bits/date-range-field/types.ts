@@ -1,84 +1,178 @@
 import type { DateValue } from "@internationalized/date";
-import type { CreateDateRangeFieldProps as MeltDateRangeFieldProps } from "@melt-ui/svelte";
 import type {
-	DOMElement,
-	Expand,
-	HTMLDivAttributes,
-	HTMLSpanAttributes,
-	OmitDates,
 	OnChangeFn,
-} from "$lib/internal/index.js";
+	PrimitiveDivAttributes,
+	PrimitiveSpanAttributes,
+	WithChild,
+	Without,
+} from "$lib/internal/types.js";
+import type { DateMatcher, Granularity } from "$lib/shared/date/types.js";
+import type { DateRange, EditableSegmentPart, SegmentPart } from "$lib/shared/index.js";
+import type { DateFieldSegmentProps, DateFieldSegmentPropsWithoutHTML } from "$lib/types.js";
 
-import type { DateRange, SegmentPart } from "$lib/shared/index.js";
+export type DateRangeFieldRootPropsWithoutHTML = WithChild<{
+	/**
+	 * The value of the date range field.
+	 *
+	 * @bindable
+	 */
+	value?: DateRange;
 
-export type { DateFieldSegmentEvents as DateRangeFieldSegmentEvents } from "../date-field/types.js";
+	/**
+	 * A callback that is called when the value of the date range field changes.
+	 */
+	onValueChange?: OnChangeFn<DateRange | undefined>;
 
-type CreateDateRangeFieldProps = Omit<
-	OmitDates<MeltDateRangeFieldProps>,
-	"required" | "name" | "startIds" | "endIds" | "startName" | "endName"
->;
+	/**
+	 * The placeholder value of the date field. This determines the format
+	 * and what date the field starts at when it is empty.
+	 *
+	 * @bindable
+	 */
+	placeholder?: DateValue | undefined;
 
-export type DateRangeFieldPropsWithoutHTML = Expand<
-	Omit<
-		OmitDates<CreateDateRangeFieldProps>,
-		"required" | "name" | "startIds" | "endIds" | "startName" | "endName"
-	> & {
-		/**
-		 * The value of the date field.
-		 * You can bind this to a `DateValue` object to programmatically control the value.
-		 */
-		value?: DateRange;
+	/**
+	 * A callback that is called when the date field's placeholder value changes.
+	 */
+	onPlaceholderChange?: OnChangeFn<DateValue | undefined>;
 
-		/**
-		 * A callback function called when the value changes.
-		 */
-		onValueChange?: OnChangeFn<DateRange | undefined>;
+	/**
+	 * A function that returns true if the given date is unavailable,
+	 * where if selected, the date field will be marked as invalid.
+	 */
+	isDateUnavailable?: DateMatcher;
 
-		/**
-		 * The placeholder date used to start the field.
-		 */
-		placeholder?: DateValue;
+	/**
+	 * The minimum acceptable date. When provided, the date field
+	 * will be marked as invalid if the user enters a date before this date.
+	 */
+	minValue?: DateValue | undefined;
 
-		/**
-		 * A callback function called when the placeholder changes.
-		 */
-		onPlaceholderChange?: OnChangeFn<DateValue>;
+	/**
+	 * The maximum acceptable date. When provided, the date field
+	 * will be marked as invalid if the user enters a date after this date.
+	 */
+	maxValue?: DateValue | undefined;
 
-		/**
-		 * The id of the validation message element which is used to apply the
-		 * appropriate `aria-describedby` attribute to the input.
-		 */
-		validationId?: string;
+	/**
+	 * If true, the date field will be disabled and users will not be able
+	 * to interact with it. This also disables the hidden input element if
+	 * the date field is used in a form.
+	 *
+	 * @defaultValue false
+	 */
+	disabled?: boolean;
 
-		/**
-		 * The id of the description element which is used to describe the input.
-		 * This is used to apply the appropriate `aria-describedby` attribute to the input.
-		 */
-		descriptionId?: string;
-	}
->;
+	/**
+	 * If true, the date field will be readonly, and users will not be able to
+	 * edit the values of any of the individual segments.
+	 *
+	 * @defaultValue false
+	 */
+	readonly?: boolean;
 
-export type DateRangeFieldInputPropsWithoutHTML = DOMElement;
+	/**
+	 * If true, the date field will be required, which is useful when used within
+	 * a form. If the date field is empty when the form is submitted, the form
+	 * will not be valid.
+	 *
+	 * @defaultValue false
+	 */
+	required?: boolean;
 
-export type DateRangeFieldLabelPropsWithoutHTML = DOMElement<HTMLSpanElement>;
+	/**
+	 * An array of segment names that should be readonly. If provided, only the
+	 * segments not in this array will be editable.
+	 */
+	readonlySegments?: EditableSegmentPart[];
 
-export type DateRangeFieldSegmentPropsWithoutHTML = Expand<
+	/**
+	 * The format to use for displaying the time in the input.
+	 * If using a 12 hour clock, ensure you also include the `dayPeriod`
+	 * segment in your input to ensure the user can select AM/PM.
+	 *
+	 * @defaultValue the locale's default time format
+	 */
+	hourCycle?: 12 | 24;
+
+	/**
+	 * The locale to use for formatting the date field.
+	 *
+	 * @defaultValue 'en'
+	 */
+	locale?: string;
+
+	/**
+	 * The granularity of the date field. This determines which
+	 * segments will be includes in the segments array used to
+	 * build the date field.
+	 *
+	 * By default, when a `CalendarDate` value is used, the granularity
+	 * will default to `'day'`, and when a `CalendarDateTime` or `ZonedDateTime`
+	 * value is used, the granularity will default to `'minute'`.
+	 *
+	 * Granularity is only used for visual purposes, and does not impact
+	 * the value of the date field. You can have the same value synced
+	 * between multiple date fields with different granularities and they
+	 * will all contain the same value.
+	 *
+	 * @defaultValue 'day'
+	 */
+	granularity?: Granularity;
+
+	/**
+	 * Whether or not to hide the timeZoneName segment from the date field.
+	 *
+	 * @defaultValue false;
+	 */
+	hideTimeZone?: boolean;
+
+	/**
+	 * A callback function called when the start value changes. This doesn't necessarily mean
+	 * the `value` has updated and should be used to apply cosmetic changes to the calendar when
+	 * only part of the value is changed/completed.
+	 */
+	onStartValueChange?: OnChangeFn<DateValue | undefined>;
+
+	/**
+	 * A callback function called when the end value changes. This doesn't necessarily mean
+	 * the `value` has updated and should be used to apply cosmetic changes to the calendar when
+	 * only part of the value is changed/completed.
+	 */
+	onEndValueChange?: OnChangeFn<DateValue | undefined>;
+}>;
+
+export type DateRangeFieldRootProps = DateRangeFieldRootPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, DateRangeFieldRootPropsWithoutHTML>;
+
+export type DateRangeFieldLabelPropsWithoutHTML = WithChild;
+
+export type DateRangeFieldLabelProps = DateRangeFieldLabelPropsWithoutHTML &
+	Without<PrimitiveSpanAttributes, DateRangeFieldLabelPropsWithoutHTML>;
+
+export type DateRangeFieldInputSnippetProps = {
+	segments: Array<{ part: SegmentPart; value: string }>;
+};
+
+export type DateRangeFieldInputPropsWithoutHTML = WithChild<
 	{
 		/**
-		 * The type of field to render (start or end).
+		 * The name to use for the hidden input element associated with this input
+		 * used for form submission.
 		 */
-		type: "start" | "end";
+		name?: string;
 
 		/**
-		 * The part of the date to render.
+		 * Whether this input represents the start or end of the date range.
 		 */
-		part: SegmentPart;
-	} & DOMElement
+		type: "start" | "end";
+	},
+	DateRangeFieldInputSnippetProps
 >;
 
-//
+export type DateRangeFieldInputProps = DateRangeFieldInputPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, DateRangeFieldInputPropsWithoutHTML>;
 
-export type DateRangeFieldProps = DateRangeFieldPropsWithoutHTML;
-export type DateRangeFieldLabelProps = DateRangeFieldLabelPropsWithoutHTML & HTMLSpanAttributes;
-export type DateRangeFieldSegmentProps = DateRangeFieldSegmentPropsWithoutHTML & HTMLDivAttributes;
-export type DateRangeFieldInputProps = DateRangeFieldInputPropsWithoutHTML & HTMLDivAttributes;
+export type DateRangeFieldSegmentPropsWithoutHTML = DateFieldSegmentPropsWithoutHTML;
+
+export type DateRangeFieldSegmentProps = DateFieldSegmentProps;

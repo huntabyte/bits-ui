@@ -7,11 +7,10 @@
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
 
 	let {
-		asChild,
 		children,
 		child,
 		id = useId(),
-		el = $bindable(),
+		ref = $bindable(null),
 		side = "top",
 		sideOffset = 0,
 		align = "center",
@@ -26,8 +25,12 @@
 		...restProps
 	}: ContentProps = $props();
 
-	const state = useTooltipContent({
+	const contentState = useTooltipContent({
 		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
 	const floatingProps = $derived({
@@ -45,17 +48,17 @@
 <PopperLayer
 	{...restProps}
 	{...floatingProps}
-	present={state.root.open.value || forceMount}
+	present={contentState.root.open.value || forceMount}
 	{id}
 	onInteractOutside={(e) => {
 		onInteractOutside?.(e);
 		if (e.defaultPrevented) return;
-		state.root.handleClose();
+		contentState.root.handleClose();
 	}}
 	onEscapeKeydown={(e) => {
 		// TODO: users should be able to cancel this
 		onEscapeKeydown?.(e);
-		state.root.handleClose();
+		contentState.root.handleClose();
 	}}
 	onMountAutoFocus={(e) => e.preventDefault()}
 	onDestroyAutoFocus={(e) => e.preventDefault()}
@@ -64,11 +67,11 @@
 	preventScroll={false}
 >
 	{#snippet popper({ props })}
-		{@const mergedProps = mergeProps(restProps, state.props, props)}
-		{#if asChild}
+		{@const mergedProps = mergeProps(restProps, contentState.props, props)}
+		{#if child}
 			{@render child?.({ props: mergedProps })}
 		{:else}
-			<div {...mergedProps} bind:this={el}>
+			<div {...mergedProps} bind:this={ref}>
 				{@render children?.()}
 			</div>
 		{/if}

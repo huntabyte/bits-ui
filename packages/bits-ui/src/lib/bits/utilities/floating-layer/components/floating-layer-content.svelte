@@ -23,12 +23,12 @@
 		strategy = "fixed",
 		dir = "ltr",
 		style = {},
-		present,
+		enabled,
 		wrapperId = useId(),
 		preventScroll = true,
 	}: ContentImplProps = $props();
 
-	const state = useFloatingContentState({
+	const contentState = useFloatingContentState({
 		side: box.with(() => side),
 		sideOffset: box.with(() => sideOffset),
 		align: box.with(() => align),
@@ -45,12 +45,12 @@
 		strategy: box.with(() => strategy),
 		dir: box.with(() => dir),
 		style: box.with(() => style),
-		present: box.with(() => present),
+		enabled: box.with(() => enabled),
 		wrapperId: box.with(() => wrapperId),
 	});
 
 	const mergedProps = $derived(
-		mergeProps(state.wrapperProps, {
+		mergeProps(contentState.wrapperProps, {
 			style: {
 				pointerEvents: "auto",
 			},
@@ -61,5 +61,5 @@
 </script>
 
 <div {...mergedProps}>
-	{@render content?.({ props: state.props })}
+	{@render content?.({ props: contentState.props })}
 </div>

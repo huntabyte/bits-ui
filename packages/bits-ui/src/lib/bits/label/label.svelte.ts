@@ -1,7 +1,21 @@
+import type { WithRefProps } from "$lib/internal/types.js";
+import { useRefById } from "$lib/internal/useRefById.svelte.js";
+
 const ROOT_ATTR = "data-label-root";
 
+type LabelRootStateProps = WithRefProps;
 class LabelRootState {
-	constructor() {}
+	#id: LabelRootStateProps["id"];
+	#ref: LabelRootStateProps["ref"];
+	constructor(props: LabelRootStateProps) {
+		this.#id = props.id;
+		this.#ref = props.ref;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+		});
+	}
 
 	#onmousedown = (e: MouseEvent) => {
 		if (e.detail > 1) e.preventDefault();
@@ -13,6 +27,6 @@ class LabelRootState {
 	});
 }
 
-export function setLabelRootState() {
-	return new LabelRootState();
+export function setLabelRootState(props: LabelRootStateProps) {
+	return new LabelRootState(props);
 }

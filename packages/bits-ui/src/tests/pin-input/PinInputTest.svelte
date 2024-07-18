@@ -1,19 +1,64 @@
 <script lang="ts">
-	import { PinInput } from "$lib/index.js";
+	import { PinInput, type PinInputRootSnippetProps } from "$lib/index.js";
+	import { noop } from "$lib/internal/callbacks.js";
 
-	type $$Props = PinInput.Props;
+	let {
+		onComplete = noop,
+		maxlength = 6,
+		value = "",
+		...restProps
+	}: Omit<PinInput.RootProps, "children"> = $props();
 
-	export let value: string[] | undefined = undefined;
+	type CellProps = PinInputRootSnippetProps["cells"][0];
 </script>
 
 <main>
-	<button data-testid="binding" on:click={() => (value = ["0", "1", "1", "3", "4"])}>
+	<button aria-label="binding" data-testid="binding" onclick={() => (value = "999999")}>
 		{value}
 	</button>
-	<PinInput.Root bind:value {...$$restProps} data-testid="root">
-		{#each Array(5) as _, i}
-			<PinInput.Input data-testid="input-{i + 1}" />
-		{/each}
-		<PinInput.HiddenInput data-testid="hidden-input" />
+
+	<PinInput.Root
+		aria-label="my input"
+		inputId="myInput"
+		bind:value
+		class="group/pininput flex items-center text-foreground has-[:disabled]:opacity-30"
+		{maxlength}
+		{onComplete}
+		data-testid="input"
+		{...restProps}
+	>
+		{#snippet children({ cells })}
+			<div class="flex">
+				{#each cells.slice(0, 3) as cell, idx}
+					{@render Cell(cell, idx)}
+				{/each}
+			</div>
+
+			<div class="flex w-10 items-center justify-center">
+				<div class="h-1 w-3 rounded-full bg-border"></div>
+			</div>
+
+			<div class="flex">
+				{#each cells.slice(3, 6) as cell, idx}
+					{@render Cell(cell, idx + 3)}
+				{/each}
+			</div>
+		{/snippet}
 	</PinInput.Root>
 </main>
+
+{#snippet Cell(props: CellProps, idx: number)}
+	<div data-testid="cell-{idx}" data-active={props.isActive ? "" : undefined}>
+		{#if props.char !== null}
+			{props.char}
+		{/if}
+		{#if props.hasFakeCaret}
+			<div
+				class="pointer-events-none absolute inset-0 flex animate-caret-blink items-center justify-center"
+				data-testid="caret-{idx}"
+			>
+				<div class="h-8 w-px bg-white"></div>
+			</div>
+		{/if}
+	</div>
+{/snippet}

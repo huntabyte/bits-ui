@@ -9,10 +9,9 @@
 		count,
 		perPage = 1,
 		page = $bindable(1),
-		el = $bindable(),
+		ref = $bindable(null),
 		siblingCount = 1,
 		onPageChange,
-		asChild,
 		loop = false,
 		orientation = "horizontal",
 		child,
@@ -21,7 +20,7 @@
 		...restProps
 	}: RootProps = $props();
 
-	const state = usePaginationRoot({
+	const rootState = usePaginationRoot({
 		id: box.with(() => id),
 		count: box.with(() => count),
 		perPage: box.with(() => perPage),
@@ -35,19 +34,23 @@
 		loop: box.with(() => loop),
 		siblingCount: box.with(() => siblingCount),
 		orientation: box.with(() => orientation),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
 	const mergedProps = $derived({
 		...restProps,
-		...state.props,
+		...rootState.props,
 		style: styleToString(style),
 	});
 </script>
 
-{#if asChild}
-	{@render child?.({ props: mergedProps, pages: state.pages, range: state.range })}
+{#if child}
+	{@render child?.({ props: mergedProps, pages: rootState.pages, range: rootState.range })}
 {:else}
-	<div bind:this={el} {...mergedProps}>
-		{@render children?.({ pages: state.pages, range: state.range })}
+	<div {...mergedProps}>
+		{@render children?.({ pages: rootState.pages, range: rootState.range })}
 	</div>
 {/if}

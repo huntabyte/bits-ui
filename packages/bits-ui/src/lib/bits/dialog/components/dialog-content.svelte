@@ -14,10 +14,9 @@
 
 	let {
 		id = useId(),
-		asChild,
 		children,
 		child,
-		el = $bindable(),
+		ref = $bindable(null),
 		forceMount = false,
 		onDestroyAutoFocus = noop,
 		onEscapeKeydown = noop,
@@ -25,14 +24,18 @@
 		...restProps
 	}: ContentProps = $props();
 
-	const state = useDialogContent({
+	const contentState = useDialogContent({
 		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, contentState.props));
 </script>
 
-<PresenceLayer {...mergedProps} present={state.root.open.value || forceMount}>
+<PresenceLayer {...mergedProps} present={contentState.root.open.value || forceMount}>
 	{#snippet presence({ present })}
 		<ScrollLock {...mergedProps} />
 		<FocusScope
@@ -42,29 +45,29 @@
 			onDestroyAutoFocus={(e) => {
 				onDestroyAutoFocus(e);
 				if (e.defaultPrevented) return;
-				state.root.triggerNode?.value?.focus();
+				contentState.root.triggerNode?.focus();
 			}}
 		>
 			{#snippet focusScope({ props: focusScopeProps })}
 				<EscapeLayer
 					{...mergedProps}
-					present={present.value}
+					enabled={present.value}
 					onEscapeKeydown={(e) => {
 						onEscapeKeydown(e);
-						state.root.closeDialog();
+						contentState.root.closeDialog();
 					}}
 				>
 					<DismissableLayer
 						{...mergedProps}
-						present={present.value}
+						enabled={present.value}
 						onInteractOutside={(e) => {
 							onInteractOutside(e);
 							if (e.defaultPrevented) return;
-							state.root.closeDialog();
+							contentState.root.closeDialog();
 						}}
 					>
-						<TextSelectionLayer {...mergedProps} present={present.value}>
-							{#if asChild}
+						<TextSelectionLayer {...mergedProps} enabled={present.value}>
+							{#if child}
 								{@render child?.({
 									props: mergeProps(mergedProps, focusScopeProps, {
 										hidden: !present.value,
@@ -78,7 +81,6 @@
 											pointerEvents: "auto",
 										},
 									})}
-									bind:this={el}
 								>
 									{@render children?.()}
 								</div>

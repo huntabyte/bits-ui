@@ -1,19 +1,33 @@
 <script lang="ts">
+	import { box } from "svelte-toolbelt";
 	import type { FallbackProps } from "../index.js";
 	import { useAvatarFallback } from "../avatar.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
 
-	let { asChild, children, child, el = $bindable(), ...restProps }: FallbackProps = $props();
+	let {
+		children,
+		child,
+		id = useId(),
+		ref = $bindable(null),
+		...restProps
+	}: FallbackProps = $props();
 
-	const state = useAvatarFallback();
+	const fallbackState = useAvatarFallback({
+		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
+	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, fallbackState.props));
 </script>
 
-{#if asChild}
-	{@render child?.({ props: mergedProps })}
+{#if child}
+	{@render child({ props: mergedProps })}
 {:else}
-	<span bind:this={el} {...mergedProps}>
+	<span {...mergedProps}>
 		{@render children?.()}
 	</span>
 {/if}

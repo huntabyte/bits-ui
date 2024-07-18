@@ -6,10 +6,9 @@
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {
-		asChild,
 		children,
 		child,
-		el = $bindable(),
+		ref = $bindable(null),
 		value,
 		disabled = false,
 		id = useId(),
@@ -17,19 +16,23 @@
 		...restProps
 	}: ItemProps = $props();
 
-	const state = useToggleGroupItem({
+	const itemState = useToggleGroupItem({
 		id: box.with(() => id),
 		value: box.with(() => value),
 		disabled: box.with(() => disabled),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props, { type }));
+	const mergedProps = $derived(mergeProps(restProps, itemState.props, { type }));
 </script>
 
-{#if asChild}
-	{@render child?.({ props: mergedProps })}
+{#if child}
+	{@render child?.({ props: mergedProps, pressed: itemState.isPressed })}
 {:else}
-	<button bind:this={el} {...mergedProps}>
-		{@render children?.()}
+	<button bind:this={ref} {...mergedProps}>
+		{@render children?.({ pressed: itemState.isPressed })}
 	</button>
 {/if}

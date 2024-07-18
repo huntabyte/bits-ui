@@ -10,7 +10,6 @@ import {
 	type Side,
 	getCheckedState,
 	isMouseEvent,
-	isPointerInGraceArea,
 } from "./utils.js";
 import {
 	type ReadableBoxedValues,
@@ -18,9 +17,8 @@ import {
 	watch,
 } from "$lib/internal/box.svelte.js";
 import { addEventListener } from "$lib/internal/events.js";
-import type { AnyFn } from "$lib/internal/types.js";
+import type { AnyFn, WithRefProps } from "$lib/internal/types.js";
 import { executeCallbacks } from "$lib/internal/callbacks.js";
-import { useNodeById } from "$lib/internal/useNodeById.svelte.js";
 import { useTypeahead } from "$lib/internal/useTypeahead.svelte.js";
 import { onDestroyEffect } from "$lib/internal/onDestroyEffect.svelte.js";
 import { isElement, isHTMLElement } from "$lib/internal/is.js";
@@ -38,6 +36,8 @@ import { mergeProps } from "$lib/internal/mergeProps.js";
 import { createContext } from "$lib/internal/createContext.js";
 import type { Direction } from "$lib/shared/index.js";
 import { afterTick } from "$lib/internal/afterTick.js";
+import { useRefById } from "$lib/internal/useRefById.svelte.js";
+import { isPointerInGraceArea, makeHullFromElements } from "$lib/internal/polygon.js";
 
 const TRIGGER_ATTR = "data-menu-trigger";
 const CONTENT_ATTR = "data-menu-content";
@@ -128,8 +128,9 @@ type MenuMenuStateProps = WritableBoxedValues<{
 class MenuMenuState {
 	root: MenuRootState;
 	open: MenuMenuStateProps["open"];
-	contentNode = box<HTMLElement | null>(null);
-	triggerId = box.with<string | undefined>(() => undefined);
+	contentId = box.with<string>(() => "");
+	contentNode = $state<HTMLElement | null>(null);
+	triggerNode = $state<HTMLElement | null>(null);
 	parentMenu?: MenuMenuState;
 
 	constructor(props: MenuMenuStateProps, root: MenuRootState, parentMenu?: MenuMenuState) {
@@ -176,10 +177,15 @@ class MenuMenuState {
 type MenuContentStateProps = ReadableBoxedValues<{
 	id: string;
 	loop: boolean;
-}>;
+	isMounted: boolean;
+}> &
+	WritableBoxedValues<{
+		ref: HTMLElement | null;
+	}>;
 
 class MenuContentState {
 	#id: MenuContentStateProps["id"];
+	contentRef: MenuContentStateProps["ref"];
 	parentMenu: MenuMenuState;
 	search = $state("");
 	#loop: MenuContentStateProps["loop"];
@@ -190,12 +196,26 @@ class MenuContentState {
 	#lastPointerX = $state(0);
 	#handleTypeaheadSearch: ReturnType<typeof useTypeahead>["handleTypeaheadSearch"];
 	rovingFocusGroup: ReturnType<typeof useRovingFocus>;
+	isMounted: MenuContentStateProps["isMounted"];
 
 	constructor(props: MenuContentStateProps, parentMenu: MenuMenuState) {
 		this.#id = props.id;
 		this.#loop = props.loop;
 		this.parentMenu = parentMenu;
-		this.parentMenu.contentNode = useNodeById(this.#id, this.parentMenu.open);
+		this.parentMenu.contentId = props.id;
+		this.contentRef = props.ref;
+		this.isMounted = props.isMounted;
+
+		useRefById({
+			id: this.#id,
+			ref: this.contentRef,
+			condition: () => this.parentMenu.open.value,
+			onRefChange: (node) => {
+				if (this.parentMenu.contentNode !== node) {
+					this.parentMenu.contentNode = node;
+				}
+			},
+		});
 
 		onDestroyEffect(() => {
 			window.clearTimeout(this.#timer);
@@ -203,7 +223,7 @@ class MenuContentState {
 
 		this.#handleTypeaheadSearch = useTypeahead().handleTypeaheadSearch;
 		this.rovingFocusGroup = useRovingFocus({
-			rootNode: this.parentMenu.contentNode,
+			rootNodeId: this.parentMenu.contentId,
 			candidateSelector: ITEM_ATTR,
 			loop: this.#loop,
 			orientation: box.with(() => "vertical"),
@@ -211,7 +231,7 @@ class MenuContentState {
 	}
 
 	getCandidateNodes() {
-		const node = this.parentMenu.contentNode.value;
+		const node = this.parentMenu.contentNode;
 		if (!node) return [];
 		const candidates = Array.from(
 			node.querySelectorAll<HTMLElement>(`[${ITEM_ATTR}]:not([data-disabled])`)
@@ -236,7 +256,7 @@ class MenuContentState {
 		if (!isHTMLElement(target) || !isHTMLElement(currentTarget)) return;
 
 		const isKeydownInside =
-			target.closest(`[${CONTENT_ATTR}]`) === this.parentMenu.contentNode.value;
+			target.closest(`[${CONTENT_ATTR}]`)?.id === this.parentMenu.contentId.value;
 		const isModifierKey = e.ctrlKey || e.altKey || e.metaKey;
 		const isCharacterKey = e.key.length === 1;
 
@@ -257,7 +277,7 @@ class MenuContentState {
 		}
 
 		// focus first/last based on key pressed
-		if (e.target !== this.parentMenu.contentNode.value) return;
+		if ((e.target as HTMLElement)?.id !== this.parentMenu.contentId.value) return;
 
 		if (!FIRST_LAST_KEYS.includes(e.key)) return;
 		e.preventDefault();
@@ -280,7 +300,6 @@ class MenuContentState {
 
 	#onfocus = () => {
 		if (!this.parentMenu.root.isUsingKeyboard.value) return;
-
 		afterTick(() => this.rovingFocusGroup.focusFirstCandidate());
 	};
 
@@ -308,7 +327,8 @@ class MenuContentState {
 
 	onItemLeave(e: PointerEvent) {
 		if (this.isPointerMovingToSubmenu(e)) return;
-		this.parentMenu.contentNode.value?.focus();
+		const contentNode = this.parentMenu.contentNode;
+		contentNode?.focus();
 		this.rovingFocusGroup.setCurrentTabStopId("");
 	}
 
@@ -320,9 +340,8 @@ class MenuContentState {
 	onMountAutoFocus(e: Event) {
 		if (e.defaultPrevented) return;
 		e.preventDefault();
-		afterTick(() => {
-			this.parentMenu.contentNode.value?.focus();
-		});
+		const contentNode = this.parentMenu.contentNode;
+		contentNode?.focus();
 	}
 
 	props = $derived.by(
@@ -359,7 +378,6 @@ class MenuContentState {
 	createSubTrigger(props: MenuItemSharedStateProps) {
 		const item = new MenuItemSharedState(props, this);
 		const submenu = getMenuMenuContext();
-		submenu.triggerId = props.id;
 		return new MenuSubTriggerState(item, this, submenu);
 	}
 }
@@ -367,10 +385,14 @@ class MenuContentState {
 type MenuItemSharedStateProps = ReadableBoxedValues<{
 	disabled: boolean;
 	id: string;
-}>;
+}> &
+	WritableBoxedValues<{
+		ref: HTMLElement | null;
+	}>;
 
 class MenuItemSharedState {
 	content: MenuContentState;
+	ref: MenuItemSharedStateProps["ref"];
 	id: MenuItemSharedStateProps["id"];
 	disabled: MenuItemSharedStateProps["disabled"];
 	#isFocused = $state(false);
@@ -379,6 +401,13 @@ class MenuItemSharedState {
 		this.content = content;
 		this.id = props.id;
 		this.disabled = props.disabled;
+		this.ref = props.ref;
+
+		useRefById({
+			id: this.id,
+			ref: this.ref,
+			condition: () => this.content.isMounted.value,
+		});
 	}
 
 	#onpointermove = (e: PointerEvent) => {
@@ -518,10 +547,17 @@ class MenuSubTriggerState {
 		this.#item = item;
 		this.#content = content;
 		this.#submenu = submenu;
-		this.#submenu.triggerId = item.id;
 
 		onDestroyEffect(() => {
 			this.#clearOpenTimer();
+		});
+
+		useRefById({
+			id: this.#item.id,
+			ref: this.#item.ref,
+			onRefChange: (node) => {
+				this.#submenu.triggerNode = node;
+			},
 		});
 	}
 
@@ -548,25 +584,15 @@ class MenuSubTriggerState {
 		if (!isMouseEvent(e)) return;
 		this.#clearOpenTimer();
 
-		const contentRect = this.#submenu.contentNode.value?.getBoundingClientRect();
-		if (contentRect?.width) {
-			const side = this.#submenu.contentNode.value?.dataset.side as Side;
+		const contentNode = this.#submenu.contentNode;
+		const subTriggerNode = this.#item.ref.value;
 
-			const rightSide = side === "right";
-			const bleed = rightSide ? -5 : +5;
-			const contentNearEdge = contentRect[rightSide ? "left" : "right"];
-			const contentFarEdge = contentRect[rightSide ? "right" : "left"];
+		if (contentNode && subTriggerNode) {
+			const polygon = makeHullFromElements([subTriggerNode, contentNode]);
+			const side = contentNode?.dataset.side as Side;
 
 			this.#content.onPointerGraceIntentChange({
-				area: [
-					// Apply a bleed on clientX to ensure that our exit point is
-					// consistently within polygon bounds
-					{ x: e.clientX + bleed, y: e.clientY },
-					{ x: contentNearEdge, y: contentRect.top },
-					{ x: contentFarEdge, y: contentRect.top },
-					{ x: contentFarEdge, y: contentRect.bottom },
-					{ x: contentNearEdge, y: contentRect.bottom },
-				],
+				area: polygon,
 				side,
 			});
 
@@ -591,10 +617,10 @@ class MenuSubTriggerState {
 		if (SUB_OPEN_KEYS[this.#submenu.root.dir.value].includes(e.key)) {
 			this.#submenu.onOpen();
 
-			afterTick(() => {
-				this.#submenu.contentNode.value?.focus();
-				e.preventDefault();
-			});
+			const contentNode = this.#submenu.contentNode;
+
+			contentNode?.focus();
+			e.preventDefault();
 		}
 	};
 
@@ -613,19 +639,22 @@ class MenuSubTriggerState {
 	};
 
 	props = $derived.by(() =>
-		mergeProps(this.#item.props, {
-			"aria-haspopup": "menu",
-			"aria-expanded": getAriaExpanded(this.#submenu.open.value),
-			"data-state": getDataOpenClosed(this.#submenu.open.value),
-			"aria-controls": this.#submenu.open.value
-				? this.#submenu.contentNode.value?.id
-				: undefined,
-			[SUB_TRIGGER_ATTR]: "",
-			onclick: this.#onclick,
-			onpointermove: this.#onpointermove,
-			onpointerleave: this.#onpointerleave,
-			onkeydown: this.#onkeydown,
-		} as const)
+		mergeProps(
+			{
+				"aria-haspopup": "menu",
+				"aria-expanded": getAriaExpanded(this.#submenu.open.value),
+				"data-state": getDataOpenClosed(this.#submenu.open.value),
+				"aria-controls": this.#submenu.open.value
+					? this.#submenu.contentId.value
+					: undefined,
+				[SUB_TRIGGER_ATTR]: "",
+				onclick: this.#onclick,
+				onpointermove: this.#onpointermove,
+				onpointerleave: this.#onpointerleave,
+				onkeydown: this.#onkeydown,
+			},
+			this.#item.props
+		)
 	);
 }
 
@@ -664,25 +693,81 @@ class MenuCheckboxItemState {
 	);
 }
 
+type MenuGroupStateProps = WithRefProps;
+
 class MenuGroupState {
-	props = {
-		role: "group",
-		[GROUP_ATTR]: "",
-	} as const;
+	#id: MenuGroupStateProps["id"];
+	#ref: MenuGroupStateProps["ref"];
+
+	constructor(props: MenuGroupStateProps) {
+		this.#id = props.id;
+		this.#ref = props.ref;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+		});
+	}
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.value,
+				role: "group",
+				[GROUP_ATTR]: "",
+			}) as const
+	);
 }
 
+type MenuLabelStateProps = WithRefProps;
 class MenuLabelState {
-	props = {
-		[LABEL_ATTR]: "",
-	} as const;
+	#id: MenuLabelStateProps["id"];
+	#ref: MenuLabelStateProps["ref"];
+
+	constructor(props: MenuLabelStateProps) {
+		this.#id = props.id;
+		this.#ref = props.ref;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+		});
+	}
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.value,
+				role: "group",
+				[LABEL_ATTR]: "",
+			}) as const
+	);
 }
+
+type MenuSeparatorStateProps = WithRefProps;
 
 class MenuSeparatorState {
-	props = {
-		[SEPARATOR_ATTR]: "",
-		role: "separator",
-		"aria-orientation": "horizontal",
-	} as const;
+	#id: MenuSeparatorStateProps["id"];
+	#ref: MenuSeparatorStateProps["ref"];
+
+	constructor(props: MenuSeparatorStateProps) {
+		this.#id = props.id;
+		this.#ref = props.ref;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+		});
+	}
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.value,
+				role: "group",
+				[SEPARATOR_ATTR]: "",
+			}) as const
+	);
 }
 
 class MenuArrowState {
@@ -693,15 +778,28 @@ class MenuArrowState {
 
 type MenuRadioGroupStateProps = WritableBoxedValues<{
 	value: string;
-}>;
+	ref: HTMLElement | null;
+}> &
+	ReadableBoxedValues<{
+		id: string;
+	}>;
 
 class MenuRadioGroupState {
+	#id: MenuRadioGroupStateProps["id"];
 	value: MenuRadioGroupStateProps["value"];
+	#ref: MenuRadioGroupStateProps["ref"];
 	#content: MenuContentState;
 
 	constructor(props: MenuRadioGroupStateProps, content: MenuContentState) {
 		this.value = props.value;
+		this.#id = props.id;
+		this.#ref = props.ref;
 		this.#content = content;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+		});
 	}
 
 	setValue(v: string) {
@@ -718,6 +816,7 @@ class MenuRadioGroupState {
 	props = $derived.by(
 		() =>
 			({
+				id: this.#id.value,
 				[RADIO_GROUP_ATTR]: "",
 				role: "group",
 			}) as const
@@ -726,9 +825,15 @@ class MenuRadioGroupState {
 
 type MenuRadioItemStateProps = ReadableBoxedValues<{
 	value: string;
-}>;
+	id: string;
+}> &
+	WritableBoxedValues<{
+		ref: HTMLElement | null;
+	}>;
 
 class MenuRadioItemState {
+	#id: MenuRadioItemStateProps["id"];
+	#ref: MenuRadioItemStateProps["ref"];
 	#item: MenuItemState;
 	#value: MenuRadioItemStateProps["value"];
 	#group: MenuRadioGroupState;
@@ -736,8 +841,15 @@ class MenuRadioItemState {
 
 	constructor(props: MenuRadioItemStateProps, item: MenuItemState, group: MenuRadioGroupState) {
 		this.#item = item;
+		this.#id = props.id;
+		this.#ref = props.ref;
 		this.#group = group;
 		this.#value = props.value;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+		});
 	}
 
 	selectValue() {
@@ -763,15 +875,30 @@ class MenuRadioItemState {
 type DropdownMenuTriggerStateProps = ReadableBoxedValues<{
 	id: string;
 	disabled: boolean;
-}>;
+}> &
+	WritableBoxedValues<{
+		ref: HTMLElement | null;
+	}>;
 
 class DropdownMenuTriggerState {
+	#id: DropdownMenuTriggerStateProps["id"];
+	#ref: DropdownMenuTriggerStateProps["ref"];
 	#parentMenu: MenuMenuState;
 	#disabled: DropdownMenuTriggerStateProps["disabled"];
+
 	constructor(props: DropdownMenuTriggerStateProps, parentMenu: MenuMenuState) {
+		this.#ref = props.ref;
+		this.#id = props.id;
 		this.#parentMenu = parentMenu;
 		this.#disabled = props.disabled;
-		this.#parentMenu.triggerId = props.id;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+			onRefChange: (ref) => {
+				this.#parentMenu.triggerNode = ref;
+			},
+		});
 	}
 
 	#onpointerdown = (e: PointerEvent) => {
@@ -779,9 +906,7 @@ class DropdownMenuTriggerState {
 			this.#parentMenu.toggleOpen();
 			// prevent trigger focusing when opening to allow
 			// the content to be given focus without competition
-			afterTick(() => {
-				if (!this.#parentMenu.open.value) e.preventDefault();
-			});
+			if (!this.#parentMenu.open.value) e.preventDefault();
 		}
 	};
 
@@ -799,15 +924,15 @@ class DropdownMenuTriggerState {
 	};
 
 	#ariaControls = $derived.by(() => {
-		if (this.#parentMenu.open.value && this.#parentMenu.contentNode.value)
-			return this.#parentMenu.contentNode.value.id;
+		if (this.#parentMenu.open.value && this.#parentMenu.contentId.value)
+			return this.#parentMenu.contentId.value;
 		return undefined;
 	});
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.#parentMenu.triggerId.value,
+				id: this.#id.value,
 				disabled: this.#disabled.value,
 				"aria-haspopup": "menu",
 				"aria-expanded": getAriaExpanded(this.#parentMenu.open.value),
@@ -825,9 +950,14 @@ class DropdownMenuTriggerState {
 type ContextMenuTriggerStateProps = ReadableBoxedValues<{
 	id: string;
 	disabled: boolean;
-}>;
+}> &
+	WritableBoxedValues<{
+		ref: HTMLElement | null;
+	}>;
 
 class ContextMenuTriggerState {
+	#id: ContextMenuTriggerStateProps["id"];
+	#ref: ContextMenuTriggerStateProps["ref"];
 	#parentMenu: MenuMenuState;
 	#disabled: ContextMenuTriggerStateProps["disabled"];
 	#point = $state({ x: 0, y: 0 });
@@ -841,10 +971,18 @@ class ContextMenuTriggerState {
 	constructor(props: ContextMenuTriggerStateProps, parentMenu: MenuMenuState) {
 		this.#parentMenu = parentMenu;
 		this.#disabled = props.disabled;
-		this.#parentMenu.triggerId = props.id;
+		this.#id = props.id;
+		this.#ref = props.ref;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+			onRefChange: (node) => {
+				this.#parentMenu.triggerNode = node;
+			},
+		});
 
 		$effect(() => {
-			// eslint-disable-next-line no-unused-expressions
 			this.#point;
 			this.virtualElement.value = {
 				getBoundingClientRect: () =>
@@ -906,7 +1044,7 @@ class ContextMenuTriggerState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#parentMenu.triggerId.value,
+				id: this.#id.value,
 				disabled: this.#disabled.value,
 				"data-disabled": getDataDisabled(this.#disabled.value),
 				"data-state": getDataOpenClosed(this.#parentMenu.open.value),
@@ -975,16 +1113,16 @@ export function useMenuRadioItem(props: MenuRadioItemStateProps & MenuItemCombin
 	return getMenuRadioGroupContext().createRadioItem(props);
 }
 
-export function useMenuGroup() {
-	return new MenuGroupState();
+export function useMenuGroup(props: MenuGroupStateProps) {
+	return new MenuGroupState(props);
 }
 
-export function useMenuLabel() {
-	return new MenuLabelState();
+export function useMenuLabel(props: MenuLabelStateProps) {
+	return new MenuLabelState(props);
 }
 
-export function useMenuSeparator() {
-	return new MenuSeparatorState();
+export function useMenuSeparator(props: MenuSeparatorStateProps) {
+	return new MenuSeparatorState(props);
 }
 
 export function useMenuArrow() {

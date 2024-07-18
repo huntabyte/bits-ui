@@ -6,10 +6,9 @@
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {
-		asChild,
 		children,
 		child,
-		el = $bindable(),
+		ref = $bindable(null),
 		id = useId(),
 		value = $bindable(""),
 		onValueChange,
@@ -20,7 +19,7 @@
 		...restProps
 	}: RootProps = $props();
 
-	const state = useTabsRoot({
+	const rootState = useTabsRoot({
 		id: box.with(() => id),
 		value: box.with(
 			() => value,
@@ -35,15 +34,19 @@
 		loop: box.with(() => loop),
 		activationMode: box.with(() => activationMode),
 		disabled: box.with(() => disabled),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, rootState.props));
 </script>
 
-{#if asChild}
+{#if child}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<div {...mergedProps} bind:this={el}>
+	<div {...mergedProps}>
 		{@render children?.()}
 	</div>
 {/if}

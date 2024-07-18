@@ -4,53 +4,16 @@ description: Displays a menu of items that users can select from when triggered.
 ---
 
 <script>
-	import { APISection, ComponentPreview, DropdownMenuDemo } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, DropdownMenuDemo } from '$lib/components'
 	export let schemas;
 </script>
 
-<ComponentPreview name="dropdown-menu-demo" comp="DropdownMenu">
+<ComponentPreviewV2 name="dropdown-menu-demo" comp="DropdownMenu">
 
-<DropdownMenuDemo slot="preview" />
+{#snippet preview()}
+<DropdownMenuDemo />
+{/snippet}
 
-</ComponentPreview>
-
-## Structure
-
-```svelte
-<script lang="ts">
-	import { DropdownMenu } from "bits-ui";
-</script>
-
-<DropdownMenu.Root>
-	<DropdownMenu.Trigger />
-
-	<DropdownMenu.Content>
-		<DropdownMenu.Label />
-		<DropdownMenu.Item />
-
-		<DropdownMenu.Group>
-			<DropdownMenu.Item />
-		</DropdownMenu.Group>
-
-		<DropdownMenu.CheckboxItem>
-			<DropdownMenu.CheckboxIndicator />
-		</DropdownMenu.CheckboxItem>
-
-		<DropdownMenu.RadioGroup>
-			<DropdownMenu.RadioItem>
-				<DropdownMenu.RadioIndicator />
-			</DropdownMenu.RadioItem>
-		</DropdownMenu.RadioGroup>
-
-		<DropdownMenu.Sub>
-			<DropdownMenu.SubTrigger />
-			<DropdownMenu.SubContent />
-		</DropdownMenu.Sub>
-
-		<DropdownMenu.Separator />
-		<DropdownMenu.Arrow />
-	</DropdownMenu.Content>
-</DropdownMenu.Root>
-```
+</ComponentPreviewV2>
 
 <APISection {schemas} />

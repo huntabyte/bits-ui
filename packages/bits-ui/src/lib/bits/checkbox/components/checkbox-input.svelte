@@ -1,9 +1,12 @@
 <script lang="ts">
 	import { useCheckboxInput } from "../checkbox.svelte.js";
+	import VisuallyHidden from "$lib/bits/utilities/visually-hidden/visually-hidden.svelte";
 
-	const state = useCheckboxInput();
+	const inputState = useCheckboxInput();
 </script>
 
-{#if state.shouldRender}
-	<input {...state.props} type="checkbox" style="display: none !important;" />
+{#if inputState.shouldRender}
+	<VisuallyHidden>
+		<input {...inputState.props} type="checkbox" style="display: none !important;" />
+	</VisuallyHidden>
 {/if}

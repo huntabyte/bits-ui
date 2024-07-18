@@ -8,13 +8,13 @@
 		escapeKeydownBehavior = "close",
 		onEscapeKeydown = noop,
 		children,
-		present,
+		enabled,
 	}: EscapeLayerImplProps = $props();
 
 	useEscapeLayer({
 		escapeKeydownBehavior: box.with(() => escapeKeydownBehavior),
 		onEscapeKeydown: box.with(() => onEscapeKeydown),
-		present: box.with(() => present),
+		enabled: box.with(() => enabled),
 	});
 </script>
 

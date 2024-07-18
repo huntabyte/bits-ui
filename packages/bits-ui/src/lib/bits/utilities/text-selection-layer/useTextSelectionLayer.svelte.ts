@@ -1,6 +1,6 @@
 import { untrack } from "svelte";
-import type { ReadableBox, WritableBox } from "svelte-toolbelt";
-import type { TextSelectionLayerImplProps, TextSelectionLayerProps } from "./types.js";
+import { box, type ReadableBox } from "svelte-toolbelt";
+import type { TextSelectionLayerImplProps } from "./types.js";
 import {
 	type EventCallback,
 	type ReadableBoxedValues,
@@ -10,7 +10,7 @@ import {
 	isHTMLElement,
 	isOrContainsTarget,
 	noop,
-	useNodeById,
+	useRefById,
 } from "$lib/internal/index.js";
 
 type StateProps = ReadableBoxedValues<Required<Omit<TextSelectionLayerImplProps, "children">>>;
@@ -18,24 +18,28 @@ type StateProps = ReadableBoxedValues<Required<Omit<TextSelectionLayerImplProps,
 const layers = new Map<TextSelectionLayerState, ReadableBox<boolean>>();
 
 export class TextSelectionLayerState {
+	#id: StateProps["id"];
 	#onPointerDownProp: ReadableBox<EventCallback<PointerEvent>>;
 	#onPointerUpProp: ReadableBox<EventCallback<PointerEvent>>;
 	#enabled: ReadableBox<boolean>;
 	#unsubSelectionLock = noop;
-	#node: WritableBox<HTMLElement | null>;
-	#present: ReadableBox<boolean>;
+	#ref = box<HTMLElement | null>(null);
 
 	constructor(props: StateProps) {
-		this.#node = useNodeById(props.id);
+		this.#id = props.id;
 		this.#enabled = props.preventOverflowTextSelection;
 		this.#onPointerDownProp = props.onPointerDown;
 		this.#onPointerUpProp = props.onPointerUp;
-		this.#present = props.present;
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+			condition: () => this.#enabled.value,
+		});
 
 		let unsubEvents = noop;
 
 		$effect(() => {
-			if (this.#present.value) {
+			if (this.#enabled.value) {
 				layers.set(
 					this,
 					untrack(() => this.#enabled)
@@ -62,7 +66,7 @@ export class TextSelectionLayerState {
 	}
 
 	#pointerdown = (e: PointerEvent) => {
-		const node = this.#node.value;
+		const node = this.#ref.value;
 		const target = e.target;
 		if (!isHTMLElement(node) || !isHTMLElement(target) || !this.#enabled.value) return;
 		/**

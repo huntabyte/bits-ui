@@ -15,11 +15,12 @@ import {
 } from "./utils.js";
 import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import { type EventCallback, addEventListener } from "$lib/internal/events.js";
-import { useNodeById } from "$lib/internal/useNodeById.svelte.js";
+import { useRefById } from "$lib/internal/useRefById.svelte.js";
 import { isHTMLElement } from "$lib/internal/is.js";
 import { executeCallbacks } from "$lib/internal/callbacks.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { afterTick } from "$lib/internal/afterTick.js";
+import { box } from "svelte-toolbelt";
 
 type UseFocusScopeProps = ReadableBoxedValues<{
 	/**
@@ -68,11 +69,15 @@ export function useFocusScope({
 }: UseFocusScopeProps) {
 	const focusScopeStack = createFocusScopeStack();
 	const focusScope = createFocusScopeAPI();
-	const node = useNodeById(id);
+	const ref = box<HTMLElement | null>(null);
+	useRefById({
+		id,
+		ref,
+	});
 	let lastFocusedElement = $state<HTMLElement | null>(null);
 
 	$effect(() => {
-		const container = node.value;
+		const container = ref.value;
 		if (!container) return;
 		if (!trapped.value) return;
 
@@ -138,7 +143,7 @@ export function useFocusScope({
 	});
 
 	$effect(() => {
-		let container = untrack(() => node.value);
+		let container = untrack(() => ref.value);
 		const previouslyFocusedElement = document.activeElement as HTMLElement | null;
 		untrack(() => {
 			if (!container) {
@@ -203,7 +208,7 @@ export function useFocusScope({
 		const focusedElement = document.activeElement as HTMLElement | null;
 
 		if (!(isTabKey && focusedElement)) return;
-		const container = node.value;
+		const container = ref.value;
 		if (!container) return;
 
 		const [first, last] = getTabbableEdges(container);

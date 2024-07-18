@@ -6,10 +6,9 @@
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {
-		asChild,
 		child,
 		children,
-		el = $bindable(),
+		ref = $bindable(null),
 		id = useId(),
 		value = $bindable(),
 		onValueChange,
@@ -20,7 +19,7 @@
 
 	value === undefined && (value = type === "single" ? "" : []);
 
-	const state = useToolbarGroup({
+	const groupState = useToolbarGroup({
 		id: box.with(() => id),
 		disabled: box.with(() => disabled),
 		type,
@@ -31,15 +30,19 @@
 				onValueChange?.(v as any);
 			}
 		) as WritableBox<string> | WritableBox<string[]>,
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, groupState.props));
 </script>
 
-{#if asChild}
+{#if child}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<div bind:this={el} {...mergedProps}>
+	<div {...mergedProps}>
 		{@render children?.()}
 	</div>
 {/if}

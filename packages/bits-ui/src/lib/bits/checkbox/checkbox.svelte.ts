@@ -1,26 +1,32 @@
 import {
 	type ReadableBoxedValues,
+	type WithRefProps,
 	type WritableBoxedValues,
 	getAriaChecked,
 	getAriaRequired,
 	getDataDisabled,
 	kbd,
+	useRefById,
 } from "$lib/internal/index.js";
 import { createContext } from "$lib/internal/createContext.js";
 
-const ROOT_ATTR = "data-checkbox-root";
+const CHECKBOX_ROOT_ATTR = "data-checkbox-root";
 
-type CheckboxRootStateProps = ReadableBoxedValues<{
-	disabled: boolean;
-	required: boolean;
-	name: string | undefined;
-	value: string | undefined;
-}> &
-	WritableBoxedValues<{
-		checked: boolean | "indeterminate";
-	}>;
+type CheckboxRootStateProps = WithRefProps<
+	ReadableBoxedValues<{
+		disabled: boolean;
+		required: boolean;
+		name: string | undefined;
+		value: string | undefined;
+	}> &
+		WritableBoxedValues<{
+			checked: boolean | "indeterminate";
+		}>
+>;
 
 class CheckboxRootState {
+	#id: CheckboxRootStateProps["id"];
+	#ref: CheckboxRootStateProps["ref"];
 	checked: CheckboxRootStateProps["checked"];
 	disabled: CheckboxRootStateProps["disabled"];
 	required: CheckboxRootStateProps["required"];
@@ -33,6 +39,13 @@ class CheckboxRootState {
 		this.required = props.required;
 		this.name = props.name;
 		this.value = props.value;
+		this.#ref = props.ref;
+		this.#id = props.id;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+		});
 	}
 
 	#onkeydown = (e: KeyboardEvent) => {
@@ -55,6 +68,7 @@ class CheckboxRootState {
 	props = $derived.by(
 		() =>
 			({
+				id: this.#id.value,
 				"data-disabled": getDataDisabled(this.disabled.value),
 				"data-state": getCheckboxDataState(this.checked.value),
 				role: "checkbox",
@@ -62,7 +76,7 @@ class CheckboxRootState {
 				"aria-checked": getAriaChecked(this.checked.value),
 				"aria-required": getAriaRequired(this.required.value),
 				disabled: this.disabled.value,
-				[ROOT_ATTR]: "",
+				[CHECKBOX_ROOT_ATTR]: "",
 				//
 				onclick: this.#onclick,
 				onkeydown: this.#onkeydown,
@@ -76,7 +90,7 @@ class CheckboxRootState {
 
 class CheckboxInputState {
 	root: CheckboxRootState;
-	shouldRender = $derived.by(() => this.root.name.value !== undefined);
+	shouldRender = $derived.by(() => Boolean(this.root.name.value));
 
 	constructor(root: CheckboxRootState) {
 		this.root = root;

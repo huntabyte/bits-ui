@@ -14,3 +14,4 @@ export { default as APISection } from "./api-section.svelte";
 export { default as ComponentPreview } from "./component-preview.svelte";
 export { default as LightSwitch } from "./light-switch.svelte";
 export { default as Metadata } from "./metadata.svelte";
+export { default as ComponentPreviewV2 } from "./component-preview-v2.svelte";

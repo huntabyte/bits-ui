@@ -6,29 +6,32 @@
 	import { useId } from "$lib/internal/useId.svelte.js";
 
 	let {
-		asChild,
 		child,
 		children,
-		el = $bindable(),
+		ref = $bindable(null),
 		id = useId(),
 		orientation = "horizontal",
 		loop = true,
 		...restProps
 	}: RootProps = $props();
 
-	const state = useToolbarRoot({
+	const rootState = useToolbarRoot({
 		id: box.with(() => id),
 		orientation: box.with(() => orientation),
 		loop: box.with(() => loop),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, rootState.props));
 </script>
 
-{#if asChild}
+{#if child}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<div {...mergedProps} bind:this={el}>
+	<div {...mergedProps}>
 		{@render children?.()}
 	</div>
 {/if}

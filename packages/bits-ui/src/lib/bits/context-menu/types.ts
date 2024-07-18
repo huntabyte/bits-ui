@@ -1,5 +1,5 @@
 import type { MenuContentProps, MenuContentPropsWithoutHTML } from "../menu/types.js";
-import type { PrimitiveDivAttributes, WithAsChild, Without } from "$lib/internal/types.js";
+import type { PrimitiveDivAttributes, WithChild, Without } from "$lib/internal/types.js";
 
 export type ContextMenuContentPropsWithoutHTML = MenuContentPropsWithoutHTML;
 
@@ -8,9 +8,10 @@ export type ContextMenuContentProps = Omit<
 	"side" | "onMountAutoFocus" | "sideOffset" | "align"
 >;
 
-export type ContextMenuTriggerPropsWithoutHTML = WithAsChild<{
+export type ContextMenuTriggerPropsWithoutHTML = WithChild<{
 	disabled?: boolean;
 }>;
+
 export type ContextMenuTriggerProps = ContextMenuTriggerPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, ContextMenuTriggerPropsWithoutHTML>;
 

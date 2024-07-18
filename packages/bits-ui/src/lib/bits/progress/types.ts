@@ -1,6 +1,6 @@
-import type { PrimitiveDivAttributes, WithAsChild, Without } from "$lib/internal/index.js";
+import type { PrimitiveDivAttributes, WithChild, Without } from "$lib/internal/index.js";
 
-export type ProgressRootPropsWithoutHTML = WithAsChild<{
+export type ProgressRootPropsWithoutHTML = WithChild<{
 	/**
 	 * The current value of the progress bar.
 	 * If `null`, the progress bar will be in an indeterminate state.

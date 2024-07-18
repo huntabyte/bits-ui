@@ -4,18 +4,19 @@
 	import { useMenuRadioGroup } from "../menu.svelte.js";
 	import { noop } from "$lib/internal/callbacks.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
 
 	let {
-		asChild,
+		id = useId(),
 		children,
 		child,
-		el = $bindable(),
+		ref = $bindable(null),
 		value = $bindable(""),
 		onValueChange = noop,
 		...restProps
 	}: RadioGroupProps = $props();
 
-	const state = useMenuRadioGroup({
+	const radioGroupState = useMenuRadioGroup({
 		value: box.with(
 			() => value,
 			(v) => {
@@ -25,15 +26,20 @@
 				}
 			}
 		),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
+		id: box.with(() => id),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, radioGroupState.props));
 </script>
 
-{#if asChild}
-	{@render child?.({ props: mergedProps })}
+{#if child}
+	{@render child({ props: mergedProps })}
 {:else}
-	<div {...mergedProps} bind:this={el}>
+	<div {...mergedProps}>
 		{@render children?.()}
 	</div>
 {/if}

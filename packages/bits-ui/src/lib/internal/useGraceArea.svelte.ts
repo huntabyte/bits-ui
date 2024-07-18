@@ -1,4 +1,4 @@
-import type { ReadableBox } from "svelte-toolbelt";
+import type { Getter, ReadableBox } from "svelte-toolbelt";
 import { boxAutoReset } from "./boxAutoReset.svelte.js";
 import { createEventHook } from "./createEventHook.svelte.js";
 import { isElement, isHTMLElement } from "./is.js";
@@ -6,11 +6,11 @@ import { executeCallbacks } from "./callbacks.js";
 import { addEventListener } from "./events.js";
 import type { Side } from "$lib/bits/utilities/floating-layer/useFloatingLayer.svelte.js";
 
-export function useGraceArea(triggerId: ReadableBox<string>, contentId: ReadableBox<string>) {
+export function useGraceArea(
+	triggerNode: Getter<HTMLElement | null>,
+	contentNode: Getter<HTMLElement | null>
+) {
 	const isPointerInTransit = boxAutoReset(false, 300);
-
-	let contentNode = $state((() => document.getElementById(contentId.value))());
-	let triggerNode = $state((() => document.getElementById(triggerId.value))());
 
 	let pointerGraceArea = $state<Polygon | null>(null);
 	const pointerExit = createEventHook<void>();
@@ -33,20 +33,23 @@ export function useGraceArea(triggerId: ReadableBox<string>, contentId: Readable
 	}
 
 	$effect(() => {
-		contentNode = document.getElementById(contentId.value);
-		if (!triggerNode || !contentNode) return;
+		const trigger = triggerNode();
+		const content = contentNode();
+		if (!trigger || !content) return;
 
 		const handleTriggerLeave = (e: PointerEvent) => {
-			handleCreateGraceArea(e, contentNode!);
+			handleCreateGraceArea(e, content!);
 		};
 
 		const handleContentLeave = (e: PointerEvent) => {
-			handleCreateGraceArea(e, triggerNode!);
+			handleCreateGraceArea(e, trigger!);
 		};
-		return executeCallbacks(
-			addEventListener(triggerNode, "pointerleave", handleTriggerLeave),
-			addEventListener(contentNode, "pointerleave", handleContentLeave)
+
+		const unsub = executeCallbacks(
+			addEventListener(trigger, "pointerleave", handleTriggerLeave),
+			addEventListener(content, "pointerleave", handleContentLeave)
 		);
+		return unsub;
 	});
 
 	$effect(() => {
@@ -56,8 +59,10 @@ export function useGraceArea(triggerId: ReadableBox<string>, contentId: Readable
 			if (!pointerGraceArea) return;
 			const target = e.target;
 			if (!isElement(target)) return;
+			const trigger = triggerNode();
+			const content = contentNode();
 			const pointerPosition = { x: e.clientX, y: e.clientY };
-			const hasEnteredTarget = triggerNode?.contains(target) || contentNode?.contains(target);
+			const hasEnteredTarget = trigger?.contains(target) || content?.contains(target);
 			const isPointerOutsideGraceArea = !isPointInPolygon(pointerPosition, pointerGraceArea);
 
 			if (hasEnteredTarget) {

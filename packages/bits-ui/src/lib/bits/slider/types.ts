@@ -1,21 +1,21 @@
-import type { HTMLInputAttributes } from "svelte/elements";
-import type { Slider as MeltSlider, CreateSliderProps as MeltSliderProps } from "@melt-ui/svelte";
-import type { StoresValues } from "svelte/store";
 import type {
-	DOMEl,
-	DOMElement,
-	Expand,
-	HTMLSpanAttributes,
-	OmitValue,
 	OnChangeFn,
-} from "$lib/internal/index.js";
-import type { CustomEventHandler } from "$lib/index.js";
+	PrimitiveSpanAttributes,
+	WithChild,
+	Without,
+} from "$lib/internal/types.js";
+import type { Direction, Orientation } from "$lib/shared/index.js";
 
-export type SliderPropsWithoutHTML = Expand<
-	OmitValue<MeltSliderProps> & {
+export type SliderRootSnippetProps = {
+	ticks: number[];
+	thumbs: number[];
+};
+
+export type SliderRootPropsWithoutHTML = WithChild<
+	{
 		/**
 		 * The value of the slider.
-		 * You can bind this to a number value to programmatically control the value.
+		 * @bindable
 		 */
 		value?: number[];
 
@@ -23,42 +23,102 @@ export type SliderPropsWithoutHTML = Expand<
 		 * A callback function called when the value changes.
 		 */
 		onValueChange?: OnChangeFn<number[]>;
-	} & DOMElement<HTMLSpanElement>
+
+		/**
+		 * A callback function called when the user stops dragging the thumb,
+		 * which is useful for knowing when the user has finished interacting with the slider.
+		 */
+		onValueChangeEnd?: OnChangeFn<number[]>;
+
+		/**
+		 * Whether to automatically sort the values in the array when moving thumbs past
+		 * one another.
+		 *
+		 * @defaultValue true
+		 */
+		autoSort?: boolean;
+		/**
+		 * The minimum value of the slider.
+		 *
+		 * @defaultValue 0
+		 */
+		min?: number;
+
+		/**
+		 * The maximum value of the slider.
+		 *
+		 * @defaultValue 100
+		 */
+		max?: number;
+
+		/**
+		 * The amount to increment the value by when the user presses the arrow keys.
+		 *
+		 * @defayltValue 1
+		 */
+		step?: number;
+
+		/**
+		 * The direction of the slider.
+		 *
+		 * For vertical sliders, setting `dir` to `'rtl'` will caus the slider to start
+		 * from the top and move downwards. For horizontal sliders, setting `dir` to `'rtl'`
+		 * will cause the slider to start from the left and move rightwards.
+		 *
+		 * @defaultValue 'ltr'
+		 */
+		dir?: Direction;
+
+		/**
+		 * The orientation of the slider.
+		 *
+		 * @defaultValue "horizontal"
+		 */
+		orientation?: Orientation;
+
+		/**
+		 * Whether the slider is disabled or not.
+		 *
+		 * @defaultValue false
+		 */
+		disabled?: boolean;
+	},
+	SliderRootSnippetProps
 >;
 
-export type SliderRangePropsWithoutHTML = DOMElement<HTMLSpanElement>;
+export type SliderRootProps = SliderRootPropsWithoutHTML &
+	Without<PrimitiveSpanAttributes, SliderRootPropsWithoutHTML>;
 
-export type SliderThumbPropsWithoutHTML = DOMElement<HTMLSpanElement> & {
+export type SliderRangePropsWithoutHTML = WithChild;
+
+export type SliderRangeProps = SliderRangePropsWithoutHTML &
+	Without<PrimitiveSpanAttributes, SliderRangePropsWithoutHTML>;
+
+export type SliderThumbPropsWithoutHTML = WithChild<{
 	/**
-	 * An individual thumb builder from the `thumbs` slot prop
-	 * provided by the `Slider.Root` component.
+	 * Whether the thumb is disabled or not.
+	 *
+	 * @defaultValue false
 	 */
-	thumb: Thumb;
-};
+	disabled?: boolean;
 
-export type SliderTickPropsWithoutHTML = DOMElement<HTMLSpanElement> & {
 	/**
-	 * An individual tick builder from the `ticks` slot prop
-	 * provided by the `Slider.Root` component.
+	 * The index of the thumb in the array of thumbs provided by the `children` snippet prop of the
+	 * `Slider.Root` component.
 	 */
-	tick: Tick;
-};
+	index: number;
+}>;
 
-type Tick = StoresValues<MeltSlider["elements"]["ticks"]>[number];
-type Thumb = StoresValues<MeltSlider["elements"]["thumbs"]>[number];
+export type SliderThumbProps = SliderThumbPropsWithoutHTML &
+	Without<PrimitiveSpanAttributes, SliderThumbPropsWithoutHTML>;
 
-//
+export type SliderTickPropsWithoutHTML = WithChild<{
+	/**
+	 * The index of the tick in the array of ticks provided by the `children` snippet prop of the
+	 * `Slider.Root` component.
+	 */
+	index: number;
+}>;
 
-export type SliderProps = SliderPropsWithoutHTML & HTMLSpanAttributes;
-
-export type SliderRangeProps = SliderRangePropsWithoutHTML & HTMLSpanAttributes;
-
-export type SliderThumbProps = SliderThumbPropsWithoutHTML & HTMLSpanAttributes;
-
-export type SliderTickProps = SliderTickPropsWithoutHTML & HTMLSpanAttributes;
-
-export type SliderInputProps = Omit<HTMLInputAttributes, "value"> & DOMEl<HTMLInputElement>;
-
-export type SliderThumbEvents<T extends Element = HTMLSpanElement> = {
-	keydown: CustomEventHandler<KeyboardEvent, T>;
-};
+export type SliderTickProps = SliderTickPropsWithoutHTML &
+	Without<PrimitiveSpanAttributes, SliderTickPropsWithoutHTML>;

@@ -4,15 +4,17 @@ description: Displays content while maintaining a specified aspect ratio, ensuri
 ---
 
 <script>
-	import { APISection, ComponentPreview, AspectRatioDemo } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, AspectRatioDemo } from '$lib/components/index.js'
 	export let schemas;
 </script>
 
-<ComponentPreview name="aspect-ratio-demo" comp="AspectRatio">
+<ComponentPreviewV2 name="aspect-ratio-demo" comp="Aspect Ratio">
 
-<AspectRatioDemo slot="preview" />
+{#snippet preview()}
+<AspectRatioDemo />
+{/snippet}
 
-</ComponentPreview>
+</ComponentPreviewV2>
 
 ## Structure
 

@@ -2,12 +2,13 @@ import { box } from "svelte-toolbelt";
 import type { Page, PageItem } from "./types.js";
 import {
 	type ReadableBoxedValues,
+	type WithRefProps,
 	type WritableBoxedValues,
 	getDataOrientation,
 	getDirectionalKeys,
 	getElemDirection,
 	kbd,
-	useNodeById,
+	useRefById,
 } from "$lib/internal/index.js";
 import type { Orientation } from "$lib/shared/index.js";
 import { createContext } from "$lib/internal/createContext.js";
@@ -17,22 +18,23 @@ const PAGE_ATTR = "data-pagination-page";
 const PREV_ATTR = "data-pagination-prev";
 const NEXT_ATTR = "data-pagination-next";
 
-type PaginationRootStateProps = ReadableBoxedValues<{
-	id: string;
-	count: number;
-	perPage: number;
-	siblingCount: number;
-	orientation: Orientation;
-	loop: boolean;
-}> &
-	WritableBoxedValues<{
-		page: number;
-	}>;
+type PaginationRootStateProps = WithRefProps<
+	ReadableBoxedValues<{
+		count: number;
+		perPage: number;
+		siblingCount: number;
+		orientation: Orientation;
+		loop: boolean;
+	}> &
+		WritableBoxedValues<{
+			page: number;
+		}>
+>;
 
 class PaginationRootState {
 	id: PaginationRootStateProps["id"];
+	ref: PaginationRootStateProps["ref"];
 	orientation: PaginationRootStateProps["orientation"];
-	node = box<HTMLElement | null>(null);
 	count: PaginationRootStateProps["count"];
 	perPage: PaginationRootStateProps["perPage"];
 	siblingCount: PaginationRootStateProps["siblingCount"];
@@ -56,11 +58,16 @@ class PaginationRootState {
 		this.id = props.id;
 		this.perPage = props.perPage;
 		this.count = props.count;
-		this.node = useNodeById(this.id);
 		this.siblingCount = props.siblingCount;
 		this.page = props.page;
 		this.orientation = props.orientation;
 		this.loop = props.loop;
+		this.ref = props.ref;
+
+		useRefById({
+			id: this.id,
+			ref: this.ref,
+		});
 	}
 
 	setPage(page: number) {
@@ -68,13 +75,13 @@ class PaginationRootState {
 	}
 
 	getPageTriggerNodes() {
-		const node = this.node.value;
+		const node = this.ref.value;
 		if (!node) return [];
 		return Array.from(node.querySelectorAll<HTMLElement>("[data-pagination-page]"));
 	}
 
 	getButtonNode(type: "prev" | "next") {
-		const node = this.node.value;
+		const node = this.ref.value;
 		if (!node) return;
 		return node.querySelector<HTMLElement>(`[data-pagination-${type}]`);
 	}
@@ -109,22 +116,28 @@ class PaginationRootState {
 // PAGE
 //
 
-type PaginationPageStateProps = ReadableBoxedValues<{
-	id: string;
-	page: Page;
-}>;
+type PaginationPageStateProps = WithRefProps<
+	ReadableBoxedValues<{
+		page: Page;
+	}>
+>;
 
 class PaginationPage {
 	#id: PaginationPageStateProps["id"];
+	#ref: PaginationPageStateProps["ref"];
 	#root: PaginationRootState;
-	#node = box<HTMLElement | null>(null);
 	page: PaginationPageStateProps["page"];
 
 	constructor(props: PaginationPageStateProps, root: PaginationRootState) {
 		this.#root = root;
 		this.#id = props.id;
 		this.page = props.page;
-		this.#node = useNodeById(this.#id);
+		this.#ref = props.ref;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+		});
 	}
 
 	#onclick = () => {
@@ -132,7 +145,7 @@ class PaginationPage {
 	};
 
 	#onkeydown = (e: KeyboardEvent) => {
-		handleTriggerKeydown(e, this.#node.value, this.#root);
+		handleTriggerKeydown(e, this.#ref.value, this.#root);
 	};
 
 	props = $derived.by(
@@ -140,7 +153,7 @@ class PaginationPage {
 			({
 				id: this.#id.value,
 				"aria-label": `Page ${this.page.value}`,
-				"data-value": `${this.page.value}`,
+				"data-value": `${this.page.value.value}`,
 				"data-selected": this.page.value.value === this.#root.page.value ? "" : undefined,
 				[PAGE_ATTR]: "",
 				//
@@ -154,23 +167,26 @@ class PaginationPage {
 // NEXT/PREV BUTTON
 //
 
-type PaginationButtonStateProps = ReadableBoxedValues<{
-	id: string;
-}> & {
+type PaginationButtonStateProps = WithRefProps<{
 	type: "prev" | "next";
-};
+}>;
 
 class PaginationButtonState {
 	id: PaginationButtonStateProps["id"];
+	#ref: PaginationButtonStateProps["ref"];
 	#root: PaginationRootState;
-	node = box<HTMLElement | null>(null);
 	type = $state() as PaginationButtonStateProps["type"];
 
 	constructor(props: PaginationButtonStateProps, root: PaginationRootState) {
 		this.#root = root;
 		this.id = props.id;
-		this.node = useNodeById(this.id);
 		this.type = props.type;
+		this.#ref = props.ref;
+
+		useRefById({
+			id: this.id,
+			ref: this.#ref,
+		});
 	}
 
 	#onclick = () => {
@@ -178,7 +194,7 @@ class PaginationButtonState {
 	};
 
 	#onkeydown = (e: KeyboardEvent) => {
-		handleTriggerKeydown(e, this.node.value, this.#root);
+		handleTriggerKeydown(e, this.#ref.value, this.#root);
 	};
 
 	props = $derived.by(
@@ -212,7 +228,7 @@ function handleTriggerKeydown(
 	node: HTMLElement | null,
 	root: PaginationRootState
 ) {
-	if (!node || !root.node.value) return;
+	if (!node || !root.ref.value) return;
 	const items = root.getPageTriggerNodes();
 	const nextButton = root.getButtonNode("next");
 	const prevButton = root.getButtonNode("prev");
@@ -226,7 +242,7 @@ function handleTriggerKeydown(
 
 	const currentIndex = items.indexOf(node);
 
-	const dir = getElemDirection(root.node.value);
+	const dir = getElemDirection(root.ref.value);
 
 	const { nextKey, prevKey } = getDirectionalKeys(dir, root.orientation.value);
 

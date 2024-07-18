@@ -1,20 +1,30 @@
-<script lang="ts">
+<script lang="ts" context="module">
 	import { AlertDialog } from "$lib/index.js";
+	export type AlertDialogTestProps = AlertDialog.RootProps & {
+		contentProps?: Omit<AlertDialog.ContentProps, "asChild" | "child" | "children">;
+		portalProps?: AlertDialog.PortalProps;
+	};
+</script>
 
-	type $$Props = AlertDialog.Props;
-
-	export let open: AlertDialog.Props["open"] = false;
+<script lang="ts">
+	let {
+		open = false,
+		contentProps = {},
+		portalProps = {},
+		...restProps
+	}: AlertDialogTestProps = $props();
 </script>
 
 <main>
-	<AlertDialog.Root bind:open {...$$restProps}>
+	<AlertDialog.Root bind:open {...restProps}>
 		<AlertDialog.Trigger data-testid="trigger">open</AlertDialog.Trigger>
-		<AlertDialog.Portal data-testid="portal">
+		<AlertDialog.Portal {...portalProps}>
 			<AlertDialog.Overlay
 				data-testid="overlay"
 				class="fixed inset-0 h-[100vh] w-[100vw] bg-black"
 			/>
 			<AlertDialog.Content
+				{...contentProps}
 				data-testid="content"
 				class="tranlate-x-[50%] fixed left-[50%] top-[50%] translate-y-[50%] bg-white p-1"
 			>
@@ -28,7 +38,6 @@
 		</AlertDialog.Portal>
 	</AlertDialog.Root>
 	<p data-testid="binding">{open}</p>
-	<button data-testid="toggle" on:click={() => (open = !open)}> toggle </button>
-
-	<div id="portalTarget" data-testid="portalTarget" />
+	<button data-testid="toggle" onclick={() => (open = !open)}>toggle</button>
+	<div id="portalTarget" data-testid="portalTarget"></div>
 </main>

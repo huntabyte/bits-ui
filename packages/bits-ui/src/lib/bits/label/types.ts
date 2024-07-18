@@ -1,11 +1,8 @@
-import type { PrimitiveLabelAttributes, WithAsChild } from "$lib/internal/types.js";
-import type { EventCallback } from "$lib/internal/events.js";
+import type { PrimitiveLabelAttributes, WithChild, Without } from "$lib/internal/types.js";
 
-export type LabelRootPropsWithoutHTML = WithAsChild<{
-	for: string;
-}> & {
-	onmousedown?: EventCallback<MouseEvent>;
-};
+export type LabelRootPropsWithoutHTML = WithChild<{
+	for?: string;
+}>;
 
 export type LabelRootProps = LabelRootPropsWithoutHTML &
-	Omit<PrimitiveLabelAttributes, "onmousedown" | "for">;
+	Without<PrimitiveLabelAttributes, LabelRootPropsWithoutHTML>;

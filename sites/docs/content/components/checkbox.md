@@ -4,15 +4,17 @@ description: Allow users to switch between checked, unchecked, and indeterminate
 ---
 
 <script>
-	import { APISection, ComponentPreview, CheckboxDemo } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, CheckboxDemo } from '$lib/components/index.js'
 	export let schemas;
 </script>
 
-<ComponentPreview name="checkbox-demo" comp="Checkbox">
+<ComponentPreviewV2 name="checkbox-demo" comp="Checkbox">
 
-<CheckboxDemo slot="preview" />
+{#snippet preview()}
+<CheckboxDemo />
+{/snippet}
 
-</ComponentPreview>
+</ComponentPreviewV2>
 
 ## Structure
 

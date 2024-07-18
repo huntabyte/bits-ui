@@ -12,10 +12,22 @@
 	import { navigation } from "$lib/config/index.js";
 	import { cn } from "$lib/utils/index.js";
 	import "$lib/styles/app.postcss";
+	import { Toaster } from "svelte-sonner";
+
+	// onMount(async () => {
+	// 	if (dev) {
+	// 		const eruda = (await import("eruda")).default;
+	// 		eruda.init();
+	// 	}
+	// });
+
+	// eslint-disable-next-line no-unused-expressions, svelte/valid-compile
+	$page;
 </script>
 
 <ModeWatcher />
 <Metadata />
+<Toaster position="top-right" />
 
 <SiteHeader />
 <div class="min-h-[calc(100vh-64px)]">

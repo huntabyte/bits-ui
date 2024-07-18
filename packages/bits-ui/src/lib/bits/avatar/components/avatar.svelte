@@ -3,19 +3,20 @@
 	import type { RootProps } from "../index.js";
 	import { useAvatarRoot } from "../avatar.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
 
 	let {
 		delayMs = 0,
 		loadingStatus = $bindable("loading"),
 		onLoadingStatusChange,
-		asChild,
 		child,
 		children,
-		el = $bindable(),
+		id = useId(),
+		ref = $bindable(null),
 		...restProps
 	}: RootProps = $props();
 
-	const state = useAvatarRoot({
+	const rootState = useAvatarRoot({
 		delayMs: box.with(() => delayMs),
 		loadingStatus: box.with(
 			() => loadingStatus,
@@ -26,15 +27,20 @@
 				}
 			}
 		),
+		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, rootState.props));
 </script>
 
-{#if asChild}
-	{@render child?.({ props: mergedProps })}
+{#if child}
+	{@render child({ props: mergedProps })}
 {:else}
-	<div bind:this={el} {...mergedProps}>
+	<div {...mergedProps}>
 		{@render children?.()}
 	</div>
 {/if}

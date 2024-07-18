@@ -1,35 +1,36 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { getCtx } from "../ctx.js";
+	import { box } from "svelte-toolbelt";
+	import { useDateFieldInput } from "../date-field.svelte.js";
 	import type { InputProps } from "../index.js";
+	import DateFieldHiddenInput from "./date-field-hidden-input.svelte";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
 
-	type $$Props = InputProps;
+	let {
+		id = useId(),
+		ref = $bindable(null),
+		children,
+		child,
+		...restProps
+	}: InputProps = $props();
 
-	export let asChild: $$Props["asChild"] = false;
-	export let id: $$Props["id"] = undefined;
-	export let el: $$Props["el"] = undefined;
+	const inputState = useDateFieldInput({
+		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
+	});
 
-	const {
-		elements: { field },
-		states: { segmentContents },
-		ids,
-		getAttrs,
-	} = getCtx();
-
-	$: if (id) {
-		ids.field.set(id);
-	}
-
-	const attrs = getAttrs("input");
-
-	$: builder = $field;
-	$: Object.assign(builder, attrs);
+	const mergedProps = $derived(mergeProps(restProps, inputState.props));
 </script>
 
-{#if asChild}
-	<slot {builder} segments={$segmentContents} />
+{#if child}
+	{@render child({ props: mergedProps, segments: inputState.root.segmentContents })}
 {:else}
-	<div bind:this={el} use:melt={builder} {...$$restProps}>
-		<slot {builder} segments={$segmentContents} />
+	<div {...mergedProps}>
+		{@render children?.({ segments: inputState.root.segmentContents })}
 	</div>
 {/if}
+
+<DateFieldHiddenInput />

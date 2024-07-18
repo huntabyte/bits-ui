@@ -7,9 +7,14 @@ import type {
 	HTMLImgAttributes,
 	HTMLInputAttributes,
 	HTMLLabelAttributes,
+	HTMLLiAttributes,
+	HTMLTableAttributes,
+	HTMLTdAttributes,
+	HTMLThAttributes,
 	SVGAttributes,
 } from "svelte/elements";
 import type { TransitionConfig } from "svelte/transition";
+import type { Box, ReadableBoxedValues, WritableBoxedValues } from "./box.svelte.js";
 import type { StyleProperties } from "$lib/shared/index.js";
 
 export type ObjectVariation<T> = T extends object ? T : never;
@@ -132,28 +137,46 @@ export type PrimitiveHeadingAttributes = Primitive<HTMLHeadingAttributes>;
 export type PrimitiveLabelAttributes = Primitive<HTMLLabelAttributes>;
 export type PrimitiveSVGAttributes = Primitive<SVGAttributes<SVGElement>>;
 export type PrimitiveAnchorAttributes = Primitive<HTMLAnchorAttributes>;
+export type PrimitiveLiAttributes = Primitive<HTMLLiAttributes>;
+export type PrimitiveElementAttributes = Primitive<HTMLAttributes<HTMLElement>>;
+export type PrimitiveUListAttributes = Primitive<HTMLAttributes<HTMLUListElement>>;
+export type PrimitiveTdAttributes = Primitive<HTMLTdAttributes>;
+export type PrimitiveThAttributes = Primitive<HTMLThAttributes>;
+export type PrimitiveTableAttributes = Primitive<HTMLTableAttributes>;
+export type PrimitiveTbodyAttributes = Primitive<HTMLAttributes<HTMLTableSectionElement>>;
+export type PrimitiveTrAttributes = Primitive<HTMLAttributes<HTMLTableRowElement>>;
+export type PrimitiveTheadAttrbutes = Primitive<HTMLAttributes<HTMLTableSectionElement>>;
+export type PrimitiveHeaderAttributes = Primitive<HTMLAttributes<HTMLElement>>;
 
-export type AsChildProps<Props, SnippetProps, El> = {
-	child: Snippet<[SnippetProps & { props: Record<string, unknown> }]>;
-	children?: never;
-	asChild: true;
-	el?: El;
+export type ElementRef = Box<HTMLElement | null>;
+
+export type WithChild<
+	/**
+	 * The props that the component accepts.
+	 */
+	Props extends Record<PropertyKey, unknown> = {},
+	/**
+	 * The props that are passed to the `child` and `children` snippets. The `ElementProps` are
+	 * merged with these props for the `child` snippet.
+	 */
+	SnippetProps extends Record<PropertyKey, unknown> = { _default: never },
+	/**
+	 * The underlying DOM element being rendered. You can bind to this prop to
+	 * programatically interact with the element.
+	 */
+	Ref = HTMLElement,
+> = Omit<Props, "child" | "children"> & {
+	child?: SnippetProps extends { _default: never }
+		? Snippet<[{ props: Record<string, unknown> }]>
+		: Snippet<[SnippetProps & { props: Record<string, unknown> }]>;
+	children?: SnippetProps extends { _default: never } ? Snippet : Snippet<[SnippetProps]>;
 	style?: StyleProperties;
-} & Omit<Props, "children" | "asChild">;
+	ref?: Ref | null;
+};
 
-export type DefaultProps<Props, El> = {
-	asChild?: never;
-	child?: never;
+export type WithChildren<Props> = Props & {
 	children?: Snippet;
-	el?: El;
-	style?: StyleProperties;
-} & Omit<Props, "child" | "asChild">;
-
-export type WithAsChild<
-	Props,
-	SnippetProps extends Record<PropertyKey, unknown> = {},
-	El = HTMLElement,
-> = DefaultProps<Props, El> | AsChildProps<Props, SnippetProps, El>;
+};
 
 /**
  * Constructs a new type by omitting properties from type
@@ -172,3 +195,9 @@ export type Arrayable<T> = T[] | T;
 export type Fn = () => void;
 // eslint-disable-next-line ts/no-explicit-any
 export type AnyFn = (...args: any[]) => any;
+
+export type ValueOf<T> = T[keyof T];
+
+export type WithRefProps<T = {}> = T &
+	ReadableBoxedValues<{ id: string }> &
+	WritableBoxedValues<{ ref: HTMLElement | null }>;

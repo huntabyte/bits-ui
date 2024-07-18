@@ -1,17 +1,15 @@
-import type { Snippet } from "svelte";
 import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
 import type { PopperLayerProps } from "../utilities/popper-layer/types.js";
 import type {
-	EventCallback,
 	OnChangeFn,
 	PrimitiveButtonAttributes,
 	PrimitiveDivAttributes,
-	WithAsChild,
+	WithChild,
+	WithChildren,
 	Without,
 } from "$lib/internal/index.js";
-import type { CustomEventHandler } from "$lib/index.js";
 
-export type PopoverRootPropsWithoutHTML = {
+export type PopoverRootPropsWithoutHTML = WithChildren<{
 	/**
 	 * The open state of the popover.
 	 */
@@ -21,31 +19,21 @@ export type PopoverRootPropsWithoutHTML = {
 	 * A callback that is called when the popover's open state changes.
 	 */
 	onOpenChange?: OnChangeFn<boolean>;
-
-	/**
-	 * The children content of the popover.
-	 */
-	children?: Snippet;
-};
+}>;
 
 export type PopoverRootProps = PopoverRootPropsWithoutHTML;
 
-export type PopoverContentPropsWithoutHTML = WithAsChild<PopperLayerProps>;
+export type PopoverContentPropsWithoutHTML = WithChild<PopperLayerProps>;
 
-export type PopoverContentProps = PopoverContentPropsWithoutHTML & PrimitiveDivAttributes;
+export type PopoverContentProps = PopoverContentPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, PopoverContentPropsWithoutHTML>;
 
-export type PopoverTriggerPropsWithoutHTML = WithAsChild<{
-	onclick?: EventCallback<MouseEvent>;
-	onkeydown?: EventCallback<KeyboardEvent>;
-}>;
+export type PopoverTriggerPropsWithoutHTML = WithChild;
 
 export type PopoverTriggerProps = PopoverTriggerPropsWithoutHTML &
 	Without<PrimitiveButtonAttributes, PopoverTriggerPropsWithoutHTML>;
 
-export type PopoverClosePropsWithoutHTML = WithAsChild<{
-	onclick?: EventCallback<MouseEvent>;
-	onkeydown?: EventCallback<KeyboardEvent>;
-}>;
+export type PopoverClosePropsWithoutHTML = WithChild;
 
 export type PopoverCloseProps = PopoverClosePropsWithoutHTML &
 	Without<PrimitiveButtonAttributes, PopoverClosePropsWithoutHTML>;
@@ -53,10 +41,3 @@ export type PopoverCloseProps = PopoverClosePropsWithoutHTML &
 export type PopoverArrowPropsWithoutHTML = ArrowPropsWithoutHTML;
 
 export type PopoverArrowProps = ArrowProps;
-
-export type PopoverTriggerEvents<T extends Element = HTMLButtonElement> = {
-	click: CustomEventHandler<MouseEvent, T>;
-	keydown: CustomEventHandler<KeyboardEvent, T>;
-};
-
-export type PopoverCloseEvents = PopoverTriggerEvents;

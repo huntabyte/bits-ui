@@ -6,7 +6,7 @@
 	type $$Props = ViewportProps;
 
 	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
+	export let ref: $$Props["el"] = undefined;
 
 	const {
 		elements: { viewport },
@@ -28,7 +28,7 @@
 {#if asChild}
 	<slot {builder} />
 {:else}
-	<div use:melt={builder} bind:this={el}>
+	<div use:melt={builder} bind:this={ref}>
 		<slot {builder} />
 	</div>
 {/if}

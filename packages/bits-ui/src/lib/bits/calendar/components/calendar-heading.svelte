@@ -1,31 +1,37 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { getCtx } from "../ctx.js";
+	import { box } from "svelte-toolbelt";
 	import type { HeadingProps } from "../index.js";
+	import { useCalendarHeading } from "../calendar.svelte.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
 
-	type $$Props = HeadingProps;
+	let {
+		children,
+		child,
+		ref = $bindable(null),
+		id = useId(),
+		...restProps
+	}: HeadingProps = $props();
 
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
+	const headingState = useCalendarHeading({
+		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
+	});
 
-	const {
-		elements: { heading },
-		states: { headingValue },
-		getCalendarAttrs,
-	} = getCtx();
-
-	const attrs = getCalendarAttrs("heading");
-
-	$: builder = $heading;
-	$: Object.assign(builder, attrs);
+	const mergedProps = $derived(mergeProps(restProps, headingState.props));
 </script>
 
-{#if asChild}
-	<slot {builder} headingValue={$headingValue} />
+{#if child}
+	{@render child({ props: mergedProps, headingValue: headingState.headingValue })}
 {:else}
-	<div bind:this={el} use:melt={builder} {...$$restProps}>
-		<slot {builder} headingValue={$headingValue}>
-			{$headingValue}
-		</slot>
+	<div {...mergedProps}>
+		{#if children}
+			{@render children?.({ headingValue: headingState.headingValue })}
+		{:else}
+			{headingState.headingValue}
+		{/if}
 	</div>
 {/if}

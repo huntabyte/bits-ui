@@ -1,19 +1,33 @@
 <script lang="ts">
+	import { box } from "svelte-toolbelt";
 	import type { ListProps } from "../index.js";
 	import { useTabsList } from "../tabs.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
 
-	let { asChild, child, children, el = $bindable(), ...restProps }: ListProps = $props();
+	let {
+		child,
+		children,
+		id = useId(),
+		ref = $bindable(null),
+		...restProps
+	}: ListProps = $props();
 
-	const state = useTabsList();
+	const listState = useTabsList({
+		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
+	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, listState.props));
 </script>
 
-{#if asChild}
+{#if child}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<div bind:this={el} {...mergedProps}>
+	<div {...mergedProps}>
 		{@render children?.()}
 	</div>
 {/if}

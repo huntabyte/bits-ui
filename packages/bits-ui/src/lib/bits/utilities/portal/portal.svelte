@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getAllContexts, mount, unmount } from "svelte";
+	import { getAllContexts, mount, unmount, untrack } from "svelte";
 	import PortalConsumer from "./portal-consumer.svelte";
 	import type { PortalProps } from "./types.js";
 	import { isBrowser } from "$lib/internal/is.js";
@@ -11,14 +11,14 @@
 	let target = $derived(getTarget());
 
 	function getTarget() {
-		if (!isBrowser) return null;
-		let target: HTMLElement | null;
+		if (!isBrowser || disabled) return null;
+		let target: HTMLElement | null | DocumentFragment | Element = null;
 		if (typeof to === "string") {
 			target = document.querySelector(to);
 			if (target === null) {
 				throw new Error(`Target element "${to}" not found.`);
 			}
-		} else if (to instanceof HTMLElement) {
+		} else if (to instanceof HTMLElement || to instanceof DocumentFragment) {
 			target = to;
 		} else {
 			throw new TypeError(
@@ -35,12 +35,26 @@
 
 	$effect(() => {
 		if (!target || disabled) {
-			return unmount(instance);
+			if (instance) {
+				unmount(instance);
+				instance = null;
+			}
+			return;
 		}
-		instance = mount(PortalConsumer, { target, props: { children }, context });
+		untrack(
+			() =>
+				(instance = mount(PortalConsumer, {
+					target: target as any,
+					props: { children },
+					context,
+				}))
+		);
 
 		return () => {
-			unmount(instance);
+			if (instance) {
+				unmount(instance);
+				instance = null;
+			}
 		};
 	});
 </script>

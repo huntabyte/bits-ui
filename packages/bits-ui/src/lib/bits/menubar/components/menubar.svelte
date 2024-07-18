@@ -1,45 +1,48 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { derived } from "svelte/store";
-	import { setCtx } from "../ctx.js";
-	import type { Props } from "../index.js";
+	import { box } from "svelte-toolbelt";
+	import type { RootProps } from "../index.js";
+	import { useMenubarRoot } from "../menubar.svelte.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
 
-	type $$Props = Props;
+	let {
+		id = useId(),
+		children,
+		child,
+		ref = $bindable(null),
+		value = "",
+		dir = "ltr",
+		loop = true,
+		onValueChange,
+		...restProps
+	}: RootProps = $props();
 
-	export let loop: $$Props["loop"] = true;
-	export let closeOnEscape: $$Props["closeOnEscape"] = true;
-	export let asChild: $$Props["asChild"] = false;
-	export let id: $$Props["id"] = undefined;
-	export let preventScroll: $$Props["preventScroll"] = undefined;
-	export let el: $$Props["el"] = undefined;
+	const rootState = useMenubarRoot({
+		id: box.with(() => id),
+		value: box.with(
+			() => value,
+			(v) => {
+				if (v !== value) {
+					value = v;
+					onValueChange?.(v);
+				}
+			}
+		),
+		dir: box.with(() => dir),
+		loop: box.with(() => loop),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
+	});
 
-	const {
-		elements: { menubar },
-		updateOption,
-		ids,
-		getMenubarAttrs,
-	} = setCtx({ loop, closeOnEscape, preventScroll });
-
-	const idValues = derived([ids.menubar], ([$menubarId]) => ({
-		menubar: $menubarId,
-	}));
-	const attrs = getMenubarAttrs("root");
-
-	$: if (id) {
-		ids.menubar.set(id);
-	}
-
-	$: updateOption("loop", loop);
-	$: updateOption("closeOnEscape", closeOnEscape);
-	$: updateOption("preventScroll", preventScroll);
-	$: builder = $menubar;
-	$: Object.assign(builder, attrs);
+	const mergedProps = $derived(mergeProps(restProps, rootState.props));
 </script>
 
-{#if asChild}
-	<slot {builder} ids={$idValues} />
+{#if child}
+	{@render child({ props: mergedProps })}
 {:else}
-	<div bind:this={el} use:melt={builder} {...$$restProps}>
-		<slot {builder} ids={$idValues} />
+	<div {...mergedProps} bind:this={ref}>
+		{@render children?.()}
 	</div>
 {/if}

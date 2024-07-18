@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { Switch, type WithoutChildren } from "$lib/index.js";
+	import { Switch, type WithoutChildrenOrChild } from "$lib/index.js";
 
-	let { checked = false, ...restProps }: WithoutChildren<Switch.RootProps> = $props();
+	let { checked = false, ...restProps }: WithoutChildrenOrChild<Switch.RootProps> = $props();
 </script>
 
 <main>

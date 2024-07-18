@@ -1,11 +1,10 @@
-import { render } from "@testing-library/svelte";
+import { render } from "@testing-library/svelte/svelte5";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import { CalendarDate, CalendarDateTime, toZoned } from "@internationalized/date";
 import { getTestKbd } from "../utils.js";
-import DateRangeFieldTest from "./DateRangeFieldTest.svelte";
-import type { DateRangeField } from "$lib/index.js";
+import DateRangeFieldTest, { type DateRangeFieldTestProps } from "./DateRangeFieldTest.svelte";
 
 const kbd = getTestKbd();
 
@@ -23,7 +22,7 @@ const zonedDateTime = {
 	end: toZoned(calendarDateTime.end, "America/New_York"),
 };
 
-function setup(props: DateRangeField.Props = {}) {
+function setup(props: DateRangeFieldTestProps = {}) {
 	const user = userEvent.setup();
 	const returned = render(DateRangeFieldTest, { ...props });
 
@@ -41,10 +40,13 @@ function setup(props: DateRangeField.Props = {}) {
 		value: returned.getByTestId("end-value"),
 	};
 
-	const input = returned.getByTestId("input");
+	const root = returned.getByTestId("root");
+	const startInput = returned.getByTestId("start-input");
+	const endInput = returned.getByTestId("end-input");
+
 	const label = returned.getByTestId("label");
 
-	return { ...returned, user, start, end, input, label };
+	return { ...returned, user, start, end, root, startInput, endInput, label };
 }
 
 describe("date range field", () => {
@@ -196,5 +198,18 @@ describe("date range field", () => {
 		await user.keyboard("2");
 		expect(start.value).toHaveTextContent("2022-02-01");
 		expect(end.value).toHaveTextContent(calendarDate.end.toString());
+	});
+
+	it("renders an input for the start and end", async () => {
+		const { container } = setup({
+			startProps: {
+				name: "start-hidden-input",
+			},
+			endProps: {
+				name: "end-hidden-input",
+			},
+		});
+		expect(container.querySelector('input[name="start-hidden-input"]')).toBeInTheDocument();
+		expect(container.querySelector('input[name="end-hidden-input"]')).toBeInTheDocument();
 	});
 });

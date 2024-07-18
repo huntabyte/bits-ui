@@ -3,18 +3,24 @@
 	import type { ImageProps } from "../index.js";
 	import { useAvatarImage } from "../avatar.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
 
-	let { src, asChild, child, el = $bindable(), ...restProps }: ImageProps = $props();
+	let { src, child, id = useId(), ref = $bindable(null), ...restProps }: ImageProps = $props();
 
-	const state = useAvatarImage({
+	const imageState = useAvatarImage({
 		src: box.with(() => src),
+		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, imageState.props));
 </script>
 
-{#if asChild}
-	{@render child?.({ props: mergedProps })}
+{#if child}
+	{@render child({ props: mergedProps })}
 {:else}
-	<img bind:this={el} {...mergedProps} {src} />
+	<img {...mergedProps} {src} />
 {/if}

@@ -1,62 +1,99 @@
-import type { HTMLAnchorAttributes } from "svelte/elements";
-import type { CreateLinkPreviewProps } from "@melt-ui/svelte";
-import type { CustomEventHandler } from "$lib/index.js";
 import type {
-	DOMElement,
-	Expand,
-	HTMLDivAttributes,
-	OmitFloating,
 	OnChangeFn,
-	Transition,
-} from "$lib/internal/index.js";
-import type {
-	ArrowProps as LinkPreviewArrowPropsWithoutHTML,
-	ContentProps as LinkPreviewContentPropsWithoutHTML,
-} from "$lib/bits/floating/_types.js";
+	PrimitiveAnchorAttributes,
+	PrimitiveDivAttributes,
+	PrimitiveElementAttributes,
+	WithChild,
+	WithChildren,
+	Without,
+} from "$lib/internal/types.js";
+import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
+import type { DismissableLayerProps } from "../utilities/dismissable-layer/types.js";
+import type { EscapeLayerProps } from "../utilities/escape-layer/types.js";
+import type { FloatingLayerContentProps } from "../utilities/floating-layer/types.js";
+import type { PortalProps } from "../utilities/portal/types.js";
 
-export type LinkPreviewPropsWithoutHTML = Expand<
-	OmitFloating<CreateLinkPreviewProps> & {
-		/**
-		 * The open state of the link preview.
-		 * You can bind this to a boolean value to programmatically control the open state.
-		 *
-		 * @defaultValue false
-		 */
-		open?: boolean;
+export type LinkPreviewRootPropsWithoutHTML = WithChildren<{
+	/**
+	 * The open state of the link preview.
+	 *
+	 * @defaultValue false
+	 */
+	open?: boolean;
 
-		/**
-		 * A callback function called when the open state changes.
-		 */
-		onOpenChange?: OnChangeFn<boolean>;
-	}
+	/**
+	 * A callback that will be called when the link preview is opened or closed.
+	 */
+	onOpenChange?: OnChangeFn<boolean>;
+
+	/**
+	 * The delay in milliseconds before the preview opens.
+	 *
+	 * @defaultValue 700
+	 */
+	openDelay?: number;
+
+	/**
+	 * The delay in milliseconds before the preview closes.
+	 *
+	 * @defaultValue 300
+	 */
+	closeDelay?: number;
+
+	/**
+	 * When `true`, the preview will be disabled and will not open.
+	 *
+	 * @defaultValue false
+	 */
+	disabled?: boolean;
+
+	/**
+	 * Prevent the preview from opening if the focus did not come using
+	 * the keyboard.
+	 *
+	 * @defaultValue false
+	 */
+	ignoreNonKeyboardFocus?: boolean;
+}>;
+
+export type LinkPreviewRootProps = LinkPreviewRootPropsWithoutHTML;
+
+export type LinkPreviewContentPropsWithoutHTML = WithChild<
+	Pick<
+		FloatingLayerContentProps,
+		| "side"
+		| "sideOffset"
+		| "align"
+		| "alignOffset"
+		| "avoidCollisions"
+		| "collisionBoundary"
+		| "collisionPadding"
+		| "arrowPadding"
+		| "sticky"
+		| "hideWhenDetached"
+		| "dir"
+	> &
+		DismissableLayerProps &
+		EscapeLayerProps & {
+			/**
+			 * When `true`, the link preview content will be forced to mount in the DOM.
+			 *
+			 * Useful for more control over the transition behavior.
+			 */
+			forceMount?: boolean;
+		}
 >;
 
-export type LinkPreviewTriggerPropsWithoutHTML = DOMElement<HTMLAnchorElement>;
+export type LinkPreviewContentProps = LinkPreviewContentPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, LinkPreviewContentPropsWithoutHTML>;
 
-export type { LinkPreviewArrowPropsWithoutHTML, LinkPreviewContentPropsWithoutHTML };
+export type LinkPreviewArrowPropsWithoutHTML = ArrowPropsWithoutHTML;
+export type LinkPreviewArrowProps = ArrowProps;
 
-export type LinkPreviewProps = LinkPreviewPropsWithoutHTML;
+export type LinkPreviewPortalPropsWithoutHTML = PortalProps;
+export type LinkPreviewPortalProps = LinkPreviewPortalPropsWithoutHTML;
 
-export type LinkPreviewTriggerProps = LinkPreviewTriggerPropsWithoutHTML & HTMLAnchorAttributes;
+export type LinkPreviewTriggerPropsWithoutHTML = WithChild;
 
-export type LinkPreviewContentProps<
-	T extends Transition = Transition,
-	In extends Transition = Transition,
-	Out extends Transition = Transition,
-> = LinkPreviewContentPropsWithoutHTML<T, In, Out> & HTMLDivAttributes;
-
-export type LinkPreviewArrowProps = LinkPreviewArrowPropsWithoutHTML & HTMLDivAttributes;
-
-export type LinkPreviewTriggerEvents<T extends Element = HTMLAnchorElement> = {
-	click: CustomEventHandler<MouseEvent, T>;
-	blur: CustomEventHandler<FocusEvent, T>;
-	focus: CustomEventHandler<FocusEvent, T>;
-	pointerenter: CustomEventHandler<PointerEvent, T>;
-	pointerleave: CustomEventHandler<PointerEvent, T>;
-};
-export type LinkPreviewContentEvents<T extends Element = HTMLDivElement> = {
-	focusout: CustomEventHandler<FocusEvent, T>;
-	pointerenter: CustomEventHandler<PointerEvent, T>;
-	pointerleave: CustomEventHandler<PointerEvent, T>;
-	pointerdown: CustomEventHandler<PointerEvent, T>;
-};
+export type LinkPreviewTriggerProps = LinkPreviewTriggerPropsWithoutHTML &
+	Without<PrimitiveAnchorAttributes, LinkPreviewTriggerPropsWithoutHTML>;

@@ -7,29 +7,32 @@
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {
-		asChild,
 		child,
 		children,
-		el = $bindable(),
+		ref = $bindable(null),
 		id = useId(),
 		disabled = false,
 		onSelect = noop,
 		...restProps
 	}: ItemProps = $props();
 
-	const state = useMenuItem({
+	const itemState = useMenuItem({
 		id: box.with(() => id),
 		disabled: box.with(() => disabled),
 		onSelect: box.with(() => onSelect),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, itemState.props));
 </script>
 
-{#if asChild}
+{#if child}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<div {...mergedProps} bind:this={el}>
+	<div {...mergedProps}>
 		{@render children?.()}
 	</div>
 {/if}

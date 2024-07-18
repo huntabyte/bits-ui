@@ -6,27 +6,30 @@
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 
 	let {
-		asChild,
 		children,
 		child,
 		id = useId(),
-		el = $bindable(),
+		ref = $bindable(null),
 		type = "button",
 		...restProps
 	}: TriggerProps = $props();
 
-	const state = usePopoverTrigger({
+	const triggerState = usePopoverTrigger({
 		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props, { type }));
+	const mergedProps = $derived(mergeProps(restProps, triggerState.props, { type }));
 </script>
 
 <FloatingLayer.Anchor {id}>
-	{#if asChild}
+	{#if child}
 		{@render child?.({ props: mergedProps })}
 	{:else}
-		<button {...mergedProps} bind:this={el}>
+		<button {...mergedProps}>
 			{@render children?.()}
 		</button>
 	{/if}

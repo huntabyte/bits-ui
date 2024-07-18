@@ -1,27 +1,22 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { setArrow } from "../ctx.js";
+	import { box } from "svelte-toolbelt";
 	import type { ArrowProps } from "../index.js";
+	import { useSelectArrow } from "../select.svelte.js";
+	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
 
-	type $$Props = ArrowProps;
+	let { id = useId(), ref = $bindable(null), ...restProps }: ArrowProps = $props();
 
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
-	export let size = 8;
+	const arrowState = useSelectArrow({
+		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
+	});
 
-	const {
-		elements: { arrow },
-		getAttrs,
-	} = setArrow(size);
-
-	const attrs = getAttrs("arrow");
-
-	$: builder = $arrow;
-	$: Object.assign(builder, attrs);
+	const mergedProps = $derived(mergeProps(restProps, arrowState.props as any));
 </script>
 
-{#if asChild}
-	<slot {builder} />
-{:else}
-	<div bind:this={el} use:melt={builder} {...$$restProps} />
-{/if}
+<FloatingLayer.Arrow {...mergedProps} />

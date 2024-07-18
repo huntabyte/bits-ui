@@ -6,26 +6,29 @@
 	import { useId } from "$lib/internal/useId.svelte.js";
 
 	let {
-		asChild,
 		children,
 		href,
 		child,
-		el = $bindable(),
+		ref = $bindable(null),
 		id = useId(),
 		...restProps
 	}: LinkProps = $props();
 
-	const state = useToolbarLink({
+	const linkState = useToolbarLink({
 		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, linkState.props));
 </script>
 
-{#if asChild}
+{#if child}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<a {href} {...mergedProps} bind:this={el}>
+	<a {href} {...mergedProps}>
 		{@render children?.()}
 	</a>
 {/if}

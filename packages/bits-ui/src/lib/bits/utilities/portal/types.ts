@@ -6,7 +6,7 @@ export type PortalProps = {
 	 *
 	 * @defaultValue document.body
 	 */
-	to?: HTMLElement | string;
+	to?: HTMLElement | string | DocumentFragment;
 
 	/**
 	 * Disable portaling and render the component inline

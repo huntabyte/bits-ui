@@ -7,29 +7,32 @@
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 
 	let {
-		asChild,
 		children,
 		child,
 		id = useId(),
 		disabled = false,
 		type = "button",
-		el = $bindable(),
+		ref = $bindable(null),
 		...restProps
 	}: TriggerProps = $props();
 
-	const state = useTooltipTrigger({
+	const triggerState = useTooltipTrigger({
 		id: box.with(() => id),
 		disabled: box.with(() => disabled),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props, { type }));
+	const mergedProps = $derived(mergeProps(restProps, triggerState.props, { type }));
 </script>
 
 <FloatingLayer.Anchor {id}>
-	{#if asChild}
+	{#if child}
 		{@render child?.({ props: mergedProps })}
 	{:else}
-		<button {...mergedProps} bind:this={el}>
+		<button {...mergedProps}>
 			{@render children?.()}
 		</button>
 	{/if}

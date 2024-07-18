@@ -3,29 +3,35 @@
 	import type { AccordionItemProps } from "../types.js";
 	import { useAccordionItem } from "../accordion.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
 
 	let {
-		asChild,
+		id = useId(),
 		disabled = false,
 		value,
 		children,
 		child,
-		el = $bindable(),
+		ref = $bindable(null),
 		...restProps
 	}: AccordionItemProps = $props();
 
-	const state = useAccordionItem({
+	const itemState = useAccordionItem({
 		value: box.with(() => value),
 		disabled: box.with(() => disabled),
+		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, itemState.props));
 </script>
 
-{#if asChild}
-	{@render child?.({ props: mergedProps })}
+{#if child}
+	{@render child({ props: mergedProps })}
 {:else}
-	<div {...mergedProps} bind:this={el}>
+	<div {...mergedProps}>
 		{@render children?.()}
 	</div>
 {/if}

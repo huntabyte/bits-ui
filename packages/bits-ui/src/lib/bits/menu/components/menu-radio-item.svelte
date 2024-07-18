@@ -7,10 +7,9 @@
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {
-		asChild,
 		children,
 		child,
-		el = $bindable(),
+		ref = $bindable(null),
 		value,
 		onSelect = noop,
 		id = useId(),
@@ -18,26 +17,30 @@
 		...restProps
 	}: RadioItemProps = $props();
 
-	const state = useMenuRadioItem({
+	const radioItemState = useMenuRadioItem({
 		value: box.with(() => value),
 		id: box.with(() => id),
 		disabled: box.with(() => disabled),
 		onSelect: box.with(() => handleSelect),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
 	function handleSelect(e: Event) {
 		onSelect(e);
 		if (e.defaultPrevented) return;
-		state.selectValue();
+		radioItemState.selectValue();
 	}
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, radioItemState.props));
 </script>
 
-{#if asChild}
-	{@render child?.({ props: mergedProps })}
+{#if child}
+	{@render child({ props: mergedProps, checked: radioItemState.isChecked })}
 {:else}
-	<div {...mergedProps} bind:this={el}>
-		{@render children?.({ checked: state.isChecked })}
+	<div {...mergedProps} bind:this={ref}>
+		{@render children?.({ checked: radioItemState.isChecked })}
 	</div>
 {/if}

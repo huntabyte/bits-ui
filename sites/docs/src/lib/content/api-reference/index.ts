@@ -16,7 +16,6 @@ import { dialog } from "./dialog.js";
 import { dropdownMenu } from "./dropdown-menu.js";
 import { label } from "./label.js";
 import { linkPreview } from "./link-preview.js";
-import { menubar } from "./menubar.js";
 import { pagination } from "./pagination.js";
 import { pinInput } from "./pin-input.js";
 import { popover } from "./popover.js";
@@ -54,7 +53,9 @@ export const bits = [
 	"dropdown-menu",
 	"label",
 	"link-preview",
+	"listbox",
 	"menubar",
+	"navigation-menu",
 	"pagination",
 	"pin-input",
 	"popover",
@@ -100,7 +101,7 @@ export const apiSchemas: Record<Bit, APISchema[]> = {
 	"dropdown-menu": dropdownMenu,
 	label,
 	"link-preview": linkPreview,
-	menubar,
+	listbox: linkPreview,
 	pagination,
 	"pin-input": pinInput,
 	popover,

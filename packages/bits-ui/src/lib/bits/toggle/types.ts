@@ -1,11 +1,15 @@
 import type {
-	EventCallback,
 	OnChangeFn,
 	PrimitiveButtonAttributes,
-	WithAsChild,
+	WithChild,
+	Without,
 } from "$lib/internal/index.js";
 
-export type ToggleRootPropsWithoutHTML = WithAsChild<
+export type ToggleRootSnippetProps = {
+	pressed: boolean;
+};
+
+export type ToggleRootPropsWithoutHTML = WithChild<
 	{
 		/**
 		 * Whether the toggle is pressed or not.
@@ -25,17 +29,9 @@ export type ToggleRootPropsWithoutHTML = WithAsChild<
 		 * @defaultValue false
 		 */
 		disabled?: boolean;
-
-		onclick?: EventCallback<MouseEvent>;
-		onkeydown?: EventCallback<KeyboardEvent>;
 	},
-	{
-		/**
-		 * The pressed state of the toggle.
-		 */
-		pressed: boolean;
-	}
+	ToggleRootSnippetProps
 >;
 
 export type ToggleRootProps = ToggleRootPropsWithoutHTML &
-	Omit<PrimitiveButtonAttributes, "onclick" | "onkeydown" | "disabled">;
+	Without<PrimitiveButtonAttributes, ToggleRootPropsWithoutHTML>;

@@ -1,8 +1,8 @@
-import { box } from "svelte-toolbelt";
 import { getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import { useNodeById } from "$lib/internal/useNodeById.svelte.js";
+import { useRefById } from "$lib/internal/useRefById.svelte.js";
 import { createContext } from "$lib/internal/createContext.js";
+import type { WithRefProps } from "$lib/internal/types.js";
 
 const CONTENT_ATTR = "data-dialog-content";
 const TITLE_ATTR = "data-dialog-title";
@@ -10,6 +10,7 @@ const TRIGGER_ATTR = "data-dialog-trigger";
 const OVERLAY_ATTR = "data-dialog-overlay";
 const DESCRIPTION_ATTR = "data-dialog-description";
 const CLOSE_ATTR = "data-dialog-close";
+const CANCEL_ATTR = "data-dialog-cancel";
 
 type DialogRootStateProps = WritableBoxedValues<{
 	open: boolean;
@@ -17,16 +18,15 @@ type DialogRootStateProps = WritableBoxedValues<{
 
 class DialogRootState {
 	open: DialogRootStateProps["open"];
-	triggerNode = box<HTMLElement | null>(null);
-	titleNode = box<HTMLElement | null>(null);
-	contentNode = box<HTMLElement | null>(null);
-	contentId = $derived(this.contentNode.value ? this.contentNode.value.id : undefined);
-	titleId = $derived(this.titleNode.value ? this.titleNode.value.id : undefined);
-	triggerId = $derived(this.triggerNode.value ? this.triggerNode.value.id : undefined);
-	descriptionNode = box<HTMLElement | null>(null);
-	descriptionId = $derived(
-		this.descriptionNode.value ? this.descriptionNode.value.id : undefined
-	);
+	triggerNode = $state<HTMLElement | null>(null);
+	titleNode = $state<HTMLElement | null>(null);
+	contentNode = $state<HTMLElement | null>(null);
+	descriptionNode = $state<HTMLElement | null>(null);
+	contentId = $derived(this.contentNode ? this.contentNode.id : undefined);
+	titleId = $derived(this.titleNode ? this.titleNode.id : undefined);
+	triggerId = $derived(this.triggerNode ? this.triggerNode.id : undefined);
+	descriptionId = $derived(this.descriptionNode ? this.descriptionNode.id : undefined);
+	cancelNode = $state<HTMLElement | null>(null);
 
 	constructor(props: DialogRootStateProps) {
 		this.open = props.open;
@@ -62,8 +62,12 @@ class DialogRootState {
 		return new DialogDescriptionState(props, this);
 	}
 
-	createClose() {
-		return new DialogCloseState(this);
+	createClose(props: DialogCloseStateProps) {
+		return new DialogCloseState(props, this);
+	}
+
+	createCancel(props: AlertDialogCancelStateProps) {
+		return new AlertDialogCancelState(props, this);
 	}
 
 	sharedProps = $derived.by(
@@ -74,18 +78,25 @@ class DialogRootState {
 	);
 }
 
-type DialogTriggerStateProps = ReadableBoxedValues<{
-	id: string;
-}>;
+type DialogTriggerStateProps = WithRefProps;
 
 class DialogTriggerState {
 	#id: DialogTriggerStateProps["id"];
+	#ref: DialogTriggerStateProps["ref"];
 	#root: DialogRootState;
 
 	constructor(props: DialogTriggerStateProps, root: DialogRootState) {
 		this.#id = props.id;
 		this.#root = root;
-		this.#root.triggerNode = useNodeById(this.#id);
+		this.#ref = props.ref;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+			onRefChange: (node) => {
+				this.#root.triggerNode = node;
+			},
+		});
 	}
 
 	#onclick = () => {
@@ -106,11 +117,22 @@ class DialogTriggerState {
 	);
 }
 
+type DialogCloseStateProps = WithRefProps;
 class DialogCloseState {
+	#id: DialogCloseStateProps["id"];
+	#ref: DialogCloseStateProps["ref"];
 	#root: DialogRootState;
 
-	constructor(root: DialogRootState) {
+	constructor(props: DialogCloseStateProps, root: DialogRootState) {
 		this.#root = root;
+		this.#ref = props.ref;
+		this.#id = props.id;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+			condition: () => this.#root.open.value,
+		});
 	}
 
 	#onclick = () => {
@@ -120,6 +142,7 @@ class DialogCloseState {
 	props = $derived.by(
 		() =>
 			({
+				id: this.#id.value,
 				[CLOSE_ATTR]: "",
 				onclick: this.#onclick,
 				...this.#root.sharedProps,
@@ -127,21 +150,31 @@ class DialogCloseState {
 	);
 }
 
-type DialogTitleStateProps = ReadableBoxedValues<{
-	id: string;
-	level: 1 | 2 | 3 | 4 | 5 | 6;
-}>;
-
+type DialogTitleStateProps = WithRefProps<
+	ReadableBoxedValues<{
+		level: 1 | 2 | 3 | 4 | 5 | 6;
+	}>
+>;
 class DialogTitleState {
 	#id: DialogTitleStateProps["id"];
+	#ref: DialogTitleStateProps["ref"];
 	#root: DialogRootState;
 	#level: DialogTitleStateProps["level"];
 
 	constructor(props: DialogTitleStateProps, root: DialogRootState) {
 		this.#id = props.id;
 		this.#root = root;
-		this.#root.titleNode = useNodeById(this.#id);
+		this.#ref = props.ref;
 		this.#level = props.level;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+			onRefChange: (node) => {
+				this.#root.titleNode = node;
+			},
+			condition: () => this.#root.open.value,
+		});
 	}
 
 	props = $derived.by(
@@ -156,18 +189,26 @@ class DialogTitleState {
 	);
 }
 
-type DialogDescriptionStateProps = ReadableBoxedValues<{
-	id: string;
-}>;
+type DialogDescriptionStateProps = WithRefProps;
 
 class DialogDescriptionState {
 	#id: DialogDescriptionStateProps["id"];
+	#ref: DialogDescriptionStateProps["ref"];
 	#root: DialogRootState;
 
 	constructor(props: DialogDescriptionStateProps, root: DialogRootState) {
 		this.#id = props.id;
 		this.#root = root;
-		this.#root.descriptionNode = useNodeById(this.#id);
+		this.#ref = props.ref;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+			condition: () => this.#root.open.value,
+			onRefChange: (node) => {
+				this.#root.descriptionNode = node;
+			},
+		});
 	}
 
 	props = $derived.by(
@@ -180,18 +221,26 @@ class DialogDescriptionState {
 	);
 }
 
-type DialogContentStateProps = ReadableBoxedValues<{
-	id: string;
-}>;
+type DialogContentStateProps = WithRefProps;
 
 class DialogContentState {
 	#id: DialogContentStateProps["id"];
+	#ref: DialogContentStateProps["ref"];
 	root: DialogRootState;
 
 	constructor(props: DialogContentStateProps, root: DialogRootState) {
 		this.#id = props.id;
 		this.root = root;
-		this.root.contentNode = useNodeById(this.#id);
+		this.#ref = props.ref;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+			condition: () => this.root.open.value,
+			onRefChange: (node) => {
+				this.root.contentNode = node;
+			},
+		});
 	}
 
 	props = $derived.by(
@@ -207,17 +256,23 @@ class DialogContentState {
 	);
 }
 
-type DialogOverlayStateProps = ReadableBoxedValues<{
-	id: string;
-}>;
+type DialogOverlayStateProps = WithRefProps;
 
 class DialogOverlayState {
 	#id: DialogOverlayStateProps["id"];
+	#ref: DialogOverlayStateProps["ref"];
 	root: DialogRootState;
 
 	constructor(props: DialogOverlayStateProps, root: DialogRootState) {
 		this.#id = props.id;
+		this.#ref = props.ref;
 		this.root = root;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+			condition: () => this.root.open.value,
+		});
 	}
 
 	props = $derived.by(
@@ -226,6 +281,43 @@ class DialogOverlayState {
 				id: this.#id.value,
 				[OVERLAY_ATTR]: "",
 				...this.root.sharedProps,
+			}) as const
+	);
+}
+
+type AlertDialogCancelStateProps = WithRefProps;
+
+class AlertDialogCancelState {
+	#id: AlertDialogCancelStateProps["id"];
+	#ref: AlertDialogCancelStateProps["ref"];
+	#root: DialogRootState;
+
+	constructor(props: AlertDialogCancelStateProps, root: DialogRootState) {
+		this.#id = props.id;
+		this.#ref = props.ref;
+		this.#root = root;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+			condition: () => this.#root.open.value,
+			onRefChange: (node) => {
+				this.#root.cancelNode = node;
+			},
+		});
+	}
+
+	#onclick = () => {
+		this.#root.closeDialog();
+	};
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.value,
+				[CANCEL_ATTR]: "",
+				onclick: this.#onclick,
+				...this.#root.sharedProps,
 			}) as const
 	);
 }
@@ -256,6 +348,10 @@ export function useDialogDescription(props: DialogDescriptionStateProps) {
 	return getDialogRootContext().createDescription(props);
 }
 
-export function useDialogClose() {
-	return getDialogRootContext().createClose();
+export function useDialogClose(props: DialogCloseStateProps) {
+	return getDialogRootContext().createClose(props);
+}
+
+export function useAlertDialogCancel(props: AlertDialogCancelStateProps) {
+	return getDialogRootContext().createCancel(props);
 }

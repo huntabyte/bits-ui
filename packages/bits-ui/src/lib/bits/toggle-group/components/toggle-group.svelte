@@ -6,10 +6,9 @@
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {
-		asChild,
 		child,
 		children,
-		el = $bindable(),
+		ref = $bindable(null),
 		id = useId(),
 		value = $bindable(),
 		onValueChange,
@@ -23,7 +22,7 @@
 
 	value === undefined && (value = type === "single" ? "" : []);
 
-	const state = useToggleGroupRoot({
+	const rootState = useToggleGroupRoot({
 		id: box.with(() => id),
 		value: box.with(
 			() => value!,
@@ -37,15 +36,19 @@
 		orientation: box.with(() => orientation),
 		rovingFocus: box.with(() => rovingFocus),
 		type,
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, rootState.props));
 </script>
 
-{#if asChild}
+{#if child}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<div bind:this={el} {...mergedProps}>
+	<div {...mergedProps}>
 		{@render children?.()}
 	</div>
 {/if}

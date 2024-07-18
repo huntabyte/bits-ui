@@ -7,10 +7,9 @@
 	import { noop } from "$lib/internal/callbacks.js";
 
 	let {
-		asChild,
 		child,
 		children,
-		el = $bindable(),
+		ref = $bindable(null),
 		checked = $bindable(false),
 		id = useId(),
 		onCheckedChange = noop,
@@ -19,7 +18,7 @@
 		...restProps
 	}: CheckboxItemProps = $props();
 
-	const state = useMenuCheckboxItem({
+	const checkboxItemState = useMenuCheckboxItem({
 		checked: box.with(
 			() => checked,
 			(v) => {
@@ -32,21 +31,25 @@
 		id: box.with(() => id),
 		disabled: box.with(() => disabled),
 		onSelect: box.with(() => handleSelect),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
 	function handleSelect(e: Event) {
 		onSelect(e);
 		if (e.defaultPrevented) return;
-		state.toggleChecked();
+		checkboxItemState.toggleChecked();
 	}
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, checkboxItemState.props));
 </script>
 
-{#if asChild}
-	{@render child?.({ props: mergedProps })}
+{#if child}
+	{@render child?.({ props: mergedProps, checked })}
 {:else}
-	<div {...mergedProps} bind:this={el}>
+	<div {...mergedProps}>
 		{@render children?.({ checked })}
 	</div>
 {/if}

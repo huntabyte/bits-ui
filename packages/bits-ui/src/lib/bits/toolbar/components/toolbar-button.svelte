@@ -6,28 +6,31 @@
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {
-		asChild,
 		child,
 		children,
 		disabled = false,
 		type = "button",
 		id = useId(),
-		el = $bindable(),
+		ref = $bindable(null),
 		...restProps
 	}: ButtonProps = $props();
 
-	const state = useToolbarButton({
+	const buttonState = useToolbarButton({
 		id: box.with(() => id),
 		disabled: box.with(() => disabled),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props, { type }));
+	const mergedProps = $derived(mergeProps(restProps, buttonState.props, { type }));
 </script>
 
-{#if asChild}
+{#if child}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<button bind:this={el} {...mergedProps}>
+	<button {...mergedProps}>
 		{@render children?.()}
 	</button>
 {/if}

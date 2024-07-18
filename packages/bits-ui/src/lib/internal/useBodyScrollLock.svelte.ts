@@ -1,4 +1,4 @@
-import { Map } from "svelte/reactivity";
+import { SvelteMap } from "svelte/reactivity";
 import { box } from "svelte-toolbelt";
 import type { Fn } from "./types.js";
 import { isBrowser, isIOS } from "./is.js";
@@ -14,7 +14,7 @@ export type ScrollBodyOption = {
 };
 
 const useBodyLockStackCount = createSharedHook(() => {
-	const map = new Map<string, boolean>();
+	const map = new SvelteMap<string, boolean>();
 
 	const locked = $derived.by(() => {
 		for (const value of map.values()) {

@@ -9,21 +9,26 @@ import {
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { createContext } from "$lib/internal/createContext.js";
+import type { WithRefProps } from "$lib/internal/types.js";
+import { useRefById } from "$lib/internal/useRefById.svelte.js";
 
 const ROOT_ATTR = "data-switch-root";
 const THUMB_ATTR = "data-switch-thumb";
 
-type SwitchRootStateProps = ReadableBoxedValues<{
-	disabled: boolean;
-	required: boolean;
-	name: string | undefined;
-	value: string;
-}> &
-	WritableBoxedValues<{
-		checked: boolean;
-	}>;
-
+type SwitchRootStateProps = WithRefProps<
+	ReadableBoxedValues<{
+		disabled: boolean;
+		required: boolean;
+		name: string | undefined;
+		value: string;
+	}> &
+		WritableBoxedValues<{
+			checked: boolean;
+		}>
+>;
 class SwitchRootState {
+	#id: SwitchRootStateProps["id"];
+	#ref: SwitchRootStateProps["ref"];
 	checked: SwitchRootStateProps["checked"];
 	disabled: SwitchRootStateProps["disabled"];
 	required: SwitchRootStateProps["required"];
@@ -36,6 +41,13 @@ class SwitchRootState {
 		this.required = props.required;
 		this.name = props.name;
 		this.value = props.value;
+		this.#id = props.id;
+		this.#ref = props.ref;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+		});
 	}
 
 	#toggle() {
@@ -57,8 +69,8 @@ class SwitchRootState {
 		return new SwitchInputState(this);
 	}
 
-	createThumb() {
-		return new SwitchThumbState(this);
+	createThumb(props: SwitchThumbStateProps) {
+		return new SwitchThumbState(props, this);
 	}
 
 	sharedProps = $derived.by(() => ({
@@ -71,6 +83,7 @@ class SwitchRootState {
 		() =>
 			({
 				...this.sharedProps,
+				id: this.#id.value,
 				role: "switch",
 				disabled: getDisabledAttr(this.disabled.value),
 				"aria-checked": getAriaChecked(this.checked.value),
@@ -104,17 +117,29 @@ class SwitchInputState {
 	);
 }
 
+type SwitchThumbStateProps = WithRefProps;
+
 class SwitchThumbState {
+	#id: SwitchThumbStateProps["id"];
+	#ref: SwitchThumbStateProps["ref"];
 	root: SwitchRootState;
 
-	constructor(root: SwitchRootState) {
+	constructor(props: SwitchThumbStateProps, root: SwitchRootState) {
 		this.root = root;
+		this.#id = props.id;
+		this.#ref = props.ref;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+		});
 	}
 
 	props = $derived.by(
 		() =>
 			({
 				...this.root.sharedProps,
+				id: this.#id.value,
 				[THUMB_ATTR]: "",
 			}) as const
 	);
@@ -134,6 +159,6 @@ export function useSwitchInput(): SwitchInputState {
 	return getSwitchRootContext().createInput();
 }
 
-export function useSwitchThumb(): SwitchThumbState {
-	return getSwitchRootContext().createThumb();
+export function useSwitchThumb(props: SwitchThumbStateProps): SwitchThumbState {
+	return getSwitchRootContext().createThumb(props);
 }

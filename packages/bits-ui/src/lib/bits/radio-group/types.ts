@@ -1,14 +1,14 @@
-import type { Snippet } from "svelte";
 import type {
 	EventCallback,
 	OnChangeFn,
 	PrimitiveButtonAttributes,
 	PrimitiveDivAttributes,
-	WithAsChild,
+	WithChild,
+	Without,
 } from "$lib/internal/index.js";
 import type { Orientation } from "$lib/index.js";
 
-export type RadioGroupRootPropsWithoutHTML = WithAsChild<{
+export type RadioGroupRootPropsWithoutHTML = WithChild<{
 	/**
 	 * The orientation of the radio group. Used to determine
 	 * how keyboard navigation should work.
@@ -61,40 +61,33 @@ export type RadioGroupRootPropsWithoutHTML = WithAsChild<{
 	required?: boolean;
 }>;
 
-export type RadioGroupRootProps = RadioGroupRootPropsWithoutHTML & PrimitiveDivAttributes;
+export type RadioGroupRootProps = RadioGroupRootPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, RadioGroupRootPropsWithoutHTML>;
 
-export type RadioGroupItemPropsWithoutHTML = Omit<
-	WithAsChild<
-		{
-			/**
-			 * The value of the radio item.
-			 */
-			value: string;
+export type RadioGroupItemSnippetProps = { checked: boolean };
 
-			/**
-			 * Whether the radio item is disabled.
-			 *
-			 * @defaultValue false
-			 */
-			disabled?: boolean;
+export type RadioGroupItemPropsWithoutHTML = WithChild<
+	{
+		/**
+		 * The value of the radio item.
+		 */
+		value: string;
 
-			onclick?: EventCallback<MouseEvent>;
+		/**
+		 * Whether the radio item is disabled.
+		 *
+		 * @defaultValue false
+		 */
+		disabled?: boolean;
 
-			onkeydown?: EventCallback<KeyboardEvent>;
+		onclick?: EventCallback<MouseEvent>;
 
-			onfocus?: EventCallback<FocusEvent>;
-		},
-		{ checked: boolean }
-	>,
-	"children"
-> & {
-	/**
-	 * The children snippet to render inside the radio item.
-	 * It provides the `checked` state of the item for conditionally
-	 * rendering/styling the indicator.
-	 */
-	children?: Snippet<[{ checked: boolean }]>;
-};
+		onkeydown?: EventCallback<KeyboardEvent>;
+
+		onfocus?: EventCallback<FocusEvent>;
+	},
+	RadioGroupItemSnippetProps
+>;
 
 export type RadioGroupItemProps = RadioGroupItemPropsWithoutHTML &
-	Omit<PrimitiveButtonAttributes, "value" | "disabled" | "onclick" | "onkeydown">;
+	Without<PrimitiveButtonAttributes, RadioGroupItemPropsWithoutHTML>;

@@ -26,5 +26,5 @@
 {#if asChild}
 	<slot {builder} />
 {:else}
-	<input bind:this={el} use:melt={builder} {...$$restProps} />
+	<input bind:this={ref} use:melt={builder} {...$$restProps} />
 {/if}

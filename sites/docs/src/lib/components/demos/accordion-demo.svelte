@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Accordion } from "bits-ui";
-	import { CaretDown } from "$icons/index.js";
+	import CaretDown from "phosphor-svelte/lib/CaretDown";
 
 	const items = [
 		{

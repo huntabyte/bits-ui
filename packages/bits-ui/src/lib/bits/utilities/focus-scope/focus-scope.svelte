@@ -13,7 +13,7 @@
 		focusScope,
 	}: FocusScopeImplProps = $props();
 
-	const state = useFocusScope({
+	const focusScopeState = useFocusScope({
 		trapped: box.with(() => trapped),
 		loop: box.with(() => loop),
 		onDestroyAutoFocus: box.with(() => onDestroyAutoFocus),
@@ -22,4 +22,4 @@
 	});
 </script>
 
-{@render focusScope?.({ props: state.props })}
+{@render focusScope?.({ props: focusScopeState.props })}

@@ -5,32 +5,31 @@
 	import { styleToString } from "$lib/internal/style.js";
 
 	let {
-		asChild,
 		child,
 		children,
 		decorative = false,
 		orientation = "horizontal",
-		el = $bindable(),
+		ref = $bindable(),
 		style = {},
 		...restProps
 	}: RootProps = $props();
 
-	const state = useSeparatorRoot({
+	const rootState = useSeparatorRoot({
 		decorative: box.with(() => decorative),
 		orientation: box.with(() => orientation),
 	});
 
 	const mergedProps = $derived({
 		...restProps,
-		...state.props,
+		...rootState.props,
 		style: styleToString(style),
 	});
 </script>
 
-{#if asChild}
+{#if child}
 	{@render child?.({ props: mergedProps })}
 {:else}
-	<div bind:this={el} {...mergedProps}>
+	<div bind:this={ref} {...mergedProps}>
 		{@render children?.()}
 	</div>
 {/if}

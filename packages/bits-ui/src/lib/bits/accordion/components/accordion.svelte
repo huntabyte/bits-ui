@@ -7,12 +7,11 @@
 
 	let {
 		disabled = false,
-		asChild,
 		children,
 		child,
 		type,
 		value = $bindable(),
-		el = $bindable(),
+		ref = $bindable(null),
 		id = useId(),
 		onValueChange,
 		loop = true,
@@ -22,7 +21,7 @@
 
 	value === undefined && (value = type === "single" ? "" : []);
 
-	const state = useAccordionRoot({
+	const rootState = useAccordionRoot({
 		type,
 		value: box.with(
 			() => value!,
@@ -35,15 +34,19 @@
 		disabled: box.with(() => disabled),
 		loop: box.with(() => loop),
 		orientation: box.with(() => orientation),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, rootState.props));
 </script>
 
-{#if asChild}
-	{@render child?.({ props: mergedProps })}
+{#if child}
+	{@render child({ props: mergedProps })}
 {:else}
-	<div bind:this={el} {...mergedProps}>
+	<div {...mergedProps}>
 		{@render children?.()}
 	</div>
 {/if}

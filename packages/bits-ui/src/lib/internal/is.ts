@@ -6,6 +6,7 @@ function getIsIOS() {
 	return (
 		isBrowser &&
 		window?.navigator?.userAgent &&
+		// eslint-disable-next-line regexp/no-unused-capturing-group
 		(/iP(ad|hone|od)/.test(window.navigator.userAgent) ||
 			// The new iPad Pro Gen3 does not identify itself as iPad, but as Macintosh.
 			(window?.navigator?.maxTouchPoints > 2 &&
@@ -27,4 +28,20 @@ export function isElement(element: unknown): element is Element {
 
 export function isElementOrSVGElement(element: unknown): element is Element | SVGElement {
 	return element instanceof Element || element instanceof SVGElement;
+}
+
+export function isNumberString(value: string) {
+	return !isNaN(Number(value)) && !isNaN(parseFloat(value));
+}
+
+export function isNull(value: unknown): value is null {
+	return value === null;
+}
+
+export function isTouch(e: PointerEvent) {
+	return e.pointerType === "touch";
+}
+
+export function isFocusVisible(element: Element) {
+	return element.matches(":focus-visible");
 }

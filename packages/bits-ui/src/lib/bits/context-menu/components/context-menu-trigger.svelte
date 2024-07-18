@@ -8,29 +8,32 @@
 
 	let {
 		id = useId(),
-		el = $bindable(),
-		asChild,
+		ref = $bindable(null),
 		child,
 		children,
 		disabled = false,
 		...restProps
 	}: TriggerProps = $props();
 
-	const state = useMenuContextTrigger({
+	const triggerState = useMenuContextTrigger({
 		id: box.with(() => id),
 		disabled: box.with(() => disabled),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
 	const mergedProps = $derived(
-		mergeProps(restProps, state.props, { style: { pointerEvents: "auto" } })
+		mergeProps(restProps, triggerState.props, { style: { pointerEvents: "auto" } })
 	);
 </script>
 
-<FloatingLayer.Anchor {id} virtualEl={state.virtualElement}>
-	{#if asChild}
-		{@render child?.({ props: mergedProps })}
+<FloatingLayer.Anchor {id} virtualEl={triggerState.virtualElement}>
+	{#if child}
+		{@render child({ props: mergedProps })}
 	{:else}
-		<div {...mergedProps} bind:this={el}>
+		<div {...mergedProps}>
 			{@render children?.()}
 		</div>
 	{/if}

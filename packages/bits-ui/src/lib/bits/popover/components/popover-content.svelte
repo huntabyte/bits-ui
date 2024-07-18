@@ -6,10 +6,9 @@
 	import { mergeProps, noop, useId } from "$lib/internal/index.js";
 
 	let {
-		asChild,
 		child,
 		children,
-		el = $bindable(),
+		ref = $bindable(null),
 		id = useId(),
 		forceMount = false,
 		onDestroyAutoFocus = noop,
@@ -19,40 +18,47 @@
 		...restProps
 	}: ContentProps = $props();
 
-	const state = usePopoverContent({
+	const contentState = usePopoverContent({
 		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
+
+	const mergedProps = $derived(mergeProps(restProps, contentState.props));
 </script>
 
 <PopperLayer
-	{...restProps}
-	present={state.root.open.value || forceMount}
+	{...mergedProps}
+	present={contentState.root.open.value || forceMount}
 	{id}
 	onInteractOutside={(e) => {
 		onInteractOutside(e);
 		if (e.defaultPrevented) return;
-		state.root.close();
+		contentState.root.close();
 	}}
 	onEscapeKeydown={(e) => {
 		// TODO: users should be able to cancel this
 		onEscapeKeydown(e);
-		state.root.close();
+		contentState.root.close();
 	}}
 	onDestroyAutoFocus={(e) => {
 		onDestroyAutoFocus(e);
 		if (e.defaultPrevented) return;
 		e.preventDefault();
-		state.root.triggerNode?.value?.focus();
+		contentState.root.triggerNode?.focus();
 	}}
 	trapped
 	{loop}
+	{forceMount}
 >
 	{#snippet popper({ props })}
-		{@const mergedProps = mergeProps(restProps, state.props, props)}
-		{#if asChild}
-			{@render child?.({ props: mergedProps })}
+		{@const finalProps = mergeProps(props, mergedProps)}
+		{#if child}
+			{@render child?.({ props: finalProps })}
 		{:else}
-			<div {...mergedProps} bind:this={el}>
+			<div {...finalProps}>
 				{@render children?.()}
 			</div>
 		{/if}

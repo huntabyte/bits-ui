@@ -24,34 +24,34 @@
 		outTransitionConfig,
 		children,
 		condition,
-		el = $bindable(),
+		ref = $bindable(),
 		...restProps
 	}: Props = $props();
 </script>
 
 {#if transition && condition}
-	<div transition:transition={transitionConfig} {...restProps} bind:this={el}>
+	<div transition:transition={transitionConfig} {...restProps} bind:this={ref}>
 		{@render children?.()}
 	</div>
 {:else if inTransition && outTransition && condition}
 	<div
 		in:inTransition={inTransitionConfig}
 		out:outTransition={outTransitionConfig}
-		bind:this={el}
+		bind:this={ref}
 		{...restProps}
 	>
 		{@render children?.()}
 	</div>
 {:else if inTransition && condition}
-	<div in:inTransition={inTransitionConfig} {...restProps} bind:this={el}>
+	<div in:inTransition={inTransitionConfig} {...restProps} bind:this={ref}>
 		{@render children?.()}
 	</div>
 {:else if outTransition && condition}
-	<div out:outTransition={outTransitionConfig} {...restProps} bind:this={el}>
+	<div out:outTransition={outTransitionConfig} {...restProps} bind:this={ref}>
 		{@render children?.()}
 	</div>
 {:else if condition}
-	<div {...restProps} bind:this={el}>
+	<div {...restProps} bind:this={ref}>
 		{@render children?.()}
 	</div>
 {/if}

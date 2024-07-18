@@ -1,26 +1,35 @@
 <script lang="ts">
-	import { getCtx } from "../ctx.js";
 	import type { ValueProps } from "../index.js";
+	import { useSelectValue } from "../select.svelte.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
 
-	type $$Props = ValueProps;
+	let {
+		placeholder = "",
+		children,
+		child,
+		ref = $bindable(),
+		...restProps
+	}: ValueProps = $props();
 
-	export let placeholder: $$Props["placeholder"] = "";
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
+	const valueState = useSelectValue();
 
-	const {
-		states: { selectedLabel },
-		getAttrs,
-	} = getCtx();
-	const attrs = getAttrs("value");
+	if (children) {
+		valueState.root.valueNodeHasChildren.value = true;
+	}
 
-	$: label = $selectedLabel;
+	const mergedProps = $derived(
+		mergeProps(restProps, valueState.props, { style: { pointerEvents: "none" } })
+	);
 </script>
 
-{#if asChild}
-	<slot {label} {attrs} />
+{#if child}
+	{@render child?.({ props: mergedProps })}
 {:else}
-	<span bind:this={el} {...$$restProps} {...attrs} data-placeholder={!label ? "" : undefined}>
-		{label || placeholder}
+	<span {...mergedProps} bind:this={ref}>
+		{#if valueState.showPlaceholder}
+			{placeholder}
+		{:else}
+			{@render children?.()}
+		{/if}
 	</span>
 {/if}

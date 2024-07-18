@@ -1,24 +1,22 @@
 // Credit to @paoloricciuti for this code via melt :)
 import { render } from "@testing-library/svelte";
-import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
-import { getTestKbd } from "../utils.js";
-import SliderTest from "./SliderTest.svelte";
-import SliderRangeTest from "./SliderRangeTest.svelte";
-import type { Slider } from "$lib/index.js";
+import { getTestKbd, setupUserEvents } from "../utils.js";
+import SliderTest, { type SliderTestProps } from "./SliderTest.svelte";
+import SliderRangeTest, { type SliderRangeTestProps } from "./SliderRangeTest.svelte";
 
 const kbd = getTestKbd();
 
-function renderSlider(props: Slider.Props = {}) {
+function renderSlider(props: SliderTestProps = {}) {
 	return render(SliderTest, { ...props });
 }
-function renderSliderRange(props: Slider.Props = {}) {
+function renderSliderRange(props: SliderRangeTestProps = {}) {
 	return render(SliderRangeTest, { ...props });
 }
 
-function setup(props: Slider.Props = {}, kind: "default" | "range" = "default") {
-	const user = userEvent.setup();
+function setup(props: SliderTestProps = {}, kind: "default" | "range" = "default") {
+	const user = setupUserEvents();
 	// eslint-disable-next-line ts/no-explicit-any
 	let returned: any;
 	if (kind === "default") {
@@ -57,8 +55,7 @@ describe("slider (default)", () => {
 	});
 
 	it.each([kbd.ARROW_RIGHT, kbd.ARROW_UP])("change by 1% when pressing %s", async (key) => {
-		const { getByTestId } = setup();
-		const user = userEvent.setup();
+		const { getByTestId, user } = setup();
 
 		const thumb = getByTestId("thumb");
 		const range = getByTestId("range");
@@ -70,8 +67,7 @@ describe("slider (default)", () => {
 	});
 
 	it.each([kbd.ARROW_LEFT, kbd.ARROW_DOWN])("change by 1% when pressing %s", async (key) => {
-		const { getByTestId } = setup();
-		const user = userEvent.setup();
+		const { getByTestId, user } = setup();
 
 		const thumb = getByTestId("thumb");
 		const range = getByTestId("range");
@@ -83,8 +79,7 @@ describe("slider (default)", () => {
 	});
 
 	it("goes to minimum when pressing Home", async () => {
-		const { getByTestId } = setup();
-		const user = userEvent.setup();
+		const { getByTestId, user } = setup();
 
 		const thumb = getByTestId("thumb");
 		const range = getByTestId("range");
@@ -96,8 +91,7 @@ describe("slider (default)", () => {
 	});
 
 	it("goes to maximum when pressing End", async () => {
-		const { getByTestId } = setup();
-		const user = userEvent.setup();
+		const { getByTestId, user } = setup();
 		const thumb = getByTestId("thumb");
 		const range = getByTestId("range");
 
@@ -139,8 +133,7 @@ describe("slider (range)", () => {
 	it.each([kbd.ARROW_RIGHT, kbd.ARROW_UP])(
 		"change by 1% when pressing %s (pressing on the first thumb)",
 		async (key) => {
-			const { getByTestId } = setup({}, "range");
-			const user = userEvent.setup();
+			const { getByTestId, user } = setup({}, "range");
 
 			const thumb0 = getByTestId("thumb-0");
 			const thumb1 = getByTestId("thumb-1");
@@ -156,8 +149,7 @@ describe("slider (range)", () => {
 	it.each([kbd.ARROW_RIGHT, kbd.ARROW_UP])(
 		"change by 1% when pressing %s (pressing on the last thumb)",
 		async (key) => {
-			const { getByTestId } = setup({}, "range");
-			const user = userEvent.setup();
+			const { getByTestId, user } = setup({}, "range");
 
 			const thumb0 = getByTestId("thumb-0");
 			const thumb1 = getByTestId("thumb-1");
@@ -173,8 +165,7 @@ describe("slider (range)", () => {
 	it.each([kbd.ARROW_LEFT, kbd.ARROW_DOWN])(
 		"change by 1% when pressing %s (pressing on the first thumb)",
 		async (key) => {
-			const { getByTestId } = setup({}, "range");
-			const user = userEvent.setup();
+			const { getByTestId, user } = setup({}, "range");
 
 			const thumb0 = getByTestId("thumb-0");
 			const thumb1 = getByTestId("thumb-1");
@@ -190,8 +181,7 @@ describe("slider (range)", () => {
 	it.each([kbd.ARROW_LEFT, kbd.ARROW_DOWN])(
 		"change by 1% when pressing %s (pressing on the last thumb)",
 		async (key) => {
-			const { getByTestId } = setup({}, "range");
-			const user = userEvent.setup();
+			const { getByTestId, user } = setup({}, "range");
 
 			const thumb0 = getByTestId("thumb-0");
 			const thumb1 = getByTestId("thumb-1");
@@ -207,13 +197,12 @@ describe("slider (range)", () => {
 	it.each([kbd.ARROW_RIGHT, kbd.ARROW_UP])(
 		"the handlers swap places when they overlap pressing %s (going up)",
 		async (key) => {
-			const { getByTestId } = setup(
+			const { getByTestId, user } = setup(
 				{
 					value: [49, 51],
 				},
 				"range"
 			);
-			const user = userEvent.setup();
 
 			const thumb0 = getByTestId("thumb-0");
 			const thumb1 = getByTestId("thumb-1");
@@ -232,13 +221,12 @@ describe("slider (range)", () => {
 	it.each([kbd.ARROW_LEFT, kbd.ARROW_DOWN])(
 		"the handlers swap places when they overlap pressing %s (going down)",
 		async (key) => {
-			const { getByTestId } = setup(
+			const { getByTestId, user } = setup(
 				{
 					value: [49, 51],
 				},
 				"range"
 			);
-			const user = userEvent.setup();
 
 			const thumb0 = getByTestId("thumb-0");
 			const thumb1 = getByTestId("thumb-1");
@@ -255,8 +243,7 @@ describe("slider (range)", () => {
 	);
 
 	it("thumb 0 goes to minimum when pressing Home", async () => {
-		const { getByTestId } = setup({}, "range");
-		const user = userEvent.setup();
+		const { getByTestId, user } = setup({}, "range");
 
 		const thumb0 = getByTestId("thumb-0");
 		const thumb1 = getByTestId("thumb-1");
@@ -269,8 +256,7 @@ describe("slider (range)", () => {
 	});
 
 	it("thumb 1 goes to maximum when pressing End", async () => {
-		const { getByTestId } = setup({}, "range");
-		const user = userEvent.setup();
+		const { getByTestId, user } = setup({}, "range");
 
 		const thumb0 = getByTestId("thumb-0");
 		const thumb1 = getByTestId("thumb-1");
@@ -283,8 +269,7 @@ describe("slider (range)", () => {
 	});
 
 	it("thumb 1 goes to minimum when pressing Home (thumbs swap places)", async () => {
-		const { getByTestId } = setup({}, "range");
-		const user = userEvent.setup();
+		const { getByTestId, user } = setup({}, "range");
 
 		const thumb0 = getByTestId("thumb-0");
 		const thumb1 = getByTestId("thumb-1");
@@ -298,8 +283,7 @@ describe("slider (range)", () => {
 	});
 
 	it("thumb 0 goes to maximum when pressing End (thumbs swap places)", async () => {
-		const { getByTestId } = setup({}, "range");
-		const user = userEvent.setup();
+		const { getByTestId, user } = setup({}, "range");
 
 		const thumb0 = getByTestId("thumb-0");
 		const thumb1 = getByTestId("thumb-1");
@@ -329,14 +313,12 @@ describe("slider (small min, max, step)", () => {
 	});
 
 	it.each([kbd.ARROW_RIGHT, kbd.ARROW_UP])("change by 1% when pressing %s", async (key) => {
-		const { getByTestId } = setup({
+		const { getByTestId, user } = setup({
 			value: [0.5],
 			min: 0,
 			max: 1,
 			step: 0.01,
 		});
-
-		const user = userEvent.setup();
 
 		const thumb = getByTestId("thumb");
 		const range = getByTestId("range");
@@ -348,13 +330,12 @@ describe("slider (small min, max, step)", () => {
 	});
 
 	it.each([kbd.ARROW_LEFT, kbd.ARROW_DOWN])("change by 10% when pressing %s", async (key) => {
-		const { getByTestId } = setup({
+		const { getByTestId, user } = setup({
 			value: [0.5],
 			min: 0,
 			max: 1,
 			step: 0.01,
 		});
-		const user = userEvent.setup();
 
 		const thumb = getByTestId("thumb");
 		const range = getByTestId("range");
@@ -382,14 +363,12 @@ describe("slider (negative min)", () => {
 	});
 
 	it.each([kbd.ARROW_RIGHT, kbd.ARROW_UP])("change by 1% when pressing %s", async (key) => {
-		const { getByTestId } = setup({
+		const { getByTestId, user } = setup({
 			value: [0],
 			min: -50,
 			max: 50,
 			step: 1,
 		});
-
-		const user = userEvent.setup();
 
 		const thumb = getByTestId("thumb");
 		const range = getByTestId("range");
@@ -401,13 +380,12 @@ describe("slider (negative min)", () => {
 	});
 
 	it.each([kbd.ARROW_LEFT, kbd.ARROW_DOWN])("change by 10% when pressing %s", async (key) => {
-		const { getByTestId } = setup({
+		const { getByTestId, user } = setup({
 			value: [0],
 			min: -50,
 			max: 50,
 			step: 1,
 		});
-		const user = userEvent.setup();
 
 		const thumb = getByTestId("thumb");
 		const range = getByTestId("range");

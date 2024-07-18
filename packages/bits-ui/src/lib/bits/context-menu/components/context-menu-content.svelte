@@ -8,13 +8,13 @@
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
 	import { isElement } from "$lib/internal/is.js";
 	import type { InteractOutsideEvent } from "$lib/bits/utilities/dismissable-layer/types.js";
+	import Mounted from "$lib/bits/utilities/mounted.svelte";
 
 	let {
 		id = useId(),
-		asChild,
 		child,
 		children,
-		el = $bindable(),
+		ref = $bindable(null),
 		loop = true,
 		onInteractOutside = noop,
 		// we need to explicitly pass this prop to the PopperLayer to override
@@ -25,24 +25,31 @@
 		...restProps
 	}: ContentProps = $props();
 
-	const state = useMenuContent({
+	let isMounted = $state(false);
+
+	const contentState = useMenuContent({
 		id: box.with(() => id),
 		loop: box.with(() => loop),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
+		isMounted: box.with(() => isMounted),
 	});
 
 	function handleInteractOutsideStart(e: InteractOutsideEvent) {
 		if (!isElement(e.target)) return;
-		if (e.target.id === state.parentMenu.triggerId.value) {
+		if (e.target.id === contentState.parentMenu.triggerNode?.id) {
 			e.preventDefault();
 			return;
 		}
-		if (e.target.closest(`#${state.parentMenu.triggerId.value}`)) {
+		if (e.target.closest(`#${contentState.parentMenu.triggerNode?.id}`)) {
 			e.preventDefault();
 		}
 	}
 
 	const mergedProps = $derived(
-		mergeProps(restProps, state.props, {
+		mergeProps(restProps, contentState.props, {
 			onInteractOutsideStart: handleInteractOutsideStart,
 			style: {
 				outline: "none",
@@ -64,29 +71,30 @@
 	side="right"
 	sideOffset={2}
 	align="start"
-	present={state.parentMenu.open.value || forceMount}
+	present={contentState.parentMenu.open.value || forceMount}
 	{onInteractOutsideStart}
 	onInteractOutside={(e) => {
 		onInteractOutside(e);
 		if (e.defaultPrevented) return;
-		state.parentMenu.onClose();
+		contentState.parentMenu.onClose();
 	}}
 	onEscapeKeydown={(e) => {
 		// TODO: users should be able to cancel this
 		onEscapeKeydown(e);
-		state.parentMenu.onClose();
+		contentState.parentMenu.onClose();
 	}}
 	trapped
 	{loop}
 >
 	{#snippet popper({ props })}
 		{@const finalProps = mergeProps(props, mergedProps)}
-		{#if asChild}
-			{@render child?.({ props: finalProps })}
+		{#if child}
+			{@render child({ props: finalProps })}
 		{:else}
-			<div {...finalProps} bind:this={el}>
+			<div {...finalProps}>
 				{@render children?.()}
 			</div>
 		{/if}
+		<Mounted bind:isMounted />
 	{/snippet}
 </PopperLayer>

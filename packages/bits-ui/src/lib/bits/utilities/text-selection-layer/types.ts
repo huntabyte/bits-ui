@@ -16,7 +16,7 @@ export type TextSelectionLayerImplProps = {
 	 * Whether the layer is enabled. Currently, we determine this with the
 	 * `presence` returned from the `presence` layer.
 	 */
-	present: boolean;
+	enabled: boolean;
 
 	/**
 	 * DOM ID of the node.

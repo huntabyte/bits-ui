@@ -1,25 +1,33 @@
 <script lang="ts">
+	import { box } from "svelte-toolbelt";
 	import type { RootProps } from "../index.js";
 	import { setLabelRootState } from "../label.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
 
 	let {
-		asChild,
 		children,
 		child,
-		el = $bindable(),
+		id = useId(),
+		ref = $bindable(null),
 		for: forProp,
 		...restProps
 	}: RootProps = $props();
 
-	const state = setLabelRootState();
-	const mergedProps = $derived(mergeProps(restProps, state.props, { for: forProp }));
+	const rootState = setLabelRootState({
+		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
+	});
+	const mergedProps = $derived(mergeProps(restProps, rootState.props, { for: forProp }));
 </script>
 
-{#if asChild}
-	{@render child?.({ props: mergedProps })}
+{#if child}
+	{@render child({ props: mergedProps })}
 {:else}
-	<label bind:this={el} {...mergedProps} for={forProp}>
+	<label {...mergedProps} for={forProp}>
 		{@render children?.()}
 	</label>
 {/if}

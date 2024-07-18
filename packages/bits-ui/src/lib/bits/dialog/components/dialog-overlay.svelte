@@ -9,26 +9,29 @@
 	let {
 		id = useId(),
 		forceMount = false,
-		asChild,
 		child,
 		children,
-		el = $bindable(),
+		ref = $bindable(null),
 		...restProps
 	}: OverlayProps = $props();
 
-	const state = useDialogOverlay({
+	const overlayState = useDialogOverlay({
 		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, overlayState.props));
 </script>
 
-<PresenceLayer {id} present={state.root.open.value || forceMount}>
+<PresenceLayer {id} present={overlayState.root.open.value || forceMount}>
 	{#snippet presence({ present })}
-		{#if asChild}
+		{#if child}
 			{@render child?.({ props: mergeProps(mergedProps, { hidden: !present.value }) })}
 		{:else}
-			<div {...mergeProps(mergedProps, { hidden: !present.value })} bind:this={el}>
+			<div {...mergeProps(mergedProps, { hidden: !present.value })}>
 				{@render children?.()}
 			</div>
 		{/if}

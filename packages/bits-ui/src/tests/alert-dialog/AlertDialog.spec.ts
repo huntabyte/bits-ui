@@ -1,11 +1,16 @@
-import { type Matcher, type MatcherOptions, render, screen } from "@testing-library/svelte";
+import {
+	type Matcher,
+	type MatcherOptions,
+	render,
+	screen,
+	waitFor,
+} from "@testing-library/svelte/svelte5";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import { getTestKbd } from "../utils.js";
-import AlertDialogTest from "./AlertDialogTest.svelte";
+import AlertDialogTest, { type AlertDialogTestProps } from "./AlertDialogTest.svelte";
 import { sleep } from "$lib/internal/index.js";
-import type { AlertDialog } from "$lib/index.js";
 
 const kbd = getTestKbd();
 
@@ -16,25 +21,35 @@ function expectIsClosed(
 	expect(content).toBeNull();
 }
 
-function setup(props: AlertDialog.Props = {}) {
-	const user = userEvent.setup();
-	const { getByTestId, queryByTestId } = render(AlertDialogTest, { ...props });
+async function expectIsOpen(
+	queryByTestId: (id: Matcher, options?: MatcherOptions | undefined) => HTMLElement | null
+) {
+	const content = queryByTestId("content");
+	await waitFor(() => expect(content).not.toBeNull());
+}
+
+function setup(props: AlertDialogTestProps = {}) {
+	const user = userEvent.setup({ pointerEventsCheck: 0 });
+	const returned = render(AlertDialogTest, { ...props });
+	const trigger = returned.getByTestId("trigger");
+
 	return {
-		getByTestId,
-		queryByTestId,
+		...returned,
+		trigger,
 		user,
 	};
 }
 
-async function open(props: AlertDialog.Props = {}) {
-	const { getByTestId, queryByTestId, user } = setup(props);
-	const trigger = getByTestId("trigger");
+async function open(props: AlertDialogTestProps = {}) {
+	const { getByTestId, queryByTestId, user, trigger } = setup(props);
 	const content = queryByTestId("content");
 	expect(content).toBeNull();
 	await user.click(trigger);
 	const contentAfter = getByTestId("content");
 	expect(contentAfter).not.toBeNull();
-	return { getByTestId, queryByTestId, user };
+	const cancel = getByTestId("cancel");
+	const action = getByTestId("action");
+	return { getByTestId, queryByTestId, user, action, cancel };
 }
 
 describe("alert dialog", () => {
@@ -45,20 +60,11 @@ describe("alert dialog", () => {
 
 	it("has bits data attrs", async () => {
 		const { getByTestId } = render(AlertDialogTest, { open: true });
-		const parts = [
-			"trigger",
-			"overlay",
-			"portal",
-			"cancel",
-			"action",
-			"title",
-			"description",
-			"content",
-		];
+		const parts = ["trigger", "overlay", "cancel", "title", "description", "content"];
 
 		for (const part of parts) {
 			const el = getByTestId(part);
-			expect(el).toHaveAttribute(`data-alert-dialog-${part}`);
+			expect(el).toHaveAttribute(`data-dialog-${part}`);
 		}
 	});
 
@@ -69,117 +75,81 @@ describe("alert dialog", () => {
 		expect(overlay).toHaveAttribute("data-state", "open");
 		const content = getByTestId("content");
 		expect(content).toHaveAttribute("data-state", "open");
-		const portal = getByTestId("portal");
-		expect(portal).toHaveAttribute("data-portal");
 	});
 
 	it("opens when the trigger is clicked", async () => {
 		await open();
 	});
 
+	it("focuses the cancel button by default when opened", async () => {
+		const { cancel } = await open();
+		expect(cancel).toHaveFocus();
+	});
+
 	it("closes when the cancel button is clicked", async () => {
-		const { user, getByTestId, queryByTestId } = await open();
+		const { getByTestId, queryByTestId, user } = await open();
 		const cancel = getByTestId("cancel");
 		await user.click(cancel);
 		expectIsClosed(queryByTestId);
 	});
 
-	it("closes when the action button is clicked", async () => {
-		const { user, getByTestId, queryByTestId } = await open();
-
-		const action = getByTestId("action");
-		await user.click(action);
-		expectIsClosed(queryByTestId);
-	});
-
 	it("closes when the `Escape` key is pressed", async () => {
-		const { user, queryByTestId, getByTestId } = await open();
+		const { queryByTestId, user, getByTestId } = await open();
 
 		await user.keyboard(kbd.ESCAPE);
 		expectIsClosed(queryByTestId);
 		expect(getByTestId("trigger")).toHaveFocus();
 	});
 
-	it("doesnt close when the overlay is clicked", async () => {
+	it("doesn't close when the overlay is clicked", async () => {
 		const { getByTestId, queryByTestId, user } = await open();
 		await sleep(100);
 
 		const overlay = getByTestId("overlay");
 		await user.click(overlay);
-		expect(queryByTestId("content")).not.toBeNull();
-	});
+		await sleep(25);
 
-	it("attaches to body when using portal element", async () => {
-		const user = userEvent.setup();
-		render(AlertDialogTest);
-
-		const trigger = screen.getByTestId("trigger");
-		await user.click(trigger);
-
-		const portalled = screen.getByTestId("portal");
-		expect(portalled.parentElement).toEqual(document.body);
-	});
-
-	it("doesnt attached to body when portal prop is null", async () => {
-		const user = userEvent.setup();
-		render(AlertDialogTest, { portal: null });
-
-		const trigger = screen.getByTestId("trigger");
-		await user.click(trigger);
-
-		const portalled = screen.getByTestId("portal");
-
-		expect(portalled.parentElement).not.toEqual(document.body);
-	});
-
-	it("portals to the target if passed as a prop", async () => {
-		const user = userEvent.setup();
-		const { getByTestId } = render(AlertDialogTest, { portal: "#portalTarget" });
-
-		const trigger = getByTestId("trigger");
-		const portalTarget = getByTestId("portalTarget");
-		await user.click(trigger);
-
-		const portalled = getByTestId("portal");
-
-		expect(portalled.parentElement).toEqual(portalTarget);
-	});
-
-	it("focuses first focusable item upon opening", async () => {
-		const user = userEvent.setup();
-		const { getByTestId, queryByTestId } = render(AlertDialogTest);
-
-		const trigger = getByTestId("trigger");
-		const content = queryByTestId("content");
-
-		expect(content).toBeNull();
-		await user.click(trigger);
-		const contentAfter = getByTestId("content");
-		expect(contentAfter).not.toBeNull();
-		// Testing focus-trap is a bit flaky. So the focusable element is
-		// always content here.
-		expect(document.activeElement).toBe(contentAfter);
-	});
-
-	it("doesnt close when content is clicked", async () => {
-		const user = userEvent.setup();
-		const { getByTestId, queryByTestId } = render(AlertDialogTest);
-
-		const trigger = getByTestId("trigger");
-		const content = queryByTestId("content");
-
-		expect(content).toBeNull();
-		await user.click(trigger);
-		const contentAfter = getByTestId("content");
-		expect(contentAfter).not.toBeNull();
-		await user.click(contentAfter);
-		const contentAfter2 = getByTestId("content");
+		const contentAfter2 = queryByTestId("content");
 		expect(contentAfter2).not.toBeNull();
 	});
 
+	it("attaches to body when using portal element", async () => {
+		await open();
+
+		const content = screen.getByTestId("content");
+		expect(content.parentElement).toEqual(document.body);
+	});
+
+	it("doesnt attached to body when portal is disabled", async () => {
+		await open({
+			portalProps: {
+				disabled: true,
+			},
+		});
+		const content = screen.getByTestId("content");
+		expect(content.parentElement).not.toEqual(document.body);
+	});
+
+	it("portals to the target if passed as a prop", async () => {
+		await open({
+			portalProps: {
+				to: "#portalTarget",
+			},
+		});
+		const portalTarget = screen.getByTestId("portalTarget");
+		const content = screen.getByTestId("content");
+		expect(content.parentElement).toEqual(portalTarget);
+	});
+
+	it("doesnt close when content is clicked", async () => {
+		const { user, getByTestId, queryByTestId } = await open();
+		const content = getByTestId("content");
+		await user.click(content);
+		await expectIsOpen(queryByTestId);
+	});
+
 	it("respects binding to the `open` prop", async () => {
-		const user = userEvent.setup();
-		const { getByTestId, queryByTestId } = render(AlertDialogTest);
+		const { getByTestId, queryByTestId, user } = setup();
 
 		const trigger = getByTestId("trigger");
 		const binding = getByTestId("binding");
@@ -190,46 +160,34 @@ describe("alert dialog", () => {
 		expect(binding).toHaveTextContent("false");
 
 		const toggle = getByTestId("toggle");
-		expect(queryByTestId("content")).toBeNull();
+		expectIsClosed(queryByTestId);
 		await user.click(toggle);
-		expect(queryByTestId("content")).not.toBeNull();
+		await expectIsOpen(queryByTestId);
 	});
 
-	it("respects the `closeOnOutsideClick` prop", async () => {
-		const user = userEvent.setup();
-		const { getByTestId, queryByTestId } = render(AlertDialogTest, {
-			closeOnOutsideClick: false,
+	it("respects the `interactOutsideBehavior: 'ignore'` prop", async () => {
+		const { getByTestId, queryByTestId, user } = await open({
+			contentProps: {
+				interactOutsideBehavior: "ignore",
+			},
 		});
-
-		const trigger = getByTestId("trigger");
-		const content = queryByTestId("content");
-		expect(content).toBeNull();
-		await user.click(trigger);
-		const contentAfter = getByTestId("content");
-		expect(contentAfter).not.toBeNull();
 		await sleep(100);
 
 		const overlay = getByTestId("overlay");
 		await user.click(overlay);
 
-		const contentAfter2 = queryByTestId("content");
-		expect(contentAfter2).not.toBeNull();
+		await expectIsOpen(queryByTestId);
 	});
 
-	it("respects the the `closeOnEscape` prop", async () => {
-		const user = userEvent.setup();
-		const { getByTestId, queryByTestId } = render(AlertDialogTest, { closeOnEscape: false });
-
-		const trigger = getByTestId("trigger");
-		const content = queryByTestId("content");
-		expect(content).toBeNull();
-		await user.click(trigger);
-		const contentAfter = getByTestId("content");
-		expect(contentAfter).not.toBeNull();
+	it("respects the the `escapeKeydownBehavior: 'ignore'` prop", async () => {
+		const { user, getByTestId, queryByTestId } = await open({
+			contentProps: {
+				escapeKeydownBehavior: "ignore",
+			},
+		});
 
 		await user.keyboard(kbd.ESCAPE);
-		const contentAfter2 = queryByTestId("content");
-		expect(contentAfter2).not.toBeNull();
-		expect(trigger).not.toHaveFocus();
+		await expectIsOpen(queryByTestId);
+		expect(getByTestId("trigger")).not.toHaveFocus();
 	});
 });

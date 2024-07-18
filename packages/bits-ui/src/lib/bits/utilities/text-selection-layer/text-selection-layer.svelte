@@ -10,7 +10,7 @@
 		onPointerUp = noop,
 		id,
 		children,
-		present,
+		enabled,
 	}: TextSelectionLayerImplProps = $props();
 
 	useTextSelectionLayer({
@@ -18,7 +18,7 @@
 		preventOverflowTextSelection: box.with(() => preventOverflowTextSelection),
 		onPointerDown: box.with(() => onPointerDown),
 		onPointerUp: box.with(() => onPointerUp),
-		present: box.with(() => present),
+		enabled: box.with(() => enabled),
 	});
 </script>
 

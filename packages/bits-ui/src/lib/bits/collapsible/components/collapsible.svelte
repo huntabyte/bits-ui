@@ -3,19 +3,20 @@
 	import type { RootProps } from "../index.js";
 	import { useCollapsibleRoot } from "../collapsible.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
 
 	let {
-		asChild,
 		children,
 		child,
-		el = $bindable(),
+		id = useId(),
+		ref = $bindable(null),
 		open = $bindable(false),
 		disabled = false,
 		onOpenChange,
 		...restProps
 	}: RootProps = $props();
 
-	const state = useCollapsibleRoot({
+	const rootState = useCollapsibleRoot({
 		open: box.with(
 			() => open,
 			(v) => {
@@ -24,15 +25,20 @@
 			}
 		),
 		disabled: box.with(() => disabled),
+		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const mergedProps = $derived(mergeProps(restProps, rootState.props));
 </script>
 
-{#if asChild}
-	{@render child?.({ props: mergedProps })}
+{#if child}
+	{@render child({ props: mergedProps })}
 {:else}
-	<div bind:this={el} {...mergedProps}>
+	<div {...mergedProps}>
 		{@render children?.()}
 	</div>
 {/if}

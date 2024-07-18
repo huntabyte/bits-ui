@@ -2,14 +2,14 @@ import { render, waitFor } from "@testing-library/svelte/svelte5";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
-import { getTestKbd } from "../utils.js";
+import { getTestKbd, setupUserEvents } from "../utils.js";
 import PopoverTest, { type PopoverTestProps } from "./PopoverTest.svelte";
 import { sleep } from "$lib/internal/sleep.js";
 
 const kbd = getTestKbd();
 
 function setup(props: PopoverTestProps = {}) {
-	const user = userEvent.setup({ pointerEventsCheck: 0 });
+	const user = setupUserEvents();
 	const returned = render(PopoverTest, { ...props });
 	const { getByTestId } = returned;
 	const trigger = getByTestId("trigger");
@@ -67,9 +67,7 @@ describe("popover", () => {
 	it("closes on outside click by default", async () => {
 		const { user, queryByTestId, getByTestId } = await open();
 		const outside = getByTestId("outside");
-		await sleep(100);
 		await user.click(outside);
-		await sleep(100);
 
 		expect(queryByTestId("content")).toBeNull();
 	});

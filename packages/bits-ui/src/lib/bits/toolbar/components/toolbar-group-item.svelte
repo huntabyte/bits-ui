@@ -6,30 +6,33 @@
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {
-		asChild,
 		child,
 		children,
 		value,
 		disabled = false,
 		type = "button",
 		id = useId(),
-		el = $bindable(),
+		ref = $bindable(null),
 		...restProps
 	}: GroupItemProps = $props();
 
-	const state = useToolbarGroupItem({
+	const groupItemState = useToolbarGroupItem({
 		id: box.with(() => id),
 		value: box.with(() => value),
 		disabled: box.with(() => disabled),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, state.props, { type }));
+	const mergedProps = $derived(mergeProps(restProps, groupItemState.props, { type }));
 </script>
 
-{#if asChild}
-	{@render child?.({ props: mergedProps })}
+{#if child}
+	{@render child?.({ props: mergedProps, pressed: groupItemState.isPressed })}
 {:else}
-	<button bind:this={el} {...mergedProps}>
-		{@render children?.()}
+	<button {...mergedProps}>
+		{@render children?.({ pressed: groupItemState.isPressed })}
 	</button>
 {/if}

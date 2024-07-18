@@ -1,18 +1,32 @@
 <script lang="ts">
+	import { box } from "svelte-toolbelt";
 	import type { TriggerProps } from "../index.js";
 	import { useCollapsibleTrigger } from "../collapsible.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
 
-	let { asChild, children, child, el = $bindable(), ...restProps }: TriggerProps = $props();
+	let {
+		children,
+		child,
+		ref = $bindable(null),
+		id = useId(),
+		...restProps
+	}: TriggerProps = $props();
 
-	const state = useCollapsibleTrigger();
-	const mergedProps = $derived(mergeProps(restProps, state.props));
+	const triggerState = useCollapsibleTrigger({
+		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
+	});
+	const mergedProps = $derived(mergeProps(restProps, triggerState.props));
 </script>
 
-{#if asChild}
-	{@render child?.({ props: mergedProps })}
+{#if child}
+	{@render child({ props: mergedProps })}
 {:else}
-	<button bind:this={el} {...mergedProps}>
+	<button {...mergedProps}>
 		{@render children?.()}
 	</button>
 {/if}

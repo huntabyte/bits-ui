@@ -1,38 +1,56 @@
 <script lang="ts">
-	import { type Month, melt } from "@melt-ui/svelte";
-	import type { DateValue } from "@internationalized/date";
-	import { getCtx } from "../ctx.js";
+	import { box } from "svelte-toolbelt";
 	import type { CalendarProps } from "../index.js";
+	import { getDateRangePickerRootContext } from "../date-range-picker.svelte.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useRangeCalendarRoot } from "$lib/bits/range-calendar/range-calendar.svelte.js";
 
-	type $$Props = CalendarProps;
+	let {
+		children,
+		child,
+		id = useId(),
+		ref = $bindable(null),
+		...restProps
+	}: CalendarProps = $props();
 
-	export let asChild: $$Props["asChild"] = false;
-	export let id: $$Props["id"] = undefined;
-	export let el: $$Props["el"] = undefined;
+	const dateRangePickerRootState = getDateRangePickerRootContext();
 
-	const {
-		elements: { calendar },
-		states: { months: localMonths, weekdays },
-		ids,
-		getCalendarAttrs,
-	} = getCtx();
+	const rangeCalendarState = useRangeCalendarRoot({
+		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
+		calendarLabel: dateRangePickerRootState.props.calendarLabel,
+		fixedWeeks: dateRangePickerRootState.props.fixedWeeks,
+		isDateDisabled: dateRangePickerRootState.props.isDateDisabled,
+		isDateUnavailable: dateRangePickerRootState.props.isDateUnavailable,
+		locale: dateRangePickerRootState.props.locale,
+		numberOfMonths: dateRangePickerRootState.props.numberOfMonths,
+		pagedNavigation: dateRangePickerRootState.props.pagedNavigation,
+		preventDeselect: dateRangePickerRootState.props.preventDeselect,
+		readonly: dateRangePickerRootState.props.readonly,
+		weekStartsOn: dateRangePickerRootState.props.weekStartsOn,
+		weekdayFormat: dateRangePickerRootState.props.weekdayFormat,
+		disabled: dateRangePickerRootState.props.disabled,
+		disableDaysOutsideMonth: dateRangePickerRootState.props.disableDaysOutsideMonth,
+		maxValue: dateRangePickerRootState.props.maxValue,
+		minValue: dateRangePickerRootState.props.minValue,
+		placeholder: dateRangePickerRootState.props.placeholder,
+		value: dateRangePickerRootState.props.value,
+		onRangeSelect: dateRangePickerRootState.props.onRangeSelect,
+		startValue: dateRangePickerRootState.props.startValue,
+		endValue: dateRangePickerRootState.props.endValue,
+	});
 
-	$: if (id) {
-		ids.calendar.calendar.set(id);
-	}
-
-	const attrs = getCalendarAttrs("root");
-
-	$: builder = $calendar;
-	$: Object.assign(builder, attrs);
-	let months: Month<DateValue>[] = $localMonths;
-	$: months = $localMonths;
+	const mergedProps = $derived(mergeProps(restProps, rangeCalendarState.props));
 </script>
 
-{#if asChild}
-	<slot {builder} {months} weekdays={$weekdays} />
+{#if child}
+	{@render child?.({ props: mergedProps, ...rangeCalendarState.snippetProps })}
 {:else}
-	<div bind:this={el} use:melt={builder} {...$$restProps}>
-		<slot {builder} {months} weekdays={$weekdays} />
+	<div {...mergedProps}>
+		{@render children?.(rangeCalendarState.snippetProps)}
 	</div>
 {/if}

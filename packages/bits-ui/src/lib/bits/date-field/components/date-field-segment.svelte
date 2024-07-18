@@ -1,45 +1,36 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { getCtx } from "../ctx.js";
-	import type { SegmentEvents, SegmentProps } from "../index.js";
-	import { createDispatcher } from "$lib/internal/events.js";
+	import { box } from "svelte-toolbelt";
+	import { useDateFieldSegment } from "../date-field.svelte.js";
+	import type { SegmentProps } from "../index.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
 
-	type $$Props = SegmentProps;
-	type $$Events = SegmentEvents;
+	let {
+		id = useId(),
+		ref = $bindable(null),
+		children,
+		child,
+		part,
+		...restProps
+	}: SegmentProps = $props();
 
-	export let asChild: $$Props["asChild"] = false;
-	export let id: $$Props["id"] = undefined;
-	export let part: $$Props["part"];
-	export let el: $$Props["el"] = undefined;
+	const segmentState = useDateFieldSegment(part, {
+		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
+	});
 
-	const {
-		elements: { segment },
-		ids,
-		getAttrs,
-	} = getCtx();
-
-	$: if (id && part !== "literal") {
-		ids[part].set(id);
-	}
-
-	const attrs = getAttrs("segment");
-	const dispatch = createDispatcher();
-
-	$: builder = $segment(part);
-	$: Object.assign(builder, attrs);
+	const mergedProps = $derived(
+		mergeProps(restProps, segmentState.props as Record<string, unknown>)
+	);
 </script>
 
-{#if asChild}
-	<slot {builder} />
+{#if child}
+	{@render child({ props: mergedProps })}
 {:else}
-	<div
-		bind:this={el}
-		use:melt={builder}
-		{...$$restProps}
-		on:m-click={dispatch}
-		on:m-focusout={dispatch}
-		on:m-keydown={dispatch}
-	>
-		<slot {builder} />
-	</div>
+	<span {...mergedProps}>
+		{@render children?.()}
+	</span>
 {/if}
