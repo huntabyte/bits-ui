@@ -7,7 +7,7 @@ import type { DateRange, SegmentPart } from "$lib/shared/index.js";
 import type { DateValue } from "@internationalized/date";
 import { onDestroy, untrack } from "svelte";
 import { useDateFieldRoot } from "../date-field/date-field.svelte.js";
-import type { OnChangeFn, WithRefProps } from "$lib/internal/types.js";
+import type { WithRefProps } from "$lib/internal/types.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
 import { createContext } from "$lib/internal/createContext.js";
 import { getFirstSegment } from "$lib/shared/date/field.js";
@@ -62,8 +62,8 @@ export class DateRangeFieldRootState {
 	labelNode = $state<HTMLElement | null>(null);
 	descriptionNode = $state<HTMLElement | null>(null);
 	validationNode = $state<HTMLElement | null>(null);
-	startValueComplete = $derived.by(() => this.startValue !== undefined);
-	endValueComplete = $derived.by(() => this.endValue !== undefined);
+	startValueComplete = $derived.by(() => this.startValue.value !== undefined);
+	endValueComplete = $derived.by(() => this.endValue.value !== undefined);
 	rangeComplete = $derived(this.startValueComplete && this.endValueComplete);
 	mergedValues = $derived.by(() => {
 		if (this.startValue.value === undefined || this.endValue.value === undefined) {
@@ -137,10 +137,10 @@ export class DateRangeFieldRootState {
 			const value = this.value.value;
 
 			untrack(() => {
-				if (value && value.start !== this.startValue.value) {
+				if (value.start !== undefined && value.start !== this.startValue.value) {
 					this.setStartValue(value.start);
 				}
-				if (value && value.end !== this.endValue.value) {
+				if (value.end !== undefined && value.end !== this.endValue.value) {
 					this.setEndValue(value.end);
 				}
 			});

@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { cn } from "$lib/utils/styles.js";
-	import { CopySimple } from "$icons/index.js";
 	import { Tabs } from "bits-ui";
 	import type { Snippet } from "svelte";
+	import { cn } from "$lib/utils/styles.js";
+	import { CopySimple } from "$icons/index.js";
 
 	type Props = {
 		value?: string;

@@ -239,8 +239,8 @@ export class RangeCalendarRootState {
 						if (isBefore(endValue, startValue)) {
 							const start = startValue;
 							const end = endValue;
-							this.startValue.value = end;
-							this.endValue.value = start;
+							this.setStartValue(end);
+							this.setEndValue(start);
 							return { start: endValue, end: startValue };
 						} else {
 							return {
@@ -266,6 +266,14 @@ export class RangeCalendarRootState {
 		if (newValue.start && newValue.end) {
 			this.onRangeSelect?.value?.();
 		}
+	};
+
+	setStartValue = (value: DateValue | undefined) => {
+		this.startValue.value = value;
+	};
+
+	setEndValue = (value: DateValue | undefined) => {
+		this.endValue.value = value;
 	};
 
 	#setMonths = (months: Month<DateValue>[]) => (this.months = months);
@@ -449,14 +457,14 @@ export class RangeCalendarRootState {
 				!this.preventDeselect.value &&
 				!this.endValue.value
 			) {
-				this.startValue.value = undefined;
+				this.setStartValue(undefined);
 				this.placeholder.value = date;
 				this.#announceEmpty();
 				return;
-			} else if (!this.endValue) {
+			} else if (!this.endValue.value) {
 				e.preventDefault();
 				if (prevLastPressedDate && isSameDay(prevLastPressedDate, date)) {
-					this.startValue.value = date;
+					this.setStartValue(date);
 					this.#announceSelectedDate(date);
 				}
 			}
@@ -468,8 +476,8 @@ export class RangeCalendarRootState {
 			isSameDay(this.endValue.value, date) &&
 			!this.preventDeselect.value
 		) {
-			this.startValue.value = undefined;
-			this.endValue.value = undefined;
+			this.setStartValue(undefined);
+			this.setEndValue(undefined);
 			this.placeholder.value = date;
 			this.#announceEmpty();
 			return;
@@ -477,14 +485,14 @@ export class RangeCalendarRootState {
 
 		if (!this.startValue.value) {
 			this.#announceSelectedDate(date);
-			this.startValue.value = date;
+			this.setStartValue(date);
 		} else if (!this.endValue.value) {
 			this.#announceSelectedRange(this.startValue.value, date);
-			this.endValue.value = date;
+			this.setEndValue(date);
 		} else if (this.endValue.value && this.startValue.value) {
-			this.endValue.value = undefined;
+			this.setEndValue(undefined);
 			this.#announceSelectedDate(date);
-			this.startValue.value = date;
+			this.setStartValue(date);
 		}
 	};
 

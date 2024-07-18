@@ -157,11 +157,6 @@ export type DateRangeFieldInputSnippetProps = {
 export type DateRangeFieldInputPropsWithoutHTML = WithChild<
 	{
 		/**
-		 * A callback that is called when the value of the specific date field changes.
-		 */
-		onValueChange?: OnChangeFn<DateValue | undefined>;
-
-		/**
 		 * The name to use for the hidden input element associated with this input
 		 * used for form submission.
 		 */

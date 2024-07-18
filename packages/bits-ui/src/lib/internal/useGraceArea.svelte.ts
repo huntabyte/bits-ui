@@ -1,4 +1,4 @@
-import type { ReadableBox } from "svelte-toolbelt";
+import type { Getter, ReadableBox } from "svelte-toolbelt";
 import { boxAutoReset } from "./boxAutoReset.svelte.js";
 import { createEventHook } from "./createEventHook.svelte.js";
 import { isElement, isHTMLElement } from "./is.js";
@@ -7,8 +7,8 @@ import { addEventListener } from "./events.js";
 import type { Side } from "$lib/bits/utilities/floating-layer/useFloatingLayer.svelte.js";
 
 export function useGraceArea(
-	triggerNode: ReadableBox<HTMLElement | null>,
-	contentNode: ReadableBox<HTMLElement | null>
+	triggerNode: Getter<HTMLElement | null>,
+	contentNode: Getter<HTMLElement | null>
 ) {
 	const isPointerInTransit = boxAutoReset(false, 300);
 
@@ -33,19 +33,23 @@ export function useGraceArea(
 	}
 
 	$effect(() => {
-		if (!triggerNode.value || !contentNode.value) return;
+		const trigger = triggerNode();
+		const content = contentNode();
+		if (!trigger || !content) return;
 
 		const handleTriggerLeave = (e: PointerEvent) => {
-			handleCreateGraceArea(e, contentNode.value!);
+			handleCreateGraceArea(e, content!);
 		};
 
 		const handleContentLeave = (e: PointerEvent) => {
-			handleCreateGraceArea(e, triggerNode.value!);
+			handleCreateGraceArea(e, trigger!);
 		};
-		return executeCallbacks(
-			addEventListener(triggerNode.value, "pointerleave", handleTriggerLeave),
-			addEventListener(contentNode.value, "pointerleave", handleContentLeave)
+
+		const unsub = executeCallbacks(
+			addEventListener(trigger, "pointerleave", handleTriggerLeave),
+			addEventListener(content, "pointerleave", handleContentLeave)
 		);
+		return unsub;
 	});
 
 	$effect(() => {
@@ -55,9 +59,10 @@ export function useGraceArea(
 			if (!pointerGraceArea) return;
 			const target = e.target;
 			if (!isElement(target)) return;
+			const trigger = triggerNode();
+			const content = contentNode();
 			const pointerPosition = { x: e.clientX, y: e.clientY };
-			const hasEnteredTarget =
-				triggerNode.value?.contains(target) || contentNode.value?.contains(target);
+			const hasEnteredTarget = trigger?.contains(target) || content?.contains(target);
 			const isPointerOutsideGraceArea = !isPointInPolygon(pointerPosition, pointerGraceArea);
 
 			if (hasEnteredTarget) {

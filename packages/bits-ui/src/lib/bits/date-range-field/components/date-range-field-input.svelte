@@ -5,7 +5,6 @@
 		getDateRangeFieldRootContext,
 		useDateRangeFieldInput,
 	} from "../date-range-field.svelte.js";
-	import { noop } from "$lib/internal/callbacks.js";
 	import { useId } from "$lib/internal/useId.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import DateFieldHiddenInput from "$lib/bits/date-field/components/date-field-hidden-input.svelte";
@@ -14,7 +13,6 @@
 		id = useId(),
 		ref = $bindable(null),
 		name = "",
-		onValueChange = noop,
 		child,
 		children,
 		type,
@@ -25,13 +23,7 @@
 
 	const fieldState = useDateRangeFieldInput({
 		name: box.with(() => name),
-		value: box.with(
-			() => (type === "start" ? rootState.startValue : rootState.endValue),
-			(v) => {
-				type === "start" ? (rootState.startValue = v) : (rootState.endValue = v);
-				onValueChange(v);
-			}
-		),
+		value: type === "start" ? rootState.startValue : rootState.endValue,
 	});
 
 	const inputState = fieldState.createInput({

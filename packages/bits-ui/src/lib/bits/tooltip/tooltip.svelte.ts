@@ -5,7 +5,7 @@ import { watch } from "$lib/internal/box.svelte.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { useTimeoutFn } from "$lib/internal/useTimeoutFn.svelte.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
-import { isElement } from "$lib/internal/is.js";
+import { isElement, isFocusVisible } from "$lib/internal/is.js";
 import { useGraceArea } from "$lib/internal/useGraceArea.svelte.js";
 import { createContext } from "$lib/internal/createContext.js";
 import { getDataDisabled } from "$lib/internal/attrs.js";
@@ -244,15 +244,12 @@ class TooltipTriggerState {
 		this.#hasPointerMoveOpened = false;
 	};
 
-	#onfocus = (e: FocusEvent) => {
+	#onfocus = (e: FocusEvent & { currentTarget: HTMLElement }) => {
 		if (this.#isPointerDown.value || this.#isDisabled) {
 			return;
 		}
 
-		if (
-			this.#root.ignoreNonKeyboardFocus &&
-			!(e.target as HTMLElement).matches(":focus-visible")
-		) {
+		if (this.#root.ignoreNonKeyboardFocus && !isFocusVisible(e.currentTarget)) {
 			return;
 		}
 
@@ -311,8 +308,8 @@ class TooltipContentState {
 			if (!this.root.open.value) return;
 			if (this.root.disableHoverableContent) return;
 			const { isPointerInTransit, onPointerExit } = useGraceArea(
-				box.with(() => this.root.triggerNode),
-				box.with(() => this.root.contentNode)
+				() => this.root.triggerNode,
+				() => this.root.contentNode
 			);
 
 			this.root.provider.isPointerInTransit = isPointerInTransit;

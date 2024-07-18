@@ -37,3 +37,11 @@ export function isNumberString(value: string) {
 export function isNull(value: unknown): value is null {
 	return value === null;
 }
+
+export function isTouch(e: PointerEvent) {
+	return e.pointerType === "touch";
+}
+
+export function isFocusVisible(element: Element) {
+	return element.matches(":focus-visible");
+}
