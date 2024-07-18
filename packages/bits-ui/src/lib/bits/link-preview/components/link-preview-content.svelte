@@ -53,12 +53,12 @@
 	onInteractOutside={(e) => {
 		onInteractOutside?.(e);
 		if (e.defaultPrevented) return;
-		contentState.root.handleClose();
+		contentState.root.immediateClose();
 	}}
 	onEscapeKeydown={(e) => {
 		// TODO: users should be able to cancel this
 		onEscapeKeydown?.(e);
-		contentState.root.handleClose();
+		contentState.root.immediateClose();
 	}}
 	onMountAutoFocus={(e) => e.preventDefault()}
 	onDestroyAutoFocus={(e) => e.preventDefault()}

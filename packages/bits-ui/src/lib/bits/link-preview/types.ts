@@ -17,28 +17,43 @@ export type LinkPreviewRootPropsWithoutHTML = WithChildren<{
 	/**
 	 * The open state of the link preview.
 	 *
-	 * @bindable
+	 * @defaultValue false
 	 */
 	open?: boolean;
 
 	/**
-	 * A callback function called when the open state changes.
+	 * A callback that will be called when the link preview is opened or closed.
 	 */
 	onOpenChange?: OnChangeFn<boolean>;
 
 	/**
-	 * The delay in milliseconds to hover before the link preview opens.
+	 * The delay in milliseconds before the preview opens.
 	 *
 	 * @defaultValue 700
 	 */
 	openDelay?: number;
 
 	/**
-	 * The delay in milliseconds to hover before the link preview closes.
+	 * The delay in milliseconds before the preview closes.
 	 *
 	 * @defaultValue 300
 	 */
 	closeDelay?: number;
+
+	/**
+	 * When `true`, the preview will be disabled and will not open.
+	 *
+	 * @defaultValue false
+	 */
+	disabled?: boolean;
+
+	/**
+	 * Prevent the preview from opening if the focus did not come using
+	 * the keyboard.
+	 *
+	 * @defaultValue false
+	 */
+	ignoreNonKeyboardFocus?: boolean;
 }>;
 
 export type LinkPreviewRootProps = LinkPreviewRootPropsWithoutHTML;

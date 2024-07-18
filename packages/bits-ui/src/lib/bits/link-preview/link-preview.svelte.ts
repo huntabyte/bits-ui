@@ -51,8 +51,11 @@ class LinkPreviewRootState {
 
 				sleep(1).then(() => {
 					const isSelection = document.getSelection()?.toString() !== "";
+
 					if (isSelection) {
 						this.hasSelection = true;
+					} else {
+						this.hasSelection = false;
 					}
 				});
 			};
@@ -84,13 +87,20 @@ class LinkPreviewRootState {
 
 	handleOpen = () => {
 		this.clearTimeout();
+		if (this.open.value) return;
 		this.timeout = window.setTimeout(() => {
 			this.open.value = true;
 		}, this.openDelay.value);
 	};
 
+	immediateClose = () => {
+		this.clearTimeout();
+		this.open.value = false;
+	};
+
 	handleClose = () => {
 		this.clearTimeout();
+
 		if (!this.isPointerDownOnContent && !this.hasSelection) {
 			this.timeout = window.setTimeout(() => {
 				this.open.value = false;
@@ -133,17 +143,12 @@ class LinkPreviewTriggerState {
 		this.#root.handleOpen();
 	};
 
-	#onpointerleave = (e: PointerEvent) => {
-		if (isTouch(e)) return;
-		this.#root.handleClose();
-	};
-
 	#onfocus = (e: FocusEvent & { currentTarget: HTMLElement }) => {
 		if (!isFocusVisible(e.currentTarget)) return;
 		this.#root.handleOpen();
 	};
 
-	#onblur = (e: FocusEvent & { currentTarget: HTMLElement }) => {
+	#onblur = () => {
 		this.#root.handleClose();
 	};
 
@@ -157,7 +162,6 @@ class LinkPreviewTriggerState {
 				"aria-controls": this.#root.contentNode?.id ?? undefined,
 				role: "button",
 				[TRIGGER_ATTR]: "",
-				onpointerleave: this.#onpointerleave,
 				onpointerenter: this.#onpointerenter,
 				onfocus: this.#onfocus,
 				onblur: this.#onblur,
@@ -188,13 +192,14 @@ class LinkPreviewContentState {
 		$effect(() => {
 			if (!this.root.open.value) return;
 			const { isPointerInTransit, onPointerExit } = useGraceArea(
-				box.with(() => this.root.triggerNode),
-				box.with(() => this.root.contentNode)
+				() => this.root.triggerNode,
+				() => this.#ref.value
 			);
 
 			this.root.isPointerInTransit = isPointerInTransit;
 
 			onPointerExit(() => {
+				console.log("pointer exit");
 				this.root.handleClose();
 			});
 		});
@@ -216,13 +221,8 @@ class LinkPreviewContentState {
 	};
 
 	#onpointerenter = (e: PointerEvent) => {
-		if (isTouch(e) || this.root.isPointerInTransit.value) return;
-		this.root.handleOpen();
-	};
-
-	#onpointerleave = (e: PointerEvent) => {
 		if (isTouch(e)) return;
-		this.root.handleClose();
+		this.root.handleOpen();
 	};
 
 	#onfocusout = (e: FocusEvent) => {
@@ -238,7 +238,6 @@ class LinkPreviewContentState {
 				[CONTENT_ATTR]: "",
 				onpointerdown: this.#onpointerdown,
 				onpointerenter: this.#onpointerenter,
-				onpointerleave: this.#onpointerleave,
 				onfocusout: this.#onfocusout,
 			}) as const
 	);
