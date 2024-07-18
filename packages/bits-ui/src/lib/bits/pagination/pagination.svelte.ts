@@ -153,7 +153,7 @@ class PaginationPage {
 			({
 				id: this.#id.value,
 				"aria-label": `Page ${this.page.value}`,
-				"data-value": `${this.page.value}`,
+				"data-value": `${this.page.value.value}`,
 				"data-selected": this.page.value.value === this.#root.page.value ? "" : undefined,
 				[PAGE_ATTR]: "",
 				//
