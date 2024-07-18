@@ -6,17 +6,15 @@ on:
 
 jobs:
     preview-release:
-        if: github.repository == 'huntabyte/bits-ui' && (!github.event.pull_request.draft && github.event.pull_request.labels.name == 'publish:preview')
+        if: github.repository == 'huntabyte/bits-ui' && contains(github.event.pull_request.labels.*.name, 'publish:preview')
         timeout-minutes: 5
         runs-on: ubuntu-latest
         steps:
-            - name: checkout code repository
-              uses: actions/checkout@v4
-
+            - uses: actions/checkout@v4
             - uses: pnpm/action-setup@v4
-
-            - name: setup node.js
-              uses: actions/setup-node@v4
+              with:
+                  version: 8
+            - uses: actions/setup-node@v4
               with:
                   node-version: 20
                   cache: pnpm
@@ -29,4 +27,4 @@ jobs:
 
             - name: publish preview
               run: |
-                  pnpx pkg-pr-new@0.0 publish --pnpm './packages/*'
+                  pnpx pkg-pr-new@0.0 publish --pnpm --compact './packages/*'
