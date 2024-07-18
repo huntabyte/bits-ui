@@ -10,13 +10,11 @@ jobs:
         timeout-minutes: 5
         runs-on: ubuntu-latest
         steps:
-            - name: checkout code repository
-              uses: actions/checkout@v4
-
+            - uses: actions/checkout@v4
             - uses: pnpm/action-setup@v4
-
-            - name: setup node.js
-              uses: actions/setup-node@v4
+              with:
+                  version: 8
+            - uses: actions/setup-node@v4
               with:
                   node-version: 20
                   cache: pnpm
