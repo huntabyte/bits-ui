@@ -6,7 +6,7 @@ on:
 
 jobs:
     preview-release:
-        if: github.repository == 'huntabyte/bits-ui' && (!github.event.pull_request.draft && github.event.pull_request.labels.name == 'publish:preview')
+        if: github.repository == 'huntabyte/bits-ui' && (!github.event.pull_request.draft)
         timeout-minutes: 5
         runs-on: ubuntu-latest
         steps:
