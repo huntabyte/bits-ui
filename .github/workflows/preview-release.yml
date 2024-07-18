@@ -1,5 +1,6 @@
 name: Publish Preview Release
 on:
+    label:
     pull_request:
         paths: packages/**
 
@@ -28,4 +29,4 @@ jobs:
 
             - name: publish preview
               run: |
-                  pnpx pkg-pr-new@0.0 publish './packages/*'
+                  pnpx pkg-pr-new@0.0 publish --pnpm './packages/*'
