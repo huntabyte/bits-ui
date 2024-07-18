@@ -3,7 +3,7 @@
 	import { CalendarBlank, CaretLeft, CaretRight } from "$icons/index.js";
 	import { cn } from "$lib/utils/index.js";
 
-	let value: DateRange = { start: undefined, end: undefined };
+	let value: DateRange = $state({ start: undefined, end: undefined });
 </script>
 
 <DateRangePicker.Root

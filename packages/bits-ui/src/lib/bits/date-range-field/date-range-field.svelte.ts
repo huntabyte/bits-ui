@@ -137,10 +137,10 @@ export class DateRangeFieldRootState {
 			const value = this.value.value;
 
 			untrack(() => {
-				if (value && value.start !== this.startValue.value) {
+				if (value.start !== undefined && value.start !== this.startValue.value) {
 					this.setStartValue(value.start);
 				}
-				if (value && value.end !== this.endValue.value) {
+				if (value.end !== undefined && value.end !== this.endValue.value) {
 					this.setEndValue(value.end);
 				}
 			});

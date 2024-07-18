@@ -21,7 +21,6 @@ export function useGraceArea(
 	}
 
 	function handleCreateGraceArea(e: PointerEvent, hoverTarget: HTMLElement) {
-		console.log("creating grace area");
 		const currentTarget = e.currentTarget;
 		if (!isHTMLElement(currentTarget)) return;
 		const exitPoint = { x: e.clientX, y: e.clientY };
@@ -36,11 +35,7 @@ export function useGraceArea(
 	$effect(() => {
 		const trigger = triggerNode();
 		const content = contentNode();
-		console.log("trigger", trigger);
-		console.log("content", content);
 		if (!trigger || !content) return;
-		console.log("triggernode", trigger);
-		console.log("contentnode", content);
 
 		const handleTriggerLeave = (e: PointerEvent) => {
 			handleCreateGraceArea(e, content!);

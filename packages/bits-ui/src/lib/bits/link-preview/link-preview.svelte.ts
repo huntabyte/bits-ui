@@ -199,7 +199,6 @@ class LinkPreviewContentState {
 			this.root.isPointerInTransit = isPointerInTransit;
 
 			onPointerExit(() => {
-				console.log("pointer exit");
 				this.root.handleClose();
 			});
 		});

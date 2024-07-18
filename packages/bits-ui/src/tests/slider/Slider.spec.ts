@@ -574,7 +574,5 @@ function expectPercentages({
 		expect(isCloseEnough(percentage, thumb.style.left)).toBeTruthy();
 	}
 	expect(isCloseEnough(lesserPercentage, range.style.left)).toBeTruthy();
-	console.log("higherPercentage", higherPercentage);
-	console.log("rangeStyleRight", range.style.right);
 	expect(isCloseEnough(100 - higherPercentage, range.style.right)).toBeTruthy();
 }
