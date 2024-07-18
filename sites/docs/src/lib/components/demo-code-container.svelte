@@ -1,10 +1,10 @@
 <script lang="ts">
 	import type { Snippet } from "svelte";
-	import { Tabs, Collapsible } from "bits-ui";
+	import { Collapsible, Tabs } from "bits-ui";
 	import DemoCodeTabs from "./demo-code-tabs.svelte";
-	import { cn } from "$lib/utils/styles.js";
 	import TailwindConfig from "./code-renders/tailwind-config.svelte";
 	import AppCSS from "./code-renders/app-css.svelte";
+	import { cn } from "$lib/utils/styles.js";
 
 	type Props = {
 		children: Snippet;
