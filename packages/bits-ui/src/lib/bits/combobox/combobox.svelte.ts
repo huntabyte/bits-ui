@@ -301,6 +301,9 @@ class ComboboxInputState {
 	#onkeydown = async (e: KeyboardEvent) => {
 		const open = this.root.open.value;
 		const inputValue = this.root.inputValue;
+
+		// prevent arrow up/down from moving the position of the cursor in the input
+		if (e.key === kbd.ARROW_UP || e.key === kbd.ARROW_DOWN) e.preventDefault();
 		if (!open) {
 			if (INTERACTION_KEYS.includes(e.key)) return;
 			if (e.key === kbd.TAB) return;
