@@ -64,18 +64,10 @@ class ComboboxBaseRootState {
 		this.scrollAlignment = props.scrollAlignment;
 
 		$effect(() => {
-			console.log(this.contentNode);
+			if (!this.open.value) {
+				this.highlightedNode = null;
+			}
 		});
-
-		// $effect(() => {
-		// 	const open = this.open.value;
-		// 	if (!open) return;
-		// 	afterTick(() => {
-		// 		if (!this.highlightedNode) {
-		// 			this.setHighlightedNode(this.getCandidateNodes()[0] ?? null);
-		// 		}
-		// 	});
-		// });
 	}
 
 	setHighlightedNode = (node: HTMLElement | null) => {
@@ -88,8 +80,20 @@ class ComboboxBaseRootState {
 		const nodes = Array.from(
 			node.querySelectorAll<HTMLElement>(`[${COMBOBOX_ITEM_ATTR}]:not([data-disabled])`)
 		);
-		console.log("candidatenodes", nodes);
 		return nodes;
+	};
+
+	setHighlightedToFirstCandidate = () => {
+		afterTick(() => {
+			const candidateNodes = this.getCandidateNodes();
+			if (!candidateNodes.length) return;
+			this.highlightedNode = candidateNodes[0]!;
+		});
+	};
+
+	getNodeByValue = (value: string): HTMLElement | null => {
+		const candidateNodes = this.getCandidateNodes();
+		return candidateNodes.find((node) => node.dataset.value === value) ?? null;
 	};
 
 	setOpen = (open: boolean) => {
@@ -101,12 +105,12 @@ class ComboboxBaseRootState {
 	};
 
 	openMenu = () => {
-		console.log("opening menu");
 		this.setOpen(true);
 	};
 
 	closeMenu = () => {
 		this.setOpen(false);
+		this.highlightedNode = null;
 	};
 
 	toggleMenu = () => {
@@ -122,10 +126,18 @@ type ComboboxSingleRootStateProps = ComboboxBaseRootStateProps &
 class ComboboxSingleRootState extends ComboboxBaseRootState {
 	value: ComboboxSingleRootStateProps["value"];
 	isMulti = false as const;
+	hasValue = $derived.by(() => this.value.value !== "");
 
 	constructor(props: ComboboxSingleRootStateProps) {
 		super(props);
 		this.value = props.value;
+
+		$effect(() => {
+			if (!this.open.value) return;
+			afterTick(() => {
+				this.#setInitialHighlightedNode();
+			});
+		});
 	}
 
 	includesItem = (itemValue: string) => {
@@ -134,6 +146,23 @@ class ComboboxSingleRootState extends ComboboxBaseRootState {
 
 	toggleItem = (itemValue: string) => {
 		this.value.value = this.includesItem(itemValue) ? "" : itemValue;
+	};
+
+	#setInitialHighlightedNode = () => {
+		console.log("this highlighted node", this.highlightedNode);
+		if (this.highlightedNode) return;
+		if (this.value.value !== "") {
+			const node = this.getNodeByValue(this.value.value);
+			console.log("initial node to focus", node);
+			if (node) {
+				this.highlightedNode = node;
+				return;
+			}
+		}
+		// if no value is set, we want to highlight the first item
+		const firstCandidate = this.getCandidateNodes()[0];
+		if (!firstCandidate) return;
+		this.highlightedNode = firstCandidate;
 	};
 
 	createInput(props: ComboboxInputStateProps) {
@@ -165,10 +194,18 @@ type ComboboxMultipleRootStateProps = ComboboxBaseRootStateProps &
 class ComboboxMultipleRootState extends ComboboxBaseRootState {
 	value: ComboboxMultipleRootStateProps["value"];
 	isMulti = true as const;
+	hasValue = $derived.by(() => this.value.value.length > 0);
 
 	constructor(props: ComboboxMultipleRootStateProps) {
 		super(props);
 		this.value = props.value;
+
+		$effect(() => {
+			if (!this.open.value) return;
+			afterTick(() => {
+				this.#setInitialHighlightedNode();
+			});
+		});
 	}
 
 	includesItem = (itemValue: string) => {
@@ -181,6 +218,21 @@ class ComboboxMultipleRootState extends ComboboxBaseRootState {
 		} else {
 			this.value.value = [...this.value.value, itemValue];
 		}
+	};
+
+	#setInitialHighlightedNode = () => {
+		if (this.highlightedNode) return;
+		if (this.value.value.length && this.value.value[0] !== "") {
+			const node = this.getNodeByValue(this.value.value[0]!);
+			if (node) {
+				this.highlightedNode = node;
+				return;
+			}
+		}
+		// if no value is set, we want to highlight the first item
+		const firstCandidate = this.getCandidateNodes()[0];
+		if (!firstCandidate) return;
+		this.highlightedNode = firstCandidate;
 	};
 
 	createInput(props: ComboboxInputStateProps) {
@@ -235,10 +287,10 @@ class ComboboxInputState {
 			if (e.key === kbd.BACKSPACE && inputValue === "") return;
 			this.root.openMenu();
 
+			if (this.root.hasValue) return;
 			await tick();
 
 			const candidateNodes = this.root.getCandidateNodes();
-			console.log("candidatenodes", candidateNodes);
 			if (!candidateNodes.length) return;
 
 			if (e.key === kbd.ARROW_DOWN) {
@@ -301,7 +353,11 @@ class ComboboxInputState {
 			if (!nextItem) return;
 			this.root.setHighlightedNode(nextItem);
 			nextItem.scrollIntoView({ block: scrollAlignment });
+			return;
 		}
+
+		if (INTERACTION_KEYS.includes(e.key)) return;
+		this.root.setHighlightedToFirstCandidate();
 	};
 
 	props = $derived.by(
