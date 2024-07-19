@@ -20,7 +20,7 @@
 </script>
 
 <Combobox.Root
-	type="multiple"
+	type="single"
 	name="favoriteFruit"
 	onOpenChange={(o) => {
 		if (!o) inputValue = "";
@@ -47,9 +47,9 @@
 		class="w-[var(--bits-combobox-trigger-width)] min-w-[var(--bits-combobox-trigger-width)] rounded-xl border border-muted bg-background px-1 py-3 shadow-popover outline-none"
 		sideOffset={10}
 	>
-		{#each filteredFruits as fruit (fruit.value)}
+		{#each filteredFruits as fruit, i (i + fruit.value)}
 			<Combobox.Item
-				class="flex h-10 w-full select-none items-center rounded-button py-3 pl-5 pr-1.5 text-sm capitalize outline-none transition-all duration-75 data-[highlighted]:bg-muted"
+				class="flex h-10 w-full select-none items-center rounded-button py-3 pl-5 pr-1.5 text-sm capitalize outline-none duration-75 data-[highlighted]:bg-muted"
 				value={fruit.value}
 				label={fruit.label}
 			>

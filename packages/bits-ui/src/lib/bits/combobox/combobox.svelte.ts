@@ -13,7 +13,7 @@ import { createContext } from "$lib/internal/createContext.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
-import { onDestroy, tick } from "svelte";
+import { onDestroy, tick, untrack } from "svelte";
 
 // prettier-ignore
 export const INTERACTION_KEYS = [kbd.ARROW_LEFT, kbd.ESCAPE, kbd.ARROW_RIGHT, kbd.SHIFT, kbd.CAPS_LOCK, kbd.CONTROL, kbd.ALT, kbd.META, kbd.ENTER, kbd.F1, kbd.F2, kbd.F3, kbd.F4, kbd.F5, kbd.F6, kbd.F7, kbd.F8, kbd.F9, kbd.F10, kbd.F11, kbd.F12];
@@ -77,7 +77,7 @@ class ComboboxBaseRootState {
 
 		$effect(() => {
 			if (!this.open.value) {
-				this.highlightedNode = null;
+				untrack(() => (this.highlightedNode = null));
 			}
 		});
 	}
@@ -96,10 +96,12 @@ class ComboboxBaseRootState {
 	};
 
 	setHighlightedToFirstCandidate = () => {
+		console.log("setting to first candidate");
 		afterTick(() => {
+			this.setHighlightedNode(null);
 			const candidateNodes = this.getCandidateNodes();
 			if (!candidateNodes.length) return;
-			this.highlightedNode = candidateNodes[0]!;
+			this.setHighlightedNode(candidateNodes[0]!);
 		});
 	};
 
@@ -146,9 +148,7 @@ class ComboboxSingleRootState extends ComboboxBaseRootState {
 
 		$effect(() => {
 			if (!this.open.value) return;
-			afterTick(() => {
-				this.#setInitialHighlightedNode();
-			});
+			this.#setInitialHighlightedNode();
 		});
 	}
 
@@ -312,7 +312,6 @@ class ComboboxInputState {
 			this.root.openMenu();
 
 			if (this.root.hasValue) return;
-			await tick();
 
 			const candidateNodes = this.root.getCandidateNodes();
 			if (!candidateNodes.length) return;
@@ -543,7 +542,9 @@ class ComboboxItemState {
 	};
 
 	#onpointermove = (_: PointerEvent) => {
-		this.root.setHighlightedNode(this.#ref.value);
+		if (this.root.highlightedNode !== this.#ref.value) {
+			this.root.setHighlightedNode(this.#ref.value);
+		}
 	};
 
 	#onpointerleave = (_: PointerEvent) => {
