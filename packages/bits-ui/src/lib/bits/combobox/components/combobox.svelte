@@ -2,6 +2,7 @@
 	import { type WritableBox, box } from "svelte-toolbelt";
 	import { useComboboxRoot } from "../combobox.svelte.js";
 	import type { RootProps } from "../index.js";
+	import ComboboxHiddenInput from "./combobox-hidden-input.svelte";
 	import { noop } from "$lib/internal/callbacks.js";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 
@@ -48,3 +49,11 @@
 <FloatingLayer.Root>
 	{@render children?.()}
 </FloatingLayer.Root>
+
+{#if Array.isArray(value)}
+	{#each value as item}
+		<ComboboxHiddenInput value={item} />
+	{/each}
+{:else}
+	<ComboboxHiddenInput {value} />
+{/if}

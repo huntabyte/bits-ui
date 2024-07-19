@@ -9,8 +9,8 @@
 	let {
 		id = useId(),
 		ref = $bindable(null),
-		value = $bindable(""),
 		child,
+		value: _value,
 		...restProps
 	}: InputProps = $props();
 
@@ -20,10 +20,6 @@
 			() => ref,
 			(v) => (ref = v)
 		),
-		value: box.with(
-			() => value,
-			(v) => (value = v)
-		),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, inputState.props));
@@ -31,8 +27,8 @@
 
 <FloatingLayer.Anchor {id}>
 	{#if child}
-		{@render child?.({ props: mergedProps })}
+		{@render child({ props: mergedProps })}
 	{:else}
-		<input {...mergedProps} bind:value />
+		<input {...mergedProps} value={inputState.root.inputValue} />
 	{/if}
 </FloatingLayer.Anchor>

@@ -8,7 +8,7 @@ import type { WithRefProps } from "$lib/internal/types.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
 import { noop } from "$lib/internal/callbacks.js";
 import { addEventListener } from "$lib/internal/events.js";
-import { getDisabledAttr } from "$lib/internal/attrs.js";
+import { getDisabled } from "$lib/internal/attrs.js";
 
 export const REGEXP_ONLY_DIGITS = "^\\d+$";
 export const REGEXP_ONLY_CHARS = "^[a-zA-Z]+$";
@@ -429,7 +429,7 @@ class PinInputRootState {
 		pattern: this.#regexPattern?.source,
 		maxlength: this.#maxLength.value,
 		value: this.value.value,
-		disabled: getDisabledAttr(this.#disabled.value),
+		disabled: getDisabled(this.#disabled.value),
 		//
 		onpaste: this.#onpaste,
 		oninput: this.#oninput,

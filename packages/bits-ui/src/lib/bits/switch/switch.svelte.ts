@@ -4,7 +4,7 @@ import {
 	getDataChecked,
 	getDataDisabled,
 	getDataRequired,
-	getDisabledAttr,
+	getDisabled,
 } from "$lib/internal/attrs.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
@@ -85,7 +85,7 @@ class SwitchRootState {
 				...this.sharedProps,
 				id: this.#id.value,
 				role: "switch",
-				disabled: getDisabledAttr(this.disabled.value),
+				disabled: getDisabled(this.disabled.value),
 				"aria-checked": getAriaChecked(this.checked.value),
 				"aria-required": getAriaRequired(this.required.value),
 				[ROOT_ATTR]: "",

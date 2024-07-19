@@ -9,6 +9,7 @@
 		id = useId(),
 		ref = $bindable(null),
 		value,
+		label = value,
 		disabled = false,
 		children,
 		child,
@@ -23,13 +24,14 @@
 		),
 		value: box.with(() => value),
 		disabled: box.with(() => disabled),
+		label: box.with(() => label),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, itemState.props));
 </script>
 
 {#if child}
-	{@render child?.({ props: mergedProps, ...itemState.snippetProps })}
+	{@render child({ props: mergedProps, ...itemState.snippetProps })}
 {:else}
 	<div {...mergedProps}>
 		{@render children?.(itemState.snippetProps)}

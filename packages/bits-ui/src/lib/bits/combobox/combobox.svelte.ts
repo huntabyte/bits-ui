@@ -1,13 +1,19 @@
 import { afterTick } from "$lib/internal/afterTick.js";
 import { backward, forward, next, prev } from "$lib/internal/arrays.js";
-import { getAriaExpanded, getDataDisabled, getDataOpenClosed } from "$lib/internal/attrs.js";
+import {
+	getAriaExpanded,
+	getAriaHidden,
+	getDataDisabled,
+	getDataOpenClosed,
+	getDisabled,
+	getRequired,
+} from "$lib/internal/attrs.js";
 import type { Box, ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { createContext } from "$lib/internal/createContext.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
-import { isContentEditable, isHTMLInputElement } from "@melt-ui/svelte/internal/helpers";
-import { onDestroy, tick, untrack } from "svelte";
+import { onDestroy, tick } from "svelte";
 
 // prettier-ignore
 export const INTERACTION_KEYS = [kbd.ARROW_LEFT, kbd.ESCAPE, kbd.ARROW_RIGHT, kbd.SHIFT, kbd.CAPS_LOCK, kbd.CONTROL, kbd.ALT, kbd.META, kbd.ENTER, kbd.F1, kbd.F2, kbd.F3, kbd.F4, kbd.F5, kbd.F6, kbd.F7, kbd.F8, kbd.F9, kbd.F10, kbd.F11, kbd.F12];
@@ -42,8 +48,9 @@ class ComboboxBaseRootState {
 	loop: ComboboxBaseRootStateProps["loop"];
 	open: ComboboxBaseRootStateProps["open"];
 	scrollAlignment: ComboboxBaseRootStateProps["scrollAlignment"];
-	inputValue = $state<string>("");
 	touchedInput = $state(false);
+	inputValue = $state<string>("");
+	inputNode = $state<HTMLElement | null>(null);
 	contentNode = $state<HTMLElement | null>(null);
 	highlightedNode = $state<HTMLElement | null>(null);
 	highlightedValue = $derived.by(() => {
@@ -53,6 +60,10 @@ class ComboboxBaseRootState {
 	highlightedId = $derived.by(() => {
 		if (!this.highlightedNode) return undefined;
 		return this.highlightedNode.id;
+	});
+	highlightedLabel = $derived.by(() => {
+		if (!this.highlightedNode) return null;
+		return this.highlightedNode.getAttribute("data-label");
 	});
 
 	constructor(props: ComboboxBaseRootStateProps) {
@@ -144,16 +155,15 @@ class ComboboxSingleRootState extends ComboboxBaseRootState {
 		return this.value.value === itemValue;
 	};
 
-	toggleItem = (itemValue: string) => {
+	toggleItem = (itemValue: string, itemLabel: string = itemValue) => {
 		this.value.value = this.includesItem(itemValue) ? "" : itemValue;
+		this.inputValue = itemLabel;
 	};
 
 	#setInitialHighlightedNode = () => {
-		console.log("this highlighted node", this.highlightedNode);
 		if (this.highlightedNode) return;
 		if (this.value.value !== "") {
 			const node = this.getNodeByValue(this.value.value);
-			console.log("initial node to focus", node);
 			if (node) {
 				this.highlightedNode = node;
 				return;
@@ -184,6 +194,10 @@ class ComboboxSingleRootState extends ComboboxBaseRootState {
 	createGroup(props: ComboboxGroupStateProps) {
 		return new ComboboxGroupState(props);
 	}
+
+	createHiddenInput(props: ComboboxHiddenInputStateProps) {
+		return new ComboboxHiddenInputState(props, this);
+	}
 }
 
 type ComboboxMultipleRootStateProps = ComboboxBaseRootStateProps &
@@ -212,12 +226,13 @@ class ComboboxMultipleRootState extends ComboboxBaseRootState {
 		return this.value.value.includes(itemValue);
 	};
 
-	toggleItem = (itemValue: string) => {
+	toggleItem = (itemValue: string, itemLabel: string = itemValue) => {
 		if (this.includesItem(itemValue)) {
 			this.value.value = this.value.value.filter((v) => v !== itemValue);
 		} else {
 			this.value.value = [...this.value.value, itemValue];
 		}
+		this.inputValue = itemLabel;
 	};
 
 	#setInitialHighlightedNode = () => {
@@ -254,33 +269,38 @@ class ComboboxMultipleRootState extends ComboboxBaseRootState {
 	createGroup(props: ComboboxGroupStateProps) {
 		return new ComboboxGroupState(props);
 	}
+
+	createHiddenInput(props: ComboboxHiddenInputStateProps) {
+		return new ComboboxHiddenInputState(props, this);
+	}
 }
 
 type ComboboxRootState = ComboboxSingleRootState | ComboboxMultipleRootState;
 
-type ComboboxInputStateProps = WithRefProps & WritableBoxedValues<{ value: string }>;
+type ComboboxInputStateProps = WithRefProps;
 
 class ComboboxInputState {
 	#id: ComboboxInputStateProps["id"];
 	#ref: ComboboxInputStateProps["ref"];
-	inputValue: ComboboxInputStateProps["value"];
 	root: ComboboxRootState;
 
 	constructor(props: ComboboxInputStateProps, root: ComboboxRootState) {
 		this.root = root;
 		this.#id = props.id;
 		this.#ref = props.ref;
-		this.inputValue = props.value;
 
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
+			onRefChange: (node) => {
+				this.root.inputNode = node;
+			},
 		});
 	}
 
 	#onkeydown = async (e: KeyboardEvent) => {
 		const open = this.root.open.value;
-		const inputValue = this.inputValue.value;
+		const inputValue = this.root.inputValue;
 		if (!open) {
 			if (INTERACTION_KEYS.includes(e.key)) return;
 			if (e.key === kbd.TAB) return;
@@ -314,7 +334,7 @@ class ComboboxInputState {
 			e.preventDefault();
 			const highlightedValue = this.root.highlightedValue;
 			if (highlightedValue) {
-				this.root.toggleItem(highlightedValue);
+				this.root.toggleItem(highlightedValue, this.root.highlightedLabel ?? undefined);
 			}
 			if (!this.root.isMulti) {
 				this.root.closeMenu();
@@ -360,6 +380,11 @@ class ComboboxInputState {
 		this.root.setHighlightedToFirstCandidate();
 	};
 
+	#oninput = (e: Event & { currentTarget: HTMLInputElement }) => {
+		this.root.inputValue = e.currentTarget.value;
+		this.root.setHighlightedToFirstCandidate();
+	};
+
 	props = $derived.by(
 		() =>
 			({
@@ -372,6 +397,7 @@ class ComboboxInputState {
 				"data-disabled": getDataDisabled(this.root.disabled.value),
 				disabled: this.root.disabled.value ? true : undefined,
 				onkeydown: this.#onkeydown,
+				oninput: this.#oninput,
 				[COMBOBOX_INPUT_ATTR]: "",
 			}) as const
 	);
@@ -395,8 +421,16 @@ class ComboboxTriggerState {
 		});
 	}
 
-	#onclick = () => {
+	/**
+	 * `pointerdown` fires before the `focus` event, so we can prevent the default
+	 * behavior of focusing the button and keep focus on the input.
+	 */
+	#onpointerdown = (e: MouseEvent) => {
 		if (this.root.disabled.value) return;
+		e.preventDefault();
+		if (document.activeElement !== this.root.inputNode) {
+			this.root.inputNode?.focus();
+		}
 		this.root.toggleMenu();
 	};
 
@@ -406,7 +440,7 @@ class ComboboxTriggerState {
 		"data-state": getDataOpenClosed(this.root.open.value),
 		"data-disabled": getDataDisabled(this.root.disabled.value),
 		disabled: this.root.disabled.value ? true : undefined,
-		onclick: this.#onclick,
+		onpointerdown: this.#onpointerdown,
 		[COMBOBOX_TRIGGER_ATTR]: "",
 	}));
 }
@@ -449,7 +483,7 @@ class ComboboxContentState {
 }
 
 type ComboboxItemStateProps = WithRefProps<
-	ReadableBoxedValues<{ value: string; disabled: boolean }>
+	ReadableBoxedValues<{ value: string; disabled: boolean; label: string }>
 >;
 
 class ComboboxItemState {
@@ -457,6 +491,7 @@ class ComboboxItemState {
 	#ref: ComboboxItemStateProps["ref"];
 	root: ComboboxRootState;
 	value: ComboboxItemStateProps["value"];
+	label: ComboboxItemStateProps["label"];
 	disabled: ComboboxItemStateProps["disabled"];
 	isSelected = $derived.by(() => this.root.includesItem(this.value.value));
 	isHighlighted = $derived.by(() => this.root.highlightedValue === this.value.value);
@@ -465,6 +500,7 @@ class ComboboxItemState {
 		this.root = root;
 		this.value = props.value;
 		this.disabled = props.disabled;
+		this.label = props.label;
 		this.#id = props.id;
 		this.#ref = props.ref;
 
@@ -479,14 +515,16 @@ class ComboboxItemState {
 		highlighted: this.isHighlighted,
 	}));
 
-	#onclick = (e: MouseEvent) => {
-		if (this.disabled.value) {
-			// prevent default to prevent input from losing focus
-			e.preventDefault();
-			return;
-		}
-
-		this.root.setHighlightedNode(this.#ref.value);
+	/**
+	 * Using `pointerup` instead of `click` allows power users to pointerdown
+	 * the trigger, then release pointerup on an item to select it vs having to do
+	 * multiple clicks.
+	 */
+	#onpointerup = (e: PointerEvent) => {
+		// prevent any default behavior
+		e.preventDefault();
+		if (this.disabled.value) return;
+		this.root.toggleItem(this.value.value, this.label.value);
 		if (!this.root.isMulti) {
 			this.root.closeMenu();
 		}
@@ -512,10 +550,11 @@ class ComboboxItemState {
 					this.root.highlightedValue === this.value.value ? "" : undefined,
 				"data-selected": this.root.includesItem(this.value.value) ? "" : undefined,
 				"aria-selected": this.root.includesItem(this.value.value) ? "true" : undefined,
+				"data-label": this.label.value,
 				[COMBOBOX_ITEM_ATTR]: "",
 				onpointermove: this.#onpointermove,
 				onpointerleave: this.#onpointerleave,
-				onclick: this.#onclick,
+				onpointerup: this.#onpointerup,
 			}) as const
 	);
 }
@@ -580,6 +619,32 @@ class ComboboxGroupLabelState {
 	);
 }
 
+type ComboboxHiddenInputStateProps = ReadableBoxedValues<{
+	value: string;
+}>;
+
+class ComboboxHiddenInputState {
+	#value: ComboboxHiddenInputStateProps["value"];
+	root: ComboboxRootState;
+	shouldRender = $derived.by(() => this.root.name.value !== "");
+
+	constructor(props: ComboboxHiddenInputStateProps, root: ComboboxRootState) {
+		this.root = root;
+		this.#value = props.value;
+	}
+
+	props = $derived.by(
+		() =>
+			({
+				disabled: getDisabled(this.root.disabled.value),
+				required: getRequired(this.root.required.value),
+				name: this.root.name.value,
+				value: this.#value.value,
+				"aria-hidden": getAriaHidden(true),
+			}) as const
+	);
+}
+
 type InitComboboxProps = {
 	type: "single" | "multiple";
 	value: Box<string> | Box<string[]>;
@@ -628,9 +693,13 @@ export function useComboboxItem(props: ComboboxItemStateProps) {
 }
 
 export function useComboboxGroup(props: ComboboxGroupStateProps) {
-	return getComboboxRootContext().createGroup(props);
+	return setComboboxGroupContext(getComboboxRootContext().createGroup(props));
 }
 
 export function useComboboxGroupLabel(props: ComboboxGroupLabelStateProps) {
 	return getComboboxGroupContext().createGroupLabel(props);
+}
+
+export function useComboboxHiddenInput(props: ComboboxHiddenInputStateProps) {
+	return getComboboxRootContext().createHiddenInput(props);
 }

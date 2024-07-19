@@ -105,6 +105,7 @@ class CheckboxInputState {
 				required: this.root.required.value,
 				name: this.root.name.value,
 				value: this.root.value.value,
+				"aria-hidden": "true",
 				"data-checkbox-input": "",
 			}) as const
 	);

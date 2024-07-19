@@ -146,17 +146,21 @@ export function getDataUnavailable(condition: boolean): "" | undefined {
 /**
  * Returns the hidden attribute if the condition is true.
  */
-export function getHiddenAttr(condition: boolean): true | undefined {
-	return condition ? true : undefined;
+export function getHidden(condition: boolean): "true" | undefined {
+	return condition ? "true" : undefined;
 }
 
 /**
  * Returns the `disabled` attribute if the condition is true.
  */
-export function getDisabledAttr(condition: boolean): true | undefined {
+export function getDisabled(condition: boolean): true | undefined {
 	return condition ? true : undefined;
 }
 
 export function getAriaPressed(condition: boolean): "true" | "false" {
 	return condition ? "true" : "false";
+}
+
+export function getRequired(condition: boolean): true | undefined {
+	return condition ? true : undefined;
 }

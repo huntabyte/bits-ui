@@ -139,6 +139,12 @@ export type ComboboxItemPropsWithoutHTML = WithChild<
 		value: string;
 
 		/**
+		 * The label of the item. If provided, this is the item that users will search for.
+		 * If not provided, the value will be used as the label.
+		 */
+		label?: string;
+
+		/**
 		 * Whether the item is disabled.
 		 *
 		 * @defaultValeu `false`

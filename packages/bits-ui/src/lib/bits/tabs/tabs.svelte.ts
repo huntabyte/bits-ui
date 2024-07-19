@@ -7,8 +7,8 @@ import {
 	getAriaOrientation,
 	getDataDisabled,
 	getDataOrientation,
-	getDisabledAttr,
-	getHiddenAttr,
+	getDisabled,
+	getHidden,
 	isBrowser,
 	kbd,
 	useRefById,
@@ -228,7 +228,7 @@ class TabsTriggerState {
 				"data-orientation": getDataOrientation(this.#root.orientation.value),
 				"data-disabled": getDataDisabled(this.#disabled.value),
 				[TRIGGER_ATTR]: "",
-				disabled: getDisabledAttr(this.#disabled.value),
+				disabled: getDisabled(this.#disabled.value),
 				tabindex: this.#tabIndex,
 				//
 				onclick: this.#onclick,
@@ -270,7 +270,7 @@ class TabsContentState {
 		() =>
 			({
 				role: "tabpanel",
-				hidden: getHiddenAttr(!this.#isActive),
+				hidden: getHidden(!this.#isActive),
 				tabindex: 0,
 				"data-value": this.#value.value,
 				"data-state": getTabDataState(this.#isActive),

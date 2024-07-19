@@ -4,7 +4,7 @@ import {
 	getAriaPressed,
 	getDataDisabled,
 	getDataOrientation,
-	getDisabledAttr,
+	getDisabled,
 } from "$lib/internal/attrs.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
@@ -277,7 +277,7 @@ class ToolbarGroupItemState {
 				"aria-checked": this.#ariaChecked,
 				[ITEM_ATTR]: "",
 				[GROUP_ITEM_ATTR]: "",
-				disabled: getDisabledAttr(this.#isDisabled),
+				disabled: getDisabled(this.#isDisabled),
 				//
 				onclick: this.#onclick,
 				onkeydown: this.#onkeydown,
@@ -375,7 +375,7 @@ class ToolbarButtonState {
 				tabindex: this.#tabIndex,
 				"data-disabled": getDataDisabled(this.#disabled.value),
 				"data-orientation": getDataOrientation(this.#root.orientation.value),
-				disabled: getDisabledAttr(this.#disabled.value),
+				disabled: getDisabled(this.#disabled.value),
 				//
 				onkeydown: this.#onkeydown,
 			}) as const

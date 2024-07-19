@@ -10,26 +10,37 @@
 		{ value: "orange", label: "Orange" },
 	];
 
-	let inputValue = "";
+	let inputValue = $state("");
 
-	$: filteredFruits =
+	const filteredFruits = $derived(
 		inputValue === ""
 			? fruits
-			: fruits.filter((fruit) => fruit.value.includes(inputValue.toLowerCase()));
+			: fruits.filter((fruit) => fruit.value.includes(inputValue.toLowerCase()))
+	);
 </script>
 
-<Combobox.Root type="single" name="favoriteFruit">
+<Combobox.Root
+	type="single"
+	name="favoriteFruit"
+	onOpenChange={(o) => {
+		if (!o) inputValue = "";
+	}}
+>
 	<div class="relative">
 		<OrangeSlice
 			class="absolute start-3 top-1/2 size-6 -translate-y-1/2 text-muted-foreground"
 		/>
 		<Combobox.Input
-			bind:value={inputValue}
+			oninput={(e) => (inputValue = e.currentTarget.value)}
 			class="inline-flex h-input w-[296px] truncate rounded-9px border border-border-input bg-background px-11 text-sm transition-colors placeholder:text-foreground-alt/50 focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2 focus:ring-offset-background"
 			placeholder="Search a fruit"
 			aria-label="Search a fruit"
 		/>
-		<CaretUpDown class="absolute end-3 top-1/2 size-6 -translate-y-1/2 text-muted-foreground" />
+		<Combobox.Trigger>
+			<CaretUpDown
+				class="absolute end-3 top-1/2 size-6 -translate-y-1/2 text-muted-foreground"
+			/>
+		</Combobox.Trigger>
 	</div>
 
 	<Combobox.Content
@@ -39,6 +50,7 @@
 			<Combobox.Item
 				class="flex h-10 w-full select-none items-center rounded-button py-3 pl-5 pr-1.5 text-sm capitalize outline-none transition-all duration-75 data-[highlighted]:bg-muted"
 				value={fruit.value}
+				label={fruit.label}
 			>
 				{#snippet children({ selected })}
 					{fruit.label}

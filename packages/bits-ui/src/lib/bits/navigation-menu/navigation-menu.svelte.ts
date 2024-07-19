@@ -14,7 +14,7 @@ import {
 	getDataDisabled,
 	getDataOpenClosed,
 	getDataOrientation,
-	getDisabledAttr,
+	getDisabled,
 } from "$lib/internal/attrs.js";
 import { createContext } from "$lib/internal/createContext.js";
 import { useId } from "$lib/internal/useId.svelte.js";
@@ -595,7 +595,7 @@ class NavigationMenuTriggerState {
 		() =>
 			({
 				id: this.id.value,
-				disabled: getDisabledAttr(this.disabled.value),
+				disabled: getDisabled(this.disabled.value),
 				"data-disabled": getDataDisabled(this.disabled.value),
 				"data-state": getDataOpenClosed(this.open),
 				"aria-expanded": getAriaExpanded(this.open),
