@@ -20,7 +20,7 @@
 </script>
 
 <Combobox.Root
-	type="single"
+	type="multiple"
 	name="favoriteFruit"
 	onOpenChange={(o) => {
 		if (!o) inputValue = "";

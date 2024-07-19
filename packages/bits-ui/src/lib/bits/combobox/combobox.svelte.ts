@@ -522,6 +522,11 @@ class ComboboxItemState {
 		highlighted: this.isHighlighted,
 	}));
 
+	#onpointerdown = (e: PointerEvent) => {
+		// prevent focus from leaving the combobox
+		e.preventDefault();
+	};
+
 	/**
 	 * Using `pointerup` instead of `click` allows power users to pointerdown
 	 * the trigger, then release pointerup on an item to select it vs having to do
@@ -560,6 +565,7 @@ class ComboboxItemState {
 				"data-label": this.label.value,
 				[COMBOBOX_ITEM_ATTR]: "",
 				onpointermove: this.#onpointermove,
+				onpointerdown: this.#onpointerdown,
 				onpointerleave: this.#onpointerleave,
 				onpointerup: this.#onpointerup,
 			}) as const
