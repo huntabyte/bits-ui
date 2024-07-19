@@ -1,38 +1,38 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { getCtx } from "../ctx.js";
-	import type { InputEvents, InputProps } from "../index.js";
-	import { createDispatcher } from "$lib/internal/events.js";
+	import { box } from "svelte-toolbelt";
+	import { useComboboxInput } from "../combobox.svelte.js";
+	import type { InputProps } from "../index.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 
-	type $$Props = InputProps;
-	type $$Events = InputEvents;
+	let {
+		id = useId(),
+		ref = $bindable(null),
+		value = $bindable(""),
+		child,
+		...restProps
+	}: InputProps = $props();
 
-	export let asChild: $$Props["asChild"] = false;
-	export let placeholder: $$Props["placeholder"] = undefined;
-	export let el: $$Props["el"] = undefined;
+	const inputState = useComboboxInput({
+		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
+		value: box.with(
+			() => value,
+			(v) => (value = v)
+		),
+	});
 
-	const {
-		elements: { input },
-		getAttrs,
-	} = getCtx();
-
-	const dispatch = createDispatcher();
-	const attrs = getAttrs("input");
-
-	$: builder = $input;
-	$: Object.assign(builder, attrs);
+	const mergedProps = $derived(mergeProps(restProps, inputState.props));
 </script>
 
-{#if asChild}
-	<slot {builder} {placeholder} />
-{:else}
-	<input
-		bind:this={ref}
-		use:melt={builder}
-		{...$$restProps}
-		{placeholder}
-		on:m-click={dispatch}
-		on:m-keydown={dispatch}
-		on:m-input={dispatch}
-	/>
-{/if}
+<FloatingLayer.Anchor {id}>
+	{#if child}
+		{@render child?.({ props: mergedProps })}
+	{:else}
+		<input {...mergedProps} bind:value />
+	{/if}
+</FloatingLayer.Anchor>

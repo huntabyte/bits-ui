@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { arraysAreEqual, chunk, isValidIndex } from "./arrays.js";
+import { arraysAreEqual, backward, chunk, forward, isValidIndex, next, prev } from "./arrays.js";
 
 describe("arraysAreEqual", () => {
 	it("should return true for two empty arrays", () => {
@@ -122,5 +122,226 @@ describe("isValidIndex", () => {
 		expect(isValidIndex(0, arr)).toBe(true);
 		expect(isValidIndex(3, arr)).toBe(true);
 		expect(isValidIndex(4, arr)).toBe(false);
+	});
+});
+
+describe("next", () => {
+	const testArray = ["a", "b", "c", "d"];
+
+	it("returns the next element in the array", () => {
+		expect(next(testArray, 0)).toBe("b");
+		expect(next(testArray, 1)).toBe("c");
+		expect(next(testArray, 2)).toBe("d");
+	});
+
+	it("loops to the beginning of the array when reaching the end (default behavior)", () => {
+		expect(next(testArray, 3)).toBe("a");
+	});
+
+	it("returns undefined when loop is false and at the end of the array", () => {
+		expect(next(testArray, 3, false)).toBeUndefined();
+	});
+
+	it("works with arrays of different types", () => {
+		const numberArray = [1, 2, 3, 4];
+		expect(next(numberArray, 1)).toBe(3);
+
+		const objectArray = [{ id: 1 }, { id: 2 }, { id: 3 }];
+		expect(next(objectArray, 0)).toEqual({ id: 2 });
+	});
+
+	it("handles arrays with one element", () => {
+		const singleElementArray = ["solo"];
+		expect(next(singleElementArray, 0)).toEqual("solo");
+		expect(next(singleElementArray, 0, false)).toEqual("solo");
+	});
+
+	it("returns undefined for empty arrays", () => {
+		const emptyArray: string[] = [];
+		expect(next(emptyArray, 0)).toBeUndefined();
+	});
+
+	it("returns undefined for out-of-bounds indices", () => {
+		expect(next(testArray, 4)).toBeUndefined();
+		expect(next(testArray, -1)).toBeUndefined();
+	});
+
+	it("returns undefined for negative indices", () => {
+		expect(next(testArray, -1)).toBeUndefined();
+	});
+
+	it("returns undefined for indices equal to or greater than array length", () => {
+		expect(next(testArray, 4)).toBeUndefined();
+		expect(next(testArray, 5)).toBeUndefined();
+	});
+});
+
+describe("prev", () => {
+	const testArray = ["a", "b", "c", "d"];
+
+	it("returns the previous element in the array", () => {
+		expect(prev(testArray, 1)).toBe("a");
+		expect(prev(testArray, 2)).toBe("b");
+		expect(prev(testArray, 3)).toBe("c");
+	});
+
+	it("loops to the end of the array when at the beginning (default behavior)", () => {
+		expect(prev(testArray, 0)).toBe("d");
+	});
+
+	it("returns undefined when loop is false and at the beginning of the array", () => {
+		expect(prev(testArray, 0, false)).toBeUndefined();
+	});
+
+	it("works with arrays of different types", () => {
+		const numberArray = [1, 2, 3, 4];
+		expect(prev(numberArray, 2)).toBe(2);
+
+		const objectArray = [{ id: 1 }, { id: 2 }, { id: 3 }];
+		expect(prev(objectArray, 1)).toEqual({ id: 1 });
+	});
+
+	it("handles arrays with one element", () => {
+		const singleElementArray = ["solo"];
+		expect(prev(singleElementArray, 0)).toBe("solo");
+		expect(prev(singleElementArray, 0, false)).toBe("solo");
+	});
+
+	it("returns undefined for empty arrays", () => {
+		const emptyArray: string[] = [];
+		expect(prev(emptyArray, 0)).toBeUndefined();
+	});
+
+	it("returns undefined for out-of-bounds indices", () => {
+		expect(prev(testArray, 4)).toBeUndefined();
+		expect(prev(testArray, -1)).toBeUndefined();
+	});
+
+	it("returns undefined for negative indices", () => {
+		expect(prev(testArray, -1)).toBeUndefined();
+	});
+
+	it("returns undefined for indices equal to or greater than array length", () => {
+		expect(prev(testArray, 4)).toBeUndefined();
+		expect(prev(testArray, 5)).toBeUndefined();
+	});
+
+	it("returns undefined for indices other than 0 in single-element arrays", () => {
+		const singleElementArray = ["solo"];
+		expect(prev(singleElementArray, 1)).toBeUndefined();
+		expect(prev(singleElementArray, -1)).toBeUndefined();
+	});
+});
+
+describe("forward function", () => {
+	const testArray = ["a", "b", "c", "d", "e"];
+
+	it("returns the element at the target index when within bounds", () => {
+		expect(forward(testArray, 0, 2)).toBe("c");
+		expect(forward(testArray, 1, 1)).toBe("c");
+		expect(forward(testArray, 2, 2)).toBe("e");
+	});
+
+	it("wraps around the array when looping is enabled and target index is out of bounds", () => {
+		expect(forward(testArray, 3, 2)).toBe("a");
+		expect(forward(testArray, 4, 1)).toBe("a");
+		expect(forward(testArray, 0, 5)).toBe("a");
+		expect(forward(testArray, 0, 7)).toBe("c");
+	});
+
+	it("returns the first or last element when looping is disabled and target index is out of bounds", () => {
+		expect(forward(testArray, 3, 2, false)).toBe("e");
+		expect(forward(testArray, 4, 1, false)).toBe("e");
+		expect(forward(testArray, 0, 5, false)).toBe("e");
+		expect(forward(testArray, 2, -3, false)).toBe("a");
+	});
+
+	it("handles zero increment", () => {
+		expect(forward(testArray, 2, 0)).toBe("c");
+		expect(forward(testArray, 4, 0)).toBe("e");
+	});
+
+	it("works with arrays of different types", () => {
+		const numberArray = [1, 2, 3, 4, 5];
+		expect(forward(numberArray, 1, 2)).toBe(4);
+
+		const objectArray = [{ id: 1 }, { id: 2 }, { id: 3 }];
+		expect(forward(objectArray, 0, 1)).toEqual({ id: 2 });
+	});
+
+	it("handles single-element arrays", () => {
+		const singleElementArray = ["solo"];
+		expect(forward(singleElementArray, 0, 1)).toBe("solo");
+		expect(forward(singleElementArray, 0, 5)).toBe("solo");
+		expect(forward(singleElementArray, 0, -1)).toBe("solo");
+	});
+
+	it("handles negative increments", () => {
+		expect(forward(testArray, 3, -1)).toBe("c");
+		expect(forward(testArray, 4, -2)).toBe("c");
+		expect(forward(testArray, 1, -1)).toBe("a"); // Correctly wraps to the end
+		expect(forward(testArray, 0, -1)).toBe("e"); // Wraps to the last element
+	});
+
+	it("handles negative increments with looping disabled", () => {
+		expect(forward(testArray, 3, -1, false)).toBe("c");
+		expect(forward(testArray, 4, -2, false)).toBe("c");
+		expect(forward(testArray, 1, -2, false)).toBe("a"); // Returns first element
+		expect(forward(testArray, 4, -5, false)).toBe("a"); // Returns first element
+	});
+
+	it("returns undefined for empty arrays", () => {
+		const emptyArray: string[] = [];
+		expect(forward(emptyArray, 0, 1)).toBeUndefined();
+	});
+
+	it("returns undefined for out-of-bounds initial indices", () => {
+		expect(forward(testArray, -1, 1)).toBeUndefined();
+		expect(forward(testArray, 5, 1)).toBeUndefined();
+	});
+
+	it("handles large positive and negative increments", () => {
+		expect(forward(testArray, 0, 15)).toBe("a"); // Loops around 3 times
+		expect(forward(testArray, 0, -15)).toBe("a"); // Loops around -3 times
+		expect(forward(testArray, 0, 15, false)).toBe("e");
+		expect(forward(testArray, 0, -15, false)).toBe("a");
+	});
+});
+
+describe("backward function", () => {
+	const testArray = [1, 2, 3, 4, 5];
+
+	it("should return the correct element when moving backward", () => {
+		expect(backward(testArray, 2, 1)).toBe(2);
+		expect(backward(testArray, 4, 2)).toBe(3);
+	});
+
+	it("should wrap around the array when looping is enabled", () => {
+		expect(backward(testArray, 0, 1)).toBe(5);
+		expect(backward(testArray, 1, 3)).toBe(4);
+	});
+
+	it("should clamp to array bounds when looping is disabled", () => {
+		expect(backward(testArray, 0, 1, false)).toBe(1);
+		expect(backward(testArray, 1, 3, false)).toBe(1);
+	});
+
+	it("should handle negative decrements (moving forward)", () => {
+		expect(backward(testArray, 2, -1)).toBe(4);
+		expect(backward(testArray, 4, -2)).toBe(2);
+	});
+
+	it("should return undefined for empty arrays", () => {
+		expect(backward([], 0, 1)).toBeUndefined();
+	});
+
+	it("should return undefined for out-of-bounds initial indices", () => {
+		expect(backward(testArray, -1, 1)).toBeUndefined();
+		expect(backward(testArray, 5, 1)).toBeUndefined();
+	});
+
+	it("should handle large decrements", () => {
+		expect(backward(testArray, 4, 10)).toBe(5);
+		expect(backward(testArray, 4, 11)).toBe(4);
 	});
 });

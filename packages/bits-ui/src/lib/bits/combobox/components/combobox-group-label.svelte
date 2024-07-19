@@ -1,30 +1,33 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { getCtx, getGroupLabel } from "../ctx.js";
-	import type { GroupLabelEvents, GroupLabelProps } from "../index.js";
+	import { box } from "svelte-toolbelt";
+	import type { GroupLabelProps } from "../index.js";
+	import { useComboboxGroupLabel } from "../combobox.svelte.js";
+	import { useId } from "$lib/internal/useId.svelte.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
 
-	type $$Props = GroupLabelProps;
-	type $$Events = GroupLabelEvents;
+	let {
+		id = useId(),
+		ref = $bindable(null),
+		child,
+		children,
+		...restProps
+	}: GroupLabelProps = $props();
 
-	export let asChild: $$Props["asChild"] = false;
-	export let id: $$Props["id"] = undefined;
-	export let el: $$Props["el"] = undefined;
+	const groupLabelState = useComboboxGroupLabel({
+		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
+	});
 
-	const { ids, getAttrs } = getCtx();
-	const { groupLabel, id: groupId } = getGroupLabel();
-	const attrs = getAttrs("group-label");
-
-	$: if (id) {
-		ids.label.set(id);
-	}
-	$: builder = $groupLabel(groupId);
-	$: Object.assign(builder, attrs);
+	const mergedProps = $derived(mergeProps(restProps, groupLabelState.props));
 </script>
 
-{#if asChild}
-	<slot {builder} />
+{#if child}
+	{@render child?.({ props: mergedProps })}
 {:else}
-	<div bind:this={ref} use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+	<div {...mergedProps}>
+		{@render children?.()}
 	</div>
 {/if}

@@ -80,3 +80,115 @@ export function chunk<T>(arr: T[], size: number): T[][] {
 export function isValidIndex(index: number, arr: unknown[]) {
 	return index >= 0 && index < arr.length;
 }
+
+/**
+ * Returns the array element after the given index, or undefined for out-of-bounds or empty arrays.
+ * @param array the array.
+ * @param index the index of the current element.
+ * @param loop loop to the beginning of the array if the next index is out of bounds?
+ */
+/**
+ * Returns the array element after the given index, or undefined for out-of-bounds or empty arrays.
+ * For single-element arrays, returns the element if the index is 0.
+ * @param array the array.
+ * @param index the index of the current element.
+ * @param loop loop to the beginning of the array if the next index is out of bounds?
+ */
+export function next<T>(array: T[], index: number, loop = true): T | undefined {
+	if (array.length === 0 || index < 0 || index >= array.length) {
+		return undefined;
+	}
+	if (array.length === 1 && index === 0) {
+		return array[0];
+	}
+	if (index === array.length - 1) {
+		return loop ? array[0] : undefined;
+	}
+	return array[index + 1];
+}
+
+/**
+ * Returns the array element prior to the given index, or undefined for out-of-bounds or empty arrays.
+ * For single-element arrays, returns the element if the index is 0.
+ * @param array the array.
+ * @param index the index of the current element.
+ * @param loop loop to the end of the array if the previous index is out of bounds?
+ */
+export function prev<T>(array: T[], index: number, loop = true): T | undefined {
+	if (array.length === 0 || index < 0 || index >= array.length) {
+		return undefined;
+	}
+	if (array.length === 1 && index === 0) {
+		return array[0];
+	}
+	if (index === 0) {
+		return loop ? array[array.length - 1] : undefined;
+	}
+	return array[index - 1];
+}
+
+/**
+ * Returns the element some number after the given index. If the target index is out of bounds:
+ *   - If looping is disabled, the first or last element will be returned.
+ *   - If looping is enabled, it will wrap around the array.
+ * Returns undefined for empty arrays or out-of-bounds initial indices.
+ * @param array the array.
+ * @param index the index of the current element.
+ * @param increment the number of elements to move forward (can be negative).
+ * @param loop loop around the array if the target index is out of bounds?
+ */
+export function forward<T>(
+	array: T[],
+	index: number,
+	increment: number,
+	loop = true
+): T | undefined {
+	if (array.length === 0 || index < 0 || index >= array.length) {
+		return undefined;
+	}
+
+	let targetIndex = index + increment;
+
+	if (loop) {
+		// Ensure positive modulus
+		targetIndex = ((targetIndex % array.length) + array.length) % array.length;
+	} else {
+		// Clamp to array bounds when not looping
+		targetIndex = Math.max(0, Math.min(targetIndex, array.length - 1));
+	}
+
+	return array[targetIndex];
+}
+
+/**
+ * Returns the element some number before the given index. If the target index is out of bounds:
+ *   - If looping is disabled, the first or last element will be returned.
+ *   - If looping is enabled, it will wrap around the array.
+ * Returns undefined for empty arrays or out-of-bounds initial indices.
+ * @param array the array.
+ * @param index the index of the current element.
+ * @param decrement the number of elements to move backward (can be negative).
+ * @param loop loop around the array if the target index is out of bounds?
+ */
+export function backward<T>(
+	array: T[],
+	index: number,
+	decrement: number,
+	loop = true
+): T | undefined {
+	if (array.length === 0 || index < 0 || index >= array.length) {
+		return undefined;
+	}
+
+	let targetIndex = index - decrement;
+
+	if (loop) {
+		// Ensure positive modulus
+		targetIndex = ((targetIndex % array.length) + array.length) % array.length;
+	} else {
+		// Clamp to array bounds when not looping
+		targetIndex = Math.max(0, Math.min(targetIndex, array.length - 1));
+	}
+
+	return array[targetIndex];
+}
