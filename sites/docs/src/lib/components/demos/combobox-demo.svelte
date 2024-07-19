@@ -36,10 +36,8 @@
 			placeholder="Search a fruit"
 			aria-label="Search a fruit"
 		/>
-		<Combobox.Trigger>
-			<CaretUpDown
-				class="absolute end-3 top-1/2 size-6 -translate-y-1/2 text-muted-foreground"
-			/>
+		<Combobox.Trigger class="absolute end-3 top-1/2 size-6 -translate-y-1/2">
+			<CaretUpDown class="size-6 text-muted-foreground" />
 		</Combobox.Trigger>
 	</div>
 

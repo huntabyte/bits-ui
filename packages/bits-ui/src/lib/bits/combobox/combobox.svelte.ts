@@ -427,6 +427,16 @@ class ComboboxTriggerState {
 		});
 	}
 
+	#onkeydown = (e: KeyboardEvent) => {
+		if (e.key === kbd.ENTER || e.key === kbd.SPACE) {
+			e.preventDefault();
+			if (document.activeElement !== this.root.inputNode) {
+				this.root.inputNode?.focus();
+			}
+			this.root.toggleMenu();
+		}
+	};
+
 	/**
 	 * `pointerdown` fires before the `focus` event, so we can prevent the default
 	 * behavior of focusing the button and keep focus on the input.
@@ -447,6 +457,7 @@ class ComboboxTriggerState {
 		"data-disabled": getDataDisabled(this.root.disabled.value),
 		disabled: this.root.disabled.value ? true : undefined,
 		onpointerdown: this.#onpointerdown,
+		onkeydown: this.#onkeydown,
 		[COMBOBOX_TRIGGER_ATTR]: "",
 	}));
 }
