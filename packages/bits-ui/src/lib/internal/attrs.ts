@@ -146,8 +146,8 @@ export function getDataUnavailable(condition: boolean): "" | undefined {
 /**
  * Returns the hidden attribute if the condition is true.
  */
-export function getHidden(condition: boolean): "true" | undefined {
-	return condition ? "true" : undefined;
+export function getHidden(condition: boolean): true | undefined {
+	return condition ? true : undefined;
 }
 
 /**

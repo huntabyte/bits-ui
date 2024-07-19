@@ -9,7 +9,6 @@ import {
 	getDataOrientation,
 	getDisabled,
 	getHidden,
-	isBrowser,
 	kbd,
 	useRefById,
 } from "$lib/internal/index.js";
