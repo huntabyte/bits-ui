@@ -45,6 +45,7 @@
 
 	<Combobox.Content
 		class="w-[var(--bits-combobox-trigger-width)] min-w-[var(--bits-combobox-trigger-width)] rounded-xl border border-muted bg-background px-1 py-3 shadow-popover outline-none"
+		sideOffset={10}
 	>
 		{#each filteredFruits as fruit (fruit.value)}
 			<Combobox.Item
