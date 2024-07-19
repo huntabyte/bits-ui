@@ -52,6 +52,7 @@ class ComboboxBaseRootState {
 	inputValue = $state<string>("");
 	inputNode = $state<HTMLElement | null>(null);
 	contentNode = $state<HTMLElement | null>(null);
+	triggerNode = $state<HTMLElement | null>(null);
 	highlightedNode = $state<HTMLElement | null>(null);
 	highlightedValue = $derived.by(() => {
 		if (!this.highlightedNode) return null;
@@ -380,7 +381,7 @@ class ComboboxInputState {
 		}
 
 		if (INTERACTION_KEYS.includes(e.key)) return;
-		this.root.setHighlightedToFirstCandidate();
+		// this.root.setHighlightedToFirstCandidate();
 	};
 
 	#oninput = (e: Event & { currentTarget: HTMLInputElement }) => {
@@ -421,6 +422,9 @@ class ComboboxTriggerState {
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
+			onRefChange: (node) => {
+				this.root.triggerNode = node;
+			},
 		});
 	}
 
