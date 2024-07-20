@@ -15,7 +15,7 @@
 	const filteredFruits = $derived(
 		inputValue === ""
 			? fruits
-			: fruits.filter((fruit) => fruit.value.includes(inputValue.toLowerCase()))
+			: fruits.filter((fruit) => fruit.label.includes(inputValue.toLowerCase()))
 	);
 </script>
 

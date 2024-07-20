@@ -8,6 +8,7 @@ export { default as HiddenInput } from "./components/combobox-hidden-input.svelt
 export { default as Separator } from "../separator/components/separator.svelte";
 export { default as Arrow } from "$lib/bits/utilities/arrow/arrow.svelte";
 export { default as Trigger } from "./components/combobox-trigger.svelte";
+export { default as Portal } from "$lib/bits/utilities/portal/portal.svelte";
 
 export type {
 	ComboboxRootProps as RootProps,

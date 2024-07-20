@@ -102,6 +102,20 @@ export type ComboboxMultipleRootPropsWithoutHTML = {
 	type: "multiple";
 };
 
+export type ComboboxSingleRootProps = ComboboxBaseRootPropsWithoutHTML &
+	ComboboxSingleRootPropsWithoutHTML &
+	Without<
+		PrimitiveDivAttributes,
+		ComboboxSingleRootPropsWithoutHTML | ComboboxBaseRootPropsWithoutHTML
+	>;
+
+export type ComboboxMultipleRootProps = ComboboxBaseRootPropsWithoutHTML &
+	ComboboxMultipleRootPropsWithoutHTML &
+	Without<
+		PrimitiveDivAttributes,
+		ComboboxMultipleRootPropsWithoutHTML | ComboboxBaseRootPropsWithoutHTML
+	>;
+
 export type ComboboxRootPropsWithoutHTML = ComboboxBaseRootPropsWithoutHTML &
 	(ComboboxSingleRootPropsWithoutHTML | ComboboxMultipleRootPropsWithoutHTML);
 

@@ -22,6 +22,8 @@
 		),
 	});
 
+	const defaultValue = _value;
+
 	const mergedProps = $derived(mergeProps(restProps, inputState.props));
 </script>
 
@@ -29,6 +31,6 @@
 	{#if child}
 		{@render child({ props: mergedProps })}
 	{:else}
-		<input {...mergedProps} value={inputState.root.inputValue} />
+		<input {...mergedProps} value={defaultValue ?? inputState.root.inputValue} />
 	{/if}
 </FloatingLayer.Anchor>
