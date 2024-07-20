@@ -29,10 +29,7 @@ describe("collapsible", () => {
 	});
 
 	it("has bits data attrs", async () => {
-		const { getByTestId } = setup();
-		const root = getByTestId("root");
-		const trigger = getByTestId("trigger");
-		const content = getByTestId("content");
+		const { root, trigger, content } = setup();
 		expect(root).toHaveAttribute("data-collapsible-root");
 		expect(trigger).toHaveAttribute("data-collapsible-trigger");
 		expect(content).toHaveAttribute("data-collapsible-content");
