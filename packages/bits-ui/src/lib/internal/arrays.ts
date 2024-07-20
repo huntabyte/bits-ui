@@ -1,3 +1,6 @@
+/**
+ * Checks if two arrays are equal by comparing their values.
+ */
 export function arraysAreEqual<T extends Array<unknown>>(arr1: T, arr2: T): boolean {
 	if (arr1.length !== arr2.length) {
 		return false;

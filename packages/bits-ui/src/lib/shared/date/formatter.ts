@@ -3,6 +3,15 @@ import { hasTime, isZonedDateTime, toDate } from "./index.js";
 
 export type Formatter = ReturnType<typeof createFormatter>;
 
+const defaultPartOptions: Intl.DateTimeFormatOptions = {
+	year: "numeric",
+	month: "numeric",
+	day: "numeric",
+	hour: "numeric",
+	minute: "numeric",
+	second: "numeric",
+};
+
 /**
  * Creates a wrapper around the `DateFormatter`, which is
  * an improved version of the {@link Intl.DateTimeFormat} API,
@@ -77,15 +86,6 @@ export function createFormatter(initialLocale: string) {
 		}
 		return "AM";
 	}
-
-	const defaultPartOptions: Intl.DateTimeFormatOptions = {
-		year: "numeric",
-		month: "numeric",
-		day: "numeric",
-		hour: "numeric",
-		minute: "numeric",
-		second: "numeric",
-	};
 
 	function part(
 		dateObj: DateValue,

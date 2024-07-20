@@ -115,15 +115,9 @@ export function getPlaceholder(
 	// eslint-disable-next-line @typescript-eslint/ban-types
 	locale: SupportedLocale | (string & {})
 ) {
-	if (isPlaceholderField(field)) {
-		return getPlaceholderObj(locale)[field];
-	}
-	if (isDefaultField(field)) {
-		return value;
-	}
-	if (isTimeField(field)) {
-		return "––";
-	}
+	if (isPlaceholderField(field)) return getPlaceholderObj(locale)[field];
+	if (isDefaultField(field)) return value;
+	if (isTimeField(field)) return "––";
 	return "";
 }
 
