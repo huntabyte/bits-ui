@@ -1,152 +1,210 @@
-import type { EventHandler, HTMLInputAttributes } from "svelte/elements";
 import type {
-	ComboboxOptionProps as MeltComboboxOptionProps,
-	CreateComboboxProps as MeltComboboxProps,
-} from "@melt-ui/svelte";
-import type {
-	DOMElement,
-	Expand,
-	HTMLDivAttributes,
-	OmitFloating,
 	OnChangeFn,
-	Transition,
-} from "$lib/internal/index.js";
-import type { CustomEventHandler, Selected } from "$lib/index.js";
+	PrimitiveButtonAttributes,
+	PrimitiveDivAttributes,
+	PrimitiveInputAttributes,
+	WithChild,
+	WithChildren,
+	Without,
+} from "$lib/internal/types.js";
+import type { PortalProps } from "../utilities/portal/types.js";
+import type { PopperLayerProps } from "../utilities/popper-layer/types.js";
+import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
 
-import type {
-	ArrowProps as ComboboxArrowPropsWithoutHTML,
-	ContentProps as ComboboxContentPropsWithoutHTML,
-} from "$lib/bits/floating/_types.js";
+export type ComboboxBaseRootPropsWithoutHTML = WithChildren<{
+	/**
+	 * Whether the combobox is disabled.
+	 *
+	 * @defaultValue `false`
+	 */
+	disabled?: boolean;
 
-type WhenTrue<TrueOrFalse, IfTrue, IfFalse, IfNeither = IfTrue | IfFalse> = [TrueOrFalse] extends [
-	true,
-]
-	? IfTrue
-	: [TrueOrFalse] extends [false]
-		? IfFalse
-		: IfNeither;
+	/**
+	 * Whether the combobox is required (for form submission).
+	 *
+	 * @defaultValue `false`
+	 */
+	required?: boolean;
 
-type SelectValue<T, Multiple extends boolean> = WhenTrue<Multiple, T[] | undefined, T | undefined>;
+	/**
+	 * The name to apply to the hidden input element for form submission.
+	 * If not provided, a hidden input will not be rendered and the combobox will not be part of a form.
+	 */
+	name?: string;
 
-export type ComboboxPropsWithoutHTML<T = unknown, Multiple extends boolean = false> = Expand<
-	OmitFloating<
-		Omit<MeltComboboxProps, "selected" | "defaultSelected" | "onSelectedChange" | "multiple">
-	> & {
+	/**
+	 * Whether the combobox popover is open.
+	 *
+	 * @defaultValue `false`
+	 * @bindable
+	 */
+	open?: boolean;
+
+	/**
+	 * A callback function called when the open state changes.
+	 */
+	onOpenChange?: OnChangeFn<boolean>;
+
+	/**
+	 * Whether or not the combobox menu should loop through the items when navigating with the keyboard.
+	 *
+	 * @defaultValue `false`
+	 */
+	loop?: boolean;
+
+	/**
+	 * How to scroll the combobox items into view when navigating with the keyboard.
+	 *
+	 * @defaultValue `"nearest"`
+	 */
+	scrollAlignment?: "nearest" | "center";
+}>;
+
+export type ComboboxSingleRootPropsWithoutHTML = {
+	/**
+	 * The value of the selected combobox item.
+	 *
+	 * @bindable
+	 */
+	value?: string;
+
+	/**
+	 * A callback function called when the value changes.
+	 */
+	onValueChange?: OnChangeFn<string>;
+
+	/**
+	 * The type of combobox.
+	 *
+	 * @required
+	 */
+	type: "single";
+};
+
+export type ComboboxMultipleRootPropsWithoutHTML = {
+	/**
+	 * The value of the selected combobox item.
+	 *
+	 * @bindable
+	 */
+	value?: string[];
+
+	/**
+	 * A callback function called when the value changes.
+	 */
+	onValueChange?: OnChangeFn<string[]>;
+
+	/**
+	 * The type of combobox.
+	 *
+	 * @required
+	 */
+	type: "multiple";
+};
+
+export type ComboboxSingleRootProps = ComboboxBaseRootPropsWithoutHTML &
+	ComboboxSingleRootPropsWithoutHTML &
+	Without<
+		PrimitiveDivAttributes,
+		ComboboxSingleRootPropsWithoutHTML | ComboboxBaseRootPropsWithoutHTML
+	>;
+
+export type ComboboxMultipleRootProps = ComboboxBaseRootPropsWithoutHTML &
+	ComboboxMultipleRootPropsWithoutHTML &
+	Without<
+		PrimitiveDivAttributes,
+		ComboboxMultipleRootPropsWithoutHTML | ComboboxBaseRootPropsWithoutHTML
+	>;
+
+export type ComboboxRootPropsWithoutHTML = ComboboxBaseRootPropsWithoutHTML &
+	(ComboboxSingleRootPropsWithoutHTML | ComboboxMultipleRootPropsWithoutHTML);
+
+export type ComboboxRootProps = ComboboxRootPropsWithoutHTML;
+
+export type ComboboxInputPropsWithoutHTML = WithChild<{
+	/**
+	 * The default value of the input. This is not a reactive prop and is only used to populate
+	 * the input when the combobox is first mounted if there is already a value set.
+	 */
+	defaultValue?: string;
+}>;
+
+export type ComboboxInputProps = ComboboxInputPropsWithoutHTML &
+	Without<Omit<PrimitiveInputAttributes, "value">, ComboboxInputPropsWithoutHTML>;
+
+export type ComboboxContentPropsWithoutHTML = WithChild<PopperLayerProps>;
+
+export type ComboboxContentProps = ComboboxContentPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, ComboboxContentPropsWithoutHTML>;
+
+export type ComboboxTriggerPropsWithoutHTML = WithChild;
+
+export type ComboboxTriggerProps = ComboboxTriggerPropsWithoutHTML &
+	Without<PrimitiveButtonAttributes, ComboboxTriggerPropsWithoutHTML>;
+
+export type ComboboxItemSnippetProps = { selected: boolean; highlighted: boolean };
+
+export type ComboboxItemPropsWithoutHTML = WithChild<
+	{
 		/**
-		 * The selected value of the combobox.
-		 * You can bind this to a value to programmatically control the selected value.
+		 * The value of the item.
 		 *
-		 * @defaultValue undefined
+		 * @required
 		 */
-		selected?: SelectValue<Selected<T>, Multiple> | undefined;
+		value: string;
 
 		/**
-		 * A callback function called when the selected value changes.
+		 * The label of the item. If provided, this is the item that users will search for.
+		 * If not provided, the value will be used as the label.
 		 */
-		onSelectedChange?: OnChangeFn<SelectValue<Selected<T>, Multiple>>;
+		label?: string;
 
 		/**
-		 * The open state of the combobox menu.
-		 * You can bind this to a boolean value to programmatically control the open state.
+		 * Whether the item is disabled.
 		 *
-		 * @defaultValue false
+		 * @defaultValeu `false`
 		 */
-		open?: boolean;
+		disabled?: boolean;
 
 		/**
-		 * A callback function called when the open state changes.
+		 * A callback function called when the item is highlighted. This can be used as a
+		 * replacement for `onfocus` since we don't actually focus the item and instead
+		 * rely on the `aria-activedescendant` attribute to indicate the highlighted item.
 		 */
-		onOpenChange?: OnChangeFn<boolean>;
+		onHighlight?: () => void;
 
 		/**
-		 * Whether or not multiple values can be selected.
+		 * A callback function called when the item is unhighlighted. This can be used as a
+		 * replacement for `onblur` since we don't actually focus the item and instead
+		 * rely on the `aria-activedescendant` attribute to indicate the highlighted item.
 		 */
-		multiple?: Multiple;
-
-		/**
-		 * The value of the input.
-		 * You can bind this to a value to programmatically control the input value.
-		 *
-		 * @defaultValue ""
-		 */
-		inputValue?: string;
-
-		/**
-		 * Optionally provide an array of `Selected<T>` objects to
-		 * type the `selected` and `onSelectedChange` props.
-		 */
-		items?: Selected<T>[];
-
-		/**
-		 * Whether the input has been touched or not. You can bind to this to
-		 * handle filtering the items only when the input has been touched.
-		 *
-		 * @defaultValue false
-		 */
-		touchedInput?: boolean;
-	}
+		onUnhighlight?: () => void;
+	},
+	ComboboxItemSnippetProps
 >;
 
-export type ComboboxInputPropsWithoutHTML = DOMElement<HTMLInputElement>;
-export type ComboboxLabelPropsWithoutHTML = DOMElement<HTMLLabelElement>;
+export type ComboboxItemProps = ComboboxItemPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, ComboboxItemPropsWithoutHTML>;
 
-export type ComboboxGroupPropsWithoutHTML = DOMElement;
-export type ComboboxGroupLabelPropsWithoutHTML = DOMElement;
+export type ComboboxGroupPropsWithoutHTML = WithChild;
 
-export type ComboboxItemPropsWithoutHTML = Expand<MeltComboboxOptionProps & DOMElement>;
+export type ComboboxGroupProps = ComboboxGroupPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, ComboboxGroupPropsWithoutHTML>;
 
-export type ComboboxHiddenInputPropsWithoutHTML = DOMElement;
-export type ComboboxSeparatorPropsWithoutHTML = DOMElement;
-export type ComboboxIndicatorPropsWithoutHTML = DOMElement;
+export type ComboboxGroupLabelPropsWithoutHTML = WithChild;
 
-//
+export type ComboboxGroupLabelProps = ComboboxGroupLabelPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, ComboboxGroupLabelPropsWithoutHTML>;
 
-export type ComboboxProps<T, Multiple extends boolean = false> = ComboboxPropsWithoutHTML<
-	T,
-	Multiple
->;
+export type ComboboxSeparatorPropsWithoutHTML = WithChild;
 
-export type ComboboxContentProps<
-	T extends Transition = Transition,
-	In extends Transition = Transition,
-	Out extends Transition = Transition,
-> = ComboboxContentPropsWithoutHTML<T, In, Out> & HTMLDivAttributes;
+export type ComboboxSeparatorProps = ComboboxSeparatorPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, ComboboxSeparatorPropsWithoutHTML>;
 
-export type ComboboxInputProps = ComboboxInputPropsWithoutHTML & HTMLInputAttributes;
-export type ComboboxLabelProps = ComboboxLabelPropsWithoutHTML & HTMLDivAttributes;
+export type ComboboxPortalPropsWithoutHTML = PortalProps;
 
-export type ComboboxGroupProps = ComboboxGroupPropsWithoutHTML & HTMLDivAttributes;
-export type ComboboxGroupLabelProps = ComboboxGroupLabelPropsWithoutHTML & HTMLDivAttributes;
+export type ComboboxPortalProps = ComboboxPortalPropsWithoutHTML;
 
-export type ComboboxItemProps = ComboboxItemPropsWithoutHTML & HTMLDivAttributes;
+export type ComboboxArrowPropsWithoutHTML = ArrowPropsWithoutHTML;
 
-export type ComboboxHiddenInputProps = ComboboxHiddenInputPropsWithoutHTML & HTMLInputAttributes;
-export type ComboboxSeparatorProps = ComboboxSeparatorPropsWithoutHTML & HTMLDivAttributes;
-export type ComboboxIndicatorProps = ComboboxIndicatorPropsWithoutHTML & HTMLDivAttributes;
-export type ComboboxArrowProps = ComboboxArrowPropsWithoutHTML & HTMLDivAttributes;
-
-export type ComboboxItemEvents<T extends Element = HTMLDivElement> = {
-	click: CustomEventHandler<MouseEvent, T>;
-	pointermove: CustomEventHandler<PointerEvent, T>;
-	focusin: EventHandler<FocusEvent, T>;
-	keydown: EventHandler<KeyboardEvent, T>;
-	focusout: EventHandler<FocusEvent, T>;
-	pointerleave: EventHandler<PointerEvent, T>;
-};
-
-export type ComboboxContentEvents<T extends Element = HTMLDivElement> = {
-	pointerleave: CustomEventHandler<PointerEvent, T>;
-	keydown: EventHandler<KeyboardEvent, T>;
-};
-
-export type ComboboxGroupLabelEvents<T extends Element = HTMLSpanElement> = {
-	click: CustomEventHandler<MouseEvent, T>;
-};
-
-export type ComboboxInputEvents = {
-	keydown: CustomEventHandler<KeyboardEvent, HTMLInputElement>;
-	input: CustomEventHandler<InputEvent, HTMLInputElement>;
-	click: CustomEventHandler<ClipboardEvent, HTMLInputElement>;
-};
-
-export type { ComboboxArrowPropsWithoutHTML, ComboboxContentPropsWithoutHTML };
+export type ComboboxArrowProps = ArrowProps;

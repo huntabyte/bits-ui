@@ -4,7 +4,7 @@ import {
 	getAriaPressed,
 	getDataDisabled,
 	getDataOrientation,
-	getDisabledAttr,
+	getDisabled,
 } from "$lib/internal/attrs.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
@@ -216,7 +216,7 @@ class ToggleGroupItemState {
 				"data-value": this.#value.value,
 				"aria-pressed": this.#ariaPressed,
 				"aria-checked": this.#ariaChecked,
-				disabled: getDisabledAttr(this.#isDisabled),
+				disabled: getDisabled(this.#isDisabled),
 				[ITEM_ATTR]: "",
 				//
 				onclick: this.#onclick,

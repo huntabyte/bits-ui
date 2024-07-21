@@ -1,4 +1,4 @@
-import { getAriaPressed, getDataDisabled, getDisabledAttr } from "$lib/internal/attrs.js";
+import { getAriaPressed, getDataDisabled, getDisabled } from "$lib/internal/attrs.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type { WithRefProps } from "$lib/internal/types.js";
@@ -56,7 +56,7 @@ class ToggleRootState {
 				"data-disabled": getDataDisabled(this.#disabled.value),
 				"aria-pressed": getAriaPressed(this.pressed.value),
 				"data-state": getToggleDataState(this.pressed.value),
-				disabled: getDisabledAttr(this.#disabled.value),
+				disabled: getDisabled(this.#disabled.value),
 				onclick: this.#onclick,
 				onkeydown: this.#onkeydown,
 			}) as const

@@ -1,30 +1,21 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { getCtx } from "../ctx.js";
-	import type { InputProps } from "../index.js";
+	import { box } from "svelte-toolbelt";
+	import { useComboboxHiddenInput } from "../combobox.svelte.js";
+	import VisuallyHidden from "$lib/bits/utilities/visually-hidden/visually-hidden.svelte";
 
-	type $$Props = InputProps;
-
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
-
-	const {
-		elements: { hiddenInput },
-		options: { disabled },
-		getAttrs,
-	} = getCtx();
-
-	$: attrs = {
-		...getAttrs("input"),
-		disabled: $disabled ? true : undefined,
+	type Props = {
+		value?: string;
 	};
 
-	$: builder = $hiddenInput;
-	$: Object.assign(builder, attrs);
+	let { value = "" }: Props = $props();
+
+	const hiddenInputState = useComboboxHiddenInput({
+		value: box.with(() => value),
+	});
 </script>
 
-{#if asChild}
-	<slot {builder} />
-{:else}
-	<input bind:this={ref} use:melt={builder} {...$$restProps} />
-{/if}
+<VisuallyHidden>
+	{#if hiddenInputState.shouldRender}
+		<input {...hiddenInputState.props} />
+	{/if}
+</VisuallyHidden>

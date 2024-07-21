@@ -70,7 +70,16 @@
 	{loop}
 >
 	{#snippet popper({ props })}
-		{@const finalProps = mergeProps(props, mergedProps)}
+		{@const finalProps = mergeProps(props, {
+			style: {
+				outline: "none",
+				"--bits-menu-content-transform-origin": "var(--bits-floating-transform-origin)",
+				"--bits-menu-content-available-width": "var(--bits-floating-available-width)",
+				"--bits-menu-content-available-height": "var(--bits-floating-available-height)",
+				"--bits-menu-trigger-width": "var(--bits-floating-anchor-width)",
+				"--bits-menu-trigger-height": "var(--bits-floating-anchor-height)",
+			},
+		})}
 		{#if child}
 			{@render child({ props: finalProps })}
 		{:else}

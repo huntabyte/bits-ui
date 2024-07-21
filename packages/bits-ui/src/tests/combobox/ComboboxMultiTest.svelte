@@ -1,17 +1,18 @@
 <script lang="ts" context="module">
 	import {
 		Combobox,
-		type ComboboxSingleRootProps,
+		type ComboboxMultipleRootProps,
 		type WithoutChildren,
 		type WithoutChildrenOrChild,
 	} from "$lib/index.js";
+
 	export type Item = {
 		value: string;
 		label: string;
 		disabled?: boolean;
 	};
 
-	export type ComboboxSingleTestProps = WithoutChildren<ComboboxSingleRootProps> & {
+	export type ComboboxMultipleTestProps = WithoutChildren<ComboboxMultipleRootProps> & {
 		contentProps?: WithoutChildrenOrChild<Combobox.ContentProps>;
 		portalProps?: WithoutChildrenOrChild<Combobox.PortalProps>;
 		inputProps?: WithoutChildrenOrChild<Combobox.InputProps>;
@@ -25,13 +26,13 @@
 		contentProps,
 		portalProps,
 		items,
-		value = "",
+		value = [],
 		open = false,
 		searchValue = "",
 		inputProps,
 		onOpenChange,
 		...restProps
-	}: ComboboxSingleTestProps = $props();
+	}: ComboboxMultipleTestProps = $props();
 
 	const filteredItems = $derived(
 		searchValue === ""
@@ -86,8 +87,8 @@
 	<button data-testid="open-binding" onclick={() => (open = !open)}>
 		{open}
 	</button>
-	<button data-testid="value-binding" onclick={() => (value = "")}>
-		{#if value === ""}
+	<button data-testid="value-binding" onclick={() => (value = [])}>
+		{#if value.length === 0}
 			empty
 		{:else}
 			{value}

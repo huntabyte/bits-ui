@@ -51,17 +51,6 @@
 	const mergedProps = $derived(
 		mergeProps(restProps, contentState.props, {
 			onInteractOutsideStart: handleInteractOutsideStart,
-			style: {
-				outline: "none",
-				"--bits-context-menu-content-transform-origin":
-					"var(--bits-floating-transform-origin)",
-				"--bits-context-menu-content-available-width":
-					"var(--bits-floating-available-width)",
-				"--bits-context-menu-content-available-height":
-					"var(--bits-floating-available-height)",
-				"--bits-context-menu-trigger-width": "var(--bits-floating-anchor-width)",
-				"--bits-context-menu-trigger-height": "var(--bits-floating-anchor-height)",
-			},
 		})
 	);
 </script>
@@ -87,7 +76,18 @@
 	{loop}
 >
 	{#snippet popper({ props })}
-		{@const finalProps = mergeProps(props, mergedProps)}
+		{@const finalProps = mergeProps(props, {
+			style: {
+				"--bits-context-menu-content-transform-origin":
+					"var(--bits-floating-transform-origin)",
+				"--bits-context-menu-content-available-width":
+					"var(--bits-floating-available-width)",
+				"--bits-context-menu-content-available-height":
+					"var(--bits-floating-available-height)",
+				"--bits-context-menu-trigger-width": "var(--bits-floating-anchor-width)",
+				"--bits-context-menu-trigger-height": "var(--bits-floating-anchor-height)",
+			},
+		})}
 		{#if child}
 			{@render child({ props: finalProps })}
 		{:else}

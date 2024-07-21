@@ -1,5 +1,9 @@
-export function get<T>(valueOrGetValue: T | (() => T)): T {
-	return typeof valueOrGetValue === "function" ? (valueOrGetValue as () => T)() : valueOrGetValue;
+import type { Getter, MaybeGetter } from "svelte-toolbelt";
+
+export function get<T>(valueOrGetValue: MaybeGetter<T>): T {
+	return typeof valueOrGetValue === "function"
+		? (valueOrGetValue as Getter<T>)()
+		: valueOrGetValue;
 }
 
 export function getDPR(element: Element): number {

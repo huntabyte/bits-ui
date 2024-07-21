@@ -33,21 +33,7 @@
 		isMounted: box.with(() => isMounted),
 	});
 
-	const mergedProps = $derived(
-		mergeProps(restProps, contentState.props, {
-			style: {
-				outline: "none",
-				"--bits-dropdown-menu-content-transform-origin":
-					"var(--bits-floating-transform-origin)",
-				"--bits-dropdown-menu-content-available-width":
-					"var(--bits-floating-available-width)",
-				"--bits-dropdown-menu-content-available-height":
-					"var(--bits-floating-available-height)",
-				"--bits-dropdown-menu-trigger-width": "var(--bits-floating-anchor-width)",
-				"--bits-dropdown-menu-trigger-height": "var(--bits-floating-anchor-height)",
-			},
-		})
-	);
+	const mergedProps = $derived(mergeProps(restProps, contentState.props));
 </script>
 
 <PopperLayer
@@ -86,7 +72,18 @@
 	{loop}
 >
 	{#snippet popper({ props })}
-		{@const finalProps = mergeProps(props, mergedProps)}
+		{@const finalProps = mergeProps(props, {
+			style: {
+				"--bits-dropdown-menu-content-transform-origin":
+					"var(--bits-floating-transform-origin)",
+				"--bits-dropdown-menu-content-available-width":
+					"var(--bits-floating-available-width)",
+				"--bits-dropdown-menu-content-available-height":
+					"var(--bits-floating-available-height)",
+				"--bits-dropdown-menu-trigger-width": "var(--bits-floating-anchor-width)",
+				"--bits-dropdown-menu-trigger-height": "var(--bits-floating-anchor-height)",
+			},
+		})}
 		{#if child}
 			{@render child({ props: finalProps })}
 		{:else}

@@ -43,11 +43,12 @@
 		hideWhenDetached,
 		collisionPadding,
 	});
+
+	const mergedProps = $derived(mergeProps(restProps, floatingProps, contentState.props));
 </script>
 
 <PopperLayer
-	{...restProps}
-	{...floatingProps}
+	{...mergedProps}
 	present={contentState.root.open.value || forceMount}
 	{id}
 	onInteractOutside={(e) => {
@@ -67,7 +68,15 @@
 	preventScroll={false}
 >
 	{#snippet popper({ props })}
-		{@const mergedProps = mergeProps(restProps, contentState.props, props)}
+		{@const mergedProps = mergeProps(props, {
+			style: {
+				"--bits-tooltip-content-transform-origin": "var(--bits-floating-transform-origin)",
+				"--bits-tooltip-content-available-width": "var(--bits-floating-available-width)",
+				"--bits-tooltip-content-available-height": "var(--bits-floating-available-height)",
+				"--bits-tooltip-trigger-width": "var(--bits-floating-anchor-width)",
+				"--bits-tooltip-trigger-height": "var(--bits-floating-anchor-height)",
+			},
+		})}
 		{#if child}
 			{@render child?.({ props: mergedProps })}
 		{:else}

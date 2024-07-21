@@ -3,7 +3,7 @@
 	import type { StyleProperties } from "$lib/shared/index.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
-	let { asChild, children, child, ...restProps }: VisuallyHiddenProps = $props();
+	let { children, child, ...restProps }: VisuallyHiddenProps = $props();
 
 	const style: StyleProperties = {
 		position: "absolute",
@@ -22,7 +22,7 @@
 	const mergedProps = $derived(mergeProps(restProps, { style }));
 </script>
 
-{#if asChild}
+{#if child}
 	{@render child?.({ props: mergedProps })}
 {:else}
 	<span {...mergedProps}>

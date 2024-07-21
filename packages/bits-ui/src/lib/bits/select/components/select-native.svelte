@@ -27,9 +27,9 @@
 	 */
 </script>
 
-<VisuallyHidden asChild>
+<VisuallyHidden>
 	{#snippet child({ props })}
-		{@const mergedProps = mergeProps(props, restProps)}
+		{@const mergedProps = mergeProps(props, restProps, { "aria-hidden": "true" })}
 		<select bind:value {...mergedProps} data-value={value}>
 			{@render children?.()}
 		</select>

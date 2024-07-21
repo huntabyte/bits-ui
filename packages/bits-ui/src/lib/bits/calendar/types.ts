@@ -186,7 +186,7 @@ type CalendarBaseRootPropsWithoutHTML = {
 	disableDaysOutsideMonth?: boolean;
 };
 
-type CalendarSingleRootPropsWithoutHTML = {
+export type CalendarSingleRootPropsWithoutHTML = {
 	/**
 	 * The type of calendar. If set to `'single'`, the calendar will
 	 * only allow a single date to be selected. If set to `'multiple'`,
@@ -205,7 +205,7 @@ type CalendarSingleRootPropsWithoutHTML = {
 	onValueChange?: OnChangeFn<DateValue | undefined>;
 };
 
-type CalendarMultipleRootPropsWithoutHTML = {
+export type CalendarMultipleRootPropsWithoutHTML = {
 	/**
 	 * The type of calendar. If set to `'single'`, the calendar will
 	 * only allow a single date to be selected. If set to `'multiple'`,
@@ -223,6 +223,18 @@ type CalendarMultipleRootPropsWithoutHTML = {
 	 */
 	onValueChange?: OnChangeFn<DateValue[]>;
 };
+
+export type _CalendarSingleRootPropsWithoutHTML = CalendarBaseRootPropsWithoutHTML &
+	CalendarSingleRootPropsWithoutHTML;
+
+export type CalendarSingleRootProps = _CalendarSingleRootPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, _CalendarSingleRootPropsWithoutHTML>;
+
+export type _CalendarMultipleRootPropsWithoutHTML = CalendarBaseRootPropsWithoutHTML &
+	CalendarMultipleRootPropsWithoutHTML;
+
+export type CalendarMultipleRootProps = _CalendarMultipleRootPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, _CalendarMultipleRootPropsWithoutHTML>;
 
 export type CalendarRootPropsWithoutHTML = CalendarBaseRootPropsWithoutHTML &
 	(

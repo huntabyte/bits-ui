@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { GroupLabelProps } from "../index.js";
-	import { useComboboxGroupLabel } from "../combobox.svelte.js";
+	import { useComboboxTrigger } from "../combobox.svelte.js";
+	import type { TriggerProps } from "../index.js";
 	import { useId } from "$lib/internal/useId.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
@@ -11,9 +11,9 @@
 		child,
 		children,
 		...restProps
-	}: GroupLabelProps = $props();
+	}: TriggerProps = $props();
 
-	const groupLabelState = useComboboxGroupLabel({
+	const triggerState = useComboboxTrigger({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,
@@ -21,13 +21,13 @@
 		),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, groupLabelState.props));
+	const mergedProps = $derived(mergeProps(restProps, triggerState.props));
 </script>
 
 {#if child}
-	{@render child?.({ props: mergedProps })}
+	{@render child({ props: mergedProps })}
 {:else}
-	<div {...mergedProps}>
+	<button {...mergedProps}>
 		{@render children?.()}
-	</div>
+	</button>
 {/if}

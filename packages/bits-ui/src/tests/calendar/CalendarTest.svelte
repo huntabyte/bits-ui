@@ -1,18 +1,15 @@
 <script lang="ts" context="module">
-	export type CalendarSingleTestProps = Omit<
-		WithoutChildrenOrChild<Calendar.RootProps>,
-		"value" | "onValueChange"
-	> & {
-		value?: DateValue | undefined;
-		onValueChange?: (value: DateValue | undefined) => void;
-	};
+	import { Calendar, type CalendarSingleRootProps } from "$lib/index.js";
+	export type CalendarSingleTestProps = CalendarSingleRootProps;
 </script>
 
 <script lang="ts">
-	import { Calendar, type WithoutChildrenOrChild } from "$lib/index.js";
-	import type { DateValue } from "@internationalized/date";
-
-	let { placeholder, value, type = "single", ...restProps }: CalendarSingleTestProps = $props();
+	let {
+		placeholder,
+		value,
+		type: _type = "single",
+		...restProps
+	}: CalendarSingleTestProps = $props();
 
 	function changeValue(field: "day" | "month" | "year") {
 		if (value) {
