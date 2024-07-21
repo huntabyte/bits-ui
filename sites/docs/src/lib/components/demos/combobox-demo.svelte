@@ -8,6 +8,19 @@
 		{ value: "apple", label: "Apple" },
 		{ value: "pineapple", label: "Pineapple" },
 		{ value: "orange", label: "Orange" },
+		{ value: "grape", label: "Grape" },
+		{ value: "strawberry", label: "Strawberry" },
+		{ value: "banana", label: "Banana" },
+		{ value: "kiwi", label: "Kiwi" },
+		{ value: "peach", label: "Peach" },
+		{ value: "cherry", label: "Cherry" },
+		{ value: "blueberry", label: "Blueberry" },
+		{ value: "raspberry", label: "Raspberry" },
+		{ value: "blackberry", label: "Blackberry" },
+		{ value: "plum", label: "Plum" },
+		{ value: "apricot", label: "Apricot" },
+		{ value: "pear", label: "Pear" },
+		{ value: "grapefruit", label: "Grapefruit" },
 	];
 
 	let searchValue = $state("");
@@ -42,28 +55,31 @@
 			<CaretUpDown class="size-6 text-muted-foreground" />
 		</Combobox.Trigger>
 	</div>
-
-	<Combobox.Content
-		class="w-[var(--bits-combobox-trigger-width)] min-w-[var(--bits-combobox-trigger-width)] rounded-xl border border-muted bg-background px-1 py-3 shadow-popover outline-none"
-		sideOffset={10}
-	>
-		{#each filteredFruits as fruit, i (i + fruit.value)}
-			<Combobox.Item
-				class="flex h-10 w-full select-none items-center rounded-button py-3 pl-5 pr-1.5 text-sm capitalize outline-none duration-75 data-[highlighted]:bg-muted"
-				value={fruit.value}
-				label={fruit.label}
-			>
-				{#snippet children({ selected })}
-					{fruit.label}
-					{#if selected}
-						<div class="ml-auto">
-							<Check />
-						</div>
-					{/if}
-				{/snippet}
-			</Combobox.Item>
-		{:else}
-			<span class="block px-5 py-2 text-sm text-muted-foreground"> No results found </span>
-		{/each}
-	</Combobox.Content>
+	<Combobox.Portal>
+		<Combobox.Content
+			class="max-h-96 w-[var(--bits-combobox-trigger-width)] min-w-[var(--bits-combobox-trigger-width)] overflow-y-auto rounded-xl border border-muted bg-background px-1 py-3 shadow-popover outline-none"
+			sideOffset={10}
+		>
+			{#each filteredFruits as fruit, i (i + fruit.value)}
+				<Combobox.Item
+					class="flex h-10 w-full select-none items-center rounded-button py-3 pl-5 pr-1.5 text-sm capitalize outline-none duration-75 data-[highlighted]:bg-muted"
+					value={fruit.value}
+					label={fruit.label}
+				>
+					{#snippet children({ selected })}
+						{fruit.label}
+						{#if selected}
+							<div class="ml-auto">
+								<Check />
+							</div>
+						{/if}
+					{/snippet}
+				</Combobox.Item>
+			{:else}
+				<span class="block px-5 py-2 text-sm text-muted-foreground">
+					No results found
+				</span>
+			{/each}
+		</Combobox.Content>
+	</Combobox.Portal>
 </Combobox.Root>

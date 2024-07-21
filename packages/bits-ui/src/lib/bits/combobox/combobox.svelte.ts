@@ -85,6 +85,9 @@ class ComboboxBaseRootState {
 
 	setHighlightedNode = (node: HTMLElement | null) => {
 		this.highlightedNode = node;
+		if (node) {
+			node.scrollIntoView({ block: this.scrollAlignment.value });
+		}
 	};
 
 	getCandidateNodes = (): HTMLElement[] => {
@@ -329,11 +332,9 @@ class ComboboxInputState {
 				if (e.key === kbd.ARROW_DOWN) {
 					const firstCandidate = candidateNodes[0]!;
 					this.root.setHighlightedNode(firstCandidate);
-					firstCandidate.scrollIntoView({ block: this.root.scrollAlignment.value });
 				} else if (e.key === kbd.ARROW_UP) {
 					const lastCandidate = candidateNodes[candidateNodes.length - 1]!;
 					this.root.setHighlightedNode(lastCandidate);
-					lastCandidate.scrollIntoView({ block: this.root.scrollAlignment.value });
 				}
 			});
 			return;
@@ -386,7 +387,6 @@ class ComboboxInputState {
 			}
 			if (!nextItem) return;
 			this.root.setHighlightedNode(nextItem);
-			nextItem.scrollIntoView({ block: scrollAlignment });
 			return;
 		}
 

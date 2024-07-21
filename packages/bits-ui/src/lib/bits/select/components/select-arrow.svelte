@@ -16,7 +16,7 @@
 		),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, arrowState.props as any));
+	const mergedProps = $derived(mergeProps(restProps, arrowState.props));
 </script>
 
 <FloatingLayer.Arrow {...mergedProps} />
