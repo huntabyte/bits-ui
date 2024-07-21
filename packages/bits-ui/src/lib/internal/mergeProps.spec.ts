@@ -68,6 +68,34 @@ describe("mergeProps", () => {
 		expect(result).toEqual({ style: "color: red; font-size: 16px;" });
 	});
 
+	it("should merge one class string with a style object", () => {
+		const props1 = { style: "color: red;" };
+		const props2 = { style: { fontSize: "16px", pointerEvents: "auto" } };
+		const props3 = { style: "pointer-events: none;" };
+		const result = mergeProps(props1, props2, props3);
+		expect(result).toEqual({ style: "color: red; font-size: 16px; pointer-events: none;" });
+	});
+
+	it("should merge multiple css variables", () => {
+		const props1 = {
+			style: {
+				"--foo": "red",
+				"--bar": "blue",
+			},
+		};
+
+		const props2 = {
+			style: {
+				"--foo": "green",
+				"--baz": "yellow",
+			},
+		};
+
+		const result = mergeProps(props1, props2);
+
+		expect(result.style).toEqual("--foo: green; --bar: blue; --baz: yellow;");
+	});
+
 	it("should merge style strings", () => {
 		const props1 = { style: "color: red;" };
 		const props2 = { style: "font-size: 16px;" };

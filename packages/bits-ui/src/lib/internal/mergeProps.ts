@@ -97,7 +97,7 @@ export function mergeProps<T extends PropsArg[]>(
 
 	// convert style object to string
 	if ("style" in result && typeof result.style === "object") {
-		result.style = styleToString(result.style as StyleProperties);
+		result.style = styleToString(result.style as StyleProperties).replaceAll("\n", " ");
 	}
 
 	// handle weird svelte bug where `hidden` is not removed when set to `false`

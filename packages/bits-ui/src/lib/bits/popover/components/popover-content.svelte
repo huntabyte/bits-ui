@@ -54,7 +54,15 @@
 	{forceMount}
 >
 	{#snippet popper({ props })}
-		{@const finalProps = mergeProps(props, mergedProps)}
+		{@const finalProps = mergeProps(props, {
+			style: {
+				"--bits-popover-content-transform-origin": "var(--bits-floating-transform-origin)",
+				"--bits-popover-content-available-width": "var(--bits-floating-available-width)",
+				"--bits-popover-content-available-height": "var(--bits-floating-available-height)",
+				"--bits-popover-trigger-width": "var(--bits-floating-anchor-width)",
+				"--bits-popover-trigger-height": "var(--bits-floating-anchor-height)",
+			},
+		})}
 		{#if child}
 			{@render child?.({ props: finalProps })}
 		{:else}

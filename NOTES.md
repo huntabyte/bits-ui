@@ -33,4 +33,4 @@ Should we embrace the [ValidityState](https://developer.mozilla.org/en-US/docs/W
 
 ---
 
-Need to ensure that the `--bits-floating-X` CSS variables are set correctly. Only the combobox has them set correctly atm.
+Need to determine how we'll handle users being able to cancel the `onEscapeKeydown` event.
