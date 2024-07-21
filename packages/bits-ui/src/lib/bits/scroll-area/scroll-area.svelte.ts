@@ -20,12 +20,12 @@ import { untrack } from "svelte";
 import { createContext } from "$lib/internal/createContext.js";
 import { box } from "svelte-toolbelt";
 import { afterTick } from "$lib/internal/afterTick.js";
-import { sleep } from "$lib/internal/sleep.js";
 
 const SCROLL_AREA_ROOT_ATTR = "data-scroll-area-root";
 const SCROLL_AREA_VIEWPORT_ATTR = "data-scroll-area-viewport";
 const SCROLL_AREA_CORNER_ATTR = "data-scroll-area-corner";
 const SCROLL_AREA_THUMB_ATTR = "data-scroll-area-thumb";
+const SCROLL_AREA_SCROLLBAR_ATTR = "data-scroll-area-scrollbar";
 
 type Sizes = {
 	content: number;
@@ -220,16 +220,13 @@ class ScrollAreaScrollbarHoverState {
 			let hideTimer = 0;
 			if (scrollAreaNode) {
 				const handlePointerEnter = () => {
-					console.log("pointer enter");
 					window.clearTimeout(hideTimer);
 					untrack(() => (this.isVisible = true));
 				};
 
 				const handlePointerLeave = () => {
-					console.log("pointer leave");
 					if (hideTimer) window.clearTimeout(hideTimer);
 					hideTimer = window.setTimeout(() => {
-						console.log("setting is visible to false");
 						untrack(() => {
 							this.scrollbar.hasThumb = false;
 							this.isVisible = false;
@@ -502,12 +499,24 @@ class ScrollAreaScrollbarXState implements ScrollbarAxisState {
 
 		$effect(() => {
 			if (!this.ref.value) return;
-			this.computedStyle = getComputedStyle(this.ref.value!);
+			if (this.#mounted.value) {
+				afterTick(() => {
+					this.computedStyle = getComputedStyle(this.ref.value!);
+				});
+			}
+		});
+
+		$effect(() => {
+			console.log("thumb size", this.thumbSize);
 		});
 	}
 
 	onThumbPointerDown = (pointerPos: { x: number; y: number }) => {
 		this.scrollbarVis.onThumbPointerDown(pointerPos.x);
+	};
+
+	onDragScroll = (pointerPos: { x: number; y: number }) => {
+		this.scrollbarVis.xOnDragScroll(pointerPos.x);
 	};
 
 	onThumbPointerUp = () => {
@@ -516,10 +525,6 @@ class ScrollAreaScrollbarXState implements ScrollbarAxisState {
 
 	onThumbPositionChange = () => {
 		this.scrollbarVis.xOnThumbPositionChange();
-	};
-
-	onDragScroll = (pointerPos: { x: number; y: number }) => {
-		this.scrollbarVis.xOnDragScroll(pointerPos.x);
 	};
 
 	onWheelScroll = (e: WheelEvent, maxScrollPos: number) => {
@@ -545,6 +550,11 @@ class ScrollAreaScrollbarXState implements ScrollbarAxisState {
 		});
 	};
 
+	thumbSize = $derived.by(() => {
+		const ts = getThumbSize(this.scrollbarVis.sizes);
+		return ts;
+	});
+
 	props = $derived.by(
 		() =>
 			({
@@ -556,7 +566,7 @@ class ScrollAreaScrollbarXState implements ScrollbarAxisState {
 						this.root.dir.value === "rtl" ? "var(--bits-scroll-area-corner-width)" : 0,
 					right:
 						this.root.dir.value === "ltr" ? "var(--bits-scroll-area-corner-width)" : 0,
-					"--bits-scroll-area-thumb-width": `${getThumbSize(this.scrollbarVis.sizes)}px`,
+					"--bits-scroll-area-thumb-width": `${this.thumbSize}px`,
 				},
 			}) as const
 	);
@@ -568,8 +578,8 @@ class ScrollAreaScrollbarXState implements ScrollbarAxisState {
 
 class ScrollAreaScrollbarYState implements ScrollbarAxisState {
 	#id: WithRefProps["id"];
-	ref: WithRefProps["ref"];
 	#mounted: ScrollbarAxisStateProps["mounted"];
+	ref: WithRefProps["ref"];
 	scrollbarVis: ScrollAreaScrollbarVisibleState;
 	root: ScrollAreaRootState;
 	computedStyle = $state<CSSStyleDeclaration>();
@@ -627,6 +637,7 @@ class ScrollAreaScrollbarYState implements ScrollbarAxisState {
 	};
 
 	onResize = () => {
+		console.log("on resize");
 		if (!(this.ref.value && this.root.viewportNode && this.computedStyle)) return;
 		this.scrollbarVis.setSizes({
 			content: this.root.viewportNode.scrollHeight,
@@ -640,8 +651,7 @@ class ScrollAreaScrollbarYState implements ScrollbarAxisState {
 	};
 
 	thumbSize = $derived.by(() => {
-		const ts = getThumbSize(this.scrollbarVis.sizes);
-		return ts;
+		return getThumbSize(this.scrollbarVis.sizes);
 	});
 
 	props = $derived.by(
@@ -760,6 +770,7 @@ class ScrollAreaScrollbarSharedState {
 				position: "absolute",
 				...this.scrollbarState.props.style,
 			},
+			[SCROLL_AREA_SCROLLBAR_ATTR]: "",
 			onpointerdown: this.#onpointerdown,
 			onpointermove: this.#onpointermove,
 			onpointerup: this.#onpointerup,

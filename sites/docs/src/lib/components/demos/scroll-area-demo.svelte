@@ -5,7 +5,7 @@
 	let type = $state<"auto" | "hover" | "scroll" | "always">("auto");
 	let height = $state(200);
 	let width = $state(250);
-	let wrapText = $state(true);
+	let wrapText = $state(false);
 </script>
 
 <div class="flex w-[500px] max-w-[500px] flex-col gap-4">
@@ -71,9 +71,9 @@
 			class="flex h-2.5 touch-none select-none rounded-full border-t border-t-transparent bg-muted p-px transition-all duration-200 hover:h-3 hover:bg-dark-10 data-[state=visible]:animate-in data-[state=hidden]:animate-out data-[state=hidden]:fade-out-0 data-[state=visible]:fade-in-0"
 		>
 			<ScrollArea.Thumb
-				class="flex-1 rounded-full bg-muted-foreground data-[state=visible]:animate-in data-[state=hidden]:animate-out data-[state=hidden]:fade-out-0 data-[state=visible]:fade-in-0"
+				class="rounded-full bg-muted-foreground data-[state=visible]:animate-in data-[state=hidden]:animate-out data-[state=hidden]:fade-out-0 data-[state=visible]:fade-in-0"
 			/>
 		</ScrollArea.Scrollbar>
-		<ScrollArea.Corner />
+		<!-- <ScrollArea.Corner /> -->
 	</ScrollArea.Root>
 </div>
