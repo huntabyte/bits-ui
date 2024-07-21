@@ -1,3 +1,8 @@
+/**
+ * This logic is adapted from Radix UI's Select component.
+ * https://github.com/radix-ui/primitives/blob/main/packages/react/select/src/Select.tsx
+ * Credit to the Radix UI team for the original implementation.
+ */
 import { type ReadableBox, type WritableBox, box } from "svelte-toolbelt";
 import { SvelteMap } from "svelte/reactivity";
 import { untrack } from "svelte";

@@ -1,3 +1,10 @@
+/**
+ * This logic is adapted from Radix UI's ScrollArea component.
+ * https://github.com/radix-ui/primitives/blob/main/packages/react/scroll-area/src/ScrollArea.tsx
+ * Credit to Jenna Smith (@jjenzz) for the original implementation.
+ * Incredible thought must have went into solving all the intricacies of this component.
+ */
+
 import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import { executeCallbacks } from "$lib/internal/callbacks.js";
 import { addEventListener } from "$lib/internal/events.js";
