@@ -32,3 +32,15 @@
 		<slot {builder} />
 	</div>
 {/if}
+
+<style>
+	/* Hide scrollbars cross browser and enable momentum scroll for touch devices */
+	:global([data-scroll-area-viewport]) {
+		scrollbar-width: none !important;
+		-ms-overflow-style: none !important;
+		-webkit-overflow-scrolling: touch !important;
+	}
+	:global([data-scroll-area-viewport])::-webkit-scrollbar {
+		display: none !important;
+	}
+</style>
