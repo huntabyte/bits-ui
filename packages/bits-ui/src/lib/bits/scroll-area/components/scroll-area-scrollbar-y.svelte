@@ -1,34 +1,14 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import type { ScrollbarProps } from "../index.js";
-	import { getCtx } from "../ctx.js";
+	import { useScrollAreaScrollbarY } from "../scroll-area.svelte.js";
+	import type { _ScrollbarStubProps } from "../types.js";
+	import ScrollAreaScrollbarShared from "./scroll-area-scrollbar-shared.svelte";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
 
-	type $$Props = Omit<ScrollbarProps, "orientation">;
+	let { ...restProps }: _ScrollbarStubProps = $props();
 
-	export let asChild: $$Props["asChild"] = false;
-	export let ref: $$Props["el"] = undefined;
+	const scrollbarXState = useScrollAreaScrollbarY();
 
-	const {
-		elements: { scrollbarY },
-		getAttrs,
-	} = getCtx();
-
-	const bitsAttrs = getAttrs("scrollbar-y");
-
-	$: attrs = {
-		...$$restProps,
-		...bitsAttrs,
-	};
-
-	$: builder = $scrollbarY;
-
-	$: Object.assign(builder, attrs);
+	const mergedProps = $derived(mergeProps(restProps, scrollbarXState.props));
 </script>
 
-{#if asChild}
-	<slot {builder} />
-{:else}
-	<div use:melt={builder} bind:this={ref}>
-		<slot {builder} />
-	</div>
-{/if}
+<ScrollAreaScrollbarShared {...mergedProps} />

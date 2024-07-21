@@ -1,20 +1,22 @@
 <script lang="ts">
 	import type { ThumbProps } from "../index.js";
-	import { getScrollbarOrientation } from "../ctx.js";
-	import ScrollAreaThumbY from "./scroll-area-thumb-y.svelte";
-	import ScrollAreaThumbX from "./scroll-area-thumb-x.svelte";
+	import { getScrollAreaScrollbarVisibleContext } from "../scroll-area.svelte.js";
+	import ScrollAreaThumbImpl from "./scroll-area-thumb-impl.svelte";
+	import { useId } from "$lib/internal/useId.svelte.js";
+	import { PresenceLayer } from "$lib/bits/utilities/presence-layer/index.js";
 
-	type $$Props = ThumbProps;
+	let {
+		id = useId(),
+		ref = $bindable(null),
+		forceMount = false,
+		...restProps
+	}: ThumbProps = $props();
 
-	const orientation = getScrollbarOrientation();
+	const scrollbarState = getScrollAreaScrollbarVisibleContext();
 </script>
 
-{#if $orientation === "vertical"}
-	<ScrollAreaThumbY {...$$restProps} let:builder>
-		<slot {builder} />
-	</ScrollAreaThumbY>
-{:else}
-	<ScrollAreaThumbX {...$$restProps} let:builder>
-		<slot {builder} />
-	</ScrollAreaThumbX>
-{/if}
+<PresenceLayer present={forceMount || scrollbarState.hasThumb} {...restProps} {id}>
+	{#snippet presence()}
+		<ScrollAreaThumbImpl {...restProps} {id} bind:ref />
+	{/snippet}
+</PresenceLayer>

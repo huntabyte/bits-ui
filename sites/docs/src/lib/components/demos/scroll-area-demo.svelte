@@ -7,21 +7,19 @@
 >
 	<ScrollArea.Root class="relative h-[205px] px-4">
 		<ScrollArea.Viewport class="h-full w-full">
-			<ScrollArea.Content>
-				<h4
-					class="mb-4 mt-2 text-[20px] font-semibold leading-none tracking-[-0.01em] text-foreground"
-				>
-					Scroll Area
-				</h4>
-				<p class="text-sm leading-5 text-foreground-alt">
-					Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dignissimos impedit
-					rem, repellat deserunt ducimus quasi nisi voluptatem cumque aliquid esse ea
-					deleniti eveniet incidunt! Deserunt minus laborum accusamus iusto dolorum. Lorem
-					ipsum dolor sit, amet consectetur adipisicing elit. Blanditiis officiis error
-					minima eos fugit voluptate excepturi eveniet dolore et, ratione impedit
-					consequuntur dolorem hic quae corrupti autem? Dolorem, sit voluptatum.
-				</p>
-			</ScrollArea.Content>
+			<h4
+				class="mb-4 mt-2 text-[20px] font-semibold leading-none tracking-[-0.01em] text-foreground"
+			>
+				Scroll Area
+			</h4>
+			<p class="text-sm leading-5 text-foreground-alt">
+				Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dignissimos impedit rem,
+				repellat deserunt ducimus quasi nisi voluptatem cumque aliquid esse ea deleniti
+				eveniet incidunt! Deserunt minus laborum accusamus iusto dolorum. Lorem ipsum dolor
+				sit, amet consectetur adipisicing elit. Blanditiis officiis error minima eos fugit
+				voluptate excepturi eveniet dolore et, ratione impedit consequuntur dolorem hic quae
+				corrupti autem? Dolorem, sit voluptatum.
+			</p>
 		</ScrollArea.Viewport>
 		<ScrollArea.Scrollbar
 			orientation="vertical"

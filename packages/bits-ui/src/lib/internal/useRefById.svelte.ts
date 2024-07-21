@@ -49,4 +49,11 @@ export function useRefById({
 			onRefChange(ref.value);
 		});
 	});
+
+	$effect(() => {
+		return () => {
+			ref.value = null;
+			onRefChange(null);
+		};
+	});
 }
