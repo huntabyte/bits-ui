@@ -96,6 +96,7 @@ async function openSingle(
 	searchValue?: string
 ) {
 	const returned = setupSingle(props);
+
 	const { queryByTestId, getByTestId, user, input, trigger } = returned;
 	expect(queryByTestId("content")).toBeNull();
 	if (openWith === "click") {
@@ -108,8 +109,12 @@ async function openSingle(
 	}
 	await waitFor(() => expect(queryByTestId("content")).not.toBeNull());
 	const content = getByTestId("content");
+	const group = returned.getByTestId("group");
+	const groupLabel = returned.getByTestId("group-label");
 	return {
 		...returned,
+		group,
+		groupLabel,
 		content,
 	};
 }
@@ -152,6 +157,12 @@ describe("combobox - single", () => {
 
 	it.each(OPEN_KEYS)("opens on %s keydown", async (key) => {
 		await openSingle({}, key);
+	});
+
+	it("applies the appropriate `aria-labelledby` attribute to the group", async () => {
+		const { group, groupLabel } = await openSingle();
+
+		expect(group).toHaveAttribute("aria-labelledby", groupLabel.id);
 	});
 
 	it("selects item with the enter key", async () => {
