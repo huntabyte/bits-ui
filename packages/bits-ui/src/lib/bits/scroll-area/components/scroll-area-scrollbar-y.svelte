@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { IsMounted } from "runed";
+	import { box } from "svelte-toolbelt";
 	import { useScrollAreaScrollbarY } from "../scroll-area.svelte.js";
 	import type { _ScrollbarStubProps } from "../types.js";
 	import ScrollAreaScrollbarShared from "./scroll-area-scrollbar-shared.svelte";
@@ -6,9 +8,13 @@
 
 	let { ...restProps }: _ScrollbarStubProps = $props();
 
-	const scrollbarXState = useScrollAreaScrollbarY();
+	const isMounted = new IsMounted();
 
-	const mergedProps = $derived(mergeProps(restProps, scrollbarXState.props));
+	const scrollbarYState = useScrollAreaScrollbarY({
+		mounted: box.with(() => isMounted.current),
+	});
+
+	const mergedProps = $derived(mergeProps(restProps, scrollbarYState.props));
 </script>
 
 <ScrollAreaScrollbarShared {...mergedProps} />

@@ -5,7 +5,7 @@
 <div
 	class="max-w-[250px] rounded-[10px] border border-dark-10 bg-background-alt px-2 py-4 shadow-card"
 >
-	<ScrollArea.Root class="relative h-[205px] px-4">
+	<ScrollArea.Root class="relative h-[205px] overflow-hidden px-4" type="always">
 		<ScrollArea.Viewport class="h-full w-full">
 			<h4
 				class="mb-4 mt-2 text-[20px] font-semibold leading-none tracking-[-0.01em] text-foreground"
@@ -23,10 +23,10 @@
 		</ScrollArea.Viewport>
 		<ScrollArea.Scrollbar
 			orientation="vertical"
-			class="flex h-full w-2.5 touch-none select-none rounded-full border-l border-l-transparent p-px transition-all hover:w-3 hover:bg-dark-10"
+			class="flex w-2.5 touch-none select-none rounded-full border-l border-l-transparent p-px transition-all hover:w-3 hover:bg-dark-10"
 		>
 			<ScrollArea.Thumb
-				class="relative flex-1 rounded-full bg-muted-foreground opacity-40 transition-opacity hover:opacity-100"
+				class="flex-1 rounded-full bg-muted-foreground opacity-40 transition-opacity hover:opacity-100"
 			/>
 		</ScrollArea.Scrollbar>
 		<ScrollArea.Corner />
