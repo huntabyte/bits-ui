@@ -13,7 +13,8 @@ import { createContext } from "$lib/internal/createContext.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
-import { onDestroy, tick, untrack } from "svelte";
+import { Previous } from "runed";
+import { onDestroy } from "svelte";
 
 // prettier-ignore
 export const INTERACTION_KEYS = [kbd.ARROW_LEFT, kbd.ESCAPE, kbd.ARROW_RIGHT, kbd.SHIFT, kbd.CAPS_LOCK, kbd.CONTROL, kbd.ALT, kbd.META, kbd.ENTER, kbd.F1, kbd.F2, kbd.F3, kbd.F4, kbd.F5, kbd.F6, kbd.F7, kbd.F8, kbd.F9, kbd.F10, kbd.F11, kbd.F12];
@@ -75,9 +76,9 @@ class ComboboxBaseRootState {
 		this.open = props.open;
 		this.scrollAlignment = props.scrollAlignment;
 
-		$effect(() => {
+		$effect.pre(() => {
 			if (!this.open.value) {
-				untrack(() => (this.highlightedNode = null));
+				this.setHighlightedNode(null);
 			}
 		});
 	}
@@ -96,13 +97,10 @@ class ComboboxBaseRootState {
 	};
 
 	setHighlightedToFirstCandidate = () => {
-		console.log("setting to first candidate");
-		afterTick(() => {
-			this.setHighlightedNode(null);
-			const candidateNodes = this.getCandidateNodes();
-			if (!candidateNodes.length) return;
-			this.setHighlightedNode(candidateNodes[0]!);
-		});
+		this.setHighlightedNode(null);
+		const candidateNodes = this.getCandidateNodes();
+		if (!candidateNodes.length) return;
+		this.setHighlightedNode(candidateNodes[0]!);
 	};
 
 	getNodeByValue = (value: string): HTMLElement | null => {
@@ -123,8 +121,8 @@ class ComboboxBaseRootState {
 	};
 
 	closeMenu = () => {
+		this.setHighlightedNode(null);
 		this.setOpen(false);
-		this.highlightedNode = null;
 	};
 
 	toggleMenu = () => {
@@ -147,8 +145,16 @@ class ComboboxSingleRootState extends ComboboxBaseRootState {
 		this.value = props.value;
 
 		$effect(() => {
+			if (!this.open.value && this.highlightedNode) {
+				this.setHighlightedNode(null);
+			}
+		});
+
+		$effect(() => {
 			if (!this.open.value) return;
-			this.#setInitialHighlightedNode();
+			afterTick(() => {
+				this.#setInitialHighlightedNode();
+			});
 		});
 	}
 
@@ -166,14 +172,14 @@ class ComboboxSingleRootState extends ComboboxBaseRootState {
 		if (this.value.value !== "") {
 			const node = this.getNodeByValue(this.value.value);
 			if (node) {
-				this.highlightedNode = node;
+				this.setHighlightedNode(node);
 				return;
 			}
 		}
 		// if no value is set, we want to highlight the first item
 		const firstCandidate = this.getCandidateNodes()[0];
 		if (!firstCandidate) return;
-		this.highlightedNode = firstCandidate;
+		this.setHighlightedNode(firstCandidate);
 	};
 
 	createInput(props: ComboboxInputStateProps) {
@@ -218,7 +224,9 @@ class ComboboxMultipleRootState extends ComboboxBaseRootState {
 		$effect(() => {
 			if (!this.open.value) return;
 			afterTick(() => {
-				this.#setInitialHighlightedNode();
+				if (!this.highlightedNode) {
+					this.#setInitialHighlightedNode();
+				}
 			});
 		});
 	}
@@ -241,14 +249,14 @@ class ComboboxMultipleRootState extends ComboboxBaseRootState {
 		if (this.value.value.length && this.value.value[0] !== "") {
 			const node = this.getNodeByValue(this.value.value[0]!);
 			if (node) {
-				this.highlightedNode = node;
+				this.setHighlightedNode(node);
 				return;
 			}
 		}
 		// if no value is set, we want to highlight the first item
 		const firstCandidate = this.getCandidateNodes()[0];
 		if (!firstCandidate) return;
-		this.highlightedNode = firstCandidate;
+		this.setHighlightedNode(firstCandidate);
 	};
 
 	createInput(props: ComboboxInputStateProps) {
@@ -300,6 +308,7 @@ class ComboboxInputState {
 	}
 
 	#onkeydown = async (e: KeyboardEvent) => {
+		if (e.key === kbd.ESCAPE) return;
 		const open = this.root.open.value;
 		const inputValue = this.root.inputValue;
 
@@ -310,21 +319,23 @@ class ComboboxInputState {
 			if (e.key === kbd.TAB) return;
 			if (e.key === kbd.BACKSPACE && inputValue === "") return;
 			this.root.openMenu();
+			// we need to wait for a tick after the menu opens to ensure the highlighted nodes are
+			// set correctly.
+			afterTick(() => {
+				if (this.root.hasValue) return;
+				const candidateNodes = this.root.getCandidateNodes();
+				if (!candidateNodes.length) return;
 
-			if (this.root.hasValue) return;
-
-			const candidateNodes = this.root.getCandidateNodes();
-			if (!candidateNodes.length) return;
-
-			if (e.key === kbd.ARROW_DOWN) {
-				const firstCandidate = candidateNodes[0]!;
-				this.root.setHighlightedNode(firstCandidate);
-				firstCandidate.scrollIntoView({ block: this.root.scrollAlignment.value });
-			} else if (e.key === kbd.ARROW_UP) {
-				const lastCandidate = candidateNodes[candidateNodes.length - 1]!;
-				this.root.setHighlightedNode(lastCandidate);
-				lastCandidate.scrollIntoView({ block: this.root.scrollAlignment.value });
-			}
+				if (e.key === kbd.ARROW_DOWN) {
+					const firstCandidate = candidateNodes[0]!;
+					this.root.setHighlightedNode(firstCandidate);
+					firstCandidate.scrollIntoView({ block: this.root.scrollAlignment.value });
+				} else if (e.key === kbd.ARROW_UP) {
+					const lastCandidate = candidateNodes[candidateNodes.length - 1]!;
+					this.root.setHighlightedNode(lastCandidate);
+					lastCandidate.scrollIntoView({ block: this.root.scrollAlignment.value });
+				}
+			});
 			return;
 		}
 
@@ -380,6 +391,9 @@ class ComboboxInputState {
 		}
 
 		if (INTERACTION_KEYS.includes(e.key)) return;
+		if (!this.root.highlightedNode) {
+			this.root.setHighlightedToFirstCandidate();
+		}
 		// this.root.setHighlightedToFirstCandidate();
 	};
 
@@ -500,7 +514,13 @@ class ComboboxContentState {
 }
 
 type ComboboxItemStateProps = WithRefProps<
-	ReadableBoxedValues<{ value: string; disabled: boolean; label: string }>
+	ReadableBoxedValues<{
+		value: string;
+		disabled: boolean;
+		label: string;
+		onHighlight: () => void;
+		onUnhighlight: () => void;
+	}>
 >;
 
 class ComboboxItemState {
@@ -509,17 +529,31 @@ class ComboboxItemState {
 	root: ComboboxRootState;
 	value: ComboboxItemStateProps["value"];
 	label: ComboboxItemStateProps["label"];
+	onHighlight: ComboboxItemStateProps["onHighlight"];
+	onUnhighlight: ComboboxItemStateProps["onUnhighlight"];
 	disabled: ComboboxItemStateProps["disabled"];
 	isSelected = $derived.by(() => this.root.includesItem(this.value.value));
 	isHighlighted = $derived.by(() => this.root.highlightedValue === this.value.value);
+	prevHighlighted = new Previous(() => this.isHighlighted);
 
 	constructor(props: ComboboxItemStateProps, root: ComboboxRootState) {
 		this.root = root;
 		this.value = props.value;
 		this.disabled = props.disabled;
 		this.label = props.label;
+		this.onHighlight = props.onHighlight;
+		this.onUnhighlight = props.onUnhighlight;
 		this.#id = props.id;
 		this.#ref = props.ref;
+
+		$effect(() => {
+			if (this.isHighlighted) {
+				this.onHighlight.value();
+				return;
+			} else if (this.prevHighlighted.current) {
+				this.onUnhighlight.value();
+			}
+		});
 
 		useRefById({
 			id: this.#id,

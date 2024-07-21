@@ -165,6 +165,20 @@ export type ComboboxItemPropsWithoutHTML = WithChild<
 		 * @defaultValeu `false`
 		 */
 		disabled?: boolean;
+
+		/**
+		 * A callback function called when the item is highlighted. This can be used as a
+		 * replacement for `onfocus` since we don't actually focus the item and instead
+		 * rely on the `aria-activedescendant` attribute to indicate the highlighted item.
+		 */
+		onHighlight?: () => void;
+
+		/**
+		 * A callback function called when the item is unhighlighted. This can be used as a
+		 * replacement for `onblur` since we don't actually focus the item and instead
+		 * rely on the `aria-activedescendant` attribute to indicate the highlighted item.
+		 */
+		onUnhighlight?: () => void;
 	},
 	ComboboxItemSnippetProps
 >;

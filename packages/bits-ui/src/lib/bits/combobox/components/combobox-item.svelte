@@ -4,6 +4,7 @@
 	import type { ItemProps } from "../index.js";
 	import { useId } from "$lib/internal/useId.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { noop } from "$lib/internal/callbacks.js";
 
 	let {
 		id = useId(),
@@ -13,6 +14,8 @@
 		disabled = false,
 		children,
 		child,
+		onHighlight = noop,
+		onUnhighlight = noop,
 		...restProps
 	}: ItemProps = $props();
 
@@ -25,6 +28,8 @@
 		value: box.with(() => value),
 		disabled: box.with(() => disabled),
 		label: box.with(() => label),
+		onHighlight: box.with(() => onHighlight),
+		onUnhighlight: box.with(() => onUnhighlight),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, itemState.props));

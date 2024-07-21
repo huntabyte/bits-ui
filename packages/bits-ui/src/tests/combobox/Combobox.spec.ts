@@ -359,6 +359,29 @@ describe("combobox - single", () => {
 		const [_, item2] = getItems(getByTestId);
 		expectSelected(item2!);
 	});
+
+	it("allows navigating after navigating to the bottom, closing, and reopening the menu", async () => {
+		const { getByTestId, user, getContent } = await openSingle();
+		const [item0, item1, item2, item3] = getItems(getByTestId);
+		expectHighlighted(item0!);
+		await user.keyboard(kbd.ARROW_DOWN);
+		expectHighlighted(item1!);
+		await user.keyboard(kbd.ARROW_DOWN);
+		expectHighlighted(item2!);
+		await user.keyboard(kbd.ARROW_DOWN);
+		expectHighlighted(item3!);
+		await user.keyboard(kbd.ARROW_DOWN);
+		expectHighlighted(item3!);
+		await user.keyboard(kbd.ESCAPE);
+		await waitFor(() => expect(getContent()).toBeNull());
+
+		await user.keyboard(kbd.ARROW_DOWN);
+		await waitFor(() => expect(getContent()).not.toBeNull());
+		const [i0, i1] = getItems(getByTestId);
+		expectHighlighted(i0!);
+		await user.keyboard(kbd.ARROW_DOWN);
+		expectHighlighted(i1!);
+	});
 });
 
 ////////////////////////////////////
