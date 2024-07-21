@@ -332,6 +332,20 @@ describe("combobox - single", () => {
 		expectNotHighlighted(item1!);
 	});
 
+	it("starts keyboard navigation at the highlighted item even if hovered with mouse", async () => {
+		const { getByTestId, user, input } = await openSingle({}, kbd.ARROW_DOWN);
+		const [item1, item2, item3] = getItems(getByTestId);
+		await user.click(input);
+		await user.hover(item1!);
+		expectHighlighted(item1!);
+		await user.hover(item2!);
+		expectHighlighted(item2!);
+		expectNotHighlighted(item1!);
+		await user.keyboard(kbd.ARROW_DOWN);
+		expectHighlighted(item3!);
+		expectNotHighlighted(item2!);
+	});
+
 	it("selects a default item when provided", async () => {
 		const { getByTestId, queryByTestId, input, getHiddenInput } = await openSingle({
 			value: "2",
