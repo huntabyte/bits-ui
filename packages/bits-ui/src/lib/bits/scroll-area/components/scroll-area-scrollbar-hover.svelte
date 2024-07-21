@@ -11,7 +11,7 @@
 	const mergedProps = $derived(mergeProps(restProps, scrollbarHoverState.props));
 </script>
 
-<PresenceLayer present={forceMount || scrollbarHoverState.isVisible} {...mergedProps}>
+<PresenceLayer {...mergedProps} present={forceMount || scrollbarHoverState.isVisible}>
 	{#snippet presence()}
 		<ScrollAreaScrollbarAuto {...mergedProps} />
 	{/snippet}

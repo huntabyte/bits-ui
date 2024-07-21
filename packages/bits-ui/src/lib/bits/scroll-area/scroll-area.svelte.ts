@@ -210,13 +210,17 @@ class ScrollAreaScrollbarHoverState {
 			let hideTimer = 0;
 			if (scrollAreaNode) {
 				const handlePointerEnter = () => {
+					console.log("pointer enter");
 					window.clearTimeout(hideTimer);
-					this.isVisible = true;
+					untrack(() => (this.isVisible = true));
 				};
 
 				const handlePointerLeave = () => {
+					console.log("pointer leave");
+					if (hideTimer) window.clearTimeout(hideTimer);
 					hideTimer = window.setTimeout(() => {
-						this.isVisible = false;
+						console.log("setting is visible to false");
+						untrack(() => (this.isVisible = false));
 					}, hideDelay);
 				};
 
