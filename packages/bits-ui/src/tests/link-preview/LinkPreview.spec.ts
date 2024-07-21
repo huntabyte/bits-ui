@@ -1,4 +1,4 @@
-import { fireEvent, render, waitFor } from "@testing-library/svelte";
+import { render, waitFor } from "@testing-library/svelte";
 import { axe } from "jest-axe";
 import { describe, it, vi } from "vitest";
 import { getTestKbd, setupUserEvents } from "../utils.js";
