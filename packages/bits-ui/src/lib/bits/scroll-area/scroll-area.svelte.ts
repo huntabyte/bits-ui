@@ -98,6 +98,10 @@ class ScrollAreaRootState {
 	createScrollbar(props: ScrollAreaScrollbarStateProps) {
 		return new ScrollAreaScrollbarState(props, this);
 	}
+
+	createCorner(props: ScrollAreaCornerImplStateProps) {
+		return new ScrollAreaCornerImplState(props, this);
+	}
 }
 
 type ScrollAreaViewportStateProps = WithRefProps;
@@ -505,10 +509,6 @@ class ScrollAreaScrollbarXState implements ScrollbarAxisState {
 				});
 			}
 		});
-
-		$effect(() => {
-			console.log("thumb size", this.thumbSize);
-		});
 	}
 
 	onThumbPointerDown = (pointerPos: { x: number; y: number }) => {
@@ -637,7 +637,6 @@ class ScrollAreaScrollbarYState implements ScrollbarAxisState {
 	};
 
 	onResize = () => {
-		console.log("on resize");
 		if (!(this.ref.value && this.root.viewportNode && this.computedStyle)) return;
 		this.scrollbarVis.setSizes({
 			content: this.root.viewportNode.scrollHeight,
@@ -780,10 +779,6 @@ class ScrollAreaScrollbarSharedState {
 	createThumb(props: ScrollAreaThumbImplStateProps) {
 		return new ScrollAreaThumbImplState(props, this);
 	}
-
-	createCorner(props: ScrollAreaCornerImplStateProps) {
-		return new ScrollAreaCornerImplState(props, this);
-	}
 }
 
 type ScrollAreaThumbImplStateProps = WithRefProps &
@@ -878,17 +873,12 @@ class ScrollAreaCornerImplState {
 	#id: ScrollAreaCornerImplStateProps["id"];
 	#ref: ScrollAreaCornerImplStateProps["ref"];
 	#root: ScrollAreaRootState;
-	scrollbarState: ScrollAreaScrollbarSharedState;
 	#width = $state(0);
 	#height = $state(0);
 	hasSize = $derived(Boolean(this.#width && this.#height));
 
-	constructor(
-		props: ScrollAreaCornerImplStateProps,
-		scrollbarState: ScrollAreaScrollbarSharedState
-	) {
-		this.#root = scrollbarState.root;
-		this.scrollbarState = scrollbarState;
+	constructor(props: ScrollAreaCornerImplStateProps, root: ScrollAreaRootState) {
+		this.#root = root;
 		this.#id = props.id;
 		this.#ref = props.ref;
 
@@ -996,7 +986,7 @@ export function useScrollAreaThumb(props: ScrollAreaThumbImplStateProps) {
 }
 
 export function useScrollAreaCorner(props: ScrollAreaCornerImplStateProps) {
-	return getScrollAreaScrollbarSharedContext().createCorner(props);
+	return getScrollAreaRootContext().createCorner(props);
 }
 
 function toInt(value?: string) {

@@ -6,11 +6,12 @@
 	let height = $state(200);
 	let width = $state(250);
 	let wrapText = $state(false);
+	let numParagraphs = $state(3);
 </script>
 
 <div class="flex w-[500px] max-w-[500px] flex-col gap-4">
 	<div class="flex items-center gap-4">
-		<div class="flex w-1/3 flex-col gap-1">
+		<div class="flex w-1/5 flex-col gap-1">
 			<label for="type">Type</label>
 			<select bind:value={type} class="border" id="type">
 				<option value="auto">auto</option>
@@ -19,17 +20,21 @@
 				<option value="always">always</option>
 			</select>
 		</div>
-		<div class="flex w-1/3 flex-col gap-1">
+		<div class="flex w-1/5 flex-col gap-1">
 			<label for="height">Height</label>
 			<input class="border" type="number" bind:value={height} id="height" />
 		</div>
-		<div class="flex w-1/3 flex-col gap-1">
+		<div class="flex w-1/5 flex-col gap-1">
 			<label for="width">Width</label>
 			<input class="border" type="number" bind:value={width} id="width" />
 		</div>
-		<div class="flex w-1/3 items-center gap-1">
+		<div class="flex w-1/5 items-center gap-1">
 			<label for="wrap">Wrap</label>
 			<input type="checkbox" bind:checked={wrapText} id="wrap" />
+		</div>
+		<div class="flex w-1/5 flex-col gap-1">
+			<label for="num-p"> Paragraphs </label>
+			<input class="border" type="number" bind:value={numParagraphs} id="num-p" />
 		</div>
 	</div>
 
@@ -44,19 +49,21 @@
 			>
 				Scroll Area
 			</h4>
-			<p
-				class={cn(
-					"text-wrap text-sm leading-5 text-foreground-alt",
-					!wrapText && "text-nowrap"
-				)}
-			>
-				Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dignissimos impedit rem,
-				repellat deserunt ducimus quasi nisi voluptatem cumque aliquid esse ea deleniti
-				eveniet incidunt! Deserunt minus laborum accusamus iusto dolorum. Lorem ipsum dolor
-				sit, amet consectetur adipisicing elit. Blanditiis officiis error minima eos fugit
-				voluptate excepturi eveniet dolore et, ratione impedit consequuntur dolorem hic quae
-				corrupti autem? Dolorem, sit voluptatum.
-			</p>
+			{#each Array(numParagraphs) as _}
+				<p
+					class={cn(
+						"text-wrap text-sm leading-5 text-foreground-alt",
+						!wrapText && "text-nowrap"
+					)}
+				>
+					Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dignissimos impedit
+					rem, repellat deserunt ducimus quasi nisi voluptatem cumque aliquid esse ea
+					deleniti eveniet incidunt! Deserunt minus laborum accusamus iusto dolorum. Lorem
+					ipsum dolor sit, amet consectetur adipisicing elit. Blanditiis officiis error
+					minima eos fugit voluptate excepturi eveniet dolore et, ratione impedit
+					consequuntur dolorem hic quae corrupti autem? Dolorem, sit voluptatum.
+				</p>
+			{/each}
 		</ScrollArea.Viewport>
 		<ScrollArea.Scrollbar
 			orientation="vertical"
@@ -74,6 +81,6 @@
 				class="rounded-full bg-muted-foreground data-[state=visible]:animate-in data-[state=hidden]:animate-out data-[state=hidden]:fade-out-0 data-[state=visible]:fade-in-0"
 			/>
 		</ScrollArea.Scrollbar>
-		<!-- <ScrollArea.Corner /> -->
+		<ScrollArea.Corner />
 	</ScrollArea.Root>
 </div>
