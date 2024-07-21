@@ -20,7 +20,7 @@
 		onEscapeKeydown = noop,
 		forceMount = false,
 		...restProps
-	}: ContentProps & { kind: "menubar" | "context" | "dropdown" } = $props();
+	}: ContentProps = $props();
 
 	let isMounted = $state(false);
 

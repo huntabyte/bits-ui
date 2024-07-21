@@ -5,7 +5,6 @@
 	let {
 		id = useId(),
 		children,
-		asChild,
 		child,
 		height = 5,
 		width = 10,
@@ -15,8 +14,8 @@
 	const mergedProps = $derived(mergeProps(restProps, { id }));
 </script>
 
-{#if asChild}
-	{@render child?.({ props: mergedProps })}
+{#if child}
+	{@render child({ props: mergedProps })}
 {:else}
 	<span {...mergedProps}>
 		{#if children}

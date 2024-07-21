@@ -6,7 +6,7 @@
 </script>
 
 {#if hiddenInputState.shouldRender}
-	<VisuallyHidden asChild>
+	<VisuallyHidden>
 		{#snippet child({ props })}
 			<input {...props} {...hiddenInputState.props} />
 		{/snippet}
