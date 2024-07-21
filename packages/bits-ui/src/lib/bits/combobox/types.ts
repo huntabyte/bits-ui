@@ -123,13 +123,14 @@ export type ComboboxRootProps = ComboboxRootPropsWithoutHTML;
 
 export type ComboboxInputPropsWithoutHTML = WithChild<{
 	/**
-	 * The value of the input.
+	 * The default value of the input. This is not a reactive prop and is only used to populate
+	 * the input when the combobox is first mounted if there is already a value set.
 	 */
-	value?: string;
+	defaultValue?: string;
 }>;
 
 export type ComboboxInputProps = ComboboxInputPropsWithoutHTML &
-	Without<PrimitiveInputAttributes, ComboboxInputPropsWithoutHTML>;
+	Without<Omit<PrimitiveInputAttributes, "value">, ComboboxInputPropsWithoutHTML>;
 
 export type ComboboxContentPropsWithoutHTML = WithChild<PopperLayerProps>;
 

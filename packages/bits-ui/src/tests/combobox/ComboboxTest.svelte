@@ -16,7 +16,7 @@
 		portalProps?: WithoutChildrenOrChild<Combobox.PortalProps>;
 		inputProps?: WithoutChildrenOrChild<Combobox.InputProps>;
 		items: Item[];
-		inputValue?: string;
+		searchValue?: string;
 	};
 </script>
 
@@ -27,16 +27,16 @@
 		items,
 		value = "",
 		open = false,
-		inputValue = "",
+		searchValue = "",
 		inputProps,
 		onOpenChange,
 		...restProps
 	}: ComboboxSingleTestProps = $props();
 
 	const filteredItems = $derived(
-		inputValue === ""
+		searchValue === ""
 			? items
-			: items.filter((item) => item.label.includes(inputValue.toLowerCase()))
+			: items.filter((item) => item.label.includes(searchValue.toLowerCase()))
 	);
 </script>
 
@@ -47,14 +47,14 @@
 		{...restProps}
 		onOpenChange={(v) => {
 			onOpenChange?.(v);
-			if (!v) inputValue = "";
+			if (!v) searchValue = "";
 		}}
 	>
 		<Combobox.Trigger data-testid="trigger">Open combobox</Combobox.Trigger>
 		<Combobox.Input
 			data-testid="input"
 			aria-label="open combobox"
-			oninput={(e) => (inputValue = e.currentTarget.value)}
+			oninput={(e) => (searchValue = e.currentTarget.value)}
 			{...inputProps}
 		/>
 		<Combobox.Portal {...portalProps}>
@@ -76,11 +76,11 @@
 		</Combobox.Portal>
 	</Combobox.Root>
 	<div data-testid="outside"></div>
-	<button data-testid="input-binding" onclick={() => (inputValue = "")}>
-		{#if inputValue === ""}
+	<button data-testid="input-binding" onclick={() => (searchValue = "")}>
+		{#if searchValue === ""}
 			empty
 		{:else}
-			{inputValue}
+			{searchValue}
 		{/if}
 	</button>
 	<button data-testid="open-binding" onclick={() => (open = !open)}>

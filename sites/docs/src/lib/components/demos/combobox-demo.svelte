@@ -10,12 +10,14 @@
 		{ value: "orange", label: "Orange" },
 	];
 
-	let inputValue = $state("");
+	let searchValue = $state("");
 
 	const filteredFruits = $derived(
-		inputValue === ""
+		searchValue === ""
 			? fruits
-			: fruits.filter((fruit) => fruit.label.includes(inputValue.toLowerCase()))
+			: fruits.filter((fruit) =>
+					fruit.label.toLowerCase().includes(searchValue.toLowerCase())
+				)
 	);
 </script>
 
@@ -23,7 +25,7 @@
 	type="single"
 	name="favoriteFruit"
 	onOpenChange={(o) => {
-		if (!o) inputValue = "";
+		if (!o) searchValue = "";
 	}}
 >
 	<div class="relative">
@@ -31,7 +33,7 @@
 			class="absolute start-3 top-1/2 size-6 -translate-y-1/2 text-muted-foreground"
 		/>
 		<Combobox.Input
-			oninput={(e) => (inputValue = e.currentTarget.value)}
+			oninput={(e) => (searchValue = e.currentTarget.value)}
 			class="inline-flex h-input w-[296px] truncate rounded-9px border border-border-input bg-background px-11 text-sm transition-colors placeholder:text-foreground-alt/50 focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2 focus:ring-offset-background"
 			placeholder="Search a fruit"
 			aria-label="Search a fruit"

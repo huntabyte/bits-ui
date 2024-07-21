@@ -10,7 +10,7 @@
 		id = useId(),
 		ref = $bindable(null),
 		child,
-		value: _value,
+		defaultValue,
 		...restProps
 	}: InputProps = $props();
 
@@ -22,15 +22,19 @@
 		),
 	});
 
-	const defaultValue = _value;
+	if (defaultValue) {
+		inputState.root.inputValue = defaultValue;
+	}
 
-	const mergedProps = $derived(mergeProps(restProps, inputState.props));
+	const mergedProps = $derived(
+		mergeProps(restProps, inputState.props, { value: inputState.root.inputValue })
+	);
 </script>
 
 <FloatingLayer.Anchor {id}>
 	{#if child}
 		{@render child({ props: mergedProps })}
 	{:else}
-		<input {...mergedProps} value={defaultValue ?? inputState.root.inputValue} />
+		<input {...mergedProps} />
 	{/if}
 </FloatingLayer.Anchor>

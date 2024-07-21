@@ -51,9 +51,13 @@
 </FloatingLayer.Root>
 
 {#if Array.isArray(value)}
-	{#each value as item}
-		<ComboboxHiddenInput value={item} />
-	{/each}
+	{#if value.length === 0}
+		<ComboboxHiddenInput value="" />
+	{:else}
+		{#each value as item}
+			<ComboboxHiddenInput value={item} />
+		{/each}
+	{/if}
 {:else}
 	<ComboboxHiddenInput {value} />
 {/if}
