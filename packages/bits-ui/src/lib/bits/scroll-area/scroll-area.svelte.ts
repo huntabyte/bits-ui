@@ -160,6 +160,7 @@ class ScrollAreaScrollbarState {
 	root: ScrollAreaRootState;
 	orientation: ScrollAreaScrollbarStateProps["orientation"];
 	isHorizontal = $derived.by(() => this.orientation.value === "horizontal");
+	hasThumb = $state(false);
 
 	constructor(props: ScrollAreaScrollbarStateProps, root: ScrollAreaRootState) {
 		this.root = root;
@@ -200,9 +201,11 @@ class ScrollAreaScrollbarState {
 class ScrollAreaScrollbarHoverState {
 	root: ScrollAreaRootState;
 	isVisible = $state(false);
+	scrollbar: ScrollAreaScrollbarState;
 
 	constructor(scrollbar: ScrollAreaScrollbarState) {
 		this.root = scrollbar.root;
+		this.scrollbar = scrollbar;
 
 		$effect(() => {
 			const scrollAreaNode = this.root.scrollAreaNode;
@@ -220,7 +223,10 @@ class ScrollAreaScrollbarHoverState {
 					if (hideTimer) window.clearTimeout(hideTimer);
 					hideTimer = window.setTimeout(() => {
 						console.log("setting is visible to false");
-						untrack(() => (this.isVisible = false));
+						untrack(() => {
+							this.scrollbar.hasThumb = false;
+							this.isVisible = false;
+						});
 					}, hideDelay);
 				};
 
@@ -372,6 +378,10 @@ class ScrollAreaScrollbarVisibleState {
 	constructor(scrollbar: ScrollAreaScrollbarState) {
 		this.scrollbar = scrollbar;
 		this.root = scrollbar.root;
+
+		$effect(() => {
+			this.scrollbar.hasThumb = this.hasThumb;
+		});
 	}
 
 	setSizes = (sizes: Sizes) => {

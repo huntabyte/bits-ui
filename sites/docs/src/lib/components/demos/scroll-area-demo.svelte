@@ -23,10 +23,10 @@
 		</ScrollArea.Viewport>
 		<ScrollArea.Scrollbar
 			orientation="vertical"
-			class="flex w-2.5 touch-none select-none rounded-full border-l border-l-transparent p-px transition-all duration-200 hover:w-3 hover:bg-dark-10 data-[state=visible]:animate-in data-[state=hidden]:animate-out data-[state=hidden]:fade-out-0 data-[state=visible]:fade-in-0"
+			class="flex w-2.5 touch-none select-none rounded-full border-l border-l-transparent bg-muted p-px transition-all duration-200 hover:w-3 hover:bg-dark-10 data-[state=visible]:animate-in data-[state=hidden]:animate-out data-[state=hidden]:fade-out-0 data-[state=visible]:fade-in-0"
 		>
 			<ScrollArea.Thumb
-				class="flex-1 rounded-full bg-muted-foreground transition-all duration-200 data-[state=visible]:animate-in data-[state=hidden]:animate-out data-[state=hidden]:fade-out-0 data-[state=visible]:fade-in-0"
+				class="flex-1 rounded-full bg-muted-foreground data-[state=visible]:animate-in data-[state=hidden]:animate-out data-[state=hidden]:fade-out-0 data-[state=visible]:fade-in-0"
 			/>
 		</ScrollArea.Scrollbar>
 		<ScrollArea.Corner />

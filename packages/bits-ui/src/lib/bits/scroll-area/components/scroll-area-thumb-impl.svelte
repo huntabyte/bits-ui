@@ -10,9 +10,11 @@
 		id,
 		child,
 		children,
+		present,
 		...restProps
 	}: Omit<ThumbProps, "forceMount" | "id"> & {
 		id: string;
+		present: boolean;
 	} = $props();
 
 	const isMounted = new IsMounted();
@@ -26,7 +28,13 @@
 		mounted: box.with(() => isMounted.current),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, thumbState.props));
+	const mergedProps = $derived(
+		mergeProps(restProps, thumbState.props, {
+			style: {
+				hidden: !present,
+			},
+		})
+	);
 </script>
 
 {#if child}
