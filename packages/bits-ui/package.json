@@ -68,5 +68,10 @@
 	},
 	"peerDependencies": {
 		"svelte": "^5.0.0-next.1"
-	}
+	},
+	"engines": {
+		"pnpm": ">=8.7.0",
+		"node": ">=18"
+	},
+	"packageManager": "pnpm@8.15.8"
 }
