@@ -8,7 +8,7 @@
 		open?: boolean;
 		contentProps?: Omit<DropdownMenu.ContentProps, "children" | "child" | "asChild">;
 		subContentProps?: Omit<DropdownMenu.SubContentProps, "children" | "child" | "asChild">;
-		portalProps?: DropdownMenu.PortalProps
+		portalProps?: DropdownMenu.PortalProps;
 	};
 </script>
 

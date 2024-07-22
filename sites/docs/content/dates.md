@@ -30,7 +30,7 @@ The `CalendarDate` object represents a date with no time component, such as `202
 You can use the `CalendarDate` constructor to create a new `CalendarDate` object:
 
 ```ts
-import { CalendarDate } from '@internationalized/date';
+import { CalendarDate } from "@internationalized/date";
 
 const date = new CalendarDate(2024, 7, 10);
 ```
@@ -38,17 +38,17 @@ const date = new CalendarDate(2024, 7, 10);
 You can also use the `parseDate` function to parse an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) string into a `CalendarDate` object:
 
 ```ts
-import { parseDate } from '@internationalized/date';
+import { parseDate } from "@internationalized/date";
 
-const date = parseDate('2024-07-10');
+const date = parseDate("2024-07-10");
 ```
 
 If you want to create a `CalendarDate` with the current date, you can use the `today` function. This function requires a timezone identifier as an argument, which can be passed in as a string, or by using `getLocalTimeZone` which returns the user's current time zone:
 
 ```ts
-import { today, getLocalTimeZone } from '@internationalized/date';
+import { today, getLocalTimeZone } from "@internationalized/date";
 
-const losAngelesToday = today('America/Los_Angeles');
+const losAngelesToday = today("America/Los_Angeles");
 const localToday = today(getLocalTimeZone());
 ```
 
@@ -61,7 +61,7 @@ The `CalendarDateTime` object represents a date and time, such as `2024-07-10T12
 You can use the `CalendarDateTime` constructor to create a new `CalendarDateTime` object:
 
 ```ts
-import { CalendarDateTime } from '@internationalized/date';
+import { CalendarDateTime } from "@internationalized/date";
 
 const dateTime = new CalendarDateTime(2024, 7, 10, 12, 30, 0);
 ```
@@ -69,9 +69,9 @@ const dateTime = new CalendarDateTime(2024, 7, 10, 12, 30, 0);
 You can also use the `parseDateTime` function to parse an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) string into a `CalendarDateTime` object:
 
 ```ts
-import { parseDateTime } from '@internationalized/date';
+import { parseDateTime } from "@internationalized/date";
 
-const dateTime = parseDateTime('2024-07-10T12:30:00');
+const dateTime = parseDateTime("2024-07-10T12:30:00");
 ```
 
 See the [CalendarDateTime API documentation](https://react-spectrum.adobe.com/internationalized/date/CalendarDateTime.html) for more information.
@@ -83,28 +83,33 @@ The `ZonedDateTime` object represents a date and time with a time zone, which re
 You can use the `ZonedDateTime` constructor to create a new `ZonedDateTime` object:
 
 ```ts
-import { ZonedDateTime } from '@internationalized/date';
+import { ZonedDateTime } from "@internationalized/date";
 
 const date = new ZonedDateTime(
-  // Date
-  2022, 2, 3,
-  // Time zone and UTC offset
-  'America/Los_Angeles', -28800000,
-  // Time
-  9, 15, 0
+	// Date
+	2022,
+	2,
+	3,
+	// Time zone and UTC offset
+	"America/Los_Angeles",
+	-28800000,
+	// Time
+	9,
+	15,
+	0
 );
 ```
 
 You can also use one of the following parsing functions to parse an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) string into a `ZonedDateTime` object:
 
 ```ts
-import { parseZonedDateTime, parseAbsolute, parseAbsoluteToLocal } from '@internationalized/date';
+import { parseZonedDateTime, parseAbsolute, parseAbsoluteToLocal } from "@internationalized/date";
 
-const date = parseZonedDateTime('2024-07-12T00:45[America/New_York]');
+const date = parseZonedDateTime("2024-07-12T00:45[America/New_York]");
 // or
-const date = parseAbsolute('2024-07-12T07:45:00Z', 'America/New_York');
+const date = parseAbsolute("2024-07-12T07:45:00Z", "America/New_York");
 // or
-const date = parseAbsoluteToLocal('2024-07-12T07:45:00Z');
+const date = parseAbsoluteToLocal("2024-07-12T07:45:00Z");
 ```
 
 See the [ZonedDateTime API documentation](https://react-spectrum.adobe.com/internationalized/date/ZonedDateTime.html) for more information.
@@ -117,7 +122,7 @@ Bits UI also provides a `DateRange` type with the following structure:
 type DateRange = {
 	start: DateValue;
 	end: DateValue;
-}
+};
 ```
 
 This type is used to represent the value of the various date range components in Bits UI, such as the [Date Range Field](/docs/components/date-range-field), [Date Range Picker](/docs/components/date-range-picker), and [Range Calendar](/docs/components/range-calendar).

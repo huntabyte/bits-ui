@@ -10,5 +10,5 @@
 		{$page.status}
 	</h1>
 	<p class="text-foreground">{message}</p>
-	<a href="/docs" class={buttonVariants({ size: "lg"})}>Back to docs</a>
+	<a href="/docs" class={buttonVariants({ size: "lg" })}>Back to docs</a>
 </section>

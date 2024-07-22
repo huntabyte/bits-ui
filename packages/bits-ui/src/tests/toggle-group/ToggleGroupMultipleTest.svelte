@@ -6,9 +6,10 @@
 		disabled?: boolean;
 	};
 
-	export type MultipleToggleGroupTestProps = WithoutChildrenOrChild<MultipleToggleGroupRootProps> & {
-		items: Item[];
-	};
+	export type MultipleToggleGroupTestProps =
+		WithoutChildrenOrChild<MultipleToggleGroupRootProps> & {
+			items: Item[];
+		};
 </script>
 
 <script lang="ts">
