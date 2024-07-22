@@ -56,18 +56,12 @@ importers:
       '@internationalized/date':
         specifier: ^3.5.4
         version: 3.5.4
-      '@melt-ui/svelte':
-        specifier: 0.76.2
-        version: 0.76.2(svelte@5.0.0-next.193)
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
       esm-env:
         specifier: ^1.0.0
         version: 1.0.0
-      nanoid:
-        specifier: ^5.0.7
-        version: 5.0.7
       runed:
         specifier: ^0.15.0
         version: 0.15.0(svelte@5.0.0-next.193)
@@ -84,9 +78,6 @@ importers:
         specifier: ^0.1.0
         version: 0.1.0(svelte@5.0.0-next.193)
     devDependencies:
-      '@melt-ui/pp':
-        specifier: ^0.3.0
-        version: 0.3.2(@melt-ui/svelte@0.76.2(svelte@5.0.0-next.193))(svelte@5.0.0-next.193)
       '@sveltejs/kit':
         specifier: ^2.5.18
         version: 2.5.18(@sveltejs/vite-plugin-svelte@3.1.1(svelte@5.0.0-next.193)(vite@5.3.3(@types/node@20.14.10)))(svelte@5.0.0-next.193)(vite@5.3.3(@types/node@20.14.10))
