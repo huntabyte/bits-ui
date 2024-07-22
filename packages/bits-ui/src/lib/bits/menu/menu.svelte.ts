@@ -20,7 +20,7 @@ import { addEventListener } from "$lib/internal/events.js";
 import type { AnyFn, WithRefProps } from "$lib/internal/types.js";
 import { executeCallbacks } from "$lib/internal/callbacks.js";
 import { useTypeahead } from "$lib/internal/useTypeahead.svelte.js";
-import { isElement, isHTMLElement } from "$lib/internal/is.js";
+import { isBrowser, isElement, isHTMLElement } from "$lib/internal/is.js";
 import { useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import {
@@ -217,6 +217,7 @@ class MenuContentState {
 		});
 
 		onDestroy(() => {
+			if (!isBrowser) return;
 			window.clearTimeout(this.#timer);
 		});
 
