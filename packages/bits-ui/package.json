@@ -27,7 +27,6 @@
 		"!dist/**/*.spec.*"
 	],
 	"devDependencies": {
-		"@melt-ui/pp": "^0.3.0",
 		"@sveltejs/kit": "^2.5.18",
 		"@sveltejs/package": "^2.3.2",
 		"@sveltejs/vite-plugin-svelte": "^3.1.1",
@@ -59,10 +58,8 @@
 		"@floating-ui/core": "^1.6.4",
 		"@floating-ui/dom": "^1.6.7",
 		"@internationalized/date": "^3.5.4",
-		"@melt-ui/svelte": "0.76.2",
 		"clsx": "^2.1.1",
 		"esm-env": "^1.0.0",
-		"nanoid": "^5.0.7",
 		"runed": "^0.15.0",
 		"scule": "^1.3.0",
 		"style-object-to-css-string": "^1.1.3",
