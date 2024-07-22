@@ -1,6 +1,6 @@
 import { SvelteMap } from "svelte/reactivity";
 import { box } from "svelte-toolbelt";
-import type { Fn } from "./types.js";
+import type { NoopFn } from "./types.js";
 import { isBrowser, isIOS } from "./is.js";
 import { addEventListener } from "./events.js";
 import { afterTick } from "./afterTick.js";
@@ -27,7 +27,7 @@ const useBodyLockStackCount = createSharedHook(() => {
 
 	let initialBodyStyle: Partial<CSSStyleDeclaration> = $state<Partial<CSSStyleDeclaration>>({});
 
-	let stopTouchMoveListener: Fn | null = null;
+	let stopTouchMoveListener: NoopFn | null = null;
 
 	function resetBodyStyle() {
 		if (!isBrowser) return;
