@@ -35,13 +35,6 @@ export type FloatingLayerContentProps = {
 	alignOffset?: number;
 
 	/**
-	 * Whether the content should be the same width as the trigger.
-	 *
-	 * @see https://floating-ui.com/docs/size
-	 */
-	sameWidth?: boolean;
-
-	/**
 	 * The distance in pixels from the anchor to the floating element.
 	 */
 	arrowPadding?: number;
@@ -98,10 +91,6 @@ export type FloatingLayerContentProps = {
 
 export type FloatingLayerContentImplProps = {
 	id: string;
-	/**
-	 * Whether the floating layer is present.
-	 */
-	enabled: boolean;
 
 	/**
 	 * The ID of the content wrapper element.

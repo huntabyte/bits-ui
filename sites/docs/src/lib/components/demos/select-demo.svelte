@@ -30,7 +30,7 @@
 
 <Select.Root name="hello">
 	<Select.Trigger
-		class="inline-flex h-input w-[296px] items-center rounded-9px border border-border-input bg-background px-[11px] text-sm transition-colors placeholder:text-foreground-alt/50 "
+		class="inline-flex h-input w-[296px] select-none items-center rounded-9px border border-border-input bg-background px-[11px] text-sm transition-colors placeholder:text-foreground-alt/50"
 		aria-label="Select a theme"
 	>
 		<Palette class="mr-[9px] size-6 text-muted-foreground" />
@@ -41,7 +41,6 @@
 		<Select.Content
 			class="focus-override z-50 max-h-96 w-full min-w-[296px] rounded-xl border border-muted bg-background px-1 py-3 shadow-popover outline-none"
 			sideOffset={8}
-			sameWidth={true}
 		>
 			<Select.ScrollUpButton class="flex w-full items-center justify-center"
 				>up</Select.ScrollUpButton

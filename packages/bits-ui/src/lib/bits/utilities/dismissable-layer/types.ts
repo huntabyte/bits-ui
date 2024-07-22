@@ -40,7 +40,7 @@ export type DismissableLayerProps = {
 	interactOutsideBehavior?: InteractOutsideBehaviorType;
 
 	/**
-	 *
+	 * Callback fired when focus leaves the dismissable layer.
 	 */
 	onFocusOutside?: (event: FocusEvent) => void;
 };
@@ -57,8 +57,6 @@ export type DismissableLayerImplProps = {
 	id: string;
 
 	children?: Snippet<[{ props: Record<string, unknown> }]>;
-
-	onFocusOutside?: (event: FocusEvent) => void;
 } & DismissableLayerProps;
 
 export type InteractOutsideInterceptEventType =
