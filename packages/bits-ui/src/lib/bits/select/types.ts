@@ -49,6 +49,11 @@ export type SelectRootPropsWithoutHTML = WithChildren<{
 	autocomplete?: string;
 
 	/**
+	 * The native HTML select `form` attribute.
+	 */
+	form?: string;
+
+	/**
 	 * Whether the select is disabled.
 	 */
 	disabled?: boolean;

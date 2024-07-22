@@ -16,6 +16,7 @@
 		disabled = false,
 		autocomplete = undefined,
 		dir = "ltr",
+		form,
 	}: RootProps = $props();
 
 	const rootState = useSelectRoot({
@@ -55,6 +56,7 @@
 				{name}
 				{autocomplete}
 				{disabled}
+				{form}
 				onchange={(e) => (value = e.currentTarget.value)}
 			>
 				{#if value === ""}

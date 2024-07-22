@@ -1,6 +1,8 @@
+import { useId } from "$lib/internal/useId.svelte.js";
 import { box } from "svelte-toolbelt";
 
 export type FocusScopeAPI = {
+	id: string;
 	paused: boolean;
 	pause: () => void;
 	resume: () => void;
@@ -20,11 +22,11 @@ export function createFocusScopeStack() {
 			}
 
 			// remove in case it already exists because it'll be added to the top
-			stack.value = removeFromArray($state.snapshot(stack.value), focusScope);
+			stack.value = removeFromFocusScopeArray(stack.value, focusScope);
 			stack.value.unshift(focusScope);
 		},
 		remove(focusScope: FocusScopeAPI) {
-			stack.value = removeFromArray($state.snapshot(stack.value), focusScope);
+			stack.value = removeFromFocusScopeArray(stack.value, focusScope);
 			stack.value[0]?.resume();
 		},
 	};
@@ -34,6 +36,7 @@ export function createFocusScopeAPI(): FocusScopeAPI {
 	let paused = $state(false);
 
 	return {
+		id: useId(),
 		get paused() {
 			return paused;
 		},
@@ -46,10 +49,8 @@ export function createFocusScopeAPI(): FocusScopeAPI {
 	};
 }
 
-export function removeFromArray<T>(arr: T[], item: T) {
-	const updatedArr = [...arr];
-	const index = updatedArr.indexOf(item);
-	if (index !== -1) updatedArr.splice(index, 1);
+function removeFromFocusScopeArray(arr: FocusScopeAPI[], item: FocusScopeAPI) {
+	const updatedArr = [...arr].filter((i) => i.id !== item.id);
 	return updatedArr;
 }
 

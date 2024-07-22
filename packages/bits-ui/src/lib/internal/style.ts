@@ -2,7 +2,8 @@ import styleToCSS from "style-object-to-css-string";
 import type { StyleProperties } from "$lib/shared/index.js";
 
 export function styleToString(style: StyleProperties = {}): string {
-	return styleToCSS(style).replace("\n", " ");
+	const stringified = styleToCSS(style).replace("\n", " ");
+	return stringified;
 }
 
 export const srOnlyStyles: StyleProperties = {

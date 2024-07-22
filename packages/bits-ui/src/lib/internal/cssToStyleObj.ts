@@ -16,6 +16,10 @@ export function cssToStyleObj(css: string | null | undefined): StyleProperties {
 			styleObj[pascalCase(name)] = value;
 			return;
 		}
+		if (name.startsWith("--")) {
+			styleObj[name] = value;
+			return;
+		}
 		styleObj[camelCase(name)] = value;
 	}
 

@@ -174,7 +174,7 @@ export type WithChild<
 	ref?: Ref | null;
 };
 
-export type WithChildren<Props> = Props & {
+export type WithChildren<Props = {}> = Props & {
 	children?: Snippet;
 };
 

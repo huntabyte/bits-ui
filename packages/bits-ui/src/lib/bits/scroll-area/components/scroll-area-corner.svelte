@@ -1,34 +1,19 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
 	import type { CornerProps } from "../index.js";
-	import { getCtx } from "../ctx.js";
+	import { getScrollAreaRootContext } from "../scroll-area.svelte.js";
+	import ScrollAreaCornerImpl from "./scroll-area-corner-impl.svelte";
+	import { useId } from "$lib/internal/useId.svelte.js";
 
-	type $$Props = CornerProps;
+	let { ref = $bindable(null), id = useId(), ...restProps }: CornerProps = $props();
 
-	export let asChild: $$Props["asChild"] = false;
-	export let ref: $$Props["el"] = undefined;
+	const scrollAreaState = getScrollAreaRootContext();
 
-	const {
-		elements: { corner },
-		getAttrs,
-	} = getCtx();
-
-	const bitsAttrs = getAttrs("corner");
-
-	$: attrs = {
-		...$$restProps,
-		...bitsAttrs,
-	};
-
-	$: builder = $corner;
-
-	$: Object.assign(builder, attrs);
+	const hasBothScrollbarsVisible = $derived(
+		Boolean(scrollAreaState.scrollbarXNode && scrollAreaState.scrollbarYNode)
+	);
+	const hasCorner = $derived(scrollAreaState.type.value !== "scroll" && hasBothScrollbarsVisible);
 </script>
 
-{#if asChild}
-	<slot {builder} />
-{:else}
-	<div use:melt={builder} bind:this={ref}>
-		<slot {builder} />
-	</div>
+{#if hasCorner}
+	<ScrollAreaCornerImpl {...restProps} {id} bind:ref />
 {/if}
