@@ -26,6 +26,7 @@
 		enabled,
 		wrapperId = useId(),
 		preventScroll = true,
+		...restProps
 	}: ContentImplProps = $props();
 
 	const contentState = useFloatingContentState({
@@ -57,9 +58,11 @@
 		})
 	);
 
+	const mergedContentProps = $derived(mergeProps(restProps, contentState.props));
+
 	useBodyScrollLock(preventScroll);
 </script>
 
 <div {...mergedProps}>
-	{@render content?.({ props: contentState.props })}
+	{@render content?.({ props: mergedContentProps })}
 </div>

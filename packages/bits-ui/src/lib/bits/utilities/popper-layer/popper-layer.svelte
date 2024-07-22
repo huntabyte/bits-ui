@@ -23,7 +23,6 @@
 									<TextSelectionLayer {...restProps} enabled={present.current}>
 										{@render popper?.({
 											props: mergeProps(
-												restProps,
 												floatingProps,
 												dismissableProps,
 												focusScopeProps,

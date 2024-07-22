@@ -73,7 +73,7 @@ export type FloatingContentStateProps = ReadableBoxedValues<{
 	strategy: "fixed" | "absolute";
 	onPlaced: () => void;
 	dir: Direction;
-	style: StyleProperties;
+	style: StyleProperties | null | undefined | string
 	enabled: boolean;
 }>;
 
