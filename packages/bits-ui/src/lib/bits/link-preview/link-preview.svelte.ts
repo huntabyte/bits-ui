@@ -40,7 +40,7 @@ class LinkPreviewRootState {
 		this.closeDelay = props.closeDelay;
 
 		$effect(() => {
-			if (!this.open.value) {
+			if (!this.open.current) {
 				untrack(() => (this.hasSelection = false));
 				return;
 			}
@@ -87,15 +87,15 @@ class LinkPreviewRootState {
 
 	handleOpen = () => {
 		this.clearTimeout();
-		if (this.open.value) return;
+		if (this.open.current) return;
 		this.timeout = window.setTimeout(() => {
-			this.open.value = true;
-		}, this.openDelay.value);
+			this.open.current = true;
+		}, this.openDelay.current);
 	};
 
 	immediateClose = () => {
 		this.clearTimeout();
-		this.open.value = false;
+		this.open.current = false;
 	};
 
 	handleClose = () => {
@@ -103,8 +103,8 @@ class LinkPreviewRootState {
 
 		if (!this.isPointerDownOnContent && !this.hasSelection) {
 			this.timeout = window.setTimeout(() => {
-				this.open.value = false;
-			}, this.closeDelay.value);
+				this.open.current = false;
+			}, this.closeDelay.current);
 		}
 	};
 
@@ -155,10 +155,10 @@ class LinkPreviewTriggerState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
+				id: this.#id.current,
 				"aria-haspopup": "dialog",
-				"aria-expanded": getAriaExpanded(this.#root.open.value),
-				"data-state": getDataOpenClosed(this.#root.open.value),
+				"aria-expanded": getAriaExpanded(this.#root.open.current),
+				"data-state": getDataOpenClosed(this.#root.open.current),
 				"aria-controls": this.#root.contentNode?.id ?? undefined,
 				role: "button",
 				[TRIGGER_ATTR]: "",
@@ -190,10 +190,10 @@ class LinkPreviewContentState {
 		});
 
 		$effect(() => {
-			if (!this.root.open.value) return;
+			if (!this.root.open.current) return;
 			const { isPointerInTransit, onPointerExit } = useGraceArea(
 				() => this.root.triggerNode,
-				() => this.#ref.value
+				() => this.#ref.current
 			);
 
 			this.root.isPointerInTransit = isPointerInTransit;
@@ -231,9 +231,9 @@ class LinkPreviewContentState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
+				id: this.#id.current,
 				tabindex: -1,
-				"data-state": getDataOpenClosed(this.root.open.value),
+				"data-state": getDataOpenClosed(this.root.open.current),
 				[CONTENT_ATTR]: "",
 				onpointerdown: this.#onpointerdown,
 				onpointerenter: this.#onpointerenter,

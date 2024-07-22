@@ -2,7 +2,7 @@
 	import { box } from "svelte-toolbelt";
 	import type { ItemProps } from "../index.js";
 	import { useMenuItem } from "../menu.svelte.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 	import { noop } from "$lib/internal/callbacks.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 

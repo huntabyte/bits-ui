@@ -13,14 +13,14 @@
 
 <PresenceLayer {present} {...restProps}>
 	{#snippet presence({ present })}
-		<FloatingLayer.Content {...restProps} enabled={present.value}>
+		<FloatingLayer.Content {...restProps} enabled={present.current}>
 			{#snippet content({ props: floatingProps })}
 				<FocusScope {...restProps}>
 					{#snippet focusScope({ props: focusScopeProps })}
-						<EscapeLayer {...restProps} enabled={present.value}>
-							<DismissableLayer {...restProps} enabled={present.value}>
+						<EscapeLayer {...restProps} enabled={present.current}>
+							<DismissableLayer {...restProps} enabled={present.current}>
 								{#snippet children({ props: dismissableProps })}
-									<TextSelectionLayer {...restProps} enabled={present.value}>
+									<TextSelectionLayer {...restProps} enabled={present.current}>
 										{@render popper?.({
 											props: mergeProps(
 												restProps,

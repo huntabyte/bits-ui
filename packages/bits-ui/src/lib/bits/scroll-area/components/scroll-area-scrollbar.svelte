@@ -6,7 +6,7 @@
 	import ScrollAreaScrollbarScroll from "./scroll-area-scrollbar-scroll.svelte";
 	import ScrollAreaScrollbarHover from "./scroll-area-scrollbar-hover.svelte";
 	import ScrollAreaScrollbarVisible from "./scroll-area-scrollbar-visible.svelte";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 
 	let {
 		ref = $bindable(null),
@@ -24,7 +24,7 @@
 		),
 	});
 
-	const type = $derived(scrollbarState.root.type.value);
+	const type = $derived(scrollbarState.root.type.current);
 </script>
 
 {#if type === "hover"}

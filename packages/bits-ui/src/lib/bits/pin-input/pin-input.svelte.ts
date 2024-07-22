@@ -51,7 +51,7 @@ class PinInputRootState {
 	#mirrorSelectionEnd = $state<number | null>(null);
 	#onComplete: PinInputRootStateProps["onComplete"];
 	value: PinInputRootStateProps["value"];
-	#previousValue = new Previous(() => this.value.value ?? "");
+	#previousValue = new Previous(() => this.value.current ?? "");
 	#maxLength: PinInputRootStateProps["maxLength"];
 	#disabled: PinInputRootStateProps["disabled"];
 	#pattern: PinInputRootStateProps["pattern"];
@@ -59,10 +59,10 @@ class PinInputRootState {
 	#autocomplete: PinInputRootStateProps["autocomplete"];
 	#inputmode: PinInputRootStateProps["inputmode"];
 	#regexPattern = $derived.by(() => {
-		if (typeof this.#pattern.value === "string") {
-			return new RegExp(this.#pattern.value);
+		if (typeof this.#pattern.current === "string") {
+			return new RegExp(this.#pattern.current);
 		} else {
-			return this.#pattern.value;
+			return this.#pattern.current;
 		}
 	});
 	#prevInputMetadata = $state<PrevInputMetadata>([null, null, "none"]);
@@ -112,13 +112,13 @@ class PinInputRootState {
 		$effect(() => {
 			let unsub = noop;
 			untrack(() => {
-				const input = this.#inputRef.value;
-				const container = this.#containerRef.value;
+				const input = this.#inputRef.current;
+				const container = this.#containerRef.current;
 
 				if (!input || !container) return;
 
-				if (this.#initialLoad.value.value !== input.value) {
-					this.value.value = input.value;
+				if (this.#initialLoad.value.current !== input.value) {
+					this.value.current = input.value;
 				}
 
 				this.#prevInputMetadata = [
@@ -136,7 +136,7 @@ class PinInputRootState {
 
 				this.onDocumentSelectionChange();
 				if (document.activeElement === input) {
-					this.#isFocused.value = true;
+					this.#isFocused.current = true;
 				}
 
 				if (!document.getElementById("pin-input-style")) {
@@ -161,10 +161,10 @@ class PinInputRootState {
 		});
 
 		$effect(() => {
-			this.value.value;
-			this.#inputRef.value;
+			this.value.current;
+			this.#inputRef.current;
 			syncTimeouts(() => {
-				const input = this.#inputRef.value;
+				const input = this.#inputRef.current;
 				if (!input) return;
 				// forcefully remove :autofull state
 				input.dispatchEvent(new Event("input"));
@@ -183,10 +183,10 @@ class PinInputRootState {
 
 		$effect(() => {
 			// invoke `onComplete` when the input is completely filled.
-			const value = this.value.value;
+			const value = this.value.current;
 			const prevValue = this.#previousValue.current;
-			const maxLength = this.#maxLength.value;
-			const onComplete = this.#onComplete.value;
+			const maxLength = this.#maxLength.current;
+			const onComplete = this.#onComplete.current;
 
 			if (prevValue === undefined) return;
 			if (value !== prevValue && prevValue.length < maxLength && value.length === maxLength) {
@@ -197,14 +197,14 @@ class PinInputRootState {
 
 	#rootStyles = $derived.by(() => ({
 		position: "relative",
-		cursor: this.#disabled.value ? "default" : "text",
+		cursor: this.#disabled.current ? "default" : "text",
 		userSelect: "none",
 		WebkitUserSelect: "none",
 		pointerEvents: "none",
 	}));
 
 	rootProps = $derived.by(() => ({
-		id: this.#containerId.value,
+		id: this.#containerId.current,
 		"data-pin-input-root": "",
 		style: this.#rootStyles,
 	}));
@@ -228,7 +228,7 @@ class PinInputRootState {
 			: undefined,
 		height: "100%",
 		display: "flex",
-		textAlign: this.#textAlign.value,
+		textAlign: this.#textAlign.current,
 		opacity: "1",
 		color: "transparent",
 		pointerEvents: "all",
@@ -276,8 +276,8 @@ class PinInputRootState {
 	}
 
 	onDocumentSelectionChange = () => {
-		const input = this.#inputRef.value;
-		const container = this.#containerRef.value;
+		const input = this.#inputRef.current;
+		const container = this.#containerRef.current;
 		if (!input || !container) return;
 
 		if (document.activeElement !== input) {
@@ -326,7 +326,7 @@ class PinInputRootState {
 			}
 
 			if (start !== -1 && end !== -1 && start !== end) {
-				this.#inputRef.value?.setSelectionRange(start, end, direction);
+				this.#inputRef.current?.setSelectionRange(start, end, direction);
 			}
 		}
 
@@ -340,7 +340,7 @@ class PinInputRootState {
 	};
 
 	#oninput = (e: Event & { currentTarget: HTMLInputElement }) => {
-		const newValue = e.currentTarget.value.slice(0, this.#maxLength.value);
+		const newValue = e.currentTarget.value.slice(0, this.#maxLength.current);
 		if (newValue.length > 0 && this.#regexPattern && !this.#regexPattern.test(newValue)) {
 			e.preventDefault();
 			return;
@@ -357,23 +357,23 @@ class PinInputRootState {
 			// a value with smaller length, which is not ideal for performance.
 			document.dispatchEvent(new Event("selectionchange"));
 		}
-		this.value.value = newValue;
+		this.value.current = newValue;
 	};
 
 	#onfocus = (_: FocusEvent & { currentTarget: HTMLInputElement }) => {
-		const input = this.#inputRef.value;
+		const input = this.#inputRef.current;
 		if (input) {
-			const start = Math.min(input.value.length, this.#maxLength.value - 1);
+			const start = Math.min(input.value.length, this.#maxLength.current - 1);
 			const end = input.value.length;
 			input.setSelectionRange(start, end);
 			this.#mirrorSelectionStart = start;
 			this.#mirrorSelectionEnd = end;
 		}
-		this.#isFocused.value = true;
+		this.#isFocused.current = true;
 	};
 
 	#onpaste = (e: ClipboardEvent & { currentTarget: HTMLInputElement }) => {
-		const input = this.#inputRef.value;
+		const input = this.#inputRef.current;
 		if (!this.#initialLoad.isIOS || !e.clipboardData || !input) return;
 		const content = e.clipboardData.getData("text/plain");
 		e.preventDefault();
@@ -383,22 +383,22 @@ class PinInputRootState {
 
 		const isReplacing = start !== end;
 
-		const initNewVal = this.value.value;
+		const initNewVal = this.value.current;
 
 		const newValueUncapped = isReplacing
 			? initNewVal.slice(0, start) + content + initNewVal.slice(end)
 			: initNewVal.slice(0, start) + content + initNewVal.slice(start);
 
-		const newValue = newValueUncapped.slice(0, this.#maxLength.value);
+		const newValue = newValueUncapped.slice(0, this.#maxLength.current);
 
 		if (newValue.length > 0 && this.#regexPattern && !this.#regexPattern.test(newValue)) {
 			return;
 		}
 
 		input.value = newValue;
-		this.value.value = newValue;
+		this.value.current = newValue;
 
-		const selStart = Math.min(newValue.length, this.#maxLength.value - 1);
+		const selStart = Math.min(newValue.length, this.#maxLength.current - 1);
 		const selEnd = newValue.length;
 
 		input.setSelectionRange(selStart, selEnd);
@@ -415,21 +415,21 @@ class PinInputRootState {
 	};
 
 	#onblur = () => {
-		this.#isFocused.value = false;
+		this.#isFocused.current = false;
 	};
 
 	inputProps = $derived.by(() => ({
-		id: this.#inputId.value,
+		id: this.#inputId.current,
 		style: this.#inputStyle,
-		autocomplete: this.#autocomplete.value || "one-time-code",
+		autocomplete: this.#autocomplete.current || "one-time-code",
 		"data-pin-input-input": "",
 		"data-pin-input-input-mss": this.#mirrorSelectionStart,
 		"data-pin-input-input-mse": this.#mirrorSelectionEnd,
-		inputmode: this.#inputmode.value,
+		inputmode: this.#inputmode.current,
 		pattern: this.#regexPattern?.source,
-		maxlength: this.#maxLength.value,
-		value: this.value.value,
-		disabled: getDisabled(this.#disabled.value),
+		maxlength: this.#maxLength.current,
+		value: this.value.current,
+		disabled: getDisabled(this.#disabled.current),
 		//
 		onpaste: this.#onpaste,
 		oninput: this.#oninput,
@@ -440,16 +440,16 @@ class PinInputRootState {
 	}));
 
 	#cells = $derived.by(() =>
-		Array.from({ length: this.#maxLength.value }).map((_, idx) => {
+		Array.from({ length: this.#maxLength.current }).map((_, idx) => {
 			const isActive =
-				this.#isFocused.value &&
+				this.#isFocused.current &&
 				this.#mirrorSelectionStart !== null &&
 				this.#mirrorSelectionEnd !== null &&
 				((this.#mirrorSelectionStart === this.#mirrorSelectionEnd &&
 					idx === this.#mirrorSelectionStart) ||
 					(idx >= this.#mirrorSelectionStart && idx < this.#mirrorSelectionEnd));
 
-			const char = this.value.value[idx] !== undefined ? this.value.value[idx] : null;
+			const char = this.value.current[idx] !== undefined ? this.value.current[idx] : null;
 
 			return {
 				char,
@@ -461,7 +461,7 @@ class PinInputRootState {
 
 	snippetProps = $derived.by(() => ({
 		cells: this.#cells,
-		isFocused: this.#isFocused.value,
+		isFocused: this.#isFocused.current,
 		isHovering: this.#isHoveringInput,
 	}));
 }

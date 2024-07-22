@@ -14,5 +14,5 @@ export type PresenceLayerImplProps = PresenceLayerProps & {
 	 */
 	present: boolean;
 
-	presence?: Snippet<[{ present: { value: boolean } }]>;
+	presence?: Snippet<[{ present: { current: boolean } }]>;
 };

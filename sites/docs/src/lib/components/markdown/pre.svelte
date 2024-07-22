@@ -1,8 +1,8 @@
 <script lang="ts">
+	import type { HTMLAttributes } from "svelte/elements";
 	import { cn, createCopyCodeButton } from "$lib/utils/index.js";
 
-	let className: string | undefined | null = undefined;
-	export { className as class };
+	let { class: className, children, ...restProps }: HTMLAttributes<HTMLPreElement> = $props();
 
 	const { setCodeString } = createCopyCodeButton();
 </script>
@@ -13,7 +13,6 @@
 		className
 	)}
 	use:setCodeString
-	{...$$restProps}>
-	<slot />
-	<!-- <CopyCodeButton {copyCode} copied={$copied} class={cn("pre-copy-btn absolute right-4 top-4")} /> -->
+	{...restProps}>
+	{@render children?.()}
 </pre>

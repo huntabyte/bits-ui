@@ -77,9 +77,9 @@ export function useFocusScope({
 	let lastFocusedElement = $state<HTMLElement | null>(null);
 
 	$effect(() => {
-		const container = ref.value;
+		const container = ref.current;
 		if (!container) return;
-		if (!trapped.value) return;
+		if (!trapped.current) return;
 
 		function handleFocusIn(event: FocusEvent) {
 			if (focusScope.paused || !container) return;
@@ -143,11 +143,11 @@ export function useFocusScope({
 	});
 
 	$effect(() => {
-		let container = untrack(() => ref.value);
+		let container = untrack(() => ref.current);
 		const previouslyFocusedElement = document.activeElement as HTMLElement | null;
 		untrack(() => {
 			if (!container) {
-				container = document.getElementById(untrack(() => id.value));
+				container = document.getElementById(untrack(() => id.current));
 			}
 			if (!container) return;
 			untrack(() => focusScopeStack.add(focusScope));
@@ -157,7 +157,7 @@ export function useFocusScope({
 				const mountEvent = new CustomEvent(AUTOFOCUS_ON_MOUNT, EVENT_OPTIONS);
 				container.addEventListener(
 					AUTOFOCUS_ON_MOUNT,
-					untrack(() => onMountAutoFocus.value)
+					untrack(() => onMountAutoFocus.current)
 				);
 				container.dispatchEvent(mountEvent);
 
@@ -178,13 +178,13 @@ export function useFocusScope({
 			if (!container) return;
 			container.removeEventListener(
 				AUTOFOCUS_ON_MOUNT,
-				untrack(() => onMountAutoFocus.value)
+				untrack(() => onMountAutoFocus.current)
 			);
 
 			const destroyEvent = new CustomEvent(AUTOFOCUS_ON_DESTROY, EVENT_OPTIONS);
 			container.addEventListener(
 				AUTOFOCUS_ON_DESTROY,
-				untrack(() => onDestroyAutoFocus.value)
+				untrack(() => onDestroyAutoFocus.current)
 			);
 			container.dispatchEvent(destroyEvent);
 
@@ -193,7 +193,7 @@ export function useFocusScope({
 					focus(previouslyFocusedElement ?? document.body, { select: true });
 				}
 
-				container?.removeEventListener(AUTOFOCUS_ON_DESTROY, onDestroyAutoFocus.value);
+				container?.removeEventListener(AUTOFOCUS_ON_DESTROY, onDestroyAutoFocus.current);
 
 				focusScopeStack.remove(focusScope);
 			}, 0);
@@ -201,14 +201,14 @@ export function useFocusScope({
 	});
 
 	function handleKeydown(e: KeyboardEvent) {
-		if (!loop.value && !trapped.value) return;
+		if (!loop.current && !trapped.current) return;
 		if (focusScope.paused) return;
 
 		const isTabKey = e.key === kbd.TAB && !e.ctrlKey && !e.altKey && !e.metaKey;
 		const focusedElement = document.activeElement as HTMLElement | null;
 
 		if (!(isTabKey && focusedElement)) return;
-		const container = ref.value;
+		const container = ref.current;
 		if (!container) return;
 
 		const [first, last] = getTabbableEdges(container);
@@ -221,16 +221,16 @@ export function useFocusScope({
 		} else {
 			if (!e.shiftKey && focusedElement === last) {
 				e.preventDefault();
-				if (loop.value) focus(first, { select: true });
+				if (loop.current) focus(first, { select: true });
 			} else if (e.shiftKey && focusedElement === first) {
 				e.preventDefault();
-				if (loop.value) focus(last, { select: true });
+				if (loop.current) focus(last, { select: true });
 			}
 		}
 	}
 
 	const props: FocusScopeContainerProps = $derived({
-		id: id.value,
+		id: id.current,
 		tabindex: -1,
 		onkeydown: handleKeydown,
 	});

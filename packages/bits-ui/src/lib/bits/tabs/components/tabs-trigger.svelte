@@ -3,7 +3,7 @@
 	import type { TriggerProps } from "../index.js";
 	import { useTabsTrigger } from "../tabs.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 
 	let {
 		child,

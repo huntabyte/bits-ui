@@ -8,7 +8,7 @@
 	import { usePopoverRoot } from "$lib/bits/popover/popover.svelte.js";
 	import { useDateRangeFieldRoot } from "$lib/bits/date-range-field/date-range-field.svelte.js";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import type { DateRange } from "$lib/shared/index.js";
 

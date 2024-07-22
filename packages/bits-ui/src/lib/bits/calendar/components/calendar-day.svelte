@@ -2,7 +2,7 @@
 	import { box } from "svelte-toolbelt";
 	import { useCalendarDay } from "../calendar.svelte.js";
 	import type { DayProps } from "../index.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let { children, child, ref = $bindable(null), id = useId(), ...restProps }: DayProps = $props();
@@ -28,7 +28,7 @@
 		{#if children}
 			{@render children?.(dayState.snippetProps)}
 		{:else}
-			{dayState.cell.date.value.day}
+			{dayState.cell.date.current.day}
 		{/if}
 	</div>
 {/if}

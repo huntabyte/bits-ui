@@ -1,41 +1,5 @@
-import { createEventDispatcher } from "svelte";
 import type { ReadableBox } from "svelte-toolbelt";
 import type { Arrayable } from "$lib/internal/index.js";
-
-type MeltEvent<T extends Event = Event> = {
-	detail: {
-		originalEvent: T;
-	};
-	cancelable: boolean;
-	preventDefault: () => void;
-};
-
-export type SvelteEvent<T extends Event = Event, U extends EventTarget = EventTarget> = T & {
-	currentTarget: EventTarget & U;
-};
-
-export function createDispatcher<M extends Element = Element>() {
-	const dispatch = createEventDispatcher();
-	return (e: MeltEvent) => {
-		const { originalEvent } = e.detail;
-		const { cancelable } = e;
-
-		const type = originalEvent.type;
-
-		const shouldContinue = dispatch(
-			type,
-			{ originalEvent, currentTarget: originalEvent.currentTarget as M },
-			{ cancelable }
-		);
-		if (!shouldContinue) {
-			e.preventDefault();
-		}
-	};
-}
-
-export type CreateDispatcher = {
-	createDispatcher: typeof createDispatcher;
-};
 
 export type EventCallback<E extends Event = Event> = (event: E) => void;
 
@@ -48,7 +12,7 @@ export function composeHandlers<E extends Event = Event, T extends Element = Ele
 			if (typeof handler === "function") {
 				handler.call(this, e);
 			} else {
-				handler.value.call(this, e);
+				handler.current.call(this, e);
 			}
 		}
 	};
@@ -99,20 +63,4 @@ export function addEventListener(
 	return () => {
 		events.forEach((_event) => target.removeEventListener(_event, handler, options));
 	};
-}
-
-export function handleAndDispatchCustomEvent<E extends CustomEvent, OriginalEvent extends Event>(
-	name: string,
-	handler: ((event: E) => void) | undefined,
-	detail: { originalEvent: OriginalEvent } & (E extends CustomEvent<infer D> ? D : never)
-) {
-	const target = detail.originalEvent.target;
-	const event = new CustomEvent(name, {
-		bubbles: false,
-		cancelable: true,
-		detail,
-	});
-	if (handler) target.addEventListener(name, handler as EventListener, { once: true });
-
-	target.dispatchEvent(event);
 }

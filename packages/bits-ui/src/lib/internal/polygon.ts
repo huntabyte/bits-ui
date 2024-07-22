@@ -29,7 +29,7 @@ export type Polygon = Array<Point>;
 // Returns a new array of points representing the convex hull of
 // the given set of points. The convex hull excludes collinear points.
 // This algorithm runs in O(n log n) time.
-export function makeHull<P extends Point>(points: Readonly<Array<P>>): Array<P> {
+function makeHull<P extends Point>(points: Readonly<Array<P>>): Array<P> {
 	const newPoints: Array<P> = points.slice();
 	newPoints.sort(POINT_COMPARATOR);
 	return makeHullPresorted(newPoints);
@@ -87,7 +87,7 @@ export function POINT_COMPARATOR(a: Point, b: Point): number {
 	else return 0;
 }
 
-export function getPointsFromEl(el: HTMLElement): Array<Point> {
+function getPointsFromEl(el: HTMLElement): Array<Point> {
 	const rect = el.getBoundingClientRect();
 	return [
 		{ x: rect.left, y: rect.top },

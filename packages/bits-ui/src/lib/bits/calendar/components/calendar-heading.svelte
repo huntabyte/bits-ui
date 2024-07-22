@@ -2,7 +2,7 @@
 	import { box } from "svelte-toolbelt";
 	import type { HeadingProps } from "../index.js";
 	import { useCalendarHeading } from "../calendar.svelte.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {

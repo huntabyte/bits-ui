@@ -33,13 +33,13 @@ export class TextSelectionLayerState {
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
-			condition: () => this.#enabled.value,
+			condition: () => this.#enabled.current,
 		});
 
 		let unsubEvents = noop;
 
 		$effect(() => {
-			if (this.#enabled.value) {
+			if (this.#enabled.current) {
 				layers.set(
 					this,
 					untrack(() => this.#enabled)
@@ -66,16 +66,16 @@ export class TextSelectionLayerState {
 	}
 
 	#pointerdown = (e: PointerEvent) => {
-		const node = this.#ref.value;
+		const node = this.#ref.current;
 		const target = e.target;
-		if (!isHTMLElement(node) || !isHTMLElement(target) || !this.#enabled.value) return;
+		if (!isHTMLElement(node) || !isHTMLElement(target) || !this.#enabled.current) return;
 		/**
 		 * We only lock user-selection overflow if layer is the top most layer and
 		 * pointerdown occured inside the node. You are still allowed to select text
 		 * outside the node provided pointerdown occurs outside the node.
 		 */
 		if (!isHighestLayer(this) || !isOrContainsTarget(node, target)) return;
-		this.#onPointerDownProp.value(e);
+		this.#onPointerDownProp.current(e);
 		if (e.defaultPrevented) return;
 		this.#unsubSelectionLock = preventTextSelectionOverflow(node);
 	};

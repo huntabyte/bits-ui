@@ -2,7 +2,7 @@
 	import { box } from "svelte-toolbelt";
 	import type { TriggerProps } from "../index.js";
 	import { useNavigationMenuTrigger } from "../navigation-menu.svelte.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import VisuallyHidden from "$lib/bits/utilities/visually-hidden/visually-hidden.svelte";
 	import Mounted from "$lib/bits/utilities/mounted.svelte";

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { Toaster } from "svelte-sonner";
 	import { ModeWatcher } from "mode-watcher";
 	import { dev } from "$app/environment";
 	import { page } from "$app/stores";
@@ -12,17 +13,6 @@
 	import { navigation } from "$lib/config/index.js";
 	import { cn } from "$lib/utils/index.js";
 	import "$lib/styles/app.postcss";
-	import { Toaster } from "svelte-sonner";
-
-	// onMount(async () => {
-	// 	if (dev) {
-	// 		const eruda = (await import("eruda")).default;
-	// 		eruda.init();
-	// 	}
-	// });
-
-	// eslint-disable-next-line no-unused-expressions, svelte/valid-compile
-	$page;
 </script>
 
 <ModeWatcher />

@@ -2,7 +2,7 @@
 	import { box } from "svelte-toolbelt";
 	import { useComboboxItem } from "../combobox.svelte.js";
 	import type { ItemProps } from "../index.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { noop } from "$lib/internal/callbacks.js";
 

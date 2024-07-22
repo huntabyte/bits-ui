@@ -49,15 +49,15 @@ export function useTimeoutFn<T extends AnyFn>(
 	}
 
 	function stop() {
-		isPending.value = false;
+		isPending.current = false;
 		clear();
 	}
 
 	function start(...args: Parameters<T> | []) {
 		clear();
-		isPending.value = true;
+		isPending.current = true;
 		timer = setTimeout(() => {
-			isPending.value = false;
+			isPending.current = false;
 			timer = null;
 
 			cb(...args);
@@ -65,7 +65,7 @@ export function useTimeoutFn<T extends AnyFn>(
 	}
 
 	if (immediate) {
-		isPending.value = true;
+		isPending.current = true;
 		if (isBrowser) start();
 	}
 

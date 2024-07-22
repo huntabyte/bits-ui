@@ -2,7 +2,7 @@
 	import { box } from "svelte-toolbelt";
 	import type { ContentProps } from "../index.js";
 	import { useListboxContent } from "../listbox.svelte.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {

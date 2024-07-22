@@ -75,7 +75,7 @@ class TabsRootState {
 	}
 
 	setValue(v: string) {
-		this.value.value = v;
+		this.value.current = v;
 	}
 
 	createList(props: TabsListStateProps) {
@@ -93,8 +93,8 @@ class TabsRootState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
-				"data-orientation": getDataOrientation(this.orientation.value),
+				id: this.#id.current,
+				"data-orientation": getDataOrientation(this.orientation.current),
 				[ROOT_ATTR]: "",
 			}) as const
 	);
@@ -110,7 +110,7 @@ class TabsListState {
 	#id: TabsListStateProps["id"];
 	#ref: TabsListStateProps["ref"];
 	#root: TabsRootState;
-	#isDisabled = $derived.by(() => this.#root.disabled.value);
+	#isDisabled = $derived.by(() => this.#root.disabled.current);
 
 	constructor(props: TabsListStateProps, root: TabsRootState) {
 		this.#root = root;
@@ -126,10 +126,10 @@ class TabsListState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
+				id: this.#id.current,
 				role: "tablist",
-				"aria-orientation": getAriaOrientation(this.#root.orientation.value),
-				"data-orientation": getDataOrientation(this.#root.orientation.value),
+				"aria-orientation": getAriaOrientation(this.#root.orientation.current),
+				"data-orientation": getDataOrientation(this.#root.orientation.current),
 				[LIST_ATTR]: "",
 				"data-disabled": getDataDisabled(this.#isDisabled),
 			}) as const
@@ -153,8 +153,8 @@ class TabsTriggerState {
 	#ref: TabsTriggerStateProps["ref"];
 	#disabled: TabsTriggerStateProps["disabled"];
 	#value: TabsTriggerStateProps["value"];
-	#isActive = $derived.by(() => this.#root.value.value === this.#value.value);
-	#isDisabled = $derived.by(() => this.#disabled.value || this.#root.disabled.value);
+	#isActive = $derived.by(() => this.#root.value.current === this.#value.current);
+	#isDisabled = $derived.by(() => this.#disabled.current || this.#root.disabled.current);
 	#tabIndex = $state(0);
 
 	constructor(props: TabsTriggerStateProps, root: TabsRootState) {
@@ -171,7 +171,7 @@ class TabsTriggerState {
 
 		$effect(() => {
 			// we want to track the value
-			const id = this.#id.value;
+			const id = this.#id.current;
 			// on mount register the trigger
 			untrack(() => this.#root.registerTrigger(id));
 
@@ -183,24 +183,24 @@ class TabsTriggerState {
 
 		$effect(() => {
 			if (this.#root.triggerIds.length) {
-				this.#tabIndex = this.#root.rovingFocusGroup.getTabIndex(this.#ref.value);
+				this.#tabIndex = this.#root.rovingFocusGroup.getTabIndex(this.#ref.current);
 			}
 		});
 	}
 
 	activate() {
-		if (this.#root.value.value === this.#value.value) return;
-		this.#root.setValue(this.#value.value);
+		if (this.#root.value.current === this.#value.current) return;
+		this.#root.setValue(this.#value.current);
 	}
 
 	#onfocus = () => {
-		if (this.#root.activationMode.value !== "automatic" || this.#disabled.value) return;
+		if (this.#root.activationMode.current !== "automatic" || this.#disabled.current) return;
 
 		this.activate();
 	};
 
 	#onclick = (e: MouseEvent) => {
-		const node = this.#ref.value;
+		const node = this.#ref.current;
 		if (!node || this.#isDisabled) return;
 		e.preventDefault();
 		node.focus();
@@ -214,20 +214,20 @@ class TabsTriggerState {
 			this.activate();
 			return;
 		}
-		this.#root.rovingFocusGroup.handleKeydown(this.#ref.value, e);
+		this.#root.rovingFocusGroup.handleKeydown(this.#ref.current, e);
 	};
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
+				id: this.#id.current,
 				role: "tab",
 				"data-state": getTabDataState(this.#isActive),
-				"data-value": this.#value.value,
-				"data-orientation": getDataOrientation(this.#root.orientation.value),
-				"data-disabled": getDataDisabled(this.#disabled.value),
+				"data-value": this.#value.current,
+				"data-orientation": getDataOrientation(this.#root.orientation.current),
+				"data-disabled": getDataDisabled(this.#disabled.current),
 				[TRIGGER_ATTR]: "",
-				disabled: getDisabled(this.#disabled.value),
+				disabled: getDisabled(this.#disabled.current),
 				tabindex: this.#tabIndex,
 				//
 				onclick: this.#onclick,
@@ -251,7 +251,7 @@ class TabsContentState {
 	#id: TabsContentStateProps["id"];
 	#ref: TabsContentStateProps["ref"];
 	#value: TabsContentStateProps["value"];
-	#isActive = $derived.by(() => this.#root.value.value === this.#value.value);
+	#isActive = $derived.by(() => this.#root.value.current === this.#value.current);
 
 	constructor(props: TabsContentStateProps, root: TabsRootState) {
 		this.#root = root;
@@ -271,7 +271,7 @@ class TabsContentState {
 				role: "tabpanel",
 				hidden: getHidden(!this.#isActive),
 				tabindex: 0,
-				"data-value": this.#value.value,
+				"data-value": this.#value.current,
 				"data-state": getTabDataState(this.#isActive),
 				[CONTENT_ATTR]: "",
 			}) as const

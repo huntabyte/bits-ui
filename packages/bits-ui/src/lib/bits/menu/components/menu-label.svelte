@@ -3,7 +3,7 @@
 	import type { LabelProps } from "../index.js";
 	import { useMenuLabel } from "../menu.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 
 	let {
 		children,

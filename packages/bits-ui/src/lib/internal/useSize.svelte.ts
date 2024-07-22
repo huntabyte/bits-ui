@@ -8,7 +8,7 @@ export function useSize(node: WritableBox<HTMLElement | null>) {
 	let size = $state<{ width: number; height: number } | undefined>(undefined);
 
 	$effect(() => {
-		const currNode = node.value;
+		const currNode = node.current;
 		if (!currNode) {
 			size = undefined;
 			return;

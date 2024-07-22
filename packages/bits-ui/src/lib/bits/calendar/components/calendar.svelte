@@ -3,7 +3,7 @@
 	import type { DateValue } from "@internationalized/date";
 	import { useCalendarRoot } from "../calendar.svelte.js";
 	import type { RootProps } from "../index.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 	import { noop } from "$lib/internal/callbacks.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { getDefaultDate } from "$lib/shared/date/utils.js";

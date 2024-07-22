@@ -2,7 +2,7 @@
 	import { box } from "svelte-toolbelt";
 	import type { TriggerProps } from "../index.js";
 	import { useMenuContextTrigger } from "$lib/bits/menu/menu.svelte.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 

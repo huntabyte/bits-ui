@@ -2,7 +2,7 @@
 	import { box } from "svelte-toolbelt";
 	import type { DayProps } from "../index.js";
 	import { useRangeCalendarDay } from "../range-calendar.svelte.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let { children, child, id = useId(), ref = $bindable(null), ...restProps }: DayProps = $props();

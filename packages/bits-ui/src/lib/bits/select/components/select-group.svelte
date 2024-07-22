@@ -3,7 +3,7 @@
 	import type { GroupProps } from "../index.js";
 	import { useSelectGroup } from "../select.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 
 	let {
 		children,

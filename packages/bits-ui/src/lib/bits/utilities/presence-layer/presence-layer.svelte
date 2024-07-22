@@ -11,6 +11,6 @@
 	);
 </script>
 
-{#if forceMount || present || isPresent.value}
+{#if forceMount || present || isPresent.current}
 	{@render presence?.({ present: isPresent })}
 {/if}

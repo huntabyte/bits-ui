@@ -15,7 +15,7 @@ type UseRefByIdProps = {
 	ref: WritableBox<HTMLElement | null>;
 
 	/**
-	 * A condition that determines whether the ref should be set or not.
+	 * A reactive condition that will cause the node to be set.
 	 */
 	condition?: Getter<boolean>;
 
@@ -40,19 +40,19 @@ export function useRefById({
 }: UseRefByIdProps) {
 	$effect(() => {
 		// re-run when the ID changes.
-		id.value;
+		id.current;
 		condition();
 		// re-run when the condition changes.
 		untrack(() => {
-			const node = document.getElementById(id.value);
-			ref.value = node;
-			onRefChange(ref.value);
+			const node = document.getElementById(id.current);
+			ref.current = node;
+			onRefChange(ref.current);
 		});
 	});
 
 	$effect(() => {
 		return () => {
-			ref.value = null;
+			ref.current = null;
 			onRefChange(null);
 		};
 	});

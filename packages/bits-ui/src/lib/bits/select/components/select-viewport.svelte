@@ -2,7 +2,7 @@
 	import { box } from "svelte-toolbelt";
 	import type { ViewportProps } from "../index.js";
 	import { useSelectViewport } from "../select.svelte.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {

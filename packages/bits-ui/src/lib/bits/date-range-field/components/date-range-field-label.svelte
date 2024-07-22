@@ -2,7 +2,7 @@
 	import { box } from "svelte-toolbelt";
 	import { useDateRangeFieldLabel } from "../date-range-field.svelte.js";
 	import type { LabelProps } from "../index.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {

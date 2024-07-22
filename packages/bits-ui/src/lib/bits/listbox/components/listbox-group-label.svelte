@@ -2,7 +2,7 @@
 	import { box } from "svelte-toolbelt";
 	import type { GroupLabelProps } from "../index.js";
 	import { useListboxGroupLabel } from "../listbox.svelte.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {

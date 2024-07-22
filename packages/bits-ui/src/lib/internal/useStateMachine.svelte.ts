@@ -34,12 +34,12 @@ export function useStateMachine<M>(
 
 	function reducer(event: MachineEvent<M>) {
 		// @ts-expect-error  state.value is keyof M
-		const nextState = machine[state.value][event];
-		return nextState ?? state.value;
+		const nextState = machine[state.current][event];
+		return nextState ?? state.current;
 	}
 
 	const dispatch = (event: MachineEvent<M>) => {
-		state.value = reducer(event);
+		state.current = reducer(event);
 	};
 
 	return {

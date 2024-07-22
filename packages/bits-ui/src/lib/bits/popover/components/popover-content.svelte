@@ -31,7 +31,7 @@
 
 <PopperLayer
 	{...mergedProps}
-	present={contentState.root.open.value || forceMount}
+	present={contentState.root.open.current || forceMount}
 	{id}
 	onInteractOutside={(e) => {
 		onInteractOutside(e);

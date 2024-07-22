@@ -118,17 +118,17 @@ class FloatingContentState {
 	arrowHeight = $derived(this.arrowSize.value?.height ?? 0);
 	desiredPlacement = $derived.by(
 		() =>
-			(this.side?.value +
-				(this.align.value !== "center" ? `-${this.align.value}` : "")) as Placement
+			(this.side?.current +
+				(this.align.current !== "center" ? `-${this.align.current}` : "")) as Placement
 	);
 	boundary = $derived.by(() =>
-		Array.isArray(this.collisionBoundary.value)
-			? this.collisionBoundary.value
-			: [this.collisionBoundary.value]
+		Array.isArray(this.collisionBoundary.current)
+			? this.collisionBoundary.current
+			: [this.collisionBoundary.current]
 	);
 	hasExplicitBoundaries = $derived(this.boundary.length > 0);
 	detectOverflowOptions = $derived.by(() => ({
-		padding: this.collisionPadding.value,
+		padding: this.collisionPadding.current,
 		boundary: this.boundary.filter(isNotNull),
 		altBoundary: this.hasExplicitBoundaries,
 	}));
@@ -136,14 +136,14 @@ class FloatingContentState {
 		() =>
 			[
 				offset({
-					mainAxis: this.sideOffset.value + this.arrowHeight,
-					alignmentAxis: this.alignOffset.value,
+					mainAxis: this.sideOffset.current + this.arrowHeight,
+					alignmentAxis: this.alignOffset.current,
 				}),
 				this.avoidCollisions &&
 					shift({
 						mainAxis: true,
 						crossAxis: false,
-						limiter: this.sticky.value === "partial" ? limitShift() : undefined,
+						limiter: this.sticky.current === "partial" ? limitShift() : undefined,
 						...this.detectOverflowOptions,
 					}),
 				this.avoidCollisions && flip({ ...this.detectOverflowOptions }),
@@ -170,10 +170,10 @@ class FloatingContentState {
 						);
 					},
 				}),
-				this.arrowRef.value &&
-					arrow({ element: this.arrowRef.value, padding: this.arrowPadding.value }),
+				this.arrowRef.current &&
+					arrow({ element: this.arrowRef.current, padding: this.arrowPadding.current }),
 				transformOrigin({ arrowWidth: this.arrowWidth, arrowHeight: this.arrowHeight }),
-				this.hideWhenDetached.value &&
+				this.hideWhenDetached.current &&
 					hide({ strategy: "referenceHidden", ...this.detectOverflowOptions }),
 			].filter(Boolean) as Middleware[]
 	);
@@ -188,7 +188,7 @@ class FloatingContentState {
 	wrapperProps = $derived.by(
 		() =>
 			({
-				id: this.wrapperId.value,
+				id: this.wrapperId.current,
 				"data-bits-floating-content-wrapper": "",
 				style: {
 					...this.floating.floatingStyles,
@@ -204,10 +204,10 @@ class FloatingContentState {
 						visibility: "hidden",
 						"pointer-events": "none",
 					}),
-					...this.style.value,
+					...this.style.current,
 				},
 				// Floating UI calculates logical alignment based the `dir` attribute
-				dir: this.dir.value,
+				dir: this.dir.current,
 			}) as const
 	);
 	props = $derived.by(
@@ -216,7 +216,7 @@ class FloatingContentState {
 				"data-side": this.placedSide,
 				"data-align": this.placedAlign,
 				style: styleToString({
-					...this.style.value,
+					...this.style.current,
 					// if the FloatingContent hasn't been placed yet (not all measurements done)
 					// we prevent animations so that users's animation don't kick in too early referring wrong sides
 					// animation: !this.floating.isPositioned ? "none" : undefined,
@@ -277,26 +277,26 @@ class FloatingContentState {
 		});
 
 		this.floating = useFloating({
-			strategy: () => this.strategy.value,
+			strategy: () => this.strategy.current,
 			placement: () => this.desiredPlacement,
 			middleware: () => this.middleware,
 			reference: this.root.anchorNode,
 			whileElementsMounted: (...args) => {
 				const cleanup = autoUpdate(...args, {
-					animationFrame: this.updatePositionStrategy?.value === "always",
+					animationFrame: this.updatePositionStrategy?.current === "always",
 				});
 				return cleanup;
 			},
-			open: () => this.enabled.value,
+			open: () => this.enabled.current,
 		});
 
 		$effect(() => {
 			if (!this.floating.isPositioned) return;
-			this.onPlaced?.value();
+			this.onPlaced?.current();
 		});
 
 		$effect(() => {
-			const contentNode = this.contentRef.value;
+			const contentNode = this.contentRef.current;
 			if (!contentNode) return;
 
 			untrack(() => {
@@ -305,7 +305,7 @@ class FloatingContentState {
 		});
 
 		$effect(() => {
-			this.floating.floating.value = this.wrapperRef.value;
+			this.floating.floating.current = this.wrapperRef.current;
 		});
 	}
 
@@ -330,16 +330,16 @@ class FloatingArrowState {
 			id: this.#id,
 			ref: this.#ref,
 			onRefChange: (node) => {
-				this.#content.arrowRef.value = node;
+				this.#content.arrowRef.current = node;
 			},
-			condition: () => this.#content.enabled.value,
+			condition: () => this.#content.enabled.current,
 		});
 	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
+				id: this.#id.current,
 				style: this.#content.arrowStyle,
 			}) as const
 	);
@@ -354,14 +354,14 @@ class FloatingAnchorState {
 	ref = box<HTMLElement | null>(null);
 
 	constructor(props: FloatingAnchorStateProps, root: FloatingRootState) {
-		if (props.virtualEl && props.virtualEl.value) {
-			root.anchorNode = box.from(props.virtualEl.value);
+		if (props.virtualEl && props.virtualEl.current) {
+			root.anchorNode = box.from(props.virtualEl.current);
 		} else {
 			useRefById({
 				id: props.id,
 				ref: this.ref,
 				onRefChange: (node) => {
-					root.anchorNode.value = node;
+					root.anchorNode.current = node;
 				},
 			});
 		}

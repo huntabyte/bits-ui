@@ -2,11 +2,12 @@ import { error, redirect } from "@sveltejs/kit";
 import type { Doc } from "contentlayer/generated/index.js";
 import { getAPISchemas, isBit } from "$lib/content/api-reference/index.js";
 import type { APISchema } from "$lib/types/index.js";
+import type { Component } from "svelte";
 
 export type FrontMatter = Pick<Doc, "title" | "description">;
 
 export type DocFile = {
-	default: import("svelte").SvelteComponent;
+	default: Component;
 	metadata: FrontMatter;
 };
 

@@ -40,17 +40,17 @@ class PaginationRootState {
 	siblingCount: PaginationRootStateProps["siblingCount"];
 	page: PaginationRootStateProps["page"];
 	loop: PaginationRootStateProps["loop"];
-	totalPages = $derived.by(() => Math.ceil(this.count.value / this.perPage.value));
+	totalPages = $derived.by(() => Math.ceil(this.count.current / this.perPage.current));
 	range = $derived.by(() => {
-		const start = (this.page.value - 1) * this.perPage.value;
-		const end = Math.min(start + this.perPage.value, this.count.value);
+		const start = (this.page.current - 1) * this.perPage.current;
+		const end = Math.min(start + this.perPage.current, this.count.current);
 		return { start, end };
 	});
 	pages = $derived.by(() =>
 		getPageItems({
-			page: this.page.value,
+			page: this.page.current,
 			totalPages: this.totalPages,
-			siblingCount: this.siblingCount.value,
+			siblingCount: this.siblingCount.current,
 		})
 	);
 
@@ -71,27 +71,27 @@ class PaginationRootState {
 	}
 
 	setPage(page: number) {
-		this.page.value = page;
+		this.page.current = page;
 	}
 
 	getPageTriggerNodes() {
-		const node = this.ref.value;
+		const node = this.ref.current;
 		if (!node) return [];
 		return Array.from(node.querySelectorAll<HTMLElement>("[data-pagination-page]"));
 	}
 
 	getButtonNode(type: "prev" | "next") {
-		const node = this.ref.value;
+		const node = this.ref.current;
 		if (!node) return;
 		return node.querySelector<HTMLElement>(`[data-pagination-${type}]`);
 	}
 
 	prevPage() {
-		this.page.value = Math.max(this.page.value - 1, 1);
+		this.page.current = Math.max(this.page.current - 1, 1);
 	}
 
 	nextPage() {
-		this.page.value = Math.min(this.page.value + 1, this.totalPages);
+		this.page.current = Math.min(this.page.current + 1, this.totalPages);
 	}
 
 	createPage(props: PaginationPageStateProps) {
@@ -105,8 +105,8 @@ class PaginationRootState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.value,
-				"data-orientation": getDataOrientation(this.orientation.value),
+				id: this.id.current,
+				"data-orientation": getDataOrientation(this.orientation.current),
 				[ROOT_ATTR]: "",
 			}) as const
 	);
@@ -141,20 +141,21 @@ class PaginationPage {
 	}
 
 	#onclick = () => {
-		this.#root.setPage(this.page.value.value);
+		this.#root.setPage(this.page.current.value);
 	};
 
 	#onkeydown = (e: KeyboardEvent) => {
-		handleTriggerKeydown(e, this.#ref.value, this.#root);
+		handleTriggerKeydown(e, this.#ref.current, this.#root);
 	};
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
-				"aria-label": `Page ${this.page.value}`,
-				"data-value": `${this.page.value.value}`,
-				"data-selected": this.page.value.value === this.#root.page.value ? "" : undefined,
+				id: this.#id.current,
+				"aria-label": `Page ${this.page.current}`,
+				"data-value": `${this.page.current.value}`,
+				"data-selected":
+					this.page.current.value === this.#root.page.current ? "" : undefined,
 				[PAGE_ATTR]: "",
 				//
 				onclick: this.#onclick,
@@ -194,13 +195,13 @@ class PaginationButtonState {
 	};
 
 	#onkeydown = (e: KeyboardEvent) => {
-		handleTriggerKeydown(e, this.#ref.value, this.#root);
+		handleTriggerKeydown(e, this.#ref.current, this.#root);
 	};
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.value,
+				id: this.id.current,
 				[PREV_ATTR]: this.type === "prev" ? "" : undefined,
 				[NEXT_ATTR]: this.type === "next" ? "" : undefined,
 				//
@@ -228,7 +229,7 @@ function handleTriggerKeydown(
 	node: HTMLElement | null,
 	root: PaginationRootState
 ) {
-	if (!node || !root.ref.value) return;
+	if (!node || !root.ref.current) return;
 	const items = root.getPageTriggerNodes();
 	const nextButton = root.getButtonNode("next");
 	const prevButton = root.getButtonNode("prev");
@@ -242,11 +243,11 @@ function handleTriggerKeydown(
 
 	const currentIndex = items.indexOf(node);
 
-	const dir = getElemDirection(root.ref.value);
+	const dir = getElemDirection(root.ref.current);
 
-	const { nextKey, prevKey } = getDirectionalKeys(dir, root.orientation.value);
+	const { nextKey, prevKey } = getDirectionalKeys(dir, root.orientation.current);
 
-	const loop = root.loop.value;
+	const loop = root.loop.current;
 
 	const keyToIndex = {
 		[nextKey]: currentIndex + 1,

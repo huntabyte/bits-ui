@@ -5,7 +5,7 @@
 	import SelectContentItemAligned from "./select-content-item-aligned.svelte";
 	import FocusScope from "$lib/bits/utilities/focus-scope/focus-scope.svelte";
 	import { noop } from "$lib/internal/callbacks.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 	import EscapeLayer from "$lib/bits/utilities/escape-layer/escape-layer.svelte";
 	import DismissableLayer from "$lib/bits/utilities/dismissable-layer/dismissable-layer.svelte";
 	import TextSelectionLayer from "$lib/bits/utilities/text-selection-layer/text-selection-layer.svelte";
@@ -74,13 +74,13 @@
 							<SelectContentFloating
 								{...restProps}
 								{...mergedProps}
-								onPlaced={() => (contentState.isPositioned.value = true)}
+								onPlaced={() => (contentState.isPositioned.current = true)}
 							/>
 						{:else}
 							<SelectContentItemAligned
 								{...restProps}
 								{...mergedProps}
-								onPlaced={() => (contentState.isPositioned.value = true)}
+								onPlaced={() => (contentState.isPositioned.current = true)}
 							/>
 						{/if}
 					</TextSelectionLayer>

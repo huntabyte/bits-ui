@@ -2,7 +2,7 @@
 	import { box } from "svelte-toolbelt";
 	import { useDateFieldSegment } from "../date-field.svelte.js";
 	import type { SegmentProps } from "../index.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {

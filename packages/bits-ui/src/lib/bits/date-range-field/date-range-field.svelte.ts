@@ -1,5 +1,5 @@
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import { useId } from "$lib/internal/useId.svelte.js";
+import { useId } from "$lib/internal/useId.js";
 import { removeDescriptionElement } from "$lib/shared/date/field/helpers.js";
 import { createFormatter, type Formatter } from "$lib/shared/date/formatter.js";
 import type { Granularity, DateMatcher } from "$lib/shared/date/types.js";
@@ -62,19 +62,19 @@ export class DateRangeFieldRootState {
 	labelNode = $state<HTMLElement | null>(null);
 	descriptionNode = $state<HTMLElement | null>(null);
 	validationNode = $state<HTMLElement | null>(null);
-	startValueComplete = $derived.by(() => this.startValue.value !== undefined);
-	endValueComplete = $derived.by(() => this.endValue.value !== undefined);
+	startValueComplete = $derived.by(() => this.startValue.current !== undefined);
+	endValueComplete = $derived.by(() => this.endValue.current !== undefined);
 	rangeComplete = $derived(this.startValueComplete && this.endValueComplete);
 	mergedValues = $derived.by(() => {
-		if (this.startValue.value === undefined || this.endValue.value === undefined) {
+		if (this.startValue.current === undefined || this.endValue.current === undefined) {
 			return {
 				start: undefined,
 				end: undefined,
 			};
 		} else {
 			return {
-				start: this.startValue.value,
-				end: this.endValue.value,
+				start: this.startValue.current,
+				end: this.endValue.current,
 			};
 		}
 	});
@@ -95,7 +95,7 @@ export class DateRangeFieldRootState {
 		this.locale = props.locale;
 		this.hideTimeZone = props.hideTimeZone;
 		this.required = props.required;
-		this.formatter = createFormatter(this.locale.value);
+		this.formatter = createFormatter(this.locale.current);
 		this.id = props.id;
 		this.ref = props.ref;
 
@@ -112,21 +112,21 @@ export class DateRangeFieldRootState {
 		});
 
 		$effect(() => {
-			if (this.formatter.getLocale() === this.locale.value) return;
-			this.formatter.setLocale(this.locale.value);
+			if (this.formatter.getLocale() === this.locale.current) return;
+			this.formatter.setLocale(this.locale.current);
 		});
 
 		$effect(() => {
-			const startValue = this.value.value.start;
+			const startValue = this.value.current.start;
 			untrack(() => {
-				if (startValue) this.placeholder.value = startValue;
+				if (startValue) this.placeholder.current = startValue;
 			});
 		});
 
 		$effect(() => {
-			const endValue = this.value.value.end;
+			const endValue = this.value.current.end;
 			untrack(() => {
-				if (endValue) this.placeholder.value = endValue;
+				if (endValue) this.placeholder.current = endValue;
 			});
 		});
 
@@ -134,13 +134,13 @@ export class DateRangeFieldRootState {
 		 * Sync values set programatically with the `startValue` and `endValue`
 		 */
 		$effect(() => {
-			const value = this.value.value;
+			const value = this.value.current;
 
 			untrack(() => {
-				if (value.start !== undefined && value.start !== this.startValue.value) {
+				if (value.start !== undefined && value.start !== this.startValue.current) {
 					this.setStartValue(value.start);
 				}
-				if (value.end !== undefined && value.end !== this.endValue.value) {
+				if (value.end !== undefined && value.end !== this.endValue.current) {
 					this.setEndValue(value.end);
 				}
 			});
@@ -149,29 +149,29 @@ export class DateRangeFieldRootState {
 		// TODO: Handle description element
 
 		$effect(() => {
-			const placeholder = untrack(() => this.placeholder.value);
-			const startValue = untrack(() => this.startValue.value);
+			const placeholder = untrack(() => this.placeholder.current);
+			const startValue = untrack(() => this.startValue.current);
 
 			if (this.startValueComplete && placeholder !== startValue) {
 				untrack(() => {
 					if (startValue) {
-						this.placeholder.value = startValue;
+						this.placeholder.current = startValue;
 					}
 				});
 			}
 		});
 
 		$effect(() => {
-			this.value.value = this.mergedValues;
+			this.value.current = this.mergedValues;
 		});
 	}
 
 	setStartValue(value: DateValue | undefined) {
-		this.startValue.value = value;
+		this.startValue.current = value;
 	}
 
 	setEndValue(value: DateValue | undefined) {
-		this.endValue.value = value;
+		this.endValue.current = value;
 	}
 
 	/**
@@ -207,7 +207,7 @@ export class DateRangeFieldRootState {
 	}
 
 	props = $derived.by(() => ({
-		id: this.id.value,
+		id: this.id.current,
 		role: "group",
 		[DATE_RANGE_FIELD_ROOT_ATTR]: "",
 	}));
@@ -235,7 +235,7 @@ class DateRangeFieldLabelState {
 	}
 
 	#onclick = () => {
-		if (this.#root.disabled.value) return;
+		if (this.#root.disabled.current) return;
 		const firstSegment = getFirstSegment(this.#root.fieldNode);
 		if (!firstSegment) return;
 		firstSegment.focus();
@@ -244,9 +244,9 @@ class DateRangeFieldLabelState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
+				id: this.#id.current,
 				// "data-invalid": getDataInvalid(this.#root.isInvalid),
-				"data-disabled": getDataDisabled(this.#root.disabled.value),
+				"data-disabled": getDataDisabled(this.#root.disabled.current),
 				onclick: this.#onclick,
 			}) as const
 	);

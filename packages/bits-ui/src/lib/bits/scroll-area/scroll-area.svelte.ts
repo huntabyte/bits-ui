@@ -80,8 +80,8 @@ class ScrollAreaRootState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
-				dir: this.dir.value,
+				id: this.#id.current,
+				dir: this.dir.current,
 				style: {
 					position: "relative",
 					"--bits-scroll-area-corner-height": `${this.cornerHeight}px`,
@@ -138,7 +138,7 @@ class ScrollAreaViewportState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
+				id: this.#id.current,
 				style: {
 					overflowX: this.root.scrollbarXEnabled ? "scroll" : "hidden",
 					overflowY: this.root.scrollbarYEnabled ? "scroll" : "hidden",
@@ -150,7 +150,7 @@ class ScrollAreaViewportState {
 	contentProps = $derived.by(
 		() =>
 			({
-				id: this.#contentId.value,
+				id: this.#contentId.current,
 				style: {
 					minWidth: "100%",
 					display: "table",
@@ -170,7 +170,7 @@ class ScrollAreaScrollbarState {
 	id: ScrollAreaScrollbarStateProps["id"];
 	root: ScrollAreaRootState;
 	orientation: ScrollAreaScrollbarStateProps["orientation"];
-	isHorizontal = $derived.by(() => this.orientation.value === "horizontal");
+	isHorizontal = $derived.by(() => this.orientation.current === "horizontal");
 	hasThumb = $state(false);
 
 	constructor(props: ScrollAreaScrollbarStateProps, root: ScrollAreaRootState) {
@@ -220,7 +220,7 @@ class ScrollAreaScrollbarHoverState {
 
 		$effect(() => {
 			const scrollAreaNode = this.root.scrollAreaNode;
-			const hideDelay = this.root.scrollHideDelay.value;
+			const hideDelay = this.root.scrollHideDelay.current;
 			let hideTimer = 0;
 			if (scrollAreaNode) {
 				const handlePointerEnter = () => {
@@ -281,7 +281,7 @@ class ScrollAreaScrollbarScrollState {
 			POINTER_ENTER: "interacting",
 		},
 	});
-	isHidden = $derived.by(() => this.machine.state.value === "hidden");
+	isHidden = $derived.by(() => this.machine.state.current === "hidden");
 
 	constructor(scrollbar: ScrollAreaScrollbarState) {
 		this.scrollbar = scrollbar;
@@ -291,8 +291,8 @@ class ScrollAreaScrollbarScrollState {
 		const debounceScrollend = useDebounce(() => this.machine.dispatch("SCROLL_END"), 100);
 
 		$effect(() => {
-			const _state = this.machine.state.value;
-			const scrollHideDelay = this.root.scrollHideDelay.value;
+			const _state = this.machine.state.current;
+			const scrollHideDelay = this.root.scrollHideDelay.current;
 			if (_state === "idle") {
 				const hideTimer = window.setTimeout(
 					() => this.machine.dispatch("HIDE"),
@@ -334,7 +334,7 @@ class ScrollAreaScrollbarScrollState {
 	props = $derived.by(
 		() =>
 			({
-				"data-state": this.machine.state.value === "hidden" ? "hidden" : "visible",
+				"data-state": this.machine.state.current === "hidden" ? "hidden" : "visible",
 				onpointerenter: this.#onpointerenter,
 				onpointerleave: this.#onpointerleave,
 			}) as const
@@ -419,7 +419,7 @@ class ScrollAreaScrollbarVisibleState {
 		const offset = getThumbOffsetFromScroll({
 			scrollPos,
 			sizes: this.sizes,
-			dir: this.root.dir.value,
+			dir: this.root.dir.current,
 		});
 		this.thumbNode.style.transform = `translate3d(${offset}px, 0, 0)`;
 	};
@@ -431,7 +431,10 @@ class ScrollAreaScrollbarVisibleState {
 
 	xOnDragScroll = (pointerPos: number) => {
 		if (!this.root.viewportNode) return;
-		this.root.viewportNode.scrollLeft = this.getScrollPosition(pointerPos, this.root.dir.value);
+		this.root.viewportNode.scrollLeft = this.getScrollPosition(
+			pointerPos,
+			this.root.dir.current
+		);
 	};
 
 	yOnThumbPositionChange = () => {
@@ -498,14 +501,14 @@ class ScrollAreaScrollbarXState implements ScrollbarAxisState {
 			onRefChange: (node) => {
 				this.root.scrollbarXNode = node;
 			},
-			condition: () => this.#mounted.value,
+			condition: () => this.#mounted.current,
 		});
 
 		$effect(() => {
-			if (!this.ref.value) return;
-			if (this.#mounted.value) {
+			if (!this.ref.current) return;
+			if (this.#mounted.current) {
 				afterTick(() => {
-					this.computedStyle = getComputedStyle(this.ref.value!);
+					this.computedStyle = getComputedStyle(this.ref.current!);
 				});
 			}
 		});
@@ -538,12 +541,12 @@ class ScrollAreaScrollbarXState implements ScrollbarAxisState {
 	};
 
 	onResize = () => {
-		if (!(this.ref.value && this.root.viewportNode && this.computedStyle)) return;
+		if (!(this.ref.current && this.root.viewportNode && this.computedStyle)) return;
 		this.scrollbarVis.setSizes({
 			content: this.root.viewportNode.scrollWidth,
 			viewport: this.root.viewportNode.offsetWidth,
 			scrollbar: {
-				size: this.ref.value.clientWidth,
+				size: this.ref.current.clientWidth,
 				paddingStart: toInt(this.computedStyle.paddingLeft),
 				paddingEnd: toInt(this.computedStyle.paddingRight),
 			},
@@ -558,14 +561,18 @@ class ScrollAreaScrollbarXState implements ScrollbarAxisState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
+				id: this.#id.current,
 				"data-orientation": "horizontal",
 				style: {
 					bottom: 0,
 					left:
-						this.root.dir.value === "rtl" ? "var(--bits-scroll-area-corner-width)" : 0,
+						this.root.dir.current === "rtl"
+							? "var(--bits-scroll-area-corner-width)"
+							: 0,
 					right:
-						this.root.dir.value === "ltr" ? "var(--bits-scroll-area-corner-width)" : 0,
+						this.root.dir.current === "ltr"
+							? "var(--bits-scroll-area-corner-width)"
+							: 0,
 					"--bits-scroll-area-thumb-width": `${this.thumbSize}px`,
 				},
 			}) as const
@@ -597,14 +604,14 @@ class ScrollAreaScrollbarYState implements ScrollbarAxisState {
 			onRefChange: (node) => {
 				this.root.scrollbarYNode = node;
 			},
-			condition: () => this.#mounted.value,
+			condition: () => this.#mounted.current,
 		});
 
 		$effect(() => {
-			if (!this.ref.value) return;
-			if (this.#mounted.value) {
+			if (!this.ref.current) return;
+			if (this.#mounted.current) {
 				afterTick(() => {
-					this.computedStyle = getComputedStyle(this.ref.value!);
+					this.computedStyle = getComputedStyle(this.ref.current!);
 				});
 			}
 		});
@@ -637,12 +644,12 @@ class ScrollAreaScrollbarYState implements ScrollbarAxisState {
 	};
 
 	onResize = () => {
-		if (!(this.ref.value && this.root.viewportNode && this.computedStyle)) return;
+		if (!(this.ref.current && this.root.viewportNode && this.computedStyle)) return;
 		this.scrollbarVis.setSizes({
 			content: this.root.viewportNode.scrollHeight,
 			viewport: this.root.viewportNode.offsetHeight,
 			scrollbar: {
-				size: this.ref.value.clientHeight,
+				size: this.ref.current.clientHeight,
 				paddingStart: toInt(this.computedStyle.paddingTop),
 				paddingEnd: toInt(this.computedStyle.paddingBottom),
 			},
@@ -656,12 +663,12 @@ class ScrollAreaScrollbarYState implements ScrollbarAxisState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
+				id: this.#id.current,
 				"data-orientation": "vertical",
 				style: {
 					top: 0,
-					right: this.root.dir.value === "ltr" ? 0 : undefined,
-					left: this.root.dir.value === "rtl" ? 0 : undefined,
+					right: this.root.dir.current === "ltr" ? 0 : undefined,
+					left: this.root.dir.current === "rtl" ? 0 : undefined,
 					bottom: "var(--bits-scroll-area-corner-height)",
 					"--bits-scroll-area-thumb-height": `${this.thumbSize}px`,
 				},
@@ -702,7 +709,7 @@ class ScrollAreaScrollbarSharedState {
 
 		$effect(() => {
 			const maxScrollPos = this.maxScrollPos;
-			const scrollbarNode = this.scrollbarState.ref.value;
+			const scrollbarNode = this.scrollbarState.ref.current;
 			// we want to react to the viewport node changing so we leave this here
 			this.root.viewportNode;
 			const handleWheel = (e: WheelEvent) => {
@@ -724,7 +731,7 @@ class ScrollAreaScrollbarSharedState {
 			untrack(() => this.handleThumbPositionChange());
 		});
 
-		useResizeObserver(() => this.scrollbarState.ref.value, this.handleResize);
+		useResizeObserver(() => this.scrollbarState.ref.current, this.handleResize);
 		useResizeObserver(() => this.root.contentNode, this.handleResize);
 	}
 
@@ -739,7 +746,7 @@ class ScrollAreaScrollbarSharedState {
 		if (e.button !== 0) return;
 		const target = e.target as HTMLElement;
 		target.setPointerCapture(e.pointerId);
-		this.rect = this.scrollbarState.ref.value?.getBoundingClientRect() ?? null;
+		this.rect = this.scrollbarState.ref.current?.getBoundingClientRect() ?? null;
 		// pointer capture doesn't prevent text selection in Safari
 		// so we remove text selection manually when scrolling
 		this.prevWebkitUserSelect = document.body.style.webkitUserSelect;
@@ -815,7 +822,7 @@ class ScrollAreaThumbImplState {
 			onRefChange: (node) => {
 				this.#scrollbarState.scrollbarVis.thumbNode = node;
 			},
-			condition: () => this.#mounted.value,
+			condition: () => this.#mounted.current,
 		});
 
 		$effect(() => {
@@ -854,7 +861,7 @@ class ScrollAreaThumbImplState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
+				id: this.#id.current,
 				"data-state": this.#scrollbarState.scrollbarVis.hasThumb ? "visible" : "hidden",
 				style: {
 					width: "var(--bits-scroll-area-thumb-width)",
@@ -907,13 +914,13 @@ class ScrollAreaCornerImplState {
 	}
 
 	props = $derived.by(() => ({
-		id: this.#id.value,
+		id: this.#id.current,
 		style: {
 			width: this.#width,
 			height: this.#height,
 			position: "absolute",
-			right: this.#root.dir.value === "ltr" ? 0 : undefined,
-			left: this.#root.dir.value === "rtl" ? 0 : undefined,
+			right: this.#root.dir.current === "ltr" ? 0 : undefined,
+			left: this.#root.dir.current === "rtl" ? 0 : undefined,
 			bottom: 0,
 		},
 		[SCROLL_AREA_CORNER_ATTR]: "",

@@ -43,4 +43,4 @@ export type { EditableSegmentPart } from "./date/field/types.js";
 export type { Month } from "./date/types.js";
 export type { WithChild, Expand, Without } from "$lib/internal/types.js";
 export { mergeProps } from "$lib/internal/mergeProps.js";
-export { useId } from "$lib/internal/useId.svelte.js";
+export { useId } from "$lib/internal/useId.js";

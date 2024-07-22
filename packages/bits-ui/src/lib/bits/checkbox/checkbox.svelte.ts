@@ -53,12 +53,12 @@ class CheckboxRootState {
 	};
 
 	#onclick = () => {
-		if (this.disabled.value) return;
-		if (this.checked.value === "indeterminate") {
-			this.checked.value = true;
+		if (this.disabled.current) return;
+		if (this.checked.current === "indeterminate") {
+			this.checked.current = true;
 			return;
 		}
-		this.checked.value = !this.checked.value;
+		this.checked.current = !this.checked.current;
 	};
 
 	createInput() {
@@ -68,14 +68,14 @@ class CheckboxRootState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
-				"data-disabled": getDataDisabled(this.disabled.value),
-				"data-state": getCheckboxDataState(this.checked.value),
+				id: this.#id.current,
+				"data-disabled": getDataDisabled(this.disabled.current),
+				"data-state": getCheckboxDataState(this.checked.current),
 				role: "checkbox",
 				type: "button",
-				"aria-checked": getAriaChecked(this.checked.value),
-				"aria-required": getAriaRequired(this.required.value),
-				disabled: this.disabled.value,
+				"aria-checked": getAriaChecked(this.checked.current),
+				"aria-required": getAriaRequired(this.required.current),
+				disabled: this.disabled.current,
 				[CHECKBOX_ROOT_ATTR]: "",
 				//
 				onclick: this.#onclick,
@@ -90,7 +90,7 @@ class CheckboxRootState {
 
 class CheckboxInputState {
 	root: CheckboxRootState;
-	shouldRender = $derived.by(() => Boolean(this.root.name.value));
+	shouldRender = $derived.by(() => Boolean(this.root.name.current));
 
 	constructor(root: CheckboxRootState) {
 		this.root = root;
@@ -100,11 +100,11 @@ class CheckboxInputState {
 		() =>
 			({
 				type: "checkbox",
-				checked: this.root.checked.value === true,
-				disabled: this.root.disabled.value,
-				required: this.root.required.value,
-				name: this.root.name.value,
-				value: this.root.value.value,
+				checked: this.root.checked.current === true,
+				disabled: this.root.disabled.current,
+				required: this.root.required.current,
+				name: this.root.name.current,
+				value: this.root.value.current,
 				"aria-hidden": "true",
 				"data-checkbox-input": "",
 			}) as const

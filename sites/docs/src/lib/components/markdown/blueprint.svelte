@@ -23,8 +23,7 @@
 </script>
 
 <script lang="ts">
-	export let title = "";
-	export let description = "";
+	let { title, description }: { title: string; description: string } = $props();
 </script>
 
 <slot {title} {description} />

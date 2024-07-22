@@ -14,7 +14,7 @@
 	const valueState = useSelectValue();
 
 	if (children) {
-		valueState.root.valueNodeHasChildren.value = true;
+		valueState.root.valueNodeHasChildren.current = true;
 	}
 
 	const mergedProps = $derived(

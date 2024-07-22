@@ -2,7 +2,7 @@
 	import { box } from "svelte-toolbelt";
 	import { useDialogOverlay } from "../dialog.svelte.js";
 	import type { OverlayProps } from "../index.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import PresenceLayer from "$lib/bits/utilities/presence-layer/presence-layer.svelte";
 
@@ -26,12 +26,12 @@
 	const mergedProps = $derived(mergeProps(restProps, overlayState.props));
 </script>
 
-<PresenceLayer {id} present={overlayState.root.open.value || forceMount}>
+<PresenceLayer {id} present={overlayState.root.open.current || forceMount}>
 	{#snippet presence({ present })}
 		{#if child}
-			{@render child?.({ props: mergeProps(mergedProps, { hidden: !present.value }) })}
+			{@render child?.({ props: mergeProps(mergedProps, { hidden: !present.current }) })}
 		{:else}
-			<div {...mergeProps(mergedProps, { hidden: !present.value })}>
+			<div {...mergeProps(mergedProps, { hidden: !present.current })}>
 				{@render children?.()}
 			</div>
 		{/if}

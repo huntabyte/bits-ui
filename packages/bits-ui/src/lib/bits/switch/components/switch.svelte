@@ -4,7 +4,7 @@
 	import { useSwitchRoot } from "../switch.svelte.js";
 	import SwitchInput from "./switch-input.svelte";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 
 	let {
 		child,
@@ -44,10 +44,10 @@
 </script>
 
 {#if child}
-	{@render child?.({ props: mergedProps, checked: rootState.checked.value })}
+	{@render child?.({ props: mergedProps, checked: rootState.checked.current })}
 {:else}
 	<button bind:this={ref} {...mergedProps}>
-		{@render children?.({ checked: rootState.checked.value })}
+		{@render children?.({ checked: rootState.checked.current })}
 	</button>
 {/if}
 

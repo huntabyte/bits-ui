@@ -2,7 +2,7 @@
 	import { box } from "svelte-toolbelt";
 	import type { ContentProps } from "../index.js";
 	import { useMenuContent } from "$lib/bits/menu/menu.svelte.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { noop } from "$lib/internal/callbacks.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
@@ -38,7 +38,7 @@
 
 <PopperLayer
 	{...mergedProps}
-	present={contentState.parentMenu.open.value || forceMount}
+	present={contentState.parentMenu.open.current || forceMount}
 	onInteractOutsideStart={(e) => {
 		if (!isElementOrSVGElement(e.target)) return;
 		if (e.target.id === contentState.parentMenu.triggerNode?.id) {

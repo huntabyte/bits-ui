@@ -2,7 +2,7 @@
 	import { box } from "svelte-toolbelt";
 	import { useComboboxInput } from "../combobox.svelte.js";
 	import type { InputProps } from "../index.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 

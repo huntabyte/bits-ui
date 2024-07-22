@@ -15,11 +15,11 @@
 
 	$effect(() => {
 		untrack(() => {
-			mounted.value = true;
+			mounted.current = true;
 		});
 
 		return () => {
-			mounted.value = false;
+			mounted.current = false;
 		};
 	});
 </script>

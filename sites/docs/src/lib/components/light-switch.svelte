@@ -7,7 +7,7 @@
 </script>
 
 <Button.Root
-	on:click={toggleMode}
+	onclick={toggleMode}
 	role="switch"
 	aria-label="Light Switch"
 	aria-checked={$mode === "light"}

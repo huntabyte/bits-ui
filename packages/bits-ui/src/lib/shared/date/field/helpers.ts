@@ -29,10 +29,10 @@ import {
 import {
 	isBrowser,
 	isNull,
-	generateId,
 	kbd,
 	isNumberString,
 	styleToString,
+	useId,
 } from "$lib/internal/index.js";
 import { get, type Writable } from "svelte/store";
 
@@ -265,7 +265,7 @@ export function initSegmentStates() {
 export function initSegmentIds() {
 	return Object.fromEntries(
 		ALL_SEGMENT_PARTS.map((part) => {
-			return [part, generateId()];
+			return [part, useId()];
 		}).filter(([key]) => key !== "literal")
 	);
 }

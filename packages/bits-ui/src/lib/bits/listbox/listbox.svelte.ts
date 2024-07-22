@@ -67,11 +67,11 @@ export class ListboxRootSingleState extends ListboxRootBaseState {
 	}
 
 	includesItem = (itemValue: string) => {
-		return this.value.value === itemValue;
+		return this.value.current === itemValue;
 	};
 
 	toggleItem = (itemValue: string) => {
-		this.value.value = this.includesItem(itemValue) ? "" : itemValue;
+		this.value.current = this.includesItem(itemValue) ? "" : itemValue;
 	};
 
 	createContent = (props: ListboxContentStateProps) => {
@@ -102,19 +102,19 @@ export class ListboxRootMultipleState extends ListboxRootBaseState {
 	}
 
 	includesItem = (itemValue: string) => {
-		return this.value.value.includes(itemValue);
+		return this.value.current.includes(itemValue);
 	};
 
 	toggleItem = (itemValue: string) => {
 		if (this.includesItem(itemValue)) {
-			this.value.value = this.value.value.filter((v) => v !== itemValue);
+			this.value.current = this.value.current.filter((v) => v !== itemValue);
 		} else {
-			this.value.value = [...this.value.value, itemValue];
+			this.value.current = [...this.value.current, itemValue];
 		}
 	};
 
 	selectAll = () => {
-		this.value.value = [...this.valueOptions];
+		this.value.current = [...this.valueOptions];
 	};
 
 	createContent = (props: ListboxContentStateProps) => {
@@ -141,7 +141,7 @@ export class ListboxContentState {
 	rovingFocusGroup: UseRovingFocusReturn;
 	#handleTypeaheadSearch: ReturnType<typeof useTypeahead>["handleTypeaheadSearch"];
 	focusedItemId = $state("");
-	focusWithin = new IsFocusWithin(() => this.ref.value ?? undefined);
+	focusWithin = new IsFocusWithin(() => this.ref.current ?? undefined);
 	#labelledBy = $derived.by(() => this.root.labelNode?.id ?? undefined);
 
 	constructor(props: ListboxContentStateProps, root: ListboxRootState) {
@@ -176,8 +176,8 @@ export class ListboxContentState {
 		onMount(() => {
 			if (!this.focusedItemId) {
 				const candidateNodes = this.getCandidateNodes();
-				if (this.root.isMulti && this.root.value.value.length) {
-					const firstValue = this.root.value.value[0];
+				if (this.root.isMulti && this.root.value.current.length) {
+					const firstValue = this.root.value.current[0];
 					if (firstValue) {
 						const candidateNode = candidateNodes.find(
 							(node) => node.dataset.value === firstValue
@@ -187,9 +187,9 @@ export class ListboxContentState {
 							return;
 						}
 					}
-				} else if (!this.root.isMulti && this.root.value.value) {
+				} else if (!this.root.isMulti && this.root.value.current) {
 					const candidateNode = candidateNodes.find(
-						(node) => node.dataset.value === this.root.value.value
+						(node) => node.dataset.value === this.root.value.current
 					);
 					if (candidateNode) {
 						this.focusedItemId = candidateNode.id;
@@ -222,8 +222,8 @@ export class ListboxContentState {
 	 */
 	getNodeIdToFocus = () => {
 		const candidateNodes = this.getCandidateNodes();
-		if (this.root.isMulti && this.root.value.value.length) {
-			const firstValue = this.root.value.value[0];
+		if (this.root.isMulti && this.root.value.current.length) {
+			const firstValue = this.root.value.current[0];
 			if (firstValue !== undefined) {
 				const candidateNode = candidateNodes.find(
 					(node) => node.dataset.value === firstValue
@@ -232,9 +232,9 @@ export class ListboxContentState {
 					return candidateNode.id;
 				}
 			}
-		} else if (!this.root.isMulti && this.root.value.value) {
+		} else if (!this.root.isMulti && this.root.value.current) {
 			const candidateNode = candidateNodes.find(
-				(node) => node.dataset.value === this.root.value.value
+				(node) => node.dataset.value === this.root.value.current
 			);
 			if (candidateNode) {
 				return candidateNode.id;
@@ -249,7 +249,7 @@ export class ListboxContentState {
 	};
 
 	getCandidateNodes = () => {
-		const node = this.ref.value;
+		const node = this.ref.current;
 		if (!node) return [];
 		const candidates = Array.from(node.querySelectorAll<HTMLElement>(`[${LISTBOX_ITEM_ATTR}]`));
 		return candidates;
@@ -261,7 +261,7 @@ export class ListboxContentState {
 		const currentTarget = e.currentTarget;
 		if (!isHTMLElement(target) || !isHTMLElement(currentTarget)) return;
 
-		const isKeydownInside = target.closest(`[${LISTBOX_CONTENT_ATTR}]`)?.id === this.id.value;
+		const isKeydownInside = target.closest(`[${LISTBOX_CONTENT_ATTR}]`)?.id === this.id.current;
 
 		const isModifierKey = e.ctrlKey || e.altKey || e.metaKey;
 		const isCharacterKey = e.key.length === 1;
@@ -290,14 +290,14 @@ export class ListboxContentState {
 
 		if (e.key === kbd.ESCAPE) {
 			if (this.root.isMulti) {
-				this.root.value.value = [];
+				this.root.value.current = [];
 			} else {
-				this.root.value.value = "";
+				this.root.value.current = "";
 			}
 		}
 
 		// focus first/last based on key pressed;
-		if (target.id !== this.id.value) return;
+		if (target.id !== this.id.current) return;
 
 		if (!FIRST_LAST_KEYS.includes(e.key)) return;
 		e.preventDefault();
@@ -311,8 +311,8 @@ export class ListboxContentState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.value,
-				"data-orientation": getDataOrientation(this.root.orientation.value),
+				id: this.id.current,
+				"data-orientation": getDataOrientation(this.root.orientation.current),
 				"aria-labelledby": this.#labelledBy,
 				role: "listbox",
 				[LISTBOX_CONTENT_ATTR]: "",
@@ -349,8 +349,8 @@ export class ListboxLabelState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.value,
-				"data-orientation": getDataOrientation(this.root.orientation.value),
+				id: this.id.current,
+				"data-orientation": getDataOrientation(this.root.orientation.current),
 				[LISTOX_LABEL_ATTR]: "",
 			}) as const
 	);
@@ -371,8 +371,8 @@ export class ListboxItemState {
 	label: ListboxItemStateProps["label"];
 	disabled: ListboxItemStateProps["disabled"];
 	content: ListboxContentState;
-	isSelected = $derived.by(() => this.content.root.includesItem(this.value.value));
-	isTabIndexTarget = $derived.by(() => this.content.isFocusedItem(this.id.value));
+	isSelected = $derived.by(() => this.content.root.includesItem(this.value.current));
+	isTabIndexTarget = $derived.by(() => this.content.isFocusedItem(this.id.current));
 	#isFocused = $state(false);
 
 	constructor(props: ListboxItemStateProps, content: ListboxContentState) {
@@ -384,15 +384,15 @@ export class ListboxItemState {
 		this.content = content;
 
 		$effect(() => {
-			this.content.root.valueOptions.add(this.value.value);
+			this.content.root.valueOptions.add(this.value.current);
 
 			return () => {
-				this.content.root.valueOptions.delete(this.value.value);
+				this.content.root.valueOptions.delete(this.value.current);
 			};
 		});
 
 		onDestroy(() => {
-			this.content.root.valueOptions.delete(this.value.value);
+			this.content.root.valueOptions.delete(this.value.current);
 		});
 
 		useRefById({
@@ -402,8 +402,8 @@ export class ListboxItemState {
 	}
 
 	handleSelect = () => {
-		if (this.disabled.value) return;
-		this.content.root.toggleItem(this.value.value);
+		if (this.disabled.current) return;
+		this.content.root.toggleItem(this.value.current);
 	};
 
 	#onpointerup = () => {
@@ -419,7 +419,7 @@ export class ListboxItemState {
 
 	#onfocus = async (e: FocusEvent) => {
 		afterTick(() => {
-			if (e.defaultPrevented || this.disabled.value) return;
+			if (e.defaultPrevented || this.disabled.current) return;
 			this.#isFocused = true;
 		});
 	};
@@ -434,17 +434,17 @@ export class ListboxItemState {
 	#onpointermove = () => {
 		if (this.#isFocused) return;
 		this.#isFocused = true;
-		this.ref.value?.focus();
+		this.ref.current?.focus();
 	};
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.value,
+				id: this.id.current,
 				role: "option",
-				"data-value": this.value.value,
-				"aria-disabled": getAriaDisabled(this.disabled.value),
-				"data-disabled": getDataDisabled(this.disabled.value),
+				"data-value": this.value.current,
+				"aria-disabled": getAriaDisabled(this.disabled.current),
+				"data-disabled": getDataDisabled(this.disabled.current),
 				"aria-selected": getAriaSelected(this.isSelected),
 				"data-selected": getDataSelected(this.isSelected),
 				"data-highlighted": this.#isFocused ? "" : undefined,
@@ -487,8 +487,8 @@ export class ListboxGroupState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.value,
-				"data-orientation": getDataOrientation(this.root.orientation.value),
+				id: this.id.current,
+				"data-orientation": getDataOrientation(this.root.orientation.current),
 				role: "group",
 				"aria-labelledby": this.#ariaLabelledBy,
 				[LISTBOX_GROUP_ATTR]: "",
@@ -525,8 +525,8 @@ export class ListboxGroupLabelState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.value,
-				"data-orientation": getDataOrientation(this.group.root.orientation.value),
+				id: this.id.current,
+				"data-orientation": getDataOrientation(this.group.root.orientation.current),
 				[LISTBOX_GROUP_LABEL_ATTR]: "",
 			}) as const
 	);

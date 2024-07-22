@@ -3,7 +3,7 @@
 	import type { ContentProps } from "../index.js";
 	import { useComboboxContent } from "../combobox.svelte.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { noop } from "$lib/internal/callbacks.js";
 
@@ -33,7 +33,7 @@
 <PopperLayer
 	{...mergedProps}
 	{side}
-	present={contentState.root.open.value || forceMount}
+	present={contentState.root.open.current || forceMount}
 	{id}
 	onInteractOutside={(e) => {
 		if (

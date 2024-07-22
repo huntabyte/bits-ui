@@ -29,12 +29,3 @@ export function snapValueToStep(value: number, min: number, max: number, step: n
 
 	return snappedValue;
 }
-
-export function roundValue(value: number, decimalCount: number) {
-	const rounder = 10 ** decimalCount;
-	return Math.round(value * rounder) / rounder;
-}
-
-export function getDecimalCount(value: number) {
-	return (String(value).split(".")[1] || "").length;
-}

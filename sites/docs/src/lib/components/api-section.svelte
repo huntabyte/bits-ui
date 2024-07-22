@@ -6,9 +6,6 @@
 	import { parseMarkdown } from "$lib/utils/index.js";
 
 	export let schemas: APISchema[] = [];
-
-	// eslint-disable-next-line no-unused-expressions, svelte/valid-compile
-	$page;
 </script>
 
 <H2>API Reference</H2>

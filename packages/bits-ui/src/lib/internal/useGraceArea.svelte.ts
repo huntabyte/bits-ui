@@ -17,7 +17,7 @@ export function useGraceArea(
 
 	function handleRemoveGraceArea() {
 		pointerGraceArea = null;
-		isPointerInTransit.value = false;
+		isPointerInTransit.current = false;
 	}
 
 	function handleCreateGraceArea(e: PointerEvent, hoverTarget: HTMLElement) {
@@ -29,7 +29,7 @@ export function useGraceArea(
 		const hoverTargetPoints = getPointsFromRect(hoverTarget.getBoundingClientRect());
 		const graceArea = getHull([...paddedExitPoints, ...hoverTargetPoints]);
 		pointerGraceArea = graceArea;
-		isPointerInTransit.value = true;
+		isPointerInTransit.current = true;
 	}
 
 	$effect(() => {

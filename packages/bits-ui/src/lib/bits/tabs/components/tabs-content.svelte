@@ -3,7 +3,7 @@
 	import type { ContentProps } from "../index.js";
 	import { useTabsContent } from "../tabs.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 
 	let {
 		children,
@@ -27,7 +27,7 @@
 </script>
 
 {#if child}
-	{@render child?.({ props: mergedProps })}
+	{@render child({ props: mergedProps })}
 {:else}
 	<div {...mergedProps}>
 		{@render children?.()}

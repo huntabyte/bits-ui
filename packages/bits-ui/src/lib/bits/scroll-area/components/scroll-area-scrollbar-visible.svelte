@@ -9,7 +9,7 @@
 	const scrollbarVisibleState = useScrollAreaScrollbarVisible();
 </script>
 
-{#if scrollbarVisibleState.scrollbar.orientation.value === "horizontal"}
+{#if scrollbarVisibleState.scrollbar.orientation.current === "horizontal"}
 	<ScrollAreaScrollbarX {...restProps} />
 {:else}
 	<ScrollAreaScrollbarY {...restProps} />

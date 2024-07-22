@@ -4,7 +4,7 @@
 	import type { RootProps } from "../index.js";
 	import { useRangeCalendarRoot } from "../range-calendar.svelte.js";
 	import { noop } from "$lib/internal/callbacks.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 	import { getDefaultDate } from "$lib/shared/date/utils.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 

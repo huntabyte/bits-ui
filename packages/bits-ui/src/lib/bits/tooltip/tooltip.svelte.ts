@@ -45,7 +45,7 @@ class TooltipProviderState {
 			() => {
 				this.isOpenDelayed = true;
 			},
-			this.skipDelayDuration.value,
+			this.skipDelayDuration.current,
 			{ immediate: false }
 		);
 	}
@@ -92,25 +92,26 @@ class TooltipRootState {
 	_ignoreNonKeyboardFocus: TooltipRootStateProps["ignoreNonKeyboardFocus"];
 	provider: TooltipProviderState;
 	delayDuration = $derived.by(
-		() => this._delayDuration.value ?? this.provider.delayDuration.value
+		() => this._delayDuration.current ?? this.provider.delayDuration.current
 	);
 	disableHoverableContent = $derived.by(
-		() => this._disableHoverableContent.value ?? this.provider.disableHoverableContent.value
+		() => this._disableHoverableContent.current ?? this.provider.disableHoverableContent.current
 	);
 	disableCloseOnTriggerClick = $derived.by(
 		() =>
-			this._disableCloseOnTriggerClick.value ?? this.provider.disableCloseOnTriggerClick.value
+			this._disableCloseOnTriggerClick.current ??
+			this.provider.disableCloseOnTriggerClick.current
 	);
-	disabled = $derived.by(() => this._disabled.value ?? this.provider.disabled.value);
+	disabled = $derived.by(() => this._disabled.current ?? this.provider.disabled.current);
 	ignoreNonKeyboardFocus = $derived.by(
-		() => this._ignoreNonKeyboardFocus.value ?? this.provider.ignoreNonKeyboardFocus.value
+		() => this._ignoreNonKeyboardFocus.current ?? this.provider.ignoreNonKeyboardFocus.current
 	);
 	contentNode = $state<HTMLElement | null>(null);
 	triggerNode = $state<HTMLElement | null>(null);
 	#wasOpenDelayed = $state(false);
 	#timerFn: ReturnType<typeof useTimeoutFn>;
 	stateAttr = $derived.by(() => {
-		if (!this.open.value) return "closed";
+		if (!this.open.current) return "closed";
 		return this.#wasOpenDelayed ? "delayed-open" : "instant-open";
 	});
 
@@ -125,9 +126,9 @@ class TooltipRootState {
 		this.#timerFn = useTimeoutFn(
 			() => {
 				this.#wasOpenDelayed = true;
-				this.open.value = true;
+				this.open.current = true;
 			},
-			this._delayDuration.value,
+			this._delayDuration.current,
 			{ immediate: false }
 		);
 
@@ -146,12 +147,12 @@ class TooltipRootState {
 	handleOpen() {
 		this.#timerFn.stop();
 		this.#wasOpenDelayed = false;
-		this.open.value = true;
+		this.open.current = true;
 	}
 
 	handleClose() {
 		this.#timerFn.stop();
-		this.open.value = false;
+		this.open.current = false;
 	}
 
 	#handleDelayedOpen() {
@@ -192,7 +193,7 @@ class TooltipTriggerState {
 	#isPointerDown = box(false);
 	#hasPointerMoveOpened = $state(false);
 	#disabled: TooltipTriggerStateProps["disabled"];
-	#isDisabled = $derived.by(() => this.#disabled.value || this.#root.disabled);
+	#isDisabled = $derived.by(() => this.#disabled.current || this.#root.disabled);
 
 	constructor(props: TooltipTriggerStateProps, root: TooltipRootState) {
 		this.#id = props.id;
@@ -210,17 +211,17 @@ class TooltipTriggerState {
 	}
 
 	handlePointerUp() {
-		this.#isPointerDown.value = false;
+		this.#isPointerDown.current = false;
 	}
 
 	#onpointerup = () => {
 		if (this.#isDisabled) return;
-		this.#isPointerDown.value = false;
+		this.#isPointerDown.current = false;
 	};
 
 	#onpointerdown = () => {
 		if (this.#isDisabled) return;
-		this.#isPointerDown.value = true;
+		this.#isPointerDown.current = true;
 		document.addEventListener(
 			"pointerup",
 			() => {
@@ -233,7 +234,7 @@ class TooltipTriggerState {
 	#onpointermove = (e: PointerEvent) => {
 		if (this.#isDisabled) return;
 		if (e.pointerType === "touch") return;
-		if (this.#hasPointerMoveOpened || this.#root.provider.isPointerInTransit.value) return;
+		if (this.#hasPointerMoveOpened || this.#root.provider.isPointerInTransit.current) return;
 		this.#root.onTriggerEnter();
 		this.#hasPointerMoveOpened = true;
 	};
@@ -245,7 +246,7 @@ class TooltipTriggerState {
 	};
 
 	#onfocus = (e: FocusEvent & { currentTarget: HTMLElement }) => {
-		if (this.#isPointerDown.value || this.#isDisabled) {
+		if (this.#isPointerDown.current || this.#isDisabled) {
 			return;
 		}
 
@@ -267,8 +268,8 @@ class TooltipTriggerState {
 	};
 
 	props = $derived.by(() => ({
-		id: this.#id.value,
-		"aria-describedby": this.#root.open.value ? this.#root.contentNode?.id : undefined,
+		id: this.#id.current,
+		"aria-describedby": this.#root.open.current ? this.#root.contentNode?.id : undefined,
 		"data-state": this.#root.stateAttr,
 		"data-disabled": getDataDisabled(this.#isDisabled),
 		[TRIGGER_ATTR]: "",
@@ -301,11 +302,11 @@ class TooltipContentState {
 			onRefChange: (node) => {
 				this.root.contentNode = node;
 			},
-			condition: () => this.root.open.value,
+			condition: () => this.root.open.current,
 		});
 
 		$effect(() => {
-			if (!this.root.open.value) return;
+			if (!this.root.open.current) return;
 			if (this.root.disableHoverableContent) return;
 			const { isPointerInTransit, onPointerExit } = useGraceArea(
 				() => this.root.triggerNode,
@@ -332,7 +333,7 @@ class TooltipContentState {
 	}
 
 	props = $derived.by(() => ({
-		id: this.#id.value,
+		id: this.#id.current,
 		"data-state": this.root.stateAttr,
 		"data-disabled": getDataDisabled(this.root.disabled),
 		[CONTENT_ATTR]: "",

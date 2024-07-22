@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from "$app/stores";
-	import { Button } from "$lib/components/ui/button/index.js";
+	import { buttonVariants } from "$lib/styles/buttonVariants.js";
 
 	$: message = $page.status === 404 ? "Not Found" : "Something went wrong";
 </script>
@@ -10,5 +10,5 @@
 		{$page.status}
 	</h1>
 	<p class="text-foreground">{message}</p>
-	<Button size="lg" href="/docs">Back to docs</Button>
+	<a href="/docs" class={buttonVariants({ size: "lg"})}>Back to docs</a>
 </section>

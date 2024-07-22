@@ -19,12 +19,12 @@ class PopoverRootState {
 	}
 
 	toggleOpen = () => {
-		this.open.value = !this.open.value;
+		this.open.current = !this.open.current;
 	};
 
 	close = () => {
-		if (!this.open.value) return;
-		this.open.value = false;
+		if (!this.open.current) return;
+		this.open.current = false;
 	};
 
 	createTrigger = (props: PopoverTriggerStateProps) => {
@@ -72,7 +72,7 @@ class PopoverTriggerState {
 	};
 
 	#getAriaControls = () => {
-		if (this.#root.open.value && this.#root.contentNode?.id) {
+		if (this.#root.open.current && this.#root.contentNode?.id) {
 			return this.#root.contentNode.id;
 		}
 		return undefined;
@@ -81,10 +81,10 @@ class PopoverTriggerState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
+				id: this.#id.current,
 				"aria-haspopup": "dialog",
-				"aria-expanded": getAriaExpanded(this.#root.open.value),
-				"data-state": getDataOpenClosed(this.#root.open.value),
+				"aria-expanded": getAriaExpanded(this.#root.open.current),
+				"data-state": getDataOpenClosed(this.#root.open.current),
 				"aria-controls": this.#getAriaControls(),
 				"data-popover-trigger": "",
 				//
@@ -108,14 +108,14 @@ class PopoverContentState {
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
-			condition: () => this.root.open.value,
+			condition: () => this.root.open.current,
 		});
 	}
 
 	props = $derived.by(() => ({
-		id: this.#id.value,
+		id: this.#id.current,
 		tabindex: -1,
-		"data-state": getDataOpenClosed(this.root.open.value),
+		"data-state": getDataOpenClosed(this.root.open.current),
 		"data-popover-content": "",
 	}));
 }
@@ -135,7 +135,7 @@ class PopoverCloseState {
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
-			condition: () => this.#root.open.value,
+			condition: () => this.#root.open.current,
 		});
 	}
 
@@ -152,7 +152,7 @@ class PopoverCloseState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
+				id: this.#id.current,
 				onclick: this.#onclick,
 				onkeydown: this.#onkeydown,
 				type: "button",
