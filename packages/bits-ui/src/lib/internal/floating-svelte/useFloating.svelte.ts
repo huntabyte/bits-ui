@@ -1,7 +1,7 @@
 import { computePosition } from "@floating-ui/dom";
 import { box } from "svelte-toolbelt";
 import type { UseFloatingOptions, UseFloatingReturn } from "./types.js";
-import { get, getDPR, roundByDPR } from "./utils.js";
+import { get, getDPR, roundByDPR } from "./floating-utils.svelte.js";
 
 export function useFloating(options: UseFloatingOptions): UseFloatingReturn {
 	/** Options */
