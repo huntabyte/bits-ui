@@ -39,7 +39,6 @@
 				</Table.Cell>
 				<Table.Cell class="align-baseline">
 					<p class="text-sm leading-[1.3rem]">
-						<!--  eslint-disable-next-line svelte/no-at-html-tags -->
 						{@html parseMarkdown(description)}
 					</p>
 					{#if !slotted}

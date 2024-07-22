@@ -72,21 +72,6 @@ export type DOMEl<T extends Element = HTMLDivElement> = Expand<{
 	el?: T;
 }>;
 
-export type DOMElement<T extends Element = HTMLDivElement> = Expand<{
-	/**
-	 * Whether to delegate rendering the element to your own
-	 * custom element.
-	 *
-	 * @see https://www.bits-ui.com/docs/delegation
-	 */
-	asChild?: boolean;
-
-	/**
-	 * Bind to the underlying DOM element of the component.
-	 */
-	el?: T;
-}>;
-
 export type TransitionProps<
 	T extends Transition = Transition,
 	In extends Transition = Transition,

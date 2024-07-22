@@ -88,13 +88,13 @@ export class AccordionSingleState extends AccordionBaseState {
 		this.#value = props.value;
 	}
 
-	includesItem(item: string) {
+	includesItem = (item: string) => {
 		return this.#value.current === item;
-	}
+	};
 
-	toggleItem(item: string) {
+	toggleItem = (item: string) => {
 		this.#value.current = this.includesItem(item) ? "" : item;
-	}
+	};
 }
 
 //
@@ -112,17 +112,17 @@ export class AccordionMultiState extends AccordionBaseState {
 		this.#value = props.value;
 	}
 
-	includesItem(item: string) {
+	includesItem = (item: string) => {
 		return this.#value.current.includes(item);
-	}
+	};
 
-	toggleItem(item: string) {
+	toggleItem = (item: string) => {
 		if (this.includesItem(item)) {
 			this.#value.current = this.#value.current.filter((v) => v !== item);
 		} else {
 			this.#value.current = [...this.#value.current, item];
 		}
-	}
+	};
 }
 
 //

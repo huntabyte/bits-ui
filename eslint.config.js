@@ -20,4 +20,9 @@ export default config({ svelte: true, ignores: [...DEFAULT_IGNORES, ...ignores] 
 		rules: {
 			"no-unused-expressions": "off",
 		},
+	})
+	.override("huntabyte/svelte/rules", {
+		rules: {
+			"svelte/no-at-html-tags": "off",
+		},
 	});
