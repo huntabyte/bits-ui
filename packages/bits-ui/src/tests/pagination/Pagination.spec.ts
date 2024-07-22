@@ -36,12 +36,12 @@ function getValue(el: HTMLElement) {
 }
 
 describe("pagination", () => {
-	it("no accessibility violations", async () => {
+	it("should have no  accessibility violations", async () => {
 		const { container } = render(PaginationTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
-	it("previous and Next button should work accordingly", async () => {
+	it("should navigate previous and Next button accordingly", async () => {
 		const { root, prev, next, user } = setup();
 
 		expect(getValue(root)).toBe("1");

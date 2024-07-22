@@ -39,8 +39,8 @@
 		contentState.root.close();
 	}}
 	onEscapeKeydown={(e) => {
-		// TODO: users should be able to cancel this
 		onEscapeKeydown(e);
+		if (e.defaultPrevented) return
 		contentState.root.close();
 	}}
 	onDestroyAutoFocus={(e) => {

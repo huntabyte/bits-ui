@@ -12,23 +12,31 @@ const kbd = getTestKbd();
  */
 function setup(props: ContextMenuTestProps = {}) {
 	const user = setupUserEvents();
-	const { getByTestId, queryByTestId } = render(ContextMenuTest, { ...props });
-	const trigger = getByTestId("trigger");
+	const returned = render(ContextMenuTest, { ...props });
+	const trigger = returned.getByTestId("trigger");
+	function getContent() {
+		return returned.queryByTestId("content");
+	}
+
+	function getSubContent() {
+		return returned.queryByTestId("sub-content");
+	}
 	return {
-		getByTestId,
-		queryByTestId,
+		...returned,
+		getContent,
+		getSubContent,
 		user,
 		trigger,
 	};
 }
 
 async function open(props: ContextMenuTestProps = {}) {
-	const { getByTestId, queryByTestId, user, trigger } = setup(props);
-	const content = queryByTestId("content");
-	expect(content).toBeNull();
+	const { getByTestId, queryByTestId, user, trigger, getContent, ...returned } = setup(props);
+
+	expect(getContent()).toBeNull();
 	await user.pointer([{ target: trigger }, { keys: "[MouseRight]", target: trigger }]);
-	expect(queryByTestId("content")).not.toBeNull();
-	return { getByTestId, queryByTestId, user, trigger };
+	expect(getContent()).not.toBeNull();
+	return { getByTestId, queryByTestId, user, trigger, getContent, ...returned };
 }
 
 async function openSubmenu(props: Awaited<ReturnType<typeof open>>) {
@@ -37,6 +45,7 @@ async function openSubmenu(props: Awaited<ReturnType<typeof open>>) {
 	await user.keyboard(kbd.ARROW_DOWN);
 
 	await waitFor(() => expect(queryByTestId("sub-trigger")).toHaveFocus());
+
 	expect(queryByTestId("sub-content")).toBeNull();
 	await user.keyboard(kbd.ARROW_RIGHT);
 	expect(queryByTestId("sub-content")).not.toBeNull();
@@ -51,12 +60,12 @@ async function openSubmenu(props: Awaited<ReturnType<typeof open>>) {
 }
 
 describe("context menu", () => {
-	it("has no accessibility violations", async () => {
+	it("should have no accessibility violations", async () => {
 		const { container } = render(ContextMenuTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
-	it("has bits data attrs", async () => {
+	it("should have bits data attrs", async () => {
 		const { user, trigger, getByTestId } = setup();
 		await user.pointer([{ target: trigger }, { keys: "[MouseRight]", target: trigger }]);
 
@@ -84,28 +93,25 @@ describe("context menu", () => {
 		expect(subContent).toHaveAttribute(`data-menu-sub-content`);
 	});
 
-	it("opens when right-clicked & respects binding", async () => {
-		const { getByTestId, queryByTestId, user, trigger } = setup();
+	it("should open when right-clicked & respects binding", async () => {
+		const { getByTestId, getContent, user, trigger } = setup();
 		const binding = getByTestId("binding");
 		expect(binding).toHaveTextContent("false");
 		await user.pointer([{ target: trigger }, { keys: "[MouseRight]", target: trigger }]);
-		expect(queryByTestId("content")).not.toBeNull();
+		expect(getContent()).not.toBeNull();
 		expect(binding).toHaveTextContent("true");
 	});
 
-	it("manages focus correctly when opened with pointer", async () => {
+	it("should manage focus correctly when opened with pointer", async () => {
 		cleanup();
 		const { queryByTestId, user } = await open();
-
 		const item = queryByTestId("item");
 		expect(item).not.toHaveFocus();
-
 		await user.keyboard(kbd.ARROW_DOWN);
-
 		expect(item).toHaveFocus();
 	});
 
-	it("opens submenu with keyboard on subtrigger", async () => {
+	it("should open submenu with keyboard on subtrigger", async () => {
 		const { getByTestId, queryByTestId, user } = await open();
 
 		await user.keyboard(kbd.ARROW_DOWN);
@@ -118,7 +124,7 @@ describe("context menu", () => {
 		await waitFor(() => expect(getByTestId("sub-item")).toHaveFocus());
 	});
 
-	it("toggles the checkbox item when clicked & respects binding", async () => {
+	it("should toggle the checkbox item when clicked & respects binding", async () => {
 		const { getByTestId, user, trigger } = await open();
 		const checkedBinding = getByTestId("checked-binding");
 		const indicator = getByTestId("checkbox-indicator");
@@ -138,7 +144,7 @@ describe("context menu", () => {
 		expect(getByTestId("checkbox-indicator")).toHaveTextContent("true");
 	});
 
-	it("toggles checkbox items within submenus when clicked & respects binding", async () => {
+	it("should toggle checkbox items within submenus when clicked & respects binding", async () => {
 		const props = await open();
 		const { getByTestId, user, trigger } = props;
 		await openSubmenu(props);
@@ -162,8 +168,8 @@ describe("context menu", () => {
 		expect(getByTestId("sub-checkbox-indicator")).toHaveTextContent("true");
 	});
 
-	it("checks the radio item when clicked & respects binding", async () => {
-		const { getByTestId, queryByTestId, user, trigger } = await open();
+	it("should check the radio item when clicked & respects binding", async () => {
+		const { getByTestId, queryByTestId, getContent, user, trigger } = await open();
 		const radioBinding = getByTestId("radio-binding");
 		expect(radioBinding).toHaveTextContent("");
 		const radioItem1 = getByTestId("radio-item");
@@ -179,14 +185,14 @@ describe("context menu", () => {
 		expect(queryByTestId("radio-indicator-2")).toHaveTextContent("true");
 
 		await user.keyboard(kbd.ESCAPE);
-		expect(queryByTestId("content")).toBeNull();
+		expect(getContent()).toBeNull();
 		await user.click(radioBinding);
 		expect(radioBinding).toHaveTextContent("");
 		await user.pointer([{ target: trigger }, { keys: "[MouseRight]", target: trigger }]);
 	});
 
-	it("skips over disabled items when navigating with the keyboard", async () => {
-		const { user, getByTestId, queryByTestId } = await open();
+	it("should skip disabled items when navigating with the keyboard", async () => {
+		const { user, queryByTestId } = await open();
 		await user.keyboard(kbd.ARROW_DOWN);
 		await user.keyboard(kbd.ARROW_DOWN);
 		await waitFor(() => expect(queryByTestId("sub-trigger")).toHaveFocus());
@@ -196,7 +202,7 @@ describe("context menu", () => {
 		expect(queryByTestId("disabled-item-2")).not.toHaveFocus();
 	});
 
-	it("doesnt loop through the menu items when the `loop` prop is set to false", async () => {
+	it("should not loop through the menu items when the `loop` prop is set to false", async () => {
 		const { user, queryByTestId } = await open({
 			contentProps: {
 				loop: false,
@@ -217,7 +223,7 @@ describe("context menu", () => {
 		await waitFor(() => expect(queryByTestId("item")).not.toHaveFocus());
 	});
 
-	it("loops through the menu items when the `loop` prop is set to true", async () => {
+	it("should loop through the menu items when the `loop` prop is set to true", async () => {
 		const { user, getByTestId } = await open({
 			contentProps: {
 				loop: true,
@@ -239,41 +245,41 @@ describe("context menu", () => {
 		await waitFor(() => expect(getByTestId("item")).toHaveFocus());
 	});
 
-	it("closes the menu on escape", async () => {
-		const { queryByTestId, user } = await open();
+	it("should close the menu on escape", async () => {
+		const { user, getContent } = await open();
 		await user.keyboard(kbd.ESCAPE);
-		expect(queryByTestId("content")).toBeNull();
+		expect(getContent()).toBeNull();
 	});
 
-	it("respects the `escapeKeydownBehavior: 'ignore'` prop", async () => {
-		const { queryByTestId, user } = await open({
+	it("should respect the `escapeKeydownBehavior: 'ignore'` prop", async () => {
+		const { getContent, user } = await open({
 			contentProps: {
 				escapeKeydownBehavior: "ignore",
 			},
 		});
 		await user.keyboard(kbd.ESCAPE);
-		expect(queryByTestId("content")).not.toBeNull();
+		expect(getContent()).not.toBeNull();
 	});
 
-	it("respects the `interactOutsideBehavior: 'ignore'` prop", async () => {
-		const { queryByTestId, user, getByTestId } = await open({
+	it("should respect the `interactOutsideBehavior: 'ignore'` prop", async () => {
+		const { getContent, user, getByTestId } = await open({
 			contentProps: {
 				interactOutsideBehavior: "ignore",
 			},
 		});
 		const outside = getByTestId("outside");
 		await user.click(outside);
-		expect(queryByTestId("content")).not.toBeNull();
+		expect(getContent()).not.toBeNull();
 	});
 
-	it("portals to the body if a `to` prop is not passed to the Portal", async () => {
+	it("should portal to the body if a `to` prop is not passed to the Portal", async () => {
 		const { getByTestId } = await open();
 		const content = getByTestId("content");
 		const wrapper = content.parentElement;
 		expect(wrapper?.parentElement).toEqual(document.body);
 	});
 
-	it("portals to the portal target if a valid `to` prop is passed to the portal", async () => {
+	it("should portal to the portal target if a valid `to` prop is passed to the portal", async () => {
 		const { getByTestId } = await open({
 			portalProps: {
 				to: "#portal-target",
@@ -285,7 +291,7 @@ describe("context menu", () => {
 		expect(wrapper?.parentElement).toEqual(portalTarget);
 	});
 
-	it("does not portal if `disabled: true` is passed to the Portal", async () => {
+	it("should not portal if `disabled: true` is passed to the Portal", async () => {
 		const { getByTestId } = await open({
 			portalProps: {
 				disabled: true,

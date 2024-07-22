@@ -14,12 +14,12 @@ function setup(props: Separator.RootProps = {}) {
 }
 
 describe("separator", () => {
-	it("has no accessibility violations", async () => {
+	it("should have no accessibility violations", async () => {
 		const { container } = render(SeparatorTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
-	it("has bits data attrs", async () => {
+	it("should have bits data attrs", async () => {
 		const { root } = setup();
 		expect(root).toHaveAttribute("data-separator-root");
 	});

@@ -67,12 +67,12 @@ async function openSubmenu(props: Awaited<ReturnType<typeof openWithKbd>>) {
 }
 
 describe("dropdown menu", () => {
-	it("has no accessibility violations", async () => {
+	it("should have no accessibility violations", async () => {
 		const { container } = render(DropdownMenuTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
-	it("has bits data attrs", async () => {
+	it("should have bits data attrs", async () => {
 		const { user, trigger, getByTestId } = setup();
 		await user.click(trigger);
 
@@ -100,11 +100,11 @@ describe("dropdown menu", () => {
 		expect(subContent).toHaveAttribute(`data-menu-sub-content`);
 	});
 
-	it.each(OPEN_KEYS)("opens when %s is pressed & respects binding", async (key) => {
+	it.each(OPEN_KEYS)("should open when %s is pressed & respects binding", async (key) => {
 		await openWithKbd({}, key);
 	});
 
-	it("opens when clicked & respects binding", async () => {
+	it("should open when clicked & respects binding", async () => {
 		const { getByTestId, queryByTestId, user, trigger } = setup();
 		const binding = getByTestId("binding");
 		expect(binding).toHaveTextContent("false");
@@ -113,7 +113,7 @@ describe("dropdown menu", () => {
 		expect(binding).toHaveTextContent("true");
 	});
 
-	it("manages focus correctly when opened with pointer", async () => {
+	it("should manage focus correctly when opened with pointer", async () => {
 		const { getByTestId, user } = await openWithPointer();
 
 		const item = getByTestId("item");
@@ -123,7 +123,7 @@ describe("dropdown menu", () => {
 		expect(item).toHaveFocus();
 	});
 
-	it("manages focus correctly when opened with keyboard", async () => {
+	it("should manage focus correctly when opened with keyboard", async () => {
 		const { user, getByTestId, queryByTestId, trigger } = setup();
 
 		expect(queryByTestId("content")).toBeNull();
@@ -136,7 +136,7 @@ describe("dropdown menu", () => {
 		await waitFor(() => expect(item).toHaveFocus());
 	});
 
-	it("opens submenu with keyboard on subtrigger", async () => {
+	it("should open submenu with keyboard on subtrigger", async () => {
 		const { getByTestId, queryByTestId, user } = await openWithKbd();
 
 		await user.keyboard(kbd.ARROW_DOWN);
@@ -148,7 +148,7 @@ describe("dropdown menu", () => {
 		await waitFor(() => expect(getByTestId("sub-item")).toHaveFocus());
 	});
 
-	it("toggles the checkbox item when clicked & respects binding", async () => {
+	it("should toggle the checkbox item when clicked & respects binding", async () => {
 		const { getByTestId, user, trigger } = await openWithPointer();
 		const checkedBinding = getByTestId("checked-binding");
 		const indicator = getByTestId("checkbox-indicator");
@@ -168,7 +168,7 @@ describe("dropdown menu", () => {
 		expect(getByTestId("checkbox-indicator")).toHaveTextContent("true");
 	});
 
-	it("toggles checkbox items within submenus when clicked & respects binding", async () => {
+	it("should toggle checkbox items within submenus when clicked & respects binding", async () => {
 		const props = await openWithKbd();
 		const { getByTestId, user, trigger } = props;
 		await openSubmenu(props);
@@ -194,7 +194,7 @@ describe("dropdown menu", () => {
 		expect(getByTestId("sub-checkbox-indicator")).toHaveTextContent("true");
 	});
 
-	it("checks the radio item when clicked & respects binding", async () => {
+	it("should check the radio item when clicked & respects binding", async () => {
 		const { getByTestId, queryByTestId, user, trigger } = await openWithPointer();
 		const radioBinding = getByTestId("radio-binding");
 		expect(radioBinding).toHaveTextContent("");
@@ -219,7 +219,7 @@ describe("dropdown menu", () => {
 		await user.click(trigger);
 	});
 
-	it("skips over disabled items when navigating with the keyboard", async () => {
+	it("should skip over disabled items when navigating with the keyboard", async () => {
 		const { user, getByTestId } = await openWithKbd();
 		await user.keyboard(kbd.ARROW_DOWN);
 		await waitFor(() => expect(getByTestId("sub-trigger")).toHaveFocus());
@@ -229,7 +229,7 @@ describe("dropdown menu", () => {
 		expect(getByTestId("disabled-item-2")).not.toHaveFocus();
 	});
 
-	it("doesnt loop through the menu items when the `loop` prop is set to false/undefined", async () => {
+	it("should not loop through the menu items when the `loop` prop is set to false/undefined", async () => {
 		const { user, getByTestId } = await openWithKbd({
 			contentProps: {
 				loop: false,
@@ -249,7 +249,7 @@ describe("dropdown menu", () => {
 		await waitFor(() => expect(getByTestId("item")).not.toHaveFocus());
 	});
 
-	it("loops through the menu items when the `loop` prop is set to true", async () => {
+	it("should loop through the menu items when the `loop` prop is set to true", async () => {
 		const { user, getByTestId } = await openWithKbd({
 			contentProps: {
 				loop: true,
@@ -270,13 +270,13 @@ describe("dropdown menu", () => {
 		await waitFor(() => expect(getByTestId("item")).toHaveFocus());
 	});
 
-	it("closes the menu on escape", async () => {
+	it("should close the menu on escape", async () => {
 		const { queryByTestId, user } = await openWithKbd();
 		await user.keyboard(kbd.ESCAPE);
 		expect(queryByTestId("content")).toBeNull();
 	});
 
-	it("respects the `escapeKeydownBehavior` prop", async () => {
+	it("should respect the `escapeKeydownBehavior` prop", async () => {
 		const { queryByTestId, user } = await openWithKbd({
 			contentProps: {
 				escapeKeydownBehavior: "ignore",
@@ -286,7 +286,7 @@ describe("dropdown menu", () => {
 		expect(queryByTestId("content")).not.toBeNull();
 	});
 
-	it("respects the `interactOutsideBehavior` prop", async () => {
+	it("should respect the `interactOutsideBehavior` prop", async () => {
 		const { queryByTestId, user, getByTestId } = await openWithPointer({
 			contentProps: {
 				interactOutsideBehavior: "ignore",
@@ -297,13 +297,13 @@ describe("dropdown menu", () => {
 		expect(queryByTestId("content")).not.toBeNull();
 	});
 
-	it("portals to the body if a `portal` prop is not passed", async () => {
+	it("should portal to the body if a `portal` prop is not passed", async () => {
 		const { getByTestId } = await openWithPointer();
 		const content = getByTestId("content");
 		expect(content.parentElement?.parentElement).toEqual(document.body);
 	});
 
-	it("portals to the portal target if a valid `portal` prop is passed", async () => {
+	it("should portal to the portal target if a valid `portal` prop is passed", async () => {
 		const { getByTestId } = await openWithPointer({
 			portalProps: {
 				to: "#portal-target",
@@ -314,7 +314,7 @@ describe("dropdown menu", () => {
 		expect(content.parentElement?.parentElement).toEqual(portalTarget);
 	});
 
-	it("does not portal if `disabled` is passed to the portal", async () => {
+	it("should not portal if `disabled` is passed to the portal", async () => {
 		const { getByTestId } = await openWithPointer({
 			portalProps: {
 				disabled: true,
@@ -327,7 +327,7 @@ describe("dropdown menu", () => {
 		expect(contentWrapper?.parentElement).toEqual(ogContainer);
 	});
 
-	it("can prevent autofocusing first item with `onMountAutoFocus`  prop", async () => {
+	it("should allow preventing autofocusing first item with `onMountAutoFocus`  prop", async () => {
 		const { getByTestId } = await openWithKbd({
 			contentProps: {
 				onMountAutoFocus: (e) => {

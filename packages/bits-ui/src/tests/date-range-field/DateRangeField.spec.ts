@@ -50,12 +50,12 @@ function setup(props: DateRangeFieldTestProps = {}) {
 }
 
 describe("date range field", () => {
-	it("has no axe violations", async () => {
+	it("should have no axe violations", async () => {
 		const { container } = setup();
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
-	it("populates segment with value - `CalendarDate`", async () => {
+	it("should populate segment with value - `CalendarDate`", async () => {
 		const { start, end } = setup({
 			value: calendarDate,
 		});
@@ -71,7 +71,7 @@ describe("date range field", () => {
 		expect(end.value).toHaveTextContent(calendarDate.end.toString());
 	});
 
-	it("populates segment with value - `CalendarDateTime`", async () => {
+	it("should populate segment with value - `CalendarDateTime`", async () => {
 		const { start, end, getByTestId } = setup({
 			value: calendarDateTime,
 			granularity: "second",
@@ -98,7 +98,7 @@ describe("date range field", () => {
 		expect(end.value).toHaveTextContent(calendarDateTime.end.toString());
 	});
 
-	it("populates segment with value - `ZonedDateTime`", async () => {
+	it("should populate segment with value - `ZonedDateTime`", async () => {
 		const { start, end, getByTestId } = setup({
 			value: zonedDateTime,
 			granularity: "second",
@@ -125,7 +125,7 @@ describe("date range field", () => {
 		expect(end.value).toHaveTextContent(calendarDateTime.end.toString());
 	});
 
-	it("navigates between the fields", async () => {
+	it("should navigate between the fields", async () => {
 		const { getByTestId, user } = setup({
 			value: calendarDate,
 		});
@@ -156,7 +156,7 @@ describe("date range field", () => {
 		}
 	});
 
-	it("navigates between the fields - right to left", async () => {
+	it("should navigate between the fields - right to left", async () => {
 		const { getByTestId, user } = setup({
 			value: calendarDate,
 		});
@@ -187,7 +187,7 @@ describe("date range field", () => {
 		}
 	});
 
-	it("binds to the value", async () => {
+	it("should respect `bind:value` to the value", async () => {
 		const { start, end, user } = setup({
 			value: calendarDate,
 		});
@@ -200,7 +200,7 @@ describe("date range field", () => {
 		expect(end.value).toHaveTextContent(calendarDate.end.toString());
 	});
 
-	it("renders an input for the start and end", async () => {
+	it("should render an input for the start and end", async () => {
 		const { container } = setup({
 			startProps: {
 				name: "start-hidden-input",

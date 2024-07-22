@@ -20,17 +20,17 @@ function setup(props: Toggle.RootProps = {}) {
 }
 
 describe("toggle", () => {
-	it("has no accessibility violations", async () => {
+	it("should have no accessibility violations", async () => {
 		const { container } = render(ToggleTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
-	it("has bits data attrs", async () => {
+	it("should have bits data attrs", async () => {
 		const { root } = setup();
 		expect(root).toHaveAttribute("data-toggle-root");
 	});
 
-	it("toggles when clicked", async () => {
+	it("should toggle when clicked", async () => {
 		const { user, root } = setup();
 		expect(root).toHaveAttribute("data-state", "off");
 		expect(root).toHaveAttribute("aria-pressed", "false");
@@ -39,7 +39,7 @@ describe("toggle", () => {
 		expect(root).toHaveAttribute("aria-pressed", "true");
 	});
 
-	it.each([kbd.ENTER, kbd.SPACE])("toggles when the `%s` key is pressed", async (key) => {
+	it.each([kbd.ENTER, kbd.SPACE])("should toggle when the `%s` key is pressed", async (key) => {
 		const { user, root } = setup();
 		expect(root).toHaveAttribute("data-state", "off");
 		expect(root).toHaveAttribute("aria-pressed", "false");
@@ -67,7 +67,7 @@ describe("toggle", () => {
 		expect(newValue).toBe(true);
 	});
 
-	it("respects binding to the `pressed` prop", async () => {
+	it("should respect binding to the `pressed` prop", async () => {
 		const { getByTestId, user, root } = setup();
 		const binding = getByTestId("binding");
 		expect(binding).toHaveTextContent("false");

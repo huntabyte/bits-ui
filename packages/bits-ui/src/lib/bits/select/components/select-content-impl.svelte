@@ -26,8 +26,7 @@
 
 	const contentState = context;
 
-	// eslint-disable-next-line unused-imports/no-unused-vars, ts/no-unused-vars
-	const { children, child, ...restWithoutChildren } = restProps;
+	const { children: _c, child: _ch, ...restWithoutChildren } = restProps;
 </script>
 
 <FocusScope
@@ -46,8 +45,8 @@
 			{...restWithoutChildren}
 			enabled={present}
 			onEscapeKeydown={(e) => {
-				// TODO: users should be able to cancel this
 				onEscapeKeydown(e);
+				if (e.defaultPrevented) return;
 				contentState.root.handleClose();
 			}}
 		>

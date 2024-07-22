@@ -60,12 +60,12 @@ const itemsWithDisabled = items.map((item) => {
 });
 
 describe("accordion - single", () => {
-	it("has no accessibility violations", async () => {
+	it("should have no accessibility violations", async () => {
 		const { container } = render(AccordionSingleTest as any, { items });
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
-	it("has bits data attrs", async () => {
+	it("should have bits data attrs", async () => {
 		const { getByTestId } = render(AccordionTestIsolated);
 		const root = getByTestId("root");
 		const trigger = getByTestId("trigger");
@@ -79,7 +79,7 @@ describe("accordion - single", () => {
 		expect(trigger).toHaveAttribute("data-accordion-trigger");
 	});
 
-	it("has expected data attributes", async () => {
+	it("should have expected data attributes", async () => {
 		const user = setupUserEvents();
 		const { getByTestId } = render(AccordionSingleTest as any, { items: itemsWithDisabled });
 		const itemEls = items.map((item) => getByTestId(`${item.value}-item`));
@@ -99,7 +99,7 @@ describe("accordion - single", () => {
 		expect(triggerEls[1]).toHaveAttribute("data-disabled");
 	});
 
-	it("disables everything when the `disabled` prop is true", async () => {
+	it("should disable everything when the `disabled` prop is true", async () => {
 		const user = setupUserEvents();
 		const { getByTestId } = render(AccordionSingleTest as any, {
 			items,
@@ -120,7 +120,7 @@ describe("accordion - single", () => {
 		expect(triggerEls[2]).toHaveAttribute("data-disabled");
 	});
 
-	it("displays content when an item is expanded", async () => {
+	it("should display content when an item is expanded", async () => {
 		const user = setupUserEvents();
 		const { getByTestId } = render(AccordionSingleTest as any, { items });
 
@@ -138,7 +138,7 @@ describe("accordion - single", () => {
 		}
 	});
 
-	it("expands only one item at a time when `multiple` is false", async () => {
+	it("should expand only one item at a time when `multiple` is false", async () => {
 		const user = setupUserEvents();
 		const { getByTestId } = render(AccordionSingleTest as any, { items });
 
@@ -160,7 +160,7 @@ describe("accordion - single", () => {
 		expect(openItems.length).toBe(1);
 	});
 
-	it("expands when the trigger is focused and `Enter` key is pressed", async () => {
+	it("should expand when the trigger is focused and `Enter` key is pressed", async () => {
 		const user = setupUserEvents();
 		const { getByTestId } = render(AccordionSingleTest as any, {
 			items,
@@ -181,7 +181,7 @@ describe("accordion - single", () => {
 		}
 	});
 
-	it("expands when the trigger is focused and `Space` key is pressed", async () => {
+	it("should expand when the trigger is focused and `Space` key is pressed", async () => {
 		const user = setupUserEvents();
 		const { getByTestId } = render(AccordionSingleTest as any, {
 			items,
@@ -202,7 +202,7 @@ describe("accordion - single", () => {
 		}
 	});
 
-	it("focuses the next item when `ArrowDown` key is pressed", async () => {
+	it("should focus the next item when `ArrowDown` key is pressed", async () => {
 		const user = setupUserEvents();
 		const { getByTestId } = render(AccordionSingleTest as any, { items });
 
@@ -218,7 +218,7 @@ describe("accordion - single", () => {
 		expect(triggers[0]).toHaveFocus();
 	});
 
-	it("focuses the previous item when the `ArrowUp` key is pressed", async () => {
+	it("should focus the previous item when the `ArrowUp` key is pressed", async () => {
 		const user = setupUserEvents();
 		const { getByTestId } = render(AccordionSingleTest as any, { items });
 
@@ -234,7 +234,7 @@ describe("accordion - single", () => {
 		expect(triggers[0]).toHaveFocus();
 	});
 
-	it("focuses the first item when the `Home` key is pressed", async () => {
+	it("should focus the first item when the `Home` key is pressed", async () => {
 		const user = setupUserEvents();
 		const { getByTestId } = render(AccordionSingleTest as any, { items });
 
@@ -247,7 +247,7 @@ describe("accordion - single", () => {
 		}
 	});
 
-	it("focuses the last item when the `End` key is pressed", async () => {
+	it("should focus the last item when the `End` key is pressed", async () => {
 		const user = setupUserEvents();
 		const { getByTestId } = render(AccordionSingleTest as any, { items });
 
@@ -260,7 +260,7 @@ describe("accordion - single", () => {
 		}
 	});
 
-	it("respects the `disabled` prop for items", async () => {
+	it("should respect the `disabled` prop for items", async () => {
 		const user = setupUserEvents();
 		const { getByTestId } = render(AccordionSingleTest as any, { items: itemsWithDisabled });
 
@@ -272,7 +272,7 @@ describe("accordion - single", () => {
 		expect(triggers[2]).toHaveFocus();
 	});
 
-	it("respects the `level` prop for headers", async () => {
+	it("should respect the `level` prop for headers", async () => {
 		const itemsWithLevel = items.map((item, i) => {
 			if (i === 0) {
 				return { ...item, level: 1 } as const;
@@ -288,7 +288,7 @@ describe("accordion - single", () => {
 		expect(headers[1]).toHaveAttribute("aria-level", "3");
 	});
 
-	it("updates the `bind:value` prop when the value changes", async () => {
+	it("should update the `bind:value` prop when the value changes", async () => {
 		const user = setupUserEvents();
 		const { getByTestId } = render(AccordionSingleTestControlledSvelte as any, { items });
 		const trigger = getByTestId("item-1-trigger");
@@ -301,7 +301,7 @@ describe("accordion - single", () => {
 		expect(value).toHaveTextContent("item-1");
 	});
 
-	it('handles programatic changes to the "value" prop', async () => {
+	it('should handle programatic changes to the "value" prop', async () => {
 		const user = setupUserEvents();
 		const { getByTestId } = render(AccordionSingleTestControlledSvelte as any, { items });
 		const updateButton = getByTestId("update-value");
@@ -323,12 +323,12 @@ describe("accordion - single", () => {
 //
 
 describe("accordion - multiple", () => {
-	it("has no accessibility violations", async () => {
+	it("should have no accessibility violations", async () => {
 		const { container } = render(AccordionMultiTest as any, { items });
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
-	it("has expected data attributes", async () => {
+	it("should have expected data attributes", async () => {
 		const user = setupUserEvents();
 		const { getByTestId } = render(AccordionMultiTest as any, { items: itemsWithDisabled });
 		const itemEls = items.map((item) => getByTestId(`${item.value}-item`));
@@ -347,7 +347,7 @@ describe("accordion - multiple", () => {
 		expect(triggerEls[1]).toHaveAttribute("data-disabled");
 	});
 
-	it("disables everything when the `disabled` prop is true", async () => {
+	it("should disable everything when the `disabled` prop is true", async () => {
 		const user = setupUserEvents();
 		const { getByTestId } = render(AccordionMultiTest as any, {
 			items,
@@ -368,7 +368,7 @@ describe("accordion - multiple", () => {
 		expect(triggerEls[2]).toHaveAttribute("data-disabled");
 	});
 
-	it("displays content when an item is expanded", async () => {
+	it("should display content when an item is expanded", async () => {
 		const user = setupUserEvents();
 		const { getByTestId } = render(AccordionMultiTest as any, { items });
 
@@ -387,7 +387,7 @@ describe("accordion - multiple", () => {
 		}
 	});
 
-	it("expands multiple items", async () => {
+	it("should allow expanding multiple items", async () => {
 		const user = setupUserEvents();
 		const { getByTestId } = render(AccordionMultiTest as any, {
 			items,
@@ -410,7 +410,7 @@ describe("accordion - multiple", () => {
 		expect(openItems.length).toBe(4);
 	});
 
-	it("expands when the trigger is focused and `Enter` key is pressed", async () => {
+	it("should expand when the trigger is focused and `Enter` key is pressed", async () => {
 		const user = setupUserEvents();
 		const { getByTestId } = render(AccordionMultiTest as any, {
 			items,
@@ -431,7 +431,7 @@ describe("accordion - multiple", () => {
 		}
 	});
 
-	it("expands when the trigger is focused and `Space` key is pressed", async () => {
+	it("should expand when the trigger is focused and `Space` key is pressed", async () => {
 		const user = setupUserEvents();
 		const { getByTestId } = render(AccordionMultiTest as any, {
 			items,
@@ -453,7 +453,7 @@ describe("accordion - multiple", () => {
 		}
 	});
 
-	it("focuses the next item when `ArrowDown` key is pressed", async () => {
+	it("should focus the next item when `ArrowDown` key is pressed", async () => {
 		const user = setupUserEvents();
 		const { getByTestId } = render(AccordionMultiTest as any, { items });
 
@@ -469,7 +469,7 @@ describe("accordion - multiple", () => {
 		expect(triggers[0]).toHaveFocus();
 	});
 
-	it("focuses the previous item when the `ArrowUp` key is pressed", async () => {
+	it("should focus the previous item when the `ArrowUp` key is pressed", async () => {
 		const user = setupUserEvents();
 		const { getByTestId } = render(AccordionMultiTest as any, { items });
 
@@ -485,7 +485,7 @@ describe("accordion - multiple", () => {
 		expect(triggers[0]).toHaveFocus();
 	});
 
-	it("focuses the first item when the `Home` key is pressed", async () => {
+	it("should focus the first item when the `Home` key is pressed", async () => {
 		const user = setupUserEvents();
 		const { getByTestId } = render(AccordionMultiTest as any, { items });
 
@@ -498,7 +498,7 @@ describe("accordion - multiple", () => {
 		}
 	});
 
-	it("focuses the last item when the `End` key is pressed", async () => {
+	it("should focus the last item when the `End` key is pressed", async () => {
 		const user = setupUserEvents();
 		const { getByTestId } = render(AccordionMultiTest as any, { items });
 
@@ -511,7 +511,7 @@ describe("accordion - multiple", () => {
 		}
 	});
 
-	it("respects the `disabled` prop for items", async () => {
+	it("should respect the `disabled` prop for items", async () => {
 		const user = setupUserEvents();
 		const { getByTestId } = render(AccordionMultiTest as any, { items: itemsWithDisabled });
 
@@ -523,7 +523,7 @@ describe("accordion - multiple", () => {
 		expect(triggers[2]).toHaveFocus();
 	});
 
-	it("respects the `level` prop for headers", async () => {
+	it("should respect the `level` prop for headers", async () => {
 		const itemsWithLevel = items.map((item, i) => {
 			if (i === 0) {
 				return { ...item, level: 1 } as const;
@@ -539,7 +539,7 @@ describe("accordion - multiple", () => {
 		expect(headers[1]).toHaveAttribute("aria-level", "3");
 	});
 
-	it("updates the `bind:value` prop when the value changes", async () => {
+	it("should update the `bind:value` prop when the value changes", async () => {
 		const user = setupUserEvents();
 		const { getByTestId, queryByTestId } = render(AccordionMultiTestControlled as any, {
 			items,
@@ -554,7 +554,7 @@ describe("accordion - multiple", () => {
 		expect(queryByTestId("value")).toHaveTextContent("item-1");
 	});
 
-	it('handles programatic changes to the "value" prop', async () => {
+	it('should handle programatic changes to the "value" prop', async () => {
 		const user = setupUserEvents();
 		const { getByTestId, queryByTestId } = render(AccordionMultiTestControlled as any, {
 			items,

@@ -49,8 +49,8 @@
 		contentState.root.closeMenu();
 	}}
 	onEscapeKeydown={(e) => {
-		// TODO: users should be able to cancel this
 		onEscapeKeydown(e);
+		if (e.defaultPrevented) return
 		contentState.root.closeMenu();
 	}}
 	onMountAutoFocus={(e) => e.preventDefault()}

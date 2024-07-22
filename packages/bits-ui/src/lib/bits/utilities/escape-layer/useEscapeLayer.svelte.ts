@@ -44,10 +44,11 @@ export class EscapeLayerState {
 
 	#onkeydown = (e: KeyboardEvent) => {
 		if (e.key !== kbd.ESCAPE || !isResponsibleEscapeLayer(this)) return;
+		const clonedEvent = new KeyboardEvent(e.type, e);
 		e.preventDefault();
 		const behaviorType = this.#behaviorType.current;
 		if (behaviorType !== "close" && behaviorType !== "defer-otherwise-close") return;
-		this.#onEscapeProp.current(e);
+		this.#onEscapeProp.current(clonedEvent);
 	};
 }
 

@@ -53,12 +53,12 @@ async function open(props: AlertDialogTestProps = {}) {
 }
 
 describe("alert dialog", () => {
-	it("has no accessibility violations", async () => {
+	it("should have no accessibility violations", async () => {
 		const { container } = render(AlertDialogTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
-	it("has bits data attrs", async () => {
+	it("should have bits data attrs", async () => {
 		const { getByTestId } = render(AlertDialogTest, { open: true });
 		const parts = ["trigger", "overlay", "cancel", "title", "description", "content"];
 
@@ -68,7 +68,7 @@ describe("alert dialog", () => {
 		}
 	});
 
-	it("has expected data attributes", async () => {
+	it("should have expected data attributes", async () => {
 		const { getByTestId } = await open();
 
 		const overlay = getByTestId("overlay");
@@ -77,23 +77,23 @@ describe("alert dialog", () => {
 		expect(content).toHaveAttribute("data-state", "open");
 	});
 
-	it("opens when the trigger is clicked", async () => {
+	it("should open when the trigger is clicked", async () => {
 		await open();
 	});
 
-	it("focuses the cancel button by default when opened", async () => {
+	it("should focus the cancel button by default when opened", async () => {
 		const { cancel } = await open();
 		expect(cancel).toHaveFocus();
 	});
 
-	it("closes when the cancel button is clicked", async () => {
+	it("should close when the cancel button is clicked", async () => {
 		const { getByTestId, queryByTestId, user } = await open();
 		const cancel = getByTestId("cancel");
 		await user.click(cancel);
 		expectIsClosed(queryByTestId);
 	});
 
-	it("closes when the `Escape` key is pressed", async () => {
+	it("should close when the `Escape` key is pressed", async () => {
 		const { queryByTestId, user, getByTestId } = await open();
 
 		await user.keyboard(kbd.ESCAPE);
@@ -101,7 +101,7 @@ describe("alert dialog", () => {
 		expect(getByTestId("trigger")).toHaveFocus();
 	});
 
-	it("doesn't close when the overlay is clicked", async () => {
+	it("should not close when the overlay is clicked", async () => {
 		const { getByTestId, queryByTestId, user } = await open();
 		await sleep(100);
 
@@ -113,14 +113,14 @@ describe("alert dialog", () => {
 		expect(contentAfter2).not.toBeNull();
 	});
 
-	it("attaches to body when using portal element", async () => {
+	it("should attach to body when using portal element", async () => {
 		await open();
 
 		const content = screen.getByTestId("content");
 		expect(content.parentElement).toEqual(document.body);
 	});
 
-	it("doesnt attached to body when portal is disabled", async () => {
+	it("should attach to body when portal is disabled", async () => {
 		await open({
 			portalProps: {
 				disabled: true,
@@ -130,7 +130,7 @@ describe("alert dialog", () => {
 		expect(content.parentElement).not.toEqual(document.body);
 	});
 
-	it("portals to the target if passed as a prop", async () => {
+	it("should portal to the target if passed as a prop", async () => {
 		await open({
 			portalProps: {
 				to: "#portalTarget",
@@ -141,14 +141,14 @@ describe("alert dialog", () => {
 		expect(content.parentElement).toEqual(portalTarget);
 	});
 
-	it("doesnt close when content is clicked", async () => {
+	it("should not close when content is clicked", async () => {
 		const { user, getByTestId, queryByTestId } = await open();
 		const content = getByTestId("content");
 		await user.click(content);
 		await expectIsOpen(queryByTestId);
 	});
 
-	it("respects binding to the `open` prop", async () => {
+	it("should respect binding to the `open` prop", async () => {
 		const { getByTestId, queryByTestId, user } = setup();
 
 		const trigger = getByTestId("trigger");
@@ -165,7 +165,7 @@ describe("alert dialog", () => {
 		await expectIsOpen(queryByTestId);
 	});
 
-	it("respects the `interactOutsideBehavior: 'ignore'` prop", async () => {
+	it("should respect the `interactOutsideBehavior: 'ignore'` prop", async () => {
 		const { getByTestId, queryByTestId, user } = await open({
 			contentProps: {
 				interactOutsideBehavior: "ignore",
@@ -179,7 +179,7 @@ describe("alert dialog", () => {
 		await expectIsOpen(queryByTestId);
 	});
 
-	it("respects the the `escapeKeydownBehavior: 'ignore'` prop", async () => {
+	it("should respect the the `escapeKeydownBehavior: 'ignore'` prop", async () => {
 		const { user, getByTestId, queryByTestId } = await open({
 			contentProps: {
 				escapeKeydownBehavior: "ignore",
