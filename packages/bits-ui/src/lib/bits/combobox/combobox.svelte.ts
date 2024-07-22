@@ -14,7 +14,6 @@ import { kbd } from "$lib/internal/kbd.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
 import { Previous } from "runed";
-import { onDestroy } from "svelte";
 
 // prettier-ignore
 export const INTERACTION_KEYS = [kbd.ARROW_LEFT, kbd.ESCAPE, kbd.ARROW_RIGHT, kbd.SHIFT, kbd.CAPS_LOCK, kbd.CONTROL, kbd.ALT, kbd.META, kbd.ENTER, kbd.F1, kbd.F2, kbd.F3, kbd.F4, kbd.F5, kbd.F6, kbd.F7, kbd.F8, kbd.F9, kbd.F10, kbd.F11, kbd.F12];
@@ -496,8 +495,10 @@ class ComboboxContentState {
 			condition: () => this.root.open.current,
 		});
 
-		onDestroy(() => {
-			this.root.contentNode = null;
+		$effect(() => {
+			return () => {
+				this.root.contentNode = null;
+			};
 		});
 	}
 

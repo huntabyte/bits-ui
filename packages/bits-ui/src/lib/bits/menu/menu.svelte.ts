@@ -1,5 +1,5 @@
 import { box } from "svelte-toolbelt";
-import { onDestroy, tick } from "svelte";
+import { tick } from "svelte";
 import { focusFirst } from "../utilities/focus-scope/utils.js";
 import {
 	FIRST_LAST_KEYS,
@@ -37,6 +37,7 @@ import type { Direction } from "$lib/shared/index.js";
 import { afterTick } from "$lib/internal/afterTick.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
 import { isPointerInGraceArea, makeHullFromElements } from "$lib/internal/polygon.js";
+import { onDestroyEffect } from "$lib/internal/onDestroyEffect.svelte.js";
 
 const TRIGGER_ATTR = "data-menu-trigger";
 const CONTENT_ATTR = "data-menu-content";
@@ -216,8 +217,7 @@ class MenuContentState {
 			},
 		});
 
-		onDestroy(() => {
-			if (!isBrowser) return;
+		onDestroyEffect(() => {
 			window.clearTimeout(this.#timer);
 		});
 
@@ -548,7 +548,7 @@ class MenuSubTriggerState {
 		this.#content = content;
 		this.#submenu = submenu;
 
-		onDestroy(() => {
+		onDestroyEffect(() => {
 			this.#clearOpenTimer();
 		});
 

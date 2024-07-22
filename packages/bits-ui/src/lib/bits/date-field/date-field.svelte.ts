@@ -1,7 +1,7 @@
 import type { Updater } from "svelte/store";
 import type { DateValue } from "@internationalized/date";
 import type { WritableBox } from "svelte-toolbelt";
-import { onDestroy, onMount, untrack } from "svelte";
+import { onMount, untrack } from "svelte";
 import type { DateRangeFieldRootState } from "../date-range-field/date-range-field.svelte.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { WithRefProps } from "$lib/internal/types.js";
@@ -54,6 +54,7 @@ import { DATE_SEGMENT_PARTS, TIME_SEGMENT_PARTS } from "$lib/shared/date/field/p
 import { createContext } from "$lib/internal/createContext.js";
 import { useId } from "$lib/internal/useId.js";
 import type { DateMatcher, Granularity, HourCycle } from "$lib/shared/date/types.js";
+import { onDestroyEffect } from "$lib/internal/onDestroyEffect.svelte.js";
 
 export const DATE_FIELD_INPUT_ATTR = "data-date-field-input";
 
@@ -142,7 +143,7 @@ class DateFieldRootState {
 			this.announcer = getAnnouncer();
 		});
 
-		onDestroy(() => {
+		onDestroyEffect(() => {
 			if (rangeRoot) return;
 			removeDescriptionElement(this.descriptionId);
 		});

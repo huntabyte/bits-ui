@@ -5,7 +5,7 @@ import { createFormatter, type Formatter } from "$lib/shared/date/formatter.js";
 import type { Granularity, DateMatcher } from "$lib/shared/date/types.js";
 import type { DateRange, SegmentPart } from "$lib/shared/index.js";
 import type { DateValue } from "@internationalized/date";
-import { onDestroy, untrack } from "svelte";
+import { untrack } from "svelte";
 import { useDateFieldRoot } from "../date-field/date-field.svelte.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
@@ -13,6 +13,7 @@ import { createContext } from "$lib/internal/createContext.js";
 import { getFirstSegment } from "$lib/shared/date/field.js";
 import { getDataDisabled } from "$lib/internal/attrs.js";
 import type { ReadableBox, WritableBox } from "svelte-toolbelt";
+import { onDestroyEffect } from "$lib/internal/onDestroyEffect.svelte.js";
 
 export const DATE_RANGE_FIELD_ROOT_ATTR = "data-date-range-field-root";
 
@@ -107,7 +108,7 @@ export class DateRangeFieldRootState {
 			},
 		});
 
-		onDestroy(() => {
+		onDestroyEffect(() => {
 			removeDescriptionElement(this.descriptionId);
 		});
 

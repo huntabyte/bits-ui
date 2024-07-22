@@ -20,6 +20,7 @@ import {
 	noop,
 	useRefById,
 } from "$lib/internal/index.js";
+import { onDestroyEffect } from "$lib/internal/onDestroyEffect.svelte.js";
 
 const layers = new Map<DismissableLayerState, ReadableBox<InteractOutsideBehaviorType>>();
 
@@ -106,17 +107,12 @@ export class DismissableLayerState {
 			};
 		});
 
-		$effect(() => {
-			return () => {
-				// onDestroy, cleanup anything leftover
-				untrack(() => {
-					this.#resetState.destroy();
-					layers.delete(this);
-					this.#onInteractOutsideStart.destroy();
-					this.#onInteractOutside.destroy();
-					unsubEvents();
-				});
-			};
+		onDestroyEffect(() => {
+			this.#resetState.destroy();
+			layers.delete(this);
+			this.#onInteractOutsideStart.destroy();
+			this.#onInteractOutside.destroy();
+			unsubEvents();
 		});
 	}
 

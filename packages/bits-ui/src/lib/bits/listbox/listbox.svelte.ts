@@ -1,4 +1,4 @@
-import { onDestroy, onMount } from "svelte";
+import { onMount } from "svelte";
 import { SvelteSet } from "svelte/reactivity";
 import { IsFocusWithin } from "runed";
 import { focusFirst } from "../utilities/focus-scope/utils.js";
@@ -19,6 +19,7 @@ import { type UseRovingFocusReturn, useRovingFocus } from "$lib/internal/useRovi
 import { useTypeahead } from "$lib/internal/useTypeahead.svelte.js";
 import type { Orientation } from "$lib/shared/index.js";
 import { afterTick } from "$lib/internal/afterTick.js";
+import { onDestroyEffect } from "$lib/internal/onDestroyEffect.svelte.js";
 
 const LISTBOX_ITEM_ATTR = "data-listbox-item";
 const LISTBOX_CONTENT_ATTR = "data-listbox-content";
@@ -391,7 +392,7 @@ export class ListboxItemState {
 			};
 		});
 
-		onDestroy(() => {
+		onDestroyEffect(() => {
 			this.content.root.valueOptions.delete(this.value.current);
 		});
 

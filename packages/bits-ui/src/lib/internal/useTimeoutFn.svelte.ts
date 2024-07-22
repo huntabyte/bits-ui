@@ -1,8 +1,8 @@
 import { box } from "svelte-toolbelt";
-import { onDestroy } from "svelte";
 import type { Box } from "./box.svelte.js";
 import type { AnyFn, Fn } from "./types.js";
 import { isBrowser } from "./is.js";
+import { onDestroyEffect } from "./onDestroyEffect.svelte.js";
 
 export type UseTimeoutFnOptions = {
 	/**
@@ -69,7 +69,7 @@ export function useTimeoutFn<T extends AnyFn>(
 		if (isBrowser) start();
 	}
 
-	onDestroy(() => {
+	onDestroyEffect(() => {
 		stop();
 	});
 

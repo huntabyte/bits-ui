@@ -5,11 +5,12 @@ import { isElement, isFocusVisible, isTouch } from "$lib/internal/is.js";
 import { sleep } from "$lib/internal/sleep.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
-import { onDestroy, untrack } from "svelte";
+import { untrack } from "svelte";
 import { getTabbableCandidates } from "../utilities/focus-scope/utils.js";
 import { createContext } from "$lib/internal/createContext.js";
 import { useGraceArea } from "$lib/internal/useGraceArea.svelte.js";
 import { box } from "svelte-toolbelt";
+import { onDestroyEffect } from "$lib/internal/onDestroyEffect.svelte.js";
 
 const CONTENT_ATTR = "data-link-preview-content";
 const TRIGGER_ATTR = "data-link-preview-trigger";
@@ -203,7 +204,7 @@ class LinkPreviewContentState {
 			});
 		});
 
-		onDestroy(() => {
+		onDestroyEffect(() => {
 			this.root.clearTimeout();
 		});
 	}
