@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { Popover } from "bits-ui";
-	import { Info } from "$icons/index.js";
+	import Info from "phosphor-svelte/lib/Info";
 	import { Code } from "$lib/components/index.js";
 	import type { PropType } from "$lib/types/index.js";
 	import { parseTypeDef } from "$lib/utils/index.js";
 
-	export let type: PropType | string;
+	let { type }: { type: PropType | string } = $props();
 </script>
 
 <div class="flex items-center gap-1.5">

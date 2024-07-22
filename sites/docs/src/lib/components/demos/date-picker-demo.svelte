@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { DatePicker } from "bits-ui";
-	import { CalendarBlank, CaretLeft, CaretRight } from "$icons/index.js";
+	import CalendarBlank from "phosphor-svelte/lib/CalendarBlank";
+	import CaretLeft from "phosphor-svelte/lib/CaretLeft";
+	import CaretRight from "phosphor-svelte/lib/CaretRight";
 </script>
 
 <DatePicker.Root weekdayFormat="short" fixedWeeks={true}>

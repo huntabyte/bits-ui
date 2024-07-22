@@ -1,6 +1,10 @@
 <script lang="ts">
 	import { ContextMenu } from "bits-ui";
-	import { CopySimple, MouseSimple, PencilSimpleLine, PlusCircle, Trash } from "$icons/index.js";
+	import CopySimple from "phosphor-svelte/lib/CopySimple";
+	import MouseSimple from "phosphor-svelte/lib/MouseSimple";
+	import PencilSimpleLine from "phosphor-svelte/lib/PencilSimpleLine";
+	import PlusCircle from "phosphor-svelte/lib/PlusCircle";
+	import Trash from "phosphor-svelte/lib/Trash";
 </script>
 
 <ContextMenu.Root>

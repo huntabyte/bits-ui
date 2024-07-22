@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Checkbox, Label } from "bits-ui";
-	import { Check, Minus } from "$icons/index.js";
+	import Check from "phosphor-svelte/lib/Check";
+	import Minus from "phosphor-svelte/lib/Minus";
 </script>
 
 <div class="flex items-center space-x-3">
@@ -10,7 +11,7 @@
 		class="peer inline-flex size-[25px] items-center justify-center rounded-md border border-muted bg-foreground transition-all duration-150 ease-in-out active:scale-98 data-[state=unchecked]:border-border-input data-[state=unchecked]:bg-background data-[state=unchecked]:hover:border-dark-40"
 		name="hello"
 	>
-		{#snippet indicator({ checked })}
+		{#snippet children({ checked })}
 			<div class="inline-flex items-center justify-center text-background">
 				{#if checked === true}
 					<Check class="size-[15px]" weight="bold" />

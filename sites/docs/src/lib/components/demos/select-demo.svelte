@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { Select } from "bits-ui";
-	import { CaretUpDown, Check, Palette } from "$icons/index.js";
+	import CaretUpDown from "phosphor-svelte/lib/CaretUpDown";
+	import Check from "phosphor-svelte/lib/Check";
+	import Palette from "phosphor-svelte/lib/Palette";
 
 	const themes = [
 		{ value: "light-monochrome", label: "Light Monochrome" },

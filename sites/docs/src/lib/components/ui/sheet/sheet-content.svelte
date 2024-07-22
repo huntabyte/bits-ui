@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { Dialog as SheetPrimitive } from "bits-ui";
+	import X from "phosphor-svelte/lib/X";
 	import { SheetOverlay, SheetPortal, type Side, sheetVariants } from "./index.js";
 	import { cn } from "$lib/utils/index.js";
-	import { X } from "$icons/index.js";
 
 	let {
 		side,

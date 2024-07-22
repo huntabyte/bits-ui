@@ -1,13 +1,11 @@
 <script lang="ts">
 	import { Avatar, DropdownMenu } from "bits-ui";
-	import {
-		Cardholder,
-		CaretRight,
-		DotsThree,
-		GearSix,
-		UserCircle,
-		UserCirclePlus,
-	} from "$icons/index.js";
+	import Cardholder from "phosphor-svelte/lib/Cardholder";
+	import CaretRight from "phosphor-svelte/lib/CaretRight";
+	import DotsThree from "phosphor-svelte/lib/DotsThree";
+	import GearSix from "phosphor-svelte/lib/GearSix";
+	import UserCircle from "phosphor-svelte/lib/UserCircle";
+	import UserCirclePlus from "phosphor-svelte/lib/UserCirclePlus";
 
 	let checked = $state(false);
 	let invited = $state("");

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Tabs } from "bits-ui";
-	import { Airplane } from "$icons/index.js";
+	import Airplane from "phosphor-svelte/lib/Airplane";
 </script>
 
 <div class="pt-6">

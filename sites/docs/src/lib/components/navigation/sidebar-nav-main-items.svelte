@@ -1,10 +1,14 @@
 <script lang="ts">
+	import CalendarBlank from "phosphor-svelte/lib/CalendarBlank";
+	import CodeBlock from "phosphor-svelte/lib/CodeBlock";
+	import Compass from "phosphor-svelte/lib/Compass";
+	import Palette from "phosphor-svelte/lib/Palette";
+	import Sticker from "phosphor-svelte/lib/Sticker";
 	import { page } from "$app/stores";
-	import { CalendarBlank, CodeBlock, Compass, Palette, Sticker } from "$icons/index.js";
 	import type { SidebarNavItem } from "$lib/config/index.js";
 	import { cn } from "$lib/utils/index.js";
 
-	export let items: SidebarNavItem[] = [];
+	let { items = [] }: { items: SidebarNavItem[] } = $props();
 
 	const iconMap = {
 		Introduction: Sticker,

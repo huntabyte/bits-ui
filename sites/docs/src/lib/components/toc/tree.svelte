@@ -7,11 +7,19 @@
 	} from "@melt-ui/svelte";
 	import { cn } from "$lib/utils/index.js";
 
-	export let tree: TableOfContentsItem[] = [];
-	export let activeHeadingIdxs: number[];
-	export let item: TableOfContentsElements["item"];
-	export let level = 1;
-	export let isActive: TableOfContents["helpers"]["isActive"];
+	let {
+		tree = [],
+		activeHeadingIdxs,
+		item,
+		level = 1,
+		isActive,
+	}: {
+		tree?: TableOfContentsItem[];
+		activeHeadingIdxs: number[];
+		item: TableOfContentsElements["item"];
+		level?: number;
+		isActive: TableOfContents["helpers"]["isActive"];
+	} = $props();
 
 	function hoverAction(node: HTMLElement) {
 		function handleMouseEnter() {

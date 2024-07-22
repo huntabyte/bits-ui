@@ -5,13 +5,17 @@
 	import type { PropObj, PropSchema } from "$lib/types/index.js";
 	import { parseMarkdown } from "$lib/utils/index.js";
 
-	export let props: PropObj<Record<string, unknown>>;
-	export let slotted = false;
+	let {
+		props: _props,
+		slotted = false,
+	}: { props: PropObj<Record<string, unknown>>; slotted?: boolean } = $props();
 
-	$: propData = Object.entries(props).map(([name, prop]) => {
-		const { type, description, default: defaultVal, required } = prop as PropSchema;
-		return { name, type, description, default: defaultVal, required };
-	});
+	const propData = $derived(
+		Object.entries(_props).map(([name, prop]) => {
+			const { type, description, default: defaultVal, required } = prop as PropSchema;
+			return { name, type, description, default: defaultVal, required };
+		})
+	);
 </script>
 
 <Table.Root>

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Listbox } from "bits-ui";
-	import { Check } from "$icons/index.js";
+	import Check from "phosphor-svelte/lib/Check";
 
 	const themes = [
 		{ value: "light-monochrome", label: "Light Monochrome" },

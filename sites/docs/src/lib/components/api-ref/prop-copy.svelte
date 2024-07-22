@@ -2,7 +2,7 @@
 	import { Popover } from "bits-ui";
 	import { Code } from "$lib/components/index.js";
 
-	export let name: string;
+	let { name }: { name: string } = $props();
 </script>
 
 <div class="flex items-center gap-1.5">

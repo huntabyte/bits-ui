@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { Menubar } from "bits-ui";
-	import { CaretRight, Cat, Check, SwitchOff, SwitchOn } from "$icons/index.js";
+	import CaretRight from "phosphor-svelte/lib/CaretRight";
+	import Cat from "phosphor-svelte/lib/Cat";
+	import Check from "phosphor-svelte/lib/Check";
+	import { SwitchOff, SwitchOn } from "$icons/index.js";
 
 	let selectedView = $state("table");
 	let selectedProfile = $state("pavel");

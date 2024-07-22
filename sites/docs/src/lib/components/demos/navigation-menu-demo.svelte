@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { NavigationMenu } from "bits-ui";
-	import { CaretDown } from "$icons/index.js";
+	import CaretDown from "phosphor-svelte/lib/CaretDown";
 	import { cn } from "$lib/utils/styles.js";
 
 	const components: { title: string; href: string; description: string }[] = [

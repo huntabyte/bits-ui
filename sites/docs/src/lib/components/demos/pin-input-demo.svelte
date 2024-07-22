@@ -1,13 +1,14 @@
 <script lang="ts">
-	import { PinInput, Toggle, type PinInputRootSnippetProps } from "bits-ui";
-	import { cn } from "$lib/utils/styles.js";
+	import { PinInput, type PinInputRootSnippetProps } from "bits-ui";
 	import { toast } from "svelte-sonner";
+	import { cn } from "$lib/utils/styles.js";
+
 	let value = $state("");
 
 	type CellProps = PinInputRootSnippetProps["cells"][0];
 
 	function onComplete() {
-		toast.success("Completed with value " + value);
+		toast.success(`Completed with value ${value}`);
 		value = "";
 	}
 </script>
@@ -37,7 +38,7 @@
 	{/snippet}
 </PinInput.Root>
 
-{#snippet Cell(props: CellProps )}
+{#snippet Cell(props: CellProps)}
 	<div
 		class={cn(
 			// Custom class to override global focus styles

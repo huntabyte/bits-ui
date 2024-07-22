@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Popover, Separator, Toggle } from "bits-ui";
-	import { ImageSquare, LinkSimpleHorizontalBreak } from "$icons/index.js";
+	import ImageSquare from "phosphor-svelte/lib/ImageSquare";
+	import LinkSimpleHorizontalBreak from "phosphor-svelte/lib/LinkSimpleHorizontalBreak";
 
 	let width = $state(1024);
 	let height = $state(768);
