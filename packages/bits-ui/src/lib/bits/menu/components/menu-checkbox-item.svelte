@@ -47,7 +47,7 @@
 </script>
 
 {#if child}
-	{@render child?.({ props: mergedProps, checked })}
+	{@render child({ props: mergedProps, checked })}
 {:else}
 	<div {...mergedProps}>
 		{@render children?.({ checked })}

@@ -1,11 +1,5 @@
-import type {
-	EventCallback,
-	OnChangeFn,
-	PrimitiveButtonAttributes,
-	PrimitiveSpanAttributes,
-	WithChild,
-	Without,
-} from "$lib/internal/index.js";
+import type { EventCallback, OnChangeFn, WithChild, Without } from "$lib/internal/index.js";
+import type { PrimitiveButtonAttributes, PrimitiveSpanAttributes } from "$lib/shared/attributes.js";
 
 type SwitchRootSnippetProps = {
 	checked: boolean;

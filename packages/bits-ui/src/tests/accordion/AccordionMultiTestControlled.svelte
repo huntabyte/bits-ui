@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Accordion } from "$lib/index.js";
-	import type { OnChangeFn, PrimitiveDivAttributes } from "$lib/internal/types.js";
+	import type { OnChangeFn } from "$lib/internal/types.js";
+	import type { PrimitiveDivAttributes } from "$lib/shared/attributes.js";
 
 	type Item = {
 		value: string;

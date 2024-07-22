@@ -19,7 +19,7 @@
 </script>
 
 {#if child}
-	{@render child?.({ props: mergedProps, ...dayState.snippetProps })}
+	{@render child({ props: mergedProps, ...dayState.snippetProps })}
 {:else}
 	<div {...mergedProps}>
 		{@render children?.(dayState.snippetProps)}

@@ -34,7 +34,7 @@
 			style: contentFloatingState.props.style,
 		})}
 		{#if child}
-			{@render child?.({ props: finalProps })}
+			{@render child({ props: finalProps })}
 		{:else}
 			<div {...finalProps}>
 				{@render children?.()}

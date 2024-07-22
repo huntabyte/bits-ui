@@ -48,7 +48,7 @@
 </script>
 
 {#if child}
-	{@render child?.({ props: mergedProps, ...rangeCalendarState.snippetProps })}
+	{@render child({ props: mergedProps, ...rangeCalendarState.snippetProps })}
 {:else}
 	<div {...mergedProps}>
 		{@render children?.(rangeCalendarState.snippetProps)}

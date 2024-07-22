@@ -11,10 +11,11 @@ import {
 	shift,
 	size,
 } from "@floating-ui/dom";
-import { type ReadableBox, box } from "svelte-toolbelt";
+import { box } from "svelte-toolbelt";
 import {
 	type Arrayable,
 	type Box,
+	isNotNull,
 	type ReadableBoxedValues,
 	styleToString,
 	useId,
@@ -26,6 +27,7 @@ import { useFloating } from "$lib/internal/floating-svelte/useFloating.svelte.js
 import type { Measurable, UseFloatingReturn } from "$lib/internal/floating-svelte/types.js";
 import type { Direction, StyleProperties } from "$lib/shared/index.js";
 import { createContext } from "$lib/internal/createContext.js";
+import { cssToStyleObj } from "$lib/internal/cssToStyleObj.js";
 
 export const SIDE_OPTIONS = ["top", "right", "bottom", "left"] as const;
 export const ALIGN_OPTIONS = ["start", "center", "end"] as const;
@@ -90,6 +92,11 @@ class FloatingContentState {
 	wrapperId: FloatingContentStateProps["wrapperId"];
 
 	style: FloatingContentStateProps["style"];
+
+	transformedStyle = $derived.by(() => {
+		if (typeof this.style === "string") return cssToStyleObj(this.style);
+		if (!this.style) return {};
+	});
 	dir: FloatingContentStateProps["dir"];
 	side: FloatingContentStateProps["side"];
 	sideOffset: FloatingContentStateProps["sideOffset"];
@@ -204,7 +211,7 @@ class FloatingContentState {
 						visibility: "hidden",
 						"pointer-events": "none",
 					}),
-					...this.style.current,
+					...this.transformedStyle,
 				},
 				// Floating UI calculates logical alignment based the `dir` attribute
 				dir: this.dir.current,
@@ -216,7 +223,7 @@ class FloatingContentState {
 				"data-side": this.placedSide,
 				"data-align": this.placedAlign,
 				style: styleToString({
-					...this.style.current,
+					...this.transformedStyle,
 					// if the FloatingContent hasn't been placed yet (not all measurements done)
 					// we prevent animations so that users's animation don't kick in too early referring wrong sides
 					// animation: !this.floating.isPositioned ? "none" : undefined,
@@ -397,10 +404,6 @@ export function useFloatingAnchorState(props: FloatingAnchorStateProps): Floatin
 //
 // HELPERS
 //
-
-function isNotNull<T>(value: T | null): value is T {
-	return value !== null;
-}
 
 function transformOrigin(options: { arrowWidth: number; arrowHeight: number }): Middleware {
 	return {

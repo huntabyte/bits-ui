@@ -1,12 +1,6 @@
 import type { MenuContentProps, MenuContentPropsWithoutHTML } from "../menu/types.js";
-import type {
-	OnChangeFn,
-	PrimitiveButtonAttributes,
-	PrimitiveDivAttributes,
-	WithChild,
-	WithChildren,
-	Without,
-} from "$lib/internal/types.js";
+import type { OnChangeFn, WithChild, WithChildren, Without } from "$lib/internal/types.js";
+import type { PrimitiveButtonAttributes, PrimitiveDivAttributes } from "$lib/shared/attributes.js";
 import type { Direction } from "$lib/shared/index.js";
 
 export type MenubarRootPropsWithoutHTML = WithChild<{

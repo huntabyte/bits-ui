@@ -44,7 +44,7 @@
 </script>
 
 {#if child}
-	{@render child?.({ props: mergedProps, checked: rootState.checked.current })}
+	{@render child({ props: mergedProps, checked: rootState.checked.current })}
 {:else}
 	<button bind:this={ref} {...mergedProps}>
 		{@render children?.({ checked: rootState.checked.current })}

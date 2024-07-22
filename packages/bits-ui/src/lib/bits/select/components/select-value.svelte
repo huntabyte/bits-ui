@@ -23,7 +23,7 @@
 </script>
 
 {#if child}
-	{@render child?.({ props: mergedProps })}
+	{@render child({ props: mergedProps })}
 {:else}
 	<span {...mergedProps} bind:this={ref}>
 		{#if valueState.showPlaceholder}

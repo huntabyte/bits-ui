@@ -1,7 +1,7 @@
 import { box } from "svelte-toolbelt";
 import { onDestroy } from "svelte";
 import type { Box } from "./box.svelte.js";
-import type { AnyFn, NoopFn } from "./types.js";
+import type { AnyFn, Fn } from "./types.js";
 import { isBrowser } from "./is.js";
 
 export type UseTimeoutFnOptions = {
@@ -22,7 +22,7 @@ export type Stoppable<StartFnArgs extends unknown[] = unknown[]> = {
 	/**
 	 * Stop the effect from executing
 	 */
-	stop: NoopFn;
+	stop: Fn;
 
 	/**
 	 * Start the effects

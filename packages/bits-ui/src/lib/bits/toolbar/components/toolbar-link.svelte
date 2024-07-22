@@ -26,7 +26,7 @@
 </script>
 
 {#if child}
-	{@render child?.({ props: mergedProps })}
+	{@render child({ props: mergedProps })}
 {:else}
 	<a {href} {...mergedProps}>
 		{@render children?.()}

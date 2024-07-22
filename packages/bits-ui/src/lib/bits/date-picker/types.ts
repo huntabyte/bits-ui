@@ -1,11 +1,6 @@
 import type { DateValue } from "@internationalized/date";
-import type {
-	OnChangeFn,
-	PrimitiveDivAttributes,
-	WithChild,
-	WithChildren,
-	Without,
-} from "$lib/internal/types.js";
+import type { OnChangeFn, WithChild, WithChildren, Without } from "$lib/internal/types.js";
+import type { PrimitiveDivAttributes } from "$lib/shared/attributes.js";
 import type { EditableSegmentPart } from "$lib/shared/date/field/types.js";
 import type { DateMatcher, Granularity, WeekStartsOn } from "$lib/shared/date/types.js";
 import type { CalendarRootSnippetProps } from "$lib/types.js";

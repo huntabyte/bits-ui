@@ -25,7 +25,7 @@
 </script>
 
 {#if child}
-	{@render child?.({ props: restProps })}
+	{@render child({ props: restProps })}
 {:else}
 	<div {...restProps}>
 		{@render children?.()}

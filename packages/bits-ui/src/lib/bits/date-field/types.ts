@@ -1,13 +1,8 @@
 import type { DateValue } from "@internationalized/date";
 import type { SegmentPart } from "$lib/shared/index.js";
 import type { Snippet } from "svelte";
-import type {
-	OnChangeFn,
-	PrimitiveDivAttributes,
-	PrimitiveSpanAttributes,
-	WithChild,
-	Without,
-} from "$lib/internal/types.js";
+import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
+import type { PrimitiveDivAttributes, PrimitiveSpanAttributes } from "$lib/shared/attributes.js";
 import type { EditableSegmentPart } from "$lib/shared/date/field/types.js";
 import type { DateMatcher, Granularity } from "$lib/shared/date/types.js";
 

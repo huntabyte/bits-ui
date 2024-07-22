@@ -1,5 +1,5 @@
 import type { Snippet } from "svelte";
-import type { ReadableBox, WritableBox } from "svelte-toolbelt";
+import type { ReadableBox } from "svelte-toolbelt";
 import type { Align, Boundary, Side } from "./useFloatingLayer.svelte.js";
 import type { Arrayable } from "$lib/internal/types.js";
 import type { Direction, StyleProperties } from "$lib/shared/index.js";
@@ -111,7 +111,7 @@ export type FloatingLayerContentImplProps = {
 	/**
 	 * The style properties to apply to the content.
 	 */
-	style?: StyleProperties;
+	style?: StyleProperties | string | null;
 
 	/**
 	 * Callback that is called when the floating element is placed.

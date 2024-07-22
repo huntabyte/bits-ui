@@ -1,15 +1,13 @@
 import type { InteractOutsideEvent } from "@melt-ui/svelte";
+import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
 import type {
-	OnChangeFn,
 	PrimitiveAnchorAttributes,
 	PrimitiveButtonAttributes,
 	PrimitiveDivAttributes,
 	PrimitiveElementAttributes,
 	PrimitiveLiAttributes,
 	PrimitiveUListAttributes,
-	WithChild,
-	Without,
-} from "$lib/internal/types.js";
+} from "$lib/shared/attributes.js";
 import type { Direction, Orientation } from "$lib/shared/index.js";
 
 export type NavigationMenuRootPropsWithoutHTML = WithChild<{

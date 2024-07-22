@@ -1,4 +1,3 @@
-import { box } from "svelte-toolbelt";
 import type { Page, PageItem } from "./types.js";
 import {
 	type ReadableBoxedValues,
@@ -101,6 +100,11 @@ class PaginationRootState {
 	createButton(props: PaginationButtonStateProps) {
 		return new PaginationButtonState(props, this);
 	}
+
+	snippetProps = $derived.by(() => ({
+		pages: this.pages,
+		range: this.range,
+	}));
 
 	props = $derived.by(
 		() =>

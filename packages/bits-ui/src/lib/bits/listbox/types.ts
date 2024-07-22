@@ -1,10 +1,5 @@
-import type {
-	OnChangeFn,
-	PrimitiveDivAttributes,
-	WithChild,
-	WithChildren,
-	Without,
-} from "$lib/internal/types.js";
+import type { OnChangeFn, WithChild, WithChildren, Without } from "$lib/internal/types.js";
+import type { PrimitiveDivAttributes } from "$lib/shared/attributes.js";
 import type { Orientation } from "$lib/shared/index.js";
 
 export type ListboxRootBasePropsWithoutHTML = WithChildren<{

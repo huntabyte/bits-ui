@@ -29,7 +29,7 @@
 </script>
 
 {#if child}
-	{@render child?.({
+	{@render child({
 		props: mergedProps,
 		...cellState.snippetProps,
 	})}

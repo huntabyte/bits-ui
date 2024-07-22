@@ -29,7 +29,7 @@
 <PresenceLayer {id} present={forceMount || viewportState.open}>
 	{#snippet presence()}
 		{#if child}
-			{@render child?.({ props: mergedProps })}
+			{@render child({ props: mergedProps })}
 		{:else}
 			<div {...mergedProps}>
 				{@render children?.()}

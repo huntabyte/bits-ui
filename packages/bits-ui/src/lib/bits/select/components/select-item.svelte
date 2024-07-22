@@ -31,7 +31,7 @@
 </script>
 
 {#if child}
-	{@render child?.({ props: mergedProps, selected: itemState.isSelected })}
+	{@render child({ props: mergedProps, selected: itemState.isSelected })}
 {:else}
 	<div {...mergedProps}>
 		{@render children?.({ selected: itemState.isSelected })}

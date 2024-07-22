@@ -78,7 +78,7 @@
 			},
 		})}
 		{#if child}
-			{@render child?.({ props: mergedProps })}
+			{@render child({ props: mergedProps })}
 		{:else}
 			<div {...mergedProps} bind:this={ref}>
 				{@render children?.()}

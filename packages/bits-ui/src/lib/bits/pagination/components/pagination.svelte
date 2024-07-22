@@ -2,7 +2,7 @@
 	import { box } from "svelte-toolbelt";
 	import type { RootProps } from "../index.js";
 	import { usePaginationRoot } from "../pagination.svelte.js";
-	import { styleToString, useId } from "$lib/internal/index.js";
+	import { mergeProps, useId } from "$lib/internal/index.js";
 
 	let {
 		id = useId(),
@@ -16,7 +16,6 @@
 		orientation = "horizontal",
 		child,
 		children,
-		style = {},
 		...restProps
 	}: RootProps = $props();
 
@@ -40,17 +39,13 @@
 		),
 	});
 
-	const mergedProps = $derived({
-		...restProps,
-		...rootState.props,
-		style: styleToString(style),
-	});
+	const mergedProps = $derived(mergeProps(restProps, rootState.props));
 </script>
 
 {#if child}
-	{@render child?.({ props: mergedProps, pages: rootState.pages, range: rootState.range })}
+	{@render child({ props: mergedProps, ...rootState.snippetProps })}
 {:else}
 	<div {...mergedProps}>
-		{@render children?.({ pages: rootState.pages, range: rootState.range })}
+		{@render children?.(rootState.snippetProps)}
 	</div>
 {/if}

@@ -30,7 +30,7 @@
 </script>
 
 {#if child}
-	{@render child?.({ props: mergedProps, pressed: itemState.isPressed })}
+	{@render child({ props: mergedProps, pressed: itemState.isPressed })}
 {:else}
 	<button bind:this={ref} {...mergedProps}>
 		{@render children?.({ pressed: itemState.isPressed })}

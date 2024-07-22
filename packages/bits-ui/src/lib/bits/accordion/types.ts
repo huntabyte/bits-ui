@@ -1,11 +1,5 @@
-import type {
-	EventCallback,
-	OnChangeFn,
-	PrimitiveButtonAttributes,
-	PrimitiveDivAttributes,
-	WithChild,
-	Without,
-} from "$lib/internal/index.js";
+import type { EventCallback, OnChangeFn, WithChild, Without } from "$lib/internal/index.js";
+import type { PrimitiveButtonAttributes, PrimitiveDivAttributes } from "$lib/shared/attributes.js";
 import type { Orientation } from "$lib/shared/index.js";
 
 export type BaseAccordionRootPropsWithoutHTML = {

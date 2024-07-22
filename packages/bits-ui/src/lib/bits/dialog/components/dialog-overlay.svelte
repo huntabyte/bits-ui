@@ -29,7 +29,7 @@
 <PresenceLayer {id} present={overlayState.root.open.current || forceMount}>
 	{#snippet presence({ present })}
 		{#if child}
-			{@render child?.({ props: mergeProps(mergedProps, { hidden: !present.current }) })}
+			{@render child({ props: mergeProps(mergedProps, { hidden: !present.current }) })}
 		{:else}
 			<div {...mergeProps(mergedProps, { hidden: !present.current })}>
 				{@render children?.()}

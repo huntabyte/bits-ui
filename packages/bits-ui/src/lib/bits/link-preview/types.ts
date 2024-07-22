@@ -1,12 +1,5 @@
-import type {
-	OnChangeFn,
-	PrimitiveAnchorAttributes,
-	PrimitiveDivAttributes,
-	PrimitiveElementAttributes,
-	WithChild,
-	WithChildren,
-	Without,
-} from "$lib/internal/types.js";
+import type { OnChangeFn, WithChild, WithChildren, Without } from "$lib/internal/types.js";
+import type { PrimitiveAnchorAttributes, PrimitiveDivAttributes } from "$lib/shared/attributes.js";
 import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
 import type { DismissableLayerProps } from "../utilities/dismissable-layer/types.js";
 import type { EscapeLayerProps } from "../utilities/escape-layer/types.js";

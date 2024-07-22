@@ -121,7 +121,7 @@
 </script>
 
 {#if child}
-	{@render child?.({ props: mergedProps, ...rootState.snippetProps })}
+	{@render child({ props: mergedProps, ...rootState.snippetProps })}
 {:else}
 	<div {...mergedProps}>
 		{@render children?.(rootState.snippetProps)}

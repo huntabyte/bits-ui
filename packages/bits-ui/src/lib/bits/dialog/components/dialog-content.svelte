@@ -68,7 +68,7 @@
 					>
 						<TextSelectionLayer {...mergedProps} enabled={present.current}>
 							{#if child}
-								{@render child?.({
+								{@render child({
 									props: mergeProps(mergedProps, focusScopeProps, {
 										hidden: !present.current,
 									}),
