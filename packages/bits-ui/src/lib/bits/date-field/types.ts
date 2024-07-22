@@ -1,5 +1,5 @@
 import type { DateValue } from "@internationalized/date";
-import type { SegmentPart } from "@melt-ui/svelte";
+import type { SegmentPart } from "$lib/shared/index.js";
 import type { Snippet } from "svelte";
 import type {
 	OnChangeFn,
