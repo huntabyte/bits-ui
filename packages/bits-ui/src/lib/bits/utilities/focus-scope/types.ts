@@ -4,13 +4,6 @@ import type { EventCallback } from "$lib/internal/events.js";
 
 export type FocusScopeProps = {
 	/**
-	 * When `true` will loop through the tabbable elements in the focus scope.
-	 *
-	 * @defaultValue false
-	 */
-	loop?: boolean;
-
-	/**
 	 * Event handler called when auto-focusing onMount.
 	 * Can be prevented.
 	 */
@@ -35,6 +28,13 @@ export type FocusScopeImplProps = {
 	 * @defaultValue false
 	 */
 	trapped?: boolean;
+
+	/**
+	 * When `true` will loop through the tabbable elements in the focus scope.
+	 *
+	 * @defaultValue false
+	 */
+	loop?: boolean;
 
 	focusScope?: Snippet<[{ props: FocusScopeContainerProps }]>;
 } & FocusScopeProps;

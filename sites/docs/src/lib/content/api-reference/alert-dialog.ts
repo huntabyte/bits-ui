@@ -5,46 +5,39 @@ import type {
 	AlertDialogDescriptionPropsWithoutHTML,
 	AlertDialogOverlayPropsWithoutHTML,
 	AlertDialogPortalPropsWithoutHTML,
-	AlertDialogPropsWithoutHTML,
+	AlertDialogRootPropsWithoutHTML,
 	AlertDialogTitlePropsWithoutHTML,
 	AlertDialogTriggerPropsWithoutHTML,
 } from "bits-ui";
 import { focusProp } from "$lib/content/api-reference/extended-types/index.js";
 import {
 	builderAndAttrsSlotProps,
+	childrenSnippet,
+	dismissableLayerProps,
 	domElProps,
 	enums,
+	escapeLayerProps,
+	focusScopeProps,
+	forceMountProp,
 	idsSlotProp,
 	onOutsideClickProp,
 	portalProp,
+	portalProps,
+	preventOverflowTextSelectionProp,
+	preventScrollProp,
 	transitionProps,
+	withChildProps,
 } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/api.js";
 
-const root: APISchema<AlertDialogPropsWithoutHTML> = {
+const root: APISchema<AlertDialogRootPropsWithoutHTML> = {
 	title: "Root",
 	description: "The root component used to set and manage the state of the alert dialog.",
 	slotProps: {
 		ids: idsSlotProp,
 	},
 	props: {
-		preventScroll: {
-			type: C.BOOLEAN,
-			default: C.TRUE,
-			description:
-				"Whether or not to prevent scroll on the body when the alert dialog is open.",
-		},
-		closeOnEscape: {
-			type: C.BOOLEAN,
-			default: C.TRUE,
-			description: "Whether to close the alert dialog when the escape key is pressed.",
-		},
-		closeOnOutsideClick: {
-			type: C.BOOLEAN,
-			default: C.FALSE,
-			description: "Whether to close the alert dialog when a click occurs outside of it.",
-		},
 		open: {
 			type: C.BOOLEAN,
 			default: C.FALSE,
@@ -57,23 +50,14 @@ const root: APISchema<AlertDialogPropsWithoutHTML> = {
 			},
 			description: "A callback function called when the open state changes.",
 		},
-		openFocus: {
-			type: focusProp,
-			description: "Override the initial focus when the alert dialog is opened.",
-		},
-		closeFocus: {
-			type: focusProp,
-			description: "Override the focus when the alert dialog is closed.",
-		},
-		portal: { ...portalProp("alert dialog") },
-		onOutsideClick: onOutsideClickProp,
+		children: childrenSnippet(),
 	},
 };
 
 const action: APISchema<AlertDialogActionPropsWithoutHTML> = {
 	title: "Action",
 	description: "A button used to close the alert dialog by taking an action.",
-	props: domElProps("HTMLButtonElement"),
+	props: withChildProps({ elType: "HTMLButtonElement" }),
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -86,7 +70,7 @@ const action: APISchema<AlertDialogActionPropsWithoutHTML> = {
 const cancel: APISchema<AlertDialogCancelPropsWithoutHTML> = {
 	title: "Cancel",
 	description: "A button used to close the alert dialog without taking an action.",
-	props: domElProps("HTMLButtonElement"),
+	props: withChildProps({ elType: "HTMLButtonElement" }),
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -99,7 +83,15 @@ const cancel: APISchema<AlertDialogCancelPropsWithoutHTML> = {
 const content: APISchema<AlertDialogContentPropsWithoutHTML> = {
 	title: "Content",
 	description: "The content displayed within the alert dialog modal.",
-	props: { ...transitionProps, ...domElProps("HTMLDivElement") },
+	props: {
+		...dismissableLayerProps,
+		...escapeLayerProps,
+		...focusScopeProps,
+		forceMount: forceMountProp,
+		preventOverflowTextSelection: preventOverflowTextSelectionProp,
+		preventScroll: preventScrollProp(),
+		...withChildProps({ elType: "HTMLDivElement" }),
+	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -119,7 +111,6 @@ const title: APISchema<AlertDialogTitlePropsWithoutHTML> = {
 	title: "Title",
 	description: "An accessibile title for the alert dialog.",
 	props: {
-		...domElProps("HTMLHeadingElement"),
 		level: {
 			type: {
 				type: "enum",
@@ -127,6 +118,7 @@ const title: APISchema<AlertDialogTitlePropsWithoutHTML> = {
 			},
 			description: "The heading level of the title.",
 		},
+		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
@@ -140,7 +132,7 @@ const title: APISchema<AlertDialogTitlePropsWithoutHTML> = {
 const description: APISchema<AlertDialogDescriptionPropsWithoutHTML> = {
 	title: "Description",
 	description: "An accessibile description for the alert dialog.",
-	props: domElProps("HTMLDivElement"),
+	props: withChildProps({ elType: "HTMLDivElement" }),
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -153,7 +145,9 @@ const description: APISchema<AlertDialogDescriptionPropsWithoutHTML> = {
 const trigger: APISchema<AlertDialogTriggerPropsWithoutHTML> = {
 	title: "Trigger",
 	description: "The element which opens the alert dialog on press.",
-	props: domElProps("HTMLButtonElement"),
+	props: {
+		...withChildProps({ elType: "HTMLButtonElement" }),
+	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -166,7 +160,10 @@ const trigger: APISchema<AlertDialogTriggerPropsWithoutHTML> = {
 const overlay: APISchema<AlertDialogOverlayPropsWithoutHTML> = {
 	title: "Overlay",
 	description: "An overlay which covers the body when the alert dialog is open.",
-	props: { ...transitionProps, ...domElProps("HTMLDivElement") },
+	props: {
+		...withChildProps({ elType: "HTMLDivElement" }),
+		forceMount: forceMountProp,
+	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -185,12 +182,9 @@ const overlay: APISchema<AlertDialogOverlayPropsWithoutHTML> = {
 const portal: APISchema<AlertDialogPortalPropsWithoutHTML> = {
 	title: "Portal",
 	description: "A portal which renders the alert dialog into the body when it is open.",
+	props: portalProps,
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
-		{
-			name: "portal",
-			description: "Present if the `portal` prop is not `null`.",
-		},
 		{
 			name: "alert-dialog-portal",
 			description: "Present on the portal.",

@@ -2,7 +2,7 @@ import type {
 	PopoverArrowPropsWithoutHTML,
 	PopoverClosePropsWithoutHTML,
 	PopoverContentPropsWithoutHTML,
-	PopoverPropsWithoutHTML,
+	PopoverRootPropsWithoutHTML,
 	PopoverTriggerPropsWithoutHTML,
 } from "bits-ui";
 import { focusProp } from "./extended-types/index.js";
@@ -10,41 +10,30 @@ import { floatingPositioning } from "./floating.js";
 import {
 	arrowProps,
 	builderAndAttrsSlotProps,
+	childrenSnippet,
+	dirProp,
+	dismissableLayerProps,
 	domElProps,
 	enums,
+	escapeLayerProps,
+	floatingProps,
+	focusScopeProps,
+	forceMountProp,
 	idsSlotProp,
 	onOutsideClickProp,
 	portalProp,
+	preventOverflowTextSelectionProp,
+	preventScrollProp,
 	transitionProps,
+	withChildProps,
 } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
 
-export const root: APISchema<PopoverPropsWithoutHTML> = {
+export const root: APISchema<PopoverRootPropsWithoutHTML> = {
 	title: "Root",
 	description: "The root component used to manage the state of the state of the popover.",
 	props: {
-		disableFocusTrap: {
-			type: C.BOOLEAN,
-			default: C.FALSE,
-			description:
-				"Whether or not to disable the focus trap that is applied to the popover when it's open.",
-		},
-		preventScroll: {
-			type: C.BOOLEAN,
-			default: C.FALSE,
-			description: "Whether or not to prevent scrolling the body while the popover is open.",
-		},
-		closeOnOutsideClick: {
-			type: C.BOOLEAN,
-			default: C.TRUE,
-			description: "Whether or not to close the popover when clicking outside of it.",
-		},
-		closeOnEscape: {
-			type: C.BOOLEAN,
-			default: C.TRUE,
-			description: "Whether or not to close the popover when pressing the escape key.",
-		},
 		open: {
 			type: C.BOOLEAN,
 			default: C.FALSE,
@@ -57,16 +46,7 @@ export const root: APISchema<PopoverPropsWithoutHTML> = {
 			},
 			description: "A callback that fires when the open state changes.",
 		},
-		openFocus: {
-			type: focusProp,
-			description: "Override the focus when the popover is opened.",
-		},
-		closeFocus: {
-			type: focusProp,
-			description: "Override the focus when the popover is closed.",
-		},
-		portal: { ...portalProp("popover") },
-		onOutsideClick: onOutsideClickProp,
+		children: childrenSnippet(),
 	},
 	slotProps: { ids: idsSlotProp },
 };
@@ -74,7 +54,7 @@ export const root: APISchema<PopoverPropsWithoutHTML> = {
 export const trigger: APISchema<PopoverTriggerPropsWithoutHTML> = {
 	title: "Trigger",
 	description: "A component which toggles the opening and closing of the popover on press.",
-	props: domElProps("HTMLButtonElement"),
+	props: withChildProps({ elType: "HTMLButtonElement" }),
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -93,7 +73,17 @@ export const trigger: APISchema<PopoverTriggerPropsWithoutHTML> = {
 export const content: APISchema<PopoverContentPropsWithoutHTML> = {
 	title: "Content",
 	description: "The contents of the popover which are displayed when the popover is open.",
-	props: { ...transitionProps, ...floatingPositioning, ...domElProps("HTMLDivElement") },
+	props: {
+		...floatingProps(),
+		...dismissableLayerProps,
+		...escapeLayerProps,
+		...focusScopeProps,
+		preventOverflowTextSelection: preventOverflowTextSelectionProp,
+		preventScroll: preventScrollProp(),
+		forceMount: forceMountProp,
+		dir: dirProp,
+		...withChildProps({ elType: "HTMLDivElement" }),
+	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -113,7 +103,7 @@ export const close: APISchema<PopoverClosePropsWithoutHTML> = {
 	title: "Close",
 	description:
 		"A button which closes the popover when pressed and is typically placed in the content.",
-	props: domElProps("HTMLButtonElement"),
+	props: withChildProps({ elType: "HTMLButtonElement" }),
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{

@@ -2,14 +2,14 @@ import type {
 	PaginationNextButtonPropsWithoutHTML,
 	PaginationPagePropsWithoutHTML,
 	PaginationPrevButtonPropsWithoutHTML,
-	PaginationPropsWithoutHTML,
+	PaginationRootPropsWithoutHTML,
 } from "bits-ui";
 import { pageItemProp } from "./extended-types/index.js";
-import { builderAndAttrsSlotProps, domElProps } from "./helpers.js";
+import { builderAndAttrsSlotProps, domElProps, enums, withChildProps } from "./helpers.js";
 import type { APISchema } from "$lib/types/index.js";
 import * as C from "$lib/content/constants.js";
 
-export const root: APISchema<PaginationPropsWithoutHTML> = {
+export const root: APISchema<PaginationRootPropsWithoutHTML> = {
 	title: "Root",
 	description: "The root pagination component which contains all other pagination components.",
 	props: {
@@ -40,7 +40,21 @@ export const root: APISchema<PaginationPropsWithoutHTML> = {
 			},
 			description: "A function called when the selected page changes.",
 		},
-		...domElProps("HTMLDivElement"),
+		loop: {
+			type: C.BOOLEAN,
+			default: C.FALSE,
+			description:
+				"Whether or not the pagination should loop through the items when reaching the end.",
+		},
+		orientation: {
+			type: {
+				type: C.ENUM,
+				definition: enums("horizontal", "vertical"),
+			},
+			default: "horizontal",
+			description: "The orientation of the pagination.",
+		},
+		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 };
 
@@ -52,7 +66,7 @@ export const page: APISchema<PaginationPagePropsWithoutHTML> = {
 			type: pageItemProp,
 			description: "The page item this component represents.",
 		},
-		...domElProps("HTMLButtonElement"),
+		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
 	slotProps: {
 		...builderAndAttrsSlotProps,
@@ -72,7 +86,7 @@ export const page: APISchema<PaginationPagePropsWithoutHTML> = {
 export const prevButton: APISchema<PaginationPrevButtonPropsWithoutHTML> = {
 	title: "PrevButton",
 	description: "The previous button of the pagination.",
-	props: domElProps("HTMLButtonElement"),
+	props: withChildProps({ elType: "HTMLButtonElement" }),
 	slotProps: {
 		...builderAndAttrsSlotProps,
 	},
@@ -87,7 +101,7 @@ export const prevButton: APISchema<PaginationPrevButtonPropsWithoutHTML> = {
 export const nextButton: APISchema<PaginationNextButtonPropsWithoutHTML> = {
 	title: "NextButton",
 	description: "The next button of the pagination.",
-	props: domElProps("HTMLButtonElement"),
+	props: withChildProps({ elType: "HTMLButtonElement" }),
 	slotProps: {
 		...builderAndAttrsSlotProps,
 	},

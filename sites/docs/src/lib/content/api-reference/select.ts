@@ -2,11 +2,8 @@ import type {
 	SelectArrowPropsWithoutHTML,
 	SelectContentPropsWithoutHTML,
 	SelectGroupPropsWithoutHTML,
-	SelectIndicatorPropsWithoutHTML,
-	SelectInputPropsWithoutHTML,
 	SelectItemPropsWithoutHTML,
-	SelectLabelPropsWithoutHTML,
-	SelectPropsWithoutHTML,
+	SelectRootPropsWithoutHTML,
 	SelectSeparatorPropsWithoutHTML,
 	SelectTriggerPropsWithoutHTML,
 } from "bits-ui";
@@ -26,7 +23,7 @@ import {
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
 
-export const root: APISchema<SelectPropsWithoutHTML> = {
+export const root: APISchema<SelectRootPropsWithoutHTML> = {
 	title: "Root",
 	description: "The root select component which manages & scopes the state of the select.",
 	props: {

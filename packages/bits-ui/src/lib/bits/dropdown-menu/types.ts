@@ -17,7 +17,7 @@ export type {
 } from "$lib/bits/menu/index.js";
 
 export type {
-	MenuRootPropsWithoutHTML as DropdownMenuPropsWithoutHTML,
+	MenuRootPropsWithoutHTML as DropdownMenuRootPropsWithoutHTML,
 	MenuArrowPropsWithoutHTML as DropdownMenuArrowPropsWithoutHTML,
 	MenuCheckboxItemPropsWithoutHTML as DropdownMenuCheckboxItemPropsWithoutHTML,
 	MenuContentPropsWithoutHTML as DropdownMenuContentPropsWithoutHTML,

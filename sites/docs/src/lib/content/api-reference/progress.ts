@@ -1,10 +1,10 @@
-import type { ProgressPropsWithoutHTML } from "bits-ui";
-import { builderAndAttrsSlotProps, domElProps } from "./helpers.js";
+import type { ProgressRootPropsWithoutHTML } from "bits-ui";
+import { builderAndAttrsSlotProps, domElProps, withChildProps } from "./helpers.js";
 import { enums } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
 
-export const root: APISchema<ProgressPropsWithoutHTML> = {
+export const root: APISchema<ProgressRootPropsWithoutHTML> = {
 	title: "Root",
 	description: "The progress bar component.",
 	props: {
@@ -19,14 +19,7 @@ export const root: APISchema<ProgressPropsWithoutHTML> = {
 			default: "0",
 			description: "The current value of the progress bar.",
 		},
-		onValueChange: {
-			type: {
-				type: C.FUNCTION,
-				definition: "(value: number) => void",
-			},
-			description: "A callback that fires when the value changes.",
-		},
-		...domElProps("HTMLDivElement"),
+		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [

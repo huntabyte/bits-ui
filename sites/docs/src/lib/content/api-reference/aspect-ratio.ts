@@ -1,5 +1,5 @@
 import type { AspectRatioPropsWithoutHTML } from "bits-ui";
-import { domElProps } from "./helpers.js";
+import { withChildProps } from "./helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
 
@@ -12,7 +12,7 @@ const root: APISchema<AspectRatioPropsWithoutHTML> = {
 			default: "1",
 			description: "The desired aspect ratio.",
 		},
-		...domElProps("HTMLDivElement"),
+		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
 		{

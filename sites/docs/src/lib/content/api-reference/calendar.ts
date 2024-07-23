@@ -10,14 +10,14 @@ import type {
 	CalendarHeadingPropsWithoutHTML,
 	CalendarNextButtonPropsWithoutHTML,
 	CalendarPrevButtonPropsWithoutHTML,
-	CalendarPropsWithoutHTML,
+	CalendarRootPropsWithoutHTML,
 } from "bits-ui";
-import { attrsSlotProp, builderAndAttrsSlotProps, domElProps } from "./helpers.js";
+import { attrsSlotProp, builderAndAttrsSlotProps, domElProps, withChildProps } from "./helpers.js";
 import { enums, monthsSlotProp, weekdaysSlotProp } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
 
-export const root: APISchema<CalendarPropsWithoutHTML> = {
+export const root: APISchema<CalendarRootPropsWithoutHTML> = {
 	title: "Root",
 	description: "The root calendar component which contains all other calendar components.",
 	props: {
@@ -106,10 +106,13 @@ export const root: APISchema<CalendarPropsWithoutHTML> = {
 			type: C.STRING,
 			description: "The locale to use for formatting dates.",
 		},
-		multiple: {
-			type: C.BOOLEAN,
+		type: {
+			type: {
+				type: C.ENUM,
+				definition: enums("single", "multiple"),
+			},
 			description: "Whether or not multiple dates can be selected.",
-			default: C.FALSE,
+			required: true,
 		},
 		numberOfMonths: {
 			type: C.NUMBER,
@@ -126,13 +129,18 @@ export const root: APISchema<CalendarPropsWithoutHTML> = {
 			description: "Whether or not the calendar is readonly.",
 			default: C.FALSE,
 		},
-		initialFocus: {
+		// initialFocus: {
+		// 	type: C.BOOLEAN,
+		// 	description:
+		// 		"If `true`, the calendar will focus the selected day, today, or the first day of the month in that order depending on what is visible when the calendar is mounted.",
+		// 	default: C.FALSE,
+		// },
+		disableDaysOutsideMonth: {
 			type: C.BOOLEAN,
-			description:
-				"If `true`, the calendar will focus the selected day, today, or the first day of the month in that order depending on what is visible when the calendar is mounted.",
+			description: "Whether or not to disable days outside the current month.",
 			default: C.FALSE,
 		},
-		...domElProps("HTMLDivElement"),
+		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	slotProps: {
 		months: monthsSlotProp,
@@ -167,7 +175,11 @@ export const cell: APISchema<CalendarCellPropsWithoutHTML> = {
 			type: "DateValue",
 			description: "The date for the cell.",
 		},
-		...domElProps("HTMLTableCellElement"),
+		month: {
+			type: "DateValue",
+			description: "The current month the date is being displayed in.",
+		},
+		...withChildProps({ elType: "HTMLTableCellElement" }),
 	},
 	slotProps: {
 		attrs: attrsSlotProp,
@@ -188,15 +200,7 @@ export const day: APISchema<CalendarDayPropsWithoutHTML> = {
 	title: "Day",
 	description: "A day in the calendar grid.",
 	props: {
-		date: {
-			type: "DateValue",
-			description: "The date for the cell.",
-		},
-		month: {
-			type: "DateValue",
-			description: "The current month the date is being displayed in.",
-		},
-		...domElProps("HTMLDivElement"),
+		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	slotProps: {
 		disabled: {
@@ -256,7 +260,7 @@ export const day: APISchema<CalendarDayPropsWithoutHTML> = {
 export const grid: APISchema<CalendarGridPropsWithoutHTML> = {
 	title: "Grid",
 	description: "The grid of dates in the calendar, typically representing a month.",
-	props: domElProps("HTMLTableElement"),
+	props: withChildProps({ elType: "HTMLTableElement" }),
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -269,7 +273,7 @@ export const grid: APISchema<CalendarGridPropsWithoutHTML> = {
 export const gridBody: APISchema<CalendarGridBodyPropsWithoutHTML> = {
 	title: "GridBody",
 	description: "The body of the grid of dates in the calendar.",
-	props: domElProps("HTMLTableSectionElement"),
+	props: withChildProps({ elType: "HTMLTableSectionElement" }),
 	slotProps: { attrs: attrsSlotProp },
 	dataAttributes: [
 		{
@@ -282,7 +286,7 @@ export const gridBody: APISchema<CalendarGridBodyPropsWithoutHTML> = {
 export const gridHead: APISchema<CalendarGridHeadPropsWithoutHTML> = {
 	title: "GridHead",
 	description: "The head of the grid of dates in the calendar.",
-	props: domElProps("HTMLTableSectionElement"),
+	props: withChildProps({ elType: "HTMLTableSectionElement" }),
 	slotProps: {
 		attrs: attrsSlotProp,
 	},
@@ -297,7 +301,7 @@ export const gridHead: APISchema<CalendarGridHeadPropsWithoutHTML> = {
 export const gridRow: APISchema<CalendarGridRowPropsWithoutHTML> = {
 	title: "GridRow",
 	description: "A row in the grid of dates in the calendar.",
-	props: domElProps("HTMLTableRowElement"),
+	props: withChildProps({ elType: "HTMLTableRowElement" }),
 	slotProps: {
 		attrs: attrsSlotProp,
 	},
@@ -312,7 +316,7 @@ export const gridRow: APISchema<CalendarGridRowPropsWithoutHTML> = {
 export const headCell: APISchema<CalendarHeadCellPropsWithoutHTML> = {
 	title: "HeadCell",
 	description: "A cell in the head of the grid of dates in the calendar.",
-	props: domElProps("HTMLTableCellElement"),
+	props: withChildProps({ elType: "HTMLTableCellElement" }),
 	slotProps: {
 		attrs: attrsSlotProp,
 	},
@@ -327,7 +331,7 @@ export const headCell: APISchema<CalendarHeadCellPropsWithoutHTML> = {
 export const header: APISchema<CalendarHeaderPropsWithoutHTML> = {
 	title: "Header",
 	description: "The header of the calendar.",
-	props: domElProps("HTMLElement"),
+	props: withChildProps({ elType: "HTMLElement" }),
 	slotProps: {
 		attrs: attrsSlotProp,
 	},
@@ -342,7 +346,7 @@ export const header: APISchema<CalendarHeaderPropsWithoutHTML> = {
 export const heading: APISchema<CalendarHeadingPropsWithoutHTML> = {
 	title: "Heading",
 	description: "The heading of the calendar.",
-	props: domElProps("HTMLDivElement"),
+	props: withChildProps({ elType: "HTMLDivElement" }),
 	slotProps: {
 		...builderAndAttrsSlotProps,
 		headingValue: {
@@ -361,7 +365,7 @@ export const heading: APISchema<CalendarHeadingPropsWithoutHTML> = {
 export const nextButton: APISchema<CalendarNextButtonPropsWithoutHTML> = {
 	title: "NextButton",
 	description: "The next button of the calendar.",
-	props: domElProps("HTMLButtonElement"),
+	props: withChildProps({ elType: "HTMLButtonElement" }),
 	slotProps: {
 		...builderAndAttrsSlotProps,
 	},
@@ -376,7 +380,7 @@ export const nextButton: APISchema<CalendarNextButtonPropsWithoutHTML> = {
 export const prevButton: APISchema<CalendarPrevButtonPropsWithoutHTML> = {
 	title: "PrevButton",
 	description: "The previous button of the calendar.",
-	props: domElProps("HTMLButtonElement"),
+	props: withChildProps({ elType: "HTMLButtonElement" }),
 	slotProps: {
 		...builderAndAttrsSlotProps,
 	},

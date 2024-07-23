@@ -2,23 +2,18 @@ import type {
 	AccordionContentPropsWithoutHTML,
 	AccordionHeaderPropsWithoutHTML,
 	AccordionItemPropsWithoutHTML,
-	AccordionPropsWithoutHTML,
+	AccordionRootPropsWithoutHTML,
 	AccordionTriggerPropsWithoutHTML,
 } from "bits-ui";
-import { builderAndAttrsSlotProps, domElProps } from "./helpers.js";
-import { enums, transitionProps, union } from "$lib/content/api-reference/helpers.js";
+import { builderAndAttrsSlotProps, forceMountProp, withChildProps } from "./helpers.js";
+import { enums, union } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
 
-const root: APISchema<AccordionPropsWithoutHTML<false>> = {
+const root: APISchema<AccordionRootPropsWithoutHTML> = {
 	title: "Root",
 	description: "The root accordion component used to set and manage the state of the accordion.",
 	props: {
-		multiple: {
-			default: "false",
-			type: C.BOOLEAN,
-			description: "Whether or not multiple accordion items can be active at the same time.",
-		},
 		disabled: {
 			default: "false",
 			type: C.BOOLEAN,
@@ -38,7 +33,30 @@ const root: APISchema<AccordionPropsWithoutHTML<false>> = {
 			},
 			description: "A callback function called when the active accordion item value changes.",
 		},
-		...domElProps("HTMLDivElement"),
+		type: {
+			type: {
+				type: C.ENUM,
+				definition: enums("single", "multiple"),
+			},
+			description:
+				"The type of accordion. If set to `'multiple'`, the accordion will allow multiple items to be open at the same time. If set to `single`, the accordion will only allow a single item to be open.",
+			required: true,
+		},
+		loop: {
+			default: "false",
+			type: C.BOOLEAN,
+			description:
+				"Whether or not the accordion should loop through items when reaching the end.",
+		},
+		orientation: {
+			type: {
+				type: C.ENUM,
+				definition: enums("horizontal", "vertical"),
+			},
+			description: "The orientation of the accordion.",
+			default: "vertical",
+		},
+		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	slotProps: {
 		...builderAndAttrsSlotProps,
@@ -72,7 +90,7 @@ const item: APISchema<AccordionItemPropsWithoutHTML> = {
 			type: "boolean",
 			description: "Whether or not the accordion item is disabled.",
 		},
-		...domElProps("HTMLDivElement"),
+		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	slotProps: {
 		...builderAndAttrsSlotProps,
@@ -99,7 +117,17 @@ const item: APISchema<AccordionItemPropsWithoutHTML> = {
 const trigger: APISchema<AccordionTriggerPropsWithoutHTML> = {
 	title: "Trigger",
 	description: "The accordion item trigger, which opens and closes the accordion item.",
-	props: { ...domElProps("HTMLButtonElement") },
+	props: {
+		...withChildProps({ elType: "HTMLButtonElement" }),
+		disabled: {
+			type: {
+				type: C.UNION,
+				definition: union("boolean", "null", "undefined"),
+			},
+			default: "false",
+			description: "Whether or not the accordion item trigger is disabled.",
+		},
+	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -126,7 +154,10 @@ const trigger: APISchema<AccordionTriggerPropsWithoutHTML> = {
 const content: APISchema<AccordionContentPropsWithoutHTML> = {
 	title: "Content",
 	description: "The accordion item content, which is displayed when the item is open.",
-	props: { ...transitionProps, ...domElProps("HTMLDivElement") },
+	props: {
+		...withChildProps({ elType: "HTMLDivElement" }),
+		forceMount: forceMountProp,
+	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -162,7 +193,7 @@ const header: APISchema<AccordionHeaderPropsWithoutHTML> = {
 			description:
 				"The heading level to use for the header. This will be set as the `aria-level` attribute.",
 		},
-		...domElProps("HTMLDivElement"),
+		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	slotProps: {
 		...builderAndAttrsSlotProps,

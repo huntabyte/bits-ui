@@ -26,7 +26,7 @@ export type MenuRootPropsWithoutHTML = WithChildren<{
 
 export type MenuRootProps = MenuRootPropsWithoutHTML;
 
-export type MenuContentPropsWithoutHTML = WithChild<PopperLayerProps>;
+export type MenuContentPropsWithoutHTML = WithChild<Omit<PopperLayerProps, "content">>;
 
 export type MenuContentProps = MenuContentPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, MenuContentPropsWithoutHTML>;
@@ -107,7 +107,7 @@ export type MenuSubPropsWithoutHTML = WithChildren<{
 	onOpenChange?: OnChangeFn<boolean>;
 }>;
 
-export type MenuSubContentPropsWithoutHTML = WithChild<PopperLayerProps>;
+export type MenuSubContentPropsWithoutHTML = WithChild<Omit<PopperLayerProps, "content">>;
 export type MenuSubContentProps = MenuSubContentPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, MenuSubContentPropsWithoutHTML>;
 

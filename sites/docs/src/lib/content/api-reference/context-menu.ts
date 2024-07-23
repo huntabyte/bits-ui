@@ -1,14 +1,12 @@
 import type {
 	ContextMenuArrowPropsWithoutHTML,
-	ContextMenuCheckboxIndicatorPropsWithoutHTML,
 	ContextMenuCheckboxItemPropsWithoutHTML,
 	ContextMenuContentPropsWithoutHTML,
 	ContextMenuGroupPropsWithoutHTML,
 	ContextMenuItemPropsWithoutHTML,
 	ContextMenuLabelPropsWithoutHTML,
-	ContextMenuPropsWithoutHTML,
+	ContextMenuRootPropsWithoutHTML,
 	ContextMenuRadioGroupPropsWithoutHTML,
-	ContextMenuRadioIndicatorPropsWithoutHTML,
 	ContextMenuRadioItemPropsWithoutHTML,
 	ContextMenuSeparatorPropsWithoutHTML,
 	ContextMenuSubContentPropsWithoutHTML,
@@ -18,17 +16,25 @@ import type {
 } from "bits-ui";
 import {
 	builderAndAttrsSlotProps,
+	dirProp,
+	dismissableLayerProps,
 	domElProps,
 	enums,
+	escapeLayerProps,
+	floatingProps,
+	focusScopeProps,
+	forceMountProp,
+	preventOverflowTextSelectionProp,
 	seeFloating,
 	transitionProps,
 	union,
+	withChildProps,
 } from "./helpers.js";
 import { menu } from "./menu.js";
 import type { APISchema } from "$lib/types/index.js";
 import * as C from "$lib/content/constants.js";
 
-export const root: APISchema<ContextMenuPropsWithoutHTML> = {
+export const root: APISchema<ContextMenuRootPropsWithoutHTML> = {
 	title: "Root",
 	description: "The root component which manages & scopes the state of the context menu.",
 	...menu.root,
@@ -40,7 +46,7 @@ export const trigger: APISchema<ContextMenuTriggerPropsWithoutHTML> = {
 	...menu.trigger,
 	props: {
 		...menu.trigger.props,
-		el: {
+		ref: {
 			type: "HTMLDivElement",
 			description: "You can bind to this prop to programatically interact with the element.",
 		},
@@ -51,75 +57,20 @@ export const content: APISchema<ContextMenuContentPropsWithoutHTML> = {
 	title: "Content",
 	description: "The content displayed when the context menu is open.",
 	props: {
-		...transitionProps,
-		alignOffset: {
-			type: C.NUMBER,
-			default: "0",
-			description: seeFloating(
-				"An offset in pixels from the 'start' or 'end' alignment options.",
-				"https://floating-ui.com/docs/offset#options"
-			),
-		},
-		avoidCollisions: {
-			type: C.BOOLEAN,
-			default: C.TRUE,
-			description: seeFloating(
-				"When `true`, overrides the `side` and `align` options to prevent collisions with the boundary edges.",
-				"https://floating-ui.com/docs/flip"
-			),
-		},
-		collisionBoundary: {
-			type: {
-				type: C.UNION,
-				definition: union("'clippingAncestors'", "Element", "Array<Element>", "Rect"),
-			},
-			description: seeFloating(
-				"A boundary element or array of elements to check for collisions against.",
-				"https://floating-ui.com/docs/detectoverflow#boundary"
-			),
-		},
-		collisionPadding: {
-			type: C.NUMBER,
-			default: "0",
-			description: seeFloating(
-				"The amount in pixels of virtual padding around the viewport edges to check for overflow which will cause a collision.",
-				"https://floating-ui.com/docs/detectOverflow#padding"
-			),
-		},
-		fitViewport: {
-			type: C.BOOLEAN,
-			default: C.FALSE,
-			description: seeFloating(
-				"Whether the floating element should be constrained to the viewport.",
-				"https://floating-ui.com/docs/size"
-			),
-		},
-		strategy: {
-			type: {
-				type: C.ENUM,
-				definition: enums("absolute", "fixed"),
-			},
-			default: "absolute",
-			description: seeFloating(
-				"The positioning strategy to use for the floating element.",
-				"https://floating-ui.com/docs/computeposition#strategy"
-			),
-		},
-		overlap: {
-			type: C.BOOLEAN,
-			default: C.FALSE,
-			description: seeFloating(
-				"Whether the floating element can overlap the reference element.",
-				"https://floating-ui.com/docs/shift#options"
-			),
-		},
-		...domElProps("HTMLDivElement"),
+		...floatingProps(),
+		...escapeLayerProps,
+		...dismissableLayerProps,
+		...focusScopeProps,
+		preventOverflowTextSelection: preventOverflowTextSelectionProp,
+		dir: dirProp,
+		forceMount: forceMountProp,
+		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: menu.content.dataAttributes,
 };
 
-export const item: APISchema<ContextMenuItemPropsWithoutHTML & { href: string }> = {
+export const item: APISchema<ContextMenuItemPropsWithoutHTML> = {
 	title: "Item",
 	description: "A menu item within the context menu.",
 	...menu.item,
@@ -143,13 +94,6 @@ export const checkboxItem: APISchema<ContextMenuCheckboxItemPropsWithoutHTML> = 
 	...menu.checkboxItem,
 };
 
-export const checkboxIndicator: APISchema<ContextMenuCheckboxIndicatorPropsWithoutHTML> = {
-	title: "CheckboxIndicator",
-	description:
-		"A visual indicator of the checkbox menu item's checked state. It passes the item's checked state as a slot prop `checked` and can be used to render a custom indicator.",
-	...menu.checkboxIndicator,
-};
-
 export const radioGroup: APISchema<ContextMenuRadioGroupPropsWithoutHTML> = {
 	title: "RadioGroup",
 	description: "A group of radio menu items, where only one can be checked at a time.",
@@ -161,13 +105,6 @@ export const radioItem: APISchema<ContextMenuRadioItemPropsWithoutHTML> = {
 	description:
 		"A menu item that can be controlled and toggled like a radio button. It must be a child of a `RadioGroup`.",
 	...menu.radioItem,
-};
-
-export const radioIndicator: APISchema<ContextMenuRadioIndicatorPropsWithoutHTML> = {
-	title: "RadioIndicator",
-	description:
-		"A visual indicator helper for `RadioItem`s. It only renders it's children when the radio item is checked.",
-	...menu.radioIndicator,
 };
 
 export const sub: APISchema<ContextMenuSubPropsWithoutHTML> = {
@@ -209,10 +146,8 @@ export const contextMenu = [
 	content,
 	item,
 	checkboxItem,
-	checkboxIndicator,
 	radioGroup,
 	radioItem,
-	radioIndicator,
 	separator,
 	arrow,
 	group,

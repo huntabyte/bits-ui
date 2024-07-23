@@ -10,8 +10,8 @@ export type PropSchema = {
 	required?: boolean;
 };
 
-export type PropObj<T> = {
-	[K in keyof T]-?: PropSchema;
+export type PropObj<T, U = Omit<T, "style">> = {
+	[K in keyof U]-?: PropSchema;
 };
 
 export type SlotPropObj = Record<string, PropSchema>;
@@ -26,7 +26,7 @@ export type DataAttrSchema = {
 export type APISchema<T = Record<string, unknown>> = {
 	title: string;
 	description: string;
-	props?: PropObj<T>;
+	props?: PropObj<Omit<T, "style">>;
 	slotProps?: SlotPropObj;
 	dataAttributes?: DataAttrSchema[];
 };

@@ -85,9 +85,7 @@ export type AccordionTriggerPropsWithoutHTML = WithChild<{
 	 *
 	 * @defaultValue false
 	 */
-	disabled?: boolean;
-	onclick?: EventCallback<MouseEvent>;
-	onkeydown?: EventCallback<KeyboardEvent>;
+	disabled?: boolean | null | undefined;
 }>;
 
 export type AccordionTriggerProps = AccordionTriggerPropsWithoutHTML &

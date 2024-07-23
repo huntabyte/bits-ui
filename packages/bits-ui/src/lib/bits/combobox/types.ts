@@ -129,7 +129,7 @@ export type ComboboxInputPropsWithoutHTML = WithChild<{
 export type ComboboxInputProps = ComboboxInputPropsWithoutHTML &
 	Without<Omit<PrimitiveInputAttributes, "value">, ComboboxInputPropsWithoutHTML>;
 
-export type ComboboxContentPropsWithoutHTML = WithChild<PopperLayerProps>;
+export type ComboboxContentPropsWithoutHTML = WithChild<Omit<PopperLayerProps, "content">>;
 
 export type ComboboxContentProps = ComboboxContentPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, ComboboxContentPropsWithoutHTML>;

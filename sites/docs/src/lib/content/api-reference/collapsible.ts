@@ -1,14 +1,14 @@
 import type {
 	CollapsibleContentPropsWithoutHTML,
-	CollapsiblePropsWithoutHTML,
+	CollapsibleRootPropsWithoutHTML,
 	CollapsibleTriggerPropsWithoutHTML,
 } from "bits-ui";
-import { builderAndAttrsSlotProps, domElProps } from "./helpers.js";
+import { builderAndAttrsSlotProps, domElProps, forceMountProp, withChildProps } from "./helpers.js";
 import { enums, transitionProps } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema, PropObj } from "$lib/types/index.js";
 
-export const root: APISchema<CollapsiblePropsWithoutHTML> = {
+export const root: APISchema<CollapsibleRootPropsWithoutHTML> = {
 	title: "Root",
 	description: "The root collapsible container which manages the state of the collapsible.",
 	props: {
@@ -31,7 +31,7 @@ export const root: APISchema<CollapsiblePropsWithoutHTML> = {
 			},
 			description: "A callback that is fired when the collapsible's open state changes.",
 		},
-		...domElProps("HTMLDivElement"),
+		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
@@ -55,7 +55,7 @@ export const root: APISchema<CollapsiblePropsWithoutHTML> = {
 export const trigger: APISchema<CollapsibleTriggerPropsWithoutHTML> = {
 	title: "Trigger",
 	description: "The button responsible for toggling the collapsible's open state.",
-	props: domElProps("HTMLButtonElement"),
+	props: withChildProps({ elType: "HTMLButtonElement" }),
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -75,15 +75,13 @@ export const trigger: APISchema<CollapsibleTriggerPropsWithoutHTML> = {
 	],
 };
 
-const contentProps = {
-	...transitionProps,
-	...domElProps("HTMLDivElement"),
-} satisfies PropObj<CollapsibleContentPropsWithoutHTML>;
-
 export const content: APISchema<CollapsibleContentPropsWithoutHTML> = {
 	title: "Content",
 	description: "The content displayed when the collapsible is open.",
-	props: contentProps,
+	props: {
+		forceMount: forceMountProp,
+		...withChildProps({ elType: "HTMLDivElement" }),
+	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{

@@ -1,15 +1,15 @@
 import type {
 	DateRangeFieldInputPropsWithoutHTML,
 	DateRangeFieldLabelPropsWithoutHTML,
-	DateRangeFieldPropsWithoutHTML,
+	DateRangeFieldRootPropsWithoutHTML,
 	DateRangeFieldSegmentPropsWithoutHTML,
 } from "bits-ui";
-import { builderAndAttrsSlotProps } from "./helpers.js";
+import { builderAndAttrsSlotProps, withChildProps } from "./helpers.js";
 import { domElProps, enums, idsSlotProp, union } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
 
-export const root: APISchema<DateRangeFieldPropsWithoutHTML> = {
+export const root: APISchema<DateRangeFieldRootPropsWithoutHTML> = {
 	title: "Root",
 	description: "The root date field component.",
 	props: {
@@ -67,16 +67,6 @@ export const root: APISchema<DateRangeFieldPropsWithoutHTML> = {
 			description: "Whether or not to hide the time zone segment of the field.",
 			default: C.FALSE,
 		},
-		validationId: {
-			type: C.STRING,
-			description:
-				"The id of your validation message element, if any, which will be applied to the `aria-describedby` attribute of the appropriate elements when a validation error occurs.",
-		},
-		descriptionId: {
-			type: C.STRING,
-			description:
-				"The id of your description element, if any, which will be applied to the `aria-describedby` attribute of the appropriate elements.",
-		},
 		maxValue: {
 			type: "DateValue",
 			description: "The maximum valid date that can be entered.",
@@ -94,6 +84,11 @@ export const root: APISchema<DateRangeFieldPropsWithoutHTML> = {
 			type: C.BOOLEAN,
 			description: "Whether or not the accordion is disabled.",
 		},
+		required: {
+			type: C.BOOLEAN,
+			description: "Whether or not the date field is required.",
+			default: C.FALSE,
+		},
 		readonly: {
 			type: C.BOOLEAN,
 			description: "Whether or not the field is readonly.",
@@ -107,6 +102,21 @@ export const root: APISchema<DateRangeFieldPropsWithoutHTML> = {
 			description:
 				"The segments for the start and end fields that should be readonly, meaning users cannot edit them. This is useful for prepopulating fixed segments like years, months, or days.",
 		},
+		onStartValueChange: {
+			type: {
+				type: C.FUNCTION,
+				definition: "(date: DateValue | undefined) => void",
+			},
+			description: "A function that is called when the start date changes.",
+		},
+		onEndValueChange: {
+			type: {
+				type: C.FUNCTION,
+				definition: "(date: DateValue | undefined) => void",
+			},
+			description: "A function that is called when the end date changes.",
+		},
+		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	slotProps: {
 		ids: idsSlotProp,
@@ -120,7 +130,22 @@ export const root: APISchema<DateRangeFieldPropsWithoutHTML> = {
 export const input: APISchema<DateRangeFieldInputPropsWithoutHTML> = {
 	title: "Input",
 	description: "The container for the segments of the date field.",
-	props: domElProps("HTMLDivElement"),
+	props: {
+		name: {
+			type: C.STRING,
+			description:
+				"The name of the date field used for form submission. If provided, a hidden input element will be rendered alongside the date field.",
+		},
+		type: {
+			type: {
+				type: C.ENUM,
+				definition: enums("start", "end"),
+			},
+			description: "The type of field to render (start or end).",
+			required: true,
+		},
+		...withChildProps({ elType: "HTMLDivElement" }),
+	},
 	slotProps: {
 		...builderAndAttrsSlotProps,
 		segments: {
@@ -169,15 +194,7 @@ export const segment: APISchema<DateRangeFieldSegmentPropsWithoutHTML> = {
 			description: "The part of the date to render.",
 			required: true,
 		},
-		type: {
-			type: {
-				type: C.ENUM,
-				definition: enums("start", "end"),
-			},
-			description: "The type of field to render (start or end).",
-			required: true,
-		},
-		...domElProps("HTMLDivElement"),
+		...withChildProps({ elType: "HTMLSpanElement" }),
 	},
 	slotProps: {
 		...builderAndAttrsSlotProps,
@@ -217,7 +234,7 @@ export const segment: APISchema<DateRangeFieldSegmentPropsWithoutHTML> = {
 export const label: APISchema<DateRangeFieldLabelPropsWithoutHTML> = {
 	title: "Label",
 	description: "The label for the date field.",
-	props: domElProps("HTMLSpanElement"),
+	props: withChildProps({ elType: "HTMLSpanElement" }),
 	slotProps: {
 		...builderAndAttrsSlotProps,
 	},

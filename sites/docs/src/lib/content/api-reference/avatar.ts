@@ -1,14 +1,14 @@
 import type {
 	AvatarFallbackPropsWithoutHTML,
 	AvatarImagePropsWithoutHTML,
-	AvatarPropsWithoutHTML,
+	AvatarRootPropsWithoutHTML,
 } from "bits-ui";
-import { builderAndAttrsSlotProps, domElProps } from "./helpers.js";
+import { builderAndAttrsSlotProps, domElProps, withChildProps } from "./helpers.js";
 import { attrsSlotProp, enums } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
 
-export const root: APISchema<AvatarPropsWithoutHTML> = {
+export const root: APISchema<AvatarRootPropsWithoutHTML> = {
 	title: "Root",
 	description: "The root component used to set and manage the state of the avatar.",
 	props: {
@@ -33,7 +33,7 @@ export const root: APISchema<AvatarPropsWithoutHTML> = {
 			},
 			description: "A callback function called when the loading status of the image changes.",
 		},
-		...domElProps("HTMLDivElement"),
+		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	slotProps: {
 		attrs: attrsSlotProp,
@@ -49,7 +49,7 @@ export const root: APISchema<AvatarPropsWithoutHTML> = {
 export const image: APISchema<AvatarImagePropsWithoutHTML> = {
 	title: "Image",
 	description: "The avatar image displayed once it has loaded.",
-	props: domElProps("HTMLImageElement"),
+	props: withChildProps({ elType: "HTMLImageElement" }),
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -62,7 +62,7 @@ export const image: APISchema<AvatarImagePropsWithoutHTML> = {
 export const fallback: APISchema<AvatarFallbackPropsWithoutHTML> = {
 	title: "Fallback",
 	description: "The fallback displayed while the avatar image is loading or if it fails to load",
-	props: domElProps("HTMLSpanElement"),
+	props: withChildProps({ elType: "HTMLSpanElement" }),
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{

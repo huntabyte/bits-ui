@@ -1,14 +1,12 @@
 import type {
 	DropdownMenuArrowPropsWithoutHTML,
-	DropdownMenuCheckboxIndicatorPropsWithoutHTML,
 	DropdownMenuCheckboxItemPropsWithoutHTML,
 	DropdownMenuContentPropsWithoutHTML,
 	DropdownMenuGroupPropsWithoutHTML,
 	DropdownMenuItemPropsWithoutHTML,
 	DropdownMenuLabelPropsWithoutHTML,
-	DropdownMenuPropsWithoutHTML,
+	DropdownMenuRootPropsWithoutHTML,
 	DropdownMenuRadioGroupPropsWithoutHTML,
-	DropdownMenuRadioIndicatorPropsWithoutHTML,
 	DropdownMenuRadioItemPropsWithoutHTML,
 	DropdownMenuSeparatorPropsWithoutHTML,
 	DropdownMenuSubContentPropsWithoutHTML,
@@ -19,7 +17,7 @@ import type {
 import { menu } from "./menu.js";
 import type { APISchema } from "$lib/types/index.js";
 
-export const root: APISchema<DropdownMenuPropsWithoutHTML> = {
+export const root: APISchema<DropdownMenuRootPropsWithoutHTML> = {
 	title: "Root",
 	description: "The root component which manages & scopes the state of the dropdown menu.",
 	...menu.root,
@@ -37,7 +35,7 @@ export const content: APISchema<DropdownMenuContentPropsWithoutHTML> = {
 	...menu.content,
 };
 
-export const item: APISchema<DropdownMenuItemPropsWithoutHTML & { href: string }> = {
+export const item: APISchema<DropdownMenuItemPropsWithoutHTML> = {
 	title: "Item",
 	description: "A menu item within the dropdown menu.",
 	...menu.item,
@@ -61,13 +59,6 @@ export const checkboxItem: APISchema<DropdownMenuCheckboxItemPropsWithoutHTML> =
 	...menu.checkboxItem,
 };
 
-export const checkboxIndicator: APISchema<DropdownMenuCheckboxIndicatorPropsWithoutHTML> = {
-	title: "CheckboxIndicator",
-	description:
-		"A visual indicator of the checkbox menu item's checked state. It passed the item's checked state as a slot prop `checked` and can be used to render a custom indicator.",
-	...menu.checkboxIndicator,
-};
-
 export const radioGroup: APISchema<DropdownMenuRadioGroupPropsWithoutHTML> = {
 	title: "RadioGroup",
 	description: "A group of radio menu items, where only one can be checked at a time.",
@@ -79,13 +70,6 @@ export const radioItem: APISchema<DropdownMenuRadioItemPropsWithoutHTML> = {
 	description:
 		"A menu item that can be controlled and toggled like a radio button. It must be a child of a `RadioGroup`.",
 	...menu.radioItem,
-};
-
-export const radioIndicator: APISchema<DropdownMenuRadioIndicatorPropsWithoutHTML> = {
-	title: "RadioIndicator",
-	description:
-		"A visual indicator helper for `RadioItem`s. It only renders it's children when the radio item is checked.",
-	...menu.radioIndicator,
 };
 
 export const sub: APISchema<DropdownMenuSubPropsWithoutHTML> = {
@@ -127,10 +111,8 @@ export const dropdownMenu = [
 	content,
 	item,
 	checkboxItem,
-	checkboxIndicator,
 	radioGroup,
 	radioItem,
-	radioIndicator,
 	separator,
 	arrow,
 	group,

@@ -1,16 +1,23 @@
 import type {
-	ScrollAreaContentPropsWithoutHTML,
 	ScrollAreaCornerPropsWithoutHTML,
-	ScrollAreaPropsWithoutHTML,
+	ScrollAreaRootPropsWithoutHTML,
 	ScrollAreaScrollbarPropsWithoutHTML,
 	ScrollAreaThumbPropsWithoutHTML,
 	ScrollAreaViewportPropsWithoutHTML,
 } from "bits-ui";
-import { builderAndAttrsSlotProps, domElProps, enums } from "$lib/content/api-reference/helpers.js";
+import {
+	builderAndAttrsSlotProps,
+	childrenSnippet,
+	domElProps,
+	enums,
+	forceMountProp,
+	refProp,
+	withChildProps,
+} from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
 
-export const root: APISchema<ScrollAreaPropsWithoutHTML> = {
+export const root: APISchema<ScrollAreaRootPropsWithoutHTML> = {
 	title: "Root",
 	description:
 		"The container of all scroll area components. Overflow is hidden on this element to prevent double scrollbars.",
@@ -22,7 +29,7 @@ export const root: APISchema<ScrollAreaPropsWithoutHTML> = {
 			},
 			description: "The type of scroll area.",
 		},
-		hideDelay: {
+		scrollHideDelay: {
 			type: "number",
 			description:
 				"The delay in milliseconds before the scroll area hides itself when using `'hover'` or `'scroll'` type.",
@@ -35,7 +42,7 @@ export const root: APISchema<ScrollAreaPropsWithoutHTML> = {
 			},
 			description: "The reading direction of the scroll area.",
 		},
-		...domElProps("HTMLDivElement"),
+		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
@@ -50,25 +57,15 @@ export const viewport: APISchema<ScrollAreaViewportPropsWithoutHTML> = {
 	title: "Viewport",
 	description:
 		"The component which wraps the content and is responsible for computing the scroll area size.",
-	props: domElProps("HTMLDivElement"),
+	props: {
+		ref: refProp({ elType: "HTMLDivElement" }),
+		children: childrenSnippet(),
+	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "scroll-area-viewport",
 			description: "Present on the viewport element.",
-		},
-	],
-};
-
-export const content: APISchema<ScrollAreaContentPropsWithoutHTML> = {
-	title: "Content",
-	description: "The scrollable content of the scroll area.",
-	props: domElProps("HTMLDivElement"),
-	slotProps: { ...builderAndAttrsSlotProps },
-	dataAttributes: [
-		{
-			name: "scroll-area-content",
-			description: "Present on the content element.",
 		},
 	],
 };
@@ -85,7 +82,8 @@ export const scrollbar: APISchema<ScrollAreaScrollbarPropsWithoutHTML> = {
 			description: "The orientation of the scrollbar.",
 			required: true,
 		},
-		...domElProps("HTMLDivElement"),
+		forceMount: forceMountProp,
+		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
@@ -109,7 +107,10 @@ export const scrollbar: APISchema<ScrollAreaScrollbarPropsWithoutHTML> = {
 export const thumb: APISchema<ScrollAreaThumbPropsWithoutHTML> = {
 	title: "Thumb",
 	description: "A thumb of a scrollbar in the scroll area.",
-	props: domElProps("HTMLDivElement"),
+	props: {
+		forceMount: forceMountProp,
+		...withChildProps({ elType: "HTMLDivElement" }),
+	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -132,7 +133,7 @@ export const thumb: APISchema<ScrollAreaThumbPropsWithoutHTML> = {
 export const corner: APISchema<ScrollAreaCornerPropsWithoutHTML> = {
 	title: "Corner",
 	description: "The corner element between the X and Y scrollbars.",
-	props: domElProps("HTMLDivElement"),
+	props: withChildProps({ elType: "HTMLDivElement" }),
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -142,4 +143,4 @@ export const corner: APISchema<ScrollAreaCornerPropsWithoutHTML> = {
 	],
 };
 
-export const scrollArea = [root, viewport, content, scrollbar, thumb, corner];
+export const scrollArea = [root, viewport, scrollbar, thumb, corner];

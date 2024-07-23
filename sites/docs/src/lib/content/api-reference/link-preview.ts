@@ -1,24 +1,27 @@
 import type {
 	LinkPreviewArrowPropsWithoutHTML,
 	LinkPreviewContentPropsWithoutHTML,
-	LinkPreviewPropsWithoutHTML,
+	LinkPreviewRootPropsWithoutHTML,
 	LinkPreviewTriggerPropsWithoutHTML,
 } from "bits-ui";
-import { floatingPositioning } from "./floating.js";
 import {
 	arrowProps,
 	builderAndAttrsSlotProps,
-	domElProps,
+	childrenSnippet,
+	dirProp,
+	dismissableLayerProps,
 	enums,
+	escapeLayerProps,
+	floatingProps,
+	focusScopeProps,
+	forceMountProp,
 	idsSlotProp,
-	onOutsideClickProp,
-	portalProp,
-	transitionProps,
+	withChildProps,
 } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
 
-export const root: APISchema<LinkPreviewPropsWithoutHTML> = {
+export const root: APISchema<LinkPreviewRootPropsWithoutHTML> = {
 	title: "Root",
 	description: "The root component used to manage the state of the state of the link preview.",
 	props: {
@@ -34,16 +37,6 @@ export const root: APISchema<LinkPreviewPropsWithoutHTML> = {
 			description:
 				"The amount of time in milliseconds to delay closing the preview when the mouse leaves the trigger.",
 		},
-		closeOnOutsideClick: {
-			type: C.BOOLEAN,
-			default: C.TRUE,
-			description: "Whether or not to close the preview when clicking outside of it.",
-		},
-		closeOnEscape: {
-			type: C.BOOLEAN,
-			default: C.TRUE,
-			description: "Whether or not to close the preview when pressing the escape key.",
-		},
 		open: {
 			type: C.BOOLEAN,
 			default: "false",
@@ -56,8 +49,17 @@ export const root: APISchema<LinkPreviewPropsWithoutHTML> = {
 			},
 			description: "A callback that fires when the open state changes.",
 		},
-		portal: { ...portalProp("link preview") },
-		onOutsideClick: onOutsideClickProp,
+		disabled: {
+			type: C.BOOLEAN,
+			default: C.FALSE,
+			description: "Whether or not the link preview is disabled.",
+		},
+		ignoreNonKeyboardFocus: {
+			type: C.BOOLEAN,
+			default: C.FALSE,
+			description: "Whether the link preview should ignore non-keyboard focus.",
+		},
+		children: childrenSnippet(),
 	},
 	slotProps: {
 		ids: idsSlotProp,
@@ -68,7 +70,7 @@ export const trigger: APISchema<LinkPreviewTriggerPropsWithoutHTML> = {
 	title: "Trigger",
 	description:
 		"A component which triggers the opening and closing of the link preview on hover or focus.",
-	props: domElProps("HTMLAnchorElement"),
+	props: withChildProps({ elType: "HTMLAnchorElement" }),
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -87,7 +89,15 @@ export const trigger: APISchema<LinkPreviewTriggerPropsWithoutHTML> = {
 export const content: APISchema<LinkPreviewContentPropsWithoutHTML> = {
 	title: "Content",
 	description: "The contents of the link preview which are displayed when the preview is open.",
-	props: { ...transitionProps, ...floatingPositioning, ...domElProps("HTMLDivElement") },
+	props: {
+		...floatingProps(),
+		...dismissableLayerProps,
+		...escapeLayerProps,
+		...focusScopeProps,
+		dir: dirProp,
+		forceMount: forceMountProp,
+		...withChildProps({ elType: "HTMLDivElement" }),
+	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{

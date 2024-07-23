@@ -73,12 +73,6 @@ export type RadioGroupItemPropsWithoutHTML = WithChild<
 		 * @defaultValue false
 		 */
 		disabled?: boolean | null | undefined;
-
-		onclick?: EventCallback<MouseEvent>;
-
-		onkeydown?: EventCallback<KeyboardEvent>;
-
-		onfocus?: EventCallback<FocusEvent>;
 	},
 	RadioGroupItemSnippetProps
 >;

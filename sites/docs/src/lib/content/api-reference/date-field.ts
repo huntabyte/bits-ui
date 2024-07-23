@@ -1,15 +1,15 @@
 import type {
 	DateFieldInputPropsWithoutHTML,
 	DateFieldLabelPropsWithoutHTML,
-	DateFieldPropsWithoutHTML,
+	DateFieldRootPropsWithoutHTML,
 	DateFieldSegmentPropsWithoutHTML,
 } from "bits-ui";
-import { builderAndAttrsSlotProps } from "./helpers.js";
-import { domElProps, enums, idsSlotProp, union } from "$lib/content/api-reference/helpers.js";
+import { builderAndAttrsSlotProps, withChildProps } from "./helpers.js";
+import { enums, idsSlotProp, union } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
 
-export const root: APISchema<DateFieldPropsWithoutHTML> = {
+export const root: APISchema<DateFieldRootPropsWithoutHTML> = {
 	title: "Root",
 	description: "The root date field component.",
 	props: {
@@ -23,6 +23,16 @@ export const root: APISchema<DateFieldPropsWithoutHTML> = {
 				definition: "(date: DateValue | undefined) => void",
 			},
 			description: "A function that is called when the selected date changes.",
+		},
+		name: {
+			type: C.STRING,
+			description:
+				"The name of the date field used for form submission. If provided, a hidden input element will be rendered alongside the date field.",
+		},
+		required: {
+			type: C.BOOLEAN,
+			description: "Whether or not the date field is required.",
+			default: C.FALSE,
 		},
 		placeholder: {
 			type: "DateValue",
@@ -64,16 +74,7 @@ export const root: APISchema<DateFieldPropsWithoutHTML> = {
 			description: "Whether or not to hide the time zone segment of the field.",
 			default: C.FALSE,
 		},
-		validationId: {
-			type: C.STRING,
-			description:
-				"The id of your validation message element, if any, which will be applied to the `aria-describedby` attribute of the appropriate elements when a validation error occurs.",
-		},
-		descriptionId: {
-			type: C.STRING,
-			description:
-				"The id of your description element, if any, which will be applied to the `aria-describedby` attribute of the appropriate elements.",
-		},
+
 		maxValue: {
 			type: "DateValue",
 			description: "The maximum valid date that can be entered.",
@@ -104,6 +105,7 @@ export const root: APISchema<DateFieldPropsWithoutHTML> = {
 			description:
 				"An array of segments that should be readonly, which prevent user input on them.",
 		},
+		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	slotProps: {
 		ids: idsSlotProp,
@@ -117,7 +119,7 @@ export const root: APISchema<DateFieldPropsWithoutHTML> = {
 const input: APISchema<DateFieldInputPropsWithoutHTML> = {
 	title: "Input",
 	description: "The container for the segments of the date field.",
-	props: domElProps("HTMLDivElement"),
+	props: withChildProps({ elType: "HTMLDivElement" }),
 	slotProps: {
 		...builderAndAttrsSlotProps,
 		segments: {
@@ -166,7 +168,7 @@ export const segment: APISchema<DateFieldSegmentPropsWithoutHTML> = {
 			description: "The part of the date to render.",
 			required: true,
 		},
-		...domElProps("HTMLDivElement"),
+		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	slotProps: {
 		...builderAndAttrsSlotProps,
@@ -206,7 +208,7 @@ export const segment: APISchema<DateFieldSegmentPropsWithoutHTML> = {
 export const label: APISchema<DateFieldLabelPropsWithoutHTML> = {
 	title: "Label",
 	description: "The label for the date field.",
-	props: domElProps("HTMLSpanElement"),
+	props: withChildProps({ elType: "HTMLSpanElement" }),
 	slotProps: {
 		...builderAndAttrsSlotProps,
 	},

@@ -1,11 +1,11 @@
 import type {
 	DateRangePickerCalendarPropsWithoutHTML,
 	DateRangePickerInputPropsWithoutHTML,
-	DateRangePickerPropsWithoutHTML,
+	DateRangePickerRootPropsWithoutHTML,
 } from "bits-ui";
 import { label, segment } from "./date-range-field.js";
 import { focusProp } from "./extended-types/index.js";
-import { builderAndAttrsSlotProps, portalProp } from "./helpers.js";
+import { builderAndAttrsSlotProps, portalProp, withChildProps } from "./helpers.js";
 import { content, trigger } from "./popover.js";
 import {
 	cell,
@@ -31,7 +31,7 @@ import {
 	weekdaysSlotProp,
 } from "$lib/content/api-reference/helpers.js";
 
-const root: APISchema<DateRangePickerPropsWithoutHTML> = {
+const root: APISchema<DateRangePickerRootPropsWithoutHTML> = {
 	title: "Root",
 	description: "The root date picker component.",
 	props: {
@@ -48,6 +48,43 @@ const root: APISchema<DateRangePickerPropsWithoutHTML> = {
 				definition: "(date: DateRange | undefined) => void",
 			},
 			description: "A function that is called when the selected date changes.",
+		},
+		readonlySegments: {
+			type: {
+				type: C.OBJECT,
+				definition: "{ start: EditableSegmentPart[]; end: EditableSegmentPart[]; }",
+			},
+			description:
+				"The segments for the start and end fields that should be readonly, meaning users cannot edit them. This is useful for prepopulating fixed segments like years, months, or days.",
+		},
+		onStartValueChange: {
+			type: {
+				type: C.FUNCTION,
+				definition: "(date: DateValue | undefined) => void",
+			},
+			description: "A function that is called when the start date changes.",
+		},
+		onEndValueChange: {
+			type: {
+				type: C.FUNCTION,
+				definition: "(date: DateValue | undefined) => void",
+			},
+			description: "A function that is called when the end date changes.",
+		},
+		closeOnRangeSelect: {
+			type: C.BOOLEAN,
+			default: C.TRUE,
+			description: "Whether or not to close the popover when a date range is selected.",
+		},
+		required: {
+			type: C.BOOLEAN,
+			description: "Whether or not the date field is required.",
+			default: C.FALSE,
+		},
+		disableDaysOutsideMonth: {
+			type: C.BOOLEAN,
+			default: C.FALSE,
+			description: "Whether or not to disable days outside the current month.",
 		},
 		placeholder: {
 			type: "DateValue",
@@ -159,37 +196,7 @@ const root: APISchema<DateRangePickerPropsWithoutHTML> = {
 			description: "Whether or not to hide the time zone segment of the field.",
 			default: C.FALSE,
 		},
-		validationId: {
-			type: C.STRING,
-			description:
-				"The id of your validation message element, if any, which will be applied to the `aria-describedby` attribute of the appropriate elements when a validation error occurs.",
-		},
-		descriptionId: {
-			type: C.STRING,
-			description:
-				"The id of your description element, if any, which will be applied to the `aria-describedby` attribute of the appropriate elements.",
-		},
-		disableFocusTrap: {
-			type: C.BOOLEAN,
-			default: C.FALSE,
-			description:
-				"Whether or not to disable the focus trap that is applied to the popover when it's open.",
-		},
-		preventScroll: {
-			type: C.BOOLEAN,
-			default: C.FALSE,
-			description: "Whether or not to prevent scrolling the body while the popover is open.",
-		},
-		closeOnOutsideClick: {
-			type: C.BOOLEAN,
-			default: C.TRUE,
-			description: "Whether or not to close the popover when clicking outside of it.",
-		},
-		closeOnEscape: {
-			type: C.BOOLEAN,
-			default: C.TRUE,
-			description: "Whether or not to close the popover when pressing the escape key.",
-		},
+
 		open: {
 			type: C.BOOLEAN,
 			default: C.FALSE,
@@ -202,24 +209,7 @@ const root: APISchema<DateRangePickerPropsWithoutHTML> = {
 			},
 			description: "A callback that fires when the open state changes.",
 		},
-		openFocus: {
-			type: focusProp,
-			description: "Override the focus when the popover is opened.",
-		},
-		closeFocus: {
-			type: focusProp,
-			description: "Override the focus when the popover is closed.",
-		},
-		portal: { ...portalProp("popover") },
-		startValue: {
-			type: {
-				type: C.UNION,
-				definition: union("DateValue", "undefined"),
-			},
-			description:
-				"The `start` value of the date range, which can exist prior to the true `value` being set, which is only set once a `start` and `end` value are selected. You can `bind:startValue` to a value to receive updates, but modifying this value outside the component will have no effect. To programmatically control the `start` value, use `bind:value` and update the `start` property of the `DateRange` object. This is provided as a convenience for use cases where you want to display the selected `start` value outside the component before the `value` is set.",
-		},
-		onOutsideClick: onOutsideClickProp,
+		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	slotProps: {
 		months: monthsSlotProp,
@@ -277,7 +267,21 @@ const calendar: APISchema<DateRangePickerCalendarPropsWithoutHTML> = {
 const input: APISchema<DateRangePickerInputPropsWithoutHTML> = {
 	title: "Input",
 	description: "The field input component which contains the segments of the date field.",
-	props: domElProps("HTMLDivElement"),
+	props: {
+		name: {
+			type: C.STRING,
+			description:
+				"The name of the input field used for form submission. If provided a hidden input will be rendered alongside the field.",
+		},
+		type: {
+			type: {
+				type: C.ENUM,
+				definition: enums("text", "hidden"),
+			},
+			description: "The part of the date this input represents.",
+		},
+		...withChildProps({ elType: "HTMLDivElement" }),
+	},
 	slotProps: {
 		...builderAndAttrsSlotProps,
 		segments: {
