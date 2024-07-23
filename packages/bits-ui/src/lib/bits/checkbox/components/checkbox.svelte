@@ -30,7 +30,7 @@
 				}
 			}
 		),
-		disabled: box.with(() => disabled),
+		disabled: box.with(() => disabled ?? false),
 		required: box.with(() => required),
 		name: box.with(() => name),
 		value: box.with(() => value),

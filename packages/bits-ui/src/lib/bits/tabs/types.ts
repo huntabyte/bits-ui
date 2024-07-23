@@ -66,7 +66,7 @@ export type TabsTriggerPropsWithoutHTML = WithChild<{
 	 *
 	 * @defaultValue false
 	 */
-	disabled?: boolean;
+	disabled?: boolean | null | undefined;
 }>;
 
 export type TabsTriggerProps = TabsTriggerPropsWithoutHTML &

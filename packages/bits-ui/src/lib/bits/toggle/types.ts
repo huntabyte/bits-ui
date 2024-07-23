@@ -24,7 +24,7 @@ export type ToggleRootPropsWithoutHTML = WithChild<
 		 *
 		 * @defaultValue false
 		 */
-		disabled?: boolean;
+		disabled?: boolean | null | undefined;
 	},
 	ToggleRootSnippetProps
 >;

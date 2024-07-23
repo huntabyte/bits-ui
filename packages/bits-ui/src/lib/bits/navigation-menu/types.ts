@@ -1,4 +1,3 @@
-import type { InteractOutsideEvent } from "@melt-ui/svelte";
 import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
 import type {
 	PrimitiveAnchorAttributes,
@@ -9,6 +8,7 @@ import type {
 	PrimitiveUListAttributes,
 } from "$lib/shared/attributes.js";
 import type { Direction, Orientation } from "$lib/shared/index.js";
+import type { InteractOutsideEvent } from "../utilities/dismissable-layer/types.js";
 
 export type NavigationMenuRootPropsWithoutHTML = WithChild<{
 	/**
@@ -89,7 +89,7 @@ export type NavigationMenuTriggerPropsWithoutHTML = WithChild<{
 	 * Whether the trigger is disabled.
 	 * @defaultValue false
 	 */
-	disabled?: boolean;
+	disabled?: boolean | null | undefined;
 }>;
 
 export type NavigationMenuTriggerProps = NavigationMenuTriggerPropsWithoutHTML &

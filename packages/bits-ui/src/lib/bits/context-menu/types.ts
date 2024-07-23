@@ -10,6 +10,10 @@ export type ContextMenuContentProps = Omit<
 >;
 
 export type ContextMenuTriggerPropsWithoutHTML = WithChild<{
+	/**
+	 * Whether the context menu trigger is disabled. If disabled, the trigger will not
+	 * open the menu when right-clicked.
+	 */
 	disabled?: boolean;
 }>;
 

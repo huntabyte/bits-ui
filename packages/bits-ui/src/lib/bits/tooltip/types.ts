@@ -146,7 +146,7 @@ export type TooltipTriggerPropsWithoutHTML = WithChild<{
 	 *
 	 * @defaultValue false
 	 */
-	disabled?: boolean;
+	disabled?: boolean | null | undefined;
 }>;
 
 export type TooltipTriggerProps = TooltipTriggerPropsWithoutHTML &

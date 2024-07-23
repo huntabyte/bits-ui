@@ -12,7 +12,7 @@ export type SwitchRootPropsWithoutHTML = WithChild<
 		 *
 		 * @defaultValue false
 		 */
-		disabled?: boolean;
+		disabled?: boolean | null | undefined;
 
 		/**
 		 * Whether the switch is required (for form validation).

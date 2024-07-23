@@ -89,7 +89,7 @@ export type MenuTriggerPropsWithoutHTML = WithChild<{
 	 *
 	 * @defaultValue false
 	 */
-	disabled?: boolean;
+	disabled?: boolean | null | undefined;
 }>;
 
 export type MenuTriggerProps = MenuTriggerPropsWithoutHTML &

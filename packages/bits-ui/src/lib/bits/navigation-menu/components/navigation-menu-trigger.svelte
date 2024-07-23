@@ -20,7 +20,7 @@
 
 	const triggerState = useNavigationMenuTrigger({
 		id: box.with(() => id),
-		disabled: box.with(() => disabled),
+		disabled: box.with(() => disabled ?? false),
 		ref: box.with(
 			() => ref,
 			(v) => (ref = v)

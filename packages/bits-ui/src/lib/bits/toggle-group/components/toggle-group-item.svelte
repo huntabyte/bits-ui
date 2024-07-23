@@ -19,7 +19,7 @@
 	const itemState = useToggleGroupItem({
 		id: box.with(() => id),
 		value: box.with(() => value),
-		disabled: box.with(() => disabled),
+		disabled: box.with(() => disabled ?? false),
 		ref: box.with(
 			() => ref,
 			(v) => (ref = v)

@@ -10,7 +10,7 @@ export type CheckboxRootPropsWithoutHTML = WithChild<
 		 *
 		 * @defaultValue false
 		 */
-		disabled?: boolean;
+		disabled?: boolean | null | undefined;
 
 		/**
 		 * Whether the checkbox is required (for form validation).

@@ -16,7 +16,7 @@
 
 	const itemState = useRadioGroupItem({
 		value: box.with(() => value),
-		disabled: box.with(() => disabled),
+		disabled: box.with(() => disabled ?? false),
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

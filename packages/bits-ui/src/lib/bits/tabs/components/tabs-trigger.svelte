@@ -18,7 +18,7 @@
 
 	const triggerState = useTabsTrigger({
 		id: box.with(() => id),
-		disabled: box.with(() => disabled),
+		disabled: box.with(() => disabled ?? false),
 		value: box.with(() => value),
 		ref: box.with(
 			() => ref,

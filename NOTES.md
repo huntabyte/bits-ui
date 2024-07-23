@@ -30,7 +30,3 @@ They also need to be flexible enough to allow for reusing the same component whi
 ---
 
 Should we embrace the [ValidityState](https://developer.mozilla.org/en-US/docs/Web/API/ValidityState) API? Something to think about.
-
----
-
-Need to determine how we'll handle users being able to cancel the `onEscapeKeydown` event.

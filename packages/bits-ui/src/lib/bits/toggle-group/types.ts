@@ -72,7 +72,7 @@ export type ToggleGroupItemPropsWithoutHTML = WithChild<
 		 *
 		 * @defaultValue false
 		 */
-		disabled?: boolean;
+		disabled?: boolean | null | undefined;
 
 		/**
 		 * The value of the toggle item.

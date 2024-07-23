@@ -48,7 +48,7 @@ export type ToolbarButtonPropsWithoutHTML = WithChild<{
 	/**
 	 * Whether the button is disabled or not.
 	 */
-	disabled?: boolean;
+	disabled?: boolean | null | undefined;
 }>;
 
 export type ToolbarButtonProps = ToolbarButtonPropsWithoutHTML &

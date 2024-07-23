@@ -29,7 +29,7 @@
 				onCheckedChange?.(v);
 			}
 		),
-		disabled: box.with(() => disabled),
+		disabled: box.with(() => disabled ?? false),
 		required: box.with(() => required),
 		value: box.with(() => value),
 		name: box.with(() => name),

@@ -72,7 +72,7 @@ export type RadioGroupItemPropsWithoutHTML = WithChild<
 		 *
 		 * @defaultValue false
 		 */
-		disabled?: boolean;
+		disabled?: boolean | null | undefined;
 
 		onclick?: EventCallback<MouseEvent>;
 

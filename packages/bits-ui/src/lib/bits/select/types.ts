@@ -124,7 +124,7 @@ export type SelectTriggerPropsWithoutHTML = WithChild<{
 	 *
 	 * @defaultValue false
 	 */
-	disabled?: boolean;
+	disabled?: boolean | null | undefined;
 }>;
 
 export type SelectTriggerProps = SelectTriggerPropsWithoutHTML &

@@ -45,7 +45,7 @@ export type MenubarTriggerPropsWithoutHTML = WithChild<{
 	 *
 	 * @defaultValue false
 	 */
-	disabled?: boolean;
+	disabled?: boolean | null | undefined;
 }>;
 
 export type MenubarTriggerProps = MenubarTriggerPropsWithoutHTML &
