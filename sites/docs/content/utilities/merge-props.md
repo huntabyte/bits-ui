@@ -42,7 +42,7 @@ mergedProps.onclick(new MouseEvent("click")); // logs "clicked!" and "clicked ag
 
 Since `props2` called `event.preventDefault()`, `props3`'s `onclick` handler will not be called.
 
-### Classes
+## Classes
 
 `mergeProps` also handles the merging of classes using `clsx`. This means that you can pass in multiple classes as an array or string, and they will be merged together.
 
@@ -57,7 +57,7 @@ const mergedProps = mergeProps(props1, props2);
 console.log(mergedProps.class); // logs "bg-red-500 bg-green-500"
 ```
 
-### Styles
+## Styles
 
 `mergeProps` also handles merging of style objects using `style-to-object`. You can pass in multiple style objects or style strings and they will be gracefully merged together in the order they are passed.
 
