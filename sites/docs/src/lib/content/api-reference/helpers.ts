@@ -156,14 +156,13 @@ export function seeFloating(content: string, link: string) {
 	return `${content} [Floating UI reference](${link}).`;
 }
 
-const entities = [
-	[/</g, "&lt;"],
-	[/>/g, "&gt;"],
-	[/{/g, "&#123;"],
-	[/}/g, "&#125;"],
-] as const;
-
 export function escape(str: string): string {
+	const entities = [
+		[/</g, "&lt;"],
+		[/>/g, "&gt;"],
+		[/{/g, "&#123;"],
+		[/}/g, "&#125;"],
+	] as const;
 	for (let i = 0; i < entities.length; i += 1) {
 		str = str.replace(entities[i][0], entities[i][1]);
 	}

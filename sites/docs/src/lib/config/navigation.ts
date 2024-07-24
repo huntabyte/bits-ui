@@ -83,5 +83,25 @@ export const navigation: Navigation = {
 			title: "Components",
 			items: generateComponentsNav(),
 		},
+		{
+			title: "Utilities",
+			items: [
+				{
+					title: "WithoutChildren",
+					href: "/docs/utilities/without-children",
+					items: [],
+				},
+				{
+					title: "WithoutChild",
+					href: "/docs/utilities/without-child",
+					items: [],
+				},
+				{
+					title: "WithoutChildrenOrChild",
+					href: "/docs/utilities/without-children-or-child",
+					items: [],
+				},
+			],
+		},
 	],
 };

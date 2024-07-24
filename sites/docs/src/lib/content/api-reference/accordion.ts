@@ -14,25 +14,6 @@ const root: APISchema<AccordionRootPropsWithoutHTML> = {
 	title: "Root",
 	description: "The root accordion component used to set and manage the state of the accordion.",
 	props: {
-		disabled: {
-			default: "false",
-			type: C.BOOLEAN,
-			description: "Whether or not the accordion is disabled.",
-		},
-		value: {
-			type: {
-				type: C.UNION,
-				definition: union("string", "undefined"),
-			},
-			description: "The active accordion item value.",
-		},
-		onValueChange: {
-			type: {
-				type: C.FUNCTION,
-				definition: "(value: string | undefined) => void",
-			},
-			description: "A callback function called when the active accordion item value changes.",
-		},
 		type: {
 			type: {
 				type: C.ENUM,
@@ -41,6 +22,26 @@ const root: APISchema<AccordionRootPropsWithoutHTML> = {
 			description:
 				"The type of accordion. If set to `'multiple'`, the accordion will allow multiple items to be open at the same time. If set to `single`, the accordion will only allow a single item to be open.",
 			required: true,
+		},
+		value: {
+			type: {
+				type: C.UNION,
+				definition: union("string", "string[]"),
+			},
+			description:
+				"The active accordion item value. If `type` is `'multiple'`, this should be an array of values. If `type` is `'single'`, this should be a string.",
+		},
+		onValueChange: {
+			type: {
+				type: C.FUNCTION,
+				definition: union("(value: string) => void", "(value: string[]) => void"),
+			},
+			description: "A callback function called when the active accordion item value changes.",
+		},
+		disabled: {
+			default: "false",
+			type: C.BOOLEAN,
+			description: "Whether or not the accordion is disabled.",
 		},
 		loop: {
 			default: "false",
