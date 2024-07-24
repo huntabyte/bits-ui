@@ -1,14 +1,15 @@
-import type { ToggleGroupItemPropsWithoutHTML, ToggleGroupPropsWithoutHTML } from "bits-ui";
+import type { ToggleGroupItemPropsWithoutHTML, ToggleGroupRootPropsWithoutHTML } from "bits-ui";
 import {
 	builderAndAttrsSlotProps,
 	domElProps,
 	enums,
 	union,
+	withChildProps,
 } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
 
-const root: APISchema<ToggleGroupPropsWithoutHTML<"multiple">> = {
+const root: APISchema<ToggleGroupRootPropsWithoutHTML> = {
 	title: "Root",
 	description: "The root component which contains the toggle group items.",
 	props: {
@@ -16,6 +17,7 @@ const root: APISchema<ToggleGroupPropsWithoutHTML<"multiple">> = {
 			type: union(C.STRING, "string[]"),
 			description:
 				"The value of the toggle group. If the type is multiple, this will be an array of strings, otherwise it will be a string.",
+			bindable: true,
 		},
 		onValueChange: {
 			type: {
@@ -50,7 +52,7 @@ const root: APISchema<ToggleGroupPropsWithoutHTML<"multiple">> = {
 			description: "The type of toggle group.",
 			type: enums("single", "multiple"),
 		},
-		...domElProps("HTMLDivElement"),
+		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
@@ -78,7 +80,7 @@ const item: APISchema<ToggleGroupItemPropsWithoutHTML> = {
 			type: C.BOOLEAN,
 			description: "Whether or not the switch is disabled.",
 		},
-		...domElProps("HTMLButtonElement"),
+		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [

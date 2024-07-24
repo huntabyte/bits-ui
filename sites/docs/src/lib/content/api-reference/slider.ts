@@ -1,14 +1,18 @@
 import type {
-	SliderPropsWithoutHTML,
+	SliderRootPropsWithoutHTML,
 	SliderRangePropsWithoutHTML,
 	SliderThumbPropsWithoutHTML,
 	SliderTickPropsWithoutHTML,
 } from "bits-ui";
-import { builderAndAttrsSlotProps, domElProps, enums } from "$lib/content/api-reference/helpers.js";
+import {
+	builderAndAttrsSlotProps,
+	enums,
+	withChildProps,
+} from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
 
-const root: APISchema<SliderPropsWithoutHTML> = {
+const root: APISchema<SliderRootPropsWithoutHTML> = {
 	title: "Root",
 	description: "The root slider component which contains the remaining slider components.",
 	props: {
@@ -16,6 +20,7 @@ const root: APISchema<SliderPropsWithoutHTML> = {
 			default: "[]",
 			type: "number[]",
 			description: "The current value of the slider.",
+			bindable: true,
 		},
 		onValueChange: {
 			type: {
@@ -23,6 +28,14 @@ const root: APISchema<SliderPropsWithoutHTML> = {
 				definition: "(value: number[]) => void",
 			},
 			description: "A callback function called when the value state of the slider changes.",
+		},
+		onValueChangeEnd: {
+			type: {
+				type: C.FUNCTION,
+				definition: "(value: number[]) => void",
+			},
+			description:
+				"A callback function called when the user finishes dragging the thumb and the value changes. This is different than the `onValueChange` callback because it waits until the user stops dragging before calling the callback, where the `onValueChange` callback is called immediately after the user starts dragging.",
 		},
 		disabled: {
 			default: C.FALSE,
@@ -61,7 +74,14 @@ const root: APISchema<SliderPropsWithoutHTML> = {
 			description:
 				"The reading direction of the slider. If set to 'rtl', the slider will be reversed for both `'horizontal'` and `'vertical'` orientations.",
 		},
-		...domElProps("HTMLSpanElement"),
+		autoSort: {
+			type: C.BOOLEAN,
+			default: C.TRUE,
+			description:
+				"Whether to automatically sort the values in the array when moving thumbs past one another.",
+		},
+
+		...withChildProps({ elType: "HTMLSpanElement" }),
 	},
 	slotProps: {
 		ticks: {
@@ -92,12 +112,17 @@ const thumb: APISchema<SliderThumbPropsWithoutHTML> = {
 	title: "Thumb",
 	description: "A thumb on the slider.",
 	props: {
-		thumb: {
-			type: "Thumb",
+		index: {
+			type: C.NUMBER,
 			description:
-				"An individual thumb builder from the `thumbs` slot prop provided by the `Slider.Root` component.",
+				"The index of the thumb in the array of thumbs provided by the `thumbs` `children` snippet prop.",
 		},
-		...domElProps("HTMLSpanElement"),
+		disabled: {
+			default: C.FALSE,
+			type: C.BOOLEAN,
+			description: "Whether or not the thumb is disabled.",
+		},
+		...withChildProps({ elType: "HTMLSpanElement" }),
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
@@ -111,7 +136,7 @@ const thumb: APISchema<SliderThumbPropsWithoutHTML> = {
 const range: APISchema<SliderRangePropsWithoutHTML> = {
 	title: "Range",
 	description: "The range of the slider.",
-	props: domElProps("HTMLSpanElement"),
+	props: withChildProps({ elType: "HTMLSpanElement" }),
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -125,12 +150,12 @@ const tick: APISchema<SliderTickPropsWithoutHTML> = {
 	title: "Tick",
 	description: "A tick mark on the slider.",
 	props: {
-		tick: {
-			type: "Tick",
+		index: {
+			type: "number",
 			description:
-				"An individual tick builder from the `ticks` slot prop provided by the `Slider.Root` component.",
+				"The index of the tick in the array of ticks provided by the `ticks` `children` snippet prop.",
 		},
-		...domElProps("HTMLSpanElement"),
+		...withChildProps({ elType: "HTMLSpanElement" }),
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [

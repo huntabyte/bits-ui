@@ -1,9 +1,14 @@
-import type { SeparatorPropsWithoutHTML } from "bits-ui";
-import { builderAndAttrsSlotProps, domElProps, enums } from "$lib/content/api-reference/helpers.js";
+import type { SeparatorRootPropsWithoutHTML } from "bits-ui";
+import {
+	builderAndAttrsSlotProps,
+	domElProps,
+	enums,
+	withChildProps,
+} from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
 
-export const root: APISchema<SeparatorPropsWithoutHTML> = {
+export const root: APISchema<SeparatorRootPropsWithoutHTML> = {
 	title: "Root",
 	description: "An element used to separate content.",
 	props: {
@@ -21,7 +26,7 @@ export const root: APISchema<SeparatorPropsWithoutHTML> = {
 			description:
 				"Whether the separator is decorative or not, which will determine if it is announce by screen readers.",
 		},
-		...domElProps("HTMLDivElement"),
+		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [

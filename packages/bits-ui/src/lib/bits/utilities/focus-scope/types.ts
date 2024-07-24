@@ -14,6 +14,13 @@ export type FocusScopeProps = {
 	 * Can be prevented.
 	 */
 	onDestroyAutoFocus?: EventCallback;
+
+	/**
+	 * When `true` will loop through the tabbable elements in the focus scope.
+	 *
+	 * @defaultValue false
+	 */
+	loop?: boolean;
 };
 
 export type FocusScopeImplProps = {
@@ -28,13 +35,6 @@ export type FocusScopeImplProps = {
 	 * @defaultValue false
 	 */
 	trapped?: boolean;
-
-	/**
-	 * When `true` will loop through the tabbable elements in the focus scope.
-	 *
-	 * @defaultValue false
-	 */
-	loop?: boolean;
 
 	focusScope?: Snippet<[{ props: FocusScopeContainerProps }]>;
 } & FocusScopeProps;

@@ -1,7 +1,8 @@
-import type { MenuContentProps, MenuContentPropsWithoutHTML } from "../menu/types.js";
 import type { OnChangeFn, WithChild, WithChildren, Without } from "$lib/internal/types.js";
 import type { PrimitiveButtonAttributes, PrimitiveDivAttributes } from "$lib/shared/attributes.js";
 import type { Direction } from "$lib/shared/index.js";
+import type { ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
+import type { ArrowProps } from "../menu/index.js";
 
 export type MenubarRootPropsWithoutHTML = WithChild<{
 	/**
@@ -51,6 +52,30 @@ export type MenubarTriggerPropsWithoutHTML = WithChild<{
 export type MenubarTriggerProps = MenubarTriggerPropsWithoutHTML &
 	Without<PrimitiveButtonAttributes, MenubarTriggerPropsWithoutHTML>;
 
-export type MenubarContentPropsWithoutHTML = MenuContentPropsWithoutHTML;
+export type {
+	MenuContentPropsWithoutHTML as MenubarContentPropsWithoutHTML,
+	MenuContentProps as MenubarContentProps,
+	MenuItemPropsWithoutHTML as MenubarItemPropsWithoutHTML,
+	MenuItemProps as MenubarItemProps,
+	MenuGroupPropsWithoutHTML as MenubarGroupPropsWithoutHTML,
+	MenuGroupProps as MenubarGroupProps,
+	MenuGroupLabelPropsWithoutHTML as MenubarGroupLabelPropsWithoutHTML,
+	MenuGroupLabelProps as MenubarGroupLabelProps,
+	MenuCheckboxItemPropsWithoutHTML as MenubarCheckboxItemPropsWithoutHTML,
+	MenuCheckboxItemProps as MenubarCheckboxItemProps,
+	MenuRadioGroupPropsWithoutHTML as MenubarRadioGroupPropsWithoutHTML,
+	MenuRadioGroupProps as MenubarRadioGroupProps,
+	MenuRadioItemPropsWithoutHTML as MenubarRadioItemPropsWithoutHTML,
+	MenuRadioItemProps as MenubarRadioItemProps,
+	MenuSeparatorPropsWithoutHTML as MenubarSeparatorPropsWithoutHTML,
+	MenuSeparatorProps as MenubarSeparatorProps,
+	MenuSubContentPropsWithoutHTML as MenubarSubContentPropsWithoutHTML,
+	MenuSubContentProps as MenubarSubContentProps,
+	MenuSubTriggerPropsWithoutHTML as MenubarSubTriggerPropsWithoutHTML,
+	MenuSubTriggerProps as MenubarSubTriggerProps,
+	MenuSubPropsWithoutHTML as MenubarSubPropsWithoutHTML,
+} from "../menu/types.js";
 
-export type MenubarContentProps = MenuContentProps;
+export type MenubarArrowPropsWithoutHTML = ArrowPropsWithoutHTML;
+
+export type MenubarArrowProps = ArrowProps;

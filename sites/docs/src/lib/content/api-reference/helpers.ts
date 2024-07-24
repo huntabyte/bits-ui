@@ -21,6 +21,8 @@ type ElementKind =
 	| "HTMLHeadingElement"
 	| "HTMLImageElement"
 	| "HTMLInputElement"
+	| "HTMLUListElement"
+	| "HTMLLiElement"
 	| "HTMLElement";
 
 export function domElProps(elType: ElementKind) {

@@ -3,18 +3,19 @@ import type {
 	ToolbarGroupItemPropsWithoutHTML,
 	ToolbarGroupPropsWithoutHTML,
 	ToolbarLinkPropsWithoutHTML,
-	ToolbarPropsWithoutHTML,
+	ToolbarRootPropsWithoutHTML,
 } from "bits-ui";
 import {
 	builderAndAttrsSlotProps,
 	domElProps,
 	enums,
 	union,
+	withChildProps,
 } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
 
-const root: APISchema<ToolbarPropsWithoutHTML> = {
+const root: APISchema<ToolbarRootPropsWithoutHTML> = {
 	title: "Root",
 	description: "The root component which contains the toolbar.",
 	props: {
@@ -31,7 +32,7 @@ const root: APISchema<ToolbarPropsWithoutHTML> = {
 			},
 			description: "The orientation of the toolbar.",
 		},
-		...domElProps("HTMLDivElement"),
+		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
@@ -49,7 +50,14 @@ const root: APISchema<ToolbarPropsWithoutHTML> = {
 const button: APISchema<ToolbarButtonPropsWithoutHTML> = {
 	title: "Button",
 	description: "A button in the toolbar.",
-	props: domElProps("HTMLButtonElement"),
+	props: {
+		disabled: {
+			default: C.FALSE,
+			type: C.BOOLEAN,
+			description: "Whether or not the button is disabled.",
+		},
+		...withChildProps({ elType: "HTMLButtonElement" }),
+	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -62,7 +70,7 @@ const button: APISchema<ToolbarButtonPropsWithoutHTML> = {
 const link: APISchema<ToolbarLinkPropsWithoutHTML> = {
 	title: "Link",
 	description: "A link in the toolbar.",
-	props: domElProps("HTMLAnchorElement"),
+	props: withChildProps({ elType: "HTMLAnchorElement" }),
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -72,7 +80,7 @@ const link: APISchema<ToolbarLinkPropsWithoutHTML> = {
 	],
 };
 
-const group: APISchema<ToolbarGroupPropsWithoutHTML<"multiple">> = {
+const group: APISchema<ToolbarGroupPropsWithoutHTML> = {
 	title: "Group",
 	description: "A group of toggle items in the toolbar.",
 	props: {
@@ -83,6 +91,7 @@ const group: APISchema<ToolbarGroupPropsWithoutHTML<"multiple">> = {
 			},
 			description:
 				"The value of the toggle group. If the type is multiple, this will be an array of strings, otherwise it will be a string.",
+			bindable: true,
 		},
 		onValueChange: {
 			type: C.FUNCTION,
@@ -101,7 +110,7 @@ const group: APISchema<ToolbarGroupPropsWithoutHTML<"multiple">> = {
 				definition: enums("single", "multiple"),
 			},
 		},
-		...domElProps("HTMLDivElement"),
+		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
@@ -126,7 +135,7 @@ const groupItem: APISchema<ToolbarGroupItemPropsWithoutHTML> = {
 			type: C.BOOLEAN,
 			description: "Whether or not the item is disabled.",
 		},
-		...domElProps("HTMLButtonElement"),
+		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [

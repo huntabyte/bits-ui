@@ -47,10 +47,6 @@ export type SwitchRootPropsWithoutHTML = WithChild<
 		 * A callback function called when the checked state changes.
 		 */
 		onCheckedChange?: OnChangeFn<boolean>;
-
-		onclick?: EventCallback<MouseEvent>;
-
-		onkeydown?: EventCallback<KeyboardEvent>;
 	},
 	SwitchRootSnippetProps
 >;

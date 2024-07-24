@@ -64,7 +64,7 @@ export type SelectRootPropsWithoutHTML = WithChildren<{
 export type SelectRootProps = SelectRootPropsWithoutHTML;
 
 export type SelectContentImplPropsWithoutHTML = WithChild<
-	PopperLayerProps & {
+	Omit<PopperLayerProps, "content"> & {
 		/**
 		 *  The positioning mode to use
 		 *

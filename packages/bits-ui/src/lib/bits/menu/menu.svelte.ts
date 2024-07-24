@@ -20,7 +20,7 @@ import { addEventListener } from "$lib/internal/events.js";
 import type { AnyFn, WithRefProps } from "$lib/internal/types.js";
 import { executeCallbacks } from "$lib/internal/callbacks.js";
 import { useTypeahead } from "$lib/internal/useTypeahead.svelte.js";
-import { isBrowser, isElement, isHTMLElement } from "$lib/internal/is.js";
+import { isElement, isHTMLElement } from "$lib/internal/is.js";
 import { useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import {
@@ -60,6 +60,8 @@ const [setMenuMenuContext, getMenuMenuContext] = createContext<MenuMenuState>(
 
 const [setMenuContentContext, getMenuContentContext] =
 	createContext<MenuContentState>("Menu.Content");
+
+const [setMenuGroupContext, getMenuGroupContext] = createContext<MenuGroupState>("Menu.Group");
 
 const [setMenuRadioGroupContext, getMenuRadioGroupContext] =
 	createContext<MenuRadioGroupState>("Menu.RadioGroup");
@@ -698,6 +700,7 @@ type MenuGroupStateProps = WithRefProps;
 class MenuGroupState {
 	#id: MenuGroupStateProps["id"];
 	#ref: MenuGroupStateProps["ref"];
+	labelNode = $state<HTMLElement | null>(null);
 
 	constructor(props: MenuGroupStateProps) {
 		this.#id = props.id;
@@ -714,23 +717,33 @@ class MenuGroupState {
 			({
 				id: this.#id.current,
 				role: "group",
+				"aria-labelledby": this.labelNode?.id ?? undefined,
 				[GROUP_ATTR]: "",
 			}) as const
 	);
+
+	createGroupLabel(props: MenuGroupLabelStateProps) {
+		return new MenuGroupLabelState(props, this);
+	}
 }
 
-type MenuLabelStateProps = WithRefProps;
-class MenuLabelState {
-	#id: MenuLabelStateProps["id"];
-	#ref: MenuLabelStateProps["ref"];
+type MenuGroupLabelStateProps = WithRefProps;
+class MenuGroupLabelState {
+	#id: MenuGroupLabelStateProps["id"];
+	#ref: MenuGroupLabelStateProps["ref"];
+	#group: MenuGroupState;
 
-	constructor(props: MenuLabelStateProps) {
+	constructor(props: MenuGroupLabelStateProps, group: MenuGroupState) {
 		this.#id = props.id;
 		this.#ref = props.ref;
+		this.#group = group;
 
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
+			onRefChange: (node) => {
+				this.#group.labelNode = node;
+			},
 		});
 	}
 
@@ -1114,11 +1127,11 @@ export function useMenuRadioItem(props: MenuRadioItemStateProps & MenuItemCombin
 }
 
 export function useMenuGroup(props: MenuGroupStateProps) {
-	return new MenuGroupState(props);
+	return setMenuGroupContext(new MenuGroupState(props));
 }
 
-export function useMenuLabel(props: MenuLabelStateProps) {
-	return new MenuLabelState(props);
+export function useMenuLabel(props: MenuGroupLabelStateProps) {
+	return getMenuGroupContext().createGroupLabel(props);
 }
 
 export function useMenuSeparator(props: MenuSeparatorStateProps) {

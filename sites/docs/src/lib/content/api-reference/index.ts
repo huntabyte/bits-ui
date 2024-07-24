@@ -16,6 +16,7 @@ import { dialog } from "./dialog.js";
 import { dropdownMenu } from "./dropdown-menu.js";
 import { label } from "./label.js";
 import { linkPreview } from "./link-preview.js";
+import { navigationMenu } from "./navigation-menu.js";
 import { pagination } from "./pagination.js";
 import { pinInput } from "./pin-input.js";
 import { popover } from "./popover.js";
@@ -33,6 +34,7 @@ import { toggle } from "./toggle.js";
 import { toolbar } from "./toolbar.js";
 import { tooltip } from "./tooltip.js";
 import type { APISchema } from "$lib/types/index.js";
+import { menubar } from "./menubar.js";
 
 export const bits = [
 	"accordion",
@@ -53,7 +55,6 @@ export const bits = [
 	"dropdown-menu",
 	"label",
 	"link-preview",
-	"listbox",
 	"menubar",
 	"navigation-menu",
 	"pagination",
@@ -101,7 +102,8 @@ export const apiSchemas: Record<Bit, APISchema[]> = {
 	"dropdown-menu": dropdownMenu,
 	label,
 	"link-preview": linkPreview,
-	listbox: linkPreview,
+	menubar: menubar,
+	"navigation-menu": navigationMenu,
 	pagination,
 	"pin-input": pinInput,
 	popover,

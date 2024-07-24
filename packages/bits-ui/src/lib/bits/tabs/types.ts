@@ -35,7 +35,7 @@ export type TabsRootPropsWithoutHTML = WithChild<{
 	 * will be activated when the trigger is focused. If set to `'manual'`,
 	 * the tabs will be activated when the trigger is pressed.
 	 *
-	 * @defaultValue true
+	 * @defaultValue "automatic"
 	 */
 	activationMode?: TabsActivationMode;
 

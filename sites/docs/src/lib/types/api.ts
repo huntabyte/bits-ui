@@ -8,6 +8,7 @@ export type PropSchema = {
 	type: PropType | string;
 	description: string;
 	required?: boolean;
+	bindable?: boolean;
 };
 
 export type PropObj<T, U = Omit<T, "style">> = {

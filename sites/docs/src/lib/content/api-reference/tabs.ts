@@ -1,7 +1,7 @@
 import type {
 	TabsContentPropsWithoutHTML,
 	TabsListPropsWithoutHTML,
-	TabsPropsWithoutHTML,
+	TabsRootPropsWithoutHTML,
 	TabsTriggerPropsWithoutHTML,
 } from "bits-ui";
 import {
@@ -9,11 +9,12 @@ import {
 	domElProps,
 	enums,
 	union,
+	withChildProps,
 } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
 
-const root: APISchema<TabsPropsWithoutHTML> = {
+const root: APISchema<TabsRootPropsWithoutHTML> = {
 	title: "Root",
 	description: "The root tabs component which contains the other tab components.",
 	props: {
@@ -23,6 +24,7 @@ const root: APISchema<TabsPropsWithoutHTML> = {
 				definition: union("string", "undefined"),
 			},
 			description: "The active tab value.",
+			bindable: true,
 		},
 		onValueChange: {
 			type: {
@@ -31,17 +33,21 @@ const root: APISchema<TabsPropsWithoutHTML> = {
 			},
 			description: "A callback function called when the active tab value changes.",
 		},
-		activateOnFocus: {
-			default: C.TRUE,
-			type: C.BOOLEAN,
-			description: "Whether or not to activate the tab when it receives focus.",
-		},
-		autoSet: {
-			default: C.TRUE,
-			type: C.BOOLEAN,
+		activationMode: {
+			type: {
+				type: C.ENUM,
+				definition: enums("manual", "automatic"),
+			},
 			description:
-				"Whether or not to automatically set the tab value when it receives focus.",
+				"How the activation of tabs should be handled. If set to `'automatic'`, the tab will be activated when the trigger is focused. If set to `'manual'`, the tab will be activated when the trigger is pressed.",
+			default: "automatic",
 		},
+		disabled: {
+			default: C.FALSE,
+			type: C.BOOLEAN,
+			description: "Whether or not the tabs are disabled.",
+		},
+
 		loop: {
 			default: C.TRUE,
 			type: C.BOOLEAN,
@@ -55,7 +61,7 @@ const root: APISchema<TabsPropsWithoutHTML> = {
 			},
 			description: "The orientation of the tabs.",
 		},
-		...domElProps("HTMLDivElement"),
+		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	slotProps: {
 		...builderAndAttrsSlotProps,
@@ -80,7 +86,7 @@ const root: APISchema<TabsPropsWithoutHTML> = {
 const list: APISchema<TabsListPropsWithoutHTML> = {
 	title: "List",
 	description: "The component containing the tab triggers.",
-	props: domElProps("HTMLDivElement"),
+	props: withChildProps({ elType: "HTMLDivElement" }),
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
@@ -109,7 +115,7 @@ const trigger: APISchema<TabsTriggerPropsWithoutHTML> = {
 			type: C.BOOLEAN,
 			description: "Whether or not the tab is disabled.",
 		},
-		...domElProps("HTMLButtonElement"),
+		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
@@ -149,7 +155,7 @@ const content: APISchema<TabsContentPropsWithoutHTML> = {
 			type: "string",
 			description: "The value of the tab this content represents.",
 		},
-		...domElProps("HTMLDivElement"),
+		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [

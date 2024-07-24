@@ -1,10 +1,10 @@
-import type { SwitchPropsWithoutHTML, SwitchThumbPropsWithoutHTML } from "bits-ui";
-import { builderAndAttrsSlotProps, domElProps } from "./helpers.js";
+import type { SwitchRootPropsWithoutHTML, SwitchThumbPropsWithoutHTML } from "bits-ui";
+import { builderAndAttrsSlotProps, withChildProps } from "./helpers.js";
 import { attrsSlotProp, enums } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
 
-const root: APISchema<SwitchPropsWithoutHTML> = {
+const root: APISchema<SwitchRootPropsWithoutHTML> = {
 	title: "Root",
 	description: "The root switch component used to set and manage the state of the switch.",
 	props: {
@@ -12,6 +12,7 @@ const root: APISchema<SwitchPropsWithoutHTML> = {
 			default: C.FALSE,
 			type: C.BOOLEAN,
 			description: "Whether or not the switch is checked.",
+			bindable: true,
 		},
 		onCheckedChange: {
 			type: {
@@ -24,16 +25,6 @@ const root: APISchema<SwitchPropsWithoutHTML> = {
 			default: C.FALSE,
 			type: C.BOOLEAN,
 			description: "Whether or not the switch is disabled.",
-		},
-		includeInput: {
-			default: C.FALSE,
-			type: C.BOOLEAN,
-			description:
-				"Whether or not to include the input element in the switch. This will automatically add a hidden input element to the switch that will be checked when the switch is checked.",
-		},
-		inputAttrs: {
-			type: C.OBJECT,
-			description: "Attributes to be spread onto the hidden input element.",
 		},
 		name: {
 			type: C.STRING,
@@ -50,7 +41,7 @@ const root: APISchema<SwitchPropsWithoutHTML> = {
 			description:
 				"The value of the hidden input element to be used in form submissions when the switch is checked.",
 		},
-		...domElProps("HTMLButtonElement"),
+		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
 	slotProps: {
 		...builderAndAttrsSlotProps,
@@ -80,7 +71,7 @@ const root: APISchema<SwitchPropsWithoutHTML> = {
 const thumb: APISchema<SwitchThumbPropsWithoutHTML> = {
 	title: "Thumb",
 	description: "The thumb on the switch used to indicate the switch's state.",
-	props: domElProps("HTMLSpanElement"),
+	props: withChildProps({ elType: "HTMLSpanElement" }),
 	slotProps: {
 		attrs: attrsSlotProp,
 		checked: {

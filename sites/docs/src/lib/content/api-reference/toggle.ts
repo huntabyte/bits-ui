@@ -1,9 +1,13 @@
-import type { TogglePropsWithoutHTML } from "bits-ui";
-import { builderAndAttrsSlotProps, domElProps, enums } from "$lib/content/api-reference/helpers.js";
+import type { ToggleRootPropsWithoutHTML } from "bits-ui";
+import {
+	builderAndAttrsSlotProps,
+	enums,
+	withChildProps,
+} from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
 
-const root: APISchema<TogglePropsWithoutHTML> = {
+const root: APISchema<ToggleRootPropsWithoutHTML> = {
 	title: "Root",
 	description: "The toggle button.",
 	props: {
@@ -11,6 +15,7 @@ const root: APISchema<TogglePropsWithoutHTML> = {
 			default: C.FALSE,
 			type: C.BOOLEAN,
 			description: "Whether or not the toggle button is pressed.",
+			bindable: true,
 		},
 		onPressedChange: {
 			type: {
@@ -24,7 +29,7 @@ const root: APISchema<TogglePropsWithoutHTML> = {
 			type: C.BOOLEAN,
 			description: "Whether or not the switch is disabled.",
 		},
-		...domElProps("HTMLButtonElement"),
+		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [

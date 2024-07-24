@@ -25,16 +25,22 @@ export type NavigationMenuRootPropsWithoutHTML = WithChild<{
 
 	/**
 	 * The duration from when the mouse enters a trigger until the content opens.
+	 *
+	 * @defaultValue 200
 	 */
 	delayDuration?: number;
 
 	/**
 	 * How much time a user has to enter another trigger without incurring a delay again.
+	 *
+	 * @defaultValue 300
 	 */
 	skipDelayDuration?: number;
 
 	/**
 	 * The reading direction of the content.
+	 *
+	 * @defaultValue "ltr"
 	 */
 	dir?: Direction;
 

@@ -93,20 +93,18 @@ const contentProps = {
 	forceMount: forceMountProp,
 	preventOverflowTextSelection: preventOverflowTextSelectionProp,
 	dir: dirProp,
+	loop: {
+		default: C.FALSE,
+		type: C.BOOLEAN,
+		description:
+			"Whether or not to loop through the menu items in when navigating with the keyboard.",
+	},
 	...withChildProps({ elType: "HTMLDivElement" }),
 } satisfies PropObj<DropdownMenuContentPropsWithoutHTML>;
 
-const subContentProps = {
-	...floatingProps(),
-	...escapeLayerProps,
-	...dismissableLayerProps,
-	...focusScopeProps,
-	forceMount: forceMountProp,
-	preventScroll: preventScrollProp(),
-	preventOverflowTextSelection: preventOverflowTextSelectionProp,
-	...withChildProps({ elType: "HTMLDivElement" }),
-	dir: dirProp,
-} satisfies PropObj<Omit<DropdownMenuSubContentPropsWithoutHTML, "style">>;
+const subContentProps = contentProps satisfies PropObj<
+	Omit<DropdownMenuSubContentPropsWithoutHTML, "style">
+>;
 
 const checkboxItemProps = {
 	disabled: {
