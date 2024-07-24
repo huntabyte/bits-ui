@@ -87,6 +87,11 @@ export const navigation: Navigation = {
 			title: "Utilities",
 			items: [
 				{
+					title: "mergeProps",
+					href: "/docs/utilities/merge-props",
+					items: [],
+				},
+				{
 					title: "WithoutChildren",
 					href: "/docs/utilities/without-children",
 					items: [],
