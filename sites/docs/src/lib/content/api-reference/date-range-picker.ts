@@ -4,7 +4,7 @@ import type {
 	DateRangePickerRootPropsWithoutHTML,
 } from "bits-ui";
 import { label, segment } from "./date-range-field.js";
-import { withChildProps } from "./helpers.js";
+import { createApiSchema, createBooleanProp, withChildProps } from "./helpers.js";
 import { content, trigger } from "./popover.js";
 import {
 	cell,
@@ -18,12 +18,14 @@ import {
 	heading,
 	nextButton,
 	prevButton,
-} from "./range-calendar.js";
-import type { APISchema } from "$lib/types/index.js";
+} from "./calendar.js";
 import * as C from "$lib/content/constants.js";
-import { enums, union } from "$lib/content/api-reference/helpers.js";
+import { enums } from "$lib/content/api-reference/helpers.js";
+import { root as rangeFieldRoot } from "./date-range-field.js";
+import { root as rangeCalendarRoot } from "./range-calendar.js";
+import { root as datePickerRoot } from "./date-picker.js";
 
-const root: APISchema<DateRangePickerRootPropsWithoutHTML> = {
+const root = createApiSchema<DateRangePickerRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root date picker component.",
 	props: {
@@ -41,166 +43,36 @@ const root: APISchema<DateRangePickerRootPropsWithoutHTML> = {
 			},
 			description: "A function that is called when the selected date changes.",
 		},
-		readonlySegments: {
-			type: {
-				type: C.OBJECT,
-				definition: "{ start: EditableSegmentPart[]; end: EditableSegmentPart[]; }",
-			},
-			description:
-				"The segments for the start and end fields that should be readonly, meaning users cannot edit them. This is useful for prepopulating fixed segments like years, months, or days.",
-		},
-		onStartValueChange: {
-			type: {
-				type: C.FUNCTION,
-				definition: "(date: DateValue | undefined) => void",
-			},
-			description: "A function that is called when the start date changes.",
-		},
-		onEndValueChange: {
-			type: {
-				type: C.FUNCTION,
-				definition: "(date: DateValue | undefined) => void",
-			},
-			description: "A function that is called when the end date changes.",
-		},
-		closeOnRangeSelect: {
-			type: C.BOOLEAN,
+		readonlySegments: rangeFieldRoot.props!.readonlySegments,
+		isDateUnavailable: rangeFieldRoot.props!.isDateUnavailable,
+		minValue: rangeFieldRoot.props!.minValue,
+		maxValue: rangeFieldRoot.props!.maxValue,
+		granularity: rangeFieldRoot.props!.granularity,
+		hideTimeZone: rangeFieldRoot.props!.hideTimeZone,
+		hourCycle: rangeFieldRoot.props!.hourCycle,
+		locale: rangeFieldRoot.props!.locale,
+		disabled: rangeFieldRoot.props!.disabled,
+		readonly: rangeFieldRoot.props!.readonly,
+		required: rangeFieldRoot.props!.required,
+		placeholder: rangeFieldRoot.props!.placeholder,
+		onPlaceholderChange: rangeFieldRoot.props!.onPlaceholderChange,
+		closeOnRangeSelect: createBooleanProp({
 			default: C.TRUE,
 			description: "Whether or not to close the popover when a date range is selected.",
-		},
-		required: {
-			type: C.BOOLEAN,
-			description: "Whether or not the date field is required.",
-			default: C.FALSE,
-		},
-		disableDaysOutsideMonth: {
-			type: C.BOOLEAN,
-			default: C.FALSE,
-			description: "Whether or not to disable days outside the current month.",
-		},
-		placeholder: {
-			type: "DateValue",
-			description:
-				"The placeholder date, which is used to determine what month to display when no date is selected. This updates as the user navigates the calendar, and can be used to programatically control the calendar's view.",
-		},
-		onPlaceholderChange: {
-			type: {
-				type: C.FUNCTION,
-				definition: "(date: DateValue) => void",
-			},
-			description: "A function that is called when the placeholder date changes.",
-		},
-		pagedNavigation: {
-			type: C.BOOLEAN,
-			description:
-				"Whether or not to use paged navigation for the calendar. Paged navigation causes the previous and next buttons to navigate by the number of months displayed at once, rather than by one month.",
-			default: C.FALSE,
-		},
-		preventDeselect: {
-			type: C.BOOLEAN,
-			description:
-				"Whether or not to prevent the user from deselecting a date without selecting another date first.",
-			default: C.FALSE,
-		},
-		weekStartsOn: {
-			type: C.NUMBER,
-			description:
-				"The day of the week to start the calendar on. 0 is Sunday, 1 is Monday, etc.",
-			default: "0",
-		},
-		weekdayFormat: {
-			type: {
-				type: C.ENUM,
-				definition: enums("narrow", "short", "long"),
-			},
-			description:
-				"The format to use for the weekday strings provided via the `weekdays` slot prop.",
-			default: "'narrow'",
-		},
-		calendarLabel: {
-			type: C.STRING,
-			description: "The accessible label for the calendar.",
-		},
-		fixedWeeks: {
-			type: C.BOOLEAN,
-			description: "Whether or not to always display 6 weeks in the calendar.",
-			default: C.FALSE,
-		},
-		isDateDisabled: {
-			type: {
-				type: C.FUNCTION,
-				definition: "(date: DateValue) => boolean",
-			},
-			description: "A function that returns whether or not a date is disabled.",
-		},
-		isDateUnavailable: {
-			type: {
-				type: C.FUNCTION,
-				definition: "(date: DateValue) => boolean",
-			},
-			description: "A function that returns whether or not a date is unavailable.",
-		},
-		maxValue: {
-			type: "DateValue",
-			description: "The maximum date that can be selected.",
-		},
-		minValue: {
-			type: "DateValue",
-			description: "The minimum date that can be selected.",
-		},
-		locale: {
-			type: C.STRING,
-			description: "The locale to use for formatting dates.",
-		},
-		numberOfMonths: {
-			type: C.NUMBER,
-			description: "The number of months to display at once.",
-			default: "1",
-		},
-		disabled: {
-			default: C.FALSE,
-			type: C.BOOLEAN,
-			description: "Whether or not the accordion is disabled.",
-		},
-		readonly: {
-			type: C.BOOLEAN,
-			description: "Whether or not the calendar is readonly.",
-			default: C.FALSE,
-		},
-		hourCycle: {
-			type: {
-				type: C.ENUM,
-				definition: union("12", "24"),
-			},
-			description:
-				"The hour cycle to use for formatting times. Defaults to the locale preference",
-		},
-		granularity: {
-			type: {
-				type: C.ENUM,
-				definition: enums("day", "hour", "minute", "second"),
-			},
-			description:
-				"The granularity to use for formatting the field. Defaults to `'day'` if a `CalendarDate` is provided, otherwise defaults to `'minute'`. The field will render segments for each part of the date up to and including the specified granularity.",
-		},
-		hideTimeZone: {
-			type: C.BOOLEAN,
-			description: "Whether or not to hide the time zone segment of the field.",
-			default: C.FALSE,
-		},
-
-		open: {
-			type: C.BOOLEAN,
-			default: C.FALSE,
-			description: "The open state of the link popover component.",
-		},
-		onOpenChange: {
-			type: {
-				type: C.FUNCTION,
-				definition: "(open: boolean) => void",
-			},
-			description: "A callback that fires when the open state changes.",
-		},
+		}),
+		disableDaysOutsideMonth: rangeCalendarRoot.props!.disableDaysOutsideMonth,
+		pagedNavigation: rangeCalendarRoot.props!.pagedNavigation,
+		preventDeselect: rangeCalendarRoot.props!.preventDeselect,
+		weekdayFormat: rangeCalendarRoot.props!.weekdayFormat,
+		weekStartsOn: rangeCalendarRoot.props!.weekStartsOn,
+		calendarLabel: rangeCalendarRoot.props!.calendarLabel,
+		fixedWeeks: rangeCalendarRoot.props!.fixedWeeks,
+		isDateDisabled: rangeCalendarRoot.props!.isDateDisabled,
+		numberOfMonths: rangeCalendarRoot.props!.numberOfMonths,
+		open: datePickerRoot.props!.open,
+		onOpenChange: datePickerRoot.props!.onOpenChange,
+		onEndValueChange: rangeFieldRoot.props!.onEndValueChange,
+		onStartValueChange: rangeFieldRoot.props!.onStartValueChange,
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
@@ -221,9 +93,9 @@ const root: APISchema<DateRangePickerRootPropsWithoutHTML> = {
 			description: "Present on the root element.",
 		},
 	],
-};
+});
 
-const calendar: APISchema<DateRangePickerCalendarPropsWithoutHTML> = {
+const calendar = createApiSchema<DateRangePickerCalendarPropsWithoutHTML>({
 	title: "Calendar",
 	description: "The calendar component containing the grids of dates.",
 	dataAttributes: [
@@ -244,9 +116,9 @@ const calendar: APISchema<DateRangePickerCalendarPropsWithoutHTML> = {
 			description: "Present on the root element.",
 		},
 	],
-};
+});
 
-const input: APISchema<DateRangePickerInputPropsWithoutHTML> = {
+const input = createApiSchema<DateRangePickerInputPropsWithoutHTML>({
 	title: "Input",
 	description: "The field input component which contains the segments of the date field.",
 	props: {
@@ -278,7 +150,7 @@ const input: APISchema<DateRangePickerInputPropsWithoutHTML> = {
 			description: "Present on the element.",
 		},
 	],
-};
+});
 
 export const dateRangePicker = [
 	root,

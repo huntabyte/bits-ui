@@ -9,6 +9,12 @@ import type {
 	NavigationMenuViewportPropsWithoutHTML,
 } from "bits-ui";
 import {
+	createApiSchema,
+	createBooleanProp,
+	createEnumProp,
+	createFunctionProp,
+	createNumberProp,
+	createStringProp,
 	dirProp,
 	dismissableLayerProps,
 	enums,
@@ -20,82 +26,69 @@ import {
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
 
-export const root: APISchema<NavigationMenuRootPropsWithoutHTML> = {
+export const root = createApiSchema<NavigationMenuRootPropsWithoutHTML>({
 	title: "Root",
 	description:
 		"The root navigation menu component which manages & scopes the state of the navigation menu.",
 	props: {
-		value: {
-			type: C.STRING,
+		value: createStringProp({
 			description: "The value of the currently active menu.",
 			bindable: true,
-		},
-		onValueChange: {
-			type: {
-				type: C.FUNCTION,
-				definition: "(value: string | undefined) => void",
-			},
+		}),
+		onValueChange: createFunctionProp({
+			definition: "(value: string | undefined) => void",
 			description: "A callback function called when the active menu value changes.",
-		},
+		}),
 		dir: dirProp,
-		skipDelayDuration: {
-			type: C.NUMBER,
+		skipDelayDuration: createNumberProp({
 			default: "300",
 			description:
 				"How much time a user has to enter another trigger without incurring a delay again.",
-		},
-		delayDuration: {
-			type: C.NUMBER,
+		}),
+		delayDuration: createNumberProp({
 			default: "200",
 			description:
 				"The duration from when the mouse enters a trigger until the content opens.",
-		},
-		orientation: {
-			type: {
-				type: C.ENUM,
-				definition: enums("horizontal", "vertical"),
-			},
+		}),
+		orientation: createEnumProp({
+			options: ["horizontal", "vertical"],
 			default: "horizontal",
 			description: "The orientation of the menu.",
-		},
+		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
-};
+});
 
-export const list: APISchema<NavigationMenuListPropsWithoutHTML> = {
+export const list = createApiSchema<NavigationMenuListPropsWithoutHTML>({
 	title: "List",
 	description: "A menu within the menubar.",
-	props: {
-		...withChildProps({ elType: "HTMLUListElement" }),
-	},
-};
+	props: withChildProps({ elType: "HTMLUListElement" }),
+});
 
-export const item: APISchema<NavigationMenuItemPropsWithoutHTML> = {
+export const item = createApiSchema<NavigationMenuItemPropsWithoutHTML>({
 	title: "Item",
 	description: "A list item within the navigation menu.",
 	props: {
-		value: {
-			type: C.STRING,
+		value: createStringProp({
 			description: "The value of the item.",
-		},
+		}),
 		...withChildProps({ elType: "HTMLLiElement" }),
 	},
-};
+});
 
-export const trigger: APISchema<NavigationMenuTriggerPropsWithoutHTML> = {
+export const trigger = createApiSchema<NavigationMenuTriggerPropsWithoutHTML>({
 	title: "Trigger",
 	description: "The button element which toggles the dropdown menu.",
 	props: {
-		disabled: {
+		disabled: createBooleanProp({
 			default: C.FALSE,
-			type: C.BOOLEAN,
 			description: "Whether or not the trigger is disabled.",
-		},
+		}),
 		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
-};
+});
 
-export const content: APISchema<NavigationMenuContentPropsWithoutHTML> = {
+export const content = createApiSchema<NavigationMenuContentPropsWithoutHTML>({
 	title: "Content",
 	description: "The content displayed when the dropdown menu is open.",
 	props: {
@@ -105,29 +98,25 @@ export const content: APISchema<NavigationMenuContentPropsWithoutHTML> = {
 		forceMount: forceMountProp,
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
-};
+});
 
-export const link: APISchema<NavigationMenuLinkPropsWithoutHTML> = {
+export const link = createApiSchema<NavigationMenuLinkPropsWithoutHTML>({
 	title: "Link",
 	description: "A link within the navigation menu.",
 	props: {
-		active: {
-			type: C.BOOLEAN,
+		active: createBooleanProp({
 			default: C.FALSE,
 			description: "Whether or not the link is active.",
-		},
-		onSelect: {
-			type: {
-				type: C.FUNCTION,
-				definition: "() => void",
-			},
+		}),
+		onSelect: createFunctionProp({
+			definition: "() => void",
 			description: "A callback function called when the link is selected.",
-		},
+		}),
 		...withChildProps({ elType: "HTMLAnchorElement" }),
 	},
-};
+});
 
-export const indicator: APISchema<NavigationMenuIndicatorPropsWithoutHTML> = {
+export const indicator = createApiSchema<NavigationMenuIndicatorPropsWithoutHTML>({
 	title: "Indicator",
 	description:
 		"The indicator element for the navigation menu, which is used to indicate the current active item.",
@@ -135,9 +124,9 @@ export const indicator: APISchema<NavigationMenuIndicatorPropsWithoutHTML> = {
 		forceMount: forceMountProp,
 		...withChildProps({ elType: "HTMLSpanElement" }),
 	},
-};
+});
 
-export const viewport: APISchema<NavigationMenuViewportPropsWithoutHTML> = {
+export const viewport = createApiSchema<NavigationMenuViewportPropsWithoutHTML>({
 	title: "Viewport",
 	description:
 		"The viewport element for the navigation menu, which is used to contain the menu items.",
@@ -145,6 +134,6 @@ export const viewport: APISchema<NavigationMenuViewportPropsWithoutHTML> = {
 		forceMount: forceMountProp,
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
-};
+});
 
 export const navigationMenu = [root, list, item, trigger, content, link, viewport, indicator];

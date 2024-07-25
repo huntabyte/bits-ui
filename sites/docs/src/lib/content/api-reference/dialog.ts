@@ -10,6 +10,7 @@ import type {
 } from "bits-ui";
 import {
 	childrenSnippet,
+	createApiSchema,
 	dismissableLayerProps,
 	escapeLayerProps,
 	focusScopeProps,
@@ -22,9 +23,8 @@ import {
 } from "./helpers.js";
 import { enums } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
-import type { APISchema } from "$lib/types/index.js";
 
-export const root: APISchema<DialogRootPropsWithoutHTML> = {
+export const root = createApiSchema<DialogRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root component used to set and manage the state of the dialog.",
 	props: {
@@ -42,9 +42,9 @@ export const root: APISchema<DialogRootPropsWithoutHTML> = {
 		},
 		children: childrenSnippet(),
 	},
-};
+});
 
-export const close: APISchema<DialogClosePropsWithoutHTML> = {
+export const close = createApiSchema<DialogClosePropsWithoutHTML>({
 	title: "Close",
 	description: "A button used to close the dialog.",
 	props: withChildProps({ elType: "HTMLButtonElement" }),
@@ -54,9 +54,9 @@ export const close: APISchema<DialogClosePropsWithoutHTML> = {
 			description: "Present on the close button.",
 		},
 	],
-};
+});
 
-export const content: APISchema<DialogContentPropsWithoutHTML> = {
+export const content = createApiSchema<DialogContentPropsWithoutHTML>({
 	title: "Content",
 	description: "The content displayed within the dialog modal.",
 	props: {
@@ -80,9 +80,9 @@ export const content: APISchema<DialogContentPropsWithoutHTML> = {
 			description: "Present on the content.",
 		},
 	],
-};
+});
 
-export const title: APISchema<DialogTitlePropsWithoutHTML> = {
+export const title = createApiSchema<DialogTitlePropsWithoutHTML>({
 	title: "Title",
 	description: "An accessibile title for the dialog.",
 	props: {
@@ -101,9 +101,9 @@ export const title: APISchema<DialogTitlePropsWithoutHTML> = {
 			description: "Present on the title.",
 		},
 	],
-};
+});
 
-export const description: APISchema<DialogDescriptionPropsWithoutHTML> = {
+export const description = createApiSchema<DialogDescriptionPropsWithoutHTML>({
 	title: "Description",
 	description: "An accessibile description for the dialog.",
 	props: withChildProps({ elType: "HTMLDivElement" }),
@@ -113,9 +113,9 @@ export const description: APISchema<DialogDescriptionPropsWithoutHTML> = {
 			description: "Present on the description.",
 		},
 	],
-};
+});
 
-export const trigger: APISchema<DialogTriggerPropsWithoutHTML> = {
+export const trigger = createApiSchema<DialogTriggerPropsWithoutHTML>({
 	title: "Trigger",
 	description: "The element which opens the dialog on press.",
 	props: {
@@ -127,9 +127,9 @@ export const trigger: APISchema<DialogTriggerPropsWithoutHTML> = {
 			description: "Present on the trigger.",
 		},
 	],
-};
+});
 
-export const overlay: APISchema<DialogOverlayPropsWithoutHTML> = {
+export const overlay = createApiSchema<DialogOverlayPropsWithoutHTML>({
 	title: "Overlay",
 	description: "An overlay which covers the body when the dialog is open.",
 	props: {
@@ -148,22 +148,12 @@ export const overlay: APISchema<DialogOverlayPropsWithoutHTML> = {
 			description: "Present on the overlay.",
 		},
 	],
-};
+});
 
-export const portal: APISchema<DialogPortalPropsWithoutHTML> = {
+export const portal = createApiSchema<DialogPortalPropsWithoutHTML>({
 	title: "Portal",
 	description: "A portal which renders the dialog into the body when it is open.",
 	props: portalProps,
-	dataAttributes: [
-		{
-			name: "portal",
-			description: "Present on the portal.",
-		},
-		{
-			name: "dialog-portal",
-			description: "Present on the portal.",
-		},
-	],
-};
+});
 
 export const dialog = [root, trigger, content, overlay, portal, close, title, description];

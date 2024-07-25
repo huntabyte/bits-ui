@@ -1,16 +1,22 @@
-import type {
-	SelectArrowPropsWithoutHTML,
-	SelectContentPropsWithoutHTML,
-	SelectGroupLabelPropsWithoutHTML,
-	SelectGroupPropsWithoutHTML,
-	SelectItemPropsWithoutHTML,
-	SelectRootPropsWithoutHTML,
-	SelectSeparatorPropsWithoutHTML,
-	SelectTriggerPropsWithoutHTML,
+import {
+	type SelectValuePropsWithoutHTML,
+	type SelectArrowPropsWithoutHTML,
+	type SelectContentPropsWithoutHTML,
+	type SelectGroupLabelPropsWithoutHTML,
+	type SelectGroupPropsWithoutHTML,
+	type SelectItemPropsWithoutHTML,
+	type SelectRootPropsWithoutHTML,
+	type SelectSeparatorPropsWithoutHTML,
+	type SelectTriggerPropsWithoutHTML,
 } from "bits-ui";
 import {
 	arrowProps,
 	childrenSnippet,
+	createApiSchema,
+	createBooleanProp,
+	createEnumProp,
+	createFunctionProp,
+	createStringProp,
 	dirProp,
 	dismissableLayerProps,
 	enums,
@@ -23,71 +29,58 @@ import {
 	withChildProps,
 } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
-import type { APISchema } from "$lib/types/index.js";
 
-export const root: APISchema<SelectRootPropsWithoutHTML> = {
+export const root = createApiSchema<SelectRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root select component which manages & scopes the state of the select.",
 	props: {
-		disabled: {
-			default: C.FALSE,
-			type: C.BOOLEAN,
-			description: "Whether or not the select menu is disabled.",
-		},
-		autocomplete: {
-			type: C.STRING,
-			description: "The autocomplete attribute of the select.",
-		},
-		dir: dirProp,
-		form: {
-			type: C.STRING,
-			description: "The form attribute of the select.",
-		},
-		value: {
-			type: C.STRING,
+		value: createStringProp({
 			description: "The value of the currently selected select item.",
-		},
-		onValueChange: {
-			type: {
-				type: C.FUNCTION,
-				definition: "(value: string | undefined) => void",
-			},
+			bindable: true,
+		}),
+		onValueChange: createFunctionProp({
+			definition: "(value: string | undefined) => void",
 			description: "A callback that is fired when the select menu's value changes.",
-		},
-		open: {
-			type: C.BOOLEAN,
+		}),
+		open: createBooleanProp({
 			default: C.FALSE,
 			description: "The open state of the select menu.",
-		},
-		onOpenChange: {
-			type: {
-				type: C.FUNCTION,
-				definition: "(open: boolean) => void",
-			},
+			bindable: true,
+		}),
+		onOpenChange: createFunctionProp({
+			definition: "(open: boolean) => void",
 			description: "A callback that is fired when the select menu's open state changes.",
-		},
-		name: {
-			type: C.STRING,
-			description: "The name to apply to the hidden input element for form submission.",
-		},
-		required: {
+		}),
+		disabled: createBooleanProp({
 			default: C.FALSE,
-			type: C.BOOLEAN,
+			description: "Whether or not the select menu is disabled.",
+		}),
+		autocomplete: createStringProp({
+			description: "The autocomplete attribute of the select.",
+		}),
+		dir: dirProp,
+		form: createStringProp({
+			description: "The form attribute of the select.",
+		}),
+		name: createStringProp({
+			description: "The name to apply to the hidden input element for form submission.",
+		}),
+		required: createBooleanProp({
+			default: C.FALSE,
 			description: "Whether or not the select menu is required.",
-		},
+		}),
 		children: childrenSnippet(),
 	},
-};
+});
 
-export const trigger: APISchema<SelectTriggerPropsWithoutHTML> = {
+export const trigger = createApiSchema<SelectTriggerPropsWithoutHTML>({
 	title: "Trigger",
 	description: "The button element which toggles the select menu's open state.",
 	props: {
-		disabled: {
+		disabled: createBooleanProp({
 			default: C.FALSE,
-			type: C.BOOLEAN,
 			description: "Whether or not the select menu trigger is disabled.",
-		},
+		}),
 		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
 	dataAttributes: [
@@ -106,21 +99,18 @@ export const trigger: APISchema<SelectTriggerPropsWithoutHTML> = {
 			description: "Present on the trigger element.",
 		},
 	],
-};
+});
 
-export const content: APISchema<SelectContentPropsWithoutHTML> = {
+export const content = createApiSchema<SelectContentPropsWithoutHTML>({
 	title: "Content",
 	description: "The content/menu element which contains the select menu's items.",
 	props: {
-		position: {
-			type: {
-				type: C.ENUM,
-				definition: enums("floating", "item-aligned"),
-			},
+		position: createEnumProp({
+			options: ["floating", "item-aligned"],
 			default: "floating",
 			description:
 				"The positioning strategy to use for the content. If set to 'item-aligned', the content will be positioned relative to the trigger, similar to a native select. If set to `floating`, the content will use Floating UI to position itself similar to other popover-like components.",
-		},
+		}),
 		dir: dirProp,
 		...floatingProps(),
 		...dismissableLayerProps,
@@ -129,12 +119,11 @@ export const content: APISchema<SelectContentPropsWithoutHTML> = {
 		preventOverflowTextSelection: preventOverflowTextSelectionProp,
 		preventScroll: preventScrollProp,
 		forceMount: forceMountProp,
-		loop: {
-			type: C.BOOLEAN,
+		loop: createBooleanProp({
 			default: C.FALSE,
 			description:
 				"Whether or not the select menu should loop through items when reaching the end.",
-		},
+		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
@@ -143,27 +132,24 @@ export const content: APISchema<SelectContentPropsWithoutHTML> = {
 			description: "Present on the content element.",
 		},
 	],
-};
+});
 
-export const item: APISchema<SelectItemPropsWithoutHTML> = {
+export const item = createApiSchema<SelectItemPropsWithoutHTML>({
 	title: "Item",
 	description: "A select item, which must be a child of the `Select.Content` component.",
 	props: {
-		textValue: {
-			type: C.STRING,
-			description: "The text value of the select item, which is used for typeahead purposes.",
-		},
-		value: {
-			type: C.STRING,
+		value: createStringProp({
 			description: "The value of the select item.",
 			required: true,
-		},
-		disabled: {
-			type: C.BOOLEAN,
+		}),
+		textValue: createStringProp({
+			description: "The text value of the select item, which is used for typeahead purposes.",
+		}),
+		disabled: createBooleanProp({
 			default: C.FALSE,
 			description:
 				"Whether or not the select item is disabled. This will prevent interaction/selection.",
-		},
+		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
@@ -186,17 +172,17 @@ export const item: APISchema<SelectItemPropsWithoutHTML> = {
 			description: "Present on the item element.",
 		},
 	],
-};
+});
 
-export const value: APISchema = {
+export const value = createApiSchema<SelectValuePropsWithoutHTML>({
 	title: "Value",
 	description:
 		"A representation of the select menu's value, which is typically displayed in the trigger.",
 	props: {
-		placeholder: {
-			type: C.STRING,
+		placeholder: createStringProp({
 			description: "A placeholder value to display when no value is selected.",
-		},
+		}),
+		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
 		{
@@ -209,9 +195,9 @@ export const value: APISchema = {
 				"Present when the placeholder is being displayed (there isn't a value selected). You can use this to style the placeholder differently than the selected value.",
 		},
 	],
-};
+});
 
-export const group: APISchema<SelectGroupPropsWithoutHTML> = {
+export const group = createApiSchema<SelectGroupPropsWithoutHTML>({
 	title: "Group",
 	description: "An accessible group of select menu items.",
 	props: withChildProps({ elType: "HTMLDivElement" }),
@@ -221,9 +207,9 @@ export const group: APISchema<SelectGroupPropsWithoutHTML> = {
 			description: "Present on the group element.",
 		},
 	],
-};
+});
 
-export const groupLabel: APISchema<SelectGroupLabelPropsWithoutHTML> = {
+export const groupLabel = createApiSchema<SelectGroupLabelPropsWithoutHTML>({
 	title: "GroupLabel",
 	description:
 		"A label for the select menu which will be skipped when navigating with the keyboard. This must be a child of the `Select.Group` component to be accessible.",
@@ -234,9 +220,9 @@ export const groupLabel: APISchema<SelectGroupLabelPropsWithoutHTML> = {
 			description: "Present on the label element.",
 		},
 	],
-};
+});
 
-export const separator: APISchema<SelectSeparatorPropsWithoutHTML> = {
+export const separator = createApiSchema<SelectSeparatorPropsWithoutHTML>({
 	title: "Separator",
 	description: "A visual separator for use between select items or groups.",
 	props: withChildProps({ elType: "HTMLDivElement" }),
@@ -246,9 +232,9 @@ export const separator: APISchema<SelectSeparatorPropsWithoutHTML> = {
 			description: "Present on the separator element.",
 		},
 	],
-};
+});
 
-export const arrow: APISchema<SelectArrowPropsWithoutHTML> = {
+export const arrow = createApiSchema<SelectArrowPropsWithoutHTML>({
 	title: "Arrow",
 	description: "An optional arrow element which points to the trigger when open.",
 	props: arrowProps,
@@ -258,6 +244,6 @@ export const arrow: APISchema<SelectArrowPropsWithoutHTML> = {
 			description: "Present on the arrow element.",
 		},
 	],
-};
+});
 
 export const select = [root, trigger, content, item, value, group, groupLabel, separator, arrow];

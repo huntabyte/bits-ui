@@ -8,6 +8,9 @@ import type {
 import {
 	arrowProps,
 	childrenSnippet,
+	createApiSchema,
+	createBooleanProp,
+	createFunctionProp,
 	dirProp,
 	dismissableLayerProps,
 	enums,
@@ -20,29 +23,25 @@ import {
 	withChildProps,
 } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
-import type { APISchema } from "$lib/types/index.js";
 
-export const root: APISchema<PopoverRootPropsWithoutHTML> = {
+export const root = createApiSchema<PopoverRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root component used to manage the state of the state of the popover.",
 	props: {
-		open: {
-			type: C.BOOLEAN,
+		open: createBooleanProp({
 			default: C.FALSE,
 			description: "The open state of the link popover component.",
-		},
-		onOpenChange: {
-			type: {
-				type: C.FUNCTION,
-				definition: "(open: boolean) => void",
-			},
+			bindable: true,
+		}),
+		onOpenChange: createFunctionProp({
+			definition: "(open: boolean) => void",
 			description: "A callback that fires when the open state changes.",
-		},
+		}),
 		children: childrenSnippet(),
 	},
-};
+});
 
-export const trigger: APISchema<PopoverTriggerPropsWithoutHTML> = {
+export const trigger = createApiSchema<PopoverTriggerPropsWithoutHTML>({
 	title: "Trigger",
 	description: "A component which toggles the opening and closing of the popover on press.",
 	props: withChildProps({ elType: "HTMLButtonElement" }),
@@ -58,9 +57,9 @@ export const trigger: APISchema<PopoverTriggerPropsWithoutHTML> = {
 			description: "Present on the trigger element.",
 		},
 	],
-};
+});
 
-export const content: APISchema<PopoverContentPropsWithoutHTML> = {
+export const content = createApiSchema<PopoverContentPropsWithoutHTML>({
 	title: "Content",
 	description: "The contents of the popover which are displayed when the popover is open.",
 	props: {
@@ -86,9 +85,9 @@ export const content: APISchema<PopoverContentPropsWithoutHTML> = {
 			description: "Present on the content element.",
 		},
 	],
-};
+});
 
-export const close: APISchema<PopoverClosePropsWithoutHTML> = {
+export const close = createApiSchema<PopoverClosePropsWithoutHTML>({
 	title: "Close",
 	description:
 		"A button which closes the popover when pressed and is typically placed in the content.",
@@ -99,9 +98,9 @@ export const close: APISchema<PopoverClosePropsWithoutHTML> = {
 			description: "Present on the close button.",
 		},
 	],
-};
+});
 
-export const arrow: APISchema<PopoverArrowPropsWithoutHTML> = {
+export const arrow = createApiSchema<PopoverArrowPropsWithoutHTML>({
 	title: "Arrow",
 	description: "An optional arrow element which points to the trigger when the popover is open.",
 	props: arrowProps,
@@ -115,6 +114,6 @@ export const arrow: APISchema<PopoverArrowPropsWithoutHTML> = {
 			description: "Present on the arrow element.",
 		},
 	],
-};
+});
 
 export const popover = [root, trigger, content, close, arrow];

@@ -4,12 +4,12 @@ import type {
 	DateRangeFieldRootPropsWithoutHTML,
 	DateRangeFieldSegmentPropsWithoutHTML,
 } from "bits-ui";
-import { withChildProps } from "./helpers.js";
-import { enums, union } from "$lib/content/api-reference/helpers.js";
+import { createApiSchema, createEnumProp, createFunctionProp, withChildProps } from "./helpers.js";
+import { enums } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
-import type { APISchema } from "$lib/types/index.js";
+import { root as dateFieldRoot } from "./date-field.js";
 
-export const root: APISchema<DateRangeFieldRootPropsWithoutHTML> = {
+export const root = createApiSchema<DateRangeFieldRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root date field component.",
 	props: {
@@ -27,119 +27,47 @@ export const root: APISchema<DateRangeFieldRootPropsWithoutHTML> = {
 			},
 			description: "A function that is called when the selected date changes.",
 		},
-		placeholder: {
-			type: "DateValue",
-			description:
-				"The placeholder date, which is used to determine what date to start the segments from when no value exists.",
-		},
-		onPlaceholderChange: {
-			type: {
-				type: C.FUNCTION,
-				definition: "(date: DateValue) => void",
-			},
-			description: "A function that is called when the placeholder date changes.",
-		},
-		isDateUnavailable: {
-			type: {
-				type: C.FUNCTION,
-				definition: "(date: DateValue) => boolean",
-			},
-			description: "A function that returns whether or not a date is unavailable.",
-		},
-		hourCycle: {
-			type: {
-				type: C.ENUM,
-				definition: union("12", "24"),
-			},
-			description:
-				"The hour cycle to use for formatting times. Defaults to the locale preference",
-		},
-		granularity: {
-			type: {
-				type: C.ENUM,
-				definition: enums("day", "hour", "minute", "second"),
-			},
-			description:
-				"The granularity to use for formatting the field. Defaults to `'day'` if a `CalendarDate` is provided, otherwise defaults to `'minute'`. The field will render segments for each part of the date up to and including the specified granularity.",
-		},
-		hideTimeZone: {
-			type: C.BOOLEAN,
-			description: "Whether or not to hide the time zone segment of the field.",
-			default: C.FALSE,
-		},
-		maxValue: {
-			type: "DateValue",
-			description: "The maximum valid date that can be entered.",
-		},
-		minValue: {
-			type: "DateValue",
-			description: "The minimum valid date that can be entered.",
-		},
-		locale: {
-			type: C.STRING,
-			description: "The locale to use for formatting dates.",
-		},
-		disabled: {
-			default: C.FALSE,
-			type: C.BOOLEAN,
-			description: "Whether or not the accordion is disabled.",
-		},
-		required: {
-			type: C.BOOLEAN,
-			description: "Whether or not the date field is required.",
-			default: C.FALSE,
-		},
-		readonly: {
-			type: C.BOOLEAN,
-			description: "Whether or not the field is readonly.",
-			default: C.FALSE,
-		},
-		readonlySegments: {
-			type: {
-				type: C.OBJECT,
-				definition: "{ start: EditableSegmentPart[]; end: EditableSegmentPart[]; }",
-			},
-			description:
-				"The segments for the start and end fields that should be readonly, meaning users cannot edit them. This is useful for prepopulating fixed segments like years, months, or days.",
-		},
-		onStartValueChange: {
-			type: {
-				type: C.FUNCTION,
-				definition: "(date: DateValue | undefined) => void",
-			},
+		placeholder: dateFieldRoot.props!.placeholder,
+		onPlaceholderChange: dateFieldRoot.props!.onPlaceholderChange,
+		isDateUnavailable: dateFieldRoot.props!.isDateUnavailable,
+		minValue: dateFieldRoot.props!.minValue,
+		maxValue: dateFieldRoot.props!.maxValue,
+		granularity: dateFieldRoot.props!.granularity,
+		hideTimeZone: dateFieldRoot.props!.hideTimeZone,
+		hourCycle: dateFieldRoot.props!.hourCycle,
+		locale: dateFieldRoot.props!.locale,
+		disabled: dateFieldRoot.props!.disabled,
+		readonly: dateFieldRoot.props!.readonly,
+		readonlySegments: dateFieldRoot.props!.readonlySegments,
+		required: dateFieldRoot.props!.required,
+		onStartValueChange: createFunctionProp({
+			definition: "(date: DateValue | undefined) => void",
 			description: "A function that is called when the start date changes.",
-		},
-		onEndValueChange: {
-			type: {
-				type: C.FUNCTION,
-				definition: "(date: DateValue | undefined) => void",
-			},
+		}),
+		onEndValueChange: createFunctionProp({
+			definition: "(date: DateValue | undefined) => void",
 			description: "A function that is called when the end date changes.",
-		},
+		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
-};
+});
 
-export const input: APISchema<DateRangeFieldInputPropsWithoutHTML> = {
+export const input = createApiSchema<DateRangeFieldInputPropsWithoutHTML>({
 	title: "Input",
 	description: "The container for the segments of the date field.",
 	props: {
+		type: createEnumProp({
+			options: ["start", "end"],
+			description: "The type of field to render (start or end).",
+			required: true,
+		}),
 		name: {
 			type: C.STRING,
 			description:
 				"The name of the date field used for form submission. If provided, a hidden input element will be rendered alongside the date field.",
 		},
-		type: {
-			type: {
-				type: C.ENUM,
-				definition: enums("start", "end"),
-			},
-			description: "The type of field to render (start or end).",
-			required: true,
-		},
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
-
 	dataAttributes: [
 		{
 			name: "invalid",
@@ -154,9 +82,9 @@ export const input: APISchema<DateRangeFieldInputPropsWithoutHTML> = {
 			description: "Present on the element.",
 		},
 	],
-};
+});
 
-export const segment: APISchema<DateRangeFieldSegmentPropsWithoutHTML> = {
+export const segment = createApiSchema<DateRangeFieldSegmentPropsWithoutHTML>({
 	title: "Segment",
 	description: "A segment of the date field.",
 	props: {
@@ -210,9 +138,9 @@ export const segment: APISchema<DateRangeFieldSegmentPropsWithoutHTML> = {
 			description: "Present on the element.",
 		},
 	],
-};
+});
 
-export const label: APISchema<DateRangeFieldLabelPropsWithoutHTML> = {
+export const label = createApiSchema<DateRangeFieldLabelPropsWithoutHTML>({
 	title: "Label",
 	description: "The label for the date field.",
 	props: withChildProps({ elType: "HTMLSpanElement" }),
@@ -226,6 +154,6 @@ export const label: APISchema<DateRangeFieldLabelPropsWithoutHTML> = {
 			description: "Present on the element.",
 		},
 	],
-};
+});
 
 export const dateRangeField = [root, input, segment, label];

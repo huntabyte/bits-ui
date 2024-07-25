@@ -1,49 +1,45 @@
 import type { SwitchRootPropsWithoutHTML, SwitchThumbPropsWithoutHTML } from "bits-ui";
-import { withChildProps } from "./helpers.js";
+import {
+	createApiSchema,
+	createBooleanProp,
+	createFunctionProp,
+	createStringProp,
+	withChildProps,
+} from "./helpers.js";
 import { enums } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
-import type { APISchema } from "$lib/types/index.js";
 
-const root: APISchema<SwitchRootPropsWithoutHTML> = {
+const root = createApiSchema<SwitchRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root switch component used to set and manage the state of the switch.",
 	props: {
-		checked: {
+		checked: createBooleanProp({
 			default: C.FALSE,
-			type: C.BOOLEAN,
 			description: "Whether or not the switch is checked.",
 			bindable: true,
-		},
-		onCheckedChange: {
-			type: {
-				type: C.FUNCTION,
-				definition: "(checked: boolean) => void",
-			},
+		}),
+		onCheckedChange: createFunctionProp({
+			definition: "(checked: boolean) => void",
 			description: "A callback function called when the checked state of the switch changes.",
-		},
-		disabled: {
+		}),
+		disabled: createBooleanProp({
 			default: C.FALSE,
-			type: C.BOOLEAN,
 			description: "Whether or not the switch is disabled.",
-		},
-		name: {
-			type: C.STRING,
+		}),
+		name: createStringProp({
 			description:
 				"The name of the hidden input element, used to identify the input in form submissions.",
-		},
-		required: {
+		}),
+		required: createBooleanProp({
 			default: C.FALSE,
-			type: C.BOOLEAN,
 			description: "Whether or not the switch is required to be checked.",
-		},
-		value: {
-			type: C.STRING,
+		}),
+		value: createStringProp({
 			description:
 				"The value of the hidden input element to be used in form submissions when the switch is checked.",
-		},
+		}),
 		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
-
 	dataAttributes: [
 		{
 			name: "state",
@@ -64,13 +60,12 @@ const root: APISchema<SwitchRootPropsWithoutHTML> = {
 			description: "Present on the root element.",
 		},
 	],
-};
+});
 
-const thumb: APISchema<SwitchThumbPropsWithoutHTML> = {
+const thumb = createApiSchema<SwitchThumbPropsWithoutHTML>({
 	title: "Thumb",
 	description: "The thumb on the switch used to indicate the switch's state.",
 	props: withChildProps({ elType: "HTMLSpanElement" }),
-
 	dataAttributes: [
 		{
 			name: "state",
@@ -87,6 +82,6 @@ const thumb: APISchema<SwitchThumbPropsWithoutHTML> = {
 			description: "Present on the thumb element.",
 		},
 	],
-};
+});
 
 export const switchData = [root, thumb];

@@ -1,9 +1,8 @@
 import type { LabelRootPropsWithoutHTML } from "bits-ui";
-import { withChildProps } from "$lib/content/api-reference/helpers.js";
-import type { APISchema } from "$lib/types/index.js";
+import { createApiSchema, withChildProps } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 
-export const root: APISchema<LabelRootPropsWithoutHTML> = {
+export const root = createApiSchema<LabelRootPropsWithoutHTML>({
 	title: "Root",
 	description: "An enhanced label component that can be used with any input.",
 	props: {
@@ -20,6 +19,6 @@ export const root: APISchema<LabelRootPropsWithoutHTML> = {
 			description: "Present on the root element.",
 		},
 	],
-};
+});
 
 export const label = [root];

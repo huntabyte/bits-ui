@@ -7,39 +7,33 @@ import type {
 } from "bits-ui";
 import {
 	childrenSnippet,
+	createApiSchema,
+	createEnumProp,
+	createNumberProp,
+	dirProp,
 	enums,
 	forceMountProp,
 	refProp,
 	withChildProps,
 } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
-import type { APISchema } from "$lib/types/index.js";
 
-export const root: APISchema<ScrollAreaRootPropsWithoutHTML> = {
+export const root = createApiSchema<ScrollAreaRootPropsWithoutHTML>({
 	title: "Root",
 	description:
 		"The container of all scroll area components. Overflow is hidden on this element to prevent double scrollbars.",
 	props: {
-		type: {
-			type: {
-				type: C.ENUM,
-				definition: enums("hover", "scroll", "auto", "always"),
-			},
+		type: createEnumProp({
+			options: ["hover", "scroll", "auto", "always"],
+			default: "'hover'",
 			description: "The type of scroll area.",
-		},
-		scrollHideDelay: {
-			type: "number",
+		}),
+		scrollHideDelay: createNumberProp({
 			description:
 				"The delay in milliseconds before the scroll area hides itself when using `'hover'` or `'scroll'` type.",
 			default: "600",
-		},
-		dir: {
-			type: {
-				type: C.ENUM,
-				definition: enums("ltr", "rtl"),
-			},
-			description: "The reading direction of the scroll area.",
-		},
+		}),
+		dir: dirProp,
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
@@ -48,9 +42,9 @@ export const root: APISchema<ScrollAreaRootPropsWithoutHTML> = {
 			description: "Present on the root element.",
 		},
 	],
-};
+});
 
-export const viewport: APISchema<ScrollAreaViewportPropsWithoutHTML> = {
+export const viewport = createApiSchema<ScrollAreaViewportPropsWithoutHTML>({
 	title: "Viewport",
 	description:
 		"The component which wraps the content and is responsible for computing the scroll area size.",
@@ -64,20 +58,17 @@ export const viewport: APISchema<ScrollAreaViewportPropsWithoutHTML> = {
 			description: "Present on the viewport element.",
 		},
 	],
-};
+});
 
-export const scrollbar: APISchema<ScrollAreaScrollbarPropsWithoutHTML> = {
+export const scrollbar = createApiSchema<ScrollAreaScrollbarPropsWithoutHTML>({
 	title: "Scrollbar",
 	description: "A scrollbar of the scroll area.",
 	props: {
-		orientation: {
-			type: {
-				type: C.ENUM,
-				definition: enums("horizontal", "vertical"),
-			},
+		orientation: createEnumProp({
+			options: ["horizontal", "vertical"],
 			description: "The orientation of the scrollbar.",
 			required: true,
-		},
+		}),
 		forceMount: forceMountProp,
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
@@ -97,9 +88,9 @@ export const scrollbar: APISchema<ScrollAreaScrollbarPropsWithoutHTML> = {
 			description: "Present on the `'vertical'` scrollbar element.",
 		},
 	],
-};
+});
 
-export const thumb: APISchema<ScrollAreaThumbPropsWithoutHTML> = {
+export const thumb = createApiSchema<ScrollAreaThumbPropsWithoutHTML>({
 	title: "Thumb",
 	description: "A thumb of a scrollbar in the scroll area.",
 	props: {
@@ -122,9 +113,9 @@ export const thumb: APISchema<ScrollAreaThumbPropsWithoutHTML> = {
 			description: "Present on the `'vertical'` thumb element.",
 		},
 	],
-};
+});
 
-export const corner: APISchema<ScrollAreaCornerPropsWithoutHTML> = {
+export const corner = createApiSchema<ScrollAreaCornerPropsWithoutHTML>({
 	title: "Corner",
 	description: "The corner element between the X and Y scrollbars.",
 	props: withChildProps({ elType: "HTMLDivElement" }),
@@ -134,6 +125,6 @@ export const corner: APISchema<ScrollAreaCornerPropsWithoutHTML> = {
 			description: "Present on the corner element.",
 		},
 	],
-};
+});
 
 export const scrollArea = [root, viewport, scrollbar, thumb, corner];

@@ -15,7 +15,13 @@ import type {
 	MenubarSubTriggerPropsWithoutHTML,
 	MenubarTriggerPropsWithoutHTML,
 } from "bits-ui";
-import { dirProp, withChildProps } from "./helpers.js";
+import {
+	createBooleanProp,
+	createFunctionProp,
+	createStringProp,
+	dirProp,
+	withChildProps,
+} from "./helpers.js";
 import { menu as m } from "./menu.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
@@ -24,26 +30,20 @@ export const root: APISchema<MenubarRootPropsWithoutHTML> = {
 	title: "Root",
 	description: "The root menubar component which manages & scopes the state of the menubar.",
 	props: {
-		value: {
-			type: C.STRING,
+		value: createStringProp({
 			description: "The value of the currently active menu.",
 			bindable: true,
-		},
-		dir: dirProp,
-		onValueChange: {
-			type: {
-				type: C.FUNCTION,
-				definition: "(value: string | undefined) => void",
-			},
+		}),
+		onValueChange: createFunctionProp({
+			definition: "(value: string | undefined) => void",
 			description: "A callback function called when the active menu value changes.",
-		},
-		loop: {
+		}),
+		dir: dirProp,
+		loop: createBooleanProp({
 			default: C.TRUE,
-			type: C.BOOLEAN,
 			description:
 				"Whether or not to loop through the menubar menu triggers when navigating with the keyboard.",
-		},
-
+		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 };
@@ -53,11 +53,10 @@ export const menu: APISchema<MenubarMenuPropsWithoutHTML> = {
 	description: "A menu within the menubar.",
 	...m.root,
 	props: {
-		value: {
-			type: C.STRING,
+		value: createStringProp({
 			description:
 				"The value of this menu within the menubar, used to identify it when determining which menu is active.",
-		},
+		}),
 		...m.root.props,
 	},
 };

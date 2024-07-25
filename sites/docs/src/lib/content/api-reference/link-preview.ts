@@ -7,6 +7,10 @@ import type {
 import {
 	arrowProps,
 	childrenSnippet,
+	createApiSchema,
+	createBooleanProp,
+	createFunctionProp,
+	createNumberProp,
 	dirProp,
 	dismissableLayerProps,
 	enums,
@@ -17,51 +21,43 @@ import {
 	withChildProps,
 } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
-import type { APISchema } from "$lib/types/index.js";
 
-export const root: APISchema<LinkPreviewRootPropsWithoutHTML> = {
+export const root = createApiSchema<LinkPreviewRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root component used to manage the state of the state of the link preview.",
 	props: {
-		openDelay: {
-			type: C.NUMBER,
+		openDelay: createNumberProp({
 			default: "700",
 			description:
 				"The amount of time in milliseconds to delay opening the preview when hovering over the trigger.",
-		},
-		closeDelay: {
-			type: C.NUMBER,
+		}),
+		closeDelay: createNumberProp({
 			default: "300",
 			description:
 				"The amount of time in milliseconds to delay closing the preview when the mouse leaves the trigger.",
-		},
-		open: {
-			type: C.BOOLEAN,
+		}),
+		open: createBooleanProp({
 			default: "false",
 			description: "The open state of the link preview component.",
-		},
-		onOpenChange: {
-			type: {
-				type: C.FUNCTION,
-				definition: "(open: boolean) => void",
-			},
+			bindable: true,
+		}),
+		onOpenChange: createFunctionProp({
+			definition: "(open: boolean) => void",
 			description: "A callback that fires when the open state changes.",
-		},
-		disabled: {
-			type: C.BOOLEAN,
+		}),
+		disabled: createBooleanProp({
 			default: C.FALSE,
 			description: "Whether or not the link preview is disabled.",
-		},
-		ignoreNonKeyboardFocus: {
-			type: C.BOOLEAN,
+		}),
+		ignoreNonKeyboardFocus: createBooleanProp({
 			default: C.FALSE,
 			description: "Whether the link preview should ignore non-keyboard focus.",
-		},
+		}),
 		children: childrenSnippet(),
 	},
-};
+});
 
-export const trigger: APISchema<LinkPreviewTriggerPropsWithoutHTML> = {
+export const trigger = createApiSchema<LinkPreviewTriggerPropsWithoutHTML>({
 	title: "Trigger",
 	description:
 		"A component which triggers the opening and closing of the link preview on hover or focus.",
@@ -78,9 +74,9 @@ export const trigger: APISchema<LinkPreviewTriggerPropsWithoutHTML> = {
 			description: "Present on the trigger element.",
 		},
 	],
-};
+});
 
-export const content: APISchema<LinkPreviewContentPropsWithoutHTML> = {
+export const content = createApiSchema<LinkPreviewContentPropsWithoutHTML>({
 	title: "Content",
 	description: "The contents of the link preview which are displayed when the preview is open.",
 	props: {
@@ -104,9 +100,9 @@ export const content: APISchema<LinkPreviewContentPropsWithoutHTML> = {
 			description: "Present on the content element.",
 		},
 	],
-};
+});
 
-export const arrow: APISchema<LinkPreviewArrowPropsWithoutHTML> = {
+export const arrow = createApiSchema<LinkPreviewArrowPropsWithoutHTML>({
 	title: "Arrow",
 	description: "An optional arrow element which points to the trigger when the preview is open.",
 	props: arrowProps,
@@ -120,6 +116,6 @@ export const arrow: APISchema<LinkPreviewArrowPropsWithoutHTML> = {
 			description: "Present on the arrow element.",
 		},
 	],
-};
+});
 
 export const linkPreview = [root, trigger, content, arrow];
