@@ -14,12 +14,12 @@ It is used internally by Bits UI components to merge the custom `restProps` you 
 ```ts
 import { mergeProps } from "bits-ui";
 
-const props1 = { onclick: (e: MouseEvent) => console.log("clicked!") };
-const props2 = { onclick: (e: MouseEvent) => console.log("clicked again!") };
+const props1 = { onclick: (event: MouseEvent) => console.log("1") };
+const props2 = { onclick: (event: MouseEvent) => console.log("2") };
 
 const mergedProps = mergeProps(props1, props2);
 
-mergedProps.onclick(new MouseEvent("click")); // logs "clicked!" and "clicked again!"
+console.log(mergedProps.onclick(new MouseEvent("click"))) // 1 2
 ```
 
 Since `props1` didn't call `event.preventDefault()`, `props2` will stll be called as normal.
@@ -27,17 +27,18 @@ Since `props1` didn't call `event.preventDefault()`, `props2` will stll be calle
 ```ts
 import { mergeProps } from "bits-ui";
 
-const props1 = { onclick: (e: MouseEvent) => console.log("clicked!") };
-const props2 = { onclick: (e: MouseEvent) => {
-	console.log('clicked again!')
+const props1 = { onclick: (event: MouseEvent) => console.log("1") };
+const props2 = { onclick: (event: MouseEvent) => {
+	console.log('2')
+	event.preventDefault()
 } };
-const props3 = { onclick: (e: MouseEvent) => {
-	console.log('clicked a third time!')
+const props3 = { onclick: (event: MouseEvent) => {
+	console.log('3')
 } };
 
 const mergedProps = mergeProps(props1, props2, props3);
 
-mergedProps.onclick(new MouseEvent("click")); // logs "clicked!" and "clicked again!"
+console.log(mergedProps.onclick(new MouseEvent("click"))) // 1 2
 ```
 
 Since `props2` called `event.preventDefault()`, `props3`'s `onclick` handler will not be called.
@@ -49,12 +50,12 @@ Since `props2` called `event.preventDefault()`, `props3`'s `onclick` handler wil
 ```ts
 import { mergeProps } from "bits-ui";
 
-const props1 = { class: "bg-red-500" };
-const props2 = { class: "bg-green-500" };
+const props1 = { class: "orange blue yellow" };
+const props2 = { class: "yellow blue green" };
 
 const mergedProps = mergeProps(props1, props2);
 
-console.log(mergedProps.class); // logs "bg-red-500 bg-green-500"
+console.log(mergedProps.class); // "orange blue yellow green"
 ```
 
 ## Styles
@@ -69,7 +70,7 @@ const props2 = { style: "background-color: green" };
 
 const mergedProps = mergeProps(props1, props2);
 
-console.log(mergedProps.style); // logs "background-color: green;"
+console.log(mergedProps.style); // "background-color: green;"
 ```
 
 ```ts
@@ -81,5 +82,5 @@ const props2 = { style: { "--foo": "green", color: "blue" } };
 
 const mergedProps = mergeProps(props1, props2);
 
-console.log(mergedProps.style); // logs "--foo: green; color: blue;"
+console.log(mergedProps.style); // "--foo: green; color: blue;"
 ```
