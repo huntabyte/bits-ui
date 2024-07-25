@@ -12,14 +12,8 @@ import type {
 	RangeCalendarPrevButtonPropsWithoutHTML,
 	RangeCalendarRootPropsWithoutHTML,
 } from "bits-ui";
-import { builderAndAttrsSlotProps, domElProps, withChildProps } from "./helpers.js";
-import {
-	attrsSlotProp,
-	enums,
-	monthsSlotProp,
-	union,
-	weekdaysSlotProp,
-} from "$lib/content/api-reference/helpers.js";
+import { withChildProps } from "./helpers.js";
+import { enums } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
 
@@ -152,11 +146,6 @@ export const root: APISchema<RangeCalendarRootPropsWithoutHTML> = {
 		},
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
-	slotProps: {
-		months: monthsSlotProp,
-		weekdays: weekdaysSlotProp,
-		...builderAndAttrsSlotProps,
-	},
 	dataAttributes: [
 		{
 			name: "invalid",
@@ -191,9 +180,6 @@ export const cell: APISchema<RangeCalendarCellPropsWithoutHTML> = {
 		},
 		...withChildProps({ elType: "HTMLTableCellElement" }),
 	},
-	slotProps: {
-		attrs: attrsSlotProp,
-	},
 	dataAttributes: [
 		{
 			name: "disabled",
@@ -211,21 +197,6 @@ export const day: APISchema<RangeCalendarDayPropsWithoutHTML> = {
 	description: "A day in the calendar grid.",
 	props: {
 		...withChildProps({ elType: "HTMLDivElement" }),
-	},
-	slotProps: {
-		disabled: {
-			description: "Whether or not the date is disabled.",
-			type: C.BOOLEAN,
-		},
-		unavailable: {
-			description: "Whether or not the date is unavailable.",
-			type: C.BOOLEAN,
-		},
-		selected: {
-			description: "Whether or not the date is selected.",
-			type: C.BOOLEAN,
-		},
-		...builderAndAttrsSlotProps,
 	},
 	dataAttributes: [
 		{
@@ -284,7 +255,6 @@ export const grid: APISchema<RangeCalendarGridPropsWithoutHTML> = {
 	title: "Grid",
 	description: "The grid of dates in the calendar, typically representing a month.",
 	props: withChildProps({ elType: "HTMLTableElement" }),
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "calendar-grid",
@@ -297,7 +267,6 @@ export const gridBody: APISchema<RangeCalendarGridBodyPropsWithoutHTML> = {
 	title: "GridBody",
 	description: "The body of the grid of dates in the calendar.",
 	props: withChildProps({ elType: "HTMLTableSectionElement" }),
-	slotProps: { attrs: attrsSlotProp },
 	dataAttributes: [
 		{
 			name: "calendar-grid-body",
@@ -310,7 +279,6 @@ export const gridHead: APISchema<RangeCalendarGridHeadPropsWithoutHTML> = {
 	title: "GridHead",
 	description: "The head of the grid of dates in the calendar.",
 	props: withChildProps({ elType: "HTMLTableSectionElement" }),
-	slotProps: { attrs: attrsSlotProp },
 	dataAttributes: [
 		{
 			name: "calendar-grid-head",
@@ -323,7 +291,6 @@ export const gridRow: APISchema<RangeCalendarGridRowPropsWithoutHTML> = {
 	title: "GridRow",
 	description: "A row in the grid of dates in the calendar.",
 	props: withChildProps({ elType: "HTMLTableRowElement" }),
-	slotProps: { attrs: attrsSlotProp },
 	dataAttributes: [
 		{
 			name: "calendar-grid-row",
@@ -336,7 +303,6 @@ export const headCell: APISchema<RangeCalendarHeadCellPropsWithoutHTML> = {
 	title: "HeadCell",
 	description: "A cell in the head of the grid of dates in the calendar.",
 	props: withChildProps({ elType: "HTMLTableCellElement" }),
-	slotProps: { attrs: attrsSlotProp },
 	dataAttributes: [
 		{
 			name: "calendar-head-cell",
@@ -349,7 +315,6 @@ export const header: APISchema<RangeCalendarHeaderPropsWithoutHTML> = {
 	title: "Header",
 	description: "The header of the calendar.",
 	props: withChildProps({ elType: "HTMLElement" }),
-	slotProps: { attrs: attrsSlotProp },
 	dataAttributes: [
 		{
 			name: "calendar-header",
@@ -362,13 +327,6 @@ export const heading: APISchema<RangeCalendarHeadingPropsWithoutHTML> = {
 	title: "Heading",
 	description: "The heading of the calendar.",
 	props: withChildProps({ elType: "HTMLDivElement" }),
-	slotProps: {
-		...builderAndAttrsSlotProps,
-		headingValue: {
-			type: C.STRING,
-			description: "The heading value.",
-		},
-	},
 	dataAttributes: [
 		{
 			name: "calendar-heading",
@@ -381,7 +339,6 @@ export const nextButton: APISchema<RangeCalendarNextButtonPropsWithoutHTML> = {
 	title: "NextButton",
 	description: "The next button of the calendar.",
 	props: withChildProps({ elType: "HTMLButtonElement" }),
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "calendar-next-button",
@@ -394,7 +351,6 @@ export const prevButton: APISchema<RangeCalendarPrevButtonPropsWithoutHTML> = {
 	title: "PrevButton",
 	description: "The previous button of the calendar.",
 	props: withChildProps({ elType: "HTMLButtonElement" }),
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "calendar-prev-button",

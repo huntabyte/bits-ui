@@ -10,9 +10,6 @@ import type {
 } from "bits-ui";
 import {
 	arrowProps,
-	asChild,
-	attrsSlotProp,
-	builderAndAttrsSlotProps,
 	childrenSnippet,
 	dirProp,
 	dismissableLayerProps,
@@ -21,7 +18,6 @@ import {
 	floatingProps,
 	focusScopeProps,
 	forceMountProp,
-	idsSlotProp,
 	preventOverflowTextSelectionProp,
 	preventScrollProp,
 	withChildProps,
@@ -81,7 +77,6 @@ export const root: APISchema<SelectRootPropsWithoutHTML> = {
 		},
 		children: childrenSnippet(),
 	},
-	slotProps: { ids: idsSlotProp },
 };
 
 export const trigger: APISchema<SelectTriggerPropsWithoutHTML> = {
@@ -95,7 +90,6 @@ export const trigger: APISchema<SelectTriggerPropsWithoutHTML> = {
 		},
 		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "state",
@@ -133,11 +127,16 @@ export const content: APISchema<SelectContentPropsWithoutHTML> = {
 		...escapeLayerProps,
 		...focusScopeProps,
 		preventOverflowTextSelection: preventOverflowTextSelectionProp,
-		preventScroll: preventScrollProp(),
+		preventScroll: preventScrollProp,
 		forceMount: forceMountProp,
+		loop: {
+			type: C.BOOLEAN,
+			default: C.FALSE,
+			description:
+				"Whether or not the select menu should loop through items when reaching the end.",
+		},
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "select-content",
@@ -166,13 +165,6 @@ export const item: APISchema<SelectItemPropsWithoutHTML> = {
 				"Whether or not the select item is disabled. This will prevent interaction/selection.",
 		},
 		...withChildProps({ elType: "HTMLDivElement" }),
-	},
-	slotProps: {
-		isSelected: {
-			type: C.BOOLEAN,
-			description: "Whether or not the item is selected.",
-		},
-		...builderAndAttrsSlotProps,
 	},
 	dataAttributes: [
 		{
@@ -205,14 +197,6 @@ export const value: APISchema = {
 			type: C.STRING,
 			description: "A placeholder value to display when no value is selected.",
 		},
-		asChild,
-	},
-	slotProps: {
-		attrs: attrsSlotProp,
-		label: {
-			type: C.STRING,
-			description: "The label of the currently selected item.",
-		},
 	},
 	dataAttributes: [
 		{
@@ -231,7 +215,6 @@ export const group: APISchema<SelectGroupPropsWithoutHTML> = {
 	title: "Group",
 	description: "An accessible group of select menu items.",
 	props: withChildProps({ elType: "HTMLDivElement" }),
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "select-group",
@@ -245,7 +228,6 @@ export const groupLabel: APISchema<SelectGroupLabelPropsWithoutHTML> = {
 	description:
 		"A label for the select menu which will be skipped when navigating with the keyboard. This must be a child of the `Select.Group` component to be accessible.",
 	props: withChildProps({ elType: "HTMLDivElement" }),
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "select-label",
@@ -258,7 +240,6 @@ export const separator: APISchema<SelectSeparatorPropsWithoutHTML> = {
 	title: "Separator",
 	description: "A visual separator for use between select items or groups.",
 	props: withChildProps({ elType: "HTMLDivElement" }),
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "separator-root",
@@ -271,7 +252,6 @@ export const arrow: APISchema<SelectArrowPropsWithoutHTML> = {
 	title: "Arrow",
 	description: "An optional arrow element which points to the trigger when open.",
 	props: arrowProps,
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "arrow",

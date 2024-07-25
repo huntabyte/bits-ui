@@ -5,212 +5,108 @@ import type {
 	AccordionRootPropsWithoutHTML,
 	AccordionTriggerPropsWithoutHTML,
 } from "bits-ui";
-import { builderAndAttrsSlotProps, forceMountProp, withChildProps } from "./helpers.js";
-import { enums, union } from "$lib/content/api-reference/helpers.js";
+import {
+	createApiSchema,
+	createBooleanProp,
+	createEnumProp,
+	createFunctionProp,
+	createStringProp,
+	createUnionProp,
+	forceMountProp,
+	withChildProps,
+} from "./helpers.js";
 import * as C from "$lib/content/constants.js";
-import type { APISchema } from "$lib/types/index.js";
 
-const root: APISchema<AccordionRootPropsWithoutHTML> = {
+const root = createApiSchema<AccordionRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root accordion component used to set and manage the state of the accordion.",
 	props: {
-		type: {
-			type: {
-				type: C.ENUM,
-				definition: enums("single", "multiple"),
-			},
+		type: createEnumProp({
+			options: ["single", "multiple"],
 			description:
 				"The type of accordion. If set to `'multiple'`, the accordion will allow multiple items to be open at the same time. If set to `single`, the accordion will only allow a single item to be open.",
 			required: true,
-		},
-		value: {
-			type: {
-				type: C.UNION,
-				definition: union("string", "string[]"),
-			},
+		}),
+		value: createUnionProp({
+			options: ["string[]", "string"],
 			description:
-				"The active accordion item value. If `type` is `'multiple'`, this should be an array of values. If `type` is `'single'`, this should be a string.",
-		},
-		onValueChange: {
-			type: {
-				type: C.FUNCTION,
-				definition: union("(value: string) => void", "(value: string[]) => void"),
-			},
-			description: "A callback function called when the active accordion item value changes.",
-		},
-		disabled: {
-			default: "false",
-			type: C.BOOLEAN,
-			description: "Whether or not the accordion is disabled.",
-		},
-		loop: {
-			default: "false",
-			type: C.BOOLEAN,
+				"The value of the currently active accordion item. If `type` is `'single'`, this should be a string. If `type` is `'multiple'`, this should be an array of strings.",
+			bindable: true,
+		}),
+		onValueChange: createFunctionProp({
+			definition: "(value: string) => void | (value: string[]) => void",
+			description:
+				"A callback function called when the active accordion item value changes. If the `type` is `'single'`, the argument will be a string. If `type` is `'multiple'`, the argument will be an array of strings.",
+		}),
+		disabled: createBooleanProp({
+			description:
+				"Whether or not the accordion is disabled. When disabled, the accordion cannot be interacted with.",
+			default: C.FALSE,
+		}),
+		loop: createBooleanProp({
 			description:
 				"Whether or not the accordion should loop through items when reaching the end.",
-		},
-		orientation: {
-			type: {
-				type: C.ENUM,
-				definition: enums("horizontal", "vertical"),
-			},
+			default: C.FALSE,
+		}),
+		orientation: createEnumProp({
+			options: ["vertical", "horizontal"],
 			description: "The orientation of the accordion.",
 			default: "vertical",
-		},
+		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
-	slotProps: {
-		...builderAndAttrsSlotProps,
-	},
-	dataAttributes: [
-		{
-			name: "orientation",
-			value: enums("horizontal", "vertical"),
-			description: "The orientation of the accordion.",
-			isEnum: true,
-		},
-		{
-			name: "accordion-root",
-			value: "",
-			description: "Present on the root element.",
-		},
-	],
-};
+});
 
-const item: APISchema<AccordionItemPropsWithoutHTML> = {
+const item = createApiSchema<AccordionItemPropsWithoutHTML>({
 	title: "Item",
 	description: "An accordion item.",
 	props: {
-		value: {
-			required: true,
-			type: "string",
-			description: "The value of the accordion item.",
-		},
-		disabled: {
-			default: "false",
-			type: "boolean",
+		disabled: createBooleanProp({
 			description: "Whether or not the accordion item is disabled.",
-		},
+			default: C.FALSE,
+		}),
+		value: createStringProp({
+			description:
+				"The value of the accordion item. This is used to identify when the item is open or closed.",
+			required: true,
+		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
-	slotProps: {
-		...builderAndAttrsSlotProps,
-	},
-	dataAttributes: [
-		{
-			name: "state",
-			value: enums("open", "closed"),
-			description: "The state of the accordion item.",
-			isEnum: true,
-		},
-		{
-			name: "disabled",
-			value: "",
-			description: "Present when the accordion item is disabled.",
-		},
-		{
-			name: "accordion-item",
-			description: "Present on the item element.",
-		},
-	],
-};
+});
 
-const trigger: APISchema<AccordionTriggerPropsWithoutHTML> = {
+const trigger = createApiSchema<AccordionTriggerPropsWithoutHTML>({
 	title: "Trigger",
-	description: "The accordion item trigger, which opens and closes the accordion item.",
+	description: "The button responsible for toggling the accordion item.",
 	props: {
-		...withChildProps({ elType: "HTMLButtonElement" }),
-		disabled: {
-			type: {
-				type: C.UNION,
-				definition: union("boolean", "null", "undefined"),
-			},
-			default: "false",
+		disabled: createBooleanProp({
 			description: "Whether or not the accordion item trigger is disabled.",
-		},
+			default: C.FALSE,
+		}),
+		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
-	slotProps: { ...builderAndAttrsSlotProps },
-	dataAttributes: [
-		{
-			name: "state",
-			value: enums("open", "closed"),
-			description: "The state of the accordion item.",
-			isEnum: true,
-		},
-		{
-			name: "disabled",
-			description: "Present when the accordion item is disabled.",
-		},
-		{
-			name: "value",
-			description: "The value of the accordion item.",
-		},
-		{
-			name: "accordion-trigger",
-			description: "Present on the trigger element.",
-		},
-	],
-};
+});
 
-const content: APISchema<AccordionContentPropsWithoutHTML> = {
+const content = createApiSchema<AccordionContentPropsWithoutHTML>({
 	title: "Content",
 	description: "The accordion item content, which is displayed when the item is open.",
 	props: {
-		...withChildProps({ elType: "HTMLDivElement" }),
 		forceMount: forceMountProp,
-	},
-	slotProps: { ...builderAndAttrsSlotProps },
-	dataAttributes: [
-		{
-			name: "state",
-			value: enums("open", "closed"),
-			description: "The state of the accordion item.",
-			isEnum: true,
-		},
-		{
-			name: "disabled",
-			description: "Present when the accordion item is disabled.",
-		},
-		{
-			name: "value",
-			description: "The value of the accordion item.",
-		},
-		{
-			name: "accordion-content",
-			description: "Present on the content element.",
-		},
-	],
-};
-
-const header: APISchema<AccordionHeaderPropsWithoutHTML> = {
-	title: "Header",
-	description: "The accordion item header, which wraps the trigger and makes it more accessible.",
-	props: {
-		level: {
-			type: {
-				type: C.ENUM,
-				definition: union("1", "2", "3", "4", "5", "6"),
-			},
-			description:
-				"The heading level to use for the header. This will be set as the `aria-level` attribute.",
-		},
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
-	slotProps: {
-		...builderAndAttrsSlotProps,
+});
+
+const header = createApiSchema<AccordionHeaderPropsWithoutHTML>({
+	title: "Header",
+	description: "The header of the accordion item.",
+	props: {
+		level: createUnionProp({
+			options: ["1", "2", "3", "4", "5", "6"],
+			description:
+				"The heading level of the header. This will be set as the `aria-level` attribute.",
+			default: "3",
+		}),
+		...withChildProps({ elType: "HTMLDivElement" }),
 	},
-	dataAttributes: [
-		{
-			name: "heading-level",
-			value: enums("1", "2", "3", "4", "5", "6"),
-			description: "The heading level of the header.",
-			isEnum: true,
-		},
-		{
-			name: "accordion-header",
-			description: "Present on the header element.",
-		},
-	],
-};
+});
 
 export const accordion = [root, item, header, trigger, content];

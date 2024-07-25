@@ -1,11 +1,5 @@
 import type { ToggleGroupItemPropsWithoutHTML, ToggleGroupRootPropsWithoutHTML } from "bits-ui";
-import {
-	builderAndAttrsSlotProps,
-	domElProps,
-	enums,
-	union,
-	withChildProps,
-} from "$lib/content/api-reference/helpers.js";
+import { enums, union, withChildProps } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
 
@@ -54,7 +48,6 @@ const root: APISchema<ToggleGroupRootPropsWithoutHTML> = {
 		},
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "orientation",
@@ -82,7 +75,6 @@ const item: APISchema<ToggleGroupItemPropsWithoutHTML> = {
 		},
 		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "state",

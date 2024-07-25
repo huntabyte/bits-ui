@@ -6,7 +6,6 @@ import type {
 } from "bits-ui";
 import {
 	arrowProps,
-	builderAndAttrsSlotProps,
 	childrenSnippet,
 	dirProp,
 	dismissableLayerProps,
@@ -15,7 +14,6 @@ import {
 	floatingProps,
 	focusScopeProps,
 	forceMountProp,
-	idsSlotProp,
 	withChildProps,
 } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
@@ -61,9 +59,6 @@ export const root: APISchema<LinkPreviewRootPropsWithoutHTML> = {
 		},
 		children: childrenSnippet(),
 	},
-	slotProps: {
-		ids: idsSlotProp,
-	},
 };
 
 export const trigger: APISchema<LinkPreviewTriggerPropsWithoutHTML> = {
@@ -71,7 +66,6 @@ export const trigger: APISchema<LinkPreviewTriggerPropsWithoutHTML> = {
 	description:
 		"A component which triggers the opening and closing of the link preview on hover or focus.",
 	props: withChildProps({ elType: "HTMLAnchorElement" }),
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "state",
@@ -98,7 +92,6 @@ export const content: APISchema<LinkPreviewContentPropsWithoutHTML> = {
 		forceMount: forceMountProp,
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "state",
@@ -117,7 +110,6 @@ export const arrow: APISchema<LinkPreviewArrowPropsWithoutHTML> = {
 	title: "Arrow",
 	description: "An optional arrow element which points to the trigger when the preview is open.",
 	props: arrowProps,
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "arrow",

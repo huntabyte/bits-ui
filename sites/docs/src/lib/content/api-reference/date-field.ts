@@ -4,8 +4,8 @@ import type {
 	DateFieldRootPropsWithoutHTML,
 	DateFieldSegmentPropsWithoutHTML,
 } from "bits-ui";
-import { builderAndAttrsSlotProps, withChildProps } from "./helpers.js";
-import { enums, idsSlotProp, union } from "$lib/content/api-reference/helpers.js";
+import { withChildProps } from "./helpers.js";
+import { enums, union } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
 
@@ -16,6 +16,7 @@ export const root: APISchema<DateFieldRootPropsWithoutHTML> = {
 		value: {
 			type: "DateValue",
 			description: "The selected date.",
+			bindable: true,
 		},
 		onValueChange: {
 			type: {
@@ -107,29 +108,12 @@ export const root: APISchema<DateFieldRootPropsWithoutHTML> = {
 		},
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
-	slotProps: {
-		ids: idsSlotProp,
-		isInvalid: {
-			type: C.BOOLEAN,
-			description: "Whether or not the field is invalid.",
-		},
-	},
 };
 
 const input: APISchema<DateFieldInputPropsWithoutHTML> = {
 	title: "Input",
 	description: "The container for the segments of the date field.",
 	props: withChildProps({ elType: "HTMLDivElement" }),
-	slotProps: {
-		...builderAndAttrsSlotProps,
-		segments: {
-			type: {
-				type: C.ARRAY,
-				definition: "{ part: SegmentPart; value: string; }[]",
-			},
-			description: "An array of objects used to render the segments of the date field.",
-		},
-	},
 	dataAttributes: [
 		{
 			name: "invalid",
@@ -170,9 +154,6 @@ export const segment: APISchema<DateFieldSegmentPropsWithoutHTML> = {
 		},
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
-	slotProps: {
-		...builderAndAttrsSlotProps,
-	},
 	dataAttributes: [
 		{
 			name: "invalid",
@@ -209,9 +190,6 @@ export const label: APISchema<DateFieldLabelPropsWithoutHTML> = {
 	title: "Label",
 	description: "The label for the date field.",
 	props: withChildProps({ elType: "HTMLSpanElement" }),
-	slotProps: {
-		...builderAndAttrsSlotProps,
-	},
 	dataAttributes: [
 		{
 			name: "invalid",

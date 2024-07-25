@@ -22,13 +22,16 @@ export type DialogRootPropsWithoutHTML = WithChildren<{
 export type DialogRootProps = DialogRootPropsWithoutHTML;
 
 export type DialogContentPropsWithoutHTML = WithChild<
-	EscapeLayerProps &
-		DismissableLayerProps &
-		PresenceLayerProps &
-		FocusScopeProps &
-		TextSelectionLayerProps & {
-			preventScroll?: boolean;
-		}
+	Omit<
+		EscapeLayerProps &
+			DismissableLayerProps &
+			PresenceLayerProps &
+			FocusScopeProps &
+			TextSelectionLayerProps & {
+				preventScroll?: boolean;
+			},
+		"loop"
+	>
 >;
 
 export type DialogContentProps = DialogContentPropsWithoutHTML &

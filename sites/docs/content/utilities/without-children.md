@@ -5,7 +5,7 @@ description: A type helper to exclude the children snippet prop from a component
 
 The `WithoutChildren` type helper is used to exclude the `children` snippet prop from a component. This is useful when you're building custom component wrappers that populate the `children` prop of a component.
 
-```svelte
+```svelte title="CustomAccordion.svelte"
 <script lang="ts">
 	import { Accordion, type WithoutChildren } from "bits-ui";
 

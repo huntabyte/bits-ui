@@ -8,12 +8,9 @@ import type {
 	DialogTitlePropsWithoutHTML,
 	DialogTriggerPropsWithoutHTML,
 } from "bits-ui";
-import { focusProp } from "./extended-types/index.js";
 import {
-	builderAndAttrsSlotProps,
 	childrenSnippet,
 	dismissableLayerProps,
-	domElProps,
 	escapeLayerProps,
 	focusScopeProps,
 	forceMountProp,
@@ -23,13 +20,7 @@ import {
 	union,
 	withChildProps,
 } from "./helpers.js";
-import {
-	enums,
-	idsSlotProp,
-	onOutsideClickProp,
-	portalProp,
-	transitionProps,
-} from "$lib/content/api-reference/helpers.js";
+import { enums } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
 
@@ -51,16 +42,12 @@ export const root: APISchema<DialogRootPropsWithoutHTML> = {
 		},
 		children: childrenSnippet(),
 	},
-	slotProps: {
-		ids: idsSlotProp,
-	},
 };
 
 export const close: APISchema<DialogClosePropsWithoutHTML> = {
 	title: "Close",
 	description: "A button used to close the dialog.",
 	props: withChildProps({ elType: "HTMLButtonElement" }),
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "dialog-close",
@@ -78,10 +65,9 @@ export const content: APISchema<DialogContentPropsWithoutHTML> = {
 		...focusScopeProps,
 		forceMount: forceMountProp,
 		preventOverflowTextSelection: preventOverflowTextSelectionProp,
-		preventScroll: preventScrollProp(),
+		preventScroll: preventScrollProp,
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "state",
@@ -109,7 +95,6 @@ export const title: APISchema<DialogTitlePropsWithoutHTML> = {
 		},
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "dialog-title",
@@ -122,7 +107,6 @@ export const description: APISchema<DialogDescriptionPropsWithoutHTML> = {
 	title: "Description",
 	description: "An accessibile description for the dialog.",
 	props: withChildProps({ elType: "HTMLDivElement" }),
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "dialog-description",
@@ -137,7 +121,6 @@ export const trigger: APISchema<DialogTriggerPropsWithoutHTML> = {
 	props: {
 		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "dialog-trigger",
@@ -153,7 +136,6 @@ export const overlay: APISchema<DialogOverlayPropsWithoutHTML> = {
 		forceMount: forceMountProp,
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "state",
@@ -172,7 +154,6 @@ export const portal: APISchema<DialogPortalPropsWithoutHTML> = {
 	title: "Portal",
 	description: "A portal which renders the dialog into the body when it is open.",
 	props: portalProps,
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "portal",

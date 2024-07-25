@@ -17,7 +17,7 @@ export type PopoverRootPropsWithoutHTML = WithChildren<{
 
 export type PopoverRootProps = PopoverRootPropsWithoutHTML;
 
-export type PopoverContentPropsWithoutHTML = WithChild<Omit<PopperLayerProps, "content">>;
+export type PopoverContentPropsWithoutHTML = WithChild<Omit<PopperLayerProps, "content" | "loop">>;
 
 export type PopoverContentProps = PopoverContentPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, PopoverContentPropsWithoutHTML>;

@@ -1,8 +1,10 @@
 <script lang="ts">
+	import PlugsConnected from "phosphor-svelte/lib/PlugsConnected";
+	import { Popover } from "bits-ui";
 	import PropTypeContent from "./prop-type-content.svelte";
 	import { Code } from "$lib/components/index.js";
 	import * as Table from "$lib/components/ui/table/index.js";
-	import type { PropObj, PropSchema } from "$lib/types/index.js";
+	import type { PropObj } from "$lib/types/index.js";
 	import { parseMarkdown } from "$lib/utils/index.js";
 
 	let {
@@ -10,12 +12,19 @@
 		slotted = false,
 	}: { props: PropObj<Record<string, unknown>>; slotted?: boolean } = $props();
 
-	const propData = $derived(
-		Object.entries(_props).map(([name, prop]) => {
-			const { type, description, default: defaultVal, required } = prop as PropSchema;
-			return { name, type, description, default: defaultVal, required };
-		})
-	);
+	const propData = $derived.by(() => {
+		if (!_props) return [];
+		return Object.entries(_props).map(([name, prop]) => {
+			return {
+				name,
+				type: prop?.type,
+				description: prop?.description,
+				default: prop?.default,
+				required: prop?.required,
+				bindable: prop?.bindable,
+			};
+		});
+	});
 </script>
 
 <Table.Root>
@@ -29,28 +38,45 @@
 		</Table.Row>
 	</Table.Header>
 	<Table.Body>
-		{#each propData as { type, name, description, default: defaultVal, required }}
+		{#each propData as p}
 			<Table.Row>
 				<Table.Cell class="flex items-center gap-1 pr-1 align-baseline">
-					<Code class="font-semibold text-foreground">{name}</Code>
-					{#if required}
+					<Code class="font-semibold text-foreground">{p?.name}</Code>
+					{#if p?.required}
 						<div class="pb-1 text-destructive">*</div>
 						<span class="sr-only">Required</span>
 					{/if}
+					{#if p?.bindable}
+						<Popover.Root>
+							<Popover.Trigger aria-hidden="true">
+								<div class="ml-2 flex items-center justify-center text-tertiary">
+									<PlugsConnected class="size-5" />
+									<span class="sr-only">Bindable</span>
+								</div>
+							</Popover.Trigger>
+							<Popover.Content
+								preventScroll={false}
+								class="z-50 max-h-[400px] overflow-auto rounded-input border border-border bg-background p-4 font-mono shadow-popover"
+								side="top"
+								sideOffset={10}>$bindable</Popover.Content
+							>
+						</Popover.Root>
+						<span class="sr-only"> bindable prop </span>
+					{/if}
 				</Table.Cell>
 				<Table.Cell class="pr-1 align-baseline">
-					<PropTypeContent {type} />
+					<PropTypeContent type={p?.type} />
 				</Table.Cell>
 				<Table.Cell class="align-baseline">
-					<p class="text-sm leading-[1.3rem]">
-						{@html parseMarkdown(description)}
+					<p class="text-sm leading-[1.5rem]">
+						{@html parseMarkdown(p.description)}
 					</p>
 					{#if !slotted}
 						<div class="mt-2">
 							<Code class="h-auto bg-background px-0">
 								Default:
-								{#if defaultVal}
-									{` ${defaultVal}`}
+								{#if p.default}
+									{` ${p.default}`}
 								{:else}
 									<span aria-hidden="true"> &nbsp;—— </span>
 									<span class="sr-only"> undefined </span>

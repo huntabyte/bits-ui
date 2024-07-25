@@ -1,9 +1,5 @@
 import type { ToggleRootPropsWithoutHTML } from "bits-ui";
-import {
-	builderAndAttrsSlotProps,
-	enums,
-	withChildProps,
-} from "$lib/content/api-reference/helpers.js";
+import { enums, withChildProps } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
 
@@ -31,7 +27,6 @@ const root: APISchema<ToggleRootPropsWithoutHTML> = {
 		},
 		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "state",

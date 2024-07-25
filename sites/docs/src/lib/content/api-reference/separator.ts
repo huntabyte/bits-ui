@@ -1,10 +1,5 @@
 import type { SeparatorRootPropsWithoutHTML } from "bits-ui";
-import {
-	builderAndAttrsSlotProps,
-	domElProps,
-	enums,
-	withChildProps,
-} from "$lib/content/api-reference/helpers.js";
+import { enums, withChildProps } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
 
@@ -28,7 +23,6 @@ export const root: APISchema<SeparatorRootPropsWithoutHTML> = {
 		},
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "orientation",

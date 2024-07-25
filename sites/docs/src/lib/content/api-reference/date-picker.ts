@@ -17,23 +17,11 @@ import {
 	prevButton,
 } from "./calendar.js";
 import { label, segment } from "./date-field.js";
-import { focusProp } from "./extended-types/index.js";
-import {
-	builderAndAttrsSlotProps,
-	childrenSnippet,
-	portalProp,
-	withChildProps,
-} from "./helpers.js";
+import { childrenSnippet, withChildProps } from "./helpers.js";
 import { content, trigger } from "./popover.js";
 import type { APISchema } from "$lib/types/index.js";
 import * as C from "$lib/content/constants.js";
-import {
-	domElProps,
-	enums,
-	monthsSlotProp,
-	union,
-	weekdaysSlotProp,
-} from "$lib/content/api-reference/helpers.js";
+import { enums, union } from "$lib/content/api-reference/helpers.js";
 
 const root: APISchema<DatePickerRootPropsWithoutHTML> = {
 	title: "Root",
@@ -202,11 +190,6 @@ const root: APISchema<DatePickerRootPropsWithoutHTML> = {
 		},
 		children: childrenSnippet(),
 	},
-	slotProps: {
-		months: monthsSlotProp,
-		weekdays: weekdaysSlotProp,
-		...builderAndAttrsSlotProps,
-	},
 	dataAttributes: [
 		{
 			name: "invalid",
@@ -230,11 +213,6 @@ const root: APISchema<DatePickerRootPropsWithoutHTML> = {
 const calendar: APISchema<DatePickerCalendarPropsWithoutHTML> = {
 	title: "Calendar",
 	description: "The calendar component containing the grids of dates.",
-	slotProps: {
-		months: monthsSlotProp,
-		weekdays: weekdaysSlotProp,
-		...builderAndAttrsSlotProps,
-	},
 	dataAttributes: [
 		{
 			name: "invalid",
@@ -259,16 +237,6 @@ const input: APISchema<DatePickerInputPropsWithoutHTML> = {
 	title: "Input",
 	description: "The field input component which contains the segments of the date field.",
 	props: withChildProps({ elType: "HTMLDivElement" }),
-	slotProps: {
-		...builderAndAttrsSlotProps,
-		segments: {
-			type: {
-				type: C.ARRAY,
-				definition: "{ part: SegmentPart; value: string; }[]",
-			},
-			description: "An array of objects used to render the segments of the date field.",
-		},
-	},
 	dataAttributes: [
 		{
 			name: "invalid",

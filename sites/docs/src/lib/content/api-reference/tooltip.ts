@@ -5,21 +5,15 @@ import type {
 	TooltipRootPropsWithoutHTML,
 	TooltipTriggerPropsWithoutHTML,
 } from "bits-ui";
-import { floatingPositioning } from "./floating.js";
 import {
 	arrowProps,
-	builderAndAttrsSlotProps,
 	childrenSnippet,
 	dirProp,
 	dismissableLayerProps,
-	domElProps,
 	enums,
 	escapeLayerProps,
 	floatingProps,
 	forceMountProp,
-	idsSlotProp,
-	portalProp,
-	transitionProps,
 	withChildProps,
 } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
@@ -105,9 +99,6 @@ export const root: APISchema<TooltipRootPropsWithoutHTML> = {
 		ignoreNonKeyboardFocus,
 		children: childrenSnippet(),
 	},
-	slotProps: {
-		ids: idsSlotProp,
-	},
 };
 
 export const trigger: APISchema<TooltipTriggerPropsWithoutHTML> = {
@@ -122,7 +113,6 @@ export const trigger: APISchema<TooltipTriggerPropsWithoutHTML> = {
 		},
 		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "state",
@@ -148,7 +138,6 @@ export const content: APISchema<TooltipContentPropsWithoutHTML> = {
 		dir: dirProp,
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "tooltip-content",
@@ -161,7 +150,6 @@ export const arrow: APISchema<TooltipArrowPropsWithoutHTML> = {
 	title: "Arrow",
 	description: "An optional arrow element which points to the trigger when the tooltip is open.",
 	props: arrowProps,
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "arrow",

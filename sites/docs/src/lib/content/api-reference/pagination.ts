@@ -5,7 +5,7 @@ import type {
 	PaginationRootPropsWithoutHTML,
 } from "bits-ui";
 import { pageItemProp } from "./extended-types/index.js";
-import { builderAndAttrsSlotProps, domElProps, enums, withChildProps } from "./helpers.js";
+import { enums, withChildProps } from "./helpers.js";
 import type { APISchema } from "$lib/types/index.js";
 import * as C from "$lib/content/constants.js";
 
@@ -68,9 +68,6 @@ export const page: APISchema<PaginationPagePropsWithoutHTML> = {
 		},
 		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
-	slotProps: {
-		...builderAndAttrsSlotProps,
-	},
 	dataAttributes: [
 		{
 			name: "selected",
@@ -87,9 +84,6 @@ export const prevButton: APISchema<PaginationPrevButtonPropsWithoutHTML> = {
 	title: "PrevButton",
 	description: "The previous button of the pagination.",
 	props: withChildProps({ elType: "HTMLButtonElement" }),
-	slotProps: {
-		...builderAndAttrsSlotProps,
-	},
 	dataAttributes: [
 		{
 			name: "pagination-prev-button",
@@ -102,9 +96,6 @@ export const nextButton: APISchema<PaginationNextButtonPropsWithoutHTML> = {
 	title: "NextButton",
 	description: "The next button of the pagination.",
 	props: withChildProps({ elType: "HTMLButtonElement" }),
-	slotProps: {
-		...builderAndAttrsSlotProps,
-	},
 	dataAttributes: [
 		{
 			name: "pagination-next-button",

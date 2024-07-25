@@ -4,8 +4,8 @@ import type {
 	DateRangeFieldRootPropsWithoutHTML,
 	DateRangeFieldSegmentPropsWithoutHTML,
 } from "bits-ui";
-import { builderAndAttrsSlotProps, withChildProps } from "./helpers.js";
-import { domElProps, enums, idsSlotProp, union } from "$lib/content/api-reference/helpers.js";
+import { withChildProps } from "./helpers.js";
+import { enums, union } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
 
@@ -118,13 +118,6 @@ export const root: APISchema<DateRangeFieldRootPropsWithoutHTML> = {
 		},
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
-	slotProps: {
-		ids: idsSlotProp,
-		isInvalid: {
-			type: C.BOOLEAN,
-			description: "Whether or not the field is invalid.",
-		},
-	},
 };
 
 export const input: APISchema<DateRangeFieldInputPropsWithoutHTML> = {
@@ -146,16 +139,7 @@ export const input: APISchema<DateRangeFieldInputPropsWithoutHTML> = {
 		},
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
-	slotProps: {
-		...builderAndAttrsSlotProps,
-		segments: {
-			type: {
-				type: C.ARRAY,
-				definition: "{ part: SegmentPart; value: string; }[]",
-			},
-			description: "An array of objects used to render the segments of the date field.",
-		},
-	},
+
 	dataAttributes: [
 		{
 			name: "invalid",
@@ -196,9 +180,6 @@ export const segment: APISchema<DateRangeFieldSegmentPropsWithoutHTML> = {
 		},
 		...withChildProps({ elType: "HTMLSpanElement" }),
 	},
-	slotProps: {
-		...builderAndAttrsSlotProps,
-	},
 	dataAttributes: [
 		{
 			name: "invalid",
@@ -235,9 +216,6 @@ export const label: APISchema<DateRangeFieldLabelPropsWithoutHTML> = {
 	title: "Label",
 	description: "The label for the date field.",
 	props: withChildProps({ elType: "HTMLSpanElement" }),
-	slotProps: {
-		...builderAndAttrsSlotProps,
-	},
 	dataAttributes: [
 		{
 			name: "invalid",

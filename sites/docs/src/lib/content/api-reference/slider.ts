@@ -4,11 +4,7 @@ import type {
 	SliderThumbPropsWithoutHTML,
 	SliderTickPropsWithoutHTML,
 } from "bits-ui";
-import {
-	builderAndAttrsSlotProps,
-	enums,
-	withChildProps,
-} from "$lib/content/api-reference/helpers.js";
+import { enums, withChildProps } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
 
@@ -83,17 +79,7 @@ const root: APISchema<SliderRootPropsWithoutHTML> = {
 
 		...withChildProps({ elType: "HTMLSpanElement" }),
 	},
-	slotProps: {
-		ticks: {
-			type: "Tick[]",
-			description: "The tick builders to pass to the individual `Slider.Tick` components.",
-		},
-		thumbs: {
-			type: "Thumb[]",
-			description: "The thumb builders to pass to the individual `Slider.Thumb` components.",
-		},
-		...builderAndAttrsSlotProps,
-	},
+
 	dataAttributes: [
 		{
 			name: "orientation",
@@ -124,7 +110,6 @@ const thumb: APISchema<SliderThumbPropsWithoutHTML> = {
 		},
 		...withChildProps({ elType: "HTMLSpanElement" }),
 	},
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "slider-thumb",
@@ -137,7 +122,6 @@ const range: APISchema<SliderRangePropsWithoutHTML> = {
 	title: "Range",
 	description: "The range of the slider.",
 	props: withChildProps({ elType: "HTMLSpanElement" }),
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "slider-range",
@@ -157,7 +141,6 @@ const tick: APISchema<SliderTickPropsWithoutHTML> = {
 		},
 		...withChildProps({ elType: "HTMLSpanElement" }),
 	},
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "bounded",

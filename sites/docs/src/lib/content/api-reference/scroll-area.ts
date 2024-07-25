@@ -6,9 +6,7 @@ import type {
 	ScrollAreaViewportPropsWithoutHTML,
 } from "bits-ui";
 import {
-	builderAndAttrsSlotProps,
 	childrenSnippet,
-	domElProps,
 	enums,
 	forceMountProp,
 	refProp,
@@ -44,7 +42,6 @@ export const root: APISchema<ScrollAreaRootPropsWithoutHTML> = {
 		},
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "scroll-area-root",
@@ -61,7 +58,6 @@ export const viewport: APISchema<ScrollAreaViewportPropsWithoutHTML> = {
 		ref: refProp({ elType: "HTMLDivElement" }),
 		children: childrenSnippet(),
 	},
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "scroll-area-viewport",
@@ -85,7 +81,6 @@ export const scrollbar: APISchema<ScrollAreaScrollbarPropsWithoutHTML> = {
 		forceMount: forceMountProp,
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "state",
@@ -111,7 +106,6 @@ export const thumb: APISchema<ScrollAreaThumbPropsWithoutHTML> = {
 		forceMount: forceMountProp,
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "state",
@@ -134,7 +128,6 @@ export const corner: APISchema<ScrollAreaCornerPropsWithoutHTML> = {
 	title: "Corner",
 	description: "The corner element between the X and Y scrollbars.",
 	props: withChildProps({ elType: "HTMLDivElement" }),
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "scroll-area-corner",

@@ -1,5 +1,5 @@
 import type { ProgressRootPropsWithoutHTML } from "bits-ui";
-import { builderAndAttrsSlotProps, domElProps, withChildProps } from "./helpers.js";
+import { withChildProps } from "./helpers.js";
 import { enums } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
@@ -21,7 +21,6 @@ export const root: APISchema<ProgressRootPropsWithoutHTML> = {
 		},
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "value",

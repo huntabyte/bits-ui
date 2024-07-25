@@ -1,6 +1,6 @@
 import type { SwitchRootPropsWithoutHTML, SwitchThumbPropsWithoutHTML } from "bits-ui";
-import { builderAndAttrsSlotProps, withChildProps } from "./helpers.js";
-import { attrsSlotProp, enums } from "$lib/content/api-reference/helpers.js";
+import { withChildProps } from "./helpers.js";
+import { enums } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
 
@@ -43,9 +43,7 @@ const root: APISchema<SwitchRootPropsWithoutHTML> = {
 		},
 		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
-	slotProps: {
-		...builderAndAttrsSlotProps,
-	},
+
 	dataAttributes: [
 		{
 			name: "state",
@@ -72,13 +70,7 @@ const thumb: APISchema<SwitchThumbPropsWithoutHTML> = {
 	title: "Thumb",
 	description: "The thumb on the switch used to indicate the switch's state.",
 	props: withChildProps({ elType: "HTMLSpanElement" }),
-	slotProps: {
-		attrs: attrsSlotProp,
-		checked: {
-			type: C.BOOLEAN,
-			description: "Whether or not the switch is checked.",
-		},
-	},
+
 	dataAttributes: [
 		{
 			name: "state",

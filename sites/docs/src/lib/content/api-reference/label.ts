@@ -1,5 +1,5 @@
 import type { LabelRootPropsWithoutHTML } from "bits-ui";
-import { builderAndAttrsSlotProps, withChildProps } from "$lib/content/api-reference/helpers.js";
+import { withChildProps } from "$lib/content/api-reference/helpers.js";
 import type { APISchema } from "$lib/types/index.js";
 import * as C from "$lib/content/constants.js";
 
@@ -14,7 +14,6 @@ export const root: APISchema<LabelRootPropsWithoutHTML> = {
 		},
 		...withChildProps({ elType: "HTMLLabelElement" }),
 	},
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "label-root",

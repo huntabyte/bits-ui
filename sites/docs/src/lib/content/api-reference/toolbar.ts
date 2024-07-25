@@ -5,13 +5,7 @@ import type {
 	ToolbarLinkPropsWithoutHTML,
 	ToolbarRootPropsWithoutHTML,
 } from "bits-ui";
-import {
-	builderAndAttrsSlotProps,
-	domElProps,
-	enums,
-	union,
-	withChildProps,
-} from "$lib/content/api-reference/helpers.js";
+import { enums, union, withChildProps } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
 
@@ -34,7 +28,6 @@ const root: APISchema<ToolbarRootPropsWithoutHTML> = {
 		},
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "orientation",
@@ -58,7 +51,6 @@ const button: APISchema<ToolbarButtonPropsWithoutHTML> = {
 		},
 		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "toolbar-button",
@@ -71,7 +63,6 @@ const link: APISchema<ToolbarLinkPropsWithoutHTML> = {
 	title: "Link",
 	description: "A link in the toolbar.",
 	props: withChildProps({ elType: "HTMLAnchorElement" }),
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "toolbar-link",
@@ -112,7 +103,6 @@ const group: APISchema<ToolbarGroupPropsWithoutHTML> = {
 		},
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "toolbar-group",
@@ -137,7 +127,6 @@ const groupItem: APISchema<ToolbarGroupItemPropsWithoutHTML> = {
 		},
 		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "state",

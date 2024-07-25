@@ -1,6 +1,6 @@
 import type { RadioGroupItemPropsWithoutHTML, RadioGroupRootPropsWithoutHTML } from "bits-ui";
-import { builderAndAttrsSlotProps, domElProps, withChildProps } from "./helpers.js";
-import { attrsSlotProp, enums } from "$lib/content/api-reference/helpers.js";
+import { withChildProps } from "./helpers.js";
+import { enums } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
 
@@ -53,7 +53,6 @@ export const root: APISchema<RadioGroupRootPropsWithoutHTML> = {
 		},
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "orientation",
@@ -86,7 +85,6 @@ export const item: APISchema<RadioGroupItemPropsWithoutHTML> = {
 		},
 		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "disabled",

@@ -15,7 +15,6 @@ import type {
 } from "bits-ui";
 import {
 	arrowProps,
-	builderAndAttrsSlotProps,
 	childrenSnippet,
 	dirProp,
 	dismissableLayerProps,
@@ -24,12 +23,11 @@ import {
 	focusScopeProps,
 	forceMountProp,
 	preventOverflowTextSelectionProp,
-	preventScrollProp,
 	withChildProps,
 } from "./helpers.js";
 import type { APISchema, DataAttrSchema, PropObj } from "$lib/types/index.js";
 import * as C from "$lib/content/constants.js";
-import { enums, idsSlotProp, union } from "$lib/content/api-reference/helpers.js";
+import { enums, union } from "$lib/content/api-reference/helpers.js";
 
 const sharedItemProps = {
 	textValue: {
@@ -333,104 +331,72 @@ const subTriggerAttrs: DataAttrs = [
 	},
 ];
 
-const checkboxIndicatorAttrs: DataAttrs = [
-	{
-		name: "menu-checkbox-indicator",
-		description: "Present on the checkbox indicator element.",
-	},
-];
-
-const radioIndicatorAttrs: DataAttrs = [
-	{
-		name: "menu-radio-indicator",
-		description: "Present on the radio indicator element.",
-	},
-];
-
 export const trigger = {
 	props: triggerProps,
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: triggerAttrs,
 };
 
 export const content = {
 	props: contentProps,
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: contentAttrs,
 };
 
 export const arrow = {
 	props: arrowProps,
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: arrowAttrs,
 };
 
 export const item = {
 	props: itemProps,
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: itemAttrs,
 };
 
 export const group = {
 	props: groupProps,
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: groupAttrs,
 };
 
 export const label = {
 	props: labelProps,
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: labelAttrs,
 };
 
 export const separator = {
 	props: separatorProps,
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: separatorAttrs,
 };
 
 export const checkboxItem = {
 	props: checkboxItemProps,
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: checkboxItemAttrs,
 };
 
 export const radioGroup = {
 	props: radioGroupProps,
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: radioGroupAttrs,
 };
 
 export const radioItem = {
 	props: radioItemProps,
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: radioItemAttrs,
 };
 
 export const subTrigger = {
 	props: subTriggerProps,
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: subTriggerAttrs,
 };
 
 export const subContent = {
 	props: subContentProps,
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: subContentAttrs,
 };
 
 export const sub = {
 	props: subProps,
-	slotProps: {
-		subIds: idsSlotProp,
-	},
 };
 
 export const root = {
 	props,
-	slotProps: {
-		ids: idsSlotProp,
-	},
 };
 
 export const menu = {

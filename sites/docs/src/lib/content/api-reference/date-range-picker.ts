@@ -4,8 +4,7 @@ import type {
 	DateRangePickerRootPropsWithoutHTML,
 } from "bits-ui";
 import { label, segment } from "./date-range-field.js";
-import { focusProp } from "./extended-types/index.js";
-import { builderAndAttrsSlotProps, portalProp, withChildProps } from "./helpers.js";
+import { withChildProps } from "./helpers.js";
 import { content, trigger } from "./popover.js";
 import {
 	cell,
@@ -22,14 +21,7 @@ import {
 } from "./range-calendar.js";
 import type { APISchema } from "$lib/types/index.js";
 import * as C from "$lib/content/constants.js";
-import {
-	domElProps,
-	enums,
-	monthsSlotProp,
-	onOutsideClickProp,
-	union,
-	weekdaysSlotProp,
-} from "$lib/content/api-reference/helpers.js";
+import { enums, union } from "$lib/content/api-reference/helpers.js";
 
 const root: APISchema<DateRangePickerRootPropsWithoutHTML> = {
 	title: "Root",
@@ -211,11 +203,6 @@ const root: APISchema<DateRangePickerRootPropsWithoutHTML> = {
 		},
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
-	slotProps: {
-		months: monthsSlotProp,
-		weekdays: weekdaysSlotProp,
-		...builderAndAttrsSlotProps,
-	},
 	dataAttributes: [
 		{
 			name: "invalid",
@@ -239,11 +226,6 @@ const root: APISchema<DateRangePickerRootPropsWithoutHTML> = {
 const calendar: APISchema<DateRangePickerCalendarPropsWithoutHTML> = {
 	title: "Calendar",
 	description: "The calendar component containing the grids of dates.",
-	slotProps: {
-		months: monthsSlotProp,
-		weekdays: weekdaysSlotProp,
-		...builderAndAttrsSlotProps,
-	},
 	dataAttributes: [
 		{
 			name: "invalid",
@@ -281,18 +263,6 @@ const input: APISchema<DateRangePickerInputPropsWithoutHTML> = {
 			description: "The part of the date this input represents.",
 		},
 		...withChildProps({ elType: "HTMLDivElement" }),
-	},
-	slotProps: {
-		...builderAndAttrsSlotProps,
-		segments: {
-			type: {
-				type: C.OBJECT,
-				definition:
-					"Record&lt;'start' | 'end', { part: SegmentPart; value: string; }[]&gt;",
-			},
-			description:
-				"An object containing the start and end segment arrays used to render the start and end segments of the date field.",
-		},
 	},
 	dataAttributes: [
 		{

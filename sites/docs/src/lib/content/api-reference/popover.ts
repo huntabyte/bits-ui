@@ -5,26 +5,18 @@ import type {
 	PopoverRootPropsWithoutHTML,
 	PopoverTriggerPropsWithoutHTML,
 } from "bits-ui";
-import { focusProp } from "./extended-types/index.js";
-import { floatingPositioning } from "./floating.js";
 import {
 	arrowProps,
-	builderAndAttrsSlotProps,
 	childrenSnippet,
 	dirProp,
 	dismissableLayerProps,
-	domElProps,
 	enums,
 	escapeLayerProps,
 	floatingProps,
 	focusScopeProps,
 	forceMountProp,
-	idsSlotProp,
-	onOutsideClickProp,
-	portalProp,
 	preventOverflowTextSelectionProp,
 	preventScrollProp,
-	transitionProps,
 	withChildProps,
 } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
@@ -48,14 +40,12 @@ export const root: APISchema<PopoverRootPropsWithoutHTML> = {
 		},
 		children: childrenSnippet(),
 	},
-	slotProps: { ids: idsSlotProp },
 };
 
 export const trigger: APISchema<PopoverTriggerPropsWithoutHTML> = {
 	title: "Trigger",
 	description: "A component which toggles the opening and closing of the popover on press.",
 	props: withChildProps({ elType: "HTMLButtonElement" }),
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "state",
@@ -79,12 +69,11 @@ export const content: APISchema<PopoverContentPropsWithoutHTML> = {
 		...escapeLayerProps,
 		...focusScopeProps,
 		preventOverflowTextSelection: preventOverflowTextSelectionProp,
-		preventScroll: preventScrollProp(),
+		preventScroll: preventScrollProp,
 		forceMount: forceMountProp,
 		dir: dirProp,
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "state",
@@ -104,7 +93,6 @@ export const close: APISchema<PopoverClosePropsWithoutHTML> = {
 	description:
 		"A button which closes the popover when pressed and is typically placed in the content.",
 	props: withChildProps({ elType: "HTMLButtonElement" }),
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "popover-close",
@@ -117,7 +105,6 @@ export const arrow: APISchema<PopoverArrowPropsWithoutHTML> = {
 	title: "Arrow",
 	description: "An optional arrow element which points to the trigger when the popover is open.",
 	props: arrowProps,
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "arrow",

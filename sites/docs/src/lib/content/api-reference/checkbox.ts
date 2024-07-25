@@ -1,51 +1,50 @@
 import type { CheckboxRootPropsWithoutHTML } from "bits-ui";
-import { builderAndAttrsSlotProps, enums, union, withChildProps } from "./helpers.js";
+import {
+	createApiSchema,
+	createBooleanProp,
+	createEnumProp,
+	createFunctionProp,
+	createStringProp,
+	enums,
+	withChildProps,
+} from "./helpers.js";
 import * as C from "$lib/content/constants.js";
-import type { APISchema } from "$lib/types/index.js";
 
-export const root: APISchema<CheckboxRootPropsWithoutHTML> = {
+export const root = createApiSchema<CheckboxRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The button component used to toggle the state of the checkbox.",
 	props: {
-		disabled: {
+		checked: createEnumProp({
+			options: ["boolean", "'indeterminate'"],
 			default: C.FALSE,
-			type: C.BOOLEAN,
-			description:
-				"Whether or not the checkbox button is disabled. This prevents the user from interacting with it.",
-		},
-		checked: {
-			default: C.FALSE,
-			type: {
-				type: C.ENUM,
-				definition: union("boolean", "'indeterminate'"),
-			},
 			description:
 				"The checkbox button's checked state. This can be a boolean or the string 'indeterminate', which would typically display a dash in the checkbox.",
-		},
-		onCheckedChange: {
-			type: {
-				type: C.FUNCTION,
-				definition: "(checked: boolean | 'indeterminate') => void",
-			},
+			bindable: true,
+		}),
+		onCheckedChange: createFunctionProp({
+			definition: "(checked: boolean | 'indeterminate') => void",
 			description:
 				"A callback that is fired when the checkbox button's checked state changes.",
-		},
-		required: {
+		}),
+		disabled: createBooleanProp({
 			default: C.FALSE,
-			type: C.BOOLEAN,
+			description:
+				"Whether or not the checkbox button is disabled. This prevents the user from interacting with it.",
+		}),
+		required: createBooleanProp({
+			default: C.FALSE,
 			description: "Whether or not the checkbox is required.",
-		},
-		name: {
-			type: C.STRING,
-			description: "The name of the checkbox. This is used for form submission.",
-		},
-		value: {
-			type: C.STRING,
-			description: "The value of the checkbox. This is used for form submission.",
-		},
+		}),
+		name: createStringProp({
+			description:
+				"The name of the checkbox. If provided a hidden input will be render to use for form submission. If not provided, the hidden input will not be rendered.",
+		}),
+		value: createStringProp({
+			description:
+				"The value of the checkbox. This is what is submitted with the form when the checkbox is checked.",
+		}),
 		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "disabled",
@@ -62,6 +61,6 @@ export const root: APISchema<CheckboxRootPropsWithoutHTML> = {
 			description: "Present on the root element.",
 		},
 	],
-};
+});
 
 export const checkbox = [root];
