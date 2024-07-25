@@ -20,6 +20,7 @@ import StringOrArrayString from "./extended-types/string-or-array-string.md";
 import SingleOrMultiple from "./extended-types/single-or-multiple.md";
 import StringOrArrayChangeFn from "./extended-types/string-or-array-change-fn.md";
 import Orientation from "./extended-types/orientation.md";
+import HeaderLevel from "./extended-types/header-level.md";
 
 const root = createApiSchema<AccordionRootPropsWithoutHTML>({
 	title: "Root",
@@ -108,6 +109,7 @@ const header = createApiSchema<AccordionHeaderPropsWithoutHTML>({
 	props: {
 		level: createUnionProp({
 			options: ["1", "2", "3", "4", "5", "6"],
+			definition: HeaderLevel,
 			description:
 				"The heading level of the header. This will be set as the `aria-level` attribute.",
 			default: "3",
