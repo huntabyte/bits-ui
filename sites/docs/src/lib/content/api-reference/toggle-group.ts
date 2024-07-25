@@ -1,51 +1,54 @@
 import type { ToggleGroupItemPropsWithoutHTML, ToggleGroupRootPropsWithoutHTML } from "bits-ui";
-import { enums, union, withChildProps } from "$lib/content/api-reference/helpers.js";
+import {
+	createApiSchema,
+	createBooleanProp,
+	createEnumProp,
+	createFunctionProp,
+	createStringProp,
+	createUnionProp,
+	enums,
+	union,
+	withChildProps,
+} from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
-import type { APISchema } from "$lib/types/index.js";
 
-const root: APISchema<ToggleGroupRootPropsWithoutHTML> = {
+const root = createApiSchema<ToggleGroupRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root component which contains the toggle group items.",
 	props: {
-		value: {
-			type: union(C.STRING, "string[]"),
+		type: createEnumProp({
+			options: ["single", "multiple"],
+			description: "The type of toggle group.",
+			required: true,
+		}),
+		value: createUnionProp({
+			options: ["string", "string[]"],
 			description:
-				"The value of the toggle group. If the type is multiple, this will be an array of strings, otherwise it will be a string.",
+				"The value of the toggle group. If the `type` is `'multiple'`, this will be an array of strings, otherwise it will be a string.",
 			bindable: true,
-		},
-		onValueChange: {
-			type: {
-				type: C.FUNCTION,
-				definition: union("(value: string) => void", "(value: string[]) => void"),
-			},
+		}),
+		onValueChange: createFunctionProp({
+			definition: union("(value: string) => void", "(value: string[]) => void"),
 			description:
 				"A callback function called when the value of the toggle group changes. The type of the value is dependent on the type of the toggle group.",
-		},
-		disabled: {
+		}),
+		disabled: createBooleanProp({
 			default: C.FALSE,
-			type: C.BOOLEAN,
 			description: "Whether or not the switch is disabled.",
-		},
-		loop: {
+		}),
+		loop: createBooleanProp({
 			default: C.TRUE,
-			type: C.BOOLEAN,
 			description: "Whether or not the toggle group should loop when navigating.",
-		},
-		orientation: {
+		}),
+		orientation: createEnumProp({
+			options: [C.HORIZONTAL, C.VERTICAL],
 			default: C.HORIZONTAL,
-			type: enums(C.HORIZONTAL, C.VERTICAL),
 			description: "The orientation of the toggle group.",
-		},
-		rovingFocus: {
+		}),
+		rovingFocus: createBooleanProp({
 			default: C.TRUE,
-			type: C.BOOLEAN,
 			description: "Whether or not the toggle group should use roving focus when navigating.",
-		},
-		type: {
-			default: "single",
-			description: "The type of toggle group.",
-			type: enums("single", "multiple"),
-		},
+		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
@@ -58,21 +61,19 @@ const root: APISchema<ToggleGroupRootPropsWithoutHTML> = {
 			description: "Present on the root element.",
 		},
 	],
-};
+});
 
-const item: APISchema<ToggleGroupItemPropsWithoutHTML> = {
+const item = createApiSchema<ToggleGroupItemPropsWithoutHTML>({
 	title: "Item",
 	description: "An individual toggle item within the group.",
 	props: {
-		value: {
-			type: C.STRING,
+		value: createStringProp({
 			description: "The value of the item.",
-		},
-		disabled: {
+		}),
+		disabled: createBooleanProp({
 			default: C.FALSE,
-			type: C.BOOLEAN,
 			description: "Whether or not the switch is disabled.",
-		},
+		}),
 		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
 	dataAttributes: [
@@ -99,6 +100,6 @@ const item: APISchema<ToggleGroupItemPropsWithoutHTML> = {
 			description: "Present on the item elements.",
 		},
 	],
-};
+});
 
 export const toggleGroup = [root, item];

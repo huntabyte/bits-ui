@@ -1,30 +1,30 @@
 import type { ToggleRootPropsWithoutHTML } from "bits-ui";
-import { enums, withChildProps } from "$lib/content/api-reference/helpers.js";
+import {
+	createApiSchema,
+	createBooleanProp,
+	createFunctionProp,
+	enums,
+	withChildProps,
+} from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
-import type { APISchema } from "$lib/types/index.js";
 
-const root: APISchema<ToggleRootPropsWithoutHTML> = {
+const root = createApiSchema<ToggleRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The toggle button.",
 	props: {
-		pressed: {
+		pressed: createBooleanProp({
 			default: C.FALSE,
-			type: C.BOOLEAN,
 			description: "Whether or not the toggle button is pressed.",
 			bindable: true,
-		},
-		onPressedChange: {
-			type: {
-				type: C.FUNCTION,
-				definition: "(checked: boolean) => void",
-			},
+		}),
+		onPressedChange: createFunctionProp({
+			definition: "(checked: boolean) => void",
 			description: "A callback function called when the pressed state of the toggle changes.",
-		},
-		disabled: {
+		}),
+		disabled: createBooleanProp({
 			default: C.FALSE,
-			type: C.BOOLEAN,
 			description: "Whether or not the switch is disabled.",
-		},
+		}),
 		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
 	dataAttributes: [
@@ -43,6 +43,6 @@ const root: APISchema<ToggleRootPropsWithoutHTML> = {
 			description: "Present on the root element.",
 		},
 	],
-};
+});
 
 export const toggle = [root];
