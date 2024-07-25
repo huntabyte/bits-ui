@@ -19,6 +19,7 @@ export const root = createApiSchema<DateRangeFieldRootPropsWithoutHTML>({
 				definition: "{ start: DateValue; end: DateValue; }",
 			},
 			description: "The selected date range.",
+			bindable: true,
 		},
 		onValueChange: {
 			type: {

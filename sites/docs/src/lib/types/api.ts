@@ -1,6 +1,8 @@
+import type { Component } from "svelte";
+
 export type PropType = {
 	type: string;
-	definition: string;
+	definition: string | Component;
 };
 
 export type PropSchema = {
@@ -9,6 +11,9 @@ export type PropSchema = {
 	description: string;
 	required?: boolean;
 	bindable?: boolean;
+	linked?: boolean;
+	href?: string;
+	tooltipContent?: string;
 };
 
 export type PropObj<T, U = Omit<T, "style">> = {

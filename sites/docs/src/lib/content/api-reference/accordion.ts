@@ -16,6 +16,10 @@ import {
 	withChildProps,
 } from "./helpers.js";
 import * as C from "$lib/content/constants.js";
+import StringOrArrayString from "./extended-types/string-or-array-string.md";
+import SingleOrMultiple from "./extended-types/single-or-multiple.md";
+import StringOrArrayChangeFn from "./extended-types/string-or-array-change-fn.md";
+import Orientation from "./extended-types/orientation.md";
 
 const root = createApiSchema<AccordionRootPropsWithoutHTML>({
 	title: "Root",
@@ -23,18 +27,20 @@ const root = createApiSchema<AccordionRootPropsWithoutHTML>({
 	props: {
 		type: createEnumProp({
 			options: ["single", "multiple"],
+			definition: SingleOrMultiple,
 			description:
 				"The type of accordion. If set to `'multiple'`, the accordion will allow multiple items to be open at the same time. If set to `single`, the accordion will only allow a single item to be open.",
 			required: true,
 		}),
 		value: createUnionProp({
 			options: ["string[]", "string"],
+			definition: StringOrArrayString,
 			description:
 				"The value of the currently active accordion item. If `type` is `'single'`, this should be a string. If `type` is `'multiple'`, this should be an array of strings.",
 			bindable: true,
 		}),
 		onValueChange: createFunctionProp({
-			definition: "(value: string) => void | (value: string[]) => void",
+			definition: StringOrArrayChangeFn,
 			description:
 				"A callback function called when the active accordion item value changes. If the `type` is `'single'`, the argument will be a string. If `type` is `'multiple'`, the argument will be an array of strings.",
 		}),
@@ -50,6 +56,7 @@ const root = createApiSchema<AccordionRootPropsWithoutHTML>({
 		}),
 		orientation: createEnumProp({
 			options: ["vertical", "horizontal"],
+			definition: Orientation,
 			description: "The orientation of the accordion.",
 			default: "vertical",
 		}),

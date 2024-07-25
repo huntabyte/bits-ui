@@ -26,6 +26,15 @@ export const root = createApiSchema<LinkPreviewRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root component used to manage the state of the state of the link preview.",
 	props: {
+		open: createBooleanProp({
+			default: "false",
+			description: "The open state of the link preview component.",
+			bindable: true,
+		}),
+		onOpenChange: createFunctionProp({
+			definition: "(open: boolean) => void",
+			description: "A callback that fires when the open state changes.",
+		}),
 		openDelay: createNumberProp({
 			default: "700",
 			description:
@@ -35,15 +44,6 @@ export const root = createApiSchema<LinkPreviewRootPropsWithoutHTML>({
 			default: "300",
 			description:
 				"The amount of time in milliseconds to delay closing the preview when the mouse leaves the trigger.",
-		}),
-		open: createBooleanProp({
-			default: "false",
-			description: "The open state of the link preview component.",
-			bindable: true,
-		}),
-		onOpenChange: createFunctionProp({
-			definition: "(open: boolean) => void",
-			description: "A callback that fires when the open state changes.",
 		}),
 		disabled: createBooleanProp({
 			default: C.FALSE,

@@ -1,16 +1,82 @@
 <script lang="ts">
-	import { Popover } from "bits-ui";
+	import { Popover, Tooltip } from "bits-ui";
 	import Info from "phosphor-svelte/lib/Info";
+	import type { Component } from "svelte";
 	import { Code } from "$lib/components/index.js";
 	import type { PropType } from "$lib/types/index.js";
 	import { parseTypeDef } from "$lib/utils/index.js";
 
-	let { type }: { type: PropType | string } = $props();
+	let {
+		type,
+		linked = false,
+		href = "",
+		tooltipContent = "",
+	}: {
+		type: PropType | string;
+		linked?: boolean;
+		href?: string;
+		tooltipContent?: string;
+	} = $props();
 </script>
+
+{#snippet StringType()}
+	{#if tooltipContent && linked && href}
+		<Tooltip.Root>
+			<Tooltip.Trigger>
+				{#snippet child({ props })}
+					<a {href} {...props}>
+						<Code class="bg-transparent px-0">{type}</Code>
+					</a>
+				{/snippet}
+			</Tooltip.Trigger>
+			<Tooltip.Portal>
+				<Tooltip.Content side="top" sideOffset={8}>
+					<div
+						class="flex items-center justify-center rounded-input border border-dark-10 bg-background p-3 text-sm font-medium shadow-popover outline-none"
+					>
+						{tooltipContent}
+					</div>
+				</Tooltip.Content>
+			</Tooltip.Portal>
+		</Tooltip.Root>
+	{:else if linked && href}
+		<a {href}>
+			<Code class="bg-transparent px-0">{type}</Code>
+		</a>
+	{:else}
+		<Code class="bg-transparent px-0">{type}</Code>
+	{/if}
+{/snippet}
+
+{#snippet TypeContent({ typeDef }: { typeDef: string | Component })}
+	{#if typeof typeDef === "string"}
+		<Popover.Content
+			preventScroll={false}
+			side="top"
+			sideOffset={10}
+			class="z-50 max-h-[400px] overflow-auto rounded-card border border-border bg-background p-4 shadow-popover"
+		>
+			<Code class="h-auto bg-transparent px-0 tracking-tight text-foreground">
+				{@html parseTypeDef(typeDef)}
+			</Code>
+		</Popover.Content>
+	{:else}
+		<Popover.Content
+			preventScroll={false}
+			side="top"
+			sideOffset={10}
+			class="z-50 max-h-[400px] overflow-auto rounded-card bg-background shadow-popover"
+		>
+			<div class="[&_pre]:!my-0 [&_pre]:!mb-0 [&_pre]:!mt-0 [&_span]:!pr-0.5">
+				<svelte:component this={typeDef} />
+			</div>
+		</Popover.Content>
+	{/if}
+{/snippet}
 
 <div class="flex items-center gap-1.5">
 	{#if typeof type === "string"}
-		<Code class="bg-transparent px-0">{type}</Code>
+		{@render StringType()}
 	{:else}
 		<Code class="bg-transparent px-0">{type.type}</Code>
 		<Popover.Root>
@@ -20,16 +86,7 @@
 				<Info class="size-4" weight="bold" />
 				<span class="sr-only">See type definition</span>
 			</Popover.Trigger>
-			<Popover.Content
-				preventScroll={false}
-				side="top"
-				sideOffset={10}
-				class="z-50 max-h-[400px] overflow-auto rounded-input border border-border bg-background p-4 shadow-popover"
-			>
-				<Code class="h-auto bg-transparent px-0 tracking-tight text-foreground">
-					{@html parseTypeDef(type.definition)}
-				</Code>
-			</Popover.Content>
+			{@render TypeContent({ typeDef: type.definition })}
 		</Popover.Root>
 	{/if}
 </div>

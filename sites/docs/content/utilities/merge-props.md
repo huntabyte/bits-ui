@@ -43,6 +43,21 @@ console.log(mergedProps.onclick(new MouseEvent("click"))) // 1 2
 
 Since `props2` called `event.preventDefault()`, `props3`'s `onclick` handler will not be called.
 
+## Non-Event Handler Functions
+
+Functions that are't event handlers are also chained together, but one can't cancel out the other since there isn't an `event` object to cancel.
+
+```ts
+import { mergeProps } from "bits-ui";
+
+const props1 = { doSomething: () => console.log("1") };
+const props2 = { doSomething: () => console.log("2") };
+
+const mergedProps = mergeProps(props1, props2);
+
+console.log(mergedProps.onclick(new MouseEvent("click"))) // 1 2
+```
+
 ## Classes
 
 `mergeProps` also handles the merging of classes using `clsx`. This means that you can pass in multiple classes as an array or string, and they will be merged together.

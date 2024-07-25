@@ -11,6 +11,10 @@ import type {
 import {
 	childrenSnippet,
 	createApiSchema,
+	createBooleanProp,
+	createEnumProp,
+	createFunctionProp,
+	createUnionProp,
 	dismissableLayerProps,
 	escapeLayerProps,
 	focusScopeProps,
@@ -28,18 +32,15 @@ export const root = createApiSchema<DialogRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root component used to set and manage the state of the dialog.",
 	props: {
-		open: {
-			type: C.BOOLEAN,
+		open: createBooleanProp({
 			default: C.FALSE,
 			description: "Whether or not the dialog is open.",
-		},
-		onOpenChange: {
-			type: {
-				type: C.FUNCTION,
-				definition: "(open: boolean) => void",
-			},
+			bindable: true,
+		}),
+		onOpenChange: createFunctionProp({
+			definition: "(open: boolean) => void",
 			description: "A callback function called when the open state changes.",
-		},
+		}),
 		children: childrenSnippet(),
 	},
 });
@@ -86,13 +87,11 @@ export const title = createApiSchema<DialogTitlePropsWithoutHTML>({
 	title: "Title",
 	description: "An accessibile title for the dialog.",
 	props: {
-		level: {
-			type: {
-				type: C.ENUM,
-				definition: union("1", "2", "3", "4", "5", "6"),
-			},
+		level: createUnionProp({
+			options: ["1", "2", "3", "4", "5", "6"],
 			description: "The heading level of the title.",
-		},
+			default: "3",
+		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
@@ -118,9 +117,7 @@ export const description = createApiSchema<DialogDescriptionPropsWithoutHTML>({
 export const trigger = createApiSchema<DialogTriggerPropsWithoutHTML>({
 	title: "Trigger",
 	description: "The element which opens the dialog on press.",
-	props: {
-		...withChildProps({ elType: "HTMLButtonElement" }),
-	},
+	props: withChildProps({ elType: "HTMLButtonElement" }),
 	dataAttributes: [
 		{
 			name: "dialog-trigger",

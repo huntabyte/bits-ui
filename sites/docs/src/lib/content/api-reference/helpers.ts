@@ -1,5 +1,7 @@
 import * as C from "$lib/content/constants.js";
 import type { APISchema, PropSchema } from "$lib/types/api.js";
+import type { Component } from "svelte";
+import ChildDefaultSnippetProps from "./extended-types/child-default-snippet-props.md";
 
 type ElementKind =
 	| "HTMLDivElement"
@@ -39,11 +41,12 @@ export function createUnionProp({
 	required = false,
 	bindable = false,
 	default: defaultProp,
-}: { options: string[] } & SharedPropOptions): PropSchema {
+	definition,
+}: { options: string[]; definition?: Component } & SharedPropOptions): PropSchema {
 	return {
 		type: {
 			type: C.UNION,
-			definition: union(...options),
+			definition: definition ?? union(...options),
 		},
 		description,
 		required,
@@ -58,11 +61,12 @@ export function createEnumProp({
 	required = false,
 	bindable = false,
 	default: defaultProp,
-}: { options: string[] } & SharedPropOptions): PropSchema {
+	definition,
+}: { options: string[]; definition?: Component } & SharedPropOptions): PropSchema {
 	return {
 		type: {
 			type: C.ENUM,
-			definition: enums(...options),
+			definition: definition ?? enums(...options),
 		},
 		description,
 		required,
@@ -96,7 +100,7 @@ export function createFunctionProp({
 	required = false,
 	bindable = false,
 	default: defaultProp,
-}: { definition: string } & SharedPropOptions): PropSchema {
+}: { definition: string | Component } & SharedPropOptions): PropSchema {
 	return {
 		type: {
 			type: C.FUNCTION,
@@ -205,11 +209,11 @@ export function escape(str: string): string {
 	return str;
 }
 
-export function childSnippet(definition?: string): PropSchema {
+export function childSnippet(definition?: string | Component): PropSchema {
 	return {
 		type: {
 			type: C.SNIPPET,
-			definition: definition || "{ props: Record<string, unknown> }",
+			definition: definition || ChildDefaultSnippetProps,
 		},
 		description:
 			"Use render delegation to render your own element. See [render delegation](/docs/delegation) for more information.",

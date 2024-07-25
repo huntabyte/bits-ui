@@ -29,20 +29,8 @@ const root = createApiSchema<DateRangePickerRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root date picker component.",
 	props: {
-		value: {
-			type: {
-				type: "DateRange",
-				definition: "{ start: DateValue; end: DateValue; }",
-			},
-			description: "The selected date range.",
-		},
-		onValueChange: {
-			type: {
-				type: C.FUNCTION,
-				definition: "(date: DateRange | undefined) => void",
-			},
-			description: "A function that is called when the selected date changes.",
-		},
+		value: rangeFieldRoot.props!.value,
+		onValueChange: rangeFieldRoot.props!.onValueChange,
 		readonlySegments: rangeFieldRoot.props!.readonlySegments,
 		isDateUnavailable: rangeFieldRoot.props!.isDateUnavailable,
 		minValue: rangeFieldRoot.props!.minValue,

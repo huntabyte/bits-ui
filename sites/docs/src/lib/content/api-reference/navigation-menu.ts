@@ -17,14 +17,12 @@ import {
 	createStringProp,
 	dirProp,
 	dismissableLayerProps,
-	enums,
 	escapeLayerProps,
 	floatingProps,
 	forceMountProp,
 	withChildProps,
 } from "./helpers.js";
 import * as C from "$lib/content/constants.js";
-import type { APISchema } from "$lib/types/index.js";
 
 export const root = createApiSchema<NavigationMenuRootPropsWithoutHTML>({
 	title: "Root",

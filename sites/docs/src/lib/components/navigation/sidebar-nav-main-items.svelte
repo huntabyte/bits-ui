@@ -4,6 +4,7 @@
 	import Compass from "phosphor-svelte/lib/Compass";
 	import Palette from "phosphor-svelte/lib/Palette";
 	import Sticker from "phosphor-svelte/lib/Sticker";
+	import Leaf from "phosphor-svelte/lib/Leaf";
 	import { page } from "$app/stores";
 	import type { SidebarNavItem } from "$lib/config/index.js";
 	import { cn } from "$lib/utils/index.js";
@@ -16,6 +17,7 @@
 		Delegation: CodeBlock,
 		Styling: Palette,
 		Dates: CalendarBlank,
+		Ref: Leaf,
 	} as const;
 
 	const iconMapKeys = Object.keys(iconMap) as (keyof typeof iconMap)[];

@@ -10,28 +10,27 @@ import {
 	createNumberProp,
 	withChildProps,
 } from "./helpers.js";
-import { enums } from "$lib/content/api-reference/helpers.js";
-import * as C from "$lib/content/constants.js";
-import type { APISchema } from "$lib/types/index.js";
 
 export const root = createApiSchema<AvatarRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root component used to set and manage the state of the avatar.",
 	props: {
-		delayMs: createNumberProp({
-			default: "0",
-			description:
-				"How long to wait before showing the image after it has loaded. This can be useful to prevent a harsh flickering effect when the image loads quickly.",
-		}),
 		loadingStatus: createEnumProp({
 			options: ["loading", "loaded", "error"],
 			description:
 				"The loading status of the avatars source image. You can bind a variable to track the status outside of the component and use it to show a loading indicator or error message.",
+			bindable: true,
 		}),
 		onLoadingStatusChange: createFunctionProp({
 			definition: "(status: LoadingStatus) => void",
 			description: "A callback function called when the loading status of the image changes.",
 		}),
+		delayMs: createNumberProp({
+			default: "0",
+			description:
+				"How long to wait before showing the image after it has loaded. This can be useful to prevent a harsh flickering effect when the image loads quickly.",
+		}),
+
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [

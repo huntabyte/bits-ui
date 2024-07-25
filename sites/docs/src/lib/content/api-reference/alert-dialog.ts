@@ -11,6 +11,9 @@ import type {
 } from "bits-ui";
 import {
 	childrenSnippet,
+	createApiSchema,
+	createBooleanProp,
+	createFunctionProp,
 	createUnionProp,
 	dismissableLayerProps,
 	escapeLayerProps,
@@ -22,29 +25,20 @@ import {
 	withChildProps,
 } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
-import type { APISchema } from "$lib/types/api.js";
-
-function createApiSchema<T>(schema: APISchema<T>) {
-	return schema;
-}
 
 const root = createApiSchema<AlertDialogRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root component used to set and manage the state of the alert dialog.",
 	props: {
-		open: {
-			type: C.BOOLEAN,
+		open: createBooleanProp({
 			default: C.FALSE,
 			description: "Whether or not the alert dialog is open.",
 			bindable: true,
-		},
-		onOpenChange: {
-			type: {
-				type: C.FUNCTION,
-				definition: "(open: boolean) => void",
-			},
+		}),
+		onOpenChange: createFunctionProp({
+			definition: "(open: boolean) => void",
 			description: "A callback function called when the open state changes.",
-		},
+		}),
 		children: childrenSnippet(),
 	},
 });
