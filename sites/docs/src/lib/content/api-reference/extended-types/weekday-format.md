@@ -1,3 +1,3 @@
 ```ts
-'narrow' | 'short' | 'long'
+"narrow" | "short" | "long";
 ```

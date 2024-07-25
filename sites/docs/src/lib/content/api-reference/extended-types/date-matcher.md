@@ -1,3 +1,3 @@
 ```ts
-(date: DateValue) => boolean
+(date: DateValue) => boolean;
 ```

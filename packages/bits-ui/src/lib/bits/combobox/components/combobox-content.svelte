@@ -50,7 +50,7 @@
 	}}
 	onEscapeKeydown={(e) => {
 		onEscapeKeydown(e);
-		if (e.defaultPrevented) return
+		if (e.defaultPrevented) return;
 		contentState.root.closeMenu();
 	}}
 	onMountAutoFocus={(e) => e.preventDefault()}

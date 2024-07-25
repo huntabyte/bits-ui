@@ -54,7 +54,7 @@
 					enabled={present.current}
 					onEscapeKeydown={(e) => {
 						onEscapeKeydown(e);
-						if (e.defaultPrevented) return
+						if (e.defaultPrevented) return;
 						contentState.root.closeDialog();
 					}}
 				>

@@ -1,3 +1,3 @@
 ```ts
-"horizontal" | "vertical"
+"horizontal" | "vertical";
 ```

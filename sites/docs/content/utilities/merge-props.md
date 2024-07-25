@@ -19,7 +19,7 @@ const props2 = { onclick: (event: MouseEvent) => console.log("2") };
 
 const mergedProps = mergeProps(props1, props2);
 
-console.log(mergedProps.onclick(new MouseEvent("click"))) // 1 2
+console.log(mergedProps.onclick(new MouseEvent("click"))); // 1 2
 ```
 
 Since `props1` didn't call `event.preventDefault()`, `props2` will stll be called as normal.
@@ -28,17 +28,21 @@ Since `props1` didn't call `event.preventDefault()`, `props2` will stll be calle
 import { mergeProps } from "bits-ui";
 
 const props1 = { onclick: (event: MouseEvent) => console.log("1") };
-const props2 = { onclick: (event: MouseEvent) => {
-	console.log('2')
-	event.preventDefault()
-} };
-const props3 = { onclick: (event: MouseEvent) => {
-	console.log('3')
-} };
+const props2 = {
+	onclick: (event: MouseEvent) => {
+		console.log("2");
+		event.preventDefault();
+	},
+};
+const props3 = {
+	onclick: (event: MouseEvent) => {
+		console.log("3");
+	},
+};
 
 const mergedProps = mergeProps(props1, props2, props3);
 
-console.log(mergedProps.onclick(new MouseEvent("click"))) // 1 2
+console.log(mergedProps.onclick(new MouseEvent("click"))); // 1 2
 ```
 
 Since `props2` called `event.preventDefault()`, `props3`'s `onclick` handler will not be called.
@@ -55,7 +59,7 @@ const props2 = { doSomething: () => console.log("2") };
 
 const mergedProps = mergeProps(props1, props2);
 
-console.log(mergedProps.onclick(new MouseEvent("click"))) // 1 2
+console.log(mergedProps.onclick(new MouseEvent("click"))); // 1 2
 ```
 
 ## Classes
@@ -89,7 +93,6 @@ console.log(mergedProps.style); // "background-color: green;"
 ```
 
 ```ts
-
 import { mergeProps } from "bits-ui";
 
 const props1 = { style: "--foo: red" };

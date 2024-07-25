@@ -1,5 +1,5 @@
 ```ts
 {
-	props: Record<string, unknown>
+	props: Record<string, unknown>;
 }
 ```
