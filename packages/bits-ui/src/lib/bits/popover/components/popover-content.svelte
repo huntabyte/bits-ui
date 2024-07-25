@@ -14,7 +14,6 @@
 		onDestroyAutoFocus = noop,
 		onEscapeKeydown = noop,
 		onInteractOutside = noop,
-		loop = true,
 		...restProps
 	}: ContentProps = $props();
 
@@ -50,7 +49,7 @@
 		contentState.root.triggerNode?.focus();
 	}}
 	trapped
-	{loop}
+	loop
 	{forceMount}
 >
 	{#snippet popper({ props })}
