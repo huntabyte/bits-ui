@@ -10,7 +10,7 @@
 <Popover.Root>
 	<Popover.Trigger
 		class="inline-flex h-10
-	items-center justify-center whitespace-nowrap rounded-input bg-dark px-[21px] text-[15px] font-medium text-background shadow-mini transition-all hover:cursor-pointer hover:bg-dark/95 active:scale-98"
+	select-none items-center justify-center whitespace-nowrap rounded-input bg-dark px-[21px] text-[15px] font-medium text-background shadow-mini transition-all hover:cursor-pointer hover:bg-dark/95 active:scale-98"
 	>
 		Resize
 	</Popover.Trigger>
