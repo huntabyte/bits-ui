@@ -38,6 +38,7 @@ import { afterTick } from "$lib/internal/afterTick.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
 import { isPointerInGraceArea, makeHullFromElements } from "$lib/internal/polygon.js";
 import { onDestroyEffect } from "$lib/internal/onDestroyEffect.svelte.js";
+import { IsFocusWithin } from "runed";
 
 const TRIGGER_ATTR = "data-menu-trigger";
 const CONTENT_ATTR = "data-menu-content";
@@ -200,6 +201,7 @@ class MenuContentState {
 	#handleTypeaheadSearch: ReturnType<typeof useTypeahead>["handleTypeaheadSearch"];
 	rovingFocusGroup: ReturnType<typeof useRovingFocus>;
 	isMounted: MenuContentStateProps["isMounted"];
+	isFocusWithin = new IsFocusWithin(() => this.parentMenu.contentNode ?? undefined);
 
 	constructor(props: MenuContentStateProps, parentMenu: MenuMenuState) {
 		this.#id = props.id;
@@ -994,6 +996,7 @@ class ContextMenuTriggerState {
 			onRefChange: (node) => {
 				this.#parentMenu.triggerNode = node;
 			},
+			condition: () => this.#parentMenu.open.current,
 		});
 
 		$effect(() => {
@@ -1032,6 +1035,7 @@ class ContextMenuTriggerState {
 		this.#clearLongPressTimer();
 		this.#handleOpen(e);
 		e.preventDefault();
+		this.#parentMenu.contentNode?.focus();
 	};
 
 	#onpointerdown = (e: PointerEvent) => {
