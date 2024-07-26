@@ -61,10 +61,10 @@ class SliderRootState {
 	isActive = $state(false);
 	currentThumbIdx = $state(0);
 	direction: "rl" | "lr" | "tb" | "bt" = $derived.by(() => {
-		if (this.orientation.value === "horizontal") {
-			return this.dir.value === "rtl" ? "rl" : "lr";
+		if (this.orientation.current === "horizontal") {
+			return this.dir.current === "rtl" ? "rl" : "lr";
 		} else {
-			return this.dir.value === "rtl" ? "tb" : "bt";
+			return this.dir.current === "rtl" ? "tb" : "bt";
 		}
 	});
 	onValueChangeEnd: SliderRootStateProps["onValueChangeEnd"];
@@ -99,10 +99,10 @@ class SliderRootState {
 		});
 
 		$effect(() => {
-			const step = this.step.value;
-			const min = this.min.value;
-			const max = this.max.value;
-			const value = this.value.value;
+			const step = this.step.current;
+			const min = this.min.current;
+			const max = this.max.current;
+			const value = this.value.current;
 
 			const isValidValue = (v: number) => {
 				const snappedValue = snapValueToStep(v, min, max, step);
@@ -114,7 +114,7 @@ class SliderRootState {
 			};
 
 			if (value.some((v) => !isValidValue(v))) {
-				this.value.value = value.map(gcv);
+				this.value.current = value.map(gcv);
 			}
 		});
 	}
@@ -130,8 +130,8 @@ class SliderRootState {
 		start: number;
 		end: number;
 	}) => {
-		const min = this.min.value;
-		const max = this.max.value;
+		const min = this.min.current;
+		const max = this.max.current;
 		const percent = (clientXY - start) / (end - start);
 		const val = percent * (max - min) + min;
 
@@ -140,7 +140,7 @@ class SliderRootState {
 		} else if (val > max) {
 			this.updateValue(max, activeThumbIdx);
 		} else {
-			const step = this.step.value;
+			const step = this.step.current;
 
 			const currStep = Math.floor((val - min) / step);
 			const midpointOfCurrStep = min + currStep * step + step / 2;
@@ -164,7 +164,7 @@ class SliderRootState {
 		}
 
 		const distances = thumbs.map((thumb) => {
-			if (this.orientation.value === "horizontal") {
+			if (this.orientation.current === "horizontal") {
 				const { left, right } = thumb.getBoundingClientRect();
 				return Math.abs(e.clientX - (left + right) / 2);
 			} else {
@@ -186,7 +186,7 @@ class SliderRootState {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const sliderNode = this.ref.value;
+		const sliderNode = this.ref.current;
 		const activeThumb = this.activeThumb;
 		if (!sliderNode || !activeThumb) return;
 
@@ -228,7 +228,7 @@ class SliderRootState {
 
 	handlePointerDown = (e: PointerEvent) => {
 		if (e.button !== 0) return;
-		const sliderNode = this.ref.value;
+		const sliderNode = this.ref.current;
 		const closestThumb = this.getClosestThumb(e);
 		if (!closestThumb || !sliderNode) return;
 
@@ -245,29 +245,29 @@ class SliderRootState {
 
 	handlePointerUp = () => {
 		if (this.isActive) {
-			this.onValueChangeEnd.value(untrack(() => this.value.value));
+			this.onValueChangeEnd.current(untrack(() => this.value.current));
 		}
 		this.isActive = false;
 	};
 
 	getPositionFromValue = (thumbValue: number) => {
-		const min = this.min.value;
-		const max = this.max.value;
+		const min = this.min.current;
+		const max = this.max.current;
 
 		return ((thumbValue - min) / (max - min)) * 100;
 	};
 
 	getAllThumbs = () => {
-		const node = this.ref.value;
+		const node = this.ref.current;
 		if (!node) return [];
 		const thumbs = Array.from(node.querySelectorAll<HTMLElement>(`[${SLIDER_THUMB_ATTR}]`));
 		return thumbs;
 	};
 
 	updateValue = (thumbValue: number, idx: number) => {
-		const currValue = this.value.value;
+		const currValue = this.value.current;
 		if (!currValue.length) {
-			this.value.value.push(thumbValue);
+			this.value.current.push(thumbValue);
 			return;
 		}
 		const valueAtIndex = currValue[idx];
@@ -290,25 +290,25 @@ class SliderRootState {
 		};
 
 		if (
-			this.autoSort.value &&
+			this.autoSort.current &&
 			((direction === -1 && thumbValue < newValue[idx - 1]!) ||
 				(direction === 1 && thumbValue > newValue[idx + 1]!))
 		) {
 			swap();
-			this.value.value = newValue;
+			this.value.current = newValue;
 			return;
 		}
 
-		const min = this.min.value;
-		const max = this.max.value;
-		const step = this.step.value;
+		const min = this.min.current;
+		const max = this.max.current;
+		const step = this.step.current;
 		newValue[idx] = snapValueToStep(thumbValue, min, max, step);
 
-		this.value.value = newValue;
+		this.value.current = newValue;
 	};
 
 	thumbsPropsArr = $derived.by(() => {
-		const currValue = this.value.value;
+		const currValue = this.value.current;
 		return Array.from({ length: currValue.length || 1 }, (_, i) => {
 			const currThumb = untrack(() => this.currentThumbIdx);
 
@@ -324,13 +324,13 @@ class SliderRootState {
 
 			return {
 				role: "slider",
-				"aria-valuemin": this.min.value,
-				"aria-valuemax": this.max.value,
+				"aria-valuemin": this.min.current,
+				"aria-valuemax": this.max.current,
 				"aria-valuenow": thumbValue,
-				"aria-disabled": getAriaDisabled(this.disabled.value),
-				"aria-orientation": getAriaOrientation(this.orientation.value),
+				"aria-disabled": getAriaDisabled(this.disabled.current),
+				"aria-orientation": getAriaOrientation(this.orientation.current),
 				"data-value": thumbValue,
-				tabindex: this.disabled.value ? -1 : 0,
+				tabindex: this.disabled.current ? -1 : 0,
 				style,
 				[SLIDER_THUMB_ATTR]: "",
 			} as const;
@@ -342,9 +342,9 @@ class SliderRootState {
 	});
 
 	ticksPropsArr = $derived.by(() => {
-		const max = this.max.value;
-		const min = this.min.value;
-		const step = this.step.value;
+		const max = this.max.current;
+		const min = this.min.current;
+		const step = this.step.current;
 		const difference = max - min;
 
 		let count = Math.ceil(difference / step);
@@ -353,7 +353,7 @@ class SliderRootState {
 		if (difference % step == 0) {
 			count++;
 		}
-		const currValue = this.value.value;
+		const currValue = this.value.current;
 
 		return Array.from({ length: count }, (_, i) => {
 			const tickPosition = i * (step / difference) * 100;
@@ -369,8 +369,8 @@ class SliderRootState {
 					: currValue[0]! <= tickValue && tickValue <= currValue[currValue.length - 1]!;
 
 			return {
-				"data-disabled": getDataDisabled(this.disabled.value),
-				"data-orientation": getDataOrientation(this.orientation.value),
+				"data-disabled": getDataDisabled(this.disabled.current),
+				"data-orientation": getDataOrientation(this.orientation.current),
 				"data-bounded": bounded ? "" : undefined,
 				"data-value": tickValue,
 				style,
@@ -394,11 +394,11 @@ class SliderRootState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.value,
-				"data-orientation": getDataOrientation(this.orientation.value),
-				"data-disabled": getDataDisabled(this.disabled.value),
+				id: this.id.current,
+				"data-orientation": getDataOrientation(this.orientation.current),
+				"data-disabled": getDataDisabled(this.disabled.current),
 				style: {
-					touchAction: this.orientation.value === "horizontal" ? "pan-y" : "pan-x",
+					touchAction: this.orientation.current === "horizontal" ? "pan-y" : "pan-x",
 				},
 				[SLIDER_ROOT_ATTR]: "",
 			}) as const
@@ -445,7 +445,7 @@ class SliderRangeState {
 	}
 
 	rangeStyles = $derived.by(() => {
-		const value = this.#root.value.value;
+		const value = this.#root.value.current;
 		const min = value.length > 1 ? this.#root.getPositionFromValue(Math.min(...value) ?? 0) : 0;
 		const max = 100 - this.#root.getPositionFromValue(Math.max(...value) ?? 0);
 
@@ -458,9 +458,9 @@ class SliderRangeState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
-				"data-orientation": getDataOrientation(this.#root.orientation.value),
-				"data-disabled": getDataDisabled(this.#root.disabled.value),
+				id: this.#id.current,
+				"data-orientation": getDataOrientation(this.#root.orientation.current),
+				"data-disabled": getDataDisabled(this.#root.disabled.current),
 				style: this.rangeStyles,
 				[SLIDER_RANGE_ATTR]: "",
 			}) as const
@@ -478,7 +478,7 @@ class SliderThumbState {
 	#ref: SliderThumbStateProps["ref"];
 	#index: SliderThumbStateProps["index"];
 	#root: SliderRootState;
-	#isDisabled = $derived.by(() => this.#root.disabled.value || this.#root.disabled.value);
+	#isDisabled = $derived.by(() => this.#root.disabled.current || this.#root.disabled.current);
 
 	constructor(props: SliderThumbStateProps, root: SliderRootState) {
 		this.#id = props.id;
@@ -493,12 +493,12 @@ class SliderThumbState {
 	}
 
 	updateValue = (newValue: number) => {
-		this.#root.updateValue(newValue, this.#index.value);
+		this.#root.updateValue(newValue, this.#index.current);
 	};
 
 	moveValue = (thumbValue: number, increment: number) => {
 		const newValue = thumbValue + increment;
-		if (newValue >= this.#root.min.value && newValue <= this.#root.max.value) {
+		if (newValue >= this.#root.min.current && newValue <= this.#root.max.current) {
 			this.updateValue(newValue);
 		}
 	};
@@ -509,7 +509,7 @@ class SliderThumbState {
 		isHorizontal: boolean,
 		e: KeyboardEvent
 	) => {
-		const orientation = this.#root.orientation.value;
+		const orientation = this.#root.orientation.current;
 		const direction = this.#root.direction;
 		if (
 			(isHorizontal && orientation !== "horizontal") ||
@@ -521,18 +521,18 @@ class SliderThumbState {
 			(isHorizontal && direction === "lr") || (!isHorizontal && direction === "bt");
 
 		if (e.metaKey) {
-			const max = this.#root.max.value;
-			const min = this.#root.min.value;
+			const max = this.#root.max.current;
+			const min = this.#root.min.current;
 			this.updateValue(isForwardDirection === isPositiveDirection ? max : min);
 		} else {
-			const step = this.#root.step.value;
+			const step = this.#root.step.current;
 			this.moveValue(thumbValue, isForwardDirection === isPositiveDirection ? step : -step);
 		}
 	};
 
 	#onkeydown = (e: KeyboardEvent) => {
 		if (this.#isDisabled) return;
-		const currNode = this.#ref.value;
+		const currNode = this.#ref.current;
 		if (!currNode) return;
 		const thumbs = this.#root.getAllThumbs();
 		if (!thumbs.length) return;
@@ -544,13 +544,13 @@ class SliderThumbState {
 
 		e.preventDefault();
 
-		const min = this.#root.min.value;
-		const max = this.#root.max.value;
-		const value = this.#root.value.value;
+		const min = this.#root.min.current;
+		const max = this.#root.max.current;
+		const value = this.#root.value.current;
 		const thumbValue = value[idx]!;
-		const orientation = this.#root.orientation.value;
+		const orientation = this.#root.orientation.current;
 		const direction = this.#root.direction;
-		const step = this.#root.step.value;
+		const step = this.#root.step.current;
 
 		switch (e.key) {
 			case kbd.HOME:
@@ -602,14 +602,14 @@ class SliderThumbState {
 				}
 				break;
 		}
-		this.#root.onValueChangeEnd.value(this.#root.value.value);
+		this.#root.onValueChangeEnd.current(this.#root.value.current);
 	};
 
 	props = $derived.by(
 		() =>
 			({
-				...this.#root.thumbsPropsArr[this.#index.value]!,
-				id: this.#id.value,
+				...this.#root.thumbsPropsArr[this.#index.current]!,
+				id: this.#id.current,
 				onkeydown: this.#onkeydown,
 			}) as const
 	);
@@ -641,8 +641,8 @@ class SliderTickState {
 	props = $derived.by(
 		() =>
 			({
-				...this.#root.ticksPropsArr[this.#index.value]!,
-				id: this.#id.value,
+				...this.#root.ticksPropsArr[this.#index.current]!,
+				id: this.#id.current,
 			}) as const
 	);
 }

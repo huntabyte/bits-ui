@@ -8,7 +8,7 @@
 	import PresenceLayer from "$lib/bits/utilities/presence-layer/presence-layer.svelte";
 	import TextSelectionLayer from "$lib/bits/utilities/text-selection-layer/text-selection-layer.svelte";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 	import { noop } from "$lib/internal/callbacks.js";
 	import ScrollLock from "$lib/bits/utilities/scroll-lock/scroll-lock.svelte";
 
@@ -35,12 +35,12 @@
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));
 </script>
 
-<PresenceLayer {...mergedProps} present={contentState.root.open.value || forceMount}>
+<PresenceLayer {...mergedProps} present={contentState.root.open.current || forceMount}>
 	{#snippet presence({ present })}
 		<ScrollLock {...mergedProps} />
 		<FocusScope
 			loop
-			trapped={present.value}
+			trapped={present.current}
 			{...mergedProps}
 			onDestroyAutoFocus={(e) => {
 				onDestroyAutoFocus(e);
@@ -51,32 +51,30 @@
 			{#snippet focusScope({ props: focusScopeProps })}
 				<EscapeLayer
 					{...mergedProps}
-					enabled={present.value}
+					enabled={present.current}
 					onEscapeKeydown={(e) => {
 						onEscapeKeydown(e);
+						if (e.defaultPrevented) return;
 						contentState.root.closeDialog();
 					}}
 				>
 					<DismissableLayer
 						{...mergedProps}
-						enabled={present.value}
+						enabled={present.current}
 						onInteractOutside={(e) => {
 							onInteractOutside(e);
 							if (e.defaultPrevented) return;
 							contentState.root.closeDialog();
 						}}
 					>
-						<TextSelectionLayer {...mergedProps} enabled={present.value}>
+						<TextSelectionLayer {...mergedProps} enabled={present.current}>
 							{#if child}
-								{@render child?.({
-									props: mergeProps(mergedProps, focusScopeProps, {
-										hidden: !present.value,
-									}),
+								{@render child({
+									props: mergeProps(mergedProps, focusScopeProps),
 								})}
 							{:else}
 								<div
 									{...mergeProps(mergedProps, focusScopeProps, {
-										hidden: !present.value,
 										style: {
 											pointerEvents: "auto",
 										},

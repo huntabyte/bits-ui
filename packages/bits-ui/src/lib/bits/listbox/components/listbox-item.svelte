@@ -2,7 +2,7 @@
 	import { box } from "svelte-toolbelt";
 	import type { ItemProps } from "../index.js";
 	import { useListboxItem } from "../listbox.svelte.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {
@@ -36,7 +36,7 @@
 </script>
 
 {#if child}
-	{@render child?.({ props: mergedProps, selected: itemState.isSelected })}
+	{@render child({ props: mergedProps, selected: itemState.isSelected })}
 {:else}
 	<div {...mergedProps}>
 		{#if children}

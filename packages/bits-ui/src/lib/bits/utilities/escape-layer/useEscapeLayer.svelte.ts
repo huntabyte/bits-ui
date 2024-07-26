@@ -23,7 +23,7 @@ export class EscapeLayerState {
 		let unsubEvents = noop;
 
 		$effect(() => {
-			if (this.#enabled.value) {
+			if (this.#enabled.current) {
 				layers.set(
 					this,
 					untrack(() => this.#behaviorType)
@@ -44,10 +44,11 @@ export class EscapeLayerState {
 
 	#onkeydown = (e: KeyboardEvent) => {
 		if (e.key !== kbd.ESCAPE || !isResponsibleEscapeLayer(this)) return;
+		const clonedEvent = new KeyboardEvent(e.type, e);
 		e.preventDefault();
-		const behaviorType = this.#behaviorType.value;
+		const behaviorType = this.#behaviorType.current;
 		if (behaviorType !== "close" && behaviorType !== "defer-otherwise-close") return;
-		this.#onEscapeProp.value(e);
+		this.#onEscapeProp.current(clonedEvent);
 	};
 }
 
@@ -64,7 +65,7 @@ function isResponsibleEscapeLayer(instance: EscapeLayerState) {
 	 * the first layer is the responsible one.
 	 */
 	const topMostLayer = layersArr.findLast(
-		([_, { value: behaviorType }]) => behaviorType === "close" || behaviorType === "ignore"
+		([_, { current: behaviorType }]) => behaviorType === "close" || behaviorType === "ignore"
 	);
 	if (topMostLayer) return topMostLayer[0] === instance;
 	const [firstLayerNode] = layersArr[0]!;

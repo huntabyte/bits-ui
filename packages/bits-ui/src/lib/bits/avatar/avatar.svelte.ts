@@ -42,14 +42,14 @@ class AvatarRootState {
 		let imageTimerId: NodeJS.Timeout;
 		const image = new Image();
 		image.src = src;
-		this.loadingStatus.value = "loading";
+		this.loadingStatus.current = "loading";
 		image.onload = () => {
 			imageTimerId = setTimeout(() => {
-				this.loadingStatus.value = "loaded";
-			}, this.delayMs.value);
+				this.loadingStatus.current = "loaded";
+			}, this.delayMs.current);
 		};
 		image.onerror = () => {
-			this.loadingStatus.value = "error";
+			this.loadingStatus.current = "error";
 		};
 		return () => {
 			clearTimeout(imageTimerId);
@@ -59,9 +59,9 @@ class AvatarRootState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
+				id: this.#id.current,
 				[AVATAR_ROOT_ATTR]: "",
-				"data-status": this.loadingStatus.value,
+				"data-status": this.loadingStatus.current,
 			}) as const
 	);
 
@@ -102,20 +102,20 @@ class AvatarImageState {
 		});
 
 		$effect.pre(() => {
-			if (!this.src.value) return;
-			untrack(() => this.root.loadImage(this.src.value ?? ""));
+			if (!this.src.current) return;
+			untrack(() => this.root.loadImage(this.src.current ?? ""));
 		});
 	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
+				id: this.#id.current,
 				style: {
-					display: this.root.loadingStatus.value === "loaded" ? "block" : "none",
+					display: this.root.loadingStatus.current === "loaded" ? "block" : "none",
 				},
 				[AVATAR_IMAGE_ATTR]: "",
-				src: this.src.value,
+				src: this.src.current,
 			}) as const
 	);
 }
@@ -146,7 +146,7 @@ class AvatarFallbackState {
 		() =>
 			({
 				style: {
-					display: this.root.loadingStatus.value === "loaded" ? "none" : undefined,
+					display: this.root.loadingStatus.current === "loaded" ? "none" : undefined,
 				},
 				[AVATAR_FALLBACK_ATTR]: "",
 			}) as const

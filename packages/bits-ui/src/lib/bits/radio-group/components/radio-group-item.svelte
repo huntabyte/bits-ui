@@ -2,7 +2,7 @@
 	import { box } from "svelte-toolbelt";
 	import type { ItemProps } from "../index.js";
 	import { useRadioGroupItem } from "../radio-group.svelte.js";
-	import { styleToString, useId } from "$lib/internal/index.js";
+	import { mergeProps, useId } from "$lib/internal/index.js";
 
 	let {
 		id = useId(),
@@ -11,13 +11,12 @@
 		value,
 		disabled = false,
 		ref = $bindable(null),
-		style = {},
 		...restProps
 	}: ItemProps = $props();
 
 	const itemState = useRadioGroupItem({
 		value: box.with(() => value),
-		disabled: box.with(() => disabled),
+		disabled: box.with(() => disabled ?? false),
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,
@@ -25,15 +24,11 @@
 		),
 	});
 
-	const mergedProps = $derived({
-		...restProps,
-		...itemState.props,
-		style: styleToString(style),
-	});
+	const mergedProps = $derived(mergeProps(restProps, itemState.props));
 </script>
 
 {#if child}
-	{@render child?.({ props: mergedProps, checked: itemState.checked })}
+	{@render child({ props: mergedProps, checked: itemState.checked })}
 {:else}
 	<button {...mergedProps}>
 		{@render children?.({ checked: itemState.checked })}

@@ -1,34 +1,22 @@
-import type { ProgressPropsWithoutHTML } from "bits-ui";
-import { builderAndAttrsSlotProps, domElProps } from "./helpers.js";
+import type { ProgressRootPropsWithoutHTML } from "bits-ui";
+import { createApiSchema, createNumberProp, withChildProps } from "./helpers.js";
 import { enums } from "$lib/content/api-reference/helpers.js";
-import * as C from "$lib/content/constants.js";
-import type { APISchema } from "$lib/types/index.js";
 
-export const root: APISchema<ProgressPropsWithoutHTML> = {
+export const root = createApiSchema<ProgressRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The progress bar component.",
 	props: {
-		max: {
-			type: C.NUMBER,
+		max: createNumberProp({
 			default: "100",
 			description:
 				"The maximum value of the progress bar. Used to calculate the percentage of the progress bar.",
-		},
-		value: {
-			type: C.NUMBER,
+		}),
+		value: createNumberProp({
 			default: "0",
 			description: "The current value of the progress bar.",
-		},
-		onValueChange: {
-			type: {
-				type: C.FUNCTION,
-				definition: "(value: number) => void",
-			},
-			description: "A callback that fires when the value changes.",
-		},
-		...domElProps("HTMLDivElement"),
+		}),
+		...withChildProps({ elType: "HTMLDivElement" }),
 	},
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "value",
@@ -49,6 +37,6 @@ export const root: APISchema<ProgressPropsWithoutHTML> = {
 			description: "Present on the root element.",
 		},
 	],
-};
+});
 
 export const progress = [root];

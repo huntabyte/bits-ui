@@ -25,7 +25,7 @@
 	@apply relative;
 
 	& pre {
-		@apply mb-4 mt-6 w-full overflow-x-auto rounded-card px-2.5 py-5 text-sm font-semibold;
+		@apply mb-4 mt-6 w-full overflow-x-auto rounded-card  py-5 text-sm font-semibold;
 	}
 
 	& pre[data-metadata] {
@@ -39,11 +39,15 @@
 	}
 
 	& [data-line] {
-		@apply inline-block w-full basis-4 border-l-[3px] border-l-transparent py-0.5 pl-2 pr-5;
+		@apply inline-block w-full basis-4 border-l-[3px] border-l-transparent py-0.5 pl-2.5 pr-5;
 	}
 
 	& [data-chars-id] {
 		@apply pb-0.5 shadow-none;
+	}
+
+	& [data-highlighted-line] {
+		@apply !bg-muted;
 	}
 }
 

@@ -23,26 +23,26 @@ function setup(props?: Collapsible.RootProps) {
 }
 
 describe("collapsible", () => {
-	it("has no accessibility violations", async () => {
+	it("should have no accessibility violations", async () => {
 		const { container } = render(CollapsibleTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
-	it("has bits data attrs", async () => {
+	it("should have bits data attrs", async () => {
 		const { root, trigger, content } = setup();
 		expect(root).toHaveAttribute("data-collapsible-root");
 		expect(trigger).toHaveAttribute("data-collapsible-trigger");
 		expect(content).toHaveAttribute("data-collapsible-content");
 	});
 
-	it("content is hidden when `open` is false", async () => {
+	it("should hide content when `open` is false", async () => {
 		const { root, trigger, content } = setup();
 		expect(root).not.toBeNull();
 		expect(trigger).not.toBeNull();
 		expect(content).not.toBeVisible();
 	});
 
-	it("toggles the `open` state when clicked", async () => {
+	it("should toggle the `open` state when clicked", async () => {
 		const { user, trigger, content } = setup();
 		expect(content).not.toBeVisible();
 		await user.click(trigger);
@@ -51,7 +51,7 @@ describe("collapsible", () => {
 		expect(content).not.toBeVisible();
 	});
 
-	it("respects binds to the `open` prop", async () => {
+	it("should respect binds to the `open` prop", async () => {
 		const { getByTestId, user, trigger, binding } = setup({ open: false });
 		expect(binding).toHaveTextContent("false");
 		await user.click(trigger);

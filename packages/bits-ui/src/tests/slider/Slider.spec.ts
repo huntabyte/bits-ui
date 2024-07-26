@@ -30,13 +30,13 @@ function setup(props: SliderTestProps = {}, kind: "default" | "range" = "default
 }
 
 describe("slider (default)", () => {
-	it("no accessibility violations", async () => {
+	it("should haveno accessibility violations", async () => {
 		const { container } = render(SliderTest);
 
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
-	it("has a thumb positioned at 30% of the container", async () => {
+	it("should have a thumb positioned at 30% of the container", async () => {
 		const { getByTestId } = setup();
 
 		const thumb = getByTestId("thumb");
@@ -44,7 +44,7 @@ describe("slider (default)", () => {
 
 		expect(isCloseEnough(30, thumb.style.left)).toBeTruthy();
 	});
-	it("has a range that covers from 0 to 30%", async () => {
+	it("should have a range that covers from 0 to 30%", async () => {
 		const { getByTestId } = setup();
 
 		const range = getByTestId("range");
@@ -54,31 +54,37 @@ describe("slider (default)", () => {
 		expect(isCloseEnough(70, range.style.right)).toBeTruthy();
 	});
 
-	it.each([kbd.ARROW_RIGHT, kbd.ARROW_UP])("change by 1% when pressing %s", async (key) => {
-		const { getByTestId, user } = setup();
+	it.each([kbd.ARROW_RIGHT, kbd.ARROW_UP])(
+		"should change by 1% when pressing %s",
+		async (key) => {
+			const { getByTestId, user } = setup();
 
-		const thumb = getByTestId("thumb");
-		const range = getByTestId("range");
+			const thumb = getByTestId("thumb");
+			const range = getByTestId("range");
 
-		thumb.focus();
-		await user.keyboard(key);
+			thumb.focus();
+			await user.keyboard(key);
 
-		expectPercentage({ percentage: 31, thumb, range });
-	});
+			expectPercentage({ percentage: 31, thumb, range });
+		}
+	);
 
-	it.each([kbd.ARROW_LEFT, kbd.ARROW_DOWN])("change by 1% when pressing %s", async (key) => {
-		const { getByTestId, user } = setup();
+	it.each([kbd.ARROW_LEFT, kbd.ARROW_DOWN])(
+		"should change by 1% when pressing %s",
+		async (key) => {
+			const { getByTestId, user } = setup();
 
-		const thumb = getByTestId("thumb");
-		const range = getByTestId("range");
-		thumb.focus();
+			const thumb = getByTestId("thumb");
+			const range = getByTestId("range");
+			thumb.focus();
 
-		await user.keyboard(key);
+			await user.keyboard(key);
 
-		expectPercentage({ percentage: 29, thumb, range });
-	});
+			expectPercentage({ percentage: 29, thumb, range });
+		}
+	);
 
-	it("goes to minimum when pressing Home", async () => {
+	it("should go to minimum when pressing Home", async () => {
 		const { getByTestId, user } = setup();
 
 		const thumb = getByTestId("thumb");
@@ -90,7 +96,7 @@ describe("slider (default)", () => {
 		expectPercentage({ percentage: 0, thumb, range });
 	});
 
-	it("goes to maximum when pressing End", async () => {
+	it("should go to maximum when pressing End", async () => {
 		const { getByTestId, user } = setup();
 		const thumb = getByTestId("thumb");
 		const range = getByTestId("range");
@@ -103,13 +109,13 @@ describe("slider (default)", () => {
 });
 
 describe("slider (range)", () => {
-	it("no accessibility violations", async () => {
+	it("should have no accessibility violations", async () => {
 		const { container } = setup({}, "range");
 
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
-	it("has a thumb positioned at 20% of the container and one at 80%", async () => {
+	it("should have a thumb positioned at 20% of the container and one at 80%", async () => {
 		const { getByTestId } = setup({}, "range");
 
 		const thumb0 = getByTestId("thumb-0");
@@ -120,7 +126,7 @@ describe("slider (range)", () => {
 		expect(isCloseEnough(20, thumb0.style.left)).toBeTruthy();
 		expect(isCloseEnough(80, thumb1.style.left)).toBeTruthy();
 	});
-	it("has a range that covers from 20% to 80%", async () => {
+	it("should have a range that covers from 20% to 80%", async () => {
 		const { getByTestId } = setup({}, "range");
 
 		const range = getByTestId("range");
@@ -131,7 +137,7 @@ describe("slider (range)", () => {
 	});
 
 	it.each([kbd.ARROW_RIGHT, kbd.ARROW_UP])(
-		"change by 1% when pressing %s (pressing on the first thumb)",
+		"should change by 1% when pressing %s (pressing on the first thumb)",
 		async (key) => {
 			const { getByTestId, user } = setup({}, "range");
 
@@ -147,7 +153,7 @@ describe("slider (range)", () => {
 	);
 
 	it.each([kbd.ARROW_RIGHT, kbd.ARROW_UP])(
-		"change by 1% when pressing %s (pressing on the last thumb)",
+		"should change by 1% when pressing %s (pressing on the last thumb)",
 		async (key) => {
 			const { getByTestId, user } = setup({}, "range");
 
@@ -163,7 +169,7 @@ describe("slider (range)", () => {
 	);
 
 	it.each([kbd.ARROW_LEFT, kbd.ARROW_DOWN])(
-		"change by 1% when pressing %s (pressing on the first thumb)",
+		"should change by 1% when pressing %s (pressing on the first thumb)",
 		async (key) => {
 			const { getByTestId, user } = setup({}, "range");
 
@@ -179,7 +185,7 @@ describe("slider (range)", () => {
 	);
 
 	it.each([kbd.ARROW_LEFT, kbd.ARROW_DOWN])(
-		"change by 1% when pressing %s (pressing on the last thumb)",
+		"should change by 1% when pressing %s (pressing on the last thumb)",
 		async (key) => {
 			const { getByTestId, user } = setup({}, "range");
 
@@ -195,7 +201,7 @@ describe("slider (range)", () => {
 	);
 
 	it.each([kbd.ARROW_RIGHT, kbd.ARROW_UP])(
-		"the handlers swap places when they overlap pressing %s (going up)",
+		"should swap handler places when they overlap pressing %s (going up)",
 		async (key) => {
 			const { getByTestId, user } = setup(
 				{
@@ -219,7 +225,7 @@ describe("slider (range)", () => {
 	);
 
 	it.each([kbd.ARROW_LEFT, kbd.ARROW_DOWN])(
-		"the handlers swap places when they overlap pressing %s (going down)",
+		"should swap handler places when they overlap pressing %s (going down)",
 		async (key) => {
 			const { getByTestId, user } = setup(
 				{
@@ -242,7 +248,7 @@ describe("slider (range)", () => {
 		}
 	);
 
-	it("thumb 0 goes to minimum when pressing Home", async () => {
+	it("should bring thumb to 0  to minimum when pressing Home", async () => {
 		const { getByTestId, user } = setup({}, "range");
 
 		const thumb0 = getByTestId("thumb-0");
@@ -255,7 +261,7 @@ describe("slider (range)", () => {
 		expectPercentages({ percentages: [0, 80], thumbs: [thumb0, thumb1], range });
 	});
 
-	it("thumb 1 goes to maximum when pressing End", async () => {
+	it("should bring thumb 1  to maximum when pressing End", async () => {
 		const { getByTestId, user } = setup({}, "range");
 
 		const thumb0 = getByTestId("thumb-0");
@@ -268,7 +274,7 @@ describe("slider (range)", () => {
 		expectPercentages({ percentages: [20, 100], thumbs: [thumb0, thumb1], range });
 	});
 
-	it("thumb 1 goes to minimum when pressing Home (thumbs swap places)", async () => {
+	it("should bring thumb 1  to minimum when pressing Home (thumbs swap places)", async () => {
 		const { getByTestId, user } = setup({}, "range");
 
 		const thumb0 = getByTestId("thumb-0");
@@ -282,7 +288,7 @@ describe("slider (range)", () => {
 		expect(thumb0).toHaveFocus();
 	});
 
-	it("thumb 0 goes to maximum when pressing End (thumbs swap places)", async () => {
+	it("should bring thumb 0 to maximum when pressing End (thumbs swap places)", async () => {
 		const { getByTestId, user } = setup({}, "range");
 
 		const thumb0 = getByTestId("thumb-0");
@@ -298,7 +304,7 @@ describe("slider (range)", () => {
 });
 
 describe("slider (small min, max, step)", () => {
-	it("has a thumb positioned at 50% of the container", async () => {
+	it("should have a thumb positioned at 50% of the container", async () => {
 		const { getByTestId } = setup({
 			value: [0.5],
 			min: 0,
@@ -312,43 +318,49 @@ describe("slider (small min, max, step)", () => {
 		expect(isCloseEnough(50, thumb.style.left)).toBeTruthy();
 	});
 
-	it.each([kbd.ARROW_RIGHT, kbd.ARROW_UP])("change by 1% when pressing %s", async (key) => {
-		const { getByTestId, user } = setup({
-			value: [0.5],
-			min: 0,
-			max: 1,
-			step: 0.01,
-		});
+	it.each([kbd.ARROW_RIGHT, kbd.ARROW_UP])(
+		"should change by 1% when pressing %s",
+		async (key) => {
+			const { getByTestId, user } = setup({
+				value: [0.5],
+				min: 0,
+				max: 1,
+				step: 0.01,
+			});
 
-		const thumb = getByTestId("thumb");
-		const range = getByTestId("range");
+			const thumb = getByTestId("thumb");
+			const range = getByTestId("range");
 
-		thumb.focus();
-		await user.keyboard(key);
+			thumb.focus();
+			await user.keyboard(key);
 
-		expectPercentage({ percentage: 51, thumb, range });
-	});
+			expectPercentage({ percentage: 51, thumb, range });
+		}
+	);
 
-	it.each([kbd.ARROW_LEFT, kbd.ARROW_DOWN])("change by 10% when pressing %s", async (key) => {
-		const { getByTestId, user } = setup({
-			value: [0.5],
-			min: 0,
-			max: 1,
-			step: 0.01,
-		});
+	it.each([kbd.ARROW_LEFT, kbd.ARROW_DOWN])(
+		"should change by 10% when pressing %s",
+		async (key) => {
+			const { getByTestId, user } = setup({
+				value: [0.5],
+				min: 0,
+				max: 1,
+				step: 0.01,
+			});
 
-		const thumb = getByTestId("thumb");
-		const range = getByTestId("range");
+			const thumb = getByTestId("thumb");
+			const range = getByTestId("range");
 
-		thumb.focus();
-		await user.keyboard(key);
+			thumb.focus();
+			await user.keyboard(key);
 
-		expectPercentage({ percentage: 49, thumb, range });
-	});
+			expectPercentage({ percentage: 49, thumb, range });
+		}
+	);
 });
 
 describe("slider (negative min)", () => {
-	it("has a thumb positioned at 50% of the container", async () => {
+	it("should have a thumb positioned at 50% of the container", async () => {
 		const { getByTestId } = setup({
 			value: [0],
 			min: -50,
@@ -362,39 +374,45 @@ describe("slider (negative min)", () => {
 		expect(isCloseEnough(50, thumb.style.left)).toBeTruthy();
 	});
 
-	it.each([kbd.ARROW_RIGHT, kbd.ARROW_UP])("change by 1% when pressing %s", async (key) => {
-		const { getByTestId, user } = setup({
-			value: [0],
-			min: -50,
-			max: 50,
-			step: 1,
-		});
+	it.each([kbd.ARROW_RIGHT, kbd.ARROW_UP])(
+		"should change by 1% when pressing %s",
+		async (key) => {
+			const { getByTestId, user } = setup({
+				value: [0],
+				min: -50,
+				max: 50,
+				step: 1,
+			});
 
-		const thumb = getByTestId("thumb");
-		const range = getByTestId("range");
+			const thumb = getByTestId("thumb");
+			const range = getByTestId("range");
 
-		thumb.focus();
-		await user.keyboard(key);
+			thumb.focus();
+			await user.keyboard(key);
 
-		expectPercentage({ percentage: 51, thumb, range });
-	});
+			expectPercentage({ percentage: 51, thumb, range });
+		}
+	);
 
-	it.each([kbd.ARROW_LEFT, kbd.ARROW_DOWN])("change by 10% when pressing %s", async (key) => {
-		const { getByTestId, user } = setup({
-			value: [0],
-			min: -50,
-			max: 50,
-			step: 1,
-		});
+	it.each([kbd.ARROW_LEFT, kbd.ARROW_DOWN])(
+		"should change by 10% when pressing %s",
+		async (key) => {
+			const { getByTestId, user } = setup({
+				value: [0],
+				min: -50,
+				max: 50,
+				step: 1,
+			});
 
-		const thumb = getByTestId("thumb");
-		const range = getByTestId("range");
+			const thumb = getByTestId("thumb");
+			const range = getByTestId("range");
 
-		thumb.focus();
-		await user.keyboard(key);
+			thumb.focus();
+			await user.keyboard(key);
 
-		expectPercentage({ percentage: 49, thumb, range });
-	});
+			expectPercentage({ percentage: 49, thumb, range });
+		}
+	);
 });
 
 describe("slider (value=[5], min=0, max=10, step=1)", () => {
@@ -405,13 +423,13 @@ describe("slider (value=[5], min=0, max=10, step=1)", () => {
 		step: 1,
 	};
 
-	it("11 ticks are rendered", () => {
+	it("should render 11 ticks", () => {
 		const { getAllByTestId } = setup(props);
 
 		expect(getAllByTestId("tick")).toHaveLength(11);
 	});
 
-	it("ticks 0-5 have a data-bounded attribute", () => {
+	it("should have a data-bounded attribute on ticks 0-5", () => {
 		const { getAllByTestId } = setup(props);
 
 		const ticks = getAllByTestId("tick");
@@ -420,7 +438,7 @@ describe("slider (value=[5], min=0, max=10, step=1)", () => {
 		}
 	});
 
-	it("ticks 6-10 have no data-bounded attribute", () => {
+	it("should not have a data-bounded attribute on ticks 6-10", () => {
 		const { getAllByTestId } = setup(props);
 
 		const ticks = getAllByTestId("tick");
@@ -431,7 +449,7 @@ describe("slider (value=[5], min=0, max=10, step=1)", () => {
 });
 
 describe("slider (min=0, max=8, step=3)", () => {
-	it("3 ticks are rendered", () => {
+	it("should render 3 ticks", () => {
 		const { getAllByTestId } = setup({
 			min: 0,
 			max: 8,
@@ -443,7 +461,7 @@ describe("slider (min=0, max=8, step=3)", () => {
 });
 
 describe("slider (min=0, max=9, step=3)", () => {
-	it("4 ticks are rendered", () => {
+	it("should render 4 ticks", () => {
 		const { getAllByTestId } = setup({
 			min: 0,
 			max: 9,
@@ -462,13 +480,13 @@ describe("slider (value=[3,6], min=0, max=10, step=3)", () => {
 		step: 3,
 	};
 
-	it("4 ticks are rendered", () => {
+	it("should render 4 ticks", () => {
 		const { getAllByTestId } = setup(props);
 
 		expect(getAllByTestId("tick")).toHaveLength(4);
 	});
 
-	it("ticks 1,2 have a data-bounded attribute", () => {
+	it("should have a data-bounded attribute on ticks 1,2", () => {
 		const { getAllByTestId } = setup(props);
 
 		const ticks = getAllByTestId("tick");
@@ -477,7 +495,7 @@ describe("slider (value=[3,6], min=0, max=10, step=3)", () => {
 		}
 	});
 
-	it("ticks 0,3 have no data-bounded attribute", () => {
+	it("should not have a data-bounded attribute on ticks 0,3", () => {
 		const { getAllByTestId } = setup(props);
 
 		const ticks = getAllByTestId("tick");
@@ -495,7 +513,7 @@ describe("slider changing options after building", () => {
 		step: 1,
 	};
 
-	it("changing min", async () => {
+	it("should change the min", async () => {
 		const { getAllByTestId, rerender } = setup(props);
 
 		expect(getAllByTestId("tick")).toHaveLength(11);
@@ -505,7 +523,7 @@ describe("slider changing options after building", () => {
 		expect(getAllByTestId("tick")).toHaveLength(9);
 	});
 
-	it("changing max", async () => {
+	it("should change the max", async () => {
 		const { getAllByTestId, rerender } = setup(props);
 
 		expect(getAllByTestId("tick")).toHaveLength(11);
@@ -515,7 +533,7 @@ describe("slider changing options after building", () => {
 		expect(getAllByTestId("tick")).toHaveLength(9);
 	});
 
-	it("changing step", async () => {
+	it("should change the  step", async () => {
 		const { getAllByTestId, rerender } = setup(props);
 
 		expect(getAllByTestId("tick")).toHaveLength(11);

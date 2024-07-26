@@ -36,30 +36,6 @@ export const bits = [
 	"tooltip",
 ] as const;
 
-export function getAttrAndSelector<const T extends string>(str: T) {
-	return [`data-${str}`, `[data-${str}]`] as const;
-}
-
-export function createBitAttrs<T extends readonly string[]>(
-	bit: (typeof bits)[number] | "menu",
-	parts: T
-) {
-	const attrs: Record<string, Record<string, string>> = {};
-	parts.forEach((part) => {
-		attrs[part] = {
-			[`data-${bit}-${part}`]: "",
-		};
-	});
-
-	return (part: T[number]) => attrs[part];
-}
-
-export function disabledAttrs(disabled: boolean | undefined | null) {
-	return disabled
-		? { "aria-disabled": "true", "data-disabled": "" }
-		: { "aria-disabled": undefined, "data-disabled": undefined };
-}
-
 export function getDataOpenClosed(condition: boolean): "open" | "closed" {
 	return condition ? "open" : "closed";
 }
@@ -143,16 +119,10 @@ export function getDataUnavailable(condition: boolean): "" | undefined {
 	return condition ? "" : undefined;
 }
 
-/**
- * Returns the hidden attribute if the condition is true.
- */
 export function getHidden(condition: boolean): true | undefined {
 	return condition ? true : undefined;
 }
 
-/**
- * Returns the `disabled` attribute if the condition is true.
- */
 export function getDisabled(condition: boolean): true | undefined {
 	return condition ? true : undefined;
 }

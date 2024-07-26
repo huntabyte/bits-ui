@@ -3,7 +3,7 @@
 	import type { ThumbProps } from "../index.js";
 	import { useSwitchThumb } from "../switch.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 
 	let {
 		child,
@@ -25,9 +25,9 @@
 </script>
 
 {#if child}
-	{@render child?.({ props: mergedProps, checked: thumbState.root.checked.value })}
+	{@render child({ props: mergedProps, checked: thumbState.root.checked.current })}
 {:else}
 	<span {...mergedProps}>
-		{@render children?.({ checked: thumbState.root.checked.value })}
+		{@render children?.({ checked: thumbState.root.checked.current })}
 	</span>
 {/if}

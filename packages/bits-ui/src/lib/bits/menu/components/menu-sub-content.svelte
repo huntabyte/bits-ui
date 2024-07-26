@@ -3,7 +3,7 @@
 	import type { SubContentProps } from "../index.js";
 	import { useMenuContent } from "../menu.svelte.js";
 	import { SUB_CLOSE_KEYS } from "../utils.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
 	import { noop } from "$lib/internal/callbacks.js";
@@ -40,7 +40,7 @@
 
 	function onkeydown(e: KeyboardEvent) {
 		const isKeyDownInside = (e.currentTarget as HTMLElement).contains(e.target as HTMLElement);
-		const isCloseKey = SUB_CLOSE_KEYS[subContentState.parentMenu.root.dir.value].includes(
+		const isCloseKey = SUB_CLOSE_KEYS[subContentState.parentMenu.root.dir.current].includes(
 			e.key
 		);
 		if (isKeyDownInside && isCloseKey) {
@@ -64,7 +64,7 @@
 	function onMountAutoFocus(e: Event) {
 		afterTick(() => {
 			e.preventDefault();
-			if (subContentState.parentMenu.root.isUsingKeyboard.value) {
+			if (subContentState.parentMenu.root.isUsingKeyboard.current) {
 				const subContentEl = subContentState.parentMenu.contentNode;
 				subContentEl?.focus();
 			}
@@ -81,7 +81,7 @@
 	{interactOutsideBehavior}
 	{escapeKeydownBehavior}
 	{onMountAutoFocus}
-	present={subContentState.parentMenu.open.value || forceMount}
+	present={subContentState.parentMenu.open.current || forceMount}
 	onInteractOutside={(e) => {
 		onInteractOutside(e);
 		if (e.defaultPrevented) return;
@@ -90,6 +90,7 @@
 	onEscapeKeydown={(e) => {
 		// TODO: users should be able to cancel this
 		onEscapeKeydown(e);
+		if (e.defaultPrevented) return;
 		subContentState.parentMenu.onClose();
 	}}
 	onFocusOutside={(e) => {

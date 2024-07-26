@@ -1,58 +1,55 @@
-import type {
-	RadioGroupInputPropsWithoutHTML,
-	RadioGroupItemPropsWithoutHTML,
-	RadioGroupPropsWithoutHTML,
-} from "bits-ui";
-import { builderAndAttrsSlotProps, domElProps } from "./helpers.js";
-import { attrsSlotProp, enums } from "$lib/content/api-reference/helpers.js";
+import type { RadioGroupItemPropsWithoutHTML, RadioGroupRootPropsWithoutHTML } from "bits-ui";
+import {
+	createApiSchema,
+	createBooleanProp,
+	createEnumProp,
+	createFunctionProp,
+	createStringProp,
+	withChildProps,
+} from "./helpers.js";
+import { enums } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
 
-export const root: APISchema<RadioGroupPropsWithoutHTML> = {
+export const root = createApiSchema<RadioGroupRootPropsWithoutHTML>({
 	title: "Root",
 	description:
 		"The radio group component used to group radio items under a common name for form submission.",
 	props: {
-		disabled: {
-			default: C.FALSE,
-			type: C.BOOLEAN,
-			description:
-				"Whether or not the radio group is disabled. This prevents the user from interacting with it.",
-		},
-		required: {
-			default: C.FALSE,
-			type: C.BOOLEAN,
-			description: "Whether or not the radio group is required.",
-		},
-		loop: {
-			default: C.FALSE,
-			type: C.BOOLEAN,
-			description:
-				"Whether or not the radio group should loop through the items when navigating with the arrow keys.",
-		},
-		orientation: {
-			default: "'vertical'",
-			type: {
-				type: C.ENUM,
-				definition: enums("vertical", "horizontal"),
-			},
-			description: "The orientation of the radio group.",
-		},
-		value: {
-			type: C.STRING,
+		value: createStringProp({
 			description:
 				"The value of the currently selected radio item. You can bind to this value to control the radio group's value from outside the component.",
-		},
-		onValueChange: {
-			type: {
-				type: C.FUNCTION,
-				definition: "(value: string | undefined) => void",
-			},
+			bindable: true,
+		}),
+		onValueChange: createFunctionProp({
+			definition: "(value: string | undefined) => void",
 			description: "A callback that is fired when the radio group's value changes.",
-		},
-		...domElProps("HTMLDivElement"),
+		}),
+		disabled: createBooleanProp({
+			default: C.FALSE,
+			description:
+				"Whether or not the radio group is disabled. This prevents the user from interacting with it.",
+		}),
+		required: createBooleanProp({
+			default: C.FALSE,
+			description: "Whether or not the radio group is required.",
+		}),
+		name: createStringProp({
+			description:
+				"The name of the radio group used in form submission. If provided, a hidden input element will be rendered to submit the value of the radio group.",
+		}),
+		loop: createBooleanProp({
+			default: C.FALSE,
+			description:
+				"Whether or not the radio group should loop through the items when navigating with the arrow keys.",
+		}),
+		orientation: createEnumProp({
+			options: ["vertical", "horizontal"],
+			default: "'vertical'",
+			description: "The orientation of the radio group.",
+		}),
+		...withChildProps({ elType: "HTMLDivElement" }),
 	},
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "orientation",
@@ -65,9 +62,9 @@ export const root: APISchema<RadioGroupPropsWithoutHTML> = {
 			description: "Present on the root element.",
 		},
 	],
-};
+});
 
-export const item: APISchema<RadioGroupItemPropsWithoutHTML> = {
+export const item = createApiSchema<RadioGroupItemPropsWithoutHTML>({
 	title: "Item",
 	description: "An radio item, which must be a child of the `RadioGroup.Root` component.",
 	props: {
@@ -83,9 +80,8 @@ export const item: APISchema<RadioGroupItemPropsWithoutHTML> = {
 				"The value of the radio item. This should be unique for each radio item in the group.",
 			required: true,
 		},
-		...domElProps("HTMLButtonElement"),
+		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "disabled",
@@ -112,33 +108,6 @@ export const item: APISchema<RadioGroupItemPropsWithoutHTML> = {
 			description: "Present on the radio item element.",
 		},
 	],
-};
+});
 
-export const input: APISchema<RadioGroupInputPropsWithoutHTML> = {
-	title: "Input",
-	description:
-		"A hidden input that is used to submit the radio group's value with a form. It can receive all the same props/attributes as a normal HTML input.",
-	props: domElProps("HTMLInputElement"),
-};
-
-export const indicator: APISchema = {
-	title: "ItemIndicator",
-	description:
-		"A component which is used to indicate the radio item's checked state. Any children of this component will only be visible when the radio item is checked.",
-	props: domElProps("HTMLDivElement"),
-	slotProps: {
-		attrs: attrsSlotProp,
-		checked: {
-			type: C.BOOLEAN,
-			description: "Whether or not the radio item is checked.",
-		},
-	},
-	dataAttributes: [
-		{
-			name: "radio-item-indicator",
-			description: "Present on the indicator element.",
-		},
-	],
-};
-
-export const radioGroup = [root, item, input, indicator];
+export const radioGroup = [root, item];

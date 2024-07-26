@@ -8,7 +8,7 @@ import { SvelteMap } from "svelte/reactivity";
 import { untrack } from "svelte";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { watch } from "$lib/internal/box.svelte.js";
-import { useId } from "$lib/internal/useId.svelte.js";
+import { useId } from "$lib/internal/useId.js";
 import type { Direction } from "$lib/shared/index.js";
 import { createContext } from "$lib/internal/createContext.js";
 import { useFormControl } from "$lib/internal/useFormControl.svelte.js";
@@ -104,7 +104,7 @@ export class SelectRootState {
 	// A key we'll use to rerender the native select when the options change to keep it in sync
 	nativeSelectKey = $derived.by(() => {
 		return Array.from(this.#nativeOptionsSet.values())
-			.map((opt) => opt.value.value)
+			.map((opt) => opt.current.value)
 			.join(";");
 	});
 
@@ -120,7 +120,7 @@ export class SelectRootState {
 	}
 
 	handleClose() {
-		this.open.value = false;
+		this.open.current = false;
 		this.focusTriggerNode();
 	}
 
@@ -134,11 +134,11 @@ export class SelectRootState {
 	}
 
 	onNativeOptionAdd(option: ReadableBox<SelectNativeOption>) {
-		this.#nativeOptionsSet.set(option.value.value, option);
+		this.#nativeOptionsSet.set(option.current.value, option);
 	}
 
 	onNativeOptionRemove(option: ReadableBox<SelectNativeOption>) {
-		this.#nativeOptionsSet.delete(option.value.value);
+		this.#nativeOptionsSet.delete(option.current.value);
 	}
 
 	getTriggerTypeaheadCandidateNodes() {
@@ -189,7 +189,7 @@ class SelectTriggerState {
 	#disabled: SelectTriggerStateProps["disabled"];
 	#typeahead: Typeahead;
 	#isDisabled = $derived.by(() => {
-		return this.#root.disabled.value || this.#disabled.value;
+		return this.#root.disabled.current || this.#disabled.current;
 	});
 
 	constructor(props: SelectTriggerStateProps, root: SelectRootState) {
@@ -211,13 +211,13 @@ class SelectTriggerState {
 
 	#handleOpen() {
 		if (this.#isDisabled) return;
-		this.#root.open.value = true;
+		this.#root.open.current = true;
 		this.#typeahead.resetTypeahead();
 	}
 
 	#handlePointerOpen(e: PointerEvent) {
 		this.#handleOpen();
-		this.#root.triggerPointerDownPos.value = {
+		this.#root.triggerPointerDownPos.current = {
 			x: Math.round(e.pageX),
 			y: Math.round(e.pageY),
 		};
@@ -260,7 +260,7 @@ class SelectTriggerState {
 	};
 
 	#onkeydown = (e: KeyboardEvent) => {
-		const isTypingAhead = this.#typeahead.search.value !== "";
+		const isTypingAhead = this.#typeahead.search.current !== "";
 		const isModifierKey = e.ctrlKey || e.altKey || e.metaKey;
 
 		if (!isModifierKey && e.key.length === 1) {
@@ -272,7 +272,7 @@ class SelectTriggerState {
 		);
 
 		if (newItem && newItem.dataset.value) {
-			this.#root.value.value = newItem.dataset.value;
+			this.#root.value.current = newItem.dataset.value;
 		}
 
 		if (OPEN_KEYS.includes(e.key)) {
@@ -288,18 +288,20 @@ class SelectTriggerState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
+				id: this.#id.current,
 				disabled: this.#isDisabled,
 				role: "combobox",
 				type: "button",
 				"aria-controls": this.#ariaControls,
-				"aria-expanded": getAriaExpanded(this.#root.open.value),
-				"aria-required": getAriaRequired(this.#root.required.value),
+				"aria-expanded": getAriaExpanded(this.#root.open.current),
+				"aria-required": getAriaRequired(this.#root.required.current),
 				"aria-autocomplete": "none",
-				dir: this.#root.dir.value,
-				"data-state": getDataOpenClosed(this.#root.open.value),
+				dir: this.#root.dir.current,
+				"data-state": getDataOpenClosed(this.#root.open.current),
 				"data-disabled": getDataDisabled(this.#isDisabled),
-				"data-placeholder": shouldShowPlaceholder(this.#root.value.value) ? "" : undefined,
+				"data-placeholder": shouldShowPlaceholder(this.#root.value.current)
+					? ""
+					: undefined,
 				[TRIGGER_ATTR]: "",
 				onclick: this.#onclick,
 				onpointerdown: this.#onpointerdown,
@@ -311,7 +313,7 @@ class SelectTriggerState {
 
 class SelectValueState {
 	root: SelectRootState;
-	showPlaceholder = $derived.by(() => shouldShowPlaceholder(this.root.value.value));
+	showPlaceholder = $derived.by(() => shouldShowPlaceholder(this.root.value.current));
 	ref: WritableBox<HTMLElement | null> = box(null);
 
 	constructor(root: SelectRootState) {
@@ -329,9 +331,9 @@ class SelectValueState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.root.valueId.value,
-				"data-state": getDataOpenClosed(this.root.open.value),
-				"data-disabled": getDataDisabled(this.root.disabled.value),
+				id: this.root.valueId.current,
+				"data-state": getDataOpenClosed(this.root.open.current),
+				"data-disabled": getDataDisabled(this.root.disabled.current),
 				[VALUE_ATTR]: "",
 				style: {
 					pointerEvents: "none",
@@ -382,7 +384,7 @@ export class SelectContentState {
 		useRefById({
 			id: this.id,
 			ref: this.ref,
-			condition: () => this.root.open.value,
+			condition: () => this.root.open.current,
 			onRefChange: (node) => {
 				this.root.contentNode = node;
 			},
@@ -392,7 +394,7 @@ export class SelectContentState {
 			let cleanup = [noop];
 
 			afterTick(() => {
-				const node = document.getElementById(this.id.value);
+				const node = document.getElementById(this.id.current);
 				if (!node) return;
 
 				let pointerMoveDelta = { x: 0, y: 0 };
@@ -400,10 +402,10 @@ export class SelectContentState {
 				const handlePointerMove = (e: PointerEvent) => {
 					pointerMoveDelta = {
 						x: Math.abs(
-							Math.round(e.pageX) - (this.root.triggerPointerDownPos.value?.x ?? 0)
+							Math.round(e.pageX) - (this.root.triggerPointerDownPos.current?.x ?? 0)
 						),
 						y: Math.abs(
-							Math.round(e.pageY) - (this.root.triggerPointerDownPos.value?.y ?? 0)
+							Math.round(e.pageY) - (this.root.triggerPointerDownPos.current?.y ?? 0)
 						),
 					};
 				};
@@ -419,10 +421,10 @@ export class SelectContentState {
 						}
 					}
 					document.removeEventListener("pointermove", handlePointerMove);
-					this.root.triggerPointerDownPos.value = null;
+					this.root.triggerPointerDownPos.current = null;
 				};
 
-				if (this.root.triggerPointerDownPos.value !== null) {
+				if (this.root.triggerPointerDownPos.current !== null) {
 					const pointerMove = addEventListener(
 						document,
 						"pointermove",
@@ -443,14 +445,14 @@ export class SelectContentState {
 		});
 
 		$effect(() => {
-			if (this.isPositioned.value) {
+			if (this.isPositioned.current) {
 				this.focusSelectedItem();
 			}
 		});
 
 		$effect(() => {
-			if (this.root.open.value === false) {
-				this.isPositioned.value = false;
+			if (this.root.open.current === false) {
+				this.isPositioned.current = false;
 			}
 		});
 	}
@@ -486,7 +488,7 @@ export class SelectContentState {
 	getSelectedItem() {
 		const candidates = this.root.getCandidateNodes();
 		const selectedItemNode =
-			candidates.find((node) => node?.dataset.value === this.root.value.value) ?? null;
+			candidates.find((node) => node?.dataset.value === this.root.value.current) ?? null;
 		const first = candidates[0] ?? null;
 		if (selectedItemNode) {
 			const selectedItemTextNode = selectedItemNode.querySelector<HTMLElement>(
@@ -515,31 +517,31 @@ export class SelectContentState {
 		afterTick(() => {
 			const candidates = this.root.getCandidateNodes();
 			const selected =
-				candidates.find((node) => node?.dataset.value === this.root.value.value) ?? null;
+				candidates.find((node) => node?.dataset.value === this.root.value.current) ?? null;
 			const first = candidates[0] ?? null;
 			this.focusFirst([selected, first]);
 		});
 	}
 
 	itemRegister(value: string, disabled: boolean) {
-		const isFirstValidItem = !this.firstValidItemFound.value && !disabled;
+		const isFirstValidItem = !this.firstValidItemFound.current && !disabled;
 		const isSelectedItem =
-			this.root.value.value !== undefined && this.root.value.value === value;
+			this.root.value.current !== undefined && this.root.value.current === value;
 
 		if (isSelectedItem || isFirstValidItem) {
 			if (isFirstValidItem) {
-				this.firstValidItemFound.value = true;
+				this.firstValidItemFound.current = true;
 			}
 		}
 	}
 
 	itemTextRegister(node: HTMLElement | null, value: string, disabled: boolean) {
-		const isFirstValidItem = !this.firstValidItemFound.value && !disabled;
+		const isFirstValidItem = !this.firstValidItemFound.current && !disabled;
 		const isSelectedItem =
-			this.root.value.value !== undefined && this.root.value.value === value;
+			this.root.value.current !== undefined && this.root.value.current === value;
 
 		if (isSelectedItem || isFirstValidItem) {
-			this.selectedItemText.value = node;
+			this.selectedItemText.current = node;
 		}
 	}
 
@@ -577,9 +579,9 @@ export class SelectContentState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.value,
+				id: this.id.current,
 				role: "listbox",
-				"data-state": getDataOpenClosed(this.root.open.value),
+				"data-state": getDataOpenClosed(this.root.open.current),
 				style: {
 					display: "flex",
 					flexDirection: "column",
@@ -636,7 +638,7 @@ class SelectItemState {
 	value: SelectItemStateProps["value"];
 	disabled: SelectItemStateProps["disabled"];
 	textValue: SelectItemStateProps["textValue"];
-	isSelected = $derived.by(() => this.root.value.value === this.value.value);
+	isSelected = $derived.by(() => this.root.value.current === this.value.current);
 	isFocused = box(false);
 	node = box<HTMLElement | null>(null);
 	trueTextValue = box<string>("");
@@ -656,32 +658,32 @@ class SelectItemState {
 		});
 
 		$effect(() => {
-			const node = this.#ref.value;
+			const node = this.#ref.current;
 			if (!node) return;
-			this.content.itemRegister(this.value.value, this.disabled.value);
+			this.content.itemRegister(this.value.current, this.disabled.current);
 		});
 	}
 
 	onItemTextChange(node: HTMLElement | null) {
-		this.trueTextValue.value = ((this.textValue?.value || node?.textContent) ?? "").trim();
+		this.trueTextValue.current = ((this.textValue?.current || node?.textContent) ?? "").trim();
 	}
 
 	setTextId(id: string) {
-		this.textId.value = id;
+		this.textId.current = id;
 	}
 
 	async handleSelect(e?: PointerEvent) {
 		if (e?.defaultPrevented) return;
 
-		if (!this.disabled.value) {
-			this.root.value.value = this.value.value;
+		if (!this.disabled.current) {
+			this.root.value.current = this.value.current;
 			this.root.handleClose();
 		}
 	}
 
 	#onpointermove = async (e: PointerEvent) => {
 		if (e.defaultPrevented) return;
-		if (this.disabled.value) {
+		if (this.disabled.current) {
 			this.content.onItemLeave();
 		} else {
 			(e.currentTarget as HTMLElement).focus({ preventScroll: true });
@@ -706,7 +708,7 @@ class SelectItemState {
 	#onkeydown = async (e: KeyboardEvent) => {
 		if (e.defaultPrevented) return;
 
-		const isTypingAhead = this.content.typeahead.search.value !== "";
+		const isTypingAhead = this.content.typeahead.search.current !== "";
 		if (isTypingAhead && e.key === kbd.SPACE) return;
 
 		if (SELECTION_KEYS.includes(e.key)) {
@@ -718,11 +720,11 @@ class SelectItemState {
 	};
 
 	#onfocus = () => {
-		this.isFocused.value = true;
+		this.isFocused.current = true;
 	};
 
 	#onblur = () => {
-		this.isFocused.value = false;
+		this.isFocused.current = false;
 	};
 
 	#ontouchend = (e: TouchEvent) => {
@@ -733,17 +735,17 @@ class SelectItemState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
+				id: this.#id.current,
 				role: "option",
-				"aria-labelledby": this.textId.value ?? undefined,
-				"data-highlighted": this.isFocused.value ? "" : undefined,
+				"aria-labelledby": this.textId.current ?? undefined,
+				"data-highlighted": this.isFocused.current ? "" : undefined,
 				"aria-selected": getAriaSelected(this.isSelected),
 				"data-state": getDataChecked(this.isSelected),
-				"aria-disabled": getAriaDisabled(this.disabled.value),
-				"data-disabled": getDataDisabled(this.disabled.value),
+				"aria-disabled": getAriaDisabled(this.disabled.current),
+				"data-disabled": getDataDisabled(this.disabled.current),
 				"data-selected": this.isSelected ? "" : undefined,
-				"data-value": this.value.value,
-				tabindex: this.disabled.value ? undefined : -1,
+				"data-value": this.value.current,
+				tabindex: this.disabled.current ? undefined : -1,
 				[ITEM_ATTR]: "",
 				//
 				onfocus: this.#onfocus,
@@ -772,10 +774,10 @@ class SelectItemTextState {
 	nativeOption = box.with(
 		() =>
 			({
-				key: this.item.value.value,
-				value: this.item.value.value,
-				disabled: this.item.disabled.value,
-				innerHTML: this.node.value?.textContent,
+				key: this.item.value.current,
+				value: this.item.value.current,
+				disabled: this.item.disabled.current,
+				innerHTML: this.node.current?.textContent,
 			}) as const
 	);
 
@@ -783,7 +785,7 @@ class SelectItemTextState {
 		this.#id = props.id;
 		this.#ref = props.ref;
 		this.item = item;
-		this.item.setTextId(this.#id.value);
+		this.item.setTextId(this.#id.current);
 
 		useRefById({
 			id: this.#id,
@@ -791,25 +793,25 @@ class SelectItemTextState {
 		});
 
 		$effect(() => {
-			this.item.setTextId(this.#id.value);
+			this.item.setTextId(this.#id.current);
 		});
 
 		$effect(() => {
 			untrack(() => {
-				const textNode = this.item.root.contentFragment?.getElementById(this.#id.value);
+				const textNode = this.item.root.contentFragment?.getElementById(this.#id.current);
 				if (!textNode) return;
 				this.item.onItemTextChange(textNode);
 				this.item.content.itemTextRegister(
 					textNode,
-					this.item.value.value,
-					this.item.disabled.value
+					this.item.value.current,
+					this.item.disabled.current
 				);
 
 				this.item.root.onNativeOptionAdd(
 					box.with(() => ({
-						key: this.item.value.value,
-						value: this.item.value.value,
-						disabled: this.item.disabled.value,
+						key: this.item.value.current,
+						value: this.item.value.current,
+						disabled: this.item.disabled.current,
 						innerHTML: textNode?.textContent,
 					}))
 				);
@@ -826,7 +828,7 @@ class SelectItemTextState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
+				id: this.#id.current,
 				[ITEM_TEXT_ATTR]: "",
 			}) as const
 	);
@@ -853,7 +855,7 @@ class SelectItemAlignedPositionState {
 		$effect(() => {
 			afterTick(() => {
 				this.position();
-				const contentNode = document.getElementById(this.content.id.value);
+				const contentNode = document.getElementById(this.content.id.current);
 				if (contentNode) {
 					this.contentZIndex = window.getComputedStyle(contentNode).zIndex;
 				}
@@ -868,7 +870,7 @@ class SelectItemAlignedPositionState {
 			const contentWrapperNode = document.getElementById(this.contentWrapperId);
 			const viewportNode = this.content.viewportNode;
 			const triggerNode = this.root.triggerNode;
-			const valueNode = document.getElementById(this.root.valueId.value);
+			const valueNode = document.getElementById(this.root.valueId.current);
 
 			if (
 				!contentNode ||
@@ -889,7 +891,7 @@ class SelectItemAlignedPositionState {
 			const valueRect = valueNode.getBoundingClientRect();
 			const itemTextRect = selectedItemTextNode.getBoundingClientRect();
 
-			if (this.root.dir.value === "rtl") {
+			if (this.root.dir.current === "rtl") {
 				const itemTextOffset = itemTextRect.left - contentRect.left;
 				const left = valueRect.left - itemTextOffset;
 				const leftDelta = triggerRect.left - left;
@@ -988,7 +990,7 @@ class SelectItemAlignedPositionState {
 			contentWrapperNode.style.minHeight = `${minContentHeight}px`;
 			contentWrapperNode.style.maxHeight = `${availableHeight}px`;
 
-			this.onPlaced.value();
+			this.onPlaced.current();
 		});
 		requestAnimationFrame(() => (this.shouldExpandOnScroll = true));
 	}
@@ -1021,7 +1023,7 @@ class SelectItemAlignedPositionState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.content.id.value,
+				id: this.content.id.current,
 				style: {
 					boxSizing: "border-box",
 					maxHeight: "100%",
@@ -1070,7 +1072,7 @@ class SelectViewportState {
 			onRefChange: (node) => {
 				this.content.viewportNode = node;
 			},
-			condition: () => this.content.root.open.value,
+			condition: () => this.content.root.open.current,
 		});
 	}
 
@@ -1112,7 +1114,7 @@ class SelectViewportState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.value,
+				id: this.id.current,
 				role: "presentation",
 				[VIEWPORT_ATTR]: "",
 				style: {
@@ -1153,11 +1155,11 @@ class SelectScrollButtonImplState {
 		useRefById({
 			id: this.id,
 			ref: this.ref,
-			condition: () => this.mounted.value,
+			condition: () => this.mounted.current,
 		});
 
 		$effect(() => {
-			if (this.mounted.value) {
+			if (this.mounted.current) {
 				const activeItem = this.content.root
 					.getCandidateNodes()
 					.find((node) => node === document.activeElement);
@@ -1201,7 +1203,7 @@ class SelectScrollButtonImplState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.value,
+				id: this.id.current,
 				"aria-hidden": "true",
 				style: {
 					flexShrink: 0,
@@ -1225,7 +1227,7 @@ class SelectScrollDownButtonState {
 
 		$effect(() => {
 			const viewport = this.content.viewportNode;
-			const isPositioned = this.content.isPositioned.value;
+			const isPositioned = this.content.isPositioned.current;
 
 			if (!viewport || !isPositioned) return;
 
@@ -1247,13 +1249,13 @@ class SelectScrollDownButtonState {
 		});
 
 		$effect(() => {
-			if (this.state.mounted.value) {
-				this.state.alignedPositionState?.handleScrollButtonChange(this.state.id.value);
+			if (this.state.mounted.current) {
+				this.state.alignedPositionState?.handleScrollButtonChange(this.state.id.current);
 			}
 		});
 
 		$effect(() => {
-			if (!this.state.mounted.value) {
+			if (!this.state.mounted.current) {
 				this.state.clearAutoScrollTimer();
 			}
 		});
@@ -1288,7 +1290,7 @@ class SelectScrollUpButtonState {
 
 			cleanup();
 			const viewport = this.content.viewportNode;
-			const isPositioned = this.content.isPositioned.value;
+			const isPositioned = this.content.isPositioned.current;
 
 			if (!viewport || !isPositioned) return;
 
@@ -1305,13 +1307,13 @@ class SelectScrollUpButtonState {
 		});
 
 		$effect(() => {
-			if (this.state.mounted.value) {
-				this.state.alignedPositionState?.handleScrollButtonChange(this.state.id.value);
+			if (this.state.mounted.current) {
+				this.state.alignedPositionState?.handleScrollButtonChange(this.state.id.current);
 			}
 		});
 
 		$effect(() => {
-			if (!this.state.mounted.value) {
+			if (!this.state.mounted.current) {
 				this.state.clearAutoScrollTimer();
 			}
 		});
@@ -1349,7 +1351,7 @@ class SelectGroupState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
+				id: this.#id.current,
 				role: "group",
 				"aria-labelledby": this.labelNode?.id ?? undefined,
 				[GROUP_ATTR]: "",
@@ -1385,7 +1387,7 @@ class SelectGroupLabel {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
+				id: this.#id.current,
 				[GROUP_LABEL_ATTR]: "",
 			}) as const
 	);
@@ -1410,7 +1412,7 @@ class SelectSeparatorState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
+				id: this.#id.current,
 				[SEPARATOR_ATTR]: "",
 				"aria-hidden": getAriaHidden(true),
 			}) as const
@@ -1436,7 +1438,7 @@ class SelectArrowState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
+				id: this.#id.current,
 				[ARROW_ATTR]: "",
 				"aria-hidden": getAriaHidden(true),
 			}) as const
@@ -1462,7 +1464,7 @@ class SelectIconState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
+				id: this.#id.current,
 				[ICON_ATTR]: "",
 				"aria-hidden": getAriaHidden(true),
 			}) as const

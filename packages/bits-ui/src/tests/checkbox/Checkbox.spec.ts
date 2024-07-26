@@ -22,32 +22,32 @@ function setup(props?: Checkbox.RootProps) {
 }
 
 describe("checkbox", () => {
-	it("has no accessibility violations", async () => {
+	it("should have no accessibility violations", async () => {
 		const { container } = render(CheckboxTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
-	it("has bits data attrs", async () => {
+	it("should have bits data attrs", async () => {
 		const { root } = setup();
 		expect(root).toHaveAttribute("data-checkbox-root");
 	});
 
-	it("doesn't render the checkbox input if a name prop isnt passed", async () => {
+	it("should not render the checkbox input if a name prop isnt passed", async () => {
 		const { input } = setup({ name: "" });
 		expect(input).not.toBeInTheDocument();
 	});
 
-	it("renders the checkbox input if a name prop is passed", async () => {
+	it("should render the checkbox input if a name prop is passed", async () => {
 		const { input } = setup({ name: "checkbox" });
 		expect(input).toBeInTheDocument();
 	});
 
-	it('defaults the value to "on", when no value prop is passed', async () => {
+	it('should default the value to "on", when no value prop is passed', async () => {
 		const { input } = setup();
 		expect(input).toHaveAttribute("value", "on");
 	});
 
-	it("can be indeterminate", async () => {
+	it("should be able to be indeterminate", async () => {
 		const { getByTestId, root, input } = setup({ checked: "indeterminate" });
 		const indicator = getByTestId("indicator");
 		expect(root).toHaveAttribute("data-state", "indeterminate");
@@ -58,7 +58,7 @@ describe("checkbox", () => {
 		expect(indicator).not.toHaveTextContent("false");
 	});
 
-	it("toggles when clicked", async () => {
+	it("should toggle when clicked", async () => {
 		const { getByTestId, root, input, user } = setup();
 		const indicator = getByTestId("indicator");
 		expect(root).toHaveAttribute("data-state", "unchecked");
@@ -76,7 +76,7 @@ describe("checkbox", () => {
 		expect(indicator).not.toHaveTextContent("indeterminate");
 	});
 
-	it("toggles when the `Space` key is pressed", async () => {
+	it("should toggle when the `Space` key is pressed", async () => {
 		const { root, input, user } = setup();
 		expect(root).toHaveAttribute("data-state", "unchecked");
 		expect(root).toHaveAttribute("aria-checked", "false");
@@ -88,7 +88,7 @@ describe("checkbox", () => {
 		expect(input.checked).toBe(true);
 	});
 
-	it("does not toggle when the `Enter` key is pressed", async () => {
+	it("should not toggle when the `Enter` key is pressed", async () => {
 		const { getByTestId, root, input, user } = setup();
 		const indicator = getByTestId("indicator");
 		expect(root).toHaveAttribute("data-state", "unchecked");

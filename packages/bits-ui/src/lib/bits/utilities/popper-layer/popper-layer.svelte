@@ -8,19 +8,92 @@
 	import { FocusScope } from "$lib/bits/utilities/focus-scope/index.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
-	let { popper, present, ...restProps }: PopperLayerImplProps = $props();
+	let {
+		popper,
+		present,
+		onEscapeKeydown,
+		escapeKeydownBehavior,
+		preventOverflowTextSelection,
+		id,
+		onPointerDown,
+		onPointerUp,
+		side,
+		sideOffset,
+		align,
+		alignOffset,
+		arrowPadding,
+		avoidCollisions,
+		collisionBoundary,
+		collisionPadding,
+		sticky,
+		hideWhenDetached,
+		updatePositionStrategy,
+		strategy,
+		dir,
+		preventScroll,
+		wrapperId,
+		style,
+		onPlaced,
+		onInteractOutside,
+		onInteractOutsideStart,
+		onDestroyAutoFocus,
+		onMountAutoFocus,
+		onFocusOutside,
+		interactOutsideBehavior = "close",
+		loop,
+		trapped,
+		isValidEvent = () => false,
+		...restProps
+	}: PopperLayerImplProps = $props();
 </script>
 
-<PresenceLayer {present} {...restProps}>
+<PresenceLayer {id} {present} {...restProps}>
 	{#snippet presence({ present })}
-		<FloatingLayer.Content {...restProps} enabled={present.value}>
+		<FloatingLayer.Content
+			{id}
+			{side}
+			{sideOffset}
+			{align}
+			{alignOffset}
+			{arrowPadding}
+			{avoidCollisions}
+			{collisionBoundary}
+			{collisionPadding}
+			{sticky}
+			{hideWhenDetached}
+			{updatePositionStrategy}
+			{strategy}
+			{dir}
+			{preventScroll}
+			{wrapperId}
+			{style}
+			{onPlaced}
+		>
 			{#snippet content({ props: floatingProps })}
-				<FocusScope {...restProps}>
+				<FocusScope {id} {onMountAutoFocus} {onDestroyAutoFocus} {loop} {trapped}>
 					{#snippet focusScope({ props: focusScopeProps })}
-						<EscapeLayer {...restProps} enabled={present.value}>
-							<DismissableLayer {...restProps} enabled={present.value}>
+						<EscapeLayer
+							{onEscapeKeydown}
+							{escapeKeydownBehavior}
+							enabled={present.current}
+						>
+							<DismissableLayer
+								{id}
+								{onInteractOutside}
+								{onInteractOutsideStart}
+								{onFocusOutside}
+								{interactOutsideBehavior}
+								{isValidEvent}
+								enabled={present.current}
+							>
 								{#snippet children({ props: dismissableProps })}
-									<TextSelectionLayer {...restProps} enabled={present.value}>
+									<TextSelectionLayer
+										{id}
+										{preventOverflowTextSelection}
+										{onPointerDown}
+										{onPointerUp}
+										enabled={present.current}
+									>
 										{@render popper?.({
 											props: mergeProps(
 												restProps,

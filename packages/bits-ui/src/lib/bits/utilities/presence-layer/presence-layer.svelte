@@ -3,7 +3,7 @@
 	import type { PresenceLayerImplProps } from "./types.js";
 	import { usePresence } from "$lib/bits/utilities/presence-layer/usePresence.svelte.js";
 
-	let { present, forceMount = false, presence, id }: PresenceLayerImplProps = $props();
+	let { present, forceMount, presence, id }: PresenceLayerImplProps = $props();
 
 	const isPresent = usePresence(
 		box.with(() => present),
@@ -11,6 +11,6 @@
 	);
 </script>
 
-{#if forceMount || present || isPresent.value}
+{#if forceMount || present || isPresent.current}
 	{@render presence?.({ present: isPresent })}
 {/if}

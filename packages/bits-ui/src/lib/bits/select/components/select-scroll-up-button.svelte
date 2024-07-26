@@ -3,7 +3,7 @@
 	import type { ScrollUpButtonProps } from "../index.js";
 	import { useSelectScrollUpButton } from "../select.svelte.js";
 	import SelectScrollUpButtonMounted from "./select-scroll-up-button-mounted.svelte";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let { id = useId(), ref = $bindable(null), ...restProps }: ScrollUpButtonProps = $props();

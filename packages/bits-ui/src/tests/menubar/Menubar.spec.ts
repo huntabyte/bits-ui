@@ -21,12 +21,12 @@ function setup(props: Menubar.RootProps = {}, menuId: string = "1") {
 }
 
 describe("menubar", () => {
-	it("has no accessibility violations", async () => {
+	it("should have no accessibility violations", async () => {
 		const { container } = render(MenubarTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
-	it.skip("has bits data attrs", async () => {
+	it.skip("should have bits data attrs", async () => {
 		const menuId = "1";
 		const { user, trigger, getByTestId, queryByTestId } = setup({}, menuId);
 		await user.click(trigger);
@@ -64,7 +64,7 @@ describe("menubar", () => {
 		expect(subContent).toHaveAttribute(`data-menu-sub-content`);
 	});
 
-	it("navigates triggers within the menubar using arrow keys", async () => {
+	it("should navigate triggers within the menubar using arrow keys", async () => {
 		const { user, trigger, getByTestId } = setup({}, "1");
 		trigger.focus();
 		await user.keyboard(kbd.ARROW_RIGHT);
@@ -77,7 +77,7 @@ describe("menubar", () => {
 		expect(getByTestId("1-trigger")).toHaveFocus();
 	});
 
-	it("respects the loop prop", async () => {
+	it("should respect the loop prop", async () => {
 		const { user, trigger, getByTestId } = setup({ loop: false }, "1");
 		trigger.focus();
 		await user.keyboard(kbd.ARROW_RIGHT);

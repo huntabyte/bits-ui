@@ -15,17 +15,17 @@
 
 	$effect(() => {
 		untrack(() => {
-			mounted.value = true;
+			mounted.current = true;
 		});
 
 		return () => {
-			mounted.value = false;
+			mounted.current = false;
 		};
 	});
 </script>
 
 {#if child}
-	{@render child?.({ props: restProps })}
+	{@render child({ props: restProps })}
 {:else}
 	<div {...restProps}>
 		{@render children?.()}

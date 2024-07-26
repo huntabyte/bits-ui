@@ -1,84 +1,111 @@
 import type {
 	TooltipArrowPropsWithoutHTML,
 	TooltipContentPropsWithoutHTML,
-	TooltipPropsWithoutHTML,
+	TooltipProviderPropsWithoutHTML,
+	TooltipRootPropsWithoutHTML,
 	TooltipTriggerPropsWithoutHTML,
 } from "bits-ui";
-import { floatingPositioning } from "./floating.js";
 import {
 	arrowProps,
-	builderAndAttrsSlotProps,
-	domElProps,
+	childrenSnippet,
+	createApiSchema,
+	createBooleanProp,
+	createFunctionProp,
+	createNumberProp,
+	dirProp,
+	dismissableLayerProps,
 	enums,
-	idsSlotProp,
-	portalProp,
-	transitionProps,
+	escapeLayerProps,
+	floatingProps,
+	forceMountProp,
+	withChildProps,
 } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
 
-export const root: APISchema<TooltipPropsWithoutHTML> = {
-	title: "Root",
-	description: "The root component containing the parts of the tooltip.",
+const delayDuration = createNumberProp({
+	default: "700",
+	description:
+		"The amount of time in milliseconds to delay opening the tooltip when hovering over the trigger.",
+});
+
+const disableHoverableContent = createBooleanProp({
+	default: C.FALSE,
+	description:
+		"Whether or not to disable the hoverable content. This is useful when the content contains interactive elements.",
+});
+
+const disabled = createBooleanProp({
+	default: C.FALSE,
+	description: "Whether or not the tooltip is disabled.",
+});
+
+const disableCloseOnTriggerClick = createBooleanProp({
+	default: C.FALSE,
+	description:
+		"Whether or not to close the tooltip when pressing the escape key. This is useful when the content contains interactive elements.",
+});
+
+const skipDelayDuration = createNumberProp({
+	default: "300",
+	description:
+		"The amount of time in milliseconds to delay opening the tooltip when the user has used their mouse to hover over the trigger.",
+});
+
+const ignoreNonKeyboardFocus = createBooleanProp({
+	default: C.FALSE,
+	description:
+		"Whether or not to ignore the tooltip when the focus is not on the trigger. This is useful when the content contains interactive elements.",
+});
+
+export const provider: APISchema<TooltipProviderPropsWithoutHTML> = {
+	title: "Provider",
+	description:
+		"A provider component which contains shared state and logic for the tooltips within its subtree.",
 	props: {
-		openDelay: {
-			type: C.NUMBER,
-			default: "700",
-			description:
-				"The amount of time in milliseconds to delay opening the tooltip when hovering over the trigger.",
-		},
-		closeDelay: {
-			type: C.NUMBER,
-			default: "300",
-			description:
-				"The amount of time in milliseconds to delay closing the tooltip when the mouse leaves the trigger.",
-		},
-		closeOnEscape: {
-			type: C.BOOLEAN,
-			default: C.TRUE,
-			description: "Whether or not to close the tooltip when pressing the escape key.",
-		},
-		closeOnPointerDown: {
-			type: C.BOOLEAN,
-			default: C.TRUE,
-			description:
-				"Whether or not to close the tooltip when clicking outside of the tooltip.",
-		},
-		disableHoverableContent: {
-			type: C.BOOLEAN,
-			default: C.FALSE,
-			description:
-				"Whether or not to disable the hoverable content. This is useful when the content contains interactive elements.",
-		},
-		group: {
-			type: C.STRING,
-			description: "The group the tooltip belongs to.",
-		},
-		open: {
-			type: C.BOOLEAN,
-			default: "false",
-			description: "The open state of the tooltip component.",
-		},
-		onOpenChange: {
-			type: {
-				type: C.FUNCTION,
-				definition: "(open: boolean) => void",
-			},
-			description: "A callback that fires when the open state changes.",
-		},
-		portal: { ...portalProp("tooltip") },
-	},
-	slotProps: {
-		ids: idsSlotProp,
+		delayDuration,
+		disableHoverableContent,
+		disabled,
+		disableCloseOnTriggerClick,
+		skipDelayDuration,
+		ignoreNonKeyboardFocus,
+		children: childrenSnippet(),
 	},
 };
 
-export const trigger: APISchema<TooltipTriggerPropsWithoutHTML> = {
+export const root = createApiSchema<TooltipRootPropsWithoutHTML>({
+	title: "Root",
+	description: "The root component containing the parts of the tooltip.",
+	props: {
+		open: createBooleanProp({
+			default: C.FALSE,
+			description: "The open state of the tooltip component.",
+			bindable: true,
+		}),
+		onOpenChange: createFunctionProp({
+			definition: "(open: boolean) => void",
+			description: "A callback that fires when the open state changes.",
+		}),
+		disabled,
+		delayDuration,
+		disableHoverableContent,
+		disableCloseOnTriggerClick,
+		ignoreNonKeyboardFocus,
+		children: childrenSnippet(),
+	},
+});
+
+export const trigger = createApiSchema<TooltipTriggerPropsWithoutHTML>({
 	title: "Trigger",
 	description:
 		"A component which triggers the opening and closing of the tooltip on hover or focus.",
-	props: domElProps("HTMLButtonElement"),
-	slotProps: { ...builderAndAttrsSlotProps },
+	props: {
+		disabled: createBooleanProp({
+			default: C.FALSE,
+			description: "Whether or not the tooltip trigger is disabled.",
+		}),
+		...withChildProps({ elType: "HTMLButtonElement" }),
+	},
 	dataAttributes: [
 		{
 			name: "state",
@@ -91,26 +118,31 @@ export const trigger: APISchema<TooltipTriggerPropsWithoutHTML> = {
 			description: "Present on the trigger element.",
 		},
 	],
-};
+});
 
-export const content: APISchema<TooltipContentPropsWithoutHTML> = {
+export const content = createApiSchema<TooltipContentPropsWithoutHTML>({
 	title: "Content",
 	description: "The contents of the tooltip which are displayed when the tooltip is open.",
-	props: { ...transitionProps, ...floatingPositioning, ...domElProps("HTMLDivElement") },
-	slotProps: { ...builderAndAttrsSlotProps },
+	props: {
+		...floatingProps(),
+		...dismissableLayerProps,
+		...escapeLayerProps,
+		forceMount: forceMountProp,
+		dir: dirProp,
+		...withChildProps({ elType: "HTMLDivElement" }),
+	},
 	dataAttributes: [
 		{
 			name: "tooltip-content",
 			description: "Present on the content element.",
 		},
 	],
-};
+});
 
-export const arrow: APISchema<TooltipArrowPropsWithoutHTML> = {
+export const arrow = createApiSchema<TooltipArrowPropsWithoutHTML>({
 	title: "Arrow",
 	description: "An optional arrow element which points to the trigger when the tooltip is open.",
 	props: arrowProps,
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "arrow",
@@ -121,6 +153,6 @@ export const arrow: APISchema<TooltipArrowPropsWithoutHTML> = {
 			description: "Present on the arrow element.",
 		},
 	],
-};
+});
 
 export const tooltip = [root, trigger, content, arrow];

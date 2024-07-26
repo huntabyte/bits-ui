@@ -5,10 +5,7 @@
 	import type { APISchema } from "$lib/types/index.js";
 	import { parseMarkdown } from "$lib/utils/index.js";
 
-	export let schemas: APISchema[] = [];
-
-	// eslint-disable-next-line no-unused-expressions, svelte/valid-compile
-	$page;
+	let { schemas = [] }: { schemas: APISchema[] } = $props();
 </script>
 
 <H2>API Reference</H2>
@@ -25,7 +22,6 @@
 					>{schema.title}
 				</h3>
 			</div>
-			<!--  eslint-disable-next-line svelte/no-at-html-tags -->
 			<P class="!mb-5 !mt-2">{@html parseMarkdown(schema.description)}</P>
 			<div class="flex flex-col gap-4">
 				{#if schema.props}

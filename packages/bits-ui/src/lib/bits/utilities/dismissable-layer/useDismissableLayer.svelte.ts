@@ -20,6 +20,7 @@ import {
 	noop,
 	useRefById,
 } from "$lib/internal/index.js";
+import { onDestroyEffect } from "$lib/internal/onDestroyEffect.svelte.js";
 
 const layers = new Map<DismissableLayerState, ReadableBox<InteractOutsideBehaviorType>>();
 
@@ -58,14 +59,16 @@ export class DismissableLayerState {
 	#isFocusInsideDOMTree = $state(false);
 	#onFocusOutside: DismissableLayerStateProps["onFocusOutside"];
 	currNode = $state<HTMLElement | null>(null);
+	#isValidEventProp: DismissableLayerStateProps["isValidEvent"];
 
 	constructor(props: DismissableLayerStateProps) {
 		this.#enabled = props.enabled;
+		this.#isValidEventProp = props.isValidEvent;
 
 		useRefById({
 			id: props.id,
 			ref: this.node,
-			condition: () => this.#enabled.value,
+			condition: () => this.#enabled.current,
 			onRefChange: (node) => {
 				this.currNode = node;
 			},
@@ -91,7 +94,7 @@ export class DismissableLayerState {
 		};
 
 		$effect(() => {
-			if (this.#enabled.value) {
+			if (this.#enabled.current) {
 				layers.set(
 					this,
 					untrack(() => this.#behaviorType)
@@ -106,17 +109,12 @@ export class DismissableLayerState {
 			};
 		});
 
-		$effect(() => {
-			return () => {
-				// onDestroy, cleanup anything leftover
-				untrack(() => {
-					this.#resetState.destroy();
-					layers.delete(this);
-					this.#onInteractOutsideStart.destroy();
-					this.#onInteractOutside.destroy();
-					unsubEvents();
-				});
-			};
+		onDestroyEffect(() => {
+			this.#resetState.destroy();
+			layers.delete(this);
+			this.#onInteractOutsideStart.destroy();
+			this.#onInteractOutside.destroy();
+			unsubEvents();
 		});
 	}
 
@@ -127,7 +125,7 @@ export class DismissableLayerState {
 			if (!this.currNode || this.#isTargetWithinLayer(event.target as HTMLElement)) return;
 
 			if (event.target && !this.#isFocusInsideDOMTree) {
-				this.#onFocusOutside.value?.(event);
+				this.#onFocusOutside.current?.(event);
 			}
 		});
 	};
@@ -190,17 +188,15 @@ export class DismissableLayerState {
 	}
 
 	#onInteractOutsideStart = debounce((e: InteractOutsideEvent) => {
-		if (!this.currNode) {
+		if (!this.currNode) return;
+
+		const isEventValid =
+			this.#isValidEventProp.current(e, this.currNode) || isValidEvent(e, this.currNode);
+
+		if (!this.#isResponsibleLayer || this.#isAnyEventIntercepted() || !isEventValid) {
 			return;
 		}
-		if (
-			!this.#isResponsibleLayer ||
-			this.#isAnyEventIntercepted() ||
-			!isValidEvent(e, this.currNode)
-		) {
-			return;
-		}
-		this.#interactOutsideStartProp.value(e);
+		this.#interactOutsideStartProp.current(e);
 		if (e.defaultPrevented) return;
 		this.#isPointerDownOutside = true;
 	}, 10);
@@ -208,18 +204,16 @@ export class DismissableLayerState {
 	#onInteractOutside = debounce((e: InteractOutsideEvent) => {
 		if (!this.currNode) return;
 
-		const behaviorType = this.#behaviorType.value;
+		const behaviorType = this.#behaviorType.current;
+		const isEventValid =
+			this.#isValidEventProp.current(e, this.currNode) || isValidEvent(e, this.currNode);
 
-		if (
-			!this.#isResponsibleLayer ||
-			this.#isAnyEventIntercepted() ||
-			!isValidEvent(e, this.currNode)
-		) {
+		if (!this.#isResponsibleLayer || this.#isAnyEventIntercepted() || !isEventValid) {
 			return;
 		}
 		if (behaviorType !== "close" && behaviorType !== "defer-otherwise-close") return;
 		if (!this.#isPointerDownOutside) return;
-		this.#interactOutsideProp.value(e);
+		this.#interactOutsideProp.current(e);
 	}, 10);
 
 	#markInterceptedEvent = (e: HTMLElementEventMap[InteractOutsideInterceptEventType]) => {
@@ -231,13 +225,13 @@ export class DismissableLayerState {
 	};
 
 	#markResponsibleLayer = () => {
-		if (!this.node.value) return;
-		this.#isResponsibleLayer = isResponsibleLayer(this.node.value);
+		if (!this.node.current) return;
+		this.#isResponsibleLayer = isResponsibleLayer(this.node.current);
 	};
 
 	#isTargetWithinLayer = (target: HTMLElement) => {
-		if (!this.node.value) return false;
-		return isOrContainsTarget(this.node.value, target);
+		if (!this.node.current) return false;
+		return isOrContainsTarget(this.node.current, target);
 	};
 
 	#resetState = debounce(() => {
@@ -275,7 +269,7 @@ function getTopMostLayer(
 	layersArr: [DismissableLayerState, ReadableBox<InteractOutsideBehaviorType>][]
 ) {
 	return layersArr.findLast(
-		([_, { value: behaviorType }]) => behaviorType === "close" || behaviorType === "ignore"
+		([_, { current: behaviorType }]) => behaviorType === "close" || behaviorType === "ignore"
 	);
 }
 
@@ -288,9 +282,9 @@ function isResponsibleLayer(node: HTMLElement): boolean {
 	 * the first layer is the responsible one.
 	 */
 	const topMostLayer = getTopMostLayer(layersArr);
-	if (topMostLayer) return topMostLayer[0].node.value === node;
+	if (topMostLayer) return topMostLayer[0].node.current === node;
 	const [firstLayerNode] = layersArr[0]!;
-	return firstLayerNode.node.value === node;
+	return firstLayerNode.node.current === node;
 }
 
 function isValidEvent(e: InteractOutsideEvent, node: HTMLElement): boolean {

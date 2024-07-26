@@ -2,34 +2,36 @@
 	import { box } from "svelte-toolbelt";
 	import { useSeparatorRoot } from "../separator.svelte.js";
 	import type { RootProps } from "../index.js";
-	import { styleToString } from "$lib/internal/style.js";
+	import { useId } from "$lib/internal/useId.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {
+		id = useId(),
+		ref = $bindable(null),
 		child,
 		children,
 		decorative = false,
 		orientation = "horizontal",
-		ref = $bindable(),
-		style = {},
 		...restProps
 	}: RootProps = $props();
 
 	const rootState = useSeparatorRoot({
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
+		id: box.with(() => id),
 		decorative: box.with(() => decorative),
 		orientation: box.with(() => orientation),
 	});
 
-	const mergedProps = $derived({
-		...restProps,
-		...rootState.props,
-		style: styleToString(style),
-	});
+	const mergedProps = $derived(mergeProps(restProps, rootState.props));
 </script>
 
 {#if child}
-	{@render child?.({ props: mergedProps })}
+	{@render child({ props: mergedProps })}
 {:else}
-	<div bind:this={ref} {...mergedProps}>
+	<div {...mergedProps}>
 		{@render children?.()}
 	</div>
 {/if}

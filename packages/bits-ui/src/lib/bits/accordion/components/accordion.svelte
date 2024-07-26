@@ -3,7 +3,7 @@
 	import { useAccordionRoot } from "../accordion.svelte.js";
 	import type { RootProps } from "../index.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 
 	let {
 		disabled = false,

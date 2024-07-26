@@ -14,7 +14,6 @@ import { kbd } from "$lib/internal/kbd.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
 import { Previous } from "runed";
-import { onDestroy } from "svelte";
 
 // prettier-ignore
 export const INTERACTION_KEYS = [kbd.ARROW_LEFT, kbd.ESCAPE, kbd.ARROW_RIGHT, kbd.SHIFT, kbd.CAPS_LOCK, kbd.CONTROL, kbd.ALT, kbd.META, kbd.ENTER, kbd.F1, kbd.F2, kbd.F3, kbd.F4, kbd.F5, kbd.F6, kbd.F7, kbd.F8, kbd.F9, kbd.F10, kbd.F11, kbd.F12];
@@ -77,7 +76,7 @@ class ComboboxBaseRootState {
 		this.scrollAlignment = props.scrollAlignment;
 
 		$effect.pre(() => {
-			if (!this.open.value) {
+			if (!this.open.current) {
 				this.setHighlightedNode(null);
 			}
 		});
@@ -86,7 +85,7 @@ class ComboboxBaseRootState {
 	setHighlightedNode = (node: HTMLElement | null) => {
 		this.highlightedNode = node;
 		if (node) {
-			node.scrollIntoView({ block: this.scrollAlignment.value });
+			node.scrollIntoView({ block: this.scrollAlignment.current });
 		}
 	};
 
@@ -112,11 +111,11 @@ class ComboboxBaseRootState {
 	};
 
 	setOpen = (open: boolean) => {
-		this.open.value = open;
+		this.open.current = open;
 	};
 
 	toggleOpen = () => {
-		this.open.value = !this.open.value;
+		this.open.current = !this.open.current;
 	};
 
 	openMenu = () => {
@@ -141,20 +140,20 @@ type ComboboxSingleRootStateProps = ComboboxBaseRootStateProps &
 class ComboboxSingleRootState extends ComboboxBaseRootState {
 	value: ComboboxSingleRootStateProps["value"];
 	isMulti = false as const;
-	hasValue = $derived.by(() => this.value.value !== "");
+	hasValue = $derived.by(() => this.value.current !== "");
 
 	constructor(props: ComboboxSingleRootStateProps) {
 		super(props);
 		this.value = props.value;
 
 		$effect(() => {
-			if (!this.open.value && this.highlightedNode) {
+			if (!this.open.current && this.highlightedNode) {
 				this.setHighlightedNode(null);
 			}
 		});
 
 		$effect(() => {
-			if (!this.open.value) return;
+			if (!this.open.current) return;
 			afterTick(() => {
 				this.#setInitialHighlightedNode();
 			});
@@ -162,18 +161,18 @@ class ComboboxSingleRootState extends ComboboxBaseRootState {
 	}
 
 	includesItem = (itemValue: string) => {
-		return this.value.value === itemValue;
+		return this.value.current === itemValue;
 	};
 
 	toggleItem = (itemValue: string, itemLabel: string = itemValue) => {
-		this.value.value = this.includesItem(itemValue) ? "" : itemValue;
+		this.value.current = this.includesItem(itemValue) ? "" : itemValue;
 		this.inputValue = itemLabel;
 	};
 
 	#setInitialHighlightedNode = () => {
 		if (this.highlightedNode) return;
-		if (this.value.value !== "") {
-			const node = this.getNodeByValue(this.value.value);
+		if (this.value.current !== "") {
+			const node = this.getNodeByValue(this.value.current);
 			if (node) {
 				this.setHighlightedNode(node);
 				return;
@@ -218,14 +217,14 @@ type ComboboxMultipleRootStateProps = ComboboxBaseRootStateProps &
 class ComboboxMultipleRootState extends ComboboxBaseRootState {
 	value: ComboboxMultipleRootStateProps["value"];
 	isMulti = true as const;
-	hasValue = $derived.by(() => this.value.value.length > 0);
+	hasValue = $derived.by(() => this.value.current.length > 0);
 
 	constructor(props: ComboboxMultipleRootStateProps) {
 		super(props);
 		this.value = props.value;
 
 		$effect(() => {
-			if (!this.open.value) return;
+			if (!this.open.current) return;
 			afterTick(() => {
 				if (!this.highlightedNode) {
 					this.#setInitialHighlightedNode();
@@ -235,22 +234,22 @@ class ComboboxMultipleRootState extends ComboboxBaseRootState {
 	}
 
 	includesItem = (itemValue: string) => {
-		return this.value.value.includes(itemValue);
+		return this.value.current.includes(itemValue);
 	};
 
 	toggleItem = (itemValue: string, itemLabel: string = itemValue) => {
 		if (this.includesItem(itemValue)) {
-			this.value.value = this.value.value.filter((v) => v !== itemValue);
+			this.value.current = this.value.current.filter((v) => v !== itemValue);
 		} else {
-			this.value.value = [...this.value.value, itemValue];
+			this.value.current = [...this.value.current, itemValue];
 		}
 		this.inputValue = itemLabel;
 	};
 
 	#setInitialHighlightedNode = () => {
 		if (this.highlightedNode) return;
-		if (this.value.value.length && this.value.value[0] !== "") {
-			const node = this.getNodeByValue(this.value.value[0]!);
+		if (this.value.current.length && this.value.current[0] !== "") {
+			const node = this.getNodeByValue(this.value.current[0]!);
 			if (node) {
 				this.setHighlightedNode(node);
 				return;
@@ -312,7 +311,7 @@ class ComboboxInputState {
 
 	#onkeydown = async (e: KeyboardEvent) => {
 		if (e.key === kbd.ESCAPE) return;
-		const open = this.root.open.value;
+		const open = this.root.open.current;
 		const inputValue = this.root.inputValue;
 
 		// prevent arrow up/down from moving the position of the cursor in the input
@@ -368,8 +367,7 @@ class ComboboxInputState {
 				? candidateNodes.indexOf(currHighlightedNode)
 				: -1;
 
-			const loop = this.root.loop.value;
-			const scrollAlignment = this.root.scrollAlignment.value;
+			const loop = this.root.loop.current;
 			let nextItem: HTMLElement | undefined;
 
 			if (e.key === kbd.ARROW_DOWN) {
@@ -405,14 +403,14 @@ class ComboboxInputState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
+				id: this.#id.current,
 				role: "combobox",
 				"aria-activedescendant": this.root.highlightedId,
 				"aria-autocomplete": "list",
-				"aria-expanded": getAriaExpanded(this.root.open.value),
-				"data-state": getDataOpenClosed(this.root.open.value),
-				"data-disabled": getDataDisabled(this.root.disabled.value),
-				disabled: this.root.disabled.value ? true : undefined,
+				"aria-expanded": getAriaExpanded(this.root.open.current),
+				"data-state": getDataOpenClosed(this.root.open.current),
+				"data-disabled": getDataDisabled(this.root.disabled.current),
+				disabled: this.root.disabled.current ? true : undefined,
 				onkeydown: this.#onkeydown,
 				oninput: this.#oninput,
 				[COMBOBOX_INPUT_ATTR]: "",
@@ -456,7 +454,7 @@ class ComboboxTriggerState {
 	 * behavior of focusing the button and keep focus on the input.
 	 */
 	#onpointerdown = (e: MouseEvent) => {
-		if (this.root.disabled.value) return;
+		if (this.root.disabled.current) return;
 		e.preventDefault();
 		if (document.activeElement !== this.root.inputNode) {
 			this.root.inputNode?.focus();
@@ -465,11 +463,11 @@ class ComboboxTriggerState {
 	};
 
 	props = $derived.by(() => ({
-		id: this.#id.value,
+		id: this.#id.current,
 		"aria-haspopup": "listbox",
-		"data-state": getDataOpenClosed(this.root.open.value),
-		"data-disabled": getDataDisabled(this.root.disabled.value),
-		disabled: this.root.disabled.value ? true : undefined,
+		"data-state": getDataOpenClosed(this.root.open.current),
+		"data-disabled": getDataDisabled(this.root.disabled.current),
+		disabled: this.root.disabled.current ? true : undefined,
 		onpointerdown: this.#onpointerdown,
 		onkeydown: this.#onkeydown,
 		[COMBOBOX_TRIGGER_ATTR]: "",
@@ -494,20 +492,22 @@ class ComboboxContentState {
 			onRefChange: (node) => {
 				this.root.contentNode = node;
 			},
-			condition: () => this.root.open.value,
+			condition: () => this.root.open.current,
 		});
 
-		onDestroy(() => {
-			this.root.contentNode = null;
+		$effect(() => {
+			return () => {
+				this.root.contentNode = null;
+			};
 		});
 	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
+				id: this.#id.current,
 				role: "listbox",
-				"data-state": getDataOpenClosed(this.root.open.value),
+				"data-state": getDataOpenClosed(this.root.open.current),
 				[COMBOBOX_CONTENT_ATTR]: "",
 			}) as const
 	);
@@ -532,8 +532,8 @@ class ComboboxItemState {
 	onHighlight: ComboboxItemStateProps["onHighlight"];
 	onUnhighlight: ComboboxItemStateProps["onUnhighlight"];
 	disabled: ComboboxItemStateProps["disabled"];
-	isSelected = $derived.by(() => this.root.includesItem(this.value.value));
-	isHighlighted = $derived.by(() => this.root.highlightedValue === this.value.value);
+	isSelected = $derived.by(() => this.root.includesItem(this.value.current));
+	isHighlighted = $derived.by(() => this.root.highlightedValue === this.value.current);
 	prevHighlighted = new Previous(() => this.isHighlighted);
 
 	constructor(props: ComboboxItemStateProps, root: ComboboxRootState) {
@@ -548,10 +548,10 @@ class ComboboxItemState {
 
 		$effect(() => {
 			if (this.isHighlighted) {
-				this.onHighlight.value();
+				this.onHighlight.current();
 				return;
 			} else if (this.prevHighlighted.current) {
-				this.onUnhighlight.value();
+				this.onUnhighlight.current();
 			}
 		});
 
@@ -579,21 +579,21 @@ class ComboboxItemState {
 	#onpointerup = (e: PointerEvent) => {
 		// prevent any default behavior
 		e.preventDefault();
-		if (this.disabled.value) return;
-		this.root.toggleItem(this.value.value, this.label.value);
+		if (this.disabled.current) return;
+		this.root.toggleItem(this.value.current, this.label.current);
 		if (!this.root.isMulti) {
 			this.root.closeMenu();
 		}
 	};
 
 	#onpointermove = (_: PointerEvent) => {
-		if (this.root.highlightedNode !== this.#ref.value) {
-			this.root.setHighlightedNode(this.#ref.value);
+		if (this.root.highlightedNode !== this.#ref.current) {
+			this.root.setHighlightedNode(this.#ref.current);
 		}
 	};
 
 	#onpointerleave = (_: PointerEvent) => {
-		if (this.root.highlightedNode === this.#ref.value) {
+		if (this.root.highlightedNode === this.#ref.current) {
 			this.root.setHighlightedNode(null);
 		}
 	};
@@ -601,14 +601,14 @@ class ComboboxItemState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
-				"data-value": this.value.value,
-				"data-disabled": getDataDisabled(this.disabled.value),
+				id: this.#id.current,
+				"data-value": this.value.current,
+				"data-disabled": getDataDisabled(this.disabled.current),
 				"data-highlighted":
-					this.root.highlightedValue === this.value.value ? "" : undefined,
-				"data-selected": this.root.includesItem(this.value.value) ? "" : undefined,
-				"aria-selected": this.root.includesItem(this.value.value) ? "true" : undefined,
-				"data-label": this.label.value,
+					this.root.highlightedValue === this.value.current ? "" : undefined,
+				"data-selected": this.root.includesItem(this.value.current) ? "" : undefined,
+				"aria-selected": this.root.includesItem(this.value.current) ? "true" : undefined,
+				"data-label": this.label.current,
 				[COMBOBOX_ITEM_ATTR]: "",
 				onpointermove: this.#onpointermove,
 				onpointerdown: this.#onpointerdown,
@@ -638,7 +638,7 @@ class ComboboxGroupState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
+				id: this.#id.current,
 				role: "group",
 				[COMBOBOX_GROUP_ATTR]: "",
 				"aria-labelledby": this.labelNode?.id ?? undefined,
@@ -672,7 +672,7 @@ class ComboboxGroupLabelState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
+				id: this.#id.current,
 				[COMBOBOX_GROUP_LABEL_ATTR]: "",
 			}) as const
 	);
@@ -685,7 +685,7 @@ type ComboboxHiddenInputStateProps = ReadableBoxedValues<{
 class ComboboxHiddenInputState {
 	#value: ComboboxHiddenInputStateProps["value"];
 	root: ComboboxRootState;
-	shouldRender = $derived.by(() => this.root.name.value !== "");
+	shouldRender = $derived.by(() => this.root.name.current !== "");
 
 	constructor(props: ComboboxHiddenInputStateProps, root: ComboboxRootState) {
 		this.root = root;
@@ -695,10 +695,10 @@ class ComboboxHiddenInputState {
 	props = $derived.by(
 		() =>
 			({
-				disabled: getDisabled(this.root.disabled.value),
-				required: getRequired(this.root.required.value),
-				name: this.root.name.value,
-				value: this.#value.value,
+				disabled: getDisabled(this.root.disabled.current),
+				required: getRequired(this.root.required.current),
+				name: this.root.name.current,
+				value: this.#value.current,
 				"aria-hidden": getAriaHidden(true),
 			}) as const
 	);

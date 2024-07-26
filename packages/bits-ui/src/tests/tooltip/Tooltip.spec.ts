@@ -25,12 +25,12 @@ async function open(props: Partial<TooltipTestProps> = {}) {
 }
 
 describe("tooltip", () => {
-	it("has no accessibility violations", async () => {
+	it("should have no accessibility violations", async () => {
 		const { container } = setup();
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
-	it("has bits data attrs", async () => {
+	it("should have bits data attrs", async () => {
 		const { getByTestId } = await open();
 		const parts = ["trigger", "content"];
 
@@ -40,20 +40,19 @@ describe("tooltip", () => {
 		}
 	});
 
-	it("opens on hover", async () => {
+	it("should on hover", async () => {
 		const { user, content } = await open();
 		await user.click(content);
 		expect(content).toBeVisible();
 	});
 
-	it.skip("closes on escape keydown", async () => {
+	it("should close on escape keydown", async () => {
 		const { user, queryByTestId } = await open();
 		await user.keyboard(kbd.ESCAPE);
-		await sleep(100);
 		expect(queryByTestId("content")).toBeNull();
 	});
 
-	it.skip("closes when pointer moves outside the trigger and content", async () => {
+	it.skip("should close when pointer moves outside the trigger and content", async () => {
 		const { user, getByTestId, queryByTestId, content } = await open();
 
 		const outside = getByTestId("outside") as HTMLElement;
@@ -70,27 +69,27 @@ describe("tooltip", () => {
 		await waitFor(() => expect(queryByTestId("content")).toBeNull());
 	});
 
-	it("portals to the body by default", async () => {
+	it("should portal to the body by default", async () => {
 		const { content } = await open();
 		const contentWrapper = content.parentElement;
 		expect(contentWrapper?.parentElement).toBe(document.body);
 	});
 
-	it("portals to a custom element if specified", async () => {
+	it("should portal to a custom element if specified", async () => {
 		const { content, getByTestId } = await open({ portalProps: { to: "#portal-target" } });
 		const portalTarget = getByTestId("portal-target");
 		const contentWrapper = content.parentElement;
 		expect(contentWrapper?.parentElement).toBe(portalTarget);
 	});
 
-	it("does not portal if `disabled` is passed to the portal", async () => {
+	it("should not portal if `disabled` is passed to the portal", async () => {
 		const { content, getByTestId } = await open({ portalProps: { disabled: true } });
 		const main = getByTestId("main");
 		const contentWrapper = content.parentElement;
 		expect(contentWrapper?.parentElement).toBe(main);
 	});
 
-	it("allows ignoring escapeKeydownBehavior ", async () => {
+	it("should allow ignoring escapeKeydownBehavior ", async () => {
 		const { content, user, queryByTestId } = await open({
 			contentProps: {
 				escapeKeydownBehavior: "ignore",
@@ -101,7 +100,7 @@ describe("tooltip", () => {
 		expect(queryByTestId("content")).not.toBeNull();
 	});
 
-	it("allows ignoring interactOutsideBehavior", async () => {
+	it("should allow ignoring interactOutsideBehavior", async () => {
 		const { content, user, queryByTestId, getByTestId } = await open({
 			contentProps: {
 				interactOutsideBehavior: "ignore",
@@ -113,7 +112,7 @@ describe("tooltip", () => {
 		expect(queryByTestId("content")).not.toBeNull();
 	});
 
-	it("respects binding the open prop", async () => {
+	it("should respect binding the open prop", async () => {
 		const { queryByTestId, getByTestId, user } = await open({
 			contentProps: {
 				interactOutsideBehavior: "ignore",

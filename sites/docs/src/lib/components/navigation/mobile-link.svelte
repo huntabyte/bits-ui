@@ -4,22 +4,17 @@
 	import { cn } from "$lib/utils/index.js";
 
 	let {
-		open = $bindable(false),
+		onClose,
 		href = "#",
 		children,
 		class: className,
 		...restProps
-	}: HTMLAnchorAttributes & { open: boolean } = $props();
-
-	function close() {
-		open = false;
-	}
-
+	}: HTMLAnchorAttributes & { onClose?: () => void } = $props();
 </script>
 
 <a
 	{href}
-	onclick={close}
+	onclick={onClose}
 	class={cn($page.url.pathname === href ? "text-foreground" : "text-foreground/60", className)}
 	{...restProps}
 >

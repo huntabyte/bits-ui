@@ -5,7 +5,7 @@
 	import type { DataAttrSchema } from "$lib/types/index.js";
 	import { parseMarkdown } from "$lib/utils/index.js";
 
-	export let dataAttrs: DataAttrSchema[] = [];
+	let { dataAttrs = [] }: { dataAttrs: DataAttrSchema[] } = $props();
 </script>
 
 <Table.Root>

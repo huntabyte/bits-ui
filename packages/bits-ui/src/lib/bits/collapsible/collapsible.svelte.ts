@@ -42,7 +42,7 @@ class CollapsibleRootState {
 	}
 
 	toggleOpen() {
-		this.open.value = !this.open.value;
+		this.open.current = !this.open.current;
 	}
 
 	createContent(props: CollapsibleContentStateProps) {
@@ -56,9 +56,9 @@ class CollapsibleRootState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
-				"data-state": getDataOpenClosed(this.open.value),
-				"data-disabled": getDataDisabled(this.disabled.value),
+				id: this.#id.current,
+				"data-state": getDataOpenClosed(this.open.current),
+				"data-disabled": getDataDisabled(this.disabled.current),
 				[ROOT_ATTR]: "",
 			}) as const
 	);
@@ -82,11 +82,11 @@ class CollapsibleContentState {
 	#height = $state(0);
 	#forceMount: CollapsibleContentStateProps["forceMount"];
 
-	present = $derived.by(() => this.#forceMount.value || this.root.open.value);
+	present = $derived.by(() => this.#forceMount.current || this.root.open.current);
 
 	constructor(props: CollapsibleContentStateProps, root: CollapsibleRootState) {
 		this.root = root;
-		this.#isMountAnimationPrevented = root.open.value;
+		this.#isMountAnimationPrevented = root.open.current;
 		this.#forceMount = props.forceMount;
 		this.#id = props.id;
 		this.#ref = props.ref;
@@ -112,11 +112,11 @@ class CollapsibleContentState {
 
 		$effect(() => {
 			this.present;
-			const node = this.#ref.value;
+			const node = this.#ref.current;
 			if (!node) return;
 
 			afterTick(() => {
-				if (!this.#ref.value) return;
+				if (!this.#ref.current) return;
 				// get the dimensions of the element
 				this.#originalStyles = this.#originalStyles || {
 					transitionDuration: node.style.transitionDuration,
@@ -144,9 +144,9 @@ class CollapsibleContentState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
-				"data-state": getDataOpenClosed(this.root.open.value),
-				"data-disabled": getDataDisabled(this.root.disabled.value),
+				id: this.#id.current,
+				"data-state": getDataOpenClosed(this.root.open.current),
+				"data-disabled": getDataDisabled(this.root.disabled.current),
 				style: {
 					"--bits-collapsible-content-height": this.#height
 						? `${this.#height}px`
@@ -190,13 +190,13 @@ class CollapsibleTriggerState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
+				id: this.#id.current,
 				type: "button",
 				"aria-controls": this.#root.contentNode?.id,
-				"aria-expanded": getAriaExpanded(this.#root.open.value),
-				"data-state": getDataOpenClosed(this.#root.open.value),
-				"data-disabled": getDataDisabled(this.#root.disabled.value),
-				disabled: this.#root.disabled.value,
+				"aria-expanded": getAriaExpanded(this.#root.open.current),
+				"data-state": getDataOpenClosed(this.#root.open.current),
+				"data-disabled": getDataDisabled(this.#root.disabled.current),
+				disabled: this.#root.disabled.current,
 				[TRIGGER_ATTR]: "",
 				//
 				onclick: this.#onclick,

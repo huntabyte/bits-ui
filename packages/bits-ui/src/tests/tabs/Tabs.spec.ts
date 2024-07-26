@@ -34,7 +34,7 @@ function setup(props: Partial<TabsTestProps> = {}) {
 }
 
 describe("tabs", () => {
-	it("has no accessibility violations", async () => {
+	it("should have no accessibility violations", async () => {
 		const { container } = render(TabsTest, {
 			items: [
 				{
@@ -47,7 +47,7 @@ describe("tabs", () => {
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
-	it("has bits data attrs", async () => {
+	it("should have bits data attrs", async () => {
 		const { getByTestId } = render(TabsTest, {
 			items: [items[0] as Item],
 		});
@@ -63,7 +63,7 @@ describe("tabs", () => {
 		expect(content).toHaveAttribute("data-tabs-content");
 	});
 
-	it("switches tabs on click", async () => {
+	it("should switch tabs on click", async () => {
 		const { getByTestId, user } = setup();
 
 		const trigger1 = getByTestId("trigger-1");
@@ -94,7 +94,7 @@ describe("tabs", () => {
 		expect(content3).not.toBeVisible();
 	});
 
-	it("navigates the tabs with the keyboard", async () => {
+	it("should navigate the tabs with the keyboard", async () => {
 		const { getByTestId, user } = setup();
 
 		const trigger1 = getByTestId("trigger-1");
@@ -136,7 +136,7 @@ describe("tabs", () => {
 		expect(content3).toBeVisible();
 	});
 
-	it("respects the loop prop", async () => {
+	it("should respect the loop prop", async () => {
 		const { getByTestId, user } = setup({ loop: false });
 
 		const trigger1 = getByTestId("trigger-1");
@@ -153,7 +153,7 @@ describe("tabs", () => {
 		expect(trigger3).toHaveFocus();
 	});
 
-	it("respects the `activationMode: 'manual'` prop", async () => {
+	it("should respect the `activationMode: 'manual'` prop", async () => {
 		const { getByTestId, user } = setup({
 			activationMode: "manual",
 		});
@@ -178,7 +178,7 @@ describe("tabs", () => {
 		expect(content1).toBeVisible();
 	});
 
-	it("navigates using up & down when orientation is vertical", async () => {
+	it("should navigate using up & down when orientation is vertical", async () => {
 		const { getByTestId, user } = setup({
 			orientation: "vertical",
 		});

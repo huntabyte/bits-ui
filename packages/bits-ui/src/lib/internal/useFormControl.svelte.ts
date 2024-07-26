@@ -10,7 +10,7 @@ export function useFormControl(getNode: Getter<HTMLElement | null>) {
 	});
 
 	return {
-		get value() {
+		get current() {
 			return isInForm;
 		},
 	};

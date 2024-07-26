@@ -60,11 +60,11 @@ class RadioGroupRootState {
 	}
 
 	isChecked(value: string) {
-		return this.value.value === value;
+		return this.value.current === value;
 	}
 
 	selectValue(value: string) {
-		this.value.value = value;
+		this.value.current = value;
 	}
 
 	createItem(props: RadioGroupItemStateProps) {
@@ -78,11 +78,11 @@ class RadioGroupRootState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.value,
+				id: this.id.current,
 				role: "radiogroup",
-				"aria-required": getAriaRequired(this.required.value),
-				"data-disabled": getDataDisabled(this.disabled.value),
-				"data-orientation": this.orientation.value,
+				"aria-required": getAriaRequired(this.required.current),
+				"data-disabled": getDataDisabled(this.disabled.current),
+				"data-orientation": this.orientation.current,
 				[ROOT_ATTR]: "",
 			}) as const
 	);
@@ -105,9 +105,9 @@ class RadioGroupItemState {
 	#root: RadioGroupRootState;
 	#disabled: RadioGroupItemStateProps["disabled"];
 	#value: RadioGroupItemStateProps["value"];
-	checked = $derived.by(() => this.#root.value.value === this.#value.value);
-	#isDisabled = $derived.by(() => this.#disabled.value || this.#root.disabled.value);
-	#isChecked = $derived.by(() => this.#root.isChecked(this.#value.value));
+	checked = $derived.by(() => this.#root.value.current === this.#value.current);
+	#isDisabled = $derived.by(() => this.#disabled.current || this.#root.disabled.current);
+	#isChecked = $derived.by(() => this.#root.isChecked(this.#value.current));
 
 	constructor(props: RadioGroupItemStateProps, root: RadioGroupRootState) {
 		this.#disabled = props.disabled;
@@ -123,26 +123,26 @@ class RadioGroupItemState {
 	}
 
 	#onclick = () => {
-		this.#root.selectValue(this.#value.value);
+		this.#root.selectValue(this.#value.current);
 	};
 
 	#onfocus = () => {
-		this.#root.selectValue(this.#value.value);
+		this.#root.selectValue(this.#value.current);
 	};
 
 	#onkeydown = (e: KeyboardEvent) => {
-		this.#root.rovingFocusGroup.handleKeydown(this.#ref.value, e);
+		this.#root.rovingFocusGroup.handleKeydown(this.#ref.current, e);
 	};
 
-	#tabIndex = $derived.by(() => this.#root.rovingFocusGroup.getTabIndex(this.#ref.value));
+	#tabIndex = $derived.by(() => this.#root.rovingFocusGroup.getTabIndex(this.#ref.current));
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
+				id: this.#id.current,
 				disabled: this.#isDisabled ? true : undefined,
-				"data-value": this.#value.value,
-				"data-orientation": this.#root.orientation.value,
+				"data-value": this.#value.current,
+				"data-orientation": this.#root.orientation.current,
 				"data-disabled": getDataDisabled(this.#isDisabled),
 				"data-state": this.#isChecked ? "checked" : "unchecked",
 				"aria-checked": getAriaChecked(this.#isChecked),
@@ -164,14 +164,14 @@ class RadioGroupItemState {
 
 class RadioGroupInputState {
 	#root: RadioGroupRootState;
-	shouldRender = $derived.by(() => this.#root.name.value !== undefined);
+	shouldRender = $derived.by(() => this.#root.name.current !== undefined);
 	props = $derived.by(
 		() =>
 			({
-				name: this.#root.name.value,
-				value: this.#root.value.value,
-				required: this.#root.required.value,
-				disabled: this.#root.disabled.value,
+				name: this.#root.name.current,
+				value: this.#root.value.current,
+				required: this.#root.required.current,
+				disabled: this.#root.disabled.current,
 				"aria-hidden": "true",
 				hidden: true,
 				style: styleToString(srOnlyStyles),

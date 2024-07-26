@@ -1,30 +1,44 @@
 import { getAriaHidden, getAriaOrientation, getDataOrientation } from "$lib/internal/attrs.js";
 import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
+import type { WithRefProps } from "$lib/internal/types.js";
+import { useRefById } from "$lib/internal/useRefById.svelte.js";
 import type { Orientation } from "$lib/shared/index.js";
 
 const ROOT_ATTR = "data-separator-root";
 
-type SeparatorRootStateProps = ReadableBoxedValues<{
-	orientation: Orientation;
-	decorative: boolean;
-}>;
+type SeparatorRootStateProps = WithRefProps<
+	ReadableBoxedValues<{
+		orientation: Orientation;
+		decorative: boolean;
+	}>
+>;
 
 class SeparatorRootState {
+	#id: SeparatorRootStateProps["id"];
+	#ref: SeparatorRootStateProps["ref"];
 	#orientation: SeparatorRootStateProps["orientation"];
 	#decorative: SeparatorRootStateProps["decorative"];
 
 	constructor(props: SeparatorRootStateProps) {
 		this.#orientation = props.orientation;
 		this.#decorative = props.decorative;
+		this.#id = props.id;
+		this.#ref = props.ref;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+		});
 	}
 
 	props = $derived.by(
 		() =>
 			({
-				role: this.#decorative.value ? "none" : "separator",
-				"aria-orientation": getAriaOrientation(this.#orientation.value),
-				"aria-hidden": getAriaHidden(this.#decorative.value),
-				"data-orientation": getDataOrientation(this.#orientation.value),
+				id: this.#id.current,
+				role: this.#decorative.current ? "none" : "separator",
+				"aria-orientation": getAriaOrientation(this.#orientation.current),
+				"aria-hidden": getAriaHidden(this.#decorative.current),
+				"data-orientation": getDataOrientation(this.#orientation.current),
 				[ROOT_ATTR]: "",
 			}) as const
 	);

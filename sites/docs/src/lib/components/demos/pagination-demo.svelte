@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Pagination } from "bits-ui";
-	import { CaretLeft, CaretRight } from "$icons/index.js";
+	import CaretLeft from "phosphor-svelte/lib/CaretLeft";
+	import CaretRight from "phosphor-svelte/lib/CaretRight";
 </script>
 
 <Pagination.Root count={100} perPage={10}>

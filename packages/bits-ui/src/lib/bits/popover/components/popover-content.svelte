@@ -14,7 +14,6 @@
 		onDestroyAutoFocus = noop,
 		onEscapeKeydown = noop,
 		onInteractOutside = noop,
-		loop = true,
 		...restProps
 	}: ContentProps = $props();
 
@@ -31,7 +30,7 @@
 
 <PopperLayer
 	{...mergedProps}
-	present={contentState.root.open.value || forceMount}
+	present={contentState.root.open.current || forceMount}
 	{id}
 	onInteractOutside={(e) => {
 		onInteractOutside(e);
@@ -39,8 +38,8 @@
 		contentState.root.close();
 	}}
 	onEscapeKeydown={(e) => {
-		// TODO: users should be able to cancel this
 		onEscapeKeydown(e);
+		if (e.defaultPrevented) return;
 		contentState.root.close();
 	}}
 	onDestroyAutoFocus={(e) => {
@@ -50,7 +49,7 @@
 		contentState.root.triggerNode?.focus();
 	}}
 	trapped
-	{loop}
+	loop
 	{forceMount}
 >
 	{#snippet popper({ props })}
@@ -64,7 +63,7 @@
 			},
 		})}
 		{#if child}
-			{@render child?.({ props: finalProps })}
+			{@render child({ props: finalProps })}
 		{:else}
 			<div {...finalProps}>
 				{@render children?.()}

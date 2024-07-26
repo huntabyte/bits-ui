@@ -51,17 +51,17 @@ class SwitchRootState {
 	}
 
 	#toggle() {
-		this.checked.value = !this.checked.value;
+		this.checked.current = !this.checked.current;
 	}
 
 	#onkeydown = (e: KeyboardEvent) => {
-		if (!(e.key === kbd.ENTER || e.key === kbd.SPACE) || this.disabled.value) return;
+		if (!(e.key === kbd.ENTER || e.key === kbd.SPACE) || this.disabled.current) return;
 		e.preventDefault();
 		this.#toggle();
 	};
 
 	#onclick = () => {
-		if (this.disabled.value) return;
+		if (this.disabled.current) return;
 		this.#toggle();
 	};
 
@@ -74,20 +74,20 @@ class SwitchRootState {
 	}
 
 	sharedProps = $derived.by(() => ({
-		"data-disabled": getDataDisabled(this.disabled.value),
-		"data-state": getDataChecked(this.checked.value),
-		"data-required": getDataRequired(this.required.value),
+		"data-disabled": getDataDisabled(this.disabled.current),
+		"data-state": getDataChecked(this.checked.current),
+		"data-required": getDataRequired(this.required.current),
 	}));
 
 	props = $derived.by(
 		() =>
 			({
 				...this.sharedProps,
-				id: this.#id.value,
+				id: this.#id.current,
 				role: "switch",
-				disabled: getDisabled(this.disabled.value),
-				"aria-checked": getAriaChecked(this.checked.value),
-				"aria-required": getAriaRequired(this.required.value),
+				disabled: getDisabled(this.disabled.current),
+				"aria-checked": getAriaChecked(this.checked.current),
+				"aria-required": getAriaRequired(this.required.current),
 				[ROOT_ATTR]: "",
 				//
 				onclick: this.#onclick,
@@ -98,7 +98,7 @@ class SwitchRootState {
 
 class SwitchInputState {
 	#root: SwitchRootState;
-	shouldRender = $derived.by(() => this.#root.name.value !== undefined);
+	shouldRender = $derived.by(() => this.#root.name.current !== undefined);
 
 	constructor(root: SwitchRootState) {
 		this.#root = root;
@@ -108,11 +108,11 @@ class SwitchInputState {
 		() =>
 			({
 				type: "checkbox",
-				name: this.#root.name.value,
-				value: this.#root.value.value,
-				checked: this.#root.checked.value,
-				disabled: this.#root.disabled.value,
-				required: this.#root.required.value,
+				name: this.#root.name.current,
+				value: this.#root.value.current,
+				checked: this.#root.checked.current,
+				disabled: this.#root.disabled.current,
+				required: this.#root.required.current,
 			}) as const
 	);
 }
@@ -139,7 +139,7 @@ class SwitchThumbState {
 		() =>
 			({
 				...this.root.sharedProps,
-				id: this.#id.value,
+				id: this.#id.current,
 				[THUMB_ATTR]: "",
 			}) as const
 	);

@@ -1,6 +1,7 @@
 <script lang="ts">
+	import SquareHalf from "phosphor-svelte/lib/SquareHalf";
 	import MobileLink from "./mobile-link.svelte";
-	import { Logo, SquareHalf } from "$icons/index.js";
+	import { Logo } from "$icons/index.js";
 	import { Button } from "$lib/components/ui/button/index.js";
 	import * as Sheet from "$lib/components/ui/sheet/index.js";
 	import { navigation } from "$lib/config/index.js";
@@ -9,7 +10,7 @@
 </script>
 
 <Sheet.Root bind:open>
-	<Sheet.Trigger asChild>
+	<Sheet.Trigger>
 		{#snippet child({ props })}
 			<Button
 				{...props}
@@ -22,7 +23,7 @@
 		{/snippet}
 	</Sheet.Trigger>
 	<Sheet.Content side="left" class="pr-0">
-		<MobileLink href="/" class="flex items-center" bind:open>
+		<MobileLink href="/" class="flex items-center" onClose={() => (open = false)}>
 			<Logo />
 		</MobileLink>
 		<div class="my-4 h-[calc(100vh-8rem)] overflow-auto pb-10 pl-6">
@@ -33,7 +34,7 @@
 						{#if navItem?.items?.length}
 							{#each navItem.items as item}
 								{#if !item.disabled && item.href}
-									<MobileLink href={item.href} bind:open>
+									<MobileLink href={item.href} onClose={() => (open = false)}>
 										{item.title}
 									</MobileLink>
 								{/if}

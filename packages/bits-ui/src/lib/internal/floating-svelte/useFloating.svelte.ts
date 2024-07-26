@@ -1,7 +1,7 @@
 import { computePosition } from "@floating-ui/dom";
 import { box } from "svelte-toolbelt";
 import type { UseFloatingOptions, UseFloatingReturn } from "./types.js";
-import { get, getDPR, roundByDPR } from "./utils.js";
+import { get, getDPR, roundByDPR } from "./floating-utils.svelte.js";
 
 export function useFloating(options: UseFloatingOptions): UseFloatingReturn {
 	/** Options */
@@ -30,18 +30,18 @@ export function useFloating(options: UseFloatingOptions): UseFloatingReturn {
 			top: "0",
 		};
 
-		if (!floating.value) {
+		if (!floating.current) {
 			return initialStyles;
 		}
 
-		const xVal = roundByDPR(floating.value, x);
-		const yVal = roundByDPR(floating.value, y);
+		const xVal = roundByDPR(floating.current, x);
+		const yVal = roundByDPR(floating.current, y);
 
 		if (transformOption) {
 			return {
 				...initialStyles,
 				transform: `translate(${xVal}px, ${yVal}px)`,
-				...(getDPR(floating.value) >= 1.5 && {
+				...(getDPR(floating.current) >= 1.5 && {
 					willChange: "transform",
 				}),
 			};
@@ -58,8 +58,8 @@ export function useFloating(options: UseFloatingOptions): UseFloatingReturn {
 	let whileElementsMountedCleanup: (() => void) | undefined;
 
 	function update() {
-		if (reference.value === null || floating.value === null) return;
-		computePosition(reference.value, floating.value, {
+		if (reference.current === null || floating.current === null) return;
+		computePosition(reference.current, floating.current, {
 			middleware: middlewareOption,
 			placement: placementOption,
 			strategy: strategyOption,
@@ -88,11 +88,11 @@ export function useFloating(options: UseFloatingOptions): UseFloatingReturn {
 			return;
 		}
 
-		if (reference.value === null || floating.value === null) return;
+		if (reference.current === null || floating.current === null) return;
 
 		whileElementsMountedCleanup = whileElementsMountedOption(
-			reference.value,
-			floating.value,
+			reference.current,
+			floating.current,
 			update
 		);
 	}

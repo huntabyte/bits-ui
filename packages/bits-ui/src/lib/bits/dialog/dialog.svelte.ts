@@ -33,13 +33,13 @@ class DialogRootState {
 	}
 
 	openDialog() {
-		if (this.open.value) return;
-		this.open.value = true;
+		if (this.open.current) return;
+		this.open.current = true;
 	}
 
 	closeDialog() {
-		if (!this.open.value) return;
-		this.open.value = false;
+		if (!this.open.current) return;
+		this.open.current = false;
 	}
 
 	createTrigger(props: DialogTriggerStateProps) {
@@ -73,7 +73,7 @@ class DialogRootState {
 	sharedProps = $derived.by(
 		() =>
 			({
-				"data-state": getDataOpenClosed(this.open.value),
+				"data-state": getDataOpenClosed(this.open.current),
 			}) as const
 	);
 }
@@ -106,9 +106,9 @@ class DialogTriggerState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
+				id: this.#id.current,
 				"aria-haspopup": "dialog",
-				"aria-expanded": getAriaExpanded(this.#root.open.value),
+				"aria-expanded": getAriaExpanded(this.#root.open.current),
 				"aria-controls": this.#root.contentId,
 				[TRIGGER_ATTR]: "",
 				onclick: this.#onclick,
@@ -131,7 +131,7 @@ class DialogCloseState {
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
-			condition: () => this.#root.open.value,
+			condition: () => this.#root.open.current,
 		});
 	}
 
@@ -142,7 +142,7 @@ class DialogCloseState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
+				id: this.#id.current,
 				[CLOSE_ATTR]: "",
 				onclick: this.#onclick,
 				...this.#root.sharedProps,
@@ -173,14 +173,14 @@ class DialogTitleState {
 			onRefChange: (node) => {
 				this.#root.titleNode = node;
 			},
-			condition: () => this.#root.open.value,
+			condition: () => this.#root.open.current,
 		});
 	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
+				id: this.#id.current,
 				role: "heading",
 				"aria-level": String(this.#level),
 				[TITLE_ATTR]: "",
@@ -204,7 +204,7 @@ class DialogDescriptionState {
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
-			condition: () => this.#root.open.value,
+			condition: () => this.#root.open.current,
 			onRefChange: (node) => {
 				this.#root.descriptionNode = node;
 			},
@@ -214,7 +214,7 @@ class DialogDescriptionState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
+				id: this.#id.current,
 				[DESCRIPTION_ATTR]: "",
 				...this.#root.sharedProps,
 			}) as const
@@ -236,7 +236,7 @@ class DialogContentState {
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
-			condition: () => this.root.open.value,
+			condition: () => this.root.open.current,
 			onRefChange: (node) => {
 				this.root.contentNode = node;
 			},
@@ -246,7 +246,7 @@ class DialogContentState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
+				id: this.#id.current,
 				role: "dialog",
 				"aria-describedby": this.root.descriptionId,
 				"aria-labelledby": this.root.titleId,
@@ -271,14 +271,14 @@ class DialogOverlayState {
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
-			condition: () => this.root.open.value,
+			condition: () => this.root.open.current,
 		});
 	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
+				id: this.#id.current,
 				[OVERLAY_ATTR]: "",
 				...this.root.sharedProps,
 			}) as const
@@ -300,7 +300,7 @@ class AlertDialogCancelState {
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
-			condition: () => this.#root.open.value,
+			condition: () => this.#root.open.current,
 			onRefChange: (node) => {
 				this.#root.cancelNode = node;
 			},
@@ -314,7 +314,7 @@ class AlertDialogCancelState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
+				id: this.#id.current,
 				[CANCEL_ATTR]: "",
 				onclick: this.#onclick,
 				...this.#root.sharedProps,

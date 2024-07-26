@@ -46,7 +46,7 @@
 
 <FloatingLayer.Root>
 	{@render children?.()}
-	{#if rootState.isFormControl.value}
+	{#if rootState.isFormControl.current}
 		{#key rootState.nativeSelectKey}
 			<SelectNative
 				bind:value
@@ -62,14 +62,14 @@
 				{#if value === ""}
 					<option value=""></option>
 				{/if}
-				{#each rootState.nativeOptionsArr as opt, idx (opt.value.key + idx)}
+				{#each rootState.nativeOptionsArr as opt, idx (opt.current.key + idx)}
 					<option
-						value={opt.value.value}
-						disabled={opt.value.disabled}
-						selected={opt.value.value === rootState.value.value}
+						value={opt.current.value}
+						disabled={opt.current.disabled}
+						selected={opt.current.value === rootState.value.current}
 					>
 						<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-						{@html opt.value.innerHTML}
+						{@html opt.current.innerHTML}
 					</option>
 				{/each}
 			</SelectNative>

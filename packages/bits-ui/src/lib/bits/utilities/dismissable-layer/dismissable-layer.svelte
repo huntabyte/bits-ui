@@ -12,6 +12,7 @@
 		id,
 		children,
 		enabled,
+		isValidEvent = () => false,
 	}: DismissableLayerImplProps = $props();
 
 	const dismissableLayerState = useDismissableLayer({
@@ -21,6 +22,7 @@
 		onInteractOutsideStart: box.with(() => onInteractOutsideStart),
 		enabled: box.with(() => enabled),
 		onFocusOutside: box.with(() => onFocusOutside),
+		isValidEvent: box.with(() => isValidEvent),
 	});
 </script>
 

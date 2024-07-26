@@ -4,7 +4,7 @@ export type {
 	ContentProps as DropdownMenuContentProps,
 	GroupProps as DropdownMenuGroupProps,
 	ItemProps as DropdownMenuItemProps,
-	LabelProps as DropdownMenuLabelProps,
+	GroupLabelProps as DropdownMenuGroupLabelProps,
 	RootProps as DropdownMenuRootProps,
 	RadioGroupProps as DropdownMenuRadioGroupProps,
 	RadioItemProps as DropdownMenuRadioItemProps,
@@ -17,13 +17,13 @@ export type {
 } from "$lib/bits/menu/index.js";
 
 export type {
-	MenuRootPropsWithoutHTML as DropdownMenuPropsWithoutHTML,
+	MenuRootPropsWithoutHTML as DropdownMenuRootPropsWithoutHTML,
 	MenuArrowPropsWithoutHTML as DropdownMenuArrowPropsWithoutHTML,
 	MenuCheckboxItemPropsWithoutHTML as DropdownMenuCheckboxItemPropsWithoutHTML,
 	MenuContentPropsWithoutHTML as DropdownMenuContentPropsWithoutHTML,
 	MenuGroupPropsWithoutHTML as DropdownMenuGroupPropsWithoutHTML,
 	MenuItemPropsWithoutHTML as DropdownMenuItemPropsWithoutHTML,
-	MenuLabelPropsWithoutHTML as DropdownMenuLabelPropsWithoutHTML,
+	MenuGroupLabelPropsWithoutHTML as DropdownMenuLabelPropsWithoutHTML,
 	MenuRadioGroupPropsWithoutHTML as DropdownMenuRadioGroupPropsWithoutHTML,
 	MenuRadioItemPropsWithoutHTML as DropdownMenuRadioItemPropsWithoutHTML,
 	MenuSeparatorPropsWithoutHTML as DropdownMenuSeparatorPropsWithoutHTML,

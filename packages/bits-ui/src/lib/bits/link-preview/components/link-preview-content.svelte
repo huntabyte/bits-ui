@@ -2,7 +2,7 @@
 	import { box } from "svelte-toolbelt";
 	import type { ContentProps } from "../index.js";
 	import { useLinkPreviewContent } from "../link-preview.svelte.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
 
@@ -49,7 +49,7 @@
 
 <PopperLayer
 	{...mergedProps}
-	present={contentState.root.open.value || forceMount}
+	present={contentState.root.open.current || forceMount}
 	{id}
 	onInteractOutside={(e) => {
 		onInteractOutside?.(e);
@@ -57,8 +57,8 @@
 		contentState.root.immediateClose();
 	}}
 	onEscapeKeydown={(e) => {
-		// TODO: users should be able to cancel this
 		onEscapeKeydown?.(e);
+		if (e.defaultPrevented) return;
 		contentState.root.immediateClose();
 	}}
 	onMountAutoFocus={(e) => e.preventDefault()}
@@ -81,7 +81,7 @@
 			},
 		})}
 		{#if child}
-			{@render child?.({ props: mergedProps })}
+			{@render child({ props: mergedProps })}
 		{:else}
 			<div {...mergedProps} bind:this={ref}>
 				{@render children?.()}

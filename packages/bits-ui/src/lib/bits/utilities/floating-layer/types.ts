@@ -1,5 +1,5 @@
 import type { Snippet } from "svelte";
-import type { ReadableBox, WritableBox } from "svelte-toolbelt";
+import type { ReadableBox } from "svelte-toolbelt";
 import type { Align, Boundary, Side } from "./useFloatingLayer.svelte.js";
 import type { Arrayable } from "$lib/internal/types.js";
 import type { Direction, StyleProperties } from "$lib/shared/index.js";
@@ -33,13 +33,6 @@ export type FloatingLayerContentProps = {
 	 * @see https://floating-ui.com/docs/offset#options
 	 */
 	alignOffset?: number;
-
-	/**
-	 * Whether the content should be the same width as the trigger.
-	 *
-	 * @see https://floating-ui.com/docs/size
-	 */
-	sameWidth?: boolean;
 
 	/**
 	 * The distance in pixels from the anchor to the floating element.
@@ -98,10 +91,6 @@ export type FloatingLayerContentProps = {
 
 export type FloatingLayerContentImplProps = {
 	id: string;
-	/**
-	 * Whether the floating layer is present.
-	 */
-	enabled: boolean;
 
 	/**
 	 * The ID of the content wrapper element.
@@ -111,7 +100,7 @@ export type FloatingLayerContentImplProps = {
 	/**
 	 * The style properties to apply to the content.
 	 */
-	style?: StyleProperties;
+	style?: StyleProperties | string | null;
 
 	/**
 	 * Callback that is called when the floating element is placed.

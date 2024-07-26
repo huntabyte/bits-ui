@@ -5,7 +5,7 @@
 		getDateRangeFieldRootContext,
 		useDateRangeFieldInput,
 	} from "../date-range-field.svelte.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import DateFieldHiddenInput from "$lib/bits/date-field/components/date-field-hidden-input.svelte";
 

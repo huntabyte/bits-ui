@@ -29,30 +29,30 @@ type WatchOptions = {
 };
 
 export function watch<T>(box: Box<T>, callback: WatcherCallback<T>, options: WatchOptions = {}) {
-	let prev = $state(box.value);
+	let prev = $state(box.current);
 	let ranOnce = false;
 
 	const watchEffect = $effect.root(() => {
 		$effect.pre(() => {
-			if (prev === box.value || !options.immediate) return;
+			if (prev === box.current || !options.immediate) return;
 			if (options.once && ranOnce) return;
 			callback(
-				box.value,
+				box.current,
 				untrack(() => prev)
 			);
-			untrack(() => (prev = box.value));
+			untrack(() => (prev = box.current));
 			ranOnce = true;
 		});
 
 		$effect(() => {
-			if (prev === box.value || options.immediate) return;
+			if (prev === box.current || options.immediate) return;
 			if (options.once && ranOnce) return;
 
 			callback(
-				box.value,
+				box.current,
 				untrack(() => prev)
 			);
-			untrack(() => (prev = box.value));
+			untrack(() => (prev = box.current));
 			ranOnce = true;
 		});
 	});

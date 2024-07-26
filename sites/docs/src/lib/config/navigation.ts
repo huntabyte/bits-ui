@@ -1,4 +1,8 @@
-import { allComponentDocs } from "../../../.contentlayer/generated/index.mjs";
+import {
+	allComponentDocs,
+	allUtilityDocs,
+	allTypeHelperDocs,
+} from "../../../.contentlayer/generated/index.mjs";
 
 export type NavItem = {
 	title: string;
@@ -41,6 +45,42 @@ function generateComponentsNav() {
 	return componentNavItems;
 }
 
+/**
+ * Generates the navigation items for the utilities section of the sidebar.
+ */
+function generateUtilitiesNav(): SidebarNavItem[] {
+	const utilityNavItems: SidebarNavItem[] = [];
+
+	for (const comp of allUtilityDocs) {
+		utilityNavItems.push({
+			title: comp.title,
+			href: `/docs/utilities/${comp.slug}`,
+			items: [],
+		});
+	}
+
+	utilityNavItems.sort((a, b) => a.title.localeCompare(b.title));
+	return utilityNavItems;
+}
+
+/**
+ * Generates the navigation items for the type helpers section of the sidebar.
+ */
+function generateTypeHelpersNav(): SidebarNavItem[] {
+	const utilityNavItems: SidebarNavItem[] = [];
+
+	for (const comp of allTypeHelperDocs) {
+		utilityNavItems.push({
+			title: comp.title,
+			href: `/docs/type-helpers/${comp.slug}`,
+			items: [],
+		});
+	}
+
+	utilityNavItems.sort((a, b) => a.title.localeCompare(b.title));
+	return utilityNavItems;
+}
+
 export const navigation: Navigation = {
 	main: [
 		{
@@ -68,6 +108,11 @@ export const navigation: Navigation = {
 					items: [],
 				},
 				{
+					title: "Ref",
+					href: "/docs/ref",
+					items: [],
+				},
+				{
 					title: "Styling",
 					href: "/docs/styling",
 					items: [],
@@ -82,6 +127,14 @@ export const navigation: Navigation = {
 		{
 			title: "Components",
 			items: generateComponentsNav(),
+		},
+		{
+			title: "Utilities",
+			items: generateUtilitiesNav(),
+		},
+		{
+			title: "Type Helpers",
+			items: generateTypeHelpersNav(),
 		},
 	],
 };

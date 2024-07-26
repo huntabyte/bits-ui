@@ -4,17 +4,32 @@
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import type { WithoutChildrenOrChild } from "$lib/shared/index.js";
 	import type { WithChild } from "$lib/internal/types.js";
-	import type { PopperLayerImplProps } from "$lib/bits/utilities/popper-layer/types.js";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
+	import type { FloatingLayerContentImplProps } from "$lib/bits/utilities/floating-layer/types.js";
 
 	let {
 		children,
 		child,
 		align = "start",
 		collisionPadding = CONTENT_MARGIN,
-		enabled = false,
+		side = "bottom",
+		sideOffset = 0,
+		alignOffset = 0,
+		arrowPadding,
+		avoidCollisions,
+		collisionBoundary,
+		sticky,
+		hideWhenDetached,
+		updatePositionStrategy,
+		strategy,
+		dir,
+		preventScroll,
+		wrapperId,
+		style,
+		onPlaced,
+		id,
 		...restProps
-	}: WithoutChildrenOrChild<PopperLayerImplProps> &
+	}: WithoutChildrenOrChild<FloatingLayerContentImplProps> &
 		WithChild<ContentProps> & { enabled: boolean } = $props();
 
 	const contentFloatingState = useSelectFloatingPosition();
@@ -23,18 +38,31 @@
 </script>
 
 <FloatingLayer.Content
-	style={contentFloatingState.props.style}
-	{...restProps}
-	{enabled}
-	{align}
+	{id}
+	{side}
+	{sideOffset}
+	{arrowPadding}
+	{alignOffset}
 	{collisionPadding}
+	{align}
+	{collisionBoundary}
+	{avoidCollisions}
+	{sticky}
+	{hideWhenDetached}
+	{updatePositionStrategy}
+	{strategy}
+	{dir}
+	{preventScroll}
+	{wrapperId}
+	{onPlaced}
+	{style}
 >
 	{#snippet content({ props })}
 		{@const finalProps = mergeProps(props, mergedProps, {
 			style: contentFloatingState.props.style,
 		})}
 		{#if child}
-			{@render child?.({ props: finalProps })}
+			{@render child({ props: finalProps })}
 		{:else}
 			<div {...finalProps}>
 				{@render children?.()}

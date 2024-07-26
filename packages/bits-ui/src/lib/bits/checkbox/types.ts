@@ -1,9 +1,5 @@
-import type {
-	OnChangeFn,
-	PrimitiveButtonAttributes,
-	WithChild,
-	Without,
-} from "$lib/internal/index.js";
+import type { OnChangeFn, WithChild, Without } from "$lib/internal/index.js";
+import type { PrimitiveButtonAttributes } from "$lib/shared/attributes.js";
 
 export type CheckboxRootSnippetProps = { checked: boolean | "indeterminate" };
 
@@ -14,7 +10,7 @@ export type CheckboxRootPropsWithoutHTML = WithChild<
 		 *
 		 * @defaultValue false
 		 */
-		disabled?: boolean;
+		disabled?: boolean | null | undefined;
 
 		/**
 		 * Whether the checkbox is required (for form validation).

@@ -35,8 +35,8 @@ export function arrow(options: ArrowOptions | Derivable<ArrowOptions>): Middlewa
 			const { element, padding } = typeof options === "function" ? options(state) : options;
 
 			if (element && box.isBox(element)) {
-				if (element.value !== null) {
-					return arrowCore({ element: element.value, padding }).fn(state);
+				if (element.current !== null) {
+					return arrowCore({ element: element.current, padding }).fn(state);
 				}
 
 				return {};

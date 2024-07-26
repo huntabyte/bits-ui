@@ -2,7 +2,7 @@
 	import { box } from "svelte-toolbelt";
 	import type { ContentProps } from "../index.js";
 	import { useMenuContent } from "../menu.svelte.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { noop } from "$lib/internal/callbacks.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
@@ -55,15 +55,15 @@
 
 <PopperLayer
 	{...mergedProps}
-	present={contentState.parentMenu.open.value || forceMount}
+	present={contentState.parentMenu.open.current || forceMount}
 	onInteractOutside={(e) => {
 		onInteractOutside(e);
 		if (e.defaultPrevented) return;
 		contentState.parentMenu.onClose();
 	}}
 	onEscapeKeydown={(e) => {
-		// TODO: users should be able to cancel this
 		onEscapeKeydown(e);
+		if (e.defaultPrevented) return;
 		contentState.parentMenu.onClose();
 	}}
 	trapped

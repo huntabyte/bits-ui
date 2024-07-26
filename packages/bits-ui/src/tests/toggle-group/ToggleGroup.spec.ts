@@ -59,19 +59,19 @@ function setup(props: Partial<SingleToggleGroupTestProps> = {}) {
 }
 
 describe("toggleGroup", () => {
-	it("has no accessibility violations", async () => {
+	it("should have no accessibility violations", async () => {
 		const { container } = setup();
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
-	it("has bits data attrs", async () => {
+	it("should have bits data attrs", async () => {
 		const { root, getByTestId } = setup();
 		const item = getByTestId("item-1");
 		expect(root).toHaveAttribute("data-toggle-group-root");
 		expect(item).toHaveAttribute("data-toggle-group-item");
 	});
 
-	it("toggles when clicked", async () => {
+	it("should toggle when clicked", async () => {
 		const { user, binding, getByTestId } = setup();
 		expect(binding).toHaveTextContent("");
 		const item = getByTestId("item-1");
@@ -82,7 +82,7 @@ describe("toggleGroup", () => {
 		expect(binding).toHaveTextContent("2");
 	});
 
-	it.each([kbd.ENTER, kbd.SPACE])("toggles when the %s key is pressed", async (key) => {
+	it.each([kbd.ENTER, kbd.SPACE])("should toggle when the %s key is pressed", async (key) => {
 		const { user, binding, getByTestId } = setup();
 		expect(binding).toHaveTextContent("");
 		const item = getByTestId("item-1");
@@ -95,7 +95,7 @@ describe("toggleGroup", () => {
 		expect(binding).toHaveTextContent("2");
 	});
 
-	it("navigates between the items using the arrow keys", async () => {
+	it("should navigate between the items using the arrow keys", async () => {
 		const { user, binding, getByTestId } = setup();
 		expect(binding).toHaveTextContent("");
 		const item1 = getByTestId("item-1");
@@ -111,7 +111,7 @@ describe("toggleGroup", () => {
 		expect(item4).toHaveFocus();
 	});
 
-	it("loops around when navigating with the arrow keys", async () => {
+	it("should loop around when navigating with the arrow keys", async () => {
 		const { user, binding, getByTestId } = setup();
 		expect(binding).toHaveTextContent("");
 		const item1 = getByTestId("item-1");
@@ -123,7 +123,7 @@ describe("toggleGroup", () => {
 		expect(item1).toHaveFocus();
 	});
 
-	it("respects the loop prop", async () => {
+	it("should respect the loop prop", async () => {
 		const { user, binding, getByTestId } = setup({
 			loop: false,
 		});
@@ -160,7 +160,7 @@ describe("toggleGroup", () => {
 		expect(newValue).toBe("2");
 	});
 
-	it("respects binding to the `value` prop", async () => {
+	it("should respect binding to the `value` prop", async () => {
 		const { getByTestId, user } = setup();
 		const binding = getByTestId("binding");
 		expect(binding).toHaveTextContent("");
@@ -171,7 +171,7 @@ describe("toggleGroup", () => {
 		expect(item4).toHaveAttribute("data-state", "on");
 	});
 
-	it("allows multiple items to be selected when `kind` is `'multiple'`", async () => {
+	it("should allow multiple items to be selected when `kind` is `'multiple'`", async () => {
 		const { getByTestId, user } = setupMultiple();
 		const item1 = getByTestId("item-1");
 		const item2 = getByTestId("item-2");

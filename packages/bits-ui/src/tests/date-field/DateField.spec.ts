@@ -35,12 +35,12 @@ function setup(props: DateFieldTestProps = {}) {
 }
 
 describe("date field", () => {
-	it("has no axe violations", async () => {
+	it("should have no axe violations", async () => {
 		const { container } = setup();
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
-	it("populates segment with value - `CalendarDate`", async () => {
+	it("should populate segment with value - `CalendarDate`", async () => {
 		const { month, day, year, value } = setup({
 			value: calendarDate,
 		});
@@ -51,7 +51,7 @@ describe("date field", () => {
 		expect(value).toHaveTextContent(calendarDate.toString());
 	});
 
-	it("populates segment with value - `CalendarDateTime`", async () => {
+	it("should populate segment with value - `CalendarDateTime`", async () => {
 		const { month, day, year, value, getByTestId } = setup({
 			value: calendarDateTime,
 		});
@@ -64,7 +64,7 @@ describe("date field", () => {
 		expect(value).toHaveTextContent(calendarDate.toString());
 	});
 
-	it("populates segment with value - `ZonedDateTime`", async () => {
+	it("should populate segment with value - `ZonedDateTime`", async () => {
 		const { month, day, year, value, getByTestId } = setup({
 			value: zonedDateTime,
 		});
@@ -79,7 +79,7 @@ describe("date field", () => {
 		expect(value).toHaveTextContent(calendarDate.toString());
 	});
 
-	it("changes segment positioning based on `locale`", async () => {
+	it("should change segment positioning based on `locale`", async () => {
 		const { input } = setup({
 			locale: "en-UK",
 		});
@@ -94,7 +94,7 @@ describe("date field", () => {
 		expect(thirdSeg).toHaveTextContent("yyyy");
 	});
 
-	it("doesnt show the day period for locales that don't use them", async () => {
+	it("should not show the day period for locales that don't use them", async () => {
 		const { queryByTestId } = setup({
 			locale: "en-UK",
 			value: calendarDateTime,
@@ -102,20 +102,20 @@ describe("date field", () => {
 		expect(queryByTestId("dayPeriod")).toBeNull();
 	});
 
-	it("does show the day period for locales that do use them", async () => {
+	it("should show the day period for locales that do use them", async () => {
 		const { queryByTestId } = setup({
 			value: calendarDateTime,
 		});
 		expect(queryByTestId("dayPeriod")).not.toBeNull();
 	});
 
-	it("focuses first segment on label click", async () => {
+	it("should focus first segment on label click", async () => {
 		const { user, label, month } = setup();
 		await user.click(label);
 		expect(month).toHaveFocus();
 	});
 
-	it("focuses segments on click", async () => {
+	it("should focus segments on click", async () => {
 		const { user, day, month, year, getByTestId } = setup({
 			value: zonedDateTime,
 		});
@@ -132,7 +132,7 @@ describe("date field", () => {
 		}
 	});
 
-	it("incremenets segment on arrow up", async () => {
+	it("should increment segment on arrow up", async () => {
 		const { user, day, month, year, getByTestId } = setup({
 			value: zonedDateTime,
 			granularity: "second",
@@ -166,7 +166,7 @@ describe("date field", () => {
 		expect(second).toHaveTextContent(cycle("second"));
 	});
 
-	it("decrements segment on arrow down", async () => {
+	it("should decrement segment on arrow down", async () => {
 		const { user, day, month, year, getByTestId } = setup({
 			value: zonedDateTime,
 			granularity: "second",
@@ -200,7 +200,7 @@ describe("date field", () => {
 		expect(second).toHaveTextContent(cycle("second"));
 	});
 
-	it("navigates segments using the arrow keys", async () => {
+	it("should navigate segments using the arrow keys", async () => {
 		const { getByTestId, user, day, month, year } = setup({
 			value: zonedDateTime,
 			granularity: "second",
@@ -234,7 +234,7 @@ describe("date field", () => {
 		expect(month).toHaveFocus();
 	});
 
-	it("navigates the segments using tab", async () => {
+	it("should navigate the segments using tab", async () => {
 		const { getByTestId, user, day, month, year } = setup({
 			value: zonedDateTime,
 			granularity: "second",
@@ -258,7 +258,7 @@ describe("date field", () => {
 		}
 	});
 
-	it("prevents interaction when `disabled`", async () => {
+	it("should prevent interaction when `disabled`", async () => {
 		const { user, getByTestId, day, month, year } = setup({
 			value: zonedDateTime,
 			granularity: "second",
@@ -285,7 +285,7 @@ describe("date field", () => {
 		}
 	});
 
-	it("prevents modification when `readonly`", async () => {
+	it("should prevent modification when `readonly`", async () => {
 		const { user, getByTestId, day, month, year } = setup({
 			value: zonedDateTime,
 			granularity: "second",
@@ -306,7 +306,7 @@ describe("date field", () => {
 		}
 	});
 
-	it("correctly marks the field as invalid if the value is invalid", async () => {
+	it("should marks the field as invalid if the value is invalid", async () => {
 		const { getByTestId, day, month, year, input, label, user } = setup({
 			granularity: "second",
 			isDateUnavailable: (date) => date.day === 19,
@@ -345,7 +345,7 @@ describe("date field", () => {
 		expect(label).toHaveAttribute("data-invalid");
 	});
 
-	it("adjusts the hour cycle with the `hourCycle` prop", async () => {
+	it("should adjust the hour cycle with the `hourCycle` prop", async () => {
 		const { getByTestId, queryByTestId, user } = setup({
 			value: zonedDateTime,
 			hourCycle: 24,
@@ -360,7 +360,7 @@ describe("date field", () => {
 		expect(hour).toHaveTextContent("13");
 	});
 
-	it("overrides the default displayed segments with the `granularity` prop - `'day'`", async () => {
+	it("should override the default displayed segments with the `granularity` prop - `'day'`", async () => {
 		const { queryByTestId, month, day, year } = setup({
 			value: calendarDateTime,
 			granularity: "day",
@@ -377,7 +377,7 @@ describe("date field", () => {
 		}
 	});
 
-	it("overrides the default displayed segments with the `granularity` prop - `'minute'`", async () => {
+	it("should override the default displayed segments with the `granularity` prop - `'minute'`", async () => {
 		const { queryByTestId, getByTestId, month, day, year } = setup({
 			value: calendarDateTime,
 			granularity: "minute",
@@ -399,7 +399,7 @@ describe("date field", () => {
 		}
 	});
 
-	it("changes the value when the dayPeriod segment is changed", async () => {
+	it("should change the value when the dayPeriod segment is changed", async () => {
 		const { getByTestId, user, value } = setup({
 			value: calendarDateTime,
 		});
@@ -415,7 +415,7 @@ describe("date field", () => {
 		expect(value).toHaveTextContent("1980-01-20T00:30");
 	});
 
-	it("takes you all the way through the segment with spamming 3", async () => {
+	it("should go all the way through the segment with spamming 3", async () => {
 		const { getByTestId, user, month, day, year } = setup({
 			value: zonedDateTime,
 			granularity: "second",
@@ -444,7 +444,7 @@ describe("date field", () => {
 		expect(getDayPeriod()).toHaveFocus();
 	});
 
-	it("fully overwrites on first click and type - `month`", async () => {
+	it("should overwrite on first click and type - `month`", async () => {
 		const { user, month } = setup({
 			value: zonedDateTime,
 			granularity: "second",
@@ -457,7 +457,7 @@ describe("date field", () => {
 		expect(month).toHaveTextContent("3");
 	});
 
-	it("fully overwrites on first click and type - `day`", async () => {
+	it("should fully overwrite on first click and type - `day`", async () => {
 		const { user, day } = setup({
 			value: zonedDateTime,
 			granularity: "second",
@@ -470,7 +470,7 @@ describe("date field", () => {
 		expect(day).toHaveTextContent("1");
 	});
 
-	it("fully overwrites on first click and type - `year`", async () => {
+	it("should overwrite on first click and type - `year`", async () => {
 		const { user, year } = setup({
 			value: zonedDateTime,
 			granularity: "second",
@@ -483,7 +483,7 @@ describe("date field", () => {
 		expect(year).toHaveTextContent("1");
 	});
 
-	it("fully overwrites on first click and type - `hour`", async () => {
+	it("should overwrite on first click and type - `hour`", async () => {
 		const { user, getByTestId } = setup({
 			value: zonedDateTime,
 			granularity: "second",
@@ -497,7 +497,7 @@ describe("date field", () => {
 		expect(hour).toHaveTextContent("1");
 	});
 
-	it("fully overwrites on first click and type - `minute`", async () => {
+	it("should overwrite on first click and type - `minute`", async () => {
 		const { user, getByTestId } = setup({
 			value: zonedDateTime,
 			granularity: "second",
@@ -511,7 +511,7 @@ describe("date field", () => {
 		expect(minute).toHaveTextContent("1");
 	});
 
-	it("fully overwrites on first click and type - `second`", async () => {
+	it("should overwrite on first click and type - `second`", async () => {
 		const { user, getByTestId } = setup({
 			value: zonedDateTime,
 			granularity: "second",
@@ -525,7 +525,7 @@ describe("date field", () => {
 		expect(second).toHaveTextContent("1");
 	});
 
-	it("moves to the previous segment when backspace is pressed while empty - `day`", async () => {
+	it("should move to the previous segment when backspace is pressed while empty - `day`", async () => {
 		const { user, day, month } = setup({
 			value: zonedDateTime,
 			granularity: "second",
@@ -543,7 +543,7 @@ describe("date field", () => {
 		expect(month).toHaveFocus();
 	});
 
-	it("moves to the previous segment when backspace is pressed while empty - `year`", async () => {
+	it("should to the previous segment when backspace is pressed while empty - `year`", async () => {
 		const { user, year, day } = setup({
 			value: zonedDateTime,
 			granularity: "second",
@@ -577,7 +577,7 @@ describe("date field", () => {
 		}
 	});
 
-	it("displays correct timezone with ZonedDateTime value - absolute -> local", async () => {
+	it("should display correct timezone with ZonedDateTime value - absolute -> local", async () => {
 		const { getByTestId } = setup({
 			value: parseAbsoluteToLocal("2023-10-12T12:30:00Z"),
 		});

@@ -67,22 +67,22 @@ class MenubarRootState {
 	}
 
 	getTriggers() {
-		const node = this.ref.value;
+		const node = this.ref.current;
 		if (!node) return [];
 		return Array.from(node.querySelectorAll<HTMLButtonElement>(`[${TRIGGER_ATTR}]`));
 	}
 
 	onMenuOpen(id: string) {
-		this.value.value = id;
-		this.currentTabStopId.value = id;
+		this.value.current = id;
+		this.currentTabStopId.current = id;
 	}
 
 	onMenuClose() {
-		this.value.value = "";
+		this.value.current = "";
 	}
 
 	onMenuToggle(id: string) {
-		this.value.value = this.value.value ? "" : id;
+		this.value.current = this.value.current ? "" : id;
 	}
 
 	createMenu(props: MenubarMenuStateProps) {
@@ -92,7 +92,7 @@ class MenubarRootState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.value,
+				id: this.id.current,
 				role: "menubar",
 				[ROOT_ATTR]: "",
 			}) as const
@@ -106,7 +106,7 @@ type MenubarMenuStateProps = ReadableBoxedValues<{
 class MenubarMenuState {
 	root: MenubarRootState;
 	value: MenubarMenuStateProps["value"];
-	open = $derived.by(() => this.root.value.value === this.value.value);
+	open = $derived.by(() => this.root.value.current === this.value.current);
 	wasOpenedByKeyboard = $state(false);
 	triggerNode = $state<HTMLElement | null>(null);
 	contentNode = $state<HTMLElement | null>(null);
@@ -127,14 +127,14 @@ class MenubarMenuState {
 		$effect(() => {
 			untrack(() => {
 				this.root.valueToContentId.set(
-					this.value.value,
+					this.value.current,
 					box.with(() => this.contentNode?.id ?? "")
 				);
 			});
 
 			// unregister on unmount
 			return () => {
-				this.root.valueToContentId.delete(this.value.value);
+				this.root.valueToContentId.delete(this.value.current);
 			};
 		});
 	}
@@ -189,11 +189,11 @@ class MenubarTriggerState {
 
 		$effect(() => {
 			untrack(() => {
-				this.root.registerTrigger(props.id.value);
+				this.root.registerTrigger(props.id.current);
 			});
 
 			return () => {
-				this.root.deRegisterTrigger(props.id.value);
+				this.root.deRegisterTrigger(props.id.current);
 			};
 		});
 
@@ -206,31 +206,31 @@ class MenubarTriggerState {
 
 	#onpointerdown = (e: PointerEvent) => {
 		// only call if the left button but not when the CTRL key is pressed
-		if (!this.disabled.value && e.button === 0 && e.ctrlKey === false) {
+		if (!this.disabled.current && e.button === 0 && e.ctrlKey === false) {
 			// prevent trigger from focusing when opening
 			// which allows the content to focus withut competition
 			if (!this.menu.open) {
 				e.preventDefault();
 			}
-			this.root.onMenuOpen(this.menu.value.value);
+			this.root.onMenuOpen(this.menu.value.current);
 		}
 	};
 
 	#onpointerenter = () => {
-		const isMenubarOpen = Boolean(this.root.value.value);
+		const isMenubarOpen = Boolean(this.root.value.current);
 		if (isMenubarOpen && !this.menu.open) {
-			this.root.onMenuOpen(this.menu.value.value);
+			this.root.onMenuOpen(this.menu.value.current);
 			this.menu.getTriggerNode()?.focus();
 		}
 	};
 
 	#onkeydown = (e: KeyboardEvent) => {
-		if (this.disabled.value) return;
+		if (this.disabled.current) return;
 		if (e.key === kbd.ENTER || e.key === kbd.SPACE) {
-			this.root.onMenuToggle(this.menu.value.value);
+			this.root.onMenuToggle(this.menu.value.current);
 		}
 		if (e.key === kbd.ARROW_DOWN) {
-			this.root.onMenuOpen(this.menu.value.value);
+			this.root.onMenuOpen(this.menu.value.current);
 		}
 		// prevent keydown from scrolling window / first focused item
 		// from inadvertedly closing the menu
@@ -255,15 +255,15 @@ class MenubarTriggerState {
 			({
 				type: "button",
 				role: "menuitem",
-				id: this.id.value,
+				id: this.id.current,
 				"aria-haspopup": "menu",
 				"aria-expanded": getAriaExpanded(this.menu.open),
 				"aria-controls": this.menu.open ? this.menu.contentNode?.id : undefined,
 				"data-highlighted": this.isFocused ? "" : undefined,
 				"data-state": getDataOpenClosed(this.menu.open),
-				"data-disabled": getDataDisabled(this.disabled.value),
-				"data-menu-value": this.menu.value.value,
-				disabled: this.disabled.value ? true : undefined,
+				"data-disabled": getDataDisabled(this.disabled.current),
+				"data-menu-value": this.menu.value.current,
+				disabled: this.disabled.current ? true : undefined,
 				tabIndex: this.#tabIndex,
 				[TRIGGER_ATTR]: "",
 				onpointerdown: this.#onpointerdown,
@@ -307,7 +307,7 @@ class MenubarContentState {
 	}
 
 	onDestroyAutoFocus = (e: Event) => {
-		const menubarOpen = Boolean(this.root.value.value);
+		const menubarOpen = Boolean(this.root.value.current);
 		if (!menubarOpen && !this.hasInteractedOutside) {
 			this.menu.getTriggerNode()?.focus();
 		}
@@ -329,7 +329,7 @@ class MenubarContentState {
 	};
 
 	onMountAutoFocus = () => {
-		afterTick(() => this.ref.value?.focus());
+		afterTick(() => this.ref.current?.focus());
 	};
 
 	#onkeydown = (e: KeyboardEvent) => {
@@ -339,7 +339,7 @@ class MenubarContentState {
 		const targetIsSubTrigger = target.hasAttribute("data-menu-sub-trigger");
 		const isKeydownInsideSubMenu = target.closest("[data-menu-content]") !== e.currentTarget;
 
-		const prevMenuKey = this.root.dir.value === "rtl" ? kbd.ARROW_RIGHT : kbd.ARROW_LEFT;
+		const prevMenuKey = this.root.dir.current === "rtl" ? kbd.ARROW_RIGHT : kbd.ARROW_LEFT;
 		const isPrevKey = prevMenuKey === e.key;
 		const isNextKey = !isPrevKey;
 
@@ -352,9 +352,9 @@ class MenubarContentState {
 		let candidateValues = items.map((item) => item.getAttribute("data-menu-value")!);
 		if (isPrevKey) candidateValues.reverse();
 
-		const currentIndex = candidateValues.indexOf(this.menu.value.value);
+		const currentIndex = candidateValues.indexOf(this.menu.value.current);
 
-		candidateValues = this.root.loop.value
+		candidateValues = this.root.loop.current
 			? wrapArray(candidateValues, currentIndex + 1)
 			: candidateValues.slice(currentIndex + 1);
 		const [nextValue] = candidateValues;
@@ -362,7 +362,7 @@ class MenubarContentState {
 	};
 
 	props = $derived.by(() => ({
-		id: this.id.value,
+		id: this.id.current,
 		"aria-labelledby": this.menu.triggerNode?.id,
 		style: {
 			"--bits-menubar-content-transform-origin": "var(--bits-floating-transform-origin)",

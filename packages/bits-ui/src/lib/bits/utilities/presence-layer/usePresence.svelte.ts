@@ -1,18 +1,18 @@
-import { type ReadableBox, type WritableBox, box } from "svelte-toolbelt";
+import { type ReadableBox } from "svelte-toolbelt";
 import { afterTick, useStateMachine, watch } from "$lib/internal/index.js";
 
 export function usePresence(present: ReadableBox<boolean>, id: ReadableBox<string>) {
-	const styles = box({}) as unknown as WritableBox<CSSStyleDeclaration>;
-	const prevAnimationNameState = box("none");
-	const initialState = present.value ? "mounted" : "unmounted";
+	let styles = $state({}) as CSSStyleDeclaration;
+	let prevAnimationNameState = $state("none");
+	const initialState = present.current ? "mounted" : "unmounted";
 	let node = $state<HTMLElement | null>(null);
 
 	$effect(() => {
-		if (!id.value) return;
-		if (!present.value) return;
+		if (!id.current) return;
+		if (!present.current) return;
 
 		afterTick(() => {
-			node = document.getElementById(id.value);
+			node = document.getElementById(id.current);
 		});
 	});
 
@@ -32,18 +32,18 @@ export function usePresence(present: ReadableBox<boolean>, id: ReadableBox<strin
 
 	watch(present, (currPresent, prevPresent) => {
 		if (!node) {
-			node = document.getElementById(id.value);
+			node = document.getElementById(id.current);
 		}
 		if (!node) return;
 		const hasPresentChanged = currPresent !== prevPresent;
 		if (!hasPresentChanged) return;
 
-		const prevAnimationName = prevAnimationNameState.value;
+		const prevAnimationName = prevAnimationNameState;
 		const currAnimationName = getAnimationName(node);
 
 		if (currPresent) {
 			dispatch("MOUNT");
-		} else if (currAnimationName === "none" || styles.value.display === "none") {
+		} else if (currAnimationName === "none" || styles.display === "none") {
 			// If there is no exit animation or the element is hidden, animations won't run
 			// so we unmount instantly
 			dispatch("UNMOUNT");
@@ -72,7 +72,7 @@ export function usePresence(present: ReadableBox<boolean>, id: ReadableBox<strin
 
 	function handleAnimationEnd(event: AnimationEvent) {
 		if (!node) {
-			node = document.getElementById(id.value);
+			node = document.getElementById(id.current);
 		}
 		if (!node) return;
 		const currAnimationName = getAnimationName(node);
@@ -86,27 +86,27 @@ export function usePresence(present: ReadableBox<boolean>, id: ReadableBox<strin
 
 	function handleAnimationStart(event: AnimationEvent) {
 		if (!node) {
-			node = document.getElementById(id.value);
+			node = document.getElementById(id.current);
 		}
 		if (!node) return;
 		if (event.target === node) {
-			prevAnimationNameState.value = getAnimationName(node);
+			prevAnimationNameState = getAnimationName(node);
 		}
 	}
 
 	watch(state, () => {
 		if (!node) {
-			node = document.getElementById(id.value);
+			node = document.getElementById(id.current);
 		}
 		if (!node) return;
 		const currAnimationName = getAnimationName(node);
-		prevAnimationNameState.value = state.value === "mounted" ? currAnimationName : "none";
+		prevAnimationNameState = state.current === "mounted" ? currAnimationName : "none";
 	});
 
 	$effect(() => {
 		if (!node) return;
 
-		styles.value = getComputedStyle(node);
+		styles = getComputedStyle(node);
 		node.addEventListener("animationstart", handleAnimationStart);
 		node.addEventListener("animationcancel", handleAnimationEnd);
 		node.addEventListener("animationend", handleAnimationEnd);
@@ -118,10 +118,10 @@ export function usePresence(present: ReadableBox<boolean>, id: ReadableBox<strin
 		};
 	});
 
-	const isPresentDerived = $derived(["mounted", "unmountSuspended"].includes(state.value));
+	const isPresentDerived = $derived(["mounted", "unmountSuspended"].includes(state.current));
 
 	return {
-		get value() {
+		get current() {
 			return isPresentDerived;
 		},
 	};

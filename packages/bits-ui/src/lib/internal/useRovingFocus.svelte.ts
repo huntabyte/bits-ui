@@ -46,7 +46,7 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 
 	function getCandidateNodes() {
 		if (!isBrowser) return [];
-		const node = document.getElementById(props.rootNodeId.value);
+		const node = document.getElementById(props.rootNodeId.current);
 		if (!node) return [];
 		return Array.from(
 			node.querySelectorAll<HTMLElement>(`[${props.candidateSelector}]:not([data-disabled])`)
@@ -61,7 +61,7 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 	}
 
 	function handleKeydown(node: HTMLElement | null | undefined, e: KeyboardEvent) {
-		const rootNode = document.getElementById(props.rootNodeId.value);
+		const rootNode = document.getElementById(props.rootNodeId.current);
 		if (!rootNode || !node) return;
 
 		const items = getCandidateNodes();
@@ -69,9 +69,9 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 
 		const currentIndex = items.indexOf(node);
 		const dir = getElemDirection(rootNode);
-		const { nextKey, prevKey } = getDirectionalKeys(dir, props.orientation.value);
+		const { nextKey, prevKey } = getDirectionalKeys(dir, props.orientation.current);
 
-		const loop = props.loop.value;
+		const loop = props.loop.current;
 
 		const keyToIndex = {
 			[nextKey]: currentIndex + 1,
@@ -93,18 +93,18 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 		const itemToFocus = items[itemIndex];
 		if (!itemToFocus) return;
 		itemToFocus.focus();
-		currentTabStopId.value = itemToFocus.id;
+		currentTabStopId.current = itemToFocus.id;
 		props.onCandidateFocus?.(itemToFocus);
 		return itemToFocus;
 	}
 
 	function getTabIndex(node: HTMLElement | null | undefined) {
 		const items = getCandidateNodes();
-		const anyActive = currentTabStopId.value !== null;
+		const anyActive = currentTabStopId.current !== null;
 		if (node && !anyActive && items[0] === node) {
-			currentTabStopId.value = node.id;
+			currentTabStopId.current = node.id;
 			return 0;
-		} else if (node?.id === currentTabStopId.value) {
+		} else if (node?.id === currentTabStopId.current) {
 			return 0;
 		}
 
@@ -113,7 +113,7 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 
 	return {
 		setCurrentTabStopId(id: string) {
-			currentTabStopId.value = id;
+			currentTabStopId.current = id;
 		},
 		getTabIndex,
 		handleKeydown,

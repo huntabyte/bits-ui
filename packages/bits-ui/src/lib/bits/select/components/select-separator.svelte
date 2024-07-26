@@ -3,7 +3,7 @@
 	import type { SeparatorProps } from "../index.js";
 	import { useSelectSeparator } from "../select.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 
 	let {
 		child,
@@ -25,7 +25,7 @@
 </script>
 
 {#if child}
-	{@render child?.({ props: mergedProps })}
+	{@render child({ props: mergedProps })}
 {:else}
 	<div {...mergedProps}>
 		{@render children?.()}

@@ -18,12 +18,12 @@ export function useTypeahead(opts?: TypeaheadOpts) {
 	function handleTypeaheadSearch(key: string, candidates: HTMLElement[]) {
 		if (!candidates.length) return;
 
-		search.value = search.value + key;
+		search.current = search.current + key;
 		const currentItem = getCurrentItem();
 		const currentMatch =
 			candidates.find((item) => item === currentItem)?.textContent?.trim() ?? "";
 		const values = candidates.map((item) => item.textContent?.trim() ?? "");
-		const nextMatch = getNextMatch(values, search.value, currentMatch);
+		const nextMatch = getNextMatch(values, search.current, currentMatch);
 		const newItem = candidates.find((item) => item.textContent?.trim() === nextMatch);
 		if (newItem) {
 			onMatch(newItem);
@@ -32,7 +32,7 @@ export function useTypeahead(opts?: TypeaheadOpts) {
 	}
 
 	function resetTypeahead() {
-		search.value = "";
+		search.current = "";
 	}
 
 	return {

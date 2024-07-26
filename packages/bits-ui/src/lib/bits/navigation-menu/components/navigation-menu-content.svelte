@@ -2,7 +2,7 @@
 	import { box } from "svelte-toolbelt";
 	import type { ContentProps } from "../index.js";
 	import { useNavigationMenuContent } from "../navigation-menu.svelte.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import Portal from "$lib/bits/utilities/portal/portal.svelte";
 	import { PresenceLayer } from "$lib/bits/utilities/presence-layer/index.js";
@@ -16,6 +16,9 @@
 		ref = $bindable(null),
 		id = useId(),
 		forceMount = false,
+		onEscapeKeydown,
+		onInteractOutside,
+		onFocusOutside,
 		...restProps
 	}: ContentProps = $props();
 
@@ -42,13 +45,25 @@
 		{#snippet presence()}
 			<EscapeLayer
 				enabled={contentState.isPresent}
-				onEscapeKeydown={(e) => contentState.onEscapeKeydown(e)}
+				onEscapeKeydown={(e) => {
+					onEscapeKeydown?.(e);
+					if (e.defaultPrevented) return;
+					contentState.onEscapeKeydown(e);
+				}}
 			>
 				<DismissableLayer
 					enabled={contentState.isPresent}
 					{id}
-					onInteractOutside={contentState.onInteractOutside}
-					onFocusOutside={contentState.onFocusOutside}
+					onInteractOutside={(e) => {
+						onInteractOutside?.(e);
+						if (e.defaultPrevented) return;
+						contentState.onInteractOutside(e);
+					}}
+					onFocusOutside={(e) => {
+						onFocusOutside?.(e);
+						if (e.defaultPrevented) return;
+						contentState.onFocusOutside(e);
+					}}
 				>
 					{#snippet children({ props: dismissableProps })}
 						{#if child}

@@ -2,7 +2,7 @@
 	import { box } from "svelte-toolbelt";
 	import type { ViewportProps } from "../index.js";
 	import { useScrollAreaViewport } from "../scroll-area.svelte.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let { ref = $bindable(null), id = useId(), children, ...restProps }: ViewportProps = $props();

@@ -4,13 +4,6 @@ import type { EventCallback } from "$lib/internal/events.js";
 
 export type FocusScopeProps = {
 	/**
-	 * When `true` will loop through the tabbable elements in the focus scope.
-	 *
-	 * @defaultValue false
-	 */
-	loop?: boolean;
-
-	/**
 	 * Event handler called when auto-focusing onMount.
 	 * Can be prevented.
 	 */
@@ -21,6 +14,13 @@ export type FocusScopeProps = {
 	 * Can be prevented.
 	 */
 	onDestroyAutoFocus?: EventCallback;
+
+	/**
+	 * When `true` will loop through the tabbable elements in the focus scope.
+	 *
+	 * @defaultValue false
+	 */
+	loop?: boolean;
 };
 
 export type FocusScopeImplProps = {

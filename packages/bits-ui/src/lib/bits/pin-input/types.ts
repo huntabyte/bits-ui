@@ -1,5 +1,6 @@
 import type { Snippet } from "svelte";
-import type { OnChangeFn, PrimitiveInputAttributes, Without } from "$lib/internal/types.js";
+import type { OnChangeFn, Without } from "$lib/internal/types.js";
+import type { PrimitiveInputAttributes } from "$lib/shared/attributes.js";
 
 export type PinInputRootPropsWithoutHTML = {
 	/**

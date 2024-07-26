@@ -1,9 +1,5 @@
-import type {
-	OnChangeFn,
-	PrimitiveButtonAttributes,
-	WithChild,
-	Without,
-} from "$lib/internal/index.js";
+import type { OnChangeFn, WithChild, Without } from "$lib/internal/index.js";
+import type { PrimitiveButtonAttributes } from "$lib/shared/attributes.js";
 
 export type ToggleRootSnippetProps = {
 	pressed: boolean;
@@ -28,7 +24,7 @@ export type ToggleRootPropsWithoutHTML = WithChild<
 		 *
 		 * @defaultValue false
 		 */
-		disabled?: boolean;
+		disabled?: boolean | null | undefined;
 	},
 	ToggleRootSnippetProps
 >;

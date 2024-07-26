@@ -24,23 +24,23 @@ function setup(props: Switch.RootProps = {}) {
 }
 
 describe("switch", () => {
-	it("has no accessibility violations", async () => {
+	it("should have no accessibility violations", async () => {
 		const { container } = render(SwitchTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
-	it("has bits data attrs", async () => {
+	it("should have bits data attrs", async () => {
 		const { root, thumb } = setup();
 		expect(root).toHaveAttribute("data-switch-root");
 		expect(thumb).toHaveAttribute("data-switch-thumb");
 	});
 
-	it('defaults the value to "on", when no value prop is passed', async () => {
+	it('should default the value to "on", when no value prop is passed', async () => {
 		const { input } = setup();
 		expect(input).toHaveAttribute("value", "on");
 	});
 
-	it("toggles when clicked", async () => {
+	it("should toggle when clicked", async () => {
 		const { user, root, input } = setup();
 		expect(root).toHaveAttribute("data-state", "unchecked");
 		expect(root).not.toHaveAttribute("data-checked");
@@ -51,7 +51,7 @@ describe("switch", () => {
 		expect(input.checked).toBe(true);
 	});
 
-	it.each([kbd.ENTER, kbd.SPACE])("toggles when the `%s` key is pressed", async (key) => {
+	it.each([kbd.ENTER, kbd.SPACE])("should toggle when the `%s` key is pressed", async (key) => {
 		const { user, root, input } = setup();
 		expect(root).toHaveAttribute("data-state", "unchecked");
 		expect(root).toHaveAttribute("aria-checked", "false");
@@ -88,7 +88,7 @@ describe("switch", () => {
 		expect(newValue).toBe(true);
 	});
 
-	it("respects binding to the `checked` prop", async () => {
+	it("should respect binding to the `checked` prop", async () => {
 		const { getByTestId, user, root, input } = setup();
 		const binding = getByTestId("binding");
 		expect(binding).toHaveTextContent("false");
@@ -98,12 +98,12 @@ describe("switch", () => {
 		expect(input.checked).toBe(true);
 	});
 
-	it("doesnt include the input when the `name` prop isn't passed/undefined", async () => {
+	it("should not include the input when the `name` prop isn't passed/undefined", async () => {
 		const { input } = setup({ name: undefined });
 		expect(input).not.toBeInTheDocument();
 	});
 
-	it("renders the input when the `name` prop is passed", async () => {
+	it("should render the input when the `name` prop is passed", async () => {
 		// passed by default
 		const { input } = setup();
 		expect(input).toBeInTheDocument();

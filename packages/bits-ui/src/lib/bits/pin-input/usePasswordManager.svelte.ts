@@ -37,7 +37,7 @@ export function usePasswordManagerBadge({
 	let done = $state(false);
 
 	function willPushPwmBadge() {
-		const strat = pushPasswordManagerStrategy.value;
+		const strat = pushPasswordManagerStrategy.current;
 		if (strat === "none") return false;
 
 		const increaseWidthCase = strat === "increase-width" && hasPwmBadge && hasPwmBadgeSpace;
@@ -46,9 +46,9 @@ export function usePasswordManagerBadge({
 	}
 
 	function trackPwmBadge() {
-		const container = containerRef.value;
-		const input = inputRef.value;
-		if (!container || !input || done || pushPasswordManagerStrategy.value === "none") return;
+		const container = containerRef.current;
+		const input = inputRef.current;
+		if (!container || !input || done || pushPasswordManagerStrategy.current === "none") return;
 
 		const elementToCompare = container;
 
@@ -92,8 +92,8 @@ export function usePasswordManagerBadge({
 	}
 
 	$effect(() => {
-		const container = containerRef.value;
-		if (!container || pushPasswordManagerStrategy.value === "none") return;
+		const container = containerRef.current;
+		if (!container || pushPasswordManagerStrategy.current === "none") return;
 
 		// check if the pwm area is fully visible
 		function checkHasSpace() {
@@ -111,9 +111,9 @@ export function usePasswordManagerBadge({
 	});
 
 	$effect(() => {
-		const focused = isFocused.value || document.activeElement === inputRef.value;
+		const focused = isFocused.current || document.activeElement === inputRef.current;
 
-		if (pushPasswordManagerStrategy.value === "none" || !focused) return;
+		if (pushPasswordManagerStrategy.current === "none" || !focused) return;
 
 		const t1 = setTimeout(trackPwmBadge, 0);
 		const t2 = setTimeout(trackPwmBadge, 2000);

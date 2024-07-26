@@ -29,28 +29,28 @@ function setup(props: Partial<PinInput.RootProps> = {}) {
 }
 
 describe("Pin Input", () => {
-	it("has no accessibility violations", async () => {
+	it("should have no accessibility violations", async () => {
 		const { container } = render(PinInputTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
-	it("syncs the `name` prop to the hidden input", async () => {
+	it("should sync the `name` prop to the hidden input", async () => {
 		const { hiddenInput } = setup({ name: "test" });
 		expect(hiddenInput).toHaveAttribute("name", "test");
 	});
 
-	it("syncs the `value` prop to the hidden input", async () => {
+	it("should sync the `value` prop to the hidden input", async () => {
 		const value = "123456";
 		const { hiddenInput } = setup({ value });
 		expect(hiddenInput).toHaveValue(value);
 	});
 
-	it("syncs the `disabled` prop to the hidden input", async () => {
+	it("should sync the `disabled` prop to the hidden input", async () => {
 		const { hiddenInput } = setup({ disabled: true });
 		await waitFor(() => expect(hiddenInput).toHaveAttribute("disabled", ""));
 	});
 
-	it("respects binding to the `value` prop", async () => {
+	it("should respect binding to the `value` prop", async () => {
 		let initialValue = "123456";
 		const { hiddenInput, binding, user } = setup({
 			value: initialValue,
@@ -62,7 +62,7 @@ describe("Pin Input", () => {
 		expect(binding).toHaveTextContent("999999");
 	});
 
-	it("sets the appropriate `isActive` prop on each cell", async () => {
+	it("should set the appropriate `isActive` prop on each cell", async () => {
 		const { user, hiddenInput, cells } = setup();
 
 		await user.click(hiddenInput);
@@ -87,7 +87,7 @@ describe("Pin Input", () => {
 		expect(cells[5]).toHaveTextContent("6");
 	});
 
-	it("handles backspace appropriately", async () => {
+	it("should handle backspace appropriately", async () => {
 		const { user, hiddenInput, cells } = setup();
 
 		await user.click(hiddenInput);
@@ -103,7 +103,7 @@ describe("Pin Input", () => {
 		expect(cells[2]).not.toHaveAttribute("data-active");
 	});
 
-	it("fires the `onComplete` callback when the input is complete", async () => {
+	it("should fire the `onComplete` callback when the input is complete", async () => {
 		const mockComplete = vi.fn();
 		const { user, hiddenInput } = setup({
 			onComplete: mockComplete,

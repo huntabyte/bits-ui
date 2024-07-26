@@ -3,7 +3,7 @@
 	import type { ImageProps } from "../index.js";
 	import { useAvatarImage } from "../avatar.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 
 	let { src, child, id = useId(), ref = $bindable(null), ...restProps }: ImageProps = $props();
 

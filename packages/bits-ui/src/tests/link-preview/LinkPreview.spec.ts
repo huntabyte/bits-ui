@@ -23,12 +23,12 @@ async function open(props: LinkPreviewTestProps = {}) {
 }
 
 describe("link preview", () => {
-	it("has no accessibility violations", async () => {
+	it("should have no accessibility violations", async () => {
 		const { container } = render(LinkPreviewTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
-	it("has bits data attrs", async () => {
+	it("should have bits data attrs", async () => {
 		const { getByTestId } = await open();
 		const parts = ["trigger", "content"];
 
@@ -38,13 +38,13 @@ describe("link preview", () => {
 		}
 	});
 
-	it("opens on hover", async () => {
+	it("should open on hover", async () => {
 		const { user, content } = await open();
 		await user.click(content);
 		expect(content).toBeVisible();
 	});
 
-	it.skip("closes on escape keydown", async () => {
+	it("should close on escape keydown", async () => {
 		const mockEsc = vi.fn();
 		const { user, content, queryByTestId } = await open({
 			contentProps: {
@@ -61,15 +61,16 @@ describe("link preview", () => {
 		const { user, getByTestId, queryByTestId } = await open();
 		const outside = getByTestId("outside");
 		await user.hover(outside);
+		await user.hover(outside);
 		await waitFor(() => expect(queryByTestId("content")).toBeNull());
 	});
 
-	it("portals to the body by default", async () => {
+	it("should portal to the body by default", async () => {
 		const { content } = await open();
 		expect(content.parentElement?.parentElement).toBe(document.body);
 	});
 
-	it("portals to a custom element if specified", async () => {
+	it("should portal to a custom element if specified", async () => {
 		const { content, getByTestId } = await open({
 			portalProps: {
 				to: "#portal-target",
@@ -79,13 +80,13 @@ describe("link preview", () => {
 		expect(content.parentElement?.parentElement).toBe(portalTarget);
 	});
 
-	it("does not portal if `disabled` is passed as portal prop", async () => {
+	it("should not portal if `disabled` is passed as portal prop", async () => {
 		const { content, getByTestId } = await open({ portalProps: { disabled: true } });
 		const main = getByTestId("main");
 		expect(content.parentElement?.parentElement).toBe(main);
 	});
 
-	it("respects the close on escape prop", async () => {
+	it("should respect the `escapeKeydownBehavior` prop", async () => {
 		const { content, user, queryByTestId } = await open({
 			contentProps: {
 				escapeKeydownBehavior: "ignore",
@@ -96,7 +97,7 @@ describe("link preview", () => {
 		expect(queryByTestId("content")).not.toBeNull();
 	});
 
-	it("respects the close on outside click prop", async () => {
+	it("should respect the `interactOutsideBehavior` prop", async () => {
 		const { content, user, queryByTestId, getByTestId } = await open({
 			contentProps: {
 				interactOutsideBehavior: "ignore",
@@ -108,7 +109,7 @@ describe("link preview", () => {
 		expect(queryByTestId("content")).not.toBeNull();
 	});
 
-	it("respects binding the open prop", async () => {
+	it("should respect binding the open prop", async () => {
 		const { queryByTestId, getByTestId, user } = await open({
 			contentProps: {
 				interactOutsideBehavior: "ignore",

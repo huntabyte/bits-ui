@@ -10,134 +10,130 @@ import type {
 	CalendarHeadingPropsWithoutHTML,
 	CalendarNextButtonPropsWithoutHTML,
 	CalendarPrevButtonPropsWithoutHTML,
-	CalendarPropsWithoutHTML,
+	CalendarRootPropsWithoutHTML,
 } from "bits-ui";
-import { attrsSlotProp, builderAndAttrsSlotProps, domElProps } from "./helpers.js";
-import { enums, monthsSlotProp, weekdaysSlotProp } from "$lib/content/api-reference/helpers.js";
-import * as C from "$lib/content/constants.js";
-import type { APISchema } from "$lib/types/index.js";
+import DateMatcher from "./extended-types/date-matcher.md";
+import SingleOrMultiple from "./extended-types/single-or-multiple.md";
+import DateValueOrArray from "./extended-types/date-value-or-array.md";
+import DateValueChangeFn from "./extended-types/date-value-change-fn.md";
+import DatePlaceholderChangeFn from "./extended-types/date-placeholder-change-fn.md";
+import WeekdayFormat from "./extended-types/weekday-format.md";
 
-export const root: APISchema<CalendarPropsWithoutHTML> = {
+import {
+	createApiSchema,
+	createBooleanProp,
+	createEnumProp,
+	createFunctionProp,
+	createNumberProp,
+	createStringProp,
+	createUnionProp,
+	withChildProps,
+} from "./helpers.js";
+import * as C from "$lib/content/constants.js";
+
+export const root = createApiSchema<CalendarRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root calendar component which contains all other calendar components.",
 	props: {
-		value: {
-			type: "DateValue",
-			description: "The selected date.",
-		},
-		onValueChange: {
-			type: {
-				type: C.FUNCTION,
-				definition: "(date: DateValue | undefined) => void",
-			},
+		type: createEnumProp({
+			options: ["single", "multiple"],
+			description: "Whether or not multiple dates can be selected.",
+			required: true,
+			definition: SingleOrMultiple,
+		}),
+		value: createUnionProp({
+			options: ["DateValue", "DateValue[]"],
+			description:
+				"The selected date(s). If `type` is `'single'`, this will be a `DateValue`. If `type` is `'multiple'`, this will be an array of `DateValue`s.",
+			bindable: true,
+			definition: DateValueOrArray,
+		}),
+		onValueChange: createFunctionProp({
+			definition: DateValueChangeFn,
 			description: "A function that is called when the selected date changes.",
-		},
+		}),
 		placeholder: {
 			type: "DateValue",
 			description:
 				"The placeholder date, which is used to determine what month to display when no date is selected. This updates as the user navigates the calendar, and can be used to programatically control the calendar's view.",
 		},
-		onPlaceholderChange: {
-			type: {
-				type: C.FUNCTION,
-				definition: "(date: DateValue) => void",
-			},
+		onPlaceholderChange: createFunctionProp({
+			definition: DatePlaceholderChangeFn,
 			description: "A function that is called when the placeholder date changes.",
-		},
-		pagedNavigation: {
-			type: C.BOOLEAN,
+		}),
+		pagedNavigation: createBooleanProp({
 			description:
 				"Whether or not to use paged navigation for the calendar. Paged navigation causes the previous and next buttons to navigate by the number of months displayed at once, rather than by one month.",
 			default: C.FALSE,
-		},
-		preventDeselect: {
-			type: C.BOOLEAN,
+		}),
+		preventDeselect: createBooleanProp({
 			description:
 				"Whether or not to prevent the user from deselecting a date without selecting another date first.",
 			default: C.FALSE,
-		},
-		weekStartsOn: {
-			type: C.NUMBER,
+		}),
+		weekStartsOn: createNumberProp({
 			description:
 				"The day of the week to start the calendar on. 0 is Sunday, 1 is Monday, etc.",
 			default: "0",
-		},
-		weekdayFormat: {
-			type: {
-				type: C.ENUM,
-				definition: enums("narrow", "short", "long"),
-			},
+		}),
+		weekdayFormat: createEnumProp({
+			options: ["narrow", "short", "long"],
+			definition: WeekdayFormat,
 			description:
 				"The format to use for the weekday strings provided via the `weekdays` slot prop.",
 			default: "'narrow'",
-		},
-		calendarLabel: {
-			type: C.STRING,
+		}),
+		calendarLabel: createStringProp({
 			description: "The accessible label for the calendar.",
-		},
-		fixedWeeks: {
-			type: C.BOOLEAN,
+		}),
+		fixedWeeks: createBooleanProp({
 			description: "Whether or not to always display 6 weeks in the calendar.",
 			default: C.FALSE,
-		},
-		isDateDisabled: {
-			type: {
-				type: C.FUNCTION,
-				definition: "(date: DateValue) => boolean",
-			},
+		}),
+		isDateDisabled: createFunctionProp({
+			definition: DateMatcher,
 			description: "A function that returns whether or not a date is disabled.",
-		},
-		isDateUnavailable: {
-			type: {
-				type: C.FUNCTION,
-				definition: "(date: DateValue) => boolean",
-			},
+		}),
+		isDateUnavailable: createFunctionProp({
+			definition: DateMatcher,
 			description: "A function that returns whether or not a date is unavailable.",
-		},
+		}),
 		maxValue: {
 			type: "DateValue",
 			description: "The maximum date that can be selected.",
+			tooltipContent: "Learn more about the `DateValue` type.",
 		},
 		minValue: {
 			type: "DateValue",
 			description: "The minimum date that can be selected.",
 		},
-		locale: {
-			type: C.STRING,
+		locale: createStringProp({
 			description: "The locale to use for formatting dates.",
-		},
-		multiple: {
-			type: C.BOOLEAN,
-			description: "Whether or not multiple dates can be selected.",
-			default: C.FALSE,
-		},
-		numberOfMonths: {
-			type: C.NUMBER,
+			default: "'en'",
+		}),
+		numberOfMonths: createNumberProp({
 			description: "The number of months to display at once.",
 			default: "1",
-		},
-		disabled: {
+		}),
+		disabled: createBooleanProp({
 			default: C.FALSE,
-			type: C.BOOLEAN,
 			description: "Whether or not the accordion is disabled.",
-		},
-		readonly: {
-			type: C.BOOLEAN,
+		}),
+		readonly: createBooleanProp({
 			description: "Whether or not the calendar is readonly.",
 			default: C.FALSE,
-		},
-		initialFocus: {
-			type: C.BOOLEAN,
-			description:
-				"If `true`, the calendar will focus the selected day, today, or the first day of the month in that order depending on what is visible when the calendar is mounted.",
+		}),
+		// initialFocus: {
+		// 	type: C.BOOLEAN,
+		// 	description:
+		// 		"If `true`, the calendar will focus the selected day, today, or the first day of the month in that order depending on what is visible when the calendar is mounted.",
+		// 	default: C.FALSE,
+		// },
+		disableDaysOutsideMonth: createBooleanProp({
+			description: "Whether or not to disable days outside the current month.",
 			default: C.FALSE,
-		},
-		...domElProps("HTMLDivElement"),
-	},
-	slotProps: {
-		months: monthsSlotProp,
-		weekdays: weekdaysSlotProp,
-		...builderAndAttrsSlotProps,
+		}),
+		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
 		{
@@ -157,9 +153,9 @@ export const root: APISchema<CalendarPropsWithoutHTML> = {
 			description: "Present on the root element.",
 		},
 	],
-};
+});
 
-export const cell: APISchema<CalendarCellPropsWithoutHTML> = {
+export const cell = createApiSchema<CalendarCellPropsWithoutHTML>({
 	title: "Cell",
 	description: "A cell in the calendar grid.",
 	props: {
@@ -167,10 +163,11 @@ export const cell: APISchema<CalendarCellPropsWithoutHTML> = {
 			type: "DateValue",
 			description: "The date for the cell.",
 		},
-		...domElProps("HTMLTableCellElement"),
-	},
-	slotProps: {
-		attrs: attrsSlotProp,
+		month: {
+			type: "DateValue",
+			description: "The current month the date is being displayed in.",
+		},
+		...withChildProps({ elType: "HTMLTableCellElement" }),
 	},
 	dataAttributes: [
 		{
@@ -182,37 +179,12 @@ export const cell: APISchema<CalendarCellPropsWithoutHTML> = {
 			description: "Present on the cell element.",
 		},
 	],
-};
+});
 
-export const day: APISchema<CalendarDayPropsWithoutHTML> = {
+export const day = createApiSchema<CalendarDayPropsWithoutHTML>({
 	title: "Day",
 	description: "A day in the calendar grid.",
-	props: {
-		date: {
-			type: "DateValue",
-			description: "The date for the cell.",
-		},
-		month: {
-			type: "DateValue",
-			description: "The current month the date is being displayed in.",
-		},
-		...domElProps("HTMLDivElement"),
-	},
-	slotProps: {
-		disabled: {
-			description: "Whether or not the date is disabled.",
-			type: C.BOOLEAN,
-		},
-		unavailable: {
-			description: "Whether or not the date is unavailable.",
-			type: C.BOOLEAN,
-		},
-		selected: {
-			description: "Whether or not the date is selected.",
-			type: C.BOOLEAN,
-		},
-		...builderAndAttrsSlotProps,
-	},
+	props: withChildProps({ elType: "HTMLDivElement" }),
 	dataAttributes: [
 		{
 			name: "disabled",
@@ -251,142 +223,115 @@ export const day: APISchema<CalendarDayPropsWithoutHTML> = {
 			description: "Present on the day element.",
 		},
 	],
-};
+});
 
-export const grid: APISchema<CalendarGridPropsWithoutHTML> = {
+export const grid = createApiSchema<CalendarGridPropsWithoutHTML>({
 	title: "Grid",
 	description: "The grid of dates in the calendar, typically representing a month.",
-	props: domElProps("HTMLTableElement"),
-	slotProps: { ...builderAndAttrsSlotProps },
+	props: withChildProps({ elType: "HTMLTableElement" }),
 	dataAttributes: [
 		{
 			name: "calendar-grid",
 			description: "Present on the grid element.",
 		},
 	],
-};
+});
 
-export const gridBody: APISchema<CalendarGridBodyPropsWithoutHTML> = {
+export const gridBody = createApiSchema<CalendarGridBodyPropsWithoutHTML>({
 	title: "GridBody",
 	description: "The body of the grid of dates in the calendar.",
-	props: domElProps("HTMLTableSectionElement"),
-	slotProps: { attrs: attrsSlotProp },
+	props: withChildProps({ elType: "HTMLTableSectionElement" }),
 	dataAttributes: [
 		{
 			name: "calendar-grid-body",
 			description: "Present on the grid body element.",
 		},
 	],
-};
+});
 
-export const gridHead: APISchema<CalendarGridHeadPropsWithoutHTML> = {
+export const gridHead = createApiSchema<CalendarGridHeadPropsWithoutHTML>({
 	title: "GridHead",
 	description: "The head of the grid of dates in the calendar.",
-	props: domElProps("HTMLTableSectionElement"),
-	slotProps: {
-		attrs: attrsSlotProp,
-	},
+	props: withChildProps({ elType: "HTMLTableSectionElement" }),
 	dataAttributes: [
 		{
 			name: "calendar-grid-head",
 			description: "Present on the grid head element.",
 		},
 	],
-};
+});
 
-export const gridRow: APISchema<CalendarGridRowPropsWithoutHTML> = {
+export const gridRow = createApiSchema<CalendarGridRowPropsWithoutHTML>({
 	title: "GridRow",
 	description: "A row in the grid of dates in the calendar.",
-	props: domElProps("HTMLTableRowElement"),
-	slotProps: {
-		attrs: attrsSlotProp,
-	},
+	props: withChildProps({ elType: "HTMLTableRowElement" }),
 	dataAttributes: [
 		{
 			name: "calendar-grid-row",
 			description: "Present on the grid row element.",
 		},
 	],
-};
+});
 
-export const headCell: APISchema<CalendarHeadCellPropsWithoutHTML> = {
+export const headCell = createApiSchema<CalendarHeadCellPropsWithoutHTML>({
 	title: "HeadCell",
 	description: "A cell in the head of the grid of dates in the calendar.",
-	props: domElProps("HTMLTableCellElement"),
-	slotProps: {
-		attrs: attrsSlotProp,
-	},
+	props: withChildProps({ elType: "HTMLTableCellElement" }),
 	dataAttributes: [
 		{
 			name: "calendar-head-cell",
 			description: "Present on the head cell element.",
 		},
 	],
-};
+});
 
-export const header: APISchema<CalendarHeaderPropsWithoutHTML> = {
+export const header = createApiSchema<CalendarHeaderPropsWithoutHTML>({
 	title: "Header",
 	description: "The header of the calendar.",
-	props: domElProps("HTMLElement"),
-	slotProps: {
-		attrs: attrsSlotProp,
-	},
+	props: withChildProps({ elType: "HTMLElement" }),
 	dataAttributes: [
 		{
 			name: "calendar-header",
 			description: "Present on the header element.",
 		},
 	],
-};
+});
 
-export const heading: APISchema<CalendarHeadingPropsWithoutHTML> = {
+export const heading = createApiSchema<CalendarHeadingPropsWithoutHTML>({
 	title: "Heading",
 	description: "The heading of the calendar.",
-	props: domElProps("HTMLDivElement"),
-	slotProps: {
-		...builderAndAttrsSlotProps,
-		headingValue: {
-			type: C.STRING,
-			description: "The heading value.",
-		},
-	},
+	props: withChildProps({ elType: "HTMLDivElement" }),
 	dataAttributes: [
 		{
 			name: "calendar-heading",
 			description: "Present on the heading element.",
 		},
 	],
-};
+});
 
-export const nextButton: APISchema<CalendarNextButtonPropsWithoutHTML> = {
+export const nextButton = createApiSchema<CalendarNextButtonPropsWithoutHTML>({
 	title: "NextButton",
 	description: "The next button of the calendar.",
-	props: domElProps("HTMLButtonElement"),
-	slotProps: {
-		...builderAndAttrsSlotProps,
-	},
+	props: withChildProps({ elType: "HTMLButtonElement" }),
 	dataAttributes: [
 		{
 			name: "calendar-next-button",
 			description: "Present on the next button element.",
 		},
 	],
-};
+});
 
-export const prevButton: APISchema<CalendarPrevButtonPropsWithoutHTML> = {
+export const prevButton = createApiSchema<CalendarPrevButtonPropsWithoutHTML>({
 	title: "PrevButton",
 	description: "The previous button of the calendar.",
-	props: domElProps("HTMLButtonElement"),
-	slotProps: {
-		...builderAndAttrsSlotProps,
-	},
+	props: withChildProps({ elType: "HTMLButtonElement" }),
 	dataAttributes: [
 		{
 			name: "calendar-prev-button",
 			description: "Present on the prev button element.",
 		},
 	],
-};
+});
 
 export const calendar = [
 	root,

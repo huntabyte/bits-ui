@@ -2,49 +2,61 @@ import type {
 	PaginationNextButtonPropsWithoutHTML,
 	PaginationPagePropsWithoutHTML,
 	PaginationPrevButtonPropsWithoutHTML,
-	PaginationPropsWithoutHTML,
+	PaginationRootPropsWithoutHTML,
 } from "bits-ui";
 import { pageItemProp } from "./extended-types/index.js";
-import { builderAndAttrsSlotProps, domElProps } from "./helpers.js";
+import {
+	createApiSchema,
+	createBooleanProp,
+	createEnumProp,
+	createFunctionProp,
+	createNumberProp,
+	enums,
+	withChildProps,
+} from "./helpers.js";
 import type { APISchema } from "$lib/types/index.js";
 import * as C from "$lib/content/constants.js";
 
-export const root: APISchema<PaginationPropsWithoutHTML> = {
+export const root = createApiSchema<PaginationRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root pagination component which contains all other pagination components.",
 	props: {
-		count: {
-			type: C.NUMBER,
+		count: createNumberProp({
 			description: "The total number of items.",
 			required: true,
-		},
-		perPage: {
-			type: C.NUMBER,
+		}),
+		perPage: createNumberProp({
 			description: "The number of items per page.",
 			default: "1",
-		},
-		siblingCount: {
-			type: C.NUMBER,
+		}),
+		siblingCount: createNumberProp({
 			description: "The number of page triggers to show on either side of the current page.",
 			default: "1",
-		},
-		page: {
-			type: C.NUMBER,
+		}),
+		page: createNumberProp({
 			description:
 				"The selected page. You can bind this to a variable to control the selected page from outside the component.",
-		},
-		onPageChange: {
-			type: {
-				type: C.FUNCTION,
-				definition: "(page: number) => void",
-			},
+			bindable: true,
+		}),
+		onPageChange: createFunctionProp({
+			definition: "(page: number) => void",
 			description: "A function called when the selected page changes.",
-		},
-		...domElProps("HTMLDivElement"),
+		}),
+		loop: createBooleanProp({
+			default: C.FALSE,
+			description:
+				"Whether or not the pagination should loop through the items when reaching the end.",
+		}),
+		orientation: createEnumProp({
+			options: ["horizontal", "vertical"],
+			default: "horizontal",
+			description: "The orientation of the pagination.",
+		}),
+		...withChildProps({ elType: "HTMLDivElement" }),
 	},
-};
+});
 
-export const page: APISchema<PaginationPagePropsWithoutHTML> = {
+export const page = createApiSchema<PaginationPagePropsWithoutHTML>({
 	title: "Page",
 	description: "A button that triggers a page change.",
 	props: {
@@ -52,10 +64,7 @@ export const page: APISchema<PaginationPagePropsWithoutHTML> = {
 			type: pageItemProp,
 			description: "The page item this component represents.",
 		},
-		...domElProps("HTMLButtonElement"),
-	},
-	slotProps: {
-		...builderAndAttrsSlotProps,
+		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
 	dataAttributes: [
 		{
@@ -67,36 +76,30 @@ export const page: APISchema<PaginationPagePropsWithoutHTML> = {
 			description: "Present on the page trigger element.",
 		},
 	],
-};
+});
 
-export const prevButton: APISchema<PaginationPrevButtonPropsWithoutHTML> = {
+export const prevButton = createApiSchema<PaginationPrevButtonPropsWithoutHTML>({
 	title: "PrevButton",
 	description: "The previous button of the pagination.",
-	props: domElProps("HTMLButtonElement"),
-	slotProps: {
-		...builderAndAttrsSlotProps,
-	},
+	props: withChildProps({ elType: "HTMLButtonElement" }),
 	dataAttributes: [
 		{
 			name: "pagination-prev-button",
 			description: "Present on the previous button element.",
 		},
 	],
-};
+});
 
-export const nextButton: APISchema<PaginationNextButtonPropsWithoutHTML> = {
+export const nextButton = createApiSchema<PaginationNextButtonPropsWithoutHTML>({
 	title: "NextButton",
 	description: "The next button of the pagination.",
-	props: domElProps("HTMLButtonElement"),
-	slotProps: {
-		...builderAndAttrsSlotProps,
-	},
+	props: withChildProps({ elType: "HTMLButtonElement" }),
 	dataAttributes: [
 		{
 			name: "pagination-next-button",
 			description: "Present on the next button element.",
 		},
 	],
-};
+});
 
 export const pagination = [root, page, prevButton, nextButton];

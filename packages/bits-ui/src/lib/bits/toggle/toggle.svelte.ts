@@ -34,8 +34,8 @@ class ToggleRootState {
 	}
 
 	#togglePressed() {
-		if (!this.#disabled.value) {
-			this.pressed.value = !this.pressed.value;
+		if (!this.#disabled.current) {
+			this.pressed.current = !this.pressed.current;
 		}
 	}
 
@@ -53,10 +53,10 @@ class ToggleRootState {
 		() =>
 			({
 				[ROOT_ATTR]: "",
-				"data-disabled": getDataDisabled(this.#disabled.value),
-				"aria-pressed": getAriaPressed(this.pressed.value),
-				"data-state": getToggleDataState(this.pressed.value),
-				disabled: getDisabled(this.#disabled.value),
+				"data-disabled": getDataDisabled(this.#disabled.current),
+				"aria-pressed": getAriaPressed(this.pressed.current),
+				"data-state": getToggleDataState(this.pressed.current),
+				disabled: getDisabled(this.#disabled.current),
 				onclick: this.#onclick,
 				onkeydown: this.#onkeydown,
 			}) as const

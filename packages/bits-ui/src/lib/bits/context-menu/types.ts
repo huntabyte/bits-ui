@@ -1,5 +1,6 @@
 import type { MenuContentProps, MenuContentPropsWithoutHTML } from "../menu/types.js";
-import type { PrimitiveDivAttributes, WithChild, Without } from "$lib/internal/types.js";
+import type { WithChild, Without } from "$lib/internal/types.js";
+import type { PrimitiveDivAttributes } from "$lib/shared/attributes.js";
 
 export type ContextMenuContentPropsWithoutHTML = MenuContentPropsWithoutHTML;
 
@@ -9,6 +10,10 @@ export type ContextMenuContentProps = Omit<
 >;
 
 export type ContextMenuTriggerPropsWithoutHTML = WithChild<{
+	/**
+	 * Whether the context menu trigger is disabled. If disabled, the trigger will not
+	 * open the menu when right-clicked.
+	 */
 	disabled?: boolean;
 }>;
 
@@ -20,7 +25,7 @@ export type {
 	CheckboxItemProps as ContextMenuCheckboxItemProps,
 	GroupProps as ContextMenuGroupProps,
 	ItemProps as ContextMenuItemProps,
-	LabelProps as ContextMenuLabelProps,
+	GroupLabelProps as ContextMenuGroupLabelProps,
 	RootProps as ContextMenuRootProps,
 	RadioGroupProps as ContextMenuRadioGroupProps,
 	RadioItemProps as ContextMenuRadioItemProps,
@@ -37,7 +42,7 @@ export type {
 	MenuCheckboxItemPropsWithoutHTML as ContextMenuCheckboxItemPropsWithoutHTML,
 	MenuGroupPropsWithoutHTML as ContextMenuGroupPropsWithoutHTML,
 	MenuItemPropsWithoutHTML as ContextMenuItemPropsWithoutHTML,
-	MenuLabelPropsWithoutHTML as ContextMenuLabelPropsWithoutHTML,
+	MenuGroupLabelPropsWithoutHTML as ContextMenuLabelPropsWithoutHTML,
 	MenuRadioGroupPropsWithoutHTML as ContextMenuRadioGroupPropsWithoutHTML,
 	MenuRadioItemPropsWithoutHTML as ContextMenuRadioItemPropsWithoutHTML,
 	MenuSeparatorPropsWithoutHTML as ContextMenuSeparatorPropsWithoutHTML,

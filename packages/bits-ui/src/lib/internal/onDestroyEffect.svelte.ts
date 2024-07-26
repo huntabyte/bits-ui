@@ -1,7 +1,7 @@
-import type { AnyFn } from "./types.js";
-
-export function onDestroyEffect(cb: AnyFn) {
+export function onDestroyEffect(fn: () => void) {
 	$effect(() => {
-		return cb;
+		return () => {
+			fn();
+		};
 	});
 }

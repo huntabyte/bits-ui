@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { Popover } from "bits-ui";
-	import { Info } from "$icons/index.js";
+	import Info from "phosphor-svelte/lib/Info";
 	import { Code } from "$lib/components/index.js";
 	import type { DataAttrSchema } from "$lib/types/index.js";
 
-	export let attr: DataAttrSchema;
+	let { attr }: { attr: DataAttrSchema } = $props();
 </script>
 
 <div class="flex items-center gap-1.5">

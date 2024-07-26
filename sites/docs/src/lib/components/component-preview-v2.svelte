@@ -6,14 +6,15 @@
 	type Props = {
 		preview: Snippet;
 		children: Snippet;
+		class?: string;
 	};
 
-	let { preview, children }: Props = $props();
+	let { preview, children, class: className }: Props = $props();
 </script>
 
 <DemoContainer>
 	{@render preview()}
 </DemoContainer>
-<DemoCodeContainer>
+<DemoCodeContainer class={className}>
 	{@render children()}
 </DemoCodeContainer>

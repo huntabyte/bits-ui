@@ -14,7 +14,7 @@ import {
 } from "@internationalized/date";
 import { getAnnouncer, type Announcer } from "$lib/shared/date/announcer.js";
 import { createFormatter, type Formatter } from "$lib/shared/date/formatter.js";
-import { useId } from "$lib/internal/useId.svelte.js";
+import { useId } from "$lib/internal/useId.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
 import {
 	areAllDaysBetweenValid,
@@ -156,7 +156,7 @@ export class RangeCalendarRootState {
 		this.endValue = props.endValue;
 
 		this.announcer = getAnnouncer();
-		this.formatter = createFormatter(this.locale.value);
+		this.formatter = createFormatter(this.locale.current);
 
 		useRefById({
 			id: this.id,
@@ -164,16 +164,16 @@ export class RangeCalendarRootState {
 		});
 
 		this.months = createMonths({
-			dateObj: this.placeholder.value,
-			weekStartsOn: this.weekStartsOn.value,
-			locale: this.locale.value,
-			fixedWeeks: this.fixedWeeks.value,
-			numberOfMonths: this.numberOfMonths.value,
+			dateObj: this.placeholder.current,
+			weekStartsOn: this.weekStartsOn.current,
+			locale: this.locale.current,
+			fixedWeeks: this.fixedWeeks.current,
+			numberOfMonths: this.numberOfMonths.current,
 		});
 
 		$effect(() => {
-			if (this.formatter.getLocale() === this.locale.value) return;
-			this.formatter.setLocale(this.locale.value);
+			if (this.formatter.getLocale() === this.locale.current) return;
+			this.formatter.setLocale(this.locale.current);
 		});
 
 		/**
@@ -217,18 +217,18 @@ export class RangeCalendarRootState {
 		 * Synchronize the placeholder value with the current start value
 		 */
 		watch(this.value, () => {
-			const startValue = this.value.value.start;
-			if (startValue && this.placeholder.value !== startValue) {
-				this.placeholder.value = startValue;
+			const startValue = this.value.current.start;
+			if (startValue && this.placeholder.current !== startValue) {
+				this.placeholder.current = startValue;
 			}
 		});
 
 		$effect(() => {
-			const startValue = this.startValue.value;
-			const endValue = this.endValue.value;
+			const startValue = this.startValue.current;
+			const endValue = this.endValue.current;
 
 			untrack(() => {
-				const value = this.value.value;
+				const value = this.value.current;
 				if (value && value.start === startValue && value.end === endValue) {
 					return;
 				}
@@ -250,7 +250,7 @@ export class RangeCalendarRootState {
 						}
 					});
 				} else if (value && value.start && value.end) {
-					this.value.value = {
+					this.value.current = {
 						start: undefined,
 						end: undefined,
 					};
@@ -260,20 +260,20 @@ export class RangeCalendarRootState {
 	}
 
 	#updateValue = (cb: (value: DateRange) => DateRange) => {
-		const value = this.value.value;
+		const value = this.value.current;
 		const newValue = cb(value);
-		this.value.value = newValue;
+		this.value.current = newValue;
 		if (newValue.start && newValue.end) {
-			this.onRangeSelect?.value?.();
+			this.onRangeSelect?.current?.();
 		}
 	};
 
 	setStartValue = (value: DateValue | undefined) => {
-		this.startValue.value = value;
+		this.startValue.current = value;
 	};
 
 	setEndValue = (value: DateValue | undefined) => {
-		this.endValue.value = value;
+		this.endValue.current = value;
 	};
 
 	#setMonths = (months: Month<DateValue>[]) => (this.months = months);
@@ -289,7 +289,7 @@ export class RangeCalendarRootState {
 		return getWeekdays({
 			months: this.months,
 			formatter: this.formatter,
-			weekdayFormat: this.weekdayFormat.value,
+			weekdayFormat: this.weekdayFormat.current,
 		});
 	});
 
@@ -298,31 +298,32 @@ export class RangeCalendarRootState {
 	};
 
 	isDateDisabled = (date: DateValue) => {
-		if (this.isDateDisabledProp.value(date) || this.disabled.value) return true;
-		const minValue = this.minValue.value;
-		const maxValue = this.maxValue.value;
+		if (this.isDateDisabledProp.current(date) || this.disabled.current) return true;
+		const minValue = this.minValue.current;
+		const maxValue = this.maxValue.current;
 		if (minValue && isBefore(date, minValue)) return true;
 		if (maxValue && isAfter(date, maxValue)) return true;
 		return false;
 	};
 
 	isDateUnavailable = (date: DateValue) => {
-		if (this.isDateUnavailableProp.value(date)) return true;
+		if (this.isDateUnavailableProp.current(date)) return true;
 		return false;
 	};
 
 	isStartInvalid = $derived.by(() => {
-		if (!this.startValue.value) return false;
+		if (!this.startValue.current) return false;
 		return (
-			this.isDateUnavailable(this.startValue.value) ||
-			this.isDateDisabled(this.startValue.value)
+			this.isDateUnavailable(this.startValue.current) ||
+			this.isDateDisabled(this.startValue.current)
 		);
 	});
 
 	isEndInvalid = $derived.by(() => {
-		if (!this.endValue.value) return false;
+		if (!this.endValue.current) return false;
 		return (
-			this.isDateUnavailable(this.endValue.value) || this.isDateDisabled(this.endValue.value)
+			this.isDateUnavailable(this.endValue.current) ||
+			this.isDateDisabled(this.endValue.current)
 		);
 	});
 
@@ -330,9 +331,9 @@ export class RangeCalendarRootState {
 		if (this.isStartInvalid || this.isEndInvalid) return true;
 
 		if (
-			this.endValue.value &&
-			this.startValue.value &&
-			isBefore(this.endValue.value, this.startValue.value)
+			this.endValue.current &&
+			this.startValue.current &&
+			isBefore(this.endValue.current, this.startValue.current)
 		)
 			return true;
 
@@ -341,17 +342,17 @@ export class RangeCalendarRootState {
 
 	isNextButtonDisabled = $derived.by(() => {
 		return getIsNextButtonDisabled({
-			maxValue: this.maxValue.value,
+			maxValue: this.maxValue.current,
 			months: this.months,
-			disabled: this.disabled.value,
+			disabled: this.disabled.current,
 		});
 	});
 
 	isPrevButtonDisabled = $derived.by(() => {
 		return getIsPrevButtonDisabled({
-			minValue: this.minValue.value,
+			minValue: this.minValue.current,
 			months: this.months,
-			disabled: this.disabled.value,
+			disabled: this.disabled.current,
 		});
 	});
 
@@ -359,39 +360,39 @@ export class RangeCalendarRootState {
 		return getCalendarHeadingValue({
 			months: this.months,
 			formatter: this.formatter,
-			locale: this.locale.value,
+			locale: this.locale.current,
 		});
 	});
 
-	fullCalendarLabel = $derived.by(() => `${this.calendarLabel.value} ${this.headingValue}`);
+	fullCalendarLabel = $derived.by(() => `${this.calendarLabel.current} ${this.headingValue}`);
 
 	isSelectionStart = (date: DateValue) => {
-		if (!this.startValue.value) return false;
-		return isSameDay(date, this.startValue.value);
+		if (!this.startValue.current) return false;
+		return isSameDay(date, this.startValue.current);
 	};
 
 	isSelectionEnd = (date: DateValue) => {
-		if (!this.endValue.value) return false;
-		return isSameDay(date, this.endValue.value);
+		if (!this.endValue.current) return false;
+		return isSameDay(date, this.endValue.current);
 	};
 
 	isSelected = (date: DateValue) => {
-		if (this.startValue.value && isSameDay(this.startValue.value, date)) return true;
-		if (this.endValue.value && isSameDay(this.endValue.value, date)) return true;
-		if (this.startValue.value && this.endValue.value) {
-			return isBetweenInclusive(date, this.startValue.value, this.endValue.value);
+		if (this.startValue.current && isSameDay(this.startValue.current, date)) return true;
+		if (this.endValue.current && isSameDay(this.endValue.current, date)) return true;
+		if (this.startValue.current && this.endValue.current) {
+			return isBetweenInclusive(date, this.startValue.current, this.endValue.current);
 		}
 		return false;
 	};
 
 	highlightedRange = $derived.by(() => {
-		if (this.startValue.value && this.endValue.value) return null;
-		if (!this.startValue.value || !this.focusedValue) return null;
+		if (this.startValue.current && this.endValue.current) return null;
+		if (!this.startValue.current || !this.focusedValue) return null;
 
-		const isStartBeforeFocused = isBefore(this.startValue.value, this.focusedValue);
-		const start = isStartBeforeFocused ? this.startValue.value : this.focusedValue;
+		const isStartBeforeFocused = isBefore(this.startValue.current, this.focusedValue);
+		const start = isStartBeforeFocused ? this.startValue.current : this.focusedValue;
 
-		const end = isStartBeforeFocused ? this.focusedValue : this.startValue.value;
+		const end = isStartBeforeFocused ? this.focusedValue : this.startValue.current;
 
 		if (isSameDay(start.add({ days: 1 }), end)) {
 			return {
@@ -420,11 +421,11 @@ export class RangeCalendarRootState {
 			node,
 			add,
 			placeholder: this.placeholder,
-			calendarNode: this.ref.value,
+			calendarNode: this.ref.current,
 			isPrevButtonDisabled: this.isPrevButtonDisabled,
 			isNextButtonDisabled: this.isNextButtonDisabled,
 			months: this.months,
-			numberOfMonths: this.numberOfMonths.value,
+			numberOfMonths: this.numberOfMonths.current,
 		});
 	};
 
@@ -451,17 +452,17 @@ export class RangeCalendarRootState {
 		const prevLastPressedDate = this.lastPressedDateValue;
 		this.lastPressedDateValue = date;
 
-		if (this.startValue.value && this.highlightedRange === null) {
+		if (this.startValue.current && this.highlightedRange === null) {
 			if (
-				isSameDay(this.startValue.value, date) &&
-				!this.preventDeselect.value &&
-				!this.endValue.value
+				isSameDay(this.startValue.current, date) &&
+				!this.preventDeselect.current &&
+				!this.endValue.current
 			) {
 				this.setStartValue(undefined);
-				this.placeholder.value = date;
+				this.placeholder.current = date;
 				this.#announceEmpty();
 				return;
-			} else if (!this.endValue.value) {
+			} else if (!this.endValue.current) {
 				e.preventDefault();
 				if (prevLastPressedDate && isSameDay(prevLastPressedDate, date)) {
 					this.setStartValue(date);
@@ -471,25 +472,25 @@ export class RangeCalendarRootState {
 		}
 
 		if (
-			this.startValue.value &&
-			this.endValue.value &&
-			isSameDay(this.endValue.value, date) &&
-			!this.preventDeselect.value
+			this.startValue.current &&
+			this.endValue.current &&
+			isSameDay(this.endValue.current, date) &&
+			!this.preventDeselect.current
 		) {
 			this.setStartValue(undefined);
 			this.setEndValue(undefined);
-			this.placeholder.value = date;
+			this.placeholder.current = date;
 			this.#announceEmpty();
 			return;
 		}
 
-		if (!this.startValue.value) {
+		if (!this.startValue.current) {
 			this.#announceSelectedDate(date);
 			this.setStartValue(date);
-		} else if (!this.endValue.value) {
-			this.#announceSelectedRange(this.startValue.value, date);
+		} else if (!this.endValue.current) {
+			this.#announceSelectedRange(this.startValue.current, date);
 			this.setEndValue(date);
-		} else if (this.endValue.value && this.startValue.value) {
+		} else if (this.endValue.current && this.startValue.current) {
 			this.setEndValue(undefined);
 			this.#announceSelectedDate(date);
 			this.setStartValue(date);
@@ -500,7 +501,7 @@ export class RangeCalendarRootState {
 		return handleCalendarKeydown({
 			event,
 			handleCellClick: this.handleCellClick,
-			placeholderValue: this.placeholder.value,
+			placeholderValue: this.placeholder.current,
 			shiftFocus: this.#shiftFocus,
 		});
 	};
@@ -510,13 +511,13 @@ export class RangeCalendarRootState {
 	 */
 	nextPage = () => {
 		handleCalendarNextPage({
-			fixedWeeks: this.fixedWeeks.value,
-			locale: this.locale.value,
-			numberOfMonths: this.numberOfMonths.value,
-			pagedNavigation: this.pagedNavigation.value,
+			fixedWeeks: this.fixedWeeks.current,
+			locale: this.locale.current,
+			numberOfMonths: this.numberOfMonths.current,
+			pagedNavigation: this.pagedNavigation.current,
 			setMonths: this.#setMonths,
-			setPlaceholder: (date: DateValue) => (this.placeholder.value = date),
-			weekStartsOn: this.weekStartsOn.value,
+			setPlaceholder: (date: DateValue) => (this.placeholder.current = date),
+			weekStartsOn: this.weekStartsOn.current,
 			months: this.months,
 		});
 	};
@@ -526,31 +527,31 @@ export class RangeCalendarRootState {
 	 */
 	prevPage = () => {
 		handleCalendarPrevPage({
-			fixedWeeks: this.fixedWeeks.value,
-			locale: this.locale.value,
-			numberOfMonths: this.numberOfMonths.value,
-			pagedNavigation: this.pagedNavigation.value,
+			fixedWeeks: this.fixedWeeks.current,
+			locale: this.locale.current,
+			numberOfMonths: this.numberOfMonths.current,
+			pagedNavigation: this.pagedNavigation.current,
 			setMonths: this.#setMonths,
-			setPlaceholder: (date: DateValue) => (this.placeholder.value = date),
-			weekStartsOn: this.weekStartsOn.value,
+			setPlaceholder: (date: DateValue) => (this.placeholder.current = date),
+			weekStartsOn: this.weekStartsOn.current,
 			months: this.months,
 		});
 	};
 
 	nextYear = () => {
-		this.placeholder.value = this.placeholder.value.add({ years: 1 });
+		this.placeholder.current = this.placeholder.current.add({ years: 1 });
 	};
 
 	prevYear = () => {
-		this.placeholder.value = this.placeholder.value.subtract({ years: 1 });
+		this.placeholder.current = this.placeholder.current.subtract({ years: 1 });
 	};
 
 	setYear = (year: number) => {
-		this.placeholder.value = this.placeholder.value.set({ year });
+		this.placeholder.current = this.placeholder.current.set({ year });
 	};
 
 	setMonth = (month: number) => {
-		this.placeholder.value = this.placeholder.value.set({ month });
+		this.placeholder.current = this.placeholder.current.set({ month });
 	};
 
 	getBitsAttr = (part: CalendarParts) => {
@@ -567,10 +568,10 @@ export class RangeCalendarRootState {
 			({
 				...getCalendarElementProps({
 					fullCalendarLabel: this.fullCalendarLabel,
-					id: this.id.value,
+					id: this.id.current,
 					isInvalid: this.isInvalid,
-					disabled: this.disabled.value,
-					readonly: this.readonly.value,
+					disabled: this.disabled.current,
+					readonly: this.readonly.current,
 				}),
 				[this.getBitsAttr("root")]: "",
 				//
@@ -631,20 +632,20 @@ export class RangeCalendarCellState {
 	ref: RangeCalendarCellStateProps["ref"];
 	date: RangeCalendarCellStateProps["date"];
 	month: RangeCalendarCellStateProps["month"];
-	cellDate = $derived.by(() => toDate(this.date.value));
-	isDisabled = $derived.by(() => this.root.isDateDisabled(this.date.value));
-	isUnvailable = $derived.by(() => this.root.isDateUnavailableProp.value(this.date.value));
-	isDateToday = $derived.by(() => isToday(this.date.value, getLocalTimeZone()));
-	isOutsideMonth = $derived.by(() => !isSameMonth(this.date.value, this.month.value));
-	isOutsideVisibleMonths = $derived.by(() => this.root.isOutsideVisibleMonths(this.date.value));
-	isFocusedDate = $derived.by(() => isSameDay(this.date.value, this.root.placeholder.value));
-	isSelectedDate = $derived.by(() => this.root.isSelected(this.date.value));
-	isSelectionStart = $derived.by(() => this.root.isSelectionStart(this.date.value));
-	isSelectionEnd = $derived.by(() => this.root.isSelectionEnd(this.date.value));
+	cellDate = $derived.by(() => toDate(this.date.current));
+	isDisabled = $derived.by(() => this.root.isDateDisabled(this.date.current));
+	isUnvailable = $derived.by(() => this.root.isDateUnavailableProp.current(this.date.current));
+	isDateToday = $derived.by(() => isToday(this.date.current, getLocalTimeZone()));
+	isOutsideMonth = $derived.by(() => !isSameMonth(this.date.current, this.month.current));
+	isOutsideVisibleMonths = $derived.by(() => this.root.isOutsideVisibleMonths(this.date.current));
+	isFocusedDate = $derived.by(() => isSameDay(this.date.current, this.root.placeholder.current));
+	isSelectedDate = $derived.by(() => this.root.isSelected(this.date.current));
+	isSelectionStart = $derived.by(() => this.root.isSelectionStart(this.date.current));
+	isSelectionEnd = $derived.by(() => this.root.isSelectionEnd(this.date.current));
 	isHighlighted = $derived.by(() =>
 		this.root.highlightedRange
 			? isBetweenInclusive(
-					this.date.value,
+					this.date.current,
 					this.root.highlightedRange.start,
 					this.root.highlightedRange.end
 				)
@@ -684,7 +685,7 @@ export class RangeCalendarCellState {
 	ariaDisabled = $derived.by(() => {
 		return (
 			this.isDisabled ||
-			(this.isOutsideMonth && this.root.disableDaysOutsideMonth.value) ||
+			(this.isOutsideMonth && this.root.disableDaysOutsideMonth.current) ||
 			this.isUnvailable
 		);
 	});
@@ -701,10 +702,10 @@ export class RangeCalendarCellState {
 				"data-selection-end": this.isSelectionEnd ? "" : undefined,
 				"data-highlighted": this.isHighlighted ? "" : undefined,
 				"data-selected": getDataSelected(this.isSelectedDate),
-				"data-value": this.date.value.toString(),
+				"data-value": this.date.current.toString(),
 				"data-disabled": getDataDisabled(
 					this.isDisabled ||
-						(this.isOutsideMonth && this.root.disableDaysOutsideMonth.value)
+						(this.isOutsideMonth && this.root.disableDaysOutsideMonth.current)
 				),
 			}) as const
 	);
@@ -712,7 +713,7 @@ export class RangeCalendarCellState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.value,
+				id: this.id.current,
 				role: "gridcell",
 				"aria-selected": getAriaSelected(this.isSelectedDate),
 				"aria-disabled": getAriaDisabled(this.ariaDisabled),
@@ -748,7 +749,7 @@ class RangeCalendarDayState {
 	#tabindex = $derived.by(() =>
 		this.cell.isFocusedDate
 			? 0
-			: (this.cell.isOutsideMonth && this.cell.root.disableDaysOutsideMonth.value) ||
+			: (this.cell.isOutsideMonth && this.cell.root.disableDaysOutsideMonth.current) ||
 				  this.cell.isDisabled
 				? undefined
 				: -1
@@ -756,30 +757,30 @@ class RangeCalendarDayState {
 
 	#onclick = (e: MouseEvent) => {
 		if (this.cell.isDisabled) return;
-		this.cell.root.handleCellClick(e, this.cell.date.value);
+		this.cell.root.handleCellClick(e, this.cell.date.current);
 	};
 
 	#onmouseenter = () => {
 		if (this.cell.isDisabled) return;
-		this.cell.root.focusedValue = this.cell.date.value;
+		this.cell.root.focusedValue = this.cell.date.current;
 	};
 
 	#onfocusin = () => {
 		if (this.cell.isDisabled) return;
-		this.cell.root.focusedValue = this.cell.date.value;
+		this.cell.root.focusedValue = this.cell.date.current;
 	};
 
 	snippetProps = $derived.by(() => ({
 		disabled: this.cell.isDisabled,
 		unavailable: this.cell.isUnvailable,
 		selected: this.cell.isSelectedDate,
-		day: `${this.cell.date.value.day}`,
+		day: `${this.cell.date.current.day}`,
 	}));
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.value,
+				id: this.id.current,
 				role: "button",
 				"aria-label": this.cell.labelText,
 				"aria-disabled": getAriaDisabled(this.cell.ariaDisabled),

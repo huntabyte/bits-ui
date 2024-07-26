@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { Combobox } from "bits-ui";
-	import { CaretUpDown, Check, OrangeSlice } from "$icons/index.js";
+	import CaretUpDown from "phosphor-svelte/lib/CaretUpDown";
+	import Check from "phosphor-svelte/lib/Check";
+	import OrangeSlice from "phosphor-svelte/lib/OrangeSlice";
 
 	const fruits = [
 		{ value: "mango", label: "Mango" },

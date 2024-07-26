@@ -1,59 +1,44 @@
-import type { SwitchPropsWithoutHTML, SwitchThumbPropsWithoutHTML } from "bits-ui";
-import { builderAndAttrsSlotProps, domElProps } from "./helpers.js";
-import { attrsSlotProp, enums } from "$lib/content/api-reference/helpers.js";
+import type { SwitchRootPropsWithoutHTML, SwitchThumbPropsWithoutHTML } from "bits-ui";
+import {
+	createApiSchema,
+	createBooleanProp,
+	createFunctionProp,
+	createStringProp,
+	withChildProps,
+} from "./helpers.js";
+import { enums } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
-import type { APISchema } from "$lib/types/index.js";
 
-const root: APISchema<SwitchPropsWithoutHTML> = {
+const root = createApiSchema<SwitchRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root switch component used to set and manage the state of the switch.",
 	props: {
-		checked: {
+		checked: createBooleanProp({
 			default: C.FALSE,
-			type: C.BOOLEAN,
 			description: "Whether or not the switch is checked.",
-		},
-		onCheckedChange: {
-			type: {
-				type: C.FUNCTION,
-				definition: "(checked: boolean) => void",
-			},
+			bindable: true,
+		}),
+		onCheckedChange: createFunctionProp({
+			definition: "(checked: boolean) => void",
 			description: "A callback function called when the checked state of the switch changes.",
-		},
-		disabled: {
+		}),
+		disabled: createBooleanProp({
 			default: C.FALSE,
-			type: C.BOOLEAN,
 			description: "Whether or not the switch is disabled.",
-		},
-		includeInput: {
-			default: C.FALSE,
-			type: C.BOOLEAN,
-			description:
-				"Whether or not to include the input element in the switch. This will automatically add a hidden input element to the switch that will be checked when the switch is checked.",
-		},
-		inputAttrs: {
-			type: C.OBJECT,
-			description: "Attributes to be spread onto the hidden input element.",
-		},
-		name: {
-			type: C.STRING,
+		}),
+		name: createStringProp({
 			description:
 				"The name of the hidden input element, used to identify the input in form submissions.",
-		},
-		required: {
+		}),
+		required: createBooleanProp({
 			default: C.FALSE,
-			type: C.BOOLEAN,
 			description: "Whether or not the switch is required to be checked.",
-		},
-		value: {
-			type: C.STRING,
+		}),
+		value: createStringProp({
 			description:
 				"The value of the hidden input element to be used in form submissions when the switch is checked.",
-		},
-		...domElProps("HTMLButtonElement"),
-	},
-	slotProps: {
-		...builderAndAttrsSlotProps,
+		}),
+		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
 	dataAttributes: [
 		{
@@ -75,19 +60,12 @@ const root: APISchema<SwitchPropsWithoutHTML> = {
 			description: "Present on the root element.",
 		},
 	],
-};
+});
 
-const thumb: APISchema<SwitchThumbPropsWithoutHTML> = {
+const thumb = createApiSchema<SwitchThumbPropsWithoutHTML>({
 	title: "Thumb",
 	description: "The thumb on the switch used to indicate the switch's state.",
-	props: domElProps("HTMLSpanElement"),
-	slotProps: {
-		attrs: attrsSlotProp,
-		checked: {
-			type: C.BOOLEAN,
-			description: "Whether or not the switch is checked.",
-		},
-	},
+	props: withChildProps({ elType: "HTMLSpanElement" }),
 	dataAttributes: [
 		{
 			name: "state",
@@ -104,6 +82,6 @@ const thumb: APISchema<SwitchThumbPropsWithoutHTML> = {
 			description: "Present on the thumb element.",
 		},
 	],
-};
+});
 
 export const switchData = [root, thumb];

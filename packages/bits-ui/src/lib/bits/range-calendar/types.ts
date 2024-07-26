@@ -1,12 +1,8 @@
 import type { DateValue } from "@internationalized/date";
 import type { DateMatcher, Month } from "$lib/shared/date/types.js";
-import type {
-	OnChangeFn,
-	PrimitiveDivAttributes,
-	WithChild,
-	Without,
-} from "$lib/internal/types.js";
+import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
 import type { DateRange } from "$lib/shared/index.js";
+import type { PrimitiveDivAttributes } from "$lib/shared/attributes.js";
 
 export type RangeCalendarRootSnippetProps = {
 	months: Month<DateValue>[];

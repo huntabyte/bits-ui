@@ -1,16 +1,14 @@
-import type { InteractOutsideEvent } from "@melt-ui/svelte";
+import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
 import type {
-	OnChangeFn,
 	PrimitiveAnchorAttributes,
 	PrimitiveButtonAttributes,
 	PrimitiveDivAttributes,
 	PrimitiveElementAttributes,
 	PrimitiveLiAttributes,
 	PrimitiveUListAttributes,
-	WithChild,
-	Without,
-} from "$lib/internal/types.js";
+} from "$lib/shared/attributes.js";
 import type { Direction, Orientation } from "$lib/shared/index.js";
+import type { InteractOutsideEvent } from "../utilities/dismissable-layer/types.js";
 
 export type NavigationMenuRootPropsWithoutHTML = WithChild<{
 	/**
@@ -27,16 +25,22 @@ export type NavigationMenuRootPropsWithoutHTML = WithChild<{
 
 	/**
 	 * The duration from when the mouse enters a trigger until the content opens.
+	 *
+	 * @defaultValue 200
 	 */
 	delayDuration?: number;
 
 	/**
 	 * How much time a user has to enter another trigger without incurring a delay again.
+	 *
+	 * @defaultValue 300
 	 */
 	skipDelayDuration?: number;
 
 	/**
 	 * The reading direction of the content.
+	 *
+	 * @defaultValue "ltr"
 	 */
 	dir?: Direction;
 
@@ -91,7 +95,7 @@ export type NavigationMenuTriggerPropsWithoutHTML = WithChild<{
 	 * Whether the trigger is disabled.
 	 * @defaultValue false
 	 */
-	disabled?: boolean;
+	disabled?: boolean | null | undefined;
 }>;
 
 export type NavigationMenuTriggerProps = NavigationMenuTriggerPropsWithoutHTML &

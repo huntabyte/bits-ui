@@ -1,4 +1,4 @@
-import type { PrimitiveDivAttributes, WithChildren } from "$lib/internal/types.js";
+import type { PrimitiveDivAttributes } from "$lib/shared/attributes.js";
 import type { Direction, Orientation, WithChild, Without } from "$lib/shared/index.js";
 
 export type ScrollAreaType = "hover" | "scroll" | "auto" | "always";

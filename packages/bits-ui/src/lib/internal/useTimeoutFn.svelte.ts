@@ -1,8 +1,8 @@
 import { box } from "svelte-toolbelt";
-import { onDestroy } from "svelte";
 import type { Box } from "./box.svelte.js";
 import type { AnyFn, Fn } from "./types.js";
 import { isBrowser } from "./is.js";
+import { onDestroyEffect } from "./onDestroyEffect.svelte.js";
 
 export type UseTimeoutFnOptions = {
 	/**
@@ -49,15 +49,15 @@ export function useTimeoutFn<T extends AnyFn>(
 	}
 
 	function stop() {
-		isPending.value = false;
+		isPending.current = false;
 		clear();
 	}
 
 	function start(...args: Parameters<T> | []) {
 		clear();
-		isPending.value = true;
+		isPending.current = true;
 		timer = setTimeout(() => {
-			isPending.value = false;
+			isPending.current = false;
 			timer = null;
 
 			cb(...args);
@@ -65,11 +65,11 @@ export function useTimeoutFn<T extends AnyFn>(
 	}
 
 	if (immediate) {
-		isPending.value = true;
+		isPending.current = true;
 		if (isBrowser) start();
 	}
 
-	onDestroy(() => {
+	onDestroyEffect(() => {
 		stop();
 	});
 

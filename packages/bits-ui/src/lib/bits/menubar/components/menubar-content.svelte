@@ -3,7 +3,7 @@
 	import type { ContentProps } from "../index.js";
 	import { useMenubarContent } from "../menubar.svelte.js";
 	import MenuContent from "$lib/bits/menu/components/menu-content.svelte";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {

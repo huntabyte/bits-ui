@@ -1,4 +1,4 @@
-import { useId } from "$lib/internal/useId.svelte.js";
+import { useId } from "$lib/internal/useId.js";
 import { box } from "svelte-toolbelt";
 
 export type FocusScopeAPI = {
@@ -16,18 +16,18 @@ export function createFocusScopeStack() {
 	return {
 		add(focusScope: FocusScopeAPI) {
 			// pause the currently active focus scope (top of the stack)
-			const activeFocusScope = stack.value[0];
+			const activeFocusScope = stack.current[0];
 			if (focusScope !== activeFocusScope) {
 				activeFocusScope?.pause();
 			}
 
 			// remove in case it already exists because it'll be added to the top
-			stack.value = removeFromFocusScopeArray(stack.value, focusScope);
-			stack.value.unshift(focusScope);
+			stack.current = removeFromFocusScopeArray(stack.current, focusScope);
+			stack.current.unshift(focusScope);
 		},
 		remove(focusScope: FocusScopeAPI) {
-			stack.value = removeFromFocusScopeArray(stack.value, focusScope);
-			stack.value[0]?.resume();
+			stack.current = removeFromFocusScopeArray(stack.current, focusScope);
+			stack.current[0]?.resume();
 		},
 	};
 }

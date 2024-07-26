@@ -20,7 +20,6 @@ import { addEventListener } from "$lib/internal/events.js";
 import type { AnyFn, WithRefProps } from "$lib/internal/types.js";
 import { executeCallbacks } from "$lib/internal/callbacks.js";
 import { useTypeahead } from "$lib/internal/useTypeahead.svelte.js";
-import { onDestroyEffect } from "$lib/internal/onDestroyEffect.svelte.js";
 import { isElement, isHTMLElement } from "$lib/internal/is.js";
 import { useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
@@ -38,6 +37,8 @@ import type { Direction } from "$lib/shared/index.js";
 import { afterTick } from "$lib/internal/afterTick.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
 import { isPointerInGraceArea, makeHullFromElements } from "$lib/internal/polygon.js";
+import { onDestroyEffect } from "$lib/internal/onDestroyEffect.svelte.js";
+import { IsFocusWithin } from "runed";
 
 const TRIGGER_ATTR = "data-menu-trigger";
 const CONTENT_ATTR = "data-menu-content";
@@ -50,6 +51,7 @@ const LABEL_ATTR = "data-menu-label";
 const RADIO_GROUP_ATTR = "data-menu-radio-group";
 const RADIO_ITEM_ATTR = "data-menu-radio-item";
 const ARROW_ATTR = "data-menu-arrow";
+export const CONTEXT_MENU_TRIGGER_ATTR = "data-context-menu-trigger";
 
 const [setMenuRootContext] = createContext<MenuRootState>("Menu.Root");
 
@@ -60,6 +62,8 @@ const [setMenuMenuContext, getMenuMenuContext] = createContext<MenuMenuState>(
 
 const [setMenuContentContext, getMenuContentContext] =
 	createContext<MenuContentState>("Menu.Content");
+
+const [setMenuGroupContext, getMenuGroupContext] = createContext<MenuGroupState>("Menu.Group");
 
 const [setMenuRadioGroupContext, getMenuRadioGroupContext] =
 	createContext<MenuRadioGroupState>("Menu.RadioGroup");
@@ -83,11 +87,11 @@ class MenuRootState {
 			const callbacksToDispose: AnyFn[] = [];
 
 			const handlePointer = (_: PointerEvent) => {
-				this.isUsingKeyboard.value = false;
+				this.isUsingKeyboard.current = false;
 			};
 
 			const handleKeydown = (_: KeyboardEvent) => {
-				this.isUsingKeyboard.value = true;
+				this.isUsingKeyboard.current = true;
 
 				const disposePointerDown = addEventListener(
 					document,
@@ -140,21 +144,21 @@ class MenuMenuState {
 
 		if (parentMenu) {
 			watch(parentMenu.open, (v) => {
-				if (!v) this.open.value = false;
+				if (!v) this.open.current = false;
 			});
 		}
 	}
 
 	toggleOpen() {
-		this.open.value = !this.open.value;
+		this.open.current = !this.open.current;
 	}
 
 	onOpen() {
-		this.open.value = true;
+		this.open.current = true;
 	}
 
 	onClose() {
-		this.open.value = false;
+		this.open.current = false;
 	}
 
 	createContent(props: MenuContentStateProps) {
@@ -197,6 +201,7 @@ class MenuContentState {
 	#handleTypeaheadSearch: ReturnType<typeof useTypeahead>["handleTypeaheadSearch"];
 	rovingFocusGroup: ReturnType<typeof useRovingFocus>;
 	isMounted: MenuContentStateProps["isMounted"];
+	isFocusWithin = new IsFocusWithin(() => this.parentMenu.contentNode ?? undefined);
 
 	constructor(props: MenuContentStateProps, parentMenu: MenuMenuState) {
 		this.#id = props.id;
@@ -209,7 +214,7 @@ class MenuContentState {
 		useRefById({
 			id: this.#id,
 			ref: this.contentRef,
-			condition: () => this.parentMenu.open.value,
+			condition: () => this.parentMenu.open.current,
 			onRefChange: (node) => {
 				if (this.parentMenu.contentNode !== node) {
 					this.parentMenu.contentNode = node;
@@ -256,7 +261,7 @@ class MenuContentState {
 		if (!isHTMLElement(target) || !isHTMLElement(currentTarget)) return;
 
 		const isKeydownInside =
-			target.closest(`[${CONTENT_ATTR}]`)?.id === this.parentMenu.contentId.value;
+			target.closest(`[${CONTENT_ATTR}]`)?.id === this.parentMenu.contentId.current;
 		const isModifierKey = e.ctrlKey || e.altKey || e.metaKey;
 		const isCharacterKey = e.key.length === 1;
 
@@ -277,7 +282,7 @@ class MenuContentState {
 		}
 
 		// focus first/last based on key pressed
-		if ((e.target as HTMLElement)?.id !== this.parentMenu.contentId.value) return;
+		if ((e.target as HTMLElement)?.id !== this.parentMenu.contentId.current) return;
 
 		if (!FIRST_LAST_KEYS.includes(e.key)) return;
 		e.preventDefault();
@@ -299,7 +304,7 @@ class MenuContentState {
 	};
 
 	#onfocus = () => {
-		if (!this.parentMenu.root.isUsingKeyboard.value) return;
+		if (!this.parentMenu.root.isUsingKeyboard.current) return;
 		afterTick(() => this.rovingFocusGroup.focusFirstCandidate());
 	};
 
@@ -347,11 +352,11 @@ class MenuContentState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
+				id: this.#id.current,
 				role: "menu",
 				"aria-orientation": getAriaOrientation("vertical"),
 				[CONTENT_ATTR]: "",
-				"data-state": getDataOpenClosed(this.parentMenu.open.value),
+				"data-state": getDataOpenClosed(this.parentMenu.open.current),
 				onkeydown: this.#onkeydown,
 				onblur: this.#onblur,
 				onpointermove: this.#onpointermove,
@@ -406,7 +411,7 @@ class MenuItemSharedState {
 		useRefById({
 			id: this.id,
 			ref: this.ref,
-			condition: () => this.content.isMounted.value,
+			condition: () => this.content.isMounted.current,
 		});
 	}
 
@@ -414,7 +419,7 @@ class MenuItemSharedState {
 		if (e.defaultPrevented) return;
 		if (!isMouseEvent(e)) return;
 
-		if (this.disabled.value) {
+		if (this.disabled.current) {
 			this.content.onItemLeave(e);
 		} else {
 			const defaultPrevented = this.content.onItemEnter(e);
@@ -435,7 +440,7 @@ class MenuItemSharedState {
 
 	#onfocus = async (e: FocusEvent) => {
 		afterTick(() => {
-			if (e.defaultPrevented || this.disabled.value) return;
+			if (e.defaultPrevented || this.disabled.current) return;
 			this.#isFocused = true;
 		});
 	};
@@ -450,11 +455,11 @@ class MenuItemSharedState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.value,
+				id: this.id.current,
 				tabindex: -1,
 				role: "menuitem",
-				"aria-disabled": getAriaDisabled(this.disabled.value),
-				"data-disabled": getDataDisabled(this.disabled.value),
+				"aria-disabled": getAriaDisabled(this.disabled.current),
+				"data-disabled": getDataDisabled(this.disabled.current),
 				"data-highlighted": this.#isFocused ? "" : undefined,
 				[ITEM_ATTR]: "",
 				//
@@ -482,7 +487,7 @@ class MenuItemState {
 
 	#onkeydown = (e: KeyboardEvent) => {
 		const isTypingAhead = this.#item.content.search !== "";
-		if (this.#item.disabled.value || (isTypingAhead && e.key === kbd.SPACE)) return;
+		if (this.#item.disabled.current || (isTypingAhead && e.key === kbd.SPACE)) return;
 		if (SELECTION_KEYS.includes(e.key)) {
 			if (!isHTMLElement(e.currentTarget)) return;
 			e.currentTarget.click();
@@ -497,19 +502,19 @@ class MenuItemState {
 	};
 
 	#handleSelect = async () => {
-		if (this.#item.disabled.value) return;
+		if (this.#item.disabled.current) return;
 		const selectEvent = new CustomEvent("menuitemselect", { bubbles: true, cancelable: true });
-		this.#onSelect.value(selectEvent);
+		this.#onSelect.current(selectEvent);
 		await tick();
 		if (selectEvent.defaultPrevented) {
-			this.#item.content.parentMenu.root.isUsingKeyboard.value = false;
+			this.#item.content.parentMenu.root.isUsingKeyboard.current = false;
 		} else {
 			this.#item.content.parentMenu.root.onClose();
 		}
 	};
 
 	#onclick = () => {
-		if (this.#item.disabled.value) return;
+		if (this.#item.disabled.current) return;
 		this.#handleSelect();
 	};
 
@@ -571,7 +576,7 @@ class MenuSubTriggerState {
 		if (!isMouseEvent(e)) return;
 		const defaultPrevented = this.#content.onItemEnter(e);
 		if (defaultPrevented) return;
-		if (!this.#item.disabled.value && !this.#submenu.open.value && !this.#openTimer) {
+		if (!this.#item.disabled.current && !this.#submenu.open.current && !this.#openTimer) {
 			this.#content.onPointerGraceIntentChange(null);
 			this.#openTimer = window.setTimeout(() => {
 				this.#submenu.onOpen();
@@ -585,7 +590,7 @@ class MenuSubTriggerState {
 		this.#clearOpenTimer();
 
 		const contentNode = this.#submenu.contentNode;
-		const subTriggerNode = this.#item.ref.value;
+		const subTriggerNode = this.#item.ref.current;
 
 		if (contentNode && subTriggerNode) {
 			const polygon = makeHullFromElements([subTriggerNode, contentNode]);
@@ -612,9 +617,9 @@ class MenuSubTriggerState {
 
 	#onkeydown = (e: KeyboardEvent) => {
 		const isTypingAhead = this.#content.search !== "";
-		if (this.#item.disabled.value || (isTypingAhead && e.key === kbd.SPACE)) return;
+		if (this.#item.disabled.current || (isTypingAhead && e.key === kbd.SPACE)) return;
 
-		if (SUB_OPEN_KEYS[this.#submenu.root.dir.value].includes(e.key)) {
+		if (SUB_OPEN_KEYS[this.#submenu.root.dir.current].includes(e.key)) {
 			this.#submenu.onOpen();
 
 			const contentNode = this.#submenu.contentNode;
@@ -625,7 +630,7 @@ class MenuSubTriggerState {
 	};
 
 	#onclick = (e: MouseEvent) => {
-		if (this.#item.disabled.value) return;
+		if (this.#item.disabled.current) return;
 		/**
 		 * We manually focus because iOS Safari doesn't always focus on click (e.g. buttons)
 		 * and we rely heavily on `onFocusOutside` for submenus to close when switching
@@ -633,7 +638,7 @@ class MenuSubTriggerState {
 		 */
 		if (!isHTMLElement(e.currentTarget)) return;
 		e.currentTarget.focus();
-		if (!this.#submenu.open.value) {
+		if (!this.#submenu.open.current) {
 			this.#submenu.onOpen();
 		}
 	};
@@ -642,10 +647,10 @@ class MenuSubTriggerState {
 		mergeProps(
 			{
 				"aria-haspopup": "menu",
-				"aria-expanded": getAriaExpanded(this.#submenu.open.value),
-				"data-state": getDataOpenClosed(this.#submenu.open.value),
-				"aria-controls": this.#submenu.open.value
-					? this.#submenu.contentId.value
+				"aria-expanded": getAriaExpanded(this.#submenu.open.current),
+				"data-state": getDataOpenClosed(this.#submenu.open.current),
+				"aria-controls": this.#submenu.open.current
+					? this.#submenu.contentId.current
 					: undefined,
 				[SUB_TRIGGER_ATTR]: "",
 				onclick: this.#onclick,
@@ -672,12 +677,12 @@ class MenuCheckboxItemState {
 	}
 
 	toggleChecked() {
-		if (this.#checked.value === true) {
-			this.#checked.value = false;
-		} else if (this.#checked.value === false) {
-			this.#checked.value = true;
-		} else if (this.#checked.value === "indeterminate") {
-			this.#checked.value = true;
+		if (this.#checked.current === true) {
+			this.#checked.current = false;
+		} else if (this.#checked.current === false) {
+			this.#checked.current = true;
+		} else if (this.#checked.current === "indeterminate") {
+			this.#checked.current = true;
 		}
 	}
 
@@ -686,8 +691,8 @@ class MenuCheckboxItemState {
 			({
 				...this.#item.props,
 				role: "menuitemcheckbox",
-				"aria-checked": getAriaChecked(this.#checked.value),
-				"data-state": getCheckedState(this.#checked.value),
+				"aria-checked": getAriaChecked(this.#checked.current),
+				"data-state": getCheckedState(this.#checked.current),
 				[CHECKBOX_ITEM_ATTR]: "",
 			}) as const
 	);
@@ -698,6 +703,7 @@ type MenuGroupStateProps = WithRefProps;
 class MenuGroupState {
 	#id: MenuGroupStateProps["id"];
 	#ref: MenuGroupStateProps["ref"];
+	labelNode = $state<HTMLElement | null>(null);
 
 	constructor(props: MenuGroupStateProps) {
 		this.#id = props.id;
@@ -712,32 +718,42 @@ class MenuGroupState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
+				id: this.#id.current,
 				role: "group",
+				"aria-labelledby": this.labelNode?.id ?? undefined,
 				[GROUP_ATTR]: "",
 			}) as const
 	);
+
+	createGroupLabel(props: MenuGroupLabelStateProps) {
+		return new MenuGroupLabelState(props, this);
+	}
 }
 
-type MenuLabelStateProps = WithRefProps;
-class MenuLabelState {
-	#id: MenuLabelStateProps["id"];
-	#ref: MenuLabelStateProps["ref"];
+type MenuGroupLabelStateProps = WithRefProps;
+class MenuGroupLabelState {
+	#id: MenuGroupLabelStateProps["id"];
+	#ref: MenuGroupLabelStateProps["ref"];
+	#group: MenuGroupState;
 
-	constructor(props: MenuLabelStateProps) {
+	constructor(props: MenuGroupLabelStateProps, group: MenuGroupState) {
 		this.#id = props.id;
 		this.#ref = props.ref;
+		this.#group = group;
 
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
+			onRefChange: (node) => {
+				this.#group.labelNode = node;
+			},
 		});
 	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
+				id: this.#id.current,
 				role: "group",
 				[LABEL_ATTR]: "",
 			}) as const
@@ -763,7 +779,7 @@ class MenuSeparatorState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
+				id: this.#id.current,
 				role: "group",
 				[SEPARATOR_ATTR]: "",
 			}) as const
@@ -803,7 +819,7 @@ class MenuRadioGroupState {
 	}
 
 	setValue(v: string) {
-		this.value.value = v;
+		this.value.current = v;
 	}
 
 	createRadioItem(
@@ -816,7 +832,7 @@ class MenuRadioGroupState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
+				id: this.#id.current,
 				[RADIO_GROUP_ATTR]: "",
 				role: "group",
 			}) as const
@@ -837,7 +853,7 @@ class MenuRadioItemState {
 	#item: MenuItemState;
 	#value: MenuRadioItemStateProps["value"];
 	#group: MenuRadioGroupState;
-	isChecked = $derived.by(() => this.#group.value.value === this.#value.value);
+	isChecked = $derived.by(() => this.#group.value.current === this.#value.current);
 
 	constructor(props: MenuRadioItemStateProps, item: MenuItemState, group: MenuRadioGroupState) {
 		this.#item = item;
@@ -853,7 +869,7 @@ class MenuRadioItemState {
 	}
 
 	selectValue() {
-		this.#group.setValue(this.#value.value);
+		this.#group.setValue(this.#value.current);
 	}
 
 	props = $derived.by(
@@ -902,16 +918,16 @@ class DropdownMenuTriggerState {
 	}
 
 	#onpointerdown = (e: PointerEvent) => {
-		if (!this.#disabled.value && e.button === 0 && e.ctrlKey === false) {
+		if (!this.#disabled.current && e.button === 0 && e.ctrlKey === false) {
 			this.#parentMenu.toggleOpen();
 			// prevent trigger focusing when opening to allow
 			// the content to be given focus without competition
-			if (!this.#parentMenu.open.value) e.preventDefault();
+			if (!this.#parentMenu.open.current) e.preventDefault();
 		}
 	};
 
 	#onkeydown = (e: KeyboardEvent) => {
-		if (this.#disabled.value) return;
+		if (this.#disabled.current) return;
 		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
 			this.#parentMenu.toggleOpen();
 			e.preventDefault();
@@ -924,21 +940,21 @@ class DropdownMenuTriggerState {
 	};
 
 	#ariaControls = $derived.by(() => {
-		if (this.#parentMenu.open.value && this.#parentMenu.contentId.value)
-			return this.#parentMenu.contentId.value;
+		if (this.#parentMenu.open.current && this.#parentMenu.contentId.current)
+			return this.#parentMenu.contentId.current;
 		return undefined;
 	});
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
-				disabled: this.#disabled.value,
+				id: this.#id.current,
+				disabled: this.#disabled.current,
 				"aria-haspopup": "menu",
-				"aria-expanded": getAriaExpanded(this.#parentMenu.open.value),
+				"aria-expanded": getAriaExpanded(this.#parentMenu.open.current),
 				"aria-controls": this.#ariaControls,
-				"data-disabled": getDataDisabled(this.#disabled.value),
-				"data-state": getDataOpenClosed(this.#parentMenu.open.value),
+				"data-disabled": getDataDisabled(this.#disabled.current),
+				"data-state": getDataOpenClosed(this.#parentMenu.open.current),
 				[TRIGGER_ATTR]: "",
 				//
 				onpointerdown: this.#onpointerdown,
@@ -980,18 +996,19 @@ class ContextMenuTriggerState {
 			onRefChange: (node) => {
 				this.#parentMenu.triggerNode = node;
 			},
+			condition: () => this.#parentMenu.open.current,
 		});
 
 		$effect(() => {
 			this.#point;
-			this.virtualElement.value = {
+			this.virtualElement.current = {
 				getBoundingClientRect: () =>
 					DOMRect.fromRect({ width: 0, height: 0, ...this.#point }),
 			};
 		});
 
 		$effect(() => {
-			if (this.#disabled.value) {
+			if (this.#disabled.current) {
 				this.#clearLongPressTimer();
 			}
 		});
@@ -1014,41 +1031,43 @@ class ContextMenuTriggerState {
 	};
 
 	#oncontextmenu = (e: MouseEvent) => {
-		if (this.#disabled.value) return;
+		if (this.#disabled.current) return;
 		this.#clearLongPressTimer();
 		this.#handleOpen(e);
 		e.preventDefault();
+		this.#parentMenu.contentNode?.focus();
 	};
 
 	#onpointerdown = (e: PointerEvent) => {
-		if (this.#disabled.value || isMouseEvent(e)) return;
+		if (this.#disabled.current || isMouseEvent(e)) return;
 		this.#clearLongPressTimer();
 		this.#longPressTimer = window.setTimeout(() => this.#handleOpen(e), 700);
 	};
 
 	#onpointermove = (e: PointerEvent) => {
-		if (this.#disabled.value || isMouseEvent(e)) return;
+		if (this.#disabled.current || isMouseEvent(e)) return;
 		this.#clearLongPressTimer();
 	};
 
 	#onpointercancel = (e: PointerEvent) => {
-		if (this.#disabled.value || isMouseEvent(e)) return;
+		if (this.#disabled.current || isMouseEvent(e)) return;
 		this.#clearLongPressTimer();
 	};
 
 	#onpointerup = (e: PointerEvent) => {
-		if (this.#disabled.value || isMouseEvent(e)) return;
+		if (this.#disabled.current || isMouseEvent(e)) return;
 		this.#clearLongPressTimer();
 	};
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.value,
-				disabled: this.#disabled.value,
-				"data-disabled": getDataDisabled(this.#disabled.value),
-				"data-state": getDataOpenClosed(this.#parentMenu.open.value),
+				id: this.#id.current,
+				disabled: this.#disabled.current,
+				"data-disabled": getDataDisabled(this.#disabled.current),
+				"data-state": getDataOpenClosed(this.#parentMenu.open.current),
 				[TRIGGER_ATTR]: "",
+				[CONTEXT_MENU_TRIGGER_ATTR]: "",
 				//
 				onpointerdown: this.#onpointerdown,
 				onpointermove: this.#onpointermove,
@@ -1114,11 +1133,11 @@ export function useMenuRadioItem(props: MenuRadioItemStateProps & MenuItemCombin
 }
 
 export function useMenuGroup(props: MenuGroupStateProps) {
-	return new MenuGroupState(props);
+	return setMenuGroupContext(new MenuGroupState(props));
 }
 
-export function useMenuLabel(props: MenuLabelStateProps) {
-	return new MenuLabelState(props);
+export function useMenuLabel(props: MenuGroupLabelStateProps) {
+	return getMenuGroupContext().createGroupLabel(props);
 }
 
 export function useMenuSeparator(props: MenuSeparatorStateProps) {

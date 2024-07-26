@@ -14,7 +14,7 @@
 	const valueState = useSelectValue();
 
 	if (children) {
-		valueState.root.valueNodeHasChildren.value = true;
+		valueState.root.valueNodeHasChildren.current = true;
 	}
 
 	const mergedProps = $derived(
@@ -23,7 +23,7 @@
 </script>
 
 {#if child}
-	{@render child?.({ props: mergedProps })}
+	{@render child({ props: mergedProps })}
 {:else}
 	<span {...mergedProps} bind:this={ref}>
 		{#if valueState.showPlaceholder}

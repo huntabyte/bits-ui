@@ -1,11 +1,5 @@
-import type {
-	EventCallback,
-	OnChangeFn,
-	PrimitiveButtonAttributes,
-	PrimitiveSpanAttributes,
-	WithChild,
-	Without,
-} from "$lib/internal/index.js";
+import type { EventCallback, OnChangeFn, WithChild, Without } from "$lib/internal/index.js";
+import type { PrimitiveButtonAttributes, PrimitiveSpanAttributes } from "$lib/shared/attributes.js";
 
 type SwitchRootSnippetProps = {
 	checked: boolean;
@@ -18,7 +12,7 @@ export type SwitchRootPropsWithoutHTML = WithChild<
 		 *
 		 * @defaultValue false
 		 */
-		disabled?: boolean;
+		disabled?: boolean | null | undefined;
 
 		/**
 		 * Whether the switch is required (for form validation).
@@ -53,10 +47,6 @@ export type SwitchRootPropsWithoutHTML = WithChild<
 		 * A callback function called when the checked state changes.
 		 */
 		onCheckedChange?: OnChangeFn<boolean>;
-
-		onclick?: EventCallback<MouseEvent>;
-
-		onkeydown?: EventCallback<KeyboardEvent>;
 	},
 	SwitchRootSnippetProps
 >;

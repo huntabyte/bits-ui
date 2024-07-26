@@ -53,8 +53,40 @@ export const ComponentDoc = defineDocumentType(() => ({
 	computedFields,
 }));
 
+export const UtilityDoc = defineDocumentType(() => ({
+	name: "UtilityDoc",
+	filePathPattern: `./utilities/**/*.md`,
+	fields: {
+		title: {
+			type: "string",
+			required: true,
+		},
+		description: {
+			type: "string",
+			required: true,
+		},
+	},
+	computedFields,
+}));
+
+export const TypeHelperDoc = defineDocumentType(() => ({
+	name: "TypeHelperDoc",
+	filePathPattern: `./type-helpers/**/*.md`,
+	fields: {
+		title: {
+			type: "string",
+			required: true,
+		},
+		description: {
+			type: "string",
+			required: true,
+		},
+	},
+	computedFields,
+}));
+
 export default makeSource({
 	contentDirPath: "./content",
-	documentTypes: [Doc, ComponentDoc],
+	documentTypes: [Doc, ComponentDoc, UtilityDoc, TypeHelperDoc],
 	disableImportAliasWarning: true,
 });

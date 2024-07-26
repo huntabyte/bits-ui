@@ -146,26 +146,26 @@ async function openMultiple(
 const OPEN_KEYS = [kbd.ARROW_DOWN, kbd.ARROW_UP];
 
 describe("combobox - single", () => {
-	it("has no accessibility violations", async () => {
+	it("should have noaccessibility violations", async () => {
 		const { container } = render(ComboboxTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
-	it("opens on click", async () => {
+	it("should open on click", async () => {
 		await openSingle();
 	});
 
-	it.each(OPEN_KEYS)("opens on %s keydown", async (key) => {
+	it.each(OPEN_KEYS)("should open on %s keydown", async (key) => {
 		await openSingle({}, key);
 	});
 
-	it("applies the appropriate `aria-labelledby` attribute to the group", async () => {
+	it("should applie the appropriate `aria-labelledby` attribute to the group", async () => {
 		const { group, groupLabel } = await openSingle();
 
 		expect(group).toHaveAttribute("aria-labelledby", groupLabel.id);
 	});
 
-	it("selects item with the enter key", async () => {
+	it("should select item with the enter key", async () => {
 		const { user, input } = await openSingle();
 		await user.keyboard(kbd.ARROW_DOWN);
 		await user.keyboard(kbd.ENTER);
@@ -173,38 +173,38 @@ describe("combobox - single", () => {
 		expect(input).toHaveValue("B");
 	});
 
-	it("renders an input if the `name` prop is passed", async () => {
+	it("should render an input if the `name` prop is passed", async () => {
 		const { getHiddenInput } = setupSingle();
 		expect(getHiddenInput()).toBeInTheDocument();
 	});
 
-	it("doesn't render an input if the `name` prop isn't passed or is an empty string/undefined", async () => {
+	it("should not render an input if the `name` prop isn't passed or is an empty string/undefined", async () => {
 		const { getHiddenInput } = setupSingle({ name: "" });
 		expect(getHiddenInput()).not.toBeInTheDocument();
 	});
 
-	it("syncs the value prop to the hidden input", async () => {
+	it("should sync the value prop to the hidden input", async () => {
 		const { getHiddenInput } = setupSingle({ value: "test" });
 		expect(getHiddenInput()).toHaveValue("test");
 	});
 
-	it("syncs the required prop to the hidden input", async () => {
+	it("should sync the required prop to the hidden input", async () => {
 		const { getHiddenInput } = setupSingle({ required: true });
 		expect(getHiddenInput()).toHaveAttribute("required");
 	});
 
-	it("syncs the disabled prop to the hidden input", async () => {
+	it("should sync the disabled prop to the hidden input", async () => {
 		const { getHiddenInput } = setupSingle({ disabled: true });
 		expect(getHiddenInput()).toHaveAttribute("disabled");
 	});
 
-	it("closes on escape keydown", async () => {
+	it("should close on escape keydown", async () => {
 		const { user, getContent } = await openSingle();
 		await user.keyboard(kbd.ESCAPE);
 		expect(getContent()).toBeNull();
 	});
 
-	it("closes on outside click", async () => {
+	it("should close on outside click", async () => {
 		const { user, getContent, outside } = await openSingle();
 		await sleep(100);
 		await user.click(outside);
@@ -212,12 +212,12 @@ describe("combobox - single", () => {
 		expect(getContent()).toBeNull();
 	});
 
-	it("portals to the body by default", async () => {
+	it("should portal to the body by default", async () => {
 		const { content } = await openSingle();
 		expect(content.parentElement?.parentElement).toBe(document.body);
 	});
 
-	it("portals to a custom element if specified", async () => {
+	it("should portal to a custom element if specified", async () => {
 		const { content, getByTestId } = await openSingle({
 			portalProps: { to: "#portal-target" },
 		});
@@ -225,13 +225,13 @@ describe("combobox - single", () => {
 		expect(content.parentElement?.parentElement).toBe(portalTarget);
 	});
 
-	it("does not portal if `disabled` is passed as portal prop", async () => {
+	it("should not portal if `disabled` is passed as portal prop", async () => {
 		const { content, getByTestId } = await openSingle({ portalProps: { disabled: true } });
 		const main = getByTestId("main");
 		expect(content.parentElement?.parentElement).toBe(main);
 	});
 
-	it("respects binding the `open` prop", async () => {
+	it("should respect binding the `open` prop", async () => {
 		const { getContent, user, openBinding } = await openSingle();
 		expect(openBinding).toHaveTextContent("true");
 		await user.click(openBinding);
@@ -242,14 +242,14 @@ describe("combobox - single", () => {
 		await waitFor(() => expect(getContent()).not.toBeNull());
 	});
 
-	it("respects binding the `value` prop", async () => {
+	it("should respect binding the `value` prop", async () => {
 		const { user, valueBinding } = await openSingle({ value: "1" });
 		expect(valueBinding).toHaveTextContent("1");
 		await user.click(valueBinding);
 		expect(valueBinding).toHaveTextContent("empty");
 	});
 
-	it("selects items when clicked", async () => {
+	it("should select items when clicked", async () => {
 		const { getByTestId, user, queryByTestId, input, getHiddenInput } = await openSingle();
 		const [item1] = getItems(getByTestId);
 		expect(queryByTestId("1-indicator")).toBeNull();
@@ -261,7 +261,7 @@ describe("combobox - single", () => {
 		expect(queryByTestId("1-indicator")).not.toBeNull();
 	});
 
-	it("navigates through the items using the keyboard (loop = false)", async () => {
+	it("should navigate through the items using the keyboard (loop = false)", async () => {
 		const { getByTestId, user } = await openSingle({}, kbd.ARROW_DOWN);
 
 		const [item0, item1, item2, item3] = getItems(getByTestId);
@@ -285,7 +285,7 @@ describe("combobox - single", () => {
 		expectHighlighted(item0!);
 	});
 
-	it("navigates through the items using the keyboard (loop = true)", async () => {
+	it("should navigate through the items using the keyboard (loop = true)", async () => {
 		const { getByTestId, user } = await openSingle(
 			{
 				loop: true,
@@ -317,7 +317,7 @@ describe("combobox - single", () => {
 		expectHighlighted(item3!);
 	});
 
-	it("allows items to be selected using the keyboard", async () => {
+	it("should allow items to be selected using the keyboard", async () => {
 		const { getByTestId, user, input, getHiddenInput } = await openSingle({}, kbd.ARROW_DOWN);
 
 		const [item0, item1, item2, item3] = getItems(getByTestId);
@@ -333,7 +333,7 @@ describe("combobox - single", () => {
 		expectSelected(item3!);
 	});
 
-	it("applies the `data-highlighted` attribute on mouseover", async () => {
+	it("should apply the `data-highlighted` attribute on mouseover", async () => {
 		const { getByTestId, user } = await openSingle({}, kbd.ARROW_DOWN);
 		const [item1, item2] = getItems(getByTestId);
 		await user.hover(item1!);
@@ -343,7 +343,7 @@ describe("combobox - single", () => {
 		expectNotHighlighted(item1!);
 	});
 
-	it("starts keyboard navigation at the highlighted item even if hovered with mouse", async () => {
+	it("should start keyboard navigation at the highlighted item even if hovered with mouse", async () => {
 		const { getByTestId, user, input } = await openSingle({}, kbd.ARROW_DOWN);
 		const [item1, item2, item3] = getItems(getByTestId);
 		await user.click(input);
@@ -357,7 +357,7 @@ describe("combobox - single", () => {
 		expectNotHighlighted(item2!);
 	});
 
-	it("selects a default item when provided", async () => {
+	it("should select a default item when provided", async () => {
 		const { getByTestId, queryByTestId, input, getHiddenInput } = await openSingle({
 			value: "2",
 			inputProps: {
@@ -371,7 +371,7 @@ describe("combobox - single", () => {
 		expectSelected(item2!);
 	});
 
-	it("allows navigating after navigating to the bottom, closing, and reopening the menu", async () => {
+	it("should allow navigating after navigating to the bottom, closing, and reopening the menu", async () => {
 		const { getByTestId, user, getContent } = await openSingle();
 		const [item0, item1, item2, item3] = getItems(getByTestId);
 		expectHighlighted(item0!);
@@ -399,32 +399,32 @@ describe("combobox - single", () => {
 // MULTIPLE
 ////////////////////////////////////
 describe("combobox - multiple", () => {
-	it("has no accessibility violations", async () => {
+	it("should have no accessibility violations", async () => {
 		const { container } = render(ComboboxMultiTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
-	it("opens on click", async () => {
+	it("should open on click", async () => {
 		await openMultiple();
 	});
 
-	it.each(OPEN_KEYS)("opens on %s keydown", async (key) => {
+	it.each(OPEN_KEYS)("should open on %s keydown", async (key) => {
 		await openMultiple({}, key);
 	});
 
-	it("selects item with the enter key", async () => {
+	it("should select item with the enter key", async () => {
 		const { user, input } = await openMultiple();
 		await user.keyboard(kbd.ARROW_DOWN);
 		await user.keyboard(kbd.ENTER);
 		expect(input).toHaveValue("B");
 	});
 
-	it("renders a hidden input if the `name` prop is passed", async () => {
+	it("should render a hidden input if the `name` prop is passed", async () => {
 		const { getHiddenInputs } = setupMultiple();
 		expect(getHiddenInputs()).toHaveLength(1);
 	});
 
-	it("renders a hidden input for each value in the `value` array, each with the same `name` prop", async () => {
+	it("should render a hidden input for each value in the `value` array, each with the same `name` prop", async () => {
 		const { getHiddenInputs } = setupMultiple({ value: ["a", "b"] });
 		const hiddenInputs = getHiddenInputs();
 		expect(hiddenInputs).toHaveLength(2);
@@ -432,7 +432,7 @@ describe("combobox - multiple", () => {
 		expect(hiddenInputs[1]).toHaveAttribute("name", "test");
 	});
 
-	it("syncs the value prop to the hidden inputs", async () => {
+	it("should sync the value prop to the hidden inputs", async () => {
 		const { getHiddenInputs } = setupMultiple({ value: ["a", "b"] });
 		const hiddenInputs = getHiddenInputs();
 		expect(hiddenInputs).toHaveLength(2);
@@ -440,7 +440,7 @@ describe("combobox - multiple", () => {
 		expect(hiddenInputs[1]).toHaveValue("b");
 	});
 
-	it("syncs the required prop to the hidden inputs", async () => {
+	it("should sync the required prop to the hidden inputs", async () => {
 		const { getHiddenInputs } = setupMultiple({ required: true, value: ["a", "b"] });
 		const hiddenInputs = getHiddenInputs();
 		expect(hiddenInputs).toHaveLength(2);
@@ -450,7 +450,7 @@ describe("combobox - multiple", () => {
 		}
 	});
 
-	it("syncs the disabled prop to the hidden inputs", async () => {
+	it("should sync the disabled prop to the hidden inputs", async () => {
 		const { getHiddenInputs } = setupMultiple({ disabled: true, value: ["a", "b"] });
 		const hiddenInputs = getHiddenInputs();
 		expect(hiddenInputs).toHaveLength(2);
@@ -460,13 +460,13 @@ describe("combobox - multiple", () => {
 		}
 	});
 
-	it("closes on escape keydown", async () => {
+	it("should close on escape keydown", async () => {
 		const { user, getContent } = await openMultiple();
 		await user.keyboard(kbd.ESCAPE);
 		expect(getContent()).toBeNull();
 	});
 
-	it("closes on outside click", async () => {
+	it("should close on outside click", async () => {
 		const { user, getContent, outside } = await openMultiple();
 		await sleep(100);
 		await user.click(outside);
@@ -474,12 +474,12 @@ describe("combobox - multiple", () => {
 		expect(getContent()).toBeNull();
 	});
 
-	it("portals to the body by default", async () => {
+	it("should portal to the body by default", async () => {
 		const { content } = await openMultiple();
 		expect(content.parentElement?.parentElement).toBe(document.body);
 	});
 
-	it("portals to a custom element if specified", async () => {
+	it("should portal to a custom element if specified", async () => {
 		const { content, getByTestId } = await openMultiple({
 			portalProps: { to: "#portal-target" },
 		});
@@ -487,13 +487,13 @@ describe("combobox - multiple", () => {
 		expect(content.parentElement?.parentElement).toBe(portalTarget);
 	});
 
-	it("does not portal if `disabled` is passed as portal prop", async () => {
+	it("should not portal if `disabled` is passed as portal prop", async () => {
 		const { content, getByTestId } = await openMultiple({ portalProps: { disabled: true } });
 		const main = getByTestId("main");
 		expect(content.parentElement?.parentElement).toBe(main);
 	});
 
-	it("respects binding the `open` prop", async () => {
+	it("should respect binding the `open` prop", async () => {
 		const { getContent, getByTestId, user, openBinding } = await openMultiple();
 		expect(openBinding).toHaveTextContent("true");
 		await user.click(openBinding);
@@ -504,14 +504,14 @@ describe("combobox - multiple", () => {
 		await waitFor(() => expect(getContent()).not.toBeNull());
 	});
 
-	it("respects binding the `value` prop", async () => {
+	it("should respect binding the `value` prop", async () => {
 		const { user, valueBinding } = await openMultiple({ value: ["1", "2"] });
 		expect(valueBinding.textContent).toEqual("1,2");
 		await user.click(valueBinding);
 		expect(valueBinding.textContent).toEqual("empty");
 	});
 
-	it("selects items when clicked", async () => {
+	it("should select items when clicked", async () => {
 		const { getByTestId, user, queryByTestId, input, getHiddenInputs } = await openMultiple();
 		const [item] = getItems(getByTestId);
 		await waitFor(() => expect(queryByTestId("1-indicator")).toBeNull());
@@ -525,7 +525,7 @@ describe("combobox - multiple", () => {
 		await waitFor(() => expect(queryByTestId("1-indicator")).not.toBeNull());
 	});
 
-	it("navigates through the items using the keyboard (loop = false)", async () => {
+	it("should navigate through the items using the keyboard (loop = false)", async () => {
 		const { getByTestId, user } = await openMultiple({}, kbd.ARROW_DOWN);
 
 		const [item0, item1, item2, item3] = getItems(getByTestId);
@@ -549,7 +549,7 @@ describe("combobox - multiple", () => {
 		expectHighlighted(item0!);
 	});
 
-	it("navigates through the items using the keyboard (loop = true)", async () => {
+	it("should navigate through the items using the keyboard (loop = true)", async () => {
 		const { getByTestId, user } = await openMultiple(
 			{
 				loop: true,
@@ -581,7 +581,7 @@ describe("combobox - multiple", () => {
 		expectHighlighted(item3!);
 	});
 
-	it("allows items to be selected using the keyboard", async () => {
+	it("should allow items to be selected using the keyboard", async () => {
 		const { getByTestId, user, input, getHiddenInputs } = await openMultiple(
 			{},
 			kbd.ARROW_DOWN
@@ -602,7 +602,7 @@ describe("combobox - multiple", () => {
 		expectSelected(item3!);
 	});
 
-	it("allows multiple items to be selected using the keyboard", async () => {
+	it("should allow multiple items to be selected using the keyboard", async () => {
 		const { getByTestId, user, input, getHiddenInputs } = await openMultiple(
 			{},
 			kbd.ARROW_DOWN
@@ -627,7 +627,7 @@ describe("combobox - multiple", () => {
 		expectNotSelected([item0!, item1!]);
 	});
 
-	it("applies the `data-highlighted` attribute on mouseover", async () => {
+	it("should apply the `data-highlighted` attribute on mouseover", async () => {
 		const { getByTestId, user } = await openMultiple({}, kbd.ARROW_DOWN);
 		const [item1, item2] = getItems(getByTestId);
 		await user.hover(item1!);
@@ -637,7 +637,7 @@ describe("combobox - multiple", () => {
 		expectNotHighlighted(item1!);
 	});
 
-	it("selects a default item when provided", async () => {
+	it("should select a default item when provided", async () => {
 		const { getByTestId, queryByTestId, input, container, getHiddenInputs } =
 			await openMultiple({
 				value: ["2"],

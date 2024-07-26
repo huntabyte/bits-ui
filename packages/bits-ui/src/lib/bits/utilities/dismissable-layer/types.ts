@@ -40,7 +40,7 @@ export type DismissableLayerProps = {
 	interactOutsideBehavior?: InteractOutsideBehaviorType;
 
 	/**
-	 *
+	 * Callback fired when focus leaves the dismissable layer.
 	 */
 	onFocusOutside?: (event: FocusEvent) => void;
 };
@@ -56,9 +56,16 @@ export type DismissableLayerImplProps = {
 	 */
 	id: string;
 
-	children?: Snippet<[{ props: Record<string, unknown> }]>;
+	/**
+	 * Provide a custom event validator function to determine if the event should be
+	 * considered a dismissal event. This was added to handle the case where a user
+	 * has one context menu open and right clicks on another context menu. We normally ignore
+	 * right clicks for "close" events, but in this case we want to close the context menu when
+	 * another is open.
+	 */
+	isValidEvent?: (e: PointerEvent | MouseEvent | TouchEvent, node: HTMLElement) => boolean;
 
-	onFocusOutside?: (event: FocusEvent) => void;
+	children?: Snippet<[{ props: Record<string, unknown> }]>;
 } & DismissableLayerProps;
 
 export type InteractOutsideInterceptEventType =

@@ -149,11 +149,13 @@ If you're going to be using the same accordion component multiple places through
 </Accordion.Root>
 ```
 
+Since we're populating the `children` of the `Accordion.Root` within the component, we've excluded the `children` snippet prop from the component props using the `WithoutChildren` type helper.
+
 ### Individual Item
 
 For each invidual item, you need an `Accordion.Item`, `Accordion.Header`, `Accordion.Trigger` and `Accordion.Content` component. You can make a reusable wrapper to reduce the amount of code you need to write each time.
 
-```svelte title="CustomAcccordionItem.svelte"
+```svelte title="CustomItem.svelte"
 <script lang="ts">
 	import { Accordion, type WithoutChildren } from "bits-ui";
 
@@ -180,13 +182,13 @@ For each invidual item, you need an `Accordion.Item`, `Accordion.Header`, `Accor
 ```svelte title="+page.svelte"
 <script lang="ts">
 	import { Accordion } from "bits-ui";
-	import CustomAccordionItem from "$lib/components/CustomAccordionItem.svelte";
+	import CustomItem from "$lib/components/CustomItem.svelte";
 </script>
 
 <Accordion.Root type="single">
-	<CustomAccordionItem title="Item 1" content="Content 1" />
-	<CustomAccordionItem title="Item 2" content="Content 2" />
-	<CustomAccordionItem title="Item 3" content="Content 3" />
+	<CustomItem title="Item 1" content="Content 1" />
+	<CustomItem title="Item 2" content="Content 2" />
+	<CustomItem title="Item 3" content="Content 3" />
 </Accordion.Root>
 ```
 

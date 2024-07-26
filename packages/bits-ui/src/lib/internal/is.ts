@@ -45,3 +45,7 @@ export function isTouch(e: PointerEvent) {
 export function isFocusVisible(element: Element) {
 	return element.matches(":focus-visible");
 }
+
+export function isNotNull<T>(value: T | null): value is T {
+	return value !== null;
+}

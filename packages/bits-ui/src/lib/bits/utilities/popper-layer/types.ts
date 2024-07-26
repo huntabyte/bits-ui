@@ -27,7 +27,7 @@ export type PopperLayerImplProps = Omit<
 	EscapeLayerImplProps &
 		DismissableLayerImplProps &
 		FloatingLayerContentImplProps &
-		PresenceLayerImplProps &
+		Omit<PresenceLayerImplProps, "presence"> &
 		TextSelectionLayerImplProps &
 		FocusScopeImplProps & {
 			popper: Snippet<[{ props: Record<string, unknown> }]>;

@@ -1,10 +1,5 @@
-import type {
-	OnChangeFn,
-	PrimitiveButtonAttributes,
-	PrimitiveDivAttributes,
-	WithChild,
-	Without,
-} from "$lib/internal/index.js";
+import type { OnChangeFn, WithChild, Without } from "$lib/internal/index.js";
+import type { PrimitiveButtonAttributes, PrimitiveDivAttributes } from "$lib/shared/attributes.js";
 import type { Orientation } from "$lib/index.js";
 
 export type BaseToggleGroupRootProps = {
@@ -77,7 +72,7 @@ export type ToggleGroupItemPropsWithoutHTML = WithChild<
 		 *
 		 * @defaultValue false
 		 */
-		disabled?: boolean;
+		disabled?: boolean | null | undefined;
 
 		/**
 		 * The value of the toggle item.

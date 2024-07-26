@@ -1,20 +1,37 @@
 <script lang="ts">
+	import { box } from "svelte-toolbelt";
 	import type { RootProps } from "../index.js";
+	import { useAspectRatioRoot } from "../aspect-ratio.svelte.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/useId.js";
 
-	let { ratio, children, ref = $bindable(), ...restProps }: RootProps = $props();
+	let {
+		ref = $bindable(null),
+		id = useId(),
+		ratio = 1,
+		children,
+		child,
+		...restProps
+	}: RootProps = $props();
+
+	const rootState = useAspectRatioRoot({
+		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
+		ratio: box.with(() => ratio),
+	});
+
+	const mergedProps = $derived(mergeProps(restProps, rootState.props));
 </script>
 
 <div style:position="relative" style:width="100%" style:padding-bottom="{ratio ? 100 / ratio : 0}%">
-	<div
-		bind:this={ref}
-		style:position="absolute"
-		style:top="0"
-		style:right="0"
-		style:bottom="0"
-		style:left="0"
-		{...restProps}
-		data-aspect-ratio-root=""
-	>
-		{@render children?.()}
-	</div>
+	{#if child}
+		{@render child({ props: mergedProps })}
+	{:else}
+		<div {...mergedProps}>
+			{@render children?.()}
+		</div>
+	{/if}
 </div>

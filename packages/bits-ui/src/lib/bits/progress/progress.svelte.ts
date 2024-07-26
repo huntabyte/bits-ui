@@ -33,14 +33,14 @@ class ProgressRootState {
 		() =>
 			({
 				role: "meter",
-				value: this.#value.value,
-				max: this.#max.value,
+				value: this.#value.current,
+				max: this.#max.current,
 				"aria-valuemin": 0,
-				"aria-valuemax": this.#max.value,
-				"aria-valuenow": this.#value.value,
-				"data-value": this.#value.value,
-				"data-state": getProgressDataState(this.#value.value, this.#max.value),
-				"data-max": this.#max.value,
+				"aria-valuemax": this.#max.current,
+				"aria-valuenow": this.#value.current,
+				"data-value": this.#value.current,
+				"data-state": getProgressDataState(this.#value.current, this.#max.current),
+				"data-max": this.#max.current,
 				[ROOT_ATTR]: "",
 			}) as const
 	);

@@ -2,7 +2,7 @@
 	import { box } from "svelte-toolbelt";
 	import type { ItemProps } from "../index.js";
 	import { useToggleGroupItem } from "../toggle-group.svelte.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {
@@ -19,7 +19,7 @@
 	const itemState = useToggleGroupItem({
 		id: box.with(() => id),
 		value: box.with(() => value),
-		disabled: box.with(() => disabled),
+		disabled: box.with(() => disabled ?? false),
 		ref: box.with(
 			() => ref,
 			(v) => (ref = v)
@@ -30,7 +30,7 @@
 </script>
 
 {#if child}
-	{@render child?.({ props: mergedProps, pressed: itemState.isPressed })}
+	{@render child({ props: mergedProps, pressed: itemState.isPressed })}
 {:else}
 	<button bind:this={ref} {...mergedProps}>
 		{@render children?.({ pressed: itemState.isPressed })}

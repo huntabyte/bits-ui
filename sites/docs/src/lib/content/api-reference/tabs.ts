@@ -1,68 +1,52 @@
 import type {
 	TabsContentPropsWithoutHTML,
 	TabsListPropsWithoutHTML,
-	TabsPropsWithoutHTML,
+	TabsRootPropsWithoutHTML,
 	TabsTriggerPropsWithoutHTML,
 } from "bits-ui";
 import {
-	builderAndAttrsSlotProps,
-	domElProps,
+	createApiSchema,
+	createBooleanProp,
+	createEnumProp,
+	createFunctionProp,
+	createStringProp,
 	enums,
-	union,
+	withChildProps,
 } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
-import type { APISchema } from "$lib/types/index.js";
 
-const root: APISchema<TabsPropsWithoutHTML> = {
+const root = createApiSchema<TabsRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root tabs component which contains the other tab components.",
 	props: {
-		value: {
-			type: {
-				type: C.UNION,
-				definition: union("string", "undefined"),
-			},
+		value: createStringProp({
 			description: "The active tab value.",
-		},
-		onValueChange: {
-			type: {
-				type: C.FUNCTION,
-				definition: "(value: string | undefined) => void",
-			},
+			bindable: true,
+		}),
+		onValueChange: createFunctionProp({
+			definition: "(value: string) => void",
 			description: "A callback function called when the active tab value changes.",
-		},
-		activateOnFocus: {
-			default: C.TRUE,
-			type: C.BOOLEAN,
-			description: "Whether or not to activate the tab when it receives focus.",
-		},
-		autoSet: {
-			default: C.TRUE,
-			type: C.BOOLEAN,
+		}),
+		activationMode: createEnumProp({
+			options: ["automatic", "manual"],
 			description:
-				"Whether or not to automatically set the tab value when it receives focus.",
-		},
-		loop: {
+				"How the activation of tabs should be handled. If set to `'automatic'`, the tab will be activated when the trigger is focused. If set to `'manual'`, the tab will be activated when the trigger is pressed.",
+			default: "'automatic'",
+		}),
+		disabled: createBooleanProp({
+			default: C.FALSE,
+			description: "Whether or not the tabs are disabled.",
+		}),
+		loop: createBooleanProp({
 			default: C.TRUE,
-			type: C.BOOLEAN,
 			description: "Whether or not the tabs should loop when navigating with the keyboard.",
-		},
-		orientation: {
+		}),
+		orientation: createEnumProp({
+			options: [C.HORIZONTAL, C.VERTICAL],
 			default: C.HORIZONTAL,
-			type: {
-				type: C.ENUM,
-				definition: enums(C.HORIZONTAL, C.VERTICAL),
-			},
 			description: "The orientation of the tabs.",
-		},
-		...domElProps("HTMLDivElement"),
-	},
-	slotProps: {
-		...builderAndAttrsSlotProps,
-		value: {
-			type: C.STRING,
-			description: "The currently active tab value.",
-		},
+		}),
+		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
 		{
@@ -75,13 +59,12 @@ const root: APISchema<TabsPropsWithoutHTML> = {
 			description: "Present on the root element.",
 		},
 	],
-};
+});
 
-const list: APISchema<TabsListPropsWithoutHTML> = {
+const list = createApiSchema<TabsListPropsWithoutHTML>({
 	title: "List",
 	description: "The component containing the tab triggers.",
-	props: domElProps("HTMLDivElement"),
-	slotProps: { ...builderAndAttrsSlotProps },
+	props: withChildProps({ elType: "HTMLDivElement" }),
 	dataAttributes: [
 		{
 			name: "orientation",
@@ -93,25 +76,22 @@ const list: APISchema<TabsListPropsWithoutHTML> = {
 			description: "Present on the list element.",
 		},
 	],
-};
+});
 
-const trigger: APISchema<TabsTriggerPropsWithoutHTML> = {
+const trigger = createApiSchema<TabsTriggerPropsWithoutHTML>({
 	title: "Trigger",
 	description: "The trigger for a tab.",
 	props: {
-		value: {
+		value: createStringProp({
 			required: true,
-			type: "string",
 			description: "The value of the tab this trigger represents.",
-		},
-		disabled: {
+		}),
+		disabled: createBooleanProp({
 			default: C.FALSE,
-			type: C.BOOLEAN,
 			description: "Whether or not the tab is disabled.",
-		},
-		...domElProps("HTMLButtonElement"),
+		}),
+		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "state",
@@ -138,26 +118,24 @@ const trigger: APISchema<TabsTriggerPropsWithoutHTML> = {
 			description: "Present on the trigger elements.",
 		},
 	],
-};
+});
 
-const content: APISchema<TabsContentPropsWithoutHTML> = {
+const content = createApiSchema<TabsContentPropsWithoutHTML>({
 	title: "Content",
 	description: "The panel containing the contents of a tab.",
 	props: {
-		value: {
+		value: createStringProp({
 			required: true,
-			type: "string",
 			description: "The value of the tab this content represents.",
-		},
-		...domElProps("HTMLDivElement"),
+		}),
+		...withChildProps({ elType: "HTMLDivElement" }),
 	},
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "tabs-content",
 			description: "Present on the content elements.",
 		},
 	],
-};
+});
 
 export const tabs = [root, list, trigger, content];

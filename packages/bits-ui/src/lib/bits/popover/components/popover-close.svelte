@@ -3,7 +3,7 @@
 	import type { CloseProps } from "../index.js";
 	import { usePopoverClose } from "../popover.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 
 	let {
 		child,
@@ -24,7 +24,7 @@
 </script>
 
 {#if child}
-	{@render child?.({ props: mergedProps })}
+	{@render child({ props: mergedProps })}
 {:else}
 	<button {...mergedProps}>
 		{@render children?.()}

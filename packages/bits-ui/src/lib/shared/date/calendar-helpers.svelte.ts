@@ -196,7 +196,7 @@ export function getSelectableCells(calendarNode: HTMLElement | null) {
 export function setPlaceholderToNodeValue(node: HTMLElement, placeholder: WritableBox<DateValue>) {
 	const cellValue = node.getAttribute("data-value");
 	if (!cellValue) return;
-	placeholder.value = parseStringToDateValue(cellValue, placeholder.value);
+	placeholder.current = parseStringToDateValue(cellValue, placeholder.current);
 }
 
 type ShiftCalendarFocusProps = {
@@ -290,7 +290,7 @@ export function shiftCalendarFocus({
 
 		const firstMonth = months[0]?.value;
 		if (!firstMonth) return;
-		placeholder.value = firstMonth.subtract({ months: numberOfMonths });
+		placeholder.current = firstMonth.subtract({ months: numberOfMonths });
 
 		// Without a tick here, it seems to be too quick for the DOM to update
 
@@ -325,7 +325,7 @@ export function shiftCalendarFocus({
 
 		const firstMonth = months[0]?.value;
 		if (!firstMonth) return;
-		placeholder.value = firstMonth.add({ months: numberOfMonths });
+		placeholder.current = firstMonth.add({ months: numberOfMonths });
 
 		afterTick(() => {
 			const newCandidateCells = getSelectableCells(calendarNode);
@@ -491,13 +491,13 @@ type UseMonthViewSyncProps = {
  * which determines the month to show in the calendar.
  */
 export function useMonthViewOptionsSync(props: UseMonthViewSyncProps) {
-	const weekStartsOn = props.weekStartsOn.value;
-	const locale = props.locale.value;
-	const fixedWeeks = props.fixedWeeks.value;
-	const numberOfMonths = props.numberOfMonths.value;
+	const weekStartsOn = props.weekStartsOn.current;
+	const locale = props.locale.current;
+	const fixedWeeks = props.fixedWeeks.current;
+	const numberOfMonths = props.numberOfMonths.current;
 
 	untrack(() => {
-		const placeholder = props.placeholder.value;
+		const placeholder = props.placeholder.current;
 		if (!placeholder) return;
 		const defaultMonthProps = {
 			weekStartsOn,
@@ -578,18 +578,18 @@ export function useMonthViewPlaceholderSync({
 		 * If the placeholder's month is already in this visible months,
 		 * we don't need to do anything.
 		 */
-		if (getVisibleMonths().some((month) => isSameMonth(month, placeholder.value))) {
+		if (getVisibleMonths().some((month) => isSameMonth(month, placeholder.current))) {
 			return;
 		}
 
 		const defaultMonthProps = {
-			weekStartsOn: weekStartsOn.value,
-			locale: locale.value,
-			fixedWeeks: fixedWeeks.value,
-			numberOfMonths: numberOfMonths.value,
+			weekStartsOn: weekStartsOn.current,
+			locale: locale.current,
+			fixedWeeks: fixedWeeks.current,
+			numberOfMonths: numberOfMonths.current,
 		};
 
-		setMonths(createMonths({ ...defaultMonthProps, dateObj: placeholder.value }));
+		setMonths(createMonths({ ...defaultMonthProps, dateObj: placeholder.current }));
 	});
 }
 

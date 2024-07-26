@@ -2,7 +2,7 @@
 	import { box } from "svelte-toolbelt";
 	import type { TriggerProps } from "../index.js";
 	import { useLinkPreviewTrigger } from "../link-preview.svelte.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 
@@ -27,7 +27,7 @@
 
 <FloatingLayer.Anchor {id}>
 	{#if child}
-		{@render child?.({ props: mergedProps })}
+		{@render child({ props: mergedProps })}
 	{:else}
 		<a {...mergedProps}>
 			{@render children?.()}

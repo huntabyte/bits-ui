@@ -1,8 +1,10 @@
 <script lang="ts">
 	import { Avatar, LinkPreview } from "bits-ui";
-	import { CalendarBlank, MapPin } from "$icons/index.js";
-	let loadingStatusTrigger: Avatar.RootProps["loadingStatus"] = "loading";
-	let loadingStatusContent: Avatar.RootProps["loadingStatus"] = "loading";
+	import CalendarBlank from "phosphor-svelte/lib/CalendarBlank";
+	import MapPin from "phosphor-svelte/lib/MapPin";
+
+	let loadingStatusTrigger: Avatar.RootProps["loadingStatus"] = $state("loading");
+	let loadingStatusContent: Avatar.RootProps["loadingStatus"] = $state("loading");
 </script>
 
 <LinkPreview.Root>

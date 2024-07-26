@@ -3,7 +3,7 @@
 	import type { IconProps } from "../index.js";
 	import { useSelectIcon } from "../select.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 
 	let {
 		children,
@@ -25,9 +25,9 @@
 </script>
 
 {#if child}
-	{@render child?.({ props: mergedProps })}
+	{@render child({ props: mergedProps })}
 {:else}
-	<span {...mergedProps} bind:this={ref}>
+	<span {...mergedProps}>
 		{#if children}
 			{@render children()}
 		{:else}

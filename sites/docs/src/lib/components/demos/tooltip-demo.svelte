@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Tooltip } from "bits-ui";
-	import { MagicWand } from "$icons/index.js";
+	import MagicWand from "phosphor-svelte/lib/MagicWand";
 </script>
 
 <Tooltip.Provider>

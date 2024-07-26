@@ -1,12 +1,6 @@
-import type {
-	EventCallback,
-	OnChangeFn,
-	PrimitiveButtonAttributes,
-	PrimitiveDivAttributes,
-	WithChild,
-	Without,
-} from "$lib/internal/index.js";
+import type { EventCallback, OnChangeFn, WithChild, Without } from "$lib/internal/index.js";
 import type { Orientation } from "$lib/index.js";
+import type { PrimitiveButtonAttributes, PrimitiveDivAttributes } from "$lib/shared/attributes.js";
 
 export type RadioGroupRootPropsWithoutHTML = WithChild<{
 	/**
@@ -78,13 +72,7 @@ export type RadioGroupItemPropsWithoutHTML = WithChild<
 		 *
 		 * @defaultValue false
 		 */
-		disabled?: boolean;
-
-		onclick?: EventCallback<MouseEvent>;
-
-		onkeydown?: EventCallback<KeyboardEvent>;
-
-		onfocus?: EventCallback<FocusEvent>;
+		disabled?: boolean | null | undefined;
 	},
 	RadioGroupItemSnippetProps
 >;

@@ -12,9 +12,9 @@ We could have some sort of `Validation` object that gets passed to an `onInvalid
 
 ```ts
 type InvalidResult = {
-	type: "min" | "max" | "unavailable" | "custom"
+	type: "min" | "max" | "unavailable" | "custom";
 	message?: string;
-}
+};
 ```
 
 Then the user can handle this in their own way, such as displaying a validation message in a `Validation` component, or calling a function that does whatever they need to do to handle the validation. Need to think more on this one.
@@ -30,7 +30,3 @@ They also need to be flexible enough to allow for reusing the same component whi
 ---
 
 Should we embrace the [ValidityState](https://developer.mozilla.org/en-US/docs/Web/API/ValidityState) API? Something to think about.
-
----
-
-Need to determine how we'll handle users being able to cancel the `onEscapeKeydown` event.

@@ -3,7 +3,7 @@
 	import type { AccordionItemProps } from "../types.js";
 	import { useAccordionItem } from "../accordion.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 
 	let {
 		id = useId(),

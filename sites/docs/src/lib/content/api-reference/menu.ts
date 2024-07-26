@@ -1,14 +1,11 @@
 import type {
-	DropdownMenuArrowPropsWithoutHTML,
-	DropdownMenuCheckboxIndicatorPropsWithoutHTML,
 	DropdownMenuCheckboxItemPropsWithoutHTML,
 	DropdownMenuContentPropsWithoutHTML,
 	DropdownMenuGroupPropsWithoutHTML,
 	DropdownMenuItemPropsWithoutHTML,
 	DropdownMenuLabelPropsWithoutHTML,
-	DropdownMenuPropsWithoutHTML,
+	DropdownMenuRootPropsWithoutHTML,
 	DropdownMenuRadioGroupPropsWithoutHTML,
-	DropdownMenuRadioIndicatorPropsWithoutHTML,
 	DropdownMenuRadioItemPropsWithoutHTML,
 	DropdownMenuSeparatorPropsWithoutHTML,
 	DropdownMenuSubContentPropsWithoutHTML,
@@ -16,220 +13,165 @@ import type {
 	DropdownMenuSubTriggerPropsWithoutHTML,
 	DropdownMenuTriggerPropsWithoutHTML,
 } from "bits-ui";
-import { focusProp } from "./extended-types/index.js";
-import { floatingPositioning } from "./floating.js";
-import { builderAndAttrsSlotProps, domElProps, onOutsideClickProp } from "./helpers.js";
+import {
+	arrowProps,
+	childrenSnippet,
+	createBooleanProp,
+	createFunctionProp,
+	createStringProp,
+	createUnionProp,
+	dirProp,
+	dismissableLayerProps,
+	escapeLayerProps,
+	floatingProps,
+	focusScopeProps,
+	forceMountProp,
+	preventOverflowTextSelectionProp,
+	withChildProps,
+} from "./helpers.js";
 import type { APISchema, DataAttrSchema, PropObj } from "$lib/types/index.js";
 import * as C from "$lib/content/constants.js";
-import {
-	attrsSlotProp,
-	enums,
-	idsSlotProp,
-	portalProp,
-	transitionProps,
-	union,
-} from "$lib/content/api-reference/helpers.js";
+import { enums, union } from "$lib/content/api-reference/helpers.js";
+
+const sharedItemProps = {
+	textValue: createStringProp({
+		description: "The text value of the checkbox menu item. This is used for typeahead.",
+	}),
+	onSelect: createFunctionProp({
+		definition: "() => void",
+		description: "A callback that is fired when the menu item is selected.",
+	}),
+	...withChildProps({ elType: "HTMLDivElement" }),
+} as const;
 
 const props = {
-	preventScroll: {
-		default: C.TRUE,
-		type: C.BOOLEAN,
-		description: "Whether or not to prevent scroll on the body when the menu is open.",
-	},
-	closeOnEscape: {
-		default: C.TRUE,
-		type: C.BOOLEAN,
-		description: "Whether to close the menu when the escape key is pressed.",
-	},
-	closeOnOutsideClick: {
-		type: C.BOOLEAN,
-		default: C.TRUE,
-		description: "Whether to close the menu when a click occurs outside of it.",
-	},
-	loop: {
-		type: C.BOOLEAN,
-		default: C.FALSE,
-		description:
-			"Whether or not to loop through the menu items when navigating with the keyboard.",
-	},
-	open: {
-		type: C.BOOLEAN,
+	open: createBooleanProp({
 		default: C.FALSE,
 		description: "The open state of the  menu.",
-	},
-	onOpenChange: {
-		type: {
-			type: C.FUNCTION,
-			definition: "(open: boolean) => void",
-		},
+		bindable: true,
+	}),
+	onOpenChange: createFunctionProp({
+		definition: "(open: boolean) => void",
 		description: "A callback that is fired when the menu's open state changes.",
-	},
-	dir: {
-		type: {
-			type: C.ENUM,
-			definition: enums("ltr", "rtl"),
-		},
-		description: "The direction of the menu.",
-	},
-	portal: { ...portalProp("menu") },
-	closeFocus: {
-		type: focusProp,
-		description: "Override the focus when the menu is closed.",
-	},
-	typeahead: {
-		type: C.BOOLEAN,
-		default: C.TRUE,
-		description:
-			"Whether or not to enable typeahead functionality. When enabled, the user can type to navigate to menu items.",
-	},
-	disableFocusFirstItem: {
-		type: C.BOOLEAN,
-		default: C.FALSE,
-		description: "Whether or not to disable focus on the first item when the menu is opened.",
-	},
-	closeOnItemClick: {
-		type: C.BOOLEAN,
-		default: C.TRUE,
-		description: "Whether or not to close the menu when an item is clicked.",
-	},
-	onOutsideClick: onOutsideClickProp,
-} satisfies PropObj<DropdownMenuPropsWithoutHTML>;
+	}),
+	dir: dirProp,
+	children: childrenSnippet(),
+} satisfies PropObj<DropdownMenuRootPropsWithoutHTML>;
 
 const subProps = {
-	disabled: {
-		type: C.BOOLEAN,
-		description: "Whether or not the submenu is disabled.",
-	},
-	open: {
-		type: C.BOOLEAN,
+	open: createBooleanProp({
 		default: C.FALSE,
 		description: "The open state of the submenu.",
-	},
-	onOpenChange: {
-		type: {
-			type: C.FUNCTION,
-			definition: "(open: boolean) => void",
-		},
+		bindable: true,
+	}),
+	onOpenChange: createFunctionProp({
+		definition: "(open: boolean) => void",
 		description: "A callback that is fired when the submenu's open state changes.",
-	},
+	}),
+	children: childrenSnippet(),
 } satisfies PropObj<DropdownMenuSubPropsWithoutHTML>;
 
 const contentProps = {
-	...transitionProps,
-	...floatingPositioning,
-	...domElProps("HTMLDivElement"),
+	...floatingProps(),
+	...escapeLayerProps,
+	...dismissableLayerProps,
+	...focusScopeProps,
+	forceMount: forceMountProp,
+	preventOverflowTextSelection: preventOverflowTextSelectionProp,
+	dir: dirProp,
+	loop: createBooleanProp({
+		default: C.FALSE,
+		description:
+			"Whether or not to loop through the menu items in when navigating with the keyboard.",
+	}),
+	...withChildProps({ elType: "HTMLDivElement" }),
 } satisfies PropObj<DropdownMenuContentPropsWithoutHTML>;
 
-const subContentProps = {
-	...transitionProps,
-	...floatingPositioning,
-	...domElProps("HTMLDivElement"),
-} satisfies PropObj<DropdownMenuSubContentPropsWithoutHTML>;
-
-const arrowProps = {
-	size: {
-		type: C.NUMBER,
-		default: "8",
-		description: "The height and width of the arrow in pixels.",
-	},
-	...domElProps("HTMLDivElement"),
-} satisfies PropObj<DropdownMenuArrowPropsWithoutHTML>;
+const subContentProps = contentProps satisfies PropObj<
+	Omit<DropdownMenuSubContentPropsWithoutHTML, "style">
+>;
 
 const checkboxItemProps = {
-	disabled: {
-		type: C.BOOLEAN,
+	disabled: createBooleanProp({
 		default: C.FALSE,
 		description:
 			"Whether or not the checkbox menu item is disabled. Disabled items cannot be interacted with and are skipped when navigating with the keyboard.",
-	},
-	checked: {
+	}),
+	checked: createUnionProp({
+		options: ["boolean", "'indeterminate'"],
 		default: C.FALSE,
-		type: union("boolean", "'indeterminate'"),
 		description: "The checkbox menu item's checked state.",
-	},
-	onCheckedChange: {
-		type: {
-			type: C.FUNCTION,
-			definition: "(checked: boolean | 'indeterminate') => void",
-		},
+		bindable: true,
+	}),
+	onCheckedChange: createFunctionProp({
+		definition: "(checked: boolean | 'indeterminate') => void",
 		description:
 			"A callback that is fired when the checkbox menu item's checked state changes.",
-	},
-	...domElProps("HTMLDivElement"),
+	}),
+	...sharedItemProps,
 } satisfies PropObj<DropdownMenuCheckboxItemPropsWithoutHTML>;
 
 const radioGroupProps = {
-	value: {
-		type: C.STRING,
+	value: createStringProp({
 		description: "The value of the currently checked radio menu item.",
-	},
-	onValueChange: {
-		type: {
-			type: C.FUNCTION,
-			definition: "(value: string) => void",
-		},
+		bindable: true,
+	}),
+	onValueChange: createFunctionProp({
+		definition: "(value: string) => void",
 		description: "A callback that is fired when the radio group's value changes.",
-	},
-	...domElProps("HTMLDivElement"),
+	}),
+	...withChildProps({ elType: "HTMLDivElement" }),
 } satisfies PropObj<DropdownMenuRadioGroupPropsWithoutHTML>;
 
 const radioItemProps = {
-	value: {
-		type: C.STRING,
+	value: createStringProp({
 		description:
 			"The value of the radio item. When checked, the parent `RadioGroup`'s value will be set to this value.",
 		required: true,
-	},
-	disabled: {
-		type: C.FALSE,
+	}),
+	disabled: createBooleanProp({
 		description:
 			"Whether or not the radio menu item is disabled. Disabled items cannot be interacted with and are skipped when navigating with the keyboard.",
-	},
-	...domElProps("HTMLDivElement"),
+		default: C.FALSE,
+	}),
+	...sharedItemProps,
 } satisfies PropObj<DropdownMenuRadioItemPropsWithoutHTML>;
 
-const radioIndicatorProps = {
-	...domElProps("HTMLDivElement"),
-} satisfies PropObj<DropdownMenuRadioIndicatorPropsWithoutHTML>;
-
 const itemProps = {
-	disabled: {
-		type: C.BOOLEAN,
+	disabled: createBooleanProp({
 		default: C.FALSE,
 		description: "Whether or not the menu item is disabled.",
-	},
-	href: {
-		type: C.STRING,
-		description:
-			"An optional prop that when passed converts the dropdown item into an anchor tag.",
-	},
-	...domElProps("HTMLDivElement"),
-} satisfies PropObj<DropdownMenuItemPropsWithoutHTML & { href: string }>;
+	}),
+	...sharedItemProps,
+} satisfies PropObj<DropdownMenuItemPropsWithoutHTML>;
 
 const subTriggerProps = {
-	disabled: {
-		type: C.BOOLEAN,
+	disabled: createBooleanProp({
 		default: C.FALSE,
 		description: "Whether or not the submenu trigger is disabled.",
-	},
-	...domElProps("HTMLDivElement"),
+	}),
+	...sharedItemProps,
 } satisfies PropObj<DropdownMenuSubTriggerPropsWithoutHTML>;
 
-const triggerProps = domElProps(
-	"HTMLButtonElement"
-) satisfies PropObj<DropdownMenuTriggerPropsWithoutHTML>;
-const groupProps = domElProps(
-	"HTMLDivElement"
-) satisfies PropObj<DropdownMenuGroupPropsWithoutHTML>;
-const labelProps = domElProps(
-	"HTMLDivElement"
-) satisfies PropObj<DropdownMenuLabelPropsWithoutHTML>;
-const separatorProps = domElProps(
-	"HTMLDivElement"
-) satisfies PropObj<DropdownMenuSeparatorPropsWithoutHTML>;
-const checkboxIndicatorProps = {
-	...domElProps("HTMLDivElement"),
-} satisfies PropObj<DropdownMenuCheckboxIndicatorPropsWithoutHTML>;
+const triggerProps = {
+	disabled: createBooleanProp({
+		default: C.FALSE,
+		description: "Whether or not the menu trigger is disabled.",
+	}),
+	...withChildProps({ elType: "HTMLButtonElement" }),
+} satisfies PropObj<DropdownMenuTriggerPropsWithoutHTML>;
+
+const groupProps = withChildProps({
+	elType: "HTMLDivElement",
+}) satisfies PropObj<DropdownMenuGroupPropsWithoutHTML>;
+
+const labelProps = withChildProps({
+	elType: "HTMLDivElement",
+}) satisfies PropObj<DropdownMenuLabelPropsWithoutHTML>;
+
+const separatorProps = withChildProps({
+	elType: "HTMLDivElement",
+}) satisfies PropObj<DropdownMenuSeparatorPropsWithoutHTML>;
 
 const STATE: DataAttrSchema = {
 	name: "state",
@@ -365,128 +307,72 @@ const subTriggerAttrs: DataAttrs = [
 	},
 ];
 
-const checkboxIndicatorAttrs: DataAttrs = [
-	{
-		name: "menu-checkbox-indicator",
-		description: "Present on the checkbox indicator element.",
-	},
-];
-
-const radioIndicatorAttrs: DataAttrs = [
-	{
-		name: "menu-radio-indicator",
-		description: "Present on the radio indicator element.",
-	},
-];
-
 export const trigger = {
 	props: triggerProps,
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: triggerAttrs,
 };
 
 export const content = {
 	props: contentProps,
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: contentAttrs,
 };
 
 export const arrow = {
 	props: arrowProps,
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: arrowAttrs,
 };
 
 export const item = {
 	props: itemProps,
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: itemAttrs,
 };
 
 export const group = {
 	props: groupProps,
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: groupAttrs,
 };
 
 export const label = {
 	props: labelProps,
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: labelAttrs,
 };
 
 export const separator = {
 	props: separatorProps,
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: separatorAttrs,
-};
-
-export const checkboxIndicator = {
-	props: checkboxIndicatorProps,
-	slotProps: {
-		attrs: attrsSlotProp,
-		checked: {
-			type: C.BOOLEAN,
-			description: "Whether or not the checkbox is checked.",
-		},
-	},
-	dataAttributes: checkboxIndicatorAttrs,
 };
 
 export const checkboxItem = {
 	props: checkboxItemProps,
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: checkboxItemAttrs,
 };
 
 export const radioGroup = {
 	props: radioGroupProps,
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: radioGroupAttrs,
 };
 
 export const radioItem = {
 	props: radioItemProps,
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: radioItemAttrs,
 };
 
 export const subTrigger = {
 	props: subTriggerProps,
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: subTriggerAttrs,
 };
 
 export const subContent = {
 	props: subContentProps,
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: subContentAttrs,
-};
-
-export const radioIndicator = {
-	props: radioIndicatorProps,
-	slotProps: {
-		attrs: attrsSlotProp,
-		checked: {
-			type: C.BOOLEAN,
-			description: "Whether or not the checkbox is checked.",
-		},
-	},
-	dataAttributes: radioIndicatorAttrs,
 };
 
 export const sub = {
 	props: subProps,
-	slotProps: {
-		subIds: idsSlotProp,
-	},
 };
 
 export const root = {
 	props,
-	slotProps: {
-		ids: idsSlotProp,
-	},
 };
 
 export const menu = {
@@ -495,10 +381,8 @@ export const menu = {
 	content,
 	item,
 	checkboxItem,
-	checkboxIndicator,
 	radioGroup,
 	radioItem,
-	radioIndicator,
 	separator,
 	arrow,
 	group,

@@ -1,10 +1,5 @@
-import type {
-	OnChangeFn,
-	PrimitiveButtonAttributes,
-	PrimitiveDivAttributes,
-	WithChild,
-	Without,
-} from "$lib/internal/index.js";
+import type { OnChangeFn, WithChild, Without } from "$lib/internal/index.js";
+import type { PrimitiveButtonAttributes, PrimitiveDivAttributes } from "$lib/shared/attributes.js";
 
 export type CollapsibleRootPropsWithoutHTML = WithChild<{
 	/**

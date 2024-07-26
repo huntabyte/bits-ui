@@ -2,7 +2,7 @@
 	import { box } from "svelte-toolbelt";
 	import type { CalendarProps } from "../index.js";
 	import { getDateRangePickerRootContext } from "../date-range-picker.svelte.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { useRangeCalendarRoot } from "$lib/bits/range-calendar/range-calendar.svelte.js";
 
@@ -48,7 +48,7 @@
 </script>
 
 {#if child}
-	{@render child?.({ props: mergedProps, ...rangeCalendarState.snippetProps })}
+	{@render child({ props: mergedProps, ...rangeCalendarState.snippetProps })}
 {:else}
 	<div {...mergedProps}>
 		{@render children?.(rangeCalendarState.snippetProps)}

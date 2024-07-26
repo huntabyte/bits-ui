@@ -1,14 +1,11 @@
 import type { PopperLayerProps } from "../utilities/popper-layer/types.js";
 import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
+import type { OnChangeFn, WithChild, WithChildren, Without } from "$lib/internal/types.js";
 import type {
-	OnChangeFn,
 	PrimitiveButtonAttributes,
 	PrimitiveDivAttributes,
 	PrimitiveSpanAttributes,
-	WithChild,
-	WithChildren,
-	Without,
-} from "$lib/internal/types.js";
+} from "$lib/shared/attributes.js";
 import type { Direction } from "$lib/shared/index.js";
 import type { PortalProps } from "$lib/bits/utilities/portal/index.js";
 
@@ -67,7 +64,7 @@ export type SelectRootPropsWithoutHTML = WithChildren<{
 export type SelectRootProps = SelectRootPropsWithoutHTML;
 
 export type SelectContentImplPropsWithoutHTML = WithChild<
-	PopperLayerProps & {
+	Omit<PopperLayerProps, "content"> & {
 		/**
 		 *  The positioning mode to use
 		 *
@@ -127,7 +124,7 @@ export type SelectTriggerPropsWithoutHTML = WithChild<{
 	 *
 	 * @defaultValue false
 	 */
-	disabled?: boolean;
+	disabled?: boolean | null | undefined;
 }>;
 
 export type SelectTriggerProps = SelectTriggerPropsWithoutHTML &

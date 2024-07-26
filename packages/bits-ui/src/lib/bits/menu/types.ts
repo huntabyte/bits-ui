@@ -1,13 +1,7 @@
 import type { PopperLayerProps } from "../utilities/popper-layer/types.js";
 import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
-import type {
-	OnChangeFn,
-	PrimitiveButtonAttributes,
-	PrimitiveDivAttributes,
-	WithChild,
-	WithChildren,
-	Without,
-} from "$lib/internal/types.js";
+import type { OnChangeFn, WithChild, WithChildren, Without } from "$lib/internal/types.js";
+import type { PrimitiveButtonAttributes, PrimitiveDivAttributes } from "$lib/shared/attributes.js";
 import type { Direction } from "$lib/shared/index.js";
 import type { PortalProps } from "$lib/bits/utilities/portal/types.js";
 
@@ -32,7 +26,7 @@ export type MenuRootPropsWithoutHTML = WithChildren<{
 
 export type MenuRootProps = MenuRootPropsWithoutHTML;
 
-export type MenuContentPropsWithoutHTML = WithChild<PopperLayerProps>;
+export type MenuContentPropsWithoutHTML = WithChild<Omit<PopperLayerProps, "content">>;
 
 export type MenuContentProps = MenuContentPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, MenuContentPropsWithoutHTML>;
@@ -95,7 +89,7 @@ export type MenuTriggerPropsWithoutHTML = WithChild<{
 	 *
 	 * @defaultValue false
 	 */
-	disabled?: boolean;
+	disabled?: boolean | null | undefined;
 }>;
 
 export type MenuTriggerProps = MenuTriggerPropsWithoutHTML &
@@ -113,7 +107,7 @@ export type MenuSubPropsWithoutHTML = WithChildren<{
 	onOpenChange?: OnChangeFn<boolean>;
 }>;
 
-export type MenuSubContentPropsWithoutHTML = WithChild<PopperLayerProps>;
+export type MenuSubContentPropsWithoutHTML = WithChild<Omit<PopperLayerProps, "content">>;
 export type MenuSubContentProps = MenuSubContentPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, MenuSubContentPropsWithoutHTML>;
 
@@ -131,9 +125,9 @@ export type MenuGroupPropsWithoutHTML = WithChild;
 export type MenuGroupProps = MenuGroupPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, MenuGroupPropsWithoutHTML>;
 
-export type MenuLabelPropsWithoutHTML = WithChild;
-export type MenuLabelProps = MenuLabelPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, MenuLabelPropsWithoutHTML>;
+export type MenuGroupLabelPropsWithoutHTML = WithChild;
+export type MenuGroupLabelProps = MenuGroupLabelPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, MenuGroupLabelPropsWithoutHTML>;
 
 export type MenuRadioGroupPropsWithoutHTML = WithChild<{
 	/**

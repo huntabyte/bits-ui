@@ -1,10 +1,6 @@
 import type { DateValue } from "@internationalized/date";
-import type {
-	OnChangeFn,
-	PrimitiveDivAttributes,
-	WithChild,
-	Without,
-} from "$lib/internal/types.js";
+import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
+import type { PrimitiveDivAttributes } from "$lib/shared/attributes.js";
 import type { EditableSegmentPart } from "$lib/shared/date/field/types.js";
 import type { DateMatcher, Granularity, WeekStartsOn } from "$lib/shared/date/types.js";
 import type { DateRange } from "$lib/shared/index.js";

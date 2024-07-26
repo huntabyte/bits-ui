@@ -1,9 +1,5 @@
-import type {
-	OnChangeFn,
-	PrimitiveSpanAttributes,
-	WithChild,
-	Without,
-} from "$lib/internal/types.js";
+import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
+import type { PrimitiveSpanAttributes } from "$lib/shared/attributes.js";
 import type { Direction, Orientation } from "$lib/shared/index.js";
 
 export type SliderRootSnippetProps = {

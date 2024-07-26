@@ -2,7 +2,7 @@
 	import { box } from "svelte-toolbelt";
 	import type { ViewportProps } from "../index.js";
 	import { useNavigationMenuViewport } from "../navigation-menu.svelte.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import PresenceLayer from "$lib/bits/utilities/presence-layer/presence-layer.svelte";
 
@@ -29,7 +29,7 @@
 <PresenceLayer {id} present={forceMount || viewportState.open}>
 	{#snippet presence()}
 		{#if child}
-			{@render child?.({ props: mergedProps })}
+			{@render child({ props: mergedProps })}
 		{:else}
 			<div {...mergedProps}>
 				{@render children?.()}

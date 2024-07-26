@@ -4,7 +4,7 @@
 	import { useCheckboxRoot } from "../checkbox.svelte.js";
 	import CheckboxInput from "./checkbox-input.svelte";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
-	import { useId } from "$lib/internal/useId.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
 
 	let {
 		checked = $bindable(false),
@@ -30,7 +30,7 @@
 				}
 			}
 		),
-		disabled: box.with(() => disabled),
+		disabled: box.with(() => disabled ?? false),
 		required: box.with(() => required),
 		name: box.with(() => name),
 		value: box.with(() => value),
@@ -45,11 +45,11 @@
 </script>
 
 {#if child}
-	{@render child({ props: mergedProps, checked: rootState.checked.value })}
+	{@render child({ props: mergedProps, checked: rootState.checked.current })}
 {:else}
 	<button {...mergedProps}>
 		{@render children?.({
-			checked: rootState.checked.value,
+			checked: rootState.checked.current,
 		})}
 	</button>
 {/if}

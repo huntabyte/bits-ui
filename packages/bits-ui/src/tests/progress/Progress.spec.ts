@@ -14,27 +14,27 @@ function setup(props: Progress.RootProps = {}) {
 }
 
 describe("progress", () => {
-	it("has no accessibility violations", async () => {
+	it("should have no accessibility violations", async () => {
 		const { container } = render(ProgressTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
-	it("has bits data attrs", async () => {
+	it("should have bits data attrs", async () => {
 		const { root } = setup();
 		expect(root).toHaveAttribute("data-progress-root");
 	});
 
-	it("respects the value prop", async () => {
+	it("should respect the value prop", async () => {
 		const { root } = setup({ value: 50 });
 		expect(root).toHaveAttribute("aria-valuenow", "50");
 	});
 
-	it("respects the max prop", async () => {
+	it("should respect the max prop", async () => {
 		const { root } = setup({ max: 20 });
 		expect(root).toHaveAttribute("aria-valuemax", "20");
 	});
 
-	it("reacts to updates to the value prop", async () => {
+	it("should react to updates to the value prop", async () => {
 		const user = userEvent.setup();
 		const { getByTestId } = render(ProgressTest);
 		const root = getByTestId("root");
