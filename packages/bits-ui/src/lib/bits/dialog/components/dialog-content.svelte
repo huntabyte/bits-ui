@@ -70,14 +70,11 @@
 						<TextSelectionLayer {...mergedProps} enabled={present.current}>
 							{#if child}
 								{@render child({
-									props: mergeProps(mergedProps, focusScopeProps, {
-										hidden: !present.current,
-									}),
+									props: mergeProps(mergedProps, focusScopeProps),
 								})}
 							{:else}
 								<div
 									{...mergeProps(mergedProps, focusScopeProps, {
-										hidden: !present.current,
 										style: {
 											pointerEvents: "auto",
 										},

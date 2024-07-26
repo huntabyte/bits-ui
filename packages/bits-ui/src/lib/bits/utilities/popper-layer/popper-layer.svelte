@@ -42,6 +42,7 @@
 		interactOutsideBehavior = "close",
 		loop,
 		trapped,
+		isValidEvent = () => false,
 		...restProps
 	}: PopperLayerImplProps = $props();
 </script>
@@ -82,6 +83,7 @@
 								{onInteractOutsideStart}
 								{onFocusOutside}
 								{interactOutsideBehavior}
+								{isValidEvent}
 								enabled={present.current}
 							>
 								{#snippet children({ props: dismissableProps })}

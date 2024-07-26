@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
 	import type { ContentProps } from "../index.js";
-	import { useMenuContent } from "$lib/bits/menu/menu.svelte.js";
+	import { CONTEXT_MENU_TRIGGER_ATTR, useMenuContent } from "$lib/bits/menu/menu.svelte.js";
 	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { noop } from "$lib/internal/callbacks.js";
@@ -71,6 +71,17 @@
 		onEscapeKeydown(e);
 		if (e.defaultPrevented) return;
 		contentState.parentMenu.onClose();
+	}}
+	isValidEvent={(e) => {
+		if ("button" in e && e.button === 2) {
+			const target = e.target as HTMLElement;
+			if (!target) return false;
+			const isAnotherContextTrigger =
+				target.closest(`[${CONTEXT_MENU_TRIGGER_ATTR}]`) !==
+				contentState.parentMenu.triggerNode;
+			return isAnotherContextTrigger;
+		}
+		return false;
 	}}
 	trapped
 	{loop}

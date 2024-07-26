@@ -50,6 +50,7 @@ const LABEL_ATTR = "data-menu-label";
 const RADIO_GROUP_ATTR = "data-menu-radio-group";
 const RADIO_ITEM_ATTR = "data-menu-radio-item";
 const ARROW_ATTR = "data-menu-arrow";
+export const CONTEXT_MENU_TRIGGER_ATTR = "data-context-menu-trigger";
 
 const [setMenuRootContext] = createContext<MenuRootState>("Menu.Root");
 
@@ -1062,6 +1063,7 @@ class ContextMenuTriggerState {
 				"data-disabled": getDataDisabled(this.#disabled.current),
 				"data-state": getDataOpenClosed(this.#parentMenu.open.current),
 				[TRIGGER_ATTR]: "",
+				[CONTEXT_MENU_TRIGGER_ATTR]: "",
 				//
 				onpointerdown: this.#onpointerdown,
 				onpointermove: this.#onpointermove,

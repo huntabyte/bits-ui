@@ -59,9 +59,11 @@ export class DismissableLayerState {
 	#isFocusInsideDOMTree = $state(false);
 	#onFocusOutside: DismissableLayerStateProps["onFocusOutside"];
 	currNode = $state<HTMLElement | null>(null);
+	#isValidEventProp: DismissableLayerStateProps["isValidEvent"];
 
 	constructor(props: DismissableLayerStateProps) {
 		this.#enabled = props.enabled;
+		this.#isValidEventProp = props.isValidEvent;
 
 		useRefById({
 			id: props.id,
@@ -186,14 +188,12 @@ export class DismissableLayerState {
 	}
 
 	#onInteractOutsideStart = debounce((e: InteractOutsideEvent) => {
-		if (!this.currNode) {
-			return;
-		}
-		if (
-			!this.#isResponsibleLayer ||
-			this.#isAnyEventIntercepted() ||
-			!isValidEvent(e, this.currNode)
-		) {
+		if (!this.currNode) return;
+
+		const isEventValid =
+			this.#isValidEventProp.current(e, this.currNode) || isValidEvent(e, this.currNode);
+
+		if (!this.#isResponsibleLayer || this.#isAnyEventIntercepted() || !isEventValid) {
 			return;
 		}
 		this.#interactOutsideStartProp.current(e);
@@ -205,12 +205,10 @@ export class DismissableLayerState {
 		if (!this.currNode) return;
 
 		const behaviorType = this.#behaviorType.current;
+		const isEventValid =
+			this.#isValidEventProp.current(e, this.currNode) || isValidEvent(e, this.currNode);
 
-		if (
-			!this.#isResponsibleLayer ||
-			this.#isAnyEventIntercepted() ||
-			!isValidEvent(e, this.currNode)
-		) {
+		if (!this.#isResponsibleLayer || this.#isAnyEventIntercepted() || !isEventValid) {
 			return;
 		}
 		if (behaviorType !== "close" && behaviorType !== "defer-otherwise-close") return;
