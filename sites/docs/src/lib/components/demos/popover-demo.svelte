@@ -19,7 +19,6 @@
 			class="z-30 w-full max-w-[328px] rounded-[12px] border border-dark-10 bg-background p-4 shadow-popover data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2"
 			sideOffset={8}
 		>
-			<Popover.Arrow class="text-white" />
 			<div class="flex items-center">
 				<div class="mr-3 flex size-12 items-center justify-center rounded-full bg-muted">
 					<ImageSquare class="size-6" />
