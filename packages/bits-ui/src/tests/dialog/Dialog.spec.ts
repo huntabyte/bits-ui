@@ -57,7 +57,7 @@ describe("dialog", () => {
 	});
 
 	it("should have bits data attrs", async () => {
-		const { getByTestId } = render(DialogTest, { open: true });
+		const { getByTestId } = await open();
 		const parts = ["trigger", "overlay", "close", "title", "description", "content"];
 
 		for (const part of parts) {

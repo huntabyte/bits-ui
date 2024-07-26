@@ -59,7 +59,7 @@ describe("alert dialog", () => {
 	});
 
 	it("should have bits data attrs", async () => {
-		const { getByTestId } = render(AlertDialogTest, { open: true });
+		const { getByTestId } = await open();
 		const parts = ["trigger", "overlay", "cancel", "title", "description", "content"];
 
 		for (const part of parts) {

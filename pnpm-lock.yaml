@@ -94,8 +94,8 @@ importers:
         specifier: ^6.4.6
         version: 6.4.6(@types/jest@29.5.12)(vitest@2.0.4(@types/node@20.14.10)(@vitest/ui@1.6.0)(jsdom@24.1.0))
       '@testing-library/svelte':
-        specifier: ^5.2.0
-        version: 5.2.0(svelte@5.0.0-next.199)(vite@5.3.3(@types/node@20.14.10))(vitest@2.0.4(@types/node@20.14.10)(@vitest/ui@1.6.0)(jsdom@24.1.0))
+        specifier: ^5.2.1
+        version: 5.2.1(svelte@5.0.0-next.199)(vite@5.3.3(@types/node@20.14.10))(vitest@2.0.4(@types/node@20.14.10)(@vitest/ui@1.6.0)(jsdom@24.1.0))
       '@testing-library/user-event':
         specifier: ^14.5.2
         version: 14.5.2(@testing-library/dom@10.3.1)
@@ -1481,8 +1481,8 @@ packages:
       vitest:
         optional: true
 
-  '@testing-library/svelte@5.2.0':
-    resolution: {integrity: sha512-oMIFfxMcaPOXp+BQTRVgkeKzfAx7ee9fMrWaiKbMN36tN61kLl4Uj5ZZ/y1w9aL3a0BuBEoErV5iorYwCHqVUA==}
+  '@testing-library/svelte@5.2.1':
+    resolution: {integrity: sha512-yXSqBsYaQAeP2xt7gqKu135Q67+NTsBDcpL1akv5MVAQ/amb7AQ0zW5nzrquTIE2lvrc6q58KZhQA61Vc05ZOg==}
     engines: {node: '>= 10'}
     peerDependencies:
       svelte: ^3 || ^4 || ^5 || ^5.0.0-next.0
@@ -6309,7 +6309,7 @@ snapshots:
       '@types/jest': 29.5.12
       vitest: 2.0.4(@types/node@20.14.10)(@vitest/ui@1.6.0)(jsdom@24.1.0)
 
-  '@testing-library/svelte@5.2.0(svelte@5.0.0-next.199)(vite@5.3.3(@types/node@20.14.10))(vitest@2.0.4(@types/node@20.14.10)(@vitest/ui@1.6.0)(jsdom@24.1.0))':
+  '@testing-library/svelte@5.2.1(svelte@5.0.0-next.199)(vite@5.3.3(@types/node@20.14.10))(vitest@2.0.4(@types/node@20.14.10)(@vitest/ui@1.6.0)(jsdom@24.1.0))':
     dependencies:
       '@testing-library/dom': 10.3.1
       svelte: 5.0.0-next.199
