@@ -222,32 +222,31 @@ class ScrollAreaScrollbarHoverState {
 			const scrollAreaNode = this.root.scrollAreaNode;
 			const hideDelay = this.root.scrollHideDelay.current;
 			let hideTimer = 0;
-			if (scrollAreaNode) {
-				const handlePointerEnter = () => {
-					window.clearTimeout(hideTimer);
-					untrack(() => (this.isVisible = true));
-				};
+			if (!scrollAreaNode) return;
+			const handlePointerEnter = () => {
+				window.clearTimeout(hideTimer);
+				untrack(() => (this.isVisible = true));
+			};
 
-				const handlePointerLeave = () => {
-					if (hideTimer) window.clearTimeout(hideTimer);
-					hideTimer = window.setTimeout(() => {
-						untrack(() => {
-							this.scrollbar.hasThumb = false;
-							this.isVisible = false;
-						});
-					}, hideDelay);
-				};
+			const handlePointerLeave = () => {
+				if (hideTimer) window.clearTimeout(hideTimer);
+				hideTimer = window.setTimeout(() => {
+					untrack(() => {
+						this.scrollbar.hasThumb = false;
+						this.isVisible = false;
+					});
+				}, hideDelay);
+			};
 
-				const unsubListeners = executeCallbacks(
-					addEventListener(scrollAreaNode, "pointerenter", handlePointerEnter),
-					addEventListener(scrollAreaNode, "pointerleave", handlePointerLeave)
-				);
+			const unsubListeners = executeCallbacks(
+				addEventListener(scrollAreaNode, "pointerenter", handlePointerEnter),
+				addEventListener(scrollAreaNode, "pointerleave", handlePointerLeave)
+			);
 
-				return () => {
-					window.clearTimeout(hideTimer);
-					unsubListeners();
-				};
-			}
+			return () => {
+				window.clearTimeout(hideTimer);
+				unsubListeners();
+			};
 		});
 	}
 
@@ -382,6 +381,7 @@ class ScrollAreaScrollbarVisibleState {
 	});
 	thumbRatio = $derived.by(() => getThumbRatio(this.sizes.viewport, this.sizes.content));
 	hasThumb = $derived.by(() => Boolean(this.thumbRatio > 0 && this.thumbRatio < 1));
+	prevTransformStyle = "";
 
 	constructor(scrollbar: ScrollAreaScrollbarState) {
 		this.scrollbar = scrollbar;
@@ -389,6 +389,12 @@ class ScrollAreaScrollbarVisibleState {
 
 		$effect(() => {
 			this.scrollbar.hasThumb = this.hasThumb;
+		});
+
+		$effect.pre(() => {
+			if (!this.scrollbar.hasThumb && this.thumbNode) {
+				this.prevTransformStyle = this.thumbNode.style.transform;
+			}
 		});
 	}
 
@@ -421,7 +427,8 @@ class ScrollAreaScrollbarVisibleState {
 			sizes: this.sizes,
 			dir: this.root.dir.current,
 		});
-		this.thumbNode.style.transform = `translate3d(${offset}px, 0, 0)`;
+		const transformStyle = `translate3d(${offset}px, 0, 0)`;
+		this.thumbNode.style.transform = transformStyle;
 	};
 
 	xOnWheelScroll = (scrollPos: number) => {
@@ -441,7 +448,8 @@ class ScrollAreaScrollbarVisibleState {
 		if (!(this.root.viewportNode && this.thumbNode)) return;
 		const scrollPos = this.root.viewportNode.scrollTop;
 		const offset = getThumbOffsetFromScroll({ scrollPos, sizes: this.sizes });
-		this.thumbNode.style.transform = `translate3d(0, ${offset}px, 0)`;
+		const transformStyle = `translate3d(0, ${offset}px, 0)`;
+		this.thumbNode.style.transform = transformStyle;
 	};
 
 	yOnWheelScroll = (scrollPos: number) => {
@@ -451,7 +459,10 @@ class ScrollAreaScrollbarVisibleState {
 
 	yOnDragScroll = (pointerPos: number) => {
 		if (!this.root.viewportNode) return;
-		this.root.viewportNode.scrollTop = this.getScrollPosition(pointerPos);
+		this.root.viewportNode.scrollTop = this.getScrollPosition(
+			pointerPos,
+			this.root.dir.current
+		);
 	};
 
 	createScrollbarX(props: ScrollbarAxisStateProps) {
@@ -554,8 +565,7 @@ class ScrollAreaScrollbarXState implements ScrollbarAxisState {
 	};
 
 	thumbSize = $derived.by(() => {
-		const ts = getThumbSize(this.scrollbarVis.sizes);
-		return ts;
+		return getThumbSize(this.scrollbarVis.sizes);
 	});
 
 	props = $derived.by(
@@ -731,6 +741,10 @@ class ScrollAreaScrollbarSharedState {
 			untrack(() => this.handleThumbPositionChange());
 		});
 
+		$effect(() => {
+			this.handleThumbPositionChange();
+		});
+
 		useResizeObserver(() => this.scrollbarState.ref.current, this.handleResize);
 		useResizeObserver(() => this.root.contentNode, this.handleResize);
 	}
@@ -854,7 +868,7 @@ class ScrollAreaThumbImplState {
 		this.#scrollbarState.handleThumbPointerDown({ x, y });
 	};
 
-	#onpointerup = (e: PointerEvent) => {
+	#onpointerup = () => {
 		this.#scrollbarState.handleThumbPointerUp();
 	};
 
@@ -866,6 +880,7 @@ class ScrollAreaThumbImplState {
 				style: {
 					width: "var(--bits-scroll-area-thumb-width)",
 					height: "var(--bits-scroll-area-thumb-height)",
+					transform: this.#scrollbarState.scrollbarVis.prevTransformStyle,
 				},
 				onpointerdowncapture: this.#onpointerdowncapture,
 				onpointerup: this.#onpointerup,

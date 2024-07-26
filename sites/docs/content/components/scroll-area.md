@@ -89,6 +89,14 @@ We'll use this custom component in the following examples to demonstrate how to 
 
 The `hover` type is the default type of the scroll area, demonstrated in the featured example above. It only shows scrollbars when the user hovers over the scroll area and the content is larger than the viewport.
 
+```svelte {1}
+<CustomScrollArea type="hover">
+	<!-- ... -->
+</CustomScrollArea>
+```
+
+<ScrollAreaDemoCustom type="hover" />
+
 ### Scroll
 
 The `scroll` type displays the scrollbars when the user scrolls the content. This is similar to the behavior of MacOS.
@@ -115,15 +123,15 @@ The `auto` type behaves similarly to your typical browser scrollbars. When the c
 
 ### Always
 
-The `always` type behaves as if you set `overflow: scroll` on the scroll area. Scrollbars will always be visible, even when the content is smaller than the viewport.
+The `always` type behaves as if you set `overflow: scroll` on the scroll area. Scrollbars will always be visible, even when the content is smaller than the viewport. We've also set the `orientation` prop on the `CustomScrollArea` to `'both'` to ensure both scrollbars are rendered.
 
 ```svelte {1}
-<CustomScrollArea type="always">
+<CustomScrollArea type="always" orientation="both">
 	<!-- ... -->
 </CustomScrollArea>
 ```
 
-<ScrollAreaDemoCustom type="always" />
+<ScrollAreaDemoCustom type="always" orientation="both" />
 
 ## Customizing the Hide Delay
 
