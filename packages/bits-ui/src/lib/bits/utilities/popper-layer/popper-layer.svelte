@@ -39,7 +39,7 @@
 		onDestroyAutoFocus,
 		onMountAutoFocus,
 		onFocusOutside,
-		interactOutsideBehavior,
+		interactOutsideBehavior = "close",
 		loop,
 		trapped,
 		...restProps
