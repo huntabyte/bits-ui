@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from "svelte";
+	import { Collapsible } from "bits-ui";
 	import DemoContainer from "./demo-container.svelte";
 	import DemoCodeContainer from "./demo-code-container.svelte";
 
@@ -13,8 +14,13 @@
 </script>
 
 <DemoContainer>
-	{@render preview()}
+	{@render preview?.()}
 </DemoContainer>
-<DemoCodeContainer class={className}>
-	{@render children()}
-</DemoCodeContainer>
+<Collapsible.Root>
+	<Collapsible.Trigger>Show code</Collapsible.Trigger>
+	<Collapsible.Content>
+		<DemoCodeContainer class={className}>
+			{@render children?.()}
+		</DemoCodeContainer>
+	</Collapsible.Content>
+</Collapsible.Root>

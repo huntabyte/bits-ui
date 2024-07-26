@@ -4,6 +4,7 @@
 
 <ScrollArea.Root
 	class="relative overflow-hidden rounded-[10px] border border-dark-10 bg-background-alt px-4 py-4 shadow-card"
+	type="always"
 >
 	<ScrollArea.Viewport class="h-full max-h-[200px] w-full max-w-[200px]">
 		<h4 class="mb-4 mt-2 text-xl font-semibold leading-none tracking-[-0.01em] text-foreground">
