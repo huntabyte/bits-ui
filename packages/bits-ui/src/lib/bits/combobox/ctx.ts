@@ -46,11 +46,11 @@ export function getCtx() {
 
 type Items<T> = {
 	value: T;
-	label?: string;
+	label?: string | undefined;
 };
 
 type Props<T = unknown, M extends boolean = false> = CreateComboboxProps<T, M> & {
-	items?: Items<T>[];
+	items?: Items<T>[] | undefined;
 };
 
 export function setCtx<T = unknown, M extends boolean = false>(props: Props<T, M>) {

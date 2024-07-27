@@ -26,12 +26,12 @@ export type PopoverPropsWithoutHTML = Expand<
 		 *
 		 * @defaultValue false
 		 */
-		open?: boolean;
+		open?: boolean | undefined;
 
 		/**
 		 * A callback function called when the open state changes.
 		 */
-		onOpenChange?: OnChangeFn<boolean>;
+		onOpenChange?: OnChangeFn<boolean> | undefined;
 	}
 >;
 

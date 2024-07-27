@@ -13,12 +13,12 @@ export type ProgressPropsWithoutHTML = Expand<
 		 * The value of the progress bar.
 		 * You can bind this to a number value to programmatically control the value.
 		 */
-		value?: MeltProgressProps["defaultValue"];
+		value?: MeltProgressProps["defaultValue"] | undefined;
 
 		/**
 		 * A callback function called when the value changes.
 		 */
-		onValueChange?: OnChangeFn<number | null>;
+		onValueChange?: OnChangeFn<number | null> | undefined;
 	} & DOMElement
 >;
 //

@@ -30,12 +30,12 @@ export type CalendarPropsWithoutHTML<Multiple extends boolean = false> = Expand<
 		 * You can bind this to a value to programmatically control the
 		 * value state.
 		 */
-		value?: MeltCalendarProps<Multiple>["defaultValue"];
+		value?: MeltCalendarProps<Multiple>["defaultValue"] | undefined;
 
 		/**
 		 * A callback function called when the value changes.
 		 */
-		onValueChange?: OnChangeFn<MeltCalendarProps<Multiple>["defaultValue"]>;
+		onValueChange?: OnChangeFn<MeltCalendarProps<Multiple>["defaultValue"]> | undefined;
 
 		/**
 		 * The placeholder date, used to display the calendar when no
@@ -45,12 +45,12 @@ export type CalendarPropsWithoutHTML<Multiple extends boolean = false> = Expand<
 		 * You can bind this to a value to programmatically control the
 		 * placeholder state.
 		 */
-		placeholder?: DateValue;
+		placeholder?: DateValue | undefined;
 
 		/**
 		 * A callback function called when the placeholder changes.
 		 */
-		onPlaceholderChange?: OnChangeFn<DateValue>;
+		onPlaceholderChange?: OnChangeFn<DateValue> | undefined;
 
 		/**
 		 * If `true`, the calendar will focus the selected day,
@@ -59,7 +59,7 @@ export type CalendarPropsWithoutHTML<Multiple extends boolean = false> = Expand<
 		 *
 		 * @default false
 		 */
-		initialFocus?: boolean;
+		initialFocus?: boolean | undefined;
 	} & DOMElement
 >;
 

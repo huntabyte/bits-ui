@@ -18,12 +18,12 @@ export type CheckboxPropsWithoutHTML = Expand<
 		 *
 		 * @defaultValue false
 		 */
-		checked?: boolean | "indeterminate";
+		checked?: boolean | "indeterminate" | undefined;
 
 		/**
 		 * A callback function called when the checked state changes.
 		 */
-		onCheckedChange?: OnChangeFn<boolean | "indeterminate">;
+		onCheckedChange?: OnChangeFn<boolean | "indeterminate"> | undefined;
 	} & DOMElement<HTMLButtonElement>
 >;
 

@@ -25,22 +25,22 @@ export type DialogPropsWithoutHTML = Expand<
 		 *
 		 * @defaultValue false
 		 */
-		open?: MeltDialogProps["defaultOpen"] & {};
+		open?: (MeltDialogProps["defaultOpen"] & {}) | undefined;
 
 		/**
 		 * A callback function called when the open state changes.
 		 */
-		onOpenChange?: OnChangeFn<boolean>;
+		onOpenChange?: OnChangeFn<boolean> | undefined;
 
 		/**
 		 * Override the default autofocus behavior of the dialog when it opens
 		 */
-		openFocus?: FocusProp;
+		openFocus?: FocusProp | undefined;
 
 		/**
 		 * Override the default autofocus behavior of the dialog after close
 		 */
-		closeFocus?: FocusProp;
+		closeFocus?: FocusProp | undefined;
 	}
 >;
 
@@ -66,7 +66,7 @@ export type DialogPortalPropsWithoutHTML = DOMElement;
 
 export type DialogTitlePropsWithoutHTML = Expand<
 	{
-		level?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+		level?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | undefined;
 	} & DOMElement<HTMLHeadingElement>
 >;
 
