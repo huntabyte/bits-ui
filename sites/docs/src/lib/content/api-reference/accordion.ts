@@ -85,13 +85,7 @@ const item = createApiSchema<AccordionItemPropsWithoutHTML>({
 const trigger = createApiSchema<AccordionTriggerPropsWithoutHTML>({
 	title: "Trigger",
 	description: "The button responsible for toggling the accordion item.",
-	props: {
-		disabled: createBooleanProp({
-			description: "Whether or not the accordion item trigger is disabled.",
-			default: C.FALSE,
-		}),
-		...withChildProps({ elType: "HTMLButtonElement" }),
-	},
+	props: withChildProps({ elType: "HTMLButtonElement" }),
 });
 
 const content = createApiSchema<AccordionContentPropsWithoutHTML>({

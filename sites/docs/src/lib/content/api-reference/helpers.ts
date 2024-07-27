@@ -417,7 +417,7 @@ export const escapeLayerProps = {
 
 export const forceMountProp = createBooleanProp({
 	description:
-		"Whether or not to forcefully mount the content. This is useful if you want to use Svelte transitions or another animnation library for the content.",
+		"Whether or not to forcefully mount the content. This is useful if you want to use Svelte transitions or another animation library for the content.",
 	default: C.FALSE,
 });
 
