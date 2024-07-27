@@ -16,11 +16,13 @@ import {
 	withChildProps,
 } from "./helpers.js";
 import * as C from "$lib/content/constants.js";
-import StringOrArrayString from "./extended-types/string-or-array-string.md";
-import SingleOrMultiple from "./extended-types/single-or-multiple.md";
-import StringOrArrayChangeFn from "./extended-types/string-or-array-change-fn.md";
-import Orientation from "./extended-types/orientation.md";
-import HeaderLevel from "./extended-types/header-level.md";
+import StringOrArrayString from "./extended-types/shared/string-or-array-string.md";
+import SingleOrMultiple from "./extended-types/shared/single-or-multiple.md";
+import StringOrArrayChangeFn from "./extended-types/shared/string-or-array-change-fn.md";
+import Orientation from "./extended-types/shared/orientation.md";
+import HeaderLevel from "./extended-types/shared/header-level.md";
+import ContentChildSnippetProps from "./extended-types/accordion/content-child-snippet-props.md";
+import ContentChildrenSnippetProps from "./extended-types/accordion/content-children-snippet-props.md";
 
 const root = createApiSchema<AccordionRootPropsWithoutHTML>({
 	title: "Root",
@@ -75,8 +77,8 @@ const item = createApiSchema<AccordionItemPropsWithoutHTML>({
 		}),
 		value: createStringProp({
 			description:
-				"The value of the accordion item. This is used to identify when the item is open or closed.",
-			required: true,
+				"The value of the accordion item. This is used to identify when the item is open or closed. If not provided, a unique ID will be generated for this value.",
+			default: "A random unique ID",
 		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
@@ -93,7 +95,11 @@ const content = createApiSchema<AccordionContentPropsWithoutHTML>({
 	description: "The accordion item content, which is displayed when the item is open.",
 	props: {
 		forceMount: forceMountProp,
-		...withChildProps({ elType: "HTMLDivElement" }),
+		...withChildProps({
+			elType: "HTMLDivElement",
+			childrenDef: ContentChildrenSnippetProps,
+			childDef: ContentChildSnippetProps,
+		}),
 	},
 });
 

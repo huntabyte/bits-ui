@@ -1,7 +1,14 @@
 import * as C from "$lib/content/constants.js";
 import type { APISchema, PropSchema } from "$lib/types/api.js";
 import type { Component } from "svelte";
-import ChildDefaultSnippetProps from "./extended-types/child-default-snippet-props.md";
+import ChildDefaultSnippetProps from "./extended-types/shared/child-default-snippet-props.md";
+import OnInteractOutside from "./extended-types/shared/on-interact-outside.md";
+import OnFocusOutside from "./extended-types/shared/on-focus-outside.md";
+import InteractOutsideBehavior from "./extended-types/shared/interact-outside-behavior.md";
+import OnEscapeKeydown from "./extended-types/shared/on-escape-keydown.md";
+import EscapeKeydownBehavior from "./extended-types/shared/escape-keydown-behavior.md";
+import Dir from "./extended-types/shared/dir.md";
+import To from "./extended-types/portal/to.md";
 
 type ElementKind =
 	| "HTMLDivElement"
@@ -172,6 +179,7 @@ export const arrowProps = {
 
 export const portalProps = {
 	to: createUnionProp({
+		definition: To,
 		options: ["string", "HTMLElement", "null", "undefined"],
 		description: `Where to render the content when it is open. Defaults to the body. Can be disabled by passing \`null\``,
 		default: "body",
@@ -216,11 +224,11 @@ export function childSnippet(definition?: string | Component): PropSchema {
 			definition: definition || ChildDefaultSnippetProps,
 		},
 		description:
-			"Use render delegation to render your own element. See [render delegation](/docs/delegation) for more information.",
+			"Use render delegation to render your own element. See [delegation](/docs/delegation) docs for more information.",
 	};
 }
 
-export function childrenSnippet(definition?: string): PropSchema {
+export function childrenSnippet(definition?: string | Component): PropSchema {
 	if (definition) {
 		return {
 			type: {
@@ -242,20 +250,35 @@ export function refProp({ elType = "HTMLElement" }: { elType?: ElementKind }): P
 		type: elType,
 		description:
 			"The underlying DOM element being rendered. You can bind to this to get a reference to the element.",
+		bindable: true,
 	};
 }
 
 export function withChildProps({
 	elType = "HTMLElement",
-	def,
+	childrenDef,
+	childDef = ChildDefaultSnippetProps,
 }: {
 	elType: ElementKind;
-	def?: string;
+	childrenDef?: string | Component;
+	childDef?: string | Component;
 }) {
+	const trueChildrenDef = childrenDef
+		? typeof childrenDef === "string"
+			? escape(childrenDef)
+			: childrenDef
+		: undefined;
+
+	const trueChildDef = childDef
+		? typeof childDef === "string"
+			? escape(childDef)
+			: childDef
+		: undefined;
+
 	return {
-		child: childSnippet(def),
-		children: childrenSnippet(def),
 		ref: refProp({ elType }),
+		children: childrenSnippet(trueChildrenDef),
+		child: childSnippet(trueChildDef),
 	} as const;
 }
 
@@ -366,24 +389,25 @@ export function floatingProps(props?: {
 }
 
 export const dismissableOnInteractOutsideProp = createFunctionProp({
-	definition: "(event: PointerEvent | MouseEvent | TouchEvent) => void",
+	definition: OnInteractOutside,
 	description:
 		"Callback fired when an outside interaction event completes, which is either a `pointerup`, `mouseup`, or `touchend` event, depending on the user's input device. You can call `event.preventDefault()` to prevent the default behavior of handling the outside interaction.",
 });
 
 export const dismissableOnInteractOutsideStartProp: PropSchema = createFunctionProp({
-	definition: "(event: PointerEvent | MouseEvent | TouchEvent) => void",
+	definition: OnInteractOutside,
 	description:
 		"Callback fired when an outside interaction event starts, which is either a `pointerdown`, `mousedown`, or `touchstart` event, depending on the user's input device. You can call `event.preventDefault()` to prevent the continuation of the outside interaction.",
 });
 
 export const dismissableOnFocusOutsideProp = createFunctionProp({
-	definition: "(event: FocusEvent) => void",
+	definition: OnFocusOutside,
 	description:
 		"Callback fired when focus leaves the dismissable layer. You can call `event.preventDefault()` to prevent the default behavior on focus leaving the layer.",
 });
 
 export const dismissableInteractOutsideBehaviorProp: PropSchema = createEnumProp({
+	definition: InteractOutsideBehavior,
 	options: ["close", "ignore", "defer-otherwise-close", "defer-otherwise-ignore"],
 	default: "close",
 	description:
@@ -398,6 +422,7 @@ export const dismissableLayerProps = {
 } as const;
 
 export const escapeEscapeKeydownBehaviorProp: PropSchema = createEnumProp({
+	definition: EscapeKeydownBehavior,
 	options: ["close", "ignore", "defer-otherwise-close", "defer-otherwise-ignore"],
 	default: "close",
 	description:
@@ -405,7 +430,7 @@ export const escapeEscapeKeydownBehaviorProp: PropSchema = createEnumProp({
 });
 
 export const escapeOnEscapeKeydownProp: PropSchema = createFunctionProp({
-	definition: "(event: KeyboardEvent) => void",
+	definition: OnEscapeKeydown,
 	description:
 		"Callback fired when an escape keydown event occurs in the floating content. You can call `event.preventDefault()` to prevent the default behavior of handling the escape keydown event.",
 });
@@ -422,13 +447,13 @@ export const forceMountProp = createBooleanProp({
 });
 
 export const onMountAutoFocusProp = createFunctionProp({
-	definition: "(event: FocusEvent) => void",
+	definition: OnFocusOutside,
 	description:
 		"Event handler called when auto-focusing the content as it is mounted. Can be prevented.",
 });
 
 export const onDestroyAutoFocusProp = createFunctionProp({
-	definition: "(event: FocusEvent) => void",
+	definition: OnFocusOutside,
 	description:
 		"Event handler called when auto-focusing the content as it is destroyed. Can be prevented.",
 });
@@ -445,6 +470,7 @@ export const preventOverflowTextSelectionProp = createBooleanProp({
 });
 
 export const dirProp = createEnumProp({
+	definition: Dir,
 	options: ["ltr", "rtl"],
 	description: "The reading direction of the app.",
 	default: "ltr",

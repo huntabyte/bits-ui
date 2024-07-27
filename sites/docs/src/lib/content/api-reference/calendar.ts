@@ -12,12 +12,12 @@ import type {
 	CalendarPrevButtonPropsWithoutHTML,
 	CalendarRootPropsWithoutHTML,
 } from "bits-ui";
-import DateMatcher from "./extended-types/date-matcher.md";
-import SingleOrMultiple from "./extended-types/single-or-multiple.md";
-import DateValueOrArray from "./extended-types/date-value-or-array.md";
-import DateValueChangeFn from "./extended-types/date-value-change-fn.md";
-import DatePlaceholderChangeFn from "./extended-types/date-placeholder-change-fn.md";
-import WeekdayFormat from "./extended-types/weekday-format.md";
+import DateMatcher from "./extended-types/shared/date-matcher.md";
+import SingleOrMultiple from "./extended-types/shared/single-or-multiple.md";
+import DateValueOrArray from "./extended-types/shared/date-value-or-array.md";
+import DateValueChangeFn from "./extended-types/shared/date-value-change-fn.md";
+import DatePlaceholderChangeFn from "./extended-types/shared/date-placeholder-change-fn.md";
+import WeekdayFormat from "./extended-types/shared/weekday-format.md";
 
 import {
 	createApiSchema,
