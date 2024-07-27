@@ -144,7 +144,7 @@ export class AccordionItemState {
 	value: AccordionItemStateProps["value"];
 	disabled: AccordionItemStateProps["disabled"];
 	root: AccordionState;
-	isSelected = $derived.by(() => this.root.includesItem(this.value.current));
+	isActive = $derived.by(() => this.root.includesItem(this.value.current));
 	isDisabled = $derived.by(() => this.disabled.current || this.root.disabled.current);
 
 	constructor(props: AccordionItemStateProps) {
@@ -179,7 +179,7 @@ export class AccordionItemState {
 	props = $derived.by(() => ({
 		id: this.#id.current,
 		[ACCORDION_ITEM_ATTR]: "",
-		"data-state": getDataOpenClosed(this.isSelected),
+		"data-state": getDataOpenClosed(this.isActive),
 		"data-disabled": getDataDisabled(this.isDisabled),
 	}));
 }
@@ -190,7 +190,7 @@ export class AccordionItemState {
 
 type AccordionTriggerStateProps = WithRefProps<
 	ReadableBoxedValues<{
-		disabled: boolean;
+		disabled: boolean | null | undefined;
 	}>
 >;
 
@@ -240,10 +240,10 @@ class AccordionTriggerState {
 			({
 				id: this.#id.current,
 				disabled: this.#isDisabled,
-				"aria-expanded": getAriaExpanded(this.#itemState.isSelected),
+				"aria-expanded": getAriaExpanded(this.#itemState.isActive),
 				"aria-disabled": getAriaDisabled(this.#isDisabled),
 				"data-disabled": getDataDisabled(this.#isDisabled),
-				"data-state": getDataOpenClosed(this.#itemState.isSelected),
+				"data-state": getDataOpenClosed(this.#itemState.isActive),
 				"data-orientation": getDataOrientation(this.#root.orientation.current),
 				[ACCORDION_TRIGGER_ATTR]: "",
 				tabindex: 0,
@@ -273,12 +273,12 @@ class AccordionContentState {
 	#height = $state(0);
 	#forceMount: AccordionContentStateProps["forceMount"];
 
-	present = $derived.by(() => this.#forceMount.current || this.item.isSelected);
+	present = $derived.by(() => this.#forceMount.current || this.item.isActive);
 
 	constructor(props: AccordionContentStateProps, item: AccordionItemState) {
 		this.item = item;
 		this.#forceMount = props.forceMount;
-		this.#isMountAnimationPrevented = this.item.isSelected;
+		this.#isMountAnimationPrevented = this.item.isActive;
 		this.#id = props.id;
 		this.#ref = props.ref;
 
@@ -328,11 +328,15 @@ class AccordionContentState {
 		});
 	}
 
+	snippetProps = $derived.by(() => ({
+		open: this.item.isActive,
+	}));
+
 	props = $derived.by(
 		() =>
 			({
 				id: this.#id.current,
-				"data-state": getDataOpenClosed(this.item.isSelected),
+				"data-state": getDataOpenClosed(this.item.isActive),
 				"data-disabled": getDataDisabled(this.item.isDisabled),
 				"data-orientation": getDataOrientation(this.item.root.orientation.current),
 				[ACCORDION_CONTENT_ATTR]: "",
@@ -375,7 +379,7 @@ class AccordionHeaderState {
 				role: "heading",
 				"aria-level": this.#level.current,
 				"data-heading-level": this.#level.current,
-				"data-state": getDataOpenClosed(this.#item.isSelected),
+				"data-state": getDataOpenClosed(this.#item.isActive),
 				"data-orientation": getDataOrientation(this.#item.root.orientation.current),
 				[ACCORDION_HEADER_ATTR]: "",
 			}) as const

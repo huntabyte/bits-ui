@@ -79,42 +79,58 @@ export type AccordionRootPropsWithoutHTML =
 export type AccordionRootProps = AccordionRootPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, AccordionRootPropsWithoutHTML>;
 
-export type AccordionTriggerPropsWithoutHTML = WithChild<{
-	/**
-	 * Whether the trigger for the accordion item is disabled or not.
-	 *
-	 * @defaultValue false
-	 */
-	disabled?: boolean | null | undefined;
-}>;
+export type AccordionTriggerPropsWithoutHTML = WithChild;
 
 export type AccordionTriggerProps = AccordionTriggerPropsWithoutHTML &
-	Omit<PrimitiveButtonAttributes, "disabled" | "onclick" | "onkeydown">;
+	Without<PrimitiveButtonAttributes, AccordionTriggerPropsWithoutHTML>;
 
-export type AccordionItemContext = {
-	value: string;
-	disabled: boolean;
+export type AccordionContentSnippetProps = {
+	/**
+	 * Whether the accordion content is active/open or not.
+	 */
+	open: boolean;
 };
 
-export type AccordionContentPropsWithoutHTML = WithChild<{
-	/**
-	 * Whether to forcefully mount the content, regardless of the open state.
-	 * This is useful if you want to use Svelte transitions for the content.
-	 */
-	forceMount?: boolean;
-}>;
+export type AccordionContentPropsWithoutHTML = WithChild<
+	{
+		/**
+		 * Whether to forcefully mount the content, regardless of the open state.
+		 * This is useful if you want to use Svelte transitions for the content.
+		 *
+		 * @defaultValue `true`
+		 */
+		forceMount?: boolean;
+	},
+	AccordionContentSnippetProps
+>;
 
 export type AccordionContentProps = AccordionContentPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, AccordionContentPropsWithoutHTML>;
 
 export type AccordionItemPropsWithoutHTML = WithChild<{
-	value: string;
+	/**
+	 * The value of the accordion item. This is used to identify if the item is open or closed.
+	 * If not provided, a unique ID will be generated for this value.
+	 */
+	value?: string;
+
+	/**
+	 * Whether the accordion item is disabled, which prevents users from interacting with it.
+	 *
+	 * @defaultValue `false`
+	 */
 	disabled?: boolean;
 }>;
 
 export type AccordionItemProps = AccordionItemPropsWithoutHTML & PrimitiveDivAttributes;
 
 export type AccordionHeaderPropsWithoutHTML = WithChild<{
+	/**
+	 * The level of the accordion header, applied to the element's `aria-level` attribute.
+	 * This is used to indicate the hierarchical relationship between the accordion items.
+	 *
+	 * @defaultValue `3`
+	 */
 	level?: 1 | 2 | 3 | 4 | 5 | 6;
 }>;
 

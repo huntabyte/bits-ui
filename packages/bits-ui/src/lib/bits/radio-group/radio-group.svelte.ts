@@ -27,8 +27,8 @@ type RadioGroupRootStateProps = WithRefProps<
 		WritableBoxedValues<{ value: string }>
 >;
 class RadioGroupRootState {
-	id: RadioGroupRootStateProps["id"];
-	ref: RadioGroupRootStateProps["ref"];
+	#id: RadioGroupRootStateProps["id"];
+	#ref: RadioGroupRootStateProps["ref"];
 	disabled: RadioGroupRootStateProps["disabled"];
 	required: RadioGroupRootStateProps["required"];
 	loop: RadioGroupRootStateProps["loop"];
@@ -38,24 +38,24 @@ class RadioGroupRootState {
 	rovingFocusGroup: UseRovingFocusReturn;
 
 	constructor(props: RadioGroupRootStateProps) {
-		this.id = props.id;
+		this.#id = props.id;
 		this.disabled = props.disabled;
 		this.required = props.required;
 		this.loop = props.loop;
 		this.orientation = props.orientation;
 		this.name = props.name;
 		this.value = props.value;
-		this.ref = props.ref;
+		this.#ref = props.ref;
 		this.rovingFocusGroup = useRovingFocus({
-			rootNodeId: this.id,
+			rootNodeId: this.#id,
 			candidateSelector: ITEM_ATTR,
 			loop: this.loop,
 			orientation: this.orientation,
 		});
 
 		useRefById({
-			id: this.id,
-			ref: this.ref,
+			id: this.#id,
+			ref: this.#ref,
 		});
 	}
 
@@ -78,7 +78,7 @@ class RadioGroupRootState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.current,
+				id: this.#id.current,
 				role: "radiogroup",
 				"aria-required": getAriaRequired(this.required.current),
 				"data-disabled": getDataDisabled(this.disabled.current),

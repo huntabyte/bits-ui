@@ -27,15 +27,16 @@
 <PresenceLayer forceMount={true} present={contentState.present} {id}>
 	{#snippet presence({ present })}
 		{@const mergedProps = mergeProps(restProps, contentState.props, {
-			hidden: !present.current,
+			hidden: forceMount ? undefined : !present.current,
 		})}
 		{#if child}
 			{@render child({
 				props: mergedProps,
+				...contentState.snippetProps,
 			})}
 		{:else}
 			<div {...mergedProps}>
-				{@render children?.()}
+				{@render children?.(contentState.snippetProps)}
 			</div>
 		{/if}
 	{/snippet}
