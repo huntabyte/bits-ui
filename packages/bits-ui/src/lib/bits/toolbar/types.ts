@@ -26,12 +26,12 @@ export type ToolbarGroupPropsWithoutHTML<T extends "single" | "multiple"> = Expa
 		 *
 		 * You can bind to this to programmatically control the value.
 		 */
-		value?: MeltToolbarGroupProps<T>["defaultValue"];
+		value?: MeltToolbarGroupProps<T>["defaultValue"] | undefined;
 
 		/**
 		 * A callback function called when the value changes.
 		 */
-		onValueChange?: OnChangeFn<MeltToolbarGroupProps<T>["defaultValue"]>;
+		onValueChange?: OnChangeFn<MeltToolbarGroupProps<T>["defaultValue"]> | undefined;
 
 		/**
 		 * The type of the toolbar toggle group.
@@ -40,7 +40,7 @@ export type ToolbarGroupPropsWithoutHTML<T extends "single" | "multiple"> = Expa
 		 * at a time. If the type is `"multiple"`, the toolbar toggle group allows multiple items
 		 * to be selected at a time.
 		 */
-		type?: T;
+		type?: T | undefined;
 	} & DOMElement
 >;
 
@@ -60,7 +60,7 @@ export type ToolbarGroupItemPropsWithoutHTML = Expand<
 		 *
 		 * @defaultValue false
 		 */
-		disabled?: boolean;
+		disabled?: boolean | undefined;
 	} & DOMElement<HTMLButtonElement>
 >;
 

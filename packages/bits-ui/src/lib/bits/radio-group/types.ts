@@ -22,13 +22,13 @@ export type RadioGroupPropsWithoutHTML = Expand<
 		 * @defaultValue undefined
 		 */
 
-		value?: MeltRadioGroupProps["defaultValue"] & {};
+		value?: (MeltRadioGroupProps["defaultValue"] & {}) | undefined;
 
 		/**
 		 * A callback function called when the value changes.
 		 */
 
-		onValueChange?: OnChangeFn<MeltRadioGroupProps["defaultValue"] & {}>;
+		onValueChange?: OnChangeFn<MeltRadioGroupProps["defaultValue"] & {}> | undefined;
 	} & DOMElement
 >;
 

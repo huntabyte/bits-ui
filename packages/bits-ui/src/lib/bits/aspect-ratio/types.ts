@@ -1,8 +1,8 @@
-import type { DOMEl, HTMLDivAttributes } from "$lib/internal/index.js";
+import type { DOMEl, Expand, HTMLDivAttributes } from "$lib/internal/index.js";
 
 export type AspectRatioPropsWithoutHTML = Expand<
 	{
-		ratio?: number;
+		ratio?: number | undefined;
 	} & DOMEl
 >;
 

@@ -19,19 +19,19 @@ export type TabsPropsWithoutHTML = Expand<
 		 * The value of the currently active tab.
 		 * You can bind this to a string value to programmatically control the active tab.
 		 */
-		value?: MeltTabsProps["defaultValue"] & {};
+		value?: (MeltTabsProps["defaultValue"] & {}) | undefined;
 
 		/**
 		 * A callback function called when the value changes.
 		 */
-		onValueChange?: OnChangeFn<MeltTabsProps["defaultValue"]>;
+		onValueChange?: OnChangeFn<MeltTabsProps["defaultValue"]> | undefined;
 
 		/**
 		 * The orientation of the tabs, which determines how keyboard navigation works.
 		 *
 		 * @defaultValue "horizontal"
 		 */
-		orientation?: MeltTabsProps["orientation"] & {};
+		orientation?: (MeltTabsProps["orientation"] & {}) | undefined;
 	} & DOMElement
 >;
 

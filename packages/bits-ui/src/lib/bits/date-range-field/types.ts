@@ -27,34 +27,34 @@ export type DateRangeFieldPropsWithoutHTML = Expand<
 		 * The value of the date field.
 		 * You can bind this to a `DateValue` object to programmatically control the value.
 		 */
-		value?: DateRange;
+		value?: DateRange | undefined;
 
 		/**
 		 * A callback function called when the value changes.
 		 */
-		onValueChange?: OnChangeFn<DateRange | undefined>;
+		onValueChange?: OnChangeFn<DateRange | undefined> | undefined;
 
 		/**
 		 * The placeholder date used to start the field.
 		 */
-		placeholder?: DateValue;
+		placeholder?: DateValue | undefined;
 
 		/**
 		 * A callback function called when the placeholder changes.
 		 */
-		onPlaceholderChange?: OnChangeFn<DateValue>;
+		onPlaceholderChange?: OnChangeFn<DateValue> | undefined;
 
 		/**
 		 * The id of the validation message element which is used to apply the
 		 * appropriate `aria-describedby` attribute to the input.
 		 */
-		validationId?: string;
+		validationId?: string | undefined;
 
 		/**
 		 * The id of the description element which is used to describe the input.
 		 * This is used to apply the appropriate `aria-describedby` attribute to the input.
 		 */
-		descriptionId?: string;
+		descriptionId?: string | undefined;
 	}
 >;
 

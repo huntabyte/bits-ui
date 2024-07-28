@@ -43,7 +43,7 @@ export type ComboboxPropsWithoutHTML<T = unknown, Multiple extends boolean = fal
 		/**
 		 * A callback function called when the selected value changes.
 		 */
-		onSelectedChange?: OnChangeFn<SelectValue<Selected<T>, Multiple>>;
+		onSelectedChange?: OnChangeFn<SelectValue<Selected<T>, Multiple>> | undefined;
 
 		/**
 		 * The open state of the combobox menu.
@@ -51,17 +51,17 @@ export type ComboboxPropsWithoutHTML<T = unknown, Multiple extends boolean = fal
 		 *
 		 * @defaultValue false
 		 */
-		open?: boolean;
+		open?: boolean | undefined;
 
 		/**
 		 * A callback function called when the open state changes.
 		 */
-		onOpenChange?: OnChangeFn<boolean>;
+		onOpenChange?: OnChangeFn<boolean> | undefined;
 
 		/**
 		 * Whether or not multiple values can be selected.
 		 */
-		multiple?: Multiple;
+		multiple?: Multiple | undefined;
 
 		/**
 		 * The value of the input.
@@ -69,13 +69,13 @@ export type ComboboxPropsWithoutHTML<T = unknown, Multiple extends boolean = fal
 		 *
 		 * @defaultValue ""
 		 */
-		inputValue?: string;
+		inputValue?: string | undefined;
 
 		/**
 		 * Optionally provide an array of `Selected<T>` objects to
 		 * type the `selected` and `onSelectedChange` props.
 		 */
-		items?: Selected<T>[];
+		items?: Selected<T>[] | undefined;
 
 		/**
 		 * Whether the input has been touched or not. You can bind to this to
@@ -83,7 +83,7 @@ export type ComboboxPropsWithoutHTML<T = unknown, Multiple extends boolean = fal
 		 *
 		 * @defaultValue false
 		 */
-		touchedInput?: boolean;
+		touchedInput?: boolean | undefined;
 	}
 >;
 

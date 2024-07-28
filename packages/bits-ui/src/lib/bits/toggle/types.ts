@@ -11,12 +11,12 @@ export type TogglePropsWithoutHTML = Expand<
 		 *
 		 * @defaultValue false
 		 */
-		pressed?: boolean;
+		pressed?: boolean | undefined;
 
 		/**
 		 * A callback function called when the pressed state changes.
 		 */
-		onPressedChange?: OnChangeFn<boolean>;
+		onPressedChange?: OnChangeFn<boolean> | undefined;
 	} & DOMElement<HTMLButtonElement>
 >;
 

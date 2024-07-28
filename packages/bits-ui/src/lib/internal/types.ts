@@ -54,7 +54,7 @@ export type DOMEl<T extends Element = HTMLDivElement> = Expand<{
 	/**
 	 * Wheter to expose the underlying DOM element.
 	 */
-	el?: T;
+	el?: T | undefined;
 }>;
 
 export type DOMElement<T extends Element = HTMLDivElement> = Expand<{
@@ -64,12 +64,12 @@ export type DOMElement<T extends Element = HTMLDivElement> = Expand<{
 	 *
 	 * @see https://www.bits-ui.com/docs/delegation
 	 */
-	asChild?: boolean;
+	asChild?: boolean | undefined;
 
 	/**
 	 * Bind to the underlying DOM element of the component.
 	 */
-	el?: T;
+	el?: T | undefined;
 }>;
 
 export type TransitionProps<
@@ -80,34 +80,34 @@ export type TransitionProps<
 	/**
 	 * A transition function to use during both the in and out transitions.
 	 */
-	transition?: T;
+	transition?: T | undefined;
 
 	/**
 	 * The configuration to pass to the `transition` function.
 	 */
-	transitionConfig?: TransitionParams<T>;
+	transitionConfig?: TransitionParams<T> | undefined;
 
 	/**
 	 * A transition function to use during the in transition.
 	 *
 	 * If provided, this will override the `transition` function.
 	 */
-	inTransition?: In;
+	inTransition?: In | undefined;
 
 	/**
 	 * The configuration to pass to the `inTransition` function.
 	 */
-	inTransitionConfig?: TransitionParams<In>;
+	inTransitionConfig?: TransitionParams<In> | undefined;
 
 	/**
 	 * A transition function to use during the out transition.
 	 *
 	 * If provided, this will override the `transition` function.
 	 */
-	outTransition?: Out;
+	outTransition?: Out | undefined;
 
 	/**
 	 * The configuration to pass to the `outTransition` function.
 	 */
-	outTransitionConfig?: TransitionParams<Out>;
+	outTransitionConfig?: TransitionParams<Out> | undefined;
 }>;

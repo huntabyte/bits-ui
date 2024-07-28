@@ -7,7 +7,7 @@ import type {
 } from "svelte/elements";
 import type { DateValue } from "@internationalized/date";
 import type { CreateRangeCalendarProps as MeltRangeCalendarProps } from "@melt-ui/svelte";
-import type { DOMElement, HTMLDivAttributes, OnChangeFn } from "$lib/internal/index.js";
+import type { DOMElement, Expand, HTMLDivAttributes, OnChangeFn } from "$lib/internal/index.js";
 import type { CustomEventHandler } from "$lib/index.js";
 
 import type { DateRange } from "$lib/shared/index.js";
@@ -30,12 +30,12 @@ export type RangeCalendarPropsWithoutHTML = Expand<
 		 * You can bind this to a value to programmatically control the
 		 * value state.
 		 */
-		value?: DateRange;
+		value?: DateRange | undefined;
 
 		/**
 		 * A callback function called when the value changes.
 		 */
-		onValueChange?: OnChangeFn<DateRange>;
+		onValueChange?: OnChangeFn<DateRange> | undefined;
 
 		/**
 		 * The placeholder date, used to display the calendar when no
@@ -45,12 +45,12 @@ export type RangeCalendarPropsWithoutHTML = Expand<
 		 * You can bind this to a value to programmatically control the
 		 * placeholder state.
 		 */
-		placeholder?: DateValue;
+		placeholder?: DateValue | undefined;
 
 		/**
 		 * A callback function called when the placeholder changes.
 		 */
-		onPlaceholderChange?: OnChangeFn<DateValue>;
+		onPlaceholderChange?: OnChangeFn<DateValue> | undefined;
 
 		/**
 		 * If `true`, the calendar will focus the selected day,
@@ -59,7 +59,7 @@ export type RangeCalendarPropsWithoutHTML = Expand<
 		 *
 		 * @default false
 		 */
-		initialFocus?: boolean;
+		initialFocus?: boolean | undefined;
 
 		/**
 		 * The `start` value of the date range, which can exist prior

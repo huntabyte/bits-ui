@@ -14,12 +14,12 @@ export type AvatarPropsWithoutHTML = Expand<
 		 * The loading state of the image.
 		 * You can bind this to a boolean value to programmatically control the loading state.
 		 */
-		loadingStatus?: "loading" | "loaded" | "error";
+		loadingStatus?: "loading" | "loaded" | "error" | undefined;
 
 		/**
 		 * A callback function called when the loading state changes.
 		 */
-		onLoadingStatusChange?: OnChangeFn<"loading" | "loaded" | "error">;
+		onLoadingStatusChange?: OnChangeFn<"loading" | "loaded" | "error"> | undefined;
 	} & DOMElement
 >;
 

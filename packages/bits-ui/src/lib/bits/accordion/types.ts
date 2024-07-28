@@ -23,12 +23,12 @@ export type AccordionPropsWithoutHTML<Multiple extends boolean> = Expand<
 		 * The value of the accordion.
 		 * You can bind this to a value to programmatically control the open state.
 		 */
-		value?: MeltAccordionProps<Multiple>["defaultValue"];
+		value?: MeltAccordionProps<Multiple>["defaultValue"] | undefined;
 
 		/**
 		 * A callback function called when the value changes.
 		 */
-		onValueChange?: OnChangeFn<MeltAccordionProps<Multiple>["defaultValue"]>;
+		onValueChange?: OnChangeFn<MeltAccordionProps<Multiple>["defaultValue"]> | undefined;
 	} & DOMElement
 >;
 
@@ -41,7 +41,7 @@ export type AccordionHeaderPropsWithoutHTML = Expand<
 		/**
 		 * The heading level of the accordion header.
 		 */
-		level?: ObjectVariation<MeltAccordionHeadingProps>["level"];
+		level?: ObjectVariation<MeltAccordionHeadingProps>["level"] | undefined;
 	} & DOMElement
 >;
 
