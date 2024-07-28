@@ -7,7 +7,7 @@ import type {
 } from "svelte/elements";
 import type { DateValue } from "@internationalized/date";
 import type { CreateCalendarProps as MeltCalendarProps } from "@melt-ui/svelte";
-import type { DOMElement, HTMLDivAttributes, OnChangeFn } from "$lib/internal/index.js";
+import type { DOMElement, Expand, HTMLDivAttributes, OnChangeFn } from "$lib/internal/index.js";
 import type { CustomEventHandler } from "$lib/index.js";
 
 type OmitCalendarProps<T> = Omit<

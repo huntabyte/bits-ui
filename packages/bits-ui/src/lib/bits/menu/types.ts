@@ -14,6 +14,7 @@ import type {
 import type {
 	DOMEl,
 	DOMElement,
+	Expand,
 	HTMLDivAttributes,
 	OmitChecked,
 	OmitFloating,
