@@ -6,7 +6,7 @@ import { sleep } from "$lib/internal/sleep.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
 import { untrack } from "svelte";
-import { getTabbableCandidates } from "../utilities/focus-scope/utils.js";
+import { getTabbableCandidates } from "$lib/internal/focus.js";
 import { createContext } from "$lib/internal/createContext.js";
 import { useGraceArea } from "$lib/internal/useGraceArea.svelte.js";
 import { box } from "svelte-toolbelt";

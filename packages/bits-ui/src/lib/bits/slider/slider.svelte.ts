@@ -6,21 +6,19 @@
 import { untrack } from "svelte";
 import { getRangeStyles, getThumbStyles, getTickStyles } from "./helpers.js";
 import {
-	type OnChangeFn,
-	type ReadableBoxedValues,
-	type WithRefProps,
-	type WritableBoxedValues,
-	addEventListener,
-	executeCallbacks,
 	getAriaDisabled,
 	getAriaOrientation,
 	getDataDisabled,
 	getDataOrientation,
-	isElementOrSVGElement,
-	isValidIndex,
-	kbd,
-	useRefById,
-} from "$lib/internal/index.js";
+} from "$lib/internal/attrs.js";
+import { useRefById } from "$lib/internal/useRefById.svelte.js";
+import { kbd } from "$lib/internal/kbd.js";
+import { isElementOrSVGElement } from "$lib/internal/is.js";
+import { isValidIndex } from "$lib/internal/arrays.js";
+import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
+import type { WithRefProps, OnChangeFn } from "$lib/internal/types.js";
+import { addEventListener } from "$lib/internal/events.js";
+import { executeCallbacks } from "$lib/internal/executeCallbacks.js";
 import type { Direction, Orientation } from "$lib/shared/index.js";
 import { createContext } from "$lib/internal/createContext.js";
 import { snapValueToStep } from "$lib/internal/math.js";

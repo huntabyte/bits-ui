@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { ArrowProps } from "./types.js";
-	import { mergeProps, useId } from "$lib/internal/index.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/useId.js";
 
 	let {
 		id = useId(),

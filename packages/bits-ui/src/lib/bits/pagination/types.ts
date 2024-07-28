@@ -1,6 +1,5 @@
-import type { WithChild, Without } from "$lib/internal/types.js";
+import type { WithChild, Without, OnChangeFn } from "$lib/internal/types.js";
 import type { PrimitiveButtonAttributes, PrimitiveDivAttributes } from "$lib/shared/attributes.js";
-import type { OnChangeFn } from "$lib/internal/index.js";
 
 type PaginationSnippetProps = {
 	pages: PageItem[];

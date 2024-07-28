@@ -1,6 +1,7 @@
 import { type Matcher, type MatcherOptions, fireEvent } from "@testing-library/svelte";
 import { userEvent } from "@testing-library/user-event";
-import { getKbd, sleep } from "$lib/internal/index.js";
+import { getKbd } from "$lib/internal/kbd.js";
+import { sleep } from "$lib/internal/sleep.js";
 
 /**
  * A wrapper around the internal kbd object to make it easier to use in tests

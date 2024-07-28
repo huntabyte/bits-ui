@@ -6,7 +6,7 @@
  */
 
 import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
-import { executeCallbacks } from "$lib/internal/callbacks.js";
+import { executeCallbacks } from "$lib/internal/executeCallbacks.js";
 import { addEventListener } from "$lib/internal/events.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";

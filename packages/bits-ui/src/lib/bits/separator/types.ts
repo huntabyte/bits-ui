@@ -1,4 +1,4 @@
-import type { WithChild, Without } from "$lib/internal/index.js";
+import type { WithChild, Without } from "$lib/internal/types.js";
 import type { Orientation } from "$lib/shared/index.js";
 import type { PrimitiveDivAttributes } from "$lib/shared/attributes.js";
 

@@ -3,7 +3,8 @@
 	import { useCollapsibleContent } from "../collapsible.svelte.js";
 	import type { CollapsibleContentProps } from "../types.js";
 	import { PresenceLayer } from "$lib/bits/utilities/presence-layer/index.js";
-	import { mergeProps, useId } from "$lib/internal/index.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/useId.js";
 
 	let {
 		child,

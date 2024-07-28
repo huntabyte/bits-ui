@@ -1,4 +1,6 @@
-import { useRefById, type ReadableBoxedValues, type WithRefProps } from "$lib/internal/index.js";
+import { useRefById } from "$lib/internal/useRefById.svelte.js";
+import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
+import type { WithRefProps } from "$lib/internal/types.js";
 
 const ASPECT_RATIO_ROOT_ATTR = "data-aspect-ratio-root";
 

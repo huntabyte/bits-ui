@@ -15,7 +15,3 @@ export function executeCallbacks<T extends unknown[]>(
 		}
 	};
 }
-
-export function noop() {
-	//
-}

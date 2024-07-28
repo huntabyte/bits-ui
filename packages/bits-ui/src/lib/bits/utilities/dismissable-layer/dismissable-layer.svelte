@@ -2,7 +2,7 @@
 	import { box } from "svelte-toolbelt";
 	import type { DismissableLayerImplProps } from "./types.js";
 	import { useDismissableLayer } from "./useDismissableLayer.svelte.js";
-	import { noop } from "$lib/internal/index.js";
+	import { noop } from "$lib/internal/noop.js";
 
 	let {
 		interactOutsideBehavior = "close",

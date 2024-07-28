@@ -1,5 +1,7 @@
-import { type ReadableBox } from "svelte-toolbelt";
-import { afterTick, useStateMachine, watch } from "$lib/internal/index.js";
+import type { ReadableBox } from "svelte-toolbelt";
+import { afterTick } from "$lib/internal/afterTick.js";
+import { useStateMachine } from "$lib/internal/useStateMachine.svelte.js";
+import { watch } from "$lib/internal/box.svelte.js";
 
 export function usePresence(present: ReadableBox<boolean>, id: ReadableBox<string>) {
 	let styles = $state({}) as CSSStyleDeclaration;

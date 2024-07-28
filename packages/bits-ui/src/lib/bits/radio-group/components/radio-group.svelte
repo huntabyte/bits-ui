@@ -3,7 +3,8 @@
 	import type { RootProps } from "../index.js";
 	import { useRadioGroupRoot } from "../radio-group.svelte.js";
 	import RadioGroupInput from "./radio-group-input.svelte";
-	import { mergeProps, useId } from "$lib/internal/index.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/useId.js";
 
 	let {
 		disabled = false,

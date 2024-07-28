@@ -1,6 +1,6 @@
 import { box } from "svelte-toolbelt";
 import { tick } from "svelte";
-import { focusFirst } from "../utilities/focus-scope/utils.js";
+import { focusFirst } from "$lib/internal/focus.js";
 import {
 	FIRST_LAST_KEYS,
 	type GraceIntent,
@@ -18,7 +18,7 @@ import {
 } from "$lib/internal/box.svelte.js";
 import { addEventListener } from "$lib/internal/events.js";
 import type { AnyFn, WithRefProps } from "$lib/internal/types.js";
-import { executeCallbacks } from "$lib/internal/callbacks.js";
+import { executeCallbacks } from "$lib/internal/executeCallbacks.js";
 import { useTypeahead } from "$lib/internal/useTypeahead.svelte.js";
 import { isElement, isHTMLElement } from "$lib/internal/is.js";
 import { useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";

@@ -4,15 +4,7 @@ import {
 	createFocusScopeStack,
 	removeLinks,
 } from "./focus-scope-stack.svelte.js";
-import {
-	AUTOFOCUS_ON_DESTROY,
-	AUTOFOCUS_ON_MOUNT,
-	EVENT_OPTIONS,
-	focus,
-	focusFirst,
-	getTabbableCandidates,
-	getTabbableEdges,
-} from "./utils.js";
+import { focus, focusFirst, getTabbableCandidates, getTabbableEdges } from "$lib/internal/focus.js";
 import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import { type EventCallback, addEventListener } from "$lib/internal/events.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
@@ -21,6 +13,10 @@ import { executeCallbacks } from "$lib/internal/callbacks.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { afterTick } from "$lib/internal/afterTick.js";
 import { box } from "svelte-toolbelt";
+
+const AUTOFOCUS_ON_MOUNT = "focusScope.autoFocusOnMount";
+const AUTOFOCUS_ON_DESTROY = "focusScope.autoFocusOnDestroy";
+const EVENT_OPTIONS = { bubbles: false, cancelable: true };
 
 type UseFocusScopeProps = ReadableBoxedValues<{
 	/**

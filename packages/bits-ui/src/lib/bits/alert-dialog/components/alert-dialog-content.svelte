@@ -21,6 +21,7 @@
 		onDestroyAutoFocus = noop,
 		onEscapeKeydown = noop,
 		onMountAutoFocus = noop,
+		preventScroll = true,
 		...restProps
 	}: ContentProps = $props();
 
@@ -37,7 +38,7 @@
 
 <PresenceLayer {...mergedProps} present={contentState.root.open.current || forceMount}>
 	{#snippet presence({ present })}
-		<ScrollLock preventScroll={true} />
+		<ScrollLock {preventScroll} />
 		<FocusScope
 			loop
 			trapped={present.current}

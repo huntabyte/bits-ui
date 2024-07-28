@@ -1,17 +1,15 @@
+import type { Box, WritableBoxedValues, ReadableBoxedValues } from "$lib/internal/box.svelte.js";
+import type { WithRefProps } from "$lib/internal/types.js";
+import { afterTick } from "$lib/internal/afterTick.js";
 import {
-	type Box,
-	type ReadableBoxedValues,
-	type WithRefProps,
-	type WritableBoxedValues,
-	afterTick,
 	getAriaDisabled,
 	getAriaExpanded,
 	getDataDisabled,
 	getDataOpenClosed,
 	getDataOrientation,
-	kbd,
-	useRefById,
-} from "$lib/internal/index.js";
+} from "$lib/internal/attrs.js";
+import { kbd } from "$lib/internal/kbd.js";
+import { useRefById } from "$lib/internal/useRefById.svelte.js";
 import { type UseRovingFocusReturn, useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
 import type { Orientation } from "$lib/shared/index.js";
 import { createContext } from "$lib/internal/createContext.js";

@@ -2,7 +2,8 @@
 	import { box } from "svelte-toolbelt";
 	import { useFloatingArrowState } from "../useFloatingLayer.svelte.js";
 	import { Arrow, type ArrowProps } from "$lib/bits/utilities/arrow/index.js";
-	import { mergeProps, useId } from "$lib/internal/index.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/useId.js";
 
 	let { id = useId(), ref = $bindable(null), ...restProps }: ArrowProps = $props();
 

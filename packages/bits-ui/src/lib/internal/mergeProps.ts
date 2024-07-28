@@ -2,10 +2,11 @@
  * Modified from https://github.com/adobe/react-spectrum/blob/main/packages/%40react-aria/utils/src/mergeProps.ts (see NOTICE.txt for source)
  */
 import { clsx } from "clsx";
-import { type EventCallback, composeHandlers } from "./events.js";
+import type { EventCallback } from "./events.js";
+import { composeHandlers } from "./composeHandlers.js";
+import { executeCallbacks } from "./executeCallbacks.js";
 import { styleToString } from "./style.js";
 import { cssToStyleObj } from "./cssToStyleObj.js";
-import { executeCallbacks } from "./callbacks.js";
 import type { StyleProperties } from "$lib/shared/index.js";
 
 type Props = Record<string, unknown>;
@@ -36,7 +37,6 @@ function isEventHandler(key: string): boolean {
  * - Merges style objects and converts them to strings
  * - Handles a bug with Svelte where setting the `hidden` attribute to `false` doesn't remove it
  * - Overrides other values with the last one
- *
  */
 export function mergeProps<T extends PropsArg[]>(
 	...args: T
@@ -72,18 +72,18 @@ export function mergeProps<T extends PropsArg[]>(
 				const aIsString = typeof a === "string";
 				const bIsString = typeof b === "string";
 				if (aIsObject && bIsObject) {
+					// both are style objects, merge them
 					result[key] = { ...a, ...b };
 				} else if (aIsObject && bIsString) {
+					// a is style object, b is string, convert b to style object and merge
 					const parsedStyle = cssToStyleObj(b);
 					result[key] = { ...a, ...parsedStyle };
 				} else if (aIsString && bIsObject) {
+					// a is string, b is style object, convert a to style object and merge
 					const parsedStyle = cssToStyleObj(a);
 					result[key] = { ...parsedStyle, ...b };
 				} else if (aIsString && bIsString) {
-					// this should rarely happen, but we need to handle it in case
-					// specific components stringify the style before it gets to
-					// another component down the tree.
-					// this can happen when a component has an optional inherited component
+					// both are strings, convert both to objects and merge
 					const parsedStyleA = cssToStyleObj(a);
 					const parsedStyleB = cssToStyleObj(b);
 					result[key] = { ...parsedStyleA, ...parsedStyleB };

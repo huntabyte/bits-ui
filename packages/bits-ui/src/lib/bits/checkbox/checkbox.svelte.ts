@@ -1,13 +1,8 @@
-import {
-	type ReadableBoxedValues,
-	type WithRefProps,
-	type WritableBoxedValues,
-	getAriaChecked,
-	getAriaRequired,
-	getDataDisabled,
-	kbd,
-	useRefById,
-} from "$lib/internal/index.js";
+import { useRefById } from "$lib/internal/useRefById.svelte.js";
+import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
+import type { WithRefProps } from "$lib/internal/types.js";
+import { getAriaChecked, getAriaRequired, getDataDisabled } from "$lib/internal/attrs.js";
+import { kbd } from "$lib/internal/kbd.js";
 import { createContext } from "$lib/internal/createContext.js";
 
 const CHECKBOX_ROOT_ATTR = "data-checkbox-root";

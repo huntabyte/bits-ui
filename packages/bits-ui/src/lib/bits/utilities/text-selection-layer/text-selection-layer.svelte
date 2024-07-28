@@ -2,7 +2,7 @@
 	import { box } from "svelte-toolbelt";
 	import type { TextSelectionLayerImplProps } from "./types.js";
 	import { useTextSelectionLayer } from "./useTextSelectionLayer.svelte.js";
-	import { noop } from "$lib/internal/index.js";
+	import { noop } from "$lib/internal/noop.js";
 
 	let {
 		preventOverflowTextSelection = true,

@@ -3,7 +3,8 @@
 	import { useAccordionContent } from "../accordion.svelte.js";
 	import type { AccordionContentProps } from "../types.js";
 	import { PresenceLayer } from "$lib/bits/utilities/presence-layer/index.js";
-	import { mergeProps, useId } from "$lib/internal/index.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/useId.js";
 
 	let {
 		child,

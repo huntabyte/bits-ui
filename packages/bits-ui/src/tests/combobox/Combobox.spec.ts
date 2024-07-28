@@ -1,10 +1,11 @@
-import { getByTestId, render, waitFor } from "@testing-library/svelte";
+import { render, waitFor } from "@testing-library/svelte";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import { getTestKbd, setupUserEvents } from "../utils.js";
 import ComboboxTest from "./ComboboxTest.svelte";
 import type { ComboboxSingleTestProps, Item } from "./ComboboxTest.svelte";
-import { sleep, type AnyFn } from "$lib/internal/index.js";
+import { sleep } from "$lib/internal/sleep.js";
+import type { AnyFn } from "$lib/internal/types.js";
 import type { ComboboxMultipleTestProps } from "./ComboboxMultiTest.svelte";
 import ComboboxMultiTest from "./ComboboxMultiTest.svelte";
 import { tick } from "svelte";

@@ -1,24 +1,8 @@
-import type { ReadableBox } from "svelte-toolbelt";
-import type { Arrayable } from "$lib/internal/index.js";
+import type { Arrayable } from "$lib/internal/types.js";
 
 export type EventCallback<E extends Event = Event> = (event: E) => void;
 
-export function composeHandlers<E extends Event = Event, T extends Element = Element>(
-	...handlers: Array<EventCallback<E> | ReadableBox<EventCallback<E>> | undefined>
-): (e: E) => void {
-	return function (this: T, e: E) {
-		for (const handler of handlers) {
-			if (!handler || e.defaultPrevented) return;
-			if (typeof handler === "function") {
-				handler.call(this, e);
-			} else {
-				handler.current.call(this, e);
-			}
-		}
-	};
-}
-
-export type GeneralEventListener<E = Event> = (evt: E) => unknown;
+type GeneralEventListener<E = Event> = (evt: E) => unknown;
 
 export function addEventListener<E extends keyof WindowEventMap>(
 	target: Window,

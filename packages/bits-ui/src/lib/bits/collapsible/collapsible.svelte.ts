@@ -1,12 +1,7 @@
-import {
-	type ReadableBoxedValues,
-	type WritableBoxedValues,
-	afterTick,
-	getAriaExpanded,
-	getDataDisabled,
-	getDataOpenClosed,
-	useRefById,
-} from "$lib/internal/index.js";
+import { useRefById } from "$lib/internal/useRefById.svelte.js";
+import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
+import { afterTick } from "$lib/internal/afterTick.js";
+import { getAriaExpanded, getDataDisabled, getDataOpenClosed } from "$lib/internal/attrs.js";
 import { createContext } from "$lib/internal/createContext.js";
 
 const ROOT_ATTR = "data-collapsible-root";

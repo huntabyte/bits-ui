@@ -1,14 +1,11 @@
 import type { Page, PageItem } from "./types.js";
-import {
-	type ReadableBoxedValues,
-	type WithRefProps,
-	type WritableBoxedValues,
-	getDataOrientation,
-	getDirectionalKeys,
-	getElemDirection,
-	kbd,
-	useRefById,
-} from "$lib/internal/index.js";
+import { useRefById } from "$lib/internal/useRefById.svelte.js";
+import type { WithRefProps } from "$lib/internal/types.js";
+import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
+import { getDataOrientation } from "$lib/internal/attrs.js";
+import { getElemDirection } from "$lib/internal/locale.js";
+import { kbd } from "$lib/internal/kbd.js";
+import { getDirectionalKeys } from "$lib/internal/getDirectionalKeys.js";
 import type { Orientation } from "$lib/shared/index.js";
 import { createContext } from "$lib/internal/createContext.js";
 

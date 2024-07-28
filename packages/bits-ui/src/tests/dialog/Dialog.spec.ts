@@ -10,7 +10,7 @@ import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import { getTestKbd } from "../utils.js";
 import DialogTest, { type DialogTestProps } from "./DialogTest.svelte";
-import { sleep } from "$lib/internal/index.js";
+import { sleep } from "$lib/internal/sleep.js";
 
 const kbd = getTestKbd();
 
