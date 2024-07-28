@@ -22,6 +22,12 @@ type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
 	? I
 	: never;
 
+function isEventHandler(key: string): boolean {
+	// we check if the 3rd character is uppercase to avoid merging our own
+	// custom callbacks like `onValueChange` and strictly merge native event handlers
+	return key.length > 2 && key.startsWith("on") && key[2] === key[2]?.toLowerCase();
+}
+
 /**
  * Given a list of prop objects, merges them into a single object.
  * - Automatically composes event handlers (e.g. `onclick`, `oninput`, etc.)
@@ -45,37 +51,35 @@ export function mergeProps<T extends PropsArg[]>(
 			const a = result[key];
 			const b = props[key];
 
+			const aIsFunction = typeof a === "function";
+			const bIsFunction = typeof b === "function";
+
 			// compose event handlers
-			if (
-				typeof a === "function" &&
-				typeof b === "function" &&
-				key.length > 2 &&
-				key[0] === "o" &&
-				key[1] === "n" &&
-				// we check if the 3rd character is uppercase to avoid merging our own
-				// custom callbacks like `onValueChange` and strictly merge native event handlers
-				key[2] === key[2]?.toLowerCase()
-			) {
+			if (aIsFunction && typeof bIsFunction && isEventHandler(key)) {
 				// handle merging of event handlers
 				const aHandler = a as EventCallback;
 				const bHandler = b as EventCallback;
 				result[key] = composeHandlers(aHandler, bHandler);
-			} else if (typeof a === "function" && typeof b === "function") {
+			} else if (aIsFunction && bIsFunction) {
 				// chain non-event handler functions
 				result[key] = executeCallbacks(a, b);
 			} else if (key === "class" && typeof a === "string" && typeof b === "string") {
 				// handle merging class strings
 				result[key] = clsx(a, b);
 			} else if (key === "style") {
-				if (typeof a === "object" && typeof b === "object") {
+				const aIsObject = typeof a === "object";
+				const bIsObject = typeof b === "object";
+				const aIsString = typeof a === "string";
+				const bIsString = typeof b === "string";
+				if (aIsObject && bIsObject) {
 					result[key] = { ...a, ...b };
-				} else if (typeof a === "object" && typeof b === "string") {
+				} else if (aIsObject && bIsString) {
 					const parsedStyle = cssToStyleObj(b);
 					result[key] = { ...a, ...parsedStyle };
-				} else if (typeof a === "string" && typeof b === "object") {
+				} else if (aIsString && bIsObject) {
 					const parsedStyle = cssToStyleObj(a);
 					result[key] = { ...parsedStyle, ...b };
-				} else if (typeof a === "string" && typeof b === "string") {
+				} else if (aIsString && bIsString) {
 					// this should rarely happen, but we need to handle it in case
 					// specific components stringify the style before it gets to
 					// another component down the tree.
@@ -83,9 +87,9 @@ export function mergeProps<T extends PropsArg[]>(
 					const parsedStyleA = cssToStyleObj(a);
 					const parsedStyleB = cssToStyleObj(b);
 					result[key] = { ...parsedStyleA, ...parsedStyleB };
-				} else if (typeof a === "object") {
+				} else if (aIsObject) {
 					result[key] = a;
-				} else if (typeof b === "object") {
+				} else if (bIsObject) {
 					result[key] = b;
 				}
 			} else {
