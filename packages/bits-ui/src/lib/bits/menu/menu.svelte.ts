@@ -63,7 +63,9 @@ const [setMenuMenuContext, getMenuMenuContext] = createContext<MenuMenuState>(
 const [setMenuContentContext, getMenuContentContext] =
 	createContext<MenuContentState>("Menu.Content");
 
-const [setMenuGroupContext, getMenuGroupContext] = createContext<MenuGroupState>("Menu.Group");
+const [setMenuGroupContext, getMenuGroupContext] = createContext<
+	MenuGroupState | MenuRadioGroupState
+>("Menu.Group");
 
 const [setMenuRadioGroupContext, getMenuRadioGroupContext] =
 	createContext<MenuRadioGroupState>("Menu.RadioGroup");
@@ -734,9 +736,9 @@ type MenuGroupLabelStateProps = WithRefProps;
 class MenuGroupLabelState {
 	#id: MenuGroupLabelStateProps["id"];
 	#ref: MenuGroupLabelStateProps["ref"];
-	#group: MenuGroupState;
+	#group: MenuGroupState | MenuRadioGroupState | undefined = undefined;
 
-	constructor(props: MenuGroupLabelStateProps, group: MenuGroupState) {
+	constructor(props: MenuGroupLabelStateProps, group?: MenuGroupState | MenuRadioGroupState) {
 		this.#id = props.id;
 		this.#ref = props.ref;
 		this.#group = group;
@@ -745,6 +747,7 @@ class MenuGroupLabelState {
 			id: this.#id,
 			ref: this.#ref,
 			onRefChange: (node) => {
+				if (!this.#group) return;
 				this.#group.labelNode = node;
 			},
 		});
@@ -805,6 +808,7 @@ class MenuRadioGroupState {
 	value: MenuRadioGroupStateProps["value"];
 	#ref: MenuRadioGroupStateProps["ref"];
 	#content: MenuContentState;
+	labelNode = $state<HTMLElement | null>(null);
 
 	constructor(props: MenuRadioGroupStateProps, content: MenuContentState) {
 		this.value = props.value;
@@ -829,12 +833,17 @@ class MenuRadioGroupState {
 		return new MenuRadioItemState(props, item, this);
 	}
 
+	createGroupLabel(props: MenuGroupLabelStateProps) {
+		return new MenuGroupLabelState(props, this);
+	}
+
 	props = $derived.by(
 		() =>
 			({
 				id: this.#id.current,
 				[RADIO_GROUP_ATTR]: "",
 				role: "group",
+				"aria-labelledby": this.labelNode?.id ?? undefined,
 			}) as const
 	);
 }
@@ -1125,7 +1134,9 @@ export function useMenuCheckboxItem(props: MenuItemCombinedProps & MenuCheckboxI
 }
 
 export function useMenuRadioGroup(props: MenuRadioGroupStateProps) {
-	return setMenuRadioGroupContext(getMenuContentContext().createRadioGroup(props));
+	return setMenuGroupContext(
+		setMenuRadioGroupContext(getMenuContentContext().createRadioGroup(props))
+	);
 }
 
 export function useMenuRadioItem(props: MenuRadioItemStateProps & MenuItemCombinedProps) {
@@ -1136,8 +1147,10 @@ export function useMenuGroup(props: MenuGroupStateProps) {
 	return setMenuGroupContext(new MenuGroupState(props));
 }
 
-export function useMenuLabel(props: MenuGroupLabelStateProps) {
-	return getMenuGroupContext().createGroupLabel(props);
+export function useMenuGroupLabel(props: MenuGroupLabelStateProps) {
+	const groupCtx = getMenuGroupContext(null);
+	if (!groupCtx) return new MenuGroupLabelState(props);
+	return groupCtx.createGroupLabel(props);
 }
 
 export function useMenuSeparator(props: MenuSeparatorStateProps) {
