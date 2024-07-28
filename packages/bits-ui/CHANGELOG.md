@@ -1,5 +1,11 @@
 # bits-ui
 
+## 0.21.13
+
+### Patch Changes
+
+- fix: compatibility with `exactOptionalPropertyTypes` ([#621](https://github.com/huntabyte/bits-ui/pull/621))
+
 ## 0.21.12
 
 ### Patch Changes
