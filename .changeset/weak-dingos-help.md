@@ -2,4 +2,4 @@
 "bits-ui": patch
 ---
 
-feat: compatibility with `exactOptionalPropertyTypes`
+fix: compatibility with `exactOptionalPropertyTypes`
