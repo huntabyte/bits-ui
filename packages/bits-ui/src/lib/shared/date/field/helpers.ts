@@ -1,24 +1,22 @@
+import type { DateValue } from "@internationalized/date";
 import {
-	getPlaceholder,
 	type Formatter,
 	type Granularity,
-	toDate,
-	isZonedDateTime,
-	hasTime,
+	getPlaceholder,
 	getSegments,
+	hasTime,
+	isZonedDateTime,
 } from "../index.js";
-import type { DateValue } from "@internationalized/date";
 import type {
+	DateAndTimeSegmentObj,
 	DateSegmentPart,
-	SegmentContentObj,
 	EditableSegmentPart,
+	HourCycle,
+	SegmentContentObj,
+	SegmentPart,
 	SegmentStateMap,
 	SegmentValueObj,
 	TimeSegmentPart,
-	DateAndTimeSegmentObj,
-	DayPeriod,
-	SegmentPart,
-	HourCycle,
 } from "./types.js";
 import {
 	ALL_SEGMENT_PARTS,
@@ -26,15 +24,11 @@ import {
 	EDITABLE_SEGMENT_PARTS,
 	TIME_SEGMENT_PARTS,
 } from "./parts.js";
-import {
-	isBrowser,
-	isNull,
-	kbd,
-	isNumberString,
-	styleToString,
-	useId,
-} from "$lib/internal/index.js";
-import { get, type Writable } from "svelte/store";
+
+import { isBrowser, isNull, isNumberString } from "$lib/internal/is.js";
+import { styleToString } from "$lib/internal/style.js";
+import { useId } from "$lib/internal/useId.js";
+import { kbd } from "$lib/internal/kbd.js";
 
 export function initializeSegmentValues(granularity: Granularity) {
 	const calendarDateTimeGranularities = ["hour", "minute", "second"];
@@ -94,7 +88,7 @@ function createContentObj(props: CreateContentObjProps) {
 		if ("hour" in segmentValues) {
 			const value = segmentValues[part];
 			const leadingZero = typeof value === "string" && value?.startsWith("0");
-			const intValue = value !== null ? parseInt(value) : null;
+			const intValue = value !== null ? Number.parseInt(value) : null;
 
 			if (value === "0" && part !== "year") {
 				return "0";
@@ -313,12 +307,10 @@ export function getValueFromSegments(props: GetValueFromSegments) {
 			const value = segmentObj[part];
 			if (isNull(value)) return;
 			date = date.set({ [part]: segmentObj[part] });
-			return;
 		} else if (isDateSegmentPart(part)) {
 			const value = segmentObj[part];
 			if (isNull(value)) return;
 			date = date.set({ [part]: segmentObj[part] });
-			return;
 		}
 	});
 	return date;
@@ -349,15 +341,6 @@ export function areAllSegmentsFilled(
 		}
 	}
 	return true;
-}
-/**
- * Extracts the segment part from the provided node,
- * if it exists, otherwise returns null.
- */
-export function getPartFromNode(node: HTMLElement) {
-	const part = node.dataset.segment;
-	if (!isAnySegmentPart(part)) return null;
-	return part;
 }
 
 /**
@@ -412,47 +395,6 @@ export function isAcceptableSegmentKey(key: string) {
 	if (acceptableSegmentKeys.includes(key)) return true;
 	if (isNumberString(key)) return true;
 	return false;
-}
-
-type SyncSegmentValuesProps = {
-	value: DateValue;
-	updatingDayPeriod: Writable<DayPeriod>;
-	segmentValues: Writable<SegmentValueObj>;
-	formatter: Formatter;
-};
-
-/**
- * Sets the individual segment values based on the current
- * value of the date picker. This is used to initialize the
- * segment values if a default value is provided, and to
- * keep it in sync as the value changes outside the builder.
- */
-export function syncSegmentValues(props: SyncSegmentValuesProps) {
-	const { value, updatingDayPeriod, segmentValues, formatter } = props;
-
-	const dateValues = DATE_SEGMENT_PARTS.map((part) => {
-		return [part, value[part]];
-	});
-	if ("hour" in value) {
-		const timeValues = TIME_SEGMENT_PARTS.map((part) => {
-			if (part === "dayPeriod") {
-				const $updatingDayPeriod = get(updatingDayPeriod);
-				if ($updatingDayPeriod) {
-					return [part, $updatingDayPeriod];
-				} else {
-					return [part, formatter.dayPeriod(toDate(value))];
-				}
-			}
-			return [part, value[part]];
-		});
-
-		const mergedSegmentValues = [...dateValues, ...timeValues];
-		segmentValues.set(Object.fromEntries(mergedSegmentValues) as SegmentValueObj);
-		updatingDayPeriod.set(null);
-		return;
-	}
-
-	segmentValues.set(Object.fromEntries(dateValues) as SegmentValueObj);
 }
 
 /**

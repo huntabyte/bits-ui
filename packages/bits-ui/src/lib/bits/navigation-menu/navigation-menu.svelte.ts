@@ -1,7 +1,7 @@
 import { untrack } from "svelte";
 import { box } from "svelte-toolbelt";
 import { Previous } from "runed";
-import { getTabbableCandidates } from "../utilities/focus-scope/utils.js";
+import { getTabbableCandidates } from "$lib/internal/focus.js";
 import {
 	type ReadableBoxedValues,
 	type WritableBoxedValues,

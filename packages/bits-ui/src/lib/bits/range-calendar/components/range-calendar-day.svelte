@@ -22,6 +22,10 @@
 	{@render child({ props: mergedProps, ...dayState.snippetProps })}
 {:else}
 	<div {...mergedProps}>
-		{@render children?.(dayState.snippetProps)}
+		{#if children}
+			{@render children?.(dayState.snippetProps)}
+		{:else}
+			{dayState.cell.date.current.day}
+		{/if}
 	</div>
 {/if}

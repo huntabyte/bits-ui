@@ -90,6 +90,7 @@ vi.mock("$app/stores", (): typeof stores => {
 // eslint-disable-next-line ts/no-require-imports
 globalThis.ResizeObserver = require("resize-observer-polyfill");
 Element.prototype.scrollIntoView = () => {};
+// eslint-disable-next-line ts/no-explicit-any
 Element.prototype.hasPointerCapture = (() => {}) as any;
 
 // @ts-expect-error - shut it

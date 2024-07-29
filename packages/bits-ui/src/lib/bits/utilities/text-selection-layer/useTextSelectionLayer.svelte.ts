@@ -1,17 +1,14 @@
 import { untrack } from "svelte";
-import { box, type ReadableBox } from "svelte-toolbelt";
+import { type ReadableBox, box } from "svelte-toolbelt";
 import type { TextSelectionLayerImplProps } from "./types.js";
-import {
-	type EventCallback,
-	type ReadableBoxedValues,
-	addEventListener,
-	composeHandlers,
-	executeCallbacks,
-	isHTMLElement,
-	isOrContainsTarget,
-	noop,
-	useRefById,
-} from "$lib/internal/index.js";
+import { composeHandlers } from "$lib/internal/composeHandlers.js";
+import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
+import { type EventCallback, addEventListener } from "$lib/internal/events.js";
+import { noop } from "$lib/internal/noop.js";
+import { useRefById } from "$lib/internal/useRefById.svelte.js";
+import { isHTMLElement } from "$lib/internal/is.js";
+import { isOrContainsTarget } from "$lib/internal/elements.js";
+import { executeCallbacks } from "$lib/internal/executeCallbacks.js";
 
 type StateProps = ReadableBoxedValues<Required<Omit<TextSelectionLayerImplProps, "children">>>;
 

@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import { snapValueToStep } from "./math.js";
 
 describe("snapValueToStep", () => {
@@ -21,15 +21,15 @@ describe("snapValueToStep", () => {
 	});
 
 	it("should handle NaN min value", () => {
-		expect(snapValueToStep(3.7, NaN, 10, 1)).toBe(4);
+		expect(snapValueToStep(3.7, Number.NaN, 10, 1)).toBe(4);
 	});
 
 	it("should handle NaN max value", () => {
-		expect(snapValueToStep(3.7, 0, NaN, 1)).toBe(4);
+		expect(snapValueToStep(3.7, 0, Number.NaN, 1)).toBe(4);
 	});
 
 	it("should handle both NaN min and max values", () => {
-		expect(snapValueToStep(3.7, NaN, NaN, 1)).toBe(4);
+		expect(snapValueToStep(3.7, Number.NaN, Number.NaN, 1)).toBe(4);
 	});
 
 	it("should handle values outside the range", () => {

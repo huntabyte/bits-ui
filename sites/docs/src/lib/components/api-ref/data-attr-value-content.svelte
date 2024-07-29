@@ -9,7 +9,7 @@
 
 <div class="flex items-center gap-1.5">
 	{#if !attr.isEnum}
-		<Code class="bg-transparent px-0">{attr.value ?? "——"}</Code>
+		<Code class="bg-transparent px-0">{attr.value ?? "''"}</Code>
 	{:else}
 		<Code class="bg-transparent px-0">enum</Code>
 		<Popover.Root>

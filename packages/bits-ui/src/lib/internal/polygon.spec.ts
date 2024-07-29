@@ -1,10 +1,10 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import {
-	makeHullPresorted,
 	POINT_COMPARATOR,
-	pointInPolygon,
 	type Point,
 	type Polygon,
+	makeHullPresorted,
+	pointInPolygon,
 } from "./polygon.js";
 
 describe("makeHullPresorted", () => {
@@ -84,7 +84,7 @@ describe("makeHullPresorted", () => {
 	});
 });
 
-describe("POINT_COMPARATOR", () => {
+describe("pOINT_COMPARATOR", () => {
 	it("should return -1 if point a has a smaller x-coordinate", () => {
 		const a: Point = { x: 1, y: 0 };
 		const b: Point = { x: 2, y: 0 };

@@ -21,10 +21,13 @@
 
 	const rootState = getDateRangeFieldRootContext();
 
-	const fieldState = useDateRangeFieldInput({
-		name: box.with(() => name),
-		value: type === "start" ? rootState.startValue : rootState.endValue,
-	});
+	const fieldState = useDateRangeFieldInput(
+		{
+			name: box.with(() => name),
+			value: type === "start" ? rootState.startValue : rootState.endValue,
+		},
+		type
+	);
 
 	const inputState = fieldState.createInput({
 		id: box.with(() => id),

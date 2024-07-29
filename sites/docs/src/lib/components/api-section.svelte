@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from "$app/stores";
-	import { DataAttrsTable, PropsTable } from "$lib/components/index.js";
+	import { CSSVarsTable, DataAttrsTable, PropsTable } from "$lib/components/index.js";
 	import { h2 as H2, p as P } from "$lib/components/markdown/index.js";
 	import type { APISchema } from "$lib/types/index.js";
 	import { parseMarkdown } from "$lib/utils/index.js";
@@ -27,11 +27,11 @@
 				{#if schema.props}
 					<PropsTable props={schema.props} />
 				{/if}
-				{#if schema.slotProps}
-					<PropsTable slotted props={schema.slotProps} />
-				{/if}
 				{#if schema.dataAttributes && schema.dataAttributes.length}
 					<DataAttrsTable dataAttrs={schema.dataAttributes} />
+				{/if}
+				{#if schema.cssVars && schema.cssVars.length}
+					<CSSVarsTable cssVars={schema.cssVars} />
 				{/if}
 			</div>
 		</div>

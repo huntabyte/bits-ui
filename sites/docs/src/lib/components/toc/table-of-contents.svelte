@@ -2,7 +2,7 @@
 	import { createTableOfContents } from "@melt-ui/svelte";
 	import Tree from "./tree.svelte";
 
-	let { selector = "#content" }: { selector: string } = $props();
+	let { selector = "#content" }: { selector?: string } = $props();
 
 	const {
 		elements: { item },

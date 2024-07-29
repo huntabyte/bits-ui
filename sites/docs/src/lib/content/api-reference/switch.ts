@@ -6,6 +6,8 @@ import {
 	createStringProp,
 	withChildProps,
 } from "./helpers.js";
+import SwitchChildSnippetProps from "./extended-types/switch/root-child-snippet-props.md";
+import SwitchChildrenSnippetProps from "./extended-types/switch/root-children-snippet-props.md";
 import { enums } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 
@@ -38,7 +40,11 @@ const root = createApiSchema<SwitchRootPropsWithoutHTML>({
 			description:
 				"The value of the hidden input element to be used in form submissions when the switch is checked.",
 		}),
-		...withChildProps({ elType: "HTMLButtonElement" }),
+		...withChildProps({
+			elType: "HTMLButtonElement",
+			childrenDef: SwitchChildrenSnippetProps,
+			childDef: SwitchChildSnippetProps,
+		}),
 	},
 	dataAttributes: [
 		{
@@ -65,7 +71,11 @@ const root = createApiSchema<SwitchRootPropsWithoutHTML>({
 const thumb = createApiSchema<SwitchThumbPropsWithoutHTML>({
 	title: "Thumb",
 	description: "The thumb on the switch used to indicate the switch's state.",
-	props: withChildProps({ elType: "HTMLSpanElement" }),
+	props: withChildProps({
+		elType: "HTMLSpanElement",
+		childrenDef: SwitchChildrenSnippetProps,
+		childDef: SwitchChildSnippetProps,
+	}),
 	dataAttributes: [
 		{
 			name: "state",

@@ -175,6 +175,12 @@ type CalendarBaseRootPropsWithoutHTML = {
 	readonly?: boolean;
 
 	/**
+	 * If `true`, the calendar will focus the selected day, today, or the first day of the month
+	 * in that order depending on what is visible when the calendar is mounted.
+	 */
+	initialFocus?: boolean;
+
+	/**
 	 * Whether to disable the selection of days outside the current month. By default,
 	 * days outside the current month are rendered to fill the calendar grid, but they
 	 * are not selectable. Setting this prop to `true` will disable this behavior.

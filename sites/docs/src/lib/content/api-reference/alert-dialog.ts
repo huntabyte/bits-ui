@@ -9,6 +9,8 @@ import type {
 	AlertDialogTitlePropsWithoutHTML,
 	AlertDialogTriggerPropsWithoutHTML,
 } from "bits-ui";
+import OpenChangeFn from "./extended-types/shared/open-change-fn.md";
+import HeaderLevel from "./extended-types/shared/header-level.md";
 import {
 	childrenSnippet,
 	createApiSchema,
@@ -36,7 +38,7 @@ const root = createApiSchema<AlertDialogRootPropsWithoutHTML>({
 			bindable: true,
 		}),
 		onOpenChange: createFunctionProp({
-			definition: "(open: boolean) => void",
+			definition: OpenChangeFn,
 			description: "A callback function called when the open state changes.",
 		}),
 		children: childrenSnippet(),
@@ -74,6 +76,7 @@ const title = createApiSchema<AlertDialogTitlePropsWithoutHTML>({
 	description: "An accessibile title for the alert dialog.",
 	props: {
 		level: createUnionProp({
+			definition: HeaderLevel,
 			options: ["1", "2", "3", "4", "5", "6"],
 			description:
 				"The heading level of the title. This will be set as the `aria-level` attribute.",

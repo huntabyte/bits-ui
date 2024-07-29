@@ -2,7 +2,8 @@
 	import { box } from "svelte-toolbelt";
 	import type { TriggerProps } from "../index.js";
 	import { usePopoverTrigger } from "../popover.svelte.js";
-	import { mergeProps, useId } from "$lib/internal/index.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/useId.js";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 
 	let {

@@ -1,13 +1,14 @@
-import { getByTestId, render, waitFor } from "@testing-library/svelte";
+import { render, waitFor } from "@testing-library/svelte";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
+import { tick } from "svelte";
 import { getTestKbd, setupUserEvents } from "../utils.js";
 import ComboboxTest from "./ComboboxTest.svelte";
 import type { ComboboxSingleTestProps, Item } from "./ComboboxTest.svelte";
-import { sleep, type AnyFn } from "$lib/internal/index.js";
 import type { ComboboxMultipleTestProps } from "./ComboboxMultiTest.svelte";
 import ComboboxMultiTest from "./ComboboxMultiTest.svelte";
-import { tick } from "svelte";
+import { sleep } from "$lib/internal/sleep.js";
+import type { AnyFn } from "$lib/internal/types.js";
 
 const kbd = getTestKbd();
 
@@ -32,6 +33,7 @@ const testItems: Item[] = [
 
 function setupSingle(props: Partial<ComboboxSingleTestProps> = {}, items: Item[] = testItems) {
 	const user = setupUserEvents();
+	// eslint-disable-next-line ts/no-explicit-any
 	const returned = render(ComboboxTest, { name: "test", ...props, items } as any);
 	const input = returned.getByTestId("input");
 	const trigger = returned.getByTestId("trigger");
@@ -62,6 +64,7 @@ function setupSingle(props: Partial<ComboboxSingleTestProps> = {}, items: Item[]
 
 function setupMultiple(props: Partial<ComboboxMultipleTestProps> = {}, items: Item[] = testItems) {
 	const user = setupUserEvents();
+	// eslint-disable-next-line ts/no-explicit-any
 	const returned = render(ComboboxMultiTest, { name: "test", ...props, items } as any);
 	const input = returned.getByTestId("input");
 	const trigger = returned.getByTestId("trigger");

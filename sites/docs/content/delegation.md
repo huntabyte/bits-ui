@@ -29,18 +29,20 @@ Let's take a look at an example using the `Accordion.Trigger` component:
 
 We're passing all the props/attribute we would normally apply to th `<button>` within the component to whatever element we want. These props include event handlers, aria attributes, and any other attributes you passed into the `Accordion.Trigger` component.
 
-NOTE: If you wish to use a custom ID with a custom element, you must pass it to the component first. A lot of Bits UI internals rely on the ID so you'll need to do something like this:
+## Custom IDs & Attributes
+
+If you wish to use a custom ID, event handlers, or other attributes with a custom element, you **_must_** pass them to the component first. A lot of Bits UI internals rely on the ID, and these props are merged via [`mergeProps`](https://github.com/huntabyte/bits-ui/blob/main/packages/bits-ui/src/lib/internal/mergeProps.ts) so you'll need to do something like this:
 
 ```svelte
-<Accordion.Trigger id="my-custom-id">
-	<!-- your custom ID is now inside the `props` object -->
+<Accordion.Trigger id="my-custom-id" onclick={() => console.log("clicked")}>
+	<!-- your custom ID and event handler is now inside the `props` object -->
 	{#snippet child({ props })}
 		<div {...props}>Open accordion item</div>
 	{/snippet}
 </Accordion.Trigger>
 ```
 
-So behind the scenes this is what's happening (pseudo):
+Behind the scenes this is what's happening (pseudo):
 
 ```svelte
 <script lang="ts">

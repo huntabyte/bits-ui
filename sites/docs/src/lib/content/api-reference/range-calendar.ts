@@ -1,21 +1,5 @@
-import type {
-	RangeCalendarCellPropsWithoutHTML,
-	RangeCalendarDayPropsWithoutHTML,
-	RangeCalendarGridBodyPropsWithoutHTML,
-	RangeCalendarGridHeadPropsWithoutHTML,
-	RangeCalendarGridPropsWithoutHTML,
-	RangeCalendarGridRowPropsWithoutHTML,
-	RangeCalendarHeadCellPropsWithoutHTML,
-	RangeCalendarHeaderPropsWithoutHTML,
-	RangeCalendarHeadingPropsWithoutHTML,
-	RangeCalendarNextButtonPropsWithoutHTML,
-	RangeCalendarPrevButtonPropsWithoutHTML,
-	RangeCalendarRootPropsWithoutHTML,
-} from "bits-ui";
+import type { RangeCalendarRootPropsWithoutHTML } from "bits-ui";
 import { createApiSchema, createFunctionProp, withChildProps } from "./helpers.js";
-import { enums } from "$lib/content/api-reference/helpers.js";
-import * as C from "$lib/content/constants.js";
-import type { APISchema } from "$lib/types/index.js";
 import {
 	root as calendarRoot,
 	cell,

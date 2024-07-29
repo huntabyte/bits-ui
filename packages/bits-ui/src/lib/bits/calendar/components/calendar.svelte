@@ -33,6 +33,7 @@
 		preventDeselect = false,
 		type,
 		disableDaysOutsideMonth = true,
+		initialFocus = false,
 		...restProps
 	}: RootProps = $props();
 
@@ -65,6 +66,7 @@
 		minValue: box.with(() => minValue),
 		maxValue: box.with(() => maxValue),
 		disableDaysOutsideMonth: box.with(() => disableDaysOutsideMonth),
+		initialFocus: box.with(() => initialFocus),
 		placeholder: box.with(
 			() => placeholder as DateValue,
 			(v) => {

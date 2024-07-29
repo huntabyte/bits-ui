@@ -1,10 +1,10 @@
-import type { OnChangeFn, WithChild, WithChildren, Without } from "$lib/internal/types.js";
-import type { PrimitiveAnchorAttributes, PrimitiveDivAttributes } from "$lib/shared/attributes.js";
 import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
 import type { DismissableLayerProps } from "../utilities/dismissable-layer/types.js";
 import type { EscapeLayerProps } from "../utilities/escape-layer/types.js";
 import type { FloatingLayerContentProps } from "../utilities/floating-layer/types.js";
 import type { PortalProps } from "../utilities/portal/types.js";
+import type { PrimitiveAnchorAttributes, PrimitiveDivAttributes } from "$lib/shared/attributes.js";
+import type { OnChangeFn, WithChild, WithChildren, Without } from "$lib/internal/types.js";
 
 export type LinkPreviewRootPropsWithoutHTML = WithChildren<{
 	/**

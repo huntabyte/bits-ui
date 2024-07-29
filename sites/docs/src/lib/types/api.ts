@@ -20,8 +20,6 @@ export type PropObj<T, U = Omit<T, "style">> = {
 	[K in keyof U]-?: PropSchema;
 };
 
-export type SlotPropObj = Record<string, PropSchema>;
-
 export type DataAttrSchema = {
 	name: string;
 	value?: string;
@@ -29,10 +27,15 @@ export type DataAttrSchema = {
 	isEnum?: boolean;
 };
 
+export type CSSVarSchema = {
+	name: string;
+	description: string;
+};
+
 export type APISchema<T = Record<string, unknown>> = {
 	title: string;
 	description: string;
 	props?: PropObj<Omit<T, "style">>;
-	slotProps?: SlotPropObj;
 	dataAttributes?: DataAttrSchema[];
+	cssVars?: CSSVarSchema[];
 };

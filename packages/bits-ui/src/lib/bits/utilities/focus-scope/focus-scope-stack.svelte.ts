@@ -1,5 +1,5 @@
-import { useId } from "$lib/internal/useId.js";
 import { box } from "svelte-toolbelt";
+import { useId } from "$lib/internal/useId.js";
 
 export type FocusScopeAPI = {
 	id: string;
@@ -50,8 +50,7 @@ export function createFocusScopeAPI(): FocusScopeAPI {
 }
 
 function removeFromFocusScopeArray(arr: FocusScopeAPI[], item: FocusScopeAPI) {
-	const updatedArr = [...arr].filter((i) => i.id !== item.id);
-	return updatedArr;
+	return [...arr].filter((i) => i.id !== item.id);
 }
 
 export function removeLinks(items: HTMLElement[]) {

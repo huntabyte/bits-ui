@@ -1,25 +1,21 @@
 import { untrack } from "svelte";
-import { box, type ReadableBox, type WritableBox } from "svelte-toolbelt";
+import { type ReadableBox, type WritableBox, box } from "svelte-toolbelt";
 import type {
 	DismissableLayerImplProps,
 	InteractOutsideBehaviorType,
 	InteractOutsideEvent,
 	InteractOutsideInterceptEventType,
 } from "./types.js";
-import {
-	type EventCallback,
-	type ReadableBoxedValues,
-	addEventListener,
-	afterTick,
-	composeHandlers,
-	debounce,
-	executeCallbacks,
-	getOwnerDocument,
-	isElement,
-	isOrContainsTarget,
-	noop,
-	useRefById,
-} from "$lib/internal/index.js";
+import { composeHandlers } from "$lib/internal/composeHandlers.js";
+import { type EventCallback, addEventListener } from "$lib/internal/events.js";
+import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
+import { afterTick } from "$lib/internal/afterTick.js";
+import { debounce } from "$lib/internal/debounce.js";
+import { executeCallbacks } from "$lib/internal/executeCallbacks.js";
+import { noop } from "$lib/internal/noop.js";
+import { useRefById } from "$lib/internal/useRefById.svelte.js";
+import { getOwnerDocument, isOrContainsTarget } from "$lib/internal/elements.js";
+import { isElement } from "$lib/internal/is.js";
 import { onDestroyEffect } from "$lib/internal/onDestroyEffect.svelte.js";
 
 const layers = new Map<DismissableLayerState, ReadableBox<InteractOutsideBehaviorType>>();

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
 	import type { GroupLabelProps } from "../index.js";
-	import { useMenuLabel } from "../menu.svelte.js";
+	import { useMenuGroupLabel } from "../menu.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { useId } from "$lib/internal/useId.js";
 
@@ -13,7 +13,7 @@
 		...restProps
 	}: GroupLabelProps = $props();
 
-	const groupLabelState = useMenuLabel({
+	const groupLabelState = useMenuGroupLabel({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

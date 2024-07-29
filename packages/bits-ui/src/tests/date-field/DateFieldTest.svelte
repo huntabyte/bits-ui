@@ -1,9 +1,9 @@
 <script lang="ts" context="module">
+	import { DateField, type DateFieldRootProps, type WithoutChildrenOrChild } from "$lib/index.js";
 	export type DateFieldTestProps = WithoutChildrenOrChild<DateFieldRootProps>;
 </script>
 
 <script lang="ts">
-	import { DateField, type DateFieldRootProps, type WithoutChildrenOrChild } from "$lib/index.js";
 	let { value, placeholder, ...restProps }: DateFieldTestProps = $props();
 </script>
 

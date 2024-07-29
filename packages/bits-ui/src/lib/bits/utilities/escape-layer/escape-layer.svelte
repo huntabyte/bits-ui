@@ -2,7 +2,7 @@
 	import { box } from "svelte-toolbelt";
 	import type { EscapeLayerImplProps } from "./types.js";
 	import { useEscapeLayer } from "./useEscapeLayer.svelte.js";
-	import { noop } from "$lib/internal/index.js";
+	import { noop } from "$lib/internal/noop.js";
 
 	let {
 		escapeKeydownBehavior = "close",

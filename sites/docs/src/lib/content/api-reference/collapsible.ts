@@ -6,11 +6,15 @@ import type {
 import {
 	createApiSchema,
 	createBooleanProp,
+	createCSSVarSchema,
+	createDataAttrSchema,
+	createEnumDataAttr,
 	createFunctionProp,
 	forceMountProp,
 	withChildProps,
 } from "./helpers.js";
-import { enums } from "$lib/content/api-reference/helpers.js";
+import ContentChildSnippetProps from "./extended-types/collapsible/content-child-snippet-props.md";
+import ContentChildrenSnippetProps from "./extended-types/collapsible/content-children-snippet-props.md";
 import * as C from "$lib/content/constants.js";
 
 export const root = createApiSchema<CollapsibleRootPropsWithoutHTML>({
@@ -35,20 +39,19 @@ export const root = createApiSchema<CollapsibleRootPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		{
-			name: "disabled",
-			description: "Present when the checkbox is disabled.",
-		},
-		{
+		createEnumDataAttr({
 			name: "state",
-			value: enums("open", "closed"),
+			options: ["open", "closed"],
 			description: "The collapsible's open state.",
-			isEnum: true,
-		},
-		{
+		}),
+		createDataAttrSchema({
+			name: "disabled",
+			description: "Present when the collapsible is disabled.",
+		}),
+		createDataAttrSchema({
 			name: "collapsible-root",
 			description: "Present on the root element.",
-		},
+		}),
 	],
 });
 
@@ -57,20 +60,19 @@ export const trigger = createApiSchema<CollapsibleTriggerPropsWithoutHTML>({
 	description: "The button responsible for toggling the collapsible's open state.",
 	props: withChildProps({ elType: "HTMLButtonElement" }),
 	dataAttributes: [
-		{
-			name: "disabled",
-			description: "Present when the checkbox is disabled.",
-		},
-		{
+		createEnumDataAttr({
 			name: "state",
-			value: enums("open", "closed"),
+			options: ["open", "closed"],
 			description: "The collapsible's open state.",
-			isEnum: true,
-		},
-		{
+		}),
+		createDataAttrSchema({
+			name: "disabled",
+			description: "Present when the collapsible or this trigger is disabled.",
+		}),
+		createDataAttrSchema({
 			name: "collapsible-trigger",
 			description: "Present on the trigger element.",
-		},
+		}),
 	],
 });
 
@@ -79,23 +81,36 @@ export const content = createApiSchema<CollapsibleContentPropsWithoutHTML>({
 	description: "The content displayed when the collapsible is open.",
 	props: {
 		forceMount: forceMountProp,
-		...withChildProps({ elType: "HTMLDivElement" }),
+		...withChildProps({
+			elType: "HTMLDivElement",
+			childrenDef: ContentChildrenSnippetProps,
+			childDef: ContentChildSnippetProps,
+		}),
 	},
 	dataAttributes: [
-		{
-			name: "disabled",
-			description: "Present when the checkbox is disabled.",
-		},
-		{
+		createEnumDataAttr({
 			name: "state",
-			value: enums("open", "closed"),
+			options: ["open", "closed"],
 			description: "The collapsible's open state.",
-			isEnum: true,
-		},
-		{
+		}),
+		createDataAttrSchema({
+			name: "disabled",
+			description: "Present when the collapsible is disabled.",
+		}),
+		createDataAttrSchema({
 			name: "collapsible-content",
 			description: "Present on the content element.",
-		},
+		}),
+	],
+	cssVars: [
+		createCSSVarSchema({
+			name: "--bits-collapsible-content-height",
+			description: "The height of the collapsible content element.",
+		}),
+		createCSSVarSchema({
+			name: "--bits-collapsible-content-width",
+			description: "The width of the collapsible content element.",
+		}),
 	],
 });
 

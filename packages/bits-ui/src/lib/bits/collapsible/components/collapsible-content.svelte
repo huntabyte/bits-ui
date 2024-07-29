@@ -3,7 +3,8 @@
 	import { useCollapsibleContent } from "../collapsible.svelte.js";
 	import type { CollapsibleContentProps } from "../types.js";
 	import { PresenceLayer } from "$lib/bits/utilities/presence-layer/index.js";
-	import { mergeProps, useId } from "$lib/internal/index.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/useId.js";
 
 	let {
 		child,
@@ -27,15 +28,16 @@
 <PresenceLayer forceMount={true} present={contentState.present} {id}>
 	{#snippet presence({ present })}
 		{@const mergedProps = mergeProps(restProps, contentState.props, {
-			hidden: !present.current,
+			hidden: forceMount ? undefined : !present.current,
 		})}
 		{#if child}
 			{@render child({
+				...contentState.snippetProps,
 				props: mergedProps,
 			})}
 		{:else}
 			<div {...mergedProps}>
-				{@render children?.()}
+				{@render children?.(contentState.snippetProps)}
 			</div>
 		{/if}
 	{/snippet}

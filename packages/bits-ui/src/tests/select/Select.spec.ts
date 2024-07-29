@@ -4,7 +4,7 @@ import { describe, it, vi } from "vitest";
 import { getTestKbd, setupUserEvents } from "../utils.js";
 import SelectTest from "./SelectTest.svelte";
 import type { Item, SelectTestProps } from "./SelectTest.svelte";
-import { sleep } from "$lib/internal/index.js";
+import { sleep } from "$lib/internal/sleep.js";
 
 const kbd = getTestKbd();
 

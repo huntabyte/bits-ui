@@ -1,17 +1,16 @@
 import { untrack } from "svelte";
 import type { TabsActivationMode } from "./types.js";
 import {
-	type ReadableBoxedValues,
-	type WithRefProps,
-	type WritableBoxedValues,
 	getAriaOrientation,
 	getDataDisabled,
 	getDataOrientation,
 	getDisabled,
 	getHidden,
-	kbd,
-	useRefById,
-} from "$lib/internal/index.js";
+} from "$lib/internal/attrs.js";
+import { useRefById } from "$lib/internal/useRefById.svelte.js";
+import { kbd } from "$lib/internal/kbd.js";
+import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
+import type { WithRefProps } from "$lib/internal/types.js";
 import type { Orientation } from "$lib/shared/index.js";
 import { type UseRovingFocusReturn, useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
 import { createContext } from "$lib/internal/createContext.js";

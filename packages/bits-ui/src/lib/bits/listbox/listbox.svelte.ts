@@ -1,7 +1,7 @@
 import { onMount } from "svelte";
 import { SvelteSet } from "svelte/reactivity";
 import { IsFocusWithin } from "runed";
-import { focusFirst } from "../utilities/focus-scope/utils.js";
+import { focusFirst } from "$lib/internal/focus.js";
 import {
 	getAriaDisabled,
 	getAriaSelected,

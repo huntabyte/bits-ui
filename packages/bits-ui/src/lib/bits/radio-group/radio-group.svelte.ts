@@ -1,14 +1,8 @@
-import {
-	type ReadableBoxedValues,
-	type WithRefProps,
-	type WritableBoxedValues,
-	getAriaChecked,
-	getAriaRequired,
-	getDataDisabled,
-	srOnlyStyles,
-	styleToString,
-	useRefById,
-} from "$lib/internal/index.js";
+import { useRefById } from "$lib/internal/useRefById.svelte.js";
+import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
+import type { WithRefProps } from "$lib/internal/types.js";
+import { getAriaChecked, getAriaRequired, getDataDisabled } from "$lib/internal/attrs.js";
+import { srOnlyStyles, styleToString } from "$lib/internal/style.js";
 import type { Orientation } from "$lib/shared/index.js";
 import { type UseRovingFocusReturn, useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
 import { createContext } from "$lib/internal/createContext.js";
@@ -27,8 +21,8 @@ type RadioGroupRootStateProps = WithRefProps<
 		WritableBoxedValues<{ value: string }>
 >;
 class RadioGroupRootState {
-	id: RadioGroupRootStateProps["id"];
-	ref: RadioGroupRootStateProps["ref"];
+	#id: RadioGroupRootStateProps["id"];
+	#ref: RadioGroupRootStateProps["ref"];
 	disabled: RadioGroupRootStateProps["disabled"];
 	required: RadioGroupRootStateProps["required"];
 	loop: RadioGroupRootStateProps["loop"];
@@ -38,24 +32,24 @@ class RadioGroupRootState {
 	rovingFocusGroup: UseRovingFocusReturn;
 
 	constructor(props: RadioGroupRootStateProps) {
-		this.id = props.id;
+		this.#id = props.id;
 		this.disabled = props.disabled;
 		this.required = props.required;
 		this.loop = props.loop;
 		this.orientation = props.orientation;
 		this.name = props.name;
 		this.value = props.value;
-		this.ref = props.ref;
+		this.#ref = props.ref;
 		this.rovingFocusGroup = useRovingFocus({
-			rootNodeId: this.id,
+			rootNodeId: this.#id,
 			candidateSelector: ITEM_ATTR,
 			loop: this.loop,
 			orientation: this.orientation,
 		});
 
 		useRefById({
-			id: this.id,
-			ref: this.ref,
+			id: this.#id,
+			ref: this.#ref,
 		});
 	}
 
@@ -78,7 +72,7 @@ class RadioGroupRootState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.current,
+				id: this.#id.current,
 				role: "radiogroup",
 				"aria-required": getAriaRequired(this.required.current),
 				"data-disabled": getDataDisabled(this.disabled.current),

@@ -12,7 +12,6 @@ import {
 	childrenSnippet,
 	createApiSchema,
 	createBooleanProp,
-	createEnumProp,
 	createFunctionProp,
 	createUnionProp,
 	dismissableLayerProps,
@@ -22,7 +21,6 @@ import {
 	portalProps,
 	preventOverflowTextSelectionProp,
 	preventScrollProp,
-	union,
 	withChildProps,
 } from "./helpers.js";
 import { enums } from "$lib/content/api-reference/helpers.js";

@@ -1,3 +1,4 @@
+import { Previous } from "runed";
 import { afterTick } from "$lib/internal/afterTick.js";
 import { backward, forward, next, prev } from "$lib/internal/arrays.js";
 import {
@@ -13,7 +14,6 @@ import { createContext } from "$lib/internal/createContext.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
-import { Previous } from "runed";
 
 // prettier-ignore
 export const INTERACTION_KEYS = [kbd.ARROW_LEFT, kbd.ESCAPE, kbd.ARROW_RIGHT, kbd.SHIFT, kbd.CAPS_LOCK, kbd.CONTROL, kbd.ALT, kbd.META, kbd.ENTER, kbd.F1, kbd.F2, kbd.F3, kbd.F4, kbd.F5, kbd.F6, kbd.F7, kbd.F8, kbd.F9, kbd.F10, kbd.F11, kbd.F12];
@@ -372,7 +372,7 @@ class ComboboxInputState {
 
 			if (e.key === kbd.ARROW_DOWN) {
 				nextItem = next(candidateNodes, currIndex, loop);
-			} else if (e.key == kbd.ARROW_UP) {
+			} else if (e.key === kbd.ARROW_UP) {
 				nextItem = prev(candidateNodes, currIndex, loop);
 			} else if (e.key === kbd.PAGE_DOWN) {
 				nextItem = forward(candidateNodes, currIndex, 10, loop);
@@ -405,12 +405,12 @@ class ComboboxInputState {
 			({
 				id: this.#id.current,
 				role: "combobox",
+				disabled: this.root.disabled.current ? true : undefined,
 				"aria-activedescendant": this.root.highlightedId,
 				"aria-autocomplete": "list",
 				"aria-expanded": getAriaExpanded(this.root.open.current),
 				"data-state": getDataOpenClosed(this.root.open.current),
 				"data-disabled": getDataDisabled(this.root.disabled.current),
-				disabled: this.root.disabled.current ? true : undefined,
 				onkeydown: this.#onkeydown,
 				oninput: this.#oninput,
 				[COMBOBOX_INPUT_ATTR]: "",
@@ -462,16 +462,19 @@ class ComboboxTriggerState {
 		this.root.toggleMenu();
 	};
 
-	props = $derived.by(() => ({
-		id: this.#id.current,
-		"aria-haspopup": "listbox",
-		"data-state": getDataOpenClosed(this.root.open.current),
-		"data-disabled": getDataDisabled(this.root.disabled.current),
-		disabled: this.root.disabled.current ? true : undefined,
-		onpointerdown: this.#onpointerdown,
-		onkeydown: this.#onkeydown,
-		[COMBOBOX_TRIGGER_ATTR]: "",
-	}));
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.current,
+				disabled: this.root.disabled.current ? true : undefined,
+				"aria-haspopup": "listbox",
+				"data-state": getDataOpenClosed(this.root.open.current),
+				"data-disabled": getDataDisabled(this.root.disabled.current),
+				[COMBOBOX_TRIGGER_ATTR]: "",
+				onpointerdown: this.#onpointerdown,
+				onkeydown: this.#onkeydown,
+			}) as const
+	);
 }
 
 type ComboboxContentStateProps = WithRefProps;
@@ -549,7 +552,6 @@ class ComboboxItemState {
 		$effect(() => {
 			if (this.isHighlighted) {
 				this.onHighlight.current();
-				return;
 			} else if (this.prevHighlighted.current) {
 				this.onUnhighlight.current();
 			}
@@ -602,14 +604,24 @@ class ComboboxItemState {
 		() =>
 			({
 				id: this.#id.current,
+				"aria-selected": this.root.includesItem(this.value.current) ? "true" : undefined,
 				"data-value": this.value.current,
 				"data-disabled": getDataDisabled(this.disabled.current),
 				"data-highlighted":
 					this.root.highlightedValue === this.value.current ? "" : undefined,
 				"data-selected": this.root.includesItem(this.value.current) ? "" : undefined,
-				"aria-selected": this.root.includesItem(this.value.current) ? "true" : undefined,
 				"data-label": this.label.current,
 				[COMBOBOX_ITEM_ATTR]: "",
+				style: {
+					"--bits-combobox-content-transform-origin":
+						"var(--bits-floating-transform-origin)",
+					"--bits-combobox-content-available-width":
+						"var(--bits-floating-available-width)",
+					"--bits-combobox-content-available-height":
+						"var(--bits-floating-available-height)",
+					"--bits-combobox-trigger-width": "var(--bits-floating-anchor-width)",
+					"--bits-combobox-trigger-height": "var(--bits-floating-anchor-height)",
+				},
 				onpointermove: this.#onpointermove,
 				onpointerdown: this.#onpointerdown,
 				onpointerleave: this.#onpointerleave,

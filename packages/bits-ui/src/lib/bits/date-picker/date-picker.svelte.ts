@@ -1,8 +1,8 @@
+import type { DateValue } from "@internationalized/date";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { createContext } from "$lib/internal/createContext.js";
 import type { DateMatcher, Granularity, HourCycle, WeekStartsOn } from "$lib/shared/date/types.js";
 import type { SegmentPart } from "$lib/shared/index.js";
-import type { DateValue } from "@internationalized/date";
 
 type DatePickerRootStateProps = WritableBoxedValues<{
 	value: DateValue | undefined;
@@ -31,6 +31,7 @@ type DatePickerRootStateProps = WritableBoxedValues<{
 		numberOfMonths: number;
 		calendarLabel: string;
 		disableDaysOutsideMonth: boolean;
+		initialFocus: boolean;
 		onDateSelect?: () => void;
 	}>;
 

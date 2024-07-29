@@ -1,4 +1,4 @@
-import type { OnChangeFn, WithChild, Without } from "$lib/internal/index.js";
+import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
 import type { PrimitiveButtonAttributes } from "$lib/shared/attributes.js";
 
 export type ToggleRootSnippetProps = {

@@ -2,7 +2,8 @@
 	import { box } from "svelte-toolbelt";
 	import { useFloatingContentState } from "../useFloatingLayer.svelte.js";
 	import type { ContentImplProps } from "./index.js";
-	import { mergeProps, useId } from "$lib/internal/index.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/useId.js";
 	import { useBodyScrollLock } from "$lib/internal/useBodyScrollLock.svelte.js";
 
 	let {

@@ -1,6 +1,6 @@
-import { type Getter, type WritableBox } from "svelte-toolbelt";
-import type { Box } from "./box.svelte.js";
+import type { Getter, WritableBox } from "svelte-toolbelt";
 import { untrack } from "svelte";
+import type { Box } from "./box.svelte.js";
 import { noop } from "./callbacks.js";
 
 type UseRefByIdProps = {
@@ -30,7 +30,6 @@ type UseRefByIdProps = {
  * Reactive using `$effect` to ensure when the ID or condition changes,
  * an update is triggered and new node is found.
  *
- * @param id The boxed ID of the node to find.
  */
 export function useRefById({
 	id,

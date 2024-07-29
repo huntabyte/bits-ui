@@ -1,13 +1,13 @@
-import {
-	type SelectValuePropsWithoutHTML,
-	type SelectArrowPropsWithoutHTML,
-	type SelectContentPropsWithoutHTML,
-	type SelectGroupLabelPropsWithoutHTML,
-	type SelectGroupPropsWithoutHTML,
-	type SelectItemPropsWithoutHTML,
-	type SelectRootPropsWithoutHTML,
-	type SelectSeparatorPropsWithoutHTML,
-	type SelectTriggerPropsWithoutHTML,
+import type {
+	SelectArrowPropsWithoutHTML,
+	SelectContentPropsWithoutHTML,
+	SelectGroupLabelPropsWithoutHTML,
+	SelectGroupPropsWithoutHTML,
+	SelectItemPropsWithoutHTML,
+	SelectRootPropsWithoutHTML,
+	SelectSeparatorPropsWithoutHTML,
+	SelectTriggerPropsWithoutHTML,
+	SelectValuePropsWithoutHTML,
 } from "bits-ui";
 import {
 	arrowProps,

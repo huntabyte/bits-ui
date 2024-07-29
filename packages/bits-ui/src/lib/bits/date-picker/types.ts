@@ -241,6 +241,11 @@ export type DatePickerRootPropsWithoutHTML = WithChildren<{
 	 * @defaultValue true
 	 */
 	closeOnDateSelect?: boolean;
+
+	/**
+	 * Whether to focus a date when the picker is first opened.
+	 */
+	initialFocus?: boolean;
 }>;
 
 export type DatePickerRootProps = DatePickerRootPropsWithoutHTML;

@@ -3,7 +3,7 @@ import type {
 	DateRangePickerInputPropsWithoutHTML,
 	DateRangePickerRootPropsWithoutHTML,
 } from "bits-ui";
-import { label, segment } from "./date-range-field.js";
+import { label, root as rangeFieldRoot, segment } from "./date-range-field.js";
 import { createApiSchema, createBooleanProp, withChildProps } from "./helpers.js";
 import { content, trigger } from "./popover.js";
 import {
@@ -19,11 +19,10 @@ import {
 	nextButton,
 	prevButton,
 } from "./calendar.js";
-import * as C from "$lib/content/constants.js";
-import { enums } from "$lib/content/api-reference/helpers.js";
-import { root as rangeFieldRoot } from "./date-range-field.js";
 import { root as rangeCalendarRoot } from "./range-calendar.js";
 import { root as datePickerRoot } from "./date-picker.js";
+import * as C from "$lib/content/constants.js";
+import { enums } from "$lib/content/api-reference/helpers.js";
 
 const root = createApiSchema<DateRangePickerRootPropsWithoutHTML>({
 	title: "Root",

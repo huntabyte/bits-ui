@@ -36,5 +36,8 @@ export type FocusScopeImplProps = {
 	 */
 	trapped?: boolean;
 
+	/**
+	 * The snippet to render the focus scope container with its props.
+	 */
 	focusScope?: Snippet<[{ props: FocusScopeContainerProps }]>;
 } & FocusScopeProps;

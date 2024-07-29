@@ -1,8 +1,8 @@
 import { render } from "@testing-library/svelte";
 import { axe } from "jest-axe";
+import { setupUserEvents } from "../utils.js";
 import PaginationTest, { type PaginationTestProps } from "./PaginationTest.svelte";
 import { isHTMLElement } from "$lib/internal/is.js";
-import { setupUserEvents } from "../utils.js";
 
 function setup(props: PaginationTestProps = { count: 100 }) {
 	const user = setupUserEvents();

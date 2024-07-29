@@ -1,6 +1,6 @@
 import type {
-	SliderRootPropsWithoutHTML,
 	SliderRangePropsWithoutHTML,
+	SliderRootPropsWithoutHTML,
 	SliderThumbPropsWithoutHTML,
 	SliderTickPropsWithoutHTML,
 } from "bits-ui";

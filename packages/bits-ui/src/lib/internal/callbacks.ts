@@ -16,9 +16,6 @@ export function executeCallbacks<T extends unknown[]>(
 	};
 }
 
-/**
- * A no operation function (does nothing)
- */
 export function noop() {
 	//
 }

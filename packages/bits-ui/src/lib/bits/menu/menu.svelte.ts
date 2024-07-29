@@ -1,6 +1,6 @@
 import { box } from "svelte-toolbelt";
 import { tick } from "svelte";
-import { focusFirst } from "../utilities/focus-scope/utils.js";
+import { IsFocusWithin } from "runed";
 import {
 	FIRST_LAST_KEYS,
 	type GraceIntent,
@@ -11,6 +11,7 @@ import {
 	getCheckedState,
 	isMouseEvent,
 } from "./utils.js";
+import { focusFirst } from "$lib/internal/focus.js";
 import {
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
@@ -18,7 +19,7 @@ import {
 } from "$lib/internal/box.svelte.js";
 import { addEventListener } from "$lib/internal/events.js";
 import type { AnyFn, WithRefProps } from "$lib/internal/types.js";
-import { executeCallbacks } from "$lib/internal/callbacks.js";
+import { executeCallbacks } from "$lib/internal/executeCallbacks.js";
 import { useTypeahead } from "$lib/internal/useTypeahead.svelte.js";
 import { isElement, isHTMLElement } from "$lib/internal/is.js";
 import { useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
@@ -38,7 +39,6 @@ import { afterTick } from "$lib/internal/afterTick.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
 import { isPointerInGraceArea, makeHullFromElements } from "$lib/internal/polygon.js";
 import { onDestroyEffect } from "$lib/internal/onDestroyEffect.svelte.js";
-import { IsFocusWithin } from "runed";
 
 const TRIGGER_ATTR = "data-menu-trigger";
 const CONTENT_ATTR = "data-menu-content";
@@ -63,7 +63,9 @@ const [setMenuMenuContext, getMenuMenuContext] = createContext<MenuMenuState>(
 const [setMenuContentContext, getMenuContentContext] =
 	createContext<MenuContentState>("Menu.Content");
 
-const [setMenuGroupContext, getMenuGroupContext] = createContext<MenuGroupState>("Menu.Group");
+const [setMenuGroupContext, getMenuGroupContext] = createContext<
+	MenuGroupState | MenuRadioGroupState
+>("Menu.Group");
 
 const [setMenuRadioGroupContext, getMenuRadioGroupContext] =
 	createContext<MenuRadioGroupState>("Menu.RadioGroup");
@@ -734,9 +736,9 @@ type MenuGroupLabelStateProps = WithRefProps;
 class MenuGroupLabelState {
 	#id: MenuGroupLabelStateProps["id"];
 	#ref: MenuGroupLabelStateProps["ref"];
-	#group: MenuGroupState;
+	#group: MenuGroupState | MenuRadioGroupState | undefined = undefined;
 
-	constructor(props: MenuGroupLabelStateProps, group: MenuGroupState) {
+	constructor(props: MenuGroupLabelStateProps, group?: MenuGroupState | MenuRadioGroupState) {
 		this.#id = props.id;
 		this.#ref = props.ref;
 		this.#group = group;
@@ -745,6 +747,7 @@ class MenuGroupLabelState {
 			id: this.#id,
 			ref: this.#ref,
 			onRefChange: (node) => {
+				if (!this.#group) return;
 				this.#group.labelNode = node;
 			},
 		});
@@ -805,6 +808,7 @@ class MenuRadioGroupState {
 	value: MenuRadioGroupStateProps["value"];
 	#ref: MenuRadioGroupStateProps["ref"];
 	#content: MenuContentState;
+	labelNode = $state<HTMLElement | null>(null);
 
 	constructor(props: MenuRadioGroupStateProps, content: MenuContentState) {
 		this.value = props.value;
@@ -829,12 +833,17 @@ class MenuRadioGroupState {
 		return new MenuRadioItemState(props, item, this);
 	}
 
+	createGroupLabel(props: MenuGroupLabelStateProps) {
+		return new MenuGroupLabelState(props, this);
+	}
+
 	props = $derived.by(
 		() =>
 			({
 				id: this.#id.current,
 				[RADIO_GROUP_ATTR]: "",
 				role: "group",
+				"aria-labelledby": this.labelNode?.id ?? undefined,
 			}) as const
 	);
 }
@@ -1125,7 +1134,9 @@ export function useMenuCheckboxItem(props: MenuItemCombinedProps & MenuCheckboxI
 }
 
 export function useMenuRadioGroup(props: MenuRadioGroupStateProps) {
-	return setMenuRadioGroupContext(getMenuContentContext().createRadioGroup(props));
+	return setMenuGroupContext(
+		setMenuRadioGroupContext(getMenuContentContext().createRadioGroup(props))
+	);
 }
 
 export function useMenuRadioItem(props: MenuRadioItemStateProps & MenuItemCombinedProps) {
@@ -1136,8 +1147,10 @@ export function useMenuGroup(props: MenuGroupStateProps) {
 	return setMenuGroupContext(new MenuGroupState(props));
 }
 
-export function useMenuLabel(props: MenuGroupLabelStateProps) {
-	return getMenuGroupContext().createGroupLabel(props);
+export function useMenuGroupLabel(props: MenuGroupLabelStateProps) {
+	const groupCtx = getMenuGroupContext(null);
+	if (!groupCtx) return new MenuGroupLabelState(props);
+	return groupCtx.createGroupLabel(props);
 }
 
 export function useMenuSeparator(props: MenuSeparatorStateProps) {

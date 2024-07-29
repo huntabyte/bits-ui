@@ -1,4 +1,10 @@
 <script lang="ts" context="module">
+	import {
+		DateRangeField,
+		type DateRangeFieldInputProps,
+		type DateRangeFieldRootProps,
+		type WithoutChildrenOrChild,
+	} from "$lib/index.js";
 	export type DateRangeFieldTestProps = WithoutChildrenOrChild<DateRangeFieldRootProps> & {
 		startProps?: Omit<DateRangeFieldInputProps, "type">;
 		endProps?: Omit<DateRangeFieldInputProps, "type">;
@@ -6,12 +12,6 @@
 </script>
 
 <script lang="ts">
-	import {
-		DateRangeField,
-		type DateRangeFieldInputProps,
-		type DateRangeFieldRootProps,
-		type WithoutChildrenOrChild,
-	} from "$lib/index.js";
 	let { value, placeholder, startProps, endProps, ...restProps }: DateRangeFieldTestProps =
 		$props();
 </script>

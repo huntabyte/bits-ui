@@ -8,7 +8,7 @@
 	let {
 		id = useId(),
 		disabled = false,
-		value,
+		value = useId(),
 		children,
 		child,
 		ref = $bindable(null),

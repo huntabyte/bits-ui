@@ -1,3 +1,5 @@
+import type { FocusableTarget } from "./focus.js";
+
 export const isBrowser = typeof document !== "undefined";
 
 export const isIOS = getIsIOS();
@@ -31,7 +33,7 @@ export function isElementOrSVGElement(element: unknown): element is Element | SV
 }
 
 export function isNumberString(value: string) {
-	return !isNaN(Number(value)) && !isNaN(parseFloat(value));
+	return !Number.isNaN(Number(value)) && !Number.isNaN(Number.parseFloat(value));
 }
 
 export function isNull(value: unknown): value is null {
@@ -48,4 +50,30 @@ export function isFocusVisible(element: Element) {
 
 export function isNotNull<T>(value: T | null): value is T {
 	return value !== null;
+}
+
+/**
+ * Determines if the provided object is a valid `HTMLInputElement` with
+ * a `select` method available.
+ */
+export function isSelectableInput(
+	element: unknown
+): element is FocusableTarget & { select: () => void } {
+	return element instanceof HTMLInputElement && "select" in element;
+}
+
+/**
+ * Given a node, determine if it is hidden by walking up the
+ * DOM tree until we hit the `stopAt` node (exclusive), if provided)
+ * otherwise we stop at the document root.
+ */
+export function isElementHidden(node: HTMLElement, stopAt?: HTMLElement) {
+	if (getComputedStyle(node).visibility === "hidden") return true;
+	while (node) {
+		// we stop at `upTo` (excluding it)
+		if (stopAt !== undefined && node === stopAt) return false;
+		if (getComputedStyle(node).display === "none") return true;
+		node = node.parentElement as HTMLElement;
+	}
+	return false;
 }

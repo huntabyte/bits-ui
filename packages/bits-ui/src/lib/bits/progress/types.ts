@@ -1,4 +1,4 @@
-import type { WithChild, Without } from "$lib/internal/index.js";
+import type { WithChild, Without } from "$lib/internal/types.js";
 import type { PrimitiveDivAttributes } from "$lib/shared/attributes.js";
 
 export type ProgressRootPropsWithoutHTML = WithChild<{

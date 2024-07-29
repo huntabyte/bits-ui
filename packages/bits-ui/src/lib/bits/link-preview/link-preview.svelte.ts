@@ -1,3 +1,5 @@
+import { untrack } from "svelte";
+import { box } from "svelte-toolbelt";
 import { getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { addEventListener } from "$lib/internal/events.js";
@@ -5,11 +7,9 @@ import { isElement, isFocusVisible, isTouch } from "$lib/internal/is.js";
 import { sleep } from "$lib/internal/sleep.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
-import { untrack } from "svelte";
-import { getTabbableCandidates } from "../utilities/focus-scope/utils.js";
+import { getTabbableCandidates } from "$lib/internal/focus.js";
 import { createContext } from "$lib/internal/createContext.js";
 import { useGraceArea } from "$lib/internal/useGraceArea.svelte.js";
-import { box } from "svelte-toolbelt";
 import { onDestroyEffect } from "$lib/internal/onDestroyEffect.svelte.js";
 
 const CONTENT_ATTR = "data-link-preview-content";

@@ -8,19 +8,32 @@ import type {
 import {
 	createApiSchema,
 	createBooleanProp,
+	createCSSVarSchema,
+	createDataAttrSchema,
+	createEnumDataAttr,
 	createEnumProp,
 	createFunctionProp,
 	createStringProp,
 	createUnionProp,
+	disabledDataAttr,
 	forceMountProp,
+	orientationDataAttr,
 	withChildProps,
 } from "./helpers.js";
+import StringOrArrayString from "./extended-types/shared/string-or-array-string.md";
+import SingleOrMultiple from "./extended-types/shared/single-or-multiple.md";
+import StringOrArrayChangeFn from "./extended-types/shared/string-or-array-change-fn.md";
+import Orientation from "./extended-types/shared/orientation.md";
+import HeaderLevel from "./extended-types/shared/header-level.md";
+import ContentChildSnippetProps from "./extended-types/accordion/content-child-snippet-props.md";
+import ContentChildrenSnippetProps from "./extended-types/accordion/content-children-snippet-props.md";
 import * as C from "$lib/content/constants.js";
-import StringOrArrayString from "./extended-types/string-or-array-string.md";
-import SingleOrMultiple from "./extended-types/single-or-multiple.md";
-import StringOrArrayChangeFn from "./extended-types/string-or-array-change-fn.md";
-import Orientation from "./extended-types/orientation.md";
-import HeaderLevel from "./extended-types/header-level.md";
+
+const stateDataAttr = createEnumDataAttr({
+	name: "state",
+	description: "Whether the accordion item is open or closed.",
+	options: ["open", "closed"],
+});
 
 const root = createApiSchema<AccordionRootPropsWithoutHTML>({
 	title: "Root",
@@ -63,6 +76,14 @@ const root = createApiSchema<AccordionRootPropsWithoutHTML>({
 		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
+	dataAttributes: [
+		orientationDataAttr,
+		disabledDataAttr,
+		createDataAttrSchema({
+			name: "accordion-root",
+			description: "Present on the root element.",
+		}),
+	],
 });
 
 const item = createApiSchema<AccordionItemPropsWithoutHTML>({
@@ -75,23 +96,33 @@ const item = createApiSchema<AccordionItemPropsWithoutHTML>({
 		}),
 		value: createStringProp({
 			description:
-				"The value of the accordion item. This is used to identify when the item is open or closed.",
-			required: true,
+				"The value of the accordion item. This is used to identify when the item is open or closed. If not provided, a unique ID will be generated for this value.",
+			default: "A random unique ID",
 		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
+	dataAttributes: [
+		stateDataAttr,
+		disabledDataAttr,
+		createDataAttrSchema({
+			name: "accordion-item",
+			description: "Present on the item element.",
+		}),
+	],
 });
 
 const trigger = createApiSchema<AccordionTriggerPropsWithoutHTML>({
 	title: "Trigger",
 	description: "The button responsible for toggling the accordion item.",
-	props: {
-		disabled: createBooleanProp({
-			description: "Whether or not the accordion item trigger is disabled.",
-			default: C.FALSE,
+	props: withChildProps({ elType: "HTMLButtonElement" }),
+	dataAttributes: [
+		orientationDataAttr,
+		disabledDataAttr,
+		createDataAttrSchema({
+			name: "accordion-trigger",
+			description: "Present on the trigger element.",
 		}),
-		...withChildProps({ elType: "HTMLButtonElement" }),
-	},
+	],
 });
 
 const content = createApiSchema<AccordionContentPropsWithoutHTML>({
@@ -99,8 +130,30 @@ const content = createApiSchema<AccordionContentPropsWithoutHTML>({
 	description: "The accordion item content, which is displayed when the item is open.",
 	props: {
 		forceMount: forceMountProp,
-		...withChildProps({ elType: "HTMLDivElement" }),
+		...withChildProps({
+			elType: "HTMLDivElement",
+			childrenDef: ContentChildrenSnippetProps,
+			childDef: ContentChildSnippetProps,
+		}),
 	},
+	dataAttributes: [
+		orientationDataAttr,
+		disabledDataAttr,
+		createDataAttrSchema({
+			name: "accordion-content",
+			description: "Present on the content element.",
+		}),
+	],
+	cssVars: [
+		createCSSVarSchema({
+			name: "--bits-accordion-content-height",
+			description: "The height of the accordion content element.",
+		}),
+		createCSSVarSchema({
+			name: "--bits-accordion-content-width",
+			description: "The width of the accordion content element.",
+		}),
+	],
 });
 
 const header = createApiSchema<AccordionHeaderPropsWithoutHTML>({
@@ -116,6 +169,19 @@ const header = createApiSchema<AccordionHeaderPropsWithoutHTML>({
 		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
+	dataAttributes: [
+		orientationDataAttr,
+		disabledDataAttr,
+		createEnumDataAttr({
+			name: "heading-level",
+			description: "The heading level of the element.",
+			options: ["1", "2", "3", "4", "5", "6"],
+		}),
+		createDataAttrSchema({
+			name: "accordion-header",
+			description: "Present on the header element.",
+		}),
+	],
 });
 
 export const accordion = [root, item, header, trigger, content];

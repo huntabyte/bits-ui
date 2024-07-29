@@ -1,7 +1,7 @@
 import {
 	allComponentDocs,
-	allUtilityDocs,
 	allTypeHelperDocs,
+	allUtilityDocs,
 } from "../../../.contentlayer/generated/index.mjs";
 
 export type NavItem = {

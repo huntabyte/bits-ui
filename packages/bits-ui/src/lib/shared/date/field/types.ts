@@ -1,8 +1,8 @@
 import type { DateValue } from "@internationalized/date";
 import type {
 	DATE_SEGMENT_PARTS,
+	EDITABLE_SEGMENT_PARTS,
 	NON_EDITABLE_SEGMENT_PARTS,
-	EDITABLE_SEGMENT_PARTS as EDITABLE_SEGMENT_PARTS,
 	TIME_SEGMENT_PARTS,
 } from "./parts.js";
 

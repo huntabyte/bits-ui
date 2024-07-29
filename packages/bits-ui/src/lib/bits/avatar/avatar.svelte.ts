@@ -114,6 +114,7 @@ class AvatarImageState {
 				style: {
 					display: this.root.loadingStatus.current === "loaded" ? "block" : "none",
 				},
+				"data-status": this.root.loadingStatus.current,
 				[AVATAR_IMAGE_ATTR]: "",
 				src: this.src.current,
 			}) as const
@@ -148,6 +149,7 @@ class AvatarFallbackState {
 				style: {
 					display: this.root.loadingStatus.current === "loaded" ? "none" : undefined,
 				},
+				"data-status": this.root.loadingStatus.current,
 				[AVATAR_FALLBACK_ATTR]: "",
 			}) as const
 	);

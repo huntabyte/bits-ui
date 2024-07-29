@@ -4,6 +4,7 @@ import type {
 	DatePickerRootPropsWithoutHTML,
 } from "bits-ui";
 import {
+	root as calendarRoot,
 	cell,
 	day,
 	grid,
@@ -16,7 +17,7 @@ import {
 	nextButton,
 	prevButton,
 } from "./calendar.js";
-import { label, segment } from "./date-field.js";
+import { root as dateFieldRoot, label, segment } from "./date-field.js";
 import {
 	childrenSnippet,
 	createApiSchema,
@@ -26,8 +27,6 @@ import {
 } from "./helpers.js";
 import { content, trigger } from "./popover.js";
 import * as C from "$lib/content/constants.js";
-import { root as calendarRoot } from "./calendar.js";
-import { root as dateFieldRoot } from "./date-field.js";
 
 export const root = createApiSchema<DatePickerRootPropsWithoutHTML>({
 	title: "Root",
@@ -72,6 +71,7 @@ export const root = createApiSchema<DatePickerRootPropsWithoutHTML>({
 		hourCycle: dateFieldRoot.props!.hourCycle,
 		granularity: dateFieldRoot.props!.granularity,
 		hideTimeZone: dateFieldRoot.props!.hideTimeZone,
+		initialFocus: calendarRoot.props!.initialFocus,
 		children: childrenSnippet(),
 	},
 	dataAttributes: [
