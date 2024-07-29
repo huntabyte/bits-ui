@@ -64,13 +64,13 @@ class CheckboxRootState {
 		() =>
 			({
 				id: this.#id.current,
-				"data-disabled": getDataDisabled(this.disabled.current),
-				"data-state": getCheckboxDataState(this.checked.current),
 				role: "checkbox",
 				type: "button",
+				disabled: this.disabled.current,
 				"aria-checked": getAriaChecked(this.checked.current),
 				"aria-required": getAriaRequired(this.required.current),
-				disabled: this.disabled.current,
+				"data-disabled": getDataDisabled(this.disabled.current),
+				"data-state": getCheckboxDataState(this.checked.current),
 				[CHECKBOX_ROOT_ATTR]: "",
 				//
 				onclick: this.#onclick,

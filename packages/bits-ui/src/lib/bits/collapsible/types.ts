@@ -25,14 +25,21 @@ export type CollapsibleRootPropsWithoutHTML = WithChild<{
 export type CollapsibleRootProps = CollapsibleRootPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, CollapsibleRootPropsWithoutHTML>;
 
-export type CollapsibleContentPropsWithoutHTML = WithChild<{
-	/**
-	 * Whether to force mount the content to the DOM.
-	 *
-	 * @defaultValue false
-	 */
-	forceMount?: boolean;
-}>;
+export type CollapsibleContentSnippetProps = {
+	open: boolean;
+};
+
+export type CollapsibleContentPropsWithoutHTML = WithChild<
+	{
+		/**
+		 * Whether to force mount the content to the DOM.
+		 *
+		 * @defaultValue false
+		 */
+		forceMount?: boolean;
+	},
+	CollapsibleContentSnippetProps
+>;
 
 export type CollapsibleContentProps = CollapsibleContentPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, CollapsibleContentPropsWithoutHTML>;

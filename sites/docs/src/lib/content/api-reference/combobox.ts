@@ -5,19 +5,22 @@ import type {
 	ComboboxItemPropsWithoutHTML,
 	ComboboxGroupLabelPropsWithoutHTML,
 	ComboboxRootPropsWithoutHTML,
+	ComboboxTriggerPropsWithoutHTML,
+	ComboboxGroupPropsWithoutHTML,
 } from "bits-ui";
 import {
 	arrowProps,
 	childrenSnippet,
 	createApiSchema,
 	createBooleanProp,
+	createDataAttrSchema,
+	createEnumDataAttr,
 	createEnumProp,
 	createFunctionProp,
 	createStringProp,
 	createUnionProp,
 	dirProp,
 	dismissableLayerProps,
-	enums,
 	escapeLayerProps,
 	floatingProps,
 	focusScopeProps,
@@ -26,6 +29,12 @@ import {
 	withChildProps,
 } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
+
+const stateDataAttr = createEnumDataAttr({
+	name: "state",
+	options: ["open", "closed"],
+	description: "The combobox's open state.",
+});
 
 export const root = createApiSchema<ComboboxRootPropsWithoutHTML>({
 	title: "Root",
@@ -101,10 +110,11 @@ export const content = createApiSchema<ComboboxContentPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		{
+		stateDataAttr,
+		createDataAttrSchema({
 			name: "combobox-content",
 			description: "Present on the content element.",
-		},
+		}),
 	],
 });
 
@@ -135,24 +145,31 @@ export const item = createApiSchema<ComboboxItemPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		{
-			name: "state",
-			description: "The state of the item.",
-			value: enums("selected", "hovered"),
-			isEnum: true,
-		},
-		{
+		createDataAttrSchema({
+			name: "value",
+			description: "The value of the combobox item.",
+		}),
+		createDataAttrSchema({
+			name: "label",
+			description: "The label of the combobox item.",
+		}),
+		createDataAttrSchema({
 			name: "disabled",
 			description: "Present when the item is disabled.",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "highlighted",
-			description: "Present when the item is highlighted, via keyboard navigation or hover.",
-		},
-		{
+			description:
+				"Present when the item is highlighted, which is either via keyboard navigation of the menu or hover.",
+		}),
+		createDataAttrSchema({
+			name: "selected",
+			description: "Present when the item is selected.",
+		}),
+		createDataAttrSchema({
 			name: "combobox-item",
 			description: "Present on the item element.",
-		},
+		}),
 	],
 });
 
@@ -168,23 +185,65 @@ export const input = createApiSchema<ComboboxInputPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLInputElement" }),
 	},
 	dataAttributes: [
-		{
+		createEnumDataAttr({
+			name: "state",
+			options: ["open", "closed"],
+			description: "The combobox's open state.",
+		}),
+		createDataAttrSchema({
+			name: "disabled",
+			description: "Present when the combobox is disabled.",
+		}),
+		createDataAttrSchema({
 			name: "combobox-input",
 			description: "Present on the input element.",
-		},
+		}),
+	],
+});
+
+export const trigger = createApiSchema<ComboboxTriggerPropsWithoutHTML>({
+	title: "Trigger",
+	description: "A button which toggles the combobox's open state.",
+	props: withChildProps({ elType: "HTMLButtonElement" }),
+	dataAttributes: [
+		createEnumDataAttr({
+			name: "state",
+			options: ["open", "closed"],
+			description: "The combobox's open state.",
+		}),
+		createDataAttrSchema({
+			name: "disabled",
+			description: "Present when the combobox is disabled.",
+		}),
+		createDataAttrSchema({
+			name: "combobox-trigger",
+			description: "Present on the trigger element.",
+		}),
+	],
+});
+
+export const group = createApiSchema<ComboboxGroupPropsWithoutHTML>({
+	title: "Group",
+	description: "A group of related combobox items.",
+	props: withChildProps({ elType: "HTMLDivElement" }),
+	dataAttributes: [
+		createDataAttrSchema({
+			name: "combobox-group",
+			description: "Present on the group element.",
+		}),
 	],
 });
 
 export const groupLabel = createApiSchema<ComboboxGroupLabelPropsWithoutHTML>({
-	title: "Label",
+	title: "GroupLabel",
 	description:
-		"A label for the combobox input element, which is typically displayed in the content.",
+		"A label for the parent combobox group. This is used to describe a group of related combobox items.",
 	props: withChildProps({ elType: "HTMLDivElement" }),
 	dataAttributes: [
-		{
-			name: "combobox-label",
-			description: "Present on the label element.",
-		},
+		createDataAttrSchema({
+			name: "combobox-group-label",
+			description: "Present on the group label element.",
+		}),
 	],
 });
 
@@ -193,10 +252,10 @@ export const arrow = createApiSchema<ComboboxArrowPropsWithoutHTML>({
 	description: "An optional arrow element which points to the content when open.",
 	props: arrowProps,
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "arrow",
 			description: "Present on the arrow element.",
-		},
+		}),
 	],
 });
 

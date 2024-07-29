@@ -170,7 +170,7 @@ Alternatively, you can use `bind:value` with an `$effect` block to handle side e
 </Accordion.Item>
 ```
 
-## Transitions
+## Svelte Transitions
 
 You can use the `forceMount` prop on the `Accordion.Content` component to forcefully mount the content regardless of whether the accordion item is open or closed. This is useful when you want more control over the transitions when the accordion item opens and closes using something like [Svelte Transitions](https://svelte.dev/docs/svelte-transition).
 

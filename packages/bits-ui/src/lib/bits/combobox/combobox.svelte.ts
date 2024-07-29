@@ -405,12 +405,12 @@ class ComboboxInputState {
 			({
 				id: this.#id.current,
 				role: "combobox",
+				disabled: this.root.disabled.current ? true : undefined,
 				"aria-activedescendant": this.root.highlightedId,
 				"aria-autocomplete": "list",
 				"aria-expanded": getAriaExpanded(this.root.open.current),
 				"data-state": getDataOpenClosed(this.root.open.current),
 				"data-disabled": getDataDisabled(this.root.disabled.current),
-				disabled: this.root.disabled.current ? true : undefined,
 				onkeydown: this.#onkeydown,
 				oninput: this.#oninput,
 				[COMBOBOX_INPUT_ATTR]: "",
@@ -462,16 +462,19 @@ class ComboboxTriggerState {
 		this.root.toggleMenu();
 	};
 
-	props = $derived.by(() => ({
-		id: this.#id.current,
-		"aria-haspopup": "listbox",
-		"data-state": getDataOpenClosed(this.root.open.current),
-		"data-disabled": getDataDisabled(this.root.disabled.current),
-		disabled: this.root.disabled.current ? true : undefined,
-		onpointerdown: this.#onpointerdown,
-		onkeydown: this.#onkeydown,
-		[COMBOBOX_TRIGGER_ATTR]: "",
-	}));
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.current,
+				disabled: this.root.disabled.current ? true : undefined,
+				"aria-haspopup": "listbox",
+				"data-state": getDataOpenClosed(this.root.open.current),
+				"data-disabled": getDataDisabled(this.root.disabled.current),
+				[COMBOBOX_TRIGGER_ATTR]: "",
+				onpointerdown: this.#onpointerdown,
+				onkeydown: this.#onkeydown,
+			}) as const
+	);
 }
 
 type ComboboxContentStateProps = WithRefProps;

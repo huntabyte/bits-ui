@@ -10,6 +10,7 @@
 		child,
 		ref = $bindable(null),
 		id = useId(),
+		disabled = false,
 		...restProps
 	}: TriggerProps = $props();
 
@@ -19,7 +20,9 @@
 			() => ref,
 			(v) => (ref = v)
 		),
+		disabled: box.with(() => disabled),
 	});
+
 	const mergedProps = $derived(mergeProps(restProps, triggerState.props));
 </script>
 

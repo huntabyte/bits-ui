@@ -30,3 +30,7 @@ They also need to be flexible enough to allow for reusing the same component whi
 ---
 
 Should we embrace the [ValidityState](https://developer.mozilla.org/en-US/docs/Web/API/ValidityState) API? Something to think about.
+
+---
+
+We need to expose the different `open` states via snippet props for all the `forceMount`-able components to work with Svelte and other transition/animation libs.

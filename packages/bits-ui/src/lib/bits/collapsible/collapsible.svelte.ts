@@ -4,9 +4,9 @@ import { afterTick } from "$lib/internal/afterTick.js";
 import { getAriaExpanded, getDataDisabled, getDataOpenClosed } from "$lib/internal/attrs.js";
 import { createContext } from "$lib/internal/createContext.js";
 
-const ROOT_ATTR = "data-collapsible-root";
-const CONTENT_ATTR = "data-collapsible-content";
-const TRIGGER_ATTR = "data-collapsible-trigger";
+const COLLAPSIBLE_ROOT_ATTR = "data-collapsible-root";
+const COLLAPSIBLE_CONTENT_ATTR = "data-collapsible-content";
+const COLLAPSIBLE_TRIGGER_ATTR = "data-collapsible-trigger";
 
 type CollapsibleRootStateProps = WritableBoxedValues<{
 	open: boolean;
@@ -54,7 +54,7 @@ class CollapsibleRootState {
 				id: this.#id.current,
 				"data-state": getDataOpenClosed(this.open.current),
 				"data-disabled": getDataDisabled(this.disabled.current),
-				[ROOT_ATTR]: "",
+				[COLLAPSIBLE_ROOT_ATTR]: "",
 			}) as const
 	);
 }
@@ -136,12 +136,14 @@ class CollapsibleContentState {
 		});
 	}
 
+	snippetProps = $derived.by(() => ({
+		open: this.root.open.current,
+	}));
+
 	props = $derived.by(
 		() =>
 			({
 				id: this.#id.current,
-				"data-state": getDataOpenClosed(this.root.open.current),
-				"data-disabled": getDataDisabled(this.root.disabled.current),
 				style: {
 					"--bits-collapsible-content-height": this.#height
 						? `${this.#height}px`
@@ -150,13 +152,16 @@ class CollapsibleContentState {
 						? `${this.#width}px`
 						: undefined,
 				},
-				[CONTENT_ATTR]: "",
+				"data-state": getDataOpenClosed(this.root.open.current),
+				"data-disabled": getDataDisabled(this.root.disabled.current),
+				[COLLAPSIBLE_CONTENT_ATTR]: "",
 			}) as const
 	);
 }
 
 type CollapsibleTriggerStateProps = ReadableBoxedValues<{
 	id: string;
+	disabled: boolean | null | undefined;
 }> &
 	WritableBoxedValues<{
 		ref: HTMLElement | null;
@@ -166,11 +171,14 @@ class CollapsibleTriggerState {
 	#root: CollapsibleRootState;
 	#ref: CollapsibleTriggerStateProps["ref"];
 	#id: CollapsibleTriggerStateProps["id"];
+	#disabled: CollapsibleTriggerStateProps["disabled"];
+	#isDisabled = $derived.by(() => this.#disabled.current || this.#root.disabled.current);
 
 	constructor(props: CollapsibleTriggerStateProps, root: CollapsibleRootState) {
 		this.#root = root;
 		this.#id = props.id;
 		this.#ref = props.ref;
+		this.#disabled = props.disabled;
 
 		useRefById({
 			id: this.#id,
@@ -187,12 +195,12 @@ class CollapsibleTriggerState {
 			({
 				id: this.#id.current,
 				type: "button",
+				disabled: this.#isDisabled,
 				"aria-controls": this.#root.contentNode?.id,
 				"aria-expanded": getAriaExpanded(this.#root.open.current),
 				"data-state": getDataOpenClosed(this.#root.open.current),
-				"data-disabled": getDataDisabled(this.#root.disabled.current),
-				disabled: this.#root.disabled.current,
-				[TRIGGER_ATTR]: "",
+				"data-disabled": getDataDisabled(this.#isDisabled),
+				[COLLAPSIBLE_TRIGGER_ATTR]: "",
 				//
 				onclick: this.#onclick,
 			}) as const

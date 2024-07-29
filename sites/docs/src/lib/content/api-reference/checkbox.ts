@@ -2,6 +2,8 @@ import type { CheckboxRootPropsWithoutHTML } from "bits-ui";
 import {
 	createApiSchema,
 	createBooleanProp,
+	createDataAttrSchema,
+	createEnumDataAttr,
 	createEnumProp,
 	createFunctionProp,
 	createStringProp,
@@ -46,20 +48,19 @@ export const root = createApiSchema<CheckboxRootPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
 	dataAttributes: [
-		{
+		createEnumDataAttr({
+			name: "state",
+			options: ["checked", "unchecked", "indeterminate"],
+			description: "The checkbox's state of checked, unchecked, or indeterminate.",
+		}),
+		createDataAttrSchema({
 			name: "disabled",
 			description: "Present when the checkbox is disabled.",
-		},
-		{
-			name: "state",
-			value: enums("checked", "unchecked", "indeterminate"),
-			description: "The checkbox's state. Can be 'checked', 'unchecked', or 'indeterminate'.",
-			isEnum: true,
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "checkbox-root",
 			description: "Present on the root element.",
-		},
+		}),
 	],
 });
 
