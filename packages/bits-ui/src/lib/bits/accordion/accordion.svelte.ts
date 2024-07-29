@@ -174,12 +174,15 @@ export class AccordionItemState {
 		return new AccordionHeaderState(props, this);
 	}
 
-	props = $derived.by(() => ({
-		id: this.#id.current,
-		[ACCORDION_ITEM_ATTR]: "",
-		"data-state": getDataOpenClosed(this.isActive),
-		"data-disabled": getDataDisabled(this.isDisabled),
-	}));
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.current,
+				"data-state": getDataOpenClosed(this.isActive),
+				"data-disabled": getDataDisabled(this.isDisabled),
+				[ACCORDION_ITEM_ATTR]: "",
+			}) as const
+	);
 }
 
 //

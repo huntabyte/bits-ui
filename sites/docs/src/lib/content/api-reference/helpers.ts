@@ -1,5 +1,5 @@
 import * as C from "$lib/content/constants.js";
-import type { APISchema, PropSchema } from "$lib/types/api.js";
+import type { APISchema, DataAttrSchema, PropSchema } from "$lib/types/api.js";
 import type { Component } from "svelte";
 import ChildDefaultSnippetProps from "./extended-types/shared/child-default-snippet-props.md";
 import OnInteractOutside from "./extended-types/shared/on-interact-outside.md";
@@ -39,6 +39,10 @@ export function createApiSchema<T>(schema: APISchema<T>) {
 }
 
 export function createPropSchema(schema: PropSchema) {
+	return schema;
+}
+
+export function createDataAttrSchema(schema: DataAttrSchema) {
 	return schema;
 }
 
@@ -162,6 +166,21 @@ export function createNumberProp({
 		bindable,
 		default: defaultProp,
 		description,
+	};
+}
+
+type EnumDataAttrOptions = {
+	name: string;
+	description: string;
+	options: string[];
+};
+
+export function createEnumDataAttr(options: EnumDataAttrOptions): DataAttrSchema {
+	return {
+		name: options.name,
+		value: enums(...options.options),
+		description: options.description,
+		isEnum: true,
 	};
 }
 
@@ -475,3 +494,15 @@ export const dirProp = createEnumProp({
 	description: "The reading direction of the app.",
 	default: "ltr",
 });
+
+export const orientationDataAttr = createEnumDataAttr({
+	name: "orientation",
+	options: ["vertical", "horizontal"],
+	description: "The orientation of the component.",
+});
+
+export const disabledDataAttr: DataAttrSchema = {
+	name: "disabled",
+	value: "''",
+	description: "Present when the component is disabled.",
+};
