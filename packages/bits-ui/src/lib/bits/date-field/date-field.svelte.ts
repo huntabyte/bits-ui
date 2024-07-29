@@ -78,7 +78,7 @@ export type DateFieldRootStateProps = WritableBoxedValues<{
 		required: boolean;
 	}>;
 
-class DateFieldRootState {
+export class DateFieldRootState {
 	value: DateFieldRootStateProps["value"];
 	placeholder: WritableBox<DateValue>;
 	isDateUnavailable: DateFieldRootStateProps["isDateUnavailable"];

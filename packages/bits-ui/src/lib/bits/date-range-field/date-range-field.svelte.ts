@@ -6,7 +6,7 @@ import type { Granularity, DateMatcher } from "$lib/shared/date/types.js";
 import type { DateRange, SegmentPart } from "$lib/shared/index.js";
 import type { DateValue } from "@internationalized/date";
 import { untrack } from "svelte";
-import { useDateFieldRoot } from "../date-field/date-field.svelte.js";
+import { DateFieldRootState, useDateFieldRoot } from "../date-field/date-field.svelte.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
 import { createContext } from "$lib/internal/createContext.js";
@@ -58,6 +58,8 @@ export class DateRangeFieldRootState {
 	required: DateRangeFieldRootStateProps["required"];
 	startValue: DateRangeFieldRootStateProps["startValue"];
 	endValue: DateRangeFieldRootStateProps["endValue"];
+	startFieldState: DateFieldRootState | undefined = undefined;
+	endFieldState: DateFieldRootState | undefined = undefined;
 	descriptionId = useId();
 	formatter: Formatter;
 	fieldNode = $state<HTMLElement | null>(null);
@@ -182,8 +184,8 @@ export class DateRangeFieldRootState {
 	 */
 	childFieldPropOverrides = {};
 
-	createField(props: DateRangeFieldInputStateProps) {
-		return useDateFieldRoot(
+	createField(props: DateRangeFieldInputStateProps, type: "start" | "end") {
+		const fieldState = useDateFieldRoot(
 			{
 				value: props.value,
 				name: props.name,
@@ -202,6 +204,13 @@ export class DateRangeFieldRootState {
 			},
 			this
 		);
+
+		if (type === "start") {
+			this.startFieldState = fieldState;
+		} else {
+			this.endFieldState = fieldState;
+		}
+		return fieldState;
 	}
 
 	createLabel(props: DateRangeFieldLabelStateProps) {
@@ -272,8 +281,11 @@ export function useDateRangeFieldLabel(props: DateRangeFieldLabelStateProps) {
 	return getDateRangeFieldRootContext().createLabel(props);
 }
 
-export function useDateRangeFieldInput(props: DateRangeFieldInputStateProps) {
-	return getDateRangeFieldRootContext().createField(props);
+export function useDateRangeFieldInput(
+	props: DateRangeFieldInputStateProps,
+	type: "start" | "end"
+) {
+	return getDateRangeFieldRootContext().createField(props, type);
 }
 
 export { getDateRangeFieldRootContext };
