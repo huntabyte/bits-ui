@@ -5,11 +5,19 @@ import type {
 } from "bits-ui";
 import {
 	createApiSchema,
+	createDataAttrSchema,
+	createEnumDataAttr,
 	createEnumProp,
 	createFunctionProp,
 	createNumberProp,
 	withChildProps,
 } from "./helpers.js";
+
+const statusDataAttr = createEnumDataAttr({
+	name: "status",
+	description: "The loading status of the image.",
+	options: ["loading", "loaded", "error"],
+});
 
 export const root = createApiSchema<AvatarRootPropsWithoutHTML>({
 	title: "Root",
@@ -34,10 +42,11 @@ export const root = createApiSchema<AvatarRootPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		{
+		statusDataAttr,
+		createDataAttrSchema({
 			name: "avatar-root",
 			description: "Present on the root element.",
-		},
+		}),
 	],
 });
 
@@ -46,10 +55,11 @@ export const image = createApiSchema<AvatarImagePropsWithoutHTML>({
 	description: "The avatar image displayed once it has loaded.",
 	props: withChildProps({ elType: "HTMLImageElement" }),
 	dataAttributes: [
-		{
+		statusDataAttr,
+		createDataAttrSchema({
 			name: "avatar-image",
-			description: "Present on the image element.",
-		},
+			description: "Present on the root element.",
+		}),
 	],
 });
 
@@ -58,10 +68,11 @@ export const fallback = createApiSchema<AvatarFallbackPropsWithoutHTML>({
 	description: "The fallback displayed while the avatar image is loading or if it fails to load",
 	props: withChildProps({ elType: "HTMLSpanElement" }),
 	dataAttributes: [
-		{
+		statusDataAttr,
+		createDataAttrSchema({
 			name: "avatar-fallback",
 			description: "Present on the fallback element.",
-		},
+		}),
 	],
 });
 

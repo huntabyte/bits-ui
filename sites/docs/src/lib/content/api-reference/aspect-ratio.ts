@@ -1,5 +1,10 @@
 import type { AspectRatioPropsWithoutHTML } from "bits-ui";
-import { createApiSchema, createNumberProp, withChildProps } from "./helpers.js";
+import {
+	createApiSchema,
+	createDataAttrSchema,
+	createNumberProp,
+	withChildProps,
+} from "./helpers.js";
 
 const root = createApiSchema<AspectRatioPropsWithoutHTML>({
 	title: "Root",
@@ -11,6 +16,12 @@ const root = createApiSchema<AspectRatioPropsWithoutHTML>({
 		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
+	dataAttributes: [
+		createDataAttrSchema({
+			name: "aspect-ratio-root",
+			description: "Present on the root element.",
+		}),
+	],
 });
 
 export const aspectRatio = [root];

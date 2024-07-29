@@ -50,6 +50,7 @@ import {
 import { type Formatter, createFormatter } from "$lib/shared/date/formatter.js";
 import type { DateMatcher, Month } from "$lib/shared/date/types.js";
 import { isBefore, toDate } from "$lib/shared/date/utils.js";
+import { untrack } from "svelte";
 
 type CalendarRootStateProps = WithRefProps<
 	WritableBoxedValues<{
@@ -73,6 +74,7 @@ type CalendarRootStateProps = WithRefProps<
 			type: "single" | "multiple";
 			readonly: boolean;
 			disableDaysOutsideMonth: boolean;
+			initialFocus: boolean;
 			/**
 			 * This is strictly used by the `DatePicker` component to close the popover when a date
 			 * is selected. It is not intended to be used by the user.
@@ -103,6 +105,7 @@ export class CalendarRootState {
 	readonly: CalendarRootStateProps["readonly"];
 	disableDaysOutsideMonth: CalendarRootStateProps["disableDaysOutsideMonth"];
 	onDateSelect: CalendarRootStateProps["onDateSelect"];
+	initialFocus: CalendarRootStateProps["initialFocus"];
 	months: Month<DateValue>[] = $state([]);
 	visibleMonths = $derived.by(() => this.months.map((month) => month.value));
 	announcer: Announcer;
@@ -131,6 +134,7 @@ export class CalendarRootState {
 		this.ref = props.ref;
 		this.disableDaysOutsideMonth = props.disableDaysOutsideMonth;
 		this.onDateSelect = props.onDateSelect;
+		this.initialFocus = props.initialFocus;
 
 		this.announcer = getAnnouncer();
 		this.formatter = createFormatter(this.locale.current);
@@ -146,6 +150,18 @@ export class CalendarRootState {
 			locale: this.locale.current,
 			fixedWeeks: this.fixedWeeks.current,
 			numberOfMonths: this.numberOfMonths.current,
+		});
+
+		$effect(() => {
+			const initialFocus = untrack(() => this.initialFocus.current);
+			if (initialFocus) {
+				// focus the first `data-focused` day node
+				const firstFocusedDay =
+					this.ref.current?.querySelector<HTMLElement>(`[data-focused]`);
+				if (firstFocusedDay) {
+					firstFocusedDay.focus();
+				}
+			}
 		});
 
 		$effect(() => {
@@ -530,6 +546,7 @@ export class CalendarHeadingState {
 				id: this.id.current,
 				"aria-hidden": getAriaHidden(true),
 				"data-disabled": getDataDisabled(this.root.disabled.current),
+				"data-readonly": getDataReadonly(this.root.readonly.current),
 				[this.root.getBitsAttr("heading")]: "",
 			}) as const
 	);
@@ -822,12 +839,15 @@ export class CalendarGridBodyState {
 		});
 	}
 
-	props = $derived.by(() => ({
-		id: this.id.current,
-		"data-disabled": getDataDisabled(this.root.disabled.current),
-		"data-readonly": getDataReadonly(this.root.readonly.current),
-		[this.root.getBitsAttr("grid-body")]: "",
-	}));
+	props = $derived.by(
+		() =>
+			({
+				id: this.id.current,
+				"data-disabled": getDataDisabled(this.root.disabled.current),
+				"data-readonly": getDataReadonly(this.root.readonly.current),
+				[this.root.getBitsAttr("grid-body")]: "",
+			}) as const
+	);
 }
 
 export type CalendarGridHeadStateProps = WithRefProps;
