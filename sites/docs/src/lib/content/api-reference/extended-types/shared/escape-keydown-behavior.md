@@ -1,3 +1,3 @@
 ```ts
-"close" | "ignore" | "defer-otherwise-close" | "defer-otherwise-ignore"
+"close" | "ignore" | "defer-otherwise-close" | "defer-otherwise-ignore";
 ```
