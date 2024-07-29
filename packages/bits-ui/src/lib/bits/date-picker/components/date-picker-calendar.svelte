@@ -41,6 +41,7 @@
 		placeholder: datePickerRootState.props.placeholder,
 		value: datePickerRootState.props.value,
 		onDateSelect: datePickerRootState.props.onDateSelect,
+		initialFocus: datePickerRootState.props.initialFocus,
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, calendarState.props));

@@ -39,6 +39,7 @@
 		fixedWeeks = false,
 		numberOfMonths = 1,
 		closeOnDateSelect = true,
+		initialFocus = false,
 		children,
 	}: RootProps = $props();
 
@@ -105,6 +106,7 @@
 		isDateDisabled: box.with(() => isDateDisabled),
 		fixedWeeks: box.with(() => fixedWeeks),
 		numberOfMonths: box.with(() => numberOfMonths),
+		initialFocus: box.with(() => initialFocus),
 		onDateSelect: box.with(() => onDateSelect),
 	});
 
