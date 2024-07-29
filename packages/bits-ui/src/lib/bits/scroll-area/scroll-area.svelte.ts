@@ -5,20 +5,20 @@
  * Incredible thought must have went into solving all the intricacies of this component.
  */
 
+import { useDebounce } from "runed";
+import { untrack } from "svelte";
+import { box } from "svelte-toolbelt";
+import type { ScrollAreaType } from "./types.js";
 import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import { executeCallbacks } from "$lib/internal/executeCallbacks.js";
 import { addEventListener } from "$lib/internal/events.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
-import { mergeProps, useId, type Direction, type Orientation } from "$lib/shared/index.js";
-import { useDebounce } from "runed";
-import type { ScrollAreaType } from "./types.js";
+import { type Direction, type Orientation, mergeProps, useId } from "$lib/shared/index.js";
 import { useStateMachine } from "$lib/internal/useStateMachine.svelte.js";
 import { clamp } from "$lib/internal/clamp.js";
 import { useResizeObserver } from "$lib/internal/useResizeObserver.svelte.js";
-import { untrack } from "svelte";
 import { createContext } from "$lib/internal/createContext.js";
-import { box } from "svelte-toolbelt";
 import { afterTick } from "$lib/internal/afterTick.js";
 
 const SCROLL_AREA_ROOT_ATTR = "data-scroll-area-root";
@@ -1012,7 +1012,7 @@ export function useScrollAreaCorner(props: ScrollAreaCornerImplStateProps) {
 }
 
 function toInt(value?: string) {
-	return value ? parseInt(value, 10) : 0;
+	return value ? Number.parseInt(value, 10) : 0;
 }
 
 function getThumbRatio(viewportSize: number, contentSize: number) {

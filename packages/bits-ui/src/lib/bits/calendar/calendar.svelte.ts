@@ -6,6 +6,7 @@ import {
 	isToday,
 } from "@internationalized/date";
 import { DEV } from "esm-env";
+import { untrack } from "svelte";
 import type {
 	RangeCalendarCellState,
 	RangeCalendarRootState,
@@ -50,7 +51,6 @@ import {
 import { type Formatter, createFormatter } from "$lib/shared/date/formatter.js";
 import type { DateMatcher, Month } from "$lib/shared/date/types.js";
 import { isBefore, toDate } from "$lib/shared/date/utils.js";
-import { untrack } from "svelte";
 
 type CalendarRootStateProps = WithRefProps<
 	WritableBoxedValues<{

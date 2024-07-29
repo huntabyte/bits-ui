@@ -1,8 +1,8 @@
 import { error, redirect } from "@sveltejs/kit";
 import type { Doc } from "contentlayer/generated/index.js";
+import type { Component } from "svelte";
 import { getAPISchemas, isBit } from "$lib/content/api-reference/index.js";
 import type { APISchema } from "$lib/types/index.js";
-import type { Component } from "svelte";
 
 export type FrontMatter = Pick<Doc, "title" | "description">;
 

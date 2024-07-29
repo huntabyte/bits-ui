@@ -70,10 +70,10 @@ export function makeHullPresorted<P extends Point>(points: Readonly<Array<P>>): 
 	lowerHull.pop();
 
 	if (
-		upperHull.length == 1 &&
-		lowerHull.length == 1 &&
-		upperHull[0]!.x == lowerHull[0]!.x &&
-		upperHull[0]!.y == lowerHull[0]!.y
+		upperHull.length === 1 &&
+		lowerHull.length === 1 &&
+		upperHull[0]!.x === lowerHull[0]!.x &&
+		upperHull[0]!.y === lowerHull[0]!.y
 	)
 		return upperHull;
 	else return upperHull.concat(lowerHull);

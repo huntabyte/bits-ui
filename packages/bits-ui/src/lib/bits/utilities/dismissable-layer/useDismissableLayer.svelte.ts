@@ -1,5 +1,5 @@
 import { untrack } from "svelte";
-import { box, type ReadableBox, type WritableBox } from "svelte-toolbelt";
+import { type ReadableBox, type WritableBox, box } from "svelte-toolbelt";
 import type {
 	DismissableLayerImplProps,
 	InteractOutsideBehaviorType,
@@ -14,7 +14,7 @@ import { debounce } from "$lib/internal/debounce.js";
 import { executeCallbacks } from "$lib/internal/executeCallbacks.js";
 import { noop } from "$lib/internal/noop.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
-import { isOrContainsTarget, getOwnerDocument } from "$lib/internal/elements.js";
+import { getOwnerDocument, isOrContainsTarget } from "$lib/internal/elements.js";
 import { isElement } from "$lib/internal/is.js";
 import { onDestroyEffect } from "$lib/internal/onDestroyEffect.svelte.js";
 

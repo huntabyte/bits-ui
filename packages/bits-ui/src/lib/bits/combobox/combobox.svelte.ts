@@ -1,3 +1,4 @@
+import { Previous } from "runed";
 import { afterTick } from "$lib/internal/afterTick.js";
 import { backward, forward, next, prev } from "$lib/internal/arrays.js";
 import {
@@ -13,7 +14,6 @@ import { createContext } from "$lib/internal/createContext.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
-import { Previous } from "runed";
 
 // prettier-ignore
 export const INTERACTION_KEYS = [kbd.ARROW_LEFT, kbd.ESCAPE, kbd.ARROW_RIGHT, kbd.SHIFT, kbd.CAPS_LOCK, kbd.CONTROL, kbd.ALT, kbd.META, kbd.ENTER, kbd.F1, kbd.F2, kbd.F3, kbd.F4, kbd.F5, kbd.F6, kbd.F7, kbd.F8, kbd.F9, kbd.F10, kbd.F11, kbd.F12];
@@ -372,7 +372,7 @@ class ComboboxInputState {
 
 			if (e.key === kbd.ARROW_DOWN) {
 				nextItem = next(candidateNodes, currIndex, loop);
-			} else if (e.key == kbd.ARROW_UP) {
+			} else if (e.key === kbd.ARROW_UP) {
 				nextItem = prev(candidateNodes, currIndex, loop);
 			} else if (e.key === kbd.PAGE_DOWN) {
 				nextItem = forward(candidateNodes, currIndex, 10, loop);
@@ -552,7 +552,6 @@ class ComboboxItemState {
 		$effect(() => {
 			if (this.isHighlighted) {
 				this.onHighlight.current();
-				return;
 			} else if (this.prevHighlighted.current) {
 				this.onUnhighlight.current();
 			}

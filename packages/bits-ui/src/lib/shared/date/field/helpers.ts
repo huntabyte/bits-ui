@@ -1,22 +1,22 @@
+import type { DateValue } from "@internationalized/date";
 import {
-	getPlaceholder,
 	type Formatter,
 	type Granularity,
-	isZonedDateTime,
-	hasTime,
+	getPlaceholder,
 	getSegments,
+	hasTime,
+	isZonedDateTime,
 } from "../index.js";
-import type { DateValue } from "@internationalized/date";
 import type {
+	DateAndTimeSegmentObj,
 	DateSegmentPart,
-	SegmentContentObj,
 	EditableSegmentPart,
+	HourCycle,
+	SegmentContentObj,
+	SegmentPart,
 	SegmentStateMap,
 	SegmentValueObj,
 	TimeSegmentPart,
-	DateAndTimeSegmentObj,
-	SegmentPart,
-	HourCycle,
 } from "./types.js";
 import {
 	ALL_SEGMENT_PARTS,
@@ -88,7 +88,7 @@ function createContentObj(props: CreateContentObjProps) {
 		if ("hour" in segmentValues) {
 			const value = segmentValues[part];
 			const leadingZero = typeof value === "string" && value?.startsWith("0");
-			const intValue = value !== null ? parseInt(value) : null;
+			const intValue = value !== null ? Number.parseInt(value) : null;
 
 			if (value === "0" && part !== "year") {
 				return "0";
@@ -307,12 +307,10 @@ export function getValueFromSegments(props: GetValueFromSegments) {
 			const value = segmentObj[part];
 			if (isNull(value)) return;
 			date = date.set({ [part]: segmentObj[part] });
-			return;
 		} else if (isDateSegmentPart(part)) {
 			const value = segmentObj[part];
 			if (isNull(value)) return;
 			date = date.set({ [part]: segmentObj[part] });
-			return;
 		}
 	});
 	return date;

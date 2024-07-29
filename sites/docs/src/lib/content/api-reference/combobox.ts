@@ -1,12 +1,12 @@
 import type {
 	ComboboxArrowPropsWithoutHTML,
 	ComboboxContentPropsWithoutHTML,
+	ComboboxGroupLabelPropsWithoutHTML,
+	ComboboxGroupPropsWithoutHTML,
 	ComboboxInputPropsWithoutHTML,
 	ComboboxItemPropsWithoutHTML,
-	ComboboxGroupLabelPropsWithoutHTML,
 	ComboboxRootPropsWithoutHTML,
 	ComboboxTriggerPropsWithoutHTML,
-	ComboboxGroupPropsWithoutHTML,
 } from "bits-ui";
 import {
 	arrowProps,

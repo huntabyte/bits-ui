@@ -6,10 +6,10 @@ import {
 	createStringProp,
 	withChildProps,
 } from "./helpers.js";
-import { enums } from "$lib/content/api-reference/helpers.js";
-import * as C from "$lib/content/constants.js";
 import SwitchChildSnippetProps from "./extended-types/switch/root-child-snippet-props.md";
 import SwitchChildrenSnippetProps from "./extended-types/switch/root-children-snippet-props.md";
+import { enums } from "$lib/content/api-reference/helpers.js";
+import * as C from "$lib/content/constants.js";
 
 const root = createApiSchema<SwitchRootPropsWithoutHTML>({
 	title: "Root",

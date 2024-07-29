@@ -13,9 +13,9 @@ import {
 	forceMountProp,
 	withChildProps,
 } from "./helpers.js";
-import * as C from "$lib/content/constants.js";
 import ContentChildSnippetProps from "./extended-types/collapsible/content-child-snippet-props.md";
 import ContentChildrenSnippetProps from "./extended-types/collapsible/content-children-snippet-props.md";
+import * as C from "$lib/content/constants.js";
 
 export const root = createApiSchema<CollapsibleRootPropsWithoutHTML>({
 	title: "Root",

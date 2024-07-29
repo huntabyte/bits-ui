@@ -1,12 +1,12 @@
-import type { OnChangeFn, WithChild, WithChildren, Without } from "$lib/internal/types.js";
+import type { PortalProps } from "../utilities/portal/types.js";
+import type { PopperLayerProps } from "../utilities/popper-layer/types.js";
+import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
 import type {
 	PrimitiveButtonAttributes,
 	PrimitiveDivAttributes,
 	PrimitiveInputAttributes,
 } from "$lib/shared/attributes.js";
-import type { PortalProps } from "../utilities/portal/types.js";
-import type { PopperLayerProps } from "../utilities/popper-layer/types.js";
-import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
+import type { OnChangeFn, WithChild, WithChildren, Without } from "$lib/internal/types.js";
 
 export type ComboboxBaseRootPropsWithoutHTML = WithChildren<{
 	/**

@@ -16,7 +16,7 @@ import { kbd } from "$lib/internal/kbd.js";
 import { isElementOrSVGElement } from "$lib/internal/is.js";
 import { isValidIndex } from "$lib/internal/arrays.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import type { WithRefProps, OnChangeFn } from "$lib/internal/types.js";
+import type { OnChangeFn, WithRefProps } from "$lib/internal/types.js";
 import { addEventListener } from "$lib/internal/events.js";
 import { executeCallbacks } from "$lib/internal/executeCallbacks.js";
 import type { Direction, Orientation } from "$lib/shared/index.js";

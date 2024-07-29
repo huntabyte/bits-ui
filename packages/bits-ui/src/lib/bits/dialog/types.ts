@@ -4,7 +4,7 @@ import type { PresenceLayerProps } from "../utilities/presence-layer/types.js";
 import type { FocusScopeProps } from "../utilities/focus-scope/types.js";
 import type { TextSelectionLayerProps } from "../utilities/text-selection-layer/types.js";
 import type { OnChangeFn, WithChild, WithChildren, Without } from "$lib/internal/types.js";
-import type { PrimitiveDivAttributes, PrimitiveButtonAttributes } from "$lib/shared/attributes.js";
+import type { PrimitiveButtonAttributes, PrimitiveDivAttributes } from "$lib/shared/attributes.js";
 import type { PortalProps } from "$lib/bits/utilities/portal/index.js";
 
 export type DialogRootPropsWithoutHTML = WithChildren<{

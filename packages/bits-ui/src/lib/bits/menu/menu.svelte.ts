@@ -1,6 +1,6 @@
 import { box } from "svelte-toolbelt";
 import { tick } from "svelte";
-import { focusFirst } from "$lib/internal/focus.js";
+import { IsFocusWithin } from "runed";
 import {
 	FIRST_LAST_KEYS,
 	type GraceIntent,
@@ -11,6 +11,7 @@ import {
 	getCheckedState,
 	isMouseEvent,
 } from "./utils.js";
+import { focusFirst } from "$lib/internal/focus.js";
 import {
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
@@ -38,7 +39,6 @@ import { afterTick } from "$lib/internal/afterTick.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
 import { isPointerInGraceArea, makeHullFromElements } from "$lib/internal/polygon.js";
 import { onDestroyEffect } from "$lib/internal/onDestroyEffect.svelte.js";
-import { IsFocusWithin } from "runed";
 
 const TRIGGER_ATTR = "data-menu-trigger";
 const CONTENT_ATTR = "data-menu-content";

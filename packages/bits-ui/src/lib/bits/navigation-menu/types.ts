@@ -1,3 +1,4 @@
+import type { InteractOutsideEvent } from "../utilities/dismissable-layer/types.js";
 import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
 import type {
 	PrimitiveAnchorAttributes,
@@ -8,7 +9,6 @@ import type {
 	PrimitiveUListAttributes,
 } from "$lib/shared/attributes.js";
 import type { Direction, Orientation } from "$lib/shared/index.js";
-import type { InteractOutsideEvent } from "../utilities/dismissable-layer/types.js";
 
 export type NavigationMenuRootPropsWithoutHTML = WithChild<{
 	/**

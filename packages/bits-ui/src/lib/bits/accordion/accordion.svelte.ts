@@ -1,4 +1,4 @@
-import type { Box, WritableBoxedValues, ReadableBoxedValues } from "$lib/internal/box.svelte.js";
+import type { Box, ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { afterTick } from "$lib/internal/afterTick.js";
 import {

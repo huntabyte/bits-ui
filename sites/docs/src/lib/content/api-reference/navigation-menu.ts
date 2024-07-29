@@ -1,10 +1,10 @@
 import type {
-	NavigationMenuRootPropsWithoutHTML,
 	NavigationMenuContentPropsWithoutHTML,
 	NavigationMenuIndicatorPropsWithoutHTML,
 	NavigationMenuItemPropsWithoutHTML,
 	NavigationMenuLinkPropsWithoutHTML,
 	NavigationMenuListPropsWithoutHTML,
+	NavigationMenuRootPropsWithoutHTML,
 	NavigationMenuTriggerPropsWithoutHTML,
 	NavigationMenuViewportPropsWithoutHTML,
 } from "bits-ui";

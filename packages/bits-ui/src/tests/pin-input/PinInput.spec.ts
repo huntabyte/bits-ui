@@ -9,6 +9,7 @@ const kbd = getTestKbd();
 
 function setup(props: Partial<PinInput.RootProps> = {}) {
 	const user = setupUserEvents();
+	// eslint-disable-next-line ts/no-explicit-any
 	const returned = render(PinInputTest, { ...props } as any);
 	const cell0 = returned.getByTestId("cell-0");
 	const cell1 = returned.getByTestId("cell-1");
@@ -28,7 +29,7 @@ function setup(props: Partial<PinInput.RootProps> = {}) {
 	};
 }
 
-describe("Pin Input", () => {
+describe("pin Input", () => {
 	it("should have no accessibility violations", async () => {
 		const { container } = render(PinInputTest);
 		expect(await axe(container)).toHaveNoViolations();
@@ -51,7 +52,7 @@ describe("Pin Input", () => {
 	});
 
 	it("should respect binding to the `value` prop", async () => {
-		let initialValue = "123456";
+		const initialValue = "123456";
 		const { hiddenInput, binding, user } = setup({
 			value: initialValue,
 		});

@@ -1,5 +1,3 @@
-import * as C from "$lib/content/constants.js";
-import type { APISchema, CSSVarSchema, DataAttrSchema, PropSchema } from "$lib/types/api.js";
 import type { Component } from "svelte";
 import ChildDefaultSnippetProps from "./extended-types/shared/child-default-snippet-props.md";
 import OnInteractOutside from "./extended-types/shared/on-interact-outside.md";
@@ -9,6 +7,8 @@ import OnEscapeKeydown from "./extended-types/shared/on-escape-keydown.md";
 import EscapeKeydownBehavior from "./extended-types/shared/escape-keydown-behavior.md";
 import Dir from "./extended-types/shared/dir.md";
 import To from "./extended-types/portal/to.md";
+import type { APISchema, CSSVarSchema, DataAttrSchema, PropSchema } from "$lib/types/api.js";
+import * as C from "$lib/content/constants.js";
 
 type ElementKind =
 	| "HTMLDivElement"
@@ -239,8 +239,8 @@ export function escape(str: string): string {
 	const entities = [
 		[/</g, "&lt;"],
 		[/>/g, "&gt;"],
-		[/{/g, "&#123;"],
-		[/}/g, "&#125;"],
+		[/\{/g, "&#123;"],
+		[/\}/g, "&#125;"],
 	] as const;
 	for (let i = 0; i < entities.length; i += 1) {
 		str = str.replace(entities[i][0], entities[i][1]);

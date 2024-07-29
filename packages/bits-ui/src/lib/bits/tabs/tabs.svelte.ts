@@ -9,7 +9,7 @@ import {
 } from "$lib/internal/attrs.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
-import type { WritableBoxedValues, ReadableBoxedValues } from "$lib/internal/box.svelte.js";
+import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import type { Orientation } from "$lib/shared/index.js";
 import { type UseRovingFocusReturn, useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";

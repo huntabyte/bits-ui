@@ -33,7 +33,7 @@ export function isElementOrSVGElement(element: unknown): element is Element | SV
 }
 
 export function isNumberString(value: string) {
-	return !isNaN(Number(value)) && !isNaN(parseFloat(value));
+	return !Number.isNaN(Number(value)) && !Number.isNaN(Number.parseFloat(value));
 }
 
 export function isNull(value: unknown): value is null {

@@ -1,5 +1,5 @@
 import { untrack } from "svelte";
-import { box, type ReadableBox } from "svelte-toolbelt";
+import { type ReadableBox, box } from "svelte-toolbelt";
 import type { TextSelectionLayerImplProps } from "./types.js";
 import { composeHandlers } from "$lib/internal/composeHandlers.js";
 import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";

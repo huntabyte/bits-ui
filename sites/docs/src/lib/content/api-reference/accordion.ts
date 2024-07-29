@@ -20,7 +20,6 @@ import {
 	orientationDataAttr,
 	withChildProps,
 } from "./helpers.js";
-import * as C from "$lib/content/constants.js";
 import StringOrArrayString from "./extended-types/shared/string-or-array-string.md";
 import SingleOrMultiple from "./extended-types/shared/single-or-multiple.md";
 import StringOrArrayChangeFn from "./extended-types/shared/string-or-array-change-fn.md";
@@ -28,6 +27,7 @@ import Orientation from "./extended-types/shared/orientation.md";
 import HeaderLevel from "./extended-types/shared/header-level.md";
 import ContentChildSnippetProps from "./extended-types/accordion/content-child-snippet-props.md";
 import ContentChildrenSnippetProps from "./extended-types/accordion/content-children-snippet-props.md";
+import * as C from "$lib/content/constants.js";
 
 const stateDataAttr = createEnumDataAttr({
 	name: "state",

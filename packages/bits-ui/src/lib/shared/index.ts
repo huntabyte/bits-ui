@@ -36,7 +36,9 @@ export type Orientation = "horizontal" | "vertical";
 export type Direction = "ltr" | "rtl";
 
 export type WithoutChildrenOrChild<T> = WithoutChildren<WithoutChild<T>>;
+// eslint-disable-next-line ts/no-explicit-any
 export type WithoutChildren<T> = T extends { children?: any } ? Omit<T, "children"> : T;
+// eslint-disable-next-line ts/no-explicit-any
 export type WithoutChild<T> = T extends { child?: any } ? Omit<T, "child"> : T;
 export type WithElementRef<T, U extends HTMLElement = HTMLElement> = T & { ref?: U | null };
 export type { EditableSegmentPart } from "./date/field/types.js";

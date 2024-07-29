@@ -33,8 +33,8 @@ import { toggleGroup } from "./toggle-group.js";
 import { toggle } from "./toggle.js";
 import { toolbar } from "./toolbar.js";
 import { tooltip } from "./tooltip.js";
-import type { APISchema } from "$lib/types/index.js";
 import { menubar } from "./menubar.js";
+import type { APISchema } from "$lib/types/index.js";
 
 export const bits = [
 	"accordion",
@@ -102,7 +102,7 @@ export const apiSchemas: Record<Bit, APISchema[]> = {
 	"dropdown-menu": dropdownMenu,
 	label,
 	"link-preview": linkPreview,
-	menubar: menubar,
+	menubar,
 	"navigation-menu": navigationMenu,
 	pagination,
 	"pin-input": pinInput,

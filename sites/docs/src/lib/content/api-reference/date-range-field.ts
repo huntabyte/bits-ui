@@ -11,9 +11,9 @@ import {
 	createFunctionProp,
 	withChildProps,
 } from "./helpers.js";
+import { root as dateFieldRoot } from "./date-field.js";
 import { enums } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
-import { root as dateFieldRoot } from "./date-field.js";
 
 export const root = createApiSchema<DateRangeFieldRootPropsWithoutHTML>({
 	title: "Root",

@@ -1,4 +1,5 @@
 import { untrack } from "svelte";
+import { box } from "svelte-toolbelt";
 import {
 	createFocusScopeAPI,
 	createFocusScopeStack,
@@ -12,7 +13,6 @@ import { isHTMLElement } from "$lib/internal/is.js";
 import { executeCallbacks } from "$lib/internal/callbacks.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { afterTick } from "$lib/internal/afterTick.js";
-import { box } from "svelte-toolbelt";
 
 const AUTOFOCUS_ON_MOUNT = "focusScope.autoFocusOnMount";
 const AUTOFOCUS_ON_DESTROY = "focusScope.autoFocusOnDestroy";

@@ -12,13 +12,12 @@ import {
 	size,
 } from "@floating-ui/dom";
 import { box } from "svelte-toolbelt";
-import type { WithRefProps } from "$lib/internal/types.js";
+import type { Arrayable, WithRefProps } from "$lib/internal/types.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
 import { isNotNull } from "$lib/internal/is.js";
 import { styleToString } from "$lib/internal/style.js";
 import { useId } from "$lib/internal/useId.js";
 import type { Box, ReadableBoxedValues } from "$lib/internal/box.svelte.js";
-import type { Arrayable } from "$lib/internal/types.js";
 import { useSize } from "$lib/internal/useSize.svelte.js";
 import { useFloating } from "$lib/internal/floating-svelte/useFloating.svelte.js";
 import type { Measurable, UseFloatingReturn } from "$lib/internal/floating-svelte/types.js";

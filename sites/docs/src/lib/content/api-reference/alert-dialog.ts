@@ -9,6 +9,8 @@ import type {
 	AlertDialogTitlePropsWithoutHTML,
 	AlertDialogTriggerPropsWithoutHTML,
 } from "bits-ui";
+import OpenChangeFn from "./extended-types/shared/open-change-fn.md";
+import HeaderLevel from "./extended-types/shared/header-level.md";
 import {
 	childrenSnippet,
 	createApiSchema,
@@ -24,8 +26,6 @@ import {
 	preventScrollProp,
 	withChildProps,
 } from "$lib/content/api-reference/helpers.js";
-import OpenChangeFn from "./extended-types/shared/open-change-fn.md";
-import HeaderLevel from "./extended-types/shared/header-level.md";
 import * as C from "$lib/content/constants.js";
 
 const root = createApiSchema<AlertDialogRootPropsWithoutHTML>({
