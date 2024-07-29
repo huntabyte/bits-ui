@@ -1,9 +1,18 @@
-import type { RangeCalendarRootPropsWithoutHTML } from "bits-ui";
-import { createApiSchema, createFunctionProp, withChildProps } from "./helpers.js";
+import type {
+	RangeCalendarCellPropsWithoutHTML,
+	RangeCalendarDayPropsWithoutHTML,
+	RangeCalendarRootPropsWithoutHTML,
+} from "bits-ui";
 import {
+	createApiSchema,
+	createDataAttrSchema,
+	createFunctionProp,
+	withChildProps,
+} from "./helpers.js";
+import {
+	cell as calendarCell,
+	day as calendarDay,
 	root as calendarRoot,
-	cell,
-	day,
 	grid,
 	gridBody,
 	gridHead,
@@ -73,6 +82,31 @@ export const root = createApiSchema<RangeCalendarRootPropsWithoutHTML>({
 	],
 });
 
+const dayCellAttrs = [
+	...(calendarCell.dataAttributes ?? []),
+	createDataAttrSchema({
+		name: "selection-start",
+		description: "Present when the cell is the start of a selection.",
+	}),
+	createDataAttrSchema({
+		name: "selection-end",
+		description: "Present when the cell is the end of a selection.",
+	}),
+	createDataAttrSchema({
+		name: "highlighted",
+		description: "Present when the cell is highlighted within a range.",
+	}),
+];
+
+export const cell = createApiSchema<RangeCalendarCellPropsWithoutHTML>({
+	...calendarCell,
+	dataAttributes: dayCellAttrs,
+});
+
+export const day = createApiSchema<RangeCalendarDayPropsWithoutHTML>({
+	...calendarDay,
+	dataAttributes: dayCellAttrs,
+});
 export const rangeCalendar = [
 	root,
 	header,
