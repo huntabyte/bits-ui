@@ -71,6 +71,7 @@ export const root = createApiSchema<DatePickerRootPropsWithoutHTML>({
 		hourCycle: dateFieldRoot.props!.hourCycle,
 		granularity: dateFieldRoot.props!.granularity,
 		hideTimeZone: dateFieldRoot.props!.hideTimeZone,
+		initialFocus: calendarRoot.props!.initialFocus,
 		children: childrenSnippet(),
 	},
 	dataAttributes: [
