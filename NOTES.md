@@ -34,3 +34,7 @@ Should we embrace the [ValidityState](https://developer.mozilla.org/en-US/docs/W
 ---
 
 We need to expose the different `open` states via snippet props for all the `forceMount`-able components to work with Svelte and other transition/animation libs.
+
+---
+
+We need to handle `invalid` state for the `DateRangeField` component.

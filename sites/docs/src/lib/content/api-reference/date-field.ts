@@ -5,8 +5,11 @@ import type {
 	DateFieldSegmentPropsWithoutHTML,
 } from "bits-ui";
 import {
+	childrenSnippet,
 	createApiSchema,
 	createBooleanProp,
+	createDataAttrSchema,
+	createEnumDataAttr,
 	createEnumProp,
 	createFunctionProp,
 	createStringProp,
@@ -93,7 +96,7 @@ export const root = createApiSchema<DateFieldRootPropsWithoutHTML>({
 			description:
 				"An array of segments that should be readonly, which prevent user input on them.",
 		},
-		...withChildProps({ elType: "HTMLDivElement" }),
+		children: childrenSnippet(),
 	},
 });
 
@@ -102,18 +105,18 @@ const input = createApiSchema<DateFieldInputPropsWithoutHTML>({
 	description: "The container for the segments of the date field.",
 	props: withChildProps({ elType: "HTMLDivElement" }),
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "invalid",
 			description: "Present on the element when the field is invalid.",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "disabled",
 			description: "Present on the element when the field is disabled.",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "date-field-input",
 			description: "Present on the element.",
-		},
+		}),
 	],
 });
 
@@ -142,34 +145,37 @@ export const segment = createApiSchema<DateFieldSegmentPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "invalid",
 			description: "Present on the element when the field is invalid",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "disabled",
 			description: "Present on the element when the field is disabled",
-		},
-		{
+		}),
+		createDataAttrSchema({
+			name: "readonly",
+			description: "Present on the element when the field or segment is readonly",
+		}),
+		createEnumDataAttr({
 			name: "segment",
-			value: enums(
-				"month",
+			description: "The part of the date to render.",
+			options: [
 				"day",
+				"month",
 				"year",
 				"hour",
 				"minute",
 				"second",
 				"dayPeriod",
 				"timeZoneName",
-				"literal"
-			),
-			isEnum: true,
-			description: "The type of segment the element represents.",
-		},
-		{
+				"literal",
+			],
+		}),
+		createDataAttrSchema({
 			name: "date-field-segment",
 			description: "Present on the element.",
-		},
+		}),
 	],
 });
 
@@ -178,14 +184,18 @@ export const label = createApiSchema<DateFieldLabelPropsWithoutHTML>({
 	description: "The label for the date field.",
 	props: withChildProps({ elType: "HTMLSpanElement" }),
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "invalid",
 			description: "Present on the element when the field is invalid",
-		},
-		{
+		}),
+		createDataAttrSchema({
+			name: "disabled",
+			description: "Present on the element when the field is disabled",
+		}),
+		createDataAttrSchema({
 			name: "date-field-label",
 			description: "Present on the element.",
-		},
+		}),
 	],
 });
 

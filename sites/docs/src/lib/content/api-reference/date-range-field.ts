@@ -4,7 +4,13 @@ import type {
 	DateRangeFieldRootPropsWithoutHTML,
 	DateRangeFieldSegmentPropsWithoutHTML,
 } from "bits-ui";
-import { createApiSchema, createEnumProp, createFunctionProp, withChildProps } from "./helpers.js";
+import {
+	createApiSchema,
+	createDataAttrSchema,
+	createEnumProp,
+	createFunctionProp,
+	withChildProps,
+} from "./helpers.js";
 import { enums } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import { root as dateFieldRoot } from "./date-field.js";
@@ -51,6 +57,12 @@ export const root = createApiSchema<DateRangeFieldRootPropsWithoutHTML>({
 		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
+	dataAttributes: [
+		createDataAttrSchema({
+			name: "date-range-field-root",
+			description: "Present on the root element.",
+		}),
+	],
 });
 
 export const input = createApiSchema<DateRangeFieldInputPropsWithoutHTML>({

@@ -13,6 +13,7 @@ import {
 	childrenSnippet,
 	createApiSchema,
 	createBooleanProp,
+	createCSSVarSchema,
 	createDataAttrSchema,
 	createEnumDataAttr,
 	createEnumProp,
@@ -114,6 +115,28 @@ export const content = createApiSchema<ComboboxContentPropsWithoutHTML>({
 		createDataAttrSchema({
 			name: "combobox-content",
 			description: "Present on the content element.",
+		}),
+	],
+	cssVars: [
+		createCSSVarSchema({
+			name: "--bits-combobox-content-transform-origin",
+			description: "The transform origin of the combobox content element.",
+		}),
+		createCSSVarSchema({
+			name: "--bits-combobox-content-available-width",
+			description: "The available width of the combobox content element.",
+		}),
+		createCSSVarSchema({
+			name: "--bits-combobox-content-available-height",
+			description: "The available height of the combobox content element.",
+		}),
+		createCSSVarSchema({
+			name: "--bits-combobox-trigger-width",
+			description: "The width of the combobox trigger element.",
+		}),
+		createCSSVarSchema({
+			name: "--bits-combobox-trigger-height",
+			description: "The height of the combobox trigger element.",
 		}),
 	],
 });

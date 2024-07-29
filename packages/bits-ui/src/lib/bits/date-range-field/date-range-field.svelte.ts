@@ -16,6 +16,7 @@ import type { ReadableBox, WritableBox } from "svelte-toolbelt";
 import { onDestroyEffect } from "$lib/internal/onDestroyEffect.svelte.js";
 
 export const DATE_RANGE_FIELD_ROOT_ATTR = "data-date-range-field-root";
+const DATE_RANGE_FIELD_LABEL_ATTR = "data-date-range-field-label";
 
 type DateRangeFieldRootStateProps = WithRefProps<
 	WritableBoxedValues<{
@@ -246,8 +247,10 @@ class DateRangeFieldLabelState {
 		() =>
 			({
 				id: this.#id.current,
+				// TODO: invalid state for field
 				// "data-invalid": getDataInvalid(this.#root.isInvalid),
 				"data-disabled": getDataDisabled(this.#root.disabled.current),
+				[DATE_RANGE_FIELD_LABEL_ATTR]: "",
 				onclick: this.#onclick,
 			}) as const
 	);

@@ -57,6 +57,7 @@ import type { DateMatcher, Granularity, HourCycle } from "$lib/shared/date/types
 import { onDestroyEffect } from "$lib/internal/onDestroyEffect.svelte.js";
 
 export const DATE_FIELD_INPUT_ATTR = "data-date-field-input";
+const DATE_FIELD_LABEL_ATTR = "data-date-field-label";
 
 export type DateFieldRootStateProps = WritableBoxedValues<{
 	value: DateValue | undefined;
@@ -518,6 +519,7 @@ class DateFieldRootState {
 			"aria-readonly": getAriaReadonly(this.readonly.current || inReadonlySegments),
 			"data-invalid": getDataInvalid(this.isInvalid),
 			"data-disabled": getDataDisabled(this.disabled.current),
+			"data-readonly": getDataReadonly(this.readonly.current || inReadonlySegments),
 			"data-segment": `${part}`,
 		};
 
@@ -665,6 +667,7 @@ class DateFieldLabelState {
 				id: this.#id.current,
 				"data-invalid": getDataInvalid(this.#root.isInvalid),
 				"data-disabled": getDataDisabled(this.#root.disabled.current),
+				[DATE_FIELD_LABEL_ATTR]: "",
 				onclick: this.#onclick,
 			}) as const
 	);
@@ -2328,13 +2331,13 @@ class DateFieldTimeZoneSegmentState {
 				role: "textbox",
 				id: this.#id.current,
 				"aria-label": "timezone, ",
-				"data-readonly": getDataReadonly(true),
-				tabindex: 0,
 				style: {
 					caretColor: "transparent",
 				},
 				onkeydown: this.#onkeydown,
+				tabindex: 0,
 				...this.#root.getBaseSegmentAttrs("timeZoneName", this.#id.current),
+				"data-readonly": getDataReadonly(true),
 			}) as const
 	);
 }

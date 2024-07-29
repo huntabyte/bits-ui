@@ -8,6 +8,7 @@ import type {
 import {
 	createApiSchema,
 	createBooleanProp,
+	createCSSVarSchema,
 	createDataAttrSchema,
 	createEnumDataAttr,
 	createEnumProp,
@@ -141,6 +142,16 @@ const content = createApiSchema<AccordionContentPropsWithoutHTML>({
 		createDataAttrSchema({
 			name: "accordion-content",
 			description: "Present on the content element.",
+		}),
+	],
+	cssVars: [
+		createCSSVarSchema({
+			name: "--bits-accordion-content-height",
+			description: "The height of the accordion content element.",
+		}),
+		createCSSVarSchema({
+			name: "--bits-accordion-content-width",
+			description: "The width of the accordion content element.",
 		}),
 	],
 });

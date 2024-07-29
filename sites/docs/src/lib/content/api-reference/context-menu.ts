@@ -17,6 +17,7 @@ import type {
 import {
 	createApiSchema,
 	createBooleanProp,
+	createCSSVarSchema,
 	dirProp,
 	dismissableLayerProps,
 	escapeLayerProps,
@@ -65,6 +66,28 @@ export const content = createApiSchema<ContextMenuContentPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: menu.content.dataAttributes,
+	cssVars: [
+		createCSSVarSchema({
+			name: "--bits-context-menu-content-transform-origin",
+			description: "The transform origin of the context menu content element.",
+		}),
+		createCSSVarSchema({
+			name: "--bits-context-menu-content-available-width",
+			description: "The available width of the context menu content element.",
+		}),
+		createCSSVarSchema({
+			name: "--bits-context-menu-content-available-height",
+			description: "The available height of the context menu content element.",
+		}),
+		createCSSVarSchema({
+			name: "--bits-context-menu-trigger-width",
+			description: "The width of the context menu trigger element.",
+		}),
+		createCSSVarSchema({
+			name: "--bits-context-menu-trigger-height",
+			description: "The height of the context menu trigger element.",
+		}),
+	],
 });
 
 export const item = createApiSchema<ContextMenuItemPropsWithoutHTML>({

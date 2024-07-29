@@ -6,6 +6,7 @@ import type {
 import {
 	createApiSchema,
 	createBooleanProp,
+	createCSSVarSchema,
 	createDataAttrSchema,
 	createEnumDataAttr,
 	createFunctionProp,
@@ -99,6 +100,16 @@ export const content = createApiSchema<CollapsibleContentPropsWithoutHTML>({
 		createDataAttrSchema({
 			name: "collapsible-content",
 			description: "Present on the content element.",
+		}),
+	],
+	cssVars: [
+		createCSSVarSchema({
+			name: "--bits-collapsible-content-height",
+			description: "The height of the collapsible content element.",
+		}),
+		createCSSVarSchema({
+			name: "--bits-collapsible-content-width",
+			description: "The width of the collapsible content element.",
 		}),
 	],
 });

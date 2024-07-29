@@ -1,5 +1,5 @@
 import * as C from "$lib/content/constants.js";
-import type { APISchema, DataAttrSchema, PropSchema } from "$lib/types/api.js";
+import type { APISchema, CSSVarSchema, DataAttrSchema, PropSchema } from "$lib/types/api.js";
 import type { Component } from "svelte";
 import ChildDefaultSnippetProps from "./extended-types/shared/child-default-snippet-props.md";
 import OnInteractOutside from "./extended-types/shared/on-interact-outside.md";
@@ -181,6 +181,18 @@ export function createEnumDataAttr(options: EnumDataAttrOptions): DataAttrSchema
 		value: enums(...options.options),
 		description: options.description,
 		isEnum: true,
+	};
+}
+
+type CSSVarOptions = {
+	name: string;
+	description: string;
+};
+
+export function createCSSVarSchema(options: CSSVarOptions): CSSVarSchema {
+	return {
+		name: options.name,
+		description: options.description,
 	};
 }
 
