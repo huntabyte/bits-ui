@@ -6,7 +6,8 @@ import type {
 import {
 	createApiSchema,
 	createDataAttrSchema,
-	createFunctionProp,
+	valueDateRangeChangeFn,
+	valueDateRangeProp,
 	withChildProps,
 } from "./helpers.js";
 import {
@@ -29,18 +30,8 @@ export const root = createApiSchema<RangeCalendarRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root range calendar component which contains all other calendar components.",
 	props: {
-		value: {
-			type: {
-				type: "DateRange",
-				definition: "{ start: DateValue | undefined; end: DateValue | undefined; }",
-			},
-			description: "The selected date range.",
-			bindable: true,
-		},
-		onValueChange: createFunctionProp({
-			definition: "(date: DateRange | undefined) => void",
-			description: "A function that is called when the selected date range changes.",
-		}),
+		value: valueDateRangeProp,
+		onValueChange: valueDateRangeChangeFn,
 		placeholder: calendarRoot.props!.placeholder,
 		onPlaceholderChange: calendarRoot.props!.onPlaceholderChange,
 		pagedNavigation: calendarRoot.props!.pagedNavigation,
