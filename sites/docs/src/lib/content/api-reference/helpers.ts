@@ -7,6 +7,8 @@ import OnEscapeKeydown from "./extended-types/shared/on-escape-keydown.md";
 import EscapeKeydownBehavior from "./extended-types/shared/escape-keydown-behavior.md";
 import Dir from "./extended-types/shared/dir.md";
 import To from "./extended-types/portal/to.md";
+import DateRange from "./extended-types/shared/date-range.md";
+import DateRangeChangeFn from "./extended-types/shared/date-range-change-fn.md";
 import type { APISchema, CSSVarSchema, DataAttrSchema, PropSchema } from "$lib/types/api.js";
 import * as C from "$lib/content/constants.js";
 
@@ -518,3 +520,17 @@ export const disabledDataAttr: DataAttrSchema = {
 	value: "''",
 	description: "Present when the component is disabled.",
 };
+
+export const valueDateRangeProp: PropSchema = createPropSchema({
+	type: {
+		type: "DateRange",
+		definition: DateRange,
+	},
+	description: "The selected date range.",
+	bindable: true,
+});
+
+export const valueDateRangeChangeFn: PropSchema = createFunctionProp({
+	definition: DateRangeChangeFn,
+	description: "A function that is called when the selected date range changes.",
+});
