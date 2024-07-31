@@ -11,6 +11,11 @@ import type {
 } from "bits-ui";
 import OpenChangeFn from "./extended-types/shared/open-change-fn.md";
 import HeaderLevel from "./extended-types/shared/header-level.md";
+import DialogContentChildSnippetProps from "./extended-types/shared/dialog-content-child-snippet-props.md";
+import DialogContentChildrenSnippetProps from "./extended-types/shared/dialog-content-children-snippet-props.md";
+import DialogOverlayChildSnippetProps from "./extended-types/shared/dialog-overlay-child-snippet-props.md";
+import DialogOverlayChildrenSnippetProps from "./extended-types/shared/dialog-overlay-children-snippet-props.md";
+
 import {
 	childrenSnippet,
 	createApiSchema,
@@ -67,7 +72,11 @@ const content = createApiSchema<AlertDialogContentPropsWithoutHTML>({
 		forceMount: forceMountProp,
 		preventOverflowTextSelection: preventOverflowTextSelectionProp,
 		preventScroll: preventScrollProp,
-		...withChildProps({ elType: "HTMLDivElement" }),
+		...withChildProps({
+			elType: "HTMLDivElement",
+			childrenDef: DialogContentChildrenSnippetProps,
+			childDef: DialogContentChildSnippetProps,
+		}),
 	},
 });
 
@@ -103,7 +112,11 @@ const overlay = createApiSchema<AlertDialogOverlayPropsWithoutHTML>({
 	description: "An overlay which covers the body when the alert dialog is open.",
 	props: {
 		forceMount: forceMountProp,
-		...withChildProps({ elType: "HTMLDivElement" }),
+		...withChildProps({
+			elType: "HTMLDivElement",
+			childrenDef: DialogOverlayChildrenSnippetProps,
+			childDef: DialogOverlayChildSnippetProps,
+		}),
 	},
 });
 

@@ -63,7 +63,7 @@
 	}}
 	onMountAutoFocus={(e) => e.preventDefault()}
 	onDestroyAutoFocus={(e) => e.preventDefault()}
-	trapped={false}
+	trapFocus={false}
 	loop={false}
 	preventScroll={false}
 >

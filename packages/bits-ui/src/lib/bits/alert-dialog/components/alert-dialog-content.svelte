@@ -22,6 +22,7 @@
 		onEscapeKeydown = noop,
 		onMountAutoFocus = noop,
 		preventScroll = true,
+		trapFocus = true,
 		...restProps
 	}: ContentProps = $props();
 
@@ -41,7 +42,7 @@
 		<ScrollLock {preventScroll} />
 		<FocusScope
 			loop
-			trapped={present.current}
+			trapFocus={present.current && trapFocus}
 			{...mergedProps}
 			onDestroyAutoFocus={(e) => {
 				onDestroyAutoFocus(e);

@@ -35,7 +35,7 @@ type UseFocusScopeProps = ReadableBoxedValues<{
 	 *
 	 * @defaultValue false
 	 */
-	trapped: boolean;
+	trapFocus: boolean;
 
 	/**
 	 * Event handler called when auto-focusing onMount.
@@ -59,7 +59,7 @@ export type FocusScopeContainerProps = {
 export function useFocusScope({
 	id,
 	loop,
-	trapped,
+	trapFocus,
 	onMountAutoFocus,
 	onDestroyAutoFocus,
 }: UseFocusScopeProps) {
@@ -75,7 +75,7 @@ export function useFocusScope({
 	$effect(() => {
 		const container = ref.current;
 		if (!container) return;
-		if (!trapped.current) return;
+		if (!trapFocus.current) return;
 
 		function handleFocusIn(event: FocusEvent) {
 			if (focusScope.paused || !container) return;
@@ -197,7 +197,7 @@ export function useFocusScope({
 	});
 
 	function handleKeydown(e: KeyboardEvent) {
-		if (!loop.current && !trapped.current) return;
+		if (!loop.current && !trapFocus.current) return;
 		if (focusScope.paused) return;
 
 		const isTabKey = e.key === kbd.TAB && !e.ctrlKey && !e.altKey && !e.metaKey;

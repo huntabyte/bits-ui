@@ -31,7 +31,7 @@
 
 <FocusScope
 	{id}
-	trapped={present}
+	trapFocus={present}
 	onMountAutoFocus={(e) => {
 		onMountAutoFocus(e);
 		e.preventDefault();

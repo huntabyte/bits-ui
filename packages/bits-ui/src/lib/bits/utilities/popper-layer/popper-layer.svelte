@@ -41,7 +41,7 @@
 		onFocusOutside,
 		interactOutsideBehavior = "close",
 		loop,
-		trapped,
+		trapFocus,
 		isValidEvent = () => false,
 		...restProps
 	}: PopperLayerImplProps = $props();
@@ -70,7 +70,7 @@
 			{onPlaced}
 		>
 			{#snippet content({ props: floatingProps })}
-				<FocusScope {id} {onMountAutoFocus} {onDestroyAutoFocus} {loop} {trapped}>
+				<FocusScope {id} {onMountAutoFocus} {onDestroyAutoFocus} {loop} {trapFocus}>
 					{#snippet focusScope({ props: focusScopeProps })}
 						<EscapeLayer
 							{onEscapeKeydown}

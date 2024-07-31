@@ -83,7 +83,7 @@
 		}
 		return false;
 	}}
-	trapped
+	trapFocus
 	{loop}
 >
 	{#snippet popper({ props })}

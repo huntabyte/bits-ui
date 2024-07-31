@@ -6,7 +6,7 @@
 
 	let {
 		id,
-		trapped = false,
+		trapFocus = false,
 		loop = false,
 		onDestroyAutoFocus = noop,
 		onMountAutoFocus = noop,
@@ -14,7 +14,7 @@
 	}: FocusScopeImplProps = $props();
 
 	const focusScopeState = useFocusScope({
-		trapped: box.with(() => trapped),
+		trapFocus: box.with(() => trapFocus),
 		loop: box.with(() => loop),
 		onDestroyAutoFocus: box.with(() => onDestroyAutoFocus),
 		onMountAutoFocus: box.with(() => onMountAutoFocus),

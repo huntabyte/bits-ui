@@ -21,6 +21,7 @@
 		onDestroyAutoFocus = noop,
 		onEscapeKeydown = noop,
 		onInteractOutside = noop,
+		trapFocus = true,
 		...restProps
 	}: ContentProps = $props();
 
@@ -40,7 +41,7 @@
 		<ScrollLock {...mergedProps} />
 		<FocusScope
 			loop
-			trapped={present.current}
+			trapFocus={present.current && trapFocus}
 			{...mergedProps}
 			onDestroyAutoFocus={(e) => {
 				onDestroyAutoFocus(e);
@@ -71,6 +72,7 @@
 							{#if child}
 								{@render child({
 									props: mergeProps(mergedProps, focusScopeProps),
+									...contentState.snippetProps,
 								})}
 							{:else}
 								<div
@@ -80,7 +82,7 @@
 										},
 									})}
 								>
-									{@render children?.()}
+									{@render children?.(contentState.snippetProps)}
 								</div>
 							{/if}
 						</TextSelectionLayer>

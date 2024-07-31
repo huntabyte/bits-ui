@@ -37,22 +37,21 @@ description: A modal window that alerts users with important information and awa
 </AlertDialog.Root>
 ```
 
-<APISection {schemas} />
+## Usage
 
-## Examples
-
-### Controlled
+### Controlled Open
 
 If you want to control or be aware of the `open` state of the dialog from outside of the component, bind to the `open` prop.
 
-```svelte showLineNumbers
+```svelte {3,6,8}
 <script lang="ts">
 	import { AlertDialog } from "bits-ui";
-	let dialogOpen = false;
+	let open = $state(false);
 </script>
 
-<button on:click={() => (dialogOpen = true)}>Open Dialog</button>
-<AlertDialog.Root bind:open={dialogOpen}>
+<button onclick={() => (open = true)}>Open Dialog</button>
+
+<AlertDialog.Root bind:open>
 	<AlertDialog.Trigger />
 	<AlertDialog.Portal>
 		<AlertDialog.Overlay />
@@ -65,3 +64,5 @@ If you want to control or be aware of the `open` state of the dialog from outsid
 	</AlertDialog.Portal>
 </AlertDialog.Root>
 ```
+
+<APISection {schemas} />

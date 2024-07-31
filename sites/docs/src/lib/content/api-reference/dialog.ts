@@ -23,6 +23,10 @@ import {
 	preventScrollProp,
 	withChildProps,
 } from "./helpers.js";
+import DialogContentChildSnippetProps from "./extended-types/shared/dialog-content-child-snippet-props.md";
+import DialogContentChildrenSnippetProps from "./extended-types/shared/dialog-content-children-snippet-props.md";
+import DialogOverlayChildSnippetProps from "./extended-types/shared/dialog-overlay-child-snippet-props.md";
+import DialogOverlayChildrenSnippetProps from "./extended-types/shared/dialog-overlay-children-snippet-props.md";
 import { enums } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 
@@ -65,7 +69,11 @@ export const content = createApiSchema<DialogContentPropsWithoutHTML>({
 		forceMount: forceMountProp,
 		preventOverflowTextSelection: preventOverflowTextSelectionProp,
 		preventScroll: preventScrollProp,
-		...withChildProps({ elType: "HTMLDivElement" }),
+		...withChildProps({
+			elType: "HTMLDivElement",
+			childrenDef: DialogContentChildrenSnippetProps,
+			childDef: DialogContentChildSnippetProps,
+		}),
 	},
 	dataAttributes: [
 		{
@@ -129,7 +137,11 @@ export const overlay = createApiSchema<DialogOverlayPropsWithoutHTML>({
 	description: "An overlay which covers the body when the dialog is open.",
 	props: {
 		forceMount: forceMountProp,
-		...withChildProps({ elType: "HTMLDivElement" }),
+		...withChildProps({
+			elType: "HTMLDivElement",
+			childrenDef: DialogOverlayChildrenSnippetProps,
+			childDef: DialogOverlayChildSnippetProps,
+		}),
 	},
 	dataAttributes: [
 		{

@@ -491,9 +491,15 @@ export const onDestroyAutoFocusProp = createFunctionProp({
 		"Event handler called when auto-focusing the content as it is destroyed. Can be prevented.",
 });
 
+export const trapFocusProp = createBooleanProp({
+	description: "Whether or not to trap the focus within the content when open.",
+	default: C.TRUE,
+});
+
 export const focusScopeProps = {
 	onMountAutoFocus: onMountAutoFocusProp,
 	onDestroyAutoFocus: onDestroyAutoFocusProp,
+	trapFocus: trapFocusProp,
 } as const;
 
 export const preventOverflowTextSelectionProp = createBooleanProp({
