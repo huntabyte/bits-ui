@@ -34,5 +34,6 @@
 		"pnpm": ">=8.7.0",
 		"node": ">=18"
 	},
-	"private": true
+	"private": true,
+	"packageManager": "pnpm@9.6.0"
 }
