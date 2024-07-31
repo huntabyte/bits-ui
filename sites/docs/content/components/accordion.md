@@ -4,7 +4,7 @@ description: Organizes content into collapsible sections, allowing users to focu
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, AccordionDemo, AccordionDemoTransitions } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, AccordionDemo, AccordionDemoTransitions, AccordionDemoCustom } from '$lib/components/index.js'
 	export let schemas
 </script>
 
@@ -37,31 +37,18 @@ description: Organizes content into collapsible sections, allowing users to focu
 
 If you're planning to use the `Accordion` component throughout your application, it's recommended to create reusable wrapper components to reduce the amount of code you need to write each time.
 
-```svelte title="CustomAccordion.svelte"
-<script lang="ts">
-	import { Accordion } from "bits-ui";
-
-	let {
-		value = $bindable(""),
-		ref = $bindable(null),
-		...restProps
-	}: Accordion.RootProps = $props();
-</script>
-
-<Accordion.Root bind:value bind:ref {...restProps} />
-```
-
 For each invidual item, you need an `Accordion.Item`, `Accordion.Header`, `Accordion.Trigger` and `Accordion.Content` component. We can combine these into a single `CustomAccordionItem` component that makes it easier to reuse.
 
 ```svelte title="CustomAccordionItem.svelte"
 <script lang="ts">
-	import { Accordion, type WithoutChild } from "bits-ui";
+	import { Accordion, type WithoutChildrenOrChild } from "bits-ui";
 
-	type Props = WithoutChild<Accordion.ItemProps> & {
+	type Props = WithoutChildrenOrChild<Accordion.ItemProps> & {
 		title: string;
+		content: string;
 	};
 
-	let { title, children, ...restProps }: Props = $props();
+	let { title, content, ...restProps }: Props = $props();
 </script>
 
 <Accordion.Item {...restProps}>
@@ -69,12 +56,45 @@ For each invidual item, you need an `Accordion.Item`, `Accordion.Header`, `Accor
 		<Accordion.Trigger>{item.title}</Accordion.Trigger>
 	</Accordion.Header>
 	<Accordion.Content>
-		{@render children?.()}
+		{content}
 	</Accordion.Content>
 </Accordion.Item>
 ```
 
-We used the [`WithoutChild`](/docs/type-helpers/without-child) type helper to omit the `child` snippet prop from `Accordion.ItemProps`, since we are opting out of using [Delegation](/docs/delegation) with our custom component.
+We used the [`WithoutChildrenOrChild`](/docs/type-helpers/without-children-or-child) type helper to omit the `child` and `children` snippet props from `Accordion.ItemProps`, since we are opting out of using [Delegation](/docs/delegation) and are already taking care of rendering the children as text via the `content` prop.
+
+For our `CustomAccordion` component, we'll accept all the props that `Accordion.Root` accepts, as well as an additional `items` prop that will be used to render the `CustomAccordionItem` components.
+
+```svelte title="CustomAccordion.svelte"
+<script lang="ts">
+	import { Accordion, type WithoutChildrenOrChild } from "bits-ui";
+
+	type Item = {
+		value?: string;
+		title: string;
+		content: string;
+	};
+
+	let {
+		value = $bindable(),
+		ref = $bindable(null),
+		...restProps
+	}: WithoutChildrenOrChild<Accordion.RootProps> & {
+		items: Item[];
+	} = $props();
+</script>
+
+<!--
+ Since we have to destructure the `value` to make it `$bindable`, we need to use `as any` here to avoid
+ type errors from the discriminated union of `"single" | "multiple"`.
+ (an unfortunate consequence of having to destructure bindable values)
+  -->
+<Accordion.Root bind:value bind:ref {...restProps as any}>
+	{#each items as item, i (item.title + i)}
+		<CustomAccordionItem {...item} />
+	{/each}
+</Accordion.Root>
+```
 
 ```svelte title="+page.svelte"
 <script lang="ts">
@@ -95,20 +115,30 @@ We used the [`WithoutChild`](/docs/type-helpers/without-child) type helper to om
 Set the `type` prop to `"single"` to allow only one accordion item to be open at a time.
 
 ```svelte {1}
-<Accordion.Root type="single">
-	<!-- ... -->
-</Accordion.Root>
+<CustomAccordion type="single" />
 ```
+
+<AccordionDemoCustom type="single" />
 
 ### Multiple
 
 Set the `type` prop to `"multiple"` to allow multiple accordion items to be open at the same time.
 
-```svelte {1}
-<Accordion.Root type="multiple">
-	<!-- ... -->
-</Accordion.Root>
+```svelte
+<CustomAccordion type="multiple" />
 ```
+
+<AccordionDemoCustom type="multiple" />
+
+### Default Open Items
+
+To set default open items, pass them as the `value` prop, which will be an array if the `type` is `"multiple"`, or a string if the `type` is `"single"`.
+
+```svelte
+<CustomAccordion value={["A", "C"]} type="multiple" />
+```
+
+<AccordionDemoCustom value={["A", "C"]} type="multiple" />
 
 ### Disable Items
 
@@ -124,7 +154,7 @@ To disable an individual accordion item, set the `disabled` prop to `true`. This
 
 ### Controlled Value
 
-You can programmatically control the active of the accordion item(s) using the `value` prop.
+You can programmatically control the active of the accordion item(s) using the `value` prop. If you `bind` the `value` prop, the local value will remain in sync with the state of the accordion, even if changes are made within the component.
 
 ```svelte {2,5,7}
 <script lang="ts">
@@ -133,7 +163,7 @@ You can programmatically control the active of the accordion item(s) using the `
 
 <button onclick={() => (value = "item-2")}>Change value</button>
 
-<Accordion.Root bind:value>
+<Accordion.Root bind:value type="single">
 	<!-- ... -->
 </Accordion.Root>
 ```
