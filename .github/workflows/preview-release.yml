@@ -2,7 +2,7 @@ name: Publish Preview Release
 on:
     pull_request:
         types: [ready_for_review, synchronize, opened, labeled]
-        paths: packages/**
+        paths: [packages/**]
 
 jobs:
     preview-release:
