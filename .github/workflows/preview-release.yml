@@ -2,8 +2,6 @@ name: Publish Preview Release
 on:
     pull_request:
         types: [ready_for_review, synchronize, opened, labeled]
-        paths: [packages/**]
-    workflow_dispatch:
 
 jobs:
     preview-release:
