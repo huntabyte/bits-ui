@@ -40,6 +40,7 @@ export type AccordionRootSinglePropsWithoutHTML = BaseAccordionRootPropsWithoutH
 	 * The value of the currently open accordion item.
 	 *
 	 * @bindable
+	 * @defaultValue ""
 	 */
 	value?: string;
 
@@ -63,6 +64,7 @@ export type AccordionRootMultiplePropsWithoutHTML = BaseAccordionRootPropsWithou
 	 * The value of the currently open accordion item.
 	 *
 	 * @bindable
+	 * @defaultValue []
 	 */
 	value?: string[];
 
