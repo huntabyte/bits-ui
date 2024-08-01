@@ -73,6 +73,7 @@ For our `CustomAccordion` component, we'll accept all the props that `Accordion.
 		value?: string;
 		title: string;
 		content: string;
+		disabled?: boolean;
 	};
 
 	let {
@@ -108,13 +109,82 @@ For our `CustomAccordion` component, we'll accept all the props that `Accordion.
 </CustomAccordion>
 ```
 
+## Managing Value State
+
+The `value` prop is used to determine which accordion item(s) are currently open. Bits UI provides flexible options for controlling and synchronizing the Accordion's value state.
+
+### Two-Way Binding
+
+Use the `bind:value` directive for effortless two-way synchronization between your local state and the Accordion's internal state.
+
+```svelte
+<script lang="ts">
+	import { Accordion } from "bits-ui";
+
+	let myValue = $state<string[]>([]);
+</script>
+
+<button
+	onclick={() => {
+		myValue = ["item-1", "item-2"];
+	}}
+>
+	Open Items 1 and 2
+</button>
+
+<Accordion.Root type="multiple" bind:value={myValue}>
+	<Accordion.Item value="item-1">
+		<!-- ... -->
+	</Accordion.Item>
+	<Accordion.Item value="item-2">
+		<!-- ... -->
+	</Accordion.Item>
+	<Accordion.Item value="item-3">
+		<!-- ... -->
+	</Accordion.Item>
+</Accordion.Root>
+```
+
+This setup enables opening the Accordion items via the custom button and ensures the local `myValue` state updates when the Accordion closes through any internal means (e.g., clicking on an item's trigger).
+
+### Change Handler
+
+You can also use the `onValueChange` prop to update local state when the Accordion's `value` state changes. This is useful when you don't want two-way binding for one reason or another, or you want to perform additional logic when the Accordion opens or closes.
+
+```svelte
+<script lang="ts">
+	import { Accordion } from "bits-ui";
+
+	let myValue = $state<string[]>([]);
+</script>
+
+<Accordion.Root
+	type="multiple"
+	value={myValue}
+	onValueChange={(value) => {
+		myValue = value;
+		// additional logic here.
+	}}
+>
+	<Accordion.Item value="item-1">
+		<!-- ... -->
+	</Accordion.Item>
+	<Accordion.Item value="item-2">
+		<!-- ... -->
+	</Accordion.Item>
+	<Accordion.Item value="item-3">
+		<!-- ... -->
+	</Accordion.Item>
+</Accordion.Root>
+```
+
 ## Usage
 
 ### Single
 
 Set the `type` prop to `"single"` to allow only one accordion item to be open at a time.
 
-```svelte {1}
+```svelte /type="single"/
 <CustomAccordion type="single" />
 ```
 
@@ -124,7 +194,7 @@ Set the `type` prop to `"single"` to allow only one accordion item to be open at
 
 Set the `type` prop to `"multiple"` to allow multiple accordion items to be open at the same time.
 
-```svelte
+```svelte /type="multiple"/
 <CustomAccordion type="multiple" />
 ```
 
@@ -134,7 +204,7 @@ Set the `type` prop to `"multiple"` to allow multiple accordion items to be open
 
 To set default open items, pass them as the `value` prop, which will be an array if the `type` is `"multiple"`, or a string if the `type` is `"single"`.
 
-```svelte
+```svelte /value={["A", "C"]}/
 <CustomAccordion value={["A", "C"]} type="multiple" />
 ```
 
@@ -150,54 +220,6 @@ To disable an individual accordion item, set the `disabled` prop to `true`. This
 		<!-- ... -->
 	</Accordion.Item>
 </Accordion.Root>
-```
-
-### Controlled Value
-
-You can programmatically control the active of the accordion item(s) using the `value` prop. If you `bind` the `value` prop, the local value will remain in sync with the state of the accordion, even if changes are made within the component.
-
-```svelte {2,5,7}
-<script lang="ts">
-	let value = $state("item-1");
-</script>
-
-<button onclick={() => (value = "item-2")}>Change value</button>
-
-<Accordion.Root bind:value type="single">
-	<!-- ... -->
-</Accordion.Root>
-```
-
-### Value Change Side Effects
-
-You can use the `onValueChange` prop to handle side effects when the value of the accordion changes.
-
-```svelte {2-4}
-<Accordion.Root
-	onValueChange={(value) => {
-		doSomething(value);
-	}}
->
-	<!-- ... -->
-</Accordion.Root>
-```
-
-Alternatively, you can use `bind:value` with an `$effect` block to handle side effects when the value of the accordion changes.
-
-```svelte {4,6-8,11}
-<script lang="ts">
-	import { Accordion } from "bits-ui";
-
-	let value = $state("item-1")
-
-	$effect(() => {
-		doSomething(value);
-	})
-</script>
-
-<Accordion.Root bind:value>
-	<!-- ... -->
-</Accordion.Item>
 ```
 
 ## Svelte Transitions
@@ -225,5 +247,7 @@ The `open` snippet prop can be used for conditional rendering of the content bas
 {/snippet}
 
 </ComponentPreviewV2>
+
+For more information on using transitions with Bits UI components, see the [Transitions](/docs/transitions) documentation.
 
 <APISection {schemas} />

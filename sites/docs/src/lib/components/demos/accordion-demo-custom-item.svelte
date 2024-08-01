@@ -5,6 +5,7 @@
 	type Props = WithoutChildrenOrChild<Accordion.ItemProps> & {
 		title: string;
 		content: string;
+		disabled?: boolean;
 	};
 
 	let { title, content, ...restProps }: Props = $props();

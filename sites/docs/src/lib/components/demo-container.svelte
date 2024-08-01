@@ -5,14 +5,24 @@
 		align?: "start" | "center" | "end";
 		size?: "sm" | "default" | "lg";
 		class?: string;
+		wrapperClass?: string;
 		children: Snippet;
 	};
 
-	let { align = "center", size = "default", class: className, children }: Props = $props();
+	let {
+		align = "center",
+		size = "default",
+		class: className,
+		wrapperClass,
+		children,
+	}: Props = $props();
 </script>
 
 <div
-	class="relative rounded-tl-card rounded-tr-card border-2 border-muted bg-zinc-50 !ring-transparent dark:bg-neutral-900/50"
+	class={cn(
+		"relative rounded-tl-card rounded-tr-card border-2 border-muted bg-zinc-50 !ring-transparent dark:bg-neutral-900/50",
+		wrapperClass
+	)}
 >
 	<div
 		class={cn(

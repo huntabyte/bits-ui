@@ -113,6 +113,11 @@ export const navigation: Navigation = {
 					items: [],
 				},
 				{
+					title: "Transitions",
+					href: "/docs/transitions",
+					items: [],
+				},
+				{
 					title: "Styling",
 					href: "/docs/styling",
 					items: [],

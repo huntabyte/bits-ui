@@ -8,16 +8,19 @@
 			value: "A",
 			title: "Title A",
 			content: "Content A",
+			disabled: false,
 		},
 		{
 			value: "B",
 			title: "Title B",
 			content: "Content B",
+			disabled: false,
 		},
 		{
 			value: "C",
 			title: "Title C",
 			content: "Content C",
+			disabled: false,
 		},
 	];
 

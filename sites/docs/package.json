@@ -32,7 +32,7 @@
 		"eruda": "^3.0.1",
 		"mdsx": "^0.0.6",
 		"mode-watcher": "^0.2.0",
-		"phosphor-svelte": "^1.4.2",
+		"phosphor-svelte": "^2.0.1",
 		"postcss": "^8.4.33",
 		"postcss-load-config": "^5.0.2",
 		"rehype-pretty-code": "^0.13.0",

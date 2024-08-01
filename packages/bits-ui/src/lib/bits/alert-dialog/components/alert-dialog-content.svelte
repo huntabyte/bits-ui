@@ -70,7 +70,8 @@
 						<TextSelectionLayer {...mergedProps} enabled={present.current}>
 							{#if child}
 								{@render child({
-									props: mergeProps(mergedProps, focusScopeProps, {}),
+									props: mergeProps(mergedProps, focusScopeProps),
+									...contentState.snippetProps,
 								})}
 							{:else}
 								<div
@@ -80,7 +81,7 @@
 										},
 									})}
 								>
-									{@render children?.()}
+									{@render children?.(contentState.snippetProps)}
 								</div>
 							{/if}
 						</TextSelectionLayer>

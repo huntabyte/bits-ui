@@ -16,6 +16,8 @@ export { default as DateRangeFieldDemo } from "./date-range-field-demo.svelte";
 export { default as DatePickerDemo } from "./date-picker-demo.svelte";
 export { default as DateRangePickerDemo } from "./date-range-picker-demo.svelte";
 export { default as DialogDemo } from "./dialog-demo.svelte";
+export { default as DialogDemoCustom } from "./dialog-demo-custom.svelte";
+export { default as DialogDemoNested } from "./dialog-demo-nested.svelte";
 export { default as DropdownMenuDemo } from "./dropdown-menu-demo.svelte";
 export { default as LabelDemo } from "./label-demo.svelte";
 export { default as LinkPreviewDemo } from "./link-preview-demo.svelte";
