@@ -3,7 +3,7 @@
 	import { cn } from "$lib/utils/index.js";
 	type Props = {
 		align?: "start" | "center" | "end";
-		size?: "sm" | "default" | "lg";
+		size?: "xs" | "sm" | "default" | "lg";
 		class?: string;
 		wrapperClass?: string;
 		children: Snippet;
@@ -32,6 +32,7 @@
 				"items-start": align === "start",
 				"items-end": align === "end",
 				"min-h-[443px]": size === "default",
+				"min-h-[200px]": size === "xs",
 				"min-h-[300px]": size === "sm",
 				"min-h-[600px]": size === "lg",
 			},

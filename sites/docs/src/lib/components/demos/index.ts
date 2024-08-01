@@ -7,6 +7,7 @@ export { default as AvatarDemo } from "./avatar-demo.svelte";
 export { default as ButtonDemo } from "./button-demo.svelte";
 export { default as CalendarDemo } from "./calendar-demo.svelte";
 export { default as CheckboxDemo } from "./checkbox-demo.svelte";
+export { default as CheckboxDemoCustom } from "./checkbox-demo-custom.svelte";
 export { default as CollapsibleDemo } from "./collapsible-demo.svelte";
 export { default as CollapsibleDemoTransitions } from "./collapsible-demo-transitions.svelte";
 export { default as ComboboxDemo } from "./combobox-demo.svelte";
