@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Dialog as SheetPrimitive } from "bits-ui";
 	import X from "phosphor-svelte/lib/X";
+	import type { Snippet } from "svelte";
 	import { SheetOverlay, SheetPortal, type Side, sheetVariants } from "./index.js";
 	import { cn } from "$lib/utils/index.js";
 
@@ -9,7 +10,9 @@
 		class: className,
 		children,
 		...restProps
-	}: Omit<SheetPrimitive.ContentProps & { side?: Side }, "child" | "asChild" | "ref"> = $props();
+	}: Omit<SheetPrimitive.ContentProps & { side?: Side }, "child" | "children" | "ref"> & {
+		children?: Snippet;
+	} = $props();
 </script>
 
 <SheetPortal>
