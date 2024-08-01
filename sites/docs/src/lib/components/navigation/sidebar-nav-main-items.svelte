@@ -5,6 +5,7 @@
 	import Palette from "phosphor-svelte/lib/Palette";
 	import Sticker from "phosphor-svelte/lib/Sticker";
 	import Leaf from "phosphor-svelte/lib/Leaf";
+	import CableCar from "phosphor-svelte/lib/CableCar";
 	import { page } from "$app/stores";
 	import type { SidebarNavItem } from "$lib/config/index.js";
 	import { cn } from "$lib/utils/index.js";
@@ -18,6 +19,7 @@
 		Styling: Palette,
 		Dates: CalendarBlank,
 		Ref: Leaf,
+		Transitions: CableCar,
 	} as const;
 
 	const iconMapKeys = Object.keys(iconMap) as (keyof typeof iconMap)[];

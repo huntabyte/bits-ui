@@ -21,6 +21,10 @@ export type DialogRootPropsWithoutHTML = WithChildren<{
 
 export type DialogRootProps = DialogRootPropsWithoutHTML;
 
+export type DialogContentSnippetProps = {
+	open: boolean;
+};
+
 export type DialogContentPropsWithoutHTML = WithChild<
 	Omit<
 		EscapeLayerProps &
@@ -31,13 +35,22 @@ export type DialogContentPropsWithoutHTML = WithChild<
 				preventScroll?: boolean;
 			},
 		"loop"
-	>
+	>,
+	DialogContentSnippetProps
 >;
 
 export type DialogContentProps = DialogContentPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, DialogContentPropsWithoutHTML>;
 
-export type DialogOverlayPropsWithoutHTML = WithChild<PresenceLayerProps>;
+export type DialogOverlaySnippetProps = {
+	open: boolean;
+};
+
+export type DialogOverlayPropsWithoutHTML = WithChild<
+	PresenceLayerProps,
+	DialogOverlaySnippetProps
+>;
+
 export type DialogOverlayProps = DialogOverlayPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, DialogOverlayPropsWithoutHTML>;
 

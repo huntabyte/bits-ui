@@ -46,6 +46,10 @@
 		@apply pb-0.5 shadow-none;
 	}
 
+	& [data-highlighted-chars] {
+		@apply rounded-md bg-muted px-1 pb-0.5 font-bold;
+	}
+
 	& [data-highlighted-line] {
 		@apply !bg-muted;
 	}
@@ -66,7 +70,7 @@
 }
 
 [data-chars-id="hi"] {
-	@apply rounded bg-accent/[0.1] p-1 font-bold !important;
+	@apply rounded p-1 font-bold !important;
 }
 
 [data-chars-id="r"] {
@@ -82,7 +86,7 @@
 }
 
 [data-rehype-pretty-code-title] {
-	@apply mt-4 rounded-t-xl bg-muted px-4 py-2.5 text-sm  tracking-wide text-foreground/70;
+	@apply mt-4 rounded-t-xl bg-muted px-4 py-2.5 text-sm tracking-wide text-foreground/70;
 }
 
 [data-rehype-pretty-code-title] + pre {

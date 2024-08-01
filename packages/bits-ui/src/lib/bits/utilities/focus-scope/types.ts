@@ -16,6 +16,13 @@ export type FocusScopeProps = {
 	onDestroyAutoFocus?: EventCallback;
 
 	/**
+	 * Whether focus is trapped within the focus scope.
+	 *
+	 * @defaultValue false
+	 */
+	trapFocus?: boolean;
+
+	/**
 	 * When `true` will loop through the tabbable elements in the focus scope.
 	 *
 	 * @defaultValue false
@@ -28,13 +35,6 @@ export type FocusScopeImplProps = {
 	 * The ID of the focus scope container node.
 	 */
 	id: string;
-
-	/**
-	 * Whether focus is trapped within the focus scope.
-	 *
-	 * @defaultValue false
-	 */
-	trapped?: boolean;
 
 	/**
 	 * The snippet to render the focus scope container with its props.

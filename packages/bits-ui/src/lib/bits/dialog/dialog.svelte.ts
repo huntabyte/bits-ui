@@ -243,6 +243,8 @@ class DialogContentState {
 		});
 	}
 
+	snippetProps = $derived.by(() => ({ open: this.root.open.current }));
+
 	props = $derived.by(
 		() =>
 			({
@@ -274,6 +276,8 @@ class DialogOverlayState {
 			condition: () => this.root.open.current,
 		});
 	}
+
+	snippetProps = $derived.by(() => ({ open: this.root.open.current }));
 
 	props = $derived.by(
 		() =>

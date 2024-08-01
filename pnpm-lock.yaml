@@ -134,7 +134,7 @@ importers:
         version: 5.0.0-next.199
       svelte-check:
         specifier: ^3.8.4
-        version: 3.8.4(postcss-load-config@5.1.0(jiti@1.21.6)(postcss@8.4.40))(postcss@8.4.40)(svelte@5.0.0-next.199)
+        version: 3.8.4(postcss-load-config@5.1.0(postcss@8.4.40))(postcss@8.4.40)(svelte@5.0.0-next.199)
       tslib:
         specifier: ^2.6.3
         version: 2.6.3
@@ -212,8 +212,8 @@ importers:
         specifier: ^0.2.0
         version: 0.2.2(svelte@5.0.0-next.199)
       phosphor-svelte:
-        specifier: ^1.4.2
-        version: 1.4.2(svelte@5.0.0-next.199)
+        specifier: ^2.0.1
+        version: 2.0.1(svelte@5.0.0-next.199)
       postcss:
         specifier: ^8.4.33
         version: 8.4.40
@@ -237,7 +237,7 @@ importers:
         version: 5.0.0-next.199
       svelte-check:
         specifier: ^3.6.9
-        version: 3.8.4(postcss-load-config@5.1.0(jiti@1.21.6)(postcss@8.4.40))(postcss@8.4.40)(svelte@5.0.0-next.199)
+        version: 3.8.4(postcss-load-config@5.1.0(postcss@8.4.40))(postcss@8.4.40)(svelte@5.0.0-next.199)
       svelte-sonner:
         specifier: ^0.3.24
         version: 0.3.27(svelte@5.0.0-next.199)
@@ -3785,8 +3785,8 @@ packages:
   periscopic@3.1.0:
     resolution: {integrity: sha512-vKiQ8RRtkl9P+r/+oefh25C3fhybptkHKCZSPlcXiJux2tJF55GnEj3BVn4A5gKfq9NWWXXrxkHBwVPUfH0opw==}
 
-  phosphor-svelte@1.4.2:
-    resolution: {integrity: sha512-wdHKlZbE5D3ad1dd4K9bqWxpOb6gIwe+/ZeXGI9YpdKqECxqd+g3/NsLYE1+/hjlXixTWhQ7VMVIxTtBRXegCg==}
+  phosphor-svelte@2.0.1:
+    resolution: {integrity: sha512-2Ryvaf1sfCNOF0zTQVghtxOs/6JKn9MV+e9uluNAT9wAosgNYnaBD210WcFGRrva1sF8cddv7EWSS//ITNN4mg==}
     peerDependencies:
       svelte: '>=3'
 
@@ -5027,7 +5027,7 @@ snapshots:
       '@antfu/install-pkg': 0.3.3
       '@clack/prompts': 0.7.0
       '@stylistic/eslint-plugin': 2.6.0-beta.1(eslint@9.8.0)(typescript@5.5.4)
-      '@typescript-eslint/eslint-plugin': 8.0.0-alpha.40(@typescript-eslint/parser@8.0.0-alpha.40(eslint@9.8.0)(typescript@5.5.4))(eslint@9.8.0)(typescript@5.5.4)
+      '@typescript-eslint/eslint-plugin': 8.0.0-alpha.40(@typescript-eslint/parser@7.18.0(eslint@9.8.0)(typescript@5.5.4))(eslint@9.8.0)(typescript@5.5.4)
       '@typescript-eslint/parser': 8.0.0-alpha.40(eslint@9.8.0)(typescript@5.5.4)
       eslint: 9.8.0
       eslint-config-flat-gitignore: 0.1.8
@@ -6406,10 +6406,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/eslint-plugin@8.0.0-alpha.40(@typescript-eslint/parser@8.0.0-alpha.40(eslint@9.8.0)(typescript@5.5.4))(eslint@9.8.0)(typescript@5.5.4)':
+  '@typescript-eslint/eslint-plugin@8.0.0-alpha.40(@typescript-eslint/parser@7.18.0(eslint@9.8.0)(typescript@5.5.4))(eslint@9.8.0)(typescript@5.5.4)':
     dependencies:
       '@eslint-community/regexpp': 4.11.0
-      '@typescript-eslint/parser': 8.0.0-alpha.40(eslint@9.8.0)(typescript@5.5.4)
+      '@typescript-eslint/parser': 7.18.0(eslint@9.8.0)(typescript@5.5.4)
       '@typescript-eslint/scope-manager': 8.0.0-alpha.40
       '@typescript-eslint/type-utils': 8.0.0-alpha.40(eslint@9.8.0)(typescript@5.5.4)
       '@typescript-eslint/utils': 8.0.0-alpha.40(eslint@9.8.0)(typescript@5.5.4)
@@ -7396,14 +7396,14 @@ snapshots:
       eslint: 9.8.0
       eslint-rule-composer: 0.3.0
     optionalDependencies:
-      '@typescript-eslint/eslint-plugin': 8.0.0-alpha.40(@typescript-eslint/parser@8.0.0-alpha.40(eslint@9.8.0)(typescript@5.5.4))(eslint@9.8.0)(typescript@5.5.4)
+      '@typescript-eslint/eslint-plugin': 8.0.0-alpha.40(@typescript-eslint/parser@7.18.0(eslint@9.8.0)(typescript@5.5.4))(eslint@9.8.0)(typescript@5.5.4)
 
   eslint-plugin-vitest@0.5.4(@typescript-eslint/eslint-plugin@8.0.0-alpha.40(@typescript-eslint/parser@8.0.0-alpha.40(eslint@9.8.0)(typescript@5.5.4))(eslint@9.8.0)(typescript@5.5.4))(eslint@9.8.0)(typescript@5.5.4)(vitest@2.0.4):
     dependencies:
       '@typescript-eslint/utils': 7.18.0(eslint@9.8.0)(typescript@5.5.4)
       eslint: 9.8.0
     optionalDependencies:
-      '@typescript-eslint/eslint-plugin': 8.0.0-alpha.40(@typescript-eslint/parser@8.0.0-alpha.40(eslint@9.8.0)(typescript@5.5.4))(eslint@9.8.0)(typescript@5.5.4)
+      '@typescript-eslint/eslint-plugin': 8.0.0-alpha.40(@typescript-eslint/parser@7.18.0(eslint@9.8.0)(typescript@5.5.4))(eslint@9.8.0)(typescript@5.5.4)
       vitest: 2.0.4(@types/node@20.14.13)(@vitest/ui@1.6.0)(jsdom@24.1.1)
     transitivePeerDependencies:
       - supports-color
@@ -9294,7 +9294,7 @@ snapshots:
       estree-walker: 3.0.3
       is-reference: 3.0.2
 
-  phosphor-svelte@1.4.2(svelte@5.0.0-next.199):
+  phosphor-svelte@2.0.1(svelte@5.0.0-next.199):
     dependencies:
       svelte: 5.0.0-next.199
 
@@ -9919,14 +9919,14 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  svelte-check@3.8.4(postcss-load-config@5.1.0(jiti@1.21.6)(postcss@8.4.40))(postcss@8.4.40)(svelte@5.0.0-next.199):
+  svelte-check@3.8.4(postcss-load-config@5.1.0(postcss@8.4.40))(postcss@8.4.40)(svelte@5.0.0-next.199):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
       chokidar: 3.6.0
       picocolors: 1.0.1
       sade: 1.8.1
       svelte: 5.0.0-next.199
-      svelte-preprocess: 5.1.4(postcss-load-config@5.1.0(jiti@1.21.6)(postcss@8.4.40))(postcss@8.4.40)(svelte@5.0.0-next.199)(typescript@5.5.4)
+      svelte-preprocess: 5.1.4(postcss-load-config@5.1.0(postcss@8.4.40))(postcss@8.4.40)(svelte@5.0.0-next.199)(typescript@5.5.4)
       typescript: 5.5.4
     transitivePeerDependencies:
       - '@babel/core'
@@ -9953,7 +9953,7 @@ snapshots:
     dependencies:
       svelte: 5.0.0-next.199
 
-  svelte-preprocess@5.1.4(postcss-load-config@5.1.0(jiti@1.21.6)(postcss@8.4.40))(postcss@8.4.40)(svelte@5.0.0-next.199)(typescript@5.5.4):
+  svelte-preprocess@5.1.4(postcss-load-config@5.1.0(postcss@8.4.40))(postcss@8.4.40)(svelte@5.0.0-next.199)(typescript@5.5.4):
     dependencies:
       '@types/pug': 2.0.10
       detect-indent: 6.1.0

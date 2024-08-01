@@ -68,7 +68,7 @@
 		if (e.defaultPrevented) return;
 		contentState.parentMenu.onClose();
 	}}
-	trapped
+	trapFocus
 	{loop}
 >
 	{#snippet popper({ props })}

@@ -50,7 +50,7 @@
 		e.preventDefault();
 		contentState.root.triggerNode?.focus();
 	}}
-	trapped
+	trapFocus
 	loop
 	{forceMount}
 >

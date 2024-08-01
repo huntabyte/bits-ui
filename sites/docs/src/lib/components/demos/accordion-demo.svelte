@@ -4,27 +4,28 @@
 
 	const items = [
 		{
+			value: "1",
 			title: "What is the meaning of life?",
 			content:
 				"To become a better person, to help others, and to leave the world a better place than you found it.",
 		},
 		{
+			value: "2",
 			title: "How do I become a better person?",
 			content:
 				"Read books, listen to podcasts, and surround yourself with people who inspire you.",
 		},
 		{
+			value: "3",
 			title: "What is the best way to help others?",
 			content: "Give them your time, attention, and love.",
 		},
 	];
-
-	let value = $state<string[]>([]);
 </script>
 
-<Accordion.Root class="w-full sm:max-w-[70%]" type="multiple" bind:value>
-	{#each items as item, i}
-		<Accordion.Item value={`${i}`} class="group border-b border-dark-10 px-1.5">
+<Accordion.Root class="w-full sm:max-w-[70%]" type="multiple">
+	{#each items as item (item.value)}
+		<Accordion.Item value={item.value} class="group border-b border-dark-10 px-1.5">
 			<Accordion.Header>
 				<Accordion.Trigger
 					class="flex w-full flex-1 items-center justify-between py-5 text-[15px] font-medium transition-all [&[data-state=open]>span>svg]:rotate-180"

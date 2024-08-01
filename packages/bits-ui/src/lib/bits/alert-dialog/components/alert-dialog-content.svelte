@@ -18,10 +18,13 @@
 		child,
 		ref = $bindable(null),
 		forceMount = false,
+		interactOutsideBehavior = "ignore",
 		onDestroyAutoFocus = noop,
 		onEscapeKeydown = noop,
 		onMountAutoFocus = noop,
+		onInteractOutsideStart = noop,
 		preventScroll = true,
+		trapFocus = true,
 		...restProps
 	}: ContentProps = $props();
 
@@ -41,7 +44,7 @@
 		<ScrollLock {preventScroll} />
 		<FocusScope
 			loop
-			trapped={present.current}
+			trapFocus={present.current && trapFocus}
 			{...mergedProps}
 			onDestroyAutoFocus={(e) => {
 				onDestroyAutoFocus(e);
@@ -65,11 +68,21 @@
 						contentState.root.closeDialog();
 					}}
 				>
-					<DismissableLayer {...mergedProps} enabled={present.current}>
+					<DismissableLayer
+						{...mergedProps}
+						enabled={present.current}
+						{interactOutsideBehavior}
+						onInteractOutside={(e) => {
+							onInteractOutsideStart(e);
+							if (e.defaultPrevented) return;
+							contentState.root.closeDialog();
+						}}
+					>
 						<TextSelectionLayer {...mergedProps} enabled={present.current}>
 							{#if child}
 								{@render child({
-									props: mergeProps(mergedProps, focusScopeProps, {}),
+									props: mergeProps(mergedProps, focusScopeProps),
+									...contentState.snippetProps,
 								})}
 							{:else}
 								<div
@@ -79,7 +92,7 @@
 										},
 									})}
 								>
-									{@render children?.()}
+									{@render children?.(contentState.snippetProps)}
 								</div>
 							{/if}
 						</TextSelectionLayer>
