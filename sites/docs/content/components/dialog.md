@@ -90,7 +90,7 @@ You can then use the `MyDialog` component in your application like so:
 
 ```svelte
 <script lang="ts">
-	import { MyDialog } from "$lib/components/MyDialog.svelte";
+	import MyDialog from "$lib/components/MyDialog.svelte";
 </script>
 
 <MyDialog buttonText="Open Dialog">
@@ -110,7 +110,7 @@ Alternatively, you can define the snippets separately and pass them as props to 
 
 ```svelte
 <script lang="ts">
-	import { MyDialog } from "$lib/components/MyDialog.svelte";
+	import MyDialog from "$lib/components/MyDialog.svelte";
 </script>
 
 {#snippet title()}
@@ -243,6 +243,54 @@ By default, when a Dialog is opened, scrolling the body will be disabled, which 
 
 ```svelte /preventScroll={false}/
 <Dialog.Content preventScroll={false}>
+	<!-- ... -->
+</Dialog.Content>
+```
+
+## Escape Keydown
+
+By default, when a Dialog is open, pressing the `Escape` key will close the dialog. Bits UI provides a couple ways to override this behavior.
+
+### escapeKeydownBehavior
+
+You can set the `escapeKeydownBehavior` prop to `'ignore'` on the `Dialog.Content` component to prevent the dialog from closing when the `Escape` key is pressed.
+
+```svelte /escapeKeydownBehavior="ignore"/
+<Dialog.Content escapeKeydownBehavior="ignore">
+	<!-- ... -->
+</Dialog.Content>
+```
+
+### onEscapeKeydown
+
+You can also override the default behavior by cancelling the event passed to the `onEscapeKeydown` callback on the `Dialog.Content` component.
+
+```svelte /onEscapeKeydown={(e) => e.preventDefault()}/
+<Dialog.Content onEscapeKeydown={(e) => e.preventDefault()}>
+	<!-- ... -->
+</Dialog.Content>
+```
+
+## Interact Outside
+
+By default, when a Dialog is open, pressing the outside the content will close the dialog. Bits UI provides a couple ways to override this behavior.
+
+### interactOutsideBehavior
+
+You can set the `interactOutsideBehavior` prop to `'ignore'` on the `Dialog.Content` component to prevent the dialog from closing when the user interacts outside the content.
+
+```svelte /interactOutsideBehavior="ignore"/
+<Dialog.Content interactOutsideBehavior="ignore">
+	<!-- ... -->
+</Dialog.Content>
+```
+
+### onInteractOutside
+
+You can also override the default behavior by cancelling the event passed to the `onInteractOutside` callback on the `Dialog.Content` component.
+
+```svelte /onInteractOutside={(e) => e.preventDefault()}/
+<Dialog.Content onInteractOutside={(e) => e.preventDefault()}>
 	<!-- ... -->
 </Dialog.Content>
 ```

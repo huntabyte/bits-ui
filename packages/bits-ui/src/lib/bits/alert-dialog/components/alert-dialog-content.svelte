@@ -18,9 +18,11 @@
 		child,
 		ref = $bindable(null),
 		forceMount = false,
+		interactOutsideBehavior = "ignore",
 		onDestroyAutoFocus = noop,
 		onEscapeKeydown = noop,
 		onMountAutoFocus = noop,
+		onInteractOutsideStart = noop,
 		preventScroll = true,
 		trapFocus = true,
 		...restProps
@@ -66,7 +68,16 @@
 						contentState.root.closeDialog();
 					}}
 				>
-					<DismissableLayer {...mergedProps} enabled={present.current}>
+					<DismissableLayer
+						{...mergedProps}
+						enabled={present.current}
+						{interactOutsideBehavior}
+						onInteractOutside={(e) => {
+							onInteractOutsideStart(e);
+							if (e.defaultPrevented) return;
+							contentState.root.closeDialog();
+						}}
+					>
 						<TextSelectionLayer {...mergedProps} enabled={present.current}>
 							{#if child}
 								{@render child({
