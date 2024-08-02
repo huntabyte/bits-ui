@@ -41,15 +41,11 @@ export const root = createApiSchema<DateFieldRootPropsWithoutHTML>({
 			definition: "(date: DateValue) => void",
 			description: "A function that is called when the placeholder date changes.",
 		}),
-		name: createStringProp({
-			description:
-				"The name of the date field used for form submission. If provided, a hidden input element will be rendered alongside the date field.",
-		}),
+
 		required: createBooleanProp({
 			description: "Whether or not the date field is required.",
 			default: C.FALSE,
 		}),
-
 		isDateUnavailable: createFunctionProp({
 			definition: "(date: DateValue) => boolean",
 			description: "A function that returns whether or not a date is unavailable.",
@@ -103,7 +99,13 @@ export const root = createApiSchema<DateFieldRootPropsWithoutHTML>({
 const input = createApiSchema<DateFieldInputPropsWithoutHTML>({
 	title: "Input",
 	description: "The container for the segments of the date field.",
-	props: withChildProps({ elType: "HTMLDivElement" }),
+	props: {
+		name: createStringProp({
+			description:
+				"The name of the date field used for form submission. If provided, a hidden input element will be rendered alongside the date field.",
+		}),
+		...withChildProps({ elType: "HTMLDivElement" }),
+	},
 	dataAttributes: [
 		createDataAttrSchema({
 			name: "invalid",
