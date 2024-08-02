@@ -25,12 +25,32 @@ description: Displays a menu of items that users can select from when triggered.
 
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger />
+
 	<DropdownMenu.Content>
+		<DropdownMenu.Label />
+		<DropdownMenu.Item />
+
 		<DropdownMenu.Group>
-			<DropdownMenu.Label />
-			<DropdownMenu.Separator />
 			<DropdownMenu.Item />
 		</DropdownMenu.Group>
+
+		<DropdownMenu.CheckboxItem>
+			<DropdownMenu.CheckboxIndicator />
+		</DropdownMenu.CheckboxItem>
+
+		<DropdownMenu.RadioGroup>
+			<DropdownMenu.RadioItem>
+				<DropdownMenu.RadioIndicator />
+			</DropdownMenu.RadioItem>
+		</DropdownMenu.RadioGroup>
+
+		<DropdownMenu.Sub>
+			<DropdownMenu.SubTrigger />
+			<DropdownMenu.SubContent />
+		</DropdownMenu.Sub>
+
+		<DropdownMenu.Separator />
+		<DropdownMenu.Arrow />
 	</DropdownMenu.Content>
 </DropdownMenu.Root>
 ```
@@ -68,11 +88,13 @@ This example shows you how to create a Dropdown Menu component that accepts a fe
 		{buttonText}
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content {...contentProps}>
-		{#each items as item}
-			<DropdownMenu.Item value={item.value}>
-				{item.label}
-			</DropdownMenu.Item>
-		{/each}
+		<DropdownMenu.Group>
+			{#each items as item}
+				<DropdownMenu.Item value={item.value}>
+					{item.label}
+				</DropdownMenu.Item>
+			{/each}
+		</DropdownMenu.Group>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>
 ```
@@ -112,6 +134,29 @@ Use the `bind:open` directive for effortless two-way synchronization between you
 
 <DropdownMenu.Root bind:open={isOpen}>
 	<!-- Dropdown Menu content -->
+</DropdownMenu.Root>
+```
+
+This setup enables opening the menu via the custom button and ensures the local `isOpen` state updates when the menu closes through any means (e.g., escape key).
+
+### Change Handler
+
+You can also use the `onOpenChange` prop to update local state when the menu's `open` state changes. This is useful when you don't want two-way binding for one reason or another, or you want to perform additional logic when the menu opens or closes.
+
+```svelte {3,7-11}
+<script lang="ts">
+	import { DropdownMenu } from "bits-ui";
+	let isOpen = $state(false);
+</script>
+
+<DropdownMenu.Root
+	open={isOpen}
+	onOpenChange={(open) => {
+		isOpen = open;
+		// additional logic here.
+	}}
+>
+	<!-- ... -->
 </DropdownMenu.Root>
 ```
 
