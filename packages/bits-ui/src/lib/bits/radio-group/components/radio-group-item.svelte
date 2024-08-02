@@ -29,9 +29,9 @@
 </script>
 
 {#if child}
-	{@render child({ props: mergedProps, checked: itemState.checked })}
+	{@render child({ props: mergedProps, ...itemState.snippetProps })}
 {:else}
 	<button {...mergedProps}>
-		{@render children?.({ checked: itemState.checked })}
+		{@render children?.(itemState.snippetProps)}
 	</button>
 {/if}

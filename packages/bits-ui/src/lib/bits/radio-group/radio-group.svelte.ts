@@ -7,8 +7,8 @@ import type { Orientation } from "$lib/shared/index.js";
 import { type UseRovingFocusReturn, useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
 import { createContext } from "$lib/internal/createContext.js";
 
-const ROOT_ATTR = "data-radio-group-root";
-const ITEM_ATTR = "data-radio-group-item";
+const RADIO_GROUP_ROOT_ATTR = "data-radio-group-root";
+const RADIO_GROUP_ITEM_ATTR = "data-radio-group-item";
 
 type RadioGroupRootStateProps = WithRefProps<
 	ReadableBoxedValues<{
@@ -42,7 +42,7 @@ class RadioGroupRootState {
 		this.#ref = props.ref;
 		this.rovingFocusGroup = useRovingFocus({
 			rootNodeId: this.#id,
-			candidateSelector: ITEM_ATTR,
+			candidateSelector: RADIO_GROUP_ITEM_ATTR,
 			loop: this.loop,
 			orientation: this.orientation,
 		});
@@ -53,21 +53,21 @@ class RadioGroupRootState {
 		});
 	}
 
-	isChecked(value: string) {
+	isChecked = (value: string) => {
 		return this.value.current === value;
-	}
+	};
 
-	selectValue(value: string) {
+	setValue = (value: string) => {
 		this.value.current = value;
-	}
+	};
 
-	createItem(props: RadioGroupItemStateProps) {
+	createItem = (props: RadioGroupItemStateProps) => {
 		return new RadioGroupItemState(props, this);
-	}
+	};
 
-	createInput() {
+	createInput = () => {
 		return new RadioGroupInputState(this);
-	}
+	};
 
 	props = $derived.by(
 		() =>
@@ -77,7 +77,7 @@ class RadioGroupRootState {
 				"aria-required": getAriaRequired(this.required.current),
 				"data-disabled": getDataDisabled(this.disabled.current),
 				"data-orientation": this.orientation.current,
-				[ROOT_ATTR]: "",
+				[RADIO_GROUP_ROOT_ATTR]: "",
 			}) as const
 	);
 }
@@ -117,11 +117,11 @@ class RadioGroupItemState {
 	}
 
 	#onclick = () => {
-		this.#root.selectValue(this.#value.current);
+		this.#root.setValue(this.#value.current);
 	};
 
 	#onfocus = () => {
-		this.#root.selectValue(this.#value.current);
+		this.#root.setValue(this.#value.current);
 	};
 
 	#onkeydown = (e: KeyboardEvent) => {
@@ -129,6 +129,8 @@ class RadioGroupItemState {
 	};
 
 	#tabIndex = $derived.by(() => this.#root.rovingFocusGroup.getTabIndex(this.#ref.current));
+
+	snippetProps = $derived.by(() => ({ checked: this.#isChecked }));
 
 	props = $derived.by(
 		() =>
@@ -140,7 +142,7 @@ class RadioGroupItemState {
 				"data-disabled": getDataDisabled(this.#isDisabled),
 				"data-state": this.#isChecked ? "checked" : "unchecked",
 				"aria-checked": getAriaChecked(this.#isChecked),
-				[ITEM_ATTR]: "",
+				[RADIO_GROUP_ITEM_ATTR]: "",
 				type: "button",
 				role: "radio",
 				tabindex: this.#tabIndex,

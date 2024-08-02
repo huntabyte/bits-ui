@@ -9,7 +9,6 @@ import {
 } from "./helpers.js";
 import { enums } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
-import type { APISchema } from "$lib/types/index.js";
 
 export const root = createApiSchema<RadioGroupRootPropsWithoutHTML>({
 	title: "Root",
@@ -46,7 +45,8 @@ export const root = createApiSchema<RadioGroupRootPropsWithoutHTML>({
 		orientation: createEnumProp({
 			options: ["vertical", "horizontal"],
 			default: "'vertical'",
-			description: "The orientation of the radio group.",
+			description:
+				"The orientation of the radio group. This will determine how keyboard navigation will work within the component.",
 		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
@@ -68,17 +68,17 @@ export const item = createApiSchema<RadioGroupItemPropsWithoutHTML>({
 	title: "Item",
 	description: "An radio item, which must be a child of the `RadioGroup.Root` component.",
 	props: {
-		disabled: {
-			default: C.FALSE,
-			type: C.BOOLEAN,
-			description:
-				"Whether or not the radio item is disabled. This prevents the user from interacting with it.",
-		},
 		value: {
 			type: C.STRING,
 			description:
 				"The value of the radio item. This should be unique for each radio item in the group.",
 			required: true,
+		},
+		disabled: {
+			default: C.FALSE,
+			type: C.BOOLEAN,
+			description:
+				"Whether or not the radio item is disabled. This prevents the user from interacting with it.",
 		},
 		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
