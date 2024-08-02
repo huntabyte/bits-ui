@@ -74,7 +74,6 @@ export type DateFieldRootStateProps = WritableBoxedValues<{
 		hourCycle: HourCycle | undefined;
 		locale: string;
 		hideTimeZone: boolean;
-		name: string;
 		required: boolean;
 	}>;
 
@@ -91,7 +90,6 @@ export class DateFieldRootState {
 	hourCycle: DateFieldRootStateProps["hourCycle"];
 	locale: DateFieldRootStateProps["locale"];
 	hideTimeZone: DateFieldRootStateProps["hideTimeZone"];
-	name: DateFieldRootStateProps["name"];
 	required: DateFieldRootStateProps["required"];
 	descriptionId = useId();
 	formatter: Formatter;
@@ -107,6 +105,7 @@ export class DateFieldRootState {
 	states = initSegmentStates();
 	dayPeriodNode = $state<HTMLElement | null>(null);
 	rangeRoot: DateRangeFieldRootState | undefined = undefined;
+	name = $state("");
 
 	constructor(props: DateFieldRootStateProps, rangeRoot?: DateRangeFieldRootState) {
 		this.rangeRoot = rangeRoot;
@@ -128,7 +127,6 @@ export class DateFieldRootState {
 		this.locale = rangeRoot ? rangeRoot.locale : props.locale;
 		this.hideTimeZone = rangeRoot ? rangeRoot.hideTimeZone : props.hideTimeZone;
 		this.required = rangeRoot ? rangeRoot.required : props.required;
-		this.name = props.name;
 		this.formatter = createFormatter(this.locale.current);
 		this.initialSegments = initializeSegmentValues(this.inferredGranularity);
 		this.segmentValues = this.initialSegments;
@@ -184,6 +182,10 @@ export class DateFieldRootState {
 			this.clearUpdating();
 		});
 	}
+
+	setName = (name: string) => {
+		this.name = name;
+	};
 
 	/**
 	 * Sets the field node for the `DateFieldRootState` instance. We use this method so we can
@@ -569,17 +571,26 @@ export class DateFieldRootState {
 	}
 }
 
-type DateFieldInputStateProps = WithRefProps;
+type DateFieldInputStateProps = WithRefProps &
+	ReadableBoxedValues<{
+		name: string;
+	}>;
 
 class DateFieldInputState {
 	#id: DateFieldInputStateProps["id"];
 	#ref: DateFieldInputStateProps["ref"];
+	#name: DateFieldInputStateProps["name"];
 	root: DateFieldRootState;
 
 	constructor(props: DateFieldInputStateProps, root: DateFieldRootState) {
 		this.#id = props.id;
 		this.#ref = props.ref;
 		this.root = root;
+		this.#name = props.name;
+
+		$effect(() => {
+			this.root.setName(this.#name.current);
+		});
 
 		useRefById({
 			id: this.#id,
@@ -614,7 +625,7 @@ class DateFieldInputState {
 
 class DateFieldHiddenInputState {
 	#root: DateFieldRootState;
-	shouldRender = $derived.by(() => this.#root.name.current !== "");
+	shouldRender = $derived.by(() => this.#root.name !== "");
 	isoValue = $derived.by(() =>
 		this.#root.value.current ? this.#root.value.current.toString() : ""
 	);
@@ -625,7 +636,7 @@ class DateFieldHiddenInputState {
 
 	props = $derived.by(() => {
 		return {
-			name: this.#root.name.current,
+			name: this.#root.name,
 			value: this.isoValue,
 			required: this.#root.required.current,
 			"aria-hidden": getAriaHidden(true),
