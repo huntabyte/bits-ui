@@ -9,6 +9,7 @@
 	let {
 		id = useId(),
 		ref = $bindable(null),
+		name = "",
 		children,
 		child,
 		...restProps
@@ -20,6 +21,7 @@
 			() => ref,
 			(v) => (ref = v)
 		),
+		name: box.with(() => name),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, inputState.props));

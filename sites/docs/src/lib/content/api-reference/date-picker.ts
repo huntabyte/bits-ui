@@ -17,7 +17,7 @@ import {
 	nextButton,
 	prevButton,
 } from "./calendar.js";
-import { root as dateFieldRoot, label, segment } from "./date-field.js";
+import { input as dateFieldInput, root as dateFieldRoot, label, segment } from "./date-field.js";
 import {
 	childrenSnippet,
 	createApiSchema,
@@ -43,7 +43,7 @@ export const root = createApiSchema<DatePickerRootPropsWithoutHTML>({
 			definition: "(open: boolean) => void",
 			description: "A callback that fires when the open state changes.",
 		}),
-		name: dateFieldRoot.props!.name,
+
 		isDateUnavailable: dateFieldRoot.props!.isDateUnavailable,
 		isDateDisabled: calendarRoot.props!.isDateDisabled,
 		required: dateFieldRoot.props!.required,
@@ -120,7 +120,10 @@ const calendar = createApiSchema<DatePickerCalendarPropsWithoutHTML>({
 const input = createApiSchema<DatePickerInputPropsWithoutHTML>({
 	title: "Input",
 	description: "The field input component which contains the segments of the date field.",
-	props: withChildProps({ elType: "HTMLDivElement" }),
+	props: {
+		...withChildProps({ elType: "HTMLDivElement" }),
+		name: dateFieldInput.props!.name,
+	},
 	dataAttributes: [
 		{
 			name: "invalid",

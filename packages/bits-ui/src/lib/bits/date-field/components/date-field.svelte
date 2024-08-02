@@ -15,7 +15,6 @@
 		locale = "en",
 		maxValue,
 		minValue,
-		name = "",
 		onPlaceholderChange = noop,
 		onValueChange = noop,
 		placeholder = $bindable(),
@@ -64,7 +63,6 @@
 		readonly: box.with(() => readonly),
 		readonlySegments: box.with(() => readonlySegments),
 		required: box.with(() => required),
-		name: box.with(() => name),
 	});
 </script>
 

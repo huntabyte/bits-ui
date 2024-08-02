@@ -21,7 +21,6 @@ type DatePickerRootStateProps = WritableBoxedValues<{
 		hourCycle: HourCycle | undefined;
 		locale: string;
 		hideTimeZone: boolean;
-		name: string;
 		required: boolean;
 		preventDeselect: boolean;
 		pagedNavigation: boolean;

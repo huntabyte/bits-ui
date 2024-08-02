@@ -1,10 +1,12 @@
 <script lang="ts" context="module">
 	import { DateField, type DateFieldRootProps, type WithoutChildrenOrChild } from "$lib/index.js";
-	export type DateFieldTestProps = WithoutChildrenOrChild<DateFieldRootProps>;
+	export type DateFieldTestProps = WithoutChildrenOrChild<DateFieldRootProps> & {
+		name?: string;
+	};
 </script>
 
 <script lang="ts">
-	let { value, placeholder, ...restProps }: DateFieldTestProps = $props();
+	let { value, placeholder, name, ...restProps }: DateFieldTestProps = $props();
 </script>
 
 <main>
@@ -12,7 +14,7 @@
 	<DateField.Root bind:value bind:placeholder {...restProps}>
 		<div>
 			<DateField.Label data-testid="label">Label</DateField.Label>
-			<DateField.Input data-testid="input">
+			<DateField.Input data-testid="input" {name}>
 				{#snippet children({ segments })}
 					{#each segments as { part, value }}
 						<DateField.Segment

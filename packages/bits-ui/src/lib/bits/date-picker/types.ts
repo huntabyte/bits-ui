@@ -131,14 +131,6 @@ export type DatePickerRootPropsWithoutHTML = WithChildren<{
 	hideTimeZone?: boolean;
 
 	/**
-	 * The name to use for the hidden input element of the date field,
-	 * which is used to submit the ISO string value of the date field
-	 * to a server. If not provided, the hidden input element will not
-	 * be rendered.
-	 */
-	name?: string;
-
-	/**
 	 * Whether or not the hidden input of the date field requires a value
 	 * to be submitted.
 	 *
