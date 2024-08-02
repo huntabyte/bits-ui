@@ -96,7 +96,7 @@ export const root = createApiSchema<DateFieldRootPropsWithoutHTML>({
 	},
 });
 
-const input = createApiSchema<DateFieldInputPropsWithoutHTML>({
+export const input = createApiSchema<DateFieldInputPropsWithoutHTML>({
 	title: "Input",
 	description: "The container for the segments of the date field.",
 	props: {

@@ -28,7 +28,6 @@
 		locale = "en",
 		hideTimeZone = false,
 		required = false,
-		name = "",
 		calendarLabel = "Event",
 		disableDaysOutsideMonth = true,
 		preventDeselect = false,
@@ -96,7 +95,6 @@
 		locale: box.with(() => locale),
 		hideTimeZone: box.with(() => hideTimeZone),
 		required: box.with(() => required),
-		name: box.with(() => name),
 		calendarLabel: box.with(() => calendarLabel),
 		disableDaysOutsideMonth: box.with(() => disableDaysOutsideMonth),
 		preventDeselect: box.with(() => preventDeselect),
@@ -126,7 +124,6 @@
 		hideTimeZone: pickerRootState.props.hideTimeZone,
 		hourCycle: pickerRootState.props.hourCycle,
 		locale: pickerRootState.props.locale,
-		name: pickerRootState.props.name,
 		required: pickerRootState.props.required,
 		placeholder: pickerRootState.props.placeholder,
 	});
