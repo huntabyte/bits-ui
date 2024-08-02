@@ -90,7 +90,7 @@ This example shows you how to create a Dropdown Menu component that accepts a fe
 	<DropdownMenu.Content {...contentProps}>
 		<DropdownMenu.Group>
 			{#each items as item}
-				<DropdownMenu.Item value={item.value}>
+				<DropdownMenu.Item textValue={item.value}>
 					{item.label}
 				</DropdownMenu.Item>
 			{/each}
