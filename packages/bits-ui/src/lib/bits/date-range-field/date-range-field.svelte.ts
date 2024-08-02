@@ -185,11 +185,15 @@ export class DateRangeFieldRootState {
 	 */
 	childFieldPropOverrides = {};
 
-	createField(props: DateRangeFieldInputStateProps, type: "start" | "end") {
+	createField(
+		props: {
+			value: WritableBox<DateValue | undefined>;
+		},
+		type: "start" | "end"
+	) {
 		const fieldState = useDateFieldRoot(
 			{
 				value: props.value,
-				name: props.name,
 				disabled: this.disabled,
 				readonly: this.readonly,
 				readonlySegments: this.readonlySegments,
@@ -266,10 +270,13 @@ class DateRangeFieldLabelState {
 	);
 }
 
-type DateRangeFieldInputStateProps = {
-	value: WritableBox<DateValue | undefined>;
-	name: ReadableBox<string>;
-};
+type DateRangeFieldInputStateProps = WritableBoxedValues<{
+	value: DateValue | undefined;
+}> &
+	ReadableBoxedValues<{
+		name: string;
+	}> &
+	WithRefProps;
 
 const [setDateRangeFieldRootContext, getDateRangeFieldRootContext] =
 	createContext<DateRangeFieldRootState>("DateRangeField.Root");
@@ -283,10 +290,22 @@ export function useDateRangeFieldLabel(props: DateRangeFieldLabelStateProps) {
 }
 
 export function useDateRangeFieldInput(
-	props: DateRangeFieldInputStateProps,
+	props: Omit<DateRangeFieldInputStateProps, "value">,
 	type: "start" | "end"
 ) {
-	return getDateRangeFieldRootContext().createField(props, type);
+	const rootState = getDateRangeFieldRootContext();
+	const fieldState = rootState.createField(
+		{
+			value: type === "start" ? rootState.startValue : rootState.endValue,
+		},
+		type
+	);
+	const inputState = fieldState.createInput({
+		name: props.name,
+		id: props.id,
+		ref: props.ref,
+	});
+	return inputState;
 }
 
 export { getDateRangeFieldRootContext };
