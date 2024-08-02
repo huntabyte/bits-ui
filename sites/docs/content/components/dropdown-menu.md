@@ -160,4 +160,58 @@ You can also use the `onOpenChange` prop to update local state when the menu's `
 </DropdownMenu.Root>
 ```
 
+## Nested Menus
+
+You can nest menus within menus to create complex menu structures.
+
+```svelte
+<script lang="ts">
+	import { DropdownMenu } from "bits-ui";
+</script>
+
+<DropdownMenu.Root>
+	<DropdownMenu.Trigger>Open Menu</DropdownMenu.Trigger>
+	<DropdownMenu.Content>
+		<DropdownMenu.Item>Item 1</DropdownMenu.Item>
+		<DropdownMenu.Item>Item 2</DropdownMenu.Item>
+		<DropdownMenu.Sub>
+			<DropdownMenu.SubTrigger>Open Sub Menu</DropdownMenu.SubTrigger>
+			<DropdownMenu.SubContent>
+				<DropdownMenu.Item>Sub Item 1</DropdownMenu.Item>
+				<DropdownMenu.Item>Sub Item 2</DropdownMenu.Item>
+			</DropdownMenu.SubContent>
+		</DropdownMenu.Sub>
+	</DropdownMenu.Content>
+</DropdownMenu.Root>
+```
+
+<!-- <DropdownMenuDemoNested /> -->
+
+## Svelte Transitions
+
+You can use the `forceMount` prop along with the `child` snippet to forcefully mount the `DropdownMenu.Content` component to use Svelte Transitions or another animation library that requires more control.
+
+```svelte /forceMount/ /transition:fade/ /transition:fly/
+<script lang="ts">
+	import { DropdownMenu } from "bits-ui";
+	import { fly } from "svelte/transition";
+</script>
+
+<DropdownMenu.Root>
+	<DropdownMenu.Trigger>Open Menu</DropdownMenu.Trigger>
+	<DropdownMenu.Content forceMount>
+		{#snippet child({ props, open })}
+			{#if open}
+				<div {...props} transition:fly>
+					<DropdownMenu.Item>Item 1</DropdownMenu.Item>
+					<DropdownMenu.Item>Item 2</DropdownMenu.Item>
+				</div>
+			{/if}
+		{/snippet}
+	</DropdownMenu.Content>
+</DropdownMenu.Root>
+```
+
+Of course, this isn't the prettiest syntax, so it's recommended to create your own reusable content component that handles this logic if you intend to use this approach. For more information on using transitions with Bits UI components, see the [Transitions](/docs/transitions) documentation.
+
 <APISection {schemas} />
