@@ -7,3 +7,4 @@ These are outstanding tasks that need to be completed or addressed before the pr
 -   [ ] Determine the ideal approach for managing the `data-<component>` attributes.
 -   [ ] Expose the various `open` states via snippet props for all compoents with the `forceMount` prop for controlled transitions and animations. Thinking more about this, we don't need to pass it via `children`, only via the `child` snippet.
 -   [ ] Handle the `invalid` state for the `DateRangeField` component.
+-   [ ] Determine how we can give users the ability to opt-out of Floating UI styles.
