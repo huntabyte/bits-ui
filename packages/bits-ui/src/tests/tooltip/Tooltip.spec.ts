@@ -40,6 +40,11 @@ describe("tooltip", () => {
 		}
 	});
 
+	it("should use provider delay duration if provided and the tooltip.root did not provide one", async () => {
+		const { user, trigger } = setup();
+		expect(trigger).toHaveAttribute("data-delay-duration", "0");
+	});
+
 	it("should on hover", async () => {
 		const { user, content } = await open();
 		await user.click(content);

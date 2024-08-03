@@ -6,6 +6,7 @@ import type {
 	TooltipTriggerPropsWithoutHTML,
 } from "bits-ui";
 import OpenClosed from "./extended-types/shared/open-closed.md";
+import OpenChangeFn from "./extended-types/shared/open-change-fn.md";
 import {
 	arrowProps,
 	childrenSnippet,
@@ -76,7 +77,8 @@ export const provider: APISchema<TooltipProviderPropsWithoutHTML> = {
 
 export const root = createApiSchema<TooltipRootPropsWithoutHTML>({
 	title: "Root",
-	description: "The root component containing the parts of the tooltip.",
+	description:
+		"The root component containing the parts of the tooltip. Must be a descendant of a `Tooltip.Provider` component.",
 	props: {
 		open: createBooleanProp({
 			default: C.FALSE,
@@ -84,7 +86,7 @@ export const root = createApiSchema<TooltipRootPropsWithoutHTML>({
 			bindable: true,
 		}),
 		onOpenChange: createFunctionProp({
-			definition: "(open: boolean) => void",
+			definition: OpenChangeFn,
 			description: "A callback that fires when the open state changes.",
 		}),
 		disabled,
@@ -164,4 +166,4 @@ export const arrow = createApiSchema<TooltipArrowPropsWithoutHTML>({
 	],
 });
 
-export const tooltip = [root, trigger, content, arrow];
+export const tooltip = [provider, root, trigger, content, arrow];

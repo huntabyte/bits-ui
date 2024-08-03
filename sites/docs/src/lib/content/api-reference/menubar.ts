@@ -23,6 +23,7 @@ import {
 	withChildProps,
 } from "./helpers.js";
 import { menu as m } from "./menu.js";
+import OnStringValueChange from "./extended-types/shared/on-string-value-change.md";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
 
@@ -35,7 +36,7 @@ export const root: APISchema<MenubarRootPropsWithoutHTML> = {
 			bindable: true,
 		}),
 		onValueChange: createFunctionProp({
-			definition: "(value: string | undefined) => void",
+			definition: OnStringValueChange,
 			description: "A callback function called when the active menu value changes.",
 		}),
 		dir: dirProp,

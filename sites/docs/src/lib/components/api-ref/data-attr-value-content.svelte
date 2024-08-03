@@ -4,12 +4,13 @@
 	import type { Component } from "svelte";
 	import { Code } from "$lib/components/index.js";
 	import type { DataAttrSchema } from "$lib/types/index.js";
+	import { parseMarkdown } from "$lib/utils/markdown.js";
 
 	let { attr }: { attr: DataAttrSchema } = $props();
 </script>
 
 {#snippet StringType()}
-	<Code class="bg-transparent px-0">{attr.value ?? "''"}</Code>
+	<Code class="bg-transparent px-0">{parseMarkdown(attr.value ?? "''")}</Code>
 {/snippet}
 
 {#snippet DefinitionContent({ definition }: { definition: Component })}

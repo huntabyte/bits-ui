@@ -1,5 +1,5 @@
 ```ts
-type DialogOverlaySnippetProps = {
+type ChildrenSnippetProps = {
 	open: boolean;
 };
 ```
