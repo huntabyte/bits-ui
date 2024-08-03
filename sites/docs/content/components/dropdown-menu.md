@@ -27,7 +27,8 @@ description: Displays a menu of items that users can select from when triggered.
 	<DropdownMenu.Trigger />
 
 	<DropdownMenu.Content>
-		<DropdownMenu.Label />
+		<DropdownMenu.Group>
+		<DropdownMenu.GroupLabel />
 		<DropdownMenu.Item />
 
 		<DropdownMenu.Group>
@@ -68,7 +69,7 @@ This example shows you how to create a Dropdown Menu component that accepts a fe
 
 	type Props = DropdownMenu.Props & {
 		buttonText: string;
-		items: { label: string; value: string }[];
+		items: string[];
 		contentProps?: WithoutChild<DropdownMenu.Content.Props>;
 		// other component props if needed
 	};
@@ -88,10 +89,10 @@ This example shows you how to create a Dropdown Menu component that accepts a fe
 		{buttonText}
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content {...contentProps}>
-		<DropdownMenu.Group>
+		<DropdownMenu.Group aria-label={buttonText}>
 			{#each items as item}
-				<DropdownMenu.Item textValue={item.value}>
-					{item.label}
+				<DropdownMenu.Item textValue={item}>
+					{item}
 				</DropdownMenu.Item>
 			{/each}
 		</DropdownMenu.Group>
@@ -108,11 +109,7 @@ You can then use the `CustomDropdownMenu` component like this:
 
 <CustomDropdownMenu
 	buttonText="Select a manager"
-	items={[
-		{ label: "Michael Scott", value: "michael" },
-		{ label: "Dwight Schrute", value: "dwight" },
-		{ label: "Jim Halpert", value: "jim" },
-	]}
+	items={["Michael Scott", "Dwight Schrute", "Jim Halpert"]}
 />
 ```
 
@@ -162,9 +159,9 @@ You can also use the `onOpenChange` prop to update local state when the menu's `
 
 ## Nested Menus
 
-You can nest menus within menus to create complex menu structures.
+You can create nested menus using the `DropdownMenu.Sub` component to create complex menu structures.
 
-```svelte
+```svelte /DropdownMenu.Sub/
 <script lang="ts">
 	import { DropdownMenu } from "bits-ui";
 </script>
