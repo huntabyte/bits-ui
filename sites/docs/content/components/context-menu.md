@@ -205,6 +205,8 @@ You can use the `ContextMenu.CheckboxItem` component to create a `menuitemcheckb
 </ContextMenu.CheckboxItem>
 ```
 
+See the [CheckboxItem API](#contextmenucheckboxitem) for more information.
+
 ## Radio Groups
 
 You can combine the `ContextMenu.RadioGroup` and `ContextMenu.RadioItem` components to create a radio group within a menu.
@@ -230,6 +232,8 @@ You can combine the `ContextMenu.RadioGroup` and `ContextMenu.RadioItem` compone
 	{/each}
 </ContextMenu.RadioGroup>
 ```
+
+See the [RadioGroup](#contextmenuradiogroup) and [RadioItem](#contextmenuradiaitem) APIs for more information.
 
 ## Nested Menus
 

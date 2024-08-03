@@ -137,7 +137,7 @@ export const sub = createApiSchema<ContextMenuSubPropsWithoutHTML>({
 
 export const subTrigger = createApiSchema<ContextMenuSubTriggerPropsWithoutHTML>({
 	title: "SubTrigger",
-	description: "A menu item which when pressed or hovered, opens the submenu.",
+	description: "A menu item which when pressed or hovered, opens the submenu it is a child of.",
 	...menu.subTrigger,
 });
 
@@ -150,14 +150,14 @@ export const subContent = createApiSchema<ContextMenuSubContentPropsWithoutHTML>
 export const group = createApiSchema<ContextMenuGroupPropsWithoutHTML>({
 	title: "Group",
 	description:
-		"A group of menu items. It can be used along with the `Menu.Label` component to provide a visual label for a group of menu items. When a label is within a group, appropriate aria attributes will be applied to the group.",
+		"A group of menu items. It should be passed an `aria-label` or have a child `Menu.GroupLabel` component to provide a label for a group of menu items.",
 	...menu.group,
 });
 
-export const label = createApiSchema<ContextMenuLabelPropsWithoutHTML>({
-	title: "Label",
+export const groupLabel = createApiSchema<ContextMenuLabelPropsWithoutHTML>({
+	title: "GroupLabel",
 	description:
-		"A label which will be skipped when navigating with the keyboard. It is used to provide a visual label for a group of menu items. When a label is within a `Menu.Group`, appropriate aria attributes will be applied to the group.",
+		"A label which will be skipped when navigating with the keyboard. It is used to provide a visual label for a group of menu items and must be a child of either a `ContextMenu.Group` or `ContextMenu.RadioGroup` component.",
 	...menu.label,
 });
 
@@ -172,7 +172,7 @@ export const contextMenu = [
 	separator,
 	arrow,
 	group,
-	label,
+	groupLabel,
 	sub,
 	subTrigger,
 	subContent,
