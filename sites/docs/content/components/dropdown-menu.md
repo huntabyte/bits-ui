@@ -160,6 +160,45 @@ You can also use the `onOpenChange` prop to update local state when the menu's `
 </DropdownMenu.Root>
 ```
 
+## Groups
+
+To group related menu items, you can use the `DropdownMenu.Group` component along with either a `DropdownMenu.GroupLabel` or an `aria-label` attribute on the `DropdownMenu.Group` component.
+
+```svelte
+<DropdownMenu.Group>
+	<DropdownMenu.GroupLabel>File</DropdownMenu.GroupLabel>
+	<DropdownMenu.Item>New</DropdownMenu.Item>
+	<DropdownMenu.Item>Open</DropdownMenu.Item>
+	<DropdownMenu.Item>Save</DropdownMenu.Item>
+	<DropdownMenu.Item>Save As</DropdownMenu.Item>
+</DropdownMenu.Group>
+<!-- or -->
+<DropdownMenu.Group aria-label="file">
+	<DropdownMenu.Item>New</DropdownMenu.Item>
+	<DropdownMenu.Item>Open</DropdownMenu.Item>
+	<DropdownMenu.Item>Save</DropdownMenu.Item>
+	<DropdownMenu.Item>Save As</DropdownMenu.Item>
+</DropdownMenu.Group>
+```
+
+### Group Label
+
+The `DropdownMenu.GroupLabel` component must be a child of either a `DropdownMenu.Group` or `DropdownMenu.RadioGroup` component. If used on its own, an error will be thrown during development.
+
+```svelte
+<DropdownMenu.Group>
+	<DropdownMenu.GroupLabel>File</DropdownMenu.GroupLabel>
+	<!-- ... items here -->
+</DropdownMenu.Group>
+
+<!-- or -->
+
+<DropdownMenu.RadioGroup>
+	<DropdownMenu.GroupLabel>Favorite color</DropdownMenu.GroupLabel>
+	<!-- ... radio items here -->
+</DropdownMenu.RadioGroup>
+```
+
 ## Checkbox Items
 
 You can use the `DropdownMenu.CheckboxItem` component to create a `menuitemcheckbox` element to add checkbox functionality to menu items.

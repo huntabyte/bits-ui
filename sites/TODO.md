@@ -9,3 +9,4 @@ These are outstanding tasks that need to be completed or addressed before the pr
 -   [ ] Handle the `invalid` state for the `DateRangeField` component.
 -   [ ] Determine how we can give users the ability to opt-out of Floating UI styles.
 -   [ ] Now that `Select` is more similar to a native `<select>` element, we need to come up with a solution/component for `MultiSelect` or just `Select` without the underlying `<select>` element and behavior. I want to have a separate `Listbox` component that doesn't have to be within a "popover-like" component and can just be static on the page, so Listbox isn't a fitting component name.
+-   [ ] Select deselection of items

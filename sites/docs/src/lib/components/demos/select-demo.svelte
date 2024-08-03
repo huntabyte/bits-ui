@@ -3,6 +3,8 @@
 	import CaretUpDown from "phosphor-svelte/lib/CaretUpDown";
 	import Check from "phosphor-svelte/lib/Check";
 	import Palette from "phosphor-svelte/lib/Palette";
+	import CaretDoubleDown from "phosphor-svelte/lib/CaretDoubleDown";
+	import CaretDoubleUp from "phosphor-svelte/lib/CaretDoubleUp";
 
 	const themes = [
 		{ value: "light-monochrome", label: "Light Monochrome" },
@@ -26,15 +28,23 @@
 		{ value: "turquoise-blue", label: "Turquoise Blue" },
 		{ value: "burnt-orange", label: "Burnt Orange" },
 	];
+
+	let value = $state("");
 </script>
 
-<Select.Root name="hello">
+<Select.Root name="hello" bind:value>
 	<Select.Trigger
 		class="inline-flex h-input w-[296px] select-none items-center rounded-9px border border-border-input bg-background px-[11px] text-sm transition-colors placeholder:text-foreground-alt/50"
 		aria-label="Select a theme"
 	>
 		<Palette class="mr-[9px] size-6 text-muted-foreground" />
-		<Select.Value class="text-sm" placeholder="Select a theme" />
+		{#if value}
+			<Select.Value class="text-sm">
+				{themes.find((t) => t.value === value)!.label}
+			</Select.Value>
+		{:else}
+			<Select.Value class="text-sm" placeholder="Select a theme" />
+		{/if}
 		<CaretUpDown class="ml-auto size-6 text-muted-foreground" />
 	</Select.Trigger>
 	<Select.Portal>
@@ -42,9 +52,9 @@
 			class="focus-override z-50 max-h-96 w-full min-w-[296px] rounded-xl border border-muted bg-background px-1 py-3 shadow-popover outline-none"
 			sideOffset={8}
 		>
-			<Select.ScrollUpButton class="flex w-full items-center justify-center"
-				>up</Select.ScrollUpButton
-			>
+			<Select.ScrollUpButton class="flex w-full items-center justify-center">
+				<CaretDoubleUp class="size-3" />
+			</Select.ScrollUpButton>
 			<Select.Viewport class="p-1">
 				{#each themes as theme}
 					<Select.Item
@@ -64,9 +74,9 @@
 					</Select.Item>
 				{/each}
 			</Select.Viewport>
-			<Select.ScrollDownButton class="flex w-full items-center justify-center"
-				>down</Select.ScrollDownButton
-			>
+			<Select.ScrollDownButton class="flex w-full items-center justify-center py-1">
+				<CaretDoubleDown class="size-3" />
+			</Select.ScrollDownButton>
 		</Select.Content>
 	</Select.Portal>
 </Select.Root>
