@@ -1,5 +1,23 @@
 # bits-ui
 
+## 0.21.13
+
+### Patch Changes
+
+- fix: compatibility with `exactOptionalPropertyTypes` ([#621](https://github.com/huntabyte/bits-ui/pull/621))
+
+## 0.21.12
+
+### Patch Changes
+
+- Add `nonpassive` modifier to `touchmove` and `touchstart` events ([#591](https://github.com/huntabyte/bits-ui/pull/591))
+
+## 0.21.11
+
+### Patch Changes
+
+- fix: use the `dir` props for rtl support ([#531](https://github.com/huntabyte/bits-ui/pull/531))
+
 ## 0.21.10
 
 ### Patch Changes

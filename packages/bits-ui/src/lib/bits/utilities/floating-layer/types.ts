@@ -32,7 +32,7 @@ export type FloatingLayerContentProps = {
 	 * An offset in pixels from the "start" or "end" alignment options.
 	 * @see https://floating-ui.com/docs/offset#options
 	 */
-	alignOffset?: number;
+	alignOffset?: number | undefined;
 
 	/**
 	 * The distance in pixels from the anchor to the floating element.
@@ -46,7 +46,7 @@ export type FloatingLayerContentProps = {
 	 * @default true
 	 * @see https://floating-ui.com/docs/flip
 	 */
-	avoidCollisions?: boolean;
+	avoidCollisions?: boolean | undefined;
 
 	/**
 	 * A boundary element or array of elements to check for collisions against.
@@ -76,7 +76,7 @@ export type FloatingLayerContentProps = {
 	 * The positioning strategy to use for the floating element.
 	 * @see https://floating-ui.com/docs/computeposition#strategy
 	 */
-	strategy?: "absolute" | "fixed";
+	strategy?: "absolute" | "fixed" | undefined;
 
 	/**
 	 * The text direction of the content.

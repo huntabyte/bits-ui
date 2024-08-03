@@ -1,6 +1,6 @@
 ---
 title: Toggle
-description: Groups multiple toggle controls, allowing users to enable one or multiple options.
+description: A control element that switches between two states, providing a binary choice.
 ---
 
 <script>
@@ -23,10 +23,7 @@ description: Groups multiple toggle controls, allowing users to enable one or mu
 	import { Toggle } from "bits-ui";
 </script>
 
-<Toggle.Root>
-	<Toggle.Thumb />
-	<Toggle.Input />
-</Toggle.Root>
+<Toggle.Root />
 ```
 
 <APISection {schemas} />

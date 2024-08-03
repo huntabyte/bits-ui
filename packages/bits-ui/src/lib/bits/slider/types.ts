@@ -13,7 +13,7 @@ export type SliderRootPropsWithoutHTML = WithChild<
 		 * The value of the slider.
 		 * @bindable
 		 */
-		value?: number[];
+		value?: number[] | undefined;
 
 		/**
 		 * A callback function called when the value changes.

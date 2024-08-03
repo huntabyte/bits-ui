@@ -72,7 +72,7 @@ export type MenuCheckboxItemPropsWithoutHTML =
 		 *
 		 * Supports two-way binding with `bind:checked`.
 		 */
-		checked?: boolean | "indeterminate";
+		checked?: boolean | "indeterminate" | undefined;
 
 		/**
 		 * A callback that is fired when the checked state changes.

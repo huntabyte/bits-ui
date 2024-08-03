@@ -41,7 +41,7 @@ export type SwitchRootPropsWithoutHTML = WithChild<
 		 *
 		 * @defaultValue false
 		 */
-		checked?: boolean;
+		checked?: boolean | undefined;
 
 		/**
 		 * A callback function called when the checked state changes.

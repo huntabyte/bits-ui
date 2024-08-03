@@ -32,7 +32,7 @@ export type PaginationRootPropsWithoutHTML = WithChild<
 		 *
 		 * @defaultValue 1
 		 */
-		page?: number;
+		page?: number | undefined;
 
 		/**
 		 * A callback function called when the page changes.

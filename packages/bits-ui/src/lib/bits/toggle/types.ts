@@ -12,7 +12,7 @@ export type ToggleRootPropsWithoutHTML = WithChild<
 		 *
 		 * @defaultValue false
 		 */
-		pressed?: boolean;
+		pressed?: boolean | undefined;
 
 		/**
 		 * A callback function called when the toggle is pressed.

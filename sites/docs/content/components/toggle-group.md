@@ -1,6 +1,6 @@
 ---
 title: Toggle Group
-description: A control element that switches between two states, providing a binary choice.
+description: Groups multiple toggle controls, allowing users to enable one or multiple options.
 ---
 
 <script>
