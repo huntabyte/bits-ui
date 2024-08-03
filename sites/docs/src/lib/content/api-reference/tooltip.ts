@@ -7,6 +7,8 @@ import type {
 } from "bits-ui";
 import OpenClosed from "./extended-types/shared/open-closed.md";
 import OpenChangeFn from "./extended-types/shared/open-change-fn.md";
+import OpenChildrenSnippetProps from "./extended-types/shared/open-children-snippet-props.md";
+import OpenChildSnippetProps from "./extended-types/shared/open-child-snippet-props.md";
 import {
 	arrowProps,
 	childrenSnippet,
@@ -133,7 +135,11 @@ export const content = createApiSchema<TooltipContentPropsWithoutHTML>({
 		...escapeLayerProps,
 		forceMount: forceMountProp,
 		dir: dirProp,
-		...withChildProps({ elType: "HTMLDivElement" }),
+		...withChildProps({
+			elType: "HTMLDivElement",
+			childrenDef: OpenChildrenSnippetProps,
+			childDef: OpenChildSnippetProps,
+		}),
 	},
 	dataAttributes: [
 		{

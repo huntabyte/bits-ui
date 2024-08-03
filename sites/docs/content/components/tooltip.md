@@ -169,12 +169,60 @@ You can change how long a user needs to hover over a trigger before the tooltip 
 
 <TooltipDemoDelayDuration />
 
-## Disable Close on Trigger Click
+## Close on Trigger Click
 
-By default, the tooltip will close when the user clicks the trigger.
+By default, the tooltip will close when the user clicks the trigger. If you want to disable this behavior, you can set the `disableCloseOnTriggerClick` prop to `true`.
 
-## Disable Hoverable Content
+```svelte /disableCloseOnTriggerClick/
+<Tooltip.Root disableCloseOnTriggerClick>
+	<!-- .... -->
+</Tooltip.Root>
+```
 
-By default, the tooltip will be disabled if the user hovers over the trigger.
+## Hoverable Content
+
+By default, the tooltip will remain open when the user hovers over the content. If you instead want the tooltip to close as the user moves their mouse towards the content, you can set the `disableHoverableContent` prop to `true`.
+
+```svelte /disableHoverableContent/
+<Tooltip.Root disableHoverableContent>
+	<!-- .... -->
+</Tooltip.Root>
+```
+
+## Non-Keyboard Focus
+
+If you want to prevent opening the tooltip when the user focuses the trigger without using the keyboard, you can set the `ignoreNonKeyboardFocus` prop to `true`.
+
+```svelte /ignoreNonKeyboardFocus/
+<Tooltip.Root ignoreNonKeyboardFocus>
+	<!-- .... -->
+</Tooltip.Root>
+```
+
+## Svelte Transitions
+
+You can use the `forceMount` prop along with the `child` snippet to forcefully mount the `Tooltip.Content` component to use Svelte Transitions or another animation library that requires more control.
+
+```svelte /forceMount/ /transition:fade/ /transition:fly/
+<script lang="ts">
+	import { Tooltip } from "bits-ui";
+	import { fly, fade } from "svelte/transition";
+</script>
+
+<Tooltip.Root>
+	<!-- ... other tooltip components -->
+	<Tooltip.Content forceMount>
+		{#snippet child({ props, open })}
+			{#if open}
+				<div {...props} transition:fly>
+					<!-- ... -->
+				</div>
+			{/if}
+		{/snippet}
+	</Tooltip.Content>
+</Dialog.Root>
+```
+
+Of course, this isn't the prettiest syntax, so it's recommended to create your own reusable content components that handles this logic if you intend to use this approach throughout your app. For more information on using transitions with Bits UI components, see the [Transitions](/docs/transitions) documentation.
 
 <APISection {schemas} />
