@@ -27,6 +27,7 @@ import DialogContentChildSnippetProps from "./extended-types/shared/dialog-conte
 import DialogContentChildrenSnippetProps from "./extended-types/shared/dialog-content-children-snippet-props.md";
 import DialogOverlayChildSnippetProps from "./extended-types/shared/dialog-overlay-child-snippet-props.md";
 import DialogOverlayChildrenSnippetProps from "./extended-types/shared/dialog-overlay-children-snippet-props.md";
+import OpenClosed from "./extended-types/shared/open-closed.md";
 import { enums } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 
@@ -81,6 +82,7 @@ export const content = createApiSchema<DialogContentPropsWithoutHTML>({
 			value: enums("open", "closed"),
 			description: "The state of the dialog.",
 			isEnum: true,
+			definition: OpenClosed,
 		},
 		{
 			name: "dialog-content",
@@ -149,6 +151,7 @@ export const overlay = createApiSchema<DialogOverlayPropsWithoutHTML>({
 			value: enums("open", "closed"),
 			description: "The state of the dialog.",
 			isEnum: true,
+			definition: OpenClosed,
 		},
 		{
 			name: "dialog-overlay",

@@ -29,9 +29,10 @@ import {
 	preventOverflowTextSelectionProp,
 	withChildProps,
 } from "./helpers.js";
+import OpenClosed from "./extended-types/shared/open-closed.md";
 import type { APISchema, DataAttrSchema, PropObj } from "$lib/types/index.js";
 import * as C from "$lib/content/constants.js";
-import { enums, union } from "$lib/content/api-reference/helpers.js";
+import { enums } from "$lib/content/api-reference/helpers.js";
 
 const sharedItemProps = {
 	textValue: createStringProp({
@@ -178,6 +179,7 @@ const STATE: DataAttrSchema = {
 	value: enums("open", "closed"),
 	description: "The open state of the menu or submenu the element controls or belongs to.",
 	isEnum: true,
+	definition: OpenClosed,
 };
 
 type DataAttrs = APISchema["dataAttributes"];

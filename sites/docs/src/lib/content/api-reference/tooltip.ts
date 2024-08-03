@@ -5,6 +5,7 @@ import type {
 	TooltipRootPropsWithoutHTML,
 	TooltipTriggerPropsWithoutHTML,
 } from "bits-ui";
+import OpenClosed from "./extended-types/shared/open-closed.md";
 import {
 	arrowProps,
 	childrenSnippet,
@@ -112,6 +113,7 @@ export const trigger = createApiSchema<TooltipTriggerPropsWithoutHTML>({
 			description: "The open state of the tooltip.",
 			value: enums("open", "closed"),
 			isEnum: true,
+			definition: OpenClosed,
 		},
 		{
 			name: "tooltip-trigger",
@@ -132,6 +134,13 @@ export const content = createApiSchema<TooltipContentPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
+		{
+			name: "state",
+			value: enums("open", "closed"),
+			description: "The open state of the tooltip.",
+			isEnum: true,
+			definition: OpenClosed,
+		},
 		{
 			name: "tooltip-content",
 			description: "Present on the content element.",
