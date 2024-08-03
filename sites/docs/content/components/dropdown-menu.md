@@ -63,7 +63,7 @@ If you're planning to use Dropdown Menu in multiple places, you can create a reu
 
 This example shows you how to create a Dropdown Menu component that accepts a few custom props that make it more capable.
 
-```svelte title="CustomDropdownMenu.svelte"
+```svelte title="MyDropdownMenu.svelte"
 <script lang="ts">
 	import type { Snippet } from "svelte";
 	import { DropdownMenu, type WithoutChild } from "bits-ui";
@@ -101,14 +101,14 @@ This example shows you how to create a Dropdown Menu component that accepts a fe
 </DropdownMenu.Root>
 ```
 
-You can then use the `CustomDropdownMenu` component like this:
+You can then use the `MyDropdownMenu` component like this:
 
 ```svelte
 <script lang="ts">
-	import CustomDropdownMenu from "./CustomDropdownMenu.svelte";
+	import MyDropdownMenu from "./MyDropdownMenu.svelte";
 </script>
 
-<CustomDropdownMenu
+<MyDropdownMenu
 	buttonText="Select a manager"
 	items={["Michael Scott", "Dwight Schrute", "Jim Halpert"]}
 />
@@ -128,7 +128,7 @@ Use the `bind:open` directive for effortless two-way synchronization between you
 	let isOpen = $state(false);
 </script>
 
-<button on:click={() => (isOpen = true)}>Open Dropdown Menu</button>
+<button onclick={() => (isOpen = true)}>Open Dropdown Menu</button>
 
 <DropdownMenu.Root bind:open={isOpen}>
 	<!-- Dropdown Menu content -->
