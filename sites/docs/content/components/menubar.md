@@ -244,22 +244,17 @@ You can create nested menus using the `Menubar.Sub` component to create complex 
 	import { Menubar } from "bits-ui";
 </script>
 
-<Menubar.Root>
-	<Menubar.Menu>
-		<Menubar.Trigger>Open Menu</Menubar.Trigger>
-		<Menubar.Content>
-			<Menubar.Item>Item 1</Menubar.Item>
-			<Menubar.Item>Item 2</Menubar.Item>
-			<Menubar.Sub>
-				<Menubar.SubTrigger>Open Sub Menu</Menubar.SubTrigger>
-				<Menubar.SubContent>
-					<Menubar.Item>Sub Item 1</Menubar.Item>
-					<Menubar.Item>Sub Item 2</Menubar.Item>
-				</Menubar.SubContent>
-			</Menubar.Sub>
-		</Menubar.Content>
-	</Menubar.Menu>
-</Menubar.Root>
+<Menubar.Content>
+	<Menubar.Item>Item 1</Menubar.Item>
+	<Menubar.Item>Item 2</Menubar.Item>
+	<Menubar.Sub>
+		<Menubar.SubTrigger>Open Sub Menu</Menubar.SubTrigger>
+		<Menubar.SubContent>
+			<Menubar.Item>Sub Item 1</Menubar.Item>
+			<Menubar.Item>Sub Item 2</Menubar.Item>
+		</Menubar.SubContent>
+	</Menubar.Sub>
+</Menubar.Content>
 ```
 
 <!-- <MenubarDemoNested /> -->
@@ -274,21 +269,16 @@ You can use the `forceMount` prop along with the `child` snippet to forcefully m
 	import { fly } from "svelte/transition";
 </script>
 
-<Menubar.Root>
-	<Menubar.Menu>
-		<Menubar.Trigger>Open Menu</Menubar.Trigger>
-		<Menubar.Content forceMount>
-			{#snippet child({ props, open })}
-				{#if open}
-					<div {...props} transition:fly>
-						<Menubar.Item>Item 1</Menubar.Item>
-						<Menubar.Item>Item 2</Menubar.Item>
-					</div>
-				{/if}
-			{/snippet}
-		</Menubar.Content>
-	</Menubar.Menu>
-</Menubar.Root>
+<Menubar.Content forceMount>
+	{#snippet child({ props, open })}
+		{#if open}
+			<div {...props} transition:fly>
+				<Menubar.Item>Item 1</Menubar.Item>
+				<Menubar.Item>Item 2</Menubar.Item>
+			</div>
+		{/if}
+	{/snippet}
+</Menubar.Content>
 ```
 
 Of course, this isn't the prettiest syntax, so it's recommended to create your own reusable content component that handles this logic if you intend to use this approach. For more information on using transitions with Bits UI components, see the [Transitions](/docs/transitions) documentation.

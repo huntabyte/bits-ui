@@ -240,20 +240,17 @@ You can create nested menus using the `ContextMenu.Sub` component to create comp
 	import { ContextMenu } from "bits-ui";
 </script>
 
-<ContextMenu.Root>
-	<ContextMenu.Trigger>Right-click me</ContextMenu.Trigger>
-	<ContextMenu.Content>
-		<ContextMenu.Item>Item 1</ContextMenu.Item>
-		<ContextMenu.Item>Item 2</ContextMenu.Item>
-		<ContextMenu.Sub>
-			<ContextMenu.SubTrigger>Open Sub Menu</ContextMenu.SubTrigger>
-			<ContextMenu.SubContent>
-				<ContextMenu.Item>Sub Item 1</ContextMenu.Item>
-				<ContextMenu.Item>Sub Item 2</ContextMenu.Item>
-			</ContextMenu.SubContent>
-		</ContextMenu.Sub>
-	</ContextMenu.Content>
-</ContextMenu.Root>
+<ContextMenu.Content>
+	<ContextMenu.Item>Item 1</ContextMenu.Item>
+	<ContextMenu.Item>Item 2</ContextMenu.Item>
+	<ContextMenu.Sub>
+		<ContextMenu.SubTrigger>Open Sub Menu</ContextMenu.SubTrigger>
+		<ContextMenu.SubContent>
+			<ContextMenu.Item>Sub Item 1</ContextMenu.Item>
+			<ContextMenu.Item>Sub Item 2</ContextMenu.Item>
+		</ContextMenu.SubContent>
+	</ContextMenu.Sub>
+</ContextMenu.Content>
 ```
 
 <!-- <ContextMenuDemoNested /> -->
@@ -268,19 +265,16 @@ You can use the `forceMount` prop along with the `child` snippet to forcefully m
 	import { fly } from "svelte/transition";
 </script>
 
-<ContextMenu.Root>
-	<ContextMenu.Trigger>Open Menu</ContextMenu.Trigger>
-	<ContextMenu.Content forceMount>
-		{#snippet child({ props, open })}
-			{#if open}
-				<div {...props} transition:fly>
-					<ContextMenu.Item>Item 1</ContextMenu.Item>
-					<ContextMenu.Item>Item 2</ContextMenu.Item>
-				</div>
-			{/if}
-		{/snippet}
-	</ContextMenu.Content>
-</ContextMenu.Root>
+<ContextMenu.Content forceMount>
+	{#snippet child({ props, open })}
+		{#if open}
+			<div {...props} transition:fly>
+				<ContextMenu.Item>Item 1</ContextMenu.Item>
+				<ContextMenu.Item>Item 2</ContextMenu.Item>
+			</div>
+		{/if}
+	{/snippet}
+</ContextMenu.Content>
 ```
 
 Of course, this isn't the prettiest syntax, so it's recommended to create your own reusable content component that handles this logic if you intend to use this approach. For more information on using transitions with Bits UI components, see the [Transitions](/docs/transitions) documentation.
