@@ -52,6 +52,7 @@
 		<Select.Content
 			class="focus-override z-50 max-h-96 w-full min-w-[296px] rounded-xl border border-muted bg-background px-1 py-3 shadow-popover outline-none"
 			sideOffset={8}
+			preventScroll={false}
 		>
 			<Select.ScrollUpButton class="flex w-full items-center justify-center">
 				<CaretDoubleUp class="size-3" />

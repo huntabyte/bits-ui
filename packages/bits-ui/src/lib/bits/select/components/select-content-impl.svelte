@@ -54,7 +54,11 @@
 				{...restWithoutChildren}
 				{id}
 				enabled={present}
+				onInteractOutsideStart={(e) => {
+					console.log("oninteractoutsidestart", e);
+				}}
 				onInteractOutside={(e) => {
+					console.log("oninteractoutside", e);
 					onInteractOutside(e);
 					if (e.defaultPrevented) return;
 					contentState.root.handleClose();

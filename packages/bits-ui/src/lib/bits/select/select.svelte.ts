@@ -247,8 +247,12 @@ class SelectTriggerState {
 		// only call the handle if it's a left click, since pointerdown is triggered
 		// by right clicks as well, but not when ctrl is pressed
 		if (e.button === 0 && e.ctrlKey === false) {
-			this.#handlePointerOpen(e);
-			e.preventDefault();
+			if (this.#root.open.current === false) {
+				this.#handlePointerOpen(e);
+				e.preventDefault();
+			} else {
+				this.#root.handleClose();
+			}
 		}
 	};
 

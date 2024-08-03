@@ -168,6 +168,50 @@ You can also use the `onValueChange` prop to update local state when the Select'
 </Select.Root>
 ```
 
+## Managing Open State
+
+The `open` state represents whether or not the select menu is open. Bits UI provides flexible options for controlling and synchronizing the Select's open state.
+
+### Two-Way Binding
+
+Use the `bind:open` directive for effortless two-way synchronization between your local state and the Select's internal state.
+
+```svelte {3,6,8}
+<script lang="ts">
+	import { Select } from "bits-ui";
+	let isOpen = $state(false);
+</script>
+
+<button onclick={() => (open = true)}> Open select </button>
+
+<Select.Root bind:open={isOpen}>
+	<!-- ... -->
+</Select.Root>
+```
+
+This setup enables toggling the Select via the custom button and ensures the local `isOpen` state updates when the Select changes through any internal means e.g. clicking on the trigger or outside the content.
+
+### Change Handler
+
+You can also use the `onOpenChange` prop to update local state when the Select's `open` state changes. This is useful when you don't want two-way binding for one reason or another, or you want to perform additional logic when the Select changes.
+
+```svelte {3,7-11}
+<script lang="ts">
+	import { Select } from "bits-ui";
+	let isOpen = $state(false);
+</script>
+
+<Select.Root
+	open={isOpen}
+	onOpenChange={(open) => {
+		isOpen = open;
+		// additional logic here.
+	}}
+>
+	<!-- ... -->
+</Select.Root>
+```
+
 ## Positioning
 
 The `Select` component supports two different positioning strategies for the content. The default positioning strategy is `floating`, which uses Floating UI to position the content relative to the trigger, similar to other popover-like components. If you prefer a more native-like experience, you can set the `position` prop to `item-aligned`, which will position the content relative to the trigger, similar to a native `<select>` element.
@@ -187,6 +231,18 @@ The `Select` component supports two different positioning strategies for the con
 Here's an example of both strategies in action:
 
 <SelectDemoPositioning />
+
+NOTE: When using the `"item-aligned"` positioning strategy, the props related to configuring Floating UI on the `Select.Content` component will be ignored.
+
+## HTML Forms
+
+The `Select` component is designed to work seamlessly with HTML forms. You can use the `name` prop to associate the select with a form field.
+
+```svelte /name="theme"/
+<Select.Root name="theme">
+	<!-- ... -->
+</Select.Root>
+```
 
 ## Server-side Rendering
 
@@ -223,6 +279,24 @@ Portals only work client-side, so if you are using SvelteKit with SSR, you'll ne
 	<!-- ... other select components -->
 </Select.Root>
 ```
+
+## Scroll Lock
+
+By default, when a user opens the select, scrolling outside the content will be disabled. You can override this behavior by setting the `preventScroll` prop to `false`.
+
+```svelte /preventScroll={false}/
+<Select.Content preventScroll={false}>
+	<!-- ... -->
+</Select.Content>
+```
+
+## Viewport
+
+The `Select.Viewport` component is used to determine the size of the select menu in order to determine whether or not the scroll up and down buttons should be rendered. If you wish to set a minimum/maxmimum height for the select content, you should apply it to the `Select.Viewport` component.
+
+## Scroll Up/Down Buttons
+
+The `Select.ScrollUpButton` and `Select.ScrollDownButton` components are used to render the scroll up and down buttons when the select content is larger than the viewport.
 
 ## Multiple Select
 
