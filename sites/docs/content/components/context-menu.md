@@ -149,7 +149,7 @@ Use the `bind:open` directive for effortless two-way synchronization between you
 	let isOpen = $state(false);
 </script>
 
-<button on:click={() => (isOpen = true)}>Open Context Menu</button>
+<button onclick={() => (isOpen = true)}>Open Context Menu</button>
 <ContextMenu.Root bind:open={isOpen}>
 	<!-- Context Menu content -->
 </ContextMenu.Root>
