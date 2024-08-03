@@ -132,7 +132,7 @@ describe("date field", () => {
 		}
 	});
 
-	it("incremenets segment on arrow up", async () => {
+	it("increments segment on arrow up", async () => {
 		const { user, day, month, year, getByTestId } = setup({
 			value: zonedDateTime,
 			granularity: "second",

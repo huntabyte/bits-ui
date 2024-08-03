@@ -45,7 +45,7 @@ export const root: APISchema<RangeCalendarPropsWithoutHTML> = {
 		placeholder: {
 			type: dateValueProp,
 			description:
-				"The placeholder date, which is used to determine what month to display when no date range is selected. This updates as the user navigates the calendar, and can be used to programatically control the calendar's view.",
+				"The placeholder date, which is used to determine what month to display when no date range is selected. This updates as the user navigates the calendar, and can be used to programmatically control the calendar's view.",
 		},
 		onPlaceholderChange: {
 			type: {

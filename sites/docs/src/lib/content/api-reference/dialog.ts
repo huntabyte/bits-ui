@@ -101,7 +101,7 @@ export const content: APISchema<DialogContentPropsWithoutHTML> = {
 
 export const title: APISchema<DialogTitlePropsWithoutHTML> = {
 	title: "Title",
-	description: "An accessibile title for the dialog.",
+	description: "An accessible title for the dialog.",
 	props: {
 		level: {
 			type: {
@@ -123,7 +123,7 @@ export const title: APISchema<DialogTitlePropsWithoutHTML> = {
 
 export const description: APISchema<DialogDescriptionPropsWithoutHTML> = {
 	title: "Description",
-	description: "An accessibile description for the dialog.",
+	description: "An accessible description for the dialog.",
 	props: domElProps("HTMLDivElement"),
 	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
