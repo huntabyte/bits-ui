@@ -8,6 +8,8 @@
 
 <!-- /automd -->
 
+[![](https://dcbadge.vercel.app/api/server/fdXy3Sk8Gq?style=flat)](https://discord.gg/fdXy3Sk8Gq)
+
 The headless components for Svelte.
 
 [Read the docs](https://bits-ui.com)
@@ -41,3 +43,14 @@ Built by [@huntabyte](https://github.com/huntabyte) and [community](https://gith
 </a>
 
 <!-- /automd -->
+
+## Community
+
+Join the Discord server to ask questions, find collaborators, or just say hi!
+
+<a href="https://discord.gg/fdXy3Sk8Gq" alt="Svecosystem Discord community">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://invidget.switchblade.xyz/fdXy3Sk8Gq">
+  <img alt="Svecosystem Discord community" src="https://invidget.switchblade.xyz/fdXy3Sk8Gq?theme=light">
+</picture>
+</a>

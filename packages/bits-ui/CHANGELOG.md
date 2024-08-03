@@ -1,5 +1,49 @@
 # bits-ui
 
+## 0.21.10
+
+### Patch Changes
+
+- fix: allow overriding the combobox input id ([#553](https://github.com/huntabyte/bits-ui/pull/553))
+
+## 0.21.9
+
+### Patch Changes
+
+- feat: forward additional events from `<Button>` ([#550](https://github.com/huntabyte/bits-ui/pull/550))
+
+## 0.21.8
+
+### Patch Changes
+
+- fix: Updated `ComboboxLabelProps` to use `HTMLLabelAttributes` ([#544](https://github.com/huntabyte/bits-ui/pull/544))
+
+- fix: ContentProps type ([#545](https://github.com/huntabyte/bits-ui/pull/545))
+
+## 0.21.7
+
+### Patch Changes
+
+- chore: Updated a11y warnings for better Svelte 5 compatibility ([#529](https://github.com/huntabyte/bits-ui/pull/529))
+
+## 0.21.6
+
+### Patch Changes
+
+- chore: update peer deps to include Svelte 5 ([#525](https://github.com/huntabyte/bits-ui/pull/525))
+
+## 0.21.5
+
+### Patch Changes
+
+- chore: Replaced all self-closing non-void elements ([#518](https://github.com/huntabyte/bits-ui/pull/518))
+
+## 0.21.4
+
+### Patch Changes
+
+- Fix binding button element ([#473](https://github.com/huntabyte/bits-ui/pull/473))
+
 ## 0.21.3
 
 ### Patch Changes
