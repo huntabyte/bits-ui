@@ -1,6 +1,5 @@
-name: Docs - Production Deployment
+name: Production Deployment
 on:
-    workflow_dispatch:
     push:
         branches:
             - main
@@ -8,15 +7,13 @@ on:
             - sites/docs/**
             - packages/bits-ui/**
 
-concurrency: ${{ github.workflow }}-${{ github.ref }}
-
 jobs:
-    publish:
+    deploy-production:
         runs-on: ubuntu-latest
         permissions:
             contents: read
             deployments: write
-        name: Publish to Cloudflare Pages
+        name: Deploy Production Site to Cloudflare Pages
         steps:
             - uses: actions/checkout@v4
             - uses: pnpm/action-setup@v4
