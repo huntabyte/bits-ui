@@ -17,8 +17,6 @@ description: Enables users to input specific dates within a designated field.
 
 </ComponentPreviewV2>
 
--   add docs about leap years/birthdays and placeholder date
-
 ## Overview
 
 The `DateField` component is an alternative to the native `<input type="date">` element. It provides a more flexible and customizable way to select dates within a designated field.
@@ -126,6 +124,8 @@ If we're collecting a date from the user where we want the timezone as well, we 
 <DemoContainer size="xs" wrapperClass="rounded-bl-card rounded-br-card">
 	<DateFieldDemoCustom placeholder={now("America/New_York")} />
 </DemoContainer>
+
+NOTE: If you're creating a date field for something like a birthday, ensure your placeholder is set in a leap year to ensure users born on a leap year will be able to select the correct date.
 
 ## Managing Placeholder State
 
