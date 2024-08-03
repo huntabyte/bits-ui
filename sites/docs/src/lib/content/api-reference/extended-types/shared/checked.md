@@ -1,3 +1,3 @@
 ```ts
-boolean | 'indeterminate'
+boolean | "indeterminate";
 ```

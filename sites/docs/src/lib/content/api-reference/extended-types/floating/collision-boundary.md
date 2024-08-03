@@ -1,3 +1,3 @@
 ```ts
-Element | null
+Element | null;
 ```

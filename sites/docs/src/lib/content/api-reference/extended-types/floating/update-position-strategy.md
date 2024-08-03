@@ -1,3 +1,3 @@
 ```ts
-"optimized" | "always"
+"optimized" | "always";
 ```

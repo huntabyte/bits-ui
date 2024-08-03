@@ -1,3 +1,3 @@
 ```ts
-"partial" | "always"
+"partial" | "always";
 ```

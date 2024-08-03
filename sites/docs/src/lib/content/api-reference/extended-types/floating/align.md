@@ -1,3 +1,3 @@
 ```ts
-"start" | "center" | "end"
+"start" | "center" | "end";
 ```

@@ -1,3 +1,3 @@
 ```ts
-"open" | "closed"
+"open" | "closed";
 ```
