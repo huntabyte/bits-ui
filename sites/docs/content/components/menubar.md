@@ -263,7 +263,7 @@ You can create nested menus using the `Menubar.Sub` component to create complex 
 
 You can use the `forceMount` prop along with the `child` snippet to forcefully mount the `Menubar.Content` component to use Svelte Transitions or another animation library that requires more control.
 
-```svelte /forceMount/ /transition:fade/ /transition:fly/
+```svelte /forceMount/ /transition:fly/
 <script lang="ts">
 	import { Menubar } from "bits-ui";
 	import { fly } from "svelte/transition";

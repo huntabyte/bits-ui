@@ -236,7 +236,7 @@ You can create nested menus using the `DropdownMenu.Sub` component to create com
 
 You can use the `forceMount` prop along with the `child` snippet to forcefully mount the `DropdownMenu.Content` component to use Svelte Transitions or another animation library that requires more control.
 
-```svelte /forceMount/ /transition:fade/ /transition:fly/
+```svelte /forceMount/ /transition:fly/
 <script lang="ts">
 	import { DropdownMenu } from "bits-ui";
 	import { fly } from "svelte/transition";
