@@ -81,19 +81,84 @@ Here's an example of how you might create a reusable `MySelect` component that r
 	</Select.Trigger>
 	<Select.Portal>
 		<Select.Content {...contentProps}>
-			<Select.ScrollUpButton />
+			<Select.ScrollUpButton>up</Select.ScrollUpButton>
 			<Select.Viewport>
-				{#each items as item}
-					<Select.Item value={item.value} textValue={item.label}>
-						<Select.ItemText>
-							{item.label}
-						</Select.ItemText>
+				{#each items as { value, label, disabled } (value)}
+					<Select.Item {value} textValue={label} {disabled}>
+						{#snippet children({ selected })}
+							{selected ? "✅" : ""}
+							<Select.ItemText>
+								{item.label}
+							</Select.ItemText>
+						{/snippet}
 					</Select.Item>
 				{/each}
 			</Select.Viewport>
-			<Select.ScrollDownButton />
+			<Select.ScrollDownButton>down</Select.ScrollDownButton>
 		</Select.Content>
 	</Select.Portal>
+</Select.Root>
+```
+
+You can then use the `MySelect` component throughout your application like so:
+
+```svelte
+<script lang="ts">
+	import MySelect from "$lib/components/MySelect.svelte";
+
+	const items = [
+		{ value: "apple", label: "Apple" },
+		{ value: "banana", label: "Banana" },
+		{ value: "cherry", label: "Cherry" },
+	];
+
+	let fruit = $state("apple");
+</script>
+
+<MySelect {items} bind:value={fruit} />
+```
+
+## Managing Value State
+
+The `value` represents the currently selected item/option within the select menu. Bits UI provides flexible options for controlling and synchronizing the Select's value state.
+
+### Two-Way Binding
+
+Use the `bind:value` directive for effortless two-way synchronization between your local state and the Select's internal state.
+
+```svelte {3,6,8}
+<script lang="ts">
+	import { Select } from "bits-ui";
+	let myValue = $state<string>("");
+</script>
+
+<button onclick={() => (myValue = "apple")}> Apple </button>
+
+<Select.Root bind:value={myValue}>
+	<!-- ... -->
+</Select.Root>
+```
+
+This setup enables toggling the Select via the custom button and ensures the local `myValue` state updates when the Select changes through any internal means (e.g., clicking on an item's button).
+
+### Change Handler
+
+You can also use the `onValueChange` prop to update local state when the Select's `value` state changes. This is useful when you don't want two-way binding for one reason or another, or you want to perform additional logic when the Select changes.
+
+```svelte {3,7-11}
+<script lang="ts">
+	import { Select } from "bits-ui";
+	let myValue = $state<string>("");
+</script>
+
+<Select.Root
+	value={myValue}
+	onValueChange={(value) => {
+		myValue = value;
+		// additional logic here.
+	}}
+>
+	<!-- ... -->
 </Select.Root>
 ```
 
@@ -105,7 +170,7 @@ Portals only work client-side, so if you are using SvelteKit with SSR, you'll ne
 
 ```svelte title="+page.svelte"
 <script lang="ts">
-	// default value is provided via page data
+	// default value is provided via page data from a load function
 	let { data } = $props();
 
 	let options = [
@@ -114,14 +179,12 @@ Portals only work client-side, so if you are using SvelteKit with SSR, you'll ne
 		{ value: "cherry", label: "Cherry" },
 	];
 
-	let value = $state(data.selectedValue);
+	let value = $state(data.fruit);
 
-	const selectedLabel = $derived(
-		options.find((option) => option.value === data.selectedValue)?.label
-	);
+	const selectedLabel = $derived(options.find((option) => option.value === data.fruit)?.label);
 </script>
 
-<Select.Root value={data.selectedValue} onValueChange={(v) => (data.selectedValue = v)}>
+<Select.Root value={data.fruit} onValueChange={(v) => (data.fruit = v)}>
 	<Select.Trigger>
 		{#if selectedLabel}
 			<Select.Value>
@@ -131,11 +194,12 @@ Portals only work client-side, so if you are using SvelteKit with SSR, you'll ne
 			<Select.Value placeholder="Select a fruit" />
 		{/if}
 	</Select.Trigger>
+	<!-- ... other select components -->
 </Select.Root>
 ```
 
 ## Multiple Select
 
-The `Select` component does not support multiple selections. If you're looking for a multi-select component, checkout the [Listbox](/docs/components/listbox) component.
+The `Select` component does not support multiple selections. If you're looking for a multi-select component, check out the [Listbox](/docs/components/listbox) component.
 
 <APISection {schemas} />
