@@ -28,8 +28,9 @@ description: Displays a menu of items that users can select from when triggered.
 
 	<DropdownMenu.Content>
 		<DropdownMenu.Group>
-		<DropdownMenu.GroupLabel />
-		<DropdownMenu.Item />
+			<DropdownMenu.GroupLabel />
+			<DropdownMenu.Item />
+		</DropdownMenu.Group>
 
 		<DropdownMenu.Group>
 			<DropdownMenu.Item />
