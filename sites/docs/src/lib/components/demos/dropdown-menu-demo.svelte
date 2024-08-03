@@ -6,8 +6,11 @@
 	import GearSix from "phosphor-svelte/lib/GearSix";
 	import UserCircle from "phosphor-svelte/lib/UserCircle";
 	import UserCirclePlus from "phosphor-svelte/lib/UserCirclePlus";
+	import Bell from "phosphor-svelte/lib/Bell";
+	import Check from "phosphor-svelte/lib/Check";
+	import DotOutline from "phosphor-svelte/lib/DotOutline";
 
-	let checked = $state(false);
+	let notifications = $state(false);
 	let invited = $state("");
 </script>
 
@@ -19,7 +22,7 @@
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Portal>
 		<DropdownMenu.Content
-			class="focus-override w-full max-w-[229px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover outline-none focus-visible:outline-none"
+			class="focus-override w-[200px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover outline-none focus-visible:outline-none"
 			sideOffset={8}
 		>
 			<DropdownMenu.Item
@@ -83,19 +86,17 @@
 				</div>
 			</DropdownMenu.Item>
 			<DropdownMenu.CheckboxItem
-				bind:checked
+				bind:checked={notifications}
 				class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted"
 			>
 				{#snippet children({ checked })}
-					<div class="flex items-center">
-						<GearSix class="mr-2 size-5 text-foreground-alt" />
-						Settings
+					<div class="flex items-center pr-4">
+						<Bell class="mr-2 size-5 text-foreground-alt" />
+						Notifications
 					</div>
 					<div class="ml-auto flex items-center gap-px">
 						{#if checked}
-							checked
-						{:else}
-							unchecked
+							<Check class="size-4" />
 						{/if}
 					</div>
 				{/snippet}
@@ -106,7 +107,7 @@
 				>
 					<div class="flex items-center">
 						<UserCirclePlus class="mr-2 size-5 text-foreground-alt" />
-						Invite users
+						Workspace
 					</div>
 					<div class="ml-auto flex items-center gap-px">
 						<CaretRight class="size-5 text-foreground-alt" />
@@ -114,7 +115,7 @@
 				</DropdownMenu.SubTrigger>
 				<DropdownMenu.SubContent
 					id="subcontent"
-					class="w-full max-w-[209px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover !ring-0 !ring-transparent"
+					class="w-[209px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover !ring-0 !ring-transparent"
 					sideOffset={10}
 				>
 					<DropdownMenu.RadioGroup bind:value={invited}>
@@ -138,7 +139,7 @@
 								</Avatar.Root>
 								@huntabyte
 								{#if checked}
-									×
+									<DotOutline class="ml-auto size-4" />
 								{/if}
 							{/snippet}
 						</DropdownMenu.RadioItem>
@@ -162,7 +163,7 @@
 								</Avatar.Root>
 								@pavel_stianko
 								{#if checked}
-									×
+									<DotOutline class="ml-auto size-4" />
 								{/if}
 							{/snippet}
 						</DropdownMenu.RadioItem>
@@ -186,7 +187,7 @@
 								</Avatar.Root>
 								@cokakoala_
 								{#if checked}
-									×
+									<DotOutline class="ml-auto size-4" />
 								{/if}
 							{/snippet}
 						</DropdownMenu.RadioItem>
@@ -205,12 +206,13 @@
 									/>
 									<Avatar.Fallback
 										class="flex h-full w-full items-center justify-center rounded-full bg-muted text-xs"
-										>TL</Avatar.Fallback
 									>
+										TL
+									</Avatar.Fallback>
 								</Avatar.Root>
 								@thomasglopes
 								{#if checked}
-									×
+									<DotOutline class="ml-auto size-4" />
 								{/if}
 							{/snippet}
 						</DropdownMenu.RadioItem>

@@ -5,6 +5,7 @@ import type {
 	DropdownMenuGroupPropsWithoutHTML,
 	DropdownMenuItemPropsWithoutHTML,
 	DropdownMenuLabelPropsWithoutHTML,
+	DropdownMenuPortalPropsWithoutHTML,
 	DropdownMenuRadioGroupPropsWithoutHTML,
 	DropdownMenuRadioItemPropsWithoutHTML,
 	DropdownMenuRootPropsWithoutHTML,
@@ -27,6 +28,13 @@ export const trigger = createApiSchema<DropdownMenuTriggerPropsWithoutHTML>({
 	title: "Trigger",
 	description: "The button element which toggles the dropdown menu.",
 	...menu.trigger,
+});
+
+const portal = createApiSchema<DropdownMenuPortalPropsWithoutHTML>({
+	title: "Portal",
+	description:
+		"A component that portals the content of the dropdown menu to the body or a custom target (if provided).",
+	...menu.portal,
 });
 
 export const content = createApiSchema<DropdownMenuContentPropsWithoutHTML>({
@@ -108,6 +116,7 @@ export const groupLabel = createApiSchema<DropdownMenuLabelPropsWithoutHTML>({
 export const dropdownMenu = [
 	root,
 	trigger,
+	portal,
 	content,
 	item,
 	checkboxItem,

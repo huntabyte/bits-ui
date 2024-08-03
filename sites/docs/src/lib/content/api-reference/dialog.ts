@@ -28,6 +28,8 @@ import DialogContentChildrenSnippetProps from "./extended-types/shared/dialog-co
 import DialogOverlayChildSnippetProps from "./extended-types/shared/dialog-overlay-child-snippet-props.md";
 import DialogOverlayChildrenSnippetProps from "./extended-types/shared/dialog-overlay-children-snippet-props.md";
 import OpenClosed from "./extended-types/shared/open-closed.md";
+import HeaderLevel from "./extended-types/shared/header-level.md";
+import OnOpenChange from "./extended-types/shared/open-change-fn.md";
 import { enums } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 
@@ -41,7 +43,7 @@ export const root = createApiSchema<DialogRootPropsWithoutHTML>({
 			bindable: true,
 		}),
 		onOpenChange: createFunctionProp({
-			definition: "(open: boolean) => void",
+			definition: OnOpenChange,
 			description: "A callback function called when the open state changes.",
 		}),
 		children: childrenSnippet(),
@@ -99,6 +101,7 @@ export const title = createApiSchema<DialogTitlePropsWithoutHTML>({
 			options: ["1", "2", "3", "4", "5", "6"],
 			description: "The heading level of the title.",
 			default: "3",
+			definition: HeaderLevel,
 		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
@@ -166,4 +169,4 @@ export const portal = createApiSchema<DialogPortalPropsWithoutHTML>({
 	props: portalProps,
 });
 
-export const dialog = [root, trigger, content, overlay, portal, close, title, description];
+export const dialog = [root, trigger, portal, content, overlay, close, title, description];

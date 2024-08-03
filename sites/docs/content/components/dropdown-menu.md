@@ -220,6 +220,8 @@ You can use the `DropdownMenu.CheckboxItem` component to create a `menuitemcheck
 </DropdownMenu.CheckboxItem>
 ```
 
+The `checked` state does not persist between menu open/close cycles. To persist the state, you must store it in a `$state` variable and pass it to the `checked` prop.
+
 ## Radio Groups
 
 You can combine the `DropdownMenu.RadioGroup` and `DropdownMenu.RadioItem` components to create a radio group within a menu.
@@ -246,6 +248,8 @@ You can combine the `DropdownMenu.RadioGroup` and `DropdownMenu.RadioItem` compo
 	{/each}
 </DropdownMenu.RadioGroup>
 ```
+
+The `value` state does not persist between menu open/close cycles. To persist the state, you must store it in a `$state` variable and pass it to the `value` prop.
 
 ## Nested Menus
 

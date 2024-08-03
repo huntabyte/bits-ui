@@ -5,6 +5,7 @@ import type {
 	ContextMenuGroupPropsWithoutHTML,
 	ContextMenuItemPropsWithoutHTML,
 	ContextMenuLabelPropsWithoutHTML,
+	ContextMenuPortalPropsWithoutHTML,
 	ContextMenuRadioGroupPropsWithoutHTML,
 	ContextMenuRadioItemPropsWithoutHTML,
 	ContextMenuRootPropsWithoutHTML,
@@ -46,6 +47,13 @@ export const trigger = createApiSchema<ContextMenuTriggerPropsWithoutHTML>({
 		...menu.trigger.props,
 		ref: refProp({ elType: "HTMLDivElement" }),
 	},
+});
+
+const portal = createApiSchema<ContextMenuPortalPropsWithoutHTML>({
+	title: "Portal",
+	description:
+		"A component that portals the content of the dropdown menu to the body or a custom target (if provided).",
+	...menu.portal,
 });
 
 export const content = createApiSchema<ContextMenuContentPropsWithoutHTML>({
@@ -164,6 +172,7 @@ export const groupLabel = createApiSchema<ContextMenuLabelPropsWithoutHTML>({
 export const contextMenu = [
 	root,
 	trigger,
+	portal,
 	content,
 	item,
 	checkboxItem,

@@ -1,3 +1,3 @@
 ```ts
-"floating" | "item-aligned"
+"floating" | "item-aligned";
 ```

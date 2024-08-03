@@ -6,6 +6,7 @@ import type {
 	MenubarGroupPropsWithoutHTML,
 	MenubarItemPropsWithoutHTML,
 	MenubarMenuPropsWithoutHTML,
+	MenubarPortalPropsWithoutHTML,
 	MenubarRadioGroupPropsWithoutHTML,
 	MenubarRadioItemPropsWithoutHTML,
 	MenubarRootPropsWithoutHTML,
@@ -66,6 +67,13 @@ export const trigger = createApiSchema<MenubarTriggerPropsWithoutHTML>({
 	title: "Trigger",
 	description: "The button element which toggles the dropdown menu.",
 	...m.trigger,
+});
+
+const portal = createApiSchema<MenubarPortalPropsWithoutHTML>({
+	title: "Portal",
+	description:
+		"A component that portals the content of the dropdown menu to the body or a custom target (if provided).",
+	...m.portal,
 });
 
 export const content = createApiSchema<MenubarContentPropsWithoutHTML>({
@@ -148,6 +156,7 @@ export const menubar = [
 	root,
 	menu,
 	trigger,
+	portal,
 	content,
 	item,
 	checkboxItem,

@@ -74,6 +74,8 @@ export type {
 	MenuSubTriggerPropsWithoutHTML as MenubarSubTriggerPropsWithoutHTML,
 	MenuSubTriggerProps as MenubarSubTriggerProps,
 	MenuSubPropsWithoutHTML as MenubarSubPropsWithoutHTML,
+	MenuPortalPropsWithoutHTML as MenubarPortalPropsWithoutHTML,
+	MenuPortalProps as MenubarPortalProps,
 } from "../menu/types.js";
 
 export type MenubarArrowPropsWithoutHTML = ArrowPropsWithoutHTML;
