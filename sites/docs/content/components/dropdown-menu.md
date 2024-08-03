@@ -89,15 +89,17 @@ This example shows you how to create a Dropdown Menu component that accepts a fe
 	<DropdownMenu.Trigger>
 		{buttonText}
 	</DropdownMenu.Trigger>
-	<DropdownMenu.Content {...contentProps}>
-		<DropdownMenu.Group aria-label={buttonText}>
-			{#each items as item}
-				<DropdownMenu.Item textValue={item}>
-					{item}
-				</DropdownMenu.Item>
-			{/each}
-		</DropdownMenu.Group>
-	</DropdownMenu.Content>
+	<DropdownMenu.Portal>
+		<DropdownMenu.Content {...contentProps}>
+			<DropdownMenu.Group aria-label={buttonText}>
+				{#each items as item}
+					<DropdownMenu.Item textValue={item}>
+						{item}
+					</DropdownMenu.Item>
+				{/each}
+			</DropdownMenu.Group>
+		</DropdownMenu.Content>
+	</DropdownMenu.Portal>
 </DropdownMenu.Root>
 ```
 
@@ -158,6 +160,54 @@ You can also use the `onOpenChange` prop to update local state when the menu's `
 </DropdownMenu.Root>
 ```
 
+## Checkbox Items
+
+You can use the `DropdownMenu.CheckboxItem` component to create a `menuitemcheckbox` element to add checkbox functionality to menu items.
+
+```svelte
+<script lang="ts">
+	import { DropdownMenu } from "bits-ui";
+
+	let notifications = $state(true);
+</script>
+
+<DropdownMenu.CheckboxItem bind:checked={notifications}>
+	{#snippet children({ checked })}
+		{#if checked}
+			✅
+		{/if}
+		Notifications
+	{/snippet}
+</DropdownMenu.CheckboxItem>
+```
+
+## Radio Groups
+
+You can combine the `DropdownMenu.RadioGroup` and `DropdownMenu.RadioItem` components to create a radio group within a menu.
+
+```svelte
+<script lang="ts">
+	import { DropdownMenu } from "bits-ui";
+
+	const values = ["one", "two", "three"];
+	let value = $state("one");
+</script>
+
+<DropdownMenu.RadioGroup bind:value>
+	<DropdownMenu.GroupLabel>Favorite number</DropdownMenu.GroupLabel>
+	{#each values as value}
+		<DropdownMenu.RadioItem {value}>
+			{#snippet children({ checked })}
+				{#if checked}
+					✅
+				{/if}
+				{value}
+			{/snippet}
+		</DropdownMenu.RadioItem>
+	{/each}
+</DropdownMenu.RadioGroup>
+```
+
 ## Nested Menus
 
 You can create nested menus using the `DropdownMenu.Sub` component to create complex menu structures.
@@ -169,17 +219,19 @@ You can create nested menus using the `DropdownMenu.Sub` component to create com
 
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger>Open Menu</DropdownMenu.Trigger>
-	<DropdownMenu.Content>
-		<DropdownMenu.Item>Item 1</DropdownMenu.Item>
-		<DropdownMenu.Item>Item 2</DropdownMenu.Item>
-		<DropdownMenu.Sub>
-			<DropdownMenu.SubTrigger>Open Sub Menu</DropdownMenu.SubTrigger>
-			<DropdownMenu.SubContent>
-				<DropdownMenu.Item>Sub Item 1</DropdownMenu.Item>
-				<DropdownMenu.Item>Sub Item 2</DropdownMenu.Item>
-			</DropdownMenu.SubContent>
-		</DropdownMenu.Sub>
-	</DropdownMenu.Content>
+	<DropdownMenu.Portal>
+		<DropdownMenu.Content>
+			<DropdownMenu.Item>Item 1</DropdownMenu.Item>
+			<DropdownMenu.Item>Item 2</DropdownMenu.Item>
+			<DropdownMenu.Sub>
+				<DropdownMenu.SubTrigger>Open Sub Menu</DropdownMenu.SubTrigger>
+				<DropdownMenu.SubContent>
+					<DropdownMenu.Item>Sub Item 1</DropdownMenu.Item>
+					<DropdownMenu.Item>Sub Item 2</DropdownMenu.Item>
+				</DropdownMenu.SubContent>
+			</DropdownMenu.Sub>
+		</DropdownMenu.Content>
+	</DropdownMenu.Portal>
 </DropdownMenu.Root>
 ```
 

@@ -25,35 +25,39 @@ description: Displays options or actions relevant to a specific context or selec
 
 <ContextMenu.Root>
 	<ContextMenu.Trigger />
+	<ContextMenu.Portal>
+		<ContextMenu.Content>
+			<ContextMenu.Group>
+				<ContextMenu.GroupLabel />
+				<ContextMenu.Item />
+			</ContextMenu.Group>
 
-	<ContextMenu.Content>
-		<ContextMenu.Group>
-			<ContextMenu.GroupLabel />
 			<ContextMenu.Item />
-		</ContextMenu.Group>
 
-		<ContextMenu.Group>
-			<ContextMenu.Item />
-		</ContextMenu.Group>
+			<ContextMenu.CheckboxItem>
+				{#snippet children({ checked })}
+					{checked ? "✅" : ""}
+				{/snippet}
+			</ContextMenu.CheckboxItem>
 
-		<ContextMenu.CheckboxItem>
-			<ContextMenu.CheckboxIndicator />
-		</ContextMenu.CheckboxItem>
+			<ContextMenu.RadioGroup>
+				<ContextMenu.GroupLabel />
+				<ContextMenu.RadioItem>
+					{#snippet children({ checked })}
+						{checked ? "✅" : ""}
+					{/snippet}
+				</ContextMenu.RadioItem>
+			</ContextMenu.RadioGroup>
 
-		<ContextMenu.RadioGroup>
-			<ContextMenu.RadioItem>
-				<ContextMenu.RadioIndicator />
-			</ContextMenu.RadioItem>
-		</ContextMenu.RadioGroup>
+			<ContextMenu.Sub>
+				<ContextMenu.SubTrigger />
+				<ContextMenu.SubContent />
+			</ContextMenu.Sub>
 
-		<ContextMenu.Sub>
-			<ContextMenu.SubTrigger />
-			<ContextMenu.SubContent />
-		</ContextMenu.Sub>
-
-		<ContextMenu.Separator />
-		<ContextMenu.Arrow />
-	</ContextMenu.Content>
+			<ContextMenu.Separator />
+			<ContextMenu.Arrow />
+		</ContextMenu.Content>
+	</ContextMenu.Portal>
 </ContextMenu.Root>
 ```
 
@@ -68,7 +72,7 @@ This example shows you how to create a Context Menu component that accepts a few
 	import type { Snippet } from "svelte";
 	import { ContextMenu, type WithoutChild } from "bits-ui";
 	type Props = ContextMenu.Props & {
-		triggerArea: Snippet;
+		trigger: Snippet;
 		items: string[];
 		contentProps?: WithoutChild<ContextMenu.Content.Props>;
 		// other component props if needed
@@ -76,7 +80,7 @@ This example shows you how to create a Context Menu component that accepts a few
 	let {
 		open = $bindable(false),
 		children,
-		triggerArea,
+		trigger,
 		items,
 		contentProps,
 		...restProps
@@ -85,18 +89,20 @@ This example shows you how to create a Context Menu component that accepts a few
 
 <ContextMenu.Root bind:open {...restProps}>
 	<ContextMenu.Trigger>
-		{@render triggerArea}
+		{@render trigger()}
 	</ContextMenu.Trigger>
-	<ContextMenu.Content {...contentProps}>
-		<ContextMenu.Group>
-		<ContextMenu.GroupLabel>Select an Office</ContextMenu.GroupLabel>
-			{#each items as item}
-				<ContextMenu.Item textValue={item}>
-					{item}
-				</ContextMenu.Item>
-			{/each}
-		</ContextMenu.Group>
-	</ContextMenu.Content>
+	<ContextMenu.Portal>
+		<ContextMenu.Content {...contentProps}>
+			<ContextMenu.Group>
+				<ContextMenu.GroupLabel>Select an Office</ContextMenu.GroupLabel>
+				{#each items as item}
+					<ContextMenu.Item textValue={item}>
+						{item}
+					</ContextMenu.Item>
+				{/each}
+			</ContextMenu.Group>
+		</ContextMenu.Content>
+	</ContextMenu.Portal>
 </ContextMenu.Root>
 ```
 
@@ -176,6 +182,53 @@ You can also use the `onOpenChange` prop to update local state when the menu's `
 >
 	<!-- ... -->
 </ContextMenu.Root>
+```
+
+## Checkbox Items
+
+You can use the `ContextMenu.CheckboxItem` component to create a `menuitemcheckbox` element to add checkbox functionality to menu items.
+
+```svelte
+<script lang="ts">
+	import { ContextMenu } from "bits-ui";
+
+	let notifications = $state(true);
+</script>
+
+<ContextMenu.CheckboxItem bind:checked={notifications}>
+	{#snippet children({ checked })}
+		{#if checked}
+			✅
+		{/if}
+		Notifications
+	{/snippet}
+</ContextMenu.CheckboxItem>
+```
+
+## Radio Groups
+
+You can combine the `ContextMenu.RadioGroup` and `ContextMenu.RadioItem` components to create a radio group within a menu.
+
+```svelte
+<script lang="ts">
+	import { ContextMenu } from "bits-ui";
+
+	const values = ["one", "two", "three"];
+	let value = $state("one");
+</script>
+
+<ContextMenu.RadioGroup bind:value>
+	{#each values as value}
+		<ContextMenu.RadioItem {value}>
+			{#snippet children({ checked })}
+				{#if checked}
+					✅
+				{/if}
+				{value}
+			{/snippet}
+		</ContextMenu.RadioItem>
+	{/each}
+</ContextMenu.RadioGroup>
 ```
 
 ## Nested Menus

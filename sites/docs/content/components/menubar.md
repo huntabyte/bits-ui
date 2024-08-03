@@ -26,34 +26,39 @@ description: Organizes and presents a collection of menu options or actions with
 <Menubar.Root>
 	<Menubar.Menu>
 		<Menubar.Trigger />
-		<Menubar.Content>
-			<Menubar.Group>
-				<Menubar.GroupLabel />
+		<Menubar.Portal>
+			<Menubar.Content>
+				<Menubar.Group>
+					<Menubar.GroupLabel />
+					<Menubar.Item />
+				</Menubar.Group>
+
 				<Menubar.Item />
-			</Menubar.Group>
 
-			<Menubar.Group>
-				<Menubar.Item />
-			</Menubar.Group>
+				<Menubar.CheckboxItem>
+					{#snippet children({ checked })}
+						{checked ? "✅" : ""}
+					{/snippet}
+				</Menubar.CheckboxItem>
 
-			<Menubar.CheckboxItem>
-				<Menubar.CheckboxIndicator />
-			</Menubar.CheckboxItem>
+				<Menubar.RadioGroup>
+					<Menubar.GroupLabel />
+					<Menubar.RadioItem>
+						{#snippet children({ checked })}
+							{checked ? "✅" : ""}
+						{/snippet}
+					</Menubar.RadioItem>
+				</Menubar.RadioGroup>
 
-			<Menubar.RadioGroup>
-				<Menubar.RadioItem>
-					<Menubar.RadioIndicator />
-				<Menubar.RadioItem>
-			</Menubar.RadioGroup>
+				<Menubar.Sub>
+					<Menubar.SubTrigger />
+					<Menubar.SubContent />
+				</Menubar.Sub>
 
-			<Menubar.Sub>
-				<Menubar.SubTrigger />
-				<Menubar.SubContent />
-			</Menubar.Sub>
-
-			<Menubar.Separator />
-			<Menubar.Arrow />
-		</Menubar.Content>
+				<Menubar.Separator />
+				<Menubar.Arrow />
+			</Menubar.Content>
+		</Menubar.Portal>
 	</Menubar.Menu>
 </Menubar.Root>
 ```
@@ -181,6 +186,53 @@ You can also use the `onValueCHange` prop to update local state when the menubar
 >
 	<!-- ... -->
 </Menubar.Root>
+```
+
+## Checkbox Items
+
+You can use the `Menubar.CheckboxItem` component to create a `menuitemcheckbox` element to add checkbox functionality to menu items.
+
+```svelte
+<script lang="ts">
+	import { Menubar } from "bits-ui";
+
+	let notifications = $state(true);
+</script>
+
+<Menubar.CheckboxItem bind:checked={notifications}>
+	{#snippet children({ checked })}
+		{#if checked}
+			✅
+		{/if}
+		Notifications
+	{/snippet}
+</Menubar.CheckboxItem>
+```
+
+## Radio Groups
+
+You can combine the `Menubar.RadioGroup` and `Menubar.RadioItem` components to create a radio group within a menu.
+
+```svelte
+<script lang="ts">
+	import { Menubar } from "bits-ui";
+
+	const values = ["one", "two", "three"];
+	let value = $state("one");
+</script>
+
+<Menubar.RadioGroup bind:value>
+	{#each values as value}
+		<Menubar.RadioItem {value}>
+			{#snippet children({ checked })}
+				{#if checked}
+					✅
+				{/if}
+				{value}
+			{/snippet}
+		</Menubar.RadioItem>
+	{/each}
+</Menubar.RadioGroup>
 ```
 
 ## Nested Menus
