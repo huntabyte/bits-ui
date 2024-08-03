@@ -9,6 +9,10 @@ import type {
 	SelectTriggerPropsWithoutHTML,
 	SelectValuePropsWithoutHTML,
 } from "bits-ui";
+import OnStringValueChange from "./extended-types/shared/on-string-value-change.md";
+import OnOpenChange from "./extended-types/shared/open-change-fn.md";
+import OpenClosed from "./extended-types/shared/open-closed.md";
+import Position from "./extended-types/select/position.md";
 import {
 	arrowProps,
 	childrenSnippet,
@@ -37,9 +41,10 @@ export const root = createApiSchema<SelectRootPropsWithoutHTML>({
 		value: createStringProp({
 			description: "The value of the currently selected select item.",
 			bindable: true,
+			default: "''",
 		}),
 		onValueChange: createFunctionProp({
-			definition: "(value: string | undefined) => void",
+			definition: OnStringValueChange,
 			description: "A callback that is fired when the select menu's value changes.",
 		}),
 		open: createBooleanProp({
@@ -48,7 +53,7 @@ export const root = createApiSchema<SelectRootPropsWithoutHTML>({
 			bindable: true,
 		}),
 		onOpenChange: createFunctionProp({
-			definition: "(open: boolean) => void",
+			definition: OnOpenChange,
 			description: "A callback that is fired when the select menu's open state changes.",
 		}),
 		disabled: createBooleanProp({
@@ -110,6 +115,7 @@ export const content = createApiSchema<SelectContentPropsWithoutHTML>({
 			default: "floating",
 			description:
 				"The positioning strategy to use for the content. If set to 'item-aligned', the content will be positioned relative to the trigger, similar to a native select. If set to `floating`, the content will use Floating UI to position itself similar to other popover-like components.",
+			definition: Position,
 		}),
 		dir: dirProp,
 		...floatingProps(),
@@ -158,6 +164,7 @@ export const item = createApiSchema<SelectItemPropsWithoutHTML>({
 			description: "The state of the item.",
 			value: enums("selected", "hovered"),
 			isEnum: true,
+			definition: OpenClosed,
 		},
 		{
 			name: "highlighted",
@@ -212,11 +219,11 @@ export const group = createApiSchema<SelectGroupPropsWithoutHTML>({
 export const groupLabel = createApiSchema<SelectGroupLabelPropsWithoutHTML>({
 	title: "GroupLabel",
 	description:
-		"A label for the select menu which will be skipped when navigating with the keyboard. This must be a child of the `Select.Group` component to be accessible.",
+		"A label for the select menu which will be skipped when navigating with the keyboard. This must be a child of the `Select.Group` component.",
 	props: withChildProps({ elType: "HTMLDivElement" }),
 	dataAttributes: [
 		{
-			name: "select-label",
+			name: "select-group-label",
 			description: "Present on the label element.",
 		},
 	],

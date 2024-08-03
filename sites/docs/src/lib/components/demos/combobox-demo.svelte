@@ -79,7 +79,7 @@
 				</Combobox.Item>
 			{:else}
 				<span class="block px-5 py-2 text-sm text-muted-foreground">
-					No results found
+					No results found, try again.
 				</span>
 			{/each}
 		</Combobox.Content>

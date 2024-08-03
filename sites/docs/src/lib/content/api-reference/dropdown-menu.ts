@@ -5,6 +5,7 @@ import type {
 	DropdownMenuGroupPropsWithoutHTML,
 	DropdownMenuItemPropsWithoutHTML,
 	DropdownMenuLabelPropsWithoutHTML,
+	DropdownMenuPortalPropsWithoutHTML,
 	DropdownMenuRadioGroupPropsWithoutHTML,
 	DropdownMenuRadioItemPropsWithoutHTML,
 	DropdownMenuRootPropsWithoutHTML,
@@ -15,99 +16,107 @@ import type {
 	DropdownMenuTriggerPropsWithoutHTML,
 } from "bits-ui";
 import { menu } from "./menu.js";
-import type { APISchema } from "$lib/types/index.js";
+import { createApiSchema } from "./helpers.js";
 
-export const root: APISchema<DropdownMenuRootPropsWithoutHTML> = {
+export const root = createApiSchema<DropdownMenuRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root component which manages & scopes the state of the dropdown menu.",
 	...menu.root,
-};
+});
 
-export const trigger: APISchema<DropdownMenuTriggerPropsWithoutHTML> = {
+export const trigger = createApiSchema<DropdownMenuTriggerPropsWithoutHTML>({
 	title: "Trigger",
 	description: "The button element which toggles the dropdown menu.",
 	...menu.trigger,
-};
+});
 
-export const content: APISchema<DropdownMenuContentPropsWithoutHTML> = {
+const portal = createApiSchema<DropdownMenuPortalPropsWithoutHTML>({
+	title: "Portal",
+	description:
+		"A component that portals the content of the dropdown menu to the body or a custom target (if provided).",
+	...menu.portal,
+});
+
+export const content = createApiSchema<DropdownMenuContentPropsWithoutHTML>({
 	title: "Content",
 	description: "The content displayed when the dropdown menu is open.",
 	...menu.content,
-};
+});
 
-export const item: APISchema<DropdownMenuItemPropsWithoutHTML> = {
+export const item = createApiSchema<DropdownMenuItemPropsWithoutHTML>({
 	title: "Item",
 	description: "A menu item within the dropdown menu.",
 	...menu.item,
-};
+});
 
-export const separator: APISchema<DropdownMenuSeparatorPropsWithoutHTML> = {
+export const separator = createApiSchema<DropdownMenuSeparatorPropsWithoutHTML>({
 	title: "Separator",
 	description: "A horizontal line to visually separate menu items.",
 	...menu.separator,
-};
+});
 
-export const arrow: APISchema<DropdownMenuArrowPropsWithoutHTML> = {
+export const arrow = createApiSchema<DropdownMenuArrowPropsWithoutHTML>({
 	title: "Arrow",
 	description: "An optional arrow which points to the dropdown menu's anchor/trigger point.",
 	...menu.arrow,
-};
+});
 
-export const checkboxItem: APISchema<DropdownMenuCheckboxItemPropsWithoutHTML> = {
+export const checkboxItem = createApiSchema<DropdownMenuCheckboxItemPropsWithoutHTML>({
 	title: "CheckboxItem",
 	description: "A menu item that can be controlled and toggled like a checkbox.",
 	...menu.checkboxItem,
-};
+});
 
-export const radioGroup: APISchema<DropdownMenuRadioGroupPropsWithoutHTML> = {
+export const radioGroup = createApiSchema<DropdownMenuRadioGroupPropsWithoutHTML>({
 	title: "RadioGroup",
 	description: "A group of radio menu items, where only one can be checked at a time.",
 	...menu.radioGroup,
-};
+});
 
-export const radioItem: APISchema<DropdownMenuRadioItemPropsWithoutHTML> = {
+export const radioItem = createApiSchema<DropdownMenuRadioItemPropsWithoutHTML>({
 	title: "RadioItem",
 	description:
 		"A menu item that can be controlled and toggled like a radio button. It must be a child of a `RadioGroup`.",
 	...menu.radioItem,
-};
+});
 
-export const sub: APISchema<DropdownMenuSubPropsWithoutHTML> = {
+export const sub = createApiSchema<DropdownMenuSubPropsWithoutHTML>({
 	title: "Sub",
 	description:
 		"A submenu belonging to the parent dropdown menu. Responsible for managing the state of the submenu.",
 	...menu.sub,
-};
+});
 
-export const subTrigger: APISchema<DropdownMenuSubTriggerPropsWithoutHTML> = {
+export const subTrigger = createApiSchema<DropdownMenuSubTriggerPropsWithoutHTML>({
 	title: "SubTrigger",
-	description: "A menu item which when pressed or hovered, opens the submenu.",
+	description: "A menu item which when pressed or hovered, opens the submenu it is a child of.",
 	...menu.subTrigger,
-};
+});
 
-export const subContent: APISchema<DropdownMenuSubContentPropsWithoutHTML> = {
+export const subContent = createApiSchema<DropdownMenuSubContentPropsWithoutHTML>({
 	title: "SubContent",
 	description: "The submenu content displayed when the parent submenu is open.",
 	...menu.subContent,
-};
+});
 
-export const group: APISchema<DropdownMenuGroupPropsWithoutHTML> = {
+export const group = createApiSchema<DropdownMenuGroupPropsWithoutHTML>({
 	title: "Group",
 	description:
-		"A group of menu items. It can be used along with the `Menu.Label` component to provide a visual label for a group of menu items. When a label is within a group, appropriate aria attributes will be applied to the group.",
+		"A group of menu items. It should be passed an `aria-label` or have a child `Menu.GroupLabel` component to provide a label for a group of menu items.",
 	...menu.group,
-};
+});
 
-export const label: APISchema<DropdownMenuLabelPropsWithoutHTML> = {
-	title: "Label",
+export const groupLabel = createApiSchema<DropdownMenuLabelPropsWithoutHTML>({
+	title: "GroupLabel",
 	description:
-		"A label which will be skipped when navigating with the keyboard. It is used to provide a visual label for a group of menu items. When a label is within a `Menu.Group`, appropriate aria attributes will be applied to the group.",
+		"A label which will be skipped when navigating with the keyboard. It is used to provide a label for a group of menu items and must be a child of either a `DropdownMenu.Group` or `DropdownMenu.RadioGroup` component.",
 	...menu.label,
-};
+});
 
 export const dropdownMenu = [
 	root,
 	trigger,
+	portal,
 	content,
 	item,
 	checkboxItem,
@@ -116,7 +125,7 @@ export const dropdownMenu = [
 	separator,
 	arrow,
 	group,
-	label,
+	groupLabel,
 	sub,
 	subTrigger,
 	subContent,

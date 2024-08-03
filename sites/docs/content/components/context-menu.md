@@ -25,35 +25,39 @@ description: Displays options or actions relevant to a specific context or selec
 
 <ContextMenu.Root>
 	<ContextMenu.Trigger />
+	<ContextMenu.Portal>
+		<ContextMenu.Content>
+			<ContextMenu.Group>
+				<ContextMenu.GroupLabel />
+				<ContextMenu.Item />
+			</ContextMenu.Group>
 
-	<ContextMenu.Content>
-		<ContextMenu.Group>
-			<ContextMenu.GroupLabel />
 			<ContextMenu.Item />
-		</ContextMenu.Group>
 
-		<ContextMenu.Group>
-			<ContextMenu.Item />
-		</ContextMenu.Group>
+			<ContextMenu.CheckboxItem>
+				{#snippet children({ checked })}
+					{checked ? "✅" : ""}
+				{/snippet}
+			</ContextMenu.CheckboxItem>
 
-		<ContextMenu.CheckboxItem>
-			<ContextMenu.CheckboxIndicator />
-		</ContextMenu.CheckboxItem>
+			<ContextMenu.RadioGroup>
+				<ContextMenu.GroupLabel />
+				<ContextMenu.RadioItem>
+					{#snippet children({ checked })}
+						{checked ? "✅" : ""}
+					{/snippet}
+				</ContextMenu.RadioItem>
+			</ContextMenu.RadioGroup>
 
-		<ContextMenu.RadioGroup>
-			<ContextMenu.RadioItem>
-				<ContextMenu.RadioIndicator />
-			</ContextMenu.RadioItem>
-		</ContextMenu.RadioGroup>
+			<ContextMenu.Sub>
+				<ContextMenu.SubTrigger />
+				<ContextMenu.SubContent />
+			</ContextMenu.Sub>
 
-		<ContextMenu.Sub>
-			<ContextMenu.SubTrigger />
-			<ContextMenu.SubContent />
-		</ContextMenu.Sub>
-
-		<ContextMenu.Separator />
-		<ContextMenu.Arrow />
-	</ContextMenu.Content>
+			<ContextMenu.Separator />
+			<ContextMenu.Arrow />
+		</ContextMenu.Content>
+	</ContextMenu.Portal>
 </ContextMenu.Root>
 ```
 
@@ -68,7 +72,7 @@ This example shows you how to create a Context Menu component that accepts a few
 	import type { Snippet } from "svelte";
 	import { ContextMenu, type WithoutChild } from "bits-ui";
 	type Props = ContextMenu.Props & {
-		triggerArea: Snippet;
+		trigger: Snippet;
 		items: string[];
 		contentProps?: WithoutChild<ContextMenu.Content.Props>;
 		// other component props if needed
@@ -76,7 +80,7 @@ This example shows you how to create a Context Menu component that accepts a few
 	let {
 		open = $bindable(false),
 		children,
-		triggerArea,
+		trigger,
 		items,
 		contentProps,
 		...restProps
@@ -85,18 +89,20 @@ This example shows you how to create a Context Menu component that accepts a few
 
 <ContextMenu.Root bind:open {...restProps}>
 	<ContextMenu.Trigger>
-		{@render triggerArea}
+		{@render trigger()}
 	</ContextMenu.Trigger>
-	<ContextMenu.Content {...contentProps}>
-		<ContextMenu.Group>
-		<ContextMenu.GroupLabel>Select an Office</ContextMenu.GroupLabel>
-			{#each items as item}
-				<ContextMenu.Item textValue={item}>
-					{item}
-				</ContextMenu.Item>
-			{/each}
-		</ContextMenu.Group>
-	</ContextMenu.Content>
+	<ContextMenu.Portal>
+		<ContextMenu.Content {...contentProps}>
+			<ContextMenu.Group>
+				<ContextMenu.GroupLabel>Select an Office</ContextMenu.GroupLabel>
+				{#each items as item}
+					<ContextMenu.Item textValue={item}>
+						{item}
+					</ContextMenu.Item>
+				{/each}
+			</ContextMenu.Group>
+		</ContextMenu.Content>
+	</ContextMenu.Portal>
 </ContextMenu.Root>
 ```
 
@@ -178,6 +184,57 @@ You can also use the `onOpenChange` prop to update local state when the menu's `
 </ContextMenu.Root>
 ```
 
+## Checkbox Items
+
+You can use the `ContextMenu.CheckboxItem` component to create a `menuitemcheckbox` element to add checkbox functionality to menu items.
+
+```svelte
+<script lang="ts">
+	import { ContextMenu } from "bits-ui";
+
+	let notifications = $state(true);
+</script>
+
+<ContextMenu.CheckboxItem bind:checked={notifications}>
+	{#snippet children({ checked })}
+		{#if checked}
+			✅
+		{/if}
+		Notifications
+	{/snippet}
+</ContextMenu.CheckboxItem>
+```
+
+See the [CheckboxItem API](#contextmenucheckboxitem) for more information.
+
+## Radio Groups
+
+You can combine the `ContextMenu.RadioGroup` and `ContextMenu.RadioItem` components to create a radio group within a menu.
+
+```svelte
+<script lang="ts">
+	import { ContextMenu } from "bits-ui";
+
+	const values = ["one", "two", "three"];
+	let value = $state("one");
+</script>
+
+<ContextMenu.RadioGroup bind:value>
+	{#each values as value}
+		<ContextMenu.RadioItem {value}>
+			{#snippet children({ checked })}
+				{#if checked}
+					✅
+				{/if}
+				{value}
+			{/snippet}
+		</ContextMenu.RadioItem>
+	{/each}
+</ContextMenu.RadioGroup>
+```
+
+See the [RadioGroup](#contextmenuradiogroup) and [RadioItem](#contextmenuradiaitem) APIs for more information.
+
 ## Nested Menus
 
 You can create nested menus using the `ContextMenu.Sub` component to create complex menu structures.
@@ -187,20 +244,17 @@ You can create nested menus using the `ContextMenu.Sub` component to create comp
 	import { ContextMenu } from "bits-ui";
 </script>
 
-<ContextMenu.Root>
-	<ContextMenu.Trigger>Right-click me</ContextMenu.Trigger>
-	<ContextMenu.Content>
-		<ContextMenu.Item>Item 1</ContextMenu.Item>
-		<ContextMenu.Item>Item 2</ContextMenu.Item>
-		<ContextMenu.Sub>
-			<ContextMenu.SubTrigger>Open Sub Menu</ContextMenu.SubTrigger>
-			<ContextMenu.SubContent>
-				<ContextMenu.Item>Sub Item 1</ContextMenu.Item>
-				<ContextMenu.Item>Sub Item 2</ContextMenu.Item>
-			</ContextMenu.SubContent>
-		</ContextMenu.Sub>
-	</ContextMenu.Content>
-</ContextMenu.Root>
+<ContextMenu.Content>
+	<ContextMenu.Item>Item 1</ContextMenu.Item>
+	<ContextMenu.Item>Item 2</ContextMenu.Item>
+	<ContextMenu.Sub>
+		<ContextMenu.SubTrigger>Open Sub Menu</ContextMenu.SubTrigger>
+		<ContextMenu.SubContent>
+			<ContextMenu.Item>Sub Item 1</ContextMenu.Item>
+			<ContextMenu.Item>Sub Item 2</ContextMenu.Item>
+		</ContextMenu.SubContent>
+	</ContextMenu.Sub>
+</ContextMenu.Content>
 ```
 
 <!-- <ContextMenuDemoNested /> -->
@@ -209,25 +263,22 @@ You can create nested menus using the `ContextMenu.Sub` component to create comp
 
 You can use the `forceMount` prop along with the `child` snippet to forcefully mount the `ContextMenu.Content` component to use Svelte Transitions or another animation library that requires more control.
 
-```svelte /forceMount/ /transition:fade/ /transition:fly/
+```svelte /forceMount/ /transition:fly/
 <script lang="ts">
 	import { ContextMenu } from "bits-ui";
 	import { fly } from "svelte/transition";
 </script>
 
-<ContextMenu.Root>
-	<ContextMenu.Trigger>Open Menu</ContextMenu.Trigger>
-	<ContextMenu.Content forceMount>
-		{#snippet child({ props, open })}
-			{#if open}
-				<div {...props} transition:fly>
-					<ContextMenu.Item>Item 1</ContextMenu.Item>
-					<ContextMenu.Item>Item 2</ContextMenu.Item>
-				</div>
-			{/if}
-		{/snippet}
-	</ContextMenu.Content>
-</ContextMenu.Root>
+<ContextMenu.Content forceMount>
+	{#snippet child({ props, open })}
+		{#if open}
+			<div {...props} transition:fly>
+				<ContextMenu.Item>Item 1</ContextMenu.Item>
+				<ContextMenu.Item>Item 2</ContextMenu.Item>
+			</div>
+		{/if}
+	{/snippet}
+</ContextMenu.Content>
 ```
 
 Of course, this isn't the prettiest syntax, so it's recommended to create your own reusable content component that handles this logic if you intend to use this approach. For more information on using transitions with Bits UI components, see the [Transitions](/docs/transitions) documentation.

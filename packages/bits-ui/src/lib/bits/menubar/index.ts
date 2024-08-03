@@ -19,6 +19,7 @@ export type {
 	MenubarMenuProps as MenuProps,
 	MenubarTriggerProps as TriggerProps,
 	MenubarContentProps as ContentProps,
+	MenubarPortalProps as PortalProps,
 } from "./types.js";
 
 export type {

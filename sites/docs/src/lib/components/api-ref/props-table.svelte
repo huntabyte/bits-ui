@@ -48,16 +48,30 @@
 					<Table.Cell class="flex items-center gap-1 pr-1 align-baseline">
 						<Code class="font-semibold text-foreground">{p?.name}</Code>
 						{#if p?.required}
-							<div class="pb-1 text-destructive" aria-hidden="true">
-								<AsteriskSimple class="size-3" />
-							</div>
-							<span class="sr-only">Required</span>
+							<Popover.Root>
+								<Popover.Trigger aria-hidden="true">
+									<div
+										class=" flex items-start text-destructive"
+										aria-hidden="true"
+									>
+										<AsteriskSimple class="mb-1 size-3.5" />
+									</div>
+									<span class="sr-only">Required</span>
+								</Popover.Trigger>
+								<Popover.Content
+									preventScroll={false}
+									class="z-50 max-h-[400px] overflow-auto rounded-input border border-border bg-background p-4 font-mono shadow-popover"
+									side="top"
+									sideOffset={10}>Required</Popover.Content
+								>
+							</Popover.Root>
+							<span class="sr-only"> required prop </span>
 						{/if}
 						{#if p?.bindable}
 							<Popover.Root>
 								<Popover.Trigger aria-hidden="true">
 									<div
-										class="ml-2 flex items-center justify-center text-tertiary"
+										class="ml-1.5 flex items-center justify-center text-tertiary"
 									>
 										<PlugsConnected class="size-4" />
 										<span class="sr-only">Bindable</span>

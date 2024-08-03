@@ -26,6 +26,7 @@ import {
 	floatingProps,
 	focusScopeProps,
 	forceMountProp,
+	portalProps,
 	preventOverflowTextSelectionProp,
 	withChildProps,
 } from "./helpers.js";
@@ -404,6 +405,10 @@ export const root = {
 	props,
 };
 
+const portal = {
+	props: portalProps,
+};
+
 export const menu = {
 	root,
 	trigger,
@@ -419,4 +424,5 @@ export const menu = {
 	sub,
 	subTrigger,
 	subContent,
+	portal,
 };

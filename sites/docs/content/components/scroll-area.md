@@ -43,7 +43,7 @@ If you're planning to use the Scroll Area throughout your application, it's reco
 
 This example shows you how to create a Scroll Area component that accepts a few custom props that make it more capable.
 
-```svelte title="CustomScrollArea.svelte"
+```svelte title="MyScrollArea.svelte"
 <script lang="ts">
 	import { ScrollArea, type WithoutChild } from "bits-ui";
 
@@ -90,9 +90,9 @@ We'll use this custom component in the following examples to demonstrate how to 
 The `hover` type is the default type of the scroll area, demonstrated in the featured example above. It only shows scrollbars when the user hovers over the scroll area and the content is larger than the viewport.
 
 ```svelte {1}
-<CustomScrollArea type="hover">
+<MyScrollArea type="hover">
 	<!-- ... -->
-</CustomScrollArea>
+</MyScrollArea>
 ```
 
 <ScrollAreaDemoCustom type="hover" />
@@ -102,9 +102,9 @@ The `hover` type is the default type of the scroll area, demonstrated in the fea
 The `scroll` type displays the scrollbars when the user scrolls the content. This is similar to the behavior of MacOS.
 
 ```svelte {1}
-<CustomScrollArea type="scroll">
+<MyScrollArea type="scroll">
 	<!-- ... -->
-</CustomScrollArea>
+</MyScrollArea>
 ```
 
 <ScrollAreaDemoCustom type="scroll" />
@@ -114,21 +114,21 @@ The `scroll` type displays the scrollbars when the user scrolls the content. Thi
 The `auto` type behaves similarly to your typical browser scrollbars. When the content is larger than the viewport, the scrollbars will appear and remain visible at all times.
 
 ```svelte {1}
-<CustomScrollArea type="auto">
+<MyScrollArea type="auto">
 	<!-- ... -->
-</CustomScrollArea>
+</MyScrollArea>
 ```
 
 <ScrollAreaDemoCustom type="auto" />
 
 ### Always
 
-The `always` type behaves as if you set `overflow: scroll` on the scroll area. Scrollbars will always be visible, even when the content is smaller than the viewport. We've also set the `orientation` prop on the `CustomScrollArea` to `'both'` to ensure both scrollbars are rendered.
+The `always` type behaves as if you set `overflow: scroll` on the scroll area. Scrollbars will always be visible, even when the content is smaller than the viewport. We've also set the `orientation` prop on the `MyScrollArea` to `'both'` to ensure both scrollbars are rendered.
 
 ```svelte {1}
-<CustomScrollArea type="always" orientation="both">
+<MyScrollArea type="always" orientation="both">
 	<!-- ... -->
-</CustomScrollArea>
+</MyScrollArea>
 ```
 
 <ScrollAreaDemoCustom type="always" orientation="both" />
@@ -138,9 +138,9 @@ The `always` type behaves as if you set `overflow: scroll` on the scroll area. S
 You can customize the hide delay of the scrollbars using the `scrollHideDelay` prop.
 
 ```svelte {1}
-<CustomScrollArea scrollHideDelay={10}>
+<MyScrollArea scrollHideDelay={10}>
 	<!-- ... -->
-</CustomScrollArea>
+</MyScrollArea>
 ```
 
 <ScrollAreaDemoCustom scrollHideDelay={10} />

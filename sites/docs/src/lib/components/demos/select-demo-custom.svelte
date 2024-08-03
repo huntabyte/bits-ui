@@ -1,10 +1,18 @@
 <script lang="ts">
-	import { Select } from "bits-ui";
+	import { Select, type WithoutChildren } from "bits-ui";
 	import CaretUpDown from "phosphor-svelte/lib/CaretUpDown";
 	import Check from "phosphor-svelte/lib/Check";
 	import Palette from "phosphor-svelte/lib/Palette";
 	import CaretDoubleDown from "phosphor-svelte/lib/CaretDoubleDown";
 	import CaretDoubleUp from "phosphor-svelte/lib/CaretDoubleUp";
+
+	let {
+		value = $bindable(""),
+		contentProps,
+		...restProps
+	}: WithoutChildren<Select.RootProps> & {
+		contentProps?: WithoutChildren<Select.ContentProps>;
+	} = $props();
 
 	const themes = [
 		{ value: "light-monochrome", label: "Light Monochrome" },
@@ -29,11 +37,10 @@
 		{ value: "burnt-orange", label: "Burnt Orange" },
 	];
 
-	let value = $state("");
 	const selectedLabel = $derived(themes.find((theme) => theme.value === value)?.label);
 </script>
 
-<Select.Root name="hello" bind:value>
+<Select.Root name="hello" bind:value {...restProps}>
 	<Select.Trigger
 		class="inline-flex h-input w-[296px] select-none items-center rounded-9px border border-border-input bg-background px-[11px] text-sm transition-colors placeholder:text-foreground-alt/50"
 		aria-label="Select a theme"
@@ -50,9 +57,9 @@
 	</Select.Trigger>
 	<Select.Portal>
 		<Select.Content
-			class="focus-override z-50 max-h-96 w-full min-w-[296px] rounded-xl border border-muted bg-background px-1 py-3 shadow-popover outline-none"
+			{...contentProps}
+			class="focus-override z-50 max-h-96 w-full min-w-[296px] select-none rounded-xl border border-muted bg-background px-1 py-3 shadow-popover outline-none"
 			sideOffset={8}
-			preventScroll={false}
 		>
 			<Select.ScrollUpButton class="flex w-full items-center justify-center">
 				<CaretDoubleUp class="size-3" />
