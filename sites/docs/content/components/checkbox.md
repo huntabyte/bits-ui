@@ -139,8 +139,8 @@ You can disable the checkbox by setting the `disabled` prop to `true`.
 
 If you set the `name` prop, a hidden checkbox input will be rendered to submit the value of the checkbox to a form. By default, the checkbox will be submitted with default checkbox values of `on` or `off` depending on the `checked` prop. You can customize the value by setting the `value` prop.
 
-```svelte
-<MyCheckbox name="myCheckbox" value="on" labelText="Enable notifications" />
+```svelte /name="notifications"/
+<MyCheckbox name="notifications" labelText="Enable notifications" />
 ```
 
 <APISection {schemas} />

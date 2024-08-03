@@ -8,9 +8,9 @@
 		open = $bindable(false),
 		onOpenChange,
 		disabled = false,
-		delayDuration = 700,
+		delayDuration,
 		disableCloseOnTriggerClick = false,
-		disableHoverableContent = false,
+		disableHoverableContent,
 		ignoreNonKeyboardFocus = false,
 		children,
 	}: RootProps = $props();

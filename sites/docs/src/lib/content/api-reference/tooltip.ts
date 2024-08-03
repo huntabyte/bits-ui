@@ -5,6 +5,10 @@ import type {
 	TooltipRootPropsWithoutHTML,
 	TooltipTriggerPropsWithoutHTML,
 } from "bits-ui";
+import OpenClosed from "./extended-types/shared/open-closed.md";
+import OpenChangeFn from "./extended-types/shared/open-change-fn.md";
+import OpenChildrenSnippetProps from "./extended-types/shared/open-children-snippet-props.md";
+import OpenChildSnippetProps from "./extended-types/shared/open-child-snippet-props.md";
 import {
 	arrowProps,
 	childrenSnippet,
@@ -75,7 +79,8 @@ export const provider: APISchema<TooltipProviderPropsWithoutHTML> = {
 
 export const root = createApiSchema<TooltipRootPropsWithoutHTML>({
 	title: "Root",
-	description: "The root component containing the parts of the tooltip.",
+	description:
+		"The root component containing the parts of the tooltip. Must be a descendant of a `Tooltip.Provider` component.",
 	props: {
 		open: createBooleanProp({
 			default: C.FALSE,
@@ -83,7 +88,7 @@ export const root = createApiSchema<TooltipRootPropsWithoutHTML>({
 			bindable: true,
 		}),
 		onOpenChange: createFunctionProp({
-			definition: "(open: boolean) => void",
+			definition: OpenChangeFn,
 			description: "A callback that fires when the open state changes.",
 		}),
 		disabled,
@@ -112,6 +117,7 @@ export const trigger = createApiSchema<TooltipTriggerPropsWithoutHTML>({
 			description: "The open state of the tooltip.",
 			value: enums("open", "closed"),
 			isEnum: true,
+			definition: OpenClosed,
 		},
 		{
 			name: "tooltip-trigger",
@@ -129,9 +135,20 @@ export const content = createApiSchema<TooltipContentPropsWithoutHTML>({
 		...escapeLayerProps,
 		forceMount: forceMountProp,
 		dir: dirProp,
-		...withChildProps({ elType: "HTMLDivElement" }),
+		...withChildProps({
+			elType: "HTMLDivElement",
+			childrenDef: OpenChildrenSnippetProps,
+			childDef: OpenChildSnippetProps,
+		}),
 	},
 	dataAttributes: [
+		{
+			name: "state",
+			value: enums("open", "closed"),
+			description: "The open state of the tooltip.",
+			isEnum: true,
+			definition: OpenClosed,
+		},
 		{
 			name: "tooltip-content",
 			description: "Present on the content element.",
@@ -155,4 +172,4 @@ export const arrow = createApiSchema<TooltipArrowPropsWithoutHTML>({
 	],
 });
 
-export const tooltip = [root, trigger, content, arrow];
+export const tooltip = [provider, root, trigger, content, arrow];

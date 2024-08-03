@@ -43,7 +43,7 @@
 			</Table.Row>
 		</Table.Header>
 		<Table.Body>
-			{#each propData as p}
+			{#each propData as p, i (p.name + i)}
 				<Table.Row>
 					<Table.Cell class="flex items-center gap-1 pr-1 align-baseline">
 						<Code class="font-semibold text-foreground">{p?.name}</Code>

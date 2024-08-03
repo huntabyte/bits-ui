@@ -1,5 +1,6 @@
 import { box } from "svelte-toolbelt";
 import { useEventListener } from "runed";
+import { untrack } from "svelte";
 import { TOOLTIP_OPEN_EVENT } from "./utils.js";
 import { watch } from "$lib/internal/box.svelte.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
@@ -73,8 +74,8 @@ class TooltipProviderState {
 }
 
 type TooltipRootStateProps = ReadableBoxedValues<{
-	delayDuration: number;
-	disableHoverableContent: boolean;
+	delayDuration: number | undefined;
+	disableHoverableContent: boolean | undefined;
 	disableCloseOnTriggerClick: boolean;
 	disabled: boolean;
 	ignoreNonKeyboardFocus: boolean;
@@ -123,14 +124,30 @@ class TooltipRootState {
 		this._disableCloseOnTriggerClick = props.disableCloseOnTriggerClick;
 		this._disabled = props.disabled;
 		this._ignoreNonKeyboardFocus = props.ignoreNonKeyboardFocus;
+
 		this.#timerFn = useTimeoutFn(
 			() => {
 				this.#wasOpenDelayed = true;
 				this.open.current = true;
 			},
-			this._delayDuration.current,
+			this.delayDuration ?? 0,
 			{ immediate: false }
 		);
+
+		$effect(() => {
+			if (this.delayDuration !== undefined) {
+				untrack(() => {
+					this.#timerFn = useTimeoutFn(
+						() => {
+							this.#wasOpenDelayed = true;
+							this.open.current = true;
+						},
+						this.delayDuration,
+						{ immediate: false }
+					);
+				});
+			}
+		});
 
 		watch(this.open, (isOpen) => {
 			if (!this.provider.onClose) return;
@@ -246,14 +263,9 @@ class TooltipTriggerState {
 	};
 
 	#onfocus = (e: FocusEvent & { currentTarget: HTMLElement }) => {
-		if (this.#isPointerDown.current || this.#isDisabled) {
-			return;
-		}
+		if (this.#isPointerDown.current || this.#isDisabled) return;
 
-		if (this.#root.ignoreNonKeyboardFocus && !isFocusVisible(e.currentTarget)) {
-			return;
-		}
-
+		if (this.#root.ignoreNonKeyboardFocus && !isFocusVisible(e.currentTarget)) return;
 		this.#root.handleOpen();
 	};
 
@@ -272,6 +284,7 @@ class TooltipTriggerState {
 		"aria-describedby": this.#root.open.current ? this.#root.contentNode?.id : undefined,
 		"data-state": this.#root.stateAttr,
 		"data-disabled": getDataDisabled(this.#isDisabled),
+		"data-delay-duration": `${this.#root.delayDuration}`,
 		[TRIGGER_ATTR]: "",
 		tabindex: this.#isDisabled ? undefined : 0,
 		onpointerup: this.#onpointerup,

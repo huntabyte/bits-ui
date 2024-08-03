@@ -12,8 +12,8 @@
 </script>
 
 <main data-testid="main">
-	<Tooltip.Provider>
-		<Tooltip.Root bind:open {...restProps} delayDuration={50}>
+	<Tooltip.Provider delayDuration={0}>
+		<Tooltip.Root bind:open {...restProps}>
 			<Tooltip.Trigger data-testid="trigger">@sveltejs</Tooltip.Trigger>
 			<Tooltip.Portal {...portalProps}>
 				<Tooltip.Content {...contentProps} data-testid="content" class="w-80">

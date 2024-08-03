@@ -9,6 +9,14 @@ import Dir from "./extended-types/shared/dir.md";
 import To from "./extended-types/portal/to.md";
 import DateRange from "./extended-types/shared/date-range.md";
 import DateRangeChangeFn from "./extended-types/shared/date-range-change-fn.md";
+import FloatingSide from "./extended-types/floating/side.md";
+import FloatingAlign from "./extended-types/floating/align.md";
+import FloatingStrategy from "./extended-types/floating/strategy.md";
+import FloatingUpdatePositionStrategy from "./extended-types/floating/update-position-strategy.md";
+import FloatingCollisionBoundary from "./extended-types/floating/collision-boundary.md";
+import FloatingCollisionPadding from "./extended-types/floating/collision-padding.md";
+import FloatingSticky from "./extended-types/floating/sticky.md";
+
 import type { APISchema, CSSVarSchema, DataAttrSchema, PropSchema } from "$lib/types/api.js";
 import * as C from "$lib/content/constants.js";
 
@@ -175,6 +183,7 @@ type EnumDataAttrOptions = {
 	name: string;
 	description: string;
 	options: string[];
+	definition?: Component;
 };
 
 export function createEnumDataAttr(options: EnumDataAttrOptions): DataAttrSchema {
@@ -182,6 +191,7 @@ export function createEnumDataAttr(options: EnumDataAttrOptions): DataAttrSchema
 		name: options.name,
 		value: enums(...options.options),
 		description: options.description,
+		definition: options.definition,
 		isEnum: true,
 	};
 }
@@ -321,6 +331,7 @@ export function floatingSideProp(side = "bottom"): PropSchema {
 		default: side,
 		description:
 			"The preferred side of the anchor to render the floating element against when open. Will be reversed when collisions occur.",
+		definition: FloatingSide,
 	});
 }
 
@@ -335,6 +346,7 @@ export function floatingAlignProp(align = "start"): PropSchema {
 		default: align,
 		description:
 			"The preferred alignment of the anchor to render the floating element against when open. This may change when collisions occur.",
+		definition: FloatingAlign,
 	});
 }
 
@@ -358,6 +370,7 @@ export const floatingAvoidCollisionsProp = createBooleanProp({
 export const floatingCollisionBoundaryProp = createUnionProp({
 	options: ["Element", "null"],
 	description: "A boundary element or array of elements to check for collisions against.",
+	definition: FloatingCollisionBoundary,
 });
 
 export const floatingCollisionPaddingProp = createUnionProp({
@@ -365,6 +378,7 @@ export const floatingCollisionPaddingProp = createUnionProp({
 	description:
 		"The amount in pixels of virtual padding around the viewport edges to check for overflow which will cause a collision.",
 	default: "0",
+	definition: FloatingCollisionPadding,
 });
 
 export const floatingStickyProp = createEnumProp({
@@ -372,6 +386,7 @@ export const floatingStickyProp = createEnumProp({
 	description:
 		"The sticky behavior on the align axis. `'partial'` will keep the content in the boundary as long as the trigger is at least partially in the boundary whilst `'always'` will keep the content in the boundary regardless.",
 	default: "partial",
+	definition: FloatingSticky,
 });
 
 export const floatingHideWhenDetachedProp = createBooleanProp({
@@ -385,6 +400,7 @@ export const floatingUpdatePositionStrategyProp = createEnumProp({
 	description:
 		"The strategy to use when updating the position of the content. When `'optimized'` the content will only be repositioned when the trigger is in the viewport. When `'always'` the content will be repositioned whenever the position changes.",
 	default: "optimized",
+	definition: FloatingUpdatePositionStrategy,
 });
 
 export const floatingStrategyProp = createEnumProp({
@@ -392,6 +408,7 @@ export const floatingStrategyProp = createEnumProp({
 	description:
 		"The positioning strategy to use for the floating element. When `'fixed'` the element will be positioned relative to the viewport. When `'absolute'` the element will be positioned relative to the nearest positioned ancestor.",
 	default: "fixed",
+	definition: FloatingStrategy,
 });
 
 export const preventScrollProp = createBooleanProp({

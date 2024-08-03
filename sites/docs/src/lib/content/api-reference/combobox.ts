@@ -8,6 +8,15 @@ import type {
 	ComboboxRootPropsWithoutHTML,
 	ComboboxTriggerPropsWithoutHTML,
 } from "bits-ui";
+import StringOrArrayChangeFn from "./extended-types/shared/string-or-array-change-fn.md";
+import StringOrArrayString from "./extended-types/shared/string-or-array-string.md";
+import SingleOrMultiple from "./extended-types/shared/single-or-multiple.md";
+import OpenChangeFn from "./extended-types/shared/open-change-fn.md";
+import ScrollAlignment from "./extended-types/combobox/scroll-alignment.md";
+import OpenChildSnippetProps from "./extended-types/shared/open-child-snippet-props.md";
+import OpenChildrenSnippetProps from "./extended-types/shared/open-children-snippet-props.md";
+import OpenClosed from "./extended-types/shared/open-closed.md";
+import Noop from "./extended-types/shared/noop.md";
 import {
 	arrowProps,
 	childrenSnippet,
@@ -35,6 +44,7 @@ const stateDataAttr = createEnumDataAttr({
 	name: "state",
 	options: ["open", "closed"],
 	description: "The combobox's open state.",
+	definition: OpenClosed,
 });
 
 export const root = createApiSchema<ComboboxRootPropsWithoutHTML>({
@@ -45,6 +55,7 @@ export const root = createApiSchema<ComboboxRootPropsWithoutHTML>({
 			options: ["single", "multiple"],
 			description: "The type of combobox.",
 			required: true,
+			definition: SingleOrMultiple,
 		}),
 		value: createUnionProp({
 			options: ["string", "string[]"],
@@ -52,9 +63,10 @@ export const root = createApiSchema<ComboboxRootPropsWithoutHTML>({
 			description:
 				"The value of the combobox. When the type is `'single'`, this should be a string. When the type is `'multiple'`, this should be an array of strings.",
 			bindable: true,
+			definition: StringOrArrayString,
 		}),
 		onValueChange: createFunctionProp({
-			definition: "(value: string) => void | (value: string[]) => void",
+			definition: StringOrArrayChangeFn,
 			description:
 				"A callback that is fired when the combobox value changes. When the type is `'single'`, the argument will be a string. When the type is `'multiple'`, the argument will be an array of strings.",
 		}),
@@ -64,7 +76,7 @@ export const root = createApiSchema<ComboboxRootPropsWithoutHTML>({
 			bindable: true,
 		}),
 		onOpenChange: createFunctionProp({
-			definition: "(open: boolean) => void",
+			definition: OpenChangeFn,
 			description: "A callback that is fired when the combobox menu's open state changes.",
 		}),
 		disabled: createBooleanProp({
@@ -83,6 +95,7 @@ export const root = createApiSchema<ComboboxRootPropsWithoutHTML>({
 			options: ["nearest", "center"],
 			default: "'nearest'",
 			description: "The alignment of the highlighted item when scrolling.",
+			definition: ScrollAlignment,
 		}),
 		loop: createBooleanProp({
 			default: C.FALSE,
@@ -108,7 +121,11 @@ export const content = createApiSchema<ComboboxContentPropsWithoutHTML>({
 				"Whether or not the combobox should loop through items when reaching the end.",
 		}),
 		forceMount: forceMountProp,
-		...withChildProps({ elType: "HTMLDivElement" }),
+		...withChildProps({
+			elType: "HTMLDivElement",
+			childrenDef: OpenChildrenSnippetProps,
+			childDef: OpenChildSnippetProps,
+		}),
 	},
 	dataAttributes: [
 		stateDataAttr,
@@ -158,11 +175,11 @@ export const item = createApiSchema<ComboboxItemPropsWithoutHTML>({
 				"Whether or not the combobox item is disabled. This will prevent interaction/selection.",
 		}),
 		onHighlight: createFunctionProp({
-			definition: "() => void",
+			definition: Noop,
 			description: "A callback that is fired when the item is highlighted.",
 		}),
 		onUnhighlight: createFunctionProp({
-			definition: "()) => void",
+			definition: Noop,
 			description: "A callback that is fired when the item is unhighlighted.",
 		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
@@ -171,10 +188,12 @@ export const item = createApiSchema<ComboboxItemPropsWithoutHTML>({
 		createDataAttrSchema({
 			name: "value",
 			description: "The value of the combobox item.",
+			value: "string",
 		}),
 		createDataAttrSchema({
 			name: "label",
 			description: "The label of the combobox item.",
+			value: "string",
 		}),
 		createDataAttrSchema({
 			name: "disabled",
@@ -208,11 +227,7 @@ export const input = createApiSchema<ComboboxInputPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLInputElement" }),
 	},
 	dataAttributes: [
-		createEnumDataAttr({
-			name: "state",
-			options: ["open", "closed"],
-			description: "The combobox's open state.",
-		}),
+		stateDataAttr,
 		createDataAttrSchema({
 			name: "disabled",
 			description: "Present when the combobox is disabled.",
@@ -282,4 +297,4 @@ export const arrow = createApiSchema<ComboboxArrowPropsWithoutHTML>({
 	],
 });
 
-export const combobox = [root, content, item, input, groupLabel, arrow];
+export const combobox = [root, trigger, content, item, input, groupLabel, arrow];

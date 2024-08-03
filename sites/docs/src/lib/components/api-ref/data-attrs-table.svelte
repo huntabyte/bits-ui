@@ -18,7 +18,7 @@
 	</Table.Header>
 	<Table.Body>
 		{#if dataAttrs.length}
-			{#each dataAttrs as attr}
+			{#each dataAttrs as attr (attr.name)}
 				<Table.Row>
 					<Table.Cell class="align-baseline">
 						<Code class="font-semibold text-foreground">data-{attr.name}</Code>

@@ -1,5 +1,5 @@
 ```ts
-type DialogOverlaySnippetProps = {
+type ChildSnippetProps = {
 	props: Record<string, unknown>;
 	open: boolean;
 };

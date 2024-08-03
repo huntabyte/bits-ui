@@ -12,11 +12,13 @@ import {
 	createNumberProp,
 	withChildProps,
 } from "./helpers.js";
+import LoadingStatus from "./extended-types/avatar/loading-status.md";
 
 const statusDataAttr = createEnumDataAttr({
 	name: "status",
 	description: "The loading status of the image.",
 	options: ["loading", "loaded", "error"],
+	definition: LoadingStatus,
 });
 
 export const root = createApiSchema<AvatarRootPropsWithoutHTML>({

@@ -29,16 +29,29 @@ import {
 	preventOverflowTextSelectionProp,
 	withChildProps,
 } from "./helpers.js";
+import OpenClosed from "./extended-types/shared/open-closed.md";
+import Noop from "./extended-types/shared/noop.md";
+import OnCheckedChange from "./extended-types/shared/on-checked-change.md";
+import OnStringValueChange from "./extended-types/shared/on-string-value-change.md";
+import Checked from "./extended-types/shared/checked.md";
+import CheckedChildrenSnippetProps from "./extended-types/shared/checked-children-snippet-props.md";
+import CheckedChildSnippetProps from "./extended-types/shared/checked-child-snippet-props.md";
+import RadioItemChildrenSnippetProps from "./extended-types/shared/radio-item-children-snippet-props.md";
+import RadioItemChildSnippetProps from "./extended-types/shared/radio-item-child-snippet-props.md";
+import OpenChildSnippetProps from "./extended-types/shared/open-child-snippet-props.md";
+import OpenChildrenSnippetProps from "./extended-types/shared/open-children-snippet-props.md";
+import OpenChangeFn from "./extended-types/shared/open-change-fn.md";
 import type { APISchema, DataAttrSchema, PropObj } from "$lib/types/index.js";
 import * as C from "$lib/content/constants.js";
-import { enums, union } from "$lib/content/api-reference/helpers.js";
+import { enums } from "$lib/content/api-reference/helpers.js";
+import { omit } from "$lib/utils/omit.js";
 
 const sharedItemProps = {
 	textValue: createStringProp({
 		description: "The text value of the checkbox menu item. This is used for typeahead.",
 	}),
 	onSelect: createFunctionProp({
-		definition: "() => void",
+		definition: Noop,
 		description: "A callback that is fired when the menu item is selected.",
 	}),
 	...withChildProps({ elType: "HTMLDivElement" }),
@@ -51,7 +64,7 @@ const props = {
 		bindable: true,
 	}),
 	onOpenChange: createFunctionProp({
-		definition: "(open: boolean) => void",
+		definition: OpenChangeFn,
 		description: "A callback that is fired when the menu's open state changes.",
 	}),
 	dir: dirProp,
@@ -65,7 +78,7 @@ const subProps = {
 		bindable: true,
 	}),
 	onOpenChange: createFunctionProp({
-		definition: "(open: boolean) => void",
+		definition: OpenChangeFn,
 		description: "A callback that is fired when the submenu's open state changes.",
 	}),
 	children: childrenSnippet(),
@@ -84,7 +97,11 @@ const contentProps = {
 		description:
 			"Whether or not to loop through the menu items in when navigating with the keyboard.",
 	}),
-	...withChildProps({ elType: "HTMLDivElement" }),
+	...withChildProps({
+		elType: "HTMLDivElement",
+		childrenDef: OpenChildrenSnippetProps,
+		childDef: OpenChildSnippetProps,
+	}),
 } satisfies PropObj<DropdownMenuContentPropsWithoutHTML>;
 
 const subContentProps = contentProps satisfies PropObj<
@@ -102,13 +119,19 @@ const checkboxItemProps = {
 		default: C.FALSE,
 		description: "The checkbox menu item's checked state.",
 		bindable: true,
+		definition: Checked,
 	}),
 	onCheckedChange: createFunctionProp({
-		definition: "(checked: boolean | 'indeterminate') => void",
+		definition: OnCheckedChange,
 		description:
 			"A callback that is fired when the checkbox menu item's checked state changes.",
 	}),
-	...sharedItemProps,
+	...omit(sharedItemProps, "child", "children"),
+	...withChildProps({
+		elType: "HTMLDivElement",
+		childrenDef: CheckedChildrenSnippetProps,
+		childDef: CheckedChildSnippetProps,
+	}),
 } satisfies PropObj<DropdownMenuCheckboxItemPropsWithoutHTML>;
 
 const radioGroupProps = {
@@ -117,7 +140,7 @@ const radioGroupProps = {
 		bindable: true,
 	}),
 	onValueChange: createFunctionProp({
-		definition: "(value: string) => void",
+		definition: OnStringValueChange,
 		description: "A callback that is fired when the radio group's value changes.",
 	}),
 	...withChildProps({ elType: "HTMLDivElement" }),
@@ -134,7 +157,12 @@ const radioItemProps = {
 			"Whether or not the radio menu item is disabled. Disabled items cannot be interacted with and are skipped when navigating with the keyboard.",
 		default: C.FALSE,
 	}),
-	...sharedItemProps,
+	...omit(sharedItemProps, "child", "children"),
+	...withChildProps({
+		elType: "HTMLDivElement",
+		childrenDef: RadioItemChildrenSnippetProps,
+		childDef: RadioItemChildSnippetProps,
+	}),
 } satisfies PropObj<DropdownMenuRadioItemPropsWithoutHTML>;
 
 const itemProps = {
@@ -178,6 +206,7 @@ const STATE: DataAttrSchema = {
 	value: enums("open", "closed"),
 	description: "The open state of the menu or submenu the element controls or belongs to.",
 	isEnum: true,
+	definition: OpenClosed,
 };
 
 type DataAttrs = APISchema["dataAttributes"];
@@ -209,7 +238,7 @@ const arrowAttrs: DataAttrs = [
 const sharedItemAttrs: DataAttrs = [
 	{
 		name: "orientation",
-		value: "vertical",
+		value: "'vertical'",
 	},
 	{
 		name: "highlighted",
@@ -281,7 +310,7 @@ const radioItemAttrs: DataAttrs = [
 const separatorAttrs: DataAttrs = [
 	{
 		name: "orientation",
-		value: "vertical",
+		value: "'vertical'",
 		description: "The orientation of the separator.",
 	},
 	{

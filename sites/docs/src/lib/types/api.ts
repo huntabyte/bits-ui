@@ -25,6 +25,7 @@ export type DataAttrSchema = {
 	value?: string;
 	description?: string;
 	isEnum?: boolean;
+	definition?: Component;
 };
 
 export type CSSVarSchema = {
