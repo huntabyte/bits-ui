@@ -15,6 +15,7 @@ import {
 	createStringProp,
 	withChildProps,
 } from "./helpers.js";
+import { dateValueProp } from "./extended-types/index.js";
 import { enums } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 
@@ -23,7 +24,7 @@ export const root = createApiSchema<DateFieldRootPropsWithoutHTML>({
 	description: "The root date field component.",
 	props: {
 		value: {
-			type: "DateValue",
+			type: dateValueProp,
 			description: "The selected date.",
 			bindable: true,
 		},
@@ -32,7 +33,7 @@ export const root = createApiSchema<DateFieldRootPropsWithoutHTML>({
 			description: "A function that is called when the selected date changes.",
 		}),
 		placeholder: {
-			type: "DateValue",
+			type: dateValueProp,
 			description:
 				"The placeholder date, which is used to determine what date to start the segments from when no value exists.",
 			bindable: true,
@@ -65,11 +66,11 @@ export const root = createApiSchema<DateFieldRootPropsWithoutHTML>({
 			default: C.FALSE,
 		}),
 		maxValue: {
-			type: "DateValue",
+			type: dateValueProp,
 			description: "The maximum valid date that can be entered.",
 		},
 		minValue: {
-			type: "DateValue",
+			type: dateValueProp,
 			description: "The minimum valid date that can be entered.",
 		},
 		locale: createStringProp({

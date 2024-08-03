@@ -30,6 +30,7 @@ import {
 	createUnionProp,
 	withChildProps,
 } from "./helpers.js";
+import { dateValueProp } from "./extended-types/index.js";
 import * as C from "$lib/content/constants.js";
 
 const sharedCellDayAttrs = [
@@ -89,7 +90,7 @@ export const root = createApiSchema<CalendarRootPropsWithoutHTML>({
 			description: "A function that is called when the selected date changes.",
 		}),
 		placeholder: {
-			type: "DateValue",
+			type: dateValueProp,
 			description:
 				"The placeholder date, which is used to determine what month to display when no date is selected. This updates as the user navigates the calendar, and can be used to programatically control the calendar's view.",
 		},
@@ -135,12 +136,12 @@ export const root = createApiSchema<CalendarRootPropsWithoutHTML>({
 			description: "A function that returns whether or not a date is unavailable.",
 		}),
 		maxValue: {
-			type: "DateValue",
+			type: dateValueProp,
 			description: "The maximum date that can be selected.",
 			tooltipContent: "Learn more about the `DateValue` type.",
 		},
 		minValue: {
-			type: "DateValue",
+			type: dateValueProp,
 			description: "The minimum date that can be selected.",
 		},
 		locale: createStringProp({
@@ -195,11 +196,11 @@ export const cell = createApiSchema<CalendarCellPropsWithoutHTML>({
 	description: "A cell in the calendar grid.",
 	props: {
 		date: {
-			type: "DateValue",
+			type: dateValueProp,
 			description: "The date for the cell.",
 		},
 		month: {
-			type: "DateValue",
+			type: dateValueProp,
 			description: "The current month the date is being displayed in.",
 		},
 		...withChildProps({ elType: "HTMLTableCellElement" }),
