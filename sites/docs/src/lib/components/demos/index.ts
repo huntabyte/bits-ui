@@ -45,3 +45,5 @@ export { default as TooltipDemo } from "./tooltip-demo.svelte";
 export { default as TooltipDemoCustom } from "./tooltip-demo-custom.svelte";
 export { default as TooltipDemoDelayDuration } from "./tooltip-demo-delay-duration.svelte";
 export { default as DateFieldDemoCustom } from "./date-field-demo-custom.svelte";
+export { default as SelectDemoCustom } from "./select-demo-custom.svelte";
+export { default as SelectDemoPositioning } from "./select-demo-positioning.svelte";

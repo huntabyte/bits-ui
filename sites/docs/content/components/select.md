@@ -4,7 +4,7 @@ description: Enables users to choose from a list of options presented in a dropd
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, SelectDemo } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, SelectDemo, SelectDemoPositioning } from '$lib/components/index.js'
 	export let schemas;
 </script>
 
@@ -38,6 +38,12 @@ The `Select` component can be used as a replacement for the native `<select>` el
 				<Select.Item>
 					<Select.ItemText />
 				</Select.Item>
+				<Select.Group>
+					<Select.GroupLabel />
+					<Select.Item>
+						<Select.ItemText />
+					</Select.Item>
+				</Select.Group>
 			</Select.Viewport>
 			<Select.ScrollDownButton />
 		</Select.Content>
@@ -161,6 +167,26 @@ You can also use the `onValueChange` prop to update local state when the Select'
 	<!-- ... -->
 </Select.Root>
 ```
+
+## Positioning
+
+The `Select` component supports two different positioning strategies for the content. The default positioning strategy is `floating`, which uses Floating UI to position the content relative to the trigger, similar to other popover-like components. If you prefer a more native-like experience, you can set the `position` prop to `item-aligned`, which will position the content relative to the trigger, similar to a native `<select>` element.
+
+```svelte /position="item-aligned"/ /position="floating"/
+<Select.Content position="floating">
+	<!-- ... -->
+</Select.Content>
+
+<!-- or -->
+
+<Select.Content position="item-aligned">
+	<!-- ... -->
+</Select.Content>
+```
+
+Here's an example of both strategies in action:
+
+<SelectDemoPositioning />
 
 ## Server-side Rendering
 
