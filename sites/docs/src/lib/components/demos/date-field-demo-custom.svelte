@@ -1,11 +1,17 @@
 <script lang="ts">
-	import { CalendarDate } from "@internationalized/date";
 	import { DateField } from "bits-ui";
+
+	let {
+		labelText = "Select a date",
+		value = $bindable(),
+		placeholder = $bindable(),
+		...restProps
+	}: DateField.RootProps & { labelText: string } = $props();
 </script>
 
-<DateField.Root minValue={new CalendarDate(2024, 8, 1)}>
+<DateField.Root bind:value bind:placeholder {...restProps}>
 	<div class="flex w-full max-w-[280px] flex-col gap-1.5">
-		<DateField.Label class="block select-none text-sm font-medium">Birthday</DateField.Label>
+		<DateField.Label class="block select-none text-sm font-medium">{labelText}</DateField.Label>
 		<DateField.Input
 			class="flex h-input w-full select-none items-center rounded-input border border-border-input bg-background px-2 py-3 text-sm tracking-[0.01em] text-foreground focus-within:border-border-input-hover focus-within:shadow-date-field-focus hover:border-border-input-hover data-[invalid]:border-destructive "
 		>

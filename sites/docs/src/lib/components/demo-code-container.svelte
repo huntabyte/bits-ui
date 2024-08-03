@@ -7,15 +7,16 @@
 	import { cn } from "$lib/utils/styles.js";
 
 	type Props = {
+		fileName?: string;
 		children: Snippet;
 		class?: string;
 	};
-	let { children, class: className }: Props = $props();
+	let { children, fileName = "App.svelte", class: className }: Props = $props();
 
-	const items = [
+	const items = $derived([
 		{
-			label: "App.svelte",
-			value: "App.svelte",
+			label: fileName,
+			value: fileName,
 		},
 		{
 			label: "tailwind.config.js",
@@ -25,12 +26,12 @@
 			label: "app.css",
 			value: "app.css",
 		},
-	];
+	]);
 
 	let open = $state(false);
 </script>
 
-<DemoCodeTabs {items} value="App.svelte" bind:open>
+<DemoCodeTabs {items} value={fileName} bind:open>
 	<Collapsible.Root bind:open>
 		{#each items as item (item.value)}
 			<Tabs.Content
@@ -45,7 +46,7 @@
 							className
 						)}
 					>
-						{#if item.value === "App.svelte"}
+						{#if item.value === fileName}
 							{@render children()}
 						{:else if item.value === "tailwind.config.js"}
 							<TailwindConfig />

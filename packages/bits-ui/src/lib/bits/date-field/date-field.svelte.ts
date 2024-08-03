@@ -723,10 +723,12 @@ class DateFieldDaySegmentState {
 				if (prev === null) {
 					const next = placeholder.day;
 					this.#announcer.announce(next);
+					if (next < 10) return `0${next}`;
 					return `${next}`;
 				}
 				const next = placeholder.set({ day: Number.parseInt(prev) }).cycle("day", 1).day;
 				this.#announcer.announce(next);
+				if (next < 10) return `0${next}`;
 				return `${next}`;
 			});
 			return;
@@ -736,11 +738,13 @@ class DateFieldDaySegmentState {
 				if (prev === null) {
 					const next = placeholder.day;
 					this.#announcer.announce(next);
+					if (next < 10) return `0${next}`;
 					return `${next}`;
 				}
 				const next = placeholder.set({ day: Number.parseInt(prev) }).cycle("day", -1).day;
 
 				this.#announcer.announce(next);
+				if (next < 10) return `0${next}`;
 				return `${next}`;
 			});
 			return;
