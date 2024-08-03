@@ -60,50 +60,46 @@ description: Organizes and presents a collection of menu options or actions with
 
 ## Reusable Components
 
-If you're planning to use Menubar in multiple places, you can create a reusable component that wraps the Menubar component.
+If you're planning to use Menubar in multiple places, you can create reusable components that wrap the different parts of the Menubar.
 
-This example shows you how to create a Menubar component that accepts a few custom props that make it more capable.
+In the following example, we're creating a reusable `MyMenubarMenu` component that contains the trigger, content, and items of a menu.
 
-```svelte title="CustomMenubar.svelte"
+```svelte title="MyMenubarMenu.svelte"
 <script lang="ts">
-	import { Menubar, type WithoutChild } from "bits-ui";
-	type Props = Menubar.Props & {
+	import { Menubar, type WithoutChildrenOrChild } from "bits-ui";
+
+	type Props = WithoutChildrenOrChild<Menubar.MenuProps> & {
 		triggerText: string;
-		items: { label: string; value: string }[];
-		contentProps?: WithoutChild<Menubar.Content.Props>;
+		items: { label: string; value: string; onSelect?: () => void }[];
+		contentProps?: WithoutChildrenOrChild<Menubar.ContentProps>;
 		// other component props if needed
 	};
-	let {
-		open = $bindable(false),
-		children,
-		triggerText,
-		items,
-		contentProps,
-		...restProps
-	}: Props = $props();
+
+	let { triggerText, items, contentProps, ...restProps }: Props = $props();
 </script>
 
-<Menubar.Root bind:open {...restProps}>
+<Menubar.Menu {...restProps}>
 	<Menubar.Trigger>
 		{triggerText}
 	</Menubar.Trigger>
 	<Menubar.Content {...contentProps}>
 		<Menubar.Group aria-label={triggerText}>
 			{#each items as item}
-				<Menubar.Item textValue={item.label}>
+				<Menubar.Item textValue={item.label} onSelect={item.onSelect}>
 					{item.label}
 				</Menubar.Item>
 			{/each}
 		</Menubar.Group>
 	</Menubar.Content>
-</Menubar.Root>
+</Menubar.Menu>
 ```
 
-You can then use the `CustomMenubar` component like this:
+Now, we can use the `MyMenubarMenu` component within a `Menubar.Root` component to render out the various menus.
 
 ```svelte
 <script lang="ts">
-	import CustomMenubar from "./CustomMenubar.svelte";
+	import { Menubar } from "bits-ui";
+	import MyMenubarMenu from "./MyMenubarMenu.svelte";
 
 	const sales = [
 		{ label: "Michael Scott", value: "michael" },
@@ -127,54 +123,59 @@ You can then use the `CustomMenubar` component like this:
 		{ label: "Oscar Martinez", value: "oscar" },
 	];
 
-	const menuItems = [
+	const menubarMenus = [
 		{ title: "Sales", items: sales },
 		{ title: "HR", items: hr },
 		{ title: "Accounting", items: accounting },
 	];
 </script>
 
-{#each menuItems as { title, items }}
-	<CustomMenubar triggerText={title} {items} />
-{/each}
+<Menubar.Root>
+	{#each menubarMenus as { title, items }}
+		<CustomMenubar triggerText={title} {items} />
+	{/each}
+</Menubar.Root>
 ```
 
-## Managing Open State
+## Managing Value State
 
-Bits UI provides flexible options for controlling and synchronizing the menu's open state.
+Bits UI provides flexible options for controlling and synchronizing the menubar's active value state. The `value` represents the currently opened menu within the menubar.
 
 ### Two-Way Binding
 
-Use the `bind:open` directive for effortless two-way synchronization between your local state and the menu's internal state.
+Use the `bind:value` directive for effortless two-way synchronization between your local state and the menubar's internal state.
 
 ```svelte {3,6,8}
 <script lang="ts">
 	import { Menubar } from "bits-ui";
-	let isOpen = $state(false);
+	let activeValue = $state("");
 </script>
 
-<button on:click={() => (isOpen = true)}>Open Menubar Menu</button>
-<Menubar.Root bind:open={isOpen}>
-	<!-- Menubar Menu content -->
+<button onclick={() => (activeValue = "menu-1")}>Open Menubar Menu</button>
+<Menubar.Root bind:value={activeValue}>
+	<Menubar.Menu value="menu-1">
+		<!-- ... -->
+	</Menubar.Menu>
+	<Menubar.Menu value="menu-2">
+		<!-- ... -->
+	</Menubar.Menu>
 </Menubar.Root>
 ```
 
-This setup enables opening the menu via the custom button and ensures the local `isOpen` state updates when the menu closes through any means (e.g., escape key).
-
 ### Change Handler
 
-You can also use the `onOpenChange` prop to update local state when the menu's `open` state changes. This is useful when you don't want two-way binding for one reason or another, or you want to perform additional logic when the menu opens or closes.
+You can also use the `onValueCHange` prop to update local state when the menubar's active menu changes. This is useful when you don't want two-way binding for one reason or another, or you want to perform additional logic when the menus open or close.
 
 ```svelte {3,7-11}
 <script lang="ts">
 	import { Menubar } from "bits-ui";
-	let isOpen = $state(false);
+	let activeValue = $state("");
 </script>
 
 <Menubar.Root
-	open={isOpen}
-	onOpenChange={(open) => {
-		isOpen = open;
+	value={activeValue}
+	onOpenChange={(value) => {
+		activeValue = value;
 		// additional logic here.
 	}}
 >
@@ -192,18 +193,20 @@ You can create nested menus using the `Menubar.Sub` component to create complex 
 </script>
 
 <Menubar.Root>
-	<Menubar.Trigger>Open Menu</Menubar.Trigger>
-	<Menubar.Content>
-		<Menubar.Item>Item 1</Menubar.Item>
-		<Menubar.Item>Item 2</Menubar.Item>
-		<Menubar.Sub>
-			<Menubar.SubTrigger>Open Sub Menu</Menubar.SubTrigger>
-			<Menubar.SubContent>
-				<Menubar.Item>Sub Item 1</Menubar.Item>
-				<Menubar.Item>Sub Item 2</Menubar.Item>
-			</Menubar.SubContent>
-		</Menubar.Sub>
-	</Menubar.Content>
+	<Menubar.Menu>
+		<Menubar.Trigger>Open Menu</Menubar.Trigger>
+		<Menubar.Content>
+			<Menubar.Item>Item 1</Menubar.Item>
+			<Menubar.Item>Item 2</Menubar.Item>
+			<Menubar.Sub>
+				<Menubar.SubTrigger>Open Sub Menu</Menubar.SubTrigger>
+				<Menubar.SubContent>
+					<Menubar.Item>Sub Item 1</Menubar.Item>
+					<Menubar.Item>Sub Item 2</Menubar.Item>
+				</Menubar.SubContent>
+			</Menubar.Sub>
+		</Menubar.Content>
+	</Menubar.Menu>
 </Menubar.Root>
 ```
 
@@ -220,17 +223,19 @@ You can use the `forceMount` prop along with the `child` snippet to forcefully m
 </script>
 
 <Menubar.Root>
-	<Menubar.Trigger>Open Menu</Menubar.Trigger>
-	<Menubar.Content forceMount>
-		{#snippet child({ props, open })}
-			{#if open}
-				<div {...props} transition:fly>
-					<Menubar.Item>Item 1</Menubar.Item>
-					<Menubar.Item>Item 2</Menubar.Item>
-				</div>
-			{/if}
-		{/snippet}
-	</Menubar.Content>
+	<Menubar.Menu>
+		<Menubar.Trigger>Open Menu</Menubar.Trigger>
+		<Menubar.Content forceMount>
+			{#snippet child({ props, open })}
+				{#if open}
+					<div {...props} transition:fly>
+						<Menubar.Item>Item 1</Menubar.Item>
+						<Menubar.Item>Item 2</Menubar.Item>
+					</div>
+				{/if}
+			{/snippet}
+		</Menubar.Content>
+	</Menubar.Menu>
 </Menubar.Root>
 ```
 
