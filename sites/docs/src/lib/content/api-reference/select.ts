@@ -9,10 +9,12 @@ import type {
 	SelectTriggerPropsWithoutHTML,
 	SelectValuePropsWithoutHTML,
 } from "bits-ui";
-import OnStringValueChange from "./extended-types/shared/on-string-value-change.md";
-import OnOpenChange from "./extended-types/shared/open-change-fn.md";
-import OpenClosed from "./extended-types/shared/open-closed.md";
-import Position from "./extended-types/select/position.md";
+import {
+	OnOpenChangeProp,
+	OnStringValueChangeProp,
+	OpenClosedProp,
+} from "./extended-types/shared/index.js";
+import { SelectPositionProp } from "./extended-types/select/index.js";
 import {
 	arrowProps,
 	childrenSnippet,
@@ -44,7 +46,7 @@ export const root = createApiSchema<SelectRootPropsWithoutHTML>({
 			default: "''",
 		}),
 		onValueChange: createFunctionProp({
-			definition: OnStringValueChange,
+			definition: OnStringValueChangeProp,
 			description: "A callback that is fired when the select menu's value changes.",
 		}),
 		open: createBooleanProp({
@@ -53,7 +55,7 @@ export const root = createApiSchema<SelectRootPropsWithoutHTML>({
 			bindable: true,
 		}),
 		onOpenChange: createFunctionProp({
-			definition: OnOpenChange,
+			definition: OnOpenChangeProp,
 			description: "A callback that is fired when the select menu's open state changes.",
 		}),
 		disabled: createBooleanProp({
@@ -115,7 +117,7 @@ export const content = createApiSchema<SelectContentPropsWithoutHTML>({
 			default: "floating",
 			description:
 				"The positioning strategy to use for the content. If set to 'item-aligned', the content will be positioned relative to the trigger, similar to a native select. If set to `floating`, the content will use Floating UI to position itself similar to other popover-like components.",
-			definition: Position,
+			definition: SelectPositionProp,
 		}),
 		dir: dirProp,
 		...floatingProps(),
@@ -164,7 +166,7 @@ export const item = createApiSchema<SelectItemPropsWithoutHTML>({
 			description: "The state of the item.",
 			value: enums("selected", "hovered"),
 			isEnum: true,
-			definition: OpenClosed,
+			definition: OpenClosedProp,
 		},
 		{
 			name: "highlighted",

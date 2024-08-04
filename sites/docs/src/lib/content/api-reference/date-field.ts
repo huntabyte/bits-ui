@@ -16,14 +16,17 @@ import {
 	withChildProps,
 } from "./helpers.js";
 import { dateValueProp } from "./extended-types/index.js";
-import DateValueChangeFn from "./extended-types/shared/date-value-change-fn.md";
-import PlaceholderChangeFn from "./extended-types/shared/placeholder-change-fn.md";
-import Granularity from "./extended-types/shared/granularity.md";
-import HourCycle from "./extended-types/shared/hour-cycle.md";
-import DateMatcher from "./extended-types/shared/date-matcher.md";
-import InputChildrenSnippetProps from "./extended-types/shared/date-field-input-children-snippet-props.md";
-import InputChildSnippetProps from "./extended-types/shared/date-field-input-child-snippet-props.md";
-import SegmentPart from "./extended-types/shared/segment-part.md";
+import {
+	DateFieldInputChildSnippetprops,
+	DateFieldInputChildrenSnippetProps,
+	DateMatcherProp,
+	GranularityProp,
+	HourCycleProp,
+	OnDateValueChangeProp,
+	OnPlaceholderChangeProp,
+	SegmentPartProp,
+} from "./extended-types/shared/index.js";
+
 import { enums } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 
@@ -37,7 +40,7 @@ export const root = createApiSchema<DateFieldRootPropsWithoutHTML>({
 			bindable: true,
 		},
 		onValueChange: createFunctionProp({
-			definition: DateValueChangeFn,
+			definition: OnDateValueChangeProp,
 			description: "A function that is called when the selected date changes.",
 		}),
 		placeholder: {
@@ -47,7 +50,7 @@ export const root = createApiSchema<DateFieldRootPropsWithoutHTML>({
 			bindable: true,
 		},
 		onPlaceholderChange: createFunctionProp({
-			definition: PlaceholderChangeFn,
+			definition: OnPlaceholderChangeProp,
 			description: "A function that is called when the placeholder date changes.",
 		}),
 
@@ -56,20 +59,20 @@ export const root = createApiSchema<DateFieldRootPropsWithoutHTML>({
 			default: C.FALSE,
 		}),
 		isDateUnavailable: createFunctionProp({
-			definition: DateMatcher,
+			definition: DateMatcherProp,
 			description: "A function that returns whether or not a date is unavailable.",
 		}),
 		hourCycle: createEnumProp({
 			options: ["12", "24"],
 			description:
 				"The hour cycle to use for formatting times. Defaults to the locale preference",
-			definition: HourCycle,
+			definition: HourCycleProp,
 		}),
 		granularity: createEnumProp({
 			options: ["day", "hour", "minute", "second"],
 			description:
 				"The granularity to use for formatting the field. Defaults to `'day'` if a `CalendarDate` is provided, otherwise defaults to `'minute'`. The field will render segments for each part of the date up to and including the specified granularity.",
-			definition: Granularity,
+			definition: GranularityProp,
 		}),
 		hideTimeZone: createBooleanProp({
 			description: "Whether or not to hide the time zone segment of the field.",
@@ -117,8 +120,8 @@ export const input = createApiSchema<DateFieldInputPropsWithoutHTML>({
 		}),
 		...withChildProps({
 			elType: "HTMLDivElement",
-			childrenDef: InputChildrenSnippetProps,
-			childDef: InputChildSnippetProps,
+			childrenDef: DateFieldInputChildrenSnippetProps,
+			childDef: DateFieldInputChildSnippetprops,
 		}),
 	},
 	dataAttributes: [
@@ -144,7 +147,7 @@ export const segment = createApiSchema<DateFieldSegmentPropsWithoutHTML>({
 		part: {
 			type: {
 				type: "SegmentPart",
-				definition: SegmentPart,
+				definition: SegmentPartProp,
 			},
 			description: "The part of the date to render.",
 			required: true,

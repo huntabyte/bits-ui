@@ -1,5 +1,5 @@
 import type { SeparatorRootPropsWithoutHTML } from "bits-ui";
-import Orientation from "./extended-types/shared/orientation.md";
+import { OrientationProp } from "./extended-types/shared/index.js";
 import {
 	createApiSchema,
 	createBooleanProp,
@@ -17,7 +17,7 @@ export const root = createApiSchema<SeparatorRootPropsWithoutHTML>({
 			options: ["horizontal", "vertical"],
 			default: "'horizontal'",
 			description: "The orientation of the separator.",
-			definition: Orientation,
+			definition: OrientationProp,
 		}),
 		decorative: createBooleanProp({
 			default: C.FALSE,
@@ -32,7 +32,7 @@ export const root = createApiSchema<SeparatorRootPropsWithoutHTML>({
 			description: "The orientation of the separator.",
 			value: enums("horizontal", "vertical"),
 			isEnum: true,
-			definition: Orientation,
+			definition: OrientationProp,
 		},
 		{
 			name: "separator-root",

@@ -20,13 +20,17 @@ import {
 	orientationDataAttr,
 	withChildProps,
 } from "./helpers.js";
-import StringOrArrayString from "./extended-types/shared/string-or-array-string.md";
-import SingleOrMultiple from "./extended-types/shared/single-or-multiple.md";
-import StringOrArrayChangeFn from "./extended-types/shared/string-or-array-change-fn.md";
-import Orientation from "./extended-types/shared/orientation.md";
-import HeaderLevel from "./extended-types/shared/header-level.md";
-import ContentChildSnippetProps from "./extended-types/accordion/content-child-snippet-props.md";
-import ContentChildrenSnippetProps from "./extended-types/accordion/content-children-snippet-props.md";
+import {
+	HeaderLevelProp,
+	OnChangeStringOrArrayProp,
+	OrientationProp,
+	SingleOrMultipleProp,
+	StringOrArrayStringProp,
+} from "./extended-types/shared/index.js";
+import {
+	ContentChildSnippetProps,
+	ContentChildrenSnippetProps,
+} from "./extended-types/accordion/index.js";
 import * as C from "$lib/content/constants.js";
 
 const stateDataAttr = createEnumDataAttr({
@@ -41,20 +45,20 @@ const root = createApiSchema<AccordionRootPropsWithoutHTML>({
 	props: {
 		type: createEnumProp({
 			options: ["single", "multiple"],
-			definition: SingleOrMultiple,
+			definition: SingleOrMultipleProp,
 			description:
 				"The type of accordion. If set to `'multiple'`, the accordion will allow multiple items to be open at the same time. If set to `single`, the accordion will only allow a single item to be open.",
 			required: true,
 		}),
 		value: createUnionProp({
 			options: ["string[]", "string"],
-			definition: StringOrArrayString,
+			definition: StringOrArrayStringProp,
 			description:
 				"The value of the currently active accordion item. If `type` is `'single'`, this should be a string. If `type` is `'multiple'`, this should be an array of strings.",
 			bindable: true,
 		}),
 		onValueChange: createFunctionProp({
-			definition: StringOrArrayChangeFn,
+			definition: OnChangeStringOrArrayProp,
 			description:
 				"A callback function called when the active accordion item value changes. If the `type` is `'single'`, the argument will be a string. If `type` is `'multiple'`, the argument will be an array of strings.",
 		}),
@@ -70,7 +74,7 @@ const root = createApiSchema<AccordionRootPropsWithoutHTML>({
 		}),
 		orientation: createEnumProp({
 			options: ["vertical", "horizontal"],
-			definition: Orientation,
+			definition: OrientationProp,
 			description: "The orientation of the accordion.",
 			default: "vertical",
 		}),
@@ -162,7 +166,7 @@ const header = createApiSchema<AccordionHeaderPropsWithoutHTML>({
 	props: {
 		level: createUnionProp({
 			options: ["1", "2", "3", "4", "5", "6"],
-			definition: HeaderLevel,
+			definition: HeaderLevelProp,
 			description:
 				"The heading level of the header. This will be set as the `aria-level` attribute.",
 			default: "3",

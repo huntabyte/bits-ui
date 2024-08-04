@@ -12,12 +12,14 @@ import type {
 	CalendarPrevButtonPropsWithoutHTML,
 	CalendarRootPropsWithoutHTML,
 } from "bits-ui";
-import DateMatcher from "./extended-types/shared/date-matcher.md";
-import SingleOrMultiple from "./extended-types/shared/single-or-multiple.md";
-import DateValueOrArray from "./extended-types/shared/date-value-or-array.md";
-import DateValueChangeFn from "./extended-types/shared/date-value-change-fn.md";
-import DatePlaceholderChangeFn from "./extended-types/shared/date-placeholder-change-fn.md";
-import WeekdayFormat from "./extended-types/shared/weekday-format.md";
+import {
+	CalendarOnValueChangeProp,
+	CalendarValueProp,
+	DateMatcherProp,
+	OnPlaceholderChangeProp,
+	SingleOrMultipleProp,
+	WeekdayFormatProp,
+} from "./extended-types/shared/index.js";
 
 import {
 	createApiSchema,
@@ -76,17 +78,17 @@ export const root = createApiSchema<CalendarRootPropsWithoutHTML>({
 			options: ["single", "multiple"],
 			description: "Whether or not multiple dates can be selected.",
 			required: true,
-			definition: SingleOrMultiple,
+			definition: SingleOrMultipleProp,
 		}),
 		value: createUnionProp({
 			options: ["DateValue", "DateValue[]"],
 			description:
 				"The selected date(s). If `type` is `'single'`, this will be a `DateValue`. If `type` is `'multiple'`, this will be an array of `DateValue`s.",
 			bindable: true,
-			definition: DateValueOrArray,
+			definition: CalendarValueProp,
 		}),
 		onValueChange: createFunctionProp({
-			definition: DateValueChangeFn,
+			definition: CalendarOnValueChangeProp,
 			description: "A function that is called when the selected date changes.",
 		}),
 		placeholder: {
@@ -95,7 +97,7 @@ export const root = createApiSchema<CalendarRootPropsWithoutHTML>({
 				"The placeholder date, which is used to determine what month to display when no date is selected. This updates as the user navigates the calendar, and can be used to programatically control the calendar's view.",
 		},
 		onPlaceholderChange: createFunctionProp({
-			definition: DatePlaceholderChangeFn,
+			definition: OnPlaceholderChangeProp,
 			description: "A function that is called when the placeholder date changes.",
 		}),
 		pagedNavigation: createBooleanProp({
@@ -115,7 +117,7 @@ export const root = createApiSchema<CalendarRootPropsWithoutHTML>({
 		}),
 		weekdayFormat: createEnumProp({
 			options: ["narrow", "short", "long"],
-			definition: WeekdayFormat,
+			definition: WeekdayFormatProp,
 			description:
 				"The format to use for the weekday strings provided via the `weekdays` slot prop.",
 			default: "'narrow'",
@@ -128,11 +130,11 @@ export const root = createApiSchema<CalendarRootPropsWithoutHTML>({
 			default: C.FALSE,
 		}),
 		isDateDisabled: createFunctionProp({
-			definition: DateMatcher,
+			definition: DateMatcherProp,
 			description: "A function that returns whether or not a date is disabled.",
 		}),
 		isDateUnavailable: createFunctionProp({
-			definition: DateMatcher,
+			definition: DateMatcherProp,
 			description: "A function that returns whether or not a date is unavailable.",
 		}),
 		maxValue: {

@@ -7,7 +7,6 @@ import {
 	createEnumProp,
 	createFunctionProp,
 	createStringProp,
-	enums,
 	withChildProps,
 } from "./helpers.js";
 import * as C from "$lib/content/constants.js";

@@ -11,10 +11,8 @@ import {
 	createEnumProp,
 	createFunctionProp,
 	createNumberProp,
-	enums,
 	withChildProps,
 } from "./helpers.js";
-import type { APISchema } from "$lib/types/index.js";
 import * as C from "$lib/content/constants.js";
 
 export const root = createApiSchema<PaginationRootPropsWithoutHTML>({

@@ -30,18 +30,20 @@ import {
 	preventOverflowTextSelectionProp,
 	withChildProps,
 } from "./helpers.js";
-import OpenClosed from "./extended-types/shared/open-closed.md";
-import Noop from "./extended-types/shared/noop.md";
-import OnCheckedChange from "./extended-types/shared/on-checked-change.md";
-import OnStringValueChange from "./extended-types/shared/on-string-value-change.md";
-import Checked from "./extended-types/shared/checked.md";
-import CheckedChildrenSnippetProps from "./extended-types/shared/checked-children-snippet-props.md";
-import CheckedChildSnippetProps from "./extended-types/shared/checked-child-snippet-props.md";
-import RadioItemChildrenSnippetProps from "./extended-types/shared/radio-item-children-snippet-props.md";
-import RadioItemChildSnippetProps from "./extended-types/shared/radio-item-child-snippet-props.md";
-import OpenChildSnippetProps from "./extended-types/shared/open-child-snippet-props.md";
-import OpenChildrenSnippetProps from "./extended-types/shared/open-children-snippet-props.md";
-import OpenChangeFn from "./extended-types/shared/open-change-fn.md";
+import {
+	CheckedChildSnippetProps,
+	CheckedChildrenSnippetProps,
+	CheckedProp,
+	NoopProp,
+	OnCheckedChangeProp,
+	OnOpenChangeProp,
+	OnStringValueChangeProp,
+	OpenChildSnippetProps,
+	OpenChildrenSnippetProps,
+	OpenClosedProp,
+	RadioItemChildSnippetProps,
+	RadioItemChildrenSnippetProps,
+} from "./extended-types/shared/index.js";
 import type { APISchema, DataAttrSchema, PropObj } from "$lib/types/index.js";
 import * as C from "$lib/content/constants.js";
 import { enums } from "$lib/content/api-reference/helpers.js";
@@ -52,7 +54,7 @@ const sharedItemProps = {
 		description: "The text value of the checkbox menu item. This is used for typeahead.",
 	}),
 	onSelect: createFunctionProp({
-		definition: Noop,
+		definition: NoopProp,
 		description: "A callback that is fired when the menu item is selected.",
 	}),
 	...withChildProps({ elType: "HTMLDivElement" }),
@@ -65,7 +67,7 @@ const props = {
 		bindable: true,
 	}),
 	onOpenChange: createFunctionProp({
-		definition: OpenChangeFn,
+		definition: OnOpenChangeProp,
 		description: "A callback that is fired when the menu's open state changes.",
 	}),
 	dir: dirProp,
@@ -79,7 +81,7 @@ const subProps = {
 		bindable: true,
 	}),
 	onOpenChange: createFunctionProp({
-		definition: OpenChangeFn,
+		definition: OnOpenChangeProp,
 		description: "A callback that is fired when the submenu's open state changes.",
 	}),
 	children: childrenSnippet(),
@@ -120,10 +122,10 @@ const checkboxItemProps = {
 		default: C.FALSE,
 		description: "The checkbox menu item's checked state.",
 		bindable: true,
-		definition: Checked,
+		definition: CheckedProp,
 	}),
 	onCheckedChange: createFunctionProp({
-		definition: OnCheckedChange,
+		definition: OnCheckedChangeProp,
 		description:
 			"A callback that is fired when the checkbox menu item's checked state changes.",
 	}),
@@ -141,7 +143,7 @@ const radioGroupProps = {
 		bindable: true,
 	}),
 	onValueChange: createFunctionProp({
-		definition: OnStringValueChange,
+		definition: OnStringValueChangeProp,
 		description: "A callback that is fired when the radio group's value changes.",
 	}),
 	...withChildProps({ elType: "HTMLDivElement" }),
@@ -207,7 +209,7 @@ const STATE: DataAttrSchema = {
 	value: enums("open", "closed"),
 	description: "The open state of the menu or submenu the element controls or belongs to.",
 	isEnum: true,
-	definition: OpenClosed,
+	definition: OpenClosedProp,
 };
 
 type DataAttrs = APISchema["dataAttributes"];

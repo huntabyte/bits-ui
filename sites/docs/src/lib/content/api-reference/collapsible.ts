@@ -13,9 +13,11 @@ import {
 	forceMountProp,
 	withChildProps,
 } from "./helpers.js";
-import ContentChildSnippetProps from "./extended-types/collapsible/content-child-snippet-props.md";
-import ContentChildrenSnippetProps from "./extended-types/collapsible/content-children-snippet-props.md";
-import OpenClosed from "./extended-types/shared/open-closed.md";
+import {
+	CollapsibleContentChildSnippetProps,
+	CollapsibleContentChildrenSnippetProps,
+} from "./extended-types/collapsible/index.js";
+import { OpenClosedProp } from "./extended-types/shared/index.js";
 import * as C from "$lib/content/constants.js";
 
 export const root = createApiSchema<CollapsibleRootPropsWithoutHTML>({
@@ -44,7 +46,7 @@ export const root = createApiSchema<CollapsibleRootPropsWithoutHTML>({
 			name: "state",
 			options: ["open", "closed"],
 			description: "The collapsible's open state.",
-			definition: OpenClosed,
+			definition: OpenClosedProp,
 		}),
 		createDataAttrSchema({
 			name: "disabled",
@@ -66,7 +68,7 @@ export const trigger = createApiSchema<CollapsibleTriggerPropsWithoutHTML>({
 			name: "state",
 			options: ["open", "closed"],
 			description: "The collapsible's open state.",
-			definition: OpenClosed,
+			definition: OpenClosedProp,
 		}),
 		createDataAttrSchema({
 			name: "disabled",
@@ -86,8 +88,8 @@ export const content = createApiSchema<CollapsibleContentPropsWithoutHTML>({
 		forceMount: forceMountProp,
 		...withChildProps({
 			elType: "HTMLDivElement",
-			childrenDef: ContentChildrenSnippetProps,
-			childDef: ContentChildSnippetProps,
+			childrenDef: CollapsibleContentChildrenSnippetProps,
+			childDef: CollapsibleContentChildSnippetProps,
 		}),
 	},
 	dataAttributes: [
@@ -95,7 +97,7 @@ export const content = createApiSchema<CollapsibleContentPropsWithoutHTML>({
 			name: "state",
 			options: ["open", "closed"],
 			description: "The collapsible's open state.",
-			definition: OpenClosed,
+			definition: OpenClosedProp,
 		}),
 		createDataAttrSchema({
 			name: "disabled",

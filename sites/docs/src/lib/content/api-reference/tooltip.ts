@@ -5,10 +5,12 @@ import type {
 	TooltipRootPropsWithoutHTML,
 	TooltipTriggerPropsWithoutHTML,
 } from "bits-ui";
-import OpenClosed from "./extended-types/shared/open-closed.md";
-import OpenChangeFn from "./extended-types/shared/open-change-fn.md";
-import OpenChildrenSnippetProps from "./extended-types/shared/open-children-snippet-props.md";
-import OpenChildSnippetProps from "./extended-types/shared/open-child-snippet-props.md";
+import {
+	OnOpenChangeProp,
+	OpenChildSnippetProps,
+	OpenChildrenSnippetProps,
+	OpenClosedProp,
+} from "./extended-types/shared/index.js";
 import {
 	arrowProps,
 	childrenSnippet,
@@ -88,7 +90,7 @@ export const root = createApiSchema<TooltipRootPropsWithoutHTML>({
 			bindable: true,
 		}),
 		onOpenChange: createFunctionProp({
-			definition: OpenChangeFn,
+			definition: OnOpenChangeProp,
 			description: "A callback that fires when the open state changes.",
 		}),
 		disabled,
@@ -117,7 +119,7 @@ export const trigger = createApiSchema<TooltipTriggerPropsWithoutHTML>({
 			description: "The open state of the tooltip.",
 			value: enums("open", "closed"),
 			isEnum: true,
-			definition: OpenClosed,
+			definition: OpenClosedProp,
 		},
 		{
 			name: "tooltip-trigger",
@@ -147,7 +149,7 @@ export const content = createApiSchema<TooltipContentPropsWithoutHTML>({
 			value: enums("open", "closed"),
 			description: "The open state of the tooltip.",
 			isEnum: true,
-			definition: OpenClosed,
+			definition: OpenClosedProp,
 		},
 		{
 			name: "tooltip-content",
