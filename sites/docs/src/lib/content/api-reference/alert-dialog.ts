@@ -9,12 +9,13 @@ import type {
 	AlertDialogTitlePropsWithoutHTML,
 	AlertDialogTriggerPropsWithoutHTML,
 } from "bits-ui";
-import OpenChangeFn from "./extended-types/shared/open-change-fn.md";
-import HeaderLevel from "./extended-types/shared/header-level.md";
-import DialogContentChildSnippetProps from "./extended-types/shared/dialog-content-child-snippet-props.md";
-import DialogContentChildrenSnippetProps from "./extended-types/shared/dialog-content-children-snippet-props.md";
-import DialogOverlayChildSnippetProps from "./extended-types/shared/dialog-overlay-child-snippet-props.md";
-import DialogOverlayChildrenSnippetProps from "./extended-types/shared/dialog-overlay-children-snippet-props.md";
+import { HeaderLevelProp, OnOpenChangeProp } from "./extended-types/shared/index.js";
+import {
+	DialogContentChildSnippetProps,
+	DialogContentChildrenSnippetProps,
+	DialogOverlayChildSnippetProps,
+	DialogOverlayChildrenSnippetProps,
+} from "./extended-types/dialog/index.js";
 
 import {
 	childrenSnippet,
@@ -43,7 +44,7 @@ const root = createApiSchema<AlertDialogRootPropsWithoutHTML>({
 			bindable: true,
 		}),
 		onOpenChange: createFunctionProp({
-			definition: OpenChangeFn,
+			definition: OnOpenChangeProp,
 			description: "A callback function called when the open state changes.",
 		}),
 		children: childrenSnippet(),
@@ -85,7 +86,7 @@ const title = createApiSchema<AlertDialogTitlePropsWithoutHTML>({
 	description: "An accessibile title for the alert dialog.",
 	props: {
 		level: createUnionProp({
-			definition: HeaderLevel,
+			definition: HeaderLevelProp,
 			options: ["1", "2", "3", "4", "5", "6"],
 			description:
 				"The heading level of the title. This will be set as the `aria-level` attribute.",

@@ -1,21 +1,25 @@
 import type { Component } from "svelte";
-import ChildDefaultSnippetProps from "./extended-types/shared/child-default-snippet-props.md";
-import OnInteractOutside from "./extended-types/shared/on-interact-outside.md";
-import OnFocusOutside from "./extended-types/shared/on-focus-outside.md";
-import InteractOutsideBehavior from "./extended-types/shared/interact-outside-behavior.md";
-import OnEscapeKeydown from "./extended-types/shared/on-escape-keydown.md";
-import EscapeKeydownBehavior from "./extended-types/shared/escape-keydown-behavior.md";
-import Dir from "./extended-types/shared/dir.md";
-import To from "./extended-types/portal/to.md";
-import DateRange from "./extended-types/shared/date-range.md";
-import DateRangeChangeFn from "./extended-types/shared/date-range-change-fn.md";
-import FloatingSide from "./extended-types/floating/side.md";
-import FloatingAlign from "./extended-types/floating/align.md";
-import FloatingStrategy from "./extended-types/floating/strategy.md";
-import FloatingUpdatePositionStrategy from "./extended-types/floating/update-position-strategy.md";
-import FloatingCollisionBoundary from "./extended-types/floating/collision-boundary.md";
-import FloatingCollisionPadding from "./extended-types/floating/collision-padding.md";
-import FloatingSticky from "./extended-types/floating/sticky.md";
+import {
+	ChildDefaultSnippetProps,
+	DateOnRangeChangeProp,
+	DateRangeProp,
+	DirProp,
+	EscapeKeydownBehaviorProp,
+	InteractOutsideBehaviorProp,
+	OnEscapeKeydownProp,
+	OnFocusOutsideProp,
+	OnInteractOutsideProp,
+} from "./extended-types/shared/index.js";
+import {
+	FloatingAlignProp,
+	FloatingCollisionBoundaryProp,
+	FloatingCollisionPaddingProp,
+	FloatingSideProp,
+	FloatingStickyProp,
+	FloatingStrategyProp,
+	FloatingUpdatePositionStrategyProp,
+} from "./extended-types/floating/index.js";
+import { PortalToProp } from "./extended-types/portal/index.js";
 
 import type { APISchema, CSSVarSchema, DataAttrSchema, PropSchema } from "$lib/types/api.js";
 import * as C from "$lib/content/constants.js";
@@ -222,7 +226,7 @@ export const arrowProps = {
 
 export const portalProps = {
 	to: createUnionProp({
-		definition: To,
+		definition: PortalToProp,
 		options: ["string", "HTMLElement", "null", "undefined"],
 		description: `Where to render the content when it is open. Defaults to the body. Can be disabled by passing \`null\``,
 		default: "body",
@@ -331,7 +335,7 @@ export function floatingSideProp(side = "bottom"): PropSchema {
 		default: side,
 		description:
 			"The preferred side of the anchor to render the floating element against when open. Will be reversed when collisions occur.",
-		definition: FloatingSide,
+		definition: FloatingSideProp,
 	});
 }
 
@@ -346,7 +350,7 @@ export function floatingAlignProp(align = "start"): PropSchema {
 		default: align,
 		description:
 			"The preferred alignment of the anchor to render the floating element against when open. This may change when collisions occur.",
-		definition: FloatingAlign,
+		definition: FloatingAlignProp,
 	});
 }
 
@@ -370,7 +374,7 @@ export const floatingAvoidCollisionsProp = createBooleanProp({
 export const floatingCollisionBoundaryProp = createUnionProp({
 	options: ["Element", "null"],
 	description: "A boundary element or array of elements to check for collisions against.",
-	definition: FloatingCollisionBoundary,
+	definition: FloatingCollisionBoundaryProp,
 });
 
 export const floatingCollisionPaddingProp = createUnionProp({
@@ -378,7 +382,7 @@ export const floatingCollisionPaddingProp = createUnionProp({
 	description:
 		"The amount in pixels of virtual padding around the viewport edges to check for overflow which will cause a collision.",
 	default: "0",
-	definition: FloatingCollisionPadding,
+	definition: FloatingCollisionPaddingProp,
 });
 
 export const floatingStickyProp = createEnumProp({
@@ -386,7 +390,7 @@ export const floatingStickyProp = createEnumProp({
 	description:
 		"The sticky behavior on the align axis. `'partial'` will keep the content in the boundary as long as the trigger is at least partially in the boundary whilst `'always'` will keep the content in the boundary regardless.",
 	default: "partial",
-	definition: FloatingSticky,
+	definition: FloatingStickyProp,
 });
 
 export const floatingHideWhenDetachedProp = createBooleanProp({
@@ -400,7 +404,7 @@ export const floatingUpdatePositionStrategyProp = createEnumProp({
 	description:
 		"The strategy to use when updating the position of the content. When `'optimized'` the content will only be repositioned when the trigger is in the viewport. When `'always'` the content will be repositioned whenever the position changes.",
 	default: "optimized",
-	definition: FloatingUpdatePositionStrategy,
+	definition: FloatingUpdatePositionStrategyProp,
 });
 
 export const floatingStrategyProp = createEnumProp({
@@ -408,7 +412,7 @@ export const floatingStrategyProp = createEnumProp({
 	description:
 		"The positioning strategy to use for the floating element. When `'fixed'` the element will be positioned relative to the viewport. When `'absolute'` the element will be positioned relative to the nearest positioned ancestor.",
 	default: "fixed",
-	definition: FloatingStrategy,
+	definition: FloatingStrategyProp,
 });
 
 export const preventScrollProp = createBooleanProp({
@@ -439,25 +443,25 @@ export function floatingProps(props?: {
 }
 
 export const dismissableOnInteractOutsideProp = createFunctionProp({
-	definition: OnInteractOutside,
+	definition: OnInteractOutsideProp,
 	description:
 		"Callback fired when an outside interaction event completes, which is either a `pointerup`, `mouseup`, or `touchend` event, depending on the user's input device. You can call `event.preventDefault()` to prevent the default behavior of handling the outside interaction.",
 });
 
 export const dismissableOnInteractOutsideStartProp: PropSchema = createFunctionProp({
-	definition: OnInteractOutside,
+	definition: OnInteractOutsideProp,
 	description:
 		"Callback fired when an outside interaction event starts, which is either a `pointerdown`, `mousedown`, or `touchstart` event, depending on the user's input device. You can call `event.preventDefault()` to prevent the continuation of the outside interaction.",
 });
 
 export const dismissableOnFocusOutsideProp = createFunctionProp({
-	definition: OnFocusOutside,
+	definition: OnFocusOutsideProp,
 	description:
 		"Callback fired when focus leaves the dismissable layer. You can call `event.preventDefault()` to prevent the default behavior on focus leaving the layer.",
 });
 
 export const dismissableInteractOutsideBehaviorProp: PropSchema = createEnumProp({
-	definition: InteractOutsideBehavior,
+	definition: InteractOutsideBehaviorProp,
 	options: ["close", "ignore", "defer-otherwise-close", "defer-otherwise-ignore"],
 	default: "close",
 	description:
@@ -472,7 +476,7 @@ export const dismissableLayerProps = {
 } as const;
 
 export const escapeEscapeKeydownBehaviorProp: PropSchema = createEnumProp({
-	definition: EscapeKeydownBehavior,
+	definition: EscapeKeydownBehaviorProp,
 	options: ["close", "ignore", "defer-otherwise-close", "defer-otherwise-ignore"],
 	default: "close",
 	description:
@@ -480,7 +484,7 @@ export const escapeEscapeKeydownBehaviorProp: PropSchema = createEnumProp({
 });
 
 export const escapeOnEscapeKeydownProp: PropSchema = createFunctionProp({
-	definition: OnEscapeKeydown,
+	definition: OnEscapeKeydownProp,
 	description:
 		"Callback fired when an escape keydown event occurs in the floating content. You can call `event.preventDefault()` to prevent the default behavior of handling the escape keydown event.",
 });
@@ -497,13 +501,13 @@ export const forceMountProp = createBooleanProp({
 });
 
 export const onMountAutoFocusProp = createFunctionProp({
-	definition: OnFocusOutside,
+	definition: OnFocusOutsideProp,
 	description:
 		"Event handler called when auto-focusing the content as it is mounted. Can be prevented.",
 });
 
 export const onDestroyAutoFocusProp = createFunctionProp({
-	definition: OnFocusOutside,
+	definition: OnFocusOutsideProp,
 	description:
 		"Event handler called when auto-focusing the content as it is destroyed. Can be prevented.",
 });
@@ -526,7 +530,7 @@ export const preventOverflowTextSelectionProp = createBooleanProp({
 });
 
 export const dirProp = createEnumProp({
-	definition: Dir,
+	definition: DirProp,
 	options: ["ltr", "rtl"],
 	description: "The reading direction of the app.",
 	default: "ltr",
@@ -547,13 +551,13 @@ export const disabledDataAttr: DataAttrSchema = {
 export const valueDateRangeProp: PropSchema = createPropSchema({
 	type: {
 		type: "DateRange",
-		definition: DateRange,
+		definition: DateRangeProp,
 	},
 	description: "The selected date range.",
 	bindable: true,
 });
 
 export const valueDateRangeChangeFn: PropSchema = createFunctionProp({
-	definition: DateRangeChangeFn,
+	definition: DateOnRangeChangeProp,
 	description: "A function that is called when the selected date range changes.",
 });

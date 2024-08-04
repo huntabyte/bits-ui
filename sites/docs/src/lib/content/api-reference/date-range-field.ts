@@ -11,7 +11,12 @@ import {
 	createFunctionProp,
 	withChildProps,
 } from "./helpers.js";
-import { root as dateFieldRoot } from "./date-field.js";
+import { input as dateFieldInput, root as dateFieldRoot } from "./date-field.js";
+import {
+	DateOnRangeChangeProp,
+	DateRangeProp,
+	OnStartEndValueChangeProp,
+} from "./extended-types/shared/index.js";
 import { enums } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 
@@ -22,18 +27,15 @@ export const root = createApiSchema<DateRangeFieldRootPropsWithoutHTML>({
 		value: {
 			type: {
 				type: "DateRange",
-				definition: "{ start: DateValue; end: DateValue; }",
+				definition: DateRangeProp,
 			},
 			description: "The selected date range.",
 			bindable: true,
 		},
-		onValueChange: {
-			type: {
-				type: C.FUNCTION,
-				definition: "(date: DateRange | undefined) => void",
-			},
+		onValueChange: createFunctionProp({
+			definition: DateOnRangeChangeProp,
 			description: "A function that is called when the selected date changes.",
-		},
+		}),
 		placeholder: dateFieldRoot.props!.placeholder,
 		onPlaceholderChange: dateFieldRoot.props!.onPlaceholderChange,
 		isDateUnavailable: dateFieldRoot.props!.isDateUnavailable,
@@ -48,11 +50,11 @@ export const root = createApiSchema<DateRangeFieldRootPropsWithoutHTML>({
 		readonlySegments: dateFieldRoot.props!.readonlySegments,
 		required: dateFieldRoot.props!.required,
 		onStartValueChange: createFunctionProp({
-			definition: "(date: DateValue | undefined) => void",
+			definition: OnStartEndValueChangeProp,
 			description: "A function that is called when the start date changes.",
 		}),
 		onEndValueChange: createFunctionProp({
-			definition: "(date: DateValue | undefined) => void",
+			definition: OnStartEndValueChangeProp,
 			description: "A function that is called when the end date changes.",
 		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
@@ -80,6 +82,8 @@ export const input = createApiSchema<DateRangeFieldInputPropsWithoutHTML>({
 				"The name of the date field used for form submission. If provided, a hidden input element will be rendered alongside the date field.",
 		},
 		...withChildProps({ elType: "HTMLDivElement" }),
+		children: dateFieldInput.props!.children,
+		child: dateFieldInput.props!.child,
 	},
 	dataAttributes: [
 		{

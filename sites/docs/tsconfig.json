@@ -11,8 +11,7 @@
 		"strict": true,
 		"moduleResolution": "NodeNext",
 		"module": "NodeNext",
-		"verbatimModuleSyntax": true,
-		"exactOptionalPropertyTypes": true
+		"verbatimModuleSyntax": true
 	},
 	"include": [
 		"./svelte-kit/ambient.d.ts",

@@ -12,14 +12,13 @@ import {
 	createNumberProp,
 	withChildProps,
 } from "./helpers.js";
-import LoadingStatus from "./extended-types/avatar/loading-status.md";
-import OnLoadingStatusChange from "./extended-types/avatar/on-loading-status-change.md";
+import { LoadingStatusProp, OnLoadingStatusChangeProp } from "./extended-types/avatar/index.js";
 
 const statusDataAttr = createEnumDataAttr({
 	name: "status",
 	description: "The loading status of the image.",
 	options: ["loading", "loaded", "error"],
-	definition: LoadingStatus,
+	definition: LoadingStatusProp,
 });
 
 export const root = createApiSchema<AvatarRootPropsWithoutHTML>({
@@ -33,7 +32,7 @@ export const root = createApiSchema<AvatarRootPropsWithoutHTML>({
 			bindable: true,
 		}),
 		onLoadingStatusChange: createFunctionProp({
-			definition: OnLoadingStatusChange,
+			definition: OnLoadingStatusChangeProp,
 			description: "A callback function called when the loading status of the image changes.",
 		}),
 		delayMs: createNumberProp({

@@ -5,9 +5,11 @@ import type {
 	ScrollAreaThumbPropsWithoutHTML,
 	ScrollAreaViewportPropsWithoutHTML,
 } from "bits-ui";
-import VisibleHidden from "./extended-types/scroll-area/visible-hidden.md";
-import ScrollAreaType from "./extended-types/scroll-area/scroll-area-type.md";
-import Orientation from "./extended-types/shared/orientation.md";
+import {
+	ScrollAreaTypeProp,
+	ScrollAreaVisibleHiddenProp,
+} from "./extended-types/scroll-area/index.js";
+import { OrientationProp } from "./extended-types/shared/index.js";
 import {
 	childrenSnippet,
 	createApiSchema,
@@ -29,7 +31,7 @@ export const root = createApiSchema<ScrollAreaRootPropsWithoutHTML>({
 			options: ["hover", "scroll", "auto", "always"],
 			default: "'hover'",
 			description: "The type of scroll area.",
-			definition: ScrollAreaType,
+			definition: ScrollAreaTypeProp,
 		}),
 		scrollHideDelay: createNumberProp({
 			description:
@@ -71,7 +73,7 @@ export const scrollbar = createApiSchema<ScrollAreaScrollbarPropsWithoutHTML>({
 			options: ["horizontal", "vertical"],
 			description: "The orientation of the scrollbar.",
 			required: true,
-			definition: Orientation,
+			definition: OrientationProp,
 		}),
 		forceMount: forceMountProp,
 		...withChildProps({ elType: "HTMLDivElement" }),
@@ -82,7 +84,7 @@ export const scrollbar = createApiSchema<ScrollAreaScrollbarPropsWithoutHTML>({
 			description: "The visibility state of the scrollbar",
 			value: enums("visible", "hidden"),
 			isEnum: true,
-			definition: VisibleHidden,
+			definition: ScrollAreaVisibleHiddenProp,
 		},
 		{
 			name: "scroll-area-scrollbar-x",
@@ -108,7 +110,7 @@ export const thumb = createApiSchema<ScrollAreaThumbPropsWithoutHTML>({
 			description: "The visibility state of the scrollbar",
 			value: enums("visible", "hidden"),
 			isEnum: true,
-			definition: VisibleHidden,
+			definition: ScrollAreaVisibleHiddenProp,
 		},
 		{
 			name: "scroll-area-thumb-x",

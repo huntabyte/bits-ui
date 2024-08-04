@@ -5,7 +5,7 @@ import type {
 	PopoverRootPropsWithoutHTML,
 	PopoverTriggerPropsWithoutHTML,
 } from "bits-ui";
-import OpenClosed from "./extended-types/shared/open-closed.md";
+import { OpenClosedProp } from "./extended-types/shared/index.js";
 import {
 	arrowProps,
 	childrenSnippet,
@@ -52,7 +52,7 @@ export const trigger = createApiSchema<PopoverTriggerPropsWithoutHTML>({
 			value: enums("open", "closed"),
 			description: "The open state of the link preview.",
 			isEnum: true,
-			definition: OpenClosed,
+			definition: OpenClosedProp,
 		},
 		{
 			name: "popover-trigger",
@@ -81,7 +81,7 @@ export const content = createApiSchema<PopoverContentPropsWithoutHTML>({
 			value: enums("open", "closed"),
 			description: "The open state of the popover.",
 			isEnum: true,
-			definition: OpenClosed,
+			definition: OpenClosedProp,
 		},
 		{
 			name: "popover-content",

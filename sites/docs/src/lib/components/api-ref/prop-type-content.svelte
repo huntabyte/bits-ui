@@ -54,7 +54,7 @@
 			preventScroll={false}
 			side="top"
 			sideOffset={10}
-			class="z-50 max-h-[400px] overflow-auto rounded-card border border-border bg-background p-4 shadow-popover"
+			class="z-50 max-h-[400px] max-w-[400px] overflow-auto rounded-card border border-border bg-background p-4 shadow-popover"
 		>
 			<Code class="h-auto bg-transparent px-0 tracking-tight text-foreground">
 				{@html parseTypeDef(typeDef)}
@@ -65,7 +65,7 @@
 			preventScroll={false}
 			side="top"
 			sideOffset={10}
-			class="z-50 max-h-[400px] overflow-auto rounded-card bg-background shadow-popover"
+			class="z-50 max-h-[400px] max-w-[600px] overflow-auto rounded-card bg-background shadow-popover"
 		>
 			<div class="[&_[data-line]]:!pr-2.5 [&_pre]:!my-0 [&_pre]:!mb-0 [&_pre]:!mt-0">
 				<svelte:component this={typeDef} />

@@ -8,15 +8,17 @@ import type {
 	ComboboxRootPropsWithoutHTML,
 	ComboboxTriggerPropsWithoutHTML,
 } from "bits-ui";
-import StringOrArrayChangeFn from "./extended-types/shared/string-or-array-change-fn.md";
-import StringOrArrayString from "./extended-types/shared/string-or-array-string.md";
-import SingleOrMultiple from "./extended-types/shared/single-or-multiple.md";
-import OpenChangeFn from "./extended-types/shared/open-change-fn.md";
-import ScrollAlignment from "./extended-types/combobox/scroll-alignment.md";
-import OpenChildSnippetProps from "./extended-types/shared/open-child-snippet-props.md";
-import OpenChildrenSnippetProps from "./extended-types/shared/open-children-snippet-props.md";
-import OpenClosed from "./extended-types/shared/open-closed.md";
-import Noop from "./extended-types/shared/noop.md";
+import {
+	NoopProp,
+	OnChangeStringOrArrayProp,
+	OnOpenChangeProp,
+	OpenChildSnippetProps,
+	OpenChildrenSnippetProps,
+	OpenClosedProp,
+	SingleOrMultipleProp,
+	StringOrArrayStringProp,
+} from "./extended-types/shared/index.js";
+import { ComboboxScrollAlignmentProp } from "./extended-types/combobox/index.js";
 import {
 	arrowProps,
 	childrenSnippet,
@@ -44,7 +46,7 @@ const stateDataAttr = createEnumDataAttr({
 	name: "state",
 	options: ["open", "closed"],
 	description: "The combobox's open state.",
-	definition: OpenClosed,
+	definition: OpenClosedProp,
 });
 
 export const root = createApiSchema<ComboboxRootPropsWithoutHTML>({
@@ -55,7 +57,7 @@ export const root = createApiSchema<ComboboxRootPropsWithoutHTML>({
 			options: ["single", "multiple"],
 			description: "The type of combobox.",
 			required: true,
-			definition: SingleOrMultiple,
+			definition: SingleOrMultipleProp,
 		}),
 		value: createUnionProp({
 			options: ["string", "string[]"],
@@ -63,10 +65,10 @@ export const root = createApiSchema<ComboboxRootPropsWithoutHTML>({
 			description:
 				"The value of the combobox. When the type is `'single'`, this should be a string. When the type is `'multiple'`, this should be an array of strings.",
 			bindable: true,
-			definition: StringOrArrayString,
+			definition: StringOrArrayStringProp,
 		}),
 		onValueChange: createFunctionProp({
-			definition: StringOrArrayChangeFn,
+			definition: OnChangeStringOrArrayProp,
 			description:
 				"A callback that is fired when the combobox value changes. When the type is `'single'`, the argument will be a string. When the type is `'multiple'`, the argument will be an array of strings.",
 		}),
@@ -76,7 +78,7 @@ export const root = createApiSchema<ComboboxRootPropsWithoutHTML>({
 			bindable: true,
 		}),
 		onOpenChange: createFunctionProp({
-			definition: OpenChangeFn,
+			definition: OnOpenChangeProp,
 			description: "A callback that is fired when the combobox menu's open state changes.",
 		}),
 		disabled: createBooleanProp({
@@ -95,7 +97,7 @@ export const root = createApiSchema<ComboboxRootPropsWithoutHTML>({
 			options: ["nearest", "center"],
 			default: "'nearest'",
 			description: "The alignment of the highlighted item when scrolling.",
-			definition: ScrollAlignment,
+			definition: ComboboxScrollAlignmentProp,
 		}),
 		loop: createBooleanProp({
 			default: C.FALSE,
@@ -175,11 +177,11 @@ export const item = createApiSchema<ComboboxItemPropsWithoutHTML>({
 				"Whether or not the combobox item is disabled. This will prevent interaction/selection.",
 		}),
 		onHighlight: createFunctionProp({
-			definition: Noop,
+			definition: NoopProp,
 			description: "A callback that is fired when the item is highlighted.",
 		}),
 		onUnhighlight: createFunctionProp({
-			definition: Noop,
+			definition: NoopProp,
 			description: "A callback that is fired when the item is unhighlighted.",
 		}),
 		...withChildProps({ elType: "HTMLDivElement" }),

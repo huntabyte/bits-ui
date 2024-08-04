@@ -6,8 +6,10 @@ import {
 	createStringProp,
 	withChildProps,
 } from "./helpers.js";
-import SwitchChildSnippetProps from "./extended-types/switch/root-child-snippet-props.md";
-import SwitchChildrenSnippetProps from "./extended-types/switch/root-children-snippet-props.md";
+import {
+	SwitchRootChildSnippetProps,
+	SwitchRootChildrenSnippetProps,
+} from "./extended-types/switch/index.js";
 import { enums } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 
@@ -42,8 +44,8 @@ const root = createApiSchema<SwitchRootPropsWithoutHTML>({
 		}),
 		...withChildProps({
 			elType: "HTMLButtonElement",
-			childrenDef: SwitchChildrenSnippetProps,
-			childDef: SwitchChildSnippetProps,
+			childrenDef: SwitchRootChildrenSnippetProps,
+			childDef: SwitchRootChildSnippetProps,
 		}),
 	},
 	dataAttributes: [
@@ -73,8 +75,8 @@ const thumb = createApiSchema<SwitchThumbPropsWithoutHTML>({
 	description: "The thumb on the switch used to indicate the switch's state.",
 	props: withChildProps({
 		elType: "HTMLSpanElement",
-		childrenDef: SwitchChildrenSnippetProps,
-		childDef: SwitchChildSnippetProps,
+		childrenDef: SwitchRootChildrenSnippetProps,
+		childDef: SwitchRootChildSnippetProps,
 	}),
 	dataAttributes: [
 		{

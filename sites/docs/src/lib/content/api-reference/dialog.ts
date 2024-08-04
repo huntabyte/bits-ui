@@ -23,13 +23,17 @@ import {
 	preventScrollProp,
 	withChildProps,
 } from "./helpers.js";
-import DialogContentChildSnippetProps from "./extended-types/shared/dialog-content-child-snippet-props.md";
-import DialogContentChildrenSnippetProps from "./extended-types/shared/dialog-content-children-snippet-props.md";
-import DialogOverlayChildSnippetProps from "./extended-types/shared/dialog-overlay-child-snippet-props.md";
-import DialogOverlayChildrenSnippetProps from "./extended-types/shared/dialog-overlay-children-snippet-props.md";
-import OpenClosed from "./extended-types/shared/open-closed.md";
-import HeaderLevel from "./extended-types/shared/header-level.md";
-import OnOpenChange from "./extended-types/shared/open-change-fn.md";
+import {
+	DialogContentChildSnippetProps,
+	DialogContentChildrenSnippetProps,
+	DialogOverlayChildSnippetProps,
+	DialogOverlayChildrenSnippetProps,
+} from "./extended-types/dialog/index.js";
+import {
+	HeaderLevelProp,
+	OnOpenChangeProp,
+	OpenClosedProp,
+} from "./extended-types/shared/index.js";
 import { enums } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 
@@ -43,7 +47,7 @@ export const root = createApiSchema<DialogRootPropsWithoutHTML>({
 			bindable: true,
 		}),
 		onOpenChange: createFunctionProp({
-			definition: OnOpenChange,
+			definition: OnOpenChangeProp,
 			description: "A callback function called when the open state changes.",
 		}),
 		children: childrenSnippet(),
@@ -84,7 +88,7 @@ export const content = createApiSchema<DialogContentPropsWithoutHTML>({
 			value: enums("open", "closed"),
 			description: "The state of the dialog.",
 			isEnum: true,
-			definition: OpenClosed,
+			definition: OpenClosedProp,
 		},
 		{
 			name: "dialog-content",
@@ -101,7 +105,7 @@ export const title = createApiSchema<DialogTitlePropsWithoutHTML>({
 			options: ["1", "2", "3", "4", "5", "6"],
 			description: "The heading level of the title.",
 			default: "3",
-			definition: HeaderLevel,
+			definition: HeaderLevelProp,
 		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
@@ -154,7 +158,7 @@ export const overlay = createApiSchema<DialogOverlayPropsWithoutHTML>({
 			value: enums("open", "closed"),
 			description: "The state of the dialog.",
 			isEnum: true,
-			definition: OpenClosed,
+			definition: OpenClosedProp,
 		},
 		{
 			name: "dialog-overlay",
