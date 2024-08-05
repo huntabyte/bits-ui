@@ -4,4 +4,6 @@
 	const { children }: { children?: Snippet } = $props();
 </script>
 
-{@render children?.()}
+{#key children}
+	{@render children?.()}
+{/key}
