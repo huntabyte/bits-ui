@@ -182,7 +182,7 @@ class DialogTitleState {
 			({
 				id: this.#id.current,
 				role: "heading",
-				"aria-level": String(this.#level),
+				"aria-level": this.#level.current,
 				[TITLE_ATTR]: "",
 				...this.#root.sharedProps,
 			}) as const
