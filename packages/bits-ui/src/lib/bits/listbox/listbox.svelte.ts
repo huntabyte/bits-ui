@@ -1,358 +1,600 @@
-import { onMount } from "svelte";
-import { SvelteSet } from "svelte/reactivity";
-import { IsFocusWithin } from "runed";
-import { focusFirst } from "$lib/internal/focus.js";
+import { Previous } from "runed";
+import { afterTick } from "$lib/internal/afterTick.js";
+import { backward, forward, next, prev } from "$lib/internal/arrays.js";
 import {
-	getAriaDisabled,
-	getAriaSelected,
+	getAriaExpanded,
+	getAriaHidden,
 	getDataDisabled,
-	getDataOrientation,
-	getDataSelected,
+	getDataOpenClosed,
+	getDisabled,
+	getRequired,
 } from "$lib/internal/attrs.js";
 import type { Box, ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { createContext } from "$lib/internal/createContext.js";
-import { isHTMLElement } from "$lib/internal/is.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
-import { type UseRovingFocusReturn, useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
-import { useTypeahead } from "$lib/internal/useTypeahead.svelte.js";
-import type { Orientation } from "$lib/shared/index.js";
-import { afterTick } from "$lib/internal/afterTick.js";
-import { onDestroyEffect } from "$lib/internal/onDestroyEffect.svelte.js";
 
-const LISTBOX_ITEM_ATTR = "data-listbox-item";
-const LISTBOX_CONTENT_ATTR = "data-listbox-content";
-const LISTOX_LABEL_ATTR = "data-listbox-label";
-const LISTBOX_GROUP_ATTR = "data-listbox-group";
-const LISTBOX_GROUP_LABEL_ATTR = "data-listbox-group-label";
+// prettier-ignore
+export const INTERACTION_KEYS = [kbd.ARROW_LEFT, kbd.ESCAPE, kbd.ARROW_RIGHT, kbd.SHIFT, kbd.CAPS_LOCK, kbd.CONTROL, kbd.ALT, kbd.META, kbd.ENTER, kbd.F1, kbd.F2, kbd.F3, kbd.F4, kbd.F5, kbd.F6, kbd.F7, kbd.F8, kbd.F9, kbd.F10, kbd.F11, kbd.F12];
 
-export const SELECTION_KEYS = [kbd.ENTER, kbd.SPACE];
 export const FIRST_KEYS = [kbd.ARROW_DOWN, kbd.PAGE_UP, kbd.HOME];
 export const LAST_KEYS = [kbd.ARROW_UP, kbd.PAGE_DOWN, kbd.END];
 export const FIRST_LAST_KEYS = [...FIRST_KEYS, ...LAST_KEYS];
+export const SELECTION_KEYS = [kbd.ENTER, kbd.SPACE];
 
-type ListboxRootBaseStateProps = ReadableBoxedValues<{
+const LISTOX_ITEM_ATTR = "data-listbox-item";
+const LISTBOX_CONTENT_ATTR = "data-listbox-content";
+const LISTBOX_INPUT_ATTR = "data-listbox-input";
+const LISTBOX_TRIGGER_ATTR = "data-listbox-trigger";
+const LISTBOX_GROUP_ATTR = "data-listbox-group";
+const LISTBOX_GROUP_LABEL_ATTR = "data-listbox-group-label";
+
+type ListboxBaseRootStateProps = ReadableBoxedValues<{
+	disabled: boolean;
+	required: boolean;
+	name: string;
 	loop: boolean;
-	orientation: Orientation;
-	autoFocus: boolean | "first" | "last";
-}>;
+	scrollAlignment: "nearest" | "center";
+}> &
+	WritableBoxedValues<{
+		open: boolean;
+	}>;
 
-class ListboxRootBaseState {
-	loop: ListboxRootBaseStateProps["loop"];
-	orientation: ListboxRootBaseStateProps["orientation"];
-	autoFocus: ListboxRootBaseStateProps["autoFocus"];
-	labelNode = $state<HTMLElement | null>(null);
+class ListboxBaseRootState {
+	disabled: ListboxBaseRootStateProps["disabled"];
+	required: ListboxBaseRootStateProps["required"];
+	name: ListboxBaseRootStateProps["name"];
+	loop: ListboxBaseRootStateProps["loop"];
+	open: ListboxBaseRootStateProps["open"];
+	scrollAlignment: ListboxBaseRootStateProps["scrollAlignment"];
+	touchedInput = $state(false);
+	inputValue = $state<string>("");
+	inputNode = $state<HTMLElement | null>(null);
 	contentNode = $state<HTMLElement | null>(null);
-	valueOptions = new SvelteSet<string>();
+	triggerNode = $state<HTMLElement | null>(null);
+	highlightedNode = $state<HTMLElement | null>(null);
+	highlightedValue = $derived.by(() => {
+		if (!this.highlightedNode) return null;
+		return this.highlightedNode.getAttribute("data-value");
+	});
+	highlightedId = $derived.by(() => {
+		if (!this.highlightedNode) return undefined;
+		return this.highlightedNode.id;
+	});
+	highlightedLabel = $derived.by(() => {
+		if (!this.highlightedNode) return null;
+		return this.highlightedNode.getAttribute("data-label");
+	});
 
-	constructor(props: ListboxRootBaseStateProps) {
+	constructor(props: ListboxBaseRootStateProps) {
+		this.disabled = props.disabled;
+		this.required = props.required;
+		this.name = props.name;
 		this.loop = props.loop;
-		this.orientation = props.orientation;
-		this.autoFocus = props.autoFocus;
+		this.open = props.open;
+		this.scrollAlignment = props.scrollAlignment;
+
+		$effect.pre(() => {
+			if (!this.open.current) {
+				this.setHighlightedNode(null);
+			}
+		});
 	}
+
+	setHighlightedNode = (node: HTMLElement | null) => {
+		this.highlightedNode = node;
+		if (node) {
+			node.scrollIntoView({ block: this.scrollAlignment.current });
+		}
+	};
+
+	getCandidateNodes = (): HTMLElement[] => {
+		const node = this.contentNode;
+		if (!node) return [];
+		const nodes = Array.from(
+			node.querySelectorAll<HTMLElement>(`[${LISTOX_ITEM_ATTR}]:not([data-disabled])`)
+		);
+		return nodes;
+	};
+
+	setHighlightedToFirstCandidate = () => {
+		this.setHighlightedNode(null);
+		const candidateNodes = this.getCandidateNodes();
+		if (!candidateNodes.length) return;
+		this.setHighlightedNode(candidateNodes[0]!);
+	};
+
+	getNodeByValue = (value: string): HTMLElement | null => {
+		const candidateNodes = this.getCandidateNodes();
+		return candidateNodes.find((node) => node.dataset.value === value) ?? null;
+	};
+
+	setOpen = (open: boolean) => {
+		this.open.current = open;
+	};
+
+	toggleOpen = () => {
+		this.open.current = !this.open.current;
+	};
+
+	openMenu = () => {
+		this.setOpen(true);
+	};
+
+	closeMenu = () => {
+		this.setHighlightedNode(null);
+		this.setOpen(false);
+	};
+
+	toggleMenu = () => {
+		this.toggleOpen();
+	};
 }
 
-type ListboxRootSingleStateProps = ListboxRootBaseStateProps &
+type ListboxSingleRootStateProps = ListboxBaseRootStateProps &
 	WritableBoxedValues<{
 		value: string;
 	}>;
 
-export class ListboxRootSingleState extends ListboxRootBaseState {
-	value: ListboxRootSingleStateProps["value"];
+class ListboxSingleRootState extends ListboxBaseRootState {
+	value: ListboxSingleRootStateProps["value"];
 	isMulti = false as const;
+	hasValue = $derived.by(() => this.value.current !== "");
 
-	constructor(props: ListboxRootSingleStateProps) {
+	constructor(props: ListboxSingleRootStateProps) {
 		super(props);
 		this.value = props.value;
+
+		$effect(() => {
+			if (!this.open.current && this.highlightedNode) {
+				this.setHighlightedNode(null);
+			}
+		});
+
+		$effect(() => {
+			if (!this.open.current) return;
+			afterTick(() => {
+				this.#setInitialHighlightedNode();
+			});
+		});
 	}
 
 	includesItem = (itemValue: string) => {
 		return this.value.current === itemValue;
 	};
 
-	toggleItem = (itemValue: string) => {
+	toggleItem = (itemValue: string, itemLabel: string = itemValue) => {
 		this.value.current = this.includesItem(itemValue) ? "" : itemValue;
+		this.inputValue = itemLabel;
 	};
 
-	createContent = (props: ListboxContentStateProps) => {
+	#setInitialHighlightedNode = () => {
+		if (this.highlightedNode) return;
+		if (this.value.current !== "") {
+			const node = this.getNodeByValue(this.value.current);
+			if (node) {
+				this.setHighlightedNode(node);
+				return;
+			}
+		}
+		// if no value is set, we want to highlight the first item
+		const firstCandidate = this.getCandidateNodes()[0];
+		if (!firstCandidate) return;
+		this.setHighlightedNode(firstCandidate);
+	};
+
+	// createInput(props: ListboxInputStateProps) {
+	// 	return new ListboxInputState(props, this);
+	// }
+
+	createContent(props: ListboxContentStateProps) {
 		return new ListboxContentState(props, this);
-	};
+	}
 
-	createGroup = (props: ListboxGroupStateProps) => {
-		return new ListboxGroupState(props, this);
-	};
+	createTrigger(props: ListboxTriggerStateProps) {
+		return new ListboxTriggerState(props, this);
+	}
 
-	createLabel = (props: ListboxLabelStateProps) => {
-		return new ListboxLabelState(props, this);
-	};
+	createItem(props: ListboxItemStateProps) {
+		return new ListboxItemState(props, this);
+	}
+
+	createGroup(props: ListboxGroupStateProps) {
+		return new ListboxGroupState(props);
+	}
+
+	createHiddenInput(props: ListboxHiddenInputStateProps) {
+		return new ListboxHiddenInputState(props, this);
+	}
 }
 
-type ListboxRootMultipleStateProps = ListboxRootBaseStateProps &
+type ListboxMultipleRootStateProps = ListboxBaseRootStateProps &
 	WritableBoxedValues<{
 		value: string[];
 	}>;
 
-export class ListboxRootMultipleState extends ListboxRootBaseState {
-	value: ListboxRootMultipleStateProps["value"];
+class ListboxMultipleRootState extends ListboxBaseRootState {
+	value: ListboxMultipleRootStateProps["value"];
 	isMulti = true as const;
+	hasValue = $derived.by(() => this.value.current.length > 0);
 
-	constructor(props: ListboxRootMultipleStateProps) {
+	constructor(props: ListboxMultipleRootStateProps) {
 		super(props);
 		this.value = props.value;
+
+		$effect(() => {
+			if (!this.open.current) return;
+			afterTick(() => {
+				if (!this.highlightedNode) {
+					this.#setInitialHighlightedNode();
+				}
+			});
+		});
 	}
 
 	includesItem = (itemValue: string) => {
 		return this.value.current.includes(itemValue);
 	};
 
-	toggleItem = (itemValue: string) => {
+	toggleItem = (itemValue: string, itemLabel: string = itemValue) => {
 		if (this.includesItem(itemValue)) {
 			this.value.current = this.value.current.filter((v) => v !== itemValue);
 		} else {
 			this.value.current = [...this.value.current, itemValue];
 		}
+		this.inputValue = itemLabel;
 	};
 
-	selectAll = () => {
-		this.value.current = [...this.valueOptions];
+	#setInitialHighlightedNode = () => {
+		if (this.highlightedNode) return;
+		if (this.value.current.length && this.value.current[0] !== "") {
+			const node = this.getNodeByValue(this.value.current[0]!);
+			if (node) {
+				this.setHighlightedNode(node);
+				return;
+			}
+		}
+		// if no value is set, we want to highlight the first item
+		const firstCandidate = this.getCandidateNodes()[0];
+		if (!firstCandidate) return;
+		this.setHighlightedNode(firstCandidate);
 	};
 
-	createContent = (props: ListboxContentStateProps) => {
+	// createInput(props: ListboxInputStateProps) {
+	// 	return new ListboxInputState(props, this);
+	// }
+
+	createContent(props: ListboxContentStateProps) {
 		return new ListboxContentState(props, this);
-	};
+	}
 
-	createGroup = (props: ListboxGroupStateProps) => {
-		return new ListboxGroupState(props, this);
-	};
+	createTrigger(props: ListboxTriggerStateProps) {
+		return new ListboxTriggerState(props, this);
+	}
 
-	createLabel = (props: ListboxLabelStateProps) => {
-		return new ListboxLabelState(props, this);
-	};
+	createItem(props: ListboxItemStateProps) {
+		return new ListboxItemState(props, this);
+	}
+
+	createGroup(props: ListboxGroupStateProps) {
+		return new ListboxGroupState(props);
+	}
+
+	createHiddenInput(props: ListboxHiddenInputStateProps) {
+		return new ListboxHiddenInputState(props, this);
+	}
 }
 
-type ListboxRootState = ListboxRootSingleState | ListboxRootMultipleState;
+type ListboxRootState = ListboxSingleRootState | ListboxMultipleRootState;
 
-type ListboxContentStateProps = WithRefProps;
+type ListboxInputStateProps = WithRefProps;
 
-export class ListboxContentState {
-	id: ListboxContentStateProps["id"];
-	ref: ListboxContentStateProps["ref"];
+// class ListboxInputState {
+// 	#id: ListboxInputStateProps["id"];
+// 	#ref: ListboxInputStateProps["ref"];
+// 	root: ListboxRootState;
+
+// 	constructor(props: ListboxInputStateProps, root: ListboxRootState) {
+// 		this.root = root;
+// 		this.#id = props.id;
+// 		this.#ref = props.ref;
+
+// 		useRefById({
+// 			id: this.#id,
+// 			ref: this.#ref,
+// 			onRefChange: (node) => {
+// 				this.root.inputNode = node;
+// 			},
+// 		});
+// 	}
+
+// 	#onkeydown = async (e: KeyboardEvent) => {
+// 		if (e.key === kbd.ESCAPE) return;
+// 		const open = this.root.open.current;
+// 		const inputValue = this.root.inputValue;
+
+// 		// prevent arrow up/down from moving the position of the cursor in the input
+// 		if (e.key === kbd.ARROW_UP || e.key === kbd.ARROW_DOWN) e.preventDefault();
+// 		if (!open) {
+// 			if (INTERACTION_KEYS.includes(e.key)) return;
+// 			if (e.key === kbd.TAB) return;
+// 			if (e.key === kbd.BACKSPACE && inputValue === "") return;
+// 			this.root.openMenu();
+// 			// we need to wait for a tick after the menu opens to ensure the highlighted nodes are
+// 			// set correctly.
+// 			afterTick(() => {
+// 				if (this.root.hasValue) return;
+// 				const candidateNodes = this.root.getCandidateNodes();
+// 				if (!candidateNodes.length) return;
+
+// 				if (e.key === kbd.ARROW_DOWN) {
+// 					const firstCandidate = candidateNodes[0]!;
+// 					this.root.setHighlightedNode(firstCandidate);
+// 				} else if (e.key === kbd.ARROW_UP) {
+// 					const lastCandidate = candidateNodes[candidateNodes.length - 1]!;
+// 					this.root.setHighlightedNode(lastCandidate);
+// 				}
+// 			});
+// 			return;
+// 		}
+
+// 		if (e.key === kbd.TAB) {
+// 			this.root.closeMenu();
+// 			return;
+// 		}
+
+// 		if (e.key === kbd.ENTER && !e.isComposing) {
+// 			e.preventDefault();
+// 			const highlightedValue = this.root.highlightedValue;
+// 			if (highlightedValue) {
+// 				this.root.toggleItem(highlightedValue, this.root.highlightedLabel ?? undefined);
+// 			}
+// 			if (!this.root.isMulti) {
+// 				this.root.closeMenu();
+// 			}
+// 		}
+
+// 		if (e.key === kbd.ARROW_UP && e.altKey) {
+// 			this.root.closeMenu();
+// 		}
+
+// 		if (FIRST_LAST_KEYS.includes(e.key)) {
+// 			e.preventDefault();
+// 			const candidateNodes = this.root.getCandidateNodes();
+// 			const currHighlightedNode = this.root.highlightedNode;
+// 			const currIndex = currHighlightedNode
+// 				? candidateNodes.indexOf(currHighlightedNode)
+// 				: -1;
+
+// 			const loop = this.root.loop.current;
+// 			let nextItem: HTMLElement | undefined;
+
+// 			if (e.key === kbd.ARROW_DOWN) {
+// 				nextItem = next(candidateNodes, currIndex, loop);
+// 			} else if (e.key === kbd.ARROW_UP) {
+// 				nextItem = prev(candidateNodes, currIndex, loop);
+// 			} else if (e.key === kbd.PAGE_DOWN) {
+// 				nextItem = forward(candidateNodes, currIndex, 10, loop);
+// 			} else if (e.key === kbd.PAGE_UP) {
+// 				nextItem = backward(candidateNodes, currIndex, 10, loop);
+// 			} else if (e.key === kbd.HOME) {
+// 				nextItem = candidateNodes[0];
+// 			} else if (e.key === kbd.END) {
+// 				nextItem = candidateNodes[candidateNodes.length - 1];
+// 			}
+// 			if (!nextItem) return;
+// 			this.root.setHighlightedNode(nextItem);
+// 			return;
+// 		}
+
+// 		if (INTERACTION_KEYS.includes(e.key)) return;
+// 		if (!this.root.highlightedNode) {
+// 			this.root.setHighlightedToFirstCandidate();
+// 		}
+// 		// this.root.setHighlightedToFirstCandidate();
+// 	};
+
+// 	#oninput = (e: Event & { currentTarget: HTMLInputElement }) => {
+// 		this.root.inputValue = e.currentTarget.value;
+// 		this.root.setHighlightedToFirstCandidate();
+// 	};
+
+// 	props = $derived.by(
+// 		() =>
+// 			({
+// 				id: this.#id.current,
+// 				role: "combobox",
+// 				disabled: this.root.disabled.current ? true : undefined,
+// 				"aria-activedescendant": this.root.highlightedId,
+// 				"aria-autocomplete": "list",
+// 				"aria-expanded": getAriaExpanded(this.root.open.current),
+// 				"data-state": getDataOpenClosed(this.root.open.current),
+// 				"data-disabled": getDataDisabled(this.root.disabled.current),
+// 				onkeydown: this.#onkeydown,
+// 				oninput: this.#oninput,
+// 				[LISTBOX_INPUT_ATTR]: "",
+// 			}) as const
+// 	);
+// }
+
+type ListboxTriggerStateProps = WithRefProps;
+
+class ListboxTriggerState {
+	#id: ListboxTriggerStateProps["id"];
+	#ref: ListboxTriggerStateProps["ref"];
 	root: ListboxRootState;
-	rovingFocusGroup: UseRovingFocusReturn;
-	#handleTypeaheadSearch: ReturnType<typeof useTypeahead>["handleTypeaheadSearch"];
-	focusedItemId = $state("");
-	focusWithin = new IsFocusWithin(() => this.ref.current ?? undefined);
-	#labelledBy = $derived.by(() => this.root.labelNode?.id ?? undefined);
 
-	constructor(props: ListboxContentStateProps, root: ListboxRootState) {
-		this.id = props.id;
-		this.ref = props.ref;
+	constructor(props: ListboxTriggerStateProps, root: ListboxRootState) {
 		this.root = root;
+		this.#id = props.id;
+		this.#ref = props.ref;
 
 		useRefById({
-			id: this.id,
-			ref: this.ref,
+			id: this.#id,
+			ref: this.#ref,
 			onRefChange: (node) => {
-				this.root.contentNode = node;
+				this.root.triggerNode = node;
 			},
-		});
-
-		this.rovingFocusGroup = useRovingFocus({
-			rootNodeId: this.id,
-			candidateSelector: "data-listbox-item",
-			loop: this.root.loop,
-			orientation: this.root.orientation,
-			onCandidateFocus: (node) => {
-				if (node) {
-					this.focusedItemId = node.id;
-				} else {
-					this.focusedItemId = "";
-				}
-			},
-		});
-
-		this.#handleTypeaheadSearch = useTypeahead().handleTypeaheadSearch;
-
-		onMount(() => {
-			if (!this.focusedItemId) {
-				const candidateNodes = this.getCandidateNodes();
-				if (this.root.isMulti && this.root.value.current.length) {
-					const firstValue = this.root.value.current[0];
-					if (firstValue) {
-						const candidateNode = candidateNodes.find(
-							(node) => node.dataset.value === firstValue
-						);
-						if (candidateNode) {
-							this.focusedItemId = candidateNode.id;
-							return;
-						}
-					}
-				} else if (!this.root.isMulti && this.root.value.current) {
-					const candidateNode = candidateNodes.find(
-						(node) => node.dataset.value === this.root.value.current
-					);
-					if (candidateNode) {
-						this.focusedItemId = candidateNode.id;
-						return;
-					}
-				}
-				const firstCandidate = candidateNodes[0];
-				if (firstCandidate) {
-					this.focusedItemId = firstCandidate.id;
-				}
-			}
-		});
-
-		$effect(() => {
-			if (!this.focusWithin.current) {
-				this.focusedItemId = this.getNodeIdToFocus() ?? "";
-			}
 		});
 	}
 
-	/**
-	 * Get the node to focus when the listbox loses focus and then
-	 * regains focus. In the case of a single-select listbox, if an item is
-	 * selected, we want to focus that item. If no item is selected, we want to
-	 * focus the first item in the list.
-	 *
-	 * In the case of a multi-select listbox, if at least one or more items are
-	 * selected, we want to focus the first selected item. If no items are selected,
-	 * we want to focus the first item in the list.
-	 */
-	getNodeIdToFocus = () => {
-		const candidateNodes = this.getCandidateNodes();
-		if (this.root.isMulti && this.root.value.current.length) {
-			const firstValue = this.root.value.current[0];
-			if (firstValue !== undefined) {
-				const candidateNode = candidateNodes.find(
-					(node) => node.dataset.value === firstValue
-				);
-				if (candidateNode) {
-					return candidateNode.id;
-				}
-			}
-		} else if (!this.root.isMulti && this.root.value.current) {
-			const candidateNode = candidateNodes.find(
-				(node) => node.dataset.value === this.root.value.current
-			);
-			if (candidateNode) {
-				return candidateNode.id;
-			}
-		}
-		const firstCandidate = candidateNodes[0];
-		return firstCandidate?.id;
-	};
-
-	isFocusedItem = (id: string) => {
-		return this.focusedItemId === id;
-	};
-
-	getCandidateNodes = () => {
-		const node = this.ref.current;
-		if (!node) return [];
-		const candidates = Array.from(node.querySelectorAll<HTMLElement>(`[${LISTBOX_ITEM_ATTR}]`));
-		return candidates;
-	};
-
 	#onkeydown = (e: KeyboardEvent) => {
-		if (e.defaultPrevented) return;
-		const target = e.target;
-		const currentTarget = e.currentTarget;
-		if (!isHTMLElement(target) || !isHTMLElement(currentTarget)) return;
+		if (e.key === kbd.ARROW_UP || e.key === kbd.ARROW_DOWN) e.preventDefault();
 
-		const isKeydownInside = target.closest(`[${LISTBOX_CONTENT_ATTR}]`)?.id === this.id.current;
+		if (!this.root.open.current) {
+			if (e.key === kbd.ENTER) return;
 
-		const isModifierKey = e.ctrlKey || e.altKey || e.metaKey;
-		const isCharacterKey = e.key.length === 1;
-
-		const kbdFocusedEl = this.rovingFocusGroup.handleKeydown(target, e);
-		if (kbdFocusedEl) return;
-
-		// prevent space from being considered with typeahead
-		if (e.code === "Space") return;
-
-		const candidateNodes = this.getCandidateNodes();
-
-		if (isKeydownInside) {
-			// listboxes do not respect the tab key
-			if (e.key === kbd.TAB) return;
-			if (!isModifierKey && isCharacterKey) {
-				this.#handleTypeaheadSearch(e.key, candidateNodes);
+			if (e.key === kbd.SPACE || e.key === kbd.ARROW_DOWN || e.key === kbd.ARROW_UP) {
+				e.preventDefault();
+				this.root.openMenu();
 			}
-		}
 
-		if (e.key === "a" && (e.ctrlKey || e.metaKey) && this.root.isMulti) {
-			this.root.selectAll();
-			e.preventDefault();
+			// we need to wait for a tick after the menu opens to ensure
+			// the highlighted nodes are set correctly
+			afterTick(() => {
+				if (this.root.hasValue) return;
+				const candidateNodes = this.root.getCandidateNodes();
+				if (!candidateNodes.length) return;
+
+				if (e.key === kbd.ARROW_DOWN) {
+					const firstCandidate = candidateNodes[0]!;
+					this.root.setHighlightedNode(firstCandidate);
+				} else if (e.key === kbd.ARROW_UP) {
+					const lastCandidate = candidateNodes[candidateNodes.length - 1]!;
+					this.root.setHighlightedNode(lastCandidate);
+				}
+			});
 			return;
 		}
 
-		if (e.key === kbd.ESCAPE) {
-			if (this.root.isMulti) {
-				this.root.value.current = [];
-			} else {
-				this.root.value.current = "";
+		if (e.key === kbd.TAB) {
+			this.root.closeMenu();
+		}
+
+		if ((e.key === kbd.ENTER || e.key === kbd.SPACE) && !e.isComposing) {
+			e.preventDefault();
+			const highlightedValue = this.root.highlightedValue;
+			if (highlightedValue) {
+				this.root.toggleItem(highlightedValue, this.root.highlightedLabel ?? undefined);
+			}
+			if (!this.root.isMulti) {
+				this.root.closeMenu();
 			}
 		}
 
-		// focus first/last based on key pressed;
-		if (target.id !== this.id.current) return;
-
-		if (!FIRST_LAST_KEYS.includes(e.key)) return;
-		e.preventDefault();
-
-		if (LAST_KEYS.includes(e.key)) {
-			candidateNodes.reverse();
+		if (e.key === kbd.ARROW_UP && e.altKey) {
+			this.root.closeMenu();
 		}
-		focusFirst(candidateNodes);
+
+		if (FIRST_LAST_KEYS.includes(e.key)) {
+			e.preventDefault();
+			const candidateNodes = this.root.getCandidateNodes();
+			const currHighlightedNode = this.root.highlightedNode;
+			const currIndex = currHighlightedNode
+				? candidateNodes.indexOf(currHighlightedNode)
+				: -1;
+
+			const loop = this.root.loop.current;
+			let nextItem: HTMLElement | undefined;
+
+			if (e.key === kbd.ARROW_DOWN) {
+				nextItem = next(candidateNodes, currIndex, loop);
+			} else if (e.key === kbd.ARROW_UP) {
+				nextItem = prev(candidateNodes, currIndex, loop);
+			} else if (e.key === kbd.PAGE_DOWN) {
+				nextItem = forward(candidateNodes, currIndex, 10, loop);
+			} else if (e.key === kbd.PAGE_UP) {
+				nextItem = backward(candidateNodes, currIndex, 10, loop);
+			} else if (e.key === kbd.HOME) {
+				nextItem = candidateNodes[0];
+			} else if (e.key === kbd.END) {
+				nextItem = candidateNodes[candidateNodes.length - 1];
+			}
+			if (!nextItem) return;
+			this.root.setHighlightedNode(nextItem);
+			return;
+		}
+
+		if (!this.root.highlightedNode) {
+			this.root.setHighlightedToFirstCandidate();
+		}
+	};
+
+	#onclick = (e: MouseEvent) => {
+		e.preventDefault();
+	};
+
+	/**
+	 * `pointerdown` fires before the `focus` event, so we can prevent the default
+	 * behavior of focusing the button and keep focus on the input.
+	 */
+	#onpointerdown = () => {
+		if (this.root.disabled.current) return;
+		this.root.toggleMenu();
 	};
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.current,
-				"data-orientation": getDataOrientation(this.root.orientation.current),
-				"aria-labelledby": this.#labelledBy,
-				role: "listbox",
-				[LISTBOX_CONTENT_ATTR]: "",
+				id: this.#id.current,
+				disabled: this.root.disabled.current ? true : undefined,
+				"aria-haspopup": "listbox",
+				"data-state": getDataOpenClosed(this.root.open.current),
+				"data-disabled": getDataDisabled(this.root.disabled.current),
+				[LISTBOX_TRIGGER_ATTR]: "",
+				onpointerdown: this.#onpointerdown,
 				onkeydown: this.#onkeydown,
+				onclick: this.#onclick,
 			}) as const
 	);
-
-	createItem = (props: ListboxItemStateProps) => {
-		return new ListboxItemState(props, this);
-	};
 }
 
-type ListboxLabelStateProps = WithRefProps;
+type ListboxContentStateProps = WithRefProps;
 
-export class ListboxLabelState {
-	id: ListboxLabelStateProps["id"];
-	ref: ListboxLabelStateProps["ref"];
+class ListboxContentState {
+	#id: ListboxContentStateProps["id"];
+	#ref: ListboxContentStateProps["ref"];
 	root: ListboxRootState;
 
-	constructor(props: ListboxLabelStateProps, root: ListboxRootState) {
-		this.id = props.id;
-		this.ref = props.ref;
+	constructor(props: ListboxContentStateProps, root: ListboxRootState) {
 		this.root = root;
+		this.#id = props.id;
+		this.#ref = props.ref;
 
 		useRefById({
-			id: this.id,
-			ref: this.ref,
+			id: this.#id,
+			ref: this.#ref,
 			onRefChange: (node) => {
-				this.root.labelNode = node;
+				this.root.contentNode = node;
 			},
+			condition: () => this.root.open.current,
+		});
+
+		$effect(() => {
+			return () => {
+				this.root.contentNode = null;
+			};
 		});
 	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.current,
-				"data-orientation": getDataOrientation(this.root.orientation.current),
-				[LISTOX_LABEL_ATTR]: "",
+				id: this.#id.current,
+				role: "listbox",
+				"data-state": getDataOpenClosed(this.root.open.current),
+				style: {
+					"--bits-listbox-content-transform-origin":
+						"var(--bits-floating-transform-origin)",
+					"--bits-listbox-content-available-width":
+						"var(--bits-floating-available-width)",
+					"--bits-listbox-content-available-height":
+						"var(--bits-floating-available-height)",
+					"--bits-listbox-trigger-width": "var(--bits-floating-anchor-width)",
+					"--bits-listbox-trigger-height": "var(--bits-floating-anchor-height)",
+				},
+				[LISTBOX_CONTENT_ATTR]: "",
 			}) as const
 	);
 }
@@ -360,139 +602,132 @@ export class ListboxLabelState {
 type ListboxItemStateProps = WithRefProps<
 	ReadableBoxedValues<{
 		value: string;
-		label: string;
 		disabled: boolean;
+		label: string;
+		onHighlight: () => void;
+		onUnhighlight: () => void;
 	}>
 >;
 
-export class ListboxItemState {
-	id: ListboxItemStateProps["id"];
-	ref: ListboxItemStateProps["ref"];
+class ListboxItemState {
+	#id: ListboxItemStateProps["id"];
+	#ref: ListboxItemStateProps["ref"];
+	root: ListboxRootState;
 	value: ListboxItemStateProps["value"];
 	label: ListboxItemStateProps["label"];
+	onHighlight: ListboxItemStateProps["onHighlight"];
+	onUnhighlight: ListboxItemStateProps["onUnhighlight"];
 	disabled: ListboxItemStateProps["disabled"];
-	content: ListboxContentState;
-	isSelected = $derived.by(() => this.content.root.includesItem(this.value.current));
-	isTabIndexTarget = $derived.by(() => this.content.isFocusedItem(this.id.current));
-	#isFocused = $state(false);
+	isSelected = $derived.by(() => this.root.includesItem(this.value.current));
+	isHighlighted = $derived.by(() => this.root.highlightedValue === this.value.current);
+	prevHighlighted = new Previous(() => this.isHighlighted);
 
-	constructor(props: ListboxItemStateProps, content: ListboxContentState) {
-		this.id = props.id;
-		this.ref = props.ref;
+	constructor(props: ListboxItemStateProps, root: ListboxRootState) {
+		this.root = root;
 		this.value = props.value;
-		this.label = props.label;
 		this.disabled = props.disabled;
-		this.content = content;
+		this.label = props.label;
+		this.onHighlight = props.onHighlight;
+		this.onUnhighlight = props.onUnhighlight;
+		this.#id = props.id;
+		this.#ref = props.ref;
 
 		$effect(() => {
-			this.content.root.valueOptions.add(this.value.current);
-
-			return () => {
-				this.content.root.valueOptions.delete(this.value.current);
-			};
-		});
-
-		onDestroyEffect(() => {
-			this.content.root.valueOptions.delete(this.value.current);
+			if (this.isHighlighted) {
+				this.onHighlight.current();
+			} else if (this.prevHighlighted.current) {
+				this.onUnhighlight.current();
+			}
 		});
 
 		useRefById({
-			id: this.id,
-			ref: this.ref,
+			id: this.#id,
+			ref: this.#ref,
 		});
 	}
 
-	handleSelect = () => {
+	snippetProps = $derived.by(() => ({
+		selected: this.isSelected,
+		highlighted: this.isHighlighted,
+	}));
+
+	#onpointerdown = (e: PointerEvent) => {
+		// prevent focus from leaving the combobox
+		e.preventDefault();
+	};
+
+	/**
+	 * Using `pointerup` instead of `click` allows power users to pointerdown
+	 * the trigger, then release pointerup on an item to select it vs having to do
+	 * multiple clicks.
+	 */
+	#onpointerup = (e: PointerEvent) => {
+		// prevent any default behavior
+		e.preventDefault();
 		if (this.disabled.current) return;
-		this.content.root.toggleItem(this.value.current);
-	};
-
-	#onpointerup = () => {
-		this.handleSelect();
-	};
-
-	#onkeydown = (e: KeyboardEvent) => {
-		if (SELECTION_KEYS.includes(e.key)) {
-			e.preventDefault();
-			this.handleSelect();
+		this.root.toggleItem(this.value.current, this.label.current);
+		if (!this.root.isMulti) {
+			this.root.closeMenu();
 		}
 	};
 
-	#onfocus = async (e: FocusEvent) => {
-		afterTick(() => {
-			if (e.defaultPrevented || this.disabled.current) return;
-			this.#isFocused = true;
-		});
+	#onpointermove = (_: PointerEvent) => {
+		if (this.root.highlightedNode !== this.#ref.current) {
+			this.root.setHighlightedNode(this.#ref.current);
+		}
 	};
 
-	#onblur = async (e: FocusEvent) => {
-		afterTick(() => {
-			if (e.defaultPrevented) return;
-			this.#isFocused = false;
-		});
-	};
-
-	#onpointermove = () => {
-		if (this.#isFocused) return;
-		this.#isFocused = true;
-		this.ref.current?.focus();
+	#onpointerleave = (_: PointerEvent) => {
+		if (this.root.highlightedNode === this.#ref.current) {
+			this.root.setHighlightedNode(null);
+		}
 	};
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.current,
-				role: "option",
+				id: this.#id.current,
+				"aria-selected": this.root.includesItem(this.value.current) ? "true" : undefined,
 				"data-value": this.value.current,
-				"aria-disabled": getAriaDisabled(this.disabled.current),
 				"data-disabled": getDataDisabled(this.disabled.current),
-				"aria-selected": getAriaSelected(this.isSelected),
-				"data-selected": getDataSelected(this.isSelected),
-				"data-highlighted": this.#isFocused ? "" : undefined,
-				tabindex: this.isTabIndexTarget ? 0 : -1,
-				[LISTBOX_ITEM_ATTR]: "",
-				//
-				onpointerup: this.#onpointerup,
-				onkeydown: this.#onkeydown,
-				onfocus: this.#onfocus,
-				onblur: this.#onblur,
+				"data-highlighted":
+					this.root.highlightedValue === this.value.current ? "" : undefined,
+				"data-selected": this.root.includesItem(this.value.current) ? "" : undefined,
+				"data-label": this.label.current,
+				[LISTOX_ITEM_ATTR]: "",
+
 				onpointermove: this.#onpointermove,
+				onpointerdown: this.#onpointerdown,
+				onpointerleave: this.#onpointerleave,
+				onpointerup: this.#onpointerup,
 			}) as const
 	);
 }
 
 type ListboxGroupStateProps = WithRefProps;
 
-export class ListboxGroupState {
-	id: ListboxGroupStateProps["id"];
-	ref: ListboxGroupStateProps["ref"];
-	root: ListboxRootState;
-	groupLabelNode = $state<HTMLElement | null>(null);
+class ListboxGroupState {
+	#id: ListboxGroupStateProps["id"];
+	#ref: ListboxGroupStateProps["ref"];
+	labelNode = $state<HTMLElement | null>(null);
 
-	constructor(props: ListboxGroupStateProps, root: ListboxRootState) {
-		this.id = props.id;
-		this.ref = props.ref;
-		this.root = root;
+	constructor(props: ListboxGroupStateProps) {
+		this.#id = props.id;
+		this.#ref = props.ref;
 
 		useRefById({
-			id: this.id,
-			ref: this.ref,
+			id: this.#id,
+			ref: this.#ref,
 		});
 	}
-
-	#ariaLabelledBy = $derived.by(() => {
-		if (!this.groupLabelNode) return undefined;
-		return this.groupLabelNode.id;
-	});
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.current,
-				"data-orientation": getDataOrientation(this.root.orientation.current),
+				id: this.#id.current,
 				role: "group",
-				"aria-labelledby": this.#ariaLabelledBy,
 				[LISTBOX_GROUP_ATTR]: "",
+				"aria-labelledby": this.labelNode?.id ?? undefined,
 			}) as const
 	);
 
@@ -503,22 +738,19 @@ export class ListboxGroupState {
 
 type ListboxGroupLabelStateProps = WithRefProps;
 
-export class ListboxGroupLabelState {
-	id: ListboxGroupLabelStateProps["id"];
-	ref: ListboxGroupLabelStateProps["ref"];
+class ListboxGroupLabelState {
+	#id: ListboxGroupLabelStateProps["id"];
+	#ref: ListboxGroupLabelStateProps["ref"];
 
-	constructor(
-		props: ListboxGroupLabelStateProps,
-		readonly group: ListboxGroupState
-	) {
-		this.id = props.id;
-		this.ref = props.ref;
+	constructor(props: ListboxGroupLabelStateProps, group: ListboxGroupState) {
+		this.#id = props.id;
+		this.#ref = props.ref;
 
 		useRefById({
-			id: this.id,
-			ref: this.ref,
+			id: this.#id,
+			ref: this.#ref,
 			onRefChange: (node) => {
-				this.group.groupLabelNode = node;
+				group.labelNode = node;
 			},
 		});
 	}
@@ -526,9 +758,34 @@ export class ListboxGroupLabelState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.current,
-				"data-orientation": getDataOrientation(this.group.root.orientation.current),
+				id: this.#id.current,
 				[LISTBOX_GROUP_LABEL_ATTR]: "",
+			}) as const
+	);
+}
+
+type ListboxHiddenInputStateProps = ReadableBoxedValues<{
+	value: string;
+}>;
+
+class ListboxHiddenInputState {
+	#value: ListboxHiddenInputStateProps["value"];
+	root: ListboxRootState;
+	shouldRender = $derived.by(() => this.root.name.current !== "");
+
+	constructor(props: ListboxHiddenInputStateProps, root: ListboxRootState) {
+		this.root = root;
+		this.#value = props.value;
+	}
+
+	props = $derived.by(
+		() =>
+			({
+				disabled: getDisabled(this.root.disabled.current),
+				required: getRequired(this.root.required.current),
+				name: this.root.name.current,
+				value: this.#value.current,
+				"aria-hidden": getAriaHidden(true),
 			}) as const
 	);
 }
@@ -538,16 +795,17 @@ type InitListboxProps = {
 	value: Box<string> | Box<string[]>;
 } & ReadableBoxedValues<{
 	disabled: boolean;
-	orientation: Orientation;
+	required: boolean;
 	loop: boolean;
-	autoFocus: boolean | "first" | "last";
-}>;
+	scrollAlignment: "nearest" | "center";
+	name: string;
+}> &
+	WritableBoxedValues<{
+		open: boolean;
+	}>;
 
 const [setListboxRootContext, getListboxRootContext] =
 	createContext<ListboxRootState>("Listbox.Root");
-
-const [setListboxContentContext, getListboxContentContext] =
-	createContext<ListboxContentState>("Listbox.Content");
 
 const [setListboxGroupContext, getListboxGroupContext] =
 	createContext<ListboxGroupState>("Listbox.Group");
@@ -557,21 +815,26 @@ export function useListboxRoot(props: InitListboxProps) {
 
 	const rootState =
 		type === "single"
-			? new ListboxRootSingleState(rest as ListboxRootSingleStateProps)
-			: new ListboxRootMultipleState(rest as ListboxRootMultipleStateProps);
+			? new ListboxSingleRootState(rest as ListboxSingleRootStateProps)
+			: new ListboxMultipleRootState(rest as ListboxMultipleRootStateProps);
+
 	return setListboxRootContext(rootState);
 }
 
+// export function useListboxInput(props: ListboxInputStateProps) {
+// 	return getListboxRootContext().createInput(props);
+// }
+
 export function useListboxContent(props: ListboxContentStateProps) {
-	return setListboxContentContext(getListboxRootContext().createContent(props));
+	return getListboxRootContext().createContent(props);
+}
+
+export function useListboxTrigger(props: ListboxTriggerStateProps) {
+	return getListboxRootContext().createTrigger(props);
 }
 
 export function useListboxItem(props: ListboxItemStateProps) {
-	return getListboxContentContext().createItem(props);
-}
-
-export function useListboxLabel(props: ListboxLabelStateProps) {
-	return getListboxRootContext().createLabel(props);
+	return getListboxRootContext().createItem(props);
 }
 
 export function useListboxGroup(props: ListboxGroupStateProps) {
@@ -580,4 +843,8 @@ export function useListboxGroup(props: ListboxGroupStateProps) {
 
 export function useListboxGroupLabel(props: ListboxGroupLabelStateProps) {
 	return getListboxGroupContext().createGroupLabel(props);
+}
+
+export function useListboxHiddenInput(props: ListboxHiddenInputStateProps) {
+	return getListboxRootContext().createHiddenInput(props);
 }

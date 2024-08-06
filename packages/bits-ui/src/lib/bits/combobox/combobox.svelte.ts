@@ -612,16 +612,6 @@ class ComboboxItemState {
 				"data-selected": this.root.includesItem(this.value.current) ? "" : undefined,
 				"data-label": this.label.current,
 				[COMBOBOX_ITEM_ATTR]: "",
-				style: {
-					"--bits-combobox-content-transform-origin":
-						"var(--bits-floating-transform-origin)",
-					"--bits-combobox-content-available-width":
-						"var(--bits-floating-available-width)",
-					"--bits-combobox-content-available-height":
-						"var(--bits-floating-available-height)",
-					"--bits-combobox-trigger-width": "var(--bits-floating-anchor-width)",
-					"--bits-combobox-trigger-height": "var(--bits-floating-anchor-height)",
-				},
 				onpointermove: this.#onpointermove,
 				onpointerdown: this.#onpointerdown,
 				onpointerleave: this.#onpointerleave,

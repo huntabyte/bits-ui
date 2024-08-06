@@ -6,10 +6,10 @@
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {
-		children,
-		child,
-		ref = $bindable(null),
 		id = useId(),
+		ref = $bindable(null),
+		child,
+		children,
 		...restProps
 	}: GroupLabelProps = $props();
 

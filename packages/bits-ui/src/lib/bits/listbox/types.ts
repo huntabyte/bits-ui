@@ -1,40 +1,67 @@
+import type { PortalProps } from "../utilities/portal/types.js";
+import type { PopperLayerProps } from "../utilities/popper-layer/types.js";
+import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
+import type {
+	PrimitiveButtonAttributes,
+	PrimitiveDivAttributes,
+	PrimitiveInputAttributes,
+} from "$lib/shared/attributes.js";
 import type { OnChangeFn, WithChild, WithChildren, Without } from "$lib/internal/types.js";
-import type { PrimitiveDivAttributes } from "$lib/shared/attributes.js";
-import type { Orientation } from "$lib/shared/index.js";
 
-export type ListboxRootBasePropsWithoutHTML = WithChildren<{
+export type ListboxBaseRootPropsWithoutHTML = WithChildren<{
 	/**
-	 * Whether to loop through the listbox items when reaching the end via keyboard.
+	 * Whether the combobox is disabled.
 	 *
-	 * @defaultValue false
+	 * @defaultValue `false`
+	 */
+	disabled?: boolean;
+
+	/**
+	 * Whether the combobox is required (for form submission).
+	 *
+	 * @defaultValue `false`
+	 */
+	required?: boolean;
+
+	/**
+	 * The name to apply to the hidden input element for form submission.
+	 * If not provided, a hidden input will not be rendered and the combobox will not be part of a form.
+	 */
+	name?: string;
+
+	/**
+	 * Whether the combobox popover is open.
+	 *
+	 * @defaultValue `false`
+	 * @bindable
+	 */
+	open?: boolean;
+
+	/**
+	 * A callback function called when the open state changes.
+	 */
+	onOpenChange?: OnChangeFn<boolean>;
+
+	/**
+	 * Whether or not the combobox menu should loop through the items when navigating with the keyboard.
+	 *
+	 * @defaultValue `false`
 	 */
 	loop?: boolean;
 
 	/**
-	 * The orientation of the listbox. This is how the listbox items are laid out and will
-	 * impact how keyboard navigation works within the component.
+	 * How to scroll the combobox items into view when navigating with the keyboard.
 	 *
-	 * @defaultValue "vertical"
+	 * @defaultValue `"nearest"`
 	 */
-	orientation?: Orientation;
-
-	/**
-	 * Whether to autofocus the first or last listbox item when the listbox is mounted.
-	 * This is useful when composing a custom listbox component within a popover or dialog.
-	 *
-	 * @defaultValue false
-	 */
-	autoFocus?: boolean | "first" | "last";
-
-	/**
-	 * Whether the listbox is disabled.
-	 */
-	disabled?: boolean;
+	scrollAlignment?: "nearest" | "center";
 }>;
 
-export type ListboxSingleRootPropsWithoutHTML = ListboxRootBasePropsWithoutHTML & {
+export type ListboxSingleRootPropsWithoutHTML = {
 	/**
-	 * The value of the selected listbox item.
+	 * The value of the selected combobox item.
+	 *
+	 * @bindable
 	 */
 	value?: string;
 
@@ -44,14 +71,18 @@ export type ListboxSingleRootPropsWithoutHTML = ListboxRootBasePropsWithoutHTML 
 	onValueChange?: OnChangeFn<string>;
 
 	/**
-	 * The selection type of the listbox.
+	 * The type of combobox.
+	 *
+	 * @required
 	 */
 	type: "single";
 };
 
-export type ListboxMultipleRootPropsWithoutHTML = ListboxRootBasePropsWithoutHTML & {
+export type ListboxMultipleRootPropsWithoutHTML = {
 	/**
-	 * The value of the selected listbox items.
+	 * The value of the selected combobox item.
+	 *
+	 * @bindable
 	 */
 	value?: string[];
 
@@ -61,46 +92,79 @@ export type ListboxMultipleRootPropsWithoutHTML = ListboxRootBasePropsWithoutHTM
 	onValueChange?: OnChangeFn<string[]>;
 
 	/**
-	 * The selection type of the listbox.
+	 * The type of combobox.
+	 *
+	 * @required
 	 */
 	type: "multiple";
 };
 
-export type ListboxRootPropsWithoutHTML =
-	| ListboxSingleRootPropsWithoutHTML
-	| ListboxMultipleRootPropsWithoutHTML;
+export type ListboxSingleRootProps = ListboxBaseRootPropsWithoutHTML &
+	ListboxSingleRootPropsWithoutHTML &
+	Without<
+		PrimitiveDivAttributes,
+		ListboxSingleRootPropsWithoutHTML | ListboxBaseRootPropsWithoutHTML
+	>;
 
-export type ListboxSingleRootProps = ListboxSingleRootPropsWithoutHTML;
+export type ListboxMultipleRootProps = ListboxBaseRootPropsWithoutHTML &
+	ListboxMultipleRootPropsWithoutHTML &
+	Without<
+		PrimitiveDivAttributes,
+		ListboxMultipleRootPropsWithoutHTML | ListboxBaseRootPropsWithoutHTML
+	>;
 
-export type ListboxMultipleRootProps = ListboxMultipleRootPropsWithoutHTML;
+export type ListboxRootPropsWithoutHTML = ListboxBaseRootPropsWithoutHTML &
+	(ListboxSingleRootPropsWithoutHTML | ListboxMultipleRootPropsWithoutHTML);
 
 export type ListboxRootProps = ListboxRootPropsWithoutHTML;
 
-export type ListboxContentPropsWithoutHTML = WithChild;
+export type ListboxContentPropsWithoutHTML = WithChild<Omit<PopperLayerProps, "content">>;
 
 export type ListboxContentProps = ListboxContentPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, ListboxContentPropsWithoutHTML>;
 
-export type ListboxItemSnippetProps = { selected: boolean };
+export type ListboxTriggerPropsWithoutHTML = WithChild;
+
+export type ListboxTriggerProps = ListboxTriggerPropsWithoutHTML &
+	Without<PrimitiveButtonAttributes, ListboxTriggerPropsWithoutHTML>;
+
+export type ListboxItemSnippetProps = { selected: boolean; highlighted: boolean };
 
 export type ListboxItemPropsWithoutHTML = WithChild<
 	{
 		/**
-		 * The value of the listbox item. This is used to populate the `value` prop of the
-		 * `Listbox.Root` component.
+		 * The value of the item.
+		 *
+		 * @required
 		 */
 		value: string;
 
 		/**
-		 * The label of the listbox item. This will be rendered as the text content of the listbox item
-		 * by default. If a child is provided, this will only be used for typeahead purposes.
+		 * The label of the item. If provided, this is the item that users will search for.
+		 * If not provided, the value will be used as the label.
 		 */
 		label?: string;
 
 		/**
-		 * Whether the listbox item is disabled, which prevents users from interacting with it.
+		 * Whether the item is disabled.
+		 *
+		 * @defaultValeu `false`
 		 */
 		disabled?: boolean;
+
+		/**
+		 * A callback function called when the item is highlighted. This can be used as a
+		 * replacement for `onfocus` since we don't actually focus the item and instead
+		 * rely on the `aria-activedescendant` attribute to indicate the highlighted item.
+		 */
+		onHighlight?: () => void;
+
+		/**
+		 * A callback function called when the item is unhighlighted. This can be used as a
+		 * replacement for `onblur` since we don't actually focus the item and instead
+		 * rely on the `aria-activedescendant` attribute to indicate the highlighted item.
+		 */
+		onUnhighlight?: () => void;
 	},
 	ListboxItemSnippetProps
 >;
@@ -118,7 +182,15 @@ export type ListboxGroupLabelPropsWithoutHTML = WithChild;
 export type ListboxGroupLabelProps = ListboxGroupLabelPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, ListboxGroupLabelPropsWithoutHTML>;
 
-export type ListboxLabelPropsWithoutHTML = WithChild;
+export type ListboxSeparatorPropsWithoutHTML = WithChild;
 
-export type ListboxLabelProps = ListboxLabelPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, ListboxLabelPropsWithoutHTML>;
+export type ListboxSeparatorProps = ListboxSeparatorPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, ListboxSeparatorPropsWithoutHTML>;
+
+export type ListboxPortalPropsWithoutHTML = PortalProps;
+
+export type ListboxPortalProps = ListboxPortalPropsWithoutHTML;
+
+export type ListboxArrowPropsWithoutHTML = ArrowPropsWithoutHTML;
+
+export type ListboxArrowProps = ArrowProps;

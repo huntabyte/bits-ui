@@ -1,4 +1,4 @@
-<script lang="ts">
+<!-- <script lang="ts">
 	import { box } from "svelte-toolbelt";
 	import type { LabelProps } from "../index.js";
 	import { useListboxLabel } from "../listbox.svelte.js";
@@ -30,4 +30,4 @@
 	<div {...mergedProps}>
 		{@render children?.()}
 	</div>
-{/if}
+{/if} -->
