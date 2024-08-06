@@ -190,4 +190,30 @@ describe("alert dialog", () => {
 		await expectIsOpen(queryByTestId);
 		expect(getByTestId("trigger")).not.toHaveFocus();
 	});
+
+	it("should apply the correct `aria-describedby` attribute to the `Dialog.Content` element", async () => {
+		const { getByTestId } = await open();
+
+		const content = getByTestId("content");
+		const description = getByTestId("description");
+		expect(content).toHaveAttribute("aria-describedby", description.id);
+	});
+
+	it("should apply a default `aria-level` attribute to the `AlertDialog.Title` element", async () => {
+		const { getByTestId } = await open();
+
+		const title = getByTestId("title");
+		expect(title).toHaveAttribute("aria-level", "2");
+	});
+
+	it("should allow setting a custom level for the `AlertDialog.Title` element", async () => {
+		const { getByTestId } = await open({
+			titleProps: {
+				level: 3,
+			},
+		});
+
+		const title = getByTestId("title");
+		expect(title).toHaveAttribute("aria-level", "3");
+	});
 });

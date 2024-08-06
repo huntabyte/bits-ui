@@ -1,8 +1,10 @@
 <script lang="ts" context="module">
-	import { AlertDialog } from "$lib/index.js";
+	import { AlertDialog, type WithoutChildrenOrChild } from "$lib/index.js";
 	export type AlertDialogTestProps = AlertDialog.RootProps & {
 		contentProps?: Omit<AlertDialog.ContentProps, "asChild" | "child" | "children">;
 		portalProps?: AlertDialog.PortalProps;
+		titleProps?: WithoutChildrenOrChild<AlertDialog.TitleProps>;
+		descriptionProps?: WithoutChildrenOrChild<AlertDialog.DescriptionProps>;
 	};
 </script>
 
@@ -11,6 +13,8 @@
 		open = false,
 		contentProps = {},
 		portalProps = {},
+		titleProps = {},
+		descriptionProps = {},
 		...restProps
 	}: AlertDialogTestProps = $props();
 </script>
@@ -28,10 +32,10 @@
 				data-testid="content"
 				class="tranlate-x-[50%] fixed left-[50%] top-[50%] translate-y-[50%] bg-white p-1"
 			>
-				<AlertDialog.Title data-testid="title">title</AlertDialog.Title>
-				<AlertDialog.Description data-testid="description"
-					>description</AlertDialog.Description
-				>
+				<AlertDialog.Title {...titleProps} data-testid="title">title</AlertDialog.Title>
+				<AlertDialog.Description {...descriptionProps} data-testid="description">
+					description
+				</AlertDialog.Description>
 				<AlertDialog.Cancel data-testid="cancel">cancel</AlertDialog.Cancel>
 				<AlertDialog.Action data-testid="action">action</AlertDialog.Action>
 			</AlertDialog.Content>

@@ -705,7 +705,7 @@ type MenuGroupStateProps = WithRefProps;
 class MenuGroupState {
 	#id: MenuGroupStateProps["id"];
 	#ref: MenuGroupStateProps["ref"];
-	labelNode = $state<HTMLElement | null>(null);
+	groupLabelId = $state<string | undefined>(undefined);
 
 	constructor(props: MenuGroupStateProps) {
 		this.#id = props.id;
@@ -722,7 +722,7 @@ class MenuGroupState {
 			({
 				id: this.#id.current,
 				role: "group",
-				"aria-labelledby": this.labelNode?.id ?? undefined,
+				"aria-labelledby": this.groupLabelId,
 				[GROUP_ATTR]: "",
 			}) as const
 	);
@@ -748,7 +748,7 @@ class MenuGroupLabelState {
 			ref: this.#ref,
 			onRefChange: (node) => {
 				if (!this.#group) return;
-				this.#group.labelNode = node;
+				this.#group.groupLabelId = node?.id;
 			},
 		});
 	}
@@ -808,7 +808,7 @@ class MenuRadioGroupState {
 	value: MenuRadioGroupStateProps["value"];
 	#ref: MenuRadioGroupStateProps["ref"];
 	#content: MenuContentState;
-	labelNode = $state<HTMLElement | null>(null);
+	groupLabelId = $state<string | null>(null);
 
 	constructor(props: MenuRadioGroupStateProps, content: MenuContentState) {
 		this.value = props.value;
@@ -843,7 +843,7 @@ class MenuRadioGroupState {
 				id: this.#id.current,
 				[RADIO_GROUP_ATTR]: "",
 				role: "group",
-				"aria-labelledby": this.labelNode?.id ?? undefined,
+				"aria-labelledby": this.groupLabelId,
 			}) as const
 	);
 }

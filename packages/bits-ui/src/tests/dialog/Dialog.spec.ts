@@ -8,6 +8,7 @@ import {
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
+import { tick } from "svelte";
 import { getTestKbd } from "../utils.js";
 import DialogTest, { type DialogTestProps } from "./DialogTest.svelte";
 import { sleep } from "$lib/internal/sleep.js";
@@ -188,5 +189,53 @@ describe("dialog", () => {
 		await user.keyboard(kbd.ESCAPE);
 		await expectIsOpen(queryByTestId);
 		expect(getByTestId("trigger")).not.toHaveFocus();
+	});
+
+	it("should apply the correct `aria-describedby` attribute to the `Dialog.Content` element", async () => {
+		const { getByTestId } = await open();
+
+		const content = getByTestId("content");
+		const description = getByTestId("description");
+		expect(content).toHaveAttribute("aria-describedby", description.id);
+	});
+
+	it("should apply a default `aria-level` attribute to the `Dialog.Title` element", async () => {
+		const { getByTestId } = await open();
+
+		const title = getByTestId("title");
+		expect(title).toHaveAttribute("aria-level", "2");
+	});
+
+	it("should allow setting a custom level for the `Dialog.Title` element", async () => {
+		const { getByTestId } = await open({
+			titleProps: {
+				level: 3,
+			},
+		});
+
+		const title = getByTestId("title");
+		expect(title).toHaveAttribute("aria-level", "3");
+	});
+
+	it("should keep the `aria-describedby` attribute in sync with the `Dialog.Description` id", async () => {
+		const { getByTestId, user } = await open({
+			descriptionProps: {
+				id: "description-id",
+			},
+		});
+
+		const content = getByTestId("content");
+		const description = getByTestId("description");
+		expect(description).toHaveAttribute("id", "description-id");
+		expect(content).toHaveAttribute("aria-describedby", description.id);
+
+		const updateIdButton = getByTestId("update-id");
+		await user.click(updateIdButton);
+		await user.click(updateIdButton);
+		await tick();
+
+		expect(description.id).not.toBe("description-id");
+		expect(description.id).toBe("new-id");
+		expect(content).toHaveAttribute("aria-describedby", description.id);
 	});
 });

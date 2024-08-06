@@ -96,6 +96,7 @@ export class SelectRootState {
 	valueNodeHasChildren = box(false);
 	valueNode = $state<HTMLElement | null>(null);
 	contentNode = $state<HTMLElement | null>(null);
+	contentId = $state<string | undefined>(undefined);
 	triggerPointerDownPos = box<{ x: number; y: number } | null>({ x: 0, y: 0 });
 	contentFragment = $state<DocumentFragment | null>(null);
 
@@ -285,10 +286,6 @@ class SelectTriggerState {
 		}
 	};
 
-	#ariaControls = $derived.by(() => {
-		return this.#root.contentNode?.id ?? undefined;
-	});
-
 	props = $derived.by(
 		() =>
 			({
@@ -296,7 +293,7 @@ class SelectTriggerState {
 				disabled: this.#isDisabled,
 				role: "combobox",
 				type: "button",
-				"aria-controls": this.#ariaControls,
+				"aria-controls": this.#root.contentId,
 				"aria-expanded": getAriaExpanded(this.#root.open.current),
 				"aria-required": getAriaRequired(this.#root.required.current),
 				"aria-autocomplete": "none",
@@ -391,6 +388,7 @@ export class SelectContentState {
 			condition: () => this.root.open.current,
 			onRefChange: (node) => {
 				this.root.contentNode = node;
+				this.root.contentId = node?.id;
 			},
 		});
 
