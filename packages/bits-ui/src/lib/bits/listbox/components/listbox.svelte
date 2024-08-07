@@ -2,7 +2,7 @@
 	import { type WritableBox, box } from "svelte-toolbelt";
 	import { useListboxRoot } from "../listbox.svelte.js";
 	import type { RootProps } from "../index.js";
-	import ComboboxHiddenInput from "./listbox-hidden-input.svelte";
+	import ListboxHiddenInput from "./listbox-hidden-input.svelte";
 	import { noop } from "$lib/internal/callbacks.js";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 
@@ -52,12 +52,12 @@
 
 {#if Array.isArray(value)}
 	{#if value.length === 0}
-		<ComboboxHiddenInput value="" />
+		<ListboxHiddenInput value="" />
 	{:else}
 		{#each value as item}
-			<ComboboxHiddenInput value={item} />
+			<ListboxHiddenInput value={item} />
 		{/each}
 	{/if}
 {:else}
-	<ComboboxHiddenInput {value} />
+	<ListboxHiddenInput {value} />
 {/if}

@@ -33,3 +33,5 @@ description: A list of options that can be selected by the user.
 	</Listbox.Content>
 </Listbox.Root>
 ```
+
+<APISection {schemas} />

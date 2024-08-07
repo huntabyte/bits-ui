@@ -5,9 +5,12 @@ import type {
 	SelectGroupPropsWithoutHTML,
 	SelectItemPropsWithoutHTML,
 	SelectRootPropsWithoutHTML,
+	SelectScrollDownButtonPropsWithoutHTML,
+	SelectScrollUpButtonPropsWithoutHTML,
 	SelectSeparatorPropsWithoutHTML,
 	SelectTriggerPropsWithoutHTML,
 	SelectValuePropsWithoutHTML,
+	SelectViewportPropsWithoutHTML,
 } from "bits-ui";
 import {
 	OnOpenChangeProp,
@@ -20,6 +23,7 @@ import {
 	childrenSnippet,
 	createApiSchema,
 	createBooleanProp,
+	createDataAttrSchema,
 	createEnumProp,
 	createFunctionProp,
 	createStringProp,
@@ -255,4 +259,56 @@ export const arrow = createApiSchema<SelectArrowPropsWithoutHTML>({
 	],
 });
 
-export const select = [root, trigger, content, item, value, group, groupLabel, separator, arrow];
+export const viewport = createApiSchema<SelectViewportPropsWithoutHTML>({
+	title: "Viewport",
+	description:
+		"An optional element to track the scroll position of the select for rendering the scroll up/down buttons.",
+	props: withChildProps({ elType: "HTMLDivElement" }),
+	dataAttributes: [
+		createDataAttrSchema({
+			name: "select-viewport",
+			description: "Present on the viewport element.",
+		}),
+	],
+});
+
+export const scrollUpButton = createApiSchema<SelectScrollUpButtonPropsWithoutHTML>({
+	title: "ScrollUpButton",
+	description:
+		"An optional scroll up button element to improve the scroll experience within the select. Should be used in conjunction with the `Select.Viewport` component.",
+	props: withChildProps({ elType: "HTMLDivElement" }),
+	dataAttributes: [
+		createDataAttrSchema({
+			name: "select-scroll-up-button",
+			description: "Present on the scroll up button element.",
+		}),
+	],
+});
+
+export const scrollDownButton = createApiSchema<SelectScrollDownButtonPropsWithoutHTML>({
+	title: "ScrollDownButton",
+	description:
+		"An optional scroll down button element to improve the scroll experience within the select. Should be used in conjunction with the `Select.Viewport` component.",
+	props: withChildProps({ elType: "HTMLDivElement" }),
+	dataAttributes: [
+		createDataAttrSchema({
+			name: "select-scroll-down-button",
+			description: "Present on the scroll down button element.",
+		}),
+	],
+});
+
+export const select = [
+	root,
+	trigger,
+	content,
+	item,
+	value,
+	viewport,
+	scrollUpButton,
+	scrollDownButton,
+	group,
+	groupLabel,
+	separator,
+	arrow,
+];
