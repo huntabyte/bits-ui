@@ -3,6 +3,8 @@
 	import Check from "phosphor-svelte/lib/Check";
 	import Palette from "phosphor-svelte/lib/Palette";
 	import CaretUpDown from "phosphor-svelte/lib/CaretUpDown";
+	import CaretDoubleUp from "phosphor-svelte/lib/CaretDoubleUp";
+	import CaretDoubleDown from "phosphor-svelte/lib/CaretDoubleDown";
 
 	const themes = [
 		{ value: "light-monochrome", label: "Light Monochrome" },
@@ -44,25 +46,33 @@
 	</Listbox.Trigger>
 	<Listbox.Portal>
 		<Listbox.Content
-			class="max-h-96 w-[var(--bits-listbox-trigger-width)] min-w-[var(--bits-listbox-trigger-width)] overflow-y-auto rounded-xl border border-muted bg-background px-1 py-3 shadow-popover outline-none"
+			class="max-h-96 w-[var(--bits-listbox-trigger-width)] min-w-[var(--bits-listbox-trigger-width)] rounded-xl border border-muted bg-background px-1 py-3 shadow-popover outline-none"
 			sideOffset={10}
 		>
-			{#each themes as theme, i (i + theme.value)}
-				<Listbox.Item
-					class="flex h-10 w-full select-none items-center rounded-button py-3 pl-5 pr-1.5 text-sm capitalize outline-none duration-75 data-[highlighted]:bg-muted"
-					value={theme.value}
-					label={theme.label}
-				>
-					{#snippet children({ selected })}
-						{theme.label}
-						{#if selected}
-							<div class="ml-auto">
-								<Check />
-							</div>
-						{/if}
-					{/snippet}
-				</Listbox.Item>
-			{/each}
+			<Listbox.ScrollUpButton class="flex w-full items-center justify-center">
+				<CaretDoubleUp class="size-3" />
+			</Listbox.ScrollUpButton>
+			<Listbox.Viewport class="p-1">
+				{#each themes as theme, i (i + theme.value)}
+					<Listbox.Item
+						class="flex h-10 w-full select-none items-center rounded-button py-3 pl-5 pr-1.5 text-sm capitalize outline-none duration-75 data-[highlighted]:bg-muted"
+						value={theme.value}
+						label={theme.label}
+					>
+						{#snippet children({ selected })}
+							{theme.label}
+							{#if selected}
+								<div class="ml-auto">
+									<Check />
+								</div>
+							{/if}
+						{/snippet}
+					</Listbox.Item>
+				{/each}
+			</Listbox.Viewport>
+			<Listbox.ScrollDownButton class="flex w-full items-center justify-center">
+				<CaretDoubleDown class="size-3" />
+			</Listbox.ScrollDownButton>
 		</Listbox.Content>
 	</Listbox.Portal>
 </Listbox.Root>

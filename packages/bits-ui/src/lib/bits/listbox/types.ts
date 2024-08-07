@@ -194,3 +194,18 @@ export type ListboxPortalProps = ListboxPortalPropsWithoutHTML;
 export type ListboxArrowPropsWithoutHTML = ArrowPropsWithoutHTML;
 
 export type ListboxArrowProps = ArrowProps;
+
+export type ListboxViewportPropsWithoutHTML = WithChild;
+
+export type ListboxViewportProps = ListboxViewportPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, ListboxViewportPropsWithoutHTML>;
+
+export type ListboxScrollUpButtonPropsWithoutHTML = WithChild;
+
+export type ListboxScrollUpButtonProps = ListboxScrollUpButtonPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, ListboxScrollUpButtonPropsWithoutHTML>;
+
+export type ListboxScrollDownButtonPropsWithoutHTML = WithChild;
+
+export type ListboxScrollDownButtonProps = ListboxScrollDownButtonPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, ListboxScrollDownButtonPropsWithoutHTML>;

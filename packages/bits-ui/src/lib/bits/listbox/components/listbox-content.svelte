@@ -58,6 +58,7 @@
 	trapFocus={false}
 	loop={false}
 	preventScroll={false}
+	onPlaced={() => (contentState.isPositioned = true)}
 	{forceMount}
 >
 	{#snippet popper({ props })}
@@ -68,6 +69,7 @@
 				"--bits-listbox-content-available-height": "var(--bits-floating-available-height)",
 				"--bits-listbox-trigger-width": "var(--bits-floating-anchor-width)",
 				"--bits-listbox-trigger-height": "var(--bits-floating-anchor-height)",
+				...contentState.props.style,
 			},
 		})}
 		{#if child}

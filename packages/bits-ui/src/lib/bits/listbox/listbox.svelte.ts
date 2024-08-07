@@ -1,4 +1,5 @@
 import { Previous } from "runed";
+import { untrack } from "svelte";
 import { afterTick } from "$lib/internal/afterTick.js";
 import { backward, forward, next, prev } from "$lib/internal/arrays.js";
 import {
@@ -14,6 +15,8 @@ import { createContext } from "$lib/internal/createContext.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
+import { noop } from "$lib/internal/callbacks.js";
+import { addEventListener } from "$lib/internal/events.js";
 
 // prettier-ignore
 export const INTERACTION_KEYS = [kbd.ARROW_LEFT, kbd.ESCAPE, kbd.ARROW_RIGHT, kbd.SHIFT, kbd.CAPS_LOCK, kbd.CONTROL, kbd.ALT, kbd.META, kbd.ENTER, kbd.F1, kbd.F2, kbd.F3, kbd.F4, kbd.F5, kbd.F6, kbd.F7, kbd.F8, kbd.F9, kbd.F10, kbd.F11, kbd.F12];
@@ -29,6 +32,9 @@ const LISTBOX_INPUT_ATTR = "data-listbox-input";
 const LISTBOX_TRIGGER_ATTR = "data-listbox-trigger";
 const LISTBOX_GROUP_ATTR = "data-listbox-group";
 const LISTBOX_GROUP_LABEL_ATTR = "data-listbox-group-label";
+const LISTBOX_VIEWPORT_ATTR = "data-listbox-viewport";
+const LISTBOX_SCROLL_UP_BUTTON_ATTR = "data-listbox-scroll-up-button";
+const LISTBOX_SCROLL_DOWN_BUTTON_ATTR = "data-listbox-scroll-down-button";
 
 type ListboxBaseRootStateProps = ReadableBoxedValues<{
 	disabled: boolean;
@@ -85,7 +91,7 @@ class ListboxBaseRootState {
 	setHighlightedNode = (node: HTMLElement | null) => {
 		this.highlightedNode = node;
 		if (node) {
-			node.scrollIntoView({ block: this.scrollAlignment.current });
+			node.scrollIntoView({ block: "nearest" });
 		}
 	};
 
@@ -555,7 +561,9 @@ type ListboxContentStateProps = WithRefProps;
 class ListboxContentState {
 	#id: ListboxContentStateProps["id"];
 	#ref: ListboxContentStateProps["ref"];
+	viewportNode = $state<HTMLElement | null>(null);
 	root: ListboxRootState;
+	isPositioned = $state(false);
 
 	constructor(props: ListboxContentStateProps, root: ListboxRootState) {
 		this.root = root;
@@ -576,6 +584,12 @@ class ListboxContentState {
 				this.root.contentNode = null;
 			};
 		});
+
+		$effect(() => {
+			if (this.root.open.current === false) {
+				this.isPositioned = false;
+			}
+		});
 	}
 
 	props = $derived.by(
@@ -584,18 +598,251 @@ class ListboxContentState {
 				id: this.#id.current,
 				role: "listbox",
 				"data-state": getDataOpenClosed(this.root.open.current),
-				style: {
-					"--bits-listbox-content-transform-origin":
-						"var(--bits-floating-transform-origin)",
-					"--bits-listbox-content-available-width":
-						"var(--bits-floating-available-width)",
-					"--bits-listbox-content-available-height":
-						"var(--bits-floating-available-height)",
-					"--bits-listbox-trigger-width": "var(--bits-floating-anchor-width)",
-					"--bits-listbox-trigger-height": "var(--bits-floating-anchor-height)",
-				},
 				[LISTBOX_CONTENT_ATTR]: "",
+				style: {
+					display: "flex",
+					flexDirection: "column",
+					outline: "none",
+					boxSizing: "border-box",
+				},
 			}) as const
+	);
+
+	createViewportState = (props: ListboxViewportStateProps) => {
+		return new ListboxViewportState(props, this);
+	};
+
+	createScrollUpButtonState = (props: ListboxScrollButtonImplStateProps) => {
+		const state = new ListboxScrollButtonImplState(props, this);
+		return new ListboxScrollUpButtonState(state);
+	};
+
+	createScrollDownButtonState = (props: ListboxScrollButtonImplStateProps) => {
+		const state = new ListboxScrollButtonImplState(props, this);
+		return new ListboxScrollDownButtonState(state);
+	};
+}
+
+type ListboxViewportStateProps = WithRefProps;
+
+class ListboxViewportState {
+	#id: ListboxViewportStateProps["id"];
+	#ref: ListboxViewportStateProps["ref"];
+	root: ListboxRootState;
+	content: ListboxContentState;
+
+	constructor(props: ListboxViewportStateProps, content: ListboxContentState) {
+		this.#id = props.id;
+		this.#ref = props.ref;
+		this.content = content;
+		this.root = content.root;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+			onRefChange: (node) => {
+				this.content.viewportNode = node;
+			},
+			condition: () => this.root.open.current,
+		});
+	}
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.current,
+				role: "presentation",
+				[LISTBOX_VIEWPORT_ATTR]: "",
+				style: {
+					// we use position: 'relative' here on the `viewport` so that when we call
+					// `selectedItem.offsetTop` in calculations, the offset is relative to the viewport
+					// (independent of the scrollUpButton).
+					position: "relative",
+					flex: 1,
+					overflow: "auto",
+				},
+			}) as const
+	);
+}
+
+type ListboxScrollButtonImplStateProps = WithRefProps<ReadableBoxedValues<{ mounted: boolean }>>;
+
+class ListboxScrollButtonImplState {
+	id: ListboxScrollButtonImplStateProps["id"];
+	ref: ListboxScrollButtonImplStateProps["ref"];
+	content: ListboxContentState;
+	root: ListboxRootState;
+	autoScrollTimer = $state<number | null>(null);
+	onAutoScroll: () => void = noop;
+	mounted: ListboxScrollButtonImplStateProps["mounted"];
+
+	constructor(props: ListboxScrollButtonImplStateProps, content: ListboxContentState) {
+		this.ref = props.ref;
+		this.id = props.id;
+		this.mounted = props.mounted;
+		this.content = content;
+		this.root = content.root;
+
+		useRefById({
+			id: this.id,
+			ref: this.ref,
+			condition: () => this.mounted.current,
+		});
+
+		$effect(() => {
+			if (!this.mounted.current) return;
+			const activeItem = untrack(() => this.root.highlightedNode);
+			activeItem?.scrollIntoView({ block: "nearest" });
+		});
+	}
+
+	clearAutoScrollTimer = () => {
+		if (this.autoScrollTimer === null) return;
+		window.clearInterval(this.autoScrollTimer);
+		this.autoScrollTimer = null;
+	};
+
+	#onpointerdown = () => {
+		if (this.autoScrollTimer !== null) return;
+		this.autoScrollTimer = window.setInterval(() => {
+			this.onAutoScroll();
+		}, 50);
+	};
+
+	#onpointermove = () => {
+		if (this.autoScrollTimer !== null) return;
+		this.autoScrollTimer = window.setInterval(() => {
+			this.onAutoScroll();
+		}, 50);
+	};
+
+	#onpointerleave = () => {
+		this.clearAutoScrollTimer();
+	};
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.id.current,
+				"aria-hidden": getAriaHidden(true),
+				style: {
+					flexShrink: 0,
+				},
+				onpointerdown: this.#onpointerdown,
+				onpointermove: this.#onpointermove,
+				onpointerleave: this.#onpointerleave,
+			}) as const
+	);
+}
+
+class ListboxScrollDownButtonState {
+	state: ListboxScrollButtonImplState;
+	content: ListboxContentState;
+	root: ListboxRootState;
+	canScrollDown = $state(false);
+
+	constructor(state: ListboxScrollButtonImplState) {
+		this.state = state;
+		this.content = state.content;
+		this.root = state.root;
+		this.state.onAutoScroll = this.handleAutoScroll;
+
+		$effect(() => {
+			const viewport = this.content.viewportNode;
+			const isPositioned = this.content.isPositioned;
+			if (!viewport || !isPositioned) return;
+
+			let cleanup = noop;
+
+			untrack(() => {
+				const handleScroll = () => {
+					afterTick(() => {
+						const maxScroll = viewport.scrollHeight - viewport.clientHeight;
+						const paddingTop = Number.parseInt(
+							getComputedStyle(viewport).paddingTop,
+							10
+						);
+
+						this.canScrollDown = Math.ceil(viewport.scrollTop) < maxScroll - paddingTop;
+					});
+				};
+				handleScroll();
+
+				cleanup = addEventListener(viewport, "scroll", handleScroll);
+			});
+
+			return cleanup;
+		});
+
+		$effect(() => {
+			if (this.state.mounted.current) return;
+			this.state.clearAutoScrollTimer();
+		});
+	}
+
+	handleAutoScroll = () => {
+		afterTick(() => {
+			const viewport = this.content.viewportNode;
+			const selectedItem = this.root.highlightedNode;
+			if (!viewport || !selectedItem) return;
+			viewport.scrollTop = viewport.scrollTop + selectedItem.offsetHeight;
+		});
+	};
+
+	props = $derived.by(
+		() => ({ ...this.state.props, [LISTBOX_SCROLL_DOWN_BUTTON_ATTR]: "" }) as const
+	);
+}
+
+class ListboxScrollUpButtonState {
+	state: ListboxScrollButtonImplState;
+	content: ListboxContentState;
+	root: ListboxRootState;
+	canScrollUp = $state(false);
+
+	constructor(state: ListboxScrollButtonImplState) {
+		this.state = state;
+		this.content = state.content;
+		this.root = state.root;
+		this.state.onAutoScroll = this.handleAutoScroll;
+
+		$effect(() => {
+			const viewport = this.content.viewportNode;
+			const isPositioned = this.content.isPositioned;
+			if (!viewport || !isPositioned) return;
+
+			let cleanup = noop;
+
+			untrack(() => {
+				const handleScroll = () => {
+					const paddingTop = Number.parseInt(getComputedStyle(viewport).paddingTop, 10);
+					this.canScrollUp = viewport.scrollTop - paddingTop > 0;
+				};
+				handleScroll();
+
+				cleanup = addEventListener(viewport, "scroll", handleScroll);
+			});
+
+			return cleanup;
+		});
+
+		$effect(() => {
+			if (this.state.mounted.current) return;
+			this.state.clearAutoScrollTimer();
+		});
+	}
+
+	handleAutoScroll() {
+		afterTick(() => {
+			const viewport = this.content.viewportNode;
+			const selectedItem = this.root.highlightedNode;
+			if (!viewport || !selectedItem) return;
+			viewport.scrollTop = viewport.scrollTop - selectedItem.offsetHeight;
+		});
+	}
+
+	props = $derived.by(
+		() => ({ ...this.state.props, [LISTBOX_SCROLL_UP_BUTTON_ATTR]: "" }) as const
 	);
 }
 
@@ -678,9 +925,9 @@ class ListboxItemState {
 	};
 
 	#onpointerleave = (_: PointerEvent) => {
-		if (this.root.highlightedNode === this.#ref.current) {
-			this.root.setHighlightedNode(null);
-		}
+		// if (this.root.highlightedNode === this.#ref.current) {
+		// 	this.root.setHighlightedNode(null);
+		// }
 	};
 
 	props = $derived.by(
@@ -810,6 +1057,9 @@ const [setListboxRootContext, getListboxRootContext] =
 const [setListboxGroupContext, getListboxGroupContext] =
 	createContext<ListboxGroupState>("Listbox.Group");
 
+const [setListboxContentContext, getListboxContentContext] =
+	createContext<ListboxContentState>("Listbox.Content");
+
 export function useListboxRoot(props: InitListboxProps) {
 	const { type, ...rest } = props;
 
@@ -826,7 +1076,7 @@ export function useListboxRoot(props: InitListboxProps) {
 // }
 
 export function useListboxContent(props: ListboxContentStateProps) {
-	return getListboxRootContext().createContent(props);
+	return setListboxContentContext(getListboxRootContext().createContent(props));
 }
 
 export function useListboxTrigger(props: ListboxTriggerStateProps) {
@@ -835,6 +1085,18 @@ export function useListboxTrigger(props: ListboxTriggerStateProps) {
 
 export function useListboxItem(props: ListboxItemStateProps) {
 	return getListboxRootContext().createItem(props);
+}
+
+export function useListboxViewport(props: ListboxViewportStateProps) {
+	return getListboxContentContext().createViewportState(props);
+}
+
+export function useListboxScrollUpButton(props: ListboxScrollButtonImplStateProps) {
+	return getListboxContentContext().createScrollUpButtonState(props);
+}
+
+export function useListboxScrollDownButton(props: ListboxScrollButtonImplStateProps) {
+	return getListboxContentContext().createScrollDownButtonState(props);
 }
 
 export function useListboxGroup(props: ListboxGroupStateProps) {

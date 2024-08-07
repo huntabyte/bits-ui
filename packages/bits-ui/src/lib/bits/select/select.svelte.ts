@@ -1176,12 +1176,12 @@ class SelectScrollButtonImplState {
 		});
 	}
 
-	clearAutoScrollTimer() {
+	clearAutoScrollTimer = () => {
 		if (this.autoScrollTimer !== null) {
 			window.clearInterval(this.autoScrollTimer);
 			this.autoScrollTimer = null;
 		}
-	}
+	};
 
 	#onpointerdown = () => {
 		if (this.autoScrollTimer !== null) return;
