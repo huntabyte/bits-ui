@@ -43,6 +43,7 @@
 		loop: box.with(() => loop),
 		scrollAlignment: box.with(() => scrollAlignment),
 		name: box.with(() => name),
+		isCombobox: false,
 	});
 </script>
 
