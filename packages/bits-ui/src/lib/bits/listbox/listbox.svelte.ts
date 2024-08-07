@@ -17,6 +17,7 @@ import type { WithRefProps } from "$lib/internal/types.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
 import { noop } from "$lib/internal/callbacks.js";
 import { addEventListener } from "$lib/internal/events.js";
+import { type Typeahead, useTypeahead } from "$lib/internal/useTypeahead.svelte.js";
 
 // prettier-ignore
 export const INTERACTION_KEYS = [kbd.ARROW_LEFT, kbd.ESCAPE, kbd.ARROW_RIGHT, kbd.SHIFT, kbd.CAPS_LOCK, kbd.CONTROL, kbd.ALT, kbd.META, kbd.ENTER, kbd.F1, kbd.F2, kbd.F3, kbd.F4, kbd.F5, kbd.F6, kbd.F7, kbd.F8, kbd.F9, kbd.F10, kbd.F11, kbd.F12];
@@ -433,6 +434,7 @@ class ListboxTriggerState {
 	#id: ListboxTriggerStateProps["id"];
 	#ref: ListboxTriggerStateProps["ref"];
 	root: ListboxRootState;
+	#typeahead: Typeahead;
 
 	constructor(props: ListboxTriggerStateProps, root: ListboxRootState) {
 		this.root = root;
@@ -444,6 +446,13 @@ class ListboxTriggerState {
 			ref: this.#ref,
 			onRefChange: (node) => {
 				this.root.triggerNode = node;
+			},
+		});
+
+		this.#typeahead = useTypeahead({
+			getCurrentItem: () => this.root.highlightedNode,
+			onMatch: (node) => {
+				this.root.setHighlightedNode(node);
 			},
 		});
 	}
@@ -480,6 +489,7 @@ class ListboxTriggerState {
 
 		if (e.key === kbd.TAB) {
 			this.root.closeMenu();
+			return;
 		}
 
 		if ((e.key === kbd.ENTER || e.key === kbd.SPACE) && !e.isComposing) {
@@ -523,6 +533,20 @@ class ListboxTriggerState {
 			}
 			if (!nextItem) return;
 			this.root.setHighlightedNode(nextItem);
+			return;
+		}
+		const isModifierKey = e.ctrlKey || e.altKey || e.metaKey;
+		const isCharacterKey = e.key.length === 1;
+
+		// prevent space from being considered with typeahead
+		if (e.code === "Space") return;
+
+		const candidateNodes = this.root.getCandidateNodes();
+
+		if (e.key === kbd.TAB) return;
+
+		if (!isModifierKey && isCharacterKey) {
+			this.#typeahead.handleTypeaheadSearch(e.key, candidateNodes);
 			return;
 		}
 
@@ -630,6 +654,190 @@ class ListboxContentState {
 		const state = new ListboxScrollButtonImplState(props, this);
 		return new ListboxScrollDownButtonState(state);
 	};
+}
+
+type ListboxItemStateProps = WithRefProps<
+	ReadableBoxedValues<{
+		value: string;
+		disabled: boolean;
+		label: string;
+		onHighlight: () => void;
+		onUnhighlight: () => void;
+	}>
+>;
+
+class ListboxItemState {
+	#id: ListboxItemStateProps["id"];
+	#ref: ListboxItemStateProps["ref"];
+	root: ListboxRootState;
+	value: ListboxItemStateProps["value"];
+	label: ListboxItemStateProps["label"];
+	onHighlight: ListboxItemStateProps["onHighlight"];
+	onUnhighlight: ListboxItemStateProps["onUnhighlight"];
+	disabled: ListboxItemStateProps["disabled"];
+	isSelected = $derived.by(() => this.root.includesItem(this.value.current));
+	isHighlighted = $derived.by(() => this.root.highlightedValue === this.value.current);
+	prevHighlighted = new Previous(() => this.isHighlighted);
+
+	constructor(props: ListboxItemStateProps, root: ListboxRootState) {
+		this.root = root;
+		this.value = props.value;
+		this.disabled = props.disabled;
+		this.label = props.label;
+		this.onHighlight = props.onHighlight;
+		this.onUnhighlight = props.onUnhighlight;
+		this.#id = props.id;
+		this.#ref = props.ref;
+
+		$effect(() => {
+			if (this.isHighlighted) {
+				this.onHighlight.current();
+			} else if (this.prevHighlighted.current) {
+				this.onUnhighlight.current();
+			}
+		});
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+		});
+	}
+
+	snippetProps = $derived.by(() => ({
+		selected: this.isSelected,
+		highlighted: this.isHighlighted,
+	}));
+
+	#onpointerdown = (e: PointerEvent) => {
+		// prevent focus from leaving the combobox
+		e.preventDefault();
+	};
+
+	/**
+	 * Using `pointerup` instead of `click` allows power users to pointerdown
+	 * the trigger, then release pointerup on an item to select it vs having to do
+	 * multiple clicks.
+	 */
+	#onpointerup = (e: PointerEvent) => {
+		// prevent any default behavior
+		e.preventDefault();
+		if (this.disabled.current) return;
+		this.root.toggleItem(this.value.current, this.label.current);
+		if (!this.root.isMulti) {
+			this.root.closeMenu();
+		}
+	};
+
+	#onpointermove = (_: PointerEvent) => {
+		if (this.root.highlightedNode !== this.#ref.current) {
+			this.root.setHighlightedNode(this.#ref.current);
+		}
+	};
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.current,
+				"aria-selected": this.root.includesItem(this.value.current) ? "true" : undefined,
+				"data-value": this.value.current,
+				"data-disabled": getDataDisabled(this.disabled.current),
+				"data-highlighted":
+					this.root.highlightedValue === this.value.current ? "" : undefined,
+				"data-selected": this.root.includesItem(this.value.current) ? "" : undefined,
+				"data-label": this.label.current,
+				[LISTOX_ITEM_ATTR]: "",
+
+				onpointermove: this.#onpointermove,
+				onpointerdown: this.#onpointerdown,
+				onpointerup: this.#onpointerup,
+			}) as const
+	);
+}
+
+type ListboxGroupStateProps = WithRefProps;
+
+class ListboxGroupState {
+	#id: ListboxGroupStateProps["id"];
+	#ref: ListboxGroupStateProps["ref"];
+	labelNode = $state<HTMLElement | null>(null);
+
+	constructor(props: ListboxGroupStateProps) {
+		this.#id = props.id;
+		this.#ref = props.ref;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+		});
+	}
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.current,
+				role: "group",
+				[LISTBOX_GROUP_ATTR]: "",
+				"aria-labelledby": this.labelNode?.id ?? undefined,
+			}) as const
+	);
+
+	createGroupLabel(props: ListboxGroupLabelStateProps) {
+		return new ListboxGroupLabelState(props, this);
+	}
+}
+
+type ListboxGroupLabelStateProps = WithRefProps;
+
+class ListboxGroupLabelState {
+	#id: ListboxGroupLabelStateProps["id"];
+	#ref: ListboxGroupLabelStateProps["ref"];
+
+	constructor(props: ListboxGroupLabelStateProps, group: ListboxGroupState) {
+		this.#id = props.id;
+		this.#ref = props.ref;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+			onRefChange: (node) => {
+				group.labelNode = node;
+			},
+		});
+	}
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.current,
+				[LISTBOX_GROUP_LABEL_ATTR]: "",
+			}) as const
+	);
+}
+
+type ListboxHiddenInputStateProps = ReadableBoxedValues<{
+	value: string;
+}>;
+
+class ListboxHiddenInputState {
+	#value: ListboxHiddenInputStateProps["value"];
+	root: ListboxRootState;
+	shouldRender = $derived.by(() => this.root.name.current !== "");
+
+	constructor(props: ListboxHiddenInputStateProps, root: ListboxRootState) {
+		this.root = root;
+		this.#value = props.value;
+	}
+
+	props = $derived.by(
+		() =>
+			({
+				disabled: getDisabled(this.root.disabled.current),
+				required: getRequired(this.root.required.current),
+				name: this.root.name.current,
+				value: this.#value.current,
+				"aria-hidden": getAriaHidden(true),
+			}) as const
+	);
 }
 
 type ListboxViewportStateProps = WithRefProps;
@@ -852,197 +1060,6 @@ class ListboxScrollUpButtonState {
 
 	props = $derived.by(
 		() => ({ ...this.state.props, [LISTBOX_SCROLL_UP_BUTTON_ATTR]: "" }) as const
-	);
-}
-
-type ListboxItemStateProps = WithRefProps<
-	ReadableBoxedValues<{
-		value: string;
-		disabled: boolean;
-		label: string;
-		onHighlight: () => void;
-		onUnhighlight: () => void;
-	}>
->;
-
-class ListboxItemState {
-	#id: ListboxItemStateProps["id"];
-	#ref: ListboxItemStateProps["ref"];
-	root: ListboxRootState;
-	value: ListboxItemStateProps["value"];
-	label: ListboxItemStateProps["label"];
-	onHighlight: ListboxItemStateProps["onHighlight"];
-	onUnhighlight: ListboxItemStateProps["onUnhighlight"];
-	disabled: ListboxItemStateProps["disabled"];
-	isSelected = $derived.by(() => this.root.includesItem(this.value.current));
-	isHighlighted = $derived.by(() => this.root.highlightedValue === this.value.current);
-	prevHighlighted = new Previous(() => this.isHighlighted);
-
-	constructor(props: ListboxItemStateProps, root: ListboxRootState) {
-		this.root = root;
-		this.value = props.value;
-		this.disabled = props.disabled;
-		this.label = props.label;
-		this.onHighlight = props.onHighlight;
-		this.onUnhighlight = props.onUnhighlight;
-		this.#id = props.id;
-		this.#ref = props.ref;
-
-		$effect(() => {
-			if (this.isHighlighted) {
-				this.onHighlight.current();
-			} else if (this.prevHighlighted.current) {
-				this.onUnhighlight.current();
-			}
-		});
-
-		useRefById({
-			id: this.#id,
-			ref: this.#ref,
-		});
-	}
-
-	snippetProps = $derived.by(() => ({
-		selected: this.isSelected,
-		highlighted: this.isHighlighted,
-	}));
-
-	#onpointerdown = (e: PointerEvent) => {
-		// prevent focus from leaving the combobox
-		e.preventDefault();
-	};
-
-	/**
-	 * Using `pointerup` instead of `click` allows power users to pointerdown
-	 * the trigger, then release pointerup on an item to select it vs having to do
-	 * multiple clicks.
-	 */
-	#onpointerup = (e: PointerEvent) => {
-		// prevent any default behavior
-		e.preventDefault();
-		if (this.disabled.current) return;
-		this.root.toggleItem(this.value.current, this.label.current);
-		if (!this.root.isMulti) {
-			this.root.closeMenu();
-		}
-	};
-
-	#onpointermove = (_: PointerEvent) => {
-		if (this.root.highlightedNode !== this.#ref.current) {
-			this.root.setHighlightedNode(this.#ref.current);
-		}
-	};
-
-	#onpointerleave = (_: PointerEvent) => {
-		// if (this.root.highlightedNode === this.#ref.current) {
-		// 	this.root.setHighlightedNode(null);
-		// }
-	};
-
-	props = $derived.by(
-		() =>
-			({
-				id: this.#id.current,
-				"aria-selected": this.root.includesItem(this.value.current) ? "true" : undefined,
-				"data-value": this.value.current,
-				"data-disabled": getDataDisabled(this.disabled.current),
-				"data-highlighted":
-					this.root.highlightedValue === this.value.current ? "" : undefined,
-				"data-selected": this.root.includesItem(this.value.current) ? "" : undefined,
-				"data-label": this.label.current,
-				[LISTOX_ITEM_ATTR]: "",
-
-				onpointermove: this.#onpointermove,
-				onpointerdown: this.#onpointerdown,
-				onpointerleave: this.#onpointerleave,
-				onpointerup: this.#onpointerup,
-			}) as const
-	);
-}
-
-type ListboxGroupStateProps = WithRefProps;
-
-class ListboxGroupState {
-	#id: ListboxGroupStateProps["id"];
-	#ref: ListboxGroupStateProps["ref"];
-	labelNode = $state<HTMLElement | null>(null);
-
-	constructor(props: ListboxGroupStateProps) {
-		this.#id = props.id;
-		this.#ref = props.ref;
-
-		useRefById({
-			id: this.#id,
-			ref: this.#ref,
-		});
-	}
-
-	props = $derived.by(
-		() =>
-			({
-				id: this.#id.current,
-				role: "group",
-				[LISTBOX_GROUP_ATTR]: "",
-				"aria-labelledby": this.labelNode?.id ?? undefined,
-			}) as const
-	);
-
-	createGroupLabel(props: ListboxGroupLabelStateProps) {
-		return new ListboxGroupLabelState(props, this);
-	}
-}
-
-type ListboxGroupLabelStateProps = WithRefProps;
-
-class ListboxGroupLabelState {
-	#id: ListboxGroupLabelStateProps["id"];
-	#ref: ListboxGroupLabelStateProps["ref"];
-
-	constructor(props: ListboxGroupLabelStateProps, group: ListboxGroupState) {
-		this.#id = props.id;
-		this.#ref = props.ref;
-
-		useRefById({
-			id: this.#id,
-			ref: this.#ref,
-			onRefChange: (node) => {
-				group.labelNode = node;
-			},
-		});
-	}
-
-	props = $derived.by(
-		() =>
-			({
-				id: this.#id.current,
-				[LISTBOX_GROUP_LABEL_ATTR]: "",
-			}) as const
-	);
-}
-
-type ListboxHiddenInputStateProps = ReadableBoxedValues<{
-	value: string;
-}>;
-
-class ListboxHiddenInputState {
-	#value: ListboxHiddenInputStateProps["value"];
-	root: ListboxRootState;
-	shouldRender = $derived.by(() => this.root.name.current !== "");
-
-	constructor(props: ListboxHiddenInputStateProps, root: ListboxRootState) {
-		this.root = root;
-		this.#value = props.value;
-	}
-
-	props = $derived.by(
-		() =>
-			({
-				disabled: getDisabled(this.root.disabled.current),
-				required: getRequired(this.root.required.current),
-				name: this.root.name.current,
-				value: this.#value.current,
-				"aria-hidden": getAriaHidden(true),
-			}) as const
 	);
 }
 
