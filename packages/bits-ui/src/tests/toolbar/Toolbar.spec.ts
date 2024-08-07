@@ -1,19 +1,14 @@
-import { render } from "@testing-library/svelte";
+import { render } from "@testing-library/svelte/svelte5";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import { getTestKbd } from "../utils.js";
 import ToolbarTest from "./ToolbarTest.svelte";
-import type { Toolbar } from "$lib/index.js";
+import type { ToolbarTestProps } from "./ToolbarTest.svelte";
 
 const kbd = getTestKbd();
 
-function setup(
-	props: Toolbar.Props & {
-		multipleProps?: Toolbar.GroupProps<"multiple">;
-		singleProps?: Toolbar.GroupProps<"single">;
-	} = {}
-) {
+function setup(props: Partial<ToolbarTestProps> = {}) {
 	const user = userEvent.setup();
 	const returned = render(ToolbarTest, { ...props });
 	const root = returned.getByTestId("root");
@@ -51,12 +46,12 @@ function setup(
 }
 
 describe("toolbar", () => {
-	it("has no accessibility violations", async () => {
+	it("should have no accessibility violations", async () => {
 		const { container } = render(ToolbarTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
-	it("has bits data attrs", async () => {
+	it("should have bits data attrs", async () => {
 		const {
 			root,
 			groupMultiple,
@@ -75,7 +70,7 @@ describe("toolbar", () => {
 		expect(button).toHaveAttribute("data-toolbar-button");
 	});
 
-	it("navigates between the items using the arrow keys", async () => {
+	it("should navigate between the items using the arrow keys", async () => {
 		const {
 			user,
 			groupMultipleItemBold,
@@ -105,7 +100,7 @@ describe("toolbar", () => {
 		await user.keyboard(kbd.ARROW_RIGHT);
 	});
 
-	it("loops around when navigating with the arrow keys", async () => {
+	it("should loop around when navigating with the arrow keys", async () => {
 		const { user, groupMultipleItemBold, button } = setup();
 		groupMultipleItemBold.focus();
 		await user.keyboard(kbd.ARROW_LEFT);
@@ -114,7 +109,7 @@ describe("toolbar", () => {
 		expect(groupMultipleItemBold).toHaveFocus();
 	});
 
-	it("respects the loop prop", async () => {
+	it("should respect the loop: false prop", async () => {
 		const { user, groupMultipleItemBold, button } = setup({
 			loop: false,
 		});
@@ -128,9 +123,9 @@ describe("toolbar", () => {
 		expect(button).toHaveFocus();
 	});
 
-	it("toolbar toogle group, type `'single'`, toggles when clicked", async () => {
+	it("should toggles when clicked when toolbar toogle group, type `'single'`", async () => {
 		const { user, groupSingleItemLeft, groupSingleItemCenter, alignBinding } = setup();
-		expect(alignBinding).toHaveTextContent("undefined");
+		expect(alignBinding).toHaveTextContent("");
 		await user.click(groupSingleItemLeft);
 		expect(alignBinding).toHaveTextContent("left");
 		await user.click(groupSingleItemCenter);
@@ -138,10 +133,10 @@ describe("toolbar", () => {
 	});
 
 	it.each([kbd.ENTER, kbd.SPACE])(
-		"toolbar toogle group, type `'single'`, toggles when the %s key is pressed",
+		"should toggles when the %s key is pressed when toolbar toogle group, type `'single'`",
 		async (key) => {
 			const { user, groupSingleItemLeft, groupSingleItemCenter, alignBinding } = setup();
-			expect(alignBinding).toHaveTextContent("undefined");
+			expect(alignBinding).toHaveTextContent("");
 			groupSingleItemLeft.focus();
 			await user.keyboard(key);
 			expect(alignBinding).toHaveTextContent("left");
@@ -151,7 +146,7 @@ describe("toolbar", () => {
 		}
 	);
 
-	it("allows multiple items to be selected with toolbar toggle group type `'multiple'`", async () => {
+	it("should allow multiple items to be selected with toolbar toggle group type `'multiple'`", async () => {
 		const {
 			user,
 			groupMultipleItemBold,
@@ -172,7 +167,7 @@ describe("toolbar", () => {
 		expect(styleBinding).toHaveTextContent("");
 	});
 
-	it("toolbar toogle group items should be disabled then the `disabled` prop is set to true", async () => {
+	it("should disable group items when the `disabled` prop is set to true", async () => {
 		const {
 			groupMultipleItemBold,
 			groupMultipleItemItalic,
@@ -180,7 +175,10 @@ describe("toolbar", () => {
 			groupSingleItemLeft,
 			groupSingleItemCenter,
 			groupSingleItemRight,
-		} = setup({ multipleProps: { disabled: true }, singleProps: { disabled: true } });
+		} = setup({
+			multipleProps: { disabled: true },
+			singleProps: { disabled: true },
+		});
 		expect(groupMultipleItemBold).toBeDisabled();
 		expect(groupMultipleItemItalic).toBeDisabled();
 		expect(groupMultipleItemStrikethrough).toBeDisabled();
@@ -189,7 +187,7 @@ describe("toolbar", () => {
 		expect(groupSingleItemRight).toBeDisabled();
 	});
 
-	it("toolbar toogle groups should fire the `onChange` callback when changing", async () => {
+	it("should fire the `onChange` callback when changing", async () => {
 		let newMultipleValue;
 		function multipleOnValueChange(next: string[] | undefined) {
 			newMultipleValue = next;
@@ -212,11 +210,11 @@ describe("toolbar", () => {
 		expect(newSingleValue).toBe("right");
 	});
 
-	it("toolbar toogle groups respects binding to the `value` prop", async () => {
+	it("should respect binding to the `value` prop", async () => {
 		const { user, groupMultipleItemItalic, groupSingleItemCenter, styleBinding, alignBinding } =
 			setup();
 		expect(styleBinding).toHaveTextContent("bold");
-		expect(alignBinding).toHaveTextContent("undefined");
+		expect(alignBinding).toHaveTextContent("");
 		expect(groupMultipleItemItalic).toHaveAttribute("data-state", "off");
 		expect(groupMultipleItemItalic).toHaveAttribute("aria-pressed", "false");
 		expect(groupSingleItemCenter).toHaveAttribute("data-state", "off");
@@ -233,25 +231,26 @@ describe("toolbar", () => {
 		expect(groupSingleItemCenter).toHaveAttribute("aria-checked", "true");
 	});
 
-	it.each(["link", "button"])("toolbar %s forwards click event", async (kind) => {
-		const { user, clickedBinding, [kind as keyof ReturnType<typeof setup>]: el } = setup();
+	it.each(["link", "button"])(
+		"should forward click event when the %s is clicked",
+		async (kind) => {
+			const { user, clickedBinding, [kind as keyof ReturnType<typeof setup>]: el } = setup();
 
-		expect(clickedBinding).toHaveTextContent("undefined");
-		await user.click(el as Element);
-		expect(clickedBinding).toHaveTextContent(kind);
-	});
+			expect(clickedBinding).toHaveTextContent("");
+			await user.click(el as Element);
+			expect(clickedBinding).toHaveTextContent(kind);
+		}
+	);
 
 	it.each([kbd.ENTER, kbd.SPACE])(
-		"toolbar button forwards click event when the %s key is pressed",
+		"should forward click event when the %s key is pressed",
 		async (key) => {
 			const { user, button, clickedBinding } = setup();
 
 			button.focus();
-			expect(clickedBinding).toHaveTextContent("undefined");
+			expect(clickedBinding).toHaveTextContent("");
 			await user.keyboard(key);
 			expect(clickedBinding).toHaveTextContent("button");
 		}
 	);
-
-	it.todo("`asChild` behavior");
 });

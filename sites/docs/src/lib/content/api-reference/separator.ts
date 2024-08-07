@@ -1,41 +1,44 @@
-import type { SeparatorPropsWithoutHTML } from "bits-ui";
-import { builderAndAttrsSlotProps, domElProps, enums } from "$lib/content/api-reference/helpers.js";
+import type { SeparatorRootPropsWithoutHTML } from "bits-ui";
+import { OrientationProp } from "./extended-types/shared/index.js";
+import {
+	createApiSchema,
+	createBooleanProp,
+	createEnumProp,
+	enums,
+	withChildProps,
+} from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
-import type { APISchema } from "$lib/types/index.js";
 
-export const root: APISchema<SeparatorPropsWithoutHTML> = {
+export const root = createApiSchema<SeparatorRootPropsWithoutHTML>({
 	title: "Root",
 	description: "An element used to separate content.",
 	props: {
-		orientation: {
-			type: {
-				type: C.ENUM,
-				definition: enums("horizontal", "vertical"),
-			},
+		orientation: createEnumProp({
+			options: ["horizontal", "vertical"],
 			default: "'horizontal'",
 			description: "The orientation of the separator.",
-		},
-		decorative: {
-			type: C.BOOLEAN,
+			definition: OrientationProp,
+		}),
+		decorative: createBooleanProp({
 			default: C.FALSE,
 			description:
-				"Whether the separator is decorative or not, which will determine if it is announce by screen readers.",
-		},
-		...domElProps("HTMLDivElement"),
+				"Whether the separator is decorative or not, which will determine if it is announced by screen readers.",
+		}),
+		...withChildProps({ elType: "HTMLDivElement" }),
 	},
-	slotProps: { ...builderAndAttrsSlotProps },
 	dataAttributes: [
 		{
 			name: "orientation",
 			description: "The orientation of the separator.",
 			value: enums("horizontal", "vertical"),
 			isEnum: true,
+			definition: OrientationProp,
 		},
 		{
 			name: "separator-root",
 			description: "Present on the root element.",
 		},
 	],
-};
+});
 
 export const separator = [root];

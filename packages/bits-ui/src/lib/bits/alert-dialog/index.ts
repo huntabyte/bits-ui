@@ -1,15 +1,15 @@
-export { default as Root } from "./components/alert-dialog.svelte";
-export { default as Title } from "./components/alert-dialog-title.svelte";
-export { default as Action } from "./components/alert-dialog-action.svelte";
+export { default as Root } from "$lib/bits/dialog/components/dialog.svelte";
+export { default as Title } from "$lib/bits/dialog/components/dialog-title.svelte";
+export { default as Action } from "$lib/bits/dialog/components/dialog-close.svelte";
 export { default as Cancel } from "./components/alert-dialog-cancel.svelte";
-export { default as Portal } from "./components/alert-dialog-portal.svelte";
+export { default as Portal } from "$lib/bits/utilities/portal/portal.svelte";
 export { default as Content } from "./components/alert-dialog-content.svelte";
-export { default as Overlay } from "./components/alert-dialog-overlay.svelte";
-export { default as Trigger } from "./components/alert-dialog-trigger.svelte";
-export { default as Description } from "./components/alert-dialog-description.svelte";
+export { default as Overlay } from "$lib/bits/dialog/components/dialog-overlay.svelte";
+export { default as Trigger } from "$lib/bits/dialog/components/dialog-trigger.svelte";
+export { default as Description } from "$lib/bits/dialog/components/dialog-description.svelte";
 
 export type {
-	AlertDialogProps as Props,
+	AlertDialogRootProps as RootProps,
 	AlertDialogTitleProps as TitleProps,
 	AlertDialogActionProps as ActionProps,
 	AlertDialogCancelProps as CancelProps,
@@ -18,7 +18,4 @@ export type {
 	AlertDialogOverlayProps as OverlayProps,
 	AlertDialogTriggerProps as TriggerProps,
 	AlertDialogDescriptionProps as DescriptionProps,
-	AlertDialogTriggerEvents as TriggerEvents,
-	AlertDialogActionEvents as ActionEvents,
-	AlertDialogCancelEvents as CancelEvents,
 } from "./types.js";

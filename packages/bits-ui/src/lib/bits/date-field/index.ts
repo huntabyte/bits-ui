@@ -4,10 +4,9 @@ export { default as Label } from "./components/date-field-label.svelte";
 export { default as Segment } from "./components/date-field-segment.svelte";
 
 export type {
-	DateFieldProps as Props,
+	DateFieldRootProps as RootProps,
 	DateFieldInputProps as InputProps,
 	DateFieldLabelProps as LabelProps,
 	DateFieldSegmentProps as SegmentProps,
-	DateFieldDescriptionProps as DescriptionProps,
-	DateFieldSegmentEvents as SegmentEvents,
+	// DateFieldDescriptionProps as DescriptionProps,
 } from "./types.js";

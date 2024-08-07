@@ -1,10 +1,10 @@
-import { render, waitFor } from "@testing-library/svelte";
+import { render, waitFor } from "@testing-library/svelte/svelte5";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import { getTestKbd } from "../utils.js";
 import RadioGroupTest from "./RadioGroupTest.svelte";
-import type { Item } from "./RadioGroupTest.svelte";
+import type { Item, RadioGroupTestProps } from "./RadioGroupTest.svelte";
 import type { RadioGroup } from "$lib/index.js";
 
 const kbd = getTestKbd();
@@ -31,11 +31,13 @@ const testItems: Item[] = [
 const itemIds = testItems.map((item) => `${item.value}-item`);
 const indicatorIds = testItems.map((item) => `${item.value}-indicator`);
 
-function setup(props: RadioGroup.Props = {}, items: Item[] = testItems) {
+function setup(props: Partial<RadioGroupTestProps> = {}, items: Item[] = testItems) {
 	const user = userEvent.setup();
 	const returned = render(RadioGroupTest, { ...props, items });
+	const input = document.querySelector("input") as HTMLInputElement;
 	return {
 		user,
+		input,
 		...returned,
 	};
 }
@@ -45,12 +47,12 @@ function randItem() {
 }
 
 describe("radio group", () => {
-	it("has no accessibility violations", async () => {
+	it("should have no accessibility violations", async () => {
 		const { container } = render(RadioGroupTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
-	it("has bits data attrs", async () => {
+	it("should have bits data attrs", async () => {
 		const { getByTestId } = render(RadioGroupTest, {
 			items: [testItems[0] as Item],
 			value: testItems[0]?.value,
@@ -62,30 +64,27 @@ describe("radio group", () => {
 		expect(item).toHaveAttribute("data-radio-group-item");
 	});
 
-	it("changes the value when an item is clicked", async () => {
-		const { getByTestId, queryByTestId, user } = setup();
+	it("should change the value when an item is clicked", async () => {
+		const { getByTestId, user } = setup();
 
 		for (const indicator of indicatorIds) {
-			expect(queryByTestId(indicator)).toBeNull();
+			expect(getByTestId(indicator)).toHaveTextContent("false");
 		}
 		const itemIdx = randItem();
 		const item = getByTestId(itemIds[itemIdx] as string);
 		await user.click(item);
-		await waitFor(() => expect(queryByTestId(indicatorIds[itemIdx] as string)).not.toBeNull());
+		expect(getByTestId(indicatorIds[itemIdx] as string)).toHaveTextContent("true");
 	});
 
-	it("doesnt change the value when a disabled item is clicked", async () => {
-		const { getByTestId, queryByTestId, user } = setup({}, [
-			...testItems,
-			{ value: "e", disabled: true },
-		]);
+	it("should not change the value when a disabled item is clicked", async () => {
+		const { getByTestId, user } = setup({}, [...testItems, { value: "e", disabled: true }]);
 
 		const item = getByTestId("e-item");
 		await user.click(item);
-		await waitFor(() => expect(queryByTestId("e-indicator")).toBeNull());
+		expect(getByTestId("e-indicator")).toHaveTextContent("false");
 	});
 
-	it("navigates through the items using the keyboard", async () => {
+	it("should navigate through the items using the keyboard", async () => {
 		const { getByTestId, user } = setup();
 
 		const item0 = getByTestId(itemIds[0] as string);
@@ -108,7 +107,7 @@ describe("radio group", () => {
 		await waitFor(() => expect(item0).toHaveFocus());
 	});
 
-	it("respects the loop prop", async () => {
+	it("should respect the loop prop", async () => {
 		const { getByTestId, user } = setup({
 			loop: false,
 		});
@@ -126,22 +125,22 @@ describe("radio group", () => {
 		await waitFor(() => expect(item3).toHaveFocus());
 	});
 
-	it("respects the value prop & binding", async () => {
+	it("should respect the value prop & binding", async () => {
 		const { getByTestId, user, queryByTestId } = setup({
 			value: "b",
 		});
 		const binding = getByTestId("binding");
 		expect(binding).toHaveTextContent("b");
 		const bindingIndic = getByTestId("b-indicator");
-		expect(bindingIndic).not.toBeNull();
+		expect(bindingIndic).toHaveTextContent("true");
 		await user.click(binding);
 		expect(binding).toHaveTextContent("a");
-		expect(queryByTestId("b-indicator")).toBeNull();
+		expect(queryByTestId("b-indicator")).toHaveTextContent("false");
 		const bindingIndic2 = getByTestId("a-indicator");
-		expect(bindingIndic2).not.toBeNull();
+		expect(bindingIndic2).toHaveTextContent("true");
 	});
 
-	it("modifies keyboard navigation when the orientation is horizontal", async () => {
+	it("should modify keyboard navigation when the orientation is horizontal", async () => {
 		const { getByTestId, user } = setup({
 			orientation: "horizontal",
 		});
@@ -168,7 +167,7 @@ describe("radio group", () => {
 		await waitFor(() => expect(item3).toHaveFocus());
 	});
 
-	it("respects the loop prop when orientation is horizontal", async () => {
+	it("should respect the loop prop when orientation is horizontal", async () => {
 		const { getByTestId, user } = setup({
 			loop: false,
 			orientation: "horizontal",
@@ -187,32 +186,44 @@ describe("radio group", () => {
 		await waitFor(() => expect(item3).toHaveFocus());
 	});
 
-	it("syncs the inputs value with the radio group value", async () => {
-		const { getByTestId, user } = setup();
+	it("should not render an input if the `name` prop isn't passed", async () => {
+		const { input } = setup();
 
-		const input = getByTestId("input");
-		expect(input).toHaveValue("");
+		expect(input).not.toBeInTheDocument();
+	});
+
+	it("should render an input if the `name` prop is passed", async () => {
+		const { input } = setup({
+			name: "radio-group",
+		});
+
+		expect(input).toBeInTheDocument();
+	});
+
+	it("should syncs the inputs value with the radio group value", async () => {
+		const { getByTestId, user, input } = setup({ name: "radio-group" });
+
 		await user.click(getByTestId("a-item"));
 		expect(input).toHaveValue("a");
 		await user.click(getByTestId("b-item"));
 		expect(input).toHaveValue("b");
 	});
 
-	it("makes the input required if the radio group is required", async () => {
-		const { getByTestId } = setup({
+	it("should make the input required if the radio group is required", async () => {
+		const { input } = setup({
 			required: true,
+			name: "radio-group",
 		});
 
-		const input = getByTestId("input");
 		expect(input).toHaveAttribute("required");
 	});
 
-	it("disables the input if the radio group is disabled", async () => {
-		const { getByTestId } = setup({
+	it("should make the input disabled if the radio group is disabled", async () => {
+		const { input } = setup({
 			disabled: true,
+			name: "radio-group",
 		});
 
-		const input = getByTestId("input");
 		expect(input).toHaveAttribute("disabled");
 	});
 });

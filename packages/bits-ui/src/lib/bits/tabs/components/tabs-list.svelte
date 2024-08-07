@@ -1,28 +1,33 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { getCtx } from "../ctx.js";
+	import { box } from "svelte-toolbelt";
 	import type { ListProps } from "../index.js";
+	import { useTabsList } from "../tabs.svelte.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/useId.js";
 
-	type $$Props = ListProps;
+	let {
+		child,
+		children,
+		id = useId(),
+		ref = $bindable(null),
+		...restProps
+	}: ListProps = $props();
 
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
+	const listState = useTabsList({
+		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
+	});
 
-	const {
-		elements: { list },
-		getAttrs,
-	} = getCtx();
-
-	const attrs = getAttrs("list");
-
-	$: builder = $list;
-	$: Object.assign(builder, attrs);
+	const mergedProps = $derived(mergeProps(restProps, listState.props));
 </script>
 
-{#if asChild}
-	<slot {builder} />
+{#if child}
+	{@render child({ props: mergedProps })}
 {:else}
-	<div bind:this={el} use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+	<div {...mergedProps}>
+		{@render children?.()}
 	</div>
 {/if}

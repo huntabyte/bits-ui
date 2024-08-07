@@ -2,183 +2,190 @@ import type {
 	AccordionContentPropsWithoutHTML,
 	AccordionHeaderPropsWithoutHTML,
 	AccordionItemPropsWithoutHTML,
-	AccordionPropsWithoutHTML,
+	AccordionRootPropsWithoutHTML,
 	AccordionTriggerPropsWithoutHTML,
 } from "bits-ui";
-import { builderAndAttrsSlotProps, domElProps } from "./helpers.js";
-import { enums, transitionProps, union } from "$lib/content/api-reference/helpers.js";
+import {
+	createApiSchema,
+	createBooleanProp,
+	createCSSVarSchema,
+	createDataAttrSchema,
+	createEnumDataAttr,
+	createEnumProp,
+	createFunctionProp,
+	createStringProp,
+	createUnionProp,
+	disabledDataAttr,
+	forceMountProp,
+	orientationDataAttr,
+	withChildProps,
+} from "./helpers.js";
+import {
+	HeaderLevelProp,
+	OnChangeStringOrArrayProp,
+	OrientationProp,
+	SingleOrMultipleProp,
+	StringOrArrayStringProp,
+} from "./extended-types/shared/index.js";
+import {
+	ContentChildSnippetProps,
+	ContentChildrenSnippetProps,
+} from "./extended-types/accordion/index.js";
 import * as C from "$lib/content/constants.js";
-import type { APISchema } from "$lib/types/index.js";
 
-const root: APISchema<AccordionPropsWithoutHTML<false>> = {
+const stateDataAttr = createEnumDataAttr({
+	name: "state",
+	description: "Whether the accordion item is open or closed.",
+	options: ["open", "closed"],
+});
+
+const root = createApiSchema<AccordionRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root accordion component used to set and manage the state of the accordion.",
 	props: {
-		multiple: {
-			default: "false",
-			type: C.BOOLEAN,
-			description: "Whether or not multiple accordion items can be active at the same time.",
-		},
-		disabled: {
-			default: "false",
-			type: C.BOOLEAN,
-			description: "Whether or not the accordion is disabled.",
-		},
-		value: {
-			type: {
-				type: C.UNION,
-				definition: union("string", "undefined"),
-			},
-			description: "The active accordion item value.",
-		},
-		onValueChange: {
-			type: {
-				type: C.FUNCTION,
-				definition: "(value: string | undefined) => void",
-			},
-			description: "A callback function called when the active accordion item value changes.",
-		},
-		...domElProps("HTMLDivElement"),
-	},
-	slotProps: {
-		...builderAndAttrsSlotProps,
+		type: createEnumProp({
+			options: ["single", "multiple"],
+			definition: SingleOrMultipleProp,
+			description:
+				"The type of accordion. If set to `'multiple'`, the accordion will allow multiple items to be open at the same time. If set to `single`, the accordion will only allow a single item to be open.",
+			required: true,
+		}),
+		value: createUnionProp({
+			options: ["string[]", "string"],
+			definition: StringOrArrayStringProp,
+			description:
+				"The value of the currently active accordion item. If `type` is `'single'`, this should be a string. If `type` is `'multiple'`, this should be an array of strings.",
+			bindable: true,
+		}),
+		onValueChange: createFunctionProp({
+			definition: OnChangeStringOrArrayProp,
+			description:
+				"A callback function called when the active accordion item value changes. If the `type` is `'single'`, the argument will be a string. If `type` is `'multiple'`, the argument will be an array of strings.",
+		}),
+		disabled: createBooleanProp({
+			description:
+				"Whether or not the accordion is disabled. When disabled, the accordion cannot be interacted with.",
+			default: C.FALSE,
+		}),
+		loop: createBooleanProp({
+			description:
+				"Whether or not the accordion should loop through items when reaching the end.",
+			default: C.FALSE,
+		}),
+		orientation: createEnumProp({
+			options: ["vertical", "horizontal"],
+			definition: OrientationProp,
+			description: "The orientation of the accordion.",
+			default: "vertical",
+		}),
+		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		{
-			name: "orientation",
-			value: enums("horizontal", "vertical"),
-			description: "The orientation of the accordion.",
-			isEnum: true,
-		},
-		{
+		orientationDataAttr,
+		disabledDataAttr,
+		createDataAttrSchema({
 			name: "accordion-root",
-			value: "",
 			description: "Present on the root element.",
-		},
+		}),
 	],
-};
+});
 
-const item: APISchema<AccordionItemPropsWithoutHTML> = {
+const item = createApiSchema<AccordionItemPropsWithoutHTML>({
 	title: "Item",
 	description: "An accordion item.",
 	props: {
-		value: {
-			required: true,
-			type: "string",
-			description: "The value of the accordion item.",
-		},
-		disabled: {
-			default: "false",
-			type: "boolean",
+		disabled: createBooleanProp({
 			description: "Whether or not the accordion item is disabled.",
-		},
-		...domElProps("HTMLDivElement"),
-	},
-	slotProps: {
-		...builderAndAttrsSlotProps,
+			default: C.FALSE,
+		}),
+		value: createStringProp({
+			description:
+				"The value of the accordion item. This is used to identify when the item is open or closed. If not provided, a unique ID will be generated for this value.",
+			default: "A random unique ID",
+		}),
+		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		{
-			name: "state",
-			value: enums("open", "closed"),
-			description: "The state of the accordion item.",
-			isEnum: true,
-		},
-		{
-			name: "disabled",
-			value: "",
-			description: "Present when the accordion item is disabled.",
-		},
-		{
+		stateDataAttr,
+		disabledDataAttr,
+		createDataAttrSchema({
 			name: "accordion-item",
 			description: "Present on the item element.",
-		},
+		}),
 	],
-};
+});
 
-const trigger: APISchema<AccordionTriggerPropsWithoutHTML> = {
+const trigger = createApiSchema<AccordionTriggerPropsWithoutHTML>({
 	title: "Trigger",
-	description: "The accordion item trigger, which opens and closes the accordion item.",
-	props: { ...domElProps("HTMLButtonElement") },
-	slotProps: { ...builderAndAttrsSlotProps },
+	description: "The button responsible for toggling the accordion item.",
+	props: withChildProps({ elType: "HTMLButtonElement" }),
 	dataAttributes: [
-		{
-			name: "state",
-			value: enums("open", "closed"),
-			description: "The state of the accordion item.",
-			isEnum: true,
-		},
-		{
-			name: "disabled",
-			description: "Present when the accordion item is disabled.",
-		},
-		{
-			name: "value",
-			description: "The value of the accordion item.",
-		},
-		{
+		orientationDataAttr,
+		disabledDataAttr,
+		createDataAttrSchema({
 			name: "accordion-trigger",
 			description: "Present on the trigger element.",
-		},
+		}),
 	],
-};
+});
 
-const content: APISchema<AccordionContentPropsWithoutHTML> = {
+const content = createApiSchema<AccordionContentPropsWithoutHTML>({
 	title: "Content",
 	description: "The accordion item content, which is displayed when the item is open.",
-	props: { ...transitionProps, ...domElProps("HTMLDivElement") },
-	slotProps: { ...builderAndAttrsSlotProps },
+	props: {
+		forceMount: forceMountProp,
+		...withChildProps({
+			elType: "HTMLDivElement",
+			childrenDef: ContentChildrenSnippetProps,
+			childDef: ContentChildSnippetProps,
+		}),
+	},
 	dataAttributes: [
-		{
-			name: "state",
-			value: enums("open", "closed"),
-			description: "The state of the accordion item.",
-			isEnum: true,
-		},
-		{
-			name: "disabled",
-			description: "Present when the accordion item is disabled.",
-		},
-		{
-			name: "value",
-			description: "The value of the accordion item.",
-		},
-		{
+		orientationDataAttr,
+		disabledDataAttr,
+		createDataAttrSchema({
 			name: "accordion-content",
 			description: "Present on the content element.",
-		},
+		}),
 	],
-};
+	cssVars: [
+		createCSSVarSchema({
+			name: "--bits-accordion-content-height",
+			description: "The height of the accordion content element.",
+		}),
+		createCSSVarSchema({
+			name: "--bits-accordion-content-width",
+			description: "The width of the accordion content element.",
+		}),
+	],
+});
 
-const header: APISchema<AccordionHeaderPropsWithoutHTML> = {
+const header = createApiSchema<AccordionHeaderPropsWithoutHTML>({
 	title: "Header",
-	description: "The accordion item header, which wraps the trigger and makes it more accessible.",
+	description: "The header of the accordion item.",
 	props: {
-		level: {
-			type: {
-				type: C.ENUM,
-				definition: union("1", "2", "3", "4", "5", "6"),
-			},
+		level: createUnionProp({
+			options: ["1", "2", "3", "4", "5", "6"],
+			definition: HeaderLevelProp,
 			description:
-				"The heading level to use for the header. This will be set as the `aria-level` attribute.",
-		},
-		...domElProps("HTMLDivElement"),
-	},
-	slotProps: {
-		...builderAndAttrsSlotProps,
+				"The heading level of the header. This will be set as the `aria-level` attribute.",
+			default: "3",
+		}),
+		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		{
+		orientationDataAttr,
+		disabledDataAttr,
+		createEnumDataAttr({
 			name: "heading-level",
-			value: enums("1", "2", "3", "4", "5", "6"),
-			description: "The heading level of the header.",
-			isEnum: true,
-		},
-		{
+			description: "The heading level of the element.",
+			options: ["1", "2", "3", "4", "5", "6"],
+		}),
+		createDataAttrSchema({
 			name: "accordion-header",
 			description: "Present on the header element.",
-		},
+		}),
 	],
-};
+});
 
 export const accordion = [root, item, header, trigger, content];

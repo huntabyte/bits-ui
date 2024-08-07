@@ -1,9 +1,14 @@
-import type { DOMEl, Expand, HTMLDivAttributes } from "$lib/internal/index.js";
+import type { WithChild, Without } from "$lib/internal/types.js";
+import type { PrimitiveDivAttributes } from "$lib/shared/attributes.js";
 
-export type AspectRatioPropsWithoutHTML = Expand<
-	{
-		ratio?: number | undefined;
-	} & DOMEl
->;
+export type AspectRatioPropsWithoutHTML = WithChild<{
+	/**
+	 * The aspect ratio of the image.
+	 *
+	 * @defaultValue 1
+	 */
+	ratio?: number;
+}>;
 
-export type AspectRatioProps = AspectRatioPropsWithoutHTML & HTMLDivAttributes;
+export type AspectRatioProps = AspectRatioPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, AspectRatioPropsWithoutHTML>;

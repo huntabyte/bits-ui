@@ -4,15 +4,17 @@ description: Organizes content into distinct sections, allowing users to switch 
 ---
 
 <script>
-	import { APISection, ComponentPreview, TabsDemo } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, TabsDemo } from '$lib/components/index.js'
 	export let schemas;
 </script>
 
-<ComponentPreview name="tabs-demo" comp="Tabs">
+<ComponentPreviewV2 name="tabs-demo" comp="Tabs">
 
-<TabsDemo slot="preview" />
+{#snippet preview()}
+<TabsDemo />
+{/snippet}
 
-</ComponentPreview>
+</ComponentPreviewV2>
 
 ## Structure
 

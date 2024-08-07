@@ -1,58 +1,61 @@
-import { render } from "@testing-library/svelte";
-import { userEvent } from "@testing-library/user-event";
+import { render } from "@testing-library/svelte/svelte5";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
+import { setupUserEvents } from "../utils.js";
 import CollapsibleTest from "./CollapsibleTest.svelte";
+import type { Collapsible } from "$lib/index.js";
+
+function setup(props?: Collapsible.RootProps) {
+	const user = setupUserEvents();
+	const returned = render(CollapsibleTest, props);
+	const root = returned.getByTestId("root");
+	const trigger = returned.getByTestId("trigger");
+	const content = returned.queryByTestId("content");
+	const binding = returned.getByTestId("binding");
+	return {
+		...returned,
+		root,
+		trigger,
+		content,
+		binding,
+		user,
+	};
+}
 
 describe("collapsible", () => {
-	it("has no accessibility violations", async () => {
+	it("should have no accessibility violations", async () => {
 		const { container } = render(CollapsibleTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
-	it("has bits data attrs", async () => {
-		const { getByTestId } = render(CollapsibleTest, { open: true });
-		const root = getByTestId("root");
-		const trigger = getByTestId("trigger");
-		const content = getByTestId("content");
+	it("should have bits data attrs", async () => {
+		const { root, trigger, content } = setup();
 		expect(root).toHaveAttribute("data-collapsible-root");
 		expect(trigger).toHaveAttribute("data-collapsible-trigger");
 		expect(content).toHaveAttribute("data-collapsible-content");
 	});
 
-	it("doesnt render content when `open` is false", async () => {
-		const { getByTestId, queryByTestId } = render(CollapsibleTest);
-		const root = getByTestId("root");
-		const trigger = getByTestId("trigger");
-		const content = queryByTestId("content");
+	it("should hide content when `open` is false", async () => {
+		const { root, trigger, content } = setup();
 		expect(root).not.toBeNull();
 		expect(trigger).not.toBeNull();
-		expect(content).toBeNull();
+		expect(content).not.toBeVisible();
 	});
 
-	it("toggles the `open` state when clicked", async () => {
-		const user = userEvent.setup();
-		const { getByTestId, queryByTestId } = render(CollapsibleTest);
-		const trigger = getByTestId("trigger");
-		const content = queryByTestId("content");
-		expect(content).toBeNull();
+	it("should toggle the `open` state when clicked", async () => {
+		const { user, trigger, content } = setup();
+		expect(content).not.toBeVisible();
 		await user.click(trigger);
-		const contentAfter = getByTestId("content");
-		expect(contentAfter).not.toBeNull();
+		expect(content).toBeVisible();
 		await user.click(trigger);
-		const contentAfter2 = queryByTestId("content");
-		expect(contentAfter2).toBeNull();
+		expect(content).not.toBeVisible();
 	});
 
-	it("respects binds to the `open` prop", async () => {
-		const user = userEvent.setup();
-		const { getByTestId } = render(CollapsibleTest);
-		const trigger = getByTestId("trigger");
-		const binding = getByTestId("binding");
+	it("should respect binds to the `open` prop", async () => {
+		const { getByTestId, user, trigger, binding } = setup({ open: false });
 		expect(binding).toHaveTextContent("false");
 		await user.click(trigger);
 		expect(binding).toHaveTextContent("true");
-
 		const altTrigger = getByTestId("alt-trigger");
 		await user.click(altTrigger);
 		expect(binding).toHaveTextContent("false");

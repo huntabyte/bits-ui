@@ -1,8 +1,21 @@
+import process from "node:process";
 import { sveltekit } from "@sveltejs/kit/vite";
+import { svelteTesting } from "@testing-library/svelte/vite";
 import { defineConfig } from "vitest/config";
+import type { Plugin } from "vite";
+
+const vitestBrowserConditionPlugin: Plugin = {
+	name: "vite-plugin-vitest-browser-condition",
+	//@ts-expect-error - idk
+	config({ resolve }: { resolve: { conditions: string[] } }) {
+		if (process.env.VITEST) {
+			resolve.conditions.unshift("browser");
+		}
+	},
+};
 
 export default defineConfig({
-	plugins: [sveltekit()],
+	plugins: [vitestBrowserConditionPlugin, sveltekit(), svelteTesting()],
 	test: {
 		include: ["src/**/*.{test,spec}.{js,ts}"],
 		// jest like globals
@@ -13,9 +26,7 @@ export default defineConfig({
 		// Add @testing-library/jest-dom's matchers & mocks of SvelteKit modules
 		setupFiles: ["./other/setupTest.ts"],
 		coverage: {
-			exclude: ["setupTest.ts"],
+			exclude: ["./other/setupTest.ts"],
 		},
-		alias: [{ find: /^svelte$/, replacement: "svelte/internal" }],
-		retry: 3,
 	},
 });

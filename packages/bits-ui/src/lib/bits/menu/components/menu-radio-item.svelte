@@ -1,44 +1,46 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { setRadioItem } from "../ctx.js";
-	import type { RadioItemEvents, RadioItemProps } from "../index.js";
-	import { createDispatcher } from "$lib/internal/events.js";
+	import { box } from "svelte-toolbelt";
+	import type { RadioItemProps } from "../index.js";
+	import { useMenuRadioItem } from "../menu.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
+	import { noop } from "$lib/internal/callbacks.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
 
-	type $$Props = RadioItemProps;
-	type $$Events = RadioItemEvents;
-	export let value: $$Props["value"];
-	export let disabled = false;
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
+	let {
+		children,
+		child,
+		ref = $bindable(null),
+		value,
+		onSelect = noop,
+		id = useId(),
+		disabled = false,
+		...restProps
+	}: RadioItemProps = $props();
 
-	const {
-		elements: { radioItem },
-		getAttrs,
-	} = setRadioItem(value);
+	const radioItemState = useMenuRadioItem({
+		value: box.with(() => value),
+		id: box.with(() => id),
+		disabled: box.with(() => disabled),
+		onSelect: box.with(() => handleSelect),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
+	});
 
-	const attrs = getAttrs("radio-item");
-	const dispatch = createDispatcher();
+	function handleSelect(e: Event) {
+		onSelect(e);
+		if (e.defaultPrevented) return;
+		radioItemState.selectValue();
+	}
 
-	$: builder = $radioItem({ value, disabled });
-	$: Object.assign(builder, attrs);
+	const mergedProps = $derived(mergeProps(restProps, radioItemState.props));
 </script>
 
-{#if asChild}
-	<slot {builder} />
+{#if child}
+	{@render child({ props: mergedProps, checked: radioItemState.isChecked })}
 {:else}
-	<div
-		bind:this={el}
-		use:melt={builder}
-		{...$$restProps}
-		on:m-click={dispatch}
-		on:m-focusin={dispatch}
-		on:m-focusout={dispatch}
-		on:m-keydown={dispatch}
-		on:m-pointerdown={dispatch}
-		on:m-pointerleave={dispatch}
-		on:m-pointermove={dispatch}
-		on:pointerenter
-	>
-		<slot {builder} />
+	<div {...mergedProps} bind:this={ref}>
+		{@render children?.({ checked: radioItemState.isChecked })}
 	</div>
 {/if}

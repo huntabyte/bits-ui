@@ -5,7 +5,7 @@
 	import type { DataAttrSchema } from "$lib/types/index.js";
 	import { parseMarkdown } from "$lib/utils/index.js";
 
-	export let dataAttrs: DataAttrSchema[] = [];
+	let { dataAttrs = [] }: { dataAttrs: DataAttrSchema[] } = $props();
 </script>
 
 <Table.Root>
@@ -18,7 +18,7 @@
 	</Table.Header>
 	<Table.Body>
 		{#if dataAttrs.length}
-			{#each dataAttrs as attr}
+			{#each dataAttrs as attr (attr.name)}
 				<Table.Row>
 					<Table.Cell class="align-baseline">
 						<Code class="font-semibold text-foreground">data-{attr.name}</Code>

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { Toaster } from "svelte-sonner";
 	import { ModeWatcher } from "mode-watcher";
 	import { dev } from "$app/environment";
 	import { page } from "$app/stores";
@@ -16,6 +17,7 @@
 
 <ModeWatcher />
 <Metadata />
+<Toaster position="top-right" />
 
 <SiteHeader />
 <div class="min-h-[calc(100vh-64px)]">

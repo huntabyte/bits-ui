@@ -1,54 +1,52 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { setCtx } from "../ctx.js";
-	import type { Props } from "../index.js";
+	import { box } from "svelte-toolbelt";
+	import type { RootProps } from "../index.js";
+	import { usePaginationRoot } from "../pagination.svelte.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/useId.js";
 
-	type $$Props = Props;
-
-	export let count: $$Props["count"];
-	export let page: $$Props["page"] = undefined;
-	export let onPageChange: $$Props["onPageChange"] = undefined;
-	export let perPage: $$Props["perPage"] = undefined;
-	export let siblingCount: $$Props["siblingCount"] = undefined;
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
-
-	const {
-		elements: { root },
-		states: { pages, range, page: localPage },
-		getAttrs,
-		updateOption,
-	} = setCtx({
+	let {
+		id = useId(),
 		count,
-		perPage,
-		siblingCount,
-		defaultPage: page,
-		onPageChange: ({ next }) => {
-			if (page !== next) {
-				onPageChange?.(next);
-				page = next;
-			}
+		perPage = 1,
+		page = $bindable(1),
+		ref = $bindable(null),
+		siblingCount = 1,
+		onPageChange,
+		loop = false,
+		orientation = "horizontal",
+		child,
+		children,
+		...restProps
+	}: RootProps = $props();
 
-			return next;
-		},
+	const rootState = usePaginationRoot({
+		id: box.with(() => id),
+		count: box.with(() => count),
+		perPage: box.with(() => perPage),
+		page: box.with(
+			() => page,
+			(v) => {
+				page = v;
+				onPageChange?.(v);
+			}
+		),
+		loop: box.with(() => loop),
+		siblingCount: box.with(() => siblingCount),
+		orientation: box.with(() => orientation),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
-	$: page !== undefined && localPage.set(page);
-
-	const attrs = getAttrs("root");
-
-	$: builder = $root;
-	$: Object.assign(builder, attrs);
-
-	$: updateOption("count", count);
-	$: updateOption("perPage", perPage);
-	$: updateOption("siblingCount", siblingCount);
+	const mergedProps = $derived(mergeProps(restProps, rootState.props));
 </script>
 
-{#if asChild}
-	<slot {builder} pages={$pages} range={$range} />
+{#if child}
+	{@render child({ props: mergedProps, ...rootState.snippetProps })}
 {:else}
-	<div bind:this={el} use:melt={builder} {...$$restProps}>
-		<slot {builder} pages={$pages} range={$range} />
+	<div {...mergedProps}>
+		{@render children?.(rootState.snippetProps)}
 	</div>
 {/if}

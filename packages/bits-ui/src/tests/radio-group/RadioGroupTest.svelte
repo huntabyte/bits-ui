@@ -1,33 +1,38 @@
 <script lang="ts" context="module">
+	import { RadioGroup } from "$lib/index.js";
 	export type Item = {
 		value: string;
 		disabled: boolean;
 	};
+
+	export type RadioGroupTestProps = Omit<
+		RadioGroup.RootProps,
+		"child" | "children" | "asChild"
+	> & {
+		items: Item[];
+	};
 </script>
 
 <script lang="ts">
-	import { RadioGroup } from "$lib/index.js";
-
-	type $$Props = RadioGroup.Props & {
-		items: Item[];
-	};
-	export let value: $$Props["value"] = "";
-	export let items: Item[] = [];
+	let { items, value = "", ...restProps }: RadioGroupTestProps = $props();
 </script>
 
 <main>
-	<RadioGroup.Root data-testid="root" bind:value {...$$restProps}>
+	<RadioGroup.Root data-testid="root" bind:value {...restProps}>
 		{#each items as { value, disabled }}
 			<RadioGroup.Item {value} {disabled} data-testid="{value}-item">
-				<RadioGroup.ItemIndicator>
-					<span data-testid="{value}-indicator"> checked </span>
-				</RadioGroup.ItemIndicator>
-				{value}
+				{#snippet children({ checked })}
+					<span data-testid="{value}-indicator"> {checked} </span>
+					{value}
+				{/snippet}
 			</RadioGroup.Item>
 		{/each}
-		<RadioGroup.Input data-testid="input" />
 	</RadioGroup.Root>
-	<button aria-label="binding" data-testid="binding" on:click={() => (value = items[0]?.value)}
-		>{value}</button
+	<button
+		aria-label="binding"
+		data-testid="binding"
+		onclick={() => (value = items[0]?.value ?? "")}
 	>
+		{value}
+	</button>
 </main>

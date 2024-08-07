@@ -1,20 +1,43 @@
-import type { HTMLButtonAttributes, HTMLInputAttributes } from "svelte/elements";
-import type { CreateSwitchProps as MeltSwitchProps } from "@melt-ui/svelte";
-import type {
-	DOMEl,
-	DOMElement,
-	Expand,
-	HTMLSpanAttributes,
-	OmitChecked,
-	OnChangeFn,
-} from "$lib/internal/index.js";
-import type { CustomEventHandler } from "$lib/index.js";
+import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
+import type { PrimitiveButtonAttributes, PrimitiveSpanAttributes } from "$lib/shared/attributes.js";
 
-export type SwitchPropsWithoutHTML = Expand<
-	OmitChecked<MeltSwitchProps> & {
+type SwitchRootSnippetProps = {
+	checked: boolean;
+};
+
+export type SwitchRootPropsWithoutHTML = WithChild<
+	{
+		/**
+		 * Whether the switch is disabled.
+		 *
+		 * @defaultValue false
+		 */
+		disabled?: boolean | null | undefined;
+
+		/**
+		 * Whether the switch is required (for form validation).
+		 *
+		 * @defaultValue false
+		 */
+		required?: boolean;
+
+		/**
+		 * The name of the switch used in form submission.
+		 * If not provided, the hidden input will not be rendered.
+		 *
+		 * @defaultValue undefined
+		 */
+		name?: string;
+
+		/**
+		 * The value of the switch used in form submission.
+		 *
+		 * @defaultValue undefined
+		 */
+		value?: string;
+
 		/**
 		 * The checked state of the switch.
-		 * You can bind this to a boolean value to programmatically control the checked state.
 		 *
 		 * @defaultValue false
 		 */
@@ -23,35 +46,17 @@ export type SwitchPropsWithoutHTML = Expand<
 		/**
 		 * A callback function called when the checked state changes.
 		 */
-		onCheckedChange?: OnChangeFn<boolean> | undefined;
-
-		/**
-		 * Whether to include the hidden input element in the DOM.
-		 */
-		includeInput?: boolean | undefined;
-
-		/**
-		 * Additional input attributes to pass to the hidden input element.
-		 * Note, the value, name, type, and checked attributes are derived from the
-		 * Switch props and cannot be overridden.
-		 */
-		inputAttrs?:
-			| Partial<Omit<HTMLInputAttributes, "value" | "name" | "type" | "checked">>
-			| undefined;
-	} & DOMElement<HTMLButtonElement>
+		onCheckedChange?: OnChangeFn<boolean>;
+	},
+	SwitchRootSnippetProps
 >;
 
-export type SwitchThumbPropsWithoutHTML = DOMElement<HTMLSpanElement>;
+export type SwitchRootProps = SwitchRootPropsWithoutHTML &
+	Without<PrimitiveButtonAttributes, SwitchRootPropsWithoutHTML>;
 
-//
+export type SwitchThumbSnippetProps = SwitchRootSnippetProps;
 
-export type SwitchProps = SwitchPropsWithoutHTML & HTMLButtonAttributes;
+export type SwitchThumbPropsWithoutHTML = WithChild<{}, SwitchThumbSnippetProps>;
 
-export type SwitchThumbProps = SwitchThumbPropsWithoutHTML & HTMLSpanAttributes;
-
-export type SwitchInputProps = HTMLInputAttributes & DOMEl<HTMLInputElement>;
-
-export type SwitchEvents<T extends Element = HTMLButtonElement> = {
-	click: CustomEventHandler<MouseEvent, T>;
-	keydown: CustomEventHandler<KeyboardEvent, T>;
-};
+export type SwitchThumbProps = SwitchThumbPropsWithoutHTML &
+	Without<PrimitiveSpanAttributes, SwitchThumbPropsWithoutHTML>;

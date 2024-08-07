@@ -1,3 +1,3 @@
 export { default as Root } from "./components/separator.svelte";
 
-export type { SeparatorProps as Props } from "./types.js";
+export type { SeparatorRootProps as RootProps } from "./types.js";

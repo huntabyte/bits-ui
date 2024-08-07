@@ -1,80 +1,83 @@
 import type {
 	DateFieldInputPropsWithoutHTML,
 	DateFieldLabelPropsWithoutHTML,
-	DateFieldPropsWithoutHTML,
+	DateFieldRootPropsWithoutHTML,
 	DateFieldSegmentPropsWithoutHTML,
 } from "bits-ui";
-import { builderAndAttrsSlotProps } from "./helpers.js";
-import { domElProps, enums, idsSlotProp, union } from "$lib/content/api-reference/helpers.js";
-import { dateValueProp } from "$lib/content/api-reference/extended-types/index.js";
-import * as C from "$lib/content/constants.js";
-import type { APISchema } from "$lib/types/index.js";
+import {
+	childrenSnippet,
+	createApiSchema,
+	createBooleanProp,
+	createDataAttrSchema,
+	createEnumDataAttr,
+	createEnumProp,
+	createFunctionProp,
+	createStringProp,
+	withChildProps,
+} from "./helpers.js";
+import { dateValueProp } from "./extended-types/index.js";
+import {
+	DateFieldInputChildSnippetprops,
+	DateFieldInputChildrenSnippetProps,
+	DateMatcherProp,
+	GranularityProp,
+	HourCycleProp,
+	OnDateValueChangeProp,
+	OnPlaceholderChangeProp,
+	SegmentPartProp,
+} from "./extended-types/shared/index.js";
 
-export const root: APISchema<DateFieldPropsWithoutHTML> = {
+import { enums } from "$lib/content/api-reference/helpers.js";
+import * as C from "$lib/content/constants.js";
+
+export const root = createApiSchema<DateFieldRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root date field component.",
 	props: {
 		value: {
 			type: dateValueProp,
 			description: "The selected date.",
+			bindable: true,
 		},
-		onValueChange: {
-			type: {
-				type: C.FUNCTION,
-				definition: "(date: DateValue | undefined) => void",
-			},
+		onValueChange: createFunctionProp({
+			definition: OnDateValueChangeProp,
 			description: "A function that is called when the selected date changes.",
-		},
+		}),
 		placeholder: {
 			type: dateValueProp,
 			description:
 				"The placeholder date, which is used to determine what date to start the segments from when no value exists.",
+			bindable: true,
 		},
-		onPlaceholderChange: {
-			type: {
-				type: C.FUNCTION,
-				definition: "(date: DateValue) => void",
-			},
+		onPlaceholderChange: createFunctionProp({
+			definition: OnPlaceholderChangeProp,
 			description: "A function that is called when the placeholder date changes.",
-		},
-		isDateUnavailable: {
-			type: {
-				type: C.FUNCTION,
-				definition: "(date: DateValue) => boolean",
-			},
+		}),
+
+		required: createBooleanProp({
+			description: "Whether or not the date field is required.",
+			default: C.FALSE,
+		}),
+		isDateUnavailable: createFunctionProp({
+			definition: DateMatcherProp,
 			description: "A function that returns whether or not a date is unavailable.",
-		},
-		hourCycle: {
-			type: {
-				type: C.ENUM,
-				definition: union("12", "24"),
-			},
+		}),
+		hourCycle: createEnumProp({
+			options: ["12", "24"],
 			description:
 				"The hour cycle to use for formatting times. Defaults to the locale preference",
-		},
-		granularity: {
-			type: {
-				type: C.ENUM,
-				definition: enums("day", "hour", "minute", "second"),
-			},
+			definition: HourCycleProp,
+		}),
+		granularity: createEnumProp({
+			options: ["day", "hour", "minute", "second"],
 			description:
 				"The granularity to use for formatting the field. Defaults to `'day'` if a `CalendarDate` is provided, otherwise defaults to `'minute'`. The field will render segments for each part of the date up to and including the specified granularity.",
-		},
-		hideTimeZone: {
-			type: C.BOOLEAN,
+			definition: GranularityProp,
+		}),
+		hideTimeZone: createBooleanProp({
 			description: "Whether or not to hide the time zone segment of the field.",
 			default: C.FALSE,
-		},
-		validationId: {
-			type: C.STRING,
-			description:
-				"The id of your validation message element, if any, which will be applied to the `aria-describedby` attribute of the appropriate elements when a validation error occurs.",
-		},
-		descriptionId: {
-			type: C.STRING,
-			description:
-				"The id of your description element, if any, which will be applied to the `aria-describedby` attribute of the appropriate elements.",
-		},
+		}),
 		maxValue: {
 			type: dateValueProp,
 			description: "The maximum valid date that can be entered.",
@@ -83,20 +86,18 @@ export const root: APISchema<DateFieldPropsWithoutHTML> = {
 			type: dateValueProp,
 			description: "The minimum valid date that can be entered.",
 		},
-		locale: {
-			type: C.STRING,
+		locale: createStringProp({
 			description: "The locale to use for formatting dates.",
-		},
-		disabled: {
+			default: "'en-US'",
+		}),
+		disabled: createBooleanProp({
 			default: C.FALSE,
-			type: C.BOOLEAN,
 			description: "Whether or not the accordion is disabled.",
-		},
-		readonly: {
-			type: C.BOOLEAN,
+		}),
+		readonly: createBooleanProp({
 			description: "Whether or not the field is readonly.",
 			default: C.FALSE,
-		},
+		}),
 		readonlySegments: {
 			type: {
 				type: C.ARRAY,
@@ -105,122 +106,107 @@ export const root: APISchema<DateFieldPropsWithoutHTML> = {
 			description:
 				"An array of segments that should be readonly, which prevent user input on them.",
 		},
+		children: childrenSnippet(),
 	},
-	slotProps: {
-		ids: idsSlotProp,
-		isInvalid: {
-			type: C.BOOLEAN,
-			description: "Whether or not the field is invalid.",
-		},
-	},
-};
+});
 
-const input: APISchema<DateFieldInputPropsWithoutHTML> = {
+export const input = createApiSchema<DateFieldInputPropsWithoutHTML>({
 	title: "Input",
 	description: "The container for the segments of the date field.",
-	props: domElProps("HTMLDivElement"),
-	slotProps: {
-		...builderAndAttrsSlotProps,
-		segments: {
-			type: {
-				type: C.ARRAY,
-				definition: "{ part: SegmentPart; value: string; }[]",
-			},
-			description: "An array of objects used to render the segments of the date field.",
-		},
+	props: {
+		name: createStringProp({
+			description:
+				"The name of the date field used for form submission. If provided, a hidden input element will be rendered alongside the date field.",
+		}),
+		...withChildProps({
+			elType: "HTMLDivElement",
+			childrenDef: DateFieldInputChildrenSnippetProps,
+			childDef: DateFieldInputChildSnippetprops,
+		}),
 	},
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "invalid",
 			description: "Present on the element when the field is invalid.",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "disabled",
 			description: "Present on the element when the field is disabled.",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "date-field-input",
 			description: "Present on the element.",
-		},
+		}),
 	],
-};
+});
 
-export const segment: APISchema<DateFieldSegmentPropsWithoutHTML> = {
+export const segment = createApiSchema<DateFieldSegmentPropsWithoutHTML>({
 	title: "Segment",
 	description: "A segment of the date field.",
 	props: {
 		part: {
 			type: {
 				type: "SegmentPart",
-				definition: enums(
-					"month",
-					"day",
-					"year",
-					"hour",
-					"minute",
-					"second",
-					"dayPeriod",
-					"timeZoneName",
-					"literal"
-				),
+				definition: SegmentPartProp,
 			},
 			description: "The part of the date to render.",
 			required: true,
 		},
-		...domElProps("HTMLDivElement"),
-	},
-	slotProps: {
-		...builderAndAttrsSlotProps,
+		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "invalid",
 			description: "Present on the element when the field is invalid",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "disabled",
 			description: "Present on the element when the field is disabled",
-		},
-		{
+		}),
+		createDataAttrSchema({
+			name: "readonly",
+			description: "Present on the element when the field or segment is readonly",
+		}),
+		createEnumDataAttr({
 			name: "segment",
-			value: enums(
-				"month",
+			description: "The part of the date to render.",
+			options: [
 				"day",
+				"month",
 				"year",
 				"hour",
 				"minute",
 				"second",
 				"dayPeriod",
 				"timeZoneName",
-				"literal"
-			),
-			isEnum: true,
-			description: "The type of segment the element represents.",
-		},
-		{
+				"literal",
+			],
+		}),
+		createDataAttrSchema({
 			name: "date-field-segment",
 			description: "Present on the element.",
-		},
+		}),
 	],
-};
+});
 
-export const label: APISchema<DateFieldLabelPropsWithoutHTML> = {
+export const label = createApiSchema<DateFieldLabelPropsWithoutHTML>({
 	title: "Label",
 	description: "The label for the date field.",
-	props: domElProps("HTMLSpanElement"),
-	slotProps: {
-		...builderAndAttrsSlotProps,
-	},
+	props: withChildProps({ elType: "HTMLSpanElement" }),
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "invalid",
 			description: "Present on the element when the field is invalid",
-		},
-		{
+		}),
+		createDataAttrSchema({
+			name: "disabled",
+			description: "Present on the element when the field is disabled",
+		}),
+		createDataAttrSchema({
 			name: "date-field-label",
 			description: "Present on the element.",
-		},
+		}),
 	],
-};
+});
 
 export const dateField = [root, input, segment, label];

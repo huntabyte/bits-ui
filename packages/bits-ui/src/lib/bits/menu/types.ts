@@ -1,230 +1,162 @@
-/**
- * These types are shared between the various menu components,
- * such as `DropdownMenu`, `Menubar` & `ContextMenu`.
- */
+import type { PopperLayerProps } from "../utilities/popper-layer/types.js";
+import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
+import type { OnChangeFn, WithChild, WithChildren, Without } from "$lib/internal/types.js";
+import type { PrimitiveButtonAttributes, PrimitiveDivAttributes } from "$lib/shared/attributes.js";
+import type { Direction } from "$lib/shared/index.js";
+import type { PortalProps } from "$lib/bits/utilities/portal/types.js";
 
-import type { HTMLAnchorAttributes, HTMLButtonAttributes } from "svelte/elements";
-import type {
-	CreateContextMenuCheckboxItemProps as MeltContextMenuCheckboxItemProps,
-	CreateContextMenuProps as MeltContextMenuProps,
-	CreateContextMenuRadioGroupProps as MeltContextMenuRadioGroupProps,
-	ContextMenuRadioItemProps as MeltContextMenuRadioItemProps,
-	CreateContextSubmenuProps as MeltContextSubmenuProps,
-} from "@melt-ui/svelte";
-import type {
-	DOMEl,
-	DOMElement,
-	Expand,
-	HTMLDivAttributes,
-	OmitChecked,
-	OmitFloating,
-	OnChangeFn,
-} from "$lib/internal/index.js";
-import type { CustomEventHandler } from "$lib/index.js";
-import type { ContentProps as MenuContentProps } from "$lib/bits/floating/types.js";
+export type MenuRootPropsWithoutHTML = WithChildren<{
+	/**
+	 * The open state of the menu.
+	 */
+	open?: boolean;
 
-import type {
-	ArrowProps as MenuArrowPropsWithoutHTML,
-	ContentProps as MenuContentPropsWithoutHTML,
-} from "$lib/bits/floating/_types.js";
+	/**
+	 * A callback that is called when the menu is opened or closed.
+	 */
+	onOpenChange?: OnChangeFn<boolean>;
 
-export type MenuPropsWithoutHTML = Expand<
-	OmitFloating<MeltContextMenuProps> & {
-		/**
-		 * The open state of the context menu.
-		 * You can bind this to a boolean value to programmatically control the open state.
-		 *
-		 * @defaultValue false
-		 */
-		open?: boolean | undefined;
+	/**
+	 * The direction of the site.
+	 *
+	 * @defaultValue "ltr"
+	 */
+	dir?: Direction;
+}>;
 
-		/**
-		 * A callback function called when the open state changes.
-		 */
-		onOpenChange?: OnChangeFn<boolean> | undefined;
-	}
->;
+export type MenuRootProps = MenuRootPropsWithoutHTML;
 
-export type MenuSubTriggerPropsWithoutHTML = Expand<
-	{
-		/**
-		 * Whether the subtrigger is disabled or not.
-		 *
-		 * @defaultValue false;
-		 */
-		disabled?: boolean | undefined;
-	} & DOMElement
->;
+export type MenuContentPropsWithoutHTML = WithChild<Omit<PopperLayerProps, "content">>;
 
-export type MenuCheckboxItemPropsWithoutHTML = Expand<
-	OmitChecked<MeltContextMenuCheckboxItemProps> & {
+export type MenuContentProps = MenuContentPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, MenuContentPropsWithoutHTML>;
+
+export type MenuItemPropsWithoutHTML<U extends Record<PropertyKey, unknown> = { _default: never }> =
+	WithChild<
+		{
+			/**
+			 * When `true`, the user will not be able to interact with the menu item.
+			 *
+			 * @defaultValue false
+			 */
+			disabled?: boolean;
+
+			/**
+			 * Optional text to use for typeahead filtering. By default, typeahead will use
+			 * the `.textContent` of the menu item. When the content is more complex, you
+			 * can provide a string here instead.
+			 *
+			 * @defaultValue undefined
+			 */
+			textValue?: string;
+
+			/**
+			 * A callback fired when the menu item is selected.
+			 *
+			 * Prevent default behavior of selection with `event.preventDefault()`.
+			 */
+			onSelect?: (event: Event) => void;
+		},
+		U
+	>;
+
+export type MenuItemProps = MenuItemPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, MenuItemPropsWithoutHTML>;
+
+export type MenuCheckboxItemSnippetProps = { checked: boolean | "indeterminate" };
+
+export type MenuCheckboxItemPropsWithoutHTML =
+	MenuItemPropsWithoutHTML<MenuCheckboxItemSnippetProps> & {
 		/**
 		 * The checked state of the checkbox item.
-		 * You can bind this to a boolean value to programmatically control the checked state.
 		 *
-		 * @defaultValue false
+		 * Supports two-way binding with `bind:checked`.
 		 */
 		checked?: boolean | "indeterminate" | undefined;
 
 		/**
-		 * A callback function called when the checked state changes.
+		 * A callback that is fired when the checked state changes.
 		 */
-		onCheckedChange?: OnChangeFn<boolean | "indeterminate"> | undefined;
-	} & DOMElement
->;
+		onCheckedChange?: OnChangeFn<boolean | "indeterminate">;
+	};
 
-export type MenuRadioGroupPropsWithoutHTML = Expand<
-	{
-		/**
-		 * The value of the radio group.
-		 *
-		 * @defaultValue undefined
-		 */
-		value?: (MeltContextMenuRadioGroupProps["defaultValue"] & {}) | undefined;
+export type MenuCheckboxItemProps = MenuCheckboxItemPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, MenuCheckboxItemPropsWithoutHTML>;
 
-		/**
-		 * A callback function called when the value changes.
-		 */
-		onValueChange?: OnChangeFn<MeltContextMenuRadioGroupProps["defaultValue"]> | undefined;
-	} & DOMElement
->;
+export type MenuTriggerPropsWithoutHTML = WithChild<{
+	/**
+	 * Whether the trigger is disabled.
+	 *
+	 * @defaultValue false
+	 */
+	disabled?: boolean | null | undefined;
+}>;
 
-export type MenuRadioItemPropsWithoutHTML = Expand<MeltContextMenuRadioItemProps & DOMElement>;
+export type MenuTriggerProps = MenuTriggerPropsWithoutHTML &
+	Without<PrimitiveButtonAttributes, MenuTriggerPropsWithoutHTML>;
 
-export type MenuSubPropsWithoutHTML = Expand<
-	OmitFloating<MeltContextSubmenuProps> & {
-		/**
-		 * The open state of the submenu.
-		 * You can bind this to a boolean value to programmatically control the open state.
-		 *
-		 * @defaultValue false
-		 */
-		open?: boolean | undefined;
+export type MenuSubPropsWithoutHTML = WithChildren<{
+	/**
+	 * The open state of the menu.
+	 */
+	open?: boolean;
 
-		/**
-		 * A callback function called when the open state changes.
-		 */
-		onOpenChange?: OnChangeFn<boolean> | undefined;
-	}
->;
+	/**
+	 * A callback that is called when the menu is opened or closed.
+	 */
+	onOpenChange?: OnChangeFn<boolean>;
+}>;
 
-export type MenuItemPropsWithoutHTML = Expand<
-	{
-		/**
-		 * Whether the item is disabled.
-		 *
-		 * @defaultValue false
-		 */
-		disabled?: boolean | undefined;
-	} & DOMElement
->;
+export type MenuSubContentPropsWithoutHTML = WithChild<Omit<PopperLayerProps, "content">>;
+export type MenuSubContentProps = MenuSubContentPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, MenuSubContentPropsWithoutHTML>;
 
-export type MenuGroupPropsWithoutHTML = DOMElement;
-export type MenuCheckboxIndicatorPropsWithoutHTML = DOMElement;
-export type MenuRadioIndicatorPropsWithoutHTML = DOMElement;
-export type MenuLabelPropsWithoutHTML = DOMElement;
-export type MenuSeparatorPropsWithoutHTML = DOMElement;
-export type MenuTriggerPropsWithoutHTML = DOMElement<HTMLElement>;
+export type MenuSubTriggerPropsWithoutHTML = MenuItemPropsWithoutHTML;
+export type MenuSubTriggerProps = MenuItemProps;
 
-export type {
-	MenuContentPropsWithoutHTML,
-	MenuContentPropsWithoutHTML as MenuSubContentPropsWithoutHTML,
-	MenuArrowPropsWithoutHTML,
+export type MenuSeparatorPropsWithoutHTML = WithChild;
+export type MenuSeparatorProps = MenuSeparatorPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, MenuSeparatorPropsWithoutHTML>;
+
+export type MenuArrowPropsWithoutHTML = ArrowPropsWithoutHTML;
+export type MenuArrowProps = ArrowProps;
+
+export type MenuGroupPropsWithoutHTML = WithChild;
+export type MenuGroupProps = MenuGroupPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, MenuGroupPropsWithoutHTML>;
+
+export type MenuGroupLabelPropsWithoutHTML = WithChild;
+export type MenuGroupLabelProps = MenuGroupLabelPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, MenuGroupLabelPropsWithoutHTML>;
+
+export type MenuRadioGroupPropsWithoutHTML = WithChild<{
+	/**
+	 * The value of the selected radio item.
+	 *
+	 * Supports two-way binding with `bind:value`.
+	 */
+	value?: string;
+
+	/**
+	 * A callback that is fired when the selected radio item changes.
+	 */
+	onValueChange?: OnChangeFn<string>;
+}>;
+
+export type MenuRadioGroupProps = MenuRadioGroupPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, MenuRadioGroupPropsWithoutHTML>;
+
+export type MenuRadioItemSnippetProps = { checked: boolean };
+
+export type MenuRadioItemPropsWithoutHTML = MenuItemPropsWithoutHTML<MenuRadioItemSnippetProps> & {
+	/**
+	 * The value of the radio item.
+	 */
+	value: string;
 };
 
-//
+export type MenuRadioItemProps = MenuRadioItemPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, MenuRadioItemPropsWithoutHTML>;
 
-export type MenuProps = MenuPropsWithoutHTML;
-
-export type MenuCheckboxItemProps = MenuCheckboxItemPropsWithoutHTML & HTMLDivAttributes;
-
-export type MenuRadioGroupProps = MenuRadioGroupPropsWithoutHTML & HTMLDivAttributes;
-
-export type MenuRadioItemProps = MenuRadioItemPropsWithoutHTML & HTMLDivAttributes;
-
-export type MenuGroupProps = MenuGroupPropsWithoutHTML & HTMLDivAttributes;
-
-type MenuAnchorElement = HTMLAnchorAttributes & {
-	href?: HTMLAnchorAttributes["href"] | undefined;
-} & DOMEl<HTMLAnchorElement>;
-
-type MenuDivElement = HTMLDivAttributes & {
-	href?: never | undefined;
-} & DOMEl;
-
-export type MenuItemProps = Omit<MenuItemPropsWithoutHTML, "el"> &
-	(MenuAnchorElement | MenuDivElement);
-
-export type MenuCheckboxIndicatorProps = MenuCheckboxIndicatorPropsWithoutHTML & HTMLDivAttributes;
-
-export type MenuRadioIndicatorProps = MenuRadioIndicatorPropsWithoutHTML & HTMLDivAttributes;
-
-export type MenuLabelProps = MenuLabelPropsWithoutHTML & HTMLDivAttributes;
-
-export type MenuSeparatorProps = MenuSeparatorPropsWithoutHTML & HTMLDivAttributes;
-
-export type MenuSubProps = MenuSubPropsWithoutHTML;
-
-export type MenuSubTriggerProps = MenuSubTriggerPropsWithoutHTML & HTMLDivAttributes;
-
-// Trigger for context menu
-export type ContextTriggerProps = Omit<MenuTriggerPropsWithoutHTML, "el"> &
-	HTMLDivAttributes &
-	DOMEl;
-
-// Trigger for dropdown menu & menubar menu
-export type DropdownTriggerProps = Omit<MenuTriggerPropsWithoutHTML, "el"> &
-	HTMLButtonAttributes &
-	DOMEl<HTMLButtonElement>;
-
-export type MenuArrowProps = MenuArrowPropsWithoutHTML & HTMLDivAttributes;
-
-export type MenuItemEvents<T extends Element = HTMLDivElement> = {
-	click: CustomEventHandler<MouseEvent, T>;
-	keydown: CustomEventHandler<KeyboardEvent, T>;
-	focusin: CustomEventHandler<FocusEvent, T>;
-	focusout: CustomEventHandler<FocusEvent, T>;
-	pointerdown: CustomEventHandler<PointerEvent, T>;
-	pointerleave: CustomEventHandler<PointerEvent, T>;
-	pointermove: CustomEventHandler<PointerEvent, T>;
-	pointerenter: CustomEventHandler<PointerEvent, T>;
-};
-
-export type MenuCheckboxItemEvents = MenuItemEvents;
-
-export type MenuRadioItemEvents = MenuItemEvents;
-
-export type MenuSubTriggerEvents = Omit<MenuItemEvents, "pointerdown">;
-
-// Trigger events used by the context menu
-export type ContextTriggerEvents<T extends Element = HTMLDivElement> = {
-	pointerdown: CustomEventHandler<PointerEvent, T>;
-	contextmenu: CustomEventHandler<MouseEvent, T>;
-};
-
-// Trigger events used by the dropdown
-export type DropdownTriggerEvents<T extends Element = HTMLButtonElement> = {
-	click: CustomEventHandler<MouseEvent, T>;
-	keydown: CustomEventHandler<KeyboardEvent, T>;
-};
-
-// Trigger events used by the menubar
-export type MenubarTriggerEvents<T extends Element = HTMLButtonElement> = {
-	click: CustomEventHandler<MouseEvent, T>;
-	keydown: CustomEventHandler<KeyboardEvent, T>;
-	pointerenter: CustomEventHandler<PointerEvent, T>;
-};
-
-export type MenuSubContentEvents<T extends Element = HTMLDivElement> = {
-	keydown: CustomEventHandler<KeyboardEvent, T>;
-	focusout: CustomEventHandler<FocusEvent, T>;
-	pointermove: CustomEventHandler<PointerEvent, T>;
-};
-
-export type MenuContentEvents<T extends Element = HTMLDivElement> = {
-	keydown: CustomEventHandler<KeyboardEvent, T>;
-};
-
-export type { MenuContentProps, MenuContentProps as MenuSubContentProps };
-
-export type { DropdownTriggerProps as MenubarTriggerProps };
+export type MenuPortalPropsWithoutHTML = PortalProps;
+export type MenuPortalProps = MenuPortalPropsWithoutHTML;

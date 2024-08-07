@@ -1,27 +1,33 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { getCtx } from "../ctx.js";
+	import { box } from "svelte-toolbelt";
 	import type { FallbackProps } from "../index.js";
+	import { useAvatarFallback } from "../avatar.svelte.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/useId.js";
 
-	type $$Props = FallbackProps;
+	let {
+		children,
+		child,
+		id = useId(),
+		ref = $bindable(null),
+		...restProps
+	}: FallbackProps = $props();
 
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
+	const fallbackState = useAvatarFallback({
+		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
+	});
 
-	const {
-		elements: { fallback },
-		getAttrs,
-	} = getCtx();
-	const attrs = getAttrs("fallback");
-
-	$: builder = $fallback;
-	$: Object.assign(builder, attrs);
+	const mergedProps = $derived(mergeProps(restProps, fallbackState.props));
 </script>
 
-{#if asChild}
-	<slot {builder} />
+{#if child}
+	{@render child({ props: mergedProps })}
 {:else}
-	<span bind:this={el} use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+	<span {...mergedProps}>
+		{@render children?.()}
 	</span>
 {/if}
