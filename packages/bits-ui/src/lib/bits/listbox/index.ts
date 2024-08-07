@@ -4,6 +4,11 @@ export { default as Item } from "./components/listbox-item.svelte";
 export { default as Group } from "./components/listbox-group.svelte";
 export { default as GroupLabel } from "./components/listbox-group-label.svelte";
 export { default as Label } from "./components/listbox-label.svelte";
+export { default as Trigger } from "./components/listbox-trigger.svelte";
+export { default as Portal } from "$lib/bits/utilities/portal/portal.svelte";
+export { default as Viewport } from "./components/listbox-viewport.svelte";
+export { default as ScrollUpButton } from "./components/listbox-scroll-up-button.svelte";
+export { default as ScrollDownButton } from "./components/listbox-scroll-down-button.svelte";
 
 export type {
 	ListboxRootProps as RootProps,
@@ -11,5 +16,10 @@ export type {
 	ListboxItemProps as ItemProps,
 	ListboxGroupProps as GroupProps,
 	ListboxGroupLabelProps as GroupLabelProps,
-	ListboxLabelProps as LabelProps,
+	ListboxTriggerProps as TriggerProps,
+	ListboxViewportProps as ViewportProps,
+	ListboxScrollUpButtonProps as ScrollUpButtonProps,
+	ListboxScrollDownButtonProps as ScrollDownButtonProps,
+	ListboxPortalProps as PortalProps,
+	// ListboxLabelProps as LabelProps,
 } from "./types.js";

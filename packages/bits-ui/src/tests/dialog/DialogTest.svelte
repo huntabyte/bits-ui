@@ -1,18 +1,26 @@
 <script lang="ts" context="module">
-	import { Dialog } from "$lib/index.js";
+	import { Dialog, type WithoutChildrenOrChild } from "$lib/index.js";
 	export type DialogTestProps = Dialog.RootProps & {
 		contentProps?: Omit<Dialog.ContentProps, "asChild" | "child" | "children">;
 		portalProps?: Dialog.PortalProps;
+		titleProps?: WithoutChildrenOrChild<Dialog.TitleProps>;
+		descriptionProps?: WithoutChildrenOrChild<Dialog.DescriptionProps>;
 	};
 </script>
 
 <script lang="ts">
+	import { useId } from "$lib/index.js";
+
 	let {
 		open = false,
 		contentProps = {},
 		portalProps = {},
+		titleProps = {},
+		descriptionProps = {},
 		...restProps
 	}: DialogTestProps = $props();
+
+	let descriptionId = $state<string>(descriptionProps.id ?? useId());
 </script>
 
 <main>
@@ -28,9 +36,18 @@
 				data-testid="content"
 				class="tranlate-x-[50%] fixed left-[50%] top-[50%] translate-y-[50%] bg-white p-1"
 			>
-				<Dialog.Title data-testid="title">title</Dialog.Title>
-				<Dialog.Description data-testid="description">description</Dialog.Description>
+				<Dialog.Title {...titleProps} data-testid="title">title</Dialog.Title>
+				<Dialog.Description
+					{...descriptionProps}
+					id={descriptionId}
+					data-testid="description"
+				>
+					description
+				</Dialog.Description>
 				<Dialog.Close data-testid="close">close</Dialog.Close>
+				<button data-testid="update-id" onclick={() => (descriptionId = "new-id")}
+					>Reactively update description id</button
+				>
 			</Dialog.Content>
 		</Dialog.Portal>
 	</Dialog.Root>

@@ -1,6 +1,10 @@
 <script lang="ts">
 	import { Listbox } from "bits-ui";
 	import Check from "phosphor-svelte/lib/Check";
+	import Palette from "phosphor-svelte/lib/Palette";
+	import CaretUpDown from "phosphor-svelte/lib/CaretUpDown";
+	import CaretDoubleUp from "phosphor-svelte/lib/CaretDoubleUp";
+	import CaretDoubleDown from "phosphor-svelte/lib/CaretDoubleDown";
 
 	const themes = [
 		{ value: "light-monochrome", label: "Light Monochrome" },
@@ -25,34 +29,50 @@
 		{ value: "burnt-orange", label: "Burnt Orange" },
 	];
 
-	let value = $state<string[]>([]);
+	let value = $state<string>("");
+	const selectedLabel = $derived(
+		value ? themes.find((theme) => theme.value === value)?.label : "Select a theme"
+	);
 </script>
 
-<div class="flex flex-col gap-4">
-	<Listbox.Root type="multiple" bind:value>
+<Listbox.Root type="single" bind:value>
+	<Listbox.Trigger
+		class="inline-flex h-input w-[296px] select-none items-center rounded-9px border border-border-input bg-background px-[11px] text-sm transition-colors placeholder:text-foreground-alt/50"
+		aria-label="Select a theme"
+	>
+		<Palette class="mr-[9px] size-6 text-muted-foreground" />
+		{selectedLabel}
+		<CaretUpDown class="ml-auto size-6 text-muted-foreground" />
+	</Listbox.Trigger>
+	<Listbox.Portal>
 		<Listbox.Content
-			class="max-h-80 w-full min-w-[296px] max-w-[296px] overflow-y-scroll rounded-xl border border-muted bg-background px-1 py-3 shadow-card outline-none"
+			class="max-h-96 w-[var(--bits-listbox-trigger-width)] min-w-[var(--bits-listbox-trigger-width)] rounded-xl border border-muted bg-background px-1 py-3 shadow-popover outline-none"
+			sideOffset={10}
 		>
-			{#each themes as item}
-				<Listbox.Item
-					value={item.value}
-					label={item.label}
-					class="flex h-10 w-full select-none items-center rounded-button py-3 pl-5 pr-1.5 text-sm outline-none transition-all duration-75 focus:outline-none focus-visible:outline-none data-[highlighted]:bg-muted"
-				>
-					{#snippet children({ selected })}
-						{item.label}
-						{#if selected}
-							<span class="ml-auto">
-								<Check />
-							</span>
-						{/if}
-					{/snippet}
-				</Listbox.Item>
-			{/each}
+			<Listbox.ScrollUpButton class="flex w-full items-center justify-center">
+				<CaretDoubleUp class="size-3" />
+			</Listbox.ScrollUpButton>
+			<Listbox.Viewport class="p-1">
+				{#each themes as theme, i (i + theme.value)}
+					<Listbox.Item
+						class="flex h-10 w-full select-none items-center rounded-button py-3 pl-5 pr-1.5 text-sm capitalize outline-none duration-75 data-[highlighted]:bg-muted"
+						value={theme.value}
+						label={theme.label}
+					>
+						{#snippet children({ selected })}
+							{theme.label}
+							{#if selected}
+								<div class="ml-auto">
+									<Check />
+								</div>
+							{/if}
+						{/snippet}
+					</Listbox.Item>
+				{/each}
+			</Listbox.Viewport>
+			<Listbox.ScrollDownButton class="flex w-full items-center justify-center">
+				<CaretDoubleDown class="size-3" />
+			</Listbox.ScrollDownButton>
 		</Listbox.Content>
-	</Listbox.Root>
-
-	<div class="max-w-[200px]">
-		Selected: {value}
-	</div>
-</div>
+	</Listbox.Portal>
+</Listbox.Root>

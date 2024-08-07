@@ -1,17 +1,18 @@
 <script lang="ts" context="module">
 	import {
 		Listbox,
-		type ListboxSingleRootProps,
+		type ListboxMultipleRootProps,
 		type WithoutChildren,
 		type WithoutChildrenOrChild,
 	} from "$lib/index.js";
+
 	export type Item = {
 		value: string;
 		label: string;
 		disabled?: boolean;
 	};
 
-	export type ListboxSingleTestProps = WithoutChildren<ListboxSingleRootProps> & {
+	export type ListboxMultipleTestProps = WithoutChildren<ListboxMultipleRootProps> & {
 		contentProps?: WithoutChildrenOrChild<Listbox.ContentProps>;
 		portalProps?: WithoutChildrenOrChild<Listbox.PortalProps>;
 		items: Item[];
@@ -23,12 +24,12 @@
 	let {
 		contentProps,
 		portalProps,
-		items,
-		value = "",
+		items = [],
+		value = [],
 		open = false,
 		searchValue = "",
 		...restProps
-	}: ListboxSingleTestProps = $props();
+	}: ListboxMultipleTestProps = $props();
 
 	const filteredItems = $derived(
 		searchValue === ""
@@ -36,18 +37,21 @@
 			: items.filter((item) => item.label.includes(searchValue.toLowerCase()))
 	);
 
-	const selectedLabel = $derived(filteredItems.find((item) => item.value === value)?.label);
+	const selectedLabels = $derived(
+		filteredItems.filter((item) => value.includes(item.value)).map((item) => item.label)
+	);
 </script>
 
 <main data-testid="main">
 	<Listbox.Root bind:value bind:open {...restProps}>
 		<Listbox.Trigger data-testid="trigger">
-			{#if selectedLabel}
-				{selectedLabel}
+			{#if selectedLabels && selectedLabels.length}
+				{selectedLabels.join(", ")}
 			{:else}
 				Open combobox
 			{/if}
 		</Listbox.Trigger>
+
 		<Listbox.Portal {...portalProps}>
 			<Listbox.Content data-testid="content" {...contentProps}>
 				<Listbox.Group data-testid="group">
@@ -70,8 +74,8 @@
 	<button data-testid="open-binding" onclick={() => (open = !open)}>
 		{open}
 	</button>
-	<button data-testid="value-binding" onclick={() => (value = "")}>
-		{#if value === ""}
+	<button data-testid="value-binding" onclick={() => (value = [])}>
+		{#if value.length === 0}
 			empty
 		{:else}
 			{value}

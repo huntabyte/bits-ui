@@ -1,15 +1,15 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { GroupProps } from "../index.js";
 	import { useListboxGroup } from "../listbox.svelte.js";
+	import type { GroupProps } from "../index.js";
 	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {
-		children,
-		child,
 		id = useId(),
 		ref = $bindable(null),
+		children,
+		child,
 		...restProps
 	}: GroupProps = $props();
 

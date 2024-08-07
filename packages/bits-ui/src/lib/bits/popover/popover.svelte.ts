@@ -12,6 +12,7 @@ type PopoverRootStateProps = WritableBoxedValues<{
 class PopoverRootState {
 	open: PopoverRootStateProps["open"];
 	contentNode = $state<HTMLElement | null>(null);
+	contentId = $state<string | undefined>(undefined);
 	triggerNode = $state<HTMLElement | null>(null);
 
 	constructor(props: PopoverRootStateProps) {
@@ -72,8 +73,8 @@ class PopoverTriggerState {
 	};
 
 	#getAriaControls = () => {
-		if (this.#root.open.current && this.#root.contentNode?.id) {
-			return this.#root.contentNode.id;
+		if (this.#root.open.current && this.#root.contentId) {
+			return this.#root.contentId;
 		}
 		return undefined;
 	};
@@ -109,6 +110,10 @@ class PopoverContentState {
 			id: this.#id,
 			ref: this.#ref,
 			condition: () => this.root.open.current,
+			onRefChange: (node) => {
+				this.root.contentNode = node;
+				this.root.contentId = node?.id;
+			},
 		});
 	}
 

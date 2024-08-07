@@ -2,14 +2,20 @@
 	import { box } from "svelte-toolbelt";
 	import type { ContentProps } from "../index.js";
 	import { useListboxContent } from "../listbox.svelte.js";
+	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
 	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { noop } from "$lib/internal/callbacks.js";
 
 	let {
+		id = useId(),
+		ref = $bindable(null),
+		forceMount = false,
+		side = "bottom",
+		onInteractOutside = noop,
+		onEscapeKeydown = noop,
 		children,
 		child,
-		ref = $bindable(null),
-		id = useId(),
 		...restProps
 	}: ContentProps = $props();
 
@@ -24,10 +30,54 @@
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));
 </script>
 
-{#if child}
-	{@render child({ props: mergedProps })}
-{:else}
-	<div {...mergedProps}>
-		{@render children?.()}
-	</div>
-{/if}
+<PopperLayer
+	{...mergedProps}
+	{side}
+	present={contentState.root.open.current || forceMount}
+	{id}
+	onInteractOutside={(e) => {
+		if (
+			e.target === contentState.root.triggerNode ||
+			e.target === contentState.root.inputNode
+		) {
+			e.preventDefault();
+			return;
+		}
+
+		onInteractOutside(e);
+		if (e.defaultPrevented) return;
+		contentState.root.closeMenu();
+	}}
+	onEscapeKeydown={(e) => {
+		onEscapeKeydown(e);
+		if (e.defaultPrevented) return;
+		contentState.root.closeMenu();
+	}}
+	onMountAutoFocus={(e) => e.preventDefault()}
+	onDestroyAutoFocus={(e) => e.preventDefault()}
+	trapFocus={false}
+	loop={false}
+	preventScroll={false}
+	onPlaced={() => (contentState.isPositioned = true)}
+	{forceMount}
+>
+	{#snippet popper({ props })}
+		{@const finalProps = mergeProps(props, {
+			style: {
+				"--bits-listbox-content-transform-origin": "var(--bits-floating-transform-origin)",
+				"--bits-listbox-content-available-width": "var(--bits-floating-available-width)",
+				"--bits-listbox-content-available-height": "var(--bits-floating-available-height)",
+				"--bits-listbox-trigger-width": "var(--bits-floating-anchor-width)",
+				"--bits-listbox-trigger-height": "var(--bits-floating-anchor-height)",
+				...contentState.props.style,
+			},
+		})}
+		{#if child}
+			{@render child({ props: finalProps })}
+		{:else}
+			<div {...finalProps}>
+				{@render children?.()}
+			</div>
+		{/if}
+	{/snippet}
+</PopperLayer>

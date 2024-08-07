@@ -10,12 +10,8 @@ const count = new Counter(0);
 
 /**
  * Generates a unique ID based on a global counter.
- *
- * @param deterministicId - An optional, typically user defined string to use as the id.
  */
-export function useId(deterministicId?: string) {
-	if (!deterministicId) {
-		count.value++;
-	}
-	return deterministicId || `bits-${count.value}`;
+export function useId() {
+	count.value++;
+	return `bits-${count.value}`;
 }

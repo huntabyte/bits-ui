@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { type WritableBox, box } from "svelte-toolbelt";
-	import { useComboboxRoot } from "../combobox.svelte.js";
 	import type { RootProps } from "../index.js";
-	import ComboboxHiddenInput from "./combobox-hidden-input.svelte";
 	import { noop } from "$lib/internal/callbacks.js";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
+	import { useListboxRoot } from "$lib/bits/listbox/listbox.svelte.js";
+	import ListboxHiddenInput from "$lib/bits/listbox/components/listbox-hidden-input.svelte";
 
 	let {
 		value = $bindable(),
@@ -22,7 +22,7 @@
 
 	value === undefined && (value = type === "single" ? "" : []);
 
-	useComboboxRoot({
+	useListboxRoot({
 		type,
 		value: box.with(
 			() => value!,
@@ -43,6 +43,7 @@
 		loop: box.with(() => loop),
 		scrollAlignment: box.with(() => scrollAlignment),
 		name: box.with(() => name),
+		isCombobox: true,
 	});
 </script>
 
@@ -52,12 +53,12 @@
 
 {#if Array.isArray(value)}
 	{#if value.length === 0}
-		<ComboboxHiddenInput value="" />
+		<ListboxHiddenInput value="" />
 	{:else}
 		{#each value as item}
-			<ComboboxHiddenInput value={item} />
+			<ListboxHiddenInput value={item} />
 		{/each}
 	{/if}
 {:else}
-	<ComboboxHiddenInput {value} />
+	<ListboxHiddenInput {value} />
 {/if}

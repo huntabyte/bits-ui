@@ -22,10 +22,10 @@ class DialogRootState {
 	titleNode = $state<HTMLElement | null>(null);
 	contentNode = $state<HTMLElement | null>(null);
 	descriptionNode = $state<HTMLElement | null>(null);
-	contentId = $derived(this.contentNode ? this.contentNode.id : undefined);
-	titleId = $derived(this.titleNode ? this.titleNode.id : undefined);
-	triggerId = $derived(this.triggerNode ? this.triggerNode.id : undefined);
-	descriptionId = $derived(this.descriptionNode ? this.descriptionNode.id : undefined);
+	contentId = $state<string | undefined>(undefined);
+	titleId = $state<string | undefined>(undefined);
+	triggerId = $state<string | undefined>(undefined);
+	descriptionId = $state<string | undefined>(undefined);
 	cancelNode = $state<HTMLElement | null>(null);
 
 	constructor(props: DialogRootStateProps) {
@@ -95,6 +95,7 @@ class DialogTriggerState {
 			ref: this.#ref,
 			onRefChange: (node) => {
 				this.#root.triggerNode = node;
+				this.#root.triggerId = node?.id;
 			},
 		});
 	}
@@ -172,6 +173,7 @@ class DialogTitleState {
 			ref: this.#ref,
 			onRefChange: (node) => {
 				this.#root.titleNode = node;
+				this.#root.titleId = node?.id;
 			},
 			condition: () => this.#root.open.current,
 		});
@@ -182,7 +184,7 @@ class DialogTitleState {
 			({
 				id: this.#id.current,
 				role: "heading",
-				"aria-level": String(this.#level),
+				"aria-level": this.#level.current,
 				[TITLE_ATTR]: "",
 				...this.#root.sharedProps,
 			}) as const
@@ -207,6 +209,7 @@ class DialogDescriptionState {
 			condition: () => this.#root.open.current,
 			onRefChange: (node) => {
 				this.#root.descriptionNode = node;
+				this.#root.descriptionId = node?.id;
 			},
 		});
 	}
@@ -239,6 +242,7 @@ class DialogContentState {
 			condition: () => this.root.open.current,
 			onRefChange: (node) => {
 				this.root.contentNode = node;
+				this.root.contentId = node?.id;
 			},
 		});
 	}

@@ -32,6 +32,7 @@ class LinkPreviewRootState {
 	containsSelection = $state(false);
 	timeout: number | null = null;
 	contentNode = $state<HTMLElement | null>(null);
+	contentId = $state<string | undefined>(undefined);
 	triggerNode = $state<HTMLElement | null>(null);
 	isPointerInTransit = box(false);
 
@@ -160,7 +161,7 @@ class LinkPreviewTriggerState {
 				"aria-haspopup": "dialog",
 				"aria-expanded": getAriaExpanded(this.#root.open.current),
 				"data-state": getDataOpenClosed(this.#root.open.current),
-				"aria-controls": this.#root.contentNode?.id ?? undefined,
+				"aria-controls": this.#root.contentId,
 				role: "button",
 				[TRIGGER_ATTR]: "",
 				onpointerenter: this.#onpointerenter,
@@ -187,6 +188,7 @@ class LinkPreviewContentState {
 			ref: this.#ref,
 			onRefChange: (node) => {
 				this.root.contentNode = node;
+				this.root.contentId = node?.id;
 			},
 		});
 

@@ -34,6 +34,7 @@ import { toggle } from "./toggle.js";
 import { toolbar } from "./toolbar.js";
 import { tooltip } from "./tooltip.js";
 import { menubar } from "./menubar.js";
+import { listbox } from "./listbox.js";
 import type { APISchema } from "$lib/types/index.js";
 
 export const bits = [
@@ -55,6 +56,7 @@ export const bits = [
 	"dropdown-menu",
 	"label",
 	"link-preview",
+	"listbox",
 	"menubar",
 	"navigation-menu",
 	"pagination",
@@ -102,6 +104,7 @@ export const apiSchemas: Record<Bit, APISchema[]> = {
 	"dropdown-menu": dropdownMenu,
 	label,
 	"link-preview": linkPreview,
+	listbox,
 	menubar,
 	"navigation-menu": navigationMenu,
 	pagination,
