@@ -72,6 +72,7 @@ class ListboxBaseRootState {
 		if (!this.highlightedNode) return null;
 		return this.highlightedNode.getAttribute("data-label");
 	});
+	isUsingKeyboard = $state(false);
 
 	constructor(props: ListboxBaseRootStateProps) {
 		this.disabled = props.disabled;
@@ -91,7 +92,9 @@ class ListboxBaseRootState {
 	setHighlightedNode = (node: HTMLElement | null) => {
 		this.highlightedNode = node;
 		if (node) {
-			node.scrollIntoView({ block: "nearest" });
+			if (this.isUsingKeyboard) {
+				node.scrollIntoView({ block: "nearest" });
+			}
 		}
 	};
 
@@ -294,7 +297,7 @@ class ListboxMultipleRootState extends ListboxBaseRootState {
 
 type ListboxRootState = ListboxSingleRootState | ListboxMultipleRootState;
 
-type ListboxInputStateProps = WithRefProps;
+// type ListboxInputStateProps = WithRefProps;
 
 // class ListboxInputState {
 // 	#id: ListboxInputStateProps["id"];
@@ -446,6 +449,7 @@ class ListboxTriggerState {
 	}
 
 	#onkeydown = (e: KeyboardEvent) => {
+		this.root.isUsingKeyboard = true;
 		if (e.key === kbd.ARROW_UP || e.key === kbd.ARROW_DOWN) e.preventDefault();
 
 		if (!this.root.open.current) {
@@ -592,6 +596,10 @@ class ListboxContentState {
 		});
 	}
 
+	#onpointermove = () => {
+		this.root.isUsingKeyboard = false;
+	};
+
 	props = $derived.by(
 		() =>
 			({
@@ -605,6 +613,7 @@ class ListboxContentState {
 					outline: "none",
 					boxSizing: "border-box",
 				},
+				onpointermove: this.#onpointermove,
 			}) as const
 	);
 
@@ -832,14 +841,14 @@ class ListboxScrollUpButtonState {
 		});
 	}
 
-	handleAutoScroll() {
+	handleAutoScroll = () => {
 		afterTick(() => {
 			const viewport = this.content.viewportNode;
 			const selectedItem = this.root.highlightedNode;
 			if (!viewport || !selectedItem) return;
 			viewport.scrollTop = viewport.scrollTop - selectedItem.offsetHeight;
 		});
-	}
+	};
 
 	props = $derived.by(
 		() => ({ ...this.state.props, [LISTBOX_SCROLL_UP_BUTTON_ATTR]: "" }) as const
