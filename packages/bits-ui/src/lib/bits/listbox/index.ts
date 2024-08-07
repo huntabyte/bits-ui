@@ -20,5 +20,6 @@ export type {
 	ListboxViewportProps as ViewportProps,
 	ListboxScrollUpButtonProps as ScrollUpButtonProps,
 	ListboxScrollDownButtonProps as ScrollDownButtonProps,
+	ListboxPortalProps as PortalProps,
 	// ListboxLabelProps as LabelProps,
 } from "./types.js";
