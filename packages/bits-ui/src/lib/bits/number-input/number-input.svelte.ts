@@ -90,7 +90,7 @@ class NumberInputRootState {
 	formattedValue = $derived.by(() => {
 		const val =
 			this.#value.current === null && !this.#allowEmpty.current ? 0 : this.#value.current;
-
+		console.log("formattedValue", val);
 		return this.#formatValue(Number(val));
 	});
 
@@ -350,26 +350,24 @@ class NumberInputRootState {
 
 		this.#minusSignExp.lastIndex = 0;
 
-		if (!this.#allowMinusSign && minusCharIndexOnText !== -1) return;
-
+		if (!this.#allowMinusSign && minusCharIndexOnText !== -1) {
+			return;
+		}
 		const node = this.#ref.current;
 		if (!node) return;
 
-		const { selectionStart, selectionEnd } = getSelectionBounds(node);
-
-		let inputValue = node.value.trim();
+		const selectionStart = node.selectionStart ?? 0;
+		const selectionEnd = node.selectionEnd ?? 0;
+		const inputValue = node.value.trim();
 		const { decimalCharIndex, minusCharIndex, suffixCharIndex, currencyCharIndex } =
 			this.#getCharIndexes(inputValue);
-
-		console.log("decimalCharIndex", decimalCharIndex);
-
-		let newValueStr = "";
+		let newValueStr;
 
 		if (sign.isMinusSign) {
 			if (selectionStart === 0) {
 				newValueStr = inputValue;
 
-				if (minusCharIndex !== -1 || selectionEnd !== 0) {
+				if (minusCharIndex === -1 || selectionEnd !== 0) {
 					newValueStr = this.#insertText(inputValue, text, 0, selectionEnd);
 				}
 
@@ -390,10 +388,7 @@ class NumberInputRootState {
 			const operation = selectionStart !== selectionEnd ? "range-insert" : "insert";
 
 			if (decimalCharIndex > 0 && selectionStart > decimalCharIndex) {
-				if (
-					selectionStart + text.length - (decimalCharIndex + 1) <=
-					(maxFractionDigits ?? 0)
-				) {
+				if (selectionStart + text.length - (decimalCharIndex + 1) <= maxFractionDigits!) {
 					const charIndex =
 						currencyCharIndex >= selectionStart
 							? currencyCharIndex - 1
@@ -471,17 +466,12 @@ class NumberInputRootState {
 	};
 
 	#deleteRange = (value: string, start: number, end: number) => {
-		let newValueStr: string = "";
+		let newValueStr;
 
-		if (end - start === value.length) {
-			newValueStr = "";
-		} else if (start === 0) {
-			newValueStr = value.slice(end);
-		} else if (end === value.length) {
-			newValueStr = value.slice(0, start);
-		} else {
-			newValueStr = value.slice(0, start) + value.slice(end);
-		}
+		if (end - start === value.length) newValueStr = "";
+		else if (start === 0) newValueStr = value.slice(end);
+		else if (end === value.length) newValueStr = value.slice(0, start);
+		else newValueStr = value.slice(0, start) + value.slice(end);
 
 		return newValueStr;
 	};
@@ -536,11 +526,11 @@ class NumberInputRootState {
 		operation: InputOperation,
 		valueStr?: string
 	) => {
-		insertedValueStr = insertedValueStr ?? "";
+		insertedValueStr = insertedValueStr || "";
 		const node = this.#ref.current;
 		if (!node) return;
 
-		const inputValue = node.value ?? "";
+		let inputValue = node.value;
 		let newValue = this.#formatValue(value);
 		let currentLength = inputValue.length;
 
@@ -556,25 +546,20 @@ class NumberInputRootState {
 
 			node.setSelectionRange(selectionEnd, selectionEnd);
 		} else {
-			const selectionStart = node.selectionStart ?? 0;
+			let selectionStart = node.selectionStart ?? 0;
 			let selectionEnd = node.selectionEnd ?? 0;
 
 			node.value = newValue;
-			const newLength = newValue.length;
+			let newLength = newValue.length;
 
 			if (operation === "range-insert") {
-				let startValue = this.#parseValue(inputValue);
-				startValue =
-					startValue === null
-						? ""
-						: typeof startValue === "string"
-							? startValue.slice(0, selectionStart)
-							: "";
-
-				const startExp = startValue.split("").join(`(${this.#groupChar})?`);
-				const sRegex = new RegExp(startExp, "g");
+				const startValue = this.#parseValue((inputValue || "").slice(0, selectionStart));
+				const startValueStr = startValue !== null ? startValue.toString() : "";
+				const startExpr = startValueStr.split("").join(`(${this.#groupChar})?`);
+				const sRegex = new RegExp(startExpr, "g");
 
 				sRegex.test(newValue);
+
 				const tExpr = insertedValueStr.split("").join(`(${this.#groupChar})?`);
 				const tRegex = new RegExp(tExpr, "g");
 
@@ -586,15 +571,15 @@ class NumberInputRootState {
 				if (operation === "insert" || operation === "delete-back-single") {
 					node.setSelectionRange(selectionEnd + 1, selectionEnd + 1);
 				} else if (operation === "delete-single") {
-					node.setSelectionRange(selectionStart - 1, selectionEnd - 1);
+					node.setSelectionRange(selectionEnd - 1, selectionEnd - 1);
 				} else if (operation === "delete-range" || operation === "spin") {
 					node.setSelectionRange(selectionEnd, selectionEnd);
 				}
 			} else if (operation === "delete-back-single") {
-				const prevChar = inputValue.charAt(selectionEnd - 1);
-				const nextChar = inputValue.charAt(selectionEnd);
-				const diff = currentLength - newLength;
-				const isGroupChar = this.#groupExp.test(nextChar);
+				let prevChar = inputValue.charAt(selectionEnd - 1);
+				let nextChar = inputValue.charAt(selectionEnd);
+				let diff = currentLength - newLength;
+				let isGroupChar = this.#groupExp.test(nextChar);
 
 				if (isGroupChar && diff === 1) {
 					selectionEnd += 1;
@@ -816,7 +801,7 @@ class NumberInputRootState {
 		}
 	};
 
-	#onkeydown = (e: KeyboardEvent & { currentTarget: HTMLInputElement }) => {
+	#onkeydown = (e: KeyboardEvent & { target: HTMLInputElement }) => {
 		if (this.#readonly.current) return;
 		const node = this.#ref.current;
 		if (!node) return;
@@ -824,14 +809,15 @@ class NumberInputRootState {
 		if (e.altKey || e.ctrlKey || e.metaKey) {
 			this.#isSpecialChar = true;
 			this.#lastValue = node.value;
+
 			return;
 		}
 
-		this.#lastValue = e.currentTarget.value;
+		this.#lastValue = e.target.value;
 
-		const selectionStart = e.currentTarget.selectionStart ?? 0;
-		const selectionEnd = e.currentTarget.selectionEnd ?? 0;
-		const inputValue = e.currentTarget.value;
+		let selectionStart = e.target.selectionStart ?? 0;
+		let selectionEnd = e.target.selectionEnd ?? 0;
+		let inputValue = e.target.value;
 		let newValueStr = null;
 
 		switch (e.code) {
@@ -849,21 +835,23 @@ class NumberInputRootState {
 				if (!this.#isNumeralChar(inputValue.charAt(selectionStart - 1))) {
 					e.preventDefault();
 				}
+
 				break;
 
 			case "ArrowRight":
 				if (!this.#isNumeralChar(inputValue.charAt(selectionStart))) {
 					e.preventDefault();
 				}
+
 				break;
 
 			case "Tab":
 			case "Enter":
 			case "NumpadEnter":
-				newValueStr = this.#validateValue(this.#parseValue(inputValue)) ?? "";
-				node.value = this.#formatValue(newValueStr);
-				node.setAttribute("aria-valuenow", `${newValueStr ?? ""}`);
-				this.#value.current = newValueStr as number | null;
+				newValueStr = this.#validateValue(this.#parseValue(inputValue));
+				node.value = this.#formatValue(newValueStr!);
+				node.setAttribute("aria-valuenow", `${newValueStr}`);
+				this.#value.current = Number(newValueStr);
 				break;
 
 			case "Backspace": {
@@ -906,7 +894,7 @@ class NumberInputRootState {
 						} else if (decimalCharIndexWithoutPrefix === 1) {
 							newValueStr = `${inputValue.slice(0, selectionStart - 1)}0${inputValue.slice(selectionStart)}`;
 							newValueStr =
-								Number(this.#parseValue(newValueStr)) > 0 ? newValueStr : "";
+								(this.#parseValue(newValueStr) ?? 0 > 0) ? newValueStr : "";
 						} else {
 							newValueStr =
 								inputValue.slice(0, selectionStart - 1) +
@@ -919,6 +907,7 @@ class NumberInputRootState {
 					newValueStr = this.#deleteRange(inputValue, selectionStart, selectionEnd);
 					this.#updateValue(newValueStr, null, "delete-range");
 				}
+
 				break;
 			}
 
@@ -961,8 +950,10 @@ class NumberInputRootState {
 								inputValue.slice(selectionStart + 1);
 						} else if (decimalCharIndexWithoutPrefix === 1) {
 							newValueStr = `${inputValue.slice(0, selectionStart)}0${inputValue.slice(selectionStart + 1)}`;
-							newValueStr =
-								Number(this.#parseValue(newValueStr)) > 0 ? newValueStr : "";
+							const parsedV = this.#parseValue(newValueStr);
+							if (typeof parsedV === "number") {
+								newValueStr = parsedV > 0 ? newValueStr : "";
+							}
 						} else {
 							newValueStr =
 								inputValue.slice(0, selectionStart) +
@@ -975,6 +966,7 @@ class NumberInputRootState {
 					newValueStr = this.#deleteRange(inputValue, selectionStart, selectionEnd);
 					this.#updateValue(newValueStr, null, "delete-range");
 				}
+
 				break;
 
 			case "Home":
@@ -983,6 +975,7 @@ class NumberInputRootState {
 				if (isNotEmpty(this.#min.current)) {
 					this.#value.current = this.#min.current!;
 				}
+
 				break;
 
 			case "End":
@@ -991,6 +984,7 @@ class NumberInputRootState {
 				if (isNotEmpty(this.#max.current)) {
 					this.#value.current = this.#max.current!;
 				}
+
 				break;
 
 			default:
