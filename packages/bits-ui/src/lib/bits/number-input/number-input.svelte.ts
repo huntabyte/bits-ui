@@ -86,6 +86,7 @@ class NumberInputRootState {
 	#maxBoundary = $derived.by(() => (this.#value.current ?? 0) >= (this.#max.current ?? 0));
 	#minBoundary = $derived.by(() => (this.#value.current ?? 0) <= (this.#min.current ?? 0));
 	#lastValue = $state("");
+	#indexMap = new Map<string, number>();
 	formattedValue = $derived.by(() => {
 		const val =
 			this.#value.current === null && !this.#allowEmpty.current ? 0 : this.#value.current;
@@ -118,28 +119,24 @@ class NumberInputRootState {
 		this.#highlightOnFocus = props.highlightOnFocus;
 
 		$effect(() => {
-			untrack(() => {
-				this.#numberFormat = new Intl.NumberFormat(
-					this.#locale.current,
-					this.#numberFormatOpts
-				);
+			this.#numberFormat = new Intl.NumberFormat(
+				this.#locale.current,
+				this.#numberFormatOpts
+			);
 
-				const numerals = [
-					...new Intl.NumberFormat(this.#locale.current, { useGrouping: false }).format(
-						9876543210
-					),
-				].reverse();
-				const index = new Map(numerals.map((d, i) => [d, i]));
-
-				this.#numeralExp = new RegExp(`[${numerals.join("")}]`, "g");
-				this.#groupExp = this.#getGroupingExp();
-				this.#minusSignExp = this.#getMinusSignExp();
-				this.#decimalExp = this.#getDecimalExp();
-				this.#suffixExp = this.#getSuffixExp();
-				this.#prefixExp = this.#getPrefixExp();
-				this.#currencyExp = this.#getCurrencyExp();
-				this.#index = (d) => index.get(d);
-			});
+			const numerals = [
+				...new Intl.NumberFormat(this.#locale.current, { useGrouping: false }).format(
+					9876543210
+				),
+			].reverse();
+			this.#indexMap = new Map(numerals.map((d, i) => [d, i]));
+			this.#numeralExp = new RegExp(`[${numerals.join("")}]`, "g");
+			this.#groupExp = this.#getGroupingExp();
+			this.#minusSignExp = this.#getMinusSignExp();
+			this.#decimalExp = this.#getDecimalExp();
+			this.#suffixExp = this.#getSuffixExp();
+			this.#prefixExp = this.#getPrefixExp();
+			this.#currencyExp = this.#getCurrencyExp();
 		});
 
 		useRefById({
@@ -321,29 +318,30 @@ class NumberInputRootState {
 			.replace(this.#decimalExp, ".");
 		// .replace(this.#numeralExp, String(this.#index(v) ?? 0));
 
+		// value is an empty string, return null
 		if (!filteredValue) return null;
-		if (filteredValue === "-") {
-			return filteredValue;
-		}
 
-		const parsedValue = +filteredValue;
+		// if the user is starting with a `-` we just return it as is
+		if (filteredValue === "-") return filteredValue;
 
+		// after going through the above checks, the value should be a string with
+		// a number that can be safely parsed
+		const parsedValue = Number(filteredValue);
+
+		// if the parsed value is NaN, return null, otherwise return the parsed value
 		return Number.isNaN(parsedValue) ? null : parsedValue;
 	};
 
-	#validateValue = (value: string | number | null | undefined): number | null => {
-		if (value === "-" || value == null || typeof value === "string") {
-			return null;
-		}
+	/**
+	 * Validates the value to ensure it is a number and within the min and max bounds
+	 */
+	#validateValue = (value: "-" | number | null): number | null => {
+		if (value === "-" || value == null) return null;
 		const min = this.#min.current;
 		const max = this.#max.current;
 
-		if (min != null && Number(value) < min) {
-			return min;
-		}
-		if (max != null && Number(value) > max) {
-			return max;
-		}
+		if (min != null && Number(value) < min) return min;
+		if (max != null && Number(value) > max) return max;
 		return value;
 	};
 
@@ -352,17 +350,12 @@ class NumberInputRootState {
 
 		this.#minusSignExp.lastIndex = 0;
 
-		if (!this.#allowMinusSign && minusCharIndexOnText !== -1) {
-			return;
-		}
+		if (!this.#allowMinusSign && minusCharIndexOnText !== -1) return;
 
 		const node = this.#ref.current;
-		if (!node) {
-			return;
-		}
+		if (!node) return;
 
-		const selectionStart = node.selectionStart ?? 0;
-		const selectionEnd = node.selectionEnd ?? 0;
+		const { selectionStart, selectionEnd } = getSelectionBounds(node);
 
 		let inputValue = node.value.trim();
 		const { decimalCharIndex, minusCharIndex, suffixCharIndex, currencyCharIndex } =
@@ -532,7 +525,7 @@ class NumberInputRootState {
 		if (currValue === "-") return;
 		const newValue = this.#validateValue(currValue + step);
 		this.#updateInput(newValue!, null, "spin");
-		this.#value.current = newValue;
+		this.#value.current = Number(newValue);
 	};
 
 	#updateInput = (
@@ -568,7 +561,6 @@ class NumberInputRootState {
 			const newLength = newValue.length;
 
 			if (operation === "range-insert") {
-				const _inputVal = inputValue || "";
 				let startValue = this.#parseValue(inputValue);
 				startValue =
 					startValue === null
@@ -642,7 +634,7 @@ class NumberInputRootState {
 		return { decimalCharIndex, decimalCharIndexWithoutPrefix };
 	};
 
-	#getDecimalLength = (v: string | null | undefined) => {
+	#getDecimalLength = (v: string | null) => {
 		if (!v) return 0;
 		const valueSplit = v.split(this.#decimalExp);
 
@@ -658,7 +650,7 @@ class NumberInputRootState {
 	};
 
 	#updateValue = (
-		valueStr: string | null | undefined,
+		valueStr: string | null,
 		insertedValueStr: string | null,
 		operation: InputOperation
 	) => {
@@ -780,11 +772,11 @@ class NumberInputRootState {
 		this.#focused = false;
 
 		const input = e.currentTarget;
-		const newValue = this.#validateValue(input.value);
+		const newValue = this.#validateValue(this.#parseValue(input.value));
 
 		input.value = this.#formatValue(newValue ?? "");
 		input.setAttribute("aria-valuenow", `${newValue}`);
-		this.#value.current = newValue;
+		this.#value.current = Number(newValue);
 
 		if (!this.#disabled.current && !this.#readonly.current && this.#highlightOnFocus.current) {
 			clearSelection();
@@ -854,14 +846,12 @@ class NumberInputRootState {
 				if (!this.#isNumeralChar(inputValue.charAt(selectionStart - 1))) {
 					e.preventDefault();
 				}
-
 				break;
 
 			case "ArrowRight":
 				if (!this.#isNumeralChar(inputValue.charAt(selectionStart))) {
 					e.preventDefault();
 				}
-
 				break;
 
 			case "Tab":
@@ -926,7 +916,6 @@ class NumberInputRootState {
 					newValueStr = this.#deleteRange(inputValue, selectionStart, selectionEnd);
 					this.#updateValue(newValueStr, null, "delete-range");
 				}
-
 				break;
 			}
 
@@ -983,7 +972,6 @@ class NumberInputRootState {
 					newValueStr = this.#deleteRange(inputValue, selectionStart, selectionEnd);
 					this.#updateValue(newValueStr, null, "delete-range");
 				}
-
 				break;
 
 			case "Home":
@@ -992,7 +980,6 @@ class NumberInputRootState {
 				if (isNotEmpty(this.#min.current)) {
 					this.#value.current = this.#min.current!;
 				}
-
 				break;
 
 			case "End":
@@ -1001,7 +988,6 @@ class NumberInputRootState {
 				if (isNotEmpty(this.#max.current)) {
 					this.#value.current = this.#max.current!;
 				}
-
 				break;
 
 			default:
@@ -1058,4 +1044,15 @@ const [setNumberInputRootContext, getNumberInputRootContext] =
 
 export function useNumberInputRoot(props: NumberInputStateProps) {
 	return setNumberInputRootContext(new NumberInputRootState(props));
+}
+
+////////////////////////////////////
+// Helpers
+////////////////////////////////////
+
+function getSelectionBounds(node: HTMLInputElement) {
+	return {
+		selectionStart: node.selectionStart ?? 0,
+		selectionEnd: node.selectionEnd ?? 0,
+	};
 }
