@@ -137,6 +137,7 @@ class NumberInputRootState {
 			this.#suffixExp = this.#getSuffixExp();
 			this.#prefixExp = this.#getPrefixExp();
 			this.#currencyExp = this.#getCurrencyExp();
+			this.#index = (d) => this.#indexMap.get(d);
 		});
 
 		useRefById({
@@ -192,24 +193,24 @@ class NumberInputRootState {
 			...this.#numberFormatOpts,
 			useGrouping: false,
 		});
+
 		return new RegExp(
-			`[${formatter
-				.format(1.1)
-				.replace(this.#currency.current ?? "", "")
-				.trim()
-				.replace(this.#numeralExp, "")}]`,
+			`[${formatter.format(1.1).replace(this.#currencyExp, "").trim().replace(this.#numeralExp, "")}]`,
 			"g"
 		);
 	};
 
 	#getGroupingExp = (): RegExp => {
 		const formatter = new Intl.NumberFormat(this.#locale.current, { useGrouping: true });
+
 		this.#groupChar = formatter.format(1000000).trim().replace(this.#numeralExp, "").charAt(0);
+
 		return new RegExp(`[${this.#groupChar}]`, "g");
 	};
 
 	#getMinusSignExp = (): RegExp => {
 		const formatter = new Intl.NumberFormat(this.#locale.current, { useGrouping: false });
+
 		return new RegExp(`[${formatter.format(-1).trim().replace(this.#numeralExp, "")}]`, "g");
 	};
 
@@ -230,8 +231,8 @@ class NumberInputRootState {
 			);
 		}
 
-		// eslint-disable-next-line regexp/no-empty-character-class
-		return /[]/g;
+		// eslint-disable-next-line prefer-regex-literals, regexp/no-empty-character-class
+		return new RegExp(`[]`, "g");
 	};
 
 	#getPrefixExp = (): RegExp => {
@@ -284,13 +285,11 @@ class NumberInputRootState {
 
 	#formatValue = (value: number | string) => {
 		if (value == null) return "";
-		if (value === "-") {
-			return value;
-		}
+		if (value === "-") return value;
 
 		if (this.#format.current) {
-			const formatter = new Intl.NumberFormat(this.#locale.current, this.#numberFormatOpts);
-			let formattedValue = formatter.format(Number(value));
+			let formatter = new Intl.NumberFormat(this.#locale.current, this.#numberFormatOpts);
+			let formattedValue = formatter.format(value as number);
 
 			if (this.#prefixProp.current) {
 				formattedValue = this.#prefixProp.current + formattedValue;
@@ -315,8 +314,9 @@ class NumberInputRootState {
 			.replace(this.#currencyExp, "")
 			.replace(this.#groupExp, "")
 			.replace(this.#minusSignExp, "-")
-			.replace(this.#decimalExp, ".");
-		// .replace(this.#numeralExp, String(this.#index(v) ?? 0));
+			.replace(this.#decimalExp, ".")
+			// @ts-expect-error - we're using a custom index function
+			.replace(this.#numeralExp, this.#index);
 
 		// value is an empty string, return null
 		if (!filteredValue) return null;
@@ -360,6 +360,8 @@ class NumberInputRootState {
 		let inputValue = node.value.trim();
 		const { decimalCharIndex, minusCharIndex, suffixCharIndex, currencyCharIndex } =
 			this.#getCharIndexes(inputValue);
+
+		console.log("decimalCharIndex", decimalCharIndex);
 
 		let newValueStr = "";
 
@@ -635,15 +637,16 @@ class NumberInputRootState {
 	};
 
 	#getDecimalLength = (v: string | null) => {
-		if (!v) return 0;
-		const valueSplit = v.split(this.#decimalExp);
+		if (v) {
+			const valueSplit = v.split(this.#decimalExp);
 
-		if (valueSplit.length === 2) {
-			return valueSplit[1]!
-				.replace(this.#suffixExp, "")
-				.trim()
-				.replace(/\s/g, "")
-				.replace(this.#currencyExp, "").length;
+			if (valueSplit.length === 2) {
+				return valueSplit[1]!
+					.replace(this.#suffixExp, "")
+					.trim()
+					.replace(/\s/g, "")
+					.replace(this.#currencyExp, "").length;
+			}
 		}
 
 		return 0;
