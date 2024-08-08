@@ -53,6 +53,6 @@ export type Fn = () => void;
 // eslint-disable-next-line ts/no-explicit-any
 export type AnyFn = (...args: any[]) => any;
 
-export type WithRefProps<T = {}> = T &
+export type WithRefProps<T = {}, U extends HTMLElement = HTMLElement> = T &
 	ReadableBoxedValues<{ id: string }> &
-	WritableBoxedValues<{ ref: HTMLElement | null }>;
+	WritableBoxedValues<{ ref: U | null }>;
