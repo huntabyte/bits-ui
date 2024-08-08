@@ -1,18 +1,18 @@
-import type { LabelPropsWithoutHTML } from "bits-ui";
-import { builderAndAttrsSlotProps, domElProps } from "$lib/content/api-reference/helpers.js";
-import type { APISchema } from "$lib/types/index.js";
+import type { LabelRootPropsWithoutHTML } from "bits-ui";
+import { createApiSchema, withChildProps } from "$lib/content/api-reference/helpers.js";
 
-export const root: APISchema<LabelPropsWithoutHTML> = {
+export const root = createApiSchema<LabelRootPropsWithoutHTML>({
 	title: "Root",
 	description: "An enhanced label component that can be used with any input.",
-	props: domElProps("HTMLLabelElement"),
-	slotProps: { ...builderAndAttrsSlotProps },
+	props: {
+		...withChildProps({ elType: "HTMLLabelElement" }),
+	},
 	dataAttributes: [
 		{
 			name: "label-root",
 			description: "Present on the root element.",
 		},
 	],
-};
+});
 
 export const label = [root];

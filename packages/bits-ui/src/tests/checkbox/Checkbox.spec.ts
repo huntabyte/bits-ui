@@ -1,19 +1,18 @@
-import { render } from "@testing-library/svelte";
-import { userEvent } from "@testing-library/user-event";
+import { render } from "@testing-library/svelte/svelte5";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import { tick } from "svelte";
-import { getTestKbd } from "../utils.js";
+import { getTestKbd, setupUserEvents } from "../utils.js";
 import CheckboxTest from "./CheckboxTest.svelte";
 import type { Checkbox } from "$lib/index.js";
 
 const kbd = getTestKbd();
 
-function setup(props?: Checkbox.Props) {
-	const user = userEvent.setup();
+function setup(props?: Checkbox.RootProps) {
+	const user = setupUserEvents();
 	const returned = render(CheckboxTest, props);
 	const root = returned.getByTestId("root");
-	const input = returned.getByTestId("input") as HTMLInputElement;
+	const input = document.querySelector("input") as HTMLInputElement;
 	return {
 		...returned,
 		root,
@@ -23,24 +22,32 @@ function setup(props?: Checkbox.Props) {
 }
 
 describe("checkbox", () => {
-	it("has no accessibility violations", async () => {
+	it("should have no accessibility violations", async () => {
 		const { container } = render(CheckboxTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
-	it("has bits data attrs", async () => {
-		const { getByTestId, root } = setup();
-		const indicator = getByTestId("indicator");
+	it("should have bits data attrs", async () => {
+		const { root } = setup();
 		expect(root).toHaveAttribute("data-checkbox-root");
-		expect(indicator).toHaveAttribute("data-checkbox-indicator");
 	});
 
-	it('defaults the value to "on", when no value prop is passed', async () => {
+	it("should not render the checkbox input if a name prop isnt passed", async () => {
+		const { input } = setup({ name: "" });
+		expect(input).not.toBeInTheDocument();
+	});
+
+	it("should render the checkbox input if a name prop is passed", async () => {
+		const { input } = setup({ name: "checkbox" });
+		expect(input).toBeInTheDocument();
+	});
+
+	it('should default the value to "on", when no value prop is passed', async () => {
 		const { input } = setup();
 		expect(input).toHaveAttribute("value", "on");
 	});
 
-	it("can be indeterminate", async () => {
+	it("should be able to be indeterminate", async () => {
 		const { getByTestId, root, input } = setup({ checked: "indeterminate" });
 		const indicator = getByTestId("indicator");
 		expect(root).toHaveAttribute("data-state", "indeterminate");
@@ -51,7 +58,7 @@ describe("checkbox", () => {
 		expect(indicator).not.toHaveTextContent("false");
 	});
 
-	it("toggles when clicked", async () => {
+	it("should toggle when clicked", async () => {
 		const { getByTestId, root, input, user } = setup();
 		const indicator = getByTestId("indicator");
 		expect(root).toHaveAttribute("data-state", "unchecked");
@@ -69,7 +76,7 @@ describe("checkbox", () => {
 		expect(indicator).not.toHaveTextContent("indeterminate");
 	});
 
-	it("toggles when the `Space` key is pressed", async () => {
+	it("should toggle when the `Space` key is pressed", async () => {
 		const { root, input, user } = setup();
 		expect(root).toHaveAttribute("data-state", "unchecked");
 		expect(root).toHaveAttribute("aria-checked", "false");
@@ -81,7 +88,7 @@ describe("checkbox", () => {
 		expect(input.checked).toBe(true);
 	});
 
-	it("does not toggle when the `Enter` key is pressed", async () => {
+	it("should not toggle when the `Enter` key is pressed", async () => {
 		const { getByTestId, root, input, user } = setup();
 		const indicator = getByTestId("indicator");
 		expect(root).toHaveAttribute("data-state", "unchecked");
@@ -137,6 +144,4 @@ describe("checkbox", () => {
 		await tick();
 		expect(binding).toHaveTextContent("true");
 	});
-
-	it.todo("`asChild` behavior");
 });

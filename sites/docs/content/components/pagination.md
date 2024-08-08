@@ -4,15 +4,17 @@ description: Facilitates navigation between pages.
 ---
 
 <script>
-	import { APISection, ComponentPreview, PaginationDemo } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, PaginationDemo } from '$lib/components/index.js'
 	export let schemas
 </script>
 
-<ComponentPreview name="pagination-demo" comp="Pagination">
+<ComponentPreviewV2 name="pagination-demo" comp="Pagination">
 
-<PaginationDemo slot="preview" />
+{#snippet preview()}
+<PaginationDemo />
+{/snippet}
 
-</ComponentPreview>
+</ComponentPreviewV2>
 
 ## Structure
 

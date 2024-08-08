@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { SidebarNavItems, SidebarNavMainItems } from "$lib/components/index.js";
 	import type { SidebarNavItem } from "$lib/config/index.js";
-	export let items: SidebarNavItem[] = [];
+
+	let { items = [] }: { items: SidebarNavItem[] } = $props();
 </script>
 
 {#if items.length}

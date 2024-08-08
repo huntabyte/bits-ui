@@ -1,59 +1,96 @@
 <script lang="ts" context="module">
+	import {
+		Combobox,
+		type ComboboxSingleRootProps,
+		type WithoutChildren,
+		type WithoutChildrenOrChild,
+	} from "$lib/index.js";
 	export type Item = {
-		value: unknown;
+		value: string;
 		label: string;
 		disabled?: boolean;
+	};
+
+	export type ComboboxSingleTestProps = WithoutChildren<ComboboxSingleRootProps> & {
+		contentProps?: WithoutChildrenOrChild<Combobox.ContentProps>;
+		portalProps?: WithoutChildrenOrChild<Combobox.PortalProps>;
+		inputProps?: WithoutChildrenOrChild<Combobox.InputProps>;
+		items: Item[];
+		searchValue?: string;
 	};
 </script>
 
 <script lang="ts">
-	import { Combobox } from "$lib/index.js";
+	let {
+		contentProps,
+		portalProps,
+		items,
+		value = "",
+		open = false,
+		searchValue = "",
+		inputProps,
+		onOpenChange,
+		...restProps
+	}: ComboboxSingleTestProps = $props();
 
-	type $$Props = Combobox.Props<unknown> & {
-		options: Item[];
-	};
-
-	export let inputValue: $$Props["inputValue"] = undefined;
-	export let selected: $$Props["selected"] = undefined;
-	export let open: $$Props["open"] = false;
-	export let options: Item[] = [];
-	export let placeholder = "Select something";
+	const filteredItems = $derived(
+		searchValue === ""
+			? items
+			: items.filter((item) => item.label.includes(searchValue.toLowerCase()))
+	);
 </script>
 
 <main data-testid="main">
-	<Combobox.Root bind:selected bind:open bind:inputValue {...$$restProps}>
-		<Combobox.Input data-testid="input" {placeholder} aria-label="open combobox" />
-		<Combobox.Content data-testid="content">
-			<Combobox.Group data-testid="group">
-				<Combobox.GroupLabel data-testid="group-label">Options</Combobox.GroupLabel>
-				{#each options as { value, label, disabled }}
-					<Combobox.Item data-testid={value} {disabled} {value} {label}>
-						<Combobox.ItemIndicator>
-							<span data-testid="{value}-indicator">x</span>
-						</Combobox.ItemIndicator>
-						{label}
-					</Combobox.Item>
-				{/each}
-			</Combobox.Group>
-		</Combobox.Content>
-		<Combobox.HiddenInput data-testid="hidden-input" />
+	<Combobox.Root
+		bind:value
+		bind:open
+		{...restProps}
+		onOpenChange={(v) => {
+			onOpenChange?.(v);
+			if (!v) searchValue = "";
+		}}
+	>
+		<Combobox.Trigger data-testid="trigger">Open combobox</Combobox.Trigger>
+		<Combobox.Input
+			data-testid="input"
+			aria-label="open combobox"
+			oninput={(e) => (searchValue = e.currentTarget.value)}
+			{...inputProps}
+		/>
+		<Combobox.Portal {...portalProps}>
+			<Combobox.Content data-testid="content" {...contentProps}>
+				<Combobox.Group data-testid="group">
+					<Combobox.GroupLabel data-testid="group-label">Options</Combobox.GroupLabel>
+					{#each filteredItems as { value, label, disabled }}
+						<Combobox.Item data-testid={value} {disabled} {value} {label}>
+							{#snippet children({ selected })}
+								{#if selected}
+									<span data-testid="{value}-indicator">x</span>
+								{/if}
+								{label}
+							{/snippet}
+						</Combobox.Item>
+					{/each}
+				</Combobox.Group>
+			</Combobox.Content>
+		</Combobox.Portal>
 	</Combobox.Root>
 	<div data-testid="outside"></div>
-	<button data-testid="input-binding" on:click={() => (inputValue = "")}>
-		{#if inputValue === ""}
+	<button data-testid="input-binding" onclick={() => (searchValue = "")}>
+		{#if searchValue === ""}
 			empty
 		{:else}
-			{inputValue}
+			{searchValue}
 		{/if}
 	</button>
-	<button data-testid="open-binding" on:click={() => (open = !open)}>
+	<button data-testid="open-binding" onclick={() => (open = !open)}>
 		{open}
 	</button>
-	<button data-testid="selected-binding" on:click={() => (selected = undefined)}>
-		{#if selected === undefined}
-			undefined
+	<button data-testid="value-binding" onclick={() => (value = "")}>
+		{#if value === ""}
+			empty
 		{:else}
-			{selected.label} - {selected.value}
+			{value}
 		{/if}
 	</button>
 </main>

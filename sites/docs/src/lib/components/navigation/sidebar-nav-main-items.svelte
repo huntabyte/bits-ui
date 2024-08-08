@@ -1,16 +1,25 @@
 <script lang="ts">
+	import CalendarBlank from "phosphor-svelte/lib/CalendarBlank";
+	import CodeBlock from "phosphor-svelte/lib/CodeBlock";
+	import Compass from "phosphor-svelte/lib/Compass";
+	import Palette from "phosphor-svelte/lib/Palette";
+	import Sticker from "phosphor-svelte/lib/Sticker";
+	import Leaf from "phosphor-svelte/lib/Leaf";
+	import CableCar from "phosphor-svelte/lib/CableCar";
 	import { page } from "$app/stores";
-	import { CodeBlock, Compass, Palette, Sticker } from "$icons/index.js";
 	import type { SidebarNavItem } from "$lib/config/index.js";
 	import { cn } from "$lib/utils/index.js";
 
-	export let items: SidebarNavItem[] = [];
+	let { items = [] }: { items: SidebarNavItem[] } = $props();
 
 	const iconMap = {
 		Introduction: Sticker,
 		"Getting Started": Compass,
 		Delegation: CodeBlock,
 		Styling: Palette,
+		Dates: CalendarBlank,
+		Ref: Leaf,
+		Transitions: CableCar,
 	} as const;
 
 	const iconMapKeys = Object.keys(iconMap) as (keyof typeof iconMap)[];

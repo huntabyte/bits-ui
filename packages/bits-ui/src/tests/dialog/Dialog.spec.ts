@@ -1,11 +1,17 @@
-import { type Matcher, type MatcherOptions, render, screen } from "@testing-library/svelte";
+import {
+	type Matcher,
+	type MatcherOptions,
+	render,
+	screen,
+	waitFor,
+} from "@testing-library/svelte/svelte5";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
+import { tick } from "svelte";
 import { getTestKbd } from "../utils.js";
-import DialogTest from "./DialogTest.svelte";
-import { sleep } from "$lib/internal/index.js";
-import type { Dialog } from "$lib/index.js";
+import DialogTest, { type DialogTestProps } from "./DialogTest.svelte";
+import { sleep } from "$lib/internal/sleep.js";
 
 const kbd = getTestKbd();
 
@@ -16,26 +22,27 @@ function expectIsClosed(
 	expect(content).toBeNull();
 }
 
-function expectIsOpen(
+async function expectIsOpen(
 	queryByTestId: (id: Matcher, options?: MatcherOptions | undefined) => HTMLElement | null
 ) {
 	const content = queryByTestId("content");
-	expect(content).not.toBeNull();
+	await waitFor(() => expect(content).not.toBeNull());
 }
 
-function setup(props: Dialog.Props = {}) {
-	const user = userEvent.setup();
-	const { getByTestId, queryByTestId } = render(DialogTest, { ...props });
+function setup(props: DialogTestProps = {}) {
+	const user = userEvent.setup({ pointerEventsCheck: 0 });
+	const returned = render(DialogTest, { ...props });
+	const trigger = returned.getByTestId("trigger");
+
 	return {
-		getByTestId,
-		queryByTestId,
+		...returned,
+		trigger,
 		user,
 	};
 }
 
-async function open(props: Dialog.Props = {}) {
-	const { getByTestId, queryByTestId, user } = setup(props);
-	const trigger = getByTestId("trigger");
+async function open(props: DialogTestProps = {}) {
+	const { getByTestId, queryByTestId, user, trigger } = setup(props);
 	const content = queryByTestId("content");
 	expect(content).toBeNull();
 	await user.click(trigger);
@@ -45,14 +52,14 @@ async function open(props: Dialog.Props = {}) {
 }
 
 describe("dialog", () => {
-	it("has no accessibility violations", async () => {
+	it("should have no accessibility violations", async () => {
 		const { container } = render(DialogTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
-	it("has bits data attrs", async () => {
-		const { getByTestId } = render(DialogTest, { open: true });
-		const parts = ["trigger", "overlay", "portal", "close", "title", "description", "content"];
+	it("should have bits data attrs", async () => {
+		const { getByTestId } = await open();
+		const parts = ["trigger", "overlay", "close", "title", "description", "content"];
 
 		for (const part of parts) {
 			const el = getByTestId(part);
@@ -60,29 +67,27 @@ describe("dialog", () => {
 		}
 	});
 
-	it("has expected data attributes", async () => {
+	it("should have expected data attributes", async () => {
 		const { getByTestId } = await open();
 
 		const overlay = getByTestId("overlay");
 		expect(overlay).toHaveAttribute("data-state", "open");
 		const content = getByTestId("content");
 		expect(content).toHaveAttribute("data-state", "open");
-		const portal = getByTestId("portal");
-		expect(portal).toHaveAttribute("data-portal");
 	});
 
-	it("opens when the trigger is clicked", async () => {
+	it("should open when the trigger is clicked", async () => {
 		await open();
 	});
 
-	it("closes when the close button is clicked", async () => {
+	it("should close when the close button is clicked", async () => {
 		const { getByTestId, queryByTestId, user } = await open();
 		const close = getByTestId("close");
 		await user.click(close);
 		expectIsClosed(queryByTestId);
 	});
 
-	it("closes when the `Escape` key is pressed", async () => {
+	it("should close when the `Escape` key is pressed", async () => {
 		const { queryByTestId, user, getByTestId } = await open();
 
 		await user.keyboard(kbd.ESCAPE);
@@ -90,54 +95,60 @@ describe("dialog", () => {
 		expect(getByTestId("trigger")).toHaveFocus();
 	});
 
-	it("closes when the overlay is clicked", async () => {
+	it("should close when the overlay is clicked", async () => {
 		const { getByTestId, queryByTestId, user } = await open();
 		await sleep(100);
 
 		const overlay = getByTestId("overlay");
 		await user.click(overlay);
+		await sleep(25);
 
 		const contentAfter2 = queryByTestId("content");
 		expect(contentAfter2).toBeNull();
 	});
 
-	it("attaches to body when using portal element", async () => {
+	it("should portal to body when using portal element", async () => {
 		await open();
 
-		const portalled = screen.getByTestId("portal");
-
-		expect(portalled.parentElement).toEqual(document.body);
+		const content = screen.getByTestId("content");
+		expect(content.parentElement).toEqual(document.body);
 	});
 
-	it("doesnt attached to body when portal prop is null", async () => {
-		await open({ portal: null });
-		const portalled = screen.getByTestId("portal");
-
-		expect(portalled.parentElement).not.toEqual(document.body);
+	it("should not portal to body when portal is disabled", async () => {
+		await open({
+			portalProps: {
+				disabled: true,
+			},
+		});
+		const content = screen.getByTestId("content");
+		expect(content.parentElement).not.toEqual(document.body);
 	});
 
-	it("portals to the target if passed as a prop", async () => {
-		await open({ portal: "#portalTarget" });
+	it("should portal to the target if passed as a prop", async () => {
+		await open({
+			portalProps: {
+				to: "#portalTarget",
+			},
+		});
 		const portalTarget = screen.getByTestId("portalTarget");
-		const portalled = screen.getByTestId("portal");
-		expect(portalled.parentElement).toEqual(portalTarget);
+		const content = screen.getByTestId("content");
+		expect(content.parentElement).toEqual(portalTarget);
 	});
 
-	it("focuses first focusable item upon opening", async () => {
+	it("should focus first focusable item upon opening", async () => {
 		const { getByTestId } = await open();
-		// Testing focus-trap is a bit flaky. So the focusable element is
-		// always content here.
-		expect(document.activeElement).toBe(getByTestId("content"));
+		const closeButton = getByTestId("close");
+		expect(document.activeElement).toBe(closeButton);
 	});
 
-	it("doesnt close when content is clicked", async () => {
+	it("should not close when content is clicked", async () => {
 		const { user, getByTestId, queryByTestId } = await open();
 		const content = getByTestId("content");
 		await user.click(content);
-		expectIsOpen(queryByTestId);
+		await expectIsOpen(queryByTestId);
 	});
 
-	it("respects binding to the `open` prop", async () => {
+	it("should respect binding to the `open` prop", async () => {
 		const { getByTestId, queryByTestId, user } = setup();
 
 		const trigger = getByTestId("trigger");
@@ -151,26 +162,80 @@ describe("dialog", () => {
 		const toggle = getByTestId("toggle");
 		expectIsClosed(queryByTestId);
 		await user.click(toggle);
-		expectIsOpen(queryByTestId);
+		await expectIsOpen(queryByTestId);
 	});
 
-	it("respects the `closeOnOutsideClick` prop", async () => {
-		const { getByTestId, queryByTestId, user } = await open({ closeOnOutsideClick: false });
+	it("should respect the `interactOutsideBehavior: 'ignore'` prop", async () => {
+		const { getByTestId, queryByTestId, user } = await open({
+			contentProps: {
+				interactOutsideBehavior: "ignore",
+			},
+		});
 		await sleep(100);
 
 		const overlay = getByTestId("overlay");
 		await user.click(overlay);
 
-		expectIsOpen(queryByTestId);
+		await expectIsOpen(queryByTestId);
 	});
 
-	it("respects the the `closeOnEscape` prop", async () => {
+	it("should respect the the `escapeKeydownBehavior: 'ignore'` prop", async () => {
 		const { user, getByTestId, queryByTestId } = await open({
-			closeOnEscape: false,
+			contentProps: {
+				escapeKeydownBehavior: "ignore",
+			},
 		});
 
 		await user.keyboard(kbd.ESCAPE);
-		expectIsOpen(queryByTestId);
+		await expectIsOpen(queryByTestId);
 		expect(getByTestId("trigger")).not.toHaveFocus();
+	});
+
+	it("should apply the correct `aria-describedby` attribute to the `Dialog.Content` element", async () => {
+		const { getByTestId } = await open();
+
+		const content = getByTestId("content");
+		const description = getByTestId("description");
+		expect(content).toHaveAttribute("aria-describedby", description.id);
+	});
+
+	it("should apply a default `aria-level` attribute to the `Dialog.Title` element", async () => {
+		const { getByTestId } = await open();
+
+		const title = getByTestId("title");
+		expect(title).toHaveAttribute("aria-level", "2");
+	});
+
+	it("should allow setting a custom level for the `Dialog.Title` element", async () => {
+		const { getByTestId } = await open({
+			titleProps: {
+				level: 3,
+			},
+		});
+
+		const title = getByTestId("title");
+		expect(title).toHaveAttribute("aria-level", "3");
+	});
+
+	it("should keep the `aria-describedby` attribute in sync with the `Dialog.Description` id", async () => {
+		const { getByTestId, user } = await open({
+			descriptionProps: {
+				id: "description-id",
+			},
+		});
+
+		const content = getByTestId("content");
+		const description = getByTestId("description");
+		expect(description).toHaveAttribute("id", "description-id");
+		expect(content).toHaveAttribute("aria-describedby", description.id);
+
+		const updateIdButton = getByTestId("update-id");
+		await user.click(updateIdButton);
+		await user.click(updateIdButton);
+		await tick();
+
+		expect(description.id).not.toBe("description-id");
+		expect(description.id).toBe("new-id");
+		expect(content).toHaveAttribute("aria-describedby", description.id);
 	});
 });

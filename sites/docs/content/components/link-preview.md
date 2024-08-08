@@ -4,15 +4,17 @@ description: Displays a summarized preview of a linked content's details or info
 ---
 
 <script>
-	import { APISection, ComponentPreview, LinkPreviewDemo } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, LinkPreviewDemo } from '$lib/components/index.js'
 	export let schemas;
 </script>
 
-<ComponentPreview name="link-preview-demo" comp="LinkPreview">
+<ComponentPreviewV2 name="link-preview-demo" comp="LinkPreview">
 
-<LinkPreviewDemo slot="preview" />
+{#snippet preview()}
+<LinkPreviewDemo />
+{/snippet}
 
-</ComponentPreview>
+</ComponentPreviewV2>
 
 ## Structure
 

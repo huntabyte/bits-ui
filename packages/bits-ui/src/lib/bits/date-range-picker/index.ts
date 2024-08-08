@@ -1,55 +1,43 @@
-export { default as Arrow } from "./components/date-range-picker-arrow.svelte";
-export { default as Cell } from "./components/date-range-picker-cell.svelte";
-export { default as Day } from "./components/date-range-picker-day.svelte";
-export { default as Heading } from "./components/date-range-picker-heading.svelte";
-export { default as NextButton } from "./components/date-range-picker-next-button.svelte";
-export { default as PrevButton } from "./components/date-range-picker-prev-button.svelte";
-export { default as Calendar } from "./components/date-range-picker-calendar.svelte";
-export { default as Close } from "./components/date-range-picker-close.svelte";
-export { default as Content } from "./components/date-range-picker-content.svelte";
-export { default as Field } from "./components/date-range-picker-field.svelte";
-export { default as Input } from "./components/date-range-picker-input.svelte";
-export { default as Label } from "./components/date-range-picker-label.svelte";
-export { default as Segment } from "./components/date-range-picker-segment.svelte";
-export { default as Trigger } from "./components/date-range-picker-trigger.svelte";
 export { default as Root } from "./components/date-range-picker.svelte";
-export { default as Grid } from "./components/date-range-picker-grid.svelte";
-export { default as GridBody } from "./components/date-range-picker-grid-body.svelte";
-export { default as GridHead } from "./components/date-range-picker-grid-head.svelte";
-export { default as GridRow } from "./components/date-range-picker-grid-row.svelte";
-export { default as HeadCell } from "./components/date-range-picker-head-cell.svelte";
-export { default as Header } from "./components/date-range-picker-header.svelte";
+export { default as Calendar } from "./components/date-range-picker-calendar.svelte";
+export { default as Trigger } from "./components/date-range-picker-trigger.svelte";
+export { default as Content } from "$lib/bits/date-picker/components/date-picker-content.svelte";
+export { Arrow } from "$lib/bits/popover/index.js";
+export { default as Close } from "$lib/bits/popover/components/popover-close.svelte";
+export { default as Input } from "$lib/bits/date-range-field/components/date-range-field-input.svelte";
+export { default as Label } from "$lib/bits/date-range-field/components/date-range-field-label.svelte";
+export { default as Segment } from "$lib/bits/date-field/components/date-field-segment.svelte";
+export { default as GridBody } from "$lib/bits/calendar/components/calendar-grid-body.svelte";
+export { default as GridHead } from "$lib/bits/calendar/components/calendar-grid-head.svelte";
+export { default as GridRow } from "$lib/bits/calendar/components/calendar-grid-row.svelte";
+export { default as Grid } from "$lib/bits/calendar/components/calendar-grid.svelte";
+export { default as HeadCell } from "$lib/bits/calendar/components/calendar-head-cell.svelte";
+export { default as Header } from "$lib/bits/calendar/components/calendar-header.svelte";
+export { default as Heading } from "$lib/bits/calendar/components/calendar-heading.svelte";
+export { default as NextButton } from "$lib/bits/calendar/components/calendar-next-button.svelte";
+export { default as PrevButton } from "$lib/bits/calendar/components/calendar-prev-button.svelte";
+export { default as Cell } from "$lib/bits/range-calendar/components/range-calendar-cell.svelte";
+export { default as Day } from "$lib/bits/range-calendar/components/range-calendar-day.svelte";
 
 export type {
-	DateRangePickerProps as Props,
-	DateRangePickerCalendarProps as CalendarProps,
+	DateRangePickerRootProps as RootProps,
 	DateRangePickerLabelProps as LabelProps,
-	DateRangePickerDescriptionProps as DescriptionProps,
 	DateRangePickerInputProps as InputProps,
 	DateRangePickerSegmentProps as SegmentProps,
+	DateRangePickerArrowProps as ArrowProps,
+	DateRangePickerCloseProps as CloseProps,
+	DateRangePickerContentProps as ContentProps,
+	DateRangePickerTriggerProps as TriggerProps,
+	DateRangePickerCalendarProps as CalendarProps,
 	DateRangePickerCellProps as CellProps,
 	DateRangePickerDayProps as DayProps,
 	DateRangePickerGridBodyProps as GridBodyProps,
 	DateRangePickerGridHeadProps as GridHeadProps,
-	DateRangePickerGridRowProps as GridRowProps,
 	DateRangePickerGridProps as GridProps,
+	DateRangePickerGridRowProps as GridRowProps,
 	DateRangePickerHeadCellProps as HeadCellProps,
 	DateRangePickerHeaderProps as HeaderProps,
 	DateRangePickerHeadingProps as HeadingProps,
 	DateRangePickerNextButtonProps as NextButtonProps,
 	DateRangePickerPrevButtonProps as PrevButtonProps,
-	DateRangePickerTriggerProps as TriggerProps,
-	DateRangePickerContentProps as ContentProps,
-	DateRangePickerArrowProps as ArrowProps,
-	DateRangePickerCloseProps as CloseProps,
-	//
-	// Events
-	//
-	DateRangePickerCloseEvents as CloseEvents,
-	DateRangePickerTriggerEvents as TriggerEvents,
-	DateRangePickerCalendarEvents as CalendarEvents,
-	DateRangePickerDayEvents as DayEvents,
-	DateRangePickerPrevButtonEvents as PrevButtonEvents,
-	DateRangePickerNextButtonEvents as NextButtonEvents,
-	DateRangePickerSegmentEvents as SegmentEvents,
 } from "./types.js";

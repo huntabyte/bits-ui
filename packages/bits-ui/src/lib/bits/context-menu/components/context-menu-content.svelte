@@ -1,105 +1,111 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { getCtx, updatePositioning } from "../ctx.js";
-	import type { ContentEvents, ContentProps } from "../index.js";
-	import type { Transition } from "$lib/internal/types.js";
-	import { createDispatcher } from "$lib/internal/events.js";
+	import { box } from "svelte-toolbelt";
+	import type { ContentProps } from "../index.js";
+	import { CONTEXT_MENU_TRIGGER_ATTR, useMenuContent } from "$lib/bits/menu/menu.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { noop } from "$lib/internal/callbacks.js";
+	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
+	import { isElement } from "$lib/internal/is.js";
+	import type { InteractOutsideEvent } from "$lib/bits/utilities/dismissable-layer/types.js";
+	import Mounted from "$lib/bits/utilities/mounted.svelte";
 
-	type T = $$Generic<Transition>;
-	type In = $$Generic<Transition>;
-	type Out = $$Generic<Transition>;
-	type $$Props = ContentProps<T, In, Out>;
-	type $$Events = ContentEvents;
+	let {
+		id = useId(),
+		child,
+		children,
+		ref = $bindable(null),
+		loop = true,
+		onInteractOutside = noop,
+		// we need to explicitly pass this prop to the PopperLayer to override
+		// the default menu behavior of handling outside interactions on the trigger
+		onInteractOutsideStart = noop,
+		onEscapeKeydown = noop,
+		forceMount = false,
+		...restProps
+	}: ContentProps = $props();
 
-	export let transition: $$Props["transition"] = undefined;
-	export let transitionConfig: $$Props["transitionConfig"] = undefined;
-	export let inTransition: $$Props["inTransition"] = undefined;
-	export let inTransitionConfig: $$Props["inTransitionConfig"] = undefined;
-	export let outTransition: $$Props["outTransition"] = undefined;
-	export let outTransitionConfig: $$Props["outTransitionConfig"] = undefined;
-	export let asChild: $$Props["asChild"] = false;
-	export let id: $$Props["id"] = undefined;
-	export let alignOffset: $$Props["alignOffset"] = 0;
-	export let collisionPadding: $$Props["collisionPadding"] = 8;
-	export let avoidCollisions: $$Props["avoidCollisions"] = true;
-	export let collisionBoundary: $$Props["collisionBoundary"] = undefined;
-	export let fitViewport: $$Props["fitViewport"] = false;
-	export let strategy: $$Props["strategy"] = "absolute";
-	export let overlap: $$Props["overlap"] = false;
-	export let el: $$Props["el"] = undefined;
+	let isMounted = $state(false);
 
-	const {
-		elements: { menu },
-		states: { open },
-		ids,
-		getAttrs,
-	} = getCtx();
-
-	const dispatch = createDispatcher();
-	const attrs = getAttrs("content");
-
-	$: if (id) {
-		ids.menu.set(id);
-	}
-	$: builder = $menu;
-	$: Object.assign(builder, attrs);
-
-	$: updatePositioning({
-		alignOffset,
-		collisionPadding,
-		avoidCollisions,
-		collisionBoundary,
-		fitViewport,
-		strategy,
-		overlap,
+	const contentState = useMenuContent({
+		id: box.with(() => id),
+		loop: box.with(() => loop),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
+		isMounted: box.with(() => isMounted),
 	});
+
+	function handleInteractOutsideStart(e: InteractOutsideEvent) {
+		if (!isElement(e.target)) return;
+		if (e.target.id === contentState.parentMenu.triggerNode?.id) {
+			e.preventDefault();
+			return;
+		}
+		if (e.target.closest(`#${contentState.parentMenu.triggerNode?.id}`)) {
+			e.preventDefault();
+		}
+	}
+
+	const mergedProps = $derived(
+		mergeProps(restProps, contentState.props, {
+			onInteractOutsideStart: handleInteractOutsideStart,
+		})
+	);
 </script>
 
-{#if asChild && $open}
-	<slot {builder} />
-{:else if transition && $open}
-	<div
-		bind:this={el}
-		transition:transition={transitionConfig}
-		use:melt={builder}
-		{...$$restProps}
-		on:m-keydown={dispatch}
-	>
-		<slot {builder} />
-	</div>
-{:else if inTransition && outTransition && $open}
-	<div
-		bind:this={el}
-		in:inTransition={inTransitionConfig}
-		out:outTransition={outTransitionConfig}
-		use:melt={builder}
-		{...$$restProps}
-		on:m-keydown={dispatch}
-	>
-		<slot {builder} />
-	</div>
-{:else if inTransition && $open}
-	<div
-		bind:this={el}
-		in:inTransition={inTransitionConfig}
-		use:melt={builder}
-		{...$$restProps}
-		on:m-keydown={dispatch}
-	>
-		<slot {builder} />
-	</div>
-{:else if outTransition && $open}
-	<div
-		bind:this={el}
-		out:outTransition={outTransitionConfig}
-		use:melt={builder}
-		{...$$restProps}
-		on:m-keydown={dispatch}
-	>
-		<slot {builder} />
-	</div>
-{:else if $open}
-	<div bind:this={el} use:melt={builder} {...$$restProps} on:m-keydown={dispatch}>
-		<slot {builder} />
-	</div>
-{/if}
+<PopperLayer
+	{...mergedProps}
+	side="right"
+	sideOffset={2}
+	align="start"
+	present={contentState.parentMenu.open.current || forceMount}
+	{onInteractOutsideStart}
+	onInteractOutside={(e) => {
+		onInteractOutside(e);
+		if (e.defaultPrevented) return;
+		contentState.parentMenu.onClose();
+	}}
+	onEscapeKeydown={(e) => {
+		onEscapeKeydown(e);
+		if (e.defaultPrevented) return;
+		contentState.parentMenu.onClose();
+	}}
+	isValidEvent={(e) => {
+		if ("button" in e && e.button === 2) {
+			const target = e.target as HTMLElement;
+			if (!target) return false;
+			const isAnotherContextTrigger =
+				target.closest(`[${CONTEXT_MENU_TRIGGER_ATTR}]`) !==
+				contentState.parentMenu.triggerNode;
+			return isAnotherContextTrigger;
+		}
+		return false;
+	}}
+	trapFocus
+	{loop}
+>
+	{#snippet popper({ props })}
+		{@const finalProps = mergeProps(props, {
+			style: {
+				"--bits-context-menu-content-transform-origin":
+					"var(--bits-floating-transform-origin)",
+				"--bits-context-menu-content-available-width":
+					"var(--bits-floating-available-width)",
+				"--bits-context-menu-content-available-height":
+					"var(--bits-floating-available-height)",
+				"--bits-context-menu-trigger-width": "var(--bits-floating-anchor-width)",
+				"--bits-context-menu-trigger-height": "var(--bits-floating-anchor-height)",
+			},
+		})}
+		{#if child}
+			{@render child({ props: finalProps })}
+		{:else}
+			<div {...finalProps}>
+				{@render children?.()}
+			</div>
+		{/if}
+		<Mounted bind:isMounted />
+	{/snippet}
+</PopperLayer>

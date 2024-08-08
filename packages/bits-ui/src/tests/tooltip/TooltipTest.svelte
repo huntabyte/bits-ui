@@ -1,17 +1,29 @@
+<script lang="ts" context="module">
+	import { Tooltip, type WithoutChildrenOrChild } from "$lib/index.js";
+
+	export type TooltipTestProps = WithoutChildrenOrChild<Tooltip.RootProps> & {
+		contentProps?: WithoutChildrenOrChild<Tooltip.ContentProps>;
+		portalProps?: WithoutChildrenOrChild<Tooltip.PortalProps>;
+	};
+</script>
+
 <script lang="ts">
-	import { Tooltip } from "$lib/index.js";
-
-	type $$Props = Tooltip.Props;
-
-	export let open: $$Props["open"] = false;
+	let { open = false, portalProps, contentProps, ...restProps }: TooltipTestProps = $props();
 </script>
 
 <main data-testid="main">
-	<Tooltip.Root bind:open {...$$restProps} openDelay={50} closeDelay={50}>
-		<Tooltip.Trigger data-testid="trigger">@sveltejs</Tooltip.Trigger>
-		<Tooltip.Content data-testid="content" class="w-80">Content</Tooltip.Content>
-	</Tooltip.Root>
-	<button data-testid="binding" on:click={() => (open = !open)}>{open}</button>
-	<div data-testid="outside">outside</div>
+	<Tooltip.Provider delayDuration={0}>
+		<Tooltip.Root bind:open {...restProps}>
+			<Tooltip.Trigger data-testid="trigger">@sveltejs</Tooltip.Trigger>
+			<Tooltip.Portal {...portalProps}>
+				<Tooltip.Content {...contentProps} data-testid="content" class="w-80">
+					Content
+				</Tooltip.Content>
+			</Tooltip.Portal>
+		</Tooltip.Root>
+	</Tooltip.Provider>
+	<button data-testid="binding" onclick={() => (open = !open)}>{open}</button>
+	<div class="h-96"></div>
+	<div data-testid="outside" class="">outside</div>
 </main>
 <div data-testid="portal-target" id="portal-target"></div>

@@ -4,15 +4,17 @@ description: Allows users to select a value from a continuous range by sliding a
 ---
 
 <script>
-	import { APISection, ComponentPreview, SliderDemo } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, SliderDemo } from '$lib/components/index.js'
 	export let schemas;
 </script>
 
-<ComponentPreview name="slider-demo" comp="Slider">
+<ComponentPreviewV2 name="slider-demo" comp="Slider">
 
-<SliderDemo slot="preview" />
+{#snippet preview()}
+<SliderDemo />
+{/snippet}
 
-</ComponentPreview>
+</ComponentPreviewV2>
 
 ## Structure
 

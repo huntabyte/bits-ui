@@ -1,20 +1,44 @@
-import type { HTMLButtonAttributes, HTMLInputAttributes } from "svelte/elements";
-import type { CreateCheckboxProps as MeltCheckboxProps } from "@melt-ui/svelte";
-import type { CustomEventHandler } from "$lib/index.js";
-import type {
-	DOMEl,
-	DOMElement,
-	Expand,
-	HTMLDivAttributes,
-	OmitChecked,
-	OnChangeFn,
-} from "$lib/internal/index.js";
+import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
+import type { PrimitiveButtonAttributes } from "$lib/shared/attributes.js";
 
-export type CheckboxPropsWithoutHTML = Expand<
-	OmitChecked<MeltCheckboxProps> & {
+export type CheckboxRootSnippetProps = { checked: boolean | "indeterminate" };
+
+export type CheckboxRootPropsWithoutHTML = WithChild<
+	{
 		/**
-		 * The state of the checkbox.
-		 * You can bind this to a boolean value to programmatically control the checked state.
+		 * Whether the checkbox is disabled.
+		 *
+		 * @defaultValue false
+		 */
+		disabled?: boolean | null | undefined;
+
+		/**
+		 * Whether the checkbox is required (for form validation).
+		 *
+		 * @defaultValue false
+		 */
+		required?: boolean;
+
+		/**
+		 * The name of the checkbox used in form submission.
+		 * If not provided, the hidden input will not be rendered.
+		 *
+		 * @defaultValue undefined
+		 */
+		name?: string;
+
+		/**
+		 * The value of the checkbox used in form submission.
+		 *
+		 * @defaultValue undefined
+		 */
+		value?: string;
+
+		/**
+		 * The checked state of the checkbox. It can be one of:
+		 * - `true` for checked
+		 * - `false` for unchecked
+		 * - `"indeterminate"` for indeterminate
 		 *
 		 * @defaultValue false
 		 */
@@ -23,19 +47,10 @@ export type CheckboxPropsWithoutHTML = Expand<
 		/**
 		 * A callback function called when the checked state changes.
 		 */
-		onCheckedChange?: OnChangeFn<boolean | "indeterminate"> | undefined;
-	} & DOMElement<HTMLButtonElement>
+		onCheckedChange?: OnChangeFn<boolean | "indeterminate">;
+	},
+	CheckboxRootSnippetProps
 >;
 
-export type CheckboxIndicatorPropsWithoutHTML = DOMElement;
-
-export type CheckboxProps = CheckboxPropsWithoutHTML & HTMLButtonAttributes;
-
-export type CheckboxIndicatorProps = CheckboxIndicatorPropsWithoutHTML & HTMLDivAttributes;
-
-export type CheckboxInputProps = Omit<HTMLInputAttributes, "value"> & DOMEl<HTMLInputElement>;
-
-export type CheckboxEvents = {
-	click: CustomEventHandler<MouseEvent, HTMLButtonElement>;
-	keydown: CustomEventHandler<KeyboardEvent, HTMLButtonElement>;
-};
+export type CheckboxRootProps = CheckboxRootPropsWithoutHTML &
+	Without<PrimitiveButtonAttributes, CheckboxRootPropsWithoutHTML>;

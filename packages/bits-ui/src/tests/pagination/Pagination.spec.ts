@@ -1,13 +1,11 @@
-// NOTE: these tests were shamelessly copied from melt-ui 🥲
 import { render } from "@testing-library/svelte";
-import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
-import { isHTMLElement } from "@melt-ui/svelte/internal/helpers";
-import PaginationTest from "./PaginationTest.svelte";
-import type { Pagination } from "$lib/index.js";
+import { setupUserEvents } from "../utils.js";
+import PaginationTest, { type PaginationTestProps } from "./PaginationTest.svelte";
+import { isHTMLElement } from "$lib/internal/is.js";
 
-function setup(props: Pagination.Props = { count: 100 }) {
-	const user = userEvent.setup();
+function setup(props: PaginationTestProps = { count: 100 }) {
+	const user = setupUserEvents();
 	const returned = render(PaginationTest, { ...props });
 
 	const root = returned.getByTestId("root");
@@ -38,37 +36,37 @@ function getValue(el: HTMLElement) {
 }
 
 describe("pagination", () => {
-	it("no accessibility violations", async () => {
+	it("should have no  accessibility violations", async () => {
 		const { container } = render(PaginationTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
-	it("previous and Next button should work accordingly", async () => {
-		const { root, prev, next } = setup();
+	it("should navigate previous and Next button accordingly", async () => {
+		const { root, prev, next, user } = setup();
 
-		await expect(getValue(root)).toBe("1");
-		await prev.click();
-		await expect(getValue(root)).toBe("1");
-		await next.click();
-		await expect(getValue(root)).toBe("2");
-		await next.click();
-		await expect(getValue(root)).toBe("3");
-		await prev.click();
-		await expect(getValue(root)).toBe("2");
+		expect(getValue(root)).toBe("1");
+		await user.click(prev);
+		expect(getValue(root)).toBe("1");
+		await user.click(next);
+		expect(getValue(root)).toBe("2");
+		await user.click(next);
+		expect(getValue(root)).toBe("3");
+		await user.click(prev);
+		expect(getValue(root)).toBe("2");
 	});
 
 	it("should change on clicked button", async () => {
-		const { getByTestId } = await render(PaginationTest);
+		const { getByTestId, user } = setup();
 
 		const root = getByTestId("root");
 		const page2 = getPageButton(root, 2);
 
-		await expect(getValue(root)).toBe("1");
-		await page2.click();
-		await expect(getValue(root)).toBe("2");
+		expect(getValue(root)).toBe("1");
+		await user.click(page2);
+		expect(getValue(root)).toBe("2");
 
 		const page10 = getPageButton(root, 10);
-		await page10.click();
-		await expect(getValue(root)).toBe("10");
+		await user.click(page10);
+		expect(getValue(root)).toBe("10");
 	});
 });

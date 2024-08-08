@@ -1,37 +1,37 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { setCtx } from "../ctx.js";
-	import type { Props } from "../index.js";
+	import { box } from "svelte-toolbelt";
+	import type { RootProps } from "../index.js";
+	import { useToolbarRoot } from "../toolbar.svelte.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/useId.js";
 
-	type $$Props = Props;
+	let {
+		child,
+		children,
+		ref = $bindable(null),
+		id = useId(),
+		orientation = "horizontal",
+		loop = true,
+		...restProps
+	}: RootProps = $props();
 
-	export let loop: $$Props["loop"] = true;
-	export let orientation: $$Props["orientation"] = undefined;
-	export let asChild: $$Props["asChild"] = false;
-	export let el: $$Props["el"] = undefined;
-
-	const {
-		elements: { root },
-		updateOption,
-		getAttrs,
-	} = setCtx({
-		loop,
-		orientation,
+	const rootState = useToolbarRoot({
+		id: box.with(() => id),
+		orientation: box.with(() => orientation),
+		loop: box.with(() => loop),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 	});
 
-	const attrs = getAttrs("root");
-
-	$: updateOption("loop", loop);
-	$: updateOption("orientation", orientation);
-
-	$: builder = $root;
-	$: Object.assign(builder, attrs);
+	const mergedProps = $derived(mergeProps(restProps, rootState.props));
 </script>
 
-{#if asChild}
-	<slot {builder} />
+{#if child}
+	{@render child({ props: mergedProps })}
 {:else}
-	<div bind:this={el} use:melt={builder} {...$$restProps}>
-		<slot {builder} />
+	<div {...mergedProps}>
+		{@render children?.()}
 	</div>
 {/if}
