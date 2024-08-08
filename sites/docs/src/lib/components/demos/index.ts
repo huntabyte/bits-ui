@@ -1,4 +1,5 @@
 export { default as AccordionDemo } from "./accordion-demo.svelte";
+export { default as NumberInputDemo } from "./number-input-demo.svelte";
 export { default as AccordionDemoCustom } from "./accordion-demo-custom.svelte";
 export { default as AccordionDemoTransitions } from "./accordion-demo-transitions.svelte";
 export { default as AlertDialogDemo } from "./alert-dialog-demo.svelte";

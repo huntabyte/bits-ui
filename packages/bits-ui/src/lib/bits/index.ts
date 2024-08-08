@@ -19,6 +19,7 @@ export * as LinkPreview from "./link-preview/index.js";
 export * as Listbox from "./listbox/index.js";
 export * as Menubar from "./menubar/index.js";
 export * as NavigationMenu from "./navigation-menu/index.js";
+export * as NumberInput from "./number-input/index.js";
 export * as Pagination from "./pagination/index.js";
 export * as PinInput from "./pin-input/index.js";
 export * as Popover from "./popover/index.js";

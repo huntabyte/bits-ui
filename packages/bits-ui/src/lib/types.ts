@@ -36,3 +36,4 @@ export type * from "$lib/bits/toggle/types.js";
 export type * from "$lib/bits/toggle-group/types.js";
 export type * from "$lib/bits/toolbar/types.js";
 export type * from "$lib/bits/tooltip/types.js";
+export type * from "$lib/bits/number-input/types.js";

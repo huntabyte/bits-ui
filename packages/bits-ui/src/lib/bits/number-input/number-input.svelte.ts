@@ -3,7 +3,9 @@ import type { NumberInputRoundingMode } from "./types.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { clearSelection, getSelection } from "$lib/internal/dom.js";
-import { isNotEmpty } from "$lib/internal/is.js";
+import { isBrowser, isNotEmpty } from "$lib/internal/is.js";
+import { createContext } from "$lib/internal/createContext.js";
+import { useRefById } from "$lib/internal/useRefById.svelte.js";
 
 type InputOperation =
 	| "range-insert"
@@ -22,9 +24,9 @@ type NumberInputStateProps = WithRefProps<{}, HTMLInputElement> &
 		locale: string;
 		localeMatcher: "lookup" | "best fit";
 		mode: "decimal" | "currency";
-		prefix: string;
-		suffix: string;
-		currency: string;
+		prefix: string | undefined;
+		suffix: string | undefined;
+		currency: string | undefined;
 		currencyDisplay: "symbol" | "code" | "name";
 		useGrouping: boolean;
 		minFractionDigits: number;
@@ -33,14 +35,13 @@ type NumberInputStateProps = WithRefProps<{}, HTMLInputElement> &
 		max: number | undefined;
 		step: number;
 		allowEmpty: boolean;
-		readonly: boolean;
-		placeholder: string | undefined;
+		readonly: boolean | null | undefined;
 		roundingMode: NumberInputRoundingMode;
-		disabled: boolean;
+		disabled: boolean | null | undefined;
 		highlightOnFocus: boolean;
 	}>;
 
-class NumberInputState {
+class NumberInputRootState {
 	#id: NumberInputStateProps["id"];
 	#ref: NumberInputStateProps["ref"];
 	#value: NumberInputStateProps["value"];
@@ -62,18 +63,17 @@ class NumberInputState {
 	#allowEmpty: NumberInputStateProps["allowEmpty"];
 	#readonly: NumberInputStateProps["readonly"];
 	#disabled: NumberInputStateProps["disabled"];
-	#placeholder: NumberInputStateProps["placeholder"];
 	#highlightOnFocus: NumberInputStateProps["highlightOnFocus"];
 	//
-	#numberFormat: Intl.NumberFormat;
-	#numeralExp: RegExp;
-	#groupExp: RegExp;
-	#minusSignExp: RegExp;
-	#decimalExp: RegExp;
-	#suffixExp: RegExp;
-	#prefixExp: RegExp;
-	#currencyExp: RegExp;
-	#index: (n: string) => number | undefined;
+	#numberFormat = undefined as unknown as Intl.NumberFormat;
+	#numeralExp = undefined as unknown as RegExp;
+	#groupExp = undefined as unknown as RegExp;
+	#minusSignExp = undefined as unknown as RegExp;
+	#decimalExp = undefined as unknown as RegExp;
+	#suffixExp = undefined as unknown as RegExp;
+	#prefixExp = undefined as unknown as RegExp;
+	#currencyExp = undefined as unknown as RegExp;
+	#index = undefined as unknown as (n: string) => number | undefined;
 	#groupChar: string = "";
 	#isSpecialChar: boolean | null = null;
 	#prefixChar: string | undefined = undefined;
@@ -90,7 +90,7 @@ class NumberInputState {
 		const val =
 			this.#value.current === null && !this.#allowEmpty.current ? 0 : this.#value.current;
 
-		return this.#formatValue(val!);
+		return this.#formatValue(Number(val));
 	});
 
 	constructor(props: NumberInputStateProps) {
@@ -114,27 +114,38 @@ class NumberInputState {
 		this.#allowEmpty = props.allowEmpty;
 		this.#readonly = props.readonly;
 		this.#disabled = props.disabled;
-		this.#placeholder = props.placeholder;
 		this.#roundingMode = props.roundingMode;
 		this.#highlightOnFocus = props.highlightOnFocus;
 
-		this.#numberFormat = new Intl.NumberFormat(this.#locale.current, this.#numberFormatOpts);
+		$effect(() => {
+			untrack(() => {
+				this.#numberFormat = new Intl.NumberFormat(
+					this.#locale.current,
+					this.#numberFormatOpts
+				);
 
-		const numerals = [
-			...new Intl.NumberFormat(this.#locale.current, { useGrouping: false }).format(
-				9876543210
-			),
-		].reverse();
-		const index = new Map(numerals.map((d, i) => [d, i]));
+				const numerals = [
+					...new Intl.NumberFormat(this.#locale.current, { useGrouping: false }).format(
+						9876543210
+					),
+				].reverse();
+				const index = new Map(numerals.map((d, i) => [d, i]));
 
-		this.#numeralExp = new RegExp(`[${numerals.join("")}]`, "g");
-		this.#groupExp = this.#getGroupingExp();
-		this.#minusSignExp = this.#getMinusSignExp();
-		this.#decimalExp = this.#getDecimalExp();
-		this.#suffixExp = this.#getSuffixExp();
-		this.#prefixExp = this.#getPrefixExp();
-		this.#currencyExp = this.#getCurrencyExp();
-		this.#index = (d) => index.get(d);
+				this.#numeralExp = new RegExp(`[${numerals.join("")}]`, "g");
+				this.#groupExp = this.#getGroupingExp();
+				this.#minusSignExp = this.#getMinusSignExp();
+				this.#decimalExp = this.#getDecimalExp();
+				this.#suffixExp = this.#getSuffixExp();
+				this.#prefixExp = this.#getPrefixExp();
+				this.#currencyExp = this.#getCurrencyExp();
+				this.#index = (d) => index.get(d);
+			});
+		});
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+		});
 
 		$effect(() => {});
 	}
@@ -187,7 +198,7 @@ class NumberInputState {
 		return new RegExp(
 			`[${formatter
 				.format(1.1)
-				.replace(this.#currency.current, "")
+				.replace(this.#currency.current ?? "", "")
 				.trim()
 				.replace(this.#numeralExp, "")}]`,
 			"g"
@@ -307,8 +318,8 @@ class NumberInputState {
 			.replace(this.#currencyExp, "")
 			.replace(this.#groupExp, "")
 			.replace(this.#minusSignExp, "-")
-			.replace(this.#decimalExp, ".")
-			.replace(this.#numeralExp, String(this.#index));
+			.replace(this.#decimalExp, ".");
+		// .replace(this.#numeralExp, String(this.#index(v) ?? 0));
 
 		if (!filteredValue) return null;
 		if (filteredValue === "-") {
@@ -341,10 +352,14 @@ class NumberInputState {
 
 		this.#minusSignExp.lastIndex = 0;
 
-		if (!this.#allowMinusSign && minusCharIndexOnText !== -1) return;
+		if (!this.#allowMinusSign && minusCharIndexOnText !== -1) {
+			return;
+		}
 
 		const node = this.#ref.current;
-		if (!node) return;
+		if (!node) {
+			return;
+		}
 
 		const selectionStart = node.selectionStart ?? 0;
 		const selectionEnd = node.selectionEnd ?? 0;
@@ -1010,4 +1025,37 @@ class NumberInputState {
 		}
 		this.#isSpecialChar = false;
 	};
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.current,
+				role: "spinbutton",
+				value: this.formattedValue,
+				"aria-valuemin": this.#min.current,
+				"aria-valuemax": this.#max.current,
+				"aria-valuenow": this.#value.current,
+				inputmode:
+					this.#mode.current === "decimal" && !this.#minFractionDigits.current
+						? "numeric"
+						: "decimal",
+				disabled: this.#disabled.current,
+				readonly: this.#readonly.current,
+				//
+				oninput: this.#oninput,
+				onkeydown: this.#onkeydown,
+				onkeypress: this.#onkeypress,
+				onpaste: this.#onpaste,
+				onclick: this.#onclick,
+				onfocus: this.#onfocus,
+				onblur: this.#onblur,
+			}) as const
+	);
+}
+
+const [setNumberInputRootContext, getNumberInputRootContext] =
+	createContext<NumberInputRootState>("NumberInput.Root");
+
+export function useNumberInputRoot(props: NumberInputStateProps) {
+	return setNumberInputRootContext(new NumberInputRootState(props));
 }
