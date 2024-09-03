@@ -5,6 +5,8 @@
 
 	type $$Props = Props;
 
+	export let open: $$Props["open"] = undefined;
+	export let onOpenChange: $$Props["onOpenChange"] = undefined;
 	export let value: $$Props["value"] = undefined;
 	export let onValueChange: $$Props["onValueChange"] = undefined;
 	export let placeholder: $$Props["placeholder"] = undefined;
@@ -33,6 +35,7 @@
 
 	const {
 		states: {
+			open: localOpen,
 			value: localValue,
 			placeholder: localPlaceholder,
 			isInvalid: localIsInvalid,
@@ -42,6 +45,7 @@
 		updateOption,
 		ids,
 	} = setCtx({
+    defaultOpen: open,
 		defaultValue: value,
 		defaultPlaceholder: placeholder,
 		preventDeselect,
@@ -73,6 +77,13 @@
 			if (placeholder !== next) {
 				onPlaceholderChange?.(next);
 				placeholder = next;
+			}
+			return next;
+		},
+		onOpenChange: ({ next }) => {
+			if (open !== next) {
+				onOpenChange?.(next);
+				open = next;
 			}
 			return next;
 		},
@@ -197,6 +208,7 @@
 		localValue.set(nextValue);
 	}
 	$: placeholder !== undefined && localPlaceholder.set(placeholder);
+	$: open !== undefined && localOpen.set(open);
 
 	$: updateOption("disabled", disabled);
 	$: updateOption("isDateUnavailable", isDateUnavailable);
