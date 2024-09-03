@@ -45,7 +45,7 @@
 		updateOption,
 		ids,
 	} = setCtx({
-    defaultOpen: open,
+		defaultOpen: open,
 		defaultValue: value,
 		defaultPlaceholder: placeholder,
 		preventDeselect,
