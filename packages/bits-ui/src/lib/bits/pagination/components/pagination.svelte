@@ -25,8 +25,8 @@
 		defaultPage: page,
 		onPageChange: ({ next }) => {
 			if (page !== next) {
-				onPageChange?.(next);
 				page = next;
+				onPageChange?.(next);
 			}
 
 			return next;
