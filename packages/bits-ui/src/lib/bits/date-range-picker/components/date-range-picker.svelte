@@ -7,6 +7,7 @@
 
 	export let open: $$Props["open"] = undefined;
 	export let onOpenChange: $$Props["onOpenChange"] = undefined;
+	export let portal: $$Props["portal"] = undefined;
 	export let value: $$Props["value"] = undefined;
 	export let onValueChange: $$Props["onValueChange"] = undefined;
 	export let placeholder: $$Props["placeholder"] = undefined;
@@ -54,6 +55,7 @@
 		isDateDisabled,
 		fixedWeeks,
 		calendarLabel,
+		portal,
 		disabled,
 		granularity,
 		hideTimeZone,
@@ -228,6 +230,7 @@
 	$: updateOption("weekdayFormat", weekdayFormat);
 	$: updateOption("numberOfMonths", numberOfMonths);
 	$: updateOption("onOutsideClick", onOutsideClick);
+	$: updateOption("portal", portal);
 </script>
 
 <slot
