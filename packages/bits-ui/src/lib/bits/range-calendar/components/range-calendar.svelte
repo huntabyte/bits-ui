@@ -58,7 +58,7 @@
 		value: box.with(
 			() => (value === undefined ? { start: undefined, end: undefined } : value),
 			(v) => {
-				if (!$state.is(v, value)) {
+				if (value !== v) {
 					value = v;
 					onValueChange(v as any);
 				}
