@@ -5,7 +5,7 @@ description: Learn how to use the asChild prop to render your own elements.
 
 ## Usage
 
-For certain components, we set a default underlying HTML element to wrap the `<slot/>` with. As a high level example, the `AccordionTrigger`, looks something like this:
+For certain components, we set a default underlying HTML element to wrap the `<slot/>` with. As a high level example, the `Accordion.Trigger`, looks something like this:
 
 ```svelte
 <button>
@@ -17,12 +17,12 @@ While we do allow you to set any attribute that you normally could on a button, 
 
 Each of the components that support render delegation have an optional prop called `asChild`. When set to `true`, the component will pass the `builder` as a slot prop, which you can then apply to the element of your choosing.
 
-Let's take a look at an example using the `AccordionTrigger` component:
+Let's take a look at an example using the `Accordion.Trigger` component:
 
 ```svelte
-<AccordionTrigger asChild let:builder>
+<Accordion.Trigger asChild let:builder>
 	<div use:builder.action {...builder}>Open accordion item</div>
-</AccordionTrigger>
+</Accordion.Trigger>
 ```
 
 We're passing the Melt UI builder we would normally apply to the `<button>` as a prop which can then be applied to any element we want. Keep in mind, you will need to `use:builder.action`, as well as spread the builder props onto the element you're using to retain all functionality.
