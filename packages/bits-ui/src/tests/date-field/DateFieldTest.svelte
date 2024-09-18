@@ -1,4 +1,4 @@
-<script lang="ts" context="module">
+<script lang="ts" module>
 	import { DateField, type DateFieldRootProps, type WithoutChildrenOrChild } from "$lib/index.js";
 	export type DateFieldTestProps = WithoutChildrenOrChild<DateFieldRootProps> & {
 		name?: string;

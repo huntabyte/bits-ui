@@ -1,4 +1,4 @@
-<script lang="ts" context="module">
+<script lang="ts" module>
 	import { Menubar } from "$lib/index.js";
 	export type MenubarMenuProps = Menubar.MenuProps & {
 		checked?: boolean;

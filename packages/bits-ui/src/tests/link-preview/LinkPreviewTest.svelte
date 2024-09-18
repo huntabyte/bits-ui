@@ -1,4 +1,4 @@
-<script lang="ts" context="module">
+<script lang="ts" module>
 	import { LinkPreview, type WithoutChildrenOrChild } from "$lib/index.js";
 	export type LinkPreviewTestProps = LinkPreview.RootProps & {
 		contentProps?: WithoutChildrenOrChild<LinkPreview.ContentProps>;

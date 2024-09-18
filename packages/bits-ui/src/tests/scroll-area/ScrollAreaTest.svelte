@@ -1,4 +1,4 @@
-<script lang="ts" context="module">
+<script lang="ts" module>
 	import { ScrollArea, type WithoutChildrenOrChild } from "$lib/index.js";
 
 	export type ScrollAreaTestProps = WithoutChildrenOrChild<ScrollArea.RootProps> & {

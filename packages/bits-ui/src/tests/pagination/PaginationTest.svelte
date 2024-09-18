@@ -1,4 +1,4 @@
-<script lang="ts" context="module">
+<script lang="ts" module>
 	import { Pagination, type WithoutChildrenOrChild } from "$lib/index.js";
 	export type PaginationTestProps = WithoutChildrenOrChild<Pagination.RootProps>;
 </script>
