@@ -149,15 +149,19 @@ class TooltipRootState {
 			}
 		});
 
-		watch(this.open, (isOpen) => {
-			if (!this.provider.onClose) return;
-			if (isOpen) {
-				this.provider.onOpen();
+		$effect(() => {
+			this.open.current;
+			untrack(() => {
+				if (!this.provider.onClose) return;
+				const isOpen = this.open.current;
+				if (isOpen) {
+					this.provider.onOpen();
 
-				document.dispatchEvent(new CustomEvent(TOOLTIP_OPEN_EVENT));
-			} else {
-				this.provider.onClose();
-			}
+					document.dispatchEvent(new CustomEvent(TOOLTIP_OPEN_EVENT));
+				} else {
+					this.provider.onClose();
+				}
+			});
 		});
 	}
 

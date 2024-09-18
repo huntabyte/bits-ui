@@ -1,5 +1,5 @@
 import { box } from "svelte-toolbelt";
-import { tick } from "svelte";
+import { tick, untrack } from "svelte";
 import { IsFocusWithin } from "runed";
 import {
 	FIRST_LAST_KEYS,
@@ -145,8 +145,11 @@ class MenuMenuState {
 		this.parentMenu = parentMenu;
 
 		if (parentMenu) {
-			watch(parentMenu.open, (v) => {
-				if (!v) this.open.current = false;
+			$effect(() => {
+				parentMenu.open;
+				untrack(() => {
+					if (!this.parentMenu?.open) this.open.current = false;
+				});
 			});
 		}
 	}

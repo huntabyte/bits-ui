@@ -218,16 +218,19 @@ export class CalendarRootState {
 		/**
 		 * Synchronize the placeholder value with the current value.
 		 */
-		watch(this.value, () => {
-			const value = this.value.current;
-			if (Array.isArray(value) && value.length) {
-				const lastValue = value[value.length - 1];
-				if (lastValue && this.placeholder.current !== lastValue) {
-					this.placeholder.current = lastValue;
+		$effect(() => {
+			this.value.current;
+			untrack(() => {
+				const value = this.value.current;
+				if (Array.isArray(value) && value.length) {
+					const lastValue = value[value.length - 1];
+					if (lastValue && this.placeholder.current !== lastValue) {
+						this.placeholder.current = lastValue;
+					}
+				} else if (!Array.isArray(value) && value && this.placeholder.current !== value) {
+					this.placeholder.current = value;
 				}
-			} else if (!Array.isArray(value) && value && this.placeholder.current !== value) {
-				this.placeholder.current = value;
-			}
+			});
 		});
 	}
 

@@ -58,10 +58,8 @@
 		value: box.with(
 			() => (value === undefined ? { start: undefined, end: undefined } : value),
 			(v) => {
-				if (!$state.is(v, value)) {
-					value = v;
-					onValueChange(v as any);
-				}
+				value = v;
+				onValueChange(v as any);
 			}
 		),
 		placeholder: box.with(
