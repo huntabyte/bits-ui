@@ -1,5 +1,15 @@
 # bits-ui
 
+## 0.21.14
+
+### Patch Changes
+
+- fix(Date Pickers): expose `portal` prop ([#652](https://github.com/huntabyte/bits-ui/pull/652))
+
+- fix(Pagination): call `onPageChange` _after_ setting the `page` ([#657](https://github.com/huntabyte/bits-ui/pull/657))
+
+- fix(Date Range Picker): expose missing props ([#651](https://github.com/huntabyte/bits-ui/pull/651))
+
 ## 0.21.13
 
 ### Patch Changes
