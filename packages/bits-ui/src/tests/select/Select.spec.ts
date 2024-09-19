@@ -78,7 +78,6 @@ describe("select", () => {
 
 		const item = getByTestId("1");
 		expect(item).toHaveAttribute("data-select-item");
-		1;
 	});
 
 	it("opens on click", async () => {
