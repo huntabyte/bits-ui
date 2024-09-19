@@ -11,12 +11,13 @@
 
 	const {
 		elements: { item },
-		props,
+		propsStore,
 		getAttrs,
 	} = setItem({ value, disabled });
 	const attrs = getAttrs("item");
 
-	$: builder = $item(props);
+	$: propsStore.set({ value, disabled });
+	$: builder = $item({ ...$propsStore, disabled });
 	$: Object.assign(builder, attrs);
 </script>
 

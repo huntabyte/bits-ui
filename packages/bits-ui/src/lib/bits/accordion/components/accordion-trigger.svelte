@@ -18,7 +18,9 @@
 	const dispatch = createDispatcher();
 	const attrs = getAttrs("trigger");
 
-	$: builder = $trigger(props);
+	$: builder = $trigger({
+		...$props,
+	});
 	$: Object.assign(builder, attrs);
 </script>
 

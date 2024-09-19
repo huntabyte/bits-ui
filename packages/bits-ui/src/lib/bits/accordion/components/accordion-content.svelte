@@ -22,19 +22,19 @@
 	const {
 		elements: { content },
 		helpers: { isSelected },
-		props,
+		propsStore,
 		getAttrs,
 	} = getContent();
 
 	const attrs = getAttrs("content");
 
-	$: builder = $content(props);
+	$: builder = $content({ ...$propsStore });
 	$: Object.assign(builder, attrs);
 </script>
 
-{#if asChild && $isSelected(props)}
+{#if asChild && $isSelected($propsStore.value)}
 	<slot {builder} />
-{:else if transition && $isSelected(props)}
+{:else if transition && $isSelected($propsStore.value)}
 	<div
 		bind:this={el}
 		transition:transition={transitionConfig}
@@ -43,7 +43,7 @@
 	>
 		<slot {builder} />
 	</div>
-{:else if inTransition && outTransition && $isSelected(props)}
+{:else if inTransition && outTransition && $isSelected($propsStore.value)}
 	<div
 		bind:this={el}
 		in:inTransition={inTransitionConfig}
@@ -53,15 +53,15 @@
 	>
 		<slot {builder} />
 	</div>
-{:else if inTransition && $isSelected(props)}
+{:else if inTransition && $isSelected($propsStore.value)}
 	<div bind:this={el} in:inTransition={inTransitionConfig} use:melt={builder} {...$$restProps}>
 		<slot {builder} />
 	</div>
-{:else if outTransition && $isSelected(props)}
+{:else if outTransition && $isSelected($propsStore.value)}
 	<div bind:this={el} out:outTransition={outTransitionConfig} use:melt={builder} {...$$restProps}>
 		<slot {builder} />
 	</div>
-{:else if $isSelected(props)}
+{:else if $isSelected($propsStore.value)}
 	<div bind:this={el} use:melt={builder} {...$$restProps}>
 		<slot {builder} />
 	</div>
