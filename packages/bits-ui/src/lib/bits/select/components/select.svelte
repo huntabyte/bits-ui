@@ -26,6 +26,7 @@
 	export let onOpenChange: $$Props["onOpenChange"] = undefined;
 	export let items: $$Props["items"] = [];
 	export let onOutsideClick: $$Props["onOutsideClick"] = undefined;
+	export let typeahead: $$Props["typeahead"] = undefined;
 
 	const {
 		states: { open: localOpen, selected: localSelected },
@@ -71,6 +72,7 @@
 			return next;
 		},
 		items,
+		typeahead,
 	});
 
 	const idValues = derived(
@@ -98,6 +100,7 @@
 	$: updateOption("name", name);
 	$: updateOption("multiple", multiple);
 	$: updateOption("onOutsideClick", onOutsideClick);
+	$: updateOption("typeahead", typeahead);
 </script>
 
 <slot ids={$idValues} />
