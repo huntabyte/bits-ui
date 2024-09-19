@@ -11,7 +11,7 @@
 		disabled?: boolean;
 	};
 
-	export type ComboboxSingleTestProps = WithoutChildren<ComboboxSingleRootProps> & {
+	export type ComboboxSingleTestProps = Omit<WithoutChildren<ComboboxSingleRootProps>, "type"> & {
 		contentProps?: WithoutChildrenOrChild<Combobox.ContentProps>;
 		portalProps?: WithoutChildrenOrChild<Combobox.PortalProps>;
 		inputProps?: WithoutChildrenOrChild<Combobox.InputProps>;
@@ -42,6 +42,7 @@
 
 <main data-testid="main">
 	<Combobox.Root
+		type="single"
 		bind:value
 		bind:open
 		{...restProps}

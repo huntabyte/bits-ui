@@ -5,7 +5,6 @@
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	type Props = {
-		autocomplete?: string;
 		autofocus?: boolean;
 		disabled?: boolean;
 		form?: string;

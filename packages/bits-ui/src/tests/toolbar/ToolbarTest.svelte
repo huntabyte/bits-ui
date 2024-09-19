@@ -31,8 +31,8 @@
 	<Toolbar.Root data-testid="root" {...restProps}>
 		<Toolbar.Group
 			data-testid="group-multiple"
-			bind:value={style}
 			type="multiple"
+			bind:value={style}
 			{...multipleProps}
 		>
 			<Toolbar.GroupItem

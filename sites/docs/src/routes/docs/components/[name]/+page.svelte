@@ -3,6 +3,7 @@
 	import { PageHeader, PageHeaderDescription, PageHeaderHeading } from "$lib/components/index.js";
 
 	let { data } = $props();
+	const Component = $derived(data.component);
 </script>
 
 <div class="markdown pb-24">
@@ -10,5 +11,5 @@
 		<PageHeaderHeading>{data.metadata.title}</PageHeaderHeading>
 		<PageHeaderDescription>{data.metadata.description}</PageHeaderDescription>
 	</PageHeader>
-	<svelte:component this={data.component} schemas={data.schemas} />
+	<Component schemas={data.schemas} />
 </div>

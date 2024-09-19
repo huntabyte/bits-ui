@@ -67,8 +67,9 @@
 			sideOffset={10}
 			class="z-50 max-h-[400px] max-w-[600px] overflow-auto rounded-card bg-background shadow-popover"
 		>
+			{@const TypeDef = typeDef}
 			<div class="[&_[data-line]]:!pr-2.5 [&_pre]:!my-0 [&_pre]:!mb-0 [&_pre]:!mt-0">
-				<svelte:component this={typeDef} />
+				<TypeDef />
 			</div>
 		</Popover.Content>
 	{/if}

@@ -1,4 +1,4 @@
-<script module>
+<script lang="ts" module>
 	export {
 		a,
 		blockquote,
@@ -26,4 +26,5 @@
 	let { title, description }: { title: string; description: string } = $props();
 </script>
 
+<!-- svelte-ignore slot_element_deprecated -->
 <slot {title} {description} />
