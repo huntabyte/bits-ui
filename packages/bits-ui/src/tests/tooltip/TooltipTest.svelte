@@ -1,4 +1,4 @@
-<script lang="ts" context="module">
+<script lang="ts" module>
 	import { Tooltip, type WithoutChildrenOrChild } from "$lib/index.js";
 
 	export type TooltipTestProps = WithoutChildrenOrChild<Tooltip.RootProps> & {

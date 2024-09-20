@@ -1,4 +1,4 @@
-<script lang="ts" context="module">
+<script lang="ts" module>
 	import { Slider } from "$lib/index.js";
 
 	export type SliderRangeTestProps = Slider.RootProps;

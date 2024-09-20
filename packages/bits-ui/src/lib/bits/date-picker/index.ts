@@ -1,6 +1,7 @@
 export { default as Root } from "./components/date-picker.svelte";
 export { default as Calendar } from "./components/date-picker-calendar.svelte";
 export { default as Content } from "./components/date-picker-content.svelte";
+export { default as ContentStatic } from "./components/date-picker-content-static.svelte";
 export { default as Trigger } from "./components/date-picker-trigger.svelte";
 export { Arrow } from "$lib/bits/popover/index.js";
 export { default as Close } from "$lib/bits/popover/components/popover-close.svelte";
@@ -27,6 +28,7 @@ export type {
 	DatePickerArrowProps as ArrowProps,
 	DatePickerCloseProps as CloseProps,
 	DatePickerContentProps as ContentProps,
+	DatePickerContentStaticProps as ContentStaticProps,
 	DatePickerTriggerProps as TriggerProps,
 	DatePickerCalendarProps as CalendarProps,
 	DatePickerCellProps as CellProps,

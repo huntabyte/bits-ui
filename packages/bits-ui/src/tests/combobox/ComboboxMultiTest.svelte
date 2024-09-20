@@ -1,4 +1,4 @@
-<script lang="ts" context="module">
+<script lang="ts" module>
 	import {
 		Combobox,
 		type ComboboxMultipleRootProps,
@@ -12,7 +12,10 @@
 		disabled?: boolean;
 	};
 
-	export type ComboboxMultipleTestProps = WithoutChildren<ComboboxMultipleRootProps> & {
+	export type ComboboxMultipleTestProps = Omit<
+		WithoutChildren<ComboboxMultipleRootProps>,
+		"type"
+	> & {
 		contentProps?: WithoutChildrenOrChild<Combobox.ContentProps>;
 		portalProps?: WithoutChildrenOrChild<Combobox.PortalProps>;
 		inputProps?: WithoutChildrenOrChild<Combobox.InputProps>;
@@ -45,6 +48,7 @@
 	<Combobox.Root
 		bind:value
 		bind:open
+		type="multiple"
 		{...restProps}
 		onOpenChange={(v) => {
 			onOpenChange?.(v);

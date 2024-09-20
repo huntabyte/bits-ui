@@ -415,6 +415,13 @@ export const floatingStrategyProp = createEnumProp({
 	definition: FloatingStrategyProp,
 });
 
+export const floatingCustomAnchorProp = createUnionProp({
+	options: ["string", "HTMLElement", "Measurable", "null"],
+	description:
+		"Use an element other than the trigger to anchor the content to. If provided, the content will be anchored to the provided element instead of the trigger.",
+	default: "null",
+});
+
 export const preventScrollProp = createBooleanProp({
 	description:
 		"When `true`, prevents the body from scrolling when the content is open. This is useful when you want to use the content as a modal.",
@@ -439,6 +446,7 @@ export function floatingProps(props?: {
 		updatePositionStrategy: floatingUpdatePositionStrategyProp,
 		strategy: floatingStrategyProp,
 		preventScroll: preventScrollProp,
+		customAnchor: floatingCustomAnchorProp,
 	} as const;
 }
 

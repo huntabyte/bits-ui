@@ -1,4 +1,4 @@
-<script lang="ts" context="module">
+<script lang="ts" module>
 	import { Dialog, type WithoutChildrenOrChild } from "$lib/index.js";
 	export type DialogTestProps = Dialog.RootProps & {
 		contentProps?: Omit<Dialog.ContentProps, "asChild" | "child" | "children">;

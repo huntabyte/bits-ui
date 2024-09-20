@@ -566,23 +566,26 @@ export function useMonthViewPlaceholderSync({
 	numberOfMonths,
 	setMonths,
 }: UseMonthViewPlaceholderSyncProps) {
-	watch(placeholder, () => {
-		/**
-		 * If the placeholder's month is already in this visible months,
-		 * we don't need to do anything.
-		 */
-		if (getVisibleMonths().some((month) => isSameMonth(month, placeholder.current))) {
-			return;
-		}
+	$effect(() => {
+		placeholder.current;
+		untrack(() => {
+			/**
+			 * If the placeholder's month is already in this visible months,
+			 * we don't need to do anything.
+			 */
+			if (getVisibleMonths().some((month) => isSameMonth(month, placeholder.current))) {
+				return;
+			}
 
-		const defaultMonthProps = {
-			weekStartsOn: weekStartsOn.current,
-			locale: locale.current,
-			fixedWeeks: fixedWeeks.current,
-			numberOfMonths: numberOfMonths.current,
-		};
+			const defaultMonthProps = {
+				weekStartsOn: weekStartsOn.current,
+				locale: locale.current,
+				fixedWeeks: fixedWeeks.current,
+				numberOfMonths: numberOfMonths.current,
+			};
 
-		setMonths(createMonths({ ...defaultMonthProps, dateObj: placeholder.current }));
+			setMonths(createMonths({ ...defaultMonthProps, dateObj: placeholder.current }));
+		});
 	});
 }
 

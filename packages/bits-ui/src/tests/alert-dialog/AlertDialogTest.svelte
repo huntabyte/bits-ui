@@ -1,4 +1,4 @@
-<script lang="ts" context="module">
+<script lang="ts" module>
 	import { AlertDialog, type WithoutChildrenOrChild } from "$lib/index.js";
 	export type AlertDialogTestProps = AlertDialog.RootProps & {
 		contentProps?: Omit<AlertDialog.ContentProps, "asChild" | "child" | "children">;

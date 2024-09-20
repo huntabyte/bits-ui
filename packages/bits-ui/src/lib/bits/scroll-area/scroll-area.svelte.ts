@@ -374,7 +374,7 @@ class ScrollAreaScrollbarVisibleState {
 	root: ScrollAreaRootState;
 	thumbNode = $state<HTMLElement | null>(null);
 	pointerOffset = $state(0);
-	sizes = $state.frozen<Sizes>({
+	sizes = $state.raw<Sizes>({
 		content: 0,
 		viewport: 0,
 		scrollbar: { size: 0, paddingStart: 0, paddingEnd: 0 },
@@ -696,7 +696,7 @@ class ScrollAreaScrollbarSharedState {
 	scrollbarState: ScrollbarAxis;
 	root: ScrollAreaRootState;
 	scrollbarVis: ScrollAreaScrollbarVisibleState;
-	rect = $state.frozen<DOMRect | null>(null);
+	rect = $state.raw<DOMRect | null>(null);
 	prevWebkitUserSelect = $state<string>("");
 	handleResize: () => void;
 	handleThumbPositionChange: () => void;

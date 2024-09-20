@@ -10,13 +10,13 @@
 	import Check from "phosphor-svelte/lib/Check";
 	import DotOutline from "phosphor-svelte/lib/DotOutline";
 
-	let notifications = $state(false);
+	let notifications = $state<"indeterminate" | boolean>(false);
 	let invited = $state("");
 </script>
 
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger
-		class="focus-visible border-bordinput bg-backgrounder-lt text-a-foreground inline-flex h-10 w-10 items-center justify-center rounded-full border text-sm font-medium shadow-btn hover:bg-muted focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
+		class="focus-visible border-bordinput bg-backgrounder-lt text-a-foreground inline-flex h-10 w-10 select-none items-center justify-center rounded-full border text-sm font-medium shadow-btn hover:bg-muted focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
 	>
 		<DotsThree class="h-6 w-6 text-foreground" />
 	</DropdownMenu.Trigger>

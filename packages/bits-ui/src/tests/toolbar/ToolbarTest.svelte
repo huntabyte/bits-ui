@@ -1,4 +1,4 @@
-<script lang="ts" context="module">
+<script lang="ts" module>
 	import { Toolbar, type WithoutChildrenOrChild } from "$lib/index.js";
 	export type ToolbarTestProps = WithoutChildrenOrChild<Toolbar.RootProps> & {
 		multipleProps?: Partial<Toolbar.GroupProps>;
@@ -31,8 +31,8 @@
 	<Toolbar.Root data-testid="root" {...restProps}>
 		<Toolbar.Group
 			data-testid="group-multiple"
-			bind:value={style}
 			type="multiple"
+			bind:value={style}
 			{...multipleProps}
 		>
 			<Toolbar.GroupItem

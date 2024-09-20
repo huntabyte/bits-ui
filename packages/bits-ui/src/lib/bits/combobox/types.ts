@@ -5,6 +5,8 @@ export type {
 	ListboxBaseRootPropsWithoutHTML as ComboboxBaseRootPropsWithoutHTML,
 	ListboxContentProps as ComboboxContentProps,
 	ListboxContentPropsWithoutHTML as ComboboxContentPropsWithoutHTML,
+	ListboxContentStaticProps as ComboboxContentStaticProps,
+	ListboxContentStaticPropsWithoutHTML as ComboboxContentStaticPropsWithoutHTML,
 	ListboxItemProps as ComboboxItemProps,
 	ListboxItemPropsWithoutHTML as ComboboxItemPropsWithoutHTML,
 	ListboxItemSnippetProps as ComboboxItemSnippetProps,

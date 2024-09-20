@@ -1,5 +1,5 @@
 import type { PortalProps } from "../utilities/portal/types.js";
-import type { PopperLayerProps } from "../utilities/popper-layer/types.js";
+import type { PopperLayerProps, PopperLayerStaticProps } from "../utilities/popper-layer/types.js";
 import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
 import type {
 	PrimitiveButtonAttributes,
@@ -122,6 +122,13 @@ export type ListboxContentPropsWithoutHTML = WithChild<Omit<PopperLayerProps, "c
 
 export type ListboxContentProps = ListboxContentPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, ListboxContentPropsWithoutHTML>;
+
+export type ListboxContentStaticPropsWithoutHTML = WithChild<
+	Omit<PopperLayerStaticProps, "content">
+>;
+
+export type ListboxContentStaticProps = ListboxContentStaticPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, ListboxContentStaticPropsWithoutHTML>;
 
 export type ListboxTriggerPropsWithoutHTML = WithChild;
 

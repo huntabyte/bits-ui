@@ -1,3 +1,4 @@
+import type { HTMLSelectAttributes } from "svelte/elements";
 import type { PopperLayerProps } from "../utilities/popper-layer/types.js";
 import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
 import type { OnChangeFn, WithChild, WithChildren, Without } from "$lib/internal/types.js";
@@ -43,7 +44,7 @@ export type SelectRootPropsWithoutHTML = WithChildren<{
 	/**
 	 * The native HTML select autocomplete attribute.
 	 */
-	autocomplete?: string;
+	autocomplete?: HTMLSelectAttributes["autocomplete"];
 
 	/**
 	 * The native HTML select `form` attribute.

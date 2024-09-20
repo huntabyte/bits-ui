@@ -1,4 +1,4 @@
-<script lang="ts" context="module">
+<script lang="ts" module>
 	import { Calendar, type CalendarMultipleRootProps } from "$lib/index.js";
 
 	export type CalendarMultiTestProps = CalendarMultipleRootProps;

@@ -86,20 +86,24 @@ class NavigationMenuRootState {
 			ref: this.rootRef,
 		});
 
-		watch(this.value, (curr) => {
-			const isOpen = curr !== "";
-			const hasSkipDelayDuration = this.skipDelayDuration.current > 0;
+		$effect(() => {
+			this.value.current;
+			untrack(() => {
+				const curr = this.value.current;
+				const isOpen = curr !== "";
+				const hasSkipDelayDuration = this.skipDelayDuration.current > 0;
 
-			if (isOpen) {
-				window.clearTimeout(this.skipDelayTimer);
-				if (hasSkipDelayDuration) this.isOpenDelayed = false;
-			} else {
-				window.clearTimeout(this.skipDelayTimer);
-				this.skipDelayTimer = window.setTimeout(
-					() => (this.isOpenDelayed = true),
-					this.skipDelayDuration.current
-				);
-			}
+				if (isOpen) {
+					window.clearTimeout(this.skipDelayTimer);
+					if (hasSkipDelayDuration) this.isOpenDelayed = false;
+				} else {
+					window.clearTimeout(this.skipDelayTimer);
+					this.skipDelayTimer = window.setTimeout(
+						() => (this.isOpenDelayed = true),
+						this.skipDelayDuration.current
+					);
+				}
+			});
 		});
 
 		$effect(() => {

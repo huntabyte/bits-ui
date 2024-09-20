@@ -1,4 +1,4 @@
-<script lang="ts" context="module">
+<script lang="ts" module>
 	import type { MultipleToggleGroupRootProps, WithoutChildrenOrChild } from "$lib/index.js";
 	import { ToggleGroup } from "$lib/index.js";
 	export type Item = {

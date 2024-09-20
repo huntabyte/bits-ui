@@ -1,6 +1,7 @@
 import { box } from "svelte-toolbelt";
-import { tick } from "svelte";
+import { tick, untrack } from "svelte";
 import { IsFocusWithin } from "runed";
+import type { InteractOutsideEvent } from "../utilities/dismissable-layer/types.js";
 import {
 	FIRST_LAST_KEYS,
 	type GraceIntent,
@@ -12,16 +13,12 @@ import {
 	isMouseEvent,
 } from "./utils.js";
 import { focusFirst } from "$lib/internal/focus.js";
-import {
-	type ReadableBoxedValues,
-	type WritableBoxedValues,
-	watch,
-} from "$lib/internal/box.svelte.js";
+import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { addEventListener } from "$lib/internal/events.js";
 import type { AnyFn, WithRefProps } from "$lib/internal/types.js";
 import { executeCallbacks } from "$lib/internal/executeCallbacks.js";
 import { useTypeahead } from "$lib/internal/useTypeahead.svelte.js";
-import { isElement, isHTMLElement } from "$lib/internal/is.js";
+import { isElement, isElementOrSVGElement, isHTMLElement } from "$lib/internal/is.js";
 import { useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import {
@@ -145,8 +142,11 @@ class MenuMenuState {
 		this.parentMenu = parentMenu;
 
 		if (parentMenu) {
-			watch(parentMenu.open, (v) => {
-				if (!v) this.open.current = false;
+			$effect(() => {
+				parentMenu.open;
+				untrack(() => {
+					if (!this.parentMenu?.open) this.open.current = false;
+				});
 			});
 		}
 	}
@@ -350,6 +350,18 @@ class MenuContentState {
 		const contentNode = this.parentMenu.contentNode;
 		contentNode?.focus();
 	}
+
+	handleInteractOutside = (e: InteractOutsideEvent) => {
+		if (!isElementOrSVGElement(e.target)) return;
+		const triggerId = this.parentMenu.triggerNode?.id;
+		if (e.target.id === triggerId) {
+			e.preventDefault();
+			return;
+		}
+		if (e.target.closest(`#${triggerId}`)) {
+			e.preventDefault();
+		}
+	};
 
 	props = $derived.by(
 		() =>

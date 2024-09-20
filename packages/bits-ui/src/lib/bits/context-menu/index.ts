@@ -5,6 +5,7 @@ export { default as Group } from "$lib/bits/menu/components/menu-group.svelte";
 export { default as GroupLabel } from "$lib/bits/menu/components/menu-group-label.svelte";
 export { default as Arrow } from "$lib/bits/menu/components/menu-arrow.svelte";
 export { default as Content } from "./components/context-menu-content.svelte";
+export { default as ContentStatic } from "./components/context-menu-content-static.svelte";
 export { default as Trigger } from "./components/context-menu-trigger.svelte";
 export { default as RadioItem } from "$lib/bits/menu/components/menu-radio-item.svelte";
 export { default as Separator } from "$lib/bits/menu/components/menu-separator.svelte";
@@ -28,6 +29,7 @@ export type {
 	ContextMenuSubProps as SubProps,
 	ContextMenuSubTriggerProps as SubTriggerProps,
 	ContextMenuContentProps as ContentProps,
+	ContextMenuContentStaticProps as ContentStaticProps,
 	ContextMenuTriggerProps as TriggerProps,
 	ContextMenuPortalProps as PortalProps,
 } from "./types.js";

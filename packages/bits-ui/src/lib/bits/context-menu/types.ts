@@ -25,6 +25,7 @@ export type ContextMenuTriggerProps = ContextMenuTriggerPropsWithoutHTML &
 
 export type {
 	ArrowProps as ContextMenuArrowProps,
+	ContentStaticProps as ContextMenuContentStaticProps,
 	CheckboxItemProps as ContextMenuCheckboxItemProps,
 	GroupProps as ContextMenuGroupProps,
 	ItemProps as ContextMenuItemProps,
@@ -41,6 +42,7 @@ export type {
 
 export type {
 	MenuRootPropsWithoutHTML as ContextMenuRootPropsWithoutHTML,
+	MenuContentStaticPropsWithoutHTML as ContextMenuContentStaticPropsWithoutHTML,
 	MenuArrowPropsWithoutHTML as ContextMenuArrowPropsWithoutHTML,
 	MenuCheckboxItemPropsWithoutHTML as ContextMenuCheckboxItemPropsWithoutHTML,
 	MenuGroupPropsWithoutHTML as ContextMenuGroupPropsWithoutHTML,

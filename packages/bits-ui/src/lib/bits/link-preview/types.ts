@@ -80,6 +80,22 @@ export type LinkPreviewContentPropsWithoutHTML = WithChild<
 export type LinkPreviewContentProps = LinkPreviewContentPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, LinkPreviewContentPropsWithoutHTML>;
 
+export type LinkPreviewContentStaticPropsWithoutHTML = WithChild<
+	Pick<FloatingLayerContentProps, "dir"> &
+		DismissableLayerProps &
+		EscapeLayerProps & {
+			/**
+			 * When `true`, the link preview content will be forced to mount in the DOM.
+			 *
+			 * Useful for more control over the transition behavior.
+			 */
+			forceMount?: boolean;
+		}
+>;
+
+export type LinkPreviewContentStaticProps = LinkPreviewContentStaticPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, LinkPreviewContentStaticPropsWithoutHTML>;
+
 export type LinkPreviewArrowPropsWithoutHTML = ArrowPropsWithoutHTML;
 export type LinkPreviewArrowProps = ArrowProps;
 

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { ContentProps } from "../index.js";
+	import type { ContentStaticProps } from "../index.js";
 	import { useListboxContent } from "../listbox.svelte.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
 	import { useId } from "$lib/internal/useId.js";
@@ -11,13 +11,12 @@
 		id = useId(),
 		ref = $bindable(null),
 		forceMount = false,
-		side = "bottom",
 		onInteractOutside = noop,
 		onEscapeKeydown = noop,
 		children,
 		child,
 		...restProps
-	}: ContentProps = $props();
+	}: ContentStaticProps = $props();
 
 	const contentState = useListboxContent({
 		id: box.with(() => id),
@@ -31,8 +30,8 @@
 </script>
 
 <PopperLayer
+	isStatic={true}
 	{...mergedProps}
-	{side}
 	present={contentState.root.open.current || forceMount}
 	{id}
 	onInteractOutside={(e) => {
@@ -57,14 +56,7 @@
 >
 	{#snippet popper({ props })}
 		{@const finalProps = mergeProps(props, {
-			style: {
-				"--bits-listbox-content-transform-origin": "var(--bits-floating-transform-origin)",
-				"--bits-listbox-content-available-width": "var(--bits-floating-available-width)",
-				"--bits-listbox-content-available-height": "var(--bits-floating-available-height)",
-				"--bits-listbox-trigger-width": "var(--bits-floating-anchor-width)",
-				"--bits-listbox-trigger-height": "var(--bits-floating-anchor-height)",
-				...contentState.props.style,
-			},
+			style: contentState.props.style,
 		})}
 		{#if child}
 			{@render child({ props: finalProps })}

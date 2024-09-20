@@ -1,4 +1,4 @@
-<script lang="ts" context="module">
+<script lang="ts" module>
 	import { DropdownMenu } from "$lib/index.js";
 	export type DropdownMenuTestProps = DropdownMenu.RootProps & {
 		checked?: boolean;

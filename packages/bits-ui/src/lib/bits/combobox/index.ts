@@ -7,6 +7,7 @@ export { default as Portal } from "$lib/bits/utilities/portal/portal.svelte";
 
 export {
 	Content,
+	ContentStatic,
 	Item,
 	Group,
 	GroupLabel,
@@ -18,6 +19,7 @@ export {
 export type {
 	ComboboxRootProps as RootProps,
 	ComboboxContentProps as ContentProps,
+	ComboboxContentStaticProps as ContentStaticProps,
 	ComboboxInputProps as InputProps,
 	ComboboxItemProps as ItemProps,
 	ComboboxGroupProps as GroupProps,

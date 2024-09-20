@@ -1,4 +1,4 @@
-import type { PopperLayerProps } from "../utilities/popper-layer/types.js";
+import type { PopperLayerProps, PopperLayerStaticProps } from "../utilities/popper-layer/types.js";
 import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
 import type { OnChangeFn, WithChild, WithChildren, Without } from "$lib/internal/types.js";
 import type { PrimitiveButtonAttributes, PrimitiveDivAttributes } from "$lib/shared/attributes.js";
@@ -30,6 +30,11 @@ export type MenuContentPropsWithoutHTML = WithChild<Omit<PopperLayerProps, "cont
 
 export type MenuContentProps = MenuContentPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, MenuContentPropsWithoutHTML>;
+
+export type MenuContentStaticPropsWithoutHTML = WithChild<Omit<PopperLayerStaticProps, "content">>;
+
+export type MenuContentStaticProps = MenuContentStaticPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, MenuContentStaticPropsWithoutHTML>;
 
 export type MenuItemPropsWithoutHTML<U extends Record<PropertyKey, unknown> = { _default: never }> =
 	WithChild<
@@ -72,7 +77,7 @@ export type MenuCheckboxItemPropsWithoutHTML =
 		 *
 		 * Supports two-way binding with `bind:checked`.
 		 */
-		checked?: boolean | "indeterminate" | undefined;
+		checked?: boolean | "indeterminate";
 
 		/**
 		 * A callback that is fired when the checked state changes.

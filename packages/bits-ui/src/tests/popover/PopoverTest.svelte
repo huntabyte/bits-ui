@@ -1,4 +1,4 @@
-<script lang="ts" context="module">
+<script lang="ts" module>
 	import { Popover } from "$lib/index.js";
 	export type PopoverTestProps = Popover.RootProps & {
 		contentProps?: Omit<Popover.ContentProps, "asChild" | "child" | "children">;

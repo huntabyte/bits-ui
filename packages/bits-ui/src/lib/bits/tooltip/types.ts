@@ -134,6 +134,22 @@ export type TooltipContentPropsWithoutHTML = WithChild<
 export type TooltipContentProps = TooltipContentPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, TooltipContentPropsWithoutHTML>;
 
+export type TooltipContentStaticPropsWithoutHTML = WithChild<
+	Pick<FloatingLayerContentProps, "dir"> &
+		DismissableLayerProps &
+		EscapeLayerProps & {
+			/**
+			 * When `true`, the tooltip will be forced to mount in the DOM.
+			 *
+			 * Useful for more control over the transition behavior.
+			 */
+			forceMount?: boolean;
+		}
+>;
+
+export type TooltipContentStaticProps = TooltipContentStaticPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, TooltipContentStaticPropsWithoutHTML>;
+
 export type TooltipArrowPropsWithoutHTML = ArrowPropsWithoutHTML;
 export type TooltipArrowProps = ArrowProps;
 

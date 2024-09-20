@@ -5,6 +5,7 @@ export { default as Group } from "$lib/bits/menu/components/menu-group.svelte";
 export { default as GroupLabel } from "$lib/bits/menu/components/menu-group-label.svelte";
 export { default as Arrow } from "$lib/bits/menu/components/menu-arrow.svelte";
 export { default as Content } from "./components/dropdown-menu-content.svelte";
+export { default as ContentStatic } from "./components/dropdown-menu-content-static.svelte";
 export { default as Trigger } from "$lib/bits/menu/components/menu-trigger.svelte";
 export { default as RadioItem } from "$lib/bits/menu/components/menu-radio-item.svelte";
 export { default as Separator } from "$lib/bits/menu/components/menu-separator.svelte";
@@ -18,6 +19,7 @@ export type {
 	DropdownMenuArrowProps as ArrowProps,
 	DropdownMenuCheckboxItemProps as CheckboxItemProps,
 	DropdownMenuContentProps as ContentProps,
+	DropdownMenuContentStaticProps as ContentStaticProps,
 	DropdownMenuGroupProps as GroupProps,
 	DropdownMenuItemProps as ItemProps,
 	DropdownMenuGroupLabelProps as GroupLabelProps,

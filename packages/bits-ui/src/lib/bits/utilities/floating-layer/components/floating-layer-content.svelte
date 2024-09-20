@@ -4,7 +4,6 @@
 	import type { ContentImplProps } from "./index.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { useId } from "$lib/internal/useId.js";
-	import { useBodyScrollLock } from "$lib/internal/useBodyScrollLock.svelte.js";
 
 	let {
 		content,
@@ -25,7 +24,7 @@
 		dir = "ltr",
 		style = {},
 		wrapperId = useId(),
-		preventScroll = true,
+		customAnchor = null,
 	}: ContentImplProps = $props();
 
 	const contentState = useFloatingContentState({
@@ -47,6 +46,7 @@
 		style: box.with(() => style),
 		enabled: box.with(() => false),
 		wrapperId: box.with(() => wrapperId),
+		customAnchor: box.with(() => customAnchor),
 	});
 
 	const mergedProps = $derived(
@@ -56,8 +56,6 @@
 			},
 		})
 	);
-
-	useBodyScrollLock(preventScroll);
 </script>
 
 <div {...mergedProps}>

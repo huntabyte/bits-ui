@@ -1,4 +1,4 @@
-<script lang="ts" context="module">
+<script lang="ts" module>
 	import { Tabs, type WithoutChildrenOrChild } from "$lib/index.js";
 	export type Item = {
 		value: string;

@@ -3,9 +3,7 @@ title: Transitions
 description: Learn how to use transitions with Bits UI components.
 ---
 
-Svelte Transitions are one of the awesome features of Svelte. Unfortunately, they don't play very nicely with components.
-
-This is due to the fact that they rely on various directives like `in:`, `out:`, and `transition:` to use them, which aren't supported by Svelte components.
+Svelte Transitions are one of the awesome features of Svelte. Unfortunately, they don't play very nicely with components, due to the fact that they rely on various directives like `in:`, `out:`, and `transition:`, which aren't supported by components.
 
 In previous version of Bits UI, we had a workaround for this by exposing a ton of `transition*` props on the components that we felt were most likely to be used with transitions. However, this was a bit of a hack and limited us to _only_ Svelte Transitions, and users who wanted to use other libraries or just CSS were left out.
 
@@ -45,7 +43,7 @@ The `child` snippet exposes a prop that you can use to conditionally render the 
 
 In the example above, we're using the `forceMount` prop to tell the component to forcefully mount the `Dialog.Content` component. We're then using the `child` snippet to delegate the rendering of the `Dialog.Content` to a `div` element which we can apply our props and transitions to.
 
-We understand this isn't the prettiest syntax, but it enables us to cover everyones use cases. If you intend to use this approach across your application, we recommend creating a reusable component that handles this logic, like so:
+We understand this isn't the prettiest syntax, but it enables us to cover every use case. If you intend to use this approach across your application, it's recommended to create a reusable component that handles this logic, like so:
 
 ```svelte title="MyDialogContent.svelte"
 <script lang="ts">
@@ -55,7 +53,6 @@ We understand this isn't the prettiest syntax, but it enables us to cover everyo
 
 	let {
 		ref = $bindable(null),
-		forceMount = true,
 		children,
 		...restProps
 	}: WithoutChildrenOrChild<Dialog.ContentProps> & {
@@ -63,7 +60,7 @@ We understand this isn't the prettiest syntax, but it enables us to cover everyo
 	} = $props();
 </script>
 
-<Dialog.Content bind:ref {forceMount}>
+<Dialog.Content bind:ref {...restProps} forceMount={true}>
 	{#snippet child({ props, open })}
 		{#if open}
 			<div {...props} transition:fly>

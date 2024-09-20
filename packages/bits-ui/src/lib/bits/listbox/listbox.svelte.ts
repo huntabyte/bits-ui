@@ -1,5 +1,6 @@
 import { Previous } from "runed";
 import { untrack } from "svelte";
+import type { InteractOutsideEvent } from "../utilities/dismissable-layer/types.js";
 import { afterTick } from "$lib/internal/afterTick.js";
 import { backward, forward, next, prev } from "$lib/internal/arrays.js";
 import {
@@ -688,6 +689,12 @@ class ListboxContentState {
 			};
 		}
 	});
+
+	handleInteractOutside = (e: InteractOutsideEvent) => {
+		if (e.target === this.root.triggerNode || e.target === this.root.inputNode) {
+			e.preventDefault();
+		}
+	};
 
 	props = $derived.by(
 		() =>

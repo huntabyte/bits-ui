@@ -392,57 +392,62 @@ export class SelectContentState {
 			},
 		});
 
-		watch(this.root.open, () => {
-			let cleanup = [noop];
+		$effect(() => {
+			this.root.open.current;
+			untrack(() => {
+				let cleanup = [noop];
 
-			afterTick(() => {
-				const node = document.getElementById(this.id.current);
-				if (!node) return;
+				afterTick(() => {
+					const node = document.getElementById(this.id.current);
+					if (!node) return;
 
-				let pointerMoveDelta = { x: 0, y: 0 };
+					let pointerMoveDelta = { x: 0, y: 0 };
 
-				const handlePointerMove = (e: PointerEvent) => {
-					pointerMoveDelta = {
-						x: Math.abs(
-							Math.round(e.pageX) - (this.root.triggerPointerDownPos.current?.x ?? 0)
-						),
-						y: Math.abs(
-							Math.round(e.pageY) - (this.root.triggerPointerDownPos.current?.y ?? 0)
-						),
+					const handlePointerMove = (e: PointerEvent) => {
+						pointerMoveDelta = {
+							x: Math.abs(
+								Math.round(e.pageX) -
+									(this.root.triggerPointerDownPos.current?.x ?? 0)
+							),
+							y: Math.abs(
+								Math.round(e.pageY) -
+									(this.root.triggerPointerDownPos.current?.y ?? 0)
+							),
+						};
 					};
-				};
 
-				const handlePointerUp = (e: PointerEvent) => {
-					if (e.pointerType === "touch") return;
+					const handlePointerUp = (e: PointerEvent) => {
+						if (e.pointerType === "touch") return;
 
-					if (pointerMoveDelta.x <= 10 && pointerMoveDelta.y <= 10) {
-						e.preventDefault();
-					} else {
-						if (!this.root.contentNode?.contains(e.target as HTMLElement)) {
-							this.root.handleClose();
+						if (pointerMoveDelta.x <= 10 && pointerMoveDelta.y <= 10) {
+							e.preventDefault();
+						} else {
+							if (!this.root.contentNode?.contains(e.target as HTMLElement)) {
+								this.root.handleClose();
+							}
 						}
+						document.removeEventListener("pointermove", handlePointerMove);
+						this.root.triggerPointerDownPos.current = null;
+					};
+
+					if (this.root.triggerPointerDownPos.current !== null) {
+						const pointerMove = addEventListener(
+							document,
+							"pointermove",
+							handlePointerMove
+						);
+						const pointerUp = addEventListener(document, "pointerup", handlePointerUp, {
+							capture: true,
+							once: true,
+						});
+						for (const cleanupFn of cleanup) cleanupFn();
+						cleanup = [pointerMove, pointerUp];
 					}
-					document.removeEventListener("pointermove", handlePointerMove);
-					this.root.triggerPointerDownPos.current = null;
-				};
 
-				if (this.root.triggerPointerDownPos.current !== null) {
-					const pointerMove = addEventListener(
-						document,
-						"pointermove",
-						handlePointerMove
-					);
-					const pointerUp = addEventListener(document, "pointerup", handlePointerUp, {
-						capture: true,
-						once: true,
-					});
-					for (const cleanupFn of cleanup) cleanupFn();
-					cleanup = [pointerMove, pointerUp];
-				}
-
-				return () => {
-					for (const cleanupFn of cleanup) cleanupFn();
-				};
+					return () => {
+						for (const cleanupFn of cleanup) cleanupFn();
+					};
+				});
 			});
 		});
 

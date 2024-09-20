@@ -1,11 +1,13 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { ContentProps } from "../index.js";
-	import { useMenuContent } from "$lib/bits/menu/menu.svelte.js";
+	import type { ContentStaticProps } from "../index.js";
+	import { useMenuContent } from "../menu.svelte.js";
 	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { noop } from "$lib/internal/callbacks.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
+	import { isElement } from "$lib/internal/is.js";
+	import type { InteractOutsideEvent } from "$lib/bits/utilities/dismissable-layer/types.js";
 	import Mounted from "$lib/bits/utilities/mounted.svelte";
 
 	let {
@@ -18,7 +20,7 @@
 		onEscapeKeydown = noop,
 		forceMount = false,
 		...restProps
-	}: ContentProps = $props();
+	}: ContentStaticProps = $props();
 
 	let isMounted = $state(false);
 
@@ -32,19 +34,32 @@
 		isMounted: box.with(() => isMounted),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, contentState.props));
+	function handleInteractOutsideStart(e: InteractOutsideEvent) {
+		if (!isElement(e.target)) return;
+		if (e.target.id === contentState.parentMenu.triggerNode?.id) {
+			e.preventDefault();
+			return;
+		}
+		if (e.target.closest(`#${contentState.parentMenu.triggerNode?.id}`)) {
+			e.preventDefault();
+		}
+	}
+
+	const mergedProps = $derived(
+		mergeProps(restProps, contentState.props, {
+			onInteractOutsideStart: handleInteractOutsideStart,
+			style: { outline: "none" },
+		})
+	);
 </script>
 
 <PopperLayer
+	isStatic={true}
 	{...mergedProps}
 	present={contentState.parentMenu.open.current || forceMount}
-	onInteractOutsideStart={(e) => {
-		contentState.handleInteractOutside(e);
-	}}
 	onInteractOutside={(e) => {
-		contentState.handleInteractOutside(e);
-		if (e.defaultPrevented) return;
 		onInteractOutside(e);
+		if (e.defaultPrevented) return;
 		contentState.parentMenu.onClose();
 	}}
 	onEscapeKeydown={(e) => {
@@ -58,14 +73,7 @@
 	{#snippet popper({ props })}
 		{@const finalProps = mergeProps(props, {
 			style: {
-				"--bits-dropdown-menu-content-transform-origin":
-					"var(--bits-floating-transform-origin)",
-				"--bits-dropdown-menu-content-available-width":
-					"var(--bits-floating-available-width)",
-				"--bits-dropdown-menu-content-available-height":
-					"var(--bits-floating-available-height)",
-				"--bits-dropdown-menu-trigger-width": "var(--bits-floating-anchor-width)",
-				"--bits-dropdown-menu-trigger-height": "var(--bits-floating-anchor-height)",
+				outline: "none",
 			},
 		})}
 		{#if child}

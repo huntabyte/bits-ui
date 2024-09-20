@@ -27,12 +27,8 @@ import {
 	type CalendarPrevButtonStateProps,
 } from "../calendar/calendar.svelte.js";
 import type { DateRange, Month } from "$lib/shared/index.js";
-import {
-	type ReadableBoxedValues,
-	type WritableBoxedValues,
-	watch,
-} from "$lib/internal/box.svelte.js";
-import type { OnChangeFn, WithRefProps } from "$lib/internal/types.js";
+import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
+import type { WithRefProps } from "$lib/internal/types.js";
 import { type Announcer, getAnnouncer } from "$lib/shared/date/announcer.js";
 import { type Formatter, createFormatter } from "$lib/shared/date/formatter.js";
 import { useId } from "$lib/internal/useId.js";
@@ -216,11 +212,14 @@ export class RangeCalendarRootState {
 		/**
 		 * Synchronize the placeholder value with the current start value
 		 */
-		watch(this.value, () => {
-			const startValue = this.value.current.start;
-			if (startValue && this.placeholder.current !== startValue) {
-				this.placeholder.current = startValue;
-			}
+		$effect(() => {
+			this.value.current;
+			untrack(() => {
+				const startValue = this.value.current.start;
+				if (startValue && this.placeholder.current !== startValue) {
+					this.placeholder.current = startValue;
+				}
+			});
 		});
 
 		$effect(() => {

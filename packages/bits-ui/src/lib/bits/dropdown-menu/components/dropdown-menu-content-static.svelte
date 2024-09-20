@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { ContentProps } from "../index.js";
+	import type { ContentStaticProps } from "../index.js";
 	import { useMenuContent } from "$lib/bits/menu/menu.svelte.js";
 	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
@@ -18,7 +18,7 @@
 		onEscapeKeydown = noop,
 		forceMount = false,
 		...restProps
-	}: ContentProps = $props();
+	}: ContentStaticProps = $props();
 
 	let isMounted = $state(false);
 
@@ -36,6 +36,7 @@
 </script>
 
 <PopperLayer
+	isStatic={true}
 	{...mergedProps}
 	present={contentState.parentMenu.open.current || forceMount}
 	onInteractOutsideStart={(e) => {
@@ -56,18 +57,7 @@
 	{loop}
 >
 	{#snippet popper({ props })}
-		{@const finalProps = mergeProps(props, {
-			style: {
-				"--bits-dropdown-menu-content-transform-origin":
-					"var(--bits-floating-transform-origin)",
-				"--bits-dropdown-menu-content-available-width":
-					"var(--bits-floating-available-width)",
-				"--bits-dropdown-menu-content-available-height":
-					"var(--bits-floating-available-height)",
-				"--bits-dropdown-menu-trigger-width": "var(--bits-floating-anchor-width)",
-				"--bits-dropdown-menu-trigger-height": "var(--bits-floating-anchor-height)",
-			},
-		})}
+		{@const finalProps = mergeProps(props)}
 		{#if child}
 			{@render child({ props: finalProps })}
 		{:else}

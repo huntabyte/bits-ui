@@ -45,7 +45,8 @@
 					rel={item.external ? "noreferrer" : ""}
 				>
 					{#if isIconMapKey(item.title)}
-						<svelte:component this={iconMap[item.title]} size={22} />
+						{@const Icon = iconMap[item.title]}
+						<Icon size={22} />
 					{/if}
 					{item.title}
 					{#if item.label}
