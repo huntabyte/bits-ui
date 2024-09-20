@@ -247,6 +247,8 @@ export type {
 	PopoverTriggerProps as DatePickerTriggerProps,
 	PopoverContentPropsWithoutHTML as DatePickerContentPropsWithoutHTML,
 	PopoverContentProps as DatePickerContentProps,
+	PopoverContentStaticPropsWithoutHTML as DatePickerContentStaticPropsWithoutHTML,
+	PopoverContentStaticProps as DatePickerContentStaticProps,
 	PopoverArrowPropsWithoutHTML as DatePickerArrowPropsWithoutHTML,
 	PopoverArrowProps as DatePickerArrowProps,
 	PopoverClosePropsWithoutHTML as DatePickerClosePropsWithoutHTML,

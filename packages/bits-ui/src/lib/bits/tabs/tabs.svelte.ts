@@ -194,15 +194,13 @@ class TabsTriggerState {
 
 	#onfocus = () => {
 		if (this.#root.activationMode.current !== "automatic" || this.#disabled.current) return;
-
 		this.activate();
 	};
 
 	#onclick = (e: MouseEvent) => {
-		const node = this.#ref.current;
-		if (!node || this.#isDisabled) return;
+		if (!this.#ref.current || this.#isDisabled) return;
 		e.preventDefault();
-		node.focus();
+		this.#ref.current.focus();
 		this.activate();
 	};
 
