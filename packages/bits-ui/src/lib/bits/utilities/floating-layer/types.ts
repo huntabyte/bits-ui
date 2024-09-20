@@ -95,14 +95,6 @@ export type FloatingLayerContentProps = {
 	 * You can pass a selector string or an HTMLElement.
 	 */
 	customAnchor?: string | HTMLElement | Measurable | null;
-
-	/**
-	 * Whether to opt out of using Floating UI and instead render a static element which you
-	 * can position yourself.
-	 *
-	 * @defaultValue false
-	 */
-	static?: boolean;
 };
 
 export type FloatingLayerContentImplProps = {
