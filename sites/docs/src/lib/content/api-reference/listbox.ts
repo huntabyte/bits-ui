@@ -40,6 +40,7 @@ import {
 	floatingProps,
 	focusScopeProps,
 	forceMountProp,
+	onCloseAutoFocusProp,
 	preventOverflowTextSelectionProp,
 	preventScrollProp,
 	withChildProps,
@@ -118,7 +119,7 @@ export const content = createApiSchema<ListboxContentPropsWithoutHTML>({
 		...floatingProps(),
 		...escapeLayerProps,
 		...dismissableLayerProps,
-		...focusScopeProps,
+		onCloseAutoFocus: onCloseAutoFocusProp,
 		preventOverflowTextSelection: preventOverflowTextSelectionProp,
 		dir: dirProp,
 		loop: createBooleanProp({
@@ -127,6 +128,10 @@ export const content = createApiSchema<ListboxContentPropsWithoutHTML>({
 				"Whether or not the listbox should loop through items when reaching the end.",
 		}),
 		forceMount: forceMountProp,
+		preventScroll: {
+			...preventScrollProp,
+			default: C.FALSE,
+		},
 		...withChildProps({
 			elType: "HTMLDivElement",
 			childrenDef: OpenChildrenSnippetProps,

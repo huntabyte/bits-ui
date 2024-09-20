@@ -125,14 +125,20 @@ export type _SharedListboxContentProps = {
 };
 
 export type ListboxContentPropsWithoutHTML = Expand<
-	WithChild<Omit<PopperLayerProps, "content"> & _SharedListboxContentProps>
+	WithChild<
+		Omit<PopperLayerProps, "content" | "onOpenAutoFocus" | "trapFocus"> &
+			_SharedListboxContentProps
+	>
 >;
 
 export type ListboxContentProps = ListboxContentPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, ListboxContentPropsWithoutHTML>;
 
 export type ListboxContentStaticPropsWithoutHTML = Expand<
-	WithChild<Omit<PopperLayerStaticProps, "content"> & _SharedListboxContentProps>
+	WithChild<
+		Omit<PopperLayerStaticProps, "content" | "onOpenAutoFocus" | "trapFocus"> &
+			_SharedListboxContentProps
+	>
 >;
 
 export type ListboxContentStaticProps = ListboxContentStaticPropsWithoutHTML &

@@ -16,6 +16,8 @@
 		onCloseAutoFocus = noop,
 		onEscapeKeydown = noop,
 		onInteractOutside = noop,
+		preventScroll = false,
+		trapFocus = true,
 		...restProps
 	}: ContentStaticProps = $props();
 
@@ -51,7 +53,8 @@
 		e.preventDefault();
 		contentState.root.triggerNode?.focus();
 	}}
-	trapFocus
+	{trapFocus}
+	{preventScroll}
 	loop
 	{forceMount}
 >

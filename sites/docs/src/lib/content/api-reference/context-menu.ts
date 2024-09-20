@@ -102,7 +102,7 @@ export const content = createApiSchema<ContextMenuContentPropsWithoutHTML>({
 });
 
 export const contentStatic = createApiSchema<ContextMenuContentStaticPropsWithoutHTML>({
-	title: "Content",
+	title: "ContentStatic",
 	description: "The content displayed when the context menu is open. (Static/No Floating UI)",
 	props: {
 		...escapeLayerProps,

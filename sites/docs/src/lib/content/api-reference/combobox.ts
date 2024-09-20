@@ -38,6 +38,7 @@ import {
 	floatingProps,
 	focusScopeProps,
 	forceMountProp,
+	onCloseAutoFocusProp,
 	preventOverflowTextSelectionProp,
 	preventScrollProp,
 	withChildProps,
@@ -116,7 +117,7 @@ export const content = createApiSchema<ComboboxContentPropsWithoutHTML>({
 		...floatingProps(),
 		...escapeLayerProps,
 		...dismissableLayerProps,
-		...focusScopeProps,
+		onCloseAutoFocus: onCloseAutoFocusProp,
 		preventOverflowTextSelection: preventOverflowTextSelectionProp,
 		dir: dirProp,
 		loop: createBooleanProp({
@@ -125,6 +126,10 @@ export const content = createApiSchema<ComboboxContentPropsWithoutHTML>({
 				"Whether or not the combobox should loop through items when reaching the end.",
 		}),
 		forceMount: forceMountProp,
+		preventScroll: {
+			...preventScrollProp,
+			default: C.FALSE,
+		},
 		...withChildProps({
 			elType: "HTMLDivElement",
 			childrenDef: OpenChildrenSnippetProps,
