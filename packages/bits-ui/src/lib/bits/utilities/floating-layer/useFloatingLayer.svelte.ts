@@ -295,11 +295,13 @@ class FloatingContentState {
 		useRefById({
 			id: this.wrapperId,
 			ref: this.wrapperRef,
+			condition: () => this.enabled.current,
 		});
 
 		useRefById({
 			id: this.id,
 			ref: this.contentRef,
+			condition: () => this.enabled.current,
 		});
 
 		this.floating = useFloating({
