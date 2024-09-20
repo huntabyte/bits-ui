@@ -1,4 +1,3 @@
-// Prop/Event types prefixed with the component name for convenience
 export type * from "$lib/bits/accordion/types.js";
 export type * from "$lib/bits/alert-dialog/types.js";
 export type * from "$lib/bits/aspect-ratio/types.js";

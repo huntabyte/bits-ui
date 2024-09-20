@@ -2,6 +2,7 @@ import type { DateValue } from "@internationalized/date";
 import {
 	type Formatter,
 	type Granularity,
+	type HourCycle,
 	getPlaceholder,
 	getSegments,
 	hasTime,
@@ -11,7 +12,6 @@ import type {
 	DateAndTimeSegmentObj,
 	DateSegmentPart,
 	EditableSegmentPart,
-	HourCycle,
 	SegmentContentObj,
 	SegmentPart,
 	SegmentStateMap,

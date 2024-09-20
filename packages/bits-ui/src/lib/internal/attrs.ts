@@ -1,51 +1,9 @@
-export const bits = [
-	"accordion",
-	"alert-dialog",
-	"aspect-ratio",
-	"avatar",
-	"button",
-	"calendar",
-	"checkbox",
-	"collapsible",
-	"combobox",
-	"context-menu",
-	"date-field",
-	"date-picker",
-	"date-range-field",
-	"date-range-picker",
-	"dialog",
-	"dropdown-menu",
-	"label",
-	"link-preview",
-	"menubar",
-	"pagination",
-	"pin-input",
-	"popover",
-	"progress",
-	"radio-group",
-	"range-calendar",
-	"scroll-area",
-	"select",
-	"separator",
-	"slider",
-	"switch",
-	"tabs",
-	"toggle",
-	"toggle-group",
-	"toolbar",
-	"tooltip",
-] as const;
-
 export function getDataOpenClosed(condition: boolean): "open" | "closed" {
 	return condition ? "open" : "closed";
 }
 
 export function getDataChecked(condition: boolean): "checked" | "unchecked" {
 	return condition ? "checked" : "unchecked";
-}
-
-export function dataDisabledAttrs(condition: boolean): "" | undefined {
-	return condition ? "" : undefined;
 }
 
 export function getAriaDisabled(condition: boolean): "true" | "false" {
