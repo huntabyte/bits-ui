@@ -1,7 +1,7 @@
 <script lang="ts">
 	import ScrollLock from "../scroll-lock/scroll-lock.svelte";
 	import type { PopperLayerImplProps } from "./types.js";
-	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
+	import PopperContent from "./popper-content.svelte";
 	import { EscapeLayer } from "$lib/bits/utilities/escape-layer/index.js";
 	import { DismissableLayer } from "$lib/bits/utilities/dismissable-layer/index.js";
 	import { TextSelectionLayer } from "$lib/bits/utilities/text-selection-layer/index.js";
@@ -45,13 +45,15 @@
 		trapFocus,
 		isValidEvent = () => false,
 		customAnchor = null,
+		isStatic = false,
 		...restProps
 	}: PopperLayerImplProps = $props();
 </script>
 
 <PresenceLayer {id} {present} {...restProps}>
 	{#snippet presence({ present })}
-		<FloatingLayer.Content
+		<PopperContent
+			{isStatic}
 			{id}
 			{side}
 			{sideOffset}
@@ -117,6 +119,6 @@
 					{/snippet}
 				</FocusScope>
 			{/snippet}
-		</FloatingLayer.Content>
+		</PopperContent>
 	{/snippet}
 </PresenceLayer>

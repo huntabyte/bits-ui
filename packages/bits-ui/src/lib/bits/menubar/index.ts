@@ -1,6 +1,7 @@
 export { default as Root } from "./components/menubar.svelte";
 export { default as Menu } from "./components/menubar-menu.svelte";
 export { default as Content } from "./components/menubar-content.svelte";
+export { default as ContentStatic } from "./components/menubar-content-static.svelte";
 export { default as Trigger } from "./components/menubar-trigger.svelte";
 export { default as Sub } from "$lib/bits/menu/components/menu-sub.svelte";
 export { default as Item } from "$lib/bits/menu/components/menu-item.svelte";
@@ -19,6 +20,7 @@ export type {
 	MenubarMenuProps as MenuProps,
 	MenubarTriggerProps as TriggerProps,
 	MenubarContentProps as ContentProps,
+	MenubarContentStaticProps as ContentStaticProps,
 	MenubarPortalProps as PortalProps,
 } from "./types.js";
 

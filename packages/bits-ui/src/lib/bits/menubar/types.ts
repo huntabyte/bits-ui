@@ -55,6 +55,8 @@ export type MenubarTriggerProps = MenubarTriggerPropsWithoutHTML &
 export type {
 	MenuContentPropsWithoutHTML as MenubarContentPropsWithoutHTML,
 	MenuContentProps as MenubarContentProps,
+	MenuContentStaticPropsWithoutHTML as MenubarContentStaticPropsWithoutHTML,
+	MenuContentStaticProps as MenubarContentStaticProps,
 	MenuItemPropsWithoutHTML as MenubarItemPropsWithoutHTML,
 	MenuItemProps as MenubarItemProps,
 	MenuGroupPropsWithoutHTML as MenubarGroupPropsWithoutHTML,

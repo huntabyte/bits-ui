@@ -12,11 +12,7 @@ import {
 	isMouseEvent,
 } from "./utils.js";
 import { focusFirst } from "$lib/internal/focus.js";
-import {
-	type ReadableBoxedValues,
-	type WritableBoxedValues,
-	watch,
-} from "$lib/internal/box.svelte.js";
+import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { addEventListener } from "$lib/internal/events.js";
 import type { AnyFn, WithRefProps } from "$lib/internal/types.js";
 import { executeCallbacks } from "$lib/internal/executeCallbacks.js";

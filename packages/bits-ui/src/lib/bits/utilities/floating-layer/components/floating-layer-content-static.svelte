@@ -1,13 +1,17 @@
 <script lang="ts">
-	import { mergeProps } from "$lib/internal/mergeProps.js";
-	import type { PrimitiveElementAttributes } from "$lib/shared/attributes.js";
-	import type { WithChildren } from "$lib/internal/types.js";
+	import { type Snippet, onMount } from "svelte";
 
-	let { children, ...restProps }: WithChildren<PrimitiveElementAttributes> = $props();
+	let {
+		content,
+		onPlaced,
+	}: {
+		content?: Snippet<[{ props: Record<string, unknown> }]>;
+		onPlaced?: () => void;
+	} = $props();
 
-	const mergedProps = $derived(mergeProps(restProps));
+	onMount(() => {
+		onPlaced?.();
+	});
 </script>
 
-<div {...mergedProps}>
-	{@render children?.()}
-</div>
+{@render content?.({ props: {} })}
