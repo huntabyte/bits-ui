@@ -6,7 +6,6 @@ import type {
 	PopoverRootPropsWithoutHTML,
 	PopoverTriggerPropsWithoutHTML,
 } from "bits-ui";
-import { OpenClosedProp } from "./extended-types/shared/index.js";
 import {
 	arrowProps,
 	childrenSnippet,
@@ -16,7 +15,6 @@ import {
 	createFunctionProp,
 	dirProp,
 	dismissableLayerProps,
-	enums,
 	escapeLayerProps,
 	floatingProps,
 	focusScopeProps,
@@ -72,7 +70,10 @@ export const content = createApiSchema<PopoverContentPropsWithoutHTML>({
 		...escapeLayerProps,
 		...focusScopeProps,
 		preventOverflowTextSelection: preventOverflowTextSelectionProp,
-		preventScroll: preventScrollProp,
+		preventScroll: {
+			...preventScrollProp,
+			default: C.FALSE,
+		},
 		forceMount: forceMountProp,
 		dir: dirProp,
 		...withChildProps({ elType: "HTMLDivElement" }),
@@ -95,7 +96,10 @@ export const contentStatic = createApiSchema<PopoverContentStaticPropsWithoutHTM
 		...escapeLayerProps,
 		...focusScopeProps,
 		preventOverflowTextSelection: preventOverflowTextSelectionProp,
-		preventScroll: preventScrollProp,
+		preventScroll: {
+			...preventScrollProp,
+			default: C.FALSE,
+		},
 		forceMount: forceMountProp,
 		dir: dirProp,
 		...withChildProps({ elType: "HTMLDivElement" }),
