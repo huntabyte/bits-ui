@@ -87,6 +87,22 @@ export type FloatingLayerContentProps = {
 	 * Whether to prevent scrolling the body when the content is open.
 	 */
 	preventScroll?: boolean;
+
+	/**
+	 * Use an element other than the trigger to anchor the content to. If provided,
+	 * the content will be anchored to the provided element instead of the trigger.
+	 *
+	 * You can pass a selector string or an HTMLElement.
+	 */
+	customAnchor?: string | HTMLElement | Measurable | null;
+
+	/**
+	 * Whether to opt out of using Floating UI and instead render a static element which you
+	 * can position yourself.
+	 *
+	 * @defaultValue false
+	 */
+	static?: boolean;
 };
 
 export type FloatingLayerContentImplProps = {

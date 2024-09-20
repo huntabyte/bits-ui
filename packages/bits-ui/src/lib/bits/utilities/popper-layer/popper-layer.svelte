@@ -1,4 +1,5 @@
 <script lang="ts">
+	import ScrollLock from "../scroll-lock/scroll-lock.svelte";
 	import type { PopperLayerImplProps } from "./types.js";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 	import { EscapeLayer } from "$lib/bits/utilities/escape-layer/index.js";
@@ -43,6 +44,7 @@
 		loop,
 		trapFocus,
 		isValidEvent = () => false,
+		customAnchor = null,
 		...restProps
 	}: PopperLayerImplProps = $props();
 </script>
@@ -64,12 +66,13 @@
 			{updatePositionStrategy}
 			{strategy}
 			{dir}
-			{preventScroll}
 			{wrapperId}
 			{style}
 			{onPlaced}
+			{customAnchor}
 		>
 			{#snippet content({ props: floatingProps })}
+				<ScrollLock {preventScroll} />
 				<FocusScope {id} {onMountAutoFocus} {onDestroyAutoFocus} {loop} {trapFocus}>
 					{#snippet focusScope({ props: focusScopeProps })}
 						<EscapeLayer

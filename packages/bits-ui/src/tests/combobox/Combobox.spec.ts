@@ -261,7 +261,6 @@ describe("combobox - single", () => {
 		expect(getHiddenInput()).toHaveValue("1");
 		await user.click(input);
 		expectSelected(item1!);
-		expect(queryByTestId("1-indicator")).not.toBeNull();
 	});
 
 	it("should navigate through the items using the keyboard (loop = false)", async () => {

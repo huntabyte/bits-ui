@@ -42,6 +42,22 @@ export type Boundary = Element | null;
 
 class FloatingRootState {
 	anchorNode = box<Measurable | HTMLElement | null>(null);
+	customAnchorNode = box<Measurable | HTMLElement | null | string>(null);
+	triggerNode = box<Measurable | HTMLElement | null>(null);
+
+	constructor() {
+		$effect(() => {
+			if (this.customAnchorNode.current) {
+				if (typeof this.customAnchorNode.current === "string") {
+					this.anchorNode.current = document.querySelector(this.customAnchorNode.current);
+				} else {
+					this.anchorNode.current = this.customAnchorNode.current;
+				}
+			} else {
+				this.anchorNode.current = this.triggerNode.current;
+			}
+		});
+	}
 
 	createAnchor(props: FloatingAnchorStateProps) {
 		return new FloatingAnchorState(props, this);
@@ -71,6 +87,7 @@ export type FloatingContentStateProps = ReadableBoxedValues<{
 	dir: Direction;
 	style: StyleProperties | null | undefined | string;
 	enabled: boolean;
+	customAnchor: string | HTMLElement | null | Measurable;
 }>;
 
 class FloatingContentState {
@@ -264,6 +281,17 @@ class FloatingContentState {
 		this.#arrowSize = useSize(this.arrowRef);
 		this.wrapperId = props.wrapperId;
 
+		if (props.customAnchor) {
+			this.root.customAnchorNode.current = props.customAnchor.current;
+		}
+
+		$effect(() => {
+			props.customAnchor.current;
+			untrack(() => {
+				this.root.customAnchorNode.current = props.customAnchor.current;
+			});
+		});
+
 		useRefById({
 			id: this.wrapperId,
 			ref: this.wrapperRef,
@@ -353,13 +381,13 @@ class FloatingAnchorState {
 
 	constructor(props: FloatingAnchorStateProps, root: FloatingRootState) {
 		if (props.virtualEl && props.virtualEl.current) {
-			root.anchorNode = box.from(props.virtualEl.current);
+			root.triggerNode = box.from(props.virtualEl.current);
 		} else {
 			useRefById({
 				id: props.id,
 				ref: this.ref,
 				onRefChange: (node) => {
-					root.anchorNode.current = node;
+					root.triggerNode.current = node;
 				},
 			});
 		}

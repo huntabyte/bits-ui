@@ -6,6 +6,7 @@
 	import type { WithChild } from "$lib/internal/types.js";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 	import type { FloatingLayerContentImplProps } from "$lib/bits/utilities/floating-layer/types.js";
+	import ScrollLock from "$lib/bits/utilities/scroll-lock/scroll-lock.svelte";
 
 	let {
 		children,
@@ -52,12 +53,12 @@
 	{updatePositionStrategy}
 	{strategy}
 	{dir}
-	{preventScroll}
 	{wrapperId}
 	{onPlaced}
 	{style}
 >
 	{#snippet content({ props })}
+		<ScrollLock {preventScroll} />
 		{@const finalProps = mergeProps(props, mergedProps, {
 			style: contentFloatingState.props.style,
 		})}

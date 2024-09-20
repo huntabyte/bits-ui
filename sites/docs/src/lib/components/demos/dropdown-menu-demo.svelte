@@ -12,16 +12,23 @@
 
 	let notifications = $state<"indeterminate" | boolean>(false);
 	let invited = $state("");
+
+	let customAnchor = $state<HTMLElement | null>(null);
 </script>
+
+<div class="mr-48">
+	<div bind:this={customAnchor} class="h-[100px] w-[100px] rounded-full bg-blue-300"></div>
+</div>
 
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger
-		class="focus-visible border-bordinput bg-backgrounder-lt text-a-foreground inline-flex h-10 w-10 items-center justify-center rounded-full border text-sm font-medium shadow-btn hover:bg-muted focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
+		class="focus-visible border-bordinput bg-backgrounder-lt text-a-foreground inline-flex h-10 w-10 select-none items-center justify-center rounded-full border text-sm font-medium shadow-btn hover:bg-muted focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
 	>
 		<DotsThree class="h-6 w-6 text-foreground" />
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Portal>
 		<DropdownMenu.Content
+			{customAnchor}
 			class="focus-override w-[229px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover outline-none focus-visible:outline-none"
 			sideOffset={8}
 		>

@@ -20,7 +20,7 @@
 			{#each items as item}
 				<Tabs.Trigger
 					value={item.value}
-					class="flex border-b-2 border-b-transparent text-sm data-[state=active]:border-accent"
+					class="flex select-none border-b-2 border-b-transparent text-sm data-[state=active]:border-accent"
 				>
 					<span class="px-4 py-2">
 						{item.label}
@@ -31,7 +31,7 @@
 		<div class="flex items-center gap-2 border-b-2 border-transparent pr-2 text-sm">
 			<button
 				class={cn(
-					"inline-flex items-center justify-center whitespace-nowrap rounded-[7px] px-2.5 py-1.5 text-sm text-foreground ring-offset-background transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+					"inline-flex select-none items-center justify-center whitespace-nowrap rounded-[7px] px-2.5 py-1.5 text-sm text-foreground ring-offset-background transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
 				)}
 				onclick={() => (open = !open)}
 				aria-label="Toggle code expansion"
