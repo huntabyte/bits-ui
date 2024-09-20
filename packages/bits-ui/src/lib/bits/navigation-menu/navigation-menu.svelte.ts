@@ -2,11 +2,7 @@ import { untrack } from "svelte";
 import { box } from "svelte-toolbelt";
 import { Previous } from "runed";
 import { getTabbableCandidates } from "$lib/internal/focus.js";
-import {
-	type ReadableBoxedValues,
-	type WritableBoxedValues,
-	watch,
-} from "$lib/internal/box.svelte.js";
+import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { Direction, Orientation } from "$lib/shared/index.js";
 import {
 	getAriaExpanded,

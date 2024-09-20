@@ -97,7 +97,7 @@ export function toDate(dateValue: DateValue, tz: string = getLocalTimeZone()) {
 	}
 }
 
-export function isCalendarDateTime(dateValue: DateValue): dateValue is CalendarDateTime {
+function isCalendarDateTime(dateValue: DateValue): dateValue is CalendarDateTime {
 	return dateValue instanceof CalendarDateTime;
 }
 
@@ -157,7 +157,7 @@ export function isAfter(dateToCompare: DateValue, referenceDate: DateValue) {
  *
  * @see {@link isBefore} for non-inclusive
  */
-export function isBeforeOrSame(dateToCompare: DateValue, referenceDate: DateValue) {
+function isBeforeOrSame(dateToCompare: DateValue, referenceDate: DateValue) {
 	return dateToCompare.compare(referenceDate) <= 0;
 }
 
@@ -169,7 +169,7 @@ export function isBeforeOrSame(dateToCompare: DateValue, referenceDate: DateValu
  *
  * @see {@link isAfter} for non-inclusive
  */
-export function isAfterOrSame(dateToCompare: DateValue, referenceDate: DateValue) {
+function isAfterOrSame(dateToCompare: DateValue, referenceDate: DateValue) {
 	return dateToCompare.compare(referenceDate) >= 0;
 }
 
@@ -195,7 +195,7 @@ export function isBetweenInclusive(date: DateValue, start: DateValue, end: DateV
  *
  * @see {@link isBetweenInclusive} for inclusive
  */
-export function isBetween(date: DateValue, start: DateValue, end: DateValue) {
+function isBetween(date: DateValue, start: DateValue, end: DateValue) {
 	return isAfter(date, start) && isBefore(date, end);
 }
 

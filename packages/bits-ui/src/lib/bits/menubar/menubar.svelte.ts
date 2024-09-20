@@ -306,7 +306,7 @@ class MenubarContentState {
 		});
 	}
 
-	onDestroyAutoFocus = (e: Event) => {
+	onCloseAutoFocus = (e: Event) => {
 		const menubarOpen = Boolean(this.root.value.current);
 		if (!menubarOpen && !this.hasInteractedOutside) {
 			this.menu.getTriggerNode()?.focus();
@@ -328,7 +328,7 @@ class MenubarContentState {
 		this.hasInteractedOutside = true;
 	};
 
-	onMountAutoFocus = () => {
+	onOpenAutoFocus = () => {
 		afterTick(() => this.ref.current?.focus());
 	};
 

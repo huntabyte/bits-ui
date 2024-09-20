@@ -13,9 +13,11 @@
 		ref = $bindable(null),
 		id = useId(),
 		forceMount = false,
-		onDestroyAutoFocus = noop,
+		onCloseAutoFocus = noop,
 		onEscapeKeydown = noop,
 		onInteractOutside = noop,
+		preventScroll = false,
+		trapFocus = true,
 		...restProps
 	}: ContentStaticProps = $props();
 
@@ -45,13 +47,14 @@
 		if (e.defaultPrevented) return;
 		contentState.root.close();
 	}}
-	onDestroyAutoFocus={(e) => {
-		onDestroyAutoFocus(e);
+	onCloseAutoFocus={(e) => {
+		onCloseAutoFocus(e);
 		if (e.defaultPrevented) return;
 		e.preventDefault();
 		contentState.root.triggerNode?.focus();
 	}}
-	trapFocus
+	{trapFocus}
+	{preventScroll}
 	loop
 	{forceMount}
 >

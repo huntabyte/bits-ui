@@ -1,4 +1,5 @@
 import type { HTMLSelectAttributes } from "svelte/elements";
+import type { Expand } from "svelte-toolbelt";
 import type { PopperLayerProps } from "../utilities/popper-layer/types.js";
 import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
 import type { OnChangeFn, WithChild, WithChildren, Without } from "$lib/internal/types.js";
@@ -64,16 +65,27 @@ export type SelectRootPropsWithoutHTML = WithChildren<{
 
 export type SelectRootProps = SelectRootPropsWithoutHTML;
 
-export type SelectContentImplPropsWithoutHTML = WithChild<
-	Omit<PopperLayerProps, "content"> & {
-		/**
-		 *  The positioning mode to use
-		 *
-		 *  `item-aligned` - behaves similarly to a native MacOS menu by positioning content relative to the active item. <br>
-		 *  `floating  (default)` - positions content in the same way as our other primitives, for example `Popover` or `DropdownMenu`.
-		 */
-		position?: "item-aligned" | "floating";
-	}
+export type _SharedSelectContentProps = {
+	/**
+	 * Whether or not to loop through the items when navigating with the keyboard.
+	 *
+	 * @defaultValue `false`
+	 */
+	loop?: boolean;
+};
+
+export type SelectContentImplPropsWithoutHTML = Expand<
+	WithChild<
+		Omit<PopperLayerProps, "content"> & {
+			/**
+			 *  The positioning mode to use
+			 *
+			 *  `item-aligned` - behaves similarly to a native MacOS menu by positioning content relative to the active item. <br>
+			 *  `floating  (default)` - positions content in the same way as our other primitives, for example `Popover` or `DropdownMenu`.
+			 */
+			position?: "item-aligned" | "floating";
+		} & _SharedSelectContentProps
+	>
 >;
 
 export type SelectContentImplProps = SelectContentImplPropsWithoutHTML &

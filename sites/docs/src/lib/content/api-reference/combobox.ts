@@ -1,6 +1,7 @@
 import type {
 	ComboboxArrowPropsWithoutHTML,
 	ComboboxContentPropsWithoutHTML,
+	ComboboxContentStaticPropsWithoutHTML,
 	ComboboxGroupLabelPropsWithoutHTML,
 	ComboboxGroupPropsWithoutHTML,
 	ComboboxInputPropsWithoutHTML,
@@ -37,7 +38,9 @@ import {
 	floatingProps,
 	focusScopeProps,
 	forceMountProp,
+	onCloseAutoFocusProp,
 	preventOverflowTextSelectionProp,
+	preventScrollProp,
 	withChildProps,
 } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
@@ -114,7 +117,7 @@ export const content = createApiSchema<ComboboxContentPropsWithoutHTML>({
 		...floatingProps(),
 		...escapeLayerProps,
 		...dismissableLayerProps,
-		...focusScopeProps,
+		onCloseAutoFocus: onCloseAutoFocusProp,
 		preventOverflowTextSelection: preventOverflowTextSelectionProp,
 		dir: dirProp,
 		loop: createBooleanProp({
@@ -123,6 +126,10 @@ export const content = createApiSchema<ComboboxContentPropsWithoutHTML>({
 				"Whether or not the combobox should loop through items when reaching the end.",
 		}),
 		forceMount: forceMountProp,
+		preventScroll: {
+			...preventScrollProp,
+			default: C.FALSE,
+		},
 		...withChildProps({
 			elType: "HTMLDivElement",
 			childrenDef: OpenChildrenSnippetProps,
@@ -156,6 +163,37 @@ export const content = createApiSchema<ComboboxContentPropsWithoutHTML>({
 		createCSSVarSchema({
 			name: "--bits-combobox-trigger-height",
 			description: "The height of the combobox trigger element.",
+		}),
+	],
+});
+
+export const contentStatic = createApiSchema<ComboboxContentStaticPropsWithoutHTML>({
+	title: "ContentStatic",
+	description: "The element which contains the combobox's items. (Static/No Floating UI)",
+	props: {
+		...escapeLayerProps,
+		...dismissableLayerProps,
+		...focusScopeProps,
+		preventScroll: preventScrollProp,
+		preventOverflowTextSelection: preventOverflowTextSelectionProp,
+		dir: dirProp,
+		loop: createBooleanProp({
+			default: C.FALSE,
+			description:
+				"Whether or not the combobox should loop through items when reaching the end.",
+		}),
+		forceMount: forceMountProp,
+		...withChildProps({
+			elType: "HTMLDivElement",
+			childrenDef: OpenChildrenSnippetProps,
+			childDef: OpenChildSnippetProps,
+		}),
+	},
+	dataAttributes: [
+		stateDataAttr,
+		createDataAttrSchema({
+			name: "combobox-content",
+			description: "Present on the content element.",
 		}),
 	],
 });
@@ -299,4 +337,4 @@ export const arrow = createApiSchema<ComboboxArrowPropsWithoutHTML>({
 	],
 });
 
-export const combobox = [root, trigger, content, item, input, groupLabel, arrow];
+export const combobox = [root, trigger, content, contentStatic, item, input, groupLabel, arrow];

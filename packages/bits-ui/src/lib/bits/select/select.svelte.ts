@@ -7,7 +7,6 @@ import { type ReadableBox, type WritableBox, box } from "svelte-toolbelt";
 import { SvelteMap } from "svelte/reactivity";
 import { untrack } from "svelte";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import { watch } from "$lib/internal/box.svelte.js";
 import { useId } from "$lib/internal/useId.js";
 import type { Direction } from "$lib/shared/index.js";
 import { createContext } from "$lib/internal/createContext.js";

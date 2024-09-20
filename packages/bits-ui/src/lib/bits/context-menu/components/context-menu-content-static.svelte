@@ -56,10 +56,8 @@
 </script>
 
 <PopperLayer
+	isStatic={true}
 	{...mergedProps}
-	side="right"
-	sideOffset={2}
-	align="start"
 	present={contentState.parentMenu.open.current || forceMount}
 	{onInteractOutsideStart}
 	onInteractOutside={(e) => {
@@ -83,7 +81,6 @@
 		}
 		return false;
 	}}
-	trapFocus
 	{loop}
 >
 	{#snippet popper({ props })}

@@ -53,15 +53,15 @@
 
 	const mergedProps = $derived(
 		mergeProps(restProps, subContentState.props, {
-			onMountAutoFocus,
-			onDestroyAutoFocus,
+			onOpenAutoFocus,
+			onCloseAutoFocus,
 			side,
 			onkeydown,
 			"data-menu-sub-content": "",
 		})
 	);
 
-	function onMountAutoFocus(e: Event) {
+	function onOpenAutoFocus(e: Event) {
 		afterTick(() => {
 			e.preventDefault();
 			if (subContentState.parentMenu.root.isUsingKeyboard.current) {
@@ -71,7 +71,7 @@
 		});
 	}
 
-	function onDestroyAutoFocus(e: Event) {
+	function onCloseAutoFocus(e: Event) {
 		e.preventDefault();
 	}
 </script>
@@ -80,7 +80,7 @@
 	{...mergedProps}
 	{interactOutsideBehavior}
 	{escapeKeydownBehavior}
-	{onMountAutoFocus}
+	{onOpenAutoFocus}
 	present={subContentState.parentMenu.open.current || forceMount}
 	onInteractOutside={(e) => {
 		onInteractOutside(e);

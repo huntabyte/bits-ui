@@ -1,6 +1,7 @@
 import type {
 	ListboxArrowPropsWithoutHTML,
 	ListboxContentPropsWithoutHTML,
+	ListboxContentStaticPropsWithoutHTML,
 	ListboxGroupLabelPropsWithoutHTML,
 	ListboxGroupPropsWithoutHTML,
 	ListboxItemPropsWithoutHTML,
@@ -39,7 +40,9 @@ import {
 	floatingProps,
 	focusScopeProps,
 	forceMountProp,
+	onCloseAutoFocusProp,
 	preventOverflowTextSelectionProp,
+	preventScrollProp,
 	withChildProps,
 } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
@@ -116,7 +119,7 @@ export const content = createApiSchema<ListboxContentPropsWithoutHTML>({
 		...floatingProps(),
 		...escapeLayerProps,
 		...dismissableLayerProps,
-		...focusScopeProps,
+		onCloseAutoFocus: onCloseAutoFocusProp,
 		preventOverflowTextSelection: preventOverflowTextSelectionProp,
 		dir: dirProp,
 		loop: createBooleanProp({
@@ -125,6 +128,10 @@ export const content = createApiSchema<ListboxContentPropsWithoutHTML>({
 				"Whether or not the listbox should loop through items when reaching the end.",
 		}),
 		forceMount: forceMountProp,
+		preventScroll: {
+			...preventScrollProp,
+			default: C.FALSE,
+		},
 		...withChildProps({
 			elType: "HTMLDivElement",
 			childrenDef: OpenChildrenSnippetProps,
@@ -158,6 +165,37 @@ export const content = createApiSchema<ListboxContentPropsWithoutHTML>({
 		createCSSVarSchema({
 			name: "--bits-listbox-trigger-height",
 			description: "The height of the listbox trigger element.",
+		}),
+	],
+});
+
+export const contentStatic = createApiSchema<ListboxContentStaticPropsWithoutHTML>({
+	title: "ContentStatic",
+	description: "The element which contains the listbox's items. (Static/No Floating UI)",
+	props: {
+		...escapeLayerProps,
+		...dismissableLayerProps,
+		...focusScopeProps,
+		preventScroll: preventScrollProp,
+		preventOverflowTextSelection: preventOverflowTextSelectionProp,
+		dir: dirProp,
+		loop: createBooleanProp({
+			default: C.FALSE,
+			description:
+				"Whether or not the listbox should loop through items when reaching the end.",
+		}),
+		forceMount: forceMountProp,
+		...withChildProps({
+			elType: "HTMLDivElement",
+			childrenDef: OpenChildrenSnippetProps,
+			childDef: OpenChildSnippetProps,
+		}),
+	},
+	dataAttributes: [
+		stateDataAttr,
+		createDataAttrSchema({
+			name: "listbox-content",
+			description: "Present on the content element.",
 		}),
 	],
 });
@@ -225,11 +263,7 @@ export const trigger = createApiSchema<ListboxTriggerPropsWithoutHTML>({
 	description: "A button which toggles the listbox's open state.",
 	props: withChildProps({ elType: "HTMLButtonElement" }),
 	dataAttributes: [
-		createEnumDataAttr({
-			name: "state",
-			options: ["open", "closed"],
-			description: "The listbox's open state.",
-		}),
+		stateDataAttr,
 		createDataAttrSchema({
 			name: "disabled",
 			description: "Present when the listbox is disabled.",
@@ -321,6 +355,7 @@ export const listbox = [
 	root,
 	trigger,
 	content,
+	contentStatic,
 	item,
 	viewport,
 	scrollUpButton,

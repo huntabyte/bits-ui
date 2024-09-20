@@ -2,6 +2,7 @@ import type { DateValue } from "@internationalized/date";
 import {
 	type Formatter,
 	type Granularity,
+	type HourCycle,
 	getPlaceholder,
 	getSegments,
 	hasTime,
@@ -11,7 +12,6 @@ import type {
 	DateAndTimeSegmentObj,
 	DateSegmentPart,
 	EditableSegmentPart,
-	HourCycle,
 	SegmentContentObj,
 	SegmentPart,
 	SegmentStateMap,
@@ -53,7 +53,7 @@ type SharedContentProps = {
 	dateRef: DateValue;
 	formatter: Formatter;
 	hideTimeZone: boolean;
-	hourCycle: HourCycle;
+	hourCycle: HourCycle | undefined;
 };
 
 type CreateContentObjProps = SharedContentProps & {
@@ -216,7 +216,7 @@ export function createContent(props: CreateContentProps) {
 	};
 }
 
-function getOptsByGranularity(granularity: Granularity, hourCycle: HourCycle) {
+function getOptsByGranularity(granularity: Granularity, hourCycle: HourCycle | undefined) {
 	const opts: Intl.DateTimeFormatOptions = {
 		year: "numeric",
 		month: "2-digit",

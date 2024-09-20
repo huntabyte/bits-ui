@@ -18,10 +18,11 @@
 		child,
 		ref = $bindable(null),
 		forceMount = false,
-		onDestroyAutoFocus = noop,
+		onCloseAutoFocus = noop,
 		onEscapeKeydown = noop,
 		onInteractOutside = noop,
 		trapFocus = true,
+		preventScroll = true,
 		...restProps
 	}: ContentProps = $props();
 
@@ -38,13 +39,13 @@
 
 <PresenceLayer {...mergedProps} present={contentState.root.open.current || forceMount}>
 	{#snippet presence({ present })}
-		<ScrollLock {...mergedProps} />
+		<ScrollLock {preventScroll} />
 		<FocusScope
 			loop
 			trapFocus={present.current && trapFocus}
 			{...mergedProps}
-			onDestroyAutoFocus={(e) => {
-				onDestroyAutoFocus(e);
+			onCloseAutoFocus={(e) => {
+				onCloseAutoFocus(e);
 				if (e.defaultPrevented) return;
 				contentState.root.triggerNode?.focus();
 			}}

@@ -43,8 +43,8 @@
 		if (e.defaultPrevented) return;
 		contentState.root.immediateClose();
 	}}
-	onMountAutoFocus={(e) => e.preventDefault()}
-	onDestroyAutoFocus={(e) => e.preventDefault()}
+	onOpenAutoFocus={(e) => e.preventDefault()}
+	onCloseAutoFocus={(e) => e.preventDefault()}
 	trapFocus={false}
 	loop={false}
 	preventScroll={false}

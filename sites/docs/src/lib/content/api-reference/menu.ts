@@ -1,6 +1,7 @@
 import type {
 	DropdownMenuCheckboxItemPropsWithoutHTML,
 	DropdownMenuContentPropsWithoutHTML,
+	DropdownMenuContentStaticPropsWithoutHTML,
 	DropdownMenuGroupPropsWithoutHTML,
 	DropdownMenuItemPropsWithoutHTML,
 	DropdownMenuLabelPropsWithoutHTML,
@@ -28,6 +29,7 @@ import {
 	forceMountProp,
 	portalProps,
 	preventOverflowTextSelectionProp,
+	preventScrollProp,
 	withChildProps,
 } from "./helpers.js";
 import {
@@ -106,6 +108,26 @@ const contentProps = {
 		childDef: OpenChildSnippetProps,
 	}),
 } satisfies PropObj<DropdownMenuContentPropsWithoutHTML>;
+
+const contentStaticProps = {
+	...escapeLayerProps,
+	...dismissableLayerProps,
+	...focusScopeProps,
+	preventScroll: preventScrollProp,
+	forceMount: forceMountProp,
+	preventOverflowTextSelection: preventOverflowTextSelectionProp,
+	dir: dirProp,
+	loop: createBooleanProp({
+		default: C.FALSE,
+		description:
+			"Whether or not to loop through the menu items in when navigating with the keyboard.",
+	}),
+	...withChildProps({
+		elType: "HTMLDivElement",
+		childrenDef: OpenChildrenSnippetProps,
+		childDef: OpenChildSnippetProps,
+	}),
+} satisfies PropObj<DropdownMenuContentStaticPropsWithoutHTML>;
 
 const subContentProps = contentProps satisfies PropObj<
 	Omit<DropdownMenuSubContentPropsWithoutHTML, "style">
@@ -349,6 +371,11 @@ export const content = {
 	dataAttributes: contentAttrs,
 };
 
+export const contentStatic = {
+	props: contentStaticProps,
+	dataAttributes: contentAttrs,
+};
+
 export const arrow = {
 	props: arrowProps,
 	dataAttributes: arrowAttrs,
@@ -415,6 +442,7 @@ export const menu = {
 	root,
 	trigger,
 	content,
+	contentStatic,
 	item,
 	checkboxItem,
 	radioGroup,

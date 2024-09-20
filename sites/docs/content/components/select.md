@@ -145,7 +145,7 @@ Use the `bind:value` directive for effortless two-way synchronization between yo
 </Select.Root>
 ```
 
-This setup enables toggling the Select via the custom button and ensures the local `myValue` state updates when the Select changes through any internal means (e.g., clicking on an item's button).
+This setup enables toggling the value via the custom button and ensures the local `myValue` state updates when the Select's value changes through any internal means (e.g., clicking on an item's button).
 
 ### Change Handler
 
@@ -170,7 +170,7 @@ You can also use the `onValueChange` prop to update local state when the Select'
 
 ## Managing Open State
 
-The `open` state represents whether or not the select menu is open. Bits UI provides flexible options for controlling and synchronizing the Select's open state.
+The `open` state represents whether or not the select content is open. Bits UI provides flexible options for controlling and synchronizing the Select's open state.
 
 ### Two-Way Binding
 
@@ -189,7 +189,7 @@ Use the `bind:open` directive for effortless two-way synchronization between you
 </Select.Root>
 ```
 
-This setup enables toggling the Select via the custom button and ensures the local `isOpen` state updates when the Select changes through any internal means e.g. clicking on the trigger or outside the content.
+This setup enables toggling the Select via the custom button and ensures the local `isOpen` state updates when the Select's open state changes through any internal means e.g. clicking on the trigger or outside the content.
 
 ### Change Handler
 
@@ -290,9 +290,9 @@ By default, when a user opens the select, scrolling outside the content will be 
 </Select.Content>
 ```
 
-## Viewport
+## What is the Viewport?
 
-The `Select.Viewport` component is used to determine the size of the select menu in order to determine whether or not the scroll up and down buttons should be rendered. If you wish to set a minimum/maxmimum height for the select content, you should apply it to the `Select.Viewport` component.
+The `Select.Viewport` component is used to determine the size of the select content in order to determine whether or not the scroll up and down buttons should be rendered. If you wish to set a minimum/maximum height for the select content, you should apply it to the `Select.Viewport` component.
 
 ## Scroll Up/Down Buttons
 

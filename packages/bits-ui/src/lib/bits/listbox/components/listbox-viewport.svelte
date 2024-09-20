@@ -39,6 +39,16 @@
 		-ms-overflow-style: none !important;
 		-webkit-overflow-scrolling: touch !important;
 	}
+
+	:global([data-combobox-viewport]) {
+		scrollbar-width: none !important;
+		-ms-overflow-style: none !important;
+		-webkit-overflow-scrolling: touch !important;
+	}
+
+	:global([data-combobox-viewport])::-webkit-scrollbar {
+		display: none !important;
+	}
 	:global([data-listbox-viewport])::-webkit-scrollbar {
 		display: none !important;
 	}

@@ -20,7 +20,6 @@ import { chunk, isValidIndex } from "$lib/internal/arrays.js";
 import { isHTMLElement } from "$lib/internal/is.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { styleToString } from "$lib/internal/style.js";
-import { watch } from "$lib/internal/box.svelte.js";
 /**
  * Checks if a given node is a calendar cell element.
  *

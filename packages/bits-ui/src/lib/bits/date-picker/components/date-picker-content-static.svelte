@@ -4,11 +4,11 @@
 	import { pickerOpenFocus } from "$lib/shared/date/index.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
-	let { ref = $bindable(null), onMountAutoFocus, ...restProps }: ContentStaticProps = $props();
+	let { ref = $bindable(null), onOpenAutoFocus, ...restProps }: ContentStaticProps = $props();
 
 	const mergedProps = $derived(
-		mergeProps({ onMountAutoFocus }, { onMountAutoFocus: pickerOpenFocus })
-	) as any;
+		mergeProps({ onOpenAutoFocus }, { onOpenAutoFocus: pickerOpenFocus })
+	);
 </script>
 
 <PopoverContentStatic {...mergedProps} bind:ref {...restProps} />

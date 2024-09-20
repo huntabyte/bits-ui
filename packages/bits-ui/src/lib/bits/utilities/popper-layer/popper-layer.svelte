@@ -37,12 +37,12 @@
 		onPlaced,
 		onInteractOutside,
 		onInteractOutsideStart,
-		onDestroyAutoFocus,
-		onMountAutoFocus,
+		onCloseAutoFocus,
+		onOpenAutoFocus,
 		onFocusOutside,
 		interactOutsideBehavior = "close",
 		loop,
-		trapFocus,
+		trapFocus = true,
 		isValidEvent = () => false,
 		customAnchor = null,
 		isStatic = false,
@@ -75,7 +75,13 @@
 		>
 			{#snippet content({ props: floatingProps })}
 				<ScrollLock {preventScroll} />
-				<FocusScope {id} {onMountAutoFocus} {onDestroyAutoFocus} {loop} {trapFocus}>
+				<FocusScope
+					{id}
+					{onOpenAutoFocus}
+					{onCloseAutoFocus}
+					{loop}
+					trapFocus={present.current && trapFocus}
+				>
 					{#snippet focusScope({ props: focusScopeProps })}
 						<EscapeLayer
 							{onEscapeKeydown}

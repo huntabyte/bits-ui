@@ -35,19 +35,19 @@ type UseFocusScopeProps = ReadableBoxedValues<{
 	 *
 	 * @defaultValue false
 	 */
-	trapFocus: boolean;
+	enabled: boolean;
 
 	/**
 	 * Event handler called when auto-focusing onMount.
 	 * Can be prevented.
 	 */
-	onMountAutoFocus: EventCallback;
+	onOpenAutoFocus: EventCallback;
 
 	/**
 	 * Event handler called when auto-focusing onDestroy.
 	 * Can be prevented.
 	 */
-	onDestroyAutoFocus: EventCallback;
+	onCloseAutoFocus: EventCallback;
 }>;
 
 export type FocusScopeContainerProps = {
@@ -59,23 +59,26 @@ export type FocusScopeContainerProps = {
 export function useFocusScope({
 	id,
 	loop,
-	trapFocus,
-	onMountAutoFocus,
-	onDestroyAutoFocus,
+	enabled,
+	onOpenAutoFocus,
+	onCloseAutoFocus,
 }: UseFocusScopeProps) {
 	const focusScopeStack = createFocusScopeStack();
 	const focusScope = createFocusScopeAPI();
 	const ref = box<HTMLElement | null>(null);
+
 	useRefById({
 		id,
 		ref,
+		condition: () => enabled.current,
 	});
+
 	let lastFocusedElement = $state<HTMLElement | null>(null);
 
 	$effect(() => {
 		const container = ref.current;
 		if (!container) return;
-		if (!trapFocus.current) return;
+		if (!enabled.current) return;
 
 		function handleFocusIn(event: FocusEvent) {
 			if (focusScope.paused || !container) return;
@@ -153,7 +156,7 @@ export function useFocusScope({
 				const mountEvent = new CustomEvent(AUTOFOCUS_ON_MOUNT, EVENT_OPTIONS);
 				container.addEventListener(
 					AUTOFOCUS_ON_MOUNT,
-					untrack(() => onMountAutoFocus.current)
+					untrack(() => onOpenAutoFocus.current)
 				);
 				container.dispatchEvent(mountEvent);
 
@@ -174,13 +177,13 @@ export function useFocusScope({
 			if (!container) return;
 			container.removeEventListener(
 				AUTOFOCUS_ON_MOUNT,
-				untrack(() => onMountAutoFocus.current)
+				untrack(() => onOpenAutoFocus.current)
 			);
 
 			const destroyEvent = new CustomEvent(AUTOFOCUS_ON_DESTROY, EVENT_OPTIONS);
 			container.addEventListener(
 				AUTOFOCUS_ON_DESTROY,
-				untrack(() => onDestroyAutoFocus.current)
+				untrack(() => onCloseAutoFocus.current)
 			);
 			container.dispatchEvent(destroyEvent);
 
@@ -189,7 +192,7 @@ export function useFocusScope({
 					focus(previouslyFocusedElement ?? document.body, { select: true });
 				}
 
-				container?.removeEventListener(AUTOFOCUS_ON_DESTROY, onDestroyAutoFocus.current);
+				container?.removeEventListener(AUTOFOCUS_ON_DESTROY, onCloseAutoFocus.current);
 
 				focusScopeStack.remove(focusScope);
 			}, 0);
@@ -197,7 +200,8 @@ export function useFocusScope({
 	});
 
 	function handleKeydown(e: KeyboardEvent) {
-		if (!loop.current && !trapFocus.current) return;
+		if (!enabled.current) return;
+		if (!loop.current && !enabled.current) return;
 		if (focusScope.paused) return;
 
 		const isTabKey = e.key === kbd.TAB && !e.ctrlKey && !e.altKey && !e.metaKey;

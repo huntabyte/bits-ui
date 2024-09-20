@@ -3,6 +3,8 @@
 	import CaretUpDown from "phosphor-svelte/lib/CaretUpDown";
 	import Check from "phosphor-svelte/lib/Check";
 	import OrangeSlice from "phosphor-svelte/lib/OrangeSlice";
+	import CaretDoubleUp from "phosphor-svelte/lib/CaretDoubleUp";
+	import CaretDoubleDown from "phosphor-svelte/lib/CaretDoubleDown";
 
 	const fruits = [
 		{ value: "mango", label: "Mango" },
@@ -59,29 +61,37 @@
 	</div>
 	<Combobox.Portal>
 		<Combobox.Content
-			class="max-h-96 w-[var(--bits-combobox-trigger-width)] min-w-[var(--bits-combobox-trigger-width)] overflow-y-auto rounded-xl border border-muted bg-background px-1 py-3 shadow-popover outline-none"
+			class="max-h-96 w-[var(--bits-combobox-trigger-width)] min-w-[var(--bits-combobox-trigger-width)] rounded-xl border border-muted bg-background px-1 py-3 shadow-popover outline-none"
 			sideOffset={10}
 		>
-			{#each filteredFruits as fruit, i (i + fruit.value)}
-				<Combobox.Item
-					class="flex h-10 w-full select-none items-center rounded-button py-3 pl-5 pr-1.5 text-sm capitalize outline-none duration-75 data-[highlighted]:bg-muted"
-					value={fruit.value}
-					label={fruit.label}
-				>
-					{#snippet children({ selected })}
-						{fruit.label}
-						{#if selected}
-							<div class="ml-auto">
-								<Check />
-							</div>
-						{/if}
-					{/snippet}
-				</Combobox.Item>
-			{:else}
-				<span class="block px-5 py-2 text-sm text-muted-foreground">
-					No results found, try again.
-				</span>
-			{/each}
+			<Combobox.ScrollUpButton class="flex w-full items-center justify-center">
+				<CaretDoubleUp class="size-3" />
+			</Combobox.ScrollUpButton>
+			<Combobox.Viewport class="p-1">
+				{#each filteredFruits as fruit, i (i + fruit.value)}
+					<Combobox.Item
+						class="flex h-10 w-full select-none items-center rounded-button py-3 pl-5 pr-1.5 text-sm capitalize outline-none duration-75 data-[highlighted]:bg-muted"
+						value={fruit.value}
+						label={fruit.label}
+					>
+						{#snippet children({ selected })}
+							{fruit.label}
+							{#if selected}
+								<div class="ml-auto">
+									<Check />
+								</div>
+							{/if}
+						{/snippet}
+					</Combobox.Item>
+				{:else}
+					<span class="block px-5 py-2 text-sm text-muted-foreground">
+						No results found, try again.
+					</span>
+				{/each}
+			</Combobox.Viewport>
+			<Combobox.ScrollDownButton class="flex w-full items-center justify-center">
+				<CaretDoubleDown class="size-3" />
+			</Combobox.ScrollDownButton>
 		</Combobox.Content>
 	</Combobox.Portal>
 </Combobox.Root>

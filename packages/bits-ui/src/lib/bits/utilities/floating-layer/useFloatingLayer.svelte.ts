@@ -173,7 +173,7 @@ class FloatingContentState {
 				this.#avoidCollisions && flip({ ...this.detectOverflowOptions }),
 				size({
 					...this.detectOverflowOptions,
-					apply: ({ elements, rects, availableWidth, availableHeight }) => {
+					apply: ({ rects, availableWidth, availableHeight }) => {
 						const { width: anchorWidth, height: anchorHeight } = rects.reference;
 						this.#availableWidth = availableWidth;
 						this.#availableHeight = availableHeight;

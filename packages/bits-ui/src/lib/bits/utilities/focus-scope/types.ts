@@ -4,16 +4,16 @@ import type { EventCallback } from "$lib/internal/events.js";
 
 export type FocusScopeProps = {
 	/**
-	 * Event handler called when auto-focusing onMount.
+	 * Event handler called when auto-focusing on open.
 	 * Can be prevented.
 	 */
-	onMountAutoFocus?: EventCallback;
+	onOpenAutoFocus?: EventCallback;
 
 	/**
-	 * Event handler called when auto-focusing onDestroy.
+	 * Event handler called when auto-focusing on close.
 	 * Can be prevented.
 	 */
-	onDestroyAutoFocus?: EventCallback;
+	onCloseAutoFocus?: EventCallback;
 
 	/**
 	 * Whether focus is trapped within the focus scope.
@@ -21,13 +21,6 @@ export type FocusScopeProps = {
 	 * @defaultValue false
 	 */
 	trapFocus?: boolean;
-
-	/**
-	 * When `true` will loop through the tabbable elements in the focus scope.
-	 *
-	 * @defaultValue false
-	 */
-	loop?: boolean;
 };
 
 export type FocusScopeImplProps = {
@@ -40,4 +33,9 @@ export type FocusScopeImplProps = {
 	 * The snippet to render the focus scope container with its props.
 	 */
 	focusScope?: Snippet<[{ props: FocusScopeContainerProps }]>;
+
+	/**
+	 * When `true` will loop through the tabbable elements in the focus scope.
+	 */
+	loop?: boolean;
 } & FocusScopeProps;

@@ -14,8 +14,8 @@
 	let {
 		ref: _ref = $bindable(null),
 		id = useId(),
-		onMountAutoFocus = noop,
-		onDestroyAutoFocus = noop,
+		onOpenAutoFocus = noop,
+		onCloseAutoFocus = noop,
 		present,
 		position = "floating",
 		context,
@@ -32,12 +32,12 @@
 <FocusScope
 	{id}
 	trapFocus={present}
-	onMountAutoFocus={(e) => {
-		onMountAutoFocus(e);
+	onOpenAutoFocus={(e) => {
+		onOpenAutoFocus(e);
 		e.preventDefault();
 	}}
-	onDestroyAutoFocus={(e) => {
-		onDestroyAutoFocus(e);
+	onCloseAutoFocus={(e) => {
+		onCloseAutoFocus(e);
 	}}
 >
 	{#snippet focusScope({ props: focusScopeProps })}

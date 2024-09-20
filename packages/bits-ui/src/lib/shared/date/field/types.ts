@@ -1,4 +1,3 @@
-import type { DateValue } from "@internationalized/date";
 import type {
 	DATE_SEGMENT_PARTS,
 	EDITABLE_SEGMENT_PARTS,
@@ -34,13 +33,3 @@ export type SegmentState = {
 export type SegmentStateMap = {
 	[K in EditableSegmentPart]: SegmentState;
 };
-
-export type SegmentAttrProps = {
-	segmentValues: SegmentValueObj;
-	hourCycle: 12 | 24 | undefined;
-	placeholder: DateValue;
-};
-
-export type SegmentAttrFn = (props: SegmentAttrProps) => Record<string, string | number | boolean>;
-
-export type HourCycle = 12 | 24 | undefined;

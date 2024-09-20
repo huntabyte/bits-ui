@@ -19,9 +19,9 @@
 		ref = $bindable(null),
 		forceMount = false,
 		interactOutsideBehavior = "ignore",
-		onDestroyAutoFocus = noop,
+		onCloseAutoFocus = noop,
 		onEscapeKeydown = noop,
-		onMountAutoFocus = noop,
+		onOpenAutoFocus = noop,
 		onInteractOutsideStart = noop,
 		preventScroll = true,
 		trapFocus = true,
@@ -46,13 +46,13 @@
 			loop
 			trapFocus={present.current && trapFocus}
 			{...mergedProps}
-			onDestroyAutoFocus={(e) => {
-				onDestroyAutoFocus(e);
+			onCloseAutoFocus={(e) => {
+				onCloseAutoFocus(e);
 				if (e.defaultPrevented) return;
 				contentState.root.triggerNode?.focus();
 			}}
-			onMountAutoFocus={(e) => {
-				onMountAutoFocus(e);
+			onOpenAutoFocus={(e) => {
+				onOpenAutoFocus(e);
 				if (e.defaultPrevented) return;
 				e.preventDefault();
 				contentState.root.cancelNode?.focus();
