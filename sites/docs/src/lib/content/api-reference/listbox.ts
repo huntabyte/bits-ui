@@ -263,11 +263,7 @@ export const trigger = createApiSchema<ListboxTriggerPropsWithoutHTML>({
 	description: "A button which toggles the listbox's open state.",
 	props: withChildProps({ elType: "HTMLButtonElement" }),
 	dataAttributes: [
-		createEnumDataAttr({
-			name: "state",
-			options: ["open", "closed"],
-			description: "The listbox's open state.",
-		}),
+		stateDataAttr,
 		createDataAttrSchema({
 			name: "disabled",
 			description: "Present when the listbox is disabled.",
