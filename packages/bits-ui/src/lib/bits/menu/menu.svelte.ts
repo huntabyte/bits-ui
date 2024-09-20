@@ -1,7 +1,7 @@
 import { box } from "svelte-toolbelt";
 import { tick, untrack } from "svelte";
 import { IsFocusWithin } from "runed";
-import type { InteractOutsideEvent } from "../utilities/dismissable-layer/types.js"
+import type { InteractOutsideEvent } from "../utilities/dismissable-layer/types.js";
 import {
 	FIRST_LAST_KEYS,
 	type GraceIntent,
@@ -353,7 +353,7 @@ class MenuContentState {
 
 	handleInteractOutside = (e: InteractOutsideEvent) => {
 		if (!isElementOrSVGElement(e.target)) return;
-		const triggerId = this.parentMenu.triggerNode?.id
+		const triggerId = this.parentMenu.triggerNode?.id;
 		if (e.target.id === triggerId) {
 			e.preventDefault();
 			return;
@@ -361,7 +361,7 @@ class MenuContentState {
 		if (e.target.closest(`#${triggerId}`)) {
 			e.preventDefault();
 		}
-	}
+	};
 
 	props = $derived.by(
 		() =>
