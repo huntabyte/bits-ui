@@ -50,11 +50,10 @@
 	preventScroll={false}
 >
 	{#snippet popper({ props })}
-		{@const mergedProps = mergeProps(props)}
 		{#if child}
-			{@render child({ props: mergedProps })}
+			{@render child({ props })}
 		{:else}
-			<div {...mergedProps} bind:this={ref}>
+			<div {...props} bind:this={ref}>
 				{@render children?.()}
 			</div>
 		{/if}

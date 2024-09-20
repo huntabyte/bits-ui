@@ -6,7 +6,6 @@
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { noop } from "$lib/internal/callbacks.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
-	import { isElementOrSVGElement } from "$lib/internal/is.js";
 	import Mounted from "$lib/bits/utilities/mounted.svelte";
 
 	let {
@@ -40,25 +39,10 @@
 	{...mergedProps}
 	present={contentState.parentMenu.open.current || forceMount}
 	onInteractOutsideStart={(e) => {
-		if (!isElementOrSVGElement(e.target)) return;
-		if (e.target.id === contentState.parentMenu.triggerNode?.id) {
-			e.preventDefault();
-			return;
-		}
-		if (e.target.closest(`#${contentState.parentMenu.triggerNode?.id}`)) {
-			e.preventDefault();
-		}
+		contentState.handleInteractOutside(e);
 	}}
 	onInteractOutside={(e) => {
-		if (!isElementOrSVGElement(e.target)) return;
-		if (e.target.id === contentState.parentMenu.triggerNode?.id) {
-			e.preventDefault();
-			return;
-		}
-		if (e.target.closest(`#${contentState.parentMenu.triggerNode?.id}`)) {
-			e.preventDefault();
-			return;
-		}
+		contentState.handleInteractOutside(e);
 		if (e.defaultPrevented) return;
 		onInteractOutside(e);
 		contentState.parentMenu.onClose();

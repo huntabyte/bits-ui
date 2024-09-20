@@ -36,14 +36,8 @@
 	present={contentState.root.open.current || forceMount}
 	{id}
 	onInteractOutside={(e) => {
-		if (
-			e.target === contentState.root.triggerNode ||
-			e.target === contentState.root.inputNode
-		) {
-			e.preventDefault();
-			return;
-		}
-
+		contentState.handleInteractOutside(e);
+		if (e.defaultPrevented) return;
 		onInteractOutside(e);
 		if (e.defaultPrevented) return;
 		contentState.root.closeMenu();

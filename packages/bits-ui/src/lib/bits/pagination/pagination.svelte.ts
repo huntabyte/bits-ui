@@ -6,7 +6,7 @@ import { getDataOrientation } from "$lib/internal/attrs.js";
 import { getElemDirection } from "$lib/internal/locale.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { getDirectionalKeys } from "$lib/internal/getDirectionalKeys.js";
-import type { Orientation } from "$lib/shared/index.js";
+import { type Orientation, useId } from "$lib/shared/index.js";
 import { createContext } from "$lib/internal/createContext.js";
 
 const ROOT_ATTR = "data-pagination-root";
@@ -66,37 +66,37 @@ class PaginationRootState {
 		});
 	}
 
-	setPage(page: number) {
+	setPage = (page: number) => {
 		this.page.current = page;
-	}
+	};
 
-	getPageTriggerNodes() {
+	getPageTriggerNodes = () => {
 		const node = this.ref.current;
 		if (!node) return [];
 		return Array.from(node.querySelectorAll<HTMLElement>("[data-pagination-page]"));
-	}
+	};
 
-	getButtonNode(type: "prev" | "next") {
+	getButtonNode = (type: "prev" | "next") => {
 		const node = this.ref.current;
 		if (!node) return;
 		return node.querySelector<HTMLElement>(`[data-pagination-${type}]`);
-	}
+	};
 
-	prevPage() {
+	prevPage = () => {
 		this.page.current = Math.max(this.page.current - 1, 1);
-	}
+	};
 
-	nextPage() {
+	nextPage = () => {
 		this.page.current = Math.min(this.page.current + 1, this.totalPages);
-	}
+	};
 
-	createPage(props: PaginationPageStateProps) {
+	createPage = (props: PaginationPageStateProps) => {
 		return new PaginationPage(props, this);
-	}
+	};
 
-	createButton(props: PaginationButtonStateProps) {
+	createButton = (props: PaginationButtonStateProps) => {
 		return new PaginationButtonState(props, this);
-	}
+	};
 
 	snippetProps = $derived.by(() => ({
 		pages: this.pages,
@@ -128,6 +128,7 @@ class PaginationPage {
 	#ref: PaginationPageStateProps["ref"];
 	#root: PaginationRootState;
 	page: PaginationPageStateProps["page"];
+	#isSelected = $derived.by(() => this.page.current.value === this.#root.page.current);
 
 	constructor(props: PaginationPageStateProps, root: PaginationRootState) {
 		this.#root = root;
@@ -155,8 +156,7 @@ class PaginationPage {
 				id: this.#id.current,
 				"aria-label": `Page ${this.page.current}`,
 				"data-value": `${this.page.current.value}`,
-				"data-selected":
-					this.page.current.value === this.#root.page.current ? "" : undefined,
+				"data-selected": this.#isSelected ? "" : undefined,
 				[PAGE_ATTR]: "",
 				//
 				onclick: this.#onclick,
@@ -318,7 +318,8 @@ function getPageItems({ page = 1, totalPages, siblingCount = 1 }: GetPageItemsPr
 	}
 
 	function addEllipsis(): void {
-		pageItems.push({ type: "ellipsis", key: "ellipsis" });
+		const id = useId();
+		pageItems.push({ type: "ellipsis", key: `ellipsis-${id}` });
 	}
 
 	let lastNumber = 0;

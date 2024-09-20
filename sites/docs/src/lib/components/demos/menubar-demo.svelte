@@ -74,24 +74,24 @@
 			View
 		</Menubar.Trigger>
 		<Menubar.Content
-			class="focus-override z-50 w-full max-w-[220px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover focus-visible:outline-none"
+			class="focus-override z-50 w-fit  rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover focus-visible:outline-none"
 			align="start"
 			sideOffset={3}
 		>
 			{#each grids as grid}
 				<Menubar.CheckboxItem
-					class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted"
+					class="flex h-10 select-none items-center gap-2 rounded-button py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted"
 					bind:checked={grid.checked}
 				>
 					{#snippet children({ checked })}
 						{grid.label} grid
-						{#if checked}
-							<SwitchOn />
-						{:else}
-							<div class="ml-auto">
+						<div class="ml-auto">
+							{#if checked}
+								<SwitchOn />
+							{:else}
 								<SwitchOff />
-							</div>
-						{/if}
+							{/if}
+						</div>
 					{/snippet}
 				</Menubar.CheckboxItem>
 			{/each}
@@ -100,13 +100,15 @@
 				{#each views as view}
 					<Menubar.RadioItem
 						value={view.value}
-						class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted"
+						class="flex h-10 select-none items-center gap-2 rounded-button py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted"
 					>
 						{#snippet children({ checked })}
 							{view.label}
-							{#if checked}
-								<Check class="size-5" />
-							{/if}
+							<div class="ml-auto size-5">
+								{#if checked}
+									<Check class="size-5" />
+								{/if}
+							</div>
 						{/snippet}
 					</Menubar.RadioItem>
 				{/each}
