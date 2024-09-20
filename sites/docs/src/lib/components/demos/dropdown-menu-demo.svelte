@@ -12,13 +12,7 @@
 
 	let notifications = $state<"indeterminate" | boolean>(false);
 	let invited = $state("");
-
-	let customAnchor = $state<HTMLElement | null>(null);
 </script>
-
-<div class="mr-48">
-	<div bind:this={customAnchor} class="h-[100px] w-[100px] rounded-full bg-blue-300"></div>
-</div>
 
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger
@@ -28,7 +22,6 @@
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Portal>
 		<DropdownMenu.Content
-			{customAnchor}
 			class="focus-override w-[229px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover outline-none focus-visible:outline-none"
 			sideOffset={8}
 		>
