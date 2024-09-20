@@ -1,6 +1,7 @@
 import type {
 	TooltipArrowPropsWithoutHTML,
 	TooltipContentPropsWithoutHTML,
+	TooltipContentStaticPropsWithoutHTML,
 	TooltipProviderPropsWithoutHTML,
 	TooltipRootPropsWithoutHTML,
 	TooltipTriggerPropsWithoutHTML,
@@ -9,18 +10,17 @@ import {
 	OnOpenChangeProp,
 	OpenChildSnippetProps,
 	OpenChildrenSnippetProps,
-	OpenClosedProp,
 } from "./extended-types/shared/index.js";
 import {
 	arrowProps,
 	childrenSnippet,
 	createApiSchema,
 	createBooleanProp,
+	createEnumDataAttr,
 	createFunctionProp,
 	createNumberProp,
 	dirProp,
 	dismissableLayerProps,
-	enums,
 	escapeLayerProps,
 	floatingProps,
 	forceMountProp,
@@ -28,6 +28,12 @@ import {
 } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
+
+const openClosedDataAttr = createEnumDataAttr({
+	name: "state",
+	description: "Whether the tooltip is open or closed.",
+	options: ["open", "closed"],
+});
 
 const delayDuration = createNumberProp({
 	default: "700",
@@ -114,13 +120,7 @@ export const trigger = createApiSchema<TooltipTriggerPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
 	dataAttributes: [
-		{
-			name: "state",
-			description: "The open state of the tooltip.",
-			value: enums("open", "closed"),
-			isEnum: true,
-			definition: OpenClosedProp,
-		},
+		openClosedDataAttr,
 		{
 			name: "tooltip-trigger",
 			description: "Present on the trigger element.",
@@ -144,13 +144,31 @@ export const content = createApiSchema<TooltipContentPropsWithoutHTML>({
 		}),
 	},
 	dataAttributes: [
+		openClosedDataAttr,
 		{
-			name: "state",
-			value: enums("open", "closed"),
-			description: "The open state of the tooltip.",
-			isEnum: true,
-			definition: OpenClosedProp,
+			name: "tooltip-content",
+			description: "Present on the content element.",
 		},
+	],
+});
+
+export const contentStatic = createApiSchema<TooltipContentStaticPropsWithoutHTML>({
+	title: "ContentStatic",
+	description:
+		"The contents of the tooltip which are displayed when the tooltip is open. (Static/No Floating UI)",
+	props: {
+		...dismissableLayerProps,
+		...escapeLayerProps,
+		forceMount: forceMountProp,
+		dir: dirProp,
+		...withChildProps({
+			elType: "HTMLDivElement",
+			childrenDef: OpenChildrenSnippetProps,
+			childDef: OpenChildSnippetProps,
+		}),
+	},
+	dataAttributes: [
+		openClosedDataAttr,
 		{
 			name: "tooltip-content",
 			description: "Present on the content element.",

@@ -15,7 +15,8 @@ export type EscapeLayerProps = {
 	/**
 	 * Escape behavior type.
 	 * `close`: Closes the element immediately.
-	 * `defer-otherwise-close`: Delegates the action to the parent element. If no parent is found, it closes the element.
+	 * `defer-otherwise-close`: Delegates the action to its parent component that has an
+	 * escape keydown handler. If no parent is found, it closes the element.
 	 * `defer-otherwise-ignore`: Delegates the action to the parent element. If no parent is found, nothing is done.
 	 * `ignore`: Prevents the element from closing and also blocks the parent element from closing in response to an escape key press.
 	 *
@@ -31,6 +32,5 @@ export type EscapeLayerImplProps = {
 	 * `presence` returned from the `presence` layer.
 	 */
 	enabled: boolean;
-
 	children?: Snippet;
 } & EscapeLayerProps;

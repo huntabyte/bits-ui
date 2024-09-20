@@ -508,16 +508,16 @@ export const forceMountProp = createBooleanProp({
 	default: C.FALSE,
 });
 
-export const onMountAutoFocusProp = createFunctionProp({
+export const onOpenAutoFocusProp = createFunctionProp({
 	definition: OnFocusOutsideProp,
 	description:
-		"Event handler called when auto-focusing the content as it is mounted. Can be prevented.",
+		"Event handler called when auto-focusing the content as it is opened. Can be prevented.",
 });
 
-export const onDestroyAutoFocusProp = createFunctionProp({
+export const onCloseAutoFocusProp = createFunctionProp({
 	definition: OnFocusOutsideProp,
 	description:
-		"Event handler called when auto-focusing the content as it is destroyed. Can be prevented.",
+		"Event handler called when auto-focusing the content as it is closed. Can be prevented.",
 });
 
 export const trapFocusProp = createBooleanProp({
@@ -526,8 +526,8 @@ export const trapFocusProp = createBooleanProp({
 });
 
 export const focusScopeProps = {
-	onMountAutoFocus: onMountAutoFocusProp,
-	onDestroyAutoFocus: onDestroyAutoFocusProp,
+	onOpenAutoFocus: onOpenAutoFocusProp,
+	onCloseAutoFocus: onCloseAutoFocusProp,
 	trapFocus: trapFocusProp,
 } as const;
 

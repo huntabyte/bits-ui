@@ -4,10 +4,10 @@
 	import { pickerOpenFocus } from "$lib/shared/date/index.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
-	let { ref = $bindable(null), onMountAutoFocus, ...restProps }: ContentProps = $props();
+	let { ref = $bindable(null), onOpenAutoFocus, ...restProps }: ContentProps = $props();
 
 	const mergedProps = $derived(
-		mergeProps({ onMountAutoFocus }, { onMountAutoFocus: pickerOpenFocus })
+		mergeProps({ onOpenAutoFocus }, { onOpenAutoFocus: pickerOpenFocus })
 	) as any;
 </script>
 

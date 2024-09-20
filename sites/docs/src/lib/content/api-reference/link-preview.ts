@@ -1,6 +1,7 @@
 import type {
 	LinkPreviewArrowPropsWithoutHTML,
 	LinkPreviewContentPropsWithoutHTML,
+	LinkPreviewContentStaticPropsWithoutHTML,
 	LinkPreviewRootPropsWithoutHTML,
 	LinkPreviewTriggerPropsWithoutHTML,
 } from "bits-ui";
@@ -9,6 +10,8 @@ import {
 	childrenSnippet,
 	createApiSchema,
 	createBooleanProp,
+	createDataAttrSchema,
+	createEnumDataAttr,
 	createFunctionProp,
 	createNumberProp,
 	dirProp,
@@ -21,6 +24,12 @@ import {
 	withChildProps,
 } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
+
+const openClosedDataAttr = createEnumDataAttr({
+	name: "state",
+	description: "Whether the accordion item is open or closed.",
+	options: ["open", "closed"],
+});
 
 export const root = createApiSchema<LinkPreviewRootPropsWithoutHTML>({
 	title: "Root",
@@ -63,16 +72,11 @@ export const trigger = createApiSchema<LinkPreviewTriggerPropsWithoutHTML>({
 		"A component which triggers the opening and closing of the link preview on hover or focus.",
 	props: withChildProps({ elType: "HTMLAnchorElement" }),
 	dataAttributes: [
-		{
-			name: "state",
-			value: enums("open", "closed"),
-			description: "The open state of the link preview.",
-			isEnum: true,
-		},
-		{
+		openClosedDataAttr,
+		createDataAttrSchema({
 			name: "link-preview-trigger",
 			description: "Present on the trigger element.",
-		},
+		}),
 	],
 });
 
@@ -89,16 +93,32 @@ export const content = createApiSchema<LinkPreviewContentPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		{
-			name: "state",
-			value: enums("open", "closed"),
-			description: "The open state of the link preview.",
-			isEnum: true,
-		},
-		{
+		openClosedDataAttr,
+		createDataAttrSchema({
 			name: "link-preview-content",
 			description: "Present on the content element.",
-		},
+		}),
+	],
+});
+
+export const contentStatic = createApiSchema<LinkPreviewContentStaticPropsWithoutHTML>({
+	title: "ContentStatic",
+	description:
+		"The contents of the link preview which are displayed when the preview is open. (Static/No Floating UI)",
+	props: {
+		...dismissableLayerProps,
+		...escapeLayerProps,
+		...focusScopeProps,
+		dir: dirProp,
+		forceMount: forceMountProp,
+		...withChildProps({ elType: "HTMLDivElement" }),
+	},
+	dataAttributes: [
+		openClosedDataAttr,
+		createDataAttrSchema({
+			name: "link-preview-content",
+			description: "Present on the content element.",
+		}),
 	],
 });
 
@@ -107,15 +127,11 @@ export const arrow = createApiSchema<LinkPreviewArrowPropsWithoutHTML>({
 	description: "An optional arrow element which points to the trigger when the preview is open.",
 	props: arrowProps,
 	dataAttributes: [
-		{
-			name: "arrow",
-			description: "Present on the arrow element.",
-		},
-		{
+		createDataAttrSchema({
 			name: "link-preview-arrow",
 			description: "Present on the arrow element.",
-		},
+		}),
 	],
 });
 
-export const linkPreview = [root, trigger, content, arrow];
+export const linkPreview = [root, trigger, content, contentStatic, arrow];

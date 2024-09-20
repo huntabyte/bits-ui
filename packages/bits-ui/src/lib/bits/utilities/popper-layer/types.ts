@@ -14,6 +14,7 @@ import type {
 } from "../text-selection-layer/types.js";
 import type { PresenceLayerImplProps, PresenceLayerProps } from "../presence-layer/types.js";
 import type { FocusScopeImplProps, FocusScopeProps } from "../focus-scope/types.js";
+import type { ScrollLockProps } from "../scroll-lock/index.js";
 import type { Direction } from "$lib/shared/index.js";
 
 export type PopperLayerProps = EscapeLayerProps &
@@ -21,16 +22,17 @@ export type PopperLayerProps = EscapeLayerProps &
 	FloatingLayerContentProps &
 	PresenceLayerProps &
 	TextSelectionLayerProps &
-	FocusScopeProps;
+	FocusScopeProps &
+	ScrollLockProps;
 
 export type PopperLayerStaticProps = EscapeLayerProps &
 	DismissableLayerProps &
 	PresenceLayerProps &
 	TextSelectionLayerProps &
-	FocusScopeProps & {
+	FocusScopeProps &
+	ScrollLockProps & {
 		content?: Snippet<[{ props: Record<string, unknown> }]>;
 		dir?: Direction;
-		preventScroll?: boolean;
 	};
 
 export type PopperLayerImplProps = Omit<

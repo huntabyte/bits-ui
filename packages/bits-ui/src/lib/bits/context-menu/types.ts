@@ -9,7 +9,7 @@ export type ContextMenuContentPropsWithoutHTML = Omit<
 
 export type ContextMenuContentProps = Omit<
 	MenuContentProps,
-	"side" | "onMountAutoFocus" | "sideOffset" | "align"
+	"side" | "onOpenAutoFocus" | "sideOffset" | "align"
 >;
 
 export type ContextMenuTriggerPropsWithoutHTML = WithChild<{

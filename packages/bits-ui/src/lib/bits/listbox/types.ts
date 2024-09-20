@@ -1,11 +1,8 @@
+import type { Expand } from "svelte-toolbelt";
 import type { PortalProps } from "../utilities/portal/types.js";
 import type { PopperLayerProps, PopperLayerStaticProps } from "../utilities/popper-layer/types.js";
 import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
-import type {
-	PrimitiveButtonAttributes,
-	PrimitiveDivAttributes,
-	PrimitiveInputAttributes,
-} from "$lib/shared/attributes.js";
+import type { PrimitiveButtonAttributes, PrimitiveDivAttributes } from "$lib/shared/attributes.js";
 import type { OnChangeFn, WithChild, WithChildren, Without } from "$lib/internal/types.js";
 
 export type ListboxBaseRootPropsWithoutHTML = WithChildren<{
@@ -118,13 +115,24 @@ export type ListboxRootPropsWithoutHTML = ListboxBaseRootPropsWithoutHTML &
 
 export type ListboxRootProps = ListboxRootPropsWithoutHTML;
 
-export type ListboxContentPropsWithoutHTML = WithChild<Omit<PopperLayerProps, "content">>;
+export type _SharedListboxContentProps = {
+	/**
+	 * Whether or not to loop through the items when navigating with the keyboard.
+	 *
+	 * @defaultValue `false`
+	 */
+	loop?: boolean;
+};
+
+export type ListboxContentPropsWithoutHTML = Expand<
+	WithChild<Omit<PopperLayerProps, "content"> & _SharedListboxContentProps>
+>;
 
 export type ListboxContentProps = ListboxContentPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, ListboxContentPropsWithoutHTML>;
 
-export type ListboxContentStaticPropsWithoutHTML = WithChild<
-	Omit<PopperLayerStaticProps, "content">
+export type ListboxContentStaticPropsWithoutHTML = Expand<
+	WithChild<Omit<PopperLayerStaticProps, "content"> & _SharedListboxContentProps>
 >;
 
 export type ListboxContentStaticProps = ListboxContentStaticPropsWithoutHTML &

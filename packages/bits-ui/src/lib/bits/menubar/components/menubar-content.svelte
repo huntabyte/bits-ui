@@ -31,6 +31,6 @@
 	preventScroll={false}
 	onInteractOutside={contentState.onInteractOutside}
 	onFocusOutside={contentState.onFocusOutside}
-	onDestroyAutoFocus={contentState.onDestroyAutoFocus}
-	onMountAutoFocus={contentState.onMountAutoFocus}
+	onCloseAutoFocus={contentState.onCloseAutoFocus}
+	onOpenAutoFocus={contentState.onOpenAutoFocus}
 />

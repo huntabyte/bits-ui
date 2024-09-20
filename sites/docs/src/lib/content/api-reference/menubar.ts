@@ -2,6 +2,7 @@ import type {
 	MenubarArrowPropsWithoutHTML,
 	MenubarCheckboxItemPropsWithoutHTML,
 	MenubarContentPropsWithoutHTML,
+	MenubarContentStaticPropsWithoutHTML,
 	MenubarGroupLabelPropsWithoutHTML,
 	MenubarGroupPropsWithoutHTML,
 	MenubarItemPropsWithoutHTML,
@@ -82,6 +83,12 @@ export const content = createApiSchema<MenubarContentPropsWithoutHTML>({
 	...m.content,
 });
 
+export const contentStatic = createApiSchema<MenubarContentStaticPropsWithoutHTML>({
+	title: "ContentStatic",
+	description: "The content displayed when the dropdown menu is open. (Static/No Floating UI)",
+	...m.contentStatic,
+});
+
 export const item = createApiSchema<MenubarItemPropsWithoutHTML>({
 	title: "Item",
 	description: "A menu item within the dropdown menu.",
@@ -132,6 +139,7 @@ export const subTrigger = createApiSchema<MenubarSubTriggerPropsWithoutHTML>({
 	...m.subTrigger,
 });
 
+// TODO: add subContentStatic
 export const subContent = createApiSchema<MenubarSubContentPropsWithoutHTML>({
 	title: "SubContent",
 	description: "The submenu content displayed when the parent submenu is open.",

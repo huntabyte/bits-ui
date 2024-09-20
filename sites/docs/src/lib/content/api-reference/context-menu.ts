@@ -2,6 +2,7 @@ import type {
 	ContextMenuArrowPropsWithoutHTML,
 	ContextMenuCheckboxItemPropsWithoutHTML,
 	ContextMenuContentPropsWithoutHTML,
+	ContextMenuContentStaticPropsWithoutHTML,
 	ContextMenuGroupPropsWithoutHTML,
 	ContextMenuItemPropsWithoutHTML,
 	ContextMenuLabelPropsWithoutHTML,
@@ -26,6 +27,7 @@ import {
 	focusScopeProps,
 	forceMountProp,
 	preventOverflowTextSelectionProp,
+	preventScrollProp,
 	refProp,
 	withChildProps,
 } from "./helpers.js";
@@ -97,6 +99,27 @@ export const content = createApiSchema<ContextMenuContentPropsWithoutHTML>({
 			description: "The height of the context menu trigger element.",
 		}),
 	],
+});
+
+export const contentStatic = createApiSchema<ContextMenuContentStaticPropsWithoutHTML>({
+	title: "Content",
+	description: "The content displayed when the context menu is open. (Static/No Floating UI)",
+	props: {
+		...escapeLayerProps,
+		...dismissableLayerProps,
+		...focusScopeProps,
+		preventScroll: preventScrollProp,
+		preventOverflowTextSelection: preventOverflowTextSelectionProp,
+		dir: dirProp,
+		forceMount: forceMountProp,
+		loop: createBooleanProp({
+			default: C.FALSE,
+			description:
+				"Whether or not the context menu should loop through items when reaching the end.",
+		}),
+		...withChildProps({ elType: "HTMLDivElement" }),
+	},
+	dataAttributes: menu.content.dataAttributes,
 });
 
 export const item = createApiSchema<ContextMenuItemPropsWithoutHTML>({
@@ -174,6 +197,7 @@ export const contextMenu = [
 	trigger,
 	portal,
 	content,
+	contentStatic,
 	item,
 	checkboxItem,
 	radioGroup,

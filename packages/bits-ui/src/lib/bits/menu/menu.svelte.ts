@@ -344,7 +344,7 @@ class MenuContentState {
 		return false;
 	}
 
-	onMountAutoFocus(e: Event) {
+	onOpenAutoFocus(e: Event) {
 		if (e.defaultPrevented) return;
 		e.preventDefault();
 		const contentNode = this.parentMenu.contentNode;

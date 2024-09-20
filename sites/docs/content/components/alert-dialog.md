@@ -188,9 +188,9 @@ Although it isn't recommended unless absolutely necessary, you can disabled this
 
 By default, when a dialog is opened, focus will be set to the `AlertDialog.Cancel` button if it exists, or the first focusable element within the `AlertDialog.Content`. This ensures that users navigating my keyboard end up somewhere within the Dialog that they can interact with.
 
-You can override this behavior using the `onMountAutoFocus` prop on the `AlertDialog.Content` component. It's _highly_ recommended that you use this prop to focus _something_ within the Dialog.
+You can override this behavior using the `onOpenAutoFocus` prop on the `AlertDialog.Content` component. It's _highly_ recommended that you use this prop to focus _something_ within the Dialog.
 
-You'll first need to cancel the default behavior of focusing the first focusable element by cancelling the event passed to the `onMountAutoFocus` callback. You can then focus whatever you wish.
+You'll first need to cancel the default behavior of focusing the first focusable element by cancelling the event passed to the `onOpenAutoFocus` callback. You can then focus whatever you wish.
 
 ```svelte {9-12}
 <script lang="ts">
@@ -201,7 +201,7 @@ You'll first need to cancel the default behavior of focusing the first focusable
 <AlertDialog.Root>
 	<AlertDialog.Trigger>Open AlertDialog</AlertDialog.Trigger>
 	<AlertDialog.Content
-		onMountAutoFocus={(e) => {
+		onOpenAutoFocus={(e) => {
 			e.preventDefault();
 			nameInput?.focus();
 		}}
@@ -213,9 +213,9 @@ You'll first need to cancel the default behavior of focusing the first focusable
 
 ### Close Focus
 
-By default, when a dialog is closed, focus will be set to the trigger element of the dialog. You can override this behavior using the `onDestroyAutoFocus` prop on the `AlertDialog.Content` component.
+By default, when a dialog is closed, focus will be set to the trigger element of the dialog. You can override this behavior using the `onCloseAutoFocus` prop on the `AlertDialog.Content` component.
 
-You'll need to cancel the default behavior of focusing the trigger element by cancelling the event passed to the `onDestroyAutoFocus` callback, and then focus whatever you wish.
+You'll need to cancel the default behavior of focusing the trigger element by cancelling the event passed to the `onCloseAutoFocus` callback, and then focus whatever you wish.
 
 ```svelte {9-12}
 <script lang="ts">
@@ -227,7 +227,7 @@ You'll need to cancel the default behavior of focusing the trigger element by ca
 <AlertDialog.Root>
 	<AlertDialog.Trigger>Open AlertDialog</AlertDialog.Trigger>
 	<AlertDialog.Content
-		onDestroyAutoFocus={(e) => {
+		onCloseAutoFocus={(e) => {
 			e.preventDefault();
 			nameInput?.focus();
 		}}

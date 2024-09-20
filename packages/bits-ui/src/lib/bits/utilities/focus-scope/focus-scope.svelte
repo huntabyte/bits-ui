@@ -8,16 +8,16 @@
 		id,
 		trapFocus = false,
 		loop = false,
-		onDestroyAutoFocus = noop,
-		onMountAutoFocus = noop,
+		onCloseAutoFocus = noop,
+		onOpenAutoFocus = noop,
 		focusScope,
 	}: FocusScopeImplProps = $props();
 
 	const focusScopeState = useFocusScope({
-		trapFocus: box.with(() => trapFocus),
+		enabled: box.with(() => trapFocus),
 		loop: box.with(() => loop),
-		onDestroyAutoFocus: box.with(() => onDestroyAutoFocus),
-		onMountAutoFocus: box.with(() => onMountAutoFocus),
+		onCloseAutoFocus: box.with(() => onCloseAutoFocus),
+		onOpenAutoFocus: box.with(() => onOpenAutoFocus),
 		id: box.with(() => id),
 	});
 </script>

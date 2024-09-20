@@ -188,9 +188,9 @@ Although it isn't recommended unless absolutely necessary, you can disabled this
 
 By default, when a Dialog is opened, focus will be set to the first focusable element with the `Dialog.Content`. This ensures that users navigating my keyboard end up somewhere within the Dialog that they can interact with.
 
-You can override this behavior using the `onMountAutoFocus` prop on the `Dialog.Content` component. It's _highly_ recommended that you use this prop to focus _something_ within the Dialog.
+You can override this behavior using the `onOpenAutoFocus` prop on the `Dialog.Content` component. It's _highly_ recommended that you use this prop to focus _something_ within the Dialog.
 
-You'll first need to cancel the default behavior of focusing the first focusable element by cancelling the event passed to the `onMountAutoFocus` callback. You can then focus whatever you wish.
+You'll first need to cancel the default behavior of focusing the first focusable element by cancelling the event passed to the `onOpenAutoFocus` callback. You can then focus whatever you wish.
 
 ```svelte {9-12}
 <script lang="ts">
@@ -201,7 +201,7 @@ You'll first need to cancel the default behavior of focusing the first focusable
 <Dialog.Root>
 	<Dialog.Trigger>Open Dialog</Dialog.Trigger>
 	<Dialog.Content
-		onMountAutoFocus={(e) => {
+		onOpenAutoFocus={(e) => {
 			e.preventDefault();
 			nameInput?.focus();
 		}}
@@ -213,9 +213,9 @@ You'll first need to cancel the default behavior of focusing the first focusable
 
 ### Close Focus
 
-By default, when a Dialog is closed, focus will be set to the trigger element of the Dialog. You can override this behavior using the `onDestroyAutoFocus` prop on the `Dialog.Content` component.
+By default, when a Dialog is closed, focus will be set to the trigger element of the Dialog. You can override this behavior using the `onCloseAutoFocus` prop on the `Dialog.Content` component.
 
-You'll need to cancel the default behavior of focusing the trigger element by cancelling the event passed to the `onDestroyAutoFocus` callback, and then focus whatever you wish.
+You'll need to cancel the default behavior of focusing the trigger element by cancelling the event passed to the `onCloseAutoFocus` callback, and then focus whatever you wish.
 
 ```svelte {9-12}
 <script lang="ts">
@@ -227,7 +227,7 @@ You'll need to cancel the default behavior of focusing the trigger element by ca
 <Dialog.Root>
 	<Dialog.Trigger>Open Dialog</Dialog.Trigger>
 	<Dialog.Content
-		onDestroyAutoFocus={(e) => {
+		onCloseAutoFocus={(e) => {
 			e.preventDefault();
 			nameInput?.focus();
 		}}

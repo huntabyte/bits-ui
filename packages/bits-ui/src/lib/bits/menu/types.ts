@@ -1,3 +1,4 @@
+import type { Expand } from "svelte-toolbelt";
 import type { PopperLayerProps, PopperLayerStaticProps } from "../utilities/popper-layer/types.js";
 import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
 import type { OnChangeFn, WithChild, WithChildren, Without } from "$lib/internal/types.js";
@@ -26,12 +27,25 @@ export type MenuRootPropsWithoutHTML = WithChildren<{
 
 export type MenuRootProps = MenuRootPropsWithoutHTML;
 
-export type MenuContentPropsWithoutHTML = WithChild<Omit<PopperLayerProps, "content">>;
+export type _SharedMenuContentProps = {
+	/**
+	 * When `true`, the menu will loop through items when navigating with the keyboard.
+	 *
+	 * @defaultValue false
+	 */
+	loop?: boolean;
+};
+
+export type MenuContentPropsWithoutHTML = Expand<
+	WithChild<Omit<PopperLayerProps, "content"> & _SharedMenuContentProps>
+>;
 
 export type MenuContentProps = MenuContentPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, MenuContentPropsWithoutHTML>;
 
-export type MenuContentStaticPropsWithoutHTML = WithChild<Omit<PopperLayerStaticProps, "content">>;
+export type MenuContentStaticPropsWithoutHTML = Expand<
+	WithChild<Omit<PopperLayerStaticProps, "content"> & _SharedMenuContentProps>
+>;
 
 export type MenuContentStaticProps = MenuContentStaticPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, MenuContentStaticPropsWithoutHTML>;
@@ -112,7 +126,10 @@ export type MenuSubPropsWithoutHTML = WithChildren<{
 	onOpenChange?: OnChangeFn<boolean>;
 }>;
 
-export type MenuSubContentPropsWithoutHTML = WithChild<Omit<PopperLayerProps, "content">>;
+export type MenuSubContentPropsWithoutHTML = Expand<
+	WithChild<Omit<PopperLayerProps, "content"> & _SharedMenuContentProps>
+>;
+
 export type MenuSubContentProps = MenuSubContentPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, MenuSubContentPropsWithoutHTML>;
 

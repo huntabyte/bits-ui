@@ -1,6 +1,7 @@
 import type {
 	ListboxArrowPropsWithoutHTML,
 	ListboxContentPropsWithoutHTML,
+	ListboxContentStaticPropsWithoutHTML,
 	ListboxGroupLabelPropsWithoutHTML,
 	ListboxGroupPropsWithoutHTML,
 	ListboxItemPropsWithoutHTML,
@@ -40,6 +41,7 @@ import {
 	focusScopeProps,
 	forceMountProp,
 	preventOverflowTextSelectionProp,
+	preventScrollProp,
 	withChildProps,
 } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
@@ -158,6 +160,37 @@ export const content = createApiSchema<ListboxContentPropsWithoutHTML>({
 		createCSSVarSchema({
 			name: "--bits-listbox-trigger-height",
 			description: "The height of the listbox trigger element.",
+		}),
+	],
+});
+
+export const contentStatic = createApiSchema<ListboxContentStaticPropsWithoutHTML>({
+	title: "ContentStatic",
+	description: "The element which contains the listbox's items. (Static/No Floating UI)",
+	props: {
+		...escapeLayerProps,
+		...dismissableLayerProps,
+		...focusScopeProps,
+		preventScroll: preventScrollProp,
+		preventOverflowTextSelection: preventOverflowTextSelectionProp,
+		dir: dirProp,
+		loop: createBooleanProp({
+			default: C.FALSE,
+			description:
+				"Whether or not the listbox should loop through items when reaching the end.",
+		}),
+		forceMount: forceMountProp,
+		...withChildProps({
+			elType: "HTMLDivElement",
+			childrenDef: OpenChildrenSnippetProps,
+			childDef: OpenChildSnippetProps,
+		}),
+	},
+	dataAttributes: [
+		stateDataAttr,
+		createDataAttrSchema({
+			name: "listbox-content",
+			description: "Present on the content element.",
 		}),
 	],
 });
@@ -321,6 +354,7 @@ export const listbox = [
 	root,
 	trigger,
 	content,
+	contentStatic,
 	item,
 	viewport,
 	scrollUpButton,

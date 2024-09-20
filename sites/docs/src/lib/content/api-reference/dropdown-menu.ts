@@ -2,6 +2,7 @@ import type {
 	DropdownMenuArrowPropsWithoutHTML,
 	DropdownMenuCheckboxItemPropsWithoutHTML,
 	DropdownMenuContentPropsWithoutHTML,
+	DropdownMenuContentStaticPropsWithoutHTML,
 	DropdownMenuGroupPropsWithoutHTML,
 	DropdownMenuItemPropsWithoutHTML,
 	DropdownMenuLabelPropsWithoutHTML,
@@ -41,6 +42,12 @@ export const content = createApiSchema<DropdownMenuContentPropsWithoutHTML>({
 	title: "Content",
 	description: "The content displayed when the dropdown menu is open.",
 	...menu.content,
+});
+
+export const contentStatic = createApiSchema<DropdownMenuContentStaticPropsWithoutHTML>({
+	title: "ContentStatic",
+	description: "The content displayed when the dropdown menu is open. (Static/No Floating UI)",
+	...menu.contentStatic,
 });
 
 export const item = createApiSchema<DropdownMenuItemPropsWithoutHTML>({
@@ -118,6 +125,7 @@ export const dropdownMenu = [
 	trigger,
 	portal,
 	content,
+	contentStatic,
 	item,
 	checkboxItem,
 	radioGroup,
