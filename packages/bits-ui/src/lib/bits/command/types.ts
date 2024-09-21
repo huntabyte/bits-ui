@@ -81,7 +81,7 @@ export type CommandGroupPropsWithoutHTML = WithChild<{
 	/**
 	 * A unique value for the group.
 	 */
-	value: string;
+	value?: string;
 
 	/**
 	 * Whether to force mount the group container regardless of

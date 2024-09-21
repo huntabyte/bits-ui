@@ -28,6 +28,7 @@ const GROUP_HEADING_ATTR = "data-command-group-heading";
 const ITEM_ATTR = "data-command-item";
 const VALUE_ATTR = `data-value`;
 const LIST_VIEWPORT_ATTR = "data-command-list-viewport";
+const INPUT_LABEL_ATTR = "data-command-input-label";
 
 const GROUP_SELECTOR = `[${GROUP_ATTR}]`;
 const GROUP_ITEMS_SELECTOR = `[${GROUP_ITEMS_ATTR}]`;
@@ -946,9 +947,6 @@ class CommandListState {
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
-			onRefChange: (node) => {
-				this.root.listNode = node;
-			},
 		});
 	}
 
@@ -994,7 +992,7 @@ class CommandLabelState {
 		() =>
 			({
 				id: this.#id.current,
-				"data-cmdk-input-label": "",
+				[INPUT_LABEL_ATTR]: "",
 				for: this.#for?.current,
 			}) as const
 	);
