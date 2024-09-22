@@ -40,37 +40,27 @@
 		},
 	];
 
-	function switcherAction(_: HTMLElement) {
-		function handleKeydown(e: KeyboardEvent) {
-			const themeNames = themes.map(({ key }) => key);
+	function handleKeydown(e: KeyboardEvent) {
+		const themeNames = themes.map(({ key }) => key);
 
-			if (e.key === "ArrowRight") {
-				const currentIndex = themeNames.indexOf(theme);
-				const nextIndex = currentIndex + 1;
-				const nextTheme = themeNames[nextIndex];
+		if (e.key === "ArrowRight") {
+			const currentIndex = themeNames.indexOf(theme);
+			const nextIndex = currentIndex + 1;
+			const nextTheme = themeNames[nextIndex];
 
-				if (isTheme(nextTheme)) {
-					theme = nextTheme;
-				}
-			}
-			if (e.key === "ArrowLeft") {
-				const currentIndex = themeNames.indexOf(theme);
-				const nextIndex = currentIndex - 1;
-				const nextTheme = themeNames[nextIndex];
-
-				if (isTheme(nextTheme)) {
-					theme = nextTheme;
-				}
+			if (isTheme(nextTheme)) {
+				theme = nextTheme;
 			}
 		}
+		if (e.key === "ArrowLeft") {
+			const currentIndex = themeNames.indexOf(theme);
+			const nextIndex = currentIndex - 1;
+			const nextTheme = themeNames[nextIndex];
 
-		document.addEventListener("keydown", handleKeydown);
-
-		return {
-			destroy() {
-				document.removeEventListener("keydown", handleKeydown);
-			},
-		};
+			if (isTheme(nextTheme)) {
+				theme = nextTheme;
+			}
+		}
 	}
 
 	function handleButtonClick(key: Themes) {
@@ -86,7 +76,9 @@
 	});
 </script>
 
-<div class="switcher" use:switcherAction>
+<svelte:document onkeydown={handleKeydown} />
+
+<div class="switcher">
 	<span class="arrow" style:left="100px" style:transform="translateX(-24px) translateZ(0px)">
 		←
 	</span>
@@ -105,7 +97,7 @@
 			{/if}
 		</button>
 	{/each}
-	<span class="arrow" style:right="100px" style:transform="translateX(20px) translateZ(0px)"
-		>→</span
-	>
+	<span class="arrow" style:right="100px" style:transform="translateX(20px) translateZ(0px)">
+		→
+	</span>
 </div>

@@ -72,17 +72,17 @@ class CommandRootState {
 	filter: CommandRootStateProps["filter"];
 	shouldFilter: CommandRootStateProps["shouldFilter"];
 	loop: CommandRootStateProps["loop"];
-	listNode = $state<HTMLElement | null>(null);
+	listViewportNode = $state<HTMLElement | null>(null);
 	labelNode = $state<HTMLElement | null>(null);
 	valueProp: CommandRootStateProps["value"];
 	// published state that the components and other things can react to
 	commandState = $state.raw<CommandState>(null!);
 	// internal state that we mutate in batches and publish to the `state` at once
-	#commmandState = $state<CommandState>(null!);
-	snapshot = () => this.#commmandState;
+	#commandState = $state<CommandState>(null!);
+	snapshot = () => this.#commandState;
 	setState: SetState = (key, value, opts) => {
-		if (Object.is(this.#commmandState[key], value)) return;
-		this.#commmandState[key] = value;
+		if (Object.is(this.#commandState[key], value)) return;
+		this.#commandState[key] = value;
 		if (key === "search") {
 			// Filter synchronously before emitting back to children
 			this.#filterItems();
@@ -99,7 +99,7 @@ class CommandRootState {
 		this.emit();
 	};
 	emit = () => {
-		this.commandState = $state.snapshot(this.#commmandState);
+		this.commandState = $state.snapshot(this.#commandState);
 	};
 
 	constructor(props: CommandRootStateProps) {
@@ -123,7 +123,7 @@ class CommandRootState {
 				groups: new Set<string>(),
 			},
 		};
-		this.#commmandState = defaultState;
+		this.#commandState = defaultState;
 		this.commandState = defaultState;
 
 		useRefById({
@@ -140,17 +140,18 @@ class CommandRootState {
 
 	#score = (value: string, keywords?: string[]) => {
 		const filter = this.filter.current ?? defaultFilter;
-		return value ? filter(value, this.#commmandState.search, keywords) : 0;
+		const score = value ? filter(value, this.#commandState.search, keywords) : 0;
+		return score;
 	};
 
 	#sort = () => {
-		if (!this.#commmandState.search || this.shouldFilter.current === false) return;
+		if (!this.#commandState.search || this.shouldFilter.current === false) return;
 
-		const scores = this.#commmandState.filtered.items;
+		const scores = this.#commandState.filtered.items;
 
 		// sort the groups
 		const groups: [string, number][] = [];
-		for (const value of this.#commmandState.filtered.groups) {
+		for (const value of this.#commandState.filtered.groups) {
 			const items = this.allGroups.get(value);
 			let max = 0;
 			if (!items) {
@@ -169,7 +170,7 @@ class CommandRootState {
 		// Sort items within groups to bottom
 		// Sort items outside of groups
 		// Sort groups to bottom (pushes all non-grouped items to the top)
-		const listInsertionElement = this.listNode;
+		const listInsertionElement = this.listViewportNode;
 
 		this.#getValidItems()
 			.sort((a, b) => {
@@ -221,13 +222,13 @@ class CommandRootState {
 	};
 
 	#filterItems = () => {
-		if (!this.#commmandState.search || this.shouldFilter.current === false) {
-			this.#commmandState.filtered.count = this.allItems.size;
+		if (!this.#commandState.search || this.shouldFilter.current === false) {
+			this.#commandState.filtered.count = this.allItems.size;
 			return;
 		}
 
 		// reset the groups
-		this.#commmandState.filtered.groups = new Set();
+		this.#commandState.filtered.groups = new Set();
 		let itemCount = 0;
 
 		// Check which items should be included
@@ -235,23 +236,23 @@ class CommandRootState {
 			const value = this.allIds.get(id)?.value ?? "";
 			const keywords = this.allIds.get(id)?.keywords ?? [];
 			const rank = this.#score(value, keywords);
-			this.#commmandState.filtered.items.set(id, rank);
+			this.#commandState.filtered.items.set(id, rank);
 			if (rank > 0) itemCount++;
 		}
 
 		// Check which groups have at least 1 item shown
 		for (const [groupId, group] of this.allGroups) {
 			for (const itemId of group) {
-				const currItem = this.#commmandState.filtered.items.get(itemId);
+				const currItem = this.#commandState.filtered.items.get(itemId);
 
 				if (currItem && currItem > 0) {
-					this.#commmandState.filtered.groups.add(groupId);
+					this.#commandState.filtered.groups.add(groupId);
 					break;
 				}
 			}
 		}
 
-		this.#commmandState.filtered.count = itemCount;
+		this.#commandState.filtered.count = itemCount;
 	};
 
 	#getValidItems = () => {
@@ -341,15 +342,17 @@ class CommandRootState {
 	registerValue = (id: string, value: string, keywords?: string[]) => {
 		if (value === this.allIds.get(id)?.value) return;
 		this.allIds.set(id, { value, keywords });
-		this.#commmandState.filtered.items.set(id, this.#score(value, keywords));
-		this.#sort();
-		this.emit();
+		this.#commandState.filtered.items.set(id, this.#score(value, keywords));
+		afterSleep(1, () => {
+			this.#sort();
+			this.emit();
+		});
 	};
 
 	registerItem = (id: string, groupId: string | undefined) => {
 		this.allItems.add(id);
 
-		// track this item within the group
+		// Track this item within the group
 		if (groupId) {
 			if (!this.allGroups.has(groupId)) {
 				this.allGroups.set(groupId, new Set([id]));
@@ -360,32 +363,34 @@ class CommandRootState {
 
 		// Batch this, multiple items can mount in one pass
 		// and we should not be filtering/sorting/emitting each time
-		this.#filterItems();
-		this.#sort();
+		afterSleep(3, () => {
+			this.#filterItems();
+			this.#sort();
 
-		// Could be initial mount, select the first item if none already selected
-		if (!this.#commmandState.value) {
-			this.#selectFirstItem();
-		}
+			// Could be initial mount, select the first item if none already selected
+			if (!this.commandState.value) {
+				this.#selectFirstItem();
+			}
 
-		this.emit();
+			this.emit();
+		});
 
 		return () => {
 			this.allIds.delete(id);
 			this.allItems.delete(id);
-			this.#commmandState.filtered.items.delete(id);
+			this.commandState.filtered.items.delete(id);
 			const selectedItem = this.#getSelectedItem();
 
-			this.#filterItems();
-
 			// Batch this, multiple items could be removed in one pass
-			this.#filterItems();
+			afterSleep(3, () => {
+				this.#filterItems();
 
-			// The item removed have been the selected one,
-			// so selection should be moved to the first
-			if (selectedItem?.getAttribute("id") === id) this.#selectFirstItem();
+				// The item removed have been the selected one,
+				// so selection should be moved to the first
+				if (selectedItem?.getAttribute("id") === id) this.#selectFirstItem();
 
-			this.emit();
+				this.emit();
+			});
 		};
 	};
 
@@ -451,7 +456,7 @@ class CommandRootState {
 				break;
 			case kbd.ENTER: {
 				e.preventDefault();
-				const item = this.#getSelectedItem() as HTMLElement;
+				const item = this.#getSelectedItem();
 				if (item) {
 					item?.click();
 				}
@@ -580,12 +585,13 @@ class CommandGroupContainerState {
 				if (this.#value.current) {
 					this.trueValue = this.#value.current;
 					this.#root.registerValue(this.id.current, this.#value.current);
-				} else if (this.#ref.current?.textContent)
-					// } else if (this.#headingValue.current) {
-					// 	this.trueValue = this.#headingValue.current.trim().toLowerCase();
-					// } else if (this.#ref.current?.textContent) {
-
+				} else if (this.#ref.current?.textContent) {
 					this.trueValue = this.#ref.current.textContent.trim().toLowerCase();
+					this.#root.registerValue(this.id.current, this.trueValue);
+				} else if (this.headingNode && this.headingNode.textContent) {
+					this.trueValue = this.headingNode.textContent.trim().toLowerCase();
+					this.#root.registerValue(this.id.current, this.trueValue);
+				}
 			});
 		});
 	}
@@ -686,7 +692,7 @@ class CommandInputState {
 	#autofocus: CommandInputStateProps["autofocus"];
 
 	#selectedItemId = $derived.by(() => {
-		const item = this.#root.listNode?.querySelector<HTMLElement>(
+		const item = this.#root.listViewportNode?.querySelector<HTMLElement>(
 			`${ITEM_SELECTOR}[${VALUE_ATTR}="${encodeURIComponent(this.#value.current)}"]`
 		);
 		if (!item) return;
@@ -736,7 +742,7 @@ class CommandInputState {
 				"aria-autocomplete": "list",
 				role: "combobox",
 				"aria-expanded": getAriaExpanded(true),
-				"aria-controls": this.#root.listNode?.id ?? undefined,
+				"aria-controls": this.#root.listViewportNode?.id ?? undefined,
 				"aria-labelledby": this.#root.labelNode?.id ?? undefined,
 				"aria-activedescendant": this.#selectedItemId, // TODO
 			}) as const
@@ -760,7 +766,7 @@ class CommandItemState {
 	#root: CommandRootState;
 	#value: CommandItemStateProps["value"];
 	#disabled: CommandItemStateProps["disabled"];
-	#onSelect: CommandItemStateProps["onSelect"];
+	#onSelectProp: CommandItemStateProps["onSelect"];
 	#forceMount: CommandItemStateProps["forceMount"];
 	#group: CommandGroupContainerState | null = null;
 	#trueForceMount = $derived.by(() => {
@@ -788,7 +794,7 @@ class CommandItemState {
 		this.#root = root;
 		this.#value = props.value;
 		this.#disabled = props.disabled;
-		this.#onSelect = props.onSelect;
+		this.#onSelectProp = props.onSelect;
 		this.#forceMount = props.forceMount;
 		this.#group = getCommandGroupContainerContext(null);
 		this.trueValue = props.value.current;
@@ -802,11 +808,11 @@ class CommandItemState {
 		$effect(() => {
 			this.id.current;
 			this.#group?.id.current;
-			let unsub = () => {};
-			untrack(() => {
-				unsub = this.#root.registerItem(this.id.current, this.#group?.id.current);
-			});
-			return unsub;
+			if (!this.#forceMount.current) {
+				untrack(() => {
+					return this.#root.registerItem(this.id.current, this.#group?.id.current);
+				});
+			}
 		});
 
 		$effect(() => {
@@ -824,10 +830,15 @@ class CommandItemState {
 		});
 	}
 
+	#onSelect = () => {
+		if (this.#disabled.current) return;
+		this.#select();
+		this.#onSelectProp?.current();
+	};
+
 	#select = () => {
 		if (this.#disabled.current) return;
 		this.#root.setValue(this.trueValue, true);
-		this.#onSelect?.current();
 	};
 
 	#onpointermove = () => {
@@ -837,7 +848,7 @@ class CommandItemState {
 
 	#onclick = () => {
 		if (this.#disabled.current) return;
-		this.#select();
+		this.#onSelect();
 	};
 
 	props = $derived.by(
@@ -933,20 +944,20 @@ type CommandListStateProps = WithRefProps &
 	}>;
 
 class CommandListState {
-	#ref: CommandListStateProps["ref"];
+	ref: CommandListStateProps["ref"];
 	#id: CommandListStateProps["id"];
 	#ariaLabel: CommandListStateProps["ariaLabel"];
 	root: CommandRootState;
 
 	constructor(props: CommandListStateProps, root: CommandRootState) {
-		this.#ref = props.ref;
+		this.ref = props.ref;
 		this.#id = props.id;
 		this.root = root;
 		this.#ariaLabel = props.ariaLabel;
 
 		useRefById({
 			id: this.#id,
-			ref: this.#ref,
+			ref: this.ref,
 		});
 	}
 
@@ -1013,11 +1024,14 @@ class CommandListViewportState {
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
+			onRefChange: (node) => {
+				this.#list.root.listViewportNode = node;
+			},
 		});
 
 		$effect(() => {
 			const node = this.#ref.current;
-			const listNode = this.#list.root.listNode;
+			const listNode = this.#list.ref.current;
 			if (!node || !listNode) return;
 			let aF: number;
 

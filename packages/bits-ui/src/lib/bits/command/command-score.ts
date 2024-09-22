@@ -151,16 +151,24 @@ function commandScoreInner(
 	return highScore;
 }
 
-function formatInput(str: string) {
+function formatInput(string) {
 	// convert all valid space characters to space so they match each other
-	return str.toLowerCase().replace(COUNT_SPACE_REGEXP, " ");
+	return string.toLowerCase().replace(COUNT_SPACE_REGEXP, " ");
 }
 
-export function commandScore(str: string, abbrev: string, aliases?: string[]): number {
+export function commandScore(string: string, abbreviation: string, aliases?: string[]): number {
 	/* NOTE:
 	 * in the original, we used to do the lower-casing on each recursive call, but this meant that toLowerCase()
 	 * was the dominating cost in the algorithm, passing both is a little ugly, but considerably faster.
 	 */
-	str = aliases && aliases.length > 0 ? `${`${str} ${aliases?.join(" ")}`}` : str;
-	return commandScoreInner(str, abbrev, formatInput(str), formatInput(abbrev), 0, 0, {});
+	string = aliases && aliases.length > 0 ? `${`${string} ${aliases?.join(" ")}`}` : string;
+	return commandScoreInner(
+		string,
+		abbreviation,
+		formatInput(string),
+		formatInput(abbreviation),
+		0,
+		0,
+		{}
+	);
 }

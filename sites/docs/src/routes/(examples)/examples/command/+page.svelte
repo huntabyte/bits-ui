@@ -1,9 +1,10 @@
 <script lang="ts">
-	import ThemeSwitcher from "$lib/components/examples/command/components/theme-switcher.svelte";
-	import CommandWrapper from "$lib/components/examples/command/components/command-wrapper.svelte";
-	import RaycastCommand from "$lib/components/examples/command/components/raycast/raycast-cmdk.svelte";
-
-	// import { FramerCMDK, LinearCMDK, VercelCMDK } from "$docs/components/cmdk/index.js";
+	import ThemeSwitcher from "$lib/components/examples/command/theme-switcher.svelte";
+	import CommandWrapper from "$lib/components/examples/command/command-wrapper.svelte";
+	import RaycastCommand from "$lib/components/examples/command/raycast/raycast-command.svelte";
+	import LinearCommand from "$lib/components/examples/command/linear/linear-command.svelte";
+	import VercelCommand from "$lib/components/examples/command/vercel/vercel-command.svelte";
+	import FramerCommand from "$lib/components/examples/command/framer/framer-command.svelte";
 
 	let theme: "raycast" | "linear" | "vercel" | "framer" = $state("raycast");
 </script>
@@ -15,20 +16,19 @@
 				<CommandWrapper>
 					<RaycastCommand />
 				</CommandWrapper>
-			{/if}
-			<!-- {:else if theme === "linear"}
+			{:else if theme === "linear"}
 				<CommandWrapper>
-					<LinearCMDK />
+					<LinearCommand />
 				</CommandWrapper>
 			{:else if theme === "vercel"}
 				<CommandWrapper>
-					<VercelCMDK />
+					<VercelCommand />
 				</CommandWrapper>
 			{:else if theme === "framer"}
 				<CommandWrapper>
-					<FramerCMDK />
+					<FramerCommand />
 				</CommandWrapper>
-			{/if} -->
+			{/if}
 		</div>
 		<ThemeSwitcher bind:theme />
 
