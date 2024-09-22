@@ -15,6 +15,7 @@ import {
 	getDataDisabled,
 	getDataSelected,
 } from "$lib/internal/attrs.js";
+import { getFirstNonCommentChild } from "$lib/internal/dom.js";
 
 const ROOT_ATTR = "data-command-root";
 const LIST_ATTR = "data-command-list";
@@ -132,9 +133,8 @@ class CommandRootState {
 		});
 
 		$effect(() => {
-			untrack(() => {
-				this.#scrollSelectedIntoView();
-			});
+			this.#commandState.value;
+			this.#scrollSelectedIntoView();
 		});
 	}
 
@@ -145,40 +145,43 @@ class CommandRootState {
 	};
 
 	#sort = () => {
-		if (!this.#commandState.search || this.shouldFilter.current === false) return;
+		afterSleep(1, () => {
+			if (!this.#commandState.search || this.shouldFilter.current === false) return;
 
-		const scores = this.#commandState.filtered.items;
+			const scores = this.#commandState.filtered.items;
 
-		// sort the groups
-		const groups: [string, number][] = [];
-		for (const value of this.#commandState.filtered.groups) {
-			const items = this.allGroups.get(value);
-			let max = 0;
-			if (!items) {
+			// sort the groups
+			const groups: [string, number][] = [];
+			for (const value of this.#commandState.filtered.groups) {
+				const items = this.allGroups.get(value);
+				let max = 0;
+				if (!items) {
+					groups.push([value, max]);
+					continue;
+				}
+
+				// get the max score of the group's items
+				for (const item of items!) {
+					const score = scores.get(item);
+					max = Math.max(score ?? 0, max);
+				}
 				groups.push([value, max]);
-				continue;
 			}
 
-			// get the max score of the group's items
-			for (const item of items!) {
-				const score = scores.get(item);
-				max = Math.max(score ?? 0, max);
-			}
-			groups.push([value, max]);
-		}
+			// Sort items within groups to bottom
+			// Sort items outside of groups
+			// Sort groups to bottom (pushes all non-grouped items to the top)
+			const listInsertionElement = this.listViewportNode;
 
-		// Sort items within groups to bottom
-		// Sort items outside of groups
-		// Sort groups to bottom (pushes all non-grouped items to the top)
-		const listInsertionElement = this.listViewportNode;
-
-		this.#getValidItems()
-			.sort((a, b) => {
+			const sorted = this.#getValidItems().sort((a, b) => {
 				const valueA = a.getAttribute("id");
 				const valueB = b.getAttribute("id");
-				return (scores.get(valueA ?? "") ?? 0) - (scores.get(valueB ?? "") ?? 0);
-			})
-			.forEach((item) => {
+				const scoresA = scores.get(valueA!) ?? 0;
+				const scoresB = scores.get(valueB!) ?? 0;
+				return scoresB - scoresA;
+			});
+
+			for (const item of sorted) {
 				const group = item.closest(GROUP_ITEMS_SELECTOR);
 
 				if (group) {
@@ -194,16 +197,17 @@ class CommandRootState {
 							: item.closest(`${GROUP_ITEMS_SELECTOR} > *`)!
 					);
 				}
-			});
+			}
 
-		groups
-			.sort((a, b) => b[1] - a[1])
-			.forEach((group) => {
+			const sortedGroups = groups.sort((a, b) => b[1] - a[1]);
+
+			for (const group of sortedGroups) {
 				const element = listInsertionElement?.querySelector(
 					`${GROUP_SELECTOR}[${VALUE_ATTR}="${encodeURIComponent(group[0])}"]`
 				);
 				element?.parentElement?.appendChild(element);
-			});
+			}
+		});
 	};
 
 	setValue = (value: string, opts?: boolean) => {
@@ -258,9 +262,10 @@ class CommandRootState {
 	#getValidItems = () => {
 		const node = this.ref.current;
 		if (!node) return [];
-		return Array.from(node.querySelectorAll<HTMLElement>(VALID_ITEM_SELECTOR)).filter(
-			(el): el is HTMLElement => !!el
-		);
+		const validItems = Array.from(
+			node.querySelectorAll<HTMLElement>(VALID_ITEM_SELECTOR)
+		).filter((el): el is HTMLElement => !!el);
+		return validItems;
 	};
 
 	#getSelectedItem = () => {
@@ -274,18 +279,18 @@ class CommandRootState {
 	};
 
 	#scrollSelectedIntoView = () => {
-		const item = this.#getSelectedItem();
-		if (!item) return;
-
-		if (item.parentElement?.firstChild === item) {
-			tick().then(() => {
+		afterSleep(1, () => {
+			const item = this.#getSelectedItem();
+			if (!item) return;
+			const firstChildOfParent = getFirstNonCommentChild(item.parentElement);
+			if (firstChildOfParent === item) {
 				item
 					?.closest(GROUP_SELECTOR)
 					?.querySelector(GROUP_HEADING_SELECTOR)
 					?.scrollIntoView({ block: "nearest" });
-			});
-		}
-		tick().then(() => item.scrollIntoView({ block: "nearest" }));
+			}
+			item.scrollIntoView({ block: "nearest" });
+		});
 	};
 
 	#updateSelectedToIndex = (index: number) => {
@@ -766,7 +771,7 @@ type CommandItemStateProps = WithRefProps<
 class CommandItemState {
 	#ref: CommandItemStateProps["ref"];
 	id: CommandItemStateProps["id"];
-	#root: CommandRootState;
+	root: CommandRootState;
 	#value: CommandItemStateProps["value"];
 	#disabled: CommandItemStateProps["disabled"];
 	#onSelectProp: CommandItemStateProps["onSelect"];
@@ -779,22 +784,22 @@ class CommandItemState {
 	shouldRender = $derived.by(() => {
 		if (
 			this.#trueForceMount ||
-			this.#root.shouldFilter.current === false ||
-			!this.#root.commandState.search
+			this.root.shouldFilter.current === false ||
+			!this.root.commandState.search
 		) {
 			return true;
 		}
-		const currentScore = this.#root.commandState.filtered.items.get(this.id.current);
+		const currentScore = this.root.commandState.filtered.items.get(this.id.current);
 		if (currentScore === undefined) return false;
 		return currentScore > 0;
 	});
 
-	isSelected = $derived.by(() => this.#root.valueProp.current === this.trueValue);
+	isSelected = $derived.by(() => this.root.valueProp.current === this.trueValue);
 
 	constructor(props: CommandItemStateProps, root: CommandRootState) {
 		this.#ref = props.ref;
 		this.id = props.id;
-		this.#root = root;
+		this.root = root;
 		this.#value = props.value;
 		this.#disabled = props.disabled;
 		this.#onSelectProp = props.onSelect;
@@ -813,7 +818,7 @@ class CommandItemState {
 			this.#group?.id.current;
 			if (!this.#forceMount.current) {
 				untrack(() => {
-					return this.#root.registerItem(this.id.current, this.#group?.id.current);
+					return this.root.registerItem(this.id.current, this.#group?.id.current);
 				});
 			}
 		});
@@ -823,11 +828,11 @@ class CommandItemState {
 			const node = this.#ref.current;
 			if (!node) return;
 			if (!value && node.textContent) {
-				this.trueValue = node.textContent.trim().toLowerCase();
+				this.trueValue = node.textContent.trim();
 			}
 
 			untrack(() => {
-				this.#root.registerValue(
+				this.root.registerValue(
 					this.id.current,
 					this.trueValue,
 					props.keywords.current.map((keyword) => keyword.trim())
@@ -845,7 +850,7 @@ class CommandItemState {
 
 	#select = () => {
 		if (this.#disabled.current) return;
-		this.#root.setValue(this.trueValue, true);
+		this.root.setValue(this.trueValue, true);
 	};
 
 	#onpointermove = () => {
