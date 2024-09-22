@@ -126,6 +126,11 @@ export type CommandItemPropsWithoutHTML = WithChild<{
 	value?: string;
 
 	/**
+	 * A list of keywords that will be used to filter the item.
+	 */
+	keywords?: string[];
+
+	/**
 	 * Whether to always mount the item regardless of filtering logic.
 	 */
 	forceMount?: boolean;

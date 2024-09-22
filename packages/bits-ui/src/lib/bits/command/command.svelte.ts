@@ -510,12 +510,19 @@ class CommandEmptyState {
 	#ref: CommandEmptyStateProps["ref"];
 	#id: CommandEmptyStateProps["id"];
 	#root: CommandRootState;
-	shouldRender = $derived.by(() => this.#root.commandState.filtered.count === 0);
+	#isInitialRender = true;
+	shouldRender = $derived.by(
+		() => this.#root.commandState.filtered.count === 0 && this.#isInitialRender === false
+	);
 
 	constructor(props: CommandEmptyStateProps, root: CommandRootState) {
 		this.#ref = props.ref;
 		this.#id = props.id;
 		this.#root = root;
+
+		$effect(() => {
+			this.#isInitialRender = false;
+		});
 
 		useRefById({
 			id: this.#id,
@@ -572,12 +579,7 @@ class CommandGroupContainerState {
 		});
 
 		$effect(() => {
-			this.id.current;
-			let unsub = () => {};
-			untrack(() => {
-				unsub = this.#root.registerGroup(this.id.current);
-			});
-			return unsub;
+			return this.#root.registerGroup(this.id.current);
 		});
 
 		$effect(() => {
@@ -585,11 +587,11 @@ class CommandGroupContainerState {
 				if (this.#value.current) {
 					this.trueValue = this.#value.current;
 					this.#root.registerValue(this.id.current, this.#value.current);
-				} else if (this.#ref.current?.textContent) {
-					this.trueValue = this.#ref.current.textContent.trim().toLowerCase();
-					this.#root.registerValue(this.id.current, this.trueValue);
 				} else if (this.headingNode && this.headingNode.textContent) {
 					this.trueValue = this.headingNode.textContent.trim().toLowerCase();
+					this.#root.registerValue(this.id.current, this.trueValue);
+				} else if (this.#ref.current?.textContent) {
+					this.trueValue = this.#ref.current.textContent.trim().toLowerCase();
 					this.#root.registerValue(this.id.current, this.trueValue);
 				}
 			});
@@ -601,7 +603,7 @@ class CommandGroupContainerState {
 			({
 				id: this.id.current,
 				role: "presentation",
-				hidden: this.shouldRender ? undefined : "true",
+				hidden: this.shouldRender ? undefined : true,
 				"data-value": this.trueValue,
 				[GROUP_ATTR]: "",
 			}) as const
@@ -755,6 +757,7 @@ type CommandItemStateProps = WithRefProps<
 		disabled: boolean;
 		onSelect: () => void;
 		forceMount: boolean;
+		keywords: string[];
 	}> & {
 		group: CommandGroupContainerState | null;
 	}
@@ -824,7 +827,11 @@ class CommandItemState {
 			}
 
 			untrack(() => {
-				this.#root.registerValue(this.id.current, this.trueValue);
+				this.#root.registerValue(
+					this.id.current,
+					this.trueValue,
+					props.keywords.current.map((keyword) => keyword.trim())
+				);
 				node.setAttribute(VALUE_ATTR, this.trueValue);
 			});
 		});

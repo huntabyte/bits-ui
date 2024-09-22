@@ -13,6 +13,7 @@
 		children,
 		onSelect = noop,
 		forceMount = false,
+		keywords = [],
 		...restProps
 	}: ItemProps = $props();
 
@@ -28,6 +29,7 @@
 		disabled: box.with(() => disabled),
 		onSelect: box.with(() => onSelect),
 		forceMount: box.with(() => forceMount),
+		keywords: box.with(() => keywords),
 		group,
 	});
 

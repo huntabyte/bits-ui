@@ -24,31 +24,31 @@
 				<Command.Group>
 					<Command.GroupHeading>Suggestions</Command.GroupHeading>
 					<Command.GroupItems>
-						<Item value="linear">
+						<Item value="linear" keywords={["issue", "sprint"]}>
 							<Logo>
 								<LinearIcon style="width: 12px; height: 12px" />
 							</Logo>
 							Linear
 						</Item>
-						<Item value="figma">
+						<Item value="figma" keywords={["design", "ui", "ux"]}>
 							<Logo>
 								<FigmaIcon />
 							</Logo>
 							Figma
 						</Item>
-						<Item value="slack">
+						<Item value="slack" keywords={["chat", "team", "communication"]}>
 							<Logo>
 								<SlackIcon />
 							</Logo>
 							Slack
 						</Item>
-						<Item value="youtube">
+						<Item value="youtube" keywords={["video", "watch", "stream"]}>
 							<Logo>
 								<YouTubeIcon />
 							</Logo>
 							YouTube
 						</Item>
-						<Item value="raycast">
+						<Item value="raycast" keywords={["productivity", "tools", "apps"]}>
 							<Logo>
 								<RaycastIcon />
 							</Logo>
@@ -59,19 +59,27 @@
 				<Command.Group>
 					<Command.GroupHeading>Commands</Command.GroupHeading>
 					<Command.GroupItems>
-						<Item isCommand value="clipboard history">
+						<Item
+							isCommand
+							value="clipboard history"
+							keywords={["copy", "paste", "clipboard"]}
+						>
 							<Logo>
 								<ClipboardIcon />
 							</Logo>
 							Clipboard History
 						</Item>
-						<Item isCommand value="import extension">
+						<Item isCommand value="import extension" keywords={["import", "extension"]}>
 							<Logo>
 								<HammerIcon />
 							</Logo>
 							Import Extension
 						</Item>
-						<Item isCommand value="manage extensions">
+						<Item
+							isCommand
+							value="manage extensions"
+							keywords={["manage", "extension"]}
+						>
 							<Logo>
 								<HammerIcon />
 							</Logo>
