@@ -16,11 +16,11 @@
 <Command.Group>
 	<Command.GroupHeading>Projects</Command.GroupHeading>
 	<Command.GroupItems>
-		<Item shortcut="S P" onSelect={searchProjects}>
+		<Item shortcut="S P" onSelect={searchProjects} value="Search Projects...">
 			<ProjectsIcon />
 			Search Projects...
 		</Item>
-		<Item>
+		<Item value="Create New Project...">
 			<PlusIcon />
 			Create New Project...
 		</Item>
@@ -29,11 +29,11 @@
 <Command.Group>
 	<Command.GroupHeading>Teams</Command.GroupHeading>
 	<Command.GroupItems>
-		<Item shortcut="⇧ P">
+		<Item shortcut="⇧ P" value="Search Teams...">
 			<TeamsIcon />
 			Search Teams...
 		</Item>
-		<Item>
+		<Item value="Create New Team...">
 			<PlusIcon />
 			Create New Team...
 		</Item>
@@ -42,15 +42,15 @@
 <Command.Group>
 	<Command.GroupHeading>Help</Command.GroupHeading>
 	<Command.GroupItems>
-		<Item shortcut="⇧ D">
+		<Item shortcut="⇧ D" value="Search Docs...">
 			<DocsIcon />
 			Search Docs...
 		</Item>
-		<Item>
+		<Item value="Send Feedback...">
 			<FeedbackIcon />
 			Send Feedback...
 		</Item>
-		<Item>
+		<Item value="Contact Support">
 			<ContactIcon />
 			Contact Support
 		</Item>

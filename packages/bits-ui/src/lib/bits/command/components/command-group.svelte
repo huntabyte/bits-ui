@@ -26,6 +26,8 @@
 	const mergedProps = $derived(mergeProps(restProps, groupState.props));
 </script>
 
-<div {...mergedProps}>
-	{@render children?.()}
+<div>
+	<div {...mergedProps}>
+		{@render children?.()}
+	</div>
 </div>

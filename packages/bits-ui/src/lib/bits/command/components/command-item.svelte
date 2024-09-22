@@ -37,7 +37,9 @@
 </script>
 
 {#if itemState.shouldRender}
-	<div {...mergedProps}>
-		{@render children?.()}
+	<div>
+		<div {...mergedProps}>
+			{@render children?.()}
+		</div>
 	</div>
 {/if}

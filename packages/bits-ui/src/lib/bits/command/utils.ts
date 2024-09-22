@@ -15,3 +15,16 @@ export function findPreviousSibling(el: Element, selector: string) {
 		sibling = sibling.previousElementSibling;
 	}
 }
+
+export function findFirstStartMarkerWithImmediateSiblingAsEnd(el: Element, type: "item" | "group") {
+	const startMarkers = el.querySelectorAll<HTMLElement>(`[data-bits-command-${type}-start]`);
+
+	for (const startMarker of startMarkers) {
+		const endMarker = startMarker.nextElementSibling;
+		if (endMarker && endMarker.hasAttribute(`data-bits-command-${type}-end`)) {
+			return startMarker;
+		}
+	}
+
+	return null;
+}

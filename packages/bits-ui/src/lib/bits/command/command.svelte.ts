@@ -185,17 +185,23 @@ class CommandRootState {
 				const group = item.closest(GROUP_ITEMS_SELECTOR);
 
 				if (group) {
-					group.appendChild(
+					const itemToAppend =
 						item.parentElement === group
 							? item
-							: item.closest(`${GROUP_ITEMS_SELECTOR} > *`)!
-					);
+							: item.closest(`${GROUP_ITEMS_SELECTOR} > *`);
+
+					if (itemToAppend) {
+						group.appendChild(itemToAppend);
+					}
 				} else {
-					listInsertionElement?.appendChild(
+					const itemToAppend =
 						item.parentElement === listInsertionElement
 							? item
-							: item.closest(`${GROUP_ITEMS_SELECTOR} > *`)!
-					);
+							: item.closest(`${GROUP_ITEMS_SELECTOR} > *`);
+
+					if (itemToAppend) {
+						listInsertionElement?.appendChild(itemToAppend);
+					}
 				}
 			}
 
@@ -366,9 +372,7 @@ class CommandRootState {
 			}
 		}
 
-		// Batch this, multiple items can mount in one pass
-		// and we should not be filtering/sorting/emitting each time
-		afterSleep(3, () => {
+		afterSleep(1, () => {
 			this.#filterItems();
 			this.#sort();
 
@@ -386,8 +390,7 @@ class CommandRootState {
 			this.commandState.filtered.items.delete(id);
 			const selectedItem = this.#getSelectedItem();
 
-			// Batch this, multiple items could be removed in one pass
-			afterSleep(3, () => {
+			afterSleep(1, () => {
 				this.#filterItems();
 
 				// The item removed have been the selected one,
@@ -810,7 +813,7 @@ class CommandItemState {
 		useRefById({
 			id: this.id,
 			ref: this.#ref,
-			condition: () => this.shouldRender,
+			condition: () => Boolean(this.root.commandState.search),
 		});
 
 		$effect(() => {

@@ -3,7 +3,7 @@
 </script>
 
 {#each { length: 6 } as _, i}
-	<Item>
+	<Item value="Project {i + 1}">
 		Project {i + 1}
 	</Item>
 {/each}
