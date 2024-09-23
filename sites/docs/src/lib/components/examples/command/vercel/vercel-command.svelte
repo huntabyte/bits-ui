@@ -59,16 +59,18 @@
 		<Command.List>
 			<Command.ListViewport>
 				<Command.Empty>No results found.</Command.Empty>
-				{#if activePage === "home"}
-					<Home
-						searchProjects={() => {
-							pages = [...pages, "projects"];
-						}}
-					/>
-				{/if}
-				{#if activePage === "projects"}
-					<Projects />
-				{/if}
+				{#key activePage}
+					{#if activePage === "home"}
+						<Home
+							searchProjects={() => {
+								pages = [...pages, "projects"];
+							}}
+						/>
+					{/if}
+					{#if activePage === "projects"}
+						<Projects />
+					{/if}
+				{/key}
 			</Command.ListViewport>
 		</Command.List>
 	</Command.Root>

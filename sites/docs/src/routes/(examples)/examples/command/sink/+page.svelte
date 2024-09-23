@@ -21,7 +21,7 @@
 			});
 		})
 		.flat(3)
-		.slice(0, 1000);
+		.slice(0, 1500);
 </script>
 
 <div>
@@ -38,9 +38,7 @@
 		>
 			<Command.ListViewport>
 				{#each names as txt (txt)}
-					<div>
-						<Command.Item value={txt}>{txt}</Command.Item>
-					</div>
+					<Command.Item value={txt}>{txt}</Command.Item>
 				{/each}
 			</Command.ListViewport>
 		</Command.List>
