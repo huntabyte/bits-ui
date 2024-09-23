@@ -4,6 +4,7 @@ import type {
 	TabsRootPropsWithoutHTML,
 	TabsTriggerPropsWithoutHTML,
 } from "bits-ui";
+import { OnStringValueChangeProp } from "./extended-types/shared/index.js";
 import {
 	createApiSchema,
 	createBooleanProp,
@@ -24,7 +25,7 @@ const root = createApiSchema<TabsRootPropsWithoutHTML>({
 			bindable: true,
 		}),
 		onValueChange: createFunctionProp({
-			definition: "(value: string) => void",
+			definition: OnStringValueChangeProp,
 			description: "A callback function called when the active tab value changes.",
 		}),
 		activationMode: createEnumProp({

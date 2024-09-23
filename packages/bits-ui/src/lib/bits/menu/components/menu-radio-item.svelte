@@ -40,7 +40,7 @@
 {#if child}
 	{@render child({ props: mergedProps, checked: radioItemState.isChecked })}
 {:else}
-	<div {...mergedProps} bind:this={ref}>
+	<div {...mergedProps}>
 		{@render children?.({ checked: radioItemState.isChecked })}
 	</div>
 {/if}

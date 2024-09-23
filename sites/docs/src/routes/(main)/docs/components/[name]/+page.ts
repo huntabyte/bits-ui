@@ -1,7 +1,6 @@
-import type { PageLoad } from "./$types.js";
 import { getComponentDoc } from "$lib/utils/docs.js";
 
-export const load: PageLoad = async (event) => {
+export async function load(event) {
 	const { component, title, metadata, schemas } = await getComponentDoc(event.params.name);
 	return {
 		component,
@@ -9,4 +8,4 @@ export const load: PageLoad = async (event) => {
 		metadata,
 		schemas,
 	};
-};
+}

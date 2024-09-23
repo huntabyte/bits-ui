@@ -1,0 +1,39 @@
+<script lang="ts">
+	import { box } from "svelte-toolbelt";
+	import type { InputProps } from "../index.js";
+	import { useCommandInput } from "../command.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
+
+	let {
+		value = $bindable(""),
+		autofocus = false,
+		id = useId(),
+		ref = $bindable(null),
+		child,
+		...restProps
+	}: InputProps = $props();
+
+	const inputState = useCommandInput({
+		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
+		value: box.with(
+			() => value,
+			(v) => {
+				value = v;
+			}
+		),
+		autofocus: box.with(() => autofocus ?? false),
+	});
+
+	const mergedProps = $derived(mergeProps(restProps, inputState.props));
+</script>
+
+{#if child}
+	{@render child({ props: mergedProps })}
+{:else}
+	<input {...mergedProps} bind:value />
+{/if}

@@ -7,6 +7,7 @@ export type * from "$lib/bits/calendar/types.js";
 export type * from "$lib/bits/checkbox/types.js";
 export type * from "$lib/bits/collapsible/types.js";
 export type * from "$lib/bits/combobox/types.js";
+export type * from "$lib/bits/command/types.js";
 export type * from "$lib/bits/context-menu/types.js";
 export type * from "$lib/bits/date-field/types.js";
 export type * from "$lib/bits/date-picker/types.js";

@@ -70,7 +70,7 @@
 			<Combobox.Viewport class="p-1">
 				{#each filteredFruits as fruit, i (i + fruit.value)}
 					<Combobox.Item
-						class="flex h-10 w-full select-none items-center rounded-button py-3 pl-5 pr-1.5 text-sm capitalize outline-none duration-75 data-[highlighted]:bg-muted"
+						class="flex h-10 w-full select-none items-center rounded-button py-3 pl-5 pr-1.5 text-sm capitalize outline-none  data-[highlighted]:bg-muted"
 						value={fruit.value}
 						label={fruit.label}
 					>
