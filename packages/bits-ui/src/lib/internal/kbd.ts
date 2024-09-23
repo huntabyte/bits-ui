@@ -74,4 +74,7 @@ export const kbd = {
 	P: "P",
 	A: "A",
 	p: "p",
+	n: "n",
+	j: "j",
+	k: "k",
 };

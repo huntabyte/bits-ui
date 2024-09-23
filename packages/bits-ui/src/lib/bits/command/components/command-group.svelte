@@ -10,6 +10,7 @@
 		value = "",
 		forceMount = false,
 		children,
+		child,
 		...restProps
 	}: CommandGroupProps = $props();
 
@@ -27,7 +28,11 @@
 </script>
 
 <div>
-	<div {...mergedProps}>
-		{@render children?.()}
-	</div>
+	{#if child}
+		{@render child({ props: mergedProps })}
+	{:else}
+		<div {...mergedProps}>
+			{@render children?.()}
+		</div>
+	{/if}
 </div>

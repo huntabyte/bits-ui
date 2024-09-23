@@ -7,6 +7,7 @@
 	let {
 		id = useId(),
 		ref = $bindable(null),
+		child,
 		children,
 		"aria-label": ariaLabel,
 		...restProps
@@ -24,6 +25,10 @@
 	const mergedProps = $derived(mergeProps(restProps, listState.props));
 </script>
 
-<div {...mergedProps}>
-	{@render children?.()}
-</div>
+{#if child}
+	{@render child({ props: mergedProps })}
+{:else}
+	<div {...mergedProps}>
+		{@render children?.()}
+	</div>
+{/if}

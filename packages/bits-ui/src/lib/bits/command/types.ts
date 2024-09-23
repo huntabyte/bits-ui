@@ -67,6 +67,18 @@ export type CommandRootPropsWithoutHTML = WithChild<{
 	 * when the user reaches the end of the list using the keyboard.
 	 */
 	loop?: boolean;
+
+	/**
+	 * Optionally set to `true` to disable selection via pointer events.
+	 */
+	disablePointerSelection?: boolean;
+
+	/**
+	 * Set the `false` to disable the option to use ctrl+n/j/p/k (vim style) navigation.
+	 *
+	 * @defaultValue true
+	 */
+	vimBindings?: boolean;
 }>;
 
 export type CommandRootProps = CommandRootPropsWithoutHTML &

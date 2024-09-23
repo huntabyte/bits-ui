@@ -4,7 +4,13 @@
 	import type { GroupItemsProps } from "../index.js";
 	import { useCommandGroupItems } from "../command.svelte.js";
 
-	let { id = useId(), ref = $bindable(null), children, ...restProps }: GroupItemsProps = $props();
+	let {
+		id = useId(),
+		ref = $bindable(null),
+		children,
+		child,
+		...restProps
+	}: GroupItemsProps = $props();
 
 	const groupItemsState = useCommandGroupItems({
 		id: box.with(() => id),
@@ -17,6 +23,10 @@
 	const mergedProps = $derived(mergeProps(restProps, groupItemsState.props));
 </script>
 
-<div {...mergedProps}>
-	{@render children?.()}
-</div>
+{#if child}
+	{@render child({ props: mergedProps })}
+{:else}
+	<div {...mergedProps}>
+		{@render children?.()}
+	</div>
+{/if}

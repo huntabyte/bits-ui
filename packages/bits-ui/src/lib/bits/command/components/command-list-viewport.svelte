@@ -8,6 +8,7 @@
 		id = useId(),
 		ref = $bindable(null),
 		children,
+		child,
 		...restProps
 	}: ListViewportProps = $props();
 
@@ -22,6 +23,10 @@
 	const mergedProps = $derived(mergeProps(restProps, listViewportState.props));
 </script>
 
-<div {...mergedProps}>
-	{@render children?.()}
-</div>
+{#if child}
+	{@render child({ props: mergedProps })}
+{:else}
+	<div {...mergedProps}>
+		{@render children?.()}
+	</div>
+{/if}

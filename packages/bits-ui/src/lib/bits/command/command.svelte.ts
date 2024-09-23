@@ -1,4 +1,4 @@
-import { tick, untrack } from "svelte";
+import { untrack } from "svelte";
 import { findNextSibling, findPreviousSibling } from "./utils.js";
 import { commandScore } from "./command-score.js";
 import type { CommandState } from "./types.js";
@@ -16,6 +16,7 @@ import {
 	getDataSelected,
 } from "$lib/internal/attrs.js";
 import { getFirstNonCommentChild } from "$lib/internal/dom.js";
+import { srOnlyStyles } from "$lib/internal/style.js";
 
 const ROOT_ATTR = "data-command-root";
 const LIST_ATTR = "data-command-list";
@@ -56,6 +57,8 @@ type CommandRootStateProps = WithRefProps<
 		filter: (value: string, search: string, keywords?: string[]) => number;
 		shouldFilter: boolean;
 		loop: boolean;
+		vimBindings: boolean;
+		disablePointerSelection: boolean;
 	}> &
 		WritableBoxedValues<{
 			value: string;
@@ -77,6 +80,8 @@ class CommandRootState {
 	listViewportNode = $state<HTMLElement | null>(null);
 	labelNode = $state<HTMLElement | null>(null);
 	valueProp: CommandRootStateProps["value"];
+	#vimBindings: CommandRootStateProps["vimBindings"];
+	disablePointerSelection: CommandRootStateProps["disablePointerSelection"];
 	// published state that the components and other things can react to
 	commandState = $state.raw<CommandState>(null!);
 	// internal state that we mutate in batches and publish to the `state` at once
@@ -111,6 +116,9 @@ class CommandRootState {
 		this.shouldFilter = props.shouldFilter;
 		this.loop = props.loop;
 		this.valueProp = props.value;
+		this.#vimBindings = props.vimBindings;
+		this.disablePointerSelection = props.disablePointerSelection;
+
 		const defaultState = {
 			/** Value of the search query */
 			search: "",
@@ -451,9 +459,25 @@ class CommandRootState {
 
 	#onkeydown = (e: KeyboardEvent) => {
 		switch (e.key) {
+			case kbd.n:
+			case kbd.j: {
+				// vim down
+				if (this.#vimBindings.current && e.ctrlKey) {
+					this.#next(e);
+				}
+				break;
+			}
 			case kbd.ARROW_DOWN:
 				this.#next(e);
 				break;
+			case kbd.p:
+			case kbd.k: {
+				// vim up
+				if (this.#vimBindings.current && e.ctrlKey) {
+					this.#prev(e);
+				}
+				break;
+			}
 			case kbd.ARROW_UP:
 				this.#prev(e);
 				break;
@@ -468,10 +492,18 @@ class CommandRootState {
 				this.#last();
 				break;
 			case kbd.ENTER: {
-				e.preventDefault();
-				const item = this.#getSelectedItem();
-				if (item) {
-					item?.click();
+				/**
+				 * Check if IME composition is finished before triggering the select event.
+				 * This prevents unwanted triggering while user is still inputting text with IME.
+				 * e.keyCode === 229 is for the Japanese IME && Safari as `isComposing` does not
+				 * work with Japanese IME and Safari in combination.
+				 */
+				if (!e.isComposing && e.keyCode !== 229) {
+					e.preventDefault();
+					const item = this.#getSelectedItem();
+					if (item) {
+						item?.click();
+					}
 				}
 			}
 		}
@@ -757,7 +789,7 @@ class CommandInputState {
 				"aria-expanded": getAriaExpanded(true),
 				"aria-controls": this.#root.listViewportNode?.id ?? undefined,
 				"aria-labelledby": this.#root.labelNode?.id ?? undefined,
-				"aria-activedescendant": this.#selectedItemId, // TODO
+				"aria-activedescendant": this.#selectedItemId,
 			}) as const
 	);
 }
@@ -860,7 +892,7 @@ class CommandItemState {
 	};
 
 	#onpointermove = () => {
-		if (this.#disabled.current) return;
+		if (this.#disabled.current || this.root.disablePointerSelection.current) return;
 		this.#select();
 	};
 
@@ -1023,6 +1055,7 @@ class CommandLabelState {
 				id: this.#id.current,
 				[INPUT_LABEL_ATTR]: "",
 				for: this.#for?.current,
+				style: srOnlyStyles,
 			}) as const
 	);
 }

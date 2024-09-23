@@ -11,6 +11,7 @@
 		value = "",
 		disabled = false,
 		children,
+		child,
 		onSelect = noop,
 		forceMount = false,
 		keywords = [],
@@ -36,10 +37,14 @@
 	const mergedProps = $derived(mergeProps(restProps, itemState.props));
 </script>
 
-<div>
+<div hidden={itemState.shouldRender ? undefined : true}>
 	{#if itemState.shouldRender}
-		<div {...mergedProps}>
-			{@render children?.()}
-		</div>
+		{#if child}
+			{@render child({ props: mergedProps })}
+		{:else}
+			<div {...mergedProps}>
+				{@render children?.()}
+			</div>
+		{/if}
 	{/if}
 </div>

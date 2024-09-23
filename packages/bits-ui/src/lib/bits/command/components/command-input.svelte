@@ -9,6 +9,7 @@
 		autofocus = false,
 		id = useId(),
 		ref = $bindable(null),
+		child,
 		...restProps
 	}: InputProps = $props();
 
@@ -30,4 +31,8 @@
 	const mergedProps = $derived(mergeProps(restProps, inputState.props));
 </script>
 
-<input {...mergedProps} bind:value />
+{#if child}
+	{@render child({ props: mergedProps })}
+{:else}
+	<input {...mergedProps} bind:value />
+{/if}

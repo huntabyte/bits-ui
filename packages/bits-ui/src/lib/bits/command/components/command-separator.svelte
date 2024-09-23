@@ -9,6 +9,7 @@
 		ref = $bindable(null),
 		forceMount = false,
 		children,
+		child,
 		...restProps
 	}: SeparatorProps = $props();
 
@@ -25,7 +26,11 @@
 </script>
 
 {#if separatorState.shouldRender}
-	<div {...mergedProps}>
-		{@render children?.()}
-	</div>
+	{#if child}
+		{@render child({ props: mergedProps })}
+	{:else}
+		<div {...mergedProps}>
+			{@render children?.()}
+		</div>
+	{/if}
 {/if}

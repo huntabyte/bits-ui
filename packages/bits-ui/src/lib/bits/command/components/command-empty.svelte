@@ -4,7 +4,13 @@
 	import type { EmptyProps } from "../index.js";
 	import { useCommandEmpty } from "../command.svelte.js";
 
-	let { id = useId(), ref = $bindable(null), children, ...restProps }: EmptyProps = $props();
+	let {
+		id = useId(),
+		ref = $bindable(null),
+		children,
+		child,
+		...restProps
+	}: EmptyProps = $props();
 
 	const emptyState = useCommandEmpty({
 		id: box.with(() => id),
@@ -18,7 +24,11 @@
 </script>
 
 {#if emptyState.shouldRender}
-	<div {...mergedProps}>
-		{@render children?.()}
-	</div>
+	{#if child}
+		{@render child({ props: mergedProps })}
+	{:else}
+		<div {...mergedProps}>
+			{@render children?.()}
+		</div>
+	{/if}
 {/if}
