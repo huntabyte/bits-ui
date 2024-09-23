@@ -38,7 +38,7 @@
 </script>
 
 {#key itemState.root.commandState.search === ""}
-	<div hidden={itemState.shouldRender ? undefined : true}>
+	<div hidden={itemState.shouldRender ? undefined : true} data-command-item-wrapper="">
 		{#if itemState.shouldRender}
 			{#if child}
 				{@render child({ props: mergedProps })}

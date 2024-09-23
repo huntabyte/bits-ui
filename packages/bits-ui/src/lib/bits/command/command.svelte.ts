@@ -79,6 +79,7 @@ class CommandRootState {
 	shouldFilter: CommandRootStateProps["shouldFilter"];
 	loop: CommandRootStateProps["loop"];
 	listViewportNode = $state<HTMLElement | null>(null);
+	inputNode = $state<HTMLElement | null>(null);
 	labelNode = $state<HTMLElement | null>(null);
 	valueProp: CommandRootStateProps["value"];
 	#vimBindings: CommandRootStateProps["vimBindings"];
@@ -155,75 +156,73 @@ class CommandRootState {
 	};
 
 	#sort = () => {
-		afterSleep(1, () => {
-			if (!this.#commandState.search || this.shouldFilter.current === false) return;
+		if (!this.#commandState.search || this.shouldFilter.current === false) return;
 
-			const scores = this.#commandState.filtered.items;
+		const scores = this.#commandState.filtered.items;
 
-			// sort the groups
-			const groups: [string, number][] = [];
-			for (const value of this.#commandState.filtered.groups) {
-				const items = this.allGroups.get(value);
-				let max = 0;
-				if (!items) {
-					groups.push([value, max]);
-					continue;
-				}
-
-				// get the max score of the group's items
-				for (const item of items!) {
-					const score = scores.get(item);
-					max = Math.max(score ?? 0, max);
-				}
+		// sort the groups
+		const groups: [string, number][] = [];
+		for (const value of this.#commandState.filtered.groups) {
+			const items = this.allGroups.get(value);
+			let max = 0;
+			if (!items) {
 				groups.push([value, max]);
+				continue;
 			}
 
-			// Sort items within groups to bottom
-			// Sort items outside of groups
-			// Sort groups to bottom (pushes all non-grouped items to the top)
-			const listInsertionElement = this.listViewportNode;
+			// get the max score of the group's items
+			for (const item of items!) {
+				const score = scores.get(item);
+				max = Math.max(score ?? 0, max);
+			}
+			groups.push([value, max]);
+		}
 
-			const sorted = this.#getValidItems().sort((a, b) => {
-				const valueA = a.getAttribute("id");
-				const valueB = b.getAttribute("id");
-				const scoresA = scores.get(valueA!) ?? 0;
-				const scoresB = scores.get(valueB!) ?? 0;
-				return scoresB - scoresA;
-			});
+		// Sort items within groups to bottom
+		// Sort items outside of groups
+		// Sort groups to bottom (pushes all non-grouped items to the top)
+		const listInsertionElement = this.listViewportNode;
 
-			for (const item of sorted) {
-				const group = item.closest(GROUP_ITEMS_SELECTOR);
+		const sorted = this.#getValidItems().sort((a, b) => {
+			const valueA = a.getAttribute("id");
+			const valueB = b.getAttribute("id");
+			const scoresA = scores.get(valueA!) ?? 0;
+			const scoresB = scores.get(valueB!) ?? 0;
+			return scoresB - scoresA;
+		});
 
-				if (group) {
-					const itemToAppend =
-						item.parentElement === group
-							? item
-							: item.closest(`${GROUP_ITEMS_SELECTOR} > *`);
+		for (const item of sorted) {
+			const group = item.closest(GROUP_ITEMS_SELECTOR);
 
-					if (itemToAppend) {
-						group.appendChild(itemToAppend);
-					}
-				} else {
-					const itemToAppend =
-						item.parentElement === listInsertionElement
-							? item
-							: item.closest(`${GROUP_ITEMS_SELECTOR} > *`);
+			if (group) {
+				const itemToAppend =
+					item.parentElement === group
+						? item
+						: item.closest(`${GROUP_ITEMS_SELECTOR} > *`);
 
-					if (itemToAppend) {
-						listInsertionElement?.appendChild(itemToAppend);
-					}
+				if (itemToAppend) {
+					group.appendChild(itemToAppend);
+				}
+			} else {
+				const itemToAppend =
+					item.parentElement === listInsertionElement
+						? item
+						: item.closest(`${GROUP_ITEMS_SELECTOR} > *`);
+
+				if (itemToAppend) {
+					listInsertionElement?.appendChild(itemToAppend);
 				}
 			}
+		}
 
-			const sortedGroups = groups.sort((a, b) => b[1] - a[1]);
+		const sortedGroups = groups.sort((a, b) => b[1] - a[1]);
 
-			for (const group of sortedGroups) {
-				const element = listInsertionElement?.querySelector(
-					`${GROUP_SELECTOR}[${VALUE_ATTR}="${encodeURIComponent(group[0])}"]`
-				);
-				element?.parentElement?.appendChild(element);
-			}
-		});
+		for (const group of sortedGroups) {
+			const element = listInsertionElement?.querySelector(
+				`${GROUP_SELECTOR}[${VALUE_ATTR}="${encodeURIComponent(group[0])}"]`
+			);
+			element?.parentElement?.appendChild(element);
+		}
 	};
 
 	setValue = (value: string, opts?: boolean) => {
@@ -232,14 +231,12 @@ class CommandRootState {
 	};
 
 	#selectFirstItem = () => {
-		afterSleep(1, () => {
-			afterTick(() => {
-				const item = this.#getValidItems().find(
-					(item) => item.getAttribute("aria-disabled") !== "true"
-				);
-				const value = item?.getAttribute(VALUE_ATTR);
-				this.setValue(value || "");
-			});
+		afterTick(() => {
+			const item = this.#getValidItems().find(
+				(item) => item.getAttribute("aria-disabled") !== "true"
+			);
+			const value = item?.getAttribute(VALUE_ATTR);
+			this.setValue(value || "");
 		});
 	};
 
@@ -366,10 +363,9 @@ class CommandRootState {
 		if (value === this.allIds.get(id)?.value) return;
 		this.allIds.set(id, { value, keywords });
 		this.#commandState.filtered.items.set(id, this.#score(value, keywords));
-		afterSleep(1, () => {
-			this.#sort();
-			this.emit();
-		});
+
+		this.#sort();
+		this.emit();
 
 		return () => {
 			this.allIds.delete(id);
@@ -388,32 +384,28 @@ class CommandRootState {
 			}
 		}
 
-		afterSleep(1, () => {
-			this.#filterItems();
-			this.#sort();
+		this.#filterItems();
+		this.#sort();
 
-			// Could be initial mount, select the first item if none already selected
-			if (!this.commandState.value) {
-				this.#selectFirstItem();
-			}
+		// Could be initial mount, select the first item if none already selected
+		if (!this.commandState.value) {
+			this.#selectFirstItem();
+		}
 
-			this.emit();
-		});
+		this.emit();
 		return () => {
 			this.allIds.delete(id);
 			this.allItems.delete(id);
 			this.commandState.filtered.items.delete(id);
 			const selectedItem = this.#getSelectedItem();
 
-			afterTick(() => {
-				this.#filterItems();
+			this.#filterItems();
 
-				// The item removed have been the selected one,
-				// so selection should be moved to the first
-				if (selectedItem?.getAttribute("id") === id) this.#selectFirstItem();
+			// The item removed have been the selected one,
+			// so selection should be moved to the first
+			if (selectedItem?.getAttribute("id") === id) this.#selectFirstItem();
 
-				this.emit();
-			});
+			this.emit();
 		};
 	};
 
@@ -756,6 +748,9 @@ class CommandInputState {
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
+			onRefChange: (node) => {
+				this.#root.inputNode = node;
+			},
 		});
 
 		$effect(() => {

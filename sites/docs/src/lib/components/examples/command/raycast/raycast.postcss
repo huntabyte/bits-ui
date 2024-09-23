@@ -168,10 +168,6 @@
 			background: var(--gray4);
 		}
 
-		&:first-child {
-			margin-top: 8px;
-		}
-
 		& + [data-command-item] {
 			margin-top: 4px;
 		}
@@ -179,6 +175,12 @@
 		& svg {
 			width: 18px;
 			height: 18px;
+		}
+	}
+
+	[data-command-item-wrapper] {
+		&:first-child {
+			margin-top: 8px;
 		}
 	}
 
@@ -325,13 +327,13 @@
 		top: var(--page-top);
 		transform: translateX(-50%);
 
-		[data-command] {
+		[data-command-root] {
 			width: 640px;
 			transform-origin: center center;
 			animation: dialogIn var(--transition-fast) forwards;
 		}
 
-		&[data-state="closed"] [data-command] {
+		&[data-state="closed"] [data-command-root] {
 			animation: dialogOut var(--transition-fast) forwards;
 		}
 	}
