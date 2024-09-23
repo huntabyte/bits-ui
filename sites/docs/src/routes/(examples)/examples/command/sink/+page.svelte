@@ -21,7 +21,7 @@
 			});
 		})
 		.flat(3)
-		.slice(0, 1000);
+		.slice(0, 2500);
 </script>
 
 <div>

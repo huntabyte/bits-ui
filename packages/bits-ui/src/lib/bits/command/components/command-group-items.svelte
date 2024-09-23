@@ -23,7 +23,7 @@
 	const mergedProps = $derived(mergeProps(restProps, groupItemsState.props));
 </script>
 
-<div>
+<div style="display: contents;">
 	{#if child}
 		{@render child({ props: mergedProps })}
 	{:else}

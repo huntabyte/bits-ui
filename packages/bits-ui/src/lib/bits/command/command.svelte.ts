@@ -78,6 +78,8 @@ class CommandRootState {
 	filter: CommandRootStateProps["filter"];
 	shouldFilter: CommandRootStateProps["shouldFilter"];
 	loop: CommandRootStateProps["loop"];
+	// attempt to prevent the harsh delay when user is typing fast
+	key = $state(0);
 	listViewportNode = $state<HTMLElement | null>(null);
 	inputNode = $state<HTMLElement | null>(null);
 	labelNode = $state<HTMLElement | null>(null);
@@ -226,6 +228,11 @@ class CommandRootState {
 	};
 
 	setValue = (value: string, opts?: boolean) => {
+		if (value !== this.valueProp.current && value === "") {
+			afterSleep(1, () => {
+				this.key++;
+			});
+		}
 		this.setState("value", value, opts);
 		this.valueProp.current = value;
 	};
@@ -807,6 +814,7 @@ class CommandItemState {
 	#ref: CommandItemStateProps["ref"];
 	id: CommandItemStateProps["id"];
 	root: CommandRootState;
+
 	#value: CommandItemStateProps["value"];
 	#disabled: CommandItemStateProps["disabled"];
 	#onSelectProp: CommandItemStateProps["onSelect"];

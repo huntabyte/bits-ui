@@ -163,6 +163,10 @@
 			cursor: not-allowed;
 		}
 
+		&:first-child {
+			margin-top: 8px;
+		}
+
 		&:active {
 			transition-property: background;
 			background: var(--gray4);
@@ -175,12 +179,6 @@
 		& svg {
 			width: 18px;
 			height: 18px;
-		}
-	}
-
-	[data-command-item-wrapper] {
-		&:first-child {
-			margin-top: 8px;
 		}
 	}
 

@@ -37,8 +37,8 @@
 	const mergedProps = $derived(mergeProps(restProps, itemState.props));
 </script>
 
-{#key itemState.root.commandState.search === ""}
-	<div hidden={itemState.shouldRender ? undefined : true} data-command-item-wrapper="">
+{#key itemState.root.key}
+	<div style="display: contents;">
 		{#if itemState.shouldRender}
 			{#if child}
 				{@render child({ props: mergedProps })}
