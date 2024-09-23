@@ -1,10 +1,11 @@
 <script lang="ts">
-	import { mergeProps, useId } from "bits-ui";
 	import { box } from "svelte-toolbelt";
 	import { defaultFilter, useCommandRoot } from "../command.svelte.js";
 	import type { RootProps } from "../index.js";
 	import CommandLabel from "./_command-label.svelte";
 	import { noop } from "$lib/internal/callbacks.js";
+	import { useId } from "$lib/internal/useId.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {
 		id = useId(),

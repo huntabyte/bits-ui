@@ -1,8 +1,9 @@
 <script lang="ts">
-	import { mergeProps, useId } from "bits-ui";
 	import { box } from "svelte-toolbelt";
 	import type { SeparatorProps } from "../index.js";
 	import { useCommandSeparator } from "../command.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {
 		id = useId(),

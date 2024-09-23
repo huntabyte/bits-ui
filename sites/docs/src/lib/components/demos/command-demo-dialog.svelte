@@ -21,8 +21,8 @@
 
 <Dialog.Root bind:open={dialogOpen}>
 	<Dialog.Trigger
-		class="inline-flex h-12 items-center
-	justify-center whitespace-nowrap rounded-input bg-dark px-[21px]
+		class="inline-flex h-12 select-none
+	items-center justify-center whitespace-nowrap rounded-input bg-dark px-[21px]
 	text-[15px] font-semibold text-background shadow-mini transition-colors hover:bg-dark/95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
 	>
 		Open Command Menu ⌘J

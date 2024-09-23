@@ -44,6 +44,12 @@ description: A command menu component that can be used to search, filter, and se
 </Command.Root>
 ```
 
+## Within a Dialog
+
+You can combine the `Command` component with the `Dialog` component to display the command menu within a modal.
+
+<br>
+
 <ComponentPreviewV2 name="command-demo-dialog" comp="Command" size="xs">
 
 {#snippet preview()}

@@ -1,8 +1,12 @@
 <script lang="ts">
-	import { mergeProps, useId } from "bits-ui";
 	import { box } from "svelte-toolbelt";
 	import { useCommandLabel } from "../command.svelte.js";
-	import type { PrimitiveLabelAttributes, WithElementRef } from "$lib/shared/index.js";
+	import {
+		type PrimitiveLabelAttributes,
+		type WithElementRef,
+		mergeProps,
+		useId,
+	} from "$lib/shared/index.js";
 	import type { WithChildren } from "$lib/internal/types.js";
 
 	let {
