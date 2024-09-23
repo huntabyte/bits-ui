@@ -36,7 +36,7 @@
 	const mergedProps = $derived(mergeProps(restProps, itemState.props));
 </script>
 
-<div hidden={itemState.shouldRender ? undefined : true}>
+<div>
 	{#if itemState.shouldRender}
 		<div {...mergedProps}>
 			{@render children?.()}

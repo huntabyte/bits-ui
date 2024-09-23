@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { Command, Popover } from "bits-ui";
-	import { onMount, tick } from "svelte";
 	import SubItem from "./sub-item.svelte";
 	import { FinderIcon, StarIcon, WindowIcon } from "./icons/index.js";
 
@@ -14,20 +13,12 @@
 
 	let open = $state(false);
 
-	onMount(() => {
-		function handleKeydown(e: KeyboardEvent) {
-			if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
-				e.preventDefault();
-				open = true;
-			}
+	function handleKeydown(e: KeyboardEvent) {
+		if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+			e.preventDefault();
+			open = true;
 		}
-
-		document.addEventListener("keydown", handleKeydown);
-
-		return () => {
-			document.removeEventListener("keydown", handleKeydown);
-		};
-	});
+	}
 
 	$effect(() => {
 		if (!listEl) return;
@@ -37,13 +28,9 @@
 			listEl.style.overflow = "";
 		}
 	});
-
-	$effect(() => {
-		if (!open) {
-			tick().then(() => inputEl?.focus());
-		}
-	});
 </script>
+
+<svelte:document onkeydown={handleKeydown} />
 
 <Popover.Root bind:open>
 	<Popover.Trigger>
@@ -55,8 +42,17 @@
 			</button>
 		{/snippet}
 	</Popover.Trigger>
-	{#if open}
-		<Popover.Content preventScroll={true} class="raycast-submenu" side="top" align="end">
+	<Popover.Portal>
+		<Popover.Content
+			onCloseAutoFocus={(e) => {
+				e.preventDefault();
+				inputEl?.focus();
+			}}
+			preventScroll={true}
+			class="raycast-submenu"
+			side="top"
+			align="end"
+		>
 			<Command.Root>
 				<Command.List>
 					<Command.Group>
@@ -82,5 +78,5 @@
 				<Command.Input placeholder="Search for actions..." />
 			</Command.Root>
 		</Popover.Content>
-	{/if}
+	</Popover.Portal>
 </Popover.Root>

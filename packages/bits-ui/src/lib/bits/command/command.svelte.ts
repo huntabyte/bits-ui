@@ -36,6 +36,7 @@ const GROUP_ITEMS_SELECTOR = `[${GROUP_ITEMS_ATTR}]`;
 const GROUP_HEADING_SELECTOR = `[${GROUP_HEADING_ATTR}]`;
 const ITEM_SELECTOR = `[${ITEM_ATTR}]`;
 const VALID_ITEM_SELECTOR = `${ITEM_SELECTOR}:not([aria-disabled="true"])`;
+const LIST_VIEWPORT_SELECTOR = `[${LIST_VIEWPORT_ATTR}]`;
 
 export function defaultFilter(value: string, search: string, keywords?: string[]): number {
 	return commandScore(value, search, keywords);
@@ -358,6 +359,10 @@ class CommandRootState {
 			this.#sort();
 			this.emit();
 		});
+
+		return () => {
+			this.allIds.delete(id);
+		};
 	};
 
 	registerItem = (id: string, groupId: string | undefined) => {
@@ -591,18 +596,16 @@ class CommandGroupContainerState {
 		});
 
 		$effect(() => {
-			untrack(() => {
-				if (this.#value.current) {
-					this.trueValue = this.#value.current;
-					this.#root.registerValue(this.id.current, this.#value.current);
-				} else if (this.headingNode && this.headingNode.textContent) {
-					this.trueValue = this.headingNode.textContent.trim().toLowerCase();
-					this.#root.registerValue(this.id.current, this.trueValue);
-				} else if (this.#ref.current?.textContent) {
-					this.trueValue = this.#ref.current.textContent.trim().toLowerCase();
-					this.#root.registerValue(this.id.current, this.trueValue);
-				}
-			});
+			if (this.#value.current) {
+				this.trueValue = this.#value.current;
+				return this.#root.registerValue(this.id.current, this.#value.current);
+			} else if (this.headingNode && this.headingNode.textContent) {
+				this.trueValue = this.headingNode.textContent.trim().toLowerCase();
+				return this.#root.registerValue(this.id.current, this.trueValue);
+			} else if (this.#ref.current?.textContent) {
+				this.trueValue = this.#ref.current.textContent.trim().toLowerCase();
+				return this.#root.registerValue(this.id.current, this.trueValue);
+			}
 		});
 	}
 
