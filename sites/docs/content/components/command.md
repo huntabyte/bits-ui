@@ -4,7 +4,7 @@ description: A command menu component that can be used to search, filter, and se
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, CommandDemo } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, CommandDemo, CommandDemoDialog } from '$lib/components/index.js'
 	export let schemas;
 </script>
 
@@ -43,5 +43,13 @@ description: A command menu component that can be used to search, filter, and se
 	</Command.List>
 </Command.Root>
 ```
+
+<ComponentPreviewV2 name="command-demo-dialog" comp="Command" size="xs">
+
+{#snippet preview()}
+<CommandDemoDialog />
+{/snippet}
+
+</ComponentPreviewV2>
 
 <APISection {schemas} />

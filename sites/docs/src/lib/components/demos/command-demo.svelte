@@ -29,18 +29,21 @@
 				<Command.GroupItems>
 					<Command.Item
 						class="flex h-10 cursor-pointer select-none items-center gap-2 rounded-button px-3 py-2.5 text-sm capitalize outline-none data-[selected]:bg-muted"
+						keywords={["getting started", "tutorial"]}
 					>
 						<Sticker class="size-4" />
 						Introduction
 					</Command.Item>
 					<Command.Item
 						class="flex h-10 cursor-pointer select-none items-center gap-2 rounded-button px-3 py-2.5 text-sm capitalize outline-none data-[selected]:bg-muted"
+						keywords={["child", "custom element", "snippets"]}
 					>
 						<CodeBlock class="size-4 " />
 						Delegation
 					</Command.Item>
 					<Command.Item
 						class="flex h-10 cursor-pointer select-none items-center gap-2 rounded-button px-3 py-2.5 text-sm capitalize outline-none data-[selected]:bg-muted"
+						keywords={["css", "theme", "colors", "fonts", "tailwind"]}
 					>
 						<Palette class="size-4" />
 						Styling
@@ -55,18 +58,21 @@
 				<Command.GroupItems>
 					<Command.Item
 						class="flex h-10 cursor-pointer select-none items-center gap-2 rounded-button px-3 py-2.5 text-sm capitalize outline-none data-[selected]:bg-muted"
+						keywords={["dates", "times"]}
 					>
 						<CalendarBlank class="size-4" />
 						Calendar
 					</Command.Item>
 					<Command.Item
 						class="flex h-10 cursor-pointer select-none items-center gap-2 rounded-button px-3 py-2.5 text-sm capitalize outline-none data-[selected]:bg-muted"
+						keywords={["buttons", "forms"]}
 					>
 						<RadioButton class="size-4" />
 						Radio Group
 					</Command.Item>
 					<Command.Item
 						class="flex h-10 cursor-pointer select-none items-center gap-2 rounded-button px-3 py-2.5 text-sm capitalize outline-none data-[selected]:bg-muted"
+						keywords={["inputs", "text", "autocomplete"]}
 					>
 						<Textbox class="size-4" />
 						Combobox
