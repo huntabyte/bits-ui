@@ -232,12 +232,14 @@ class CommandRootState {
 	};
 
 	#selectFirstItem = () => {
-		afterTick(() => {
-			const item = this.#getValidItems().find(
-				(item) => item.getAttribute("aria-disabled") !== "true"
-			);
-			const value = item?.getAttribute(VALUE_ATTR);
-			this.setValue(value || "");
+		afterSleep(1, () => {
+			afterTick(() => {
+				const item = this.#getValidItems().find(
+					(item) => item.getAttribute("aria-disabled") !== "true"
+				);
+				const value = item?.getAttribute(VALUE_ATTR);
+				this.setValue(value || "");
+			});
 		});
 	};
 
