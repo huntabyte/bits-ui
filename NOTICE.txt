@@ -33,3 +33,11 @@ This codebase contains a modified portion of code from Radix UI which can be obt
     * https://github.com/radix-ui/primitives/blob/main/LICENSE
 
 -------------------------------------------------------------------------------
+
+This codebase contains a modified portion of code from cmdk which can be obtained at:
+  * SOURCE:
+    * https://www.npmjs.com/package/cmdk
+  * LICENSE (MIT):
+    * https://github.com/pacocoursey/cmdk/blob/main/LICENSE.md
+
+-------------------------------------------------------------------------------

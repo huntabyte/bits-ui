@@ -6,7 +6,11 @@
 </script>
 
 <div class="w-full md:max-w-[280px]">
-	<Slider.Root bind:value class="relative flex w-full touch-none select-none items-center">
+	<Slider.Root
+		step={25}
+		bind:value
+		class="relative flex w-full touch-none select-none items-center"
+	>
 		{#snippet children({ thumbs, ticks })}
 			<span class="relative h-2 w-full grow overflow-hidden rounded-full bg-dark-10">
 				<Slider.Range class="absolute h-full bg-foreground" />
@@ -21,7 +25,7 @@
 				/>
 			{/each}
 			{#each ticks as index}
-				<Slider.Tick {index} class="block h-1 w-1 rounded-full bg-dark-10" />
+				<Slider.Tick {index} class="block h-1 w-1  bg-dark-10" />
 			{/each}
 		{/snippet}
 	</Slider.Root>
