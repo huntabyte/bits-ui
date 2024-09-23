@@ -88,11 +88,11 @@ class CommandRootState {
 	// published state that the components and other things can react to
 	commandState = $state.raw<CommandState>(null!);
 	// internal state that we mutate in batches and publish to the `state` at once
-	#commandState = $state<CommandState>(null!);
-	snapshot = () => this.#commandState;
+	_commandState = $state<CommandState>(null!);
+	snapshot = () => this._commandState;
 	setState: SetState = (key, value, opts) => {
-		if (Object.is(this.#commandState[key], value)) return;
-		this.#commandState[key] = value;
+		if (Object.is(this._commandState[key], value)) return;
+		this._commandState[key] = value;
 		if (key === "search") {
 			// Filter synchronously before emitting back to children
 			this.#filterItems();
@@ -109,7 +109,7 @@ class CommandRootState {
 		this.emit();
 	};
 	emit = () => {
-		this.commandState = $state.snapshot(this.#commandState);
+		this.commandState = $state.snapshot(this._commandState);
 	};
 
 	constructor(props: CommandRootStateProps) {
@@ -136,7 +136,7 @@ class CommandRootState {
 				groups: new Set<string>(),
 			},
 		};
-		this.#commandState = defaultState;
+		this._commandState = defaultState;
 		this.commandState = defaultState;
 
 		useRefById({
@@ -145,25 +145,25 @@ class CommandRootState {
 		});
 
 		$effect(() => {
-			this.#commandState.value;
+			this._commandState.value;
 			this.#scrollSelectedIntoView();
 		});
 	}
 
 	#score = (value: string, keywords?: string[]) => {
 		const filter = this.filter.current ?? defaultFilter;
-		const score = value ? filter(value, this.#commandState.search, keywords) : 0;
+		const score = value ? filter(value, this._commandState.search, keywords) : 0;
 		return score;
 	};
 
 	#sort = () => {
-		if (!this.#commandState.search || this.shouldFilter.current === false) return;
+		if (!this._commandState.search || this.shouldFilter.current === false) return;
 
-		const scores = this.#commandState.filtered.items;
+		const scores = this._commandState.filtered.items;
 
 		// sort the groups
 		const groups: [string, number][] = [];
-		for (const value of this.#commandState.filtered.groups) {
+		for (const value of this._commandState.filtered.groups) {
 			const items = this.allGroups.get(value);
 			let max = 0;
 			if (!items) {
@@ -228,7 +228,7 @@ class CommandRootState {
 
 	setValue = (value: string, opts?: boolean) => {
 		if (value !== this.valueProp.current && value === "") {
-			afterSleep(1, () => {
+			afterTick(() => {
 				this.key++;
 			});
 		}
@@ -247,13 +247,13 @@ class CommandRootState {
 	};
 
 	#filterItems = () => {
-		if (!this.#commandState.search || this.shouldFilter.current === false) {
-			this.#commandState.filtered.count = this.allItems.size;
+		if (!this._commandState.search || this.shouldFilter.current === false) {
+			this._commandState.filtered.count = this.allItems.size;
 			return;
 		}
 
 		// reset the groups
-		this.#commandState.filtered.groups = new Set();
+		this._commandState.filtered.groups = new Set();
 		let itemCount = 0;
 
 		// Check which items should be included
@@ -261,23 +261,23 @@ class CommandRootState {
 			const value = this.allIds.get(id)?.value ?? "";
 			const keywords = this.allIds.get(id)?.keywords ?? [];
 			const rank = this.#score(value, keywords);
-			this.#commandState.filtered.items.set(id, rank);
+			this._commandState.filtered.items.set(id, rank);
 			if (rank > 0) itemCount++;
 		}
 
 		// Check which groups have at least 1 item shown
 		for (const [groupId, group] of this.allGroups) {
 			for (const itemId of group) {
-				const currItem = this.#commandState.filtered.items.get(itemId);
+				const currItem = this._commandState.filtered.items.get(itemId);
 
 				if (currItem && currItem > 0) {
-					this.#commandState.filtered.groups.add(groupId);
+					this._commandState.filtered.groups.add(groupId);
 					break;
 				}
 			}
 		}
 
-		this.#commandState.filtered.count = itemCount;
+		this._commandState.filtered.count = itemCount;
 	};
 
 	#getValidItems = () => {
@@ -368,7 +368,7 @@ class CommandRootState {
 	registerValue = (id: string, value: string, keywords?: string[]) => {
 		if (value === this.allIds.get(id)?.value) return;
 		this.allIds.set(id, { value, keywords });
-		this.#commandState.filtered.items.set(id, this.#score(value, keywords));
+		this._commandState.filtered.items.set(id, this.#score(value, keywords));
 
 		this.#sort();
 		this.emit();
@@ -557,7 +557,7 @@ class CommandEmptyState {
 	#root: CommandRootState;
 	#isInitialRender = true;
 	shouldRender = $derived.by(
-		() => this.#root.commandState.filtered.count === 0 && this.#isInitialRender === false
+		() => this.#root._commandState.filtered.count === 0 && this.#isInitialRender === false
 	);
 
 	constructor(props: CommandEmptyStateProps, root: CommandRootState) {

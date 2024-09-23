@@ -30,12 +30,11 @@
 <div style:padding="16px">
 	<Command.Root loop>
 		<Command.Input placeholder="Search items..." />
-		<Command.Empty>No item found.</Command.Empty>
-
 		<Command.List
 			class="h-[var(--cmdk-list-height)]"
 			style="height: 200px; overflow-y: auto; max-width: 300px;"
 		>
+			<Command.Empty>No item found.</Command.Empty>
 			{#each names as txt (txt)}
 				<Command.Item value={txt}>{txt}</Command.Item>
 			{/each}
