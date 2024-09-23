@@ -11,6 +11,7 @@ export { default as CheckboxDemoCustom } from "./checkbox-demo-custom.svelte";
 export { default as CollapsibleDemo } from "./collapsible-demo.svelte";
 export { default as CollapsibleDemoTransitions } from "./collapsible-demo-transitions.svelte";
 export { default as ComboboxDemo } from "./combobox-demo.svelte";
+export { default as CommandDemo } from "./command-demo.svelte";
 export { default as ContextMenuDemo } from "./context-menu-demo.svelte";
 export { default as DateFieldDemo } from "./date-field-demo.svelte";
 export { default as DateRangeFieldDemo } from "./date-range-field-demo.svelte";

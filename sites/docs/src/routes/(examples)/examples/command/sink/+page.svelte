@@ -36,11 +36,9 @@
 			class="h-[var(--cmdk-list-height)]"
 			style="height: 200px; overflow-y: auto; max-width: 300px;"
 		>
-			<Command.ListViewport>
-				{#each names as txt (txt)}
-					<Command.Item value={txt}>{txt}</Command.Item>
-				{/each}
-			</Command.ListViewport>
+			{#each names as txt (txt)}
+				<Command.Item value={txt}>{txt}</Command.Item>
+			{/each}
 		</Command.List>
 	</Command.Root>
 </div>
