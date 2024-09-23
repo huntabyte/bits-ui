@@ -1,4 +1,5 @@
 import type {
+	PrimitiveAnchorAttributes,
 	PrimitiveDivAttributes,
 	PrimitiveInputAttributes,
 	WithChild,
@@ -23,12 +24,6 @@ export type CommandState = {
 
 export type CommandRootPropsWithoutHTML = WithChild<{
 	/**
-	 * Controlled state store for the command menu.
-	 * Initialize state using the `createState` function.
-	 */
-	state?: CommandState;
-
-	/**
 	 * An accessible label for the command menu.
 	 * Not visible & only used for screen readers.
 	 */
@@ -49,7 +44,7 @@ export type CommandRootPropsWithoutHTML = WithChild<{
 	 *
 	 * By default, it will use the `command-score` package to score.
 	 */
-	filter?: (value: string, search: string) => number;
+	filter?: (value: string, search: string, keywords?: string[]) => number;
 
 	/**
 	 * Optionally provide or bind to the selected command menu item.
@@ -151,7 +146,17 @@ export type CommandItemPropsWithoutHTML = WithChild<{
 export type CommandItemProps = CommandItemPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, CommandItemPropsWithoutHTML>;
 
-export type CommandInputPropsWithoutHTML = WithChild;
+export type CommandLinkItemPropsWithoutHTML = CommandItemPropsWithoutHTML;
+
+export type CommandLinkItemProps = CommandLinkItemPropsWithoutHTML &
+	Without<PrimitiveAnchorAttributes, CommandLinkItemPropsWithoutHTML>;
+
+export type CommandInputPropsWithoutHTML = WithChild<{
+	/**
+	 * The value of the input element, used to search/filter items.
+	 */
+	value?: string;
+}>;
 
 export type CommandInputProps = CommandInputPropsWithoutHTML &
 	Without<PrimitiveInputAttributes, CommandInputPropsWithoutHTML>;
@@ -183,7 +188,7 @@ export type CommandLoadingPropsWithoutHTML = WithChild<{
 export type CommandLoadingProps = CommandLoadingPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, CommandLoadingPropsWithoutHTML>;
 
-export type CommandListViewportPropsWithoutHTML = WithChild;
+export type CommandViewportPropsWithoutHTML = WithChild;
 
-export type CommandListViewportProps = CommandListViewportPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, CommandListViewportPropsWithoutHTML>;
+export type CommandViewportProps = CommandViewportPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, CommandViewportPropsWithoutHTML>;

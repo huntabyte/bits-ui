@@ -57,7 +57,7 @@
 		</div>
 		<Command.Input autofocus placeholder="What do you need?" bind:value={inputValue} />
 		<Command.List>
-			<Command.ListViewport>
+			<Command.Viewport>
 				<Command.Empty>No results found.</Command.Empty>
 				{#key activePage}
 					{#if activePage === "home"}
@@ -71,7 +71,7 @@
 						<Projects />
 					{/if}
 				{/key}
-			</Command.ListViewport>
+			</Command.Viewport>
 		</Command.List>
 	</Command.Root>
 </div>

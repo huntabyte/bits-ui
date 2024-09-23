@@ -30,7 +30,7 @@ const GROUP_ITEMS_ATTR = "data-command-group-items";
 const GROUP_HEADING_ATTR = "data-command-group-heading";
 const ITEM_ATTR = "data-command-item";
 const VALUE_ATTR = `data-value`;
-const LIST_VIEWPORT_ATTR = "data-command-list-viewport";
+const VIEWPORT_ATTR = "data-command-viewport";
 const INPUT_LABEL_ATTR = "data-command-input-label";
 
 const GROUP_SELECTOR = `[${GROUP_ATTR}]`;
@@ -38,7 +38,6 @@ const GROUP_ITEMS_SELECTOR = `[${GROUP_ITEMS_ATTR}]`;
 const GROUP_HEADING_SELECTOR = `[${GROUP_HEADING_ATTR}]`;
 const ITEM_SELECTOR = `[${ITEM_ATTR}]`;
 const VALID_ITEM_SELECTOR = `${ITEM_SELECTOR}:not([aria-disabled="true"])`;
-const LIST_VIEWPORT_SELECTOR = `[${LIST_VIEWPORT_ATTR}]`;
 
 export function defaultFilter(value: string, search: string, keywords?: string[]): number {
 	return commandScore(value, search, keywords);
@@ -80,7 +79,7 @@ class CommandRootState {
 	loop: CommandRootStateProps["loop"];
 	// attempt to prevent the harsh delay when user is typing fast
 	key = $state(0);
-	listViewportNode = $state<HTMLElement | null>(null);
+	viewportNode = $state<HTMLElement | null>(null);
 	inputNode = $state<HTMLElement | null>(null);
 	labelNode = $state<HTMLElement | null>(null);
 	valueProp: CommandRootStateProps["value"];
@@ -183,7 +182,7 @@ class CommandRootState {
 		// Sort items within groups to bottom
 		// Sort items outside of groups
 		// Sort groups to bottom (pushes all non-grouped items to the top)
-		const listInsertionElement = this.listViewportNode;
+		const listInsertionElement = this.viewportNode;
 
 		const sorted = this.#getValidItems().sort((a, b) => {
 			const valueA = a.getAttribute("id");
@@ -738,7 +737,7 @@ class CommandInputState {
 	#autofocus: CommandInputStateProps["autofocus"];
 
 	#selectedItemId = $derived.by(() => {
-		const item = this.#root.listViewportNode?.querySelector<HTMLElement>(
+		const item = this.#root.viewportNode?.querySelector<HTMLElement>(
 			`${ITEM_SELECTOR}[${VALUE_ATTR}="${encodeURIComponent(this.#value.current)}"]`
 		);
 		if (!item) return;
@@ -791,7 +790,7 @@ class CommandInputState {
 				"aria-autocomplete": "list",
 				role: "combobox",
 				"aria-expanded": getAriaExpanded(true),
-				"aria-controls": this.#root.listViewportNode?.id ?? undefined,
+				"aria-controls": this.#root.viewportNode?.id ?? undefined,
 				"aria-labelledby": this.#root.labelNode?.id ?? undefined,
 				"aria-activedescendant": this.#selectedItemId,
 			}) as const
@@ -837,7 +836,9 @@ class CommandItemState {
 		return currentScore > 0;
 	});
 
-	isSelected = $derived.by(() => this.root.valueProp.current === this.trueValue);
+	isSelected = $derived.by(
+		() => this.root.valueProp.current === this.trueValue && this.trueValue !== ""
+	);
 
 	constructor(props: CommandItemStateProps, root: CommandRootState) {
 		this.#ref = props.ref;
@@ -1026,8 +1027,8 @@ class CommandListState {
 			}) as const
 	);
 
-	createListViewport(props: CommandListViewportStateProps) {
-		return new CommandListViewportState(props, this);
+	createViewport(props: CommandViewportStateProps) {
+		return new CommandViewportState(props, this);
 	}
 }
 
@@ -1065,14 +1066,14 @@ class CommandLabelState {
 	);
 }
 
-type CommandListViewportStateProps = WithRefProps;
+type CommandViewportStateProps = WithRefProps;
 
-class CommandListViewportState {
-	#ref: CommandListViewportStateProps["ref"];
-	#id: CommandListViewportStateProps["id"];
+class CommandViewportState {
+	#ref: CommandViewportStateProps["ref"];
+	#id: CommandViewportStateProps["id"];
 	#list: CommandListState;
 
-	constructor(props: CommandListViewportStateProps, list: CommandListState) {
+	constructor(props: CommandViewportStateProps, list: CommandListState) {
 		this.#ref = props.ref;
 		this.#id = props.id;
 		this.#list = list;
@@ -1081,7 +1082,7 @@ class CommandListViewportState {
 			id: this.#id,
 			ref: this.#ref,
 			onRefChange: (node) => {
-				this.#list.root.listViewportNode = node;
+				this.#list.root.viewportNode = node;
 			},
 		});
 
@@ -1114,7 +1115,7 @@ class CommandListViewportState {
 		() =>
 			({
 				id: this.#id.current,
-				[LIST_VIEWPORT_ATTR]: "",
+				[VIEWPORT_ATTR]: "",
 			}) as const
 	);
 }
@@ -1159,8 +1160,8 @@ export function useCommandList(props: CommandListStateProps) {
 	return setCommandListContext(getCommandRootContext().createList(props));
 }
 
-export function useCommandListViewport(props: CommandListViewportStateProps) {
-	return getCommandListContext().createListViewport(props);
+export function useCommandViewport(props: CommandViewportStateProps) {
+	return getCommandListContext().createViewport(props);
 }
 
 export function useCommandLabel(props: CommandLabelStateProps) {

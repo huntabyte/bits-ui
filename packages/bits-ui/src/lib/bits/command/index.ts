@@ -5,8 +5,9 @@ export { default as GroupHeading } from "./components/command-group-heading.svel
 export { default as GroupItems } from "./components/command-group-items.svelte";
 export { default as Input } from "./components/command-input.svelte";
 export { default as Item } from "./components/command-item.svelte";
+export { default as LinkItem } from "./components/command-link-item.svelte";
 export { default as List } from "./components/command-list.svelte";
-export { default as ListViewport } from "./components/command-list-viewport.svelte";
+export { default as Viewport } from "./components/command-viewport.svelte";
 export { default as Loading } from "./components/command-loading.svelte";
 export { default as Separator } from "./components/command-separator.svelte";
 
@@ -17,9 +18,10 @@ export type {
 	CommandGroupHeadingProps as GroupHeadingProps,
 	CommandGroupItemsProps as GroupItemsProps,
 	CommandItemProps as ItemProps,
+	CommandLinkItemProps as LinkItemProps,
 	CommandInputProps as InputProps,
 	CommandSeparatorProps as SeparatorProps,
 	CommandListProps as ListProps,
 	CommandLoadingProps as LoadingProps,
-	CommandListViewportProps as ListViewportProps,
+	CommandViewportProps as ViewportProps,
 } from "./types.js";

@@ -53,7 +53,7 @@
 		{#if child}
 			{@render child({ props })}
 		{:else}
-			<div {...props} bind:this={ref}>
+			<div {...props}>
 				{@render children?.()}
 			</div>
 		{/if}

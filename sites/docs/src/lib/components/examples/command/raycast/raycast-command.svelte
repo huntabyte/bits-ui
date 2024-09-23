@@ -19,7 +19,7 @@
 		<Command.Input autofocus placeholder="Search for apps and commands..." bind:ref={inputEl} />
 		<hr data-command-raycast-loader="" />
 		<Command.List bind:ref={listEl}>
-			<Command.ListViewport>
+			<Command.Viewport>
 				<Command.Empty>No results found.</Command.Empty>
 				<Command.Group>
 					<Command.GroupHeading>Suggestions</Command.GroupHeading>
@@ -87,7 +87,7 @@
 						</Item>
 					</Command.GroupItems>
 				</Command.Group>
-			</Command.ListViewport>
+			</Command.Viewport>
 		</Command.List>
 
 		<div data-command-raycast-footer="">

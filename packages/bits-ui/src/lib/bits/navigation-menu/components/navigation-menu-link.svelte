@@ -28,7 +28,7 @@
 {#if child}
 	{@render child({ props: mergedProps })}
 {:else}
-	<a {...mergedProps} bind:this={ref}>
+	<a {...mergedProps}>
 		{@render children?.()}
 	</a>
 {/if}

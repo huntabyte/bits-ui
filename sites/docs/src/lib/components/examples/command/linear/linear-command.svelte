@@ -62,11 +62,12 @@
 		<div data-command-linear-badge="">Issue - FUN-343</div>
 		<Command.Input autofocus placeholder="Type a command or search..." />
 		<Command.List>
-			<Command.ListViewport>
+			<Command.Viewport>
 				<Command.Empty>No results found.</Command.Empty>
 				{#each items as { label, shortcut, icon }}
+					{@const Icon = icon}
 					<Command.Item value={label}>
-						<svelte:component this={icon} />
+						<Icon />
 						{label}
 						<div data-command-linear-shortcuts="">
 							{#each shortcut as key}
@@ -75,7 +76,7 @@
 						</div>
 					</Command.Item>
 				{/each}
-			</Command.ListViewport>
+			</Command.Viewport>
 		</Command.List>
 	</Command.Root>
 </div>

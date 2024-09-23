@@ -67,7 +67,7 @@
 			<Command.Input autofocus placeholder="Find components, packages, and interactions..." />
 		</div>
 		<Command.List>
-			<Command.ListViewport>
+			<Command.Viewport>
 				<div data-command-framer-items="">
 					<div data-command-framer-left="">
 						<Command.Group>
@@ -114,7 +114,7 @@
 						{/if}
 					</div>
 				</div>
-			</Command.ListViewport>
+			</Command.Viewport>
 		</Command.List>
 	</Command.Root>
 </div>
