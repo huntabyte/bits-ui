@@ -17,6 +17,7 @@ import {
 } from "$lib/internal/attrs.js";
 import { getFirstNonCommentChild } from "$lib/internal/dom.js";
 import { srOnlyStyles } from "$lib/internal/style.js";
+import { afterTick } from "$lib/internal/afterTick.js";
 
 const ROOT_ATTR = "data-command-root";
 const LIST_ATTR = "data-command-list";
@@ -231,7 +232,7 @@ class CommandRootState {
 	};
 
 	#selectFirstItem = () => {
-		afterSleep(1, () => {
+		afterTick(() => {
 			const item = this.#getValidItems().find(
 				(item) => item.getAttribute("aria-disabled") !== "true"
 			);
@@ -396,14 +397,13 @@ class CommandRootState {
 
 			this.emit();
 		});
-
 		return () => {
 			this.allIds.delete(id);
 			this.allItems.delete(id);
 			this.commandState.filtered.items.delete(id);
 			const selectedItem = this.#getSelectedItem();
 
-			afterSleep(1, () => {
+			afterTick(() => {
 				this.#filterItems();
 
 				// The item removed have been the selected one,

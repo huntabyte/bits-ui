@@ -37,14 +37,16 @@
 	const mergedProps = $derived(mergeProps(restProps, itemState.props));
 </script>
 
-<div hidden={itemState.shouldRender ? undefined : true}>
-	{#if itemState.shouldRender}
-		{#if child}
-			{@render child({ props: mergedProps })}
-		{:else}
-			<div {...mergedProps}>
-				{@render children?.()}
-			</div>
+{#key itemState.root.commandState.search === ""}
+	<div hidden={itemState.shouldRender ? undefined : true}>
+		{#if itemState.shouldRender}
+			{#if child}
+				{@render child({ props: mergedProps })}
+			{:else}
+				<div {...mergedProps}>
+					{@render children?.()}
+				</div>
+			{/if}
 		{/if}
-	{/if}
-</div>
+	</div>
+{/key}

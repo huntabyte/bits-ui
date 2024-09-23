@@ -29,7 +29,7 @@
 		},
 		{
 			value: "Input",
-			subtitle: "Retrive user input",
+			subtitle: "Retrieve user input",
 			icon: InputIcon,
 		},
 		{
@@ -73,7 +73,7 @@
 						<Command.Group>
 							<Command.GroupHeading>Components</Command.GroupHeading>
 							<Command.GroupItems>
-								{#each components as { value, subtitle, icon } (value)}
+								{#each components as { value, subtitle, icon }}
 									{@const Icon = icon}
 									<Command.Item {value}>
 										<div data-command-framer-icon-wrapper="">
@@ -81,9 +81,9 @@
 										</div>
 										<div data-command-framer-item-meta="">
 											{value}
-											<span data-command-framer-item-subtitle=""
-												>{subtitle}</span
-											>
+											<span data-command-framer-item-subtitle="">
+												{subtitle}
+											</span>
 										</div>
 									</Command.Item>
 								{/each}
