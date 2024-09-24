@@ -15,4 +15,5 @@ export const srOnlyStyles: StyleProperties = {
 	clip: "rect(0, 0, 0, 0)",
 	whiteSpace: "nowrap",
 	borderWidth: "0",
+	transform: "translateX(-100%)",
 };

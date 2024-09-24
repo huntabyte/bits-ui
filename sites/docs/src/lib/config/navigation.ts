@@ -37,6 +37,7 @@ function generateComponentsNav() {
 		componentNavItems.push({
 			title: comp.title,
 			href: `/docs/components/${comp.slug}`,
+			label: "navLabel" in comp ? (comp.navLabel as string) : undefined,
 			items: [],
 		});
 	}

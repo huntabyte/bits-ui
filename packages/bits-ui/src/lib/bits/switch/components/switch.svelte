@@ -14,7 +14,7 @@
 		disabled = false,
 		required = false,
 		checked = $bindable(false),
-		value = "on",
+		value,
 		name = undefined,
 		type = "button",
 		onCheckedChange,

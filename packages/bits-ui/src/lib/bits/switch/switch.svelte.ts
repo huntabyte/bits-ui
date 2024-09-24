@@ -1,5 +1,6 @@
 import {
 	getAriaChecked,
+	getAriaHidden,
 	getAriaRequired,
 	getDataChecked,
 	getDataDisabled,
@@ -11,6 +12,7 @@ import { kbd } from "$lib/internal/kbd.js";
 import { createContext } from "$lib/internal/createContext.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
+import { srOnlyStyles, styleToString } from "$lib/internal/style.js";
 
 const ROOT_ATTR = "data-switch-root";
 const THUMB_ATTR = "data-switch-thumb";
@@ -113,6 +115,8 @@ class SwitchInputState {
 				checked: this.#root.checked.current,
 				disabled: this.#root.disabled.current,
 				required: this.#root.required.current,
+				"aria-hidden": getAriaHidden(true),
+				style: styleToString(srOnlyStyles),
 			}) as const
 	);
 }

@@ -13,7 +13,7 @@
 		disabled = false,
 		required = false,
 		name = undefined,
-		value = "on",
+		value,
 		id = useId(),
 		ref = $bindable(null),
 		child,

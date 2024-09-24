@@ -34,14 +34,15 @@ export type SwitchRootPropsWithoutHTML = WithChild<
 		 *
 		 * @defaultValue undefined
 		 */
-		value?: string;
+		// eslint-disable-next-line ts/no-explicit-any
+		value?: any;
 
 		/**
 		 * The checked state of the switch.
 		 *
 		 * @defaultValue false
 		 */
-		checked?: boolean | undefined;
+		checked?: boolean;
 
 		/**
 		 * A callback function called when the checked state changes.

@@ -1,7 +1,6 @@
 <script lang="ts">
-	import PlugsConnected from "phosphor-svelte/lib/PlugsConnected";
-	import AsteriskSimple from "phosphor-svelte/lib/AsteriskSimple";
-	import { Popover, Tooltip } from "bits-ui";
+	import { Tooltip } from "bits-ui";
+	import Badge from "../ui/badge.svelte";
 	import PropTypeContent from "./prop-type-content.svelte";
 	import { Code } from "$lib/components/index.js";
 	import * as Table from "$lib/components/ui/table/index.js";
@@ -48,43 +47,16 @@
 					<Table.Cell class="flex items-center gap-1 pr-1 align-baseline">
 						<Code class="font-semibold text-foreground">{p?.name}</Code>
 						{#if p?.required}
-							<Popover.Root>
-								<Popover.Trigger aria-hidden="true">
-									<div
-										class=" flex items-start text-destructive"
-										aria-hidden="true"
-									>
-										<AsteriskSimple class="mb-1 size-3.5" />
-									</div>
-									<span class="sr-only">Required</span>
-								</Popover.Trigger>
-								<Popover.Content
-									preventScroll={false}
-									class="z-50 max-h-[400px] overflow-auto rounded-input border border-border bg-background p-4 font-mono shadow-popover"
-									side="top"
-									sideOffset={10}>Required</Popover.Content
-								>
-							</Popover.Root>
-							<span class="sr-only"> required prop </span>
+							<Badge class="border border-destructive bg-background text-destructive">
+								required
+							</Badge>
 						{/if}
 						{#if p?.bindable}
-							<Popover.Root>
-								<Popover.Trigger aria-hidden="true">
-									<div
-										class="ml-1.5 flex items-center justify-center text-tertiary"
-									>
-										<PlugsConnected class="size-4" />
-										<span class="sr-only">Bindable</span>
-									</div>
-								</Popover.Trigger>
-								<Popover.Content
-									preventScroll={false}
-									class="z-50 max-h-[400px] overflow-auto rounded-input border border-border bg-background p-4 font-mono shadow-popover"
-									side="top"
-									sideOffset={10}>$bindable</Popover.Content
-								>
-							</Popover.Root>
-							<span class="sr-only"> bindable prop </span>
+							<Badge
+								class="border border-[#2A266B] bg-background text-[#2A266B] dark:border-[#FCDAFE] dark:text-[#FCDAFE]"
+							>
+								$bindable
+							</Badge>
 						{/if}
 					</Table.Cell>
 					<Table.Cell class="pr-1 align-baseline">
