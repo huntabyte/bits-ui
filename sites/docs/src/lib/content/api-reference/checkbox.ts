@@ -7,23 +7,30 @@ import {
 	createEnumProp,
 	createFunctionProp,
 	createStringProp,
+	createUnionProp,
 	withChildProps,
 } from "./helpers.js";
+import {
+	CheckboxRootCheckedProp,
+	CheckboxRootOnCheckedChangeProp,
+	CheckboxRootStateDataAttr,
+} from "./extended-types/checkbox/index.js";
 import * as C from "$lib/content/constants.js";
 
 export const root = createApiSchema<CheckboxRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The button component used to toggle the state of the checkbox.",
 	props: {
-		checked: createEnumProp({
+		checked: createUnionProp({
 			options: ["boolean", "'indeterminate'"],
 			default: C.FALSE,
 			description:
 				"The checkbox button's checked state. This can be a boolean or the string 'indeterminate', which would typically display a dash in the checkbox.",
 			bindable: true,
+			definition: CheckboxRootCheckedProp,
 		}),
 		onCheckedChange: createFunctionProp({
-			definition: "(checked: boolean | 'indeterminate') => void",
+			definition: CheckboxRootOnCheckedChangeProp,
 			description:
 				"A callback that is fired when the checkbox button's checked state changes.",
 		}),
@@ -51,6 +58,7 @@ export const root = createApiSchema<CheckboxRootPropsWithoutHTML>({
 			name: "state",
 			options: ["checked", "unchecked", "indeterminate"],
 			description: "The checkbox's state of checked, unchecked, or indeterminate.",
+			definition: CheckboxRootStateDataAttr,
 		}),
 		createDataAttrSchema({
 			name: "disabled",

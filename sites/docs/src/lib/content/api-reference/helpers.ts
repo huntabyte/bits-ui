@@ -9,6 +9,7 @@ import {
 	OnEscapeKeydownProp,
 	OnFocusOutsideProp,
 	OnInteractOutsideProp,
+	OrientationProp,
 } from "./extended-types/shared/index.js";
 import {
 	FloatingAlignProp,
@@ -548,6 +549,7 @@ export const orientationDataAttr = createEnumDataAttr({
 	name: "orientation",
 	options: ["vertical", "horizontal"],
 	description: "The orientation of the component.",
+	definition: OrientationProp,
 });
 
 export const disabledDataAttr: DataAttrSchema = {

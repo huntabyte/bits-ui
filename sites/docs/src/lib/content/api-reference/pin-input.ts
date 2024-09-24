@@ -1,6 +1,8 @@
 import type { PinInputCellPropsWithoutHTML, PinInputRootPropsWithoutHTML } from "bits-ui";
 import {
 	PinInputCellCellProp,
+	PinInputRootChildSnippetProps,
+	PinInputRootChildrenSnippetProps,
 	PinInputRootOnCompleteProp,
 	PinInputRootPushPasswordManagerStrategyProp,
 	PinInputRootTextAlignProp,
@@ -59,7 +61,11 @@ const root = createApiSchema<PinInputRootPropsWithoutHTML>({
 			definition: PinInputRootPushPasswordManagerStrategyProp,
 			options: ["increase-width", "none"],
 		}),
-		...withChildProps({ elType: "HTMLDivElement" }),
+		...withChildProps({
+			elType: "HTMLDivElement",
+			childDef: PinInputRootChildSnippetProps,
+			childrenDef: PinInputRootChildrenSnippetProps,
+		}),
 	},
 	dataAttributes: [
 		createDataAttrSchema({

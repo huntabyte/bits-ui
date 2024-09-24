@@ -284,11 +284,7 @@ export const trigger = createApiSchema<ComboboxTriggerPropsWithoutHTML>({
 	description: "A button which toggles the combobox's open state.",
 	props: withChildProps({ elType: "HTMLButtonElement" }),
 	dataAttributes: [
-		createEnumDataAttr({
-			name: "state",
-			options: ["open", "closed"],
-			description: "The combobox's open state.",
-		}),
+		stateDataAttr,
 		createDataAttrSchema({
 			name: "disabled",
 			description: "Present when the combobox is disabled.",
