@@ -1,103 +1,94 @@
 import type { Snippet } from "svelte";
-import type { OnChangeFn, Without } from "$lib/internal/types.js";
-import type { PrimitiveInputAttributes } from "$lib/shared/attributes.js";
+import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
+import type { PrimitiveDivAttributes, PrimitiveInputAttributes } from "$lib/shared/attributes.js";
 
-export type PinInputRootPropsWithoutHTML = {
-	/**
-	 * The value of the input.
-	 *
-	 * @bindable
-	 */
-	value?: string;
-
-	/**
-	 * A callback function that is called when the value of the input changes.
-	 */
-	onValueChange?: OnChangeFn<string>;
-
-	/**
-	 * The max length of the input.
-	 */
-	maxlength: number;
-
-	/**
-	 * Customize the alignment of the text within in the input.
-	 *
-	 * @default "left"
-	 */
-	textalign?: "left" | "center" | "right";
-
-	/**
-	 * A callback function that is called when the input is completely filled.
-	 *
-	 */
-	// eslint-disable-next-line ts/no-explicit-any
-	onComplete?: (...args: any[]) => void;
-
-	/**
-	 * How to handle the input when a password manager is detected.
-	 */
-	pushPasswordManagerStrategy?: "increase-width" | "none";
-
-	/**
-	 * Whether the input is disabled
-	 */
-	disabled?: boolean;
-
-	/**
-	 * A reference to the container element.
-	 */
-	containerRef?: HTMLElement | null;
-
-	/**
-	 * A reference to the input element.
-	 */
-	inputRef?: HTMLInputElement | null;
-
-	/**
-	 * Id of the input element.
-	 */
-	inputId?: string;
-
-	/**
-	 * Id of the container element.
-	 */
-	containerId?: string;
-
-	/**
-	 * The children snippet used to render the individual cells.
-	 */
-	children: Snippet<[PinInputRootSnippetProps]>;
+export type PinInputRootSnippetProps = {
+	cells: PinInputCell[];
+	isFocused: boolean;
+	isHovering: boolean;
 };
 
-export type PinInputRootProps = PinInputRootPropsWithoutHTML &
-	Without<Omit<PrimitiveInputAttributes, "id">, PinInputRootPropsWithoutHTML>;
+export type PinInputRootPropsWithoutHTML = Omit<
+	WithChild<
+		{
+			/**
+			 * The value of the input.
+			 *
+			 * @bindable
+			 */
+			value?: string;
 
-export type PinInputCellProps = {
+			/**
+			 * A callback function that is called when the value of the input changes.
+			 */
+			onValueChange?: OnChangeFn<string>;
+
+			/**
+			 * The max length of the input.
+			 */
+			maxlength: number;
+
+			/**
+			 * Customize the alignment of the text within in the input.
+			 *
+			 * @default "left"
+			 */
+			textalign?: "left" | "center" | "right";
+
+			/**
+			 * A callback function that is called when the input is completely filled.
+			 *
+			 */
+			// eslint-disable-next-line ts/no-explicit-any
+			onComplete?: (...args: any[]) => void;
+
+			/**
+			 * How to handle the input when a password manager is detected.
+			 */
+			pushPasswordManagerStrategy?: "increase-width" | "none";
+
+			/**
+			 * Whether the input is disabled
+			 */
+			disabled?: boolean;
+
+			/**
+			 * The children snippet used to render the individual cells.
+			 */
+			children: Snippet<[PinInputRootSnippetProps]>;
+		},
+		PinInputRootSnippetProps
+	>,
+	"child"
+>;
+
+export type PinInputRootProps = PinInputRootPropsWithoutHTML &
+	Without<PrimitiveInputAttributes, PinInputRootPropsWithoutHTML>;
+
+export type PinInputCellPropsWithoutHTML = WithChild<{
+	/**
+	 * This specific cell, which is provided by the `cells` snippet prop from
+	 * the `PinInput.Root` component.
+	 */
+	cell: PinInputCell;
+}>;
+
+export type PinInputCellProps = PinInputCellPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, PinInputCellPropsWithoutHTML>;
+
+export type PinInputCell = {
+	/**
+	 * The character displayed in the cell.
+	 */
+	char: string | null | undefined;
+
 	/**
 	 * Whether the cell is active.
 	 */
 	isActive: boolean;
 
 	/**
-	 * The character displayed in the cell.
-	 */
-	char: string;
-
-	/**
 	 * Whether the cell has a fake caret.
 	 */
 	hasFakeCaret: boolean;
-};
-
-export type PinInputCell = {
-	char: string | null | undefined;
-	isActive: boolean;
-	hasFakeCaret: boolean;
-};
-
-export type PinInputRootSnippetProps = {
-	cells: PinInputCell[];
-	isFocused: boolean;
-	isHovering: boolean;
 };

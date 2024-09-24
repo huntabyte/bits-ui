@@ -2,7 +2,7 @@ import { Previous } from "runed";
 import { untrack } from "svelte";
 import { type WritableBox, box } from "svelte-toolbelt";
 import { usePasswordManagerBadge } from "./usePasswordManager.svelte.js";
-import type { PinInputRootProps as RootComponentProps } from "./types.js";
+import type { PinInputCell, PinInputRootProps as RootComponentProps } from "./types.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
@@ -14,10 +14,12 @@ export const REGEXP_ONLY_DIGITS = "^\\d+$";
 export const REGEXP_ONLY_CHARS = "^[a-zA-Z]+$";
 export const REGEXP_ONLY_DIGITS_AND_CHARS = "^[a-zA-Z0-9]+$";
 
+const ROOT_ATTR = "data-pin-input-root";
+const CELL_ATTR = "data-pin-input-cell";
+
 type PinInputRootStateProps = WithRefProps<
 	WritableBoxedValues<{
 		value: string;
-		inputRef: HTMLInputElement | null;
 	}> &
 		ReadableBoxedValues<{
 			inputId: string;
@@ -41,10 +43,10 @@ type InitialLoad = {
 };
 
 class PinInputRootState {
-	#containerId: PinInputRootStateProps["id"];
-	#containerRef: PinInputRootStateProps["ref"];
+	#id: PinInputRootStateProps["id"];
+	#ref: PinInputRootStateProps["ref"];
 	#inputId: PinInputRootStateProps["inputId"];
-	#inputRef: PinInputRootStateProps["inputRef"];
+	#inputRef = box<HTMLInputElement | null>(null);
 	#isHoveringInput = $state(false);
 	#isFocused = box(false);
 	#mirrorSelectionStart = $state<number | null>(null);
@@ -71,8 +73,8 @@ class PinInputRootState {
 	#initialLoad: InitialLoad;
 
 	constructor(props: PinInputRootStateProps) {
-		this.#containerId = props.id;
-		this.#containerRef = props.ref;
+		this.#id = props.id;
+		this.#ref = props.ref;
 		this.#pushPasswordManagerStrategy = props.pushPasswordManagerStrategy;
 		this.value = props.value;
 		this.#pattern = props.pattern;
@@ -82,7 +84,6 @@ class PinInputRootState {
 		this.#textAlign = props.textAlign;
 		this.#autocomplete = props.autocomplete;
 		this.#inputmode = props.inputmode;
-		this.#inputRef = props.inputRef;
 		this.#inputId = props.inputId;
 
 		this.#initialLoad = {
@@ -93,15 +94,15 @@ class PinInputRootState {
 		};
 
 		this.#pwmb = usePasswordManagerBadge({
-			containerRef: this.#containerRef,
+			containerRef: this.#ref,
 			inputRef: this.#inputRef,
 			isFocused: this.#isFocused,
 			pushPasswordManagerStrategy: this.#pushPasswordManagerStrategy,
 		});
 
 		useRefById({
-			id: this.#containerId,
-			ref: this.#containerRef,
+			id: this.#id,
+			ref: this.#ref,
 		});
 
 		useRefById({
@@ -113,7 +114,7 @@ class PinInputRootState {
 			let unsub = noop;
 			untrack(() => {
 				const input = this.#inputRef.current;
-				const container = this.#containerRef.current;
+				const container = this.#ref.current;
 
 				if (!input || !container) return;
 
@@ -145,7 +146,10 @@ class PinInputRootState {
 
 				const updateRootHeight = () => {
 					if (container) {
-						container.style.setProperty("--root-height", `${input.clientHeight}px`);
+						container.style.setProperty(
+							"--bits-pin-input-root-height",
+							`${input.clientHeight}px`
+						);
 					}
 				};
 				updateRootHeight();
@@ -203,19 +207,25 @@ class PinInputRootState {
 		pointerEvents: "none",
 	}));
 
-	rootProps = $derived.by(() => ({
-		id: this.#containerId.current,
-		"data-pin-input-root": "",
-		style: this.#rootStyles,
-	}));
+	rootProps = $derived.by(
+		() =>
+			({
+				id: this.#id.current,
+				"data-pin-input-root": "",
+				style: this.#rootStyles,
+			}) as const
+	);
 
-	inputWrapperProps = $derived.by(() => ({
-		style: {
-			position: "absolute",
-			inset: 0,
-			pointerEvents: "none",
-		},
-	}));
+	inputWrapperProps = $derived.by(
+		() =>
+			({
+				style: {
+					position: "absolute",
+					inset: 0,
+					pointerEvents: "none",
+				},
+			}) as const
+	);
 
 	#inputStyle = $derived.by(() => ({
 		position: "absolute",
@@ -239,7 +249,7 @@ class PinInputRootState {
 		boxShadow: "none",
 		lineHeight: "1",
 		letterSpacing: "-.5em",
-		fontSize: "var(--root-height)",
+		fontSize: "var(--bits-pin-input-root-height)",
 		fontFamily: "monospace",
 		fontVariantNumeric: "tabular-nums",
 	}));
@@ -277,7 +287,7 @@ class PinInputRootState {
 
 	onDocumentSelectionChange = () => {
 		const input = this.#inputRef.current;
-		const container = this.#containerRef.current;
+		const container = this.#ref.current;
 		if (!input || !container) return;
 
 		if (document.activeElement !== input) {
@@ -455,7 +465,7 @@ class PinInputRootState {
 				char,
 				isActive,
 				hasFakeCaret: isActive && char === null,
-			};
+			} satisfies PinInputCell;
 		})
 	);
 
@@ -464,6 +474,38 @@ class PinInputRootState {
 		isFocused: this.#isFocused.current,
 		isHovering: this.#isHoveringInput,
 	}));
+}
+
+type PinInputCellStateProps = WithRefProps &
+	ReadableBoxedValues<{
+		cell: PinInputCell;
+	}>;
+
+class PinInputCellState {
+	#id: PinInputCellStateProps["id"];
+	#ref: PinInputCellStateProps["ref"];
+	#cell: PinInputCellStateProps["cell"];
+
+	constructor(props: PinInputCellStateProps) {
+		this.#id = props.id;
+		this.#ref = props.ref;
+		this.#cell = props.cell;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+		});
+	}
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.current,
+				[CELL_ATTR]: "",
+				"data-active": this.#cell.current.isActive ? "" : undefined,
+				"data-inactive": !this.#cell.current.isActive ? "" : undefined,
+			}) as const
+	);
 }
 
 // eslint-disable-next-line ts/no-explicit-any
@@ -484,4 +526,8 @@ function safeInsertRule(sheet: CSSStyleSheet, rule: string) {
 
 export function usePinInput(props: PinInputRootStateProps) {
 	return new PinInputRootState(props);
+}
+
+export function usePinInputCell(props: PinInputCellStateProps) {
+	return new PinInputCellState(props);
 }
