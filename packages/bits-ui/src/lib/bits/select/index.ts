@@ -2,7 +2,7 @@ export { default as Root } from "./components/select.svelte";
 export { default as Arrow } from "./components/select-arrow.svelte";
 export { default as Content } from "./components/select-content.svelte";
 export { default as Group } from "./components/select-group.svelte";
-export { default as GroupLabel } from "./components/select-group-label.svelte";
+export { default as GroupHeading } from "./components/select-group-label.svelte";
 export { default as Item } from "./components/select-item.svelte";
 export { default as ItemText } from "./components/select-item-text.svelte";
 export { default as Separator } from "./components/select-separator.svelte";
@@ -27,7 +27,7 @@ export type {
 	SelectScrollUpButtonProps as ScrollUpButtonProps,
 	SelectIconProps as IconProps,
 	SelectGroupProps as GroupProps,
-	SelectGroupLabelProps as GroupLabelProps,
+	SelectGroupHeadingProps as GroupHeadingProps,
 	SelectSeparatorProps as SeparatorProps,
 	SelectArrowProps as ArrowProps,
 } from "./types.js";

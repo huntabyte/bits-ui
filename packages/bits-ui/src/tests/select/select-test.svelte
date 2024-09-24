@@ -48,7 +48,9 @@
 					<Select.Viewport data-testid="viewport">
 						<Select.Separator data-testid="separator" />
 						<Select.Group data-testid="group">
-							<Select.GroupLabel data-testid="group-label">Options</Select.GroupLabel>
+							<Select.GroupHeading data-testid="group-label"
+								>Options</Select.GroupHeading
+							>
 							{#each options as { value, label, disabled }}
 								<Select.Item data-testid={value} {disabled} {value}>
 									{#snippet children({ selected })}

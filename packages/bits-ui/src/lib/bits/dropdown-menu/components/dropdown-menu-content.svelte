@@ -64,8 +64,8 @@
 					"var(--bits-floating-available-width)",
 				"--bits-dropdown-menu-content-available-height":
 					"var(--bits-floating-available-height)",
-				"--bits-dropdown-menu-trigger-width": "var(--bits-floating-anchor-width)",
-				"--bits-dropdown-menu-trigger-height": "var(--bits-floating-anchor-height)",
+				"--bits-dropdown-menu-anchor-width": "var(--bits-floating-anchor-width)",
+				"--bits-dropdown-menu-anchor-height": "var(--bits-floating-anchor-height)",
 			},
 		})}
 		{#if child}

@@ -29,7 +29,7 @@ description: Enables users to pick from a list of options displayed in a dropdow
 	<Combobox.Portal>
 		<Combobox.Content>
 			<Combobox.Group>
-				<Combobox.GroupLabel />
+				<Combobox.GroupHeading />
 				<Combobox.Item />
 			</Combobox.Group>
 			<Combobox.Item />

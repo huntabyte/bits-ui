@@ -65,7 +65,7 @@
 		<Combobox.Portal {...portalProps}>
 			<Combobox.Content data-testid="content" {...contentProps}>
 				<Combobox.Group data-testid="group">
-					<Combobox.GroupLabel data-testid="group-label">Options</Combobox.GroupLabel>
+					<Combobox.GroupHeading data-testid="group-label">Options</Combobox.GroupHeading>
 					{#each filteredItems as { value, label, disabled }}
 						<Combobox.Item data-testid={value} {disabled} {value} {label}>
 							{#snippet children({ selected })}

@@ -25,7 +25,8 @@ export type CheckboxRootPropsWithoutHTML = WithChild<
 		 *
 		 * @defaultValue undefined
 		 */
-		name?: string;
+		// eslint-disable-next-line ts/no-explicit-any
+		name?: any;
 
 		/**
 		 * The value of the checkbox used in form submission.

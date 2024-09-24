@@ -44,7 +44,7 @@ const SEPARATOR_ATTR = "data-menu-separator";
 const SUB_TRIGGER_ATTR = "data-menu-sub-trigger";
 const CHECKBOX_ITEM_ATTR = "data-menu-checkbox-item";
 const GROUP_ATTR = "data-menu-group";
-const LABEL_ATTR = "data-menu-label";
+const LABEL_ATTR = "data-menu-group-heading";
 const RADIO_GROUP_ATTR = "data-menu-radio-group";
 const RADIO_ITEM_ATTR = "data-menu-radio-item";
 const ARROW_ATTR = "data-menu-arrow";
@@ -151,17 +151,17 @@ class MenuMenuState {
 		}
 	}
 
-	toggleOpen() {
+	toggleOpen = () => {
 		this.open.current = !this.open.current;
-	}
+	};
 
-	onOpen() {
+	onOpen = () => {
 		this.open.current = true;
-	}
+	};
 
-	onClose() {
+	onClose = () => {
 		this.open.current = false;
-	}
+	};
 
 	createContent(props: MenuContentStateProps) {
 		return new MenuContentState(props, this);
@@ -237,23 +237,23 @@ class MenuContentState {
 		});
 	}
 
-	getCandidateNodes() {
+	getCandidateNodes = () => {
 		const node = this.parentMenu.contentNode;
 		if (!node) return [];
 		const candidates = Array.from(
 			node.querySelectorAll<HTMLElement>(`[${ITEM_ATTR}]:not([data-disabled])`)
 		);
 		return candidates;
-	}
+	};
 
-	isPointerMovingToSubmenu(e: PointerEvent) {
+	isPointerMovingToSubmenu = (e: PointerEvent) => {
 		const isMovingTowards = this.#pointerDir === this.#pointerGraceIntent?.side;
 		return isMovingTowards && isPointerInGraceArea(e, this.#pointerGraceIntent?.area);
-	}
+	};
 
-	onPointerGraceIntentChange(intent: GraceIntent | null) {
+	onPointerGraceIntentChange = (intent: GraceIntent | null) => {
 		this.#pointerGraceIntent = intent;
-	}
+	};
 
 	#onkeydown = (e: KeyboardEvent) => {
 		if (e.defaultPrevented) return;
@@ -327,29 +327,29 @@ class MenuContentState {
 		}
 	};
 
-	onItemEnter(e: PointerEvent) {
+	onItemEnter = (e: PointerEvent) => {
 		if (this.isPointerMovingToSubmenu(e)) return true;
 		return false;
-	}
+	};
 
-	onItemLeave(e: PointerEvent) {
+	onItemLeave = (e: PointerEvent) => {
 		if (this.isPointerMovingToSubmenu(e)) return;
 		const contentNode = this.parentMenu.contentNode;
 		contentNode?.focus();
 		this.rovingFocusGroup.setCurrentTabStopId("");
-	}
+	};
 
-	onTriggerLeave(e: PointerEvent) {
+	onTriggerLeave = (e: PointerEvent) => {
 		if (this.isPointerMovingToSubmenu(e)) return true;
 		return false;
-	}
+	};
 
-	onOpenAutoFocus(e: Event) {
+	onOpenAutoFocus = (e: Event) => {
 		if (e.defaultPrevented) return;
 		e.preventDefault();
 		const contentNode = this.parentMenu.contentNode;
 		contentNode?.focus();
-	}
+	};
 
 	handleInteractOutside = (e: InteractOutsideEvent) => {
 		if (!isElementOrSVGElement(e.target)) return;
@@ -580,11 +580,11 @@ class MenuSubTriggerState {
 		});
 	}
 
-	#clearOpenTimer() {
+	#clearOpenTimer = () => {
 		if (this.#openTimer === null) return;
 		window.clearTimeout(this.#openTimer);
 		this.#openTimer = null;
-	}
+	};
 
 	#onpointermove = (e: PointerEvent) => {
 		if (!isMouseEvent(e)) return;
@@ -690,7 +690,7 @@ class MenuCheckboxItemState {
 		this.#checked = props.checked;
 	}
 
-	toggleChecked() {
+	toggleChecked = () => {
 		if (this.#checked.current === true) {
 			this.#checked.current = false;
 		} else if (this.#checked.current === false) {
@@ -698,7 +698,7 @@ class MenuCheckboxItemState {
 		} else if (this.#checked.current === "indeterminate") {
 			this.#checked.current = true;
 		}
-	}
+	};
 
 	props = $derived.by(
 		() =>
@@ -717,7 +717,7 @@ type MenuGroupStateProps = WithRefProps;
 class MenuGroupState {
 	#id: MenuGroupStateProps["id"];
 	#ref: MenuGroupStateProps["ref"];
-	groupLabelId = $state<string | undefined>(undefined);
+	groupHeadingId = $state<string | undefined>(undefined);
 
 	constructor(props: MenuGroupStateProps) {
 		this.#id = props.id;
@@ -734,23 +734,23 @@ class MenuGroupState {
 			({
 				id: this.#id.current,
 				role: "group",
-				"aria-labelledby": this.groupLabelId,
+				"aria-labelledby": this.groupHeadingId,
 				[GROUP_ATTR]: "",
 			}) as const
 	);
 
-	createGroupLabel(props: MenuGroupLabelStateProps) {
-		return new MenuGroupLabelState(props, this);
+	createGroupHeading(props: MenuGroupHeadingStateProps) {
+		return new MenuGroupHeadingState(props, this);
 	}
 }
 
-type MenuGroupLabelStateProps = WithRefProps;
-class MenuGroupLabelState {
-	#id: MenuGroupLabelStateProps["id"];
-	#ref: MenuGroupLabelStateProps["ref"];
+type MenuGroupHeadingStateProps = WithRefProps;
+class MenuGroupHeadingState {
+	#id: MenuGroupHeadingStateProps["id"];
+	#ref: MenuGroupHeadingStateProps["ref"];
 	#group: MenuGroupState | MenuRadioGroupState | undefined = undefined;
 
-	constructor(props: MenuGroupLabelStateProps, group?: MenuGroupState | MenuRadioGroupState) {
+	constructor(props: MenuGroupHeadingStateProps, group?: MenuGroupState | MenuRadioGroupState) {
 		this.#id = props.id;
 		this.#ref = props.ref;
 		this.#group = group;
@@ -760,7 +760,7 @@ class MenuGroupLabelState {
 			ref: this.#ref,
 			onRefChange: (node) => {
 				if (!this.#group) return;
-				this.#group.groupLabelId = node?.id;
+				this.#group.groupHeadingId = node?.id;
 			},
 		});
 	}
@@ -820,7 +820,7 @@ class MenuRadioGroupState {
 	value: MenuRadioGroupStateProps["value"];
 	#ref: MenuRadioGroupStateProps["ref"];
 	#content: MenuContentState;
-	groupLabelId = $state<string | null>(null);
+	groupHeadingId = $state<string | null>(null);
 
 	constructor(props: MenuRadioGroupStateProps, content: MenuContentState) {
 		this.value = props.value;
@@ -834,9 +834,9 @@ class MenuRadioGroupState {
 		});
 	}
 
-	setValue(v: string) {
+	setValue = (v: string) => {
 		this.value.current = v;
-	}
+	};
 
 	createRadioItem(
 		props: MenuItemSharedStateProps & MenuItemStateProps & MenuRadioItemStateProps
@@ -845,8 +845,8 @@ class MenuRadioGroupState {
 		return new MenuRadioItemState(props, item, this);
 	}
 
-	createGroupLabel(props: MenuGroupLabelStateProps) {
-		return new MenuGroupLabelState(props, this);
+	createGroupHeading(props: MenuGroupHeadingStateProps) {
+		return new MenuGroupHeadingState(props, this);
 	}
 
 	props = $derived.by(
@@ -855,7 +855,7 @@ class MenuRadioGroupState {
 				id: this.#id.current,
 				[RADIO_GROUP_ATTR]: "",
 				role: "group",
-				"aria-labelledby": this.groupLabelId,
+				"aria-labelledby": this.groupHeadingId,
 			}) as const
 	);
 }
@@ -889,9 +889,9 @@ class MenuRadioItemState {
 		});
 	}
 
-	selectValue() {
+	selectValue = () => {
 		this.#group.setValue(this.#value.current);
-	}
+	};
 
 	props = $derived.by(
 		() =>
@@ -1041,10 +1041,10 @@ class ContextMenuTriggerState {
 		});
 	}
 
-	#clearLongPressTimer() {
+	#clearLongPressTimer = () => {
 		if (this.#longPressTimer === null) return;
 		window.clearTimeout(this.#longPressTimer);
-	}
+	};
 
 	#handleOpen = (e: MouseEvent | PointerEvent) => {
 		this.#point = { x: e.clientX, y: e.clientY };
@@ -1159,10 +1159,10 @@ export function useMenuGroup(props: MenuGroupStateProps) {
 	return setMenuGroupContext(new MenuGroupState(props));
 }
 
-export function useMenuGroupLabel(props: MenuGroupLabelStateProps) {
+export function useMenuGroupHeading(props: MenuGroupHeadingStateProps) {
 	const groupCtx = getMenuGroupContext(null);
-	if (!groupCtx) return new MenuGroupLabelState(props);
-	return groupCtx.createGroupLabel(props);
+	if (!groupCtx) return new MenuGroupHeadingState(props);
+	return groupCtx.createGroupHeading(props);
 }
 
 export function useMenuSeparator(props: MenuSeparatorStateProps) {

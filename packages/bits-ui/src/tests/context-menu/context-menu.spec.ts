@@ -73,7 +73,7 @@ describe("context menu", () => {
 			"content",
 			"trigger",
 			"group",
-			"label",
+			"group-heading",
 			"separator",
 			"sub-trigger",
 			"item",

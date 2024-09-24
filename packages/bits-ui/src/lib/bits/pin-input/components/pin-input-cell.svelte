@@ -1,0 +1,35 @@
+<script lang="ts">
+	import { box } from "svelte-toolbelt";
+	import type { CellProps } from "../index.js";
+	import { usePinInputCell } from "../pin-input.svelte.js";
+	import { useId } from "$lib/internal/useId.js";
+	import { mergeProps } from "$lib/internal/mergeProps.js";
+
+	let {
+		id = useId(),
+		ref = $bindable(null),
+		cell,
+		child,
+		children,
+		...restProps
+	}: CellProps = $props();
+
+	const cellState = usePinInputCell({
+		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
+		cell: box.with(() => cell),
+	});
+
+	const mergedProps = $derived(mergeProps(restProps, cellState.props));
+</script>
+
+{#if child}
+	{@render child({ props: mergedProps })}
+{:else}
+	<div {...mergedProps}>
+		{@render children?.()}
+	</div>
+{/if}

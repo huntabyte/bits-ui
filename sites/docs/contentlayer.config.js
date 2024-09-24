@@ -33,6 +33,10 @@ export const Doc = defineDocumentType(() => ({
 			type: "string",
 			required: true,
 		},
+		navLabel: {
+			type: "string",
+			required: false,
+		},
 	},
 	computedFields,
 }));
@@ -48,6 +52,10 @@ export const ComponentDoc = defineDocumentType(() => ({
 		description: {
 			type: "string",
 			required: true,
+		},
+		navLabel: {
+			type: "string",
+			required: false,
 		},
 	},
 	computedFields,
@@ -65,6 +73,10 @@ export const UtilityDoc = defineDocumentType(() => ({
 			type: "string",
 			required: true,
 		},
+		navLabel: {
+			type: "string",
+			required: false,
+		},
 	},
 	computedFields,
 }));
@@ -80,6 +92,10 @@ export const TypeHelperDoc = defineDocumentType(() => ({
 		description: {
 			type: "string",
 			required: true,
+		},
+		navLabel: {
+			type: "string",
+			required: false,
 		},
 	},
 	computedFields,

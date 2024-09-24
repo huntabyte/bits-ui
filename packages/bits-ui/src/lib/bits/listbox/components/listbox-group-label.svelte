@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { GroupLabelProps } from "../index.js";
-	import { useListboxGroupLabel } from "../listbox.svelte.js";
+	import type { GroupHeadingProps } from "../index.js";
+	import { useListboxGroupHeading } from "../listbox.svelte.js";
 	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
@@ -11,9 +11,9 @@
 		child,
 		children,
 		...restProps
-	}: GroupLabelProps = $props();
+	}: GroupHeadingProps = $props();
 
-	const groupLabelState = useListboxGroupLabel({
+	const groupHeadingState = useListboxGroupHeading({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,
@@ -21,7 +21,7 @@
 		),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, groupLabelState.props));
+	const mergedProps = $derived(mergeProps(restProps, groupHeadingState.props));
 </script>
 
 {#if child}

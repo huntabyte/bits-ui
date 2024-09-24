@@ -39,7 +39,7 @@ The `Select` component can be used as a replacement for the native `<select>` el
 					<Select.ItemText />
 				</Select.Item>
 				<Select.Group>
-					<Select.GroupLabel />
+					<Select.GroupHeading />
 					<Select.Item>
 						<Select.ItemText />
 					</Select.Item>

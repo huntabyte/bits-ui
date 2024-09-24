@@ -58,32 +58,32 @@ class MenubarRootState {
 		});
 	}
 
-	registerTrigger(id: string) {
+	registerTrigger = (id: string) => {
 		this.triggerIds.push(id);
-	}
+	};
 
-	deRegisterTrigger(id: string) {
+	deRegisterTrigger = (id: string) => {
 		this.triggerIds = this.triggerIds.filter((triggerId) => triggerId !== id);
-	}
+	};
 
-	getTriggers() {
+	getTriggers = () => {
 		const node = this.ref.current;
 		if (!node) return [];
 		return Array.from(node.querySelectorAll<HTMLButtonElement>(`[${TRIGGER_ATTR}]`));
-	}
+	};
 
-	onMenuOpen(id: string) {
+	onMenuOpen = (id: string) => {
 		this.value.current = id;
 		this.currentTabStopId.current = id;
-	}
+	};
 
-	onMenuClose() {
+	onMenuClose = () => {
 		this.value.current = "";
-	}
+	};
 
-	onMenuToggle(id: string) {
+	onMenuToggle = (id: string) => {
 		this.value.current = this.value.current ? "" : id;
-	}
+	};
 
 	createMenu(props: MenubarMenuStateProps) {
 		return new MenubarMenuState(props, this);
@@ -147,14 +147,14 @@ class MenubarMenuState {
 		return new MenubarContentState(props, this);
 	}
 
-	getTriggerNode() {
+	getTriggerNode = () => {
 		if (!isBrowser) return null;
 		return this.triggerNode;
-	}
+	};
 
-	getContentNode() {
+	getContentNode = () => {
 		return this.contentNode;
-	}
+	};
 }
 
 type MenubarTriggerStateProps = WithRefProps<
@@ -368,8 +368,8 @@ class MenubarContentState {
 			"--bits-menubar-content-transform-origin": "var(--bits-floating-transform-origin)",
 			"--bits-menubar-content-available-width": "var(--bits-floating-available-width)",
 			"--bits-menubar-content-available-height": "var(--bits-floating-available-height)",
-			"--bits-menubar-trigger-width": "var(--bits-floating-anchor-width)",
-			"--bits-menubar-trigger-height": "var(--bits-floating-anchor-height)",
+			"--bits-menubar-anchor-width": "var(--bits-floating-anchor-width)",
+			"--bits-menubar-anchor-height": "var(--bits-floating-anchor-height)",
 		},
 		onkeydown: this.#onkeydown,
 	}));

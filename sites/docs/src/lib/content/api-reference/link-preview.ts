@@ -16,7 +16,6 @@ import {
 	createNumberProp,
 	dirProp,
 	dismissableLayerProps,
-	enums,
 	escapeLayerProps,
 	floatingProps,
 	focusScopeProps,

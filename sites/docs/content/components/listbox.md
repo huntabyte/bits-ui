@@ -4,7 +4,7 @@ description: A list of options that can be selected by the user.
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, ListboxDemo } from '$lib/components'
+	import { APISection, ComponentPreviewV2, ListboxDemo, ListboxDemoCustomAnchor } from '$lib/components'
 	export let schemas;
 </script>
 
@@ -35,7 +35,7 @@ The `Listbox` component gives you the ability to create a list of options that c
 			<Listbox.Viewport>
 				<Listbox.Item />
 				<Listbox.Group>
-					<Listbox.GroupLabel />
+					<Listbox.GroupHeading />
 					<Listbox.Item />
 				</Listbox.Group>
 				<Listbox.ScrollDownButton />
@@ -221,7 +221,7 @@ You can opt-out of this behavior by instead using the `Listbox.ContentStatic` co
 			<Listbox.Viewport>
 				<Listbox.Item />
 				<Listbox.Group>
-					<Listbox.GroupLabel />
+					<Listbox.GroupHeading />
 					<Listbox.Item />
 				</Listbox.Group>
 				<Listbox.ScrollDownButton />
@@ -232,6 +232,31 @@ You can opt-out of this behavior by instead using the `Listbox.ContentStatic` co
 ```
 
 When using this component, you'll need to handle the positioning of the content yourself. Keep in mind that using `Listbox.Portal` alongside `Listbox.ContentStatic` may result in some unexpected positioning behavior, feel free to not use the portal or work around it.
+
+## Custom Anchor
+
+By default, the `Listbox.Content` is anchored to the `Listbox.Trigger` component, which determines where the content is positioned.
+
+If you wish to instead anchor the content to a different element, you can pass either a selector string or an `HTMLElement` to the `customAnchor` prop of the `Listbox.Content` component.
+
+```svelte
+<script lang="ts">
+	import { Listbox } from "bits-ui";
+
+	let customAnchor = $state<HTMLElement>(null!);
+</script>
+
+<div bind:this={customAnchor}></div>
+
+<Listbox.Root>
+	<Listbox.Trigger />
+	<Listbox.Content {customAnchor}>
+		<!-- ... -->
+	</Listbox.Content>
+</Listbox.Root>
+```
+
+<ListboxDemoCustomAnchor />
 
 ## What is the Viewport?
 

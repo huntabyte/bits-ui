@@ -134,7 +134,7 @@ You can also use the `onValueChange` prop to update local state when the Radio G
 </RadioGroup.Root>
 ```
 
-## With HTML Forms
+## HTML Forms
 
 If you set the `name` prop on the `RadioGroup.Root` component, a hidden input element will be rendered to submit the value of the radio group to a form.
 

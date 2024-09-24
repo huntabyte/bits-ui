@@ -23,6 +23,7 @@ import {
 import {
 	HeaderLevelProp,
 	OnChangeStringOrArrayProp,
+	OpenClosedProp,
 	OrientationProp,
 	SingleOrMultipleProp,
 	StringOrArrayStringProp,
@@ -37,6 +38,7 @@ const stateDataAttr = createEnumDataAttr({
 	name: "state",
 	description: "Whether the accordion item is open or closed.",
 	options: ["open", "closed"],
+	definition: OpenClosedProp,
 });
 
 const root = createApiSchema<AccordionRootPropsWithoutHTML>({
@@ -180,6 +182,7 @@ const header = createApiSchema<AccordionHeaderPropsWithoutHTML>({
 			name: "heading-level",
 			description: "The heading level of the element.",
 			options: ["1", "2", "3", "4", "5", "6"],
+			definition: HeaderLevelProp,
 		}),
 		createDataAttrSchema({
 			name: "accordion-header",

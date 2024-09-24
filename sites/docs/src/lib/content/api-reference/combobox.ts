@@ -2,7 +2,7 @@ import type {
 	ComboboxArrowPropsWithoutHTML,
 	ComboboxContentPropsWithoutHTML,
 	ComboboxContentStaticPropsWithoutHTML,
-	ComboboxGroupLabelPropsWithoutHTML,
+	ComboboxGroupHeadingPropsWithoutHTML,
 	ComboboxGroupPropsWithoutHTML,
 	ComboboxInputPropsWithoutHTML,
 	ComboboxItemPropsWithoutHTML,
@@ -157,11 +157,11 @@ export const content = createApiSchema<ComboboxContentPropsWithoutHTML>({
 			description: "The available height of the combobox content element.",
 		}),
 		createCSSVarSchema({
-			name: "--bits-combobox-trigger-width",
+			name: "--bits-combobox-anchor-width",
 			description: "The width of the combobox trigger element.",
 		}),
 		createCSSVarSchema({
-			name: "--bits-combobox-trigger-height",
+			name: "--bits-combobox-anchor-height",
 			description: "The height of the combobox trigger element.",
 		}),
 	],
@@ -284,11 +284,7 @@ export const trigger = createApiSchema<ComboboxTriggerPropsWithoutHTML>({
 	description: "A button which toggles the combobox's open state.",
 	props: withChildProps({ elType: "HTMLButtonElement" }),
 	dataAttributes: [
-		createEnumDataAttr({
-			name: "state",
-			options: ["open", "closed"],
-			description: "The combobox's open state.",
-		}),
+		stateDataAttr,
 		createDataAttrSchema({
 			name: "disabled",
 			description: "Present when the combobox is disabled.",
@@ -312,10 +308,10 @@ export const group = createApiSchema<ComboboxGroupPropsWithoutHTML>({
 	],
 });
 
-export const groupLabel = createApiSchema<ComboboxGroupLabelPropsWithoutHTML>({
-	title: "GroupLabel",
+export const groupHeading = createApiSchema<ComboboxGroupHeadingPropsWithoutHTML>({
+	title: "GroupHeading",
 	description:
-		"A label for the parent combobox group. This is used to describe a group of related combobox items.",
+		"A heading for the parent combobox group. This is used to describe a group of related combobox items.",
 	props: withChildProps({ elType: "HTMLDivElement" }),
 	dataAttributes: [
 		createDataAttrSchema({
@@ -337,4 +333,4 @@ export const arrow = createApiSchema<ComboboxArrowPropsWithoutHTML>({
 	],
 });
 
-export const combobox = [root, trigger, content, contentStatic, item, input, groupLabel, arrow];
+export const combobox = [root, trigger, content, contentStatic, item, input, groupHeading, arrow];

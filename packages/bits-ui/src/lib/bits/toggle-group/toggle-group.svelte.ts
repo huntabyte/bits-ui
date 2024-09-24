@@ -86,18 +86,18 @@ class ToggleGroupSingleState extends ToggleGroupBaseState {
 		this.#value = props.value;
 	}
 
-	includesItem(item: string) {
+	includesItem = (item: string) => {
 		return this.#value.current === item;
-	}
+	};
 
-	toggleItem(item: string, id: string) {
+	toggleItem = (item: string, id: string) => {
 		if (this.includesItem(item)) {
 			this.#value.current = "";
 		} else {
 			this.#value.current = item;
 			this.rovingFocusGroup.setCurrentTabStopId(id);
 		}
-	}
+	};
 }
 
 //
@@ -119,18 +119,18 @@ class ToggleGroupMultipleState extends ToggleGroupBaseState {
 		this.#value = props.value;
 	}
 
-	includesItem(item: string) {
+	includesItem = (item: string) => {
 		return this.#value.current.includes(item);
-	}
+	};
 
-	toggleItem(item: string, id: string) {
+	toggleItem = (item: string, id: string) => {
 		if (this.includesItem(item)) {
 			this.#value.current = this.#value.current.filter((v) => v !== item);
 		} else {
 			this.#value.current = [...this.#value.current, item];
 			this.rovingFocusGroup.setCurrentTabStopId(id);
 		}
-	}
+	};
 }
 
 type ToggleGroupState = ToggleGroupSingleState | ToggleGroupMultipleState;
@@ -169,10 +169,10 @@ class ToggleGroupItemState {
 		});
 	}
 
-	toggleItem() {
+	toggleItem = () => {
 		if (this.#isDisabled) return;
 		this.#root.toggleItem(this.#value.current, this.#id.current);
-	}
+	};
 
 	#onclick = () => {
 		this.toggleItem();

@@ -17,7 +17,7 @@ import {
 	CollapsibleContentChildSnippetProps,
 	CollapsibleContentChildrenSnippetProps,
 } from "./extended-types/collapsible/index.js";
-import { OpenClosedProp } from "./extended-types/shared/index.js";
+import { OnOpenChangeProp, OpenClosedProp } from "./extended-types/shared/index.js";
 import * as C from "$lib/content/constants.js";
 
 export const root = createApiSchema<CollapsibleRootPropsWithoutHTML>({
@@ -36,7 +36,7 @@ export const root = createApiSchema<CollapsibleRootPropsWithoutHTML>({
 				"Whether or not the collapsible is disabled. This prevents the user from interacting with it.",
 		}),
 		onOpenChange: createFunctionProp({
-			definition: "(open: boolean) => void",
+			definition: OnOpenChangeProp,
 			description: "A callback that is fired when the collapsible's open state changes.",
 		}),
 		...withChildProps({ elType: "HTMLDivElement" }),

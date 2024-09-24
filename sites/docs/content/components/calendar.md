@@ -11,9 +11,7 @@ description: Displays dates and days of the week, facilitating date-related inte
 <ComponentPreviewV2 name="calendar-demo" comp="Calendar">
 
 {#snippet preview()}
-
 <CalendarDemo />
-
 {/snippet}
 
 </ComponentPreviewV2>

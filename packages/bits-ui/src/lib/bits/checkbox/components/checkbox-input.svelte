@@ -6,7 +6,7 @@
 </script>
 
 {#if inputState.shouldRender}
-	<VisuallyHidden>
+	<VisuallyHidden aria-hidden="true">
 		<input {...inputState.props} type="checkbox" style="display: none !important;" />
 	</VisuallyHidden>
 {/if}

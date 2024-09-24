@@ -1,7 +1,7 @@
 import type {
 	SelectArrowPropsWithoutHTML,
 	SelectContentPropsWithoutHTML,
-	SelectGroupLabelPropsWithoutHTML,
+	SelectGroupHeadingPropsWithoutHTML,
 	SelectGroupPropsWithoutHTML,
 	SelectItemPropsWithoutHTML,
 	SelectRootPropsWithoutHTML,
@@ -222,8 +222,8 @@ export const group = createApiSchema<SelectGroupPropsWithoutHTML>({
 	],
 });
 
-export const groupLabel = createApiSchema<SelectGroupLabelPropsWithoutHTML>({
-	title: "GroupLabel",
+export const groupHeading = createApiSchema<SelectGroupHeadingPropsWithoutHTML>({
+	title: "GroupHeading",
 	description:
 		"A label for the select menu which will be skipped when navigating with the keyboard. This must be a child of the `Select.Group` component.",
 	props: withChildProps({ elType: "HTMLDivElement" }),
@@ -308,7 +308,7 @@ export const select = [
 	scrollUpButton,
 	scrollDownButton,
 	group,
-	groupLabel,
+	groupHeading,
 	separator,
 	arrow,
 ];

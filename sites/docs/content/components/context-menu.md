@@ -28,7 +28,7 @@ description: Displays options or actions relevant to a specific context or selec
 	<ContextMenu.Portal>
 		<ContextMenu.Content>
 			<ContextMenu.Group>
-				<ContextMenu.GroupLabel />
+				<ContextMenu.GroupHeading />
 				<ContextMenu.Item />
 			</ContextMenu.Group>
 
@@ -41,7 +41,7 @@ description: Displays options or actions relevant to a specific context or selec
 			</ContextMenu.CheckboxItem>
 
 			<ContextMenu.RadioGroup>
-				<ContextMenu.GroupLabel />
+				<ContextMenu.GroupHeading />
 				<ContextMenu.RadioItem>
 					{#snippet children({ checked })}
 						{checked ? "✅" : ""}
@@ -94,7 +94,7 @@ This example shows you how to create a Context Menu component that accepts a few
 	<ContextMenu.Portal>
 		<ContextMenu.Content {...contentProps}>
 			<ContextMenu.Group>
-				<ContextMenu.GroupLabel>Select an Office</ContextMenu.GroupLabel>
+				<ContextMenu.GroupHeading>Select an Office</ContextMenu.GroupHeading>
 				{#each items as item}
 					<ContextMenu.Item textValue={item}>
 						{item}

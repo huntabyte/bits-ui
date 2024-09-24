@@ -76,8 +76,8 @@
 					"var(--bits-floating-available-width)",
 				"--bits-link-preview-content-available-height":
 					"var(--bits-floating-available-height)",
-				"--bits-link-preview-trigger-width": "var(--bits-floating-anchor-width)",
-				"--bits-link-preview-trigger-height": "var(--bits-floating-anchor-height)",
+				"--bits-link-preview-anchor-width": "var(--bits-floating-anchor-width)",
+				"--bits-link-preview-anchor-height": "var(--bits-floating-anchor-height)",
 			},
 		})}
 		{#if child}

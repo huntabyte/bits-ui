@@ -107,11 +107,11 @@ async function openSingle(
 	await waitFor(() => expect(queryByTestId("content")).not.toBeNull());
 	const content = getByTestId("content");
 	const group = returned.getByTestId("group");
-	const groupLabel = returned.getByTestId("group-label");
+	const groupHeading = returned.getByTestId("group-label");
 	return {
 		...returned,
 		group,
-		groupLabel,
+		groupHeading,
 		content,
 	};
 }
@@ -155,9 +155,9 @@ describe.skip("listbox - single", () => {
 	});
 
 	it("should applie the appropriate `aria-labelledby` attribute to the group", async () => {
-		const { group, groupLabel } = await openSingle();
+		const { group, groupHeading } = await openSingle();
 
-		expect(group).toHaveAttribute("aria-labelledby", groupLabel.id);
+		expect(group).toHaveAttribute("aria-labelledby", groupHeading.id);
 	});
 
 	it("should select item with the enter key", async () => {

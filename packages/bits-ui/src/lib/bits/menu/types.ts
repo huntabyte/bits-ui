@@ -147,9 +147,9 @@ export type MenuGroupPropsWithoutHTML = WithChild;
 export type MenuGroupProps = MenuGroupPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, MenuGroupPropsWithoutHTML>;
 
-export type MenuGroupLabelPropsWithoutHTML = WithChild;
-export type MenuGroupLabelProps = MenuGroupLabelPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, MenuGroupLabelPropsWithoutHTML>;
+export type MenuGroupHeadingPropsWithoutHTML = WithChild;
+export type MenuGroupHeadingProps = MenuGroupHeadingPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, MenuGroupHeadingPropsWithoutHTML>;
 
 export type MenuRadioGroupPropsWithoutHTML = WithChild<{
 	/**

@@ -7,10 +7,9 @@
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {
+		id = useId(),
 		inputId = useId(),
-		containerId = useId(),
-		containerRef = $bindable(null),
-		inputRef = $bindable(null),
+		ref = $bindable(null),
 		maxlength = 6,
 		textalign = "left",
 		pattern = REGEXP_ONLY_DIGITS,
@@ -27,14 +26,10 @@
 	}: RootProps = $props();
 
 	const rootState = usePinInput({
-		id: box.with(() => containerId),
-		inputRef: box.with(
-			() => inputRef,
-			(v) => (inputRef = v)
-		),
+		id: box.with(() => id),
 		ref: box.with(
-			() => containerRef,
-			(v) => (containerRef = v)
+			() => ref,
+			(v) => (ref = v)
 		),
 		inputId: box.with(() => inputId),
 		autocomplete: box.with(() => autocomplete),

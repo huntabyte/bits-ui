@@ -2,7 +2,7 @@ import type {
 	ListboxArrowPropsWithoutHTML,
 	ListboxContentPropsWithoutHTML,
 	ListboxContentStaticPropsWithoutHTML,
-	ListboxGroupLabelPropsWithoutHTML,
+	ListboxGroupHeadingPropsWithoutHTML,
 	ListboxGroupPropsWithoutHTML,
 	ListboxItemPropsWithoutHTML,
 	ListboxRootPropsWithoutHTML,
@@ -159,11 +159,11 @@ export const content = createApiSchema<ListboxContentPropsWithoutHTML>({
 			description: "The available height of the listbox content element.",
 		}),
 		createCSSVarSchema({
-			name: "--bits-listbox-trigger-width",
+			name: "--bits-listbox-anchor-width",
 			description: "The width of the listbox trigger element.",
 		}),
 		createCSSVarSchema({
-			name: "--bits-listbox-trigger-height",
+			name: "--bits-listbox-anchor-height",
 			description: "The height of the listbox trigger element.",
 		}),
 	],
@@ -326,8 +326,8 @@ export const group = createApiSchema<ListboxGroupPropsWithoutHTML>({
 	],
 });
 
-export const groupLabel = createApiSchema<ListboxGroupLabelPropsWithoutHTML>({
-	title: "GroupLabel",
+export const groupHeading = createApiSchema<ListboxGroupHeadingPropsWithoutHTML>({
+	title: "GroupHeading",
 	description:
 		"A label for the parent listbox group. This is used to describe a group of related listbox items.",
 	props: withChildProps({ elType: "HTMLDivElement" }),
@@ -361,6 +361,6 @@ export const listbox = [
 	scrollUpButton,
 	scrollDownButton,
 	group,
-	groupLabel,
+	groupHeading,
 	arrow,
 ];

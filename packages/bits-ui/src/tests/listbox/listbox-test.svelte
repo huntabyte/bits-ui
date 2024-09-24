@@ -51,7 +51,7 @@
 		<Listbox.Portal {...portalProps}>
 			<Listbox.Content data-testid="content" {...contentProps}>
 				<Listbox.Group data-testid="group">
-					<Listbox.GroupLabel data-testid="group-label">Options</Listbox.GroupLabel>
+					<Listbox.GroupHeading data-testid="group-label">Options</Listbox.GroupHeading>
 					{#each filteredItems as { value, label, disabled }}
 						<Listbox.Item data-testid={value} {disabled} {value} {label}>
 							{#snippet children({ selected })}

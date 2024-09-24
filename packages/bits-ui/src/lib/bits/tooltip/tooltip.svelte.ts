@@ -50,22 +50,22 @@ class TooltipProviderState {
 		);
 	}
 
-	#startTimer() {
+	#startTimer = () => {
 		this.#timerFn.start();
-	}
+	};
 
-	#clearTimer() {
+	#clearTimer = () => {
 		this.#timerFn.stop();
-	}
+	};
 
-	onOpen() {
+	onOpen = () => {
 		this.#clearTimer();
 		this.isOpenDelayed = false;
-	}
+	};
 
-	onClose() {
+	onClose = () => {
 		this.#startTimer();
-	}
+	};
 
 	createRoot(props: TooltipRootStateProps) {
 		return new TooltipRootState(props, this);
@@ -164,32 +164,32 @@ class TooltipRootState {
 		});
 	}
 
-	handleOpen() {
+	handleOpen = () => {
 		this.#timerFn.stop();
 		this.#wasOpenDelayed = false;
 		this.open.current = true;
-	}
+	};
 
-	handleClose() {
+	handleClose = () => {
 		this.#timerFn.stop();
 		this.open.current = false;
-	}
+	};
 
-	#handleDelayedOpen() {
+	#handleDelayedOpen = () => {
 		this.#timerFn.start();
-	}
+	};
 
-	onTriggerEnter() {
+	onTriggerEnter = () => {
 		this.#handleDelayedOpen();
-	}
+	};
 
-	onTriggerLeave() {
+	onTriggerLeave = () => {
 		if (this.disableHoverableContent) {
 			this.handleClose();
 		} else {
 			this.#timerFn.stop();
 		}
-	}
+	};
 
 	createTrigger(props: TooltipTriggerStateProps) {
 		return new TooltipTriggerState(props, this);
@@ -230,9 +230,9 @@ class TooltipTriggerState {
 		});
 	}
 
-	handlePointerUp() {
+	handlePointerUp = () => {
 		this.#isPointerDown.current = false;
-	}
+	};
 
 	#onpointerup = () => {
 		if (this.#isDisabled) return;

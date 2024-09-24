@@ -28,7 +28,7 @@ export type {
 	MenuSubPropsWithoutHTML as SubProps,
 	MenuItemProps as ItemProps,
 	MenuGroupProps as GroupProps,
-	MenuGroupLabelProps as LabelProps,
+	MenuGroupHeadingProps as LabelProps,
 	MenuArrowProps as ArrowProps,
 	MenuRadioItemProps as RadioItemProps,
 	MenuSeparatorProps as SeparatorProps,

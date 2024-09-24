@@ -4,6 +4,7 @@ import type { WithRefProps } from "$lib/internal/types.js";
 import { getAriaChecked, getAriaRequired, getDataDisabled } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { createContext } from "$lib/internal/createContext.js";
+import { srOnlyStyles, styleToString } from "$lib/internal/style.js";
 
 const CHECKBOX_ROOT_ATTR = "data-checkbox-root";
 
@@ -101,7 +102,7 @@ class CheckboxInputState {
 				name: this.root.name.current,
 				value: this.root.value.current,
 				"aria-hidden": "true",
-				"data-checkbox-input": "",
+				style: styleToString(srOnlyStyles),
 			}) as const
 	);
 }

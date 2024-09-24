@@ -33,11 +33,11 @@ class ToggleRootState {
 		});
 	}
 
-	#togglePressed() {
+	#togglePressed = () => {
 		if (!this.#disabled.current) {
 			this.pressed.current = !this.pressed.current;
 		}
-	}
+	};
 
 	#onclick = () => {
 		this.#togglePressed();
