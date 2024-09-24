@@ -254,7 +254,7 @@ class PinInputRootState {
 		fontVariantNumeric: "tabular-nums",
 	}));
 
-	applyStyles() {
+	applyStyles = () => {
 		const styleEl = document.createElement("style");
 		styleEl.id = "pin-input-style";
 		document.head.appendChild(styleEl);
@@ -283,7 +283,7 @@ class PinInputRootState {
 				`[data-pin-input-input] + * { pointer-events: all !important; }`
 			);
 		}
-	}
+	};
 
 	onDocumentSelectionChange = () => {
 		const input = this.#inputRef.current;

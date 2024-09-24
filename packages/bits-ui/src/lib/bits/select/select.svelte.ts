@@ -119,45 +119,45 @@ export class SelectRootState {
 		this.required = props.required;
 	}
 
-	handleClose() {
+	handleClose = () => {
 		this.open.current = false;
 		this.focusTriggerNode();
-	}
+	};
 
-	focusTriggerNode(preventScroll: boolean = true) {
+	focusTriggerNode = (preventScroll: boolean = true) => {
 		const node = this.triggerNode;
 		if (node) {
 			sleep(1).then(() => {
 				node.focus({ preventScroll });
 			});
 		}
-	}
+	};
 
-	onNativeOptionAdd(option: ReadableBox<SelectNativeOption>) {
+	onNativeOptionAdd = (option: ReadableBox<SelectNativeOption>) => {
 		this.#nativeOptionsSet.set(option.current.value, option);
-	}
+	};
 
-	onNativeOptionRemove(option: ReadableBox<SelectNativeOption>) {
+	onNativeOptionRemove = (option: ReadableBox<SelectNativeOption>) => {
 		this.#nativeOptionsSet.delete(option.current.value);
-	}
+	};
 
-	getTriggerTypeaheadCandidateNodes() {
+	getTriggerTypeaheadCandidateNodes = () => {
 		const node = this.contentFragment;
 		if (!node) return [];
 		const candidates = Array.from(
 			node.querySelectorAll<HTMLElement>(`[${ITEM_ATTR}]:not([data-disabled])`)
 		);
 		return candidates;
-	}
+	};
 
-	getCandidateNodes() {
+	getCandidateNodes = () => {
 		const node = this.contentNode;
 		if (!node) return [];
 		const candidates = Array.from(
 			node.querySelectorAll<HTMLElement>(`[${ITEM_ATTR}]:not([data-disabled])`)
 		);
 		return candidates;
-	}
+	};
 
 	createTrigger(props: SelectTriggerStateProps) {
 		return new SelectTriggerState(props, this);
@@ -209,19 +209,19 @@ class SelectTriggerState {
 		this.#typeahead = useTypeahead();
 	}
 
-	#handleOpen() {
+	#handleOpen = () => {
 		if (this.#isDisabled) return;
 		this.#root.open.current = true;
 		this.#typeahead.resetTypeahead();
-	}
+	};
 
-	#handlePointerOpen(e: PointerEvent) {
+	#handlePointerOpen = (e: PointerEvent) => {
 		this.#handleOpen();
 		this.#root.triggerPointerDownPos.current = {
 			x: Math.round(e.pageX),
 			y: Math.round(e.pageY),
 		};
-	}
+	};
 
 	#onclick = (e: MouseEvent) => {
 		// While browsers generally have no issue focusing the trigger when clicking
@@ -463,7 +463,7 @@ export class SelectContentState {
 		});
 	}
 
-	focusFirst(candidates: Array<HTMLElement | null>) {
+	focusFirst = (candidates: Array<HTMLElement | null>) => {
 		const [firstItem, ...restItems] = this.root.getCandidateNodes();
 		const [lastItem] = restItems.slice(-1);
 
@@ -485,13 +485,13 @@ export class SelectContentState {
 
 			if (document.activeElement !== PREV_FOCUSED_ELEMENT) return;
 		}
-	}
+	};
 
-	onItemLeave() {
+	onItemLeave = () => {
 		this.root.contentNode?.focus();
-	}
+	};
 
-	getSelectedItem() {
+	getSelectedItem = () => {
 		const candidates = this.root.getCandidateNodes();
 		const selectedItemNode =
 			candidates.find((node) => node?.dataset.value === this.root.value.current) ?? null;
@@ -517,9 +517,9 @@ export class SelectContentState {
 			selectedItemNode: null,
 			selectedItemTextNode: null,
 		};
-	}
+	};
 
-	focusSelectedItem() {
+	focusSelectedItem = () => {
 		afterTick(() => {
 			const candidates = this.root.getCandidateNodes();
 			const selected =
@@ -527,9 +527,9 @@ export class SelectContentState {
 			const first = candidates[0] ?? null;
 			this.focusFirst([selected, first]);
 		});
-	}
+	};
 
-	itemRegister(value: string, disabled: boolean) {
+	itemRegister = (value: string, disabled: boolean) => {
 		const isFirstValidItem = !this.firstValidItemFound.current && !disabled;
 		const isSelectedItem =
 			this.root.value.current !== undefined && this.root.value.current === value;
@@ -539,9 +539,9 @@ export class SelectContentState {
 				this.firstValidItemFound.current = true;
 			}
 		}
-	}
+	};
 
-	itemTextRegister(node: HTMLElement | null, value: string, disabled: boolean) {
+	itemTextRegister = (node: HTMLElement | null, value: string, disabled: boolean) => {
 		const isFirstValidItem = !this.firstValidItemFound.current && !disabled;
 		const isSelectedItem =
 			this.root.value.current !== undefined && this.root.value.current === value;
@@ -549,7 +549,7 @@ export class SelectContentState {
 		if (isSelectedItem || isFirstValidItem) {
 			this.selectedItemText.current = node;
 		}
-	}
+	};
 
 	#onkeydown = (e: KeyboardEvent) => {
 		const isModifierKey = e.ctrlKey || e.altKey || e.metaKey;
@@ -670,22 +670,22 @@ class SelectItemState {
 		});
 	}
 
-	onItemTextChange(node: HTMLElement | null) {
+	onItemTextChange = (node: HTMLElement | null) => {
 		this.trueTextValue.current = ((this.textValue?.current || node?.textContent) ?? "").trim();
-	}
+	};
 
-	setTextId(id: string) {
+	setTextId = (id: string) => {
 		this.textId.current = id;
-	}
+	};
 
-	async handleSelect(e?: PointerEvent) {
+	handleSelect = async (e?: PointerEvent) => {
 		if (e?.defaultPrevented) return;
 
 		if (!this.disabled.current) {
 			this.root.value.current = this.value.current;
 			this.root.handleClose();
 		}
-	}
+	};
 
 	#onpointermove = async (e: PointerEvent) => {
 		if (e.defaultPrevented) return;
@@ -869,7 +869,7 @@ class SelectItemAlignedPositionState {
 		});
 	}
 
-	position() {
+	position = () => {
 		afterTick(() => {
 			const { selectedItemNode, selectedItemTextNode } = this.content.getSelectedItem();
 			const contentNode = this.root.contentNode;
@@ -999,9 +999,9 @@ class SelectItemAlignedPositionState {
 			this.onPlaced.current();
 		});
 		requestAnimationFrame(() => (this.shouldExpandOnScroll = true));
-	}
+	};
 
-	handleScrollButtonChange(id: string) {
+	handleScrollButtonChange = (id: string) => {
 		afterTick(() => {
 			const node = document.getElementById(id);
 			if (!node) return;
@@ -1010,7 +1010,7 @@ class SelectItemAlignedPositionState {
 			this.content.focusSelectedItem();
 			this.shouldReposition = false;
 		});
-	}
+	};
 
 	wrapperProps = $derived.by(
 		() =>
@@ -1267,7 +1267,7 @@ class SelectScrollDownButtonState {
 		});
 	}
 
-	handleAutoScroll() {
+	handleAutoScroll = () => {
 		afterTick(() => {
 			const viewport = this.content.viewportNode;
 			const selectedItem = this.content.getSelectedItem().selectedItemNode;
@@ -1276,7 +1276,7 @@ class SelectScrollDownButtonState {
 			}
 			viewport.scrollTop = viewport.scrollTop + selectedItem.offsetHeight;
 		});
-	}
+	};
 
 	props = $derived.by(() => ({ ...this.state.props, [SCROLL_DOWN_BUTTON_ATTR]: "" }) as const);
 }
@@ -1325,14 +1325,14 @@ class SelectScrollUpButtonState {
 		});
 	}
 
-	handleAutoScroll() {
+	handleAutoScroll = () => {
 		afterTick(() => {
 			const viewport = this.content.viewportNode;
 			const selectedItem = this.content.getSelectedItem().selectedItemNode;
 			if (!viewport || !selectedItem) return;
 			viewport.scrollTop = viewport.scrollTop - selectedItem.offsetHeight;
 		});
-	}
+	};
 
 	props = $derived.by(() => ({ ...this.state.props, [SCROLL_UP_BUTTON_ATTR]: "" }) as const);
 }

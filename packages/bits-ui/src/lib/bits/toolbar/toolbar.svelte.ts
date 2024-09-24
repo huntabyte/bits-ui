@@ -138,20 +138,20 @@ class ToolbarGroupSingleState extends ToolbarGroupBaseState {
 		this.#value = props.value;
 	}
 
-	createItem(props: ToolbarGroupItemStateProps) {
-		return new ToolbarGroupItemState(props, this, this.root);
-	}
-
-	includesItem(item: string) {
+	includesItem = (item: string) => {
 		return this.#value.current === item;
-	}
+	};
 
-	toggleItem(item: string) {
+	toggleItem = (item: string) => {
 		if (this.includesItem(item)) {
 			this.#value.current = "";
 		} else {
 			this.#value.current = item;
 		}
+	};
+
+	createItem(props: ToolbarGroupItemStateProps) {
+		return new ToolbarGroupItemState(props, this, this.root);
 	}
 }
 
@@ -174,20 +174,20 @@ class ToolbarGroupMultipleState extends ToolbarGroupBaseState {
 		this.#value = props.value;
 	}
 
-	createItem(props: ToolbarGroupItemStateProps) {
-		return new ToolbarGroupItemState(props, this, this.root);
-	}
-
-	includesItem(item: string) {
+	includesItem = (item: string) => {
 		return this.#value.current.includes(item);
-	}
+	};
 
-	toggleItem(item: string) {
+	toggleItem = (item: string) => {
 		if (this.includesItem(item)) {
 			this.#value.current = this.#value.current.filter((v) => v !== item);
 		} else {
 			this.#value.current = [...this.#value.current, item];
 		}
+	};
+
+	createItem(props: ToolbarGroupItemStateProps) {
+		return new ToolbarGroupItemState(props, this, this.root);
 	}
 }
 
@@ -231,10 +231,10 @@ class ToolbarGroupItemState {
 		});
 	}
 
-	toggleItem() {
+	toggleItem = () => {
 		if (this.#isDisabled) return;
 		this.#group.toggleItem(this.#value.current);
-	}
+	};
 
 	#onclick = () => {
 		this.toggleItem();

@@ -52,9 +52,9 @@ class SwitchRootState {
 		});
 	}
 
-	#toggle() {
+	#toggle = () => {
 		this.checked.current = !this.checked.current;
-	}
+	};
 
 	#onkeydown = (e: KeyboardEvent) => {
 		if (!(e.key === kbd.ENTER || e.key === kbd.SPACE) || this.disabled.current) return;

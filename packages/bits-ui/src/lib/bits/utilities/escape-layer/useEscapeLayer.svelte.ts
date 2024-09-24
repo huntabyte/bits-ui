@@ -38,9 +38,9 @@ export class EscapeLayerState {
 		});
 	}
 
-	#addEventListener() {
+	#addEventListener = () => {
 		return addEventListener(document, "keydown", this.#onkeydown, { passive: false });
-	}
+	};
 
 	#onkeydown = (e: KeyboardEvent) => {
 		if (e.key !== kbd.ESCAPE || !isResponsibleEscapeLayer(this)) return;

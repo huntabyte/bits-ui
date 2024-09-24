@@ -65,17 +65,17 @@ class TabsRootState {
 		});
 	}
 
-	registerTrigger(id: string) {
+	registerTrigger = (id: string) => {
 		this.triggerIds.push(id);
-	}
+	};
 
-	deRegisterTrigger(id: string) {
+	deRegisterTrigger = (id: string) => {
 		this.triggerIds = this.triggerIds.filter((triggerId) => triggerId !== id);
-	}
+	};
 
-	setValue(v: string) {
+	setValue = (v: string) => {
 		this.value.current = v;
-	}
+	};
 
 	createList(props: TabsListStateProps) {
 		return new TabsListState(props, this);
@@ -187,10 +187,10 @@ class TabsTriggerState {
 		});
 	}
 
-	activate() {
+	activate = () => {
 		if (this.#root.value.current === this.#value.current) return;
 		this.#root.setValue(this.#value.current);
-	}
+	};
 
 	#onfocus = () => {
 		if (this.#root.activationMode.current !== "automatic" || this.#disabled.current) return;

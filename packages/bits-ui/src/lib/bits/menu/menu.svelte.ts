@@ -151,17 +151,17 @@ class MenuMenuState {
 		}
 	}
 
-	toggleOpen() {
+	toggleOpen = () => {
 		this.open.current = !this.open.current;
-	}
+	};
 
-	onOpen() {
+	onOpen = () => {
 		this.open.current = true;
-	}
+	};
 
-	onClose() {
+	onClose = () => {
 		this.open.current = false;
-	}
+	};
 
 	createContent(props: MenuContentStateProps) {
 		return new MenuContentState(props, this);
@@ -237,23 +237,23 @@ class MenuContentState {
 		});
 	}
 
-	getCandidateNodes() {
+	getCandidateNodes = () => {
 		const node = this.parentMenu.contentNode;
 		if (!node) return [];
 		const candidates = Array.from(
 			node.querySelectorAll<HTMLElement>(`[${ITEM_ATTR}]:not([data-disabled])`)
 		);
 		return candidates;
-	}
+	};
 
-	isPointerMovingToSubmenu(e: PointerEvent) {
+	isPointerMovingToSubmenu = (e: PointerEvent) => {
 		const isMovingTowards = this.#pointerDir === this.#pointerGraceIntent?.side;
 		return isMovingTowards && isPointerInGraceArea(e, this.#pointerGraceIntent?.area);
-	}
+	};
 
-	onPointerGraceIntentChange(intent: GraceIntent | null) {
+	onPointerGraceIntentChange = (intent: GraceIntent | null) => {
 		this.#pointerGraceIntent = intent;
-	}
+	};
 
 	#onkeydown = (e: KeyboardEvent) => {
 		if (e.defaultPrevented) return;
@@ -327,29 +327,29 @@ class MenuContentState {
 		}
 	};
 
-	onItemEnter(e: PointerEvent) {
+	onItemEnter = (e: PointerEvent) => {
 		if (this.isPointerMovingToSubmenu(e)) return true;
 		return false;
-	}
+	};
 
-	onItemLeave(e: PointerEvent) {
+	onItemLeave = (e: PointerEvent) => {
 		if (this.isPointerMovingToSubmenu(e)) return;
 		const contentNode = this.parentMenu.contentNode;
 		contentNode?.focus();
 		this.rovingFocusGroup.setCurrentTabStopId("");
-	}
+	};
 
-	onTriggerLeave(e: PointerEvent) {
+	onTriggerLeave = (e: PointerEvent) => {
 		if (this.isPointerMovingToSubmenu(e)) return true;
 		return false;
-	}
+	};
 
-	onOpenAutoFocus(e: Event) {
+	onOpenAutoFocus = (e: Event) => {
 		if (e.defaultPrevented) return;
 		e.preventDefault();
 		const contentNode = this.parentMenu.contentNode;
 		contentNode?.focus();
-	}
+	};
 
 	handleInteractOutside = (e: InteractOutsideEvent) => {
 		if (!isElementOrSVGElement(e.target)) return;
@@ -580,11 +580,11 @@ class MenuSubTriggerState {
 		});
 	}
 
-	#clearOpenTimer() {
+	#clearOpenTimer = () => {
 		if (this.#openTimer === null) return;
 		window.clearTimeout(this.#openTimer);
 		this.#openTimer = null;
-	}
+	};
 
 	#onpointermove = (e: PointerEvent) => {
 		if (!isMouseEvent(e)) return;
@@ -690,7 +690,7 @@ class MenuCheckboxItemState {
 		this.#checked = props.checked;
 	}
 
-	toggleChecked() {
+	toggleChecked = () => {
 		if (this.#checked.current === true) {
 			this.#checked.current = false;
 		} else if (this.#checked.current === false) {
@@ -698,7 +698,7 @@ class MenuCheckboxItemState {
 		} else if (this.#checked.current === "indeterminate") {
 			this.#checked.current = true;
 		}
-	}
+	};
 
 	props = $derived.by(
 		() =>
@@ -834,9 +834,9 @@ class MenuRadioGroupState {
 		});
 	}
 
-	setValue(v: string) {
+	setValue = (v: string) => {
 		this.value.current = v;
-	}
+	};
 
 	createRadioItem(
 		props: MenuItemSharedStateProps & MenuItemStateProps & MenuRadioItemStateProps
@@ -889,9 +889,9 @@ class MenuRadioItemState {
 		});
 	}
 
-	selectValue() {
+	selectValue = () => {
 		this.#group.setValue(this.#value.current);
-	}
+	};
 
 	props = $derived.by(
 		() =>
@@ -1041,10 +1041,10 @@ class ContextMenuTriggerState {
 		});
 	}
 
-	#clearLongPressTimer() {
+	#clearLongPressTimer = () => {
 		if (this.#longPressTimer === null) return;
 		window.clearTimeout(this.#longPressTimer);
-	}
+	};
 
 	#handleOpen = (e: MouseEvent | PointerEvent) => {
 		this.#point = { x: e.clientX, y: e.clientY };
