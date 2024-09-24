@@ -292,7 +292,7 @@ const groupAttrs: DataAttrs = [
 
 const labelAttrs: DataAttrs = [
 	{
-		name: "menu-label",
+		name: "menu-group-heading",
 		description: "Present on the group label element.",
 	},
 ];
