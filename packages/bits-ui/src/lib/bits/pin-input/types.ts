@@ -53,6 +53,11 @@ export type PinInputRootPropsWithoutHTML = Omit<
 			disabled?: boolean;
 
 			/**
+			 * Optionally provide an ID to apply to the hidden input element.
+			 */
+			inputId?: string;
+
+			/**
 			 * The children snippet used to render the individual cells.
 			 */
 			children: Snippet<[PinInputRootSnippetProps]>;

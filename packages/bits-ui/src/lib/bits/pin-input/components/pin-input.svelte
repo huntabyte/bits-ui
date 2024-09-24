@@ -8,6 +8,7 @@
 
 	let {
 		id = useId(),
+		inputId = useId(),
 		ref = $bindable(null),
 		maxlength = 6,
 		textalign = "left",
@@ -23,8 +24,6 @@
 		onValueChange = noop,
 		...restProps
 	}: RootProps = $props();
-
-	const inputId = useId();
 
 	const rootState = usePinInput({
 		id: box.with(() => id),

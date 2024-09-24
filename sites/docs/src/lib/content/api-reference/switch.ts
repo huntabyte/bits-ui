@@ -2,16 +2,23 @@ import type { SwitchRootPropsWithoutHTML, SwitchThumbPropsWithoutHTML } from "bi
 import {
 	createApiSchema,
 	createBooleanProp,
+	createDataAttrSchema,
 	createFunctionProp,
 	createStringProp,
 	withChildProps,
 } from "./helpers.js";
 import {
+	SwitchCheckedDataAttr,
 	SwitchRootChildSnippetProps,
 	SwitchRootChildrenSnippetProps,
 } from "./extended-types/switch/index.js";
-import { enums } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
+
+const stateDataAttr = createDataAttrSchema({
+	name: "state",
+	description: "The switch's checked state.",
+	definition: SwitchCheckedDataAttr,
+});
 
 const root = createApiSchema<SwitchRootPropsWithoutHTML>({
 	title: "Root",
@@ -49,12 +56,7 @@ const root = createApiSchema<SwitchRootPropsWithoutHTML>({
 		}),
 	},
 	dataAttributes: [
-		{
-			name: "state",
-			description: "The switch's checked state.",
-			value: enums("checked", "unchecked"),
-			isEnum: true,
-		},
+		stateDataAttr,
 		{
 			name: "checked",
 			description: "Present when the switch is checked.",
@@ -79,12 +81,7 @@ const thumb = createApiSchema<SwitchThumbPropsWithoutHTML>({
 		childDef: SwitchRootChildSnippetProps,
 	}),
 	dataAttributes: [
-		{
-			name: "state",
-			description: "The switch's checked state.",
-			value: enums("checked", "unchecked"),
-			isEnum: true,
-		},
+		stateDataAttr,
 		{
 			name: "checked",
 			description: "Present when the switch is checked.",

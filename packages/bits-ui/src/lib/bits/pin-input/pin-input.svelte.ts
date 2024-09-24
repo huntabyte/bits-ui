@@ -211,7 +211,7 @@ class PinInputRootState {
 		() =>
 			({
 				id: this.#id.current,
-				"data-pin-input-root": "",
+				[ROOT_ATTR]: "",
 				style: this.#rootStyles,
 			}) as const
 	);
