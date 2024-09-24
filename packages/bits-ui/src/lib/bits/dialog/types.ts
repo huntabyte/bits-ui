@@ -22,7 +22,7 @@ export type DialogRootPropsWithoutHTML = WithChildren<{
 export type DialogRootProps = DialogRootPropsWithoutHTML;
 
 export type DialogContentSnippetProps = {
-	open: boolean;
+	open?: boolean;
 };
 
 export type DialogContentPropsWithoutHTML = WithChild<

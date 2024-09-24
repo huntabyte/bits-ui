@@ -90,7 +90,7 @@ export type AccordionContentSnippetProps = {
 	/**
 	 * Whether the accordion content is active/open or not.
 	 */
-	open: boolean;
+	open?: boolean;
 };
 
 export type AccordionContentPropsWithoutHTML = WithChild<

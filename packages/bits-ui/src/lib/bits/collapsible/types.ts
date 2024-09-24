@@ -26,7 +26,7 @@ export type CollapsibleRootProps = CollapsibleRootPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, CollapsibleRootPropsWithoutHTML>;
 
 export type CollapsibleContentSnippetProps = {
-	open: boolean;
+	open?: boolean;
 };
 
 export type CollapsibleContentPropsWithoutHTML = WithChild<
