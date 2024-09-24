@@ -76,8 +76,8 @@
 				"--bits-menu-content-transform-origin": "var(--bits-floating-transform-origin)",
 				"--bits-menu-content-available-width": "var(--bits-floating-available-width)",
 				"--bits-menu-content-available-height": "var(--bits-floating-available-height)",
-				"--bits-menu-trigger-width": "var(--bits-floating-anchor-width)",
-				"--bits-menu-trigger-height": "var(--bits-floating-anchor-height)",
+				"--bits-menu-anchor-width": "var(--bits-floating-anchor-width)",
+				"--bits-menu-anchor-height": "var(--bits-floating-anchor-height)",
 			},
 		})}
 		{#if child}

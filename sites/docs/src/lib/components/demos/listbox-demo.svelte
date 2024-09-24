@@ -46,7 +46,7 @@
 	</Listbox.Trigger>
 	<Listbox.Portal>
 		<Listbox.Content
-			class="max-h-96 w-[var(--bits-listbox-trigger-width)] min-w-[var(--bits-listbox-trigger-width)] rounded-xl border border-muted bg-background px-1 py-3 shadow-popover outline-none"
+			class="max-h-96 w-[var(--bits-listbox-anchor-width)] min-w-[var(--bits-listbox-anchor-width)] rounded-xl border border-muted bg-background px-1 py-3 shadow-popover outline-none"
 			sideOffset={10}
 		>
 			<Listbox.ScrollUpButton class="flex w-full items-center justify-center">

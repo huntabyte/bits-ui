@@ -1,6 +1,6 @@
 import { Previous } from "runed";
 import { untrack } from "svelte";
-import { styleToString } from "svelte-toolbelt"
+import { styleToString } from "svelte-toolbelt";
 import type { InteractOutsideEvent } from "../utilities/dismissable-layer/types.js";
 import { afterTick } from "$lib/internal/afterTick.js";
 import { backward, forward, next, prev } from "$lib/internal/arrays.js";
@@ -20,7 +20,7 @@ import { useRefById } from "$lib/internal/useRefById.svelte.js";
 import { noop } from "$lib/internal/callbacks.js";
 import { addEventListener } from "$lib/internal/events.js";
 import { type Typeahead, useTypeahead } from "$lib/internal/useTypeahead.svelte.js";
-import { srOnlyStyles } from "$lib/internal/style.js"
+import { srOnlyStyles } from "$lib/internal/style.js";
 
 // prettier-ignore
 export const INTERACTION_KEYS = [kbd.ARROW_LEFT, kbd.ESCAPE, kbd.ARROW_RIGHT, kbd.SHIFT, kbd.CAPS_LOCK, kbd.CONTROL, kbd.ALT, kbd.META, kbd.ENTER, kbd.F1, kbd.F2, kbd.F3, kbd.F4, kbd.F5, kbd.F6, kbd.F7, kbd.F8, kbd.F9, kbd.F10, kbd.F11, kbd.F12];
@@ -678,16 +678,16 @@ class ListboxContentState {
 				"--bits-combobox-content-transform-origin": "var(--bits-floating-transform-origin)",
 				"--bits-combobox-content-available-width": "var(--bits-floating-available-width)",
 				"--bits-combobox-content-available-height": "var(--bits-floating-available-height)",
-				"--bits-combobox-trigger-width": "var(--bits-floating-anchor-width)",
-				"--bits-combobox-trigger-height": "var(--bits-floating-anchor-height)",
+				"--bits-combobox-anchor-width": "var(--bits-floating-anchor-width)",
+				"--bits-combobox-anchor-height": "var(--bits-floating-anchor-height)",
 			};
 		} else {
 			return {
 				"--bits-listbox-content-transform-origin": "var(--bits-floating-transform-origin)",
 				"--bits-listbox-content-available-width": "var(--bits-floating-available-width)",
 				"--bits-listbox-content-available-height": "var(--bits-floating-available-height)",
-				"--bits-listbox-trigger-width": "var(--bits-floating-anchor-width)",
-				"--bits-listbox-trigger-height": "var(--bits-floating-anchor-height)",
+				"--bits-listbox-anchor-width": "var(--bits-floating-anchor-width)",
+				"--bits-listbox-anchor-height": "var(--bits-floating-anchor-height)",
 			};
 		}
 	});
@@ -915,7 +915,7 @@ class ListboxHiddenInputState {
 				name: this.root.name.current,
 				value: this.#value.current,
 				"aria-hidden": getAriaHidden(true),
-				style: styleToString(srOnlyStyles)
+				style: styleToString(srOnlyStyles),
 			}) as const
 	);
 }

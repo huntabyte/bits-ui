@@ -368,8 +368,8 @@ class MenubarContentState {
 			"--bits-menubar-content-transform-origin": "var(--bits-floating-transform-origin)",
 			"--bits-menubar-content-available-width": "var(--bits-floating-available-width)",
 			"--bits-menubar-content-available-height": "var(--bits-floating-available-height)",
-			"--bits-menubar-trigger-width": "var(--bits-floating-anchor-width)",
-			"--bits-menubar-trigger-height": "var(--bits-floating-anchor-height)",
+			"--bits-menubar-anchor-width": "var(--bits-floating-anchor-width)",
+			"--bits-menubar-anchor-height": "var(--bits-floating-anchor-height)",
 		},
 		onkeydown: this.#onkeydown,
 	}));

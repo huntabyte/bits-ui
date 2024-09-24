@@ -91,11 +91,11 @@ export const content = createApiSchema<ContextMenuContentPropsWithoutHTML>({
 			description: "The available height of the context menu content element.",
 		}),
 		createCSSVarSchema({
-			name: "--bits-context-menu-trigger-width",
+			name: "--bits-context-menu-anchor-width",
 			description: "The width of the context menu trigger element.",
 		}),
 		createCSSVarSchema({
-			name: "--bits-context-menu-trigger-height",
+			name: "--bits-context-menu-anchor-height",
 			description: "The height of the context menu trigger element.",
 		}),
 	],

@@ -63,8 +63,8 @@
 				"--bits-popover-content-transform-origin": "var(--bits-floating-transform-origin)",
 				"--bits-popover-content-available-width": "var(--bits-floating-available-width)",
 				"--bits-popover-content-available-height": "var(--bits-floating-available-height)",
-				"--bits-popover-trigger-width": "var(--bits-floating-anchor-width)",
-				"--bits-popover-trigger-height": "var(--bits-floating-anchor-height)",
+				"--bits-popover-anchor-width": "var(--bits-floating-anchor-width)",
+				"--bits-popover-anchor-height": "var(--bits-floating-anchor-height)",
 			},
 		})}
 		{#if child}

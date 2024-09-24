@@ -61,7 +61,7 @@
 	</div>
 	<Combobox.Portal>
 		<Combobox.Content
-			class="max-h-96 w-[var(--bits-combobox-trigger-width)] min-w-[var(--bits-combobox-trigger-width)] rounded-xl border border-muted bg-background px-1 py-3 shadow-popover outline-none"
+			class="max-h-96 w-[var(--bits-combobox-anchor-width)] min-w-[var(--bits-combobox-anchor-width)] rounded-xl border border-muted bg-background px-1 py-3 shadow-popover outline-none"
 			sideOffset={10}
 		>
 			<Combobox.ScrollUpButton class="flex w-full items-center justify-center">

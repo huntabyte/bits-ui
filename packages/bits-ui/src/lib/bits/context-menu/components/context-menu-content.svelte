@@ -95,8 +95,8 @@
 					"var(--bits-floating-available-width)",
 				"--bits-context-menu-content-available-height":
 					"var(--bits-floating-available-height)",
-				"--bits-context-menu-trigger-width": "var(--bits-floating-anchor-width)",
-				"--bits-context-menu-trigger-height": "var(--bits-floating-anchor-height)",
+				"--bits-context-menu-anchor-width": "var(--bits-floating-anchor-width)",
+				"--bits-context-menu-anchor-height": "var(--bits-floating-anchor-height)",
 			},
 		})}
 		{#if child}

@@ -159,11 +159,11 @@ export const content = createApiSchema<ListboxContentPropsWithoutHTML>({
 			description: "The available height of the listbox content element.",
 		}),
 		createCSSVarSchema({
-			name: "--bits-listbox-trigger-width",
+			name: "--bits-listbox-anchor-width",
 			description: "The width of the listbox trigger element.",
 		}),
 		createCSSVarSchema({
-			name: "--bits-listbox-trigger-height",
+			name: "--bits-listbox-anchor-height",
 			description: "The height of the listbox trigger element.",
 		}),
 	],

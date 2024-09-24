@@ -61,8 +61,8 @@
 				"--bits-listbox-content-transform-origin": "var(--bits-floating-transform-origin)",
 				"--bits-listbox-content-available-width": "var(--bits-floating-available-width)",
 				"--bits-listbox-content-available-height": "var(--bits-floating-available-height)",
-				"--bits-listbox-trigger-width": "var(--bits-floating-anchor-width)",
-				"--bits-listbox-trigger-height": "var(--bits-floating-anchor-height)",
+				"--bits-listbox-anchor-width": "var(--bits-floating-anchor-width)",
+				"--bits-listbox-anchor-height": "var(--bits-floating-anchor-height)",
 				...contentState.props.style,
 			},
 		})}

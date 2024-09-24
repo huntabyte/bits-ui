@@ -1053,8 +1053,8 @@ class SelectFloatingPositionState {
 			"--bits-select-content-transform-origin": "var(--bits-floating-transform-origin)",
 			"--bits-select-content-available-width": "var(--bits-floating-available-width)",
 			"--bits-select-content-available-height": "var(--bits-floating-available-height)",
-			"--bits-select-trigger-width": "var(--bits-floating-anchor-width)",
-			"--bits-select-trigger-height": "var(--bits-floating-anchor-height)",
+			"--bits-select-anchor-width": "var(--bits-floating-anchor-width)",
+			"--bits-select-anchor-height": "var(--bits-floating-anchor-height)",
 		},
 	} as const;
 }

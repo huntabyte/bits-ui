@@ -157,11 +157,11 @@ export const content = createApiSchema<ComboboxContentPropsWithoutHTML>({
 			description: "The available height of the combobox content element.",
 		}),
 		createCSSVarSchema({
-			name: "--bits-combobox-trigger-width",
+			name: "--bits-combobox-anchor-width",
 			description: "The width of the combobox trigger element.",
 		}),
 		createCSSVarSchema({
-			name: "--bits-combobox-trigger-height",
+			name: "--bits-combobox-anchor-height",
 			description: "The height of the combobox trigger element.",
 		}),
 	],
