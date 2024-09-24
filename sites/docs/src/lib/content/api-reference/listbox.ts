@@ -2,7 +2,7 @@ import type {
 	ListboxArrowPropsWithoutHTML,
 	ListboxContentPropsWithoutHTML,
 	ListboxContentStaticPropsWithoutHTML,
-	ListboxGroupLabelPropsWithoutHTML,
+	ListboxGroupHeadingPropsWithoutHTML,
 	ListboxGroupPropsWithoutHTML,
 	ListboxItemPropsWithoutHTML,
 	ListboxRootPropsWithoutHTML,
@@ -326,8 +326,8 @@ export const group = createApiSchema<ListboxGroupPropsWithoutHTML>({
 	],
 });
 
-export const groupLabel = createApiSchema<ListboxGroupLabelPropsWithoutHTML>({
-	title: "GroupLabel",
+export const groupHeading = createApiSchema<ListboxGroupHeadingPropsWithoutHTML>({
+	title: "GroupHeading",
 	description:
 		"A label for the parent listbox group. This is used to describe a group of related listbox items.",
 	props: withChildProps({ elType: "HTMLDivElement" }),
@@ -361,6 +361,6 @@ export const listbox = [
 	scrollUpButton,
 	scrollDownButton,
 	group,
-	groupLabel,
+	groupHeading,
 	arrow,
 ];

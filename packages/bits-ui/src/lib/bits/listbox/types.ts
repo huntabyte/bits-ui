@@ -198,10 +198,10 @@ export type ListboxGroupPropsWithoutHTML = WithChild;
 export type ListboxGroupProps = ListboxGroupPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, ListboxGroupPropsWithoutHTML>;
 
-export type ListboxGroupLabelPropsWithoutHTML = WithChild;
+export type ListboxGroupHeadingPropsWithoutHTML = WithChild;
 
-export type ListboxGroupLabelProps = ListboxGroupLabelPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, ListboxGroupLabelPropsWithoutHTML>;
+export type ListboxGroupHeadingProps = ListboxGroupHeadingPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, ListboxGroupHeadingPropsWithoutHTML>;
 
 export type ListboxSeparatorPropsWithoutHTML = WithChild;
 

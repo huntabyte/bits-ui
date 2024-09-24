@@ -1364,19 +1364,19 @@ class SelectGroupState {
 			}) as const
 	);
 
-	createGroupLabel(props: SelectGroupLabelStateProps) {
-		return new SelectGroupLabel(props, this);
+	createGroupHeading(props: SelectGroupHeadingStateProps) {
+		return new SelectGroupHeading(props, this);
 	}
 }
 
-type SelectGroupLabelStateProps = WithRefProps;
+type SelectGroupHeadingStateProps = WithRefProps;
 
-class SelectGroupLabel {
-	#id: SelectGroupLabelStateProps["id"];
-	#ref: SelectGroupLabelStateProps["ref"];
+class SelectGroupHeading {
+	#id: SelectGroupHeadingStateProps["id"];
+	#ref: SelectGroupHeadingStateProps["ref"];
 	group: SelectGroupState;
 
-	constructor(props: SelectGroupLabelStateProps, group: SelectGroupState) {
+	constructor(props: SelectGroupHeadingStateProps, group: SelectGroupState) {
 		this.#ref = props.ref;
 		this.#id = props.id;
 		this.group = group;
@@ -1532,8 +1532,8 @@ export function useSelectGroup(props: SelectGroupStateProps) {
 	return setSelectGroupContext(new SelectGroupState(props));
 }
 
-export function useSelectGroupLabel(props: SelectGroupLabelStateProps) {
-	return getSelectGroupContext().createGroupLabel(props);
+export function useSelectGroupHeading(props: SelectGroupHeadingStateProps) {
+	return getSelectGroupContext().createGroupHeading(props);
 }
 
 export function useSelectArrow(props: SelectArrowStateProps) {

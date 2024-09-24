@@ -717,7 +717,7 @@ type MenuGroupStateProps = WithRefProps;
 class MenuGroupState {
 	#id: MenuGroupStateProps["id"];
 	#ref: MenuGroupStateProps["ref"];
-	groupLabelId = $state<string | undefined>(undefined);
+	groupHeadingId = $state<string | undefined>(undefined);
 
 	constructor(props: MenuGroupStateProps) {
 		this.#id = props.id;
@@ -734,23 +734,23 @@ class MenuGroupState {
 			({
 				id: this.#id.current,
 				role: "group",
-				"aria-labelledby": this.groupLabelId,
+				"aria-labelledby": this.groupHeadingId,
 				[GROUP_ATTR]: "",
 			}) as const
 	);
 
-	createGroupLabel(props: MenuGroupLabelStateProps) {
-		return new MenuGroupLabelState(props, this);
+	createGroupHeading(props: MenuGroupHeadingStateProps) {
+		return new MenuGroupHeadingState(props, this);
 	}
 }
 
-type MenuGroupLabelStateProps = WithRefProps;
-class MenuGroupLabelState {
-	#id: MenuGroupLabelStateProps["id"];
-	#ref: MenuGroupLabelStateProps["ref"];
+type MenuGroupHeadingStateProps = WithRefProps;
+class MenuGroupHeadingState {
+	#id: MenuGroupHeadingStateProps["id"];
+	#ref: MenuGroupHeadingStateProps["ref"];
 	#group: MenuGroupState | MenuRadioGroupState | undefined = undefined;
 
-	constructor(props: MenuGroupLabelStateProps, group?: MenuGroupState | MenuRadioGroupState) {
+	constructor(props: MenuGroupHeadingStateProps, group?: MenuGroupState | MenuRadioGroupState) {
 		this.#id = props.id;
 		this.#ref = props.ref;
 		this.#group = group;
@@ -760,7 +760,7 @@ class MenuGroupLabelState {
 			ref: this.#ref,
 			onRefChange: (node) => {
 				if (!this.#group) return;
-				this.#group.groupLabelId = node?.id;
+				this.#group.groupHeadingId = node?.id;
 			},
 		});
 	}
@@ -820,7 +820,7 @@ class MenuRadioGroupState {
 	value: MenuRadioGroupStateProps["value"];
 	#ref: MenuRadioGroupStateProps["ref"];
 	#content: MenuContentState;
-	groupLabelId = $state<string | null>(null);
+	groupHeadingId = $state<string | null>(null);
 
 	constructor(props: MenuRadioGroupStateProps, content: MenuContentState) {
 		this.value = props.value;
@@ -845,8 +845,8 @@ class MenuRadioGroupState {
 		return new MenuRadioItemState(props, item, this);
 	}
 
-	createGroupLabel(props: MenuGroupLabelStateProps) {
-		return new MenuGroupLabelState(props, this);
+	createGroupHeading(props: MenuGroupHeadingStateProps) {
+		return new MenuGroupHeadingState(props, this);
 	}
 
 	props = $derived.by(
@@ -855,7 +855,7 @@ class MenuRadioGroupState {
 				id: this.#id.current,
 				[RADIO_GROUP_ATTR]: "",
 				role: "group",
-				"aria-labelledby": this.groupLabelId,
+				"aria-labelledby": this.groupHeadingId,
 			}) as const
 	);
 }
@@ -1159,10 +1159,10 @@ export function useMenuGroup(props: MenuGroupStateProps) {
 	return setMenuGroupContext(new MenuGroupState(props));
 }
 
-export function useMenuGroupLabel(props: MenuGroupLabelStateProps) {
+export function useMenuGroupHeading(props: MenuGroupHeadingStateProps) {
 	const groupCtx = getMenuGroupContext(null);
-	if (!groupCtx) return new MenuGroupLabelState(props);
-	return groupCtx.createGroupLabel(props);
+	if (!groupCtx) return new MenuGroupHeadingState(props);
+	return groupCtx.createGroupHeading(props);
 }
 
 export function useMenuSeparator(props: MenuSeparatorStateProps) {

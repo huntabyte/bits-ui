@@ -29,7 +29,7 @@ description: Organizes and presents a collection of menu options or actions with
 		<Menubar.Portal>
 			<Menubar.Content>
 				<Menubar.Group>
-					<Menubar.GroupLabel />
+					<Menubar.GroupHeading />
 					<Menubar.Item />
 				</Menubar.Group>
 
@@ -42,7 +42,7 @@ description: Organizes and presents a collection of menu options or actions with
 				</Menubar.CheckboxItem>
 
 				<Menubar.RadioGroup>
-					<Menubar.GroupLabel />
+					<Menubar.GroupHeading />
 					<Menubar.RadioItem>
 						{#snippet children({ checked })}
 							{checked ? "✅" : ""}

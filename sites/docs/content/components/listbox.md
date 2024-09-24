@@ -35,7 +35,7 @@ The `Listbox` component gives you the ability to create a list of options that c
 			<Listbox.Viewport>
 				<Listbox.Item />
 				<Listbox.Group>
-					<Listbox.GroupLabel />
+					<Listbox.GroupHeading />
 					<Listbox.Item />
 				</Listbox.Group>
 				<Listbox.ScrollDownButton />
@@ -221,7 +221,7 @@ You can opt-out of this behavior by instead using the `Listbox.ContentStatic` co
 			<Listbox.Viewport>
 				<Listbox.Item />
 				<Listbox.Group>
-					<Listbox.GroupLabel />
+					<Listbox.GroupHeading />
 					<Listbox.Item />
 				</Listbox.Group>
 				<Listbox.ScrollDownButton />

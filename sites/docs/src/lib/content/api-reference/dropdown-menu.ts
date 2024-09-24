@@ -3,9 +3,9 @@ import type {
 	DropdownMenuCheckboxItemPropsWithoutHTML,
 	DropdownMenuContentPropsWithoutHTML,
 	DropdownMenuContentStaticPropsWithoutHTML,
+	DropdownMenuGroupHeadingPropsWithoutHTML,
 	DropdownMenuGroupPropsWithoutHTML,
 	DropdownMenuItemPropsWithoutHTML,
-	DropdownMenuLabelPropsWithoutHTML,
 	DropdownMenuPortalPropsWithoutHTML,
 	DropdownMenuRadioGroupPropsWithoutHTML,
 	DropdownMenuRadioItemPropsWithoutHTML,
@@ -109,14 +109,14 @@ export const subContent = createApiSchema<DropdownMenuSubContentPropsWithoutHTML
 export const group = createApiSchema<DropdownMenuGroupPropsWithoutHTML>({
 	title: "Group",
 	description:
-		"A group of menu items. It should be passed an `aria-label` or have a child `Menu.GroupLabel` component to provide a label for a group of menu items.",
+		"A group of menu items. It should be passed an `aria-label` or have a child `Menu.GroupHeading` component to provide a label for a group of menu items.",
 	...menu.group,
 });
 
-export const groupLabel = createApiSchema<DropdownMenuLabelPropsWithoutHTML>({
-	title: "GroupLabel",
+export const groupHeading = createApiSchema<DropdownMenuGroupHeadingPropsWithoutHTML>({
+	title: "GroupHeading",
 	description:
-		"A label which will be skipped when navigating with the keyboard. It is used to provide a label for a group of menu items and must be a child of either a `DropdownMenu.Group` or `DropdownMenu.RadioGroup` component.",
+		"A heading for a group which will be skipped when navigating with the keyboard. It is used to provide a description for a group of menu items and must be a child of either a `DropdownMenu.Group` or `DropdownMenu.RadioGroup` component.",
 	...menu.label,
 });
 
@@ -133,7 +133,7 @@ export const dropdownMenu = [
 	separator,
 	arrow,
 	group,
-	groupLabel,
+	groupHeading,
 	sub,
 	subTrigger,
 	subContent,

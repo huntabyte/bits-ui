@@ -2,9 +2,9 @@ import type {
 	DropdownMenuCheckboxItemPropsWithoutHTML,
 	DropdownMenuContentPropsWithoutHTML,
 	DropdownMenuContentStaticPropsWithoutHTML,
+	DropdownMenuGroupHeadingPropsWithoutHTML,
 	DropdownMenuGroupPropsWithoutHTML,
 	DropdownMenuItemPropsWithoutHTML,
-	DropdownMenuLabelPropsWithoutHTML,
 	DropdownMenuRadioGroupPropsWithoutHTML,
 	DropdownMenuRadioItemPropsWithoutHTML,
 	DropdownMenuRootPropsWithoutHTML,
@@ -218,9 +218,9 @@ const groupProps = withChildProps({
 	elType: "HTMLDivElement",
 }) satisfies PropObj<DropdownMenuGroupPropsWithoutHTML>;
 
-const labelProps = withChildProps({
+const groupHeadingProps = withChildProps({
 	elType: "HTMLDivElement",
-}) satisfies PropObj<DropdownMenuLabelPropsWithoutHTML>;
+}) satisfies PropObj<DropdownMenuGroupHeadingPropsWithoutHTML>;
 
 const separatorProps = withChildProps({
 	elType: "HTMLDivElement",
@@ -392,7 +392,7 @@ export const group = {
 };
 
 export const label = {
-	props: labelProps,
+	props: groupHeadingProps,
 	dataAttributes: labelAttrs,
 };
 

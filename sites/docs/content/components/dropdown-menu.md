@@ -28,7 +28,7 @@ description: Displays a menu of items that users can select from when triggered.
 
 	<DropdownMenu.Content>
 		<DropdownMenu.Group>
-			<DropdownMenu.GroupLabel />
+			<DropdownMenu.GroupHeading />
 			<DropdownMenu.Item />
 		</DropdownMenu.Group>
 
@@ -162,11 +162,11 @@ You can also use the `onOpenChange` prop to update local state when the menu's `
 
 ## Groups
 
-To group related menu items, you can use the `DropdownMenu.Group` component along with either a `DropdownMenu.GroupLabel` or an `aria-label` attribute on the `DropdownMenu.Group` component.
+To group related menu items, you can use the `DropdownMenu.Group` component along with either a `DropdownMenu.GroupHeading` or an `aria-label` attribute on the `DropdownMenu.Group` component.
 
 ```svelte
 <DropdownMenu.Group>
-	<DropdownMenu.GroupLabel>File</DropdownMenu.GroupLabel>
+	<DropdownMenu.GroupHeading>File</DropdownMenu.GroupHeading>
 	<DropdownMenu.Item>New</DropdownMenu.Item>
 	<DropdownMenu.Item>Open</DropdownMenu.Item>
 	<DropdownMenu.Item>Save</DropdownMenu.Item>
@@ -183,18 +183,18 @@ To group related menu items, you can use the `DropdownMenu.Group` component alon
 
 ### Group Label
 
-The `DropdownMenu.GroupLabel` component must be a child of either a `DropdownMenu.Group` or `DropdownMenu.RadioGroup` component. If used on its own, an error will be thrown during development.
+The `DropdownMenu.GroupHeading` component must be a child of either a `DropdownMenu.Group` or `DropdownMenu.RadioGroup` component. If used on its own, an error will be thrown during development.
 
 ```svelte
 <DropdownMenu.Group>
-	<DropdownMenu.GroupLabel>File</DropdownMenu.GroupLabel>
+	<DropdownMenu.GroupHeading>File</DropdownMenu.GroupHeading>
 	<!-- ... items here -->
 </DropdownMenu.Group>
 
 <!-- or -->
 
 <DropdownMenu.RadioGroup>
-	<DropdownMenu.GroupLabel>Favorite color</DropdownMenu.GroupLabel>
+	<DropdownMenu.GroupHeading>Favorite color</DropdownMenu.GroupHeading>
 	<!-- ... radio items here -->
 </DropdownMenu.RadioGroup>
 ```
@@ -235,7 +235,7 @@ You can combine the `DropdownMenu.RadioGroup` and `DropdownMenu.RadioItem` compo
 </script>
 
 <DropdownMenu.RadioGroup bind:value>
-	<DropdownMenu.GroupLabel>Favorite number</DropdownMenu.GroupLabel>
+	<DropdownMenu.GroupHeading>Favorite number</DropdownMenu.GroupHeading>
 	{#each values as value}
 		<DropdownMenu.RadioItem {value}>
 			{#snippet children({ checked })}

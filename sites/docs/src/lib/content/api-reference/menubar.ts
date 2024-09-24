@@ -3,7 +3,7 @@ import type {
 	MenubarCheckboxItemPropsWithoutHTML,
 	MenubarContentPropsWithoutHTML,
 	MenubarContentStaticPropsWithoutHTML,
-	MenubarGroupLabelPropsWithoutHTML,
+	MenubarGroupHeadingPropsWithoutHTML,
 	MenubarGroupPropsWithoutHTML,
 	MenubarItemPropsWithoutHTML,
 	MenubarMenuPropsWithoutHTML,
@@ -149,12 +149,12 @@ export const subContent = createApiSchema<MenubarSubContentPropsWithoutHTML>({
 export const group = createApiSchema<MenubarGroupPropsWithoutHTML>({
 	title: "Group",
 	description:
-		"A group of menu items. It should be passed an `aria-label` or have a child `Menu.GroupLabel` component to provide a label for a group of menu items.",
+		"A group of menu items. It should be passed an `aria-label` or have a child `Menu.GroupHeading` component to provide a label for a group of menu items.",
 	...m.group,
 });
 
-export const groupLabel = createApiSchema<MenubarGroupLabelPropsWithoutHTML>({
-	title: "GroupLabel",
+export const groupHeading = createApiSchema<MenubarGroupHeadingPropsWithoutHTML>({
+	title: "GroupHeading",
 	description:
 		"A label which will be skipped when navigating with the keyboard. It is used to provide a label for a group of menu items and must be a child of either a `Menubar.Group` or `Menubar.RadioGroup` component.",
 	...m.label,
@@ -173,7 +173,7 @@ export const menubar = [
 	separator,
 	arrow,
 	group,
-	groupLabel,
+	groupHeading,
 	sub,
 	subTrigger,
 	subContent,

@@ -3,9 +3,9 @@ import type {
 	ContextMenuCheckboxItemPropsWithoutHTML,
 	ContextMenuContentPropsWithoutHTML,
 	ContextMenuContentStaticPropsWithoutHTML,
+	ContextMenuGroupHeadingPropsWithoutHTML,
 	ContextMenuGroupPropsWithoutHTML,
 	ContextMenuItemPropsWithoutHTML,
-	ContextMenuLabelPropsWithoutHTML,
 	ContextMenuPortalPropsWithoutHTML,
 	ContextMenuRadioGroupPropsWithoutHTML,
 	ContextMenuRadioItemPropsWithoutHTML,
@@ -181,14 +181,14 @@ export const subContent = createApiSchema<ContextMenuSubContentPropsWithoutHTML>
 export const group = createApiSchema<ContextMenuGroupPropsWithoutHTML>({
 	title: "Group",
 	description:
-		"A group of menu items. It should be passed an `aria-label` or have a child `Menu.GroupLabel` component to provide a label for a group of menu items.",
+		"A group of menu items. It should be passed an `aria-label` or have a child `Menu.GroupHeading` component to provide a label for a group of menu items.",
 	...menu.group,
 });
 
-export const groupLabel = createApiSchema<ContextMenuLabelPropsWithoutHTML>({
-	title: "GroupLabel",
+export const groupHeading = createApiSchema<ContextMenuGroupHeadingPropsWithoutHTML>({
+	title: "GroupHeading",
 	description:
-		"A label which will be skipped when navigating with the keyboard. It is used to provide a visual label for a group of menu items and must be a child of either a `ContextMenu.Group` or `ContextMenu.RadioGroup` component.",
+		"A heading for a group which will be skipped when navigating with the keyboard. It is used to provide a visual label for a group of menu items and must be a child of either a `ContextMenu.Group` or `ContextMenu.RadioGroup` component.",
 	...menu.label,
 });
 
@@ -205,7 +205,7 @@ export const contextMenu = [
 	separator,
 	arrow,
 	group,
-	groupLabel,
+	groupHeading,
 	sub,
 	subTrigger,
 	subContent,

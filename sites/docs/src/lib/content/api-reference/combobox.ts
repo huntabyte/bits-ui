@@ -2,7 +2,7 @@ import type {
 	ComboboxArrowPropsWithoutHTML,
 	ComboboxContentPropsWithoutHTML,
 	ComboboxContentStaticPropsWithoutHTML,
-	ComboboxGroupLabelPropsWithoutHTML,
+	ComboboxGroupHeadingPropsWithoutHTML,
 	ComboboxGroupPropsWithoutHTML,
 	ComboboxInputPropsWithoutHTML,
 	ComboboxItemPropsWithoutHTML,
@@ -308,10 +308,10 @@ export const group = createApiSchema<ComboboxGroupPropsWithoutHTML>({
 	],
 });
 
-export const groupLabel = createApiSchema<ComboboxGroupLabelPropsWithoutHTML>({
-	title: "GroupLabel",
+export const groupHeading = createApiSchema<ComboboxGroupHeadingPropsWithoutHTML>({
+	title: "GroupHeading",
 	description:
-		"A label for the parent combobox group. This is used to describe a group of related combobox items.",
+		"A heading for the parent combobox group. This is used to describe a group of related combobox items.",
 	props: withChildProps({ elType: "HTMLDivElement" }),
 	dataAttributes: [
 		createDataAttrSchema({
@@ -333,4 +333,4 @@ export const arrow = createApiSchema<ComboboxArrowPropsWithoutHTML>({
 	],
 });
 
-export const combobox = [root, trigger, content, contentStatic, item, input, groupLabel, arrow];
+export const combobox = [root, trigger, content, contentStatic, item, input, groupHeading, arrow];

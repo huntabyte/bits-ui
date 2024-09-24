@@ -856,19 +856,19 @@ class ListboxGroupState {
 			}) as const
 	);
 
-	createGroupLabel(props: ListboxGroupLabelStateProps) {
-		return new ListboxGroupLabelState(props, this);
+	createGroupHeading(props: ListboxGroupHeadingStateProps) {
+		return new ListboxGroupHeadingState(props, this);
 	}
 }
 
-type ListboxGroupLabelStateProps = WithRefProps;
+type ListboxGroupHeadingStateProps = WithRefProps;
 
-class ListboxGroupLabelState {
-	#id: ListboxGroupLabelStateProps["id"];
-	#ref: ListboxGroupLabelStateProps["ref"];
+class ListboxGroupHeadingState {
+	#id: ListboxGroupHeadingStateProps["id"];
+	#ref: ListboxGroupHeadingStateProps["ref"];
 	group: ListboxGroupState;
 
-	constructor(props: ListboxGroupLabelStateProps, group: ListboxGroupState) {
+	constructor(props: ListboxGroupHeadingStateProps, group: ListboxGroupState) {
 		this.#id = props.id;
 		this.#ref = props.ref;
 		this.group = group;
@@ -1218,8 +1218,8 @@ export function useListboxGroup(props: ListboxGroupStateProps) {
 	return setListboxGroupContext(getListboxRootContext().createGroup(props));
 }
 
-export function useListboxGroupLabel(props: ListboxGroupLabelStateProps) {
-	return getListboxGroupContext().createGroupLabel(props);
+export function useListboxGroupHeading(props: ListboxGroupHeadingStateProps) {
+	return getListboxGroupContext().createGroupHeading(props);
 }
 
 export function useListboxHiddenInput(props: ListboxHiddenInputStateProps) {

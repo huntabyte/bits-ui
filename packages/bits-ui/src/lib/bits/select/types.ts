@@ -185,10 +185,10 @@ export type SelectGroupPropsWithoutHTML = WithChild;
 export type SelectGroupProps = SelectGroupPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, SelectGroupPropsWithoutHTML>;
 
-export type SelectGroupLabelPropsWithoutHTML = WithChild;
+export type SelectGroupHeadingPropsWithoutHTML = WithChild;
 
-export type SelectGroupLabelProps = SelectGroupLabelPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, SelectGroupLabelPropsWithoutHTML>;
+export type SelectGroupHeadingProps = SelectGroupHeadingPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, SelectGroupHeadingPropsWithoutHTML>;
 
 export type SelectSeparatorPropsWithoutHTML = WithChild;
 
