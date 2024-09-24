@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Avatar } from "$lib/index.js";
-	export let src: string;
+	let { src }: { src: string } = $props();
 </script>
 
 <main>
@@ -9,5 +9,5 @@
 		<Avatar.Fallback data-testid="fallback">HJ</Avatar.Fallback>
 	</Avatar.Root>
 
-	<button on:click={() => (src = "")} data-testid="clear-button">clear src</button>
+	<button onclick={() => (src = "")} data-testid="clear-button">clear src</button>
 </main>
