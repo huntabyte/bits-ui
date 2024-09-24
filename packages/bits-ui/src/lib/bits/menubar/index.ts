@@ -6,7 +6,7 @@ export { default as Trigger } from "./components/menubar-trigger.svelte";
 export { default as Sub } from "$lib/bits/menu/components/menu-sub.svelte";
 export { default as Item } from "$lib/bits/menu/components/menu-item.svelte";
 export { default as Group } from "$lib/bits/menu/components/menu-group.svelte";
-export { default as Label } from "$lib/bits/menu/components/menu-group-label.svelte";
+export { default as GroupHeading } from "$lib/bits/menu/components/menu-group-heading.svelte";
 export { default as Arrow } from "$lib/bits/menu/components/menu-arrow.svelte";
 export { default as RadioItem } from "$lib/bits/menu/components/menu-radio-item.svelte";
 export { default as Separator } from "$lib/bits/menu/components/menu-separator.svelte";
@@ -28,7 +28,7 @@ export type {
 	MenuSubPropsWithoutHTML as SubProps,
 	MenuItemProps as ItemProps,
 	MenuGroupProps as GroupProps,
-	MenuGroupHeadingProps as LabelProps,
+	MenuGroupHeadingProps as GroupHeadingProps,
 	MenuArrowProps as ArrowProps,
 	MenuRadioItemProps as RadioItemProps,
 	MenuSeparatorProps as SeparatorProps,

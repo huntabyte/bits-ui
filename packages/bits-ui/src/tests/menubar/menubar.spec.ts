@@ -42,7 +42,7 @@ describe("menubar", () => {
 			"content",
 			"trigger",
 			"group",
-			"label",
+			"group-heading",
 			"separator",
 			"sub-trigger",
 			"item",

@@ -5,7 +5,7 @@ export { default as Content } from "./components/menu-content.svelte";
 export { default as ContentStatic } from "./components/menu-content-static.svelte";
 export { default as Group } from "./components/menu-group.svelte";
 export { default as Item } from "./components/menu-item.svelte";
-export { default as GroupHeading } from "./components/menu-group-label.svelte";
+export { default as GroupHeading } from "./components/menu-group-heading.svelte";
 export { default as Portal } from "$lib/bits/utilities/portal/portal.svelte";
 export { default as RadioGroup } from "./components/menu-radio-group.svelte";
 export { default as RadioItem } from "./components/menu-radio-item.svelte";

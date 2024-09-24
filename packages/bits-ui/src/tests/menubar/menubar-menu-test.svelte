@@ -18,7 +18,7 @@
 	<Menubar.Content data-testid="{id}-content">
 		<Menubar.Separator data-testid="{id}-separator" />
 		<Menubar.Group data-testid="{id}-group">
-			<Menubar.Label data-testid="{id}-label">Stuff</Menubar.Label>
+			<Menubar.GroupHeading data-testid="{id}-group-heading">Stuff</Menubar.GroupHeading>
 			<Menubar.Item data-testid="{id}-item">
 				<span>item</span>
 			</Menubar.Item>
