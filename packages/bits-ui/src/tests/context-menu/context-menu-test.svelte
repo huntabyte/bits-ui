@@ -40,9 +40,9 @@
 				<ContextMenu.Content {...contentProps} data-testid="content">
 					<ContextMenu.Separator data-testid="separator" />
 					<ContextMenu.Group data-testid="group">
-						<ContextMenu.GroupHeading data-testid="label"
-							>Stuff</ContextMenu.GroupHeading
-						>
+						<ContextMenu.GroupHeading data-testid="group-heading">
+							Stuff
+						</ContextMenu.GroupHeading>
 						<ContextMenu.Item data-testid="item">
 							<span>item</span>
 						</ContextMenu.Item>

@@ -35,7 +35,7 @@
 				<DropdownMenu.Content data-testid="content" {...contentProps}>
 					<DropdownMenu.Separator data-testid="separator" />
 					<DropdownMenu.Group data-testid="group">
-						<DropdownMenu.GroupHeading data-testid="label"
+						<DropdownMenu.GroupHeading data-testid="group-heading"
 							>Stuff</DropdownMenu.GroupHeading
 						>
 						<DropdownMenu.Item data-testid="item">
