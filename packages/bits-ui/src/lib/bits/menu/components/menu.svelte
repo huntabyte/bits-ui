@@ -10,10 +10,10 @@
 		dir = "ltr",
 		onOpenChange = noop,
 		controlledOpen = false,
-		variant = "dropdown-menu",
+		_internal_variant: variant = "dropdown-menu",
 		children,
 	}: RootProps & {
-		variant: "context-menu" | "dropdown-menu" | "menubar";
+		_internal_variant?: "context-menu" | "dropdown-menu" | "menubar";
 	} = $props();
 
 	const root = useMenuRoot({

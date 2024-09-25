@@ -18,6 +18,6 @@
 		if (!open) menuState.root.onMenuClose();
 	}}
 	dir={menuState.root.dir.current}
-	variant="menubar"
+	_internal_variant="menubar"
 	{...restProps}
 />
