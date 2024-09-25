@@ -20,7 +20,6 @@ import {
 	DialogOverlayChildSnippetProps,
 	DialogOverlayChildrenSnippetProps,
 } from "./extended-types/dialog/index.js";
-
 import {
 	childrenSnippet,
 	controlledOpenProp,
