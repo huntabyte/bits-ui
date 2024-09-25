@@ -6,7 +6,7 @@ import Palette from "phosphor-svelte/lib/Palette";
 import CalendarBlank from "phosphor-svelte/lib/CalendarBlank";
 import CableCar from "phosphor-svelte/lib/CableCar";
 import Leaf from "phosphor-svelte/lib/Leaf";
-import JoyStick from "phosphor-svelte/lib/JoyStick";
+import Joystick from "phosphor-svelte/lib/Joystick";
 import {
 	allComponentDocs,
 	allTypeHelperDocs,
@@ -149,7 +149,7 @@ export const navigation: Navigation = {
 					title: "Controlled State",
 					href: "/docs/controlled-state",
 					items: [],
-					icon: JoyStick,
+					icon: Joystick,
 				},
 			],
 		},
