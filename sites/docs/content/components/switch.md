@@ -105,6 +105,26 @@ You can also use the `onCheckedChange` prop to update local state when the switc
 </Switch.Root>
 ```
 
+### Controlled
+
+Sometimes, you may want complete control over the component's `checked` state, meaning you will be "kept in the loop" and be required to apply the state change yourself. While you will rarely need this, it's possible to do so by setting the `controlledChecked` prop to `true`.
+
+You will then be responsible for updating a local value state variable that is passed as the `checked` prop to the `Switch.Root` component.
+
+```svelte
+<script lang="ts">
+	import { Switch } from "bits-ui";
+
+	let myChecked = $state(false);
+</script>
+
+<Switch.Root controlledChecked checked={myChecked} onCheckedChange={(c) => (myChecked = c)}>
+	<!-- ... -->
+</Switch.Root>
+```
+
+See the [Controlled State](/docs/controlled-state) documentation for more information about controlled values.
+
 ## Disabled State
 
 You can disable the switch by setting the `disabled` prop to `true`.

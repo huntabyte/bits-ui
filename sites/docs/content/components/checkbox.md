@@ -138,7 +138,7 @@ You will then be responsible for updating a local value state variable that is p
 	let myChecked = $state(false);
 </script>
 
-<Checkbox.Root controlledValue checked={myChecked} onCheckedChange={(c) => (myChecked = c)}>
+<Checkbox.Root controlledChecked checked={myChecked} onCheckedChange={(c) => (myChecked = c)}>
 	<!-- ... -->
 </Checkbox.Root>
 ```

@@ -110,6 +110,26 @@ Sometimes, you may only want to perform an action or update a state when the use
 </Slider.Root>
 ```
 
+### Controlled
+
+Sometimes, you may want complete control over the component's `value` state, meaning you will be "kept in the loop" and be required to apply the state change yourself. While you will rarely need this, it's possible to do so by setting the `controlledValue` prop to `true`.
+
+You will then be responsible for updating a local value state variable that is passed as the `value` prop to the `Slider.Root` component.
+
+```svelte
+<script lang="ts">
+	import { Slider } from "bits-ui";
+
+	let myValue = $state([]);
+</script>
+
+<Slider.Root controlledValue value={myValue} onValueChange={(v) => (myValue = v)}>
+	<!-- ... -->
+</Slider.Root>
+```
+
+See the [Controlled State](/docs/controlled-state) documentation for more information about controlled states.
+
 ## Multiple Thumbs and Ticks
 
 If the `value` prop has more than one value, the slider will render multiple thumbs. You can also use the `ticks` snippet prop to render ticks at specific intervals
