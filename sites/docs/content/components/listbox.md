@@ -143,7 +143,7 @@ This setup enables toggling the value via the custom button and ensures the loca
 
 ### Change Handler
 
-You can also use the `onValueChange` prop to update local state when the Listbox's `value` state changes. This is useful when you don't want two-way binding for one reason or another, or you want to perform additional logic when the Select changes.
+You can also use the `onValueChange` prop to update local state when the Listbox's `value` state changes. This is useful when you don't want two-way binding for one reason or another, or you want to perform additional logic when the value changes.
 
 ```svelte {3,7-11}
 <script lang="ts">
