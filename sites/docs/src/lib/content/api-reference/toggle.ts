@@ -1,5 +1,6 @@
 import type { ToggleRootPropsWithoutHTML } from "bits-ui";
 import {
+	controlledPressedProp,
 	createApiSchema,
 	createBooleanProp,
 	createFunctionProp,
@@ -21,6 +22,7 @@ const root = createApiSchema<ToggleRootPropsWithoutHTML>({
 			definition: "(checked: boolean) => void",
 			description: "A callback function called when the pressed state of the toggle changes.",
 		}),
+		controlledPressed: controlledPressedProp,
 		disabled: createBooleanProp({
 			default: C.FALSE,
 			description: "Whether or not the switch is disabled.",

@@ -3,13 +3,11 @@
 	import { ModeWatcher } from "mode-watcher";
 	import { dev } from "$app/environment";
 	import { page } from "$app/stores";
-	import {
-		Metadata,
-		SidebarNav,
-		SiteHeader,
-		TableOfContents,
-		TailwindIndicator,
-	} from "$lib/components/index.js";
+	import Metadata from "$lib/components/metadata.svelte";
+	import SiteHeader from "$lib/components/site-header.svelte";
+	import TailwindIndicator from "$lib/components/tailwind-indicator.svelte";
+	import TableOfContents from "$lib/components/toc/table-of-contents.svelte";
+	import SidebarNav from "$lib/components/navigation/sidebar-nav.svelte";
 	import { navigation } from "$lib/config/index.js";
 	import { cn } from "$lib/utils/index.js";
 	import "$lib/styles/app.postcss";

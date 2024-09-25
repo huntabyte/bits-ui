@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Popover } from "bits-ui";
-	import { Code } from "$lib/components/index.js";
+	import Code from "$lib/components/markdown/code.svelte";
 
 	let { name }: { name: string } = $props();
 </script>

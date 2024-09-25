@@ -1,38 +1,16 @@
 <script lang="ts">
-	import CalendarBlank from "phosphor-svelte/lib/CalendarBlank";
-	import CodeBlock from "phosphor-svelte/lib/CodeBlock";
-	import Compass from "phosphor-svelte/lib/Compass";
-	import Palette from "phosphor-svelte/lib/Palette";
-	import Sticker from "phosphor-svelte/lib/Sticker";
-	import Leaf from "phosphor-svelte/lib/Leaf";
-	import CableCar from "phosphor-svelte/lib/CableCar";
 	import { page } from "$app/stores";
 	import type { SidebarNavItem } from "$lib/config/index.js";
 	import { cn } from "$lib/utils/index.js";
 
 	let { items = [] }: { items: SidebarNavItem[] } = $props();
-
-	const iconMap = {
-		Introduction: Sticker,
-		"Getting Started": Compass,
-		Delegation: CodeBlock,
-		Styling: Palette,
-		Dates: CalendarBlank,
-		Ref: Leaf,
-		Transitions: CableCar,
-	} as const;
-
-	const iconMapKeys = Object.keys(iconMap) as (keyof typeof iconMap)[];
-
-	function isIconMapKey(key: string): key is keyof typeof iconMap {
-		return iconMapKeys.includes(key as keyof typeof iconMap);
-	}
 </script>
 
 {#if items.length}
 	<div class="grid grid-flow-row auto-rows-max gap-0.5 pb-8 pl-4 text-sm">
 		{#each items as item, index (index)}
 			{#if item.href}
+				{@const Icon = item.icon}
 				<a
 					href={item.href}
 					class={cn(
@@ -44,10 +22,7 @@
 					target={item.external ? "_blank" : ""}
 					rel={item.external ? "noreferrer" : ""}
 				>
-					{#if isIconMapKey(item.title)}
-						{@const Icon = iconMap[item.title]}
-						<Icon size={22} />
-					{/if}
+					<Icon size={22} />
 					{item.title}
 					{#if item.label}
 						<span

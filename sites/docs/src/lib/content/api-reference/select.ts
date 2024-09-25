@@ -21,6 +21,8 @@ import { SelectPositionProp } from "./extended-types/select/index.js";
 import {
 	arrowProps,
 	childrenSnippet,
+	controlledOpenProp,
+	controlledValueProp,
 	createApiSchema,
 	createBooleanProp,
 	createDataAttrSchema,
@@ -53,6 +55,7 @@ export const root = createApiSchema<SelectRootPropsWithoutHTML>({
 			definition: OnStringValueChangeProp,
 			description: "A callback that is fired when the select menu's value changes.",
 		}),
+		controlledValue: controlledValueProp,
 		open: createBooleanProp({
 			default: C.FALSE,
 			description: "The open state of the select menu.",
@@ -62,6 +65,7 @@ export const root = createApiSchema<SelectRootPropsWithoutHTML>({
 			definition: OnOpenChangeProp,
 			description: "A callback that is fired when the select menu's open state changes.",
 		}),
+		controlledOpen: controlledOpenProp,
 		disabled: createBooleanProp({
 			default: C.FALSE,
 			description: "Whether or not the select menu is disabled.",

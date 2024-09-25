@@ -22,6 +22,8 @@ import {
 } from "./extended-types/shared/index.js";
 
 import {
+	controlledPlaceholderProp,
+	controlledValueProp,
 	createApiSchema,
 	createBooleanProp,
 	createDataAttrSchema,
@@ -91,6 +93,7 @@ export const root = createApiSchema<CalendarRootPropsWithoutHTML>({
 			definition: CalendarOnValueChangeProp,
 			description: "A function that is called when the selected date changes.",
 		}),
+		controlledValue: controlledValueProp,
 		placeholder: {
 			type: dateValueProp,
 			description:
@@ -100,6 +103,7 @@ export const root = createApiSchema<CalendarRootPropsWithoutHTML>({
 			definition: OnPlaceholderChangeProp,
 			description: "A function that is called when the placeholder date changes.",
 		}),
+		controlledPlaceholder: controlledPlaceholderProp,
 		pagedNavigation: createBooleanProp({
 			description:
 				"Whether or not to use paged navigation for the calendar. Paged navigation causes the previous and next buttons to navigate by the number of months displayed at once, rather than by one month.",

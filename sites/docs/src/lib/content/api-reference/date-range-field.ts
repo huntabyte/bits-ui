@@ -5,6 +5,8 @@ import type {
 	DateRangeFieldSegmentPropsWithoutHTML,
 } from "bits-ui";
 import {
+	controlledPlaceholderProp,
+	controlledValueProp,
 	createApiSchema,
 	createDataAttrSchema,
 	createEnumProp,
@@ -36,8 +38,10 @@ export const root = createApiSchema<DateRangeFieldRootPropsWithoutHTML>({
 			definition: DateOnRangeChangeProp,
 			description: "A function that is called when the selected date changes.",
 		}),
+		controlledValue: dateFieldRoot.props!.controlledValue,
 		placeholder: dateFieldRoot.props!.placeholder,
 		onPlaceholderChange: dateFieldRoot.props!.onPlaceholderChange,
+		controlledPlaceholder: dateFieldRoot.props!.controlledPlaceholder,
 		isDateUnavailable: dateFieldRoot.props!.isDateUnavailable,
 		minValue: dateFieldRoot.props!.minValue,
 		maxValue: dateFieldRoot.props!.maxValue,

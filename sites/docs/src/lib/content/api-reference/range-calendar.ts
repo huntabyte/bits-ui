@@ -32,8 +32,10 @@ export const root = createApiSchema<RangeCalendarRootPropsWithoutHTML>({
 	props: {
 		value: valueDateRangeProp,
 		onValueChange: valueDateRangeChangeFn,
+		controlledValue: calendarRoot.props!.controlledValue,
 		placeholder: calendarRoot.props!.placeholder,
 		onPlaceholderChange: calendarRoot.props!.onPlaceholderChange,
+		controlledPlaceholder: calendarRoot.props!.controlledPlaceholder,
 		pagedNavigation: calendarRoot.props!.pagedNavigation,
 		preventDeselect: calendarRoot.props!.preventDeselect,
 		weekdayFormat: calendarRoot.props!.weekdayFormat,

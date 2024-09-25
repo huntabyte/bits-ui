@@ -160,6 +160,24 @@ You can also use the `onOpenChange` prop to update local state when the menu's `
 </DropdownMenu.Root>
 ```
 
+### Controlled
+
+Sometimes, you may want complete control over the component's `open` state, meaning you will be "kept in the loop" and be required to apply the state change yourself. While you'll rarely need this, it's possible to do so by setting the `controlledOpen` prop to `true`.
+
+You will then be responsible for updating a local state variable that is passed as the `open` prop to the `DropdownMenu.Root` or `DropdownMenu.Sub` component(s).
+
+```svelte
+<script lang="ts">
+	import { DropdownMenu } from "bits-ui";
+
+	let myOpen = $state<string>(false);
+</script>
+
+<DropdownMenu.Root controlledOpen open={myOpen} onOpenChange={(o) => (myOpen = o)}>
+	<!-- ... -->
+</DropdownMenu.Root>
+```
+
 ## Groups
 
 To group related menu items, you can use the `DropdownMenu.Group` component along with either a `DropdownMenu.GroupHeading` or an `aria-label` attribute on the `DropdownMenu.Group` component.
@@ -181,7 +199,7 @@ To group related menu items, you can use the `DropdownMenu.Group` component alon
 </DropdownMenu.Group>
 ```
 
-### Group Label
+### Group Heading
 
 The `DropdownMenu.GroupHeading` component must be a child of either a `DropdownMenu.Group` or `DropdownMenu.RadioGroup` component. If used on its own, an error will be thrown during development.
 

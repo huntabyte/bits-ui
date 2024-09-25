@@ -17,6 +17,9 @@ import type {
 import {
 	arrowProps,
 	childrenSnippet,
+	controlledCheckedProp,
+	controlledOpenProp,
+	controlledValueProp,
 	createBooleanProp,
 	createFunctionProp,
 	createStringProp,
@@ -72,6 +75,7 @@ const props = {
 		definition: OnOpenChangeProp,
 		description: "A callback that is fired when the menu's open state changes.",
 	}),
+	controlledOpen: controlledOpenProp,
 	dir: dirProp,
 	children: childrenSnippet(),
 } satisfies PropObj<DropdownMenuRootPropsWithoutHTML>;
@@ -86,6 +90,7 @@ const subProps = {
 		definition: OnOpenChangeProp,
 		description: "A callback that is fired when the submenu's open state changes.",
 	}),
+	controlledOpen: controlledOpenProp,
 	children: childrenSnippet(),
 } satisfies PropObj<DropdownMenuSubPropsWithoutHTML>;
 
@@ -151,6 +156,7 @@ const checkboxItemProps = {
 		description:
 			"A callback that is fired when the checkbox menu item's checked state changes.",
 	}),
+	controlledChecked: controlledCheckedProp,
 	...omit(sharedItemProps, "child", "children"),
 	...withChildProps({
 		elType: "HTMLDivElement",
@@ -168,6 +174,7 @@ const radioGroupProps = {
 		definition: OnStringValueChangeProp,
 		description: "A callback that is fired when the radio group's value changes.",
 	}),
+	controlledValue: controlledValueProp,
 	...withChildProps({ elType: "HTMLDivElement" }),
 } satisfies PropObj<DropdownMenuRadioGroupPropsWithoutHTML>;
 
@@ -293,7 +300,7 @@ const groupAttrs: DataAttrs = [
 const labelAttrs: DataAttrs = [
 	{
 		name: "menu-group-heading",
-		description: "Present on the group label element.",
+		description: "Present on the group heading element.",
 	},
 ];
 

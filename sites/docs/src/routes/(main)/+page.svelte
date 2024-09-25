@@ -1,5 +1,7 @@
 <script lang="ts">
-	import { PageHeader, PageHeaderDescription, PageHeaderHeading } from "$lib/components/index.js";
+	import PageHeader from "$lib/components/page-header/page-header.svelte";
+	import PageHeaderDescription from "$lib/components/page-header/page-header-description.svelte";
+	import PageHeaderHeading from "$lib/components/page-header/page-header-heading.svelte";
 </script>
 
 <PageHeader>

@@ -112,6 +112,24 @@ You can also use the `onOpenChange` prop to update local state when the Collapsi
 </Collapsible.Root>
 ```
 
+### Controlled
+
+Sometimes, you may want complete control over the component's `open` state, meaning you will be "kept in the loop" and be required to apply the state change yourself. While you'll rarely need this, it's possible to do so by setting the `controlledOpen` prop to `true`.
+
+You will then be responsible for updating a local state variable that is passed as the `open` prop to the `Collapsible.Root` component.
+
+```svelte
+<script lang="ts">
+	import { Collapsible } from "bits-ui";
+
+	let myOpen = $state<string>(false);
+</script>
+
+<Collapsible.Root controlledOpen open={myOpen} onOpenChange={(o) => (myOpen = o)}>
+	<!-- ... -->
+</Collapsible.Root>
+```
+
 ## Svelte Transitions
 
 You can use the `forceMount` prop on the `Collapsible.Content` component to forcefully mount the content regardless of whether the collapsible is opened or not. This is useful when you want more control over the transitions when the collapsible opens and closes using something like [Svelte Transitions](https://svelte.dev/docs#transition).

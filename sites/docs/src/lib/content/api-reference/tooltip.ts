@@ -14,6 +14,7 @@ import {
 import {
 	arrowProps,
 	childrenSnippet,
+	controlledOpenProp,
 	createApiSchema,
 	createBooleanProp,
 	createEnumDataAttr,
@@ -99,6 +100,7 @@ export const root = createApiSchema<TooltipRootPropsWithoutHTML>({
 			definition: OnOpenChangeProp,
 			description: "A callback that fires when the open state changes.",
 		}),
+		controlledOpen: controlledOpenProp,
 		disabled,
 		delayDuration,
 		disableHoverableContent,

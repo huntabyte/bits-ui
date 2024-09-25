@@ -25,6 +25,8 @@ import { ComboboxScrollAlignmentProp } from "./extended-types/combobox/index.js"
 import {
 	arrowProps,
 	childrenSnippet,
+	controlledOpenProp,
+	controlledValueProp,
 	createApiSchema,
 	createBooleanProp,
 	createCSSVarSchema,
@@ -77,6 +79,7 @@ export const root = createApiSchema<ListboxRootPropsWithoutHTML>({
 			description:
 				"A callback that is fired when the listbox value changes. When the type is `'single'`, the argument will be a string. When the type is `'multiple'`, the argument will be an array of strings.",
 		}),
+		controlledValue: controlledValueProp,
 		open: createBooleanProp({
 			default: C.FALSE,
 			description: "The open state of the listbox menu.",
@@ -86,6 +89,7 @@ export const root = createApiSchema<ListboxRootPropsWithoutHTML>({
 			definition: OnOpenChangeProp,
 			description: "A callback that is fired when the listbox menu's open state changes.",
 		}),
+		controlledOpen: controlledOpenProp,
 		disabled: createBooleanProp({
 			default: C.FALSE,
 			description: "Whether or not the listbox component is disabled.",
@@ -329,12 +333,12 @@ export const group = createApiSchema<ListboxGroupPropsWithoutHTML>({
 export const groupHeading = createApiSchema<ListboxGroupHeadingPropsWithoutHTML>({
 	title: "GroupHeading",
 	description:
-		"A label for the parent listbox group. This is used to describe a group of related listbox items.",
+		"A heading for the parent listbox group. This is used to describe a group of related listbox items.",
 	props: withChildProps({ elType: "HTMLDivElement" }),
 	dataAttributes: [
 		createDataAttrSchema({
-			name: "listbox-group-label",
-			description: "Present on the group label element.",
+			name: "listbox-group-heading",
+			description: "Present on the group heading element.",
 		}),
 	],
 });

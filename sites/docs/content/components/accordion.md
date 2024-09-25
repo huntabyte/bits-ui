@@ -179,6 +179,26 @@ You can also use the `onValueChange` prop to update local state when the Accordi
 </Accordion.Root>
 ```
 
+### Controlled
+
+Sometimes, you may want complete control over the accordion's value state, meaning you will be "kept in the loop" and be required to apply the value state change yourself. While you will rarely need this, it's possible to do so by setting the `controlledValue` prop to `true`.
+
+You will then be responsible for updating a local value state variable that is passed as the `value` prop to the `Accordion.Root` component.
+
+```svelte
+<script lang="ts">
+	import { Accordion } from "bits-ui";
+
+	let myValue = $state<string>("");
+</script>
+
+<Accordion.Root controlledValue value={myValue} onValueChange={(v) => (myValue = v)}>
+	<!-- ... -->
+</Accordion.Root>
+```
+
+See the [Controlled State](/docs/controlled-state) documentation for more information about controlled values.
+
 ## Single Type
 
 Set the `type` prop to `"single"` to allow only one accordion item to be open at a time.

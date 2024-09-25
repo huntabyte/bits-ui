@@ -2,7 +2,7 @@
 	import { Popover, Tooltip } from "bits-ui";
 	import Info from "phosphor-svelte/lib/Info";
 	import type { Component } from "svelte";
-	import { Code } from "$lib/components/index.js";
+	import Code from "$lib/components/markdown/code.svelte";
 	import type { PropType } from "$lib/types/index.js";
 	import { parseTypeDef } from "$lib/utils/index.js";
 

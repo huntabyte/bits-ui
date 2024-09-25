@@ -6,6 +6,7 @@ import type {
 	ToolbarRootPropsWithoutHTML,
 } from "bits-ui";
 import {
+	controlledValueProp,
 	createApiSchema,
 	createBooleanProp,
 	createEnumProp,
@@ -95,6 +96,7 @@ const group = createApiSchema<ToolbarGroupPropsWithoutHTML>({
 			definition: union("(value: string) => void", "(value: string[]) => void"),
 			description: "A callback function called when the value changes.",
 		}),
+		controlledValue: controlledValueProp,
 		disabled: createBooleanProp({
 			default: C.FALSE,
 			description: "Whether or not the switch is disabled.",

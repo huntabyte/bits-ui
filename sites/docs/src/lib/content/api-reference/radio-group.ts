@@ -1,5 +1,6 @@
 import type { RadioGroupItemPropsWithoutHTML, RadioGroupRootPropsWithoutHTML } from "bits-ui";
 import {
+	controlledValueProp,
 	createApiSchema,
 	createBooleanProp,
 	createEnumProp,
@@ -24,6 +25,7 @@ export const root = createApiSchema<RadioGroupRootPropsWithoutHTML>({
 			definition: "(value: string | undefined) => void",
 			description: "A callback that is fired when the radio group's value changes.",
 		}),
+		controlledValue: controlledValueProp,
 		disabled: createBooleanProp({
 			default: C.FALSE,
 			description:
