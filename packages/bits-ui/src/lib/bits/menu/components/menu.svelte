@@ -3,14 +3,25 @@
 	import type { RootProps } from "../index.js";
 	import { useMenuMenu, useMenuRoot } from "../menu.svelte.js";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
+	import { noop } from "$lib/internal/callbacks.js";
 
-	let { open = $bindable(false), dir = "ltr", onOpenChange, children }: RootProps = $props();
+	let {
+		open = $bindable(false),
+		dir = "ltr",
+		onOpenChange = noop,
+		controlledOpen = false,
+		children,
+	}: RootProps = $props();
 
 	const root = useMenuRoot({
 		dir: box.with(() => dir),
 		onClose: () => {
-			open = false;
-			onOpenChange?.(false);
+			if (controlledOpen) {
+				onOpenChange(false);
+			} else {
+				open = false;
+				onOpenChange?.(false);
+			}
 		},
 	});
 
@@ -18,9 +29,11 @@
 		open: box.with(
 			() => open,
 			(v) => {
-				if (v !== open) {
+				if (controlledOpen) {
+					onOpenChange(v);
+				} else {
 					open = v;
-					onOpenChange?.(v);
+					onOpenChange(v);
 				}
 			}
 		),

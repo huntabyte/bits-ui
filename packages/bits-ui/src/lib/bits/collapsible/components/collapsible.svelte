@@ -4,6 +4,7 @@
 	import { useCollapsibleRoot } from "../collapsible.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { useId } from "$lib/internal/useId.js";
+	import { noop } from "$lib/internal/callbacks.js";
 
 	let {
 		children,
@@ -12,7 +13,8 @@
 		ref = $bindable(null),
 		open = $bindable(false),
 		disabled = false,
-		onOpenChange,
+		controlledOpen = false,
+		onOpenChange = noop,
 		...restProps
 	}: RootProps = $props();
 
@@ -20,8 +22,12 @@
 		open: box.with(
 			() => open,
 			(v) => {
-				open = v;
-				onOpenChange?.(v);
+				if (controlledOpen) {
+					onOpenChange(v);
+				} else {
+					open = v;
+					onOpenChange(v);
+				}
 			}
 		),
 		disabled: box.with(() => disabled),

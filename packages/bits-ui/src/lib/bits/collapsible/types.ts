@@ -20,6 +20,15 @@ export type CollapsibleRootPropsWithoutHTML = WithChild<{
 	 * A callback function called when the open state changes.
 	 */
 	onOpenChange?: OnChangeFn<boolean>;
+
+	/**
+	 * Whether or not the collapsible is controlled or not. If `true`, the collapsible will not
+	 * update the open state internally, instead it will call `onOpenChange` when it would have
+	 * otherwise, and it is up to you to update the `value` prop that is passed to the component.
+	 *
+	 * @defaultValue false
+	 */
+	controlledOpen?: boolean;
 }>;
 
 export type CollapsibleRootProps = CollapsibleRootPropsWithoutHTML &

@@ -31,6 +31,8 @@
 		child,
 		onStartValueChange = noop,
 		onEndValueChange = noop,
+		controlledPlaceholder = false,
+		controlledValue = false,
 		...restProps
 	}: RootProps = $props();
 
@@ -38,15 +40,26 @@
 	let endValue = $state<DateValue | undefined>(value?.end);
 
 	if (placeholder === undefined) {
-		placeholder = getDefaultDate({
+		const defaultPlaceholder = getDefaultDate({
 			granularity,
 			defaultPlaceholder: undefined,
 			defaultValue: value?.start,
 		});
+
+		if (controlledPlaceholder) {
+			onPlaceholderChange(defaultPlaceholder);
+		} else {
+			placeholder = defaultPlaceholder;
+		}
 	}
 
 	if (value === undefined) {
-		value = { start: undefined, end: undefined };
+		const defaultValue = { start: undefined, end: undefined };
+		if (controlledValue) {
+			onValueChange(defaultValue);
+		} else {
+			value = defaultValue;
+		}
 	}
 
 	const rootState = useDateRangeFieldRoot({
@@ -68,7 +81,9 @@
 		placeholder: box.with(
 			() => placeholder as DateValue,
 			(v) => {
-				if (v !== placeholder) {
+				if (controlledPlaceholder) {
+					onPlaceholderChange(v);
+				} else {
 					placeholder = v;
 					onPlaceholderChange(v);
 				}
@@ -78,7 +93,9 @@
 		value: box.with(
 			() => value as DateRange,
 			(v) => {
-				if (v !== value) {
+				if (controlledValue) {
+					onValueChange(v);
+				} else {
 					value = v;
 					onValueChange(v);
 				}

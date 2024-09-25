@@ -22,22 +22,32 @@
 		readonly = false,
 		readonlySegments = [],
 		required = false,
+		controlledPlaceholder = false,
+		controlledValue = false,
 		children,
 	}: RootProps = $props();
 
 	if (placeholder === undefined) {
-		placeholder = getDefaultDate({
+		const defaultPlaceholder = getDefaultDate({
 			granularity,
 			defaultPlaceholder: undefined,
 			defaultValue: value,
 		});
+
+		if (controlledPlaceholder) {
+			onPlaceholderChange(defaultPlaceholder);
+		} else {
+			placeholder = defaultPlaceholder;
+		}
 	}
 
 	useDateFieldRoot({
 		value: box.with(
 			() => value,
 			(v) => {
-				if (value !== v) {
+				if (controlledValue) {
+					onValueChange(v);
+				} else {
 					value = v;
 					onValueChange(v);
 				}
@@ -46,7 +56,9 @@
 		placeholder: box.with(
 			() => placeholder as DateValue,
 			(v) => {
-				if (placeholder !== v) {
+				if (controlledPlaceholder) {
+					onPlaceholderChange(v);
+				} else {
 					placeholder = v;
 					onPlaceholderChange(v);
 				}

@@ -33,7 +33,7 @@ export type BaseAccordionRootPropsWithoutHTML = {
 	 *
 	 * @defaultValue false
 	 */
-	controlled?: boolean;
+	controlledValue?: boolean;
 };
 
 export type AccordionRootSinglePropsWithoutHTML = BaseAccordionRootPropsWithoutHTML & {

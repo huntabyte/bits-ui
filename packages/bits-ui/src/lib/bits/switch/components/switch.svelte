@@ -5,6 +5,7 @@
 	import SwitchInput from "./switch-input.svelte";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { useId } from "$lib/internal/useId.js";
+	import { noop } from "$lib/internal/callbacks.js";
 
 	let {
 		child,
@@ -17,7 +18,8 @@
 		value = "on",
 		name = undefined,
 		type = "button",
-		onCheckedChange,
+		onCheckedChange = noop,
+		controlledChecked = false,
 		...restProps
 	}: RootProps = $props();
 
@@ -25,8 +27,12 @@
 		checked: box.with(
 			() => checked,
 			(v) => {
-				checked = v;
-				onCheckedChange?.(v);
+				if (controlledChecked) {
+					onCheckedChange(v);
+				} else {
+					checked = v;
+					onCheckedChange?.(v);
+				}
 			}
 		),
 		disabled: box.with(() => disabled ?? false),

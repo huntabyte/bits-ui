@@ -25,6 +25,15 @@ export type MenubarRootPropsWithoutHTML = WithChild<{
 	 * A callback that is called when the active menu changes.
 	 */
 	onValueChange?: OnChangeFn<string>;
+
+	/**
+	 * Whether or not the value state is controlled or not. If `true`, the component will not update
+	 * the value state internally, instead it will call `onValueChange` when it would have
+	 * otherwise, and it is up to you to update the `value` prop that is passed to the component.
+	 *
+	 * @defaultValue false
+	 */
+	controlledValue?: boolean;
 }>;
 
 export type MenubarRootProps = MenubarRootPropsWithoutHTML &

@@ -34,6 +34,8 @@
 		disableDaysOutsideMonth = true,
 		onStartValueChange = noop,
 		onEndValueChange = noop,
+		controlledPlaceholder = false,
+		controlledValue = false,
 		...restProps
 	}: RootProps = $props();
 
@@ -41,10 +43,25 @@
 	let endValue = $state<DateValue | undefined>(value?.end);
 
 	if (placeholder === undefined) {
-		placeholder = getDefaultDate({
+		const defaultPlaceholder = getDefaultDate({
 			defaultPlaceholder: undefined,
 			defaultValue: value?.start,
 		});
+
+		if (controlledPlaceholder) {
+			onPlaceholderChange(defaultPlaceholder);
+		} else {
+			placeholder = defaultPlaceholder;
+		}
+	}
+
+	if (value === undefined) {
+		const defaultValue = { start: undefined, end: undefined };
+		if (controlledValue) {
+			onValueChange(defaultValue);
+		} else {
+			value = defaultValue;
+		}
 	}
 
 	value === undefined && (value = { start: undefined, end: undefined });
@@ -56,31 +73,24 @@
 			(v) => (ref = v)
 		),
 		value: box.with(
-			() => (value === undefined ? { start: undefined, end: undefined } : value),
+			() => value!,
 			(v) => {
-				value = v;
-				onValueChange(v as any);
+				if (controlledValue) {
+					onValueChange(v);
+				} else {
+					value = v;
+					onValueChange(v);
+				}
 			}
 		),
 		placeholder: box.with(
-			() =>
-				placeholder === undefined
-					? getDefaultDate({
-							defaultPlaceholder: undefined,
-							defaultValue: value?.start,
-						})
-					: placeholder,
+			() => placeholder!,
 			(v) => {
-				if (placeholder === undefined) {
-					placeholder = getDefaultDate({
-						defaultPlaceholder: undefined,
-						defaultValue: value?.start,
-					});
-					onPlaceholderChange(placeholder);
-				}
-				if (v !== placeholder) {
+				if (controlledPlaceholder) {
+					onPlaceholderChange(v);
+				} else {
 					placeholder = v;
-					onPlaceholderChange(v as any);
+					onPlaceholderChange(v);
 				}
 			}
 		),

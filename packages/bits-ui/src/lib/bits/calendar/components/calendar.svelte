@@ -34,6 +34,8 @@
 		type,
 		disableDaysOutsideMonth = true,
 		initialFocus = false,
+		controlledValue = false,
+		controlledPlaceholder = false,
 		...restProps
 	}: RootProps = $props();
 
@@ -70,7 +72,9 @@
 		placeholder: box.with(
 			() => placeholder as DateValue,
 			(v) => {
-				if (placeholder !== v) {
+				if (controlledPlaceholder) {
+					onPlaceholderChange(v as DateValue);
+				} else {
 					placeholder = v;
 					onPlaceholderChange(v as DateValue);
 				}
@@ -80,8 +84,12 @@
 		value: box.with(
 			() => value,
 			(v) => {
-				value = v;
-				onValueChange(v as any);
+				if (controlledValue) {
+					onValueChange(v as any);
+				} else {
+					value = v;
+					onValueChange(v as any);
+				}
 			}
 		),
 		type: box.with(() => type),

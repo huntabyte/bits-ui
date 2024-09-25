@@ -17,8 +17,19 @@
 		loop = false,
 		scrollAlignment = "nearest",
 		required = false,
+		controlledOpen = false,
+		controlledValue = false,
 		children,
 	}: RootProps = $props();
+
+	if (value === undefined) {
+		const defaultValue = type === "single" ? "" : [];
+		if (controlledValue) {
+			onValueChange(defaultValue as any);
+		} else {
+			value = defaultValue;
+		}
+	}
 
 	value === undefined && (value = type === "single" ? "" : []);
 
@@ -27,8 +38,12 @@
 		value: box.with(
 			() => value!,
 			(v) => {
-				value = v;
-				onValueChange(v as any);
+				if (controlledValue) {
+					onValueChange(v as any);
+				} else {
+					value = v;
+					onValueChange(v as any);
+				}
 			}
 		) as WritableBox<string> | WritableBox<string[]>,
 		disabled: box.with(() => disabled),
@@ -36,8 +51,12 @@
 		open: box.with(
 			() => open,
 			(v) => {
-				open = v;
-				onOpenChange(v);
+				if (controlledOpen) {
+					onOpenChange(v);
+				} else {
+					open = v;
+					onOpenChange(v);
+				}
 			}
 		),
 		loop: box.with(() => loop),

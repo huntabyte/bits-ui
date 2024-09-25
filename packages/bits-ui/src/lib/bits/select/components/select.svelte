@@ -4,18 +4,21 @@
 	import { useSelectRoot } from "../select.svelte.js";
 	import SelectNative from "./select-native.svelte";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
+	import { noop } from "$lib/internal/callbacks.js";
 
 	let {
 		open = $bindable(false),
 		value = $bindable(""),
 		children,
-		onOpenChange,
-		onValueChange,
+		onOpenChange = noop,
+		onValueChange = noop,
 		name = undefined,
 		required = false,
 		disabled = false,
 		autocomplete = undefined,
 		dir = "ltr",
+		controlledOpen = false,
+		controlledValue = false,
 		form,
 	}: RootProps = $props();
 
@@ -23,7 +26,9 @@
 		open: box.with(
 			() => open,
 			(v) => {
-				if (open !== v) {
+				if (controlledOpen) {
+					onOpenChange(v);
+				} else {
 					open = v;
 					onOpenChange?.(v);
 				}
@@ -32,7 +37,9 @@
 		value: box.with(
 			() => value,
 			(v) => {
-				if (value !== v) {
+				if (controlledValue) {
+					onValueChange(v);
+				} else {
 					value = v;
 					onValueChange?.(v);
 				}

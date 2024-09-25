@@ -3,15 +3,17 @@
 	import type { RootProps } from "../index.js";
 	import { useTooltipRoot } from "../tooltip.svelte.js";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
+	import { noop } from "$lib/internal/callbacks.js";
 
 	let {
 		open = $bindable(false),
-		onOpenChange,
+		onOpenChange = noop,
 		disabled = false,
 		delayDuration,
 		disableCloseOnTriggerClick = false,
 		disableHoverableContent,
 		ignoreNonKeyboardFocus = false,
+		controlledOpen = false,
 		children,
 	}: RootProps = $props();
 
@@ -19,9 +21,11 @@
 		open: box.with(
 			() => open,
 			(v) => {
-				if (v !== open) {
+				if (controlledOpen) {
+					onOpenChange(v);
+				} else {
 					open = v;
-					onOpenChange?.(v);
+					onOpenChange(v);
 				}
 			}
 		),

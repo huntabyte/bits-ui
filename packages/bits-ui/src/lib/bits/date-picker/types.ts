@@ -238,6 +238,35 @@ export type DatePickerRootPropsWithoutHTML = WithChildren<{
 	 * Whether to focus a date when the picker is first opened.
 	 */
 	initialFocus?: boolean;
+
+	/**
+	 * Whether or not the value is controlled or not. If `true`, the component will not update
+	 * the value state internally, instead it will call `onValueChange` when it would have
+	 * otherwise, and it is up to you to update the `value` prop that is passed to the component.
+	 *
+	 * @defaultValue false
+	 */
+	controlledValue?: boolean;
+
+	/**
+	 * Whether or not the placeholder is controlled or not. If `true`, the component will not update
+	 * the placeholder state internally, instead it will call `onPlaceholderChange` when it would
+	 * have otherwise, and it is up to you to update the `placeholder` prop that is passed to the
+	 * component.
+	 *
+	 * @defaultValue false
+	 */
+	controlledPlaceholder?: boolean;
+
+	/**
+	 * Whether or not the open state is controlled or not. If `true`, the component will not update
+	 * the open state internally, instead it will call `onOpenChange` when it would
+	 * have otherwise, and it is up to you to update the `open` prop that is passed to the
+	 * component.
+	 *
+	 * @defaultValue false
+	 */
+	controlledOpen?: boolean;
 }>;
 
 export type DatePickerRootProps = DatePickerRootPropsWithoutHTML;

@@ -39,20 +39,33 @@
 		numberOfMonths = 1,
 		closeOnDateSelect = true,
 		initialFocus = false,
+		controlledPlaceholder = false,
+		controlledValue = false,
+		controlledOpen = false,
 		children,
 	}: RootProps = $props();
 
 	if (placeholder === undefined) {
-		placeholder = getDefaultDate({
+		const defaultPlaceholder = getDefaultDate({
 			granularity,
 			defaultPlaceholder: undefined,
 			defaultValue: value,
 		});
+
+		if (controlledPlaceholder) {
+			onPlaceholderChange(defaultPlaceholder);
+		} else {
+			placeholder = defaultPlaceholder;
+		}
 	}
 
 	function onDateSelect() {
 		if (closeOnDateSelect) {
-			open = false;
+			if (controlledOpen) {
+				onOpenChange(false);
+			} else {
+				open = false;
+			}
 		}
 	}
 
@@ -60,7 +73,9 @@
 		open: box.with(
 			() => open,
 			(v) => {
-				if (open !== v) {
+				if (controlledOpen) {
+					onOpenChange(v);
+				} else {
 					open = v;
 					onOpenChange(v);
 				}
@@ -69,7 +84,9 @@
 		value: box.with(
 			() => value,
 			(v) => {
-				if (value !== v) {
+				if (controlledValue) {
+					onValueChange(v);
+				} else {
 					value = v;
 					onValueChange(v);
 				}
@@ -78,7 +95,9 @@
 		placeholder: box.with(
 			() => placeholder as DateValue,
 			(v) => {
-				if (placeholder !== v) {
+				if (controlledPlaceholder) {
+					onPlaceholderChange(v as DateValue);
+				} else {
 					placeholder = v;
 					onPlaceholderChange(v as DateValue);
 				}

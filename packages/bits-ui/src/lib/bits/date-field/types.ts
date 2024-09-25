@@ -1,12 +1,12 @@
 import type { DateValue } from "@internationalized/date";
 import type { Snippet } from "svelte";
-import type { SegmentPart } from "$lib/shared/index.js";
+import type { SegmentPart, WithChildren } from "$lib/shared/index.js";
 import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
 import type { PrimitiveDivAttributes, PrimitiveSpanAttributes } from "$lib/shared/attributes.js";
 import type { EditableSegmentPart } from "$lib/shared/date/field/types.js";
 import type { DateMatcher, Granularity } from "$lib/shared/date/types.js";
 
-export type DateFieldRootPropsWithoutHTML = {
+export type DateFieldRootPropsWithoutHTML = WithChildren<{
 	/**
 	 * The value of the date field.
 	 *
@@ -123,8 +123,25 @@ export type DateFieldRootPropsWithoutHTML = {
 	 */
 	required?: boolean;
 
-	children?: Snippet;
-};
+	/**
+	 * Whether or not the value is controlled or not. If `true`, the component will not update
+	 * the value state internally, instead it will call `onValueChange` when it would have
+	 * otherwise, and it is up to you to update the `value` prop that is passed to the component.
+	 *
+	 * @defaultValue false
+	 */
+	controlledValue?: boolean;
+
+	/**
+	 * Whether or not the placeholder is controlled or not. If `true`, the component will not update
+	 * the placeholder state internally, instead it will call `onPlaceholderChange` when it would
+	 * have otherwise, and it is up to you to update the `value` prop that is passed to the
+	 * component.
+	 *
+	 * @defaultValue false
+	 */
+	controlledPlaceholder?: boolean;
+}>;
 
 export type DateFieldRootProps = DateFieldRootPropsWithoutHTML;
 
