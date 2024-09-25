@@ -8,6 +8,7 @@
 
 	let {
 		checked = $bindable(false),
+		ref = $bindable(null),
 		onCheckedChange,
 		children,
 		disabled = false,
@@ -15,7 +16,7 @@
 		name = undefined,
 		value = "on",
 		id = useId(),
-		ref = $bindable(null),
+		controlledChecked = false,
 		child,
 		...restProps
 	}: RootProps = $props();
@@ -24,7 +25,9 @@
 		checked: box.with(
 			() => checked,
 			(v) => {
-				if (checked !== v) {
+				if (controlledChecked) {
+					onCheckedChange?.(v);
+				} else {
 					checked = v;
 					onCheckedChange?.(v);
 				}

@@ -4,6 +4,7 @@
 	import { usePaginationRoot } from "../pagination.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { useId } from "$lib/internal/useId.js";
+	import { noop } from "$lib/internal/callbacks.js";
 
 	let {
 		id = useId(),
@@ -12,9 +13,10 @@
 		page = $bindable(1),
 		ref = $bindable(null),
 		siblingCount = 1,
-		onPageChange,
+		onPageChange = noop,
 		loop = false,
 		orientation = "horizontal",
+		controlledPage = false,
 		child,
 		children,
 		...restProps
@@ -27,8 +29,12 @@
 		page: box.with(
 			() => page,
 			(v) => {
-				page = v;
-				onPageChange?.(v);
+				if (controlledPage) {
+					onPageChange(v);
+				} else {
+					page = v;
+					onPageChange?.(v);
+				}
 			}
 		),
 		loop: box.with(() => loop),

@@ -23,6 +23,15 @@ export type MenuRootPropsWithoutHTML = WithChildren<{
 	 * @defaultValue "ltr"
 	 */
 	dir?: Direction;
+
+	/**
+	 * Whether or not the open state is controlled or not. If `true`, the component will not update
+	 * the open state internally, instead it will call `onOpenChange` when it would have
+	 * otherwise, and it is up to you to update the `open` prop that is passed to the component.
+	 *
+	 * @defaultValue false
+	 */
+	controlledOpen?: boolean;
 }>;
 
 export type MenuRootProps = MenuRootPropsWithoutHTML;
@@ -97,6 +106,16 @@ export type MenuCheckboxItemPropsWithoutHTML =
 		 * A callback that is fired when the checked state changes.
 		 */
 		onCheckedChange?: OnChangeFn<boolean | "indeterminate">;
+
+		/**
+		 * Whether or not the checked state is controlled or not. If `true`, the component will not
+		 * update the checked state internally, instead it will call `onCheckedChange` when it
+		 * would have otherwise, and it is up to you to update the `checked` prop that is passed
+		 * to the component.
+		 *
+		 * @defaultValue false
+		 */
+		controlledChecked?: boolean;
 	};
 
 export type MenuCheckboxItemProps = MenuCheckboxItemPropsWithoutHTML &
@@ -124,6 +143,15 @@ export type MenuSubPropsWithoutHTML = WithChildren<{
 	 * A callback that is called when the menu is opened or closed.
 	 */
 	onOpenChange?: OnChangeFn<boolean>;
+
+	/**
+	 * Whether or not the open state is controlled or not. If `true`, the component will not update
+	 * the open state internally, instead it will call `onOpenChange` when it would have
+	 * otherwise, and it is up to you to update the `open` prop that is passed to the component.
+	 *
+	 * @defaultValue false
+	 */
+	controlledOpen?: boolean;
 }>;
 
 export type MenuSubContentPropsWithoutHTML = Expand<
@@ -163,6 +191,15 @@ export type MenuRadioGroupPropsWithoutHTML = WithChild<{
 	 * A callback that is fired when the selected radio item changes.
 	 */
 	onValueChange?: OnChangeFn<string>;
+
+	/**
+	 * Whether or not the value state is controlled or not. If `true`, the component will not update
+	 * the value state internally, instead it will call `onValueChange` when it would have
+	 * otherwise, and it is up to you to update the `value` prop that is passed to the component.
+	 *
+	 * @defaultValue false
+	 */
+	controlledValue?: boolean;
 }>;
 
 export type MenuRadioGroupProps = MenuRadioGroupPropsWithoutHTML &

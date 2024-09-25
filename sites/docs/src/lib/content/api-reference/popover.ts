@@ -6,9 +6,11 @@ import type {
 	PopoverRootPropsWithoutHTML,
 	PopoverTriggerPropsWithoutHTML,
 } from "bits-ui";
+import { OnOpenChangeProp } from "./extended-types/shared/index.js";
 import {
 	arrowProps,
 	childrenSnippet,
+	controlledOpenProp,
 	createApiSchema,
 	createBooleanProp,
 	createEnumDataAttr,
@@ -41,9 +43,10 @@ export const root = createApiSchema<PopoverRootPropsWithoutHTML>({
 			bindable: true,
 		}),
 		onOpenChange: createFunctionProp({
-			definition: "(open: boolean) => void",
+			definition: OnOpenChangeProp,
 			description: "A callback that fires when the open state changes.",
 		}),
+		controlledOpen: controlledOpenProp,
 		children: childrenSnippet(),
 	},
 });

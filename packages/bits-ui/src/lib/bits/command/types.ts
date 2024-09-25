@@ -69,11 +69,20 @@ export type CommandRootPropsWithoutHTML = WithChild<{
 	disablePointerSelection?: boolean;
 
 	/**
-	 * Set the `false` to disable the option to use ctrl+n/j/p/k (vim style) navigation.
+	 * Set this prop to `false` to disable the option to use ctrl+n/j/p/k (vim style) navigation.
 	 *
 	 * @defaultValue true
 	 */
 	vimBindings?: boolean;
+
+	/**
+	 * Whether or not the command is controlled or not. If `true`, the command will not update
+	 * the value state internally, instead it will call `onValueChange` when it would have
+	 * otherwise, and it is up to you to update the `value` prop that is passed to the component.
+	 *
+	 * @defaultValue false
+	 */
+	controlledValue?: boolean;
 }>;
 
 export type CommandRootProps = CommandRootPropsWithoutHTML &

@@ -184,6 +184,24 @@ You can also use the `onOpenChange` prop to update local state when the menu's `
 </ContextMenu.Root>
 ```
 
+### Controlled
+
+Sometimes, you may want complete control over the component's `open` state, meaning you will be "kept in the loop" and be required to apply the state change yourself. While you'll rarely need this, it's possible to do so by setting the `controlledOpen` prop to `true`.
+
+You will then be responsible for updating a local state variable that is passed as the `open` prop to the `ContextMenu.Root` or `ContextMenu.Sub` component(s).
+
+```svelte
+<script lang="ts">
+	import { ContextMenu } from "bits-ui";
+
+	let myOpen = $state<string>(false);
+</script>
+
+<ContextMenu.Root controlledOpen open={myOpen} onOpenChange={(o) => (myOpen = o)}>
+	<!-- ... -->
+</ContextMenu.Root>
+```
+
 ## Checkbox Items
 
 You can use the `ContextMenu.CheckboxItem` component to create a `menuitemcheckbox` element to add checkbox functionality to menu items.
@@ -233,7 +251,7 @@ You can combine the `ContextMenu.RadioGroup` and `ContextMenu.RadioItem` compone
 </ContextMenu.RadioGroup>
 ```
 
-See the [RadioGroup](#contextmenuradiogroup) and [RadioItem](#contextmenuradiaitem) APIs for more information.
+See the [RadioGroup](#contextmenuradiogroup) and [RadioItem](#contextmenuradioitem) APIs for more information.
 
 ## Nested Menus
 

@@ -15,6 +15,7 @@ import type {
 import { NoopProp, OnStringValueChangeProp } from "./extended-types/shared/index.js";
 import { CommandFilterProp } from "./extended-types/command/index.js";
 import {
+	controlledValueProp,
 	createApiSchema,
 	createBooleanProp,
 	createCSSVarSchema,
@@ -40,6 +41,7 @@ const root = createApiSchema<CommandRootPropsWithoutHTML>({
 			definition: OnStringValueChangeProp,
 			description: "A callback that is fired when the command value changes.",
 		}),
+		controlledValue: controlledValueProp,
 		label: createStringProp({
 			description:
 				"An accessible label for the command menu. This is not visible and is only used for screen readers.",

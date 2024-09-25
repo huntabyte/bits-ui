@@ -4,16 +4,18 @@
 	import { useToggleRoot } from "../toggle.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { useId } from "$lib/internal/useId.js";
+	import { noop } from "$lib/internal/callbacks.js";
 
 	let {
-		child,
-		children,
 		ref = $bindable(null),
 		id = useId(),
 		pressed = $bindable(false),
-		onPressedChange,
+		onPressedChange = noop,
 		disabled = false,
 		type = "button",
+		controlledPressed = false,
+		children,
+		child,
 		...restProps
 	}: RootProps = $props();
 
@@ -21,9 +23,11 @@
 		pressed: box.with(
 			() => pressed,
 			(v) => {
-				if (pressed !== v) {
+				if (controlledPressed) {
+					onPressedChange(v);
+				} else {
 					pressed = v;
-					onPressedChange?.(v);
+					onPressedChange(v);
 				}
 			}
 		),

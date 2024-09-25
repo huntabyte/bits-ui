@@ -4,20 +4,29 @@
 	import { useToolbarGroup } from "../toolbar.svelte.js";
 	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { noop } from "$lib/internal/callbacks.js";
 
 	let {
-		child,
-		children,
-		ref = $bindable(null),
 		id = useId(),
+		ref = $bindable(null),
 		value = $bindable(),
-		onValueChange,
+		onValueChange = noop,
 		type,
 		disabled = false,
+		controlledValue = false,
+		child,
+		children,
 		...restProps
 	}: GroupProps = $props();
 
-	value === undefined && (value = type === "single" ? "" : []);
+	if (value === undefined) {
+		const defaultValue = type === "single" ? "" : [];
+		if (controlledValue) {
+			onValueChange(defaultValue as any);
+		} else {
+			value = defaultValue;
+		}
+	}
 
 	const groupState = useToolbarGroup({
 		id: box.with(() => id),
@@ -26,8 +35,12 @@
 		value: box.with(
 			() => value!,
 			(v) => {
-				value = v;
-				onValueChange?.(v as any);
+				if (controlledValue) {
+					onValueChange(v as any);
+				} else {
+					value = v;
+					onValueChange(v as any);
+				}
 			}
 		) as WritableBox<string> | WritableBox<string[]>,
 		ref: box.with(

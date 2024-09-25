@@ -19,6 +19,7 @@ import {
 
 import {
 	childrenSnippet,
+	controlledOpenProp,
 	createApiSchema,
 	createBooleanProp,
 	createFunctionProp,
@@ -47,6 +48,7 @@ const root = createApiSchema<AlertDialogRootPropsWithoutHTML>({
 			definition: OnOpenChangeProp,
 			description: "A callback function called when the open state changes.",
 		}),
+		controlledOpen: controlledOpenProp,
 		children: childrenSnippet(),
 	},
 });

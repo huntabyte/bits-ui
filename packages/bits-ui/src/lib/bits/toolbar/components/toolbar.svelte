@@ -6,12 +6,12 @@
 	import { useId } from "$lib/internal/useId.js";
 
 	let {
-		child,
-		children,
 		ref = $bindable(null),
 		id = useId(),
 		orientation = "horizontal",
 		loop = true,
+		child,
+		children,
 		...restProps
 	}: RootProps = $props();
 

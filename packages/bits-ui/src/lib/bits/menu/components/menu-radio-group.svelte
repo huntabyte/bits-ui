@@ -13,6 +13,7 @@
 		ref = $bindable(null),
 		value = $bindable(""),
 		onValueChange = noop,
+		controlledValue = false,
 		...restProps
 	}: RadioGroupProps = $props();
 
@@ -20,7 +21,9 @@
 		value: box.with(
 			() => value,
 			(v) => {
-				if (value !== v) {
+				if (controlledValue) {
+					onValueChange(v);
+				} else {
 					value = v;
 					onValueChange(v);
 				}

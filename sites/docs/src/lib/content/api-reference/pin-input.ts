@@ -9,6 +9,7 @@ import {
 } from "./extended-types/pin-input/index.js";
 import { OnStringValueChangeProp } from "./extended-types/shared/index.js";
 import {
+	controlledValueProp,
 	createApiSchema,
 	createBooleanProp,
 	createDataAttrSchema,
@@ -33,6 +34,7 @@ const root = createApiSchema<PinInputRootPropsWithoutHTML>({
 			description: "A callback function that is called when the value of the input changes.",
 			definition: OnStringValueChangeProp,
 		}),
+		controlledValue: controlledValueProp,
 		disabled: createBooleanProp({
 			default: C.FALSE,
 			description: "Whether or not the pin input is disabled.",

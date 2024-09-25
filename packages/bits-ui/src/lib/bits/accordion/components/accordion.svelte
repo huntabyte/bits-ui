@@ -4,6 +4,7 @@
 	import type { RootProps } from "../index.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { useId } from "$lib/internal/useId.js";
+	import { noop } from "$lib/internal/callbacks.js";
 
 	let {
 		disabled = false,
@@ -13,9 +14,10 @@
 		value = $bindable(),
 		ref = $bindable(null),
 		id = useId(),
-		onValueChange,
+		onValueChange = noop,
 		loop = true,
 		orientation = "vertical",
+		controlledValue = false,
 		...restProps
 	}: RootProps = $props();
 
@@ -26,8 +28,12 @@
 		value: box.with(
 			() => value!,
 			(v) => {
-				value = v;
-				onValueChange?.(v as any);
+				if (controlledValue) {
+					onValueChange(v as any);
+				} else {
+					value = v;
+					onValueChange(v as any);
+				}
 			}
 		) as WritableBox<string> | WritableBox<string[]>,
 		id: box.with(() => id),

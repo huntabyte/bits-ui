@@ -20,6 +20,9 @@ import {
 import { input as dateFieldInput, root as dateFieldRoot, label, segment } from "./date-field.js";
 import {
 	childrenSnippet,
+	controlledOpenProp,
+	controlledPlaceholderProp,
+	controlledValueProp,
 	createApiSchema,
 	createBooleanProp,
 	createFunctionProp,
@@ -34,6 +37,7 @@ export const root = createApiSchema<DatePickerRootPropsWithoutHTML>({
 	props: {
 		value: calendarRoot.props!.value,
 		onValueChange: calendarRoot.props!.onValueChange,
+		controlledValue: controlledValueProp,
 		open: createBooleanProp({
 			default: C.FALSE,
 			description: "The open state of the popover content.",
@@ -43,7 +47,10 @@ export const root = createApiSchema<DatePickerRootPropsWithoutHTML>({
 			definition: "(open: boolean) => void",
 			description: "A callback that fires when the open state changes.",
 		}),
-
+		controlledOpen: controlledOpenProp,
+		placeholder: calendarRoot.props!.placeholder,
+		onPlaceholderChange: calendarRoot.props!.onPlaceholderChange,
+		controlledPlaceholder: controlledPlaceholderProp,
 		isDateUnavailable: dateFieldRoot.props!.isDateUnavailable,
 		isDateDisabled: calendarRoot.props!.isDateDisabled,
 		required: dateFieldRoot.props!.required,
@@ -54,8 +61,6 @@ export const root = createApiSchema<DatePickerRootPropsWithoutHTML>({
 			default: C.TRUE,
 			description: "Whether or not to close the popover when a date is selected.",
 		},
-		placeholder: calendarRoot.props!.placeholder,
-		onPlaceholderChange: calendarRoot.props!.onPlaceholderChange,
 		pagedNavigation: calendarRoot.props!.pagedNavigation,
 		preventDeselect: calendarRoot.props!.preventDeselect,
 		weekStartsOn: calendarRoot.props!.weekStartsOn,

@@ -170,6 +170,24 @@ You can also use the `onOpenChange` prop to update local state when the Dialog's
 </Dialog.Root>
 ```
 
+### Controlled
+
+Sometimes, you may want complete control over the dialog's `open` state, meaning you will be "kept in the loop" and be required to apply the state change yourself. While you'll rarely need this, it's possible to do so by setting the `controlledOpen` prop to `true`.
+
+You will then be responsible for updating a local state variable that is passed as the `open` prop to the `Dialog.Root` component.
+
+```svelte
+<script lang="ts">
+	import { Dialog } from "bits-ui";
+
+	let myOpen = $state<string>(false);
+</script>
+
+<Dialog.Root controlledOpen open={myOpen} onOpenChange={(o) => (myOpen = o)}>
+	<!-- ... -->
+</Dialog.Root>
+```
+
 ## Managing Focus
 
 ### Focus Trap

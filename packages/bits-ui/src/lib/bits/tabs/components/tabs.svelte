@@ -4,18 +4,20 @@
 	import { useTabsRoot } from "../tabs.svelte.js";
 	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { noop } from "$lib/internal/callbacks.js";
 
 	let {
-		children,
-		child,
-		ref = $bindable(null),
 		id = useId(),
+		ref = $bindable(null),
 		value = $bindable(""),
-		onValueChange,
+		onValueChange = noop,
 		orientation = "horizontal",
 		loop = true,
 		activationMode = "automatic",
 		disabled = false,
+		controlledValue = false,
+		children,
+		child,
 		...restProps
 	}: RootProps = $props();
 
@@ -24,9 +26,11 @@
 		value: box.with(
 			() => value,
 			(v) => {
-				if (value !== v) {
+				if (controlledValue) {
+					onValueChange(v);
+				} else {
 					value = v;
-					onValueChange?.(v);
+					onValueChange(v);
 				}
 			}
 		),

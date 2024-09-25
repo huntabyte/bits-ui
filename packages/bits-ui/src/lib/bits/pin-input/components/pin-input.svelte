@@ -22,6 +22,7 @@
 		disabled = false,
 		value = $bindable(""),
 		onValueChange = noop,
+		controlledValue = false,
 		...restProps
 	}: RootProps = $props();
 
@@ -42,7 +43,9 @@
 		value: box.with(
 			() => value,
 			(v) => {
-				if (value !== v) {
+				if (controlledValue) {
+					onValueChange(v);
+				} else {
 					value = v;
 					onValueChange(v);
 				}

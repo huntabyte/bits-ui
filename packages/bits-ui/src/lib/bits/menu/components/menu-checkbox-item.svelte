@@ -15,6 +15,7 @@
 		onCheckedChange = noop,
 		disabled = false,
 		onSelect = noop,
+		controlledChecked = false,
 		...restProps
 	}: CheckboxItemProps = $props();
 
@@ -22,7 +23,9 @@
 		checked: box.with(
 			() => checked,
 			(v) => {
-				if (checked !== v) {
+				if (controlledChecked) {
+					onCheckedChange(v);
+				} else {
 					checked = v;
 					onCheckedChange(v);
 				}

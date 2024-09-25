@@ -5,6 +5,7 @@
 	import RadioGroupInput from "./radio-group-input.svelte";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { useId } from "$lib/internal/useId.js";
+	import { noop } from "$lib/internal/callbacks.js";
 
 	let {
 		disabled = false,
@@ -17,7 +18,8 @@
 		name = undefined,
 		required = false,
 		id = useId(),
-		onValueChange,
+		onValueChange = noop,
+		controlledValue = false,
 		...restProps
 	}: RootProps = $props();
 
@@ -31,8 +33,12 @@
 		value: box.with(
 			() => value,
 			(v) => {
-				value = v;
-				onValueChange?.(v);
+				if (controlledValue) {
+					onValueChange(v);
+				} else {
+					value = v;
+					onValueChange?.(v);
+				}
 			}
 		),
 		ref: box.with(

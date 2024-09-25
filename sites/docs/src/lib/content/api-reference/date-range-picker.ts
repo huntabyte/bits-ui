@@ -30,6 +30,10 @@ const root = createApiSchema<DateRangePickerRootPropsWithoutHTML>({
 	props: {
 		value: rangeFieldRoot.props!.value,
 		onValueChange: rangeFieldRoot.props!.onValueChange,
+		controlledValue: rangeFieldRoot.props!.controlledValue,
+		placeholder: rangeFieldRoot.props!.placeholder,
+		onPlaceholderChange: rangeFieldRoot.props!.onPlaceholderChange,
+		controlledPlaceholder: rangeFieldRoot.props!.controlledPlaceholder,
 		readonlySegments: rangeFieldRoot.props!.readonlySegments,
 		isDateUnavailable: rangeFieldRoot.props!.isDateUnavailable,
 		minValue: rangeFieldRoot.props!.minValue,
@@ -41,8 +45,6 @@ const root = createApiSchema<DateRangePickerRootPropsWithoutHTML>({
 		disabled: rangeFieldRoot.props!.disabled,
 		readonly: rangeFieldRoot.props!.readonly,
 		required: rangeFieldRoot.props!.required,
-		placeholder: rangeFieldRoot.props!.placeholder,
-		onPlaceholderChange: rangeFieldRoot.props!.onPlaceholderChange,
 		closeOnRangeSelect: createBooleanProp({
 			default: C.TRUE,
 			description: "Whether or not to close the popover when a date range is selected.",
@@ -58,6 +60,7 @@ const root = createApiSchema<DateRangePickerRootPropsWithoutHTML>({
 		numberOfMonths: rangeCalendarRoot.props!.numberOfMonths,
 		open: datePickerRoot.props!.open,
 		onOpenChange: datePickerRoot.props!.onOpenChange,
+		controlledOpen: datePickerRoot.props!.controlledOpen,
 		onEndValueChange: rangeFieldRoot.props!.onEndValueChange,
 		onStartValueChange: rangeFieldRoot.props!.onStartValueChange,
 		...withChildProps({ elType: "HTMLDivElement" }),

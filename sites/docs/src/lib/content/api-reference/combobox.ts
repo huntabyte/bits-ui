@@ -23,6 +23,8 @@ import { ComboboxScrollAlignmentProp } from "./extended-types/combobox/index.js"
 import {
 	arrowProps,
 	childrenSnippet,
+	controlledOpenProp,
+	controlledValueProp,
 	createApiSchema,
 	createBooleanProp,
 	createCSSVarSchema,
@@ -75,6 +77,7 @@ export const root = createApiSchema<ComboboxRootPropsWithoutHTML>({
 			description:
 				"A callback that is fired when the combobox value changes. When the type is `'single'`, the argument will be a string. When the type is `'multiple'`, the argument will be an array of strings.",
 		}),
+		controlledValue: controlledValueProp,
 		open: createBooleanProp({
 			default: C.FALSE,
 			description: "The open state of the combobox menu.",
@@ -84,6 +87,7 @@ export const root = createApiSchema<ComboboxRootPropsWithoutHTML>({
 			definition: OnOpenChangeProp,
 			description: "A callback that is fired when the combobox menu's open state changes.",
 		}),
+		controlledOpen: controlledOpenProp,
 		disabled: createBooleanProp({
 			default: C.FALSE,
 			description: "Whether or not the combobox component is disabled.",
@@ -315,8 +319,8 @@ export const groupHeading = createApiSchema<ComboboxGroupHeadingPropsWithoutHTML
 	props: withChildProps({ elType: "HTMLDivElement" }),
 	dataAttributes: [
 		createDataAttrSchema({
-			name: "combobox-group-label",
-			description: "Present on the group label element.",
+			name: "combobox-group-heading",
+			description: "Present on the group heading element.",
 		}),
 	],
 });

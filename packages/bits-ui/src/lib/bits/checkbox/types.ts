@@ -49,6 +49,16 @@ export type CheckboxRootPropsWithoutHTML = WithChild<
 		 * A callback function called when the checked state changes.
 		 */
 		onCheckedChange?: OnChangeFn<boolean | "indeterminate">;
+
+		/**
+		 * Whether or not the checkbox is controlled or not. If `true`, the checkbox will not update
+		 * the checked state internally, instead it will call `onCheckedChange` when it would have
+		 * otherwise, and it is up to you to update the `checked` prop that is passed to the
+		 * component.
+		 *
+		 * @defaultValue false
+		 */
+		controlledChecked?: boolean;
 	},
 	CheckboxRootSnippetProps
 >;

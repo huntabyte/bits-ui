@@ -1,3 +1,12 @@
+import type { Component } from "svelte";
+import Sticker from "phosphor-svelte/lib/Sticker";
+import CodeBlock from "phosphor-svelte/lib/CodeBlock";
+import Compass from "phosphor-svelte/lib/Compass";
+import Palette from "phosphor-svelte/lib/Palette";
+import CalendarBlank from "phosphor-svelte/lib/CalendarBlank";
+import CableCar from "phosphor-svelte/lib/CableCar";
+import Leaf from "phosphor-svelte/lib/Leaf";
+import Joystick from "phosphor-svelte/lib/Joystick";
 import {
 	allComponentDocs,
 	allTypeHelperDocs,
@@ -10,6 +19,7 @@ export type NavItem = {
 	disabled?: boolean;
 	external?: boolean;
 	label?: string;
+	icon?: Component;
 };
 
 export type SidebarNavItem = NavItem & {
@@ -97,36 +107,49 @@ export const navigation: Navigation = {
 					title: "Introduction",
 					href: "/docs/introduction",
 					items: [],
+					icon: Sticker,
 				},
 				{
 					title: "Getting Started",
 					href: "/docs/getting-started",
 					items: [],
+					icon: Compass,
 				},
 				{
 					title: "Delegation",
 					href: "/docs/delegation",
 					items: [],
+					icon: CodeBlock,
 				},
 				{
 					title: "Ref",
 					href: "/docs/ref",
 					items: [],
+					icon: Leaf,
 				},
 				{
 					title: "Transitions",
 					href: "/docs/transitions",
 					items: [],
+					icon: CableCar,
 				},
 				{
 					title: "Styling",
 					href: "/docs/styling",
 					items: [],
+					icon: Palette,
 				},
 				{
 					title: "Dates",
 					href: "/docs/dates",
 					items: [],
+					icon: CalendarBlank,
+				},
+				{
+					title: "Controlled State",
+					href: "/docs/controlled-state",
+					items: [],
+					icon: Joystick,
 				},
 			],
 		},

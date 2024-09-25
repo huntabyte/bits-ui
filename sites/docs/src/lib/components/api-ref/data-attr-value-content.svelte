@@ -2,7 +2,7 @@
 	import { Popover } from "bits-ui";
 	import Info from "phosphor-svelte/lib/Info";
 	import type { Component } from "svelte";
-	import { Code } from "$lib/components/index.js";
+	import Code from "$lib/components/markdown/code.svelte";
 	import type { DataAttrSchema } from "$lib/types/index.js";
 	import { parseMarkdown } from "$lib/utils/markdown.js";
 

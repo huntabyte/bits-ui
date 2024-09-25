@@ -1,5 +1,6 @@
 import type { CheckboxRootPropsWithoutHTML } from "bits-ui";
 import {
+	controlledCheckedProp,
 	createApiSchema,
 	createBooleanProp,
 	createDataAttrSchema,
@@ -34,6 +35,7 @@ export const root = createApiSchema<CheckboxRootPropsWithoutHTML>({
 			description:
 				"A callback that is fired when the checkbox button's checked state changes.",
 		}),
+		controlledChecked: controlledCheckedProp,
 		disabled: createBooleanProp({
 			default: C.FALSE,
 			description:

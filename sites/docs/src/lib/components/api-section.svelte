@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { page } from "$app/stores";
-	import { CSSVarsTable, DataAttrsTable, PropsTable } from "$lib/components/index.js";
+	import CSSVarsTable from "$lib/components/api-ref/css-vars-table.svelte";
+	import DataAttrsTable from "$lib/components/api-ref/data-attrs-table.svelte";
+	import PropsTable from "$lib/components/api-ref/props-table.svelte";
 	import { h2 as H2, p as P } from "$lib/components/markdown/index.js";
 	import type { APISchema } from "$lib/types/index.js";
 	import { parseMarkdown } from "$lib/utils/index.js";

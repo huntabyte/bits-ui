@@ -2,7 +2,7 @@
 	import { Tooltip } from "bits-ui";
 	import Badge from "../ui/badge.svelte";
 	import PropTypeContent from "./prop-type-content.svelte";
-	import { Code } from "$lib/components/index.js";
+	import Code from "$lib/components/markdown/code.svelte";
 	import * as Table from "$lib/components/ui/table/index.js";
 	import type { PropObj } from "$lib/types/index.js";
 	import { parseMarkdown } from "$lib/utils/index.js";

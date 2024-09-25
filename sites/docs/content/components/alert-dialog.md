@@ -170,6 +170,26 @@ You can also use the `onOpenChange` prop to update local state when the dialog's
 </AlertDialog.Root>
 ```
 
+### Controlled
+
+Sometimes, you may want complete control over the dialog's `open` state, meaning you will be "kept in the loop" and be required to apply the state change yourself. While you'll rarely need this, it's possible to do so by setting the `controlledOpen` prop to `true`.
+
+You will then be responsible for updating a local state variable that is passed as the `open` prop to the `AlertDialog.Root` component.
+
+```svelte
+<script lang="ts">
+	import { AlertDialog } from "bits-ui";
+
+	let myOpen = $state<string>(false);
+</script>
+
+<AlertDialog.Root controlledOpen open={myOpen} onOpenChange={(o) => (myOpen = o)}>
+	<!-- ... -->
+</AlertDialog.Root>
+```
+
+See the [Controlled State](/docs/controlled-state) documentation for more information about controlled values.
+
 ## Managing Focus
 
 ### Focus Trap

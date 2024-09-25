@@ -5,6 +5,7 @@ import type {
 	SliderTickPropsWithoutHTML,
 } from "bits-ui";
 import {
+	controlledValueProp,
 	createApiSchema,
 	createBooleanProp,
 	createEnumProp,
@@ -35,6 +36,7 @@ const root = createApiSchema<SliderRootPropsWithoutHTML>({
 			description:
 				"A callback function called when the user finishes dragging the thumb and the value changes. This is different than the `onValueChange` callback because it waits until the user stops dragging before calling the callback, where the `onValueChange` callback is called immediately after the user starts dragging.",
 		}),
+		controlledValue: controlledValueProp,
 		disabled: createBooleanProp({
 			default: C.FALSE,
 			description: "Whether or not the switch is disabled.",

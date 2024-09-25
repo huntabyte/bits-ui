@@ -1,11 +1,11 @@
 import type { ButtonPropsWithoutHTML } from "bits-ui";
-import { createApiSchema, refProp } from "./helpers.js";
+import { childrenSnippet, createApiSchema, refProp } from "./helpers.js";
 import * as C from "$lib/content/constants.js";
 
 export const root = createApiSchema<ButtonPropsWithoutHTML & { href: string }>({
 	title: "Root",
 	description:
-		"A special button component that can receive Melt UI builders for use with the `asChild` prop.",
+		"A component that can switch between a button and an anchor tag based on the `href`/`type` props.",
 	props: {
 		href: {
 			type: C.STRING,
@@ -13,6 +13,7 @@ export const root = createApiSchema<ButtonPropsWithoutHTML & { href: string }>({
 				"An optional prop that when passed converts the button into an anchor tag.",
 		},
 		ref: refProp({ elType: "HTMLButtonElement" }),
+		children: childrenSnippet(),
 	},
 	dataAttributes: [
 		{

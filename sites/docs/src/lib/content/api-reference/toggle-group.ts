@@ -1,5 +1,6 @@
 import type { ToggleGroupItemPropsWithoutHTML, ToggleGroupRootPropsWithoutHTML } from "bits-ui";
 import {
+	controlledValueProp,
 	createApiSchema,
 	createBooleanProp,
 	createEnumProp,
@@ -32,6 +33,7 @@ const root = createApiSchema<ToggleGroupRootPropsWithoutHTML>({
 			description:
 				"A callback function called when the value of the toggle group changes. The type of the value is dependent on the type of the toggle group.",
 		}),
+		controlledValue: controlledValueProp,
 		disabled: createBooleanProp({
 			default: C.FALSE,
 			description: "Whether or not the switch is disabled.",

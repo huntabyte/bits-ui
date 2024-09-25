@@ -44,6 +44,9 @@
 		closeOnRangeSelect = true,
 		onStartValueChange = noop,
 		onEndValueChange = noop,
+		controlledValue = false,
+		controlledPlaceholder = false,
+		controlledOpen = false,
 		child,
 		children,
 		...restProps
@@ -53,20 +56,33 @@
 	let endValue = $state<DateValue | undefined>(value?.end);
 
 	if (value === undefined) {
-		value = { start: undefined, end: undefined };
+		if (controlledValue) {
+			onValueChange({ start: undefined, end: undefined });
+		} else {
+			value = { start: undefined, end: undefined };
+		}
 	}
 
 	if (placeholder === undefined) {
-		placeholder = getDefaultDate({
+		const defaultPlaceholder = getDefaultDate({
 			granularity,
 			defaultPlaceholder: undefined,
 			defaultValue: value?.start,
 		});
+		if (controlledPlaceholder) {
+			onPlaceholderChange(defaultPlaceholder);
+		} else {
+			placeholder = defaultPlaceholder;
+		}
 	}
 
 	function onRangeSelect() {
 		if (closeOnRangeSelect) {
-			open = false;
+			if (controlledOpen) {
+				onOpenChange(false);
+			} else {
+				open = false;
+			}
 		}
 	}
 
@@ -74,7 +90,9 @@
 		open: box.with(
 			() => open,
 			(v) => {
-				if (open !== v) {
+				if (controlledOpen) {
+					onOpenChange(v);
+				} else {
 					open = v;
 					onOpenChange(v);
 				}
@@ -83,14 +101,20 @@
 		value: box.with(
 			() => value as DateRange,
 			(v) => {
-				value = v;
-				onValueChange(v);
+				if (controlledValue) {
+					onValueChange(v);
+				} else {
+					value = v;
+					onValueChange(v);
+				}
 			}
 		),
 		placeholder: box.with(
 			() => placeholder as DateValue,
 			(v) => {
-				if (placeholder !== v) {
+				if (controlledPlaceholder) {
+					onPlaceholderChange(v as DateValue);
+				} else {
 					placeholder = v;
 					onPlaceholderChange(v as DateValue);
 				}

@@ -4,31 +4,44 @@
 	import { useToggleGroupRoot } from "../toggle-group.svelte.js";
 	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { noop } from "$lib/internal/callbacks.js";
 
 	let {
-		child,
-		children,
-		ref = $bindable(null),
 		id = useId(),
+		ref = $bindable(null),
 		value = $bindable(),
-		onValueChange,
+		onValueChange = noop,
 		type,
 		disabled = false,
 		loop = true,
 		orientation = "horizontal",
 		rovingFocus = true,
+		controlledValue = false,
+		child,
+		children,
 		...restProps
 	}: RootProps = $props();
 
-	value === undefined && (value = type === "single" ? "" : []);
+	if (value === undefined) {
+		const defaultValue = type === "single" ? "" : [];
+		if (controlledValue) {
+			onValueChange(defaultValue as any);
+		} else {
+			value = defaultValue;
+		}
+	}
 
 	const rootState = useToggleGroupRoot({
 		id: box.with(() => id),
 		value: box.with(
 			() => value!,
 			(v) => {
-				value = v;
-				onValueChange?.(v as any);
+				if (controlledValue) {
+					onValueChange(v as any);
+				} else {
+					value = v;
+					onValueChange?.(v as any);
+				}
 			}
 		) as WritableBox<string> | WritableBox<string[]>,
 		disabled: box.with(() => disabled),

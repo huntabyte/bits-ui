@@ -4,6 +4,7 @@
 	import { useMenubarRoot } from "../menubar.svelte.js";
 	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { noop } from "$lib/internal/callbacks.js";
 
 	let {
 		id = useId(),
@@ -13,7 +14,8 @@
 		value = "",
 		dir = "ltr",
 		loop = true,
-		onValueChange,
+		onValueChange = noop,
+		controlledValue = false,
 		...restProps
 	}: RootProps = $props();
 
@@ -22,7 +24,9 @@
 		value: box.with(
 			() => value,
 			(v) => {
-				if (v !== value) {
+				if (controlledValue) {
+					onValueChange(v);
+				} else {
 					value = v;
 					onValueChange?.(v);
 				}

@@ -10,6 +10,7 @@ import type {
 } from "bits-ui";
 import {
 	childrenSnippet,
+	controlledOpenProp,
 	createApiSchema,
 	createBooleanProp,
 	createFunctionProp,
@@ -50,6 +51,7 @@ export const root = createApiSchema<DialogRootPropsWithoutHTML>({
 			definition: OnOpenChangeProp,
 			description: "A callback function called when the open state changes.",
 		}),
+		controlledOpen: controlledOpenProp,
 		children: childrenSnippet(),
 	},
 });

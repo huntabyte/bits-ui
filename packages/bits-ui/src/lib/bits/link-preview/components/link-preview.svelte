@@ -10,6 +10,7 @@
 		onOpenChange = noop,
 		openDelay = 700,
 		closeDelay = 300,
+		controlledOpen = false,
 		children,
 	}: RootProps = $props();
 
@@ -17,7 +18,9 @@
 		open: box.with(
 			() => open,
 			(v) => {
-				if (open !== v) {
+				if (controlledOpen) {
+					onOpenChange(v);
+				} else {
 					open = v;
 					onOpenChange(v);
 				}

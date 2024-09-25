@@ -6,6 +6,7 @@ import type {
 } from "bits-ui";
 import { pageItemProp } from "./extended-types/index.js";
 import {
+	controlledPageProp,
 	createApiSchema,
 	createBooleanProp,
 	createEnumProp,
@@ -19,6 +20,16 @@ export const root = createApiSchema<PaginationRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root pagination component which contains all other pagination components.",
 	props: {
+		page: createNumberProp({
+			description:
+				"The selected page. You can bind this to a variable to control the selected page from outside the component.",
+			bindable: true,
+		}),
+		onPageChange: createFunctionProp({
+			definition: "(page: number) => void",
+			description: "A function called when the selected page changes.",
+		}),
+		controlledPage: controlledPageProp,
 		count: createNumberProp({
 			description: "The total number of items.",
 			required: true,
@@ -31,15 +42,7 @@ export const root = createApiSchema<PaginationRootPropsWithoutHTML>({
 			description: "The number of page triggers to show on either side of the current page.",
 			default: "1",
 		}),
-		page: createNumberProp({
-			description:
-				"The selected page. You can bind this to a variable to control the selected page from outside the component.",
-			bindable: true,
-		}),
-		onPageChange: createFunctionProp({
-			definition: "(page: number) => void",
-			description: "A function called when the selected page changes.",
-		}),
+
 		loop: createBooleanProp({
 			default: C.FALSE,
 			description:
