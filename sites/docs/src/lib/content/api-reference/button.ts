@@ -5,7 +5,7 @@ import * as C from "$lib/content/constants.js";
 export const root = createApiSchema<ButtonPropsWithoutHTML & { href: string }>({
 	title: "Root",
 	description:
-		"A special button component that can receive Melt UI builders for use with the `asChild` prop.",
+		"A component that can switch between a button and an anchor tag based on the `href`/`type` props.",
 	props: {
 		href: {
 			type: C.STRING,
