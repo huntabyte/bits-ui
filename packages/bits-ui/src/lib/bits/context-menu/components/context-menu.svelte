@@ -1,23 +1,20 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
 	import type { RootProps } from "../index.js";
-	import { useMenuMenu, useMenuRoot } from "../menu.svelte.js";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 	import { noop } from "$lib/internal/callbacks.js";
+	import { useMenuMenu, useMenuRoot } from "$lib/bits/menu/menu.svelte.js";
 
 	let {
 		open = $bindable(false),
 		dir = "ltr",
 		onOpenChange = noop,
 		controlledOpen = false,
-		variant = "dropdown-menu",
 		children,
-	}: RootProps & {
-		variant: "context-menu" | "dropdown-menu" | "menubar";
-	} = $props();
+	}: RootProps = $props();
 
 	const root = useMenuRoot({
-		variant: box.with(() => variant),
+		variant: box.with(() => "context-menu"),
 		dir: box.with(() => dir),
 		onClose: () => {
 			if (controlledOpen) {

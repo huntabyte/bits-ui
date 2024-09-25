@@ -24,6 +24,7 @@
 		escapeKeydownBehavior = "defer-otherwise-close",
 		onOpenAutoFocus: onOpenAutoFocusProp = noop,
 		onCloseAutoFocus: onCloseAutoFocusProp = noop,
+		onFocusOutside: onFocusOutsideProp = noop,
 		side = "right",
 		...restProps
 	}: SubContentProps = $props();
@@ -104,6 +105,7 @@
 		subContentState.parentMenu.onClose();
 	}}
 	onFocusOutside={(e) => {
+		onFocusOutsideProp(e);
 		if (e.defaultPrevented) return;
 		// We prevent closing when the trigger is focused to avoid triggering a re-open animation
 		// on pointer interaction.

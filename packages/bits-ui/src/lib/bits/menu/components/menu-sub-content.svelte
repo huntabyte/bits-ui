@@ -54,11 +54,13 @@
 		}
 	}
 
+	const dataAttr = $derived(subContentState.parentMenu.root.attrs.subContent);
+
 	const mergedProps = $derived(
 		mergeProps(restProps, subContentState.props, {
 			side,
 			onkeydown,
-			"data-menu-sub-content": "",
+			[dataAttr]: "",
 		})
 	);
 

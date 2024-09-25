@@ -65,7 +65,7 @@
 					onEscapeKeydown={(e) => {
 						onEscapeKeydown(e);
 						if (e.defaultPrevented) return;
-						contentState.root.closeDialog();
+						contentState.root.handleClose();
 					}}
 				>
 					<DismissableLayer
@@ -75,7 +75,7 @@
 						onInteractOutside={(e) => {
 							onInteractOutsideStart(e);
 							if (e.defaultPrevented) return;
-							contentState.root.closeDialog();
+							contentState.root.handleClose();
 						}}
 					>
 						<TextSelectionLayer {...mergedProps} enabled={present.current}>

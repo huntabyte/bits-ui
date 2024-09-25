@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import { useDialogRoot } from "../dialog.svelte.js";
 	import type { RootProps } from "../index.js";
 	import { noop } from "$lib/internal/callbacks.js";
+	import { useDialogRoot } from "$lib/bits/dialog/dialog.svelte.js";
 
 	let {
 		open = $bindable(false),
@@ -12,7 +12,7 @@
 	}: RootProps = $props();
 
 	useDialogRoot({
-		variant: box.with(() => "dialog"),
+		variant: box.with(() => "alert-dialog"),
 		open: box.with(
 			() => open,
 			(v) => {
