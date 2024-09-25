@@ -9,11 +9,14 @@ import {
 	controlledPageProp,
 	createApiSchema,
 	createBooleanProp,
+	createDataAttrSchema,
 	createEnumProp,
 	createFunctionProp,
 	createNumberProp,
 	withChildProps,
 } from "./helpers.js";
+import { PaginationOnPageChangeProp } from "./extended-types/pagination/index.js";
+import { OrientationProp } from "./extended-types/shared/index.js";
 import * as C from "$lib/content/constants.js";
 
 export const root = createApiSchema<PaginationRootPropsWithoutHTML>({
@@ -26,7 +29,7 @@ export const root = createApiSchema<PaginationRootPropsWithoutHTML>({
 			bindable: true,
 		}),
 		onPageChange: createFunctionProp({
-			definition: "(page: number) => void",
+			definition: PaginationOnPageChangeProp,
 			description: "A function called when the selected page changes.",
 		}),
 		controlledPage: controlledPageProp,
@@ -52,6 +55,7 @@ export const root = createApiSchema<PaginationRootPropsWithoutHTML>({
 			options: ["horizontal", "vertical"],
 			default: "horizontal",
 			description: "The orientation of the pagination.",
+			definition: OrientationProp,
 		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
@@ -68,14 +72,14 @@ export const page = createApiSchema<PaginationPagePropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "selected",
 			description: "Present on the current page element.",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "pagination-page",
 			description: "Present on the page trigger element.",
-		},
+		}),
 	],
 });
 
@@ -84,10 +88,10 @@ export const prevButton = createApiSchema<PaginationPrevButtonPropsWithoutHTML>(
 	description: "The previous button of the pagination.",
 	props: withChildProps({ elType: "HTMLButtonElement" }),
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "pagination-prev-button",
 			description: "Present on the previous button element.",
-		},
+		}),
 	],
 });
 
@@ -96,10 +100,10 @@ export const nextButton = createApiSchema<PaginationNextButtonPropsWithoutHTML>(
 	description: "The next button of the pagination.",
 	props: withChildProps({ elType: "HTMLButtonElement" }),
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "pagination-next-button",
 			description: "Present on the next button element.",
-		},
+		}),
 	],
 });
 

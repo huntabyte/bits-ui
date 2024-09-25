@@ -99,20 +99,20 @@ export const trigger = createApiSchema<SelectTriggerPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "state",
-			value: enums("open", "closed"),
-			isEnum: true,
+			definition: OpenClosedProp,
 			description: "The dropdown menu's open state.",
-		},
-		{
+			isEnum: true,
+		}),
+		createDataAttrSchema({
 			name: "disabled",
 			description: "Present when the trigger is disabled.",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "select-trigger",
-			description: "Present on the trigger element.",
-		},
+			description: "Present on the select trigger element.",
+		}),
 	],
 });
 
@@ -143,10 +143,10 @@ export const content = createApiSchema<SelectContentPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "select-content",
-			description: "Present on the content element.",
-		},
+			description: "Present on the select content element.",
+		}),
 	],
 });
 
@@ -176,18 +176,19 @@ export const item = createApiSchema<SelectItemPropsWithoutHTML>({
 			isEnum: true,
 			definition: OpenClosedProp,
 		},
-		{
+
+		createDataAttrSchema({
 			name: "highlighted",
 			description: "Present when the item is highlighted, via keyboard navigation or hover.",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "disabled",
 			description: "Present when the item is disabled.",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "select-item",
-			description: "Present on the item element.",
-		},
+			description: "Present on the select item element.",
+		}),
 	],
 });
 
@@ -202,15 +203,15 @@ export const value = createApiSchema<SelectValuePropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "select-value",
-			description: "Present on the value element.",
-		},
-		{
+			description: "Present on the select value element.",
+		}),
+		createDataAttrSchema({
 			name: "placeholder",
 			description:
 				"Present when the placeholder is being displayed (there isn't a value selected). You can use this to style the placeholder differently than the selected value.",
-		},
+		}),
 	],
 });
 
@@ -219,23 +220,23 @@ export const group = createApiSchema<SelectGroupPropsWithoutHTML>({
 	description: "An accessible group of select menu items.",
 	props: withChildProps({ elType: "HTMLDivElement" }),
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "select-group",
-			description: "Present on the group element.",
-		},
+			description: "Present on the select group element.",
+		}),
 	],
 });
 
 export const groupHeading = createApiSchema<SelectGroupHeadingPropsWithoutHTML>({
 	title: "GroupHeading",
 	description:
-		"A label for the select menu which will be skipped when navigating with the keyboard. This must be a child of the `Select.Group` component.",
+		"A heading for the select menu which will be skipped when navigating with the keyboard. This must be a child of the `Select.Group` component.",
 	props: withChildProps({ elType: "HTMLDivElement" }),
 	dataAttributes: [
-		{
-			name: "select-group-label",
-			description: "Present on the label element.",
-		},
+		createDataAttrSchema({
+			name: "select-group-heading",
+			description: "Present on the select group heading element.",
+		}),
 	],
 });
 
@@ -244,10 +245,10 @@ export const separator = createApiSchema<SelectSeparatorPropsWithoutHTML>({
 	description: "A visual separator for use between select items or groups.",
 	props: withChildProps({ elType: "HTMLDivElement" }),
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "separator-root",
-			description: "Present on the separator element.",
-		},
+			description: "Present on the select separator element.",
+		}),
 	],
 });
 
@@ -256,10 +257,10 @@ export const arrow = createApiSchema<SelectArrowPropsWithoutHTML>({
 	description: "An optional arrow element which points to the trigger when open.",
 	props: arrowProps,
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "arrow",
-			description: "Present on the arrow element.",
-		},
+			description: "Present on the select arrow element.",
+		}),
 	],
 });
 

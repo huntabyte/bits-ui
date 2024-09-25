@@ -6,15 +6,21 @@ import type {
 	ToolbarRootPropsWithoutHTML,
 } from "bits-ui";
 import {
+	OnChangeStringOrArrayProp,
+	SingleOrMultipleProp,
+	StringOrArrayStringProp,
+} from "./extended-types/shared/index.js";
+import { ToggleRootStateDataAttr } from "./extended-types/toggle/index.js";
+import {
 	controlledValueProp,
 	createApiSchema,
 	createBooleanProp,
+	createDataAttrSchema,
 	createEnumProp,
 	createFunctionProp,
 	createStringProp,
 	createUnionProp,
-	enums,
-	union,
+	orientationDataAttr,
 	withChildProps,
 } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
@@ -35,14 +41,11 @@ const root = createApiSchema<ToolbarRootPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		{
-			name: "orientation",
-			description: "The orientation of the toolbar.",
-		},
-		{
+		orientationDataAttr,
+		createDataAttrSchema({
 			name: "toolbar-root",
 			description: "Present on the root element.",
-		},
+		}),
 	],
 });
 
@@ -57,10 +60,10 @@ const button = createApiSchema<ToolbarButtonPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "toolbar-button",
 			description: "Present on the button element.",
-		},
+		}),
 	],
 });
 
@@ -69,10 +72,10 @@ const link = createApiSchema<ToolbarLinkPropsWithoutHTML>({
 	description: "A link in the toolbar.",
 	props: withChildProps({ elType: "HTMLAnchorElement" }),
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "toolbar-link",
 			description: "Present on the link element.",
-		},
+		}),
 	],
 });
 
@@ -84,16 +87,18 @@ const group = createApiSchema<ToolbarGroupPropsWithoutHTML>({
 			options: ["single", "multiple"],
 			default: "'single'",
 			description: "The type of toggle group.",
+			definition: SingleOrMultipleProp,
 			required: true,
 		}),
 		value: createUnionProp({
 			options: ["string", "string[]"],
 			description:
 				"The value of the toggle group. If the type is multiple, this will be an array of strings, otherwise it will be a string.",
+			definition: StringOrArrayStringProp,
 			bindable: true,
 		}),
 		onValueChange: createFunctionProp({
-			definition: union("(value: string) => void", "(value: string[]) => void"),
+			definition: OnChangeStringOrArrayProp,
 			description: "A callback function called when the value changes.",
 		}),
 		controlledValue: controlledValueProp,
@@ -104,10 +109,10 @@ const group = createApiSchema<ToolbarGroupPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "toolbar-group",
 			description: "Present on the group element.",
-		},
+		}),
 	],
 });
 
@@ -127,24 +132,24 @@ const groupItem = createApiSchema<ToolbarGroupItemPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "state",
 			description: "Whether the toolbar toggle item is in the on or off state.",
-			value: enums("on", "off"),
+			definition: ToggleRootStateDataAttr,
 			isEnum: true,
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "value",
 			description: "The value of the toolbar toggle item.",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "disabled",
 			description: "Present when the toolbar toggle item is disabled.",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "toolbar-item",
-			description: "Present on the item element.",
-		},
+			description: "Present on the toolbar toggle item.",
+		}),
 	],
 });
 

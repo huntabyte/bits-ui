@@ -165,7 +165,7 @@ export const group = createApiSchema<MenubarGroupPropsWithoutHTML>({
 export const groupHeading = createApiSchema<MenubarGroupHeadingPropsWithoutHTML>({
 	title: "GroupHeading",
 	description:
-		"A label which will be skipped when navigating with the keyboard. It is used to provide a label for a group of menu items and must be a child of either a `Menubar.Group` or `Menubar.RadioGroup` component.",
+		"A heading for a group which will be skipped when navigating with the keyboard. It is used to provide a heading for a group of menu items and must be a child of either a `Menubar.Group` or `Menubar.RadioGroup` component.",
 	...m.label,
 });
 

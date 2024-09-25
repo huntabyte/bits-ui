@@ -22,6 +22,7 @@ import {
 	controlledOpenProp,
 	controlledValueProp,
 	createBooleanProp,
+	createDataAttrSchema,
 	createFunctionProp,
 	createStringProp,
 	createUnionProp,
@@ -47,9 +48,12 @@ import {
 	OpenChildSnippetProps,
 	OpenChildrenSnippetProps,
 	OpenClosedProp,
+	OrientationProp,
 	RadioItemChildSnippetProps,
 	RadioItemChildrenSnippetProps,
 } from "./extended-types/shared/index.js";
+import { MenuCheckedStateAttr } from "./extended-types/menu/index.js";
+import { RadioGroupStateAttr } from "./extended-types/radio-group/index.js";
 import type { APISchema, DataAttrSchema, PropObj } from "$lib/types/index.js";
 import * as C from "$lib/content/constants.js";
 import { enums } from "$lib/content/api-reference/helpers.js";
@@ -265,127 +269,127 @@ type DataAttrs = APISchema["dataAttributes"];
 
 const triggerAttrs: DataAttrs = [
 	STATE,
-	{
+	createDataAttrSchema({
 		name: "menu-trigger",
 		description: "Present on the trigger element.",
-	},
+	}),
 ];
 
 const contentAttrs: DataAttrs = [
 	STATE,
-	{
+	createDataAttrSchema({
 		name: "menu-content",
 		description: "Present on the content element.",
-	},
+	}),
 ];
 
 const arrowAttrs: DataAttrs = [
 	STATE,
-	{
+	createDataAttrSchema({
 		name: "menu-arrow",
 		description: "Present on the arrow element.",
-	},
+	}),
 ];
 
 const sharedItemAttrs: DataAttrs = [
-	{
+	createDataAttrSchema({
 		name: "orientation",
 		value: "'vertical'",
-	},
-	{
+	}),
+	createDataAttrSchema({
 		name: "highlighted",
 		description: "Present when the menu item is highlighted.",
-	},
-	{
+	}),
+	createDataAttrSchema({
 		name: "disabled",
 		description: "Present when the menu item is disabled.",
-	},
+	}),
 ];
 
 const itemAttrs: DataAttrs = [
 	...sharedItemAttrs,
-	{
+	createDataAttrSchema({
 		name: "menu-item",
 		description: "Present on the item element.",
-	},
+	}),
 ];
 
 const groupAttrs: DataAttrs = [
-	{
+	createDataAttrSchema({
 		name: "menu-group",
 		description: "Present on the group element.",
-	},
+	}),
 ];
 
 const labelAttrs: DataAttrs = [
-	{
+	createDataAttrSchema({
 		name: "menu-group-heading",
 		description: "Present on the group heading element.",
-	},
+	}),
 ];
 
 const checkboxItemAttrs: DataAttrs = [
 	...sharedItemAttrs,
-	{
+	createDataAttrSchema({
 		name: "state",
-		value: enums("checked", "unchecked", "indeterminate"),
+		definition: MenuCheckedStateAttr,
 		description: "The checkbox menu item's checked state.",
 		isEnum: true,
-	},
+	}),
 ];
 
 const radioGroupAttrs: DataAttrs = [
-	{
+	createDataAttrSchema({
 		name: "menu-radio-group",
 		description: "Present on the radio group element.",
-	},
+	}),
 ];
 
 const radioItemAttrs: DataAttrs = [
 	...sharedItemAttrs,
-	{
+	createDataAttrSchema({
 		name: "state",
-		value: enums("checked", "unchecked"),
+		definition: RadioGroupStateAttr,
 		description: "The radio menu item's checked state.",
 		isEnum: true,
-	},
-	{
+	}),
+	createDataAttrSchema({
 		name: "value",
 		description: "The value of the radio item.",
-	},
-	{
+	}),
+	createDataAttrSchema({
 		name: "menu-radio-item",
 		description: "Present on the radio item element.",
-	},
+	}),
 ];
 
 const separatorAttrs: DataAttrs = [
-	{
+	createDataAttrSchema({
 		name: "orientation",
 		value: "'vertical'",
 		description: "The orientation of the separator.",
-	},
-	{
+	}),
+	createDataAttrSchema({
 		name: "menu-separator",
 		description: "Present on the separator element.",
-	},
+	}),
 ];
 
 const subContentAttrs: DataAttrs = [
 	STATE,
-	{
+	createDataAttrSchema({
 		name: "menu-subcontent",
 		description: "Present on the submenu content element.",
-	},
+	}),
 ];
 
 const subTriggerAttrs: DataAttrs = [
 	...sharedItemAttrs,
 	STATE,
-	{
+	createDataAttrSchema({
 		name: "menu-subtrigger",
 		description: "Present on the submenu trigger element.",
-	},
+	}),
 ];
 
 export const trigger = {

@@ -1,6 +1,11 @@
 import type { ProgressRootPropsWithoutHTML } from "bits-ui";
-import { createApiSchema, createNumberProp, withChildProps } from "./helpers.js";
-import { enums } from "$lib/content/api-reference/helpers.js";
+import {
+	createApiSchema,
+	createDataAttrSchema,
+	createNumberProp,
+	withChildProps,
+} from "./helpers.js";
+import { ProgressStateAttr } from "./extended-types/progress/index.js";
 
 export const root = createApiSchema<ProgressRootPropsWithoutHTML>({
 	title: "Root",
@@ -18,24 +23,24 @@ export const root = createApiSchema<ProgressRootPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "value",
 			description: "The current value of the progress bar.",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "state",
+			definition: ProgressStateAttr,
 			description: "The current state of the progress bar.",
-			value: enums("indeterminate", "complete", "loading"),
 			isEnum: true,
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "max",
 			description: "The maximum value of the progress bar.",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "progress-root",
 			description: "Present on the root element.",
-		},
+		}),
 	],
 });
 

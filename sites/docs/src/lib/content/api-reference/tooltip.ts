@@ -17,6 +17,7 @@ import {
 	controlledOpenProp,
 	createApiSchema,
 	createBooleanProp,
+	createDataAttrSchema,
 	createEnumDataAttr,
 	createFunctionProp,
 	createNumberProp,
@@ -123,10 +124,10 @@ export const trigger = createApiSchema<TooltipTriggerPropsWithoutHTML>({
 	},
 	dataAttributes: [
 		openClosedDataAttr,
-		{
+		createDataAttrSchema({
 			name: "tooltip-trigger",
-			description: "Present on the trigger element.",
-		},
+			description: "Present on the tooltip trigger element.",
+		}),
 	],
 });
 
@@ -147,10 +148,10 @@ export const content = createApiSchema<TooltipContentPropsWithoutHTML>({
 	},
 	dataAttributes: [
 		openClosedDataAttr,
-		{
+		createDataAttrSchema({
 			name: "tooltip-content",
-			description: "Present on the content element.",
-		},
+			description: "Present on the tooltip content element.",
+		}),
 	],
 });
 
@@ -171,10 +172,10 @@ export const contentStatic = createApiSchema<TooltipContentStaticPropsWithoutHTM
 	},
 	dataAttributes: [
 		openClosedDataAttr,
-		{
+		createDataAttrSchema({
 			name: "tooltip-content",
-			description: "Present on the content element.",
-		},
+			description: "Present on the tooltip content element.",
+		}),
 	],
 });
 
@@ -183,14 +184,14 @@ export const arrow = createApiSchema<TooltipArrowPropsWithoutHTML>({
 	description: "An optional arrow element which points to the trigger when the tooltip is open.",
 	props: arrowProps,
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "arrow",
 			description: "Present on the arrow element.",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "tooltip-arrow",
 			description: "Present on the arrow element.",
-		},
+		}),
 	],
 });
 

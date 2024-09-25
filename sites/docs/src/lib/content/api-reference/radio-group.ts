@@ -3,12 +3,14 @@ import {
 	controlledValueProp,
 	createApiSchema,
 	createBooleanProp,
+	createDataAttrSchema,
 	createEnumProp,
 	createFunctionProp,
 	createStringProp,
 	withChildProps,
 } from "./helpers.js";
-import { enums } from "$lib/content/api-reference/helpers.js";
+import { OnStringValueChangeProp, OrientationProp } from "./extended-types/shared/index.js";
+import { RadioGroupStateAttr } from "./extended-types/radio-group/index.js";
 import * as C from "$lib/content/constants.js";
 
 export const root = createApiSchema<RadioGroupRootPropsWithoutHTML>({
@@ -22,7 +24,7 @@ export const root = createApiSchema<RadioGroupRootPropsWithoutHTML>({
 			bindable: true,
 		}),
 		onValueChange: createFunctionProp({
-			definition: "(value: string | undefined) => void",
+			definition: OnStringValueChangeProp,
 			description: "A callback that is fired when the radio group's value changes.",
 		}),
 		controlledValue: controlledValueProp,
@@ -49,20 +51,21 @@ export const root = createApiSchema<RadioGroupRootPropsWithoutHTML>({
 			default: "'vertical'",
 			description:
 				"The orientation of the radio group. This will determine how keyboard navigation will work within the component.",
+			definition: OrientationProp,
 		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "orientation",
-			value: enums("vertical", "horizontal"),
+			definition: OrientationProp,
 			description: "The orientation of the radio group.",
 			isEnum: true,
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "radio-group-root",
 			description: "Present on the root element.",
-		},
+		}),
 	],
 });
 
@@ -70,45 +73,42 @@ export const item = createApiSchema<RadioGroupItemPropsWithoutHTML>({
 	title: "Item",
 	description: "An radio item, which must be a child of the `RadioGroup.Root` component.",
 	props: {
-		value: {
-			type: C.STRING,
+		value: createStringProp({
 			description:
 				"The value of the radio item. This should be unique for each radio item in the group.",
 			required: true,
-		},
-		disabled: {
+		}),
+		disabled: createBooleanProp({
 			default: C.FALSE,
-			type: C.BOOLEAN,
-			description:
-				"Whether or not the radio item is disabled. This prevents the user from interacting with it.",
-		},
+			description: "Whether the radio item is disabled.",
+		}),
 		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "disabled",
 			description: "Present when the radio item is disabled.",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "value",
 			description: "The value of the radio item.",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "state",
-			value: enums("checked", "unchecked"),
-			isEnum: true,
+			definition: RadioGroupStateAttr,
 			description: "The radio item's checked state.",
-		},
-		{
-			name: "orientation",
-			value: enums("vertical", "horizontal"),
 			isEnum: true,
+		}),
+		createDataAttrSchema({
+			name: "orientation",
+			definition: OrientationProp,
 			description: "The orientation of the parent radio group.",
-		},
-		{
+			isEnum: true,
+		}),
+		createDataAttrSchema({
 			name: "radio-group-item",
 			description: "Present on the radio item element.",
-		},
+		}),
 	],
 });
 

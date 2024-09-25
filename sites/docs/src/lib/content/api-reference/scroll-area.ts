@@ -13,10 +13,10 @@ import { OrientationProp } from "./extended-types/shared/index.js";
 import {
 	childrenSnippet,
 	createApiSchema,
+	createDataAttrSchema,
 	createEnumProp,
 	createNumberProp,
 	dirProp,
-	enums,
 	forceMountProp,
 	refProp,
 	withChildProps,
@@ -42,10 +42,10 @@ export const root = createApiSchema<ScrollAreaRootPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "scroll-area-root",
 			description: "Present on the root element.",
-		},
+		}),
 	],
 });
 
@@ -58,10 +58,10 @@ export const viewport = createApiSchema<ScrollAreaViewportPropsWithoutHTML>({
 		children: childrenSnippet(),
 	},
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "scroll-area-viewport",
 			description: "Present on the viewport element.",
-		},
+		}),
 	],
 });
 
@@ -79,21 +79,20 @@ export const scrollbar = createApiSchema<ScrollAreaScrollbarPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "state",
 			description: "The visibility state of the scrollbar",
-			value: enums("visible", "hidden"),
-			isEnum: true,
 			definition: ScrollAreaVisibleHiddenProp,
-		},
-		{
+			isEnum: true,
+		}),
+		createDataAttrSchema({
 			name: "scroll-area-scrollbar-x",
-			description: "Present on `'horizontal'` scrollbar element.",
-		},
-		{
+			description: "Present on the `'horizontal'` scrollbar element.",
+		}),
+		createDataAttrSchema({
 			name: "scroll-area-scrollbar-y",
 			description: "Present on the `'vertical'` scrollbar element.",
-		},
+		}),
 	],
 });
 
@@ -105,21 +104,20 @@ export const thumb = createApiSchema<ScrollAreaThumbPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "state",
 			description: "The visibility state of the scrollbar",
-			value: enums("visible", "hidden"),
-			isEnum: true,
 			definition: ScrollAreaVisibleHiddenProp,
-		},
-		{
+			isEnum: true,
+		}),
+		createDataAttrSchema({
 			name: "scroll-area-thumb-x",
-			description: "Present on `'horizontal'` thumb element.",
-		},
-		{
+			description: "Present on the `'horizontal'` thumb element.",
+		}),
+		createDataAttrSchema({
 			name: "scroll-area-thumb-y",
 			description: "Present on the `'vertical'` thumb element.",
-		},
+		}),
 	],
 });
 
@@ -128,10 +126,10 @@ export const corner = createApiSchema<ScrollAreaCornerPropsWithoutHTML>({
 	description: "The corner element between the X and Y scrollbars.",
 	props: withChildProps({ elType: "HTMLDivElement" }),
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "scroll-area-corner",
 			description: "Present on the corner element.",
-		},
+		}),
 	],
 });
 

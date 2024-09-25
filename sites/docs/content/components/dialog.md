@@ -188,6 +188,8 @@ You will then be responsible for updating a local state variable that is passed 
 </Dialog.Root>
 ```
 
+See the [Controlled State](/docs/controlled-state) documentation for more information about controlled states.
+
 ## Managing Focus
 
 ### Focus Trap

@@ -56,22 +56,22 @@ export const root = createApiSchema<RangeCalendarRootPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "invalid",
 			description: "Present on the root element when the calendar is invalid.",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "disabled",
 			description: "Present on the root element when the calendar is disabled.",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "readonly",
 			description: "Present on the root element when the calendar is readonly.",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "calendar-root",
 			description: "Present on the root element.",
-		},
+		}),
 	],
 });
 

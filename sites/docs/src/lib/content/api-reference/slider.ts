@@ -4,10 +4,13 @@ import type {
 	SliderThumbPropsWithoutHTML,
 	SliderTickPropsWithoutHTML,
 } from "bits-ui";
+import { SliderRootOnValueChangeProp } from "./extended-types/slider/index.js";
+import { OrientationProp } from "./extended-types/shared/index.js";
 import {
 	controlledValueProp,
 	createApiSchema,
 	createBooleanProp,
+	createDataAttrSchema,
 	createEnumProp,
 	createFunctionProp,
 	createNumberProp,
@@ -28,11 +31,11 @@ const root = createApiSchema<SliderRootPropsWithoutHTML>({
 			bindable: true,
 		},
 		onValueChange: createFunctionProp({
-			definition: "(value: number[]) => void",
+			definition: SliderRootOnValueChangeProp,
 			description: "A callback function called when the value state of the slider changes.",
 		}),
 		onValueChangeEnd: createFunctionProp({
-			definition: "(value: number[]) => void",
+			definition: SliderRootOnValueChangeProp,
 			description:
 				"A callback function called when the user finishes dragging the thumb and the value changes. This is different than the `onValueChange` callback because it waits until the user stops dragging before calling the callback, where the `onValueChange` callback is called immediately after the user starts dragging.",
 		}),
@@ -53,6 +56,7 @@ const root = createApiSchema<SliderRootPropsWithoutHTML>({
 			options: ["horizontal", "vertical"],
 			default: '"horizontal"',
 			description: "The orientation of the slider.",
+			definition: OrientationProp,
 		}),
 		step: createNumberProp({
 			default: "1",
@@ -67,16 +71,16 @@ const root = createApiSchema<SliderRootPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLSpanElement" }),
 	},
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "orientation",
+			definition: OrientationProp,
 			description: "The orientation of the slider.",
-			value: enums("horizontal", "vertical"),
 			isEnum: true,
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "slider-root",
 			description: "Present on the root element.",
-		},
+		}),
 	],
 });
 
@@ -96,10 +100,10 @@ const thumb = createApiSchema<SliderThumbPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLSpanElement" }),
 	},
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "slider-thumb",
 			description: "Present on the thumb elements.",
-		},
+		}),
 	],
 });
 
@@ -108,10 +112,10 @@ const range = createApiSchema<SliderRangePropsWithoutHTML>({
 	description: "The range of the slider.",
 	props: withChildProps({ elType: "HTMLSpanElement" }),
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "slider-range",
 			description: "Present on the range elements.",
-		},
+		}),
 	],
 });
 
@@ -127,14 +131,14 @@ const tick = createApiSchema<SliderTickPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLSpanElement" }),
 	},
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "bounded",
 			description: "Present when the tick is bounded.",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "slider-tick",
 			description: "Present on the tick elements.",
-		},
+		}),
 	],
 });
 

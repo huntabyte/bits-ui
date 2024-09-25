@@ -1,8 +1,16 @@
 import type { ToggleGroupItemPropsWithoutHTML, ToggleGroupRootPropsWithoutHTML } from "bits-ui";
 import {
+	OnChangeStringOrArrayProp,
+	OrientationProp,
+	SingleOrMultipleProp,
+	StringOrArrayStringProp,
+} from "./extended-types/shared/index.js";
+import { ToggleRootStateDataAttr } from "./extended-types/toggle/index.js";
+import {
 	controlledValueProp,
 	createApiSchema,
 	createBooleanProp,
+	createDataAttrSchema,
 	createEnumProp,
 	createFunctionProp,
 	createStringProp,
@@ -19,17 +27,19 @@ const root = createApiSchema<ToggleGroupRootPropsWithoutHTML>({
 	props: {
 		type: createEnumProp({
 			options: ["single", "multiple"],
+			definition: SingleOrMultipleProp,
 			description: "The type of toggle group.",
 			required: true,
 		}),
 		value: createUnionProp({
 			options: ["string", "string[]"],
+			definition: StringOrArrayStringProp,
 			description:
 				"The value of the toggle group. If the `type` is `'multiple'`, this will be an array of strings, otherwise it will be a string.",
 			bindable: true,
 		}),
 		onValueChange: createFunctionProp({
-			definition: union("(value: string) => void", "(value: string[]) => void"),
+			definition: OnChangeStringOrArrayProp,
 			description:
 				"A callback function called when the value of the toggle group changes. The type of the value is dependent on the type of the toggle group.",
 		}),
@@ -45,6 +55,7 @@ const root = createApiSchema<ToggleGroupRootPropsWithoutHTML>({
 		orientation: createEnumProp({
 			options: [C.HORIZONTAL, C.VERTICAL],
 			default: C.HORIZONTAL,
+			definition: OrientationProp,
 			description: "The orientation of the toggle group.",
 		}),
 		rovingFocus: createBooleanProp({
@@ -54,14 +65,16 @@ const root = createApiSchema<ToggleGroupRootPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "orientation",
+			definition: OrientationProp,
 			description: "The orientation of the toggle group.",
-		},
-		{
+			isEnum: true,
+		}),
+		createDataAttrSchema({
 			name: "toggle-group-root",
 			description: "Present on the root element.",
-		},
+		}),
 	],
 });
 
@@ -79,28 +92,30 @@ const item = createApiSchema<ToggleGroupItemPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "state",
 			description: "Whether the toggle item is in the on or off state.",
-			value: enums("on", "off"),
+			definition: ToggleRootStateDataAttr,
 			isEnum: true,
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "value",
 			description: "The value of the toggle item.",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "orientation",
 			description: "The orientation of the toggle group.",
-		},
-		{
+			definition: OrientationProp,
+			isEnum: true,
+		}),
+		createDataAttrSchema({
 			name: "disabled",
 			description: "Present when the toggle item is disabled.",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "toggle-group-item",
-			description: "Present on the item elements.",
-		},
+			description: "Present on the toggle group item.",
+		}),
 	],
 });
 

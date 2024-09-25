@@ -9,7 +9,11 @@ import type {
 	AlertDialogTitlePropsWithoutHTML,
 	AlertDialogTriggerPropsWithoutHTML,
 } from "bits-ui";
-import { HeaderLevelProp, OnOpenChangeProp } from "./extended-types/shared/index.js";
+import {
+	HeaderLevelProp,
+	OnOpenChangeProp,
+	OpenClosedProp,
+} from "./extended-types/shared/index.js";
 import {
 	DialogContentChildSnippetProps,
 	DialogContentChildrenSnippetProps,
@@ -22,6 +26,7 @@ import {
 	controlledOpenProp,
 	createApiSchema,
 	createBooleanProp,
+	createDataAttrSchema,
 	createFunctionProp,
 	createUnionProp,
 	dismissableLayerProps,
@@ -34,6 +39,13 @@ import {
 	withChildProps,
 } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
+
+const stateDataAttr = createDataAttrSchema({
+	name: "state",
+	definition: OpenClosedProp,
+	description: "The state of the alert dialog.",
+	isEnum: true,
+});
 
 const root = createApiSchema<AlertDialogRootPropsWithoutHTML>({
 	title: "Root",
@@ -57,12 +69,24 @@ const action = createApiSchema<AlertDialogActionPropsWithoutHTML>({
 	title: "Action",
 	description: "A button used to close the alert dialog by taking an action.",
 	props: withChildProps({ elType: "HTMLButtonElement" }),
+	dataAttributes: [
+		createDataAttrSchema({
+			name: "alert-dialog-action",
+			description: "Present on the action element.",
+		}),
+	],
 });
 
 const cancel = createApiSchema<AlertDialogCancelPropsWithoutHTML>({
 	title: "Cancel",
 	description: "A button used to close the alert dialog without taking an action.",
 	props: withChildProps({ elType: "HTMLButtonElement" }),
+	dataAttributes: [
+		createDataAttrSchema({
+			name: "alert-dialog-cancel",
+			description: "Present on the cancel element.",
+		}),
+	],
 });
 
 const content = createApiSchema<AlertDialogContentPropsWithoutHTML>({
@@ -81,6 +105,13 @@ const content = createApiSchema<AlertDialogContentPropsWithoutHTML>({
 			childDef: DialogContentChildSnippetProps,
 		}),
 	},
+	dataAttributes: [
+		stateDataAttr,
+		createDataAttrSchema({
+			name: "alert-dialog-content",
+			description: "Present on the content element.",
+		}),
+	],
 });
 
 const title = createApiSchema<AlertDialogTitlePropsWithoutHTML>({
@@ -96,18 +127,37 @@ const title = createApiSchema<AlertDialogTitlePropsWithoutHTML>({
 		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
+	dataAttributes: [
+		createDataAttrSchema({
+			name: "alert-dialog-title",
+			description: "Present on the title element.",
+		}),
+	],
 });
 
 const description = createApiSchema<AlertDialogDescriptionPropsWithoutHTML>({
 	title: "Description",
 	description: "An accessibile description for the alert dialog.",
 	props: withChildProps({ elType: "HTMLDivElement" }),
+	dataAttributes: [
+		createDataAttrSchema({
+			name: "alert-dialog-description",
+			description: "Present on the description element.",
+		}),
+	],
 });
 
 const trigger = createApiSchema<AlertDialogTriggerPropsWithoutHTML>({
 	title: "Trigger",
 	description: "The element which opens the alert dialog on press.",
 	props: withChildProps({ elType: "HTMLButtonElement" }),
+	dataAttributes: [
+		stateDataAttr,
+		createDataAttrSchema({
+			name: "alert-dialog-trigger",
+			description: "Present on the trigger element.",
+		}),
+	],
 });
 
 const overlay = createApiSchema<AlertDialogOverlayPropsWithoutHTML>({
@@ -121,6 +171,13 @@ const overlay = createApiSchema<AlertDialogOverlayPropsWithoutHTML>({
 			childDef: DialogOverlayChildSnippetProps,
 		}),
 	},
+	dataAttributes: [
+		stateDataAttr,
+		createDataAttrSchema({
+			name: "alert-dialog-overlay",
+			description: "Present on the overlay element.",
+		}),
+	],
 });
 
 const portal = createApiSchema<AlertDialogPortalPropsWithoutHTML>({

@@ -13,6 +13,7 @@ import {
 	controlledOpenProp,
 	createApiSchema,
 	createBooleanProp,
+	createDataAttrSchema,
 	createFunctionProp,
 	createUnionProp,
 	dismissableLayerProps,
@@ -38,6 +39,13 @@ import {
 import { enums } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 
+const stateDataAttr = createDataAttrSchema({
+	name: "state",
+	definition: OpenClosedProp,
+	description: "The state of the dialog.",
+	isEnum: true,
+});
+
 export const root = createApiSchema<DialogRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root component used to set and manage the state of the dialog.",
@@ -61,10 +69,10 @@ export const close = createApiSchema<DialogClosePropsWithoutHTML>({
 	description: "A button used to close the dialog.",
 	props: withChildProps({ elType: "HTMLButtonElement" }),
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "dialog-close",
 			description: "Present on the close button.",
-		},
+		}),
 	],
 });
 
@@ -85,17 +93,11 @@ export const content = createApiSchema<DialogContentPropsWithoutHTML>({
 		}),
 	},
 	dataAttributes: [
-		{
-			name: "state",
-			value: enums("open", "closed"),
-			description: "The state of the dialog.",
-			isEnum: true,
-			definition: OpenClosedProp,
-		},
-		{
+		stateDataAttr,
+		createDataAttrSchema({
 			name: "dialog-content",
 			description: "Present on the content.",
-		},
+		}),
 	],
 });
 
@@ -112,10 +114,10 @@ export const title = createApiSchema<DialogTitlePropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "dialog-title",
 			description: "Present on the title.",
-		},
+		}),
 	],
 });
 
@@ -124,10 +126,10 @@ export const description = createApiSchema<DialogDescriptionPropsWithoutHTML>({
 	description: "An accessibile description for the dialog.",
 	props: withChildProps({ elType: "HTMLDivElement" }),
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "dialog-description",
 			description: "Present on the description.",
-		},
+		}),
 	],
 });
 
@@ -136,10 +138,10 @@ export const trigger = createApiSchema<DialogTriggerPropsWithoutHTML>({
 	description: "The element which opens the dialog on press.",
 	props: withChildProps({ elType: "HTMLButtonElement" }),
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "dialog-trigger",
 			description: "Present on the trigger.",
-		},
+		}),
 	],
 });
 
@@ -155,17 +157,11 @@ export const overlay = createApiSchema<DialogOverlayPropsWithoutHTML>({
 		}),
 	},
 	dataAttributes: [
-		{
-			name: "state",
-			value: enums("open", "closed"),
-			description: "The state of the dialog.",
-			isEnum: true,
-			definition: OpenClosedProp,
-		},
-		{
+		stateDataAttr,
+		createDataAttrSchema({
 			name: "dialog-overlay",
 			description: "Present on the overlay.",
-		},
+		}),
 	],
 });
 
