@@ -13,6 +13,7 @@ import type {
 	MenubarRootPropsWithoutHTML,
 	MenubarSeparatorPropsWithoutHTML,
 	MenubarSubContentPropsWithoutHTML,
+	MenubarSubContentStaticPropsWithoutHTML,
 	MenubarSubPropsWithoutHTML,
 	MenubarSubTriggerPropsWithoutHTML,
 	MenubarTriggerPropsWithoutHTML,
@@ -141,11 +142,17 @@ export const subTrigger = createApiSchema<MenubarSubTriggerPropsWithoutHTML>({
 	...m.subTrigger,
 });
 
-// TODO: add subContentStatic
 export const subContent = createApiSchema<MenubarSubContentPropsWithoutHTML>({
 	title: "SubContent",
 	description: "The submenu content displayed when the parent submenu is open.",
 	...m.subContent,
+});
+
+export const subContentStatic = createApiSchema<MenubarSubContentStaticPropsWithoutHTML>({
+	title: "SubContentStatic",
+	description:
+		"The submenu content displayed when the parent submenu menu is open. (Static/No Floating UI)",
+	...m.subContentStatic,
 });
 
 export const group = createApiSchema<MenubarGroupPropsWithoutHTML>({
@@ -179,4 +186,5 @@ export const menubar = [
 	sub,
 	subTrigger,
 	subContent,
+	subContentStatic,
 ];

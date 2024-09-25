@@ -162,6 +162,26 @@ You can also use the `onValueChange` prop to update local state when the Listbox
 </Listbox.Root>
 ```
 
+### Controlled
+
+Sometimes, you may want complete control over the listbox's value state, meaning you will be "kept in the loop" and be required to apply the value state change yourself. While you will rarely need this, it's possible to do so by setting the `controlledValue` prop to `true`.
+
+You will then be responsible for updating a local value state variable that is passed as the `value` prop to the `Listbox.Root` component.
+
+```svelte
+<script lang="ts">
+	import { Listbox } from "bits-ui";
+
+	let myValue = $state<string>("");
+</script>
+
+<Listbox.Root controlledValue value={myValue} onValueChange={(v) => (myValue = v)}>
+	<!-- ... -->
+</Listbox.Root>
+```
+
+See the [Controlled State](/docs/controlled-state) documentation for more information about controlled values.
+
 ## Managing Open State
 
 The `open` state represents whether or not the listbox content is open. Bits UI provides flexible options for controlling and synchronizing the Listbox's open state.
@@ -205,6 +225,26 @@ You can also use the `onOpenChange` prop to update local state when the Listbox'
 	<!-- ... -->
 </Listbox.Root>
 ```
+
+### Controlled
+
+Sometimes, you may want complete control over the listbox's `open` state, meaning you will be "kept in the loop" and be required to apply the state change yourself. While you will rarely need this, it's possible to do so by setting the `controlledOpen` prop to `true`.
+
+You will then be responsible for updating a local value state variable that is passed as the `open` prop to the `Listbox.Root` component.
+
+```svelte
+<script lang="ts">
+	import { Listbox } from "bits-ui";
+
+	let myOpen = $state<string>(false);
+</script>
+
+<Listbox.Root controlledValue open={myOpen} onOpenChange={(o) => (myOpen = o)}>
+	<!-- ... -->
+</Listbox.Root>
+```
+
+See the [Controlled State](/docs/controlled-state) documentation for more information about controlled values.
 
 ## Opt-out of Floating UI
 

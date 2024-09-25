@@ -24,7 +24,6 @@
 		escapeKeydownBehavior = "defer-otherwise-close",
 		onOpenAutoFocus: onOpenAutoFocusProp = noop,
 		onCloseAutoFocus: onCloseAutoFocusProp = noop,
-		onFocusOutside = noop,
 		side = "right",
 		...restProps
 	}: SubContentProps = $props();
@@ -78,6 +77,7 @@
 </script>
 
 <PopperLayer
+	isStatic={true}
 	{...mergedProps}
 	{interactOutsideBehavior}
 	{escapeKeydownBehavior}
@@ -104,7 +104,6 @@
 		subContentState.parentMenu.onClose();
 	}}
 	onFocusOutside={(e) => {
-		onFocusOutside(e);
 		if (e.defaultPrevented) return;
 		// We prevent closing when the trigger is focused to avoid triggering a re-open animation
 		// on pointer interaction.

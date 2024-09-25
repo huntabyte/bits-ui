@@ -12,6 +12,7 @@ import type {
 	DropdownMenuRootPropsWithoutHTML,
 	DropdownMenuSeparatorPropsWithoutHTML,
 	DropdownMenuSubContentPropsWithoutHTML,
+	DropdownMenuSubContentStaticPropsWithoutHTML,
 	DropdownMenuSubPropsWithoutHTML,
 	DropdownMenuSubTriggerPropsWithoutHTML,
 	DropdownMenuTriggerPropsWithoutHTML,
@@ -106,6 +107,13 @@ export const subContent = createApiSchema<DropdownMenuSubContentPropsWithoutHTML
 	...menu.subContent,
 });
 
+export const subContentStatic = createApiSchema<DropdownMenuSubContentStaticPropsWithoutHTML>({
+	title: "SubContentStatic",
+	description:
+		"The submenu content displayed when the parent submenu menu is open. (Static/No Floating UI)",
+	...menu.subContentStatic,
+});
+
 export const group = createApiSchema<DropdownMenuGroupPropsWithoutHTML>({
 	title: "Group",
 	description:
@@ -137,4 +145,5 @@ export const dropdownMenu = [
 	sub,
 	subTrigger,
 	subContent,
+	subContentStatic,
 ];

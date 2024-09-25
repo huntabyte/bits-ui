@@ -10,6 +10,7 @@ import type {
 	DropdownMenuRootPropsWithoutHTML,
 	DropdownMenuSeparatorPropsWithoutHTML,
 	DropdownMenuSubContentPropsWithoutHTML,
+	DropdownMenuSubContentStaticPropsWithoutHTML,
 	DropdownMenuSubPropsWithoutHTML,
 	DropdownMenuSubTriggerPropsWithoutHTML,
 	DropdownMenuTriggerPropsWithoutHTML,
@@ -137,6 +138,25 @@ const contentStaticProps = {
 const subContentProps = contentProps satisfies PropObj<
 	Omit<DropdownMenuSubContentPropsWithoutHTML, "style">
 >;
+
+const subContentStaticProps = {
+	...escapeLayerProps,
+	...dismissableLayerProps,
+	...focusScopeProps,
+	forceMount: forceMountProp,
+	preventOverflowTextSelection: preventOverflowTextSelectionProp,
+	dir: dirProp,
+	loop: createBooleanProp({
+		default: C.TRUE,
+		description:
+			"Whether or not to loop through the menu items when reaching the end of the list when using the keyboard.",
+	}),
+	...withChildProps({
+		elType: "HTMLDivElement",
+		childrenDef: OpenChildrenSnippetProps,
+		childDef: OpenChildSnippetProps,
+	}),
+} satisfies PropObj<DropdownMenuSubContentStaticPropsWithoutHTML>;
 
 const checkboxItemProps = {
 	disabled: createBooleanProp({
@@ -433,6 +453,11 @@ export const subContent = {
 	dataAttributes: subContentAttrs,
 };
 
+export const subContentStatic = {
+	props: subContentStaticProps,
+	dataAttributes: subContentAttrs,
+};
+
 export const sub = {
 	props: subProps,
 };
@@ -461,5 +486,6 @@ export const menu = {
 	sub,
 	subTrigger,
 	subContent,
+	subContentStatic,
 	portal,
 };
