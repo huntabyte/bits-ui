@@ -110,7 +110,7 @@ For our `MyAccordion` component, we'll accept all the props that `Accordion.Root
 </MyAccordion>
 ```
 
-## Managing Value State
+## Value State
 
 The `value` prop is used to determine which accordion item(s) are currently open. Bits UI provides flexible options for controlling and synchronizing the Accordion's value state.
 

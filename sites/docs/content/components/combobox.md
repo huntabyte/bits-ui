@@ -119,7 +119,7 @@ It's recommended to use the `Combobox` primitives to build your own custom combo
 <CustomCombobox {items} />
 ```
 
-## Managing Value State
+## Value State
 
 The `value` represents the currently selected item/option within the Combobox. Bits UI provides flexible options for controlling and synchronizing the Combobox's `value` state.
 
@@ -173,7 +173,7 @@ You will then be responsible for updating a local value state variable that is p
 <script lang="ts">
 	import { Combobox } from "bits-ui";
 
-	let myValue = $state<string>("");
+	let myValue = $state("");
 </script>
 
 <Combobox.Root controlledValue value={myValue} onValueChange={(v) => (myValue = v)}>
@@ -183,7 +183,7 @@ You will then be responsible for updating a local value state variable that is p
 
 See the [Controlled State](/docs/controlled-state) documentation for more information about controlled values.
 
-## Managing Open State
+## Open State
 
 The `open` state represents whether or not the Combobox content is open. Bits UI provides flexible options for controlling and synchronizing the Combobox's open state.
 
@@ -237,7 +237,7 @@ You will then be responsible for updating a local value state variable that is p
 <script lang="ts">
 	import { Combobox } from "bits-ui";
 
-	let myOpen = $state<string>(false);
+	let myOpen = $state(false);
 </script>
 
 <Combobox.Root controlledValue open={myOpen} onOpenChange={(o) => (myOpen = o)}>

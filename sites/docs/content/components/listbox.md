@@ -118,7 +118,7 @@ You can then use the `MyListbox` component throughout your application like so:
 <MyListbox {items} bind:value={fruit} />
 ```
 
-## Managing Value State
+## Value State
 
 The `value` represents the currently selected item/option within the listbox. Bits UI provides flexible options for controlling and synchronizing the Listbox's value state.
 
@@ -182,7 +182,7 @@ You will then be responsible for updating a local value state variable that is p
 
 See the [Controlled State](/docs/controlled-state) documentation for more information about controlled values.
 
-## Managing Open State
+## Open State
 
 The `open` state represents whether or not the listbox content is open. Bits UI provides flexible options for controlling and synchronizing the Listbox's open state.
 

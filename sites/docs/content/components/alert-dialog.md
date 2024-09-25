@@ -126,7 +126,7 @@ Alternatively, you can define the snippets separately and pass them as props to 
 </MyAlertDialog>
 ```
 
-## Managing Open State
+## Open State
 
 Bits UI provides flexible options for controlling and synchronizing the Alert Dialog's open state.
 

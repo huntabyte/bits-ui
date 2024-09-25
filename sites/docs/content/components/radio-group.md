@@ -90,7 +90,7 @@ You can then use the `MyRadioGroup` component in your application like so:
 <MyRadioGroup items={myItems} name="favoriteFruit" />
 ```
 
-## Managing Value State
+## Value State
 
 The `value` prop is used to determine which radio group item(s) are currently checked. Bits UI provides flexible options for controlling and synchronizing the Radio Group's value.
 

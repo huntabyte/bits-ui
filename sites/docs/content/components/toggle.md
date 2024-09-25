@@ -26,7 +26,7 @@ description: A control element that switches between two states, providing a bin
 <Toggle.Root />
 ```
 
-## Managing Pressed State
+## Pressed State
 
 Bits UI provides flexible options for controlling and synchronizing the Toggle's pressed state.
 

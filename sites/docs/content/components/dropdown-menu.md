@@ -116,7 +116,7 @@ You can then use the `MyDropdownMenu` component like this:
 />
 ```
 
-## Managing Open State
+## Open State
 
 Bits UI provides flexible options for controlling and synchronizing the menu's open state.
 

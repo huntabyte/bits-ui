@@ -141,7 +141,7 @@ Alternatively, you can define the snippet(s) separately and pass them as props t
 />
 ```
 
-## Managing Open State
+## Open State
 
 Bits UI provides flexible options for controlling and synchronizing the menu's open state.
 
@@ -194,7 +194,7 @@ You will then be responsible for updating a local state variable that is passed 
 <script lang="ts">
 	import { ContextMenu } from "bits-ui";
 
-	let myOpen = $state<string>(false);
+	let myOpen = $state(false);
 </script>
 
 <ContextMenu.Root controlledOpen open={myOpen} onOpenChange={(o) => (myOpen = o)}>

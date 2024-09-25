@@ -71,7 +71,7 @@ You can then use the `MySlider` component in your application like so:
 <MySlider bind:value={someValue} />
 ```
 
-## Managing Value State
+## Value State
 
 The `value` represents the currently selected value(s) of the slider.
 

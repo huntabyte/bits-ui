@@ -66,7 +66,7 @@ You can then use the `MySwitch` component in your application like so:
 <MySwitch bind:checked={notifications} labelText="Enable notifications" />
 ```
 
-## Managing Checked State
+## Checked State
 
 The `checked` prop is used to determine whether the switch is in one of two states: checked and unchecked.
 

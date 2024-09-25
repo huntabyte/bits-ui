@@ -82,7 +82,7 @@ You can then use the `MyCheckbox` component in your application like so:
 
 <CheckboxDemoCustom labelText="Enable notifications" />
 
-## Managing Checked State
+## Checked State
 
 The `checked` prop is used to determine whether the checkbox is in one of three states: checked, unchecked, or indeterminate. Bits UI provides flexible options for controlling and synchronizing the Checkbox's checked state.
 
@@ -124,6 +124,26 @@ You can also use the `onCheckedChange` prop to update local state when the Check
 	}}
 />
 ```
+
+### Controlled
+
+Sometimes, you may want complete control over the checkbox's checked state, meaning you will be "kept in the loop" and be required to apply the state change yourself. While you will rarely need this, it's possible to do so by setting the `controlledChecked` prop to `true`.
+
+You will then be responsible for updating a local value state variable that is passed as the `checked` prop to the `Checkbox.Root` component.
+
+```svelte
+<script lang="ts">
+	import { Checkbox } from "bits-ui";
+
+	let myChecked = $state(false);
+</script>
+
+<Checkbox.Root controlledValue checked={myChecked} onCheckedChange={(c) => (myChecked = c)}>
+	<!-- ... -->
+</Checkbox.Root>
+```
+
+See the [Controlled State](/docs/controlled-state) documentation for more information about controlled values.
 
 ## Disabled State
 

@@ -68,7 +68,7 @@ You can then use the `MyCollapsible` component in your application like so:
 <MyCollapsible buttonText="Open Collapsible">Here is my collapsible content.</MyCollapsible>
 ```
 
-## Managing Open State
+## Open State
 
 The `open` prop is used to determine whether the collapsible is open or closed. Bits UI provides flexible options for controlling and synchronizing the Collapsible's open state.
 
@@ -122,7 +122,7 @@ You will then be responsible for updating a local state variable that is passed 
 <script lang="ts">
 	import { Collapsible } from "bits-ui";
 
-	let myOpen = $state<string>(false);
+	let myOpen = $state(false);
 </script>
 
 <Collapsible.Root controlledOpen open={myOpen} onOpenChange={(o) => (myOpen = o)}>

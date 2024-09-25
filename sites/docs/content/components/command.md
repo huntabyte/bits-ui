@@ -44,7 +44,7 @@ description: A command menu component that can be used to search, filter, and se
 </Command.Root>
 ```
 
-## Managing Value State
+## Value State
 
 The `value` prop is used to determine which command item is currently selected. Bits UI provides flexible options for controlling and synchronizing the Command's `value` state.
 
@@ -99,7 +99,7 @@ You will then be responsible for updating a local value state variable that is p
 <script lang="ts">
 	import { Command } from "bits-ui";
 
-	let myValue = $state<string>("");
+	let myValue = $state("");
 </script>
 
 <Command.Root controlledValue value={myValue} onValueChange={(v) => (myValue = v)}>
