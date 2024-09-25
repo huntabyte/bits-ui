@@ -7,13 +7,13 @@ export type ButtonPropsWithoutHTML = WithChildren<{
 }>;
 
 type AnchorElement = ButtonPropsWithoutHTML &
-	WithoutChildren<Omit<HTMLAnchorAttributes, "href">> & {
-		href?: HTMLAnchorAttributes["href"];
+	WithoutChildren<Omit<HTMLAnchorAttributes, "href" | "type">> & {
+		href: HTMLAnchorAttributes["href"];
 		type?: never;
 	};
 
 type ButtonElement = ButtonPropsWithoutHTML &
-	WithoutChildren<Omit<HTMLButtonAttributes, "type">> & {
+	WithoutChildren<Omit<HTMLButtonAttributes, "type" | "href">> & {
 		type?: HTMLButtonAttributes["type"];
 		href?: never;
 	};
