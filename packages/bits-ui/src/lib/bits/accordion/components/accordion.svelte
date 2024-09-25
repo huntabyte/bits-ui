@@ -16,6 +16,7 @@
 		onValueChange,
 		loop = true,
 		orientation = "vertical",
+		controlled = false,
 		...restProps
 	}: RootProps = $props();
 
@@ -26,6 +27,11 @@
 		value: box.with(
 			() => value!,
 			(v) => {
+				console.log("Attempting to set value", v);
+				if (controlled) {
+					onValueChange?.(v as any);
+					return;
+				}
 				value = v;
 				onValueChange?.(v as any);
 			}
