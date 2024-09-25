@@ -29,7 +29,7 @@
 				$page.error ?? "xl:grid"
 			)}
 		>
-			<div class="mx-auto w-full min-w-0 md:max-w-[700px]" id="content">
+			<div class="mx-auto w-full min-w-0 md:max-w-[760px]" id="content">
 				<slot />
 			</div>
 

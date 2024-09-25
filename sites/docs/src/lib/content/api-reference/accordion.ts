@@ -112,6 +112,7 @@ const item = createApiSchema<AccordionItemPropsWithoutHTML>({
 	dataAttributes: [
 		stateDataAttr,
 		disabledDataAttr,
+		orientationDataAttr,
 		createDataAttrSchema({
 			name: "accordion-item",
 			description: "Present on the item element.",

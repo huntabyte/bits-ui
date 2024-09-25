@@ -155,12 +155,13 @@ export class AccordionItemState {
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
+			condition: () => this.isActive,
 		});
 	}
 
-	updateValue() {
+	updateValue = () => {
 		this.root.toggleItem(this.value.current);
-	}
+	};
 
 	createTrigger(props: AccordionTriggerStateProps) {
 		return new AccordionTriggerState(props, this);
@@ -180,6 +181,7 @@ export class AccordionItemState {
 				id: this.#id.current,
 				"data-state": getDataOpenClosed(this.isActive),
 				"data-disabled": getDataDisabled(this.isDisabled),
+				"data-orientation": getDataOrientation(this.root.orientation.current),
 				[ACCORDION_ITEM_ATTR]: "",
 			}) as const
 	);

@@ -326,4 +326,22 @@ By default, when a user opens the listbox, scrolling outside the content will be
 </Listbox.Content>
 ```
 
+## Highlighted Items
+
+The Listbox component follows the [WAI-ARIA descendant pattern](https://www.w3.org/TR/wai-aria-practices-1.2/#combobox) for highlighting items. This means that the `Listbox.Trigger` retains focus the entire time, even when navigating with the keyboard, and items are highlighted as the user navigates them.
+
+### Styling Highlighted Items
+
+You can use the `data-highlighted` attribute on the `Listbox.Item` component to style the item differently when it is highlighted.
+
+### onHighlight / onUnhighlight
+
+To trigger side effects when an item is highlighted or unhighlighted, you can use the `onHighlight` and `onUnhighlight` props.
+
+```svelte
+<Listbox.Item onHighlight={() => console.log('I am highlighted!')} onUnhighlight={() => console.log('I am unhighlighted!')} />
+<!-- ... -->
+</Listbox.Item>
+```
+
 <APISection {schemas} />

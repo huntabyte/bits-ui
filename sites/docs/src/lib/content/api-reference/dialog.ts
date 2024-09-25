@@ -36,7 +36,6 @@ import {
 	OnOpenChangeProp,
 	OpenClosedProp,
 } from "./extended-types/shared/index.js";
-import { enums } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 
 const stateDataAttr = createDataAttrSchema({

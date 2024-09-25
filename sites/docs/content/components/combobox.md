@@ -299,4 +299,50 @@ If you wish to instead anchor the content to a different element, you can pass e
 </Combobox.Root>
 ```
 
+## What is the Viewport?
+
+The `Combobox.Viewport` component is used to determine the size of the content in order to determine whether or not the scroll up and down buttons should be rendered.
+
+If you wish to set a minimum/maximum height for the select content, you should apply it to the `Combobox.Viewport` component.
+
+## Scroll Up/Down Buttons
+
+The `Combobox.ScrollUpButton` and `Combobox.ScrollDownButton` components are used to render the scroll up and down buttons when the select content is larger than the viewport.
+
+You must use the `Combobox.Viewport` component when using the scroll buttons.
+
+## Native Scrolling/Overflow
+
+If you don't want to use the scroll buttons and prefer to use the standard scrollbar/overflow behavior, you can omit the `Combobox.Scroll[Up|Down]Button` components and the `Combobox.Viewport` component.
+
+You'll need to set a height on the `Combobox.Content` component and appropriate `overflow` styles to enable scrolling.
+
+## Scroll Lock
+
+By default, when a user opens the Combobox, scrolling outside the content will be disabled. You can override this behavior by setting the `preventScroll` prop to `false`.
+
+```svelte /preventScroll={false}/
+<Combobox.Content preventScroll={false}>
+	<!-- ... -->
+</Combobox.Content>
+```
+
+## Highlighted Items
+
+The Combobox component follows the [WAI-ARIA descendant pattern](https://www.w3.org/TR/wai-aria-practices-1.2/#combobox) for highlighting items. This means that the `Combobox.Input` retains focus the entire time, even when navigating with the keyboard, and items are highlighted as the user navigates them.
+
+### Styling Highlighted Items
+
+You can use the `data-highlighted` attribute on the `Combobox.Item` component to style the item differently when it is highlighted.
+
+### onHighlight / onUnhighlight
+
+To trigger side effects when an item is highlighted or unhighlighted, you can use the `onHighlight` and `onUnhighlight` props.
+
+```svelte
+<Combobox.Item onHighlight={() => console.log('I am highlighted!')} onUnhighlight={() => console.log('I am unhighlighted!')} />
+<!-- ... -->
+</Combobox.Item>
+```
+
 <APISection {schemas} />
