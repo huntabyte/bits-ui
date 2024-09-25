@@ -1,3 +1,3 @@
 ```ts
-type EditableSegmentPart = "day" | "month" | "year" | "hour" | "minute" | "second" | "dayPeriod"
+type EditableSegmentPart = "day" | "month" | "year" | "hour" | "minute" | "second" | "dayPeriod";
 ```
