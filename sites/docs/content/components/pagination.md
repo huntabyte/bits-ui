@@ -96,7 +96,6 @@ You will then be responsible for updating a local state variable that is passed 
 
 See the [Controlled State](/docs/controlled-state) documentation for more information about controlled states.
 
-
 ## Ellipsis
 
 The `pages` snippet prop consists of two types of items: `'page'` and `'ellipsis'`. The `'page'` type represents an actual page number, while the `'ellipsis'` type represents a placeholder for rendering an ellipsis between pages.
