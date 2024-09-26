@@ -26,13 +26,13 @@ The Checkbox component provides a flexible and accessible way to create checkbox
 -   **Accessibility**: Built with WAI-ARIA guidelines in mind, ensuring keyboard navigation and screen reader support.
 -   **Flexible State Management**: Supports both controlled and uncontrolled state, allowing for full control over the checkbox's checked state.
 
-## Component Architecture
+## Architecture
 
 The Checkbox component is composed of the following parts:
 
 -   **Root**: The main component that manages the state and behavior of the checkbox.
 
-## Component Structure
+## Structure
 
 Here's an overview of how the Checkbox component is structured in code:
 

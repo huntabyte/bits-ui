@@ -6,14 +6,19 @@ import AvatarTest from "./avatar-test.svelte";
 
 const src = "https://github.com/huntabyte.png";
 
+function setup(props: { src: string }) {
+	// @ts-expect-error - testing lib needs to update their generic types
+	return render(AvatarTest, { props });
+}
+
 describe("avatar", () => {
 	it("should have no accessibility violations", async () => {
-		const { container } = render(AvatarTest, { src });
+		const { container } = setup({ src });
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
 	it("should have bits data attrs", async () => {
-		const { getByTestId } = render(AvatarTest);
+		const { getByTestId } = setup({ src });
 		const root = getByTestId("root");
 		const image = getByTestId("image");
 		const fallback = getByTestId("fallback");
@@ -23,13 +28,13 @@ describe("avatar", () => {
 	});
 
 	it("should render the image with the correct src", async () => {
-		const { getByAltText } = render(AvatarTest, { src });
+		const { getByAltText } = setup({ src });
 		const avatar = getByAltText("huntabyte");
 		expect(avatar).toHaveAttribute("src", "https://github.com/huntabyte.png");
 	});
 
 	it("should render the fallback when an invalid image src is provided", async () => {
-		const { getByAltText, getByText } = render(AvatarTest, { src: "invalid" });
+		const { getByAltText, getByText } = setup({ src: "invalid" });
 		const avatar = getByAltText("huntabyte");
 		expect(avatar).not.toBeVisible();
 		const fallback = getByText("HJ");
@@ -38,7 +43,7 @@ describe("avatar", () => {
 
 	it("should remove the avatar when the src is removed", async () => {
 		const user = userEvent.setup();
-		const { getByAltText, getByTestId, getByText } = render(AvatarTest, { src });
+		const { getByAltText, getByTestId, getByText } = setup({ src });
 		const avatar = getByAltText("huntabyte");
 		expect(avatar).toHaveAttribute("src", "https://github.com/huntabyte.png");
 		const clearButton = getByTestId("clear-button");

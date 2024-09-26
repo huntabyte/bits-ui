@@ -10,6 +10,7 @@ const kbd = getTestKbd();
 
 function setup(props: Partial<ToolbarTestProps> = {}) {
 	const user = userEvent.setup();
+	// @ts-expect-error - testing lib needs to update their generic types
 	const returned = render(ToolbarTest, { ...props });
 	const root = returned.getByTestId("root");
 	const groupMultiple = returned.getByTestId("group-multiple");
@@ -47,6 +48,7 @@ function setup(props: Partial<ToolbarTestProps> = {}) {
 
 describe("toolbar", () => {
 	it("should have no accessibility violations", async () => {
+		// @ts-expect-error - testing lib needs to update their generic types
 		const { container } = render(ToolbarTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});

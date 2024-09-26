@@ -26,6 +26,7 @@ const items: Item[] = [
 function setup(props: Partial<TabsTestProps> = {}) {
 	const user = userEvent.setup();
 	const withDefaults = { ...{ items }, ...props };
+	// @ts-expect-error - testing lib needs to update their generic types
 	const returned = render(TabsTest, withDefaults);
 	return {
 		user,
@@ -35,6 +36,7 @@ function setup(props: Partial<TabsTestProps> = {}) {
 
 describe("tabs", () => {
 	it("should have no accessibility violations", async () => {
+		// @ts-expect-error - testing lib needs to update their generic types
 		const { container } = render(TabsTest, {
 			items: [
 				{
@@ -48,6 +50,7 @@ describe("tabs", () => {
 	});
 
 	it("should have bits data attrs", async () => {
+		// @ts-expect-error - testing lib needs to update their generic types
 		const { getByTestId } = render(TabsTest, {
 			items: [items[0] as Item],
 		});

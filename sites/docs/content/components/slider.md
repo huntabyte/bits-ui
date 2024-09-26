@@ -4,7 +4,7 @@ description: Allows users to select a value from a continuous range by sliding a
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, SliderDemo } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, SliderDemo, Callout } from '$lib/components/index.js'
 	export let schemas;
 </script>
 
@@ -71,56 +71,74 @@ You can then use the `MySlider` component in your application like so:
 <MySlider bind:value={someValue} />
 ```
 
-## Value State
+## Managing Value State
 
-The `value` represents the currently selected value(s) of the slider.
+Bits UI offers several approaches to manage and synchronize the Slider's value state, catering to different levels of control and integration needs.
 
-### Two-Way Binding
+### 1. Two-Way Binding
 
-Use the `bind:value` directive for effortless two-way synchronization between your local state and the slider's internal state.
+For seamless state synchronization, use Svelte's `bind:value` directive. This method automatically keeps your local state in sync with the component's internal state.
 
 ```svelte
 <script lang="ts">
 	import { Slider } from "bits-ui";
-	let value = $state([5, 7]);
+	let myValue = $state([0]);
 </script>
 
-<Slider.Root bind:value>
+<button onclick={() => (myValue = [20])}> Set value to 20 </button>
+
+<Slider.Root bind:value={myValue}>
 	<!-- ... -->
 </Slider.Root>
 ```
 
-### Change Handler
+#### Key Benefits
 
-You can also use the `onValueChange` prop to update local state when the slider's value changes.
+-   Simplifies state management
+-   Automatically updates `myValue` when the internal state changes (e.g., via dragging the thumb(s))
+-   Allows external control (e.g., updating the value via a separate button)
 
-```svelte
-<Slider.Root onValueChange={(value) => console.log(value)}>
-	<!-- ... -->
-</Slider.Root>
-```
+### 2. Change Handler
 
-### Change End Handler
-
-Sometimes, you may only want to perform an action or update a state when the user has finished dragging the thumb, but not as they are dragging it. You can use the `onValueChangeEnd` prop to listen for the end of the value change.
-
-```svelte
-<Slider.Root onValueChangeEnd={() => console.log("value changed!")}>
-	<!-- ... -->
-</Slider.Root>
-```
-
-### Controlled
-
-Sometimes, you may want complete control over the component's `value` state, meaning you will be "kept in the loop" and be required to apply the state change yourself. While you will rarely need this, it's possible to do so by setting the `controlledValue` prop to `true`.
-
-You will then be responsible for updating a local value state variable that is passed as the `value` prop to the `Slider.Root` component.
+For more granular control or to perform additional logic on state changes, use the `onValueChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
 
 ```svelte
 <script lang="ts">
 	import { Slider } from "bits-ui";
+	let myValue = $state([0]);
+</script>
 
-	let myValue = $state([]);
+<Slider.Root
+	value={myValue}
+	onValueChange={(v) => {
+		myValue = v;
+		// additional logic here.
+	}}
+>
+	<!-- ... -->
+</Slider.Root>
+```
+
+#### Use Cases
+
+-   Implementing custom behaviors on value change
+-   Integrating with external state management solutions
+-   Triggering side effects (e.g., logging, data fetching)
+
+### 3. Fully Controlled
+
+For complete control over the component's value state, use the `controlledValue` prop. This approach requires you to manually manage the value state, giving you full control over when and how the component responds to value change events.
+
+To implement controlled state:
+
+1. Set the `controlledValue` prop to `true` on the `Slider.Root` component.
+2. Provide a `value` prop to `Slider.Root`, which should be a variable holding the current state.
+3. Implement an `onValueChange` handler to update the state when the internal state changes.
+
+```svelte
+<script lang="ts">
+	import { Slider } from "bits-ui";
+	let myValue = $state([0]);
 </script>
 
 <Slider.Root controlledValue value={myValue} onValueChange={(v) => (myValue = v)}>
@@ -128,7 +146,19 @@ You will then be responsible for updating a local value state variable that is p
 </Slider.Root>
 ```
 
-See the [Controlled State](/docs/controlled-state) documentation for more information about controlled states.
+#### When to Use
+
+-   Implementing complex logic
+-   Coordinating multiple UI elements
+-   Debugging state-related issues
+
+<Callout>
+
+While powerful, fully controlled state should be used judiciously as it increases complexity and can cause unexpected behaviors if not handled carefully.
+
+For more in-depth information on controlled components and advanced state management techniques, refer to our [Controlled State](/docs/controlled-state) documentation.
+
+</Callout>
 
 ## Multiple Thumbs and Ticks
 

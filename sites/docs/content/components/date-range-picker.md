@@ -4,7 +4,7 @@ description: Facilitates the selection of date ranges through an input and calen
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, DateRangePickerDemo } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, DateRangePickerDemo, Callout } from '$lib/components/index.js'
 	export let schemas;
 </script>
 
@@ -15,6 +15,12 @@ description: Facilitates the selection of date ranges through an input and calen
 {/snippet}
 
 </ComponentPreviewV2>
+
+<Callout type="tip" title="Heads up!">
+
+Before diving into this component, it's important to understand how dates/times work in Bits UI. Please read the [Dates](/docs/dates) documentation to learn more!
+
+</Callout>
 
 ## Structure
 
@@ -77,52 +83,68 @@ description: Facilitates the selection of date ranges through an input and calen
 </DateRangePicker.Root>
 ```
 
-## Placeholder State
+## Managing Placeholder State
 
-Bits UI provides flexible options for controlling and synchronizing the `DateRangePicker` component's `placeholder` state.
+Bits UI offers several approaches to manage and synchronize the component's placeholder state, catering to different levels of control and integration needs.
 
-### Two-Way Binding
+### 1. Two-Way Binding
 
-Use the `bind:placeholder` directive for effortless two-way synchronization between your local state and the `DateRangePicker` component's placeholder.
+For seamless state synchronization, use Svelte's `bind:placeholder` directive. This method automatically keeps your local state in sync with the component's internal state.
 
 ```svelte {3,6,8}
 <script lang="ts">
 	import { DateRangePicker } from "bits-ui";
-	let placeholder = $state(new CalendarDateTime(2024, 8, 3, 12, 30));
+	import { CalendarDateTime } from "@internationalized/date";
+	let myPlaceholder = $state(new CalendarDateTime(2024, 8, 3, 12, 30));
 </script>
 
-<DateRangePicker.Root bind:placeholder>
+<DateRangePicker.Root bind:placeholder={myPlaceholder}>
 	<!-- ... -->
-</DateField.Root>
+</DateRangePicker.Root>
 ```
 
-This setup enables toggling the `DateRangePicker` component's placeholder via the custom button and ensures the local `placeholder` state is synchronized with the `DateRangePicker` component's placeholder should it change from within the component.
+#### Key Benefits
 
-### Change Handler
+-   Simplifies state management
+-   Automatically updates `myPlaceholder` when the internal state changes
+-   Allows external control (e.g., changing the placeholder via a separate button/programmatically)
 
-You can also use the `onPlaceholderChange` prop to update local state when the component's `placeholder` changes. This is useful when you don't want two-way binding for one reason or another, or you want to perform additional logic when the `DateRangePicker` component's placeholder changes.
+### 2. Change Handler
+
+For more granular control or to perform additional logic on state changes, use the `onPlaceholderChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
 
 ```svelte {3,7-11}
 <script lang="ts">
 	import { DateRangePicker } from "bits-ui";
-	let placeholder = $state(new CalendarDateTime(2024, 8, 3, 12, 30));
+	let myPlaceholder = $state(new CalendarDateTime(2024, 8, 3, 12, 30));
 </script>
 
 <DateRangePicker.Root
-	bind:placeholder
+	placeholder={myPlaceholder}
 	onPlaceholderChange={(p) => {
-		placeholder = placeholder.set({ year: 2025 });
+		myPlaceholder = p.set({ year: 2025 });
 	}}
 >
 	<!-- ... -->
 </DateRangePicker.Root>
 ```
 
-### Controlled
+#### Use Cases
 
-Sometimes, you may want complete control over the `placeholder` state, meaning you will be "kept in the loop" and be required to apply the state change yourself. While you will rarely need this, it's possible to do so by setting the `controlledPlaceholder` prop to `true`.
+-   Implementing custom behaviors on placeholder change
+-   Integrating with external state management solutions
+-   Triggering side effects (e.g., logging, data fetching)
 
-You will then be responsible for updating a local placeholder state variable that is passed as the `placeholder` prop to the `DateRangePicker.Root` component.
+### 3. Fully Controlled
+
+For complete control over the component's placeholder state, use the `controlledPlaceholder` prop. This approach requires you to manually manage the state, giving you full control over when and how the component responds to change events.
+
+To implement controlled state:
+
+1. Set the `controlledPlaceholder` prop to `true` on the `DateRangePicker.Root` component.
+2. Provide a `placeholder` prop to `DateRangePicker.Root`, which should be a variable holding the current state.
+3. Implement an `onPlaceholderChange` handler to update the state when the internal state changes.
+4.
 
 ```svelte
 <script lang="ts">
@@ -139,22 +161,33 @@ You will then be responsible for updating a local placeholder state variable tha
 </DateRangePicker.Root>
 ```
 
-See the [Controlled State](/docs/controlled-state) documentation for more information about controlled states.
+#### When to Use
 
-## Value State
+-   Implementing complex logic
+-   Coordinating multiple UI elements
+-   Debugging state-related issues
 
-The `value` represents the currently selected date within the `DateRangePicker` component.
+<Callout>
 
-Bits UI provides flexible options for controlling and synchronizing the `DateRangePicker` component's value state.
+While powerful, fully controlled state should be used judiciously as it increases complexity and can cause unexpected behaviors if not handled carefully.
 
-### Two-Way Binding
+For more in-depth information on controlled components and advanced state management techniques, refer to our [Controlled State](/docs/controlled-state) documentation.
 
-Use the `bind:value` directive for effortless two-way synchronization between your local state and the `DateRangePicker` component's value.
+</Callout>
 
-```svelte {3,6,8}
+## Managing Value State
+
+Bits UI offers several approaches to manage and synchronize the component's value state, catering to different levels of control and integration needs.
+
+### 1. Two-Way Binding
+
+For seamless state synchronization, use Svelte's `bind:value` directive. This method automatically keeps your local state in sync with the component's internal state.
+
+```svelte
 <script lang="ts">
 	import { DateRangePicker } from "bits-ui";
-	let value = $state({
+	import { CalendarDateTime } from "@internationalized/date";
+	let myValue = $state({
 		start: new CalendarDateTime(2024, 8, 3, 12, 30),
 		end: new CalendarDateTime(2024, 8, 4, 12, 30),
 	});
@@ -170,32 +203,37 @@ Use the `bind:value` directive for effortless two-way synchronization between yo
 >
 	Add 1 day
 </button>
-<DateRangePicker.Root bind:value>
+<DateRangePicker.Root bind:value={myValue}>
 	<!-- ... -->
 </DateRangePicker.Root>
 ```
 
-This setup enables toggling the component's value via the custom button and ensures the local `value` state is synchronized with the component's value, should it change from within the component.
+#### Key Benefits
 
-### Change Handler
+-   Simplifies state management
+-   Automatically updates `myValue` when the internal state changes
+-   Allows external control (e.g., changing the value via a separate button/programmatically)
 
-You can also use the `onValueChange` prop to update local state when the component's value changes. This is useful when you don't want two-way binding for one reason or another, or you want to perform additional logic when the component's value changes.
+### 2. Change Handler
 
-```svelte {3,7-11}
+For more granular control or to perform additional logic on state changes, use the `onValueChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
+
+```svelte
 <script lang="ts">
 	import { DateRangePicker } from "bits-ui";
-	let value = $state({
+	import { CalendarDateTime } from "@internationalized/date";
+	let myValue = $state({
 		start: new CalendarDateTime(2024, 8, 3, 12, 30),
 		end: new CalendarDateTime(2024, 8, 4, 12, 30),
 	});
 </script>
 
 <DateRangePicker.Root
-	bind:value
+	value={myValue}
 	onValueChange={(v) => {
 		value = {
-			start: v.start.set({ hour: v.start.hour + 1 }),
-			end: v.end.set({ hour: v.end.hour + 1 }),
+			start: v.start?.set({ hour: v.start.hour + 1 }),
+			end: v.end?.set({ hour: v.end.hour + 1 }),
 		};
 	}}
 >
@@ -203,11 +241,21 @@ You can also use the `onValueChange` prop to update local state when the compone
 </DateRangePicker.Root>
 ```
 
-### Controlled
+#### Use Cases
 
-Sometimes, you may want complete control over the component's `value` state, meaning you will be "kept in the loop" and be required to apply the state change yourself. While you will rarely need this, it's possible to do so by setting the `controlledValue` prop to `true`.
+-   Implementing custom behaviors on value change
+-   Integrating with external state management solutions
+-   Triggering side effects (e.g., logging, data fetching)
 
-You will then be responsible for updating a local value state variable that is passed as the `value` prop to the `DateRangePicker.Root` component.
+### 3. Fully Controlled
+
+For complete control over the component's value state, use the `controlledValue` prop. This approach requires you to manually manage the state, giving you full control over when and how the component responds to change events.
+
+To implement controlled state:
+
+1. Set the `controlledValue` prop to `true` on the `DateRangePicker.Root` component.
+2. Provide a `value` prop to `DateRangePicker.Root`, which should be a variable holding the current state.
+3. Implement an `onValueChange` handler to update the state when the internal state changes.
 
 ```svelte
 <script lang="ts">
@@ -220,45 +268,61 @@ You will then be responsible for updating a local value state variable that is p
 </DateRangePicker.Root>
 ```
 
-See the [Controlled State](/docs/controlled-state) documentation for more information about controlled states.
+#### When to Use
 
-## Open State
+-   Implementing complex logic
+-   Coordinating multiple UI elements
+-   Debugging state-related issues
 
-The `open` prop is used to determine whether the `DateRangePicker` is open or closed. Bits UI provides flexible options for controlling and synchronizing the open state.
+<Callout>
 
-### Two-Way Binding
+While powerful, fully controlled state should be used judiciously as it increases complexity and can cause unexpected behaviors if not handled carefully.
 
-Use the `bind:open` directive for effortless two-way synchronization between your local state and the `DateRangePicker`'s internal state.
+For more in-depth information on controlled components and advanced state management techniques, refer to our [Controlled State](/docs/controlled-state) documentation.
+
+</Callout>
+
+## Managing Open State
+
+Bits UI offers several approaches to manage and synchronize the component's open state, catering to different levels of control and integration needs.
+
+### 1. Two-Way Binding
+
+For seamless state synchronization, use Svelte's `bind:open` directive. This method automatically keeps your local state in sync with the component's internal state.
 
 ```svelte
 <script lang="ts">
 	import { DateRangePicker } from "bits-ui";
-	let myOpen = $state(false);
+	let isOpen = $state(false);
 </script>
 
-<button onclick={() => (myOpen = true)}> Open </button>
+<button onclick={() => (isOpen = true)}>Open DateRangePicker</button>
 
-<DateRangePicker.Root bind:open={myOpen}>
+<DateRangePicker.Root bind:open={isOpen}>
 	<!-- ... -->
 </DateRangePicker.Root>
 ```
 
-This setup enables toggling the `DateRangePicker` via the custom button and ensures the local `myOpen` state updates when the state changes through any internal means (e.g., clicking on the trigger).
+#### Key Benefits
 
-### Change Handler
+-   Simplifies state management
+-   Automatically updates `isOpen` when the picker closes (e.g., via escape key)
+-   Allows external control (e.g., opening via a separate button)
 
-You can also use the `onOpenChange` prop to update local state when the `DateRangePicker`'s `open` state changes. This is useful when you don't want two-way binding for one reason or another, or you want to perform additional logic when the state changes.
+### 2. Change Handler
+
+For more granular control or to perform additional logic on state changes, use the `onOpenChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
 
 ```svelte
 <script lang="ts">
 	import { DateRangePicker } from "bits-ui";
-	let myOpen = $state(false);
+	let isOpen = $state(false);
 </script>
 
 <DateRangePicker.Root
-	open={myOpen}
+	open={isOpen}
 	onOpenChange={(open) => {
-		myOpen = open;
+		isOpen = open;
 		// additional logic here.
 	}}
 >
@@ -266,15 +330,26 @@ You can also use the `onOpenChange` prop to update local state when the `DateRan
 </DateRangePicker.Root>
 ```
 
-### Controlled
+#### Use Cases
 
-Sometimes, you may want complete control over the component's `open` state, meaning you will be "kept in the loop" and be required to apply the state change yourself. While you'll rarely need this, it's possible to do so by setting the `controlledOpen` prop to `true`.
+-   Implementing custom behaviors on open/close
+-   Integrating with external state management solutions
+-   Triggering side effects (e.g., logging, data fetching)
 
-You will then be responsible for updating a local state variable that is passed as the `open` prop to the `DateRangePicker.Root` component.
+### 3. Fully Controlled
+
+For complete control over the component's open state, use the `controlledOpen` prop. This approach requires you to manually manage the open state, giving you full control over when and how the dialog responds to open/close events.
+
+To implement controlled state:
+
+1. Set the `controlledOpen` prop to `true` on the `DateRangePicker.Root` component.
+2. Provide an `open` prop to `DateRangePicker.Root`, which should be a variable holding the current state.
+3. Implement an `onOpenChange` handler to update the state when the internal state changes.
 
 ```svelte
 <script lang="ts">
 	import { DateRangePicker } from "bits-ui";
+
 	let myOpen = $state(false);
 </script>
 
@@ -283,6 +358,18 @@ You will then be responsible for updating a local state variable that is passed 
 </DateRangePicker.Root>
 ```
 
-See the [Controlled State](/docs/controlled-state) documentation for more information about controlled states.
+#### When to Use
+
+-   Implementing complex open/close logic
+-   Coordinating multiple UI elements
+-   Debugging state-related issues
+
+<Callout>
+
+While powerful, fully controlled state should be used judiciously as it increases complexity and can cause unexpected behaviors if not handled carefully.
+
+For more in-depth information on controlled components and advanced state management techniques, refer to our [Controlled State](/docs/controlled-state) documentation.
+
+</Callout>
 
 <APISection {schemas} />

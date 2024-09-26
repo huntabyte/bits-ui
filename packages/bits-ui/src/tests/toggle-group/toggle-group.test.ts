@@ -32,8 +32,8 @@ const items: Item[] = [
 
 function setupMultiple(props: Partial<MultipleToggleGroupTestProps> = {}) {
 	const user = userEvent.setup();
-	// eslint-disable-next-line ts/no-explicit-any
-	const returned = render(ToggleGroupMultipleTest, { ...props, items } as any);
+	// @ts-expect-error - testing lib needs to update their generic types
+	const returned = render(ToggleGroupMultipleTest, { ...props, items });
 	const root = returned.getByTestId("root");
 	const binding = returned.getByTestId("binding");
 	return {
@@ -46,8 +46,8 @@ function setupMultiple(props: Partial<MultipleToggleGroupTestProps> = {}) {
 
 function setup(props: Partial<SingleToggleGroupTestProps> = {}) {
 	const user = userEvent.setup();
-	// eslint-disable-next-line ts/no-explicit-any
-	const returned = render(ToggleGroupTest, { ...props, items } as any);
+	// @ts-expect-error - testing lib needs to update their generic types
+	const returned = render(ToggleGroupTest, { ...props, items });
 	const root = returned.getByTestId("root");
 	const binding = returned.getByTestId("binding");
 	return {

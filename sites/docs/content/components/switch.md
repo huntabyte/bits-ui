@@ -27,14 +27,14 @@ The Switch component provides an intuitive and accessible toggle control, allowi
 -   **Stylable**: Data attributes allow for smooth transitions between states and custom styles.
 -   **HTML Forms**: Can render a hidden input element for form submissions.
 
-## Component Architecture
+## Architecture
 
 The Switch component is composed of two main parts:
 
 -   **Root**: The main container component that manages the state and behavior of the switch.
 -   **Thumb**: The "movable" part of the switch that indicates the current state.
 
-## Component Structure
+## Structure
 
 Here's an overview of how the Switch component is structured in code:
 
@@ -138,7 +138,7 @@ For more granular control or to perform additional logic on state changes, use t
 
 ### 3. Fully Controlled
 
-For complete control over the switch's checked state, use the `controlledChecked` prop. This approach requires you to manually manage the checked state, giving you full control over when and how the checkbox responds to change events.
+For complete control over the switch's checked state, use the `controlledChecked` prop. This approach requires you to manually manage the checked state, giving you full control over when and how the component responds to change events.
 
 To implement controlled state:
 
@@ -187,7 +187,7 @@ You can disable the switch by setting the `disabled` prop to `true`.
 
 If you pass the `name` prop to `Switch.Root`, a hidden input element will be rendered to submit the value of the switch to a form.
 
-By default, the checkbox will be submitted with the default checkbox value of `'on'` if the switch is checked.
+By default, the input will be submitted with the default checkbox value of `'on'` if the switch is checked.
 
 ```svelte /name="dnd"/
 <Switch.Root name="dnd">

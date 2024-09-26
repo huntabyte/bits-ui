@@ -7,6 +7,7 @@ import type { Progress } from "$lib/index.js";
 
 function setup(props: Progress.RootProps = {}) {
 	const user = userEvent.setup();
+	// @ts-expect-error - testing lib needs to update their generic types
 	const returned = render(ProgressTest, { ...props });
 	const { getByTestId } = returned;
 	const root = getByTestId("root");
@@ -15,6 +16,7 @@ function setup(props: Progress.RootProps = {}) {
 
 describe("progress", () => {
 	it("should have no accessibility violations", async () => {
+		// @ts-expect-error - testing lib needs to update their generic types
 		const { container } = render(ProgressTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});
@@ -36,6 +38,7 @@ describe("progress", () => {
 
 	it("should react to updates to the value prop", async () => {
 		const user = userEvent.setup();
+		// @ts-expect-error - testing lib needs to update their generic types
 		const { getByTestId } = render(ProgressTest);
 		const root = getByTestId("root");
 		const binding = getByTestId("binding");

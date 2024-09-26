@@ -4,7 +4,7 @@ description: Enables users to pick from a list of options displayed in a dropdow
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, ComboboxDemo } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, ComboboxDemo, Callout } from '$lib/components/index.js'
 	export let schemas;
 </script>
 
@@ -16,7 +16,36 @@ description: Enables users to pick from a list of options displayed in a dropdow
 
 </ComponentPreviewV2>
 
+## Overview
+
+The Combobox component combines the functionality of an input field with a dropdown list of selectable options. It provides users with the ability to search, filter, and select from a predefined set of choices.
+
+## Key Features
+
+-   **Keyboard Navigation**: Full support for keyboard interactions, allowing users to navigate and select options without using a mouse.
+-   **Customizable Rendering**: Flexible architecture for rendering options, including support for grouped items.
+-   **Accessibility**: Built with ARIA attributes and keyboard interactions to ensure screen reader compatibility and accessibility standards.
+-   **Portal Support**: Ability to render the dropdown content in a portal, preventing layout issues in complex UI structures.
+
+## Architecture
+
+The Combobox component is composed of several subcomponents, each with a specific role:
+
+-   **Root**: The main container component that manages the state and context for the combobox.
+-   **Input**: The input field that allows users to enter search queries.
+-   **Trigger**: The button or element that opens the dropdown list.
+-   **Portal**: Responsible for portaling the dropdown content to the body or a custom target.
+-   **Group**: A container for grouped items, used to group related items.
+-   **GroupHeading**: A heading for a group of items, providing a descriptive label for the group.
+-   **Item**: An individual item within the list.
+-   **Separator**: A visual separator between items.
+-   **Content**: The dropdown container that displays the items. It uses [Floating UI](https://floating-ui.com/) to position the content relative to the trigger.
+-   **ContentStatic**: An alternative to the Content component, that enables you to opt-out of Floating UI and position the content yourself.
+-   **Arrow**: An arrow element that points to the trigger when using the `Combobox.Content` component.
+
 ## Structure
+
+Here's an overview of how the Combobox component is structured in code:
 
 ```svelte
 <script lang="ts">
@@ -119,37 +148,41 @@ It's recommended to use the `Combobox` primitives to build your own custom combo
 <CustomCombobox {items} />
 ```
 
-## Value State
+## Managing Value State
 
-The `value` represents the currently selected item/option within the Combobox. Bits UI provides flexible options for controlling and synchronizing the Combobox's `value` state.
+Bits UI offers several approaches to manage and synchronize the Combobox's value state, catering to different levels of control and integration needs.
 
-### Two-Way Binding
+### 1. Two-Way Binding
 
-Use the `bind:value` directive for effortless two-way synchronization between your local state and the Combobox's internal state.
+For seamless state synchronization, use Svelte's `bind:value` directive. This method automatically keeps your local state in sync with the component's internal state.
 
-```svelte {3,6,8}
+```svelte
 <script lang="ts">
 	import { Combobox } from "bits-ui";
-	let myValue = $state<string>("");
+	let myValue = $state("");
 </script>
 
-<button onclick={() => (myValue = "apple")}> Apple </button>
+<button onclick={() => (myValue = "A")}> Select A </button>
 
 <Combobox.Root bind:value={myValue}>
 	<!-- ... -->
 </Combobox.Root>
 ```
 
-This setup enables toggling the value via the custom button and ensures the local `myValue` state updates when the Combobox's value changes through any internal means (e.g., clicking on an item).
+#### Key Benefits
 
-### Change Handler
+-   Simplifies state management
+-   Automatically updates `myValue` when the internal state changes (e.g., via clicking on an item)
+-   Allows external control (e.g., selecting an item via a separate button)
 
-You can also use the `onValueChange` prop to update local state when the Combobox's `value` state changes. This is useful when you don't want two-way binding for one reason or another, or you want to perform additional logic when the value changes.
+### 2. Change Handler
 
-```svelte {3,7-11}
+For more granular control or to perform additional logic on state changes, use the `onValueChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
+
+```svelte
 <script lang="ts">
 	import { Combobox } from "bits-ui";
-	let myValue = $state<string>("");
+	let myValue = $state("");
 </script>
 
 <Combobox.Root
@@ -163,16 +196,25 @@ You can also use the `onValueChange` prop to update local state when the Combobo
 </Combobox.Root>
 ```
 
-### Controlled
+#### Use Cases
 
-Sometimes, you may want complete control over the Combobox's `value` state, meaning you will be "kept in the loop" and be required to apply the value state change yourself. While you will rarely need this, it's possible to do so by setting the `controlledValue` prop to `true`.
+-   Implementing custom behaviors on value change
+-   Integrating with external state management solutions
+-   Triggering side effects (e.g., logging, data fetching)
 
-You will then be responsible for updating a local value state variable that is passed as the `value` prop to the `Combobox.Root` component.
+### 3. Fully Controlled
+
+For complete control over the component's value state, use the `controlledValue` prop. This approach requires you to manually manage the value state, giving you full control over when and how the component responds to value change events.
+
+To implement controlled state:
+
+1. Set the `controlledValue` prop to `true` on the `Combobox.Root` component.
+2. Provide a `value` prop to `Combobox.Root`, which should be a variable holding the current state.
+3. Implement an `onValueChange` handler to update the state when the internal state changes.
 
 ```svelte
 <script lang="ts">
 	import { Combobox } from "bits-ui";
-
 	let myValue = $state("");
 </script>
 
@@ -181,45 +223,61 @@ You will then be responsible for updating a local value state variable that is p
 </Combobox.Root>
 ```
 
-See the [Controlled State](/docs/controlled-state) documentation for more information about controlled values.
+#### When to Use
 
-## Open State
+-   Implementing complex logic
+-   Coordinating multiple UI elements
+-   Debugging state-related issues
 
-The `open` state represents whether or not the Combobox content is open. Bits UI provides flexible options for controlling and synchronizing the Combobox's open state.
+<Callout>
 
-### Two-Way Binding
+While powerful, fully controlled state should be used judiciously as it increases complexity and can cause unexpected behaviors if not handled carefully.
 
-Use the `bind:open` directive for effortless two-way synchronization between your local state and the Combobox's internal state.
+For more in-depth information on controlled components and advanced state management techniques, refer to our [Controlled State](/docs/controlled-state) documentation.
 
-```svelte {3,6,8}
+</Callout>
+
+## Managing Open State
+
+Bits UI offers several approaches to manage and synchronize the Combobox's open state, catering to different levels of control and integration needs.
+
+### 1. Two-Way Binding
+
+For seamless state synchronization, use Svelte's `bind:open` directive. This method automatically keeps your local state in sync with the component's internal state.
+
+```svelte
 <script lang="ts">
 	import { Combobox } from "bits-ui";
-	let isOpen = $state(false);
+	let myOpen = $state(false);
 </script>
 
-<button onclick={() => (open = true)}> Open Combobox </button>
+<button onclick={() => (myOpen = true)}> Open </button>
 
-<Combobox.Root bind:open={isOpen}>
+<Combobox.Root bind:open={myOpen}>
 	<!-- ... -->
 </Combobox.Root>
 ```
 
-This setup enables toggling the Combobox via the custom button and ensures the local `isOpen` state updates when the Combobox's `open` state changes through any internal means e.g. clicking on the trigger or outside the content.
+#### Key Benefits
 
-### Change Handler
+-   Simplifies state management
+-   Automatically updates `myOpen` when the internal state changes (e.g., via clicking on the trigger/input)
+-   Allows external control (e.g., opening via a separate button)
 
-You can also use the `onOpenChange` prop to update local state when the Combobox's `open` state changes. This is useful when you don't want two-way binding for one reason or another, or you want to perform additional logic when the Combobox's open state changes.
+### 2. Change Handler
 
-```svelte {3,7-11}
+For more granular control or to perform additional logic on state changes, use the `onOpenChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
+
+```svelte
 <script lang="ts">
 	import { Combobox } from "bits-ui";
-	let isOpen = $state(false);
+	let myOpen = $state(false);
 </script>
 
 <Combobox.Root
-	open={isOpen}
-	onOpenChange={(open) => {
-		isOpen = open;
+	open={myOpen}
+	onOpenchange={(o) => {
+		myOpen = o;
 		// additional logic here.
 	}}
 >
@@ -227,25 +285,46 @@ You can also use the `onOpenChange` prop to update local state when the Combobox
 </Combobox.Root>
 ```
 
-### Controlled
+#### Use Cases
 
-Sometimes, you may want complete control over the Combobox's `open` state, meaning you will be "kept in the loop" and be required to apply the state change yourself. While you will rarely need this, it's possible to do so by setting the `controlledOpen` prop to `true`.
+-   Implementing custom behaviors on open change
+-   Integrating with external state management solutions
+-   Triggering side effects (e.g., logging, data fetching)
 
-You will then be responsible for updating a local value state variable that is passed as the `open` prop to the `Combobox.Root` component.
+### 3. Fully Controlled
+
+For complete control over the component's value state, use the `controlledOpen` prop. This approach requires you to manually manage the value state, giving you full control over when and how the component responds to value change events.
+
+To implement controlled state:
+
+1. Set the `controlledOpen` prop to `true` on the `Combobox.Root` component.
+2. Provide an `open` prop to `Combobox.Root`, which should be a variable holding the current state.
+3. Implement an `onOpenChange` handler to update the state when the internal state changes.
 
 ```svelte
 <script lang="ts">
 	import { Combobox } from "bits-ui";
-
 	let myOpen = $state(false);
 </script>
 
-<Combobox.Root controlledValue open={myOpen} onOpenChange={(o) => (myOpen = o)}>
+<Combobox.Root controlledOpen open={myOpen} onOpenChange={(v) => (myOpen = v)}>
 	<!-- ... -->
 </Combobox.Root>
 ```
 
-See the [Controlled State](/docs/controlled-state) documentation for more information about controlled values.
+#### When to Use
+
+-   Implementing complex open/close logic
+-   Coordinating multiple UI elements
+-   Debugging state-related issues
+
+<Callout>
+
+While powerful, fully controlled state should be used judiciously as it increases complexity and can cause unexpected behaviors if not handled carefully.
+
+For more in-depth information on controlled components and advanced state management techniques, refer to our [Controlled State](/docs/controlled-state) documentation.
+
+</Callout>
 
 ## Opt-out of Floating UI
 

@@ -30,7 +30,7 @@ import * as C from "$lib/content/constants.js";
 
 const root = createApiSchema<CommandRootPropsWithoutHTML>({
 	title: "Root",
-	description: "The root command component which manages & scopes the state of the command.",
+	description: "The main container that manages the overall state and context of the component.",
 	props: {
 		value: createStringProp({
 			default: "",
@@ -85,8 +85,7 @@ const root = createApiSchema<CommandRootPropsWithoutHTML>({
 
 const input = createApiSchema<CommandInputPropsWithoutHTML>({
 	title: "Input",
-	description:
-		"A representation of the combobox input element, which is typically displayed in the content.",
+	description: "The text input field where users can type to search or filter commands.",
 	props: {
 		value: createStringProp({
 			description:
@@ -105,7 +104,7 @@ const input = createApiSchema<CommandInputPropsWithoutHTML>({
 
 const list = createApiSchema<CommandListPropsWithoutHTML>({
 	title: "List",
-	description: "The container for the viewport and its items of the command menu.",
+	description: "The container for the viewport, items, and other elements of the command menu.",
 	props: {
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
@@ -127,7 +126,7 @@ const list = createApiSchema<CommandListPropsWithoutHTML>({
 const viewport = createApiSchema<CommandViewportPropsWithoutHTML>({
 	title: "Viewport",
 	description:
-		"The viewport component which contains the items of the command menu. This component tracks the height of the viewport and updates the `--bits-command-list-height` CSS variable on the `Command.List` component.",
+		"The visible area of the command list, which applies CSS variables to handle dynamic resizing/animations based on the height of the list.",
 	props: {
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
@@ -141,7 +140,7 @@ const viewport = createApiSchema<CommandViewportPropsWithoutHTML>({
 
 const group = createApiSchema<CommandGroupPropsWithoutHTML>({
 	title: "Group",
-	description: "A group of items within the command menu.",
+	description: "A container for a group of items within the command menu.",
 	props: {
 		value: createStringProp({
 			description:
@@ -164,7 +163,7 @@ const group = createApiSchema<CommandGroupPropsWithoutHTML>({
 
 const groupHeading = createApiSchema<CommandGroupHeadingPropsWithoutHTML>({
 	title: "GroupHeading",
-	description: "A heading for a group of items within the command menu.",
+	description: "A heading element to provide an accessible label for a group of items.",
 	props: {
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
@@ -245,7 +244,7 @@ const linkItem = createApiSchema<CommandLinkItemPropsWithoutHTML>({
 
 const empty = createApiSchema<CommandEmptyPropsWithoutHTML>({
 	title: "Empty",
-	description: "The empty state of the command menu. Shown when there are no items to display.",
+	description: "A component to display when no results are found.",
 	props: {
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
@@ -259,7 +258,7 @@ const empty = createApiSchema<CommandEmptyPropsWithoutHTML>({
 
 const loading = createApiSchema<CommandLoadingPropsWithoutHTML>({
 	title: "Loading",
-	description: "The loading state of the command menu. Shown when the menu is loading items.",
+	description: "A component to display while results are being fetched or processed.",
 	props: {
 		progress: createNumberProp({
 			default: "0",
@@ -278,7 +277,7 @@ const loading = createApiSchema<CommandLoadingPropsWithoutHTML>({
 const separator = createApiSchema<CommandSeparatorPropsWithoutHTML>({
 	title: "Separator",
 	description:
-		"A visual separator for use between items and groups. Visible when the search query is empty or the `forceMount` prop is `true`.",
+		"A visual separator to divide different sections of the command list. Visible when the search query is empty or the `forceMount` prop is `true`.",
 	props: {
 		forceMount: createBooleanProp({
 			default: C.FALSE,

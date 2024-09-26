@@ -6,6 +6,7 @@ import type { ScrollAreaTestProps } from "./scroll-area-test.svelte";
 
 function setup(props?: ScrollAreaTestProps) {
 	const user = setupUserEvents();
+	// @ts-expect-error - testing lib needs to update their generic types
 	const returned = render(ScrollAreaTest, props);
 	const root = returned.getByTestId("root");
 	const viewport = returned.getByTestId("viewport");

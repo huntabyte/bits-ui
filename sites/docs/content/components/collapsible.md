@@ -27,7 +27,7 @@ The Collapsible component enables you to create expandable and collapsible conte
 -   **Flexible State Management**: Supports controlled and uncontrolled state, take control if needed.
 -   **Compound Component Structure**: Provides a set of subcomponents that work together to create a fully-featured collapsible.
 
-## Component Architecture
+## Architecture
 
 The Accordion component is composed of a few subcomponents, each with a specific role:
 
@@ -35,7 +35,7 @@ The Accordion component is composed of a few subcomponents, each with a specific
 -   **Trigger**: The interactive element (e.g., button) that toggles the expanded/collapsed state of the content.
 -   **Content**: The container for the content that will be shown or hidden based on the collapsible state.
 
-## Component Structure
+## Structure
 
 Here's an overview of how the Collapsible component is structured in code:
 

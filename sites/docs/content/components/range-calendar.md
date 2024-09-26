@@ -4,7 +4,7 @@ description: Presents a calendar view tailored for selecting date ranges.
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, RangeCalendarDemo } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, RangeCalendarDemo, Callout } from '$lib/components/index.js'
 	export let schemas;
 </script>
 
@@ -15,6 +15,12 @@ description: Presents a calendar view tailored for selecting date ranges.
 {/snippet}
 
 </ComponentPreviewV2>
+
+<Callout type="tip" title="Heads up!">
+
+Before diving into this component, it's important to understand how dates/times work in Bits UI. Please read the [Dates](/docs/dates) documentation to learn more!
+
+</Callout>
 
 ## Structure
 

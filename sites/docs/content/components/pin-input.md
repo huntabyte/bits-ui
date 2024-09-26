@@ -33,7 +33,7 @@ This component is derived from and would not have been possible without the work
 -   **Accessibility**: Ensures keyboard navigation and screen reader compatibility.
 -   **Flexible Configuration**: Supports various PIN lengths and input types (numeric, alphanumeric).
 
-## Component Architecture
+## Architecture
 
 1. **Root Container**: A relatively positioned root element that encapsulates the entire component.
 2. **Invisible Input**: A hidden input field that manages the actual value and interacts with the browser's built-in features.

@@ -9,9 +9,11 @@ import SliderRangeTest, { type SliderRangeTestProps } from "./slider-range-test.
 const kbd = getTestKbd();
 
 function renderSlider(props: SliderTestProps = {}) {
+	// @ts-expect-error - testing lib needs to update their generic types
 	return render(SliderTest, { ...props });
 }
 function renderSliderRange(props: SliderRangeTestProps = {}) {
+	// @ts-expect-error - testing lib needs to update their generic types
 	return render(SliderRangeTest, { ...props });
 }
 
@@ -31,6 +33,7 @@ function setup(props: SliderTestProps = {}, kind: "default" | "range" = "default
 
 describe("slider (default)", () => {
 	it("should haveno accessibility violations", async () => {
+		// @ts-expect-error - testing lib needs to update their generic types
 		const { container } = render(SliderTest);
 
 		expect(await axe(container)).toHaveNoViolations();

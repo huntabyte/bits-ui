@@ -8,6 +8,8 @@ const kbd = getTestKbd();
 
 function setup(props: PopoverTestProps = {}) {
 	const user = setupUserEvents();
+
+	// @ts-expect-error - testing lib needs to update their generic types
 	const returned = render(PopoverTest, { ...props });
 	const { getByTestId, queryByTestId } = returned;
 	const trigger = getByTestId("trigger");
@@ -33,6 +35,7 @@ async function open(props: PopoverTestProps = {}, openWith: "click" | (string & 
 
 describe("popover", () => {
 	it("should have no accessibility violations", async () => {
+		// @ts-expect-error - testing lib needs to update their generic types
 		const { container } = render(PopoverTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});

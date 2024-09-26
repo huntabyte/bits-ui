@@ -4,7 +4,7 @@ description: A list of options that can be selected by the user.
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, ListboxDemo, ListboxDemoCustomAnchor } from '$lib/components'
+	import { APISection, ComponentPreviewV2, ListboxDemo, ListboxDemoCustomAnchor, Callout } from '$lib/components'
 	export let schemas;
 </script>
 
@@ -18,9 +18,35 @@ description: A list of options that can be selected by the user.
 
 ## Overview
 
-The `Listbox` component gives you the ability to create a list of options that can be selected by the user. This component offers a variety of features, such as typeahead, keyboard navigation, scroll up/down buttons, and more.
+The Listbox component provides users with a selectable list of options. It's designed to offer an enhanced selection experience with features like typeahead search, keyboard navigation, and customizable grouping. This component is particularly useful for scenarios where users need to choose from a predefined set of options, offering more functionality than a standard select element.
+
+## Key Features
+
+-   **Typeahead Search**: Users can quickly find options by typing
+-   **Keyboard Navigation**: Full support for keyboard interactions, allowing users to navigate through options using arrow keys, enter to select, and more.
+-   **Grouped Options**: Ability to organize options into logical groups, enhancing readability and organization of large option sets.
+-   **Scroll Management**: Includes scroll up/down buttons for easy navigation in long lists.
+-   **Accessibility**: Built-in ARIA attributes and keyboard support ensure compatibility with screen readers and adherence to accessibility standards.
+-   **Portal Support**: Option to render the listbox content in a portal, preventing layout issues in complex UI structures.
+
+## Architecture
+
+The Listbox component is composed of several subcomponents, each with a specific role:
+
+-   **Root**: The main container component that manages the state and context for the combobox.
+-   **Trigger**: The button or element that opens the dropdown list.
+-   **Portal**: Responsible for portaling the dropdown content to the body or a custom target.
+-   **Group**: A container for grouped items, used to group related items.
+-   **GroupHeading**: A heading for a group of items, providing a descriptive label for the group.
+-   **Item**: An individual item within the list.
+-   **Separator**: A visual separator between items.
+-   **Content**: The dropdown container that displays the items. It uses [Floating UI](https://floating-ui.com/) to position the content relative to the trigger.
+-   **ContentStatic** (Optional): An alternative to the Content component, that enables you to opt-out of Floating UI and position the content yourself.
+-   **Arrow**: An arrow element that points to the trigger when using the `Combobox.Content` component.
 
 ## Structure
+
+Here's an overview of how the Listbox component is structured in code:
 
 ```svelte
 <script lang="ts">
@@ -118,37 +144,41 @@ You can then use the `MyListbox` component throughout your application like so:
 <MyListbox {items} bind:value={fruit} />
 ```
 
-## Value State
+## Managing Value State
 
-The `value` represents the currently selected item/option within the listbox. Bits UI provides flexible options for controlling and synchronizing the Listbox's value state.
+Bits UI offers several approaches to manage and synchronize the Listbox's value state, catering to different levels of control and integration needs.
 
-### Two-Way Binding
+### 1. Two-Way Binding
 
-Use the `bind:value` directive for effortless two-way synchronization between your local state and the Listbox's internal state.
+For seamless state synchronization, use Svelte's `bind:value` directive. This method automatically keeps your local state in sync with the component's internal state.
 
-```svelte {3,6,8}
+```svelte
 <script lang="ts">
 	import { Listbox } from "bits-ui";
-	let myValue = $state<string>("");
+	let myValue = $state("");
 </script>
 
-<button onclick={() => (myValue = "apple")}> Apple </button>
+<button onclick={() => (myValue = "A")}> Select A </button>
 
 <Listbox.Root bind:value={myValue}>
 	<!-- ... -->
 </Listbox.Root>
 ```
 
-This setup enables toggling the value via the custom button and ensures the local `myValue` state updates when the Listbox's value changes through any internal means (e.g., clicking on an item's button).
+#### Key Benefits
 
-### Change Handler
+-   Simplifies state management
+-   Automatically updates `myValue` when the internal state changes (e.g., via clicking on an item)
+-   Allows external control (e.g., selecting an item via a separate button)
 
-You can also use the `onValueChange` prop to update local state when the Listbox's `value` state changes. This is useful when you don't want two-way binding for one reason or another, or you want to perform additional logic when the value changes.
+### 2. Change Handler
 
-```svelte {3,7-11}
+For more granular control or to perform additional logic on state changes, use the `onValueChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
+
+```svelte
 <script lang="ts">
 	import { Listbox } from "bits-ui";
-	let myValue = $state<string>("");
+	let myValue = $state("");
 </script>
 
 <Listbox.Root
@@ -162,17 +192,26 @@ You can also use the `onValueChange` prop to update local state when the Listbox
 </Listbox.Root>
 ```
 
-### Controlled
+#### Use Cases
 
-Sometimes, you may want complete control over the listbox's value state, meaning you will be "kept in the loop" and be required to apply the value state change yourself. While you will rarely need this, it's possible to do so by setting the `controlledValue` prop to `true`.
+-   Implementing custom behaviors on value change
+-   Integrating with external state management solutions
+-   Triggering side effects (e.g., logging, data fetching)
 
-You will then be responsible for updating a local value state variable that is passed as the `value` prop to the `Listbox.Root` component.
+### 3. Fully Controlled
+
+For complete control over the component's value state, use the `controlledValue` prop. This approach requires you to manually manage the value state, giving you full control over when and how the component responds to value change events.
+
+To implement controlled state:
+
+1. Set the `controlledValue` prop to `true` on the `Listbox.Root` component.
+2. Provide a `value` prop to `Listbox.Root`, which should be a variable holding the current state.
+3. Implement an `onValueChange` handler to update the state when the internal state changes.
 
 ```svelte
 <script lang="ts">
 	import { Listbox } from "bits-ui";
-
-	let myValue = $state<string>("");
+	let myValue = $state("");
 </script>
 
 <Listbox.Root controlledValue value={myValue} onValueChange={(v) => (myValue = v)}>
@@ -180,45 +219,61 @@ You will then be responsible for updating a local value state variable that is p
 </Listbox.Root>
 ```
 
-See the [Controlled State](/docs/controlled-state) documentation for more information about controlled values.
+#### When to Use
 
-## Open State
+-   Implementing complex open/close logic
+-   Coordinating multiple UI elements
+-   Debugging state-related issues
 
-The `open` state represents whether or not the listbox content is open. Bits UI provides flexible options for controlling and synchronizing the Listbox's open state.
+<Callout>
 
-### Two-Way Binding
+While powerful, fully controlled state should be used judiciously as it increases complexity and can cause unexpected behaviors if not handled carefully.
 
-Use the `bind:open` directive for effortless two-way synchronization between your local state and the Listbox's internal state.
+For more in-depth information on controlled components and advanced state management techniques, refer to our [Controlled State](/docs/controlled-state) documentation.
 
-```svelte {3,6,8}
+</Callout>
+
+## Managing Open State
+
+Bits UI offers several approaches to manage and synchronize the Listbox's open state, catering to different levels of control and integration needs.
+
+### 1. Two-Way Binding
+
+For seamless state synchronization, use Svelte's `bind:open` directive. This method automatically keeps your local state in sync with the component's internal state.
+
+```svelte
 <script lang="ts">
 	import { Listbox } from "bits-ui";
-	let isOpen = $state(false);
+	let myOpen = $state(false);
 </script>
 
-<button onclick={() => (open = true)}> Open listbox </button>
+<button onclick={() => (myOpen = true)}> Open </button>
 
-<Listbox.Root bind:open={isOpen}>
+<Listbox.Root bind:open={myOpen}>
 	<!-- ... -->
 </Listbox.Root>
 ```
 
-This setup enables toggling the Listbox via the custom button and ensures the local `isOpen` state updates when the Listbox's open state changes through any internal means e.g. clicking on the trigger or outside the content.
+#### Key Benefits
 
-### Change Handler
+-   Simplifies state management
+-   Automatically updates `myOpen` when the internal state changes (e.g., via clicking on the trigger/input)
+-   Allows external control (e.g., opening via a separate button)
 
-You can also use the `onOpenChange` prop to update local state when the Listbox's `open` state changes. This is useful when you don't want two-way binding for one reason or another, or you want to perform additional logic when the Listbox's open state changes.
+### 2. Change Handler
 
-```svelte {3,7-11}
+For more granular control or to perform additional logic on state changes, use the `onOpenChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
+
+```svelte
 <script lang="ts">
 	import { Listbox } from "bits-ui";
-	let isOpen = $state(false);
+	let myOpen = $state(false);
 </script>
 
 <Listbox.Root
-	open={isOpen}
-	onOpenChange={(open) => {
-		isOpen = open;
+	open={myOpen}
+	onOpenchange={(o) => {
+		myOpen = o;
 		// additional logic here.
 	}}
 >
@@ -226,25 +281,46 @@ You can also use the `onOpenChange` prop to update local state when the Listbox'
 </Listbox.Root>
 ```
 
-### Controlled
+#### Use Cases
 
-Sometimes, you may want complete control over the listbox's `open` state, meaning you will be "kept in the loop" and be required to apply the state change yourself. While you will rarely need this, it's possible to do so by setting the `controlledOpen` prop to `true`.
+-   Implementing custom behaviors on open change
+-   Integrating with external state management solutions
+-   Triggering side effects (e.g., logging, data fetching)
 
-You will then be responsible for updating a local value state variable that is passed as the `open` prop to the `Listbox.Root` component.
+### 3. Fully Controlled
+
+For complete control over the component's value state, use the `controlledOpen` prop. This approach requires you to manually manage the value state, giving you full control over when and how the component responds to value change events.
+
+To implement controlled state:
+
+1. Set the `controlledOpen` prop to `true` on the `Listbox.Root` component.
+2. Provide an `open` prop to `Listbox.Root`, which should be a variable holding the current state.
+3. Implement an `onOpenChange` handler to update the state when the internal state changes.
 
 ```svelte
 <script lang="ts">
 	import { Listbox } from "bits-ui";
-
 	let myOpen = $state(false);
 </script>
 
-<Listbox.Root controlledValue open={myOpen} onOpenChange={(o) => (myOpen = o)}>
+<Listbox.Root controlledOpen open={myOpen} onOpenChange={(v) => (myOpen = v)}>
 	<!-- ... -->
 </Listbox.Root>
 ```
 
-See the [Controlled State](/docs/controlled-state) documentation for more information about controlled values.
+#### When to Use
+
+-   Implementing complex open/close logic
+-   Coordinating multiple UI elements
+-   Debugging state-related issues
+
+<Callout>
+
+While powerful, fully controlled state should be used judiciously as it increases complexity and can cause unexpected behaviors if not handled carefully.
+
+For more in-depth information on controlled components and advanced state management techniques, refer to our [Controlled State](/docs/controlled-state) documentation.
+
+</Callout>
 
 ## Opt-out of Floating UI
 

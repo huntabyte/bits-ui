@@ -10,6 +10,7 @@ const kbd = getTestKbd();
 
 function setup(props: Switch.RootProps = {}) {
 	const user = userEvent.setup();
+	// @ts-expect-error - testing lib needs to update their generic types
 	const returned = render(SwitchTest, { name: "switch-input", ...props });
 	const root = returned.getByTestId("root");
 	const thumb = returned.getByTestId("thumb");
@@ -25,6 +26,7 @@ function setup(props: Switch.RootProps = {}) {
 
 describe("switch", () => {
 	it("should have no accessibility violations", async () => {
+		// @ts-expect-error - testing lib needs to update their generic types
 		const { container } = render(SwitchTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});

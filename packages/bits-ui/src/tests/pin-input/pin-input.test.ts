@@ -9,8 +9,8 @@ const kbd = getTestKbd();
 
 function setup(props: Partial<PinInput.RootProps> = {}) {
 	const user = setupUserEvents();
-	// eslint-disable-next-line ts/no-explicit-any
-	const returned = render(PinInputTest, { ...props } as any);
+	// @ts-expect-error - testing lib needs to update their generic types
+	const returned = render(PinInputTest, { ...props });
 	const cell0 = returned.getByTestId("cell-0");
 	const cell1 = returned.getByTestId("cell-1");
 	const cell2 = returned.getByTestId("cell-2");
@@ -31,6 +31,7 @@ function setup(props: Partial<PinInput.RootProps> = {}) {
 
 describe("pin Input", () => {
 	it("should have no accessibility violations", async () => {
+		// @ts-expect-error - testing lib needs to update their generic types
 		const { container } = render(PinInputTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});

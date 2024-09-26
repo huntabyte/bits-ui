@@ -10,6 +10,7 @@ const kbd = getTestKbd();
 
 function setup(props: Partial<TooltipTestProps> = {}) {
 	const user = userEvent.setup({ pointerEventsCheck: 0 });
+	// @ts-expect-error - testing lib needs to update their generic types
 	const returned = render(TooltipTest, { ...props });
 	const trigger = returned.getByTestId("trigger");
 	return { ...returned, trigger, user };

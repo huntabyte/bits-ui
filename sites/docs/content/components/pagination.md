@@ -4,7 +4,7 @@ description: Facilitates navigation between pages.
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, PaginationDemo } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, PaginationDemo, Callout } from '$lib/components/index.js'
 	export let schemas
 </script>
 
@@ -32,43 +32,47 @@ description: Facilitates navigation between pages.
 </Pagination.Root>
 ```
 
-## Page State
+## Managing Page State
 
-Bits UI provides flexible options for controlling and synchronizing the component's `page` state.
+Bits UI offers several approaches to manage and synchronize the Pagination's page state, catering to different levels of control and integration needs.
 
-### Two-Way Binding
+### 1. Two-Way Binding
 
-Use the `bind:page` directive for effortless two-way synchronization between your local state and the component's internal state.
+For seamless state synchronization, use Svelte's `bind:page` directive. This method automatically keeps your local state in sync with the component's internal state.
 
-```svelte {3,6,8}
+```svelte
 <script lang="ts">
 	import { Pagination } from "bits-ui";
 	let myPage = $state(1);
 </script>
 
-<button onclick={() => (myPage = 10)}>Go to page 10</button>
+<button onclick={() => (myPage = 2)}> Go to page 2 </button>
 
-<Pagination.Root bind:page={myPage}>
-	<!-- ... -->
+<Pagination.Root bind:pressed={myPage}>
+	<!-- ...-->
 </Pagination.Root>
 ```
 
-This setup enables changing the `page` via the custom button and ensures the local `myPage` state updates when the state updates through any internal means.
+#### Key Benefits
 
-### Change Handler
+-   Simplifies state management
+-   Automatically updates `myPage` when the internal state changes (e.g., via clicking on a page button)
+-   Allows external control (e.g., changing the page via a separate button/programmatically)
 
-You can also use the `onPageChange` prop to update local state when the component's `page` state changes. This is useful when you don't want two-way binding for one reason or another, or you want to perform additional logic when the page changes.
+### 2. Change Handler
 
-```svelte {3,7-11}
+For more granular control or to perform additional logic on state changes, use the `onPageChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
+
+```svelte
 <script lang="ts">
 	import { Pagination } from "bits-ui";
 	let myPage = $state(1);
 </script>
 
 <Pagination.Root
-	page={myPage}
-	onPageChange={(newPage) => {
-		myPage = newPage;
+	checked={myPage}
+	onPressedChange={(p) => {
+		myPage = p;
 		// additional logic here.
 	}}
 >
@@ -76,16 +80,25 @@ You can also use the `onPageChange` prop to update local state when the componen
 </Pagination.Root>
 ```
 
-### Controlled
+#### Use Cases
 
-Sometimes, you may want complete control over the component's `page` state, meaning you will be "kept in the loop" and be required to apply the state change yourself. While you'll rarely need this, it's possible to do so by setting the `controlledPage` prop to `true`.
+-   Implementing custom behaviors on page change
+-   Integrating with external state management solutions
+-   Triggering side effects (e.g., logging, data fetching)
 
-You will then be responsible for updating a local state variable that is passed as the `page` prop to the `Pagination.Root` component.
+### 3. Fully Controlled
+
+For complete control over the component's pressed state, use the `controlledPage` prop. This approach requires you to manually manage the state, giving you full control over when and how the component responds to change events.
+
+To implement controlled state:
+
+1. Set the `controlledPage` prop to `true` on the `Pagination.Root` component.
+2. Provide a `page` prop to `Pagination.Root`, which should be a variable holding the current state.
+3. Implement an `onPageChange` handler to update the state when the internal state changes.
 
 ```svelte
 <script lang="ts">
 	import { Pagination } from "bits-ui";
-
 	let myPage = $state(1);
 </script>
 
@@ -94,7 +107,19 @@ You will then be responsible for updating a local state variable that is passed 
 </Pagination.Root>
 ```
 
-See the [Controlled State](/docs/controlled-state) documentation for more information about controlled states.
+#### When to Use
+
+-   Implementing complex logic
+-   Coordinating multiple UI elements
+-   Debugging state-related issues
+
+<Callout>
+
+While powerful, fully controlled state should be used judiciously as it increases complexity and can cause unexpected behaviors if not handled carefully.
+
+For more in-depth information on controlled components and advanced state management techniques, refer to our [Controlled State](/docs/controlled-state) documentation.
+
+</Callout>
 
 ## Ellipsis
 
