@@ -4,7 +4,7 @@ description: Displays dates and days of the week, facilitating date-related inte
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, CalendarDemo } from '$lib/components'
+	import { APISection, ComponentPreviewV2, CalendarDemo, Callout } from '$lib/components'
 	export let schemas;
 </script>
 
@@ -15,6 +15,12 @@ description: Displays dates and days of the week, facilitating date-related inte
 {/snippet}
 
 </ComponentPreviewV2>
+
+<Callout type="tip" title="Heads up!">
+
+Before diving into this component, it's important to understand how dates/times work in Bits UI. Please read the [Dates](/docs/dates) documentation to learn more!
+
+</Callout>
 
 ## Structure
 
@@ -56,6 +62,303 @@ description: Displays dates and days of the week, facilitating date-related inte
 			</Calendar.Grid>
 		{/each}
 	{/snippet}
+</Calendar.Root>
+```
+
+## Placeholder
+
+The `placeholder` prop for the `Calendar.Root` component determines what date our calendar should start with when the user hasn't selected a date yet. It also determines the current "view" of the calendar.
+
+As the user navigates through the calendar, the `placeholder` will be updated to reflect the currently focused date in that view.
+
+By default, the `placeholder` will be set to the current date, and be of type `CalendarDate`.
+
+## Managing Placeholder State
+
+Bits UI offers several approaches to manage and synchronize the component's placeholder state, catering to different levels of control and integration needs.
+
+### 1. Two-Way Binding
+
+For seamless state synchronization, use Svelte's `bind:placeholder` directive. This method automatically keeps your local state in sync with the component's internal state.
+
+```svelte {3,6,8}
+<script lang="ts">
+	import { Calendar } from "bits-ui";
+	import { CalendarDateTime } from "@internationalized/date";
+	let myPlaceholder = $state(new CalendarDateTime(2024, 8, 3, 12, 30));
+</script>
+
+<button onclick={() => (myPlaceholder = new CalendarDate(2024, 8, 3))}>
+	Set placeholder to August 3rd, 2024
+</button>
+
+<Calendar.Root bind:placeholder={myPlaceholder}>
+	<!-- ... -->
+</Calendar.Root>
+```
+
+#### Key Benefits
+
+-   Simplifies state management
+-   Automatically updates `myPlaceholder` when the internal state changes
+-   Allows external control (e.g., changing the placeholder via a separate button/programmatically)
+
+### 2. Change Handler
+
+For more granular control or to perform additional logic on state changes, use the `onPlaceholderChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
+
+```svelte {3,7-11}
+<script lang="ts">
+	import { Calendar } from "bits-ui";
+	import { CalendarDateTime } from "@internationalized/date";
+	let myPlaceholder = $state(new CalendarDateTime(2024, 8, 3, 12, 30));
+</script>
+
+<Calendar.Root
+	placeholder={myPlaceholder}
+	onPlaceholderChange={(p) => {
+		placeholder = p;
+	}}
+>
+	<!-- ... -->
+</Calendar.Root>
+```
+
+#### Use Cases
+
+-   Implementing custom behaviors on placeholder change
+-   Integrating with external state management solutions
+-   Triggering side effects (e.g., logging, data fetching)
+
+### 3. Fully Controlled
+
+For complete control over the component's placeholder state, use the `controlledPlaceholder` prop. This approach requires you to manually manage the state, giving you full control over when and how the component responds to change events.
+
+To implement controlled state:
+
+1. Set the `controlledPlaceholder` prop to `true` on the `Calendar.Root` component.
+2. Provide a `placeholder` prop to `Calendar.Root`, which should be a variable holding the current state.
+3. Implement an `onPlaceholderChange` handler to update the state when the internal state changes.
+
+```svelte
+<script lang="ts">
+	import { Calendar } from "bits-ui";
+	let myPlaceholder = $state();
+</script>
+
+<Calendar.Root
+	controlledPlaceholder
+	placeholder={myPlaceholder}
+	onPlaceholderChange={(p) => (myPlaceholder = p)}
+>
+	<!-- ... -->
+</Calendar.Root>
+```
+
+#### When to Use
+
+-   Implementing complex logic
+-   Coordinating multiple UI elements
+-   Debugging state-related issues
+
+<Callout>
+
+While powerful, fully controlled state should be used judiciously as it increases complexity and can cause unexpected behaviors if not handled carefully.
+
+For more in-depth information on controlled components and advanced state management techniques, refer to our [Controlled State](/docs/controlled-state) documentation.
+
+</Callout>
+
+## Managing Value State
+
+Bits UI offers several approaches to manage and synchronize the component's value state, catering to different levels of control and integration needs.
+
+### 1. Two-Way Binding
+
+For seamless state synchronization, use Svelte's `bind:value` directive. This method automatically keeps your local state in sync with the component's internal state.
+
+```svelte {3,6,8}
+<script lang="ts">
+	import { Calendar } from "bits-ui";
+	import { CalendarDateTime } from "@internationalized/date";
+	let myValue = $state(new CalendarDateTime(2024, 8, 3, 12, 30));
+</script>
+
+<button onclick={() => (myValue = myValue.add({ days: 1 }))}> Add 1 day </button>
+<Calendar.Root bind:value={myValue}>
+	<!-- ... -->
+</Calendar.Root>
+```
+
+#### Key Benefits
+
+-   Simplifies state management
+-   Automatically updates `myValue` when the internal state changes
+-   Allows external control (e.g., changing the value via a separate button/programmatically)
+
+### 2. Change Handler
+
+For more granular control or to perform additional logic on state changes, use the `onValueChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
+
+```svelte {3,7-11}
+<script lang="ts">
+	import { Calendar } from "bits-ui";
+	import { CalendarDateTime } from "@internationalized/date";
+	let myValue = $state(new CalendarDateTime(2024, 8, 3, 12, 30));
+</script>
+
+<Calendar.Root
+	value={myValue}
+	onValueChange={(v) => {
+		value = v.set({ hour: v.hour + 1 });
+	}}
+>
+	<!-- ... -->
+</Calendar.Root>
+```
+
+#### Use Cases
+
+-   Implementing custom behaviors on value change
+-   Integrating with external state management solutions
+-   Triggering side effects (e.g., logging, data fetching)
+
+### 3. Fully Controlled
+
+For complete control over the component's value state, use the `controlledValue` prop. This approach requires you to manually manage the state, giving you full control over when and how the component responds to change events.
+
+To implement controlled state:
+
+1. Set the `controlledValue` prop to `true` on the `Calendar.Root` component.
+2. Provide a `value` prop to `Calendar.Root`, which should be a variable holding the current state.
+3. Implement an `onValueChange` handler to update the state when the internal state changes.
+
+```svelte
+<script lang="ts">
+	import { Calendar } from "bits-ui";
+	let myValue = $state();
+</script>
+
+<Calendar.Root controlledValue value={myValue} onValueChange={(v) => (myValue = v)}>
+	<!-- ... -->
+</Calendar.Root>
+```
+
+#### When to Use
+
+-   Implementing complex logic
+-   Coordinating multiple UI elements
+-   Debugging state-related issues
+
+<Callout>
+
+While powerful, fully controlled state should be used judiciously as it increases complexity and can cause unexpected behaviors if not handled carefully.
+
+For more in-depth information on controlled components and advanced state management techniques, refer to our [Controlled State](/docs/controlled-state) documentation.
+
+</Callout>
+
+## Default Value
+
+Often, you'll want to start the `Calendar.Root` component with a default value. Likely this value will come from a database in the format of an ISO 8601 string.
+
+You can use the `parseDate` function from the `@internationalized/date` package to parse the string into a `CalendarDate` object.
+
+```svelte
+<script lang="ts">
+	import { Calendar } from "bits-ui";
+	import { parseDate } from "@internationalized/date";
+
+	// this came from a database/API call
+	const date = "2024-08-03";
+
+	let value = $state(parseDate(date));
+</script>
+
+<Calendar.Root {value}>
+	<!-- ...-->
+</Calendar.Root>
+```
+
+## Validation
+
+### Minimum Value
+
+You can set a minimum value for the calendar by using the `minValue` prop on `Calendar.Root`. If a user selects a date that is less than the minimum value, the calendar will be marked as invalid.
+
+```svelte
+<script lang="ts">
+	import { Calendar } from "bits-ui";
+	import { today, getLocalTimeZone } from "@internationalized/date";
+
+	const todayDate = today(getLocalTimeZone());
+	const yesterday = todayDate.subtract({ days: 1 });
+</script>
+
+<Calendar.Root minValue={todayDate} value={yesterday}>
+	<!-- ...-->
+</Calendar.Root>
+```
+
+### Maximum Value
+
+You can set a maximum value for the calendar by using the `maxValue` prop on `Calendar.Root`. If a user selects a date that is greater than the maximum value, the calendar will be marked as invalid.
+
+```svelte
+<script lang="ts">
+	import { Calendar } from "bits-ui";
+	import { today, getLocalTimeZone } from "@internationalized/date";
+
+	const todayDate = today(getLocalTimeZone());
+	const tomorrow = todayDate.add({ days: 1 });
+</script>
+
+<Calendar.Root maxValue={todayDate} value={tomorrow}>
+	<!-- ...-->
+</Calendar.Root>
+```
+
+### Unavailable Dates
+
+You can specify speciifc dates that are unavailable for selection by using the `isDateUnavailable` prop. This prop accepts a function that returns a boolean value indicating whether a date is unavailable or not.
+
+```svelte
+<script lang="ts">
+	import { Calendar } from "bits-ui";
+	import { today, getLocalTimeZone, isNotNull } from "@internationalized/date";
+
+	const todayDate = today(getLocalTimeZone());
+	const tomorrow = todayDate.add({ days: 1 });
+
+	function isDateUnavailable(date: DateValue) {
+		return date.day === 1;
+	}
+</script>
+
+<Calendar.Root {isDateUnavailable} value={tomorrow}>
+	<!-- ...-->
+</Calendar.Root>
+```
+
+### Disabled Dates
+
+You can specify speciifc dates that are disabled for selection by using the `isDateDisabled` prop.
+
+```svelte
+<script lang="ts">
+	import { Calendar } from "bits-ui";
+	import { today, getLocalTimeZone, isNotNull } from "@internationalized/date";
+
+	const todayDate = today(getLocalTimeZone());
+	const tomorrow = todayDate.add({ days: 1 });
+
+	function isDateDisabled(date: DateValue) {
+		return date.day === 1;
+	}
+</script>
+
+<Calendar.Root {isDateDisabled} value={tomorrow}>
+	<!-- ...-->
 </Calendar.Root>
 ```
 

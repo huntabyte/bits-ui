@@ -4,7 +4,7 @@ description: Facilitates the selection of dates through an input and calendar-ba
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, DatePickerDemo } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, DatePickerDemo, Callout } from '$lib/components/index.js'
 	export let schemas;
 </script>
 
@@ -15,6 +15,12 @@ description: Facilitates the selection of dates through an input and calendar-ba
 {/snippet}
 
 </ComponentPreviewV2>
+
+<Callout type="tip" title="Heads up!">
+
+Before diving into this component, it's important to understand how dates/times work in Bits UI. Please read the [Dates](/docs/dates) documentation to learn more!
+
+</Callout>
 
 ## Structure
 

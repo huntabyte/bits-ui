@@ -16,6 +16,12 @@ description: Allows users to input a range of dates within a designated field.
 
 </ComponentPreviewV2>
 
+<Callout type="tip" title="Heads up!">
+
+Before diving into this component, it's important to understand how dates/times work in Bits UI. Please read the [Dates](/docs/dates) documentation to learn more!
+
+</Callout>
+
 ## Structure
 
 ```svelte
