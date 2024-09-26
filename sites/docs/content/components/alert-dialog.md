@@ -4,7 +4,7 @@ description: A modal window that alerts users with important information and awa
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, AlertDialogDemo } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, AlertDialogDemo, Callout } from '$lib/components/index.js'
 	export let schemas;
 </script>
 
@@ -126,13 +126,13 @@ Alternatively, you can define the snippets separately and pass them as props to 
 </MyAlertDialog>
 ```
 
-## Open State
+## Managing Open State
 
-Bits UI provides flexible options for controlling and synchronizing the Alert Dialog's open state.
+Bits UI offers several approaches to manage and synchronize the Alert Dialog's open state, catering to different levels of control and integration needs.
 
-### Two-Way Binding
+### 1. Two-Way Binding
 
-Use the `bind:open` directive for effortless two-way synchronization between your local state and the dialog's internal state.
+For seamless state synchronization, use Svelte's `bind:open` directive. This method automatically keeps your local state in sync with the dialog's internal state.
 
 ```svelte {3,6,8}
 <script lang="ts">
@@ -140,18 +140,22 @@ Use the `bind:open` directive for effortless two-way synchronization between you
 	let isOpen = $state(false);
 </script>
 
-<button on:click={() => (isOpen = true)}>Open Dialog</button>
+<button onclick={() => (isOpen = true)}>Open Dialog</button>
 
 <AlertDialog.Root bind:open={isOpen}>
-	<!-- ...dialog components -->
+	<!-- ... -->
 </AlertDialog.Root>
 ```
 
-This setup enables opening the dialog via the custom button and ensures the local `isOpen` state updates when the dialog closes through any means (e.g., escape key).
+#### Key Benefits
 
-### Change Handler
+-   Simplifies state management
+-   Automatically updates isOpen when the dialog closes (e.g., via escape key)
+-   Allows external control (e.g., opening via a separate button)
 
-You can also use the `onOpenChange` prop to update local state when the dialog's `open` state changes. This is useful when you don't want two-way binding for one reason or another, or you want to perform additional logic when the dialog opens or closes.
+### 2. Change Handler
+
+For more granular control or to perform additional logic on state changes, use the `onOpenChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
 
 ```svelte {3,7-11}
 <script lang="ts">
@@ -170,17 +174,21 @@ You can also use the `onOpenChange` prop to update local state when the dialog's
 </AlertDialog.Root>
 ```
 
-### Controlled
+#### Use Cases
 
-Sometimes, you may want complete control over the dialog's `open` state, meaning you will be "kept in the loop" and be required to apply the state change yourself. While you'll rarely need this, it's possible to do so by setting the `controlledOpen` prop to `true`.
+-   Implementing custom behaviors on open/close
+-   Integrating with external state management solutions
+-   Triggering side effects (e.g., logging, data fetching)
 
-You will then be responsible for updating a local state variable that is passed as the `open` prop to the `AlertDialog.Root` component.
+### 3. Fully Controlled
+
+For complete control over the dialog's open state, use the `controlledOpen` prop. This approach requires you to manually manage the open state, giving you full control over when and how the dialog responds to open/close events.
 
 ```svelte
 <script lang="ts">
 	import { AlertDialog } from "bits-ui";
 
-	let myOpen = $state<string>(false);
+	let myOpen = $state(false);
 </script>
 
 <AlertDialog.Root controlledOpen open={myOpen} onOpenChange={(o) => (myOpen = o)}>
@@ -188,7 +196,19 @@ You will then be responsible for updating a local state variable that is passed 
 </AlertDialog.Root>
 ```
 
-See the [Controlled State](/docs/controlled-state) documentation for more information about controlled values.
+#### When to Use
+
+-   Implementing complex open/close logic
+-   Coordinating multiple UI elements
+-   Debugging state-related issues
+
+<Callout>
+
+While powerful, fully controlled state should be used judiciously as it increases complexity and can cause unexpected behaviors if not handled carefully.
+
+For more in-depth information on controlled components and advanced state management techniques, refer to our [Controlled State](/docs/controlled-state) documentation.
+
+</Callout>
 
 ## Managing Focus
 
@@ -257,9 +277,17 @@ You'll need to cancel the default behavior of focusing the trigger element by ca
 </AlertDialog.Root>
 ```
 
-## Scroll Lock
+## Advanced Behaviors
 
-By default, when a dialog is opened, scrolling the body will be disabled, which provides a more native experience for users. If you wish to disable this behavior, you can set the `preventScroll` prop to `false` on the `AlertDialog.Content` component.
+The Alert Dialog component offers several advanced features to customize its behavior and enhance user experience. This section covers scroll locking, escape key handling, and interaction outside the dialog.
+
+### Scroll Lock
+
+By default, when an Alert Dialog opens, scrolling the body is disabled. This provides a more native-like experience, focusing user attention on the dialog content.
+
+#### Customizing Scroll Behavior
+
+To allow body scrolling while the dialog is open, use the `preventScroll` prop on `AlertDialog.Content`:
 
 ```svelte /preventScroll={false}/
 <AlertDialog.Content preventScroll={false}>
@@ -267,13 +295,26 @@ By default, when a dialog is opened, scrolling the body will be disabled, which 
 </AlertDialog.Content>
 ```
 
-## Escape Keydown
+<Callout type="warning" title="Note">
 
-By default, when a dialog is open, pressing the `Escape` key will close the dialog. Bits UI provides a couple ways to override this behavior.
+Enabling body scroll may affect user focus and accessibility. Use this option judiciously.
 
-### escapeKeydownBehavior
+</Callout>
 
-You can set the `escapeKeydownBehavior` prop to `'ignore'` on the `AlertDialog.Content` component to prevent the dialog from closing when the `Escape` key is pressed.
+### Escape Key Handling
+
+By default, pressing the `Escape` key closes an open Alert Dialog. Bits UI provides two methods to customize this behavior.
+
+#### Method 1: `escapeKeydownBehavior`
+
+The `escapeKeydownBehavior` prop allows you to customize the behavior taken by the component when the `Escape` key is pressed. It accepts one of the following values:
+
+-   `'close'` (default): Closes the Alert Dialog immediately.
+-   `'ignore'`: Prevents the Alert Dialog from closing.
+-   `'defer-otherwise-close'`: If an ancestor Bits UI component also implements this prop, it will defer the closing decision to that component. Otherwise, the Alert Dialog will close immediately.
+-   `'defer-otherwise-ignore'`: If an ancestor Bits UI component also implements this prop, it will defer the closing decision to that component. Otherwise, the Alert Dialog will ignore the key press and not close.
+
+To always prevent the Alert Dialog from closing on Escape key press, set the `escapeKeydownBehavior` prop to `'ignore'` on `Dialog.Content`:
 
 ```svelte /escapeKeydownBehavior="ignore"/
 <AlertDialog.Content escapeKeydownBehavior="ignore">
@@ -281,43 +322,70 @@ You can set the `escapeKeydownBehavior` prop to `'ignore'` on the `AlertDialog.C
 </AlertDialog.Content>
 ```
 
-### onEscapeKeydown
+#### Method 2: `onEscapeKeydown`
 
-You can also override the default behavior by cancelling the event passed to the `onEscapeKeydown` callback on the `AlertDialog.Content` component.
+For more granular control, override the default behavior using the `onEscapeKeydown` prop:
 
-```svelte /onEscapeKeydown={(e) => e.preventDefault()}/
-<AlertDialog.Content onEscapeKeydown={(e) => e.preventDefault()}>
+```svelte {2-5}
+<AlertDialog.Content
+	onEscapeKeydown={(e) => {
+		e.preventDefault();
+		// do something else instead
+	}}
+>
 	<!-- ... -->
 </AlertDialog.Content>
 ```
 
-## Interact Outside
+This method allows you to implement custom logic when the `Escape` key is pressed.
 
-Unlike the regular [Dialog](/docs/components/dialog), the Alert Dialog does not close when the user interacts outside the content. This is because when using an alert dialog, the user is expected to acknowledge the dialog's content before continuing.
+### Interaction Outside
 
-If you wish to override this behavior, Bits UI provides a couple ways to do so.
+By default, interacting outside the Alert Dialog content area closes the Alert Dialog. Bits UI offers two ways to modify this behavior.
 
-### interactOutsideBehavior
+#### Method 1: `interactOutsideBehavior`
 
-You can set the `interactOutsideBehavior` prop to `'close'` on the `AlertDialog.Content` component to close the dialog when the user interacts outside the content.
+The `interactOutsideBehavior` prop allows you to customize the behavior taken by the component when an interaction (touch, mouse, or pointer event) occurs outside the content. It accepts one of the following values:
+
+-   `'close'` (default): Closes the Alert Dialog immediately.
+-   `'ignore'`: Prevents the Alert Dialog from closing.
+-   `'defer-otherwise-close'`: If an ancestor Bits UI component also implements this prop, it will defer the closing decision to that component. Otherwise, the Alert Dialog will close immediately.
+-   `'defer-otherwise-ignore'`: If an ancestor Bits UI component also implements this prop, it will defer the closing decision to that component. Otherwise, the Alert Dialog will ignore the event and not close.
+
+To always prevent the Alert Dialog from closing on Escape key press, set the `escapeKeydownBehavior` prop to `'ignore'` on `Alert.Content`:
 
 ```svelte /interactOutsideBehavior="ignore"/
-<Dialog.Content interactOutsideBehavior="ignore">
-	<!-- ... -->
-</Dialog.Content>
-```
-
-### onInteractOutside
-
-If `interactOutsideBehavior` is set to `'close'`, you can intercept the event passed to the `onInteractOutside` callback on the `AlertDialog.Content` component.
-
-If the event is cancelled, the dialog will not close.
-
-```svelte /onInteractOutside={(e) => e.preventDefault()}/
-<AlertDialog.Content onInteractOutside={(e) => e.preventDefault()}>
+<AlertDialog.Content interactOutsideBehavior="ignore">
 	<!-- ... -->
 </AlertDialog.Content>
 ```
+
+#### Method 2: `onInteractOutside`
+
+For custom handling of outside interactions, you can override the default behavior using the `onInteractOutside` prop:
+
+```svelte {2-5}
+<AlertDialog.Content
+	onInteractOutside={(e) => {
+		e.preventDefault();
+		// do something else instead
+	}}
+>
+	<!-- ... -->
+</AlertDialog.Content>
+```
+
+This approach allows you to implement specific behaviors when users interact outside the Alert Dialog content.
+
+### Best Practices
+
+-   **Scroll Lock**: Consider your use case carefully before disabling scroll lock. It may be necessary for dialogs with scrollable content or for specific UX requirements.
+-   **Escape Keydown**: Overriding the default escape key behavior should be done thoughtfully. Users often expect the escape key to close modals.
+-   **Outside Interactions**: Ignoring outside interactions can be useful for important dialogs or multi-step processes, but be cautious not to trap users unintentionally.
+-   **Accessibility**: Always ensure that any customizations maintain or enhance the dialog's accessibility.
+-   **User Expectations**: Try to balance custom behaviors with common UX patterns to avoid confusing users.
+
+By leveraging these advanced features, you can create highly customized dialog experiences while maintaining usability and accessibility standards.
 
 ## Nested Dialogs
 
@@ -326,33 +394,5 @@ Dialogs can be nested within each other to create more complex layouts. See the 
 ## Svelte Transitions
 
 See the [Dialog](/docs/components/dialog) component for more information on Svelte Transitions with dialog components.
-
-## Usage
-
-### Controlled Open
-
-If you want to control or be aware of the `open` state of the dialog from outside of the component, bind to the `open` prop.
-
-```svelte {3,6,8}
-<script lang="ts">
-	import { AlertDialog } from "bits-ui";
-	let open = $state(false);
-</script>
-
-<button onclick={() => (open = true)}>Open Dialog</button>
-
-<AlertDialog.Root bind:open>
-	<AlertDialog.Trigger />
-	<AlertDialog.Portal>
-		<AlertDialog.Overlay />
-		<AlertDialog.Content>
-			<AlertDialog.Title />
-			<AlertDialog.Description />
-			<AlertDialog.Cancel />
-			<AlertDialog.Action />
-		</AlertDialog.Content>
-	</AlertDialog.Portal>
-</AlertDialog.Root>
-```
 
 <APISection {schemas} />

@@ -195,4 +195,4 @@ export const arrow = createApiSchema<TooltipArrowPropsWithoutHTML>({
 	],
 });
 
-export const tooltip = [provider, root, trigger, content, arrow];
+export const tooltip = [provider, root, trigger, content, contentStatic, arrow];

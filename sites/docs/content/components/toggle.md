@@ -80,7 +80,7 @@ You will then be responsible for updating a local state variable that is passed 
 <script lang="ts">
 	import { Toggle } from "bits-ui";
 
-	let myPressed = $state<string>(false);
+	let myPressed = $state(false);
 </script>
 
 <Toggle.Root controlledPressed pressed={myPressed} onPressedChange={(p) => (myPressed = p)}>

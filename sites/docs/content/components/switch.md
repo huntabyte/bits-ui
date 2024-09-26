@@ -4,7 +4,7 @@ description: A toggle control enabling users to switch between "on" and "off" st
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, SwitchDemo, SwitchDemoCustom } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, SwitchDemo, SwitchDemoCustom, Callout } from '$lib/components/index.js'
 	export let schemas;
 </script>
 
@@ -16,7 +16,27 @@ description: A toggle control enabling users to switch between "on" and "off" st
 
 </ComponentPreviewV2>
 
-## Structure
+## Overview
+
+The Switch component provides an intuitive and accessible toggle control, allowing users to switch between two states, typically "on" and "off". This component is commonly used for enabling or disabling features, toggling settings, or representing boolean values in forms. The Switch offers a more visual and interactive alternative to traditional checkboxes for binary choices.
+
+## Key Features
+
+-   **Accessibility**: Built with WAI-ARIA guidelines in mind, ensuring keyboard navigation and screen reader support.
+-   **State Management**: Internally manages the on/off state, with options for controlled and uncontrolled usage.
+-   **Stylable**: Data attributes allow for smooth transitions between states and custom styles.
+-   **HTML Forms**: Can render a hidden input element for form submissions.
+
+## Component Architecture
+
+The Switch component is composed of two main parts:
+
+-   **Root**: The main container component that manages the state and behavior of the switch.
+-   **Thumb**: The "movable" part of the switch that indicates the current state.
+
+## Component Structure
+
+Here's an overview of how the Switch component is structured in code:
 
 ```svelte
 <script lang="ts">
@@ -66,55 +86,69 @@ You can then use the `MySwitch` component in your application like so:
 <MySwitch bind:checked={notifications} labelText="Enable notifications" />
 ```
 
-## Checked State
+## Managing Checked State
 
-The `checked` prop is used to determine whether the switch is in one of two states: checked and unchecked.
+Bits UI offers several approaches to manage and synchronize the Switch's checked state, catering to different levels of control and integration needs.
 
-### Two-Way Binding
+### 1. Two-Way Binding
 
-Use the `bind:checked` directive for two-way synchronization between your local state and the switch's internal state.
+For seamless state synchronization, use Svelte's `bind:checked` directive. This method automatically keeps your local state in sync with the switch's internal state.
 
 ```svelte
 <script lang="ts">
 	import { Switch } from "bits-ui";
-
-	let myChecked = $state(false);
-
-	function fetchNotifications() {
-		// whatever logic would result in the `myChecked` state being updated
-		myChecked = true;
-	}
+	let myChecked = $state(true);
 </script>
 
-<button onclick={fetchNotifications}> Sync Notifications </button>
+<button onclick={() => (myChecked = false)}> uncheck </button>
 
-<Switch.Root bind:checked={myChecked}>
-	<!-- ...-->
-</Switch.Root>
+<Switch.Root bind:checked={myChecked} />
 ```
 
-This setup enables toggling the switch via custom logic and ensures the local `myChecked` state updates when the switch changes through any internal means (e.g. clicking on the switch).
+#### Key Benefits
 
-### Change Handler
+-   Simplifies state management
+-   Automatically updates `myChecked` when the switch changes (e.g., via clicking on the switch)
+-   Allows external control (e.g., checking via a separate button/programmatically)
 
-You can also use the `onCheckedChange` prop to update local state when the switch's checked state changes. This is useful when you don't want two-way binding for one reason or another, or you want to perform an additional side-effect when the switch's `checked` state changes.
+### 2. Change Handler
 
-```svelte
-<Switch.Root onCheckedChange={(checked) => console.log(checked)}>
-	<!-- ...-->
-</Switch.Root>
-```
-
-### Controlled
-
-Sometimes, you may want complete control over the component's `checked` state, meaning you will be "kept in the loop" and be required to apply the state change yourself. While you will rarely need this, it's possible to do so by setting the `controlledChecked` prop to `true`.
-
-You will then be responsible for updating a local value state variable that is passed as the `checked` prop to the `Switch.Root` component.
+For more granular control or to perform additional logic on state changes, use the `onCheckedChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
 
 ```svelte
 <script lang="ts">
 	import { Switch } from "bits-ui";
+	let myChecked = $state(false);
+</script>
 
+<Switch.Root
+	checked={myChecked}
+	onCheckedChange={(checked) => {
+		myChecked = checked;
+		// additional logic here.
+	}}
+/>
+```
+
+#### Use Cases
+
+-   Implementing custom behaviors on checked/unchecked
+-   Integrating with external state management solutions
+-   Triggering side effects (e.g., logging, data fetching)
+
+### 3. Fully Controlled
+
+For complete control over the switch's checked state, use the `controlledChecked` prop. This approach requires you to manually manage the checked state, giving you full control over when and how the checkbox responds to change events.
+
+To implement controlled state:
+
+1. Set the `controlledChecked` prop to `true` on the `Switch.Root` component.
+2. Provide a `checked` prop to `Switch.Root`, which should be a variable holding the current state.
+3. Implement an `onCheckedChange` handler to update the state when the internal state changes.
+
+```svelte
+<script lang="ts">
+	import { Switch } from "bits-ui";
 	let myChecked = $state(false);
 </script>
 
@@ -123,7 +157,19 @@ You will then be responsible for updating a local value state variable that is p
 </Switch.Root>
 ```
 
-See the [Controlled State](/docs/controlled-state) documentation for more information about controlled values.
+#### When to Use
+
+-   Implementing complex checked/unchecked logic
+-   Coordinating multiple UI elements
+-   Debugging state-related issues
+
+<Callout>
+
+While powerful, fully controlled state should be used judiciously as it increases complexity and can cause unexpected behaviors if not handled carefully.
+
+For more in-depth information on controlled components and advanced state management techniques, refer to our [Controlled State](/docs/controlled-state) documentation.
+
+</Callout>
 
 ## Disabled State
 
@@ -161,5 +207,17 @@ For example, if you wanted to submit a string value, you could do the following:
 	<Switch.Thumb />
 </Switch.Root>
 ```
+
+### Required
+
+If you want to make the switch required, you can use the `required` prop.
+
+```svelte /required/
+<Switch.Root required>
+	<!-- ... -->
+</Switch.Root>
+```
+
+This will apply the `required` attribute to the hidden input element, ensuring that proper form submission is enforced.
 
 <APISection {schemas} />

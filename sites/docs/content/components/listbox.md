@@ -236,7 +236,7 @@ You will then be responsible for updating a local value state variable that is p
 <script lang="ts">
 	import { Listbox } from "bits-ui";
 
-	let myOpen = $state<string>(false);
+	let myOpen = $state(false);
 </script>
 
 <Listbox.Root controlledValue open={myOpen} onOpenChange={(o) => (myOpen = o)}>

@@ -4,7 +4,7 @@ description: A modal window presenting content or seeking user input without nav
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, DialogDemo, DialogDemoCustom, DialogDemoNested } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, DialogDemo, DialogDemoCustom, DialogDemoNested, Callout } from '$lib/components/index.js'
 	export let schemas;
 </script>
 
@@ -16,7 +16,35 @@ description: A modal window presenting content or seeking user input without nav
 
 </ComponentPreviewV2>
 
-## Structure
+## Overview
+
+The Dialog component in Bits UI provides a flexible and accessible way to create modal dialogs in your Svelte applications. It follows a compound component pattern, allowing for fine-grained control over the dialog's structure and behavior while maintaining accessibility and ease of use.
+
+## Key Features
+
+-   **Compound Component Structure**: Offers a set of subcomponents that work together to create a fully-featured dialog.
+-   **Accessibility**: Built with WAI-ARIA guidelines in mind, ensuring keyboard navigation and screen reader support.
+-   **Customizable**: Each subcomponent can be styled and configured independently.
+-   **Portal Support**: Content can be rendered in a portal, ensuring proper stacking context.
+-   **Managed Focus**: Automatically manages focus, with the option to take control if needed.
+-   **Flexible State Management**: Supports both controlled and uncontrolled state, allowing for full control over the dialog's open state.
+
+## Component Architecture
+
+The Dialog component is composed of several subcomponents, each with a specific role:
+
+-   **Root**: The main container component that manages the state of the dialog. Provides context for all child components.
+-   **Trigger**: A button that toggles the dialog's open state.
+-   **Portal**: Renders its children in a portal, outside the normal DOM hierarchy.
+-   **Overlay**: A backdrop that sits behind the dialog content.
+-   **Content**: The main container for the dialog's content.
+-   **Title**: Renders the dialog's title.
+-   **Description**: Renders a description or additional context for the dialog.
+-   **Close**: A button that closes the dialog.
+
+## Component Structure
+
+Here's an overview of how the Dialog component is structured in code:
 
 ```svelte
 <script lang="ts">
@@ -38,9 +66,11 @@ description: A modal window presenting content or seeking user input without nav
 
 ## Reusable Components
 
-Bits UI provides a decent number of components to construct a Dialog. The idea is to provide a set of building blocks that can be used to create a variety of different layouts. It's recommended to use these components to build your own reusable Dialog components that can be used throughout your application.
+Bits UI provides a comprehensive set of Dialog components that serve as building blocks for creating customized, reusable Dialog implementations. This approach offers flexibility in design while maintaining consistency and accessibility across your application.
 
-The following example shows at a high level how you might create a reusable Dialog component. We've mixed and matched string props and snippets to demonstrate the flexibility of the component API. Use whatever makes sense for you.
+### Building a Reusable Dialog
+
+The following example demonstrates how to create a versatile, reusable Dialog component using Bits UI building blocks. This implementation showcases the flexibility of the component API by combining props and snippets.
 
 ```svelte title="MyDialog.svelte"
 <script lang="ts">
@@ -86,7 +116,7 @@ The following example shows at a high level how you might create a reusable Dial
 </Dialog.Root>
 ```
 
-You can then use the `MyDialog` component in your application like so:
+#### Usage with Inline Snippets
 
 ```svelte
 <script lang="ts">
@@ -106,7 +136,7 @@ You can then use the `MyDialog` component in your application like so:
 </MyDialog>
 ```
 
-Alternatively, you can define the snippets separately and pass them as props to the component:
+#### Usage with Separate Snippets
 
 ```svelte
 <script lang="ts">
@@ -126,13 +156,20 @@ Alternatively, you can define the snippets separately and pass them as props to 
 </MyDialog>
 ```
 
-## Open State
+### Best Practices
 
-Bits UI provides flexible options for controlling and synchronizing the Dialog's open state.
+-   **Prop Flexibility**: Design your component to accept props for any nested components for maximum flexibility
+-   **Styling Options**: Use tools like `clsx` to merge class overrides
+-   **Binding Props**: Use `bind:` and expose `$bindable` props to provide consumers with full control
+-   **Type Safety**: Use the exported types from Bits UI to type your component props
 
-### Two-Way Binding
+## Managing Open State
 
-Use the `bind:open` directive for effortless two-way synchronization between your local state and the Dialog's internal state.
+Bits UI offers several approaches to manage and synchronize the Alert Dialog's open state, catering to different levels of control and integration needs.
+
+### 1. Two-Way Binding
+
+For seamless state synchronization, use Svelte's `bind:open` directive. This method automatically keeps your local state in sync with the dialog's internal state.
 
 ```svelte {3,6,8}
 <script lang="ts">
@@ -140,18 +177,22 @@ Use the `bind:open` directive for effortless two-way synchronization between you
 	let isOpen = $state(false);
 </script>
 
-<button on:click={() => (isOpen = true)}>Open Dialog</button>
+<button onclick={() => (isOpen = true)}>Open Dialog</button>
 
 <Dialog.Root bind:open={isOpen}>
-	<!-- Dialog content -->
+	<!-- ... -->
 </Dialog.Root>
 ```
 
-This setup enables opening the Dialog via the custom button and ensures the local `isOpen` state updates when the Dialog closes through any means (e.g., escape key).
+#### Key Benefits
 
-### Change Handler
+-   Simplifies state management
+-   Automatically updates `isOpen` when the dialog closes (e.g., via escape key)
+-   Allows external control (e.g., opening via a separate button)
 
-You can also use the `onOpenChange` prop to update local state when the Dialog's `open` state changes. This is useful when you don't want two-way binding for one reason or another, or you want to perform additional logic when the Dialog opens or closes.
+### 2. Change Handler
+
+For more granular control or to perform additional logic on state changes, use the `onOpenChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
 
 ```svelte {3,7-11}
 <script lang="ts">
@@ -170,17 +211,27 @@ You can also use the `onOpenChange` prop to update local state when the Dialog's
 </Dialog.Root>
 ```
 
-### Controlled
+#### Use Cases
 
-Sometimes, you may want complete control over the dialog's `open` state, meaning you will be "kept in the loop" and be required to apply the state change yourself. While you'll rarely need this, it's possible to do so by setting the `controlledOpen` prop to `true`.
+-   Implementing custom behaviors on open/close
+-   Integrating with external state management solutions
+-   Triggering side effects (e.g., logging, data fetching)
 
-You will then be responsible for updating a local state variable that is passed as the `open` prop to the `Dialog.Root` component.
+### 3. Fully Controlled
+
+For complete control over the dialog's open state, use the `controlledOpen` prop. This approach requires you to manually manage the open state, giving you full control over when and how the dialog responds to open/close events.
+
+To implement controlled state:
+
+1. Set the `controlledOpen` prop to `true` on the `Dialog.Root` component.
+2. Provide an `open` prop to `Dialog.Root`, which should be a variable holding the current state.
+3. Implement an `onOpenChange` handler to update the state when the internal state changes.
 
 ```svelte
 <script lang="ts">
 	import { Dialog } from "bits-ui";
 
-	let myOpen = $state<string>(false);
+	let myOpen = $state(false);
 </script>
 
 <Dialog.Root controlledOpen open={myOpen} onOpenChange={(o) => (myOpen = o)}>
@@ -188,15 +239,31 @@ You will then be responsible for updating a local state variable that is passed 
 </Dialog.Root>
 ```
 
-See the [Controlled State](/docs/controlled-state) documentation for more information about controlled states.
+#### When to Use
 
-## Managing Focus
+-   Implementing complex open/close logic
+-   Coordinating multiple UI elements
+-   Debugging state-related issues
+
+<Callout>
+
+While powerful, fully controlled state should be used judiciously as it increases complexity and can cause unexpected behaviors if not handled carefully.
+
+For more in-depth information on controlled components and advanced state management techniques, refer to our [Controlled State](/docs/controlled-state) documentation.
+
+</Callout>
+
+## Focus Management
+
+Proper focus management is crucial for accessibility and user experience in modal dialogs. Bits UI's Dialog component provides several features to help you manage focus effectively.
 
 ### Focus Trap
 
-By default, when a Dialog is opened, focus will be trapped within the Dialog, preventing the user from interacting with the rest of the page. This follows the [WAI-ARIA design pattern](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/) for modal dialogs.
+By default, the Dialog implements a focus trap, adhering to the WAI-ARIA design pattern for modal dialogs. This ensures that keyboard focus remains within the Dialog while it's open, preventing users from interacting with the rest of the page.
 
-Although it isn't recommended unless absolutely necessary, you can disabled this beahvior by setting the `trapFocus` prop to `false` on the `Dialog.Content` component.
+#### Disabling the Focus Trap
+
+While not recommended, you can disable the focus trap if absolutely necessary:
 
 ```svelte /trapFocus={false}/
 <Dialog.Content trapFocus={false}>
@@ -204,13 +271,19 @@ Although it isn't recommended unless absolutely necessary, you can disabled this
 </Dialog.Content>
 ```
 
+<Callout type="warning" title="Accessibility Warning">
+
+Disabling the focus trap may compromise accessibility. Only do this if you have a specific reason and implement an alternative focus management strategy.
+
+</Callout>
+
 ### Open Focus
 
-By default, when a Dialog is opened, focus will be set to the first focusable element with the `Dialog.Content`. This ensures that users navigating my keyboard end up somewhere within the Dialog that they can interact with.
+When a Dialog opens, focus is automatically set to the first focusable element within `Dialog.Content`. This ensures keyboard users can immediately interact with the Dialog contents.
 
-You can override this behavior using the `onOpenAutoFocus` prop on the `Dialog.Content` component. It's _highly_ recommended that you use this prop to focus _something_ within the Dialog.
+#### Customizing Initial Focus
 
-You'll first need to cancel the default behavior of focusing the first focusable element by cancelling the event passed to the `onOpenAutoFocus` callback. You can then focus whatever you wish.
+To specify which element receives focus when the Dialog opens, use the `onOpenAutoFocus` prop on `Dialog.Content`:
 
 ```svelte {9-12}
 <script lang="ts">
@@ -231,11 +304,19 @@ You'll first need to cancel the default behavior of focusing the first focusable
 </Dialog.Root>
 ```
 
+<Callout type="warning" title="Important">
+
+Always ensure that _something_ within the Dialog receives focus when it opens. This is crucial for maintaining keyboard navigation context and makes your users happy.
+
+</Callout>
+
 ### Close Focus
 
-By default, when a Dialog is closed, focus will be set to the trigger element of the Dialog. You can override this behavior using the `onCloseAutoFocus` prop on the `Dialog.Content` component.
+When a Dialog closes, focus returns to the element that triggered its opening (typically the `Dialog.Trigger`).
 
-You'll need to cancel the default behavior of focusing the trigger element by cancelling the event passed to the `onCloseAutoFocus` callback, and then focus whatever you wish.
+#### Customizing Close Focus
+
+To change which element receives focus when the Dialog closes, use the `onCloseAutoFocus` prop on `Dialog.Content`:
 
 ```svelte {9-12}
 <script lang="ts">
@@ -257,9 +338,23 @@ You'll need to cancel the default behavior of focusing the trigger element by ca
 </Dialog.Root>
 ```
 
-## Scroll Lock
+### Best Practices
 
-By default, when a Dialog is opened, scrolling the body will be disabled, which provides a more native experience for users. If you wish to disable this behavior, you can set the `preventScroll` prop to `false` on the `Dialog.Content` component.
+-   Always maintain a clear focus management strategy for your Dialogs.
+-   Ensure that focus is predictable and logical for keyboard users.
+-   Test your focus management with keyboard navigation to verify its effectiveness.
+
+## Advanced Behaviors
+
+Bits UI's Dialog component offers several advanced features to customize its behavior and enhance user experience. This section covers scroll locking, escape key handling, and interaction outside the dialog.
+
+### Scroll Lock
+
+By default, when a Dialog opens, scrolling the body is disabled. This provides a more native-like experience, focusing user attention on the dialog content.
+
+#### Customizing Scroll Behavior
+
+To allow body scrolling while the dialog is open, use the `preventScroll` prop on `Dialog.Content`:
 
 ```svelte /preventScroll={false}/
 <Dialog.Content preventScroll={false}>
@@ -267,13 +362,26 @@ By default, when a Dialog is opened, scrolling the body will be disabled, which 
 </Dialog.Content>
 ```
 
-## Escape Keydown
+<Callout type="warning" title="Note">
 
-By default, when a Dialog is open, pressing the `Escape` key will close the dialog. Bits UI provides a couple ways to override this behavior.
+Enabling body scroll may affect user focus and accessibility. Use this option judiciously.
 
-### escapeKeydownBehavior
+</Callout>
 
-You can set the `escapeKeydownBehavior` prop to `'ignore'` on the `Dialog.Content` component to prevent the dialog from closing when the `Escape` key is pressed.
+### Escape Key Handling
+
+By default, pressing the `Escape` key closes an open Dialog. Bits UI provides two methods to customize this behavior.
+
+#### Method 1: `escapeKeydownBehavior`
+
+The `escapeKeydownBehavior` prop allows you to customize the behavior taken by the component when the `Escape` key is pressed. It accepts one of the following values:
+
+-   `'close'` (default): Closes the Dialog immediately.
+-   `'ignore'`: Prevents the Dialog from closing.
+-   `'defer-otherwise-close'`: If an ancestor Bits UI component also implements this prop, it will defer the closing decision to that component. Otherwise, the Dialog will close immediately.
+-   `'defer-otherwise-ignore'`: If an ancestor Bits UI component also implements this prop, it will defer the closing decision to that component. Otherwise, the Dialog will ignore the key press and not close.
+
+To always prevent the Dialog from closing on Escape key press, set the `escapeKeydownBehavior` prop to `'ignore'` on `Dialog.Content`:
 
 ```svelte /escapeKeydownBehavior="ignore"/
 <Dialog.Content escapeKeydownBehavior="ignore">
@@ -281,23 +389,37 @@ You can set the `escapeKeydownBehavior` prop to `'ignore'` on the `Dialog.Conten
 </Dialog.Content>
 ```
 
-### onEscapeKeydown
+#### Method 2: `onEscapeKeydown`
 
-You can also override the default behavior by cancelling the event passed to the `onEscapeKeydown` callback on the `Dialog.Content` component.
+For more granular control, override the default behavior using the `onEscapeKeydown` prop:
 
-```svelte /onEscapeKeydown={(e) => e.preventDefault()}/
-<Dialog.Content onEscapeKeydown={(e) => e.preventDefault()}>
+```svelte {2-5}
+<Dialog.Content
+	onEscapeKeydown={(e) => {
+		e.preventDefault();
+		// do something else instead
+	}}
+>
 	<!-- ... -->
 </Dialog.Content>
 ```
 
-## Interact Outside
+This method allows you to implement custom logic when the `Escape` key is pressed.
 
-By default, when a Dialog is open, pressing the outside the content will close the dialog. Bits UI provides a couple ways to override this behavior.
+### Interaction Outside
 
-### interactOutsideBehavior
+By default, interacting outside the Dialog content area closes the Dialog. Bits UI offers two ways to modify this behavior.
 
-You can set the `interactOutsideBehavior` prop to `'ignore'` on the `Dialog.Content` component to prevent the dialog from closing when the user interacts outside the content.
+#### Method 1: `interactOutsideBehavior`
+
+The `interactOutsideBehavior` prop allows you to customize the behavior taken by the component when an interaction (touch, mouse, or pointer event) occurs outside the content. It accepts one of the following values:
+
+-   `'close'` (default): Closes the Dialog immediately.
+-   `'ignore'`: Prevents the Dialog from closing.
+-   `'defer-otherwise-close'`: If an ancestor Bits UI component also implements this prop, it will defer the closing decision to that component. Otherwise, the Dialog will close immediately.
+-   `'defer-otherwise-ignore'`: If an ancestor Bits UI component also implements this prop, it will defer the closing decision to that component. Otherwise, the Dialog will ignore the event and not close.
+
+To always prevent the Dialog from closing on Escape key press, set the `escapeKeydownBehavior` prop to `'ignore'` on `Dialog.Content`:
 
 ```svelte /interactOutsideBehavior="ignore"/
 <Dialog.Content interactOutsideBehavior="ignore">
@@ -305,19 +427,36 @@ You can set the `interactOutsideBehavior` prop to `'ignore'` on the `Dialog.Cont
 </Dialog.Content>
 ```
 
-### onInteractOutside
+#### Method 2: `onInteractOutside`
 
-You can also override the default behavior by cancelling the event passed to the `onInteractOutside` callback on the `Dialog.Content` component.
+For custom handling of outside interactions, you can override the default behavior using the `onInteractOutside` prop:
 
-```svelte /onInteractOutside={(e) => e.preventDefault()}/
-<Dialog.Content onInteractOutside={(e) => e.preventDefault()}>
+```svelte {2-5}
+<Dialog.Content
+	onInteractOutside={(e) => {
+		e.preventDefault();
+		// do something else instead
+	}}
+>
 	<!-- ... -->
 </Dialog.Content>
 ```
 
+This approach allows you to implement specific behaviors when users interact outside the Dialog content.
+
+### Best Practices
+
+-   **Scroll Lock**: Consider your use case carefully before disabling scroll lock. It may be necessary for dialogs with scrollable content or for specific UX requirements.
+-   **Escape Keydown**: Overriding the default escape key behavior should be done thoughtfully. Users often expect the escape key to close modals.
+-   **Outside Interactions**: Ignoring outside interactions can be useful for important dialogs or multi-step processes, but be cautious not to trap users unintentionally.
+-   **Accessibility**: Always ensure that any customizations maintain or enhance the dialog's accessibility.
+-   **User Expectations**: Try to balance custom behaviors with common UX patterns to avoid confusing users.
+
+By leveraging these advanced features, you can create highly customized dialog experiences while maintaining usability and accessibility standards.
+
 ## Nested Dialogs
 
-Dialogs can be nested within each other to create more complex layouts.
+Dialogs can be nested within each other to create more complex user interfaces:
 
 ```svelte
 <script lang="ts">
@@ -346,7 +485,11 @@ Dialogs can be nested within each other to create more complex layouts.
 
 ## Svelte Transitions
 
-You can use the `forceMount` prop along with the `child` snippet to forcefully mount the `Dialog.Content` and `Dialog.Overlay` components to use Svelte Transitions or another animation library that requires more control.
+The Dialog component can be enhanced with Svelte's built-in transition effects or other animation libraries.
+
+### Using `forceMount` and `child` Snippets
+
+To apply Svelte transitions to Dialog components, use the `forceMount` prop in combination with the `child` snippet. This approach gives you full control over the mounting behavior and animation of `Dialog.Content` and `Dialog.Overlay`.
 
 ```svelte /forceMount/ /transition:fade/ /transition:fly/
 <script lang="ts">
@@ -377,6 +520,62 @@ You can use the `forceMount` prop along with the `child` snippet to forcefully m
 </Dialog.Root>
 ```
 
-Of course, this isn't the prettiest syntax, so it's recommended to create your own reusable content and overlay components that handle this logic if you intend to use this approach. For more information on using transitions with Bits UI components, see the [Transitions](/docs/transitions) documentation.
+In this example:
+
+-   The `forceMount` prop ensures the components are always in the DOM.
+-   The `child` snippet provides access to the open state and component props.
+-   Svelte's `#if` block controls when the content is visible.
+-   Transition directives (`transition:fade` and `transition:fly`) apply the animations.
+
+### Best Practices
+
+For cleaner code and better maintainability, consider creating custom reusable components that encapsulate this transition logic.
+
+```svelte title="MyDialogOverlay.svelte"
+<script lang="ts">
+	import { Dialog, type WithoutChildrenOrChild } from "bits-ui";
+	import { fade } from "svelte/transition";
+	import type { Snippet } from "svelte";
+
+	let {
+		ref = $bindable(null),
+		duration = 200,
+		children,
+		...restProps
+	}: WithoutChildrenOrChild<Dialog.OverlayProps> & {
+		duration?: number;
+		children?: Snippet;
+	} = $props();
+</script>
+
+<Dialog.Overlay forceMount bind:ref {...restProps}>
+	{#snippet child({ props, open })}
+		{#if open}
+			<div {...props} transition:fade={{ duration }}>
+				{@render children?.()}
+			</div>
+		{/if}
+	{/snippet}
+</Dialog.Overlay>
+```
+
+You can then use the `MyDialogOverlay` component alongside the other `Dialog` primitives throughout your application:
+
+```svelte
+<script lang="ts">
+	import { Dialog } from "bits-ui";
+	import { MyDialogOverlay } from "$lib/components";
+</script>
+
+<Dialog.Root>
+	<Dialog.Trigger>Open</Dialog.Trigger>
+	<Dialog.Portal>
+		<MyDialogOverlay duration={300} />
+		<Dialog.Content>
+			<!-- ... -->
+		</Dialog.Content>
+	</Dialog.Portal>
+</Dialog.Root>
+```
 
 <APISection {schemas} />

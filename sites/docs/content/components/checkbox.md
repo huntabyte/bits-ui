@@ -4,7 +4,7 @@ description: Allow users to switch between checked, unchecked, and indeterminate
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, CheckboxDemo, CheckboxDemoCustom } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, CheckboxDemo, CheckboxDemoCustom, Callout } from '$lib/components/index.js'
 	export let schemas;
 </script>
 
@@ -16,7 +16,25 @@ description: Allow users to switch between checked, unchecked, and indeterminate
 
 </ComponentPreviewV2>
 
-## Structure
+## Overview
+
+The Checkbox component provides a flexible and accessible way to create checkbox inputs in your Svelte applications. It supports three states: checked, unchecked, and indeterminate, allowing for complex form interactions and data representations.
+
+## Key Features
+
+-   **Tri-State Support**: Handles checked, unchecked, and indeterminate states, providing versatility in form design.
+-   **Accessibility**: Built with WAI-ARIA guidelines in mind, ensuring keyboard navigation and screen reader support.
+-   **Flexible State Management**: Supports both controlled and uncontrolled state, allowing for full control over the checkbox's checked state.
+
+## Component Architecture
+
+The Checkbox component is composed of the following parts:
+
+-   **Root**: The main component that manages the state and behavior of the checkbox.
+
+## Component Structure
+
+Here's an overview of how the Checkbox component is structured in code:
 
 ```svelte
 <script lang="ts">
@@ -48,9 +66,11 @@ It's recommended to use the `Checkbox` primitive to create your own custom check
 		id = useId(),
 		checked = $bindable(false),
 		ref = $bindable(null),
+		labelRef = $bindable(null),
 		...restProps
 	}: WithoutChildrenOrChild<Checkbox.RootProps> & {
 		labelText: string;
+		labelRef?: HTMLLabelElement | null;
 	} = $props();
 </script>
 
@@ -65,7 +85,7 @@ It's recommended to use the `Checkbox` primitive to create your own custom check
 		{/if}
 	{/snippet}
 </Checkbox.Root>
-<Label.Root for={id}>
+<Label.Root for={id} bind:ref={labelRef}>
 	{labelText}
 </Label.Root>
 ```
@@ -82,13 +102,13 @@ You can then use the `MyCheckbox` component in your application like so:
 
 <CheckboxDemoCustom labelText="Enable notifications" />
 
-## Checked State
+## Managing Checked State
 
-The `checked` prop is used to determine whether the checkbox is in one of three states: checked, unchecked, or indeterminate. Bits UI provides flexible options for controlling and synchronizing the Checkbox's checked state.
+Bits UI offers several approaches to manage and synchronize the Checkbox's checked state, catering to different levels of control and integration needs.
 
-### Two-Way Binding
+### 1. Two-Way Binding
 
-Use the `bind:checked` directive for effortless two-way synchronization between your local state and the Checkbox's internal state.
+For seamless state synchronization, use Svelte's `bind:checked` directive. This method automatically keeps your local state in sync with the checkbox's internal state.
 
 ```svelte
 <script lang="ts">
@@ -101,11 +121,15 @@ Use the `bind:checked` directive for effortless two-way synchronization between 
 <MyCheckbox bind:checked={myChecked} />
 ```
 
-This setup enables toggling the Checkbox via the custom button and ensures the local `myChecked` state updates when the Checkbox changes through any internal means (e.g., clicking on the checkbox).
+#### Key Benefits
 
-### Change Handler
+-   Simplifies state management
+-   Automatically updates `myChecked` when the checkbox changes (e.g., via clicking on the checkbox)
+-   Allows external control (e.g., checking via a separate button/programmatically)
 
-You can also use the `onCheckedChange` prop to update local state when the Checkbox's `checked` state changes. This is useful when you don't want two-way binding for one reason or another, or you want to perform additional logic when the Checkbox changes.
+### 2. Change Handler
+
+For more granular control or to perform additional logic on state changes, use the `onCheckedChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
 
 ```svelte
 <script lang="ts">
@@ -125,16 +149,25 @@ You can also use the `onCheckedChange` prop to update local state when the Check
 />
 ```
 
-### Controlled
+#### Use Cases
 
-Sometimes, you may want complete control over the checkbox's checked state, meaning you will be "kept in the loop" and be required to apply the state change yourself. While you will rarely need this, it's possible to do so by setting the `controlledChecked` prop to `true`.
+-   Implementing custom behaviors on checked/unchecked
+-   Integrating with external state management solutions
+-   Triggering side effects (e.g., logging, data fetching)
 
-You will then be responsible for updating a local value state variable that is passed as the `checked` prop to the `Checkbox.Root` component.
+### 3. Fully Controlled
+
+For complete control over the checkbox's checked state, use the `controlledChecked` prop. This approach requires you to manually manage the checked state, giving you full control over when and how the checkbox responds to change events.
+
+To implement controlled state:
+
+1. Set the `controlledChecked` prop to `true` on the `Checkbox.Root` component.
+2. Provide a `checked` prop to `Checkbox.Root`, which should be a variable holding the current state.
+3. Implement an `onCheckedChange` handler to update the state when the internal state changes.
 
 ```svelte
 <script lang="ts">
 	import { Checkbox } from "bits-ui";
-
 	let myChecked = $state(false);
 </script>
 
@@ -143,7 +176,19 @@ You will then be responsible for updating a local value state variable that is p
 </Checkbox.Root>
 ```
 
-See the [Controlled State](/docs/controlled-state) documentation for more information about controlled values.
+#### When to Use
+
+-   Implementing complex checked/unchecked logic
+-   Coordinating multiple UI elements
+-   Debugging state-related issues
+
+<Callout>
+
+While powerful, fully controlled state should be used judiciously as it increases complexity and can cause unexpected behaviors if not handled carefully.
+
+For more in-depth information on controlled components and advanced state management techniques, refer to our [Controlled State](/docs/controlled-state) documentation.
+
+</Callout>
 
 ## Disabled State
 
@@ -174,5 +219,17 @@ For example, if you wanted to submit a string value, you could do the following:
 ```svelte /value="hello"/
 <MyCheckbox value="hello" name="notifications" labelText="Enable notifications" />
 ```
+
+### Required
+
+If you want to make the checkbox required, you can use the `required` prop.
+
+```svelte /required/
+<Checkbox.Root required>
+	<!-- ... -->
+</Checkbox.Root>
+```
+
+This will apply the `required` attribute to the hidden input element, ensuring that proper form submission is enforced.
 
 <APISection {schemas} />

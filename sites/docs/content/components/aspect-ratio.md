@@ -16,7 +16,13 @@ description: Displays content while maintaining a specified aspect ratio, ensuri
 
 </ComponentPreviewV2>
 
-## Structure
+## Component Architecture
+
+-   **Root**: The root component which contains the aspect ratio logic
+
+## Component Structure
+
+Here's an overview of how the Aspect Ratio component is structured in code:
 
 ```svelte
 <script lang="ts">
@@ -33,18 +39,22 @@ If you plan on using a lot of `AspectRatio` components throughout your applicati
 ```svelte title="MyAspectRatio.svelte"
 <script lang="ts">
 	import { AspectRatio, type WithoutChildrenOrChild } from "bits-ui";
-	import Image from "phosphor-svelte/lib/Image";
 
 	let {
 		src,
+		alt,
+		ref = $bindable(null),
+		imageRef = $bindable(null),
 		...restProps
 	}: WithoutChildrenOrChild<AspectRatio.RootProps> & {
 		src: string;
+		alt: string;
+		imageRef?: HTMLImageElement | null;
 	} = $props();
 </script>
 
-<AspectRatio.Root {...restProps}>
-	<Image {src} alt="an abstract painting" />
+<AspectRatio.Root {...restProps} bind:ref>
+	<img {src} {alt} bind:this={imageRef} />
 </AspectRatio.Root>
 ```
 
@@ -55,7 +65,7 @@ You can then use the `MyAspectRatio` component in your application like so:
 	import MyAspectRatio from "$lib/components/MyAspectRatio.svelte";
 </script>
 
-<MyAspectRatio src="https://example.com/image.jpg" ratio={4 / 3} />
+<MyAspectRatio src="https://example.com/image.jpg" alt="an abstract painting" ratio={4 / 3} />
 ```
 
 ## Custom Ratio

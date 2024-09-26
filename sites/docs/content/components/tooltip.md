@@ -4,7 +4,7 @@ description: Provides additional information or context when users hover over or
 ---
 
 <script>
-	import { ComponentPreviewV2, TooltipDemo, TooltipDemoCustom, TooltipDemoDelayDuration, APISection } from '$lib/components/index.js'
+	import { ComponentPreviewV2, TooltipDemo, TooltipDemoCustom, TooltipDemoDelayDuration, APISection, Callout } from '$lib/components'
 	export let schemas;
 </script>
 
@@ -66,7 +66,7 @@ The `Tooltip.Provider` component is required to be an ancestor of the `Tooltip.R
 </Tooltip.Provider>
 ```
 
-It also ensures that only a single tooltip within the same provider can be open at a time. It's recommended to wrap your root layout content with the provider component.
+It also ensures that only a single tooltip within the same provider can be open at a time. It's recommended to wrap your root layout content with the provider component, setting your sensible default props there.
 
 ```svelte title="+layout.svelte"
 <script lang="ts">
@@ -78,6 +78,70 @@ It also ensures that only a single tooltip within the same provider can be open 
 	{@render children()}
 </Tooltip.Provider>
 ```
+
+## Open State
+
+Bits UI provides flexible options for controlling and synchronizing the Tooltip's open state.
+
+### Two-Way Binding
+
+Use the `bind:open` directive for effortless two-way synchronization between your local state and the Tooltip's internal state.
+
+```svelte {3,6,8}
+<script lang="ts">
+	import { Tooltip } from "bits-ui";
+	let isOpen = $state(false);
+</script>
+
+<button onclick={() => (isOpen = true)}>Open Tooltip</button>
+
+<Tooltip.Root bind:open={isOpen}>
+	<!-- Tooltip content -->
+</Tooltip.Root>
+```
+
+This setup enables opening the Tooltip via the custom button and ensures the local `isOpen` state updates when the Tooltip closes through any means (e.g., escape key).
+
+### Change Handler
+
+You can also use the `onOpenChange` prop to update local state when the Tooltip's `open` state changes. This is useful when you don't want two-way binding for one reason or another, or you want to perform additional logic when the Tooltip opens or closes.
+
+```svelte {3,7-11}
+<script lang="ts">
+	import { Tooltip } from "bits-ui";
+	let isOpen = $state(false);
+</script>
+
+<Tooltip.Root
+	open={isOpen}
+	onOpenChange={(open) => {
+		isOpen = open;
+		// additional logic here.
+	}}
+>
+	<!-- ... -->
+</Tooltip.Root>
+```
+
+### Controlled
+
+Sometimes, you may want complete control over the Tooltip's `open` state, meaning you will be "kept in the loop" and be required to apply the state change yourself. While you'll rarely need this, it's possible to do so by setting the `controlledOpen` prop to `true`.
+
+You will then be responsible for updating a local state variable that is passed as the `open` prop to the `Tooltip.Root` component.
+
+```svelte
+<script lang="ts">
+	import { Tooltip } from "bits-ui";
+
+	let myOpen = $state(false);
+</script>
+
+<Tooltip.Root controlledOpen open={myOpen} onOpenChange={(o) => (myOpen = o)}>
+	<!-- ... -->
+</Tooltip.Root>
+```
+
+See the [Controlled State](/docs/controlled-state) documentation for more information about controlled states.
 
 ## Mobile Tooltips
 
@@ -224,5 +288,26 @@ You can use the `forceMount` prop along with the `child` snippet to forcefully m
 ```
 
 Of course, this isn't the prettiest syntax, so it's recommended to create your own reusable content components that handles this logic if you intend to use this approach throughout your app. For more information on using transitions with Bits UI components, see the [Transitions](/docs/transitions) documentation.
+
+## Opt-out of Floating UI
+
+When you use the `Tooltip.Content` component, Bits UI uses [Floating UI](https://floating-ui.com/) to position the content relative to the trigger, similar to other popover-like components.
+
+You can opt-out of this behavior by instead using the `Tooltip.ContentStatic` component. This component does not use Floating UI and leaves positioning the content entirely up to you.
+
+```svelte /Tooltip.ContentStatic/
+<Tooltip.Root>
+	<Tooltip.Trigger>Hello</Tooltip.Trigger>
+	<Tooltip.ContentStatic>
+		<!-- ... -->
+	</Tooltip.ContentStatic>
+</Tooltip.Root>
+```
+
+<Callout>
+
+When using the `Tooltip.ContentStatic` component, the `Tooltip.Arrow` component will not be rendered relative to it as it is designed to be used with `Tooltip.Content`.
+
+</Callout>
 
 <APISection {schemas} />
