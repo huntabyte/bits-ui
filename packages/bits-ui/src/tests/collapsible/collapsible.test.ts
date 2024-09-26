@@ -7,6 +7,7 @@ import type { Collapsible } from "$lib/index.js";
 
 function setup(props?: Collapsible.RootProps) {
 	const user = setupUserEvents();
+	// @ts-expect-error - testing lib needs to update their generic types
 	const returned = render(CollapsibleTest, props);
 	const root = returned.getByTestId("root");
 	const trigger = returned.getByTestId("trigger");
@@ -24,6 +25,7 @@ function setup(props?: Collapsible.RootProps) {
 
 describe("collapsible", () => {
 	it("should have no accessibility violations", async () => {
+		// @ts-expect-error - testing lib needs to update their generic types
 		const { container } = render(CollapsibleTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});

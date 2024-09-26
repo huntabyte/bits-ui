@@ -33,6 +33,7 @@ const indicatorIds = testItems.map((item) => `${item.value}-indicator`);
 
 function setup(props: Partial<RadioGroupTestProps> = {}, items: Item[] = testItems) {
 	const user = userEvent.setup();
+	// @ts-expect-error - testing lib needs to update their generic types
 	const returned = render(RadioGroupTest, { ...props, items });
 	const input = document.querySelector("input") as HTMLInputElement;
 	return {
@@ -48,11 +49,13 @@ function randItem() {
 
 describe("radio group", () => {
 	it("should have no accessibility violations", async () => {
+		// @ts-expect-error - testing lib needs to update their generic types
 		const { container } = render(RadioGroupTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
 	it("should have bits data attrs", async () => {
+		// @ts-expect-error - testing lib needs to update their generic types
 		const { getByTestId } = render(RadioGroupTest, {
 			items: [testItems[0] as Item],
 			value: testItems[0]?.value,

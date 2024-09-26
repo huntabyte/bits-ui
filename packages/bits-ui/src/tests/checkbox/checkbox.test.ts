@@ -10,6 +10,7 @@ const kbd = getTestKbd();
 
 function setup(props?: Checkbox.RootProps) {
 	const user = setupUserEvents();
+	// @ts-expect-error - testing lib needs to update their generic types
 	const returned = render(CheckboxTest, props);
 	const root = returned.getByTestId("root");
 	const input = document.querySelector("input") as HTMLInputElement;
@@ -23,6 +24,7 @@ function setup(props?: Checkbox.RootProps) {
 
 describe("checkbox", () => {
 	it("should have no accessibility violations", async () => {
+		// @ts-expect-error - testing lib needs to update their generic types
 		const { container } = render(CheckboxTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});

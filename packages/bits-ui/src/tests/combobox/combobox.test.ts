@@ -33,8 +33,8 @@ const testItems: Item[] = [
 
 function setupSingle(props: Partial<ComboboxSingleTestProps> = {}, items: Item[] = testItems) {
 	const user = setupUserEvents();
-	// eslint-disable-next-line ts/no-explicit-any
-	const returned = render(ComboboxTest, { name: "test", ...props, items } as any);
+	// @ts-expect-error - testing lib needs to update their generic types
+	const returned = render(ComboboxTest, { name: "test", ...props, items });
 	const input = returned.getByTestId("input");
 	const trigger = returned.getByTestId("trigger");
 	const openBinding = returned.getByTestId("open-binding");
@@ -64,8 +64,8 @@ function setupSingle(props: Partial<ComboboxSingleTestProps> = {}, items: Item[]
 
 function setupMultiple(props: Partial<ComboboxMultipleTestProps> = {}, items: Item[] = testItems) {
 	const user = setupUserEvents();
-	// eslint-disable-next-line ts/no-explicit-any
-	const returned = render(ComboboxMultiTest, { name: "test", ...props, items } as any);
+	// @ts-expect-error - testing lib needs to update their generic types
+	const returned = render(ComboboxMultiTest, { name: "test", ...props, items });
 	const input = returned.getByTestId("input");
 	const trigger = returned.getByTestId("trigger");
 	const openBinding = returned.getByTestId("open-binding");
@@ -150,6 +150,7 @@ const OPEN_KEYS = [kbd.ARROW_DOWN, kbd.ARROW_UP];
 
 describe("combobox - single", () => {
 	it("should have noaccessibility violations", async () => {
+		// @ts-expect-error - testing lib needs to update their generic types
 		const { container } = render(ComboboxTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});
@@ -402,6 +403,7 @@ describe("combobox - single", () => {
 ////////////////////////////////////
 describe("combobox - multiple", () => {
 	it("should have no accessibility violations", async () => {
+		// @ts-expect-error - testing lib needs to update their generic types
 		const { container } = render(ComboboxMultiTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});

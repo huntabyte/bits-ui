@@ -24,6 +24,7 @@ const zonedDateTime = {
 
 function setup(props: DateRangeFieldTestProps = {}) {
 	const user = userEvent.setup();
+	// @ts-expect-error - testing lib needs to update their generic types
 	const returned = render(DateRangeFieldTest, { ...props });
 
 	const start = {

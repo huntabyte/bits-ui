@@ -33,8 +33,8 @@ const testItems: Item[] = [
 
 function setupSingle(props: Partial<ListboxSingleTestProps> = {}, items: Item[] = testItems) {
 	const user = setupUserEvents();
-	// eslint-disable-next-line ts/no-explicit-any
-	const returned = render(ListboxTest, { name: "test", ...props, items } as any);
+	// @ts-expect-error - testing lib needs to update their generic types
+	const returned = render(ListboxTest, { name: "test", ...props, items });
 	const trigger = returned.getByTestId("trigger");
 	const openBinding = returned.getByTestId("open-binding");
 	const valueBinding = returned.getByTestId("value-binding");
@@ -62,8 +62,8 @@ function setupSingle(props: Partial<ListboxSingleTestProps> = {}, items: Item[] 
 
 function setupMultiple(props: Partial<ListboxMultipleTestProps> = {}, items: Item[] = testItems) {
 	const user = setupUserEvents();
-	// eslint-disable-next-line ts/no-explicit-any
-	const returned = render(ListboxMultiTest, { name: "test", ...props, items } as any);
+	// @ts-expect-error - testing lib needs to update their generic types
+	const returned = render(ListboxMultiTest, { name: "test", ...props, items });
 	const trigger = returned.getByTestId("trigger");
 	const openBinding = returned.getByTestId("open-binding");
 	const valueBinding = returned.getByTestId("value-binding");
@@ -142,6 +142,7 @@ const OPEN_KEYS = [kbd.ARROW_DOWN, kbd.ARROW_UP];
 
 describe.skip("listbox - single", () => {
 	it("should have noaccessibility violations", async () => {
+		// @ts-expect-error - testing lib needs to update their generic types
 		const { container } = render(ListboxTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});
@@ -392,6 +393,7 @@ describe.skip("listbox - single", () => {
 ////////////////////////////////////
 describe("listbox - multiple", () => {
 	it("should have no accessibility violations", async () => {
+		// @ts-expect-error - testing lib needs to update their generic types
 		const { container } = render(ListboxMultiTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});

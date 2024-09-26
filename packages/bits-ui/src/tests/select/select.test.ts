@@ -29,6 +29,7 @@ const testItems: Item[] = [
 
 function setup(props: Partial<SelectTestProps> = {}, options: Item[] = testItems) {
 	const user = setupUserEvents();
+	// @ts-expect-error - testing lib needs to update their generic types
 	const returned = render(SelectTest, { ...props, options });
 	const trigger = returned.getByTestId("trigger");
 	const select = returned.container.querySelector("select");
@@ -65,6 +66,7 @@ const OPEN_KEYS = [kbd.ENTER, kbd.SPACE, kbd.ARROW_DOWN, kbd.ARROW_UP];
 
 describe("select", () => {
 	it("should have no accessibility violations", async () => {
+		// @ts-expect-error - testing lib needs to update their generic types
 		const { container } = render(SelectTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});

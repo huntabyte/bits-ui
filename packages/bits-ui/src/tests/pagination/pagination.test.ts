@@ -6,6 +6,7 @@ import { isHTMLElement } from "$lib/internal/is.js";
 
 function setup(props: PaginationTestProps = { count: 100 }) {
 	const user = setupUserEvents();
+	// @ts-expect-error - testing lib needs to update their generic types
 	const returned = render(PaginationTest, { ...props });
 
 	const root = returned.getByTestId("root");
@@ -37,6 +38,7 @@ function getValue(el: HTMLElement) {
 
 describe("pagination", () => {
 	it("should have no  accessibility violations", async () => {
+		// @ts-expect-error - testing lib needs to update their generic types
 		const { container } = render(PaginationTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});
