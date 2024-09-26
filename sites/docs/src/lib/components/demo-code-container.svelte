@@ -10,8 +10,14 @@
 		fileName?: string;
 		children: Snippet;
 		class?: string;
+		nonExpandableItems?: string[];
 	};
-	let { children, fileName = "App.svelte", class: className }: Props = $props();
+	let {
+		children,
+		fileName = "App.svelte",
+		class: className,
+		nonExpandableItems = [],
+	}: Props = $props();
 
 	const items = $derived([
 		{
@@ -29,9 +35,20 @@
 	]);
 
 	let open = $state(false);
+	let activeValue = $state(fileName);
+
+	const expandable = $derived(!nonExpandableItems.includes(activeValue));
 </script>
 
-<DemoCodeTabs {items} value={fileName} bind:open>
+<DemoCodeTabs
+	{items}
+	value={activeValue}
+	onValueChange={(v) => {
+		activeValue = v;
+	}}
+	bind:open
+	{expandable}
+>
 	<Collapsible.Root bind:open>
 		{#each items as item (item.value)}
 			<Tabs.Content

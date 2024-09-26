@@ -34,10 +34,11 @@ export type DateFieldRootPropsWithoutHTML = WithChildren<{
 	onPlaceholderChange?: OnChangeFn<DateValue | undefined>;
 
 	/**
-	 * A function that returns true if the given date is unavailable,
-	 * where if selected, the date field will be marked as invalid.
+	 * A function that returns true if the given date is invalid. This will mark
+	 * the field as invalid and you will be responsible for displaying an error message
+	 * to the user to inform them of the invalid state.
 	 */
-	isDateUnavailable?: DateMatcher;
+	isDateInvalid?: DateMatcher;
 
 	/**
 	 * The minimum acceptable date. When provided, the date field

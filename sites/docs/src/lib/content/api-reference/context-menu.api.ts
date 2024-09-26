@@ -32,7 +32,7 @@ import {
 	refProp,
 	withChildProps,
 } from "./helpers.js";
-import { menu } from "./menu.js";
+import { menu } from "./menu.api.js";
 import * as C from "$lib/content/constants.js";
 import { omit } from "$lib/utils/omit.js";
 

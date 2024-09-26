@@ -23,7 +23,7 @@
 		granularity,
 		locale = "en-US",
 		hideTimeZone = false,
-		isDateUnavailable,
+		isDateInvalid,
 		maxValue,
 		minValue,
 		readonlySegments = [],
@@ -75,7 +75,7 @@
 		granularity: box.with(() => granularity),
 		locale: box.with(() => locale),
 		hideTimeZone: box.with(() => hideTimeZone),
-		isDateUnavailable: box.with(() => isDateUnavailable),
+		isDateInvalid: box.with(() => isDateInvalid),
 		maxValue: box.with(() => maxValue),
 		minValue: box.with(() => minValue),
 		placeholder: box.with(

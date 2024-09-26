@@ -62,7 +62,7 @@ export const root = createApiSchema<DateFieldRootPropsWithoutHTML>({
 			description: "Whether or not the date field is required.",
 			default: C.FALSE,
 		}),
-		isDateUnavailable: createFunctionProp({
+		isDateInvalid: createFunctionProp({
 			definition: DateMatcherProp,
 			description: "A function that returns whether or not a date is unavailable.",
 		}),

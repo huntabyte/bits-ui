@@ -16,8 +16,13 @@ import {
 	heading,
 	nextButton,
 	prevButton,
-} from "./calendar.js";
-import { input as dateFieldInput, root as dateFieldRoot, label, segment } from "./date-field.js";
+} from "./calendar.api.js";
+import {
+	input as dateFieldInput,
+	root as dateFieldRoot,
+	label,
+	segment,
+} from "./date-field.api.js";
 import {
 	childrenSnippet,
 	controlledOpenProp,
@@ -30,7 +35,7 @@ import {
 	createPropSchema,
 	withChildProps,
 } from "./helpers.js";
-import { content, trigger } from "./popover.js";
+import { content, trigger } from "./popover.api.js";
 import { OnOpenChangeProp } from "./extended-types/shared/index.js";
 import * as C from "$lib/content/constants.js";
 
@@ -54,7 +59,7 @@ export const root = createApiSchema<DatePickerRootPropsWithoutHTML>({
 		placeholder: calendarRoot.props!.placeholder,
 		onPlaceholderChange: calendarRoot.props!.onPlaceholderChange,
 		controlledPlaceholder: controlledPlaceholderProp,
-		isDateUnavailable: dateFieldRoot.props!.isDateUnavailable,
+		isDateUnavailable: calendarRoot.props!.isDateUnavailable,
 		isDateDisabled: calendarRoot.props!.isDateDisabled,
 		required: dateFieldRoot.props!.required,
 		readonlySegments: dateFieldRoot.props!.readonlySegments,

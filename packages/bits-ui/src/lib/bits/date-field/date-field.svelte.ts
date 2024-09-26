@@ -65,7 +65,7 @@ export type DateFieldRootStateProps = WritableBoxedValues<{
 }> &
 	ReadableBoxedValues<{
 		readonlySegments: SegmentPart[];
-		isDateUnavailable: DateMatcher | undefined;
+		isDateInvalid: DateMatcher | undefined;
 		minValue: DateValue | undefined;
 		maxValue: DateValue | undefined;
 		disabled: boolean;
@@ -80,7 +80,7 @@ export type DateFieldRootStateProps = WritableBoxedValues<{
 export class DateFieldRootState {
 	value: DateFieldRootStateProps["value"];
 	placeholder: WritableBox<DateValue>;
-	isDateUnavailable: DateFieldRootStateProps["isDateUnavailable"];
+	isDateInvalid: DateFieldRootStateProps["isDateInvalid"];
 	minValue: DateFieldRootStateProps["minValue"];
 	maxValue: DateFieldRootStateProps["maxValue"];
 	disabled: DateFieldRootStateProps["disabled"];
@@ -116,7 +116,7 @@ export class DateFieldRootState {
 		 */
 		this.value = props.value;
 		this.placeholder = rangeRoot ? rangeRoot.placeholder : props.placeholder;
-		this.isDateUnavailable = rangeRoot ? rangeRoot.isDateUnavailable : props.isDateUnavailable;
+		this.isDateInvalid = rangeRoot ? rangeRoot.isDateInvalid : props.isDateInvalid;
 		this.minValue = rangeRoot ? rangeRoot.minValue : props.minValue;
 		this.maxValue = rangeRoot ? rangeRoot.maxValue : props.maxValue;
 		this.disabled = rangeRoot ? rangeRoot.disabled : props.disabled;
@@ -340,7 +340,7 @@ export class DateFieldRootState {
 	isInvalid = $derived.by(() => {
 		const value = this.value.current;
 		if (!value) return false;
-		if (this.isDateUnavailable.current?.(value)) return true;
+		if (this.isDateInvalid.current?.(value)) return true;
 		const minValue = this.minValue.current;
 		if (minValue && isBefore(value, minValue)) return true;
 		const maxValue = this.maxValue.current;

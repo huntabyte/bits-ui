@@ -106,7 +106,6 @@ To implement controlled state:
 1. Set the `controlledPlaceholder` prop to `true` on the `DateRangeField.Root` component.
 2. Provide a `placeholder` prop to `DateRangeField.Root`, which should be a variable holding the current state.
 3. Implement an `onPlaceholderChange` handler to update the state when the internal state changes.
-4.
 
 ```svelte
 <script lang="ts">

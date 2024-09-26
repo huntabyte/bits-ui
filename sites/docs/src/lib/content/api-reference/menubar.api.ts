@@ -27,7 +27,7 @@ import {
 	dirProp,
 	withChildProps,
 } from "./helpers.js";
-import { menu as m } from "./menu.js";
+import { menu as m } from "./menu.api.js";
 import { OnStringValueChangeProp } from "./extended-types/shared/index.js";
 import * as C from "$lib/content/constants.js";
 

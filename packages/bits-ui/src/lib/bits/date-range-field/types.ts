@@ -35,7 +35,7 @@ export type DateRangeFieldRootPropsWithoutHTML = WithChild<{
 	 * A function that returns true if the given date is unavailable,
 	 * where if selected, the date field will be marked as invalid.
 	 */
-	isDateUnavailable?: DateMatcher;
+	isDateInvalid?: DateMatcher;
 
 	/**
 	 * The minimum acceptable date. When provided, the date field
