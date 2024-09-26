@@ -16,11 +16,11 @@ description: Displays content while maintaining a specified aspect ratio, ensuri
 
 </ComponentPreviewV2>
 
-## Component Architecture
+## Architecture
 
 -   **Root**: The root component which contains the aspect ratio logic
 
-## Component Structure
+## Structure
 
 Here's an overview of how the Aspect Ratio component is structured in code:
 

@@ -4,7 +4,7 @@ description: Allows users to select a single option from a list of mutually excl
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, RadioGroupDemo } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, RadioGroupDemo, Callout } from '$lib/components/index.js'
 	export let schemas;
 </script>
 
@@ -90,43 +90,47 @@ You can then use the `MyRadioGroup` component in your application like so:
 <MyRadioGroup items={myItems} name="favoriteFruit" />
 ```
 
-## Value State
+## Managing Value State
 
-The `value` prop is used to determine which radio group item(s) are currently checked. Bits UI provides flexible options for controlling and synchronizing the Radio Group's value.
+Bits UI offers several approaches to manage and synchronize the Radio Group's value state, catering to different levels of control and integration needs.
 
-### Two-Way Binding
+### 1. Two-Way Binding
 
-Use the `bind:value` directive for effortless two-way synchronization between your local state and the Radio Group's internal state.
+For seamless state synchronization, use Svelte's `bind:value` directive. This method automatically keeps your local state in sync with the component's internal state.
 
-```svelte /bind:value={myValue}/
+```svelte
 <script lang="ts">
 	import { RadioGroup } from "bits-ui";
-	let myValue = $state<string>("");
+	let myValue = $state("");
 </script>
 
-<button onclick={() => (myValue = "apple")}> Apple </button>
+<button onclick={() => (myValue = "A")}> Select A </button>
 
 <RadioGroup.Root bind:value={myValue}>
 	<!-- ... -->
 </RadioGroup.Root>
 ```
 
-This setup enables toggling the Radio Group's value to "apple" via the custom button and ensures the local `myValue` state updates when the Radio Group changes through any internal means (e.g., clicking on an item's button).
+#### Key Benefits
 
-### Change Handler
+-   Simplifies state management
+-   Automatically updates `myValue` when the internal state changes (e.g., via clicking on an item)
+-   Allows external control (e.g., selecting an item via a separate button)
 
-You can also use the `onValueChange` prop to update local state when the Radio Group's `value` state changes. This is useful when you don't want two-way binding for one reason or another, or you want to perform additional logic when the Radio Group changes.
+### 2. Change Handler
 
-```svelte /onValueChange/
+For more granular control or to perform additional logic on state changes, use the `onValueChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
+
+```svelte
 <script lang="ts">
 	import { RadioGroup } from "bits-ui";
-	let myValue = $state<string>("");
+	let myValue = $state("");
 </script>
 
 <RadioGroup.Root
 	value={myValue}
-	onValueChange={(value) => {
-		myValue = value;
+	onValueChange={(v) => {
+		myValue = v;
 		// additional logic here.
 	}}
 >
@@ -134,16 +138,25 @@ You can also use the `onValueChange` prop to update local state when the Radio G
 </RadioGroup.Root>
 ```
 
-### Controlled
+#### Use Cases
 
-Sometimes, you may want complete control over the component's `value` state, meaning you will be "kept in the loop" and be required to apply the state change yourself. While you will rarely need this, it's possible to do so by setting the `controlledValue` prop to `true`.
+-   Implementing custom behaviors on value change
+-   Integrating with external state management solutions
+-   Triggering side effects (e.g., logging, data fetching)
 
-You will then be responsible for updating a local value state variable that is passed as the `value` prop to the `RadioGroup.Root` component.
+### 3. Fully Controlled
+
+For complete control over the component's value state, use the `controlledValue` prop. This approach requires you to manually manage the value state, giving you full control over when and how the component responds to value change events.
+
+To implement controlled state:
+
+1. Set the `controlledValue` prop to `true` on the `RadioGroup.Root` component.
+2. Provide a `value` prop to `RadioGroup.Root`, which should be a variable holding the current state.
+3. Implement an `onValueChange` handler to update the state when the internal state changes.
 
 ```svelte
 <script lang="ts">
 	import { RadioGroup } from "bits-ui";
-
 	let myValue = $state("");
 </script>
 
@@ -152,7 +165,19 @@ You will then be responsible for updating a local value state variable that is p
 </RadioGroup.Root>
 ```
 
-See the [Controlled State](/docs/controlled-state) documentation for more information about controlled states.
+#### When to Use
+
+-   Implementing complex open/close logic
+-   Coordinating multiple UI elements
+-   Debugging state-related issues
+
+<Callout>
+
+While powerful, fully controlled state should be used judiciously as it increases complexity and can cause unexpected behaviors if not handled carefully.
+
+For more in-depth information on controlled components and advanced state management techniques, refer to our [Controlled State](/docs/controlled-state) documentation.
+
+</Callout>
 
 ## HTML Forms
 

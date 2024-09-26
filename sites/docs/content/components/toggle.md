@@ -4,7 +4,7 @@ description: A control element that switches between two states, providing a bin
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, ToggleDemo } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, ToggleDemo, Callout } from '$lib/components/index.js'
 	export let schemas;
 </script>
 
@@ -26,60 +26,69 @@ description: A control element that switches between two states, providing a bin
 <Toggle.Root />
 ```
 
-## Pressed State
+## Managing Pressed State
 
-Bits UI provides flexible options for controlling and synchronizing the Toggle's pressed state.
+Bits UI offers several approaches to manage and synchronize the Toggle's pressed state, catering to different levels of control and integration needs.
 
-### Two-Way Binding
+### 1. Two-Way Binding
 
-Use the `bind:pressd` directive for effortless two-way synchronization between your local state and the Toggle's internal state.
-
-```svelte {3,6,8}
-<script lang="ts">
-	import { Toggle } from "bits-ui";
-	let isPressed = $state(false);
-</script>
-
-<button onclick={() => (isPressed = true)}>Toggle Toggle</button>
-
-<Toggle.Root bind:pressed={isPressed}>
-	<!-- ... -->
-</Toggle.Root>
-```
-
-This setup enables toggling the Toggle via the custom button and ensures the local `isPressed` state updates when the Toggle's internal state updates through any means (e.g., pressing the Toggle).
-
-### Change Handler
-
-You can also use the `onPressedChange` prop to update local state when the Toggle's `pressed` state changes. This is useful when you don't want two-way binding for one reason or another, or you want to perform additional logic when the Toggle state changes.
-
-```svelte {3,7-11}
-<script lang="ts">
-	import { Toggle } from "bits-ui";
-	let isPressed = $state(false);
-</script>
-
-<Toggle.Root
-	pressed={isPressed}
-	onPressedChange={(pressed) => {
-		isPressed = pressed;
-		// additional logic here.
-	}}
->
-	<!-- ... -->
-</Toggle.Root>
-```
-
-### Controlled
-
-Sometimes, you may want complete control over the Toggle's `pressed` state, meaning you will be "kept in the loop" and be required to apply the state change yourself. While you'll rarely need this, it's possible to do so by setting the `controlledPressed` prop to `true`.
-
-You will then be responsible for updating a local state variable that is passed as the `pressed` prop to the `Toggle.Root` component.
+For seamless state synchronization, use Svelte's `bind:pressed` directive. This method automatically keeps your local state in sync with the component's internal state.
 
 ```svelte
 <script lang="ts">
 	import { Toggle } from "bits-ui";
+	let myPressed = $state(true);
+</script>
 
+<button onclick={() => (myPressed = false)}> unpress </button>
+
+<Toggle.Root bind:pressed={myPressed} />
+```
+
+#### Key Benefits
+
+-   Simplifies state management
+-   Automatically updates `myPressed` when the switch changes (e.g., via clicking on the toggle)
+-   Allows external control (e.g., pressing/toggling via a separate button/programmatically)
+
+### 2. Change Handler
+
+For more granular control or to perform additional logic on state changes, use the `onPressedChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
+
+```svelte
+<script lang="ts">
+	import { Toggle } from "bits-ui";
+	let myPressed = $state(false);
+</script>
+
+<Toggle.Root
+	checked={myPressed}
+	onPressedChange={(p) => {
+		myPressed = p;
+		// additional logic here.
+	}}
+/>
+```
+
+#### Use Cases
+
+-   Implementing custom behaviors on pressed/unpressed
+-   Integrating with external state management solutions
+-   Triggering side effects (e.g., logging, data fetching)
+
+### 3. Fully Controlled
+
+For complete control over the component's pressed state, use the `controlledPressed` prop. This approach requires you to manually manage the checked state, giving you full control over when and how the component responds to change events.
+
+To implement controlled state:
+
+1. Set the `controlledPressed` prop to `true` on the `Toggle.Root` component.
+2. Provide a `pressed` prop to `Toggle.Root`, which should be a variable holding the current state.
+3. Implement an `onPressedChange` handler to update the state when the internal state changes.
+
+```svelte
+<script lang="ts">
+	import { Toggle } from "bits-ui";
 	let myPressed = $state(false);
 </script>
 
@@ -88,6 +97,18 @@ You will then be responsible for updating a local state variable that is passed 
 </Toggle.Root>
 ```
 
-See the [Controlled State](/docs/controlled-state) documentation for more information about controlled states.
+#### When to Use
+
+-   Implementing complex checked/unchecked logic
+-   Coordinating multiple UI elements
+-   Debugging state-related issues
+
+<Callout>
+
+While powerful, fully controlled state should be used judiciously as it increases complexity and can cause unexpected behaviors if not handled carefully.
+
+For more in-depth information on controlled components and advanced state management techniques, refer to our [Controlled State](/docs/controlled-state) documentation.
+
+</Callout>
 
 <APISection {schemas} />

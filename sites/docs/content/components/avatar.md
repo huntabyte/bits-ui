@@ -26,7 +26,7 @@ The Avatar component is designed to represent a user or entity within your appli
 -   **Fallback Mechanism**: Provides a fallback when the primary image is unavailable or loading.
 -   **Customizable**: Each subcomponent can be styled and configured independently to match your design system.
 
-## Component Architecture
+## Architecture
 
 The Avatar component is composed of several subcomponents, each with a specific role:
 
@@ -34,7 +34,7 @@ The Avatar component is composed of several subcomponents, each with a specific 
 -   **Image**: The primary image element that displays the user's profile picture or a representative image.
 -   **Fallback**: The fallback element that displays alternative content when the primary image is unavailable or loading.
 
-## Component Structure
+## Structure
 
 Here's an overview of how the Avatar component is structured in code:
 

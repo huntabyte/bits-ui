@@ -28,7 +28,7 @@ The Accordion component is a versatile UI element that organizes content into co
 -   **Flexible State Management**: Supports controlled and uncontrolled state, take control if needed.
 -   **Compound Component Structure**: Provides a set of subcomponents that work together to create a fully-featured accordion.
 
-## Component Architecture
+## Architecture
 
 The Accordion component is composed of several subcomponents, each with a specific role:
 
@@ -38,7 +38,7 @@ The Accordion component is composed of several subcomponents, each with a specif
 -   **Header**: The title or heading of each item.
 -   **Content**: The expandable/collapsible body of each item.
 
-## Component Structure
+## Structure
 
 Here's an overview of how the Accordion component is structured in code:
 

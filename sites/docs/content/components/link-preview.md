@@ -39,13 +39,13 @@ This component is only intended to be used with a mouse or other pointing device
 </LinkPreview.Root>
 ```
 
-## Open State
+## Managing Open State
 
-Bits UI provides flexible options for controlling and synchronizing the component's open state.
+Bits UI offers several approaches to manage and synchronize the Link Preview's open state, catering to different levels of control and integration needs.
 
-### Two-Way Binding
+### 1. Two-Way Binding
 
-Use the `bind:open` directive for effortless two-way synchronization between your local state and the component's internal state.
+For seamless state synchronization, use Svelte's `bind:open` directive. This method automatically keeps your local state in sync with the component's internal state.
 
 ```svelte {3,6,8}
 <script lang="ts">
@@ -53,18 +53,22 @@ Use the `bind:open` directive for effortless two-way synchronization between you
 	let isOpen = $state(false);
 </script>
 
-<button onclick={() => (isOpen = true)}>Open LinkPreview</button>
+<button onclick={() => (isOpen = true)}>Open Link Preview</button>
 
 <LinkPreview.Root bind:open={isOpen}>
-	<!-- LinkPreview content -->
+	<!-- ... -->
 </LinkPreview.Root>
 ```
 
-This setup enables opening the Link Preview via the custom button and ensures the local `isOpen` state updates when the state changes through any internal means (e.g., escape key).
+#### Key Benefits
 
-### Change Handler
+-   Simplifies state management
+-   Automatically updates `isOpen` when the preview closes/opens (e.g., via escape key)
+-   Allows external control (e.g., opening via a separate button)
 
-You can also use the `onOpenChange` prop to update local state when the Link Preview's `open` state changes. This is useful when you don't want two-way binding for one reason or another, or you want to perform additional logic when the Link Preview opens or closes.
+### 2. Change Handler
+
+For more granular control or to perform additional logic on state changes, use the `onOpenChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
 
 ```svelte {3,7-11}
 <script lang="ts">
@@ -74,8 +78,8 @@ You can also use the `onOpenChange` prop to update local state when the Link Pre
 
 <LinkPreview.Root
 	open={isOpen}
-	onOpenChange={(open) => {
-		isOpen = open;
+	onOpenChange={(o) => {
+		isOpen = o;
 		// additional logic here.
 	}}
 >
@@ -83,16 +87,25 @@ You can also use the `onOpenChange` prop to update local state when the Link Pre
 </LinkPreview.Root>
 ```
 
-### Controlled
+#### Use Cases
 
-Sometimes, you may want complete control over the component's `open` state, meaning you will be "kept in the loop" and be required to apply the state change yourself. While you'll rarely need this, it's possible to do so by setting the `controlledOpen` prop to `true`.
+-   Implementing custom behaviors on open/close
+-   Integrating with external state management solutions
+-   Triggering side effects (e.g., logging, data fetching)
 
-You will then be responsible for updating a local state variable that is passed as the `open` prop to the `LinkPreview.Root` component.
+### 3. Fully Controlled
+
+For complete control over the dialog's open state, use the `controlledOpen` prop. This approach requires you to manually manage the open state, giving you full control over when and how the dialog responds to open/close events.
+
+To implement controlled state:
+
+1. Set the `controlledOpen` prop to `true` on the `LinkPreview.Root` component.
+2. Provide an `open` prop to `LinkPreview.Root`, which should be a variable holding the current state.
+3. Implement an `onOpenChange` handler to update the state when the internal state changes.
 
 ```svelte
 <script lang="ts">
 	import { LinkPreview } from "bits-ui";
-
 	let myOpen = $state(false);
 </script>
 
@@ -101,7 +114,19 @@ You will then be responsible for updating a local state variable that is passed 
 </LinkPreview.Root>
 ```
 
-See the [Controlled State](/docs/controlled-state) documentation for more information about controlled states.
+#### When to Use
+
+-   Implementing complex open/close logic
+-   Coordinating multiple UI elements
+-   Debugging state-related issues
+
+<Callout>
+
+While powerful, fully controlled state should be used judiciously as it increases complexity and can cause unexpected behaviors if not handled carefully.
+
+For more in-depth information on controlled components and advanced state management techniques, refer to our [Controlled State](/docs/controlled-state) documentation.
+
+</Callout>
 
 ## Opt-out of Floating UI
 

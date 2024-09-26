@@ -4,7 +4,7 @@ description: Display supplementary content or information when users interact wi
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, PopoverDemo } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, PopoverDemo, Callout } from '$lib/components/index.js'
 	export let schemas;
 </script>
 
@@ -32,13 +32,13 @@ description: Display supplementary content or information when users interact wi
 </Popover.Root>
 ```
 
-## Open State
+## Managing Open State
 
-Bits UI provides flexible options for controlling and synchronizing the Popover's open state.
+Bits UI offers several approaches to manage and synchronize the Popover's open state, catering to different levels of control and integration needs.
 
-### Two-Way Binding
+### 1. Two-Way Binding
 
-Use the `bind:open` directive for effortless two-way synchronization between your local state and the Popover's internal state.
+For seamless state synchronization, use Svelte's `bind:open` directive. This method automatically keeps your local state in sync with the dialog's internal state.
 
 ```svelte {3,6,8}
 <script lang="ts">
@@ -53,11 +53,15 @@ Use the `bind:open` directive for effortless two-way synchronization between you
 </Popover.Root>
 ```
 
-This setup enables opening the `Popover` via the custom button and ensures the local `isOpen` state updates when the Dialog closes through any means (e.g., escape key).
+#### Key Benefits
 
-### Change Handler
+-   Simplifies state management
+-   Automatically updates `isOpen` when the popover closes/opens (e.g., via escape key)
+-   Allows external control (e.g., opening via a separate button)
 
-You can also use the `onOpenChange` prop to update local state when the `Popover`'s `open` state changes. This is useful when you don't want two-way binding for one reason or another, or you want to perform additional logic when the `Popover` opens or closes.
+### 2. Change Handler
+
+For more granular control or to perform additional logic on state changes, use the `onOpenChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
 
 ```svelte {3,7-11}
 <script lang="ts">
@@ -67,8 +71,8 @@ You can also use the `onOpenChange` prop to update local state when the `Popover
 
 <Popover.Root
 	open={isOpen}
-	onOpenChange={(open) => {
-		isOpen = open;
+	onOpenChange={(o) => {
+		isOpen = o;
 		// additional logic here.
 	}}
 >
@@ -76,11 +80,21 @@ You can also use the `onOpenChange` prop to update local state when the `Popover
 </Popover.Root>
 ```
 
-### Controlled
+#### Use Cases
 
-Sometimes, you may want complete control over the `open` state, meaning you will be "kept in the loop" and be required to apply the state change yourself. While you'll rarely need this, it's possible to do so by setting the `controlledOpen` prop to `true`.
+-   Implementing custom behaviors on open/close
+-   Integrating with external state management solutions
+-   Triggering side effects (e.g., logging, data fetching)
 
-You will then be responsible for updating a local state variable that is passed as the `open` prop to the `Popover.Root` component.
+### 3. Fully Controlled
+
+For complete control over the dialog's open state, use the `controlledOpen` prop. This approach requires you to manually manage the open state, giving you full control over when and how the dialog responds to open/close events.
+
+To implement controlled state:
+
+1. Set the `controlledOpen` prop to `true` on the `Popover.Root` component.
+2. Provide an `open` prop to `Popover.Root`, which should be a variable holding the current state.
+3. Implement an `onOpenChange` handler to update the local state when the internal state changes.
 
 ```svelte
 <script lang="ts">
@@ -94,7 +108,19 @@ You will then be responsible for updating a local state variable that is passed 
 </Popover.Root>
 ```
 
-See the [Controlled State](/docs/controlled-state) documentation for more information about controlled states.
+#### When to Use
+
+-   Implementing complex open/close logic
+-   Coordinating multiple UI elements
+-   Debugging state-related issues
+
+<Callout>
+
+While powerful, fully controlled state should be used judiciously as it increases complexity and can cause unexpected behaviors if not handled carefully.
+
+For more in-depth information on controlled components and advanced state management techniques, refer to our [Controlled State](/docs/controlled-state) documentation.
+
+</Callout>
 
 ## Managing Focus
 

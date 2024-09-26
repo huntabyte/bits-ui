@@ -29,7 +29,7 @@ The Dialog component in Bits UI provides a flexible and accessible way to create
 -   **Managed Focus**: Automatically manages focus, with the option to take control if needed.
 -   **Flexible State Management**: Supports both controlled and uncontrolled state, allowing for full control over the dialog's open state.
 
-## Component Architecture
+## Architecture
 
 The Dialog component is composed of several subcomponents, each with a specific role:
 
@@ -42,7 +42,7 @@ The Dialog component is composed of several subcomponents, each with a specific 
 -   **Description**: Renders a description or additional context for the dialog.
 -   **Close**: A button that closes the dialog.
 
-## Component Structure
+## Structure
 
 Here's an overview of how the Dialog component is structured in code:
 

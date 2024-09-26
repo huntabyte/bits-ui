@@ -16,6 +16,29 @@ description: A modal window that alerts users with important information and awa
 
 </ComponentPreviewV2>
 
+## Key Features
+
+-   **Compound Component Structure**: Offers a set of subcomponents that work together to create a fully-featured alert dialog.
+-   **Accessibility**: Built with WAI-ARIA guidelines in mind, ensuring keyboard navigation and screen reader support.
+-   **Customizable**: Each subcomponent can be styled and configured independently.
+-   **Portal Support**: Content can be rendered in a portal, ensuring proper stacking context.
+-   **Managed Focus**: Automatically manages focus, with the option to take control if needed.
+-   **Flexible State Management**: Supports both controlled and uncontrolled state, allowing for full control over the dialog's open state.
+
+## Architecture
+
+The Alert Dialog component is composed of several subcomponents, each with a specific role:
+
+-   **Root**: The main container component that manages the state of the dialog. Provides context for all child components.
+-   **Trigger**: A button that toggles the dialog's open state.
+-   **Portal**: Renders its children in a portal, outside the normal DOM hierarchy.
+-   **Overlay**: A backdrop that sits behind the dialog content.
+-   **Content**: The main container for the dialog's content.
+-   **Title**: Renders the dialog's title.
+-   **Description**: Renders a description or additional context for the dialog.
+-   **Cancel**: A button that closes the dialog by cancelling the action.
+-   **Action**: A button that closes the dialog by taking an action.
+
 ## Structure
 
 ```svelte
