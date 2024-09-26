@@ -87,7 +87,7 @@ Bits UI offers several approaches to manage and synchronize the component's plac
 
 For seamless state synchronization, use Svelte's `bind:placeholder` directive. This method automatically keeps your local state in sync with the component's internal state.
 
-```svelte {3,6,8}
+```svelte
 <script lang="ts">
 	import { DatePicker } from "bits-ui";
 	import { CalendarDateTime } from "@internationalized/date";
@@ -113,7 +113,7 @@ For seamless state synchronization, use Svelte's `bind:placeholder` directive. T
 
 For more granular control or to perform additional logic on state changes, use the `onPlaceholderChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
 
-```svelte {3,7-11}
+```svelte
 <script lang="ts">
 	import { DatePicker } from "bits-ui";
 	import { CalendarDateTime } from "@internationalized/date";
@@ -183,7 +183,7 @@ Bits UI offers several approaches to manage and synchronize the component's valu
 
 For seamless state synchronization, use Svelte's `bind:value` directive. This method automatically keeps your local state in sync with the component's internal state.
 
-```svelte {3,6,8}
+```svelte
 <script lang="ts">
 	import { DatePicker } from "bits-ui";
 	import { CalendarDateTime } from "@internationalized/date";
@@ -206,7 +206,7 @@ For seamless state synchronization, use Svelte's `bind:value` directive. This me
 
 For more granular control or to perform additional logic on state changes, use the `onValueChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
 
-```svelte {3,7-11}
+```svelte
 <script lang="ts">
 	import { DatePicker } from "bits-ui";
 	import { CalendarDateTime } from "@internationalized/date";
@@ -272,7 +272,7 @@ Bits UI offers several approaches to manage and synchronize the component's open
 
 For seamless state synchronization, use Svelte's `bind:open` directive. This method automatically keeps your local state in sync with the component's internal state.
 
-```svelte {3,6,8}
+```svelte
 <script lang="ts">
 	import { DatePicker } from "bits-ui";
 	let isOpen = $state(false);
@@ -295,7 +295,7 @@ For seamless state synchronization, use Svelte's `bind:open` directive. This met
 
 For more granular control or to perform additional logic on state changes, use the `onOpenChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
 
-```svelte {3,7-11}
+```svelte
 <script lang="ts">
 	import { DatePicker } from "bits-ui";
 	let isOpen = $state(false);

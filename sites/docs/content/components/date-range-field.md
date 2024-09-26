@@ -45,12 +45,6 @@ Before diving into this component, it's important to understand how dates/times 
 </DateRangeField.Root>
 ```
 
-<Callout type="warning" title="Heads up!">
-
-Before diving into this component, it's important to understand how dates/times work in Bits UI. Please read the [Dates](/docs/dates) documentation to learn more!
-
-</Callout>
-
 ## Managing Placeholder State
 
 Bits UI offers several approaches to manage and synchronize the component's placeholder state, catering to different levels of control and integration needs.
@@ -59,7 +53,7 @@ Bits UI offers several approaches to manage and synchronize the component's plac
 
 For seamless state synchronization, use Svelte's `bind:placeholder` directive. This method automatically keeps your local state in sync with the component's internal state.
 
-```svelte {3,6,8}
+```svelte
 <script lang="ts">
 	import { DateRangeField } from "bits-ui";
 	import { CalendarDateTime } from "@internationalized/date";
@@ -81,7 +75,7 @@ For seamless state synchronization, use Svelte's `bind:placeholder` directive. T
 
 For more granular control or to perform additional logic on state changes, use the `onPlaceholderChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
 
-```svelte {3,7-11}
+```svelte
 <script lang="ts">
 	import { DateRangeField } from "bits-ui";
 	let myPlaceholder = $state(new CalendarDateTime(2024, 8, 3, 12, 30));
