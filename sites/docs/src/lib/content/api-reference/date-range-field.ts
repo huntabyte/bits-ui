@@ -11,6 +11,7 @@ import {
 	createDataAttrSchema,
 	createEnumProp,
 	createFunctionProp,
+	createPropSchema,
 	withChildProps,
 } from "./helpers.js";
 import { input as dateFieldInput, root as dateFieldRoot } from "./date-field.js";
@@ -19,6 +20,8 @@ import {
 	DateRangeProp,
 	OnStartEndValueChangeProp,
 } from "./extended-types/shared/index.js";
+import { DateRangeFieldInputTypeProp } from "./extended-types/date-range-field/index.js";
+import { DateFieldSegmentPartProp } from "./extended-types/date-field/index.js";
 import { enums } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 
@@ -79,6 +82,7 @@ export const input = createApiSchema<DateRangeFieldInputPropsWithoutHTML>({
 			options: ["start", "end"],
 			description: "The type of field to render (start or end).",
 			required: true,
+			definition: DateRangeFieldInputTypeProp,
 		}),
 		name: {
 			type: C.STRING,
@@ -90,18 +94,18 @@ export const input = createApiSchema<DateRangeFieldInputPropsWithoutHTML>({
 		child: dateFieldInput.props!.child,
 	},
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "invalid",
 			description: "Present on the element when the field is invalid.",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "disabled",
 			description: "Present on the element when the field is disabled.",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "date-field-input",
 			description: "Present on the element.",
-		},
+		}),
 	],
 });
 
@@ -109,55 +113,35 @@ export const segment = createApiSchema<DateRangeFieldSegmentPropsWithoutHTML>({
 	title: "Segment",
 	description: "A segment of the date field.",
 	props: {
-		part: {
+		part: createPropSchema({
 			type: {
 				type: "SegmentPart",
-				definition: enums(
-					"month",
-					"day",
-					"year",
-					"hour",
-					"minute",
-					"second",
-					"dayPeriod",
-					"timeZoneName",
-					"literal"
-				),
+				definition: DateFieldSegmentPartProp,
 			},
 			description: "The part of the date to render.",
 			required: true,
-		},
+		}),
 		...withChildProps({ elType: "HTMLSpanElement" }),
 	},
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "invalid",
 			description: "Present on the element when the field is invalid",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "disabled",
 			description: "Present on the element when the field is disabled",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "segment",
-			value: enums(
-				"month",
-				"day",
-				"year",
-				"hour",
-				"minute",
-				"second",
-				"dayPeriod",
-				"timeZoneName",
-				"literal"
-			),
-			isEnum: true,
 			description: "The type of segment the element represents.",
-		},
-		{
+			definition: DateFieldSegmentPartProp,
+			isEnum: true,
+		}),
+		createDataAttrSchema({
 			name: "date-field-segment",
 			description: "Present on the element.",
-		},
+		}),
 	],
 });
 
@@ -166,14 +150,14 @@ export const label = createApiSchema<DateRangeFieldLabelPropsWithoutHTML>({
 	description: "The label for the date field.",
 	props: withChildProps({ elType: "HTMLSpanElement" }),
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "invalid",
 			description: "Present on the element when the field is invalid",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "date-field-label",
 			description: "Present on the element.",
-		},
+		}),
 	],
 });
 

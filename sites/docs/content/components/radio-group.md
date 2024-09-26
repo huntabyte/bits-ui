@@ -90,7 +90,7 @@ You can then use the `MyRadioGroup` component in your application like so:
 <MyRadioGroup items={myItems} name="favoriteFruit" />
 ```
 
-## Managing Value State
+## Value State
 
 The `value` prop is used to determine which radio group item(s) are currently checked. Bits UI provides flexible options for controlling and synchronizing the Radio Group's value.
 
@@ -134,6 +134,26 @@ You can also use the `onValueChange` prop to update local state when the Radio G
 </RadioGroup.Root>
 ```
 
+### Controlled
+
+Sometimes, you may want complete control over the component's `value` state, meaning you will be "kept in the loop" and be required to apply the state change yourself. While you will rarely need this, it's possible to do so by setting the `controlledValue` prop to `true`.
+
+You will then be responsible for updating a local value state variable that is passed as the `value` prop to the `RadioGroup.Root` component.
+
+```svelte
+<script lang="ts">
+	import { RadioGroup } from "bits-ui";
+
+	let myValue = $state("");
+</script>
+
+<RadioGroup.Root controlledValue value={myValue} onValueChange={(v) => (myValue = v)}>
+	<!-- ... -->
+</RadioGroup.Root>
+```
+
+See the [Controlled State](/docs/controlled-state) documentation for more information about controlled states.
+
 ## HTML Forms
 
 If you set the `name` prop on the `RadioGroup.Root` component, a hidden input element will be rendered to submit the value of the radio group to a form.
@@ -144,12 +164,38 @@ If you set the `name` prop on the `RadioGroup.Root` component, a hidden input el
 </RadioGroup.Root>
 ```
 
+### Required
+
+To make the hidden input element `required` you can set the `required` prop on the `RadioGroup.Root` component.
+
+```svelte /required/
+<RadioGroup.Root required>
+	<!-- ... -->
+</RadioGroup.Root>
+```
+
 ## Disabling Items
 
 You can disable a radio group item by setting the `disabled` prop to `true`.
 
 ```svelte /disabled/
 <RadioGroup.Item value="apple" disabled>Apple</RadioGroup.Item>
+```
+
+## Orientation
+
+The `orientation` prop is used to determine the orientation of the radio group, which influences how keyboard navigation will work.
+
+When the `orientation` is set to `'vertical'`, the radio group will navigate through the items using the `ArrowUp` and `ArrowDown` keys. When the `orientation` is set to `'horizontal'`, the radio group will navigate through the items using the `ArrowLeft` and `ArrowRight` keys.
+
+```svelte /orientation="vertical"/ /orientation="horizontal"/
+<RadioGroup.Root orientation="vertical">
+	<!-- ... -->
+</RadioGroup.Root>
+
+<RadioGroup.Root orientation="horizontal">
+	<!-- ... -->
+</RadioGroup.Root>
 ```
 
 <APISection {schemas} />

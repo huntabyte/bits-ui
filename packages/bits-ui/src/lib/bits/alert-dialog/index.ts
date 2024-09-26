@@ -1,6 +1,6 @@
-export { default as Root } from "$lib/bits/dialog/components/dialog.svelte";
+export { default as Root } from "./components/alert-dialog.svelte";
 export { default as Title } from "$lib/bits/dialog/components/dialog-title.svelte";
-export { default as Action } from "$lib/bits/dialog/components/dialog-close.svelte";
+export { default as Action } from "./components/alert-dialog-action.svelte";
 export { default as Cancel } from "./components/alert-dialog-cancel.svelte";
 export { default as Portal } from "$lib/bits/utilities/portal/portal.svelte";
 export { default as Content } from "./components/alert-dialog-content.svelte";

@@ -82,6 +82,8 @@ export type {
 	MenuSeparatorProps as MenubarSeparatorProps,
 	MenuSubContentPropsWithoutHTML as MenubarSubContentPropsWithoutHTML,
 	MenuSubContentProps as MenubarSubContentProps,
+	MenuSubContentStaticPropsWithoutHTML as MenubarSubContentStaticPropsWithoutHTML,
+	MenuSubContentStaticProps as MenubarSubContentStaticProps,
 	MenuSubTriggerPropsWithoutHTML as MenubarSubTriggerPropsWithoutHTML,
 	MenuSubTriggerProps as MenubarSubTriggerProps,
 	MenuSubPropsWithoutHTML as MenubarSubPropsWithoutHTML,

@@ -6,13 +6,14 @@ import type {
 	PopoverRootPropsWithoutHTML,
 	PopoverTriggerPropsWithoutHTML,
 } from "bits-ui";
-import { OnOpenChangeProp } from "./extended-types/shared/index.js";
+import { OnOpenChangeProp, OpenClosedProp } from "./extended-types/shared/index.js";
 import {
 	arrowProps,
 	childrenSnippet,
 	controlledOpenProp,
 	createApiSchema,
 	createBooleanProp,
+	createDataAttrSchema,
 	createEnumDataAttr,
 	createFunctionProp,
 	dirProp,
@@ -31,6 +32,7 @@ const openClosedDataAttr = createEnumDataAttr({
 	name: "state",
 	description: "Whether the popover is open or closed.",
 	options: ["open", "closed"],
+	definition: OpenClosedProp,
 });
 
 export const root = createApiSchema<PopoverRootPropsWithoutHTML>({
@@ -57,10 +59,10 @@ export const trigger = createApiSchema<PopoverTriggerPropsWithoutHTML>({
 	props: withChildProps({ elType: "HTMLButtonElement" }),
 	dataAttributes: [
 		openClosedDataAttr,
-		{
+		createDataAttrSchema({
 			name: "popover-trigger",
 			description: "Present on the trigger element.",
-		},
+		}),
 	],
 });
 
@@ -83,10 +85,10 @@ export const content = createApiSchema<PopoverContentPropsWithoutHTML>({
 	},
 	dataAttributes: [
 		openClosedDataAttr,
-		{
+		createDataAttrSchema({
 			name: "popover-content",
 			description: "Present on the content element.",
-		},
+		}),
 	],
 });
 
@@ -109,10 +111,10 @@ export const contentStatic = createApiSchema<PopoverContentStaticPropsWithoutHTM
 	},
 	dataAttributes: [
 		openClosedDataAttr,
-		{
+		createDataAttrSchema({
 			name: "popover-content",
 			description: "Present on the content element.",
-		},
+		}),
 	],
 });
 
@@ -122,10 +124,10 @@ export const close = createApiSchema<PopoverClosePropsWithoutHTML>({
 		"A button which closes the popover when pressed and is typically placed in the content.",
 	props: withChildProps({ elType: "HTMLButtonElement" }),
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "popover-close",
 			description: "Present on the close button.",
-		},
+		}),
 	],
 });
 
@@ -134,14 +136,14 @@ export const arrow = createApiSchema<PopoverArrowPropsWithoutHTML>({
 	description: "An optional arrow element which points to the trigger when the popover is open.",
 	props: arrowProps,
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "arrow",
 			description: "Present on the arrow element.",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "popover-arrow",
 			description: "Present on the arrow element.",
-		},
+		}),
 	],
 });
 

@@ -1,6 +1,6 @@
 ---
 title: Button
-description: A special button component that can receive Melt UI builders for use with the `asChild` prop.
+description: A component that if passed a `href` prop will render an anchor element instead of a button element.
 ---
 
 <script>

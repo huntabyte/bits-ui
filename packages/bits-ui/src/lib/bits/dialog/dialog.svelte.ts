@@ -4,20 +4,31 @@ import { useRefById } from "$lib/internal/useRefById.svelte.js";
 import { createContext } from "$lib/internal/createContext.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 
-const CONTENT_ATTR = "data-dialog-content";
-const TITLE_ATTR = "data-dialog-title";
-const TRIGGER_ATTR = "data-dialog-trigger";
-const OVERLAY_ATTR = "data-dialog-overlay";
-const DESCRIPTION_ATTR = "data-dialog-description";
-const CLOSE_ATTR = "data-dialog-close";
-const CANCEL_ATTR = "data-dialog-cancel";
+type DialogVariant = "alert-dialog" | "dialog";
+
+function createAttrs(variant: DialogVariant) {
+	return {
+		content: `data-${variant}-content`,
+		trigger: `data-${variant}-trigger`,
+		overlay: `data-${variant}-overlay`,
+		title: `data-${variant}-title`,
+		description: `data-${variant}-description`,
+		close: `data-${variant}-close`,
+		cancel: `data-${variant}-cancel`,
+		action: `data-${variant}-action`,
+	} as const;
+}
 
 type DialogRootStateProps = WritableBoxedValues<{
 	open: boolean;
-}>;
+}> &
+	ReadableBoxedValues<{
+		variant: DialogVariant;
+	}>;
 
 class DialogRootState {
 	open: DialogRootStateProps["open"];
+	variant: DialogRootStateProps["variant"];
 	triggerNode = $state<HTMLElement | null>(null);
 	titleNode = $state<HTMLElement | null>(null);
 	contentNode = $state<HTMLElement | null>(null);
@@ -27,20 +38,22 @@ class DialogRootState {
 	triggerId = $state<string | undefined>(undefined);
 	descriptionId = $state<string | undefined>(undefined);
 	cancelNode = $state<HTMLElement | null>(null);
+	attrs = $derived.by(() => createAttrs(this.variant.current));
 
 	constructor(props: DialogRootStateProps) {
 		this.open = props.open;
+		this.variant = props.variant;
 	}
 
-	openDialog() {
+	handleOpen = () => {
 		if (this.open.current) return;
 		this.open.current = true;
-	}
+	};
 
-	closeDialog() {
+	handleClose = () => {
 		if (!this.open.current) return;
 		this.open.current = false;
-	}
+	};
 
 	createTrigger(props: DialogTriggerStateProps) {
 		return new DialogTriggerState(props, this);
@@ -101,7 +114,7 @@ class DialogTriggerState {
 	}
 
 	#onclick = () => {
-		this.#root.openDialog();
+		this.#root.handleOpen();
 	};
 
 	props = $derived.by(
@@ -111,23 +124,29 @@ class DialogTriggerState {
 				"aria-haspopup": "dialog",
 				"aria-expanded": getAriaExpanded(this.#root.open.current),
 				"aria-controls": this.#root.contentId,
-				[TRIGGER_ATTR]: "",
+				[this.#root.attrs.trigger]: "",
 				onclick: this.#onclick,
 				...this.#root.sharedProps,
 			}) as const
 	);
 }
 
-type DialogCloseStateProps = WithRefProps;
+type DialogCloseStateProps = WithRefProps &
+	ReadableBoxedValues<{
+		variant: "action" | "cancel" | "close";
+	}>;
 class DialogCloseState {
 	#id: DialogCloseStateProps["id"];
 	#ref: DialogCloseStateProps["ref"];
 	#root: DialogRootState;
+	#variant: DialogCloseStateProps["variant"];
+	#attr = $derived.by(() => this.#root.attrs[this.#variant.current]);
 
 	constructor(props: DialogCloseStateProps, root: DialogRootState) {
 		this.#root = root;
 		this.#ref = props.ref;
 		this.#id = props.id;
+		this.#variant = props.variant;
 
 		useRefById({
 			id: this.#id,
@@ -137,14 +156,14 @@ class DialogCloseState {
 	}
 
 	#onclick = () => {
-		this.#root.closeDialog();
+		this.#root.handleClose();
 	};
 
 	props = $derived.by(
 		() =>
 			({
 				id: this.#id.current,
-				[CLOSE_ATTR]: "",
+				[this.#attr]: "",
 				onclick: this.#onclick,
 				...this.#root.sharedProps,
 			}) as const
@@ -185,7 +204,7 @@ class DialogTitleState {
 				id: this.#id.current,
 				role: "heading",
 				"aria-level": this.#level.current,
-				[TITLE_ATTR]: "",
+				[this.#root.attrs.title]: "",
 				...this.#root.sharedProps,
 			}) as const
 	);
@@ -218,7 +237,7 @@ class DialogDescriptionState {
 		() =>
 			({
 				id: this.#id.current,
-				[DESCRIPTION_ATTR]: "",
+				[this.#root.attrs.description]: "",
 				...this.#root.sharedProps,
 			}) as const
 	);
@@ -253,10 +272,10 @@ class DialogContentState {
 		() =>
 			({
 				id: this.#id.current,
-				role: "dialog",
+				role: this.root.variant.current === "alert-dialog" ? "alertdialog" : "dialog",
 				"aria-describedby": this.root.descriptionId,
 				"aria-labelledby": this.root.titleId,
-				[CONTENT_ATTR]: "",
+				[this.root.attrs.content]: "",
 				...this.root.sharedProps,
 			}) as const
 	);
@@ -287,7 +306,7 @@ class DialogOverlayState {
 		() =>
 			({
 				id: this.#id.current,
-				[OVERLAY_ATTR]: "",
+				[this.root.attrs.overlay]: "",
 				...this.root.sharedProps,
 			}) as const
 	);
@@ -316,14 +335,14 @@ class AlertDialogCancelState {
 	}
 
 	#onclick = () => {
-		this.#root.closeDialog();
+		this.#root.handleClose();
 	};
 
 	props = $derived.by(
 		() =>
 			({
 				id: this.#id.current,
-				[CANCEL_ATTR]: "",
+				[this.#root.attrs.cancel]: "",
 				onclick: this.#onclick,
 				...this.#root.sharedProps,
 			}) as const

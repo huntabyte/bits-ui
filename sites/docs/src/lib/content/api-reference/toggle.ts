@@ -1,10 +1,14 @@
 import type { ToggleRootPropsWithoutHTML } from "bits-ui";
 import {
+	ToggleRootOnPressedChangeProp,
+	ToggleRootStateDataAttr,
+} from "./extended-types/toggle/index.js";
+import {
 	controlledPressedProp,
 	createApiSchema,
 	createBooleanProp,
+	createDataAttrSchema,
 	createFunctionProp,
-	enums,
 	withChildProps,
 } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
@@ -19,7 +23,7 @@ const root = createApiSchema<ToggleRootPropsWithoutHTML>({
 			bindable: true,
 		}),
 		onPressedChange: createFunctionProp({
-			definition: "(checked: boolean) => void",
+			definition: ToggleRootOnPressedChangeProp,
 			description: "A callback function called when the pressed state of the toggle changes.",
 		}),
 		controlledPressed: controlledPressedProp,
@@ -30,20 +34,20 @@ const root = createApiSchema<ToggleRootPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "state",
 			description: "Whether the toggle is in the on or off state.",
-			value: enums("on", "off"),
+			definition: ToggleRootStateDataAttr,
 			isEnum: true,
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "disabled",
 			description: "Present when the toggle is disabled.",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "toggle-root",
 			description: "Present on the root element.",
-		},
+		}),
 	],
 });
 

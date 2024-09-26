@@ -14,6 +14,7 @@ import {
 	createEnumDataAttr,
 	createEnumProp,
 	createFunctionProp,
+	createPropSchema,
 	createStringProp,
 	withChildProps,
 } from "./helpers.js";
@@ -29,29 +30,29 @@ import {
 	SegmentPartProp,
 } from "./extended-types/shared/index.js";
 
-import { enums } from "$lib/content/api-reference/helpers.js";
+import { DateFieldEditableSegmentPartProp } from "./extended-types/date-field/index.js";
 import * as C from "$lib/content/constants.js";
 
 export const root = createApiSchema<DateFieldRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root date field component.",
 	props: {
-		value: {
+		value: createPropSchema({
 			type: dateValueProp,
 			description: "The selected date.",
 			bindable: true,
-		},
+		}),
 		onValueChange: createFunctionProp({
 			definition: OnDateValueChangeProp,
 			description: "A function that is called when the selected date changes.",
 		}),
 		controlledValue: controlledValueProp,
-		placeholder: {
+		placeholder: createPropSchema({
 			type: dateValueProp,
 			description:
 				"The placeholder date, which is used to determine what date to start the segments from when no value exists.",
 			bindable: true,
-		},
+		}),
 		onPlaceholderChange: createFunctionProp({
 			definition: OnPlaceholderChangeProp,
 			description: "A function that is called when the placeholder date changes.",
@@ -81,14 +82,14 @@ export const root = createApiSchema<DateFieldRootPropsWithoutHTML>({
 			description: "Whether or not to hide the time zone segment of the field.",
 			default: C.FALSE,
 		}),
-		maxValue: {
+		maxValue: createPropSchema({
 			type: dateValueProp,
 			description: "The maximum valid date that can be entered.",
-		},
-		minValue: {
+		}),
+		minValue: createPropSchema({
 			type: dateValueProp,
 			description: "The minimum valid date that can be entered.",
-		},
+		}),
 		locale: createStringProp({
 			description: "The locale to use for formatting dates.",
 			default: "'en-US'",
@@ -101,14 +102,14 @@ export const root = createApiSchema<DateFieldRootPropsWithoutHTML>({
 			description: "Whether or not the field is readonly.",
 			default: C.FALSE,
 		}),
-		readonlySegments: {
+		readonlySegments: createPropSchema({
 			type: {
-				type: C.ARRAY,
-				definition: "EditableSegmentPart[]",
+				type: "EditableSegmentPart[]",
+				definition: DateFieldEditableSegmentPartProp,
 			},
 			description:
 				"An array of segments that should be readonly, which prevent user input on them.",
-		},
+		}),
 		children: childrenSnippet(),
 	},
 });
@@ -147,14 +148,14 @@ export const segment = createApiSchema<DateFieldSegmentPropsWithoutHTML>({
 	title: "Segment",
 	description: "A segment of the date field.",
 	props: {
-		part: {
+		part: createPropSchema({
 			type: {
 				type: "SegmentPart",
 				definition: SegmentPartProp,
 			},
 			description: "The part of the date to render.",
 			required: true,
-		},
+		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [

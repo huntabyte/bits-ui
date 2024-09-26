@@ -142,7 +142,7 @@ Now, we can use the `MyMenubarMenu` component within a `Menubar.Root` component 
 </Menubar.Root>
 ```
 
-## Managing Value State
+## Value State
 
 Bits UI provides flexible options for controlling and synchronizing the menubar's active value state. The `value` represents the currently opened menu within the menubar.
 

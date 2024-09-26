@@ -124,7 +124,7 @@ You can then use the `MySelect` component throughout your application like so:
 <MySelect {items} bind:value={fruit} />
 ```
 
-## Managing Value State
+## Value State
 
 The `value` represents the currently selected item/option within the select menu. Bits UI provides flexible options for controlling and synchronizing the Select's value state.
 
@@ -168,7 +168,7 @@ You can also use the `onValueChange` prop to update local state when the Select'
 </Select.Root>
 ```
 
-## Managing Open State
+## Open State
 
 The `open` state represents whether or not the select content is open. Bits UI provides flexible options for controlling and synchronizing the Select's open state.
 

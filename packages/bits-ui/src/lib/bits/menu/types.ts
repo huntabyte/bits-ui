@@ -155,11 +155,18 @@ export type MenuSubPropsWithoutHTML = WithChildren<{
 }>;
 
 export type MenuSubContentPropsWithoutHTML = Expand<
-	WithChild<Omit<PopperLayerProps, "content"> & _SharedMenuContentProps>
+	WithChild<Omit<PopperLayerProps, "content" | "preventScroll"> & _SharedMenuContentProps>
 >;
 
 export type MenuSubContentProps = MenuSubContentPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, MenuSubContentPropsWithoutHTML>;
+
+export type MenuSubContentStaticPropsWithoutHTML = Expand<
+	WithChild<Omit<PopperLayerStaticProps, "content" | "preventScroll"> & _SharedMenuContentProps>
+>;
+
+export type MenuSubContentStaticProps = MenuSubContentStaticPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, MenuSubContentStaticPropsWithoutHTML>;
 
 export type MenuSubTriggerPropsWithoutHTML = MenuItemPropsWithoutHTML;
 export type MenuSubTriggerProps = MenuItemProps;

@@ -11,6 +11,7 @@ export { default as RadioItem } from "$lib/bits/menu/components/menu-radio-item.
 export { default as Separator } from "$lib/bits/menu/components/menu-separator.svelte";
 export { default as RadioGroup } from "$lib/bits/menu/components/menu-radio-group.svelte";
 export { default as SubContent } from "$lib/bits/menu/components/menu-sub-content.svelte";
+export { default as SubContentStatic } from "$lib/bits/menu/components/menu-sub-content-static.svelte";
 export { default as SubTrigger } from "$lib/bits/menu/components/menu-sub-trigger.svelte";
 export { default as CheckboxItem } from "$lib/bits/menu/components/menu-checkbox-item.svelte";
 export { default as Portal } from "$lib/bits/utilities/portal/portal.svelte";
@@ -28,6 +29,7 @@ export type {
 	DropdownMenuRadioItemProps as RadioItemProps,
 	DropdownMenuSeparatorProps as SeparatorProps,
 	DropdownMenuSubContentProps as SubContentProps,
+	DropdownMenuSubContentStaticProps as SubContentStaticProps,
 	DropdownMenuSubProps as SubProps,
 	DropdownMenuSubTriggerProps as SubTriggerProps,
 	DropdownMenuTriggerProps as TriggerProps,

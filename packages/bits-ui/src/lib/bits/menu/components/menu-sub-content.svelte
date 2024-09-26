@@ -22,6 +22,9 @@
 		onEscapeKeydown = noop,
 		interactOutsideBehavior = "defer-otherwise-close",
 		escapeKeydownBehavior = "defer-otherwise-close",
+		onOpenAutoFocus: onOpenAutoFocusProp = noop,
+		onCloseAutoFocus: onCloseAutoFocusProp = noop,
+		onFocusOutside = noop,
 		side = "right",
 		...restProps
 	}: SubContentProps = $props();
@@ -51,13 +54,13 @@
 		}
 	}
 
+	const dataAttr = $derived(subContentState.parentMenu.root.attrs.subContent);
+
 	const mergedProps = $derived(
 		mergeProps(restProps, subContentState.props, {
-			onOpenAutoFocus,
-			onCloseAutoFocus,
 			side,
 			onkeydown,
-			"data-menu-sub-content": "",
+			[dataAttr]: "",
 		})
 	);
 
@@ -80,7 +83,16 @@
 	{...mergedProps}
 	{interactOutsideBehavior}
 	{escapeKeydownBehavior}
-	{onOpenAutoFocus}
+	onCloseAutoFocus={(e) => {
+		onCloseAutoFocusProp(e);
+		if (e.defaultPrevented) return;
+		onCloseAutoFocus(e);
+	}}
+	onOpenAutoFocus={(e) => {
+		onOpenAutoFocusProp(e);
+		if (e.defaultPrevented) return;
+		onOpenAutoFocus(e);
+	}}
 	present={subContentState.parentMenu.open.current || forceMount}
 	onInteractOutside={(e) => {
 		onInteractOutside(e);
@@ -94,6 +106,7 @@
 		subContentState.parentMenu.onClose();
 	}}
 	onFocusOutside={(e) => {
+		onFocusOutside(e);
 		if (e.defaultPrevented) return;
 		// We prevent closing when the trigger is focused to avoid triggering a re-open animation
 		// on pointer interaction.

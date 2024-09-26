@@ -4,7 +4,13 @@ import type {
 	DateRangePickerRootPropsWithoutHTML,
 } from "bits-ui";
 import { label, root as rangeFieldRoot, segment } from "./date-range-field.js";
-import { createApiSchema, createBooleanProp, withChildProps } from "./helpers.js";
+import {
+	createApiSchema,
+	createBooleanProp,
+	createDataAttrSchema,
+	createEnumProp,
+	withChildProps,
+} from "./helpers.js";
 import { content, trigger } from "./popover.js";
 import {
 	cell,
@@ -21,6 +27,7 @@ import {
 } from "./calendar.js";
 import { root as rangeCalendarRoot } from "./range-calendar.js";
 import { root as datePickerRoot } from "./date-picker.js";
+import { DateRangeFieldInputTypeProp } from "./extended-types/date-range-field/index.js";
 import * as C from "$lib/content/constants.js";
 import { enums } from "$lib/content/api-reference/helpers.js";
 
@@ -66,22 +73,22 @@ const root = createApiSchema<DateRangePickerRootPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "invalid",
 			description: "Present on the root element when the calendar is invalid.",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "disabled",
 			description: "Present on the root element when the calendar is disabled.",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "readonly",
 			description: "Present on the root element when the calendar is readonly.",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "calendar-root",
 			description: "Present on the root element.",
-		},
+		}),
 	],
 });
 
@@ -89,22 +96,22 @@ const calendar = createApiSchema<DateRangePickerCalendarPropsWithoutHTML>({
 	title: "Calendar",
 	description: "The calendar component containing the grids of dates.",
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "invalid",
 			description: "Present on the root element when the calendar is invalid.",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "disabled",
 			description: "Present on the root element when the calendar is disabled.",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "readonly",
 			description: "Present on the root element when the calendar is readonly.",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "calendar-root",
 			description: "Present on the root element.",
-		},
+		}),
 	],
 });
 
@@ -117,28 +124,27 @@ const input = createApiSchema<DateRangePickerInputPropsWithoutHTML>({
 			description:
 				"The name of the input field used for form submission. If provided a hidden input will be rendered alongside the field.",
 		},
-		type: {
-			type: {
-				type: C.ENUM,
-				definition: enums("text", "hidden"),
-			},
-			description: "The part of the date this input represents.",
-		},
+		type: createEnumProp({
+			options: ["start", "end"],
+			description: "The type of field to render (start or end).",
+			required: true,
+			definition: DateRangeFieldInputTypeProp,
+		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "invalid",
 			description: "Present on the element when the field is invalid.",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "disabled",
 			description: "Present on the element when the field is disabled.",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "date-field-input",
 			description: "Present on the element.",
-		},
+		}),
 	],
 });
 

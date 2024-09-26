@@ -35,6 +35,7 @@ export type {
 	RadioItemProps as ContextMenuRadioItemProps,
 	SeparatorProps as ContextMenuSeparatorProps,
 	SubContentProps as ContextMenuSubContentProps,
+	SubContentStaticProps as ContextMenuSubContentStaticProps,
 	SubProps as ContextMenuSubProps,
 	SubTriggerProps as ContextMenuSubTriggerProps,
 	PortalProps as ContextMenuPortalProps,
@@ -54,5 +55,6 @@ export type {
 	MenuSubPropsWithoutHTML as ContextMenuSubPropsWithoutHTML,
 	MenuSubTriggerPropsWithoutHTML as ContextMenuSubTriggerPropsWithoutHTML,
 	MenuSubContentPropsWithoutHTML as ContextMenuSubContentPropsWithoutHTML,
+	MenuSubContentStaticPropsWithoutHTML as ContextMenuSubContentStaticPropsWithoutHTML,
 	MenuPortalPropsWithoutHTML as ContextMenuPortalPropsWithoutHTML,
 } from "$lib/bits/menu/types.js";

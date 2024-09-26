@@ -25,10 +25,13 @@ import {
 	controlledValueProp,
 	createApiSchema,
 	createBooleanProp,
+	createDataAttrSchema,
 	createFunctionProp,
+	createPropSchema,
 	withChildProps,
 } from "./helpers.js";
 import { content, trigger } from "./popover.js";
+import { OnOpenChangeProp } from "./extended-types/shared/index.js";
 import * as C from "$lib/content/constants.js";
 
 export const root = createApiSchema<DatePickerRootPropsWithoutHTML>({
@@ -44,7 +47,7 @@ export const root = createApiSchema<DatePickerRootPropsWithoutHTML>({
 			bindable: true,
 		}),
 		onOpenChange: createFunctionProp({
-			definition: "(open: boolean) => void",
+			definition: OnOpenChangeProp,
 			description: "A callback that fires when the open state changes.",
 		}),
 		controlledOpen: controlledOpenProp,
@@ -56,11 +59,11 @@ export const root = createApiSchema<DatePickerRootPropsWithoutHTML>({
 		required: dateFieldRoot.props!.required,
 		readonlySegments: dateFieldRoot.props!.readonlySegments,
 		disableDaysOutsideMonth: calendarRoot.props!.disableDaysOutsideMonth,
-		closeOnDateSelect: {
+		closeOnDateSelect: createPropSchema({
 			type: C.BOOLEAN,
 			default: C.TRUE,
 			description: "Whether or not to close the popover when a date is selected.",
-		},
+		}),
 		pagedNavigation: calendarRoot.props!.pagedNavigation,
 		preventDeselect: calendarRoot.props!.preventDeselect,
 		weekStartsOn: calendarRoot.props!.weekStartsOn,
@@ -80,22 +83,22 @@ export const root = createApiSchema<DatePickerRootPropsWithoutHTML>({
 		children: childrenSnippet(),
 	},
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "invalid",
 			description: "Present on the root element when the calendar is invalid.",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "disabled",
 			description: "Present on the root element when the calendar is disabled.",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "readonly",
 			description: "Present on the root element when the calendar is readonly.",
-		},
-		{
-			name: "calendar-root",
+		}),
+		createDataAttrSchema({
+			name: "date-picker-root",
 			description: "Present on the root element.",
-		},
+		}),
 	],
 });
 
@@ -103,22 +106,22 @@ const calendar = createApiSchema<DatePickerCalendarPropsWithoutHTML>({
 	title: "Calendar",
 	description: "The calendar component containing the grids of dates.",
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "invalid",
-			description: "Present on the root element when the calendar is invalid.",
-		},
-		{
+			description: "Present on the calendar element when the calendar is invalid.",
+		}),
+		createDataAttrSchema({
 			name: "disabled",
-			description: "Present on the root element when the calendar is disabled.",
-		},
-		{
+			description: "Present on the calendar element when the calendar is disabled.",
+		}),
+		createDataAttrSchema({
 			name: "readonly",
-			description: "Present on the root element when the calendar is readonly.",
-		},
-		{
+			description: "Present on the calendar element when the calendar is readonly.",
+		}),
+		createDataAttrSchema({
 			name: "calendar-root",
-			description: "Present on the root element.",
-		},
+			description: "Present on the calendar element.",
+		}),
 	],
 });
 
@@ -130,18 +133,18 @@ const input = createApiSchema<DatePickerInputPropsWithoutHTML>({
 		name: dateFieldInput.props!.name,
 	},
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "invalid",
 			description: "Present on the element when the field is invalid.",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "disabled",
 			description: "Present on the element when the field is disabled.",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "date-field-input",
 			description: "Present on the element.",
-		},
+		}),
 	],
 });
 

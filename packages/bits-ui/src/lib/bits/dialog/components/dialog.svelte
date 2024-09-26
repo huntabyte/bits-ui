@@ -12,6 +12,7 @@
 	}: RootProps = $props();
 
 	useDialogRoot({
+		variant: box.with(() => "dialog"),
 		open: box.with(
 			() => open,
 			(v) => {

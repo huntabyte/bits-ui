@@ -1,5 +1,5 @@
 import type { ButtonPropsWithoutHTML } from "bits-ui";
-import { childrenSnippet, createApiSchema, refProp } from "./helpers.js";
+import { childrenSnippet, createApiSchema, createPropSchema, refProp } from "./helpers.js";
 import * as C from "$lib/content/constants.js";
 
 export const root = createApiSchema<ButtonPropsWithoutHTML & { href: string }>({
@@ -7,11 +7,11 @@ export const root = createApiSchema<ButtonPropsWithoutHTML & { href: string }>({
 	description:
 		"A component that can switch between a button and an anchor tag based on the `href`/`type` props.",
 	props: {
-		href: {
+		href: createPropSchema({
 			type: C.STRING,
 			description:
 				"An optional prop that when passed converts the button into an anchor tag.",
-		},
+		}),
 		ref: refProp({ elType: "HTMLButtonElement" }),
 		children: childrenSnippet(),
 	},

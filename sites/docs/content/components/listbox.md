@@ -118,7 +118,7 @@ You can then use the `MyListbox` component throughout your application like so:
 <MyListbox {items} bind:value={fruit} />
 ```
 
-## Managing Value State
+## Value State
 
 The `value` represents the currently selected item/option within the listbox. Bits UI provides flexible options for controlling and synchronizing the Listbox's value state.
 
@@ -143,7 +143,7 @@ This setup enables toggling the value via the custom button and ensures the loca
 
 ### Change Handler
 
-You can also use the `onValueChange` prop to update local state when the Listbox's `value` state changes. This is useful when you don't want two-way binding for one reason or another, or you want to perform additional logic when the Select changes.
+You can also use the `onValueChange` prop to update local state when the Listbox's `value` state changes. This is useful when you don't want two-way binding for one reason or another, or you want to perform additional logic when the value changes.
 
 ```svelte {3,7-11}
 <script lang="ts">
@@ -162,7 +162,27 @@ You can also use the `onValueChange` prop to update local state when the Listbox
 </Listbox.Root>
 ```
 
-## Managing Open State
+### Controlled
+
+Sometimes, you may want complete control over the listbox's value state, meaning you will be "kept in the loop" and be required to apply the value state change yourself. While you will rarely need this, it's possible to do so by setting the `controlledValue` prop to `true`.
+
+You will then be responsible for updating a local value state variable that is passed as the `value` prop to the `Listbox.Root` component.
+
+```svelte
+<script lang="ts">
+	import { Listbox } from "bits-ui";
+
+	let myValue = $state<string>("");
+</script>
+
+<Listbox.Root controlledValue value={myValue} onValueChange={(v) => (myValue = v)}>
+	<!-- ... -->
+</Listbox.Root>
+```
+
+See the [Controlled State](/docs/controlled-state) documentation for more information about controlled values.
+
+## Open State
 
 The `open` state represents whether or not the listbox content is open. Bits UI provides flexible options for controlling and synchronizing the Listbox's open state.
 
@@ -205,6 +225,26 @@ You can also use the `onOpenChange` prop to update local state when the Listbox'
 	<!-- ... -->
 </Listbox.Root>
 ```
+
+### Controlled
+
+Sometimes, you may want complete control over the listbox's `open` state, meaning you will be "kept in the loop" and be required to apply the state change yourself. While you will rarely need this, it's possible to do so by setting the `controlledOpen` prop to `true`.
+
+You will then be responsible for updating a local value state variable that is passed as the `open` prop to the `Listbox.Root` component.
+
+```svelte
+<script lang="ts">
+	import { Listbox } from "bits-ui";
+
+	let myOpen = $state(false);
+</script>
+
+<Listbox.Root controlledValue open={myOpen} onOpenChange={(o) => (myOpen = o)}>
+	<!-- ... -->
+</Listbox.Root>
+```
+
+See the [Controlled State](/docs/controlled-state) documentation for more information about controlled values.
 
 ## Opt-out of Floating UI
 
@@ -284,6 +324,24 @@ By default, when a user opens the listbox, scrolling outside the content will be
 <Listbox.Content preventScroll={false}>
 	<!-- ... -->
 </Listbox.Content>
+```
+
+## Highlighted Items
+
+The Listbox component follows the [WAI-ARIA descendant pattern](https://www.w3.org/TR/wai-aria-practices-1.2/#combobox) for highlighting items. This means that the `Listbox.Trigger` retains focus the entire time, even when navigating with the keyboard, and items are highlighted as the user navigates them.
+
+### Styling Highlighted Items
+
+You can use the `data-highlighted` attribute on the `Listbox.Item` component to style the item differently when it is highlighted.
+
+### onHighlight / onUnhighlight
+
+To trigger side effects when an item is highlighted or unhighlighted, you can use the `onHighlight` and `onUnhighlight` props.
+
+```svelte
+<Listbox.Item onHighlight={() => console.log('I am highlighted!')} onUnhighlight={() => console.log('I am unhighlighted!')} />
+<!-- ... -->
+</Listbox.Item>
 ```
 
 <APISection {schemas} />

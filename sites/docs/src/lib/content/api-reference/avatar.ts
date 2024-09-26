@@ -30,6 +30,7 @@ export const root = createApiSchema<AvatarRootPropsWithoutHTML>({
 			description:
 				"The loading status of the avatars source image. You can bind a variable to track the status outside of the component and use it to show a loading indicator or error message.",
 			bindable: true,
+			definition: LoadingStatusProp,
 		}),
 		onLoadingStatusChange: createFunctionProp({
 			definition: OnLoadingStatusChangeProp,

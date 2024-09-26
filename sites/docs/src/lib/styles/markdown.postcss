@@ -1,5 +1,17 @@
 .markdown code:not(pre > code):not(.custom) {
-	@apply relative rounded bg-muted px-[0.4rem] py-[0.2rem] font-mono text-sm font-medium text-foreground;
+	@apply relative rounded bg-muted px-[0.375rem] py-[0.125rem] font-mono text-sm font-semibold text-foreground;
+}
+
+.markdown h1 code,
+.markdown h2 code,
+.markdown h3 code,
+.markdown h4 code,
+.markdown h5 code,
+.markdown h6 code {
+	/* Reset the styles */
+	all: unset !important;
+	/* Or specify exactly how you want it to look */
+	@apply font-mono before:content-['`'] after:content-['`'] !important;
 }
 
 [data-theme*=" "] {

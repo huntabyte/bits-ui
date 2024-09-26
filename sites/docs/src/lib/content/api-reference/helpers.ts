@@ -15,6 +15,7 @@ import {
 	FloatingAlignProp,
 	FloatingCollisionBoundaryProp,
 	FloatingCollisionPaddingProp,
+	FloatingCustomAnchorProp,
 	FloatingSideProp,
 	FloatingStickyProp,
 	FloatingStrategyProp,
@@ -330,10 +331,10 @@ export function withChildProps({
 	} as const;
 }
 
-export function floatingSideProp(side = "bottom"): PropSchema {
+export function floatingSideProp(defaultSide = "bottom"): PropSchema {
 	return createEnumProp({
 		options: ["top", "bottom", "left", "right"],
-		default: side,
+		default: defaultSide,
 		description:
 			"The preferred side of the anchor to render the floating element against when open. Will be reversed when collisions occur.",
 		definition: FloatingSideProp,
@@ -345,10 +346,10 @@ export const floatingSideOffsetProp = createNumberProp({
 	default: "0",
 });
 
-export function floatingAlignProp(align = "start"): PropSchema {
+export function floatingAlignProp(defaultAlign = "start"): PropSchema {
 	return createEnumProp({
 		options: ["start", "center", "end"],
-		default: align,
+		default: defaultAlign,
 		description:
 			"The preferred alignment of the anchor to render the floating element against when open. This may change when collisions occur.",
 		definition: FloatingAlignProp,
@@ -421,6 +422,7 @@ export const floatingCustomAnchorProp = createUnionProp({
 	description:
 		"Use an element other than the trigger to anchor the content to. If provided, the content will be anchored to the provided element instead of the trigger.",
 	default: "null",
+	definition: FloatingCustomAnchorProp,
 });
 
 export const preventScrollProp = createBooleanProp({

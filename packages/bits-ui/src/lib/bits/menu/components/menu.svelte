@@ -10,10 +10,14 @@
 		dir = "ltr",
 		onOpenChange = noop,
 		controlledOpen = false,
+		_internal_variant: variant = "dropdown-menu",
 		children,
-	}: RootProps = $props();
+	}: RootProps & {
+		_internal_variant?: "context-menu" | "dropdown-menu" | "menubar";
+	} = $props();
 
 	const root = useMenuRoot({
+		variant: box.with(() => variant),
 		dir: box.with(() => dir),
 		onClose: () => {
 			if (controlledOpen) {

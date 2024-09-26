@@ -37,20 +37,20 @@ import { useRefById } from "$lib/internal/useRefById.svelte.js";
 import { isPointerInGraceArea, makeHullFromElements } from "$lib/internal/polygon.js";
 import { onDestroyEffect } from "$lib/internal/onDestroyEffect.svelte.js";
 
-const TRIGGER_ATTR = "data-menu-trigger";
-const CONTENT_ATTR = "data-menu-content";
-const ITEM_ATTR = "data-menu-item";
-const SEPARATOR_ATTR = "data-menu-separator";
-const SUB_TRIGGER_ATTR = "data-menu-sub-trigger";
-const CHECKBOX_ITEM_ATTR = "data-menu-checkbox-item";
-const GROUP_ATTR = "data-menu-group";
-const LABEL_ATTR = "data-menu-group-heading";
-const RADIO_GROUP_ATTR = "data-menu-radio-group";
-const RADIO_ITEM_ATTR = "data-menu-radio-item";
-const ARROW_ATTR = "data-menu-arrow";
+// const TRIGGER_ATTR = "data-menu-trigger";
+// const CONTENT_ATTR = "data-menu-content";
+// const ITEM_ATTR = "data-menu-item";
+// const SEPARATOR_ATTR = "data-menu-separator";
+// const SUB_TRIGGER_ATTR = "data-menu-sub-trigger";
+// const CHECKBOX_ITEM_ATTR = "data-menu-checkbox-item";
+// const GROUP_ATTR = "data-menu-group";
+// const LABEL_ATTR = "data-menu-group-heading";
+// const RADIO_GROUP_ATTR = "data-menu-radio-group";
+// const RADIO_ITEM_ATTR = "data-menu-radio-item";
+// const ARROW_ATTR = "data-menu-arrow";
 export const CONTEXT_MENU_TRIGGER_ATTR = "data-context-menu-trigger";
 
-const [setMenuRootContext] = createContext<MenuRootState>("Menu.Root");
+const [setMenuRootContext, getMenuRootContext] = createContext<MenuRootState>("Menu.Root");
 
 const [setMenuMenuContext, getMenuMenuContext] = createContext<MenuMenuState>(
 	["Menu.Root", "Menu.Sub"],
@@ -67,20 +67,43 @@ const [setMenuGroupContext, getMenuGroupContext] = createContext<
 const [setMenuRadioGroupContext, getMenuRadioGroupContext] =
 	createContext<MenuRadioGroupState>("Menu.RadioGroup");
 
+type MenuVariant = "context-menu" | "dropdown-menu" | "menubar";
+
+function createAttrs(variant: MenuVariant) {
+	return {
+		trigger: `data-${variant}-trigger`,
+		content: `data-${variant}-content`,
+		item: `data-${variant}-item`,
+		separator: `data-${variant}-separator`,
+		subTrigger: `data-${variant}-sub-trigger`,
+		checkboxItem: `data-${variant}-checkbox-item`,
+		group: `data-${variant}-group`,
+		groupHeading: `data-${variant}-group-heading`,
+		radioGroup: `data-${variant}-radio-group`,
+		radioItem: `data-${variant}-radio-item`,
+		arrow: `data-${variant}-arrow`,
+		subContent: `data-${variant}-sub-content`,
+	} as const;
+}
+
 export type MenuRootStateProps = ReadableBoxedValues<{
 	dir: Direction;
+	variant: MenuVariant;
 }> & {
 	onClose: AnyFn;
 };
 
 class MenuRootState {
 	onClose: MenuRootStateProps["onClose"];
+	variant: MenuRootStateProps["variant"];
 	isUsingKeyboard = box(false);
 	dir: MenuRootStateProps["dir"];
+	attrs = $derived.by(() => createAttrs(this.variant.current));
 
 	constructor(props: MenuRootStateProps) {
 		this.onClose = props.onClose;
 		this.dir = props.dir;
+		this.variant = props.variant;
 
 		$effect(() => {
 			const callbacksToDispose: AnyFn[] = [];
@@ -121,6 +144,18 @@ class MenuRootState {
 
 	createMenu(props: MenuMenuStateProps) {
 		return new MenuMenuState(props, this);
+	}
+
+	createGroup(props: MenuGroupStateProps) {
+		return new MenuGroupState(props, this);
+	}
+
+	createSeparator(props: MenuSeparatorStateProps) {
+		return new MenuSeparatorState(props, this);
+	}
+
+	createArrow() {
+		return new MenuArrowState(this);
 	}
 }
 
@@ -231,7 +266,7 @@ class MenuContentState {
 		this.#handleTypeaheadSearch = useTypeahead().handleTypeaheadSearch;
 		this.rovingFocusGroup = useRovingFocus({
 			rootNodeId: this.parentMenu.contentId,
-			candidateSelector: ITEM_ATTR,
+			candidateSelector: this.parentMenu.root.attrs.item,
 			loop: this.#loop,
 			orientation: box.with(() => "vertical"),
 		});
@@ -241,7 +276,9 @@ class MenuContentState {
 		const node = this.parentMenu.contentNode;
 		if (!node) return [];
 		const candidates = Array.from(
-			node.querySelectorAll<HTMLElement>(`[${ITEM_ATTR}]:not([data-disabled])`)
+			node.querySelectorAll<HTMLElement>(
+				`[${this.parentMenu.root.attrs.item}]:not([data-disabled])`
+			)
 		);
 		return candidates;
 	};
@@ -263,7 +300,8 @@ class MenuContentState {
 		if (!isHTMLElement(target) || !isHTMLElement(currentTarget)) return;
 
 		const isKeydownInside =
-			target.closest(`[${CONTENT_ATTR}]`)?.id === this.parentMenu.contentId.current;
+			target.closest(`[${this.parentMenu.root.attrs.content}]`)?.id ===
+			this.parentMenu.contentId.current;
 		const isModifierKey = e.ctrlKey || e.altKey || e.metaKey;
 		const isCharacterKey = e.key.length === 1;
 
@@ -369,7 +407,7 @@ class MenuContentState {
 				id: this.#id.current,
 				role: "menu",
 				"aria-orientation": getAriaOrientation("vertical"),
-				[CONTENT_ATTR]: "",
+				[this.parentMenu.root.attrs.content]: "",
 				"data-state": getDataOpenClosed(this.parentMenu.open.current),
 				onkeydown: this.#onkeydown,
 				onblur: this.#onblur,
@@ -475,7 +513,7 @@ class MenuItemSharedState {
 				"aria-disabled": getAriaDisabled(this.disabled.current),
 				"data-disabled": getDataDisabled(this.disabled.current),
 				"data-highlighted": this.#isFocused ? "" : undefined,
-				[ITEM_ATTR]: "",
+				[this.content.parentMenu.root.attrs.item]: "",
 				//
 				onpointermove: this.#onpointermove,
 				onpointerleave: this.#onpointerleave,
@@ -493,9 +531,11 @@ class MenuItemState {
 	#item: MenuItemSharedState;
 	#onSelect: MenuItemStateProps["onSelect"];
 	#isPointerDown = $state(false);
+	root: MenuRootState;
 
 	constructor(props: MenuItemStateProps, item: MenuItemSharedState) {
 		this.#item = item;
+		this.root = item.content.parentMenu.root;
 		this.#onSelect = props.onSelect;
 	}
 
@@ -666,7 +706,7 @@ class MenuSubTriggerState {
 				"aria-controls": this.#submenu.open.current
 					? this.#submenu.contentId.current
 					: undefined,
-				[SUB_TRIGGER_ATTR]: "",
+				[this.#submenu.root.attrs.subTrigger]: "",
 				onclick: this.#onclick,
 				onpointermove: this.#onpointermove,
 				onpointerleave: this.#onpointerleave,
@@ -707,7 +747,7 @@ class MenuCheckboxItemState {
 				role: "menuitemcheckbox",
 				"aria-checked": getAriaChecked(this.#checked.current),
 				"data-state": getCheckedState(this.#checked.current),
-				[CHECKBOX_ITEM_ATTR]: "",
+				[this.#item.root.attrs.checkboxItem]: "",
 			}) as const
 	);
 }
@@ -718,10 +758,12 @@ class MenuGroupState {
 	#id: MenuGroupStateProps["id"];
 	#ref: MenuGroupStateProps["ref"];
 	groupHeadingId = $state<string | undefined>(undefined);
+	root: MenuRootState;
 
-	constructor(props: MenuGroupStateProps) {
+	constructor(props: MenuGroupStateProps, root: MenuRootState) {
 		this.#id = props.id;
 		this.#ref = props.ref;
+		this.root = root;
 
 		useRefById({
 			id: this.#id,
@@ -735,7 +777,7 @@ class MenuGroupState {
 				id: this.#id.current,
 				role: "group",
 				"aria-labelledby": this.groupHeadingId,
-				[GROUP_ATTR]: "",
+				[this.root.attrs.group]: "",
 			}) as const
 	);
 
@@ -748,9 +790,9 @@ type MenuGroupHeadingStateProps = WithRefProps;
 class MenuGroupHeadingState {
 	#id: MenuGroupHeadingStateProps["id"];
 	#ref: MenuGroupHeadingStateProps["ref"];
-	#group: MenuGroupState | MenuRadioGroupState | undefined = undefined;
+	#group: MenuGroupState | MenuRadioGroupState;
 
-	constructor(props: MenuGroupHeadingStateProps, group?: MenuGroupState | MenuRadioGroupState) {
+	constructor(props: MenuGroupHeadingStateProps, group: MenuGroupState | MenuRadioGroupState) {
 		this.#id = props.id;
 		this.#ref = props.ref;
 		this.#group = group;
@@ -759,7 +801,6 @@ class MenuGroupHeadingState {
 			id: this.#id,
 			ref: this.#ref,
 			onRefChange: (node) => {
-				if (!this.#group) return;
 				this.#group.groupHeadingId = node?.id;
 			},
 		});
@@ -770,7 +811,7 @@ class MenuGroupHeadingState {
 			({
 				id: this.#id.current,
 				role: "group",
-				[LABEL_ATTR]: "",
+				[this.#group.root.attrs.groupHeading]: "",
 			}) as const
 	);
 }
@@ -780,10 +821,12 @@ type MenuSeparatorStateProps = WithRefProps;
 class MenuSeparatorState {
 	#id: MenuSeparatorStateProps["id"];
 	#ref: MenuSeparatorStateProps["ref"];
+	#root: MenuRootState;
 
-	constructor(props: MenuSeparatorStateProps) {
+	constructor(props: MenuSeparatorStateProps, root: MenuRootState) {
 		this.#id = props.id;
 		this.#ref = props.ref;
+		this.#root = root;
 
 		useRefById({
 			id: this.#id,
@@ -796,15 +839,24 @@ class MenuSeparatorState {
 			({
 				id: this.#id.current,
 				role: "group",
-				[SEPARATOR_ATTR]: "",
+				[this.#root.attrs.separator]: "",
 			}) as const
 	);
 }
 
 class MenuArrowState {
-	props = {
-		[ARROW_ATTR]: "",
-	} as const;
+	#root: MenuRootState;
+
+	constructor(root: MenuRootState) {
+		this.#root = root;
+	}
+
+	props = $derived.by(
+		() =>
+			({
+				[this.#root.attrs.arrow]: "",
+			}) as const
+	);
 }
 
 type MenuRadioGroupStateProps = WritableBoxedValues<{
@@ -821,12 +873,14 @@ class MenuRadioGroupState {
 	#ref: MenuRadioGroupStateProps["ref"];
 	#content: MenuContentState;
 	groupHeadingId = $state<string | null>(null);
+	root: MenuRootState;
 
 	constructor(props: MenuRadioGroupStateProps, content: MenuContentState) {
 		this.value = props.value;
 		this.#id = props.id;
 		this.#ref = props.ref;
 		this.#content = content;
+		this.root = content.parentMenu.root;
 
 		useRefById({
 			id: this.#id,
@@ -853,7 +907,7 @@ class MenuRadioGroupState {
 		() =>
 			({
 				id: this.#id.current,
-				[RADIO_GROUP_ATTR]: "",
+				[this.root.attrs.radioGroup]: "",
 				role: "group",
 				"aria-labelledby": this.groupHeadingId,
 			}) as const
@@ -896,7 +950,7 @@ class MenuRadioItemState {
 	props = $derived.by(
 		() =>
 			({
-				[RADIO_ITEM_ATTR]: "",
+				[this.#group.root.attrs.radioItem]: "",
 				...this.#item.props,
 				role: "menuitemradio",
 				"aria-checked": getAriaChecked(this.isChecked),
@@ -976,7 +1030,7 @@ class DropdownMenuTriggerState {
 				"aria-controls": this.#ariaControls,
 				"data-disabled": getDataDisabled(this.#disabled.current),
 				"data-state": getDataOpenClosed(this.#parentMenu.open.current),
-				[TRIGGER_ATTR]: "",
+				[this.#parentMenu.root.attrs.trigger]: "",
 				//
 				onpointerdown: this.#onpointerdown,
 				onkeydown: this.#onkeydown,
@@ -1087,7 +1141,6 @@ class ContextMenuTriggerState {
 				disabled: this.#disabled.current,
 				"data-disabled": getDataDisabled(this.#disabled.current),
 				"data-state": getDataOpenClosed(this.#parentMenu.open.current),
-				[TRIGGER_ATTR]: "",
 				[CONTEXT_MENU_TRIGGER_ATTR]: "",
 				//
 				onpointerdown: this.#onpointerdown,
@@ -1156,19 +1209,17 @@ export function useMenuRadioItem(props: MenuRadioItemStateProps & MenuItemCombin
 }
 
 export function useMenuGroup(props: MenuGroupStateProps) {
-	return setMenuGroupContext(new MenuGroupState(props));
+	return setMenuGroupContext(getMenuRootContext().createGroup(props));
 }
 
 export function useMenuGroupHeading(props: MenuGroupHeadingStateProps) {
-	const groupCtx = getMenuGroupContext(null);
-	if (!groupCtx) return new MenuGroupHeadingState(props);
-	return groupCtx.createGroupHeading(props);
+	return getMenuGroupContext().createGroupHeading(props);
 }
 
 export function useMenuSeparator(props: MenuSeparatorStateProps) {
-	return new MenuSeparatorState(props);
+	return getMenuRootContext().createSeparator(props);
 }
 
 export function useMenuArrow() {
-	return new MenuArrowState();
+	return getMenuRootContext().createArrow();
 }

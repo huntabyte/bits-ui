@@ -13,6 +13,7 @@ import type {
 	MenubarRootPropsWithoutHTML,
 	MenubarSeparatorPropsWithoutHTML,
 	MenubarSubContentPropsWithoutHTML,
+	MenubarSubContentStaticPropsWithoutHTML,
 	MenubarSubPropsWithoutHTML,
 	MenubarSubTriggerPropsWithoutHTML,
 	MenubarTriggerPropsWithoutHTML,
@@ -141,11 +142,17 @@ export const subTrigger = createApiSchema<MenubarSubTriggerPropsWithoutHTML>({
 	...m.subTrigger,
 });
 
-// TODO: add subContentStatic
 export const subContent = createApiSchema<MenubarSubContentPropsWithoutHTML>({
 	title: "SubContent",
 	description: "The submenu content displayed when the parent submenu is open.",
 	...m.subContent,
+});
+
+export const subContentStatic = createApiSchema<MenubarSubContentStaticPropsWithoutHTML>({
+	title: "SubContentStatic",
+	description:
+		"The submenu content displayed when the parent submenu menu is open. (Static/No Floating UI)",
+	...m.subContentStatic,
 });
 
 export const group = createApiSchema<MenubarGroupPropsWithoutHTML>({
@@ -158,7 +165,7 @@ export const group = createApiSchema<MenubarGroupPropsWithoutHTML>({
 export const groupHeading = createApiSchema<MenubarGroupHeadingPropsWithoutHTML>({
 	title: "GroupHeading",
 	description:
-		"A label which will be skipped when navigating with the keyboard. It is used to provide a label for a group of menu items and must be a child of either a `Menubar.Group` or `Menubar.RadioGroup` component.",
+		"A heading for a group which will be skipped when navigating with the keyboard. It is used to provide a heading for a group of menu items and must be a child of either a `Menubar.Group` or `Menubar.RadioGroup` component.",
 	...m.label,
 });
 
@@ -179,4 +186,5 @@ export const menubar = [
 	sub,
 	subTrigger,
 	subContent,
+	subContentStatic,
 ];

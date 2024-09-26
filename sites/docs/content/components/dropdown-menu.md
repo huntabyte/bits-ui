@@ -116,7 +116,7 @@ You can then use the `MyDropdownMenu` component like this:
 />
 ```
 
-## Managing Open State
+## Open State
 
 Bits UI provides flexible options for controlling and synchronizing the menu's open state.
 
@@ -170,7 +170,7 @@ You will then be responsible for updating a local state variable that is passed 
 <script lang="ts">
 	import { DropdownMenu } from "bits-ui";
 
-	let myOpen = $state<string>(false);
+	let myOpen = $state(false);
 </script>
 
 <DropdownMenu.Root controlledOpen open={myOpen} onOpenChange={(o) => (myOpen = o)}>

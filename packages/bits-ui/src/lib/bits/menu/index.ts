@@ -14,6 +14,7 @@ export { default as Sub } from "./components/menu-sub.svelte";
 export { default as SubContent } from "./components/menu-sub-content.svelte";
 export { default as SubTrigger } from "./components/menu-sub-trigger.svelte";
 export { default as Trigger } from "./components/menu-trigger.svelte";
+export { default as SubContentStatic } from "./components/menu-sub-content-static.svelte";
 
 export type {
 	MenuRootPropsWithoutHTML as RootProps,
@@ -23,6 +24,7 @@ export type {
 	MenuTriggerProps as TriggerProps,
 	MenuSubPropsWithoutHTML as SubProps,
 	MenuSubContentProps as SubContentProps,
+	MenuSubContentStaticProps as SubContentStaticProps,
 	MenuSeparatorProps as SeparatorProps,
 	MenuArrowProps as ArrowProps,
 	MenuCheckboxItemProps as CheckboxItemProps,

@@ -4,15 +4,16 @@ import type {
 	TabsRootPropsWithoutHTML,
 	TabsTriggerPropsWithoutHTML,
 } from "bits-ui";
-import { OnStringValueChangeProp } from "./extended-types/shared/index.js";
+import { OnStringValueChangeProp, OrientationProp } from "./extended-types/shared/index.js";
+import { TabsRootActivationModeProp, TabsTriggerStateProp } from "./extended-types/tabs/index.js";
 import {
 	controlledValueProp,
 	createApiSchema,
 	createBooleanProp,
+	createDataAttrSchema,
 	createEnumProp,
 	createFunctionProp,
 	createStringProp,
-	enums,
 	withChildProps,
 } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
@@ -35,6 +36,7 @@ const root = createApiSchema<TabsRootPropsWithoutHTML>({
 			description:
 				"How the activation of tabs should be handled. If set to `'automatic'`, the tab will be activated when the trigger is focused. If set to `'manual'`, the tab will be activated when the trigger is pressed.",
 			default: "'automatic'",
+			definition: TabsRootActivationModeProp,
 		}),
 		disabled: createBooleanProp({
 			default: C.FALSE,
@@ -48,19 +50,21 @@ const root = createApiSchema<TabsRootPropsWithoutHTML>({
 			options: [C.HORIZONTAL, C.VERTICAL],
 			default: C.HORIZONTAL,
 			description: "The orientation of the tabs.",
+			definition: OrientationProp,
 		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "orientation",
-			value: enums("horizontal", "vertical"),
+			definition: OrientationProp,
 			description: "The orientation of the tabs.",
-		},
-		{
+			isEnum: true,
+		}),
+		createDataAttrSchema({
 			name: "tabs-root",
 			description: "Present on the root element.",
-		},
+		}),
 	],
 });
 
@@ -69,15 +73,16 @@ const list = createApiSchema<TabsListPropsWithoutHTML>({
 	description: "The component containing the tab triggers.",
 	props: withChildProps({ elType: "HTMLDivElement" }),
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "orientation",
-			value: enums("horizontal", "vertical"),
+			definition: OrientationProp,
 			description: "The orientation of the tabs.",
-		},
-		{
+			isEnum: true,
+		}),
+		createDataAttrSchema({
 			name: "tabs-list",
 			description: "Present on the list element.",
-		},
+		}),
 	],
 });
 
@@ -96,30 +101,30 @@ const trigger = createApiSchema<TabsTriggerPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "state",
 			description: "The state of the tab trigger.",
-			value: enums("active", "inactive"),
+			definition: TabsTriggerStateProp,
 			isEnum: true,
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "value",
 			description: "The value of the tab this trigger represents.",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "orientation",
+			definition: OrientationProp,
 			description: "The orientation of the tabs.",
-			value: enums("horizontal", "vertical"),
 			isEnum: true,
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "disabled",
 			description: "Present when the tab trigger is disabled.",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "tabs-trigger",
 			description: "Present on the trigger elements.",
-		},
+		}),
 	],
 });
 
@@ -134,10 +139,10 @@ const content = createApiSchema<TabsContentPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		{
+		createDataAttrSchema({
 			name: "tabs-content",
 			description: "Present on the content elements.",
-		},
+		}),
 	],
 });
 

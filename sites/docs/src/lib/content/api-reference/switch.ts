@@ -12,6 +12,7 @@ import {
 	SwitchCheckedDataAttr,
 	SwitchRootChildSnippetProps,
 	SwitchRootChildrenSnippetProps,
+	SwitchRootOnCheckedChangeProp,
 } from "./extended-types/switch/index.js";
 import * as C from "$lib/content/constants.js";
 
@@ -31,7 +32,7 @@ const root = createApiSchema<SwitchRootPropsWithoutHTML>({
 			bindable: true,
 		}),
 		onCheckedChange: createFunctionProp({
-			definition: "(checked: boolean) => void",
+			definition: SwitchRootOnCheckedChangeProp,
 			description: "A callback function called when the checked state of the switch changes.",
 		}),
 		controlledChecked: controlledCheckedProp,
@@ -59,18 +60,18 @@ const root = createApiSchema<SwitchRootPropsWithoutHTML>({
 	},
 	dataAttributes: [
 		stateDataAttr,
-		{
+		createDataAttrSchema({
 			name: "checked",
 			description: "Present when the switch is checked.",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "disabled",
 			description: "Present when the switch is disabled.",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "switch-root",
 			description: "Present on the root element.",
-		},
+		}),
 	],
 });
 
@@ -84,14 +85,14 @@ const thumb = createApiSchema<SwitchThumbPropsWithoutHTML>({
 	}),
 	dataAttributes: [
 		stateDataAttr,
-		{
+		createDataAttrSchema({
 			name: "checked",
 			description: "Present when the switch is checked.",
-		},
-		{
+		}),
+		createDataAttrSchema({
 			name: "switch-thumb",
 			description: "Present on the thumb element.",
-		},
+		}),
 	],
 });
 

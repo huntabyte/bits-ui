@@ -11,6 +11,7 @@ export type {
 	RadioItemProps as DropdownMenuRadioItemProps,
 	SeparatorProps as DropdownMenuSeparatorProps,
 	SubContentProps as DropdownMenuSubContentProps,
+	SubContentStaticProps as DropdownMenuSubContentStaticProps,
 	SubProps as DropdownMenuSubProps,
 	SubTriggerProps as DropdownMenuSubTriggerProps,
 	TriggerProps as DropdownMenuTriggerProps,
@@ -32,6 +33,7 @@ export type {
 	MenuSubPropsWithoutHTML as DropdownMenuSubPropsWithoutHTML,
 	MenuSubTriggerPropsWithoutHTML as DropdownMenuSubTriggerPropsWithoutHTML,
 	MenuSubContentPropsWithoutHTML as DropdownMenuSubContentPropsWithoutHTML,
+	MenuSubContentStaticPropsWithoutHTML as DropdownMenuSubContentStaticPropsWithoutHTML,
 	MenuTriggerPropsWithoutHTML as DropdownMenuTriggerPropsWithoutHTML,
 	MenuPortalPropsWithoutHTML as DropdownMenuPortalPropsWithoutHTML,
 } from "$lib/bits/menu/types.js";

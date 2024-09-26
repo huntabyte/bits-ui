@@ -12,6 +12,7 @@ import type {
 	ContextMenuRootPropsWithoutHTML,
 	ContextMenuSeparatorPropsWithoutHTML,
 	ContextMenuSubContentPropsWithoutHTML,
+	ContextMenuSubContentStaticPropsWithoutHTML,
 	ContextMenuSubPropsWithoutHTML,
 	ContextMenuSubTriggerPropsWithoutHTML,
 	ContextMenuTriggerPropsWithoutHTML,
@@ -178,6 +179,13 @@ export const subContent = createApiSchema<ContextMenuSubContentPropsWithoutHTML>
 	...menu.subContent,
 });
 
+export const subContentStatic = createApiSchema<ContextMenuSubContentStaticPropsWithoutHTML>({
+	title: "SubContentStatic",
+	description:
+		"The submenu content displayed when the parent submenu menu is open. (Static/No Floating UI)",
+	...menu.subContentStatic,
+});
+
 export const group = createApiSchema<ContextMenuGroupPropsWithoutHTML>({
 	title: "Group",
 	description:
@@ -209,4 +217,5 @@ export const contextMenu = [
 	sub,
 	subTrigger,
 	subContent,
+	subContentStatic,
 ];

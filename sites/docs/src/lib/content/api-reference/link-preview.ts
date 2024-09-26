@@ -5,6 +5,7 @@ import type {
 	LinkPreviewRootPropsWithoutHTML,
 	LinkPreviewTriggerPropsWithoutHTML,
 } from "bits-ui";
+import { OnOpenChangeProp, OpenClosedProp } from "./extended-types/shared/index.js";
 import {
 	arrowProps,
 	childrenSnippet,
@@ -29,6 +30,7 @@ const openClosedDataAttr = createEnumDataAttr({
 	name: "state",
 	description: "Whether the accordion item is open or closed.",
 	options: ["open", "closed"],
+	definition: OpenClosedProp,
 });
 
 export const root = createApiSchema<LinkPreviewRootPropsWithoutHTML>({
@@ -41,7 +43,7 @@ export const root = createApiSchema<LinkPreviewRootPropsWithoutHTML>({
 			bindable: true,
 		}),
 		onOpenChange: createFunctionProp({
-			definition: "(open: boolean) => void",
+			definition: OnOpenChangeProp,
 			description: "A callback that fires when the open state changes.",
 		}),
 		controlledOpen: controlledOpenProp,

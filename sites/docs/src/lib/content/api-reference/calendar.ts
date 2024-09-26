@@ -30,6 +30,7 @@ import {
 	createEnumProp,
 	createFunctionProp,
 	createNumberProp,
+	createPropSchema,
 	createStringProp,
 	createUnionProp,
 	withChildProps,
@@ -141,15 +142,15 @@ export const root = createApiSchema<CalendarRootPropsWithoutHTML>({
 			definition: DateMatcherProp,
 			description: "A function that returns whether or not a date is unavailable.",
 		}),
-		maxValue: {
+		maxValue: createPropSchema({
 			type: dateValueProp,
 			description: "The maximum date that can be selected.",
 			tooltipContent: "Learn more about the `DateValue` type.",
-		},
-		minValue: {
+		}),
+		minValue: createPropSchema({
 			type: dateValueProp,
 			description: "The minimum date that can be selected.",
-		},
+		}),
 		locale: createStringProp({
 			description: "The locale to use for formatting dates.",
 			default: "'en'",
@@ -201,14 +202,14 @@ export const cell = createApiSchema<CalendarCellPropsWithoutHTML>({
 	title: "Cell",
 	description: "A cell in the calendar grid.",
 	props: {
-		date: {
+		date: createPropSchema({
 			type: dateValueProp,
 			description: "The date for the cell.",
-		},
-		month: {
+		}),
+		month: createPropSchema({
 			type: dateValueProp,
 			description: "The current month the date is being displayed in.",
-		},
+		}),
 		...withChildProps({ elType: "HTMLTableCellElement" }),
 	},
 	dataAttributes: [

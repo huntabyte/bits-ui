@@ -127,7 +127,7 @@ If we're collecting a date from the user where we want the timezone as well, we 
 
 NOTE: If you're creating a date field for something like a birthday, ensure your placeholder is set in a leap year to ensure users born on a leap year will be able to select the correct date.
 
-## Managing Placeholder State
+## Placeholder State
 
 Bits UI provides flexible options for controlling and synchronizing the `DateField.Root` component's placeholder state.
 
@@ -168,7 +168,31 @@ You can also use the `onPlaceholderChange` prop to update local state when the `
 </DateField.Root>
 ```
 
-## Managing Value State
+### Controlled
+
+Sometimes, you may want complete control over the date field's `placeholder` state, meaning you will be "kept in the loop" and be required to apply the state change yourself. While you will rarely need this, it's possible to do so by setting the `controlledPlaceholder` prop to `true`.
+
+You will then be responsible for updating a local placeholder state variable that is passed as the `placeholder` prop to the `DateField.Root` component.
+
+```svelte
+<script lang="ts">
+	import { DateField } from "bits-ui";
+
+	let myPlaceholder = $state();
+</script>
+
+<DateField.Root
+	controlledPlaceholder
+	placeholder={myPlaceholder}
+	onPlaceholderChange={(p) => (myPlaceholder = p)}
+>
+	<!-- ... -->
+</DateField.Root>
+```
+
+See the [Controlled State](/docs/controlled-state) documentation for more information about controlled states.
+
+## Value State
 
 The `value` represents the currently selected date within the `DateField.Root` component.
 
@@ -211,6 +235,26 @@ You can also use the `onValueChange` prop to update local state when the `DateFi
 	<!-- ... -->
 </DateField.Root>
 ```
+
+### Controlled
+
+Sometimes, you may want complete control over the date field's `value` state, meaning you will be "kept in the loop" and be required to apply the state change yourself. While you will rarely need this, it's possible to do so by setting the `controlledValue` prop to `true`.
+
+You will then be responsible for updating a local value state variable that is passed as the `value` prop to the `DateField.Root` component.
+
+```svelte
+<script lang="ts">
+	import { DateField } from "bits-ui";
+
+	let myValue = $state();
+</script>
+
+<DateField.Root controlledValue value={myValue} onValueChange={(v) => (myValue = v)}>
+	<!-- ... -->
+</DateField.Root>
+```
+
+See the [Controlled State](/docs/controlled-state) documentation for more information about controlled states.
 
 ## Default Value
 

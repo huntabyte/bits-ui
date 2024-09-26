@@ -14,6 +14,7 @@
 	}: CloseProps = $props();
 
 	const closeState = useDialogClose({
+		variant: box.with(() => "close"),
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,
