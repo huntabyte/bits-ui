@@ -401,6 +401,8 @@ class MenuContentState {
 		}
 	};
 
+	snippetProps = $derived.by(() => ({ open: this.parentMenu.open.current }));
+
 	props = $derived.by(
 		() =>
 			({

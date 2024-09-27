@@ -45,15 +45,26 @@ export type _SharedMenuContentProps = {
 	loop?: boolean;
 };
 
+export type MenuContentSnippetProps = {
+	/**
+	 * Whether the content is open or closed. Used alongside the `forceMount` prop to
+	 * conditionally render the content using Svelte transitions.
+	 */
+	open: boolean;
+};
+
 export type MenuContentPropsWithoutHTML = Expand<
-	WithChild<Omit<PopperLayerProps, "content"> & _SharedMenuContentProps>
+	WithChild<Omit<PopperLayerProps, "content"> & _SharedMenuContentProps, MenuContentSnippetProps>
 >;
 
 export type MenuContentProps = MenuContentPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, MenuContentPropsWithoutHTML>;
 
 export type MenuContentStaticPropsWithoutHTML = Expand<
-	WithChild<Omit<PopperLayerStaticProps, "content"> & _SharedMenuContentProps>
+	WithChild<
+		Omit<PopperLayerStaticProps, "content"> & _SharedMenuContentProps,
+		MenuContentSnippetProps
+	>
 >;
 
 export type MenuContentStaticProps = MenuContentStaticPropsWithoutHTML &
@@ -155,14 +166,20 @@ export type MenuSubPropsWithoutHTML = WithChildren<{
 }>;
 
 export type MenuSubContentPropsWithoutHTML = Expand<
-	WithChild<Omit<PopperLayerProps, "content" | "preventScroll"> & _SharedMenuContentProps>
+	WithChild<
+		Omit<PopperLayerProps, "content" | "preventScroll"> & _SharedMenuContentProps,
+		MenuContentSnippetProps
+	>
 >;
 
 export type MenuSubContentProps = MenuSubContentPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, MenuSubContentPropsWithoutHTML>;
 
 export type MenuSubContentStaticPropsWithoutHTML = Expand<
-	WithChild<Omit<PopperLayerStaticProps, "content" | "preventScroll"> & _SharedMenuContentProps>
+	WithChild<
+		Omit<PopperLayerStaticProps, "content" | "preventScroll"> & _SharedMenuContentProps,
+		MenuContentSnippetProps
+	>
 >;
 
 export type MenuSubContentStaticProps = MenuSubContentStaticPropsWithoutHTML &

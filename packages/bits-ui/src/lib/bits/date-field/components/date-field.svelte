@@ -7,7 +7,6 @@
 	import { getDefaultDate } from "$lib/shared/date/utils.js";
 
 	let {
-		isDateInvalid,
 		disabled = false,
 		granularity,
 		hideTimeZone = false,
@@ -17,6 +16,7 @@
 		minValue,
 		onPlaceholderChange = noop,
 		onValueChange = noop,
+		isDateInvalid,
 		placeholder = $bindable(),
 		value = $bindable(),
 		readonly = false,

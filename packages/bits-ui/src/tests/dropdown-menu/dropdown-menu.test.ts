@@ -2,10 +2,12 @@ import { render, screen, waitFor } from "@testing-library/svelte/svelte5";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
-import { tick } from "svelte";
-import { getTestKbd } from "../utils.js";
+import { type Component, tick } from "svelte";
+import { getTestKbd, setupUserEvents } from "../utils.js";
 import DropdownMenuTest from "./dropdown-menu-test.svelte";
 import type { DropdownMenuTestProps } from "./dropdown-menu-test.svelte";
+import type { DropdownMenuForceMountTestProps } from "./dropdown-menu-force-mount-test.svelte";
+import DropdownMenuForceMountTest from "./dropdown-menu-force-mount-test.svelte";
 import { sleep } from "$lib/internal/sleep.js";
 
 const kbd = getTestKbd();
@@ -14,10 +16,13 @@ const OPEN_KEYS = [kbd.ENTER, kbd.ARROW_DOWN, kbd.SPACE];
 /**
  * Helper function to reduce boilerplate in tests
  */
-function setup(props: DropdownMenuTestProps = {}) {
-	const user = userEvent.setup({ pointerEventsCheck: 0 });
+function setup(
+	props: DropdownMenuTestProps | DropdownMenuForceMountTestProps = {},
+	component: Component = DropdownMenuTest
+) {
+	const user = setupUserEvents();
 	// @ts-expect-error - testing lib needs to update their generic types
-	const { getByTestId, queryByTestId } = render(DropdownMenuTest, { ...props });
+	const { getByTestId, queryByTestId } = render(component, { ...props });
 	const trigger = getByTestId("trigger");
 	return {
 		getByTestId,
@@ -338,5 +343,26 @@ describe("dropdown menu", () => {
 			},
 		});
 		await waitFor(() => expect(getByTestId("item")).not.toHaveFocus());
+	});
+
+	it("should forceMount the content when `forceMount` is true", async () => {
+		const { getByTestId } = setup({}, DropdownMenuForceMountTest);
+
+		expect(getByTestId("content")).toBeVisible();
+	});
+
+	it("should forceMount the content when `forceMount` is true and the `open` snippet prop is used to conditionally render the content", async () => {
+		const { queryByTestId, getByTestId, user, trigger } = setup(
+			{
+				withOpenCheck: true,
+			},
+			DropdownMenuForceMountTest
+		);
+		expect(queryByTestId("content")).toBeNull();
+
+		await user.click(trigger);
+
+		const content = getByTestId("content");
+		expect(content).toBeVisible();
 	});
 });

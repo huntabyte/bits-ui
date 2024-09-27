@@ -7,6 +7,7 @@
 	import { noop } from "$lib/internal/callbacks.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
 	import Mounted from "$lib/bits/utilities/mounted.svelte";
+	import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
 
 	let {
 		id = useId(),
@@ -57,22 +58,13 @@
 >
 	{#snippet popper({ props })}
 		{@const finalProps = mergeProps(props, {
-			style: {
-				"--bits-dropdown-menu-content-transform-origin":
-					"var(--bits-floating-transform-origin)",
-				"--bits-dropdown-menu-content-available-width":
-					"var(--bits-floating-available-width)",
-				"--bits-dropdown-menu-content-available-height":
-					"var(--bits-floating-available-height)",
-				"--bits-dropdown-menu-anchor-width": "var(--bits-floating-anchor-width)",
-				"--bits-dropdown-menu-anchor-height": "var(--bits-floating-anchor-height)",
-			},
+			style: getFloatingContentCSSVars("dropdown-menu"),
 		})}
 		{#if child}
-			{@render child({ props: finalProps })}
+			{@render child({ props: finalProps, ...contentState.snippetProps })}
 		{:else}
 			<div {...finalProps}>
-				{@render children?.()}
+				{@render children?.(contentState.snippetProps)}
 			</div>
 		{/if}
 		<Mounted bind:isMounted />

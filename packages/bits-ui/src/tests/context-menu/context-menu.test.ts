@@ -1,19 +1,25 @@
 import { cleanup, render, screen, waitFor } from "@testing-library/svelte/svelte5";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
+import type { Component } from "svelte";
 import { getTestKbd, setupUserEvents } from "../utils.js";
 import ContextMenuTest from "./context-menu-test.svelte";
 import type { ContextMenuTestProps } from "./context-menu-test.svelte";
+import type { ContextMenuForceMountTestProps } from "./context-menu-force-mount-test.svelte";
+import ContextMenuForceMountTest from "./context-menu-force-mount-test.svelte";
 
 const kbd = getTestKbd();
 
 /**
  * Helper function to reduce boilerplate in tests
  */
-function setup(props: ContextMenuTestProps = {}) {
+function setup(
+	props: ContextMenuTestProps | ContextMenuForceMountTestProps = {},
+	component: Component = ContextMenuTest
+) {
 	const user = setupUserEvents();
 	// @ts-expect-error - testing lib needs to update their generic types
-	const returned = render(ContextMenuTest, { ...props });
+	const returned = render(component, { ...props });
 	const trigger = returned.getByTestId("trigger");
 	function getContent() {
 		return returned.queryByTestId("content");
@@ -304,5 +310,26 @@ describe("context menu", () => {
 		const wrapper = content.parentElement;
 		expect(wrapper?.parentElement).not.toEqual(document.body);
 		expect(wrapper?.parentElement).toEqual(ogContainer);
+	});
+
+	it("should forceMount the content when `forceMount` is true", async () => {
+		const { getByTestId } = setup({}, ContextMenuForceMountTest);
+
+		expect(getByTestId("content")).toBeVisible();
+	});
+
+	it("should forceMount the content when `forceMount` is true and the `open` snippet prop is used to conditionally render the content", async () => {
+		const { queryByTestId, getByTestId, user, trigger } = setup(
+			{
+				withOpenCheck: true,
+			},
+			ContextMenuForceMountTest
+		);
+		expect(queryByTestId("content")).toBeNull();
+
+		await user.pointer([{ target: trigger }, { keys: "[MouseRight]", target: trigger }]);
+
+		const content = getByTestId("content");
+		expect(content).toBeVisible();
 	});
 });

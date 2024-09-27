@@ -9,6 +9,7 @@
 	import { isElement } from "$lib/internal/is.js";
 	import type { InteractOutsideEvent } from "$lib/bits/utilities/dismissable-layer/types.js";
 	import Mounted from "$lib/bits/utilities/mounted.svelte";
+	import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
 
 	let {
 		id = useId(),
@@ -88,22 +89,13 @@
 >
 	{#snippet popper({ props })}
 		{@const finalProps = mergeProps(props, {
-			style: {
-				"--bits-context-menu-content-transform-origin":
-					"var(--bits-floating-transform-origin)",
-				"--bits-context-menu-content-available-width":
-					"var(--bits-floating-available-width)",
-				"--bits-context-menu-content-available-height":
-					"var(--bits-floating-available-height)",
-				"--bits-context-menu-anchor-width": "var(--bits-floating-anchor-width)",
-				"--bits-context-menu-anchor-height": "var(--bits-floating-anchor-height)",
-			},
+			style: getFloatingContentCSSVars("context-menu"),
 		})}
 		{#if child}
-			{@render child({ props: finalProps })}
+			{@render child({ props: finalProps, ...contentState.snippetProps })}
 		{:else}
 			<div {...finalProps}>
-				{@render children?.()}
+				{@render children?.(contentState.snippetProps)}
 			</div>
 		{/if}
 		<Mounted bind:isMounted />
