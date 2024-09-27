@@ -111,7 +111,7 @@ describe("accordion - single", () => {
 		}
 	});
 
-	it.only("work properly when `forceMount` is true and the `open` snippet prop is used to conditionally render the content", async () => {
+	it("work properly when `forceMount` is true and the `open` snippet prop is used to conditionally render the content", async () => {
 		const user = setupUserEvents();
 		const { getByTestId, queryByTestId } = render(AccordionSingleForceMountTest as any, {
 			items: itemsWithDisabled,
