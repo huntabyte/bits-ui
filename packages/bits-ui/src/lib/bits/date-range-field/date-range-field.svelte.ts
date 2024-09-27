@@ -28,7 +28,7 @@ type DateRangeFieldRootStateProps = WithRefProps<
 	}> &
 		ReadableBoxedValues<{
 			readonlySegments: SegmentPart[];
-			isDateUnavailable: DateMatcher | undefined;
+			isDateInvalid: DateMatcher | undefined;
 			minValue: DateValue | undefined;
 			maxValue: DateValue | undefined;
 			disabled: boolean;
@@ -47,7 +47,7 @@ export class DateRangeFieldRootState {
 	value: DateRangeFieldRootStateProps["value"];
 	placeholder: DateRangeFieldRootStateProps["placeholder"];
 	readonlySegments: DateRangeFieldRootStateProps["readonlySegments"];
-	isDateUnavailable: DateRangeFieldRootStateProps["isDateUnavailable"];
+	isDateInvalid: DateRangeFieldRootStateProps["isDateInvalid"];
 	minValue: DateRangeFieldRootStateProps["minValue"];
 	maxValue: DateRangeFieldRootStateProps["maxValue"];
 	disabled: DateRangeFieldRootStateProps["disabled"];
@@ -89,7 +89,7 @@ export class DateRangeFieldRootState {
 		this.startValue = props.startValue;
 		this.endValue = props.endValue;
 		this.placeholder = props.placeholder;
-		this.isDateUnavailable = props.isDateUnavailable;
+		this.isDateInvalid = props.isDateInvalid;
 		this.minValue = props.minValue;
 		this.maxValue = props.maxValue;
 		this.disabled = props.disabled;
@@ -197,7 +197,7 @@ export class DateRangeFieldRootState {
 				disabled: this.disabled,
 				readonly: this.readonly,
 				readonlySegments: this.readonlySegments,
-				isDateUnavailable: this.isDateUnavailable,
+				isDateInvalid: this.isDateInvalid,
 				minValue: this.minValue,
 				maxValue: this.maxValue,
 				hourCycle: this.hourCycle,

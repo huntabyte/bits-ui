@@ -227,7 +227,7 @@ To implement controlled state:
 	let myValue = $state("");
 </script>
 
-<Accordion.Root controlledValue value={myValue} onValueChange={(v) => (myValue = v)}>
+<Accordion.Root type="single" controlledValue value={myValue} onValueChange={(v) => (myValue = v)}>
 	<!-- ... -->
 </Accordion.Root>
 ```

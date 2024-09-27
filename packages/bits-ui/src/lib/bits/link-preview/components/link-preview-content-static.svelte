@@ -51,10 +51,10 @@
 >
 	{#snippet popper({ props })}
 		{#if child}
-			{@render child({ props })}
+			{@render child({ props, ...contentState.snippetProps })}
 		{:else}
 			<div {...props}>
-				{@render children?.()}
+				{@render children?.(contentState.snippetProps)}
 			</div>
 		{/if}
 	{/snippet}

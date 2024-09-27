@@ -9,6 +9,7 @@ import AccordionMultiTest from "./accordion-multi-test.svelte";
 import AccordionTestIsolated from "./accordion-test-isolated.svelte";
 import AccordionSingleTestControlledSvelte from "./accordion-single-test-controlled.svelte";
 import AccordionMultiTestControlled from "./accordion-multi-test-controlled.svelte";
+import AccordionSingleForceMountTest from "./accordion-single-force-mount-test.svelte";
 import { sleep } from "$lib/internal/sleep.js";
 
 export type Item = {
@@ -99,6 +100,41 @@ describe("accordion - single", () => {
 		expect(triggerEls[1]).toHaveAttribute("data-disabled");
 	});
 
+	it("should forceMount the content when `forceMount` is true", async () => {
+		const { getByTestId } = render(AccordionSingleForceMountTest as any, {
+			items: itemsWithDisabled,
+		});
+		const contentEls = items.map((item) => getByTestId(`${item.value}-content`));
+
+		for (const content of contentEls) {
+			expect(content).toBeVisible();
+		}
+	});
+
+	it("work properly when `forceMount` is true and the `open` snippet prop is used to conditionally render the content", async () => {
+		const user = setupUserEvents();
+		const { getByTestId, queryByTestId } = render(AccordionSingleForceMountTest as any, {
+			items: itemsWithDisabled,
+			withOpenCheck: true,
+		});
+		const initContentEls = items.map((item) => queryByTestId(`${item.value}-content`));
+
+		for (const content of initContentEls) {
+			expect(content).toBeNull();
+		}
+
+		const triggerEls = items.map((item) => getByTestId(`${item.value}-trigger`));
+
+		// open the first item
+		await user.click(triggerEls[0] as HTMLElement);
+
+		const firstContentEl = getByTestId(`${items[0]!.value}-content`);
+		expect(firstContentEl).toBeVisible();
+
+		const secondContentEl = queryByTestId(`${items[1]!.value}-content`);
+		expect(secondContentEl).toBeNull();
+	});
+
 	it("should disable everything when the `disabled` prop is true", async () => {
 		const user = setupUserEvents();
 		const { getByTestId } = render(AccordionSingleTest as any, {
@@ -138,7 +174,7 @@ describe("accordion - single", () => {
 		}
 	});
 
-	it("should expand only one item at a time when `multiple` is false", async () => {
+	it("should expand only one item at a time when type is `'single'`", async () => {
 		const user = setupUserEvents();
 		const { getByTestId } = render(AccordionSingleTest as any, { items });
 

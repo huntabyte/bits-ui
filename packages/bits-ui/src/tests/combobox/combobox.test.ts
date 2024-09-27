@@ -1,12 +1,15 @@
 import { render, waitFor } from "@testing-library/svelte";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
-import { tick } from "svelte";
+import { type Component, tick } from "svelte";
 import { getTestKbd, setupUserEvents } from "../utils.js";
 import ComboboxTest from "./combobox-test.svelte";
 import type { ComboboxSingleTestProps, Item } from "./combobox-test.svelte";
 import type { ComboboxMultipleTestProps } from "./combobox-multi-test.svelte";
 import ComboboxMultiTest from "./combobox-multi-test.svelte";
+import ComboboxForceMountTest, {
+	type ComboboxForceMountTestProps,
+} from "./combobox-force-mount-test.svelte";
 import { sleep } from "$lib/internal/sleep.js";
 import type { AnyFn } from "$lib/internal/types.js";
 
@@ -31,10 +34,15 @@ const testItems: Item[] = [
 	},
 ];
 
-function setupSingle(props: Partial<ComboboxSingleTestProps> = {}, items: Item[] = testItems) {
+function setupSingle(
+	props: Partial<ComboboxSingleTestProps | ComboboxForceMountTestProps> = {},
+	items: Item[] = testItems,
+	// eslint-disable-next-line ts/no-explicit-any
+	component: Component<any, any, any> = ComboboxTest
+) {
 	const user = setupUserEvents();
 	// @ts-expect-error - testing lib needs to update their generic types
-	const returned = render(ComboboxTest, { name: "test", ...props, items });
+	const returned = render(component, { name: "test", ...props, items });
 	const input = returned.getByTestId("input");
 	const trigger = returned.getByTestId("trigger");
 	const openBinding = returned.getByTestId("open-binding");
@@ -395,6 +403,28 @@ describe("combobox - single", () => {
 		expectHighlighted(i0!);
 		await user.keyboard(kbd.ARROW_DOWN);
 		expectHighlighted(i1!);
+	});
+
+	it("should forceMount the content when `forceMount` is true", async () => {
+		const { getByTestId } = setupSingle({}, [], ComboboxForceMountTest);
+
+		const content = getByTestId("content");
+		expect(content).toBeVisible();
+	});
+
+	it("should forceMount the content when `forceMount` is true and the `open` snippet prop is used to conditionally render the content", async () => {
+		const { queryByTestId, getByTestId, user, trigger } = setupSingle(
+			{ withOpenCheck: true },
+			[],
+			ComboboxForceMountTest
+		);
+
+		expect(queryByTestId("content")).toBeNull();
+
+		await user.click(trigger);
+
+		const content = getByTestId("content");
+		expect(content).toBeVisible();
 	});
 });
 

@@ -8,7 +8,7 @@ description: A component that if passed a `href` prop will render an anchor elem
 	export let schemas;
 </script>
 
-<ComponentPreviewV2 name="button-demo" comp="Avatar">
+<ComponentPreviewV2 name="button-demo" comp="Avatar" nonExpandableItems={["App.svelte"]}>
 
 {#snippet preview()}
 <ButtonDemo />

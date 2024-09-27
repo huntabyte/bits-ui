@@ -5,8 +5,6 @@ import type {
 	DateRangeFieldSegmentPropsWithoutHTML,
 } from "bits-ui";
 import {
-	controlledPlaceholderProp,
-	controlledValueProp,
 	createApiSchema,
 	createDataAttrSchema,
 	createEnumProp,
@@ -14,7 +12,7 @@ import {
 	createPropSchema,
 	withChildProps,
 } from "./helpers.js";
-import { input as dateFieldInput, root as dateFieldRoot } from "./date-field.js";
+import { input as dateFieldInput, root as dateFieldRoot } from "./date-field.api.js";
 import {
 	DateOnRangeChangeProp,
 	DateRangeProp,
@@ -22,7 +20,6 @@ import {
 } from "./extended-types/shared/index.js";
 import { DateRangeFieldInputTypeProp } from "./extended-types/date-range-field/index.js";
 import { DateFieldSegmentPartProp } from "./extended-types/date-field/index.js";
-import { enums } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 
 export const root = createApiSchema<DateRangeFieldRootPropsWithoutHTML>({
@@ -45,7 +42,7 @@ export const root = createApiSchema<DateRangeFieldRootPropsWithoutHTML>({
 		placeholder: dateFieldRoot.props!.placeholder,
 		onPlaceholderChange: dateFieldRoot.props!.onPlaceholderChange,
 		controlledPlaceholder: dateFieldRoot.props!.controlledPlaceholder,
-		isDateUnavailable: dateFieldRoot.props!.isDateUnavailable,
+		isDateInvalid: dateFieldRoot.props!.isDateInvalid,
 		minValue: dateFieldRoot.props!.minValue,
 		maxValue: dateFieldRoot.props!.maxValue,
 		granularity: dateFieldRoot.props!.granularity,

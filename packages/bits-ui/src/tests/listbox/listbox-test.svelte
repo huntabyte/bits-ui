@@ -33,20 +33,18 @@
 	const filteredItems = $derived(
 		searchValue === ""
 			? items
-			: items.filter((item) => item.label.includes(searchValue.toLowerCase()))
+			: items.filter((item) => item.label.toLowerCase().includes(searchValue.toLowerCase()))
 	);
 
-	const selectedLabel = $derived(filteredItems.find((item) => item.value === value)?.label);
+	const selectedLabel = $derived(
+		value ? items.find((item) => item.value === value)?.label : "Open Listbox"
+	);
 </script>
 
 <main data-testid="main">
-	<Listbox.Root bind:value bind:open {...restProps}>
+	<Listbox.Root bind:value bind:open {...restProps} type="single">
 		<Listbox.Trigger data-testid="trigger">
-			{#if selectedLabel}
-				{selectedLabel}
-			{:else}
-				Open combobox
-			{/if}
+			{selectedLabel}
 		</Listbox.Trigger>
 		<Listbox.Portal {...portalProps}>
 			<Listbox.Content data-testid="content" {...contentProps}>

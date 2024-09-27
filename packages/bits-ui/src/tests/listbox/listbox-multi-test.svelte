@@ -43,7 +43,7 @@
 </script>
 
 <main data-testid="main">
-	<Listbox.Root bind:value bind:open {...restProps}>
+	<Listbox.Root bind:value bind:open {...restProps} type="multiple">
 		<Listbox.Trigger data-testid="trigger">
 			{#if selectedLabels && selectedLabels.length}
 				{selectedLabels.join(", ")}

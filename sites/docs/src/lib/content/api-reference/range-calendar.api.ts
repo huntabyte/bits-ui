@@ -23,8 +23,8 @@ import {
 	heading,
 	nextButton,
 	prevButton,
-} from "./calendar.js";
-import { root as rangeFieldRoot } from "./date-range-field.js";
+} from "./calendar.api.js";
+import { root as rangeFieldRoot } from "./date-range-field.api.js";
 
 export const root = createApiSchema<RangeCalendarRootPropsWithoutHTML>({
 	title: "Root",

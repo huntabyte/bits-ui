@@ -161,12 +161,16 @@
 		open: pickerRootState.props.open,
 	});
 
+	function isUnavailableOrDisabled(date: DateValue) {
+		return isDateDisabled(date) || isDateUnavailable(date);
+	}
+
 	const fieldRootState = useDateRangeFieldRoot({
 		value: pickerRootState.props.value,
 		disabled: pickerRootState.props.disabled,
 		readonly: pickerRootState.props.readonly,
 		readonlySegments: pickerRootState.props.readonlySegments,
-		isDateUnavailable: pickerRootState.props.isDateUnavailable,
+		isDateInvalid: box.with(() => isUnavailableOrDisabled),
 		minValue: pickerRootState.props.minValue,
 		maxValue: pickerRootState.props.maxValue,
 		granularity: pickerRootState.props.granularity,

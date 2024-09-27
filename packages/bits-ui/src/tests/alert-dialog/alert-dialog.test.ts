@@ -8,8 +8,10 @@ import {
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
+import type { Component } from "svelte";
 import { getTestKbd } from "../utils.js";
 import AlertDialogTest, { type AlertDialogTestProps } from "./alert-dialog-test.svelte";
+import AlertDialogForceMountTest from "./alert-dialog-force-mount-test.svelte";
 import { sleep } from "$lib/internal/sleep.js";
 
 const kbd = getTestKbd();
@@ -28,10 +30,10 @@ async function expectIsOpen(
 	await waitFor(() => expect(content).not.toBeNull());
 }
 
-function setup(props: AlertDialogTestProps = {}) {
+function setup(props: AlertDialogTestProps = {}, component: Component = AlertDialogTest) {
 	const user = userEvent.setup({ pointerEventsCheck: 0 });
 	// @ts-expect-error - testing lib needs to update their generic types
-	const returned = render(AlertDialogTest, { ...props });
+	const returned = render(component, { ...props });
 	const trigger = returned.getByTestId("trigger");
 
 	return {
@@ -81,6 +83,37 @@ describe("alert dialog", () => {
 
 	it("should open when the trigger is clicked", async () => {
 		await open();
+	});
+
+	it("should forceMount the content and overlay when their `forceMount` prop is true", async () => {
+		const { getByTestId } = setup({}, AlertDialogForceMountTest);
+
+		expect(getByTestId("overlay")).toBeInTheDocument();
+		expect(getByTestId("content")).toBeInTheDocument();
+	});
+
+	it("should forceMount the content and overlay when their `forceMount` prop is true and the `open` snippet prop is used to conditionally render the content", async () => {
+		const { getByTestId, queryByTestId, user } = setup(
+			{
+				// @ts-expect-error - testing lib needs to update their generic types
+				withOpenCheck: true,
+			},
+			AlertDialogForceMountTest
+		);
+		const initOverlay = queryByTestId("overlay");
+		const initContent = queryByTestId("content");
+
+		expect(initOverlay).toBeNull();
+		expect(initContent).toBeNull();
+
+		const trigger = getByTestId("trigger");
+		await user.click(trigger);
+
+		const overlay = getByTestId("overlay");
+		expect(overlay).toBeInTheDocument();
+
+		const content = getByTestId("content");
+		expect(content).toBeInTheDocument();
 	});
 
 	it("should focus the cancel button by default when opened", async () => {

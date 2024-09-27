@@ -6,6 +6,7 @@
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { noop } from "$lib/internal/noop.js";
 	import { useId } from "$lib/internal/useId.js";
+	import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
 
 	let {
 		child,
@@ -59,19 +60,13 @@
 >
 	{#snippet popper({ props })}
 		{@const finalProps = mergeProps(props, {
-			style: {
-				"--bits-popover-content-transform-origin": "var(--bits-floating-transform-origin)",
-				"--bits-popover-content-available-width": "var(--bits-floating-available-width)",
-				"--bits-popover-content-available-height": "var(--bits-floating-available-height)",
-				"--bits-popover-anchor-width": "var(--bits-floating-anchor-width)",
-				"--bits-popover-anchor-height": "var(--bits-floating-anchor-height)",
-			},
+			style: getFloatingContentCSSVars("popover"),
 		})}
 		{#if child}
-			{@render child({ props: finalProps })}
+			{@render child({ props: finalProps, ...contentState.snippetProps })}
 		{:else}
 			<div {...finalProps}>
-				{@render children?.()}
+				{@render children?.(contentState.snippetProps)}
 			</div>
 		{/if}
 	{/snippet}

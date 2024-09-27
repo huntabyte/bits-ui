@@ -114,6 +114,14 @@ export type TooltipRootPropsWithoutHTML = WithChildren<{
 
 export type TooltipRootProps = TooltipRootPropsWithoutHTML;
 
+export type TooltipContentSnippetProps = {
+	/**
+	 * Whether the content is open or closed. Used alongside the `forceMount` prop to
+	 * conditionally render the content using Svelte transitions.
+	 */
+	open: boolean;
+};
+
 export type TooltipContentPropsWithoutHTML = WithChild<
 	Pick<
 		FloatingLayerContentProps,
@@ -137,7 +145,8 @@ export type TooltipContentPropsWithoutHTML = WithChild<
 			 * Useful for more control over the transition behavior.
 			 */
 			forceMount?: boolean;
-		}
+		},
+	TooltipContentSnippetProps
 >;
 
 export type TooltipContentProps = TooltipContentPropsWithoutHTML &
@@ -153,7 +162,8 @@ export type TooltipContentStaticPropsWithoutHTML = WithChild<
 			 * Useful for more control over the transition behavior.
 			 */
 			forceMount?: boolean;
-		}
+		},
+	TooltipContentSnippetProps
 >;
 
 export type TooltipContentStaticProps = TooltipContentStaticPropsWithoutHTML &

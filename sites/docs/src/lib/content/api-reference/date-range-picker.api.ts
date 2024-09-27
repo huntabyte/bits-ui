@@ -3,7 +3,7 @@ import type {
 	DateRangePickerInputPropsWithoutHTML,
 	DateRangePickerRootPropsWithoutHTML,
 } from "bits-ui";
-import { label, root as rangeFieldRoot, segment } from "./date-range-field.js";
+import { label, root as rangeFieldRoot, segment } from "./date-range-field.api.js";
 import {
 	createApiSchema,
 	createBooleanProp,
@@ -11,8 +11,9 @@ import {
 	createEnumProp,
 	withChildProps,
 } from "./helpers.js";
-import { content, trigger } from "./popover.js";
+import { content, trigger } from "./popover.api.js";
 import {
+	root as calendarRoot,
 	cell,
 	day,
 	grid,
@@ -24,12 +25,11 @@ import {
 	heading,
 	nextButton,
 	prevButton,
-} from "./calendar.js";
-import { root as rangeCalendarRoot } from "./range-calendar.js";
-import { root as datePickerRoot } from "./date-picker.js";
+} from "./calendar.api.js";
+import { root as rangeCalendarRoot } from "./range-calendar.api.js";
+import { root as datePickerRoot } from "./date-picker.api.js";
 import { DateRangeFieldInputTypeProp } from "./extended-types/date-range-field/index.js";
 import * as C from "$lib/content/constants.js";
-import { enums } from "$lib/content/api-reference/helpers.js";
 
 const root = createApiSchema<DateRangePickerRootPropsWithoutHTML>({
 	title: "Root",
@@ -42,7 +42,7 @@ const root = createApiSchema<DateRangePickerRootPropsWithoutHTML>({
 		onPlaceholderChange: rangeFieldRoot.props!.onPlaceholderChange,
 		controlledPlaceholder: rangeFieldRoot.props!.controlledPlaceholder,
 		readonlySegments: rangeFieldRoot.props!.readonlySegments,
-		isDateUnavailable: rangeFieldRoot.props!.isDateUnavailable,
+		isDateUnavailable: calendarRoot.props!.isDateUnavailable,
 		minValue: rangeFieldRoot.props!.minValue,
 		maxValue: rangeFieldRoot.props!.maxValue,
 		granularity: rangeFieldRoot.props!.granularity,

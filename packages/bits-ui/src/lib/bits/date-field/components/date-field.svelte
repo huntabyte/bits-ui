@@ -7,7 +7,6 @@
 	import { getDefaultDate } from "$lib/shared/date/utils.js";
 
 	let {
-		isDateUnavailable,
 		disabled = false,
 		granularity,
 		hideTimeZone = false,
@@ -17,6 +16,7 @@
 		minValue,
 		onPlaceholderChange = noop,
 		onValueChange = noop,
+		isDateInvalid,
 		placeholder = $bindable(),
 		value = $bindable(),
 		readonly = false,
@@ -71,7 +71,7 @@
 		locale: box.with(() => locale),
 		maxValue: box.with(() => maxValue),
 		minValue: box.with(() => minValue),
-		isDateUnavailable: box.with(() => isDateUnavailable),
+		isDateInvalid: box.with(() => isDateInvalid),
 		readonly: box.with(() => readonly),
 		readonlySegments: box.with(() => readonlySegments),
 		required: box.with(() => required),

@@ -52,10 +52,10 @@
 	{#snippet popper({ props })}
 		{@const mergedProps = mergeProps(props)}
 		{#if child}
-			{@render child({ props: mergedProps })}
+			{@render child({ props: mergedProps, ...contentState.snippetProps })}
 		{:else}
 			<div {...mergedProps}>
-				{@render children?.()}
+				{@render children?.(contentState.snippetProps)}
 			</div>
 		{/if}
 	{/snippet}

@@ -1,15 +1,21 @@
 import { render, waitFor } from "@testing-library/svelte";
 import { axe } from "jest-axe";
 import { describe, it, vi } from "vitest";
+import type { Component } from "svelte";
 import { getTestKbd, setupUserEvents } from "../utils.js";
 import LinkPreviewTest, { type LinkPreviewTestProps } from "./link-preview-test.svelte";
+import type { LinkPreviewForceMountTestProps } from "./link-preview-force-mount-test.svelte";
+import LinkPreviewForceMountTest from "./link-preview-force-mount-test.svelte";
 
 const kbd = getTestKbd();
 
-function setup(props: LinkPreviewTestProps = {}) {
+function setup(
+	props: LinkPreviewTestProps | LinkPreviewForceMountTestProps = {},
+	component: Component = LinkPreviewTest
+) {
 	const user = setupUserEvents();
 	// @ts-expect-error - testing lib needs to update their generic types
-	const { getByTestId, queryByTestId } = render(LinkPreviewTest, { ...props });
+	const { getByTestId, queryByTestId } = render(component, { ...props });
 	const trigger = getByTestId("trigger");
 	return { trigger, getByTestId, queryByTestId, user };
 }
@@ -125,5 +131,24 @@ describe("link preview", () => {
 		await user.click(binding);
 		expect(binding).toHaveTextContent("true");
 		expect(queryByTestId("content")).not.toBeNull();
+	});
+
+	it("should forceMount the content when `forceMount` is true", async () => {
+		const { getByTestId } = setup({}, LinkPreviewForceMountTest);
+
+		const content = getByTestId("content");
+		expect(content).toBeVisible();
+	});
+
+	it("should forceMount the content when `forceMount` is true and the `open` snippet prop is used to conditionally render the content", async () => {
+		const { queryByTestId, getByTestId, user, trigger } = setup(
+			{ withOpenCheck: true },
+			LinkPreviewForceMountTest
+		);
+		expect(queryByTestId("content")).toBeNull();
+		await user.hover(trigger);
+		await waitFor(() => expect(queryByTestId("content")).not.toBeNull());
+		const content = getByTestId("content");
+		expect(content).toBeVisible();
 	});
 });

@@ -15,8 +15,6 @@ import {
 	createFunctionProp,
 	createStringProp,
 	createUnionProp,
-	enums,
-	union,
 	withChildProps,
 } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";

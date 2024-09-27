@@ -59,10 +59,10 @@
 	{#snippet popper({ props })}
 		{@const finalProps = mergeProps(props)}
 		{#if child}
-			{@render child({ props: finalProps })}
+			{@render child({ props: finalProps, ...contentState.snippetProps })}
 		{:else}
 			<div {...finalProps}>
-				{@render children?.()}
+				{@render children?.(contentState.snippetProps)}
 			</div>
 		{/if}
 		<Mounted bind:isMounted />

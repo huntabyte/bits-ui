@@ -1,14 +1,21 @@
 import { render } from "@testing-library/svelte/svelte5";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
+import type { Component } from "svelte";
 import { setupUserEvents } from "../utils.js";
 import CollapsibleTest from "./collapsible-test.svelte";
+import CollapsibleForceMountTest from "./collapsible-force-mount-test.svelte";
 import type { Collapsible } from "$lib/index.js";
 
-function setup(props?: Collapsible.RootProps) {
+function setup(
+	props: Collapsible.RootProps & {
+		withOpenCheck?: boolean;
+	} = {},
+	component: Component = CollapsibleTest
+) {
 	const user = setupUserEvents();
 	// @ts-expect-error - testing lib needs to update their generic types
-	const returned = render(CollapsibleTest, props);
+	const returned = render(component, props);
 	const root = returned.getByTestId("root");
 	const trigger = returned.getByTestId("trigger");
 	const content = returned.queryByTestId("content");
@@ -61,5 +68,28 @@ describe("collapsible", () => {
 		const altTrigger = getByTestId("alt-trigger");
 		await user.click(altTrigger);
 		expect(binding).toHaveTextContent("false");
+	});
+
+	it("should forceMount the content when `forceMount` is true", async () => {
+		const { getByTestId } = setup({ withOpenCheck: false }, CollapsibleForceMountTest);
+		const content = getByTestId("content");
+		expect(content).toBeVisible();
+	});
+
+	it("should forceMount the content when `forceMount` is true and the `open` snippet prop is used to conditionally render the content", async () => {
+		const { getByTestId, queryByTestId, user } = setup(
+			{
+				withOpenCheck: true,
+			},
+			CollapsibleForceMountTest
+		);
+		const initContent = queryByTestId("content");
+		expect(initContent).toBeNull();
+
+		const trigger = getByTestId("trigger");
+		await user.click(trigger);
+
+		const content = getByTestId("content");
+		expect(content).toBeVisible();
 	});
 });

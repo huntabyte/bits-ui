@@ -10,6 +10,7 @@
 	import { isHTMLElement } from "$lib/internal/is.js";
 	import { afterTick } from "$lib/internal/afterTick.js";
 	import Mounted from "$lib/bits/utilities/mounted.svelte";
+	import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
 
 	let {
 		id = useId(),
@@ -119,12 +120,14 @@
 	{loop}
 >
 	{#snippet popper({ props })}
-		{@const finalProps = mergeProps(props, mergedProps)}
+		{@const finalProps = mergeProps(props, mergedProps, {
+			style: getFloatingContentCSSVars("menu"),
+		})}
 		{#if child}
-			{@render child({ props: finalProps })}
+			{@render child({ props: finalProps, ...subContentState.snippetProps })}
 		{:else}
 			<div {...finalProps}>
-				{@render children?.()}
+				{@render children?.(subContentState.snippetProps)}
 			</div>
 		{/if}
 		<Mounted bind:isMounted />

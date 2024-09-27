@@ -17,7 +17,7 @@ import type {
 	DropdownMenuSubTriggerPropsWithoutHTML,
 	DropdownMenuTriggerPropsWithoutHTML,
 } from "bits-ui";
-import { menu } from "./menu.js";
+import { menu } from "./menu.api.js";
 import { createApiSchema } from "./helpers.js";
 
 export const root = createApiSchema<DropdownMenuRootPropsWithoutHTML>({

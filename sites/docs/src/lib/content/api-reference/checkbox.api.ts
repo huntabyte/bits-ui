@@ -5,7 +5,6 @@ import {
 	createBooleanProp,
 	createDataAttrSchema,
 	createEnumDataAttr,
-	createEnumProp,
 	createFunctionProp,
 	createStringProp,
 	createUnionProp,

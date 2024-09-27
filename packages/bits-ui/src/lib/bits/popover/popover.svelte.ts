@@ -117,6 +117,8 @@ class PopoverContentState {
 		});
 	}
 
+	snippetProps = $derived.by(() => ({ open: this.root.open.current }));
+
 	props = $derived.by(() => ({
 		id: this.#id.current,
 		tabindex: -1,
