@@ -8,7 +8,7 @@
 
 	let {
 		id = useId(),
-		ref = $bindable(),
+		ref = $bindable(null),
 		child,
 		children,
 		active = false,
@@ -18,6 +18,10 @@
 
 	const linkState = useNavigationMenuLink({
 		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 		active: box.with(() => active),
 		onSelect: box.with(() => onSelect),
 	});
