@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Button } from "bits-ui";
+	import Search from "./search.svelte";
 	import { Logo } from "$icons/index.js";
 	import LightSwitch from "$lib/components/light-switch.svelte";
 	import MobileNav from "$lib/components/navigation/mobile-nav.svelte";
@@ -22,6 +23,7 @@
 				</a>
 			</div>
 			<div class="flex items-center justify-end gap-2.5">
+				<Search />
 				<Button.Root
 					href={siteConfig.links.github}
 					target="_blank"
