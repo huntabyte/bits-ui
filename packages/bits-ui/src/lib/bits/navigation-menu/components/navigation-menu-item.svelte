@@ -8,14 +8,18 @@
 	let {
 		id = useId(),
 		value = useId(),
+		ref = $bindable(null),
 		child,
 		children,
-		ref = $bindable(),
 		...restProps
 	}: ItemProps = $props();
 
 	const itemState = useNavigationMenuItem({
 		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
 		value: box.with(() => value),
 	});
 

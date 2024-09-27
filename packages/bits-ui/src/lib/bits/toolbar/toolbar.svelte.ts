@@ -51,7 +51,7 @@ class ToolbarRootState {
 			orientation: this.orientation,
 			loop: this.#loop,
 			rootNodeId: this.#id,
-			candidateSelector: ITEM_ATTR,
+			candidateAttr: ITEM_ATTR,
 		});
 	}
 

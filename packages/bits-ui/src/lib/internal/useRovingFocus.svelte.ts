@@ -9,7 +9,13 @@ type UseRovingFocusProps = {
 	/**
 	 * The selector used to find the focusable candidates.
 	 */
-	candidateSelector: string;
+	candidateAttr: string;
+
+	/**
+	 * Custom candidate selector
+	 */
+	candidateSelector?: string;
+
 	/**
 	 * The id of the root node
 	 */
@@ -48,9 +54,18 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 		if (!isBrowser) return [];
 		const node = document.getElementById(props.rootNodeId.current);
 		if (!node) return [];
-		return Array.from(
-			node.querySelectorAll<HTMLElement>(`[${props.candidateSelector}]:not([data-disabled])`)
-		);
+
+		if (props.candidateSelector) {
+			const candidates = Array.from(
+				node.querySelectorAll<HTMLElement>(props.candidateSelector)
+			);
+			return candidates;
+		} else {
+			const candidates = Array.from(
+				node.querySelectorAll<HTMLElement>(`[${props.candidateAttr}]:not([data-disabled])`)
+			);
+			return candidates;
+		}
 	}
 
 	function focusFirstCandidate() {
