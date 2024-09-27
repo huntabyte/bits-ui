@@ -698,6 +698,8 @@ class ListboxContentState {
 		}
 	};
 
+	snippetProps = $derived.by(() => ({ open: this.root.open.current }));
+
 	props = $derived.by(
 		() =>
 			({

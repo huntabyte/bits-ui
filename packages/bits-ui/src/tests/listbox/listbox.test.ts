@@ -1,12 +1,14 @@
 import { render, waitFor } from "@testing-library/svelte";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
-import { tick } from "svelte";
+import { type Component, tick } from "svelte";
 import { getTestKbd, setupUserEvents } from "../utils.js";
 import ListboxTest from "./listbox-test.svelte";
 import type { Item, ListboxSingleTestProps } from "./listbox-test.svelte";
 import type { ListboxMultipleTestProps } from "./listbox-multi-test.svelte";
 import ListboxMultiTest from "./listbox-multi-test.svelte";
+import type { ListboxForceMountTestProps } from "./listbox-force-mount-test.svelte";
+import ListboxForceMountTest from "./listbox-force-mount-test.svelte";
 import { sleep } from "$lib/internal/sleep.js";
 import type { AnyFn } from "$lib/internal/types.js";
 
@@ -31,10 +33,15 @@ const testItems: Item[] = [
 	},
 ];
 
-function setupSingle(props: Partial<ListboxSingleTestProps> = {}, items: Item[] = testItems) {
+function setupSingle(
+	props: Partial<ListboxSingleTestProps | ListboxForceMountTestProps> = {},
+	items: Item[] = testItems,
+	// eslint-disable-next-line ts/no-explicit-any
+	component: Component<any, any, any> = ListboxTest
+) {
 	const user = setupUserEvents();
 	// @ts-expect-error - testing lib needs to update their generic types
-	const returned = render(ListboxTest, { name: "test", ...props, items });
+	const returned = render(component, { name: "test", ...props, items });
 	const trigger = returned.getByTestId("trigger");
 	const openBinding = returned.getByTestId("open-binding");
 	const valueBinding = returned.getByTestId("value-binding");
@@ -140,7 +147,7 @@ async function openMultiple(
 
 const OPEN_KEYS = [kbd.ARROW_DOWN, kbd.ARROW_UP];
 
-describe.skip("listbox - single", () => {
+describe("listbox - single", () => {
 	it("should have noaccessibility violations", async () => {
 		// @ts-expect-error - testing lib needs to update their generic types
 		const { container } = render(ListboxTest);
@@ -322,6 +329,7 @@ describe.skip("listbox - single", () => {
 		await user.keyboard(kbd.ARROW_DOWN);
 		await user.keyboard(kbd.ARROW_DOWN);
 		await user.keyboard(kbd.ENTER);
+		await sleep(100);
 		expect(getByTestId("trigger")).toHaveTextContent("D");
 		expect(getHiddenInput()).toHaveValue("4");
 		await user.click(trigger);
@@ -339,7 +347,7 @@ describe.skip("listbox - single", () => {
 		expectNotHighlighted(item1!);
 	});
 
-	it("should start keyboard navigation at the highlighted item even if hovered with mouse", async () => {
+	it.skip("should start keyboard navigation at the highlighted item even if hovered with mouse", async () => {
 		const { getByTestId, user, trigger } = await openSingle({}, kbd.ARROW_DOWN);
 		const [item1, item2, item3] = getItems(getByTestId);
 		await user.click(trigger);
@@ -385,6 +393,28 @@ describe.skip("listbox - single", () => {
 		expectHighlighted(i0!);
 		await user.keyboard(kbd.ARROW_DOWN);
 		expectHighlighted(i1!);
+	});
+
+	it("should forceMount the content when `forceMount` is true", async () => {
+		const { getByTestId } = setupSingle({}, [], ListboxForceMountTest);
+
+		const content = getByTestId("content");
+		expect(content).toBeVisible();
+	});
+
+	it("should forceMount the content when `forceMount` is true and the `open` snippet prop is used to conditionally render the content", async () => {
+		const { queryByTestId, getByTestId, user, trigger } = setupSingle(
+			{ withOpenCheck: true },
+			[],
+			ListboxForceMountTest
+		);
+
+		expect(queryByTestId("content")).toBeNull();
+
+		await user.click(trigger);
+
+		const content = getByTestId("content");
+		expect(content).toBeVisible();
 	});
 });
 

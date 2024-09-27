@@ -142,10 +142,19 @@ export type _SharedListboxContentProps = {
 	loop?: boolean;
 };
 
+export type ListboxContentSnippetProps = {
+	/**
+	 * Whether the content is open or closed. Used alongside the `forceMount` prop to conditionally
+	 * render the content using Svelte transitions.
+	 */
+	open: boolean;
+};
+
 export type ListboxContentPropsWithoutHTML = Expand<
 	WithChild<
 		Omit<PopperLayerProps, "content" | "onOpenAutoFocus" | "trapFocus"> &
-			_SharedListboxContentProps
+			_SharedListboxContentProps,
+		ListboxContentSnippetProps
 	>
 >;
 
@@ -155,7 +164,8 @@ export type ListboxContentProps = ListboxContentPropsWithoutHTML &
 export type ListboxContentStaticPropsWithoutHTML = Expand<
 	WithChild<
 		Omit<PopperLayerStaticProps, "content" | "onOpenAutoFocus" | "trapFocus"> &
-			_SharedListboxContentProps
+			_SharedListboxContentProps,
+		ListboxContentSnippetProps
 	>
 >;
 
