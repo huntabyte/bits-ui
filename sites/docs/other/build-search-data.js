@@ -11,74 +11,44 @@ import {
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 
+function cleanMd(md) {
+	return removeMd(md, {
+		replaceLinksWithURL: true,
+		gfm: true,
+		useImgAltText: true,
+	})
+		.replaceAll("\n", " ")
+		.replaceAll("\t", " ");
+}
+
 export function buildDocsIndex() {
-	const components = allComponentDocs.map((doc) => {
-		const content = removeMd(doc.body.raw, {
-			replaceLinksWithURL: true,
-			gfm: true,
-			useImgAltText: true,
-		})
-			.replaceAll("\n", " ")
-			.replaceAll("\t", " ");
+	const components = allComponentDocs.map((doc) => ({
+		title: doc.title,
+		content: cleanMd(doc.body.raw),
+		description: doc.description,
+		href: `/docs/components/${doc.slug}`,
+	}));
 
-		return {
-			title: doc.title,
-			content,
-			description: doc.description,
-			href: `/docs/components/${doc.slug}`,
-		};
-	});
+	const utilities = allUtilityDocs.map((doc) => ({
+		title: doc.title,
+		content: cleanMd(doc.body.raw),
+		description: doc.description,
+		href: `/docs/utilities/${doc.slug}`,
+	}));
 
-	const utilities = allUtilityDocs.map((doc) => {
-		const content = removeMd(doc.body.raw, {
-			replaceLinksWithURL: true,
-			gfm: true,
-			useImgAltText: true,
-		})
-			.replaceAll("\n", " ")
-			.replaceAll("\t", " ");
+	const typeHelpers = allTypeHelperDocs.map((doc) => ({
+		title: doc.title,
+		content: cleanMd(doc.body.raw),
+		description: doc.description,
+		href: `/docs/type-helpers/${doc.slug}`,
+	}));
 
-		return {
-			title: doc.title,
-			content,
-			description: doc.description,
-			href: `/docs/utilities/${doc.slug}`,
-		};
-	});
-
-	const typeHelpers = allTypeHelperDocs.map((doc) => {
-		const content = removeMd(doc.body.raw, {
-			replaceLinksWithURL: true,
-			gfm: true,
-			useImgAltText: true,
-		})
-			.replaceAll("\n", " ")
-			.replaceAll("\t", " ");
-
-		return {
-			title: doc.title,
-			content,
-			description: doc.description,
-			href: `/docs/type-helpers/${doc.slug}`,
-		};
-	});
-
-	const mainPages = allDocs.map((doc) => {
-		const content = removeMd(doc.body.raw, {
-			replaceLinksWithURL: true,
-			gfm: true,
-			useImgAltText: true,
-		})
-			.replaceAll("\n", " ")
-			.replaceAll("\t", " ");
-
-		return {
-			title: doc.title,
-			content,
-			description: doc.description,
-			href: `/docs${doc.slugFull}`,
-		};
-	});
+	const mainPages = allDocs.map((doc) => ({
+		title: doc.title,
+		content: cleanMd(doc.body.raw),
+		description: doc.description,
+		href: `/docs${doc.slugFull}`,
+	}));
 
 	return [...components, ...utilities, ...typeHelpers, ...mainPages];
 }

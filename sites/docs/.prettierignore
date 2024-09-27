@@ -21,3 +21,4 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 sites/docs/src/lib/content/api-reference/extended-types/**/*
+./src/routes/api/search.json/search.json
