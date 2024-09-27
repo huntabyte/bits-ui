@@ -5,6 +5,7 @@
 	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
+	import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
 
 	let {
 		children,
@@ -69,19 +70,13 @@
 >
 	{#snippet popper({ props })}
 		{@const mergedProps = mergeProps(props, {
-			style: {
-				"--bits-tooltip-content-transform-origin": "var(--bits-floating-transform-origin)",
-				"--bits-tooltip-content-available-width": "var(--bits-floating-available-width)",
-				"--bits-tooltip-content-available-height": "var(--bits-floating-available-height)",
-				"--bits-tooltip-anchor-width": "var(--bits-floating-anchor-width)",
-				"--bits-tooltip-anchor-height": "var(--bits-floating-anchor-height)",
-			},
+			style: getFloatingContentCSSVars("tooltip"),
 		})}
 		{#if child}
-			{@render child({ props: mergedProps })}
+			{@render child({ props: mergedProps, ...contentState.snippetProps })}
 		{:else}
 			<div {...mergedProps}>
-				{@render children?.()}
+				{@render children?.(contentState.snippetProps)}
 			</div>
 		{/if}
 	{/snippet}

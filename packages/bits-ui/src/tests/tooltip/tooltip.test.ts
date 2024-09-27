@@ -1,17 +1,22 @@
 import { render, waitFor } from "@testing-library/svelte/svelte5";
-import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
-import { getTestKbd } from "../utils.js";
+import type { Component } from "svelte";
+import { getTestKbd, setupUserEvents } from "../utils.js";
 import TooltipTest, { type TooltipTestProps } from "./tooltip-test.svelte";
+import type { TooltipForceMountTestProps } from "./tooltip-force-mount-test.svelte";
+import TooltipForceMountTest from "./tooltip-force-mount-test.svelte";
 import { sleep } from "$lib/internal/sleep.js";
 
 const kbd = getTestKbd();
 
-function setup(props: Partial<TooltipTestProps> = {}) {
-	const user = userEvent.setup({ pointerEventsCheck: 0 });
+function setup(
+	props: Partial<TooltipTestProps | TooltipForceMountTestProps> = {},
+	component: Component = TooltipTest
+) {
+	const user = setupUserEvents();
 	// @ts-expect-error - testing lib needs to update their generic types
-	const returned = render(TooltipTest, { ...props });
+	const returned = render(component, { ...props });
 	const trigger = returned.getByTestId("trigger");
 	return { ...returned, trigger, user };
 }
@@ -19,7 +24,7 @@ function setup(props: Partial<TooltipTestProps> = {}) {
 async function open(props: Partial<TooltipTestProps> = {}) {
 	const returned = setup(props);
 	expect(returned.queryByTestId("content")).toBeNull();
-	returned.user.hover(returned.trigger);
+	await returned.user.hover(returned.trigger);
 	await waitFor(() => expect(returned.queryByTestId("content")).not.toBeNull());
 	const content = returned.getByTestId("content");
 	return { ...returned, content };
@@ -42,7 +47,7 @@ describe("tooltip", () => {
 	});
 
 	it("should use provider delay duration if provided and the tooltip.root did not provide one", async () => {
-		const { user, trigger } = setup();
+		const { trigger } = setup();
 		expect(trigger).toHaveAttribute("data-delay-duration", "0");
 	});
 
@@ -132,5 +137,24 @@ describe("tooltip", () => {
 		await user.click(binding);
 		await waitFor(() => expect(binding).toHaveTextContent("true"));
 		expect(queryByTestId("content")).not.toBeNull();
+	});
+
+	it("should forceMount the content when `forceMount` is true", async () => {
+		const { getByTestId } = setup({}, TooltipForceMountTest);
+
+		const content = getByTestId("content");
+		expect(content).toBeVisible();
+	});
+
+	it("should forceMount the content when `forceMount` is true and the `open` snippet prop is used to conditionally render the content", async () => {
+		const { queryByTestId, getByTestId, user, trigger } = setup(
+			{ withOpenCheck: true },
+			TooltipForceMountTest
+		);
+		expect(queryByTestId("content")).toBeNull();
+		await user.hover(trigger);
+		await waitFor(() => expect(queryByTestId("content")).not.toBeNull());
+		const content = getByTestId("content");
+		expect(content).toBeVisible();
 	});
 });

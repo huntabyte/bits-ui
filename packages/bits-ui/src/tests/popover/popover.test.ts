@@ -1,16 +1,23 @@
 import { render, waitFor } from "@testing-library/svelte/svelte5";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
+import type { Component } from "svelte";
 import { getTestKbd, setupUserEvents } from "../utils.js";
 import PopoverTest, { type PopoverTestProps } from "./popover-test.svelte";
+import PopoverForceMountTest, {
+	type PopoverForceMountTestProps,
+} from "./popover-force-mount-test.svelte";
 
 const kbd = getTestKbd();
 
-function setup(props: PopoverTestProps = {}) {
+function setup(
+	props: PopoverTestProps | PopoverForceMountTestProps = {},
+	component: Component = PopoverTest
+) {
 	const user = setupUserEvents();
 
 	// @ts-expect-error - testing lib needs to update their generic types
-	const returned = render(PopoverTest, { ...props });
+	const returned = render(component, { ...props });
 	const { getByTestId, queryByTestId } = returned;
 	const trigger = getByTestId("trigger");
 	function getContent() {
@@ -160,5 +167,23 @@ describe("popover", () => {
 		await user.click(binding);
 		expect(binding).toHaveTextContent("true");
 		expect(getContent()).not.toBeNull();
+	});
+
+	it("should forceMount the content when `forceMount` is true", async () => {
+		const { getByTestId } = setup({}, PopoverForceMountTest);
+
+		const content = getByTestId("content");
+		expect(content).toBeVisible();
+	});
+
+	it("should forceMount the content when `forceMount` is true and the `open` snippet prop is used to conditionally render the content", async () => {
+		const { queryByTestId, getByTestId, user, trigger } = setup(
+			{ withOpenCheck: true },
+			PopoverForceMountTest
+		);
+		expect(queryByTestId("content")).toBeNull();
+		await user.click(trigger);
+		const content = getByTestId("content");
+		expect(content).toBeVisible();
 	});
 });

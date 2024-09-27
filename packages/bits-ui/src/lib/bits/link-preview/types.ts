@@ -60,6 +60,14 @@ export type LinkPreviewRootPropsWithoutHTML = WithChildren<{
 
 export type LinkPreviewRootProps = LinkPreviewRootPropsWithoutHTML;
 
+export type LinkPreviewContentSnippetProps = {
+	/**
+	 * Whether the content is open or closed. Used alongside the `forceMount` prop to
+	 * conditionally render the content using Svelte transitions.
+	 */
+	open: boolean;
+};
+
 export type LinkPreviewContentPropsWithoutHTML = WithChild<
 	Pick<
 		FloatingLayerContentProps,
@@ -83,7 +91,8 @@ export type LinkPreviewContentPropsWithoutHTML = WithChild<
 			 * Useful for more control over the transition behavior.
 			 */
 			forceMount?: boolean;
-		}
+		},
+	LinkPreviewContentSnippetProps
 >;
 
 export type LinkPreviewContentProps = LinkPreviewContentPropsWithoutHTML &
@@ -99,7 +108,8 @@ export type LinkPreviewContentStaticPropsWithoutHTML = WithChild<
 			 * Useful for more control over the transition behavior.
 			 */
 			forceMount?: boolean;
-		}
+		},
+	LinkPreviewContentSnippetProps
 >;
 
 export type LinkPreviewContentStaticProps = LinkPreviewContentStaticPropsWithoutHTML &

@@ -348,6 +348,8 @@ class TooltipContentState {
 		});
 	}
 
+	snippetProps = $derived.by(() => ({ open: this.root.open.current }));
+
 	props = $derived.by(() => ({
 		id: this.#id.current,
 		"data-state": this.root.stateAttr,

@@ -231,6 +231,8 @@ class LinkPreviewContentState {
 		e.preventDefault();
 	};
 
+	snippetProps = $derived.by(() => ({ open: this.root.open.current }));
+
 	props = $derived.by(
 		() =>
 			({

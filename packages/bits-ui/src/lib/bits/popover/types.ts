@@ -26,13 +26,25 @@ export type PopoverRootPropsWithoutHTML = WithChildren<{
 
 export type PopoverRootProps = PopoverRootPropsWithoutHTML;
 
-export type PopoverContentPropsWithoutHTML = WithChild<Omit<PopperLayerProps, "content" | "loop">>;
+export type PopoverContentSnippetProps = {
+	/**
+	 * Whether the content is open or closed. Used alongside the `forceMount` prop to
+	 * conditionally render the content using Svelte transitions.
+	 */
+	open: boolean;
+};
+
+export type PopoverContentPropsWithoutHTML = WithChild<
+	Omit<PopperLayerProps, "content" | "loop">,
+	PopoverContentSnippetProps
+>;
 
 export type PopoverContentProps = PopoverContentPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, PopoverContentPropsWithoutHTML>;
 
 export type PopoverContentStaticPropsWithoutHTML = WithChild<
-	Omit<PopperLayerStaticProps, "content" | "loop">
+	Omit<PopperLayerStaticProps, "content" | "loop">,
+	PopoverContentSnippetProps
 >;
 
 export type PopoverContentStaticProps = PopoverContentStaticPropsWithoutHTML &
