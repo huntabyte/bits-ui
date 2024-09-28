@@ -24,6 +24,15 @@ export type PinInputRootPropsWithoutHTML = Omit<
 			onValueChange?: OnChangeFn<string>;
 
 			/**
+			 * A callback function that is called when the user pastes text into the input.
+			 * It receives the pasted text as an argument, and should return the sanitized text.
+			 *
+			 * Use this function to clean up the pasted text, like removing hyphens or other
+			 * characters that should not make it into the input.
+			 */
+			onPaste?: (text: string) => string;
+
+			/**
 			 * The max length of the input.
 			 */
 			maxlength: number;

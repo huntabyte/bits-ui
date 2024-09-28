@@ -4,6 +4,7 @@ import {
 	PinInputRootChildSnippetProps,
 	PinInputRootChildrenSnippetProps,
 	PinInputRootOnCompleteProp,
+	PinInputRootOnPasteProp,
 	PinInputRootPushPasswordManagerStrategyProp,
 	PinInputRootTextAlignProp,
 } from "./extended-types/pin-input/index.js";
@@ -53,6 +54,11 @@ const root = createApiSchema<PinInputRootPropsWithoutHTML>({
 		onComplete: createFunctionProp({
 			description: "A callback function that is called when the input is completely filled.",
 			definition: PinInputRootOnCompleteProp,
+		}),
+		onPaste: createFunctionProp({
+			description:
+				"A callback function that is called when the user pastes text into the input. It receives the pasted text as an argument and should return the sanitized text. Useful for cleaning up pasted text, like removing hyphens or other characters that should not make it into the input.",
+			definition: PinInputRootOnPasteProp,
 		}),
 		inputId: createStringProp({
 			description: "Optionally provide an ID to apply to the hidden input element.",

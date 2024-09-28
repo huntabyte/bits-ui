@@ -42,7 +42,7 @@
 			{#if expandable}
 				<button
 					class={cn(
-						"inline-flex select-none items-center justify-center whitespace-nowrap rounded-[7px] px-2.5 py-1.5 text-sm text-foreground ring-offset-background transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+						"hidden select-none items-center justify-center whitespace-nowrap rounded-[7px] px-2.5 py-1.5 text-sm text-foreground ring-offset-background transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:inline-flex"
 					)}
 					onclick={() => (open = !open)}
 					aria-label="Toggle code expansion"

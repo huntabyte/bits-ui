@@ -46,7 +46,7 @@
 			"focus-override",
 			"relative h-14 w-10 text-[2rem]",
 			"flex items-center justify-center",
-			"transition-all duration-200",
+			"transition-all duration-75",
 			"border-y border-r border-foreground/20 first:rounded-l-md first:border-l last:rounded-r-md",
 			"text-foreground group-focus-within/pininput:border-foreground/40 group-hover/pininput:border-foreground/40",
 			"outline outline-0",

@@ -23,6 +23,7 @@
 		value = $bindable(""),
 		onValueChange = noop,
 		controlledValue = false,
+		onPaste,
 		...restProps
 	}: RootProps = $props();
 
@@ -52,6 +53,7 @@
 			}
 		),
 		pushPasswordManagerStrategy: box.with(() => pushPasswordManagerStrategy),
+		onPaste: box.with(() => onPaste),
 	});
 
 	const mergedInputProps = $derived(mergeProps(restProps, rootState.inputProps));
