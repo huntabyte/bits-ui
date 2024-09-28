@@ -41,9 +41,11 @@ You can then use those data attributes like so:
 ```svelte title="src/routes/+layout.svelte"
 <script lang="ts">
 	import "../app.pcss";
+
+	let { children } = $props();
 </script>
 
-<slot></slot>
+{@render children()}
 ```
 
 Now every `<Button.Root />` component will have the styles applied to it.
@@ -68,9 +70,11 @@ If you prefer the class approach, you can simply apply your global classes to th
 ```svelte title="src/routes/+layout.svelte"
 <script lang="ts">
 	import "../app.pcss";
+
+	let { children } = $props();
 </script>
 
-<slot></slot>
+{@render children()}
 ```
 
 #### Use with components
