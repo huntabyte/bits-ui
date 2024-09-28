@@ -176,13 +176,12 @@ describe("select", () => {
 	// this only fails during testing
 	it.skip("should close on outside click", async () => {
 		const onInteractOutside = vi.fn();
-		const { getByTestId } = await open({
+		const { getByTestId, user } = await open({
 			contentProps: {
 				onInteractOutside,
 			},
 		});
-		const outside = getByTestId("outside");
-		await fireEvent.pointerDown(outside);
+		await user.pointerDownUp(document.body);
 
 		await waitFor(() => expect(onInteractOutside).toHaveBeenCalledTimes(1));
 	});
