@@ -8,10 +8,11 @@
 		"dev": "concurrently \"pnpm:dev:content\" \"pnpm:dev:svelte\"",
 		"dev:content": "contentlayer dev",
 		"dev:svelte": "vite dev",
-		"build": "contentlayer build && vite build",
+		"build": "contentlayer build && pnpm build:search && vite build",
 		"build:content": "contentlayer build",
 		"build:content-cachebust": "contentlayer build --clearCache",
 		"preview": "vite preview",
+		"build:search": "node ./other/build-search-data.js",
 		"check": "pnpm build:content && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
 	},
 	"devDependencies": {
@@ -30,6 +31,7 @@
 		"concurrently": "^8.2.2",
 		"contentlayer": "^0.3.4",
 		"eruda": "^3.0.1",
+		"marked": "^14.1.2",
 		"mdsx": "^0.0.6",
 		"mode-watcher": "^0.4.1",
 		"phosphor-svelte": "^2.0.1",
@@ -38,6 +40,7 @@
 		"rehype-pretty-code": "^0.13.0",
 		"rehype-slug": "^6.0.0",
 		"remark-gfm": "^4.0.0",
+		"remove-markdown": "^0.5.5",
 		"shiki": "^1.1.1",
 		"svelte": "5.0.0-next.251",
 		"svelte-check": "4.0.3",
@@ -57,6 +60,7 @@
 	"dependencies": {
 		"@internationalized/date": "^3.5.1",
 		"@melt-ui/svelte": "0.76.2",
-		"bits-ui": "workspace:*"
+		"bits-ui": "workspace:*",
+		"flexsearch": "^0.7.43"
 	}
 }

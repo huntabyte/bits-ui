@@ -162,6 +162,9 @@ importers:
       bits-ui:
         specifier: workspace:*
         version: link:../../packages/bits-ui
+      flexsearch:
+        specifier: ^0.7.43
+        version: 0.7.43
     devDependencies:
       '@melt-ui/pp':
         specifier: ^0.3.0
@@ -208,6 +211,9 @@ importers:
       eruda:
         specifier: ^3.0.1
         version: 3.2.1
+      marked:
+        specifier: ^14.1.2
+        version: 14.1.2
       mdsx:
         specifier: ^0.0.6
         version: 0.0.6(svelte@5.0.0-next.251)
@@ -232,6 +238,9 @@ importers:
       remark-gfm:
         specifier: ^4.0.0
         version: 4.0.0
+      remove-markdown:
+        specifier: ^0.5.5
+        version: 0.5.5
       shiki:
         specifier: ^1.1.1
         version: 1.12.0
@@ -2745,6 +2754,9 @@ packages:
   flatted@3.3.1:
     resolution: {integrity: sha512-X8cqMLLie7KsNUDSdzeN8FYK9rEt4Dt67OsG/DNGnYTSDBG4uFAJFBnUeiV+zCVAvwFy56IjM9sH51jVaEhNxw==}
 
+  flexsearch@0.7.43:
+    resolution: {integrity: sha512-c5o/+Um8aqCSOXGcZoqZOm+NqtVwNsvVpWv6lfmSclU954O3wvQKxxK8zj74fPaSJbXpSLTs4PRhh+wnoCXnKg==}
+
   focus-trap@7.5.4:
     resolution: {integrity: sha512-N7kHdlgsO/v+iD/dMoJKtsSqs5Dz/dXZVebRgJw23LDk+jMi/974zyiOYDziY2JPp8xivq9BmUGwIJMiuSBi7w==}
 
@@ -3288,6 +3300,11 @@ packages:
 
   markdown-table@3.0.3:
     resolution: {integrity: sha512-Z1NL3Tb1M9wH4XESsCDEksWoKTdlUafKc4pt0GRwjUyXaCFZ+dc3g2erqB6zm3szA2IUSi7VnPI+o/9jnxh9hw==}
+
+  marked@14.1.2:
+    resolution: {integrity: sha512-f3r0yqpz31VXiDB/wj9GaOB0a2PRLQl6vJmXiFrniNwjkKdvakqJRULhjFKJpxOchlCRiG5fcacoUZY5Xa6PEQ==}
+    engines: {node: '>= 18'}
+    hasBin: true
 
   mdast-util-definitions@5.1.2:
     resolution: {integrity: sha512-8SVPMuHqlPME/z3gqVwWY4zVXn8lqKv/pAhC57FuJ40ImXyBpmO5ukh98zB2v7Blql2FiHjHv9LVztSIqjY+MA==}
@@ -4176,6 +4193,9 @@ packages:
 
   remark-stringify@11.0.0:
     resolution: {integrity: sha512-1OSmLd3awB/t8qdoEOMazZkNsfVTeY4fTsgzcQFdXNq8ToTN4ZGwrMnlda4K6smTFKD+GRV6O48i6Z4iKgPPpw==}
+
+  remove-markdown@0.5.5:
+    resolution: {integrity: sha512-lMR8tOtDqazFT6W2bZidoXwkptMdF3pCxpri0AEokHg0sZlC2GdoLqnoaxsEj1o7/BtXV1MKtT3YviA1t7rW7g==}
 
   repeat-string@1.6.1:
     resolution: {integrity: sha512-PV0dzCYDNfRi1jCDbJzpW7jNNDRuCOG/jI5ctQcGKt/clZD+YcPS3yIlWuTJMmESC8aevCFmWJy5wjAFgNqN6w==}
@@ -6731,7 +6751,7 @@ snapshots:
       chai: 5.1.1
       tinyrainbow: 1.2.0
 
-  '@vitest/mocker@2.1.1(@vitest/spy@2.1.1)(vite@5.4.6)':
+  '@vitest/mocker@2.1.1(@vitest/spy@2.1.1)(vite@5.4.6(@types/node@20.14.13))':
     dependencies:
       '@vitest/spy': 2.1.1
       estree-walker: 3.0.3
@@ -7789,6 +7809,8 @@ snapshots:
 
   flatted@3.3.1: {}
 
+  flexsearch@0.7.43: {}
+
   focus-trap@7.5.4:
     dependencies:
       tabbable: 6.2.0
@@ -8433,6 +8455,8 @@ snapshots:
   markdown-extensions@1.1.1: {}
 
   markdown-table@3.0.3: {}
+
+  marked@14.1.2: {}
 
   mdast-util-definitions@5.1.2:
     dependencies:
@@ -9717,6 +9741,8 @@ snapshots:
       mdast-util-to-markdown: 2.1.0
       unified: 11.0.5
 
+  remove-markdown@0.5.5: {}
+
   repeat-string@1.6.1: {}
 
   require-directory@2.1.1: {}
@@ -10447,7 +10473,7 @@ snapshots:
   vitest@2.1.1(@types/node@20.14.13)(@vitest/ui@2.1.1)(jsdom@24.1.1):
     dependencies:
       '@vitest/expect': 2.1.1
-      '@vitest/mocker': 2.1.1(@vitest/spy@2.1.1)(vite@5.4.6)
+      '@vitest/mocker': 2.1.1(@vitest/spy@2.1.1)(vite@5.4.6(@types/node@20.14.13))
       '@vitest/pretty-format': 2.1.1
       '@vitest/runner': 2.1.1
       '@vitest/snapshot': 2.1.1

@@ -26,7 +26,9 @@
 		"./tests/**/*.svelte",
 		".contentlayer/generated",
 		"./mdsx.config.js",
-		"./svelte.config.js"
+		"./svelte.config.js",
+		"./other/**/*.js",
+		"./other/**/*.ts"
 	],
 	"exclude": [
 		"./node_modules/**",
