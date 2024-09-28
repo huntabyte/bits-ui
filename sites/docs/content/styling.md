@@ -43,7 +43,7 @@ You can then use those data attributes like so:
 	import "../app.pcss";
 </script>
 
-<slot />
+<slot></slot>
 ```
 
 Now every `<Button.Root />` component will have the styles applied to it.
@@ -70,7 +70,7 @@ If you prefer the class approach, you can simply apply your global classes to th
 	import "../app.pcss";
 </script>
 
-<slot />
+<slot></slot>
 ```
 
 #### Use with components
