@@ -4,7 +4,12 @@ import type { SegmentPart, WithChildren } from "$lib/shared/index.js";
 import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
 import type { PrimitiveDivAttributes, PrimitiveSpanAttributes } from "$lib/shared/attributes.js";
 import type { EditableSegmentPart } from "$lib/shared/date/field/types.js";
-import type { DateMatcher, Granularity } from "$lib/shared/date/types.js";
+import type {
+	DateMatcher,
+	DateOnInvalid,
+	DateValidator,
+	Granularity,
+} from "$lib/shared/date/types.js";
 
 export type DateFieldRootPropsWithoutHTML = WithChildren<{
 	/**
@@ -34,23 +39,28 @@ export type DateFieldRootPropsWithoutHTML = WithChildren<{
 	onPlaceholderChange?: OnChangeFn<DateValue | undefined>;
 
 	/**
-	 * A function that returns true if the given date is invalid. This will mark
-	 * the field as invalid and you will be responsible for displaying an error message
-	 * to the user to inform them of the invalid state.
+	 * A function that returns a string or array of strings as validation errors if the date is
+	 * invalid, or nothing if the date is valid
 	 */
-	isDateInvalid?: DateMatcher;
+	validate?: DateValidator;
+
+	/**
+	 * A callback fired when the date field's value is invalid. Use this to display an error
+	 * message to the user.
+	 */
+	onInvalid?: DateOnInvalid;
 
 	/**
 	 * The minimum acceptable date. When provided, the date field
 	 * will be marked as invalid if the user enters a date before this date.
 	 */
-	minValue?: DateValue | undefined;
+	minValue?: DateValue;
 
 	/**
 	 * The maximum acceptable date. When provided, the date field
 	 * will be marked as invalid if the user enters a date after this date.
 	 */
-	maxValue?: DateValue | undefined;
+	maxValue?: DateValue;
 
 	/**
 	 * If true, the date field will be disabled and users will not be able

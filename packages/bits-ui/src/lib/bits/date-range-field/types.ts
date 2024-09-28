@@ -1,7 +1,12 @@
 import type { DateValue } from "@internationalized/date";
 import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
 import type { PrimitiveDivAttributes, PrimitiveSpanAttributes } from "$lib/shared/attributes.js";
-import type { DateMatcher, Granularity } from "$lib/shared/date/types.js";
+import type {
+	DateMatcher,
+	DateOnInvalid,
+	DateValidator,
+	Granularity,
+} from "$lib/shared/date/types.js";
 import type { DateRange, EditableSegmentPart, SegmentPart } from "$lib/shared/index.js";
 import type { DateFieldSegmentProps, DateFieldSegmentPropsWithoutHTML } from "$lib/types.js";
 
@@ -32,10 +37,16 @@ export type DateRangeFieldRootPropsWithoutHTML = WithChild<{
 	onPlaceholderChange?: OnChangeFn<DateValue | undefined>;
 
 	/**
-	 * A function that returns true if the given date is unavailable,
-	 * where if selected, the date field will be marked as invalid.
+	 * A function that returns a string or array of strings as validation errors if the date is
+	 * invalid, or nothing if the date is valid
 	 */
-	isDateInvalid?: DateMatcher;
+	validate?: DateValidator;
+
+	/**
+	 * A callback fired when the date field's value is invalid. Use this to display an error
+	 * message to the user.
+	 */
+	onInvalid?: DateOnInvalid;
 
 	/**
 	 * The minimum acceptable date. When provided, the date field

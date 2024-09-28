@@ -18,6 +18,8 @@
 		placeholder = $bindable(),
 		onPlaceholderChange = noop,
 		isDateUnavailable = () => false,
+		validate = noop,
+		onInvalid = noop,
 		minValue,
 		maxValue,
 		disabled = false,
@@ -131,16 +133,13 @@
 		open: pickerRootState.props.open,
 	});
 
-	function isUnavailableOrDisabled(date: DateValue) {
-		return isDateDisabled(date) || isDateUnavailable(date);
-	}
-
 	useDateFieldRoot({
 		value: pickerRootState.props.value,
 		disabled: pickerRootState.props.disabled,
 		readonly: pickerRootState.props.readonly,
 		readonlySegments: pickerRootState.props.readonlySegments,
-		isDateInvalid: box.with(() => isUnavailableOrDisabled),
+		validate: box.with(() => validate),
+		onInvalid: box.with(() => onInvalid),
 		minValue: pickerRootState.props.minValue,
 		maxValue: pickerRootState.props.maxValue,
 		granularity: pickerRootState.props.granularity,

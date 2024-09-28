@@ -246,6 +246,11 @@ const empty = createApiSchema<CommandEmptyPropsWithoutHTML>({
 	title: "Empty",
 	description: "A component to display when no results are found.",
 	props: {
+		forceMount: createBooleanProp({
+			default: C.FALSE,
+			description:
+				"Whether or not to forcefully mount the empty state, regardless of the internal filtering logic. Useful when you want to handle filtering yourself.",
+		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [

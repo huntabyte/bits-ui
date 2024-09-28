@@ -23,7 +23,8 @@
 		granularity,
 		locale = "en-US",
 		hideTimeZone = false,
-		isDateInvalid,
+		validate = noop,
+		onInvalid = noop,
 		maxValue,
 		minValue,
 		readonlySegments = [],
@@ -75,7 +76,7 @@
 		granularity: box.with(() => granularity),
 		locale: box.with(() => locale),
 		hideTimeZone: box.with(() => hideTimeZone),
-		isDateInvalid: box.with(() => isDateInvalid),
+		validate: box.with(() => validate),
 		maxValue: box.with(() => maxValue),
 		minValue: box.with(() => minValue),
 		placeholder: box.with(
@@ -115,6 +116,7 @@
 				onEndValueChange(v);
 			}
 		),
+		onInvalid: box.with(() => onInvalid),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, rootState.props));

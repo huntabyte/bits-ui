@@ -549,21 +549,29 @@ class CommandRootState {
 	}
 }
 
-type CommandEmptyStateProps = WithRefProps;
+type CommandEmptyStateProps = WithRefProps &
+	ReadableBoxedValues<{
+		forceMount: boolean;
+	}>;
 
 class CommandEmptyState {
 	#ref: CommandEmptyStateProps["ref"];
 	#id: CommandEmptyStateProps["id"];
 	#root: CommandRootState;
+	#forceMount: CommandEmptyStateProps["forceMount"];
 	#isInitialRender = true;
+
 	shouldRender = $derived.by(
-		() => this.#root._commandState.filtered.count === 0 && this.#isInitialRender === false
+		() =>
+			(this.#root._commandState.filtered.count === 0 && this.#isInitialRender === false) ||
+			this.#forceMount.current
 	);
 
 	constructor(props: CommandEmptyStateProps, root: CommandRootState) {
 		this.#ref = props.ref;
 		this.#id = props.id;
 		this.#root = root;
+		this.#forceMount = props.forceMount;
 
 		$effect(() => {
 			this.#isInitialRender = false;

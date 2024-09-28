@@ -23,6 +23,8 @@ import {
 	DateFieldInputChildSnippetprops,
 	DateFieldInputChildrenSnippetProps,
 	DateMatcherProp,
+	DateOnInvalidProp,
+	DateValidateProp,
 	GranularityProp,
 	HourCycleProp,
 	OnDateValueChangeProp,
@@ -62,9 +64,13 @@ export const root = createApiSchema<DateFieldRootPropsWithoutHTML>({
 			description: "Whether or not the date field is required.",
 			default: C.FALSE,
 		}),
-		isDateInvalid: createFunctionProp({
-			definition: DateMatcherProp,
+		validate: createFunctionProp({
+			definition: DateValidateProp,
 			description: "A function that returns whether or not a date is unavailable.",
+		}),
+		onInvalid: createFunctionProp({
+			definition: DateOnInvalidProp,
+			description: "A callback fired when the date field's value is invalid.",
 		}),
 		hourCycle: createEnumProp({
 			options: ["12", "24"],
