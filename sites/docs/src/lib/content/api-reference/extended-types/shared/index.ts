@@ -4,7 +4,7 @@ export { default as CheckedChildSnippetProps } from "./checked-child-snippet-pro
 export { default as CheckedChildrenSnippetProps } from "./checked-children-snippet-props.md";
 export { default as CheckedProp } from "./checked-prop.md";
 export { default as ChildDefaultSnippetProps } from "./child-default-snippet-props.md";
-export { default as DateFieldInputChildSnippetprops } from "./date-field-input-child-snippet-props.md";
+export { default as DateFieldInputChildSnippetProps } from "./date-field-input-child-snippet-props.md";
 export { default as DateFieldInputChildrenSnippetProps } from "./date-field-input-children-snippet-props.md";
 export { default as DateMatcherProp } from "./date-matcher-prop.md";
 export { default as DateOnPlaceholderChangeProp } from "./date-on-placeholder-change-prop.md";

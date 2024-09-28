@@ -30,7 +30,7 @@ The Command component, also known as a command menu, is designed to provide user
 
 ## Architecture
 
-The Command component is composed of several subcomponents, each with a specific role:
+The Command component is composed of several sub-components, each with a specific role:
 
 -   **Root**: The main container that manages the overall state and context of the command menu.
 -   **Input**: The text input field where users can type to search or filter commands.

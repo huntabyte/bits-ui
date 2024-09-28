@@ -22,13 +22,13 @@ The Avatar component is designed to represent a user or entity within your appli
 
 ## Key Features
 
--   **Compound Component Structure**: Offers a set of subcomponents that work together to create a fully-featured avatar.
+-   **Compound Component Structure**: Offers a set of sub-components that work together to create a fully-featured avatar.
 -   **Fallback Mechanism**: Provides a fallback when the primary image is unavailable or loading.
--   **Customizable**: Each subcomponent can be styled and configured independently to match your design system.
+-   **Customizable**: Each sub-component can be styled and configured independently to match your design system.
 
 ## Architecture
 
-The Avatar component is composed of several subcomponents, each with a specific role:
+The Avatar component is composed of several sub-components, each with a specific role:
 
 -   **Root**: The main container component that manages the state of the avatar.
 -   **Image**: The primary image element that displays the user's profile picture or a representative image.

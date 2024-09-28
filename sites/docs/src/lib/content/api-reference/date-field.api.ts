@@ -20,9 +20,8 @@ import {
 } from "./helpers.js";
 import { dateValueProp } from "./extended-types/index.js";
 import {
-	DateFieldInputChildSnippetprops,
+	DateFieldInputChildSnippetProps,
 	DateFieldInputChildrenSnippetProps,
-	DateMatcherProp,
 	DateOnInvalidProp,
 	DateValidateProp,
 	GranularityProp,
@@ -135,7 +134,7 @@ export const input = createApiSchema<DateFieldInputPropsWithoutHTML>({
 		...withChildProps({
 			elType: "HTMLDivElement",
 			childrenDef: DateFieldInputChildrenSnippetProps,
-			childDef: DateFieldInputChildSnippetprops,
+			childDef: DateFieldInputChildSnippetProps,
 		}),
 	},
 	dataAttributes: [

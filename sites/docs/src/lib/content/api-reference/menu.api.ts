@@ -48,7 +48,6 @@ import {
 	OpenChildSnippetProps,
 	OpenChildrenSnippetProps,
 	OpenClosedProp,
-	OrientationProp,
 	RadioItemChildSnippetProps,
 	RadioItemChildrenSnippetProps,
 } from "./extended-types/shared/index.js";
@@ -378,7 +377,7 @@ const separatorAttrs: DataAttrs = [
 const subContentAttrs: DataAttrs = [
 	STATE,
 	createDataAttrSchema({
-		name: "menu-subcontent",
+		name: "menu-sub-content",
 		description: "Present on the submenu content element.",
 	}),
 ];
@@ -387,7 +386,7 @@ const subTriggerAttrs: DataAttrs = [
 	...sharedItemAttrs,
 	STATE,
 	createDataAttrSchema({
-		name: "menu-subtrigger",
+		name: "menu-sub-trigger",
 		description: "Present on the submenu trigger element.",
 	}),
 ];

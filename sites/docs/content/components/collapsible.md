@@ -25,11 +25,11 @@ The Collapsible component enables you to create expandable and collapsible conte
 -   **Accessibility**: ARIA attributes for screen reader compatibility and keyboard navigation.
 -   **Transition Support**: CSS variables and data attributes for smooth transitions between states.
 -   **Flexible State Management**: Supports controlled and uncontrolled state, take control if needed.
--   **Compound Component Structure**: Provides a set of subcomponents that work together to create a fully-featured collapsible.
+-   **Compound Component Structure**: Provides a set of sub-components that work together to create a fully-featured collapsible.
 
 ## Architecture
 
-The Accordion component is composed of a few subcomponents, each with a specific role:
+The Accordion component is composed of a few sub-components, each with a specific role:
 
 -   **Root**: The parent container that manages the state and context for the collapsible functionality.
 -   **Trigger**: The interactive element (e.g., button) that toggles the expanded/collapsed state of the content.

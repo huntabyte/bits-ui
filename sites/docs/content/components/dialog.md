@@ -22,16 +22,16 @@ The Dialog component in Bits UI provides a flexible and accessible way to create
 
 ## Key Features
 
--   **Compound Component Structure**: Offers a set of subcomponents that work together to create a fully-featured dialog.
+-   **Compound Component Structure**: Offers a set of sub-components that work together to create a fully-featured dialog.
 -   **Accessibility**: Built with WAI-ARIA guidelines in mind, ensuring keyboard navigation and screen reader support.
--   **Customizable**: Each subcomponent can be styled and configured independently.
+-   **Customizable**: Each sub-component can be styled and configured independently.
 -   **Portal Support**: Content can be rendered in a portal, ensuring proper stacking context.
 -   **Managed Focus**: Automatically manages focus, with the option to take control if needed.
 -   **Flexible State Management**: Supports both controlled and uncontrolled state, allowing for full control over the dialog's open state.
 
 ## Architecture
 
-The Dialog component is composed of several subcomponents, each with a specific role:
+The Dialog component is composed of several sub-components, each with a specific role:
 
 -   **Root**: The main container component that manages the state of the dialog. Provides context for all child components.
 -   **Trigger**: A button that toggles the dialog's open state.

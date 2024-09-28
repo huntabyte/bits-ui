@@ -26,11 +26,11 @@ The Accordion component is a versatile UI element that organizes content into co
 -   **Accessibility**: ARIA attributes for screen reader compatibility and keyboard navigation.
 -   **Transition Support**: CSS variables and data attributes for smooth transitions between states.
 -   **Flexible State Management**: Supports controlled and uncontrolled state, take control if needed.
--   **Compound Component Structure**: Provides a set of subcomponents that work together to create a fully-featured accordion.
+-   **Compound Component Structure**: Provides a set of sub-components that work together to create a fully-featured accordion.
 
 ## Architecture
 
-The Accordion component is composed of several subcomponents, each with a specific role:
+The Accordion component is composed of several sub-components, each with a specific role:
 
 -   **Root**: The root element that wraps all accordion items and manages the overall state.
 -   **Item**: Individual sections within the accordion.
