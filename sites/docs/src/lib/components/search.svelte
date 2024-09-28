@@ -77,7 +77,15 @@
 					class="focus-override inline-flex h-input w-[296px] truncate rounded-xl bg-background px-4 text-sm transition-colors placeholder:text-foreground-alt/50 focus:outline-none focus:ring-0"
 					placeholder="Search for something..."
 				/>
-				{#if searchQuery !== ""}
+				{#if searchQuery !== "" && results.length === 0}
+					<Command.Empty
+						forceMount
+						class="flex w-full items-center justify-center pb-6 pt-8 text-sm text-foreground"
+						>No results found.</Command.Empty
+					>
+				{/if}
+
+				{#if searchQuery !== "" && results.length > 0}
 					<Command.List
 						class="max-h-[280px] overflow-y-auto overflow-x-hidden px-2 pb-2 pt-2"
 					>
@@ -85,10 +93,7 @@
 							{#if searchState === "loading"}
 								<Command.Loading>Loading...</Command.Loading>
 							{/if}
-							<Command.Empty
-								class="flex w-full items-center justify-center pb-6 pt-8 text-sm text-muted-foreground"
-								>No results found.</Command.Empty
-							>
+
 							{#each results as { title, href }}
 								<Command.LinkItem
 									{href}

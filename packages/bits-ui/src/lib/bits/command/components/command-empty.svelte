@@ -10,6 +10,7 @@
 		ref = $bindable(null),
 		children,
 		child,
+		forceMount = false,
 		...restProps
 	}: EmptyProps = $props();
 
@@ -19,6 +20,7 @@
 			() => ref,
 			(v) => (ref = v)
 		),
+		forceMount: box.with(() => forceMount),
 	});
 
 	const mergedProps = $derived(mergeProps(emptyState.props, restProps));

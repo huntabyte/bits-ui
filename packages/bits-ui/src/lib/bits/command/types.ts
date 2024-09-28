@@ -88,7 +88,13 @@ export type CommandRootPropsWithoutHTML = WithChild<{
 export type CommandRootProps = CommandRootPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, CommandRootPropsWithoutHTML>;
 
-export type CommandEmptyPropsWithoutHTML = WithChild;
+export type CommandEmptyPropsWithoutHTML = WithChild<{
+	/**
+	 * Whether to force mount the group container regardless of
+	 * filtering logic.
+	 */
+	forceMount?: boolean;
+}>;
 
 export type CommandEmptyProps = CommandEmptyPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, CommandEmptyPropsWithoutHTML>;
