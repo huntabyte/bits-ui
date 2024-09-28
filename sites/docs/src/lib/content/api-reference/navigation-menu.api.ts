@@ -9,6 +9,7 @@ import type {
 	NavigationMenuViewportPropsWithoutHTML,
 } from "bits-ui";
 import {
+	controlledValueProp,
 	createApiSchema,
 	createBooleanProp,
 	createEnumProp,
@@ -19,9 +20,11 @@ import {
 	dismissableLayerProps,
 	escapeLayerProps,
 	floatingProps,
+	focusScopeProps,
 	forceMountProp,
 	withChildProps,
 } from "./helpers.js";
+import { OnStringValueChangeProp, OrientationProp } from "./extended-types/shared/index.js";
 import * as C from "$lib/content/constants.js";
 
 export const root = createApiSchema<NavigationMenuRootPropsWithoutHTML>({
@@ -34,9 +37,10 @@ export const root = createApiSchema<NavigationMenuRootPropsWithoutHTML>({
 			bindable: true,
 		}),
 		onValueChange: createFunctionProp({
-			definition: "(value: string | undefined) => void",
+			definition: OnStringValueChangeProp,
 			description: "A callback function called when the active menu value changes.",
 		}),
+		controlledValue: controlledValueProp,
 		dir: dirProp,
 		skipDelayDuration: createNumberProp({
 			default: "300",
@@ -52,6 +56,7 @@ export const root = createApiSchema<NavigationMenuRootPropsWithoutHTML>({
 			options: ["horizontal", "vertical"],
 			default: "horizontal",
 			description: "The orientation of the menu.",
+			definition: OrientationProp,
 		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
@@ -90,7 +95,6 @@ export const content = createApiSchema<NavigationMenuContentPropsWithoutHTML>({
 	title: "Content",
 	description: "The content displayed when the dropdown menu is open.",
 	props: {
-		...floatingProps(),
 		...dismissableLayerProps,
 		...escapeLayerProps,
 		forceMount: forceMountProp,

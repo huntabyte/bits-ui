@@ -18,7 +18,7 @@ import type { ScrollLockProps } from "../scroll-lock/index.js";
 import type { Direction } from "$lib/shared/index.js";
 
 export type PopperLayerProps = EscapeLayerProps &
-	DismissableLayerProps &
+	Omit<DismissableLayerProps, "onInteractOutsideStart"> &
 	FloatingLayerContentProps &
 	PresenceLayerProps &
 	TextSelectionLayerProps &
@@ -26,7 +26,7 @@ export type PopperLayerProps = EscapeLayerProps &
 	ScrollLockProps;
 
 export type PopperLayerStaticProps = EscapeLayerProps &
-	DismissableLayerProps &
+	Omit<DismissableLayerProps, "onInteractOutsideStart"> &
 	PresenceLayerProps &
 	TextSelectionLayerProps &
 	FocusScopeProps &

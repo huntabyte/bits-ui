@@ -44,6 +44,7 @@
 		controlledPlaceholder = false,
 		controlledValue = false,
 		controlledOpen = false,
+		errorMessageId,
 		children,
 	}: RootProps = $props();
 
@@ -148,6 +149,8 @@
 		locale: pickerRootState.props.locale,
 		required: pickerRootState.props.required,
 		placeholder: pickerRootState.props.placeholder,
+		errorMessageId: box.with(() => errorMessageId),
+		isInvalidProp: box.with(() => undefined),
 	});
 </script>
 

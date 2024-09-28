@@ -13,6 +13,15 @@ export type DateMatcher = (date: DateValue) => boolean;
 export type DateValidator = (date: DateValue) => string[] | string | void;
 
 /**
+ * A function that returns a string or array of strings as validation errors if the date range
+ * is invalid, or nothing if the date range is valid
+ */
+export type DateRangeValidator = (range: {
+	start: DateValue;
+	end: DateValue;
+}) => string[] | string | void;
+
+/**
  * A callback fired when the date field's value is invalid. Use this to display an error
  * message to the user.
  */

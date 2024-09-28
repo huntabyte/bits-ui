@@ -83,7 +83,7 @@ export type LinkPreviewContentPropsWithoutHTML = WithChild<
 		| "hideWhenDetached"
 		| "dir"
 	> &
-		DismissableLayerProps &
+		Omit<DismissableLayerProps, "onInteractOutsideStart"> &
 		EscapeLayerProps & {
 			/**
 			 * When `true`, the link preview content will be forced to mount in the DOM.
@@ -100,7 +100,7 @@ export type LinkPreviewContentProps = LinkPreviewContentPropsWithoutHTML &
 
 export type LinkPreviewContentStaticPropsWithoutHTML = WithChild<
 	Pick<FloatingLayerContentProps, "dir"> &
-		DismissableLayerProps &
+		Omit<DismissableLayerProps, "onInteractOutsideStart"> &
 		EscapeLayerProps & {
 			/**
 			 * When `true`, the link preview content will be forced to mount in the DOM.

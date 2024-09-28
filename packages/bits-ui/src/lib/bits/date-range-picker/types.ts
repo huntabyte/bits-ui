@@ -5,7 +5,7 @@ import type { EditableSegmentPart } from "$lib/shared/date/field/types.js";
 import type {
 	DateMatcher,
 	DateOnInvalid,
-	DateValidator,
+	DateRangeValidator,
 	Granularity,
 	WeekStartsOn,
 } from "$lib/shared/date/types.js";
@@ -65,7 +65,7 @@ export type DateRangePickerRootPropsWithoutHTML = WithChild<{
 	 * A function that returns a string or array of strings as validation errors if the date is
 	 * invalid, or nothing if the date is valid
 	 */
-	validate?: DateValidator;
+	validate?: DateRangeValidator;
 
 	/**
 	 * A callback fired when the date field's value is invalid. Use this to display an error
@@ -295,6 +295,12 @@ export type DateRangePickerRootPropsWithoutHTML = WithChild<{
 	 * @defaultValue false
 	 */
 	controlledOpen?: boolean;
+
+	/**
+	 * The `id` of the element which contains the error messages for the date field when the
+	 * date is invalid.
+	 */
+	errorMessageId?: string;
 }>;
 
 export type DateRangePickerRootProps = DateRangePickerRootPropsWithoutHTML &

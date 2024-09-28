@@ -25,6 +25,7 @@
 		required = false,
 		controlledPlaceholder = false,
 		controlledValue = false,
+		errorMessageId,
 		children,
 	}: RootProps = $props();
 
@@ -77,6 +78,8 @@
 		readonlySegments: box.with(() => readonlySegments),
 		required: box.with(() => required),
 		onInvalid: box.with(() => onInvalid),
+		errorMessageId: box.with(() => errorMessageId),
+		isInvalidProp: box.with(() => undefined),
 	});
 </script>
 

@@ -481,7 +481,6 @@ export const dismissableInteractOutsideBehaviorProp: PropSchema = createEnumProp
 
 export const dismissableLayerProps = {
 	onInteractOutside: dismissableOnInteractOutsideProp,
-	onInteractOutsideStart: dismissableOnInteractOutsideStartProp,
 	onFocusOutside: dismissableOnFocusOutsideProp,
 	interactOutsideBehavior: dismissableInteractOutsideBehaviorProp,
 } as const;

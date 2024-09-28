@@ -1,12 +1,7 @@
 import type { DateValue } from "@internationalized/date";
 import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
 import type { PrimitiveDivAttributes, PrimitiveSpanAttributes } from "$lib/shared/attributes.js";
-import type {
-	DateMatcher,
-	DateOnInvalid,
-	DateValidator,
-	Granularity,
-} from "$lib/shared/date/types.js";
+import type { DateOnInvalid, DateRangeValidator, Granularity } from "$lib/shared/date/types.js";
 import type { DateRange, EditableSegmentPart, SegmentPart } from "$lib/shared/index.js";
 import type { DateFieldSegmentProps, DateFieldSegmentPropsWithoutHTML } from "$lib/types.js";
 
@@ -40,7 +35,7 @@ export type DateRangeFieldRootPropsWithoutHTML = WithChild<{
 	 * A function that returns a string or array of strings as validation errors if the date is
 	 * invalid, or nothing if the date is valid
 	 */
-	validate?: DateValidator;
+	validate?: DateRangeValidator;
 
 	/**
 	 * A callback fired when the date field's value is invalid. Use this to display an error
@@ -165,6 +160,12 @@ export type DateRangeFieldRootPropsWithoutHTML = WithChild<{
 	 * @defaultValue false
 	 */
 	controlledPlaceholder?: boolean;
+
+	/**
+	 * The `id` of the element which contains the error messages for the date field when the
+	 * date is invalid.
+	 */
+	errorMessageId?: string;
 }>;
 
 export type DateRangeFieldRootProps = DateRangeFieldRootPropsWithoutHTML &

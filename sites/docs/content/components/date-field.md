@@ -131,7 +131,11 @@ If we're collecting a date from the user where we want the timezone as well, we 
 	<DateFieldDemoCustom placeholder={now("America/New_York")} />
 </DemoContainer>
 
-NOTE: If you're creating a date field for something like a birthday, ensure your placeholder is set in a leap year to ensure users born on a leap year will be able to select the correct date.
+<Callout type="warning" title="Leap Years!">
+
+If you're creating a date field for something like a birthday, ensure your placeholder is set in a leap year to ensure users born on a leap year will be able to select the correct date.
+
+</Callout>
 
 ## Managing Placeholder State
 
@@ -390,9 +394,11 @@ You can set a maximum value for the `DateField.Root` component by using the `max
 
 In the example above, we're setting the maximum value to today, and the default value to tomorrow. This causes the date field to be marked as invalid, and we can style it accordingly. If you adjust the date to be less than the maximum value, the invalid state will be cleared.
 
-### Unavailable Dates
+### Custom Validation
 
-You can specify speciifc dates that are unavailable for selection by using the `isDateUnavailable` prop. This prop accepts a function that returns a boolean value indicating whether a date is unavailable or not.
+You can use the `validate` prop to provide a custom validation function for the date field. This function should return a string or array of strings as validation errors if the date is invalid, or undefined/nothing if the date is valid.
+
+The strings are then passed to the `onInvalid` callback, which you can use to display an error message to the user.
 
 ```svelte
 <script lang="ts">
@@ -401,16 +407,56 @@ You can specify speciifc dates that are unavailable for selection by using the `
 
 	const value = new CalendarDate(2024, 8, 2);
 
-	function isDateUnavailable(date: DateValue) {
-		return date.day === 1;
+	function validate(date: DateValue) {
+		return date.day === 1 ? "Date cannot be the first day of the month" : undefined;
+	}
+
+	function onInvalid(reason: "min" | "max" | "custom", msg?: string | string[]) {
+		if (reason === "custom") {
+			if (typeof msg === "string") {
+				// do something with the error message
+				console.log(msg);
+				return;
+			} else if (Array.isArray(msg)) {
+				// do something with the error messages
+				console.log(msg);
+				return;
+			}
+			console.log("The date is invalid");
+		} else if (reason === "min") {
+			// let the user know that the date is too early.
+			console.log("The date is too early.");
+		} else if (reason === "max") {
+			// let the user know that the date is too late.
+			console.log("The date is too late.");
+		}
 	}
 </script>
 
-<MyDateField {isDateUnavailable} {value} />
+<MyDateField {validate} {value} {onInvalid} />
 ```
 
 <DemoContainer size="xs" wrapperClass="rounded-bl-card rounded-br-card">
-	<DateFieldDemoCustom isDateUnavailable={(date) => date.day === 1} value={new CalendarDate(2024, 8, 2)} />
+	<DateFieldDemoCustom validate={(date) => date.day === 1 ? "Date cannot be the first day of the month" : undefined} value={new CalendarDate(2024, 8, 2)} onInvalid={(reason, msg) => {
+		if (reason === "custom") {
+			if (typeof msg === "string") {
+				// do something with the error message
+				console.log(msg);
+				return;
+			} else if (Array.isArray(msg)) {
+				// do something with the error messages
+				console.log(msg);
+				return;
+			}
+			console.log("The date is invalid");
+		} else if (reason === "min") {
+			// let the user know that the date is too early.
+			console.log("The date is too early.");
+		} else if (reason === "max") {
+			// let the user know that the date is too late.
+			console.log("The date is too late.");
+		}
+	}} />
 </DemoContainer>
 
 In the example above, we're setting the `isDateUnavailable` prop to a function that returns `true` for the first day of the month. Try selecting a date that is the first day of the month to see the date field marked as invalid.
@@ -422,7 +468,7 @@ The `granularity` prop sets the granularity of the date field, which determines 
 ```svelte
 <script lang="ts">
 	import MyDateField from "$lib/components/MyDateField.svelte";
-	import { CalendarDate } from "@internationalized/date";
+	import { CalendarDateTime } from "@internationalized/date";
 
 	const value = new CalendarDateTime(2024, 8, 2, 12, 30);
 </script>
