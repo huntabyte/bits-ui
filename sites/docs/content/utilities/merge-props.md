@@ -22,7 +22,7 @@ const mergedProps = mergeProps(props1, props2);
 console.log(mergedProps.onclick(new MouseEvent("click"))); // 1 2
 ```
 
-Since `props1` didn't call `event.preventDefault()`, `props2` will stll be called as normal.
+Since `props1` didn't call `event.preventDefault()`, `props2` will still be called as normal.
 
 ```ts
 import { mergeProps } from "bits-ui";
@@ -49,7 +49,7 @@ Since `props2` called `event.preventDefault()`, `props3`'s `onclick` handler wil
 
 ## Non-Event Handler Functions
 
-Functions that are't event handlers are also chained together, but one can't cancel out the other since there isn't an `event` object to cancel.
+Functions that aren't event handlers are also chained together, but one can't cancel out the other since there isn't an `event` object to cancel.
 
 ```ts
 import { mergeProps } from "bits-ui";
@@ -79,7 +79,7 @@ console.log(mergedProps.class); // "orange blue yellow green"
 
 ## Styles
 
-`mergeProps` also handles merging of style objects using `style-to-object`. You can pass in multiple style objects or style strings and they will be gracefully merged together in the order they are passed.
+`mergeProps` also handles merging of style objects using `style-to-object`. You can pass in multiple style objects or style strings, and they will be gracefully merged together in the order they are passed.
 
 ```ts
 import { mergeProps } from "bits-ui";

@@ -9,7 +9,7 @@ The `WithoutChildren` type helper is used to exclude the `children` snippet prop
 <script lang="ts">
 	import { Accordion, type WithoutChildren } from "bits-ui";
 
-	let { value, onValueChange, ...restProps }: WithoutChildren<Acccordion.RootProps> = $props();
+	let { value, onValueChange, ...restProps }: WithoutChildren<Accordion.RootProps> = $props();
 </script>
 
 <Accordion.Root {...restProps}>

@@ -27,7 +27,7 @@ For example, the `Accordion.Trigger` component exposes a `ref` prop, which gives
 
 ## With delegation
 
-Bits UI tracks the reference to the underlying element using it's `id` attribute. This means that even if you use a custom element/component with [delegation](/docs/delegation), the `ref` prop will still work.
+Bits UI tracks the reference to the underlying element using its `id` attribute. This means that even if you use a custom element/component with [delegation](/docs/delegation), the `ref` prop will still work.
 
 ```svelte
 <script lang="ts">
@@ -48,7 +48,7 @@ Bits UI tracks the reference to the underlying element using it's `id` attribute
 </Accordion.Trigger>
 ```
 
-One caveat is that if you wish to use a custom `id` on the element, you must pass it to the component first so it can be registered and associated with the `ref` prop. The `id` you pass will be passed down via the `props` snippet prop on the `child` snippet.
+One caveat is that if you wish to use a custom `id` on the element, you must pass it to the component first, so it can be registered and associated with the `ref` prop. The `id` you pass will be passed down via the `props` snippet prop on the `child` snippet.
 
 ```svelte
 <script lang="ts">

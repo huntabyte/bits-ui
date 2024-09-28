@@ -18,7 +18,6 @@ While we do allow you to set any attribute that you normally could on a button, 
 Each of the components that support render delegation accept an optional prop called `child`, which is a [Snippet](https://svelte.dev). When used, the component will pass the attributes as a snippet prop, which you can then apply to the element of your choosing. Note, if you use `child` any other children that aren't within that `child` snippet will be ignored.
 
 Let's take a look at an example using the `Accordion.Trigger` component:
-Let's take a look at an example using the `Accordion.Trigger` component:
 
 ```svelte
 <Accordion.Trigger>
@@ -28,11 +27,11 @@ Let's take a look at an example using the `Accordion.Trigger` component:
 </Accordion.Trigger>
 ```
 
-We're passing all the props/attribute we would normally apply to th `<button>` within the component to whatever element we want. These props include event handlers, aria attributes, and any other attributes you passed into the `Accordion.Trigger` component.
+We're passing all the props/attributes we would normally apply to the `<button>` within the component to whatever element we want. These props include event handlers, aria attributes, and any other attributes you passed into the `Accordion.Trigger` component.
 
 ## Custom IDs & Attributes
 
-If you wish to use a custom ID, event handlers, or other attributes with a custom element, you **_must_** pass them to the component first. A lot of Bits UI internals rely on the ID, and these props are merged via [`mergeProps`](https://github.com/huntabyte/bits-ui/blob/main/packages/bits-ui/src/lib/internal/mergeProps.ts) so you'll need to do something like this:
+If you wish to use a custom ID, event handlers, or other attributes with a custom element, you **_must_** pass them to the component first. A lot of Bits UI internals rely on the ID, and these props are merged via [`mergeProps`](https://github.com/huntabyte/bits-ui/blob/main/packages/bits-ui/src/lib/internal/mergeProps.ts), so you'll need to do something like this:
 
 ```svelte
 <Accordion.Trigger id="my-custom-id" onclick={() => console.log("clicked")}>

@@ -61,7 +61,7 @@ Here's an overview of how the Accordion component is structured in code:
 
 If you're planning to use the `Accordion` component throughout your application, it's recommended to create reusable wrapper components to reduce the amount of code you need to write each time.
 
-For each invidual item, you need an `Accordion.Item`, `Accordion.Header`, `Accordion.Trigger` and `Accordion.Content` component. We can combine these into a single `MyccordionItem` component that makes it easier to reuse.
+For each individual item, you need an `Accordion.Item`, `Accordion.Header`, `Accordion.Trigger` and `Accordion.Content` component. We can combine these into a single `MyAccordionItem` component that makes it easier to reuse.
 
 ```svelte title="MyAccordionItem.svelte"
 <script lang="ts">
