@@ -26,6 +26,8 @@ type PinInputRootStateProps = WithRefProps<
 			disabled: boolean;
 			// eslint-disable-next-line ts/no-explicit-any
 			onComplete: (...args: any[]) => void;
+			onPaste?: (text: string) => string;
+
 			// eslint-disable-next-line ts/no-explicit-any
 			pattern: any;
 			maxLength: number;
@@ -52,6 +54,7 @@ class PinInputRootState {
 	#mirrorSelectionStart = $state<number | null>(null);
 	#mirrorSelectionEnd = $state<number | null>(null);
 	#onComplete: PinInputRootStateProps["onComplete"];
+	#onPaste: PinInputRootStateProps["onPaste"];
 	value: PinInputRootStateProps["value"];
 	#previousValue = new Previous(() => this.value.current ?? "");
 	#maxLength: PinInputRootStateProps["maxLength"];
@@ -85,6 +88,7 @@ class PinInputRootState {
 		this.#autocomplete = props.autocomplete;
 		this.#inputmode = props.inputmode;
 		this.#inputId = props.inputId;
+		this.#onPaste = props.onPaste;
 
 		this.#initialLoad = {
 			value: this.value,
@@ -388,6 +392,8 @@ class PinInputRootState {
 		const content = e.clipboardData.getData("text/plain");
 		e.preventDefault();
 
+		const sanitizedContent = this.#onPaste?.current?.(content) ?? content;
+
 		const start = input.selectionStart === null ? undefined : input.selectionStart;
 		const end = input.selectionEnd === null ? undefined : input.selectionEnd;
 
@@ -396,8 +402,8 @@ class PinInputRootState {
 		const initNewVal = this.value.current;
 
 		const newValueUncapped = isReplacing
-			? initNewVal.slice(0, start) + content + initNewVal.slice(end)
-			: initNewVal.slice(0, start) + content + initNewVal.slice(start);
+			? initNewVal.slice(0, start) + sanitizedContent + initNewVal.slice(end)
+			: initNewVal.slice(0, start) + sanitizedContent + initNewVal.slice(start);
 
 		const newValue = newValueUncapped.slice(0, this.#maxLength.current);
 

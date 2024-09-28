@@ -126,4 +126,31 @@ describe("pin Input", () => {
 		}
 		expect(mockComplete).toHaveBeenCalledTimes(2);
 	});
+
+	it("should handle paste events correctly", async () => {
+		const mockComplete = vi.fn();
+		const { user, hiddenInput } = setup({
+			onComplete: mockComplete,
+		});
+
+		await user.click(hiddenInput);
+		await user.paste("123456");
+
+		expect(mockComplete).toHaveBeenCalledTimes(1);
+		expect(mockComplete).toHaveBeenCalledWith("123456");
+	});
+
+	it("should allow the user to sanitize pasted text (remove hyphens, etc.)", async () => {
+		const mockComplete = vi.fn();
+		const { user, hiddenInput } = setup({
+			onComplete: mockComplete,
+			onPaste: (text) => text.replace(/-/g, ""),
+		});
+
+		await user.click(hiddenInput);
+		await user.paste("123-456");
+
+		expect(mockComplete).toHaveBeenCalledTimes(1);
+		expect(mockComplete).toHaveBeenCalledWith("123456");
+	});
 });
