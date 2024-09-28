@@ -137,7 +137,7 @@ export type TooltipContentPropsWithoutHTML = WithChild<
 		| "hideWhenDetached"
 		| "dir"
 	> &
-		DismissableLayerProps &
+		Omit<DismissableLayerProps, "onInteractOutsideStart"> &
 		EscapeLayerProps & {
 			/**
 			 * When `true`, the tooltip will be forced to mount in the DOM.
@@ -154,7 +154,7 @@ export type TooltipContentProps = TooltipContentPropsWithoutHTML &
 
 export type TooltipContentStaticPropsWithoutHTML = WithChild<
 	Pick<FloatingLayerContentProps, "dir"> &
-		DismissableLayerProps &
+		Omit<DismissableLayerProps, "onInteractOutsideStart"> &
 		EscapeLayerProps & {
 			/**
 			 * When `true`, the tooltip will be forced to mount in the DOM.

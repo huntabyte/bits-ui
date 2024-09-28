@@ -174,15 +174,15 @@ describe("select", () => {
 	});
 
 	it("should close on outside click", async () => {
-		const onInteractOutsideStart = vi.fn();
+		const onInteractOutside = vi.fn();
 		const { getByTestId } = await open({
 			contentProps: {
-				onInteractOutsideStart,
+				onInteractOutside,
 			},
 		});
 		const outside = getByTestId("outside");
 		await fireEvent.pointerDown(outside);
-		await waitFor(() => expect(onInteractOutsideStart).toHaveBeenCalled());
+		await waitFor(() => expect(onInteractOutside).toHaveBeenCalled());
 	});
 
 	it("should portal to the body by default", async () => {

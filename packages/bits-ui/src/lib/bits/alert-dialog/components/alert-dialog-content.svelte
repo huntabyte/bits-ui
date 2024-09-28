@@ -22,7 +22,7 @@
 		onCloseAutoFocus = noop,
 		onEscapeKeydown = noop,
 		onOpenAutoFocus = noop,
-		onInteractOutsideStart = noop,
+		onInteractOutside = noop,
 		preventScroll = true,
 		trapFocus = true,
 		...restProps
@@ -73,7 +73,7 @@
 						enabled={present.current}
 						{interactOutsideBehavior}
 						onInteractOutside={(e) => {
-							onInteractOutsideStart(e);
+							onInteractOutside(e)
 							if (e.defaultPrevented) return;
 							contentState.root.handleClose();
 						}}
