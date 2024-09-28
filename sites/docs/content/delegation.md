@@ -27,7 +27,7 @@ Let's take a look at an example using the `Accordion.Trigger` component:
 </Accordion.Trigger>
 ```
 
-We're passing all the props/attribute we would normally apply to th `<button>` within the component to whatever element we want. These props include event handlers, aria attributes, and any other attributes you passed into the `Accordion.Trigger` component.
+We're passing all the props/attributes we would normally apply to the `<button>` within the component to whatever element we want. These props include event handlers, aria attributes, and any other attributes you passed into the `Accordion.Trigger` component.
 
 ## Custom IDs & Attributes
 
