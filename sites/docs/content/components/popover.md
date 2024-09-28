@@ -126,7 +126,7 @@ For more in-depth information on controlled components and advanced state manage
 
 ### Focus Trap
 
-By default, when a Popover is opened, focus will be trapped within that Popover. You can disabled this beahvior by setting the `trapFocus` prop to `false` on the `Popover.Content` component.
+By default, when a Popover is opened, focus will be trapped within that Popover. You can disable this behavior by setting the `trapFocus` prop to `false` on the `Popover.Content` component.
 
 ```svelte /trapFocus={false}/
 <Popover.Content trapFocus={false}>

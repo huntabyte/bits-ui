@@ -320,7 +320,7 @@ You can set a maximum value for the calendar by using the `maxValue` prop on `Ca
 
 ### Unavailable Dates
 
-You can specify speciifc dates that are unavailable for selection by using the `isDateUnavailable` prop. This prop accepts a function that returns a boolean value indicating whether a date is unavailable or not.
+You can specify specific dates that are unavailable for selection by using the `isDateUnavailable` prop. This prop accepts a function that returns a boolean value indicating whether a date is unavailable or not.
 
 ```svelte
 <script lang="ts">
@@ -342,7 +342,7 @@ You can specify speciifc dates that are unavailable for selection by using the `
 
 ### Disabled Dates
 
-You can specify speciifc dates that are disabled for selection by using the `isDateDisabled` prop.
+You can specify specific dates that are disabled for selection by using the `isDateDisabled` prop.
 
 ```svelte
 <script lang="ts">

@@ -392,7 +392,7 @@ In the example above, we're setting the maximum value to today, and the default 
 
 ### Unavailable Dates
 
-You can specify speciifc dates that are unavailable for selection by using the `isDateUnavailable` prop. This prop accepts a function that returns a boolean value indicating whether a date is unavailable or not.
+You can specify specific dates that are unavailable for selection by using the `isDateUnavailable` prop. This prop accepts a function that returns a boolean value indicating whether a date is unavailable or not.
 
 ```svelte
 <script lang="ts">
