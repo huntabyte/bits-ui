@@ -73,7 +73,7 @@
 						enabled={present.current}
 						{interactOutsideBehavior}
 						onInteractOutside={(e) => {
-							onInteractOutside(e)
+							onInteractOutside(e);
 							if (e.defaultPrevented) return;
 							contentState.root.handleClose();
 						}}
