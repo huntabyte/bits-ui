@@ -53,7 +53,12 @@ import type { SegmentPart } from "$lib/shared/index.js";
 import { DATE_SEGMENT_PARTS, TIME_SEGMENT_PARTS } from "$lib/shared/date/field/parts.js";
 import { createContext } from "$lib/internal/createContext.js";
 import { useId } from "$lib/internal/useId.js";
-import type { DateMatcher, Granularity, HourCycle } from "$lib/shared/date/types.js";
+import type {
+	DateOnInvalid,
+	DateValidator,
+	Granularity,
+	HourCycle,
+} from "$lib/shared/date/types.js";
 import { onDestroyEffect } from "$lib/internal/onDestroyEffect.svelte.js";
 
 export const DATE_FIELD_INPUT_ATTR = "data-date-field-input";
@@ -65,7 +70,8 @@ export type DateFieldRootStateProps = WritableBoxedValues<{
 }> &
 	ReadableBoxedValues<{
 		readonlySegments: SegmentPart[];
-		isDateInvalid: DateMatcher | undefined;
+		validate: DateValidator | undefined;
+		onInvalid: DateOnInvalid | undefined;
 		minValue: DateValue | undefined;
 		maxValue: DateValue | undefined;
 		disabled: boolean;
@@ -80,7 +86,7 @@ export type DateFieldRootStateProps = WritableBoxedValues<{
 export class DateFieldRootState {
 	value: DateFieldRootStateProps["value"];
 	placeholder: WritableBox<DateValue>;
-	isDateInvalid: DateFieldRootStateProps["isDateInvalid"];
+	validate: DateFieldRootStateProps["validate"];
 	minValue: DateFieldRootStateProps["minValue"];
 	maxValue: DateFieldRootStateProps["maxValue"];
 	disabled: DateFieldRootStateProps["disabled"];
@@ -91,6 +97,7 @@ export class DateFieldRootState {
 	locale: DateFieldRootStateProps["locale"];
 	hideTimeZone: DateFieldRootStateProps["hideTimeZone"];
 	required: DateFieldRootStateProps["required"];
+	onInvalid: DateFieldRootStateProps["onInvalid"];
 	descriptionId = useId();
 	formatter: Formatter;
 	initialSegments: SegmentValueObj;
@@ -116,7 +123,7 @@ export class DateFieldRootState {
 		 */
 		this.value = props.value;
 		this.placeholder = rangeRoot ? rangeRoot.placeholder : props.placeholder;
-		this.isDateInvalid = rangeRoot ? rangeRoot.isDateInvalid : props.isDateInvalid;
+		this.validate = rangeRoot ? rangeRoot.validate : props.validate;
 		this.minValue = rangeRoot ? rangeRoot.minValue : props.minValue;
 		this.maxValue = rangeRoot ? rangeRoot.maxValue : props.maxValue;
 		this.disabled = rangeRoot ? rangeRoot.disabled : props.disabled;
@@ -127,6 +134,7 @@ export class DateFieldRootState {
 		this.locale = rangeRoot ? rangeRoot.locale : props.locale;
 		this.hideTimeZone = rangeRoot ? rangeRoot.hideTimeZone : props.hideTimeZone;
 		this.required = rangeRoot ? rangeRoot.required : props.required;
+		this.onInvalid = rangeRoot ? rangeRoot.onInvalid : props.onInvalid;
 		this.formatter = createFormatter(this.locale.current);
 		this.initialSegments = initializeSegmentValues(this.inferredGranularity);
 		this.segmentValues = this.initialSegments;
@@ -180,6 +188,18 @@ export class DateFieldRootState {
 			}
 
 			this.clearUpdating();
+		});
+
+		$effect(() => {
+			this.validationStatus;
+			untrack(() => {
+				if (this.validationStatus !== false) {
+					this.onInvalid.current?.(
+						this.validationStatus.reason,
+						this.validationStatus.message
+					);
+				}
+			});
 		});
 	}
 
@@ -337,15 +357,37 @@ export class DateFieldRootState {
 		this.segmentValues = Object.fromEntries(dateValues);
 	}
 
-	isInvalid = $derived.by(() => {
+	validationStatus = $derived.by(() => {
 		const value = this.value.current;
-		if (!value) return false;
-		if (this.isDateInvalid.current?.(value)) return true;
+		if (!value) return false as const;
+
+		const msg = this.validate.current?.(value);
+
+		if (msg) {
+			return {
+				reason: "custom",
+				message: msg,
+			} as const;
+		}
+
 		const minValue = this.minValue.current;
-		if (minValue && isBefore(value, minValue)) return true;
+		if (minValue && isBefore(value, minValue)) {
+			return {
+				reason: "min",
+			} as const;
+		}
 		const maxValue = this.maxValue.current;
-		if (maxValue && isBefore(maxValue, value)) return true;
+		if (maxValue && isBefore(maxValue, value)) {
+			return {
+				reason: "max",
+			} as const;
+		}
 		return false;
+	});
+
+	isInvalid = $derived.by(() => {
+		if (this.validationStatus === false) return false;
+		return true;
 	});
 
 	inferredGranularity = $derived.by(() => {

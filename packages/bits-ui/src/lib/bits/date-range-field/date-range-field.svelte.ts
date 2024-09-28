@@ -7,7 +7,12 @@ import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box
 import { useId } from "$lib/internal/useId.js";
 import { removeDescriptionElement } from "$lib/shared/date/field/helpers.js";
 import { type Formatter, createFormatter } from "$lib/shared/date/formatter.js";
-import type { DateMatcher, Granularity } from "$lib/shared/date/types.js";
+import type {
+	DateMatcher,
+	DateOnInvalid,
+	DateValidator,
+	Granularity,
+} from "$lib/shared/date/types.js";
 import type { DateRange, SegmentPart } from "$lib/shared/index.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
@@ -28,7 +33,8 @@ type DateRangeFieldRootStateProps = WithRefProps<
 	}> &
 		ReadableBoxedValues<{
 			readonlySegments: SegmentPart[];
-			isDateInvalid: DateMatcher | undefined;
+			validate: DateValidator | undefined;
+			onInvalid: DateOnInvalid | undefined;
 			minValue: DateValue | undefined;
 			maxValue: DateValue | undefined;
 			disabled: boolean;
@@ -47,7 +53,7 @@ export class DateRangeFieldRootState {
 	value: DateRangeFieldRootStateProps["value"];
 	placeholder: DateRangeFieldRootStateProps["placeholder"];
 	readonlySegments: DateRangeFieldRootStateProps["readonlySegments"];
-	isDateInvalid: DateRangeFieldRootStateProps["isDateInvalid"];
+	validate: DateRangeFieldRootStateProps["validate"];
 	minValue: DateRangeFieldRootStateProps["minValue"];
 	maxValue: DateRangeFieldRootStateProps["maxValue"];
 	disabled: DateRangeFieldRootStateProps["disabled"];
@@ -59,6 +65,7 @@ export class DateRangeFieldRootState {
 	required: DateRangeFieldRootStateProps["required"];
 	startValue: DateRangeFieldRootStateProps["startValue"];
 	endValue: DateRangeFieldRootStateProps["endValue"];
+	onInvalid: DateRangeFieldRootStateProps["onInvalid"];
 	startFieldState: DateFieldRootState | undefined = undefined;
 	endFieldState: DateFieldRootState | undefined = undefined;
 	descriptionId = useId();
@@ -89,7 +96,8 @@ export class DateRangeFieldRootState {
 		this.startValue = props.startValue;
 		this.endValue = props.endValue;
 		this.placeholder = props.placeholder;
-		this.isDateInvalid = props.isDateInvalid;
+		this.validate = props.validate;
+		this.onInvalid = props.onInvalid;
 		this.minValue = props.minValue;
 		this.maxValue = props.maxValue;
 		this.disabled = props.disabled;
@@ -197,7 +205,7 @@ export class DateRangeFieldRootState {
 				disabled: this.disabled,
 				readonly: this.readonly,
 				readonlySegments: this.readonlySegments,
-				isDateInvalid: this.isDateInvalid,
+				validate: this.validate,
 				minValue: this.minValue,
 				maxValue: this.maxValue,
 				hourCycle: this.hourCycle,
@@ -206,6 +214,7 @@ export class DateRangeFieldRootState {
 				required: this.required,
 				granularity: this.granularity,
 				placeholder: this.placeholder,
+				onInvalid: this.onInvalid,
 			},
 			this
 		);

@@ -16,7 +16,8 @@
 		minValue,
 		onPlaceholderChange = noop,
 		onValueChange = noop,
-		isDateInvalid,
+		validate = noop,
+		onInvalid = noop,
 		placeholder = $bindable(),
 		value = $bindable(),
 		readonly = false,
@@ -71,10 +72,11 @@
 		locale: box.with(() => locale),
 		maxValue: box.with(() => maxValue),
 		minValue: box.with(() => minValue),
-		isDateInvalid: box.with(() => isDateInvalid),
+		validate: box.with(() => validate),
 		readonly: box.with(() => readonly),
 		readonlySegments: box.with(() => readonlySegments),
 		required: box.with(() => required),
+		onInvalid: box.with(() => onInvalid),
 	});
 </script>
 

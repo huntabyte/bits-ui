@@ -5,6 +5,19 @@ export type HourCycle = 12 | 24;
 export type WeekStartsOn = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
 export type DateMatcher = (date: DateValue) => boolean;
+
+/**
+ * A function that returns a string or array of strings as validation errors if the date is
+ * invalid, or nothing if the date is valid
+ */
+export type DateValidator = (date: DateValue) => string[] | string | void;
+
+/**
+ * A callback fired when the date field's value is invalid. Use this to display an error
+ * message to the user.
+ */
+export type DateOnInvalid = (reason: "min" | "max" | "custom", msg?: string | string[]) => void;
+
 export type DateRange = {
 	start: DateValue | undefined;
 	end: DateValue | undefined;

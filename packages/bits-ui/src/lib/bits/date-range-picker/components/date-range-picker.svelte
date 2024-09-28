@@ -22,6 +22,7 @@
 		placeholder = $bindable(),
 		onPlaceholderChange = noop,
 		isDateUnavailable = () => false,
+		onInvalid = noop,
 		minValue,
 		maxValue,
 		disabled = false,
@@ -47,6 +48,7 @@
 		controlledValue = false,
 		controlledPlaceholder = false,
 		controlledOpen = false,
+		validate = noop,
 		child,
 		children,
 		...restProps
@@ -161,16 +163,12 @@
 		open: pickerRootState.props.open,
 	});
 
-	function isUnavailableOrDisabled(date: DateValue) {
-		return isDateDisabled(date) || isDateUnavailable(date);
-	}
-
 	const fieldRootState = useDateRangeFieldRoot({
 		value: pickerRootState.props.value,
 		disabled: pickerRootState.props.disabled,
 		readonly: pickerRootState.props.readonly,
 		readonlySegments: pickerRootState.props.readonlySegments,
-		isDateInvalid: box.with(() => isUnavailableOrDisabled),
+		validate: box.with(() => validate),
 		minValue: pickerRootState.props.minValue,
 		maxValue: pickerRootState.props.maxValue,
 		granularity: pickerRootState.props.granularity,
@@ -186,6 +184,7 @@
 		),
 		startValue: pickerRootState.props.startValue,
 		endValue: pickerRootState.props.endValue,
+		onInvalid: box.with(() => onInvalid),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, fieldRootState.props));

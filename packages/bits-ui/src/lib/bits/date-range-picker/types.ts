@@ -2,7 +2,13 @@ import type { DateValue } from "@internationalized/date";
 import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
 import type { PrimitiveDivAttributes } from "$lib/shared/attributes.js";
 import type { EditableSegmentPart } from "$lib/shared/date/field/types.js";
-import type { DateMatcher, Granularity, WeekStartsOn } from "$lib/shared/date/types.js";
+import type {
+	DateMatcher,
+	DateOnInvalid,
+	DateValidator,
+	Granularity,
+	WeekStartsOn,
+} from "$lib/shared/date/types.js";
 import type { DateRange } from "$lib/shared/index.js";
 import type { CalendarRootSnippetProps } from "$lib/types.js";
 
@@ -56,16 +62,28 @@ export type DateRangePickerRootPropsWithoutHTML = WithChild<{
 	isDateDisabled?: DateMatcher;
 
 	/**
+	 * A function that returns a string or array of strings as validation errors if the date is
+	 * invalid, or nothing if the date is valid
+	 */
+	validate?: DateValidator;
+
+	/**
+	 * A callback fired when the date field's value is invalid. Use this to display an error
+	 * message to the user.
+	 */
+	onInvalid?: DateOnInvalid;
+
+	/**
 	 * The minimum acceptable date. When provided, the date field
 	 * will be marked as invalid if the user enters a date before this date.
 	 */
-	minValue?: DateValue | undefined;
+	minValue?: DateValue;
 
 	/**
 	 * The maximum acceptable date. When provided, the date field
 	 * will be marked as invalid if the user enters a date after this date.
 	 */
-	maxValue?: DateValue | undefined;
+	maxValue?: DateValue;
 
 	/**
 	 * If true, the date field will be disabled and users will not be able

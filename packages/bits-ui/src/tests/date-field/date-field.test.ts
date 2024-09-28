@@ -310,7 +310,7 @@ describe("date field", () => {
 	it("should marks the field as invalid if the value is invalid", async () => {
 		const { getByTestId, day, month, year, input, label, user } = setup({
 			granularity: "second",
-			isDateInvalid: (date) => date.day === 19,
+			validate: (date) => date.day === 19,
 			value: zonedDateTime,
 		});
 
