@@ -23,4 +23,4 @@ export type AlertDialogContentPropsWithoutHTML = Omit<
 	DialogContentPropsWithoutHTML,
 	"onInteractOutside"
 >;
-export type AlertDialogContentProps = Omit<DialogContentProps, "onInteractOutside">;
+export type AlertDialogContentProps = DialogContentProps;

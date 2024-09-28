@@ -20,7 +20,6 @@
 		onInteractOutside = noop,
 		// we need to explicitly pass this prop to the PopperLayer to override
 		// the default menu behavior of handling outside interactions on the trigger
-		onInteractOutsideStart = noop,
 		onEscapeKeydown = noop,
 		forceMount = false,
 		...restProps
@@ -49,11 +48,7 @@
 		}
 	}
 
-	const mergedProps = $derived(
-		mergeProps(restProps, contentState.props, {
-			onInteractOutsideStart: handleInteractOutsideStart,
-		})
-	);
+	const mergedProps = $derived(mergeProps(restProps, contentState.props));
 </script>
 
 <PopperLayer
@@ -62,7 +57,7 @@
 	sideOffset={2}
 	align="start"
 	present={contentState.parentMenu.open.current || forceMount}
-	{onInteractOutsideStart}
+	onInteractOutsideStart={handleInteractOutsideStart}
 	onInteractOutside={(e) => {
 		onInteractOutside(e);
 		if (e.defaultPrevented) return;

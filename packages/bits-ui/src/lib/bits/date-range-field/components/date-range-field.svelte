@@ -34,6 +34,7 @@
 		onEndValueChange = noop,
 		controlledPlaceholder = false,
 		controlledValue = false,
+		errorMessageId,
 		...restProps
 	}: RootProps = $props();
 
@@ -117,6 +118,7 @@
 			}
 		),
 		onInvalid: box.with(() => onInvalid),
+		errorMessageId: box.with(() => errorMessageId),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, rootState.props));

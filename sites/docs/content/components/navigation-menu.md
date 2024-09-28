@@ -43,3 +43,5 @@ description: A list of links that allow users to navigate between pages of a web
 	<NavigationMenu.Viewport />
 </NavigationMenu.Root>
 ```
+
+<APISection {schemas} />

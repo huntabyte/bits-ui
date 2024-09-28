@@ -49,6 +49,7 @@
 		controlledPlaceholder = false,
 		controlledOpen = false,
 		validate = noop,
+		errorMessageId,
 		child,
 		children,
 		...restProps
@@ -185,6 +186,7 @@
 		startValue: pickerRootState.props.startValue,
 		endValue: pickerRootState.props.endValue,
 		onInvalid: box.with(() => onInvalid),
+		errorMessageId: box.with(() => errorMessageId),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, fieldRootState.props));

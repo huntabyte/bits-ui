@@ -72,6 +72,10 @@ export const root = createApiSchema<DateFieldRootPropsWithoutHTML>({
 			definition: DateOnInvalidProp,
 			description: "A callback fired when the date field's value is invalid.",
 		}),
+		errorMessageId: createStringProp({
+			description:
+				"The `id` of the element which contains the error messages for the date field when the date is invalid.",
+		}),
 		hourCycle: createEnumProp({
 			options: ["12", "24"],
 			description:

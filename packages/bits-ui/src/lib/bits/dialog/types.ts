@@ -37,7 +37,7 @@ export type DialogContentSnippetProps = {
 export type DialogContentPropsWithoutHTML = WithChild<
 	Omit<
 		EscapeLayerProps &
-			DismissableLayerProps &
+			Omit<DismissableLayerProps, "onInteractOutsideStart"> &
 			PresenceLayerProps &
 			FocusScopeProps &
 			TextSelectionLayerProps & {

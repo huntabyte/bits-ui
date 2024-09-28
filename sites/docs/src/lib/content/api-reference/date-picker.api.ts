@@ -64,6 +64,7 @@ export const root = createApiSchema<DatePickerRootPropsWithoutHTML>({
 		validate: dateFieldRoot.props!.validate,
 		onInvalid: dateFieldRoot.props!.onInvalid,
 		required: dateFieldRoot.props!.required,
+		errorMessageId: dateFieldRoot.props!.errorMessageId,
 		readonlySegments: dateFieldRoot.props!.readonlySegments,
 		disableDaysOutsideMonth: calendarRoot.props!.disableDaysOutsideMonth,
 		closeOnDateSelect: createPropSchema({

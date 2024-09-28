@@ -17,6 +17,7 @@
 		skipDelayDuration = 300,
 		dir = "ltr",
 		orientation = "horizontal",
+		controlledValue = false,
 		...restProps
 	}: RootProps = $props();
 
@@ -25,7 +26,9 @@
 		value: box.with(
 			() => value,
 			(v) => {
-				if (v !== value) {
+				if (controlledValue) {
+					onValueChange(v);
+				} else {
 					value = v;
 					onValueChange(v);
 				}
