@@ -31,7 +31,7 @@ We're passing all the props/attributes we would normally apply to the `<button>`
 
 ## Custom IDs & Attributes
 
-If you wish to use a custom ID, event handlers, or other attributes with a custom element, you **_must_** pass them to the component first. A lot of Bits UI internals rely on the ID, and these props are merged via [`mergeProps`](https://github.com/huntabyte/bits-ui/blob/main/packages/bits-ui/src/lib/internal/mergeProps.ts) so you'll need to do something like this:
+If you wish to use a custom ID, event handlers, or other attributes with a custom element, you **_must_** pass them to the component first. A lot of Bits UI internals rely on the ID, and these props are merged via [`mergeProps`](https://github.com/huntabyte/bits-ui/blob/main/packages/bits-ui/src/lib/internal/mergeProps.ts), so you'll need to do something like this:
 
 ```svelte
 <Accordion.Trigger id="my-custom-id" onclick={() => console.log("clicked")}>
