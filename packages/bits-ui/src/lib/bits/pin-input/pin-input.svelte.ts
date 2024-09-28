@@ -296,6 +296,13 @@ class PinInputRootState {
 			return;
 		}
 
+		if (this.#regexPattern) {
+			input.value = input.value.replace(
+				new RegExp(`[^${this.#regexPattern.source}]`, "g"),
+				""
+			);
+		}
+
 		const selStart = input.selectionStart;
 		const selEnd = input.selectionEnd;
 		const selDir = input.selectionDirection ?? "none";
@@ -350,11 +357,12 @@ class PinInputRootState {
 	};
 
 	#oninput = (e: Event & { currentTarget: HTMLInputElement }) => {
-		const newValue = e.currentTarget.value.slice(0, this.#maxLength.current);
-		if (newValue.length > 0 && this.#regexPattern && !this.#regexPattern.test(newValue)) {
-			e.preventDefault();
-			return;
+		const rawValue = e.currentTarget.value;
+		let newValue = rawValue;
+		if (this.#regexPattern) {
+			newValue = newValue.replace(new RegExp(`[^${this.#regexPattern.source}]`, "g"), "");
 		}
+		newValue = newValue.slice(0, this.#maxLength.current);
 
 		const maybeHasDeleted =
 			typeof this.#previousValue.current === "string" &&
@@ -437,7 +445,6 @@ class PinInputRootState {
 		"data-pin-input-input-mse": this.#mirrorSelectionEnd,
 		inputmode: this.#inputmode.current,
 		pattern: this.#regexPattern?.source,
-		maxlength: this.#maxLength.current,
 		value: this.value.current,
 		disabled: getDisabled(this.#disabled.current),
 		//
