@@ -45,6 +45,8 @@ const root = createApiSchema<DateRangePickerRootPropsWithoutHTML>({
 		isDateUnavailable: calendarRoot.props!.isDateUnavailable,
 		minValue: rangeFieldRoot.props!.minValue,
 		maxValue: rangeFieldRoot.props!.maxValue,
+		validate: rangeFieldRoot.props!.validate,
+		onInvalid: rangeFieldRoot.props!.onInvalid,
 		granularity: rangeFieldRoot.props!.granularity,
 		hideTimeZone: rangeFieldRoot.props!.hideTimeZone,
 		hourCycle: rangeFieldRoot.props!.hourCycle,

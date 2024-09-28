@@ -11,6 +11,8 @@ export { default as DateOnPlaceholderChangeProp } from "./date-on-placeholder-ch
 export { default as DateOnRangeChangeProp } from "./date-on-range-change-prop.md";
 export { default as DateRangeProp } from "./date-range-prop.md";
 export { default as DateValueProp } from "./date-value-prop.md";
+export { default as DateOnInvalidProp } from "./date-on-invalid-prop.md";
+export { default as DateValidateProp } from "./date-validate-prop.md";
 export { default as DirProp } from "./dir-prop.md";
 export { default as EscapeKeydownBehaviorProp } from "./escape-keydown-behavior-prop.md";
 export { default as GranularityProp } from "./granularity-prop.md";
