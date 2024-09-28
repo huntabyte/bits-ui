@@ -18,7 +18,6 @@ While we do allow you to set any attribute that you normally could on a button, 
 Each of the components that support render delegation accept an optional prop called `child`, which is a [Snippet](https://svelte.dev). When used, the component will pass the attributes as a snippet prop, which you can then apply to the element of your choosing. Note, if you use `child` any other children that aren't within that `child` snippet will be ignored.
 
 Let's take a look at an example using the `Accordion.Trigger` component:
-Let's take a look at an example using the `Accordion.Trigger` component:
 
 ```svelte
 <Accordion.Trigger>
