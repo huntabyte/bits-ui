@@ -1,9 +1,8 @@
 <script lang="ts">
-	import { CalendarDate } from "@internationalized/date";
 	import { DateField } from "bits-ui";
 </script>
 
-<DateField.Root minValue={new CalendarDate(2024, 8, 1)}>
+<DateField.Root>
 	<div class="flex w-full max-w-[280px] flex-col gap-1.5">
 		<DateField.Label class="block select-none text-sm font-medium">Birthday</DateField.Label>
 		<DateField.Input

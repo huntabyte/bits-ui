@@ -152,6 +152,12 @@ export type DateFieldRootPropsWithoutHTML = WithChildren<{
 	 * @defaultValue false
 	 */
 	controlledPlaceholder?: boolean;
+
+	/**
+	 * The `id` of the element which contains the error messages for the date field when the
+	 * date is invalid.
+	 */
+	errorMessageId?: string;
 }>;
 
 export type DateFieldRootProps = DateFieldRootPropsWithoutHTML;

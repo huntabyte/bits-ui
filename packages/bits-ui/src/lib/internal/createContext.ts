@@ -37,7 +37,7 @@ export function createContext<ContextValue>(
 	useSymbol = true
 ) {
 	const symbolDescription = getSymbolDescription(providerComponentName, contextName);
-	const symbol = Symbol(symbolDescription);
+	const symbol = Symbol.for(`bits-ui.${symbolDescription}`);
 	const key = symbolDescription;
 
 	function getCtx<T extends ContextValue | null | undefined = ContextValue>(

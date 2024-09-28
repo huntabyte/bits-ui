@@ -285,6 +285,12 @@ export type DatePickerRootPropsWithoutHTML = WithChildren<{
 	 * @defaultValue false
 	 */
 	controlledOpen?: boolean;
+
+	/**
+	 * The `id` of the element which contains the error messages for the date field when the
+	 * date is invalid.
+	 */
+	errorMessageId?: string;
 }>;
 
 export type DatePickerRootProps = DatePickerRootPropsWithoutHTML;

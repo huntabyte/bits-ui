@@ -1,6 +1,6 @@
 import type { Updater } from "svelte/store";
 import type { DateValue } from "@internationalized/date";
-import type { WritableBox } from "svelte-toolbelt";
+import { type WritableBox, box } from "svelte-toolbelt";
 import { onMount, untrack } from "svelte";
 import type { DateRangeFieldRootState } from "../date-range-field/date-range-field.svelte.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
@@ -81,6 +81,8 @@ export type DateFieldRootStateProps = WritableBoxedValues<{
 		locale: string;
 		hideTimeZone: boolean;
 		required: boolean;
+		errorMessageId: string | undefined;
+		isInvalidProp: boolean | undefined;
 	}>;
 
 export class DateFieldRootState {
@@ -98,6 +100,8 @@ export class DateFieldRootState {
 	hideTimeZone: DateFieldRootStateProps["hideTimeZone"];
 	required: DateFieldRootStateProps["required"];
 	onInvalid: DateFieldRootStateProps["onInvalid"];
+	errorMessageId: DateFieldRootStateProps["errorMessageId"];
+	isInvalidProp: DateFieldRootStateProps["isInvalidProp"];
 	descriptionId = useId();
 	formatter: Formatter;
 	initialSegments: SegmentValueObj;
@@ -123,7 +127,7 @@ export class DateFieldRootState {
 		 */
 		this.value = props.value;
 		this.placeholder = rangeRoot ? rangeRoot.placeholder : props.placeholder;
-		this.validate = rangeRoot ? rangeRoot.validate : props.validate;
+		this.validate = rangeRoot ? box(undefined) : props.validate;
 		this.minValue = rangeRoot ? rangeRoot.minValue : props.minValue;
 		this.maxValue = rangeRoot ? rangeRoot.maxValue : props.maxValue;
 		this.disabled = rangeRoot ? rangeRoot.disabled : props.disabled;
@@ -135,6 +139,8 @@ export class DateFieldRootState {
 		this.hideTimeZone = rangeRoot ? rangeRoot.hideTimeZone : props.hideTimeZone;
 		this.required = rangeRoot ? rangeRoot.required : props.required;
 		this.onInvalid = rangeRoot ? rangeRoot.onInvalid : props.onInvalid;
+		this.errorMessageId = rangeRoot ? rangeRoot.errorMessageId : props.errorMessageId;
+		this.isInvalidProp = props.isInvalidProp;
 		this.formatter = createFormatter(this.locale.current);
 		this.initialSegments = initializeSegmentValues(this.inferredGranularity);
 		this.segmentValues = this.initialSegments;
@@ -387,6 +393,7 @@ export class DateFieldRootState {
 
 	isInvalid = $derived.by(() => {
 		if (this.validationStatus === false) return false;
+		if (this.isInvalidProp.current) return true;
 		return true;
 	});
 
@@ -571,10 +578,10 @@ export class DateFieldRootState {
 
 		const descriptionId = this.descriptionNode?.id;
 		const hasDescription = isFirstSegment(segmentId, this.#fieldNode) && descriptionId;
-		const validationId = this.validationNode?.id;
+		const errorMsgId = this.errorMessageId?.current;
 
 		const describedBy = hasDescription
-			? `${descriptionId} ${this.isInvalid && validationId ? validationId : ""}`
+			? `${descriptionId} ${this.isInvalid && errorMsgId ? errorMsgId : ""}`
 			: undefined;
 
 		const contenteditable = !(

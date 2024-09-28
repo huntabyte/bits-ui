@@ -1,25 +1,21 @@
 import type { DateValue } from "@internationalized/date";
 import { untrack } from "svelte";
-import type { ReadableBox, WritableBox } from "svelte-toolbelt";
+import { type WritableBox, box } from "svelte-toolbelt";
 import type { DateFieldRootState } from "../date-field/date-field.svelte.js";
 import { useDateFieldRoot } from "../date-field/date-field.svelte.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { useId } from "$lib/internal/useId.js";
 import { removeDescriptionElement } from "$lib/shared/date/field/helpers.js";
 import { type Formatter, createFormatter } from "$lib/shared/date/formatter.js";
-import type {
-	DateMatcher,
-	DateOnInvalid,
-	DateValidator,
-	Granularity,
-} from "$lib/shared/date/types.js";
+import type { DateOnInvalid, DateRangeValidator, Granularity } from "$lib/shared/date/types.js";
 import type { DateRange, SegmentPart } from "$lib/shared/index.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
 import { createContext } from "$lib/internal/createContext.js";
 import { getFirstSegment } from "$lib/shared/date/field.js";
-import { getDataDisabled } from "$lib/internal/attrs.js";
+import { getDataDisabled, getDataInvalid } from "$lib/internal/attrs.js";
 import { onDestroyEffect } from "$lib/internal/onDestroyEffect.svelte.js";
+import { isBefore } from "$lib/shared/date/utils.js";
 
 export const DATE_RANGE_FIELD_ROOT_ATTR = "data-date-range-field-root";
 const DATE_RANGE_FIELD_LABEL_ATTR = "data-date-range-field-label";
@@ -33,7 +29,7 @@ type DateRangeFieldRootStateProps = WithRefProps<
 	}> &
 		ReadableBoxedValues<{
 			readonlySegments: SegmentPart[];
-			validate: DateValidator | undefined;
+			validate: DateRangeValidator | undefined;
 			onInvalid: DateOnInvalid | undefined;
 			minValue: DateValue | undefined;
 			maxValue: DateValue | undefined;
@@ -44,6 +40,7 @@ type DateRangeFieldRootStateProps = WithRefProps<
 			locale: string;
 			hideTimeZone: boolean;
 			required: boolean;
+			errorMessageId: string | undefined;
 		}>
 >;
 
@@ -66,6 +63,7 @@ export class DateRangeFieldRootState {
 	startValue: DateRangeFieldRootStateProps["startValue"];
 	endValue: DateRangeFieldRootStateProps["endValue"];
 	onInvalid: DateRangeFieldRootStateProps["onInvalid"];
+	errorMessageId: DateRangeFieldRootStateProps["errorMessageId"];
 	startFieldState: DateFieldRootState | undefined = undefined;
 	endFieldState: DateFieldRootState | undefined = undefined;
 	descriptionId = useId();
@@ -73,7 +71,6 @@ export class DateRangeFieldRootState {
 	fieldNode = $state<HTMLElement | null>(null);
 	labelNode = $state<HTMLElement | null>(null);
 	descriptionNode = $state<HTMLElement | null>(null);
-	validationNode = $state<HTMLElement | null>(null);
 	startValueComplete = $derived.by(() => this.startValue.current !== undefined);
 	endValueComplete = $derived.by(() => this.endValue.current !== undefined);
 	rangeComplete = $derived(this.startValueComplete && this.endValueComplete);
@@ -108,6 +105,7 @@ export class DateRangeFieldRootState {
 		this.locale = props.locale;
 		this.hideTimeZone = props.hideTimeZone;
 		this.required = props.required;
+		this.errorMessageId = props.errorMessageId;
 		this.formatter = createFormatter(this.locale.current);
 		this.id = props.id;
 		this.ref = props.ref;
@@ -148,7 +146,6 @@ export class DateRangeFieldRootState {
 		 */
 		$effect(() => {
 			const value = this.value.current;
-
 			untrack(() => {
 				if (value.start !== undefined && value.start !== this.startValue.current) {
 					this.setStartValue(value.start);
@@ -179,13 +176,56 @@ export class DateRangeFieldRootState {
 		});
 	}
 
-	setStartValue(value: DateValue | undefined) {
-		this.startValue.current = value;
-	}
+	validationStatus = $derived.by(() => {
+		const value = this.value.current;
+		if (value === undefined) return false as const;
+		if (value.start === undefined || value.end === undefined) return false as const;
 
-	setEndValue(value: DateValue | undefined) {
+		const msg = this.validate.current?.({
+			start: value.start,
+			end: value.end,
+		});
+
+		if (msg) {
+			return {
+				reason: "custom",
+				message: msg,
+			} as const;
+		}
+
+		const minValue = this.minValue.current;
+		if (minValue && value.start && isBefore(value.start, minValue)) {
+			return {
+				reason: "min",
+			} as const;
+		}
+
+		const maxValue = this.maxValue.current;
+
+		if (
+			(maxValue && value.end && isBefore(maxValue, value.end)) ||
+			(maxValue && value.start && isBefore(maxValue, value.start))
+		) {
+			return {
+				reason: "max",
+			} as const;
+		}
+
+		return false as const;
+	});
+
+	isInvalid = $derived.by(() => {
+		if (this.validationStatus === false) return false;
+		return true;
+	});
+
+	setStartValue = (value: DateValue | undefined) => {
+		this.startValue.current = value;
+	};
+
+	setEndValue = (value: DateValue | undefined) => {
 		this.endValue.current = value;
-	}
+	};
 
 	/**
 	 * These props are used to override those of the child fields.
@@ -205,7 +245,7 @@ export class DateRangeFieldRootState {
 				disabled: this.disabled,
 				readonly: this.readonly,
 				readonlySegments: this.readonlySegments,
-				validate: this.validate,
+				validate: box.with(() => undefined),
 				minValue: this.minValue,
 				maxValue: this.maxValue,
 				hourCycle: this.hourCycle,
@@ -215,6 +255,8 @@ export class DateRangeFieldRootState {
 				granularity: this.granularity,
 				placeholder: this.placeholder,
 				onInvalid: this.onInvalid,
+				errorMessageId: this.errorMessageId,
+				isInvalidProp: box.with(() => this.isInvalid),
 			},
 			this
 		);
@@ -231,11 +273,15 @@ export class DateRangeFieldRootState {
 		return new DateRangeFieldLabelState(props, this);
 	}
 
-	props = $derived.by(() => ({
-		id: this.id.current,
-		role: "group",
-		[DATE_RANGE_FIELD_ROOT_ATTR]: "",
-	}));
+	props = $derived.by(
+		() =>
+			({
+				id: this.id.current,
+				role: "group",
+				[DATE_RANGE_FIELD_ROOT_ATTR]: "",
+				"data-invalid": getDataInvalid(this.isInvalid),
+			}) as const
+	);
 }
 
 type DateRangeFieldLabelStateProps = WithRefProps;
@@ -271,7 +317,7 @@ class DateRangeFieldLabelState {
 			({
 				id: this.#id.current,
 				// TODO: invalid state for field
-				// "data-invalid": getDataInvalid(this.#root.isInvalid),
+				"data-invalid": getDataInvalid(this.#root.isInvalid),
 				"data-disabled": getDataDisabled(this.#root.disabled.current),
 				[DATE_RANGE_FIELD_LABEL_ATTR]: "",
 				onclick: this.#onclick,

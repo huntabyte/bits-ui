@@ -42,6 +42,7 @@ export const root = createApiSchema<DateRangeFieldRootPropsWithoutHTML>({
 		placeholder: dateFieldRoot.props!.placeholder,
 		onPlaceholderChange: dateFieldRoot.props!.onPlaceholderChange,
 		controlledPlaceholder: dateFieldRoot.props!.controlledPlaceholder,
+		errorMessageId: dateFieldRoot.props!.errorMessageId,
 		validate: dateFieldRoot.props!.validate,
 		onInvalid: dateFieldRoot.props!.onInvalid,
 		minValue: dateFieldRoot.props!.minValue,
