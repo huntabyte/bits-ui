@@ -57,4 +57,18 @@ This structure allows for a seamless user experience while providing developers 
 </PinInput.Root>
 ```
 
+## Paste Handling
+
+The `onPaste` prop allows you to sanitize pasted text. This can be useful for cleaning up pasted text, like removing hyphens or other characters that should not make it into the input. This function should return the sanitized text.
+
+```svelte
+<script lang="ts">
+	import { PinInput } from "bits-ui";
+</script>
+
+<PinInput.Root onPaste={(text) => text.replace(/-/g, "")}>
+	<!-- ... -->
+</PinInput.Root>
+```
+
 <APISection {schemas} />

@@ -135,11 +135,11 @@ class PinInputRootState {
 				unsub = addEventListener(
 					document,
 					"selectionchange",
-					this.onDocumentSelectionChange,
+					this.#onDocumentSelectionChange,
 					{ capture: true }
 				);
 
-				this.onDocumentSelectionChange();
+				this.#onDocumentSelectionChange();
 				if (document.activeElement === input) {
 					this.#isFocused.current = true;
 				}
@@ -289,7 +289,7 @@ class PinInputRootState {
 		}
 	};
 
-	onDocumentSelectionChange = () => {
+	#onDocumentSelectionChange = () => {
 		const input = this.#inputRef.current;
 		const container = this.#ref.current;
 		if (!input || !container) return;
