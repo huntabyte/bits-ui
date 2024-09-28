@@ -44,7 +44,7 @@
 	}}
 >
 	<Dialog.Trigger
-		class="relative inline-flex h-10 items-center justify-center gap-3 whitespace-nowrap rounded-[9px] bg-foreground/5 px-4 text-sm font-semibold text-foreground text-foreground/80 ring-offset-background transition-colors hover:bg-dark-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+		class="relative inline-flex h-10 items-center justify-center gap-3 whitespace-nowrap rounded-[9px] bg-foreground/5 px-4 text-sm font-medium text-foreground text-foreground/80 ring-offset-background transition-colors hover:bg-dark-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
 	>
 		Search Docs
 		<kbd
