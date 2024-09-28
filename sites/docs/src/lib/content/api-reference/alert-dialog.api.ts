@@ -115,7 +115,7 @@ const content = createApiSchema<AlertDialogContentPropsWithoutHTML>({
 
 const title = createApiSchema<AlertDialogTitlePropsWithoutHTML>({
 	title: "Title",
-	description: "An accessibile title for the alert dialog.",
+	description: "An accessible title for the alert dialog.",
 	props: {
 		level: createUnionProp({
 			definition: HeaderLevelProp,
@@ -136,7 +136,7 @@ const title = createApiSchema<AlertDialogTitlePropsWithoutHTML>({
 
 const description = createApiSchema<AlertDialogDescriptionPropsWithoutHTML>({
 	title: "Description",
-	description: "An accessibile description for the alert dialog.",
+	description: "An accessible description for the alert dialog.",
 	props: withChildProps({ elType: "HTMLDivElement" }),
 	dataAttributes: [
 		createDataAttrSchema({

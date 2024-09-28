@@ -58,7 +58,7 @@ export const root = createApiSchema<PaginationRootPropsWithoutHTML>({
 			options: ["horizontal", "vertical"],
 			default: "horizontal",
 			description:
-				"The orientation of the pagination. This determins how keyboard navigation will work with the component.",
+				"The orientation of the pagination. This determines how keyboard navigation will work with the component.",
 			definition: OrientationProp,
 		}),
 		...withChildProps({

@@ -19,8 +19,6 @@ import {
 	dirProp,
 	dismissableLayerProps,
 	escapeLayerProps,
-	floatingProps,
-	focusScopeProps,
 	forceMountProp,
 	withChildProps,
 } from "./helpers.js";

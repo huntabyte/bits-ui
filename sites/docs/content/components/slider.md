@@ -30,7 +30,7 @@ description: Allows users to select a value from a continuous range by sliding a
 </Slider.Root>
 ```
 
-## Resuable Components
+## Reusable Components
 
 Bits UI provides primitives that enable you to build your own custom slider component that can be reused throughout your application.
 

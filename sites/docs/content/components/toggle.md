@@ -40,7 +40,7 @@ For seamless state synchronization, use Svelte's `bind:pressed` directive. This 
 	let myPressed = $state(true);
 </script>
 
-<button onclick={() => (myPressed = false)}> unpress </button>
+<button onclick={() => (myPressed = false)}> un-press </button>
 
 <Toggle.Root bind:pressed={myPressed} />
 ```

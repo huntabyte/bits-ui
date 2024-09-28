@@ -102,7 +102,7 @@ export const content = createApiSchema<DialogContentPropsWithoutHTML>({
 
 export const title = createApiSchema<DialogTitlePropsWithoutHTML>({
 	title: "Title",
-	description: "An accessibile title for the dialog.",
+	description: "An accessible title for the dialog.",
 	props: {
 		level: createUnionProp({
 			options: ["1", "2", "3", "4", "5", "6"],
@@ -122,7 +122,7 @@ export const title = createApiSchema<DialogTitlePropsWithoutHTML>({
 
 export const description = createApiSchema<DialogDescriptionPropsWithoutHTML>({
 	title: "Description",
-	description: "An accessibile description for the dialog.",
+	description: "An accessible description for the dialog.",
 	props: withChildProps({ elType: "HTMLDivElement" }),
 	dataAttributes: [
 		createDataAttrSchema({

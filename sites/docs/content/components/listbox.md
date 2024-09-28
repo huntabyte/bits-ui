@@ -31,11 +31,11 @@ The Listbox component provides users with a selectable list of options. It's des
 
 ## Architecture
 
-The Listbox component is composed of several subcomponents, each with a specific role:
+The Listbox component is composed of several sub-components, each with a specific role:
 
 -   **Root**: The main container component that manages the state and context for the combobox.
 -   **Trigger**: The button or element that opens the dropdown list.
--   **Portal**: Responsible for portaling the dropdown content to the body or a custom target.
+-   **Portal**: Responsible for portalling the dropdown content to the body or a custom target.
 -   **Group**: A container for grouped items, used to group related items.
 -   **GroupHeading**: A heading for a group of items, providing a descriptive label for the group.
 -   **Item**: An individual item within the list.
@@ -272,7 +272,7 @@ For more granular control or to perform additional logic on state changes, use t
 
 <Listbox.Root
 	open={myOpen}
-	onOpenchange={(o) => {
+	onOpenChange={(o) => {
 		myOpen = o;
 		// additional logic here.
 	}}

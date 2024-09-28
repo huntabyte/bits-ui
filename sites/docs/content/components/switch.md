@@ -24,7 +24,7 @@ The Switch component provides an intuitive and accessible toggle control, allowi
 
 -   **Accessibility**: Built with WAI-ARIA guidelines in mind, ensuring keyboard navigation and screen reader support.
 -   **State Management**: Internally manages the on/off state, with options for controlled and uncontrolled usage.
--   **Stylable**: Data attributes allow for smooth transitions between states and custom styles.
+-   **Style-able**: Data attributes allow for smooth transitions between states and custom styles.
 -   **HTML Forms**: Can render a hidden input element for form submissions.
 
 ## Architecture
