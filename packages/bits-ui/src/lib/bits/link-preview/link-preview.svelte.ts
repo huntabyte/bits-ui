@@ -11,6 +11,7 @@ import { getTabbableCandidates } from "$lib/internal/focus.js";
 import { createContext } from "$lib/internal/createContext.js";
 import { useGraceArea } from "$lib/internal/useGraceArea.svelte.js";
 import { onDestroyEffect } from "$lib/internal/onDestroyEffect.svelte.js";
+import { afterSleep } from "$lib/internal/afterSleep.js";
 
 const CONTENT_ATTR = "data-link-preview-content";
 const TRIGGER_ATTR = "data-link-preview-trigger";
@@ -51,7 +52,7 @@ class LinkPreviewRootState {
 				this.containsSelection = false;
 				this.isPointerDownOnContent = false;
 
-				sleep(1).then(() => {
+				afterSleep(1, () => {
 					const isSelection = document.getSelection()?.toString() !== "";
 
 					if (isSelection) {

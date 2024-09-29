@@ -30,6 +30,7 @@ import { noop } from "$lib/internal/callbacks.js";
 import { addEventListener } from "$lib/internal/events.js";
 import { sleep } from "$lib/internal/sleep.js";
 import type { WithRefProps } from "$lib/internal/types.js";
+import { afterSleep } from "$lib/internal/afterSleep.js";
 
 export const OPEN_KEYS = [kbd.SPACE, kbd.ENTER, kbd.ARROW_UP, kbd.ARROW_DOWN];
 export const SELECTION_KEYS = [" ", kbd.ENTER];
@@ -126,11 +127,10 @@ export class SelectRootState {
 
 	focusTriggerNode = (preventScroll: boolean = true) => {
 		const node = this.triggerNode;
-		if (node) {
-			sleep(1).then(() => {
-				node.focus({ preventScroll });
-			});
-		}
+		if (!node) return;
+		afterSleep(1, () => {
+			node.focus({ preventScroll });
+		});
 	};
 
 	onNativeOptionAdd = (option: ReadableBox<SelectNativeOption>) => {
@@ -144,19 +144,17 @@ export class SelectRootState {
 	getTriggerTypeaheadCandidateNodes = () => {
 		const node = this.contentFragment;
 		if (!node) return [];
-		const candidates = Array.from(
+		return Array.from(
 			node.querySelectorAll<HTMLElement>(`[${ITEM_ATTR}]:not([data-disabled])`)
 		);
-		return candidates;
 	};
 
 	getCandidateNodes = () => {
 		const node = this.contentNode;
 		if (!node) return [];
-		const candidates = Array.from(
+		return Array.from(
 			node.querySelectorAll<HTMLElement>(`[${ITEM_ATTR}]:not([data-disabled])`)
 		);
-		return candidates;
 	};
 
 	createTrigger(props: SelectTriggerStateProps) {
