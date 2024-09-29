@@ -7,8 +7,7 @@
 
 	$effect(() => {
 		if (preventScroll) {
-			untrack(() => useBodyScrollLock(preventScroll))
+			untrack(() => useBodyScrollLock(preventScroll));
 		}
-	})
-
+	});
 </script>
