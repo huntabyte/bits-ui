@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.1
+
+### Patch Changes
+
+-   next: fix pointer event restoration ([#695](https://github.com/huntabyte/bits-ui/pull/695))
+
 ## 1.0.0-next.0
 
 ### Major Changes
