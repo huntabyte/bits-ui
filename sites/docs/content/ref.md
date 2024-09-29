@@ -94,4 +94,4 @@ The following example would not work, as the `Accordion.Trigger` component has n
 
 ## WithElementRef
 
-Bits UI exposes a [`WithElementRef`](/docs/utilities/with-element-ref) type which enables you to create your own components following the same `ref` prop pattern.
+Bits UI exposes a [`WithElementRef`](/docs/type-helpers/with-element-ref) type which enables you to create your own components following the same `ref` prop pattern.
