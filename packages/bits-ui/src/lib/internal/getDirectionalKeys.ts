@@ -6,6 +6,9 @@ export const LAST_KEYS = [kbd.ARROW_UP, kbd.PAGE_DOWN, kbd.END];
 export const FIRST_LAST_KEYS = [...FIRST_KEYS, ...LAST_KEYS];
 export const SELECTION_KEYS = [kbd.SPACE, kbd.ENTER];
 
+/**
+ * A utility function that returns the next key based on the direction and orientation.
+ */
 export function getNextKey(dir: Direction = "ltr", orientation: Orientation = "horizontal") {
 	return {
 		horizontal: dir === "rtl" ? kbd.ARROW_LEFT : kbd.ARROW_RIGHT,
@@ -13,6 +16,9 @@ export function getNextKey(dir: Direction = "ltr", orientation: Orientation = "h
 	}[orientation];
 }
 
+/**
+ * A utility function that returns the previous key based on the direction and orientation.
+ */
 export function getPrevKey(dir: Direction = "ltr", orientation: Orientation = "horizontal") {
 	return {
 		horizontal: dir === "rtl" ? kbd.ARROW_RIGHT : kbd.ARROW_LEFT,
@@ -20,6 +26,10 @@ export function getPrevKey(dir: Direction = "ltr", orientation: Orientation = "h
 	}[orientation];
 }
 
+/**
+ * A utility function that returns the next and previous keys based on the direction
+ * and orientation.
+ */
 export function getDirectionalKeys(
 	dir: Direction = "ltr",
 	orientation: Orientation = "horizontal"

@@ -1,7 +1,9 @@
 import { untrack } from "svelte";
+import { SvelteMap } from "svelte/reactivity";
 import type { TabsActivationMode } from "./types.js";
 import {
 	getAriaOrientation,
+	getAriaSelected,
 	getDataDisabled,
 	getDataOrientation,
 	getDisabled,
@@ -42,6 +44,10 @@ class TabsRootState {
 	disabled: TabsRootStateProps["disabled"];
 	rovingFocusGroup: UseRovingFocusReturn;
 	triggerIds = $state<string[]>([]);
+	// holds the trigger ID for each value to associate it with the content
+	valueToTriggerId = new SvelteMap<string, string>();
+	// holds the content ID for each value to associate it with the trigger
+	valueToContentId = new SvelteMap<string, string>();
 
 	constructor(props: TabsRootStateProps) {
 		this.#id = props.id;
@@ -65,12 +71,24 @@ class TabsRootState {
 		});
 	}
 
-	registerTrigger = (id: string) => {
+	registerTrigger = (id: string, value: string) => {
 		this.triggerIds.push(id);
+		this.valueToTriggerId.set(value, id);
+
+		// returns the deregister function
+		return () => {
+			this.triggerIds = this.triggerIds.filter((triggerId) => triggerId !== id);
+			this.valueToTriggerId.delete(value);
+		};
 	};
 
-	deRegisterTrigger = (id: string) => {
-		this.triggerIds = this.triggerIds.filter((triggerId) => triggerId !== id);
+	registerContent = (id: string, value: string) => {
+		this.valueToContentId.set(value, id);
+
+		// returns the deregister function
+		return () => {
+			this.valueToContentId.delete(value);
+		};
 	};
 
 	setValue = (v: string) => {
@@ -155,6 +173,7 @@ class TabsTriggerState {
 	#isActive = $derived.by(() => this.#root.value.current === this.#value.current);
 	#isDisabled = $derived.by(() => this.#disabled.current || this.#root.disabled.current);
 	#tabIndex = $state(0);
+	#ariaControls = $derived.by(() => this.#root.valueToContentId.get(this.#value.current));
 
 	constructor(props: TabsTriggerStateProps, root: TabsRootState) {
 		this.#root = root;
@@ -169,15 +188,16 @@ class TabsTriggerState {
 		});
 
 		$effect(() => {
-			// we want to track the value
+			// we want to track the value & id
 			const id = this.#id.current;
-			// on mount register the trigger
-			untrack(() => this.#root.registerTrigger(id));
+			const value = this.#value.current;
 
-			return () => {
-				// deregister on ID change or unmount
-				this.#root.deRegisterTrigger(id);
-			};
+			untrack(() => {
+				const deregister = this.#root.registerTrigger(id, value);
+				return () => {
+					deregister();
+				};
+			});
 		});
 
 		$effect(() => {
@@ -223,6 +243,8 @@ class TabsTriggerState {
 				"data-value": this.#value.current,
 				"data-orientation": getDataOrientation(this.#root.orientation.current),
 				"data-disabled": getDataDisabled(this.#disabled.current),
+				"aria-selected": getAriaSelected(this.#isActive),
+				"aria-controls": this.#ariaControls,
 				[TRIGGER_ATTR]: "",
 				disabled: getDisabled(this.#disabled.current),
 				tabindex: this.#tabIndex,
@@ -249,6 +271,7 @@ class TabsContentState {
 	#ref: TabsContentStateProps["ref"];
 	#value: TabsContentStateProps["value"];
 	#isActive = $derived.by(() => this.#root.value.current === this.#value.current);
+	#ariaLabelledBy = $derived.by(() => this.#root.valueToTriggerId.get(this.#value.current));
 
 	constructor(props: TabsContentStateProps, root: TabsRootState) {
 		this.#root = root;
@@ -260,16 +283,31 @@ class TabsContentState {
 			id: this.#id,
 			ref: this.#ref,
 		});
+
+		$effect(() => {
+			// we want to track the value & id
+			const id = this.#id.current;
+			const value = this.#value.current;
+
+			untrack(() => {
+				const deregister = this.#root.registerContent(id, value);
+				return () => {
+					deregister();
+				};
+			});
+		});
 	}
 
 	props = $derived.by(
 		() =>
 			({
+				id: this.#id.current,
 				role: "tabpanel",
 				hidden: getHidden(!this.#isActive),
 				tabindex: 0,
 				"data-value": this.#value.current,
 				"data-state": getTabDataState(this.#isActive),
+				"aria-labelledby": this.#ariaLabelledBy,
 				[CONTENT_ATTR]: "",
 			}) as const
 	);

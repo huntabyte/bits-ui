@@ -224,4 +224,29 @@ describe("tabs", () => {
 		expect(content1).not.toBeVisible();
 		expect(content3).toBeVisible();
 	});
+
+	it("should apply appropriate `aria-controls` and `aria-labelledby` attributes to the `Tabs.Trigger` and `Tabs.Content` components", async () => {
+		const { getByTestId } = setup();
+		const triggers = [
+			getByTestId("trigger-1"),
+			getByTestId("trigger-2"),
+			getByTestId("trigger-3"),
+		];
+
+		const contents = [
+			getByTestId("content-1"),
+			getByTestId("content-2"),
+			getByTestId("content-3"),
+		];
+
+		for (let i = 0; i < triggers.length; i++) {
+			const trigger = triggers[i]!;
+			const content = contents[i]!;
+
+			expect(content).toHaveAttribute("role", "tabpanel");
+			expect(trigger).toHaveAttribute("role", "tab");
+			expect(trigger.getAttribute("aria-controls")).toBe(content.id);
+			expect(content.getAttribute("aria-labelledby")).toBe(trigger.id);
+		}
+	});
 });

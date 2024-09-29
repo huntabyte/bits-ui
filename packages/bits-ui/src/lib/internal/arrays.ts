@@ -9,6 +9,9 @@ export function arraysAreEqual<T extends Array<unknown>>(arr1: T, arr2: T): bool
 	return arr1.every((value, index) => isEqual(value, arr2[index]));
 }
 
+/**
+ * A utility function that compares two values for equality.
+ */
 function isEqual(a: unknown, b: unknown): boolean {
 	if (Number.isNaN(a as number) && Number.isNaN(b as number)) {
 		return true;
@@ -25,6 +28,9 @@ function isEqual(a: unknown, b: unknown): boolean {
 	return Object.is(a, b);
 }
 
+/**
+ * A utility function that compares two values for deep equality.
+ */
 function isDeepEqual(a: unknown, b: unknown): boolean {
 	if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) {
 		return false;
