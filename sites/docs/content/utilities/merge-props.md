@@ -36,10 +36,10 @@ If `preventDefault()` is called:
 ```ts
 const props1 = { onclick: (e: MouseEvent) => console.log("First click") };
 const props2 = {
-  onclick: (e: MouseEvent) => {
-    console.log("Second click");
-    e.preventDefault();
-  }
+	onclick: (e: MouseEvent) => {
+		console.log("Second click");
+		e.preventDefault();
+	},
 };
 const props3 = { onclick: (e: MouseEvent) => console.log("Third click") };
 
