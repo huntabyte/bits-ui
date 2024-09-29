@@ -17,7 +17,7 @@ import {
 	createFunctionProp,
 	createNumberProp,
 	dirProp,
-	dismissableLayerProps,
+	dismissibleLayerProps,
 	escapeLayerProps,
 	floatingProps,
 	focusScopeProps,
@@ -88,7 +88,7 @@ export const content = createApiSchema<LinkPreviewContentPropsWithoutHTML>({
 	description: "The contents of the link preview which are displayed when the preview is open.",
 	props: {
 		...floatingProps(),
-		...dismissableLayerProps,
+		...dismissibleLayerProps,
 		...escapeLayerProps,
 		...focusScopeProps,
 		dir: dirProp,
@@ -109,7 +109,7 @@ export const contentStatic = createApiSchema<LinkPreviewContentStaticPropsWithou
 	description:
 		"The contents of the link preview which are displayed when the preview is open. (Static/No Floating UI)",
 	props: {
-		...dismissableLayerProps,
+		...dismissibleLayerProps,
 		...escapeLayerProps,
 		...focusScopeProps,
 		dir: dirProp,

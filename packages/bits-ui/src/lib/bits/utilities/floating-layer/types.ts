@@ -35,7 +35,9 @@ export type FloatingLayerContentProps = {
 	alignOffset?: number | undefined;
 
 	/**
-	 * The distance in pixels from the anchor to the floating element.
+	 * This describes the padding between the arrow and the edges of the floating element.
+	 * If your floating element has border-radius, this will prevent it from overflowing
+	 * the corners.
 	 */
 	arrowPadding?: number;
 

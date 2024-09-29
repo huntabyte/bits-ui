@@ -1,4 +1,4 @@
-import type { InteractOutsideEvent } from "../utilities/dismissable-layer/types.js";
+import type { InteractOutsideEvent } from "../utilities/dismissible-layer/types.js";
 import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
 import type {
 	PrimitiveAnchorAttributes,

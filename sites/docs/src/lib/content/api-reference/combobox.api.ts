@@ -35,7 +35,7 @@ import {
 	createStringProp,
 	createUnionProp,
 	dirProp,
-	dismissableLayerProps,
+	dismissibleLayerProps,
 	escapeLayerProps,
 	floatingProps,
 	focusScopeProps,
@@ -120,7 +120,7 @@ export const content = createApiSchema<ComboboxContentPropsWithoutHTML>({
 	props: {
 		...floatingProps(),
 		...escapeLayerProps,
-		...dismissableLayerProps,
+		...dismissibleLayerProps,
 		onCloseAutoFocus: onCloseAutoFocusProp,
 		preventOverflowTextSelection: preventOverflowTextSelectionProp,
 		dir: dirProp,
@@ -176,7 +176,7 @@ export const contentStatic = createApiSchema<ComboboxContentStaticPropsWithoutHT
 	description: "The element which contains the combobox's items. (Static/No Floating UI)",
 	props: {
 		...escapeLayerProps,
-		...dismissableLayerProps,
+		...dismissibleLayerProps,
 		...focusScopeProps,
 		preventScroll: preventScrollProp,
 		preventOverflowTextSelection: preventOverflowTextSelectionProp,

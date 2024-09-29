@@ -17,7 +17,7 @@ import {
 	createEnumDataAttr,
 	createFunctionProp,
 	dirProp,
-	dismissableLayerProps,
+	dismissibleLayerProps,
 	escapeLayerProps,
 	floatingProps,
 	focusScopeProps,
@@ -71,7 +71,7 @@ export const content = createApiSchema<PopoverContentPropsWithoutHTML>({
 	description: "The contents of the popover which are displayed when the popover is open.",
 	props: {
 		...floatingProps(),
-		...dismissableLayerProps,
+		...dismissibleLayerProps,
 		...escapeLayerProps,
 		...focusScopeProps,
 		preventOverflowTextSelection: preventOverflowTextSelectionProp,
@@ -97,7 +97,7 @@ export const contentStatic = createApiSchema<PopoverContentStaticPropsWithoutHTM
 	description:
 		"The contents of the popover which are displayed when the popover is open. (Static/No Floating UI)",
 	props: {
-		...dismissableLayerProps,
+		...dismissibleLayerProps,
 		...escapeLayerProps,
 		...focusScopeProps,
 		preventOverflowTextSelection: preventOverflowTextSelectionProp,

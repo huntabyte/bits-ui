@@ -1,6 +1,6 @@
 import type { FloatingLayerContentProps } from "../utilities/floating-layer/types.js";
 import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
-import type { DismissableLayerProps } from "../utilities/dismissable-layer/types.js";
+import type { DismissibleLayerProps } from "../utilities/dismissible-layer/types.js";
 import type { EscapeLayerProps } from "../utilities/escape-layer/types.js";
 import type { OnChangeFn, WithChild, WithChildren, Without } from "$lib/internal/types.js";
 import type { PrimitiveButtonAttributes, PrimitiveDivAttributes } from "$lib/shared/attributes.js";
@@ -137,7 +137,7 @@ export type TooltipContentPropsWithoutHTML = WithChild<
 		| "hideWhenDetached"
 		| "dir"
 	> &
-		Omit<DismissableLayerProps, "onInteractOutsideStart"> &
+		Omit<DismissibleLayerProps, "onInteractOutsideStart"> &
 		EscapeLayerProps & {
 			/**
 			 * When `true`, the tooltip will be forced to mount in the DOM.
@@ -154,7 +154,7 @@ export type TooltipContentProps = TooltipContentPropsWithoutHTML &
 
 export type TooltipContentStaticPropsWithoutHTML = WithChild<
 	Pick<FloatingLayerContentProps, "dir"> &
-		Omit<DismissableLayerProps, "onInteractOutsideStart"> &
+		Omit<DismissibleLayerProps, "onInteractOutsideStart"> &
 		EscapeLayerProps & {
 			/**
 			 * When `true`, the tooltip will be forced to mount in the DOM.

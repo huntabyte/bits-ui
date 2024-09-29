@@ -7,8 +7,8 @@
 		id = useId(),
 		children,
 		child,
-		height = 5,
 		width = 10,
+		height = 5,
 		...restProps
 	}: ArrowProps = $props();
 

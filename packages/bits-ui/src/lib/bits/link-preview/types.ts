@@ -1,5 +1,5 @@
 import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
-import type { DismissableLayerProps } from "../utilities/dismissable-layer/types.js";
+import type { DismissibleLayerProps } from "../utilities/dismissible-layer/types.js";
 import type { EscapeLayerProps } from "../utilities/escape-layer/types.js";
 import type { FloatingLayerContentProps } from "../utilities/floating-layer/types.js";
 import type { PortalProps } from "../utilities/portal/types.js";
@@ -83,7 +83,7 @@ export type LinkPreviewContentPropsWithoutHTML = WithChild<
 		| "hideWhenDetached"
 		| "dir"
 	> &
-		Omit<DismissableLayerProps, "onInteractOutsideStart"> &
+		Omit<DismissibleLayerProps, "onInteractOutsideStart"> &
 		EscapeLayerProps & {
 			/**
 			 * When `true`, the link preview content will be forced to mount in the DOM.
@@ -100,7 +100,7 @@ export type LinkPreviewContentProps = LinkPreviewContentPropsWithoutHTML &
 
 export type LinkPreviewContentStaticPropsWithoutHTML = WithChild<
 	Pick<FloatingLayerContentProps, "dir"> &
-		Omit<DismissableLayerProps, "onInteractOutsideStart"> &
+		Omit<DismissibleLayerProps, "onInteractOutsideStart"> &
 		EscapeLayerProps & {
 			/**
 			 * When `true`, the link preview content will be forced to mount in the DOM.

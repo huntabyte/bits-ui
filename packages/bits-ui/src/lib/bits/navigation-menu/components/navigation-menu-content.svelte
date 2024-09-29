@@ -6,7 +6,7 @@
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import Portal from "$lib/bits/utilities/portal/portal.svelte";
 	import { PresenceLayer } from "$lib/bits/utilities/presence-layer/index.js";
-	import DismissableLayer from "$lib/bits/utilities/dismissable-layer/dismissable-layer.svelte";
+	import DismissibleLayer from "$lib/bits/utilities/dismissible-layer/dismissible-layer.svelte";
 	import EscapeLayer from "$lib/bits/utilities/escape-layer/escape-layer.svelte";
 	import Mounted from "$lib/bits/utilities/mounted.svelte";
 
@@ -51,7 +51,7 @@
 					contentState.onEscapeKeydown(e);
 				}}
 			>
-				<DismissableLayer
+				<DismissibleLayer
 					enabled={contentState.isPresent}
 					{id}
 					onInteractOutside={(e) => {
@@ -65,18 +65,18 @@
 						contentState.onFocusOutside(e);
 					}}
 				>
-					{#snippet children({ props: dismissableProps })}
+					{#snippet children({ props: dismissibleProps })}
 						{#if child}
 							<Mounted bind:isMounted />
-							{@render child({ props: mergeProps(dismissableProps, mergedProps) })}
+							{@render child({ props: mergeProps(dismissibleProps, mergedProps) })}
 						{:else}
 							<Mounted bind:isMounted />
-							<div {...mergeProps(dismissableProps, mergedProps)}>
+							<div {...mergeProps(dismissibleProps, mergedProps)}>
 								{@render contentChildren?.()}
 							</div>
 						{/if}
 					{/snippet}
-				</DismissableLayer>
+				</DismissibleLayer>
 			</EscapeLayer>
 		{/snippet}
 	</PresenceLayer>

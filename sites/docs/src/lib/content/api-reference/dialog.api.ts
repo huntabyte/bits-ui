@@ -16,7 +16,7 @@ import {
 	createDataAttrSchema,
 	createFunctionProp,
 	createUnionProp,
-	dismissableLayerProps,
+	dismissibleLayerProps,
 	escapeLayerProps,
 	focusScopeProps,
 	forceMountProp,
@@ -80,7 +80,7 @@ export const content = createApiSchema<DialogContentPropsWithoutHTML>({
 	description: "The content displayed within the dialog modal.",
 	props: {
 		...escapeLayerProps,
-		...dismissableLayerProps,
+		...dismissibleLayerProps,
 		...focusScopeProps,
 		forceMount: forceMountProp,
 		preventOverflowTextSelection: preventOverflowTextSelectionProp,

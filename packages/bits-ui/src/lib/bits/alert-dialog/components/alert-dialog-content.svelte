@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
 	import type { ContentProps } from "../index.js";
-	import DismissableLayer from "$lib/bits/utilities/dismissable-layer/dismissable-layer.svelte";
+	import DismissibleLayer from "$lib/bits/utilities/dismissible-layer/dismissible-layer.svelte";
 	import EscapeLayer from "$lib/bits/utilities/escape-layer/escape-layer.svelte";
 	import FocusScope from "$lib/bits/utilities/focus-scope/focus-scope.svelte";
 	import PresenceLayer from "$lib/bits/utilities/presence-layer/presence-layer.svelte";
@@ -68,7 +68,7 @@
 						contentState.root.handleClose();
 					}}
 				>
-					<DismissableLayer
+					<DismissibleLayer
 						{...mergedProps}
 						enabled={present.current}
 						{interactOutsideBehavior}
@@ -96,7 +96,7 @@
 								</div>
 							{/if}
 						</TextSelectionLayer>
-					</DismissableLayer>
+					</DismissibleLayer>
 				</EscapeLayer>
 			{/snippet}
 		</FocusScope>

@@ -27,7 +27,7 @@ import {
 	createStringProp,
 	createUnionProp,
 	dirProp,
-	dismissableLayerProps,
+	dismissibleLayerProps,
 	escapeLayerProps,
 	floatingProps,
 	focusScopeProps,
@@ -101,7 +101,7 @@ const subProps = {
 const contentProps = {
 	...floatingProps(),
 	...escapeLayerProps,
-	...dismissableLayerProps,
+	...dismissibleLayerProps,
 	...focusScopeProps,
 	forceMount: forceMountProp,
 	preventOverflowTextSelection: preventOverflowTextSelectionProp,
@@ -120,7 +120,7 @@ const contentProps = {
 
 const contentStaticProps = {
 	...escapeLayerProps,
-	...dismissableLayerProps,
+	...dismissibleLayerProps,
 	...focusScopeProps,
 	preventScroll: preventScrollProp,
 	forceMount: forceMountProp,
@@ -144,7 +144,7 @@ const subContentProps = contentProps satisfies PropObj<
 
 const subContentStaticProps = {
 	...escapeLayerProps,
-	...dismissableLayerProps,
+	...dismissibleLayerProps,
 	...focusScopeProps,
 	forceMount: forceMountProp,
 	preventOverflowTextSelection: preventOverflowTextSelectionProp,

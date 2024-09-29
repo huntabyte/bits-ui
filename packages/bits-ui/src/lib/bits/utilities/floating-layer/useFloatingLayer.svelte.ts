@@ -12,13 +12,13 @@ import {
 	size,
 } from "@floating-ui/dom";
 import { box } from "svelte-toolbelt";
+import { ElementSize } from "runed";
 import type { Arrayable, WithRefProps } from "$lib/internal/types.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
 import { isNotNull } from "$lib/internal/is.js";
 import { styleToString } from "$lib/internal/style.js";
 import { useId } from "$lib/internal/useId.js";
 import type { Box, ReadableBoxedValues } from "$lib/internal/box.svelte.js";
-import { useSize } from "$lib/internal/useSize.svelte.js";
 import { useFloating } from "$lib/internal/floating-svelte/useFloating.svelte.js";
 import type { Measurable, UseFloatingReturn } from "$lib/internal/floating-svelte/types.js";
 import type { Direction, StyleProperties } from "$lib/shared/index.js";
@@ -126,16 +126,9 @@ class FloatingContentState {
 		undefined as unknown as FloatingContentStateProps["updatePositionStrategy"];
 	onPlaced: FloatingContentStateProps["onPlaced"];
 	enabled: FloatingContentStateProps["enabled"];
-	#arrowSize: {
-		readonly value:
-			| {
-					width: number;
-					height: number;
-			  }
-			| undefined;
-	} = { value: undefined };
-	#arrowWidth = $derived(this.#arrowSize.value?.width ?? 0);
-	#arrowHeight = $derived(this.#arrowSize.value?.height ?? 0);
+	#arrowSize = new ElementSize(() => this.arrowRef.current ?? undefined);
+	#arrowWidth = $derived(this.#arrowSize?.width ?? 0);
+	#arrowHeight = $derived(this.#arrowSize?.height ?? 0);
 	#desiredPlacement = $derived.by(
 		() =>
 			(this.#side?.current +
@@ -278,7 +271,6 @@ class FloatingContentState {
 		this.style = props.style;
 		this.root = root;
 		this.enabled = props.enabled;
-		this.#arrowSize = useSize(this.arrowRef);
 		this.wrapperId = props.wrapperId;
 
 		if (props.customAnchor) {
@@ -369,6 +361,7 @@ class FloatingArrowState {
 			({
 				id: this.#id.current,
 				style: this.#content.arrowStyle,
+				"data-side": this.#content.placedSide,
 			}) as const
 	);
 }
