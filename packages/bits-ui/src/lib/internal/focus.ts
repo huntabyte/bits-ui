@@ -18,6 +18,9 @@ export function handleCalendarInitialFocus(calendar: HTMLElement) {
 	if (firstDay) return focusWithoutScroll(firstDay);
 }
 
+/**
+ * A utility function that focuses an element without scrolling.
+ */
 export function focusWithoutScroll(element: HTMLElement) {
 	const scrollPosition = {
 		x: window.pageXOffset || document.documentElement.scrollLeft,
@@ -27,6 +30,9 @@ export function focusWithoutScroll(element: HTMLElement) {
 	window.scrollTo(scrollPosition.x, scrollPosition.y);
 }
 
+/**
+ * A utility function that focuses an element.
+ */
 export function focus(element?: FocusableTarget | null, { select = false } = {}) {
 	if (!(element && element.focus)) return;
 	const previouslyFocusedElement = document.activeElement;
@@ -92,6 +98,10 @@ export function getTabbableCandidates(container: HTMLElement) {
 	return nodes;
 }
 
+/**
+ * A utility function that returns the first and last elements within a container that are
+ * visible and focusable.
+ */
 export function getTabbableEdges(container: HTMLElement) {
 	const candidates = getTabbableCandidates(container);
 	const first = findVisible(candidates, container);

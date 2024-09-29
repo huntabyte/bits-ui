@@ -12,14 +12,14 @@
 
 	function getTarget() {
 		if (!isBrowser || disabled) return null;
-		let target: HTMLElement | null | DocumentFragment | Element = null;
+		let localTarget: HTMLElement | null | DocumentFragment | Element = null;
 		if (typeof to === "string") {
-			target = document.querySelector(to);
-			if (target === null) {
+			localTarget = document.querySelector(to);
+			if (localTarget === null) {
 				throw new Error(`Target element "${to}" not found.`);
 			}
 		} else if (to instanceof HTMLElement || to instanceof DocumentFragment) {
-			target = to;
+			localTarget = to;
 		} else {
 			throw new TypeError(
 				`Unknown portal target type: ${
@@ -28,7 +28,7 @@
 			);
 		}
 
-		return target;
+		return localTarget;
 	}
 
 	let instance: any;

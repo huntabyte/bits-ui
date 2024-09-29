@@ -19,7 +19,7 @@ export type WithChild<
 	SnippetProps extends Record<PropertyKey, unknown> = { _default: never },
 	/**
 	 * The underlying DOM element being rendered. You can bind to this prop to
-	 * programatically interact with the element.
+	 * programmatically interact with the element.
 	 */
 	Ref = HTMLElement,
 > = Omit<Props, "child" | "children"> & {
