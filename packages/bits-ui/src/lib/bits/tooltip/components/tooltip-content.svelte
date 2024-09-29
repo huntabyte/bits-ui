@@ -23,7 +23,6 @@
 		onInteractOutside,
 		onEscapeKeydown,
 		forceMount = false,
-		arrowOffset = 0,
 		...restProps
 	}: ContentProps = $props();
 
@@ -44,7 +43,6 @@
 		sticky,
 		hideWhenDetached,
 		collisionPadding,
-		arrowOffset,
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, floatingProps, contentState.props));

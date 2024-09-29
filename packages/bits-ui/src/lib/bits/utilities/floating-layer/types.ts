@@ -42,11 +42,6 @@ export type FloatingLayerContentProps = {
 	arrowPadding?: number;
 
 	/**
-	 * The number of pixels to offset the arrow from the edges of the floating element.
-	 */
-	arrowOffset?: number;
-
-	/**
 	 * When `true`, overrides the `side` and `align` options to prevent collisions
 	 * with the boundary edges.
 	 *
