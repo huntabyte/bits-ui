@@ -112,7 +112,7 @@ It's recommended to use the `Combobox` primitives to build your own custom combo
 </script>
 
 <Combobox.Root bind:value bind:open {...mergedRootProps}>
-	<Combobox.Input {....mergedInputProps} />
+	<Combobox.Input {...mergedInputProps} />
 	<Combobox.Trigger>Open</Combobox.Trigger>
 	<Combobox.Portal>
 		<Combobox.Content {...contentProps}>
