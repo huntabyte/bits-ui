@@ -30,7 +30,9 @@
 				<Accordion.Trigger
 					class="flex w-full flex-1 items-center justify-between py-5 text-[15px] font-medium transition-all [&[data-state=open]>span>svg]:rotate-180"
 				>
-					{item.title}
+					<span class="w-full text-left">
+						{item.title}
+					</span>
 					<span
 						class="inline-flex size-8 items-center justify-center rounded-[7px] bg-transparent transition-all hover:bg-dark-10"
 					>
