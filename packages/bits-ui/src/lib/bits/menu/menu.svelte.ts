@@ -417,7 +417,7 @@ class MenuContentState {
 				onfocus: this.#onfocus,
 				style: {
 					pointerEvents: "auto",
-				}
+				},
 			}) as const
 	);
 
