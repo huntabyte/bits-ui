@@ -17,7 +17,7 @@ You can use any CSS transitions or animations you want with this approach, which
 
 ## Force Mounting
 
-On each component that we conditionally render, a `forceMount` prop is exposed. If set to `true`, the component will be forced to mount in the DOM and become visible to the user. You can use this prop in conjunction with the [delegated](/docs/delegation) `child` snippet to conditionally render the component and apply Svelte Transitions or another animation library.
+On each component that we conditionally render, a `forceMount` prop is exposed. If set to `true`, the component will be forced to mount in the DOM and become visible to the user. You can use this prop in conjunction with the [delegated](/docs/child-snippet) `child` snippet to conditionally render the component and apply Svelte Transitions or another animation library.
 
 The `child` snippet exposes a prop that you can use to conditionally render the element and apply your transitions.
 

@@ -415,6 +415,7 @@ class MenuContentState {
 				onblur: this.#onblur,
 				onpointermove: this.#onpointermove,
 				onfocus: this.#onfocus,
+				dir: this.parentMenu.root.dir.current,
 				style: {
 					pointerEvents: "auto",
 				},
@@ -551,7 +552,7 @@ class MenuItemState {
 			if (!isHTMLElement(e.currentTarget)) return;
 			e.currentTarget.click();
 			/**
-			 * We prevent default browser behaviour for selection keys as they should trigger
+			 * We prevent default browser behavior for selection keys as they should trigger
 			 * a selection only:
 			 * - prevents space from scrolling the page.
 			 * - if keydown causes focus to move, prevents keydown from firing on the new target.
@@ -601,9 +602,9 @@ class MenuItemState {
 
 class MenuSubTriggerState {
 	#item: MenuItemSharedState;
-	// The menu this subtrigger item belongs within
+	// The menu this sub-trigger item belongs within
 	#content: MenuContentState;
-	// the menu this subtrigger item opens
+	// the menu this sub-trigger item opens
 	#submenu: MenuMenuState;
 	#openTimer = $state<number | null>(null);
 

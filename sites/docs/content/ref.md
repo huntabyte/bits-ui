@@ -1,11 +1,11 @@
 ---
 title: Ref
-description: Learn about the ref prop.
+description: Learn about the $bindable ref prop.
 ---
 
-Bits UI components that render an underlying HTML element expose a `ref` prop, which gives you a reference to the underlying element.
+Bits UI components with underlying HTML elements provide a `ref` prop for direct element access.
 
-For example, the `Accordion.Trigger` component exposes a `ref` prop, which gives you a reference to the `HTMLButtonElement` that is rendered by the component.
+For example, `Accordion.Trigger`'s `ref` gives access to its rendered `HTMLButtonElement`:
 
 ```svelte
 <script lang="ts">
@@ -27,7 +27,7 @@ For example, the `Accordion.Trigger` component exposes a `ref` prop, which gives
 
 ## With delegation
 
-Bits UI tracks the reference to the underlying element using its `id` attribute. This means that even if you use a custom element/component with [delegation](/docs/delegation), the `ref` prop will still work.
+Bits UI tracks the reference to the underlying element using its `id` attribute. This means that even if you use a custom element/component with [delegation](/docs/child-snippet), the `ref` prop will still work.
 
 ```svelte
 <script lang="ts">
@@ -91,6 +91,10 @@ The following example would not work, as the `Accordion.Trigger` component has n
 	{/snippet}
 </Accordion.Trigger>
 ```
+
+## Why Possibly `null`?
+
+The `ref` prop may be `null` until the element has mounted, especially with the many components that use conditional rendering. This `HTMLElement | null` type mimics browser DOM methods like `getElementById`.
 
 ## WithElementRef
 

@@ -420,4 +420,8 @@ To trigger side effects when an item is highlighted or unhighlighted, you can us
 </Listbox.Item>
 ```
 
+## Select vs. Listbox
+
+Use `Select` as a drop-in replacement for `<select>`, supporting form auto-fill. Use `Listbox` for multi-select or custom single-select needs outside forms. For single-select within forms, prefer `Select`.
+
 <APISection {schemas} />

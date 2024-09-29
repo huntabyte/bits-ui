@@ -116,8 +116,8 @@ export const navigation: Navigation = {
 					icon: Compass,
 				},
 				{
-					title: "Delegation",
-					href: "/docs/delegation",
+					title: "Child Snippet",
+					href: "/docs/child-snippet",
 					items: [],
 					icon: CodeBlock,
 				},

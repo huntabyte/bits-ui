@@ -85,7 +85,7 @@ For each individual item, you need an `Accordion.Item`, `Accordion.Header`, `Acc
 </Accordion.Item>
 ```
 
-We used the [`WithoutChildrenOrChild`](/docs/type-helpers/without-children-or-child) type helper to omit the `child` and `children` snippet props from `Accordion.ItemProps`, since we are opting out of using [Delegation](/docs/delegation) and are already taking care of rendering the children as text via the `content` prop.
+We used the [`WithoutChildrenOrChild`](/docs/type-helpers/without-children-or-child) type helper to omit the `child` and `children` snippet props from `Accordion.ItemProps`, since we are opting out of using [delegation](/docs/child-snippet) and are already taking care of rendering the children as text via the `content` prop.
 
 For our `MyAccordion` component, we'll accept all the props that `Accordion.Root` accepts, as well as an additional `items` prop that will be used to render the `MyAccordionItem` components.
 

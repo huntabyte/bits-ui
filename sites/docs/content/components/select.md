@@ -302,4 +302,8 @@ The `Select.ScrollUpButton` and `Select.ScrollDownButton` components are used to
 
 The `Select` component does not support multiple selections. If you're looking for a multi-select component, check out the [Listbox](/docs/components/listbox) component.
 
+## Select vs. Listbox
+
+Use `Select` as a drop-in replacement for `<select>`, supporting form auto-fill. Use `Listbox` for multi-select or custom single-select needs outside forms. For single-select within forms, prefer `Select`.
+
 <APISection {schemas} />

@@ -273,7 +273,7 @@ export function childSnippet(definition?: string | Component): PropSchema {
 			definition: definition || ChildDefaultSnippetProps,
 		},
 		description:
-			"Use render delegation to render your own element. See [delegation](/docs/delegation) docs for more information.",
+			"Use render delegation to render your own element. See [Child Snippet](/docs/child-snippet) docs for more information.",
 	};
 }
 

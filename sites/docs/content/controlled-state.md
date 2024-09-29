@@ -3,23 +3,47 @@ title: Controlled State
 description: Learn how to use controlled state in Bits UI components.
 ---
 
-Sometimes, Bits UI doesn't know what's best for your specific use case. In these cases, you can use controlled state to ensure the component remains in a specific state depending on your needs.
+Bits UI components offer flexibility in state management, allowing you to choose between uncontrolled and controlled states. This guide will help you understand when and how to use controlled state effectively.
 
-## Uncontrolled State
+## Understanding State Management
 
-By default, Bits UI components are uncontrolled. This means that the component is responsible for managing its own state. You can `bind:` to that state for a reference to it, but the component decides when and how to update that state.
+### Uncontrolled State (Default)
 
-For example, the `Accordion.Root` component manages its own `value` state. When you click or press on any of the triggers, the component will update the `value` state to the value of the trigger that was clicked.
+By default, Bits UI components operate in an uncontrolled state. In this mode:
 
-You can update the `value` state of the `Accordion.Root` component yourself from the outside, but you can't prevent the component from updating it. Preventing the component from updating the state is where controlled state comes in.
+-   The component internally manages its own state.
+-   You can `bind:` to the state for reference.
+-   The component decides when and how to update its state.
+-   You can update the state of the component yourself from the outside, but you can't prevent the component from updating it.
 
-## Controlled State
+Here's an example of an uncontrolled Accordion:
 
-Controlled state is when you, as the user, are responsible for updating the state of the component. The component will let you know when it thinks it needs to update the state, but you'll be responsible for whether that update happens.
+```svelte
+<script lang="ts">
+	import { Accordion } from "bits-ui";
+	let myValue = $state("");
+</script>
 
-This is useful when you have specific conditions that should be met before the component can update, or anything else your requirements dictate.
+<Accordion.Root bind:value={myValue} type="single">
+	<!-- Accordion content -->
+</Accordion.Root>
+```
 
-To effectively use controlled state, you'll need to set the `controlled<state>` prop to `true` on the component, and you'll also need to pass a local state variable to the component that you'll update yourself. You'll use the `on<state>Change` callback to update the local state variable.
+In this example, the `Accordion.Root` component manages its value state internally. When a user interacts with the accordion, the component updates the value automatically. The local `myValue` is synced with the component's internal `value` state in both directions.
+
+### Controlled State
+
+Controlled state puts you in charge of the component's state management. Use this approach when:
+
+-   You need to meet specific conditions before state updates.
+-   You want to synchronize the component's state with other parts of your application.
+-   You require custom logic for state updates.
+
+To implement controlled state:
+
+-   Set the `controlled<State>` prop to true (e.g., `controlledValue`).
+-   Pass a local state variable to the component.
+-   Use the `on<State>`Change callback to update the local state (e.g., `onValueChange`).
 
 Here's an example of how you might use controlled state with the `Accordion` component:
 
@@ -27,12 +51,29 @@ Here's an example of how you might use controlled state with the `Accordion` com
 <script lang="ts">
 	import { Accordion } from "bits-ui";
 
-	let myValue = $state<string>("");
+	let myValue = $state("");
 </script>
 
-<Accordion.Root controlledValue value={myValue} onValueChange={(v) => (myValue = v)}>
+<Accordion.Root type="single" controlledValue value={myValue} onValueChange={(v) => (myValue = v)}>
 	<!-- ... -->
 </Accordion.Root>
 ```
 
-In the example above, we're using the `controlledValue` prop to tell the `Accordion.Root` component that it should be in controlled state. If we were to remove the `onValueChange` callback, the component wouldn't respond to user interactions and wouldn't update the `value` state.
+In this controlled state example:
+
+-   We set `controlledValue` to true.
+-   We pass our local `myValue` state to the value prop.
+-   We use `onValueChange` to handle state updates
+
+## Best Practices
+
+-   **Choose wisely**: Use controlled state only when necessary. Uncontrolled state is simpler and sufficient for most use cases.
+-   **Consistent control**: If you opt for controlled state, ensure you handle all related state updates to maintain consistency.
+-   **Performance consideration**: Be mindful of potential performance impacts when using controlled state, especially with frequently updating components.
+
+## Common Controlled State Scenarios
+
+-   Form validation before state updates
+-   Syncing component state with external data sources
+-   Implementing undo/redo functionality
+-   Creating interdependent component behaviors
