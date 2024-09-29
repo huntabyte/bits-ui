@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.3
+
+### Patch Changes
+
+-   fix: align `Tabs` component ARIA attribute with W3C spec ([#702](https://github.com/huntabyte/bits-ui/pull/702))
+
 ## 1.0.0-next.2
 
 ### Patch Changes
