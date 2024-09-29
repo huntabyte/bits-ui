@@ -18,10 +18,10 @@
 			<div
 				class="inline-flex h-[29px] items-center justify-center rounded-button bg-accent px-3 font-mono text-[17px] font-medium leading-tight tracking-tight dark:text-neutral-900"
 			>
-				<h3>
-					<span class="text-foreground/65 dark:text-neutral-900/50"
+				<h3 class="font-semibold">
+					<span class="font-normal text-foreground/65 dark:text-neutral-900/50"
 						>{$page.data.title.replaceAll(" ", "")}.</span
-					><span class="font-semibold">{schema.title}</span>
+					>{schema.title}
 				</h3>
 			</div>
 			<P class="!mb-5 !mt-2">{@html parseMarkdown(schema.description)}</P>
