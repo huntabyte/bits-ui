@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { DismissableLayerImplProps } from "./types.js";
-	import { useDismissableLayer } from "./useDismissableLayer.svelte.js";
+	import type { DismissibleLayerImplProps } from "./types.js";
+	import { useDismissibleLayer } from "./useDismissibleLayer.svelte.js";
 	import { noop } from "$lib/internal/noop.js";
 
 	let {
@@ -13,9 +13,9 @@
 		children,
 		enabled,
 		isValidEvent = () => false,
-	}: DismissableLayerImplProps = $props();
+	}: DismissibleLayerImplProps = $props();
 
-	const dismissableLayerState = useDismissableLayer({
+	const dismissibleLayerState = useDismissibleLayer({
 		id: box.with(() => id),
 		interactOutsideBehavior: box.with(() => interactOutsideBehavior),
 		onInteractOutside: box.with(() => onInteractOutside),
@@ -26,4 +26,4 @@
 	});
 </script>
 
-{@render children?.({ props: dismissableLayerState.props })}
+{@render children?.({ props: dismissibleLayerState.props })}

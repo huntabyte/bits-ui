@@ -28,7 +28,7 @@ import {
 	createDataAttrSchema,
 	createFunctionProp,
 	createUnionProp,
-	dismissableLayerProps,
+	dismissibleLayerProps,
 	escapeLayerProps,
 	focusScopeProps,
 	forceMountProp,
@@ -92,7 +92,7 @@ const content = createApiSchema<AlertDialogContentPropsWithoutHTML>({
 	title: "Content",
 	description: "The content displayed within the alert dialog modal.",
 	props: {
-		...dismissableLayerProps,
+		...dismissibleLayerProps,
 		...escapeLayerProps,
 		...focusScopeProps,
 		forceMount: forceMountProp,

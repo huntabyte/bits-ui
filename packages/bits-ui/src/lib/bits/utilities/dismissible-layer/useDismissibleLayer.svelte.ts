@@ -1,7 +1,7 @@
 import { untrack } from "svelte";
 import { type ReadableBox, type WritableBox, box } from "svelte-toolbelt";
 import type {
-	DismissableLayerImplProps,
+	DismissibleLayerImplProps,
 	InteractOutsideBehaviorType,
 	InteractOutsideEvent,
 	InteractOutsideInterceptEventType,
@@ -18,7 +18,7 @@ import { getOwnerDocument, isOrContainsTarget } from "$lib/internal/elements.js"
 import { isElement } from "$lib/internal/is.js";
 import { onDestroyEffect } from "$lib/internal/onDestroyEffect.svelte.js";
 
-const layers = new Map<DismissableLayerState, ReadableBox<InteractOutsideBehaviorType>>();
+const layers = new Map<DismissibleLayerState, ReadableBox<InteractOutsideBehaviorType>>();
 
 const interactOutsideStartEvents = [
 	"pointerdown",
@@ -30,11 +30,11 @@ const interactOutsideEndEvents = [
 	"click",
 ] satisfies InteractOutsideInterceptEventType[];
 
-type DismissableLayerStateProps = ReadableBoxedValues<
-	Required<Omit<DismissableLayerImplProps, "children">>
+type DismissibleLayerStateProps = ReadableBoxedValues<
+	Required<Omit<DismissibleLayerImplProps, "children">>
 >;
 
-export class DismissableLayerState {
+export class DismissibleLayerState {
 	#interactOutsideStartProp: ReadableBox<EventCallback<InteractOutsideEvent>>;
 	#interactOutsideProp: ReadableBox<EventCallback<InteractOutsideEvent>>;
 	#behaviorType: ReadableBox<InteractOutsideBehaviorType>;
@@ -53,11 +53,11 @@ export class DismissableLayerState {
 	#documentObj = undefined as unknown as Document;
 	#enabled: ReadableBox<boolean>;
 	#isFocusInsideDOMTree = $state(false);
-	#onFocusOutside: DismissableLayerStateProps["onFocusOutside"];
+	#onFocusOutside: DismissibleLayerStateProps["onFocusOutside"];
 	currNode = $state<HTMLElement | null>(null);
-	#isValidEventProp: DismissableLayerStateProps["isValidEvent"];
+	#isValidEventProp: DismissibleLayerStateProps["isValidEvent"];
 
-	constructor(props: DismissableLayerStateProps) {
+	constructor(props: DismissibleLayerStateProps) {
 		this.#enabled = props.enabled;
 		this.#isValidEventProp = props.isValidEvent;
 
@@ -257,12 +257,12 @@ export class DismissableLayerState {
 	};
 }
 
-export function useDismissableLayer(props: DismissableLayerStateProps) {
-	return new DismissableLayerState(props);
+export function useDismissibleLayer(props: DismissibleLayerStateProps) {
+	return new DismissibleLayerState(props);
 }
 
 function getTopMostLayer(
-	layersArr: [DismissableLayerState, ReadableBox<InteractOutsideBehaviorType>][]
+	layersArr: [DismissibleLayerState, ReadableBox<InteractOutsideBehaviorType>][]
 ) {
 	return layersArr.findLast(
 		([_, { current: behaviorType }]) => behaviorType === "close" || behaviorType === "ignore"

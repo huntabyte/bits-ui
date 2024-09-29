@@ -3,7 +3,7 @@
 	import type { PopperLayerImplProps } from "./types.js";
 	import PopperContent from "./popper-content.svelte";
 	import { EscapeLayer } from "$lib/bits/utilities/escape-layer/index.js";
-	import { DismissableLayer } from "$lib/bits/utilities/dismissable-layer/index.js";
+	import { DismissibleLayer } from "$lib/bits/utilities/dismissible-layer/index.js";
 	import { TextSelectionLayer } from "$lib/bits/utilities/text-selection-layer/index.js";
 	import { PresenceLayer } from "$lib/bits/utilities/presence-layer/index.js";
 	import { FocusScope } from "$lib/bits/utilities/focus-scope/index.js";
@@ -88,7 +88,7 @@
 							{escapeKeydownBehavior}
 							enabled={present.current}
 						>
-							<DismissableLayer
+							<DismissibleLayer
 								{id}
 								{onInteractOutside}
 								{onInteractOutsideStart}
@@ -97,7 +97,7 @@
 								{isValidEvent}
 								enabled={present.current}
 							>
-								{#snippet children({ props: dismissableProps })}
+								{#snippet children({ props: dismissibleProps })}
 									<TextSelectionLayer
 										{id}
 										{preventOverflowTextSelection}
@@ -109,7 +109,7 @@
 											props: mergeProps(
 												restProps,
 												floatingProps,
-												dismissableProps,
+												dismissibleProps,
 												focusScopeProps,
 												{
 													style: {
@@ -120,7 +120,7 @@
 										})}
 									</TextSelectionLayer>
 								{/snippet}
-							</DismissableLayer>
+							</DismissibleLayer>
 						</EscapeLayer>
 					{/snippet}
 				</FocusScope>

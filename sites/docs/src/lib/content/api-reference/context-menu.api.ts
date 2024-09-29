@@ -22,7 +22,7 @@ import {
 	createBooleanProp,
 	createCSSVarSchema,
 	dirProp,
-	dismissableLayerProps,
+	dismissibleLayerProps,
 	escapeLayerProps,
 	floatingProps,
 	focusScopeProps,
@@ -65,7 +65,7 @@ export const content = createApiSchema<ContextMenuContentPropsWithoutHTML>({
 	props: {
 		...omit(floatingProps(), "align", "side", "sideOffset"),
 		...escapeLayerProps,
-		...dismissableLayerProps,
+		...dismissibleLayerProps,
 		...focusScopeProps,
 		preventOverflowTextSelection: preventOverflowTextSelectionProp,
 		dir: dirProp,
@@ -107,7 +107,7 @@ export const contentStatic = createApiSchema<ContextMenuContentStaticPropsWithou
 	description: "The content displayed when the context menu is open. (Static/No Floating UI)",
 	props: {
 		...escapeLayerProps,
-		...dismissableLayerProps,
+		...dismissibleLayerProps,
 		...focusScopeProps,
 		preventScroll: preventScrollProp,
 		preventOverflowTextSelection: preventOverflowTextSelectionProp,

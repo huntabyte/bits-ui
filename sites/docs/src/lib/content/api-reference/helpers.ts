@@ -453,25 +453,25 @@ export function floatingProps(props?: {
 	} as const;
 }
 
-export const dismissableOnInteractOutsideProp = createFunctionProp({
+export const dismissibleOnInteractOutsideProp = createFunctionProp({
 	definition: OnInteractOutsideProp,
 	description:
 		"Callback fired when an outside interaction event completes, which is either a `pointerup`, `mouseup`, or `touchend` event, depending on the user's input device. You can call `event.preventDefault()` to prevent the default behavior of handling the outside interaction.",
 });
 
-export const dismissableOnInteractOutsideStartProp: PropSchema = createFunctionProp({
+export const dismissibleOnInteractOutsideStartProp: PropSchema = createFunctionProp({
 	definition: OnInteractOutsideProp,
 	description:
 		"Callback fired when an outside interaction event starts, which is either a `pointerdown`, `mousedown`, or `touchstart` event, depending on the user's input device. You can call `event.preventDefault()` to prevent the continuation of the outside interaction.",
 });
 
-export const dismissableOnFocusOutsideProp = createFunctionProp({
+export const dismissibleOnFocusOutsideProp = createFunctionProp({
 	definition: OnFocusOutsideProp,
 	description:
-		"Callback fired when focus leaves the dismissable layer. You can call `event.preventDefault()` to prevent the default behavior on focus leaving the layer.",
+		"Callback fired when focus leaves the dismissible layer. You can call `event.preventDefault()` to prevent the default behavior on focus leaving the layer.",
 });
 
-export const dismissableInteractOutsideBehaviorProp: PropSchema = createEnumProp({
+export const dismissibleInteractOutsideBehaviorProp: PropSchema = createEnumProp({
 	definition: InteractOutsideBehaviorProp,
 	options: ["close", "ignore", "defer-otherwise-close", "defer-otherwise-ignore"],
 	default: "close",
@@ -479,10 +479,10 @@ export const dismissableInteractOutsideBehaviorProp: PropSchema = createEnumProp
 		"The behavior to use when an interaction occurs outside of the floating content. `'close'` will close the content immediately. `'ignore'` will prevent the content from closing. `'defer-otherwise-close'` will defer to the parent element if it exists, otherwise it will close the content. `'defer-otherwise-ignore'` will defer to the parent element if it exists, otherwise it will ignore the interaction.",
 });
 
-export const dismissableLayerProps = {
-	onInteractOutside: dismissableOnInteractOutsideProp,
-	onFocusOutside: dismissableOnFocusOutsideProp,
-	interactOutsideBehavior: dismissableInteractOutsideBehaviorProp,
+export const dismissibleLayerProps = {
+	onInteractOutside: dismissibleOnInteractOutsideProp,
+	onFocusOutside: dismissibleOnFocusOutsideProp,
+	interactOutsideBehavior: dismissibleInteractOutsideBehaviorProp,
 } as const;
 
 export const escapeEscapeKeydownBehaviorProp: PropSchema = createEnumProp({

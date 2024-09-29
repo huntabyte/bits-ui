@@ -7,7 +7,7 @@
 	import { noop } from "$lib/internal/callbacks.js";
 	import { useId } from "$lib/internal/useId.js";
 	import EscapeLayer from "$lib/bits/utilities/escape-layer/escape-layer.svelte";
-	import DismissableLayer from "$lib/bits/utilities/dismissable-layer/dismissable-layer.svelte";
+	import DismissibleLayer from "$lib/bits/utilities/dismissible-layer/dismissible-layer.svelte";
 	import TextSelectionLayer from "$lib/bits/utilities/text-selection-layer/text-selection-layer.svelte";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
@@ -50,7 +50,7 @@
 				contentState.root.handleClose();
 			}}
 		>
-			<DismissableLayer
+			<DismissibleLayer
 				{...restWithoutChildren}
 				{id}
 				enabled={present}
@@ -60,11 +60,11 @@
 					contentState.root.handleClose();
 				}}
 			>
-				{#snippet children({ props: dismissableProps })}
+				{#snippet children({ props: dismissibleProps })}
 					<TextSelectionLayer {...restWithoutChildren} {id} enabled={present}>
 						{@const mergedProps = mergeProps(
 							restWithoutChildren,
-							dismissableProps,
+							dismissibleProps,
 							focusScopeProps,
 							contentState.props,
 							{ style: { pointerEvents: "auto" } }
@@ -84,7 +84,7 @@
 						{/if}
 					</TextSelectionLayer>
 				{/snippet}
-			</DismissableLayer>
+			</DismissibleLayer>
 		</EscapeLayer>
 	{/snippet}
 </FocusScope>

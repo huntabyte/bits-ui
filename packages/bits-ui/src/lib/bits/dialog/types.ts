@@ -1,5 +1,5 @@
 import type { EscapeLayerProps } from "../utilities/escape-layer/types.js";
-import type { DismissableLayerProps } from "../utilities/dismissable-layer/types.js";
+import type { DismissibleLayerProps } from "../utilities/dismissible-layer/types.js";
 import type { PresenceLayerProps } from "../utilities/presence-layer/types.js";
 import type { FocusScopeProps } from "../utilities/focus-scope/types.js";
 import type { TextSelectionLayerProps } from "../utilities/text-selection-layer/types.js";
@@ -37,7 +37,7 @@ export type DialogContentSnippetProps = {
 export type DialogContentPropsWithoutHTML = WithChild<
 	Omit<
 		EscapeLayerProps &
-			Omit<DismissableLayerProps, "onInteractOutsideStart"> &
+			Omit<DismissibleLayerProps, "onInteractOutsideStart"> &
 			PresenceLayerProps &
 			FocusScopeProps &
 			TextSelectionLayerProps & {

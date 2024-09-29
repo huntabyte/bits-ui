@@ -22,7 +22,7 @@ import {
 	createFunctionProp,
 	createNumberProp,
 	dirProp,
-	dismissableLayerProps,
+	dismissibleLayerProps,
 	escapeLayerProps,
 	floatingProps,
 	forceMountProp,
@@ -136,7 +136,7 @@ export const content = createApiSchema<TooltipContentPropsWithoutHTML>({
 	description: "The contents of the tooltip which are displayed when the tooltip is open.",
 	props: {
 		...floatingProps(),
-		...dismissableLayerProps,
+		...dismissibleLayerProps,
 		...escapeLayerProps,
 		forceMount: forceMountProp,
 		dir: dirProp,
@@ -160,7 +160,7 @@ export const contentStatic = createApiSchema<TooltipContentStaticPropsWithoutHTM
 	description:
 		"The contents of the tooltip which are displayed when the tooltip is open. (Static/No Floating UI)",
 	props: {
-		...dismissableLayerProps,
+		...dismissibleLayerProps,
 		...escapeLayerProps,
 		forceMount: forceMountProp,
 		dir: dirProp,

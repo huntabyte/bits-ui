@@ -9,7 +9,7 @@ export type InteractOutsideBehaviorType =
 	| "defer-otherwise-ignore"
 	| "ignore";
 
-export type DismissableLayerProps = {
+export type DismissibleLayerProps = {
 	/**
 	 * Callback fired when an outside interaction event completes,
 	 * which is either a `pointerup`, `mouseup`, or `touchend`
@@ -40,12 +40,12 @@ export type DismissableLayerProps = {
 	interactOutsideBehavior?: InteractOutsideBehaviorType;
 
 	/**
-	 * Callback fired when focus leaves the dismissable layer.
+	 * Callback fired when focus leaves the dismissible layer.
 	 */
 	onFocusOutside?: (event: FocusEvent) => void;
 };
 
-export type DismissableLayerImplProps = {
+export type DismissibleLayerImplProps = {
 	/**
 	 * Whether the layer is enabled.
 	 */
@@ -66,7 +66,7 @@ export type DismissableLayerImplProps = {
 	isValidEvent?: (e: PointerEvent | MouseEvent | TouchEvent, node: HTMLElement) => boolean;
 
 	children?: Snippet<[{ props: Record<string, unknown> }]>;
-} & DismissableLayerProps;
+} & DismissibleLayerProps;
 
 export type InteractOutsideInterceptEventType =
 	| "pointerdown"

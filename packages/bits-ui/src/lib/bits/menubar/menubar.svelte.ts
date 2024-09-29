@@ -1,6 +1,6 @@
 import { type ReadableBox, box } from "svelte-toolbelt";
 import { untrack } from "svelte";
-import type { InteractOutsideBehaviorType } from "../utilities/dismissable-layer/types.js";
+import type { InteractOutsideBehaviorType } from "../utilities/dismissible-layer/types.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { type UseRovingFocusReturn, useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
 import type { Direction } from "$lib/shared/index.js";

@@ -1,7 +1,7 @@
 import { Previous } from "runed";
 import { untrack } from "svelte";
 import { styleToString } from "svelte-toolbelt";
-import type { InteractOutsideEvent } from "../utilities/dismissable-layer/types.js";
+import type { InteractOutsideEvent } from "../utilities/dismissible-layer/types.js";
 import { afterTick } from "$lib/internal/afterTick.js";
 import { backward, forward, next, prev } from "$lib/internal/arrays.js";
 import {

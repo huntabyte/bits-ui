@@ -17,7 +17,7 @@ import {
 	createNumberProp,
 	createStringProp,
 	dirProp,
-	dismissableLayerProps,
+	dismissibleLayerProps,
 	escapeLayerProps,
 	forceMountProp,
 	withChildProps,
@@ -93,7 +93,7 @@ export const content = createApiSchema<NavigationMenuContentPropsWithoutHTML>({
 	title: "Content",
 	description: "The content displayed when the dropdown menu is open.",
 	props: {
-		...dismissableLayerProps,
+		...dismissibleLayerProps,
 		...escapeLayerProps,
 		forceMount: forceMountProp,
 		...withChildProps({ elType: "HTMLDivElement" }),

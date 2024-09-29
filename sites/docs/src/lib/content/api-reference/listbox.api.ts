@@ -37,7 +37,7 @@ import {
 	createStringProp,
 	createUnionProp,
 	dirProp,
-	dismissableLayerProps,
+	dismissibleLayerProps,
 	escapeLayerProps,
 	floatingProps,
 	focusScopeProps,
@@ -122,7 +122,7 @@ export const content = createApiSchema<ListboxContentPropsWithoutHTML>({
 	props: {
 		...floatingProps(),
 		...escapeLayerProps,
-		...dismissableLayerProps,
+		...dismissibleLayerProps,
 		onCloseAutoFocus: onCloseAutoFocusProp,
 		preventOverflowTextSelection: preventOverflowTextSelectionProp,
 		dir: dirProp,
@@ -178,7 +178,7 @@ export const contentStatic = createApiSchema<ListboxContentStaticPropsWithoutHTM
 	description: "The element which contains the listbox's items. (Static/No Floating UI)",
 	props: {
 		...escapeLayerProps,
-		...dismissableLayerProps,
+		...dismissibleLayerProps,
 		...focusScopeProps,
 		preventScroll: preventScrollProp,
 		preventOverflowTextSelection: preventOverflowTextSelectionProp,
