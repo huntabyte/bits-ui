@@ -1,5 +1,13 @@
 # bits-ui
 
+## 1.0.0-next.2
+
+### Patch Changes
+
+-   Forward `dir` prop to underling elements ([#701](https://github.com/huntabyte/bits-ui/pull/701))
+
+-   fix(Combobox): scroll highlighted item into view when navigating the list with keyboard ([#699](https://github.com/huntabyte/bits-ui/pull/699))
+
 ## 1.0.0-next.1
 
 ### Patch Changes
