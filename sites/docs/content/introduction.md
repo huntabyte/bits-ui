@@ -21,7 +21,7 @@ Bits UI components have been designed following the [W3C ARIA Authoring Practice
 
 ### Composable
 
-Bits UI is built with composability in mind. Each component is designed to be used in isolation, but can be composed together to create more complex UIs. Providing flexibility in the form of [Delegation](/docs/delegation) and event overrides puts the power of bending the components to your will in your hands.
+Bits UI is built with composability in mind. Each component is designed to be used in isolation, but can be composed together to create more complex UIs. Providing flexibility in the form of [Composition](/docs/child-snippet) and event overrides puts the power of bending the components to your will in your hands.
 
 ## About
 
