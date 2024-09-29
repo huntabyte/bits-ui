@@ -312,6 +312,7 @@ class ListboxInputState {
 	}
 
 	#onkeydown = async (e: KeyboardEvent) => {
+		this.root.isUsingKeyboard = true
 		if (e.key === kbd.ESCAPE) return;
 		const open = this.root.open.current;
 		const inputValue = this.root.inputValue;
