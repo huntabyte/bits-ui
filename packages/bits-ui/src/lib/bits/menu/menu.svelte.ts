@@ -415,6 +415,9 @@ class MenuContentState {
 				onblur: this.#onblur,
 				onpointermove: this.#onpointermove,
 				onfocus: this.#onfocus,
+				style: {
+					pointerEvents: "auto",
+				},
 			}) as const
 	);
 

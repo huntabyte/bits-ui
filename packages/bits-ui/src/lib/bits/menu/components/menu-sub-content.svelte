@@ -118,6 +118,7 @@
 	}}
 	preventScroll={false}
 	{loop}
+	trapFocus={false}
 >
 	{#snippet popper({ props })}
 		{@const finalProps = mergeProps(props, mergedProps, {
