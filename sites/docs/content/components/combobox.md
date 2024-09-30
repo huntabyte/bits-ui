@@ -75,13 +75,13 @@ It's recommended to use the `Combobox` primitives to build your own custom combo
 <script lang="ts">
 	import { Combobox, type WithoutChildrenOrChild, mergeProps } from "bits-ui";
 
-	type Item = { value: string; label: string; };
+	type Item = { value: string; label: string };
 
 	type Props = Combobox.RootProps & {
 		items: Item[];
 		inputProps?: WithoutChildrenOrChild<Combobox.InputProps>;
 		contentProps?: WithoutChildrenOrChild<Combobox.ContentProps>;
-	}
+	};
 
 	let {
 		items,
@@ -97,7 +97,7 @@ It's recommended to use the `Combobox` primitives to build your own custom combo
 	const filteredItems = $derived.by(() => {
 		if (searchValue === "") return items;
 		return items.filter((item) => item.label.toLowerCase().includes(searchValue.toLowerCase()));
-	})
+	});
 
 	function handleInput(e: Event & { currentTarget: HTMLInputElement }) {
 		searchValue = e.currentTarget.value;
@@ -107,12 +107,12 @@ It's recommended to use the `Combobox` primitives to build your own custom combo
 		if (!newOpen) searchValue = "";
 	}
 
-	const mergedRootProps = $derived(mergeProps(restProps, { onOpenChange: handleOpenChange }))
-	const mergedInputProps = $derived(mergeProps(inputProps, { oninput: handleInput } ))
+	const mergedRootProps = $derived(mergeProps(restProps, { onOpenChange: handleOpenChange }));
+	const mergedInputProps = $derived(mergeProps(inputProps, { oninput: handleInput }));
 </script>
 
 <Combobox.Root bind:value bind:open {...mergedRootProps}>
-	<Combobox.Input {....mergedInputProps} />
+	<Combobox.Input {...mergedInputProps} />
 	<Combobox.Trigger>Open</Combobox.Trigger>
 	<Combobox.Portal>
 		<Combobox.Content {...contentProps}>
@@ -124,9 +124,7 @@ It's recommended to use the `Combobox` primitives to build your own custom combo
 					{/snippet}
 				</Combobox.Item>
 			{:else}
-				<span>
-					No results found
-				</span>
+				<span> No results found </span>
 			{/each}
 		</Combobox.Content>
 	</Combobox.Portal>
