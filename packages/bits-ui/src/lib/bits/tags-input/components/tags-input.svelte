@@ -13,11 +13,11 @@
 		onValueChange = noop,
 		controlledValue = false,
 		delimiters = [","],
-		blurBehavior = "none",
+		blurBehavior = "add",
 		editable = true,
 		required = false,
 		name = "",
-		pasteBehavior = "none",
+		pasteBehavior = "add",
 		children,
 		child,
 		...restProps
