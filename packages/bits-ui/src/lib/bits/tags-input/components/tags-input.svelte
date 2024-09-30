@@ -13,6 +13,7 @@
 		onValueChange = noop,
 		controlledValue = false,
 		delimiter = ",",
+		blurBehavior = "none",
 		children,
 		child,
 		...restProps
@@ -31,11 +32,12 @@
 				}
 			}
 		),
-		delimiter: box.with(() => delimiter),
 		ref: box.with(
 			() => ref,
 			(v) => (ref = v)
 		),
+		delimiter: box.with(() => delimiter),
+		blurBehavior: box.with(() => blurBehavior),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, rootState.props));

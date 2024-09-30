@@ -7,6 +7,8 @@ import type {
 	Without,
 } from "$lib/shared/index.js";
 
+export type TagsInputBlurBehavior = "clear" | "add" | "none";
+
 export type TagsInputRootPropsWithoutHTML = WithChild<{
 	/**
 	 * The value of the tags input.
@@ -35,6 +37,13 @@ export type TagsInputRootPropsWithoutHTML = WithChild<{
 	 * @defaultValue ","
 	 */
 	delimiter?: string;
+
+	/**
+	 * How to handle when the input is blurred with text in it.
+	 *
+	 * @defaultValue "none"
+	 */
+	blurBehavior?: TagsInputBlurBehavior;
 }>;
 
 export type TagsInputRootProps = TagsInputRootPropsWithoutHTML &
@@ -60,6 +69,11 @@ export type TagsInputTagPropsWithoutHTML = WithChild & {
 	 * The value of this specific tag. This should be unique for the tag.
 	 */
 	value: string;
+
+	/**
+	 * The index of this specific tag in the value array.
+	 */
+	index: number;
 };
 
 export type TagsInputTagProps = TagsInputTagPropsWithoutHTML &

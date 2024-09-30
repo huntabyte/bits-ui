@@ -1,5 +1,5 @@
-import { SvelteMap } from "svelte/reactivity";
 import type { ReadableBoxedValues, WritableBoxedValues } from "svelte-toolbelt";
+import type { TagsInputBlurBehavior } from "./types.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
 import { createContext } from "$lib/internal/createContext.js";
@@ -18,6 +18,7 @@ type TagsInputRootStateProps = WithRefProps &
 	}> &
 	ReadableBoxedValues<{
 		delimiter: string;
+		blurBehavior: TagsInputBlurBehavior;
 	}>;
 
 class TagsInputRootState {
@@ -44,6 +45,10 @@ class TagsInputRootState {
 
 	addValue = (value: string) => {
 		this.#value.current.push(value);
+	};
+
+	removeValueByIndex = (index: number) => {
+		this.#value.current.splice(index, 1);
 	};
 
 	removeValue = (value: string) => {
@@ -117,12 +122,14 @@ class TagsInputListState {
 type TagsInputTagStateProps = WithRefProps &
 	ReadableBoxedValues<{
 		value: string;
+		index: number;
 	}>;
 
 class TagsInputTagState {
 	#ref: TagsInputTagStateProps["ref"];
 	#id: TagsInputTagStateProps["id"];
 	value: TagsInputTagStateProps["value"];
+	index: TagsInputTagStateProps["index"];
 	root: TagsInputRootState;
 	list: TagsInputListState;
 	contentNode = $state<HTMLElement | null>(null);
@@ -133,6 +140,7 @@ class TagsInputTagState {
 		this.root = list.root;
 		this.list = list;
 		this.value = props.value;
+		this.index = props.index;
 
 		useRefById({
 			id: this.#id,
@@ -148,6 +156,10 @@ class TagsInputTagState {
 				role: "row",
 			}) as const
 	);
+
+	remove = () => {
+		this.root.removeValueByIndex(this.index.current);
+	};
 
 	createTagContent(props: TagsInputTagContentStateProps) {
 		return new TagsInputTagContentState(props, this);
@@ -225,7 +237,7 @@ class TagsInputTagRemoveState {
 	}
 
 	#onclick = () => {
-		this.#tag.list.root.removeValue(this.#tag.value.current);
+		this.#tag.remove();
 	};
 
 	wrapperProps = $derived.by(

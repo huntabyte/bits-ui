@@ -9,6 +9,7 @@
 		id = useId(),
 		ref = $bindable(null),
 		value,
+		index,
 		child,
 		children,
 		...restProps
@@ -21,6 +22,7 @@
 			(v) => (ref = v)
 		),
 		value: box.with(() => value),
+		index: box.with(() => index),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, tagState.props));
