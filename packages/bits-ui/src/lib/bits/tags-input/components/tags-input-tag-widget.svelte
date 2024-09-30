@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
 	import type { TagContentProps } from "../index.js";
-	import { useTagsInputTagContent } from "../tags-input.svelte.js";
+	import { useTagsInputTagWidget } from "../tags-input.svelte.js";
 	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
@@ -13,7 +13,7 @@
 		...restProps
 	}: TagContentProps = $props();
 
-	const tagContentState = useTagsInputTagContent({
+	const tagWidgetState = useTagsInputTagWidget({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,
@@ -21,10 +21,10 @@
 		),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, tagContentState.props));
+	const mergedProps = $derived(mergeProps(restProps, tagWidgetState.props));
 </script>
 
-<div {...tagContentState.root.sharedGridCellProps}>
+<div {...tagWidgetState.root.sharedGridCellProps}>
 	{#if child}
 		{@render child({ props: mergedProps })}
 	{:else}

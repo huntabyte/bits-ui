@@ -12,8 +12,11 @@
 		ref = $bindable(null),
 		onValueChange = noop,
 		controlledValue = false,
-		delimiter = ",",
+		delimiters = [","],
 		blurBehavior = "none",
+		editable = true,
+		required = false,
+		name = "",
 		children,
 		child,
 		...restProps
@@ -36,8 +39,11 @@
 			() => ref,
 			(v) => (ref = v)
 		),
-		delimiter: box.with(() => delimiter),
+		delimiters: box.with(() => delimiters),
 		blurBehavior: box.with(() => blurBehavior),
+		editable: box.with(() => editable),
+		name: box.with(() => name),
+		required: box.with(() => required),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, rootState.props));

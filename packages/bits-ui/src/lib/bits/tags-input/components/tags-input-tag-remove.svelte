@@ -22,10 +22,9 @@
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, tagRemoveState.props));
-	const mergedWrapperProps = $derived(mergeProps(tagRemoveState.wrapperProps, {}));
 </script>
 
-<div {...mergedWrapperProps}>
+<div {...tagRemoveState.root.sharedGridCellProps}>
 	{#if child}
 		{@render child({ props: mergedProps })}
 	{:else}

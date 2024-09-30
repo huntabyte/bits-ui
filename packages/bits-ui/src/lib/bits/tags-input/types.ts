@@ -34,9 +34,9 @@ export type TagsInputRootPropsWithoutHTML = WithChild<{
 	/**
 	 * The delimiter used to separate tags.
 	 *
-	 * @defaultValue ","
+	 * @defaultValue [","]
 	 */
-	delimiter?: string;
+	delimiters?: string[];
 
 	/**
 	 * How to handle when the input is blurred with text in it.
@@ -44,6 +44,28 @@ export type TagsInputRootPropsWithoutHTML = WithChild<{
 	 * @defaultValue "none"
 	 */
 	blurBehavior?: TagsInputBlurBehavior;
+
+	/**
+	 * Whether the individual tags are editable or not. This applies to all tags. If you wish
+	 * to override a specific tag's editable state, you can use the `editable` prop on the
+	 * `TagInput.Tag` component.
+	 */
+	editable?: boolean;
+
+	/**
+	 * If provided, a hidden input element will be rendered for each tag to submit the values with
+	 * a form.
+	 *
+	 * @defaultValue undefined
+	 */
+	name?: string;
+
+	/**
+	 * Whether or not the hidden input element should be marked as required or not.
+	 *
+	 * @defaultValue false
+	 */
+	required?: boolean;
 }>;
 
 export type TagsInputRootProps = TagsInputRootPropsWithoutHTML &
@@ -88,3 +110,13 @@ export type TagsInputTagRemovePropsWithoutHTML = WithChild;
 
 export type TagsInputTagRemoveProps = TagsInputTagRemovePropsWithoutHTML &
 	Without<PrimitiveButtonAttributes, TagsInputTagRemovePropsWithoutHTML>;
+
+export type TagsInputTagEditPropsWithoutHTML = WithChild;
+
+export type TagsInputTagEditProps = TagsInputTagEditPropsWithoutHTML &
+	Without<PrimitiveInputAttributes, TagsInputTagEditPropsWithoutHTML>;
+
+export type TagsInputTagWidgetPropsWithoutHTML = WithChild;
+
+export type TagsInputTagWidgetProps = TagsInputTagWidgetPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, TagsInputTagWidgetPropsWithoutHTML>;
