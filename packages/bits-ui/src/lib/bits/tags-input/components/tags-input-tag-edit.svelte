@@ -1,32 +1,27 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { TagProps } from "../index.js";
-	import { useTagsInputTag } from "../tags-input.svelte.js";
-	import TagsInputTagHiddenInput from "./tags-input-tag-hidden-input.svelte";
+	import type { TagEditProps } from "../index.js";
+	import { useTagsInputTagEdit } from "../tags-input.svelte.js";
 	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {
 		id = useId(),
 		ref = $bindable(null),
-		value,
-		index,
-		child,
 		children,
+		child,
 		...restProps
-	}: TagProps = $props();
+	}: TagEditProps = $props();
 
-	const tagState = useTagsInputTag({
+	const tagEditState = useTagsInputTagEdit({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,
 			(v) => (ref = v)
 		),
-		value: box.with(() => value),
-		index: box.with(() => index),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, tagState.props));
+	const mergedProps = $derived(mergeProps(restProps, tagEditState.props));
 </script>
 
 {#if child}
@@ -36,5 +31,3 @@
 		{@render children?.()}
 	</div>
 {/if}
-
-<TagsInputTagHiddenInput />

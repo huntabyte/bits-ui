@@ -149,7 +149,7 @@ export type TagsInputTagRemoveProps = TagsInputTagRemovePropsWithoutHTML &
 export type TagsInputTagEditPropsWithoutHTML = WithChild;
 
 export type TagsInputTagEditProps = TagsInputTagEditPropsWithoutHTML &
-	Without<PrimitiveInputAttributes, TagsInputTagEditPropsWithoutHTML>;
+	Without<PrimitiveDivAttributes, TagsInputTagEditPropsWithoutHTML>;
 
 export type TagsInputTagWidgetPropsWithoutHTML = WithChild;
 

@@ -5,6 +5,7 @@ export { default as Clear } from "./components/tags-input-clear.svelte";
 export { default as Tag } from "./components/tags-input-tag.svelte";
 export { default as TagContent } from "./components/tags-input-tag-content.svelte";
 export { default as TagRemove } from "./components/tags-input-tag-remove.svelte";
+export { default as TagEdit } from "./components/tags-input-tag-edit.svelte";
 
 export type {
 	TagsInputRootProps as RootProps,
@@ -14,4 +15,5 @@ export type {
 	TagsInputTagProps as TagProps,
 	TagsInputTagContentProps as TagContentProps,
 	TagsInputTagRemoveProps as TagRemoveProps,
+	TagsInputTagEditProps as TagEditProps,
 } from "./types.js";

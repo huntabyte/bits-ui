@@ -3,7 +3,7 @@ import type { TagsInputBlurBehavior, TagsInputPasteBehavior } from "./types.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
 import { createContext } from "$lib/internal/createContext.js";
-import { getAriaHidden, getContentEditable } from "$lib/internal/attrs.js";
+import { getAriaHidden, getContentEditable, getRequired } from "$lib/internal/attrs.js";
 import { srOnlyStyles } from "$lib/internal/style.js";
 import { mergeProps } from "$lib/internal/mergeProps.js";
 import { kbd } from "$lib/internal/kbd.js";
@@ -18,8 +18,6 @@ const TAG_CONTENT_ATTR = "data-tags-input-tag-content";
 const TAG_REMOVE_ATTR = "data-tags-input-tag-remove";
 const TAG_EDIT_ATTR = "data-tags-input-tag-edit";
 const TAG_WIDGET_ATTR = "data-tags-input-tag-widget";
-
-const FOCUS_CANDIDATE_ATTR = "data-focus-candidate";
 
 type TagsInputRootStateProps = WithRefProps &
 	WritableBoxedValues<{
@@ -266,6 +264,10 @@ class TagsInputTagState {
 	createTagWidget(props: TagsInputTagWidgetStateProps) {
 		return new TagsInputTagWidgetState(props, this);
 	}
+
+	createTagHiddenInput() {
+		return new TagsInputTagHiddenInputState(this);
+	}
 }
 
 type TagsInputTagContentStateProps = WithRefProps;
@@ -300,7 +302,6 @@ class TagsInputTagContentState {
 			({
 				id: this.#id.current,
 				[TAG_CONTENT_ATTR]: "",
-				[FOCUS_CANDIDATE_ATTR]: "",
 				"data-editing": this.#tag.isEditing ? "" : undefined,
 				tabindex: -1,
 				onkeydown: this.#onkeydown,
@@ -336,7 +337,6 @@ class TagsInputTagEditState {
 			({
 				id: this.#id.current,
 				[TAG_EDIT_ATTR]: "",
-				[FOCUS_CANDIDATE_ATTR]: "",
 				contenteditable: getContentEditable(this.#tag.isEditing),
 				tabindex: -1,
 				"aria-hidden": getAriaHidden(!this.#tag.isEditing),
@@ -390,7 +390,6 @@ class TagsInputTagRemoveState {
 			({
 				id: this.#id.current,
 				[TAG_REMOVE_ATTR]: "",
-				[FOCUS_CANDIDATE_ATTR]: "",
 				role: "button",
 				"aria-label": "Remove",
 				"aria-labelledby": this.#ariaLabelledBy,
@@ -438,7 +437,6 @@ class TagsInputTagWidgetState {
 				"data-editing": this.#tag.isEditing ? "" : undefined,
 				tabindex: -1,
 				[TAG_WIDGET_ATTR]: "",
-				[FOCUS_CANDIDATE_ATTR]: "",
 				onkeydown: this.#onkeydown,
 			}) as const
 	);
@@ -550,6 +548,31 @@ class TagsInputClearState {
 	);
 }
 
+class TagsInputTagHiddenInputState {
+	#tag: TagsInputTagState;
+	#root: TagsInputRootState;
+	shouldRender = $derived.by(
+		() => this.#root.name.current !== "" && this.#tag.value.current !== ""
+	);
+
+	constructor(tag: TagsInputTagState) {
+		this.#tag = tag;
+		this.#root = tag.root;
+	}
+
+	props = $derived.by(
+		() =>
+			({
+				type: "text",
+				name: this.#root.name.current,
+				value: this.#tag.value.current,
+				style: srOnlyStyles,
+				required: getRequired(this.#root.required.current),
+				"aria-hidden": getAriaHidden(true),
+			}) as const
+	);
+}
+
 const [setTagsInputRootContext, getTagsInputRootContext] =
 	createContext<TagsInputRootState>("TagsInput.Root");
 
@@ -575,12 +598,20 @@ export function useTagsInputTagContent(props: TagsInputTagContentStateProps) {
 	return getTagsInputTagContext().createTagContent(props);
 }
 
+export function useTagsInputTagEdit(props: TagsInputTagEditStateProps) {
+	return getTagsInputTagContext().createTagEdit(props);
+}
+
 export function useTagsInputTagRemove(props: TagsInputTagRemoveStateProps) {
 	return getTagsInputTagContext().createTagRemove(props);
 }
 
 export function useTagsInputTagWidget(props: TagsInputTagWidgetStateProps) {
 	return getTagsInputTagContext().createTagWidget(props);
+}
+
+export function useTagsInputTagHiddenInput() {
+	return getTagsInputTagContext().createTagHiddenInput();
 }
 
 export function useTagsInputInput(props: TagsInputInputStateProps) {
