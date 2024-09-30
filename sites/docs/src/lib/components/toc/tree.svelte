@@ -5,6 +5,7 @@
 		type TableOfContentsItem,
 		melt,
 	} from "@melt-ui/svelte";
+	import Tree from "./tree.svelte";
 	import { cn } from "$lib/utils/index.js";
 
 	let {
@@ -67,7 +68,7 @@
 				</div>
 
 				{#if heading.children && heading.children.length}
-					<svelte:self
+					<Tree
 						tree={heading.children}
 						level={level + 1}
 						{activeHeadingIdxs}

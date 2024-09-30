@@ -5,7 +5,17 @@ on:
         branches:
             - main
             - next
+        paths-ignore:
+            - ".changeset/**"
+            - README.md
+            - ".vscode/**"
+            - CHANGELOG.md
     pull_request:
+        paths-ignore:
+            - ".changeset/**"
+            - README.md
+            - ".vscode/**"
+            - CHANGELOG.md
 
 concurrency:
     group: ${{ github.workflow }}-${{ github.event.number || github.sha }}
