@@ -76,7 +76,28 @@ export type TagsInputListPropsWithoutHTML = WithChild;
 export type TagsInputListProps = TagsInputListPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, TagsInputListPropsWithoutHTML>;
 
-export type TagsInputInputPropsWithoutHTML = WithChild;
+export type TagsInputInputPropsWithoutHTML = WithChild<{
+	/**
+	 * The value of the input.
+	 *
+	 * @bindable
+	 */
+	value?: string;
+
+	/**
+	 * A callback function called when the value changes.
+	 *
+	 *
+	 */
+	onValueChange?: OnChangeFn<string>;
+
+	/**
+	 * Whether or not the value is controlled or not. If `true`, the component will not update
+	 * the value internally, instead it will call `onValueChange` when it would have otherwise,
+	 * and it is up to you to update the `value` prop that is passed to the component.
+	 */
+	controlledValue?: boolean;
+}>;
 
 export type TagsInputInputProps = TagsInputInputPropsWithoutHTML &
 	Without<PrimitiveInputAttributes, TagsInputInputPropsWithoutHTML>;

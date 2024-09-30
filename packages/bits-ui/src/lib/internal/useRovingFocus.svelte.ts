@@ -1,4 +1,5 @@
 import { type ReadableBox, type WritableBox, box } from "svelte-toolbelt";
+import { untrack } from "svelte";
 import { getElemDirection } from "./locale.js";
 import { getDirectionalKeys } from "./getDirectionalKeys.js";
 import { kbd } from "./kbd.js";
@@ -7,14 +8,9 @@ import type { Orientation } from "$lib/shared/index.js";
 
 type UseRovingFocusProps = {
 	/**
-	 * The selector used to find the focusable candidates.
-	 */
-	candidateAttr: string;
-
-	/**
 	 * Custom candidate selector
 	 */
-	candidateSelector?: string;
+	candidateSelector: string;
 
 	/**
 	 * The id of the root node
@@ -50,22 +46,20 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 		? props.currentTabStopId
 		: box<string | null>(null);
 
+	const anyActive = $derived.by(() => {
+		if (!currentTabStopId.current) return false;
+		return Boolean(document.getElementById(currentTabStopId.current));
+	});
+
 	function getCandidateNodes() {
 		if (!isBrowser) return [];
 		const node = document.getElementById(props.rootNodeId.current);
 		if (!node) return [];
 
-		if (props.candidateSelector) {
-			const candidates = Array.from(
-				node.querySelectorAll<HTMLElement>(props.candidateSelector)
-			);
-			return candidates;
-		} else {
-			const candidates = Array.from(
-				node.querySelectorAll<HTMLElement>(`[${props.candidateAttr}]:not([data-disabled])`)
-			);
-			return candidates;
-		}
+		const candidates = Array.from(
+			node.querySelectorAll<HTMLElement>(`${props.candidateSelector}:not([data-disabled])`)
+		);
+		return candidates;
 	}
 
 	function focusFirstCandidate() {
@@ -74,7 +68,37 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 		items[0]?.focus();
 	}
 
-	function handleKeydown(node: HTMLElement | null | undefined, e: KeyboardEvent) {
+	function focusLastCandidate() {
+		const items = getCandidateNodes();
+		if (!items.length) return;
+		const lastItem = items[items.length - 1];
+		if (!lastItem) return;
+		handleFocus(lastItem);
+	}
+
+	function navigateBackward(node: HTMLElement | null | undefined, fallback?: HTMLElement | null) {
+		const rootNode = document.getElementById(props.rootNodeId.current);
+		if (!rootNode || !node) return;
+		const items = getCandidateNodes();
+		if (!items.length) return;
+		const currentIndex = items.indexOf(node);
+		const prevIndex = currentIndex - 1;
+		const prevItem = items[prevIndex];
+		if (!prevItem) {
+			if (fallback) {
+				fallback?.focus();
+			}
+			return;
+		}
+		handleFocus(prevItem);
+	}
+
+	function handleKeydown(
+		node: HTMLElement | null | undefined,
+		e: KeyboardEvent,
+		orientation: Orientation = props.orientation.current,
+		invert = false
+	) {
 		const rootNode = document.getElementById(props.rootNodeId.current);
 		if (!rootNode || !node) return;
 
@@ -83,13 +107,16 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 
 		const currentIndex = items.indexOf(node);
 		const dir = getElemDirection(rootNode);
-		const { nextKey, prevKey } = getDirectionalKeys(dir, props.orientation.current);
+		const { nextKey, prevKey } = getDirectionalKeys(dir, orientation);
+
+		const trueNextKey = invert ? prevKey : nextKey;
+		const truePrevKey = invert ? nextKey : prevKey;
 
 		const loop = props.loop.current;
 
 		const keyToIndex = {
-			[nextKey]: currentIndex + 1,
-			[prevKey]: currentIndex - 1,
+			[trueNextKey]: currentIndex + 1,
+			[truePrevKey]: currentIndex - 1,
 			[kbd.HOME]: 0,
 			[kbd.END]: items.length - 1,
 		};
@@ -106,15 +133,19 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 
 		const itemToFocus = items[itemIndex];
 		if (!itemToFocus) return;
-		itemToFocus.focus();
-		currentTabStopId.current = itemToFocus.id;
-		props.onCandidateFocus?.(itemToFocus);
+		handleFocus(itemToFocus);
 		return itemToFocus;
+	}
+
+	function handleFocus(node: HTMLElement) {
+		if (!node) return;
+		currentTabStopId.current = node.id;
+		node?.focus();
+		props.onCandidateFocus?.(node);
 	}
 
 	function getTabIndex(node: HTMLElement | null | undefined) {
 		const items = getCandidateNodes();
-		const anyActive = currentTabStopId.current !== null;
 		if (node && !anyActive && items[0] === node) {
 			currentTabStopId.current = node.id;
 			return 0;
@@ -132,6 +163,8 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 		getTabIndex,
 		handleKeydown,
 		focusFirstCandidate,
+		navigateBackward,
 		currentTabStopId,
+		focusLastCandidate,
 	};
 }

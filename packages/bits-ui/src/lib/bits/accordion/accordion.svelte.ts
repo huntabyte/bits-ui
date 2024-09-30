@@ -54,7 +54,7 @@ class AccordionBaseState {
 		this.#loop = props.loop;
 		this.rovingFocusGroup = useRovingFocus({
 			rootNodeId: this.#id,
-			candidateAttr: ACCORDION_TRIGGER_ATTR,
+			candidateSelector: `[${ACCORDION_TRIGGER_ATTR}]`,
 			loop: this.#loop,
 			orientation: this.orientation,
 		});

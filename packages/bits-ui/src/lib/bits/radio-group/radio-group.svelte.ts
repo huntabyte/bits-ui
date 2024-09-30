@@ -42,7 +42,7 @@ class RadioGroupRootState {
 		this.#ref = props.ref;
 		this.rovingFocusGroup = useRovingFocus({
 			rootNodeId: this.#id,
-			candidateAttr: RADIO_GROUP_ITEM_ATTR,
+			candidateSelector: `[${RADIO_GROUP_ITEM_ATTR}]`,
 			loop: this.loop,
 			orientation: this.orientation,
 		});
@@ -102,6 +102,7 @@ class RadioGroupItemState {
 	checked = $derived.by(() => this.#root.value.current === this.#value.current);
 	#isDisabled = $derived.by(() => this.#disabled.current || this.#root.disabled.current);
 	#isChecked = $derived.by(() => this.#root.isChecked(this.#value.current));
+	#tabIndex = $state(0);
 
 	constructor(props: RadioGroupItemStateProps, root: RadioGroupRootState) {
 		this.#disabled = props.disabled;
@@ -113,6 +114,10 @@ class RadioGroupItemState {
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
+		});
+
+		$effect(() => {
+			this.#tabIndex = this.#root.rovingFocusGroup.getTabIndex(this.#ref.current);
 		});
 	}
 
@@ -127,8 +132,6 @@ class RadioGroupItemState {
 	#onkeydown = (e: KeyboardEvent) => {
 		this.#root.rovingFocusGroup.handleKeydown(this.#ref.current, e);
 	};
-
-	#tabIndex = $derived.by(() => this.#root.rovingFocusGroup.getTabIndex(this.#ref.current));
 
 	snippetProps = $derived.by(() => ({ checked: this.#isChecked }));
 

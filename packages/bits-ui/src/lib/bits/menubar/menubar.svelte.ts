@@ -49,9 +49,10 @@ class MenubarRootState {
 			id: this.id,
 			ref: this.ref,
 		});
+
 		this.rovingFocusGroup = useRovingFocus({
 			rootNodeId: this.id,
-			candidateAttr: TRIGGER_ATTR,
+			candidateSelector: `[${TRIGGER_ATTR}]`,
 			loop: this.loop,
 			orientation: box.with(() => "horizontal"),
 			currentTabStopId: this.currentTabStopId,
@@ -208,7 +209,7 @@ class MenubarTriggerState {
 		// only call if the left button but not when the CTRL key is pressed
 		if (!this.disabled.current && e.button === 0 && e.ctrlKey === false) {
 			// prevent trigger from focusing when opening
-			// which allows the content to focus withut competition
+			// which allows the content to focus without competition
 			if (!this.menu.open) {
 				e.preventDefault();
 			}

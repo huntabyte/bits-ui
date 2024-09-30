@@ -1,14 +1,13 @@
-import type { ReadableBoxedValues, WritableBoxedValues } from "svelte-toolbelt";
+import { type ReadableBoxedValues, type WritableBoxedValues, box } from "svelte-toolbelt";
 import type { TagsInputBlurBehavior } from "./types.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
 import { createContext } from "$lib/internal/createContext.js";
 import { getAriaHidden, getContentEditable } from "$lib/internal/attrs.js";
 import { srOnlyStyles } from "$lib/internal/style.js";
-import { afterTick } from "$lib/internal/afterTick.js";
 import { mergeProps } from "$lib/internal/mergeProps.js";
-import { useGridRovingFocus } from "$lib/internal/useGridRovingFocus.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
+import { useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
 
 const ROOT_ATTR = "data-tags-input-root";
 const LIST_ATTR = "data-tags-input-list";
@@ -37,20 +36,29 @@ type TagsInputRootStateProps = WithRefProps &
 // prettier-ignore
 const NAVIGATION_KEYS = [kbd.ARROW_LEFT, kbd.ARROW_RIGHT, kbd.ARROW_UP, kbd.ARROW_DOWN, kbd.HOME, kbd.END]
 
+const HORIZONTAL_NAV_KEYS = [kbd.ARROW_LEFT, kbd.ARROW_RIGHT, kbd.HOME, kbd.END];
+const VERTICAL_NAV_KEYS = [kbd.ARROW_UP, kbd.ARROW_DOWN];
+
+const REMOVAL_KEYS = [kbd.BACKSPACE, kbd.DELETE];
+
 class TagsInputRootState {
 	#ref: TagsInputRootStateProps["ref"];
 	#id: TagsInputRootStateProps["id"];
-	#value: TagsInputRootStateProps["value"];
+	value: TagsInputRootStateProps["value"];
+	valueSnapshot = $derived.by(() => $state.snapshot(this.value.current));
 	delimiters: TagsInputRootStateProps["delimiters"];
 	blurBehavior: TagsInputRootStateProps["blurBehavior"];
 	required: TagsInputRootStateProps["required"];
 	editable: TagsInputRootStateProps["editable"];
 	name: TagsInputRootStateProps["name"];
+	inputNode = $state<HTMLElement | null>(null);
+	listRovingFocusGroup: ReturnType<typeof useRovingFocus> | null = null;
+	delimitersRegex = $derived.by(() => new RegExp(this.delimiters.current.join("|"), "g"));
 
 	constructor(props: TagsInputRootStateProps) {
 		this.#ref = props.ref;
 		this.#id = props.id;
-		this.#value = props.value;
+		this.value = props.value;
 		this.delimiters = props.delimiters;
 		this.blurBehavior = props.blurBehavior;
 		this.name = props.name;
@@ -64,23 +72,29 @@ class TagsInputRootState {
 	}
 
 	includesValue = (value: string) => {
-		return this.#value.current.includes(value);
+		return this.value.current.includes(value);
 	};
 
 	addValue = (value: string) => {
-		this.#value.current.push(value);
+		if (value === "") return;
+		this.value.current.push(value);
+	};
+
+	addValues = (values: string[]) => {
+		const newValues = values.filter((value) => value !== "");
+		this.value.current.push(...newValues);
 	};
 
 	removeValueByIndex = (index: number) => {
-		this.#value.current.splice(index, 1);
+		this.value.current.splice(index, 1);
 	};
 
 	updateValueByIndex = (index: number, value: string) => {
-		this.#value.current[index] = value;
+		this.value.current[index] = value;
 	};
 
 	clearValue = () => {
-		this.#value.current = [];
+		this.value.current = [];
 	};
 
 	props = $derived.by(
@@ -95,7 +109,7 @@ class TagsInputRootState {
 		mergeProps(
 			{
 				role: "gridcell",
-				tabindex: "-1",
+				tabindex: -1,
 				style: {
 					display: "contents",
 				},
@@ -123,7 +137,7 @@ class TagsInputListState {
 	#ref: TagsInputListStateProps["ref"];
 	#id: TagsInputListStateProps["id"];
 	root: TagsInputRootState;
-	rovingFocusGroup: ReturnType<typeof useGridRovingFocus>;
+	rovingFocusGroup: ReturnType<typeof useRovingFocus>;
 
 	// TODO: We need to trigger this to turn into `polite` reactively on a timer when
 	// an item is removed from/added to the list, so we'll need to hook into the add/remove events
@@ -133,12 +147,14 @@ class TagsInputListState {
 		this.#ref = props.ref;
 		this.#id = props.id;
 		this.root = root;
-		this.rovingFocusGroup = useGridRovingFocus({
-			cellCandidateSelector: "[role=gridcell]",
-			rowCandidateSelector: "[role=row]",
+
+		this.rovingFocusGroup = useRovingFocus({
 			rootNodeId: this.#id,
-			focusableCandidateSelector: `[${FOCUS_CANDIDATE_ATTR}]`,
+			candidateSelector: "[role=row]",
+			loop: box(false),
+			orientation: box("horizontal"),
 		});
+		this.root.listRovingFocusGroup = this.rovingFocusGroup;
 
 		useRefById({
 			id: this.#id,
@@ -179,6 +195,7 @@ class TagsInputTagState {
 	contentNode = $state<HTMLElement | null>(null);
 	editNode = $state<HTMLElement | null>(null);
 	isEditing = $state(false);
+	#tabIndex = $state(0);
 
 	constructor(props: TagsInputTagStateProps, list: TagsInputListState) {
 		this.#ref = props.ref;
@@ -192,7 +209,33 @@ class TagsInputTagState {
 			id: this.#id,
 			ref: this.#ref,
 		});
+
+		$effect(() => {
+			// we want to track the value here so when we remove the actively focused
+			// tag, we ensure the other ones get the correct tab index
+			this.root.valueSnapshot;
+			this.#ref.current;
+			this.#tabIndex = this.list.rovingFocusGroup.getTabIndex(this.#ref.current);
+		});
 	}
+
+	remove = () => {
+		this.root.removeValueByIndex(this.index.current);
+	};
+
+	#onkeydown = (e: KeyboardEvent) => {
+		if (HORIZONTAL_NAV_KEYS.includes(e.key)) {
+			e.preventDefault();
+			this.list.rovingFocusGroup.handleKeydown(this.#ref.current, e);
+		} else if (VERTICAL_NAV_KEYS.includes(e.key)) {
+			e.preventDefault();
+			this.list.rovingFocusGroup.handleKeydown(this.#ref.current, e, "vertical", true);
+		} else if (REMOVAL_KEYS.includes(e.key) && e.target === this.#ref.current) {
+			e.preventDefault();
+			this.remove();
+			this.list.rovingFocusGroup.navigateBackward(this.#ref.current, this.root.inputNode);
+		}
+	};
 
 	props = $derived.by(
 		() =>
@@ -200,12 +243,10 @@ class TagsInputTagState {
 				id: this.#id.current,
 				[TAG_ATTR]: "",
 				role: "row",
+				tabindex: this.#tabIndex,
+				onkeydown: this.#onkeydown,
 			}) as const
 	);
-
-	remove = () => {
-		this.root.removeValueByIndex(this.index.current);
-	};
 
 	createTagContent(props: TagsInputTagContentStateProps) {
 		return new TagsInputTagContentState(props, this);
@@ -249,14 +290,7 @@ class TagsInputTagContentState {
 		});
 	}
 
-	#onkeydown = (e: KeyboardEvent) => {
-		if (NAVIGATION_KEYS.includes(e.key)) {
-			e.preventDefault();
-			this.#list.rovingFocusGroup.handleKeydown(this.#ref.current, e);
-		}
-	};
-
-	#tabIndex = $derived.by(() => this.#list.rovingFocusGroup.getTabIndex(this.#ref.current));
+	#onkeydown = (e: KeyboardEvent) => {};
 
 	props = $derived.by(
 		() =>
@@ -265,7 +299,7 @@ class TagsInputTagContentState {
 				[TAG_CONTENT_ATTR]: "",
 				[FOCUS_CANDIDATE_ATTR]: "",
 				"data-editing": this.#tag.isEditing ? "" : undefined,
-				tabindex: this.#tabIndex,
+				tabindex: -1,
 				onkeydown: this.#onkeydown,
 			}) as const
 	);
@@ -348,8 +382,6 @@ class TagsInputTagRemoveState {
 		}
 	};
 
-	#tabIndex = $derived.by(() => this.#list.rovingFocusGroup.getTabIndex(this.#ref.current));
-
 	props = $derived.by(
 		() =>
 			({
@@ -360,7 +392,7 @@ class TagsInputTagRemoveState {
 				"aria-label": "Remove",
 				"aria-labelledby": this.#ariaLabelledBy,
 				"data-editing": this.#tag.isEditing ? "" : undefined,
-				tabindex: this.#tabIndex,
+				tabindex: -1,
 				onclick: this.#onclick,
 				onkeydown: this.#onkeydown,
 			}) as const
@@ -389,8 +421,6 @@ class TagsInputTagWidgetState {
 		});
 	}
 
-	#tabIndex = $derived.by(() => this.#list.rovingFocusGroup.getTabIndex(this.#ref.current));
-
 	#onkeydown = (e: KeyboardEvent) => {
 		if (NAVIGATION_KEYS.includes(e.key)) {
 			e.preventDefault();
@@ -403,7 +433,7 @@ class TagsInputTagWidgetState {
 			({
 				id: this.#id.current,
 				"data-editing": this.#tag.isEditing ? "" : undefined,
-				tabindex: this.#tabIndex,
+				tabindex: -1,
 				[TAG_WIDGET_ATTR]: "",
 				[FOCUS_CANDIDATE_ATTR]: "",
 				onkeydown: this.#onkeydown,
@@ -411,42 +441,63 @@ class TagsInputTagWidgetState {
 	);
 }
 
-type TagsInputInputStateProps = WithRefProps;
+type TagsInputInputStateProps = WithRefProps & WritableBoxedValues<{ value: string }>;
 
 class TagsInputInputState {
 	#ref: TagsInputInputStateProps["ref"];
 	#id: TagsInputInputStateProps["id"];
 	#root: TagsInputRootState;
+	value: TagsInputInputStateProps["value"];
 
 	constructor(props: TagsInputInputStateProps, root: TagsInputRootState) {
 		this.#ref = props.ref;
 		this.#id = props.id;
 		this.#root = root;
+		this.value = props.value;
 
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
+			onRefChange: (node) => {
+				this.#root.inputNode = node;
+			},
 		});
 	}
 
+	#resetValue = () => {
+		this.value.current = "";
+	};
+
 	#onkeydown = (e: KeyboardEvent & { currentTarget: HTMLInputElement }) => {
-		if (e.key === "Enter") {
+		if (e.key === kbd.ENTER) {
 			this.#root.addValue(e.currentTarget.value);
-			e.currentTarget.value = "";
+			this.#resetValue();
 		} else if (this.#root.delimiters.current.includes(e.key) && e.currentTarget.value) {
 			e.preventDefault();
 			this.#root.addValue(e.currentTarget.value);
-			e.currentTarget.value = "";
+			this.#resetValue();
+		} else if (e.key === kbd.BACKSPACE && e.currentTarget.value === "") {
+			e.preventDefault();
+			this.#root.listRovingFocusGroup?.focusLastCandidate();
 		}
+	};
+
+	#onpaste = (e: ClipboardEvent & { currentTarget: HTMLInputElement }) => {
+		if (!e.clipboardData) return;
+		const rawClipboardData = e.clipboardData.getData("text/plain");
+		// we're splitting this by the delimiters
+		const pastedValues = rawClipboardData.split(this.#root.delimitersRegex);
+		this.#root.addValues(pastedValues);
+		e.preventDefault();
 	};
 
 	#onblur = (e: KeyboardEvent & { currentTarget: HTMLInputElement }) => {
 		const blurBehavior = this.#root.blurBehavior.current;
 		if (blurBehavior === "add" && e.currentTarget.value !== "") {
 			this.#root.addValue(e.currentTarget.value);
-			e.currentTarget.value = "";
+			this.#resetValue();
 		} else if (blurBehavior === "clear") {
-			e.currentTarget.value = "";
+			this.#resetValue();
 		}
 	};
 
@@ -457,6 +508,7 @@ class TagsInputInputState {
 				[INPUT_ATTR]: "",
 				onkeydown: this.#onkeydown,
 				onblur: this.#onblur,
+				onpaste: this.#onpaste,
 			}) as const
 	);
 }

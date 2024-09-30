@@ -51,7 +51,7 @@ class ToolbarRootState {
 			orientation: this.orientation,
 			loop: this.#loop,
 			rootNodeId: this.#id,
-			candidateAttr: ITEM_ATTR,
+			candidateSelector: `[${ITEM_ATTR}]`,
 		});
 	}
 
@@ -212,6 +212,7 @@ class ToolbarGroupItemState {
 	#value: ToolbarGroupItemStateProps["value"];
 	#disabled: ToolbarGroupItemStateProps["disabled"];
 	#isDisabled = $derived.by(() => this.#disabled.current || this.#group.disabled.current);
+	#tabIndex = $state(0);
 
 	constructor(
 		props: ToolbarGroupItemStateProps,
@@ -228,6 +229,10 @@ class ToolbarGroupItemState {
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
+		});
+
+		$effect(() => {
+			this.#tabIndex = this.#root.rovingFocusGroup.getTabIndex(this.#ref.current);
 		});
 	}
 
@@ -261,8 +266,6 @@ class ToolbarGroupItemState {
 		return this.#group.isMulti ? getAriaPressed(this.isPressed) : undefined;
 	});
 
-	#tabIndex = $derived.by(() => this.#root.rovingFocusGroup.getTabIndex(this.#ref.current));
-
 	props = $derived.by(
 		() =>
 			({
@@ -291,6 +294,7 @@ class ToolbarLinkState {
 	#id: ToolbarLinkStateProps["id"];
 	#ref: ToolbarLinkStateProps["ref"];
 	#root: ToolbarRootState;
+	#tabIndex = $state(0);
 
 	constructor(props: ToolbarLinkStateProps, root: ToolbarRootState) {
 		this.#root = root;
@@ -300,6 +304,10 @@ class ToolbarLinkState {
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
+		});
+
+		$effect(() => {
+			this.#tabIndex = this.#root.rovingFocusGroup.getTabIndex(this.#ref.current);
 		});
 	}
 
@@ -313,8 +321,6 @@ class ToolbarLinkState {
 		if (tagName !== "A") return "link" as const;
 		return undefined;
 	});
-
-	#tabIndex = $derived.by(() => this.#root.rovingFocusGroup.getTabIndex(this.#ref.current));
 
 	props = $derived.by(() => ({
 		id: this.#id.current,
@@ -339,6 +345,7 @@ class ToolbarButtonState {
 	#ref: ToolbarButtonStateProps["ref"];
 	#root: ToolbarRootState;
 	#disabled: ToolbarButtonStateProps["disabled"];
+	#tabIndex = $state(0);
 
 	constructor(props: ToolbarButtonStateProps, root: ToolbarRootState) {
 		this.#id = props.id;
@@ -350,13 +357,15 @@ class ToolbarButtonState {
 			id: this.#id,
 			ref: this.#ref,
 		});
+
+		$effect(() => {
+			this.#tabIndex = this.#root.rovingFocusGroup.getTabIndex(this.#ref.current);
+		});
 	}
 
 	#onkeydown = (e: KeyboardEvent) => {
 		this.#root.rovingFocusGroup.handleKeydown(this.#ref.current, e);
 	};
-
-	#tabIndex = $derived.by(() => this.#root.rovingFocusGroup.getTabIndex(this.#ref.current));
 
 	#role = $derived.by(() => {
 		if (!this.#ref.current) return undefined;
