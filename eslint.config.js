@@ -24,5 +24,6 @@ export default config({ svelte: true, ignores: [...DEFAULT_IGNORES, ...ignores] 
 			"svelte/no-at-html-tags": "off",
 			"unused-imports/no-unused-imports": "off",
 			"unused-imports/no-unused-vars": "off",
+			"import/no-self-import": "off",
 		},
 	});

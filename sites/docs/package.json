@@ -42,7 +42,7 @@
 		"remark-gfm": "^4.0.0",
 		"remove-markdown": "^0.5.5",
 		"shiki": "^1.1.1",
-		"svelte": "5.0.0-next.251",
+		"svelte": "5.0.0-next.260",
 		"svelte-check": "4.0.3",
 		"svelte-sonner": "^0.3.24",
 		"tailwind-merge": "^2.2.1",
