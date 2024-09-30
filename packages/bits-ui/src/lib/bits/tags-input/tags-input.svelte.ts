@@ -83,7 +83,7 @@ class TagsInputListState {
 	root: TagsInputRootState;
 
 	// TODO: We need to trigger this to turn into `polite` reactively on a timer when
-	// an item is removed from/added to the list
+	// an item is removed from/added to the list, so we'll need to hook into the add/remove events
 	#ariaLive = $derived.by(() => "off");
 
 	constructor(props: TagsInputListStateProps, root: TagsInputRootState) {
