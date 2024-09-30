@@ -17,6 +17,7 @@
 		ref = $bindable(null),
 		loop = true,
 		onInteractOutside = noop,
+		preventScroll = true,
 		// we need to explicitly pass this prop to the PopperLayer to override
 		// the default menu behavior of handling outside interactions on the trigger
 		onEscapeKeydown = noop,
@@ -55,6 +56,7 @@
 	{...mergedProps}
 	present={contentState.parentMenu.open.current || forceMount}
 	onInteractOutsideStart={handleInteractOutsideStart}
+	{preventScroll}
 	onInteractOutside={(e) => {
 		onInteractOutside(e);
 		if (e.defaultPrevented) return;
