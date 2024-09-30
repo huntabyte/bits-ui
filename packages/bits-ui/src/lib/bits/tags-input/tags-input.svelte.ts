@@ -26,12 +26,14 @@ class TagsInputRootState {
 	#id: TagsInputRootStateProps["id"];
 	#value: TagsInputRootStateProps["value"];
 	delimiter: TagsInputRootStateProps["delimiter"];
+	blurBehavior: TagsInputRootStateProps["blurBehavior"];
 
 	constructor(props: TagsInputRootStateProps) {
 		this.#ref = props.ref;
 		this.#id = props.id;
 		this.#value = props.value;
 		this.delimiter = props.delimiter;
+		this.blurBehavior = props.blurBehavior;
 
 		useRefById({
 			id: this.#id,
@@ -291,12 +293,23 @@ class TagsInputState {
 		}
 	};
 
+	#onblur = (e: KeyboardEvent & { currentTarget: HTMLInputElement }) => {
+		const blurBehavior = this.#root.blurBehavior.current;
+		if (blurBehavior === "add" && e.currentTarget.value !== "") {
+			this.#root.addValue(e.currentTarget.value);
+			e.currentTarget.value = "";
+		} else if (blurBehavior === "clear") {
+			e.currentTarget.value = "";
+		}
+	};
+
 	props = $derived.by(
 		() =>
 			({
 				id: this.#id.current,
 				[INPUT_ATTR]: "",
 				onkeydown: this.#onkeydown,
+				onblur: this.#onblur,
 			}) as const
 	);
 }
