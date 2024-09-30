@@ -1,5 +1,5 @@
 import { type ReadableBoxedValues, type WritableBoxedValues, box } from "svelte-toolbelt";
-import type { TagsInputBlurBehavior } from "./types.js";
+import type { TagsInputBlurBehavior, TagsInputPasteBehavior } from "./types.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
 import { createContext } from "$lib/internal/createContext.js";
@@ -31,6 +31,7 @@ type TagsInputRootStateProps = WithRefProps &
 		editable: boolean;
 		name: string;
 		required: boolean;
+		pasteBehavior: TagsInputPasteBehavior;
 	}>;
 
 // prettier-ignore
@@ -51,6 +52,7 @@ class TagsInputRootState {
 	required: TagsInputRootStateProps["required"];
 	editable: TagsInputRootStateProps["editable"];
 	name: TagsInputRootStateProps["name"];
+	pasteBehavior: TagsInputRootStateProps["pasteBehavior"];
 	inputNode = $state<HTMLElement | null>(null);
 	listRovingFocusGroup: ReturnType<typeof useRovingFocus> | null = null;
 	delimitersRegex = $derived.by(() => new RegExp(this.delimiters.current.join("|"), "g"));
@@ -64,6 +66,7 @@ class TagsInputRootState {
 		this.name = props.name;
 		this.editable = props.editable;
 		this.required = props.required;
+		this.pasteBehavior = props.pasteBehavior;
 
 		useRefById({
 			id: this.#id,
@@ -483,7 +486,7 @@ class TagsInputInputState {
 	};
 
 	#onpaste = (e: ClipboardEvent & { currentTarget: HTMLInputElement }) => {
-		if (!e.clipboardData) return;
+		if (!e.clipboardData || this.#root.pasteBehavior.current === "none") return;
 		const rawClipboardData = e.clipboardData.getData("text/plain");
 		// we're splitting this by the delimiters
 		const pastedValues = rawClipboardData.split(this.#root.delimitersRegex);

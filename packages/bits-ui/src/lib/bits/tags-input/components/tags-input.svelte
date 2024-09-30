@@ -17,6 +17,7 @@
 		editable = true,
 		required = false,
 		name = "",
+		pasteBehavior = "none",
 		children,
 		child,
 		...restProps
@@ -44,6 +45,7 @@
 		editable: box.with(() => editable),
 		name: box.with(() => name),
 		required: box.with(() => required),
+		pasteBehavior: box.with(() => pasteBehavior),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, rootState.props));

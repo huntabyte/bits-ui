@@ -6,7 +6,12 @@
 </script>
 
 <div class="flex items-center justify-center">
-	<TagsInput.Root bind:value class="flex flex-col gap-2" blurBehavior="add">
+	<TagsInput.Root
+		bind:value
+		class="flex flex-col gap-2"
+		blurBehavior="add"
+		delimiters={[",", ";", ":"]}
+	>
 		<div
 			class="flex h-auto w-[400px] flex-col gap-4 rounded-card-sm border border-border-input bg-background p-4 text-sm placeholder:text-foreground-alt/50 focus-within:outline-none focus-within:ring-2 focus-within:ring-foreground focus-within:ring-offset-2 focus-within:ring-offset-background hover:border-dark-40"
 		>
