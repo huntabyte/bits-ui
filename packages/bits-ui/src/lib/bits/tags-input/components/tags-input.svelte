@@ -13,7 +13,7 @@
 		onValueChange = noop,
 		controlledValue = false,
 		delimiters = [","],
-		blurBehavior = "add",
+		blurBehavior = "none",
 		editable = true,
 		required = false,
 		name = "",
