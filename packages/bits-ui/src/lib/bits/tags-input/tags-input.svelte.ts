@@ -3,13 +3,10 @@ import type { TagsInputBlurBehavior, TagsInputPasteBehavior } from "./types.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
 import { createContext } from "$lib/internal/createContext.js";
-import { getAriaHidden, getContentEditable, getRequired } from "$lib/internal/attrs.js";
+import { getAriaHidden, getRequired } from "$lib/internal/attrs.js";
 import { srOnlyStyles } from "$lib/internal/style.js";
-import { mergeProps } from "$lib/internal/mergeProps.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
-import { useId } from "$lib/internal/useId.js";
-import { afterTick } from "$lib/internal/afterTick.js";
 
 const ROOT_ATTR = "data-tags-input-root";
 const LIST_ATTR = "data-tags-input-list";
@@ -20,7 +17,6 @@ const TAG_TEXT_ATTR = "data-tags-input-tag-text";
 const TAG_CONTENT_ATTR = "data-tags-input-tag-content";
 const TAG_REMOVE_ATTR = "data-tags-input-tag-remove";
 const TAG_EDIT_ATTR = "data-tags-input-tag-edit";
-const FOCUS_CANDIDATE_ATTR = "data-focus-candidate";
 
 type TagsInputRootStateProps = WithRefProps &
 	WritableBoxedValues<{
@@ -362,6 +358,7 @@ class TagsInputTagEditState {
 		if (e.key === kbd.ESCAPE || e.key === kbd.TAB) {
 			e.preventDefault();
 			this.tag.stopEditing();
+			e.currentTarget.value = this.tag.value.current;
 		} else if (e.key === kbd.ENTER) {
 			e.preventDefault();
 			const value = e.currentTarget.value;
