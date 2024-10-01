@@ -22,7 +22,10 @@
 			() => ref,
 			(v) => (ref = v)
 		),
-		value: box.with(() => value),
+		value: box.with(
+			() => value,
+			(v) => (value = v)
+		),
 		index: box.with(() => index),
 	});
 

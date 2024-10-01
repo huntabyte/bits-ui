@@ -98,6 +98,10 @@ class TagsInputRootState {
 		this.value.current = [];
 	};
 
+	recomputeTabIndex = () => {
+		this.listRovingFocusGroup?.recomputeActiveTabNode();
+	};
+
 	props = $derived.by(
 		() =>
 			({
@@ -179,8 +183,10 @@ class TagsInputListState {
 
 type TagsInputTagStateProps = WithRefProps &
 	ReadableBoxedValues<{
-		value: string;
 		index: number;
+	}> &
+	WritableBoxedValues<{
+		value: string;
 	}>;
 
 class TagsInputTagState {
@@ -218,6 +224,10 @@ class TagsInputTagState {
 		});
 	}
 
+	setValue = (value: string) => {
+		this.value.current = value;
+	};
+
 	startEditing = () => {
 		this.isEditing = true;
 		this.editInput?.focus();
@@ -231,6 +241,7 @@ class TagsInputTagState {
 
 	remove = () => {
 		this.root.removeValueByIndex(this.index.current);
+		this.root.recomputeTabIndex();
 	};
 
 	#onkeydown = (e: KeyboardEvent) => {
@@ -347,10 +358,20 @@ class TagsInputTagEditState {
 		return srOnlyStyles;
 	});
 
-	#onkeydown = (e: KeyboardEvent) => {
+	#onkeydown = (e: KeyboardEvent & { currentTarget: HTMLInputElement }) => {
 		if (e.key === kbd.ESCAPE || e.key === kbd.TAB) {
 			e.preventDefault();
 			this.tag.stopEditing();
+		} else if (e.key === kbd.ENTER) {
+			e.preventDefault();
+			const value = e.currentTarget.value;
+			if (value === "") {
+				this.tag.stopEditing();
+				this.tag.remove();
+			} else {
+				this.tag.setValue(value);
+				this.tag.stopEditing();
+			}
 		}
 	};
 
@@ -375,7 +396,6 @@ class TagsInputTagRemoveState {
 	#id: TagsInputTagRemoveStateProps["id"];
 	#tag: TagsInputTagState;
 	root: TagsInputRootState;
-	#list: TagsInputListState;
 	#ariaLabelledBy = $derived.by(() => {
 		if (this.#tag.textNode && this.#tag.textNode.id) {
 			return `${this.#id.current} ${this.#tag.textNode.id}`;
@@ -388,7 +408,6 @@ class TagsInputTagRemoveState {
 		this.#id = props.id;
 		this.#tag = tag;
 		this.root = tag.root;
-		this.#list = tag.list;
 
 		useRefById({
 			id: this.#id,
@@ -399,8 +418,6 @@ class TagsInputTagRemoveState {
 	#onclick = () => {
 		this.#tag.remove();
 	};
-
-	#onkeydown = (e: KeyboardEvent) => {};
 
 	props = $derived.by(
 		() =>
@@ -413,7 +430,6 @@ class TagsInputTagRemoveState {
 				"data-editing": this.#tag.isEditing ? "" : undefined,
 				tabindex: -1,
 				onclick: this.#onclick,
-				onkeydown: this.#onkeydown,
 			}) as const
 	);
 }

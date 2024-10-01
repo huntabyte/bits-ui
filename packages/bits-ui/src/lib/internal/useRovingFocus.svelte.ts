@@ -45,8 +45,10 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 	const currentTabStopId: WritableBox<string | null> = props.currentTabStopId
 		? props.currentTabStopId
 		: box<string | null>(null);
+	let recomputeTracker = $state(false);
 
 	const anyActive = $derived.by(() => {
+		recomputeTracker;
 		if (!currentTabStopId.current) return false;
 		return Boolean(document.getElementById(currentTabStopId.current));
 	});
@@ -156,6 +158,10 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 		return -1;
 	}
 
+	function recomputeActiveTabNode() {
+		recomputeTracker = !recomputeTracker;
+	}
+
 	return {
 		setCurrentTabStopId(id: string) {
 			currentTabStopId.current = id;
@@ -166,5 +172,6 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 		navigateBackward,
 		currentTabStopId,
 		focusLastCandidate,
+		recomputeActiveTabNode,
 	};
 }
