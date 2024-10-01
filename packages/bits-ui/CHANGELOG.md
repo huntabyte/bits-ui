@@ -1,5 +1,13 @@
 # bits-ui
 
+## 1.0.0-next.4
+
+### Patch Changes
+
+-   set `preventScroll` to `true` by default on `ContextMenu` ([#709](https://github.com/huntabyte/bits-ui/pull/709))
+
+-   update Svelte to `5.0.0-next.260` ([#707](https://github.com/huntabyte/bits-ui/pull/707))
+
 ## 1.0.0-next.3
 
 ### Patch Changes
