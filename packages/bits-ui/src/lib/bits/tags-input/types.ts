@@ -4,7 +4,6 @@ import type {
 	PrimitiveDivAttributes,
 	PrimitiveInputAttributes,
 	WithChild,
-	WithChildren,
 	Without,
 } from "$lib/shared/index.js";
 
@@ -59,6 +58,14 @@ export type TagsInputRootPropsWithoutHTML = WithChild<{
 	 * @defaultValue "add"
 	 */
 	pasteBehavior?: TagsInputPasteBehavior;
+
+	/**
+	 * A validation function to determine if the individual tag being added/edited is valid.
+	 *
+	 * Return true to allow the tag to be added/edited, or false to prevent it from being
+	 * added/confirm edited.
+	 */
+	validate?: (value: string) => boolean;
 
 	/**
 	 * Whether the individual tags are editable or not. This applies to all tags. If you wish

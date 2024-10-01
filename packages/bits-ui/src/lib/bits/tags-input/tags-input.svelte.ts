@@ -29,6 +29,7 @@ type TagsInputRootStateProps = WithRefProps &
 		name: string;
 		required: boolean;
 		pasteBehavior: TagsInputPasteBehavior;
+		validate: (value: string) => boolean;
 	}>;
 
 // prettier-ignore
@@ -47,6 +48,7 @@ class TagsInputRootState {
 	editable: TagsInputRootStateProps["editable"];
 	name: TagsInputRootStateProps["name"];
 	pasteBehavior: TagsInputRootStateProps["pasteBehavior"];
+	validate: TagsInputRootStateProps["validate"];
 	inputNode = $state<HTMLElement | null>(null);
 	listRovingFocusGroup: ReturnType<typeof useRovingFocus> | null = null;
 	delimitersRegex = $derived.by(() => new RegExp(this.delimiters.current.join("|"), "g"));
@@ -61,6 +63,7 @@ class TagsInputRootState {
 		this.editable = props.editable;
 		this.required = props.required;
 		this.pasteBehavior = props.pasteBehavior;
+		this.validate = props.validate;
 
 		useRefById({
 			id: this.#id,

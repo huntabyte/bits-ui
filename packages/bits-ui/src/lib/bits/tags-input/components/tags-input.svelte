@@ -11,6 +11,7 @@
 		value = $bindable([]),
 		ref = $bindable(null),
 		onValueChange = noop,
+		validate = () => true,
 		controlledValue = false,
 		delimiters = [","],
 		blurBehavior = "none",
@@ -46,6 +47,7 @@
 		name: box.with(() => name),
 		required: box.with(() => required),
 		pasteBehavior: box.with(() => pasteBehavior),
+		validate: box.with(() => validate),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, rootState.props));
