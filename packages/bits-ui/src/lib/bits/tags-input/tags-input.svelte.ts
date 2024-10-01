@@ -8,16 +8,19 @@ import { srOnlyStyles } from "$lib/internal/style.js";
 import { mergeProps } from "$lib/internal/mergeProps.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
+import { useId } from "$lib/internal/useId.js";
+import { afterTick } from "$lib/internal/afterTick.js";
 
 const ROOT_ATTR = "data-tags-input-root";
 const LIST_ATTR = "data-tags-input-list";
 const INPUT_ATTR = "data-tags-input-input";
 const CLEAR_ATTR = "data-tags-input-clear";
 const TAG_ATTR = "data-tags-input-tag";
+const TAG_TEXT_ATTR = "data-tags-input-tag-text";
 const TAG_CONTENT_ATTR = "data-tags-input-tag-content";
 const TAG_REMOVE_ATTR = "data-tags-input-tag-remove";
 const TAG_EDIT_ATTR = "data-tags-input-tag-edit";
-const TAG_WIDGET_ATTR = "data-tags-input-tag-widget";
+const FOCUS_CANDIDATE_ATTR = "data-focus-candidate";
 
 type TagsInputRootStateProps = WithRefProps &
 	WritableBoxedValues<{
@@ -33,11 +36,8 @@ type TagsInputRootStateProps = WithRefProps &
 	}>;
 
 // prettier-ignore
-const NAVIGATION_KEYS = [kbd.ARROW_LEFT, kbd.ARROW_RIGHT, kbd.ARROW_UP, kbd.ARROW_DOWN, kbd.HOME, kbd.END]
-
 const HORIZONTAL_NAV_KEYS = [kbd.ARROW_LEFT, kbd.ARROW_RIGHT, kbd.HOME, kbd.END];
 const VERTICAL_NAV_KEYS = [kbd.ARROW_UP, kbd.ARROW_DOWN];
-
 const REMOVAL_KEYS = [kbd.BACKSPACE, kbd.DELETE];
 
 class TagsInputRootState {
@@ -106,19 +106,6 @@ class TagsInputRootState {
 			}) as const
 	);
 
-	sharedGridCellProps = $derived(
-		mergeProps(
-			{
-				role: "gridcell",
-				tabindex: -1,
-				style: {
-					display: "contents",
-				},
-			},
-			{}
-		)
-	);
-
 	createList(props: TagsInputListStateProps) {
 		return new TagsInputListState(props, this);
 	}
@@ -151,7 +138,7 @@ class TagsInputListState {
 
 		this.rovingFocusGroup = useRovingFocus({
 			rootNodeId: this.#id,
-			candidateSelector: "[role=row]",
+			candidateSelector: `[role=gridcell]:not([aria-hidden=true])`,
 			loop: box(false),
 			orientation: box("horizontal"),
 		});
@@ -163,12 +150,22 @@ class TagsInputListState {
 		});
 	}
 
+	gridWrapperProps = $derived.by(
+		() =>
+			({
+				role: "grid",
+				style: {
+					display: "contents",
+				},
+			}) as const
+	);
+
 	props = $derived.by(
 		() =>
 			({
 				id: this.#id.current,
 				[LIST_ATTR]: "",
-				role: "grid",
+				role: "row",
 				"aria-atomic": "false",
 				"aria-relevant": "additions",
 				"aria-live": this.#ariaLive,
@@ -193,8 +190,9 @@ class TagsInputTagState {
 	index: TagsInputTagStateProps["index"];
 	root: TagsInputRootState;
 	list: TagsInputListState;
-	contentNode = $state<HTMLElement | null>(null);
-	editNode = $state<HTMLElement | null>(null);
+	textNode = $state<HTMLElement | null>(null);
+	editCell = $state<HTMLElement | null>(null);
+	editInput = $state<HTMLInputElement | null>(null);
 	isEditing = $state(false);
 	#tabIndex = $state(0);
 
@@ -220,21 +218,36 @@ class TagsInputTagState {
 		});
 	}
 
+	startEditing = () => {
+		this.isEditing = true;
+		this.editInput?.focus();
+		this.editInput?.select();
+	};
+
+	stopEditing = () => {
+		this.isEditing = false;
+		this.#ref.current?.focus();
+	};
+
 	remove = () => {
 		this.root.removeValueByIndex(this.index.current);
 	};
 
 	#onkeydown = (e: KeyboardEvent) => {
+		if (e.target !== this.#ref.current) return;
 		if (HORIZONTAL_NAV_KEYS.includes(e.key)) {
 			e.preventDefault();
 			this.list.rovingFocusGroup.handleKeydown(this.#ref.current, e);
 		} else if (VERTICAL_NAV_KEYS.includes(e.key)) {
 			e.preventDefault();
 			this.list.rovingFocusGroup.handleKeydown(this.#ref.current, e, "vertical", true);
-		} else if (REMOVAL_KEYS.includes(e.key) && e.target === this.#ref.current) {
+		} else if (REMOVAL_KEYS.includes(e.key)) {
 			e.preventDefault();
 			this.remove();
 			this.list.rovingFocusGroup.navigateBackward(this.#ref.current, this.root.inputNode);
+		} else if (e.key === kbd.ENTER) {
+			e.preventDefault();
+			this.startEditing();
 		}
 	};
 
@@ -242,15 +255,16 @@ class TagsInputTagState {
 		() =>
 			({
 				id: this.#id.current,
-				[TAG_ATTR]: "",
-				role: "row",
+				role: "gridcell",
+				"data-editing": this.isEditing ? "" : undefined,
 				tabindex: this.#tabIndex,
+				[TAG_ATTR]: "",
 				onkeydown: this.#onkeydown,
 			}) as const
 	);
 
-	createTagContent(props: TagsInputTagContentStateProps) {
-		return new TagsInputTagContentState(props, this);
+	createTagText(props: TagsInputTagTextStateProps) {
+		return new TagsInputTagTextState(props, this);
 	}
 
 	createTagEdit(props: TagsInputTagEditStateProps) {
@@ -261,25 +275,24 @@ class TagsInputTagState {
 		return new TagsInputTagRemoveState(props, this);
 	}
 
-	createTagWidget(props: TagsInputTagWidgetStateProps) {
-		return new TagsInputTagWidgetState(props, this);
-	}
-
 	createTagHiddenInput() {
 		return new TagsInputTagHiddenInputState(this);
 	}
+
+	createContent(props: TagsInputTagContentStateProps) {
+		return new TagsInputTagContentState(props, this);
+	}
 }
 
-type TagsInputTagContentStateProps = WithRefProps;
-
-class TagsInputTagContentState {
-	#ref: TagsInputTagContentStateProps["ref"];
-	#id: TagsInputTagContentStateProps["id"];
+type TagsInputTagTextStateProps = WithRefProps;
+class TagsInputTagTextState {
+	#ref: TagsInputTagTextStateProps["ref"];
+	#id: TagsInputTagTextStateProps["id"];
 	#tag: TagsInputTagState;
 	#list: TagsInputListState;
 	root: TagsInputRootState;
 
-	constructor(props: TagsInputTagContentStateProps, tag: TagsInputTagState) {
+	constructor(props: TagsInputTagTextStateProps, tag: TagsInputTagState) {
 		this.#ref = props.ref;
 		this.#id = props.id;
 		this.#tag = tag;
@@ -290,7 +303,7 @@ class TagsInputTagContentState {
 			id: this.#id,
 			ref: this.#ref,
 			onRefChange: (node) => {
-				this.#tag.contentNode = node;
+				this.#tag.textNode = node;
 			},
 		});
 	}
@@ -301,8 +314,7 @@ class TagsInputTagContentState {
 		() =>
 			({
 				id: this.#id.current,
-				[TAG_CONTENT_ATTR]: "",
-				"data-editing": this.#tag.isEditing ? "" : undefined,
+				[TAG_TEXT_ATTR]: "",
 				tabindex: -1,
 				onkeydown: this.#onkeydown,
 			}) as const
@@ -314,34 +326,44 @@ type TagsInputTagEditStateProps = WithRefProps;
 class TagsInputTagEditState {
 	#ref: TagsInputTagEditStateProps["ref"];
 	#id: TagsInputTagEditStateProps["id"];
-	#tag: TagsInputTagState;
+	tag: TagsInputTagState;
 
 	constructor(props: TagsInputTagEditStateProps, tag: TagsInputTagState) {
 		this.#ref = props.ref;
 		this.#id = props.id;
-		this.#tag = tag;
+		this.tag = tag;
 
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
 			onRefChange: (node) => {
-				this.#tag.editNode = node;
+				if (node instanceof HTMLInputElement) this.tag.editInput = node;
 			},
 		});
 	}
 
-	#style = $derived.by(() => (this.#tag.isEditing ? srOnlyStyles : undefined));
+	#style = $derived.by(() => {
+		if (this.tag.isEditing) return undefined;
+		return srOnlyStyles;
+	});
+
+	#onkeydown = (e: KeyboardEvent) => {
+		if (e.key === kbd.ESCAPE || e.key === kbd.TAB) {
+			e.preventDefault();
+			this.tag.stopEditing();
+		}
+	};
 
 	props = $derived.by(
 		() =>
 			({
 				id: this.#id.current,
 				[TAG_EDIT_ATTR]: "",
-				contenteditable: getContentEditable(this.#tag.isEditing),
 				tabindex: -1,
-				"aria-hidden": getAriaHidden(!this.#tag.isEditing),
-				"data-editing": this.#tag.isEditing ? "" : undefined,
+				"data-editing": this.tag.isEditing ? "" : undefined,
+				value: this.tag.value.current,
 				style: this.#style,
+				onkeydown: this.#onkeydown,
 			}) as const
 	);
 }
@@ -355,8 +377,8 @@ class TagsInputTagRemoveState {
 	root: TagsInputRootState;
 	#list: TagsInputListState;
 	#ariaLabelledBy = $derived.by(() => {
-		if (this.#tag.contentNode && this.#tag.contentNode.id) {
-			return `${this.#id.current} ${this.#tag.contentNode.id}`;
+		if (this.#tag.textNode && this.#tag.textNode.id) {
+			return `${this.#id.current} ${this.#tag.textNode.id}`;
 		}
 		return this.#id.current;
 	});
@@ -378,12 +400,7 @@ class TagsInputTagRemoveState {
 		this.#tag.remove();
 	};
 
-	#onkeydown = (e: KeyboardEvent) => {
-		if (NAVIGATION_KEYS.includes(e.key)) {
-			e.preventDefault();
-			this.#list.rovingFocusGroup.handleKeydown(this.#ref.current, e);
-		}
-	};
+	#onkeydown = (e: KeyboardEvent) => {};
 
 	props = $derived.by(
 		() =>
@@ -396,47 +413,6 @@ class TagsInputTagRemoveState {
 				"data-editing": this.#tag.isEditing ? "" : undefined,
 				tabindex: -1,
 				onclick: this.#onclick,
-				onkeydown: this.#onkeydown,
-			}) as const
-	);
-}
-
-type TagsInputTagWidgetStateProps = WithRefProps;
-
-class TagsInputTagWidgetState {
-	#ref: TagsInputTagWidgetStateProps["ref"];
-	#id: TagsInputTagWidgetStateProps["id"];
-	#tag: TagsInputTagState;
-	#list: TagsInputListState;
-	root: TagsInputRootState;
-
-	constructor(props: TagsInputTagWidgetStateProps, tag: TagsInputTagState) {
-		this.#ref = props.ref;
-		this.#id = props.id;
-		this.#tag = tag;
-		this.root = tag.root;
-		this.#list = tag.list;
-
-		useRefById({
-			id: this.#id,
-			ref: this.#ref,
-		});
-	}
-
-	#onkeydown = (e: KeyboardEvent) => {
-		if (NAVIGATION_KEYS.includes(e.key)) {
-			e.preventDefault();
-			this.#list.rovingFocusGroup.handleKeydown(this.#ref.current, e);
-		}
-	};
-
-	props = $derived.by(
-		() =>
-			({
-				id: this.#id.current,
-				"data-editing": this.#tag.isEditing ? "" : undefined,
-				tabindex: -1,
-				[TAG_WIDGET_ATTR]: "",
 				onkeydown: this.#onkeydown,
 			}) as const
 	);
@@ -548,6 +524,38 @@ class TagsInputClearState {
 	);
 }
 
+type TagsInputTagContentStateProps = WithRefProps;
+
+class TagsInputTagContentState {
+	#ref: TagsInputTagContentStateProps["ref"];
+	#id: TagsInputTagContentStateProps["id"];
+	tag: TagsInputTagState;
+	root: TagsInputRootState;
+
+	constructor(props: TagsInputTagContentStateProps, tag: TagsInputTagState) {
+		this.#ref = props.ref;
+		this.#id = props.id;
+		this.tag = tag;
+		this.root = tag.root;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+		});
+	}
+
+	#style = $derived.by(() => {
+		if (this.tag.isEditing) return srOnlyStyles;
+		return undefined;
+	});
+
+	props = $derived.by(() => ({
+		id: this.#id.current,
+		[TAG_CONTENT_ATTR]: "",
+		style: this.#style,
+	}));
+}
+
 class TagsInputTagHiddenInputState {
 	#tag: TagsInputTagState;
 	#root: TagsInputRootState;
@@ -594,8 +602,8 @@ export function useTagsInputTag(props: TagsInputTagStateProps) {
 	return setTagsInputTagContext(getTagsInputListContext().createTag(props));
 }
 
-export function useTagsInputTagContent(props: TagsInputTagContentStateProps) {
-	return getTagsInputTagContext().createTagContent(props);
+export function useTagsInputTagText(props: TagsInputTagTextStateProps) {
+	return getTagsInputTagContext().createTagText(props);
 }
 
 export function useTagsInputTagEdit(props: TagsInputTagEditStateProps) {
@@ -604,10 +612,6 @@ export function useTagsInputTagEdit(props: TagsInputTagEditStateProps) {
 
 export function useTagsInputTagRemove(props: TagsInputTagRemoveStateProps) {
 	return getTagsInputTagContext().createTagRemove(props);
-}
-
-export function useTagsInputTagWidget(props: TagsInputTagWidgetStateProps) {
-	return getTagsInputTagContext().createTagWidget(props);
 }
 
 export function useTagsInputTagHiddenInput() {
@@ -620,4 +624,8 @@ export function useTagsInputInput(props: TagsInputInputStateProps) {
 
 export function useTagsInputClear(props: TagsInputClearStateProps) {
 	return getTagsInputRootContext().createClear(props);
+}
+
+export function useTagsInputContent(props: TagsInputTagContentStateProps) {
+	return getTagsInputTagContext().createContent(props);
 }

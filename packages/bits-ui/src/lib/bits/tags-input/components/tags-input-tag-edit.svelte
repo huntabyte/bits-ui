@@ -5,13 +5,7 @@
 	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
-	let {
-		id = useId(),
-		ref = $bindable(null),
-		children,
-		child,
-		...restProps
-	}: TagEditProps = $props();
+	let { id = useId(), ref = $bindable(null), child, ...restProps }: TagEditProps = $props();
 
 	const tagEditState = useTagsInputTagEdit({
 		id: box.with(() => id),
@@ -27,7 +21,5 @@
 {#if child}
 	{@render child({ props: mergedProps })}
 {:else}
-	<div {...mergedProps}>
-		{@render children?.()}
-	</div>
+	<input {...mergedProps} />
 {/if}

@@ -24,12 +24,10 @@
 	const mergedProps = $derived(mergeProps(restProps, tagRemoveState.props));
 </script>
 
-<div {...tagRemoveState.root.sharedGridCellProps}>
-	{#if child}
-		{@render child({ props: mergedProps })}
-	{:else}
-		<button {...mergedProps}>
-			{@render children?.()}
-		</button>
-	{/if}
-</div>
+{#if child}
+	{@render child({ props: mergedProps })}
+{:else}
+	<button {...mergedProps}>
+		{@render children?.()}
+	</button>
+{/if}

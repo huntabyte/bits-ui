@@ -22,12 +22,15 @@
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, listState.props));
+	const mergedWrapperProps = $derived(mergeProps(listState.gridWrapperProps, {}));
 </script>
 
-{#if child}
-	{@render child({ props: mergedProps })}
-{:else}
-	<div {...mergedProps}>
-		{@render children?.()}
-	</div>
-{/if}
+<div {...mergedWrapperProps}>
+	{#if child}
+		{@render child({ props: mergedProps })}
+	{:else}
+		<div {...mergedProps}>
+			{@render children?.()}
+		</div>
+	{/if}
+</div>

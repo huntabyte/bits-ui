@@ -11,8 +11,8 @@
 		ref = $bindable(null),
 		value,
 		index,
-		child,
 		children,
+		child,
 		...restProps
 	}: TagProps = $props();
 

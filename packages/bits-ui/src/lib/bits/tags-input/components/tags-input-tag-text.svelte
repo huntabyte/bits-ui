@@ -1,19 +1,19 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import { useTagsInputContent } from "../tags-input.svelte.js";
-	import type { TagContentProps } from "../index.js";
+	import type { TagTextProps } from "../index.js";
+	import { useTagsInputTagText } from "../tags-input.svelte.js";
 	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
 	let {
 		id = useId(),
 		ref = $bindable(null),
-		children,
 		child,
+		children,
 		...restProps
-	}: TagContentProps = $props();
+	}: TagTextProps = $props();
 
-	const contentState = useTagsInputContent({
+	const tagContentState = useTagsInputTagText({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,
@@ -21,7 +21,7 @@
 		),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, contentState.props));
+	const mergedProps = $derived(mergeProps(restProps, tagContentState.props));
 </script>
 
 {#if child}

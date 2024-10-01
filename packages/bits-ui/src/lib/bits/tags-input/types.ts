@@ -4,6 +4,7 @@ import type {
 	PrimitiveDivAttributes,
 	PrimitiveInputAttributes,
 	WithChild,
+	WithChildren,
 	Without,
 } from "$lib/shared/index.js";
 
@@ -121,7 +122,7 @@ export type TagsInputClearPropsWithoutHTML = WithChild;
 export type TagsInputClearProps = TagsInputClearPropsWithoutHTML &
 	Without<PrimitiveButtonAttributes, TagsInputClearPropsWithoutHTML>;
 
-export type TagsInputTagPropsWithoutHTML = WithChild & {
+export type TagsInputTagPropsWithoutHTML = WithChild<{
 	/**
 	 * The value of this specific tag. This should be unique for the tag.
 	 */
@@ -131,15 +132,15 @@ export type TagsInputTagPropsWithoutHTML = WithChild & {
 	 * The index of this specific tag in the value array.
 	 */
 	index: number;
-};
+}>;
 
 export type TagsInputTagProps = TagsInputTagPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, TagsInputTagPropsWithoutHTML>;
 
-export type TagsInputTagContentPropsWithoutHTML = WithChild;
+export type TagsInputTagTextPropsWithoutHTML = WithChild;
 
-export type TagsInputTagContentProps = TagsInputTagContentPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, TagsInputTagContentPropsWithoutHTML>;
+export type TagsInputTagTextProps = TagsInputTagTextPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, TagsInputTagTextPropsWithoutHTML>;
 
 export type TagsInputTagRemovePropsWithoutHTML = WithChild;
 
@@ -148,10 +149,13 @@ export type TagsInputTagRemoveProps = TagsInputTagRemovePropsWithoutHTML &
 
 export type TagsInputTagEditPropsWithoutHTML = WithChild;
 
-export type TagsInputTagEditProps = TagsInputTagEditPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, TagsInputTagEditPropsWithoutHTML>;
+export type TagsInputTagEditProps = Omit<
+	TagsInputTagEditPropsWithoutHTML &
+		Without<PrimitiveInputAttributes, TagsInputTagEditPropsWithoutHTML>,
+	"children"
+>;
 
-export type TagsInputTagWidgetPropsWithoutHTML = WithChild;
+export type TagsInputTagContentPropsWithoutHTML = WithChild;
 
-export type TagsInputTagWidgetProps = TagsInputTagWidgetPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, TagsInputTagWidgetPropsWithoutHTML>;
+export type TagsInputTagContentProps = TagsInputTagContentPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, TagsInputTagContentPropsWithoutHTML>;
