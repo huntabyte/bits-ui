@@ -416,6 +416,19 @@ describe("listbox - single", () => {
 		const content = getByTestId("content");
 		expect(content).toBeVisible();
 	});
+
+	it("should deselect the selected item when the user clicks on the selected item", async () => {
+		const { getByTestId, user, trigger } = await openSingle();
+		const [item0] = getItems(getByTestId);
+		await user.click(item0!);
+		expectSelected(item0!);
+		await user.click(trigger);
+
+		const [item0v2] = getItems(getByTestId);
+
+		await user.click(item0v2!);
+		expectNotSelected(item0v2!);
+	});
 });
 
 ////////////////////////////////////

@@ -800,8 +800,10 @@ class ListboxItemState {
 		// prevent any default behavior
 		e.preventDefault();
 		if (this.disabled.current) return;
+		const isCurrentSelectedValue = this.value.current === this.root.value.current;
 		this.root.toggleItem(this.value.current, this.label.current);
-		if (!this.root.isMulti) {
+
+		if (!this.root.isMulti && !isCurrentSelectedValue) {
 			this.root.closeMenu();
 		}
 	};
