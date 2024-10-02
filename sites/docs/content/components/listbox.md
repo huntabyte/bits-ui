@@ -4,7 +4,7 @@ description: A list of options that can be selected by the user.
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, ListboxDemo, ListboxDemoCustomAnchor, Callout } from '$lib/components'
+	import { APISection, ComponentPreviewV2, ListboxDemo, ListboxDemoCustomAnchor, ListboxDemoMultiple, Callout } from '$lib/components'
 	export let schemas;
 </script>
 
@@ -321,6 +321,30 @@ While powerful, fully controlled state should be used judiciously as it increase
 For more in-depth information on controlled components and advanced state management techniques, refer to our [Controlled State](/docs/controlled-state) documentation.
 
 </Callout>
+
+## Multiple Selection
+
+The `type` prop can be set to `'multiple'` to allow multiple items to be selected at a time.
+
+```svelte
+<script lang="ts">
+	import { Listbox } from "bits-ui";
+
+	let value = $state<string[]>([]);
+</script>
+
+<Listbox.Root type="multiple" bind:value>
+	<!-- ... -->
+</Listbox.Root>
+```
+
+<ComponentPreviewV2 name="listbox-demo-multiple" comp="Listbox">
+
+{#snippet preview()}
+<ListboxDemoMultiple />
+{/snippet}
+
+</ComponentPreviewV2>
 
 ## Opt-out of Floating UI
 

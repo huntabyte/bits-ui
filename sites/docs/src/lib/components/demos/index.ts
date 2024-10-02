@@ -27,6 +27,7 @@ export { default as LinkPreviewDemo } from "./link-preview-demo.svelte";
 export { default as ListboxDemo } from "./listbox-demo.svelte";
 export { default as ListboxDemoCustom } from "./listbox-demo-custom.svelte";
 export { default as ListboxDemoCustomAnchor } from "./listbox-demo-custom-anchor.svelte";
+export { default as ListboxDemoMultiple } from "./listbox-demo-multiple.svelte";
 export { default as MenubarDemo } from "./menubar-demo.svelte";
 export { default as NavigationMenuDemo } from "./navigation-menu-demo.svelte";
 export { default as PaginationDemo } from "./pagination-demo.svelte";
