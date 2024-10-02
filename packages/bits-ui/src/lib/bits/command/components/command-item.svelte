@@ -39,7 +39,7 @@
 </script>
 
 {#key itemState.root.key}
-	<div style="display: contents;">
+	<div style="display: contents;" data-item-wrapper data-value={value}>
 		{#if itemState.shouldRender}
 			{#if child}
 				{@render child({ props: mergedProps })}

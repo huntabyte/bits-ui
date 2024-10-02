@@ -143,11 +143,6 @@ class CommandRootState {
 			id: this.id,
 			ref: this.ref,
 		});
-
-		$effect(() => {
-			this._commandState.value;
-			this.#scrollSelectedIntoView();
-		});
 	}
 
 	#score = (value: string, keywords?: string[]) => {
@@ -303,12 +298,15 @@ class CommandRootState {
 		afterSleep(1, () => {
 			const item = this.#getSelectedItem();
 			if (!item) return;
-			const firstChildOfParent = getFirstNonCommentChild(item.parentElement);
-			if (firstChildOfParent === item) {
+			const grandparent = item.parentElement?.parentElement;
+			if (!grandparent) return;
+			const firstChildOfParent = getFirstNonCommentChild(grandparent) as HTMLElement | null;
+			if (firstChildOfParent && firstChildOfParent.dataset.value === item.dataset.value) {
 				item
 					?.closest(GROUP_SELECTOR)
 					?.querySelector(GROUP_HEADING_SELECTOR)
 					?.scrollIntoView({ block: "nearest" });
+				return;
 			}
 			item.scrollIntoView({ block: "nearest" });
 		});
