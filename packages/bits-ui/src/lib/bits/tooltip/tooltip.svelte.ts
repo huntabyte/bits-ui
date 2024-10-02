@@ -318,7 +318,7 @@ class TooltipContentState {
 			onRefChange: (node) => {
 				this.root.contentNode = node;
 			},
-			condition: () => this.root.open.current,
+			deps: () => this.root.open.current,
 		});
 
 		$effect(() => {

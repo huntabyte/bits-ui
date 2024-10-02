@@ -64,7 +64,7 @@ export class DismissibleLayerState {
 		useRefById({
 			id: props.id,
 			ref: this.node,
-			condition: () => this.#enabled.current,
+			deps: () => this.#enabled.current,
 			onRefChange: (node) => {
 				this.currNode = node;
 			},

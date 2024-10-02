@@ -303,7 +303,7 @@ class MenubarContentState {
 			onRefChange: (node) => {
 				this.menu.contentNode = node;
 			},
-			condition: () => this.menu.open,
+			deps: () => this.menu.open,
 		});
 	}
 

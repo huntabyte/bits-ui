@@ -2,6 +2,8 @@
 	import { box } from "svelte-toolbelt";
 	import type { RootProps } from "../index.js";
 	import { useTagsInputRoot } from "../tags-input.svelte.js";
+	import TagsInputTagEditDescription from "./tags-input-tag-edit-description.svelte";
+	import TagsInputAnnouncer from "./tags-input-announcer.svelte";
 	import { useId } from "$lib/internal/useId.js";
 	import { noop } from "$lib/internal/callbacks.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
@@ -60,3 +62,6 @@
 		{@render children?.()}
 	</div>
 {/if}
+
+<TagsInputTagEditDescription />
+<TagsInputAnnouncer />

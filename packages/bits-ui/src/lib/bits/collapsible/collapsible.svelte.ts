@@ -90,7 +90,7 @@ class CollapsibleContentState {
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
-			condition: () => this.present,
+			deps: () => this.present,
 			onRefChange: (node) => {
 				this.root.contentNode = node;
 				this.root.contentId = node?.id;

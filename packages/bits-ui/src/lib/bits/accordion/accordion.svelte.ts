@@ -155,7 +155,7 @@ export class AccordionItemState {
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
-			condition: () => this.isActive,
+			deps: () => this.isActive,
 		});
 	}
 

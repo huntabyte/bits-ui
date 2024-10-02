@@ -1,4 +1,5 @@
 import { type ReadableBoxedValues, type WritableBoxedValues, box } from "svelte-toolbelt";
+import { untrack } from "svelte";
 import type { TagsInputBlurBehavior, TagsInputPasteBehavior } from "./types.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
@@ -52,6 +53,9 @@ class TagsInputRootState {
 	inputNode = $state<HTMLElement | null>(null);
 	listRovingFocusGroup: ReturnType<typeof useRovingFocus> | null = null;
 	delimitersRegex = $derived.by(() => new RegExp(this.delimiters.current.join("|"), "g"));
+	editDescriptionNode = $state<HTMLElement | null>(null);
+	message = $state<string | null>(null);
+	messageTimeout: number | null = null;
 
 	constructor(props: TagsInputRootStateProps) {
 		this.#ref = props.ref;
@@ -101,6 +105,28 @@ class TagsInputRootState {
 		this.listRovingFocusGroup?.recomputeActiveTabNode();
 	};
 
+	#announce = (message: string) => {
+		if (this.messageTimeout) {
+			window.clearTimeout(this.messageTimeout);
+		}
+		this.message = message;
+		this.messageTimeout = window.setTimeout(() => {
+			this.message = null;
+		});
+	};
+
+	announceEdit = (from: string, to: string) => {
+		this.#announce(`${from} has been change to ${to}`);
+	};
+
+	announceRemove = (value: string) => {
+		this.#announce(`${value} has been removed`);
+	};
+
+	announceAdd = (value: string) => {
+		this.#announce(`${value} has been added`);
+	};
+
 	props = $derived.by(
 		() =>
 			({
@@ -120,6 +146,14 @@ class TagsInputRootState {
 	createClear(props: TagsInputClearStateProps) {
 		return new TagsInputClearState(props, this);
 	}
+
+	createTagEditDescription(props: TagsInputTagEditDescriptionStateProps) {
+		return new TagsInputTagEditDescriptionState(props, this);
+	}
+
+	createAnnouncer(props: TagsInputAnnouncerStateProps) {
+		return new TagsInputAnnouncerState(props, this);
+	}
 }
 
 type TagsInputListStateProps = WithRefProps;
@@ -132,7 +166,7 @@ class TagsInputListState {
 
 	// TODO: We need to trigger this to turn into `polite` reactively on a timer when
 	// an item is removed from/added to the list, so we'll need to hook into the add/remove events
-	#ariaLive = $derived.by(() => "off");
+	#ariaLive = $derived.by(() => "polite");
 
 	constructor(props: TagsInputListStateProps, root: TagsInputRootState) {
 		this.#ref = props.ref;
@@ -212,6 +246,7 @@ class TagsInputTagState {
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
+			deps: () => this.index.current,
 		});
 
 		$effect(() => {
@@ -224,7 +259,7 @@ class TagsInputTagState {
 	}
 
 	setValue = (value: string) => {
-		this.value.current = value;
+		this.root.updateValueByIndex(this.index.current, value);
 	};
 
 	startEditing = () => {
@@ -269,6 +304,7 @@ class TagsInputTagState {
 				"data-editing": this.isEditing ? "" : undefined,
 				tabindex: this.#tabIndex,
 				[TAG_ATTR]: "",
+				"aria-label": `${this.value.current}`,
 				onkeydown: this.#onkeydown,
 			}) as const
 	);
@@ -299,7 +335,6 @@ class TagsInputTagTextState {
 	#ref: TagsInputTagTextStateProps["ref"];
 	#id: TagsInputTagTextStateProps["id"];
 	#tag: TagsInputTagState;
-	#list: TagsInputListState;
 	root: TagsInputRootState;
 
 	constructor(props: TagsInputTagTextStateProps, tag: TagsInputTagState) {
@@ -307,7 +342,6 @@ class TagsInputTagTextState {
 		this.#id = props.id;
 		this.#tag = tag;
 		this.root = tag.root;
-		this.#list = tag.list;
 
 		useRefById({
 			id: this.#id,
@@ -385,6 +419,9 @@ class TagsInputTagEditState {
 				value: this.tag.value.current,
 				style: this.#style,
 				onkeydown: this.#onkeydown,
+				"aria-label": `Edit ${this.tag.value.current}`,
+				"aria-describedby": this.tag.root.editDescriptionNode?.id,
+				"aria-hidden": getAriaHidden(!this.tag.isEditing),
 			}) as const
 	);
 }
@@ -597,6 +634,66 @@ class TagsInputTagHiddenInputState {
 	);
 }
 
+type TagsInputTagEditDescriptionStateProps = WithRefProps;
+
+class TagsInputTagEditDescriptionState {
+	#ref: TagsInputTagEditDescriptionStateProps["ref"];
+	#id: TagsInputTagEditDescriptionStateProps["id"];
+	root: TagsInputRootState;
+
+	constructor(props: TagsInputTagEditDescriptionStateProps, root: TagsInputRootState) {
+		this.#ref = props.ref;
+		this.#id = props.id;
+		this.root = root;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+			onRefChange: (node) => {
+				this.root.editDescriptionNode = node;
+			},
+		});
+	}
+
+	description = "Edit tag. Press enter to save or escape to cancel.";
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.current,
+				style: srOnlyStyles,
+			}) as const
+	);
+}
+
+type TagsInputAnnouncerStateProps = WithRefProps;
+
+class TagsInputAnnouncerState {
+	#ref: TagsInputAnnouncerStateProps["ref"];
+	#id: TagsInputAnnouncerStateProps["id"];
+	root: TagsInputRootState;
+
+	constructor(props: TagsInputAnnouncerStateProps, root: TagsInputRootState) {
+		this.#ref = props.ref;
+		this.#id = props.id;
+		this.root = root;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+		});
+	}
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.current,
+				"aria-live": "polite",
+				style: srOnlyStyles,
+			}) as const
+	);
+}
+
 const [setTagsInputRootContext, getTagsInputRootContext] =
 	createContext<TagsInputRootState>("TagsInput.Root");
 
@@ -644,4 +741,12 @@ export function useTagsInputClear(props: TagsInputClearStateProps) {
 
 export function useTagsInputContent(props: TagsInputTagContentStateProps) {
 	return getTagsInputTagContext().createContent(props);
+}
+
+export function useTagsInputTagEditDescription(props: TagsInputTagEditDescriptionStateProps) {
+	return getTagsInputRootContext().createTagEditDescription(props);
+}
+
+export function useTagsInputAnnouncer(props: TagsInputAnnouncerStateProps) {
+	return getTagsInputRootContext().createAnnouncer(props);
 }

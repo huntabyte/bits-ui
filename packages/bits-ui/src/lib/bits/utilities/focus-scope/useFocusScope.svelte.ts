@@ -70,7 +70,7 @@ export function useFocusScope({
 	useRefById({
 		id,
 		ref,
-		condition: () => enabled.current,
+		deps: () => enabled.current,
 	});
 
 	let lastFocusedElement = $state<HTMLElement | null>(null);

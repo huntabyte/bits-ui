@@ -580,7 +580,7 @@ class CommandEmptyState {
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
-			condition: () => this.shouldRender,
+			deps: () => this.shouldRender,
 		});
 	}
 
@@ -628,7 +628,7 @@ class CommandGroupContainerState {
 		useRefById({
 			id: this.id,
 			ref: this.#ref,
-			condition: () => this.shouldRender,
+			deps: () => this.shouldRender,
 		});
 
 		$effect(() => {
@@ -862,7 +862,7 @@ class CommandItemState {
 		useRefById({
 			id: this.id,
 			ref: this.#ref,
-			condition: () => Boolean(this.root.commandState.search),
+			deps: () => Boolean(this.root.commandState.search),
 		});
 
 		$effect(() => {
@@ -988,7 +988,7 @@ class CommandSeparatorState {
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
-			condition: () => this.shouldRender,
+			deps: () => this.shouldRender,
 		});
 	}
 

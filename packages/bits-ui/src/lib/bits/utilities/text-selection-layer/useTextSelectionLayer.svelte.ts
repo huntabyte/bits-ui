@@ -30,7 +30,7 @@ export class TextSelectionLayerState {
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
-			condition: () => this.#enabled.current,
+			deps: () => this.#enabled.current,
 		});
 
 		let unsubEvents = noop;

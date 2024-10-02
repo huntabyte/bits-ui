@@ -151,7 +151,7 @@ class DialogCloseState {
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
-			condition: () => this.#root.open.current,
+			deps: () => this.#root.open.current,
 		});
 	}
 
@@ -194,7 +194,7 @@ class DialogTitleState {
 				this.#root.titleNode = node;
 				this.#root.titleId = node?.id;
 			},
-			condition: () => this.#root.open.current,
+			deps: () => this.#root.open.current,
 		});
 	}
 
@@ -225,7 +225,7 @@ class DialogDescriptionState {
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
-			condition: () => this.#root.open.current,
+			deps: () => this.#root.open.current,
 			onRefChange: (node) => {
 				this.#root.descriptionNode = node;
 				this.#root.descriptionId = node?.id;
@@ -258,7 +258,7 @@ class DialogContentState {
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
-			condition: () => this.root.open.current,
+			deps: () => this.root.open.current,
 			onRefChange: (node) => {
 				this.root.contentNode = node;
 				this.root.contentId = node?.id;
@@ -296,7 +296,7 @@ class DialogOverlayState {
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
-			condition: () => this.root.open.current,
+			deps: () => this.root.open.current,
 		});
 	}
 
@@ -327,7 +327,7 @@ class AlertDialogCancelState {
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
-			condition: () => this.#root.open.current,
+			deps: () => this.#root.open.current,
 			onRefChange: (node) => {
 				this.#root.cancelNode = node;
 			},

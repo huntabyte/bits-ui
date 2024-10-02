@@ -382,7 +382,7 @@ export class SelectContentState {
 		useRefById({
 			id: this.id,
 			ref: this.ref,
-			condition: () => this.root.open.current,
+			deps: () => this.root.open.current,
 			onRefChange: (node) => {
 				this.root.contentNode = node;
 				this.root.contentId = node?.id;
@@ -1076,7 +1076,7 @@ class SelectViewportState {
 			onRefChange: (node) => {
 				this.content.viewportNode = node;
 			},
-			condition: () => this.content.root.open.current,
+			deps: () => this.content.root.open.current,
 		});
 	}
 
@@ -1159,7 +1159,7 @@ class SelectScrollButtonImplState {
 		useRefById({
 			id: this.id,
 			ref: this.ref,
-			condition: () => this.mounted.current,
+			deps: () => this.mounted.current,
 		});
 
 		$effect(() => {

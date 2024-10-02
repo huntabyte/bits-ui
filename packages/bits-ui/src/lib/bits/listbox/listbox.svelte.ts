@@ -653,7 +653,7 @@ class ListboxContentState {
 			onRefChange: (node) => {
 				this.root.contentNode = node;
 			},
-			condition: () => this.root.open.current,
+			deps: () => this.root.open.current,
 		});
 
 		$effect(() => {
@@ -943,7 +943,7 @@ class ListboxViewportState {
 			onRefChange: (node) => {
 				this.content.viewportNode = node;
 			},
-			condition: () => this.root.open.current,
+			deps: () => this.root.open.current,
 		});
 	}
 
@@ -986,7 +986,7 @@ class ListboxScrollButtonImplState {
 		useRefById({
 			id: this.id,
 			ref: this.ref,
-			condition: () => this.mounted.current,
+			deps: () => this.mounted.current,
 		});
 
 		$effect(() => {
