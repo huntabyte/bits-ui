@@ -8,6 +8,7 @@ import { getAriaHidden, getRequired } from "$lib/internal/attrs.js";
 import { srOnlyStyles } from "$lib/internal/style.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
+import { afterTick } from "$lib/internal/afterTick.js";
 
 const ROOT_ATTR = "data-tags-input-root";
 const LIST_ATTR = "data-tags-input-list";
@@ -82,19 +83,26 @@ class TagsInputRootState {
 	addValue = (value: string) => {
 		if (value === "") return;
 		this.value.current.push(value);
+		this.announceAdd(value);
 	};
 
 	addValues = (values: string[]) => {
 		const newValues = values.filter((value) => value !== "");
 		this.value.current.push(...newValues);
+		this.announceAddMultiple(newValues);
 	};
 
-	removeValueByIndex = (index: number) => {
+	removeValueByIndex = (index: number, value: string) => {
 		this.value.current.splice(index, 1);
+		this.announceRemove(value);
 	};
 
 	updateValueByIndex = (index: number, value: string) => {
+		const curr = this.value.current[index];
 		this.value.current[index] = value;
+		if (curr) {
+			this.announceEdit(curr, value);
+		}
 	};
 
 	clearValue = () => {
@@ -125,6 +133,10 @@ class TagsInputRootState {
 
 	announceAdd = (value: string) => {
 		this.#announce(`${value} has been added`);
+	};
+
+	announceAddMultiple = (values: string[]) => {
+		this.#announce(`${values.join(", ")} has been added`);
 	};
 
 	props = $derived.by(
@@ -164,10 +176,6 @@ class TagsInputListState {
 	root: TagsInputRootState;
 	rovingFocusGroup: ReturnType<typeof useRovingFocus>;
 
-	// TODO: We need to trigger this to turn into `polite` reactively on a timer when
-	// an item is removed from/added to the list, so we'll need to hook into the add/remove events
-	#ariaLive = $derived.by(() => "polite");
-
 	constructor(props: TagsInputListStateProps, root: TagsInputRootState) {
 		this.#ref = props.ref;
 		this.#id = props.id;
@@ -203,9 +211,6 @@ class TagsInputListState {
 				id: this.#id.current,
 				[LIST_ATTR]: "",
 				role: "row",
-				"aria-atomic": "false",
-				"aria-relevant": "additions",
-				"aria-live": this.#ariaLive,
 			}) as const
 	);
 
@@ -274,7 +279,7 @@ class TagsInputTagState {
 	};
 
 	remove = () => {
-		this.root.removeValueByIndex(this.index.current);
+		this.root.removeValueByIndex(this.index.current, this.value.current);
 		this.root.recomputeTabIndex();
 	};
 
@@ -456,6 +461,19 @@ class TagsInputTagRemoveState {
 		this.#tag.remove();
 	};
 
+	#onkeydown = (e: KeyboardEvent) => {
+		if (e.key === kbd.ENTER || e.key === kbd.SPACE) {
+			e.preventDefault();
+			this.#tag.remove();
+			afterTick(() => {
+				const success = this.root.listRovingFocusGroup?.focusLastCandidate();
+				if (!success) {
+					this.root.inputNode?.focus();
+				}
+			});
+		}
+	};
+
 	props = $derived.by(
 		() =>
 			({
@@ -467,6 +485,7 @@ class TagsInputTagRemoveState {
 				"data-editing": this.#tag.isEditing ? "" : undefined,
 				tabindex: -1,
 				onclick: this.#onclick,
+				onkeydown: this.#onkeydown,
 			}) as const
 	);
 }
@@ -508,7 +527,10 @@ class TagsInputInputState {
 			this.#resetValue();
 		} else if (e.key === kbd.BACKSPACE && e.currentTarget.value === "") {
 			e.preventDefault();
-			this.#root.listRovingFocusGroup?.focusLastCandidate();
+			const success = this.#root.listRovingFocusGroup?.focusLastCandidate();
+			if (!success) {
+				this.#root.inputNode?.focus();
+			}
 		}
 	};
 

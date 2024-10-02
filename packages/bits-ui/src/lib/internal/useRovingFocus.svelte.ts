@@ -72,10 +72,11 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 
 	function focusLastCandidate() {
 		const items = getCandidateNodes();
-		if (!items.length) return;
+		if (!items.length) return false;
 		const lastItem = items[items.length - 1];
-		if (!lastItem) return;
+		if (!lastItem) return false;
 		handleFocus(lastItem);
+		return true;
 	}
 
 	function navigateBackward(node: HTMLElement | null | undefined, fallback?: HTMLElement | null) {
