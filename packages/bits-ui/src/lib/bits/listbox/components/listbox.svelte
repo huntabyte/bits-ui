@@ -31,8 +31,6 @@
 		}
 	}
 
-	value === undefined && (value = type === "single" ? "" : []);
-
 	useListboxRoot({
 		type,
 		value: box.with(
