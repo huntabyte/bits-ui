@@ -1,5 +1,4 @@
 import { type ReadableBoxedValues, type WritableBoxedValues, box } from "svelte-toolbelt";
-import { untrack } from "svelte";
 import type { TagsInputBlurBehavior, TagsInputPasteBehavior } from "./types.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
