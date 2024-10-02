@@ -1,5 +1,13 @@
 # bits-ui
 
+## 1.0.0-next.5
+
+### Patch Changes
+
+-   next: fix command `scrollIntoView` issues ([#714](https://github.com/huntabyte/bits-ui/pull/714))
+
+-   Listbox/Combobox: gracefully handle deselect when `type="single"` ([#713](https://github.com/huntabyte/bits-ui/pull/713))
+
 ## 1.0.0-next.4
 
 ### Patch Changes
