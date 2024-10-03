@@ -1,5 +1,6 @@
 import { untrack } from "svelte";
 import type { ReadableBox, WritableBox } from "svelte-toolbelt";
+import type { HTMLImgAttributes } from "svelte/elements";
 import type { AvatarImageLoadingStatus } from "./types.js";
 import { createContext } from "$lib/internal/createContext.js";
 import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
@@ -9,6 +10,9 @@ import { useRefById } from "$lib/internal/useRefById.svelte.js";
 const AVATAR_ROOT_ATTR = "data-avatar-root";
 const AVATAR_IMAGE_ATTR = "data-avatar-image";
 const AVATAR_FALLBACK_ATTR = "data-avatar-fallback";
+
+type CrossOrigin = HTMLImgAttributes["crossorigin"];
+type ReferrerPolicy = HTMLImgAttributes["referrerpolicy"];
 
 /**
  * ROOT
@@ -38,13 +42,17 @@ class AvatarRootState {
 		});
 	}
 
-	loadImage(src: string) {
-		let imageTimerId: NodeJS.Timeout;
+	loadImage(src: string, crossorigin?: CrossOrigin, referrerPolicy?: ReferrerPolicy) {
+		let imageTimerId: number;
 		const image = new Image();
+
 		image.src = src;
+		if (crossorigin) image.crossOrigin = crossorigin;
+		if (referrerPolicy) image.referrerPolicy = referrerPolicy;
+
 		this.loadingStatus.current = "loading";
 		image.onload = () => {
-			imageTimerId = setTimeout(() => {
+			imageTimerId = window.setTimeout(() => {
 				this.loadingStatus.current = "loaded";
 			}, this.delayMs.current);
 		};
@@ -81,20 +89,26 @@ class AvatarRootState {
 type AvatarImageStateProps = WithRefProps<
 	ReadableBoxedValues<{
 		src: AvatarImageSrc;
+		crossOrigin: CrossOrigin;
+		referrerPolicy: ReferrerPolicy;
 	}>
 >;
 
 class AvatarImageState {
 	#id: AvatarImageStateProps["id"];
 	#ref: AvatarImageStateProps["ref"];
-	src: AvatarImageStateProps["src"];
-	root: AvatarRootState;
+	#crossOrigin: AvatarImageStateProps["crossOrigin"];
+	#referrerPolicy: AvatarImageStateProps["referrerPolicy"];
+	#src: AvatarImageStateProps["src"];
+	#root: AvatarRootState;
 
 	constructor(props: AvatarImageStateProps, root: AvatarRootState) {
-		this.root = root;
-		this.src = props.src;
+		this.#root = root;
+		this.#src = props.src;
 		this.#id = props.id;
 		this.#ref = props.ref;
+		this.#crossOrigin = props.crossOrigin;
+		this.#referrerPolicy = props.referrerPolicy;
 
 		useRefById({
 			id: this.#id,
@@ -102,8 +116,16 @@ class AvatarImageState {
 		});
 
 		$effect.pre(() => {
-			if (!this.src.current) return;
-			untrack(() => this.root.loadImage(this.src.current ?? ""));
+			if (!this.#src.current) return;
+			// dependency on crossorigin
+			this.#crossOrigin.current;
+			untrack(() =>
+				this.#root.loadImage(
+					this.#src.current ?? "",
+					this.#crossOrigin.current,
+					this.#referrerPolicy.current
+				)
+			);
 		});
 	}
 
@@ -112,11 +134,13 @@ class AvatarImageState {
 			({
 				id: this.#id.current,
 				style: {
-					display: this.root.loadingStatus.current === "loaded" ? "block" : "none",
+					display: this.#root.loadingStatus.current === "loaded" ? "block" : "none",
 				},
-				"data-status": this.root.loadingStatus.current,
+				"data-status": this.#root.loadingStatus.current,
 				[AVATAR_IMAGE_ATTR]: "",
-				src: this.src.current,
+				src: this.#src.current,
+				crossorigin: this.#crossOrigin.current,
+				referrerpolicy: this.#referrerPolicy.current,
 			}) as const
 	);
 }
@@ -130,10 +154,10 @@ type AvatarFallbackStateProps = WithRefProps;
 class AvatarFallbackState {
 	#id: AvatarFallbackStateProps["id"];
 	#ref: AvatarFallbackStateProps["ref"];
-	root: AvatarRootState;
+	#root: AvatarRootState;
 
 	constructor(props: AvatarFallbackStateProps, root: AvatarRootState) {
-		this.root = root;
+		this.#root = root;
 		this.#id = props.id;
 		this.#ref = props.ref;
 
@@ -147,9 +171,9 @@ class AvatarFallbackState {
 		() =>
 			({
 				style: {
-					display: this.root.loadingStatus.current === "loaded" ? "none" : undefined,
+					display: this.#root.loadingStatus.current === "loaded" ? "none" : undefined,
 				},
-				"data-status": this.root.loadingStatus.current,
+				"data-status": this.#root.loadingStatus.current,
 				[AVATAR_FALLBACK_ATTR]: "",
 			}) as const
 	);

@@ -5,7 +5,15 @@
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { useId } from "$lib/internal/useId.js";
 
-	let { src, child, id = useId(), ref = $bindable(null), ...restProps }: ImageProps = $props();
+	let {
+		src,
+		child,
+		id = useId(),
+		ref = $bindable(null),
+		crossorigin = "",
+		referrerpolicy = undefined,
+		...restProps
+	}: ImageProps = $props();
 
 	const imageState = useAvatarImage({
 		src: box.with(() => src),
@@ -14,6 +22,8 @@
 			() => ref,
 			(v) => (ref = v)
 		),
+		crossOrigin: box.with(() => crossorigin),
+		referrerPolicy: box.with(() => referrerpolicy),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, imageState.props));
