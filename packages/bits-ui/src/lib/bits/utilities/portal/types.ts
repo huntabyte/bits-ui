@@ -9,11 +9,14 @@ export type PortalProps = {
 	to?: HTMLElement | string | DocumentFragment;
 
 	/**
-	 * Disable portaling and render the component inline
+	 * Disable portalling and render the component inline
 	 *
 	 * @defaultValue false
 	 */
 	disabled?: boolean;
 
+	/**
+	 * The children content to render within the portal.
+	 */
 	children?: Snippet;
 };
