@@ -3,7 +3,7 @@
 	import type { ActionProps } from "../index.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { useId } from "$lib/internal/useId.js";
-	import { useDialogClose } from "$lib/bits/dialog/dialog.svelte.js";
+	import { useAlertDialogAction } from "$lib/bits/dialog/dialog.svelte.js";
 
 	let {
 		children,
@@ -13,8 +13,7 @@
 		...restProps
 	}: ActionProps = $props();
 
-	const closeState = useDialogClose({
-		variant: box.with(() => "action"),
+	const actionState = useAlertDialogAction({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,
@@ -22,7 +21,7 @@
 		),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, closeState.props));
+	const mergedProps = $derived(mergeProps(restProps, actionState.props));
 </script>
 
 {#if child}
