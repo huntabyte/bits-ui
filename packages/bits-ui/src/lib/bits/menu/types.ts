@@ -14,6 +14,7 @@ import type {
 import type {
 	DOMEl,
 	DOMElement,
+	Expand,
 	HTMLDivAttributes,
 	OmitChecked,
 	OmitFloating,
@@ -35,12 +36,12 @@ export type MenuPropsWithoutHTML = Expand<
 		 *
 		 * @defaultValue false
 		 */
-		open?: boolean;
+		open?: boolean | undefined;
 
 		/**
 		 * A callback function called when the open state changes.
 		 */
-		onOpenChange?: OnChangeFn<boolean>;
+		onOpenChange?: OnChangeFn<boolean> | undefined;
 	}
 >;
 
@@ -51,7 +52,7 @@ export type MenuSubTriggerPropsWithoutHTML = Expand<
 		 *
 		 * @defaultValue false;
 		 */
-		disabled?: boolean;
+		disabled?: boolean | undefined;
 	} & DOMElement
 >;
 
@@ -63,12 +64,12 @@ export type MenuCheckboxItemPropsWithoutHTML = Expand<
 		 *
 		 * @defaultValue false
 		 */
-		checked?: boolean | "indeterminate";
+		checked?: boolean | "indeterminate" | undefined;
 
 		/**
 		 * A callback function called when the checked state changes.
 		 */
-		onCheckedChange?: OnChangeFn<boolean | "indeterminate">;
+		onCheckedChange?: OnChangeFn<boolean | "indeterminate"> | undefined;
 	} & DOMElement
 >;
 
@@ -79,12 +80,12 @@ export type MenuRadioGroupPropsWithoutHTML = Expand<
 		 *
 		 * @defaultValue undefined
 		 */
-		value?: MeltContextMenuRadioGroupProps["defaultValue"] & {};
+		value?: (MeltContextMenuRadioGroupProps["defaultValue"] & {}) | undefined;
 
 		/**
 		 * A callback function called when the value changes.
 		 */
-		onValueChange?: OnChangeFn<MeltContextMenuRadioGroupProps["defaultValue"]>;
+		onValueChange?: OnChangeFn<MeltContextMenuRadioGroupProps["defaultValue"]> | undefined;
 	} & DOMElement
 >;
 
@@ -98,12 +99,12 @@ export type MenuSubPropsWithoutHTML = Expand<
 		 *
 		 * @defaultValue false
 		 */
-		open?: boolean;
+		open?: boolean | undefined;
 
 		/**
 		 * A callback function called when the open state changes.
 		 */
-		onOpenChange?: OnChangeFn<boolean>;
+		onOpenChange?: OnChangeFn<boolean> | undefined;
 	}
 >;
 
@@ -114,7 +115,7 @@ export type MenuItemPropsWithoutHTML = Expand<
 		 *
 		 * @defaultValue false
 		 */
-		disabled?: boolean;
+		disabled?: boolean | undefined;
 	} & DOMElement
 >;
 
@@ -144,11 +145,11 @@ export type MenuRadioItemProps = MenuRadioItemPropsWithoutHTML & HTMLDivAttribut
 export type MenuGroupProps = MenuGroupPropsWithoutHTML & HTMLDivAttributes;
 
 type MenuAnchorElement = HTMLAnchorAttributes & {
-	href?: HTMLAnchorAttributes["href"];
+	href?: HTMLAnchorAttributes["href"] | undefined;
 } & DOMEl<HTMLAnchorElement>;
 
 type MenuDivElement = HTMLDivAttributes & {
-	href?: never;
+	href?: never | undefined;
 } & DOMEl;
 
 export type MenuItemProps = Omit<MenuItemPropsWithoutHTML, "el"> &

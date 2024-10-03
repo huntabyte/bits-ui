@@ -18,12 +18,12 @@ export type PinInputPropsWithoutHTML = Expand<
 			 *
 			 * You can bind to this to programmatically control the value.
 			 */
-			value?: MeltPinInputProps["defaultValue"];
+			value?: MeltPinInputProps["defaultValue"] | undefined;
 
 			/**
 			 * A callback function called when the value changes.
 			 */
-			onValueChange?: OnChangeFn<MeltPinInputProps["defaultValue"]>;
+			onValueChange?: OnChangeFn<MeltPinInputProps["defaultValue"]> | undefined;
 		} & DOMElement
 	>
 >;

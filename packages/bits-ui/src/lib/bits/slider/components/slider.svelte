@@ -10,6 +10,7 @@
 	export let max: $$Props["max"] = undefined;
 	export let step: $$Props["step"] = undefined;
 	export let orientation: $$Props["orientation"] = undefined;
+	export let dir: $$Props["dir"] = undefined;
 	export let value: $$Props["value"] = undefined;
 	export let onValueChange: $$Props["onValueChange"] = undefined;
 	export let asChild: $$Props["asChild"] = false;
@@ -22,6 +23,7 @@
 		getAttrs,
 	} = setCtx({
 		disabled,
+		dir,
 		min,
 		max,
 		step,
@@ -44,6 +46,7 @@
 	$: updateOption("max", max);
 	$: updateOption("step", step);
 	$: updateOption("orientation", orientation);
+	$: updateOption("dir", dir);
 
 	$: builder = $root;
 	$: Object.assign(builder, attrs);

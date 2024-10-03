@@ -26,6 +26,10 @@
 		on:keyup
 		on:mouseenter
 		on:mouseleave
+		on:mousedown
+		on:pointerdown
+		on:mouseup
+		on:pointerup
 		tabindex="0"
 		use:builderActions={{ builders }}
 		{...getAttrs(builders)}
@@ -47,6 +51,10 @@
 		on:keyup
 		on:mouseenter
 		on:mouseleave
+		on:mousedown
+		on:pointerdown
+		on:mouseup
+		on:pointerup
 		tabindex="0"
 		{...$$restProps}
 		{...attrs}

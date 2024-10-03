@@ -136,8 +136,8 @@ export function seeFloating(content: string, link: string) {
 const entities = [
 	[/</g, "&lt;"],
 	[/>/g, "&gt;"],
-	[/{/g, "&#123;"],
-	[/}/g, "&#125;"],
+	[/\{/g, "&#123;"],
+	[/\}/g, "&#125;"],
 ] as const;
 
 export function escape(str: string): string {

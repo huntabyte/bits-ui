@@ -17,12 +17,12 @@ export type ToggleGroupPropsWithoutHTML<T extends "single" | "multiple"> = Expan
 		 *
 		 * You can bind to this to programmatically control the value.
 		 */
-		value?: MeltToggleGroupProps<T>["defaultValue"];
+		value?: MeltToggleGroupProps<T>["defaultValue"] | undefined;
 
 		/**
 		 * A callback function called when the value changes.
 		 */
-		onValueChange?: OnChangeFn<MeltToggleGroupProps<T>["defaultValue"]>;
+		onValueChange?: OnChangeFn<MeltToggleGroupProps<T>["defaultValue"]> | undefined;
 
 		/**
 		 * The type of the toggle group.
@@ -31,7 +31,7 @@ export type ToggleGroupPropsWithoutHTML<T extends "single" | "multiple"> = Expan
 		 * at a time. If the type is `"multiple"`, the toggle group allows multiple items
 		 * to be selected at a time.
 		 */
-		type?: T;
+		type?: T | undefined;
 	} & DOMElement
 >;
 
@@ -51,7 +51,7 @@ export type ToggleGroupItemPropsWithoutHTML = Expand<
 		 *
 		 * @defaultValue false
 		 */
-		disabled?: boolean;
+		disabled?: boolean | undefined;
 	} & DOMElement<HTMLButtonElement>
 >;
 

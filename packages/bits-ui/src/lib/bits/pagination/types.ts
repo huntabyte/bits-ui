@@ -13,12 +13,12 @@ export type PaginationPropsWithoutHTML = Expand<
 		 *
 		 * You can bind this to a value to programmatically control the value state.
 		 */
-		page?: number;
+		page?: number | undefined;
 
 		/**
 		 * A callback function called when the page changes.
 		 */
-		onPageChange?: OnChangeFn<number>;
+		onPageChange?: OnChangeFn<number> | undefined;
 	} & DOMElement
 >;
 

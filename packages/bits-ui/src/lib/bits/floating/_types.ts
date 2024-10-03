@@ -1,8 +1,8 @@
-import type { DOMElement, Transition, TransitionProps } from "$lib/internal/index.js";
+import type { DOMElement, Expand, Transition, TransitionProps } from "$lib/internal/index.js";
 
 export type ArrowProps = Expand<
 	{
-		size?: number;
+		size?: number | undefined;
 	} & DOMElement
 >;
 
@@ -22,7 +22,7 @@ export type FloatingProps = {
 	 *
 	 * @see https://floating-ui.com/docs/computePosition#placement
 	 */
-	side?: "top" | "right" | "bottom" | "left";
+	side?: "top" | "right" | "bottom" | "left" | undefined;
 
 	/**
 	 * The preferred alignment of the anchor to render against when open.
@@ -30,26 +30,26 @@ export type FloatingProps = {
 	 *
 	 * @see https://floating-ui.com/docs/computePosition#placement
 	 */
-	align?: "start" | "center" | "end";
+	align?: "start" | "center" | "end" | undefined;
 
 	/**
 	 * An offset in pixels from the "start" or "end" alignment options.
 	 * @see https://floating-ui.com/docs/offset#options
 	 */
-	alignOffset?: number;
+	alignOffset?: number | undefined;
 
 	/**
 	 * The distance in pixels from the anchor to the floating element.
 	 * @see https://floating-ui.com/docs/offset#options
 	 */
-	sideOffset?: number;
+	sideOffset?: number | undefined;
 
 	/**
 	 * Whether the content should be the same width as the trigger.
 	 *
 	 * @see https://floating-ui.com/docs/size
 	 */
-	sameWidth?: boolean;
+	sameWidth?: boolean | undefined;
 
 	/**
 	 * When `true`, overrides the `side` and `align` options to prevent collisions
@@ -58,7 +58,7 @@ export type FloatingProps = {
 	 * @default true
 	 * @see https://floating-ui.com/docs/flip
 	 */
-	avoidCollisions?: boolean;
+	avoidCollisions?: boolean | undefined;
 
 	/**
 	 * The amount in pixels of virtual padding around the viewport edges to check
@@ -67,14 +67,14 @@ export type FloatingProps = {
 	 * @default 8
 	 * @see https://floating-ui.com/docs/detectOverflow#padding
 	 */
-	collisionPadding?: number;
+	collisionPadding?: number | undefined;
 
 	/**
 	 * A boundary element or array of elements to check for collisions against.
 	 *
 	 * @see https://floating-ui.com/docs/detectoverflow#boundary
 	 */
-	collisionBoundary?: Boundary;
+	collisionBoundary?: Boundary | undefined;
 
 	/**
 	 * Whether the floating element should be constrained to the viewport.
@@ -82,13 +82,13 @@ export type FloatingProps = {
 	 * @default false
 	 * @see https://floating-ui.com/docs/size
 	 */
-	fitViewport?: boolean;
+	fitViewport?: boolean | undefined;
 
 	/**
 	 * The positioning strategy to use for the floating element.
 	 * @see https://floating-ui.com/docs/computeposition#strategy
 	 */
-	strategy?: "absolute" | "fixed";
+	strategy?: "absolute" | "fixed" | undefined;
 
 	/**
 	 * Whether the floating element can overlap the reference element.
@@ -96,7 +96,7 @@ export type FloatingProps = {
 	 *
 	 * @see https://floating-ui.com/docs/shift#options
 	 */
-	overlap?: boolean;
+	overlap?: boolean | undefined;
 };
 
 export type ContentProps<

@@ -25,14 +25,14 @@ export type FloatingConfig = {
 	 *
 	 * @see https://floating-ui.com/docs/computePosition#placement
 	 */
-	strategy?: "absolute" | "fixed";
+	strategy?: "absolute" | "fixed" | undefined;
 
 	/**
 	 * The offset of the floating element.
 	 *
 	 * @see https://floating-ui.com/docs/offset#options
 	 */
-	offset?: { mainAxis?: number; crossAxis?: number };
+	offset?: { mainAxis?: number; crossAxis?: number } | undefined;
 
 	/**
 	 * The main axis offset or gap between the reference and floating elements.
@@ -40,7 +40,7 @@ export type FloatingConfig = {
 	 *
 	 * @see https://floating-ui.com/docs/offset#options
 	 */
-	gutter?: number;
+	gutter?: number | undefined;
 
 	/**
 	 * The virtual padding around the viewport edges to check for overflow.
@@ -48,7 +48,7 @@ export type FloatingConfig = {
 	 *
 	 * @see https://floating-ui.com/docs/detectOverflow#padding
 	 */
-	overflowPadding?: number;
+	overflowPadding?: number | undefined;
 
 	/**
 	 * Whether to flip the placement.
@@ -56,7 +56,7 @@ export type FloatingConfig = {
 	 *
 	 * @see https://floating-ui.com/docs/flip
 	 */
-	flip?: boolean;
+	flip?: boolean | undefined;
 
 	/**
 	 * Whether the floating element can overlap the reference element.
@@ -64,7 +64,7 @@ export type FloatingConfig = {
 	 *
 	 * @see https://floating-ui.com/docs/shift#options
 	 */
-	overlap?: boolean;
+	overlap?: boolean | undefined;
 
 	/**
 	 * Whether to make the floating element same width as the reference element.
@@ -72,7 +72,7 @@ export type FloatingConfig = {
 	 *
 	 * @see https://floating-ui.com/docs/size
 	 */
-	sameWidth?: boolean;
+	sameWidth?: boolean | undefined;
 
 	/**
 	 * Whether the floating element should fit the viewport.
@@ -80,14 +80,14 @@ export type FloatingConfig = {
 	 *
 	 * @see https://floating-ui.com/docs/size
 	 */
-	fitViewport?: boolean;
+	fitViewport?: boolean | undefined;
 
 	/**
 	 * The overflow boundary of the reference element.
 	 *
 	 * @see https://floating-ui.com/docs/detectoverflow#boundary
 	 */
-	boundary?: Boundary;
+	boundary?: Boundary | undefined;
 };
 
 type Boundary = "clippingAncestors" | Element | Array<Element> | Rect;

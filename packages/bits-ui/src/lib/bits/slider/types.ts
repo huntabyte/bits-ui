@@ -17,12 +17,12 @@ export type SliderPropsWithoutHTML = Expand<
 		 * The value of the slider.
 		 * You can bind this to a number value to programmatically control the value.
 		 */
-		value?: number[];
+		value?: number[] | undefined;
 
 		/**
 		 * A callback function called when the value changes.
 		 */
-		onValueChange?: OnChangeFn<number[]>;
+		onValueChange?: OnChangeFn<number[]> | undefined;
 	} & DOMElement<HTMLSpanElement>
 >;
 

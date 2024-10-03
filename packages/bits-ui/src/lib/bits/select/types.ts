@@ -44,7 +44,7 @@ export type SelectPropsWithoutHTML<T = unknown, Multiple extends boolean = false
 		/**
 		 * A callback function called when the selected value changes.
 		 */
-		onSelectedChange?: OnChangeFn<SelectValue<Selected<T>, Multiple>>;
+		onSelectedChange?: OnChangeFn<SelectValue<Selected<T>, Multiple>> | undefined;
 
 		/**
 		 * The open state of the select menu.
@@ -52,23 +52,23 @@ export type SelectPropsWithoutHTML<T = unknown, Multiple extends boolean = false
 		 *
 		 * @defaultValue false
 		 */
-		open?: boolean;
+		open?: boolean | undefined;
 
 		/**
 		 * A callback function called when the open state changes.
 		 */
-		onOpenChange?: OnChangeFn<boolean>;
+		onOpenChange?: OnChangeFn<boolean> | undefined;
 
 		/**
 		 * Whether or not multiple values can be selected.
 		 */
-		multiple?: Multiple;
+		multiple?: Multiple | undefined;
 
 		/**
 		 * Optionally provide an array of `Selected<T>` objects to
 		 * type the `selected` and `onSelectedChange` props.
 		 */
-		items?: Selected<T>[];
+		items?: Selected<T>[] | undefined;
 	}
 >;
 
@@ -89,7 +89,7 @@ export type SelectValuePropsWithoutHTML = Expand<
 		 *
 		 * @defaultValue ""
 		 */
-		placeholder?: string;
+		placeholder?: string | undefined;
 	} & DOMElement<HTMLSpanElement>
 >;
 

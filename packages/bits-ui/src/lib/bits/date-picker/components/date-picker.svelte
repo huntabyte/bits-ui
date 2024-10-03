@@ -5,6 +5,7 @@
 
 	type $$Props = Props;
 
+	export let portal: $$Props["portal"] = undefined;
 	export let open: $$Props["open"] = undefined;
 	export let onOpenChange: $$Props["onOpenChange"] = undefined;
 	export let value: $$Props["value"] = undefined;
@@ -145,7 +146,7 @@
 		ids.dateField.description.set(descriptionId);
 	}
 
-	$: value !== undefined && localValue.set(value);
+	$: value !== $localValue && localValue.set(value);
 	$: placeholder !== undefined && localPlaceholder.set(placeholder);
 	$: open !== undefined && localOpen.set(open);
 
@@ -167,6 +168,7 @@
 	$: updateOption("weekdayFormat", weekdayFormat);
 	$: updateOption("numberOfMonths", numberOfMonths);
 	$: updateOption("onOutsideClick", onOutsideClick);
+	$: updateOption("portal", portal);
 </script>
 
 <slot ids={$idValues} isInvalid={$localIsInvalid} />

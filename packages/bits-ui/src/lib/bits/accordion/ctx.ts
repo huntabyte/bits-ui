@@ -1,5 +1,6 @@
 import { type CreateAccordionProps, createAccordion } from "@melt-ui/svelte";
 import { getContext, setContext } from "svelte";
+import { type Writable, writable } from "svelte/store";
 import type { ItemProps } from "./index.js";
 import { createBitAttrs, getOptionUpdater, removeUndefined } from "$lib/internal/index.js";
 
@@ -32,30 +33,31 @@ export function getCtx() {
 
 export function setItem(props: ItemProps) {
 	const { ITEM_NAME } = getAccordionData();
-	setContext(ITEM_NAME, { ...props });
+	const propsStore = writable(props);
+	setContext(ITEM_NAME, { propsStore });
 	const ctx = getCtx();
-	return { ...ctx, props };
+	return { ...ctx, propsStore };
 }
 
 export function getItemProps() {
 	const { ITEM_NAME } = getAccordionData();
-	return getContext<ItemProps>(ITEM_NAME);
+	return getContext<{ propsStore: Writable<ItemProps> }>(ITEM_NAME);
 }
 
 export function getContent() {
 	const ctx = getCtx();
-	const { value: props } = getItemProps();
+	const { propsStore } = getItemProps();
 	return {
 		...ctx,
-		props,
+		propsStore,
 	};
 }
 
 export function getTrigger() {
 	const ctx = getCtx();
-	const { value, disabled } = getItemProps();
+	const { propsStore } = getItemProps();
 	return {
 		...ctx,
-		props: { value, disabled },
+		props: propsStore,
 	};
 }

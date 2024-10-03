@@ -1,6 +1,5 @@
-name: Docs - Production Deployment
+name: Production Deployment
 on:
-    workflow_dispatch:
     push:
         branches:
             - main
@@ -8,36 +7,20 @@ on:
             - sites/docs/**
             - packages/bits-ui/**
 
-concurrency: ${{ github.workflow }}-${{ github.ref }}
-
 jobs:
-    publish:
+    deploy-production:
         runs-on: ubuntu-latest
         permissions:
             contents: read
             deployments: write
-        name: Publish to Cloudflare Pages
+        name: Deploy Production Site to Cloudflare Pages
         steps:
             - uses: actions/checkout@v4
-            - uses: pnpm/action-setup@v3
-              with:
-                  version: 8
+            - uses: pnpm/action-setup@v4
             - uses: actions/setup-node@v4
               with:
                   node-version: 20
-
-            # PNPM Store cache setup
-            - name: Get pnpm store directory
-              id: pnpm-cache
-              run: |
-                  echo "pnpm_cache_dir=$(pnpm store path)" >> $GITHUB_OUTPUT
-            - name: Setup pnpm cache
-              uses: actions/cache@v4
-              with:
-                  path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
-                  key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-                  restore-keys: |
-                      ${{ runner.os }}-pnpm-store-
+                  cache: pnpm
 
             - name: Install dependencies
               run: pnpm install

@@ -5,6 +5,9 @@
 
 	type $$Props = Props;
 
+	export let open: $$Props["open"] = undefined;
+	export let onOpenChange: $$Props["onOpenChange"] = undefined;
+	export let portal: $$Props["portal"] = undefined;
 	export let value: $$Props["value"] = undefined;
 	export let onValueChange: $$Props["onValueChange"] = undefined;
 	export let placeholder: $$Props["placeholder"] = undefined;
@@ -33,15 +36,17 @@
 
 	const {
 		states: {
+			open: localOpen,
 			value: localValue,
 			placeholder: localPlaceholder,
 			isInvalid: localIsInvalid,
 			startValue: localStartValue,
-			endValue,
+			endValue: localEndValue,
 		},
 		updateOption,
 		ids,
 	} = setCtx({
+		defaultOpen: open,
 		defaultValue: value,
 		defaultPlaceholder: placeholder,
 		preventDeselect,
@@ -50,6 +55,7 @@
 		isDateDisabled,
 		fixedWeeks,
 		calendarLabel,
+		portal,
 		disabled,
 		granularity,
 		hideTimeZone,
@@ -73,6 +79,13 @@
 			if (placeholder !== next) {
 				onPlaceholderChange?.(next);
 				placeholder = next;
+			}
+			return next;
+		},
+		onOpenChange: ({ next }) => {
+			if (open !== next) {
+				onOpenChange?.(next);
+				open = next;
 			}
 			return next;
 		},
@@ -188,8 +201,16 @@
 	}
 
 	$: startValue = $localStartValue;
-	$: value !== undefined && localValue.set(value);
+
+	$: if (value !== $localValue) {
+		const nextValue = { start: value?.start, end: value?.end };
+
+		if (nextValue.start !== $localStartValue) localStartValue.set(nextValue.start);
+		if (nextValue.end !== $localEndValue) localEndValue.set(nextValue.end);
+		localValue.set(nextValue);
+	}
 	$: placeholder !== undefined && localPlaceholder.set(placeholder);
+	$: open !== undefined && localOpen.set(open);
 
 	$: updateOption("disabled", disabled);
 	$: updateOption("isDateUnavailable", isDateUnavailable);
@@ -209,11 +230,12 @@
 	$: updateOption("weekdayFormat", weekdayFormat);
 	$: updateOption("numberOfMonths", numberOfMonths);
 	$: updateOption("onOutsideClick", onOutsideClick);
+	$: updateOption("portal", portal);
 </script>
 
 <slot
 	ids={$idValues}
 	isInvalid={$localIsInvalid}
 	startValue={$localStartValue}
-	endValue={$endValue}
+	endValue={$localEndValue}
 />

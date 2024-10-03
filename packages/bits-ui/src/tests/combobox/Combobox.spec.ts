@@ -81,7 +81,6 @@ describe("combobox", () => {
 
 		const item = getByTestId("1");
 		expect(item).toHaveAttribute("data-combobox-item");
-		1;
 	});
 
 	it("opens on click", async () => {

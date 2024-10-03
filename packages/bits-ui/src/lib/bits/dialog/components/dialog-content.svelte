@@ -48,10 +48,10 @@
 		on:pointerdown
 		on:pointermove
 		on:pointerup
-		on:touchend
-		on:touchstart
 		on:touchcancel
-		on:touchmove
+		on:touchend
+		on:touchmove|nonpassive
+		on:touchstart|nonpassive
 	>
 		<slot {builder} />
 	</div>
@@ -64,10 +64,10 @@
 		on:pointerdown
 		on:pointermove
 		on:pointerup
-		on:touchend
-		on:touchstart
 		on:touchcancel
-		on:touchmove
+		on:touchend
+		on:touchmove|nonpassive
+		on:touchstart|nonpassive
 		{...$$restProps}
 	>
 		<slot {builder} />
@@ -80,10 +80,10 @@
 		on:pointerdown
 		on:pointermove
 		on:pointerup
-		on:touchend
-		on:touchstart
 		on:touchcancel
-		on:touchmove
+		on:touchend
+		on:touchmove|nonpassive
+		on:touchstart|nonpassive
 		{...$$restProps}
 	>
 		<slot {builder} />
@@ -96,10 +96,10 @@
 		on:pointerdown
 		on:pointermove
 		on:pointerup
-		on:touchend
-		on:touchstart
 		on:touchcancel
-		on:touchmove
+		on:touchend
+		on:touchmove|nonpassive
+		on:touchstart|nonpassive
 		{...$$restProps}
 	>
 		<slot {builder} />
@@ -111,10 +111,10 @@
 		on:pointerdown
 		on:pointermove
 		on:pointerup
-		on:touchend
-		on:touchstart
 		on:touchcancel
-		on:touchmove
+		on:touchend
+		on:touchmove|nonpassive
+		on:touchstart|nonpassive
 		{...$$restProps}
 	>
 		<slot {builder} />

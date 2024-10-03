@@ -38,12 +38,12 @@ export type TooltipPropsWithoutHTML = Expand<OmitFloating<MeltTooltipProps>> & {
 	 * </Tooltip.Root>
 	 * ```
 	 */
-	open?: boolean & {};
+	open?: (boolean & {}) | undefined;
 
 	/**
 	 * A callback function called when the open state changes.
 	 */
-	onOpenChange?: OnChangeFn<boolean>;
+	onOpenChange?: OnChangeFn<boolean> | undefined;
 };
 
 export type TooltipTriggerPropsWithoutHTML = DOMElement<HTMLButtonElement>;
