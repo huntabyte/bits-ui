@@ -66,7 +66,8 @@ const root = createApiSchema<AlertDialogRootPropsWithoutHTML>({
 
 const action = createApiSchema<AlertDialogActionPropsWithoutHTML>({
 	title: "Action",
-	description: "A button used to close the alert dialog by taking an action.",
+	description:
+		"The button responsible for taking an action within the alert dialog. This button does not close the dialog out of the box. See the [Form Submission](#form-submission) documentation for more information.",
 	props: withChildProps({ elType: "HTMLButtonElement" }),
 	dataAttributes: [
 		createDataAttrSchema({
