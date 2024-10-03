@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { getAllContexts, mount, unmount, untrack } from "svelte";
+	import { DEV } from "esm-env";
 	import PortalConsumer from "./portal-consumer.svelte";
 	import type { PortalProps } from "./types.js";
 	import { isBrowser } from "$lib/internal/is.js";
@@ -16,16 +17,20 @@
 		if (typeof to === "string") {
 			localTarget = document.querySelector(to);
 			if (localTarget === null) {
-				throw new Error(`Target element "${to}" not found.`);
+				if (DEV) {
+					throw new Error(`Target element "${to}" not found.`);
+				}
 			}
 		} else if (to instanceof HTMLElement || to instanceof DocumentFragment) {
 			localTarget = to;
 		} else {
-			throw new TypeError(
-				`Unknown portal target type: ${
-					to === null ? "null" : typeof to
-				}. Allowed types: string (CSS selector) or HTMLElement.`
-			);
+			if (DEV) {
+				throw new TypeError(
+					`Unknown portal target type: ${
+						to === null ? "null" : typeof to
+					}. Allowed types: string (query selector), HTMLElement, or DocumentFragment.`
+				);
+			}
 		}
 
 		return localTarget;

@@ -1,4 +1,4 @@
-import styleToCSS from "style-object-to-css-string";
+import { styleToCSS } from "./styleToCSS.js";
 import type { StyleProperties } from "$lib/shared/index.js";
 
 export function styleToString(style: StyleProperties = {}): string {

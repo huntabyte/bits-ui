@@ -1,5 +1,5 @@
 import parse from "style-to-object";
-import { camelCase, pascalCase } from "scule";
+import { camelCase, pascalCase } from "$lib/internal/strings.js";
 import type { StyleProperties } from "$lib/shared/index.js";
 
 export function cssToStyleObj(css: string | null | undefined): StyleProperties {
