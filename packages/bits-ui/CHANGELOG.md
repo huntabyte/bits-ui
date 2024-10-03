@@ -1,5 +1,13 @@
 # bits-ui
 
+## 1.0.0-next.7
+
+### Patch Changes
+
+-   Alert Dialog: `Action` button no longer closes the dialog to accomodate form submission / other asynchronous action ([#718](https://github.com/huntabyte/bits-ui/pull/718))
+
+-   fix bug preventing `crossorigin` and `referrerpolicy` attributes to work with `Avatar.Image` component ([#721](https://github.com/huntabyte/bits-ui/pull/721))
+
 ## 1.0.0-next.6
 
 ### Patch Changes
