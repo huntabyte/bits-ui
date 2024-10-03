@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.6
+
+### Patch Changes
+
+-   feat: export and document `Portal` utility component ([#716](https://github.com/huntabyte/bits-ui/pull/716))
+
 ## 1.0.0-next.5
 
 ### Patch Changes
