@@ -1,4 +1,4 @@
-import type { EventHandler, HTMLInputAttributes, HTMLLabelAttributes } from "svelte/elements";
+import type { HTMLInputAttributes, HTMLLabelAttributes } from "svelte/elements";
 import type {
 	ComboboxOptionProps as MeltComboboxOptionProps,
 	CreateComboboxProps as MeltComboboxProps,
@@ -128,15 +128,15 @@ export type ComboboxArrowProps = ComboboxArrowPropsWithoutHTML & HTMLDivAttribut
 export type ComboboxItemEvents<T extends Element = HTMLDivElement> = {
 	click: CustomEventHandler<MouseEvent, T>;
 	pointermove: CustomEventHandler<PointerEvent, T>;
-	focusin: EventHandler<FocusEvent, T>;
-	keydown: EventHandler<KeyboardEvent, T>;
-	focusout: EventHandler<FocusEvent, T>;
-	pointerleave: EventHandler<PointerEvent, T>;
+	focusin: CustomEventHandler<FocusEvent, T>;
+	keydown: CustomEventHandler<KeyboardEvent, T>;
+	focusout: CustomEventHandler<FocusEvent, T>;
+	pointerleave: CustomEventHandler<PointerEvent, T>;
 };
 
 export type ComboboxContentEvents<T extends Element = HTMLDivElement> = {
 	pointerleave: CustomEventHandler<PointerEvent, T>;
-	keydown: EventHandler<KeyboardEvent, T>;
+	keydown: CustomEventHandler<KeyboardEvent, T>;
 };
 
 export type ComboboxGroupLabelEvents<T extends Element = HTMLSpanElement> = {
