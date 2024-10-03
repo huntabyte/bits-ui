@@ -10,7 +10,7 @@
 		child,
 		id = useId(),
 		ref = $bindable(null),
-		crossorigin = "",
+		crossorigin = undefined,
 		referrerpolicy = undefined,
 		...restProps
 	}: ImageProps = $props();

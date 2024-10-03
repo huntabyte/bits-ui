@@ -47,7 +47,7 @@ class AvatarRootState {
 		const image = new Image();
 
 		image.src = src;
-		if (crossorigin) image.crossOrigin = crossorigin;
+		if (crossorigin !== undefined) image.crossOrigin = crossorigin;
 		if (referrerPolicy) image.referrerPolicy = referrerPolicy;
 
 		this.loadingStatus.current = "loading";
