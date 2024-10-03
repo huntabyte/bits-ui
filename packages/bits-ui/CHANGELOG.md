@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.8
+
+### Patch Changes
+
+-   fix: ensure `crossorigin` isn't applied to image if it is `undefined` or not passed as a prop ([#724](https://github.com/huntabyte/bits-ui/pull/724))
+
 ## 1.0.0-next.7
 
 ### Patch Changes
