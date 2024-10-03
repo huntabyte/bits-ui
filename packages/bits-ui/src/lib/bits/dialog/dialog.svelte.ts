@@ -83,6 +83,10 @@ class DialogRootState {
 		return new AlertDialogCancelState(props, this);
 	}
 
+	createAction(props: DialogActionStateProps) {
+		return new DialogActionState(props, this);
+	}
+
 	sharedProps = $derived.by(
 		() =>
 			({
@@ -165,6 +169,35 @@ class DialogCloseState {
 				id: this.#id.current,
 				[this.#attr]: "",
 				onclick: this.#onclick,
+				...this.#root.sharedProps,
+			}) as const
+	);
+}
+
+type DialogActionStateProps = WithRefProps;
+
+class DialogActionState {
+	#id: DialogActionStateProps["id"];
+	#ref: DialogActionStateProps["ref"];
+	#root: DialogRootState;
+	#attr = $derived.by(() => this.#root.attrs.action);
+
+	constructor(props: DialogActionStateProps, root: DialogRootState) {
+		this.#id = props.id;
+		this.#ref = props.ref;
+		this.#root = root;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+		});
+	}
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.current,
+				[this.#attr]: "",
 				...this.#root.sharedProps,
 			}) as const
 	);
@@ -381,4 +414,8 @@ export function useDialogClose(props: DialogCloseStateProps) {
 
 export function useAlertDialogCancel(props: AlertDialogCancelStateProps) {
 	return getDialogRootContext().createCancel(props);
+}
+
+export function useAlertDialogAction(props: DialogActionStateProps) {
+	return getDialogRootContext().createAction(props);
 }

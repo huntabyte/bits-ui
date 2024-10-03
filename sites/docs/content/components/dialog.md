@@ -578,4 +578,47 @@ You can then use the `MyDialogOverlay` component alongside the other `Dialog` pr
 </Dialog.Root>
 ```
 
+## Working with Forms
+
+### Form Submission
+
+When using the `Dialog` component, often you'll want to submit a form or perform an asynchronous action and then close the dialog.
+
+This can be done by waiting for the asynchronous action to complete, then programmatically closing the dialog.
+
+```svelte
+<script lang="ts">
+	import { Dialog } from "bits-ui";
+
+	function wait(ms: number) {
+		return new Promise((resolve) => setTimeout(resolve, ms));
+	}
+
+	let open = $state(false);
+</script>
+
+<Dialog.Root bind:open>
+	<Dialog.Portal>
+		<Dialog.Overlay />
+		<Dialog.Content>
+			<Dialog.Title>Confirm your action</Dialog.Title>
+			<Dialog.Description>Are you sure you want to do this?</Dialog.Description>
+			<form
+				method="POST"
+				action="?/someAction"
+				onsubmit={() => {
+					wait(1000).then(() => (open = false));
+				}}
+			>
+				<button type="submit">Submit form</Dialog.Action>
+			</form>
+		</Dialog.Content>
+	</Dialog.Portal>
+</Dialog.Root>
+```
+
+### Inside a Form
+
+If you're using a `Dialog` _within_ a form, you'll need to ensure that the `Portal` is disabled or not included in the `Dialog` structure. This is because the `Portal` will render the dialog content _outside_ of the form, which will prevent the form from being submitted correctly.
+
 <APISection {schemas} />
