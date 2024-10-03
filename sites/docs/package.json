@@ -41,6 +41,7 @@
 		"rehype-slug": "^6.0.0",
 		"remark-gfm": "^4.0.0",
 		"remove-markdown": "^0.5.5",
+		"rollup-plugin-visualizer": "^5.12.0",
 		"shiki": "^1.1.1",
 		"svelte": "5.0.0-next.260",
 		"svelte-check": "4.0.3",

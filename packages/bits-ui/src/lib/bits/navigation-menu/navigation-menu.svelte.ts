@@ -386,7 +386,6 @@ class NavigationMenuListState {
 		this.indicatorTrackRef = props.indicatorTrackRef;
 		this.rovingFocusGroup = useRovingFocus({
 			rootNodeId: this.#id,
-			candidateAttr: TRIGGER_ATTR,
 			candidateSelector: `:is([${TRIGGER_ATTR}], [data-list-link]):not([data-disabled])`,
 			loop: box.with(() => false),
 			orientation: this.menu.orientation,
@@ -403,7 +402,7 @@ class NavigationMenuListState {
 			onRefChange: (node) => {
 				this.menu.indicatorTrackNode = node;
 			},
-			condition: () => Boolean(this.menu.root.value.current),
+			deps: () => Boolean(this.menu.root.value.current),
 		});
 	}
 
@@ -557,7 +556,7 @@ class NavigationMenuTriggerState {
 			onRefChange: (node) => {
 				this.item.focusProxyNode = node;
 			},
-			condition: () => this.focusProxyMounted.current,
+			deps: () => this.focusProxyMounted.current,
 		});
 
 		$effect(() => {
@@ -846,7 +845,7 @@ class NavigationMenuContentState {
 			onRefChange: (node) => {
 				this.item.contentNode = node;
 			},
-			condition: () => this.isMounted.current,
+			deps: () => this.isMounted.current,
 		});
 
 		$effect(() => {
@@ -1016,7 +1015,7 @@ class NavigationMenuViewportState {
 			onRefChange: (node) => {
 				this.menu.viewportNode = node;
 			},
-			condition: () => this.open,
+			deps: () => this.open,
 		});
 
 		$effect(() => {

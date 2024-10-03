@@ -109,7 +109,7 @@ class PopoverContentState {
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
-			condition: () => this.root.open.current,
+			deps: () => this.root.open.current,
 			onRefChange: (node) => {
 				this.root.contentNode = node;
 				this.root.contentId = node?.id;
@@ -142,7 +142,7 @@ class PopoverCloseState {
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
-			condition: () => this.#root.open.current,
+			deps: () => this.#root.open.current,
 		});
 	}
 

@@ -13,9 +13,7 @@
 	import "$lib/styles/app.postcss";
 </script>
 
-<ModeWatcher />
-<Metadata />
-<Toaster position="top-right" />
+<a href="#main-content" class="sr-only">Skip to main content</a>
 
 <SiteHeader />
 <div class="min-h-[calc(100vh-64px)]">
@@ -28,6 +26,7 @@
 				"relative pb-6 pl-4 pr-4 pt-16 md:pl-0 lg:gap-10 xl:grid-cols-[1fr_220px]",
 				$page.error ?? "xl:grid"
 			)}
+			id="main-content"
 		>
 			<div class="mx-auto w-full min-w-0 md:max-w-[760px]" id="content">
 				<slot />
@@ -47,3 +46,6 @@
 {#if dev}
 	<TailwindIndicator />
 {/if}
+<ModeWatcher />
+<Metadata />
+<Toaster position="top-right" />

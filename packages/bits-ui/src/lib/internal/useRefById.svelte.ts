@@ -17,7 +17,7 @@ type UseRefByIdProps = {
 	/**
 	 * A reactive condition that will cause the node to be set.
 	 */
-	condition?: Getter<boolean>;
+	deps?: Getter<unknown>;
 
 	/**
 	 * A callback fired when the ref changes.
@@ -31,17 +31,12 @@ type UseRefByIdProps = {
  * an update is triggered and new node is found.
  *
  */
-export function useRefById({
-	id,
-	ref,
-	condition = () => true,
-	onRefChange = noop,
-}: UseRefByIdProps) {
+export function useRefById({ id, ref, deps = () => true, onRefChange = noop }: UseRefByIdProps) {
 	$effect(() => {
 		// re-run when the ID changes.
 		id.current;
-		condition();
-		// re-run when the condition changes.
+		// re-run when the deps change
+		deps();
 		untrack(() => {
 			const node = document.getElementById(id.current);
 			ref.current = node;

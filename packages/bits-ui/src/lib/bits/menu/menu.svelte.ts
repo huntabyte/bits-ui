@@ -251,7 +251,7 @@ class MenuContentState {
 		useRefById({
 			id: this.#id,
 			ref: this.contentRef,
-			condition: () => this.parentMenu.open.current,
+			deps: () => this.parentMenu.open.current,
 			onRefChange: (node) => {
 				if (this.parentMenu.contentNode !== node) {
 					this.parentMenu.contentNode = node;
@@ -266,7 +266,7 @@ class MenuContentState {
 		this.#handleTypeaheadSearch = useTypeahead().handleTypeaheadSearch;
 		this.rovingFocusGroup = useRovingFocus({
 			rootNodeId: this.parentMenu.contentId,
-			candidateAttr: this.parentMenu.root.attrs.item,
+			candidateSelector: `[${this.parentMenu.root.attrs.item}]`,
 			loop: this.#loop,
 			orientation: box.with(() => "vertical"),
 		});
@@ -469,7 +469,7 @@ class MenuItemSharedState {
 		useRefById({
 			id: this.id,
 			ref: this.ref,
-			condition: () => this.content.isMounted.current,
+			deps: () => this.content.isMounted.current,
 		});
 	}
 
@@ -1077,7 +1077,7 @@ class ContextMenuTriggerState {
 			onRefChange: (node) => {
 				this.#parentMenu.triggerNode = node;
 			},
-			condition: () => this.#parentMenu.open.current,
+			deps: () => this.#parentMenu.open.current,
 		});
 
 		$effect(() => {

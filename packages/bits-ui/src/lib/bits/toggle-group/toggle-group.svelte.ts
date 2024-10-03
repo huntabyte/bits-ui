@@ -43,7 +43,7 @@ class ToggleGroupBaseState {
 		this.loop = props.loop;
 		this.orientation = props.orientation;
 		this.rovingFocusGroup = useRovingFocus({
-			candidateAttr: ITEM_ATTR,
+			candidateSelector: `[${ITEM_ATTR}]`,
 			rootNodeId: this.id,
 			loop: this.loop,
 			orientation: this.orientation,
@@ -155,6 +155,7 @@ class ToggleGroupItemState {
 	#value: ToggleGroupItemStateProps["value"];
 	#disabled: ToggleGroupItemStateProps["disabled"];
 	#isDisabled = $derived.by(() => this.#disabled.current || this.#root.disabled.current);
+	#tabIndex = $state(0);
 
 	constructor(props: ToggleGroupItemStateProps) {
 		this.#value = props.value;
@@ -166,6 +167,12 @@ class ToggleGroupItemState {
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
+		});
+
+		$effect(() => {
+			!this.#root.rovingFocus.current
+				? 0
+				: this.#root.rovingFocusGroup.getTabIndex(this.#ref.current);
 		});
 	}
 
@@ -199,12 +206,6 @@ class ToggleGroupItemState {
 	#ariaPressed = $derived.by(() => {
 		return this.#root.isMulti ? getAriaPressed(this.isPressed) : undefined;
 	});
-
-	#tabIndex = $derived.by(() =>
-		!this.#root.rovingFocus.current
-			? 0
-			: this.#root.rovingFocusGroup.getTabIndex(this.#ref.current)
-	);
 
 	props = $derived.by(
 		() =>

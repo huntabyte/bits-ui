@@ -32,6 +32,7 @@ export * as Separator from "./separator/index.js";
 export * as Slider from "./slider/index.js";
 export * as Switch from "./switch/index.js";
 export * as Tabs from "./tabs/index.js";
+export * as TagsInput from "./tags-input/index.js";
 export * as Toggle from "./toggle/index.js";
 export * as ToggleGroup from "./toggle-group/index.js";
 export * as Toolbar from "./toolbar/index.js";

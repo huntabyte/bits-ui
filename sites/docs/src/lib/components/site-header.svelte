@@ -20,6 +20,7 @@
 					class="ml-2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
 				>
 					<Logo />
+					<span class="sr-only">Bits UI</span>
 				</a>
 			</div>
 			<div class="flex items-center justify-end gap-2.5">

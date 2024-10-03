@@ -512,7 +512,7 @@ class ScrollAreaScrollbarXState implements ScrollbarAxisState {
 			onRefChange: (node) => {
 				this.root.scrollbarXNode = node;
 			},
-			condition: () => this.#mounted.current,
+			deps: () => this.#mounted.current,
 		});
 
 		$effect(() => {
@@ -614,7 +614,7 @@ class ScrollAreaScrollbarYState implements ScrollbarAxisState {
 			onRefChange: (node) => {
 				this.root.scrollbarYNode = node;
 			},
-			condition: () => this.#mounted.current,
+			deps: () => this.#mounted.current,
 		});
 
 		$effect(() => {
@@ -836,7 +836,7 @@ class ScrollAreaThumbImplState {
 			onRefChange: (node) => {
 				this.#scrollbarState.scrollbarVis.thumbNode = node;
 			},
-			condition: () => this.#mounted.current,
+			deps: () => this.#mounted.current,
 		});
 
 		$effect(() => {

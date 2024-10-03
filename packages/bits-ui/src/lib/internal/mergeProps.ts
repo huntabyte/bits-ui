@@ -40,7 +40,7 @@ function isEventHandler(key: string): boolean {
  */
 export function mergeProps<T extends PropsArg[]>(
 	...args: T
-): UnionToIntersection<TupleTypes<T>> & {
+): Omit<UnionToIntersection<TupleTypes<T>>, "style"> & {
 	style?: string;
 } {
 	const result: Props = { ...args[0] };

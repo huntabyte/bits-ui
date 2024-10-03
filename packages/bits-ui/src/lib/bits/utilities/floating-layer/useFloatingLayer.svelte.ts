@@ -287,13 +287,13 @@ class FloatingContentState {
 		useRefById({
 			id: this.wrapperId,
 			ref: this.wrapperRef,
-			condition: () => this.enabled.current,
+			deps: () => this.enabled.current,
 		});
 
 		useRefById({
 			id: this.id,
 			ref: this.contentRef,
-			condition: () => this.enabled.current,
+			deps: () => this.enabled.current,
 		});
 
 		this.floating = useFloating({
@@ -352,7 +352,7 @@ class FloatingArrowState {
 			onRefChange: (node) => {
 				this.#content.arrowRef.current = node;
 			},
-			condition: () => this.#content.enabled.current,
+			deps: () => this.#content.enabled.current,
 		});
 	}
 

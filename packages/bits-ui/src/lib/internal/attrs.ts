@@ -92,3 +92,7 @@ export function getAriaPressed(condition: boolean): "true" | "false" {
 export function getRequired(condition: boolean): true | undefined {
 	return condition ? true : undefined;
 }
+
+export function getContentEditable(condition: boolean): "true" | "false" {
+	return condition ? "true" : "false";
+}
