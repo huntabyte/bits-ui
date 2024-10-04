@@ -188,8 +188,8 @@ importers:
   sites/docs:
     dependencies:
       '@internationalized/date':
-        specifier: ^3.5.4
-        version: 3.5.4
+        specifier: ^3.5.6
+        version: 3.5.6
       '@melt-ui/svelte':
         specifier: 0.76.2
         version: 0.76.2(svelte@5.0.0-next.260)
@@ -1090,9 +1090,6 @@ packages:
     resolution: {integrity: sha512-u2TIbkMD8R+eke49PofIfu/hI542ZiLTynNVTtKkhIh1vmQiIPzcnVdVjuZ/aNvjIjpH9FnowyY2Xd+i4llqLQ==}
     peerDependencies:
       eslint: '*'
-
-  '@internationalized/date@3.5.4':
-    resolution: {integrity: sha512-qoVJVro+O0rBaw+8HPjUB1iH8Ihf8oziEnqMnvhJUSuVIrHOuZ6eNLHNvzXJKUvAtaDiqMnRlg8Z2mgh09BlUw==}
 
   '@internationalized/date@3.5.6':
     resolution: {integrity: sha512-jLxQjefH9VI5P9UQuqB6qNKnvFt1Ky1TPIzHGsIlCi7sZZoMR8SdYbBGRvM0y+Jtb+ez4ieBzmiAUcpmPYpyOw==}
@@ -5930,10 +5927,6 @@ snapshots:
     dependencies:
       eslint: 9.6.0
 
-  '@internationalized/date@3.5.4':
-    dependencies:
-      '@swc/helpers': 0.5.11
-
   '@internationalized/date@3.5.6':
     dependencies:
       '@swc/helpers': 0.5.11
@@ -6846,7 +6839,7 @@ snapshots:
       chai: 5.1.1
       tinyrainbow: 1.2.0
 
-  '@vitest/mocker@2.1.1(@vitest/spy@2.1.1)(vite@5.4.6(@types/node@20.14.10))':
+  '@vitest/mocker@2.1.1(@vitest/spy@2.1.1)(vite@5.4.6)':
     dependencies:
       '@vitest/spy': 2.1.1
       estree-walker: 3.0.3
@@ -10595,7 +10588,7 @@ snapshots:
   vitest@2.1.1(@types/node@20.14.10)(@vitest/ui@2.1.1)(jsdom@24.1.0):
     dependencies:
       '@vitest/expect': 2.1.1
-      '@vitest/mocker': 2.1.1(@vitest/spy@2.1.1)(vite@5.4.6(@types/node@20.14.10))
+      '@vitest/mocker': 2.1.1(@vitest/spy@2.1.1)(vite@5.4.6)
       '@vitest/pretty-format': 2.1.1
       '@vitest/runner': 2.1.1
       '@vitest/snapshot': 2.1.1
