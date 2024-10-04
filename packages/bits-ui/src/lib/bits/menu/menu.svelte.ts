@@ -141,22 +141,6 @@ class MenuRootState {
 			};
 		});
 	}
-
-	createMenu(props: MenuMenuStateProps) {
-		return new MenuMenuState(props, this);
-	}
-
-	createGroup(props: MenuGroupStateProps) {
-		return new MenuGroupState(props, this);
-	}
-
-	createSeparator(props: MenuSeparatorStateProps) {
-		return new MenuSeparatorState(props, this);
-	}
-
-	createArrow() {
-		return new MenuArrowState(this);
-	}
 }
 
 type MenuMenuStateProps = WritableBoxedValues<{
@@ -197,22 +181,6 @@ class MenuMenuState {
 	onClose = () => {
 		this.open.current = false;
 	};
-
-	createContent(props: MenuContentStateProps) {
-		return new MenuContentState(props, this);
-	}
-
-	createSubmenu(props: MenuMenuStateProps) {
-		return new MenuMenuState(props, this.root, this);
-	}
-
-	createDropdownTrigger(props: DropdownMenuTriggerStateProps) {
-		return new DropdownMenuTriggerState(props, this);
-	}
-
-	createContextTrigger(props: ContextMenuTriggerStateProps) {
-		return new ContextMenuTriggerState(props, this);
-	}
 }
 
 type MenuContentStateProps = ReadableBoxedValues<{
@@ -421,28 +389,6 @@ class MenuContentState {
 				},
 			}) as const
 	);
-
-	createItem(props: MenuItemSharedStateProps & MenuItemStateProps) {
-		const item = new MenuItemSharedState(props, this);
-		return new MenuItemState(props, item);
-	}
-
-	createCheckboxItem(
-		props: MenuItemSharedStateProps & MenuItemStateProps & MenuCheckboxItemStateProps
-	) {
-		const item = new MenuItemState(props, new MenuItemSharedState(props, this));
-		return new MenuCheckboxItemState(props, item);
-	}
-
-	createRadioGroup(props: MenuRadioGroupStateProps) {
-		return new MenuRadioGroupState(props, this);
-	}
-
-	createSubTrigger(props: MenuItemSharedStateProps) {
-		const item = new MenuItemSharedState(props, this);
-		const submenu = getMenuMenuContext();
-		return new MenuSubTriggerState(item, this, submenu);
-	}
 }
 
 type MenuItemSharedStateProps = ReadableBoxedValues<{
@@ -786,10 +732,6 @@ class MenuGroupState {
 				[this.root.attrs.group]: "",
 			}) as const
 	);
-
-	createGroupHeading(props: MenuGroupHeadingStateProps) {
-		return new MenuGroupHeadingState(props, this);
-	}
 }
 
 type MenuGroupHeadingStateProps = WithRefProps;
@@ -877,7 +819,7 @@ class MenuRadioGroupState {
 	#id: MenuRadioGroupStateProps["id"];
 	value: MenuRadioGroupStateProps["value"];
 	#ref: MenuRadioGroupStateProps["ref"];
-	#content: MenuContentState;
+	content: MenuContentState;
 	groupHeadingId = $state<string | null>(null);
 	root: MenuRootState;
 
@@ -885,7 +827,7 @@ class MenuRadioGroupState {
 		this.value = props.value;
 		this.#id = props.id;
 		this.#ref = props.ref;
-		this.#content = content;
+		this.content = content;
 		this.root = content.parentMenu.root;
 
 		useRefById({
@@ -897,17 +839,6 @@ class MenuRadioGroupState {
 	setValue = (v: string) => {
 		this.value.current = v;
 	};
-
-	createRadioItem(
-		props: MenuItemSharedStateProps & MenuItemStateProps & MenuRadioItemStateProps
-	) {
-		const item = this.#content.createItem(props);
-		return new MenuRadioItemState(props, item, this);
-	}
-
-	createGroupHeading(props: MenuGroupHeadingStateProps) {
-		return new MenuGroupHeadingState(props, this);
-	}
 
 	props = $derived.by(
 		() =>
@@ -1169,63 +1100,78 @@ export function useMenuRoot(props: MenuRootStateProps) {
 }
 
 export function useMenuMenu(root: MenuRootState, props: MenuMenuStateProps) {
-	return setMenuMenuContext(root.createMenu(props));
+	const menu = new MenuMenuState(props, root);
+	return setMenuMenuContext(menu);
 }
 
 export function useMenuSubmenu(props: MenuMenuStateProps) {
-	return setMenuMenuContext(getMenuMenuContext().createSubmenu(props));
+	const menu = getMenuMenuContext();
+	return new MenuMenuState(props, menu.root, menu);
 }
 
 export function useMenuSubTrigger(props: MenuItemSharedStateProps) {
-	return getMenuContentContext().createSubTrigger(props);
+	const content = getMenuContentContext();
+	const item = new MenuItemSharedState(props, content);
+	const submenu = getMenuMenuContext();
+	return new MenuSubTriggerState(item, content, submenu);
 }
 
 export function useMenuDropdownTrigger(props: DropdownMenuTriggerStateProps) {
-	return getMenuMenuContext().createDropdownTrigger(props);
-}
-
-export function useMenuPortal() {
-	return getMenuMenuContext();
+	const menu = getMenuMenuContext();
+	return new DropdownMenuTriggerState(props, menu);
 }
 
 export function useMenuContextTrigger(props: ContextMenuTriggerStateProps) {
-	return getMenuMenuContext().createContextTrigger(props);
+	const menu = getMenuMenuContext();
+	return new ContextMenuTriggerState(props, menu);
 }
 
 export function useMenuContent(props: MenuContentStateProps) {
-	return setMenuContentContext(getMenuMenuContext().createContent(props));
+	const menu = getMenuMenuContext();
+	return setMenuContentContext(new MenuContentState(props, menu));
 }
 
 export function useMenuItem(props: MenuItemCombinedProps) {
-	return getMenuContentContext().createItem(props);
+	const content = getMenuContentContext();
+	const item = new MenuItemSharedState(props, content);
+	return new MenuItemState(props, item);
 }
 
 export function useMenuCheckboxItem(props: MenuItemCombinedProps & MenuCheckboxItemStateProps) {
-	return getMenuContentContext().createCheckboxItem(props);
+	const content = getMenuContentContext();
+	const item = new MenuItemState(props, new MenuItemSharedState(props, content));
+	return new MenuCheckboxItemState(props, item);
 }
 
 export function useMenuRadioGroup(props: MenuRadioGroupStateProps) {
-	return setMenuGroupContext(
-		setMenuRadioGroupContext(getMenuContentContext().createRadioGroup(props))
-	);
+	const content = getMenuContentContext();
+	const radioGroup = new MenuRadioGroupState(props, content);
+	return setMenuGroupContext(setMenuRadioGroupContext(radioGroup));
 }
 
 export function useMenuRadioItem(props: MenuRadioItemStateProps & MenuItemCombinedProps) {
-	return getMenuRadioGroupContext().createRadioItem(props);
+	const radioGroup = getMenuRadioGroupContext();
+	const sharedItem = new MenuItemSharedState(props, radioGroup.content);
+	const item = new MenuItemState(props, sharedItem);
+	return new MenuRadioItemState(props, item, radioGroup);
 }
 
 export function useMenuGroup(props: MenuGroupStateProps) {
-	return setMenuGroupContext(getMenuRootContext().createGroup(props));
+	const root = getMenuRootContext();
+	return setMenuGroupContext(new MenuGroupState(props, root));
 }
 
 export function useMenuGroupHeading(props: MenuGroupHeadingStateProps) {
-	return getMenuGroupContext().createGroupHeading(props);
+	const group = getMenuGroupContext();
+	return new MenuGroupHeadingState(props, group);
 }
 
 export function useMenuSeparator(props: MenuSeparatorStateProps) {
-	return getMenuRootContext().createSeparator(props);
+	const root = getMenuRootContext();
+	return new MenuSeparatorState(props, root);
 }
 
 export function useMenuArrow() {
-	return getMenuRootContext().createArrow();
+	const root = getMenuRootContext();
+	return new MenuArrowState(root);
 }
