@@ -13,7 +13,7 @@
 	const scrollbarXState = useScrollAreaScrollbarX({
 		mounted: box.with(() => isMounted.current),
 	});
-	const mergedProps = $derived(mergeProps(restProps, scrollbarXState.props));
+	const mergedProps = $derived(mergeProps(restProps, scrollbarXState.props)) as any;
 </script>
 
 <ScrollAreaScrollbarShared {...mergedProps} />

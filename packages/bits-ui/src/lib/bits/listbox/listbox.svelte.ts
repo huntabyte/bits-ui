@@ -1159,7 +1159,7 @@ export function useListboxScrollUpButton(props: ListboxScrollButtonImplStateProp
 }
 
 export function useListboxScrollDownButton(props: ListboxScrollButtonImplStateProps) {
-	return new ListboxScrollUpButtonState(
+	return new ListboxScrollDownButtonState(
 		new ListboxScrollButtonImplState(props, getListboxContentContext())
 	);
 }
