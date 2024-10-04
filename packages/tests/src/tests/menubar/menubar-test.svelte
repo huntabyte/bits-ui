@@ -1,6 +1,6 @@
 <script lang="ts">
-	import MenubarMenu from "./menubar-menu-test.svelte";
 	import { Menubar } from "bits-ui";
+	import MenubarMenu from "./menubar-menu-test.svelte";
 
 	type $$Props = Menubar.RootProps;
 </script>

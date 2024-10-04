@@ -2,9 +2,9 @@ import { render } from "@testing-library/svelte/svelte5";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
+import type { Switch } from "bits-ui";
 import { getTestKbd } from "../utils.js";
 import SwitchTest from "./switch-test.svelte";
-import type { Switch } from "bits-ui";
 
 const kbd = getTestKbd();
 

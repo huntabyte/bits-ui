@@ -5,7 +5,6 @@ import { describe, it } from "vitest";
 import { getTestKbd } from "../utils.js";
 import RadioGroupTest from "./radio-group-test.svelte";
 import type { Item, RadioGroupTestProps } from "./radio-group-test.svelte";
-import type { RadioGroup } from "bits-ui";
 
 const kbd = getTestKbd();
 

@@ -2,8 +2,8 @@ import { render } from "@testing-library/svelte/svelte5";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
-import SeparatorTest from "./separator-test.svelte";
 import type { Separator } from "bits-ui";
+import SeparatorTest from "./separator-test.svelte";
 
 function setup(props: Separator.RootProps = {}) {
 	const user = userEvent.setup();

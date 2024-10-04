@@ -2,10 +2,10 @@ import { render } from "@testing-library/svelte/svelte5";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import type { Component } from "svelte";
+import type { Collapsible } from "bits-ui";
 import { setupUserEvents } from "../utils.js";
 import CollapsibleTest from "./collapsible-test.svelte";
 import CollapsibleForceMountTest from "./collapsible-force-mount-test.svelte";
-import type { Collapsible } from "bits-ui";
 
 function setup(
 	props: Collapsible.RootProps & {

@@ -2,9 +2,9 @@ import { render } from "@testing-library/svelte/svelte5";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
+import type { Toggle } from "bits-ui";
 import { getTestKbd } from "../utils.js";
 import ToggleTest from "./toggle-test.svelte";
-import type { Toggle } from "bits-ui";
 
 const kbd = getTestKbd();
 

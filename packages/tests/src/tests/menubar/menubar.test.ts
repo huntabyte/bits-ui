@@ -3,9 +3,9 @@ import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import { tick } from "svelte";
+import type { Menubar } from "bits-ui";
 import { getTestKbd } from "../utils.js";
 import MenubarTest from "./menubar-test.svelte";
-import type { Menubar } from "bits-ui";
 
 const kbd = getTestKbd();
 

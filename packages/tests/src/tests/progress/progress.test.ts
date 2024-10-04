@@ -2,8 +2,8 @@ import { render } from "@testing-library/svelte/svelte5";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
-import ProgressTest from "./progress-test.svelte";
 import type { Progress } from "bits-ui";
+import ProgressTest from "./progress-test.svelte";
 
 function setup(props: Progress.RootProps = {}) {
 	const user = userEvent.setup();

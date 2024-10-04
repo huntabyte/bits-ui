@@ -2,9 +2,9 @@ import { render } from "@testing-library/svelte/svelte5";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import { tick } from "svelte";
+import type { Checkbox } from "bits-ui";
 import { getTestKbd, setupUserEvents } from "../utils.js";
 import CheckboxTest from "./checkbox-test.svelte";
-import type { Checkbox } from "bits-ui";
 
 const kbd = getTestKbd();
 
