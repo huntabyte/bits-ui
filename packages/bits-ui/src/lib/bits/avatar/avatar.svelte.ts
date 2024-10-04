@@ -72,14 +72,6 @@ class AvatarRootState {
 				"data-status": this.loadingStatus.current,
 			}) as const
 	);
-
-	createImage(props: AvatarImageStateProps) {
-		return new AvatarImageState(props, this);
-	}
-
-	createFallback(props: AvatarFallbackStateProps) {
-		return new AvatarFallbackState(props, this);
-	}
 }
 
 /**
@@ -190,9 +182,11 @@ export function useAvatarRoot(props: AvatarRootStateProps) {
 }
 
 export function useAvatarImage(props: AvatarImageStateProps) {
-	return getAvatarRootContext().createImage(props);
+	const root = getAvatarRootContext();
+	return new AvatarImageState(props, root);
 }
 
 export function useAvatarFallback(props: AvatarFallbackStateProps) {
-	return getAvatarRootContext().createFallback(props);
+	const root = getAvatarRootContext();
+	return new AvatarFallbackState(props, root);
 }

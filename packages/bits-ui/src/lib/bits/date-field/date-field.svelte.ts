@@ -217,15 +217,15 @@ export class DateFieldRootState {
 	 * Sets the field node for the `DateFieldRootState` instance. We use this method so we can
 	 * keep `#fieldNode` private to prevent accidental usage of the incorrect field node.
 	 */
-	setFieldNode(node: HTMLElement | null) {
+	setFieldNode = (node: HTMLElement | null) => {
 		this.#fieldNode = node;
-	}
+	};
 
 	/**
 	 * Gets the correct field node for the date field regardless of whether it's being
 	 * used in a standalone context or within a `DateRangeField` component.
 	 */
-	getFieldNode() {
+	getFieldNode = () => {
 		/** If we're not within a DateRangeField, we return this field. */
 		if (!this.rangeRoot) {
 			return this.#fieldNode;
@@ -236,37 +236,37 @@ export class DateFieldRootState {
 			 */
 			return this.rangeRoot.fieldNode;
 		}
-	}
+	};
 
 	/**
 	 * Sets the label node for the `DateFieldRootState` instance. We use this method so we can
 	 * keep `#labelNode` private to prevent accidental usage of the incorrect label node.
 	 */
-	setLabelNode(node: HTMLElement | null) {
+	setLabelNode = (node: HTMLElement | null) => {
 		this.#labelNode = node;
-	}
+	};
 
 	/**
 	 * Gets the correct label node for the date field regardless of whether it's being used in
 	 * a standalone context or within a `DateRangeField` component.
 	 */
-	getLabelNode() {
+	getLabelNode = () => {
 		/** If we're not within a DateRangeField, we return this field. */
 		if (!this.rangeRoot) {
 			return this.#labelNode;
 		}
 		/** Otherwise we return the rangeRoot's label node. */
 		return this.rangeRoot.labelNode;
-	}
+	};
 
-	clearUpdating() {
+	clearUpdating = () => {
 		this.states.day.updating = null;
 		this.states.month.updating = null;
 		this.states.year.updating = null;
 		this.states.hour.updating = null;
 		this.states.minute.updating = null;
 		this.states.dayPeriod.updating = null;
-	}
+	};
 
 	setValue(value: DateValue | undefined) {
 		this.value.current = value;
@@ -599,25 +599,25 @@ export class DateFieldRootState {
 		};
 	};
 
-	createInput(props: DateFieldInputStateProps) {
-		return new DateFieldInputState(props, this);
-	}
+	// createInput(props: DateFieldInputStateProps) {
+	// 	return new DateFieldInputState(props, this);
+	// }
 
-	createLabel(props: DateFieldLabelStateProps) {
-		return new DateFieldLabelState(props, this);
-	}
+	// createLabel(props: DateFieldLabelStateProps) {
+	// 	return new DateFieldLabelState(props, this);
+	// }
 
-	createHiddenInput() {
-		return new DateFieldHiddenInputState(this);
-	}
+	// createHiddenInput() {
+	// 	return new DateFieldHiddenInputState(this);
+	// }
 
-	createSegment(part: SegmentPart, props: WithRefProps) {
-		return segmentPartToInstance({
-			part,
-			segmentProps: props,
-			root: this,
-		});
-	}
+	// createSegment(part: SegmentPart, props: WithRefProps) {
+	// 	return segmentPartToInstance({
+	// 		part,
+	// 		segmentProps: props,
+	// 		root: this,
+	// 	});
+	// }
 }
 
 type DateFieldInputStateProps = WithRefProps &
@@ -625,7 +625,7 @@ type DateFieldInputStateProps = WithRefProps &
 		name: string;
 	}>;
 
-class DateFieldInputState {
+export class DateFieldInputState {
 	#id: DateFieldInputStateProps["id"];
 	#ref: DateFieldInputStateProps["ref"];
 	#name: DateFieldInputStateProps["name"];
@@ -2441,19 +2441,27 @@ export function useDateFieldRoot(
 }
 
 export function useDateFieldInput(props: DateFieldInputStateProps) {
-	return getDateFieldRootContext().createInput(props);
+	const root = getDateFieldRootContext();
+	return new DateFieldInputState(props, root);
 }
 
 export function useDateFieldHiddenInput() {
-	return getDateFieldRootContext().createHiddenInput();
+	const root = getDateFieldRootContext();
+	return new DateFieldHiddenInputState(root);
 }
 
 export function useDateFieldSegment(part: SegmentPart, props: WithRefProps) {
-	return getDateFieldRootContext().createSegment(part, props);
+	const root = getDateFieldRootContext();
+	return segmentPartToInstance({
+		part,
+		segmentProps: props,
+		root,
+	});
 }
 
 export function useDateFieldLabel(props: DateFieldLabelStateProps) {
-	return getDateFieldRootContext().createLabel(props);
+	const root = getDateFieldRootContext();
+	return new DateFieldLabelState(props, root);
 }
 
 type SegmentPartToInstanceProps = {
@@ -2463,26 +2471,25 @@ type SegmentPartToInstanceProps = {
 };
 
 function segmentPartToInstance(props: SegmentPartToInstanceProps) {
-	const { part, root, segmentProps } = props;
-	switch (part) {
+	switch (props.part) {
 		case "day":
-			return new DateFieldDaySegmentState(segmentProps, root);
+			return new DateFieldDaySegmentState(props.segmentProps, props.root);
 		case "month":
-			return new DateFieldMonthSegmentState(segmentProps, root);
+			return new DateFieldMonthSegmentState(props.segmentProps, props.root);
 		case "year":
-			return new DateFieldYearSegmentState(segmentProps, root);
+			return new DateFieldYearSegmentState(props.segmentProps, props.root);
 		case "hour":
-			return new DateFieldHourSegmentState(segmentProps, root);
+			return new DateFieldHourSegmentState(props.segmentProps, props.root);
 		case "minute":
-			return new DateFieldMinuteSegmentState(segmentProps, root);
+			return new DateFieldMinuteSegmentState(props.segmentProps, props.root);
 		case "second":
-			return new DateFieldSecondSegmentState(segmentProps, root);
+			return new DateFieldSecondSegmentState(props.segmentProps, props.root);
 		case "dayPeriod":
-			return new DateFieldDayPeriodSegmentState(segmentProps, root);
+			return new DateFieldDayPeriodSegmentState(props.segmentProps, props.root);
 		case "literal":
-			return new DateFieldDayLiteralSegmentState(segmentProps, root);
+			return new DateFieldDayLiteralSegmentState(props.segmentProps, props.root);
 		case "timeZoneName":
-			return new DateFieldTimeZoneSegmentState(segmentProps, root);
+			return new DateFieldTimeZoneSegmentState(props.segmentProps, props.root);
 	}
 }
 

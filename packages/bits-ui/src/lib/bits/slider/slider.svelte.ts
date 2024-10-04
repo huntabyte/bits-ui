@@ -401,18 +401,6 @@ class SliderRootState {
 				[SLIDER_ROOT_ATTR]: "",
 			}) as const
 	);
-
-	createThumb = (props: SliderThumbStateProps) => {
-		return new SliderThumbState(props, this);
-	};
-
-	createRange = (props: SliderRangeStateProps) => {
-		return new SliderRangeState(props, this);
-	};
-
-	createTick = (props: SliderTickStateProps) => {
-		return new SliderTickState(props, this);
-	};
 }
 
 const VALID_SLIDER_KEYS = [
@@ -652,13 +640,13 @@ export function useSliderRoot(props: SliderRootStateProps) {
 }
 
 export function useSliderRange(props: SliderRangeStateProps) {
-	return getSliderRootContext().createRange(props);
+	return new SliderRangeState(props, getSliderRootContext());
 }
 
 export function useSliderThumb(props: SliderThumbStateProps) {
-	return getSliderRootContext().createThumb(props);
+	return new SliderThumbState(props, getSliderRootContext());
 }
 
 export function useSliderTick(props: SliderTickStateProps) {
-	return getSliderRootContext().createTick(props);
+	return new SliderTickState(props, getSliderRootContext());
 }

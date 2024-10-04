@@ -61,14 +61,6 @@ class RadioGroupRootState {
 		this.value.current = value;
 	};
 
-	createItem = (props: RadioGroupItemStateProps) => {
-		return new RadioGroupItemState(props, this);
-	};
-
-	createInput = () => {
-		return new RadioGroupInputState(this);
-	};
-
 	props = $derived.by(
 		() =>
 			({
@@ -192,9 +184,9 @@ export function useRadioGroupRoot(props: RadioGroupRootStateProps) {
 }
 
 export function useRadioGroupItem(props: RadioGroupItemStateProps) {
-	return getRadioGroupRootContext().createItem(props);
+	return new RadioGroupItemState(props, getRadioGroupRootContext());
 }
 
 export function useRadioGroupInput() {
-	return getRadioGroupRootContext().createInput();
+	return new RadioGroupInputState(getRadioGroupRootContext());
 }

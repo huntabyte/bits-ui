@@ -85,10 +85,6 @@ class MenubarRootState {
 		this.value.current = this.value.current ? "" : id;
 	};
 
-	createMenu(props: MenubarMenuStateProps) {
-		return new MenubarMenuState(props, this);
-	}
-
 	props = $derived.by(
 		() =>
 			({
@@ -137,14 +133,6 @@ class MenubarMenuState {
 				this.root.valueToContentId.delete(this.value.current);
 			};
 		});
-	}
-
-	createTrigger(props: MenubarTriggerStateProps) {
-		return new MenubarTriggerState(props, this);
-	}
-
-	createContent(props: MenubarContentStateProps) {
-		return new MenubarContentState(props, this);
 	}
 
 	getTriggerNode = () => {
@@ -386,13 +374,13 @@ export function useMenubarRoot(props: MenubarRootStateProps) {
 }
 
 export function useMenubarMenu(props: MenubarMenuStateProps) {
-	return setMenubarMenuContext(getMenubarRootContext().createMenu(props));
+	return setMenubarMenuContext(new MenubarMenuState(props, getMenubarRootContext()));
 }
 
 export function useMenubarTrigger(props: MenubarTriggerStateProps) {
-	return getMenubarMenuContext().createTrigger(props);
+	return new MenubarTriggerState(props, getMenubarMenuContext());
 }
 
 export function useMenubarContent(props: MenubarContentStateProps) {
-	return getMenubarMenuContext().createContent(props);
+	return new MenubarContentState(props, getMenubarMenuContext());
 }

@@ -67,14 +67,6 @@ class SwitchRootState {
 		this.#toggle();
 	};
 
-	createInput() {
-		return new SwitchInputState(this);
-	}
-
-	createThumb(props: SwitchThumbStateProps) {
-		return new SwitchThumbState(props, this);
-	}
-
 	sharedProps = $derived.by(() => ({
 		"data-disabled": getDataDisabled(this.disabled.current),
 		"data-state": getDataChecked(this.checked.current),
@@ -160,9 +152,9 @@ export function useSwitchRoot(props: SwitchRootStateProps) {
 }
 
 export function useSwitchInput(): SwitchInputState {
-	return getSwitchRootContext().createInput();
+	return new SwitchInputState(getSwitchRootContext());
 }
 
 export function useSwitchThumb(props: SwitchThumbStateProps): SwitchThumbState {
-	return getSwitchRootContext().createThumb(props);
+	return new SwitchThumbState(props, getSwitchRootContext());
 }

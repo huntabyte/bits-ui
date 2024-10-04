@@ -185,10 +185,6 @@ class NavigationMenuRootState {
 		dir: this.dir.current,
 		[ROOT_ATTR]: "",
 	}));
-
-	createMenu(props: NavigationMenuMenuStateProps) {
-		return new NavigationMenuMenuState(props, this);
-	}
 }
 
 type NavigationMenuMenuStateProps = ReadableBoxedValues<{
@@ -257,22 +253,6 @@ class NavigationMenuMenuState {
 			.map((ref) => ref.current)
 			.filter((node): node is HTMLElement => Boolean(node));
 	};
-
-	createList(props: NavigationMenuListStateProps) {
-		return new NavigationMenuListState(props, this);
-	}
-
-	createIndicator(props: NavigationMenuIndicatorStateProps) {
-		return new NavigationMenuIndicatorState(props, this);
-	}
-
-	createViewport(props: NavigationMenuViewportStateProps) {
-		return new NavigationMenuViewportState(props, this);
-	}
-
-	createSubMenu(props: NavigationMenuSubStateProps) {
-		return new NavigationMenuSubState(props, this.root);
-	}
 }
 
 type NavigationMenuSubStateProps = ReadableBoxedValues<{
@@ -379,7 +359,7 @@ class NavigationMenuListState {
 
 	constructor(
 		props: NavigationMenuListStateProps,
-		private menu: NavigationMenuMenuState | NavigationMenuSubState
+		readonly menu: NavigationMenuMenuState | NavigationMenuSubState
 	) {
 		this.#id = props.id;
 		this.#ref = props.ref;
@@ -501,18 +481,6 @@ class NavigationMenuItemState {
 				[ITEM_ATTR]: "",
 			}) as const
 	);
-
-	createTrigger(props: NavigationMenuTriggerStateProps) {
-		return new NavigationMenuTriggerState(props, this);
-	}
-
-	createContent(props: NavigationMenuContentStateProps) {
-		return new NavigationMenuContentState(props, this);
-	}
-
-	createLink(props: NavigationMenuLinkStateProps) {
-		return new NavigationMenuLinkState(props, this);
-	}
 }
 
 type NavigationMenuTriggerStateProps = ReadableBoxedValues<{
@@ -963,10 +931,6 @@ class NavigationMenuContentState {
 		newSelectedElement?.focus();
 	};
 
-	createLink(props: NavigationMenuLinkStateProps) {
-		return new NavigationMenuLinkState(props, this.item, this);
-	}
-
 	props = $derived.by(
 		() =>
 			({
@@ -1076,67 +1040,64 @@ class NavigationMenuViewportState {
 
 export function useNavigationMenuRoot(props: NavigationMenuRootStateProps) {
 	const rootState = new NavigationMenuRootState(props);
-	const menuState = rootState.createMenu({
-		rootNavigationId: rootState.id,
-		dir: rootState.dir,
-		orientation: rootState.orientation,
-		value: rootState.value,
-		isRoot: true,
-		onTriggerEnter: rootState.onTriggerEnter,
-		onItemSelect: rootState.onItemSelect,
-		onItemDismiss: rootState.onItemDismiss,
-		onContentEnter: rootState.onContentEnter,
-		onContentLeave: rootState.onContentLeave,
-		onTriggerLeave: rootState.onTriggerLeave,
-		previousValue: rootState.previousValue,
-	});
+	const menuState = new NavigationMenuMenuState(
+		{
+			rootNavigationId: rootState.id,
+			dir: rootState.dir,
+			orientation: rootState.orientation,
+			value: rootState.value,
+			isRoot: true,
+			onTriggerEnter: rootState.onTriggerEnter,
+			onItemSelect: rootState.onItemSelect,
+			onItemDismiss: rootState.onItemDismiss,
+			onContentEnter: rootState.onContentEnter,
+			onContentLeave: rootState.onContentLeave,
+			onTriggerLeave: rootState.onTriggerLeave,
+			previousValue: rootState.previousValue,
+		},
+		rootState
+	);
 
 	setNavigationMenuMenuContext(menuState);
 	return setNavigationMenuRootContext(rootState);
 }
 
-export function useNavigationMenuSub(props: NavigationMenuSubStateProps) {
-	const parentMenu = getNavigationMenuMenuContext();
-	if (parentMenu instanceof NavigationMenuMenuState) {
-		return setNavigationMenuMenuContext(
-			parentMenu.createSubMenu(props)
-		) as NavigationMenuSubState;
-	}
-	throw new Error("useNavigationMenuSub must be used within a NavigationMenuMenu");
-}
-
 export function useNavigationMenuList(props: NavigationMenuListStateProps) {
 	const menuState = getNavigationMenuMenuContext();
-	return setNavigationMenuListContext(menuState.createList(props));
+	return setNavigationMenuListContext(new NavigationMenuListState(props, menuState));
 }
 
 export function useNavigationMenuItem(props: NavigationMenuItemStateProps) {
 	const listState = getNavigationMenuListContext();
-	return setNavigationMenuItemContext(listState.createItem(props));
+	return setNavigationMenuItemContext(
+		new NavigationMenuItemState(props, listState, listState.menu)
+	);
 }
 
 export function useNavigationMenuTrigger(props: NavigationMenuTriggerStateProps) {
-	return getNavigationMenuItemContext().createTrigger(props);
+	return new NavigationMenuTriggerState(props, getNavigationMenuItemContext());
 }
 
 export function useNavigationMenuContent(props: NavigationMenuContentStateProps) {
-	return setNavigationMenuContentContext(getNavigationMenuItemContext().createContent(props));
+	return setNavigationMenuContentContext(
+		new NavigationMenuContentState(props, getNavigationMenuItemContext())
+	);
 }
 
 export function useNavigationMenuViewport(props: NavigationMenuViewportStateProps) {
-	return getNavigationMenuMenuContext().createViewport(props);
+	return new NavigationMenuViewportState(props, getNavigationMenuMenuContext());
 }
 
 export function useNavigationMenuIndicator(props: NavigationMenuIndicatorStateProps) {
-	return getNavigationMenuMenuContext().createIndicator(props);
+	return new NavigationMenuIndicatorState(props, getNavigationMenuMenuContext());
 }
 
 export function useNavigationMenuLink(props: NavigationMenuLinkStateProps) {
 	const content = getNavigationMenuContentContext(null);
 	if (content) {
-		return content.createLink(props);
+		return new NavigationMenuLinkState(props, content.item, content);
 	}
-	return getNavigationMenuItemContext().createLink(props);
+	return new NavigationMenuLinkState(props, getNavigationMenuItemContext());
 }
 
 /// Utils

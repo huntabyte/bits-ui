@@ -66,10 +66,6 @@ class TooltipProviderState {
 	onClose = () => {
 		this.#startTimer();
 	};
-
-	createRoot(props: TooltipRootStateProps) {
-		return new TooltipRootState(props, this);
-	}
 }
 
 type TooltipRootStateProps = ReadableBoxedValues<{
@@ -190,14 +186,6 @@ class TooltipRootState {
 			this.#timerFn.stop();
 		}
 	};
-
-	createTrigger(props: TooltipTriggerStateProps) {
-		return new TooltipTriggerState(props, this);
-	}
-
-	createContent(props: TooltipContentStateProps) {
-		return new TooltipContentState(props, this);
-	}
 }
 
 type TooltipTriggerStateProps = WithRefProps<
@@ -373,13 +361,13 @@ export function useTooltipProvider(props: TooltipProviderStateProps) {
 }
 
 export function useTooltipRoot(props: TooltipRootStateProps) {
-	return setTooltipRootContext(getTooltipProviderContext().createRoot(props));
+	return setTooltipRootContext(new TooltipRootState(props, getTooltipProviderContext()));
 }
 
 export function useTooltipTrigger(props: TooltipTriggerStateProps) {
-	return getTooltipRootContext().createTrigger(props);
+	return new TooltipTriggerState(props, getTooltipRootContext());
 }
 
 export function useTooltipContent(props: TooltipContentStateProps) {
-	return getTooltipRootContext().createContent(props);
+	return new TooltipContentState(props, getTooltipRootContext());
 }

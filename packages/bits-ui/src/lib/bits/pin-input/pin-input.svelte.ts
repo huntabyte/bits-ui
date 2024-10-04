@@ -174,7 +174,7 @@ class PinInputRootState {
 			syncTimeouts(() => {
 				const input = this.#inputRef.current;
 				if (!input) return;
-				// forcefully remove :autofull state
+				// forcefully remove :autofill state
 				input.dispatchEvent(new Event("input"));
 
 				// update selection state

@@ -27,18 +27,6 @@ class PopoverRootState {
 		if (!this.open.current) return;
 		this.open.current = false;
 	};
-
-	createTrigger = (props: PopoverTriggerStateProps) => {
-		return new PopoverTriggerState(props, this);
-	};
-
-	createContent = (props: PopoverContentStateProps) => {
-		return new PopoverContentState(props, this);
-	};
-
-	createClose = (props: PopoverCloseStateProps) => {
-		return new PopoverCloseState(props, this);
-	};
 }
 
 type PopoverTriggerStateProps = WithRefProps;
@@ -180,13 +168,13 @@ export function usePopoverRoot(props: PopoverRootStateProps) {
 }
 
 export function usePopoverTrigger(props: PopoverTriggerStateProps) {
-	return getPopoverRootContext().createTrigger(props);
+	return new PopoverTriggerState(props, getPopoverRootContext());
 }
 
 export function usePopoverContent(props: PopoverContentStateProps) {
-	return getPopoverRootContext().createContent(props);
+	return new PopoverContentState(props, getPopoverRootContext());
 }
 
 export function usePopoverClose(props: PopoverCloseStateProps) {
-	return getPopoverRootContext().createClose(props);
+	return new PopoverCloseState(props, getPopoverRootContext());
 }

@@ -90,14 +90,6 @@ class PaginationRootState {
 		this.page.current = Math.min(this.page.current + 1, this.totalPages);
 	};
 
-	createPage = (props: PaginationPageStateProps) => {
-		return new PaginationPage(props, this);
-	};
-
-	createButton = (props: PaginationButtonStateProps) => {
-		return new PaginationButtonState(props, this);
-	};
-
 	snippetProps = $derived.by(() => ({
 		pages: this.pages,
 		range: this.range,
@@ -123,7 +115,7 @@ type PaginationPageStateProps = WithRefProps<
 	}>
 >;
 
-class PaginationPage {
+class PaginationPageState {
 	#id: PaginationPageStateProps["id"];
 	#ref: PaginationPageStateProps["ref"];
 	#root: PaginationRootState;
@@ -347,9 +339,9 @@ export function usePaginationRoot(props: PaginationRootStateProps) {
 }
 
 export function usePaginationPage(props: PaginationPageStateProps) {
-	return getPaginationRootContext().createPage(props);
+	return new PaginationPageState(props, getPaginationRootContext());
 }
 
 export function usePaginationButton(props: PaginationButtonStateProps) {
-	return getPaginationRootContext().createButton(props);
+	return new PaginationButtonState(props, getPaginationRootContext());
 }

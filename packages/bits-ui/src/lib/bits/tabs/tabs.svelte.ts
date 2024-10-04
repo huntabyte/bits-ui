@@ -95,18 +95,6 @@ class TabsRootState {
 		this.value.current = v;
 	};
 
-	createList(props: TabsListStateProps) {
-		return new TabsListState(props, this);
-	}
-
-	createTrigger(props: TabsTriggerStateProps) {
-		return new TabsTriggerState(props, this);
-	}
-
-	createContent(props: TabsContentStateProps) {
-		return new TabsContentState(props, this);
-	}
-
 	props = $derived.by(
 		() =>
 			({
@@ -324,15 +312,15 @@ export function useTabsRoot(props: TabsRootStateProps) {
 }
 
 export function useTabsTrigger(props: TabsTriggerStateProps) {
-	return getTabsRootContext().createTrigger(props);
+	return new TabsTriggerState(props, getTabsRootContext());
 }
 
 export function useTabsList(props: TabsListStateProps) {
-	return getTabsRootContext().createList(props);
+	return new TabsListState(props, getTabsRootContext());
 }
 
 export function useTabsContent(props: TabsContentStateProps) {
-	return getTabsRootContext().createContent(props);
+	return new TabsContentState(props, getTabsRootContext());
 }
 
 //

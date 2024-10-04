@@ -41,14 +41,6 @@ class CollapsibleRootState {
 		this.open.current = !this.open.current;
 	}
 
-	createContent(props: CollapsibleContentStateProps) {
-		return new CollapsibleContentState(props, this);
-	}
-
-	createTrigger(props: CollapsibleTriggerStateProps) {
-		return new CollapsibleTriggerState(props, this);
-	}
-
 	props = $derived.by(
 		() =>
 			({
@@ -219,11 +211,13 @@ export function useCollapsibleRoot(props: CollapsibleRootStateProps) {
 export function useCollapsibleTrigger(
 	props: CollapsibleTriggerStateProps
 ): CollapsibleTriggerState {
-	return getCollapsibleRootContext().createTrigger(props);
+	const root = getCollapsibleRootContext();
+	return new CollapsibleTriggerState(props, root);
 }
 
 export function useCollapsibleContent(
 	props: CollapsibleContentStateProps
 ): CollapsibleContentState {
-	return getCollapsibleRootContext().createContent(props);
+	const root = getCollapsibleRootContext();
+	return new CollapsibleContentState(props, root);
 }

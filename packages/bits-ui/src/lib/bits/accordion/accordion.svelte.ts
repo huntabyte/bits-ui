@@ -163,18 +163,6 @@ export class AccordionItemState {
 		this.root.toggleItem(this.value.current);
 	};
 
-	createTrigger(props: AccordionTriggerStateProps) {
-		return new AccordionTriggerState(props, this);
-	}
-
-	createContent(props: AccordionContentStateProps) {
-		return new AccordionContentState(props, this);
-	}
-
-	createHeader(props: AccordionHeaderStateProps) {
-		return new AccordionHeaderState(props, this);
-	}
-
 	props = $derived.by(
 		() =>
 			({
@@ -426,13 +414,16 @@ export function useAccordionItem(props: Omit<AccordionItemStateProps, "rootState
 }
 
 export function useAccordionTrigger(props: AccordionTriggerStateProps): AccordionTriggerState {
-	return getAccordionItemContext().createTrigger(props);
+	const item = getAccordionItemContext();
+	return new AccordionTriggerState(props, item);
 }
 
 export function useAccordionContent(props: AccordionContentStateProps): AccordionContentState {
-	return getAccordionItemContext().createContent(props);
+	const item = getAccordionItemContext();
+	return new AccordionContentState(props, item);
 }
 
 export function useAccordionHeader(props: AccordionHeaderStateProps): AccordionHeaderState {
-	return getAccordionItemContext().createHeader(props);
+	const item = getAccordionItemContext();
+	return new AccordionHeaderState(props, item);
 }

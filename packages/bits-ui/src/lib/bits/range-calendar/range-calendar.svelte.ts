@@ -633,7 +633,7 @@ export class RangeCalendarCellState {
 	month: RangeCalendarCellStateProps["month"];
 	cellDate = $derived.by(() => toDate(this.date.current));
 	isDisabled = $derived.by(() => this.root.isDateDisabled(this.date.current));
-	isUnvailable = $derived.by(() => this.root.isDateUnavailableProp.current(this.date.current));
+	isUnavailable = $derived.by(() => this.root.isDateUnavailableProp.current(this.date.current));
 	isDateToday = $derived.by(() => isToday(this.date.current, getLocalTimeZone()));
 	isOutsideMonth = $derived.by(() => !isSameMonth(this.date.current, this.month.current));
 	isOutsideVisibleMonths = $derived.by(() => this.root.isOutsideVisibleMonths(this.date.current));
@@ -677,7 +677,7 @@ export class RangeCalendarCellState {
 
 	snippetProps = $derived.by(() => ({
 		disabled: this.isDisabled,
-		unavailable: this.isUnvailable,
+		unavailable: this.isUnavailable,
 		selected: this.isSelectedDate,
 	}));
 
@@ -685,14 +685,14 @@ export class RangeCalendarCellState {
 		return (
 			this.isDisabled ||
 			(this.isOutsideMonth && this.root.disableDaysOutsideMonth.current) ||
-			this.isUnvailable
+			this.isUnavailable
 		);
 	});
 
 	sharedDataAttrs = $derived.by(
 		() =>
 			({
-				"data-unavailable": getDataUnavailable(this.isUnvailable),
+				"data-unavailable": getDataUnavailable(this.isUnavailable),
 				"data-today": this.isDateToday ? "" : undefined,
 				"data-outside-month": this.isOutsideMonth ? "" : undefined,
 				"data-outside-visible-months": this.isOutsideVisibleMonths ? "" : undefined,
@@ -720,10 +720,6 @@ export class RangeCalendarCellState {
 				[this.root.getBitsAttr("cell")]: "",
 			}) as const
 	);
-
-	createDay(props: RangeCalendarDayStateProps) {
-		return new RangeCalendarDayState(props, this);
-	}
 }
 
 type RangeCalendarDayStateProps = WithRefProps;
@@ -771,7 +767,7 @@ class RangeCalendarDayState {
 
 	snippetProps = $derived.by(() => ({
 		disabled: this.cell.isDisabled,
-		unavailable: this.cell.isUnvailable,
+		unavailable: this.cell.isUnavailable,
 		selected: this.cell.isSelectedDate,
 		day: `${this.cell.date.current.day}`,
 	}));
@@ -814,5 +810,5 @@ export function useRangeCalendarCell(props: RangeCalendarCellStateProps) {
 }
 
 export function useRangeCalendarDay(props: RangeCalendarDayStateProps) {
-	return getRangeCalendarCellContext().createDay(props);
+	return new RangeCalendarDayState(props, getRangeCalendarCellContext());
 }

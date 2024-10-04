@@ -110,14 +110,6 @@ class LinkPreviewRootState {
 			}, this.closeDelay.current);
 		}
 	};
-
-	createTrigger(props: LinkPreviewTriggerStateProps) {
-		return new LinkPreviewTriggerState(props, this);
-	}
-
-	createContent(props: LinkPreviewContentStateProps) {
-		return new LinkPreviewContentState(props, this);
-	}
 }
 
 type LinkPreviewTriggerStateProps = WithRefProps;
@@ -256,9 +248,9 @@ export function useLinkPreviewRoot(props: LinkPreviewRootStateProps) {
 }
 
 export function useLinkPreviewTrigger(props: LinkPreviewTriggerStateProps) {
-	return getLinkPreviewRootContext().createTrigger(props);
+	return new LinkPreviewTriggerState(props, getLinkPreviewRootContext());
 }
 
 export function useLinkPreviewContent(props: LinkPreviewContentStateProps) {
-	return getLinkPreviewRootContext().createContent(props);
+	return new LinkPreviewContentState(props, getLinkPreviewRootContext());
 }

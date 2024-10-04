@@ -37,17 +37,6 @@ import { useRefById } from "$lib/internal/useRefById.svelte.js";
 import { isPointerInGraceArea, makeHullFromElements } from "$lib/internal/polygon.js";
 import { onDestroyEffect } from "$lib/internal/onDestroyEffect.svelte.js";
 
-// const TRIGGER_ATTR = "data-menu-trigger";
-// const CONTENT_ATTR = "data-menu-content";
-// const ITEM_ATTR = "data-menu-item";
-// const SEPARATOR_ATTR = "data-menu-separator";
-// const SUB_TRIGGER_ATTR = "data-menu-sub-trigger";
-// const CHECKBOX_ITEM_ATTR = "data-menu-checkbox-item";
-// const GROUP_ATTR = "data-menu-group";
-// const LABEL_ATTR = "data-menu-group-heading";
-// const RADIO_GROUP_ATTR = "data-menu-radio-group";
-// const RADIO_ITEM_ATTR = "data-menu-radio-item";
-// const ARROW_ATTR = "data-menu-arrow";
 export const CONTEXT_MENU_TRIGGER_ATTR = "data-context-menu-trigger";
 
 const [setMenuRootContext, getMenuRootContext] = createContext<MenuRootState>("Menu.Root");
@@ -1106,7 +1095,7 @@ export function useMenuMenu(root: MenuRootState, props: MenuMenuStateProps) {
 
 export function useMenuSubmenu(props: MenuMenuStateProps) {
 	const menu = getMenuMenuContext();
-	return new MenuMenuState(props, menu.root, menu);
+	return setMenuMenuContext(new MenuMenuState(props, menu.root, menu));
 }
 
 export function useMenuSubTrigger(props: MenuItemSharedStateProps) {

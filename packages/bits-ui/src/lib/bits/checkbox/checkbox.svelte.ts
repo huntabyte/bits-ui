@@ -57,10 +57,6 @@ class CheckboxRootState {
 		this.checked.current = !this.checked.current;
 	};
 
-	createInput() {
-		return new CheckboxInputState(this);
-	}
-
 	props = $derived.by(
 		() =>
 			({
@@ -130,5 +126,6 @@ export function useCheckboxRoot(props: CheckboxRootStateProps) {
 }
 
 export function useCheckboxInput(): CheckboxInputState {
-	return getCheckboxRootContext().createInput();
+	const root = getCheckboxRootContext();
+	return new CheckboxInputState(root);
 }

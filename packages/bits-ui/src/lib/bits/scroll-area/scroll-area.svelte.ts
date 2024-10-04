@@ -1,5 +1,5 @@
 /**
- * This logic is adapted from Radix UI's ScrollArea component.
+ * This logic is adapted from Radix UI ScrollArea component.
  * https://github.com/radix-ui/primitives/blob/main/packages/react/scroll-area/src/ScrollArea.tsx
  * Credit to Jenna Smith (@jjenzz) for the original implementation.
  * Incredible thought must have went into solving all the intricacies of this component.
@@ -90,18 +90,6 @@ class ScrollAreaRootState {
 				[SCROLL_AREA_ROOT_ATTR]: "",
 			}) as const
 	);
-
-	createViewport(props: ScrollAreaViewportStateProps) {
-		return new ScrollAreaViewportState(props, this);
-	}
-
-	createScrollbar(props: ScrollAreaScrollbarStateProps) {
-		return new ScrollAreaScrollbarState(props, this);
-	}
-
-	createCorner(props: ScrollAreaCornerImplStateProps) {
-		return new ScrollAreaCornerImplState(props, this);
-	}
 }
 
 type ScrollAreaViewportStateProps = WithRefProps;
@@ -190,22 +178,6 @@ class ScrollAreaScrollbarState {
 					: (this.root.scrollbarYEnabled = false);
 			};
 		});
-	}
-
-	createScrollbarHover() {
-		return new ScrollAreaScrollbarHoverState(this);
-	}
-
-	createScrollbarScroll() {
-		return new ScrollAreaScrollbarScrollState(this);
-	}
-
-	createScrollbarAuto() {
-		return new ScrollAreaScrollbarAutoState(this);
-	}
-
-	createScrollbarVisible() {
-		return new ScrollAreaScrollbarVisibleState(this);
 	}
 }
 
@@ -464,14 +436,6 @@ class ScrollAreaScrollbarVisibleState {
 			this.root.dir.current
 		);
 	};
-
-	createScrollbarX(props: ScrollbarAxisStateProps) {
-		return new ScrollAreaScrollbarXState(props, this);
-	}
-
-	createScrollbarY(props: ScrollbarAxisStateProps) {
-		return new ScrollAreaScrollbarYState(props, this);
-	}
 }
 
 type ScrollbarAxisStateProps = ReadableBoxedValues<{ mounted: boolean }>;
@@ -483,7 +447,6 @@ type ScrollbarAxisState = {
 	onResize: () => void;
 	onThumbPositionChange: () => void;
 	onThumbPointerUp: () => void;
-	createShared: () => ScrollAreaScrollbarSharedState;
 	props: {
 		id: string;
 		"data-orientation": "horizontal" | "vertical";
@@ -587,10 +550,6 @@ class ScrollAreaScrollbarXState implements ScrollbarAxisState {
 				},
 			}) as const
 	);
-
-	createShared() {
-		return new ScrollAreaScrollbarSharedState(this);
-	}
 }
 
 class ScrollAreaScrollbarYState implements ScrollbarAxisState {
@@ -684,10 +643,6 @@ class ScrollAreaScrollbarYState implements ScrollbarAxisState {
 				},
 			}) as const
 	);
-
-	createShared() {
-		return new ScrollAreaScrollbarSharedState(this);
-	}
 }
 
 type ScrollbarAxis = ScrollAreaScrollbarXState | ScrollAreaScrollbarYState;
@@ -796,10 +751,6 @@ class ScrollAreaScrollbarSharedState {
 			onpointerup: this.#onpointerup,
 		})
 	);
-
-	createThumb(props: ScrollAreaThumbImplStateProps) {
-		return new ScrollAreaThumbImplState(props, this);
-	}
 }
 
 type ScrollAreaThumbImplStateProps = WithRefProps &
@@ -952,7 +903,7 @@ export const [setScrollAreaScrollbarVisibleContext, getScrollAreaScrollbarVisibl
 	createContext<ScrollAreaScrollbarVisibleState>("ScrollArea.ScrollbarVisible");
 
 export const [setScrollAreaScrollbarAxisContext, getScrollAreaScrollbarAxisContext] =
-	createContext<ScrollbarAxisState>("ScrollArea.ScrollbarAxis");
+	createContext<ScrollbarAxis>("ScrollArea.ScrollbarAxis");
 
 export const [setScrollAreaScrollbarSharedContext, getScrollAreaScrollbarSharedContext] =
 	createContext<ScrollAreaScrollbarSharedState>("ScrollArea.ScrollbarShared");
@@ -962,53 +913,57 @@ export function useScrollAreaRoot(props: ScrollAreaRootStateProps) {
 }
 
 export function useScrollAreaViewport(props: ScrollAreaViewportStateProps) {
-	return getScrollAreaRootContext().createViewport(props);
+	return new ScrollAreaViewportState(props, getScrollAreaRootContext());
 }
 
 export function useScrollAreaScrollbar(props: ScrollAreaScrollbarStateProps) {
-	return setScrollAreaScrollbarContext(getScrollAreaRootContext().createScrollbar(props));
+	return setScrollAreaScrollbarContext(
+		new ScrollAreaScrollbarState(props, getScrollAreaRootContext())
+	);
 }
 
 export function useScrollAreaScrollbarVisible() {
 	return setScrollAreaScrollbarVisibleContext(
-		getScrollAreaScrollbarContext().createScrollbarVisible()
+		new ScrollAreaScrollbarVisibleState(getScrollAreaScrollbarContext())
 	);
 }
 
 export function useScrollAreaScrollbarAuto() {
-	return getScrollAreaScrollbarContext().createScrollbarAuto();
+	return new ScrollAreaScrollbarAutoState(getScrollAreaScrollbarContext());
 }
 
 export function useScrollAreaScrollbarScroll() {
-	return getScrollAreaScrollbarContext().createScrollbarScroll();
+	return new ScrollAreaScrollbarScrollState(getScrollAreaScrollbarContext());
 }
 
 export function useScrollAreaScrollbarHover() {
-	return getScrollAreaScrollbarContext().createScrollbarHover();
+	return new ScrollAreaScrollbarHoverState(getScrollAreaScrollbarContext());
 }
 
 export function useScrollAreaScrollbarX(props: ScrollbarAxisStateProps) {
 	return setScrollAreaScrollbarAxisContext(
-		getScrollAreaScrollbarVisibleContext().createScrollbarX(props)
+		new ScrollAreaScrollbarXState(props, getScrollAreaScrollbarVisibleContext())
 	);
 }
 
 export function useScrollAreaScrollbarY(props: ScrollbarAxisStateProps) {
 	return setScrollAreaScrollbarAxisContext(
-		getScrollAreaScrollbarVisibleContext().createScrollbarY(props)
+		new ScrollAreaScrollbarYState(props, getScrollAreaScrollbarVisibleContext())
 	);
 }
 
 export function useScrollAreaScrollbarShared() {
-	return setScrollAreaScrollbarSharedContext(getScrollAreaScrollbarAxisContext().createShared());
+	return setScrollAreaScrollbarSharedContext(
+		new ScrollAreaScrollbarSharedState(getScrollAreaScrollbarAxisContext())
+	);
 }
 
 export function useScrollAreaThumb(props: ScrollAreaThumbImplStateProps) {
-	return getScrollAreaScrollbarSharedContext().createThumb(props);
+	return new ScrollAreaThumbImplState(props, getScrollAreaScrollbarSharedContext());
 }
 
 export function useScrollAreaCorner(props: ScrollAreaCornerImplStateProps) {
-	return getScrollAreaRootContext().createCorner(props);
+	return new ScrollAreaCornerImplState(props, getScrollAreaRootContext());
 }
 
 function toInt(value?: string) {
