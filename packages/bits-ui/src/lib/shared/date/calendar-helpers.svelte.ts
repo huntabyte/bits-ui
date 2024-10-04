@@ -12,8 +12,6 @@ import {
 	parseStringToDateValue,
 	toDate,
 } from "./index.js";
-import type { CalendarRootState } from "$lib/bits/calendar/calendar.svelte.js";
-import { RangeCalendarRootState } from "$lib/bits/range-calendar/range-calendar.svelte.js";
 import { getDataDisabled, getDataInvalid, getDataReadonly } from "$lib/internal/attrs.js";
 import { afterTick } from "$lib/internal/afterTick.js";
 import { chunk, isValidIndex } from "$lib/internal/arrays.js";
@@ -710,15 +708,6 @@ export type CalendarParts =
 	| "head-cell"
 	| "header"
 	| "heading";
-
-export function getCalendarBitsAttr(
-	root: CalendarRootState | RangeCalendarRootState,
-	part: CalendarParts
-) {
-	const isRange = root instanceof RangeCalendarRootState;
-	const prefix = isRange ? "data-range-calendar-" : "data-calendar-";
-	return `${prefix}${part}`;
-}
 
 export function pickerOpenFocus(e: Event) {
 	const nodeToFocus = document.querySelector<HTMLElement>("[data-bits-day][data-focused]");

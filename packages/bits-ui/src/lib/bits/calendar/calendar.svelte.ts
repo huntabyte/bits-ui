@@ -7,10 +7,7 @@ import {
 } from "@internationalized/date";
 import { DEV } from "esm-env";
 import { untrack } from "svelte";
-import type {
-	RangeCalendarCellState,
-	RangeCalendarRootState,
-} from "../range-calendar/range-calendar.svelte.js";
+import type { RangeCalendarRootState } from "../range-calendar/range-calendar.svelte.js";
 import {
 	getAriaDisabled,
 	getAriaHidden,
@@ -31,7 +28,6 @@ import {
 	type CalendarParts,
 	createAccessibleHeading,
 	createMonths,
-	getCalendarBitsAttr,
 	getCalendarElementProps,
 	getCalendarHeadingValue,
 	getIsNextButtonDisabled,
@@ -279,21 +275,21 @@ export class CalendarRootState {
 		});
 	};
 
-	nextYear() {
+	nextYear = () => {
 		this.placeholder.current = this.placeholder.current.add({ years: 1 });
-	}
+	};
 
-	prevYear() {
+	prevYear = () => {
 		this.placeholder.current = this.placeholder.current.subtract({ years: 1 });
-	}
+	};
 
-	setYear(year: number) {
+	setYear = (year: number) => {
 		this.placeholder.current = this.placeholder.current.set({ year });
-	}
+	};
 
-	setMonth(month: number) {
+	setMonth = (month: number) => {
 		this.placeholder.current = this.placeholder.current.set({ month });
-	}
+	};
 
 	isNextButtonDisabled = $derived.by(() => {
 		return getIsNextButtonDisabled({
@@ -341,20 +337,20 @@ export class CalendarRootState {
 		return `${this.calendarLabel.current} ${this.headingValue}`;
 	});
 
-	isOutsideVisibleMonths(date: DateValue) {
+	isOutsideVisibleMonths = (date: DateValue) => {
 		return !this.visibleMonths.some((month) => isSameMonth(date, month));
-	}
+	};
 
-	isDateDisabled(date: DateValue) {
+	isDateDisabled = (date: DateValue) => {
 		if (this.isDateDisabledProp.current(date) || this.disabled.current) return true;
 		const minValue = this.minValue.current;
 		const maxValue = this.maxValue.current;
 		if (minValue && isBefore(date, minValue)) return true;
 		if (maxValue && isBefore(maxValue, date)) return true;
 		return false;
-	}
+	};
 
-	isDateSelected(date: DateValue) {
+	isDateSelected = (date: DateValue) => {
 		const value = this.value.current;
 		if (Array.isArray(value)) {
 			return value.some((d) => isSameDay(d, date));
@@ -363,7 +359,7 @@ export class CalendarRootState {
 		} else {
 			return isSameDay(value, date);
 		}
-	}
+	};
 
 	#shiftFocus = (node: HTMLElement, add: number) => {
 		return shiftCalendarFocus({
@@ -410,7 +406,7 @@ export class CalendarRootState {
 		}
 	};
 
-	#handleMultipleUpdate(prev: DateValue[] | undefined, date: DateValue) {
+	#handleMultipleUpdate = (prev: DateValue[] | undefined, date: DateValue) => {
 		if (!prev) return [date];
 		if (!Array.isArray(prev)) {
 			if (DEV) throw new Error("Invalid value for multiple prop.");
@@ -430,9 +426,9 @@ export class CalendarRootState {
 			}
 			return next;
 		}
-	}
+	};
 
-	#handleSingleUpdate(prev: DateValue | undefined, date: DateValue) {
+	#handleSingleUpdate = (prev: DateValue | undefined, date: DateValue) => {
 		if (Array.isArray(prev)) {
 			if (DEV) throw new Error("Invalid value for single prop.");
 		}
@@ -443,7 +439,7 @@ export class CalendarRootState {
 			return undefined;
 		}
 		return date;
-	}
+	};
 
 	#onkeydown = (event: KeyboardEvent) => {
 		handleCalendarKeydown({
@@ -459,9 +455,9 @@ export class CalendarRootState {
 		weekdays: this.weekdays,
 	}));
 
-	getBitsAttr(part: CalendarParts) {
-		return getCalendarBitsAttr(this, part);
-	}
+	getBitsAttr = (part: CalendarParts) => {
+		return `data-bits-calendar-${part}`;
+	};
 
 	props = $derived.by(
 		() =>
@@ -597,10 +593,6 @@ class CalendarCellState {
 				[this.root.getBitsAttr("cell")]: "",
 			}) as const
 	);
-
-	createDay(props: CalendarDayStateProps) {
-		return new CalendarDayState(props, this);
-	}
 }
 
 type CalendarDayStateProps = WithRefProps;

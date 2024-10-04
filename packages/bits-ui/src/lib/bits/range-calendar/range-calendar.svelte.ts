@@ -6,26 +6,6 @@ import {
 	isToday,
 } from "@internationalized/date";
 import { untrack } from "svelte";
-import {
-	CalendarGridBodyState,
-	type CalendarGridBodyStateProps,
-	CalendarGridHeadState,
-	type CalendarGridHeadStateProps,
-	CalendarGridRowState,
-	type CalendarGridRowStateProps,
-	CalendarGridState,
-	type CalendarGridStateProps,
-	CalendarHeadCellState,
-	type CalendarHeadCellStateProps,
-	CalendarHeaderState,
-	type CalendarHeaderStateProps,
-	CalendarHeadingState,
-	type CalendarHeadingStateProps,
-	CalendarNextButtonState,
-	type CalendarNextButtonStateProps,
-	CalendarPrevButtonState,
-	type CalendarPrevButtonStateProps,
-} from "../calendar/calendar.svelte.js";
 import type { DateRange, Month } from "$lib/shared/index.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { WithRefProps } from "$lib/internal/types.js";
@@ -43,7 +23,6 @@ import {
 } from "$lib/shared/date/index.js";
 import {
 	createMonths,
-	getCalendarBitsAttr,
 	getCalendarElementProps,
 	getCalendarHeadingValue,
 	getIsNextButtonDisabled,
@@ -554,7 +533,7 @@ export class RangeCalendarRootState {
 	};
 
 	getBitsAttr = (part: CalendarParts) => {
-		return getCalendarBitsAttr(this, part);
+		return `data-range-calendar-${part}`;
 	};
 
 	snippetProps = $derived.by(() => ({
@@ -577,46 +556,6 @@ export class RangeCalendarRootState {
 				onkeydown: this.#onkeydown,
 			}) as const
 	);
-
-	createHeading = (props: CalendarHeadingStateProps) => {
-		return new CalendarHeadingState(props, this);
-	};
-
-	createGrid = (props: CalendarGridStateProps) => {
-		return new CalendarGridState(props, this);
-	};
-
-	createCell = (props: RangeCalendarCellStateProps) => {
-		return new RangeCalendarCellState(props, this);
-	};
-
-	createNextButton = (props: CalendarNextButtonStateProps) => {
-		return new CalendarNextButtonState(props, this);
-	};
-
-	createPrevButton = (props: CalendarPrevButtonStateProps) => {
-		return new CalendarPrevButtonState(props, this);
-	};
-
-	createGridBody = (props: CalendarGridBodyStateProps) => {
-		return new CalendarGridBodyState(props, this);
-	};
-
-	createGridHead = (props: CalendarGridHeadStateProps) => {
-		return new CalendarGridHeadState(props, this);
-	};
-
-	createGridRow = (props: CalendarGridRowStateProps) => {
-		return new CalendarGridRowState(props, this);
-	};
-
-	createHeadCell = (props: CalendarHeadCellStateProps) => {
-		return new CalendarHeadCellState(props, this);
-	};
-
-	createHeader = (props: CalendarHeaderStateProps) => {
-		return new CalendarHeaderState(props, this);
-	};
 }
 
 type RangeCalendarCellStateProps = WithRefProps<
@@ -806,7 +745,9 @@ export function useRangeCalendarRoot(props: RangeCalendarRootStateProps) {
 }
 
 export function useRangeCalendarCell(props: RangeCalendarCellStateProps) {
-	return setRangeCalendarCellContext(getRangeCalendarRootContext().createCell(props));
+	return setRangeCalendarCellContext(
+		new RangeCalendarCellState(props, getRangeCalendarRootContext())
+	);
 }
 
 export function useRangeCalendarDay(props: RangeCalendarDayStateProps) {
