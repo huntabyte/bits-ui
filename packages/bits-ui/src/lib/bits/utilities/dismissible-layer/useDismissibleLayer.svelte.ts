@@ -138,7 +138,7 @@ export class DismissibleLayerState {
 			addEventListener(
 				this.#documentObj,
 				interactOutsideStartEvents,
-				composeHandlers(this.#markInterceptedEvent, this.#markResponsibleLayer),
+				executeCallbacks(this.#markInterceptedEvent, this.#markResponsibleLayer),
 				true
 			),
 
@@ -150,7 +150,7 @@ export class DismissibleLayerState {
 			addEventListener(
 				this.#documentObj,
 				interactOutsideEndEvents,
-				composeHandlers(this.#markInterceptedEvent, this.#resetState),
+				executeCallbacks(this.#markInterceptedEvent, this.#resetState),
 				true
 			),
 
@@ -162,7 +162,7 @@ export class DismissibleLayerState {
 			addEventListener(
 				this.#documentObj,
 				interactOutsideStartEvents,
-				composeHandlers(this.#markNonInterceptedEvent, this.#onInteractOutsideStart)
+				executeCallbacks(this.#markNonInterceptedEvent, this.#onInteractOutsideStart)
 			),
 
 			/**
@@ -192,8 +192,12 @@ export class DismissibleLayerState {
 		if (!this.#isResponsibleLayer || this.#isAnyEventIntercepted() || !isEventValid) {
 			return;
 		}
-		this.#interactOutsideStartProp.current(e);
-		if (e.defaultPrevented) return;
+		let event = e;
+		if (event.defaultPrevented) {
+			event = createWrappedEvent(event);
+		}
+		this.#interactOutsideStartProp.current(event);
+		if (event.defaultPrevented) return;
 		this.#isPointerDownOutside = true;
 	}, 10);
 
@@ -294,3 +298,53 @@ function isValidEvent(e: InteractOutsideEvent, node: HTMLElement): boolean {
 }
 
 export type FocusOutsideEvent = CustomEvent<{ originalEvent: FocusEvent }>;
+
+function createWrappedEvent(e: InteractOutsideEvent): InteractOutsideEvent {
+	const capturedCurrentTarget = e.currentTarget;
+	const capturedTarget = e.target;
+
+	let newEvent: InteractOutsideEvent;
+
+	if (e instanceof PointerEvent) {
+		newEvent = new PointerEvent(e.type, e);
+	} else if (e instanceof MouseEvent) {
+		newEvent = new MouseEvent(e.type, e);
+	} else {
+		newEvent = document.createEvent("TouchEvent") as TouchEvent;
+		newEvent.initEvent(e.type, e.bubbles, e.cancelable);
+	}
+
+	// track the prevented state separately
+	let isPrevented = false;
+
+	// Create a proxy to intercept property access and method calls
+	const wrappedEvent = new Proxy(newEvent, {
+		get: (target, prop) => {
+			if (prop === "currentTarget") {
+				return capturedCurrentTarget;
+			}
+			if (prop === "target") {
+				return capturedTarget;
+			}
+			if (prop === "preventDefault") {
+				return () => {
+					isPrevented = true;
+					if (typeof target.preventDefault === "function") {
+						target.preventDefault();
+					}
+				};
+			}
+			if (prop === "defaultPrevented") {
+				return isPrevented;
+			}
+			if (prop in target) {
+				// eslint-disable-next-line ts/no-explicit-any
+				return (target as any)[prop];
+			}
+			// eslint-disable-next-line ts/no-explicit-any
+			return (e as any)[prop];
+		},
+	});
+
+	return wrappedEvent as InteractOutsideEvent;
+}
