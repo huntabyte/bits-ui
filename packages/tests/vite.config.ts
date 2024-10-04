@@ -1,5 +1,6 @@
 import process from "node:process";
 import { sveltekit } from "@sveltejs/kit/vite";
+import { svelteTesting } from "@testing-library/svelte/vite";
 import { defineConfig } from "vitest/config";
 import type { Plugin } from "vite";
 
@@ -14,7 +15,7 @@ const vitestBrowserConditionPlugin: Plugin = {
 };
 
 export default defineConfig({
-	plugins: [vitestBrowserConditionPlugin, sveltekit()],
+	plugins: [vitestBrowserConditionPlugin, sveltekit(), svelteTesting()],
 	test: {
 		include: ["src/**/*.{test,spec}.{js,ts}"],
 		// jest like globals
@@ -22,5 +23,10 @@ export default defineConfig({
 		environment: "jsdom",
 		// in-source testing
 		includeSource: ["src/**/*.{js,ts,svelte}"],
+		// Add @testing-library/jest-dom's matchers & mocks of SvelteKit modules
+		setupFiles: ["./other/setup-test.ts"],
+		coverage: {
+			exclude: ["./other/setup-test.ts"],
+		},
 	},
 });
