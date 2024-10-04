@@ -598,26 +598,6 @@ export class DateFieldRootState {
 			tabindex: this.disabled.current ? undefined : 0,
 		};
 	};
-
-	// createInput(props: DateFieldInputStateProps) {
-	// 	return new DateFieldInputState(props, this);
-	// }
-
-	// createLabel(props: DateFieldLabelStateProps) {
-	// 	return new DateFieldLabelState(props, this);
-	// }
-
-	// createHiddenInput() {
-	// 	return new DateFieldHiddenInputState(this);
-	// }
-
-	// createSegment(part: SegmentPart, props: WithRefProps) {
-	// 	return segmentPartToInstance({
-	// 		part,
-	// 		segmentProps: props,
-	// 		root: this,
-	// 	});
-	// }
 }
 
 type DateFieldInputStateProps = WithRefProps &
@@ -955,26 +935,20 @@ class DateFieldDaySegmentState {
 	};
 
 	props = $derived.by(() => {
-		const segmentValues = this.#root.segmentValues;
-		const isEmpty = segmentValues.day === null;
-		const placeholder = this.#root.placeholder.current;
-		const date = segmentValues.day
-			? placeholder.set({ day: Number.parseInt(segmentValues.day) })
-			: placeholder;
-
-		const valueNow = date.day;
-		const valueMin = 1;
-		const valueMax = getDaysInMonth(toDate(date));
-		const valueText = isEmpty ? "Empty" : `${valueNow}`;
+		const date = this.#root.segmentValues.day
+			? this.#root.placeholder.current.set({
+					day: Number.parseInt(this.#root.segmentValues.day),
+				})
+			: this.#root.placeholder.current;
 
 		return {
 			...this.#root.sharedSegmentAttrs,
 			id: this.#id.current,
 			"aria-label": "day,",
-			"aria-valuemin": valueMin,
-			"aria-valuemax": valueMax,
-			"aria-valuenow": valueNow,
-			"aria-valuetext": valueText,
+			"aria-valuemin": 1,
+			"aria-valuemax": getDaysInMonth(toDate(date)),
+			"aria-valuenow": date.day,
+			"aria-valuetext": this.#root.segmentValues.day === null ? "Empty" : `${date.day}`,
 			onkeydown: this.#onkeydown,
 			onfocusout: this.#onfocusout,
 			onclick: this.#root.handleSegmentClick,
@@ -1010,7 +984,6 @@ class DateFieldMonthSegmentState {
 	};
 
 	#onkeydown = (e: KeyboardEvent) => {
-		const placeholder = this.#root.placeholder.current;
 		if (e.ctrlKey || e.metaKey || this.#root.disabled.current) return;
 		if (e.key !== kbd.TAB) e.preventDefault();
 		if (!isAcceptableSegmentKey(e.key)) return;
@@ -1020,7 +993,7 @@ class DateFieldMonthSegmentState {
 		if (isArrowUp(e.key)) {
 			this.#updateSegment("month", (prev) => {
 				if (prev === null) {
-					const next = placeholder.month;
+					const next = this.#root.placeholder.current.month;
 					this.#announcer.announce(this.getAnnouncement(next));
 
 					if (String(next).length === 1) {
@@ -1029,7 +1002,7 @@ class DateFieldMonthSegmentState {
 
 					return `${next}`;
 				}
-				const next = placeholder
+				const next = this.#root.placeholder.current
 					.set({ month: Number.parseInt(prev) })
 					.cycle("month", 1).month;
 				this.#announcer.announce(this.getAnnouncement(next));
@@ -1044,14 +1017,14 @@ class DateFieldMonthSegmentState {
 		if (isArrowDown(e.key)) {
 			this.#updateSegment("month", (prev) => {
 				if (prev === null) {
-					const next = placeholder.month;
+					const next = this.#root.placeholder.current.month;
 					this.#announcer.announce(this.getAnnouncement(next));
 					if (String(next).length === 1) {
 						return `0${next}`;
 					}
 					return `${next}`;
 				}
-				const next = placeholder
+				const next = this.#root.placeholder.current
 					.set({ month: Number.parseInt(prev) })
 					.cycle("month", -1).month;
 				this.#announcer.announce(this.getAnnouncement(next));
@@ -1226,28 +1199,24 @@ class DateFieldMonthSegmentState {
 	};
 
 	props = $derived.by(() => {
-		const segmentValues = this.#root.segmentValues;
-		const placeholder = this.#root.placeholder.current;
-		const isEmpty = segmentValues.month === null;
-		const date = segmentValues.month
-			? placeholder.set({ month: Number.parseInt(segmentValues.month) })
-			: placeholder;
-		const valueNow = date.month;
-		const valueMin = 1;
-		const valueMax = 12;
-		const valueText = isEmpty
-			? "Empty"
-			: `${valueNow} - ${this.#root.formatter.fullMonth(toDate(date))}`;
+		const date = this.#root.segmentValues.month
+			? this.#root.placeholder.current.set({
+					month: Number.parseInt(this.#root.segmentValues.month),
+				})
+			: this.#root.placeholder.current;
 
 		return {
 			...this.#root.sharedSegmentAttrs,
 			id: this.#id.current,
 			"aria-label": "month, ",
 			contenteditable: "true",
-			"aria-valuemin": valueMin,
-			"aria-valuemax": valueMax,
-			"aria-valuenow": valueNow,
-			"aria-valuetext": valueText,
+			"aria-valuemin": 1,
+			"aria-valuemax": 12,
+			"aria-valuenow": date.month,
+			"aria-valuetext":
+				this.#root.segmentValues.month === null
+					? "Empty"
+					: `${date.month} - ${this.#root.formatter.fullMonth(toDate(date))}`,
 			onkeydown: this.#onkeydown,
 			onfocusout: this.#onfocusout,
 			onclick: this.#root.handleSegmentClick,
@@ -1306,13 +1275,13 @@ class DateFieldYearSegmentState {
 		});
 	}
 
-	#resetBackspaceCount() {
+	#resetBackspaceCount = () => {
 		this.#backspaceCount = 0;
-	}
+	};
 
-	#incrementBackspaceCount() {
+	#incrementBackspaceCount = () => {
 		this.#backspaceCount++;
-	}
+	};
 
 	#onkeydown = (e: KeyboardEvent) => {
 		const placeholder = this.#root.placeholder.current;
