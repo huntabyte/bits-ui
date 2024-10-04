@@ -55,7 +55,7 @@
 		}
 	}
 
-	const dataAttr = $derived(subContentState.parentMenu.root.attrs.subContent);
+	const dataAttr = $derived(subContentState.parentMenu.root.getAttr("sub-content"));
 
 	const mergedProps = $derived(
 		mergeProps(restProps, subContentState.props, {
