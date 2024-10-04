@@ -58,7 +58,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@internationalized/date": "^3.5.1",
+		"@internationalized/date": "^3.5.4",
 		"@melt-ui/svelte": "0.76.2",
 		"bits-ui": "workspace:*",
 		"flexsearch": "^0.7.43"
