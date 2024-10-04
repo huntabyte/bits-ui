@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { RootProps } from "../index.js";
-	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
+	import type { ContextMenuRootProps } from "../types.js";
+	import FloatingLayer from "$lib/bits/utilities/floating-layer/components/floating-layer.svelte";
 	import { noop } from "$lib/internal/callbacks.js";
 	import { useMenuMenu, useMenuRoot } from "$lib/bits/menu/menu.svelte.js";
 
@@ -11,7 +11,7 @@
 		onOpenChange = noop,
 		controlledOpen = false,
 		children,
-	}: RootProps = $props();
+	}: ContextMenuRootProps = $props();
 
 	const root = useMenuRoot({
 		variant: box.with(() => "context-menu"),
@@ -41,6 +41,6 @@
 	});
 </script>
 
-<FloatingLayer.Root>
+<FloatingLayer>
 	{@render children?.()}
-</FloatingLayer.Root>
+</FloatingLayer>

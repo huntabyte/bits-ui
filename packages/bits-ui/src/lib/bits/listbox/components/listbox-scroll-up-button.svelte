@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { ScrollUpButtonProps } from "../index.js";
+	import type { ListboxScrollUpButtonProps } from "../types.js";
 	import { useListboxScrollUpButton } from "../listbox.svelte.js";
 	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
@@ -12,7 +12,7 @@
 		child,
 		children,
 		...restProps
-	}: ScrollUpButtonProps = $props();
+	}: ListboxScrollUpButtonProps = $props();
 
 	let mounted = $state(false);
 

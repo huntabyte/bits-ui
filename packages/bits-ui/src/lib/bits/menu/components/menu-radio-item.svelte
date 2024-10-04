@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { RadioItemProps } from "../index.js";
+	import type { MenuRadioItemProps } from "../types.js";
 	import { useMenuRadioItem } from "../menu.svelte.js";
 	import { useId } from "$lib/internal/useId.js";
 	import { noop } from "$lib/internal/callbacks.js";
@@ -15,7 +15,7 @@
 		id = useId(),
 		disabled = false,
 		...restProps
-	}: RadioItemProps = $props();
+	}: MenuRadioItemProps = $props();
 
 	const radioItemState = useMenuRadioItem({
 		value: box.with(() => value),

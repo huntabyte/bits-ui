@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
 	import { useDateFieldInput } from "../date-field.svelte.js";
-	import type { InputProps } from "../index.js";
+	import type { DateFieldInputProps } from "../types.js";
 	import DateFieldHiddenInput from "./date-field-hidden-input.svelte";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { useId } from "$lib/internal/useId.js";
@@ -13,7 +13,7 @@
 		children,
 		child,
 		...restProps
-	}: InputProps = $props();
+	}: DateFieldInputProps = $props();
 
 	const inputState = useDateFieldInput({
 		id: box.with(() => id),

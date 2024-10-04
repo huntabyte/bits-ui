@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
 	import { useDialogContent } from "../dialog.svelte.js";
-	import type { ContentProps } from "../index.js";
+	import type { DialogContentProps } from "../types.js";
 	import DismissibleLayer from "$lib/bits/utilities/dismissible-layer/dismissible-layer.svelte";
 	import EscapeLayer from "$lib/bits/utilities/escape-layer/escape-layer.svelte";
 	import FocusScope from "$lib/bits/utilities/focus-scope/focus-scope.svelte";
@@ -24,7 +24,7 @@
 		trapFocus = true,
 		preventScroll = true,
 		...restProps
-	}: ContentProps = $props();
+	}: DialogContentProps = $props();
 
 	const contentState = useDialogContent({
 		id: box.with(() => id),

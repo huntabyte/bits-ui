@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { CheckboxItemProps } from "../index.js";
+	import type { MenuCheckboxItemProps } from "../types.js";
 	import { useMenuCheckboxItem } from "../menu.svelte.js";
 	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
@@ -17,7 +17,7 @@
 		onSelect = noop,
 		controlledChecked = false,
 		...restProps
-	}: CheckboxItemProps = $props();
+	}: MenuCheckboxItemProps = $props();
 
 	const checkboxItemState = useMenuCheckboxItem({
 		checked: box.with(

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { EmptyProps } from "../index.js";
+	import type { CommandEmptyProps } from "../types.js";
 	import { useCommandEmpty } from "../command.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { useId } from "$lib/internal/useId.js";
@@ -12,7 +12,7 @@
 		child,
 		forceMount = false,
 		...restProps
-	}: EmptyProps = $props();
+	}: CommandEmptyProps = $props();
 
 	const emptyState = useCommandEmpty({
 		id: box.with(() => id),

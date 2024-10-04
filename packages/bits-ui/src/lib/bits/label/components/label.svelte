@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { RootProps } from "../index.js";
+	import type { LabelRootProps } from "../types.js";
 	import { setLabelRootState } from "../label.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { useId } from "$lib/internal/useId.js";
@@ -12,7 +12,7 @@
 		ref = $bindable(null),
 		for: forProp,
 		...restProps
-	}: RootProps = $props();
+	}: LabelRootProps = $props();
 
 	const rootState = setLabelRootState({
 		id: box.with(() => id),

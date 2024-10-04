@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
 	import { useDialogRoot } from "../dialog.svelte.js";
-	import type { RootProps } from "../index.js";
+	import type { DialogRootProps } from "../types.js";
 	import { noop } from "$lib/internal/callbacks.js";
 
 	let {
@@ -9,7 +9,7 @@
 		onOpenChange = noop,
 		controlledOpen = false,
 		children,
-	}: RootProps = $props();
+	}: DialogRootProps = $props();
 
 	useDialogRoot({
 		variant: box.with(() => "dialog"),

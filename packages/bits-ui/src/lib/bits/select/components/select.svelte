@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { RootProps } from "../index.js";
+	import type { SelectRootProps } from "../types.js";
 	import { useSelectRoot } from "../select.svelte.js";
 	import SelectNative from "./select-native.svelte";
-	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
+	import FloatingLayer from "$lib/bits/utilities/floating-layer/components/floating-layer.svelte";
 	import { noop } from "$lib/internal/callbacks.js";
 
 	let {
@@ -20,7 +20,7 @@
 		controlledOpen = false,
 		controlledValue = false,
 		form,
-	}: RootProps = $props();
+	}: SelectRootProps = $props();
 
 	const rootState = useSelectRoot({
 		open: box.with(
@@ -51,7 +51,7 @@
 	});
 </script>
 
-<FloatingLayer.Root>
+<FloatingLayer>
 	{@render children?.()}
 	{#if rootState.isFormControl.current}
 		{#key rootState.nativeSelectKey}
@@ -82,4 +82,4 @@
 			</SelectNative>
 		{/key}
 	{/if}
-</FloatingLayer.Root>
+</FloatingLayer>

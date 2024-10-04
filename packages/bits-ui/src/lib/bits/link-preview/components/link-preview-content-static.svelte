@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { ContentStaticProps } from "../index.js";
+	import type { LinkPreviewContentStaticProps } from "../types.js";
 	import { useLinkPreviewContent } from "../link-preview.svelte.js";
 	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
@@ -15,7 +15,7 @@
 		onEscapeKeydown,
 		forceMount = false,
 		...restProps
-	}: ContentStaticProps = $props();
+	}: LinkPreviewContentStaticProps = $props();
 
 	const contentState = useLinkPreviewContent({
 		id: box.with(() => id),

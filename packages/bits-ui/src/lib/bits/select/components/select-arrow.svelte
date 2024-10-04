@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { ArrowProps } from "../index.js";
+	import type { SelectArrowProps } from "../types.js";
 	import { useSelectArrow } from "../select.svelte.js";
-	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
+	import FloatingLayerArrow from "$lib/bits/utilities/floating-layer/components/floating-layer-arrow.svelte";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { useId } from "$lib/internal/useId.js";
 
-	let { id = useId(), ref = $bindable(null), ...restProps }: ArrowProps = $props();
+	let { id = useId(), ref = $bindable(null), ...restProps }: SelectArrowProps = $props();
 
 	const arrowState = useSelectArrow({
 		id: box.with(() => id),
@@ -19,4 +19,4 @@
 	const mergedProps = $derived(mergeProps(restProps, arrowState.props));
 </script>
 
-<FloatingLayer.Arrow {...mergedProps} />
+<FloatingLayerArrow {...mergedProps} />

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
 	import { IsMounted } from "runed";
-	import type { ThumbProps } from "../index.js";
+	import type { ScrollAreaThumbProps } from "../types.js";
 	import { useScrollAreaThumb } from "../scroll-area.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
@@ -12,7 +12,7 @@
 		children,
 		present,
 		...restProps
-	}: Omit<ThumbProps, "forceMount" | "id"> & {
+	}: Omit<ScrollAreaThumbProps, "forceMount" | "id"> & {
 		id: string;
 		present: boolean;
 	} = $props();

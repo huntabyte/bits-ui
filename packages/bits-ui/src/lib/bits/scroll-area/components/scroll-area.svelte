@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { RootProps } from "../index.js";
+	import type { ScrollAreaRootProps } from "../types.js";
 	import { useScrollAreaRoot } from "../scroll-area.svelte.js";
 	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
@@ -14,7 +14,7 @@
 		children,
 		child,
 		...restProps
-	}: RootProps = $props();
+	}: ScrollAreaRootProps = $props();
 
 	const rootState = useScrollAreaRoot({
 		type: box.with(() => type),

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { TriggerProps } from "../index.js";
+	import type { MenubarTriggerProps } from "../types.js";
 	import { useMenubarTrigger } from "../menubar.svelte.js";
 	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
@@ -14,7 +14,7 @@
 		child,
 		ref = $bindable(null),
 		...restProps
-	}: TriggerProps = $props();
+	}: MenubarTriggerProps = $props();
 
 	const triggerState = useMenubarTrigger({
 		id: box.with(() => id),

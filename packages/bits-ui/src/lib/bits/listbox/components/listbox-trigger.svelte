@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
 	import { useListboxTrigger } from "../listbox.svelte.js";
-	import type { TriggerProps } from "../index.js";
+	import type { ListboxTriggerProps } from "../types.js";
 	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
@@ -12,7 +12,7 @@
 		child,
 		children,
 		...restProps
-	}: TriggerProps = $props();
+	}: ListboxTriggerProps = $props();
 
 	const triggerState = useListboxTrigger({
 		id: box.with(() => id),

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { ProviderProps } from "../index.js";
+	import type { TooltipProviderProps } from "../types.js";
 	import { useTooltipProvider } from "../tooltip.svelte.js";
 
 	let {
@@ -11,7 +11,7 @@
 		disabled = false,
 		ignoreNonKeyboardFocus = false,
 		skipDelayDuration = 300,
-	}: ProviderProps = $props();
+	}: TooltipProviderProps = $props();
 
 	useTooltipProvider({
 		delayDuration: box.with(() => delayDuration),

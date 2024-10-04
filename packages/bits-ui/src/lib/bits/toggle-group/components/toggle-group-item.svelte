@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { ItemProps } from "../index.js";
+	import type { ToggleGroupItemProps } from "../types.js";
 	import { useToggleGroupItem } from "../toggle-group.svelte.js";
 	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
@@ -14,7 +14,7 @@
 		id = useId(),
 		type = "button",
 		...restProps
-	}: ItemProps = $props();
+	}: ToggleGroupItemProps = $props();
 
 	const itemState = useToggleGroupItem({
 		id: box.with(() => id),

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { RootProps } from "../index.js";
+	import type { SliderRootProps } from "../types.js";
 	import { useSliderRoot } from "../slider.svelte.js";
 	import { useId } from "$lib/internal/useId.js";
 	import { noop } from "$lib/internal/callbacks.js";
@@ -23,7 +23,7 @@
 		orientation = "horizontal",
 		controlledValue = false,
 		...restProps
-	}: RootProps = $props();
+	}: SliderRootProps = $props();
 
 	const rootState = useSliderRoot({
 		id: box.with(() => id),

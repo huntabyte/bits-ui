@@ -2,12 +2,12 @@
 	import { box } from "svelte-toolbelt";
 	import type { DateValue } from "@internationalized/date";
 	import { useDateRangePickerRoot } from "../date-range-picker.svelte.js";
-	import type { RootProps } from "../index.js";
+	import type { DateRangePickerRootProps } from "../types.js";
 	import { getDefaultDate } from "$lib/shared/date/utils.js";
 	import { noop } from "$lib/internal/callbacks.js";
 	import { usePopoverRoot } from "$lib/bits/popover/popover.svelte.js";
 	import { useDateRangeFieldRoot } from "$lib/bits/date-range-field/date-range-field.svelte.js";
-	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
+	import FloatingLayer from "$lib/bits/utilities/floating-layer/components/floating-layer.svelte";
 	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import type { DateRange } from "$lib/shared/index.js";
@@ -53,7 +53,7 @@
 		child,
 		children,
 		...restProps
-	}: RootProps = $props();
+	}: DateRangePickerRootProps = $props();
 
 	let startValue = $state<DateValue | undefined>(value?.start);
 	let endValue = $state<DateValue | undefined>(value?.end);
@@ -192,7 +192,7 @@
 	const mergedProps = $derived(mergeProps(restProps, fieldRootState.props));
 </script>
 
-<FloatingLayer.Root>
+<FloatingLayer>
 	{#if child}
 		{@render child({ props: mergedProps })}
 	{:else}
@@ -200,4 +200,4 @@
 			{@render children?.()}
 		</div>
 	{/if}
-</FloatingLayer.Root>
+</FloatingLayer>

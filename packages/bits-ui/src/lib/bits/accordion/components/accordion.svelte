@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { type WritableBox, box } from "svelte-toolbelt";
 	import { useAccordionRoot } from "../accordion.svelte.js";
-	import type { RootProps } from "../index.js";
+	import type { AccordionRootProps } from "../types.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { useId } from "$lib/internal/useId.js";
 	import { noop } from "$lib/internal/callbacks.js";
@@ -19,7 +19,7 @@
 		orientation = "vertical",
 		controlledValue = false,
 		...restProps
-	}: RootProps = $props();
+	}: AccordionRootProps = $props();
 
 	value === undefined && (value = type === "single" ? "" : []);
 

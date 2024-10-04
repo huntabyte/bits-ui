@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { TriggerProps } from "../index.js";
+	import type { TabsTriggerProps } from "../types.js";
 	import { useTabsTrigger } from "../tabs.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { useId } from "$lib/internal/useId.js";
@@ -14,7 +14,7 @@
 		value,
 		ref = $bindable(null),
 		...restProps
-	}: TriggerProps = $props();
+	}: TabsTriggerProps = $props();
 
 	const triggerState = useTabsTrigger({
 		id: box.with(() => id),

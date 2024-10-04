@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { ItemTextProps } from "../index.js";
+	import type { SelectItemTextProps } from "../types.js";
 	import { useSelectItemText } from "../select.svelte.js";
 	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
@@ -12,7 +12,7 @@
 		children,
 		child,
 		...restProps
-	}: ItemTextProps = $props();
+	}: SelectItemTextProps = $props();
 
 	const itemTextState = useSelectItemText({
 		id: box.with(() => id),

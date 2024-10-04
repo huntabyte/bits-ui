@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { ContentProps } from "../index.js";
+	import type { TooltipContentProps } from "../types.js";
 	import { useTooltipContent } from "../tooltip.svelte.js";
 	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
@@ -24,7 +24,7 @@
 		onEscapeKeydown,
 		forceMount = false,
 		...restProps
-	}: ContentProps = $props();
+	}: TooltipContentProps = $props();
 
 	const contentState = useTooltipContent({
 		id: box.with(() => id),

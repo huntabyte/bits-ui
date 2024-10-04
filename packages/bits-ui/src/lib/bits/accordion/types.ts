@@ -19,7 +19,7 @@ export type BaseAccordionRootPropsWithoutHTML = {
 	loop?: boolean;
 
 	/**
-	 * The orienation of the accordion.
+	 * The orientation of the accordion.
 	 *
 	 * @defaultValue "vertical"
 	 */

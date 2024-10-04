@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { RootProps } from "../index.js";
+	import type { AspectRatioRootProps } from "../types.js";
 	import { useAspectRatioRoot } from "../aspect-ratio.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { useId } from "$lib/internal/useId.js";
@@ -12,7 +12,7 @@
 		children,
 		child,
 		...restProps
-	}: RootProps = $props();
+	}: AspectRatioRootProps = $props();
 
 	const rootState = useAspectRatioRoot({
 		id: box.with(() => id),

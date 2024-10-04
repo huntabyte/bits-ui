@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
 	import { useListboxGroup } from "../listbox.svelte.js";
-	import type { GroupProps } from "../index.js";
+	import type { ListboxGroupProps } from "../types.js";
 	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
@@ -11,7 +11,7 @@
 		children,
 		child,
 		...restProps
-	}: GroupProps = $props();
+	}: ListboxGroupProps = $props();
 
 	const groupState = useListboxGroup({
 		id: box.with(() => id),

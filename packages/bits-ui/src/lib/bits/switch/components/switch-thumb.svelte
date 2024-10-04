@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { ThumbProps } from "../index.js";
+	import type { SwitchThumbProps } from "../types.js";
 	import { useSwitchThumb } from "../switch.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { useId } from "$lib/internal/useId.js";
@@ -11,7 +11,7 @@
 		ref = $bindable(null),
 		id = useId(),
 		...restProps
-	}: ThumbProps = $props();
+	}: SwitchThumbProps = $props();
 
 	const thumbState = useSwitchThumb({
 		id: box.with(() => id),

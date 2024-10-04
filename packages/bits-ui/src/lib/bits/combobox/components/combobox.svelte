@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { type WritableBox, box } from "svelte-toolbelt";
-	import type { RootProps } from "../index.js";
+	import type { ComboboxRootProps } from "../types.js";
 	import { noop } from "$lib/internal/callbacks.js";
-	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
+	import FloatingLayer from "$lib/bits/utilities/floating-layer/components/floating-layer.svelte";
 	import { useListboxRoot } from "$lib/bits/listbox/listbox.svelte.js";
 	import ListboxHiddenInput from "$lib/bits/listbox/components/listbox-hidden-input.svelte";
 
@@ -20,7 +20,7 @@
 		controlledOpen = false,
 		controlledValue = false,
 		children,
-	}: RootProps = $props();
+	}: ComboboxRootProps = $props();
 
 	if (value === undefined) {
 		const defaultValue = type === "single" ? "" : [];
@@ -64,9 +64,9 @@
 	});
 </script>
 
-<FloatingLayer.Root>
+<FloatingLayer>
 	{@render children?.()}
-</FloatingLayer.Root>
+</FloatingLayer>
 
 {#if Array.isArray(value)}
 	{#if value.length === 0}

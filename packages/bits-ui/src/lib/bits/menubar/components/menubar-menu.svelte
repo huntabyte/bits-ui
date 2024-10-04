@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { MenuProps } from "../index.js";
+	import type { MenubarMenuProps } from "../types.js";
 	import { useMenubarMenu } from "../menubar.svelte.js";
 	import Menu from "$lib/bits/menu/components/menu.svelte";
 	import { useId } from "$lib/internal/useId.js";
 
-	let { value = useId(), ...restProps }: MenuProps = $props();
+	let { value = useId(), ...restProps }: MenubarMenuProps = $props();
 
 	const menuState = useMenubarMenu({
 		value: box.with(() => value),

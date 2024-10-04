@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { SubContentProps } from "../index.js";
+	import type { MenuSubContentProps } from "../types.js";
 	import { useMenuContent } from "../menu.svelte.js";
 	import { SUB_CLOSE_KEYS } from "../utils.js";
 	import { useId } from "$lib/internal/useId.js";
@@ -28,7 +28,7 @@
 		onFocusOutside: onFocusOutsideProp = noop,
 		side = "right",
 		...restProps
-	}: SubContentProps = $props();
+	}: MenuSubContentProps = $props();
 
 	let isMounted = $state(false);
 

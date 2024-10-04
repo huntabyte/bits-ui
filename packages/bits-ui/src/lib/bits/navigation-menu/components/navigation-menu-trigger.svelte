@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { TriggerProps } from "../index.js";
+	import type { NavigationMenuTriggerProps } from "../types.js";
 	import { useNavigationMenuTrigger } from "../navigation-menu.svelte.js";
 	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
@@ -14,7 +14,7 @@
 		child,
 		ref = $bindable(null),
 		...restProps
-	}: TriggerProps = $props();
+	}: NavigationMenuTriggerProps = $props();
 
 	let focusProxyMounted = $state(false);
 

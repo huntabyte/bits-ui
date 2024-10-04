@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { CornerProps } from "../index.js";
+	import type { ScrollAreaCornerProps } from "../types.js";
 	import { useScrollAreaCorner } from "../scroll-area.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
@@ -10,7 +10,7 @@
 		children,
 		child,
 		...restProps
-	}: Omit<CornerProps, "id"> & {
+	}: Omit<ScrollAreaCornerProps, "id"> & {
 		id: string;
 	} = $props();
 

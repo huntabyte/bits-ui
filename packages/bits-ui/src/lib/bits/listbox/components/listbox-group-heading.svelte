@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { GroupHeadingProps } from "../index.js";
+	import type { ListboxGroupHeadingProps } from "../types.js";
 	import { useListboxGroupHeading } from "../listbox.svelte.js";
 	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
@@ -11,7 +11,7 @@
 		child,
 		children,
 		...restProps
-	}: GroupHeadingProps = $props();
+	}: ListboxGroupHeadingProps = $props();
 
 	const groupHeadingState = useListboxGroupHeading({
 		id: box.with(() => id),

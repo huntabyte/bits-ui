@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { TriggerProps } from "../index.js";
+	import type { CollapsibleTriggerProps } from "../types.js";
 	import { useCollapsibleTrigger } from "../collapsible.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { useId } from "$lib/internal/useId.js";
@@ -12,7 +12,7 @@
 		id = useId(),
 		disabled = false,
 		...restProps
-	}: TriggerProps = $props();
+	}: CollapsibleTriggerProps = $props();
 
 	const triggerState = useCollapsibleTrigger({
 		id: box.with(() => id),

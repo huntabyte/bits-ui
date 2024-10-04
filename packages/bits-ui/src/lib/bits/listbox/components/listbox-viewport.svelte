@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { ViewportProps } from "../index.js";
+	import type { ListboxViewportProps } from "../types.js";
 	import { useListboxViewport } from "../listbox.svelte.js";
 	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
@@ -11,7 +11,7 @@
 		children,
 		child,
 		...restProps
-	}: ViewportProps = $props();
+	}: ListboxViewportProps = $props();
 
 	const viewportState = useListboxViewport({
 		id: box.with(() => id),

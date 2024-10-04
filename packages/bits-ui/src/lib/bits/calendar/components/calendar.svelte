@@ -2,7 +2,7 @@
 	import { box } from "svelte-toolbelt";
 	import type { DateValue } from "@internationalized/date";
 	import { useCalendarRoot } from "../calendar.svelte.js";
-	import type { RootProps } from "../index.js";
+	import type { CalendarRootProps } from "../types.js";
 	import { useId } from "$lib/internal/useId.js";
 	import { noop } from "$lib/internal/callbacks.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
@@ -37,7 +37,7 @@
 		controlledValue = false,
 		controlledPlaceholder = false,
 		...restProps
-	}: RootProps = $props();
+	}: CalendarRootProps = $props();
 
 	if (placeholder === undefined) {
 		placeholder = getDefaultDate({

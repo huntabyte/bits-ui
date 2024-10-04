@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { ContentProps } from "../index.js";
+	import type { MenubarContentProps } from "../types.js";
 	import { useMenubarContent } from "../menubar.svelte.js";
 	import MenuContent from "$lib/bits/menu/components/menu-content.svelte";
 	import { useId } from "$lib/internal/useId.js";
@@ -11,7 +11,7 @@
 		interactOutsideBehavior = "close",
 		id = useId(),
 		...restProps
-	}: ContentProps = $props();
+	}: MenubarContentProps = $props();
 
 	const contentState = useMenubarContent({
 		id: box.with(() => id),

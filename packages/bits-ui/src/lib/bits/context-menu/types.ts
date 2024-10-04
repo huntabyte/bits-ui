@@ -24,22 +24,22 @@ export type ContextMenuTriggerProps = ContextMenuTriggerPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, ContextMenuTriggerPropsWithoutHTML>;
 
 export type {
-	ArrowProps as ContextMenuArrowProps,
-	ContentStaticProps as ContextMenuContentStaticProps,
-	CheckboxItemProps as ContextMenuCheckboxItemProps,
-	GroupProps as ContextMenuGroupProps,
-	ItemProps as ContextMenuItemProps,
-	GroupHeadingProps as ContextMenuGroupHeadingProps,
-	RootProps as ContextMenuRootProps,
-	RadioGroupProps as ContextMenuRadioGroupProps,
-	RadioItemProps as ContextMenuRadioItemProps,
-	SeparatorProps as ContextMenuSeparatorProps,
-	SubContentProps as ContextMenuSubContentProps,
-	SubContentStaticProps as ContextMenuSubContentStaticProps,
-	SubProps as ContextMenuSubProps,
-	SubTriggerProps as ContextMenuSubTriggerProps,
-	PortalProps as ContextMenuPortalProps,
-} from "$lib/bits/menu/index.js";
+	MenuArrowProps as ContextMenuArrowProps,
+	MenuContentStaticProps as ContextMenuContentStaticProps,
+	MenuCheckboxItemProps as ContextMenuCheckboxItemProps,
+	MenuGroupProps as ContextMenuGroupProps,
+	MenuItemProps as ContextMenuItemProps,
+	MenuGroupHeadingProps as ContextMenuGroupHeadingProps,
+	MenuRootProps as ContextMenuRootProps,
+	MenuRadioGroupProps as ContextMenuRadioGroupProps,
+	MenuRadioItemProps as ContextMenuRadioItemProps,
+	MenuSeparatorProps as ContextMenuSeparatorProps,
+	MenuSubContentProps as ContextMenuSubContentProps,
+	MenuSubContentStaticProps as ContextMenuSubContentStaticProps,
+	MenuSubProps as ContextMenuSubProps,
+	MenuSubTriggerProps as ContextMenuSubTriggerProps,
+	MenuPortalProps as ContextMenuPortalProps,
+} from "$lib/bits/menu/types.js";
 
 export type {
 	MenuRootPropsWithoutHTML as ContextMenuRootPropsWithoutHTML,

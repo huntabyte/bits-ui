@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { RangeProps } from "../index.js";
+	import type { SliderRangeProps } from "../types.js";
 	import { useSliderRange } from "../slider.svelte.js";
 	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
@@ -11,7 +11,7 @@
 		ref = $bindable(null),
 		id = useId(),
 		...restProps
-	}: RangeProps = $props();
+	}: SliderRangeProps = $props();
 
 	const rangeState = useSliderRange({
 		id: box.with(() => id),

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { RootProps } from "../index.js";
+	import type { PinInputRootProps } from "../types.js";
 	import { REGEXP_ONLY_DIGITS, usePinInput } from "../pin-input.svelte.js";
 	import { useId } from "$lib/internal/useId.js";
 	import { noop } from "$lib/internal/callbacks.js";
@@ -25,7 +25,7 @@
 		controlledValue = false,
 		onPaste,
 		...restProps
-	}: RootProps = $props();
+	}: PinInputRootProps = $props();
 
 	const rootState = usePinInput({
 		id: box.with(() => id),

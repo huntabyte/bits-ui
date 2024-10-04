@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { NextButtonProps } from "../index.js";
+	import type { PaginationNextButtonProps } from "../types.js";
 	import { usePaginationButton } from "../pagination.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { useId } from "$lib/internal/useId.js";
@@ -12,7 +12,7 @@
 		ref = $bindable(null),
 		type = "button",
 		...restProps
-	}: NextButtonProps = $props();
+	}: PaginationNextButtonProps = $props();
 
 	const nextButtonState = usePaginationButton({
 		type: "next",

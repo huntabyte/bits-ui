@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { PrevButtonProps } from "../index.js";
+	import type { CalendarPrevButtonProps } from "../types.js";
 	import { useCalendarPrevButton } from "../calendar.svelte.js";
 	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
@@ -11,7 +11,7 @@
 		id = useId(),
 		ref = $bindable(null),
 		...restProps
-	}: PrevButtonProps = $props();
+	}: CalendarPrevButtonProps = $props();
 
 	const prevButtonState = useCalendarPrevButton({
 		id: box.with(() => id),

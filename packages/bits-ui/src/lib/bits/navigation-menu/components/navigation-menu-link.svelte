@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { LinkProps } from "../index.js";
+	import type { NavigationMenuLinkProps } from "../types.js";
 	import { useNavigationMenuLink } from "../navigation-menu.svelte.js";
 	import { useId } from "$lib/internal/useId.js";
 	import { noop } from "$lib/internal/callbacks.js";
@@ -14,7 +14,7 @@
 		active = false,
 		onSelect = noop,
 		...restProps
-	}: LinkProps = $props();
+	}: NavigationMenuLinkProps = $props();
 
 	const linkState = useNavigationMenuLink({
 		id: box.with(() => id),

@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { ContentProps } from "../index.js";
+	import type { SelectContentProps } from "../types.js";
 	import { useSelectContent, useSelectContentFrag } from "../select.svelte.js";
 	import SelectProvider from "./select-provider.svelte";
 	import SelectContentImpl from "./select-content-impl.svelte";
 	import { useId } from "$lib/internal/useId.js";
 	import Portal from "$lib/bits/utilities/portal/portal.svelte";
-	import { PresenceLayer } from "$lib/bits/utilities/presence-layer/index.js";
+	import PresenceLayer from "$lib/bits/utilities/presence-layer/presence-layer.svelte";
 
 	let {
 		id = useId(),
@@ -14,7 +14,7 @@
 		forceMount = false,
 		position = "floating",
 		...restProps
-	}: ContentProps = $props();
+	}: SelectContentProps = $props();
 
 	const contentState = useSelectContentFrag();
 

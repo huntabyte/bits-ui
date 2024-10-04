@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
 	import { useSeparatorRoot } from "../separator.svelte.js";
-	import type { RootProps } from "../index.js";
+	import type { SeparatorRootProps } from "../types.js";
 	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
@@ -13,7 +13,7 @@
 		decorative = false,
 		orientation = "horizontal",
 		...restProps
-	}: RootProps = $props();
+	}: SeparatorRootProps = $props();
 
 	const rootState = useSeparatorRoot({
 		ref: box.with(

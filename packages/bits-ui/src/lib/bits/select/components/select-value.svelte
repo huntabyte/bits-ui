@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { ValueProps } from "../index.js";
+	import type { SelectValueProps } from "../types.js";
 	import { useSelectValue } from "../select.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 
@@ -9,7 +9,7 @@
 		child,
 		ref = $bindable(),
 		...restProps
-	}: ValueProps = $props();
+	}: SelectValueProps = $props();
 
 	const valueState = useSelectValue();
 

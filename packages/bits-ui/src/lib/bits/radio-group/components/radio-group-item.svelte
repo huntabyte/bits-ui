@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { ItemProps } from "../index.js";
+	import type { RadioGroupItemProps } from "../types.js";
 	import { useRadioGroupItem } from "../radio-group.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { useId } from "$lib/internal/useId.js";
@@ -13,7 +13,7 @@
 		disabled = false,
 		ref = $bindable(null),
 		...restProps
-	}: ItemProps = $props();
+	}: RadioGroupItemProps = $props();
 
 	const itemState = useRadioGroupItem({
 		value: box.with(() => value),

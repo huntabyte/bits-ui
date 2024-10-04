@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { LoadingProps } from "../index.js";
+	import type { CommandLoadingProps } from "../types.js";
 	import { useCommandLoading } from "../command.svelte.js";
 	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
@@ -12,7 +12,7 @@
 		children,
 		child,
 		...restProps
-	}: LoadingProps = $props();
+	}: CommandLoadingProps = $props();
 
 	const loadingState = useCommandLoading({
 		id: box.with(() => id),

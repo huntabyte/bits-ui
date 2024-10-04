@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { ListProps } from "../index.js";
+	import type { CommandListProps } from "../types.js";
 	import { useCommandList } from "../command.svelte.js";
 	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
@@ -12,7 +12,7 @@
 		children,
 		"aria-label": ariaLabel,
 		...restProps
-	}: ListProps = $props();
+	}: CommandListProps = $props();
 
 	const listState = useCommandList({
 		id: box.with(() => id),

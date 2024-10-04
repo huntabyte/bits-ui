@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { ContentImplProps } from "../index.js";
+	import type { SelectContentImplProps } from "../types.js";
 	import { SelectContentState } from "../select.svelte.js";
 	import SelectContentFloating from "./select-content-floating.svelte";
 	import SelectContentItemAligned from "./select-content-item-aligned.svelte";
@@ -22,7 +22,7 @@
 		onEscapeKeydown = noop,
 		onInteractOutside = noop,
 		...restProps
-	}: ContentImplProps & { present: boolean; context: SelectContentState } = $props();
+	}: SelectContentImplProps & { present: boolean; context: SelectContentState } = $props();
 
 	const contentState = context;
 

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { RadioGroupProps } from "../index.js";
+	import type { MenuRadioGroupProps } from "../types.js";
 	import { useMenuRadioGroup } from "../menu.svelte.js";
 	import { noop } from "$lib/internal/callbacks.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
@@ -15,7 +15,7 @@
 		onValueChange = noop,
 		controlledValue = false,
 		...restProps
-	}: RadioGroupProps = $props();
+	}: MenuRadioGroupProps = $props();
 
 	const radioGroupState = useMenuRadioGroup({
 		value: box.with(

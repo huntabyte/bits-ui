@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { ImageProps } from "../index.js";
+	import type { AvatarImageProps } from "../types.js";
 	import { useAvatarImage } from "../avatar.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { useId } from "$lib/internal/useId.js";
@@ -13,7 +13,7 @@
 		crossorigin = undefined,
 		referrerpolicy = undefined,
 		...restProps
-	}: ImageProps = $props();
+	}: AvatarImageProps = $props();
 
 	const imageState = useAvatarImage({
 		src: box.with(() => src),

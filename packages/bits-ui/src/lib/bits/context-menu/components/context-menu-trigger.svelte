@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { TriggerProps } from "../index.js";
+	import type { ContextMenuTriggerProps } from "../types.js";
 	import { useMenuContextTrigger } from "$lib/bits/menu/menu.svelte.js";
 	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
@@ -13,7 +13,7 @@
 		children,
 		disabled = false,
 		...restProps
-	}: TriggerProps = $props();
+	}: ContextMenuTriggerProps = $props();
 
 	const triggerState = useMenuContextTrigger({
 		id: box.with(() => id),

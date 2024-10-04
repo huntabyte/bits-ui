@@ -1,5 +1,5 @@
 import type { ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
-import type { ArrowProps } from "../menu/index.js";
+import type { MenuArrowProps } from "../menu/types.js";
 import type { OnChangeFn, WithChild, WithChildren, Without } from "$lib/internal/types.js";
 import type { PrimitiveButtonAttributes, PrimitiveDivAttributes } from "$lib/shared/attributes.js";
 import type { Direction } from "$lib/shared/index.js";
@@ -93,4 +93,4 @@ export type {
 
 export type MenubarArrowPropsWithoutHTML = ArrowPropsWithoutHTML;
 
-export type MenubarArrowProps = ArrowProps;
+export type MenubarArrowProps = MenuArrowProps;

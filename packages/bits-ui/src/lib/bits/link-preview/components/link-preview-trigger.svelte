@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { TriggerProps } from "../index.js";
+	import type { LinkPreviewTriggerProps } from "../types.js";
 	import { useLinkPreviewTrigger } from "../link-preview.svelte.js";
 	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
@@ -12,7 +12,7 @@
 		child,
 		children,
 		...restProps
-	}: TriggerProps = $props();
+	}: LinkPreviewTriggerProps = $props();
 
 	const triggerState = useLinkPreviewTrigger({
 		id: box.with(() => id),

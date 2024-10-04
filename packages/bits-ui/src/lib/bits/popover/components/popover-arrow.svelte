@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { ArrowProps } from "../index.js";
-	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
+	import type { PopoverArrowProps } from "../types.js";
+	import FloatingLayerArrow from "$lib/bits/utilities/floating-layer/components/floating-layer-arrow.svelte";
 
-	let { ref = $bindable(null), ...restProps }: ArrowProps = $props();
+	let { ref = $bindable(null), ...restProps }: PopoverArrowProps = $props();
 </script>
 
-<FloatingLayer.Arrow bind:ref {...restProps} data-popover-arrow="" />
+<FloatingLayerArrow bind:ref {...restProps} data-popover-arrow="" />

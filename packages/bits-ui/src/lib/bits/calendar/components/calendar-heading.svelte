@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { HeadingProps } from "../index.js";
+	import type { CalendarHeadingProps } from "../types.js";
 	import { useCalendarHeading } from "../calendar.svelte.js";
 	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
@@ -11,7 +11,7 @@
 		ref = $bindable(null),
 		id = useId(),
 		...restProps
-	}: HeadingProps = $props();
+	}: CalendarHeadingProps = $props();
 
 	const headingState = useCalendarHeading({
 		id: box.with(() => id),

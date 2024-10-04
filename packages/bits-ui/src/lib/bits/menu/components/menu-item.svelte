@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { ItemProps } from "../index.js";
+	import type { MenuItemProps } from "../types.js";
 	import { useMenuItem } from "../menu.svelte.js";
 	import { useId } from "$lib/internal/useId.js";
 	import { noop } from "$lib/internal/callbacks.js";
@@ -14,7 +14,7 @@
 		disabled = false,
 		onSelect = noop,
 		...restProps
-	}: ItemProps = $props();
+	}: MenuItemProps = $props();
 
 	const itemState = useMenuItem({
 		id: box.with(() => id),

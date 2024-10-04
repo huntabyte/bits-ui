@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
 	import { useDialogDescription } from "../dialog.svelte.js";
-	import type { DescriptionProps } from "../index.js";
+	import type { DialogDescriptionProps } from "../types.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { useId } from "$lib/internal/useId.js";
 
@@ -11,7 +11,7 @@
 		child,
 		ref = $bindable(null),
 		...restProps
-	}: DescriptionProps = $props();
+	}: DialogDescriptionProps = $props();
 
 	const descriptionState = useDialogDescription({
 		id: box.with(() => id),

@@ -9,7 +9,7 @@ import type {
 	PrimitiveTbodyAttributes,
 	PrimitiveTdAttributes,
 	PrimitiveThAttributes,
-	PrimitiveTheadAttrbutes,
+	PrimitiveTheadAttributes,
 	PrimitiveTrAttributes,
 } from "$lib/shared/attributes.js";
 
@@ -308,7 +308,7 @@ export type CalendarGridBodyProps = CalendarGridBodyPropsWithoutHTML &
 export type CalendarGridHeadPropsWithoutHTML = WithChild;
 
 export type CalendarGridHeadProps = CalendarGridHeadPropsWithoutHTML &
-	Without<PrimitiveTheadAttrbutes, CalendarGridHeadPropsWithoutHTML>;
+	Without<PrimitiveTheadAttributes, CalendarGridHeadPropsWithoutHTML>;
 
 export type CalendarHeadCellPropsWithoutHTML = WithChild;
 

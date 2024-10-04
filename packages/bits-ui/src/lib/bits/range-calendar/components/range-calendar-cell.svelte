@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { CellProps } from "../index.js";
+	import type { RangeCalendarCellProps } from "../types.js";
 	import { useRangeCalendarCell } from "../range-calendar.svelte.js";
 	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
@@ -13,7 +13,7 @@
 		date,
 		month,
 		...restProps
-	}: CellProps = $props();
+	}: RangeCalendarCellProps = $props();
 
 	const cellState = useRangeCalendarCell({
 		id: box.with(() => id),

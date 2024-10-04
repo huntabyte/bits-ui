@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { PageProps } from "../index.js";
+	import type { PaginationPageProps } from "../types.js";
 	import { usePaginationPage } from "../pagination.svelte.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { useId } from "$lib/internal/useId.js";
@@ -13,7 +13,7 @@
 		type = "button",
 		ref = $bindable(null),
 		...restProps
-	}: PageProps = $props();
+	}: PaginationPageProps = $props();
 
 	const pageState = usePaginationPage({
 		id: box.with(() => id),

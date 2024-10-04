@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { InputProps } from "../index.js";
+	import type { DateRangeFieldInputProps } from "../types.js";
 	import { useDateRangeFieldInput } from "../date-range-field.svelte.js";
 	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
@@ -14,7 +14,7 @@
 		children,
 		type,
 		...restProps
-	}: InputProps = $props();
+	}: DateRangeFieldInputProps = $props();
 
 	const inputState = useDateRangeFieldInput(
 		{

@@ -3,7 +3,7 @@
 	import { box } from "svelte-toolbelt";
 	import type { DateValue } from "@internationalized/date";
 	import { useDatePickerRoot } from "../date-picker.svelte.js";
-	import type { RootProps } from "../index.js";
+	import type { DatePickerRootProps } from "../types.js";
 	import { getDefaultDate } from "$lib/shared/date/utils.js";
 	import { noop } from "$lib/internal/callbacks.js";
 	import { usePopoverRoot } from "$lib/bits/popover/popover.svelte.js";
@@ -46,7 +46,7 @@
 		controlledOpen = false,
 		errorMessageId,
 		children,
-	}: RootProps = $props();
+	}: DatePickerRootProps = $props();
 
 	if (placeholder === undefined) {
 		const defaultPlaceholder = getDefaultDate({

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { ScrollbarProps } from "../index.js";
+	import type { ScrollAreaScrollbarProps } from "../types.js";
 	import { useScrollAreaScrollbar } from "../scroll-area.svelte.js";
 	import ScrollAreaScrollbarAuto from "./scroll-area-scrollbar-auto.svelte";
 	import ScrollAreaScrollbarScroll from "./scroll-area-scrollbar-scroll.svelte";
@@ -13,7 +13,7 @@
 		id = useId(),
 		orientation,
 		...restProps
-	}: ScrollbarProps = $props();
+	}: ScrollAreaScrollbarProps = $props();
 
 	const scrollbarState = useScrollAreaScrollbar({
 		orientation: box.with(() => orientation),

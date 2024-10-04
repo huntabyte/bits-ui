@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { ViewportProps } from "../index.js";
+	import type { SelectViewportProps } from "../types.js";
 	import { useSelectViewport } from "../select.svelte.js";
 	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
@@ -11,7 +11,7 @@
 		children,
 		child,
 		...restProps
-	}: ViewportProps = $props();
+	}: SelectViewportProps = $props();
 
 	const viewportState = useSelectViewport({
 		id: box.with(() => id),

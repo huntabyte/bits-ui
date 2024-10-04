@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { ItemProps } from "../index.js";
+	import type { CommandItemProps } from "../types.js";
 	import { getCommandGroupContainerContext, useCommandItem } from "../command.svelte.js";
 	import { noop } from "$lib/internal/callbacks.js";
 	import { useId } from "$lib/internal/useId.js";
@@ -17,7 +17,7 @@
 		forceMount = false,
 		keywords = [],
 		...restProps
-	}: ItemProps = $props();
+	}: CommandItemProps = $props();
 
 	const group = getCommandGroupContainerContext(null);
 
