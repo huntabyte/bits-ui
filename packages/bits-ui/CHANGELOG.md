@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.9
+
+### Patch Changes
+
+-   gracefully handle internally cancelled interactoutside events ([#726](https://github.com/huntabyte/bits-ui/pull/726))
+
 ## 1.0.0-next.8
 
 ### Patch Changes
