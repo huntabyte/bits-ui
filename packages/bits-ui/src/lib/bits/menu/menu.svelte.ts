@@ -58,23 +58,6 @@ const [setMenuRadioGroupContext, getMenuRadioGroupContext] =
 
 type MenuVariant = "context-menu" | "dropdown-menu" | "menubar";
 
-function createAttrs(variant: MenuVariant) {
-	return {
-		trigger: `data-${variant}-trigger`,
-		content: `data-${variant}-content`,
-		item: `data-${variant}-item`,
-		separator: `data-${variant}-separator`,
-		subTrigger: `data-${variant}-sub-trigger`,
-		checkboxItem: `data-${variant}-checkbox-item`,
-		group: `data-${variant}-group`,
-		groupHeading: `data-${variant}-group-heading`,
-		radioGroup: `data-${variant}-radio-group`,
-		radioItem: `data-${variant}-radio-item`,
-		arrow: `data-${variant}-arrow`,
-		subContent: `data-${variant}-sub-content`,
-	} as const;
-}
-
 export type MenuRootStateProps = ReadableBoxedValues<{
 	dir: Direction;
 	variant: MenuVariant;
@@ -87,7 +70,6 @@ class MenuRootState {
 	variant: MenuRootStateProps["variant"];
 	isUsingKeyboard = box(false);
 	dir: MenuRootStateProps["dir"];
-	attrs = $derived.by(() => createAttrs(this.variant.current));
 
 	constructor(props: MenuRootStateProps) {
 		this.onClose = props.onClose;
@@ -130,6 +112,10 @@ class MenuRootState {
 			};
 		});
 	}
+
+	getAttr = (name: string) => {
+		return `data-${this.variant.current}-${name}`;
+	};
 }
 
 type MenuMenuStateProps = WritableBoxedValues<{
@@ -223,7 +209,7 @@ class MenuContentState {
 		this.#handleTypeaheadSearch = useTypeahead().handleTypeaheadSearch;
 		this.rovingFocusGroup = useRovingFocus({
 			rootNodeId: this.parentMenu.contentId,
-			candidateAttr: this.parentMenu.root.attrs.item,
+			candidateAttr: this.parentMenu.root.getAttr("item"),
 			loop: this.#loop,
 			orientation: box.with(() => "vertical"),
 		});
@@ -234,7 +220,7 @@ class MenuContentState {
 		if (!node) return [];
 		const candidates = Array.from(
 			node.querySelectorAll<HTMLElement>(
-				`[${this.parentMenu.root.attrs.item}]:not([data-disabled])`
+				`[${this.parentMenu.root.getAttr("item")}]:not([data-disabled])`
 			)
 		);
 		return candidates;
@@ -257,7 +243,7 @@ class MenuContentState {
 		if (!isHTMLElement(target) || !isHTMLElement(currentTarget)) return;
 
 		const isKeydownInside =
-			target.closest(`[${this.parentMenu.root.attrs.content}]`)?.id ===
+			target.closest(`[${this.parentMenu.root.getAttr("content")}]`)?.id ===
 			this.parentMenu.contentId.current;
 		const isModifierKey = e.ctrlKey || e.altKey || e.metaKey;
 		const isCharacterKey = e.key.length === 1;
@@ -366,7 +352,7 @@ class MenuContentState {
 				id: this.#id.current,
 				role: "menu",
 				"aria-orientation": getAriaOrientation("vertical"),
-				[this.parentMenu.root.attrs.content]: "",
+				[this.parentMenu.root.getAttr("content")]: "",
 				"data-state": getDataOpenClosed(this.parentMenu.open.current),
 				onkeydown: this.#onkeydown,
 				onblur: this.#onblur,
@@ -454,7 +440,7 @@ class MenuItemSharedState {
 				"aria-disabled": getAriaDisabled(this.disabled.current),
 				"data-disabled": getDataDisabled(this.disabled.current),
 				"data-highlighted": this.#isFocused ? "" : undefined,
-				[this.content.parentMenu.root.attrs.item]: "",
+				[this.content.parentMenu.root.getAttr("item")]: "",
 				//
 				onpointermove: this.#onpointermove,
 				onpointerleave: this.#onpointerleave,
@@ -647,7 +633,7 @@ class MenuSubTriggerState {
 				"aria-controls": this.#submenu.open.current
 					? this.#submenu.contentId.current
 					: undefined,
-				[this.#submenu.root.attrs.subTrigger]: "",
+				[this.#submenu.root.getAttr("sub-trigger")]: "",
 				onclick: this.#onclick,
 				onpointermove: this.#onpointermove,
 				onpointerleave: this.#onpointerleave,
@@ -688,7 +674,7 @@ class MenuCheckboxItemState {
 				role: "menuitemcheckbox",
 				"aria-checked": getAriaChecked(this.#checked.current),
 				"data-state": getCheckedState(this.#checked.current),
-				[this.#item.root.attrs.checkboxItem]: "",
+				[this.#item.root.getAttr("checkbox-item")]: "",
 			}) as const
 	);
 }
@@ -718,7 +704,7 @@ class MenuGroupState {
 				id: this.#id.current,
 				role: "group",
 				"aria-labelledby": this.groupHeadingId,
-				[this.root.attrs.group]: "",
+				[this.root.getAttr("group")]: "",
 			}) as const
 	);
 }
@@ -748,7 +734,7 @@ class MenuGroupHeadingState {
 			({
 				id: this.#id.current,
 				role: "group",
-				[this.#group.root.attrs.groupHeading]: "",
+				[this.#group.root.getAttr("group-heading")]: "",
 			}) as const
 	);
 }
@@ -776,7 +762,7 @@ class MenuSeparatorState {
 			({
 				id: this.#id.current,
 				role: "group",
-				[this.#root.attrs.separator]: "",
+				[this.#root.getAttr("separator")]: "",
 			}) as const
 	);
 }
@@ -791,7 +777,7 @@ class MenuArrowState {
 	props = $derived.by(
 		() =>
 			({
-				[this.#root.attrs.arrow]: "",
+				[this.#root.getAttr("arrow")]: "",
 			}) as const
 	);
 }
@@ -833,7 +819,7 @@ class MenuRadioGroupState {
 		() =>
 			({
 				id: this.#id.current,
-				[this.root.attrs.radioGroup]: "",
+				[this.root.getAttr("radio-group")]: "",
 				role: "group",
 				"aria-labelledby": this.groupHeadingId,
 			}) as const
@@ -876,7 +862,7 @@ class MenuRadioItemState {
 	props = $derived.by(
 		() =>
 			({
-				[this.#group.root.attrs.radioItem]: "",
+				[this.#group.root.getAttr("radio-item")]: "",
 				...this.#item.props,
 				role: "menuitemradio",
 				"aria-checked": getAriaChecked(this.isChecked),
@@ -956,7 +942,7 @@ class DropdownMenuTriggerState {
 				"aria-controls": this.#ariaControls,
 				"data-disabled": getDataDisabled(this.#disabled.current),
 				"data-state": getDataOpenClosed(this.#parentMenu.open.current),
-				[this.#parentMenu.root.attrs.trigger]: "",
+				[this.#parentMenu.root.getAttr("trigger")]: "",
 				//
 				onpointerdown: this.#onpointerdown,
 				onkeydown: this.#onkeydown,
