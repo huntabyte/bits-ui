@@ -71,5 +71,6 @@
 		"pnpm": ">=8.7.0",
 		"node": ">=18"
 	},
+	"sideEffects": false,
 	"packageManager": "pnpm@9.6.0"
 }
