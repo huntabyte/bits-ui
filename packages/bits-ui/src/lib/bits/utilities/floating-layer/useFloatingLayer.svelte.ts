@@ -58,14 +58,6 @@ class FloatingRootState {
 			}
 		});
 	}
-
-	createAnchor(props: FloatingAnchorStateProps) {
-		return new FloatingAnchorState(props, this);
-	}
-
-	createContent(props: FloatingContentStateProps) {
-		return new FloatingContentState(props, this);
-	}
 }
 
 export type FloatingContentStateProps = ReadableBoxedValues<{
@@ -328,10 +320,6 @@ class FloatingContentState {
 			this.floating.floating.current = this.wrapperRef.current;
 		});
 	}
-
-	createArrow(props: FloatingArrowStateProps) {
-		return new FloatingArrowState(props, this);
-	}
 }
 
 type FloatingArrowStateProps = WithRefProps;
@@ -404,15 +392,15 @@ export function useFloatingRootState() {
 }
 
 export function useFloatingContentState(props: FloatingContentStateProps): FloatingContentState {
-	return setFloatingContentContext(getFloatingRootContext().createContent(props));
+	return setFloatingContentContext(new FloatingContentState(props, getFloatingRootContext()));
 }
 
 export function useFloatingArrowState(props: FloatingArrowStateProps): FloatingArrowState {
-	return getFloatingContentContext().createArrow(props);
+	return new FloatingArrowState(props, getFloatingContentContext());
 }
 
 export function useFloatingAnchorState(props: FloatingAnchorStateProps): FloatingAnchorState {
-	return getFloatingRootContext().createAnchor(props);
+	return new FloatingAnchorState(props, getFloatingRootContext());
 }
 
 //
