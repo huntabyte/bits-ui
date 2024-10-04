@@ -16,6 +16,8 @@ description: Enables users to pick from a list of options displayed in a dropdow
 
 </ComponentPreviewV2>
 
+<ComboboxDemo />
+
 ## Overview
 
 The Combobox component combines the functionality of an input field with a dropdown list of selectable options. It provides users with the ability to search, filter, and select from a predefined set of choices.

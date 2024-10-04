@@ -604,10 +604,6 @@ class ListboxTriggerState {
 		}
 	};
 
-	#onclick = (e: MouseEvent) => {
-		e.preventDefault();
-	};
-
 	/**
 	 * `pointerdown` fires before the `focus` event, so we can prevent the default
 	 * behavior of focusing the button and keep focus on the input.
@@ -628,7 +624,7 @@ class ListboxTriggerState {
 				[this.root.bitsAttrs.trigger]: "",
 				onpointerdown: this.#onpointerdown,
 				onkeydown: this.#onkeydown,
-				onclick: this.#onclick,
+				// onclick: this.#onclick,
 			}) as const
 	);
 }
