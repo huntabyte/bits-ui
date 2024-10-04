@@ -7,7 +7,7 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"sync": "svelte-kit sync",
-		"test": "vitest"
+		"test": "pnpm sync && vitest"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^3.0.0",
