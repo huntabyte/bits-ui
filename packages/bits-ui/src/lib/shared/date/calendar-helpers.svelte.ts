@@ -312,7 +312,7 @@ export function shiftCalendarFocus({
 		 * amount.
 		 */
 
-		// shift the calendard forward a month unless next month is disabled
+		// shift the calendar forward a month unless next month is disabled
 		if (isNextButtonDisabled) return;
 
 		const firstMonth = months[0]?.value;
@@ -338,15 +338,14 @@ export function shiftCalendarFocus({
 	}
 }
 
-const ARROW_KEYS = [kbd.ARROW_DOWN, kbd.ARROW_UP, kbd.ARROW_LEFT, kbd.ARROW_RIGHT];
-const SELECT_KEYS = [kbd.ENTER, kbd.SPACE];
-
 type HandleCalendarKeydownProps = {
 	event: KeyboardEvent;
 	handleCellClick: (event: Event, date: DateValue) => void;
 	shiftFocus: (node: HTMLElement, add: number) => void;
 	placeholderValue: DateValue;
 };
+const ARROW_KEYS = [kbd.ARROW_DOWN, kbd.ARROW_UP, kbd.ARROW_LEFT, kbd.ARROW_RIGHT] as const;
+const SELECT_KEYS = [kbd.ENTER, kbd.SPACE];
 
 /**
  * Shared keyboard event handler for the calendar and range calendar.
@@ -359,19 +358,21 @@ export function handleCalendarKeydown({
 }: HandleCalendarKeydownProps) {
 	const currentCell = event.target;
 	if (!isCalendarDayNode(currentCell)) return;
-	if (!ARROW_KEYS.includes(event.key) && !SELECT_KEYS.includes(event.key)) return;
+	// eslint-disable-next-line ts/no-explicit-any
+	if (!ARROW_KEYS.includes(event.key as any) && !SELECT_KEYS.includes(event.key)) return;
 
 	event.preventDefault();
 
-	const kbdFocusMap = {
+	const kbdFocusMap: Record<(typeof ARROW_KEYS)[number], number> = {
 		[kbd.ARROW_DOWN]: 7,
 		[kbd.ARROW_UP]: -7,
 		[kbd.ARROW_LEFT]: -1,
 		[kbd.ARROW_RIGHT]: 1,
 	};
 
-	if (ARROW_KEYS.includes(event.key)) {
-		const add = kbdFocusMap[event.key];
+	// eslint-disable-next-line ts/no-explicit-any
+	if (ARROW_KEYS.includes(event.key as any)) {
+		const add = kbdFocusMap[event.key as (typeof ARROW_KEYS)[number]];
 		if (add !== undefined) {
 			shiftFocus(currentCell, add);
 		}

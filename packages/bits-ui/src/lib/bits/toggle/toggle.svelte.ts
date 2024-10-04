@@ -44,7 +44,7 @@ class ToggleRootState {
 	};
 
 	#onkeydown = (e: KeyboardEvent) => {
-		if (e.key !== kbd.ENTER || e.key !== kbd.SPACE) return;
+		if (![kbd.ENTER, kbd.SPACE].includes(e.key)) return;
 		e.preventDefault();
 		this.#togglePressed();
 	};
