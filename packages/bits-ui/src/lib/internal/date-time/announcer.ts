@@ -1,5 +1,5 @@
 import { isBrowser, isHTMLElement } from "$lib/internal/is.js";
-import { styleToString } from "$lib/internal/style.js";
+import { srOnlyStyleString } from "$lib/internal/style.js";
 
 /**
  * Creates or gets an announcer element which is used to announce messages to screen readers.
@@ -11,18 +11,7 @@ function initAnnouncer() {
 	let el = document.querySelector("[data-bits-announcer]");
 	if (!isHTMLElement(el)) {
 		const div = document.createElement("div");
-		div.style.cssText = styleToString({
-			border: "0px",
-			clip: "rect(0px, 0px, 0px, 0px)",
-			clipPath: "inset(50%)",
-			height: "1px",
-			margin: "-1px",
-			overflow: "hidden",
-			padding: "0px",
-			position: "absolute",
-			whiteSpace: "nowrap",
-			width: "1px",
-		});
+		div.style.cssText = srOnlyStyleString;
 		div.setAttribute("data-bits-announcer", "");
 		div.appendChild(createLog("assertive"));
 		div.appendChild(createLog("polite"));

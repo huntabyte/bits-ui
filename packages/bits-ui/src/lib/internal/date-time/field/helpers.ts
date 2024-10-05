@@ -1,13 +1,7 @@
 import type { DateValue } from "@internationalized/date";
-import {
-	type Formatter,
-	type Granularity,
-	type HourCycle,
-	getPlaceholder,
-	getSegments,
-	hasTime,
-	isZonedDateTime,
-} from "../index.js";
+import type { Formatter } from "../formatter.js";
+import { getPlaceholder } from "../placeholders.js";
+import { hasTime, isZonedDateTime } from "../utils.js";
 import type {
 	DateAndTimeSegmentObj,
 	DateSegmentPart,
@@ -24,11 +18,12 @@ import {
 	EDITABLE_SEGMENT_PARTS,
 	TIME_SEGMENT_PARTS,
 } from "./parts.js";
-
+import { getSegments } from "./segments.js";
 import { isBrowser, isNull, isNumberString } from "$lib/internal/is.js";
 import { styleToString } from "$lib/internal/style.js";
 import { useId } from "$lib/internal/useId.js";
 import { kbd } from "$lib/internal/kbd.js";
+import type { Granularity, HourCycle } from "$lib/shared/date/types.js";
 
 export function initializeSegmentValues(granularity: Granularity) {
 	const calendarDateTimeGranularities = ["hour", "minute", "second"];
@@ -302,17 +297,19 @@ export function getValueFromSegments(props: GetValueFromSegments) {
 	const { segmentObj, fieldNode, dateRef } = props;
 	const usedSegments = getUsedSegments(fieldNode);
 	let date = dateRef;
-	usedSegments.forEach((part) => {
+
+	for (const part of usedSegments) {
 		if ("hour" in segmentObj) {
 			const value = segmentObj[part];
-			if (isNull(value)) return;
+			if (isNull(value)) continue;
 			date = date.set({ [part]: segmentObj[part] });
 		} else if (isDateSegmentPart(part)) {
 			const value = segmentObj[part];
-			if (isNull(value)) return;
+			if (isNull(value)) continue;
 			date = date.set({ [part]: segmentObj[part] });
 		}
-	});
+	}
+
 	return date;
 }
 
@@ -373,12 +370,8 @@ export function inferGranularity(
 	value: DateValue,
 	granularity: Granularity | undefined
 ): Granularity {
-	if (granularity) {
-		return granularity;
-	}
-	if (hasTime(value)) {
-		return "minute";
-	}
+	if (granularity) return granularity;
+	if (hasTime(value)) return "minute";
 	return "day";
 }
 

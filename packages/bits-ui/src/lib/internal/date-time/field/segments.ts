@@ -1,4 +1,4 @@
-import { isAnySegmentPart } from "./field/helpers.js";
+import { isAnySegmentPart } from "./helpers.js";
 import { isHTMLElement } from "$lib/internal/is.js";
 import { kbd } from "$lib/internal/kbd.js";
 
@@ -122,6 +122,5 @@ export function getSegments(fieldNode: HTMLElement | null) {
  * Get the first interactive segment within the field identified by the provided ID.
  */
 export function getFirstSegment(fieldNode: HTMLElement | null) {
-	const segments = getSegments(fieldNode);
-	return segments[0];
+	return getSegments(fieldNode)[0];
 }

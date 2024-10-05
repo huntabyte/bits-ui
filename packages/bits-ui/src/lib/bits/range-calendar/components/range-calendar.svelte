@@ -5,8 +5,8 @@
 	import { useRangeCalendarRoot } from "../range-calendar.svelte.js";
 	import { noop } from "$lib/internal/callbacks.js";
 	import { useId } from "$lib/internal/useId.js";
-	import { getDefaultDate } from "$lib/shared/date/utils.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
 
 	let {
 		children,

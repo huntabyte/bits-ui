@@ -1,9 +1,12 @@
 <script lang="ts">
 	import type { DateRangePickerTriggerProps } from "../types.js";
 	import PopoverTrigger from "$lib/bits/popover/components/popover-trigger.svelte";
-	import { handleSegmentNavigation, isSegmentNavigationKey } from "$lib/shared/date/field.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import { DATE_RANGE_FIELD_ROOT_ATTR } from "$lib/bits/date-range-field/date-range-field.svelte.js";
+	import {
+		handleSegmentNavigation,
+		isSegmentNavigationKey,
+	} from "$lib/internal/date-time/field/segments.js";
 
 	let { ref = $bindable(null), onkeydown, ...restProps }: DateRangePickerTriggerProps = $props();
 

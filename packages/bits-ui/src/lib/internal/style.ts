@@ -17,3 +17,5 @@ export const srOnlyStyles: StyleProperties = {
 	borderWidth: "0",
 	transform: "translateX(-100%)",
 };
+
+export const srOnlyStyleString = styleToString(srOnlyStyles);

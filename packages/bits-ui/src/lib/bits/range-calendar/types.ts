@@ -1,7 +1,6 @@
 import type { DateValue } from "@internationalized/date";
-import type { DateMatcher, Month } from "$lib/shared/date/types.js";
 import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
-import type { DateRange } from "$lib/shared/index.js";
+import type { DateMatcher, DateRange, Month } from "$lib/shared/index.js";
 import type { PrimitiveDivAttributes } from "$lib/shared/attributes.js";
 
 export type RangeCalendarRootSnippetProps = {
@@ -228,34 +227,24 @@ export type RangeCalendarRootProps = RangeCalendarRootPropsWithoutHTML &
 export type {
 	CalendarPrevButtonProps as RangeCalendarPrevButtonProps,
 	CalendarPrevButtonPropsWithoutHTML as RangeCalendarPrevButtonPropsWithoutHTML,
-	//
 	CalendarNextButtonProps as RangeCalendarNextButtonProps,
 	CalendarNextButtonPropsWithoutHTML as RangeCalendarNextButtonPropsWithoutHTML,
-	//
 	CalendarHeadingProps as RangeCalendarHeadingProps,
 	CalendarHeadingPropsWithoutHTML as RangeCalendarHeadingPropsWithoutHTML,
-	//
 	CalendarGridProps as RangeCalendarGridProps,
 	CalendarGridPropsWithoutHTML as RangeCalendarGridPropsWithoutHTML,
-	//
 	CalendarCellProps as RangeCalendarCellProps,
 	CalendarCellPropsWithoutHTML as RangeCalendarCellPropsWithoutHTML,
-	//
 	CalendarDayProps as RangeCalendarDayProps,
 	CalendarDayPropsWithoutHTML as RangeCalendarDayPropsWithoutHTML,
-	//
 	CalendarGridBodyProps as RangeCalendarGridBodyProps,
 	CalendarGridBodyPropsWithoutHTML as RangeCalendarGridBodyPropsWithoutHTML,
-	//
 	CalendarGridHeadProps as RangeCalendarGridHeadProps,
 	CalendarGridHeadPropsWithoutHTML as RangeCalendarGridHeadPropsWithoutHTML,
-	//
 	CalendarGridRowProps as RangeCalendarGridRowProps,
 	CalendarGridRowPropsWithoutHTML as RangeCalendarGridRowPropsWithoutHTML,
-	//
 	CalendarHeadCellProps as RangeCalendarHeadCellProps,
 	CalendarHeadCellPropsWithoutHTML as RangeCalendarHeadCellPropsWithoutHTML,
-	//
 	CalendarHeaderProps as RangeCalendarHeaderProps,
 	CalendarHeaderPropsWithoutHTML as RangeCalendarHeaderPropsWithoutHTML,
 } from "../calendar/types.js";

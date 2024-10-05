@@ -5,9 +5,9 @@
 	import type { DateRangeFieldRootProps } from "../types.js";
 	import { useId } from "$lib/internal/useId.js";
 	import { noop } from "$lib/internal/callbacks.js";
-	import { getDefaultDate } from "$lib/shared/date/utils.js";
 	import type { DateRange } from "$lib/shared/index.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
 
 	let {
 		id = useId(),

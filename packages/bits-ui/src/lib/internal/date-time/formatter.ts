@@ -1,5 +1,5 @@
 import { DateFormatter, type DateValue } from "@internationalized/date";
-import { hasTime, isZonedDateTime, toDate } from "./index.js";
+import { hasTime, isZonedDateTime, toDate } from "./utils.js";
 
 export type Formatter = ReturnType<typeof createFormatter>;
 

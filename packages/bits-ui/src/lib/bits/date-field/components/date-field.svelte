@@ -4,7 +4,7 @@
 	import { useDateFieldRoot } from "../date-field.svelte.js";
 	import type { DateFieldRootProps } from "../types.js";
 	import { noop } from "$lib/internal/callbacks.js";
-	import { getDefaultDate } from "$lib/shared/date/utils.js";
+	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
 
 	let {
 		disabled = false,

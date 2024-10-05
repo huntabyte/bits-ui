@@ -6,7 +6,35 @@ import type { DateRangeFieldRootState } from "../date-range-field/date-range-fie
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
-import { type Announcer, getAnnouncer } from "$lib/shared/date/announcer.js";
+import {
+	getAriaDisabled,
+	getAriaHidden,
+	getAriaInvalid,
+	getAriaReadonly,
+	getDataDisabled,
+	getDataInvalid,
+	getDataReadonly,
+} from "$lib/internal/attrs.js";
+import { isBrowser, isNumberString } from "$lib/internal/is.js";
+import { kbd } from "$lib/internal/kbd.js";
+import { createContext } from "$lib/internal/createContext.js";
+import { useId } from "$lib/internal/useId.js";
+import { onDestroyEffect } from "$lib/internal/onDestroyEffect.svelte.js";
+import type {
+	DateAndTimeSegmentObj,
+	DateOnInvalid,
+	DateSegmentObj,
+	DateSegmentPart,
+	DateValidator,
+	Granularity,
+	HourCycle,
+	SegmentPart,
+	SegmentValueObj,
+	TimeSegmentObj,
+	TimeSegmentPart,
+} from "$lib/shared/date/types.js";
+import { type Formatter, createFormatter } from "$lib/internal/date-time/formatter.js";
+import { type Announcer, getAnnouncer } from "$lib/internal/date-time/announcer.js";
 import {
 	areAllSegmentsFilled,
 	createContent,
@@ -20,46 +48,16 @@ import {
 	isFirstSegment,
 	removeDescriptionElement,
 	setDescription,
-} from "$lib/shared/date/field/helpers.js";
-import type {
-	DateAndTimeSegmentObj,
-	DateSegmentObj,
-	DateSegmentPart,
-	SegmentValueObj,
-	TimeSegmentObj,
-	TimeSegmentPart,
-} from "$lib/shared/date/field/types.js";
-import { type Formatter, createFormatter } from "$lib/shared/date/formatter.js";
-import { getDaysInMonth, isBefore, toDate } from "$lib/shared/date/utils.js";
-import {
-	getAriaDisabled,
-	getAriaHidden,
-	getAriaInvalid,
-	getAriaReadonly,
-	getDataDisabled,
-	getDataInvalid,
-	getDataReadonly,
-} from "$lib/internal/attrs.js";
-import { isBrowser, isNumberString } from "$lib/internal/is.js";
-import { kbd } from "$lib/internal/kbd.js";
+} from "$lib/internal/date-time/field/helpers.js";
+import { DATE_SEGMENT_PARTS, TIME_SEGMENT_PARTS } from "$lib/internal/date-time/field/parts.js";
+import { getDaysInMonth, isBefore, toDate } from "$lib/internal/date-time/utils.js";
 import {
 	getFirstSegment,
 	handleSegmentNavigation,
 	isSegmentNavigationKey,
 	moveToNextSegment,
 	moveToPrevSegment,
-} from "$lib/shared/date/field.js";
-import type { SegmentPart } from "$lib/shared/index.js";
-import { DATE_SEGMENT_PARTS, TIME_SEGMENT_PARTS } from "$lib/shared/date/field/parts.js";
-import { createContext } from "$lib/internal/createContext.js";
-import { useId } from "$lib/internal/useId.js";
-import type {
-	DateOnInvalid,
-	DateValidator,
-	Granularity,
-	HourCycle,
-} from "$lib/shared/date/types.js";
-import { onDestroyEffect } from "$lib/internal/onDestroyEffect.svelte.js";
+} from "$lib/internal/date-time/field/segments.js";
 
 export const DATE_FIELD_INPUT_ATTR = "data-date-field-input";
 const DATE_FIELD_LABEL_ATTR = "data-date-field-label";

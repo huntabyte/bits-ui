@@ -9,19 +9,21 @@ import { untrack } from "svelte";
 import type { DateRange, Month } from "$lib/shared/index.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { WithRefProps } from "$lib/internal/types.js";
-import { type Announcer, getAnnouncer } from "$lib/shared/date/announcer.js";
-import { type Formatter, createFormatter } from "$lib/shared/date/formatter.js";
 import { useId } from "$lib/internal/useId.js";
 import { useRefById } from "$lib/internal/useRefById.svelte.js";
+
+import {
+	getAriaDisabled,
+	getAriaSelected,
+	getDataDisabled,
+	getDataSelected,
+	getDataUnavailable,
+} from "$lib/internal/attrs.js";
+import { createContext } from "$lib/internal/createContext.js";
+import { type Announcer, getAnnouncer } from "$lib/internal/date-time/announcer.js";
+import { type Formatter, createFormatter } from "$lib/internal/date-time/formatter.js";
 import {
 	type CalendarParts,
-	areAllDaysBetweenValid,
-	isAfter,
-	isBefore,
-	isBetweenInclusive,
-	toDate,
-} from "$lib/shared/date/index.js";
-import {
 	createMonths,
 	getCalendarElementProps,
 	getCalendarHeadingValue,
@@ -34,15 +36,14 @@ import {
 	shiftCalendarFocus,
 	useMonthViewOptionsSync,
 	useMonthViewPlaceholderSync,
-} from "$lib/shared/date/calendar-helpers.svelte.js";
+} from "$lib/internal/date-time/calendar-helpers.svelte.js";
 import {
-	getAriaDisabled,
-	getAriaSelected,
-	getDataDisabled,
-	getDataSelected,
-	getDataUnavailable,
-} from "$lib/internal/attrs.js";
-import { createContext } from "$lib/internal/createContext.js";
+	areAllDaysBetweenValid,
+	isAfter,
+	isBefore,
+	isBetweenInclusive,
+	toDate,
+} from "$lib/internal/date-time/utils.js";
 
 type RangeCalendarRootStateProps = WithRefProps<
 	WritableBoxedValues<{

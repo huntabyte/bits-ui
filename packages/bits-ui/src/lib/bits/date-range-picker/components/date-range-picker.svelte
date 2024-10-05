@@ -3,7 +3,6 @@
 	import type { DateValue } from "@internationalized/date";
 	import { useDateRangePickerRoot } from "../date-range-picker.svelte.js";
 	import type { DateRangePickerRootProps } from "../types.js";
-	import { getDefaultDate } from "$lib/shared/date/utils.js";
 	import { noop } from "$lib/internal/callbacks.js";
 	import { usePopoverRoot } from "$lib/bits/popover/popover.svelte.js";
 	import { useDateRangeFieldRoot } from "$lib/bits/date-range-field/date-range-field.svelte.js";
@@ -11,6 +10,7 @@
 	import { useId } from "$lib/internal/useId.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
 	import type { DateRange } from "$lib/shared/index.js";
+	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
 
 	let {
 		open = false,

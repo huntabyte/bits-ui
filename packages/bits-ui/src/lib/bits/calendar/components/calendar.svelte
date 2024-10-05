@@ -6,7 +6,7 @@
 	import { useId } from "$lib/internal/useId.js";
 	import { noop } from "$lib/internal/callbacks.js";
 	import { mergeProps } from "$lib/internal/mergeProps.js";
-	import { getDefaultDate } from "$lib/shared/date/utils.js";
+	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
 
 	let {
 		child,
@@ -40,10 +40,25 @@
 	}: CalendarRootProps = $props();
 
 	if (placeholder === undefined) {
-		placeholder = getDefaultDate({
+		const defaultPlaceholder = getDefaultDate({
 			defaultPlaceholder: undefined,
 			defaultValue: value,
 		});
+
+		if (controlledPlaceholder) {
+			onPlaceholderChange(defaultPlaceholder);
+		} else {
+			placeholder = defaultPlaceholder;
+		}
+	}
+
+	if (value === undefined) {
+		const defaultValue = type === "single" ? "" : [];
+		if (controlledValue) {
+			onValueChange(defaultValue as any);
+		} else {
+			value = defaultValue as any;
+		}
 	}
 
 	value === undefined && (value = type === "single" ? undefined : []);

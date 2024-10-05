@@ -1,9 +1,7 @@
 import { type DateValue, endOfMonth, isSameMonth, startOfMonth } from "@internationalized/date";
 import type { ReadableBox, WritableBox } from "svelte-toolbelt";
 import { untrack } from "svelte";
-import type { Month } from "./types.js";
 import {
-	type Formatter,
 	getDaysInMonth,
 	getLastFirstDayOfWeek,
 	getNextLastDayOfWeek,
@@ -11,13 +9,16 @@ import {
 	isBefore,
 	parseStringToDateValue,
 	toDate,
-} from "./index.js";
+} from "./utils.js";
+import type { Formatter } from "./formatter.js";
 import { getDataDisabled, getDataInvalid, getDataReadonly } from "$lib/internal/attrs.js";
 import { afterTick } from "$lib/internal/afterTick.js";
 import { chunk, isValidIndex } from "$lib/internal/arrays.js";
 import { isHTMLElement } from "$lib/internal/is.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { styleToString } from "$lib/internal/style.js";
+import type { Month } from "$lib/shared/index.js";
+
 /**
  * Checks if a given node is a calendar cell element.
  *
