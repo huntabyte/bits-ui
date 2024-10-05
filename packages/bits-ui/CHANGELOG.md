@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.11
+
+### Patch Changes
+
+-   fix: Select trigger refocus in firefox/safari ([#735](https://github.com/huntabyte/bits-ui/pull/735))
+
 ## 1.0.0-next.10
 
 ### Patch Changes
