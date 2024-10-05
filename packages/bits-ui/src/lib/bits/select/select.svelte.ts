@@ -1,5 +1,5 @@
 /**
- * This logic is adapted from Radix UI's Select component.
+ * This logic is adapted from Radix UI Select component.
  * https://github.com/radix-ui/primitives/blob/main/packages/react/select/src/Select.tsx
  * Credit to the Radix UI team for the original implementation.
  */
@@ -128,7 +128,8 @@ export class SelectRootState {
 	focusTriggerNode = (preventScroll: boolean = true) => {
 		const node = this.triggerNode;
 		if (!node) return;
-		afterSleep(1, () => {
+		// this needs to be 10 otherwise Firefox doesn't focus the correct node
+		afterSleep(10, () => {
 			node.focus({ preventScroll });
 		});
 	};
