@@ -28,7 +28,6 @@ import { afterTick } from "$lib/internal/after-tick.js";
 import { clamp } from "$lib/internal/clamp.js";
 import { noop } from "$lib/internal/callbacks.js";
 import { addEventListener } from "$lib/internal/events.js";
-import { sleep } from "$lib/internal/sleep.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { afterSleep } from "$lib/internal/after-sleep.js";
 
