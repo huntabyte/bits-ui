@@ -1,4 +1,9 @@
-import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
+import type {
+	OnChangeFn,
+	WithChild,
+	WithChildNoChildrenSnippetProps,
+	Without,
+} from "$lib/internal/types.js";
 import type { PrimitiveButtonAttributes, PrimitiveDivAttributes } from "$lib/shared/attributes.js";
 import type { Orientation } from "$lib/shared/index.js";
 
@@ -103,7 +108,7 @@ export type AccordionContentSnippetProps = {
 	open: boolean;
 };
 
-export type AccordionContentPropsWithoutHTML = WithChild<
+export type AccordionContentPropsWithoutHTML = WithChildNoChildrenSnippetProps<
 	{
 		/**
 		 * Whether to forcefully mount the content, regardless of the open state.

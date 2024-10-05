@@ -3,7 +3,13 @@ import type { PortalProps } from "../utilities/portal/types.js";
 import type { PopperLayerProps, PopperLayerStaticProps } from "../utilities/popper-layer/types.js";
 import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
 import type { PrimitiveButtonAttributes, PrimitiveDivAttributes } from "$lib/shared/attributes.js";
-import type { OnChangeFn, WithChild, WithChildren, Without } from "$lib/internal/types.js";
+import type {
+	OnChangeFn,
+	WithChild,
+	WithChildNoChildrenSnippetProps,
+	WithChildren,
+	Without,
+} from "$lib/internal/types.js";
 
 export type ListboxBaseRootPropsWithoutHTML = WithChildren<{
 	/**
@@ -151,7 +157,7 @@ export type ListboxContentSnippetProps = {
 };
 
 export type ListboxContentPropsWithoutHTML = Expand<
-	WithChild<
+	WithChildNoChildrenSnippetProps<
 		Omit<PopperLayerProps, "content" | "onOpenAutoFocus" | "trapFocus"> &
 			_SharedListboxContentProps,
 		ListboxContentSnippetProps
@@ -162,7 +168,7 @@ export type ListboxContentProps = ListboxContentPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, ListboxContentPropsWithoutHTML>;
 
 export type ListboxContentStaticPropsWithoutHTML = Expand<
-	WithChild<
+	WithChildNoChildrenSnippetProps<
 		Omit<PopperLayerStaticProps, "content" | "onOpenAutoFocus" | "trapFocus"> &
 			_SharedListboxContentProps,
 		ListboxContentSnippetProps

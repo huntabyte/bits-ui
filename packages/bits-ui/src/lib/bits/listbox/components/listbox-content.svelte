@@ -70,7 +70,7 @@
 			{@render child({ props: finalProps, ...contentState.snippetProps })}
 		{:else}
 			<div {...finalProps}>
-				{@render children?.(contentState.snippetProps)}
+				{@render children?.()}
 			</div>
 		{/if}
 	{/snippet}

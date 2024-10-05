@@ -57,6 +57,95 @@ This structure allows for a seamless user experience while providing developers 
 </PinInput.Root>
 ```
 
+## Managing Value State
+
+Bits UI offers several approaches to manage and synchronize the component's value state, catering to different levels of control and integration needs.
+
+### 1. Two-Way Binding
+
+For seamless state synchronization, use Svelte's `bind:value` directive. This method automatically keeps your local state in sync with the component's internal state.
+
+```svelte
+<script lang="ts">
+	import { PinInput } from "bits-ui";
+	let myValue = $state("");
+</script>
+
+<button onclick={() => (myValue = "123456")}> Set value to 123456 </button>
+
+<PinInput.Root bind:value={myValue}>
+	<!-- -->
+</PinInput.Root>
+```
+
+#### Key Benefits
+
+-   Simplifies state management
+-   Automatically updates `myValue` when the internal state changes (e.g., user typing in the input)
+-   Allows external control (e.g., switching tabs via a separate button)
+
+### 2. Change Handler
+
+For more granular control or to perform additional logic on state changes, use the `onValueChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
+
+```svelte
+<script lang="ts">
+	import { PinInput } from "bits-ui";
+	let myValue = $state("");
+</script>
+
+<PinInput.Root
+	value={myValue}
+	onValueChange={(v) => {
+		myValue = v;
+		// additional logic here.
+	}}
+>
+	<!-- ... -->
+</PinInput.Root>
+```
+
+#### Use Cases
+
+-   Implementing custom behaviors on value change
+-   Integrating with external state management solutions
+-   Triggering side effects (e.g., logging, data fetching)
+
+### 3. Fully Controlled
+
+For complete control over the component's value state, use the `controlledValue` prop. This approach requires you to manually manage the value state, giving you full control over when and how the component responds to value change events.
+
+To implement controlled state:
+
+1. Set the `controlledValue` prop to `true` on the `PinInput.Root` component.
+2. Provide a `value` prop to `PinInput.Root`, which should be a variable holding the current state.
+3. Implement an `onValueChange` handler to update the state when the internal state changes.
+
+```svelte
+<script lang="ts">
+	import { PinInput } from "bits-ui";
+	let myValue = $state("");
+</script>
+
+<PinInput.Root controlledValue value={myValue} onValueChange={(v) => (myValue = v)}>
+	<!-- ... -->
+</PinInput.Root>
+```
+
+#### When to Use
+
+-   Implementing complex logic
+-   Coordinating multiple UI elements
+-   Debugging state-related issues
+
+<Callout>
+
+While powerful, fully controlled state should be used judiciously as it increases complexity and can cause unexpected behaviors if not handled carefully.
+
+For more in-depth information on controlled components and advanced state management techniques, refer to our [Controlled State](/docs/controlled-state) documentation.
+
+</Callout>
+
 ## Paste Handling
 
 The `onPaste` prop allows you to sanitize pasted text. This can be useful for cleaning up pasted text, like removing hyphens or other characters that should not make it into the input. This function should return the sanitized text.
@@ -69,6 +158,27 @@ The `onPaste` prop allows you to sanitize pasted text. This can be useful for cl
 <PinInput.Root onPaste={(text) => text.replace(/-/g, "")}>
 	<!-- ... -->
 </PinInput.Root>
+```
+
+## HTML Forms
+
+The `PinInput.Root` component is designed to work seamlessly with HTML forms. Simply pass the `name` prop to the `PinInput.Root` component and the input will be submitted with the form.
+
+### Submit On Complete
+
+To submit the form when the input is complete, you can use the `onComplete` prop.
+
+```svelte
+<script lang="ts">
+	import { PinInput } from "bits-ui";
+	let form = $state<HTMLFormElement>(null!);
+</script>
+
+<form method="POST" bind:this={form}>
+	<PinInput.Root name="mfaCode" onComplete={() => form.submit()}>
+		<!-- ... -->
+	</PinInput.Root>
+</form>
 ```
 
 <APISection {schemas} />

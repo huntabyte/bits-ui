@@ -4,7 +4,13 @@ import type { EscapeLayerProps } from "../utilities/escape-layer/types.js";
 import type { FloatingLayerContentProps } from "../utilities/floating-layer/types.js";
 import type { PortalProps } from "../utilities/portal/types.js";
 import type { PrimitiveAnchorAttributes, PrimitiveDivAttributes } from "$lib/shared/attributes.js";
-import type { OnChangeFn, WithChild, WithChildren, Without } from "$lib/internal/types.js";
+import type {
+	OnChangeFn,
+	WithChild,
+	WithChildNoChildrenSnippetProps,
+	WithChildren,
+	Without,
+} from "$lib/internal/types.js";
 
 export type LinkPreviewRootPropsWithoutHTML = WithChildren<{
 	/**
@@ -68,7 +74,7 @@ export type LinkPreviewContentSnippetProps = {
 	open: boolean;
 };
 
-export type LinkPreviewContentPropsWithoutHTML = WithChild<
+export type LinkPreviewContentPropsWithoutHTML = WithChildNoChildrenSnippetProps<
 	Pick<
 		FloatingLayerContentProps,
 		| "side"

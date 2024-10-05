@@ -85,7 +85,7 @@
 			{@render child({ props, ...contentState.snippetProps })}
 		{:else}
 			<div {...props}>
-				{@render children?.(contentState.snippetProps)}
+				{@render children?.()}
 			</div>
 		{/if}
 		<Mounted bind:isMounted />

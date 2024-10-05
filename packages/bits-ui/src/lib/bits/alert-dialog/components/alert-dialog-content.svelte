@@ -92,7 +92,7 @@
 										},
 									})}
 								>
-									{@render children?.(contentState.snippetProps)}
+									{@render children?.()}
 								</div>
 							{/if}
 						</TextSelectionLayer>

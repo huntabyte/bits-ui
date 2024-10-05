@@ -1,7 +1,13 @@
 import type { Expand } from "svelte-toolbelt";
 import type { PopperLayerProps, PopperLayerStaticProps } from "../utilities/popper-layer/types.js";
 import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
-import type { OnChangeFn, WithChild, WithChildren, Without } from "$lib/internal/types.js";
+import type {
+	OnChangeFn,
+	WithChild,
+	WithChildNoChildrenSnippetProps,
+	WithChildren,
+	Without,
+} from "$lib/internal/types.js";
 import type { PrimitiveButtonAttributes, PrimitiveDivAttributes } from "$lib/shared/attributes.js";
 import type { Direction } from "$lib/shared/index.js";
 import type { PortalProps } from "$lib/bits/utilities/portal/types.js";
@@ -54,14 +60,17 @@ export type MenuContentSnippetProps = {
 };
 
 export type MenuContentPropsWithoutHTML = Expand<
-	WithChild<Omit<PopperLayerProps, "content"> & _SharedMenuContentProps, MenuContentSnippetProps>
+	WithChildNoChildrenSnippetProps<
+		Omit<PopperLayerProps, "content"> & _SharedMenuContentProps,
+		MenuContentSnippetProps
+	>
 >;
 
 export type MenuContentProps = MenuContentPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, MenuContentPropsWithoutHTML>;
 
 export type MenuContentStaticPropsWithoutHTML = Expand<
-	WithChild<
+	WithChildNoChildrenSnippetProps<
 		Omit<PopperLayerStaticProps, "content"> & _SharedMenuContentProps,
 		MenuContentSnippetProps
 	>
@@ -168,7 +177,7 @@ export type MenuSubPropsWithoutHTML = WithChildren<{
 export type MenuSubProps = MenuSubPropsWithoutHTML;
 
 export type MenuSubContentPropsWithoutHTML = Expand<
-	WithChild<
+	WithChildNoChildrenSnippetProps<
 		Omit<PopperLayerProps, "content" | "preventScroll"> & _SharedMenuContentProps,
 		MenuContentSnippetProps
 	>
@@ -178,7 +187,7 @@ export type MenuSubContentProps = MenuSubContentPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, MenuSubContentPropsWithoutHTML>;
 
 export type MenuSubContentStaticPropsWithoutHTML = Expand<
-	WithChild<
+	WithChildNoChildrenSnippetProps<
 		Omit<PopperLayerStaticProps, "content" | "preventScroll"> & _SharedMenuContentProps,
 		MenuContentSnippetProps
 	>

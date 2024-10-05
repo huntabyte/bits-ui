@@ -1,6 +1,12 @@
 import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
 import type { PopperLayerProps, PopperLayerStaticProps } from "../utilities/popper-layer/types.js";
-import type { OnChangeFn, WithChild, WithChildren, Without } from "$lib/internal/types.js";
+import type {
+	OnChangeFn,
+	WithChild,
+	WithChildNoChildrenSnippetProps,
+	WithChildren,
+	Without,
+} from "$lib/internal/types.js";
 import type { PrimitiveButtonAttributes, PrimitiveDivAttributes } from "$lib/shared/attributes.js";
 
 export type PopoverRootPropsWithoutHTML = WithChildren<{
@@ -34,7 +40,7 @@ export type PopoverContentSnippetProps = {
 	open: boolean;
 };
 
-export type PopoverContentPropsWithoutHTML = WithChild<
+export type PopoverContentPropsWithoutHTML = WithChildNoChildrenSnippetProps<
 	Omit<PopperLayerProps, "content" | "loop">,
 	PopoverContentSnippetProps
 >;
@@ -42,7 +48,7 @@ export type PopoverContentPropsWithoutHTML = WithChild<
 export type PopoverContentProps = PopoverContentPropsWithoutHTML &
 	Without<PrimitiveDivAttributes, PopoverContentPropsWithoutHTML>;
 
-export type PopoverContentStaticPropsWithoutHTML = WithChild<
+export type PopoverContentStaticPropsWithoutHTML = WithChildNoChildrenSnippetProps<
 	Omit<PopperLayerStaticProps, "content" | "loop">,
 	PopoverContentSnippetProps
 >;

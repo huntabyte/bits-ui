@@ -3,7 +3,13 @@ import type { DismissibleLayerProps } from "../utilities/dismissible-layer/types
 import type { PresenceLayerProps } from "../utilities/presence-layer/types.js";
 import type { FocusScopeProps } from "../utilities/focus-scope/types.js";
 import type { TextSelectionLayerProps } from "../utilities/text-selection-layer/types.js";
-import type { OnChangeFn, WithChild, WithChildren, Without } from "$lib/internal/types.js";
+import type {
+	OnChangeFn,
+	WithChild,
+	WithChildNoChildrenSnippetProps,
+	WithChildren,
+	Without,
+} from "$lib/internal/types.js";
 import type { PrimitiveButtonAttributes, PrimitiveDivAttributes } from "$lib/shared/attributes.js";
 import type { PortalProps } from "$lib/bits/utilities/portal/index.js";
 
@@ -34,7 +40,7 @@ export type DialogContentSnippetProps = {
 	open: boolean;
 };
 
-export type DialogContentPropsWithoutHTML = WithChild<
+export type DialogContentPropsWithoutHTML = WithChildNoChildrenSnippetProps<
 	Omit<
 		EscapeLayerProps &
 			Omit<DismissibleLayerProps, "onInteractOutsideStart"> &
