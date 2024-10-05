@@ -68,6 +68,12 @@
 
 -   Svelte 5 pre-release. This release includes many breaking changes, bug fixes, and new features that are not possible to include in the previous release. Please see the [@next documentation](https://huntabyte-next.bits-ui.pages.dev/) for more information. ([#690](https://github.com/huntabyte/bits-ui/pull/690))
 
+## 0.21.16
+
+### Patch Changes
+
+-   fix: Changed svelte event handlers in favor of CustomEventHandler ([#536](https://github.com/huntabyte/bits-ui/pull/536))
+
 ## 0.21.15
 
 ### Patch Changes
