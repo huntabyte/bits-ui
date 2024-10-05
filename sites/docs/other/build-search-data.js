@@ -20,28 +20,28 @@ function cleanMd(md) {
 export function buildDocsIndex() {
 	const components = componentDocs.map((doc) => ({
 		title: doc.title,
-		content: cleanMd(doc.body.raw),
+		content: cleanMd(doc.raw),
 		description: doc.description,
 		href: `/docs/components/${doc.slug}`,
 	}));
 
 	const utilities = utilityDocs.map((doc) => ({
 		title: doc.title,
-		content: cleanMd(doc.body.raw),
+		content: cleanMd(doc.raw),
 		description: doc.description,
 		href: `/docs/utilities/${doc.slug}`,
 	}));
 
 	const typeHelpers = typeHelperDocs.map((doc) => ({
 		title: doc.title,
-		content: cleanMd(doc.body.raw),
+		content: cleanMd(doc.raw),
 		description: doc.description,
 		href: `/docs/type-helpers/${doc.slug}`,
 	}));
 
 	const mainPages = docs.map((doc) => ({
 		title: doc.title,
-		content: cleanMd(doc.body.raw),
+		content: cleanMd(doc.raw),
 		description: doc.description,
 		href: `/docs${doc.slugFull}`,
 	}));
