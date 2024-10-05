@@ -2,7 +2,7 @@
 	import { box } from "svelte-toolbelt";
 	import type { ScrollAreaCornerProps } from "../types.js";
 	import { useScrollAreaCorner } from "../scroll-area.svelte.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 
 	let {
 		ref = $bindable(null),

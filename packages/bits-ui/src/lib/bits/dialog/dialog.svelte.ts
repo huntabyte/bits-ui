@@ -1,7 +1,7 @@
 import { getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import { useRefById } from "$lib/internal/useRefById.svelte.js";
-import { createContext } from "$lib/internal/createContext.js";
+import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
+import { createContext } from "$lib/internal/create-context.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 
 type DialogVariant = "alert-dialog" | "dialog";

@@ -2,8 +2,8 @@
 	import { box } from "svelte-toolbelt";
 	import { useSeparatorRoot } from "../separator.svelte.js";
 	import type { SeparatorRootProps } from "../types.js";
-	import { useId } from "$lib/internal/useId.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/use-id.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 
 	let {
 		id = useId(),

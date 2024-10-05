@@ -1,6 +1,6 @@
 import type { DateValue } from "@internationalized/date";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import { createContext } from "$lib/internal/createContext.js";
+import { createContext } from "$lib/internal/create-context.js";
 import type { DateMatcher, SegmentPart } from "$lib/shared/index.js";
 import type { Granularity, HourCycle, WeekStartsOn } from "$lib/shared/date/types.js";
 

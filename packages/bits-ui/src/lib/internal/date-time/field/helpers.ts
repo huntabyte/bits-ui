@@ -21,7 +21,7 @@ import {
 import { getSegments } from "./segments.js";
 import { isBrowser, isNull, isNumberString } from "$lib/internal/is.js";
 import { styleToString } from "$lib/internal/style.js";
-import { useId } from "$lib/internal/useId.js";
+import { useId } from "$lib/internal/use-id.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type { Granularity, HourCycle } from "$lib/shared/date/types.js";
 

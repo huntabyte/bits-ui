@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { mergeProps } from "./mergeProps.js";
+import { mergeProps } from "./merge-props.js";
 
 describe("mergeProps", () => {
 	it("should merge objects", () => {

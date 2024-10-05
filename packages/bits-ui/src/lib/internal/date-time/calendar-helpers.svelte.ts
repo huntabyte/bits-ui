@@ -12,7 +12,7 @@ import {
 } from "./utils.js";
 import type { Formatter } from "./formatter.js";
 import { getDataDisabled, getDataInvalid, getDataReadonly } from "$lib/internal/attrs.js";
-import { afterTick } from "$lib/internal/afterTick.js";
+import { afterTick } from "$lib/internal/after-tick.js";
 import { chunk, isValidIndex } from "$lib/internal/arrays.js";
 import { isHTMLElement } from "$lib/internal/is.js";
 import { kbd } from "$lib/internal/kbd.js";

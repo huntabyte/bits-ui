@@ -2,8 +2,8 @@
 	import { box } from "svelte-toolbelt";
 	import { useListboxTrigger } from "../listbox.svelte.js";
 	import type { ListboxTriggerProps } from "../types.js";
-	import { useId } from "$lib/internal/useId.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/use-id.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 
 	let {

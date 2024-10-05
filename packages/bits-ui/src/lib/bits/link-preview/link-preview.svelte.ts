@@ -6,12 +6,12 @@ import { addEventListener } from "$lib/internal/events.js";
 import { isElement, isFocusVisible, isTouch } from "$lib/internal/is.js";
 import { sleep } from "$lib/internal/sleep.js";
 import type { WithRefProps } from "$lib/internal/types.js";
-import { useRefById } from "$lib/internal/useRefById.svelte.js";
+import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
 import { getTabbableCandidates } from "$lib/internal/focus.js";
-import { createContext } from "$lib/internal/createContext.js";
-import { useGraceArea } from "$lib/internal/useGraceArea.svelte.js";
-import { onDestroyEffect } from "$lib/internal/onDestroyEffect.svelte.js";
-import { afterSleep } from "$lib/internal/afterSleep.js";
+import { createContext } from "$lib/internal/create-context.js";
+import { useGraceArea } from "$lib/internal/use-grace-area.svelte.js";
+import { onDestroyEffect } from "$lib/internal/on-destroy-effect.svelte.js";
+import { afterSleep } from "$lib/internal/after-sleep.js";
 
 const CONTENT_ATTR = "data-link-preview-content";
 const TRIGGER_ATTR = "data-link-preview-trigger";

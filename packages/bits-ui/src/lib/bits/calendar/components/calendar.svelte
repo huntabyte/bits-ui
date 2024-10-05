@@ -3,9 +3,9 @@
 	import type { DateValue } from "@internationalized/date";
 	import { useCalendarRoot } from "../calendar.svelte.js";
 	import type { CalendarRootProps } from "../types.js";
-	import { useId } from "$lib/internal/useId.js";
+	import { useId } from "$lib/internal/use-id.js";
 	import { noop } from "$lib/internal/callbacks.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
 
 	let {

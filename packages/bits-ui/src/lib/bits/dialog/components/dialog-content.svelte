@@ -7,8 +7,8 @@
 	import FocusScope from "$lib/bits/utilities/focus-scope/focus-scope.svelte";
 	import PresenceLayer from "$lib/bits/utilities/presence-layer/presence-layer.svelte";
 	import TextSelectionLayer from "$lib/bits/utilities/text-selection-layer/text-selection-layer.svelte";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
-	import { useId } from "$lib/internal/useId.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
+	import { useId } from "$lib/internal/use-id.js";
 	import { noop } from "$lib/internal/callbacks.js";
 	import ScrollLock from "$lib/bits/utilities/scroll-lock/scroll-lock.svelte";
 

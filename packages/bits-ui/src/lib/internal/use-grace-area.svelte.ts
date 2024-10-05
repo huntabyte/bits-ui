@@ -1,6 +1,6 @@
 import type { Getter, ReadableBox } from "svelte-toolbelt";
-import { boxAutoReset } from "./boxAutoReset.svelte.js";
-import { createEventHook } from "./createEventHook.svelte.js";
+import { boxAutoReset } from "./box-auto-reset.svelte.js";
+import { createEventHook } from "./create-event-hook.svelte.js";
 import { isElement, isHTMLElement } from "./is.js";
 import { executeCallbacks } from "./callbacks.js";
 import { addEventListener } from "./events.js";

@@ -3,9 +3,9 @@
 	import type { PopoverContentProps } from "../types.js";
 	import { usePopoverContent } from "../popover.svelte.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 	import { noop } from "$lib/internal/noop.js";
-	import { useId } from "$lib/internal/useId.js";
+	import { useId } from "$lib/internal/use-id.js";
 	import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
 
 	let {

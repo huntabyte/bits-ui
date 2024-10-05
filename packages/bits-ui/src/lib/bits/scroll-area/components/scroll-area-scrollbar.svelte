@@ -6,7 +6,7 @@
 	import ScrollAreaScrollbarScroll from "./scroll-area-scrollbar-scroll.svelte";
 	import ScrollAreaScrollbarHover from "./scroll-area-scrollbar-hover.svelte";
 	import ScrollAreaScrollbarVisible from "./scroll-area-scrollbar-visible.svelte";
-	import { useId } from "$lib/internal/useId.js";
+	import { useId } from "$lib/internal/use-id.js";
 
 	let {
 		ref = $bindable(null),

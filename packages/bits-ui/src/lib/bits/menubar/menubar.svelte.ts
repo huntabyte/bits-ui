@@ -2,16 +2,19 @@ import { type ReadableBox, box } from "svelte-toolbelt";
 import { untrack } from "svelte";
 import type { InteractOutsideBehaviorType } from "../utilities/dismissible-layer/types.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import { type UseRovingFocusReturn, useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
+import {
+	type UseRovingFocusReturn,
+	useRovingFocus,
+} from "$lib/internal/use-roving-focus.svelte.js";
 import type { Direction } from "$lib/shared/index.js";
-import { createContext } from "$lib/internal/createContext.js";
+import { createContext } from "$lib/internal/create-context.js";
 import { getAriaExpanded, getDataDisabled, getDataOpenClosed } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
-import { wrapArray } from "$lib/internal/useTypeahead.svelte.js";
+import { wrapArray } from "$lib/internal/use-typeahead.svelte.js";
 import { isBrowser } from "$lib/internal/is.js";
-import { afterTick } from "$lib/internal/afterTick.js";
+import { afterTick } from "$lib/internal/after-tick.js";
 import type { WithRefProps } from "$lib/internal/types.js";
-import { useRefById } from "$lib/internal/useRefById.svelte.js";
+import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
 
 const ROOT_ATTR = "data-menubar-root";
 const TRIGGER_ATTR = "data-menubar-trigger";

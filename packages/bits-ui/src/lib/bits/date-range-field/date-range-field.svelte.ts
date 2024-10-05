@@ -4,7 +4,7 @@ import { box } from "svelte-toolbelt";
 import type { DateFieldRootState } from "../date-field/date-field.svelte.js";
 import { DateFieldInputState, useDateFieldRoot } from "../date-field/date-field.svelte.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import { useId } from "$lib/internal/useId.js";
+import { useId } from "$lib/internal/use-id.js";
 import type {
 	DateOnInvalid,
 	DateRange,
@@ -12,10 +12,10 @@ import type {
 	SegmentPart,
 } from "$lib/shared/index.js";
 import type { WithRefProps } from "$lib/internal/types.js";
-import { useRefById } from "$lib/internal/useRefById.svelte.js";
-import { createContext } from "$lib/internal/createContext.js";
+import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
+import { createContext } from "$lib/internal/create-context.js";
 import { getDataDisabled, getDataInvalid } from "$lib/internal/attrs.js";
-import { onDestroyEffect } from "$lib/internal/onDestroyEffect.svelte.js";
+import { onDestroyEffect } from "$lib/internal/on-destroy-effect.svelte.js";
 import type { Granularity } from "$lib/shared/date/types.js";
 import { type Formatter, createFormatter } from "$lib/internal/date-time/formatter.js";
 import { removeDescriptionElement } from "$lib/internal/date-time/field/helpers.js";

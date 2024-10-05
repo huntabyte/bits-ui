@@ -4,8 +4,8 @@
 	import type { CommandRootProps } from "../types.js";
 	import CommandLabel from "./_command-label.svelte";
 	import { noop } from "$lib/internal/callbacks.js";
-	import { useId } from "$lib/internal/useId.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/use-id.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 
 	let {
 		id = useId(),

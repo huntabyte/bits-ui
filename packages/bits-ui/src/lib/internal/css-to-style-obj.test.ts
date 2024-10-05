@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { cssToStyleObj } from "./cssToStyleObj.js";
+import { cssToStyleObj } from "./css-to-style-obj.js";
 
 describe("cssToStyleObj", () => {
 	it("should return an empty object if an empty string is passed", () => {

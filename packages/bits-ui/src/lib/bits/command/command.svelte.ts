@@ -2,11 +2,11 @@ import { untrack } from "svelte";
 import { findNextSibling, findPreviousSibling } from "./utils.js";
 import { commandScore } from "./command-score.js";
 import type { CommandState } from "./types.js";
-import { useRefById } from "$lib/internal/useRefById.svelte.js";
-import { createContext } from "$lib/internal/createContext.js";
+import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
+import { createContext } from "$lib/internal/create-context.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import { afterSleep } from "$lib/internal/afterSleep.js";
+import { afterSleep } from "$lib/internal/after-sleep.js";
 import { kbd } from "$lib/internal/kbd.js";
 import {
 	getAriaDisabled,
@@ -17,7 +17,7 @@ import {
 } from "$lib/internal/attrs.js";
 import { getFirstNonCommentChild } from "$lib/internal/dom.js";
 import { srOnlyStyles } from "$lib/internal/style.js";
-import { afterTick } from "$lib/internal/afterTick.js";
+import { afterTick } from "$lib/internal/after-tick.js";
 
 const ROOT_ATTR = "data-command-root";
 const LIST_ATTR = "data-command-list";

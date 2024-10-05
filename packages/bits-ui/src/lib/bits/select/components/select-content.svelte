@@ -4,7 +4,7 @@
 	import { useSelectContent, useSelectContentFrag } from "../select.svelte.js";
 	import SelectProvider from "./select-provider.svelte";
 	import SelectContentImpl from "./select-content-impl.svelte";
-	import { useId } from "$lib/internal/useId.js";
+	import { useId } from "$lib/internal/use-id.js";
 	import Portal from "$lib/bits/utilities/portal/portal.svelte";
 	import PresenceLayer from "$lib/bits/utilities/presence-layer/presence-layer.svelte";
 

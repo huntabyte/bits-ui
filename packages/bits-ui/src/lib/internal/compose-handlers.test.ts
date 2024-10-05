@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { composeHandlers } from "./composeHandlers.js"; // Replace with the actual file name
+import { composeHandlers } from "./compose-handlers.js"; // Replace with the actual file name
 
 describe("composeHandlers", () => {
 	it("should call all handlers in order", () => {

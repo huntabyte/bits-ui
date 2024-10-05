@@ -19,10 +19,10 @@ import {
 	getDataUnavailable,
 } from "$lib/internal/attrs.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import { createContext } from "$lib/internal/createContext.js";
+import { createContext } from "$lib/internal/create-context.js";
 import type { WithRefProps } from "$lib/internal/types.js";
-import { useId } from "$lib/internal/useId.js";
-import { useRefById } from "$lib/internal/useRefById.svelte.js";
+import { useId } from "$lib/internal/use-id.js";
+import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
 import type { DateMatcher, Month } from "$lib/shared/index.js";
 import { type Announcer, getAnnouncer } from "$lib/internal/date-time/announcer.js";
 import { type Formatter, createFormatter } from "$lib/internal/date-time/formatter.js";

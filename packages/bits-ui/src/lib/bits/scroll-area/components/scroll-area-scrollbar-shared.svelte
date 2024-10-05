@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { useScrollAreaScrollbarShared } from "../scroll-area.svelte.js";
 	import type { _ScrollbarStubProps } from "../types.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 
 	let { child, children, ...restProps }: _ScrollbarStubProps = $props();
 

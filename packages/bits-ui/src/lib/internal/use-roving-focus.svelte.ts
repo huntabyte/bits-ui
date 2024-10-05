@@ -1,6 +1,6 @@
 import { type ReadableBox, type WritableBox, box } from "svelte-toolbelt";
 import { getElemDirection } from "./locale.js";
-import { getDirectionalKeys } from "./getDirectionalKeys.js";
+import { getDirectionalKeys } from "./get-directional-keys.js";
 import { kbd } from "./kbd.js";
 import { isBrowser } from "./is.js";
 import type { Orientation } from "$lib/shared/index.js";

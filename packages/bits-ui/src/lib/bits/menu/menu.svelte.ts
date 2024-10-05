@@ -16,10 +16,10 @@ import { focusFirst } from "$lib/internal/focus.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { addEventListener } from "$lib/internal/events.js";
 import type { AnyFn, WithRefProps } from "$lib/internal/types.js";
-import { executeCallbacks } from "$lib/internal/executeCallbacks.js";
-import { useTypeahead } from "$lib/internal/useTypeahead.svelte.js";
+import { executeCallbacks } from "$lib/internal/execute-callbacks.js";
+import { useTypeahead } from "$lib/internal/use-typeahead.svelte.js";
 import { isElement, isElementOrSVGElement, isHTMLElement } from "$lib/internal/is.js";
-import { useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
+import { useRovingFocus } from "$lib/internal/use-roving-focus.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import {
 	getAriaChecked,
@@ -29,13 +29,13 @@ import {
 	getDataDisabled,
 	getDataOpenClosed,
 } from "$lib/internal/attrs.js";
-import { mergeProps } from "$lib/internal/mergeProps.js";
-import { createContext } from "$lib/internal/createContext.js";
+import { mergeProps } from "$lib/internal/merge-props.js";
+import { createContext } from "$lib/internal/create-context.js";
 import type { Direction } from "$lib/shared/index.js";
-import { afterTick } from "$lib/internal/afterTick.js";
-import { useRefById } from "$lib/internal/useRefById.svelte.js";
+import { afterTick } from "$lib/internal/after-tick.js";
+import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
 import { isPointerInGraceArea, makeHullFromElements } from "$lib/internal/polygon.js";
-import { onDestroyEffect } from "$lib/internal/onDestroyEffect.svelte.js";
+import { onDestroyEffect } from "$lib/internal/on-destroy-effect.svelte.js";
 
 export const CONTEXT_MENU_TRIGGER_ATTR = "data-context-menu-trigger";
 

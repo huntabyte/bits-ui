@@ -5,7 +5,7 @@ import { onMount, untrack } from "svelte";
 import type { DateRangeFieldRootState } from "../date-range-field/date-range-field.svelte.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { WithRefProps } from "$lib/internal/types.js";
-import { useRefById } from "$lib/internal/useRefById.svelte.js";
+import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
 import {
 	getAriaDisabled,
 	getAriaHidden,
@@ -17,9 +17,9 @@ import {
 } from "$lib/internal/attrs.js";
 import { isBrowser, isNumberString } from "$lib/internal/is.js";
 import { kbd } from "$lib/internal/kbd.js";
-import { createContext } from "$lib/internal/createContext.js";
-import { useId } from "$lib/internal/useId.js";
-import { onDestroyEffect } from "$lib/internal/onDestroyEffect.svelte.js";
+import { createContext } from "$lib/internal/create-context.js";
+import { useId } from "$lib/internal/use-id.js";
+import { onDestroyEffect } from "$lib/internal/on-destroy-effect.svelte.js";
 import type {
 	DateAndTimeSegmentObj,
 	DateOnInvalid,

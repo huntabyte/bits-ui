@@ -3,8 +3,8 @@
 	import type { SwitchRootProps } from "../types.js";
 	import { useSwitchRoot } from "../switch.svelte.js";
 	import SwitchInput from "./switch-input.svelte";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
-	import { useId } from "$lib/internal/useId.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
+	import { useId } from "$lib/internal/use-id.js";
 	import { noop } from "$lib/internal/callbacks.js";
 
 	let {

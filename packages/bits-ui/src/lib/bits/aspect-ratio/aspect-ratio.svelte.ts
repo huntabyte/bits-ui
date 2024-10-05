@@ -1,4 +1,4 @@
-import { useRefById } from "$lib/internal/useRefById.svelte.js";
+import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
 import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 

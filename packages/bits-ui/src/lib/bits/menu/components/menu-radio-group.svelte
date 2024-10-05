@@ -3,8 +3,8 @@
 	import type { MenuRadioGroupProps } from "../types.js";
 	import { useMenuRadioGroup } from "../menu.svelte.js";
 	import { noop } from "$lib/internal/callbacks.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
-	import { useId } from "$lib/internal/useId.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
+	import { useId } from "$lib/internal/use-id.js";
 
 	let {
 		id = useId(),

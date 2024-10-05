@@ -3,10 +3,10 @@
  */
 import { clsx } from "clsx";
 import type { EventCallback } from "./events.js";
-import { composeHandlers } from "./composeHandlers.js";
-import { executeCallbacks } from "./executeCallbacks.js";
+import { composeHandlers } from "./compose-handlers.js";
+import { executeCallbacks } from "./execute-callbacks.js";
 import { styleToString } from "./style.js";
-import { cssToStyleObj } from "./cssToStyleObj.js";
+import { cssToStyleObj } from "./css-to-style-obj.js";
 import type { StyleProperties } from "$lib/shared/index.js";
 
 type Props = Record<string, unknown>;

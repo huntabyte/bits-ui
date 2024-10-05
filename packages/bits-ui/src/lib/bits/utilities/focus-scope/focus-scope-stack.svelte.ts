@@ -1,5 +1,5 @@
 import { box } from "svelte-toolbelt";
-import { useId } from "$lib/internal/useId.js";
+import { useId } from "$lib/internal/use-id.js";
 
 export type FocusScopeAPI = {
 	id: string;

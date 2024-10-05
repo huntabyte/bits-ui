@@ -2,8 +2,8 @@
 	import { box } from "svelte-toolbelt";
 	import type { ListboxScrollDownButtonProps } from "../types.js";
 	import { useListboxScrollDownButton } from "../listbox.svelte.js";
-	import { useId } from "$lib/internal/useId.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/use-id.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 	import { Mounted } from "$lib/bits/utilities/index.js";
 
 	let {

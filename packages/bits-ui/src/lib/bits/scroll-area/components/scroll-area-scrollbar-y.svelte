@@ -4,7 +4,7 @@
 	import { useScrollAreaScrollbarY } from "../scroll-area.svelte.js";
 	import type { _ScrollbarStubProps } from "../types.js";
 	import ScrollAreaScrollbarShared from "./scroll-area-scrollbar-shared.svelte";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 
 	let { ...restProps }: _ScrollbarStubProps = $props();
 

@@ -12,16 +12,16 @@ import {
 	getDataOrientation,
 	getDisabled,
 } from "$lib/internal/attrs.js";
-import { createContext } from "$lib/internal/createContext.js";
-import { useId } from "$lib/internal/useId.js";
+import { createContext } from "$lib/internal/create-context.js";
+import { useId } from "$lib/internal/use-id.js";
 import { kbd } from "$lib/internal/kbd.js";
-import { useArrowNavigation } from "$lib/internal/useArrowNavigation.js";
-import { boxAutoReset } from "$lib/internal/boxAutoReset.svelte.js";
-import { useRefById } from "$lib/internal/useRefById.svelte.js";
+import { useArrowNavigation } from "$lib/internal/use-arrow-navigation.js";
+import { boxAutoReset } from "$lib/internal/box-auto-reset.svelte.js";
+import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
 import type { ElementRef, WithRefProps } from "$lib/internal/types.js";
-import { afterTick } from "$lib/internal/afterTick.js";
+import { afterTick } from "$lib/internal/after-tick.js";
 import { noop } from "$lib/internal/callbacks.js";
-import { useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
+import { useRovingFocus } from "$lib/internal/use-roving-focus.svelte.js";
 
 const [setNavigationMenuRootContext] =
 	createContext<NavigationMenuRootState>("NavigationMenu.Root");

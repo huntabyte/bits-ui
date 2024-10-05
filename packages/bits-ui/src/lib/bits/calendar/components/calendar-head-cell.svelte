@@ -2,8 +2,8 @@
 	import { box } from "svelte-toolbelt";
 	import { useCalendarHeadCell } from "../calendar.svelte.js";
 	import type { CalendarHeadCellProps } from "../types.js";
-	import { useId } from "$lib/internal/useId.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/use-id.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 
 	let {
 		children,

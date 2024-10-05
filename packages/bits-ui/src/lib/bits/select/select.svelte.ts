@@ -7,12 +7,12 @@ import { type ReadableBox, type WritableBox, box } from "svelte-toolbelt";
 import { SvelteMap } from "svelte/reactivity";
 import { untrack } from "svelte";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import { useId } from "$lib/internal/useId.js";
+import { useId } from "$lib/internal/use-id.js";
 import type { Direction } from "$lib/shared/index.js";
-import { createContext } from "$lib/internal/createContext.js";
-import { useFormControl } from "$lib/internal/useFormControl.svelte.js";
-import { useRefById } from "$lib/internal/useRefById.svelte.js";
-import { type Typeahead, useTypeahead } from "$lib/internal/useTypeahead.svelte.js";
+import { createContext } from "$lib/internal/create-context.js";
+import { useFormControl } from "$lib/internal/use-form-control.svelte.js";
+import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
+import { type Typeahead, useTypeahead } from "$lib/internal/use-typeahead.svelte.js";
 import {
 	getAriaDisabled,
 	getAriaExpanded,
@@ -24,13 +24,13 @@ import {
 	getDataOpenClosed,
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
-import { afterTick } from "$lib/internal/afterTick.js";
+import { afterTick } from "$lib/internal/after-tick.js";
 import { clamp } from "$lib/internal/clamp.js";
 import { noop } from "$lib/internal/callbacks.js";
 import { addEventListener } from "$lib/internal/events.js";
 import { sleep } from "$lib/internal/sleep.js";
 import type { WithRefProps } from "$lib/internal/types.js";
-import { afterSleep } from "$lib/internal/afterSleep.js";
+import { afterSleep } from "$lib/internal/after-sleep.js";
 
 export const OPEN_KEYS = [kbd.SPACE, kbd.ENTER, kbd.ARROW_UP, kbd.ARROW_DOWN];
 export const SELECTION_KEYS = [" ", kbd.ENTER];

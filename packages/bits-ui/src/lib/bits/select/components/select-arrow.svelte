@@ -3,8 +3,8 @@
 	import type { SelectArrowProps } from "../types.js";
 	import { useSelectArrow } from "../select.svelte.js";
 	import FloatingLayerArrow from "$lib/bits/utilities/floating-layer/components/floating-layer-arrow.svelte";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
-	import { useId } from "$lib/internal/useId.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
+	import { useId } from "$lib/internal/use-id.js";
 
 	let { id = useId(), ref = $bindable(null), ...restProps }: SelectArrowProps = $props();
 

@@ -2,7 +2,7 @@
 	import { box, mergeProps } from "svelte-toolbelt";
 	import { useCommandViewport } from "../command.svelte.js";
 	import type { CommandViewportProps } from "../types.js";
-	import { useId } from "$lib/internal/useId.js";
+	import { useId } from "$lib/internal/use-id.js";
 
 	let {
 		id = useId(),

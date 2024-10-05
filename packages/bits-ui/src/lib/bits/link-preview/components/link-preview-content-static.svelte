@@ -2,8 +2,8 @@
 	import { box } from "svelte-toolbelt";
 	import type { LinkPreviewContentStaticProps } from "../types.js";
 	import { useLinkPreviewContent } from "../link-preview.svelte.js";
-	import { useId } from "$lib/internal/useId.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/use-id.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
 
 	let {

@@ -3,8 +3,8 @@
 	import type { CheckboxRootProps } from "../types.js";
 	import { useCheckboxRoot } from "../checkbox.svelte.js";
 	import CheckboxInput from "./checkbox-input.svelte";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
-	import { useId } from "$lib/internal/useId.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
+	import { useId } from "$lib/internal/use-id.js";
 
 	let {
 		checked = $bindable(false),

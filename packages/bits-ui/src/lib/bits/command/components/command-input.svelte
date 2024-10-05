@@ -2,8 +2,8 @@
 	import { box } from "svelte-toolbelt";
 	import type { CommandInputProps } from "../types.js";
 	import { useCommandInput } from "../command.svelte.js";
-	import { useId } from "$lib/internal/useId.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/use-id.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 
 	let {
 		value = $bindable(""),

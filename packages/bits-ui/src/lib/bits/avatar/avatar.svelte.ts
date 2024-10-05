@@ -2,10 +2,10 @@ import { untrack } from "svelte";
 import type { ReadableBox, WritableBox } from "svelte-toolbelt";
 import type { HTMLImgAttributes } from "svelte/elements";
 import type { AvatarImageLoadingStatus } from "./types.js";
-import { createContext } from "$lib/internal/createContext.js";
+import { createContext } from "$lib/internal/create-context.js";
 import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { WithRefProps } from "$lib/internal/types.js";
-import { useRefById } from "$lib/internal/useRefById.svelte.js";
+import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
 
 const AVATAR_ROOT_ATTR = "data-avatar-root";
 const AVATAR_IMAGE_ATTR = "data-avatar-image";

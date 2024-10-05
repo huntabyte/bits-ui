@@ -1,4 +1,4 @@
-import { boxAutoReset } from "./boxAutoReset.svelte.js";
+import { boxAutoReset } from "./box-auto-reset.svelte.js";
 
 export type Typeahead = ReturnType<typeof useTypeahead>;
 

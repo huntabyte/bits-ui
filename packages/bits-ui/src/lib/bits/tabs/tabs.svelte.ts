@@ -9,13 +9,16 @@ import {
 	getDisabled,
 	getHidden,
 } from "$lib/internal/attrs.js";
-import { useRefById } from "$lib/internal/useRefById.svelte.js";
+import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import type { Orientation } from "$lib/shared/index.js";
-import { type UseRovingFocusReturn, useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
-import { createContext } from "$lib/internal/createContext.js";
+import {
+	type UseRovingFocusReturn,
+	useRovingFocus,
+} from "$lib/internal/use-roving-focus.svelte.js";
+import { createContext } from "$lib/internal/create-context.js";
 
 const ROOT_ATTR = "data-tabs-root";
 const LIST_ATTR = "data-tabs-list";

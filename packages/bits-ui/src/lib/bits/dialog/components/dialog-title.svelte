@@ -2,8 +2,8 @@
 	import { box } from "svelte-toolbelt";
 	import { useDialogTitle } from "../dialog.svelte.js";
 	import type { DialogTitleProps } from "../types.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
-	import { useId } from "$lib/internal/useId.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
+	import { useId } from "$lib/internal/use-id.js";
 
 	let {
 		id = useId(),

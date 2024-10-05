@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { SelectValueProps } from "../types.js";
 	import { useSelectValue } from "../select.svelte.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 
 	let {
 		placeholder = "",

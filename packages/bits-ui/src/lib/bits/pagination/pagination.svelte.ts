@@ -1,13 +1,13 @@
 import type { Page, PageItem } from "./types.js";
-import { useRefById } from "$lib/internal/useRefById.svelte.js";
+import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { getDataOrientation } from "$lib/internal/attrs.js";
 import { getElemDirection } from "$lib/internal/locale.js";
 import { kbd } from "$lib/internal/kbd.js";
-import { getDirectionalKeys } from "$lib/internal/getDirectionalKeys.js";
+import { getDirectionalKeys } from "$lib/internal/get-directional-keys.js";
 import { type Orientation, useId } from "$lib/shared/index.js";
-import { createContext } from "$lib/internal/createContext.js";
+import { createContext } from "$lib/internal/create-context.js";
 
 const ROOT_ATTR = "data-pagination-root";
 const PAGE_ATTR = "data-pagination-page";

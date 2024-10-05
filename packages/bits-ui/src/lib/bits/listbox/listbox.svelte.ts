@@ -2,7 +2,7 @@ import { Previous } from "runed";
 import { untrack } from "svelte";
 import { styleToString } from "svelte-toolbelt";
 import type { InteractOutsideEvent } from "../utilities/dismissible-layer/types.js";
-import { afterTick } from "$lib/internal/afterTick.js";
+import { afterTick } from "$lib/internal/after-tick.js";
 import { backward, forward, next, prev } from "$lib/internal/arrays.js";
 import {
 	getAriaExpanded,
@@ -13,13 +13,13 @@ import {
 	getRequired,
 } from "$lib/internal/attrs.js";
 import type { Box, ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import { createContext } from "$lib/internal/createContext.js";
+import { createContext } from "$lib/internal/create-context.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type { WithRefProps } from "$lib/internal/types.js";
-import { useRefById } from "$lib/internal/useRefById.svelte.js";
+import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
 import { noop } from "$lib/internal/callbacks.js";
 import { addEventListener } from "$lib/internal/events.js";
-import { type Typeahead, useTypeahead } from "$lib/internal/useTypeahead.svelte.js";
+import { type Typeahead, useTypeahead } from "$lib/internal/use-typeahead.svelte.js";
 import { srOnlyStyles } from "$lib/internal/style.js";
 
 // prettier-ignore

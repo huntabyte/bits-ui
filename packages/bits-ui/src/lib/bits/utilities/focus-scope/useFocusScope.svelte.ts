@@ -8,11 +8,11 @@ import {
 import { focus, focusFirst, getTabbableCandidates, getTabbableEdges } from "$lib/internal/focus.js";
 import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import { type EventCallback, addEventListener } from "$lib/internal/events.js";
-import { useRefById } from "$lib/internal/useRefById.svelte.js";
+import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
 import { isHTMLElement } from "$lib/internal/is.js";
 import { executeCallbacks } from "$lib/internal/callbacks.js";
 import { kbd } from "$lib/internal/kbd.js";
-import { afterTick } from "$lib/internal/afterTick.js";
+import { afterTick } from "$lib/internal/after-tick.js";
 
 const AUTOFOCUS_ON_MOUNT = "focusScope.autoFocusOnMount";
 const AUTOFOCUS_ON_DESTROY = "focusScope.autoFocusOnDestroy";

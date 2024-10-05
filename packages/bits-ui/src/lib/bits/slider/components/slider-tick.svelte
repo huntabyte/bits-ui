@@ -2,8 +2,8 @@
 	import { box } from "svelte-toolbelt";
 	import type { SliderTickProps } from "../types.js";
 	import { useSliderTick } from "../slider.svelte.js";
-	import { useId } from "$lib/internal/useId.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/use-id.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 
 	let {
 		children,

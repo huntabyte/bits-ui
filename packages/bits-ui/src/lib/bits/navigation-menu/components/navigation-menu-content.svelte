@@ -2,8 +2,8 @@
 	import { box } from "svelte-toolbelt";
 	import type { NavigationMenuContentProps } from "../types.js";
 	import { useNavigationMenuContent } from "../navigation-menu.svelte.js";
-	import { useId } from "$lib/internal/useId.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/use-id.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 	import Portal from "$lib/bits/utilities/portal/portal.svelte";
 	import PresenceLayer from "$lib/bits/utilities/presence-layer/presence-layer.svelte";
 	import DismissibleLayer from "$lib/bits/utilities/dismissible-layer/dismissible-layer.svelte";

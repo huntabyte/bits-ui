@@ -3,7 +3,7 @@
 	import { IsMounted } from "runed";
 	import type { ScrollAreaThumbProps } from "../types.js";
 	import { useScrollAreaThumb } from "../scroll-area.svelte.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 
 	let {
 		ref = $bindable(null),

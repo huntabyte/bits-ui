@@ -3,7 +3,7 @@
 	import type { MenubarMenuProps } from "../types.js";
 	import { useMenubarMenu } from "../menubar.svelte.js";
 	import Menu from "$lib/bits/menu/components/menu.svelte";
-	import { useId } from "$lib/internal/useId.js";
+	import { useId } from "$lib/internal/use-id.js";
 
 	let { value = useId(), ...restProps }: MenubarMenuProps = $props();
 

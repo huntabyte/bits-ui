@@ -11,16 +11,16 @@ import {
 	getDataDisabled,
 	getDataOrientation,
 } from "$lib/internal/attrs.js";
-import { useRefById } from "$lib/internal/useRefById.svelte.js";
+import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { isElementOrSVGElement } from "$lib/internal/is.js";
 import { isValidIndex } from "$lib/internal/arrays.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { OnChangeFn, WithRefProps } from "$lib/internal/types.js";
 import { addEventListener } from "$lib/internal/events.js";
-import { executeCallbacks } from "$lib/internal/executeCallbacks.js";
+import { executeCallbacks } from "$lib/internal/execute-callbacks.js";
 import type { Direction, Orientation } from "$lib/shared/index.js";
-import { createContext } from "$lib/internal/createContext.js";
+import { createContext } from "$lib/internal/create-context.js";
 import { snapValueToStep } from "$lib/internal/math.js";
 
 const SLIDER_ROOT_ATTR = "data-slider-root";

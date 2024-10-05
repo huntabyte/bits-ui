@@ -3,8 +3,8 @@
 	import { useDateFieldInput } from "../date-field.svelte.js";
 	import type { DateFieldInputProps } from "../types.js";
 	import DateFieldHiddenInput from "./date-field-hidden-input.svelte";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
-	import { useId } from "$lib/internal/useId.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
+	import { useId } from "$lib/internal/use-id.js";
 
 	let {
 		id = useId(),

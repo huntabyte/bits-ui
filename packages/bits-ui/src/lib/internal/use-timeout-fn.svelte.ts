@@ -2,7 +2,7 @@ import { box } from "svelte-toolbelt";
 import type { Box } from "./box.svelte.js";
 import type { AnyFn, Fn } from "./types.js";
 import { isBrowser } from "./is.js";
-import { onDestroyEffect } from "./onDestroyEffect.svelte.js";
+import { onDestroyEffect } from "./on-destroy-effect.svelte.js";
 
 export type UseTimeoutFnOptions = {
 	/**
