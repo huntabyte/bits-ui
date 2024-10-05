@@ -5,12 +5,12 @@
 	"license": "MIT",
 	"private": true,
 	"scripts": {
-		"dev": "concurrently \"pnpm:dev:content\" \"pnpm:dev:svelte\"",
-		"dev:content": "contentlayer dev",
+		"dev": "concurrently \"pnpm:dev:content\" \"pnpm:dev:svelte\" \"pnpm:replace:velite\"",
+		"dev:content": "velite dev --watch",
 		"dev:svelte": "vite dev",
-		"build": "contentlayer build && pnpm build:search && vite build",
-		"build:content": "contentlayer build",
-		"build:content-cachebust": "contentlayer build --clearCache",
+		"build": "velite && node ./other/update-velite-output.js && pnpm build:search && vite build",
+		"replace:velite": "node ./other/watch-velite-output.js",
+		"build:content": "velite",
 		"preview": "vite preview",
 		"build:search": "node ./other/build-search-data.js",
 		"check": "pnpm build:content && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
@@ -29,7 +29,6 @@
 		"autoprefixer": "^10.4.17",
 		"clsx": "^2.1.0",
 		"concurrently": "^8.2.2",
-		"contentlayer": "^0.3.4",
 		"eruda": "^3.0.1",
 		"marked": "^14.1.2",
 		"mdsx": "^0.0.6",
@@ -54,6 +53,7 @@
 		"unified": "^11.0.4",
 		"unist-builder": "^4.0.0",
 		"unist-util-visit": "^5.0.0",
+		"velite": "^0.1.1",
 		"vite": "^5.2.8"
 	},
 	"type": "module",

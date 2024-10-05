@@ -15,6 +15,7 @@ yarn.lock
 package.json
 .vercel
 .contentlayer
+.velite
 **/dist
 
 CHANGELOG.md

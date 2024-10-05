@@ -1,13 +1,8 @@
-import {
-	allComponentDocs,
-	allDocs,
-	allTypeHelperDocs,
-	allUtilityDocs,
-} from "contentlayer/generated/index.mjs";
 import removeMd from "remove-markdown";
+import { componentDocs, docs, typeHelperDocs, utilityDocs } from "$content/index.js";
 
 export function buildDocsIndex() {
-	const components = allComponentDocs.map((doc) => {
+	const components = componentDocs.map((doc) => {
 		const content = removeMd(doc.body.raw, {
 			replaceLinksWithURL: true,
 			gfm: true,
@@ -22,7 +17,7 @@ export function buildDocsIndex() {
 		};
 	});
 
-	const utilities = allUtilityDocs.map((doc) => {
+	const utilities = utilityDocs.map((doc) => {
 		const content = removeMd(doc.body.raw, {
 			replaceLinksWithURL: true,
 			gfm: true,
@@ -37,7 +32,7 @@ export function buildDocsIndex() {
 		};
 	});
 
-	const typeHelpers = allTypeHelperDocs.map((doc) => {
+	const typeHelpers = typeHelperDocs.map((doc) => {
 		const content = removeMd(doc.body.raw, {
 			replaceLinksWithURL: true,
 			gfm: true,
@@ -52,7 +47,7 @@ export function buildDocsIndex() {
 		};
 	});
 
-	const mainPages = allDocs.map((doc) => {
+	const mainPages = docs.map((doc) => {
 		const content = removeMd(doc.body.raw, {
 			replaceLinksWithURL: true,
 			gfm: true,

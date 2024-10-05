@@ -3,12 +3,7 @@ import { fileURLToPath } from "node:url";
 import { writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import removeMd from "remove-markdown";
-import {
-	allComponentDocs,
-	allDocs,
-	allTypeHelperDocs,
-	allUtilityDocs,
-} from "../.contentlayer/generated/index.mjs";
+import { componentDocs, docs, typeHelperDocs, utilityDocs } from "../.velite/index.js";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 
@@ -23,30 +18,30 @@ function cleanMd(md) {
 }
 
 export function buildDocsIndex() {
-	const components = allComponentDocs.map((doc) => ({
+	const components = componentDocs.map((doc) => ({
 		title: doc.title,
-		content: cleanMd(doc.body.raw),
+		content: cleanMd(doc.raw),
 		description: doc.description,
 		href: `/docs/components/${doc.slug}`,
 	}));
 
-	const utilities = allUtilityDocs.map((doc) => ({
+	const utilities = utilityDocs.map((doc) => ({
 		title: doc.title,
-		content: cleanMd(doc.body.raw),
+		content: cleanMd(doc.raw),
 		description: doc.description,
 		href: `/docs/utilities/${doc.slug}`,
 	}));
 
-	const typeHelpers = allTypeHelperDocs.map((doc) => ({
+	const typeHelpers = typeHelperDocs.map((doc) => ({
 		title: doc.title,
-		content: cleanMd(doc.body.raw),
+		content: cleanMd(doc.raw),
 		description: doc.description,
 		href: `/docs/type-helpers/${doc.slug}`,
 	}));
 
-	const mainPages = allDocs.map((doc) => ({
+	const mainPages = docs.map((doc) => ({
 		title: doc.title,
-		content: cleanMd(doc.body.raw),
+		content: cleanMd(doc.raw),
 		description: doc.description,
 		href: `/docs${doc.slugFull}`,
 	}));
