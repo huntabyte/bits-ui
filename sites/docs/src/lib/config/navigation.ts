@@ -7,11 +7,7 @@ import CalendarBlank from "phosphor-svelte/lib/CalendarBlank";
 import CableCar from "phosphor-svelte/lib/CableCar";
 import Leaf from "phosphor-svelte/lib/Leaf";
 import Joystick from "phosphor-svelte/lib/Joystick";
-import {
-	allComponentDocs,
-	allTypeHelperDocs,
-	allUtilityDocs,
-} from "../../../.contentlayer/generated/index.mjs";
+import { componentDocs, typeHelperDocs, utilityDocs } from "$content/index.js";
 
 export type NavItem = {
 	title: string;
@@ -35,7 +31,7 @@ export type Navigation = {
 	sidebar: SidebarNavItem[];
 };
 
-const filteredComponents = allComponentDocs;
+const filteredComponents = componentDocs;
 
 /**
  * Generates the navigation items for the components section of the sidebar.
@@ -62,7 +58,7 @@ function generateComponentsNav() {
 function generateUtilitiesNav(): SidebarNavItem[] {
 	const utilityNavItems: SidebarNavItem[] = [];
 
-	for (const comp of allUtilityDocs) {
+	for (const comp of utilityDocs) {
 		utilityNavItems.push({
 			title: comp.title,
 			href: `/docs/utilities/${comp.slug}`,
@@ -80,7 +76,7 @@ function generateUtilitiesNav(): SidebarNavItem[] {
 function generateTypeHelpersNav(): SidebarNavItem[] {
 	const utilityNavItems: SidebarNavItem[] = [];
 
-	for (const comp of allTypeHelperDocs) {
+	for (const comp of typeHelperDocs) {
 		utilityNavItems.push({
 			title: comp.title,
 			href: `/docs/type-helpers/${comp.slug}`,

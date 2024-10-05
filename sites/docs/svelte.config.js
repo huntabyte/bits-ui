@@ -27,8 +27,7 @@ const config = {
 		adapter: adapter(),
 		alias: {
 			"$icons/*": "src/lib/components/icons/*",
-			"contentlayer/generated": ".contentlayer/generated",
-			"$contentlayer/*": "../.contentlayer/*",
+			"$content/*": ".velite/*",
 		},
 	},
 };

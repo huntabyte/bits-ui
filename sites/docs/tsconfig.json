@@ -24,7 +24,7 @@
 		"./tests/**/*.js",
 		"./tests/**/*.ts",
 		"./tests/**/*.svelte",
-		".contentlayer/generated",
+		".velite/**/*",
 		"./mdsx.config.js",
 		"./svelte.config.js",
 		"./other/**/*.js",
