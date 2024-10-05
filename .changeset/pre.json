@@ -3,7 +3,8 @@
   "tag": "next",
   "initialVersions": {
     "bits-ui": "0.21.15",
-    "docs": "0.0.0"
+    "docs": "0.0.0",
+    "tests": "0.0.0"
   },
   "changesets": [
     "clean-wombats-argue",
@@ -18,6 +19,7 @@
     "rare-islands-divide",
     "serious-shrimps-pump",
     "shy-knives-destroy",
+    "slimy-mails-argue",
     "soft-comics-sort",
     "yellow-dodos-design"
   ]
