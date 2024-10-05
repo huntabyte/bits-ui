@@ -12,7 +12,7 @@
 		"lint": "prettier --check . && eslint .",
 		"lint:fix": "eslint --fix .",
 		"test": "pnpm -F \"./packages/**\" --parallel --reporter append-only --color test",
-		"test:components": "pnpm -F @bits-ui/tests test"
+		"test:components": "pnpm -F tests test"
 	},
 	"keywords": [],
 	"author": "Hunter Johnston <https://github.com/huntabyte>",
