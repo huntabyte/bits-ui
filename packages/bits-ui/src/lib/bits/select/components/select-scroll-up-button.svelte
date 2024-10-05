@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
 	import type { SelectScrollUpButtonProps } from "../types.js";

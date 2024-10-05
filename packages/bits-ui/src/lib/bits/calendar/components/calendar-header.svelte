@@ -1,5 +1,3 @@
-
-
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
 	import { useCalendarHeader } from "../calendar.svelte.js";
