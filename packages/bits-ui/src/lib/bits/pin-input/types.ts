@@ -1,6 +1,9 @@
 import type { Snippet } from "svelte";
 import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
-import type { PrimitiveDivAttributes, PrimitiveInputAttributes } from "$lib/shared/attributes.js";
+import type {
+	BitsPrimitiveDivAttributes,
+	BitsPrimitiveInputAttributes,
+} from "$lib/shared/attributes.js";
 
 export type PinInputRootSnippetProps = {
 	cells: PinInputCell[];
@@ -87,7 +90,7 @@ export type PinInputRootPropsWithoutHTML = Omit<
 >;
 
 export type PinInputRootProps = PinInputRootPropsWithoutHTML &
-	Without<PrimitiveInputAttributes, PinInputRootPropsWithoutHTML>;
+	Without<BitsPrimitiveInputAttributes, PinInputRootPropsWithoutHTML>;
 
 export type PinInputCellPropsWithoutHTML = WithChild<{
 	/**
@@ -98,7 +101,7 @@ export type PinInputCellPropsWithoutHTML = WithChild<{
 }>;
 
 export type PinInputCellProps = PinInputCellPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, PinInputCellPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, PinInputCellPropsWithoutHTML>;
 
 export type PinInputCell = {
 	/**

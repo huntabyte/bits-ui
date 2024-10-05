@@ -10,7 +10,10 @@ import type {
 	WithChildren,
 	Without,
 } from "$lib/internal/types.js";
-import type { PrimitiveButtonAttributes, PrimitiveDivAttributes } from "$lib/shared/attributes.js";
+import type {
+	BitsPrimitiveButtonAttributes,
+	BitsPrimitiveDivAttributes,
+} from "$lib/shared/attributes.js";
 import type { PortalProps } from "$lib/bits/utilities/portal/index.js";
 
 export type DialogRootPropsWithoutHTML = WithChildren<{
@@ -55,7 +58,7 @@ export type DialogContentPropsWithoutHTML = WithChildNoChildrenSnippetProps<
 >;
 
 export type DialogContentProps = DialogContentPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, DialogContentPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, DialogContentPropsWithoutHTML>;
 
 export type DialogOverlaySnippetProps = {
 	open: boolean;
@@ -67,7 +70,7 @@ export type DialogOverlayPropsWithoutHTML = WithChild<
 >;
 
 export type DialogOverlayProps = DialogOverlayPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, DialogOverlayPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, DialogOverlayPropsWithoutHTML>;
 
 export type DialogPortalPropsWithoutHTML = PortalProps;
 export type DialogPortalProps = DialogPortalPropsWithoutHTML;
@@ -75,7 +78,7 @@ export type DialogPortalProps = DialogPortalPropsWithoutHTML;
 export type DialogTriggerPropsWithoutHTML = WithChild;
 
 export type DialogTriggerProps = DialogTriggerPropsWithoutHTML &
-	Without<PrimitiveButtonAttributes, DialogTriggerPropsWithoutHTML>;
+	Without<BitsPrimitiveButtonAttributes, DialogTriggerPropsWithoutHTML>;
 
 export type DialogTitlePropsWithoutHTML = WithChild<{
 	/**
@@ -85,11 +88,11 @@ export type DialogTitlePropsWithoutHTML = WithChild<{
 }>;
 
 export type DialogTitleProps = DialogTitlePropsWithoutHTML &
-	Without<PrimitiveDivAttributes, DialogTitlePropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, DialogTitlePropsWithoutHTML>;
 
 export type DialogClosePropsWithoutHTML = DialogTriggerPropsWithoutHTML;
 export type DialogCloseProps = DialogTriggerProps;
 
 export type DialogDescriptionPropsWithoutHTML = WithChild;
 export type DialogDescriptionProps = DialogDescriptionPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, DialogDescriptionPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, DialogDescriptionPropsWithoutHTML>;

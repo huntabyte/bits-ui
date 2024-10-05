@@ -4,7 +4,10 @@ import type {
 	WithChildNoChildrenSnippetProps,
 	Without,
 } from "$lib/internal/types.js";
-import type { PrimitiveButtonAttributes, PrimitiveDivAttributes } from "$lib/shared/attributes.js";
+import type {
+	BitsPrimitiveButtonAttributes,
+	BitsPrimitiveDivAttributes,
+} from "$lib/shared/attributes.js";
 
 export type CollapsibleRootPropsWithoutHTML = WithChild<{
 	/**
@@ -37,7 +40,7 @@ export type CollapsibleRootPropsWithoutHTML = WithChild<{
 }>;
 
 export type CollapsibleRootProps = CollapsibleRootPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, CollapsibleRootPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, CollapsibleRootPropsWithoutHTML>;
 
 export type CollapsibleContentSnippetProps = {
 	open: boolean;
@@ -56,9 +59,9 @@ export type CollapsibleContentPropsWithoutHTML = WithChildNoChildrenSnippetProps
 >;
 
 export type CollapsibleContentProps = CollapsibleContentPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, CollapsibleContentPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, CollapsibleContentPropsWithoutHTML>;
 
 export type CollapsibleTriggerPropsWithoutHTML = WithChild;
 
 export type CollapsibleTriggerProps = CollapsibleTriggerPropsWithoutHTML &
-	Without<PrimitiveButtonAttributes, CollapsibleTriggerPropsWithoutHTML>;
+	Without<BitsPrimitiveButtonAttributes, CollapsibleTriggerPropsWithoutHTML>;

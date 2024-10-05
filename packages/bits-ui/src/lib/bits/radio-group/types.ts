@@ -1,6 +1,9 @@
 import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
 import type { Orientation } from "$lib/index.js";
-import type { PrimitiveButtonAttributes, PrimitiveDivAttributes } from "$lib/shared/attributes.js";
+import type {
+	BitsPrimitiveButtonAttributes,
+	BitsPrimitiveDivAttributes,
+} from "$lib/shared/attributes.js";
 
 export type RadioGroupRootPropsWithoutHTML = WithChild<{
 	/**
@@ -65,7 +68,7 @@ export type RadioGroupRootPropsWithoutHTML = WithChild<{
 }>;
 
 export type RadioGroupRootProps = RadioGroupRootPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, RadioGroupRootPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, RadioGroupRootPropsWithoutHTML>;
 
 export type RadioGroupItemSnippetProps = { checked: boolean };
 
@@ -87,4 +90,4 @@ export type RadioGroupItemPropsWithoutHTML = WithChild<
 >;
 
 export type RadioGroupItemProps = RadioGroupItemPropsWithoutHTML &
-	Without<PrimitiveButtonAttributes, RadioGroupItemPropsWithoutHTML>;
+	Without<BitsPrimitiveButtonAttributes, RadioGroupItemPropsWithoutHTML>;

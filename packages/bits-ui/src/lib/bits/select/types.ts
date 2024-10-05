@@ -4,9 +4,9 @@ import type { PopperLayerProps } from "../utilities/popper-layer/types.js";
 import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
 import type { OnChangeFn, WithChild, WithChildren, Without } from "$lib/internal/types.js";
 import type {
-	PrimitiveButtonAttributes,
-	PrimitiveDivAttributes,
-	PrimitiveSpanAttributes,
+	BitsPrimitiveButtonAttributes,
+	BitsPrimitiveDivAttributes,
+	BitsPrimitiveSpanAttributes,
 } from "$lib/shared/attributes.js";
 import type { Direction } from "$lib/shared/index.js";
 import type { PortalProps } from "$lib/bits/utilities/portal/index.js";
@@ -107,7 +107,7 @@ export type SelectContentImplPropsWithoutHTML = Expand<
 >;
 
 export type SelectContentImplProps = SelectContentImplPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, SelectContentImplPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, SelectContentImplPropsWithoutHTML>;
 
 export type SelectContentPropsWithoutHTML = SelectContentImplPropsWithoutHTML & {
 	/**
@@ -117,7 +117,7 @@ export type SelectContentPropsWithoutHTML = SelectContentImplPropsWithoutHTML & 
 };
 
 export type SelectContentProps = SelectContentPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, SelectContentPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, SelectContentPropsWithoutHTML>;
 
 export type SelectItemSnippetProps = { selected: boolean };
 
@@ -147,7 +147,7 @@ export type SelectItemPropsWithoutHTML = WithChild<
 >;
 
 export type SelectItemProps = SelectItemPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, SelectItemPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, SelectItemPropsWithoutHTML>;
 
 export type SelectTriggerPropsWithoutHTML = WithChild<{
 	/**
@@ -159,7 +159,7 @@ export type SelectTriggerPropsWithoutHTML = WithChild<{
 }>;
 
 export type SelectTriggerProps = SelectTriggerPropsWithoutHTML &
-	Without<PrimitiveButtonAttributes, SelectTriggerPropsWithoutHTML>;
+	Without<BitsPrimitiveButtonAttributes, SelectTriggerPropsWithoutHTML>;
 
 export type SelectValuePropsWithoutHTML = WithChild<{
 	/**
@@ -169,16 +169,16 @@ export type SelectValuePropsWithoutHTML = WithChild<{
 }>;
 
 export type SelectValueProps = SelectValuePropsWithoutHTML &
-	Without<Omit<PrimitiveSpanAttributes, "id">, SelectValuePropsWithoutHTML>;
+	Without<Omit<BitsPrimitiveSpanAttributes, "id">, SelectValuePropsWithoutHTML>;
 
 export type SelectItemTextPropsWithoutHTML = WithChild;
 
 export type SelectItemTextProps = SelectItemTextPropsWithoutHTML &
-	Without<PrimitiveSpanAttributes, SelectItemTextPropsWithoutHTML>;
+	Without<BitsPrimitiveSpanAttributes, SelectItemTextPropsWithoutHTML>;
 
 export type SelectViewportPropsWithoutHTML = WithChild;
 export type SelectViewportProps = SelectViewportPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, SelectViewportPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, SelectViewportPropsWithoutHTML>;
 
 export type SelectPortalPropsWithoutHTML = PortalProps;
 export type SelectPortalProps = SelectPortalPropsWithoutHTML;
@@ -186,32 +186,32 @@ export type SelectPortalProps = SelectPortalPropsWithoutHTML;
 export type SelectScrollUpButtonPropsWithoutHTML = WithChild;
 
 export type SelectScrollUpButtonProps = SelectScrollUpButtonPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, SelectScrollUpButtonPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, SelectScrollUpButtonPropsWithoutHTML>;
 
 export type SelectScrollDownButtonPropsWithoutHTML = WithChild;
 
 export type SelectScrollDownButtonProps = SelectScrollDownButtonPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, SelectScrollDownButtonPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, SelectScrollDownButtonPropsWithoutHTML>;
 
 export type SelectIconPropsWithoutHTML = WithChild;
 
 export type SelectIconProps = SelectIconPropsWithoutHTML &
-	Without<PrimitiveSpanAttributes, SelectIconPropsWithoutHTML>;
+	Without<BitsPrimitiveSpanAttributes, SelectIconPropsWithoutHTML>;
 
 export type SelectGroupPropsWithoutHTML = WithChild;
 
 export type SelectGroupProps = SelectGroupPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, SelectGroupPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, SelectGroupPropsWithoutHTML>;
 
 export type SelectGroupHeadingPropsWithoutHTML = WithChild;
 
 export type SelectGroupHeadingProps = SelectGroupHeadingPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, SelectGroupHeadingPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, SelectGroupHeadingPropsWithoutHTML>;
 
 export type SelectSeparatorPropsWithoutHTML = WithChild;
 
 export type SelectSeparatorProps = SelectSeparatorPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, SelectSeparatorPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, SelectSeparatorPropsWithoutHTML>;
 
 export type SelectArrowPropsWithoutHTML = ArrowPropsWithoutHTML;
 

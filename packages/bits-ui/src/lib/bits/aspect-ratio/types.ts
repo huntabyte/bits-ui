@@ -1,5 +1,5 @@
 import type { WithChild, Without } from "$lib/internal/types.js";
-import type { PrimitiveDivAttributes } from "$lib/shared/attributes.js";
+import type { BitsPrimitiveDivAttributes } from "$lib/shared/attributes.js";
 
 export type AspectRatioRootPropsWithoutHTML = WithChild<{
 	/**
@@ -11,4 +11,4 @@ export type AspectRatioRootPropsWithoutHTML = WithChild<{
 }>;
 
 export type AspectRatioRootProps = AspectRatioRootPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, AspectRatioRootPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, AspectRatioRootPropsWithoutHTML>;

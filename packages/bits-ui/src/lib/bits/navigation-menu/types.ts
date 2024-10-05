@@ -1,12 +1,12 @@
 import type { InteractOutsideEvent } from "../utilities/dismissible-layer/types.js";
 import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
 import type {
-	PrimitiveAnchorAttributes,
-	PrimitiveButtonAttributes,
-	PrimitiveDivAttributes,
-	PrimitiveElementAttributes,
-	PrimitiveLiAttributes,
-	PrimitiveUListAttributes,
+	BitsPrimitiveAnchorAttributes,
+	BitsPrimitiveButtonAttributes,
+	BitsPrimitiveDivAttributes,
+	BitsPrimitiveElementAttributes,
+	BitsPrimitiveLiAttributes,
+	BitsPrimitiveUListAttributes,
 } from "$lib/shared/attributes.js";
 import type { Direction, Orientation } from "$lib/shared/index.js";
 
@@ -58,7 +58,7 @@ export type NavigationMenuRootPropsWithoutHTML = WithChild<{
 }>;
 
 export type NavigationMenuRootProps = NavigationMenuRootPropsWithoutHTML &
-	Without<PrimitiveElementAttributes, NavigationMenuRootPropsWithoutHTML>;
+	Without<BitsPrimitiveElementAttributes, NavigationMenuRootPropsWithoutHTML>;
 
 export type NavigationMenuSubPropsWithoutHTML = WithChild<{
 	/**
@@ -80,12 +80,12 @@ export type NavigationMenuSubPropsWithoutHTML = WithChild<{
 }>;
 
 export type NavigationMenuSubProps = NavigationMenuSubPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, NavigationMenuSubPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, NavigationMenuSubPropsWithoutHTML>;
 
 export type NavigationMenuListPropsWithoutHTML = WithChild;
 
 export type NavigationMenuListProps = NavigationMenuListPropsWithoutHTML &
-	Without<PrimitiveUListAttributes, NavigationMenuListPropsWithoutHTML>;
+	Without<BitsPrimitiveUListAttributes, NavigationMenuListPropsWithoutHTML>;
 
 export type NavigationMenuItemPropsWithoutHTML = WithChild<{
 	/**
@@ -95,7 +95,7 @@ export type NavigationMenuItemPropsWithoutHTML = WithChild<{
 }>;
 
 export type NavigationMenuItemProps = NavigationMenuItemPropsWithoutHTML &
-	Without<PrimitiveLiAttributes, NavigationMenuItemPropsWithoutHTML>;
+	Without<BitsPrimitiveLiAttributes, NavigationMenuItemPropsWithoutHTML>;
 
 export type NavigationMenuTriggerPropsWithoutHTML = WithChild<{
 	/**
@@ -106,7 +106,7 @@ export type NavigationMenuTriggerPropsWithoutHTML = WithChild<{
 }>;
 
 export type NavigationMenuTriggerProps = NavigationMenuTriggerPropsWithoutHTML &
-	Without<PrimitiveButtonAttributes, NavigationMenuTriggerPropsWithoutHTML>;
+	Without<BitsPrimitiveButtonAttributes, NavigationMenuTriggerPropsWithoutHTML>;
 
 export type NavigationMenuContentPropsWithoutHTML = WithChild<{
 	/**
@@ -139,7 +139,7 @@ export type NavigationMenuContentPropsWithoutHTML = WithChild<{
 }>;
 
 export type NavigationMenuContentProps = NavigationMenuContentPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, NavigationMenuContentPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, NavigationMenuContentPropsWithoutHTML>;
 
 export type NavigationMenuLinkPropsWithoutHTML = WithChild<{
 	/**
@@ -155,7 +155,7 @@ export type NavigationMenuLinkPropsWithoutHTML = WithChild<{
 }>;
 
 export type NavigationMenuLinkProps = NavigationMenuLinkPropsWithoutHTML &
-	Without<PrimitiveAnchorAttributes, NavigationMenuLinkPropsWithoutHTML>;
+	Without<BitsPrimitiveAnchorAttributes, NavigationMenuLinkPropsWithoutHTML>;
 
 export type NavigationMenuIndicatorPropsWithoutHTML = WithChild<{
 	/**
@@ -169,7 +169,7 @@ export type NavigationMenuIndicatorPropsWithoutHTML = WithChild<{
 }>;
 
 export type NavigationMenuIndicatorProps = NavigationMenuIndicatorPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, NavigationMenuIndicatorPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, NavigationMenuIndicatorPropsWithoutHTML>;
 
 export type NavigationMenuViewportPropsWithoutHTML = WithChild<{
 	/**
@@ -183,4 +183,4 @@ export type NavigationMenuViewportPropsWithoutHTML = WithChild<{
 }>;
 
 export type NavigationMenuViewportProps = NavigationMenuViewportPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, NavigationMenuViewportPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, NavigationMenuViewportPropsWithoutHTML>;

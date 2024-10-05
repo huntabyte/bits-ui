@@ -1,5 +1,8 @@
 import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
-import type { PrimitiveButtonAttributes, PrimitiveDivAttributes } from "$lib/shared/attributes.js";
+import type {
+	BitsPrimitiveButtonAttributes,
+	BitsPrimitiveDivAttributes,
+} from "$lib/shared/attributes.js";
 import type { Orientation } from "$lib/index.js";
 
 export type BaseToggleGroupRootProps = {
@@ -52,7 +55,7 @@ export type SingleToggleGroupRootPropsWithoutHTML = WithChild<
 >;
 
 export type SingleToggleGroupRootProps = SingleToggleGroupRootPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, SingleToggleGroupRootPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, SingleToggleGroupRootPropsWithoutHTML>;
 
 export type MultipleToggleGroupRootPropsWithoutHTML = WithChild<BaseToggleGroupRootProps> & {
 	type: "multiple";
@@ -61,14 +64,14 @@ export type MultipleToggleGroupRootPropsWithoutHTML = WithChild<BaseToggleGroupR
 };
 
 export type MultipleToggleGroupRootProps = MultipleToggleGroupRootPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, MultipleToggleGroupRootPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, MultipleToggleGroupRootPropsWithoutHTML>;
 
 export type ToggleGroupRootPropsWithoutHTML =
 	| SingleToggleGroupRootPropsWithoutHTML
 	| MultipleToggleGroupRootPropsWithoutHTML;
 
 export type ToggleGroupRootProps = ToggleGroupRootPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, ToggleGroupRootPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, ToggleGroupRootPropsWithoutHTML>;
 
 export type ToggleGroupItemSnippetProps = {
 	pressed: boolean;
@@ -92,4 +95,4 @@ export type ToggleGroupItemPropsWithoutHTML = WithChild<
 >;
 
 export type ToggleGroupItemProps = ToggleGroupItemPropsWithoutHTML &
-	Without<PrimitiveButtonAttributes, ToggleGroupItemPropsWithoutHTML>;
+	Without<BitsPrimitiveButtonAttributes, ToggleGroupItemPropsWithoutHTML>;

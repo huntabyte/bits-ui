@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Accordion, type PrimitiveDivAttributes } from "bits-ui";
+	import { Accordion, type BitsPrimitiveDivAttributes } from "bits-ui";
 
 	type Item = {
 		value: string;
@@ -14,7 +14,7 @@
 		items: Item[];
 		value: string[];
 		onValueChange: (v: string[]) => void;
-	} & Omit<PrimitiveDivAttributes, "value">;
+	} & Omit<BitsPrimitiveDivAttributes, "value">;
 
 	let { disabled = false, items = [], value: valueProp = [], ...restProps }: Props = $props();
 

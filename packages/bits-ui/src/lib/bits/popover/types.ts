@@ -7,7 +7,10 @@ import type {
 	WithChildren,
 	Without,
 } from "$lib/internal/types.js";
-import type { PrimitiveButtonAttributes, PrimitiveDivAttributes } from "$lib/shared/attributes.js";
+import type {
+	BitsPrimitiveButtonAttributes,
+	BitsPrimitiveDivAttributes,
+} from "$lib/shared/attributes.js";
 
 export type PopoverRootPropsWithoutHTML = WithChildren<{
 	/**
@@ -46,7 +49,7 @@ export type PopoverContentPropsWithoutHTML = WithChildNoChildrenSnippetProps<
 >;
 
 export type PopoverContentProps = PopoverContentPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, PopoverContentPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, PopoverContentPropsWithoutHTML>;
 
 export type PopoverContentStaticPropsWithoutHTML = WithChildNoChildrenSnippetProps<
 	Omit<PopperLayerStaticProps, "content" | "loop">,
@@ -54,17 +57,17 @@ export type PopoverContentStaticPropsWithoutHTML = WithChildNoChildrenSnippetPro
 >;
 
 export type PopoverContentStaticProps = PopoverContentStaticPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, PopoverContentStaticPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, PopoverContentStaticPropsWithoutHTML>;
 
 export type PopoverTriggerPropsWithoutHTML = WithChild;
 
 export type PopoverTriggerProps = PopoverTriggerPropsWithoutHTML &
-	Without<PrimitiveButtonAttributes, PopoverTriggerPropsWithoutHTML>;
+	Without<BitsPrimitiveButtonAttributes, PopoverTriggerPropsWithoutHTML>;
 
 export type PopoverClosePropsWithoutHTML = WithChild;
 
 export type PopoverCloseProps = PopoverClosePropsWithoutHTML &
-	Without<PrimitiveButtonAttributes, PopoverClosePropsWithoutHTML>;
+	Without<BitsPrimitiveButtonAttributes, PopoverClosePropsWithoutHTML>;
 
 export type PopoverArrowPropsWithoutHTML = ArrowPropsWithoutHTML;
 

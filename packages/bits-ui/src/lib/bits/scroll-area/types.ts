@@ -1,4 +1,4 @@
-import type { PrimitiveDivAttributes } from "$lib/shared/attributes.js";
+import type { BitsPrimitiveDivAttributes } from "$lib/shared/attributes.js";
 import type { Direction, Orientation, WithChild, Without } from "$lib/shared/index.js";
 
 export type ScrollAreaType = "hover" | "scroll" | "auto" | "always";
@@ -26,12 +26,12 @@ export type ScrollAreaRootPropsWithoutHTML = WithChild<{
 }>;
 
 export type ScrollAreaRootProps = ScrollAreaRootPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, ScrollAreaRootPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, ScrollAreaRootPropsWithoutHTML>;
 
 export type ScrollAreaViewportPropsWithoutHTML = Omit<WithChild, "child">;
 
 export type ScrollAreaViewportProps = ScrollAreaViewportPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, ScrollAreaViewportPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, ScrollAreaViewportPropsWithoutHTML>;
 
 export type ScrollAreaScrollbarPropsWithoutHTML = WithChild<{
 	orientation: Orientation;
@@ -44,7 +44,7 @@ export type ScrollAreaScrollbarPropsWithoutHTML = WithChild<{
 }>;
 
 export type ScrollAreaScrollbarProps = ScrollAreaScrollbarPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, ScrollAreaScrollbarPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, ScrollAreaScrollbarPropsWithoutHTML>;
 
 export type ScrollAreaThumbPropsWithoutHTML = WithChild<{
 	/**
@@ -55,12 +55,12 @@ export type ScrollAreaThumbPropsWithoutHTML = WithChild<{
 }>;
 
 export type ScrollAreaThumbProps = ScrollAreaThumbPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, ScrollAreaThumbPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, ScrollAreaThumbPropsWithoutHTML>;
 
 export type ScrollAreaCornerPropsWithoutHTML = WithChild;
 
 export type ScrollAreaCornerProps = ScrollAreaCornerPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, ScrollAreaCornerPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, ScrollAreaCornerPropsWithoutHTML>;
 
 export type _ScrollbarStubProps = Omit<ScrollAreaScrollbarProps, "orientation" | "ref" | "id"> & {
 	id: string;

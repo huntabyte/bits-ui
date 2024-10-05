@@ -7,7 +7,10 @@ import type {
 	WithChildren,
 } from "$lib/shared/index.js";
 import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
-import type { PrimitiveDivAttributes, PrimitiveSpanAttributes } from "$lib/shared/attributes.js";
+import type {
+	BitsPrimitiveDivAttributes,
+	BitsPrimitiveSpanAttributes,
+} from "$lib/shared/attributes.js";
 import type { Granularity } from "$lib/shared/date/types.js";
 
 export type DateFieldRootPropsWithoutHTML = WithChildren<{
@@ -177,16 +180,16 @@ export type DateFieldInputPropsWithoutHTML = WithChild<
 >;
 
 export type DateFieldInputProps = DateFieldInputPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, DateFieldInputPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, DateFieldInputPropsWithoutHTML>;
 
 export type DateFieldSegmentPropsWithoutHTML = WithChild<{
 	part: SegmentPart;
 }>;
 
 export type DateFieldSegmentProps = DateFieldSegmentPropsWithoutHTML &
-	Without<PrimitiveSpanAttributes, DateFieldSegmentPropsWithoutHTML>;
+	Without<BitsPrimitiveSpanAttributes, DateFieldSegmentPropsWithoutHTML>;
 
 export type DateFieldLabelPropsWithoutHTML = WithChild;
 
 export type DateFieldLabelProps = DateFieldLabelPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, DateFieldLabelPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, DateFieldLabelPropsWithoutHTML>;

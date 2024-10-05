@@ -9,7 +9,10 @@ import type {
 	WithChildren,
 	Without,
 } from "$lib/internal/types.js";
-import type { PrimitiveButtonAttributes, PrimitiveDivAttributes } from "$lib/shared/attributes.js";
+import type {
+	BitsPrimitiveButtonAttributes,
+	BitsPrimitiveDivAttributes,
+} from "$lib/shared/attributes.js";
 import type { PortalProps } from "$lib/bits/utilities/portal/types.js";
 
 export type TooltipProviderPropsWithoutHTML = WithChildren<{
@@ -156,7 +159,7 @@ export type TooltipContentPropsWithoutHTML = WithChildNoChildrenSnippetProps<
 >;
 
 export type TooltipContentProps = TooltipContentPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, TooltipContentPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, TooltipContentPropsWithoutHTML>;
 
 export type TooltipContentStaticPropsWithoutHTML = WithChildNoChildrenSnippetProps<
 	Pick<FloatingLayerContentProps, "dir"> &
@@ -173,7 +176,7 @@ export type TooltipContentStaticPropsWithoutHTML = WithChildNoChildrenSnippetPro
 >;
 
 export type TooltipContentStaticProps = TooltipContentStaticPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, TooltipContentStaticPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, TooltipContentStaticPropsWithoutHTML>;
 
 export type TooltipArrowPropsWithoutHTML = ArrowPropsWithoutHTML;
 export type TooltipArrowProps = ArrowProps;
@@ -191,4 +194,4 @@ export type TooltipTriggerPropsWithoutHTML = WithChild<{
 }>;
 
 export type TooltipTriggerProps = TooltipTriggerPropsWithoutHTML &
-	Without<PrimitiveButtonAttributes, TooltipTriggerPropsWithoutHTML>;
+	Without<BitsPrimitiveButtonAttributes, TooltipTriggerPropsWithoutHTML>;

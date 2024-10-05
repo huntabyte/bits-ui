@@ -1,4 +1,4 @@
-import type { PrimitiveInputAttributes } from "$lib/shared/attributes.js";
+import type { BitsPrimitiveInputAttributes } from "$lib/shared/attributes.js";
 import type { WithChild, Without } from "$lib/internal/types.js";
 
 export type {
@@ -43,4 +43,4 @@ export type ComboboxInputPropsWithoutHTML = WithChild<{
 }>;
 
 export type ComboboxInputProps = ComboboxInputPropsWithoutHTML &
-	Without<Omit<PrimitiveInputAttributes, "value">, ComboboxInputPropsWithoutHTML>;
+	Without<Omit<BitsPrimitiveInputAttributes, "value">, ComboboxInputPropsWithoutHTML>;

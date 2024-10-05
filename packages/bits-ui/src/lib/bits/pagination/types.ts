@@ -1,5 +1,8 @@
 import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
-import type { PrimitiveButtonAttributes, PrimitiveDivAttributes } from "$lib/shared/attributes.js";
+import type {
+	BitsPrimitiveButtonAttributes,
+	BitsPrimitiveDivAttributes,
+} from "$lib/shared/attributes.js";
 
 type PaginationSnippetProps = {
 	pages: PageItem[];
@@ -69,24 +72,24 @@ export type PaginationRootPropsWithoutHTML = WithChild<
 >;
 
 export type PaginationRootProps = PaginationRootPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, PaginationRootPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, PaginationRootPropsWithoutHTML>;
 
 export type PaginationPagePropsWithoutHTML = WithChild<{
 	page: Page;
 }>;
 
 export type PaginationPageProps = PaginationPagePropsWithoutHTML &
-	Without<PrimitiveButtonAttributes, PaginationPagePropsWithoutHTML>;
+	Without<BitsPrimitiveButtonAttributes, PaginationPagePropsWithoutHTML>;
 
 export type PaginationPrevButtonPropsWithoutHTML = WithChild;
 
 export type PaginationPrevButtonProps = PaginationPrevButtonPropsWithoutHTML &
-	Without<PrimitiveButtonAttributes, PaginationPrevButtonPropsWithoutHTML>;
+	Without<BitsPrimitiveButtonAttributes, PaginationPrevButtonPropsWithoutHTML>;
 
 export type PaginationNextButtonPropsWithoutHTML = WithChild;
 
 export type PaginationNextButtonProps = PaginationNextButtonPropsWithoutHTML &
-	Without<PrimitiveButtonAttributes, PaginationNextButtonPropsWithoutHTML>;
+	Without<BitsPrimitiveButtonAttributes, PaginationNextButtonPropsWithoutHTML>;
 
 export type Page = {
 	type: "page";

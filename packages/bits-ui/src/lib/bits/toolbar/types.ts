@@ -6,9 +6,9 @@ import type {
 import type { Orientation } from "$lib/shared/index.js";
 import type { WithChild, Without } from "$lib/internal/types.js";
 import type {
-	PrimitiveAnchorAttributes,
-	PrimitiveButtonAttributes,
-	PrimitiveDivAttributes,
+	BitsPrimitiveAnchorAttributes,
+	BitsPrimitiveButtonAttributes,
+	BitsPrimitiveDivAttributes,
 } from "$lib/shared/attributes.js";
 
 export type ToolbarRootPropsWithoutHTML = WithChild<{
@@ -30,7 +30,7 @@ export type ToolbarRootPropsWithoutHTML = WithChild<{
 }>;
 
 export type ToolbarRootProps = ToolbarRootPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, ToolbarRootPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, ToolbarRootPropsWithoutHTML>;
 
 export type ToolbarGroupPropsWithoutHTML = Omit<
 	ToggleGroupRootPropsWithoutHTML,
@@ -38,7 +38,7 @@ export type ToolbarGroupPropsWithoutHTML = Omit<
 >;
 
 export type ToolbarGroupProps = ToolbarGroupPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, ToolbarGroupPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, ToolbarGroupPropsWithoutHTML>;
 
 export type ToolbarGroupItemPropsWithoutHTML = ToggleGroupItemPropsWithoutHTML;
 
@@ -52,9 +52,9 @@ export type ToolbarButtonPropsWithoutHTML = WithChild<{
 }>;
 
 export type ToolbarButtonProps = ToolbarButtonPropsWithoutHTML &
-	Without<PrimitiveButtonAttributes, ToolbarButtonPropsWithoutHTML>;
+	Without<BitsPrimitiveButtonAttributes, ToolbarButtonPropsWithoutHTML>;
 
 export type ToolbarLinkPropsWithoutHTML = WithChild;
 
 export type ToolbarLinkProps = ToolbarLinkPropsWithoutHTML &
-	Without<PrimitiveAnchorAttributes, ToolbarLinkPropsWithoutHTML>;
+	Without<BitsPrimitiveAnchorAttributes, ToolbarLinkPropsWithoutHTML>;
