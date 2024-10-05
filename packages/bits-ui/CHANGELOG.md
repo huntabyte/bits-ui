@@ -74,6 +74,12 @@
 
 -   fix: Changed svelte event handlers in favor of CustomEventHandler ([#536](https://github.com/huntabyte/bits-ui/pull/536))
 
+## 0.21.16
+
+### Patch Changes
+
+-   fix: Changed svelte event handlers in favor of CustomEventHandler ([#536](https://github.com/huntabyte/bits-ui/pull/536))
+
 ## 0.21.15
 
 ### Patch Changes
