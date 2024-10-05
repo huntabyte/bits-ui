@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
 	import { useDialogClose } from "../dialog.svelte.js";
-	import type { CloseProps } from "../index.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
-	import { useId } from "$lib/internal/useId.js";
+	import type { DialogCloseProps } from "../types.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
+	import { useId } from "$lib/internal/use-id.js";
 
 	let {
 		children,
@@ -11,7 +11,7 @@
 		id = useId(),
 		ref = $bindable(null),
 		...restProps
-	}: CloseProps = $props();
+	}: DialogCloseProps = $props();
 
 	const closeState = useDialogClose({
 		variant: box.with(() => "close"),

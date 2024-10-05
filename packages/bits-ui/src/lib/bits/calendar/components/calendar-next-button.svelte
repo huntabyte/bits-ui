@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
 	import { useCalendarNextButton } from "../calendar.svelte.js";
-	import type { NextButtonProps } from "../index.js";
-	import { useId } from "$lib/internal/useId.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import type { CalendarNextButtonProps } from "../types.js";
+	import { useId } from "$lib/internal/use-id.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 
 	let {
 		children,
@@ -11,7 +11,7 @@
 		id = useId(),
 		ref = $bindable(null),
 		...restProps
-	}: NextButtonProps = $props();
+	}: CalendarNextButtonProps = $props();
 
 	const nextButtonState = useCalendarNextButton({
 		id: box.with(() => id),

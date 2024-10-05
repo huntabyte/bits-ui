@@ -1,11 +1,14 @@
-import { useRefById } from "$lib/internal/useRefById.svelte.js";
+import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { getAriaChecked, getAriaRequired, getDataDisabled } from "$lib/internal/attrs.js";
 import { srOnlyStyles, styleToString } from "$lib/internal/style.js";
 import type { Orientation } from "$lib/shared/index.js";
-import { type UseRovingFocusReturn, useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
-import { createContext } from "$lib/internal/createContext.js";
+import {
+	type UseRovingFocusReturn,
+	useRovingFocus,
+} from "$lib/internal/use-roving-focus.svelte.js";
+import { createContext } from "$lib/internal/create-context.js";
 
 const RADIO_GROUP_ROOT_ATTR = "data-radio-group-root";
 const RADIO_GROUP_ITEM_ATTR = "data-radio-group-item";
@@ -59,14 +62,6 @@ class RadioGroupRootState {
 
 	setValue = (value: string) => {
 		this.value.current = value;
-	};
-
-	createItem = (props: RadioGroupItemStateProps) => {
-		return new RadioGroupItemState(props, this);
-	};
-
-	createInput = () => {
-		return new RadioGroupInputState(this);
 	};
 
 	props = $derived.by(
@@ -192,9 +187,9 @@ export function useRadioGroupRoot(props: RadioGroupRootStateProps) {
 }
 
 export function useRadioGroupItem(props: RadioGroupItemStateProps) {
-	return getRadioGroupRootContext().createItem(props);
+	return new RadioGroupItemState(props, getRadioGroupRootContext());
 }
 
 export function useRadioGroupInput() {
-	return getRadioGroupRootContext().createInput();
+	return new RadioGroupInputState(getRadioGroupRootContext());
 }

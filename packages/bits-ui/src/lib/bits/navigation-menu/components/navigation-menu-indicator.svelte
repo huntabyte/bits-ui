@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { IndicatorProps } from "../index.js";
+	import type { NavigationMenuIndicatorProps } from "../types.js";
 	import { useNavigationMenuIndicator } from "../navigation-menu.svelte.js";
-	import { useId } from "$lib/internal/useId.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/use-id.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 	import PresenceLayer from "$lib/bits/utilities/presence-layer/presence-layer.svelte";
 	import Portal from "$lib/bits/utilities/portal/portal.svelte";
 
@@ -14,7 +14,7 @@
 		child,
 		forceMount = false,
 		...restProps
-	}: IndicatorProps = $props();
+	}: NavigationMenuIndicatorProps = $props();
 
 	const indicatorState = useNavigationMenuIndicator({
 		id: box.with(() => id),

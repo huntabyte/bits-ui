@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { ContentStaticProps } from "../index.js";
+	import type { MenubarContentStaticProps } from "../types.js";
 	import { useMenubarContent } from "../menubar.svelte.js";
-	import { useId } from "$lib/internal/useId.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/use-id.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 	import MenuContentStatic from "$lib/bits/menu/components/menu-content-static.svelte";
 
 	let {
@@ -11,7 +11,7 @@
 		interactOutsideBehavior = "close",
 		id = useId(),
 		...restProps
-	}: ContentStaticProps = $props();
+	}: MenubarContentStaticProps = $props();
 
 	const contentState = useMenubarContent({
 		id: box.with(() => id),

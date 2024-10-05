@@ -2,12 +2,12 @@
 	import { box } from "svelte-toolbelt";
 	import type { DateValue } from "@internationalized/date";
 	import { useDateRangeFieldRoot } from "../date-range-field.svelte.js";
-	import type { RootProps } from "../index.js";
-	import { useId } from "$lib/internal/useId.js";
+	import type { DateRangeFieldRootProps } from "../types.js";
+	import { useId } from "$lib/internal/use-id.js";
 	import { noop } from "$lib/internal/callbacks.js";
-	import { getDefaultDate } from "$lib/shared/date/utils.js";
 	import type { DateRange } from "$lib/shared/index.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
+	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
 
 	let {
 		id = useId(),
@@ -36,7 +36,7 @@
 		controlledValue = false,
 		errorMessageId,
 		...restProps
-	}: RootProps = $props();
+	}: DateRangeFieldRootProps = $props();
 
 	let startValue = $state<DateValue | undefined>(value?.start);
 	let endValue = $state<DateValue | undefined>(value?.end);

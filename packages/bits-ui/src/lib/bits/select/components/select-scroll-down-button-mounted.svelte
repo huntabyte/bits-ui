@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { untrack } from "svelte";
 	import type { WritableBox } from "svelte-toolbelt";
-	import type { ScrollDownButtonProps } from "../index.js";
+	import type { SelectScrollDownButtonProps } from "../types.js";
 
 	let {
 		children,
 		child,
 		mounted,
 		...restProps
-	}: ScrollDownButtonProps & {
+	}: SelectScrollDownButtonProps & {
 		mounted: WritableBox<boolean>;
 		style: string;
 	} = $props();

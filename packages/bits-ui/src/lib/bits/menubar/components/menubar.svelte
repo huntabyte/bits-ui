@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { RootProps } from "../index.js";
+	import type { MenubarRootProps } from "../types.js";
 	import { useMenubarRoot } from "../menubar.svelte.js";
-	import { useId } from "$lib/internal/useId.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/use-id.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 	import { noop } from "$lib/internal/callbacks.js";
 
 	let {
@@ -17,7 +17,7 @@
 		onValueChange = noop,
 		controlledValue = false,
 		...restProps
-	}: RootProps = $props();
+	}: MenubarRootProps = $props();
 
 	const rootState = useMenubarRoot({
 		id: box.with(() => id),

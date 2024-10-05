@@ -1,15 +1,8 @@
-import type { DateValue } from "@internationalized/date";
-
 import type * as CSS from "csstype";
 
 export type Selected<Value> = {
 	value: Value;
 	label?: string;
-};
-
-export type DateRange = {
-	start: DateValue | undefined;
-	end: DateValue | undefined;
 };
 
 export type SegmentPart =
@@ -41,15 +34,16 @@ export type WithoutChildren<T> = T extends { children?: any } ? Omit<T, "childre
 // eslint-disable-next-line ts/no-explicit-any
 export type WithoutChild<T> = T extends { child?: any } ? Omit<T, "child"> : T;
 export type WithElementRef<T, U extends HTMLElement = HTMLElement> = T & { ref?: U | null };
-export type { EditableSegmentPart } from "./date/field/types.js";
+export type { EditableSegmentPart } from "./date/types.js";
 export type {
 	Month,
 	DateMatcher,
 	DateOnInvalid,
 	DateRangeValidator,
 	DateValidator,
+	DateRange,
 } from "./date/types.js";
 export type { WithChild, Without, WithChildren } from "$lib/internal/types.js";
-export { mergeProps } from "$lib/internal/mergeProps.js";
-export { useId } from "$lib/internal/useId.js";
+export { mergeProps } from "$lib/internal/merge-props.js";
+export { useId } from "$lib/internal/use-id.js";
 export * from "./attributes.js";

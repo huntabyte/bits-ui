@@ -2,7 +2,7 @@ import { getAriaPressed, getDataDisabled, getDisabled } from "$lib/internal/attr
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type { WithRefProps } from "$lib/internal/types.js";
-import { useRefById } from "$lib/internal/useRefById.svelte.js";
+import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
 
 const ROOT_ATTR = "data-toggle-root";
 
@@ -44,7 +44,7 @@ class ToggleRootState {
 	};
 
 	#onkeydown = (e: KeyboardEvent) => {
-		if (e.key !== kbd.ENTER || e.key !== kbd.SPACE) return;
+		if (![kbd.ENTER, kbd.SPACE].includes(e.key)) return;
 		e.preventDefault();
 		this.#togglePressed();
 	};

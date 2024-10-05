@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { SeparatorProps } from "../index.js";
+	import type { SelectSeparatorProps } from "../types.js";
 	import { useSelectSeparator } from "../select.svelte.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
-	import { useId } from "$lib/internal/useId.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
+	import { useId } from "$lib/internal/use-id.js";
 
 	let {
 		child,
@@ -11,7 +11,7 @@
 		id = useId(),
 		ref = $bindable(null),
 		...restProps
-	}: SeparatorProps = $props();
+	}: SelectSeparatorProps = $props();
 
 	const separatorState = useSelectSeparator({
 		id: box.with(() => id),

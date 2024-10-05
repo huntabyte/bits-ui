@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { RootProps } from "../index.js";
+	import type { PopoverRootProps } from "../types.js";
 	import { usePopoverRoot } from "../popover.svelte.js";
-	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
+	import FloatingLayer from "$lib/bits/utilities/floating-layer/components/floating-layer.svelte";
 	import { noop } from "$lib/internal/callbacks.js";
 
 	let {
@@ -10,7 +10,7 @@
 		onOpenChange = noop,
 		controlledOpen = false,
 		children,
-	}: RootProps = $props();
+	}: PopoverRootProps = $props();
 
 	usePopoverRoot({
 		open: box.with(
@@ -27,6 +27,6 @@
 	});
 </script>
 
-<FloatingLayer.Root>
+<FloatingLayer>
 	{@render children?.()}
-</FloatingLayer.Root>
+</FloatingLayer>

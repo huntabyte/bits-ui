@@ -2,9 +2,9 @@
 	import { box } from "svelte-toolbelt";
 	import type { DateValue } from "@internationalized/date";
 	import { useDateFieldRoot } from "../date-field.svelte.js";
-	import type { RootProps } from "../index.js";
+	import type { DateFieldRootProps } from "../types.js";
 	import { noop } from "$lib/internal/callbacks.js";
-	import { getDefaultDate } from "$lib/shared/date/utils.js";
+	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
 
 	let {
 		disabled = false,
@@ -27,7 +27,7 @@
 		controlledValue = false,
 		errorMessageId,
 		children,
-	}: RootProps = $props();
+	}: DateFieldRootProps = $props();
 
 	if (placeholder === undefined) {
 		const defaultPlaceholder = getDefaultDate({

@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { RootProps } from "../index.js";
+	import type { RadioGroupRootProps } from "../types.js";
 	import { useRadioGroupRoot } from "../radio-group.svelte.js";
 	import RadioGroupInput from "./radio-group-input.svelte";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
-	import { useId } from "$lib/internal/useId.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
+	import { useId } from "$lib/internal/use-id.js";
 	import { noop } from "$lib/internal/callbacks.js";
 
 	let {
@@ -21,7 +21,7 @@
 		onValueChange = noop,
 		controlledValue = false,
 		...restProps
-	}: RootProps = $props();
+	}: RadioGroupRootProps = $props();
 
 	const rootState = useRadioGroupRoot({
 		orientation: box.with(() => orientation),

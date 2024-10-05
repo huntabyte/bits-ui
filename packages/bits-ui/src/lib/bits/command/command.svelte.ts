@@ -2,11 +2,11 @@ import { untrack } from "svelte";
 import { findNextSibling, findPreviousSibling } from "./utils.js";
 import { commandScore } from "./command-score.js";
 import type { CommandState } from "./types.js";
-import { useRefById } from "$lib/internal/useRefById.svelte.js";
-import { createContext } from "$lib/internal/createContext.js";
+import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
+import { createContext } from "$lib/internal/create-context.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import { afterSleep } from "$lib/internal/afterSleep.js";
+import { afterSleep } from "$lib/internal/after-sleep.js";
 import { kbd } from "$lib/internal/kbd.js";
 import {
 	getAriaDisabled,
@@ -17,7 +17,7 @@ import {
 } from "$lib/internal/attrs.js";
 import { getFirstNonCommentChild } from "$lib/internal/dom.js";
 import { srOnlyStyles } from "$lib/internal/style.js";
-import { afterTick } from "$lib/internal/afterTick.js";
+import { afterTick } from "$lib/internal/after-tick.js";
 
 const ROOT_ATTR = "data-command-root";
 const LIST_ATTR = "data-command-list";
@@ -125,7 +125,7 @@ class CommandRootState {
 		const defaultState = {
 			/** Value of the search query */
 			search: "",
-			/** Currnetly selected item value */
+			/** Currently selected item value */
 			value: this.valueProp.current ?? "",
 			filtered: {
 				/** The count of all visible items. */
@@ -517,34 +517,6 @@ class CommandRootState {
 				onkeydown: this.#onkeydown,
 			}) as const
 	);
-
-	createEmpty(props: CommandEmptyStateProps) {
-		return new CommandEmptyState(props, this);
-	}
-
-	createGroupContainer(props: CommandGroupContainerStateProps) {
-		return new CommandGroupContainerState(props, this);
-	}
-
-	createInput(props: CommandInputStateProps) {
-		return new CommandInputState(props, this);
-	}
-
-	createItem(props: CommandItemStateProps) {
-		return new CommandItemState(props, this);
-	}
-
-	createSeparator(props: CommandSeparatorStateProps) {
-		return new CommandSeparatorState(props, this);
-	}
-
-	createList(props: CommandListStateProps) {
-		return new CommandListState(props, this);
-	}
-
-	createLabel(props: CommandLabelStateProps) {
-		return new CommandLabelState(props, this);
-	}
 }
 
 type CommandEmptyStateProps = WithRefProps &
@@ -1032,10 +1004,6 @@ class CommandListState {
 				[LIST_ATTR]: "",
 			}) as const
 	);
-
-	createViewport(props: CommandViewportStateProps) {
-		return new CommandViewportState(props, this);
-	}
 }
 
 type CommandLabelStateProps = WithRefProps<ReadableBoxedValues<{ for?: string }>>;
@@ -1131,27 +1099,33 @@ export function useCommandRoot(props: CommandRootStateProps) {
 }
 
 export function useCommandEmpty(props: CommandEmptyStateProps) {
-	return getCommandRootContext().createEmpty(props);
+	const root = getCommandRootContext();
+	return new CommandEmptyState(props, root);
 }
 
 export function useCommandItem(props: CommandItemStateProps) {
-	return getCommandRootContext().createItem(props);
+	const root = getCommandRootContext();
+	return new CommandItemState(props, root);
 }
 
 export function useCommandGroupContainer(props: CommandGroupContainerStateProps) {
-	return setCommandGroupContainerContext(getCommandRootContext().createGroupContainer(props));
+	const root = getCommandRootContext();
+	return setCommandGroupContainerContext(new CommandGroupContainerState(props, root));
 }
 
 export function useCommandGroupHeading(props: CommandGroupHeadingStateProps) {
-	return getCommandGroupContainerContext().createGroupHeading(props);
+	const groupContainer = getCommandGroupContainerContext();
+	return new CommandGroupHeadingState(props, groupContainer);
 }
 
 export function useCommandGroupItems(props: CommandGroupItemsStateProps) {
-	return getCommandGroupContainerContext().createGroupItems(props);
+	const groupContainer = getCommandGroupContainerContext();
+	return new CommandGroupItemsState(props, groupContainer);
 }
 
 export function useCommandInput(props: CommandInputStateProps) {
-	return getCommandRootContext().createInput(props);
+	const root = getCommandRootContext();
+	return new CommandInputState(props, root);
 }
 
 export function useCommandLoading(props: CommandLoadingStateProps) {
@@ -1159,17 +1133,21 @@ export function useCommandLoading(props: CommandLoadingStateProps) {
 }
 
 export function useCommandSeparator(props: CommandSeparatorStateProps) {
-	return getCommandRootContext().createSeparator(props);
+	const root = getCommandRootContext();
+	return new CommandSeparatorState(props, root);
 }
 
 export function useCommandList(props: CommandListStateProps) {
-	return setCommandListContext(getCommandRootContext().createList(props));
+	const root = getCommandRootContext();
+	return setCommandListContext(new CommandListState(props, root));
 }
 
 export function useCommandViewport(props: CommandViewportStateProps) {
-	return getCommandListContext().createViewport(props);
+	const list = getCommandListContext();
+	return new CommandViewportState(props, list);
 }
 
 export function useCommandLabel(props: CommandLabelStateProps) {
-	return getCommandRootContext().createLabel(props);
+	const root = getCommandRootContext();
+	return new CommandLabelState(props, root);
 }

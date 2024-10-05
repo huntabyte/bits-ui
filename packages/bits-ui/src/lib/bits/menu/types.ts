@@ -165,6 +165,8 @@ export type MenuSubPropsWithoutHTML = WithChildren<{
 	controlledOpen?: boolean;
 }>;
 
+export type MenuSubProps = MenuSubPropsWithoutHTML;
+
 export type MenuSubContentPropsWithoutHTML = Expand<
 	WithChild<
 		Omit<PopperLayerProps, "content" | "preventScroll"> & _SharedMenuContentProps,

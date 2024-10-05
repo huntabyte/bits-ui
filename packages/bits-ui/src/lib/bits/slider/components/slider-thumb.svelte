@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { ThumbProps } from "../index.js";
+	import type { SliderThumbProps } from "../types.js";
 	import { useSliderThumb } from "../slider.svelte.js";
-	import { useId } from "$lib/internal/useId.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/use-id.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 
 	let {
 		children,
@@ -13,7 +13,7 @@
 		index,
 		disabled = false,
 		...restProps
-	}: ThumbProps = $props();
+	}: SliderThumbProps = $props();
 
 	const thumbState = useSliderThumb({
 		id: box.with(() => id),

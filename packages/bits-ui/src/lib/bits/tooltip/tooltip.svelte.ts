@@ -3,11 +3,11 @@ import { useEventListener } from "runed";
 import { untrack } from "svelte";
 import { TOOLTIP_OPEN_EVENT } from "./utils.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import { useTimeoutFn } from "$lib/internal/useTimeoutFn.svelte.js";
-import { useRefById } from "$lib/internal/useRefById.svelte.js";
+import { useTimeoutFn } from "$lib/internal/use-timeout-fn.svelte.js";
+import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
 import { isElement, isFocusVisible } from "$lib/internal/is.js";
-import { useGraceArea } from "$lib/internal/useGraceArea.svelte.js";
-import { createContext } from "$lib/internal/createContext.js";
+import { useGraceArea } from "$lib/internal/use-grace-area.svelte.js";
+import { createContext } from "$lib/internal/create-context.js";
 import { getDataDisabled } from "$lib/internal/attrs.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 
@@ -66,10 +66,6 @@ class TooltipProviderState {
 	onClose = () => {
 		this.#startTimer();
 	};
-
-	createRoot(props: TooltipRootStateProps) {
-		return new TooltipRootState(props, this);
-	}
 }
 
 type TooltipRootStateProps = ReadableBoxedValues<{
@@ -190,14 +186,6 @@ class TooltipRootState {
 			this.#timerFn.stop();
 		}
 	};
-
-	createTrigger(props: TooltipTriggerStateProps) {
-		return new TooltipTriggerState(props, this);
-	}
-
-	createContent(props: TooltipContentStateProps) {
-		return new TooltipContentState(props, this);
-	}
 }
 
 type TooltipTriggerStateProps = WithRefProps<
@@ -373,13 +361,13 @@ export function useTooltipProvider(props: TooltipProviderStateProps) {
 }
 
 export function useTooltipRoot(props: TooltipRootStateProps) {
-	return setTooltipRootContext(getTooltipProviderContext().createRoot(props));
+	return setTooltipRootContext(new TooltipRootState(props, getTooltipProviderContext()));
 }
 
 export function useTooltipTrigger(props: TooltipTriggerStateProps) {
-	return getTooltipRootContext().createTrigger(props);
+	return new TooltipTriggerState(props, getTooltipRootContext());
 }
 
 export function useTooltipContent(props: TooltipContentStateProps) {
-	return getTooltipRootContext().createContent(props);
+	return new TooltipContentState(props, getTooltipRootContext());
 }

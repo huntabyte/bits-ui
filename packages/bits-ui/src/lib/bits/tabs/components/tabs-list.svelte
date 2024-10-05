@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { ListProps } from "../index.js";
+	import type { TabsListProps } from "../types.js";
 	import { useTabsList } from "../tabs.svelte.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
-	import { useId } from "$lib/internal/useId.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
+	import { useId } from "$lib/internal/use-id.js";
 
 	let {
 		child,
@@ -11,7 +11,7 @@
 		id = useId(),
 		ref = $bindable(null),
 		...restProps
-	}: ListProps = $props();
+	}: TabsListProps = $props();
 
 	const listState = useTabsList({
 		id: box.with(() => id),

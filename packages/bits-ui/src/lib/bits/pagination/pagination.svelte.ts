@@ -1,13 +1,13 @@
 import type { Page, PageItem } from "./types.js";
-import { useRefById } from "$lib/internal/useRefById.svelte.js";
+import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { getDataOrientation } from "$lib/internal/attrs.js";
 import { getElemDirection } from "$lib/internal/locale.js";
 import { kbd } from "$lib/internal/kbd.js";
-import { getDirectionalKeys } from "$lib/internal/getDirectionalKeys.js";
+import { getDirectionalKeys } from "$lib/internal/get-directional-keys.js";
 import { type Orientation, useId } from "$lib/shared/index.js";
-import { createContext } from "$lib/internal/createContext.js";
+import { createContext } from "$lib/internal/create-context.js";
 
 const ROOT_ATTR = "data-pagination-root";
 const PAGE_ATTR = "data-pagination-page";
@@ -90,14 +90,6 @@ class PaginationRootState {
 		this.page.current = Math.min(this.page.current + 1, this.totalPages);
 	};
 
-	createPage = (props: PaginationPageStateProps) => {
-		return new PaginationPage(props, this);
-	};
-
-	createButton = (props: PaginationButtonStateProps) => {
-		return new PaginationButtonState(props, this);
-	};
-
 	snippetProps = $derived.by(() => ({
 		pages: this.pages,
 		range: this.range,
@@ -123,7 +115,7 @@ type PaginationPageStateProps = WithRefProps<
 	}>
 >;
 
-class PaginationPage {
+class PaginationPageState {
 	#id: PaginationPageStateProps["id"];
 	#ref: PaginationPageStateProps["ref"];
 	#root: PaginationRootState;
@@ -347,9 +339,9 @@ export function usePaginationRoot(props: PaginationRootStateProps) {
 }
 
 export function usePaginationPage(props: PaginationPageStateProps) {
-	return getPaginationRootContext().createPage(props);
+	return new PaginationPageState(props, getPaginationRootContext());
 }
 
 export function usePaginationButton(props: PaginationButtonStateProps) {
-	return getPaginationRootContext().createButton(props);
+	return new PaginationButtonState(props, getPaginationRootContext());
 }

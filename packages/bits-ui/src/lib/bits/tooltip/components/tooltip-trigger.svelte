@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { TriggerProps } from "../index.js";
+	import type { TooltipTriggerProps } from "../types.js";
 	import { useTooltipTrigger } from "../tooltip.svelte.js";
-	import { useId } from "$lib/internal/useId.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
-	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
+	import { useId } from "$lib/internal/use-id.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
+	import FloatingLayerAnchor from "$lib/bits/utilities/floating-layer/components/floating-layer-anchor.svelte";
 
 	let {
 		children,
@@ -14,7 +14,7 @@
 		type = "button",
 		ref = $bindable(null),
 		...restProps
-	}: TriggerProps = $props();
+	}: TooltipTriggerProps = $props();
 
 	const triggerState = useTooltipTrigger({
 		id: box.with(() => id),
@@ -28,7 +28,7 @@
 	const mergedProps = $derived(mergeProps(restProps, triggerState.props, { type }));
 </script>
 
-<FloatingLayer.Anchor {id}>
+<FloatingLayerAnchor {id}>
 	{#if child}
 		{@render child({ props: mergedProps })}
 	{:else}
@@ -36,4 +36,4 @@
 			{@render children?.()}
 		</button>
 	{/if}
-</FloatingLayer.Anchor>
+</FloatingLayerAnchor>

@@ -1,11 +1,17 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
 	import { useCalendarDay } from "../calendar.svelte.js";
-	import type { DayProps } from "../index.js";
-	import { useId } from "$lib/internal/useId.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import type { CalendarDayProps } from "../types.js";
+	import { useId } from "$lib/internal/use-id.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 
-	let { children, child, ref = $bindable(null), id = useId(), ...restProps }: DayProps = $props();
+	let {
+		children,
+		child,
+		ref = $bindable(null),
+		id = useId(),
+		...restProps
+	}: CalendarDayProps = $props();
 
 	const dayState = useCalendarDay({
 		id: box.with(() => id),

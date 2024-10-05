@@ -46,5 +46,5 @@ export type PrimitiveThAttributes = Primitive<HTMLThAttributes>;
 export type PrimitiveTableAttributes = Primitive<HTMLTableAttributes>;
 export type PrimitiveTbodyAttributes = Primitive<HTMLTableSectionAttributes>;
 export type PrimitiveTrAttributes = Primitive<HTMLTableRowAttributes>;
-export type PrimitiveTheadAttrbutes = Primitive<HTMLTableSectionAttributes>;
+export type PrimitiveTheadAttributes = Primitive<HTMLTableSectionAttributes>;
 export type PrimitiveHeaderAttributes = Primitive<HTMLElementAttributes>;

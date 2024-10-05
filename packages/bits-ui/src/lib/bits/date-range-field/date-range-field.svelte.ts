@@ -1,21 +1,26 @@
 import type { DateValue } from "@internationalized/date";
 import { untrack } from "svelte";
-import { type WritableBox, box } from "svelte-toolbelt";
+import { box } from "svelte-toolbelt";
 import type { DateFieldRootState } from "../date-field/date-field.svelte.js";
-import { useDateFieldRoot } from "../date-field/date-field.svelte.js";
+import { DateFieldInputState, useDateFieldRoot } from "../date-field/date-field.svelte.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import { useId } from "$lib/internal/useId.js";
-import { removeDescriptionElement } from "$lib/shared/date/field/helpers.js";
-import { type Formatter, createFormatter } from "$lib/shared/date/formatter.js";
-import type { DateOnInvalid, DateRangeValidator, Granularity } from "$lib/shared/date/types.js";
-import type { DateRange, SegmentPart } from "$lib/shared/index.js";
+import { useId } from "$lib/internal/use-id.js";
+import type {
+	DateOnInvalid,
+	DateRange,
+	DateRangeValidator,
+	SegmentPart,
+} from "$lib/shared/index.js";
 import type { WithRefProps } from "$lib/internal/types.js";
-import { useRefById } from "$lib/internal/useRefById.svelte.js";
-import { createContext } from "$lib/internal/createContext.js";
-import { getFirstSegment } from "$lib/shared/date/field.js";
+import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
+import { createContext } from "$lib/internal/create-context.js";
 import { getDataDisabled, getDataInvalid } from "$lib/internal/attrs.js";
-import { onDestroyEffect } from "$lib/internal/onDestroyEffect.svelte.js";
-import { isBefore } from "$lib/shared/date/utils.js";
+import { onDestroyEffect } from "$lib/internal/on-destroy-effect.svelte.js";
+import type { Granularity } from "$lib/shared/date/types.js";
+import { type Formatter, createFormatter } from "$lib/internal/date-time/formatter.js";
+import { removeDescriptionElement } from "$lib/internal/date-time/field/helpers.js";
+import { isBefore } from "$lib/internal/date-time/utils.js";
+import { getFirstSegment } from "$lib/internal/date-time/field/segments.js";
 
 export const DATE_RANGE_FIELD_ROOT_ATTR = "data-date-range-field-root";
 const DATE_RANGE_FIELD_LABEL_ATTR = "data-date-range-field-label";
@@ -233,46 +238,6 @@ export class DateRangeFieldRootState {
 	 */
 	childFieldPropOverrides = {};
 
-	createField(
-		props: {
-			value: WritableBox<DateValue | undefined>;
-		},
-		type: "start" | "end"
-	) {
-		const fieldState = useDateFieldRoot(
-			{
-				value: props.value,
-				disabled: this.disabled,
-				readonly: this.readonly,
-				readonlySegments: this.readonlySegments,
-				validate: box.with(() => undefined),
-				minValue: this.minValue,
-				maxValue: this.maxValue,
-				hourCycle: this.hourCycle,
-				locale: this.locale,
-				hideTimeZone: this.hideTimeZone,
-				required: this.required,
-				granularity: this.granularity,
-				placeholder: this.placeholder,
-				onInvalid: this.onInvalid,
-				errorMessageId: this.errorMessageId,
-				isInvalidProp: box.with(() => this.isInvalid),
-			},
-			this
-		);
-
-		if (type === "start") {
-			this.startFieldState = fieldState;
-		} else {
-			this.endFieldState = fieldState;
-		}
-		return fieldState;
-	}
-
-	createLabel(props: DateRangeFieldLabelStateProps) {
-		return new DateRangeFieldLabelState(props, this);
-	}
-
 	props = $derived.by(
 		() =>
 			({
@@ -341,26 +306,38 @@ export function useDateRangeFieldRoot(props: DateRangeFieldRootStateProps) {
 }
 
 export function useDateRangeFieldLabel(props: DateRangeFieldLabelStateProps) {
-	return getDateRangeFieldRootContext().createLabel(props);
+	const root = getDateRangeFieldRootContext();
+	return new DateRangeFieldLabelState(props, root);
 }
 
 export function useDateRangeFieldInput(
 	props: Omit<DateRangeFieldInputStateProps, "value">,
 	type: "start" | "end"
 ) {
-	const rootState = getDateRangeFieldRootContext();
-	const fieldState = rootState.createField(
+	const root = getDateRangeFieldRootContext();
+	const fieldState = useDateFieldRoot(
 		{
-			value: type === "start" ? rootState.startValue : rootState.endValue,
+			value: type === "start" ? root.startValue : root.endValue,
+			disabled: root.disabled,
+			readonly: root.readonly,
+			readonlySegments: root.readonlySegments,
+			validate: box.with(() => undefined),
+			minValue: root.minValue,
+			maxValue: root.maxValue,
+			hourCycle: root.hourCycle,
+			locale: root.locale,
+			hideTimeZone: root.hideTimeZone,
+			required: root.required,
+			granularity: root.granularity,
+			placeholder: root.placeholder,
+			onInvalid: root.onInvalid,
+			errorMessageId: root.errorMessageId,
+			isInvalidProp: box.with(() => root.isInvalid),
 		},
-		type
+		root
 	);
-	const inputState = fieldState.createInput({
-		name: props.name,
-		id: props.id,
-		ref: props.ref,
-	});
-	return inputState;
+
+	return new DateFieldInputState({ name: props.name, id: props.id, ref: props.ref }, fieldState);
 }
 
 export { getDateRangeFieldRootContext };

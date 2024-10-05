@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
 	import type { DateValue } from "@internationalized/date";
-	import type { RootProps } from "../index.js";
+	import type { RangeCalendarRootProps } from "../types.js";
 	import { useRangeCalendarRoot } from "../range-calendar.svelte.js";
 	import { noop } from "$lib/internal/callbacks.js";
-	import { useId } from "$lib/internal/useId.js";
-	import { getDefaultDate } from "$lib/shared/date/utils.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/use-id.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
+	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
 
 	let {
 		children,
@@ -37,7 +37,7 @@
 		controlledPlaceholder = false,
 		controlledValue = false,
 		...restProps
-	}: RootProps = $props();
+	}: RangeCalendarRootProps = $props();
 
 	let startValue = $state<DateValue | undefined>(value?.start);
 	let endValue = $state<DateValue | undefined>(value?.end);

@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { GroupItemsProps } from "../index.js";
+	import type { CommandGroupItemsProps } from "../types.js";
 	import { useCommandGroupItems } from "../command.svelte.js";
-	import { useId } from "$lib/internal/useId.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/use-id.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 
 	let {
 		id = useId(),
@@ -11,7 +11,7 @@
 		children,
 		child,
 		...restProps
-	}: GroupItemsProps = $props();
+	}: CommandGroupItemsProps = $props();
 
 	const groupItemsState = useCommandGroupItems({
 		id: box.with(() => id),

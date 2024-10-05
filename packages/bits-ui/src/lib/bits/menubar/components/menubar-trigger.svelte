@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { TriggerProps } from "../index.js";
+	import type { MenubarTriggerProps } from "../types.js";
 	import { useMenubarTrigger } from "../menubar.svelte.js";
-	import { useId } from "$lib/internal/useId.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/use-id.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 	import FloatingLayerAnchor from "$lib/bits/utilities/floating-layer/components/floating-layer-anchor.svelte";
 	import { useMenuDropdownTrigger } from "$lib/bits/menu/menu.svelte.js";
 
@@ -14,7 +14,7 @@
 		child,
 		ref = $bindable(null),
 		...restProps
-	}: TriggerProps = $props();
+	}: MenubarTriggerProps = $props();
 
 	const triggerState = useMenubarTrigger({
 		id: box.with(() => id),

@@ -2,7 +2,7 @@ import { Previous } from "runed";
 import { untrack } from "svelte";
 import { styleToString } from "svelte-toolbelt";
 import type { InteractOutsideEvent } from "../utilities/dismissible-layer/types.js";
-import { afterTick } from "$lib/internal/afterTick.js";
+import { afterTick } from "$lib/internal/after-tick.js";
 import { backward, forward, next, prev } from "$lib/internal/arrays.js";
 import {
 	getAriaExpanded,
@@ -13,13 +13,13 @@ import {
 	getRequired,
 } from "$lib/internal/attrs.js";
 import type { Box, ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import { createContext } from "$lib/internal/createContext.js";
+import { createContext } from "$lib/internal/create-context.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type { WithRefProps } from "$lib/internal/types.js";
-import { useRefById } from "$lib/internal/useRefById.svelte.js";
+import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
 import { noop } from "$lib/internal/callbacks.js";
 import { addEventListener } from "$lib/internal/events.js";
-import { type Typeahead, useTypeahead } from "$lib/internal/useTypeahead.svelte.js";
+import { type Typeahead, useTypeahead } from "$lib/internal/use-typeahead.svelte.js";
 import { srOnlyStyles } from "$lib/internal/style.js";
 
 // prettier-ignore
@@ -140,22 +140,6 @@ class ListboxBaseRootState {
 	toggleMenu = () => {
 		this.toggleOpen();
 	};
-
-	createComboTrigger(props: ListboxComboTriggerStateProps) {
-		return new ListboxComboTriggerState(props, this);
-	}
-
-	createGroup(props: ListboxGroupStateProps) {
-		return new ListboxGroupState(props, this);
-	}
-
-	createHiddenInput(props: ListboxHiddenInputStateProps) {
-		return new ListboxHiddenInputState(props, this);
-	}
-
-	createContent(props: ListboxContentStateProps) {
-		return new ListboxContentState(props, this);
-	}
 }
 
 type ListboxSingleRootStateProps = ListboxBaseRootStateProps &
@@ -209,18 +193,6 @@ class ListboxSingleRootState extends ListboxBaseRootState {
 		if (!firstCandidate) return;
 		this.setHighlightedNode(firstCandidate);
 	};
-
-	createInput(props: ListboxInputStateProps) {
-		return new ListboxInputState(props, this);
-	}
-
-	createTrigger(props: ListboxTriggerStateProps) {
-		return new ListboxTriggerState(props, this);
-	}
-
-	createItem(props: ListboxItemStateProps) {
-		return new ListboxItemState(props, this);
-	}
 }
 
 type ListboxMultipleRootStateProps = ListboxBaseRootStateProps &
@@ -274,18 +246,6 @@ class ListboxMultipleRootState extends ListboxBaseRootState {
 		if (!firstCandidate) return;
 		this.setHighlightedNode(firstCandidate);
 	};
-
-	createInput(props: ListboxInputStateProps) {
-		return new ListboxInputState(props, this);
-	}
-
-	createTrigger(props: ListboxTriggerStateProps) {
-		return new ListboxTriggerState(props, this);
-	}
-
-	createItem(props: ListboxItemStateProps) {
-		return new ListboxItemState(props, this);
-	}
 }
 
 type ListboxRootState = ListboxSingleRootState | ListboxMultipleRootState;
@@ -714,20 +674,6 @@ class ListboxContentState {
 				onpointermove: this.#onpointermove,
 			}) as const
 	);
-
-	createViewportState = (props: ListboxViewportStateProps) => {
-		return new ListboxViewportState(props, this);
-	};
-
-	createScrollUpButtonState = (props: ListboxScrollButtonImplStateProps) => {
-		const state = new ListboxScrollButtonImplState(props, this);
-		return new ListboxScrollUpButtonState(state);
-	};
-
-	createScrollDownButtonState = (props: ListboxScrollButtonImplStateProps) => {
-		const state = new ListboxScrollButtonImplState(props, this);
-		return new ListboxScrollDownButtonState(state);
-	};
 }
 
 type ListboxItemStateProps = WithRefProps<
@@ -858,10 +804,6 @@ class ListboxGroupState {
 				"aria-labelledby": this.labelNode?.id ?? undefined,
 			}) as const
 	);
-
-	createGroupHeading(props: ListboxGroupHeadingStateProps) {
-		return new ListboxGroupHeadingState(props, this);
-	}
 }
 
 type ListboxGroupHeadingStateProps = WithRefProps;
@@ -1187,47 +1129,51 @@ export function useListboxRoot(props: InitListboxProps) {
 }
 
 export function useListboxInput(props: ListboxInputStateProps) {
-	return getListboxRootContext().createInput(props);
+	return new ListboxInputState(props, getListboxRootContext());
 }
 
 export function useListboxContent(props: ListboxContentStateProps) {
-	return setListboxContentContext(getListboxRootContext().createContent(props));
+	return setListboxContentContext(new ListboxContentState(props, getListboxRootContext()));
 }
 
 export function useListboxTrigger(props: ListboxTriggerStateProps) {
-	return getListboxRootContext().createTrigger(props);
+	return new ListboxTriggerState(props, getListboxRootContext());
 }
 
 export function useListboxComboTrigger(props: ListboxComboTriggerStateProps) {
-	return getListboxRootContext().createComboTrigger(props);
+	return new ListboxComboTriggerState(props, getListboxRootContext());
 }
 
 export function useListboxItem(props: ListboxItemStateProps) {
-	return getListboxRootContext().createItem(props);
+	return new ListboxItemState(props, getListboxRootContext());
 }
 
 export function useListboxViewport(props: ListboxViewportStateProps) {
-	return getListboxContentContext().createViewportState(props);
+	return new ListboxViewportState(props, getListboxContentContext());
 }
 
 export function useListboxScrollUpButton(props: ListboxScrollButtonImplStateProps) {
-	return getListboxContentContext().createScrollUpButtonState(props);
+	return new ListboxScrollUpButtonState(
+		new ListboxScrollButtonImplState(props, getListboxContentContext())
+	);
 }
 
 export function useListboxScrollDownButton(props: ListboxScrollButtonImplStateProps) {
-	return getListboxContentContext().createScrollDownButtonState(props);
+	return new ListboxScrollDownButtonState(
+		new ListboxScrollButtonImplState(props, getListboxContentContext())
+	);
 }
 
 export function useListboxGroup(props: ListboxGroupStateProps) {
-	return setListboxGroupContext(getListboxRootContext().createGroup(props));
+	return setListboxGroupContext(new ListboxGroupState(props, getListboxRootContext()));
 }
 
 export function useListboxGroupHeading(props: ListboxGroupHeadingStateProps) {
-	return getListboxGroupContext().createGroupHeading(props);
+	return new ListboxGroupHeadingState(props, getListboxGroupContext());
 }
 
 export function useListboxHiddenInput(props: ListboxHiddenInputStateProps) {
-	return getListboxRootContext().createHiddenInput(props);
+	return new ListboxHiddenInputState(props, getListboxRootContext());
 }
 
 ////////////////////////////////////

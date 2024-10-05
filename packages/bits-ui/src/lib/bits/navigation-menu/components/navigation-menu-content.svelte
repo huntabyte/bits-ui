@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { ContentProps } from "../index.js";
+	import type { NavigationMenuContentProps } from "../types.js";
 	import { useNavigationMenuContent } from "../navigation-menu.svelte.js";
-	import { useId } from "$lib/internal/useId.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/use-id.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 	import Portal from "$lib/bits/utilities/portal/portal.svelte";
-	import { PresenceLayer } from "$lib/bits/utilities/presence-layer/index.js";
+	import PresenceLayer from "$lib/bits/utilities/presence-layer/presence-layer.svelte";
 	import DismissibleLayer from "$lib/bits/utilities/dismissible-layer/dismissible-layer.svelte";
 	import EscapeLayer from "$lib/bits/utilities/escape-layer/escape-layer.svelte";
 	import Mounted from "$lib/bits/utilities/mounted.svelte";
@@ -20,7 +20,7 @@
 		onInteractOutside,
 		onFocusOutside,
 		...restProps
-	}: ContentProps = $props();
+	}: NavigationMenuContentProps = $props();
 
 	let isMounted = $state(false);
 

@@ -5,8 +5,36 @@ import { onMount, untrack } from "svelte";
 import type { DateRangeFieldRootState } from "../date-range-field/date-range-field.svelte.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { WithRefProps } from "$lib/internal/types.js";
-import { useRefById } from "$lib/internal/useRefById.svelte.js";
-import { type Announcer, getAnnouncer } from "$lib/shared/date/announcer.js";
+import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
+import {
+	getAriaDisabled,
+	getAriaHidden,
+	getAriaInvalid,
+	getAriaReadonly,
+	getDataDisabled,
+	getDataInvalid,
+	getDataReadonly,
+} from "$lib/internal/attrs.js";
+import { isBrowser, isNumberString } from "$lib/internal/is.js";
+import { kbd } from "$lib/internal/kbd.js";
+import { createContext } from "$lib/internal/create-context.js";
+import { useId } from "$lib/internal/use-id.js";
+import { onDestroyEffect } from "$lib/internal/on-destroy-effect.svelte.js";
+import type {
+	DateAndTimeSegmentObj,
+	DateOnInvalid,
+	DateSegmentObj,
+	DateSegmentPart,
+	DateValidator,
+	Granularity,
+	HourCycle,
+	SegmentPart,
+	SegmentValueObj,
+	TimeSegmentObj,
+	TimeSegmentPart,
+} from "$lib/shared/date/types.js";
+import { type Formatter, createFormatter } from "$lib/internal/date-time/formatter.js";
+import { type Announcer, getAnnouncer } from "$lib/internal/date-time/announcer.js";
 import {
 	areAllSegmentsFilled,
 	createContent,
@@ -20,46 +48,16 @@ import {
 	isFirstSegment,
 	removeDescriptionElement,
 	setDescription,
-} from "$lib/shared/date/field/helpers.js";
-import type {
-	DateAndTimeSegmentObj,
-	DateSegmentObj,
-	DateSegmentPart,
-	SegmentValueObj,
-	TimeSegmentObj,
-	TimeSegmentPart,
-} from "$lib/shared/date/field/types.js";
-import { type Formatter, createFormatter } from "$lib/shared/date/formatter.js";
-import { getDaysInMonth, isBefore, toDate } from "$lib/shared/date/utils.js";
-import {
-	getAriaDisabled,
-	getAriaHidden,
-	getAriaInvalid,
-	getAriaReadonly,
-	getDataDisabled,
-	getDataInvalid,
-	getDataReadonly,
-} from "$lib/internal/attrs.js";
-import { isBrowser, isNumberString } from "$lib/internal/is.js";
-import { kbd } from "$lib/internal/kbd.js";
+} from "$lib/internal/date-time/field/helpers.js";
+import { DATE_SEGMENT_PARTS, TIME_SEGMENT_PARTS } from "$lib/internal/date-time/field/parts.js";
+import { getDaysInMonth, isBefore, toDate } from "$lib/internal/date-time/utils.js";
 import {
 	getFirstSegment,
 	handleSegmentNavigation,
 	isSegmentNavigationKey,
 	moveToNextSegment,
 	moveToPrevSegment,
-} from "$lib/shared/date/field.js";
-import type { SegmentPart } from "$lib/shared/index.js";
-import { DATE_SEGMENT_PARTS, TIME_SEGMENT_PARTS } from "$lib/shared/date/field/parts.js";
-import { createContext } from "$lib/internal/createContext.js";
-import { useId } from "$lib/internal/useId.js";
-import type {
-	DateOnInvalid,
-	DateValidator,
-	Granularity,
-	HourCycle,
-} from "$lib/shared/date/types.js";
-import { onDestroyEffect } from "$lib/internal/onDestroyEffect.svelte.js";
+} from "$lib/internal/date-time/field/segments.js";
 
 export const DATE_FIELD_INPUT_ATTR = "data-date-field-input";
 const DATE_FIELD_LABEL_ATTR = "data-date-field-label";
@@ -217,15 +215,15 @@ export class DateFieldRootState {
 	 * Sets the field node for the `DateFieldRootState` instance. We use this method so we can
 	 * keep `#fieldNode` private to prevent accidental usage of the incorrect field node.
 	 */
-	setFieldNode(node: HTMLElement | null) {
+	setFieldNode = (node: HTMLElement | null) => {
 		this.#fieldNode = node;
-	}
+	};
 
 	/**
 	 * Gets the correct field node for the date field regardless of whether it's being
 	 * used in a standalone context or within a `DateRangeField` component.
 	 */
-	getFieldNode() {
+	getFieldNode = () => {
 		/** If we're not within a DateRangeField, we return this field. */
 		if (!this.rangeRoot) {
 			return this.#fieldNode;
@@ -236,37 +234,37 @@ export class DateFieldRootState {
 			 */
 			return this.rangeRoot.fieldNode;
 		}
-	}
+	};
 
 	/**
 	 * Sets the label node for the `DateFieldRootState` instance. We use this method so we can
 	 * keep `#labelNode` private to prevent accidental usage of the incorrect label node.
 	 */
-	setLabelNode(node: HTMLElement | null) {
+	setLabelNode = (node: HTMLElement | null) => {
 		this.#labelNode = node;
-	}
+	};
 
 	/**
 	 * Gets the correct label node for the date field regardless of whether it's being used in
 	 * a standalone context or within a `DateRangeField` component.
 	 */
-	getLabelNode() {
+	getLabelNode = () => {
 		/** If we're not within a DateRangeField, we return this field. */
 		if (!this.rangeRoot) {
 			return this.#labelNode;
 		}
 		/** Otherwise we return the rangeRoot's label node. */
 		return this.rangeRoot.labelNode;
-	}
+	};
 
-	clearUpdating() {
+	clearUpdating = () => {
 		this.states.day.updating = null;
 		this.states.month.updating = null;
 		this.states.year.updating = null;
 		this.states.hour.updating = null;
 		this.states.minute.updating = null;
 		this.states.dayPeriod.updating = null;
-	}
+	};
 
 	setValue(value: DateValue | undefined) {
 		this.value.current = value;
@@ -598,26 +596,6 @@ export class DateFieldRootState {
 			tabindex: this.disabled.current ? undefined : 0,
 		};
 	};
-
-	createInput(props: DateFieldInputStateProps) {
-		return new DateFieldInputState(props, this);
-	}
-
-	createLabel(props: DateFieldLabelStateProps) {
-		return new DateFieldLabelState(props, this);
-	}
-
-	createHiddenInput() {
-		return new DateFieldHiddenInputState(this);
-	}
-
-	createSegment(part: SegmentPart, props: WithRefProps) {
-		return segmentPartToInstance({
-			part,
-			segmentProps: props,
-			root: this,
-		});
-	}
 }
 
 type DateFieldInputStateProps = WithRefProps &
@@ -625,7 +603,7 @@ type DateFieldInputStateProps = WithRefProps &
 		name: string;
 	}>;
 
-class DateFieldInputState {
+export class DateFieldInputState {
 	#id: DateFieldInputStateProps["id"];
 	#ref: DateFieldInputStateProps["ref"];
 	#name: DateFieldInputStateProps["name"];
@@ -955,26 +933,20 @@ class DateFieldDaySegmentState {
 	};
 
 	props = $derived.by(() => {
-		const segmentValues = this.#root.segmentValues;
-		const isEmpty = segmentValues.day === null;
-		const placeholder = this.#root.placeholder.current;
-		const date = segmentValues.day
-			? placeholder.set({ day: Number.parseInt(segmentValues.day) })
-			: placeholder;
-
-		const valueNow = date.day;
-		const valueMin = 1;
-		const valueMax = getDaysInMonth(toDate(date));
-		const valueText = isEmpty ? "Empty" : `${valueNow}`;
+		const date = this.#root.segmentValues.day
+			? this.#root.placeholder.current.set({
+					day: Number.parseInt(this.#root.segmentValues.day),
+				})
+			: this.#root.placeholder.current;
 
 		return {
 			...this.#root.sharedSegmentAttrs,
 			id: this.#id.current,
 			"aria-label": "day,",
-			"aria-valuemin": valueMin,
-			"aria-valuemax": valueMax,
-			"aria-valuenow": valueNow,
-			"aria-valuetext": valueText,
+			"aria-valuemin": 1,
+			"aria-valuemax": getDaysInMonth(toDate(date)),
+			"aria-valuenow": date.day,
+			"aria-valuetext": this.#root.segmentValues.day === null ? "Empty" : `${date.day}`,
 			onkeydown: this.#onkeydown,
 			onfocusout: this.#onfocusout,
 			onclick: this.#root.handleSegmentClick,
@@ -1010,7 +982,6 @@ class DateFieldMonthSegmentState {
 	};
 
 	#onkeydown = (e: KeyboardEvent) => {
-		const placeholder = this.#root.placeholder.current;
 		if (e.ctrlKey || e.metaKey || this.#root.disabled.current) return;
 		if (e.key !== kbd.TAB) e.preventDefault();
 		if (!isAcceptableSegmentKey(e.key)) return;
@@ -1020,7 +991,7 @@ class DateFieldMonthSegmentState {
 		if (isArrowUp(e.key)) {
 			this.#updateSegment("month", (prev) => {
 				if (prev === null) {
-					const next = placeholder.month;
+					const next = this.#root.placeholder.current.month;
 					this.#announcer.announce(this.getAnnouncement(next));
 
 					if (String(next).length === 1) {
@@ -1029,7 +1000,7 @@ class DateFieldMonthSegmentState {
 
 					return `${next}`;
 				}
-				const next = placeholder
+				const next = this.#root.placeholder.current
 					.set({ month: Number.parseInt(prev) })
 					.cycle("month", 1).month;
 				this.#announcer.announce(this.getAnnouncement(next));
@@ -1044,14 +1015,14 @@ class DateFieldMonthSegmentState {
 		if (isArrowDown(e.key)) {
 			this.#updateSegment("month", (prev) => {
 				if (prev === null) {
-					const next = placeholder.month;
+					const next = this.#root.placeholder.current.month;
 					this.#announcer.announce(this.getAnnouncement(next));
 					if (String(next).length === 1) {
 						return `0${next}`;
 					}
 					return `${next}`;
 				}
-				const next = placeholder
+				const next = this.#root.placeholder.current
 					.set({ month: Number.parseInt(prev) })
 					.cycle("month", -1).month;
 				this.#announcer.announce(this.getAnnouncement(next));
@@ -1226,28 +1197,24 @@ class DateFieldMonthSegmentState {
 	};
 
 	props = $derived.by(() => {
-		const segmentValues = this.#root.segmentValues;
-		const placeholder = this.#root.placeholder.current;
-		const isEmpty = segmentValues.month === null;
-		const date = segmentValues.month
-			? placeholder.set({ month: Number.parseInt(segmentValues.month) })
-			: placeholder;
-		const valueNow = date.month;
-		const valueMin = 1;
-		const valueMax = 12;
-		const valueText = isEmpty
-			? "Empty"
-			: `${valueNow} - ${this.#root.formatter.fullMonth(toDate(date))}`;
+		const date = this.#root.segmentValues.month
+			? this.#root.placeholder.current.set({
+					month: Number.parseInt(this.#root.segmentValues.month),
+				})
+			: this.#root.placeholder.current;
 
 		return {
 			...this.#root.sharedSegmentAttrs,
 			id: this.#id.current,
 			"aria-label": "month, ",
 			contenteditable: "true",
-			"aria-valuemin": valueMin,
-			"aria-valuemax": valueMax,
-			"aria-valuenow": valueNow,
-			"aria-valuetext": valueText,
+			"aria-valuemin": 1,
+			"aria-valuemax": 12,
+			"aria-valuenow": date.month,
+			"aria-valuetext":
+				this.#root.segmentValues.month === null
+					? "Empty"
+					: `${date.month} - ${this.#root.formatter.fullMonth(toDate(date))}`,
 			onkeydown: this.#onkeydown,
 			onfocusout: this.#onfocusout,
 			onclick: this.#root.handleSegmentClick,
@@ -1306,13 +1273,13 @@ class DateFieldYearSegmentState {
 		});
 	}
 
-	#resetBackspaceCount() {
+	#resetBackspaceCount = () => {
 		this.#backspaceCount = 0;
-	}
+	};
 
-	#incrementBackspaceCount() {
+	#incrementBackspaceCount = () => {
 		this.#backspaceCount++;
-	}
+	};
 
 	#onkeydown = (e: KeyboardEvent) => {
 		const placeholder = this.#root.placeholder.current;
@@ -2441,19 +2408,27 @@ export function useDateFieldRoot(
 }
 
 export function useDateFieldInput(props: DateFieldInputStateProps) {
-	return getDateFieldRootContext().createInput(props);
+	const root = getDateFieldRootContext();
+	return new DateFieldInputState(props, root);
 }
 
 export function useDateFieldHiddenInput() {
-	return getDateFieldRootContext().createHiddenInput();
+	const root = getDateFieldRootContext();
+	return new DateFieldHiddenInputState(root);
 }
 
 export function useDateFieldSegment(part: SegmentPart, props: WithRefProps) {
-	return getDateFieldRootContext().createSegment(part, props);
+	const root = getDateFieldRootContext();
+	return segmentPartToInstance({
+		part,
+		segmentProps: props,
+		root,
+	});
 }
 
 export function useDateFieldLabel(props: DateFieldLabelStateProps) {
-	return getDateFieldRootContext().createLabel(props);
+	const root = getDateFieldRootContext();
+	return new DateFieldLabelState(props, root);
 }
 
 type SegmentPartToInstanceProps = {
@@ -2463,26 +2438,25 @@ type SegmentPartToInstanceProps = {
 };
 
 function segmentPartToInstance(props: SegmentPartToInstanceProps) {
-	const { part, root, segmentProps } = props;
-	switch (part) {
+	switch (props.part) {
 		case "day":
-			return new DateFieldDaySegmentState(segmentProps, root);
+			return new DateFieldDaySegmentState(props.segmentProps, props.root);
 		case "month":
-			return new DateFieldMonthSegmentState(segmentProps, root);
+			return new DateFieldMonthSegmentState(props.segmentProps, props.root);
 		case "year":
-			return new DateFieldYearSegmentState(segmentProps, root);
+			return new DateFieldYearSegmentState(props.segmentProps, props.root);
 		case "hour":
-			return new DateFieldHourSegmentState(segmentProps, root);
+			return new DateFieldHourSegmentState(props.segmentProps, props.root);
 		case "minute":
-			return new DateFieldMinuteSegmentState(segmentProps, root);
+			return new DateFieldMinuteSegmentState(props.segmentProps, props.root);
 		case "second":
-			return new DateFieldSecondSegmentState(segmentProps, root);
+			return new DateFieldSecondSegmentState(props.segmentProps, props.root);
 		case "dayPeriod":
-			return new DateFieldDayPeriodSegmentState(segmentProps, root);
+			return new DateFieldDayPeriodSegmentState(props.segmentProps, props.root);
 		case "literal":
-			return new DateFieldDayLiteralSegmentState(segmentProps, root);
+			return new DateFieldDayLiteralSegmentState(props.segmentProps, props.root);
 		case "timeZoneName":
-			return new DateFieldTimeZoneSegmentState(segmentProps, root);
+			return new DateFieldTimeZoneSegmentState(props.segmentProps, props.root);
 	}
 }
 

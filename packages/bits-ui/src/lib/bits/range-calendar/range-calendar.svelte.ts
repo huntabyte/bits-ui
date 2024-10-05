@@ -6,44 +6,25 @@ import {
 	isToday,
 } from "@internationalized/date";
 import { untrack } from "svelte";
-import {
-	CalendarGridBodyState,
-	type CalendarGridBodyStateProps,
-	CalendarGridHeadState,
-	type CalendarGridHeadStateProps,
-	CalendarGridRowState,
-	type CalendarGridRowStateProps,
-	CalendarGridState,
-	type CalendarGridStateProps,
-	CalendarHeadCellState,
-	type CalendarHeadCellStateProps,
-	CalendarHeaderState,
-	type CalendarHeaderStateProps,
-	CalendarHeadingState,
-	type CalendarHeadingStateProps,
-	CalendarNextButtonState,
-	type CalendarNextButtonStateProps,
-	CalendarPrevButtonState,
-	type CalendarPrevButtonStateProps,
-} from "../calendar/calendar.svelte.js";
 import type { DateRange, Month } from "$lib/shared/index.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { WithRefProps } from "$lib/internal/types.js";
-import { type Announcer, getAnnouncer } from "$lib/shared/date/announcer.js";
-import { type Formatter, createFormatter } from "$lib/shared/date/formatter.js";
-import { useId } from "$lib/internal/useId.js";
-import { useRefById } from "$lib/internal/useRefById.svelte.js";
+import { useId } from "$lib/internal/use-id.js";
+import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
+
+import {
+	getAriaDisabled,
+	getAriaSelected,
+	getDataDisabled,
+	getDataSelected,
+	getDataUnavailable,
+} from "$lib/internal/attrs.js";
+import { createContext } from "$lib/internal/create-context.js";
+import { type Announcer, getAnnouncer } from "$lib/internal/date-time/announcer.js";
+import { type Formatter, createFormatter } from "$lib/internal/date-time/formatter.js";
 import {
 	type CalendarParts,
-	areAllDaysBetweenValid,
-	isAfter,
-	isBefore,
-	isBetweenInclusive,
-	toDate,
-} from "$lib/shared/date/index.js";
-import {
 	createMonths,
-	getCalendarBitsAttr,
 	getCalendarElementProps,
 	getCalendarHeadingValue,
 	getIsNextButtonDisabled,
@@ -55,15 +36,14 @@ import {
 	shiftCalendarFocus,
 	useMonthViewOptionsSync,
 	useMonthViewPlaceholderSync,
-} from "$lib/shared/date/calendar-helpers.svelte.js";
+} from "$lib/internal/date-time/calendar-helpers.svelte.js";
 import {
-	getAriaDisabled,
-	getAriaSelected,
-	getDataDisabled,
-	getDataSelected,
-	getDataUnavailable,
-} from "$lib/internal/attrs.js";
-import { createContext } from "$lib/internal/createContext.js";
+	areAllDaysBetweenValid,
+	isAfter,
+	isBefore,
+	isBetweenInclusive,
+	toDate,
+} from "$lib/internal/date-time/utils.js";
 
 type RangeCalendarRootStateProps = WithRefProps<
 	WritableBoxedValues<{
@@ -554,7 +534,7 @@ export class RangeCalendarRootState {
 	};
 
 	getBitsAttr = (part: CalendarParts) => {
-		return getCalendarBitsAttr(this, part);
+		return `data-range-calendar-${part}`;
 	};
 
 	snippetProps = $derived.by(() => ({
@@ -577,46 +557,6 @@ export class RangeCalendarRootState {
 				onkeydown: this.#onkeydown,
 			}) as const
 	);
-
-	createHeading = (props: CalendarHeadingStateProps) => {
-		return new CalendarHeadingState(props, this);
-	};
-
-	createGrid = (props: CalendarGridStateProps) => {
-		return new CalendarGridState(props, this);
-	};
-
-	createCell = (props: RangeCalendarCellStateProps) => {
-		return new RangeCalendarCellState(props, this);
-	};
-
-	createNextButton = (props: CalendarNextButtonStateProps) => {
-		return new CalendarNextButtonState(props, this);
-	};
-
-	createPrevButton = (props: CalendarPrevButtonStateProps) => {
-		return new CalendarPrevButtonState(props, this);
-	};
-
-	createGridBody = (props: CalendarGridBodyStateProps) => {
-		return new CalendarGridBodyState(props, this);
-	};
-
-	createGridHead = (props: CalendarGridHeadStateProps) => {
-		return new CalendarGridHeadState(props, this);
-	};
-
-	createGridRow = (props: CalendarGridRowStateProps) => {
-		return new CalendarGridRowState(props, this);
-	};
-
-	createHeadCell = (props: CalendarHeadCellStateProps) => {
-		return new CalendarHeadCellState(props, this);
-	};
-
-	createHeader = (props: CalendarHeaderStateProps) => {
-		return new CalendarHeaderState(props, this);
-	};
 }
 
 type RangeCalendarCellStateProps = WithRefProps<
@@ -633,7 +573,7 @@ export class RangeCalendarCellState {
 	month: RangeCalendarCellStateProps["month"];
 	cellDate = $derived.by(() => toDate(this.date.current));
 	isDisabled = $derived.by(() => this.root.isDateDisabled(this.date.current));
-	isUnvailable = $derived.by(() => this.root.isDateUnavailableProp.current(this.date.current));
+	isUnavailable = $derived.by(() => this.root.isDateUnavailableProp.current(this.date.current));
 	isDateToday = $derived.by(() => isToday(this.date.current, getLocalTimeZone()));
 	isOutsideMonth = $derived.by(() => !isSameMonth(this.date.current, this.month.current));
 	isOutsideVisibleMonths = $derived.by(() => this.root.isOutsideVisibleMonths(this.date.current));
@@ -677,7 +617,7 @@ export class RangeCalendarCellState {
 
 	snippetProps = $derived.by(() => ({
 		disabled: this.isDisabled,
-		unavailable: this.isUnvailable,
+		unavailable: this.isUnavailable,
 		selected: this.isSelectedDate,
 	}));
 
@@ -685,14 +625,14 @@ export class RangeCalendarCellState {
 		return (
 			this.isDisabled ||
 			(this.isOutsideMonth && this.root.disableDaysOutsideMonth.current) ||
-			this.isUnvailable
+			this.isUnavailable
 		);
 	});
 
 	sharedDataAttrs = $derived.by(
 		() =>
 			({
-				"data-unavailable": getDataUnavailable(this.isUnvailable),
+				"data-unavailable": getDataUnavailable(this.isUnavailable),
 				"data-today": this.isDateToday ? "" : undefined,
 				"data-outside-month": this.isOutsideMonth ? "" : undefined,
 				"data-outside-visible-months": this.isOutsideVisibleMonths ? "" : undefined,
@@ -720,10 +660,6 @@ export class RangeCalendarCellState {
 				[this.root.getBitsAttr("cell")]: "",
 			}) as const
 	);
-
-	createDay(props: RangeCalendarDayStateProps) {
-		return new RangeCalendarDayState(props, this);
-	}
 }
 
 type RangeCalendarDayStateProps = WithRefProps;
@@ -771,7 +707,7 @@ class RangeCalendarDayState {
 
 	snippetProps = $derived.by(() => ({
 		disabled: this.cell.isDisabled,
-		unavailable: this.cell.isUnvailable,
+		unavailable: this.cell.isUnavailable,
 		selected: this.cell.isSelectedDate,
 		day: `${this.cell.date.current.day}`,
 	}));
@@ -810,9 +746,11 @@ export function useRangeCalendarRoot(props: RangeCalendarRootStateProps) {
 }
 
 export function useRangeCalendarCell(props: RangeCalendarCellStateProps) {
-	return setRangeCalendarCellContext(getRangeCalendarRootContext().createCell(props));
+	return setRangeCalendarCellContext(
+		new RangeCalendarCellState(props, getRangeCalendarRootContext())
+	);
 }
 
 export function useRangeCalendarDay(props: RangeCalendarDayStateProps) {
-	return getRangeCalendarCellContext().createDay(props);
+	return new RangeCalendarDayState(props, getRangeCalendarCellContext());
 }

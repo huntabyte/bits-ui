@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
 	import { useCalendarGrid } from "../calendar.svelte.js";
-	import type { GridProps } from "../index.js";
-	import { useId } from "$lib/internal/useId.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import type { CalendarGridProps } from "../types.js";
+	import { useId } from "$lib/internal/use-id.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 
 	let {
 		children,
@@ -11,7 +11,7 @@
 		ref = $bindable(null),
 		id = useId(),
 		...restProps
-	}: GridProps = $props();
+	}: CalendarGridProps = $props();
 
 	const gridState = useCalendarGrid({
 		id: box.with(() => id),

@@ -1,4 +1,4 @@
-import type { AspectRatioPropsWithoutHTML } from "bits-ui";
+import type { AspectRatioRootPropsWithoutHTML } from "bits-ui";
 import {
 	createApiSchema,
 	createDataAttrSchema,
@@ -6,7 +6,7 @@ import {
 	withChildProps,
 } from "./helpers.js";
 
-const root = createApiSchema<AspectRatioPropsWithoutHTML>({
+const root = createApiSchema<AspectRatioRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The aspect ratio component.",
 	props: {

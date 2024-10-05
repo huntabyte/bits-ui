@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { ContentProps } from "../index.js";
+	import type { TabsContentProps } from "../types.js";
 	import { useTabsContent } from "../tabs.svelte.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
-	import { useId } from "$lib/internal/useId.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
+	import { useId } from "$lib/internal/use-id.js";
 
 	let {
 		children,
@@ -12,7 +12,7 @@
 		ref = $bindable(null),
 		value,
 		...restProps
-	}: ContentProps = $props();
+	}: TabsContentProps = $props();
 
 	const contentState = useTabsContent({
 		value: box.with(() => value),

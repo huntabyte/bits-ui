@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
 	import { useDateFieldLabel } from "../date-field.svelte.js";
-	import type { LabelProps } from "../index.js";
-	import { useId } from "$lib/internal/useId.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import type { DateFieldLabelProps } from "../types.js";
+	import { useId } from "$lib/internal/use-id.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 
 	let {
 		id = useId(),
@@ -11,7 +11,7 @@
 		children,
 		child,
 		...restProps
-	}: LabelProps = $props();
+	}: DateFieldLabelProps = $props();
 
 	const labelState = useDateFieldLabel({
 		id: box.with(() => id),

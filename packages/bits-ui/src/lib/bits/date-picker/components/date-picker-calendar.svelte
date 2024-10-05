@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { CalendarProps } from "../index.js";
+	import type { DatePickerCalendarProps } from "../types.js";
 	import { getDatePickerRootContext } from "../date-picker.svelte.js";
-	import { useId } from "$lib/internal/useId.js";
+	import { useId } from "$lib/internal/use-id.js";
 	import { useCalendarRoot } from "$lib/bits/calendar/calendar.svelte.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 
 	let {
 		children,
@@ -12,7 +12,7 @@
 		id = useId(),
 		ref = $bindable(null),
 		...restProps
-	}: CalendarProps = $props();
+	}: DatePickerCalendarProps = $props();
 
 	const datePickerRootState = getDatePickerRootContext();
 

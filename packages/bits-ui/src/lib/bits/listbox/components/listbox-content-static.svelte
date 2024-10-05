@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { ContentStaticProps } from "../index.js";
+	import type { ListboxContentStaticProps } from "../types.js";
 	import { useListboxContent } from "../listbox.svelte.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
-	import { useId } from "$lib/internal/useId.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/use-id.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 	import { noop } from "$lib/internal/callbacks.js";
 
 	let {
@@ -16,7 +16,7 @@
 		children,
 		child,
 		...restProps
-	}: ContentStaticProps = $props();
+	}: ListboxContentStaticProps = $props();
 
 	const contentState = useListboxContent({
 		id: box.with(() => id),

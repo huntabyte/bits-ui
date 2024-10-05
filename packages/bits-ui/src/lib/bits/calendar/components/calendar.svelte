@@ -2,11 +2,11 @@
 	import { box } from "svelte-toolbelt";
 	import type { DateValue } from "@internationalized/date";
 	import { useCalendarRoot } from "../calendar.svelte.js";
-	import type { RootProps } from "../index.js";
-	import { useId } from "$lib/internal/useId.js";
+	import type { CalendarRootProps } from "../types.js";
+	import { useId } from "$lib/internal/use-id.js";
 	import { noop } from "$lib/internal/callbacks.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
-	import { getDefaultDate } from "$lib/shared/date/utils.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
+	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
 
 	let {
 		child,
@@ -37,13 +37,28 @@
 		controlledValue = false,
 		controlledPlaceholder = false,
 		...restProps
-	}: RootProps = $props();
+	}: CalendarRootProps = $props();
 
 	if (placeholder === undefined) {
-		placeholder = getDefaultDate({
+		const defaultPlaceholder = getDefaultDate({
 			defaultPlaceholder: undefined,
 			defaultValue: value,
 		});
+
+		if (controlledPlaceholder) {
+			onPlaceholderChange(defaultPlaceholder);
+		} else {
+			placeholder = defaultPlaceholder;
+		}
+	}
+
+	if (value === undefined) {
+		const defaultValue = type === "single" ? "" : [];
+		if (controlledValue) {
+			onValueChange(defaultValue as any);
+		} else {
+			value = defaultValue as any;
+		}
 	}
 
 	value === undefined && (value = type === "single" ? undefined : []);

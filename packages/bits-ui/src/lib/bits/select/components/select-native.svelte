@@ -2,7 +2,7 @@
 	import type { Snippet } from "svelte";
 	import type { HTMLSelectAttributes } from "svelte/elements";
 	import { VisuallyHidden } from "$lib/bits/utilities/visually-hidden/index.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 
 	type Props = {
 		autofocus?: boolean;

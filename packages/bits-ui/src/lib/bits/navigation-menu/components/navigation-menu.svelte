@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { RootProps } from "../index.js";
+	import type { NavigationMenuRootProps } from "../types.js";
 	import { useNavigationMenuRoot } from "../navigation-menu.svelte.js";
-	import { useId } from "$lib/internal/useId.js";
+	import { useId } from "$lib/internal/use-id.js";
 	import { noop } from "$lib/internal/callbacks.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 
 	let {
 		child,
@@ -19,7 +19,7 @@
 		orientation = "horizontal",
 		controlledValue = false,
 		...restProps
-	}: RootProps = $props();
+	}: NavigationMenuRootProps = $props();
 
 	const rootState = useNavigationMenuRoot({
 		id: box.with(() => id),

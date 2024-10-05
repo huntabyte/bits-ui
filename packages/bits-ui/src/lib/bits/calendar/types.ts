@@ -1,6 +1,5 @@
 import type { DateValue } from "@internationalized/date";
 import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
-import type { DateMatcher, Month, WeekStartsOn } from "$lib/shared/date/types.js";
 import type {
 	PrimitiveButtonAttributes,
 	PrimitiveDivAttributes,
@@ -9,9 +8,10 @@ import type {
 	PrimitiveTbodyAttributes,
 	PrimitiveTdAttributes,
 	PrimitiveThAttributes,
-	PrimitiveTheadAttrbutes,
+	PrimitiveTheadAttributes,
 	PrimitiveTrAttributes,
 } from "$lib/shared/attributes.js";
+import type { DateMatcher, Month, WeekStartsOn } from "$lib/shared/date/types.js";
 
 export type CalendarRootSnippetProps = {
 	months: Month<DateValue>[];
@@ -308,7 +308,7 @@ export type CalendarGridBodyProps = CalendarGridBodyPropsWithoutHTML &
 export type CalendarGridHeadPropsWithoutHTML = WithChild;
 
 export type CalendarGridHeadProps = CalendarGridHeadPropsWithoutHTML &
-	Without<PrimitiveTheadAttrbutes, CalendarGridHeadPropsWithoutHTML>;
+	Without<PrimitiveTheadAttributes, CalendarGridHeadPropsWithoutHTML>;
 
 export type CalendarHeadCellPropsWithoutHTML = WithChild;
 

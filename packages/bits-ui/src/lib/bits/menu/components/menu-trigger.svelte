@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { TriggerProps } from "../index.js";
+	import type { MenuTriggerProps } from "../types.js";
 	import { useMenuDropdownTrigger } from "../menu.svelte.js";
-	import { useId } from "$lib/internal/useId.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
-	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
+	import { useId } from "$lib/internal/use-id.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
+	import FloatingLayerAnchor from "$lib/bits/utilities/floating-layer/components/floating-layer-anchor.svelte";
 
 	let {
 		id = useId(),
@@ -13,7 +13,7 @@
 		children,
 		disabled = false,
 		...restProps
-	}: TriggerProps = $props();
+	}: MenuTriggerProps = $props();
 
 	const triggerState = useMenuDropdownTrigger({
 		id: box.with(() => id),
@@ -27,7 +27,7 @@
 	const mergedProps = $derived(mergeProps(restProps, triggerState.props));
 </script>
 
-<FloatingLayer.Anchor {id}>
+<FloatingLayerAnchor {id}>
 	{#if child}
 		{@render child({ props: mergedProps })}
 	{:else}
@@ -35,4 +35,4 @@
 			{@render children?.()}
 		</button>
 	{/if}
-</FloatingLayer.Anchor>
+</FloatingLayerAnchor>

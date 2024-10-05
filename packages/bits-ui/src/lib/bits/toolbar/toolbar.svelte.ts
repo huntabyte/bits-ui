@@ -8,10 +8,13 @@ import {
 } from "$lib/internal/attrs.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
-import { useRefById } from "$lib/internal/useRefById.svelte.js";
-import { type UseRovingFocusReturn, useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
+import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
+import {
+	type UseRovingFocusReturn,
+	useRovingFocus,
+} from "$lib/internal/use-roving-focus.svelte.js";
 import type { Orientation } from "$lib/shared/index.js";
-import { createContext } from "$lib/internal/createContext.js";
+import { createContext } from "$lib/internal/create-context.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 
 const ROOT_ATTR = "data-toolbar-root";
@@ -53,23 +56,6 @@ class ToolbarRootState {
 			rootNodeId: this.#id,
 			candidateAttr: ITEM_ATTR,
 		});
-	}
-
-	createGroup(props: InitToolbarGroupProps) {
-		const { type, ...rest } = props;
-		const groupState =
-			type === "single"
-				? new ToolbarGroupSingleState(rest as ToolbarGroupSingleStateProps, this)
-				: new ToolbarGroupMultipleState(rest as ToolbarGroupMultipleStateProps, this);
-		return groupState;
-	}
-
-	createLink(props: ToolbarLinkStateProps) {
-		return new ToolbarLinkState(props, this);
-	}
-
-	createButton(props: ToolbarButtonStateProps) {
-		return new ToolbarButtonState(props, this);
 	}
 
 	props = $derived.by(
@@ -185,10 +171,6 @@ class ToolbarGroupMultipleState extends ToolbarGroupBaseState {
 			this.#value.current = [...this.#value.current, item];
 		}
 	};
-
-	createItem(props: ToolbarGroupItemStateProps) {
-		return new ToolbarGroupItemState(props, this, this.root);
-	}
 }
 
 type ToolbarGroupState = ToolbarGroupSingleState | ToolbarGroupMultipleState;
@@ -413,17 +395,25 @@ type InitToolbarGroupProps = WithRefProps<
 >;
 
 export function useToolbarGroup(props: InitToolbarGroupProps) {
-	return setToolbarGroupContext(getToolbarRootContext().createGroup(props));
+	const { type, ...rest } = props;
+	const rootState = getToolbarRootContext();
+	const groupState =
+		type === "single"
+			? new ToolbarGroupSingleState(rest as ToolbarGroupSingleStateProps, rootState)
+			: new ToolbarGroupMultipleState(rest as ToolbarGroupMultipleStateProps, rootState);
+
+	return setToolbarGroupContext(groupState);
 }
 
 export function useToolbarGroupItem(props: ToolbarGroupItemStateProps) {
-	return getToolbarGroupContext().createItem(props);
+	const group = getToolbarGroupContext();
+	return new ToolbarGroupItemState(props, group, group.root);
 }
 
 export function useToolbarButton(props: ToolbarButtonStateProps) {
-	return getToolbarRootContext().createButton(props);
+	return new ToolbarButtonState(props, getToolbarRootContext());
 }
 
 export function useToolbarLink(props: ToolbarLinkStateProps) {
-	return getToolbarRootContext().createLink(props);
+	return new ToolbarLinkState(props, getToolbarRootContext());
 }

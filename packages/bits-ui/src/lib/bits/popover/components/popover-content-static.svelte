@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { ContentStaticProps } from "../index.js";
+	import type { PopoverContentStaticProps } from "../types.js";
 	import { usePopoverContent } from "../popover.svelte.js";
-	import { PopperLayer } from "$lib/bits/utilities/popper-layer/index.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 	import { noop } from "$lib/internal/noop.js";
-	import { useId } from "$lib/internal/useId.js";
+	import { useId } from "$lib/internal/use-id.js";
 
 	let {
 		child,
@@ -19,7 +19,7 @@
 		preventScroll = false,
 		trapFocus = true,
 		...restProps
-	}: ContentStaticProps = $props();
+	}: PopoverContentStaticProps = $props();
 
 	const contentState = usePopoverContent({
 		id: box.with(() => id),

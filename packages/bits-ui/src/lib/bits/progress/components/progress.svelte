@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { RootProps } from "../index.js";
+	import type { ProgressRootProps } from "../types.js";
 	import { useProgressRootState } from "../progress.svelte.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
-	import { useId } from "$lib/internal/useId.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
+	import { useId } from "$lib/internal/use-id.js";
 
 	let {
 		child,
@@ -13,7 +13,7 @@
 		id = useId(),
 		ref = $bindable(null),
 		...restProps
-	}: RootProps = $props();
+	}: ProgressRootProps = $props();
 
 	const rootState = useProgressRootState({
 		value: box.with(() => value),

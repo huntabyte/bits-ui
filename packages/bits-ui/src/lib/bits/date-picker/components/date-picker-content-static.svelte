@@ -1,10 +1,14 @@
 <script lang="ts">
-	import type { ContentStaticProps } from "../index.js";
+	import type { DatePickerContentStaticProps } from "../types.js";
 	import PopoverContentStatic from "$lib/bits/popover/components/popover-content-static.svelte";
-	import { pickerOpenFocus } from "$lib/shared/date/index.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
+	import { pickerOpenFocus } from "$lib/internal/date-time/calendar-helpers.svelte.js";
 
-	let { ref = $bindable(null), onOpenAutoFocus, ...restProps }: ContentStaticProps = $props();
+	let {
+		ref = $bindable(null),
+		onOpenAutoFocus,
+		...restProps
+	}: DatePickerContentStaticProps = $props();
 
 	const mergedProps = $derived(
 		mergeProps({ onOpenAutoFocus }, { onOpenAutoFocus: pickerOpenFocus })

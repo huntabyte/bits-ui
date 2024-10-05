@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { RootProps } from "../index.js";
+	import type { TooltipRootProps } from "../types.js";
 	import { useTooltipRoot } from "../tooltip.svelte.js";
-	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
+	import FloatingLayer from "$lib/bits/utilities/floating-layer/components/floating-layer.svelte";
 	import { noop } from "$lib/internal/callbacks.js";
 
 	let {
@@ -15,7 +15,7 @@
 		ignoreNonKeyboardFocus = false,
 		controlledOpen = false,
 		children,
-	}: RootProps = $props();
+	}: TooltipRootProps = $props();
 
 	useTooltipRoot({
 		open: box.with(
@@ -37,6 +37,6 @@
 	});
 </script>
 
-<FloatingLayer.Root>
+<FloatingLayer>
 	{@render children?.()}
-</FloatingLayer.Root>
+</FloatingLayer>

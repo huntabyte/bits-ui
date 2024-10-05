@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { type WritableBox, box } from "svelte-toolbelt";
-	import type { GroupProps } from "../index.js";
+	import type { ToolbarGroupProps } from "../types.js";
 	import { useToolbarGroup } from "../toolbar.svelte.js";
-	import { useId } from "$lib/internal/useId.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/use-id.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 	import { noop } from "$lib/internal/callbacks.js";
 
 	let {
@@ -17,7 +17,7 @@
 		child,
 		children,
 		...restProps
-	}: GroupProps = $props();
+	}: ToolbarGroupProps = $props();
 
 	if (value === undefined) {
 		const defaultValue = type === "single" ? "" : [];

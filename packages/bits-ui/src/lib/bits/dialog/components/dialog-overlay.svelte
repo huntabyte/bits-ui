@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
 	import { useDialogOverlay } from "../dialog.svelte.js";
-	import type { OverlayProps } from "../index.js";
-	import { useId } from "$lib/internal/useId.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import type { DialogOverlayProps } from "../types.js";
+	import { useId } from "$lib/internal/use-id.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 	import PresenceLayer from "$lib/bits/utilities/presence-layer/presence-layer.svelte";
 
 	let {
@@ -13,7 +13,7 @@
 		children,
 		ref = $bindable(null),
 		...restProps
-	}: OverlayProps = $props();
+	}: DialogOverlayProps = $props();
 
 	const overlayState = useDialogOverlay({
 		id: box.with(() => id),

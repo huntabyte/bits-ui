@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { SubContentProps } from "../index.js";
+	import type { MenuSubContentProps } from "../types.js";
 	import { useMenuContent } from "../menu.svelte.js";
 	import { SUB_CLOSE_KEYS } from "../utils.js";
-	import { useId } from "$lib/internal/useId.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/use-id.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
 	import { noop } from "$lib/internal/callbacks.js";
 	import { isHTMLElement } from "$lib/internal/is.js";
-	import { afterTick } from "$lib/internal/afterTick.js";
+	import { afterTick } from "$lib/internal/after-tick.js";
 	import Mounted from "$lib/bits/utilities/mounted.svelte";
 	import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
 
@@ -28,7 +28,7 @@
 		onFocusOutside = noop,
 		side = "right",
 		...restProps
-	}: SubContentProps = $props();
+	}: MenuSubContentProps = $props();
 
 	let isMounted = $state(false);
 
@@ -55,7 +55,7 @@
 		}
 	}
 
-	const dataAttr = $derived(subContentState.parentMenu.root.attrs.subContent);
+	const dataAttr = $derived(subContentState.parentMenu.root.getAttr("sub-content"));
 
 	const mergedProps = $derived(
 		mergeProps(restProps, subContentState.props, {

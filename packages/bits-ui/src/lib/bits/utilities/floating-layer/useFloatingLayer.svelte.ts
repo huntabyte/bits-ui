@@ -14,16 +14,16 @@ import {
 import { box } from "svelte-toolbelt";
 import { ElementSize } from "runed";
 import type { Arrayable, WithRefProps } from "$lib/internal/types.js";
-import { useRefById } from "$lib/internal/useRefById.svelte.js";
+import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
 import { isNotNull } from "$lib/internal/is.js";
 import { styleToString } from "$lib/internal/style.js";
-import { useId } from "$lib/internal/useId.js";
+import { useId } from "$lib/internal/use-id.js";
 import type { Box, ReadableBoxedValues } from "$lib/internal/box.svelte.js";
-import { useFloating } from "$lib/internal/floating-svelte/useFloating.svelte.js";
+import { useFloating } from "$lib/internal/floating-svelte/use-floating.svelte.js";
 import type { Measurable, UseFloatingReturn } from "$lib/internal/floating-svelte/types.js";
 import type { Direction, StyleProperties } from "$lib/shared/index.js";
-import { createContext } from "$lib/internal/createContext.js";
-import { cssToStyleObj } from "$lib/internal/cssToStyleObj.js";
+import { createContext } from "$lib/internal/create-context.js";
+import { cssToStyleObj } from "$lib/internal/css-to-style-obj.js";
 
 export const SIDE_OPTIONS = ["top", "right", "bottom", "left"] as const;
 export const ALIGN_OPTIONS = ["start", "center", "end"] as const;
@@ -57,14 +57,6 @@ class FloatingRootState {
 				this.anchorNode.current = this.triggerNode.current;
 			}
 		});
-	}
-
-	createAnchor(props: FloatingAnchorStateProps) {
-		return new FloatingAnchorState(props, this);
-	}
-
-	createContent(props: FloatingContentStateProps) {
-		return new FloatingContentState(props, this);
 	}
 }
 
@@ -328,10 +320,6 @@ class FloatingContentState {
 			this.floating.floating.current = this.wrapperRef.current;
 		});
 	}
-
-	createArrow(props: FloatingArrowStateProps) {
-		return new FloatingArrowState(props, this);
-	}
 }
 
 type FloatingArrowStateProps = WithRefProps;
@@ -404,15 +392,15 @@ export function useFloatingRootState() {
 }
 
 export function useFloatingContentState(props: FloatingContentStateProps): FloatingContentState {
-	return setFloatingContentContext(getFloatingRootContext().createContent(props));
+	return setFloatingContentContext(new FloatingContentState(props, getFloatingRootContext()));
 }
 
 export function useFloatingArrowState(props: FloatingArrowStateProps): FloatingArrowState {
-	return getFloatingContentContext().createArrow(props);
+	return new FloatingArrowState(props, getFloatingContentContext());
 }
 
 export function useFloatingAnchorState(props: FloatingAnchorStateProps): FloatingAnchorState {
-	return getFloatingRootContext().createAnchor(props);
+	return new FloatingAnchorState(props, getFloatingRootContext());
 }
 
 //

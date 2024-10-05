@@ -9,9 +9,9 @@ import {
 } from "$lib/internal/attrs.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
-import { createContext } from "$lib/internal/createContext.js";
+import { createContext } from "$lib/internal/create-context.js";
 import type { WithRefProps } from "$lib/internal/types.js";
-import { useRefById } from "$lib/internal/useRefById.svelte.js";
+import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
 import { srOnlyStyles, styleToString } from "$lib/internal/style.js";
 
 const ROOT_ATTR = "data-switch-root";
@@ -66,14 +66,6 @@ class SwitchRootState {
 		if (this.disabled.current) return;
 		this.#toggle();
 	};
-
-	createInput() {
-		return new SwitchInputState(this);
-	}
-
-	createThumb(props: SwitchThumbStateProps) {
-		return new SwitchThumbState(props, this);
-	}
 
 	sharedProps = $derived.by(() => ({
 		"data-disabled": getDataDisabled(this.disabled.current),
@@ -160,9 +152,9 @@ export function useSwitchRoot(props: SwitchRootStateProps) {
 }
 
 export function useSwitchInput(): SwitchInputState {
-	return getSwitchRootContext().createInput();
+	return new SwitchInputState(getSwitchRootContext());
 }
 
 export function useSwitchThumb(props: SwitchThumbStateProps): SwitchThumbState {
-	return getSwitchRootContext().createThumb(props);
+	return new SwitchThumbState(props, getSwitchRootContext());
 }

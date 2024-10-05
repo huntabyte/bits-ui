@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { InputProps } from "../index.js";
-	import { useId } from "$lib/internal/useId.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import type { ComboboxInputProps } from "../types.js";
+	import { useId } from "$lib/internal/use-id.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 	import { useListboxInput } from "$lib/bits/listbox/listbox.svelte.js";
 
@@ -12,7 +12,7 @@
 		child,
 		defaultValue,
 		...restProps
-	}: InputProps = $props();
+	}: ComboboxInputProps = $props();
 
 	const inputState = useListboxInput({
 		id: box.with(() => id),

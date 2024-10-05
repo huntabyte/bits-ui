@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { SeparatorProps } from "../index.js";
+	import type { CommandSeparatorProps } from "../types.js";
 	import { useCommandSeparator } from "../command.svelte.js";
-	import { useId } from "$lib/internal/useId.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/use-id.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 
 	let {
 		id = useId(),
@@ -12,7 +12,7 @@
 		children,
 		child,
 		...restProps
-	}: SeparatorProps = $props();
+	}: CommandSeparatorProps = $props();
 
 	const separatorState = useCommandSeparator({
 		id: box.with(() => id),

@@ -1,16 +1,15 @@
 import type { DateValue } from "@internationalized/date";
 import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
 import type { PrimitiveDivAttributes } from "$lib/shared/attributes.js";
-import type { EditableSegmentPart } from "$lib/shared/date/field/types.js";
 import type {
 	DateMatcher,
 	DateOnInvalid,
+	DateRange,
 	DateRangeValidator,
-	Granularity,
-	WeekStartsOn,
-} from "$lib/shared/date/types.js";
-import type { DateRange } from "$lib/shared/index.js";
+	EditableSegmentPart,
+} from "$lib/shared/index.js";
 import type { CalendarRootSnippetProps } from "$lib/types.js";
+import type { Granularity, WeekStartsOn } from "$lib/shared/date/types.js";
 
 export type DateRangePickerRootPropsWithoutHTML = WithChild<{
 	/**

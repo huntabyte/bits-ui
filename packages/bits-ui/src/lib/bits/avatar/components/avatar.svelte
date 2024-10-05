@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { RootProps } from "../index.js";
+	import type { AvatarRootProps } from "../types.js";
 	import { useAvatarRoot } from "../avatar.svelte.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
-	import { useId } from "$lib/internal/useId.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
+	import { useId } from "$lib/internal/use-id.js";
 
 	let {
 		delayMs = 0,
@@ -14,7 +14,7 @@
 		id = useId(),
 		ref = $bindable(null),
 		...restProps
-	}: RootProps = $props();
+	}: AvatarRootProps = $props();
 
 	const rootState = useAvatarRoot({
 		delayMs: box.with(() => delayMs),

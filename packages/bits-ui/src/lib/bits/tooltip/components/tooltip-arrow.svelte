@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { ArrowProps } from "../index.js";
-	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
+	import type { TooltipArrowProps } from "../types.js";
+	import FloatingLayerArrow from "$lib/bits/utilities/floating-layer/components/floating-layer-arrow.svelte";
 
-	let { ref = $bindable(null), ...restProps }: ArrowProps = $props();
+	let { ref = $bindable(null), ...restProps }: TooltipArrowProps = $props();
 </script>
 
-<FloatingLayer.Arrow bind:ref {...restProps} />
+<FloatingLayerArrow bind:ref {...restProps} />

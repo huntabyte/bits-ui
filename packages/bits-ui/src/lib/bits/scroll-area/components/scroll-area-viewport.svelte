@@ -1,11 +1,16 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { ViewportProps } from "../index.js";
+	import type { ScrollAreaViewportProps } from "../types.js";
 	import { useScrollAreaViewport } from "../scroll-area.svelte.js";
-	import { useId } from "$lib/internal/useId.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/use-id.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 
-	let { ref = $bindable(null), id = useId(), children, ...restProps }: ViewportProps = $props();
+	let {
+		ref = $bindable(null),
+		id = useId(),
+		children,
+		...restProps
+	}: ScrollAreaViewportProps = $props();
 
 	const viewportState = useScrollAreaViewport({
 		id: box.with(() => id),

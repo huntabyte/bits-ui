@@ -7,12 +7,12 @@ import { type ReadableBox, type WritableBox, box } from "svelte-toolbelt";
 import { SvelteMap } from "svelte/reactivity";
 import { untrack } from "svelte";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import { useId } from "$lib/internal/useId.js";
+import { useId } from "$lib/internal/use-id.js";
 import type { Direction } from "$lib/shared/index.js";
-import { createContext } from "$lib/internal/createContext.js";
-import { useFormControl } from "$lib/internal/useFormControl.svelte.js";
-import { useRefById } from "$lib/internal/useRefById.svelte.js";
-import { type Typeahead, useTypeahead } from "$lib/internal/useTypeahead.svelte.js";
+import { createContext } from "$lib/internal/create-context.js";
+import { useFormControl } from "$lib/internal/use-form-control.svelte.js";
+import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
+import { type Typeahead, useTypeahead } from "$lib/internal/use-typeahead.svelte.js";
 import {
 	getAriaDisabled,
 	getAriaExpanded,
@@ -24,13 +24,13 @@ import {
 	getDataOpenClosed,
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
-import { afterTick } from "$lib/internal/afterTick.js";
+import { afterTick } from "$lib/internal/after-tick.js";
 import { clamp } from "$lib/internal/clamp.js";
 import { noop } from "$lib/internal/callbacks.js";
 import { addEventListener } from "$lib/internal/events.js";
 import { sleep } from "$lib/internal/sleep.js";
 import type { WithRefProps } from "$lib/internal/types.js";
-import { afterSleep } from "$lib/internal/afterSleep.js";
+import { afterSleep } from "$lib/internal/after-sleep.js";
 
 export const OPEN_KEYS = [kbd.SPACE, kbd.ENTER, kbd.ARROW_UP, kbd.ARROW_DOWN];
 export const SELECTION_KEYS = [" ", kbd.ENTER];
@@ -156,22 +156,6 @@ export class SelectRootState {
 			node.querySelectorAll<HTMLElement>(`[${ITEM_ATTR}]:not([data-disabled])`)
 		);
 	};
-
-	createTrigger(props: SelectTriggerStateProps) {
-		return new SelectTriggerState(props, this);
-	}
-
-	createValue() {
-		return new SelectValueState(this);
-	}
-
-	createContent() {
-		return new SelectContentFragState(this);
-	}
-
-	createContentImpl(props: SelectContentStateProps) {
-		return new SelectContentState(props, this);
-	}
 }
 
 type SelectTriggerStateProps = WithRefProps<
@@ -597,32 +581,6 @@ export class SelectContentState {
 				[CONTENT_ATTR]: "",
 			}) as const
 	);
-
-	createItem(props: SelectItemStateProps) {
-		return new SelectItemState(props, this);
-	}
-
-	createViewport(props: SelectViewportStateProps) {
-		return new SelectViewportState(props, this);
-	}
-
-	createItemAlignedPosition(props: SelectItemAlignedPositionStateProps) {
-		return new SelectItemAlignedPositionState(props, this);
-	}
-
-	createFloatingPosition() {
-		return new SelectFloatingPositionState(this);
-	}
-
-	createScrollDownButton(props: SelectScrollButtonImplStateProps) {
-		const state = new SelectScrollButtonImplState(props, this);
-		return new SelectScrollDownButtonState(state);
-	}
-
-	createScrollUpButton(props: SelectScrollButtonImplStateProps) {
-		const state = new SelectScrollButtonImplState(props, this);
-		return new SelectScrollUpButtonState(state);
-	}
 }
 
 type SelectItemStateProps = WithRefProps<
@@ -762,10 +720,6 @@ class SelectItemState {
 				ontouchend: this.#ontouchend,
 			}) as const
 	);
-
-	createText(props: SelectItemTextStateProps) {
-		return new SelectItemTextState(props, this);
-	}
 }
 
 type SelectItemTextStateProps = WithRefProps;
@@ -1361,15 +1315,11 @@ class SelectGroupState {
 				[GROUP_ATTR]: "",
 			}) as const
 	);
-
-	createGroupHeading(props: SelectGroupHeadingStateProps) {
-		return new SelectGroupHeading(props, this);
-	}
 }
 
 type SelectGroupHeadingStateProps = WithRefProps;
 
-class SelectGroupHeading {
+class SelectGroupHeadingState {
 	#id: SelectGroupHeadingStateProps["id"];
 	#ref: SelectGroupHeadingStateProps["ref"];
 	group: SelectGroupState;
@@ -1480,50 +1430,52 @@ export function useSelectRoot(props: SelectRootStateProps) {
 }
 
 export function useSelectContentFrag() {
-	return getSelectRootContext().createContent();
+	return new SelectContentFragState(getSelectRootContext());
 }
 
 export function useSelectContent(props: SelectContentStateProps) {
-	return setSelectContentContext(getSelectRootContext().createContentImpl(props));
+	return setSelectContentContext(new SelectContentState(props, getSelectRootContext()));
 }
 
 export function useSelectItemAlignedPosition(props: SelectItemAlignedPositionStateProps) {
 	const contentContext = getSelectContentContext();
-	const alignedPositionState = contentContext.createItemAlignedPosition(props);
+	const alignedPositionState = new SelectItemAlignedPositionState(props, contentContext);
 	contentContext.alignedPositionState = alignedPositionState;
 	return setSelectContentItemAlignedContext(alignedPositionState);
 }
 
 export function useSelectFloatingPosition() {
-	return getSelectContentContext().createFloatingPosition();
+	return new SelectFloatingPositionState(getSelectContentContext());
 }
 
 export function useSelectTrigger(props: SelectTriggerStateProps) {
-	return getSelectRootContext().createTrigger(props);
+	return new SelectTriggerState(props, getSelectRootContext());
 }
 
 export function useSelectValue() {
-	return getSelectRootContext().createValue();
+	return new SelectValueState(getSelectRootContext());
 }
 
 export function useSelectItem(props: SelectItemStateProps) {
-	return setSelectItemContext(getSelectContentContext().createItem(props));
+	return setSelectItemContext(new SelectItemState(props, getSelectContentContext()));
 }
 
 export function useSelectItemText(props: SelectItemTextStateProps) {
-	return getSelectItemContext().createText(props);
+	return new SelectItemTextState(props, getSelectItemContext());
 }
 
 export function useSelectViewport(props: SelectViewportStateProps) {
-	return getSelectContentContext().createViewport(props);
+	return new SelectViewportState(props, getSelectContentContext());
 }
 
 export function useSelectScrollUpButton(props: SelectScrollButtonImplStateProps) {
-	return getSelectContentContext().createScrollUpButton(props);
+	const state = new SelectScrollButtonImplState(props, getSelectContentContext());
+	return new SelectScrollUpButtonState(state);
 }
 
 export function useSelectScrollDownButton(props: SelectScrollButtonImplStateProps) {
-	return getSelectContentContext().createScrollDownButton(props);
+	const state = new SelectScrollButtonImplState(props, getSelectContentContext());
+	return new SelectScrollDownButtonState(state);
 }
 
 export function useSelectGroup(props: SelectGroupStateProps) {
@@ -1531,7 +1483,7 @@ export function useSelectGroup(props: SelectGroupStateProps) {
 }
 
 export function useSelectGroupHeading(props: SelectGroupHeadingStateProps) {
-	return getSelectGroupContext().createGroupHeading(props);
+	return new SelectGroupHeadingState(props, getSelectGroupContext());
 }
 
 export function useSelectArrow(props: SelectArrowStateProps) {

@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
 	import { useCalendarHeadCell } from "../calendar.svelte.js";
-	import type { HeadCellProps } from "../index.js";
-	import { useId } from "$lib/internal/useId.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import type { CalendarHeadCellProps } from "../types.js";
+	import { useId } from "$lib/internal/use-id.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 
 	let {
 		children,
@@ -11,7 +11,7 @@
 		ref = $bindable(null),
 		id = useId(),
 		...restProps
-	}: HeadCellProps = $props();
+	}: CalendarHeadCellProps = $props();
 
 	const headCellState = useCalendarHeadCell({
 		id: box.with(() => id),

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { RootProps } from "../index.js";
+	import type { LinkPreviewRootProps } from "../types.js";
 	import { useLinkPreviewRoot } from "../link-preview.svelte.js";
 	import { noop } from "$lib/internal/callbacks.js";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
@@ -12,7 +12,7 @@
 		closeDelay = 300,
 		controlledOpen = false,
 		children,
-	}: RootProps = $props();
+	}: LinkPreviewRootProps = $props();
 
 	useLinkPreviewRoot({
 		open: box.with(

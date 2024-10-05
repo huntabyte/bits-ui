@@ -1,8 +1,8 @@
-import type { ButtonPropsWithoutHTML } from "bits-ui";
+import type { ButtonRootPropsWithoutHTML } from "bits-ui";
 import { childrenSnippet, createApiSchema, createPropSchema, refProp } from "./helpers.js";
 import * as C from "$lib/content/constants.js";
 
-export const root = createApiSchema<ButtonPropsWithoutHTML & { href: string }>({
+export const root = createApiSchema<ButtonRootPropsWithoutHTML & { href: string }>({
 	title: "Root",
 	description:
 		"A component that can switch between a button and an anchor tag based on the `href`/`type` props.",

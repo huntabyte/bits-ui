@@ -7,10 +7,7 @@ import {
 } from "@internationalized/date";
 import { DEV } from "esm-env";
 import { untrack } from "svelte";
-import type {
-	RangeCalendarCellState,
-	RangeCalendarRootState,
-} from "../range-calendar/range-calendar.svelte.js";
+import type { RangeCalendarRootState } from "../range-calendar/range-calendar.svelte.js";
 import {
 	getAriaDisabled,
 	getAriaHidden,
@@ -22,16 +19,17 @@ import {
 	getDataUnavailable,
 } from "$lib/internal/attrs.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import { createContext } from "$lib/internal/createContext.js";
+import { createContext } from "$lib/internal/create-context.js";
 import type { WithRefProps } from "$lib/internal/types.js";
-import { useId } from "$lib/internal/useId.js";
-import { useRefById } from "$lib/internal/useRefById.svelte.js";
-import { type Announcer, getAnnouncer } from "$lib/shared/date/announcer.js";
+import { useId } from "$lib/internal/use-id.js";
+import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
+import type { DateMatcher, Month } from "$lib/shared/index.js";
+import { type Announcer, getAnnouncer } from "$lib/internal/date-time/announcer.js";
+import { type Formatter, createFormatter } from "$lib/internal/date-time/formatter.js";
 import {
 	type CalendarParts,
 	createAccessibleHeading,
 	createMonths,
-	getCalendarBitsAttr,
 	getCalendarElementProps,
 	getCalendarHeadingValue,
 	getIsNextButtonDisabled,
@@ -43,10 +41,8 @@ import {
 	shiftCalendarFocus,
 	useMonthViewOptionsSync,
 	useMonthViewPlaceholderSync,
-} from "$lib/shared/date/calendar-helpers.svelte.js";
-import { type Formatter, createFormatter } from "$lib/shared/date/formatter.js";
-import type { DateMatcher, Month } from "$lib/shared/date/types.js";
-import { isBefore, toDate } from "$lib/shared/date/utils.js";
+} from "$lib/internal/date-time/calendar-helpers.svelte.js";
+import { isBefore, toDate } from "$lib/internal/date-time/utils.js";
 
 type CalendarRootStateProps = WithRefProps<
 	WritableBoxedValues<{
@@ -279,21 +275,21 @@ export class CalendarRootState {
 		});
 	};
 
-	nextYear() {
+	nextYear = () => {
 		this.placeholder.current = this.placeholder.current.add({ years: 1 });
-	}
+	};
 
-	prevYear() {
+	prevYear = () => {
 		this.placeholder.current = this.placeholder.current.subtract({ years: 1 });
-	}
+	};
 
-	setYear(year: number) {
+	setYear = (year: number) => {
 		this.placeholder.current = this.placeholder.current.set({ year });
-	}
+	};
 
-	setMonth(month: number) {
+	setMonth = (month: number) => {
 		this.placeholder.current = this.placeholder.current.set({ month });
-	}
+	};
 
 	isNextButtonDisabled = $derived.by(() => {
 		return getIsNextButtonDisabled({
@@ -341,20 +337,20 @@ export class CalendarRootState {
 		return `${this.calendarLabel.current} ${this.headingValue}`;
 	});
 
-	isOutsideVisibleMonths(date: DateValue) {
+	isOutsideVisibleMonths = (date: DateValue) => {
 		return !this.visibleMonths.some((month) => isSameMonth(date, month));
-	}
+	};
 
-	isDateDisabled(date: DateValue) {
+	isDateDisabled = (date: DateValue) => {
 		if (this.isDateDisabledProp.current(date) || this.disabled.current) return true;
 		const minValue = this.minValue.current;
 		const maxValue = this.maxValue.current;
 		if (minValue && isBefore(date, minValue)) return true;
 		if (maxValue && isBefore(maxValue, date)) return true;
 		return false;
-	}
+	};
 
-	isDateSelected(date: DateValue) {
+	isDateSelected = (date: DateValue) => {
 		const value = this.value.current;
 		if (Array.isArray(value)) {
 			return value.some((d) => isSameDay(d, date));
@@ -363,7 +359,7 @@ export class CalendarRootState {
 		} else {
 			return isSameDay(value, date);
 		}
-	}
+	};
 
 	#shiftFocus = (node: HTMLElement, add: number) => {
 		return shiftCalendarFocus({
@@ -410,7 +406,7 @@ export class CalendarRootState {
 		}
 	};
 
-	#handleMultipleUpdate(prev: DateValue[] | undefined, date: DateValue) {
+	#handleMultipleUpdate = (prev: DateValue[] | undefined, date: DateValue) => {
 		if (!prev) return [date];
 		if (!Array.isArray(prev)) {
 			if (DEV) throw new Error("Invalid value for multiple prop.");
@@ -430,9 +426,9 @@ export class CalendarRootState {
 			}
 			return next;
 		}
-	}
+	};
 
-	#handleSingleUpdate(prev: DateValue | undefined, date: DateValue) {
+	#handleSingleUpdate = (prev: DateValue | undefined, date: DateValue) => {
 		if (Array.isArray(prev)) {
 			if (DEV) throw new Error("Invalid value for single prop.");
 		}
@@ -443,7 +439,7 @@ export class CalendarRootState {
 			return undefined;
 		}
 		return date;
-	}
+	};
 
 	#onkeydown = (event: KeyboardEvent) => {
 		handleCalendarKeydown({
@@ -459,9 +455,9 @@ export class CalendarRootState {
 		weekdays: this.weekdays,
 	}));
 
-	getBitsAttr(part: CalendarParts) {
-		return getCalendarBitsAttr(this, part);
-	}
+	getBitsAttr = (part: CalendarParts) => {
+		return `data-bits-calendar-${part}`;
+	};
 
 	props = $derived.by(
 		() =>
@@ -478,46 +474,6 @@ export class CalendarRootState {
 				onkeydown: this.#onkeydown,
 			}) as const
 	);
-
-	createHeading(props: CalendarHeadingStateProps) {
-		return new CalendarHeadingState(props, this);
-	}
-
-	createGrid(props: CalendarGridStateProps) {
-		return new CalendarGridState(props, this);
-	}
-
-	createCell(props: CalendarCellStateProps) {
-		return new CalendarCellState(props, this);
-	}
-
-	createNextButton(props: CalendarNextButtonStateProps) {
-		return new CalendarNextButtonState(props, this);
-	}
-
-	createPrevButton(props: CalendarPrevButtonStateProps) {
-		return new CalendarPrevButtonState(props, this);
-	}
-
-	createGridBody(props: CalendarGridBodyStateProps) {
-		return new CalendarGridBodyState(props, this);
-	}
-
-	createGridHead(props: CalendarGridHeadStateProps) {
-		return new CalendarGridHeadState(props, this);
-	}
-
-	createGridRow(props: CalendarGridRowStateProps) {
-		return new CalendarGridRowState(props, this);
-	}
-
-	createHeadCell(props: CalendarHeadCellStateProps) {
-		return new CalendarHeadCellState(props, this);
-	}
-
-	createHeader(props: CalendarHeaderStateProps) {
-		return new CalendarHeaderState(props, this);
-	}
 }
 
 export type CalendarHeadingStateProps = WithRefProps;
@@ -565,7 +521,7 @@ class CalendarCellState {
 	month: CalendarCellStateProps["month"];
 	cellDate = $derived.by(() => toDate(this.date.current));
 	isDisabled = $derived.by(() => this.root.isDateDisabled(this.date.current));
-	isUnvailable = $derived.by(() => this.root.isDateUnavailableProp.current(this.date.current));
+	isUnavailable = $derived.by(() => this.root.isDateUnavailableProp.current(this.date.current));
 	isDateToday = $derived.by(() => isToday(this.date.current, getLocalTimeZone()));
 	isOutsideMonth = $derived.by(() => !isSameMonth(this.date.current, this.month.current));
 	isOutsideVisibleMonths = $derived.by(() => this.root.isOutsideVisibleMonths(this.date.current));
@@ -597,7 +553,7 @@ class CalendarCellState {
 
 	snippetProps = $derived.by(() => ({
 		disabled: this.isDisabled,
-		unavailable: this.isUnvailable,
+		unavailable: this.isUnavailable,
 		selected: this.isSelectedDate,
 	}));
 
@@ -605,14 +561,14 @@ class CalendarCellState {
 		return (
 			this.isDisabled ||
 			(this.isOutsideMonth && this.root.disableDaysOutsideMonth.current) ||
-			this.isUnvailable
+			this.isUnavailable
 		);
 	});
 
 	sharedDataAttrs = $derived.by(
 		() =>
 			({
-				"data-unavailable": getDataUnavailable(this.isUnvailable),
+				"data-unavailable": getDataUnavailable(this.isUnavailable),
 				"data-today": this.isDateToday ? "" : undefined,
 				"data-outside-month": this.isOutsideMonth ? "" : undefined,
 				"data-outside-visible-months": this.isOutsideVisibleMonths ? "" : undefined,
@@ -637,10 +593,6 @@ class CalendarCellState {
 				[this.root.getBitsAttr("cell")]: "",
 			}) as const
 	);
-
-	createDay(props: CalendarDayStateProps) {
-		return new CalendarDayState(props, this);
-	}
 }
 
 type CalendarDayStateProps = WithRefProps;
@@ -678,7 +630,7 @@ class CalendarDayState {
 
 	snippetProps = $derived.by(() => ({
 		disabled: this.cell.isDisabled,
-		unavailable: this.cell.isUnvailable,
+		unavailable: this.cell.isUnavailable,
 		selected: this.cell.isSelectedDate,
 		day: `${this.cell.date.current.day}`,
 	}));
@@ -969,58 +921,70 @@ export class CalendarHeaderState {
 	);
 }
 
-const [setCalendarRootContext, getCalendarRootContext] = createContext<
-	CalendarRootState | RangeCalendarRootState
->(["Calendar.Root", "RangeCalendar.Root"], "Calendar.Root", false);
+const [setCalendarRootContext, getCalendarRootContext] = createContext<CalendarRootState>(
+	["Calendar.Root", "RangeCalendar.Root"],
+	"Calendar.Root",
+	false
+);
 
-const [setCalendarCellContext, getCalendarCellContext] = createContext<
-	CalendarCellState | RangeCalendarCellState
->("Calendar.Cell");
+const [setCalendarCellContext, getCalendarCellContext] =
+	createContext<CalendarCellState>("Calendar.Cell");
 
 export function useCalendarRoot(props: CalendarRootStateProps) {
 	return setCalendarRootContext(new CalendarRootState(props));
 }
 
 export function useCalendarGrid(props: CalendarGridStateProps) {
-	return getCalendarRootContext().createGrid(props);
+	const root = getCalendarRootContext();
+	return new CalendarGridState(props, root);
 }
 
 export function useCalendarCell(props: CalendarCellStateProps) {
-	return setCalendarCellContext(getCalendarRootContext().createCell(props));
+	const root = getCalendarRootContext();
+	return setCalendarCellContext(new CalendarCellState(props, root));
 }
 
 export function useCalendarNextButton(props: CalendarNextButtonStateProps) {
-	return getCalendarRootContext().createNextButton(props);
+	const root = getCalendarRootContext();
+	return new CalendarNextButtonState(props, root);
 }
 
 export function useCalendarPrevButton(props: CalendarPrevButtonStateProps) {
-	return getCalendarRootContext().createPrevButton(props);
+	const root = getCalendarRootContext();
+	return new CalendarPrevButtonState(props, root);
 }
 
 export function useCalendarDay(props: CalendarDayStateProps) {
-	return getCalendarCellContext().createDay(props);
+	const cell = getCalendarCellContext();
+	return new CalendarDayState(props, cell);
 }
 
 export function useCalendarGridBody(props: CalendarGridBodyStateProps) {
-	return getCalendarRootContext().createGridBody(props);
+	const root = getCalendarRootContext();
+	return new CalendarGridBodyState(props, root);
 }
 
 export function useCalendarGridHead(props: CalendarGridHeadStateProps) {
-	return getCalendarRootContext().createGridHead(props);
+	const root = getCalendarRootContext();
+	return new CalendarGridHeadState(props, root);
 }
 
 export function useCalendarGridRow(props: CalendarGridRowStateProps) {
-	return getCalendarRootContext().createGridRow(props);
+	const root = getCalendarRootContext();
+	return new CalendarGridRowState(props, root);
 }
 
 export function useCalendarHeadCell(props: CalendarHeadCellStateProps) {
-	return getCalendarRootContext().createHeadCell(props);
+	const root = getCalendarRootContext();
+	return new CalendarHeadCellState(props, root);
 }
 
 export function useCalendarHeader(props: CalendarHeaderStateProps) {
-	return getCalendarRootContext().createHeader(props);
+	const root = getCalendarRootContext();
+	return new CalendarHeaderState(props, root);
 }
 
 export function useCalendarHeading(props: CalendarHeadingStateProps) {
-	return getCalendarRootContext().createHeading(props);
+	const root = getCalendarRootContext();
+	return new CalendarHeadingState(props, root);
 }

@@ -1,6 +1,6 @@
 import type { Box, ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { WithRefProps } from "$lib/internal/types.js";
-import { afterTick } from "$lib/internal/afterTick.js";
+import { afterTick } from "$lib/internal/after-tick.js";
 import {
 	getAriaDisabled,
 	getAriaExpanded,
@@ -9,10 +9,13 @@ import {
 	getDataOrientation,
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
-import { useRefById } from "$lib/internal/useRefById.svelte.js";
-import { type UseRovingFocusReturn, useRovingFocus } from "$lib/internal/useRovingFocus.svelte.js";
+import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
+import {
+	type UseRovingFocusReturn,
+	useRovingFocus,
+} from "$lib/internal/use-roving-focus.svelte.js";
 import type { Orientation } from "$lib/shared/index.js";
-import { createContext } from "$lib/internal/createContext.js";
+import { createContext } from "$lib/internal/create-context.js";
 
 const ACCORDION_ROOT_ATTR = "data-accordion-root";
 const ACCORDION_TRIGGER_ATTR = "data-accordion-trigger";
@@ -162,18 +165,6 @@ export class AccordionItemState {
 	updateValue = () => {
 		this.root.toggleItem(this.value.current);
 	};
-
-	createTrigger(props: AccordionTriggerStateProps) {
-		return new AccordionTriggerState(props, this);
-	}
-
-	createContent(props: AccordionContentStateProps) {
-		return new AccordionContentState(props, this);
-	}
-
-	createHeader(props: AccordionHeaderStateProps) {
-		return new AccordionHeaderState(props, this);
-	}
 
 	props = $derived.by(
 		() =>
@@ -426,13 +417,16 @@ export function useAccordionItem(props: Omit<AccordionItemStateProps, "rootState
 }
 
 export function useAccordionTrigger(props: AccordionTriggerStateProps): AccordionTriggerState {
-	return getAccordionItemContext().createTrigger(props);
+	const item = getAccordionItemContext();
+	return new AccordionTriggerState(props, item);
 }
 
 export function useAccordionContent(props: AccordionContentStateProps): AccordionContentState {
-	return getAccordionItemContext().createContent(props);
+	const item = getAccordionItemContext();
+	return new AccordionContentState(props, item);
 }
 
 export function useAccordionHeader(props: AccordionHeaderStateProps): AccordionHeaderState {
-	return getAccordionItemContext().createHeader(props);
+	const item = getAccordionItemContext();
+	return new AccordionHeaderState(props, item);
 }

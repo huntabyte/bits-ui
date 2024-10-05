@@ -1,7 +1,7 @@
 import type { WithChild, Without } from "$lib/internal/types.js";
 import type { PrimitiveDivAttributes } from "$lib/shared/attributes.js";
 
-export type AspectRatioPropsWithoutHTML = WithChild<{
+export type AspectRatioRootPropsWithoutHTML = WithChild<{
 	/**
 	 * The aspect ratio of the image.
 	 *
@@ -10,5 +10,5 @@ export type AspectRatioPropsWithoutHTML = WithChild<{
 	ratio?: number;
 }>;
 
-export type AspectRatioProps = AspectRatioPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, AspectRatioPropsWithoutHTML>;
+export type AspectRatioRootProps = AspectRatioRootPropsWithoutHTML &
+	Without<PrimitiveDivAttributes, AspectRatioRootPropsWithoutHTML>;

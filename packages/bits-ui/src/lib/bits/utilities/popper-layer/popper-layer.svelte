@@ -2,12 +2,12 @@
 	import ScrollLock from "../scroll-lock/scroll-lock.svelte";
 	import type { PopperLayerImplProps } from "./types.js";
 	import PopperContent from "./popper-content.svelte";
-	import { EscapeLayer } from "$lib/bits/utilities/escape-layer/index.js";
-	import { DismissibleLayer } from "$lib/bits/utilities/dismissible-layer/index.js";
-	import { TextSelectionLayer } from "$lib/bits/utilities/text-selection-layer/index.js";
-	import { PresenceLayer } from "$lib/bits/utilities/presence-layer/index.js";
-	import { FocusScope } from "$lib/bits/utilities/focus-scope/index.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import EscapeLayer from "$lib/bits/utilities/escape-layer/escape-layer.svelte";
+	import DismissibleLayer from "$lib/bits/utilities/dismissible-layer/dismissible-layer.svelte";
+	import TextSelectionLayer from "$lib/bits/utilities/text-selection-layer/text-selection-layer.svelte";
+	import PresenceLayer from "$lib/bits/utilities/presence-layer/presence-layer.svelte";
+	import FocusScope from "$lib/bits/utilities/focus-scope/focus-scope.svelte";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 
 	let {
 		popper,

@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { RootProps } from "../index.js";
+	import type { ToolbarRootProps } from "../types.js";
 	import { useToolbarRoot } from "../toolbar.svelte.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
-	import { useId } from "$lib/internal/useId.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
+	import { useId } from "$lib/internal/use-id.js";
 
 	let {
 		ref = $bindable(null),
@@ -13,7 +13,7 @@
 		child,
 		children,
 		...restProps
-	}: RootProps = $props();
+	}: ToolbarRootProps = $props();
 
 	const rootState = useToolbarRoot({
 		id: box.with(() => id),

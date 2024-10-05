@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { ContentProps } from "../index.js";
+	import type { TooltipContentProps } from "../types.js";
 	import { useTooltipContent } from "../tooltip.svelte.js";
-	import { useId } from "$lib/internal/useId.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
+	import { useId } from "$lib/internal/use-id.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
 	import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
 
@@ -24,7 +24,7 @@
 		onEscapeKeydown,
 		forceMount = false,
 		...restProps
-	}: ContentProps = $props();
+	}: TooltipContentProps = $props();
 
 	const contentState = useTooltipContent({
 		id: box.with(() => id),

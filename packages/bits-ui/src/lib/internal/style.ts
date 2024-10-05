@@ -1,4 +1,4 @@
-import { styleToCSS } from "./styleToCSS.js";
+import { styleToCSS } from "./style-to-css.js";
 import type { StyleProperties } from "$lib/shared/index.js";
 
 export function styleToString(style: StyleProperties = {}): string {
@@ -17,3 +17,5 @@ export const srOnlyStyles: StyleProperties = {
 	borderWidth: "0",
 	transform: "translateX(-100%)",
 };
+
+export const srOnlyStyleString = styleToString(srOnlyStyles);

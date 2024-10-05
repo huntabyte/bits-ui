@@ -6,17 +6,17 @@ import type {
 	InteractOutsideEvent,
 	InteractOutsideInterceptEventType,
 } from "./types.js";
-import { composeHandlers } from "$lib/internal/composeHandlers.js";
+import { composeHandlers } from "$lib/internal/compose-handlers.js";
 import { type EventCallback, addEventListener } from "$lib/internal/events.js";
 import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
-import { afterTick } from "$lib/internal/afterTick.js";
+import { afterTick } from "$lib/internal/after-tick.js";
 import { debounce } from "$lib/internal/debounce.js";
-import { executeCallbacks } from "$lib/internal/executeCallbacks.js";
+import { executeCallbacks } from "$lib/internal/execute-callbacks.js";
 import { noop } from "$lib/internal/noop.js";
-import { useRefById } from "$lib/internal/useRefById.svelte.js";
+import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
 import { getOwnerDocument, isOrContainsTarget } from "$lib/internal/elements.js";
 import { isElement } from "$lib/internal/is.js";
-import { onDestroyEffect } from "$lib/internal/onDestroyEffect.svelte.js";
+import { onDestroyEffect } from "$lib/internal/on-destroy-effect.svelte.js";
 
 const layers = new Map<DismissibleLayerState, ReadableBox<InteractOutsideBehaviorType>>();
 

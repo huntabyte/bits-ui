@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { RootProps } from "../index.js";
+	import type { MenuRootProps } from "../types.js";
 	import { useMenuMenu, useMenuRoot } from "../menu.svelte.js";
-	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 	import { noop } from "$lib/internal/callbacks.js";
+	import FloatingLayer from "$lib/bits/utilities/floating-layer/components/floating-layer.svelte";
 
 	let {
 		open = $bindable(false),
@@ -12,7 +12,7 @@
 		controlledOpen = false,
 		_internal_variant: variant = "dropdown-menu",
 		children,
-	}: RootProps & {
+	}: MenuRootProps & {
 		_internal_variant?: "context-menu" | "dropdown-menu" | "menubar";
 	} = $props();
 
@@ -44,6 +44,6 @@
 	});
 </script>
 
-<FloatingLayer.Root>
+<FloatingLayer>
 	{@render children?.()}
-</FloatingLayer.Root>
+</FloatingLayer>

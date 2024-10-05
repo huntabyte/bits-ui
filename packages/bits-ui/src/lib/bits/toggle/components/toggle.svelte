@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import type { RootProps } from "../index.js";
+	import type { ToggleRootProps } from "../types.js";
 	import { useToggleRoot } from "../toggle.svelte.js";
-	import { mergeProps } from "$lib/internal/mergeProps.js";
-	import { useId } from "$lib/internal/useId.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
+	import { useId } from "$lib/internal/use-id.js";
 	import { noop } from "$lib/internal/callbacks.js";
 
 	let {
@@ -17,7 +17,7 @@
 		children,
 		child,
 		...restProps
-	}: RootProps = $props();
+	}: ToggleRootProps = $props();
 
 	const toggleState = useToggleRoot({
 		pressed: box.with(
