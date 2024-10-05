@@ -362,4 +362,98 @@ You can specify specific dates that are disabled for selection by using the `isD
 </Calendar.Root>
 ```
 
+## Appearance & Behavior
+
+### Fixed Weeks
+
+You can use the `fixedWeeks` prop to ensure that the calendar renders a fixed number of weeks, regardless of the number of days in the month. This is useful to keep the calendar visually consistent when the number of days in the month changes.
+
+```svelte
+<Calendar.Root fixedWeeks>
+	<!-- ...-->
+</Calendar.Root>
+```
+
+### Multiple Months
+
+You can use the `numberOfMonths` prop to render multiple months at once.
+
+```svelte
+<Calendar.Root numberOfMonths={2}>
+	<!-- ...-->
+</Calendar.Root>
+```
+
+### Paged Navigation
+
+By default, when the calendar has more than one month, the previous and next buttons will shift the calendar forward or backward by one month. However, you can change this behavior by setting the `pagedNavigation` prop to `true`, which will shift the calendar forward or backward by the number of months being displayed.
+
+```svelte
+<Calendar.Root pagedNavigation>
+	<!-- ...-->
+</Calendar.Root>
+```
+
+### Localization
+
+The calendar will automatically format the content of the calendar according to the `locale` prop, which defaults to `'en-US'`, but can be changed to any locale supported by the [`Intl.DateTimeFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat) API.
+
+```svelte
+<Calendar.Root locale="fr-FR">
+	<!-- ...-->
+</Calendar.Root>
+```
+
+### Week Starts On
+
+The calendar will automatically format the content of the calendar according to the `weekStartsOn` prop, which defaults to `0`, but can be changed to any day of the week, where `0` is Sunday and `6` is Saturday.
+
+```svelte
+<Calendar.Root weekStartsOn={1}>
+	<!-- ...-->
+</Calendar.Root>
+```
+
+### Multiple Selection
+
+You can set the `type` prop to `'multiple'` to allow users to select multiple dates at once.
+
+```svelte
+<Calendar.Root type="multiple">
+	<!-- ...-->
+</Calendar.Root>
+```
+
+## Custom Composition
+
+### Month Selector
+
+The `Calendar` component includes a `PrevButton` and `NextButton` component to allow users to navigate between months. This is useful, but sometimes you may want to allow the user to select a specific month from a list of months, rather than having to navigate one at a time.
+
+To achieve this, you can use the `placeholder` prop to set the month of the the calendar view programmatically.
+
+```svelte
+<script lang="ts">
+	import { Calendar } from "bits-ui";
+	import { CalendarDate } from "@internationalized/date";
+
+	let placeholder = $state(new CalendarDate(2024, 8, 3));
+</script>
+
+<!-- You can use a select, button, or whatever you wish -->
+<button
+	onclick={() => {
+		placeholder = placeholder.set({ month: 8 });
+	}}
+>
+	Set month to August
+</button>
+
+<Calendar.Root bind:placeholder>
+	<!-- ... -->
+</Calendar.Root>
+```
+
+Updating the `placeholder` will update the calendar view to reflect the new month.
+
 <APISection {schemas} />
