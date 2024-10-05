@@ -50,7 +50,7 @@
 		"tailwindcss-animate": "^1.0.7",
 		"tslib": "^2.6.2",
 		"typescript": "^5.6.2",
-		"unified": "^11.0.4",
+		"unified": "^11.0.5",
 		"unist-builder": "^4.0.0",
 		"unist-util-visit": "^5.0.0",
 		"velite": "^0.1.1",
