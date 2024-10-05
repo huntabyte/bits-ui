@@ -3,7 +3,7 @@ import { fileURLToPath } from "node:url";
 import { writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import removeMd from "remove-markdown";
-import { componentDocs, docs, typeHelperDocs, utilityDocs } from "../.velite/index.mjs";
+import { componentDocs, docs, typeHelperDocs, utilityDocs } from "../.velite/index.js";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 
