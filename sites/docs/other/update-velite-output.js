@@ -2,26 +2,37 @@ import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const fileName = "../.velite/index.d.ts";
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
-const watchPath = join(__dirname, fileName);
+const dtsPath = join(__dirname, "../.velite/index.d.ts");
+const indexPath = join(__dirname, "../.velite/index.js");
 
 async function replaceContents() {
-	let content;
-
-	const data = await readFile(watchPath, "utf8").catch((err) => {
+	const data = await readFile(dtsPath, "utf8").catch((err) => {
 		console.error("Error reading file:", err);
 	});
 	if (!data) return;
 
 	const updatedContent = data.replace("'../velite.config'", "'../velite.config.js'");
-	if (updatedContent === content) {
-		return;
-	}
+	if (updatedContent === data) return;
 
-	await writeFile(watchPath, updatedContent, "utf8").catch((err) => {
+	await writeFile(dtsPath, updatedContent, "utf8").catch((err) => {
+		console.error("Error writing file:", err);
+	});
+}
+
+async function replaceIndexContents() {
+	const data = await readFile(indexPath, "utf8").catch((err) => {
+		console.error("Error reading file:", err);
+	});
+	if (!data) return;
+
+	const updatedContent = data.replaceAll(".json'", ".json' with { type: 'json' }");
+	if (updatedContent === data) return;
+
+	await writeFile(indexPath, updatedContent, "utf8").catch((err) => {
 		console.error("Error writing file:", err);
 	});
 }
 
 await replaceContents();
+await replaceIndexContents();
