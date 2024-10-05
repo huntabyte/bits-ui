@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.10
+
+### Patch Changes
+
+-   next: improve tree-shaking ([#728](https://github.com/huntabyte/bits-ui/pull/728))
+
 ## 1.0.0-next.9
 
 ### Patch Changes
