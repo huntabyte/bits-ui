@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.12
+
+### Patch Changes
+
+-   change: don't include `open` on `children` snippet props, only `child` ([#737](https://github.com/huntabyte/bits-ui/pull/737))
+
 ## 1.0.0-next.11
 
 ### Patch Changes
