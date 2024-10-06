@@ -86,7 +86,7 @@ describe("radio group", () => {
 		expect(getByTestId("e-indicator")).toHaveTextContent("false");
 	});
 
-	it("should navigate through the items using the keyboard", async () => {
+	it("should navigate through the items using the keyboard (up and down)", async () => {
 		const { getByTestId, user } = setup();
 
 		const item0 = getByTestId(itemIds[0] as string);
@@ -106,6 +106,29 @@ describe("radio group", () => {
 		await user.keyboard(kbd.ARROW_UP);
 		await waitFor(() => expect(item1).toHaveFocus());
 		await user.keyboard(kbd.ARROW_UP);
+		await waitFor(() => expect(item0).toHaveFocus());
+	});
+
+	it("should navigate through the items using the keyboard (left and right)", async () => {
+		const { getByTestId, user } = setup();
+
+		const item0 = getByTestId(itemIds[0] as string);
+		const item1 = getByTestId(itemIds[1] as string);
+		const item2 = getByTestId(itemIds[2] as string);
+		const item3 = getByTestId(itemIds[3] as string);
+		item0.focus();
+		await waitFor(() => expect(item0).toHaveFocus());
+		await user.keyboard(kbd.ARROW_RIGHT);
+		await waitFor(() => expect(item1).toHaveFocus());
+		await user.keyboard(kbd.ARROW_RIGHT);
+		await waitFor(() => expect(item2).toHaveFocus());
+		await user.keyboard(kbd.ARROW_RIGHT);
+		await waitFor(() => expect(item3).toHaveFocus());
+		await user.keyboard(kbd.ARROW_LEFT);
+		await waitFor(() => expect(item2).toHaveFocus());
+		await user.keyboard(kbd.ARROW_LEFT);
+		await waitFor(() => expect(item1).toHaveFocus());
+		await user.keyboard(kbd.ARROW_LEFT);
 		await waitFor(() => expect(item0).toHaveFocus());
 	});
 
@@ -142,37 +165,9 @@ describe("radio group", () => {
 		expect(bindingIndic2).toHaveTextContent("true");
 	});
 
-	it("should modify keyboard navigation when the orientation is horizontal", async () => {
-		const { getByTestId, user } = setup({
-			orientation: "horizontal",
-		});
-
-		const item0 = getByTestId(itemIds[0] as string);
-		const item1 = getByTestId(itemIds[1] as string);
-		const item2 = getByTestId(itemIds[2] as string);
-		const item3 = getByTestId(itemIds[3] as string);
-		item0.focus();
-		await waitFor(() => expect(item0).toHaveFocus());
-		await user.keyboard(kbd.ARROW_RIGHT);
-		await waitFor(() => expect(item1).toHaveFocus());
-		await user.keyboard(kbd.ARROW_RIGHT);
-		await waitFor(() => expect(item2).toHaveFocus());
-		await user.keyboard(kbd.ARROW_RIGHT);
-		await waitFor(() => expect(item3).toHaveFocus());
-		await user.keyboard(kbd.ARROW_LEFT);
-		await waitFor(() => expect(item2).toHaveFocus());
-		await user.keyboard(kbd.ARROW_LEFT);
-		await waitFor(() => expect(item1).toHaveFocus());
-		await user.keyboard(kbd.ARROW_LEFT);
-		await waitFor(() => expect(item0).toHaveFocus());
-		await user.keyboard(kbd.ARROW_LEFT);
-		await waitFor(() => expect(item3).toHaveFocus());
-	});
-
-	it("should respect the loop prop when orientation is horizontal", async () => {
+	it("should respect the loop prop using arrow left and right keys", async () => {
 		const { getByTestId, user } = setup({
 			loop: false,
-			orientation: "horizontal",
 		});
 
 		const item0 = getByTestId(itemIds[0] as string);
