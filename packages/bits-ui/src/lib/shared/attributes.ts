@@ -12,13 +12,13 @@ import type {
 	SVGAttributes,
 } from "svelte/elements";
 
-export type BitsHTMLDivAttributes = HTMLAttributes<HTMLDivElement>;
-export type BitsHTMLSpanAttributes = HTMLAttributes<HTMLSpanElement>;
-export type BitsHTMLHeadingAttributes = HTMLAttributes<HTMLHeadingElement>;
-export type BitsHTMLUListAttributes = HTMLAttributes<HTMLUListElement>;
-export type BitsHTMLElementAttributes = HTMLAttributes<HTMLElement>;
-export type BitsHTMLTableSectionAttributes = HTMLAttributes<HTMLTableSectionElement>;
-export type BitsHTMLTableRowAttributes = HTMLAttributes<HTMLTableRowElement>;
+export type BitsDivAttributes = HTMLAttributes<HTMLDivElement>;
+export type BitsSpanAttributes = HTMLAttributes<HTMLSpanElement>;
+export type BitsHeadingAttributes = HTMLAttributes<HTMLHeadingElement>;
+export type BitsUListAttributes = HTMLAttributes<HTMLUListElement>;
+export type BitsElementAttributes = HTMLAttributes<HTMLElement>;
+export type BitsTableSectionAttributes = HTMLAttributes<HTMLTableSectionElement>;
+export type BitsTableRowAttributes = HTMLAttributes<HTMLTableRowElement>;
 export type BitsSVGElementAttributes = SVGAttributes<SVGElement>;
 
 /**
@@ -30,21 +30,21 @@ export type BitsSVGElementAttributes = SVGAttributes<SVGElement>;
 type BitsPrimitive<T> = Omit<T, "style" | "id" | "children"> & { id?: string };
 
 export type BitsPrimitiveButtonAttributes = BitsPrimitive<HTMLButtonAttributes>;
-export type BitsPrimitiveDivAttributes = BitsPrimitive<BitsHTMLDivAttributes>;
+export type BitsPrimitiveDivAttributes = BitsPrimitive<BitsDivAttributes>;
 export type BitsPrimitiveInputAttributes = BitsPrimitive<HTMLInputAttributes>;
-export type BitsPrimitiveSpanAttributes = BitsPrimitive<BitsHTMLSpanAttributes>;
+export type BitsPrimitiveSpanAttributes = BitsPrimitive<BitsSpanAttributes>;
 export type BitsPrimitiveImgAttributes = BitsPrimitive<HTMLImgAttributes>;
-export type BitsPrimitiveHeadingAttributes = BitsPrimitive<BitsHTMLHeadingAttributes>;
+export type BitsPrimitiveHeadingAttributes = BitsPrimitive<BitsHeadingAttributes>;
 export type BitsPrimitiveLabelAttributes = BitsPrimitive<HTMLLabelAttributes>;
 export type BitsPrimitiveSVGAttributes = BitsPrimitive<BitsSVGElementAttributes>;
 export type BitsPrimitiveAnchorAttributes = BitsPrimitive<HTMLAnchorAttributes>;
 export type BitsPrimitiveLiAttributes = BitsPrimitive<HTMLLiAttributes>;
-export type BitsPrimitiveElementAttributes = BitsPrimitive<BitsHTMLElementAttributes>;
-export type BitsPrimitiveUListAttributes = BitsPrimitive<BitsHTMLUListAttributes>;
+export type BitsPrimitiveElementAttributes = BitsPrimitive<BitsElementAttributes>;
+export type BitsPrimitiveUListAttributes = BitsPrimitive<BitsUListAttributes>;
 export type BitsPrimitiveTdAttributes = BitsPrimitive<HTMLTdAttributes>;
 export type BitsPrimitiveThAttributes = BitsPrimitive<HTMLThAttributes>;
 export type BitsPrimitiveTableAttributes = BitsPrimitive<HTMLTableAttributes>;
-export type BitsPrimitiveTbodyAttributes = BitsPrimitive<BitsHTMLTableSectionAttributes>;
-export type BitsPrimitiveTrAttributes = BitsPrimitive<BitsHTMLTableRowAttributes>;
-export type BitsPrimitiveTheadAttributes = BitsPrimitive<BitsHTMLTableSectionAttributes>;
-export type BitsPrimitiveHeaderAttributes = BitsPrimitive<BitsHTMLElementAttributes>;
+export type BitsPrimitiveTbodyAttributes = BitsPrimitive<BitsTableSectionAttributes>;
+export type BitsPrimitiveTrAttributes = BitsPrimitive<BitsTableRowAttributes>;
+export type BitsPrimitiveTheadAttributes = BitsPrimitive<BitsTableSectionAttributes>;
+export type BitsPrimitiveHeaderAttributes = BitsPrimitive<BitsElementAttributes>;
