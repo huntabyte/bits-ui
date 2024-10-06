@@ -1,5 +1,8 @@
 import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
-import type { PrimitiveButtonAttributes, PrimitiveSpanAttributes } from "$lib/shared/attributes.js";
+import type {
+	BitsPrimitiveButtonAttributes,
+	BitsPrimitiveSpanAttributes,
+} from "$lib/shared/attributes.js";
 
 type SwitchRootSnippetProps = {
 	checked: boolean;
@@ -63,11 +66,11 @@ export type SwitchRootPropsWithoutHTML = WithChild<
 >;
 
 export type SwitchRootProps = SwitchRootPropsWithoutHTML &
-	Without<PrimitiveButtonAttributes, SwitchRootPropsWithoutHTML>;
+	Without<BitsPrimitiveButtonAttributes, SwitchRootPropsWithoutHTML>;
 
 export type SwitchThumbSnippetProps = SwitchRootSnippetProps;
 
 export type SwitchThumbPropsWithoutHTML = WithChild<{}, SwitchThumbSnippetProps>;
 
 export type SwitchThumbProps = SwitchThumbPropsWithoutHTML &
-	Without<PrimitiveSpanAttributes, SwitchThumbPropsWithoutHTML>;
+	Without<BitsPrimitiveSpanAttributes, SwitchThumbPropsWithoutHTML>;

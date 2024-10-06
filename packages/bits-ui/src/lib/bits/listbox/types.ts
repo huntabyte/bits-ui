@@ -2,8 +2,17 @@ import type { Expand } from "svelte-toolbelt";
 import type { PortalProps } from "../utilities/portal/types.js";
 import type { PopperLayerProps, PopperLayerStaticProps } from "../utilities/popper-layer/types.js";
 import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
-import type { PrimitiveButtonAttributes, PrimitiveDivAttributes } from "$lib/shared/attributes.js";
-import type { OnChangeFn, WithChild, WithChildren, Without } from "$lib/internal/types.js";
+import type {
+	BitsPrimitiveButtonAttributes,
+	BitsPrimitiveDivAttributes,
+} from "$lib/shared/attributes.js";
+import type {
+	OnChangeFn,
+	WithChild,
+	WithChildNoChildrenSnippetProps,
+	WithChildren,
+	Without,
+} from "$lib/internal/types.js";
 
 export type ListboxBaseRootPropsWithoutHTML = WithChildren<{
 	/**
@@ -117,14 +126,14 @@ export type ListboxMultipleRootPropsWithoutHTML = {
 export type ListboxSingleRootProps = ListboxBaseRootPropsWithoutHTML &
 	ListboxSingleRootPropsWithoutHTML &
 	Without<
-		PrimitiveDivAttributes,
+		BitsPrimitiveDivAttributes,
 		ListboxSingleRootPropsWithoutHTML | ListboxBaseRootPropsWithoutHTML
 	>;
 
 export type ListboxMultipleRootProps = ListboxBaseRootPropsWithoutHTML &
 	ListboxMultipleRootPropsWithoutHTML &
 	Without<
-		PrimitiveDivAttributes,
+		BitsPrimitiveDivAttributes,
 		ListboxMultipleRootPropsWithoutHTML | ListboxBaseRootPropsWithoutHTML
 	>;
 
@@ -151,7 +160,7 @@ export type ListboxContentSnippetProps = {
 };
 
 export type ListboxContentPropsWithoutHTML = Expand<
-	WithChild<
+	WithChildNoChildrenSnippetProps<
 		Omit<PopperLayerProps, "content" | "onOpenAutoFocus" | "trapFocus"> &
 			_SharedListboxContentProps,
 		ListboxContentSnippetProps
@@ -159,10 +168,10 @@ export type ListboxContentPropsWithoutHTML = Expand<
 >;
 
 export type ListboxContentProps = ListboxContentPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, ListboxContentPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, ListboxContentPropsWithoutHTML>;
 
 export type ListboxContentStaticPropsWithoutHTML = Expand<
-	WithChild<
+	WithChildNoChildrenSnippetProps<
 		Omit<PopperLayerStaticProps, "content" | "onOpenAutoFocus" | "trapFocus"> &
 			_SharedListboxContentProps,
 		ListboxContentSnippetProps
@@ -170,12 +179,12 @@ export type ListboxContentStaticPropsWithoutHTML = Expand<
 >;
 
 export type ListboxContentStaticProps = ListboxContentStaticPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, ListboxContentStaticPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, ListboxContentStaticPropsWithoutHTML>;
 
 export type ListboxTriggerPropsWithoutHTML = WithChild;
 
 export type ListboxTriggerProps = ListboxTriggerPropsWithoutHTML &
-	Without<PrimitiveButtonAttributes, ListboxTriggerPropsWithoutHTML>;
+	Without<BitsPrimitiveButtonAttributes, ListboxTriggerPropsWithoutHTML>;
 
 export type ListboxItemSnippetProps = { selected: boolean; highlighted: boolean };
 
@@ -219,22 +228,22 @@ export type ListboxItemPropsWithoutHTML = WithChild<
 >;
 
 export type ListboxItemProps = ListboxItemPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, ListboxItemPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, ListboxItemPropsWithoutHTML>;
 
 export type ListboxGroupPropsWithoutHTML = WithChild;
 
 export type ListboxGroupProps = ListboxGroupPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, ListboxGroupPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, ListboxGroupPropsWithoutHTML>;
 
 export type ListboxGroupHeadingPropsWithoutHTML = WithChild;
 
 export type ListboxGroupHeadingProps = ListboxGroupHeadingPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, ListboxGroupHeadingPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, ListboxGroupHeadingPropsWithoutHTML>;
 
 export type ListboxSeparatorPropsWithoutHTML = WithChild;
 
 export type ListboxSeparatorProps = ListboxSeparatorPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, ListboxSeparatorPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, ListboxSeparatorPropsWithoutHTML>;
 
 export type ListboxPortalPropsWithoutHTML = PortalProps;
 
@@ -247,14 +256,14 @@ export type ListboxArrowProps = ArrowProps;
 export type ListboxViewportPropsWithoutHTML = WithChild;
 
 export type ListboxViewportProps = ListboxViewportPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, ListboxViewportPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, ListboxViewportPropsWithoutHTML>;
 
 export type ListboxScrollUpButtonPropsWithoutHTML = WithChild;
 
 export type ListboxScrollUpButtonProps = ListboxScrollUpButtonPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, ListboxScrollUpButtonPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, ListboxScrollUpButtonPropsWithoutHTML>;
 
 export type ListboxScrollDownButtonPropsWithoutHTML = WithChild;
 
 export type ListboxScrollDownButtonProps = ListboxScrollDownButtonPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, ListboxScrollDownButtonPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, ListboxScrollDownButtonPropsWithoutHTML>;

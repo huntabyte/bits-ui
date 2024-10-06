@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { PrimitiveDivAttributes, WithChildren } from "bits-ui";
+	import type { BitsPrimitiveDivAttributes, WithChildren } from "bits-ui";
 	import { type Variant, alertVariants } from "./index.js";
 	import { cn } from "$lib/utils/styles.js";
 
@@ -8,7 +8,7 @@
 		class: className,
 		children,
 		...restProps
-	}: WithChildren<PrimitiveDivAttributes> & {
+	}: WithChildren<BitsPrimitiveDivAttributes> & {
 		variant?: Variant;
 	} = $props();
 </script>

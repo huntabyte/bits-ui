@@ -2,8 +2,17 @@ import type { FloatingLayerContentProps } from "../utilities/floating-layer/type
 import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
 import type { DismissibleLayerProps } from "../utilities/dismissible-layer/types.js";
 import type { EscapeLayerProps } from "../utilities/escape-layer/types.js";
-import type { OnChangeFn, WithChild, WithChildren, Without } from "$lib/internal/types.js";
-import type { PrimitiveButtonAttributes, PrimitiveDivAttributes } from "$lib/shared/attributes.js";
+import type {
+	OnChangeFn,
+	WithChild,
+	WithChildNoChildrenSnippetProps,
+	WithChildren,
+	Without,
+} from "$lib/internal/types.js";
+import type {
+	BitsPrimitiveButtonAttributes,
+	BitsPrimitiveDivAttributes,
+} from "$lib/shared/attributes.js";
 import type { PortalProps } from "$lib/bits/utilities/portal/types.js";
 
 export type TooltipProviderPropsWithoutHTML = WithChildren<{
@@ -122,7 +131,7 @@ export type TooltipContentSnippetProps = {
 	open: boolean;
 };
 
-export type TooltipContentPropsWithoutHTML = WithChild<
+export type TooltipContentPropsWithoutHTML = WithChildNoChildrenSnippetProps<
 	Pick<
 		FloatingLayerContentProps,
 		| "side"
@@ -150,9 +159,9 @@ export type TooltipContentPropsWithoutHTML = WithChild<
 >;
 
 export type TooltipContentProps = TooltipContentPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, TooltipContentPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, TooltipContentPropsWithoutHTML>;
 
-export type TooltipContentStaticPropsWithoutHTML = WithChild<
+export type TooltipContentStaticPropsWithoutHTML = WithChildNoChildrenSnippetProps<
 	Pick<FloatingLayerContentProps, "dir"> &
 		Omit<DismissibleLayerProps, "onInteractOutsideStart"> &
 		EscapeLayerProps & {
@@ -167,7 +176,7 @@ export type TooltipContentStaticPropsWithoutHTML = WithChild<
 >;
 
 export type TooltipContentStaticProps = TooltipContentStaticPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, TooltipContentStaticPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, TooltipContentStaticPropsWithoutHTML>;
 
 export type TooltipArrowPropsWithoutHTML = ArrowPropsWithoutHTML;
 export type TooltipArrowProps = ArrowProps;
@@ -185,4 +194,4 @@ export type TooltipTriggerPropsWithoutHTML = WithChild<{
 }>;
 
 export type TooltipTriggerProps = TooltipTriggerPropsWithoutHTML &
-	Without<PrimitiveButtonAttributes, TooltipTriggerPropsWithoutHTML>;
+	Without<BitsPrimitiveButtonAttributes, TooltipTriggerPropsWithoutHTML>;

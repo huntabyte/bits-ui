@@ -1,6 +1,6 @@
 import type { DateValue } from "@internationalized/date";
 import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
-import type { PrimitiveDivAttributes } from "$lib/shared/attributes.js";
+import type { BitsPrimitiveDivAttributes } from "$lib/shared/attributes.js";
 import type {
 	DateMatcher,
 	DateOnInvalid,
@@ -303,7 +303,7 @@ export type DateRangePickerRootPropsWithoutHTML = WithChild<{
 }>;
 
 export type DateRangePickerRootProps = DateRangePickerRootPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, DateRangePickerRootPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, DateRangePickerRootPropsWithoutHTML>;
 
 export type {
 	PopoverTriggerPropsWithoutHTML as DateRangePickerTriggerPropsWithoutHTML,
@@ -328,7 +328,7 @@ export type {
 export type DateRangePickerCalendarPropsWithoutHTML = WithChild<{}, CalendarRootSnippetProps>;
 
 export type DateRangePickerCalendarProps = DateRangePickerCalendarPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, DateRangePickerCalendarPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, DateRangePickerCalendarPropsWithoutHTML>;
 
 export type {
 	RangeCalendarCellPropsWithoutHTML as DateRangePickerCellPropsWithoutHTML,

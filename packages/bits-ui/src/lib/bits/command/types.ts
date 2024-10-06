@@ -1,7 +1,7 @@
 import type {
-	PrimitiveAnchorAttributes,
-	PrimitiveDivAttributes,
-	PrimitiveInputAttributes,
+	BitsPrimitiveAnchorAttributes,
+	BitsPrimitiveDivAttributes,
+	BitsPrimitiveInputAttributes,
 	WithChild,
 	Without,
 } from "$lib/shared/index.js";
@@ -86,7 +86,7 @@ export type CommandRootPropsWithoutHTML = WithChild<{
 }>;
 
 export type CommandRootProps = CommandRootPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, CommandRootPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, CommandRootPropsWithoutHTML>;
 
 export type CommandEmptyPropsWithoutHTML = WithChild<{
 	/**
@@ -97,7 +97,7 @@ export type CommandEmptyPropsWithoutHTML = WithChild<{
 }>;
 
 export type CommandEmptyProps = CommandEmptyPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, CommandEmptyPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, CommandEmptyPropsWithoutHTML>;
 
 export type CommandGroupPropsWithoutHTML = WithChild<{
 	/**
@@ -113,17 +113,17 @@ export type CommandGroupPropsWithoutHTML = WithChild<{
 }>;
 
 export type CommandGroupProps = CommandGroupPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, CommandGroupPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, CommandGroupPropsWithoutHTML>;
 
 export type CommandGroupHeadingPropsWithoutHTML = WithChild;
 
 export type CommandGroupHeadingProps = CommandGroupHeadingPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, CommandGroupHeadingPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, CommandGroupHeadingPropsWithoutHTML>;
 
 export type CommandGroupItemsPropsWithoutHTML = WithChild;
 
 export type CommandGroupItemsProps = CommandGroupItemsPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, CommandGroupItemsPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, CommandGroupItemsPropsWithoutHTML>;
 
 export type CommandItemPropsWithoutHTML = WithChild<{
 	/**
@@ -159,12 +159,12 @@ export type CommandItemPropsWithoutHTML = WithChild<{
 }>;
 
 export type CommandItemProps = CommandItemPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, CommandItemPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, CommandItemPropsWithoutHTML>;
 
 export type CommandLinkItemPropsWithoutHTML = CommandItemPropsWithoutHTML;
 
 export type CommandLinkItemProps = CommandLinkItemPropsWithoutHTML &
-	Without<PrimitiveAnchorAttributes, CommandLinkItemPropsWithoutHTML>;
+	Without<BitsPrimitiveAnchorAttributes, CommandLinkItemPropsWithoutHTML>;
 
 export type CommandInputPropsWithoutHTML = WithChild<{
 	/**
@@ -174,12 +174,12 @@ export type CommandInputPropsWithoutHTML = WithChild<{
 }>;
 
 export type CommandInputProps = CommandInputPropsWithoutHTML &
-	Without<PrimitiveInputAttributes, CommandInputPropsWithoutHTML>;
+	Without<BitsPrimitiveInputAttributes, CommandInputPropsWithoutHTML>;
 
 export type CommandListPropsWithoutHTML = WithChild;
 
 export type CommandListProps = CommandListPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, CommandListPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, CommandListPropsWithoutHTML>;
 
 export type CommandSeparatorPropsWithoutHTML = WithChild<{
 	/**
@@ -190,7 +190,7 @@ export type CommandSeparatorPropsWithoutHTML = WithChild<{
 }>;
 
 export type CommandSeparatorProps = CommandSeparatorPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, CommandSeparatorPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, CommandSeparatorPropsWithoutHTML>;
 
 export type CommandLoadingPropsWithoutHTML = WithChild<{
 	/**
@@ -201,9 +201,9 @@ export type CommandLoadingPropsWithoutHTML = WithChild<{
 }>;
 
 export type CommandLoadingProps = CommandLoadingPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, CommandLoadingPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, CommandLoadingPropsWithoutHTML>;
 
 export type CommandViewportPropsWithoutHTML = WithChild;
 
 export type CommandViewportProps = CommandViewportPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, CommandViewportPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, CommandViewportPropsWithoutHTML>;

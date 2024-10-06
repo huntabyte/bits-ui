@@ -3,6 +3,10 @@ title: Controlled State
 description: Learn how to use controlled state in Bits UI components.
 ---
 
+<script>
+	import { Callout } from '$lib/components'
+</script>
+
 Bits UI components offer flexibility in state management, allowing you to choose between uncontrolled and controlled states. This guide will help you understand when and how to use controlled state effectively.
 
 ## Understanding State Management
@@ -31,6 +35,12 @@ Here's an example of an uncontrolled Accordion:
 
 In this example, the `Accordion.Root` component manages its value state internally. When a user interacts with the accordion, the component updates the value automatically. The local `myValue` is synced with the component's internal `value` state in both directions.
 
+<Callout>
+
+When state is uncontrolled, the `onValueChange` prop is called _after_ the state changes, so you can use it to perform additional logic/side effects after the state updates.
+
+</Callout>
+
 ### Controlled State
 
 Controlled state puts you in charge of the component's state management. Use this approach when:
@@ -50,7 +60,6 @@ Here's an example of how you might use controlled state with the `Accordion` com
 ```svelte
 <script lang="ts">
 	import { Accordion } from "bits-ui";
-
 	let myValue = $state("");
 </script>
 
@@ -64,6 +73,12 @@ In this controlled state example:
 -   We set `controlledValue` to true.
 -   We pass our local `myValue` state to the value prop.
 -   We use `onValueChange` to handle state updates
+
+<Callout>
+
+Unlike uncontrolled state, controlled state does not update the state before calling the `onValueChange` function.
+
+</Callout>
 
 ## Best Practices
 

@@ -3,7 +3,7 @@ import { componentDocs, docs, typeHelperDocs, utilityDocs } from "$content/index
 
 export function buildDocsIndex() {
 	const components = componentDocs.map((doc) => {
-		const content = removeMd(doc.body.raw, {
+		const content = removeMd(doc.raw, {
 			replaceLinksWithURL: true,
 			gfm: true,
 			useImgAltText: true,
@@ -18,7 +18,7 @@ export function buildDocsIndex() {
 	});
 
 	const utilities = utilityDocs.map((doc) => {
-		const content = removeMd(doc.body.raw, {
+		const content = removeMd(doc.raw, {
 			replaceLinksWithURL: true,
 			gfm: true,
 			useImgAltText: true,
@@ -33,7 +33,7 @@ export function buildDocsIndex() {
 	});
 
 	const typeHelpers = typeHelperDocs.map((doc) => {
-		const content = removeMd(doc.body.raw, {
+		const content = removeMd(doc.raw, {
 			replaceLinksWithURL: true,
 			gfm: true,
 			useImgAltText: true,
@@ -48,7 +48,7 @@ export function buildDocsIndex() {
 	});
 
 	const mainPages = docs.map((doc) => {
-		const content = removeMd(doc.body.raw, {
+		const content = removeMd(doc.raw, {
 			replaceLinksWithURL: true,
 			gfm: true,
 			useImgAltText: true,

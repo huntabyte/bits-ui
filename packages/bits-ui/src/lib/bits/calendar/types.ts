@@ -1,15 +1,15 @@
 import type { DateValue } from "@internationalized/date";
 import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
 import type {
-	PrimitiveButtonAttributes,
-	PrimitiveDivAttributes,
-	PrimitiveHeaderAttributes,
-	PrimitiveTableAttributes,
-	PrimitiveTbodyAttributes,
-	PrimitiveTdAttributes,
-	PrimitiveThAttributes,
-	PrimitiveTheadAttributes,
-	PrimitiveTrAttributes,
+	BitsPrimitiveButtonAttributes,
+	BitsPrimitiveDivAttributes,
+	BitsPrimitiveHeaderAttributes,
+	BitsPrimitiveTableAttributes,
+	BitsPrimitiveTbodyAttributes,
+	BitsPrimitiveTdAttributes,
+	BitsPrimitiveThAttributes,
+	BitsPrimitiveTheadAttributes,
+	BitsPrimitiveTrAttributes,
 } from "$lib/shared/attributes.js";
 import type { DateMatcher, Month, WeekStartsOn } from "$lib/shared/date/types.js";
 
@@ -252,13 +252,13 @@ export type _CalendarSingleRootPropsWithoutHTML = CalendarBaseRootPropsWithoutHT
 	CalendarSingleRootPropsWithoutHTML;
 
 export type CalendarSingleRootProps = _CalendarSingleRootPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, _CalendarSingleRootPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, _CalendarSingleRootPropsWithoutHTML>;
 
 export type _CalendarMultipleRootPropsWithoutHTML = CalendarBaseRootPropsWithoutHTML &
 	CalendarMultipleRootPropsWithoutHTML;
 
 export type CalendarMultipleRootProps = _CalendarMultipleRootPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, _CalendarMultipleRootPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, _CalendarMultipleRootPropsWithoutHTML>;
 
 export type CalendarRootPropsWithoutHTML = CalendarBaseRootPropsWithoutHTML &
 	(
@@ -267,7 +267,7 @@ export type CalendarRootPropsWithoutHTML = CalendarBaseRootPropsWithoutHTML &
 	);
 
 export type CalendarRootProps = CalendarRootPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, CalendarRootPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, CalendarRootPropsWithoutHTML>;
 
 export type CalendarCellSnippetProps = {
 	disabled: boolean;
@@ -293,37 +293,37 @@ export type CalendarCellPropsWithoutHTML = WithChild<
 >;
 
 export type CalendarCellProps = CalendarCellPropsWithoutHTML &
-	Without<PrimitiveTdAttributes, CalendarCellPropsWithoutHTML>;
+	Without<BitsPrimitiveTdAttributes, CalendarCellPropsWithoutHTML>;
 
 export type CalendarGridPropsWithoutHTML = WithChild;
 
 export type CalendarGridProps = CalendarGridPropsWithoutHTML &
-	Without<PrimitiveTableAttributes, CalendarGridPropsWithoutHTML>;
+	Without<BitsPrimitiveTableAttributes, CalendarGridPropsWithoutHTML>;
 
 export type CalendarGridBodyPropsWithoutHTML = WithChild;
 
 export type CalendarGridBodyProps = CalendarGridBodyPropsWithoutHTML &
-	Without<PrimitiveTbodyAttributes, CalendarGridBodyPropsWithoutHTML>;
+	Without<BitsPrimitiveTbodyAttributes, CalendarGridBodyPropsWithoutHTML>;
 
 export type CalendarGridHeadPropsWithoutHTML = WithChild;
 
 export type CalendarGridHeadProps = CalendarGridHeadPropsWithoutHTML &
-	Without<PrimitiveTheadAttributes, CalendarGridHeadPropsWithoutHTML>;
+	Without<BitsPrimitiveTheadAttributes, CalendarGridHeadPropsWithoutHTML>;
 
 export type CalendarHeadCellPropsWithoutHTML = WithChild;
 
 export type CalendarHeadCellProps = CalendarHeadCellPropsWithoutHTML &
-	Without<PrimitiveThAttributes, CalendarHeadCellPropsWithoutHTML>;
+	Without<BitsPrimitiveThAttributes, CalendarHeadCellPropsWithoutHTML>;
 
 export type CalendarGridRowPropsWithoutHTML = WithChild;
 
 export type CalendarGridRowProps = CalendarGridRowPropsWithoutHTML &
-	Without<PrimitiveTrAttributes, CalendarGridRowPropsWithoutHTML>;
+	Without<BitsPrimitiveTrAttributes, CalendarGridRowPropsWithoutHTML>;
 
 export type CalendarHeaderPropsWithoutHTML = WithChild;
 
 export type CalendarHeaderProps = CalendarHeaderPropsWithoutHTML &
-	Without<PrimitiveHeaderAttributes, CalendarHeaderPropsWithoutHTML>;
+	Without<BitsPrimitiveHeaderAttributes, CalendarHeaderPropsWithoutHTML>;
 
 export type CalendarHeadingSnippetProps = {
 	headingValue: string;
@@ -341,17 +341,17 @@ export type CalendarDaySnippetProps = {
 export type CalendarDayPropsWithoutHTML = WithChild<{}, CalendarDaySnippetProps>;
 
 export type CalendarDayProps = CalendarDayPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, CalendarDayPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, CalendarDayPropsWithoutHTML>;
 
 export type CalendarHeadingProps = CalendarHeadingPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, CalendarHeadingPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, CalendarHeadingPropsWithoutHTML>;
 
 export type CalendarNextButtonPropsWithoutHTML = WithChild;
 
 export type CalendarNextButtonProps = CalendarNextButtonPropsWithoutHTML &
-	Without<PrimitiveButtonAttributes, CalendarNextButtonPropsWithoutHTML>;
+	Without<BitsPrimitiveButtonAttributes, CalendarNextButtonPropsWithoutHTML>;
 
 export type CalendarPrevButtonPropsWithoutHTML = WithChild;
 
 export type CalendarPrevButtonProps = CalendarPrevButtonPropsWithoutHTML &
-	Without<PrimitiveButtonAttributes, CalendarPrevButtonPropsWithoutHTML>;
+	Without<BitsPrimitiveButtonAttributes, CalendarPrevButtonPropsWithoutHTML>;

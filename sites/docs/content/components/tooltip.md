@@ -336,4 +336,26 @@ When using the `Tooltip.ContentStatic` component, the `Tooltip.Arrow` component 
 
 </Callout>
 
+## Custom Anchor
+
+By default, the `Tooltip.Content` is anchored to the `Tooltip.Trigger` component, which determines where the content is positioned.
+
+If you wish to instead anchor the content to a different element, you can pass either a selector `string` or an `HTMLElement` to the `customAnchor` prop of the `Tooltip.Content` component.
+
+```svelte
+<script lang="ts">
+	import { Tooltip } from "bits-ui";
+	let customAnchor = $state<HTMLElement>(null!);
+</script>
+
+<div bind:this={customAnchor}></div>
+
+<Tooltip.Root>
+	<Tooltip.Trigger />
+	<Tooltip.Content {customAnchor}>
+		<!-- ... -->
+	</Tooltip.Content>
+</Tooltip.Root>
+```
+
 <APISection {schemas} />

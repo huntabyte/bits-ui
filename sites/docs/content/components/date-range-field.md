@@ -22,6 +22,10 @@ Before diving into this component, it's important to understand how dates/times 
 
 </Callout>
 
+## Overview
+
+The `DateRangeField` component combines two [Date Field](/docs/components/date-field) components to create a date range field. Check out the [Date Field](/docs/components/date-field) component documentation for information on how to customize this component.
+
 ## Structure
 
 ```svelte

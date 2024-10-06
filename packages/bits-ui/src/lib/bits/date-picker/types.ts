@@ -1,6 +1,6 @@
 import type { DateValue } from "@internationalized/date";
 import type { OnChangeFn, WithChild, WithChildren, Without } from "$lib/internal/types.js";
-import type { PrimitiveDivAttributes } from "$lib/shared/attributes.js";
+import type { BitsPrimitiveDivAttributes } from "$lib/shared/attributes.js";
 import type { CalendarRootSnippetProps } from "$lib/types.js";
 import type {
 	DateMatcher,
@@ -319,7 +319,7 @@ export type {
 export type DatePickerCalendarPropsWithoutHTML = WithChild<{}, CalendarRootSnippetProps>;
 
 export type DatePickerCalendarProps = DatePickerCalendarPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, DatePickerCalendarPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, DatePickerCalendarPropsWithoutHTML>;
 
 export type {
 	CalendarCellPropsWithoutHTML as DatePickerCellPropsWithoutHTML,

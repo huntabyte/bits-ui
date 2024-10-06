@@ -2,7 +2,7 @@
 	import { box } from "svelte-toolbelt";
 	import { useCommandLabel } from "../command.svelte.js";
 	import {
-		type PrimitiveLabelAttributes,
+		type BitsPrimitiveLabelAttributes,
 		type WithElementRef,
 		mergeProps,
 		useId,
@@ -14,7 +14,7 @@
 		ref = $bindable(null),
 		children,
 		...restProps
-	}: WithChildren<WithElementRef<PrimitiveLabelAttributes>> = $props();
+	}: WithChildren<WithElementRef<BitsPrimitiveLabelAttributes>> = $props();
 
 	const labelState = useCommandLabel({
 		id: box.with(() => id),

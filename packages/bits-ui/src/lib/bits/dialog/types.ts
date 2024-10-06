@@ -3,8 +3,17 @@ import type { DismissibleLayerProps } from "../utilities/dismissible-layer/types
 import type { PresenceLayerProps } from "../utilities/presence-layer/types.js";
 import type { FocusScopeProps } from "../utilities/focus-scope/types.js";
 import type { TextSelectionLayerProps } from "../utilities/text-selection-layer/types.js";
-import type { OnChangeFn, WithChild, WithChildren, Without } from "$lib/internal/types.js";
-import type { PrimitiveButtonAttributes, PrimitiveDivAttributes } from "$lib/shared/attributes.js";
+import type {
+	OnChangeFn,
+	WithChild,
+	WithChildNoChildrenSnippetProps,
+	WithChildren,
+	Without,
+} from "$lib/internal/types.js";
+import type {
+	BitsPrimitiveButtonAttributes,
+	BitsPrimitiveDivAttributes,
+} from "$lib/shared/attributes.js";
 import type { PortalProps } from "$lib/bits/utilities/portal/index.js";
 
 export type DialogRootPropsWithoutHTML = WithChildren<{
@@ -34,7 +43,7 @@ export type DialogContentSnippetProps = {
 	open: boolean;
 };
 
-export type DialogContentPropsWithoutHTML = WithChild<
+export type DialogContentPropsWithoutHTML = WithChildNoChildrenSnippetProps<
 	Omit<
 		EscapeLayerProps &
 			Omit<DismissibleLayerProps, "onInteractOutsideStart"> &
@@ -49,7 +58,7 @@ export type DialogContentPropsWithoutHTML = WithChild<
 >;
 
 export type DialogContentProps = DialogContentPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, DialogContentPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, DialogContentPropsWithoutHTML>;
 
 export type DialogOverlaySnippetProps = {
 	open: boolean;
@@ -61,7 +70,7 @@ export type DialogOverlayPropsWithoutHTML = WithChild<
 >;
 
 export type DialogOverlayProps = DialogOverlayPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, DialogOverlayPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, DialogOverlayPropsWithoutHTML>;
 
 export type DialogPortalPropsWithoutHTML = PortalProps;
 export type DialogPortalProps = DialogPortalPropsWithoutHTML;
@@ -69,7 +78,7 @@ export type DialogPortalProps = DialogPortalPropsWithoutHTML;
 export type DialogTriggerPropsWithoutHTML = WithChild;
 
 export type DialogTriggerProps = DialogTriggerPropsWithoutHTML &
-	Without<PrimitiveButtonAttributes, DialogTriggerPropsWithoutHTML>;
+	Without<BitsPrimitiveButtonAttributes, DialogTriggerPropsWithoutHTML>;
 
 export type DialogTitlePropsWithoutHTML = WithChild<{
 	/**
@@ -79,11 +88,11 @@ export type DialogTitlePropsWithoutHTML = WithChild<{
 }>;
 
 export type DialogTitleProps = DialogTitlePropsWithoutHTML &
-	Without<PrimitiveDivAttributes, DialogTitlePropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, DialogTitlePropsWithoutHTML>;
 
 export type DialogClosePropsWithoutHTML = DialogTriggerPropsWithoutHTML;
 export type DialogCloseProps = DialogTriggerProps;
 
 export type DialogDescriptionPropsWithoutHTML = WithChild;
 export type DialogDescriptionProps = DialogDescriptionPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, DialogDescriptionPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, DialogDescriptionPropsWithoutHTML>;

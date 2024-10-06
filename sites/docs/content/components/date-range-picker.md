@@ -372,4 +372,10 @@ For more in-depth information on controlled components and advanced state manage
 
 </Callout>
 
+## Customization
+
+The `DateRangePicker` component is made up of three other Bits UI components: [Date Range Field](/docs/components/date-range-field), [Range Calendar](/docs/components/range-calendar), and [Popover](/docs/components/popover).
+
+You can check out the documentation for each of these components to learn more about their customization options, each of which can be used to customize the `DateRangePicker` component.
+
 <APISection {schemas} />

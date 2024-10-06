@@ -3,7 +3,7 @@
 	import RocketLaunch from "phosphor-svelte/lib/RocketLaunch";
 	import Warning from "phosphor-svelte/lib/Warning";
 	import WarningOctagon from "phosphor-svelte/lib/WarningOctagon";
-	import type { PrimitiveElementAttributes, WithChildren } from "bits-ui";
+	import type { BitsPrimitiveElementAttributes, WithChildren } from "bits-ui";
 	import * as Alert from "$lib/components/ui/alert/index.js";
 	import { cn } from "$lib/utils/styles.js";
 
@@ -15,7 +15,7 @@
 			.split("")
 			.map((c, i) => (i === 0 ? c.toUpperCase() : c))
 			.join(""),
-	}: WithChildren<PrimitiveElementAttributes> & {
+	}: WithChildren<BitsPrimitiveElementAttributes> & {
 		type?: "note" | "warning" | "danger" | "tip";
 	} = $props();
 

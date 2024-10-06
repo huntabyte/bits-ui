@@ -344,4 +344,26 @@ You can use the `forceMount` prop along with the `child` snippet to forcefully m
 
 Of course, this isn't the prettiest syntax, so it's recommended to create your own reusable content component that handles this logic if you intend to use this approach. For more information on using transitions with Bits UI components, see the [Transitions](/docs/transitions) documentation.
 
+## Custom Anchor
+
+By default, the `DropdownMenu.Content` is anchored to the `DropdownMenu.Trigger` component, which determines where the content is positioned.
+
+If you wish to instead anchor the content to a different element, you can pass either a selector `string` or an `HTMLElement` to the `customAnchor` prop of the `DropdownMenu.Content` component.
+
+```svelte
+<script lang="ts">
+	import { DropdownMenu } from "bits-ui";
+	let customAnchor = $state<HTMLElement>(null!);
+</script>
+
+<div bind:this={customAnchor}></div>
+
+<DropdownMenu.Root>
+	<DropdownMenu.Trigger />
+	<DropdownMenu.Content {customAnchor}>
+		<!-- ... -->
+	</DropdownMenu.Content>
+</DropdownMenu.Root>
+```
+
 <APISection {schemas} />

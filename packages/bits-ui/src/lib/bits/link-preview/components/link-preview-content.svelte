@@ -76,7 +76,7 @@
 			{@render child({ props: mergedProps, ...contentState.snippetProps })}
 		{:else}
 			<div {...mergedProps}>
-				{@render children?.(contentState.snippetProps)}
+				{@render children?.()}
 			</div>
 		{/if}
 	{/snippet}

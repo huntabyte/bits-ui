@@ -1,7 +1,16 @@
 import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
 import type { PopperLayerProps, PopperLayerStaticProps } from "../utilities/popper-layer/types.js";
-import type { OnChangeFn, WithChild, WithChildren, Without } from "$lib/internal/types.js";
-import type { PrimitiveButtonAttributes, PrimitiveDivAttributes } from "$lib/shared/attributes.js";
+import type {
+	OnChangeFn,
+	WithChild,
+	WithChildNoChildrenSnippetProps,
+	WithChildren,
+	Without,
+} from "$lib/internal/types.js";
+import type {
+	BitsPrimitiveButtonAttributes,
+	BitsPrimitiveDivAttributes,
+} from "$lib/shared/attributes.js";
 
 export type PopoverRootPropsWithoutHTML = WithChildren<{
 	/**
@@ -34,31 +43,31 @@ export type PopoverContentSnippetProps = {
 	open: boolean;
 };
 
-export type PopoverContentPropsWithoutHTML = WithChild<
+export type PopoverContentPropsWithoutHTML = WithChildNoChildrenSnippetProps<
 	Omit<PopperLayerProps, "content" | "loop">,
 	PopoverContentSnippetProps
 >;
 
 export type PopoverContentProps = PopoverContentPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, PopoverContentPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, PopoverContentPropsWithoutHTML>;
 
-export type PopoverContentStaticPropsWithoutHTML = WithChild<
+export type PopoverContentStaticPropsWithoutHTML = WithChildNoChildrenSnippetProps<
 	Omit<PopperLayerStaticProps, "content" | "loop">,
 	PopoverContentSnippetProps
 >;
 
 export type PopoverContentStaticProps = PopoverContentStaticPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, PopoverContentStaticPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, PopoverContentStaticPropsWithoutHTML>;
 
 export type PopoverTriggerPropsWithoutHTML = WithChild;
 
 export type PopoverTriggerProps = PopoverTriggerPropsWithoutHTML &
-	Without<PrimitiveButtonAttributes, PopoverTriggerPropsWithoutHTML>;
+	Without<BitsPrimitiveButtonAttributes, PopoverTriggerPropsWithoutHTML>;
 
 export type PopoverClosePropsWithoutHTML = WithChild;
 
 export type PopoverCloseProps = PopoverClosePropsWithoutHTML &
-	Without<PrimitiveButtonAttributes, PopoverClosePropsWithoutHTML>;
+	Without<BitsPrimitiveButtonAttributes, PopoverClosePropsWithoutHTML>;
 
 export type PopoverArrowPropsWithoutHTML = ArrowPropsWithoutHTML;
 

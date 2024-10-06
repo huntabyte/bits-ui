@@ -1,5 +1,13 @@
-import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
-import type { PrimitiveButtonAttributes, PrimitiveDivAttributes } from "$lib/shared/attributes.js";
+import type {
+	OnChangeFn,
+	WithChild,
+	WithChildNoChildrenSnippetProps,
+	Without,
+} from "$lib/internal/types.js";
+import type {
+	BitsPrimitiveButtonAttributes,
+	BitsPrimitiveDivAttributes,
+} from "$lib/shared/attributes.js";
 import type { Orientation } from "$lib/shared/index.js";
 
 export type BaseAccordionRootPropsWithoutHTML = {
@@ -89,12 +97,12 @@ export type AccordionRootPropsWithoutHTML =
 	| WithChild<AccordionRootMultiplePropsWithoutHTML>;
 
 export type AccordionRootProps = AccordionRootPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, AccordionRootPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, AccordionRootPropsWithoutHTML>;
 
 export type AccordionTriggerPropsWithoutHTML = WithChild;
 
 export type AccordionTriggerProps = AccordionTriggerPropsWithoutHTML &
-	Without<PrimitiveButtonAttributes, AccordionTriggerPropsWithoutHTML>;
+	Without<BitsPrimitiveButtonAttributes, AccordionTriggerPropsWithoutHTML>;
 
 export type AccordionContentSnippetProps = {
 	/**
@@ -103,7 +111,7 @@ export type AccordionContentSnippetProps = {
 	open: boolean;
 };
 
-export type AccordionContentPropsWithoutHTML = WithChild<
+export type AccordionContentPropsWithoutHTML = WithChildNoChildrenSnippetProps<
 	{
 		/**
 		 * Whether to forcefully mount the content, regardless of the open state.
@@ -117,7 +125,7 @@ export type AccordionContentPropsWithoutHTML = WithChild<
 >;
 
 export type AccordionContentProps = AccordionContentPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, AccordionContentPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, AccordionContentPropsWithoutHTML>;
 
 export type AccordionItemPropsWithoutHTML = WithChild<{
 	/**
@@ -134,7 +142,7 @@ export type AccordionItemPropsWithoutHTML = WithChild<{
 	disabled?: boolean;
 }>;
 
-export type AccordionItemProps = AccordionItemPropsWithoutHTML & PrimitiveDivAttributes;
+export type AccordionItemProps = AccordionItemPropsWithoutHTML & BitsPrimitiveDivAttributes;
 
 export type AccordionHeaderPropsWithoutHTML = WithChild<{
 	/**
@@ -146,4 +154,4 @@ export type AccordionHeaderPropsWithoutHTML = WithChild<{
 	level?: 1 | 2 | 3 | 4 | 5 | 6;
 }>;
 
-export type AccordionHeaderProps = AccordionHeaderPropsWithoutHTML & PrimitiveDivAttributes;
+export type AccordionHeaderProps = AccordionHeaderPropsWithoutHTML & BitsPrimitiveDivAttributes;

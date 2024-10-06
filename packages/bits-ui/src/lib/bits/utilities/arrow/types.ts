@@ -1,5 +1,5 @@
 import type { WithChild } from "$lib/internal/types.js";
-import type { PrimitiveSpanAttributes } from "$lib/shared/attributes.js";
+import type { BitsPrimitiveSpanAttributes } from "$lib/shared/attributes.js";
 
 export type ArrowPropsWithoutHTML = WithChild<{
 	/**
@@ -17,4 +17,4 @@ export type ArrowPropsWithoutHTML = WithChild<{
 	height?: number;
 }>;
 
-export type ArrowProps = ArrowPropsWithoutHTML & PrimitiveSpanAttributes;
+export type ArrowProps = ArrowPropsWithoutHTML & BitsPrimitiveSpanAttributes;

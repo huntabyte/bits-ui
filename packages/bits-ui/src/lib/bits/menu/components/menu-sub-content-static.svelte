@@ -126,7 +126,7 @@
 			{@render child({ props: finalProps, ...subContentState.snippetProps })}
 		{:else}
 			<div {...finalProps}>
-				{@render children?.(subContentState.snippetProps)}
+				{@render children?.()}
 			</div>
 		{/if}
 		<Mounted bind:isMounted />

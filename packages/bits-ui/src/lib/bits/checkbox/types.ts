@@ -1,5 +1,5 @@
 import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
-import type { PrimitiveButtonAttributes } from "$lib/shared/attributes.js";
+import type { BitsPrimitiveButtonAttributes } from "$lib/shared/attributes.js";
 
 export type CheckboxRootSnippetProps = { checked: boolean | "indeterminate" };
 
@@ -64,4 +64,4 @@ export type CheckboxRootPropsWithoutHTML = WithChild<
 >;
 
 export type CheckboxRootProps = CheckboxRootPropsWithoutHTML &
-	Without<PrimitiveButtonAttributes, CheckboxRootPropsWithoutHTML>;
+	Without<BitsPrimitiveButtonAttributes, CheckboxRootPropsWithoutHTML>;

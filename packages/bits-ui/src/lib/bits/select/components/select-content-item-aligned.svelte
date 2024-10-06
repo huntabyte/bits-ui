@@ -4,7 +4,7 @@
 	import type { WithChild } from "$lib/internal/types.js";
 	import { mergeProps } from "$lib/internal/merge-props.js";
 	import { useBodyScrollLock } from "$lib/internal/use-body-scroll-lock.svelte.js";
-	import type { PrimitiveDivAttributes } from "$lib/shared/attributes.js";
+	import type { BitsPrimitiveDivAttributes } from "$lib/shared/attributes.js";
 
 	let {
 		child,
@@ -12,7 +12,7 @@
 		preventScroll = true,
 		onPlaced,
 		...restProps
-	}: WithChild<PrimitiveDivAttributes> & {
+	}: WithChild<BitsPrimitiveDivAttributes> & {
 		preventScroll?: boolean;
 		onPlaced: () => void;
 	} = $props();

@@ -1,5 +1,13 @@
-import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
-import type { PrimitiveButtonAttributes, PrimitiveDivAttributes } from "$lib/shared/attributes.js";
+import type {
+	OnChangeFn,
+	WithChild,
+	WithChildNoChildrenSnippetProps,
+	Without,
+} from "$lib/internal/types.js";
+import type {
+	BitsPrimitiveButtonAttributes,
+	BitsPrimitiveDivAttributes,
+} from "$lib/shared/attributes.js";
 
 export type CollapsibleRootPropsWithoutHTML = WithChild<{
 	/**
@@ -32,13 +40,13 @@ export type CollapsibleRootPropsWithoutHTML = WithChild<{
 }>;
 
 export type CollapsibleRootProps = CollapsibleRootPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, CollapsibleRootPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, CollapsibleRootPropsWithoutHTML>;
 
 export type CollapsibleContentSnippetProps = {
 	open: boolean;
 };
 
-export type CollapsibleContentPropsWithoutHTML = WithChild<
+export type CollapsibleContentPropsWithoutHTML = WithChildNoChildrenSnippetProps<
 	{
 		/**
 		 * Whether to force mount the content to the DOM.
@@ -51,9 +59,9 @@ export type CollapsibleContentPropsWithoutHTML = WithChild<
 >;
 
 export type CollapsibleContentProps = CollapsibleContentPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, CollapsibleContentPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, CollapsibleContentPropsWithoutHTML>;
 
 export type CollapsibleTriggerPropsWithoutHTML = WithChild;
 
 export type CollapsibleTriggerProps = CollapsibleTriggerPropsWithoutHTML &
-	Without<PrimitiveButtonAttributes, CollapsibleTriggerPropsWithoutHTML>;
+	Without<BitsPrimitiveButtonAttributes, CollapsibleTriggerPropsWithoutHTML>;

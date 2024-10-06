@@ -1,6 +1,9 @@
 import type { DateValue } from "@internationalized/date";
 import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
-import type { PrimitiveDivAttributes, PrimitiveSpanAttributes } from "$lib/shared/attributes.js";
+import type {
+	BitsPrimitiveDivAttributes,
+	BitsPrimitiveSpanAttributes,
+} from "$lib/shared/attributes.js";
 import type {
 	DateOnInvalid,
 	DateRange,
@@ -175,12 +178,12 @@ export type DateRangeFieldRootPropsWithoutHTML = WithChild<{
 }>;
 
 export type DateRangeFieldRootProps = DateRangeFieldRootPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, DateRangeFieldRootPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, DateRangeFieldRootPropsWithoutHTML>;
 
 export type DateRangeFieldLabelPropsWithoutHTML = WithChild;
 
 export type DateRangeFieldLabelProps = DateRangeFieldLabelPropsWithoutHTML &
-	Without<PrimitiveSpanAttributes, DateRangeFieldLabelPropsWithoutHTML>;
+	Without<BitsPrimitiveSpanAttributes, DateRangeFieldLabelPropsWithoutHTML>;
 
 export type DateRangeFieldInputSnippetProps = {
 	segments: Array<{ part: SegmentPart; value: string }>;
@@ -203,7 +206,7 @@ export type DateRangeFieldInputPropsWithoutHTML = WithChild<
 >;
 
 export type DateRangeFieldInputProps = DateRangeFieldInputPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, DateRangeFieldInputPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, DateRangeFieldInputPropsWithoutHTML>;
 
 export type DateRangeFieldSegmentPropsWithoutHTML = DateFieldSegmentPropsWithoutHTML;
 

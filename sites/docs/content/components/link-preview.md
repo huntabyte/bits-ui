@@ -149,4 +149,26 @@ The `LinkPreview.Arrow` component is designed to be used with Floating UI and `L
 
 </Callout>
 
+## Custom Anchor
+
+By default, the `LinkPreview.Content` is anchored to the `LinkPreview.Trigger` component, which determines where the content is positioned.
+
+If you wish to instead anchor the content to a different element, you can pass either a selector `string` or an `HTMLElement` to the `customAnchor` prop of the `LinkPreview.Content` component.
+
+```svelte
+<script lang="ts">
+	import { LinkPreview } from "bits-ui";
+	let customAnchor = $state<HTMLElement>(null!);
+</script>
+
+<div bind:this={customAnchor}></div>
+
+<LinkPreview.Root>
+	<LinkPreview.Trigger />
+	<LinkPreview.Content {customAnchor}>
+		<!-- ... -->
+	</LinkPreview.Content>
+</LinkPreview.Root>
+```
+
 <APISection {schemas} />

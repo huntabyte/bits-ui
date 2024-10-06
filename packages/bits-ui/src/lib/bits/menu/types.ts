@@ -1,8 +1,17 @@
 import type { Expand } from "svelte-toolbelt";
 import type { PopperLayerProps, PopperLayerStaticProps } from "../utilities/popper-layer/types.js";
 import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
-import type { OnChangeFn, WithChild, WithChildren, Without } from "$lib/internal/types.js";
-import type { PrimitiveButtonAttributes, PrimitiveDivAttributes } from "$lib/shared/attributes.js";
+import type {
+	OnChangeFn,
+	WithChild,
+	WithChildNoChildrenSnippetProps,
+	WithChildren,
+	Without,
+} from "$lib/internal/types.js";
+import type {
+	BitsPrimitiveButtonAttributes,
+	BitsPrimitiveDivAttributes,
+} from "$lib/shared/attributes.js";
 import type { Direction } from "$lib/shared/index.js";
 import type { PortalProps } from "$lib/bits/utilities/portal/types.js";
 
@@ -54,21 +63,24 @@ export type MenuContentSnippetProps = {
 };
 
 export type MenuContentPropsWithoutHTML = Expand<
-	WithChild<Omit<PopperLayerProps, "content"> & _SharedMenuContentProps, MenuContentSnippetProps>
+	WithChildNoChildrenSnippetProps<
+		Omit<PopperLayerProps, "content"> & _SharedMenuContentProps,
+		MenuContentSnippetProps
+	>
 >;
 
 export type MenuContentProps = MenuContentPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, MenuContentPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, MenuContentPropsWithoutHTML>;
 
 export type MenuContentStaticPropsWithoutHTML = Expand<
-	WithChild<
+	WithChildNoChildrenSnippetProps<
 		Omit<PopperLayerStaticProps, "content"> & _SharedMenuContentProps,
 		MenuContentSnippetProps
 	>
 >;
 
 export type MenuContentStaticProps = MenuContentStaticPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, MenuContentStaticPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, MenuContentStaticPropsWithoutHTML>;
 
 export type MenuItemPropsWithoutHTML<U extends Record<PropertyKey, unknown> = { _default: never }> =
 	WithChild<
@@ -100,7 +112,7 @@ export type MenuItemPropsWithoutHTML<U extends Record<PropertyKey, unknown> = { 
 	>;
 
 export type MenuItemProps = MenuItemPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, MenuItemPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, MenuItemPropsWithoutHTML>;
 
 export type MenuCheckboxItemSnippetProps = { checked: boolean | "indeterminate" };
 
@@ -130,7 +142,7 @@ export type MenuCheckboxItemPropsWithoutHTML =
 	};
 
 export type MenuCheckboxItemProps = MenuCheckboxItemPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, MenuCheckboxItemPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, MenuCheckboxItemPropsWithoutHTML>;
 
 export type MenuTriggerPropsWithoutHTML = WithChild<{
 	/**
@@ -142,7 +154,7 @@ export type MenuTriggerPropsWithoutHTML = WithChild<{
 }>;
 
 export type MenuTriggerProps = MenuTriggerPropsWithoutHTML &
-	Without<PrimitiveButtonAttributes, MenuTriggerPropsWithoutHTML>;
+	Without<BitsPrimitiveButtonAttributes, MenuTriggerPropsWithoutHTML>;
 
 export type MenuSubPropsWithoutHTML = WithChildren<{
 	/**
@@ -168,42 +180,42 @@ export type MenuSubPropsWithoutHTML = WithChildren<{
 export type MenuSubProps = MenuSubPropsWithoutHTML;
 
 export type MenuSubContentPropsWithoutHTML = Expand<
-	WithChild<
+	WithChildNoChildrenSnippetProps<
 		Omit<PopperLayerProps, "content" | "preventScroll"> & _SharedMenuContentProps,
 		MenuContentSnippetProps
 	>
 >;
 
 export type MenuSubContentProps = MenuSubContentPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, MenuSubContentPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, MenuSubContentPropsWithoutHTML>;
 
 export type MenuSubContentStaticPropsWithoutHTML = Expand<
-	WithChild<
+	WithChildNoChildrenSnippetProps<
 		Omit<PopperLayerStaticProps, "content" | "preventScroll"> & _SharedMenuContentProps,
 		MenuContentSnippetProps
 	>
 >;
 
 export type MenuSubContentStaticProps = MenuSubContentStaticPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, MenuSubContentStaticPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, MenuSubContentStaticPropsWithoutHTML>;
 
 export type MenuSubTriggerPropsWithoutHTML = MenuItemPropsWithoutHTML;
 export type MenuSubTriggerProps = MenuItemProps;
 
 export type MenuSeparatorPropsWithoutHTML = WithChild;
 export type MenuSeparatorProps = MenuSeparatorPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, MenuSeparatorPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, MenuSeparatorPropsWithoutHTML>;
 
 export type MenuArrowPropsWithoutHTML = ArrowPropsWithoutHTML;
 export type MenuArrowProps = ArrowProps;
 
 export type MenuGroupPropsWithoutHTML = WithChild;
 export type MenuGroupProps = MenuGroupPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, MenuGroupPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, MenuGroupPropsWithoutHTML>;
 
 export type MenuGroupHeadingPropsWithoutHTML = WithChild;
 export type MenuGroupHeadingProps = MenuGroupHeadingPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, MenuGroupHeadingPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, MenuGroupHeadingPropsWithoutHTML>;
 
 export type MenuRadioGroupPropsWithoutHTML = WithChild<{
 	/**
@@ -229,7 +241,7 @@ export type MenuRadioGroupPropsWithoutHTML = WithChild<{
 }>;
 
 export type MenuRadioGroupProps = MenuRadioGroupPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, MenuRadioGroupPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, MenuRadioGroupPropsWithoutHTML>;
 
 export type MenuRadioItemSnippetProps = { checked: boolean };
 
@@ -241,7 +253,7 @@ export type MenuRadioItemPropsWithoutHTML = MenuItemPropsWithoutHTML<MenuRadioIt
 };
 
 export type MenuRadioItemProps = MenuRadioItemPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, MenuRadioItemPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, MenuRadioItemPropsWithoutHTML>;
 
 export type MenuPortalPropsWithoutHTML = PortalProps;
 export type MenuPortalProps = MenuPortalPropsWithoutHTML;

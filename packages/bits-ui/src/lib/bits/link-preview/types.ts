@@ -3,8 +3,17 @@ import type { DismissibleLayerProps } from "../utilities/dismissible-layer/types
 import type { EscapeLayerProps } from "../utilities/escape-layer/types.js";
 import type { FloatingLayerContentProps } from "../utilities/floating-layer/types.js";
 import type { PortalProps } from "../utilities/portal/types.js";
-import type { PrimitiveAnchorAttributes, PrimitiveDivAttributes } from "$lib/shared/attributes.js";
-import type { OnChangeFn, WithChild, WithChildren, Without } from "$lib/internal/types.js";
+import type {
+	BitsPrimitiveAnchorAttributes,
+	BitsPrimitiveDivAttributes,
+} from "$lib/shared/attributes.js";
+import type {
+	OnChangeFn,
+	WithChild,
+	WithChildNoChildrenSnippetProps,
+	WithChildren,
+	Without,
+} from "$lib/internal/types.js";
 
 export type LinkPreviewRootPropsWithoutHTML = WithChildren<{
 	/**
@@ -68,7 +77,7 @@ export type LinkPreviewContentSnippetProps = {
 	open: boolean;
 };
 
-export type LinkPreviewContentPropsWithoutHTML = WithChild<
+export type LinkPreviewContentPropsWithoutHTML = WithChildNoChildrenSnippetProps<
 	Pick<
 		FloatingLayerContentProps,
 		| "side"
@@ -96,7 +105,7 @@ export type LinkPreviewContentPropsWithoutHTML = WithChild<
 >;
 
 export type LinkPreviewContentProps = LinkPreviewContentPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, LinkPreviewContentPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, LinkPreviewContentPropsWithoutHTML>;
 
 export type LinkPreviewContentStaticPropsWithoutHTML = WithChild<
 	Pick<FloatingLayerContentProps, "dir"> &
@@ -113,7 +122,7 @@ export type LinkPreviewContentStaticPropsWithoutHTML = WithChild<
 >;
 
 export type LinkPreviewContentStaticProps = LinkPreviewContentStaticPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, LinkPreviewContentStaticPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, LinkPreviewContentStaticPropsWithoutHTML>;
 
 export type LinkPreviewArrowPropsWithoutHTML = ArrowPropsWithoutHTML;
 export type LinkPreviewArrowProps = ArrowProps;
@@ -124,4 +133,4 @@ export type LinkPreviewPortalProps = LinkPreviewPortalPropsWithoutHTML;
 export type LinkPreviewTriggerPropsWithoutHTML = WithChild;
 
 export type LinkPreviewTriggerProps = LinkPreviewTriggerPropsWithoutHTML &
-	Without<PrimitiveAnchorAttributes, LinkPreviewTriggerPropsWithoutHTML>;
+	Without<BitsPrimitiveAnchorAttributes, LinkPreviewTriggerPropsWithoutHTML>;

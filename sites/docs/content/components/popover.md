@@ -245,4 +245,26 @@ You can also override the default behavior by cancelling the event passed to the
 </Popover.Content>
 ```
 
+## Custom Anchor
+
+By default, the `Popover.Content` is anchored to the `Popover.Trigger` component, which determines where the content is positioned.
+
+If you wish to instead anchor the content to a different element, you can pass either a selector `string` or an `HTMLElement` to the `customAnchor` prop of the `Popover.Content` component.
+
+```svelte
+<script lang="ts">
+	import { Popover } from "bits-ui";
+	let customAnchor = $state<HTMLElement>(null!);
+</script>
+
+<div bind:this={customAnchor}></div>
+
+<Popover.Root>
+	<Popover.Trigger />
+	<Popover.Content {customAnchor}>
+		<!-- ... -->
+	</Popover.Content>
+</Popover.Root>
+```
+
 <APISection {schemas} />

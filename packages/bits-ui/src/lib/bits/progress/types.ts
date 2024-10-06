@@ -1,5 +1,5 @@
 import type { WithChild, Without } from "$lib/internal/types.js";
-import type { PrimitiveDivAttributes } from "$lib/shared/attributes.js";
+import type { BitsPrimitiveDivAttributes } from "$lib/shared/attributes.js";
 
 export type ProgressRootPropsWithoutHTML = WithChild<{
 	/**
@@ -16,4 +16,4 @@ export type ProgressRootPropsWithoutHTML = WithChild<{
 }>;
 
 export type ProgressRootProps = ProgressRootPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, ProgressRootPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, ProgressRootPropsWithoutHTML>;

@@ -1,5 +1,5 @@
 import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
-import type { PrimitiveSpanAttributes } from "$lib/shared/attributes.js";
+import type { BitsPrimitiveSpanAttributes } from "$lib/shared/attributes.js";
 import type { Direction, Orientation } from "$lib/shared/index.js";
 
 export type SliderRootSnippetProps = {
@@ -93,12 +93,12 @@ export type SliderRootPropsWithoutHTML = WithChild<
 >;
 
 export type SliderRootProps = SliderRootPropsWithoutHTML &
-	Without<PrimitiveSpanAttributes, SliderRootPropsWithoutHTML>;
+	Without<BitsPrimitiveSpanAttributes, SliderRootPropsWithoutHTML>;
 
 export type SliderRangePropsWithoutHTML = WithChild;
 
 export type SliderRangeProps = SliderRangePropsWithoutHTML &
-	Without<PrimitiveSpanAttributes, SliderRangePropsWithoutHTML>;
+	Without<BitsPrimitiveSpanAttributes, SliderRangePropsWithoutHTML>;
 
 export type SliderThumbPropsWithoutHTML = WithChild<{
 	/**
@@ -116,7 +116,7 @@ export type SliderThumbPropsWithoutHTML = WithChild<{
 }>;
 
 export type SliderThumbProps = SliderThumbPropsWithoutHTML &
-	Without<PrimitiveSpanAttributes, SliderThumbPropsWithoutHTML>;
+	Without<BitsPrimitiveSpanAttributes, SliderThumbPropsWithoutHTML>;
 
 export type SliderTickPropsWithoutHTML = WithChild<{
 	/**
@@ -127,4 +127,4 @@ export type SliderTickPropsWithoutHTML = WithChild<{
 }>;
 
 export type SliderTickProps = SliderTickPropsWithoutHTML &
-	Without<PrimitiveSpanAttributes, SliderTickPropsWithoutHTML>;
+	Without<BitsPrimitiveSpanAttributes, SliderTickPropsWithoutHTML>;

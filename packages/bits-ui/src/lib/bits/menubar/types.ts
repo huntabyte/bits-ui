@@ -1,7 +1,10 @@
 import type { ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
 import type { MenuArrowProps } from "../menu/types.js";
 import type { OnChangeFn, WithChild, WithChildren, Without } from "$lib/internal/types.js";
-import type { PrimitiveButtonAttributes, PrimitiveDivAttributes } from "$lib/shared/attributes.js";
+import type {
+	BitsPrimitiveButtonAttributes,
+	BitsPrimitiveDivAttributes,
+} from "$lib/shared/attributes.js";
 import type { Direction } from "$lib/shared/index.js";
 
 export type MenubarRootPropsWithoutHTML = WithChild<{
@@ -37,7 +40,7 @@ export type MenubarRootPropsWithoutHTML = WithChild<{
 }>;
 
 export type MenubarRootProps = MenubarRootPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, MenubarRootPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, MenubarRootPropsWithoutHTML>;
 
 export type MenubarMenuPropsWithoutHTML = WithChildren<{
 	/**
@@ -59,7 +62,7 @@ export type MenubarTriggerPropsWithoutHTML = WithChild<{
 }>;
 
 export type MenubarTriggerProps = MenubarTriggerPropsWithoutHTML &
-	Without<PrimitiveButtonAttributes, MenubarTriggerPropsWithoutHTML>;
+	Without<BitsPrimitiveButtonAttributes, MenubarTriggerPropsWithoutHTML>;
 
 export type {
 	MenuContentPropsWithoutHTML as MenubarContentPropsWithoutHTML,

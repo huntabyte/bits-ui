@@ -1,6 +1,9 @@
 import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
 import type { Orientation } from "$lib/index.js";
-import type { PrimitiveButtonAttributes, PrimitiveDivAttributes } from "$lib/shared/attributes.js";
+import type {
+	BitsPrimitiveButtonAttributes,
+	BitsPrimitiveDivAttributes,
+} from "$lib/shared/attributes.js";
 
 export type TabsActivationMode = "manual" | "automatic";
 
@@ -57,12 +60,12 @@ export type TabsRootPropsWithoutHTML = WithChild<{
 }>;
 
 export type TabsRootProps = TabsRootPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, TabsRootPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, TabsRootPropsWithoutHTML>;
 
 export type TabsListPropsWithoutHTML = WithChild;
 
 export type TabsListProps = TabsListPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, TabsListPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, TabsListPropsWithoutHTML>;
 
 export type TabsTriggerPropsWithoutHTML = WithChild<{
 	/**
@@ -79,7 +82,7 @@ export type TabsTriggerPropsWithoutHTML = WithChild<{
 }>;
 
 export type TabsTriggerProps = TabsTriggerPropsWithoutHTML &
-	Without<PrimitiveButtonAttributes, TabsTriggerPropsWithoutHTML>;
+	Without<BitsPrimitiveButtonAttributes, TabsTriggerPropsWithoutHTML>;
 
 export type TabsContentPropsWithoutHTML = WithChild<{
 	/**
@@ -89,4 +92,4 @@ export type TabsContentPropsWithoutHTML = WithChild<{
 }>;
 
 export type TabsContentProps = TabsContentPropsWithoutHTML &
-	Without<PrimitiveDivAttributes, TabsContentPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, TabsContentPropsWithoutHTML>;

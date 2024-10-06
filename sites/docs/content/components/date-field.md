@@ -27,8 +27,6 @@ Before diving into this component, it's important to understand how dates/times 
 
 The `DateField` component is an alternative to the native `<input type="date">` element. It provides a more flexible and customizable way to select dates within a designated field.
 
-Before jumping into the `DateField` component, it's important to understand how dates and times are handled in Bits UI. You can learn more about this on the [Dates](/docs/dates) page.
-
 ## Structure
 
 ```svelte
@@ -481,5 +479,21 @@ The `granularity` prop sets the granularity of the date field, which determines 
 </DemoContainer>
 
 In the example above, we're setting the granularity to `'second'`, which means that the date field will include an additional segment for the seconds.
+
+## Localization
+
+You can use the `locale` prop to set the locale of the date field. This will affect the formatting of the date field's segments and placeholders.
+
+```svelte
+<script lang="ts">
+	import MyDateField from "$lib/components/MyDateField.svelte";
+</script>
+
+<MyDateField locale="de" />
+```
+
+<DemoContainer size="xs" wrapperClass="rounded-bl-card rounded-br-card">
+	<DateFieldDemoCustom locale="de" />
+</DemoContainer>
 
 <APISection {schemas} />
