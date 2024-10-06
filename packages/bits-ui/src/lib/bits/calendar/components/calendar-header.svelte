@@ -1,9 +1,8 @@
 <script lang="ts">
-	import { box } from "svelte-toolbelt";
+	import { box, mergeProps } from "svelte-toolbelt";
 	import { useCalendarHeader } from "../calendar.svelte.js";
 	import type { CalendarHeaderProps } from "../types.js";
 	import { useId } from "$lib/internal/use-id.js";
-	import { mergeProps } from "$lib/internal/merge-props.js";
 
 	let {
 		children,

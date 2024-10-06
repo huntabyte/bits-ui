@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { type WritableBox, box } from "svelte-toolbelt";
+	import { mergeProps } from "svelte-toolbelt";
 	import type { ToggleGroupRootProps } from "../types.js";
 	import { useToggleGroupRoot } from "../toggle-group.svelte.js";
 	import { useId } from "$lib/internal/use-id.js";
-	import { mergeProps } from "$lib/internal/merge-props.js";
-	import { noop } from "$lib/internal/callbacks.js";
+	import { noop } from "$lib/internal/noop.js";
 
 	let {
 		id = useId(),

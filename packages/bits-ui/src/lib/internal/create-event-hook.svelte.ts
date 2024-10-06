@@ -1,4 +1,4 @@
-import { executeCallbacks } from "./callbacks.js";
+import { executeCallbacks } from "svelte-toolbelt";
 
 // https://stackoverflow.com/questions/55541275/typescript-check-for-the-any-type
 export type IfAny<T, Y, N> = 0 extends 1 & T ? Y : N;

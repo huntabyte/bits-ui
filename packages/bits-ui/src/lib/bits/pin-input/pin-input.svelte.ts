@@ -1,12 +1,11 @@
 import { Previous } from "runed";
 import { untrack } from "svelte";
-import { type WritableBox, box } from "svelte-toolbelt";
+import { type WritableBox, box, useRefById } from "svelte-toolbelt";
 import { usePasswordManagerBadge } from "./usePasswordManager.svelte.js";
 import type { PinInputCell, PinInputRootProps as RootComponentProps } from "./types.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { WithRefProps } from "$lib/internal/types.js";
-import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
-import { noop } from "$lib/internal/callbacks.js";
+import { noop } from "$lib/internal/noop.js";
 import { addEventListener } from "$lib/internal/events.js";
 import { getDisabled } from "$lib/internal/attrs.js";
 

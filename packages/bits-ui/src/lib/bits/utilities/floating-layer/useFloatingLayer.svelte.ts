@@ -11,19 +11,16 @@ import {
 	shift,
 	size,
 } from "@floating-ui/dom";
-import { box } from "svelte-toolbelt";
+import { box, cssToStyleObj, styleToString, useRefById } from "svelte-toolbelt";
 import { ElementSize } from "runed";
 import type { Arrayable, WithRefProps } from "$lib/internal/types.js";
-import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
 import { isNotNull } from "$lib/internal/is.js";
-import { styleToString } from "$lib/internal/style.js";
 import { useId } from "$lib/internal/use-id.js";
 import type { Box, ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import { useFloating } from "$lib/internal/floating-svelte/use-floating.svelte.js";
 import type { Measurable, UseFloatingReturn } from "$lib/internal/floating-svelte/types.js";
 import type { Direction, StyleProperties } from "$lib/shared/index.js";
 import { createContext } from "$lib/internal/create-context.js";
-import { cssToStyleObj } from "$lib/internal/css-to-style-obj.js";
 
 export const SIDE_OPTIONS = ["top", "right", "bottom", "left"] as const;
 export const ALIGN_OPTIONS = ["start", "center", "end"] as const;
@@ -279,13 +276,13 @@ class FloatingContentState {
 		useRefById({
 			id: this.wrapperId,
 			ref: this.wrapperRef,
-			condition: () => this.enabled.current,
+			deps: () => this.enabled.current,
 		});
 
 		useRefById({
 			id: this.id,
 			ref: this.contentRef,
-			condition: () => this.enabled.current,
+			deps: () => this.enabled.current,
 		});
 
 		this.floating = useFloating({
@@ -340,7 +337,7 @@ class FloatingArrowState {
 			onRefChange: (node) => {
 				this.#content.arrowRef.current = node;
 			},
-			condition: () => this.#content.enabled.current,
+			deps: () => this.#content.enabled.current,
 		});
 	}
 

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { mergeProps } from "svelte-toolbelt";
 	import ScrollLock from "../scroll-lock/scroll-lock.svelte";
 	import type { PopperLayerImplProps } from "./types.js";
 	import PopperContent from "./popper-content.svelte";
@@ -7,7 +8,6 @@
 	import TextSelectionLayer from "$lib/bits/utilities/text-selection-layer/text-selection-layer.svelte";
 	import PresenceLayer from "$lib/bits/utilities/presence-layer/presence-layer.svelte";
 	import FocusScope from "$lib/bits/utilities/focus-scope/focus-scope.svelte";
-	import { mergeProps } from "$lib/internal/merge-props.js";
 
 	let {
 		popper,

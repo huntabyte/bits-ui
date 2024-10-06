@@ -4,7 +4,7 @@
 	import { useSelectRoot } from "../select.svelte.js";
 	import SelectNative from "./select-native.svelte";
 	import FloatingLayer from "$lib/bits/utilities/floating-layer/components/floating-layer.svelte";
-	import { noop } from "$lib/internal/callbacks.js";
+	import { noop } from "$lib/internal/noop.js";
 
 	let {
 		open = $bindable(false),

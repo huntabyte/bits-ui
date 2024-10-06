@@ -1,5 +1,5 @@
 import { untrack } from "svelte";
-import { box } from "svelte-toolbelt";
+import { afterTick, box, useRefById } from "svelte-toolbelt";
 import { Previous } from "runed";
 import { getTabbableCandidates } from "$lib/internal/focus.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
@@ -17,10 +17,8 @@ import { useId } from "$lib/internal/use-id.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { useArrowNavigation } from "$lib/internal/use-arrow-navigation.js";
 import { boxAutoReset } from "$lib/internal/box-auto-reset.svelte.js";
-import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
 import type { ElementRef, WithRefProps } from "$lib/internal/types.js";
-import { afterTick } from "$lib/internal/after-tick.js";
-import { noop } from "$lib/internal/callbacks.js";
+import { noop } from "$lib/internal/noop.js";
 import { useRovingFocus } from "$lib/internal/use-roving-focus.svelte.js";
 
 const [setNavigationMenuRootContext] =
@@ -383,7 +381,7 @@ class NavigationMenuListState {
 			onRefChange: (node) => {
 				this.menu.indicatorTrackNode = node;
 			},
-			condition: () => Boolean(this.menu.root.value.current),
+			deps: () => Boolean(this.menu.root.value.current),
 		});
 	}
 
@@ -525,7 +523,7 @@ class NavigationMenuTriggerState {
 			onRefChange: (node) => {
 				this.item.focusProxyNode = node;
 			},
-			condition: () => this.focusProxyMounted.current,
+			deps: () => this.focusProxyMounted.current,
 		});
 
 		$effect(() => {
@@ -814,7 +812,7 @@ class NavigationMenuContentState {
 			onRefChange: (node) => {
 				this.item.contentNode = node;
 			},
-			condition: () => this.isMounted.current,
+			deps: () => this.isMounted.current,
 		});
 
 		$effect(() => {
@@ -980,7 +978,7 @@ class NavigationMenuViewportState {
 			onRefChange: (node) => {
 				this.menu.viewportNode = node;
 			},
-			condition: () => this.open,
+			deps: () => this.open,
 		});
 
 		$effect(() => {

@@ -1,9 +1,8 @@
 <script lang="ts">
-	import { box } from "svelte-toolbelt";
+	import { box , mergeProps } from "svelte-toolbelt";
 	import type { PaginationNextButtonProps } from "../types.js";
 	import { usePaginationButton } from "../pagination.svelte.js";
-	import { mergeProps } from "$lib/internal/merge-props.js";
-	import { useId } from "$lib/internal/use-id.js";
+		import { useId } from "$lib/internal/use-id.js";
 
 	let {
 		id = useId(),

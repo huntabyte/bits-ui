@@ -1,5 +1,5 @@
+import { srOnlyStylesString } from "svelte-toolbelt";
 import { isBrowser, isHTMLElement } from "$lib/internal/is.js";
-import { srOnlyStyleString } from "$lib/internal/style.js";
 
 /**
  * Creates or gets an announcer element which is used to announce messages to screen readers.
@@ -11,7 +11,7 @@ function initAnnouncer() {
 	let el = document.querySelector("[data-bits-announcer]");
 	if (!isHTMLElement(el)) {
 		const div = document.createElement("div");
-		div.style.cssText = srOnlyStyleString;
+		div.style.cssText = srOnlyStylesString;
 		div.setAttribute("data-bits-announcer", "");
 		div.appendChild(createLog("assertive"));
 		div.appendChild(createLog("polite"));

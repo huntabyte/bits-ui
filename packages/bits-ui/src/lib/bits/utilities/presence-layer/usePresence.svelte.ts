@@ -1,5 +1,4 @@
-import type { ReadableBox } from "svelte-toolbelt";
-import { afterTick } from "$lib/internal/after-tick.js";
+import { type ReadableBox, afterTick } from "svelte-toolbelt";
 import { useStateMachine } from "$lib/internal/use-state-machine.svelte.js";
 import { watch } from "$lib/internal/box.svelte.js";
 

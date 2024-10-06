@@ -1,10 +1,9 @@
 <script lang="ts">
-	import { box } from "svelte-toolbelt";
+	import { box, mergeProps } from "svelte-toolbelt";
 	import type { SelectScrollUpButtonProps } from "../types.js";
 	import { useSelectScrollDownButton } from "../select.svelte.js";
 	import SelectScrollDownButtonMounted from "./select-scroll-down-button-mounted.svelte";
 	import { useId } from "$lib/internal/use-id.js";
-	import { mergeProps } from "$lib/internal/merge-props.js";
 
 	let { id = useId(), ref = $bindable(null), ...restProps }: SelectScrollUpButtonProps = $props();
 

@@ -3,7 +3,7 @@
 	import type { DateValue } from "@internationalized/date";
 	import { useDateFieldRoot } from "../date-field.svelte.js";
 	import type { DateFieldRootProps } from "../types.js";
-	import { noop } from "$lib/internal/callbacks.js";
+	import { noop } from "$lib/internal/noop.js";
 	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
 
 	let {

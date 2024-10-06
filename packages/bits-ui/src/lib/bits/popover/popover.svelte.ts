@@ -1,5 +1,5 @@
+import { useRefById } from "svelte-toolbelt";
 import type { WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
 import { createContext } from "$lib/internal/create-context.js";
@@ -97,7 +97,7 @@ class PopoverContentState {
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
-			condition: () => this.root.open.current,
+			deps: () => this.root.open.current,
 			onRefChange: (node) => {
 				this.root.contentNode = node;
 				this.root.contentId = node?.id;
@@ -130,7 +130,7 @@ class PopoverCloseState {
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
-			condition: () => this.#root.open.current,
+			deps: () => this.#root.open.current,
 		});
 	}
 

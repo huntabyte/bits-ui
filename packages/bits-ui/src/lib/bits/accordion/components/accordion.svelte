@@ -1,10 +1,9 @@
 <script lang="ts">
-	import { type WritableBox, box } from "svelte-toolbelt";
+	import { type WritableBox, box, mergeProps } from "svelte-toolbelt";
 	import { useAccordionRoot } from "../accordion.svelte.js";
 	import type { AccordionRootProps } from "../types.js";
-	import { mergeProps } from "$lib/internal/merge-props.js";
 	import { useId } from "$lib/internal/use-id.js";
-	import { noop } from "$lib/internal/callbacks.js";
+	import { noop } from "$lib/internal/noop.js";
 
 	let {
 		disabled = false,

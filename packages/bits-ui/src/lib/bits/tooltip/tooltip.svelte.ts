@@ -1,10 +1,9 @@
-import { box } from "svelte-toolbelt";
+import { box, useRefById } from "svelte-toolbelt";
 import { useEventListener } from "runed";
 import { untrack } from "svelte";
 import { TOOLTIP_OPEN_EVENT } from "./utils.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { useTimeoutFn } from "$lib/internal/use-timeout-fn.svelte.js";
-import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
 import { isElement, isFocusVisible } from "$lib/internal/is.js";
 import { useGraceArea } from "$lib/internal/use-grace-area.svelte.js";
 import { createContext } from "$lib/internal/create-context.js";
@@ -306,7 +305,7 @@ class TooltipContentState {
 			onRefChange: (node) => {
 				this.root.contentNode = node;
 			},
-			condition: () => this.root.open.current,
+			deps: () => this.root.open.current,
 		});
 
 		$effect(() => {

@@ -2,7 +2,7 @@
 	import { box } from "svelte-toolbelt";
 	import type { ContextMenuRootProps } from "../types.js";
 	import FloatingLayer from "$lib/bits/utilities/floating-layer/components/floating-layer.svelte";
-	import { noop } from "$lib/internal/callbacks.js";
+	import { noop } from "$lib/internal/noop.js";
 	import { useMenuMenu, useMenuRoot } from "$lib/bits/menu/menu.svelte.js";
 
 	let {

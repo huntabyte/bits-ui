@@ -1,7 +1,7 @@
 <script lang="ts">
+	import { mergeProps } from "svelte-toolbelt";
 	import { CONTENT_MARGIN, useSelectFloatingPosition } from "../select.svelte.js";
 	import type { SelectContentProps } from "../types.js";
-	import { mergeProps } from "$lib/internal/merge-props.js";
 	import type { WithoutChildrenOrChild } from "$lib/shared/index.js";
 	import type { WithChild } from "$lib/internal/types.js";
 	import FloatingLayerContent from "$lib/bits/utilities/floating-layer/components/floating-layer-content.svelte";

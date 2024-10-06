@@ -1,14 +1,12 @@
 <script lang="ts">
-	import { box } from "svelte-toolbelt";
+	import { afterTick, box, mergeProps } from "svelte-toolbelt";
 	import type { MenuSubContentProps } from "../types.js";
 	import { useMenuContent } from "../menu.svelte.js";
 	import { SUB_CLOSE_KEYS } from "../utils.js";
 	import { useId } from "$lib/internal/use-id.js";
-	import { mergeProps } from "$lib/internal/merge-props.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
-	import { noop } from "$lib/internal/callbacks.js";
+	import { noop } from "$lib/internal/noop.js";
 	import { isHTMLElement } from "$lib/internal/is.js";
-	import { afterTick } from "$lib/internal/after-tick.js";
 	import Mounted from "$lib/bits/utilities/mounted.svelte";
 	import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
 

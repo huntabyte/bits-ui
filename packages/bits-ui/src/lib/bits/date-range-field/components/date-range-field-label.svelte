@@ -1,9 +1,8 @@
 <script lang="ts">
-	import { box } from "svelte-toolbelt";
+	import { box, mergeProps } from "svelte-toolbelt";
 	import { useDateRangeFieldLabel } from "../date-range-field.svelte.js";
 	import type { DateRangeFieldLabelProps } from "../types.js";
 	import { useId } from "$lib/internal/use-id.js";
-	import { mergeProps } from "$lib/internal/merge-props.js";
 
 	let {
 		id = useId(),

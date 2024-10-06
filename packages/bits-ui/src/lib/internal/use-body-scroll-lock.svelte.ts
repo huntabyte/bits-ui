@@ -1,9 +1,8 @@
 import { SvelteMap } from "svelte/reactivity";
-import { box } from "svelte-toolbelt";
+import { afterTick, box } from "svelte-toolbelt";
 import type { Fn } from "./types.js";
 import { isBrowser, isIOS } from "./is.js";
 import { addEventListener } from "./events.js";
-import { afterTick } from "./after-tick.js";
 import { useId } from "./use-id.js";
 import { createSharedHook } from "./create-shared-hook.svelte.js";
 import { watch } from "$lib/internal/box.svelte.js";

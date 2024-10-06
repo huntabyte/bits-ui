@@ -1,8 +1,8 @@
 <script lang="ts">
+	import { mergeProps } from "svelte-toolbelt";
 	import { useScrollAreaScrollbarScroll } from "../scroll-area.svelte.js";
 	import type { _ScrollbarStubProps } from "../types.js";
 	import ScrollAreaScrollbarVisible from "./scroll-area-scrollbar-visible.svelte";
-	import { mergeProps } from "$lib/internal/merge-props.js";
 	import PresenceLayer from "$lib/bits/utilities/presence-layer/presence-layer.svelte";
 
 	let { forceMount = false, ...restProps }: _ScrollbarStubProps = $props();

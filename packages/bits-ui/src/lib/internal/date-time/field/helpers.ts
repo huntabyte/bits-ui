@@ -1,4 +1,5 @@
 import type { DateValue } from "@internationalized/date";
+import { styleToString } from "svelte-toolbelt";
 import type { Formatter } from "../formatter.js";
 import { getPlaceholder } from "../placeholders.js";
 import { hasTime, isZonedDateTime } from "../utils.js";
@@ -20,7 +21,6 @@ import {
 } from "./parts.js";
 import { getSegments } from "./segments.js";
 import { isBrowser, isNull, isNumberString } from "$lib/internal/is.js";
-import { styleToString } from "$lib/internal/style.js";
 import { useId } from "$lib/internal/use-id.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type { Granularity, HourCycle } from "$lib/shared/date/types.js";

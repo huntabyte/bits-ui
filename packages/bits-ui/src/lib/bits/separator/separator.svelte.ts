@@ -1,7 +1,7 @@
+import { useRefById } from "svelte-toolbelt";
 import { getAriaHidden, getAriaOrientation, getDataOrientation } from "$lib/internal/attrs.js";
 import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { WithRefProps } from "$lib/internal/types.js";
-import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
 import type { Orientation } from "$lib/shared/index.js";
 
 const ROOT_ATTR = "data-separator-root";

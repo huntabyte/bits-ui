@@ -1,10 +1,9 @@
 <script lang="ts">
-	import { box } from "svelte-toolbelt";
+	import { box , mergeProps } from "svelte-toolbelt";
 	import { useListboxTrigger } from "../listbox.svelte.js";
 	import type { ListboxTriggerProps } from "../types.js";
 	import { useId } from "$lib/internal/use-id.js";
-	import { mergeProps } from "$lib/internal/merge-props.js";
-	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
+		import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 
 	let {
 		id = useId(),

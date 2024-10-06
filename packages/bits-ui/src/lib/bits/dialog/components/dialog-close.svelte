@@ -1,8 +1,7 @@
 <script lang="ts">
-	import { box } from "svelte-toolbelt";
+	import { box, mergeProps } from "svelte-toolbelt";
 	import { useDialogClose } from "../dialog.svelte.js";
 	import type { DialogCloseProps } from "../types.js";
-	import { mergeProps } from "$lib/internal/merge-props.js";
 	import { useId } from "$lib/internal/use-id.js";
 
 	let {

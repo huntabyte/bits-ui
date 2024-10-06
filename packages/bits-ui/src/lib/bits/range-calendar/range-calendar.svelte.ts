@@ -6,12 +6,11 @@ import {
 	isToday,
 } from "@internationalized/date";
 import { untrack } from "svelte";
+import { useRefById } from "svelte-toolbelt";
 import type { DateRange, Month } from "$lib/shared/index.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { useId } from "$lib/internal/use-id.js";
-import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
-
 import {
 	getAriaDisabled,
 	getAriaSelected,

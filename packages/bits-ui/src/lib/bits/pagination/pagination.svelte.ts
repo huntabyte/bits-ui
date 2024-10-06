@@ -1,5 +1,5 @@
+import { useRefById } from "svelte-toolbelt";
 import type { Page, PageItem } from "./types.js";
-import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { getDataOrientation } from "$lib/internal/attrs.js";

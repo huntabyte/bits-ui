@@ -1,8 +1,7 @@
 <script lang="ts">
-	import { box } from "svelte-toolbelt";
+	import { box, mergeProps } from "svelte-toolbelt";
 	import type { AspectRatioRootProps } from "../types.js";
 	import { useAspectRatioRoot } from "../aspect-ratio.svelte.js";
-	import { mergeProps } from "$lib/internal/merge-props.js";
 	import { useId } from "$lib/internal/use-id.js";
 
 	let {

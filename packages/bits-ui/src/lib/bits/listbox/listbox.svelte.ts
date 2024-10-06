@@ -1,8 +1,7 @@
 import { Previous } from "runed";
 import { untrack } from "svelte";
-import { styleToString } from "svelte-toolbelt";
+import { afterTick, srOnlyStyles, styleToString, useRefById } from "svelte-toolbelt";
 import type { InteractOutsideEvent } from "../utilities/dismissible-layer/types.js";
-import { afterTick } from "$lib/internal/after-tick.js";
 import { backward, forward, next, prev } from "$lib/internal/arrays.js";
 import {
 	getAriaExpanded,
@@ -16,11 +15,9 @@ import type { Box, ReadableBoxedValues, WritableBoxedValues } from "$lib/interna
 import { createContext } from "$lib/internal/create-context.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type { WithRefProps } from "$lib/internal/types.js";
-import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
-import { noop } from "$lib/internal/callbacks.js";
+import { noop } from "$lib/internal/noop.js";
 import { addEventListener } from "$lib/internal/events.js";
 import { type Typeahead, useTypeahead } from "$lib/internal/use-typeahead.svelte.js";
-import { srOnlyStyles } from "$lib/internal/style.js";
 
 // prettier-ignore
 export const INTERACTION_KEYS = [kbd.ARROW_LEFT, kbd.ESCAPE, kbd.ARROW_RIGHT, kbd.SHIFT, kbd.CAPS_LOCK, kbd.CONTROL, kbd.ALT, kbd.META, kbd.ENTER, kbd.F1, kbd.F2, kbd.F3, kbd.F4, kbd.F5, kbd.F6, kbd.F7, kbd.F8, kbd.F9, kbd.F10, kbd.F11, kbd.F12];
@@ -609,7 +606,7 @@ class ListboxContentState {
 			onRefChange: (node) => {
 				this.root.contentNode = node;
 			},
-			condition: () => this.root.open.current,
+			deps: () => this.root.open.current,
 		});
 
 		$effect(() => {
@@ -883,7 +880,7 @@ class ListboxViewportState {
 			onRefChange: (node) => {
 				this.content.viewportNode = node;
 			},
-			condition: () => this.root.open.current,
+			deps: () => this.root.open.current,
 		});
 	}
 
@@ -926,7 +923,7 @@ class ListboxScrollButtonImplState {
 		useRefById({
 			id: this.id,
 			ref: this.ref,
-			condition: () => this.mounted.current,
+			deps: () => this.mounted.current,
 		});
 
 		$effect(() => {

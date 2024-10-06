@@ -1,5 +1,5 @@
 import { type DateValue, endOfMonth, isSameMonth, startOfMonth } from "@internationalized/date";
-import type { ReadableBox, WritableBox } from "svelte-toolbelt";
+import { type ReadableBox, type WritableBox, afterTick, styleToString } from "svelte-toolbelt";
 import { untrack } from "svelte";
 import {
 	getDaysInMonth,
@@ -12,11 +12,9 @@ import {
 } from "./utils.js";
 import type { Formatter } from "./formatter.js";
 import { getDataDisabled, getDataInvalid, getDataReadonly } from "$lib/internal/attrs.js";
-import { afterTick } from "$lib/internal/after-tick.js";
 import { chunk, isValidIndex } from "$lib/internal/arrays.js";
 import { isHTMLElement } from "$lib/internal/is.js";
 import { kbd } from "$lib/internal/kbd.js";
-import { styleToString } from "$lib/internal/style.js";
 import type { Month } from "$lib/shared/index.js";
 
 /**

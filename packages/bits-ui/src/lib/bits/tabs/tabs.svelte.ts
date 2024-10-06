@@ -1,5 +1,6 @@
 import { untrack } from "svelte";
 import { SvelteMap } from "svelte/reactivity";
+import { useRefById } from "svelte-toolbelt";
 import type { TabsActivationMode } from "./types.js";
 import {
 	getAriaOrientation,
@@ -9,7 +10,6 @@ import {
 	getDisabled,
 	getHidden,
 } from "$lib/internal/attrs.js";
-import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { WithRefProps } from "$lib/internal/types.js";

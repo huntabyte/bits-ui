@@ -1,14 +1,17 @@
 import { untrack } from "svelte";
-import { type ReadableBox, box } from "svelte-toolbelt";
+import {
+	type ReadableBox,
+	box,
+	composeHandlers,
+	executeCallbacks,
+	useRefById,
+} from "svelte-toolbelt";
 import type { TextSelectionLayerImplProps } from "./types.js";
-import { composeHandlers } from "$lib/internal/compose-handlers.js";
 import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import { type EventCallback, addEventListener } from "$lib/internal/events.js";
 import { noop } from "$lib/internal/noop.js";
-import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
 import { isHTMLElement } from "$lib/internal/is.js";
 import { isOrContainsTarget } from "$lib/internal/elements.js";
-import { executeCallbacks } from "$lib/internal/execute-callbacks.js";
 
 type StateProps = ReadableBoxedValues<Required<Omit<TextSelectionLayerImplProps, "children">>>;
 
@@ -30,7 +33,7 @@ export class TextSelectionLayerState {
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
-			condition: () => this.#enabled.current,
+			deps: () => this.#enabled.current,
 		});
 
 		let unsubEvents = noop;

@@ -1,9 +1,8 @@
 <script lang="ts">
-	import { box } from "svelte-toolbelt";
+	import { box, mergeProps } from "svelte-toolbelt";
 	import type { SelectItemTextProps } from "../types.js";
 	import { useSelectItemText } from "../select.svelte.js";
 	import { useId } from "$lib/internal/use-id.js";
-	import { mergeProps } from "$lib/internal/merge-props.js";
 	import Portal from "$lib/bits/utilities/portal/portal.svelte";
 
 	let {
