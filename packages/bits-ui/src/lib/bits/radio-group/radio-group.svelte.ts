@@ -119,7 +119,7 @@ class RadioGroupItemState {
 	};
 
 	#onkeydown = (e: KeyboardEvent) => {
-		this.#root.rovingFocusGroup.handleKeydown(this.#ref.current, e);
+		this.#root.rovingFocusGroup.handleKeydown(this.#ref.current, e, true);
 	};
 
 	#tabIndex = $derived.by(() => this.#root.rovingFocusGroup.getTabIndex(this.#ref.current));
