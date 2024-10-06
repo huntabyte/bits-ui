@@ -74,7 +74,11 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 		items[0]?.focus();
 	}
 
-	function handleKeydown(node: HTMLElement | null | undefined, e: KeyboardEvent) {
+	function handleKeydown(
+		node: HTMLElement | null | undefined,
+		e: KeyboardEvent,
+		both: boolean = false
+	) {
 		const rootNode = document.getElementById(props.rootNodeId.current);
 		if (!rootNode || !node) return;
 
@@ -93,6 +97,13 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 			[kbd.HOME]: 0,
 			[kbd.END]: items.length - 1,
 		};
+
+		if (both) {
+			const altNextKey = nextKey === kbd.ARROW_DOWN ? kbd.ARROW_RIGHT : kbd.ARROW_DOWN;
+			const altPrevKey = prevKey === kbd.ARROW_UP ? kbd.ARROW_LEFT : kbd.ARROW_UP;
+			keyToIndex[altNextKey] = currentIndex + 1;
+			keyToIndex[altPrevKey] = currentIndex - 1;
+		}
 
 		let itemIndex = keyToIndex[e.key];
 		if (itemIndex === undefined) return;
