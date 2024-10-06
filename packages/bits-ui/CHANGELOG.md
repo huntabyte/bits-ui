@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.13
+
+### Patch Changes
+
+-   Radio Group: allow both arrow up/down and left/right per WAI-ARIA spec ([#742](https://github.com/huntabyte/bits-ui/pull/742))
+
 ## 1.0.0-next.12
 
 ### Patch Changes
