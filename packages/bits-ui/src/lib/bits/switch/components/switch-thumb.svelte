@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { box , mergeProps } from "svelte-toolbelt";
+	import { box, mergeProps } from "svelte-toolbelt";
 	import type { SwitchThumbProps } from "../types.js";
 	import { useSwitchThumb } from "../switch.svelte.js";
-		import { useId } from "$lib/internal/use-id.js";
+	import { useId } from "$lib/internal/use-id.js";
 
 	let {
 		child,

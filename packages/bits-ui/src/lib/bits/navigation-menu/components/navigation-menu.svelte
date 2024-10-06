@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { box , mergeProps } from "svelte-toolbelt";
+	import { box, mergeProps } from "svelte-toolbelt";
 	import type { NavigationMenuRootProps } from "../types.js";
 	import { useNavigationMenuRoot } from "../navigation-menu.svelte.js";
 	import { useId } from "$lib/internal/use-id.js";
 	import { noop } from "$lib/internal/noop.js";
-	
+
 	let {
 		child,
 		children,

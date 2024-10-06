@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { box , mergeProps } from "svelte-toolbelt";
+	import { box, mergeProps } from "svelte-toolbelt";
 	import type { ScrollAreaRootProps } from "../types.js";
 	import { useScrollAreaRoot } from "../scroll-area.svelte.js";
 	import { useId } from "$lib/internal/use-id.js";
-	
+
 	let {
 		ref = $bindable(null),
 		id = useId(),

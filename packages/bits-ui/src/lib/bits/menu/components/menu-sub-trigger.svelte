@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { box , mergeProps } from "svelte-toolbelt";
+	import { box, mergeProps } from "svelte-toolbelt";
 	import type { MenuItemProps } from "../types.js";
 	import { useMenuSubTrigger } from "../menu.svelte.js";
 	import { useId } from "$lib/internal/use-id.js";
-		import FloatingLayerAnchor from "$lib/bits/utilities/floating-layer/components/floating-layer-anchor.svelte";
+	import FloatingLayerAnchor from "$lib/bits/utilities/floating-layer/components/floating-layer-anchor.svelte";
 	let {
 		id = useId(),
 		disabled = false,

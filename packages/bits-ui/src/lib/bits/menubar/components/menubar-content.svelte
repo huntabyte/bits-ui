@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { box , mergeProps } from "svelte-toolbelt";
+	import { box, mergeProps } from "svelte-toolbelt";
 	import type { MenubarContentProps } from "../types.js";
 	import { useMenubarContent } from "../menubar.svelte.js";
 	import MenuContent from "$lib/bits/menu/components/menu-content.svelte";
 	import { useId } from "$lib/internal/use-id.js";
-	
+
 	let {
 		ref = $bindable(null),
 		interactOutsideBehavior = "close",

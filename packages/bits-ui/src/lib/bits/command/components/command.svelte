@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { box , mergeProps } from "svelte-toolbelt";
+	import { box, mergeProps } from "svelte-toolbelt";
 	import { defaultFilter, useCommandRoot } from "../command.svelte.js";
 	import type { CommandRootProps } from "../types.js";
 	import CommandLabel from "./_command-label.svelte";
 	import { noop } from "$lib/internal/noop.js";
 	import { useId } from "$lib/internal/use-id.js";
-	
+
 	let {
 		id = useId(),
 		ref = $bindable(null),

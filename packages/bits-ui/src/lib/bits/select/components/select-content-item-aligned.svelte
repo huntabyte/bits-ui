@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { box , mergeProps } from "svelte-toolbelt";
+	import { box, mergeProps } from "svelte-toolbelt";
 	import { useSelectItemAlignedPosition } from "../select.svelte.js";
 	import type { WithChild } from "$lib/internal/types.js";
-		import { useBodyScrollLock } from "$lib/internal/use-body-scroll-lock.svelte.js";
+	import { useBodyScrollLock } from "$lib/internal/use-body-scroll-lock.svelte.js";
 	import type { BitsPrimitiveDivAttributes } from "$lib/shared/attributes.js";
 
 	let {

@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { box , mergeProps } from "svelte-toolbelt";
+	import { box, mergeProps } from "svelte-toolbelt";
 	import type { DateValue } from "@internationalized/date";
 	import type { RangeCalendarRootProps } from "../types.js";
 	import { useRangeCalendarRoot } from "../range-calendar.svelte.js";
 	import { noop } from "$lib/internal/noop.js";
 	import { useId } from "$lib/internal/use-id.js";
-		import { getDefaultDate } from "$lib/internal/date-time/utils.js";
+	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
 
 	let {
 		children,

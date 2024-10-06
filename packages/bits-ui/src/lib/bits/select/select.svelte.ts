@@ -3,7 +3,14 @@
  * https://github.com/radix-ui/primitives/blob/main/packages/react/select/src/Select.tsx
  * Credit to the Radix UI team for the original implementation.
  */
-import { type ReadableBox, type WritableBox, afterSleep, afterTick, box, useRefById } from "svelte-toolbelt";
+import {
+	type ReadableBox,
+	type WritableBox,
+	afterSleep,
+	afterTick,
+	box,
+	useRefById,
+} from "svelte-toolbelt";
 import { SvelteMap } from "svelte/reactivity";
 import { untrack } from "svelte";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";

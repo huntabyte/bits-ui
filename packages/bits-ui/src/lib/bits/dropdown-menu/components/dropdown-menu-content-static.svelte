@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { box , mergeProps } from "svelte-toolbelt";
+	import { box, mergeProps } from "svelte-toolbelt";
 	import type { DropdownMenuContentStaticProps } from "../types.js";
 	import { useMenuContent } from "$lib/bits/menu/menu.svelte.js";
 	import { useId } from "$lib/internal/use-id.js";
-		import { noop } from "$lib/internal/noop.js";
+	import { noop } from "$lib/internal/noop.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
 	import Mounted from "$lib/bits/utilities/mounted.svelte";
 

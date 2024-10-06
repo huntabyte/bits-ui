@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { box , mergeProps } from "svelte-toolbelt";
+	import { box, mergeProps } from "svelte-toolbelt";
 	import type { PopoverCloseProps } from "../types.js";
 	import { usePopoverClose } from "../popover.svelte.js";
-		import { useId } from "$lib/internal/use-id.js";
+	import { useId } from "$lib/internal/use-id.js";
 
 	let {
 		child,

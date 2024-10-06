@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { box , mergeProps } from "svelte-toolbelt";
+	import { box, mergeProps } from "svelte-toolbelt";
 	import type { ToggleRootProps } from "../types.js";
 	import { useToggleRoot } from "../toggle.svelte.js";
-		import { useId } from "$lib/internal/use-id.js";
+	import { useId } from "$lib/internal/use-id.js";
 	import { noop } from "$lib/internal/noop.js";
 
 	let {
