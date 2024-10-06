@@ -1,4 +1,11 @@
-import { box } from "svelte-toolbelt";
+import {
+	afterTick,
+	box,
+	executeCallbacks,
+	mergeProps,
+	onDestroyEffect,
+	useRefById,
+} from "svelte-toolbelt";
 import { tick, untrack } from "svelte";
 import { IsFocusWithin } from "runed";
 import type { InteractOutsideEvent } from "../utilities/dismissible-layer/types.js";
@@ -16,7 +23,6 @@ import { focusFirst } from "$lib/internal/focus.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { addEventListener } from "$lib/internal/events.js";
 import type { AnyFn, WithRefProps } from "$lib/internal/types.js";
-import { executeCallbacks } from "$lib/internal/execute-callbacks.js";
 import { useTypeahead } from "$lib/internal/use-typeahead.svelte.js";
 import { isElement, isElementOrSVGElement, isHTMLElement } from "$lib/internal/is.js";
 import { useRovingFocus } from "$lib/internal/use-roving-focus.svelte.js";
@@ -29,13 +35,9 @@ import {
 	getDataDisabled,
 	getDataOpenClosed,
 } from "$lib/internal/attrs.js";
-import { mergeProps } from "$lib/internal/merge-props.js";
 import { createContext } from "$lib/internal/create-context.js";
 import type { Direction } from "$lib/shared/index.js";
-import { afterTick } from "$lib/internal/after-tick.js";
-import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
 import { isPointerInGraceArea, makeHullFromElements } from "$lib/internal/polygon.js";
-import { onDestroyEffect } from "$lib/internal/on-destroy-effect.svelte.js";
 
 export const CONTEXT_MENU_TRIGGER_ATTR = "data-context-menu-trigger";
 
@@ -194,7 +196,7 @@ class MenuContentState {
 		useRefById({
 			id: this.#id,
 			ref: this.contentRef,
-			condition: () => this.parentMenu.open.current,
+			deps: () => this.parentMenu.open.current,
 			onRefChange: (node) => {
 				if (this.parentMenu.contentNode !== node) {
 					this.parentMenu.contentNode = node;
@@ -390,7 +392,7 @@ class MenuItemSharedState {
 		useRefById({
 			id: this.id,
 			ref: this.ref,
-			condition: () => this.content.isMounted.current,
+			deps: () => this.content.isMounted.current,
 		});
 	}
 
@@ -983,7 +985,7 @@ class ContextMenuTriggerState {
 			onRefChange: (node) => {
 				this.#parentMenu.triggerNode = node;
 			},
-			condition: () => this.#parentMenu.open.current,
+			deps: () => this.#parentMenu.open.current,
 		});
 
 		$effect(() => {

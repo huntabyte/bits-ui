@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { type WritableBox, box } from "svelte-toolbelt";
 	import type { ComboboxRootProps } from "../types.js";
-	import { noop } from "$lib/internal/callbacks.js";
+	import { noop } from "$lib/internal/noop.js";
 	import FloatingLayer from "$lib/bits/utilities/floating-layer/components/floating-layer.svelte";
 	import { useListboxRoot } from "$lib/bits/listbox/listbox.svelte.js";
 	import ListboxHiddenInput from "$lib/bits/listbox/components/listbox-hidden-input.svelte";

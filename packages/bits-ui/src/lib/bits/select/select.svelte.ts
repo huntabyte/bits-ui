@@ -3,7 +3,14 @@
  * https://github.com/radix-ui/primitives/blob/main/packages/react/select/src/Select.tsx
  * Credit to the Radix UI team for the original implementation.
  */
-import { type ReadableBox, type WritableBox, box } from "svelte-toolbelt";
+import {
+	type ReadableBox,
+	type WritableBox,
+	afterSleep,
+	afterTick,
+	box,
+	useRefById,
+} from "svelte-toolbelt";
 import { SvelteMap } from "svelte/reactivity";
 import { untrack } from "svelte";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
@@ -11,7 +18,6 @@ import { useId } from "$lib/internal/use-id.js";
 import type { Direction } from "$lib/shared/index.js";
 import { createContext } from "$lib/internal/create-context.js";
 import { useFormControl } from "$lib/internal/use-form-control.svelte.js";
-import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
 import { type Typeahead, useTypeahead } from "$lib/internal/use-typeahead.svelte.js";
 import {
 	getAriaDisabled,
@@ -24,12 +30,10 @@ import {
 	getDataOpenClosed,
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
-import { afterTick } from "$lib/internal/after-tick.js";
 import { clamp } from "$lib/internal/clamp.js";
-import { noop } from "$lib/internal/callbacks.js";
+import { noop } from "$lib/internal/noop.js";
 import { addEventListener } from "$lib/internal/events.js";
 import type { WithRefProps } from "$lib/internal/types.js";
-import { afterSleep } from "$lib/internal/after-sleep.js";
 
 export const OPEN_KEYS = [kbd.SPACE, kbd.ENTER, kbd.ARROW_UP, kbd.ARROW_DOWN];
 export const SELECTION_KEYS = [" ", kbd.ENTER];
@@ -366,7 +370,7 @@ export class SelectContentState {
 		useRefById({
 			id: this.id,
 			ref: this.ref,
-			condition: () => this.root.open.current,
+			deps: () => this.root.open.current,
 			onRefChange: (node) => {
 				this.root.contentNode = node;
 				this.root.contentId = node?.id;
@@ -1030,7 +1034,7 @@ class SelectViewportState {
 			onRefChange: (node) => {
 				this.content.viewportNode = node;
 			},
-			condition: () => this.content.root.open.current,
+			deps: () => this.content.root.open.current,
 		});
 	}
 
@@ -1113,7 +1117,7 @@ class SelectScrollButtonImplState {
 		useRefById({
 			id: this.id,
 			ref: this.ref,
-			condition: () => this.mounted.current,
+			deps: () => this.mounted.current,
 		});
 
 		$effect(() => {

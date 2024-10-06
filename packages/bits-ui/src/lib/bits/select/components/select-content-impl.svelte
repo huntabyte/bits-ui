@@ -1,15 +1,15 @@
 <script lang="ts">
+	import { mergeProps } from "svelte-toolbelt";
 	import type { SelectContentImplProps } from "../types.js";
 	import { SelectContentState } from "../select.svelte.js";
 	import SelectContentFloating from "./select-content-floating.svelte";
 	import SelectContentItemAligned from "./select-content-item-aligned.svelte";
 	import FocusScope from "$lib/bits/utilities/focus-scope/focus-scope.svelte";
-	import { noop } from "$lib/internal/callbacks.js";
+	import { noop } from "$lib/internal/noop.js";
 	import { useId } from "$lib/internal/use-id.js";
 	import EscapeLayer from "$lib/bits/utilities/escape-layer/escape-layer.svelte";
 	import DismissibleLayer from "$lib/bits/utilities/dismissible-layer/dismissible-layer.svelte";
 	import TextSelectionLayer from "$lib/bits/utilities/text-selection-layer/text-selection-layer.svelte";
-	import { mergeProps } from "$lib/internal/merge-props.js";
 
 	let {
 		ref: _ref = $bindable(null),

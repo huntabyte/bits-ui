@@ -1,9 +1,8 @@
 <script lang="ts">
-	import { box } from "svelte-toolbelt";
+	import { box, mergeProps } from "svelte-toolbelt";
 	import type { DateRangeFieldInputProps } from "../types.js";
 	import { useDateRangeFieldInput } from "../date-range-field.svelte.js";
 	import { useId } from "$lib/internal/use-id.js";
-	import { mergeProps } from "$lib/internal/merge-props.js";
 	import DateFieldHiddenInput from "$lib/bits/date-field/components/date-field-hidden-input.svelte";
 
 	let {

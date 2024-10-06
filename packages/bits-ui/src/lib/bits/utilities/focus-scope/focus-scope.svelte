@@ -2,7 +2,7 @@
 	import { box } from "svelte-toolbelt";
 	import type { FocusScopeImplProps } from "./types.js";
 	import { useFocusScope } from "./useFocusScope.svelte.js";
-	import { noop } from "$lib/internal/callbacks.js";
+	import { noop } from "$lib/internal/noop.js";
 
 	let {
 		id,

@@ -3,7 +3,7 @@
 	import { useListboxRoot } from "../listbox.svelte.js";
 	import type { ListboxRootProps } from "../types.js";
 	import ListboxHiddenInput from "./listbox-hidden-input.svelte";
-	import { noop } from "$lib/internal/callbacks.js";
+	import { noop } from "$lib/internal/noop.js";
 	import FloatingLayer from "$lib/bits/utilities/floating-layer/components/floating-layer.svelte";
 
 	let {

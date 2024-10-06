@@ -7,6 +7,7 @@ import {
 } from "@internationalized/date";
 import { DEV } from "esm-env";
 import { untrack } from "svelte";
+import { useRefById } from "svelte-toolbelt";
 import type { RangeCalendarRootState } from "../range-calendar/range-calendar.svelte.js";
 import {
 	getAriaDisabled,
@@ -22,7 +23,6 @@ import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box
 import { createContext } from "$lib/internal/create-context.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { useId } from "$lib/internal/use-id.js";
-import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
 import type { DateMatcher, Month } from "$lib/shared/index.js";
 import { type Announcer, getAnnouncer } from "$lib/internal/date-time/announcer.js";
 import { type Formatter, createFormatter } from "$lib/internal/date-time/formatter.js";

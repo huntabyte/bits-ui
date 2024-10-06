@@ -1,7 +1,7 @@
 <script lang="ts">
+	import { mergeProps } from "svelte-toolbelt";
 	import type { VisuallyHiddenProps } from "./types.js";
 	import type { StyleProperties } from "$lib/shared/index.js";
-	import { mergeProps } from "$lib/internal/merge-props.js";
 
 	let { children, child, ...restProps }: VisuallyHiddenProps = $props();
 

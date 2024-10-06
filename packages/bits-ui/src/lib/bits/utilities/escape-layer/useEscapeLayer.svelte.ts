@@ -4,7 +4,7 @@ import type { EscapeBehaviorType, EscapeLayerImplProps } from "./types.js";
 import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import { type EventCallback, addEventListener } from "$lib/internal/events.js";
 import { kbd } from "$lib/internal/kbd.js";
-import { noop } from "$lib/internal/callbacks.js";
+import { noop } from "$lib/internal/noop.js";
 
 const layers = new Map<EscapeLayerState, ReadableBox<EscapeBehaviorType>>();
 

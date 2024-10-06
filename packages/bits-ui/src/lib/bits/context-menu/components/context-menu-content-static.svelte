@@ -1,10 +1,9 @@
 <script lang="ts">
-	import { box } from "svelte-toolbelt";
+	import { box, mergeProps } from "svelte-toolbelt";
 	import type { ContextMenuContentStaticProps } from "../types.js";
 	import { CONTEXT_MENU_TRIGGER_ATTR, useMenuContent } from "$lib/bits/menu/menu.svelte.js";
 	import { useId } from "$lib/internal/use-id.js";
-	import { mergeProps } from "$lib/internal/merge-props.js";
-	import { noop } from "$lib/internal/callbacks.js";
+	import { noop } from "$lib/internal/noop.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
 	import { isElement } from "$lib/internal/is.js";
 	import type { InteractOutsideEvent } from "$lib/bits/utilities/dismissible-layer/types.js";

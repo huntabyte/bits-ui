@@ -1,5 +1,5 @@
+import { useRefById } from "svelte-toolbelt";
 import type { WithRefProps } from "$lib/internal/types.js";
-import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
 
 const ROOT_ATTR = "data-label-root";
 

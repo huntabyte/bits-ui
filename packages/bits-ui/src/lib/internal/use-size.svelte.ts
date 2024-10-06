@@ -1,8 +1,7 @@
 /// <reference types="resize-observer-browser" />
 
 import { untrack } from "svelte";
-import type { WritableBox } from "svelte-toolbelt";
-import { afterTick } from "./after-tick.js";
+import { type WritableBox, afterTick } from "svelte-toolbelt";
 
 export function useSize(node: WritableBox<HTMLElement | null>) {
 	let size = $state<{ width: number; height: number } | undefined>(undefined);

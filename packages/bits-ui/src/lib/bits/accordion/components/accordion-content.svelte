@@ -1,9 +1,8 @@
 <script lang="ts">
-	import { box } from "svelte-toolbelt";
+	import { box, mergeProps } from "svelte-toolbelt";
 	import { useAccordionContent } from "../accordion.svelte.js";
 	import type { AccordionContentProps } from "../types.js";
 	import { PresenceLayer } from "$lib/bits/utilities/presence-layer/index.js";
-	import { mergeProps } from "$lib/internal/merge-props.js";
 	import { useId } from "$lib/internal/use-id.js";
 
 	let {

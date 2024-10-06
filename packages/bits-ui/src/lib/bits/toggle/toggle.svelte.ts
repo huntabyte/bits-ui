@@ -1,8 +1,8 @@
+import { useRefById } from "svelte-toolbelt";
 import { getAriaPressed, getDataDisabled, getDisabled } from "$lib/internal/attrs.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type { WithRefProps } from "$lib/internal/types.js";
-import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
 
 const ROOT_ATTR = "data-toggle-root";
 

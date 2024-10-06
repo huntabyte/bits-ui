@@ -1,9 +1,8 @@
 <script lang="ts">
-	import { box } from "svelte-toolbelt";
+	import { box, mergeProps } from "svelte-toolbelt";
 	import type { MenuRadioGroupProps } from "../types.js";
 	import { useMenuRadioGroup } from "../menu.svelte.js";
-	import { noop } from "$lib/internal/callbacks.js";
-	import { mergeProps } from "$lib/internal/merge-props.js";
+	import { noop } from "$lib/internal/noop.js";
 	import { useId } from "$lib/internal/use-id.js";
 
 	let {

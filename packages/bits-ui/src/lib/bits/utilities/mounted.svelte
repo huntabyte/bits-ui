@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { untrack } from "svelte";
-	import { noop } from "$lib/internal/callbacks.js";
+	import { noop } from "$lib/internal/noop.js";
 
 	let {
 		isMounted = $bindable(false),

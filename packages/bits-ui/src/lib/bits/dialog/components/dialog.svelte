@@ -2,7 +2,7 @@
 	import { box } from "svelte-toolbelt";
 	import { useDialogRoot } from "../dialog.svelte.js";
 	import type { DialogRootProps } from "../types.js";
-	import { noop } from "$lib/internal/callbacks.js";
+	import { noop } from "$lib/internal/noop.js";
 
 	let {
 		open = $bindable(false),

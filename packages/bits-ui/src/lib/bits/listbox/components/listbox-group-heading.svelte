@@ -1,9 +1,8 @@
 <script lang="ts">
-	import { box } from "svelte-toolbelt";
+	import { box, mergeProps } from "svelte-toolbelt";
 	import type { ListboxGroupHeadingProps } from "../types.js";
 	import { useListboxGroupHeading } from "../listbox.svelte.js";
 	import { useId } from "$lib/internal/use-id.js";
-	import { mergeProps } from "$lib/internal/merge-props.js";
 
 	let {
 		id = useId(),

@@ -1,7 +1,7 @@
 <script lang="ts">
+	import { mergeProps } from "svelte-toolbelt";
 	import type { DatePickerTriggerProps } from "../types.js";
 	import PopoverTrigger from "$lib/bits/popover/components/popover-trigger.svelte";
-	import { mergeProps } from "$lib/internal/merge-props.js";
 	import { DATE_FIELD_INPUT_ATTR } from "$lib/bits/date-field/date-field.svelte.js";
 	import {
 		handleSegmentNavigation,

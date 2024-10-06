@@ -3,7 +3,7 @@
 	import type { MenuSubProps } from "../types.js";
 	import { useMenuSubmenu } from "../menu.svelte.js";
 	import FloatingLayer from "$lib/bits/utilities/floating-layer/components/floating-layer.svelte";
-	import { noop } from "$lib/internal/callbacks.js";
+	import { noop } from "$lib/internal/noop.js";
 
 	let {
 		open = $bindable(false),

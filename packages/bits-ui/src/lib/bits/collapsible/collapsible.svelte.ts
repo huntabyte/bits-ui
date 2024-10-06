@@ -1,6 +1,5 @@
-import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
+import { afterTick, useRefById } from "svelte-toolbelt";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import { afterTick } from "$lib/internal/after-tick.js";
 import { getAriaExpanded, getDataDisabled, getDataOpenClosed } from "$lib/internal/attrs.js";
 import { createContext } from "$lib/internal/create-context.js";
 
@@ -82,7 +81,7 @@ class CollapsibleContentState {
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
-			condition: () => this.present,
+			deps: () => this.present,
 			onRefChange: (node) => {
 				this.root.contentNode = node;
 				this.root.contentId = node?.id;

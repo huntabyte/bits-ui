@@ -1,22 +1,26 @@
 import { untrack } from "svelte";
-import { type ReadableBox, type WritableBox, box } from "svelte-toolbelt";
+import {
+	type ReadableBox,
+	type WritableBox,
+	afterTick,
+	box,
+	composeHandlers,
+	executeCallbacks,
+	onDestroyEffect,
+	useRefById,
+} from "svelte-toolbelt";
 import type {
 	DismissibleLayerImplProps,
 	InteractOutsideBehaviorType,
 	InteractOutsideEvent,
 	InteractOutsideInterceptEventType,
 } from "./types.js";
-import { composeHandlers } from "$lib/internal/compose-handlers.js";
 import { type EventCallback, addEventListener } from "$lib/internal/events.js";
 import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
-import { afterTick } from "$lib/internal/after-tick.js";
 import { debounce } from "$lib/internal/debounce.js";
-import { executeCallbacks } from "$lib/internal/execute-callbacks.js";
 import { noop } from "$lib/internal/noop.js";
-import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
 import { getOwnerDocument, isOrContainsTarget } from "$lib/internal/elements.js";
 import { isElement } from "$lib/internal/is.js";
-import { onDestroyEffect } from "$lib/internal/on-destroy-effect.svelte.js";
 
 const layers = new Map<DismissibleLayerState, ReadableBox<InteractOutsideBehaviorType>>();
 
@@ -64,7 +68,7 @@ export class DismissibleLayerState {
 		useRefById({
 			id: props.id,
 			ref: this.node,
-			condition: () => this.#enabled.current,
+			deps: () => this.#enabled.current,
 			onRefChange: (node) => {
 				this.currNode = node;
 			},

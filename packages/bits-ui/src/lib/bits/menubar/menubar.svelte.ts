@@ -1,4 +1,4 @@
-import { type ReadableBox, box } from "svelte-toolbelt";
+import { type ReadableBox, afterTick, box, useRefById } from "svelte-toolbelt";
 import { untrack } from "svelte";
 import type { InteractOutsideBehaviorType } from "../utilities/dismissible-layer/types.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
@@ -12,9 +12,7 @@ import { getAriaExpanded, getDataDisabled, getDataOpenClosed } from "$lib/intern
 import { kbd } from "$lib/internal/kbd.js";
 import { wrapArray } from "$lib/internal/use-typeahead.svelte.js";
 import { isBrowser } from "$lib/internal/is.js";
-import { afterTick } from "$lib/internal/after-tick.js";
 import type { WithRefProps } from "$lib/internal/types.js";
-import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
 
 const ROOT_ATTR = "data-menubar-root";
 const TRIGGER_ATTR = "data-menubar-trigger";
@@ -293,7 +291,7 @@ class MenubarContentState {
 			onRefChange: (node) => {
 				this.menu.contentNode = node;
 			},
-			condition: () => this.menu.open,
+			deps: () => this.menu.open,
 		});
 	}
 

@@ -1,10 +1,9 @@
 <script lang="ts">
-	import { box } from "svelte-toolbelt";
+	import { box, mergeProps } from "svelte-toolbelt";
 	import type { MenuItemProps } from "../types.js";
 	import { useMenuItem } from "../menu.svelte.js";
 	import { useId } from "$lib/internal/use-id.js";
-	import { noop } from "$lib/internal/callbacks.js";
-	import { mergeProps } from "$lib/internal/merge-props.js";
+	import { noop } from "$lib/internal/noop.js";
 
 	let {
 		child,

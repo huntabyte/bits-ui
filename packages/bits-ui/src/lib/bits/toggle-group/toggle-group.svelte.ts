@@ -1,4 +1,4 @@
-import type { WritableBox } from "svelte-toolbelt";
+import { type WritableBox, useRefById } from "svelte-toolbelt";
 import {
 	getAriaChecked,
 	getAriaPressed,
@@ -8,7 +8,6 @@ import {
 } from "$lib/internal/attrs.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
-import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
 import type { Orientation } from "$lib/shared/index.js";
 import {
 	type UseRovingFocusReturn,

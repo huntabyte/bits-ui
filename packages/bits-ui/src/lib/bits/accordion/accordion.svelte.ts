@@ -1,6 +1,6 @@
+import { afterTick, useRefById } from "svelte-toolbelt";
 import type { Box, ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { WithRefProps } from "$lib/internal/types.js";
-import { afterTick } from "$lib/internal/after-tick.js";
 import {
 	getAriaDisabled,
 	getAriaExpanded,
@@ -9,7 +9,6 @@ import {
 	getDataOrientation,
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
-import { useRefById } from "$lib/internal/use-ref-by-id.svelte.js";
 import {
 	type UseRovingFocusReturn,
 	useRovingFocus,
@@ -158,7 +157,7 @@ export class AccordionItemState {
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
-			condition: () => this.isActive,
+			deps: () => this.isActive,
 		});
 	}
 
