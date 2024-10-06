@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.14
+
+### Patch Changes
+
+-   rename various `BitsHTMLAttributes` types to avoid autocomplete interference with Svelte's `HTMLAttributes` types ([#744](https://github.com/huntabyte/bits-ui/pull/744))
+
 ## 1.0.0-next.13
 
 ### Patch Changes
