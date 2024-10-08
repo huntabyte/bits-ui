@@ -115,7 +115,7 @@ class PinInputRootState {
 
 		$effect(() => {
 			let unsub = noop;
-			untrack(() => {
+			return untrack(() => {
 				const input = this.#inputRef.current;
 				const container = this.#ref.current;
 

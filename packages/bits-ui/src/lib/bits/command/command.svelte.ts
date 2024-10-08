@@ -836,7 +836,7 @@ class CommandItemState {
 			this.id.current;
 			this.#group?.id.current;
 			if (!this.#forceMount.current) {
-				untrack(() => {
+				return untrack(() => {
 					return this.root.registerItem(this.id.current, this.#group?.id.current);
 				});
 			}

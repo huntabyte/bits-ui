@@ -379,7 +379,7 @@ export class SelectContentState {
 
 		$effect(() => {
 			this.root.open.current;
-			untrack(() => {
+			return untrack(() => {
 				let cleanup = [noop];
 
 				afterTick(() => {

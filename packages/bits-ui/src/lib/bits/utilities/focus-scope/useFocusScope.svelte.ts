@@ -172,16 +172,10 @@ export function useFocusScope({
 
 		return () => {
 			if (!container) return;
-			container.removeEventListener(
-				AUTOFOCUS_ON_MOUNT,
-				untrack(() => onOpenAutoFocus.current)
-			);
+			container.removeEventListener(AUTOFOCUS_ON_MOUNT, onOpenAutoFocus.current);
 
 			const destroyEvent = new CustomEvent(AUTOFOCUS_ON_DESTROY, EVENT_OPTIONS);
-			container.addEventListener(
-				AUTOFOCUS_ON_DESTROY,
-				untrack(() => onCloseAutoFocus.current)
-			);
+			container.addEventListener(AUTOFOCUS_ON_DESTROY, onCloseAutoFocus.current);
 			container.dispatchEvent(destroyEvent);
 
 			setTimeout(() => {
