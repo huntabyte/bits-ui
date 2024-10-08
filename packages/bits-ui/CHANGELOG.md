@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.15
+
+### Patch Changes
+
+-   fix: cleanup a few untracks that were left unhandled ([#746](https://github.com/huntabyte/bits-ui/pull/746))
+
 ## 1.0.0-next.14
 
 ### Patch Changes
