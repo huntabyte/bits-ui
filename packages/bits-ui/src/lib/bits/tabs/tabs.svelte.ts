@@ -183,7 +183,7 @@ class TabsTriggerState {
 			const id = this.#id.current;
 			const value = this.#value.current;
 
-			untrack(() => {
+			return untrack(() => {
 				const deregister = this.#root.registerTrigger(id, value);
 				return () => {
 					deregister();
