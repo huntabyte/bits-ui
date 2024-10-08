@@ -1,54 +1,74 @@
-import type { HTMLButtonAttributes } from "svelte/elements";
-import type { CreatePopoverProps as MeltPopoverProps } from "@melt-ui/svelte";
+import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
+import type { PopperLayerProps, PopperLayerStaticProps } from "../utilities/popper-layer/types.js";
 import type {
-	DOMElement,
-	Expand,
-	HTMLDivAttributes,
-	OmitFloating,
 	OnChangeFn,
-} from "$lib/internal/index.js";
-import type { CustomEventHandler } from "$lib/index.js";
-
+	WithChild,
+	WithChildNoChildrenSnippetProps,
+	WithChildren,
+	Without,
+} from "$lib/internal/types.js";
 import type {
-	ArrowProps as PopoverArrowPropsWithoutHTML,
-	ContentProps as PopoverContentPropsWithoutHTML,
-} from "$lib/bits/floating/_types.js";
+	BitsPrimitiveButtonAttributes,
+	BitsPrimitiveDivAttributes,
+} from "$lib/shared/attributes.js";
 
-export type { ContentProps as PopoverContentProps } from "$lib/bits/floating/types.js";
+export type PopoverRootPropsWithoutHTML = WithChildren<{
+	/**
+	 * The open state of the popover.
+	 */
+	open?: boolean;
 
-export type { PopoverContentPropsWithoutHTML, PopoverArrowPropsWithoutHTML };
+	/**
+	 * A callback that is called when the popover's open state changes.
+	 */
+	onOpenChange?: OnChangeFn<boolean>;
 
-export type PopoverPropsWithoutHTML = Expand<
-	OmitFloating<MeltPopoverProps> & {
-		/**
-		 * The open state of the popover.
-		 * You can bind this to a boolean value to programmatically control the open state.
-		 *
-		 * @defaultValue false
-		 */
-		open?: boolean | undefined;
+	/**
+	 * Whether or not the open state is controlled or not. If `true`, the component will not update
+	 * the open state internally, instead it will call `onOpenChange` when it would have
+	 * otherwise, and it is up to you to update the `open` prop that is passed to the component.
+	 *
+	 * @defaultValue false
+	 */
+	controlledOpen?: boolean;
+}>;
 
-		/**
-		 * A callback function called when the open state changes.
-		 */
-		onOpenChange?: OnChangeFn<boolean> | undefined;
-	}
->;
+export type PopoverRootProps = PopoverRootPropsWithoutHTML;
 
-export type PopoverTriggerPropsWithoutHTML = DOMElement<HTMLButtonElement>;
-export type PopoverClosePropsWithoutHTML = DOMElement<HTMLButtonElement>;
-
-export type PopoverProps = PopoverPropsWithoutHTML;
-
-export type PopoverTriggerProps = PopoverTriggerPropsWithoutHTML & HTMLButtonAttributes;
-
-export type PopoverCloseProps = PopoverClosePropsWithoutHTML & HTMLButtonAttributes;
-
-export type PopoverArrowProps = PopoverArrowPropsWithoutHTML & HTMLDivAttributes;
-
-export type PopoverTriggerEvents<T extends Element = HTMLButtonElement> = {
-	click: CustomEventHandler<MouseEvent, T>;
-	keydown: CustomEventHandler<KeyboardEvent, T>;
+export type PopoverContentSnippetProps = {
+	/**
+	 * Whether the content is open or closed. Used alongside the `forceMount` prop to
+	 * conditionally render the content using Svelte transitions.
+	 */
+	open: boolean;
 };
 
-export type PopoverCloseEvents = PopoverTriggerEvents;
+export type PopoverContentPropsWithoutHTML = WithChildNoChildrenSnippetProps<
+	Omit<PopperLayerProps, "content" | "loop">,
+	PopoverContentSnippetProps
+>;
+
+export type PopoverContentProps = PopoverContentPropsWithoutHTML &
+	Without<BitsPrimitiveDivAttributes, PopoverContentPropsWithoutHTML>;
+
+export type PopoverContentStaticPropsWithoutHTML = WithChildNoChildrenSnippetProps<
+	Omit<PopperLayerStaticProps, "content" | "loop">,
+	PopoverContentSnippetProps
+>;
+
+export type PopoverContentStaticProps = PopoverContentStaticPropsWithoutHTML &
+	Without<BitsPrimitiveDivAttributes, PopoverContentStaticPropsWithoutHTML>;
+
+export type PopoverTriggerPropsWithoutHTML = WithChild;
+
+export type PopoverTriggerProps = PopoverTriggerPropsWithoutHTML &
+	Without<BitsPrimitiveButtonAttributes, PopoverTriggerPropsWithoutHTML>;
+
+export type PopoverClosePropsWithoutHTML = WithChild;
+
+export type PopoverCloseProps = PopoverClosePropsWithoutHTML &
+	Without<BitsPrimitiveButtonAttributes, PopoverClosePropsWithoutHTML>;
+
+export type PopoverArrowPropsWithoutHTML = ArrowPropsWithoutHTML;
+
+export type PopoverArrowProps = ArrowProps;

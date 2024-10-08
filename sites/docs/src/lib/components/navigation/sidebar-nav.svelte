@@ -1,7 +1,9 @@
 <script lang="ts">
-	import { SidebarNavItems, SidebarNavMainItems } from "$lib/components/index.js";
+	import SidebarNavItems from "$lib/components/navigation/sidebar-nav-items.svelte";
+	import SidebarNavMainItems from "$lib/components/navigation/sidebar-nav-main-items.svelte";
 	import type { SidebarNavItem } from "$lib/config/index.js";
-	export let items: SidebarNavItem[] = [];
+
+	let { items = [] }: { items: SidebarNavItem[] } = $props();
 </script>
 
 {#if items.length}

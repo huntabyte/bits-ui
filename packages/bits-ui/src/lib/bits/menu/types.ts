@@ -1,230 +1,259 @@
-/**
- * These types are shared between the various menu components,
- * such as `DropdownMenu`, `Menubar` & `ContextMenu`.
- */
-
-import type { HTMLAnchorAttributes, HTMLButtonAttributes } from "svelte/elements";
+import type { Expand } from "svelte-toolbelt";
+import type { PopperLayerProps, PopperLayerStaticProps } from "../utilities/popper-layer/types.js";
+import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
 import type {
-	CreateContextMenuCheckboxItemProps as MeltContextMenuCheckboxItemProps,
-	CreateContextMenuProps as MeltContextMenuProps,
-	CreateContextMenuRadioGroupProps as MeltContextMenuRadioGroupProps,
-	ContextMenuRadioItemProps as MeltContextMenuRadioItemProps,
-	CreateContextSubmenuProps as MeltContextSubmenuProps,
-} from "@melt-ui/svelte";
-import type {
-	DOMEl,
-	DOMElement,
-	Expand,
-	HTMLDivAttributes,
-	OmitChecked,
-	OmitFloating,
 	OnChangeFn,
-} from "$lib/internal/index.js";
-import type { CustomEventHandler } from "$lib/index.js";
-import type { ContentProps as MenuContentProps } from "$lib/bits/floating/types.js";
-
+	WithChild,
+	WithChildNoChildrenSnippetProps,
+	WithChildren,
+	Without,
+} from "$lib/internal/types.js";
 import type {
-	ArrowProps as MenuArrowPropsWithoutHTML,
-	ContentProps as MenuContentPropsWithoutHTML,
-} from "$lib/bits/floating/_types.js";
+	BitsPrimitiveButtonAttributes,
+	BitsPrimitiveDivAttributes,
+} from "$lib/shared/attributes.js";
+import type { Direction } from "$lib/shared/index.js";
+import type { PortalProps } from "$lib/bits/utilities/portal/types.js";
 
-export type MenuPropsWithoutHTML = Expand<
-	OmitFloating<MeltContextMenuProps> & {
-		/**
-		 * The open state of the context menu.
-		 * You can bind this to a boolean value to programmatically control the open state.
-		 *
-		 * @defaultValue false
-		 */
-		open?: boolean | undefined;
+export type MenuRootPropsWithoutHTML = WithChildren<{
+	/**
+	 * The open state of the menu.
+	 */
+	open?: boolean;
 
-		/**
-		 * A callback function called when the open state changes.
-		 */
-		onOpenChange?: OnChangeFn<boolean> | undefined;
-	}
->;
+	/**
+	 * A callback that is called when the menu is opened or closed.
+	 */
+	onOpenChange?: OnChangeFn<boolean>;
 
-export type MenuSubTriggerPropsWithoutHTML = Expand<
-	{
-		/**
-		 * Whether the subtrigger is disabled or not.
-		 *
-		 * @defaultValue false;
-		 */
-		disabled?: boolean | undefined;
-	} & DOMElement
->;
+	/**
+	 * The direction of the site.
+	 *
+	 * @defaultValue "ltr"
+	 */
+	dir?: Direction;
 
-export type MenuCheckboxItemPropsWithoutHTML = Expand<
-	OmitChecked<MeltContextMenuCheckboxItemProps> & {
-		/**
-		 * The checked state of the checkbox item.
-		 * You can bind this to a boolean value to programmatically control the checked state.
-		 *
-		 * @defaultValue false
-		 */
-		checked?: boolean | "indeterminate" | undefined;
+	/**
+	 * Whether or not the open state is controlled or not. If `true`, the component will not update
+	 * the open state internally, instead it will call `onOpenChange` when it would have
+	 * otherwise, and it is up to you to update the `open` prop that is passed to the component.
+	 *
+	 * @defaultValue false
+	 */
+	controlledOpen?: boolean;
+}>;
 
-		/**
-		 * A callback function called when the checked state changes.
-		 */
-		onCheckedChange?: OnChangeFn<boolean | "indeterminate"> | undefined;
-	} & DOMElement
->;
+export type MenuRootProps = MenuRootPropsWithoutHTML;
 
-export type MenuRadioGroupPropsWithoutHTML = Expand<
-	{
-		/**
-		 * The value of the radio group.
-		 *
-		 * @defaultValue undefined
-		 */
-		value?: (MeltContextMenuRadioGroupProps["defaultValue"] & {}) | undefined;
-
-		/**
-		 * A callback function called when the value changes.
-		 */
-		onValueChange?: OnChangeFn<MeltContextMenuRadioGroupProps["defaultValue"]> | undefined;
-	} & DOMElement
->;
-
-export type MenuRadioItemPropsWithoutHTML = Expand<MeltContextMenuRadioItemProps & DOMElement>;
-
-export type MenuSubPropsWithoutHTML = Expand<
-	OmitFloating<MeltContextSubmenuProps> & {
-		/**
-		 * The open state of the submenu.
-		 * You can bind this to a boolean value to programmatically control the open state.
-		 *
-		 * @defaultValue false
-		 */
-		open?: boolean | undefined;
-
-		/**
-		 * A callback function called when the open state changes.
-		 */
-		onOpenChange?: OnChangeFn<boolean> | undefined;
-	}
->;
-
-export type MenuItemPropsWithoutHTML = Expand<
-	{
-		/**
-		 * Whether the item is disabled.
-		 *
-		 * @defaultValue false
-		 */
-		disabled?: boolean | undefined;
-	} & DOMElement
->;
-
-export type MenuGroupPropsWithoutHTML = DOMElement;
-export type MenuCheckboxIndicatorPropsWithoutHTML = DOMElement;
-export type MenuRadioIndicatorPropsWithoutHTML = DOMElement;
-export type MenuLabelPropsWithoutHTML = DOMElement;
-export type MenuSeparatorPropsWithoutHTML = DOMElement;
-export type MenuTriggerPropsWithoutHTML = DOMElement<HTMLElement>;
-
-export type {
-	MenuContentPropsWithoutHTML,
-	MenuContentPropsWithoutHTML as MenuSubContentPropsWithoutHTML,
-	MenuArrowPropsWithoutHTML,
+export type _SharedMenuContentProps = {
+	/**
+	 * When `true`, the menu will loop through items when navigating with the keyboard.
+	 *
+	 * @defaultValue false
+	 */
+	loop?: boolean;
 };
 
-//
+export type MenuContentSnippetProps = {
+	/**
+	 * Whether the content is open or closed. Used alongside the `forceMount` prop to
+	 * conditionally render the content using Svelte transitions.
+	 */
+	open: boolean;
+};
 
-export type MenuProps = MenuPropsWithoutHTML;
+export type MenuContentPropsWithoutHTML = Expand<
+	WithChildNoChildrenSnippetProps<
+		Omit<PopperLayerProps, "content"> & _SharedMenuContentProps,
+		MenuContentSnippetProps
+	>
+>;
 
-export type MenuCheckboxItemProps = MenuCheckboxItemPropsWithoutHTML & HTMLDivAttributes;
+export type MenuContentProps = MenuContentPropsWithoutHTML &
+	Without<BitsPrimitiveDivAttributes, MenuContentPropsWithoutHTML>;
 
-export type MenuRadioGroupProps = MenuRadioGroupPropsWithoutHTML & HTMLDivAttributes;
+export type MenuContentStaticPropsWithoutHTML = Expand<
+	WithChildNoChildrenSnippetProps<
+		Omit<PopperLayerStaticProps, "content"> & _SharedMenuContentProps,
+		MenuContentSnippetProps
+	>
+>;
 
-export type MenuRadioItemProps = MenuRadioItemPropsWithoutHTML & HTMLDivAttributes;
+export type MenuContentStaticProps = MenuContentStaticPropsWithoutHTML &
+	Without<BitsPrimitiveDivAttributes, MenuContentStaticPropsWithoutHTML>;
 
-export type MenuGroupProps = MenuGroupPropsWithoutHTML & HTMLDivAttributes;
+export type MenuItemPropsWithoutHTML<U extends Record<PropertyKey, unknown> = { _default: never }> =
+	WithChild<
+		{
+			/**
+			 * When `true`, the user will not be able to interact with the menu item.
+			 *
+			 * @defaultValue false
+			 */
+			disabled?: boolean;
 
-type MenuAnchorElement = HTMLAnchorAttributes & {
-	href?: HTMLAnchorAttributes["href"] | undefined;
-} & DOMEl<HTMLAnchorElement>;
+			/**
+			 * Optional text to use for typeahead filtering. By default, typeahead will use
+			 * the `.textContent` of the menu item. When the content is more complex, you
+			 * can provide a string here instead.
+			 *
+			 * @defaultValue undefined
+			 */
+			textValue?: string;
 
-type MenuDivElement = HTMLDivAttributes & {
-	href?: never | undefined;
-} & DOMEl;
+			/**
+			 * A callback fired when the menu item is selected.
+			 *
+			 * Prevent default behavior of selection with `event.preventDefault()`.
+			 */
+			onSelect?: (event: Event) => void;
+		},
+		U
+	>;
 
-export type MenuItemProps = Omit<MenuItemPropsWithoutHTML, "el"> &
-	(MenuAnchorElement | MenuDivElement);
+export type MenuItemProps = MenuItemPropsWithoutHTML &
+	Without<BitsPrimitiveDivAttributes, MenuItemPropsWithoutHTML>;
 
-export type MenuCheckboxIndicatorProps = MenuCheckboxIndicatorPropsWithoutHTML & HTMLDivAttributes;
+export type MenuCheckboxItemSnippetProps = { checked: boolean | "indeterminate" };
 
-export type MenuRadioIndicatorProps = MenuRadioIndicatorPropsWithoutHTML & HTMLDivAttributes;
+export type MenuCheckboxItemPropsWithoutHTML =
+	MenuItemPropsWithoutHTML<MenuCheckboxItemSnippetProps> & {
+		/**
+		 * The checked state of the checkbox item.
+		 *
+		 * Supports two-way binding with `bind:checked`.
+		 */
+		checked?: boolean | "indeterminate";
 
-export type MenuLabelProps = MenuLabelPropsWithoutHTML & HTMLDivAttributes;
+		/**
+		 * A callback that is fired when the checked state changes.
+		 */
+		onCheckedChange?: OnChangeFn<boolean | "indeterminate">;
 
-export type MenuSeparatorProps = MenuSeparatorPropsWithoutHTML & HTMLDivAttributes;
+		/**
+		 * Whether or not the checked state is controlled or not. If `true`, the component will not
+		 * update the checked state internally, instead it will call `onCheckedChange` when it
+		 * would have otherwise, and it is up to you to update the `checked` prop that is passed
+		 * to the component.
+		 *
+		 * @defaultValue false
+		 */
+		controlledChecked?: boolean;
+	};
+
+export type MenuCheckboxItemProps = MenuCheckboxItemPropsWithoutHTML &
+	Without<BitsPrimitiveDivAttributes, MenuCheckboxItemPropsWithoutHTML>;
+
+export type MenuTriggerPropsWithoutHTML = WithChild<{
+	/**
+	 * Whether the trigger is disabled.
+	 *
+	 * @defaultValue false
+	 */
+	disabled?: boolean | null | undefined;
+}>;
+
+export type MenuTriggerProps = MenuTriggerPropsWithoutHTML &
+	Without<BitsPrimitiveButtonAttributes, MenuTriggerPropsWithoutHTML>;
+
+export type MenuSubPropsWithoutHTML = WithChildren<{
+	/**
+	 * The open state of the menu.
+	 */
+	open?: boolean;
+
+	/**
+	 * A callback that is called when the menu is opened or closed.
+	 */
+	onOpenChange?: OnChangeFn<boolean>;
+
+	/**
+	 * Whether or not the open state is controlled or not. If `true`, the component will not update
+	 * the open state internally, instead it will call `onOpenChange` when it would have
+	 * otherwise, and it is up to you to update the `open` prop that is passed to the component.
+	 *
+	 * @defaultValue false
+	 */
+	controlledOpen?: boolean;
+}>;
 
 export type MenuSubProps = MenuSubPropsWithoutHTML;
 
-export type MenuSubTriggerProps = MenuSubTriggerPropsWithoutHTML & HTMLDivAttributes;
+export type MenuSubContentPropsWithoutHTML = Expand<
+	WithChildNoChildrenSnippetProps<
+		Omit<PopperLayerProps, "content" | "preventScroll"> & _SharedMenuContentProps,
+		MenuContentSnippetProps
+	>
+>;
 
-// Trigger for context menu
-export type ContextTriggerProps = Omit<MenuTriggerPropsWithoutHTML, "el"> &
-	HTMLDivAttributes &
-	DOMEl;
+export type MenuSubContentProps = MenuSubContentPropsWithoutHTML &
+	Without<BitsPrimitiveDivAttributes, MenuSubContentPropsWithoutHTML>;
 
-// Trigger for dropdown menu & menubar menu
-export type DropdownTriggerProps = Omit<MenuTriggerPropsWithoutHTML, "el"> &
-	HTMLButtonAttributes &
-	DOMEl<HTMLButtonElement>;
+export type MenuSubContentStaticPropsWithoutHTML = Expand<
+	WithChildNoChildrenSnippetProps<
+		Omit<PopperLayerStaticProps, "content" | "preventScroll"> & _SharedMenuContentProps,
+		MenuContentSnippetProps
+	>
+>;
 
-export type MenuArrowProps = MenuArrowPropsWithoutHTML & HTMLDivAttributes;
+export type MenuSubContentStaticProps = MenuSubContentStaticPropsWithoutHTML &
+	Without<BitsPrimitiveDivAttributes, MenuSubContentStaticPropsWithoutHTML>;
 
-export type MenuItemEvents<T extends Element = HTMLDivElement> = {
-	click: CustomEventHandler<MouseEvent, T>;
-	keydown: CustomEventHandler<KeyboardEvent, T>;
-	focusin: CustomEventHandler<FocusEvent, T>;
-	focusout: CustomEventHandler<FocusEvent, T>;
-	pointerdown: CustomEventHandler<PointerEvent, T>;
-	pointerleave: CustomEventHandler<PointerEvent, T>;
-	pointermove: CustomEventHandler<PointerEvent, T>;
-	pointerenter: CustomEventHandler<PointerEvent, T>;
+export type MenuSubTriggerPropsWithoutHTML = MenuItemPropsWithoutHTML;
+export type MenuSubTriggerProps = MenuItemProps;
+
+export type MenuSeparatorPropsWithoutHTML = WithChild;
+export type MenuSeparatorProps = MenuSeparatorPropsWithoutHTML &
+	Without<BitsPrimitiveDivAttributes, MenuSeparatorPropsWithoutHTML>;
+
+export type MenuArrowPropsWithoutHTML = ArrowPropsWithoutHTML;
+export type MenuArrowProps = ArrowProps;
+
+export type MenuGroupPropsWithoutHTML = WithChild;
+export type MenuGroupProps = MenuGroupPropsWithoutHTML &
+	Without<BitsPrimitiveDivAttributes, MenuGroupPropsWithoutHTML>;
+
+export type MenuGroupHeadingPropsWithoutHTML = WithChild;
+export type MenuGroupHeadingProps = MenuGroupHeadingPropsWithoutHTML &
+	Without<BitsPrimitiveDivAttributes, MenuGroupHeadingPropsWithoutHTML>;
+
+export type MenuRadioGroupPropsWithoutHTML = WithChild<{
+	/**
+	 * The value of the selected radio item.
+	 *
+	 * Supports two-way binding with `bind:value`.
+	 */
+	value?: string;
+
+	/**
+	 * A callback that is fired when the selected radio item changes.
+	 */
+	onValueChange?: OnChangeFn<string>;
+
+	/**
+	 * Whether or not the value state is controlled or not. If `true`, the component will not update
+	 * the value state internally, instead it will call `onValueChange` when it would have
+	 * otherwise, and it is up to you to update the `value` prop that is passed to the component.
+	 *
+	 * @defaultValue false
+	 */
+	controlledValue?: boolean;
+}>;
+
+export type MenuRadioGroupProps = MenuRadioGroupPropsWithoutHTML &
+	Without<BitsPrimitiveDivAttributes, MenuRadioGroupPropsWithoutHTML>;
+
+export type MenuRadioItemSnippetProps = { checked: boolean };
+
+export type MenuRadioItemPropsWithoutHTML = MenuItemPropsWithoutHTML<MenuRadioItemSnippetProps> & {
+	/**
+	 * The value of the radio item.
+	 */
+	value: string;
 };
 
-export type MenuCheckboxItemEvents = MenuItemEvents;
+export type MenuRadioItemProps = MenuRadioItemPropsWithoutHTML &
+	Without<BitsPrimitiveDivAttributes, MenuRadioItemPropsWithoutHTML>;
 
-export type MenuRadioItemEvents = MenuItemEvents;
-
-export type MenuSubTriggerEvents = Omit<MenuItemEvents, "pointerdown">;
-
-// Trigger events used by the context menu
-export type ContextTriggerEvents<T extends Element = HTMLDivElement> = {
-	pointerdown: CustomEventHandler<PointerEvent, T>;
-	contextmenu: CustomEventHandler<MouseEvent, T>;
-};
-
-// Trigger events used by the dropdown
-export type DropdownTriggerEvents<T extends Element = HTMLButtonElement> = {
-	click: CustomEventHandler<MouseEvent, T>;
-	keydown: CustomEventHandler<KeyboardEvent, T>;
-};
-
-// Trigger events used by the menubar
-export type MenubarTriggerEvents<T extends Element = HTMLButtonElement> = {
-	click: CustomEventHandler<MouseEvent, T>;
-	keydown: CustomEventHandler<KeyboardEvent, T>;
-	pointerenter: CustomEventHandler<PointerEvent, T>;
-};
-
-export type MenuSubContentEvents<T extends Element = HTMLDivElement> = {
-	keydown: CustomEventHandler<KeyboardEvent, T>;
-	focusout: CustomEventHandler<FocusEvent, T>;
-	pointermove: CustomEventHandler<PointerEvent, T>;
-};
-
-export type MenuContentEvents<T extends Element = HTMLDivElement> = {
-	keydown: CustomEventHandler<KeyboardEvent, T>;
-};
-
-export type { MenuContentProps, MenuContentProps as MenuSubContentProps };
-
-export type { DropdownTriggerProps as MenubarTriggerProps };
+export type MenuPortalPropsWithoutHTML = PortalProps;
+export type MenuPortalProps = MenuPortalPropsWithoutHTML;

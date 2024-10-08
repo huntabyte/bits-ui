@@ -1,0 +1,31 @@
+{
+  "mode": "pre",
+  "tag": "next",
+  "initialVersions": {
+    "bits-ui": "0.21.15",
+    "docs": "0.0.0",
+    "tests": "0.0.0"
+  },
+  "changesets": [
+    "clean-wombats-argue",
+    "clever-suns-reflect",
+    "early-points-study",
+    "famous-suits-wash",
+    "gentle-scissors-vanish",
+    "healthy-ligers-sell",
+    "lucky-chefs-learn",
+    "many-clouds-clean",
+    "many-pandas-fly",
+    "moody-islands-chew",
+    "odd-games-guess",
+    "pink-eyes-begin",
+    "rare-islands-divide",
+    "serious-shrimps-pump",
+    "short-pianos-brake",
+    "shy-knives-destroy",
+    "slimy-mails-argue",
+    "soft-comics-sort",
+    "tame-ads-heal",
+    "yellow-dodos-design"
+  ]
+}
