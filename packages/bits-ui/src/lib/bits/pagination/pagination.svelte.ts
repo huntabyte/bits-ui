@@ -93,6 +93,7 @@ class PaginationRootState {
 	snippetProps = $derived.by(() => ({
 		pages: this.pages,
 		range: this.range,
+		currentPage: this.page.current
 	}));
 
 	props = $derived.by(
