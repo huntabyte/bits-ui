@@ -94,7 +94,7 @@ Here's an example of how you might create a reusable `MySelect` component that r
 						{#snippet children({ selected })}
 							{selected ? "✅" : ""}
 							<Select.ItemText>
-								{item.label}
+								{label}
 							</Select.ItemText>
 						{/snippet}
 					</Select.Item>
