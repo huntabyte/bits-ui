@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.16
+
+### Patch Changes
+
+-   expose `currentPage` to the `Pagination.Root` snippets ([#759](https://github.com/huntabyte/bits-ui/pull/759))
+
 ## 1.0.0-next.15
 
 ### Patch Changes
