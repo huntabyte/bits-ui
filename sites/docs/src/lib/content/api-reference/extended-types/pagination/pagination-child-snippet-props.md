@@ -18,6 +18,8 @@ type ChildSnippetProps = {
 	pages: PageItem[];
 	/** The range of pages to render */
 	range: { start: number; end: number };
+	/** The currently active page */
+	currentPage: number;
 	props: Record<string, unknown>;
 };
 ```
