@@ -7,6 +7,7 @@ import type {
 type PaginationSnippetProps = {
 	pages: PageItem[];
 	range: { start: number; end: number };
+	currentPage: number;
 };
 
 export type PaginationRootPropsWithoutHTML = WithChild<
