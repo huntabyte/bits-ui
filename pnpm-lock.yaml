@@ -63,8 +63,8 @@ importers:
         specifier: ^0.15.2
         version: 0.15.2(svelte@5.0.0-next.260)
       svelte-toolbelt:
-        specifier: ^0.4.1
-        version: 0.4.1(svelte@5.0.0-next.260)
+        specifier: ^0.4.2
+        version: 0.4.2(svelte@5.0.0-next.260)
     devDependencies:
       '@sveltejs/kit':
         specifier: ^2.5.28
@@ -4214,8 +4214,8 @@ packages:
     peerDependencies:
       svelte: ^3.0.0 || ^4.0.0 || ^5.0.0-next.1
 
-  svelte-toolbelt@0.4.1:
-    resolution: {integrity: sha512-wRFa4YeimMpq7EptvtgX8d0IuBxqVRF7wymVWz92hs2VmQ33CGa40NvfIdK0Xm4ONRadU7FdpH6Gn2tUmEYEAg==}
+  svelte-toolbelt@0.4.2:
+    resolution: {integrity: sha512-gepP5X070uw/lcAIhlp4Dw+LUQ8hyVa90DL7OqA8B622KkWOxVVIZvUOJSIsy27Ik68ITF9un+9NcLDuh82jbQ==}
     engines: {node: '>=20', pnpm: '>=8.7.0'}
     peerDependencies:
       svelte: ^5.0.0-next.126
@@ -9166,7 +9166,7 @@ snapshots:
     dependencies:
       svelte: 5.0.0-next.260
 
-  svelte-toolbelt@0.4.1(svelte@5.0.0-next.260):
+  svelte-toolbelt@0.4.2(svelte@5.0.0-next.260):
     dependencies:
       clsx: 2.1.1
       style-to-object: 1.0.6
