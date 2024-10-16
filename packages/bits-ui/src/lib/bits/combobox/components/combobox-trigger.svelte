@@ -2,7 +2,7 @@
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { ComboboxTriggerProps } from "../types.js";
 	import { useId } from "$lib/internal/use-id.js";
-	import { useListboxComboTrigger } from "$lib/bits/listbox/listbox.svelte.js";
+	import { useSelectComboTrigger } from "$lib/bits/select/select.svelte.js";
 
 	let {
 		id = useId(),
@@ -12,7 +12,7 @@
 		...restProps
 	}: ComboboxTriggerProps = $props();
 
-	const triggerState = useListboxComboTrigger({
+	const triggerState = useSelectComboTrigger({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

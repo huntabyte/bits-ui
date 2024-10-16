@@ -1,88 +1,79 @@
 <script lang="ts" module>
-	import { Select } from "bits-ui";
+	import {
+		Select,
+		type SelectSingleRootProps,
+		type WithoutChildren,
+		type WithoutChildrenOrChild,
+	} from "bits-ui";
 	export type Item = {
 		value: string;
 		label: string;
 		disabled?: boolean;
 	};
 
-	export type SelectTestProps = Select.RootProps & {
-		options: Item[];
-		placeholder?: string;
-		portalProps?: Select.PortalProps;
-		contentProps?: Omit<Select.ContentProps, "children" | "asChild" | "child">;
-		onSubmit?: (value: string) => void;
+	export type SelectSingleTestProps = WithoutChildren<SelectSingleRootProps> & {
+		contentProps?: WithoutChildrenOrChild<Select.ContentProps>;
+		portalProps?: WithoutChildrenOrChild<Select.PortalProps>;
+		items: Item[];
+		searchValue?: string;
 	};
 </script>
 
 <script lang="ts">
 	let {
+		contentProps,
+		portalProps,
+		items,
 		value = "",
 		open = false,
-		placeholder = "select something",
-		options = [],
-		portalProps = {},
-		contentProps = {},
-		name = "theme",
-		onSubmit,
+		searchValue = "",
 		...restProps
-	}: SelectTestProps = $props();
+	}: SelectSingleTestProps = $props();
+
+	const filteredItems = $derived(
+		searchValue === ""
+			? items
+			: items.filter((item) => item.label.toLowerCase().includes(searchValue.toLowerCase()))
+	);
+
+	const selectedLabel = $derived(
+		value ? items.find((item) => item.value === value)?.label : "Open Listbox"
+	);
 </script>
 
-<main data-testid="main" class="relative">
-	<form
-		data-testid="form"
-		onsubmit={(e) => {
-			e.preventDefault();
-			const fd = new FormData(e.currentTarget);
-			onSubmit?.(String(fd.get(name)));
-		}}
-	>
-		<Select.Root bind:value bind:open {...restProps} {name}>
-			<Select.Trigger data-testid="trigger" aria-label="open select">
-				<Select.Value data-testid="value" {placeholder} />
-			</Select.Trigger>
-			<Select.Portal {...portalProps}>
-				<Select.Content data-testid="content" {...contentProps}>
-					<Select.ScrollUpButton data-testid="scroll-up-button" />
-					<Select.Viewport data-testid="viewport">
-						<Select.Separator data-testid="separator" />
-						<Select.Group data-testid="group">
-							<Select.GroupHeading data-testid="group-label"
-								>Options</Select.GroupHeading
-							>
-							{#each options as { value, label, disabled }}
-								<Select.Item data-testid={value} {disabled} {value}>
-									{#snippet children({ selected })}
-										{#if selected}
-											<span data-testid="{value}-indicator">x</span>
-										{/if}
-										<Select.ItemText data-testid="{value}-item-text">
-											{label}
-										</Select.ItemText>
-									{/snippet}
-								</Select.Item>
-							{/each}
-						</Select.Group>
-					</Select.Viewport>
-					<Select.ScrollDownButton data-testid="scroll-down-button" />
-				</Select.Content>
-			</Select.Portal>
-		</Select.Root>
-		<div data-testid="outside" class="absolute left-0 top-0 size-10"></div>
-		<button type="button" data-testid="open-binding" onclick={() => (open = !open)}>
-			{open}
-		</button>
-		<button
-			type="button"
-			data-testid="value-binding"
-			aria-label="value binding"
-			onclick={() => (value = "")}
-		>
+<main data-testid="main">
+	<Select.Root bind:value bind:open {...restProps} type="single">
+		<Select.Trigger data-testid="trigger">
+			{selectedLabel}
+		</Select.Trigger>
+		<Select.Portal {...portalProps}>
+			<Select.Content data-testid="content" {...contentProps}>
+				<Select.Group data-testid="group">
+					<Select.GroupHeading data-testid="group-label">Options</Select.GroupHeading>
+					{#each filteredItems as { value, label, disabled }}
+						<Select.Item data-testid={value} {disabled} {value} {label}>
+							{#snippet children({ selected })}
+								{#if selected}
+									<span data-testid="{value}-indicator">x</span>
+								{/if}
+								{label}
+							{/snippet}
+						</Select.Item>
+					{/each}
+				</Select.Group>
+			</Select.Content>
+		</Select.Portal>
+	</Select.Root>
+	<div data-testid="outside"></div>
+	<button data-testid="open-binding" onclick={() => (open = !open)}>
+		{open}
+	</button>
+	<button data-testid="value-binding" onclick={() => (value = "")}>
+		{#if value === ""}
+			empty
+		{:else}
 			{value}
-		</button>
-
-		<button data-testid="submit"> submit </button>
-	</form>
+		{/if}
+	</button>
 </main>
 <div data-testid="portal-target" id="portal-target"></div>

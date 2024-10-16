@@ -1,209 +1,617 @@
-/**
- * This logic is adapted from Radix UI Select component.
- * https://github.com/radix-ui/primitives/blob/main/packages/react/select/src/Select.tsx
- * Credit to the Radix UI team for the original implementation.
- */
-import {
-	type ReadableBox,
-	type WritableBox,
-	afterSleep,
-	afterTick,
-	box,
-	useRefById,
-} from "svelte-toolbelt";
-import { SvelteMap } from "svelte/reactivity";
+import { Previous } from "runed";
 import { untrack } from "svelte";
-import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import { useId } from "$lib/internal/use-id.js";
-import type { Direction } from "$lib/shared/index.js";
-import { createContext } from "$lib/internal/create-context.js";
-import { useFormControl } from "$lib/internal/use-form-control.svelte.js";
-import { type Typeahead, useTypeahead } from "$lib/internal/use-typeahead.svelte.js";
+import { afterTick, srOnlyStyles, styleToString, useRefById } from "svelte-toolbelt";
+import type { InteractOutsideEvent } from "../utilities/dismissible-layer/types.js";
+import { backward, forward, next, prev } from "$lib/internal/arrays.js";
 import {
-	getAriaDisabled,
 	getAriaExpanded,
 	getAriaHidden,
-	getAriaRequired,
-	getAriaSelected,
-	getDataChecked,
 	getDataDisabled,
 	getDataOpenClosed,
+	getDisabled,
+	getRequired,
 } from "$lib/internal/attrs.js";
+import type { Box, ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
+import { createContext } from "$lib/internal/create-context.js";
 import { kbd } from "$lib/internal/kbd.js";
-import { clamp } from "$lib/internal/clamp.js";
+import type { WithRefProps } from "$lib/internal/types.js";
 import { noop } from "$lib/internal/noop.js";
 import { addEventListener } from "$lib/internal/events.js";
-import type { WithRefProps } from "$lib/internal/types.js";
+import { type DOMTypeahead, useDOMTypeahead } from "$lib/internal/use-dom-typeahead.svelte.js";
+import { type DataTypeahead, useDataTypeahead } from "$lib/internal/use-data-typeahead.svelte.js";
 
-export const OPEN_KEYS = [kbd.SPACE, kbd.ENTER, kbd.ARROW_UP, kbd.ARROW_DOWN];
-export const SELECTION_KEYS = [" ", kbd.ENTER];
+// prettier-ignore
+export const INTERACTION_KEYS = [kbd.ARROW_LEFT, kbd.ESCAPE, kbd.ARROW_RIGHT, kbd.SHIFT, kbd.CAPS_LOCK, kbd.CONTROL, kbd.ALT, kbd.META, kbd.ENTER, kbd.F1, kbd.F2, kbd.F3, kbd.F4, kbd.F5, kbd.F6, kbd.F7, kbd.F8, kbd.F9, kbd.F10, kbd.F11, kbd.F12];
+
+export const FIRST_KEYS = [kbd.ARROW_DOWN, kbd.PAGE_UP, kbd.HOME];
+export const LAST_KEYS = [kbd.ARROW_UP, kbd.PAGE_DOWN, kbd.END];
+export const FIRST_LAST_KEYS = [...FIRST_KEYS, ...LAST_KEYS];
+export const SELECTION_KEYS = [kbd.ENTER, kbd.SPACE];
+
 export const CONTENT_MARGIN = 10;
 
-const TRIGGER_ATTR = "data-select-trigger";
-const CONTENT_ATTR = "data-select-content";
-const ITEM_ATTR = "data-select-item";
-const VIEWPORT_ATTR = "data-select-viewport";
-const VALUE_ATTR = "data-select-value";
-const ITEM_TEXT_ATTR = "data-select-item-text";
-const CONTENT_WRAPPER_ATTR = "data-select-content-wrapper";
-const SCROLL_UP_BUTTON_ATTR = "data-select-scroll-up-button";
-const SCROLL_DOWN_BUTTON_ATTR = "data-select-scroll-down-button";
-const GROUP_ATTR = "data-select-group";
-const GROUP_LABEL_ATTR = "data-select-group-label";
-const SEPARATOR_ATTR = "data-select-separator";
-const ARROW_ATTR = "data-select-arrow";
-const ICON_ATTR = "data-select-icon";
-
-export const [setSelectRootContext, getSelectRootContext] =
-	createContext<SelectRootState>("Select.Root");
-
-export const [setSelectTriggerContext] = createContext<SelectTriggerState>("Select.Trigger");
-
-export const [setSelectContentContext, getSelectContentContext] =
-	createContext<SelectContentState>("Select.Content");
-
-export const [setSelectItemContext, getSelectItemContext] =
-	createContext<SelectItemState>("Select.Item");
-
-export const [setSelectContentItemAlignedContext, getSelectContentItemAlignedContext] =
-	createContext<SelectItemAlignedPositionState>("Select.ContentItemAligned");
-
-const [setSelectGroupContext, getSelectGroupContext] =
-	createContext<SelectGroupState>("Select.Group");
-
-type SelectRootStateProps = WritableBoxedValues<{
-	open: boolean;
-	value: string;
-}> &
-	ReadableBoxedValues<{
-		dir: Direction;
-		disabled: boolean;
-		required: boolean;
-	}>;
-
-type SelectNativeOption = {
-	value: string;
-	key: string;
+type SelectBaseRootStateProps = ReadableBoxedValues<{
 	disabled: boolean;
-	innerHTML?: string | null;
-};
+	required: boolean;
+	name: string;
+	loop: boolean;
+	scrollAlignment: "nearest" | "center";
+	items: { value: string; label: string; disabled?: boolean }[];
+}> &
+	WritableBoxedValues<{
+		open: boolean;
+	}> & {
+		isCombobox: boolean;
+	};
 
-export class SelectRootState {
-	open: SelectRootStateProps["open"];
-	value: SelectRootStateProps["value"];
-	dir: SelectRootStateProps["dir"];
-	disabled: SelectRootStateProps["disabled"];
-	required: SelectRootStateProps["required"];
-	triggerNode = $state<HTMLElement | null>(null);
-	valueId = box<string>(useId());
-	valueNodeHasChildren = box(false);
-	valueNode = $state<HTMLElement | null>(null);
+class SelectBaseRootState {
+	disabled: SelectBaseRootStateProps["disabled"];
+	required: SelectBaseRootStateProps["required"];
+	name: SelectBaseRootStateProps["name"];
+	loop: SelectBaseRootStateProps["loop"];
+	open: SelectBaseRootStateProps["open"];
+	scrollAlignment: SelectBaseRootStateProps["scrollAlignment"];
+	items: SelectBaseRootStateProps["items"];
+	touchedInput = $state(false);
+	inputValue = $state<string>("");
+	inputNode = $state<HTMLElement | null>(null);
 	contentNode = $state<HTMLElement | null>(null);
-	contentId = $state<string | undefined>(undefined);
-	triggerPointerDownPos = box<{ x: number; y: number } | null>({ x: 0, y: 0 });
-	contentFragment = $state<DocumentFragment | null>(null);
-
-	// A set of all the native options we'll use to render the native select element under the hood
-	#nativeOptionsSet = new SvelteMap<string, ReadableBox<SelectNativeOption>>();
-	// A key we'll use to rerender the native select when the options change to keep it in sync
-	nativeSelectKey = $derived.by(() => {
-		return Array.from(this.#nativeOptionsSet.values())
-			.map((opt) => opt.current.value)
-			.join(";");
+	triggerNode = $state<HTMLElement | null>(null);
+	valueId = $state("");
+	highlightedNode = $state<HTMLElement | null>(null);
+	highlightedValue = $derived.by(() => {
+		if (!this.highlightedNode) return null;
+		return this.highlightedNode.getAttribute("data-value");
 	});
+	highlightedId = $derived.by(() => {
+		if (!this.highlightedNode) return undefined;
+		return this.highlightedNode.id;
+	});
+	highlightedLabel = $derived.by(() => {
+		if (!this.highlightedNode) return null;
+		return this.highlightedNode.getAttribute("data-label");
+	});
+	isUsingKeyboard = $state(false);
+	isCombobox = $state(false);
+	bitsAttrs: SelectBitsAttrs;
+	triggerPointerDownPos = $state.raw<{ x: number; y: number } | null>({ x: 0, y: 0 });
 
-	nativeOptionsArr = $derived.by(() => Array.from(this.#nativeOptionsSet.values()));
-	isFormControl = useFormControl(() => this.triggerNode);
-
-	constructor(props: SelectRootStateProps) {
-		this.open = props.open;
-		this.value = props.value;
-		this.dir = props.dir;
+	constructor(props: SelectBaseRootStateProps) {
 		this.disabled = props.disabled;
 		this.required = props.required;
+		this.name = props.name;
+		this.loop = props.loop;
+		this.open = props.open;
+		this.scrollAlignment = props.scrollAlignment;
+		this.isCombobox = props.isCombobox;
+		this.items = props.items;
+
+		this.bitsAttrs = getSelectBitsAttrs(this);
+
+		$effect.pre(() => {
+			if (!this.open.current) {
+				this.setHighlightedNode(null);
+			}
+		});
 	}
 
-	handleClose = () => {
-		this.open.current = false;
-		this.focusTriggerNode();
+	setHighlightedNode = (node: HTMLElement | null) => {
+		this.highlightedNode = node;
+		if (node) {
+			if (this.isUsingKeyboard) {
+				node.scrollIntoView({ block: "nearest" });
+			}
+		}
 	};
 
-	focusTriggerNode = (preventScroll: boolean = true) => {
-		const node = this.triggerNode;
-		if (!node) return;
-		// this needs to be 10 otherwise Firefox doesn't focus the correct node
-		afterSleep(10, () => {
-			node.focus({ preventScroll });
-		});
-	};
-
-	onNativeOptionAdd = (option: ReadableBox<SelectNativeOption>) => {
-		this.#nativeOptionsSet.set(option.current.value, option);
-	};
-
-	onNativeOptionRemove = (option: ReadableBox<SelectNativeOption>) => {
-		this.#nativeOptionsSet.delete(option.current.value);
-	};
-
-	getTriggerTypeaheadCandidateNodes = () => {
-		const node = this.contentFragment;
-		if (!node) return [];
-		return Array.from(
-			node.querySelectorAll<HTMLElement>(`[${ITEM_ATTR}]:not([data-disabled])`)
-		);
-	};
-
-	getCandidateNodes = () => {
+	getCandidateNodes = (): HTMLElement[] => {
 		const node = this.contentNode;
 		if (!node) return [];
-		return Array.from(
-			node.querySelectorAll<HTMLElement>(`[${ITEM_ATTR}]:not([data-disabled])`)
+		const nodes = Array.from(
+			node.querySelectorAll<HTMLElement>(`[${this.bitsAttrs.item}]:not([data-disabled])`)
 		);
+		return nodes;
+	};
+
+	setHighlightedToFirstCandidate = () => {
+		this.setHighlightedNode(null);
+		const candidateNodes = this.getCandidateNodes();
+		if (!candidateNodes.length) return;
+		this.setHighlightedNode(candidateNodes[0]!);
+	};
+
+	getNodeByValue = (value: string): HTMLElement | null => {
+		const candidateNodes = this.getCandidateNodes();
+		return candidateNodes.find((node) => node.dataset.value === value) ?? null;
+	};
+
+	setOpen = (open: boolean) => {
+		this.open.current = open;
+	};
+
+	toggleOpen = () => {
+		this.open.current = !this.open.current;
+	};
+
+	handleOpen = () => {
+		this.setOpen(true);
+	};
+
+	handleClose = () => {
+		this.setHighlightedNode(null);
+		this.setOpen(false);
+	};
+
+	toggleMenu = () => {
+		this.toggleOpen();
 	};
 }
 
-type SelectTriggerStateProps = WithRefProps<
-	ReadableBoxedValues<{
-		disabled: boolean;
-	}>
->;
+type SelectSingleRootStateProps = SelectBaseRootStateProps &
+	WritableBoxedValues<{
+		value: string;
+	}>;
 
-class SelectTriggerState {
-	#root: SelectRootState;
-	#id: SelectTriggerStateProps["id"];
-	#ref: SelectTriggerStateProps["ref"];
-	#disabled: SelectTriggerStateProps["disabled"];
-	#typeahead: Typeahead;
-	#isDisabled = $derived.by(() => {
-		return this.#root.disabled.current || this.#disabled.current;
+class SelectSingleRootState extends SelectBaseRootState {
+	value: SelectSingleRootStateProps["value"];
+	isMulti = false as const;
+	hasValue = $derived.by(() => this.value.current !== "");
+	currentLabel = $derived.by(() => {
+		if (!this.items.current.length) return "";
+		const match = this.items.current.find((item) => item.value === this.value.current)?.label;
+		return match ?? "";
+	});
+	candidateLabels: string[] = $derived.by(() => {
+		if (!this.items.current.length) return [];
+		const filteredItems = this.items.current.filter((item) => !item.disabled);
+		return filteredItems.map((item) => item.label);
+	});
+	dataTypeaheadEnabled = $derived.by(() => {
+		if (this.isMulti) return false;
+		if (this.items.current.length === 0) return false;
+		return true;
 	});
 
-	constructor(props: SelectTriggerStateProps, root: SelectRootState) {
+	constructor(props: SelectSingleRootStateProps) {
+		super(props);
+		this.value = props.value;
+
+		$effect(() => {
+			if (!this.open.current && this.highlightedNode) {
+				this.setHighlightedNode(null);
+			}
+		});
+
+		$effect(() => {
+			if (!this.open.current) return;
+			afterTick(() => {
+				this.#setInitialHighlightedNode();
+			});
+		});
+	}
+
+	includesItem = (itemValue: string) => {
+		return this.value.current === itemValue;
+	};
+
+	toggleItem = (itemValue: string, itemLabel: string = itemValue) => {
+		this.value.current = this.includesItem(itemValue) ? "" : itemValue;
+		this.inputValue = itemLabel;
+	};
+
+	#setInitialHighlightedNode = () => {
+		if (this.highlightedNode) return;
+		if (this.value.current !== "") {
+			const node = this.getNodeByValue(this.value.current);
+			if (node) {
+				this.setHighlightedNode(node);
+				return;
+			}
+		}
+		// if no value is set, we want to highlight the first item
+		const firstCandidate = this.getCandidateNodes()[0];
+		if (!firstCandidate) return;
+		this.setHighlightedNode(firstCandidate);
+	};
+}
+
+type SelectMultipleRootStateProps = SelectBaseRootStateProps &
+	WritableBoxedValues<{
+		value: string[];
+	}>;
+
+class SelectMultipleRootState extends SelectBaseRootState {
+	value: SelectMultipleRootStateProps["value"];
+	isMulti = true as const;
+	hasValue = $derived.by(() => this.value.current.length > 0);
+
+	constructor(props: SelectMultipleRootStateProps) {
+		super(props);
+		this.value = props.value;
+
+		$effect(() => {
+			if (!this.open.current) return;
+			afterTick(() => {
+				if (!this.highlightedNode) {
+					this.#setInitialHighlightedNode();
+				}
+			});
+		});
+	}
+
+	includesItem = (itemValue: string) => {
+		return this.value.current.includes(itemValue);
+	};
+
+	toggleItem = (itemValue: string, itemLabel: string = itemValue) => {
+		if (this.includesItem(itemValue)) {
+			this.value.current = this.value.current.filter((v) => v !== itemValue);
+		} else {
+			this.value.current = [...this.value.current, itemValue];
+		}
+		this.inputValue = itemLabel;
+	};
+
+	#setInitialHighlightedNode = () => {
+		if (this.highlightedNode) return;
+		if (this.value.current.length && this.value.current[0] !== "") {
+			const node = this.getNodeByValue(this.value.current[0]!);
+			if (node) {
+				this.setHighlightedNode(node);
+				return;
+			}
+		}
+		// if no value is set, we want to highlight the first item
+		const firstCandidate = this.getCandidateNodes()[0];
+		if (!firstCandidate) return;
+		this.setHighlightedNode(firstCandidate);
+	};
+}
+
+type SelectRootState = SelectSingleRootState | SelectMultipleRootState;
+
+type SelectInputStateProps = WithRefProps;
+
+class SelectInputState {
+	#id: SelectInputStateProps["id"];
+	#ref: SelectInputStateProps["ref"];
+	root: SelectRootState;
+
+	constructor(props: SelectInputStateProps, root: SelectRootState) {
+		this.root = root;
 		this.#id = props.id;
 		this.#ref = props.ref;
-		this.#root = root;
-		this.#disabled = props.disabled;
 
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
 			onRefChange: (node) => {
-				this.#root.triggerNode = node;
+				this.root.inputNode = node;
+			},
+		});
+	}
+
+	#onkeydown = async (e: KeyboardEvent) => {
+		this.root.isUsingKeyboard = true;
+		if (e.key === kbd.ESCAPE) return;
+		const open = this.root.open.current;
+		const inputValue = this.root.inputValue;
+
+		// prevent arrow up/down from moving the position of the cursor in the input
+		if (e.key === kbd.ARROW_UP || e.key === kbd.ARROW_DOWN) e.preventDefault();
+		if (!open) {
+			if (INTERACTION_KEYS.includes(e.key)) return;
+			if (e.key === kbd.TAB) return;
+			if (e.key === kbd.BACKSPACE && inputValue === "") return;
+			this.root.handleOpen();
+			// we need to wait for a tick after the menu opens to ensure the highlighted nodes are
+			// set correctly.
+			afterTick(() => {
+				if (this.root.hasValue) return;
+				const candidateNodes = this.root.getCandidateNodes();
+				if (!candidateNodes.length) return;
+
+				if (e.key === kbd.ARROW_DOWN) {
+					const firstCandidate = candidateNodes[0]!;
+					this.root.setHighlightedNode(firstCandidate);
+				} else if (e.key === kbd.ARROW_UP) {
+					const lastCandidate = candidateNodes[candidateNodes.length - 1]!;
+					this.root.setHighlightedNode(lastCandidate);
+				}
+			});
+			return;
+		}
+
+		if (e.key === kbd.TAB) {
+			this.root.handleClose();
+			return;
+		}
+
+		if (e.key === kbd.ENTER && !e.isComposing) {
+			e.preventDefault();
+			const highlightedValue = this.root.highlightedValue;
+			if (highlightedValue) {
+				this.root.toggleItem(highlightedValue, this.root.highlightedLabel ?? undefined);
+			}
+			if (!this.root.isMulti) {
+				this.root.handleClose();
+			}
+		}
+
+		if (e.key === kbd.ARROW_UP && e.altKey) {
+			this.root.handleClose();
+		}
+
+		if (FIRST_LAST_KEYS.includes(e.key)) {
+			e.preventDefault();
+			const candidateNodes = this.root.getCandidateNodes();
+			const currHighlightedNode = this.root.highlightedNode;
+			const currIndex = currHighlightedNode
+				? candidateNodes.indexOf(currHighlightedNode)
+				: -1;
+
+			const loop = this.root.loop.current;
+			let nextItem: HTMLElement | undefined;
+
+			if (e.key === kbd.ARROW_DOWN) {
+				nextItem = next(candidateNodes, currIndex, loop);
+			} else if (e.key === kbd.ARROW_UP) {
+				nextItem = prev(candidateNodes, currIndex, loop);
+			} else if (e.key === kbd.PAGE_DOWN) {
+				nextItem = forward(candidateNodes, currIndex, 10, loop);
+			} else if (e.key === kbd.PAGE_UP) {
+				nextItem = backward(candidateNodes, currIndex, 10, loop);
+			} else if (e.key === kbd.HOME) {
+				nextItem = candidateNodes[0];
+			} else if (e.key === kbd.END) {
+				nextItem = candidateNodes[candidateNodes.length - 1];
+			}
+			if (!nextItem) return;
+			this.root.setHighlightedNode(nextItem);
+			return;
+		}
+
+		if (INTERACTION_KEYS.includes(e.key)) return;
+		if (!this.root.highlightedNode) {
+			this.root.setHighlightedToFirstCandidate();
+		}
+		// this.root.setHighlightedToFirstCandidate();
+	};
+
+	#oninput = (e: Event & { currentTarget: HTMLInputElement }) => {
+		this.root.inputValue = e.currentTarget.value;
+		this.root.setHighlightedToFirstCandidate();
+	};
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.current,
+				role: "combobox",
+				disabled: this.root.disabled.current ? true : undefined,
+				"aria-activedescendant": this.root.highlightedId,
+				"aria-autocomplete": "list",
+				"aria-expanded": getAriaExpanded(this.root.open.current),
+				"data-state": getDataOpenClosed(this.root.open.current),
+				"data-disabled": getDataDisabled(this.root.disabled.current),
+				onkeydown: this.#onkeydown,
+				oninput: this.#oninput,
+				[this.root.bitsAttrs.input]: "",
+			}) as const
+	);
+}
+
+type SelectComboTriggerStateProps = WithRefProps;
+
+class SelectComboTriggerState {
+	#id: SelectComboTriggerStateProps["id"];
+	#ref: SelectComboTriggerStateProps["ref"];
+	root: SelectBaseRootState;
+
+	constructor(props: SelectComboTriggerStateProps, root: SelectBaseRootState) {
+		this.root = root;
+		this.#id = props.id;
+		this.#ref = props.ref;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+		});
+	}
+
+	#onkeydown = (e: KeyboardEvent) => {
+		if (e.key === kbd.ENTER || e.key === kbd.SPACE) {
+			e.preventDefault();
+			if (document.activeElement !== this.root.inputNode) {
+				this.root.inputNode?.focus();
+			}
+			this.root.toggleMenu();
+		}
+	};
+
+	/**
+	 * `pointerdown` fires before the `focus` event, so we can prevent the default
+	 * behavior of focusing the button and keep focus on the input.
+	 */
+	#onpointerdown = (e: MouseEvent) => {
+		if (this.root.disabled.current) return;
+		e.preventDefault();
+		if (document.activeElement !== this.root.inputNode) {
+			this.root.inputNode?.focus();
+		}
+		this.root.toggleMenu();
+	};
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.current,
+				disabled: this.root.disabled.current ? true : undefined,
+				"aria-haspopup": "listbox",
+				"data-state": getDataOpenClosed(this.root.open.current),
+				"data-disabled": getDataDisabled(this.root.disabled.current),
+				[this.root.bitsAttrs.trigger]: "",
+				onpointerdown: this.#onpointerdown,
+				onkeydown: this.#onkeydown,
+			}) as const
+	);
+}
+
+type SelectTriggerStateProps = WithRefProps;
+
+class SelectTriggerState {
+	#id: SelectTriggerStateProps["id"];
+	#ref: SelectTriggerStateProps["ref"];
+	root: SelectRootState;
+	#domTypeahead: DOMTypeahead;
+	#dataTypeahead: DataTypeahead;
+
+	constructor(props: SelectTriggerStateProps, root: SelectRootState) {
+		this.root = root;
+		this.#id = props.id;
+		this.#ref = props.ref;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+			onRefChange: (node) => {
+				this.root.triggerNode = node;
 			},
 		});
 
-		this.#typeahead = useTypeahead();
+		this.#domTypeahead = useDOMTypeahead({
+			getCurrentItem: () => this.root.highlightedNode,
+			onMatch: (node) => {
+				this.root.setHighlightedNode(node);
+			},
+		});
+
+		this.#dataTypeahead = useDataTypeahead({
+			getCurrentItem: () => {
+				if (this.root.isMulti) return "";
+				return this.root.currentLabel;
+			},
+			onMatch: (label: string) => {
+				if (this.root.isMulti) return;
+				if (!this.root.items.current) return;
+				const matchedItem = this.root.items.current.find((item) => item.label === label);
+				if (!matchedItem) return;
+				this.root.value.current = matchedItem.value;
+			},
+			enabled: !this.root.isMulti && this.root.dataTypeaheadEnabled,
+		});
 	}
 
+	#onkeydown = (e: KeyboardEvent) => {
+		this.root.isUsingKeyboard = true;
+		if (e.key === kbd.ARROW_UP || e.key === kbd.ARROW_DOWN) e.preventDefault();
+
+		if (!this.root.open.current) {
+			if (e.key === kbd.ENTER) {
+				return;
+			} else if (e.key === kbd.SPACE || e.key === kbd.ARROW_DOWN || e.key === kbd.ARROW_UP) {
+				e.preventDefault();
+				this.root.handleOpen();
+			} else if (!this.root.isMulti && this.root.dataTypeaheadEnabled) {
+				this.#dataTypeahead.handleTypeaheadSearch(e.key, this.root.candidateLabels);
+				return;
+			}
+
+			// we need to wait for a tick after the menu opens to ensure
+			// the highlighted nodes are set correctly
+			afterTick(() => {
+				if (this.root.hasValue) return;
+				const candidateNodes = this.root.getCandidateNodes();
+				if (!candidateNodes.length) return;
+
+				if (e.key === kbd.ARROW_DOWN) {
+					const firstCandidate = candidateNodes[0]!;
+					this.root.setHighlightedNode(firstCandidate);
+				} else if (e.key === kbd.ARROW_UP) {
+					const lastCandidate = candidateNodes[candidateNodes.length - 1]!;
+					this.root.setHighlightedNode(lastCandidate);
+				}
+			});
+			return;
+		}
+
+		if (e.key === kbd.TAB) {
+			this.root.handleClose();
+			return;
+		}
+
+		if ((e.key === kbd.ENTER || e.key === kbd.SPACE) && !e.isComposing) {
+			e.preventDefault();
+			const highlightedValue = this.root.highlightedValue;
+			if (highlightedValue) {
+				this.root.toggleItem(highlightedValue, this.root.highlightedLabel ?? undefined);
+			}
+			if (!this.root.isMulti) {
+				this.root.handleClose();
+			}
+		}
+
+		if (e.key === kbd.ARROW_UP && e.altKey) {
+			this.root.handleClose();
+		}
+
+		if (FIRST_LAST_KEYS.includes(e.key)) {
+			e.preventDefault();
+			const candidateNodes = this.root.getCandidateNodes();
+			const currHighlightedNode = this.root.highlightedNode;
+			const currIndex = currHighlightedNode
+				? candidateNodes.indexOf(currHighlightedNode)
+				: -1;
+
+			const loop = this.root.loop.current;
+			let nextItem: HTMLElement | undefined;
+
+			if (e.key === kbd.ARROW_DOWN) {
+				nextItem = next(candidateNodes, currIndex, loop);
+			} else if (e.key === kbd.ARROW_UP) {
+				nextItem = prev(candidateNodes, currIndex, loop);
+			} else if (e.key === kbd.PAGE_DOWN) {
+				nextItem = forward(candidateNodes, currIndex, 10, loop);
+			} else if (e.key === kbd.PAGE_UP) {
+				nextItem = backward(candidateNodes, currIndex, 10, loop);
+			} else if (e.key === kbd.HOME) {
+				nextItem = candidateNodes[0];
+			} else if (e.key === kbd.END) {
+				nextItem = candidateNodes[candidateNodes.length - 1];
+			}
+			if (!nextItem) return;
+			this.root.setHighlightedNode(nextItem);
+			return;
+		}
+		const isModifierKey = e.ctrlKey || e.altKey || e.metaKey;
+		const isCharacterKey = e.key.length === 1;
+
+		// prevent space from being considered with typeahead
+		if (e.code === "Space") return;
+
+		const candidateNodes = this.root.getCandidateNodes();
+
+		if (e.key === kbd.TAB) return;
+
+		if (!isModifierKey && isCharacterKey) {
+			this.#domTypeahead.handleTypeaheadSearch(e.key, candidateNodes);
+			return;
+		}
+
+		if (!this.root.highlightedNode) {
+			this.root.setHighlightedToFirstCandidate();
+		}
+	};
+
 	#handleOpen = () => {
-		if (this.#isDisabled) return;
-		this.#root.open.current = true;
-		this.#typeahead.resetTypeahead();
+		this.root.open.current = true;
+		this.#dataTypeahead.resetTypeahead();
+		this.#domTypeahead.resetTypeahead();
 	};
 
 	#handlePointerOpen = (e: PointerEvent) => {
 		this.#handleOpen();
-		this.#root.triggerPointerDownPos.current = {
+		this.root.triggerPointerDownPos = {
 			x: Math.round(e.pageX),
 			y: Math.round(e.pageY),
 		};
@@ -219,9 +627,13 @@ class SelectTriggerState {
 		currTarget.focus();
 	};
 
+	/**
+	 * `pointerdown` fires before the `focus` event, so we can prevent the default
+	 * behavior of focusing the button and keep focus on the input.
+	 */
 	#onpointerdown = (e: PointerEvent) => {
-		// prevent opening on touch down which can be triggered
-		// when scrolling on touch devices (unexpected)
+		if (this.root.disabled.current) return;
+		// prevent opening on touch down which can be triggered when scrolling on touch devices
 		if (e.pointerType === "touch") return e.preventDefault();
 
 		// prevent implicit pointer capture
@@ -233,11 +645,11 @@ class SelectTriggerState {
 		// only call the handle if it's a left click, since pointerdown is triggered
 		// by right clicks as well, but not when ctrl is pressed
 		if (e.button === 0 && e.ctrlKey === false) {
-			if (this.#root.open.current === false) {
+			if (this.root.open.current === false) {
 				this.#handlePointerOpen(e);
 				e.preventDefault();
 			} else {
-				this.#root.handleClose();
+				this.root.handleClose();
 			}
 		}
 	};
@@ -249,324 +661,91 @@ class SelectTriggerState {
 		}
 	};
 
-	#onkeydown = (e: KeyboardEvent) => {
-		const isTypingAhead = this.#typeahead.search.current !== "";
-		const isModifierKey = e.ctrlKey || e.altKey || e.metaKey;
-
-		if (!isModifierKey && e.key.length === 1) {
-			if (isTypingAhead && e.key === " ") return;
-		}
-		const newItem = this.#typeahead.handleTypeaheadSearch(
-			e.key,
-			this.#root.getTriggerTypeaheadCandidateNodes()
-		);
-
-		if (newItem && newItem.dataset.value) {
-			this.#root.value.current = newItem.dataset.value;
-		}
-
-		if (OPEN_KEYS.includes(e.key)) {
-			this.#handleOpen();
-			e.preventDefault();
-		}
-	};
-
 	props = $derived.by(
 		() =>
 			({
 				id: this.#id.current,
-				disabled: this.#isDisabled,
-				role: "combobox",
-				type: "button",
-				"aria-controls": this.#root.contentId,
-				"aria-expanded": getAriaExpanded(this.#root.open.current),
-				"aria-required": getAriaRequired(this.#root.required.current),
-				"aria-autocomplete": "none",
-				dir: this.#root.dir.current,
-				"data-state": getDataOpenClosed(this.#root.open.current),
-				"data-disabled": getDataDisabled(this.#isDisabled),
-				"data-placeholder": shouldShowPlaceholder(this.#root.value.current)
-					? ""
-					: undefined,
-				[TRIGGER_ATTR]: "",
-				onclick: this.#onclick,
-				onpointerdown: this.#onpointerdown,
-				onpointerup: this.#onpointerup,
-				onkeydown: this.#onkeydown,
-			}) as const
-	);
-}
-
-class SelectValueState {
-	root: SelectRootState;
-	showPlaceholder = $derived.by(() => shouldShowPlaceholder(this.root.value.current));
-	ref: WritableBox<HTMLElement | null> = box(null);
-
-	constructor(root: SelectRootState) {
-		this.root = root;
-
-		useRefById({
-			id: this.root.valueId,
-			ref: this.ref,
-			onRefChange: (node) => {
-				this.root.valueNode = node;
-			},
-		});
-	}
-
-	props = $derived.by(
-		() =>
-			({
-				id: this.root.valueId.current,
+				disabled: this.root.disabled.current ? true : undefined,
+				"aria-haspopup": "listbox",
 				"data-state": getDataOpenClosed(this.root.open.current),
 				"data-disabled": getDataDisabled(this.root.disabled.current),
-				[VALUE_ATTR]: "",
-				style: {
-					pointerEvents: "none",
-				},
+				[this.root.bitsAttrs.trigger]: "",
+				onpointerdown: this.#onpointerdown,
+				onkeydown: this.#onkeydown,
+				onclick: this.#onclick,
+				onpointerup: this.#onpointerup,
+				// onclick: this.#onclick,
 			}) as const
 	);
 }
 
-class SelectContentFragState {
-	root: SelectRootState;
+type SelectContentStateProps = WithRefProps;
 
-	constructor(root: SelectRootState) {
-		this.root = root;
-
-		$effect(() => {
-			this.root.contentFragment = new DocumentFragment();
-		});
-	}
-}
-
-type SelectContentStateProps = WithRefProps<
-	ReadableBoxedValues<{
-		position: "item-aligned" | "floating";
-	}>
->;
-
-export class SelectContentState {
+class SelectContentState {
 	id: SelectContentStateProps["id"];
 	ref: SelectContentStateProps["ref"];
-	root: SelectRootState;
 	viewportNode = $state<HTMLElement | null>(null);
-	selectedItemId = box<string>(useId());
-	selectedItemTextId = box<string>(useId());
-	selectedItemText = box<HTMLElement | null>(null);
-	position: SelectContentStateProps["position"];
-	isPositioned = box(false);
-	firstValidItemFound = box(false);
-	typeahead: Typeahead;
-	alignedPositionState: SelectItemAlignedPositionState | null = null;
+	root: SelectRootState;
+	isPositioned = $state(false);
 
 	constructor(props: SelectContentStateProps, root: SelectRootState) {
-		this.position = props.position;
+		this.root = root;
 		this.id = props.id;
 		this.ref = props.ref;
-		this.root = root;
-		this.typeahead = useTypeahead();
 
 		useRefById({
 			id: this.id,
 			ref: this.ref,
-			deps: () => this.root.open.current,
 			onRefChange: (node) => {
 				this.root.contentNode = node;
-				this.root.contentId = node?.id;
 			},
+			deps: () => this.root.open.current,
 		});
 
 		$effect(() => {
-			this.root.open.current;
-			return untrack(() => {
-				let cleanup = [noop];
-
-				afterTick(() => {
-					const node = document.getElementById(this.id.current);
-					if (!node) return;
-
-					let pointerMoveDelta = { x: 0, y: 0 };
-
-					const handlePointerMove = (e: PointerEvent) => {
-						pointerMoveDelta = {
-							x: Math.abs(
-								Math.round(e.pageX) -
-									(this.root.triggerPointerDownPos.current?.x ?? 0)
-							),
-							y: Math.abs(
-								Math.round(e.pageY) -
-									(this.root.triggerPointerDownPos.current?.y ?? 0)
-							),
-						};
-					};
-
-					const handlePointerUp = (e: PointerEvent) => {
-						if (e.pointerType === "touch") return;
-
-						if (pointerMoveDelta.x <= 10 && pointerMoveDelta.y <= 10) {
-							e.preventDefault();
-						} else {
-							if (!this.root.contentNode?.contains(e.target as HTMLElement)) {
-								this.root.handleClose();
-							}
-						}
-						document.removeEventListener("pointermove", handlePointerMove);
-						this.root.triggerPointerDownPos.current = null;
-					};
-
-					if (this.root.triggerPointerDownPos.current !== null) {
-						const pointerMove = addEventListener(
-							document,
-							"pointermove",
-							handlePointerMove
-						);
-						const pointerUp = addEventListener(document, "pointerup", handlePointerUp, {
-							capture: true,
-							once: true,
-						});
-						for (const cleanupFn of cleanup) cleanupFn();
-						cleanup = [pointerMove, pointerUp];
-					}
-
-					return () => {
-						for (const cleanupFn of cleanup) cleanupFn();
-					};
-				});
-			});
-		});
-
-		$effect(() => {
-			if (this.isPositioned.current) {
-				this.focusSelectedItem();
-			}
+			return () => {
+				this.root.contentNode = null;
+			};
 		});
 
 		$effect(() => {
 			if (this.root.open.current === false) {
-				this.isPositioned.current = false;
+				this.isPositioned = false;
 			}
 		});
 	}
 
-	focusFirst = (candidates: Array<HTMLElement | null>) => {
-		const [firstItem, ...restItems] = this.root.getCandidateNodes();
-		const [lastItem] = restItems.slice(-1);
-
-		const PREV_FOCUSED_ELEMENT = document.activeElement;
-
-		for (const candidate of candidates) {
-			if (candidate === PREV_FOCUSED_ELEMENT) return;
-			candidate?.scrollIntoView({ block: "nearest" });
-			// viewport might have padding so scroll to the edge when focusing first/last
-			const viewport = this.viewportNode;
-			if (candidate === firstItem && viewport) {
-				viewport.scrollTop = 0;
-			}
-			if (candidate === lastItem && viewport) {
-				viewport.scrollTop = viewport.scrollHeight;
-			}
-
-			candidate?.focus();
-
-			if (document.activeElement !== PREV_FOCUSED_ELEMENT) return;
-		}
+	#onpointermove = () => {
+		this.root.isUsingKeyboard = false;
 	};
 
-	onItemLeave = () => {
-		this.root.contentNode?.focus();
-	};
-
-	getSelectedItem = () => {
-		const candidates = this.root.getCandidateNodes();
-		const selectedItemNode =
-			candidates.find((node) => node?.dataset.value === this.root.value.current) ?? null;
-		const first = candidates[0] ?? null;
-		if (selectedItemNode) {
-			const selectedItemTextNode = selectedItemNode.querySelector<HTMLElement>(
-				`[${ITEM_TEXT_ATTR}]`
-			);
+	#styles = $derived.by(() => {
+		if (this.root.isCombobox) {
 			return {
-				selectedItemNode,
-				selectedItemTextNode,
+				"--bits-combobox-content-transform-origin": "var(--bits-floating-transform-origin)",
+				"--bits-combobox-content-available-width": "var(--bits-floating-available-width)",
+				"--bits-combobox-content-available-height": "var(--bits-floating-available-height)",
+				"--bits-combobox-anchor-width": "var(--bits-floating-anchor-width)",
+				"--bits-combobox-anchor-height": "var(--bits-floating-anchor-height)",
 			};
 		} else {
-			if (first) {
-				const firstItemText = first.querySelector<HTMLElement>(`[${ITEM_TEXT_ATTR}]`);
-				return {
-					selectedItemNode: first,
-					selectedItemTextNode: firstItemText,
-				};
-			}
+			return {
+				"--bits-select-content-transform-origin": "var(--bits-floating-transform-origin)",
+				"--bits-select-content-available-width": "var(--bits-floating-available-width)",
+				"--bits-select-content-available-height": "var(--bits-floating-available-height)",
+				"--bits-select-anchor-width": "var(--bits-floating-anchor-width)",
+				"--bits-select-anchor-height": "var(--bits-floating-anchor-height)",
+			};
 		}
-		return {
-			selectedItemNode: null,
-			selectedItemTextNode: null,
-		};
-	};
+	});
 
-	focusSelectedItem = () => {
-		afterTick(() => {
-			const candidates = this.root.getCandidateNodes();
-			const selected =
-				candidates.find((node) => node?.dataset.value === this.root.value.current) ?? null;
-			const first = candidates[0] ?? null;
-			this.focusFirst([selected, first]);
-		});
-	};
-
-	itemRegister = (value: string, disabled: boolean) => {
-		const isFirstValidItem = !this.firstValidItemFound.current && !disabled;
-		const isSelectedItem =
-			this.root.value.current !== undefined && this.root.value.current === value;
-
-		if (isSelectedItem || isFirstValidItem) {
-			if (isFirstValidItem) {
-				this.firstValidItemFound.current = true;
-			}
-		}
-	};
-
-	itemTextRegister = (node: HTMLElement | null, value: string, disabled: boolean) => {
-		const isFirstValidItem = !this.firstValidItemFound.current && !disabled;
-		const isSelectedItem =
-			this.root.value.current !== undefined && this.root.value.current === value;
-
-		if (isSelectedItem || isFirstValidItem) {
-			this.selectedItemText.current = node;
-		}
-	};
-
-	#onkeydown = (e: KeyboardEvent) => {
-		const isModifierKey = e.ctrlKey || e.altKey || e.metaKey;
-
-		if (e.key === "Tab") e.preventDefault();
-
-		if (!isModifierKey && e.key.length === 1) {
-			this.typeahead.handleTypeaheadSearch(e.key, this.root.getCandidateNodes());
-		}
-
-		if ([kbd.ARROW_UP, kbd.ARROW_DOWN, kbd.HOME, kbd.END].includes(e.key)) {
-			let candidateNodes = this.root.getCandidateNodes();
-
-			if (e.key === kbd.ARROW_UP || e.key === kbd.END) {
-				candidateNodes = candidateNodes.slice().reverse();
-			}
-
-			if (e.key === kbd.ARROW_UP || e.key === kbd.ARROW_DOWN) {
-				const currElement = e.target as HTMLElement;
-				const currIndex = candidateNodes.indexOf(currElement);
-				candidateNodes = candidateNodes.slice(currIndex + 1);
-			}
-
-			setTimeout(() => this.focusFirst(candidateNodes));
+	handleInteractOutside = (e: InteractOutsideEvent) => {
+		if (e.target === this.root.triggerNode || e.target === this.root.inputNode) {
 			e.preventDefault();
 		}
 	};
 
-	#oncontextmenu = (e: Event) => {
-		e.preventDefault();
-	};
+	snippetProps = $derived.by(() => ({ open: this.root.open.current }));
 
 	props = $derived.by(
 		() =>
@@ -574,15 +753,15 @@ export class SelectContentState {
 				id: this.id.current,
 				role: "listbox",
 				"data-state": getDataOpenClosed(this.root.open.current),
+				[this.root.bitsAttrs.content]: "",
 				style: {
 					display: "flex",
 					flexDirection: "column",
 					outline: "none",
+					boxSizing: "border-box",
+					...this.#styles,
 				},
-				oncontextmenu: this.#oncontextmenu,
-				onkeydown: this.#onkeydown,
-				tabIndex: -1,
-				[CONTENT_ATTR]: "",
+				onpointermove: this.#onpointermove,
 			}) as const
 	);
 }
@@ -591,7 +770,9 @@ type SelectItemStateProps = WithRefProps<
 	ReadableBoxedValues<{
 		value: string;
 		disabled: boolean;
-		textValue?: string;
+		label: string;
+		onHighlight: () => void;
+		onUnhighlight: () => void;
 	}>
 >;
 
@@ -599,191 +780,146 @@ class SelectItemState {
 	#id: SelectItemStateProps["id"];
 	#ref: SelectItemStateProps["ref"];
 	root: SelectRootState;
-	content: SelectContentState;
-	textId = box<string | undefined>(undefined);
 	value: SelectItemStateProps["value"];
+	label: SelectItemStateProps["label"];
+	onHighlight: SelectItemStateProps["onHighlight"];
+	onUnhighlight: SelectItemStateProps["onUnhighlight"];
 	disabled: SelectItemStateProps["disabled"];
-	textValue: SelectItemStateProps["textValue"];
-	isSelected = $derived.by(() => this.root.value.current === this.value.current);
-	isFocused = box(false);
-	node = box<HTMLElement | null>(null);
-	trueTextValue = box<string>("");
+	isSelected = $derived.by(() => this.root.includesItem(this.value.current));
+	isHighlighted = $derived.by(() => this.root.highlightedValue === this.value.current);
+	prevHighlighted = new Previous(() => this.isHighlighted);
+	textId = $state("");
 
-	constructor(props: SelectItemStateProps, content: SelectContentState) {
-		this.#id = props.id;
-		this.#ref = props.ref;
-		this.root = content.root;
-		this.content = content;
+	constructor(props: SelectItemStateProps, root: SelectRootState) {
+		this.root = root;
 		this.value = props.value;
 		this.disabled = props.disabled;
-		this.textValue = props.textValue;
+		this.label = props.label;
+		this.onHighlight = props.onHighlight;
+		this.onUnhighlight = props.onUnhighlight;
+		this.#id = props.id;
+		this.#ref = props.ref;
+
+		$effect(() => {
+			if (this.isHighlighted) {
+				this.onHighlight.current();
+			} else if (this.prevHighlighted.current) {
+				this.onUnhighlight.current();
+			}
+		});
 
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
 		});
-
-		$effect(() => {
-			const node = this.#ref.current;
-			if (!node) return;
-			this.content.itemRegister(this.value.current, this.disabled.current);
-		});
 	}
 
-	onItemTextChange = (node: HTMLElement | null) => {
-		this.trueTextValue.current = ((this.textValue?.current || node?.textContent) ?? "").trim();
+	snippetProps = $derived.by(() => ({
+		selected: this.isSelected,
+		highlighted: this.isHighlighted,
+	}));
+
+	#onpointerdown = (e: PointerEvent) => {
+		// prevent focus from leaving the combobox
+		e.preventDefault();
 	};
 
-	setTextId = (id: string) => {
-		this.textId.current = id;
-	};
+	/**
+	 * Using `pointerup` instead of `click` allows power users to pointerdown
+	 * the trigger, then release pointerup on an item to select it vs having to do
+	 * multiple clicks.
+	 */
+	#onpointerup = (e: PointerEvent) => {
+		if (e.defaultPrevented) return;
+		// prevent any default behavior
+		e.preventDefault();
+		if (this.disabled.current) return;
+		const isCurrentSelectedValue = this.value.current === this.root.value.current;
+		this.root.toggleItem(this.value.current, this.label.current);
 
-	handleSelect = async (e?: PointerEvent) => {
-		if (e?.defaultPrevented) return;
-
-		if (!this.disabled.current) {
-			this.root.value.current = this.value.current;
+		if (!this.root.isMulti && !isCurrentSelectedValue) {
 			this.root.handleClose();
 		}
 	};
 
-	#onpointermove = async (e: PointerEvent) => {
-		if (e.defaultPrevented) return;
-		if (this.disabled.current) {
-			this.content.onItemLeave();
-		} else {
-			(e.currentTarget as HTMLElement).focus({ preventScroll: true });
+	#onpointermove = (_: PointerEvent) => {
+		if (this.root.highlightedNode !== this.#ref.current) {
+			this.root.setHighlightedNode(this.#ref.current);
 		}
 	};
 
-	#onpointerleave = async (e: PointerEvent) => {
-		if (e.defaultPrevented) return;
-		if (e.currentTarget === document.activeElement) {
-			this.content.onItemLeave();
-		}
-	};
-
-	#onpointerdown = (e: PointerEvent) => {
-		(e.currentTarget as HTMLElement).focus({ preventScroll: true });
-	};
-
-	#onpointerup = async (e: PointerEvent) => {
-		await this.handleSelect(e);
-	};
-
-	#onkeydown = async (e: KeyboardEvent) => {
-		if (e.defaultPrevented) return;
-
-		const isTypingAhead = this.content.typeahead.search.current !== "";
-		if (isTypingAhead && e.key === kbd.SPACE) return;
-
-		if (SELECTION_KEYS.includes(e.key)) {
-			this.handleSelect();
-		}
-
-		// prevent page scroll on space
-		if (e.key === kbd.SPACE) e.preventDefault();
-	};
-
-	#onfocus = () => {
-		this.isFocused.current = true;
-	};
-
-	#onblur = () => {
-		this.isFocused.current = false;
-	};
-
-	#ontouchend = (e: TouchEvent) => {
-		e.preventDefault();
-		e.stopPropagation();
+	setTextId = (id: string) => {
+		this.textId = id;
 	};
 
 	props = $derived.by(
 		() =>
 			({
 				id: this.#id.current,
-				role: "option",
-				"aria-labelledby": this.textId.current ?? undefined,
-				"data-highlighted": this.isFocused.current ? "" : undefined,
-				"aria-selected": getAriaSelected(this.isSelected),
-				"data-state": getDataChecked(this.isSelected),
-				"aria-disabled": getAriaDisabled(this.disabled.current),
-				"data-disabled": getDataDisabled(this.disabled.current),
-				"data-selected": this.isSelected ? "" : undefined,
+				"aria-selected": this.root.includesItem(this.value.current) ? "true" : undefined,
 				"data-value": this.value.current,
-				tabindex: this.disabled.current ? undefined : -1,
-				[ITEM_ATTR]: "",
-				//
-				onfocus: this.#onfocus,
+				"data-disabled": getDataDisabled(this.disabled.current),
+				"data-highlighted":
+					this.root.highlightedValue === this.value.current ? "" : undefined,
+				"data-selected": this.root.includesItem(this.value.current) ? "" : undefined,
+				"data-label": this.label.current,
+				[this.root.bitsAttrs.item]: "",
+
 				onpointermove: this.#onpointermove,
-				onpointerleave: this.#onpointerleave,
 				onpointerdown: this.#onpointerdown,
 				onpointerup: this.#onpointerup,
-				onkeydown: this.#onkeydown,
-				onblur: this.#onblur,
-				ontouchend: this.#ontouchend,
 			}) as const
 	);
 }
 
-type SelectItemTextStateProps = WithRefProps;
+type SelectGroupStateProps = WithRefProps;
 
-class SelectItemTextState {
-	item: SelectItemState;
-	#id: SelectItemTextStateProps["id"];
-	#ref: SelectItemTextStateProps["ref"];
-	node = box<HTMLElement | null>(null);
-	nativeOption = box.with(
-		() =>
-			({
-				key: this.item.value.current,
-				value: this.item.value.current,
-				disabled: this.item.disabled.current,
-				innerHTML: this.node.current?.textContent,
-			}) as const
-	);
+class SelectGroupState {
+	#id: SelectGroupStateProps["id"];
+	#ref: SelectGroupStateProps["ref"];
+	root: SelectBaseRootState;
+	labelNode = $state<HTMLElement | null>(null);
 
-	constructor(props: SelectItemTextStateProps, item: SelectItemState) {
+	constructor(props: SelectGroupStateProps, root: SelectBaseRootState) {
 		this.#id = props.id;
 		this.#ref = props.ref;
-		this.item = item;
-		this.item.setTextId(this.#id.current);
+		this.root = root;
 
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
 		});
+	}
 
-		$effect(() => {
-			this.item.setTextId(this.#id.current);
-		});
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.current,
+				role: "group",
+				[this.root.bitsAttrs.group]: "",
+				"aria-labelledby": this.labelNode?.id ?? undefined,
+			}) as const
+	);
+}
 
-		$effect(() => {
-			untrack(() => {
-				const textNode = this.item.root.contentFragment?.getElementById(this.#id.current);
-				if (!textNode) return;
-				this.item.onItemTextChange(textNode);
-				this.item.content.itemTextRegister(
-					textNode,
-					this.item.value.current,
-					this.item.disabled.current
-				);
+type SelectGroupHeadingStateProps = WithRefProps;
 
-				this.item.root.onNativeOptionAdd(
-					box.with(() => ({
-						key: this.item.value.current,
-						value: this.item.value.current,
-						disabled: this.item.disabled.current,
-						innerHTML: textNode?.textContent,
-					}))
-				);
-			});
-		});
+class SelectGroupHeadingState {
+	#id: SelectGroupHeadingStateProps["id"];
+	#ref: SelectGroupHeadingStateProps["ref"];
+	group: SelectGroupState;
 
-		$effect(() => {
-			return () => {
-				this.item.root.onNativeOptionRemove(this.nativeOption);
-			};
+	constructor(props: SelectGroupHeadingStateProps, group: SelectGroupState) {
+		this.#id = props.id;
+		this.#ref = props.ref;
+		this.group = group;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+			onRefChange: (node) => {
+				group.labelNode = node;
+			},
 		});
 	}
 
@@ -791,294 +927,80 @@ class SelectItemTextState {
 		() =>
 			({
 				id: this.#id.current,
-				[ITEM_TEXT_ATTR]: "",
+				[this.group.root.bitsAttrs["group-label"]]: "",
 			}) as const
 	);
 }
 
-type SelectItemAlignedPositionStateProps = ReadableBoxedValues<{
-	onPlaced: () => void;
+type SelectHiddenInputStateProps = ReadableBoxedValues<{
+	value: string;
 }>;
 
-class SelectItemAlignedPositionState {
-	root: SelectRootState;
-	content: SelectContentState;
-	shouldExpandOnScroll = $state(false);
-	shouldReposition = $state(false);
-	contentWrapperId = $state(useId());
-	onPlaced: SelectItemAlignedPositionStateProps["onPlaced"];
-	contentZIndex = $state("");
+class SelectHiddenInputState {
+	#value: SelectHiddenInputStateProps["value"];
+	root: SelectBaseRootState;
+	shouldRender = $derived.by(() => this.root.name.current !== "");
 
-	constructor(props: SelectItemAlignedPositionStateProps, content: SelectContentState) {
-		this.root = content.root;
-		this.content = content;
-		this.onPlaced = props.onPlaced;
-
-		$effect(() => {
-			afterTick(() => {
-				this.position();
-				const contentNode = document.getElementById(this.content.id.current);
-				if (contentNode) {
-					this.contentZIndex = window.getComputedStyle(contentNode).zIndex;
-				}
-			});
-		});
+	constructor(props: SelectHiddenInputStateProps, root: SelectBaseRootState) {
+		this.root = root;
+		this.#value = props.value;
 	}
 
-	position = () => {
-		afterTick(() => {
-			const { selectedItemNode, selectedItemTextNode } = this.content.getSelectedItem();
-			const contentNode = this.root.contentNode;
-			const contentWrapperNode = document.getElementById(this.contentWrapperId);
-			const viewportNode = this.content.viewportNode;
-			const triggerNode = this.root.triggerNode;
-			const valueNode = document.getElementById(this.root.valueId.current);
+	#onfocus = (e: FocusEvent) => {
+		e.preventDefault();
 
-			if (
-				!contentNode ||
-				!contentWrapperNode ||
-				!viewportNode ||
-				!selectedItemNode ||
-				!selectedItemTextNode ||
-				!triggerNode ||
-				!valueNode
-			) {
-				return;
-			}
-
-			const triggerRect = triggerNode.getBoundingClientRect();
-
-			// horizontal positioning
-			const contentRect = contentNode.getBoundingClientRect();
-			const valueRect = valueNode.getBoundingClientRect();
-			const itemTextRect = selectedItemTextNode.getBoundingClientRect();
-
-			if (this.root.dir.current === "rtl") {
-				const itemTextOffset = itemTextRect.left - contentRect.left;
-				const left = valueRect.left - itemTextOffset;
-				const leftDelta = triggerRect.left - left;
-				const minContentWidth = triggerRect.width + leftDelta;
-				const contentWidth = Math.max(minContentWidth, contentRect.width);
-				const rightEdge = window.innerWidth - CONTENT_MARGIN;
-				const clampedLeft = clamp(left, CONTENT_MARGIN, rightEdge - contentWidth);
-
-				contentWrapperNode.style.minWidth = `${minContentWidth}px`;
-				contentWrapperNode.style.left = `${clampedLeft}px`;
-			} else {
-				const itemTextOffset = contentRect.right - itemTextRect.right;
-				const right = window.innerWidth - valueRect.right - itemTextOffset;
-				const rightDelta = window.innerWidth - triggerRect.right - right;
-				const minContentWidth = triggerRect.width + rightDelta;
-				const contentWidth = Math.max(minContentWidth, contentRect.width);
-				const leftEdge = window.innerWidth - CONTENT_MARGIN;
-				const clampedRight = clamp(right, CONTENT_MARGIN, leftEdge - contentWidth);
-
-				contentWrapperNode.style.minWidth = `${minContentWidth}px`;
-				contentWrapperNode.style.right = `${clampedRight}px`;
-			}
-
-			// vertical positioning
-			const items = this.root.getCandidateNodes();
-
-			const availableHeight = window.innerHeight - CONTENT_MARGIN * 2;
-			const itemsHeight = viewportNode.scrollHeight;
-
-			const contentStyles = window.getComputedStyle(contentNode);
-
-			const contentBorderTopWidth = Number.parseInt(contentStyles.borderTopWidth, 10);
-			const contentPaddingTop = Number.parseInt(contentStyles.paddingTop, 10);
-
-			const contentBorderBottomWidth = Number.parseInt(contentStyles.borderBottomWidth, 10);
-			const contentPaddingBottom = Number.parseInt(contentStyles.paddingBottom, 10);
-
-			const fullContentHeight =
-				contentBorderTopWidth +
-				contentPaddingTop +
-				itemsHeight +
-				contentPaddingBottom +
-				contentBorderBottomWidth;
-
-			const minContentHeight = Math.min(selectedItemNode.offsetHeight * 5, fullContentHeight);
-
-			const viewportStyles = window.getComputedStyle(viewportNode);
-			const viewportPaddingTop = Number.parseInt(viewportStyles.paddingTop, 10);
-			const viewportPaddingBottom = Number.parseInt(viewportStyles.paddingBottom, 10);
-
-			const topEdgeToTriggerMiddle =
-				triggerRect.top + triggerRect.height / 2 - CONTENT_MARGIN;
-			const triggerMiddleToBottomEdge = availableHeight - topEdgeToTriggerMiddle;
-
-			const selectedItemHalfHeight = selectedItemNode.offsetHeight / 2;
-			const itemOffsetMiddle = selectedItemNode.offsetTop + selectedItemHalfHeight;
-			const contentTopToItemMiddle =
-				contentBorderTopWidth + contentPaddingTop + itemOffsetMiddle;
-			const itemMiddleToContentBottom = fullContentHeight - contentTopToItemMiddle;
-
-			const willAlignWithoutTopOverflow = contentTopToItemMiddle <= topEdgeToTriggerMiddle;
-
-			if (willAlignWithoutTopOverflow) {
-				const isLastItem = selectedItemNode === items[items.length - 1];
-				contentWrapperNode.style.bottom = `${0}px`;
-				const viewportOffsetBottom =
-					contentNode.clientHeight - viewportNode.offsetTop - viewportNode.offsetHeight;
-				const clampedTriggerMiddleToBottomEdge = Math.max(
-					triggerMiddleToBottomEdge,
-					selectedItemHalfHeight +
-						// viewport might have padding bottom, include it to avoid a scrollable viewport
-						(isLastItem ? viewportPaddingBottom : 0) +
-						viewportOffsetBottom +
-						contentBorderBottomWidth
-				);
-				const height = contentTopToItemMiddle + clampedTriggerMiddleToBottomEdge;
-				contentWrapperNode.style.height = `${height}px`;
-			} else {
-				const isFirstItem = selectedItemNode === items[0];
-				contentWrapperNode.style.top = `${0}px`;
-				const clampedTopEdgeToTriggerMiddle = Math.max(
-					topEdgeToTriggerMiddle,
-					contentBorderTopWidth +
-						viewportNode.offsetTop +
-						// viewport might have padding top, include it to avoid a scrollable viewport
-						(isFirstItem ? viewportPaddingTop : 0) +
-						selectedItemHalfHeight
-				);
-				const height = clampedTopEdgeToTriggerMiddle + itemMiddleToContentBottom;
-				contentWrapperNode.style.height = `${height}px`;
-				viewportNode.scrollTop =
-					contentTopToItemMiddle - topEdgeToTriggerMiddle + viewportNode.offsetTop;
-			}
-
-			contentWrapperNode.style.margin = `${CONTENT_MARGIN}px 0`;
-			contentWrapperNode.style.minHeight = `${minContentHeight}px`;
-			contentWrapperNode.style.maxHeight = `${availableHeight}px`;
-
-			this.onPlaced.current();
-		});
-		requestAnimationFrame(() => (this.shouldExpandOnScroll = true));
+		if (!this.root.isCombobox) {
+			this.root.triggerNode?.focus();
+		} else {
+			this.root.inputNode?.focus();
+		}
 	};
-
-	handleScrollButtonChange = (id: string) => {
-		afterTick(() => {
-			const node = document.getElementById(id);
-			if (!node) return;
-			if (!this.shouldReposition) return;
-			this.position();
-			this.content.focusSelectedItem();
-			this.shouldReposition = false;
-		});
-	};
-
-	wrapperProps = $derived.by(
-		() =>
-			({
-				id: this.contentWrapperId,
-				style: {
-					display: "flex",
-					flexDirection: "column",
-					position: "fixed",
-					zIndex: this.contentZIndex,
-				},
-				[CONTENT_WRAPPER_ATTR]: "",
-			}) as const
-	);
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.content.id.current,
-				style: {
-					boxSizing: "border-box",
-					maxHeight: "100%",
-				},
+				disabled: getDisabled(this.root.disabled.current),
+				required: getRequired(this.root.required.current),
+				name: this.root.name.current,
+				value: this.#value.current,
+				style: styleToString(srOnlyStyles),
+				tabindex: -1,
+				onfocus: this.#onfocus,
 			}) as const
 	);
-}
-
-class SelectFloatingPositionState {
-	root: SelectRootState;
-	content: SelectContentState;
-
-	constructor(content: SelectContentState) {
-		this.root = content.root;
-		this.content = content;
-	}
-
-	props = {
-		style: {
-			boxSizing: "border-box",
-			"--bits-select-content-transform-origin": "var(--bits-floating-transform-origin)",
-			"--bits-select-content-available-width": "var(--bits-floating-available-width)",
-			"--bits-select-content-available-height": "var(--bits-floating-available-height)",
-			"--bits-select-anchor-width": "var(--bits-floating-anchor-width)",
-			"--bits-select-anchor-height": "var(--bits-floating-anchor-height)",
-		},
-	} as const;
 }
 
 type SelectViewportStateProps = WithRefProps;
 
 class SelectViewportState {
-	id: SelectViewportStateProps["id"];
-	ref: SelectViewportStateProps["ref"];
+	#id: SelectViewportStateProps["id"];
+	#ref: SelectViewportStateProps["ref"];
+	root: SelectBaseRootState;
 	content: SelectContentState;
 	prevScrollTop = $state(0);
 
 	constructor(props: SelectViewportStateProps, content: SelectContentState) {
-		this.id = props.id;
+		this.#id = props.id;
+		this.#ref = props.ref;
 		this.content = content;
-		this.ref = props.ref;
+		this.root = content.root;
 
 		useRefById({
-			id: this.id,
-			ref: this.ref,
+			id: this.#id,
+			ref: this.#ref,
 			onRefChange: (node) => {
 				this.content.viewportNode = node;
 			},
-			deps: () => this.content.root.open.current,
+			deps: () => this.root.open.current,
 		});
 	}
-
-	#onscroll = (e: WheelEvent) => {
-		afterTick(() => {
-			const viewport = e.currentTarget as HTMLElement;
-			const shouldExpandOnScroll =
-				this.content.alignedPositionState?.shouldExpandOnScroll ?? undefined;
-
-			const contentWrapper = document.getElementById(
-				this.content.alignedPositionState?.contentWrapperId ?? ""
-			);
-
-			if (shouldExpandOnScroll && contentWrapper) {
-				const scrolledBy = Math.abs(this.prevScrollTop - viewport.scrollTop);
-				if (scrolledBy > 0) {
-					const availableHeight = window.innerHeight - CONTENT_MARGIN * 2;
-					const cssMinHeight = Number.parseFloat(contentWrapper.style.minHeight);
-					const cssHeight = Number.parseFloat(contentWrapper.style.height);
-					const prevHeight = Math.max(cssMinHeight, cssHeight);
-
-					if (prevHeight < availableHeight) {
-						const nextHeight = prevHeight + scrolledBy;
-						const clampedNextHeight = Math.min(availableHeight, nextHeight);
-						const heightDiff = nextHeight - clampedNextHeight;
-
-						contentWrapper.style.height = `${clampedNextHeight}px`;
-						if (contentWrapper.style.bottom === "0px") {
-							viewport.scrollTop = heightDiff > 0 ? heightDiff : 0;
-							contentWrapper.style.justifyContent = "flex-end";
-						}
-					}
-				}
-			}
-			this.prevScrollTop = viewport.scrollTop;
-		});
-	};
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.current,
+				id: this.#id.current,
 				role: "presentation",
-				[VIEWPORT_ATTR]: "",
+				[this.root.bitsAttrs.viewport]: "",
 				style: {
 					// we use position: 'relative' here on the `viewport` so that when we call
 					// `selectedItem.offsetTop` in calculations, the offset is relative to the viewport
@@ -1087,32 +1009,27 @@ class SelectViewportState {
 					flex: 1,
 					overflow: "auto",
 				},
-				onscroll: this.#onscroll,
 			}) as const
 	);
 }
 
-type SelectScrollButtonImplStateProps = WithRefProps<
-	ReadableBoxedValues<{
-		mounted: boolean;
-	}>
->;
+type SelectScrollButtonImplStateProps = WithRefProps<ReadableBoxedValues<{ mounted: boolean }>>;
 
 class SelectScrollButtonImplState {
 	id: SelectScrollButtonImplStateProps["id"];
 	ref: SelectScrollButtonImplStateProps["ref"];
 	content: SelectContentState;
-	alignedPositionState: SelectItemAlignedPositionState | null;
+	root: SelectBaseRootState;
 	autoScrollTimer = $state<number | null>(null);
 	onAutoScroll: () => void = noop;
 	mounted: SelectScrollButtonImplStateProps["mounted"];
 
 	constructor(props: SelectScrollButtonImplStateProps, content: SelectContentState) {
-		this.content = content;
 		this.ref = props.ref;
-		this.alignedPositionState = content.alignedPositionState;
 		this.id = props.id;
 		this.mounted = props.mounted;
+		this.content = content;
+		this.root = content.root;
 
 		useRefById({
 			id: this.id,
@@ -1121,26 +1038,16 @@ class SelectScrollButtonImplState {
 		});
 
 		$effect(() => {
-			if (this.mounted.current) {
-				const activeItem = this.content.root
-					.getCandidateNodes()
-					.find((node) => node === document.activeElement);
-				activeItem?.scrollIntoView({ block: "nearest" });
-			}
-		});
-
-		$effect(() => {
-			return () => {
-				this.clearAutoScrollTimer();
-			};
+			if (!this.mounted.current) return;
+			const activeItem = untrack(() => this.root.highlightedNode);
+			activeItem?.scrollIntoView({ block: "nearest" });
 		});
 	}
 
 	clearAutoScrollTimer = () => {
-		if (this.autoScrollTimer !== null) {
-			window.clearInterval(this.autoScrollTimer);
-			this.autoScrollTimer = null;
-		}
+		if (this.autoScrollTimer === null) return;
+		window.clearInterval(this.autoScrollTimer);
+		this.autoScrollTimer = null;
 	};
 
 	#onpointerdown = () => {
@@ -1151,7 +1058,6 @@ class SelectScrollButtonImplState {
 	};
 
 	#onpointermove = () => {
-		this.content.onItemLeave?.();
 		if (this.autoScrollTimer !== null) return;
 		this.autoScrollTimer = window.setInterval(() => {
 			this.onAutoScroll();
@@ -1166,7 +1072,7 @@ class SelectScrollButtonImplState {
 		() =>
 			({
 				id: this.id.current,
-				"aria-hidden": "true",
+				"aria-hidden": getAriaHidden(true),
 				style: {
 					flexShrink: 0,
 				},
@@ -1180,292 +1086,175 @@ class SelectScrollButtonImplState {
 class SelectScrollDownButtonState {
 	state: SelectScrollButtonImplState;
 	content: SelectContentState;
+	root: SelectBaseRootState;
 	canScrollDown = $state(false);
 
 	constructor(state: SelectScrollButtonImplState) {
 		this.state = state;
 		this.content = state.content;
+		this.root = state.root;
 		this.state.onAutoScroll = this.handleAutoScroll;
 
 		$effect(() => {
 			const viewport = this.content.viewportNode;
-			const isPositioned = this.content.isPositioned.current;
-
+			const isPositioned = this.content.isPositioned;
 			if (!viewport || !isPositioned) return;
 
 			let cleanup = noop;
 
 			untrack(() => {
 				const handleScroll = () => {
-					const maxScroll = viewport.scrollHeight - viewport.clientHeight;
-					this.canScrollDown = Math.ceil(viewport.scrollTop) < maxScroll;
+					afterTick(() => {
+						const maxScroll = viewport.scrollHeight - viewport.clientHeight;
+						const paddingTop = Number.parseInt(
+							getComputedStyle(viewport).paddingTop,
+							10
+						);
+
+						this.canScrollDown = Math.ceil(viewport.scrollTop) < maxScroll - paddingTop;
+					});
 				};
 				handleScroll();
 
 				cleanup = addEventListener(viewport, "scroll", handleScroll);
 			});
 
-			return () => {
-				cleanup();
-			};
+			return cleanup;
 		});
 
 		$effect(() => {
-			if (this.state.mounted.current) {
-				this.state.alignedPositionState?.handleScrollButtonChange(this.state.id.current);
-			}
-		});
-
-		$effect(() => {
-			if (!this.state.mounted.current) {
-				this.state.clearAutoScrollTimer();
-			}
+			if (this.state.mounted.current) return;
+			this.state.clearAutoScrollTimer();
 		});
 	}
 
 	handleAutoScroll = () => {
 		afterTick(() => {
 			const viewport = this.content.viewportNode;
-			const selectedItem = this.content.getSelectedItem().selectedItemNode;
-			if (!viewport || !selectedItem) {
-				return;
-			}
+			const selectedItem = this.root.highlightedNode;
+			if (!viewport || !selectedItem) return;
 			viewport.scrollTop = viewport.scrollTop + selectedItem.offsetHeight;
 		});
 	};
 
-	props = $derived.by(() => ({ ...this.state.props, [SCROLL_DOWN_BUTTON_ATTR]: "" }) as const);
+	props = $derived.by(
+		() => ({ ...this.state.props, [this.root.bitsAttrs["scroll-down-button"]]: "" }) as const
+	);
 }
 
 class SelectScrollUpButtonState {
 	state: SelectScrollButtonImplState;
 	content: SelectContentState;
+	root: SelectBaseRootState;
 	canScrollUp = $state(false);
 
 	constructor(state: SelectScrollButtonImplState) {
 		this.state = state;
 		this.content = state.content;
+		this.root = state.root;
 		this.state.onAutoScroll = this.handleAutoScroll;
 
 		$effect(() => {
-			let cleanup = noop;
-
-			cleanup();
 			const viewport = this.content.viewportNode;
-			const isPositioned = this.content.isPositioned.current;
-
+			const isPositioned = this.content.isPositioned;
 			if (!viewport || !isPositioned) return;
 
-			const handleScroll = () => {
-				this.canScrollUp = viewport.scrollTop > 0;
-			};
-			handleScroll();
+			let cleanup = noop;
 
-			cleanup = addEventListener(viewport, "scroll", handleScroll);
+			untrack(() => {
+				const handleScroll = () => {
+					const paddingTop = Number.parseInt(getComputedStyle(viewport).paddingTop, 10);
+					this.canScrollUp = viewport.scrollTop - paddingTop > 0;
+				};
+				handleScroll();
 
-			return () => {
-				cleanup();
-			};
+				cleanup = addEventListener(viewport, "scroll", handleScroll);
+			});
+
+			return cleanup;
 		});
 
 		$effect(() => {
-			if (this.state.mounted.current) {
-				this.state.alignedPositionState?.handleScrollButtonChange(this.state.id.current);
-			}
-		});
-
-		$effect(() => {
-			if (!this.state.mounted.current) {
-				this.state.clearAutoScrollTimer();
-			}
+			if (this.state.mounted.current) return;
+			this.state.clearAutoScrollTimer();
 		});
 	}
 
 	handleAutoScroll = () => {
 		afterTick(() => {
 			const viewport = this.content.viewportNode;
-			const selectedItem = this.content.getSelectedItem().selectedItemNode;
+			const selectedItem = this.root.highlightedNode;
 			if (!viewport || !selectedItem) return;
 			viewport.scrollTop = viewport.scrollTop - selectedItem.offsetHeight;
 		});
 	};
 
-	props = $derived.by(() => ({ ...this.state.props, [SCROLL_UP_BUTTON_ATTR]: "" }) as const);
-}
-
-type SelectGroupStateProps = WithRefProps;
-
-class SelectGroupState {
-	#id: SelectGroupStateProps["id"];
-	#ref: SelectGroupStateProps["ref"];
-	labelNode = $state<HTMLElement | null>(null);
-
-	constructor(props: SelectGroupStateProps) {
-		this.#id = props.id;
-		this.#ref = props.ref;
-
-		useRefById({
-			id: this.#id,
-			ref: this.#ref,
-		});
-	}
-
 	props = $derived.by(
-		() =>
-			({
-				id: this.#id.current,
-				role: "group",
-				"aria-labelledby": this.labelNode?.id ?? undefined,
-				[GROUP_ATTR]: "",
-			}) as const
+		() => ({ ...this.state.props, [this.root.bitsAttrs["scroll-up-button"]]: "" }) as const
 	);
 }
 
-type SelectGroupHeadingStateProps = WithRefProps;
+type InitSelectProps = {
+	type: "single" | "multiple";
+	value: Box<string> | Box<string[]>;
+} & ReadableBoxedValues<{
+	disabled: boolean;
+	required: boolean;
+	loop: boolean;
+	scrollAlignment: "nearest" | "center";
+	name: string;
+	items: { value: string; label: string; disabled?: boolean }[];
+}> &
+	WritableBoxedValues<{
+		open: boolean;
+	}> & {
+		isCombobox: boolean;
+	};
 
-class SelectGroupHeadingState {
-	#id: SelectGroupHeadingStateProps["id"];
-	#ref: SelectGroupHeadingStateProps["ref"];
-	group: SelectGroupState;
+const [setSelectRootContext, getSelectRootContext] = createContext<SelectRootState>([
+	"Select.Root",
+	"Combobox.Root",
+]);
 
-	constructor(props: SelectGroupHeadingStateProps, group: SelectGroupState) {
-		this.#ref = props.ref;
-		this.#id = props.id;
-		this.group = group;
+const [setSelectGroupContext, getSelectGroupContext] = createContext<SelectGroupState>([
+	"Select.Group",
+	"Combobox.Group",
+]);
 
-		useRefById({
-			id: this.#id,
-			ref: this.#ref,
-			onRefChange: (node) => {
-				this.group.labelNode = node;
-			},
-		});
-	}
+const [setSelectContentContext, getSelectContentContext] = createContext<SelectContentState>([
+	"Select.Content",
+	"Combobox.Content",
+]);
 
-	props = $derived.by(
-		() =>
-			({
-				id: this.#id.current,
-				[GROUP_LABEL_ATTR]: "",
-			}) as const
-	);
+export function useSelectRoot(props: InitSelectProps) {
+	const { type, ...rest } = props;
+
+	const rootState =
+		type === "single"
+			? new SelectSingleRootState(rest as SelectSingleRootStateProps)
+			: new SelectMultipleRootState(rest as SelectMultipleRootStateProps);
+
+	return setSelectRootContext(rootState);
 }
 
-type SelectSeparatorStateProps = WithRefProps;
-
-class SelectSeparatorState {
-	#id: SelectSeparatorStateProps["id"];
-	#ref: SelectSeparatorStateProps["ref"];
-
-	constructor(props: SelectSeparatorStateProps) {
-		this.#id = props.id;
-		this.#ref = props.ref;
-
-		useRefById({
-			id: this.#id,
-			ref: this.#ref,
-		});
-	}
-
-	props = $derived.by(
-		() =>
-			({
-				id: this.#id.current,
-				[SEPARATOR_ATTR]: "",
-				"aria-hidden": getAriaHidden(true),
-			}) as const
-	);
-}
-
-type SelectArrowStateProps = WithRefProps;
-
-class SelectArrowState {
-	#id: SelectArrowStateProps["id"];
-	#ref: SelectArrowStateProps["ref"];
-
-	constructor(props: SelectArrowStateProps) {
-		this.#id = props.id;
-		this.#ref = props.ref;
-
-		useRefById({
-			id: this.#id,
-			ref: this.#ref,
-		});
-	}
-
-	props = $derived.by(
-		() =>
-			({
-				id: this.#id.current,
-				[ARROW_ATTR]: "",
-				"aria-hidden": getAriaHidden(true),
-			}) as const
-	);
-}
-
-type SelectIconStateProps = WithRefProps;
-
-class SelectIconState {
-	#id: SelectIconStateProps["id"];
-	#ref: SelectIconStateProps["ref"];
-
-	constructor(props: SelectIconStateProps) {
-		this.#id = props.id;
-		this.#ref = props.ref;
-
-		useRefById({
-			id: this.#id,
-			ref: this.#ref,
-		});
-	}
-
-	props = $derived.by(
-		() =>
-			({
-				id: this.#id.current,
-				[ICON_ATTR]: "",
-				"aria-hidden": getAriaHidden(true),
-			}) as const
-	);
-}
-
-export function useSelectRoot(props: SelectRootStateProps) {
-	return setSelectRootContext(new SelectRootState(props));
-}
-
-export function useSelectContentFrag() {
-	return new SelectContentFragState(getSelectRootContext());
+export function useSelectInput(props: SelectInputStateProps) {
+	return new SelectInputState(props, getSelectRootContext());
 }
 
 export function useSelectContent(props: SelectContentStateProps) {
 	return setSelectContentContext(new SelectContentState(props, getSelectRootContext()));
 }
 
-export function useSelectItemAlignedPosition(props: SelectItemAlignedPositionStateProps) {
-	const contentContext = getSelectContentContext();
-	const alignedPositionState = new SelectItemAlignedPositionState(props, contentContext);
-	contentContext.alignedPositionState = alignedPositionState;
-	return setSelectContentItemAlignedContext(alignedPositionState);
-}
-
-export function useSelectFloatingPosition() {
-	return new SelectFloatingPositionState(getSelectContentContext());
-}
-
 export function useSelectTrigger(props: SelectTriggerStateProps) {
 	return new SelectTriggerState(props, getSelectRootContext());
 }
 
-export function useSelectValue() {
-	return new SelectValueState(getSelectRootContext());
+export function useSelectComboTrigger(props: SelectComboTriggerStateProps) {
+	return new SelectComboTriggerState(props, getSelectRootContext());
 }
 
 export function useSelectItem(props: SelectItemStateProps) {
-	return setSelectItemContext(new SelectItemState(props, getSelectContentContext()));
-}
-
-export function useSelectItemText(props: SelectItemTextStateProps) {
-	return new SelectItemTextState(props, getSelectItemContext());
+	return new SelectItemState(props, getSelectRootContext());
 }
 
 export function useSelectViewport(props: SelectViewportStateProps) {
@@ -1473,37 +1262,57 @@ export function useSelectViewport(props: SelectViewportStateProps) {
 }
 
 export function useSelectScrollUpButton(props: SelectScrollButtonImplStateProps) {
-	const state = new SelectScrollButtonImplState(props, getSelectContentContext());
-	return new SelectScrollUpButtonState(state);
+	return new SelectScrollUpButtonState(
+		new SelectScrollButtonImplState(props, getSelectContentContext())
+	);
 }
 
 export function useSelectScrollDownButton(props: SelectScrollButtonImplStateProps) {
-	const state = new SelectScrollButtonImplState(props, getSelectContentContext());
-	return new SelectScrollDownButtonState(state);
+	return new SelectScrollDownButtonState(
+		new SelectScrollButtonImplState(props, getSelectContentContext())
+	);
 }
 
 export function useSelectGroup(props: SelectGroupStateProps) {
-	return setSelectGroupContext(new SelectGroupState(props));
+	return setSelectGroupContext(new SelectGroupState(props, getSelectRootContext()));
 }
 
 export function useSelectGroupHeading(props: SelectGroupHeadingStateProps) {
 	return new SelectGroupHeadingState(props, getSelectGroupContext());
 }
 
-export function useSelectArrow(props: SelectArrowStateProps) {
-	return new SelectArrowState(props);
+export function useSelectHiddenInput(props: SelectHiddenInputStateProps) {
+	return new SelectHiddenInputState(props, getSelectRootContext());
 }
 
-export function useSelectSeparator(props: SelectSeparatorStateProps) {
-	return new SelectSeparatorState(props);
-}
+////////////////////////////////////
+// Helpers
+////////////////////////////////////
 
-export function useSelectIcon(props: SelectIconStateProps) {
-	return new SelectIconState(props);
-}
+const selectParts = [
+	"trigger",
+	"content",
+	"item",
+	"viewport",
+	"scroll-up-button",
+	"scroll-down-button",
+	"group",
+	"group-label",
+	"separator",
+	"arrow",
+	"input",
+	"content-wrapper",
+	"item-text",
+	"value",
+] as const;
 
-//
+type SelectBitsAttrs = Record<(typeof selectParts)[number], string>;
 
-export function shouldShowPlaceholder(value?: string) {
-	return value === "" || value === undefined;
+export function getSelectBitsAttrs(root: SelectBaseRootState): SelectBitsAttrs {
+	const isCombobox = root.isCombobox;
+	const attrObj = {} as SelectBitsAttrs;
+	for (const part of selectParts) {
+		attrObj[part] = isCombobox ? `data-combobox-${part}` : `data-select-${part}`;
+	}
+	return attrObj;
 }

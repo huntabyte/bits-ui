@@ -1,5 +1,15 @@
 import { describe, expect, it } from "vitest";
-import { arraysAreEqual, backward, chunk, forward, isValidIndex, next, prev } from "./arrays.js";
+import {
+	arraysAreEqual,
+	backward,
+	chunk,
+	forward,
+	getNextMatch,
+	isValidIndex,
+	next,
+	prev,
+	wrapArray,
+} from "./arrays.js";
 
 describe("arraysAreEqual", () => {
 	it("should return true for two empty arrays", () => {
@@ -343,5 +353,97 @@ describe("backward function", () => {
 	it("should handle large decrements", () => {
 		expect(backward(testArray, 4, 10)).toBe(5);
 		expect(backward(testArray, 4, 11)).toBe(4);
+	});
+});
+
+describe("getNextMatch", () => {
+	const values = ["apple", "banana", "cherry", "date", "elderberry"];
+
+	it("should return the first match when no current match is provided", () => {
+		expect(getNextMatch(values, "b")).toBe("banana");
+	});
+
+	it("should return the next match when a current match is provided", () => {
+		expect(getNextMatch(values, "c", "cherry")).toBe(undefined);
+		expect(getNextMatch(values, "c", "banana")).toBe("cherry");
+	});
+
+	it("should handle repeated characters in search", () => {
+		expect(getNextMatch(values, "aaa", "apple")).toBe(undefined);
+		expect(getNextMatch(values, "aaa", "banana")).toBe("apple");
+	});
+
+	it("should wrap around the array when reaching the end", () => {
+		expect(getNextMatch(values, "d", "date")).toBe(undefined);
+		expect(getNextMatch(values, "a", "elderberry")).toBe("apple");
+	});
+
+	it("should be case-insensitive", () => {
+		expect(getNextMatch(values, "B", "apple")).toBe("banana");
+		expect(getNextMatch(values, "cH", "banana")).toBe("cherry");
+	});
+
+	it("should handle empty search string", () => {
+		expect(getNextMatch(values, "", "banana")).toBe(undefined);
+	});
+
+	it("should handle empty values array", () => {
+		expect(getNextMatch([], "a")).toBe(undefined);
+	});
+
+	it("should exclude current match when search is a single character", () => {
+		expect(getNextMatch(values, "a", "apple")).toBe(undefined);
+		expect(getNextMatch(values, "b", "banana")).toBe(undefined);
+	});
+
+	it("should not exclude current match when search is multiple characters", () => {
+		expect(getNextMatch(values, "ap", "apple")).toBe(undefined);
+		expect(getNextMatch(values, "ba", "banana")).toBe(undefined);
+	});
+
+	it("should handle values with common prefixes", () => {
+		const prefixValues = ["prefix1", "prefix2", "prefix3", "other"];
+		expect(getNextMatch(prefixValues, "pre", "prefix1")).toBe(undefined);
+		expect(getNextMatch(prefixValues, "pre", "prefix2")).toBe(undefined);
+		expect(getNextMatch(prefixValues, "pre", "prefix3")).toBe(undefined);
+		expect(getNextMatch(prefixValues, "pre", "other")).toBe("prefix1");
+	});
+
+	it("should cycle through values with common prefixes using single character search", () => {
+		const prefixValues = ["prefix1", "prefix2", "prefix3", "other"];
+		expect(getNextMatch(prefixValues, "p", "other")).toBe("prefix1");
+		expect(getNextMatch(prefixValues, "p", "prefix1")).toBe("prefix2");
+		expect(getNextMatch(prefixValues, "p", "prefix2")).toBe("prefix3");
+		expect(getNextMatch(prefixValues, "p", "prefix3")).toBe("prefix1");
+	});
+
+	it("should handle single character search with prefixed values", () => {
+		const prefixValues = ["prefix1", "prefix2", "prefix3", "other"];
+		expect(getNextMatch(prefixValues, "p")).toBe("prefix1");
+		expect(getNextMatch(prefixValues, "p", "prefix1")).toBe("prefix2");
+		expect(getNextMatch(prefixValues, "o")).toBe("other");
+		expect(getNextMatch(prefixValues, "o", "other")).toBe(undefined);
+	});
+});
+
+describe("wrapArray", () => {
+	it("should wrap the array starting from the given index", () => {
+		expect(wrapArray(["a", "b", "c", "d"], 2)).toEqual(["c", "d", "a", "b"]);
+	});
+
+	it("should handle start index 0 (no wrapping)", () => {
+		expect(wrapArray([1, 2, 3, 4, 5], 0)).toEqual([1, 2, 3, 4, 5]);
+	});
+
+	it("should wrap correctly with start index equal to array length", () => {
+		expect(wrapArray(["x", "y", "z"], 3)).toEqual(["x", "y", "z"]);
+	});
+
+	it("should work with empty array", () => {
+		expect(wrapArray([], 2)).toEqual([]);
+	});
+
+	it("should work with array of different types", () => {
+		expect(wrapArray([true, 42, "test"], 1)).toEqual([42, "test", true]);
 	});
 });

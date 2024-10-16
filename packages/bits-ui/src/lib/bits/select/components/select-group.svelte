@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
-	import type { SelectGroupProps } from "../types.js";
 	import { useSelectGroup } from "../select.svelte.js";
+	import type { SelectGroupProps } from "../types.js";
 	import { useId } from "$lib/internal/use-id.js";
 
 	let {
-		children,
-		child,
 		id = useId(),
 		ref = $bindable(null),
+		children,
+		child,
 		...restProps
 	}: SelectGroupProps = $props();
 
@@ -19,6 +19,7 @@
 			(v) => (ref = v)
 		),
 	});
+
 	const mergedProps = $derived(mergeProps(restProps, groupState.props));
 </script>
 

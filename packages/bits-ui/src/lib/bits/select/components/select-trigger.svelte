@@ -1,22 +1,20 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
-	import type { SelectTriggerProps } from "../types.js";
 	import { useSelectTrigger } from "../select.svelte.js";
+	import type { SelectTriggerProps } from "../types.js";
 	import { useId } from "$lib/internal/use-id.js";
-	import FloatingLayerAnchor from "$lib/bits/utilities/floating-layer/components/floating-layer-anchor.svelte";
+	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 
 	let {
 		id = useId(),
-		disabled = false,
 		ref = $bindable(null),
-		children,
 		child,
+		children,
 		...restProps
 	}: SelectTriggerProps = $props();
 
 	const triggerState = useSelectTrigger({
 		id: box.with(() => id),
-		disabled: box.with(() => disabled ?? false),
 		ref: box.with(
 			() => ref,
 			(v) => (ref = v)
@@ -26,7 +24,7 @@
 	const mergedProps = $derived(mergeProps(restProps, triggerState.props));
 </script>
 
-<FloatingLayerAnchor {id}>
+<FloatingLayer.Anchor {id}>
 	{#if child}
 		{@render child({ props: mergedProps })}
 	{:else}
@@ -34,4 +32,4 @@
 			{@render children?.()}
 		</button>
 	{/if}
-</FloatingLayerAnchor>
+</FloatingLayer.Anchor>

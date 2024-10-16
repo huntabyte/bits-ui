@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
-	import type { ListboxContentStaticProps } from "../types.js";
-	import { useListboxContent } from "../listbox.svelte.js";
+	import type { SelectContentStaticProps } from "../types.js";
+	import { useSelectContent } from "../select.svelte.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
 	import { useId } from "$lib/internal/use-id.js";
 	import { noop } from "$lib/internal/noop.js";
@@ -15,9 +15,9 @@
 		children,
 		child,
 		...restProps
-	}: ListboxContentStaticProps = $props();
+	}: SelectContentStaticProps = $props();
 
-	const contentState = useListboxContent({
+	const contentState = useSelectContent({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,
@@ -38,12 +38,12 @@
 		if (e.defaultPrevented) return;
 		onInteractOutside(e);
 		if (e.defaultPrevented) return;
-		contentState.root.closeMenu();
+		contentState.root.handleClose();
 	}}
 	onEscapeKeydown={(e) => {
 		onEscapeKeydown(e);
 		if (e.defaultPrevented) return;
-		contentState.root.closeMenu();
+		contentState.root.handleClose();
 	}}
 	onOpenAutoFocus={(e) => e.preventDefault()}
 	onCloseAutoFocus={(e) => e.preventDefault()}

@@ -1,28 +1,52 @@
 <script lang="ts">
-	import { box } from "svelte-toolbelt";
-	import type { SelectRootProps } from "../types.js";
+	import { type WritableBox, box } from "svelte-toolbelt";
 	import { useSelectRoot } from "../select.svelte.js";
-	import SelectNative from "./select-native.svelte";
-	import FloatingLayer from "$lib/bits/utilities/floating-layer/components/floating-layer.svelte";
+	import type { SelectRootProps } from "../types.js";
+	import SelectHiddenInput from "./select-hidden-input.svelte";
 	import { noop } from "$lib/internal/noop.js";
+	import FloatingLayer from "$lib/bits/utilities/floating-layer/components/floating-layer.svelte";
 
 	let {
-		open = $bindable(false),
-		value = $bindable(""),
-		children,
-		onOpenChange = noop,
+		value = $bindable(),
 		onValueChange = noop,
-		name = undefined,
-		required = false,
+		name = "",
 		disabled = false,
-		autocomplete = undefined,
-		dir = "ltr",
+		type,
+		open = $bindable(false),
+		onOpenChange = noop,
+		loop = false,
+		scrollAlignment = "nearest",
+		required = false,
 		controlledOpen = false,
 		controlledValue = false,
-		form,
+		items = [],
+		children,
 	}: SelectRootProps = $props();
 
+	if (value === undefined) {
+		const defaultValue = type === "single" ? "" : [];
+		if (controlledValue) {
+			onValueChange(defaultValue as any);
+		} else {
+			value = defaultValue;
+		}
+	}
+
 	const rootState = useSelectRoot({
+		type,
+		value: box.with(
+			() => value!,
+			(v) => {
+				if (controlledValue) {
+					onValueChange(v as any);
+				} else {
+					value = v;
+					onValueChange(v as any);
+				}
+			}
+		) as WritableBox<string> | WritableBox<string[]>,
+		disabled: box.with(() => disabled),
+		required: box.with(() => required),
 		open: box.with(
 			() => open,
 			(v) => {
@@ -30,56 +54,30 @@
 					onOpenChange(v);
 				} else {
 					open = v;
-					onOpenChange?.(v);
+					onOpenChange(v);
 				}
 			}
 		),
-		value: box.with(
-			() => value,
-			(v) => {
-				if (controlledValue) {
-					onValueChange(v);
-				} else {
-					value = v;
-					onValueChange?.(v);
-				}
-			}
-		),
-		required: box.with(() => required),
-		disabled: box.with(() => disabled),
-		dir: box.with(() => dir),
+		loop: box.with(() => loop),
+		scrollAlignment: box.with(() => scrollAlignment),
+		name: box.with(() => name),
+		isCombobox: false,
+		items: box.with(() => items),
 	});
 </script>
 
 <FloatingLayer>
 	{@render children?.()}
-	{#if rootState.isFormControl.current}
-		{#key rootState.nativeSelectKey}
-			<SelectNative
-				bind:value
-				aria-hidden="true"
-				tabindex={-1}
-				{required}
-				{name}
-				{autocomplete}
-				{disabled}
-				{form}
-				onchange={(e) => (value = e.currentTarget.value)}
-			>
-				{#if value === ""}
-					<option value=""></option>
-				{/if}
-				{#each rootState.nativeOptionsArr as opt, idx (opt.current.key + idx)}
-					<option
-						value={opt.current.value}
-						disabled={opt.current.disabled}
-						selected={opt.current.value === rootState.value.current}
-					>
-						<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-						{@html opt.current.innerHTML}
-					</option>
-				{/each}
-			</SelectNative>
-		{/key}
-	{/if}
 </FloatingLayer>
+
+{#if Array.isArray(rootState.value.current)}
+	{#if rootState.value.current.length === 0}
+		<SelectHiddenInput value="" />
+	{:else}
+		{#each rootState.value.current as item}
+			<SelectHiddenInput value={item} />
+		{/each}
+	{/if}
+{:else}
+	<SelectHiddenInput bind:value={rootState.value.current as string} />
+{/if}

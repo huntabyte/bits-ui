@@ -1,23 +1,28 @@
 import type {
 	SelectArrowPropsWithoutHTML,
 	SelectContentPropsWithoutHTML,
+	SelectContentStaticPropsWithoutHTML,
 	SelectGroupHeadingPropsWithoutHTML,
 	SelectGroupPropsWithoutHTML,
 	SelectItemPropsWithoutHTML,
 	SelectRootPropsWithoutHTML,
 	SelectScrollDownButtonPropsWithoutHTML,
 	SelectScrollUpButtonPropsWithoutHTML,
-	SelectSeparatorPropsWithoutHTML,
 	SelectTriggerPropsWithoutHTML,
-	SelectValuePropsWithoutHTML,
 	SelectViewportPropsWithoutHTML,
 } from "bits-ui";
 import {
+	NoopProp,
+	OnChangeStringOrArrayProp,
 	OnOpenChangeProp,
-	OnStringValueChangeProp,
+	OpenChildSnippetProps,
+	OpenChildrenSnippetProps,
 	OpenClosedProp,
+	SingleOrMultipleProp,
+	StringOrArrayStringProp,
 } from "./extended-types/shared/index.js";
-import { SelectPositionProp } from "./extended-types/select/index.js";
+import { ComboboxScrollAlignmentProp } from "./extended-types/combobox/index.js";
+import { ItemsProp } from "./extended-types/select/index.js";
 import {
 	arrowProps,
 	childrenSnippet,
@@ -25,35 +30,56 @@ import {
 	controlledValueProp,
 	createApiSchema,
 	createBooleanProp,
+	createCSSVarSchema,
 	createDataAttrSchema,
+	createEnumDataAttr,
 	createEnumProp,
 	createFunctionProp,
+	createObjectProp,
 	createStringProp,
+	createUnionProp,
 	dirProp,
 	dismissibleLayerProps,
-	enums,
 	escapeLayerProps,
 	floatingProps,
 	focusScopeProps,
 	forceMountProp,
+	onCloseAutoFocusProp,
 	preventOverflowTextSelectionProp,
 	preventScrollProp,
 	withChildProps,
 } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 
+const stateDataAttr = createEnumDataAttr({
+	name: "state",
+	options: ["open", "closed"],
+	description: "The select's open state.",
+	definition: OpenClosedProp,
+});
+
 export const root = createApiSchema<SelectRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root select component which manages & scopes the state of the select.",
 	props: {
-		value: createStringProp({
-			description: "The value of the currently selected select item.",
+		type: createEnumProp({
+			options: ["single", "multiple"],
+			description: "The type of selection to use for the select.",
+			required: true,
+			definition: SingleOrMultipleProp,
+		}),
+		value: createUnionProp({
+			options: ["string", "string[]"],
+			default: "",
+			description:
+				"The value of the select. When the type is `'single'`, this should be a string. When the type is `'multiple'`, this should be an array of strings.",
 			bindable: true,
-			default: "''",
+			definition: StringOrArrayStringProp,
 		}),
 		onValueChange: createFunctionProp({
-			definition: OnStringValueChangeProp,
-			description: "A callback that is fired when the select menu's value changes.",
+			definition: OnChangeStringOrArrayProp,
+			description:
+				"A callback that is fired when the select value changes. When the type is `'single'`, the argument will be a string. When the type is `'multiple'`, the argument will be an array of strings.",
 		}),
 		controlledValue: controlledValueProp,
 		open: createBooleanProp({
@@ -68,198 +94,194 @@ export const root = createApiSchema<SelectRootPropsWithoutHTML>({
 		controlledOpen: controlledOpenProp,
 		disabled: createBooleanProp({
 			default: C.FALSE,
-			description: "Whether or not the select menu is disabled.",
-		}),
-		autocomplete: createStringProp({
-			description: "The autocomplete attribute of the select.",
-		}),
-		dir: dirProp,
-		form: createStringProp({
-			description: "The form attribute of the select.",
+			description: "Whether or not the select component is disabled.",
 		}),
 		name: createStringProp({
-			description: "The name to apply to the hidden input element for form submission.",
+			description:
+				"The name to apply to the hidden input element for form submission. If provided, a hidden input element will be rendered to submit the value of the select.",
 		}),
 		required: createBooleanProp({
 			default: C.FALSE,
 			description: "Whether or not the select menu is required.",
 		}),
+		scrollAlignment: createEnumProp({
+			options: ["nearest", "center"],
+			default: "'nearest'",
+			description: "The alignment of the highlighted item when scrolling.",
+			definition: ComboboxScrollAlignmentProp,
+		}),
+		loop: createBooleanProp({
+			default: C.FALSE,
+			description: "Whether or not the select menu should loop through items.",
+		}),
+		items: createObjectProp({
+			definition: ItemsProp,
+			description:
+				"Optionally provide an array of `value` and `label` pairs that will be used to match and trigger selection when the trigger is focused and a key is pressed while the content is closed. Additionally, this will be used for form autofill when the type is single.",
+		}),
 		children: childrenSnippet(),
 	},
 });
 
-export const trigger = createApiSchema<SelectTriggerPropsWithoutHTML>({
-	title: "Trigger",
-	description: "The button element which toggles the select menu's open state.",
+export const content = createApiSchema<SelectContentPropsWithoutHTML>({
+	title: "Content",
+	description: "The element which contains the select's items.",
 	props: {
-		disabled: createBooleanProp({
+		...floatingProps(),
+		...escapeLayerProps,
+		...dismissibleLayerProps,
+		onCloseAutoFocus: onCloseAutoFocusProp,
+		preventOverflowTextSelection: preventOverflowTextSelectionProp,
+		dir: dirProp,
+		loop: createBooleanProp({
 			default: C.FALSE,
-			description: "Whether or not the select menu trigger is disabled.",
+			description:
+				"Whether or not the select should loop through items when reaching the end.",
 		}),
-		...withChildProps({ elType: "HTMLButtonElement" }),
+		forceMount: forceMountProp,
+		preventScroll: {
+			...preventScrollProp,
+			default: C.FALSE,
+		},
+		...withChildProps({
+			elType: "HTMLDivElement",
+			childrenDef: OpenChildrenSnippetProps,
+			childDef: OpenChildSnippetProps,
+		}),
 	},
 	dataAttributes: [
+		stateDataAttr,
 		createDataAttrSchema({
-			name: "state",
-			definition: OpenClosedProp,
-			description: "The dropdown menu's open state.",
-			isEnum: true,
+			name: "select-content",
+			description: "Present on the content element.",
 		}),
-		createDataAttrSchema({
-			name: "disabled",
-			description: "Present when the trigger is disabled.",
+	],
+	cssVars: [
+		createCSSVarSchema({
+			name: "--bits-select-content-transform-origin",
+			description: "The transform origin of the select content element.",
 		}),
-		createDataAttrSchema({
-			name: "select-trigger",
-			description: "Present on the select trigger element.",
+		createCSSVarSchema({
+			name: "--bits-select-content-available-width",
+			description: "The available width of the select content element.",
+		}),
+		createCSSVarSchema({
+			name: "--bits-select-content-available-height",
+			description: "The available height of the select content element.",
+		}),
+		createCSSVarSchema({
+			name: "--bits-select-anchor-width",
+			description: "The width of the select trigger element.",
+		}),
+		createCSSVarSchema({
+			name: "--bits-select-anchor-height",
+			description: "The height of the select trigger element.",
 		}),
 	],
 });
 
-export const content = createApiSchema<SelectContentPropsWithoutHTML>({
-	title: "Content",
-	description: "The content/menu element which contains the select menu's items.",
+export const contentStatic = createApiSchema<SelectContentStaticPropsWithoutHTML>({
+	title: "ContentStatic",
+	description: "The element which contains the select's items. (Static/No Floating UI)",
 	props: {
-		position: createEnumProp({
-			options: ["floating", "item-aligned"],
-			default: "floating",
-			description:
-				"The positioning strategy to use for the content. If set to 'item-aligned', the content will be positioned relative to the trigger, similar to a native select. If set to `floating`, the content will use Floating UI to position itself similar to other popover-like components.",
-			definition: SelectPositionProp,
-		}),
-		dir: dirProp,
-		...floatingProps(),
-		...dismissibleLayerProps,
 		...escapeLayerProps,
+		...dismissibleLayerProps,
 		...focusScopeProps,
-		preventOverflowTextSelection: preventOverflowTextSelectionProp,
 		preventScroll: preventScrollProp,
-		forceMount: forceMountProp,
+		preventOverflowTextSelection: preventOverflowTextSelectionProp,
+		dir: dirProp,
 		loop: createBooleanProp({
 			default: C.FALSE,
 			description:
-				"Whether or not the select menu should loop through items when reaching the end.",
+				"Whether or not the select should loop through items when reaching the end.",
 		}),
-		...withChildProps({ elType: "HTMLDivElement" }),
+		forceMount: forceMountProp,
+		...withChildProps({
+			elType: "HTMLDivElement",
+			childrenDef: OpenChildrenSnippetProps,
+			childDef: OpenChildSnippetProps,
+		}),
 	},
 	dataAttributes: [
+		stateDataAttr,
 		createDataAttrSchema({
 			name: "select-content",
-			description: "Present on the select content element.",
+			description: "Present on the content element.",
 		}),
 	],
 });
 
 export const item = createApiSchema<SelectItemPropsWithoutHTML>({
 	title: "Item",
-	description: "A select item, which must be a child of the `Select.Content` component.",
+	description: "A select item, which must be a child of the `select.Content` component.",
 	props: {
 		value: createStringProp({
-			description: "The value of the select item.",
+			description: "The value of the item.",
 			required: true,
 		}),
-		textValue: createStringProp({
-			description: "The text value of the select item, which is used for typeahead purposes.",
+		label: createStringProp({
+			description:
+				"The label of the item, which is what the list will be filtered by using typeahead behavior.",
 		}),
 		disabled: createBooleanProp({
 			default: C.FALSE,
 			description:
 				"Whether or not the select item is disabled. This will prevent interaction/selection.",
 		}),
+		onHighlight: createFunctionProp({
+			definition: NoopProp,
+			description: "A callback that is fired when the item is highlighted.",
+		}),
+		onUnhighlight: createFunctionProp({
+			definition: NoopProp,
+			description: "A callback that is fired when the item is unhighlighted.",
+		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		{
-			name: "state",
-			description: "The state of the item.",
-			value: enums("selected", "hovered"),
-			isEnum: true,
-			definition: OpenClosedProp,
-		},
-
 		createDataAttrSchema({
-			name: "highlighted",
-			description: "Present when the item is highlighted, via keyboard navigation or hover.",
+			name: "value",
+			description: "The value of the select item.",
+			value: "string",
+		}),
+		createDataAttrSchema({
+			name: "label",
+			description: "The label of the select item.",
+			value: "string",
 		}),
 		createDataAttrSchema({
 			name: "disabled",
 			description: "Present when the item is disabled.",
 		}),
 		createDataAttrSchema({
-			name: "select-item",
-			description: "Present on the select item element.",
-		}),
-	],
-});
-
-export const value = createApiSchema<SelectValuePropsWithoutHTML>({
-	title: "Value",
-	description:
-		"A representation of the select menu's value, which is typically displayed in the trigger.",
-	props: {
-		placeholder: createStringProp({
-			description: "A placeholder value to display when no value is selected.",
-		}),
-		...withChildProps({ elType: "HTMLDivElement" }),
-	},
-	dataAttributes: [
-		createDataAttrSchema({
-			name: "select-value",
-			description: "Present on the select value element.",
-		}),
-		createDataAttrSchema({
-			name: "placeholder",
+			name: "highlighted",
 			description:
-				"Present when the placeholder is being displayed (there isn't a value selected). You can use this to style the placeholder differently than the selected value.",
+				"Present when the item is highlighted, which is either via keyboard navigation of the menu or hover.",
+		}),
+		createDataAttrSchema({
+			name: "selected",
+			description: "Present when the item is selected.",
+		}),
+		createDataAttrSchema({
+			name: "select-item",
+			description: "Present on the item element.",
 		}),
 	],
 });
 
-export const group = createApiSchema<SelectGroupPropsWithoutHTML>({
-	title: "Group",
-	description: "An accessible group of select menu items.",
-	props: withChildProps({ elType: "HTMLDivElement" }),
+export const trigger = createApiSchema<SelectTriggerPropsWithoutHTML>({
+	title: "Trigger",
+	description: "A button which toggles the select's open state.",
+	props: withChildProps({ elType: "HTMLButtonElement" }),
 	dataAttributes: [
+		stateDataAttr,
 		createDataAttrSchema({
-			name: "select-group",
-			description: "Present on the select group element.",
+			name: "disabled",
+			description: "Present when the select is disabled.",
 		}),
-	],
-});
-
-export const groupHeading = createApiSchema<SelectGroupHeadingPropsWithoutHTML>({
-	title: "GroupHeading",
-	description:
-		"A heading for the select menu which will be skipped when navigating with the keyboard. This must be a child of the `Select.Group` component.",
-	props: withChildProps({ elType: "HTMLDivElement" }),
-	dataAttributes: [
 		createDataAttrSchema({
-			name: "select-group-heading",
-			description: "Present on the select group heading element.",
-		}),
-	],
-});
-
-export const separator = createApiSchema<SelectSeparatorPropsWithoutHTML>({
-	title: "Separator",
-	description: "A visual separator for use between select items or groups.",
-	props: withChildProps({ elType: "HTMLDivElement" }),
-	dataAttributes: [
-		createDataAttrSchema({
-			name: "separator-root",
-			description: "Present on the select separator element.",
-		}),
-	],
-});
-
-export const arrow = createApiSchema<SelectArrowPropsWithoutHTML>({
-	title: "Arrow",
-	description: "An optional arrow element which points to the trigger when open.",
-	props: arrowProps,
-	dataAttributes: [
-		createDataAttrSchema({
-			name: "arrow",
-			description: "Present on the select arrow element.",
+			name: "select-trigger",
+			description: "Present on the trigger element.",
 		}),
 	],
 });
@@ -280,7 +302,7 @@ export const viewport = createApiSchema<SelectViewportPropsWithoutHTML>({
 export const scrollUpButton = createApiSchema<SelectScrollUpButtonPropsWithoutHTML>({
 	title: "ScrollUpButton",
 	description:
-		"An optional scroll up button element to improve the scroll experience within the select. Should be used in conjunction with the `Select.Viewport` component.",
+		"An optional scroll up button element to improve the scroll experience within the select. Should be used in conjunction with the `select.Viewport` component.",
 	props: withChildProps({ elType: "HTMLDivElement" }),
 	dataAttributes: [
 		createDataAttrSchema({
@@ -293,7 +315,7 @@ export const scrollUpButton = createApiSchema<SelectScrollUpButtonPropsWithoutHT
 export const scrollDownButton = createApiSchema<SelectScrollDownButtonPropsWithoutHTML>({
 	title: "ScrollDownButton",
 	description:
-		"An optional scroll down button element to improve the scroll experience within the select. Should be used in conjunction with the `Select.Viewport` component.",
+		"An optional scroll down button element to improve the scroll experience within the select. Should be used in conjunction with the `select.Viewport` component.",
 	props: withChildProps({ elType: "HTMLDivElement" }),
 	dataAttributes: [
 		createDataAttrSchema({
@@ -303,17 +325,53 @@ export const scrollDownButton = createApiSchema<SelectScrollDownButtonPropsWitho
 	],
 });
 
+export const group = createApiSchema<SelectGroupPropsWithoutHTML>({
+	title: "Group",
+	description: "A group of related select items.",
+	props: withChildProps({ elType: "HTMLDivElement" }),
+	dataAttributes: [
+		createDataAttrSchema({
+			name: "select-group",
+			description: "Present on the group element.",
+		}),
+	],
+});
+
+export const groupHeading = createApiSchema<SelectGroupHeadingPropsWithoutHTML>({
+	title: "GroupHeading",
+	description:
+		"A heading for the parent select group. This is used to describe a group of related select items.",
+	props: withChildProps({ elType: "HTMLDivElement" }),
+	dataAttributes: [
+		createDataAttrSchema({
+			name: "select-group-heading",
+			description: "Present on the group heading element.",
+		}),
+	],
+});
+
+export const arrow = createApiSchema<SelectArrowPropsWithoutHTML>({
+	title: "Arrow",
+	description: "An optional arrow element which points to the content when open.",
+	props: arrowProps,
+	dataAttributes: [
+		createDataAttrSchema({
+			name: "arrow",
+			description: "Present on the arrow element.",
+		}),
+	],
+});
+
 export const select = [
 	root,
 	trigger,
 	content,
+	contentStatic,
 	item,
-	value,
 	viewport,
 	scrollUpButton,
 	scrollDownButton,
 	group,
 	groupHeading,
-	separator,
 	arrow,
 ];

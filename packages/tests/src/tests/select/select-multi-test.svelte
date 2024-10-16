@@ -1,7 +1,7 @@
 <script lang="ts" module>
 	import {
-		Listbox,
-		type ListboxMultipleRootProps,
+		Select,
+		type SelectMultipleRootProps,
 		type WithoutChildren,
 		type WithoutChildrenOrChild,
 	} from "bits-ui";
@@ -12,11 +12,12 @@
 		disabled?: boolean;
 	};
 
-	export type ListboxMultipleTestProps = WithoutChildren<ListboxMultipleRootProps> & {
-		contentProps?: WithoutChildrenOrChild<Listbox.ContentProps>;
-		portalProps?: WithoutChildrenOrChild<Listbox.PortalProps>;
+	export type SelectMultipleTestProps = WithoutChildren<SelectMultipleRootProps> & {
+		contentProps?: WithoutChildrenOrChild<Select.ContentProps>;
+		portalProps?: WithoutChildrenOrChild<Select.PortalProps>;
 		items: Item[];
 		searchValue?: string;
+		onSelectedLabelChange?: (value: string) => void;
 	};
 </script>
 
@@ -28,8 +29,9 @@
 		value = [],
 		open = false,
 		searchValue = "",
+		onSelectedLabelChange,
 		...restProps
-	}: ListboxMultipleTestProps = $props();
+	}: SelectMultipleTestProps = $props();
 
 	const filteredItems = $derived(
 		searchValue === ""
@@ -40,36 +42,40 @@
 	const selectedLabels = $derived(
 		filteredItems.filter((item) => value.includes(item.value)).map((item) => item.label)
 	);
+
+	const selectedLabel = $derived(
+		selectedLabels.length > 0 ? selectedLabels.join(", ") : "Open combobox"
+	);
+
+	$effect(() => {
+		onSelectedLabelChange?.(selectedLabel);
+	});
 </script>
 
 <main data-testid="main">
-	<Listbox.Root bind:value bind:open {...restProps} type="multiple">
-		<Listbox.Trigger data-testid="trigger">
-			{#if selectedLabels && selectedLabels.length}
-				{selectedLabels.join(", ")}
-			{:else}
-				Open combobox
-			{/if}
-		</Listbox.Trigger>
+	<Select.Root bind:value bind:open {...restProps} type="multiple">
+		<Select.Trigger data-testid="trigger">
+			{selectedLabel}
+		</Select.Trigger>
 
-		<Listbox.Portal {...portalProps}>
-			<Listbox.Content data-testid="content" {...contentProps}>
-				<Listbox.Group data-testid="group">
-					<Listbox.GroupHeading data-testid="group-label">Options</Listbox.GroupHeading>
+		<Select.Portal {...portalProps}>
+			<Select.Content data-testid="content" {...contentProps}>
+				<Select.Group data-testid="group">
+					<Select.GroupHeading data-testid="group-label">Options</Select.GroupHeading>
 					{#each filteredItems as { value, label, disabled }}
-						<Listbox.Item data-testid={value} {disabled} {value} {label}>
+						<Select.Item data-testid={value} {disabled} {value} {label}>
 							{#snippet children({ selected })}
 								{#if selected}
 									<span data-testid="{value}-indicator">x</span>
 								{/if}
 								{label}
 							{/snippet}
-						</Listbox.Item>
+						</Select.Item>
 					{/each}
-				</Listbox.Group>
-			</Listbox.Content>
-		</Listbox.Portal>
-	</Listbox.Root>
+				</Select.Group>
+			</Select.Content>
+		</Select.Portal>
+	</Select.Root>
 	<div data-testid="outside"></div>
 	<button data-testid="open-binding" onclick={() => (open = !open)}>
 		{open}

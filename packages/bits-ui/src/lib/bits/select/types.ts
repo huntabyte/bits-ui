@@ -1,66 +1,66 @@
-import type { HTMLSelectAttributes } from "svelte/elements";
 import type { Expand } from "svelte-toolbelt";
-import type { PopperLayerProps } from "../utilities/popper-layer/types.js";
+import type { PortalProps } from "../utilities/portal/types.js";
+import type { PopperLayerProps, PopperLayerStaticProps } from "../utilities/popper-layer/types.js";
 import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
-import type { OnChangeFn, WithChild, WithChildren, Without } from "$lib/internal/types.js";
 import type {
 	BitsPrimitiveButtonAttributes,
 	BitsPrimitiveDivAttributes,
-	BitsPrimitiveSpanAttributes,
 } from "$lib/shared/attributes.js";
-import type { Direction } from "$lib/shared/index.js";
-import type { PortalProps } from "$lib/bits/utilities/portal/index.js";
+import type {
+	OnChangeFn,
+	WithChild,
+	WithChildNoChildrenSnippetProps,
+	WithChildren,
+	Without,
+} from "$lib/internal/types.js";
 
-export type SelectRootPropsWithoutHTML = WithChildren<{
+export type SelectBaseRootPropsWithoutHTML = WithChildren<{
 	/**
-	 * The open state of the select.
-	 */
-	open?: boolean;
-
-	/**
-	 * A callback that is called when the select's open state changes.
-	 */
-	onOpenChange?: OnChangeFn<boolean>;
-
-	/**
-	 * The value of the select.
-	 */
-	value?: string;
-
-	/**
-	 * A callback that is called when the select's value changes.
-	 */
-	onValueChange?: OnChangeFn<string>;
-
-	/**
-	 * The reading direction of the select.
-	 */
-	dir?: Direction;
-
-	/**
-	 * The name of the select used in form submission.
-	 */
-	name?: string;
-
-	/**
-	 * The native HTML select autocomplete attribute.
-	 */
-	autocomplete?: HTMLSelectAttributes["autocomplete"];
-
-	/**
-	 * The native HTML select `form` attribute.
-	 */
-	form?: string;
-
-	/**
-	 * Whether the select is disabled.
+	 * Whether the combobox is disabled.
+	 *
+	 * @defaultValue `false`
 	 */
 	disabled?: boolean;
 
 	/**
-	 * Whether the select is required.
+	 * Whether the combobox is required (for form submission).
+	 *
+	 * @defaultValue `false`
 	 */
 	required?: boolean;
+
+	/**
+	 * The name to apply to the hidden input element for form submission.
+	 * If not provided, a hidden input will not be rendered and the combobox will not be part of a form.
+	 */
+	name?: string;
+
+	/**
+	 * Whether the combobox popover is open.
+	 *
+	 * @defaultValue `false`
+	 * @bindable
+	 */
+	open?: boolean;
+
+	/**
+	 * A callback function called when the open state changes.
+	 */
+	onOpenChange?: OnChangeFn<boolean>;
+
+	/**
+	 * Whether or not the combobox menu should loop through the items when navigating with the keyboard.
+	 *
+	 * @defaultValue `false`
+	 */
+	loop?: boolean;
+
+	/**
+	 * How to scroll the combobox items into view when navigating with the keyboard.
+	 *
+	 * @defaultValue `"nearest"`
+	 */
+	scrollAlignment?: "nearest" | "center";
 
 	/**
 	 * Whether or not the open state is controlled or not. If `true`, the component will not update
@@ -79,7 +79,86 @@ export type SelectRootPropsWithoutHTML = WithChildren<{
 	 * @defaultValue false
 	 */
 	controlledValue?: boolean;
+
+	/**
+	 * Optionally provide an array of `value` and `label` pairs that will be used to match
+	 * and trigger selection when the trigger is focused and a key is pressed while the content
+	 * is closed. It's also used to handle form autofill.
+	 *
+	 * By providing this value, you enable selecting a value when the trigger is focused and a key
+	 * is pressed without the content being open, similar to how a native `<select>` works.
+	 * For this to work, you must
+	 *
+	 * The label is what the user will potentially search for via typeahead, and the value is what
+	 * is set as the selected value when a typeahead match is found.
+	 *
+	 * We can't rely on the individual `Item` components to do this because they may not ever be
+	 * mounted to do the DOM if using a conditional block with a Svelte transition or certain
+	 * animation libraries.
+	 *
+	 * IMPORTANT: This functionality is only available for single-select listboxes.
+	 */
+	items?: { value: string; label: string; disabled?: boolean }[];
 }>;
+
+export type SelectSingleRootPropsWithoutHTML = {
+	/**
+	 * The value of the selected combobox item.
+	 *
+	 * @bindable
+	 */
+	value?: string;
+
+	/**
+	 * A callback function called when the value changes.
+	 */
+	onValueChange?: OnChangeFn<string>;
+
+	/**
+	 * The type of combobox.
+	 *
+	 * @required
+	 */
+	type: "single";
+};
+
+export type SelectMultipleRootPropsWithoutHTML = {
+	/**
+	 * The value of the selected combobox item.
+	 *
+	 * @bindable
+	 */
+	value?: string[];
+
+	/**
+	 * A callback function called when the value changes.
+	 */
+	onValueChange?: OnChangeFn<string[]>;
+
+	/**
+	 * The type of combobox.
+	 *
+	 * @required
+	 */
+	type: "multiple";
+};
+
+export type SelectSingleRootProps = SelectBaseRootPropsWithoutHTML &
+	SelectSingleRootPropsWithoutHTML &
+	Without<
+		BitsPrimitiveDivAttributes,
+		SelectSingleRootPropsWithoutHTML | SelectBaseRootPropsWithoutHTML
+	>;
+
+export type SelectMultipleRootProps = SelectBaseRootPropsWithoutHTML &
+	SelectMultipleRootPropsWithoutHTML &
+	Without<
+		BitsPrimitiveDivAttributes,
+		SelectMultipleRootPropsWithoutHTML | SelectBaseRootPropsWithoutHTML
+	>;
+
+export type SelectRootPropsWithoutHTML = SelectBaseRootPropsWithoutHTML &
+	(SelectSingleRootPropsWithoutHTML | SelectMultipleRootPropsWithoutHTML);
 
 export type SelectRootProps = SelectRootPropsWithoutHTML;
 
@@ -92,111 +171,84 @@ export type _SharedSelectContentProps = {
 	loop?: boolean;
 };
 
-export type SelectContentImplPropsWithoutHTML = Expand<
-	WithChild<
-		Omit<PopperLayerProps, "content"> & {
-			/**
-			 *  The positioning mode to use
-			 *
-			 *  `item-aligned` - behaves similarly to a native MacOS menu by positioning content relative to the active item. <br>
-			 *  `floating  (default)` - positions content in the same way as our other primitives, for example `Popover` or `DropdownMenu`.
-			 */
-			position?: "item-aligned" | "floating";
-		} & _SharedSelectContentProps
+export type SelectContentSnippetProps = {
+	/**
+	 * Whether the content is open or closed. Used alongside the `forceMount` prop to conditionally
+	 * render the content using Svelte transitions.
+	 */
+	open: boolean;
+};
+
+export type SelectContentPropsWithoutHTML = Expand<
+	WithChildNoChildrenSnippetProps<
+		Omit<PopperLayerProps, "content" | "onOpenAutoFocus" | "trapFocus"> &
+			_SharedSelectContentProps,
+		SelectContentSnippetProps
 	>
 >;
-
-export type SelectContentImplProps = SelectContentImplPropsWithoutHTML &
-	Without<BitsPrimitiveDivAttributes, SelectContentImplPropsWithoutHTML>;
-
-export type SelectContentPropsWithoutHTML = SelectContentImplPropsWithoutHTML & {
-	/**
-	 * Whether to force mount the content for use with certain animation libraries.
-	 */
-	forceMount?: boolean;
-};
 
 export type SelectContentProps = SelectContentPropsWithoutHTML &
 	Without<BitsPrimitiveDivAttributes, SelectContentPropsWithoutHTML>;
 
-export type SelectItemSnippetProps = { selected: boolean };
+export type SelectContentStaticPropsWithoutHTML = Expand<
+	WithChildNoChildrenSnippetProps<
+		Omit<PopperLayerStaticProps, "content" | "onOpenAutoFocus" | "trapFocus"> &
+			_SharedSelectContentProps,
+		SelectContentSnippetProps
+	>
+>;
+
+export type SelectContentStaticProps = SelectContentStaticPropsWithoutHTML &
+	Without<BitsPrimitiveDivAttributes, SelectContentStaticPropsWithoutHTML>;
+
+export type SelectTriggerPropsWithoutHTML = WithChild;
+
+export type SelectTriggerProps = SelectTriggerPropsWithoutHTML &
+	Without<BitsPrimitiveButtonAttributes, SelectTriggerPropsWithoutHTML>;
+
+export type SelectItemSnippetProps = { selected: boolean; highlighted: boolean };
 
 export type SelectItemPropsWithoutHTML = WithChild<
 	{
 		/**
 		 * The value of the item.
+		 *
+		 * @required
 		 */
 		value: string;
 
 		/**
+		 * The label of the item. If provided, this is the item that users will search for.
+		 * If not provided, the value will be used as the label.
+		 */
+		label?: string;
+
+		/**
 		 * Whether the item is disabled.
 		 *
-		 * @defaultValue false
+		 * @defaultValue `false`
 		 */
 		disabled?: boolean;
 
 		/**
-		 * Optionally provide text to use for typeahead purposes.
-		 *
-		 * By default, the typeahead behavior will use the `textContent` of the `SelectItemText`
-		 * component. Use this prop if the text content is not suitable for typeahead.
+		 * A callback function called when the item is highlighted. This can be used as a
+		 * replacement for `onfocus` since we don't actually focus the item and instead
+		 * rely on the `aria-activedescendant` attribute to indicate the highlighted item.
 		 */
-		textValue?: string;
+		onHighlight?: () => void;
+
+		/**
+		 * A callback function called when the item is unhighlighted. This can be used as a
+		 * replacement for `onblur` since we don't actually focus the item and instead
+		 * rely on the `aria-activedescendant` attribute to indicate the highlighted item.
+		 */
+		onUnhighlight?: () => void;
 	},
 	SelectItemSnippetProps
 >;
 
 export type SelectItemProps = SelectItemPropsWithoutHTML &
 	Without<BitsPrimitiveDivAttributes, SelectItemPropsWithoutHTML>;
-
-export type SelectTriggerPropsWithoutHTML = WithChild<{
-	/**
-	 * Whether the trigger is disabled.
-	 *
-	 * @defaultValue false
-	 */
-	disabled?: boolean | null | undefined;
-}>;
-
-export type SelectTriggerProps = SelectTriggerPropsWithoutHTML &
-	Without<BitsPrimitiveButtonAttributes, SelectTriggerPropsWithoutHTML>;
-
-export type SelectValuePropsWithoutHTML = WithChild<{
-	/**
-	 * The content to render inside the `Select.Value` when no `value` is set.
-	 */
-	placeholder?: string;
-}>;
-
-export type SelectValueProps = SelectValuePropsWithoutHTML &
-	Without<Omit<BitsPrimitiveSpanAttributes, "id">, SelectValuePropsWithoutHTML>;
-
-export type SelectItemTextPropsWithoutHTML = WithChild;
-
-export type SelectItemTextProps = SelectItemTextPropsWithoutHTML &
-	Without<BitsPrimitiveSpanAttributes, SelectItemTextPropsWithoutHTML>;
-
-export type SelectViewportPropsWithoutHTML = WithChild;
-export type SelectViewportProps = SelectViewportPropsWithoutHTML &
-	Without<BitsPrimitiveDivAttributes, SelectViewportPropsWithoutHTML>;
-
-export type SelectPortalPropsWithoutHTML = PortalProps;
-export type SelectPortalProps = SelectPortalPropsWithoutHTML;
-
-export type SelectScrollUpButtonPropsWithoutHTML = WithChild;
-
-export type SelectScrollUpButtonProps = SelectScrollUpButtonPropsWithoutHTML &
-	Without<BitsPrimitiveDivAttributes, SelectScrollUpButtonPropsWithoutHTML>;
-
-export type SelectScrollDownButtonPropsWithoutHTML = WithChild;
-
-export type SelectScrollDownButtonProps = SelectScrollDownButtonPropsWithoutHTML &
-	Without<BitsPrimitiveDivAttributes, SelectScrollDownButtonPropsWithoutHTML>;
-
-export type SelectIconPropsWithoutHTML = WithChild;
-
-export type SelectIconProps = SelectIconPropsWithoutHTML &
-	Without<BitsPrimitiveSpanAttributes, SelectIconPropsWithoutHTML>;
 
 export type SelectGroupPropsWithoutHTML = WithChild;
 
@@ -213,6 +265,25 @@ export type SelectSeparatorPropsWithoutHTML = WithChild;
 export type SelectSeparatorProps = SelectSeparatorPropsWithoutHTML &
 	Without<BitsPrimitiveDivAttributes, SelectSeparatorPropsWithoutHTML>;
 
+export type SelectPortalPropsWithoutHTML = PortalProps;
+
+export type SelectPortalProps = SelectPortalPropsWithoutHTML;
+
 export type SelectArrowPropsWithoutHTML = ArrowPropsWithoutHTML;
 
 export type SelectArrowProps = ArrowProps;
+
+export type SelectViewportPropsWithoutHTML = WithChild;
+
+export type SelectViewportProps = SelectViewportPropsWithoutHTML &
+	Without<BitsPrimitiveDivAttributes, SelectViewportPropsWithoutHTML>;
+
+export type SelectScrollUpButtonPropsWithoutHTML = WithChild;
+
+export type SelectScrollUpButtonProps = SelectScrollUpButtonPropsWithoutHTML &
+	Without<BitsPrimitiveDivAttributes, SelectScrollUpButtonPropsWithoutHTML>;
+
+export type SelectScrollDownButtonPropsWithoutHTML = WithChild;
+
+export type SelectScrollDownButtonProps = SelectScrollDownButtonPropsWithoutHTML &
+	Without<BitsPrimitiveDivAttributes, SelectScrollDownButtonPropsWithoutHTML>;

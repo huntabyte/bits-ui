@@ -17,7 +17,6 @@ export { Dialog } from "./dialog/index.js";
 export { DropdownMenu } from "./dropdown-menu/index.js";
 export { Label } from "./label/index.js";
 export { LinkPreview } from "./link-preview/index.js";
-export { Listbox } from "./listbox/index.js";
 export { Menubar } from "./menubar/index.js";
 export { NavigationMenu } from "./navigation-menu/index.js";
 export { Pagination } from "./pagination/index.js";

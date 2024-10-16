@@ -10,7 +10,7 @@ import type { Direction } from "$lib/shared/index.js";
 import { createContext } from "$lib/internal/create-context.js";
 import { getAriaExpanded, getDataDisabled, getDataOpenClosed } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
-import { wrapArray } from "$lib/internal/use-typeahead.svelte.js";
+import { wrapArray } from "$lib/internal/arrays.js";
 import { isBrowser } from "$lib/internal/is.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 

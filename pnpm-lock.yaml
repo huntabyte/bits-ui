@@ -63,8 +63,8 @@ importers:
         specifier: ^0.15.2
         version: 0.15.2(svelte@5.0.0-next.260)
       svelte-toolbelt:
-        specifier: ^0.4.1
-        version: 0.4.1(svelte@5.0.0-next.260)
+        specifier: ^0.4.4
+        version: 0.4.4(svelte@5.0.0-next.260)
     devDependencies:
       '@sveltejs/kit':
         specifier: ^2.5.28
@@ -2861,6 +2861,9 @@ packages:
   inline-style-parser@0.2.3:
     resolution: {integrity: sha512-qlD8YNDqyTKTyuITrDOffsl6Tdhv+UC4hcdAVuQsK4IMQ99nSgd1MIA/Q+jQYoh9r3hVUXhYh7urSRmXPkW04g==}
 
+  inline-style-parser@0.2.4:
+    resolution: {integrity: sha512-0aO8FkhNZlj/ZIbNi7Lxxr12obT7cL1moPfE4tg1LkX7LlLfC6DeX4l2ZEud1ukP9jNQyNnfzQVqwbwmAATY4Q==}
+
   is-alphabetical@1.0.4:
     resolution: {integrity: sha512-DwzsA04LQ10FHTZuL0/grVDk4rFoVH1pjAToYwBrHSxcrBIGQuXrQMtD5U1b0U2XVgKZCTLLP8u2Qxqhy3l2Vg==}
 
@@ -4171,6 +4174,9 @@ packages:
   style-to-object@1.0.6:
     resolution: {integrity: sha512-khxq+Qm3xEyZfKd/y9L3oIWQimxuc4STrQKtQn8aSDRHb8mFgpukgX1hdzfrMEW6JCjyJ8p89x+IUMVnCBI1PA==}
 
+  style-to-object@1.0.8:
+    resolution: {integrity: sha512-xT47I/Eo0rwJmaXC4oilDGDWLohVhR6o/xAQcPQN8q6QBuZVL8qMYL85kLmST5cPjAorwvqIA4qXTRQoYHaL6g==}
+
   sucrase@3.35.0:
     resolution: {integrity: sha512-8EbVDiu9iN/nESwxeSxDKe0dunta1GOlHufmSSXxMD2z2/tMZpDMpvXQGsc+ajGo8y2uYUmixaSRUc/QPoQ0GA==}
     engines: {node: '>=16 || 14 >=14.17'}
@@ -4214,9 +4220,9 @@ packages:
     peerDependencies:
       svelte: ^3.0.0 || ^4.0.0 || ^5.0.0-next.1
 
-  svelte-toolbelt@0.4.1:
-    resolution: {integrity: sha512-wRFa4YeimMpq7EptvtgX8d0IuBxqVRF7wymVWz92hs2VmQ33CGa40NvfIdK0Xm4ONRadU7FdpH6Gn2tUmEYEAg==}
-    engines: {node: '>=20', pnpm: '>=8.7.0'}
+  svelte-toolbelt@0.4.4:
+    resolution: {integrity: sha512-sNSJ4zUUVpou/p7O2IagMGfSPKHwqsOCYvDceFEMoPmkRXlNDvRethDDAzYM8hO3ayYpdEAPG4H8wsD385hspw==}
+    engines: {node: '>=18', pnpm: '>=8.7.0'}
     peerDependencies:
       svelte: ^5.0.0-next.126
 
@@ -7523,6 +7529,8 @@ snapshots:
 
   inline-style-parser@0.2.3: {}
 
+  inline-style-parser@0.2.4: {}
+
   is-alphabetical@1.0.4: {}
 
   is-alphabetical@2.0.1: {}
@@ -9116,6 +9124,10 @@ snapshots:
     dependencies:
       inline-style-parser: 0.2.3
 
+  style-to-object@1.0.8:
+    dependencies:
+      inline-style-parser: 0.2.4
+
   sucrase@3.35.0:
     dependencies:
       '@jridgewell/gen-mapping': 0.3.5
@@ -9166,10 +9178,10 @@ snapshots:
     dependencies:
       svelte: 5.0.0-next.260
 
-  svelte-toolbelt@0.4.1(svelte@5.0.0-next.260):
+  svelte-toolbelt@0.4.4(svelte@5.0.0-next.260):
     dependencies:
       clsx: 2.1.1
-      style-to-object: 1.0.6
+      style-to-object: 1.0.8
       svelte: 5.0.0-next.260
 
   svelte2tsx@0.7.19(svelte@5.0.0-next.260)(typescript@5.6.2):
