@@ -1,5 +1,13 @@
 # bits-ui
 
+## 1.0.0-next.18
+
+### Patch Changes
+
+-   Breaking: replace existing `Select` implementation with `Listbox` and remove standalone `Listbox` as `Select` now has the exact functionality ([#769](https://github.com/huntabyte/bits-ui/pull/769))
+
+-   Add support for typeahead select when the trigger is focused and content is closed via the `items` prop on `Select.Root`. ([#769](https://github.com/huntabyte/bits-ui/pull/769))
+
 ## 1.0.0-next.17
 
 ### Patch Changes
