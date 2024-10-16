@@ -79,6 +79,26 @@ export type ListboxBaseRootPropsWithoutHTML = WithChildren<{
 	 * @defaultValue false
 	 */
 	controlledValue?: boolean;
+
+	/**
+	 * Optionally provide an array of `value` and `label` pairs that will be used to match
+	 * and trigger selection when the trigger is focused and a key is pressed while the content
+	 * is closed.
+	 *
+	 * By providing this value, you enable selecting a value when the trigger is focused and a key
+	 * is pressed without the content being open, similar to how a native `<select>` works.
+	 * For this to work, you must
+	 *
+	 * The label is what the user will potentially search for via typeahead, and the value is what
+	 * is set as the selected value when a typeahead match is found.
+	 *
+	 * We can't rely on the individual `Item` components to do this because they may not ever be
+	 * mounted to do the DOM if using a conditional block with a Svelte transition or certain
+	 * animation libraries.
+	 *
+	 * IMPORTANT: This functionality is only available for single-select listboxes.
+	 */
+	items?: { value: string; label: string }[];
 }>;
 
 export type ListboxSingleRootPropsWithoutHTML = {
@@ -206,7 +226,7 @@ export type ListboxItemPropsWithoutHTML = WithChild<
 		/**
 		 * Whether the item is disabled.
 		 *
-		 * @defaultValeu `false`
+		 * @defaultValue `false`
 		 */
 		disabled?: boolean;
 

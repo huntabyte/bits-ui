@@ -23,7 +23,7 @@ import { focusFirst } from "$lib/internal/focus.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { addEventListener } from "$lib/internal/events.js";
 import type { AnyFn, WithRefProps } from "$lib/internal/types.js";
-import { useTypeahead } from "$lib/internal/use-typeahead.svelte.js";
+import { useDOMTypeahead } from "$lib/internal/use-dom-typeahead.svelte.js";
 import { isElement, isElementOrSVGElement, isHTMLElement } from "$lib/internal/is.js";
 import { useRovingFocus } from "$lib/internal/use-roving-focus.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
@@ -180,7 +180,7 @@ class MenuContentState {
 	#pointerGraceIntent = $state<GraceIntent | null>(null);
 	#pointerDir = $state<Side>("right");
 	#lastPointerX = $state(0);
-	#handleTypeaheadSearch: ReturnType<typeof useTypeahead>["handleTypeaheadSearch"];
+	#handleTypeaheadSearch: ReturnType<typeof useDOMTypeahead>["handleTypeaheadSearch"];
 	rovingFocusGroup: ReturnType<typeof useRovingFocus>;
 	isMounted: MenuContentStateProps["isMounted"];
 	isFocusWithin = new IsFocusWithin(() => this.parentMenu.contentNode ?? undefined);
@@ -208,7 +208,7 @@ class MenuContentState {
 			window.clearTimeout(this.#timer);
 		});
 
-		this.#handleTypeaheadSearch = useTypeahead().handleTypeaheadSearch;
+		this.#handleTypeaheadSearch = useDOMTypeahead().handleTypeaheadSearch;
 		this.rovingFocusGroup = useRovingFocus({
 			rootNodeId: this.parentMenu.contentId,
 			candidateAttr: this.parentMenu.root.getAttr("item"),

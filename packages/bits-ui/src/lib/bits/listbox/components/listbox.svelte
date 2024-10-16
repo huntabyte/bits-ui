@@ -19,6 +19,7 @@
 		required = false,
 		controlledOpen = false,
 		controlledValue = false,
+		items = [],
 		children,
 	}: ListboxRootProps = $props();
 
@@ -61,6 +62,7 @@
 		scrollAlignment: box.with(() => scrollAlignment),
 		name: box.with(() => name),
 		isCombobox: false,
+		items: box.with(() => items),
 	});
 </script>
 

@@ -17,7 +17,8 @@ import { kbd } from "$lib/internal/kbd.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { noop } from "$lib/internal/noop.js";
 import { addEventListener } from "$lib/internal/events.js";
-import { type Typeahead, useTypeahead } from "$lib/internal/use-typeahead.svelte.js";
+import { type DOMTypeahead, useDOMTypeahead } from "$lib/internal/use-dom-typeahead.svelte.js";
+import { type DataTypeahead, useDataTypeahead } from "$lib/internal/use-data-typeahead.svelte.js";
 
 // prettier-ignore
 export const INTERACTION_KEYS = [kbd.ARROW_LEFT, kbd.ESCAPE, kbd.ARROW_RIGHT, kbd.SHIFT, kbd.CAPS_LOCK, kbd.CONTROL, kbd.ALT, kbd.META, kbd.ENTER, kbd.F1, kbd.F2, kbd.F3, kbd.F4, kbd.F5, kbd.F6, kbd.F7, kbd.F8, kbd.F9, kbd.F10, kbd.F11, kbd.F12];
@@ -33,6 +34,7 @@ type ListboxBaseRootStateProps = ReadableBoxedValues<{
 	name: string;
 	loop: boolean;
 	scrollAlignment: "nearest" | "center";
+	items: { value: string; label: string }[];
 }> &
 	WritableBoxedValues<{
 		open: boolean;
@@ -47,6 +49,7 @@ class ListboxBaseRootState {
 	loop: ListboxBaseRootStateProps["loop"];
 	open: ListboxBaseRootStateProps["open"];
 	scrollAlignment: ListboxBaseRootStateProps["scrollAlignment"];
+	items: ListboxBaseRootStateProps["items"];
 	touchedInput = $state(false);
 	inputValue = $state<string>("");
 	inputNode = $state<HTMLElement | null>(null);
@@ -77,6 +80,7 @@ class ListboxBaseRootState {
 		this.open = props.open;
 		this.scrollAlignment = props.scrollAlignment;
 		this.isCombobox = props.isCombobox;
+		this.items = props.items;
 
 		this.bitsAttrs = getListboxBitsAttrs(this);
 
@@ -148,6 +152,20 @@ class ListboxSingleRootState extends ListboxBaseRootState {
 	value: ListboxSingleRootStateProps["value"];
 	isMulti = false as const;
 	hasValue = $derived.by(() => this.value.current !== "");
+	currentLabel = $derived.by(() => {
+		if (!this.items.current.length) return "";
+		const match = this.items.current.find((item) => item.value === this.value.current)?.label;
+		return match ?? "";
+	});
+	candidateLabels: string[] = $derived.by(() => {
+		if (!this.items.current.length) return [];
+		return this.items.current.map((item) => item.label);
+	});
+	dataTypeaheadEnabled = $derived.by(() => {
+		if (this.isMulti) return false;
+		if (this.items.current.length === 0) return false;
+		return true;
+	});
 
 	constructor(props: ListboxSingleRootStateProps) {
 		super(props);
@@ -440,7 +458,8 @@ class ListboxTriggerState {
 	#id: ListboxTriggerStateProps["id"];
 	#ref: ListboxTriggerStateProps["ref"];
 	root: ListboxRootState;
-	#typeahead: Typeahead;
+	#domTypeahead: DOMTypeahead;
+	#dataTypeahead: DataTypeahead;
 
 	constructor(props: ListboxTriggerStateProps, root: ListboxRootState) {
 		this.root = root;
@@ -455,11 +474,26 @@ class ListboxTriggerState {
 			},
 		});
 
-		this.#typeahead = useTypeahead({
+		this.#domTypeahead = useDOMTypeahead({
 			getCurrentItem: () => this.root.highlightedNode,
 			onMatch: (node) => {
 				this.root.setHighlightedNode(node);
 			},
+		});
+
+		this.#dataTypeahead = useDataTypeahead({
+			getCurrentItem: () => {
+				if (this.root.isMulti) return "";
+				return this.root.currentLabel;
+			},
+			onMatch: (label: string) => {
+				if (this.root.isMulti) return;
+				if (!this.root.items.current) return;
+				const matchedItem = this.root.items.current.find((item) => item.label === label);
+				if (!matchedItem) return;
+				this.root.value.current = matchedItem.value;
+			},
+			enabled: !this.root.isMulti && this.root.dataTypeaheadEnabled,
 		});
 	}
 
@@ -468,11 +502,14 @@ class ListboxTriggerState {
 		if (e.key === kbd.ARROW_UP || e.key === kbd.ARROW_DOWN) e.preventDefault();
 
 		if (!this.root.open.current) {
-			if (e.key === kbd.ENTER) return;
-
-			if (e.key === kbd.SPACE || e.key === kbd.ARROW_DOWN || e.key === kbd.ARROW_UP) {
+			if (e.key === kbd.ENTER) {
+				return;
+			} else if (e.key === kbd.SPACE || e.key === kbd.ARROW_DOWN || e.key === kbd.ARROW_UP) {
 				e.preventDefault();
 				this.root.openMenu();
+			} else if (!this.root.isMulti && this.root.dataTypeaheadEnabled) {
+				this.#dataTypeahead.handleTypeaheadSearch(e.key, this.root.candidateLabels);
+				return;
 			}
 
 			// we need to wait for a tick after the menu opens to ensure
@@ -552,7 +589,7 @@ class ListboxTriggerState {
 		if (e.key === kbd.TAB) return;
 
 		if (!isModifierKey && isCharacterKey) {
-			this.#typeahead.handleTypeaheadSearch(e.key, candidateNodes);
+			this.#domTypeahead.handleTypeaheadSearch(e.key, candidateNodes);
 			return;
 		}
 
@@ -1092,6 +1129,7 @@ type InitListboxProps = {
 	loop: boolean;
 	scrollAlignment: "nearest" | "center";
 	name: string;
+	items: { value: string; label: string }[];
 }> &
 	WritableBoxedValues<{
 		open: boolean;

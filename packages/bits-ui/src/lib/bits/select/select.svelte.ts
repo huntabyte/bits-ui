@@ -18,7 +18,7 @@ import { useId } from "$lib/internal/use-id.js";
 import type { Direction } from "$lib/shared/index.js";
 import { createContext } from "$lib/internal/create-context.js";
 import { useFormControl } from "$lib/internal/use-form-control.svelte.js";
-import { type Typeahead, useTypeahead } from "$lib/internal/use-typeahead.svelte.js";
+import { type DOMTypeahead, useDOMTypeahead } from "$lib/internal/use-dom-typeahead.svelte.js";
 import {
 	getAriaDisabled,
 	getAriaExpanded,
@@ -173,7 +173,7 @@ class SelectTriggerState {
 	#id: SelectTriggerStateProps["id"];
 	#ref: SelectTriggerStateProps["ref"];
 	#disabled: SelectTriggerStateProps["disabled"];
-	#typeahead: Typeahead;
+	#typeahead: DOMTypeahead;
 	#isDisabled = $derived.by(() => {
 		return this.#root.disabled.current || this.#disabled.current;
 	});
@@ -192,7 +192,7 @@ class SelectTriggerState {
 			},
 		});
 
-		this.#typeahead = useTypeahead();
+		this.#typeahead = useDOMTypeahead();
 	}
 
 	#handleOpen = () => {
@@ -357,7 +357,7 @@ export class SelectContentState {
 	position: SelectContentStateProps["position"];
 	isPositioned = box(false);
 	firstValidItemFound = box(false);
-	typeahead: Typeahead;
+	typeahead: DOMTypeahead;
 	alignedPositionState: SelectItemAlignedPositionState | null = null;
 
 	constructor(props: SelectContentStateProps, root: SelectRootState) {
@@ -365,7 +365,7 @@ export class SelectContentState {
 		this.id = props.id;
 		this.ref = props.ref;
 		this.root = root;
-		this.typeahead = useTypeahead();
+		this.typeahead = useDOMTypeahead();
 
 		useRefById({
 			id: this.id,
