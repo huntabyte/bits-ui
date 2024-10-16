@@ -201,6 +201,16 @@ export type ListboxContentStaticPropsWithoutHTML = Expand<
 export type ListboxContentStaticProps = ListboxContentStaticPropsWithoutHTML &
 	Without<BitsPrimitiveDivAttributes, ListboxContentStaticPropsWithoutHTML>;
 
+export type ListboxContentAlignedPropsWithoutHTML = Expand<
+	WithChildNoChildrenSnippetProps<
+		Omit<PopperLayerStaticProps, "content" | "onOpenAutoFocus" | "trapFocus"> &
+			_SharedListboxContentProps,
+		ListboxContentSnippetProps
+	>
+>;
+export type ListboxContentAlignedProps = ListboxContentStaticPropsWithoutHTML &
+	Without<BitsPrimitiveDivAttributes, ListboxContentStaticPropsWithoutHTML>;
+
 export type ListboxTriggerPropsWithoutHTML = WithChild;
 
 export type ListboxTriggerProps = ListboxTriggerPropsWithoutHTML &

@@ -19,6 +19,7 @@ import { noop } from "$lib/internal/noop.js";
 import { addEventListener } from "$lib/internal/events.js";
 import { type DOMTypeahead, useDOMTypeahead } from "$lib/internal/use-dom-typeahead.svelte.js";
 import { type DataTypeahead, useDataTypeahead } from "$lib/internal/use-data-typeahead.svelte.js";
+import type { Direction } from "$lib/shared/index.js";
 
 // prettier-ignore
 export const INTERACTION_KEYS = [kbd.ARROW_LEFT, kbd.ESCAPE, kbd.ARROW_RIGHT, kbd.SHIFT, kbd.CAPS_LOCK, kbd.CONTROL, kbd.ALT, kbd.META, kbd.ENTER, kbd.F1, kbd.F2, kbd.F3, kbd.F4, kbd.F5, kbd.F6, kbd.F7, kbd.F8, kbd.F9, kbd.F10, kbd.F11, kbd.F12];
@@ -27,6 +28,8 @@ export const FIRST_KEYS = [kbd.ARROW_DOWN, kbd.PAGE_UP, kbd.HOME];
 export const LAST_KEYS = [kbd.ARROW_UP, kbd.PAGE_DOWN, kbd.END];
 export const FIRST_LAST_KEYS = [...FIRST_KEYS, ...LAST_KEYS];
 export const SELECTION_KEYS = [kbd.ENTER, kbd.SPACE];
+
+export const CONTENT_MARGIN = 10;
 
 type ListboxBaseRootStateProps = ReadableBoxedValues<{
 	disabled: boolean;
@@ -194,6 +197,15 @@ class ListboxSingleRootState extends ListboxBaseRootState {
 		this.inputValue = itemLabel;
 	};
 
+	getSelectedNode = () => {
+		if (this.value.current === "") return null;
+		const node = this.getNodeByValue(this.value.current);
+		if (node) return node;
+		const firstNode = this.getCandidateNodes()[0];
+		if (firstNode) return firstNode;
+		return null;
+	};
+
 	#setInitialHighlightedNode = () => {
 		if (this.highlightedNode) return;
 		if (this.value.current !== "") {
@@ -245,6 +257,18 @@ class ListboxMultipleRootState extends ListboxBaseRootState {
 			this.value.current = [...this.value.current, itemValue];
 		}
 		this.inputValue = itemLabel;
+	};
+
+	getSelectedNode = () => {
+		if (this.value.current.length && this.value.current[0] !== "") {
+			const node = this.getNodeByValue(this.value.current[0]!);
+			if (node) return node;
+			return null;
+		}
+		// if no value is set, get the first item
+		const firstNode = this.getCandidateNodes()[0];
+		if (!firstNode) return null;
+		return firstNode;
 	};
 
 	#setInitialHighlightedNode = () => {
@@ -626,19 +650,19 @@ class ListboxTriggerState {
 type ListboxContentStateProps = WithRefProps;
 
 class ListboxContentState {
-	#id: ListboxContentStateProps["id"];
+	id: ListboxContentStateProps["id"];
 	#ref: ListboxContentStateProps["ref"];
 	viewportNode = $state<HTMLElement | null>(null);
-	root: ListboxBaseRootState;
+	root: ListboxRootState;
 	isPositioned = $state(false);
 
-	constructor(props: ListboxContentStateProps, root: ListboxBaseRootState) {
+	constructor(props: ListboxContentStateProps, root: ListboxRootState) {
 		this.root = root;
-		this.#id = props.id;
+		this.id = props.id;
 		this.#ref = props.ref;
 
 		useRefById({
-			id: this.#id,
+			id: this.id,
 			ref: this.#ref,
 			onRefChange: (node) => {
 				this.root.contentNode = node;
@@ -694,7 +718,7 @@ class ListboxContentState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
+				id: this.id.current,
 				role: "listbox",
 				"data-state": getDataOpenClosed(this.root.open.current),
 				[this.root.bitsAttrs.content]: "",
@@ -884,6 +908,16 @@ class ListboxHiddenInputState {
 		this.#value = props.value;
 	}
 
+	#onfocus = (e: FocusEvent) => {
+		e.preventDefault();
+
+		if (!this.root.isCombobox) {
+			this.root.triggerNode?.focus();
+		} else {
+			this.root.inputNode?.focus();
+		}
+	};
+
 	props = $derived.by(
 		() =>
 			({
@@ -891,8 +925,9 @@ class ListboxHiddenInputState {
 				required: getRequired(this.root.required.current),
 				name: this.root.name.current,
 				value: this.#value.current,
-				"aria-hidden": getAriaHidden(true),
 				style: styleToString(srOnlyStyles),
+				tabindex: -1,
+				onfocus: this.#onfocus,
 			}) as const
 	);
 }
@@ -1227,6 +1262,7 @@ const listboxParts = [
 	"separator",
 	"arrow",
 	"input",
+	"content-wrapper",
 ] as const;
 
 type ListboxBitsAttrs = Record<(typeof listboxParts)[number], string>;

@@ -7,7 +7,7 @@
 		value?: string;
 	};
 
-	let { value = "" }: Props = $props();
+	let { value = $bindable("") }: Props = $props();
 
 	const hiddenInputState = useListboxHiddenInput({
 		value: box.with(() => value),
@@ -16,6 +16,6 @@
 
 <VisuallyHidden>
 	{#if hiddenInputState.shouldRender}
-		<input {...hiddenInputState.props} />
+		<input {...hiddenInputState.props} bind:value />
 	{/if}
 </VisuallyHidden>

@@ -32,7 +32,7 @@
 		}
 	}
 
-	useListboxRoot({
+	const rootState = useListboxRoot({
 		type,
 		value: box.with(
 			() => value!,
@@ -79,5 +79,5 @@
 		{/each}
 	{/if}
 {:else}
-	<ListboxHiddenInput {value} />
+	<ListboxHiddenInput bind:value={rootState.value.current as string} />
 {/if}
