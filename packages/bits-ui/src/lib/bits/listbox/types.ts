@@ -13,6 +13,7 @@ import type {
 	WithChildren,
 	Without,
 } from "$lib/internal/types.js";
+import type { Direction } from "$lib/shared/index.js";
 
 export type ListboxBaseRootPropsWithoutHTML = WithChildren<{
 	/**
@@ -99,6 +100,8 @@ export type ListboxBaseRootPropsWithoutHTML = WithChildren<{
 	 * IMPORTANT: This functionality is only available for single-select listboxes.
 	 */
 	items?: { value: string; label: string }[];
+
+	dir?: Direction;
 }>;
 
 export type ListboxSingleRootPropsWithoutHTML = {
@@ -287,6 +290,16 @@ export type ListboxViewportPropsWithoutHTML = WithChild;
 
 export type ListboxViewportProps = ListboxViewportPropsWithoutHTML &
 	Without<BitsPrimitiveDivAttributes, ListboxViewportPropsWithoutHTML>;
+
+export type ListboxItemTextPropsWithoutHTML = WithChild;
+
+export type ListboxItemTextProps = ListboxItemTextPropsWithoutHTML &
+	Without<BitsPrimitiveDivAttributes, ListboxItemTextPropsWithoutHTML>;
+
+export type ListboxValuePropsWithoutHTML = WithChild;
+
+export type ListboxValueProps = ListboxValuePropsWithoutHTML &
+	Without<BitsPrimitiveDivAttributes, ListboxValuePropsWithoutHTML>;
 
 export type ListboxScrollUpButtonPropsWithoutHTML = WithChild;
 

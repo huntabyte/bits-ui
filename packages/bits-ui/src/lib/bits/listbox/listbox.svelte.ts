@@ -19,6 +19,8 @@ import { noop } from "$lib/internal/noop.js";
 import { addEventListener } from "$lib/internal/events.js";
 import { type DOMTypeahead, useDOMTypeahead } from "$lib/internal/use-dom-typeahead.svelte.js";
 import { type DataTypeahead, useDataTypeahead } from "$lib/internal/use-data-typeahead.svelte.js";
+import { useId } from "$lib/internal/use-id.js";
+import { clamp } from "$lib/internal/clamp.js";
 import type { Direction } from "$lib/shared/index.js";
 
 // prettier-ignore
@@ -38,6 +40,7 @@ type ListboxBaseRootStateProps = ReadableBoxedValues<{
 	loop: boolean;
 	scrollAlignment: "nearest" | "center";
 	items: { value: string; label: string }[];
+	dir: Direction;
 }> &
 	WritableBoxedValues<{
 		open: boolean;
@@ -53,11 +56,13 @@ class ListboxBaseRootState {
 	open: ListboxBaseRootStateProps["open"];
 	scrollAlignment: ListboxBaseRootStateProps["scrollAlignment"];
 	items: ListboxBaseRootStateProps["items"];
+	dir: ListboxBaseRootStateProps["dir"];
 	touchedInput = $state(false);
 	inputValue = $state<string>("");
 	inputNode = $state<HTMLElement | null>(null);
 	contentNode = $state<HTMLElement | null>(null);
 	triggerNode = $state<HTMLElement | null>(null);
+	valueNode = $state<HTMLElement | null>(null);
 	highlightedNode = $state<HTMLElement | null>(null);
 	highlightedValue = $derived.by(() => {
 		if (!this.highlightedNode) return null;
@@ -84,6 +89,7 @@ class ListboxBaseRootState {
 		this.scrollAlignment = props.scrollAlignment;
 		this.isCombobox = props.isCombobox;
 		this.items = props.items;
+		this.dir = props.dir;
 
 		this.bitsAttrs = getListboxBitsAttrs(this);
 
@@ -197,13 +203,34 @@ class ListboxSingleRootState extends ListboxBaseRootState {
 		this.inputValue = itemLabel;
 	};
 
-	getSelectedNode = () => {
-		if (this.value.current === "") return null;
+	getSelectedItemNodes = () => {
+		if (this.value.current === "")
+			return {
+				selectedItemNode: null,
+				selectedItemTextNode: null,
+			};
 		const node = this.getNodeByValue(this.value.current);
-		if (node) return node;
+		if (node) {
+			const textNode = node.querySelector<HTMLElement>(`${this.bitsAttrs["item-text"]}`);
+			return {
+				selectedItemNode: node,
+				selectedItemTextNode: textNode,
+			};
+		}
 		const firstNode = this.getCandidateNodes()[0];
-		if (firstNode) return firstNode;
-		return null;
+		if (firstNode) {
+			const firstItemTextNode = firstNode.querySelector<HTMLElement>(
+				`${this.bitsAttrs["item-text"]}`
+			);
+			return {
+				selectedItemNode: firstNode,
+				selectedItemTextNode: firstItemTextNode,
+			};
+		}
+		return {
+			selectedItemNode: null,
+			selectedItemTextNode: null,
+		};
 	};
 
 	#setInitialHighlightedNode = () => {
@@ -259,16 +286,37 @@ class ListboxMultipleRootState extends ListboxBaseRootState {
 		this.inputValue = itemLabel;
 	};
 
-	getSelectedNode = () => {
+	getSelectedItemNodes = () => {
 		if (this.value.current.length && this.value.current[0] !== "") {
 			const node = this.getNodeByValue(this.value.current[0]!);
-			if (node) return node;
-			return null;
+			if (node) {
+				const textNode = node.querySelector<HTMLElement>(`${this.bitsAttrs["item-text"]}`);
+				return {
+					selectedItemNode: node,
+					selectedItemTextNode: textNode,
+				};
+			}
+			return {
+				selectedItemNode: null,
+				selectedItemTextNode: null,
+			};
 		}
 		// if no value is set, get the first item
 		const firstNode = this.getCandidateNodes()[0];
-		if (!firstNode) return null;
-		return firstNode;
+
+		if (firstNode) {
+			const firstItemTextNode = firstNode.querySelector<HTMLElement>(
+				`${this.bitsAttrs["item-text"]}`
+			);
+			return {
+				selectedItemNode: firstNode,
+				selectedItemTextNode: firstItemTextNode,
+			};
+		}
+		return {
+			selectedItemNode: null,
+			selectedItemTextNode: null,
+		};
 	};
 
 	#setInitialHighlightedNode = () => {
@@ -655,6 +703,7 @@ class ListboxContentState {
 	viewportNode = $state<HTMLElement | null>(null);
 	root: ListboxRootState;
 	isPositioned = $state(false);
+	alignedPositionState: ListboxContentAlignedState | null = null;
 
 	constructor(props: ListboxContentStateProps, root: ListboxRootState) {
 		this.root = root;
@@ -734,6 +783,192 @@ class ListboxContentState {
 	);
 }
 
+class ListboxContentAlignedState {
+	content: ListboxContentState;
+	root: ListboxRootState;
+	contentWrapperId = $state(useId());
+	shouldExpandOnScroll = $state(false);
+	shouldReposition = $state(false);
+	contentZIndex = $state("");
+
+	constructor(content: ListboxContentState) {
+		this.content = content;
+		this.root = content.root;
+
+		this.content.alignedPositionState = this;
+
+		$effect(() => {
+			afterTick(() => {
+				this.position();
+				const contentNode = document.getElementById(this.content.id.current);
+				if (contentNode) {
+					this.contentZIndex = window.getComputedStyle(contentNode).zIndex;
+				}
+			});
+		});
+	}
+
+	onPlaced = () => {
+		this.content.isPositioned = true;
+	};
+	position = () => {
+		afterTick(() => {
+			const { selectedItemNode, selectedItemTextNode } = this.root.getSelectedItemNodes();
+			const contentNode = this.root.contentNode;
+			const contentWrapperNode = document.getElementById(this.contentWrapperId);
+			const viewportNode = this.content.viewportNode;
+			const triggerNode = this.root.triggerNode;
+			const valueNode = this.root.valueNode;
+
+			if (
+				!contentNode ||
+				!contentWrapperNode ||
+				!viewportNode ||
+				!selectedItemNode ||
+				!selectedItemTextNode ||
+				!triggerNode ||
+				!valueNode
+			) {
+				return;
+			}
+
+			const triggerRect = triggerNode.getBoundingClientRect();
+
+			// horizontal positioning
+			const contentRect = contentNode.getBoundingClientRect();
+			const valueRect = valueNode.getBoundingClientRect();
+			const itemTextRect = selectedItemTextNode.getBoundingClientRect();
+
+			if (this.root.dir.current === "rtl") {
+				const itemTextOffset = itemTextRect.left - contentRect.left;
+				const left = valueRect.left - itemTextOffset;
+				const leftDelta = triggerRect.left - left;
+				const minContentWidth = triggerRect.width + leftDelta;
+				const contentWidth = Math.max(minContentWidth, contentRect.width);
+				const rightEdge = window.innerWidth - CONTENT_MARGIN;
+				const clampedLeft = clamp(left, CONTENT_MARGIN, rightEdge - contentWidth);
+
+				contentWrapperNode.style.minWidth = `${minContentWidth}px`;
+				contentWrapperNode.style.left = `${clampedLeft}px`;
+			} else {
+				const itemTextOffset = contentRect.right - itemTextRect.right;
+				const right = window.innerWidth - valueRect.right - itemTextOffset;
+				const rightDelta = window.innerWidth - triggerRect.right - right;
+				const minContentWidth = triggerRect.width + rightDelta;
+				const contentWidth = Math.max(minContentWidth, contentRect.width);
+				const leftEdge = window.innerWidth - CONTENT_MARGIN;
+				const clampedRight = clamp(right, CONTENT_MARGIN, leftEdge - contentWidth);
+
+				contentWrapperNode.style.minWidth = `${minContentWidth}px`;
+				contentWrapperNode.style.right = `${clampedRight}px`;
+			}
+
+			// vertical positioning
+			const items = this.root.getCandidateNodes();
+
+			const availableHeight = window.innerHeight - CONTENT_MARGIN * 2;
+			const itemsHeight = viewportNode.scrollHeight;
+
+			const contentStyles = window.getComputedStyle(contentNode);
+
+			const contentBorderTopWidth = Number.parseInt(contentStyles.borderTopWidth, 10);
+			const contentPaddingTop = Number.parseInt(contentStyles.paddingTop, 10);
+
+			const contentBorderBottomWidth = Number.parseInt(contentStyles.borderBottomWidth, 10);
+			const contentPaddingBottom = Number.parseInt(contentStyles.paddingBottom, 10);
+
+			const fullContentHeight =
+				contentBorderTopWidth +
+				contentPaddingTop +
+				itemsHeight +
+				contentPaddingBottom +
+				contentBorderBottomWidth;
+
+			const minContentHeight = Math.min(selectedItemNode.offsetHeight * 5, fullContentHeight);
+
+			const viewportStyles = window.getComputedStyle(viewportNode);
+			const viewportPaddingTop = Number.parseInt(viewportStyles.paddingTop, 10);
+			const viewportPaddingBottom = Number.parseInt(viewportStyles.paddingBottom, 10);
+
+			const topEdgeToTriggerMiddle =
+				triggerRect.top + triggerRect.height / 2 - CONTENT_MARGIN;
+			const triggerMiddleToBottomEdge = availableHeight - topEdgeToTriggerMiddle;
+
+			const selectedItemHalfHeight = selectedItemNode.offsetHeight / 2;
+			const itemOffsetMiddle = selectedItemNode.offsetTop + selectedItemHalfHeight;
+			const contentTopToItemMiddle =
+				contentBorderTopWidth + contentPaddingTop + itemOffsetMiddle;
+			const itemMiddleToContentBottom = fullContentHeight - contentTopToItemMiddle;
+
+			const willAlignWithoutTopOverflow = contentTopToItemMiddle <= topEdgeToTriggerMiddle;
+
+			if (willAlignWithoutTopOverflow) {
+				const isLastItem = selectedItemNode === items[items.length - 1];
+				contentWrapperNode.style.bottom = `${0}px`;
+				const viewportOffsetBottom =
+					contentNode.clientHeight - viewportNode.offsetTop - viewportNode.offsetHeight;
+				const clampedTriggerMiddleToBottomEdge = Math.max(
+					triggerMiddleToBottomEdge,
+					selectedItemHalfHeight +
+						// viewport might have padding bottom, include it to avoid a scrollable viewport
+						(isLastItem ? viewportPaddingBottom : 0) +
+						viewportOffsetBottom +
+						contentBorderBottomWidth
+				);
+				const height = contentTopToItemMiddle + clampedTriggerMiddleToBottomEdge;
+				contentWrapperNode.style.height = `${height}px`;
+			} else {
+				const isFirstItem = selectedItemNode === items[0];
+				contentWrapperNode.style.top = `${0}px`;
+				const clampedTopEdgeToTriggerMiddle = Math.max(
+					topEdgeToTriggerMiddle,
+					contentBorderTopWidth +
+						viewportNode.offsetTop +
+						// viewport might have padding top, include it to avoid a scrollable viewport
+						(isFirstItem ? viewportPaddingTop : 0) +
+						selectedItemHalfHeight
+				);
+				const height = clampedTopEdgeToTriggerMiddle + itemMiddleToContentBottom;
+				contentWrapperNode.style.height = `${height}px`;
+				viewportNode.scrollTop =
+					contentTopToItemMiddle - topEdgeToTriggerMiddle + viewportNode.offsetTop;
+			}
+
+			contentWrapperNode.style.margin = `${CONTENT_MARGIN}px 0`;
+			contentWrapperNode.style.minHeight = `${minContentHeight}px`;
+			contentWrapperNode.style.maxHeight = `${availableHeight}px`;
+
+			this.onPlaced();
+		});
+		requestAnimationFrame(() => (this.shouldExpandOnScroll = true));
+	};
+
+	wrapperProps = $derived.by(
+		() =>
+			({
+				id: this.contentWrapperId,
+				style: {
+					display: "flex",
+					flexDirection: "column",
+					position: "fixed",
+					zIndex: this.contentZIndex,
+				},
+				[this.content.root.bitsAttrs["content-wrapper"]]: "",
+			}) as const
+	);
+
+	props = $derived.by(
+		() =>
+			({
+				...this.content.props,
+				style: {
+					boxSizing: "border-box",
+					maxHeight: "100%",
+				},
+			}) as const
+	);
+}
+
 type ListboxItemStateProps = WithRefProps<
 	ReadableBoxedValues<{
 		value: string;
@@ -756,6 +991,7 @@ class ListboxItemState {
 	isSelected = $derived.by(() => this.root.includesItem(this.value.current));
 	isHighlighted = $derived.by(() => this.root.highlightedValue === this.value.current);
 	prevHighlighted = new Previous(() => this.isHighlighted);
+	textId = $state("");
 
 	constructor(props: ListboxItemStateProps, root: ListboxRootState) {
 		this.root = root;
@@ -814,6 +1050,10 @@ class ListboxItemState {
 		}
 	};
 
+	setTextId = (id: string) => {
+		this.textId = id;
+	};
+
 	props = $derived.by(
 		() =>
 			({
@@ -830,6 +1070,38 @@ class ListboxItemState {
 				onpointermove: this.#onpointermove,
 				onpointerdown: this.#onpointerdown,
 				onpointerup: this.#onpointerup,
+			}) as const
+	);
+}
+
+type ListboxItemTextStateProps = WithRefProps;
+
+class ListboxItemTextState {
+	item: ListboxItemState;
+	#id: ListboxItemTextStateProps["id"];
+	#ref: ListboxItemTextStateProps["ref"];
+
+	constructor(props: ListboxItemTextStateProps, item: ListboxItemState) {
+		this.item = item;
+		this.#id = props.id;
+		this.#ref = props.ref;
+		this.item.setTextId(this.#id.current);
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+		});
+
+		$effect(() => {
+			this.item.setTextId(this.#id.current);
+		});
+	}
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.current,
+				[this.item.root.bitsAttrs["item-text"]]: "",
 			}) as const
 	);
 }
@@ -939,6 +1211,7 @@ class ListboxViewportState {
 	#ref: ListboxViewportStateProps["ref"];
 	root: ListboxBaseRootState;
 	content: ListboxContentState;
+	prevScrollTop = $state(0);
 
 	constructor(props: ListboxViewportStateProps, content: ListboxContentState) {
 		this.#id = props.id;
@@ -956,6 +1229,41 @@ class ListboxViewportState {
 		});
 	}
 
+	#onscroll = (e: WheelEvent) => {
+		afterTick(() => {
+			const viewport = e.currentTarget as HTMLElement;
+			const shouldExpandOnScroll =
+				this.content.alignedPositionState?.shouldExpandOnScroll ?? undefined;
+
+			const contentWrapper = document.getElementById(
+				this.content.alignedPositionState?.contentWrapperId ?? ""
+			);
+
+			if (shouldExpandOnScroll && contentWrapper) {
+				const scrolledBy = Math.abs(this.prevScrollTop - viewport.scrollTop);
+				if (scrolledBy > 0) {
+					const availableHeight = window.innerHeight - CONTENT_MARGIN * 2;
+					const cssMinHeight = Number.parseFloat(contentWrapper.style.minHeight);
+					const cssHeight = Number.parseFloat(contentWrapper.style.height);
+					const prevHeight = Math.max(cssMinHeight, cssHeight);
+
+					if (prevHeight < availableHeight) {
+						const nextHeight = prevHeight + scrolledBy;
+						const clampedNextHeight = Math.min(availableHeight, nextHeight);
+						const heightDiff = nextHeight - clampedNextHeight;
+
+						contentWrapper.style.height = `${clampedNextHeight}px`;
+						if (contentWrapper.style.bottom === "0px") {
+							viewport.scrollTop = heightDiff > 0 ? heightDiff : 0;
+							contentWrapper.style.justifyContent = "flex-end";
+						}
+					}
+				}
+			}
+			this.prevScrollTop = viewport.scrollTop;
+		});
+	};
+
 	props = $derived.by(
 		() =>
 			({
@@ -970,6 +1278,7 @@ class ListboxViewportState {
 					flex: 1,
 					overflow: "auto",
 				},
+				onscroll: this.#onscroll
 			}) as const
 	);
 }
@@ -1155,6 +1464,36 @@ class ListboxScrollUpButtonState {
 	);
 }
 
+type ListboxValueStateProps = WithRefProps;
+
+class ListboxValueState {
+	#id: ListboxValueStateProps["id"];
+	#ref: ListboxValueStateProps["ref"];
+	#root: ListboxRootState;
+
+	constructor(props: ListboxValueStateProps, root: ListboxRootState) {
+		this.#id = props.id;
+		this.#ref = props.ref;
+		this.#root = root;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+			onRefChange: (node) => {
+				this.#root.valueNode = node;
+			},
+		});
+	}
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.current,
+				[this.#root.bitsAttrs.value]: "",
+			}) as const
+	);
+}
+
 type InitListboxProps = {
 	type: "single" | "multiple";
 	value: Box<string> | Box<string[]>;
@@ -1165,6 +1504,7 @@ type InitListboxProps = {
 	scrollAlignment: "nearest" | "center";
 	name: string;
 	items: { value: string; label: string }[];
+	dir: Direction;
 }> &
 	WritableBoxedValues<{
 		open: boolean;
@@ -1187,6 +1527,10 @@ const [setListboxContentContext, getListboxContentContext] = createContext<Listb
 	"Combobox.Content",
 ]);
 
+const [setListboxItemContext, getListboxItemContext] = createContext<ListboxItemState>([
+	"Listbox.Item",
+]);
+
 export function useListboxRoot(props: InitListboxProps) {
 	const { type, ...rest } = props;
 
@@ -1206,6 +1550,10 @@ export function useListboxContent(props: ListboxContentStateProps) {
 	return setListboxContentContext(new ListboxContentState(props, getListboxRootContext()));
 }
 
+export function useListboxContentAligned(content: ListboxContentState) {
+	return new ListboxContentAlignedState(content);
+}
+
 export function useListboxTrigger(props: ListboxTriggerStateProps) {
 	return new ListboxTriggerState(props, getListboxRootContext());
 }
@@ -1215,7 +1563,7 @@ export function useListboxComboTrigger(props: ListboxComboTriggerStateProps) {
 }
 
 export function useListboxItem(props: ListboxItemStateProps) {
-	return new ListboxItemState(props, getListboxRootContext());
+	return setListboxItemContext(new ListboxItemState(props, getListboxRootContext()));
 }
 
 export function useListboxViewport(props: ListboxViewportStateProps) {
@@ -1246,6 +1594,14 @@ export function useListboxHiddenInput(props: ListboxHiddenInputStateProps) {
 	return new ListboxHiddenInputState(props, getListboxRootContext());
 }
 
+export function useListboxItemText(props: ListboxItemTextStateProps) {
+	return new ListboxItemTextState(props, getListboxItemContext());
+}
+
+export function useListboxValue(props: ListboxValueStateProps) {
+	return new ListboxValueState(props, getListboxRootContext());
+}
+
 ////////////////////////////////////
 // Helpers
 ////////////////////////////////////
@@ -1263,6 +1619,8 @@ const listboxParts = [
 	"arrow",
 	"input",
 	"content-wrapper",
+	"item-text",
+	"value",
 ] as const;
 
 type ListboxBitsAttrs = Record<(typeof listboxParts)[number], string>;

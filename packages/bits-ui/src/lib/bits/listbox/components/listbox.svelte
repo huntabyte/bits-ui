@@ -20,6 +20,7 @@
 		controlledOpen = false,
 		controlledValue = false,
 		items = [],
+		dir = "ltr",
 		children,
 	}: ListboxRootProps = $props();
 
@@ -47,6 +48,7 @@
 		) as WritableBox<string> | WritableBox<string[]>,
 		disabled: box.with(() => disabled),
 		required: box.with(() => required),
+		dir: box.with(() => dir),
 		open: box.with(
 			() => open,
 			(v) => {
