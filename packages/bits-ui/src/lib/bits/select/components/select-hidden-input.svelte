@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import { useListboxHiddenInput } from "../listbox.svelte.js";
+	import { useSelectHiddenInput } from "../select.svelte.js";
 	import VisuallyHidden from "$lib/bits/utilities/visually-hidden/visually-hidden.svelte";
 
 	type Props = {
@@ -9,7 +9,7 @@
 
 	let { value = $bindable("") }: Props = $props();
 
-	const hiddenInputState = useListboxHiddenInput({
+	const hiddenInputState = useSelectHiddenInput({
 		value: box.with(() => value),
 	});
 </script>

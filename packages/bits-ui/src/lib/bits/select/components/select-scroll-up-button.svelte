@@ -2,27 +2,38 @@
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { SelectScrollUpButtonProps } from "../types.js";
 	import { useSelectScrollUpButton } from "../select.svelte.js";
-	import SelectScrollUpButtonMounted from "./select-scroll-up-button-mounted.svelte";
 	import { useId } from "$lib/internal/use-id.js";
+	import { Mounted } from "$lib/bits/utilities/index.js";
 
-	let { id = useId(), ref = $bindable(null), ...restProps }: SelectScrollUpButtonProps = $props();
+	let {
+		id = useId(),
+		ref = $bindable(null),
+		child,
+		children,
+		...restProps
+	}: SelectScrollUpButtonProps = $props();
 
-	const mounted = box(false);
+	let mounted = $state(false);
 
-	const scrollUpButtonState = useSelectScrollUpButton({
+	const scrollDownButtonState = useSelectScrollUpButton({
 		id: box.with(() => id),
-		mounted: box.from(mounted),
+		mounted: box.with(() => mounted),
 		ref: box.with(
 			() => ref,
 			(v) => (ref = v)
 		),
 	});
 
-	const { child: _child, children: _children, ...restWithoutChildren } = restProps;
-	const mergedProps = $derived(mergeProps(restWithoutChildren, scrollUpButtonState.props));
-	const { style: _style, ...restWithoutStyle } = restProps;
+	const mergedProps = $derived(mergeProps(restProps, scrollDownButtonState.props));
 </script>
 
-{#if scrollUpButtonState.canScrollUp}
-	<SelectScrollUpButtonMounted {...restWithoutStyle} {...mergedProps} {mounted} />
+{#if scrollDownButtonState.canScrollUp}
+	<Mounted onMountedChange={(m) => (mounted = m)} />
+	{#if child}
+		{@render child({ props: restProps })}
+	{:else}
+		<div {...mergedProps}>
+			{@render children?.()}
+		</div>
+	{/if}
 {/if}

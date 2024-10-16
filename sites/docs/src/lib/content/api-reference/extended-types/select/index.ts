@@ -1,1 +1,1 @@
-export { default as SelectPositionProp } from "./position-prop.md";
+export { default as ItemsProp } from "./items-prop.md";

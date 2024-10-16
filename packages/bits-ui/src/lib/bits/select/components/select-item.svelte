@@ -1,38 +1,43 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
-	import type { SelectItemProps } from "../types.js";
 	import { useSelectItem } from "../select.svelte.js";
+	import type { SelectItemProps } from "../types.js";
 	import { useId } from "$lib/internal/use-id.js";
+	import { noop } from "$lib/internal/noop.js";
 
 	let {
 		id = useId(),
-		value,
-		textValue = "",
 		ref = $bindable(null),
+		value,
+		label = value,
+		disabled = false,
 		children,
 		child,
-		disabled = false,
+		onHighlight = noop,
+		onUnhighlight = noop,
 		...restProps
 	}: SelectItemProps = $props();
 
 	const itemState = useSelectItem({
 		id: box.with(() => id),
-		disabled: box.with(() => disabled),
-		value: box.with(() => value),
-		textValue: box.with(() => textValue),
 		ref: box.with(
 			() => ref,
 			(v) => (ref = v)
 		),
+		value: box.with(() => value),
+		disabled: box.with(() => disabled),
+		label: box.with(() => label),
+		onHighlight: box.with(() => onHighlight),
+		onUnhighlight: box.with(() => onUnhighlight),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, itemState.props));
 </script>
 
 {#if child}
-	{@render child({ props: mergedProps, selected: itemState.isSelected })}
+	{@render child({ props: mergedProps, ...itemState.snippetProps })}
 {:else}
 	<div {...mergedProps}>
-		{@render children?.({ selected: itemState.isSelected })}
+		{@render children?.(itemState.snippetProps)}
 	</div>
 {/if}

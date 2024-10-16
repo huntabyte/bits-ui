@@ -5,10 +5,10 @@
 	import { useId } from "$lib/internal/use-id.js";
 
 	let {
-		children,
-		child,
-		ref = $bindable(null),
 		id = useId(),
+		ref = $bindable(null),
+		child,
+		children,
 		...restProps
 	}: SelectGroupHeadingProps = $props();
 

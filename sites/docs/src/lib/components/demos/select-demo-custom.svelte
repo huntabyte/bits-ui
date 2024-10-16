@@ -1,18 +1,16 @@
 <script lang="ts">
-	import { Select, type WithoutChildren } from "bits-ui";
-	import CaretUpDown from "phosphor-svelte/lib/CaretUpDown";
+	import { Select, type SelectSingleRootProps, type WithoutChildrenOrChild } from "bits-ui";
 	import Check from "phosphor-svelte/lib/Check";
 	import Palette from "phosphor-svelte/lib/Palette";
-	import CaretDoubleDown from "phosphor-svelte/lib/CaretDoubleDown";
+	import CaretUpDown from "phosphor-svelte/lib/CaretUpDown";
 	import CaretDoubleUp from "phosphor-svelte/lib/CaretDoubleUp";
+	import CaretDoubleDown from "phosphor-svelte/lib/CaretDoubleDown";
 
-	let {
-		value = $bindable(""),
-		contentProps,
-		...restProps
-	}: WithoutChildren<Select.RootProps> & {
-		contentProps?: WithoutChildren<Select.ContentProps>;
-	} = $props();
+	type Props = Omit<SelectSingleRootProps, "type"> & {
+		contentProps?: WithoutChildrenOrChild<Select.ContentProps>;
+	};
+
+	let { value = $bindable(""), contentProps, ...restProps }: Props = $props();
 
 	const themes = [
 		{ value: "light-monochrome", label: "Light Monochrome" },
@@ -37,53 +35,48 @@
 		{ value: "burnt-orange", label: "Burnt Orange" },
 	];
 
-	const selectedLabel = $derived(themes.find((theme) => theme.value === value)?.label);
+	const selectedLabel = $derived(
+		value ? themes.find((theme) => theme.value === value)?.label : "Select a theme"
+	);
 </script>
 
-<Select.Root name="hello" bind:value {...restProps}>
+<Select.Root {...restProps} type="single" bind:value items={themes}>
 	<Select.Trigger
 		class="inline-flex h-input w-[296px] select-none items-center rounded-9px border border-border-input bg-background px-[11px] text-sm transition-colors placeholder:text-foreground-alt/50"
 		aria-label="Select a theme"
 	>
 		<Palette class="mr-[9px] size-6 text-muted-foreground" />
-		{#if selectedLabel}
-			<Select.Value class="text-sm">
-				{selectedLabel}
-			</Select.Value>
-		{:else}
-			<Select.Value class="text-sm" placeholder="Select a theme" />
-		{/if}
+		{selectedLabel}
 		<CaretUpDown class="ml-auto size-6 text-muted-foreground" />
 	</Select.Trigger>
 	<Select.Portal>
 		<Select.Content
+			class="max-h-96 w-[var(--bits-select-anchor-width)] min-w-[var(--bits-select-anchor-width)] rounded-xl border border-muted bg-background px-1 py-3 shadow-popover outline-none"
+			sideOffset={10}
 			{...contentProps}
-			class="focus-override z-50 max-h-96 w-full min-w-[296px] select-none rounded-xl border border-muted bg-background px-1 py-3 shadow-popover outline-none"
-			sideOffset={8}
 		>
 			<Select.ScrollUpButton class="flex w-full items-center justify-center">
 				<CaretDoubleUp class="size-3" />
 			</Select.ScrollUpButton>
 			<Select.Viewport class="p-1">
-				{#each themes as theme}
+				{#each themes as theme, i (i + theme.value)}
 					<Select.Item
-						class="focus-override flex h-10 w-full select-none items-center rounded-button py-3 pl-5 pr-1.5 text-sm outline-none transition-all duration-75 focus:outline-none focus-visible:outline-none data-[highlighted]:bg-muted"
+						class="flex h-10 w-full select-none items-center rounded-button py-3 pl-5 pr-1.5 text-sm capitalize outline-none duration-75 data-[highlighted]:bg-muted"
 						value={theme.value}
+						label={theme.label}
 					>
 						{#snippet children({ selected })}
-							<Select.ItemText>
-								{theme.label}
-							</Select.ItemText>
+							{theme.label}
 							{#if selected}
-								<span class="ml-auto">
+								<div class="ml-auto">
 									<Check />
-								</span>
+								</div>
 							{/if}
 						{/snippet}
 					</Select.Item>
 				{/each}
 			</Select.Viewport>
-			<Select.ScrollDownButton class="flex w-full items-center justify-center py-1">
+			<Select.ScrollDownButton class="flex w-full items-center justify-center">
 				<CaretDoubleDown class="size-3" />
 			</Select.ScrollDownButton>
 		</Select.Content>

@@ -1,7 +1,7 @@
 <script lang="ts" module>
 	import {
-		Listbox,
-		type ListboxSingleRootProps,
+		Select,
+		type SelectSingleRootProps,
 		type WithoutChildren,
 		type WithoutChildrenOrChild,
 	} from "bits-ui";
@@ -11,9 +11,9 @@
 		disabled?: boolean;
 	};
 
-	export type ListboxForceMountTestProps = WithoutChildren<ListboxSingleRootProps> & {
-		contentProps?: WithoutChildrenOrChild<Listbox.ContentProps>;
-		portalProps?: WithoutChildrenOrChild<Listbox.PortalProps>;
+	export type SelectForceMountTestProps = WithoutChildren<SelectSingleRootProps> & {
+		contentProps?: WithoutChildrenOrChild<Select.ContentProps>;
+		portalProps?: WithoutChildrenOrChild<Select.PortalProps>;
 		items: Item[];
 		searchValue?: string;
 		withOpenCheck?: boolean;
@@ -30,7 +30,7 @@
 		searchValue = "",
 		withOpenCheck = false,
 		...restProps
-	}: ListboxForceMountTestProps = $props();
+	}: SelectForceMountTestProps = $props();
 
 	const filteredItems = $derived(
 		searchValue === ""
@@ -42,69 +42,64 @@
 </script>
 
 <main data-testid="main">
-	<Listbox.Root bind:value bind:open {...restProps}>
-		<Listbox.Trigger data-testid="trigger">
+	<Select.Root bind:value bind:open {...restProps}>
+		<Select.Trigger data-testid="trigger">
 			{#if selectedLabel}
 				{selectedLabel}
 			{:else}
 				Open combobox
 			{/if}
-		</Listbox.Trigger>
-		<Listbox.Portal {...portalProps}>
+		</Select.Trigger>
+		<Select.Portal {...portalProps}>
 			{#if withOpenCheck}
-				<Listbox.Content data-testid="content" {...contentProps} forceMount>
+				<Select.Content data-testid="content" {...contentProps} forceMount>
 					{#snippet child({ props, open })}
 						{#if open}
 							<div {...props}>
-								<Listbox.Group data-testid="group">
-									<Listbox.GroupHeading data-testid="group-label"
-										>Options</Listbox.GroupHeading
+								<Select.Group data-testid="group">
+									<Select.GroupHeading data-testid="group-label"
+										>Options</Select.GroupHeading
 									>
 									{#each filteredItems as { value, label, disabled }}
-										<Listbox.Item
-											data-testid={value}
-											{disabled}
-											{value}
-											{label}
-										>
+										<Select.Item data-testid={value} {disabled} {value} {label}>
 											{#snippet children({ selected })}
 												{#if selected}
 													<span data-testid="{value}-indicator">x</span>
 												{/if}
 												{label}
 											{/snippet}
-										</Listbox.Item>
+										</Select.Item>
 									{/each}
-								</Listbox.Group>
+								</Select.Group>
 							</div>
 						{/if}
 					{/snippet}
-				</Listbox.Content>
+				</Select.Content>
 			{:else}
-				<Listbox.Content data-testid="content" {...contentProps} forceMount>
+				<Select.Content data-testid="content" {...contentProps} forceMount>
 					{#snippet child({ props })}
 						<div {...props}>
-							<Listbox.Group data-testid="group">
-								<Listbox.GroupHeading data-testid="group-label"
-									>Options</Listbox.GroupHeading
+							<Select.Group data-testid="group">
+								<Select.GroupHeading data-testid="group-label"
+									>Options</Select.GroupHeading
 								>
 								{#each filteredItems as { value, label, disabled }}
-									<Listbox.Item data-testid={value} {disabled} {value} {label}>
+									<Select.Item data-testid={value} {disabled} {value} {label}>
 										{#snippet children({ selected })}
 											{#if selected}
 												<span data-testid="{value}-indicator">x</span>
 											{/if}
 											{label}
 										{/snippet}
-									</Listbox.Item>
+									</Select.Item>
 								{/each}
-							</Listbox.Group>
+							</Select.Group>
 						</div>
 					{/snippet}
-				</Listbox.Content>
+				</Select.Content>
 			{/if}
-		</Listbox.Portal>
-	</Listbox.Root>
+		</Select.Portal>
+	</Select.Root>
 	<div data-testid="outside"></div>
 	<button data-testid="open-binding" onclick={() => (open = !open)}>
 		{open}

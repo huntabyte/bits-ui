@@ -3,8 +3,8 @@
 	import type { ComboboxRootProps } from "../types.js";
 	import { noop } from "$lib/internal/noop.js";
 	import FloatingLayer from "$lib/bits/utilities/floating-layer/components/floating-layer.svelte";
-	import { useListboxRoot } from "$lib/bits/listbox/listbox.svelte.js";
-	import ListboxHiddenInput from "$lib/bits/listbox/components/listbox-hidden-input.svelte";
+	import { useSelectRoot } from "$lib/bits/select/select.svelte.js";
+	import ListboxHiddenInput from "$lib/bits/select/components/select-hidden-input.svelte";
 
 	let {
 		value = $bindable(),
@@ -32,7 +32,7 @@
 		}
 	}
 
-	const rootState = useListboxRoot({
+	const rootState = useSelectRoot({
 		type,
 		value: box.with(
 			() => value!,

@@ -4,7 +4,7 @@ description: Enables users to choose from a list of options presented in a dropd
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, SelectDemo, SelectDemoPositioning } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, SelectDemo, SelectDemoCustomAnchor, SelectDemoMultiple, Callout } from '$lib/components'
 	export let schemas;
 </script>
 
@@ -18,9 +18,35 @@ description: Enables users to choose from a list of options presented in a dropd
 
 ## Overview
 
-The `Select` component can be used as a replacement for the native `<select>` element in your application. It provides a more flexible and customizable way to select an option from a list of options. The component offers a variety of features, such as typeahead, keyboard navigation, scroll up/down buttons, and more.
+The Select component provides users with a selectable list of options. It's designed to offer an enhanced selection experience with features like typeahead search, keyboard navigation, and customizable grouping. This component is particularly useful for scenarios where users need to choose from a predefined set of options, offering more functionality than a standard select element.
+
+## Key Features
+
+-   **Typeahead Search**: Users can quickly find options by typing
+-   **Keyboard Navigation**: Full support for keyboard interactions, allowing users to navigate through options using arrow keys, enter to select, and more.
+-   **Grouped Options**: Ability to organize options into logical groups, enhancing readability and organization of large option sets.
+-   **Scroll Management**: Includes scroll up/down buttons for easy navigation in long lists.
+-   **Accessibility**: Built-in ARIA attributes and keyboard support ensure compatibility with screen readers and adherence to accessibility standards.
+-   **Portal Support**: Option to render the select content in a portal, preventing layout issues in complex UI structures.
+
+## Architecture
+
+The Select component is composed of several sub-components, each with a specific role:
+
+-   **Root**: The main container component that manages the state and context for the combobox.
+-   **Trigger**: The button or element that opens the dropdown list.
+-   **Portal**: Responsible for portalling the dropdown content to the body or a custom target.
+-   **Group**: A container for grouped items, used to group related items.
+-   **GroupHeading**: A heading for a group of items, providing a descriptive label for the group.
+-   **Item**: An individual item within the list.
+-   **Separator**: A visual separator between items.
+-   **Content**: The dropdown container that displays the items. It uses [Floating UI](https://floating-ui.com/) to position the content relative to the trigger.
+-   **ContentStatic** (Optional): An alternative to the Content component, that enables you to opt-out of Floating UI and position the content yourself.
+-   **Arrow**: An arrow element that points to the trigger when using the `Combobox.Content` component.
 
 ## Structure
+
+Here's an overview of how the Select component is structured in code:
 
 ```svelte
 <script lang="ts">
@@ -28,24 +54,18 @@ The `Select` component can be used as a replacement for the native `<select>` el
 </script>
 
 <Select.Root>
-	<Select.Trigger>
-		<Select.Value />
-	</Select.Trigger>
+	<Select.Trigger />
 	<Select.Portal>
 		<Select.Content>
 			<Select.ScrollUpButton />
 			<Select.Viewport>
-				<Select.Item>
-					<Select.ItemText />
-				</Select.Item>
+				<Select.Item />
 				<Select.Group>
 					<Select.GroupHeading />
-					<Select.Item>
-						<Select.ItemText />
-					</Select.Item>
+					<Select.Item />
 				</Select.Group>
+				<Select.ScrollDownButton />
 			</Select.Viewport>
-			<Select.ScrollDownButton />
 		</Select.Content>
 	</Select.Portal>
 </Select.Root>
@@ -53,9 +73,9 @@ The `Select` component can be used as a replacement for the native `<select>` el
 
 ## Reusable Components
 
-As you can see from the structure above, there are a number of pieces that make up the `Select` component. These pieces are provided to give you maximum flexibility and customization options, but can be a burden to write out everywhere you need to use a `Select` in your application.
+As you can see from the structure above, there are a number of pieces that make up the `Select` component. These pieces are provided to give you maximum flexibility and customization options, but can be a burden to write out everywhere you need to use a select in your application.
 
-To ease this burden, it's recommended to create your own reusable `Select` component that wraps the primitives and provides a more convenient API for your use cases.
+To ease this burden, it's recommended to create your own reusable select component that wraps the primitives and provides a more convenient API for your use cases.
 
 Here's an example of how you might create a reusable `MySelect` component that receives a list of options and renders each of them as an item.
 
@@ -94,7 +114,7 @@ Here's an example of how you might create a reusable `MySelect` component that r
 						{#snippet children({ selected })}
 							{selected ? "✅" : ""}
 							<Select.ItemText>
-								{label}
+								{item.label}
 							</Select.ItemText>
 						{/snippet}
 					</Select.Item>
@@ -124,37 +144,41 @@ You can then use the `MySelect` component throughout your application like so:
 <MySelect {items} bind:value={fruit} />
 ```
 
-## Value State
+## Managing Value State
 
-The `value` represents the currently selected item/option within the select menu. Bits UI provides flexible options for controlling and synchronizing the Select's value state.
+Bits UI offers several approaches to manage and synchronize the Select's value state, catering to different levels of control and integration needs.
 
-### Two-Way Binding
+### 1. Two-Way Binding
 
-Use the `bind:value` directive for effortless two-way synchronization between your local state and the Select's internal state.
+For seamless state synchronization, use Svelte's `bind:value` directive. This method automatically keeps your local state in sync with the component's internal state.
 
-```svelte {3,6,8}
+```svelte
 <script lang="ts">
 	import { Select } from "bits-ui";
-	let myValue = $state<string>("");
+	let myValue = $state("");
 </script>
 
-<button onclick={() => (myValue = "apple")}> Apple </button>
+<button onclick={() => (myValue = "A")}> Select A </button>
 
 <Select.Root bind:value={myValue}>
 	<!-- ... -->
 </Select.Root>
 ```
 
-This setup enables toggling the value via the custom button and ensures the local `myValue` state updates when the Select's value changes through any internal means (e.g., clicking on an item's button).
+#### Key Benefits
 
-### Change Handler
+-   Simplifies state management
+-   Automatically updates `myValue` when the internal state changes (e.g., via clicking on an item)
+-   Allows external control (e.g., selecting an item via a separate button)
 
-You can also use the `onValueChange` prop to update local state when the Select's `value` state changes. This is useful when you don't want two-way binding for one reason or another, or you want to perform additional logic when the Select changes.
+### 2. Change Handler
 
-```svelte {3,7-11}
+For more granular control or to perform additional logic on state changes, use the `onValueChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
+
+```svelte
 <script lang="ts">
 	import { Select } from "bits-ui";
-	let myValue = $state<string>("");
+	let myValue = $state("");
 </script>
 
 <Select.Root
@@ -168,43 +192,88 @@ You can also use the `onValueChange` prop to update local state when the Select'
 </Select.Root>
 ```
 
-## Open State
+#### Use Cases
 
-The `open` state represents whether or not the select content is open. Bits UI provides flexible options for controlling and synchronizing the Select's open state.
+-   Implementing custom behaviors on value change
+-   Integrating with external state management solutions
+-   Triggering side effects (e.g., logging, data fetching)
 
-### Two-Way Binding
+### 3. Fully Controlled
 
-Use the `bind:open` directive for effortless two-way synchronization between your local state and the Select's internal state.
+For complete control over the component's value state, use the `controlledValue` prop. This approach requires you to manually manage the value state, giving you full control over when and how the component responds to value change events.
 
-```svelte {3,6,8}
+To implement controlled state:
+
+1. Set the `controlledValue` prop to `true` on the `Select.Root` component.
+2. Provide a `value` prop to `Select.Root`, which should be a variable holding the current state.
+3. Implement an `onValueChange` handler to update the state when the internal state changes.
+
+```svelte
 <script lang="ts">
 	import { Select } from "bits-ui";
-	let isOpen = $state(false);
+	let myValue = $state("");
 </script>
 
-<button onclick={() => (open = true)}> Open select </button>
-
-<Select.Root bind:open={isOpen}>
+<Select.Root controlledValue value={myValue} onValueChange={(v) => (myValue = v)}>
 	<!-- ... -->
 </Select.Root>
 ```
 
-This setup enables toggling the Select via the custom button and ensures the local `isOpen` state updates when the Select's open state changes through any internal means e.g. clicking on the trigger or outside the content.
+#### When to Use
 
-### Change Handler
+-   Implementing complex open/close logic
+-   Coordinating multiple UI elements
+-   Debugging state-related issues
 
-You can also use the `onOpenChange` prop to update local state when the Select's `open` state changes. This is useful when you don't want two-way binding for one reason or another, or you want to perform additional logic when the Select changes.
+<Callout>
 
-```svelte {3,7-11}
+While powerful, fully controlled state should be used judiciously as it increases complexity and can cause unexpected behaviors if not handled carefully.
+
+For more in-depth information on controlled components and advanced state management techniques, refer to our [Controlled State](/docs/controlled-state) documentation.
+
+</Callout>
+
+## Managing Open State
+
+Bits UI offers several approaches to manage and synchronize the Select's open state, catering to different levels of control and integration needs.
+
+### 1. Two-Way Binding
+
+For seamless state synchronization, use Svelte's `bind:open` directive. This method automatically keeps your local state in sync with the component's internal state.
+
+```svelte
 <script lang="ts">
 	import { Select } from "bits-ui";
-	let isOpen = $state(false);
+	let myOpen = $state(false);
+</script>
+
+<button onclick={() => (myOpen = true)}> Open </button>
+
+<Select.Root bind:open={myOpen}>
+	<!-- ... -->
+</Select.Root>
+```
+
+#### Key Benefits
+
+-   Simplifies state management
+-   Automatically updates `myOpen` when the internal state changes (e.g., via clicking on the trigger/input)
+-   Allows external control (e.g., opening via a separate button)
+
+### 2. Change Handler
+
+For more granular control or to perform additional logic on state changes, use the `onOpenChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
+
+```svelte
+<script lang="ts">
+	import { Select } from "bits-ui";
+	let myOpen = $state(false);
 </script>
 
 <Select.Root
-	open={isOpen}
-	onOpenChange={(open) => {
-		isOpen = open;
+	open={myOpen}
+	onOpenChange={(o) => {
+		myOpen = o;
 		// additional logic here.
 	}}
 >
@@ -212,98 +281,167 @@ You can also use the `onOpenChange` prop to update local state when the Select's
 </Select.Root>
 ```
 
-## Positioning
+#### Use Cases
 
-The `Select` component supports two different positioning strategies for the content. The default positioning strategy is `floating`, which uses Floating UI to position the content relative to the trigger, similar to other popover-like components. If you prefer a more native-like experience, you can set the `position` prop to `item-aligned`, which will position the content relative to the trigger, similar to a native `<select>` element.
+-   Implementing custom behaviors on open change
+-   Integrating with external state management solutions
+-   Triggering side effects (e.g., logging, data fetching)
 
-```svelte /position="item-aligned"/ /position="floating"/
-<Select.Content position="floating">
-	<!-- ... -->
-</Select.Content>
+### 3. Fully Controlled
 
-<!-- or -->
+For complete control over the component's value state, use the `controlledOpen` prop. This approach requires you to manually manage the value state, giving you full control over when and how the component responds to value change events.
 
-<Select.Content position="item-aligned">
-	<!-- ... -->
-</Select.Content>
-```
+To implement controlled state:
 
-Here's an example of both strategies in action:
+1. Set the `controlledOpen` prop to `true` on the `Select.Root` component.
+2. Provide an `open` prop to `Select.Root`, which should be a variable holding the current state.
+3. Implement an `onOpenChange` handler to update the state when the internal state changes.
 
-<SelectDemoPositioning />
-
-NOTE: When using the `"item-aligned"` positioning strategy, the props related to configuring Floating UI on the `Select.Content` component will be ignored.
-
-## HTML Forms
-
-The `Select` component is designed to work seamlessly with HTML forms. You can use the `name` prop to associate the select with a form field.
-
-```svelte /name="theme"/
-<Select.Root name="theme">
-	<!-- ... -->
-</Select.Root>
-```
-
-## Server-side Rendering
-
-To accomplish some of the nice features of the `Select` component, such as typeahead while the select content is closed and the trigger is focused, we leverage portals to send items into the `Select.Value` component.
-
-Portals only work client-side, so if you are using SvelteKit with SSR, you'll need to handle the case where a default value is provided, otherwise, there will be a flicker of the placeholder value before the default value is portalled into the `Select.Value` component. We're demonstrating this in the featured demo at the top of this page, but here's an example of how you might handle this:
-
-```svelte title="+page.svelte"
+```svelte
 <script lang="ts">
-	// default value is provided via page data from a load function
-	let { data } = $props();
-
-	let options = [
-		{ value: "apple", label: "Apple" },
-		{ value: "banana", label: "Banana" },
-		{ value: "cherry", label: "Cherry" },
-	];
-
-	let value = $state(data.fruit);
-
-	const selectedLabel = $derived(options.find((option) => option.value === data.fruit)?.label);
+	import { Select } from "bits-ui";
+	let myOpen = $state(false);
 </script>
 
-<Select.Root value={data.fruit} onValueChange={(v) => (data.fruit = v)}>
-	<Select.Trigger>
-		{#if selectedLabel}
-			<Select.Value>
-				{selectedLabel}
-			</Select.Value>
-		{:else}
-			<Select.Value placeholder="Select a fruit" />
-		{/if}
-	</Select.Trigger>
-	<!-- ... other select components -->
+<Select.Root controlledOpen open={myOpen} onOpenChange={(v) => (myOpen = v)}>
+	<!-- ... -->
 </Select.Root>
 ```
 
-## Scroll Lock
+#### When to Use
 
-By default, when a user opens the select, scrolling outside the content will be disabled. You can override this behavior by setting the `preventScroll` prop to `false`.
+-   Implementing complex open/close logic
+-   Coordinating multiple UI elements
+-   Debugging state-related issues
 
-```svelte /preventScroll={false}/
-<Select.Content preventScroll={false}>
+<Callout>
+
+While powerful, fully controlled state should be used judiciously as it increases complexity and can cause unexpected behaviors if not handled carefully.
+
+For more in-depth information on controlled components and advanced state management techniques, refer to our [Controlled State](/docs/controlled-state) documentation.
+
+</Callout>
+
+## Multiple Selection
+
+The `type` prop can be set to `'multiple'` to allow multiple items to be selected at a time.
+
+```svelte
+<script lang="ts">
+	import { Select } from "bits-ui";
+
+	let value = $state<string[]>([]);
+</script>
+
+<Select.Root type="multiple" bind:value>
 	<!-- ... -->
-</Select.Content>
+</Select.Root>
 ```
+
+<ComponentPreviewV2 name="select-demo-multiple" comp="Select">
+
+{#snippet preview()}
+<SelectDemoMultiple />
+{/snippet}
+
+</ComponentPreviewV2>
+
+## Opt-out of Floating UI
+
+When you use the `Select.Content` component, Bits UI uses [Floating UI](https://floating-ui.com/) to position the content relative to the trigger, similar to other popover-like components.
+
+You can opt-out of this behavior by instead using the `Select.ContentStatic` component.
+
+```svelte {4,14}
+<Select.Root>
+	<Select.Trigger />
+	<Select.Portal>
+		<Select.ContentStatic>
+			<Select.ScrollUpButton />
+			<Select.Viewport>
+				<Select.Item />
+				<Select.Group>
+					<Select.GroupHeading />
+					<Select.Item />
+				</Select.Group>
+				<Select.ScrollDownButton />
+			</Select.Viewport>
+		</Select.ContentStatic>
+	</Select.Portal>
+</Select.Root>
+```
+
+When using this component, you'll need to handle the positioning of the content yourself. Keep in mind that using `Select.Portal` alongside `Select.ContentStatic` may result in some unexpected positioning behavior, feel free to not use the portal or work around it.
+
+## Custom Anchor
+
+By default, the `Select.Content` is anchored to the `Select.Trigger` component, which determines where the content is positioned.
+
+If you wish to instead anchor the content to a different element, you can pass either a selector string or an `HTMLElement` to the `customAnchor` prop of the `Select.Content` component.
+
+```svelte
+<script lang="ts">
+	import { Select } from "bits-ui";
+
+	let customAnchor = $state<HTMLElement>(null!);
+</script>
+
+<div bind:this={customAnchor}></div>
+
+<Select.Root>
+	<Select.Trigger />
+	<Select.Content {customAnchor}>
+		<!-- ... -->
+	</Select.Content>
+</Select.Root>
+```
+
+<SelectDemoCustomAnchor />
 
 ## What is the Viewport?
 
-The `Select.Viewport` component is used to determine the size of the select content in order to determine whether or not the scroll up and down buttons should be rendered. If you wish to set a minimum/maximum height for the select content, you should apply it to the `Select.Viewport` component.
+The `Select.Viewport` component is used to determine the size of the content in order to determine whether or not the scroll up and down buttons should be rendered.
+
+If you wish to set a minimum/maximum height for the select content, you should apply it to the `Select.Viewport` component.
 
 ## Scroll Up/Down Buttons
 
 The `Select.ScrollUpButton` and `Select.ScrollDownButton` components are used to render the scroll up and down buttons when the select content is larger than the viewport.
 
-## Multiple Select
+You must use the `Select.Viewport` component when using the scroll buttons.
 
-The `Select` component does not support multiple selections. If you're looking for a multi-select component, check out the [Listbox](/docs/components/listbox) component.
+## Native Scrolling/Overflow
 
-## Select vs. Listbox
+If you don't want to use the scroll buttons and prefer to use the standard scrollbar/overflow behavior, you can omit the `Select.Scroll[Up|Down]Button` components and the `Select.Viewport` component.
 
-Use `Select` as a drop-in replacement for `<select>`, supporting form auto-fill. Use `Listbox` for multi-select or custom single-select needs outside forms. For single-select within forms, prefer `Select`.
+You'll need to set a height on the `Select.Content` component and appropriate `overflow` styles to enable scrolling.
+
+## Scroll Lock
+
+By default, when a user opens the select, scrolling outside the content will not be disabled. You can override this behavior by setting the `preventScroll` prop to `true`.
+
+```svelte /preventScroll={false}/
+<Select.Content preventScroll={true}>
+	<!-- ... -->
+</Select.Content>
+```
+
+## Highlighted Items
+
+The Select component follows the [WAI-ARIA descendant pattern](https://www.w3.org/TR/wai-aria-practices-1.2/#combobox) for highlighting items. This means that the `Select.Trigger` retains focus the entire time, even when navigating with the keyboard, and items are highlighted as the user navigates them.
+
+### Styling Highlighted Items
+
+You can use the `data-highlighted` attribute on the `Select.Item` component to style the item differently when it is highlighted.
+
+### onHighlight / onUnhighlight
+
+To trigger side effects when an item is highlighted or unhighlighted, you can use the `onHighlight` and `onUnhighlight` props.
+
+```svelte
+<Select.Item onHighlight={() => console.log('I am highlighted!')} onUnhighlight={() => console.log('I am unhighlighted!')} />
+<!-- ... -->
+</Select.Item>
+```
 
 <APISection {schemas} />
