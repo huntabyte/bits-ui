@@ -84,7 +84,7 @@ export type ListboxBaseRootPropsWithoutHTML = WithChildren<{
 	/**
 	 * Optionally provide an array of `value` and `label` pairs that will be used to match
 	 * and trigger selection when the trigger is focused and a key is pressed while the content
-	 * is closed.
+	 * is closed. It's also used to handle form autofill.
 	 *
 	 * By providing this value, you enable selecting a value when the trigger is focused and a key
 	 * is pressed without the content being open, similar to how a native `<select>` works.
@@ -100,8 +100,6 @@ export type ListboxBaseRootPropsWithoutHTML = WithChildren<{
 	 * IMPORTANT: This functionality is only available for single-select listboxes.
 	 */
 	items?: { value: string; label: string }[];
-
-	dir?: Direction;
 }>;
 
 export type ListboxSingleRootPropsWithoutHTML = {
@@ -204,16 +202,6 @@ export type ListboxContentStaticPropsWithoutHTML = Expand<
 export type ListboxContentStaticProps = ListboxContentStaticPropsWithoutHTML &
 	Without<BitsPrimitiveDivAttributes, ListboxContentStaticPropsWithoutHTML>;
 
-export type ListboxContentAlignedPropsWithoutHTML = Expand<
-	WithChildNoChildrenSnippetProps<
-		Omit<PopperLayerStaticProps, "content" | "onOpenAutoFocus" | "trapFocus"> &
-			_SharedListboxContentProps,
-		ListboxContentSnippetProps
-	>
->;
-export type ListboxContentAlignedProps = ListboxContentStaticPropsWithoutHTML &
-	Without<BitsPrimitiveDivAttributes, ListboxContentStaticPropsWithoutHTML>;
-
 export type ListboxTriggerPropsWithoutHTML = WithChild;
 
 export type ListboxTriggerProps = ListboxTriggerPropsWithoutHTML &
@@ -290,16 +278,6 @@ export type ListboxViewportPropsWithoutHTML = WithChild;
 
 export type ListboxViewportProps = ListboxViewportPropsWithoutHTML &
 	Without<BitsPrimitiveDivAttributes, ListboxViewportPropsWithoutHTML>;
-
-export type ListboxItemTextPropsWithoutHTML = WithChild;
-
-export type ListboxItemTextProps = ListboxItemTextPropsWithoutHTML &
-	Without<BitsPrimitiveDivAttributes, ListboxItemTextPropsWithoutHTML>;
-
-export type ListboxValuePropsWithoutHTML = WithChild;
-
-export type ListboxValueProps = ListboxValuePropsWithoutHTML &
-	Without<BitsPrimitiveDivAttributes, ListboxValuePropsWithoutHTML>;
 
 export type ListboxScrollUpButtonPropsWithoutHTML = WithChild;
 

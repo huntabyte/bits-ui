@@ -19,6 +19,7 @@
 		required = false,
 		controlledOpen = false,
 		controlledValue = false,
+		items = [],
 		children,
 	}: ComboboxRootProps = $props();
 
@@ -31,7 +32,7 @@
 		}
 	}
 
-	useListboxRoot({
+	const rootState = useListboxRoot({
 		type,
 		value: box.with(
 			() => value!,
@@ -61,6 +62,7 @@
 		scrollAlignment: box.with(() => scrollAlignment),
 		name: box.with(() => name),
 		isCombobox: true,
+		items: box.with(() => items),
 	});
 </script>
 
@@ -68,14 +70,14 @@
 	{@render children?.()}
 </FloatingLayer>
 
-{#if Array.isArray(value)}
-	{#if value.length === 0}
+{#if Array.isArray(rootState.value.current)}
+	{#if rootState.value.current.length === 0}
 		<ListboxHiddenInput value="" />
 	{:else}
-		{#each value as item}
+		{#each rootState.value.current as item}
 			<ListboxHiddenInput value={item} />
 		{/each}
 	{/if}
 {:else}
-	<ListboxHiddenInput {value} />
+	<ListboxHiddenInput bind:value={rootState.value.current as string} />
 {/if}

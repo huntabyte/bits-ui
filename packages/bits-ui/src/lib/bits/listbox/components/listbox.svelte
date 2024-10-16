@@ -20,7 +20,6 @@
 		controlledOpen = false,
 		controlledValue = false,
 		items = [],
-		dir = "ltr",
 		children,
 	}: ListboxRootProps = $props();
 
@@ -48,7 +47,6 @@
 		) as WritableBox<string> | WritableBox<string[]>,
 		disabled: box.with(() => disabled),
 		required: box.with(() => required),
-		dir: box.with(() => dir),
 		open: box.with(
 			() => open,
 			(v) => {
@@ -72,11 +70,11 @@
 	{@render children?.()}
 </FloatingLayer>
 
-{#if Array.isArray(value)}
-	{#if value.length === 0}
+{#if Array.isArray(rootState.value.current)}
+	{#if rootState.value.current.length === 0}
 		<ListboxHiddenInput value="" />
 	{:else}
-		{#each value as item}
+		{#each rootState.value.current as item}
 			<ListboxHiddenInput value={item} />
 		{/each}
 	{/if}

@@ -847,9 +847,9 @@ class SelectItemAlignedPositionState {
 			}
 
 			const triggerRect = triggerNode.getBoundingClientRect();
-
 			// horizontal positioning
 			const contentRect = contentNode.getBoundingClientRect();
+
 			const valueRect = valueNode.getBoundingClientRect();
 			const itemTextRect = selectedItemTextNode.getBoundingClientRect();
 

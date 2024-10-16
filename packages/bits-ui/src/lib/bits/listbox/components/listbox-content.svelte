@@ -39,12 +39,12 @@
 		if (e.defaultPrevented) return;
 		onInteractOutside(e);
 		if (e.defaultPrevented) return;
-		contentState.root.closeMenu();
+		contentState.root.handleClose();
 	}}
 	onEscapeKeydown={(e) => {
 		onEscapeKeydown(e);
 		if (e.defaultPrevented) return;
-		contentState.root.closeMenu();
+		contentState.root.handleClose();
 	}}
 	onOpenAutoFocus={(e) => e.preventDefault()}
 	onCloseAutoFocus={(e) => e.preventDefault()}
