@@ -20,6 +20,8 @@ import {
 	StringOrArrayStringProp,
 } from "./extended-types/shared/index.js";
 import { ComboboxScrollAlignmentProp } from "./extended-types/combobox/index.js";
+import { select } from "./select.api.js";
+import { ItemsProp } from "./extended-types/select/index.js";
 import {
 	arrowProps,
 	childrenSnippet,
@@ -32,6 +34,7 @@ import {
 	createEnumDataAttr,
 	createEnumProp,
 	createFunctionProp,
+	createPropSchema,
 	createStringProp,
 	createUnionProp,
 	dirProp,
@@ -109,6 +112,14 @@ export const root = createApiSchema<ComboboxRootPropsWithoutHTML>({
 		loop: createBooleanProp({
 			default: C.FALSE,
 			description: "Whether or not the combobox menu should loop through items.",
+		}),
+		items: createPropSchema({
+			type: {
+				type: "array",
+				definition: ItemsProp,
+			},
+			description:
+				"Optionally provide an array of objects representing the items in the select for autofill capabilities. Only applicable to combobox's with type `single`",
 		}),
 		children: childrenSnippet(),
 	},
