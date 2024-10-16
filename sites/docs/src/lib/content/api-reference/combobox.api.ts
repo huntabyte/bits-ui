@@ -20,7 +20,6 @@ import {
 	StringOrArrayStringProp,
 } from "./extended-types/shared/index.js";
 import { ComboboxScrollAlignmentProp } from "./extended-types/combobox/index.js";
-import { select } from "./select.api.js";
 import { ItemsProp } from "./extended-types/select/index.js";
 import {
 	arrowProps,
