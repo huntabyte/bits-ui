@@ -276,6 +276,10 @@ export const trigger = createApiSchema<SelectTriggerPropsWithoutHTML>({
 	dataAttributes: [
 		stateDataAttr,
 		createDataAttrSchema({
+			name: "placeholder",
+			description: "Present when the select does not have a value.",
+		}),
+		createDataAttrSchema({
 			name: "disabled",
 			description: "Present when the select is disabled.",
 		}),

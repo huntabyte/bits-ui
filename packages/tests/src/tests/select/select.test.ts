@@ -174,6 +174,16 @@ describe("select - single", () => {
 		expect(trigger).toHaveTextContent("B");
 	});
 
+	it("should have the placeholder attribute when empty and not when not empty", async () => {
+		const { user, trigger } = await openSingle();
+		trigger.focus();
+		expect(trigger).toHaveAttribute("data-placeholder");
+		await user.keyboard(kbd.ARROW_DOWN);
+		await user.keyboard(kbd.ENTER);
+		expect(trigger).toHaveTextContent("B");
+		expect(trigger).not.toHaveAttribute("data-placeholder");
+	});
+
 	it("should render an input if the `name` prop is passed", async () => {
 		const { getHiddenInput } = setupSingle();
 		expect(getHiddenInput()).toBeInTheDocument();
@@ -458,6 +468,19 @@ describe("select - multiple", () => {
 		await user.keyboard(kbd.ARROW_DOWN);
 		await user.keyboard(kbd.ENTER);
 		expect(mockFn).toHaveBeenCalledWith("B");
+	});
+
+	it("should have the placeholder attribute when empty and not when not empty", async () => {
+		const mockFn = vi.fn();
+		const { user, trigger } = await openMultiple({
+			onSelectedLabelChange: mockFn,
+		});
+		trigger.focus();
+		expect(trigger).toHaveAttribute("data-placeholder");
+		await user.keyboard(kbd.ARROW_DOWN);
+		await user.keyboard(kbd.ENTER);
+		expect(mockFn).toHaveBeenCalledWith("B");
+		expect(trigger).not.toHaveAttribute("data-placeholder");
 	});
 
 	it("should render a hidden input if the `name` prop is passed", async () => {
