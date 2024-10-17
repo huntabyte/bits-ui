@@ -1,11 +1,12 @@
 import { SvelteMap } from "svelte/reactivity";
 import { afterTick, box } from "svelte-toolbelt";
+import { Previous, watch } from "runed";
+import { untrack } from "svelte";
 import type { Fn } from "./types.js";
 import { isBrowser, isIOS } from "./is.js";
 import { addEventListener } from "./events.js";
 import { useId } from "./use-id.js";
 import { createSharedHook } from "./create-shared-hook.svelte.js";
-import { watch } from "$lib/internal/box.svelte.js";
 
 export type ScrollBodyOption = {
 	padding?: boolean | number;
@@ -24,6 +25,8 @@ const useBodyLockStackCount = createSharedHook(() => {
 		return false;
 	});
 
+	const prevLocked = new Previous(() => locked);
+
 	let initialBodyStyle: Partial<CSSStyleDeclaration> = $state<Partial<CSSStyleDeclaration>>({});
 
 	let stopTouchMoveListener: Fn | null = null;
@@ -38,13 +41,10 @@ const useBodyLockStackCount = createSharedHook(() => {
 		isIOS && stopTouchMoveListener?.();
 	}
 
-	watch(
-		box.with(() => locked),
-		(curr, prev) => {
+	$effect(() => {
+		const curr = locked;
+		return untrack(() => {
 			if (!curr) {
-				if (prev) {
-					resetBodyStyle();
-				}
 				return;
 			}
 
@@ -88,8 +88,8 @@ const useBodyLockStackCount = createSharedHook(() => {
 				document.body.style.pointerEvents = "none";
 				document.body.style.overflow = "hidden";
 			});
-		}
-	);
+		});
+	});
 
 	$effect(() => {
 		return () => {
@@ -97,23 +97,32 @@ const useBodyLockStackCount = createSharedHook(() => {
 		};
 	});
 
-	return map;
+	return {
+		get map() {
+			return map;
+		},
+		resetBodyStyle,
+	};
 });
 
 export function useBodyScrollLock(initialState?: boolean | undefined) {
 	const id = useId();
-	const map = useBodyLockStackCount();
+	const countState = useBodyLockStackCount();
 
-	map.set(id, initialState ?? false);
+	countState.map.set(id, initialState ?? false);
 
 	const locked = box.with(
-		() => map.get(id) ?? false,
-		(v) => map.set(id, v)
+		() => countState.map.get(id) ?? false,
+		(v) => countState.map.set(id, v)
 	);
 
 	$effect(() => {
 		return () => {
-			map.delete(id);
+			countState.map.delete(id);
+			const length = Array.from(countState.map.values()).length;
+			if (length === 0) {
+				countState.resetBodyStyle();
+			}
 		};
 	});
 
