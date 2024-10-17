@@ -74,9 +74,7 @@
 			{customAnchor}
 		>
 			{#snippet content({ props: floatingProps })}
-				{#if preventScroll}
-					<ScrollLock {preventScroll} />
-				{/if}
+				<ScrollLock {preventScroll} />
 				<FocusScope
 					{id}
 					{onOpenAutoFocus}

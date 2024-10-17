@@ -38,7 +38,6 @@
 
 <PresenceLayer {...mergedProps} present={contentState.root.open.current || forceMount}>
 	{#snippet presence({ present })}
-		<ScrollLock {preventScroll} />
 		<FocusScope
 			loop
 			trapFocus={present.current && trapFocus}
@@ -69,6 +68,7 @@
 						}}
 					>
 						<TextSelectionLayer {...mergedProps} enabled={present.current}>
+							<ScrollLock {preventScroll} />
 							{#if child}
 								{@render child({
 									props: mergeProps(mergedProps, focusScopeProps),
