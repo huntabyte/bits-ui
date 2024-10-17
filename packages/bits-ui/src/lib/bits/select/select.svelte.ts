@@ -669,6 +669,7 @@ class SelectTriggerState {
 				"aria-haspopup": "listbox",
 				"data-state": getDataOpenClosed(this.root.open.current),
 				"data-disabled": getDataDisabled(this.root.disabled.current),
+				"data-placeholder": this.root.hasValue ? undefined : "",
 				[this.root.bitsAttrs.trigger]: "",
 				onpointerdown: this.#onpointerdown,
 				onkeydown: this.#onkeydown,
