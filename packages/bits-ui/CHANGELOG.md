@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.20
+
+### Patch Changes
+
+-   Select: add `data-placeholder` to `Select.Trigger` when the select doesn't have a value ([#778](https://github.com/huntabyte/bits-ui/pull/778))
+
 ## 1.0.0-next.19
 
 ### Patch Changes
