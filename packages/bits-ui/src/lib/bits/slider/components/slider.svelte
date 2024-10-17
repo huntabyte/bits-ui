@@ -12,7 +12,7 @@
 		ref = $bindable(null),
 		value = $bindable([]),
 		onValueChange = noop,
-		onValueChangeEnd = noop,
+		onValueCommit = noop,
 		disabled = false,
 		min = 0,
 		max = 100,
@@ -41,7 +41,7 @@
 				}
 			}
 		),
-		onValueChangeEnd: box.with(() => onValueChangeEnd),
+		onValueCommit: box.with(() => onValueCommit),
 		disabled: box.with(() => disabled),
 		min: box.with(() => min),
 		max: box.with(() => max),

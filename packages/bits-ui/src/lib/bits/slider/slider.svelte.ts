@@ -36,7 +36,7 @@ type SliderRootStateProps = WithRefProps<
 		step: number;
 		dir: Direction;
 		autoSort: boolean;
-		onValueChangeEnd: OnChangeFn<number[]>;
+		onValueCommit: OnChangeFn<number[]>;
 	}> &
 		WritableBoxedValues<{
 			value: number[];
@@ -64,7 +64,7 @@ class SliderRootState {
 			return this.dir.current === "rtl" ? "tb" : "bt";
 		}
 	});
-	onValueChangeEnd: SliderRootStateProps["onValueChangeEnd"];
+	onValueCommit: SliderRootStateProps["onValueCommit"];
 
 	constructor(props: SliderRootStateProps) {
 		this.id = props.id;
@@ -77,7 +77,7 @@ class SliderRootState {
 		this.dir = props.dir;
 		this.autoSort = props.autoSort;
 		this.value = props.value;
-		this.onValueChangeEnd = props.onValueChangeEnd;
+		this.onValueCommit = props.onValueCommit;
 
 		useRefById({
 			id: this.id,
@@ -242,7 +242,7 @@ class SliderRootState {
 
 	handlePointerUp = () => {
 		if (this.isActive) {
-			this.onValueChangeEnd.current(untrack(() => this.value.current));
+			this.onValueCommit.current(untrack(() => this.value.current));
 		}
 		this.isActive = false;
 	};
@@ -587,7 +587,7 @@ class SliderThumbState {
 				}
 				break;
 		}
-		this.#root.onValueChangeEnd.current(this.#root.value.current);
+		this.#root.onValueCommit.current(this.#root.value.current);
 	};
 
 	props = $derived.by(

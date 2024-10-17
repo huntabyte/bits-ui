@@ -22,9 +22,10 @@ export type SliderRootPropsWithoutHTML = WithChild<
 
 		/**
 		 * A callback function called when the user stops dragging the thumb,
-		 * which is useful for knowing when the user has finished interacting with the slider.
+		 * which is useful for knowing when the user has finished interacting with the
+		 * slider and _commits_ the value.
 		 */
-		onValueChangeEnd?: OnChangeFn<number[]>;
+		onValueCommit?: OnChangeFn<number[]>;
 
 		/**
 		 * Whether to automatically sort the values in the array when moving thumbs past

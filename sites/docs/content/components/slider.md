@@ -160,6 +160,18 @@ For more in-depth information on controlled components and advanced state manage
 
 </Callout>
 
+## Value Commit
+
+You can use the `onValueCommit` prop to be notified when the user finishes dragging the thumb and the value changes. This is different than the `onValueChange` callback because it waits until the user stops dragging before calling the callback, where the `onValueChange` callback is called as the user dragging.
+
+```svelte
+<Slider.Root
+	onValueCommit={(v) => {
+		console.log("user is done sliding!", v);
+	}}
+/>
+```
+
 ## Multiple Thumbs and Ticks
 
 If the `value` prop has more than one value, the slider will render multiple thumbs. You can also use the `ticks` snippet prop to render ticks at specific intervals
