@@ -1,136 +1,82 @@
 <script lang="ts">
-	import { melt } from "@melt-ui/svelte";
-	import { getCtx, updatePositioning } from "../ctx.js";
-	import type { ContentEvents, ContentProps } from "../index.js";
-	import { type Transition, createDispatcher } from "$lib/internal/index.js";
+	import { box, mergeProps } from "svelte-toolbelt";
+	import type { LinkPreviewContentProps } from "../types.js";
+	import { useLinkPreviewContent } from "../link-preview.svelte.js";
+	import { useId } from "$lib/internal/use-id.js";
+	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
+	import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
 
-	type T = $$Generic<Transition>;
-	type In = $$Generic<Transition>;
-	type Out = $$Generic<Transition>;
+	let {
+		children,
+		child,
+		id = useId(),
+		ref = $bindable(null),
+		side = "top",
+		sideOffset = 0,
+		align = "center",
+		avoidCollisions = true,
+		arrowPadding = 0,
+		sticky = "partial",
+		hideWhenDetached = false,
+		collisionPadding = 0,
+		onInteractOutside,
+		onEscapeKeydown,
+		forceMount = false,
+		...restProps
+	}: LinkPreviewContentProps = $props();
 
-	type $$Props = ContentProps<T, In, Out>;
-	type $$Events = ContentEvents;
+	const contentState = useLinkPreviewContent({
+		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
+	});
 
-	export let transition: $$Props["transition"] = undefined;
-	export let transitionConfig: $$Props["transitionConfig"] = undefined;
-	export let inTransition: $$Props["inTransition"] = undefined;
-	export let inTransitionConfig: $$Props["inTransitionConfig"] = undefined;
-	export let outTransition: $$Props["outTransition"] = undefined;
-	export let outTransitionConfig: $$Props["outTransitionConfig"] = undefined;
-	export let asChild: $$Props["asChild"] = false;
-	export let id: $$Props["id"] = undefined;
-	export let side: $$Props["side"] = "bottom";
-	export let align: $$Props["align"] = "center";
-	export let sideOffset: $$Props["sideOffset"] = 0;
-	export let alignOffset: $$Props["alignOffset"] = 0;
-	export let collisionPadding: $$Props["collisionPadding"] = 8;
-	export let avoidCollisions: $$Props["avoidCollisions"] = true;
-	export let collisionBoundary: $$Props["collisionBoundary"] = undefined;
-	export let sameWidth: $$Props["sameWidth"] = false;
-	export let fitViewport: $$Props["fitViewport"] = false;
-	export let strategy: $$Props["strategy"] = "absolute";
-	export let overlap: $$Props["overlap"] = false;
-	export let el: $$Props["el"] = undefined;
+	const floatingProps = $derived({
+		side,
+		sideOffset,
+		align,
+		avoidCollisions,
+		arrowPadding,
+		sticky,
+		hideWhenDetached,
+		collisionPadding,
+	});
 
-	const {
-		elements: { content },
-		states: { open },
-		ids,
-		getAttrs,
-	} = getCtx();
-
-	$: if (id) {
-		ids.content.set(id);
-	}
-
-	const attrs = getAttrs("content");
-	const dispatch = createDispatcher();
-
-	$: builder = $content;
-	$: Object.assign(builder, attrs);
-
-	$: if ($open) {
-		updatePositioning({
-			side,
-			align,
-			sideOffset,
-			alignOffset,
-			collisionPadding,
-			avoidCollisions,
-			collisionBoundary,
-			sameWidth,
-			fitViewport,
-			strategy,
-			overlap,
-		});
-	}
+	const mergedProps = $derived(mergeProps(restProps, floatingProps, contentState.props));
 </script>
 
-{#if asChild && $open}
-	<slot {builder} />
-{:else if transition && $open}
-	<div
-		bind:this={el}
-		transition:transition={transitionConfig}
-		use:melt={builder}
-		{...$$restProps}
-		on:m-focusout={dispatch}
-		on:m-pointerdown={dispatch}
-		on:m-pointerenter={dispatch}
-		on:m-pointerleave={dispatch}
-	>
-		<slot {builder} />
-	</div>
-{:else if inTransition && outTransition && $open}
-	<div
-		bind:this={el}
-		in:inTransition={inTransitionConfig}
-		out:outTransition={outTransitionConfig}
-		use:melt={builder}
-		{...$$restProps}
-		on:m-focusout={dispatch}
-		on:m-pointerdown={dispatch}
-		on:m-pointerenter={dispatch}
-		on:m-pointerleave={dispatch}
-	>
-		<slot {builder} />
-	</div>
-{:else if inTransition && $open}
-	<div
-		bind:this={el}
-		in:inTransition={inTransitionConfig}
-		use:melt={builder}
-		{...$$restProps}
-		on:m-focusout={dispatch}
-		on:m-pointerdown={dispatch}
-		on:m-pointerenter={dispatch}
-		on:m-pointerleave={dispatch}
-	>
-		<slot {builder} />
-	</div>
-{:else if outTransition && $open}
-	<div
-		bind:this={el}
-		out:outTransition={outTransitionConfig}
-		use:melt={builder}
-		{...$$restProps}
-		on:m-focusout={dispatch}
-		on:m-pointerdown={dispatch}
-		on:m-pointerenter={dispatch}
-		on:m-pointerleave={dispatch}
-	>
-		<slot {builder} />
-	</div>
-{:else if $open}
-	<div
-		bind:this={el}
-		use:melt={builder}
-		{...$$restProps}
-		on:m-focusout={dispatch}
-		on:m-pointerdown={dispatch}
-		on:m-pointerenter={dispatch}
-		on:m-pointerleave={dispatch}
-	>
-		<slot {builder} />
-	</div>
-{/if}
+<PopperLayer
+	{...mergedProps}
+	present={contentState.root.open.current || forceMount}
+	{id}
+	onInteractOutside={(e) => {
+		onInteractOutside?.(e);
+		if (e.defaultPrevented) return;
+		contentState.root.immediateClose();
+	}}
+	onEscapeKeydown={(e) => {
+		onEscapeKeydown?.(e);
+		if (e.defaultPrevented) return;
+		contentState.root.immediateClose();
+	}}
+	onOpenAutoFocus={(e) => e.preventDefault()}
+	onCloseAutoFocus={(e) => e.preventDefault()}
+	trapFocus={false}
+	loop={false}
+	preventScroll={false}
+>
+	{#snippet popper({ props })}
+		{@const mergedProps = mergeProps(props, {
+			style: getFloatingContentCSSVars("link-preview"),
+		})}
+		{#if child}
+			{@render child({ props: mergedProps, ...contentState.snippetProps })}
+		{:else}
+			<div {...mergedProps}>
+				{@render children?.()}
+			</div>
+		{/if}
+	{/snippet}
+</PopperLayer>

@@ -1,5 +1,151 @@
 # bits-ui
 
+## 1.0.0-next.20
+
+### Patch Changes
+
+-   Select: add `data-placeholder` to `Select.Trigger` when the select doesn't have a value ([#778](https://github.com/huntabyte/bits-ui/pull/778))
+
+## 1.0.0-next.19
+
+### Patch Changes
+
+-   fix: issues with body scroll lock not resetting on destroy with no transition time ([#775](https://github.com/huntabyte/bits-ui/pull/775))
+
+-   fix: bug with calendar months sometimes not rendering the first day of the month ([#777](https://github.com/huntabyte/bits-ui/pull/777))
+
+-   breaking: rename `onValueChangeEnd` to `onValueCommit` ([#774](https://github.com/huntabyte/bits-ui/pull/774))
+
+## 1.0.0-next.18
+
+### Patch Changes
+
+-   Breaking: replace existing `Select` implementation with `Listbox` and remove standalone `Listbox` as `Select` now has the exact functionality ([#769](https://github.com/huntabyte/bits-ui/pull/769))
+
+-   Add support for typeahead select when the trigger is focused and content is closed via the `items` prop on `Select.Root`. ([#769](https://github.com/huntabyte/bits-ui/pull/769))
+
+## 1.0.0-next.17
+
+### Patch Changes
+
+-   update `PaginationSnippetProps` type ([#761](https://github.com/huntabyte/bits-ui/pull/761))
+
+## 1.0.0-next.16
+
+### Patch Changes
+
+-   expose `currentPage` to the `Pagination.Root` snippets ([#759](https://github.com/huntabyte/bits-ui/pull/759))
+
+## 1.0.0-next.15
+
+### Patch Changes
+
+-   fix: cleanup a few untracks that were left unhandled ([#746](https://github.com/huntabyte/bits-ui/pull/746))
+
+## 1.0.0-next.14
+
+### Patch Changes
+
+-   rename various `BitsHTMLAttributes` types to avoid autocomplete interference with Svelte's `HTMLAttributes` types ([#744](https://github.com/huntabyte/bits-ui/pull/744))
+
+## 1.0.0-next.13
+
+### Patch Changes
+
+-   Radio Group: allow both arrow up/down and left/right per WAI-ARIA spec ([#742](https://github.com/huntabyte/bits-ui/pull/742))
+
+## 1.0.0-next.12
+
+### Patch Changes
+
+-   change: don't include `open` on `children` snippet props, only `child` ([#737](https://github.com/huntabyte/bits-ui/pull/737))
+
+## 1.0.0-next.11
+
+### Patch Changes
+
+-   fix: Select trigger refocus in firefox/safari ([#735](https://github.com/huntabyte/bits-ui/pull/735))
+
+## 1.0.0-next.10
+
+### Patch Changes
+
+-   next: improve tree-shaking ([#728](https://github.com/huntabyte/bits-ui/pull/728))
+
+## 1.0.0-next.9
+
+### Patch Changes
+
+-   gracefully handle internally cancelled interactoutside events ([#726](https://github.com/huntabyte/bits-ui/pull/726))
+
+## 1.0.0-next.8
+
+### Patch Changes
+
+-   fix: ensure `crossorigin` isn't applied to image if it is `undefined` or not passed as a prop ([#724](https://github.com/huntabyte/bits-ui/pull/724))
+
+## 1.0.0-next.7
+
+### Patch Changes
+
+-   Alert Dialog: `Action` button no longer closes the dialog to accomodate form submission / other asynchronous action ([#718](https://github.com/huntabyte/bits-ui/pull/718))
+
+-   fix bug preventing `crossorigin` and `referrerpolicy` attributes to work with `Avatar.Image` component ([#721](https://github.com/huntabyte/bits-ui/pull/721))
+
+## 1.0.0-next.6
+
+### Patch Changes
+
+-   feat: export and document `Portal` utility component ([#716](https://github.com/huntabyte/bits-ui/pull/716))
+
+## 1.0.0-next.5
+
+### Patch Changes
+
+-   next: fix command `scrollIntoView` issues ([#714](https://github.com/huntabyte/bits-ui/pull/714))
+
+-   Listbox/Combobox: gracefully handle deselect when `type="single"` ([#713](https://github.com/huntabyte/bits-ui/pull/713))
+
+## 1.0.0-next.4
+
+### Patch Changes
+
+-   set `preventScroll` to `true` by default on `ContextMenu` ([#709](https://github.com/huntabyte/bits-ui/pull/709))
+
+-   update Svelte to `5.0.0-next.260` ([#707](https://github.com/huntabyte/bits-ui/pull/707))
+
+## 1.0.0-next.3
+
+### Patch Changes
+
+-   fix: align `Tabs` component ARIA attribute with W3C spec ([#702](https://github.com/huntabyte/bits-ui/pull/702))
+
+## 1.0.0-next.2
+
+### Patch Changes
+
+-   Forward `dir` prop to underling elements ([#701](https://github.com/huntabyte/bits-ui/pull/701))
+
+-   fix(Combobox): scroll highlighted item into view when navigating the list with keyboard ([#699](https://github.com/huntabyte/bits-ui/pull/699))
+
+## 1.0.0-next.1
+
+### Patch Changes
+
+-   next: fix pointer event restoration ([#695](https://github.com/huntabyte/bits-ui/pull/695))
+
+## 1.0.0-next.0
+
+### Major Changes
+
+-   Svelte 5 pre-release. This release includes many breaking changes, bug fixes, and new features that are not possible to include in the previous release. Please see the [@next documentation](https://huntabyte-next.bits-ui.pages.dev/) for more information. ([#690](https://github.com/huntabyte/bits-ui/pull/690))
+
+## 0.21.16
+
+### Patch Changes
+
+-   fix: Changed svelte event handlers in favor of CustomEventHandler ([#536](https://github.com/huntabyte/bits-ui/pull/536))
+
 ## 0.21.16
 
 ### Patch Changes
