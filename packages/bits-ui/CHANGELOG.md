@@ -1,5 +1,15 @@
 # bits-ui
 
+## 1.0.0-next.19
+
+### Patch Changes
+
+-   fix: issues with body scroll lock not resetting on destroy with no transition time ([#775](https://github.com/huntabyte/bits-ui/pull/775))
+
+-   fix: bug with calendar months sometimes not rendering the first day of the month ([#777](https://github.com/huntabyte/bits-ui/pull/777))
+
+-   breaking: rename `onValueChangeEnd` to `onValueCommit` ([#774](https://github.com/huntabyte/bits-ui/pull/774))
+
 ## 1.0.0-next.18
 
 ### Patch Changes
