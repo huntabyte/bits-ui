@@ -9,6 +9,7 @@
 		child,
 		id = useId(),
 		ref = $bindable(null),
+		disabled = false,
 		...restProps
 	}: DialogCloseProps = $props();
 
@@ -19,6 +20,7 @@
 			() => ref,
 			(v) => (ref = v)
 		),
+		disabled: box.with(() => Boolean(disabled)),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, closeState.props));

@@ -7,7 +7,7 @@
 	"scripts": {
 		"dev": "concurrently \"pnpm:dev:content\" \"pnpm:dev:svelte\" \"pnpm:replace:velite\"",
 		"dev:content": "velite dev --watch",
-		"dev:svelte": "vite dev",
+		"dev:svelte": "vite dev --host",
 		"build": "velite && node ./other/update-velite-output.js && pnpm build:search && vite build",
 		"replace:velite": "node ./other/watch-velite-output.js",
 		"build:content": "velite",
@@ -41,7 +41,7 @@
 		"remark-gfm": "^4.0.0",
 		"remove-markdown": "^0.5.5",
 		"shiki": "^1.1.1",
-		"svelte": "5.0.0-next.260",
+		"svelte": "^5.0.0",
 		"svelte-check": "4.0.3",
 		"svelte-sonner": "^0.3.24",
 		"tailwind-merge": "^2.2.1",

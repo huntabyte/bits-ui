@@ -11,6 +11,7 @@
 		children,
 		type = "button",
 		ref = $bindable(null),
+		disabled = false,
 		...restProps
 	}: PaginationPageProps = $props();
 
@@ -21,6 +22,7 @@
 			() => ref,
 			(v) => (ref = v)
 		),
+		disabled: box.with(() => Boolean(disabled)),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, pageState.props, { type }));

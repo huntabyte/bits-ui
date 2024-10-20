@@ -1,6 +1,6 @@
 import type { Snippet } from "svelte";
 
-export type InteractOutsideEvent = PointerEvent | MouseEvent | TouchEvent;
+export type InteractOutsideEvent = PointerEvent;
 export type InteractOutsideEventHandler = (e: InteractOutsideEvent) => void;
 
 export type InteractOutsideBehaviorType =
@@ -63,16 +63,7 @@ export type DismissibleLayerImplProps = {
 	 * right clicks for "close" events, but in this case we want to close the context menu when
 	 * another is open.
 	 */
-	isValidEvent?: (e: PointerEvent | MouseEvent | TouchEvent, node: HTMLElement) => boolean;
+	isValidEvent?: (e: PointerEvent, node: HTMLElement) => boolean;
 
 	children?: Snippet<[{ props: Record<string, unknown> }]>;
 } & DismissibleLayerProps;
-
-export type InteractOutsideInterceptEventType =
-	| "pointerdown"
-	| "pointerup"
-	| "mousedown"
-	| "mouseup"
-	| "touchstart"
-	| "touchend"
-	| "click";

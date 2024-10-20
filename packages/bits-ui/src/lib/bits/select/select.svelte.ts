@@ -1,7 +1,6 @@
 import { Previous } from "runed";
 import { untrack } from "svelte";
 import { afterTick, srOnlyStyles, styleToString, useRefById } from "svelte-toolbelt";
-import type { InteractOutsideEvent } from "../utilities/dismissible-layer/types.js";
 import { backward, forward, next, prev } from "$lib/internal/arrays.js";
 import {
 	getAriaExpanded,
@@ -740,7 +739,7 @@ class SelectContentState {
 		}
 	});
 
-	handleInteractOutside = (e: InteractOutsideEvent) => {
+	handleInteractOutside = (e: PointerEvent) => {
 		if (e.target === this.root.triggerNode || e.target === this.root.inputNode) {
 			e.preventDefault();
 		}

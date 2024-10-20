@@ -28,7 +28,7 @@
 		<Accordion.Item value={item.value} class="group border-b border-dark-10 px-1.5">
 			<Accordion.Header>
 				<Accordion.Trigger
-					class="flex w-full flex-1 items-center justify-between py-5 text-[15px] font-medium transition-all [&[data-state=open]>span>svg]:rotate-180"
+					class="flex w-full flex-1 select-none items-center justify-between py-5 text-[15px] font-medium transition-all [&[data-state=open]>span>svg]:rotate-180"
 				>
 					<span class="w-full text-left">
 						{item.title}

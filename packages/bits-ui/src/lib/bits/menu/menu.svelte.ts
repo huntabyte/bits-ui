@@ -8,7 +8,6 @@ import {
 } from "svelte-toolbelt";
 import { tick, untrack } from "svelte";
 import { IsFocusWithin } from "runed";
-import type { InteractOutsideEvent } from "../utilities/dismissible-layer/types.js";
 import {
 	FIRST_LAST_KEYS,
 	type GraceIntent,
@@ -334,7 +333,7 @@ class MenuContentState {
 		contentNode?.focus();
 	};
 
-	handleInteractOutside = (e: InteractOutsideEvent) => {
+	handleInteractOutside = (e: PointerEvent) => {
 		if (!isElementOrSVGElement(e.target)) return;
 		const triggerId = this.parentMenu.triggerNode?.id;
 		if (e.target.id === triggerId) {
@@ -907,11 +906,22 @@ class DropdownMenuTriggerState {
 	}
 
 	#onpointerdown = (e: PointerEvent) => {
-		if (!this.#disabled.current && e.button === 0 && e.ctrlKey === false) {
+		if (this.#disabled.current) return;
+		if (e.pointerType === "touch") return e.preventDefault();
+
+		if (e.button === 0 && e.ctrlKey === false) {
 			this.#parentMenu.toggleOpen();
 			// prevent trigger focusing when opening to allow
 			// the content to be given focus without competition
 			if (!this.#parentMenu.open.current) e.preventDefault();
+		}
+	};
+
+	#onpointerup = (e: PointerEvent) => {
+		if (this.#disabled.current) return;
+		if (e.pointerType === "touch") {
+			e.preventDefault();
+			this.#parentMenu.toggleOpen();
 		}
 	};
 
@@ -947,6 +957,7 @@ class DropdownMenuTriggerState {
 				[this.#parentMenu.root.getAttr("trigger")]: "",
 				//
 				onpointerdown: this.#onpointerdown,
+				onpointerup: this.#onpointerup,
 				onkeydown: this.#onkeydown,
 			}) as const
 	);

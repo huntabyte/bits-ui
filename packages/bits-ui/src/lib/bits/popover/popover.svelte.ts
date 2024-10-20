@@ -1,4 +1,4 @@
-import { useRefById } from "svelte-toolbelt";
+import { type ReadableBoxedValues, useRefById } from "svelte-toolbelt";
 import type { WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
@@ -29,17 +29,19 @@ class PopoverRootState {
 	};
 }
 
-type PopoverTriggerStateProps = WithRefProps;
+type PopoverTriggerStateProps = WithRefProps & ReadableBoxedValues<{ disabled: boolean }>;
 
 class PopoverTriggerState {
 	#id: PopoverTriggerStateProps["id"];
 	#ref: PopoverTriggerStateProps["ref"];
+	#disabled: PopoverTriggerStateProps["disabled"];
 	#root: PopoverRootState;
 
 	constructor(props: PopoverTriggerStateProps, root: PopoverRootState) {
 		this.#id = props.id;
 		this.#root = root;
 		this.#ref = props.ref;
+		this.#disabled = props.disabled;
 
 		useRefById({
 			id: this.#id,
@@ -50,11 +52,22 @@ class PopoverTriggerState {
 		});
 	}
 
-	#onclick = () => {
+	#onpointerdown = (e: PointerEvent) => {
+		if (this.#disabled.current) return;
+		if (e.pointerType === "touch" || e.button !== 0) return e.preventDefault();
 		this.#root.toggleOpen();
 	};
 
+	#onpointerup = (e: PointerEvent) => {
+		if (this.#disabled.current) return;
+		if (e.pointerType === "touch") {
+			e.preventDefault();
+			this.#root.toggleOpen();
+		}
+	};
+
 	#onkeydown = (e: KeyboardEvent) => {
+		if (this.#disabled.current) return;
 		if (!(e.key === kbd.ENTER || e.key === kbd.SPACE)) return;
 		e.preventDefault();
 		this.#root.toggleOpen();
@@ -77,8 +90,9 @@ class PopoverTriggerState {
 				"aria-controls": this.#getAriaControls(),
 				"data-popover-trigger": "",
 				//
-				onclick: this.#onclick,
+				onpointerdown: this.#onpointerdown,
 				onkeydown: this.#onkeydown,
+				onpointerup: this.#onpointerup,
 			}) as const
 	);
 }
@@ -134,8 +148,16 @@ class PopoverCloseState {
 		});
 	}
 
-	#onclick = () => {
+	#onpointerdown = (e: PointerEvent) => {
+		if (e.pointerType === "touch") return e.preventDefault();
 		this.#root.close();
+	};
+
+	#onpointerup = (e: PointerEvent) => {
+		e.preventDefault();
+		if (e.pointerType === "touch") {
+			this.#root.close();
+		}
 	};
 
 	#onkeydown = (e: KeyboardEvent) => {
@@ -148,7 +170,7 @@ class PopoverCloseState {
 		() =>
 			({
 				id: this.#id.current,
-				onclick: this.#onclick,
+				onclick: this.#onpointerdown,
 				onkeydown: this.#onkeydown,
 				type: "button",
 				"data-popover-close": "",

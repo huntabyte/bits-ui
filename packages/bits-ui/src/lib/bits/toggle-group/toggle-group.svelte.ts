@@ -176,8 +176,18 @@ class ToggleGroupItemState {
 		this.#root.toggleItem(this.#value.current, this.#id.current);
 	};
 
-	#onclick = () => {
+	#onpointerdown = (e: PointerEvent) => {
+		if (this.#isDisabled) return;
+		if (e.pointerType === "touch" || e.button !== 0) return e.preventDefault();
 		this.toggleItem();
+	};
+
+	#onpointerup = (e: PointerEvent) => {
+		if (this.#isDisabled) return;
+		if (e.pointerType === "touch") {
+			e.preventDefault();
+			this.toggleItem();
+		}
 	};
 
 	#onkeydown = (e: KeyboardEvent) => {
@@ -223,7 +233,8 @@ class ToggleGroupItemState {
 				disabled: getDisabled(this.#isDisabled),
 				[ITEM_ATTR]: "",
 				//
-				onclick: this.#onclick,
+				onpointerdown: this.#onpointerdown,
+				onpointerup: this.#onpointerup,
 				onkeydown: this.#onkeydown,
 			}) as const
 	);

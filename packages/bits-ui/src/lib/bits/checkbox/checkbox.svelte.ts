@@ -44,16 +44,34 @@ class CheckboxRootState {
 	}
 
 	#onkeydown = (e: KeyboardEvent) => {
+		if (this.disabled.current) return;
 		if (e.key === kbd.ENTER) e.preventDefault();
+		if (e.key === kbd.SPACE) {
+			e.preventDefault();
+			this.#toggle();
+		}
 	};
 
-	#onclick = () => {
-		if (this.disabled.current) return;
+	#toggle = () => {
 		if (this.checked.current === "indeterminate") {
 			this.checked.current = true;
-			return;
+		} else {
+			this.checked.current = !this.checked.current;
 		}
-		this.checked.current = !this.checked.current;
+	};
+
+	#onpointerdown = (e: PointerEvent) => {
+		if (this.disabled.current) return;
+		if (e.pointerType === "touch" || e.button !== 0) return e.preventDefault();
+		this.#toggle();
+	};
+
+	#onpointerup = (e: PointerEvent) => {
+		if (this.disabled.current) return;
+		if (e.pointerType === "touch") {
+			e.preventDefault();
+			this.#toggle();
+		}
 	};
 
 	props = $derived.by(
@@ -69,7 +87,8 @@ class CheckboxRootState {
 				"data-state": getCheckboxDataState(this.checked.current),
 				[CHECKBOX_ROOT_ATTR]: "",
 				//
-				onclick: this.#onclick,
+				onpointerdown: this.#onpointerdown,
+				onpointerup: this.#onpointerup,
 				onkeydown: this.#onkeydown,
 			}) as const
 	);

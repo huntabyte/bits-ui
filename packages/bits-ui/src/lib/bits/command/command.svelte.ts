@@ -877,9 +877,18 @@ class CommandItemState {
 		this.#select();
 	};
 
-	#onclick = () => {
+	#onpointerdown = (e: PointerEvent) => {
 		if (this.#disabled.current) return;
+		if (e.pointerType === "touch" || e.button !== 0) return e.preventDefault();
 		this.#onSelect();
+	};
+
+	#onpointerup = (e: PointerEvent) => {
+		if (this.#disabled.current) return;
+		if (e.pointerType === "touch") {
+			e.preventDefault();
+			this.#onSelect();
+		}
 	};
 
 	props = $derived.by(
@@ -892,8 +901,9 @@ class CommandItemState {
 				"data-selected": getDataSelected(this.isSelected),
 				[ITEM_ATTR]: "",
 				role: "option",
-				onclick: this.#onclick,
+				onpointerdown: this.#onpointerdown,
 				onpointermove: this.#onpointermove,
+				onpointerup: this.#onpointerup,
 			}) as const
 	);
 }

@@ -110,8 +110,18 @@ class RadioGroupItemState {
 		});
 	}
 
-	#onclick = () => {
+	#onpointerdown = (e: PointerEvent) => {
+		if (this.#disabled.current) return;
+		if (e.pointerType === "touch") return e.preventDefault();
 		this.#root.setValue(this.#value.current);
+	};
+
+	#onpointerup = (e: PointerEvent) => {
+		if (this.#disabled.current) return;
+		if (e.pointerType === "touch") {
+			e.preventDefault();
+			this.#root.setValue(this.#value.current);
+		}
 	};
 
 	#onfocus = () => {
@@ -141,7 +151,8 @@ class RadioGroupItemState {
 				role: "radio",
 				tabindex: this.#tabIndex,
 				//
-				onclick: this.#onclick,
+				onpointerdown: this.#onpointerdown,
+				onpointerup: this.#onpointerup,
 				onkeydown: this.#onkeydown,
 				onfocus: this.#onfocus,
 			}) as const

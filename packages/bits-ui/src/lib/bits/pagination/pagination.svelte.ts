@@ -113,6 +113,7 @@ class PaginationRootState {
 type PaginationPageStateProps = WithRefProps<
 	ReadableBoxedValues<{
 		page: Page;
+		disabled: boolean;
 	}>
 >;
 
@@ -120,6 +121,7 @@ class PaginationPageState {
 	#id: PaginationPageStateProps["id"];
 	#ref: PaginationPageStateProps["ref"];
 	#root: PaginationRootState;
+	#disabled: PaginationPageStateProps["disabled"];
 	page: PaginationPageStateProps["page"];
 	#isSelected = $derived.by(() => this.page.current.value === this.#root.page.current);
 
@@ -128,6 +130,7 @@ class PaginationPageState {
 		this.#id = props.id;
 		this.page = props.page;
 		this.#ref = props.ref;
+		this.#disabled = props.disabled;
 
 		useRefById({
 			id: this.#id,
@@ -135,12 +138,27 @@ class PaginationPageState {
 		});
 	}
 
-	#onclick = () => {
+	#onpointerdown = (e: PointerEvent) => {
+		if (this.#disabled.current) return;
+		if (e.pointerType === "touch") return e.preventDefault();
 		this.#root.setPage(this.page.current.value);
 	};
 
+	#onpointerup = (e: PointerEvent) => {
+		if (this.#disabled.current) return;
+		if (e.pointerType === "touch") {
+			e.preventDefault();
+			this.#root.setPage(this.page.current.value);
+		}
+	};
+
 	#onkeydown = (e: KeyboardEvent) => {
-		handleTriggerKeydown(e, this.#ref.current, this.#root);
+		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
+			e.preventDefault();
+			this.#root.setPage(this.page.current.value);
+		} else {
+			handleTriggerKeydown(e, this.#ref.current, this.#root);
+		}
 	};
 
 	props = $derived.by(
@@ -152,7 +170,8 @@ class PaginationPageState {
 				"data-selected": this.#isSelected ? "" : undefined,
 				[PAGE_ATTR]: "",
 				//
-				onclick: this.#onclick,
+				onpointerdown: this.#onpointerdown,
+				onpointerup: this.#onpointerup,
 				onkeydown: this.#onkeydown,
 			}) as const
 	);
@@ -164,11 +183,15 @@ class PaginationPageState {
 
 type PaginationButtonStateProps = WithRefProps<{
 	type: "prev" | "next";
-}>;
+}> &
+	ReadableBoxedValues<{
+		disabled: boolean;
+	}>;
 
 class PaginationButtonState {
 	id: PaginationButtonStateProps["id"];
 	#ref: PaginationButtonStateProps["ref"];
+	#disabled: PaginationButtonStateProps["disabled"];
 	#root: PaginationRootState;
 	type = $state() as PaginationButtonStateProps["type"];
 
@@ -177,6 +200,7 @@ class PaginationButtonState {
 		this.id = props.id;
 		this.type = props.type;
 		this.#ref = props.ref;
+		this.#disabled = props.disabled;
 
 		useRefById({
 			id: this.id,
@@ -184,12 +208,31 @@ class PaginationButtonState {
 		});
 	}
 
-	#onclick = () => {
+	#action = () => {
 		this.type === "prev" ? this.#root.prevPage() : this.#root.nextPage();
 	};
 
+	#onpointerdown = (e: PointerEvent) => {
+		if (this.#disabled.current) return;
+		if (e.pointerType === "touch") return e.preventDefault();
+		this.#action();
+	};
+
+	#onpointerup = (e: PointerEvent) => {
+		if (this.#disabled.current) return;
+		if (e.pointerType === "touch") {
+			e.preventDefault();
+			this.#action();
+		}
+	};
+
 	#onkeydown = (e: KeyboardEvent) => {
-		handleTriggerKeydown(e, this.#ref.current, this.#root);
+		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
+			e.preventDefault();
+			this.#action();
+		} else {
+			handleTriggerKeydown(e, this.#ref.current, this.#root);
+		}
 	};
 
 	props = $derived.by(
@@ -199,7 +242,8 @@ class PaginationButtonState {
 				[PREV_ATTR]: this.type === "prev" ? "" : undefined,
 				[NEXT_ATTR]: this.type === "next" ? "" : undefined,
 				//
-				onclick: this.#onclick,
+				onpointerdown: this.#onpointerdown,
+				onpointerup: this.#onpointerup,
 				onkeydown: this.#onkeydown,
 			}) as const
 	);
