@@ -26,5 +26,4 @@
 	let { title, description }: { title: string; description: string } = $props();
 </script>
 
-<!-- svelte-ignore slot_element_deprecated -->
 <slot {title} {description} />
