@@ -456,13 +456,7 @@ export function floatingProps(props?: {
 export const dismissibleOnInteractOutsideProp = createFunctionProp({
 	definition: OnInteractOutsideProp,
 	description:
-		"Callback fired when an outside interaction event completes, which is either a `pointerup`, `mouseup`, or `touchend` event, depending on the user's input device. You can call `event.preventDefault()` to prevent the default behavior of handling the outside interaction.",
-});
-
-export const dismissibleOnInteractOutsideStartProp: PropSchema = createFunctionProp({
-	definition: OnInteractOutsideProp,
-	description:
-		"Callback fired when an outside interaction event starts, which is either a `pointerdown`, `mousedown`, or `touchstart` event, depending on the user's input device. You can call `event.preventDefault()` to prevent the continuation of the outside interaction.",
+		"Callback fired when an outside interaction event occurs, which is a `pointerdown` event. You can call `event.preventDefault()` to prevent the default behavior of handling the outside interaction.",
 });
 
 export const dismissibleOnFocusOutsideProp = createFunctionProp({

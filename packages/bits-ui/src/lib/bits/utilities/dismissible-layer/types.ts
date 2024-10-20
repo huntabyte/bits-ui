@@ -1,7 +1,7 @@
 import type { Snippet } from "svelte";
 
 export type InteractOutsideEvent = PointerEvent;
-export type InteractOutsideEventHandler = (e: InteractOutsideEvent) => void;
+export type InteractOutsideEventHandler = (e: PointerEvent) => void;
 
 export type InteractOutsideBehaviorType =
 	| "close"
@@ -16,17 +16,6 @@ export type DismissibleLayerProps = {
 	 * event, depending on the user's input device.
 	 */
 	onInteractOutside?: InteractOutsideEventHandler;
-
-	/**
-	 * Callback fired when an outside interaction event starts,
-	 * which is either a `pointerdown`, `mousedown`, or `touchstart`
-	 * event, depending on the user's input device.
-	 *
-	 * This callback is useful when you want to know when the user
-	 * begins an outside interaction, but before the interaction
-	 * completes.
-	 */
-	onInteractOutsideStart?: InteractOutsideEventHandler;
 
 	/**
 	 * Interact outside behavior type.

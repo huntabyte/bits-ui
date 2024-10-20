@@ -36,7 +36,6 @@
 		style,
 		onPlaced,
 		onInteractOutside,
-		onInteractOutsideStart,
 		onCloseAutoFocus,
 		onOpenAutoFocus,
 		onFocusOutside,
@@ -91,7 +90,6 @@
 							<DismissibleLayer
 								{id}
 								{onInteractOutside}
-								{onInteractOutsideStart}
 								{onFocusOutside}
 								{interactOutsideBehavior}
 								{isValidEvent}

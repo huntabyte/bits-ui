@@ -45,7 +45,6 @@
 
 	const mergedProps = $derived(
 		mergeProps(restProps, contentState.props, {
-			onInteractOutsideStart: handleInteractOutsideStart,
 			style: { outline: "none" },
 		})
 	);

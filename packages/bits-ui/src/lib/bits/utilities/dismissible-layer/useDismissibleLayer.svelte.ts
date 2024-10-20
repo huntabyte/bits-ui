@@ -65,8 +65,7 @@ export class DismissibleLayerState {
 		const cleanup = () => {
 			this.#resetState();
 			layers.delete(this);
-			// this.#onInteractOutsideStart.destroy();
-			// this.#onInteractOutside.destroy();
+			this.#handleInteractOutside.destroy();
 			unsubEvents();
 		};
 
@@ -272,7 +271,7 @@ function isValidEvent(e: PointerEvent, node: HTMLElement): boolean {
 
 export type FocusOutsideEvent = CustomEvent<{ originalEvent: FocusEvent }>;
 
-function createWrappedEvent(e: PointerEvent): PointerEvent {
+function createWrappedEvent(e: PointerEvent | MouseEvent): PointerEvent {
 	const capturedCurrentTarget = e.currentTarget;
 	const capturedTarget = e.target;
 
@@ -280,11 +279,8 @@ function createWrappedEvent(e: PointerEvent): PointerEvent {
 
 	if (e instanceof PointerEvent) {
 		newEvent = new PointerEvent(e.type, e);
-	} else if (e instanceof MouseEvent) {
-		newEvent = new MouseEvent(e.type, e);
 	} else {
-		newEvent = document.createEvent("TouchEvent") as TouchEvent;
-		newEvent.initEvent(e.type, e.bubbles, e.cancelable);
+		newEvent = new PointerEvent("pointerdown", e);
 	}
 
 	// track the prevented state separately
@@ -319,5 +315,5 @@ function createWrappedEvent(e: PointerEvent): PointerEvent {
 		},
 	});
 
-	return wrappedEvent as InteractOutsideEvent;
+	return wrappedEvent as PointerEvent;
 }
