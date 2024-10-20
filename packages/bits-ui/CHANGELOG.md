@@ -1,5 +1,13 @@
 # bits-ui
 
+## 1.0.0-next.21
+
+### Patch Changes
+
+-   Allow `Select` to be opened with the `Enter` key. ([#785](https://github.com/huntabyte/bits-ui/pull/785))
+
+-   fix: issues with dismissable layer siblings being confused ([#785](https://github.com/huntabyte/bits-ui/pull/785))
+
 ## 1.0.0-next.20
 
 ### Patch Changes
