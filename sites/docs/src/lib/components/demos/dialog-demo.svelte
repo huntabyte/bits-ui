@@ -35,8 +35,7 @@
 						id="apiKey"
 						class="inline-flex h-input w-full items-center rounded-card-sm border border-border-input bg-background px-4 text-sm placeholder:text-foreground-alt/50 hover:border-dark-40 focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2 focus:ring-offset-background"
 						placeholder="secret_api_key"
-						type="password"
-						autocomplete="off"
+						name="name"
 					/>
 					<LockKeyOpen class="absolute right-4 top-[14px] size-[22px] text-dark/30" />
 				</div>

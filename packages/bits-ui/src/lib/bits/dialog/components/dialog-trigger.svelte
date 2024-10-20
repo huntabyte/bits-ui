@@ -9,6 +9,7 @@
 		ref = $bindable(null),
 		children,
 		child,
+		disabled = false,
 		...restProps
 	}: DialogTriggerProps = $props();
 
@@ -18,6 +19,7 @@
 			() => ref,
 			(v) => (ref = v)
 		),
+		disabled: box.with(() => Boolean(disabled)),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, triggerState.props));

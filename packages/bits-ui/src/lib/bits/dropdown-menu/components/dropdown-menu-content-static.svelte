@@ -38,9 +38,6 @@
 	isStatic={true}
 	{...mergedProps}
 	present={contentState.parentMenu.open.current || forceMount}
-	onInteractOutsideStart={(e) => {
-		contentState.handleInteractOutside(e);
-	}}
 	onInteractOutside={(e) => {
 		contentState.handleInteractOutside(e);
 		if (e.defaultPrevented) return;

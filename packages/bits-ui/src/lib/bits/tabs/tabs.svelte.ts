@@ -208,11 +208,21 @@ class TabsTriggerState {
 		this.activate();
 	};
 
-	#onclick = (e: MouseEvent) => {
-		if (!this.#ref.current || this.#isDisabled) return;
+	#onpointerdown = (e: PointerEvent) => {
+		if (this.#disabled.current) return;
+		if (e.pointerType === "touch" || e.button !== 0) return e.preventDefault();
 		e.preventDefault();
-		this.#ref.current.focus();
+		this.#ref.current?.focus();
 		this.activate();
+	};
+
+	#onpointerup = (e: PointerEvent) => {
+		if (this.#disabled.current) return;
+		if (e.pointerType === "touch") {
+			e.preventDefault();
+			this.#ref.current?.focus();
+			this.activate();
+		}
 	};
 
 	#onkeydown = (e: KeyboardEvent) => {
@@ -240,7 +250,8 @@ class TabsTriggerState {
 				disabled: getDisabled(this.#disabled.current),
 				tabindex: this.#tabIndex,
 				//
-				onclick: this.#onclick,
+				onpointerdown: this.#onpointerdown,
+				onpointerup: this.#onpointerup,
 				onfocus: this.#onfocus,
 				onkeydown: this.#onkeydown,
 			}) as const

@@ -1,4 +1,3 @@
-import type { InteractOutsideEvent } from "../utilities/dismissible-layer/types.js";
 import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
 import type {
 	BitsPrimitiveAnchorAttributes,
@@ -114,7 +113,7 @@ export type NavigationMenuContentPropsWithoutHTML = WithChild<{
 	 * Default behavior can be prevented with `event.preventDefault()`
 	 *
 	 */
-	onInteractOutside?: (event: InteractOutsideEvent) => void;
+	onInteractOutside?: (event: PointerEvent) => void;
 
 	/**
 	 * Callback fired when a focus event occurs outside the content.

@@ -3,6 +3,7 @@ import { getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { createContext } from "$lib/internal/create-context.js";
 import type { WithRefProps } from "$lib/internal/types.js";
+import { kbd } from "$lib/internal/kbd.js";
 
 type DialogVariant = "alert-dialog" | "dialog";
 
@@ -63,17 +64,19 @@ class DialogRootState {
 	);
 }
 
-type DialogTriggerStateProps = WithRefProps;
+type DialogTriggerStateProps = WithRefProps & ReadableBoxedValues<{ disabled: boolean }>;
 
 class DialogTriggerState {
 	#id: DialogTriggerStateProps["id"];
 	#ref: DialogTriggerStateProps["ref"];
 	#root: DialogRootState;
+	#disabled: DialogTriggerStateProps["disabled"];
 
 	constructor(props: DialogTriggerStateProps, root: DialogRootState) {
 		this.#id = props.id;
 		this.#root = root;
 		this.#ref = props.ref;
+		this.#disabled = props.disabled;
 
 		useRefById({
 			id: this.#id,
@@ -85,8 +88,29 @@ class DialogTriggerState {
 		});
 	}
 
-	#onclick = () => {
+	#onpointerdown = (e: PointerEvent) => {
+		if (this.#disabled.current) return;
+		if (e.pointerType === "touch") return e.preventDefault();
+		// by default, it will attempt to focus this trigger on pointerdown
+		// since this also opens the dialog we want to prevent that behavior
+		e.preventDefault();
 		this.#root.handleOpen();
+	};
+
+	#onpointerup = (e: PointerEvent) => {
+		if (this.#disabled.current) return;
+		if (e.pointerType === "touch") {
+			e.preventDefault();
+			this.#root.handleOpen();
+		}
+	};
+
+	#onkeydown = (e: KeyboardEvent) => {
+		if (this.#disabled.current) return;
+		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
+			e.preventDefault();
+			this.#root.handleOpen();
+		}
 	};
 
 	props = $derived.by(
@@ -97,7 +121,9 @@ class DialogTriggerState {
 				"aria-expanded": getAriaExpanded(this.#root.open.current),
 				"aria-controls": this.#root.contentId,
 				[this.#root.attrs.trigger]: "",
-				onclick: this.#onclick,
+				onpointerdown: this.#onpointerdown,
+				onkeydown: this.#onkeydown,
+				onpointerup: this.#onpointerup,
 				...this.#root.sharedProps,
 			}) as const
 	);
@@ -106,12 +132,14 @@ class DialogTriggerState {
 type DialogCloseStateProps = WithRefProps &
 	ReadableBoxedValues<{
 		variant: "action" | "cancel" | "close";
+		disabled: boolean;
 	}>;
 class DialogCloseState {
 	#id: DialogCloseStateProps["id"];
 	#ref: DialogCloseStateProps["ref"];
 	#root: DialogRootState;
 	#variant: DialogCloseStateProps["variant"];
+	#disabled: DialogCloseStateProps["disabled"];
 	#attr = $derived.by(() => this.#root.attrs[this.#variant.current]);
 
 	constructor(props: DialogCloseStateProps, root: DialogRootState) {
@@ -119,6 +147,7 @@ class DialogCloseState {
 		this.#ref = props.ref;
 		this.#id = props.id;
 		this.#variant = props.variant;
+		this.#disabled = props.disabled;
 
 		useRefById({
 			id: this.#id,
@@ -127,8 +156,26 @@ class DialogCloseState {
 		});
 	}
 
-	#onclick = () => {
+	#onpointerdown = (e: PointerEvent) => {
+		if (this.#disabled.current) return;
+		if (e.pointerType === "touch") return e.preventDefault();
 		this.#root.handleClose();
+	};
+
+	#onpointerup = (e: PointerEvent) => {
+		if (this.#disabled.current) return;
+		if (e.pointerType === "touch") {
+			e.preventDefault();
+			this.#root.handleClose();
+		}
+	};
+
+	#onkeydown = (e: KeyboardEvent) => {
+		if (this.#disabled.current) return;
+		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
+			e.preventDefault();
+			this.#root.handleClose();
+		}
 	};
 
 	props = $derived.by(
@@ -136,7 +183,9 @@ class DialogCloseState {
 			({
 				id: this.#id.current,
 				[this.#attr]: "",
-				onclick: this.#onclick,
+				onpointerdown: this.#onpointerdown,
+				onpointerup: this.#onpointerup,
+				onkeydown: this.#onkeydown,
 				...this.#root.sharedProps,
 			}) as const
 	);
@@ -313,17 +362,22 @@ class DialogOverlayState {
 	);
 }
 
-type AlertDialogCancelStateProps = WithRefProps;
+type AlertDialogCancelStateProps = WithRefProps &
+	ReadableBoxedValues<{
+		disabled: boolean;
+	}>;
 
 class AlertDialogCancelState {
 	#id: AlertDialogCancelStateProps["id"];
 	#ref: AlertDialogCancelStateProps["ref"];
 	#root: DialogRootState;
+	#disabled: AlertDialogCancelStateProps["disabled"];
 
 	constructor(props: AlertDialogCancelStateProps, root: DialogRootState) {
 		this.#id = props.id;
 		this.#ref = props.ref;
 		this.#root = root;
+		this.#disabled = props.disabled;
 
 		useRefById({
 			id: this.#id,
@@ -335,8 +389,26 @@ class AlertDialogCancelState {
 		});
 	}
 
-	#onclick = () => {
+	#onpointerdown = (e: PointerEvent) => {
+		if (this.#disabled.current) return;
+		if (e.pointerType === "touch") return e.preventDefault();
 		this.#root.handleClose();
+	};
+
+	#onkeydown = (e: KeyboardEvent) => {
+		if (this.#disabled.current) return;
+		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
+			e.preventDefault();
+			this.#root.handleClose();
+		}
+	};
+
+	#onpointerup = (e: PointerEvent) => {
+		if (this.#disabled.current) return;
+		if (e.pointerType === "touch") {
+			e.preventDefault();
+			this.#root.handleClose();
+		}
 	};
 
 	props = $derived.by(
@@ -344,7 +416,9 @@ class AlertDialogCancelState {
 			({
 				id: this.#id.current,
 				[this.#root.attrs.cancel]: "",
-				onclick: this.#onclick,
+				onpointerdown: this.#onpointerdown,
+				onpointerup: this.#onpointerup,
+				onkeydown: this.#onkeydown,
 				...this.#root.sharedProps,
 			}) as const
 	);

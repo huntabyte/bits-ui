@@ -1,3 +1,3 @@
 ```ts
-(event: PointerEvent | MouseEvent | TouchEvent) => void
+(event: PointerEvent) => void
 ```

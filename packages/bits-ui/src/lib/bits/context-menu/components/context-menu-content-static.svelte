@@ -5,8 +5,6 @@
 	import { useId } from "$lib/internal/use-id.js";
 	import { noop } from "$lib/internal/noop.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
-	import { isElement } from "$lib/internal/is.js";
-	import type { InteractOutsideEvent } from "$lib/bits/utilities/dismissible-layer/types.js";
 	import Mounted from "$lib/bits/utilities/mounted.svelte";
 
 	let {
@@ -36,17 +34,6 @@
 		isMounted: box.with(() => isMounted),
 	});
 
-	function handleInteractOutsideStart(e: InteractOutsideEvent) {
-		if (!isElement(e.target)) return;
-		if (e.target.id === contentState.parentMenu.triggerNode?.id) {
-			e.preventDefault();
-			return;
-		}
-		if (e.target.closest(`#${contentState.parentMenu.triggerNode?.id}`)) {
-			e.preventDefault();
-		}
-	}
-
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));
 </script>
 
@@ -54,7 +41,6 @@
 	isStatic={true}
 	{...mergedProps}
 	present={contentState.parentMenu.open.current || forceMount}
-	onInteractOutsideStart={handleInteractOutsideStart}
 	{preventScroll}
 	onInteractOutside={(e) => {
 		onInteractOutside(e);

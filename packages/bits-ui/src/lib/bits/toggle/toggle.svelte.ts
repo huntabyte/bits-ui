@@ -39,11 +39,22 @@ class ToggleRootState {
 		}
 	};
 
-	#onclick = () => {
+	#onpointerdown = (e: PointerEvent) => {
+		if (this.#disabled.current) return;
+		if (e.pointerType === "touch" || e.button !== 0) return e.preventDefault();
 		this.#togglePressed();
 	};
 
+	#onpointerup = (e: PointerEvent) => {
+		if (this.#disabled.current) return;
+		if (e.pointerType === "touch") {
+			e.preventDefault();
+			this.#togglePressed();
+		}
+	};
+
 	#onkeydown = (e: KeyboardEvent) => {
+		if (this.#disabled.current) return;
 		if (![kbd.ENTER, kbd.SPACE].includes(e.key)) return;
 		e.preventDefault();
 		this.#togglePressed();
@@ -57,7 +68,8 @@ class ToggleRootState {
 				"aria-pressed": getAriaPressed(this.pressed.current),
 				"data-state": getToggleDataState(this.pressed.current),
 				disabled: getDisabled(this.#disabled.current),
-				onclick: this.#onclick,
+				onpointerdown: this.#onpointerdown,
+				onpointerup: this.#onpointerup,
 				onkeydown: this.#onkeydown,
 			}) as const
 	);

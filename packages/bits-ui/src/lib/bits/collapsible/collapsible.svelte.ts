@@ -2,6 +2,7 @@ import { afterTick, useRefById } from "svelte-toolbelt";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { getAriaExpanded, getDataDisabled, getDataOpenClosed } from "$lib/internal/attrs.js";
 import { createContext } from "$lib/internal/create-context.js";
+import { kbd } from "$lib/internal/kbd.js";
 
 const COLLAPSIBLE_ROOT_ATTR = "data-collapsible-root";
 const COLLAPSIBLE_CONTENT_ATTR = "data-collapsible-content";
@@ -179,8 +180,25 @@ class CollapsibleTriggerState {
 		});
 	}
 
-	#onclick = () => {
+	#onpointerdown = (e: PointerEvent) => {
+		if (this.#isDisabled) return;
+		if (e.pointerType === "touch" || e.button !== 0) return e.preventDefault();
 		this.#root.toggleOpen();
+	};
+
+	#onpointerup = (e: PointerEvent) => {
+		if (this.#isDisabled) return;
+		if (e.pointerType === "touch") {
+			e.preventDefault();
+			this.#root.toggleOpen();
+		}
+	};
+
+	#onkeydown = (e: KeyboardEvent) => {
+		if (this.#isDisabled) return;
+		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
+			this.#root.toggleOpen();
+		}
 	};
 
 	props = $derived.by(
@@ -195,7 +213,9 @@ class CollapsibleTriggerState {
 				"data-disabled": getDataDisabled(this.#isDisabled),
 				[COLLAPSIBLE_TRIGGER_ATTR]: "",
 				//
-				onclick: this.#onclick,
+				onpointerdown: this.#onpointerdown,
+				onpointerup: this.#onpointerup,
+				onkeydown: this.#onkeydown,
 			}) as const
 	);
 }

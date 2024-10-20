@@ -7,7 +7,6 @@
 	let {
 		interactOutsideBehavior = "close",
 		onInteractOutside = noop,
-		onInteractOutsideStart = noop,
 		onFocusOutside = noop,
 		id,
 		children,
@@ -19,7 +18,6 @@
 		id: box.with(() => id),
 		interactOutsideBehavior: box.with(() => interactOutsideBehavior),
 		onInteractOutside: box.with(() => onInteractOutside),
-		onInteractOutsideStart: box.with(() => onInteractOutsideStart),
 		enabled: box.with(() => enabled),
 		onFocusOutside: box.with(() => onFocusOutside),
 		isValidEvent: box.with(() => isValidEvent),

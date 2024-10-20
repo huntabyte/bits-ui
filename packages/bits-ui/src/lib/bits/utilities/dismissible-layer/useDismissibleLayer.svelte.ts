@@ -2,19 +2,14 @@ import { untrack } from "svelte";
 import {
 	type ReadableBox,
 	type WritableBox,
+	afterSleep,
 	afterTick,
 	box,
-	composeHandlers,
 	executeCallbacks,
 	onDestroyEffect,
 	useRefById,
 } from "svelte-toolbelt";
-import type {
-	DismissibleLayerImplProps,
-	InteractOutsideBehaviorType,
-	InteractOutsideEvent,
-	InteractOutsideInterceptEventType,
-} from "./types.js";
+import type { DismissibleLayerImplProps, InteractOutsideBehaviorType } from "./types.js";
 import { type EventCallback, addEventListener } from "$lib/internal/events.js";
 import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import { debounce } from "$lib/internal/debounce.js";
@@ -24,34 +19,16 @@ import { isElement } from "$lib/internal/is.js";
 
 const layers = new Map<DismissibleLayerState, ReadableBox<InteractOutsideBehaviorType>>();
 
-const interactOutsideStartEvents = [
-	"pointerdown",
-	"touchstart",
-] satisfies InteractOutsideInterceptEventType[];
-const interactOutsideEndEvents = [
-	"pointerup",
-	"touchend",
-	"click",
-] satisfies InteractOutsideInterceptEventType[];
-
 type DismissibleLayerStateProps = ReadableBoxedValues<
 	Required<Omit<DismissibleLayerImplProps, "children">>
 >;
 
 export class DismissibleLayerState {
-	#interactOutsideStartProp: ReadableBox<EventCallback<InteractOutsideEvent>>;
-	#interactOutsideProp: ReadableBox<EventCallback<InteractOutsideEvent>>;
+	#interactOutsideProp: ReadableBox<EventCallback<PointerEvent>>;
 	#behaviorType: ReadableBox<InteractOutsideBehaviorType>;
-	#interceptedEvents: Record<InteractOutsideInterceptEventType, boolean> = {
+	#interceptedEvents: Record<string, boolean> = {
 		pointerdown: false,
-		pointerup: false,
-		mousedown: false,
-		mouseup: false,
-		touchstart: false,
-		touchend: false,
-		click: false,
 	};
-	#isPointerDownOutside = false;
 	#isResponsibleLayer = false;
 	node: WritableBox<HTMLElement | null> = box(null);
 	#documentObj = undefined as unknown as Document;
@@ -60,6 +37,7 @@ export class DismissibleLayerState {
 	#onFocusOutside: DismissibleLayerStateProps["onFocusOutside"];
 	currNode = $state<HTMLElement | null>(null);
 	#isValidEventProp: DismissibleLayerStateProps["isValidEvent"];
+	#unsubClickListener = noop;
 
 	constructor(props: DismissibleLayerStateProps) {
 		this.#enabled = props.enabled;
@@ -75,7 +53,6 @@ export class DismissibleLayerState {
 		});
 
 		this.#behaviorType = props.interactOutsideBehavior;
-		this.#interactOutsideStartProp = props.onInteractOutsideStart;
 		this.#interactOutsideProp = props.onInteractOutside;
 		this.#onFocusOutside = props.onFocusOutside;
 
@@ -88,18 +65,17 @@ export class DismissibleLayerState {
 		const cleanup = () => {
 			this.#resetState();
 			layers.delete(this);
-			this.#onInteractOutsideStart.destroy();
-			this.#onInteractOutside.destroy();
+			this.#handleInteractOutside.destroy();
 			unsubEvents();
 		};
 
 		$effect(() => {
-			if (this.#enabled.current) {
-				layers.set(
-					this,
-					untrack(() => this.#behaviorType)
-				);
-				untrack(() => {
+			if (this.#enabled.current && this.currNode) {
+				afterSleep(1, () => {
+					layers.set(
+						this,
+						untrack(() => this.#behaviorType)
+					);
 					unsubEvents();
 					unsubEvents = this.#addEventListeners();
 				});
@@ -112,8 +88,8 @@ export class DismissibleLayerState {
 		onDestroyEffect(() => {
 			this.#resetState.destroy();
 			layers.delete(this);
-			this.#onInteractOutsideStart.destroy();
-			this.#onInteractOutside.destroy();
+			this.#handleInteractOutside.destroy();
+			this.#unsubClickListener();
 			unsubEvents();
 		});
 	}
@@ -141,20 +117,8 @@ export class DismissibleLayerState {
 			 */
 			addEventListener(
 				this.#documentObj,
-				interactOutsideStartEvents,
+				"pointerdown",
 				executeCallbacks(this.#markInterceptedEvent, this.#markResponsibleLayer),
-				true
-			),
-
-			/**
-			 * CAPTURE INTERACTION END
-			 * mark interaction-end event as intercepted. Debounce reset state to allow
-			 * bubble events to be processed before resetting the state.
-			 */
-			addEventListener(
-				this.#documentObj,
-				interactOutsideEndEvents,
-				executeCallbacks(this.#markInterceptedEvent, this.#resetState),
 				true
 			),
 
@@ -165,19 +129,8 @@ export class DismissibleLayerState {
 			 */
 			addEventListener(
 				this.#documentObj,
-				interactOutsideStartEvents,
-				executeCallbacks(this.#markNonInterceptedEvent, this.#onInteractOutsideStart)
-			),
-
-			/**
-			 * BUBBLE INTERACTION END
-			 * Mark interaction-end event as non-intercepted. Debounce `onInteractOutside`
-			 * to avoid prematurely checking if other events were intercepted.
-			 */
-			addEventListener(
-				this.#documentObj,
-				interactOutsideEndEvents,
-				composeHandlers(this.#markNonInterceptedEvent, this.#onInteractOutside)
+				"pointerdown",
+				executeCallbacks(this.#markNonInterceptedEvent, this.#handleInteractOutside)
 			),
 
 			/**
@@ -187,45 +140,61 @@ export class DismissibleLayerState {
 		);
 	}
 
-	#onInteractOutsideStart = debounce((e: InteractOutsideEvent) => {
-		if (!this.currNode) return;
+	#handleDismiss = (e: PointerEvent) => {
+		let event = e;
+		if (event.defaultPrevented) {
+			event = createWrappedEvent(e);
+		}
+		this.#interactOutsideProp.current(e as PointerEvent);
+	};
 
+	#handleInteractOutside = debounce((e: PointerEvent) => {
+		if (!this.currNode) {
+			this.#unsubClickListener();
+			return;
+		}
 		const isEventValid =
 			this.#isValidEventProp.current(e, this.currNode) || isValidEvent(e, this.currNode);
 
 		if (!this.#isResponsibleLayer || this.#isAnyEventIntercepted() || !isEventValid) {
+			this.#unsubClickListener();
 			return;
 		}
+
 		let event = e;
 		if (event.defaultPrevented) {
 			event = createWrappedEvent(event);
 		}
-		this.#interactOutsideStartProp.current(event);
-		if (event.defaultPrevented) return;
-		this.#isPointerDownOutside = true;
-	}, 10);
 
-	#onInteractOutside = debounce((e: InteractOutsideEvent) => {
-		if (!this.currNode) return;
-
-		const behaviorType = this.#behaviorType.current;
-		const isEventValid =
-			this.#isValidEventProp.current(e, this.currNode) || isValidEvent(e, this.currNode);
-
-		if (!this.#isResponsibleLayer || this.#isAnyEventIntercepted() || !isEventValid) {
+		if (
+			this.#behaviorType.current !== "close" &&
+			this.#behaviorType.current !== "defer-otherwise-close"
+		) {
+			this.#unsubClickListener();
 			return;
 		}
-		if (behaviorType !== "close" && behaviorType !== "defer-otherwise-close") return;
-		if (!this.#isPointerDownOutside) return;
-		this.#interactOutsideProp.current(e);
+
+		if (e.pointerType === "touch") {
+			this.#unsubClickListener();
+
+			// @ts-expect-error - later
+			this.#unsubClickListener = addEventListener(
+				this.#documentObj,
+				"click",
+				this.#handleDismiss,
+				{ once: true }
+			);
+		} else {
+			this.#interactOutsideProp.current(event);
+		}
 	}, 10);
 
-	#markInterceptedEvent = (e: HTMLElementEventMap[InteractOutsideInterceptEventType]) => {
-		this.#interceptedEvents[e.type as InteractOutsideInterceptEventType] = true;
+	#markInterceptedEvent = (e: PointerEvent) => {
+		this.#interceptedEvents[e.type] = true;
 	};
 
-	#markNonInterceptedEvent = (e: HTMLElementEventMap[InteractOutsideInterceptEventType]) => {
-		this.#interceptedEvents[e.type as InteractOutsideInterceptEventType] = false;
+	#markNonInterceptedEvent = (e: PointerEvent) => {
+		this.#interceptedEvents[e.type] = false;
 	};
 
 	#markResponsibleLayer = () => {
@@ -240,9 +209,8 @@ export class DismissibleLayerState {
 
 	#resetState = debounce(() => {
 		for (const eventType in this.#interceptedEvents) {
-			this.#interceptedEvents[eventType as InteractOutsideInterceptEventType] = false;
+			this.#interceptedEvents[eventType] = false;
 		}
-		this.#isPointerDownOutside = false;
 		this.#isResponsibleLayer = false;
 	}, 20);
 
@@ -291,7 +259,7 @@ function isResponsibleLayer(node: HTMLElement): boolean {
 	return firstLayerNode.node.current === node;
 }
 
-function isValidEvent(e: InteractOutsideEvent, node: HTMLElement): boolean {
+function isValidEvent(e: PointerEvent, node: HTMLElement): boolean {
 	if ("button" in e && e.button > 0) return false;
 	const target = e.target;
 	if (!isElement(target)) return false;
@@ -303,19 +271,16 @@ function isValidEvent(e: InteractOutsideEvent, node: HTMLElement): boolean {
 
 export type FocusOutsideEvent = CustomEvent<{ originalEvent: FocusEvent }>;
 
-function createWrappedEvent(e: InteractOutsideEvent): InteractOutsideEvent {
+function createWrappedEvent(e: PointerEvent | MouseEvent): PointerEvent {
 	const capturedCurrentTarget = e.currentTarget;
 	const capturedTarget = e.target;
 
-	let newEvent: InteractOutsideEvent;
+	let newEvent: PointerEvent;
 
 	if (e instanceof PointerEvent) {
 		newEvent = new PointerEvent(e.type, e);
-	} else if (e instanceof MouseEvent) {
-		newEvent = new MouseEvent(e.type, e);
 	} else {
-		newEvent = document.createEvent("TouchEvent") as TouchEvent;
-		newEvent.initEvent(e.type, e.bubbles, e.cancelable);
+		newEvent = new PointerEvent("pointerdown", e);
 	}
 
 	// track the prevented state separately
@@ -350,5 +315,5 @@ function createWrappedEvent(e: InteractOutsideEvent): InteractOutsideEvent {
 		},
 	});
 
-	return wrappedEvent as InteractOutsideEvent;
+	return wrappedEvent as PointerEvent;
 }

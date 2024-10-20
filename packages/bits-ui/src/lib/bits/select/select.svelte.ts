@@ -1,7 +1,6 @@
 import { Previous } from "runed";
 import { untrack } from "svelte";
 import { afterTick, srOnlyStyles, styleToString, useRefById } from "svelte-toolbelt";
-import type { InteractOutsideEvent } from "../utilities/dismissible-layer/types.js";
 import { backward, forward, next, prev } from "$lib/internal/arrays.js";
 import {
 	getAriaExpanded,
@@ -507,9 +506,12 @@ class SelectTriggerState {
 		if (e.key === kbd.ARROW_UP || e.key === kbd.ARROW_DOWN) e.preventDefault();
 
 		if (!this.root.open.current) {
-			if (e.key === kbd.ENTER) {
-				return;
-			} else if (e.key === kbd.SPACE || e.key === kbd.ARROW_DOWN || e.key === kbd.ARROW_UP) {
+			if (
+				e.key === kbd.ENTER ||
+				e.key === kbd.SPACE ||
+				e.key === kbd.ARROW_DOWN ||
+				e.key === kbd.ARROW_UP
+			) {
 				e.preventDefault();
 				this.root.handleOpen();
 			} else if (!this.root.isMulti && this.root.dataTypeaheadEnabled) {
@@ -740,7 +742,7 @@ class SelectContentState {
 		}
 	});
 
-	handleInteractOutside = (e: InteractOutsideEvent) => {
+	handleInteractOutside = (e: PointerEvent) => {
 		if (e.target === this.root.triggerNode || e.target === this.root.inputNode) {
 			e.preventDefault();
 		}

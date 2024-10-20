@@ -213,12 +213,22 @@ class AccordionTriggerState {
 		});
 	}
 
-	#onclick = () => {
+	#onpointerdown = (e: PointerEvent) => {
 		if (this.#isDisabled) return;
+		if (e.pointerType === "touch" || e.button !== 0) return e.preventDefault();
 		this.#itemState.updateValue();
 	};
 
+	#onpointerup = (e: PointerEvent) => {
+		if (this.#isDisabled) return;
+		if (e.pointerType === "touch") {
+			e.preventDefault();
+			this.#itemState.updateValue();
+		}
+	};
+
 	#onkeydown = (e: KeyboardEvent) => {
+		if (this.#isDisabled) return;
 		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
 			e.preventDefault();
 			this.#itemState.updateValue();
@@ -241,7 +251,8 @@ class AccordionTriggerState {
 				[ACCORDION_TRIGGER_ATTR]: "",
 				tabindex: 0,
 				//
-				onclick: this.#onclick,
+				onpointerdown: this.#onpointerdown,
+				onpointerup: this.#onpointerup,
 				onkeydown: this.#onkeydown,
 			}) as const
 	);
