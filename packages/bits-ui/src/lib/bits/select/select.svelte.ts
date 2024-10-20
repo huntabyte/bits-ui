@@ -506,9 +506,12 @@ class SelectTriggerState {
 		if (e.key === kbd.ARROW_UP || e.key === kbd.ARROW_DOWN) e.preventDefault();
 
 		if (!this.root.open.current) {
-			if (e.key === kbd.ENTER) {
-				return;
-			} else if (e.key === kbd.SPACE || e.key === kbd.ARROW_DOWN || e.key === kbd.ARROW_UP) {
+			if (
+				e.key === kbd.ENTER ||
+				e.key === kbd.SPACE ||
+				e.key === kbd.ARROW_DOWN ||
+				e.key === kbd.ARROW_UP
+			) {
 				e.preventDefault();
 				this.root.handleOpen();
 			} else if (!this.root.isMulti && this.root.dataTypeaheadEnabled) {
