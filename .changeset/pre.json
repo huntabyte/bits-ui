@@ -1,0 +1,41 @@
+{
+  "mode": "pre",
+  "tag": "next",
+  "initialVersions": {
+    "bits-ui": "0.21.15",
+    "docs": "0.0.0",
+    "tests": "0.0.0"
+  },
+  "changesets": [
+    "clean-wombats-argue",
+    "clever-suns-reflect",
+    "cool-readers-camp",
+    "early-points-study",
+    "famous-suits-wash",
+    "gentle-scissors-vanish",
+    "green-pumpkins-provide",
+    "healthy-jeans-dream",
+    "healthy-ligers-sell",
+    "hot-owls-compete",
+    "lucky-chefs-learn",
+    "many-clouds-clean",
+    "many-pandas-fly",
+    "mighty-chefs-cheer",
+    "mighty-lamps-breathe",
+    "moody-islands-chew",
+    "odd-games-guess",
+    "pink-eyes-begin",
+    "rare-islands-divide",
+    "serious-shrimps-pump",
+    "shaggy-waves-prove",
+    "sharp-berries-hide",
+    "shiny-doors-carry",
+    "short-pianos-brake",
+    "shy-knives-destroy",
+    "slimy-mails-argue",
+    "soft-comics-sort",
+    "tame-ads-heal",
+    "weak-ducks-brush",
+    "yellow-dodos-design"
+  ]
+}

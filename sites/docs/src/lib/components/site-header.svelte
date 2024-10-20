@@ -1,8 +1,11 @@
 <script lang="ts">
 	import { Button } from "bits-ui";
+	import Search from "./search.svelte";
 	import { Logo } from "$icons/index.js";
-	import { LightSwitch, MobileNav } from "$lib/components/index.js";
+	import LightSwitch from "$lib/components/light-switch.svelte";
+	import MobileNav from "$lib/components/navigation/mobile-nav.svelte";
 	import { siteConfig } from "$lib/config/index.js";
+	import Github from "$icons/github.svelte";
 </script>
 
 <header
@@ -20,15 +23,15 @@
 				</a>
 			</div>
 			<div class="flex items-center justify-end gap-2.5">
+				<Search />
 				<Button.Root
 					href={siteConfig.links.github}
 					target="_blank"
 					rel="noopener noreferrer"
-					class="inline-flex h-10 items-center
-					justify-center whitespace-nowrap rounded-[9px] bg-muted px-4
-					text-sm font-semibold text-foreground ring-offset-background transition-colors hover:bg-dark-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+					aria-label="Light Switch"
+					class="relative inline-flex h-10 w-10 items-center justify-center rounded-input px-2 transition-colors hover:bg-dark-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
 				>
-					Report an issue
+					<Github class="size-5" />
 				</Button.Root>
 				<LightSwitch />
 			</div>
