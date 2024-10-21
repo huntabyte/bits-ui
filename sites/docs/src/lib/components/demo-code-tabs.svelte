@@ -30,7 +30,7 @@
 			{#each items as item}
 				<Tabs.Trigger
 					value={item.value}
-					class="flex select-none border-b-2 border-b-transparent text-sm data-[state=active]:border-accent"
+					class="flex select-none border-b-2 border-b-transparent text-sm text-foreground-alt data-[state=active]:border-foreground-alt/10  data-[state=active]:text-foreground"
 				>
 					<span class="px-4 py-2">
 						{item.label}
