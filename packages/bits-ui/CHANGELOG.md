@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.22
+
+### Patch Changes
+
+-   fix: various pointer/click issues ([#794](https://github.com/huntabyte/bits-ui/pull/794))
+
 ## 1.0.0-next.21
 
 ### Patch Changes
