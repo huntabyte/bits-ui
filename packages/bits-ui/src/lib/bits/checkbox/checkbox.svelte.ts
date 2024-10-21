@@ -60,18 +60,9 @@ class CheckboxRootState {
 		}
 	};
 
-	#onpointerdown = (e: PointerEvent) => {
+	#onclick = () => {
 		if (this.disabled.current) return;
-		if (e.pointerType === "touch" || e.button !== 0) return e.preventDefault();
 		this.#toggle();
-	};
-
-	#onpointerup = (e: PointerEvent) => {
-		if (this.disabled.current) return;
-		if (e.pointerType === "touch") {
-			e.preventDefault();
-			this.#toggle();
-		}
 	};
 
 	props = $derived.by(
@@ -87,8 +78,7 @@ class CheckboxRootState {
 				"data-state": getCheckboxDataState(this.checked.current),
 				[CHECKBOX_ROOT_ATTR]: "",
 				//
-				onpointerdown: this.#onpointerdown,
-				onpointerup: this.#onpointerup,
+				onclick: this.#onclick,
 				onkeydown: this.#onkeydown,
 			}) as const
 	);

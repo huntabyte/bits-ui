@@ -61,17 +61,8 @@ class SwitchRootState {
 		this.#toggle();
 	};
 
-	#onpointerup = (e: PointerEvent) => {
+	#onclick = (e: PointerEvent) => {
 		if (this.disabled.current) return;
-		if (e.pointerType === "touch") {
-			e.preventDefault();
-			this.#toggle();
-		}
-	};
-
-	#onpointerdown = (e: PointerEvent) => {
-		if (this.disabled.current) return;
-		if (e.pointerType === "touch") return e.preventDefault();
 		this.#toggle();
 	};
 
@@ -92,8 +83,7 @@ class SwitchRootState {
 				"aria-required": getAriaRequired(this.required.current),
 				[ROOT_ATTR]: "",
 				//
-				onpointerdown: this.#onpointerdown,
-				onpointerup: this.#onpointerup,
+				onclick: this.#onclick,
 				onkeydown: this.#onkeydown,
 			}) as const
 	);
