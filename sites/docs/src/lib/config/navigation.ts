@@ -1,12 +1,12 @@
 import type { Component } from "svelte";
-import Sticker from "phosphor-svelte/lib/Sticker";
+import CalendarBlank from "phosphor-svelte/lib/CalendarBlank";
+import CirclesThreePlus from "phosphor-svelte/lib/CirclesThreePlus";
 import CodeBlock from "phosphor-svelte/lib/CodeBlock";
 import Compass from "phosphor-svelte/lib/Compass";
+import Link from "phosphor-svelte/lib/Link";
 import Palette from "phosphor-svelte/lib/Palette";
-import CalendarBlank from "phosphor-svelte/lib/CalendarBlank";
-import CableCar from "phosphor-svelte/lib/CableCar";
-import Leaf from "phosphor-svelte/lib/Leaf";
-import Joystick from "phosphor-svelte/lib/Joystick";
+import Resize from "phosphor-svelte/lib/Resize";
+import Sticker from "phosphor-svelte/lib/Sticker";
 import { componentDocs, typeHelperDocs, utilityDocs } from "$content/index.js";
 
 export type NavItem = {
@@ -121,13 +121,13 @@ export const navigation: Navigation = {
 					title: "Ref",
 					href: "/docs/ref",
 					items: [],
-					icon: Leaf,
+					icon: Link,
 				},
 				{
 					title: "Transitions",
 					href: "/docs/transitions",
 					items: [],
-					icon: CableCar,
+					icon: Resize,
 				},
 				{
 					title: "Styling",
@@ -145,7 +145,7 @@ export const navigation: Navigation = {
 					title: "Controlled State",
 					href: "/docs/controlled-state",
 					items: [],
-					icon: Joystick,
+					icon: CirclesThreePlus,
 				},
 			],
 		},
