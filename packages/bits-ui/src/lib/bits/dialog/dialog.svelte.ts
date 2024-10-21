@@ -91,9 +91,11 @@ class DialogTriggerState {
 	#onpointerdown = (e: PointerEvent) => {
 		if (this.#disabled.current) return;
 		if (e.pointerType === "touch") return e.preventDefault();
+		if (e.button > 0) return;
 		// by default, it will attempt to focus this trigger on pointerdown
 		// since this also opens the dialog we want to prevent that behavior
 		e.preventDefault();
+
 		this.#root.handleOpen();
 	};
 
@@ -159,6 +161,7 @@ class DialogCloseState {
 	#onpointerdown = (e: PointerEvent) => {
 		if (this.#disabled.current) return;
 		if (e.pointerType === "touch") return e.preventDefault();
+		if (e.button > 0) return;
 		this.#root.handleClose();
 	};
 
@@ -392,6 +395,7 @@ class AlertDialogCancelState {
 	#onpointerdown = (e: PointerEvent) => {
 		if (this.#disabled.current) return;
 		if (e.pointerType === "touch") return e.preventDefault();
+		if (e.button > 0) return;
 		this.#root.handleClose();
 	};
 
