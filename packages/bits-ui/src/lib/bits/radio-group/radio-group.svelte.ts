@@ -108,6 +108,10 @@ class RadioGroupItemState {
 			id: this.#id,
 			ref: this.#ref,
 		});
+
+		$effect(() => {
+			this.#tabIndex = this.#root.rovingFocusGroup.getTabIndex(this.#ref.current);
+		});
 	}
 
 	#onpointerdown = (e: PointerEvent) => {
@@ -132,7 +136,7 @@ class RadioGroupItemState {
 		this.#root.rovingFocusGroup.handleKeydown(this.#ref.current, e, true);
 	};
 
-	#tabIndex = $derived.by(() => this.#root.rovingFocusGroup.getTabIndex(this.#ref.current));
+	#tabIndex = $state(0);
 
 	snippetProps = $derived.by(() => ({ checked: this.#isChecked }));
 

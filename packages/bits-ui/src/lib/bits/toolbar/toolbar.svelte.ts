@@ -210,6 +210,10 @@ class ToolbarGroupItemState {
 			id: this.#id,
 			ref: this.#ref,
 		});
+
+		$effect(() => {
+			this.#tabIndex = this.#root.rovingFocusGroup.getTabIndex(this.#ref.current);
+		});
 	}
 
 	toggleItem = () => {
@@ -252,7 +256,7 @@ class ToolbarGroupItemState {
 		return this.#group.isMulti ? getAriaPressed(this.isPressed) : undefined;
 	});
 
-	#tabIndex = $derived.by(() => this.#root.rovingFocusGroup.getTabIndex(this.#ref.current));
+	#tabIndex = $state(0);
 
 	props = $derived.by(
 		() =>
@@ -293,6 +297,10 @@ class ToolbarLinkState {
 			id: this.#id,
 			ref: this.#ref,
 		});
+
+		$effect(() => {
+			this.#tabIndex = this.#root.rovingFocusGroup.getTabIndex(this.#ref.current);
+		});
 	}
 
 	#onkeydown = (e: KeyboardEvent) => {
@@ -306,7 +314,7 @@ class ToolbarLinkState {
 		return undefined;
 	});
 
-	#tabIndex = $derived.by(() => this.#root.rovingFocusGroup.getTabIndex(this.#ref.current));
+	#tabIndex = $state(0);
 
 	props = $derived.by(() => ({
 		id: this.#id.current,
@@ -342,13 +350,17 @@ class ToolbarButtonState {
 			id: this.#id,
 			ref: this.#ref,
 		});
+
+		$effect(() => {
+			this.#tabIndex = this.#root.rovingFocusGroup.getTabIndex(this.#ref.current);
+		});
 	}
 
 	#onkeydown = (e: KeyboardEvent) => {
 		this.#root.rovingFocusGroup.handleKeydown(this.#ref.current, e);
 	};
 
-	#tabIndex = $derived.by(() => this.#root.rovingFocusGroup.getTabIndex(this.#ref.current));
+	#tabIndex = $state(0);
 
 	#role = $derived.by(() => {
 		if (!this.#ref.current) return undefined;

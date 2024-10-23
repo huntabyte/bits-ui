@@ -14,7 +14,6 @@
 		"test": "pnpm -F \"./packages/**\" --parallel --reporter append-only --color test",
 		"test:components": "pnpm -F tests test",
 		"test:utils": "pnpm -F bits-ui test"
-
 	},
 	"keywords": [],
 	"author": "Hunter Johnston <https://github.com/huntabyte>",
@@ -29,7 +28,7 @@
 		"prettier": "^3.2.5",
 		"prettier-plugin-svelte": "^3.2.2",
 		"prettier-plugin-tailwindcss": "0.5.13",
-		"svelte": "^5.0.0",
+		"svelte": "^5.1.0",
 		"svelte-eslint-parser": "^0.41.1",
 		"wrangler": "^3.44.0"
 	},
