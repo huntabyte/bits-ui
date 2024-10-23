@@ -10,6 +10,7 @@
 		ref = $bindable(null),
 		child,
 		children,
+		type = "button",
 		...restProps
 	}: SelectTriggerProps = $props();
 
@@ -21,7 +22,7 @@
 		),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, triggerState.props));
+	const mergedProps = $derived(mergeProps(restProps, triggerState.props, { type }));
 </script>
 
 <FloatingLayer.Anchor {id}>
