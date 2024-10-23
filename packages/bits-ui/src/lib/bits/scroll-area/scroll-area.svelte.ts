@@ -483,6 +483,14 @@ class ScrollAreaScrollbarXState implements ScrollbarAxisState {
 				});
 			}
 		});
+
+		$effect(() => {
+			// Ensure when a user scrolls down and then the scrollbar is hidden
+			// that when it shows again it will be positioned correctly.
+			afterTick(() => {
+				this.onResize();
+			});
+		});
 	}
 
 	onThumbPointerDown = (pointerPos: { x: number; y: number }) => {
@@ -580,6 +588,14 @@ class ScrollAreaScrollbarYState implements ScrollbarAxisState {
 					this.computedStyle = getComputedStyle(this.ref.current!);
 				});
 			}
+		});
+
+		$effect(() => {
+			// Ensure when a user scrolls down and then the scrollbar is hidden
+			// that when it shows again it will be positioned correctly.
+			afterTick(() => {
+				this.onResize();
+			});
 		});
 	}
 
