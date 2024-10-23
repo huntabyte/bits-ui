@@ -1,5 +1,13 @@
 # bits-ui
 
+## 1.0.0-next.24
+
+### Patch Changes
+
+-   fix: Combobox & Select trigger default to `type="button"` ([#802](https://github.com/huntabyte/bits-ui/pull/802))
+
+-   fix: derived updates ([#802](https://github.com/huntabyte/bits-ui/pull/802))
+
 ## 1.0.0-next.23
 
 ### Patch Changes
