@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.23
+
+### Patch Changes
+
+-   fix(Button): make `ref` prop `$bindable` ([#798](https://github.com/huntabyte/bits-ui/pull/798))
+
 ## 1.0.0-next.22
 
 ### Patch Changes
