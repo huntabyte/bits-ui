@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { ButtonRootProps } from "../types.js";
 
-	let { href, type, children, ref, ...restProps }: ButtonRootProps = $props();
+	let { href, type, children, ref = $bindable(), ...restProps }: ButtonRootProps = $props();
 </script>
 
 <svelte:element
