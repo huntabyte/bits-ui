@@ -169,6 +169,14 @@ class ToggleGroupItemState {
 			id: this.#id,
 			ref: this.#ref,
 		});
+
+		$effect(() => {
+			if (!this.#root.rovingFocus.current) {
+				this.#tabIndex = 0;
+			} else {
+				this.#tabIndex = this.#root.rovingFocusGroup.getTabIndex(this.#ref.current);
+			}
+		});
 	}
 
 	toggleItem = () => {
@@ -203,11 +211,7 @@ class ToggleGroupItemState {
 		return this.#root.isMulti ? getAriaPressed(this.isPressed) : undefined;
 	});
 
-	#tabIndex = $derived.by(() =>
-		!this.#root.rovingFocus.current
-			? 0
-			: this.#root.rovingFocusGroup.getTabIndex(this.#ref.current)
-	);
+	#tabIndex = $state(0);
 
 	props = $derived.by(
 		() =>

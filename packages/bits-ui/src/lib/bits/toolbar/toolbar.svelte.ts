@@ -210,6 +210,10 @@ class ToolbarGroupItemState {
 			id: this.#id,
 			ref: this.#ref,
 		});
+
+		$effect(() => {
+			this.#tabIndex = this.#root.rovingFocusGroup.getTabIndex(this.#ref.current);
+		});
 	}
 
 	toggleItem = () => {
@@ -252,7 +256,7 @@ class ToolbarGroupItemState {
 		return this.#group.isMulti ? getAriaPressed(this.isPressed) : undefined;
 	});
 
-	#tabIndex = $derived.by(() => this.#root.rovingFocusGroup.getTabIndex(this.#ref.current));
+	#tabIndex = $state(0);
 
 	props = $derived.by(
 		() =>
