@@ -1,7 +1,7 @@
 import { render, waitFor } from "@testing-library/svelte/svelte5";
 import { axe } from "jest-axe";
-import { describe, it } from "vitest";
-import type { Component } from "svelte";
+import { describe, it, vi } from "vitest";
+import { type Component, tick } from "svelte";
 import { getTestKbd, setupUserEvents } from "../utils.js";
 import PopoverTest, { type PopoverTestProps } from "./popover-test.svelte";
 import PopoverForceMountTest, {
@@ -76,11 +76,15 @@ describe("popover", () => {
 	});
 
 	it("should close on outside click by default", async () => {
-		const { user, getContent, getByTestId } = await open();
+		const mockFn = vi.fn();
+		const { user, getContent, getByTestId } = await open({
+			contentProps: {
+				onInteractOutside: mockFn,
+			},
+		});
 		const outside = getByTestId("outside");
 		await user.click(outside);
-
-		expect(getContent()).toBeNull();
+		expect(mockFn).toHaveBeenCalledTimes(1);
 	});
 
 	it("should close when the close button is clicked", async () => {
