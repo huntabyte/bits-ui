@@ -21,7 +21,7 @@
 							{:else}
 								<DateRangeField.Segment
 									{part}
-									class="rounded-5px px-1 py-1 hover:bg-muted focus:bg-muted focus:text-foreground focus-visible:!ring-0 focus-visible:!ring-offset-0 aria-[valuetext=Empty]:text-muted-foreground"
+									class="rounded-5px px-1 py-1 hover:bg-muted focus:bg-muted focus:text-foreground focus-visible:!ring-0 focus-visible:!ring-offset-0 data-[placeholder]:text-muted-foreground"
 								>
 									{value}
 								</DateRangeField.Segment>
