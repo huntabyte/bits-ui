@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.26
+
+### Patch Changes
+
+-   fix: scrollbar flicker ([#806](https://github.com/huntabyte/bits-ui/pull/806))
+
 ## 1.0.0-next.25
 
 ### Patch Changes
