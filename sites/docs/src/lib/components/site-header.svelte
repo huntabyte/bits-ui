@@ -22,7 +22,7 @@
 					<Logo />
 				</a>
 			</div>
-			<div class="flex items-center justify-end gap-2.5">
+			<div class="flex items-center justify-end gap-1">
 				<Search />
 				<Button.Root
 					href={siteConfig.links.github}
