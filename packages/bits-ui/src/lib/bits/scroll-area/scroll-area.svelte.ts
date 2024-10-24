@@ -478,18 +478,14 @@ class ScrollAreaScrollbarXState implements ScrollbarAxisState {
 		$effect(() => {
 			if (!this.ref.current) return;
 			if (this.#mounted.current) {
-				afterTick(() => {
-					this.computedStyle = getComputedStyle(this.ref.current!);
-				});
+				this.computedStyle = getComputedStyle(this.ref.current!);
 			}
 		});
 
 		$effect(() => {
 			// Ensure when a user scrolls down and then the scrollbar is hidden
 			// that when it shows again it will be positioned correctly.
-			afterTick(() => {
-				this.onResize();
-			});
+			this.onResize();
 		});
 	}
 
@@ -584,18 +580,14 @@ class ScrollAreaScrollbarYState implements ScrollbarAxisState {
 		$effect(() => {
 			if (!this.ref.current) return;
 			if (this.#mounted.current) {
-				afterTick(() => {
-					this.computedStyle = getComputedStyle(this.ref.current!);
-				});
+				this.computedStyle = getComputedStyle(this.ref.current!);
 			}
 		});
 
 		$effect(() => {
 			// Ensure when a user scrolls down and then the scrollbar is hidden
 			// that when it shows again it will be positioned correctly.
-			afterTick(() => {
-				this.onResize();
-			});
+			this.onResize();
 		});
 	}
 
