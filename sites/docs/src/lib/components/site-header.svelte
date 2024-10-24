@@ -15,15 +15,15 @@
 		<div class="flex h-[70px] items-center justify-between gap-3">
 			<div class="flex items-center gap-1.5">
 				<MobileNav />
-        
-          <a
-            href="/"
-            class="ml-2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background md:mr-[125px]"
-          >
-            <Logo />
-          </a>
-        
-        <Search />
+
+				<a
+					href="/"
+					class="ml-2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background md:mr-[125px]"
+				>
+					<Logo />
+				</a>
+
+				<Search />
 			</div>
 			<div class="flex items-center justify-end">
 				<Button.Root
