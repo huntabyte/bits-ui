@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.25
+
+### Patch Changes
+
+-   fix: Scroll Area scrollbar positioning issue after scroll then hide ([#804](https://github.com/huntabyte/bits-ui/pull/804))
+
 ## 1.0.0-next.24
 
 ### Patch Changes
