@@ -892,6 +892,67 @@ describe("date field", () => {
 		await user.keyboard(kbd.ARROW_UP);
 		expect(input).toHaveValue(value.add({ years: 1 }).toString());
 	});
+
+	it("should clear date segments when fully selected and backspace is pressed", async () => {
+		const { user, day, month, year, getByTestId } = setup({
+			value: new CalendarDateTime(2023, 10, 12, 12, 30, 30, 0),
+			granularity: "second",
+		});
+
+		const { getHour, getMinute, getSecond } = getTimeSegments(getByTestId);
+		const segments = [month, day, year, getHour(), getMinute(), getSecond()];
+
+		for (const segment of segments) {
+			await user.click(segment);
+			await user.keyboard("{Control>}a{/Control}"); // Select all text
+			await user.keyboard("{Backspace}");
+		}
+
+		expect(day).toHaveTextContent("dd");
+		expect(month).toHaveTextContent("mm");
+		expect(year).toHaveTextContent("yyyy");
+		expect(getHour()).toHaveTextContent(TIME_PLACEHOLDER);
+		expect(getMinute()).toHaveTextContent(TIME_PLACEHOLDER);
+		expect(getSecond()).toHaveTextContent(TIME_PLACEHOLDER);
+	});
+
+	it("should apply data-placeholder attribute to empty segments", async () => {
+		const { user, day, year, month, getByTestId } = setup({
+			value: undefined,
+			granularity: "second",
+		});
+
+		const { getHour, getMinute, getSecond } = getTimeSegments(getByTestId);
+		const segments = [month, day, year, getHour(), getMinute(), getSecond()];
+
+		// Check initial state
+		segments.forEach((segment) => {
+			expect(segment).toHaveAttribute("data-placeholder", "true");
+		});
+
+		// Fill in date and time
+		const fillSequence = ["12", "15", "2023", "12", "30", "30"];
+		for (let i = 0; i < fillSequence.length; i++) {
+			await user.click(segments[i]);
+			await user.keyboard(fillSequence[i]);
+			expect(segments[i]).not.toHaveAttribute("data-placeholder");
+		}
+
+		// Clear and check each segment
+		for (const segment of segments) {
+			await user.click(segment);
+			await user.keyboard("{Control>}a{/Control}{Backspace}");
+			expect(segment).toHaveAttribute("data-placeholder", "true");
+		}
+
+		// Test partial fill
+		await user.click(year);
+		await user.keyboard("20");
+		expect(year).not.toHaveAttribute("data-placeholder");
+		await user.keyboard("{Control>}a{/Control}");
+		await user.keyboard("{Backspace}");
+		expect(year).toHaveAttribute("data-placeholder", "true");
+	});
 });
 
 /**

@@ -383,6 +383,7 @@ export function isAcceptableSegmentKey(key: string) {
 		kbd.ARROW_LEFT,
 		kbd.ARROW_RIGHT,
 		kbd.BACKSPACE,
+		kbd.DELETE,
 		kbd.SPACE,
 	];
 	if (acceptableSegmentKeys.includes(key)) return true;

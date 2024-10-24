@@ -894,20 +894,30 @@ class DateFieldDaySegmentState {
 			}
 		}
 
-		if (isBackspace(e.key)) {
+		if (isBackspace(e.key) || isDelete(e.key)) {
+			this.#root.states.day.hasLeftFocus = false;
 			let moveToPrev = false;
 			this.#updateSegment("day", (prev) => {
-				this.#root.states.day.hasLeftFocus = false;
 				if (prev === null) {
+					this.#announcer.announce(null);
 					moveToPrev = true;
 					return null;
 				}
-				if (prev.length === 2 && prev.startsWith("0")) {
+
+				// Handle CTRL+A+Backspace or full selection + Backspace
+				if (document.getSelection()?.toString() === prev) {
+					this.#announcer.announce("Empty");
 					return null;
 				}
+
 				const str = prev.toString();
-				if (str.length === 1) return null;
-				return str.slice(0, -1);
+				if (str.length === 1) {
+					this.#announcer.announce(null);
+					return null;
+				}
+				const next = Number.parseInt(str.slice(0, -1));
+				this.#announcer.announce(next);
+				return `${next}`;
 			});
 
 			if (moveToPrev) {
@@ -945,6 +955,7 @@ class DateFieldDaySegmentState {
 			"aria-valuemax": getDaysInMonth(toDate(date)),
 			"aria-valuenow": date.day,
 			"aria-valuetext": this.#root.segmentValues.day === null ? "Empty" : `${date.day}`,
+			"data-placeholder": this.#root.segmentValues.day == null ? "true" : undefined,
 			onkeydown: this.#onkeydown,
 			onfocusout: this.#onfocusout,
 			onclick: this.#root.handleSegmentClick,
@@ -1149,7 +1160,7 @@ class DateFieldMonthSegmentState {
 			}
 		}
 
-		if (isBackspace(e.key)) {
+		if (isBackspace(e.key) || isDelete(e.key)) {
 			this.#root.states.month.hasLeftFocus = false;
 			let moveToPrev = false;
 			this.#updateSegment("month", (prev) => {
@@ -1159,8 +1170,9 @@ class DateFieldMonthSegmentState {
 					return null;
 				}
 
-				if (prev.length === 2 && prev.startsWith("0")) {
-					this.#announcer.announce(null);
+				// Handle CTRL+A+Backspace or full selection + Backspace
+				if (document.getSelection()?.toString() === prev) {
+					this.#announcer.announce("Empty");
 					return null;
 				}
 
@@ -1213,6 +1225,7 @@ class DateFieldMonthSegmentState {
 				this.#root.segmentValues.month === null
 					? "Empty"
 					: `${date.month} - ${this.#root.formatter.fullMonth(toDate(date))}`,
+			"data-placeholder": this.#root.segmentValues.month === null ? "true" : undefined,
 			onkeydown: this.#onkeydown,
 			onfocusout: this.#onfocusout,
 			onclick: this.#root.handleSegmentClick,
@@ -1383,7 +1396,7 @@ class DateFieldYearSegmentState {
 			}
 		}
 
-		if (isBackspace(e.key)) {
+		if (isBackspace(e.key) || isDelete(e.key)) {
 			this.#pressedKeys = [];
 			this.#incrementBackspaceCount();
 			let moveToPrev = false;
@@ -1394,6 +1407,15 @@ class DateFieldYearSegmentState {
 					this.#announcer.announce(null);
 					return null;
 				}
+
+				// Handle CTRL+A+Backspace
+
+				if (document.getSelection()?.toString() !== "") {
+					this.#root.states.year.hasLeftFocus = false;
+					this.#announcer.announce("Empty");
+					return null;
+				}
+
 				const str = prev.toString();
 				if (str.length === 1) {
 					this.#announcer.announce(null);
@@ -1450,6 +1472,7 @@ class DateFieldYearSegmentState {
 			onkeydown: this.#onkeydown,
 			onclick: this.#root.handleSegmentClick,
 			onfocusout: this.#onfocusout,
+			"data-placeholder": isEmpty ? "true" : undefined,
 			...this.#root.getBaseSegmentAttrs("year", this.#id.current),
 		};
 	});
@@ -1658,7 +1681,7 @@ class DateFieldHourSegmentState {
 			}
 		}
 
-		if (isBackspace(e.key)) {
+		if (isBackspace(e.key) || isDelete(e.key)) {
 			this.#root.states.hour.hasLeftFocus = false;
 			let moveToPrev = false;
 			this.#updateSegment("hour", (prev) => {
@@ -1667,6 +1690,13 @@ class DateFieldHourSegmentState {
 					moveToPrev = true;
 					return null;
 				}
+
+				// Handle CTRL+A+Backspace or full selection + Backspace
+				if (document.getSelection()?.toString() === prev) {
+					this.#announcer.announce("Empty");
+					return null;
+				}
+
 				const str = prev.toString();
 				if (str.length === 1) {
 					this.#announcer.announce(null);
@@ -1716,6 +1746,7 @@ class DateFieldHourSegmentState {
 			onkeydown: this.#onkeydown,
 			onfocusout: this.#onfocusout,
 			onclick: this.#root.handleSegmentClick,
+			"data-placeholder": isEmpty ? "true" : undefined,
 			...this.#root.getBaseSegmentAttrs("hour", this.#id.current),
 		};
 	});
@@ -1902,7 +1933,7 @@ class DateFieldMinuteSegmentState {
 			return;
 		}
 
-		if (isBackspace(e.key)) {
+		if (isBackspace(e.key) || isDelete(e.key)) {
 			this.#root.states.minute.hasLeftFocus = false;
 			let moveToPrev = false;
 			this.#updateSegment("minute", (prev) => {
@@ -1911,6 +1942,13 @@ class DateFieldMinuteSegmentState {
 					this.#announcer.announce("Empty");
 					return null;
 				}
+
+				// Handle CTRL+A+Backspace or full selection + Backspace
+				if (document.getSelection()?.toString() === prev) {
+					this.#announcer.announce("Empty");
+					return null;
+				}
+
 				const str = prev.toString();
 				if (str.length === 1) {
 					this.#announcer.announce("Empty");
@@ -1961,6 +1999,7 @@ class DateFieldMinuteSegmentState {
 			onkeydown: this.#onkeydown,
 			onfocusout: this.#onfocusout,
 			onclick: this.#root.handleSegmentClick,
+			"data-placeholder": isEmpty ? "true" : undefined,
 			...this.#root.getBaseSegmentAttrs("minute", this.#id.current),
 		};
 	});
@@ -2146,7 +2185,7 @@ class DateFieldSecondSegmentState {
 			}
 		}
 
-		if (isBackspace(e.key)) {
+		if (isBackspace(e.key) || isDelete(e.key)) {
 			this.#root.states.second.hasLeftFocus = false;
 			let moveToPrev = false;
 			this.#updateSegment("second", (prev) => {
@@ -2155,6 +2194,13 @@ class DateFieldSecondSegmentState {
 					this.#announcer.announce(null);
 					return null;
 				}
+
+				// Handle CTRL+A+Backspace or full selection + Backspace
+				if (document.getSelection()?.toString() === prev) {
+					this.#announcer.announce("Empty");
+					return null;
+				}
+
 				const str = prev.toString();
 				if (str.length === 1) {
 					this.#announcer.announce(null);
@@ -2203,6 +2249,7 @@ class DateFieldSecondSegmentState {
 			onkeydown: this.#onkeydown,
 			onfocusout: this.#onfocusout,
 			onclick: this.#root.handleSegmentClick,
+			"data-placeholder": isEmpty ? "true" : undefined,
 			...this.#root.getBaseSegmentAttrs("second", this.#id.current),
 		};
 	});
@@ -2253,7 +2300,7 @@ class DateFieldDayPeriodSegmentState {
 			return;
 		}
 
-		if (isBackspace(e.key)) {
+		if (isBackspace(e.key) || isDelete(e.key)) {
 			this.#root.states.dayPeriod.hasLeftFocus = false;
 			this.#updateSegment("dayPeriod", () => {
 				const next = "AM";
@@ -2393,6 +2440,10 @@ function isArrowDown(key: string) {
 
 function isBackspace(key: string) {
 	return key === kbd.BACKSPACE;
+}
+
+function isDelete(key: string) {
+	return key === kbd.DELETE;
 }
 
 const [setDateFieldRootContext, getDateFieldRootContext] =
