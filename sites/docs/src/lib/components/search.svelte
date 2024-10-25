@@ -1,4 +1,5 @@
 <script lang="ts">
+	import MagnifyingGlass from "phosphor-svelte/lib/MagnifyingGlass";
 	import { onMount } from "svelte";
 	import { Command, Dialog } from "bits-ui";
 	import {
@@ -44,14 +45,23 @@
 	}}
 >
 	<Dialog.Trigger
-		class="relative inline-flex h-10 items-center justify-center gap-3 whitespace-nowrap rounded-[9px] bg-foreground/5 px-4 text-sm font-medium text-foreground text-foreground/80 ring-offset-background transition-colors hover:bg-dark-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+		class="relative inline-flex h-10 items-center justify-between gap-3 whitespace-nowrap rounded-[9px] bg-muted px-3 text-sm font-normal text-muted-foreground ring-offset-background transition-colors hover:bg-dark-10 focus-visible:outline-none  focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background md:w-72"
 	>
-		Search Docs
-		<kbd
-			class="pointer-events-none hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex"
-		>
-			<span class="text-xs">⌘</span>K
-		</kbd>
+		<span class="flex items-center gap-2">
+			<MagnifyingGlass class="size-5" aria-label="Sun" />Search Docs ...
+		</span>
+		<span class="flex items-center gap-[1px]">
+			<kbd
+				class="pointer-events-none hidden h-5 select-none items-center gap-1 rounded border bg-background-alt px-1.5 font-mono text-[10px] font-medium opacity-100 shadow-kbd sm:flex"
+			>
+				<span class="text-xs">⌘</span>
+			</kbd>
+			<kbd
+				class="pointer-events-none hidden h-5 select-none items-center gap-1 rounded border bg-background-alt px-1.5 font-mono text-[10px] font-medium opacity-100 shadow-kbd sm:flex"
+			>
+				K
+			</kbd>
+		</span>
 	</Dialog.Trigger>
 	<Dialog.Portal>
 		<Dialog.Overlay
