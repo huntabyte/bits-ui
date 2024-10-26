@@ -298,7 +298,7 @@ class CommandRootState {
 			const grandparent = item.parentElement?.parentElement;
 			if (!grandparent) return;
 			const firstChildOfParent = getFirstNonCommentChild(grandparent) as HTMLElement | null;
-			if (firstChildOfParent && firstChildOfParent.dataset.value === item.dataset.value) {
+			if (firstChildOfParent && firstChildOfParent.dataset?.value === item.dataset?.value) {
 				item
 					?.closest(GROUP_SELECTOR)
 					?.querySelector(GROUP_HEADING_SELECTOR)
@@ -877,18 +877,9 @@ class CommandItemState {
 		this.#select();
 	};
 
-	#onpointerdown = (e: PointerEvent) => {
+	#onclick = () => {
 		if (this.#disabled.current) return;
-		if (e.pointerType === "touch" || e.button !== 0) return e.preventDefault();
 		this.#onSelect();
-	};
-
-	#onpointerup = (e: PointerEvent) => {
-		if (this.#disabled.current) return;
-		if (e.pointerType === "touch") {
-			e.preventDefault();
-			this.#onSelect();
-		}
 	};
 
 	props = $derived.by(
@@ -901,9 +892,8 @@ class CommandItemState {
 				"data-selected": getDataSelected(this.isSelected),
 				[ITEM_ATTR]: "",
 				role: "option",
-				onpointerdown: this.#onpointerdown,
 				onpointermove: this.#onpointermove,
-				onpointerup: this.#onpointerup,
+				onclick: this.#onclick,
 			}) as const
 	);
 }
