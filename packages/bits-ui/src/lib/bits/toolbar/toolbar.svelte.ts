@@ -221,18 +221,9 @@ class ToolbarGroupItemState {
 		this.#group.toggleItem(this.#value.current);
 	};
 
-	#onpointerdown = (e: PointerEvent) => {
+	#onclick = () => {
 		if (this.#isDisabled) return;
-		if (e.pointerType === "touch" || e.button !== 0) return e.preventDefault();
 		this.toggleItem();
-	};
-
-	#onpointerup = (e: PointerEvent) => {
-		if (this.#isDisabled) return;
-		if (e.pointerType === "touch") {
-			e.preventDefault();
-			this.toggleItem();
-		}
 	};
 
 	#onkeydown = (e: KeyboardEvent) => {
@@ -274,8 +265,7 @@ class ToolbarGroupItemState {
 				[GROUP_ITEM_ATTR]: "",
 				disabled: getDisabled(this.#isDisabled),
 				//
-				onpointerdown: this.#onpointerdown,
-				onpointerup: this.#onpointerup,
+				onclick: this.#onclick,
 				onkeydown: this.#onkeydown,
 			}) as const
 	);
