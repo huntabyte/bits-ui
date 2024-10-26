@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.27
+
+### Patch Changes
+
+-   fix: toolbar item events ([#813](https://github.com/huntabyte/bits-ui/pull/813))
+
 ## 1.0.0-next.26
 
 ### Patch Changes
