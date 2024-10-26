@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.28
+
+### Patch Changes
+
+-   fix: command click events ([#816](https://github.com/huntabyte/bits-ui/pull/816))
+
 ## 1.0.0-next.27
 
 ### Patch Changes
