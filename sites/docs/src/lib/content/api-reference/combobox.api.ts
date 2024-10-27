@@ -112,6 +112,11 @@ export const root = createApiSchema<ComboboxRootPropsWithoutHTML>({
 			default: C.FALSE,
 			description: "Whether or not the combobox menu should loop through items.",
 		}),
+		allowDeselect: createBooleanProp({
+			default: C.TRUE,
+			description:
+				"Whether or not the user can deselect the selected item by pressing it in a single select.",
+		}),
 		items: createPropSchema({
 			type: {
 				type: "array",

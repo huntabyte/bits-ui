@@ -439,6 +439,25 @@ describe("select - single", () => {
 		await user.click(item0v2!);
 		expectNotSelected(item0v2!);
 	});
+
+	it("should not allow deselecting an item when `allowDeselect` is false", async () => {
+		const { getByTestId, user, trigger } = await openSingle({
+			allowDeselect: false,
+		});
+
+		const [item0] = getItems(getByTestId);
+		await user.click(item0!);
+		expectSelected(item0!);
+		await user.click(trigger);
+
+		const [item0v2] = getItems(getByTestId);
+
+		await user.click(item0v2!);
+		expectSelected(item0v2!);
+		await user.click(trigger);
+		const [item0v3] = getItems(getByTestId);
+		expectSelected(item0v3!);
+	});
 });
 
 ////////////////////////////////////
