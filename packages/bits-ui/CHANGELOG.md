@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.29
+
+### Patch Changes
+
+-   Select/Combobox: add `allowDeselect` prop ([#819](https://github.com/huntabyte/bits-ui/pull/819))
+
 ## 1.0.0-next.28
 
 ### Patch Changes
