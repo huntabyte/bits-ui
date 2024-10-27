@@ -390,7 +390,9 @@ class SelectInputState {
 
 	#oninput = (e: Event & { currentTarget: HTMLInputElement }) => {
 		this.root.inputValue = e.currentTarget.value;
-		this.root.setHighlightedToFirstCandidate();
+		afterTick(() => {
+			this.root.setHighlightedToFirstCandidate();
+		});
 	};
 
 	props = $derived.by(
