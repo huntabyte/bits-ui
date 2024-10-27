@@ -20,6 +20,7 @@
 		controlledOpen = false,
 		controlledValue = false,
 		items = [],
+		allowDeselect = true,
 		children,
 	}: ComboboxRootProps = $props();
 
@@ -63,6 +64,7 @@
 		name: box.with(() => name),
 		isCombobox: true,
 		items: box.with(() => items),
+		allowDeselect: box.with(() => allowDeselect),
 	});
 </script>
 

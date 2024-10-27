@@ -44,7 +44,6 @@
 	onOpenChange={(o) => {
 		if (!o) searchValue = "";
 	}}
-	allowDeselect={false}
 >
 	<div class="relative">
 		<OrangeSlice
