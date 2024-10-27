@@ -1,5 +1,11 @@
 import type * as CSS from "csstype";
 
+export {
+	REGEXP_ONLY_DIGITS,
+	REGEXP_ONLY_CHARS,
+	REGEXP_ONLY_DIGITS_AND_CHARS,
+} from "$lib/bits/pin-input/pin-input.svelte.js";
+
 export type Selected<Value> = {
 	value: Value;
 	label?: string;
