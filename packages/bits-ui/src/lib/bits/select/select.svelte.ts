@@ -36,6 +36,7 @@ type SelectBaseRootStateProps = ReadableBoxedValues<{
 	loop: boolean;
 	scrollAlignment: "nearest" | "center";
 	items: { value: string; label: string; disabled?: boolean }[];
+	allowDeselect: boolean;
 }> &
 	WritableBoxedValues<{
 		open: boolean;
@@ -51,6 +52,7 @@ class SelectBaseRootState {
 	open: SelectBaseRootStateProps["open"];
 	scrollAlignment: SelectBaseRootStateProps["scrollAlignment"];
 	items: SelectBaseRootStateProps["items"];
+	allowDeselect: SelectBaseRootStateProps["allowDeselect"];
 	touchedInput = $state(false);
 	inputValue = $state<string>("");
 	inputNode = $state<HTMLElement | null>(null);
@@ -84,6 +86,7 @@ class SelectBaseRootState {
 		this.scrollAlignment = props.scrollAlignment;
 		this.isCombobox = props.isCombobox;
 		this.items = props.items;
+		this.allowDeselect = props.allowDeselect;
 
 		this.bitsAttrs = getSelectBitsAttrs(this);
 
@@ -329,10 +332,18 @@ class SelectInputState {
 		if (e.key === kbd.ENTER && !e.isComposing) {
 			e.preventDefault();
 			const highlightedValue = this.root.highlightedValue;
+
+			const isCurrentSelectedValue = highlightedValue === this.root.value.current;
+
+			if (!this.root.allowDeselect.current && isCurrentSelectedValue && !this.root.isMulti) {
+				this.root.handleClose();
+				return;
+			}
+
 			if (highlightedValue) {
 				this.root.toggleItem(highlightedValue, this.root.highlightedLabel ?? undefined);
 			}
-			if (!this.root.isMulti) {
+			if (!this.root.isMulti && !isCurrentSelectedValue) {
 				this.root.handleClose();
 			}
 		}
@@ -545,10 +556,19 @@ class SelectTriggerState {
 		if ((e.key === kbd.ENTER || e.key === kbd.SPACE) && !e.isComposing) {
 			e.preventDefault();
 			const highlightedValue = this.root.highlightedValue;
+
+			const isCurrentSelectedValue = highlightedValue === this.root.value.current;
+
+			if (!this.root.allowDeselect.current && isCurrentSelectedValue && !this.root.isMulti) {
+				this.root.handleClose();
+				return;
+			}
+
 			if (highlightedValue) {
 				this.root.toggleItem(highlightedValue, this.root.highlightedLabel ?? undefined);
 			}
-			if (!this.root.isMulti) {
+
+			if (!this.root.isMulti && !isCurrentSelectedValue) {
 				this.root.handleClose();
 			}
 		}
@@ -838,8 +858,16 @@ class SelectItemState {
 		e.preventDefault();
 		if (this.disabled.current) return;
 		const isCurrentSelectedValue = this.value.current === this.root.value.current;
-		this.root.toggleItem(this.value.current, this.label.current);
 
+		// if allowDeselect is false and the item is already selected and we're not in a
+		// multi select, do nothing and close the menu
+		if (!this.root.allowDeselect.current && isCurrentSelectedValue && !this.root.isMulti) {
+			this.root.handleClose();
+			return;
+		}
+
+		// otherwise, toggle the item and if we're not in a multi select, close the menu
+		this.root.toggleItem(this.value.current, this.label.current);
 		if (!this.root.isMulti && !isCurrentSelectedValue) {
 			this.root.handleClose();
 		}
@@ -1207,6 +1235,7 @@ type InitSelectProps = {
 	scrollAlignment: "nearest" | "center";
 	name: string;
 	items: { value: string; label: string; disabled?: boolean }[];
+	allowDeselect: boolean;
 }> &
 	WritableBoxedValues<{
 		open: boolean;

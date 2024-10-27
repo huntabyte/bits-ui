@@ -99,6 +99,12 @@ export type SelectBaseRootPropsWithoutHTML = WithChildren<{
 	 * IMPORTANT: This functionality is only available for single-select listboxes.
 	 */
 	items?: { value: string; label: string; disabled?: boolean }[];
+
+	/**
+	 * Whether to allow the user to deselect an item by clicking on an already selected item.
+	 * This is only applicable to `type="single"` selects/comboboxes.
+	 */
+	allowDeselect?: boolean;
 }>;
 
 export type SelectSingleRootPropsWithoutHTML = {

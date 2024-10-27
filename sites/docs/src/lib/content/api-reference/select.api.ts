@@ -114,6 +114,11 @@ export const root = createApiSchema<SelectRootPropsWithoutHTML>({
 			default: C.FALSE,
 			description: "Whether or not the select menu should loop through items.",
 		}),
+		allowDeselect: createBooleanProp({
+			default: C.TRUE,
+			description:
+				"Whether or not the user can deselect the selected item by pressing it in a single select.",
+		}),
 		items: createObjectProp({
 			definition: ItemsProp,
 			description:
