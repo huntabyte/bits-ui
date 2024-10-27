@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.30
+
+### Patch Changes
+
+-   export REGEXP helpers from pin input ([#821](https://github.com/huntabyte/bits-ui/pull/821))
+
 ## 1.0.0-next.29
 
 ### Patch Changes
