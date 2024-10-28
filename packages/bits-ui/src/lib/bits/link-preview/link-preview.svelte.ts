@@ -179,6 +179,7 @@ class LinkPreviewContentState {
 				this.root.contentNode = node;
 				this.root.contentId = node?.id;
 			},
+			deps: () => this.root.open.current,
 		});
 
 		$effect(() => {
