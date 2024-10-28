@@ -48,6 +48,7 @@ class ToggleRootState {
 		() =>
 			({
 				[ROOT_ATTR]: "",
+				id: this.#id.current,
 				"data-disabled": getDataDisabled(this.#disabled.current),
 				"aria-pressed": getAriaPressed(this.pressed.current),
 				"data-state": getToggleDataState(this.pressed.current),
