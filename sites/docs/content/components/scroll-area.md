@@ -1,6 +1,6 @@
 ---
 title: Scroll Area
-description: Consistent scroll area across platforms.
+description: Provides a consistent scroll area across platforms.
 ---
 
 <script>
