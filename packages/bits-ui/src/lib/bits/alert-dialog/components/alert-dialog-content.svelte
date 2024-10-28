@@ -24,6 +24,7 @@
 		onInteractOutside = noop,
 		preventScroll = true,
 		trapFocus = true,
+		restoreScrollDelay = null,
 		...restProps
 	}: AlertDialogContentProps = $props();
 
@@ -36,14 +37,20 @@
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));
+
+	function shouldTrapFocus(present: boolean) {
+		if (forceMount) {
+			return contentState.root.open.current && trapFocus;
+		}
+		return present && trapFocus;
+	}
 </script>
 
-<PresenceLayer {...mergedProps} present={contentState.root.open.current || forceMount}>
+<PresenceLayer {...mergedProps} {forceMount} present={contentState.root.open.current || forceMount}>
 	{#snippet presence({ present })}
-		<ScrollLock {preventScroll} />
 		<FocusScope
 			loop
-			trapFocus={present.current && trapFocus}
+			trapFocus={shouldTrapFocus(present.current)}
 			{...mergedProps}
 			onCloseAutoFocus={(e) => {
 				onCloseAutoFocus(e);
@@ -79,18 +86,16 @@
 					>
 						<TextSelectionLayer {...mergedProps} enabled={present.current}>
 							{#if child}
+								{#if contentState.root.open.current}
+									<ScrollLock {preventScroll} {restoreScrollDelay} />
+								{/if}
 								{@render child({
 									props: mergeProps(mergedProps, focusScopeProps),
 									...contentState.snippetProps,
 								})}
 							{:else}
-								<div
-									{...mergeProps(mergedProps, focusScopeProps, {
-										style: {
-											pointerEvents: "auto",
-										},
-									})}
-								>
+								<ScrollLock {preventScroll} />
+								<div {...mergeProps(mergedProps, focusScopeProps)}>
 									{@render children?.()}
 								</div>
 							{/if}

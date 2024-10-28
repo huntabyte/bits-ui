@@ -329,6 +329,9 @@ class DialogContentState {
 				"aria-describedby": this.root.descriptionId,
 				"aria-labelledby": this.root.titleId,
 				[this.root.attrs.content]: "",
+				style: {
+					pointerEvents: "auto",
+				},
 				...this.root.sharedProps,
 			}) as const
 	);

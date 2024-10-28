@@ -1,5 +1,5 @@
 import { SvelteMap } from "svelte/reactivity";
-import { afterTick, box } from "svelte-toolbelt";
+import { type Getter, afterSleep, afterTick, box } from "svelte-toolbelt";
 import { Previous, watch } from "runed";
 import { untrack } from "svelte";
 import type { Fn } from "./types.js";
@@ -105,9 +105,13 @@ const useBodyLockStackCount = createSharedHook(() => {
 	};
 });
 
-export function useBodyScrollLock(initialState?: boolean | undefined) {
+export function useBodyScrollLock(
+	initialState?: boolean | undefined,
+	restoreScrollDelay: Getter<number | null> = () => null
+) {
 	const id = useId();
 	const countState = useBodyLockStackCount();
+	const _restoreScrollDelay = $derived(restoreScrollDelay());
 
 	countState.map.set(id, initialState ?? false);
 
@@ -121,7 +125,11 @@ export function useBodyScrollLock(initialState?: boolean | undefined) {
 			countState.map.delete(id);
 			const length = Array.from(countState.map.values()).length;
 			if (length === 0) {
-				countState.resetBodyStyle();
+				if (_restoreScrollDelay === null) {
+					countState.resetBodyStyle();
+				} else {
+					afterSleep(_restoreScrollDelay, () => countState.resetBodyStyle());
+				}
 			}
 		};
 	});

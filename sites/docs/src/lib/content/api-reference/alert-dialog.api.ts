@@ -16,9 +16,7 @@ import {
 } from "./extended-types/shared/index.js";
 import {
 	DialogContentChildSnippetProps,
-	DialogContentChildrenSnippetProps,
 	DialogOverlayChildSnippetProps,
-	DialogOverlayChildrenSnippetProps,
 } from "./extended-types/dialog/index.js";
 import {
 	childrenSnippet,
@@ -35,6 +33,7 @@ import {
 	portalProps,
 	preventOverflowTextSelectionProp,
 	preventScrollProp,
+	restoreScrollDelayProp,
 	withChildProps,
 } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
@@ -99,9 +98,9 @@ const content = createApiSchema<AlertDialogContentPropsWithoutHTML>({
 		forceMount: forceMountProp,
 		preventOverflowTextSelection: preventOverflowTextSelectionProp,
 		preventScroll: preventScrollProp,
+		restoreScrollDelay: restoreScrollDelayProp,
 		...withChildProps({
 			elType: "HTMLDivElement",
-			childrenDef: DialogContentChildrenSnippetProps,
 			childDef: DialogContentChildSnippetProps,
 		}),
 	},
@@ -167,7 +166,6 @@ const overlay = createApiSchema<AlertDialogOverlayPropsWithoutHTML>({
 		forceMount: forceMountProp,
 		...withChildProps({
 			elType: "HTMLDivElement",
-			childrenDef: DialogOverlayChildrenSnippetProps,
 			childDef: DialogOverlayChildSnippetProps,
 		}),
 	},

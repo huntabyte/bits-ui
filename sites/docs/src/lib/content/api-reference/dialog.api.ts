@@ -23,13 +23,12 @@ import {
 	portalProps,
 	preventOverflowTextSelectionProp,
 	preventScrollProp,
+	restoreScrollDelayProp,
 	withChildProps,
 } from "./helpers.js";
 import {
 	DialogContentChildSnippetProps,
-	DialogContentChildrenSnippetProps,
 	DialogOverlayChildSnippetProps,
-	DialogOverlayChildrenSnippetProps,
 } from "./extended-types/dialog/index.js";
 import {
 	HeaderLevelProp,
@@ -85,9 +84,9 @@ export const content = createApiSchema<DialogContentPropsWithoutHTML>({
 		forceMount: forceMountProp,
 		preventOverflowTextSelection: preventOverflowTextSelectionProp,
 		preventScroll: preventScrollProp,
+		restoreScrollDelay: restoreScrollDelayProp,
 		...withChildProps({
 			elType: "HTMLDivElement",
-			childrenDef: DialogContentChildrenSnippetProps,
 			childDef: DialogContentChildSnippetProps,
 		}),
 	},
@@ -151,7 +150,6 @@ export const overlay = createApiSchema<DialogOverlayPropsWithoutHTML>({
 		forceMount: forceMountProp,
 		...withChildProps({
 			elType: "HTMLDivElement",
-			childrenDef: DialogOverlayChildrenSnippetProps,
 			childDef: DialogOverlayChildSnippetProps,
 		}),
 	},
