@@ -1,5 +1,13 @@
 # bits-ui
 
+## 1.0.0-next.31
+
+### Patch Changes
+
+-   Add ID Attribute to Toggle Root Component ([#823](https://github.com/huntabyte/bits-ui/pull/823))
+
+-   fix: Link preview not closing on pointer leave ([#825](https://github.com/huntabyte/bits-ui/pull/825))
+
 ## 1.0.0-next.30
 
 ### Patch Changes
