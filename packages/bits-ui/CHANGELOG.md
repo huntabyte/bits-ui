@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.32
+
+### Patch Changes
+
+-   fix: `Dialog` and `AlertDialog` `child` transition and add `restoreScrollDelay` prop to support custom transitions ([#831](https://github.com/huntabyte/bits-ui/pull/831))
+
 ## 1.0.0-next.31
 
 ### Patch Changes
