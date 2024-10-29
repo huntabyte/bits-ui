@@ -10,6 +10,7 @@
 	import { useId } from "$lib/internal/use-id.js";
 	import { noop } from "$lib/internal/noop.js";
 	import ScrollLock from "$lib/bits/utilities/scroll-lock/scroll-lock.svelte";
+	import { shouldTrapFocus } from "$lib/internal/should-trap-focus.js";
 
 	let {
 		id = useId(),
@@ -41,9 +42,12 @@
 	{#snippet presence({ present })}
 		<FocusScope
 			loop
-			trapFocus={forceMount
-				? contentState.root.open.current && trapFocus
-				: present.current && trapFocus}
+			trapFocus={shouldTrapFocus({
+				forceMount,
+				present: present.current,
+				trapFocus,
+				open: contentState.root.open.current,
+			})}
 			{...mergedProps}
 			onCloseAutoFocus={(e) => {
 				onCloseAutoFocus(e);

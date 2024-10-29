@@ -10,6 +10,7 @@
 	import { noop } from "$lib/internal/noop.js";
 	import ScrollLock from "$lib/bits/utilities/scroll-lock/scroll-lock.svelte";
 	import { useDialogContent } from "$lib/bits/dialog/dialog.svelte.js";
+	import { shouldTrapFocus } from "$lib/internal/should-trap-focus.js";
 
 	let {
 		id = useId(),
@@ -37,20 +38,18 @@
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));
-
-	function shouldTrapFocus(present: boolean) {
-		if (forceMount) {
-			return contentState.root.open.current && trapFocus;
-		}
-		return present && trapFocus;
-	}
 </script>
 
 <PresenceLayer {...mergedProps} {forceMount} present={contentState.root.open.current || forceMount}>
 	{#snippet presence({ present })}
 		<FocusScope
 			loop
-			trapFocus={shouldTrapFocus(present.current)}
+			trapFocus={shouldTrapFocus({
+				forceMount,
+				present: present.current,
+				trapFocus,
+				open: contentState.root.open.current,
+			})}
 			{...mergedProps}
 			onCloseAutoFocus={(e) => {
 				onCloseAutoFocus(e);

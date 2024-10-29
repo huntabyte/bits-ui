@@ -363,6 +363,9 @@ class DialogOverlayState {
 			({
 				id: this.#id.current,
 				[this.root.attrs.overlay]: "",
+				style: {
+					pointerEvents: "auto",
+				},
 				...this.root.sharedProps,
 			}) as const
 	);
