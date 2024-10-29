@@ -10,6 +10,7 @@
 	import { useId } from "$lib/internal/use-id.js";
 	import { noop } from "$lib/internal/noop.js";
 	import ScrollLock from "$lib/bits/utilities/scroll-lock/scroll-lock.svelte";
+	import { shouldTrapFocus } from "$lib/internal/should-trap-focus.js";
 
 	let {
 		id = useId(),
@@ -22,6 +23,7 @@
 		onInteractOutside = noop,
 		trapFocus = true,
 		preventScroll = true,
+		restoreScrollDelay = null,
 		...restProps
 	}: DialogContentProps = $props();
 
@@ -36,11 +38,16 @@
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));
 </script>
 
-<PresenceLayer {...mergedProps} present={contentState.root.open.current || forceMount}>
+<PresenceLayer {...mergedProps} {forceMount} present={contentState.root.open.current || forceMount}>
 	{#snippet presence({ present })}
 		<FocusScope
 			loop
-			trapFocus={present.current && trapFocus}
+			trapFocus={shouldTrapFocus({
+				forceMount,
+				present: present.current,
+				trapFocus,
+				open: contentState.root.open.current,
+			})}
 			{...mergedProps}
 			onCloseAutoFocus={(e) => {
 				onCloseAutoFocus(e);
@@ -68,20 +75,17 @@
 						}}
 					>
 						<TextSelectionLayer {...mergedProps} enabled={present.current}>
-							<ScrollLock {preventScroll} />
 							{#if child}
+								{#if contentState.root.open.current}
+									<ScrollLock {preventScroll} {restoreScrollDelay} />
+								{/if}
 								{@render child({
 									props: mergeProps(mergedProps, focusScopeProps),
 									...contentState.snippetProps,
 								})}
 							{:else}
-								<div
-									{...mergeProps(mergedProps, focusScopeProps, {
-										style: {
-											pointerEvents: "auto",
-										},
-									})}
-								>
+								<ScrollLock {preventScroll} />
+								<div {...mergeProps(mergedProps, focusScopeProps)}>
 									{@render children?.()}
 								</div>
 							{/if}

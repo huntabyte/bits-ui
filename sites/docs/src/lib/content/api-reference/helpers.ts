@@ -431,6 +431,12 @@ export const preventScrollProp = createBooleanProp({
 	default: C.TRUE,
 });
 
+export const restoreScrollDelayProp = createNumberProp({
+	description:
+		"The delay in milliseconds before the scrollbar is restored after closing the dialog. This is only applicable when using the `child` snippet for custom transitions and `preventScroll` and `forceMount` are `true`. You should set this to a value greater than the transition duration to prevent content from shifting during the transition.",
+	default: "null",
+});
+
 export function floatingProps(props?: {
 	side?: "top" | "right" | "bottom" | "left";
 	align?: "start" | "center" | "end";

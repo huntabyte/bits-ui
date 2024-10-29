@@ -3,6 +3,7 @@ import type { DismissibleLayerProps } from "../utilities/dismissible-layer/types
 import type { PresenceLayerProps } from "../utilities/presence-layer/types.js";
 import type { FocusScopeProps } from "../utilities/focus-scope/types.js";
 import type { TextSelectionLayerProps } from "../utilities/text-selection-layer/types.js";
+import type { ScrollLockProps } from "../utilities/scroll-lock/index.js";
 import type {
 	OnChangeFn,
 	WithChild,
@@ -49,9 +50,8 @@ export type DialogContentPropsWithoutHTML = WithChildNoChildrenSnippetProps<
 			Omit<DismissibleLayerProps, "onInteractOutsideStart"> &
 			PresenceLayerProps &
 			FocusScopeProps &
-			TextSelectionLayerProps & {
-				preventScroll?: boolean;
-			},
+			TextSelectionLayerProps &
+			ScrollLockProps,
 		"loop"
 	>,
 	DialogContentSnippetProps

@@ -74,6 +74,7 @@ export function useFocusScope({
 
 	$effect(() => {
 		const container = ref.current;
+
 		if (!container) return;
 		if (!enabled.current) return;
 
@@ -139,22 +140,19 @@ export function useFocusScope({
 	});
 
 	$effect(() => {
-		let container = untrack(() => ref.current);
+		let container = ref.current;
 		const previouslyFocusedElement = document.activeElement as HTMLElement | null;
 		untrack(() => {
 			if (!container) {
-				container = document.getElementById(untrack(() => id.current));
+				container = document.getElementById(id.current);
 			}
 			if (!container) return;
-			untrack(() => focusScopeStack.add(focusScope));
+			focusScopeStack.add(focusScope);
 			const hasFocusedCandidate = container.contains(previouslyFocusedElement);
 
 			if (!hasFocusedCandidate) {
 				const mountEvent = new CustomEvent(AUTOFOCUS_ON_MOUNT, EVENT_OPTIONS);
-				container.addEventListener(
-					AUTOFOCUS_ON_MOUNT,
-					untrack(() => onOpenAutoFocus.current)
-				);
+				container.addEventListener(AUTOFOCUS_ON_MOUNT, onOpenAutoFocus.current);
 				container.dispatchEvent(mountEvent);
 
 				if (!mountEvent.defaultPrevented) {
