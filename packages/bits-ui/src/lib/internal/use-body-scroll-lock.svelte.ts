@@ -1,6 +1,6 @@
 import { SvelteMap } from "svelte/reactivity";
 import { type Getter, afterSleep, afterTick, box } from "svelte-toolbelt";
-import { Previous, watch } from "runed";
+import { Previous } from "runed";
 import { untrack } from "svelte";
 import type { Fn } from "./types.js";
 import { isBrowser, isIOS } from "./is.js";

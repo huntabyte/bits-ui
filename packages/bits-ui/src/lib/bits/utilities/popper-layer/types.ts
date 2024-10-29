@@ -23,14 +23,14 @@ export type PopperLayerProps = EscapeLayerProps &
 	PresenceLayerProps &
 	TextSelectionLayerProps &
 	FocusScopeProps &
-	ScrollLockProps;
+	Omit<ScrollLockProps, "restoreScrollDelay">;
 
 export type PopperLayerStaticProps = EscapeLayerProps &
 	Omit<DismissibleLayerProps, "onInteractOutsideStart"> &
 	PresenceLayerProps &
 	TextSelectionLayerProps &
 	FocusScopeProps &
-	ScrollLockProps & {
+	Omit<ScrollLockProps, "restoreScrollDelay"> & {
 		content?: Snippet<[{ props: Record<string, unknown> }]>;
 		dir?: Direction;
 	};
