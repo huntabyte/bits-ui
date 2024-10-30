@@ -26,6 +26,7 @@ export { default as DropdownMenuDemo } from "./dropdown-menu-demo.svelte";
 export { default as DropdownMenuDemoTransition } from "./dropdown-menu-demo-transition.svelte";
 export { default as LabelDemo } from "./label-demo.svelte";
 export { default as LinkPreviewDemo } from "./link-preview-demo.svelte";
+export { default as LinkPreviewDemoTransition } from "./link-preview-demo-transition.svelte";
 export { default as SelectDemo } from "./select-demo.svelte";
 export { default as SelectDemoCustom } from "./select-demo-custom.svelte";
 export { default as SelectDemoCustomAnchor } from "./select-demo-custom-anchor.svelte";

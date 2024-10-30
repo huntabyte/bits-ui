@@ -344,7 +344,7 @@ You can use the `forceMount` prop along with the `child` snippet to forcefully m
 
 Of course, this isn't the prettiest syntax, so it's recommended to create your own reusable content component that handles this logic if you intend to use this approach. For more information on using transitions with Bits UI components, see the [Transitions](/docs/transitions) documentation.
 
-<ComponentPreviewV2 name="dropdown-menu-demo" comp="DropdownMenu" containerClass="mt-4">
+<ComponentPreviewV2 name="dropdown-menu-demo-transition" comp="DropdownMenu" containerClass="mt-4">
 
 {#snippet preview()}
 <DropdownMenuDemoTransition />
