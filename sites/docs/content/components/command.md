@@ -1,6 +1,7 @@
 ---
 title: Command
 description: A command menu component that can be used to search, filter, and select items.
+navLabel: New
 ---
 
 <script>

@@ -7,6 +7,7 @@ import Link from "phosphor-svelte/lib/Link";
 import Palette from "phosphor-svelte/lib/Palette";
 import Resize from "phosphor-svelte/lib/Resize";
 import Sticker from "phosphor-svelte/lib/Sticker";
+import FigmaLogo from "phosphor-svelte/lib/FigmaLogo";
 import { componentDocs, typeHelperDocs, utilityDocs } from "$content/index.js";
 
 export type NavItem = {
@@ -146,6 +147,13 @@ export const navigation: Navigation = {
 					href: "/docs/controlled-state",
 					items: [],
 					icon: CirclesThreePlus,
+				},
+				{
+					title: "Figma",
+					href: "/docs/figma-file",
+					items: [],
+					icon: FigmaLogo,
+					label: "New",
 				},
 			],
 		},
