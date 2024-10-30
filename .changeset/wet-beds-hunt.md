@@ -2,4 +2,4 @@
 "bits-ui": patch
 ---
 
-fix: LinkPreview forceMount
+fix: LinkPreview `forceMount`
