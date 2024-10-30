@@ -81,4 +81,5 @@
 	{isValidEvent}
 	{onFocusOutside}
 	{...restProps}
+	forceMount={true}
 />

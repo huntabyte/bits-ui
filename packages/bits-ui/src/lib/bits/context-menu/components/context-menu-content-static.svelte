@@ -1,11 +1,13 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
-	import type { ContextMenuContentStaticProps } from "../types.js";
+	import type { ContextMenuContentProps } from "../types.js";
 	import { CONTEXT_MENU_TRIGGER_ATTR, useMenuContent } from "$lib/bits/menu/menu.svelte.js";
 	import { useId } from "$lib/internal/use-id.js";
 	import { noop } from "$lib/internal/noop.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
 	import Mounted from "$lib/bits/utilities/mounted.svelte";
+	import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
+	import PopperLayerForceMount from "$lib/bits/utilities/popper-layer/popper-layer-force-mount.svelte";
 
 	let {
 		id = useId(),
@@ -20,7 +22,7 @@
 		onEscapeKeydown = noop,
 		forceMount = false,
 		...restProps
-	}: ContextMenuContentStaticProps = $props();
+	}: ContextMenuContentProps = $props();
 
 	let isMounted = $state(false);
 
@@ -35,24 +37,20 @@
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));
-</script>
 
-<PopperLayer
-	isStatic={true}
-	{...mergedProps}
-	present={contentState.parentMenu.open.current || forceMount}
-	{preventScroll}
-	onInteractOutside={(e) => {
+	function handleInteractOutside(e: PointerEvent) {
 		onInteractOutside(e);
 		if (e.defaultPrevented) return;
 		contentState.parentMenu.onClose();
-	}}
-	onEscapeKeydown={(e) => {
+	}
+
+	function handleEscapeKeydown(e: KeyboardEvent) {
 		onEscapeKeydown(e);
 		if (e.defaultPrevented) return;
 		contentState.parentMenu.onClose();
-	}}
-	isValidEvent={(e) => {
+	}
+
+	function isValidEvent(e: PointerEvent) {
 		if ("button" in e && e.button === 2) {
 			const target = e.target as HTMLElement;
 			if (!target) return false;
@@ -62,17 +60,67 @@
 			return isAnotherContextTrigger;
 		}
 		return false;
-	}}
-	{loop}
->
-	{#snippet popper({ props })}
-		{#if child}
-			{@render child({ props, ...contentState.snippetProps })}
-		{:else}
-			<div {...props}>
-				{@render children?.()}
-			</div>
-		{/if}
-		<Mounted bind:isMounted />
-	{/snippet}
-</PopperLayer>
+	}
+</script>
+
+{#if forceMount}
+	<PopperLayerForceMount
+		{...mergedProps}
+		isStatic
+		side="right"
+		sideOffset={2}
+		align="start"
+		enabled={contentState.parentMenu.open.current}
+		{preventScroll}
+		onInteractOutside={handleInteractOutside}
+		onEscapeKeydown={handleEscapeKeydown}
+		{isValidEvent}
+		trapFocus
+		{loop}
+		{forceMount}
+	>
+		{#snippet popper({ props })}
+			{@const finalProps = mergeProps(props, {
+				style: getFloatingContentCSSVars("context-menu"),
+			})}
+			{#if child}
+				{@render child({ props: finalProps, ...contentState.snippetProps })}
+			{:else}
+				<div {...finalProps}>
+					{@render children?.()}
+				</div>
+			{/if}
+			<Mounted bind:isMounted />
+		{/snippet}
+	</PopperLayerForceMount>
+{:else if !forceMount}
+	<PopperLayer
+		{...mergedProps}
+		isStatic
+		side="right"
+		sideOffset={2}
+		align="start"
+		present={contentState.parentMenu.open.current}
+		{preventScroll}
+		onInteractOutside={handleInteractOutside}
+		onEscapeKeydown={handleEscapeKeydown}
+		{isValidEvent}
+		trapFocus
+		{loop}
+		forceMount={false}
+	>
+		{#snippet popper({ props })}
+			{@const finalProps = mergeProps(props, {
+				style: getFloatingContentCSSVars("context-menu"),
+			})}
+			{#if child}
+				{@render child({ props: finalProps, ...contentState.snippetProps })}
+			{:else}
+				<div {...finalProps}>
+					{@render children?.()}
+				</div>
+			{/if}
+			<Mounted bind:isMounted />
+		{/snippet}
+	</PopperLayer>
+{/if}

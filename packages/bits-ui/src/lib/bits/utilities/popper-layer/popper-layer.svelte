@@ -81,6 +81,7 @@
 			{trapFocus}
 			{isValidEvent}
 			{onFocusOutside}
+			forceMount={false}
 			{...restProps}
 		/>
 	{/snippet}

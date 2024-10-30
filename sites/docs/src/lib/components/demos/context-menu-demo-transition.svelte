@@ -3,6 +3,7 @@
 	import CopySimple from "phosphor-svelte/lib/CopySimple";
 	import MouseSimple from "phosphor-svelte/lib/MouseSimple";
 	import PencilSimpleLine from "phosphor-svelte/lib/PencilSimpleLine";
+	import PlusCircle from "phosphor-svelte/lib/PlusCircle";
 	import Trash from "phosphor-svelte/lib/Trash";
 	import { fly } from "svelte/transition";
 </script>
@@ -44,7 +45,7 @@
 								</kbd>
 							</div>
 						</ContextMenu.Item>
-						<!-- <ContextMenu.Sub>
+						<ContextMenu.Sub>
 							<ContextMenu.SubTrigger
 								class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none !ring-0 !ring-transparent data-[highlighted]:bg-muted data-[state=open]:bg-muted"
 							>
@@ -95,7 +96,7 @@
 									Task
 								</ContextMenu.Item>
 							</ContextMenu.SubContent>
-						</ContextMenu.Sub> -->
+						</ContextMenu.Sub>
 						<ContextMenu.Item
 							class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium outline-none !ring-0 !ring-transparent data-[highlighted]:bg-muted"
 						>
