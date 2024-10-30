@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.33
+
+### Patch Changes
+
+-   ensure minimum esm-env version is a working version ([#840](https://github.com/huntabyte/bits-ui/pull/840))
+
 ## 1.0.0-next.32
 
 ### Patch Changes
