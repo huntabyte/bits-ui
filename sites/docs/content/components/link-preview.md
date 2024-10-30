@@ -185,8 +185,7 @@ You can use the `forceMount` prop along with the `child` snippet to forcefully m
 	{#snippet child({ props, open })}
 		{#if open}
 			<div {...props} transition:fly>
-				<LinkPreview.Item>Item 1</LinkPreview.Item>
-				<LinkPreview.Item>Item 2</LinkPreview.Item>
+				<!-- ... -->
 			</div>
 		{/if}
 	{/snippet}

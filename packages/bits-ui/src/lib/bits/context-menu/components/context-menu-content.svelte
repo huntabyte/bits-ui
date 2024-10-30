@@ -76,6 +76,7 @@
 		{isValidEvent}
 		trapFocus
 		{loop}
+		{id}
 	>
 		{#snippet popper({ props })}
 			{@const finalProps = mergeProps(props, {
@@ -104,6 +105,7 @@
 		{isValidEvent}
 		trapFocus
 		{loop}
+		{id}
 	>
 		{#snippet popper({ props })}
 			{@const finalProps = mergeProps(props, {

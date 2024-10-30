@@ -62,6 +62,7 @@
 		{loop}
 		forceMount={true}
 		isStatic
+		{id}
 	>
 		{#snippet popper({ props })}
 			{@const finalProps = mergeProps(props, {
@@ -90,6 +91,7 @@
 		{loop}
 		forceMount={false}
 		isStatic
+		{id}
 	>
 		{#snippet popper({ props })}
 			{@const finalProps = mergeProps(props, {

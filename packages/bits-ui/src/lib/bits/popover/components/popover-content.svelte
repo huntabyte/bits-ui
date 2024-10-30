@@ -63,7 +63,7 @@
 		{trapFocus}
 		{preventScroll}
 		loop
-		{forceMount}
+		forceMount={true}
 	>
 		{#snippet popper({ props })}
 			{@const finalProps = mergeProps(props, {
@@ -81,7 +81,7 @@
 {:else if !forceMount}
 	<PopperLayer
 		{...mergedProps}
-		present={contentState.root.open.current || forceMount}
+		present={contentState.root.open.current}
 		{id}
 		onInteractOutside={handleInteractOutside}
 		onEscapeKeydown={handleEscapeKeydown}
@@ -89,7 +89,7 @@
 		{trapFocus}
 		{preventScroll}
 		loop
-		{forceMount}
+		forceMount={false}
 	>
 		{#snippet popper({ props })}
 			{@const finalProps = mergeProps(props, {

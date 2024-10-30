@@ -784,6 +784,7 @@ class SelectContentState {
 					flexDirection: "column",
 					outline: "none",
 					boxSizing: "border-box",
+					pointerEvents: "auto",
 					...this.#styles,
 				},
 				onpointermove: this.#onpointermove,

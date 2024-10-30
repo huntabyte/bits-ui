@@ -78,6 +78,7 @@
 		trapFocus
 		{loop}
 		{forceMount}
+		{id}
 	>
 		{#snippet popper({ props })}
 			{@const finalProps = mergeProps(props, {
@@ -108,6 +109,7 @@
 		trapFocus
 		{loop}
 		forceMount={false}
+		{id}
 	>
 		{#snippet popper({ props })}
 			{@const finalProps = mergeProps(props, {

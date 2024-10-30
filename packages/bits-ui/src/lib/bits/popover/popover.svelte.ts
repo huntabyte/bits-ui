@@ -126,6 +126,9 @@ class PopoverContentState {
 		tabindex: -1,
 		"data-state": getDataOpenClosed(this.root.open.current),
 		"data-popover-content": "",
+		style: {
+			pointerEvents: "auto",
+		},
 	}));
 }
 
