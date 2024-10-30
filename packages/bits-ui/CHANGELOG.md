@@ -1,5 +1,21 @@
 # bits-ui
 
+## 1.0.0-next.34
+
+### Patch Changes
+
+-   fix: Combobox `forceMount` ([#844](https://github.com/huntabyte/bits-ui/pull/844))
+
+-   fix: Tooltip `forceMount` ([#844](https://github.com/huntabyte/bits-ui/pull/844))
+
+-   fix: DropdownMenu & ContextMenu `forceMount` ([#844](https://github.com/huntabyte/bits-ui/pull/844))
+
+-   fix: Select `forceMount` ([#844](https://github.com/huntabyte/bits-ui/pull/844))
+
+-   fix: popover `forceMount` ([#844](https://github.com/huntabyte/bits-ui/pull/844))
+
+-   fix: LinkPreview `forceMount` ([#844](https://github.com/huntabyte/bits-ui/pull/844))
+
 ## 1.0.0-next.33
 
 ### Patch Changes
