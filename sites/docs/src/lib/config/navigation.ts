@@ -148,12 +148,12 @@ export const navigation: Navigation = {
 					items: [],
 					icon: CirclesThreePlus,
 				},
-        {
+				{
 					title: "Figma",
 					href: "/docs/figma-file",
 					items: [],
 					icon: FigmaLogo,
-          label: "New",
+					label: "New",
 				},
 			],
 		},

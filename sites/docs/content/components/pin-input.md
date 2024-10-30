@@ -1,6 +1,7 @@
 ---
 title: PIN Input
 description: Allows users to input a sequence of one-character alphanumeric inputs.
+navLabel: New
 ---
 
 <script>
