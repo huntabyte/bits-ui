@@ -1,10 +1,12 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
-	import type { PopoverContentStaticProps } from "../types.js";
+	import type { PopoverContentProps } from "../types.js";
 	import { usePopoverContent } from "../popover.svelte.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
 	import { noop } from "$lib/internal/noop.js";
 	import { useId } from "$lib/internal/use-id.js";
+	import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
+	import PopperLayerForceMount from "$lib/bits/utilities/popper-layer/popper-layer-force-mount.svelte";
 
 	let {
 		child,
@@ -15,10 +17,10 @@
 		onCloseAutoFocus = noop,
 		onEscapeKeydown = noop,
 		onInteractOutside = noop,
-		preventScroll = false,
 		trapFocus = true,
+		preventScroll = false,
 		...restProps
-	}: PopoverContentStaticProps = $props();
+	}: PopoverContentProps = $props();
 
 	const contentState = usePopoverContent({
 		id: box.with(() => id),
@@ -29,42 +31,79 @@
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));
-</script>
 
-<PopperLayer
-	isStatic={true}
-	{...mergedProps}
-	present={contentState.root.open.current || forceMount}
-	{id}
-	onInteractOutside={(e) => {
+	function handleInteractOutside(e: PointerEvent) {
 		onInteractOutside(e);
 		if (e.defaultPrevented) return;
 		contentState.root.close();
-	}}
-	onEscapeKeydown={(e) => {
+	}
+
+	function handleEscapeKeydown(e: KeyboardEvent) {
 		onEscapeKeydown(e);
 		if (e.defaultPrevented) return;
 		contentState.root.close();
-	}}
-	onCloseAutoFocus={(e) => {
+	}
+
+	function handleCloseAutoFocus(e: Event) {
 		onCloseAutoFocus(e);
 		if (e.defaultPrevented) return;
 		e.preventDefault();
 		contentState.root.triggerNode?.focus();
-	}}
-	{trapFocus}
-	{preventScroll}
-	loop
-	{forceMount}
->
-	{#snippet popper({ props })}
-		{@const finalProps = mergeProps(props)}
-		{#if child}
-			{@render child({ props: finalProps, ...contentState.snippetProps })}
-		{:else}
-			<div {...finalProps}>
-				{@render children?.()}
-			</div>
-		{/if}
-	{/snippet}
-</PopperLayer>
+	}
+</script>
+
+{#if forceMount}
+	<PopperLayerForceMount
+		{...mergedProps}
+		isStatic
+		enabled={contentState.root.open.current}
+		{id}
+		onInteractOutside={handleInteractOutside}
+		onEscapeKeydown={handleEscapeKeydown}
+		onCloseAutoFocus={handleCloseAutoFocus}
+		{trapFocus}
+		{preventScroll}
+		loop
+		{forceMount}
+	>
+		{#snippet popper({ props })}
+			{@const finalProps = mergeProps(props, {
+				style: getFloatingContentCSSVars("popover"),
+			})}
+			{#if child}
+				{@render child({ props: finalProps, ...contentState.snippetProps })}
+			{:else}
+				<div {...finalProps}>
+					{@render children?.()}
+				</div>
+			{/if}
+		{/snippet}
+	</PopperLayerForceMount>
+{:else if !forceMount}
+	<PopperLayer
+		{...mergedProps}
+		isStatic
+		present={contentState.root.open.current || forceMount}
+		{id}
+		onInteractOutside={handleInteractOutside}
+		onEscapeKeydown={handleEscapeKeydown}
+		onCloseAutoFocus={handleCloseAutoFocus}
+		{trapFocus}
+		{preventScroll}
+		loop
+		{forceMount}
+	>
+		{#snippet popper({ props })}
+			{@const finalProps = mergeProps(props, {
+				style: getFloatingContentCSSVars("popover"),
+			})}
+			{#if child}
+				{@render child({ props: finalProps, ...contentState.snippetProps })}
+			{:else}
+				<div {...finalProps}>
+					{@render children?.()}
+				</div>
+			{/if}
+		{/snippet}
+	</PopperLayer>
+{/if}
