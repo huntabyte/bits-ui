@@ -38,4 +38,9 @@ export type FocusScopeImplProps = {
 	 * When `true` will loop through the tabbable elements in the focus scope.
 	 */
 	loop?: boolean;
+
+	/**
+	 * Whether the content within the focus trap is being force mounted or not.
+	 */
+	forceMount?: boolean;
 } & FocusScopeProps;

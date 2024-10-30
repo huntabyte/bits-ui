@@ -4,7 +4,7 @@ description: Provides additional information or context when users hover over or
 ---
 
 <script>
-	import { ComponentPreviewV2, TooltipDemo, TooltipDemoCustom, TooltipDemoDelayDuration, APISection, Callout } from '$lib/components'
+	import { ComponentPreviewV2, TooltipDemo, TooltipDemoCustom, TooltipDemoDelayDuration, TooltipDemoTransition, APISection, Callout } from '$lib/components'
 	export let schemas;
 </script>
 
@@ -314,6 +314,14 @@ You can use the `forceMount` prop along with the `child` snippet to forcefully m
 ```
 
 Of course, this isn't the prettiest syntax, so it's recommended to create your own reusable content components that handles this logic if you intend to use this approach throughout your app. For more information on using transitions with Bits UI components, see the [Transitions](/docs/transitions) documentation.
+
+<ComponentPreviewV2 name="tooltip-demo-transition" comp="Tooltip" containerClass="mt-4">
+
+{#snippet preview()}
+<TooltipDemoTransition />
+{/snippet}
+
+</ComponentPreviewV2>
 
 ## Opt-out of Floating UI
 

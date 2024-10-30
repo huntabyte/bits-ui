@@ -4,7 +4,7 @@ description: Display supplementary content or information when users interact wi
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, PopoverDemo, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, PopoverDemo, PopoverDemoTransition, Callout } from '$lib/components/index.js'
 	export let schemas;
 </script>
 
@@ -266,5 +266,36 @@ If you wish to instead anchor the content to a different element, you can pass e
 	</Popover.Content>
 </Popover.Root>
 ```
+
+## Svelte Transitions
+
+You can use the `forceMount` prop along with the `child` snippet to forcefully mount the `Popover.Content` component to use Svelte Transitions or another animation library that requires more control.
+
+```svelte /forceMount/ /transition:fly/
+<script lang="ts">
+	import { Popover } from "bits-ui";
+	import { fly } from "svelte/transition";
+</script>
+
+<Popover.Content forceMount>
+	{#snippet child({ props, open })}
+		{#if open}
+			<div {...props} transition:fly>
+				<!-- ... -->
+			</div>
+		{/if}
+	{/snippet}
+</Popover.Content>
+```
+
+Of course, this isn't the prettiest syntax, so it's recommended to create your own reusable content component that handles this logic if you intend to use this approach. For more information on using transitions with Bits UI components, see the [Transitions](/docs/transitions) documentation.
+
+<ComponentPreviewV2 name="popover-demo-transition" comp="Popover" containerClass="mt-4">
+
+{#snippet preview()}
+<PopoverDemoTransition />
+{/snippet}
+
+</ComponentPreviewV2>
 
 <APISection {schemas} />

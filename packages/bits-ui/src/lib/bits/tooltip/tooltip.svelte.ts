@@ -337,12 +337,19 @@ class TooltipContentState {
 
 	snippetProps = $derived.by(() => ({ open: this.root.open.current }));
 
-	props = $derived.by(() => ({
-		id: this.#id.current,
-		"data-state": this.root.stateAttr,
-		"data-disabled": getDataDisabled(this.root.disabled),
-		[CONTENT_ATTR]: "",
-	}));
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.current,
+				"data-state": this.root.stateAttr,
+				"data-disabled": getDataDisabled(this.root.disabled),
+				style: {
+					pointerEvents: "auto",
+					outline: "none",
+				},
+				[CONTENT_ATTR]: "",
+			}) as const
+	);
 }
 
 //

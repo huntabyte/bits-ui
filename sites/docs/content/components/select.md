@@ -4,7 +4,7 @@ description: Enables users to choose from a list of options presented in a dropd
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, SelectDemo, SelectDemoCustomAnchor, SelectDemoMultiple, Callout } from '$lib/components'
+	import { APISection, ComponentPreviewV2, SelectDemo, SelectDemoCustomAnchor, SelectDemoMultiple, SelectDemoTransition, Callout } from '$lib/components'
 	export let schemas;
 </script>
 
@@ -443,5 +443,36 @@ To trigger side effects when an item is highlighted or unhighlighted, you can us
 <!-- ... -->
 </Select.Item>
 ```
+
+## Svelte Transitions
+
+You can use the `forceMount` prop along with the `child` snippet to forcefully mount the `Select.Content` component to use Svelte Transitions or another animation library that requires more control.
+
+```svelte /forceMount/ /transition:fly/
+<script lang="ts">
+	import { Select } from "bits-ui";
+	import { fly } from "svelte/transition";
+</script>
+
+<Select.Content forceMount>
+	{#snippet child({ props, open })}
+		{#if open}
+			<div {...props} transition:fly>
+				<!-- ... -->
+			</div>
+		{/if}
+	{/snippet}
+</Select.Content>
+```
+
+Of course, this isn't the prettiest syntax, so it's recommended to create your own reusable content component that handles this logic if you intend to use this approach. For more information on using transitions with Bits UI components, see the [Transitions](/docs/transitions) documentation.
+
+<ComponentPreviewV2 name="select-demo-transition" comp="Select" containerClass="mt-4">
+
+{#snippet preview()}
+<SelectDemoTransition />
+{/snippet}
+
+</ComponentPreviewV2>
 
 <APISection {schemas} />
