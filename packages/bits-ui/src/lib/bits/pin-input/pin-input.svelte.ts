@@ -37,7 +37,10 @@ type PinInputRootStateProps = WithRefProps<
 		}>
 >;
 
-type PrevInputMetadata = [number | null, number | null, "none" | "forward" | "backward"];
+type PrevInputMetadata = {
+	prev: [number | null, number | null, "none" | "forward" | "backward"];
+	willSyntheticBlur: boolean;
+};
 type InitialLoad = {
 	value: WritableBox<string>;
 	isIOS: boolean;
@@ -69,7 +72,10 @@ class PinInputRootState {
 			return this.#pattern.current;
 		}
 	});
-	#prevInputMetadata = $state<PrevInputMetadata>([null, null, "none"]);
+	#prevInputMetadata = $state<PrevInputMetadata>({
+		prev: [null, null, "none"],
+		willSyntheticBlur: false,
+	});
 	#pushPasswordManagerStrategy: PinInputRootStateProps["pushPasswordManagerStrategy"];
 	#pwmb: ReturnType<typeof usePasswordManagerBadge>;
 	#initialLoad: InitialLoad;
@@ -125,7 +131,7 @@ class PinInputRootState {
 					this.value.current = input.value;
 				}
 
-				this.#prevInputMetadata = [
+				this.#prevInputMetadata.prev = [
 					input.selectionStart,
 					input.selectionEnd,
 					input.selectionDirection ?? "none",
@@ -183,7 +189,7 @@ class PinInputRootState {
 				if (start !== null && end !== null) {
 					this.#mirrorSelectionStart = start;
 					this.#mirrorSelectionEnd = end;
-					this.#prevInputMetadata = [start, end, dir];
+					this.#prevInputMetadata.prev = [start, end, dir];
 				}
 			});
 		});
@@ -201,6 +207,13 @@ class PinInputRootState {
 			}
 		});
 	}
+
+	#onkeydown = (e: KeyboardEvent) => {
+		const key = e.key;
+		if (key && this.#regexPattern && !this.#regexPattern.test(key)) {
+			e.preventDefault();
+		}
+	};
 
 	#rootStyles = $derived.by(() => ({
 		position: "relative",
@@ -304,7 +317,7 @@ class PinInputRootState {
 		const selDir = input.selectionDirection ?? "none";
 		const maxLength = input.maxLength;
 		const val = input.value;
-		const prev = this.#prevInputMetadata;
+		const prev = this.#prevInputMetadata.prev;
 
 		let start = -1;
 		let end = -1;
@@ -349,7 +362,7 @@ class PinInputRootState {
 		const dir = direction ?? selDir;
 		this.#mirrorSelectionStart = s;
 		this.#mirrorSelectionEnd = e;
-		this.#prevInputMetadata = [s, e, dir];
+		this.#prevInputMetadata.prev = [s, e, dir];
 	};
 
 	#oninput = (e: Event & { currentTarget: HTMLInputElement }) => {
@@ -387,11 +400,33 @@ class PinInputRootState {
 
 	#onpaste = (e: ClipboardEvent & { currentTarget: HTMLInputElement }) => {
 		const input = this.#inputRef.current;
+
+		if (!this.#initialLoad.isIOS) {
+			if (!e.clipboardData || !input) return;
+			const content = e.clipboardData.getData("text/plain");
+			const sanitizedContent = this.#onPaste?.current?.(content) ?? content;
+			if (
+				sanitizedContent.length > 0 &&
+				this.#regexPattern &&
+				!this.#regexPattern.test(sanitizedContent)
+			) {
+				e.preventDefault();
+				return;
+			}
+		}
+
 		if (!this.#initialLoad.isIOS || !e.clipboardData || !input) return;
 		const content = e.clipboardData.getData("text/plain");
 		e.preventDefault();
 
 		const sanitizedContent = this.#onPaste?.current?.(content) ?? content;
+		if (
+			sanitizedContent.length > 0 &&
+			this.#regexPattern &&
+			!this.#regexPattern.test(sanitizedContent)
+		) {
+			return;
+		}
 
 		const start = input.selectionStart === null ? undefined : input.selectionStart;
 		const end = input.selectionEnd === null ? undefined : input.selectionEnd;
@@ -430,6 +465,10 @@ class PinInputRootState {
 	};
 
 	#onblur = () => {
+		if (this.#prevInputMetadata.willSyntheticBlur) {
+			this.#prevInputMetadata.willSyntheticBlur = false;
+			return;
+		}
 		this.#isFocused.current = false;
 	};
 
@@ -448,6 +487,7 @@ class PinInputRootState {
 		//
 		onpaste: this.#onpaste,
 		oninput: this.#oninput,
+		onkeydown: this.#onkeydown,
 		onmouseover: this.#onmouseover,
 		onmouseleave: this.#onmouseleave,
 		onfocus: this.#onfocus,
