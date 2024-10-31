@@ -7,7 +7,7 @@
 </script>
  
 <Toolbar.Root
-  class="rounded-[7px] bg-background-alt px-[5px] py-1 w-min flex"
+  class="rounded-[7px] bg-background-alt px-[5px] w-min flex items-center h-10"
 >
   
   <Toolbar.Group

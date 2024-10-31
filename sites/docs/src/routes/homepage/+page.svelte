@@ -3,10 +3,10 @@
 	import { Button, Tabs } from "bits-ui";
 	import Sparkle from "phosphor-svelte/lib/Sparkle";
   import CardSound from "$lib/components/homepage/CardSound.svelte";
+  import CardAir from "$lib/components/homepage/CardAir.svelte";
 	
 	import { Logo } from "$icons/index.js";
 	import LightSwitch from "$lib/components/light-switch.svelte";
-  import HomeSlider from "$lib/components/homepage/HomeSlider.svelte";
   import HomeCombobox from "$lib/components/homepage/HomeCombobox.svelte";
   import HomeSwitch from "$lib/components/homepage/HomeSwitch.svelte";
   
@@ -72,14 +72,13 @@
 		</Button.Root>
 	</div>
 
-  <div class="grid grid-cols-4">
+  <div class="grid grid-cols-4 w-8/12 mx-auto">
     
-      <CardSound/>
+    <CardSound/>
+    <CardAir/>
+
     
-    <div class="border">
-      <HomeSlider/>
-    </div>
-    <div class="border">
+    <div class="border ">
       <Tabs.Root value="follow">
         <Tabs.List>
           <Tabs.Trigger value="follow" class="">Follow</Tabs.Trigger>

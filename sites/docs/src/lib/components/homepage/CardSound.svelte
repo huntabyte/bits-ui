@@ -21,6 +21,7 @@
 </div>
 
 <style lang="postcss">
+
   .sound_meter{
     width: 100%;
     aspect-ratio: 1/1;
