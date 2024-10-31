@@ -1,15 +1,15 @@
 <script lang="ts">
 	import "$lib/styles/app.postcss";
-	import { Button, Tabs } from "bits-ui";
+	import { Button } from "bits-ui";
 	import Sparkle from "phosphor-svelte/lib/Sparkle";
-  import CardSound from "$lib/components/homepage/CardSound.svelte";
   import CardAir from "$lib/components/homepage/CardAir.svelte";
-	
+  import CardSound from "$lib/components/homepage/CardSound.svelte";
+  import CardTimer from "$lib/components/homepage/CardTimer.svelte";
+	import CardToggle from "$lib/components/homepage/CardToggle.svelte";
 	import { Logo } from "$icons/index.js";
 	import LightSwitch from "$lib/components/light-switch.svelte";
-  import HomeCombobox from "$lib/components/homepage/HomeCombobox.svelte";
-  import HomeSwitch from "$lib/components/homepage/HomeSwitch.svelte";
   
+	  
 	</script>
 
 <header class="grid grid-cols-3 px-5 py-[17px]">
@@ -72,27 +72,12 @@
 		</Button.Root>
 	</div>
 
-  <div class="grid grid-cols-4 w-8/12 mx-auto">
+  <div class="grid grid-cols-4 w-10/12 mx-auto gap-3 mt-20">
     
     <CardSound/>
     <CardAir/>
-
-    
-    <div class="border ">
-      <Tabs.Root value="follow">
-        <Tabs.List>
-          <Tabs.Trigger value="follow" class="">Follow</Tabs.Trigger>
-          <Tabs.Trigger value="other" class="">Other</Tabs.Trigger>
-        </Tabs.List>
-    
-        <Tabs.Content value="follow" class="select-none">follow</Tabs.Content>
-        <Tabs.Content value="other" class="select-none">other</Tabs.Content>
-      </Tabs.Root>
-    </div>
-    <div class="border">
-      <HomeCombobox/>
-      <HomeSwitch/>
-    </div>
+    <CardToggle/>
+    <CardTimer/>
   </div>
 
 

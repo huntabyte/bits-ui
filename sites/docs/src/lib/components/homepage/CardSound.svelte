@@ -20,6 +20,7 @@
   </div>
 </div>
 
+
 <style lang="postcss">
 
   .sound_meter{

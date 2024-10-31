@@ -42,7 +42,7 @@
 
 <style lang="postcss">
   .temp{
-    font-size: clamp(3.125rem, 3.6vw + 1rem, 5rem);
+    font-size: clamp(2.5rem, 2.9vw + 1rem, 4.375rem);
     line-height: 1;
   }
   .right_text{

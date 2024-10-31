@@ -2,7 +2,7 @@
   import { Combobox } from "bits-ui";
   import CaretUpDown from "phosphor-svelte/lib/CaretUpDown";
   import Check from "phosphor-svelte/lib/Check";
-  import OrangeSlice from "phosphor-svelte/lib/OrangeSlice";
+  
   import CaretDoubleUp from "phosphor-svelte/lib/CaretDoubleUp";
   import CaretDoubleDown from "phosphor-svelte/lib/CaretDoubleDown";
  
@@ -46,14 +46,11 @@
   }}
 >
   <div class="relative">
-    <OrangeSlice
-      class="absolute start-3 top-1/2 size-6 -translate-y-1/2 text-muted-foreground"
-    />
     <Combobox.Input
       oninput={(e) => (searchValue = e.currentTarget.value)}
-      class="inline-flex h-input w-[296px] truncate rounded-9px border border-border-input bg-background px-11 text-sm transition-colors placeholder:text-foreground-alt/50 focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2 focus:ring-offset-background"
-      placeholder="Search a fruit"
-      aria-label="Search a fruit"
+      class="inline-flex h-[37px] truncate rounded-input border border-border-input bg-background pr-2 px-3 w-full text-sm transition-colors placeholder:text-foreground focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2 focus:ring-offset-background"
+      placeholder="New app"
+      aria-label="New app"
     />
     <Combobox.Trigger class="absolute end-3 top-1/2 size-6 -translate-y-1/2">
       <CaretUpDown class="size-6 text-muted-foreground" />
