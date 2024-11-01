@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.35
+
+### Patch Changes
+
+-   fix: pin input pattern checking ([#848](https://github.com/huntabyte/bits-ui/pull/848))
+
 ## 1.0.0-next.34
 
 ### Patch Changes
