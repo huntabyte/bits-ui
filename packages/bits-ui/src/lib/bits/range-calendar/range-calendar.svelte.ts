@@ -189,6 +189,23 @@ export class RangeCalendarRootState {
 		});
 
 		/**
+		 * Synchronize the start and end values with the `value` in case
+		 * it is updated externally.
+		 */
+		$effect(() => {
+			const value = this.value.current;
+			untrack(() => {
+				if (value.start && value.end) {
+					this.startValue.current = value.start;
+					this.endValue.current = value.end;
+				} else if (value.start) {
+					this.startValue.current = value.start;
+					this.endValue.current = undefined;
+				}
+			});
+		});
+
+		/**
 		 * Synchronize the placeholder value with the current start value
 		 */
 		$effect(() => {
