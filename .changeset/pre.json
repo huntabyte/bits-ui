@@ -7,6 +7,7 @@
     "tests": "0.0.0"
   },
   "changesets": [
+    "big-fishes-double",
     "blue-guests-jump",
     "brown-pillows-hear",
     "calm-snails-refuse",
