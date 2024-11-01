@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.36
+
+### Patch Changes
+
+-   fix: Range Calendar external value updates ([#851](https://github.com/huntabyte/bits-ui/pull/851))
+
 ## 1.0.0-next.35
 
 ### Patch Changes
