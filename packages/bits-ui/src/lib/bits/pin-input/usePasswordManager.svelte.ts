@@ -37,10 +37,10 @@ export function usePasswordManagerBadge({
 	let done = $state(false);
 
 	function willPushPwmBadge() {
-		const strat = pushPasswordManagerStrategy.current;
-		if (strat === "none") return false;
+		const strategy = pushPasswordManagerStrategy.current;
+		if (strategy === "none") return false;
 
-		const increaseWidthCase = strat === "increase-width" && hasPwmBadge && hasPwmBadgeSpace;
+		const increaseWidthCase = strategy === "increase-width" && hasPwmBadge && hasPwmBadgeSpace;
 
 		return increaseWidthCase;
 	}
@@ -62,11 +62,11 @@ export function usePasswordManagerBadge({
 		const y = centeredY;
 
 		// do an extra search to check for all the password manager badges
-		const pwms = document.querySelectorAll(PASSWORD_MANAGER_SELECTORS);
+		const passwordManagerStrategy = document.querySelectorAll(PASSWORD_MANAGER_SELECTORS);
 
-		// if no password manager is detected, dispatch document.elementfrompoint to
+		// if no password manager is detected, dispatch document.elementFromPoint to
 		// identify the badges
-		if (pwms.length === 0) {
+		if (passwordManagerStrategy.length === 0) {
 			const maybeBadgeEl = document.elementFromPoint(x, y);
 
 			// if the found element is the container,

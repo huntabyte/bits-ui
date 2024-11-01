@@ -182,4 +182,28 @@ To submit the form when the input is complete, you can use the `onComplete` prop
 </form>
 ```
 
+## Patterns
+
+You can use the `pattern` prop to restrict the characters that can be entered or pasted into the input.
+
+<Callout type="warning" title="Note!">
+Client-side validation cannot replace server-side validation. Use this in addition to server-side validation for an improved user experience.
+</Callout>
+
+Bits UI exports a few common patterns that you can import and use in your application.
+
+-   `REGEXP_ONLY_DIGITS` - Only allow digits to be entered.
+-   `REGEXP_ONLY_CHARS` - Only allow characters to be entered.
+-   `REGEXP_ONLY_DIGITS_AND_CHARS` - Only allow digits and characters to be entered.
+
+```svelte
+<script lang="ts">
+	import { PinInput, REGEXP_ONLY_DIGITS } from "bits-ui";
+</script>
+
+<PinInput.Root pattern={REGEXP_ONLY_DIGITS}>
+	<!-- ... -->
+</PinInput.Root>
+```
+
 <APISection {schemas} />

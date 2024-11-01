@@ -1,7 +1,7 @@
 import { render, waitFor } from "@testing-library/svelte/svelte5";
 import { axe } from "jest-axe";
 import { describe, it, vi } from "vitest";
-import type { PinInput } from "bits-ui";
+import { type PinInput, REGEXP_ONLY_DIGITS } from "bits-ui";
 import { getTestKbd, setupUserEvents } from "../utils.js";
 import PinInputTest from "./pin-input-test.svelte";
 
@@ -152,5 +152,24 @@ describe("pin Input", () => {
 
 		expect(mockComplete).toHaveBeenCalledTimes(1);
 		expect(mockComplete).toHaveBeenCalledWith("123456");
+	});
+
+	it("should ignore keys that do not match the pattern", async () => {
+		const { user, hiddenInput } = setup({
+			pattern: REGEXP_ONLY_DIGITS,
+		});
+
+		await user.click(hiddenInput);
+		await user.keyboard("123");
+		expect(hiddenInput).toHaveValue("123");
+
+		await user.keyboard(kbd.BACKSPACE);
+		await user.keyboard(kbd.BACKSPACE);
+		await user.keyboard(kbd.BACKSPACE);
+		expect(hiddenInput).toHaveValue("");
+		await user.keyboard("$");
+		expect(hiddenInput).toHaveValue("");
+		await user.keyboard("1$");
+		expect(hiddenInput).toHaveValue("1");
 	});
 });
