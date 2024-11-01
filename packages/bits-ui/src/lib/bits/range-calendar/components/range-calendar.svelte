@@ -63,8 +63,6 @@
 		}
 	}
 
-	value === undefined && (value = { start: undefined, end: undefined });
-
 	const rootState = useRangeCalendarRoot({
 		id: box.with(() => id),
 		ref: box.with(
