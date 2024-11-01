@@ -2,15 +2,13 @@
 	import "$lib/styles/app.postcss";
 	import { Button } from "bits-ui";
 	import Sparkle from "phosphor-svelte/lib/Sparkle";
-  import CardAir from "$lib/components/homepage/CardAir.svelte";
-  import CardSound from "$lib/components/homepage/CardSound.svelte";
-  import CardTimer from "$lib/components/homepage/CardTimer.svelte";
+	import CardAir from "$lib/components/homepage/CardAir.svelte";
+	import CardSound from "$lib/components/homepage/CardSound.svelte";
+	import CardTimer from "$lib/components/homepage/CardTimer.svelte";
 	import CardToggle from "$lib/components/homepage/CardToggle.svelte";
 	import { Logo } from "$icons/index.js";
 	import LightSwitch from "$lib/components/light-switch.svelte";
-  
-	  
-	</script>
+</script>
 
 <header class="grid grid-cols-3 px-5 py-[17px]">
 	<a
@@ -72,19 +70,73 @@
 		</Button.Root>
 	</div>
 
-  <div class="grid grid-cols-4 w-10/12 mx-auto gap-3 mt-20">
+	<div class="mx-auto bottom_visual mt-20 grid gap-0">
+    <div class="relative">
+      <div class="square"></div>
+    </div>
+     
+		<CardSound />
+		<CardAir />
+		<CardToggle />
+		<CardTimer />
     
-    <CardSound/>
-    <CardAir/>
-    <CardToggle/>
-    <CardTimer/>
-  </div>
-
-
-  
+    <div class="relative">
+      <div class="circle"></div>
+    </div>
+	</div>
 </section>
 
 <style lang="postcss">
+  .bottom_visual{
+    grid-template-columns: 206px repeat(4, 258px) 206px;
+  }
+	.square {
+		
+		display: inline-block;
+		aspect-ratio: 1/1;
+		background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='40' ry='40' stroke='%23BABABAFF' stroke-width='2' stroke-dasharray='2%2c8' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
+		border-radius: 40px;
+		position: absolute;
+    bottom: 0;
+    left: -10px;
+    width: 100%;
+		&:after {
+			content: "";
+			display: inline-block;
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			width: 100%;
+			aspect-ratio: 1/1;
+			background: radial-gradient(
+				83.66% 83.66% at 95.63% 5.58%,
+				rgba(255, 255, 255, 0) 0%,
+				#fff 100%
+			);
+		}
+	}
+  .circle{
+    
+		display: inline-block;
+		aspect-ratio: 1/1;
+    background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='100' ry='100' stroke='%23BABABAFF' stroke-width='2' stroke-dasharray='2%2c8' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
+    border-radius: 100px;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    left: 10px;
+    &:after {
+			content: "";
+			display: inline-block;
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			width: 100%;
+			aspect-ratio: 1/1;
+			background: radial-gradient(84.28% 84.28% at 40.53% 20.39%, rgba(255, 255, 255, 0.00) 0%, #FFF 100%);
+		}
+  }
+	
 	header {
 		nav {
 			li {
@@ -108,11 +160,14 @@
 			}
 		}
 	}
-
 	section {
+		overflow: hidden;
 		height: calc(100svh - 76px); /* header height */
 		min-height: 700px;
 		padding-top: 7em;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
 	}
 	h1 {
 		text-wrap: balance;
