@@ -208,8 +208,25 @@ class PinInputRootState {
 		});
 	}
 
+	keysToIgnore = [
+		"Backspace",
+		"Delete",
+		"ArrowLeft",
+		"ArrowRight",
+		"ArrowUp",
+		"ArrowDown",
+		"Home",
+		"End",
+		"Escape",
+		"Enter",
+		"Tab",
+		"Shift",
+		"Control",
+	];
+
 	#onkeydown = (e: KeyboardEvent) => {
 		const key = e.key;
+		if (this.keysToIgnore.includes(key)) return;
 		if (key && this.#regexPattern && !this.#regexPattern.test(key)) {
 			e.preventDefault();
 		}
