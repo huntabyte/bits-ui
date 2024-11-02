@@ -165,7 +165,7 @@ class PaginationPageState {
 		() =>
 			({
 				id: this.#id.current,
-				"aria-label": `Page ${this.page.current}`,
+				"aria-label": `Page ${this.page.current.value}`,
 				"data-value": `${this.page.current.value}`,
 				"data-selected": this.#isSelected ? "" : undefined,
 				[PAGE_ATTR]: "",
