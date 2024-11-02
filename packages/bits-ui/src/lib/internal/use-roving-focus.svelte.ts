@@ -7,14 +7,9 @@ import type { Orientation } from "$lib/shared/index.js";
 
 type UseRovingFocusProps = {
 	/**
-	 * The selector used to find the focusable candidates.
-	 */
-	candidateAttr: string;
-
-	/**
 	 * Custom candidate selector
 	 */
-	candidateSelector?: string;
+	candidateSelector: string;
 
 	/**
 	 * The id of the root node
@@ -55,17 +50,7 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 		const node = document.getElementById(props.rootNodeId.current);
 		if (!node) return [];
 
-		if (props.candidateSelector) {
-			const candidates = Array.from(
-				node.querySelectorAll<HTMLElement>(props.candidateSelector)
-			);
-			return candidates;
-		} else {
-			const candidates = Array.from(
-				node.querySelectorAll<HTMLElement>(`[${props.candidateAttr}]:not([data-disabled])`)
-			);
-			return candidates;
-		}
+		return Array.from(node.querySelectorAll<HTMLElement>(props.candidateSelector));
 	}
 
 	function focusFirstCandidate() {

@@ -53,7 +53,7 @@ class ToolbarRootState {
 			orientation: this.orientation,
 			loop: this.#loop,
 			rootNodeId: this.#id,
-			candidateAttr: ITEM_ATTR,
+			candidateSelector: `[${ITEM_ATTR}]:not([data-disabled])`,
 		});
 	}
 

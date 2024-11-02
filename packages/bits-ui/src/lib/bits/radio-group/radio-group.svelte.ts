@@ -44,7 +44,7 @@ class RadioGroupRootState {
 		this.#ref = props.ref;
 		this.rovingFocusGroup = useRovingFocus({
 			rootNodeId: this.#id,
-			candidateAttr: RADIO_GROUP_ITEM_ATTR,
+			candidateSelector: `[${RADIO_GROUP_ITEM_ATTR}]:not([data-disabled])`,
 			loop: this.loop,
 			orientation: this.orientation,
 		});

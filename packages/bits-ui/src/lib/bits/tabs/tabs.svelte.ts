@@ -67,7 +67,7 @@ class TabsRootState {
 		});
 
 		this.rovingFocusGroup = useRovingFocus({
-			candidateAttr: TRIGGER_ATTR,
+			candidateSelector: `[${TRIGGER_ATTR}]:not([data-disabled])`,
 			rootNodeId: this.#id,
 			loop: this.loop,
 			orientation: this.orientation,

@@ -52,7 +52,7 @@ class MenubarRootState {
 		});
 		this.rovingFocusGroup = useRovingFocus({
 			rootNodeId: this.id,
-			candidateAttr: TRIGGER_ATTR,
+			candidateSelector: `[${TRIGGER_ATTR}]:not([data-disabled])`,
 			loop: this.loop,
 			orientation: box.with(() => "horizontal"),
 			currentTabStopId: this.currentTabStopId,

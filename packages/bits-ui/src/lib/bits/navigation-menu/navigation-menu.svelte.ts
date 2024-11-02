@@ -364,7 +364,6 @@ class NavigationMenuListState {
 		this.indicatorTrackRef = props.indicatorTrackRef;
 		this.rovingFocusGroup = useRovingFocus({
 			rootNodeId: this.#id,
-			candidateAttr: TRIGGER_ATTR,
 			candidateSelector: `:is([${TRIGGER_ATTR}], [data-list-link]):not([data-disabled])`,
 			loop: box.with(() => false),
 			orientation: this.menu.orientation,
