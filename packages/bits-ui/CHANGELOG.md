@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.37
+
+### Patch Changes
+
+-   fix: pagination page aria-label ([#854](https://github.com/huntabyte/bits-ui/pull/854))
+
 ## 1.0.0-next.36
 
 ### Patch Changes
