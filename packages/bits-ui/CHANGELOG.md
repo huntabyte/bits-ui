@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.38
+
+### Patch Changes
+
+-   fix: add role="option" to select items ([#857](https://github.com/huntabyte/bits-ui/pull/857))
+
 ## 1.0.0-next.37
 
 ### Patch Changes
