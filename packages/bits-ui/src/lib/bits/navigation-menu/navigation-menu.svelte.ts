@@ -19,7 +19,7 @@ import { useArrowNavigation } from "$lib/internal/use-arrow-navigation.js";
 import { boxAutoReset } from "$lib/internal/box-auto-reset.svelte.js";
 import type { ElementRef, WithRefProps } from "$lib/internal/types.js";
 import { noop } from "$lib/internal/noop.js";
-import { useRovingFocus } from "$lib/internal/use-roving-focus.svelte.js";
+import { RovingFocusGroup } from "$lib/internal/use-roving-focus.svelte.js";
 
 const [setNavigationMenuRootContext] =
 	createContext<NavigationMenuRootState>("NavigationMenu.Root");
@@ -353,7 +353,7 @@ class NavigationMenuListState {
 	#ref: NavigationMenuListStateProps["ref"];
 	indicatorTrackRef: NavigationMenuListStateProps["indicatorTrackRef"];
 	indicatorTrackId = box(useId());
-	rovingFocusGroup: ReturnType<typeof useRovingFocus>;
+	rovingFocusGroup: RovingFocusGroup;
 
 	constructor(
 		props: NavigationMenuListStateProps,
@@ -362,7 +362,7 @@ class NavigationMenuListState {
 		this.#id = props.id;
 		this.#ref = props.ref;
 		this.indicatorTrackRef = props.indicatorTrackRef;
-		this.rovingFocusGroup = useRovingFocus({
+		this.rovingFocusGroup = new RovingFocusGroup({
 			rootNodeId: this.#id,
 			candidateSelector: `:is([${TRIGGER_ATTR}], [data-list-link]):not([data-disabled])`,
 			loop: box.with(() => false),
@@ -580,7 +580,7 @@ class NavigationMenuTriggerState {
 			e.preventDefault();
 			return;
 		}
-		this.item.list.rovingFocusGroup.handleKeydown(this.#ref.current, e);
+		this.item.list.rovingFocusGroup.handleKeydown({ node: this.#ref.current, event: e });
 	};
 
 	props = $derived.by(
@@ -668,7 +668,7 @@ class NavigationMenuLinkState {
 	};
 
 	#onkeydown = (e: KeyboardEvent) => {
-		this.item.list.rovingFocusGroup.handleKeydown(this.#ref.current, e);
+		this.item.list.rovingFocusGroup.handleKeydown({ node: this.#ref.current, event: e });
 	};
 
 	props = $derived.by(

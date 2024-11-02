@@ -2,10 +2,7 @@ import { type ReadableBox, afterTick, box, useRefById } from "svelte-toolbelt";
 import { untrack } from "svelte";
 import type { InteractOutsideBehaviorType } from "../utilities/dismissible-layer/types.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import {
-	type UseRovingFocusReturn,
-	useRovingFocus,
-} from "$lib/internal/use-roving-focus.svelte.js";
+import { RovingFocusGroup } from "$lib/internal/use-roving-focus.svelte.js";
 import type { Direction } from "$lib/shared/index.js";
 import { createContext } from "$lib/internal/create-context.js";
 import { getAriaExpanded, getDataDisabled, getDataOpenClosed } from "$lib/internal/attrs.js";
@@ -33,7 +30,7 @@ class MenubarRootState {
 	value: MenubarRootStateProps["value"];
 	dir: MenubarRootStateProps["dir"];
 	loop: MenubarRootStateProps["loop"];
-	rovingFocusGroup: UseRovingFocusReturn;
+	rovingFocusGroup: RovingFocusGroup;
 	currentTabStopId = box<string | null>(null);
 	wasOpenedByKeyboard = $state(false);
 	triggerIds = $state<string[]>([]);
@@ -50,7 +47,7 @@ class MenubarRootState {
 			id: this.id,
 			ref: this.ref,
 		});
-		this.rovingFocusGroup = useRovingFocus({
+		this.rovingFocusGroup = new RovingFocusGroup({
 			rootNodeId: this.id,
 			candidateSelector: `[${TRIGGER_ATTR}]:not([data-disabled])`,
 			loop: this.loop,
@@ -228,7 +225,7 @@ class MenubarTriggerState {
 			e.preventDefault();
 		}
 
-		this.root.rovingFocusGroup.handleKeydown(this.menu.getTriggerNode(), e);
+		this.root.rovingFocusGroup.handleKeydown({ node: this.menu.getTriggerNode(), event: e });
 	};
 
 	#onfocus = () => {

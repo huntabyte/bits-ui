@@ -9,10 +9,7 @@ import {
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type { Orientation } from "$lib/shared/index.js";
-import {
-	type UseRovingFocusReturn,
-	useRovingFocus,
-} from "$lib/internal/use-roving-focus.svelte.js";
+import { RovingFocusGroup } from "$lib/internal/use-roving-focus.svelte.js";
 import { createContext } from "$lib/internal/create-context.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 
@@ -35,7 +32,7 @@ class ToggleGroupBaseState {
 	rovingFocus: ToggleGroupBaseStateProps["rovingFocus"];
 	loop: ToggleGroupBaseStateProps["loop"];
 	orientation: ToggleGroupBaseStateProps["orientation"];
-	rovingFocusGroup: UseRovingFocusReturn;
+	rovingFocusGroup: RovingFocusGroup;
 
 	constructor(props: ToggleGroupBaseStateProps) {
 		this.id = props.id;
@@ -44,7 +41,7 @@ class ToggleGroupBaseState {
 		this.rovingFocus = props.rovingFocus;
 		this.loop = props.loop;
 		this.orientation = props.orientation;
-		this.rovingFocusGroup = useRovingFocus({
+		this.rovingFocusGroup = new RovingFocusGroup({
 			candidateSelector: `[${ITEM_ATTR}]:not([data-disabled])`,
 			rootNodeId: this.id,
 			loop: this.loop,
@@ -198,7 +195,7 @@ class ToggleGroupItemState {
 		}
 		if (!this.#root.rovingFocus.current) return;
 
-		this.#root.rovingFocusGroup.handleKeydown(this.#ref.current, e);
+		this.#root.rovingFocusGroup.handleKeydown({ node: this.#ref.current, event: e });
 	};
 
 	isPressed = $derived.by(() => this.#root.includesItem(this.#value.current));

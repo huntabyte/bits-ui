@@ -1,0 +1,3 @@
+```ts
+(value: string) => boolean;
+```

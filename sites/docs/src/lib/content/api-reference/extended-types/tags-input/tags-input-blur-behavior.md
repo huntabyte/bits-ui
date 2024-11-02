@@ -1,0 +1,3 @@
+```ts
+"clear" | "add" | "none";
+```

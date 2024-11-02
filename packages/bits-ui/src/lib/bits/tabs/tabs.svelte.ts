@@ -14,10 +14,7 @@ import { kbd } from "$lib/internal/kbd.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import type { Orientation } from "$lib/shared/index.js";
-import {
-	type UseRovingFocusReturn,
-	useRovingFocus,
-} from "$lib/internal/use-roving-focus.svelte.js";
+import { RovingFocusGroup } from "$lib/internal/use-roving-focus.svelte.js";
 import { createContext } from "$lib/internal/create-context.js";
 
 const ROOT_ATTR = "data-tabs-root";
@@ -45,7 +42,7 @@ class TabsRootState {
 	activationMode: TabsRootStateProps["activationMode"];
 	value: TabsRootStateProps["value"];
 	disabled: TabsRootStateProps["disabled"];
-	rovingFocusGroup: UseRovingFocusReturn;
+	rovingFocusGroup: RovingFocusGroup;
 	triggerIds = $state<string[]>([]);
 	// holds the trigger ID for each value to associate it with the content
 	valueToTriggerId = new SvelteMap<string, string>();
@@ -66,7 +63,7 @@ class TabsRootState {
 			ref: this.ref,
 		});
 
-		this.rovingFocusGroup = useRovingFocus({
+		this.rovingFocusGroup = new RovingFocusGroup({
 			candidateSelector: `[${TRIGGER_ATTR}]:not([data-disabled])`,
 			rootNodeId: this.#id,
 			loop: this.loop,
@@ -232,7 +229,7 @@ class TabsTriggerState {
 			this.activate();
 			return;
 		}
-		this.#root.rovingFocusGroup.handleKeydown(this.#ref.current, e);
+		this.#root.rovingFocusGroup.handleKeydown({ node: this.#ref.current, event: e });
 	};
 
 	props = $derived.by(

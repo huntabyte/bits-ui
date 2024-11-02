@@ -5,7 +5,7 @@ import { kbd } from "./kbd.js";
 import { isBrowser } from "./is.js";
 import type { Orientation } from "$lib/shared/index.js";
 
-type UseRovingFocusProps = {
+type RovingFocusGroupProps = {
 	/**
 	 * Custom candidate selector
 	 */
@@ -38,47 +38,95 @@ type UseRovingFocusProps = {
 	currentTabStopId?: WritableBox<string | null>;
 };
 
-export type UseRovingFocusReturn = ReturnType<typeof useRovingFocus>;
+export class RovingFocusGroup {
+	currentTabStopId = box<string | null>(null);
+	#rootNodeId: RovingFocusGroupProps["rootNodeId"];
+	#loop: RovingFocusGroupProps["loop"];
+	orientation: RovingFocusGroupProps["orientation"];
+	onCandidateFocus: RovingFocusGroupProps["onCandidateFocus"];
+	#recomputeDep = $state(false);
+	#candidateSelector: string;
 
-export function useRovingFocus(props: UseRovingFocusProps) {
-	const currentTabStopId: WritableBox<string | null> = props.currentTabStopId
-		? props.currentTabStopId
-		: box<string | null>(null);
+	constructor(props: RovingFocusGroupProps) {
+		this.currentTabStopId = props.currentTabStopId
+			? props.currentTabStopId
+			: box<string | null>(null);
+		this.#rootNodeId = props.rootNodeId;
+		this.#loop = props.loop;
+		this.orientation = props.orientation;
+		this.onCandidateFocus = props.onCandidateFocus;
+		this.#candidateSelector = props.candidateSelector;
+	}
 
-	function getCandidateNodes() {
+	#anyActive = $derived.by(() => {
+		this.#recomputeDep;
+		if (!this.currentTabStopId.current) return false;
+		if (!isBrowser) return false;
+		return Boolean(document.getElementById(this.currentTabStopId.current));
+	});
+
+	#handleFocus = (node: HTMLElement) => {
+		if (!node) return;
+		this.currentTabStopId.current = node.id;
+		node?.focus();
+		this.onCandidateFocus?.(node);
+	};
+
+	#getCandidateNodes = () => {
 		if (!isBrowser) return [];
-		const node = document.getElementById(props.rootNodeId.current);
+		const node = document.getElementById(this.#rootNodeId.current);
 		if (!node) return [];
+		return Array.from(node.querySelectorAll<HTMLElement>(this.#candidateSelector));
+	};
 
-		return Array.from(node.querySelectorAll<HTMLElement>(props.candidateSelector));
-	}
-
-	function focusFirstCandidate() {
-		const items = getCandidateNodes();
+	navigateBackward = (node: HTMLElement | null | undefined, fallback?: HTMLElement | null) => {
+		const rootNode = document.getElementById(this.#rootNodeId.current);
+		if (!rootNode || !node) return;
+		const items = this.#getCandidateNodes();
 		if (!items.length) return;
-		items[0]?.focus();
-	}
+		const currentIndex = items.indexOf(node);
+		const prevIndex = currentIndex - 1;
+		const prevItem = items[prevIndex];
+		if (!prevItem) {
+			if (fallback) {
+				fallback?.focus();
+			}
+			return;
+		}
+		this.#handleFocus(prevItem);
+	};
 
-	function handleKeydown(
-		node: HTMLElement | null | undefined,
-		e: KeyboardEvent,
-		both: boolean = false
-	) {
-		const rootNode = document.getElementById(props.rootNodeId.current);
+	handleKeydown = ({
+		node,
+		event: e,
+		orientation = this.orientation.current,
+		invert = false,
+		both = false,
+	}: {
+		node: HTMLElement | null | undefined;
+		event: KeyboardEvent;
+		orientation?: Orientation;
+		invert?: boolean;
+		both?: boolean;
+	}) => {
+		const rootNode = document.getElementById(this.#rootNodeId.current);
 		if (!rootNode || !node) return;
 
-		const items = getCandidateNodes();
+		const items = this.#getCandidateNodes();
 		if (!items.length) return;
 
 		const currentIndex = items.indexOf(node);
 		const dir = getElemDirection(rootNode);
-		const { nextKey, prevKey } = getDirectionalKeys(dir, props.orientation.current);
+		const { nextKey, prevKey } = getDirectionalKeys(dir, orientation);
 
-		const loop = props.loop.current;
+		const trueNextKey = invert ? prevKey : nextKey;
+		const truePrevKey = invert ? nextKey : prevKey;
+
+		const loop = this.#loop.current;
 
 		const keyToIndex = {
-			[nextKey]: currentIndex + 1,
-			[prevKey]: currentIndex - 1,
+			[trueNextKey]: currentIndex + 1,
+			[truePrevKey]: currentIndex - 1,
 			[kbd.HOME]: 0,
 			[kbd.END]: items.length - 1,
 		};
@@ -102,32 +150,42 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 
 		const itemToFocus = items[itemIndex];
 		if (!itemToFocus) return;
-		itemToFocus.focus();
-		currentTabStopId.current = itemToFocus.id;
-		props.onCandidateFocus?.(itemToFocus);
+		this.#handleFocus(itemToFocus);
 		return itemToFocus;
-	}
+	};
 
-	function getTabIndex(node: HTMLElement | null | undefined) {
-		const items = getCandidateNodes();
-		const anyActive = currentTabStopId.current !== null;
-		if (node && !anyActive && items[0] === node) {
-			currentTabStopId.current = node.id;
+	getTabIndex = (node: HTMLElement | null | undefined) => {
+		const items = this.#getCandidateNodes();
+		if (node && !this.#anyActive && items[0] === node) {
+			this.currentTabStopId.current = node.id;
 			return 0;
-		} else if (node?.id === currentTabStopId.current) {
+		} else if (node?.id === this.currentTabStopId.current) {
 			return 0;
 		}
 
 		return -1;
-	}
+	};
 
-	return {
-		setCurrentTabStopId(id: string) {
-			currentTabStopId.current = id;
-		},
-		getTabIndex,
-		handleKeydown,
-		focusFirstCandidate,
-		currentTabStopId,
+	focusFirstCandidate = () => {
+		const items = this.#getCandidateNodes();
+		if (!items.length) return;
+		items[0]?.focus();
+	};
+
+	focusLastCandidate = () => {
+		const items = this.#getCandidateNodes();
+		if (!items.length) return false;
+		const lastItem = items[items.length - 1];
+		if (!lastItem) return false;
+		this.#handleFocus(lastItem);
+		return true;
+	};
+
+	recomputeActiveTabNode = () => {
+		this.#recomputeDep = !this.#recomputeDep;
+	};
+
+	setCurrentTabStopId = (id: string) => {
+		this.currentTabStopId.current = id;
 	};
 }

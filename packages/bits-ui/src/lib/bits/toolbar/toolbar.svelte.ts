@@ -8,10 +8,7 @@ import {
 } from "$lib/internal/attrs.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
-import {
-	type UseRovingFocusReturn,
-	useRovingFocus,
-} from "$lib/internal/use-roving-focus.svelte.js";
+import { RovingFocusGroup } from "$lib/internal/use-roving-focus.svelte.js";
 import type { Orientation } from "$lib/shared/index.js";
 import { createContext } from "$lib/internal/create-context.js";
 import type { WithRefProps } from "$lib/internal/types.js";
@@ -36,7 +33,7 @@ class ToolbarRootState {
 	#ref: ToolbarRootStateProps["ref"];
 	orientation: ToolbarRootStateProps["orientation"];
 	#loop: ToolbarRootStateProps["loop"];
-	rovingFocusGroup: UseRovingFocusReturn;
+	rovingFocusGroup: RovingFocusGroup;
 
 	constructor(props: ToolbarRootStateProps) {
 		this.#id = props.id;
@@ -49,7 +46,7 @@ class ToolbarRootState {
 			ref: this.#ref,
 		});
 
-		this.rovingFocusGroup = useRovingFocus({
+		this.rovingFocusGroup = new RovingFocusGroup({
 			orientation: this.orientation,
 			loop: this.#loop,
 			rootNodeId: this.#id,
@@ -234,7 +231,7 @@ class ToolbarGroupItemState {
 			return;
 		}
 
-		this.#root.rovingFocusGroup.handleKeydown(this.#ref.current, e);
+		this.#root.rovingFocusGroup.handleKeydown({ node: this.#ref.current, event: e });
 	};
 
 	isPressed = $derived.by(() => this.#group.includesItem(this.#value.current));
@@ -294,7 +291,7 @@ class ToolbarLinkState {
 	}
 
 	#onkeydown = (e: KeyboardEvent) => {
-		this.#root.rovingFocusGroup.handleKeydown(this.#ref.current, e);
+		this.#root.rovingFocusGroup.handleKeydown({ node: this.#ref.current, event: e });
 	};
 
 	#role = $derived.by(() => {
@@ -347,7 +344,7 @@ class ToolbarButtonState {
 	}
 
 	#onkeydown = (e: KeyboardEvent) => {
-		this.#root.rovingFocusGroup.handleKeydown(this.#ref.current, e);
+		this.#root.rovingFocusGroup.handleKeydown({ node: this.#ref.current, event: e });
 	};
 
 	#tabIndex = $state(0);

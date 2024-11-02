@@ -24,7 +24,7 @@ import { addEventListener } from "$lib/internal/events.js";
 import type { AnyFn, WithRefProps } from "$lib/internal/types.js";
 import { useDOMTypeahead } from "$lib/internal/use-dom-typeahead.svelte.js";
 import { isElement, isElementOrSVGElement, isHTMLElement } from "$lib/internal/is.js";
-import { useRovingFocus } from "$lib/internal/use-roving-focus.svelte.js";
+import { RovingFocusGroup } from "$lib/internal/use-roving-focus.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import {
 	getAriaChecked,
@@ -180,7 +180,7 @@ class MenuContentState {
 	#pointerDir = $state<Side>("right");
 	#lastPointerX = $state(0);
 	#handleTypeaheadSearch: ReturnType<typeof useDOMTypeahead>["handleTypeaheadSearch"];
-	rovingFocusGroup: ReturnType<typeof useRovingFocus>;
+	rovingFocusGroup: RovingFocusGroup;
 	isMounted: MenuContentStateProps["isMounted"];
 	isFocusWithin = new IsFocusWithin(() => this.parentMenu.contentNode ?? undefined);
 
@@ -208,7 +208,7 @@ class MenuContentState {
 		});
 
 		this.#handleTypeaheadSearch = useDOMTypeahead().handleTypeaheadSearch;
-		this.rovingFocusGroup = useRovingFocus({
+		this.rovingFocusGroup = new RovingFocusGroup({
 			rootNodeId: this.parentMenu.contentId,
 			candidateSelector: `[${this.parentMenu.root.getAttr("item")}]:not([data-disabled])`,
 			loop: this.#loop,
@@ -249,7 +249,7 @@ class MenuContentState {
 		const isModifierKey = e.ctrlKey || e.altKey || e.metaKey;
 		const isCharacterKey = e.key.length === 1;
 
-		const kbdFocusedEl = this.rovingFocusGroup.handleKeydown(target, e);
+		const kbdFocusedEl = this.rovingFocusGroup.handleKeydown({ node: target, event: e });
 		if (kbdFocusedEl) return;
 
 		// prevent space from being considered with typeahead

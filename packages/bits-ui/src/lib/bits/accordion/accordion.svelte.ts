@@ -9,10 +9,7 @@ import {
 	getDataOrientation,
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
-import {
-	type UseRovingFocusReturn,
-	useRovingFocus,
-} from "$lib/internal/use-roving-focus.svelte.js";
+import { RovingFocusGroup } from "$lib/internal/use-roving-focus.svelte.js";
 import type { Orientation } from "$lib/shared/index.js";
 import { createContext } from "$lib/internal/create-context.js";
 
@@ -40,7 +37,7 @@ class AccordionBaseState {
 	disabled: AccordionBaseStateProps["disabled"];
 	#loop: AccordionBaseStateProps["loop"];
 	orientation: AccordionBaseStateProps["orientation"];
-	rovingFocusGroup: UseRovingFocusReturn;
+	rovingFocusGroup: RovingFocusGroup;
 
 	constructor(props: AccordionBaseStateProps) {
 		this.#id = props.id;
@@ -54,7 +51,7 @@ class AccordionBaseState {
 
 		this.orientation = props.orientation;
 		this.#loop = props.loop;
-		this.rovingFocusGroup = useRovingFocus({
+		this.rovingFocusGroup = new RovingFocusGroup({
 			rootNodeId: this.#id,
 			candidateSelector: `[${ACCORDION_TRIGGER_ATTR}]:not([data-disabled])`,
 			loop: this.#loop,
@@ -235,7 +232,7 @@ class AccordionTriggerState {
 			return;
 		}
 
-		this.#root.rovingFocusGroup.handleKeydown(this.#ref.current, e);
+		this.#root.rovingFocusGroup.handleKeydown({ node: this.#ref.current, event: e });
 	};
 
 	props = $derived.by(
