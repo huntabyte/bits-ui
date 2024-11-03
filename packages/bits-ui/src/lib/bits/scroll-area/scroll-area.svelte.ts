@@ -7,7 +7,7 @@
 
 import { useDebounce } from "runed";
 import { untrack } from "svelte";
-import { afterTick, box, executeCallbacks, useRefById } from "svelte-toolbelt";
+import { box, executeCallbacks, useRefById } from "svelte-toolbelt";
 import type { ScrollAreaType } from "./types.js";
 import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import { addEventListener } from "$lib/internal/events.js";
@@ -136,10 +136,15 @@ class ScrollAreaViewportState {
 		() =>
 			({
 				id: this.#contentId.current,
-				style: {
-					minWidth: "100%",
-					display: "table",
-				},
+				"data-scroll-area-content": "",
+				/**
+				 * When horizontal scrollbar is visible: this element should be at least
+				 * as wide as its children for size calculations to work correctly.
+				 *
+				 * When horizontal scrollbar is NOT visible: this element's width should
+				 * be constrained by the parent container to enable `text-overflow: ellipsis`
+				 */
+				style: { minWidth: this.root.scrollbarXEnabled ? "fit-content" : undefined },
 			}) as const
 	);
 }
