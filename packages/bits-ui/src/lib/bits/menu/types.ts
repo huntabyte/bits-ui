@@ -107,6 +107,12 @@ export type MenuItemPropsWithoutHTML<U extends Record<PropertyKey, unknown> = { 
 			 * Prevent default behavior of selection with `event.preventDefault()`.
 			 */
 			onSelect?: (event: Event) => void;
+
+			/**
+			 * Whether or not the menu item should close when selected.
+			 * @defaultValue true
+			 */
+			closeOnSelect?: boolean;
 		},
 		U
 	>;
@@ -139,6 +145,13 @@ export type MenuCheckboxItemPropsWithoutHTML =
 		 * @defaultValue false
 		 */
 		controlledChecked?: boolean;
+
+		/**
+		 * Whether or not the menu item should close when selected.
+		 *
+		 * @defaultValue true
+		 */
+		closeOnSelect?: boolean;
 	};
 
 export type MenuCheckboxItemProps = MenuCheckboxItemPropsWithoutHTML &
@@ -250,6 +263,12 @@ export type MenuRadioItemPropsWithoutHTML = MenuItemPropsWithoutHTML<MenuRadioIt
 	 * The value of the radio item.
 	 */
 	value: string;
+
+	/**
+	 * Whether or not the menu item should close when selected.
+	 * @defaultValue true
+	 */
+	closeOnSelect?: boolean;
 };
 
 export type MenuRadioItemProps = MenuRadioItemPropsWithoutHTML &

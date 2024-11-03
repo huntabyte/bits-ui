@@ -13,6 +13,7 @@
 		onSelect = noop,
 		id = useId(),
 		disabled = false,
+		closeOnSelect = true,
 		...restProps
 	}: MenuRadioItemProps = $props();
 
@@ -25,6 +26,7 @@
 			() => ref,
 			(v) => (ref = v)
 		),
+		closeOnSelect: box.with(() => closeOnSelect),
 	});
 
 	function handleSelect(e: Event) {

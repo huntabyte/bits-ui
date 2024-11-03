@@ -12,6 +12,7 @@
 		id = useId(),
 		disabled = false,
 		onSelect = noop,
+		closeOnSelect = true,
 		...restProps
 	}: MenuItemProps = $props();
 
@@ -23,6 +24,7 @@
 			() => ref,
 			(v) => (ref = v)
 		),
+		closeOnSelect: box.with(() => closeOnSelect),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, itemState.props));
