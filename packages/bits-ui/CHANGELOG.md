@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.40
+
+### Patch Changes
+
+-   fix: dont use `display: table` in scroll area ([#863](https://github.com/huntabyte/bits-ui/pull/863))
+
 ## 1.0.0-next.39
 
 ### Patch Changes
