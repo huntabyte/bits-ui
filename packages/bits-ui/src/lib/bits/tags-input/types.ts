@@ -40,28 +40,12 @@ export type TagsInputRootPropsWithoutHTML = WithChild<{
 	delimiters?: string[];
 
 	/**
-	 * How to handle when text is pasted into the input.
-	 * - `'add'`: Add the pasted text as a new tag. If it contains valid delimiters, it will be split into multiple tags.
-	 * - `'none'`: Do not add the pasted text as a new tag, just insert it into the input.
-	 *
-	 * @defaultValue "add"
-	 */
-	pasteBehavior?: TagsInputPasteBehavior;
-
-	/**
 	 * A validation function to determine if the individual tag being added/edited is valid.
 	 *
 	 * Return true to allow the tag to be added/edited, or false to prevent it from being
 	 * added/confirm edited.
 	 */
 	validate?: (value: string) => boolean;
-
-	/**
-	 * Whether the individual tags are editable or not. This applies to all tags. If you wish
-	 * to override a specific tag's editable state, you can use the `editable` prop on the
-	 * `TagInput.Tag` component.
-	 */
-	editable?: boolean;
 
 	/**
 	 * If provided, a hidden input element will be rendered for each tag to submit the values with
@@ -119,6 +103,15 @@ export type TagsInputInputPropsWithoutHTML = WithChild<{
 	 * @defaultValue "none"
 	 */
 	blurBehavior?: TagsInputBlurBehavior;
+
+	/**
+	 * How to handle when text is pasted into the input.
+	 * - `'add'`: Add the pasted text as a new tag. If it contains valid delimiters, it will be split into multiple tags.
+	 * - `'none'`: Do not add the pasted text as a new tag, just insert it into the input.
+	 *
+	 * @defaultValue "add"
+	 */
+	pasteBehavior?: TagsInputPasteBehavior;
 }>;
 
 export type TagsInputInputProps = TagsInputInputPropsWithoutHTML &
@@ -139,6 +132,20 @@ export type TagsInputTagPropsWithoutHTML = WithChild<{
 	 * The index of this specific tag in the value array.
 	 */
 	index: number;
+
+	/**
+	 * Whether or not the tag is editable.
+	 *
+	 * @defaultValue true
+	 */
+	editable?: boolean;
+
+	/**
+	 * Whether the tag can be removed or not.
+	 *
+	 * @defaultValue true
+	 */
+	removable?: boolean;
 }>;
 
 export type TagsInputTagProps = TagsInputTagPropsWithoutHTML &

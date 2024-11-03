@@ -31,10 +31,9 @@ type TagsInputRootStateProps = WithRefProps &
 	}> &
 	ReadableBoxedValues<{
 		delimiters: string[];
-		editable: boolean;
 		name: string;
 		required: boolean;
-		pasteBehavior: TagsInputPasteBehavior;
+
 		validate: (value: string) => boolean;
 	}>;
 
@@ -50,9 +49,7 @@ class TagsInputRootState {
 	valueSnapshot = $derived.by(() => $state.snapshot(this.value.current));
 	delimiters: TagsInputRootStateProps["delimiters"];
 	required: TagsInputRootStateProps["required"];
-	editable: TagsInputRootStateProps["editable"];
 	name: TagsInputRootStateProps["name"];
-	pasteBehavior: TagsInputRootStateProps["pasteBehavior"];
 	validate: TagsInputRootStateProps["validate"];
 	inputNode = $state<HTMLElement | null>(null);
 	listRovingFocusGroup: RovingFocusGroup | null = null;
@@ -72,9 +69,7 @@ class TagsInputRootState {
 		this.value = props.value;
 		this.delimiters = props.delimiters;
 		this.name = props.name;
-		this.editable = props.editable;
 		this.required = props.required;
-		this.pasteBehavior = props.pasteBehavior;
 		this.validate = props.validate;
 
 		useRefById({
@@ -221,6 +216,8 @@ class TagsInputListState {
 type TagsInputTagStateProps = WithRefProps &
 	ReadableBoxedValues<{
 		index: number;
+		editable: boolean;
+		removable: boolean;
 	}> &
 	WritableBoxedValues<{
 		value: string;
@@ -231,6 +228,8 @@ class TagsInputTagState {
 	#id: TagsInputTagStateProps["id"];
 	value: TagsInputTagStateProps["value"];
 	index: TagsInputTagStateProps["index"];
+	editable: TagsInputTagStateProps["editable"];
+	removable: TagsInputTagStateProps["removable"];
 	root: TagsInputRootState;
 	list: TagsInputListState;
 	textNode = $state<HTMLElement | null>(null);
@@ -247,6 +246,8 @@ class TagsInputTagState {
 		this.list = list;
 		this.value = props.value;
 		this.index = props.index;
+		this.editable = props.editable;
+		this.removable = props.removable;
 
 		useRefById({
 			id: this.#id,
@@ -268,6 +269,7 @@ class TagsInputTagState {
 	};
 
 	startEditing = () => {
+		if (this.editable.current === false) return;
 		this.isEditing = true;
 		this.editInput?.focus();
 		this.editInput?.select();
@@ -281,6 +283,7 @@ class TagsInputTagState {
 	};
 
 	remove = () => {
+		if (this.removable.current === false) return;
 		this.root.removeValueByIndex(this.index.current, this.value.current);
 		this.root.recomputeTabIndex();
 	};
@@ -314,6 +317,8 @@ class TagsInputTagState {
 				id: this.#id.current,
 				role: "gridcell",
 				"data-editing": this.isEditing ? "" : undefined,
+				"data-editable": this.editable.current ? "" : undefined,
+				"data-removable": this.removable.current ? "" : undefined,
 				"data-invalid": getDataInvalid(this.root.isInvalid),
 				tabindex: this.#tabIndex,
 				[TAG_ATTR]: "",
@@ -352,6 +357,8 @@ class TagsInputTagTextState {
 				id: this.#id.current,
 				[TAG_TEXT_ATTR]: "",
 				tabindex: -1,
+				"data-editable": this.#tag.editable.current ? "" : undefined,
+				"data-removable": this.#tag.removable.current ? "" : undefined,
 			}) as const
 	);
 }
@@ -384,7 +391,6 @@ class TagsInputTagEditState {
 
 	#onkeydown = (e: KeyboardEvent & { currentTarget: HTMLInputElement }) => {
 		if (e.key === kbd.ESCAPE) {
-			// e.preventDefault();
 			this.tag.stopEditing();
 			e.currentTarget.value = this.tag.value.current;
 		} else if (e.key === kbd.TAB) {
@@ -417,6 +423,8 @@ class TagsInputTagEditState {
 				tabindex: -1,
 				"data-editing": this.tag.isEditing ? "" : undefined,
 				"data-invalid": getDataInvalid(this.tag.root.isInvalid),
+				"data-editable": this.tag.editable.current ? "" : undefined,
+				"data-removable": this.tag.removable.current ? "" : undefined,
 				value: this.tag.value.current,
 				style: this.#style,
 				onkeydown: this.#onkeydown,
@@ -483,6 +491,8 @@ class TagsInputTagRemoveState {
 				"aria-label": "Remove",
 				"aria-labelledby": this.#ariaLabelledBy,
 				"data-editing": this.#tag.isEditing ? "" : undefined,
+				"data-editable": this.#tag.editable.current ? "" : undefined,
+				"data-removable": this.#tag.removable.current ? "" : undefined,
 				tabindex: -1,
 				onclick: this.#onclick,
 				onkeydown: this.#onkeydown,
@@ -493,6 +503,7 @@ class TagsInputTagRemoveState {
 type TagsInputInputStateProps = WithRefProps &
 	ReadableBoxedValues<{
 		blurBehavior: TagsInputBlurBehavior;
+		pasteBehavior: TagsInputPasteBehavior;
 	}> &
 	WritableBoxedValues<{ value: string }>;
 
@@ -502,6 +513,7 @@ class TagsInputInputState {
 	#root: TagsInputRootState;
 	value: TagsInputInputStateProps["value"];
 	#blurBehavior: TagsInputInputStateProps["blurBehavior"];
+	#pasteBehavior: TagsInputInputStateProps["pasteBehavior"];
 
 	constructor(props: TagsInputInputStateProps, root: TagsInputRootState) {
 		this.#ref = props.ref;
@@ -509,6 +521,7 @@ class TagsInputInputState {
 		this.#root = root;
 		this.value = props.value;
 		this.#blurBehavior = props.blurBehavior;
+		this.#pasteBehavior = props.pasteBehavior;
 
 		useRefById({
 			id: this.#id,
@@ -541,7 +554,7 @@ class TagsInputInputState {
 	};
 
 	#onpaste = (e: ClipboardEvent & { currentTarget: HTMLInputElement }) => {
-		if (!e.clipboardData || this.#root.pasteBehavior.current === "none") return;
+		if (!e.clipboardData || this.#pasteBehavior.current === "none") return;
 		const rawClipboardData = e.clipboardData.getData("text/plain");
 		// we're splitting this by the delimiters
 		const pastedValues = rawClipboardData.split(this.#root.delimitersRegex);

@@ -7,7 +7,7 @@
 
 import { useDebounce } from "runed";
 import { untrack } from "svelte";
-import { afterTick, box, executeCallbacks, useRefById } from "svelte-toolbelt";
+import { box, executeCallbacks, useRefById } from "svelte-toolbelt";
 import type { ScrollAreaType } from "./types.js";
 import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import { addEventListener } from "$lib/internal/events.js";

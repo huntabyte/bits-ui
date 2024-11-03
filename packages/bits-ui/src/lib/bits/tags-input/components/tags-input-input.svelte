@@ -13,6 +13,7 @@
 		onValueChange = noop,
 		child,
 		blurBehavior = "none",
+		pasteBehavior = "add",
 		...restProps
 	}: TagsInputInputProps = $props();
 
@@ -34,6 +35,7 @@
 			}
 		),
 		blurBehavior: box.with(() => blurBehavior),
+		pasteBehavior: box.with(() => pasteBehavior),
 	});
 
 	const mergedProps = $derived(

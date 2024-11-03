@@ -9,14 +9,13 @@
 	<TagsInput.Root
 		bind:value
 		class="flex flex-col gap-2"
-		blurBehavior="add"
 		delimiters={[",", ";", ":"]}
 		validate={(value) => value.length > 1}
 	>
 		<div
 			class="flex h-auto w-[400px] flex-col gap-4 rounded-card-sm border border-border-input bg-background p-4 text-sm placeholder:text-foreground-alt/50 focus-within:outline-none focus-within:ring-2 focus-within:ring-foreground focus-within:ring-offset-2 focus-within:ring-offset-background hover:border-dark-40 [&:has([data-invalid])]:border-destructive"
 		>
-			<TagsInput.List class="flex flex-wrap gap-1.5">
+			<TagsInput.List class="flex min-h-5 flex-wrap gap-1.5">
 				{#each value as tag, index}
 					<TagsInput.Tag value={tag} {index}>
 						<TagsInput.TagContent
@@ -38,6 +37,7 @@
 			<TagsInput.Input
 				class="focus-override bg-transparent focus:outline-none focus:ring-0 "
 				placeholder="Add a tag..."
+				blurBehavior="add"
 			/>
 		</div>
 		<TagsInput.Clear

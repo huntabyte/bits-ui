@@ -1,7 +1,6 @@
 ---
 title: Navigation Menu
 description: A list of links that allow users to navigate between pages of a website.
-navLabel: New
 ---
 
 <script>

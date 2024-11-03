@@ -10,6 +10,8 @@
 		ref = $bindable(null),
 		value,
 		index,
+		editable = true,
+		removable = true,
 		children,
 		child,
 		...restProps
@@ -26,6 +28,8 @@
 			(v) => (value = v)
 		),
 		index: box.with(() => index),
+		editable: box.with(() => editable),
+		removable: box.with(() => removable),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, tagState.props));
@@ -33,7 +37,7 @@
 </script>
 
 {#snippet EditButton()}
-	{#if tagState.root.editable.current}
+	{#if tagState.editable.current}
 		<button
 			tabindex={-1}
 			onclick={tagState.startEditing}

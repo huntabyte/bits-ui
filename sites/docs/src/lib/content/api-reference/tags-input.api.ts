@@ -13,6 +13,7 @@ import {
 	TagsInputBlurBehaviorProp,
 	TagsInputInputOnValueChangeProp,
 	TagsInputOnValueChangeProp,
+	TagsInputPasteBehaviorProp,
 	TagsInputValidateProp,
 } from "./extended-types/tags-input/index.js";
 import {
@@ -50,23 +51,12 @@ const root = createApiSchema<TagsInputRootPropsWithoutHTML>({
 			description: "An array of delimiters to use to splitting the input value.",
 			default: "[',']",
 		}),
-
-		pasteBehavior: createEnumProp({
-			options: ["add", "none"],
-			description: "How text is handled when it is pasted into the input.",
-			default: "'add'",
-			definition: TagsInputBlurBehaviorProp,
-		}),
 		validate: createFunctionProp({
 			description:
 				"A validation function to determine if the individual tag being added/edited is valid. Return `true` to allow the tag to be added/edited, or `false` to prevent it from being added/confirm edited.",
 			definition: TagsInputValidateProp,
 		}),
-		editable: createBooleanProp({
-			description:
-				"Whether or not the individual tags are editable or not. This applies to all tags. If you wish to override a specific tag's editable state, you can use the `editable` prop on the `TagInput.Tag` component.",
-			default: C.TRUE,
-		}),
+
 		name: createPropSchema({
 			type: "string",
 			description:
@@ -115,6 +105,15 @@ const tag = createApiSchema<TagsInputTagPropsWithoutHTML>({
 			description: "The index of the tag in the value array.",
 			required: true,
 		}),
+		editable: createBooleanProp({
+			description:
+				"Whether or not the tag is editable or not. This determines the behavior when a user double clicks or presses enter on a tag.",
+			default: C.TRUE,
+		}),
+		removable: createBooleanProp({
+			description: "Whether or not the tag is removable or not.",
+			default: C.TRUE,
+		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
@@ -125,6 +124,18 @@ const tag = createApiSchema<TagsInputTagPropsWithoutHTML>({
 		createDataAttrSchema({
 			name: "invalid",
 			description: "Present on the tag element when the tags input is marked as invalid.",
+		}),
+		createDataAttrSchema({
+			name: "editable",
+			description: "Present on the tag element when the tag is editable.",
+		}),
+		createDataAttrSchema({
+			name: "removable",
+			description: "Present on the tag element when the tag is removable.",
+		}),
+		createDataAttrSchema({
+			name: "tags-input-tag",
+			description: "Present on the tag element.",
 		}),
 	],
 });
@@ -137,6 +148,14 @@ const tagText = createApiSchema<TagsInputTagTextPropsWithoutHTML>({
 		createDataAttrSchema({
 			name: "tags-input-tag-text",
 			description: "Present on the text element.",
+		}),
+		createDataAttrSchema({
+			name: "editable",
+			description: "Present when the tag is editable.",
+		}),
+		createDataAttrSchema({
+			name: "removable",
+			description: "Present when the tag is removable.",
 		}),
 	],
 });
@@ -154,6 +173,14 @@ const tagEdit = createApiSchema<TagsInputTagEditPropsWithoutHTML>({
 			name: "invalid",
 			description: "Present on the edit element when the tags input is marked as invalid.",
 		}),
+		createDataAttrSchema({
+			name: "editable",
+			description: "Present when the tag is editable.",
+		}),
+		createDataAttrSchema({
+			name: "removable",
+			description: "Present when the tag is removable.",
+		}),
 	],
 });
 
@@ -165,6 +192,14 @@ const tagRemove = createApiSchema<TagsInputTagRemovePropsWithoutHTML>({
 		createDataAttrSchema({
 			name: "tags-input-tag-remove",
 			description: "Present on the remove element.",
+		}),
+		createDataAttrSchema({
+			name: "editable",
+			description: "Present when the tag is editable.",
+		}),
+		createDataAttrSchema({
+			name: "removable",
+			description: "Present when the tag is removable.",
 		}),
 	],
 });
@@ -178,6 +213,12 @@ const input = createApiSchema<TagsInputInputPropsWithoutHTML>({
 			description: "The behavior to use when the input is blurred with text in it.",
 			default: "'none'",
 			definition: TagsInputBlurBehaviorProp,
+		}),
+		pasteBehavior: createEnumProp({
+			options: ["add", "none"],
+			description: "How text is handled when it is pasted into the input.",
+			default: "'add'",
+			definition: TagsInputPasteBehaviorProp,
 		}),
 		value: createStringProp({
 			description: "The value of the input.",

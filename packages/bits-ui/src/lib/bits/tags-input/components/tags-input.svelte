@@ -15,10 +15,8 @@
 		validate = () => true,
 		controlledValue = false,
 		delimiters = [","],
-		editable = true,
 		required = false,
 		name = "",
-		pasteBehavior = "add",
 		children,
 		child,
 		...restProps
@@ -42,10 +40,8 @@
 			(v) => (ref = v)
 		),
 		delimiters: box.with(() => delimiters),
-		editable: box.with(() => editable),
 		name: box.with(() => name),
 		required: box.with(() => required),
-		pasteBehavior: box.with(() => pasteBehavior),
 		validate: box.with(() => validate),
 	});
 

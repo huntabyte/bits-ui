@@ -576,7 +576,7 @@ export const valueDateRangeChangeFn: PropSchema = createFunctionProp({
 export const controlledValueProp = createBooleanProp({
 	default: C.FALSE,
 	description:
-		"Whether or not the value is controlled or not. If `true`, the component will not update the value state internally, instead it will call `onValueChange` when it would have otherwise, and it is up to you to update the `value` prop that is passed to the component.",
+		"Whether or not the value is controlled or not. If `true`, the component will not update the value state internally, instead it will call `onValueChange` when it would have otherwise, and it is up to you to update the `value` prop that is passed to the component. See [Controlled State](/docs/controlled-state) for more information.",
 });
 
 export const controlledPlaceholderProp = createBooleanProp({
