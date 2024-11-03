@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.39
+
+### Patch Changes
+
+-   add `closeOnSelect` prop to all the menu item components ([#859](https://github.com/huntabyte/bits-ui/pull/859))
+
 ## 1.0.0-next.38
 
 ### Patch Changes
