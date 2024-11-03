@@ -40,17 +40,6 @@ export type TagsInputRootPropsWithoutHTML = WithChild<{
 	delimiters?: string[];
 
 	/**
-	 * How to handle when the input is blurred with text in it.
-	 *
-	 * - `'clear'`: Clear the input and remove all tags.
-	 * - `'add'`: Add the text as a new tag. If it contains valid delimiters, it will be split into multiple tags.
-	 * - `'none'`: Don't do anything special when the input is blurred. Just leave the input as is.
-	 *
-	 * @defaultValue "none"
-	 */
-	blurBehavior?: TagsInputBlurBehavior;
-
-	/**
 	 * How to handle when text is pasted into the input.
 	 * - `'add'`: Add the pasted text as a new tag. If it contains valid delimiters, it will be split into multiple tags.
 	 * - `'none'`: Do not add the pasted text as a new tag, just insert it into the input.
@@ -119,6 +108,17 @@ export type TagsInputInputPropsWithoutHTML = WithChild<{
 	 * and it is up to you to update the `value` prop that is passed to the component.
 	 */
 	controlledValue?: boolean;
+
+	/**
+	 * How to handle when the input is blurred with text in it.
+	 *
+	 * - `'clear'`: Clear the input and remove all tags.
+	 * - `'add'`: Add the text as a new tag. If it contains valid delimiters, it will be split into multiple tags.
+	 * - `'none'`: Don't do anything special when the input is blurred. Just leave the input as is.
+	 *
+	 * @defaultValue "none"
+	 */
+	blurBehavior?: TagsInputBlurBehavior;
 }>;
 
 export type TagsInputInputProps = TagsInputInputPropsWithoutHTML &

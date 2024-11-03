@@ -15,7 +15,6 @@
 		validate = () => true,
 		controlledValue = false,
 		delimiters = [","],
-		blurBehavior = "none",
 		editable = true,
 		required = false,
 		name = "",
@@ -43,7 +42,6 @@
 			(v) => (ref = v)
 		),
 		delimiters: box.with(() => delimiters),
-		blurBehavior: box.with(() => blurBehavior),
 		editable: box.with(() => editable),
 		name: box.with(() => name),
 		required: box.with(() => required),

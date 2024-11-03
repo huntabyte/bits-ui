@@ -15,3 +15,5 @@ description: Create and manage a list of tags/chips.
 {/snippet}
 
 </ComponentPreviewV2>
+
+<APISection {schemas} />

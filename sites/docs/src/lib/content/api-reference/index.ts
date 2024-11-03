@@ -35,6 +35,7 @@ import { toggle } from "./toggle.api.js";
 import { toolbar } from "./toolbar.api.js";
 import { tooltip } from "./tooltip.api.js";
 import { menubar } from "./menubar.api.js";
+import { tagsInput } from "./tags-input.api.js";
 import type { APISchema } from "$lib/types/index.js";
 
 export const bits = [
@@ -120,7 +121,7 @@ export const apiSchemas: Record<Bit, APISchema[]> = {
 	slider,
 	switch: switchData,
 	tabs,
-	"tags-input": toggle,
+	"tags-input": tagsInput,
 	toggle,
 	"toggle-group": toggleGroup,
 	toolbar,

@@ -10,9 +10,10 @@ import type { FocusEventHandler } from "svelte/elements";
 import type { TagsInputBlurBehavior, TagsInputPasteBehavior } from "./types.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { createContext } from "$lib/internal/create-context.js";
-import { getAriaHidden, getRequired } from "$lib/internal/attrs.js";
+import { getAriaHidden, getDataInvalid, getRequired } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { RovingFocusGroup } from "$lib/internal/use-roving-focus.svelte.js";
+import { isOrContainsTarget } from "$lib/internal/elements.js";
 
 const ROOT_ATTR = "data-tags-input-root";
 const LIST_ATTR = "data-tags-input-list";
@@ -30,7 +31,6 @@ type TagsInputRootStateProps = WithRefProps &
 	}> &
 	ReadableBoxedValues<{
 		delimiters: string[];
-		blurBehavior: TagsInputBlurBehavior;
 		editable: boolean;
 		name: string;
 		required: boolean;
@@ -49,7 +49,6 @@ class TagsInputRootState {
 	value: TagsInputRootStateProps["value"];
 	valueSnapshot = $derived.by(() => $state.snapshot(this.value.current));
 	delimiters: TagsInputRootStateProps["delimiters"];
-	blurBehavior: TagsInputRootStateProps["blurBehavior"];
 	required: TagsInputRootStateProps["required"];
 	editable: TagsInputRootStateProps["editable"];
 	name: TagsInputRootStateProps["name"];
@@ -61,13 +60,17 @@ class TagsInputRootState {
 	editDescriptionNode = $state<HTMLElement | null>(null);
 	message = $state<string | null>(null);
 	messageTimeout: number | null = null;
+	/**
+	 * Whether the tags input is invalid or not. It enters an invalid state when the
+	 * `validate` prop returns `false` for any of the tags.
+	 */
+	isInvalid = $state(false);
 
 	constructor(props: TagsInputRootStateProps) {
 		this.#ref = props.ref;
 		this.#id = props.id;
 		this.value = props.value;
 		this.delimiters = props.delimiters;
-		this.blurBehavior = props.blurBehavior;
 		this.name = props.name;
 		this.editable = props.editable;
 		this.required = props.required;
@@ -84,14 +87,27 @@ class TagsInputRootState {
 		return this.value.current.includes(value);
 	};
 
-	addValue = (value: string) => {
-		if (value === "") return;
+	addValue = (value: string): boolean => {
+		if (value === "") return true;
+		const isValid = this.validate.current?.(value) ?? true;
+		if (!isValid) {
+			this.isInvalid = true;
+			return false;
+		}
+		this.isInvalid = false;
 		this.value.current.push(value);
 		this.announceAdd(value);
+		return true;
 	};
 
 	addValues = (values: string[]) => {
 		const newValues = values.filter((value) => value !== "");
+		const anyInvalid = newValues.some((value) => this.validate.current?.(value) === false);
+		if (anyInvalid) {
+			this.isInvalid = true;
+			return;
+		}
+		this.isInvalid = false;
 		this.value.current.push(...newValues);
 		this.announceAddMultiple(newValues);
 	};
@@ -110,6 +126,7 @@ class TagsInputRootState {
 	};
 
 	clearValue = () => {
+		this.isInvalid = false;
 		this.value.current = [];
 	};
 
@@ -148,6 +165,7 @@ class TagsInputRootState {
 			({
 				id: this.#id.current,
 				[ROOT_ATTR]: "",
+				"data-invalid": getDataInvalid(this.isInvalid),
 			}) as const
 	);
 }
@@ -195,6 +213,7 @@ class TagsInputListState {
 				id: this.#id.current,
 				[LIST_ATTR]: "",
 				role: "row",
+				"data-invalid": getDataInvalid(this.root.isInvalid),
 			}) as const
 	);
 }
@@ -215,6 +234,7 @@ class TagsInputTagState {
 	root: TagsInputRootState;
 	list: TagsInputListState;
 	textNode = $state<HTMLElement | null>(null);
+	removeNode = $state<HTMLElement | null>(null);
 	editCell = $state<HTMLElement | null>(null);
 	editInput = $state<HTMLInputElement | null>(null);
 	isEditing = $state(false);
@@ -253,9 +273,11 @@ class TagsInputTagState {
 		this.editInput?.select();
 	};
 
-	stopEditing = () => {
+	stopEditing = (focusTag = true) => {
 		this.isEditing = false;
-		this.#ref.current?.focus();
+		if (focusTag) {
+			this.#ref.current?.focus();
+		}
 	};
 
 	remove = () => {
@@ -292,6 +314,7 @@ class TagsInputTagState {
 				id: this.#id.current,
 				role: "gridcell",
 				"data-editing": this.isEditing ? "" : undefined,
+				"data-invalid": getDataInvalid(this.root.isInvalid),
 				tabindex: this.#tabIndex,
 				[TAG_ATTR]: "",
 				"aria-label": `${this.value.current}`,
@@ -301,6 +324,7 @@ class TagsInputTagState {
 }
 
 type TagsInputTagTextStateProps = WithRefProps;
+
 class TagsInputTagTextState {
 	#ref: TagsInputTagTextStateProps["ref"];
 	#id: TagsInputTagTextStateProps["id"];
@@ -322,15 +346,12 @@ class TagsInputTagTextState {
 		});
 	}
 
-	#onkeydown = (e: KeyboardEvent) => {};
-
 	props = $derived.by(
 		() =>
 			({
 				id: this.#id.current,
 				[TAG_TEXT_ATTR]: "",
 				tabindex: -1,
-				onkeydown: this.#onkeydown,
 			}) as const
 	);
 }
@@ -362,9 +383,12 @@ class TagsInputTagEditState {
 	});
 
 	#onkeydown = (e: KeyboardEvent & { currentTarget: HTMLInputElement }) => {
-		if (e.key === kbd.ESCAPE || e.key === kbd.TAB) {
-			e.preventDefault();
+		if (e.key === kbd.ESCAPE) {
+			// e.preventDefault();
 			this.tag.stopEditing();
+			e.currentTarget.value = this.tag.value.current;
+		} else if (e.key === kbd.TAB) {
+			this.tag.stopEditing(false);
 			e.currentTarget.value = this.tag.value.current;
 		} else if (e.key === kbd.ENTER) {
 			e.preventDefault();
@@ -379,6 +403,12 @@ class TagsInputTagEditState {
 		}
 	};
 
+	#onblur = (e: FocusEvent) => {
+		if (this.tag.isEditing) {
+			this.tag.stopEditing(false);
+		}
+	};
+
 	props = $derived.by(
 		() =>
 			({
@@ -386,9 +416,11 @@ class TagsInputTagEditState {
 				[TAG_EDIT_ATTR]: "",
 				tabindex: -1,
 				"data-editing": this.tag.isEditing ? "" : undefined,
+				"data-invalid": getDataInvalid(this.tag.root.isInvalid),
 				value: this.tag.value.current,
 				style: this.#style,
 				onkeydown: this.#onkeydown,
+				onblur: this.#onblur,
 				"aria-label": `Edit ${this.tag.value.current}`,
 				"aria-describedby": this.tag.root.editDescriptionNode?.id,
 				"aria-hidden": getAriaHidden(!this.tag.isEditing),
@@ -419,6 +451,9 @@ class TagsInputTagRemoveState {
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
+			onRefChange: (node) => {
+				this.#tag.removeNode = node;
+			},
 		});
 	}
 
@@ -455,19 +490,25 @@ class TagsInputTagRemoveState {
 	);
 }
 
-type TagsInputInputStateProps = WithRefProps & WritableBoxedValues<{ value: string }>;
+type TagsInputInputStateProps = WithRefProps &
+	ReadableBoxedValues<{
+		blurBehavior: TagsInputBlurBehavior;
+	}> &
+	WritableBoxedValues<{ value: string }>;
 
 class TagsInputInputState {
 	#ref: TagsInputInputStateProps["ref"];
 	#id: TagsInputInputStateProps["id"];
 	#root: TagsInputRootState;
 	value: TagsInputInputStateProps["value"];
+	#blurBehavior: TagsInputInputStateProps["blurBehavior"];
 
 	constructor(props: TagsInputInputStateProps, root: TagsInputRootState) {
 		this.#ref = props.ref;
 		this.#id = props.id;
 		this.#root = root;
 		this.value = props.value;
+		this.#blurBehavior = props.blurBehavior;
 
 		useRefById({
 			id: this.#id,
@@ -484,12 +525,12 @@ class TagsInputInputState {
 
 	#onkeydown = (e: KeyboardEvent & { currentTarget: HTMLInputElement }) => {
 		if (e.key === kbd.ENTER) {
-			this.#root.addValue(e.currentTarget.value);
-			this.#resetValue();
+			const valid = this.#root.addValue(e.currentTarget.value);
+			if (valid) this.#resetValue();
 		} else if (this.#root.delimiters.current.includes(e.key) && e.currentTarget.value) {
 			e.preventDefault();
-			this.#root.addValue(e.currentTarget.value);
-			this.#resetValue();
+			const valid = this.#root.addValue(e.currentTarget.value);
+			if (valid) this.#resetValue();
 		} else if (e.key === kbd.BACKSPACE && e.currentTarget.value === "") {
 			e.preventDefault();
 			const success = this.#root.listRovingFocusGroup?.focusLastCandidate();
@@ -509,14 +550,15 @@ class TagsInputInputState {
 	};
 
 	#onblur: FocusEventHandler<HTMLInputElement> = (e) => {
-		const blurBehavior = this.#root.blurBehavior.current;
+		const blurBehavior = this.#blurBehavior.current;
 		const currTarget = e.currentTarget as HTMLInputElement;
 		if (blurBehavior === "add" && currTarget.value !== "") {
-			this.#root.addValue(currTarget.value);
-			this.#resetValue();
+			const valid = this.#root.addValue(currTarget.value);
+			if (valid) this.#resetValue();
 		} else if (blurBehavior === "clear") {
 			this.#resetValue();
 		}
+		this.#root.isInvalid = false;
 	};
 
 	props = $derived.by(
@@ -524,6 +566,7 @@ class TagsInputInputState {
 			({
 				id: this.#id.current,
 				[INPUT_ATTR]: "",
+				"data-invalid": getDataInvalid(this.#root.isInvalid),
 				onkeydown: this.#onkeydown,
 				onblur: this.#onblur,
 				onpaste: this.#onpaste,
@@ -590,11 +633,23 @@ class TagsInputTagContentState {
 		return undefined;
 	});
 
-	props = $derived.by(() => ({
-		id: this.#id.current,
-		[TAG_CONTENT_ATTR]: "",
-		style: this.#style,
-	}));
+	#ondblclick = (e: MouseEvent) => {
+		const target = e.target as HTMLElement;
+		if (this.tag.removeNode && isOrContainsTarget(this.tag.removeNode, target)) {
+			return;
+		}
+		this.tag.startEditing();
+	};
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.current,
+				[TAG_CONTENT_ATTR]: "",
+				style: this.#style,
+				ondblclick: this.#ondblclick,
+			}) as const
+	);
 }
 
 class TagsInputTagHiddenInputState {

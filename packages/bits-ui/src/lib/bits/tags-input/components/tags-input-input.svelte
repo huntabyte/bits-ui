@@ -12,6 +12,7 @@
 		controlledValue = false,
 		onValueChange = noop,
 		child,
+		blurBehavior = "none",
 		...restProps
 	}: TagsInputInputProps = $props();
 
@@ -32,6 +33,7 @@
 				}
 			}
 		),
+		blurBehavior: box.with(() => blurBehavior),
 	});
 
 	const mergedProps = $derived(

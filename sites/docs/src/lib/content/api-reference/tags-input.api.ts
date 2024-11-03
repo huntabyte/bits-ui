@@ -1,6 +1,17 @@
-import type { TagsInputRootPropsWithoutHTML } from "bits-ui";
+import type {
+	TagsInputClearPropsWithoutHTML,
+	TagsInputInputPropsWithoutHTML,
+	TagsInputListPropsWithoutHTML,
+	TagsInputRootPropsWithoutHTML,
+	TagsInputTagContentPropsWithoutHTML,
+	TagsInputTagEditPropsWithoutHTML,
+	TagsInputTagPropsWithoutHTML,
+	TagsInputTagRemovePropsWithoutHTML,
+	TagsInputTagTextPropsWithoutHTML,
+} from "bits-ui";
 import {
 	TagsInputBlurBehaviorProp,
+	TagsInputInputOnValueChangeProp,
 	TagsInputOnValueChangeProp,
 	TagsInputValidateProp,
 } from "./extended-types/tags-input/index.js";
@@ -11,12 +22,14 @@ import {
 	createDataAttrSchema,
 	createEnumProp,
 	createFunctionProp,
+	createNumberProp,
 	createPropSchema,
+	createStringProp,
 	withChildProps,
 } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 
-export const root = createApiSchema<TagsInputRootPropsWithoutHTML>({
+const root = createApiSchema<TagsInputRootPropsWithoutHTML>({
 	title: "Root",
 	description: "An enhanced label component that can be used with any input.",
 	props: {
@@ -37,12 +50,7 @@ export const root = createApiSchema<TagsInputRootPropsWithoutHTML>({
 			description: "An array of delimiters to use to splitting the input value.",
 			default: "[',']",
 		}),
-		blurBehavior: createEnumProp({
-			options: ["clear", "add", "none"],
-			description: "The behavior to use when the input is blurred with text in it.",
-			default: "'none'",
-			definition: TagsInputBlurBehaviorProp,
-		}),
+
 		pasteBehavior: createEnumProp({
 			options: ["add", "none"],
 			description: "How text is handled when it is pasted into the input.",
@@ -79,4 +87,147 @@ export const root = createApiSchema<TagsInputRootPropsWithoutHTML>({
 	],
 });
 
-export const label = [root];
+const list = createApiSchema<TagsInputListPropsWithoutHTML>({
+	title: "List",
+	description: "The container for the tags.",
+	props: withChildProps({ elType: "HTMLDivElement" }),
+	dataAttributes: [
+		createDataAttrSchema({
+			name: "invalid",
+			description: "Present on the list element when the tags input is invalid.",
+		}),
+		createDataAttrSchema({
+			name: "tags-input-list",
+			description: "Present on the list element.",
+		}),
+	],
+});
+
+const tag = createApiSchema<TagsInputTagPropsWithoutHTML>({
+	title: "Tag",
+	description: "The container for a single tag within the tags input.",
+	props: {
+		value: createStringProp({
+			description: "The value of the tag.",
+			required: true,
+		}),
+		index: createNumberProp({
+			description: "The index of the tag in the value array.",
+			required: true,
+		}),
+		...withChildProps({ elType: "HTMLDivElement" }),
+	},
+	dataAttributes: [
+		createDataAttrSchema({
+			name: "editing",
+			description: "Present on the tag element when the tag is being edited.",
+		}),
+		createDataAttrSchema({
+			name: "invalid",
+			description: "Present on the tag element when the tags input is marked as invalid.",
+		}),
+	],
+});
+
+const tagText = createApiSchema<TagsInputTagTextPropsWithoutHTML>({
+	title: "TagText",
+	description: "The text content of the tag.",
+	props: withChildProps({ elType: "HTMLSpanElement" }),
+	dataAttributes: [
+		createDataAttrSchema({
+			name: "tags-input-tag-text",
+			description: "Present on the text element.",
+		}),
+	],
+});
+
+const tagEdit = createApiSchema<TagsInputTagEditPropsWithoutHTML>({
+	title: "TagEdit",
+	description: "The edit button for the tag.",
+	props: withChildProps({ elType: "HTMLButtonElement" }),
+	dataAttributes: [
+		createDataAttrSchema({
+			name: "tags-input-tag-edit",
+			description: "Present on the edit element.",
+		}),
+		createDataAttrSchema({
+			name: "invalid",
+			description: "Present on the edit element when the tags input is marked as invalid.",
+		}),
+	],
+});
+
+const tagRemove = createApiSchema<TagsInputTagRemovePropsWithoutHTML>({
+	title: "TagRemove",
+	description: "The remove button for the tag.",
+	props: withChildProps({ elType: "HTMLButtonElement" }),
+	dataAttributes: [
+		createDataAttrSchema({
+			name: "tags-input-tag-remove",
+			description: "Present on the remove element.",
+		}),
+	],
+});
+
+const input = createApiSchema<TagsInputInputPropsWithoutHTML>({
+	title: "Input",
+	description: "The input field for the tags input.",
+	props: {
+		blurBehavior: createEnumProp({
+			options: ["clear", "add", "none"],
+			description: "The behavior to use when the input is blurred with text in it.",
+			default: "'none'",
+			definition: TagsInputBlurBehaviorProp,
+		}),
+		value: createStringProp({
+			description: "The value of the input.",
+			bindable: true,
+		}),
+		onValueChange: createFunctionProp({
+			definition: TagsInputInputOnValueChangeProp,
+			description: "A callback function called when the value of the input changes.",
+		}),
+		controlledValue: createBooleanProp({
+			default: C.FALSE,
+			description:
+				"Whether or not the value is controlled or not. If `true`, the component will not update the value internally, instead it will call `onValueChange` when it would have otherwise, and it is up to you to update the `value` prop that is passed to the component.",
+		}),
+		...withChildProps({ elType: "HTMLInputElement" }),
+	},
+	dataAttributes: [
+		createDataAttrSchema({
+			name: "invalid",
+			description: "Present on the input element when the tags input is marked as invalid.",
+		}),
+		createDataAttrSchema({
+			name: "tags-input-input",
+			description: "Present on the input element.",
+		}),
+	],
+});
+
+const clear = createApiSchema<TagsInputClearPropsWithoutHTML>({
+	title: "Clear",
+	description: "The clear button for the tags input.",
+	props: withChildProps({ elType: "HTMLButtonElement" }),
+	dataAttributes: [
+		createDataAttrSchema({
+			name: "tags-input-clear",
+			description: "Present on the clear element.",
+		}),
+	],
+});
+
+const tagContent = createApiSchema<TagsInputTagContentPropsWithoutHTML>({
+	title: "TagContent",
+	description:
+		"The container for the tag content, which typically includes the tag text and edit/remove buttons and does not include the edit input.",
+	props: withChildProps({ elType: "HTMLDivElement" }),
+	dataAttributes: [
+		createDataAttrSchema({
+			name: "tags-input-tag-content",
+		}),
+	],
+});
+
+export const tagsInput = [root, list, tag, tagContent, tagText, tagRemove, tagEdit, input, clear];
