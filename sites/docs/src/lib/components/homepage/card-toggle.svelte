@@ -52,14 +52,14 @@
 					src: "/avatar-1.png",
 					fallback: "HB",
 					firstName: "Huntabyte",
-					username: "@huntabyte",
+					username: "huntabyte",
 				})}
 				{@render UserListItem({
 					alt: "@pavelstianko",
 					src: "/avatar-1.png",
 					fallback: "PS",
 					firstName: "Pavel",
-					username: "@pavelstianko",
+					username: "pavelstianko",
 				})}
 			</Tabs.Content>
 			<Tabs.Content value="other" class="select-none">
@@ -68,14 +68,14 @@
 					src: "/avatar-1.png",
 					fallback: "PJ",
 					firstName: "Pája",
-					username: "@paja",
+					username: "paja",
 				})}
 				{@render UserListItem({
 					alt: "@pavelstianko",
 					src: "/avatar-1.png",
 					fallback: "PS",
 					firstName: "Pavel",
-					username: "@pavelstianko",
+					username: "pavelstianko",
 				})}
 			</Tabs.Content>
 		</Tabs.Root>
