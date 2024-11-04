@@ -17,7 +17,7 @@
   <div class="circle border border-border-input bg-white w-3 aspect-square rounded-full absolute bottom-0 left-0 -translate-x-1/2 translate-y-1/2 "/>
   <div class="circle border border-border-input bg-white w-3 aspect-square rounded-full absolute bottom-0 right-0 translate-x-1/2 translate-y-1/2 "/>
   
-  <div class="bg-[#FEFCE8] rounded-card-lg py-3 px-[14px] m-[10px] w-full aspect-square">
+  <div class="bg-[#FEFCE8] rounded-card-lg py-3 px-[14px] m-[10px]  w-full aspect-square ">
     <Tabs.Root value="follow">
       <Tabs.List class="bg-[#18181B12] h-10 flex items-center px-[3px] py-1 rounded-input shadow-mini-inset mb-[14px]">
         <Tabs.Trigger value="follow" class="data-[state=active]:bg-white data-[state=active]:shadow-mini rounded-[7px] text-sm font-medium h-8 w-full text-foreground/70 data-[state=active]:text-foreground">Follow</Tabs.Trigger>
@@ -352,5 +352,6 @@
 <style lang="postcss">
   .outer {
     border: 1px solid #cacaca;
+    transform: translateY(40%);
   }
 </style>

@@ -1,18 +1,16 @@
 <script lang=ts>
   import X from "phosphor-svelte/lib/X";
-  
   import HomeCombobox from "$lib/components/homepage/HomeCombobox.svelte";
   import HomeSwitch from "$lib/components/homepage/HomeSwitch.svelte";
-  
 </script>
 
-  <div class="relative">
+  <div class="relative outer">
     <div class="line line_top"></div>
     <div class="line line_right"></div>
     <div class="m-[10px]">
-      <div class="bg-white shadow-card border border-border-input rounded-card-lg py-3 px-[14px]  w-full">
+      <div class="bg-white shadow-card border border-border-input rounded-card-lg py-3 px-[14px] aspect-square w-full ">
         <div class="timer bg-foreground p-1 rounded-15px mb-5">
-          <div class="timer_inner text-white rounded-xl px-2 pt-4 pb-9">
+          <div class="timer_inner text-white rounded-xl px-2 pt-4 pb-8">
             <div class="time font-medium">0:00:00</div>
             <div class="text-[13px] font-medium">Task:<span class="w-[10px] aspect-square rounded-full bg-rose-500 inline-block ml-1 mr-2 mt-3"></span>New app</div>
           </div>
@@ -58,11 +56,14 @@
     background-size: 1px 10px, 100% 100%;
     transform: rotate(180deg);
   }
+  .outer{
+    transform: translateY(7%);
+  }
   .timer_inner{
     background: rgba(81,84,95,0.6);
   }
   .time{
-    font-size: clamp(1.875rem, 1.7vw + 1rem, 3.125rem);
+    font-size: 2.563rem;
     line-height: 100%;
   }
   .label{

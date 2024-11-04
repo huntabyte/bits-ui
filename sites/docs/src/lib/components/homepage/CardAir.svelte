@@ -49,7 +49,7 @@
 
 <style lang="postcss">
   .temp{
-    font-size: clamp(2.5rem, 2.9vw + 1rem, 4.375rem);
+    font-size: 3.625rem;
     line-height: 1;
   }
   .right_text{

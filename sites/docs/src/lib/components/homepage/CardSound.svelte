@@ -1,16 +1,13 @@
 <script lang="ts">
-  
   import HomeToolbar from "$lib/components/homepage/HomeToolbar.svelte";
-  
-  let className: string | undefined | null = undefined;
-  export { className as class };
 </script>
 
-<div class="relative">
+<div class="relative outer">
   <div class="line line_top"></div>
   <div class="line line_left"></div>
   <div class="line line_right"></div>
-  <div class="bg-foreground rounded-card-lg py-3 px-[14px] m-3">
+
+  <div class="bg-foreground rounded-card-lg py-3 px-[14px] m-[10px] overflow-hidden aspect-square">
     <div class="flex justify-between">
       <h3 class="text-background text-xl font-medium ml-[6px] mt-[7px]">
         <span class="">Sound</span>
@@ -31,6 +28,7 @@
 
 
 <style lang="postcss">
+  /* lines */
   .line_top {
     position: absolute;
     top: 0;
@@ -50,7 +48,6 @@
     background-size: 1px 10px, 100% 100%;
     transform: rotate(180deg);
   }
-
   .line_right {
     position: absolute;
     right: 0;
@@ -62,6 +59,9 @@
     transform: rotate(180deg);
   }
 
+  .outer{
+    transform: translateY(20%);
+  }
   .sound_meter{
     width: 100%;
     aspect-ratio: 1/1;
