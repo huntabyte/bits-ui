@@ -46,7 +46,7 @@
 				href="/"
 				class="inline-flex gap-2 rounded-card-lg border border-border-input py-1.5 pl-3 pr-4 shadow-mini"
 			>
-				<Sparkle class="size-4 mt-[2px]" aria-label="Stars" />
+				<Sparkle class="mt-[2px] size-4" aria-label="Stars" />
 				<span
 					class="inline-block border-l border-l-border-input pl-3 text-[13px] font-medium text-foreground"
 					>New Svelte 5 version</span
@@ -63,18 +63,18 @@
         hover:bg-dark/95 active:scale-98 active:transition-all"
 			>
 				<kbd
-					class=" pointer-events-none hidden h-5 select-none items-center gap-1 rounded border bg-background-alt px-1.5 font-mono text-[10px] font-medium opacity-100 shadow-kbd_homepage sm:flex "
+					class=" shadow-kbd_homepage pointer-events-none hidden h-5 select-none items-center gap-1 rounded border bg-background-alt px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex"
 				>
 					<span class="text-xs text-foreground-alt">S</span>
 				</kbd>
-				<span class="ml-4 mr-3 text-[14px] font-semibold text-background -tracking-[0.01em]"
+				<span class="ml-4 mr-3 text-[14px] font-semibold -tracking-[0.01em] text-background"
 					>Start building</span
 				>
 			</Button.Root>
 		</div>
 
 		<div class="bottom_visual mx-auto mt-20 grid gap-0">
-			<div class="relative">
+			<div class="relative hidden lg:order-1 lg:block">
 				<div class="square"></div>
 			</div>
 
@@ -83,7 +83,7 @@
 			<CardToggle />
 			<CardTimer />
 
-			<div class="relative">
+			<div class="relative hidden lg:order-6 lg:block">
 				<div class="circle"></div>
 			</div>
 		</div>
@@ -94,7 +94,7 @@
 	.page_wrap {
 		background: linear-gradient(179deg, #fdfdfd 44.88%, rgba(253, 253, 253, 0) 93.29%),
 			linear-gradient(0deg, rgba(245, 245, 245, 0.2) 0%, rgba(245, 245, 245, 0.2) 100%);
-      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+		border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 	}
 
 	header {
@@ -124,28 +124,35 @@
 	section {
 		overflow: hidden;
 		height: calc(100svh - 76px); /* header height */
-		max-height: 900px;
-		min-height: 700px;
 		padding-top: 7em;
 		display: flex;
 		flex-direction: column;
+
 		justify-content: space-between;
+		@media screen and (min-width: 1440px) {
+			max-height: 900px;
+		}
 	}
 
 	h1 {
 		text-wrap: balance;
 		//font-size: clamp(3.125rem, 3.6vw + 1rem, 5rem);
-    font-size: 4.25rem;
+		font-size: 4.25rem;
 		line-height: 102%;
 		margin-bottom: 0.35em;
 		margin-top: 0.2em;
 		font-family: "Cal Sans", sans-serif;
 		font-weight: 600;
 
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.00) 41.43%), #272727;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    padding-bottom: 0.1em;
+		background: linear-gradient(
+				180deg,
+				rgba(255, 255, 255, 0.1) 0%,
+				rgba(255, 255, 255, 0) 41.43%
+			),
+			#272727;
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		padding-bottom: 0.1em;
 	}
 
 	p {
@@ -156,7 +163,12 @@
 
 	/* bottom part */
 	.bottom_visual {
-		grid-template-columns: 1fr repeat(4, 259px) 1fr;
+		grid-template-columns: repeat(2, 1fr);
+		//background: blue;
+		@media screen and (min-width: 1024px) {
+			//background: red;
+			grid-template-columns: 1fr repeat(4, 259px) 1fr;
+		}
 	}
 
 	.square {
@@ -211,7 +223,7 @@
 		}
 	}
 
-  .shadow-kbd_homepage {
-    box-shadow: 0px 2px 0px 0px #59595B;
-}
+	.shadow-kbd_homepage {
+		box-shadow: 0px 2px 0px 0px #59595b;
+	}
 </style>
