@@ -6,7 +6,7 @@ import { type EventCallback, addEventListener } from "$lib/internal/events.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { noop } from "$lib/internal/noop.js";
 
-const layers = new Map<EscapeLayerState, ReadableBox<EscapeBehaviorType>>();
+globalThis.bitsEscapeLayers ??= new Map<EscapeLayerState, ReadableBox<EscapeBehaviorType>>();
 
 type EscapeLayerStateProps = ReadableBoxedValues<Required<Omit<EscapeLayerImplProps, "children">>>;
 
@@ -24,7 +24,7 @@ export class EscapeLayerState {
 
 		$effect(() => {
 			if (this.#enabled.current) {
-				layers.set(
+				globalThis.bitsEscapeLayers.set(
 					this,
 					untrack(() => this.#behaviorType)
 				);
@@ -33,7 +33,7 @@ export class EscapeLayerState {
 
 			return () => {
 				unsubEvents();
-				layers.delete(this);
+				globalThis.bitsEscapeLayers.delete(this);
 			};
 		});
 	}
@@ -57,7 +57,7 @@ export function useEscapeLayer(props: EscapeLayerStateProps) {
 }
 
 function isResponsibleEscapeLayer(instance: EscapeLayerState) {
-	const layersArr = [...layers];
+	const layersArr = [...globalThis.bitsEscapeLayers];
 	/**
 	 * We first check if we can find a top layer with `close` or `ignore`.
 	 * If that top layer was found and matches the provided node, then the node is

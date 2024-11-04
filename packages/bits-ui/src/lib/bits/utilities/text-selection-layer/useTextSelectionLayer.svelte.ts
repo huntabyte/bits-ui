@@ -15,7 +15,7 @@ import { isOrContainsTarget } from "$lib/internal/elements.js";
 
 type StateProps = ReadableBoxedValues<Required<Omit<TextSelectionLayerImplProps, "children">>>;
 
-const layers = new Map<TextSelectionLayerState, ReadableBox<boolean>>();
+globalThis.bitsTextSelectionLayers ??= new Map<TextSelectionLayerState, ReadableBox<boolean>>();
 
 export class TextSelectionLayerState {
 	#id: StateProps["id"];
@@ -40,7 +40,7 @@ export class TextSelectionLayerState {
 
 		$effect(() => {
 			if (this.#enabled.current) {
-				layers.set(
+				globalThis.bitsTextSelectionLayers.set(
 					this,
 					untrack(() => this.#enabled)
 				);
@@ -49,7 +49,7 @@ export class TextSelectionLayerState {
 			return () => {
 				unsubEvents();
 				this.#resetSelectionLock();
-				layers.delete(this);
+				globalThis.bitsTextSelectionLayers.delete(this);
 			};
 		});
 	}
@@ -71,7 +71,7 @@ export class TextSelectionLayerState {
 		if (!isHTMLElement(node) || !isHTMLElement(target) || !this.#enabled.current) return;
 		/**
 		 * We only lock user-selection overflow if layer is the top most layer and
-		 * pointerdown occured inside the node. You are still allowed to select text
+		 * pointerdown occurred inside the node. You are still allowed to select text
 		 * outside the node provided pointerdown occurs outside the node.
 		 */
 		if (!isHighestLayer(this) || !isOrContainsTarget(node, target)) return;
@@ -110,7 +110,7 @@ function setUserSelect(node: HTMLElement, value: string) {
 }
 
 function isHighestLayer(instance: TextSelectionLayerState) {
-	const layersArr = [...layers];
+	const layersArr = [...globalThis.bitsTextSelectionLayers];
 	if (!layersArr.length) return false;
 	const highestLayer = layersArr.at(-1);
 	if (!highestLayer) return false;
