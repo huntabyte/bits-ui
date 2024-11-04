@@ -10,7 +10,7 @@
 	import LightSwitch from "$lib/components/light-switch.svelte";
 </script>
 
-<div class="page_wrap">
+<div class="page_wrap_gradient border-b border-solid border-black/10">
 	<header class="grid grid-cols-3 px-5 py-[17px]">
 		<a
 			href="/"
@@ -21,9 +21,28 @@
 
 		<nav class="mt-2 text-center">
 			<ul>
-				<li class="active"><a href="/">Home</a></li>
-				<li><a href="/">Showcase</a></li>
-				<li><a href="/">Docs</a></li>
+				<li class="inline-block">
+					<a
+						data-active
+						href="/"
+						class="rounded-[40px] px-[0.9em] pb-[0.4em] pt-[0.3em] text-sm font-medium leading-[1] tracking-[0.01em] data-[active]:bg-black/5 data-[active]:text-foreground"
+						>Home</a
+					>
+				</li>
+				<li class="inline-block">
+					<a
+						href="/"
+						class="rounded-[40px] px-[0.9em] pb-[0.4em] pt-[0.3em] text-sm font-medium leading-[1] tracking-[0.01em] data-[active]:bg-black/5 data-[active]:text-foreground"
+						>Showcase</a
+					>
+				</li>
+				<li class="inline-block">
+					<a
+						href="/"
+						class="rounded-[40px] px-[0.9em] pb-[0.4em] pt-[0.3em] text-sm font-medium leading-[1] tracking-[0.01em] data-[active]:bg-black/5 data-[active]:text-foreground"
+						>Docs</a
+					>
+				</li>
 			</ul>
 		</nav>
 
@@ -40,7 +59,9 @@
 		</div>
 	</header>
 
-	<section>
+	<section
+		class="flex h-[calc(100svh-76px)] flex-col justify-between overflow-hidden pt-[7em] desktop:max-h-[900px]"
+	>
 		<div class="mx-auto w-7/12 text-center">
 			<a
 				href="/"
@@ -52,8 +73,14 @@
 					>New Svelte 5 version</span
 				>
 			</a>
-			<h1 class="antialiased">Build your own&nbsp;amazing UI elements</h1>
-			<p class="mx-auto w-9/12 font-medium text-muted-foreground">
+			<h1
+				class="mb-[0.35em] mt-[0.2em] text-balance pb-[0.1em] text-[4.25rem] font-semibold leading-[102%] antialiased"
+			>
+				The headless components for Svelte
+			</h1>
+			<p
+				class="mx-auto mb-[2em] w-9/12 text-[1.125rem] font-medium leading-[144%] text-muted-foreground"
+			>
 				Bits UI is a collection of headless component primitives that enable you to build
 				your own custom components.
 			</p>
@@ -63,7 +90,7 @@
         hover:bg-dark/95 active:scale-98 active:transition-all"
 			>
 				<kbd
-					class=" shadow-kbd_homepage pointer-events-none hidden h-5 select-none items-center gap-1 rounded border bg-background-alt px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex"
+					class="shadow-kbd_homepage pointer-events-none hidden h-5 select-none items-center gap-1 rounded border bg-background-alt px-1.5 font-mono text-xxs font-medium opacity-100 sm:flex"
 				>
 					<span class="text-xs text-foreground-alt">S</span>
 				</kbd>
@@ -73,7 +100,7 @@
 			</Button.Root>
 		</div>
 
-		<div class="bottom_visual mx-auto mt-20 grid gap-0">
+		<div class="mx-auto mt-20 grid grid-cols-2 gap-0 lg:grid-cols-[1fr_repeat(4,259px)_1fr]">
 			<div class="relative hidden lg:order-1 lg:block">
 				<div class="square"></div>
 			</div>
@@ -91,59 +118,13 @@
 </div>
 
 <style lang="postcss">
-	.page_wrap {
+	.page_wrap_gradient {
 		background: linear-gradient(179deg, #fdfdfd 44.88%, rgba(253, 253, 253, 0) 93.29%),
 			linear-gradient(0deg, rgba(245, 245, 245, 0.2) 0%, rgba(245, 245, 245, 0.2) 100%);
-		border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-	}
-
-	header {
-		nav {
-			li {
-				display: inline-block;
-				a {
-					font-size: 14px;
-					letter-spacing: 0.01em;
-					line-height: 1;
-					font-weight: 500;
-					-webkit-font-smoothing: antialiased;
-					border-radius: 40px;
-					padding: 0.3em 0.9em 0.4em 0.9em;
-					color: hsl(var(--foreground) / 0.5);
-				}
-				&.active {
-					a {
-						background: rgba(0, 0, 0, 0.05);
-						color: hsl(var(--foreground));
-					}
-				}
-			}
-		}
-	}
-
-	section {
-		overflow: hidden;
-		height: calc(100svh - 76px); /* header height */
-		padding-top: 7em;
-		display: flex;
-		flex-direction: column;
-
-		justify-content: space-between;
-		@media screen and (min-width: 1440px) {
-			max-height: 900px;
-		}
 	}
 
 	h1 {
-		text-wrap: balance;
-		//font-size: clamp(3.125rem, 3.6vw + 1rem, 5rem);
-		font-size: 4.25rem;
-		line-height: 102%;
-		margin-bottom: 0.35em;
-		margin-top: 0.2em;
 		font-family: "Cal Sans", sans-serif;
-		font-weight: 600;
-
 		background: linear-gradient(
 				180deg,
 				rgba(255, 255, 255, 0.1) 0%,
@@ -152,23 +133,6 @@
 			#272727;
 		-webkit-background-clip: text;
 		-webkit-text-fill-color: transparent;
-		padding-bottom: 0.1em;
-	}
-
-	p {
-		font-size: 1.125rem;
-		line-height: 144%;
-		margin-bottom: 2em;
-	}
-
-	/* bottom part */
-	.bottom_visual {
-		grid-template-columns: repeat(2, 1fr);
-		//background: blue;
-		@media screen and (min-width: 1024px) {
-			//background: red;
-			grid-template-columns: 1fr repeat(4, 259px) 1fr;
-		}
 	}
 
 	.square {
