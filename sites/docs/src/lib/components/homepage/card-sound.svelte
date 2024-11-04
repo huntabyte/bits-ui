@@ -1,5 +1,5 @@
 <script lang="ts">
-	import HomeToolbar from "$lib/components/homepage/HomeToolbar.svelte";
+	import HomeToolbar from "$lib/components/homepage/home-toolbar.svelte";
 </script>
 
 <div class="outer relative order-4 lg:order-2">

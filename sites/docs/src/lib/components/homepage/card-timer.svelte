@@ -1,7 +1,7 @@
 <script lang="ts">
 	import X from "phosphor-svelte/lib/X";
-	import HomeSwitch from "$lib/components/homepage/HomeSwitch.svelte";
-	import HomeSelect from "$lib/components/homepage/HomeSelect.svelte";
+	import HomeSwitch from "$lib/components/homepage/home-switch.svelte";
+	import HomeSelect from "$lib/components/homepage/home-select.svelte";
 	let checked = false;
 
 	let startTime: number;

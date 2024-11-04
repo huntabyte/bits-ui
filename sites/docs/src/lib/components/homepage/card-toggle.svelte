@@ -10,22 +10,22 @@
 <div class="outer relative order-3 flex h-min lg:order-4">
 	<div
 		class="circle absolute left-0 top-0 aspect-square w-3 -translate-x-1/2 -translate-y-1/2 rounded-full border border-border-input bg-white"
-	/>
+	></div>
 	<div
 		class="circle absolute right-0 top-0 aspect-square w-3 -translate-y-1/2 translate-x-1/2 rounded-full border border-border-input bg-white"
-	/>
+	></div>
 	<div
 		class="middle absolute left-1/2 top-0 aspect-[24/6] w-6 -translate-x-1/2 -translate-y-1/2 rounded-[7px] border border-border-input bg-white"
-	/>
+	></div>
 	<div
 		class="middle absolute bottom-0 left-1/2 aspect-[24/6] w-6 -translate-x-1/2 translate-y-1/2 rounded-[7px] border border-border-input bg-white"
-	/>
+	></div>
 	<div
 		class="circle absolute bottom-0 left-0 aspect-square w-3 -translate-x-1/2 translate-y-1/2 rounded-full border border-border-input bg-white"
-	/>
+	></div>
 	<div
 		class="circle absolute bottom-0 right-0 aspect-square w-3 translate-x-1/2 translate-y-1/2 rounded-full border border-border-input bg-white"
-	/>
+	></div>
 
 	<div class="m-[10px] aspect-square w-full rounded-card-lg bg-[#FEFCE8] px-[14px] py-3">
 		<Tabs.Root value="follow">

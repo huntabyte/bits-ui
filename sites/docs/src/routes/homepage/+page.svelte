@@ -2,10 +2,10 @@
 	import "$lib/styles/app.postcss";
 	import { Button } from "bits-ui";
 	import Sparkle from "phosphor-svelte/lib/Sparkle";
-	import CardAir from "$lib/components/homepage/CardAir.svelte";
-	import CardSound from "$lib/components/homepage/CardSound.svelte";
-	import CardTimer from "$lib/components/homepage/CardTimer.svelte";
-	import CardToggle from "$lib/components/homepage/CardToggle.svelte";
+	import CardAir from "$lib/components/homepage/card-air.svelte";
+	import CardSound from "$lib/components/homepage/card-sound.svelte";
+	import CardTimer from "$lib/components/homepage/card-timer.svelte";
+	import CardToggle from "$lib/components/homepage/card-toggle.svelte";
 	import { Logo } from "$icons/index.js";
 	import LightSwitch from "$lib/components/light-switch.svelte";
 </script>
