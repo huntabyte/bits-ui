@@ -38,7 +38,7 @@
 				</li>
 				<li class="inline-block">
 					<a
-						href="/"
+						href="/docs"
 						class="rounded-[40px] px-[0.9em] pb-[0.4em] pt-[0.3em] text-sm font-medium leading-[1] tracking-[0.01em] data-[active]:bg-black/5 data-[active]:text-foreground"
 						>Docs</a
 					>
