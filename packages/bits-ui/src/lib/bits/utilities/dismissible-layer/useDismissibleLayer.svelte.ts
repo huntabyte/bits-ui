@@ -75,10 +75,12 @@ export class DismissibleLayerState {
 		$effect(() => {
 			if (this.#enabled.current && this.currNode) {
 				afterSleep(1, () => {
+					if (!this.currNode) return;
 					globalThis.bitsDismissableLayers.set(
 						this,
 						untrack(() => this.#behaviorType)
 					);
+
 					unsubEvents();
 					unsubEvents = this.#addEventListeners();
 				});

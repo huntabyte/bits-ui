@@ -1,12 +1,14 @@
 import { type ReadableBox, afterTick } from "svelte-toolbelt";
+import { Previous } from "runed";
+import { untrack } from "svelte";
 import { useStateMachine } from "$lib/internal/use-state-machine.svelte.js";
-import { watch } from "$lib/internal/box.svelte.js";
 
 export function usePresence(present: ReadableBox<boolean>, id: ReadableBox<string>) {
 	let styles = $state({}) as CSSStyleDeclaration;
 	let prevAnimationNameState = $state("none");
 	const initialState = present.current ? "mounted" : "unmounted";
 	let node = $state<HTMLElement | null>(null);
+	const prevPresent = new Previous(() => present.current);
 
 	$effect(() => {
 		if (!id.current) return;
@@ -31,38 +33,41 @@ export function usePresence(present: ReadableBox<boolean>, id: ReadableBox<strin
 		},
 	});
 
-	watch(present, (currPresent, prevPresent) => {
-		if (!node) {
-			node = document.getElementById(id.current);
-		}
-		if (!node) return;
-		const hasPresentChanged = currPresent !== prevPresent;
-		if (!hasPresentChanged) return;
-
-		const prevAnimationName = prevAnimationNameState;
-		const currAnimationName = getAnimationName(node);
-
-		if (currPresent) {
-			dispatch("MOUNT");
-		} else if (currAnimationName === "none" || styles.display === "none") {
-			// If there is no exit animation or the element is hidden, animations won't run
-			// so we unmount instantly
-			dispatch("UNMOUNT");
-		} else {
-			/**
-			 * When `present` changes to `false`, we check changes to animation-name to
-			 * determine whether an animation has started. We chose this approach (reading
-			 * computed styles) because there is no `animationrun` event and `animationstart`
-			 * fires after `animation-delay` has expired which would be too late.
-			 */
-			const isAnimating = prevAnimationName !== currAnimationName;
-
-			if (prevPresent && isAnimating) {
-				dispatch("ANIMATION_OUT");
-			} else {
-				dispatch("UNMOUNT");
+	$effect(() => {
+		const currPresent = present.current;
+		untrack(() => {
+			if (!node) {
+				node = document.getElementById(id.current);
 			}
-		}
+			if (!node) return;
+			const hasPresentChanged = currPresent !== prevPresent.current;
+			if (!hasPresentChanged) return;
+
+			const prevAnimationName = prevAnimationNameState;
+			const currAnimationName = getAnimationName(node);
+
+			if (currPresent) {
+				dispatch("MOUNT");
+			} else if (currAnimationName === "none" || styles.display === "none") {
+				// If there is no exit animation or the element is hidden, animations won't run
+				// so we unmount instantly
+				dispatch("UNMOUNT");
+			} else {
+				/**
+				 * When `present` changes to `false`, we check changes to animation-name to
+				 * determine whether an animation has started. We chose this approach (reading
+				 * computed styles) because there is no `animationrun` event and `animationstart`
+				 * fires after `animation-delay` has expired which would be too late.
+				 */
+				const isAnimating = prevAnimationName !== currAnimationName;
+
+				if (prevPresent && isAnimating) {
+					dispatch("ANIMATION_OUT");
+				} else {
+					dispatch("UNMOUNT");
+				}
+			}
+		});
 	});
 
 	/**
@@ -95,13 +100,16 @@ export function usePresence(present: ReadableBox<boolean>, id: ReadableBox<strin
 		}
 	}
 
-	watch(state, () => {
-		if (!node) {
-			node = document.getElementById(id.current);
-		}
-		if (!node) return;
-		const currAnimationName = getAnimationName(node);
-		prevAnimationNameState = state.current === "mounted" ? currAnimationName : "none";
+	$effect(() => {
+		state.current;
+		untrack(() => {
+			if (!node) {
+				node = document.getElementById(id.current);
+			}
+			if (!node) return;
+			const currAnimationName = getAnimationName(node);
+			prevAnimationNameState = state.current === "mounted" ? currAnimationName : "none";
+		});
 	});
 
 	$effect(() => {
