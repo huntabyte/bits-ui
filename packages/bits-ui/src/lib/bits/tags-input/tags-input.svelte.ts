@@ -62,6 +62,7 @@ class TagsInputRootState {
 	 * `validate` prop returns `false` for any of the tags.
 	 */
 	isInvalid = $state(false);
+	hasValue = $derived.by(() => this.value.current.length > 0);
 
 	constructor(props: TagsInputRootStateProps) {
 		this.#ref = props.ref;
@@ -195,7 +196,7 @@ class TagsInputListState {
 	gridWrapperProps = $derived.by(
 		() =>
 			({
-				role: "grid",
+				role: this.root.hasValue ? "grid" : undefined,
 				style: {
 					display: "contents",
 				},
@@ -207,7 +208,7 @@ class TagsInputListState {
 			({
 				id: this.#id.current,
 				[LIST_ATTR]: "",
-				role: "row",
+				role: this.root.hasValue ? "row" : undefined,
 				"data-invalid": getDataInvalid(this.root.isInvalid),
 			}) as const
 	);
