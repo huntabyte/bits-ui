@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.41
+
+### Patch Changes
+
+-   fix: make layers global for use with other libs that depend on Bits UI (like `vaul-svelte`) ([#873](https://github.com/huntabyte/bits-ui/pull/873))
+
 ## 1.0.0-next.40
 
 ### Patch Changes

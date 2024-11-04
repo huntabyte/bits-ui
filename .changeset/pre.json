@@ -7,6 +7,7 @@
     "tests": "0.0.0"
   },
   "changesets": [
+    "beige-meals-repair",
     "big-fishes-double",
     "blue-guests-jump",
     "brown-pillows-hear",
