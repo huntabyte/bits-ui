@@ -53,6 +53,7 @@
 				class="inline-flex h-10 items-center justify-center rounded-input bg-dark
         px-5 text-[14px] font-semibold text-background shadow-mini
         hover:bg-dark/95 active:scale-98 active:transition-all"
+				href="/docs"
 			>
 				Get started
 			</Button.Root>
@@ -64,7 +65,7 @@
 	>
 		<div class="mx-auto w-7/12 text-center">
 			<a
-				href="/"
+				href="/docs"
 				class="inline-flex gap-2 rounded-card-lg border border-border-input py-1.5 pl-3 pr-4 shadow-mini"
 			>
 				<Sparkle class="mt-[2px] size-4" aria-label="Stars" />
@@ -88,6 +89,7 @@
 				class="inline-flex h-10 items-center justify-center rounded-input bg-dark
         px-3 shadow-mini
         hover:bg-dark/95 active:scale-98 active:transition-all"
+				href="/docs"
 			>
 				<kbd
 					class="shadow-kbd_homepage pointer-events-none hidden h-5 select-none items-center gap-1 rounded border bg-background-alt px-1.5 font-mono text-xxs font-medium opacity-100 sm:flex"
