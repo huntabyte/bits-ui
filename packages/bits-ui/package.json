@@ -55,7 +55,7 @@
 		"svelte-toolbelt": "^0.4.4"
 	},
 	"peerDependencies": {
-		"svelte": "^5.0.0-next.1"
+		"svelte": "^5.0.0"
 	},
 	"engines": {
 		"pnpm": ">=8.7.0",
