@@ -6,9 +6,9 @@
 	let foo = $state([50]);
 </script>
 
-<div class="relative order-2 lg:order-3 lg:-translate-y-[12px]">
+<div class="relative order-2 lg:order-3 lg:-translate-y-3">
 	<div
-		class="m-[10px] flex aspect-square flex-col justify-between rounded-card-lg bg-[#e0f2fe] px-5 pb-8 pt-5"
+		class="m-2.5 flex aspect-square flex-col justify-between rounded-card-lg bg-[#e0f2fe] px-5 pb-8 pt-5"
 	>
 		<div class="flex justify-between">
 			<Tabs.Root value="c" class="flex items-center font-medium">
@@ -58,7 +58,7 @@
 					</div>
 				{/each}
 				<div
-					class="absolute -left-[6px] top-1/2 aspect-[212/30] w-[calc(100%+10px)] -translate-y-1/2"
+					class="absolute -left-1.5 top-1/2 aspect-[212/30] w-[calc(100%+10px)] -translate-y-1/2"
 				>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"

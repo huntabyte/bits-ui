@@ -20,7 +20,7 @@
 <Select.Root type="single" bind:value items={themes}>
 	<Select.Trigger
 		class="inline-flex h-[37px] w-full select-none items-center rounded-9px border border-border-input bg-background px-3 pr-2  text-sm transition-colors placeholder:text-foreground-alt/50"
-		aria-label="New app"
+		aria-label="Select task"
 	>
 		{selectedLabel}
 		<CaretUpDown class="ml-auto size-6 text-muted-foreground" />

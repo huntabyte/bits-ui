@@ -2,23 +2,22 @@
 	import X from "phosphor-svelte/lib/X";
 	import HomeSwitch from "$lib/components/homepage/home-switch.svelte";
 	import HomeSelect from "$lib/components/homepage/home-select.svelte";
-	let checked = false;
 
-	let startTime: number;
-	let stopwatchInterval: string | number | NodeJS.Timeout | null | undefined;
-	let elapsedPausedTime = 0;
+	let checked = $state(false);
+	let startTime = $state(0);
+	let stopwatchInterval: number | null = null;
+	let elapsedPausedTime = $state(0);
+	let displayTime = $state("0:00:00");
 
-	let stopwatchElement: HTMLDivElement;
 	function startStopwatch() {
-		if (!stopwatchInterval) {
-			startTime = new Date().getTime() - elapsedPausedTime;
-			stopwatchInterval = setInterval(updateStopwatch, 1000);
-		}
+		if (stopwatchInterval !== null) return;
+		startTime = new Date().getTime() - elapsedPausedTime;
+		stopwatchInterval = window.setInterval(updateStopwatch, 1000);
 	}
 
 	function stopStopwatch() {
 		if (stopwatchInterval !== null) {
-			clearInterval(stopwatchInterval);
+			window.clearInterval(stopwatchInterval);
 		}
 		elapsedPausedTime = new Date().getTime() - startTime;
 		stopwatchInterval = null;
@@ -27,41 +26,37 @@
 	function resetStopwatch() {
 		stopStopwatch();
 		elapsedPausedTime = 0;
-		stopwatchElement.innerHTML = "0:00:00";
+		displayTime = "0:00:00";
 	}
 
 	function updateStopwatch() {
-		let currentTime = new Date().getTime();
-		let elapsedTime = currentTime - startTime;
-		let seconds = Math.floor(elapsedTime / 1000) % 60;
-		let minutes = Math.floor(elapsedTime / 1000 / 60) % 60;
-		let hours = Math.floor(elapsedTime / 1000 / 60 / 60);
-		let displayTime = `${hours}:${pad(minutes)}:${pad(seconds)}`;
-		stopwatchElement.innerHTML = displayTime;
+		const currentTime = new Date().getTime();
+		const elapsedTime = currentTime - startTime;
+		const seconds = Math.floor(elapsedTime / 1000) % 60;
+		const minutes = Math.floor(elapsedTime / 1000 / 60) % 60;
+		const hours = Math.floor(elapsedTime / 1000 / 60 / 60);
+		displayTime = `${hours}:${pad(minutes)}:${pad(seconds)}`;
 	}
 
 	function pad(number: number) {
 		return (number < 10 ? "0" : "") + number;
 	}
-	function dispatchedEvent(e: { detail: { stopwatchState: any } }) {
-		if (e.detail.stopwatchState) {
-			startStopwatch();
-		} else {
-			resetStopwatch();
-		}
-	}
+
+	const chips = ["design", "code", "other"];
 </script>
 
-<div class="outer relative order-1 lg:order-5">
-	<div class="line line_top"></div>
-	<div class="line line_right"></div>
+<div class="relative order-1 lg:order-5 lg:translate-y-[7%]">
+	<div class="w-[calc(100% + 50px)] line_top_gradient absolute -left-10 top-0 h-px"></div>
+	<div class="line_right_gradient absolute -top-[200px] bottom-0 right-0 w-px rotate-180"></div>
 	<div class="m-[10px]">
 		<div
 			class="aspect-square w-full rounded-card-lg border border-border-input bg-white px-[14px] py-3 shadow-card"
 		>
-			<div class="timer mb-5 rounded-15px bg-foreground p-1">
-				<div class="timer_inner rounded-xl px-2 pb-8 pt-3 text-white">
-					<div class="time font-medium" bind:this={stopwatchElement}>0:00:00</div>
+			<div class="mb-5 rounded-15px bg-foreground p-1">
+				<div class="rounded-xl bg-[rgba(81,84,95,0.6)] px-2 pb-8 pt-3 text-white">
+					<div class="text-[2.563rem] font-medium leading-[100%]">
+						{displayTime}
+					</div>
 					<div class="text-[13px] font-medium">
 						Task:
 						<span class="relative ml-1 mr-2 mt-[2px] inline-flex h-[10px] w-[10px]">
@@ -78,92 +73,55 @@
 					</div>
 				</div>
 				<div class="labels mb-2 mt-[9px] flex gap-[3px] px-1 font-medium">
-					<div class="label active group px-2">
-						design
-						<X
-							class="relative ml-1.5 hidden size-1.5 group-[.active]:block"
-							weight="bold"
-							aria-label="Close"
-						/>
-					</div>
-					<div class="label group px-2">
-						code
-						<X
-							class="relative ml-1.5 hidden size-1.5 group-[.active]:block"
-							weight="bold"
-							aria-label="Close"
-						/>
-					</div>
-					<div class="label group px-2">
-						other
-						<X
-							class="relative ml-1.5 hidden size-1.5 group-[.active]:block"
-							weight="bold"
-							aria-label="Close"
-						/>
-					</div>
+					{#each chips as chip, i}
+						<div
+							data-active={i === 0 ? "" : undefined}
+							class="group flex select-none items-center rounded-[25px] bg-[#31343e] px-2 text-[11px] text-white/70 data-[active]:bg-white data-[active]:text-foreground"
+						>
+							{chip}
+							<X
+								class="relative ml-1.5 hidden size-1.5 group-data-[active]:block"
+								weight="bold"
+								aria-label="Close"
+							/>
+						</div>
+					{/each}
 				</div>
 			</div>
 
 			<div class="flex gap-2">
 				<HomeSelect />
-				<HomeSwitch bind:myChecked={checked} on:stopwatch={dispatchedEvent} />
+				<HomeSwitch
+					bind:checked
+					onCheckedChange={(c) => {
+						if (c) {
+							startStopwatch();
+						} else {
+							resetStopwatch();
+						}
+					}}
+				/>
 			</div>
 		</div>
 	</div>
 </div>
 
 <style lang="postcss">
-	.line_top {
-		position: absolute;
-		top: 0;
-		left: -40px;
-		width: calc(100% + 50px);
-		height: 1px;
+	.line_top_gradient {
 		background: linear-gradient(to right, transparent 50%, white 50%),
 			linear-gradient(to right, rgba(186, 186, 186, 0), rgba(186, 186, 186, 1));
 		background-size:
 			10px 1px,
 			100% 1px;
 	}
-	.line_right {
-		position: absolute;
-		right: 0;
-		bottom: 0;
-		top: -200px;
-		width: 1px;
+	.line_right_gradient {
 		background: linear-gradient(to top, transparent 50%, white 50%),
 			linear-gradient(to top, rgba(186, 186, 186, 0), rgba(186, 186, 186, 1));
 		background-size:
 			1px 10px,
 			100% 100%;
-		transform: rotate(180deg);
 	}
-	.outer {
-		@media screen and (min-width: 1024px) {
-			transform: translateY(7%);
-		}
-	}
-	.timer_inner {
-		background: rgba(81, 84, 95, 0.6);
-	}
-	.time {
-		font-size: 2.563rem;
-		line-height: 100%;
-	}
-	.label {
-		display: flex;
-		align-items: center;
-		font-size: 11px;
-		border-radius: 25px;
 
-		background: #31343e;
-		color: rgba(255, 255, 255, 0.7);
-		&.active {
-			color: hsl(var(--foreground));
-			background: white;
-		}
-	}
 	.ping_anim {
 		animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
 	}

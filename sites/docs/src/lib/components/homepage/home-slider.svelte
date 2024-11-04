@@ -28,6 +28,3 @@
 		{/snippet}
 	</Slider.Root>
 </div>
-
-<style>
-</style>

@@ -3,7 +3,8 @@
 	import WaveSine from "phosphor-svelte/lib/WaveSine";
 	import WaveSquare from "phosphor-svelte/lib/WaveSquare";
 	import WaveTriangle from "phosphor-svelte/lib/WaveTriangle";
-	let wave = $state(["sine"]);
+
+	let wave = $state("sine");
 </script>
 
 <Toolbar.Root class="flex h-10 w-min items-center rounded-[7px] bg-background-alt px-[5px]">

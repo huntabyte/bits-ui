@@ -7,7 +7,9 @@
 	let loadingStatus = $state<Avatar.RootProps["loadingStatus"]>("loading");
 </script>
 
-<div class="outer relative order-3 flex h-min lg:order-4">
+<div
+	class="relative order-3 flex h-min border border-solid border-[#cacaca] lg:order-4 lg:translate-y-[40%]"
+>
 	<div
 		class="circle absolute left-0 top-0 aspect-square w-3 -translate-x-1/2 -translate-y-1/2 rounded-full border border-border-input bg-white"
 	></div>
@@ -45,332 +47,128 @@
 			</Tabs.List>
 
 			<Tabs.Content value="follow" class="select-none ">
-				<div class="mb-3 flex items-center justify-between">
-					<div class=" flex">
-						<Avatar.Root
-							bind:loadingStatus
-							class="h-10 w-10 rounded-full border {loadingStatus === 'loaded'
-								? 'border-foreground'
-								: 'border-transparent'} bg-muted text-[17px] font-medium uppercase text-muted-foreground"
-						>
-							<div
-								class="flex h-full w-full items-center justify-center overflow-hidden rounded-full"
-							>
-								<Avatar.Image src="/avatar-1.png" alt="@huntabyte" />
-								<Avatar.Fallback class="border border-muted">HB</Avatar.Fallback>
-							</div>
-						</Avatar.Root>
-
-						<div class="name ml-2">
-							<h3 class="text-sm font-medium text-foreground">Hunter</h3>
-							<p class="text-[12px] font-medium text-muted-foreground">@huntabyte</p>
-						</div>
-					</div>
-					<DropdownMenu.Root>
-						<DropdownMenu.Trigger
-							class="focus-visible text-a-foreground inline-flex h-8 w-8 select-none items-center justify-center rounded-[7px] border border-border-input bg-white text-sm font-medium shadow-mini hover:bg-muted focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
-						>
-							<DotsThreeVertical class="size-5 text-foreground " />
-						</DropdownMenu.Trigger>
-						<DropdownMenu.Portal>
-							<DropdownMenu.Content
-								class="focus-override w-[229px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover outline-none focus-visible:outline-none"
-								sideOffset={8}
-							>
-								<DropdownMenu.Item
-									class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted"
-								>
-									<div class="flex items-center">
-										<UserCircle class="mr-2 size-5 text-foreground-alt" />
-										Profile
-									</div>
-									<div class="ml-auto flex items-center gap-px">
-										<kbd
-											class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background-alt text-xs text-muted-foreground shadow-kbd"
-										>
-											⌘
-										</kbd>
-										<kbd
-											class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background-alt text-[10px] text-muted-foreground shadow-kbd"
-										>
-											P
-										</kbd>
-									</div>
-								</DropdownMenu.Item>
-
-								<DropdownMenu.Item
-									class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted"
-								>
-									<div class="flex items-center">
-										<Cardholder class="mr-2 size-5 text-foreground-alt" />
-										Billing
-									</div>
-									<div class="ml-auto flex items-center gap-px">
-										<kbd
-											class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background-alt text-xs text-muted-foreground shadow-kbd"
-										>
-											⌘
-										</kbd>
-										<kbd
-											class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background-alt text-[10px] text-muted-foreground shadow-kbd"
-										>
-											B
-										</kbd>
-									</div>
-								</DropdownMenu.Item>
-							</DropdownMenu.Content>
-						</DropdownMenu.Portal>
-					</DropdownMenu.Root>
-				</div>
-
-				<div class="mb-3 flex items-center justify-between">
-					<div class=" flex">
-						<Avatar.Root
-							bind:loadingStatus
-							class="h-10 w-10 rounded-full border {loadingStatus === 'loaded'
-								? 'border-foreground'
-								: 'border-transparent'} bg-muted text-[17px] font-medium uppercase text-muted-foreground"
-						>
-							<div
-								class="flex h-full w-full items-center justify-center overflow-hidden rounded-full"
-							>
-								<Avatar.Image src="/avatar-1.png" alt="@huntabyte" />
-								<Avatar.Fallback class="border border-muted">HB</Avatar.Fallback>
-							</div>
-						</Avatar.Root>
-
-						<div class="name ml-2">
-							<h3 class="text-sm font-medium text-foreground">Pavel</h3>
-							<p class="text-[12px] font-medium text-muted-foreground">
-								@pavelstianko
-							</p>
-						</div>
-					</div>
-					<DropdownMenu.Root>
-						<DropdownMenu.Trigger
-							class="focus-visible text-a-foreground inline-flex h-8 w-8 select-none items-center justify-center rounded-[7px] border border-border-input bg-white text-sm font-medium shadow-mini hover:bg-muted focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
-						>
-							<DotsThreeVertical class="size-5 text-foreground " />
-						</DropdownMenu.Trigger>
-						<DropdownMenu.Portal>
-							<DropdownMenu.Content
-								class="focus-override w-[229px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover outline-none focus-visible:outline-none"
-								sideOffset={8}
-							>
-								<DropdownMenu.Item
-									class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted"
-								>
-									<div class="flex items-center">
-										<UserCircle class="mr-2 size-5 text-foreground-alt" />
-										Profile
-									</div>
-									<div class="ml-auto flex items-center gap-px">
-										<kbd
-											class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background-alt text-xs text-muted-foreground shadow-kbd"
-										>
-											⌘
-										</kbd>
-										<kbd
-											class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background-alt text-[10px] text-muted-foreground shadow-kbd"
-										>
-											P
-										</kbd>
-									</div>
-								</DropdownMenu.Item>
-
-								<DropdownMenu.Item
-									class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted"
-								>
-									<div class="flex items-center">
-										<Cardholder class="mr-2 size-5 text-foreground-alt" />
-										Billing
-									</div>
-									<div class="ml-auto flex items-center gap-px">
-										<kbd
-											class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background-alt text-xs text-muted-foreground shadow-kbd"
-										>
-											⌘
-										</kbd>
-										<kbd
-											class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background-alt text-[10px] text-muted-foreground shadow-kbd"
-										>
-											B
-										</kbd>
-									</div>
-								</DropdownMenu.Item>
-							</DropdownMenu.Content>
-						</DropdownMenu.Portal>
-					</DropdownMenu.Root>
-				</div>
+				{@render UserListItem({
+					alt: "@huntabyte",
+					src: "/avatar-1.png",
+					fallback: "HB",
+					firstName: "Huntabyte",
+					username: "@huntabyte",
+				})}
+				{@render UserListItem({
+					alt: "@pavelstianko",
+					src: "/avatar-1.png",
+					fallback: "PS",
+					firstName: "Pavel",
+					username: "@pavelstianko",
+				})}
 			</Tabs.Content>
 			<Tabs.Content value="other" class="select-none">
-				<div class="mb-3 flex items-center justify-between">
-					<div class=" flex">
-						<Avatar.Root
-							bind:loadingStatus
-							class="h-10 w-10 rounded-full border {loadingStatus === 'loaded'
-								? 'border-foreground'
-								: 'border-transparent'} bg-muted text-[17px] font-medium uppercase text-muted-foreground"
-						>
-							<div
-								class="flex h-full w-full items-center justify-center overflow-hidden rounded-full"
-							>
-								<Avatar.Image src="/avatar-1.png" alt="@huntabyte" />
-								<Avatar.Fallback class="border border-muted">HB</Avatar.Fallback>
-							</div>
-						</Avatar.Root>
-
-						<div class="name ml-2">
-							<h3 class="text-sm font-medium text-foreground">Pája</h3>
-							<p class="text-[12px] font-medium text-muted-foreground">@huntabyte</p>
-						</div>
-					</div>
-					<DropdownMenu.Root>
-						<DropdownMenu.Trigger
-							class="focus-visible text-a-foreground inline-flex h-8 w-8 select-none items-center justify-center rounded-[7px] border border-border-input bg-white text-sm font-medium shadow-mini hover:bg-muted focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
-						>
-							<DotsThreeVertical class="size-5 text-foreground " />
-						</DropdownMenu.Trigger>
-						<DropdownMenu.Portal>
-							<DropdownMenu.Content
-								class="focus-override w-[229px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover outline-none focus-visible:outline-none"
-								sideOffset={8}
-							>
-								<DropdownMenu.Item
-									class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted"
-								>
-									<div class="flex items-center">
-										<UserCircle class="mr-2 size-5 text-foreground-alt" />
-										Profile
-									</div>
-									<div class="ml-auto flex items-center gap-px">
-										<kbd
-											class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background-alt text-xs text-muted-foreground shadow-kbd"
-										>
-											⌘
-										</kbd>
-										<kbd
-											class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background-alt text-[10px] text-muted-foreground shadow-kbd"
-										>
-											P
-										</kbd>
-									</div>
-								</DropdownMenu.Item>
-
-								<DropdownMenu.Item
-									class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted"
-								>
-									<div class="flex items-center">
-										<Cardholder class="mr-2 size-5 text-foreground-alt" />
-										Billing
-									</div>
-									<div class="ml-auto flex items-center gap-px">
-										<kbd
-											class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background-alt text-xs text-muted-foreground shadow-kbd"
-										>
-											⌘
-										</kbd>
-										<kbd
-											class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background-alt text-[10px] text-muted-foreground shadow-kbd"
-										>
-											B
-										</kbd>
-									</div>
-								</DropdownMenu.Item>
-							</DropdownMenu.Content>
-						</DropdownMenu.Portal>
-					</DropdownMenu.Root>
-				</div>
-
-				<div class="mb-3 flex items-center justify-between">
-					<div class=" flex">
-						<Avatar.Root
-							bind:loadingStatus
-							class="h-10 w-10 rounded-full border {loadingStatus === 'loaded'
-								? 'border-foreground'
-								: 'border-transparent'} bg-muted text-[17px] font-medium uppercase text-muted-foreground"
-						>
-							<div
-								class="flex h-full w-full items-center justify-center overflow-hidden rounded-full"
-							>
-								<Avatar.Image src="/avatar-1.png" alt="@huntabyte" />
-								<Avatar.Fallback class="border border-muted">HB</Avatar.Fallback>
-							</div>
-						</Avatar.Root>
-
-						<div class="name ml-2">
-							<h3 class="text-sm font-medium text-foreground">Pavel</h3>
-							<p class="text-[12px] font-medium text-muted-foreground">
-								@pavelstianko
-							</p>
-						</div>
-					</div>
-					<DropdownMenu.Root>
-						<DropdownMenu.Trigger
-							class="focus-visible text-a-foreground inline-flex h-8 w-8 select-none items-center justify-center rounded-[7px] border border-border-input bg-white text-sm font-medium shadow-mini hover:bg-muted focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
-						>
-							<DotsThreeVertical class="size-5 text-foreground " />
-						</DropdownMenu.Trigger>
-						<DropdownMenu.Portal>
-							<DropdownMenu.Content
-								class="focus-override w-[229px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover outline-none focus-visible:outline-none"
-								sideOffset={8}
-							>
-								<DropdownMenu.Item
-									class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted"
-								>
-									<div class="flex items-center">
-										<UserCircle class="mr-2 size-5 text-foreground-alt" />
-										Profile
-									</div>
-									<div class="ml-auto flex items-center gap-px">
-										<kbd
-											class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background-alt text-xs text-muted-foreground shadow-kbd"
-										>
-											⌘
-										</kbd>
-										<kbd
-											class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background-alt text-[10px] text-muted-foreground shadow-kbd"
-										>
-											P
-										</kbd>
-									</div>
-								</DropdownMenu.Item>
-
-								<DropdownMenu.Item
-									class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted"
-								>
-									<div class="flex items-center">
-										<Cardholder class="mr-2 size-5 text-foreground-alt" />
-										Billing
-									</div>
-									<div class="ml-auto flex items-center gap-px">
-										<kbd
-											class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background-alt text-xs text-muted-foreground shadow-kbd"
-										>
-											⌘
-										</kbd>
-										<kbd
-											class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background-alt text-[10px] text-muted-foreground shadow-kbd"
-										>
-											B
-										</kbd>
-									</div>
-								</DropdownMenu.Item>
-							</DropdownMenu.Content>
-						</DropdownMenu.Portal>
-					</DropdownMenu.Root>
-				</div>
+				{@render UserListItem({
+					alt: "@pája",
+					src: "/avatar-1.png",
+					fallback: "PJ",
+					firstName: "Pája",
+					username: "@paja",
+				})}
+				{@render UserListItem({
+					alt: "@pavelstianko",
+					src: "/avatar-1.png",
+					fallback: "PS",
+					firstName: "Pavel",
+					username: "@pavelstianko",
+				})}
 			</Tabs.Content>
 		</Tabs.Root>
 	</div>
 </div>
 
-<style lang="postcss">
-	.outer {
-		border: 1px solid #cacaca;
-		@media screen and (min-width: 1024px) {
-			transform: translateY(40%);
-		}
-	}
-</style>
+{#snippet UserListItem({
+	src,
+	alt,
+	fallback,
+	firstName,
+	username,
+}: {
+	src: string;
+	alt: string;
+	fallback: string;
+	firstName: string;
+	username: string;
+})}
+	<div class="mb-3 flex items-center justify-between">
+		<div class="flex">
+			<Avatar.Root
+				bind:loadingStatus
+				class="h-10 w-10 rounded-full border {loadingStatus === 'loaded'
+					? 'border-foreground'
+					: 'border-transparent'} bg-muted text-[17px] font-medium uppercase text-muted-foreground"
+			>
+				<div
+					class="flex h-full w-full items-center justify-center overflow-hidden rounded-full"
+				>
+					<Avatar.Image {src} {alt} />
+					<Avatar.Fallback class="border border-muted">{fallback}</Avatar.Fallback>
+				</div>
+			</Avatar.Root>
+			<div class="name ml-2">
+				<h3 class="text-sm font-medium text-foreground">{firstName}</h3>
+				<p class="text-[12px] font-medium text-muted-foreground">@{username}</p>
+			</div>
+		</div>
+		<DropdownMenu.Root>
+			<DropdownMenu.Trigger
+				class="focus-visible text-a-foreground inline-flex size-8 select-none items-center justify-center rounded-[7px] border border-border-input bg-white text-sm font-medium shadow-mini hover:bg-muted focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
+			>
+				<DotsThreeVertical class="size-5 text-foreground " />
+			</DropdownMenu.Trigger>
+			<DropdownMenu.Portal>
+				<DropdownMenu.Content
+					class="focus-override w-[229px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover outline-none focus-visible:outline-none"
+					sideOffset={8}
+				>
+					<DropdownMenu.Item
+						class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted"
+					>
+						<div class="flex items-center">
+							<UserCircle class="mr-2 size-5 text-foreground-alt" />
+							Profile
+						</div>
+						<div class="ml-auto flex items-center gap-px">
+							<kbd
+								class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background-alt text-xs text-muted-foreground shadow-kbd"
+							>
+								⌘
+							</kbd>
+							<kbd
+								class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background-alt text-[10px] text-muted-foreground shadow-kbd"
+							>
+								P
+							</kbd>
+						</div>
+					</DropdownMenu.Item>
+
+					<DropdownMenu.Item
+						class="flex h-10 select-none items-center rounded-button py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent data-[highlighted]:bg-muted"
+					>
+						<div class="flex items-center">
+							<Cardholder class="mr-2 size-5 text-foreground-alt" />
+							Billing
+						</div>
+						<div class="ml-auto flex items-center gap-px">
+							<kbd
+								class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background-alt text-xs text-muted-foreground shadow-kbd"
+							>
+								⌘
+							</kbd>
+							<kbd
+								class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background-alt text-[10px] text-muted-foreground shadow-kbd"
+							>
+								B
+							</kbd>
+						</div>
+					</DropdownMenu.Item>
+				</DropdownMenu.Content>
+			</DropdownMenu.Portal>
+		</DropdownMenu.Root>
+	</div>
+{/snippet}
