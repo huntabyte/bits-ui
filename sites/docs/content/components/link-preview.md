@@ -4,7 +4,7 @@ description: Displays a summarized preview of a linked content's details or info
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, LinkPreviewDemo, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, LinkPreviewDemo, LinkPreviewDemoTransition, Callout } from '$lib/components/index.js'
 	export let schemas;
 </script>
 
@@ -170,5 +170,36 @@ If you wish to instead anchor the content to a different element, you can pass e
 	</LinkPreview.Content>
 </LinkPreview.Root>
 ```
+
+## Svelte Transitions
+
+You can use the `forceMount` prop along with the `child` snippet to forcefully mount the `LinkPreview.Content` component to use Svelte Transitions or another animation library that requires more control.
+
+```svelte /forceMount/ /transition:fly/
+<script lang="ts">
+	import { LinkPreview } from "bits-ui";
+	import { fly } from "svelte/transition";
+</script>
+
+<LinkPreview.Content forceMount>
+	{#snippet child({ props, open })}
+		{#if open}
+			<div {...props} transition:fly>
+				<!-- ... -->
+			</div>
+		{/if}
+	{/snippet}
+</LinkPreview.Content>
+```
+
+Of course, this isn't the prettiest syntax, so it's recommended to create your own reusable content component that handles this logic if you intend to use this approach. For more information on using transitions with Bits UI components, see the [Transitions](/docs/transitions) documentation.
+
+<ComponentPreviewV2 name="link-preview-demo-transition" comp="LinkPreview" containerClass="mt-4">
+
+{#snippet preview()}
+<LinkPreviewDemoTransition />
+{/snippet}
+
+</ComponentPreviewV2>
 
 <APISection {schemas} />

@@ -1,5 +1,63 @@
 # bits-ui
 
+## 1.0.0-next.40
+
+### Patch Changes
+
+-   fix: dont use `display: table` in scroll area ([#863](https://github.com/huntabyte/bits-ui/pull/863))
+
+## 1.0.0-next.39
+
+### Patch Changes
+
+-   add `closeOnSelect` prop to all the menu item components ([#859](https://github.com/huntabyte/bits-ui/pull/859))
+
+## 1.0.0-next.38
+
+### Patch Changes
+
+-   fix: add role="option" to select items ([#857](https://github.com/huntabyte/bits-ui/pull/857))
+
+## 1.0.0-next.37
+
+### Patch Changes
+
+-   fix: pagination page aria-label ([#854](https://github.com/huntabyte/bits-ui/pull/854))
+
+## 1.0.0-next.36
+
+### Patch Changes
+
+-   fix: Range Calendar external value updates ([#851](https://github.com/huntabyte/bits-ui/pull/851))
+
+## 1.0.0-next.35
+
+### Patch Changes
+
+-   fix: pin input pattern checking ([#848](https://github.com/huntabyte/bits-ui/pull/848))
+
+## 1.0.0-next.34
+
+### Patch Changes
+
+-   fix: Combobox `forceMount` ([#844](https://github.com/huntabyte/bits-ui/pull/844))
+
+-   fix: Tooltip `forceMount` ([#844](https://github.com/huntabyte/bits-ui/pull/844))
+
+-   fix: DropdownMenu & ContextMenu `forceMount` ([#844](https://github.com/huntabyte/bits-ui/pull/844))
+
+-   fix: Select `forceMount` ([#844](https://github.com/huntabyte/bits-ui/pull/844))
+
+-   fix: popover `forceMount` ([#844](https://github.com/huntabyte/bits-ui/pull/844))
+
+-   fix: LinkPreview `forceMount` ([#844](https://github.com/huntabyte/bits-ui/pull/844))
+
+## 1.0.0-next.33
+
+### Patch Changes
+
+-   ensure minimum esm-env version is a working version ([#840](https://github.com/huntabyte/bits-ui/pull/840))
+
 ## 1.0.0-next.32
 
 ### Patch Changes

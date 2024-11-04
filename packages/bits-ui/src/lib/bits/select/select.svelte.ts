@@ -784,6 +784,7 @@ class SelectContentState {
 					flexDirection: "column",
 					outline: "none",
 					boxSizing: "border-box",
+					pointerEvents: "auto",
 					...this.#styles,
 				},
 				onpointermove: this.#onpointermove,
@@ -889,6 +890,7 @@ class SelectItemState {
 		() =>
 			({
 				id: this.#id.current,
+				role: "option",
 				"aria-selected": this.root.includesItem(this.value.current) ? "true" : undefined,
 				"data-value": this.value.current,
 				"data-disabled": getDataDisabled(this.disabled.current),

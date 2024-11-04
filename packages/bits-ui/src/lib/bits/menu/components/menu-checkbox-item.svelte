@@ -15,6 +15,7 @@
 		disabled = false,
 		onSelect = noop,
 		controlledChecked = false,
+		closeOnSelect = true,
 		...restProps
 	}: MenuCheckboxItemProps = $props();
 
@@ -37,6 +38,7 @@
 			() => ref,
 			(v) => (ref = v)
 		),
+		closeOnSelect: box.with(() => closeOnSelect),
 	});
 
 	function handleSelect(e: Event) {

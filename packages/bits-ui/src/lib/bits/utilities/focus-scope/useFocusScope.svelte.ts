@@ -1,5 +1,5 @@
 import { untrack } from "svelte";
-import { afterTick, box, executeCallbacks, useRefById } from "svelte-toolbelt";
+import { type Getter, afterTick, box, executeCallbacks, useRefById } from "svelte-toolbelt";
 import {
 	createFocusScopeAPI,
 	createFocusScopeStack,
@@ -45,6 +45,11 @@ type UseFocusScopeProps = ReadableBoxedValues<{
 	 * Can be prevented.
 	 */
 	onCloseAutoFocus: EventCallback;
+
+	/**
+	 * Whether force mount is enabled or not
+	 */
+	forceMount: boolean;
 }>;
 
 export type FocusScopeContainerProps = {
@@ -59,6 +64,7 @@ export function useFocusScope({
 	enabled,
 	onOpenAutoFocus,
 	onCloseAutoFocus,
+	forceMount,
 }: UseFocusScopeProps) {
 	const focusScopeStack = createFocusScopeStack();
 	const focusScope = createFocusScopeAPI();
@@ -140,53 +146,71 @@ export function useFocusScope({
 	});
 
 	$effect(() => {
+		if (forceMount.current) return;
 		let container = ref.current;
 		const previouslyFocusedElement = document.activeElement as HTMLElement | null;
 		untrack(() => {
-			if (!container) {
-				container = document.getElementById(id.current);
-			}
-			if (!container) return;
-			focusScopeStack.add(focusScope);
-			const hasFocusedCandidate = container.contains(previouslyFocusedElement);
-
-			if (!hasFocusedCandidate) {
-				const mountEvent = new CustomEvent(AUTOFOCUS_ON_MOUNT, EVENT_OPTIONS);
-				container.addEventListener(AUTOFOCUS_ON_MOUNT, onOpenAutoFocus.current);
-				container.dispatchEvent(mountEvent);
-
-				if (!mountEvent.defaultPrevented) {
-					afterTick(() => {
-						if (!container) return;
-						focusFirst(removeLinks(getTabbableCandidates(container)), { select: true });
-
-						if (document.activeElement === previouslyFocusedElement) {
-							focus(container);
-						}
-					});
-				}
-			}
+			handleMount(container, previouslyFocusedElement);
 		});
 
 		return () => {
 			if (!container) return;
-			container.removeEventListener(AUTOFOCUS_ON_MOUNT, onOpenAutoFocus.current);
-
-			const destroyEvent = new CustomEvent(AUTOFOCUS_ON_DESTROY, EVENT_OPTIONS);
-			container.addEventListener(AUTOFOCUS_ON_DESTROY, onCloseAutoFocus.current);
-			container.dispatchEvent(destroyEvent);
-
-			setTimeout(() => {
-				if (!destroyEvent.defaultPrevented && previouslyFocusedElement) {
-					focus(previouslyFocusedElement ?? document.body, { select: true });
-				}
-
-				container?.removeEventListener(AUTOFOCUS_ON_DESTROY, onCloseAutoFocus.current);
-
-				focusScopeStack.remove(focusScope);
-			}, 0);
+			handleDestroy(previouslyFocusedElement);
 		};
 	});
+
+	$effect(() => {
+		if (!forceMount.current) return;
+		let container = ref.current;
+		enabled.current;
+		const previouslyFocusedElement = document.activeElement as HTMLElement | null;
+		untrack(() => {
+			handleMount(container, previouslyFocusedElement);
+		});
+
+		return () => {
+			if (!container) return;
+			handleDestroy(previouslyFocusedElement);
+		};
+	});
+
+	function handleMount(container: HTMLElement | null, prevFocusedElement: HTMLElement | null) {
+		if (!container) {
+			container = document.getElementById(id.current);
+		}
+		if (!container) return;
+		focusScopeStack.add(focusScope);
+		const hasFocusedCandidate = container.contains(prevFocusedElement);
+
+		if (!hasFocusedCandidate) {
+			const mountEvent = new CustomEvent(AUTOFOCUS_ON_MOUNT, EVENT_OPTIONS);
+			onOpenAutoFocus.current(mountEvent);
+
+			if (!mountEvent.defaultPrevented) {
+				afterTick(() => {
+					if (!container) return;
+					focusFirst(removeLinks(getTabbableCandidates(container)), { select: true });
+
+					if (document.activeElement === prevFocusedElement) {
+						focus(container);
+					}
+				});
+			}
+		}
+	}
+
+	function handleDestroy(prevFocusedElement: HTMLElement | null) {
+		const destroyEvent = new CustomEvent(AUTOFOCUS_ON_DESTROY, EVENT_OPTIONS);
+		onCloseAutoFocus.current(destroyEvent);
+
+		setTimeout(() => {
+			if (!destroyEvent.defaultPrevented && prevFocusedElement) {
+				focus(prevFocusedElement ?? document.body, { select: true });
+			}
+
+			focusScopeStack.remove(focusScope);
+		}, 0);
+	}
 
 	function handleKeydown(e: KeyboardEvent) {
 		if (!enabled.current) return;
@@ -218,11 +242,14 @@ export function useFocusScope({
 		}
 	}
 
-	const props: FocusScopeContainerProps = $derived({
-		id: id.current,
-		tabindex: -1,
-		onkeydown: handleKeydown,
-	});
+	const props: FocusScopeContainerProps = $derived.by(
+		() =>
+			({
+				id: id.current,
+				tabindex: -1,
+				onkeydown: handleKeydown,
+			}) as const
+	);
 
 	return {
 		get props() {

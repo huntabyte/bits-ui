@@ -17,7 +17,7 @@ export function createFocusScopeStack() {
 		add(focusScope: FocusScopeAPI) {
 			// pause the currently active focus scope (top of the stack)
 			const activeFocusScope = stack.current[0];
-			if (focusScope !== activeFocusScope) {
+			if (focusScope.id !== activeFocusScope?.id) {
 				activeFocusScope?.pause();
 			}
 

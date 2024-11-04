@@ -4,7 +4,7 @@ description: Enables users to pick from a list of options displayed in a dropdow
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, ComboboxDemo, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, ComboboxDemo, ComboboxDemoTransition, Callout } from '$lib/components/index.js'
 	export let schemas;
 </script>
 
@@ -421,5 +421,36 @@ To trigger side effects when an item is highlighted or unhighlighted, you can us
 <!-- ... -->
 </Combobox.Item>
 ```
+
+## Svelte Transitions
+
+You can use the `forceMount` prop along with the `child` snippet to forcefully mount the `Combobox.Content` component to use Svelte Transitions or another animation library that requires more control.
+
+```svelte /forceMount/ /transition:fly/
+<script lang="ts">
+	import { Combobox } from "bits-ui";
+	import { fly } from "svelte/transition";
+</script>
+
+<Combobox.Content forceMount>
+	{#snippet child({ props, open })}
+		{#if open}
+			<div {...props} transition:fly>
+				<!-- ... -->
+			</div>
+		{/if}
+	{/snippet}
+</Combobox.Content>
+```
+
+Of course, this isn't the prettiest syntax, so it's recommended to create your own reusable content component that handles this logic if you intend to use this approach. For more information on using transitions with Bits UI components, see the [Transitions](/docs/transitions) documentation.
+
+<ComponentPreviewV2 name="combobox-demo-transition" comp="Select" containerClass="mt-4">
+
+{#snippet preview()}
+<ComboboxDemoTransition />
+{/snippet}
+
+</ComponentPreviewV2>
 
 <APISection {schemas} />

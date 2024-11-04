@@ -39,4 +39,13 @@
 	:global([data-scroll-area-viewport])::-webkit-scrollbar {
 		display: none !important;
 	}
+
+	:global(:where([data-scroll-area-viewport])) {
+		display: flex;
+		flex-direction: column;
+		align-items: stretch;
+	}
+	:global(:where([data-scroll-area-content])) {
+		flex-grow: 1;
+	}
 </style>
