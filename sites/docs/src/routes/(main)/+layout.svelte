@@ -20,7 +20,7 @@
 <SiteHeader />
 <div class="min-h-[calc(100vh-64px)]">
 	<div
-		class="container flex-1 items-start md:grid md:grid-cols-[220px_minmax(0,1fr)] md:gap-6 lg:grid-cols-[250px_minmax(0,1fr)] lg:gap-10"
+		class="flex-1 items-start md:grid md:grid-cols-[220px_minmax(0,1fr)] md:gap-6 lg:grid-cols-[250px_minmax(0,1fr)] lg:gap-10"
 	>
 		<SidebarNav items={navigation.sidebar} />
 		<main
