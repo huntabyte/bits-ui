@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.42
+
+### Patch Changes
+
+-   fix: nested outside clicks ([#875](https://github.com/huntabyte/bits-ui/pull/875))
+
 ## 1.0.0-next.41
 
 ### Patch Changes
