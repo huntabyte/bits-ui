@@ -134,7 +134,7 @@
   <div class="grid grid-cols-3 gap-x-[15px] ">
 
     <div class="border border-border rounded-card-lg  shadow-card overflow-hidden">
-      <div class="bg-[#FFF6F5] rounded-15px mx-2 my-[10px] pl-6 pr-2 pt-2 pb-5">
+      <div class="bg-background rounded-15px mx-2 my-[10px] pl-6 pr-2 pt-2 pb-5">
         <div class="flex items-center justify-between ">
           <h3 class="font-semibold text-[17px] -tracking-[0.01em]">Customizable</h3>
           <div class="inline-flex w-[50px] h-[50px] rounded-full items-center justify-center bg-foreground">
@@ -143,7 +143,7 @@
         </div>
   
         <div class="pt-9 pb-16">
-          <div class="relative w-full aspect-[388/261] bg-transparent left-[17px]">
+          <div class="relative w-full aspect-[388/295] bg-transparent left-[18px]">
             <Customizable />
           </div>
         </div>
@@ -153,7 +153,7 @@
     </div>
 
     <div class="rounded-card-lg  shadow-card overflow-hidden">
-      <div class="bg-[#FEFCE8] rounded-15px pl-8 pr-4 pt-[18px] pb-[30px]">
+      <div class="bg-[#F8F8F8] rounded-15px pl-8 pr-4 pt-[18px] pb-[30px]">
         <div class="flex items-center justify-between ">
           <h3 class="font-semibold text-[17px] -tracking-[0.01em]">Accessible</h3>
           <div class="inline-flex w-[50px] h-[50px] rounded-full items-center justify-center bg-foreground">
@@ -162,7 +162,7 @@
         </div>
   
         <div class="pt-9 pb-16">
-          <div class="relative w-full aspect-[388/261] bg-transparent left-[17px]">
+          <div class="relative w-full aspect-[388/295] bg-transparent left-[18px]">
             <Accessible />
           </div>
         </div>
@@ -181,7 +181,7 @@
         </div>
   
         <div class="pt-9 pb-16">
-          <div class="relative w-full aspect-[388/261] bg-transparent left-[17px]">
+          <div class="relative w-full aspect-[388/295] bg-transparent left-[18px]">
             <Consistent />
           </div>
         </div>

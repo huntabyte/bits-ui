@@ -1,4 +1,4 @@
-<svg viewBox="0 0 326 261" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 326 261" fill="none" xmlns="http://www.w3.org/2000/svg" class="absolute top-0 right-0 w-auto h-full">
   <path d="M124 20C124 8.9543 132.954 0 144 0H325V261H144C132.954 261 124 252.046 124 241V20Z" fill="white"/>
   <g filter="url(#filter0_d_2834_4414)">
   <rect x="139" y="15" width="35" height="20" rx="5" fill="white"/>
