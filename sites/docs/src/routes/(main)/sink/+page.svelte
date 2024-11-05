@@ -1,64 +1,138 @@
 <script lang="ts">
-	import { Dialog, Label, Separator } from "bits-ui";
-	import LockKeyOpen from "phosphor-svelte/lib/LockKeyOpen";
+	import { Combobox, TagsInput } from "bits-ui";
+	import CaretUpDown from "phosphor-svelte/lib/CaretUpDown";
+	import Check from "phosphor-svelte/lib/Check";
+	import OrangeSlice from "phosphor-svelte/lib/OrangeSlice";
+	import CaretDoubleUp from "phosphor-svelte/lib/CaretDoubleUp";
+	import CaretDoubleDown from "phosphor-svelte/lib/CaretDoubleDown";
 	import X from "phosphor-svelte/lib/X";
-	import SelectDemo from "$lib/components/demos/select-demo.svelte";
-	import PopoverDemo from "$lib/components/demos/popover-demo.svelte";
+
+	const fruits = [
+		{ value: "mango", label: "Mango" },
+		{ value: "watermelon", label: "Watermelon" },
+		{ value: "apple", label: "Apple" },
+		{ value: "pineapple", label: "Pineapple" },
+		{ value: "orange", label: "Orange" },
+		{ value: "grape", label: "Grape" },
+		{ value: "strawberry", label: "Strawberry" },
+		{ value: "banana", label: "Banana" },
+		{ value: "kiwi", label: "Kiwi" },
+		{ value: "peach", label: "Peach" },
+		{ value: "cherry", label: "Cherry" },
+		{ value: "blueberry", label: "Blueberry" },
+		{ value: "raspberry", label: "Raspberry" },
+		{ value: "blackberry", label: "Blackberry" },
+		{ value: "plum", label: "Plum" },
+		{ value: "apricot", label: "Apricot" },
+		{ value: "pear", label: "Pear" },
+		{ value: "grapefruit", label: "Grapefruit" },
+	];
+
+	let searchValue = $state("");
+
+	const filteredFruits = $derived(
+		searchValue === ""
+			? fruits
+			: fruits.filter((fruit) =>
+					fruit.label.toLowerCase().includes(searchValue.toLowerCase())
+				)
+	);
+
+	let value = $state<string[]>([]);
 </script>
 
-<Dialog.Root>
-	<Dialog.Trigger
-		class="inline-flex h-12 items-center
-	  justify-center whitespace-nowrap rounded-input bg-dark px-[21px]
-	  text-[15px] font-semibold text-background shadow-mini transition-colors hover:bg-dark/95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
-	>
-		New API key
-	</Dialog.Trigger>
-	<Dialog.Portal>
-		<Dialog.Overlay
-			class="fixed inset-0 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
-		/>
-		<Dialog.Content
-			class="fixed left-[50%] top-[50%] w-full max-w-[94%] translate-x-[-50%] translate-y-[-50%] rounded-card-lg border bg-background p-5 shadow-popover outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:max-w-[490px] md:w-full"
-		>
-			<Dialog.Title
-				class="flex w-full items-center justify-center text-lg font-semibold tracking-tight"
-				>Create API key</Dialog.Title
+<Combobox.Root
+	type="multiple"
+	name="favoriteFruit"
+	onOpenChange={(o) => {
+		if (!o) searchValue = "";
+	}}
+	bind:value
+>
+	<div class="flex items-center justify-center">
+		<TagsInput.Root bind:value class="flex flex-col gap-2" delimiters={[","]}>
+			<div
+				class="flex h-auto w-[330px] flex-col gap-4 rounded-card-sm border-border-input bg-background p-4 text-sm placeholder:text-foreground-alt/50"
 			>
-			<Separator.Root class="-mx-5 mb-6 mt-5 block h-px bg-muted" />
-			<Dialog.Description class="text-sm text-foreground-alt">
-				Create and manage API keys. You can create multiple keys to organize your
-				applications.
-			</Dialog.Description>
-			<SelectDemo />
-			<PopoverDemo />
-			<div class="flex flex-col items-start gap-1 pb-11 pt-7">
-				<Label.Root for="apiKey" class="text-sm font-medium">API Key</Label.Root>
-				<div class="relative w-full">
-					<input
-						id="apiKey"
-						class="inline-flex h-input w-full items-center rounded-card-sm border border-border-input bg-background px-4 text-sm placeholder:text-foreground-alt/50 hover:border-dark-40 focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2 focus:ring-offset-background"
-						placeholder="secret_api_key"
-						name="name"
+				<TagsInput.List class="flex min-h-5 flex-wrap gap-1.5">
+					{#each value as tag, index}
+						<TagsInput.Tag value={tag} {index}>
+							<TagsInput.TagContent
+								class="flex items-center gap-1 rounded-[4px] bg-[#FCDAFE] text-[0.7rem] font-semibold leading-none text-[#2A266B] no-underline group-hover:no-underline"
+							>
+								<TagsInput.TagText class="py-1 pl-1.5">
+									{tag}
+								</TagsInput.TagText>
+								<TagsInput.TagRemove
+									class="flex items-center justify-center rounded-r-[4px] px-1 py-1 hover:bg-[#edc6f0]"
+								>
+									<X class="size-3" />
+								</TagsInput.TagRemove>
+							</TagsInput.TagContent>
+							<TagsInput.TagEdit />
+						</TagsInput.Tag>
+					{/each}
+				</TagsInput.List>
+				<div class="relative">
+					<OrangeSlice
+						class="absolute start-3 top-1/2 size-6 -translate-y-1/2 text-muted-foreground"
 					/>
-					<LockKeyOpen class="absolute right-4 top-[14px] size-[22px] text-dark/30" />
+					<Combobox.Input
+						oninput={(e) => (searchValue = e.currentTarget.value)}
+						class="inline-flex h-input w-[296px] truncate rounded-9px border border-border-input bg-background px-11 text-sm transition-colors placeholder:text-foreground-alt/50 focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2 focus:ring-offset-background"
+						placeholder="Search a fruit"
+						aria-label="Search a fruit"
+					>
+						{#snippet child({ props })}
+							<TagsInput.Input {...props} blurBehavior="none" />
+						{/snippet}
+					</Combobox.Input>
+					<Combobox.Trigger class="absolute end-3 top-1/2 size-6 -translate-y-1/2">
+						<CaretUpDown class="size-6 text-muted-foreground" />
+					</Combobox.Trigger>
 				</div>
 			</div>
-			<div class="flex w-full justify-end">
-				<Dialog.Close
-					class="inline-flex h-input items-center justify-center rounded-input bg-dark px-[50px] text-[15px] font-semibold text-background shadow-mini hover:bg-dark/95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dark focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
-				>
-					Save
-				</Dialog.Close>
-			</div>
-			<Dialog.Close
-				class="absolute right-5 top-5 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
+			<TagsInput.Clear
+				class="inline-flex h-input w-full items-center justify-center rounded-input bg-muted text-[15px] font-medium shadow-mini transition-all hover:bg-dark-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98"
 			>
-				<div>
-					<X class="size-5 text-foreground" />
-					<span class="sr-only">Close</span>
-				</div>
-			</Dialog.Close>
-		</Dialog.Content>
-	</Dialog.Portal>
-</Dialog.Root>
+				Clear Tags
+			</TagsInput.Clear>
+		</TagsInput.Root>
+	</div>
+
+	<Combobox.Portal>
+		<Combobox.Content
+			class="max-h-96 w-[var(--bits-combobox-anchor-width)] min-w-[var(--bits-combobox-anchor-width)] rounded-xl border border-muted bg-background px-1 py-3 shadow-popover outline-none"
+			sideOffset={10}
+		>
+			<Combobox.ScrollUpButton class="flex w-full items-center justify-center">
+				<CaretDoubleUp class="size-3" />
+			</Combobox.ScrollUpButton>
+			<Combobox.Viewport class="p-1">
+				{#each filteredFruits as fruit, i (i + fruit.value)}
+					<Combobox.Item
+						class="flex h-10 w-full select-none items-center rounded-button py-3 pl-5 pr-1.5 text-sm capitalize outline-none  data-[highlighted]:bg-muted"
+						value={fruit.value}
+						label={fruit.label}
+					>
+						{#snippet children({ selected })}
+							{fruit.label}
+							{#if selected}
+								<div class="ml-auto">
+									<Check />
+								</div>
+							{/if}
+						{/snippet}
+					</Combobox.Item>
+				{:else}
+					<span class="block px-5 py-2 text-sm text-muted-foreground">
+						No results found, try again.
+					</span>
+				{/each}
+			</Combobox.Viewport>
+			<Combobox.ScrollDownButton class="flex w-full items-center justify-center">
+				<CaretDoubleDown class="size-3" />
+			</Combobox.ScrollDownButton>
+		</Combobox.Content>
+	</Combobox.Portal>
+</Combobox.Root>

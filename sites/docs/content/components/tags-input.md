@@ -1,7 +1,7 @@
 ---
 title: Tags Input
 description: Create and manage a list of tags/chips.
-navLabel: New
+navLabel: Preview
 ---
 
 <script>
@@ -16,6 +16,12 @@ navLabel: New
 {/snippet}
 
 </ComponentPreviewV2>
+
+<Callout type="warning" title="Preview Component">
+
+This component is currently in an early preview state and may change in the future. This process allows us to gather feedback and make improvements before the component is considered stable. If you have any feedback or suggestions, please [open an issue](https://github.com/huntabyte/bits-ui/issues/new/choose).
+
+</Callout>
 
 ## Overview
 
