@@ -2,6 +2,7 @@
 import { render } from "@testing-library/svelte";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
+import { tick } from "svelte";
 import { getTestKbd, setupUserEvents } from "../utils.js";
 import SliderTest, { type SliderTestProps } from "./slider-test.svelte";
 import SliderRangeTest, { type SliderRangeTestProps } from "./slider-range-test.svelte";
@@ -32,7 +33,7 @@ function setup(props: SliderTestProps = {}, kind: "default" | "range" = "default
 }
 
 describe("slider (default)", () => {
-	it("should haveno accessibility violations", async () => {
+	it("should have no accessibility violations", async () => {
 		// @ts-expect-error - testing lib needs to update their generic types
 		const { container } = render(SliderTest);
 
@@ -108,6 +109,17 @@ describe("slider (default)", () => {
 		await user.keyboard(kbd.END);
 
 		expectPercentage({ percentage: 100, thumb, range });
+	});
+
+	it("should not allow the value to change when the `disabled` prop is set to true", async () => {
+		const { getByTestId, user } = setup({ disabled: true });
+
+		const thumb = getByTestId("thumb");
+		const range = getByTestId("range");
+
+		thumb.focus();
+		await user.keyboard(kbd.HOME);
+		expectPercentage({ percentage: 0, thumb, range });
 	});
 });
 

@@ -179,7 +179,7 @@ class SliderRootState {
 	};
 
 	handlePointerMove = (e: PointerEvent) => {
-		if (!this.isActive) return;
+		if (!this.isActive || this.disabled.current) return;
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -224,7 +224,7 @@ class SliderRootState {
 	};
 
 	handlePointerDown = (e: PointerEvent) => {
-		if (e.button !== 0) return;
+		if (e.button !== 0 || this.disabled.current) return;
 		const sliderNode = this.ref.current;
 		const closestThumb = this.getClosestThumb(e);
 		if (!closestThumb || !sliderNode) return;
@@ -241,6 +241,7 @@ class SliderRootState {
 	};
 
 	handlePointerUp = () => {
+		if (this.disabled.current) return;
 		if (this.isActive) {
 			this.onValueCommit.current(untrack(() => this.value.current));
 		}
@@ -388,6 +389,11 @@ class SliderRootState {
 			}) as const
 	);
 
+	#touchAction = $derived.by(() => {
+		if (this.disabled.current) return undefined;
+		return this.orientation.current === "horizontal" ? "pan-y" : "pan-x";
+	});
+
 	props = $derived.by(
 		() =>
 			({
@@ -395,7 +401,7 @@ class SliderRootState {
 				"data-orientation": getDataOrientation(this.orientation.current),
 				"data-disabled": getDataDisabled(this.disabled.current),
 				style: {
-					touchAction: this.orientation.current === "horizontal" ? "pan-y" : "pan-x",
+					touchAction: this.#touchAction,
 				},
 				[SLIDER_ROOT_ATTR]: "",
 			}) as const
