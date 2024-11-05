@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.44
+
+### Patch Changes
+
+-   fix: remove defaults from `Tooltip.Root` to favor `Tooltip.Provider` ([#880](https://github.com/huntabyte/bits-ui/pull/880))
+
 ## 1.0.0-next.43
 
 ### Patch Changes
