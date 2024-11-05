@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.43
+
+### Patch Changes
+
+-   fix: ensure `Tooltip.Provider` props are applied to `Tooltip.Root` unless overridden ([#878](https://github.com/huntabyte/bits-ui/pull/878))
+
 ## 1.0.0-next.42
 
 ### Patch Changes
