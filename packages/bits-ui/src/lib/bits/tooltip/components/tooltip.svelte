@@ -8,11 +8,11 @@
 	let {
 		open = $bindable(false),
 		onOpenChange = noop,
-		disabled = false,
+		disabled,
 		delayDuration,
-		disableCloseOnTriggerClick = false,
+		disableCloseOnTriggerClick,
 		disableHoverableContent,
-		ignoreNonKeyboardFocus = false,
+		ignoreNonKeyboardFocus,
 		controlledOpen = false,
 		children,
 	}: TooltipRootProps = $props();
