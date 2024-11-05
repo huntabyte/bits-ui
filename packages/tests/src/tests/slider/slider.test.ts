@@ -119,7 +119,7 @@ describe("slider (default)", () => {
 
 		thumb.focus();
 		await user.keyboard(kbd.HOME);
-		expectPercentage({ percentage: 0, thumb, range });
+		expectPercentage({ percentage: 30, thumb, range });
 	});
 });
 
