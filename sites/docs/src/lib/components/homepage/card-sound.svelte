@@ -3,7 +3,7 @@
 </script>
 
 <div class="relative order-4 lg:order-2 lg:translate-y-1/3">
-	<div class="w-[calc(100% + 50px) line_top_gradient absolute -left-10 top-0 h-px"></div>
+	<div class="w-[calc(100%+50px)] line_top_gradient absolute -left-10 top-0 h-[1px]"></div>
 	<div class="line_left_gradient absolute -top-[100px] bottom-0 left-0 w-px rotate-180"></div>
 	<div class="line_right_gradient absolute -top-[200px] bottom-0 right-0 w-px rotate-180"></div>
 

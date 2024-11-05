@@ -43,10 +43,12 @@
 	}
 
 	const chips = ["design", "code", "other"];
+  let foo = $state("new")
+  
 </script>
 
 <div class="relative order-1 lg:order-5 lg:translate-y-[7%]">
-	<div class="w-[calc(100% + 50px)] line_top_gradient absolute -left-10 top-0 h-px"></div>
+	<div class="w-[calc(100%+50px)] line_top_gradient absolute -left-10 top-0 h-[1px]"></div>
 	<div class="line_right_gradient absolute -top-[200px] bottom-0 right-0 w-px rotate-180"></div>
 	<div class="m-[10px]">
 		<div
@@ -69,7 +71,7 @@
 								class="relative inline-flex h-[10px] w-[10px] rounded-full bg-rose-500"
 							></span>
 						</span>
-						New app
+						<span class="capitalize">{foo}</span>
 					</div>
 				</div>
 				<div class="labels mb-2 mt-[9px] flex gap-[3px] px-1 font-medium">
@@ -90,7 +92,8 @@
 			</div>
 
 			<div class="flex gap-2">
-				<HomeSelect />
+        
+				<HomeSelect bind:value={foo} />
 				<HomeSwitch
 					bind:checked
 					onCheckedChange={(c) => {

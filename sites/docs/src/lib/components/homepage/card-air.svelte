@@ -4,6 +4,8 @@
 	import HomeSlider from "$lib/components/homepage/home-slider.svelte";
 
 	let foo = $state([50]);
+
+  const temps:number[] = [ 50, 80, 95, 80, 50, 40, 60]
 </script>
 
 <div class="relative order-2 lg:order-3 lg:-translate-y-3">
@@ -17,7 +19,7 @@
 					></Tabs.Content
 				>
 				<Tabs.Content value="f" class="select-none"
-					><span class="text-[3.625rem] leading-[1] text-indigo-950">69.8</span
+					><span class="text-[3.625rem] leading-[1] text-indigo-950">69</span
 					></Tabs.Content
 				>
 
@@ -50,10 +52,10 @@
 
 		<div class="">
 			<div class="relative my-5 flex justify-between">
-				{#each { length: 7 } as _}
+				{#each temps as temp}
 					<div class="outer relative h-16 w-4 rounded-[35px] bg-[#000231]/10">
 						<div
-							class="inner absolute bottom-0 h-1/2 w-full rounded-[35px] bg-indigo-950"
+							class="inner absolute bottom-0 w-full rounded-[35px] bg-indigo-950" style="height: {temp}%"
 						></div>
 					</div>
 				{/each}

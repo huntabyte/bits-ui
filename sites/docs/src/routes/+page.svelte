@@ -10,7 +10,7 @@
 	import LightSwitch from "$lib/components/light-switch.svelte";
 </script>
 
-<div class="page_wrap_gradient border-b border-solid border-black/10">
+<div class="border-b border-solid border-black/10 bg-[#f5f5f5]/30">
 	<header class="grid grid-cols-3 px-5 py-[17px]">
 		<a
 			href="/"
@@ -66,7 +66,7 @@
 		<div class="mx-auto w-7/12 text-center">
 			<a
 				href="/docs"
-				class="inline-flex gap-2 rounded-card-lg border border-border-input py-1.5 pl-3 pr-4 shadow-mini"
+				class="inline-flex gap-2 rounded-card-lg border border-border-input py-1.5 pl-3 pr-4 shadow-mini bg-white"
 			>
 				<Sparkle class="mt-[2px] size-4" aria-label="Stars" />
 				<span
@@ -75,7 +75,7 @@
 				>
 			</a>
 			<h1
-				class="mb-[0.35em] mt-[0.2em] text-balance pb-[0.1em] text-[4.25rem] font-semibold leading-[102%] antialiased"
+				class="mb-[0.35em] mt-[0.2em] text-balance pb-[0.1em] text-[4.25rem] font-semibold leading-[102%] antialiased !text-foreground"
 			>
 				The headless components for Svelte
 			</h1>
@@ -96,7 +96,7 @@
 				>
 					<span class="text-xs text-foreground-alt">S</span>
 				</kbd>
-				<span class="ml-4 mr-3 text-[14px] font-semibold -tracking-[0.01em] text-background"
+				<span class="ml-4 mr-3 text-[14px] font-semibold tracking-[0.01em] text-background leading-[1]"
 					>Start building</span
 				>
 			</Button.Root>
@@ -120,10 +120,6 @@
 </div>
 
 <style lang="postcss">
-	.page_wrap_gradient {
-		background: linear-gradient(179deg, #fdfdfd 44.88%, rgba(253, 253, 253, 0) 93.29%),
-			linear-gradient(0deg, rgba(245, 245, 245, 0.2) 0%, rgba(245, 245, 245, 0.2) 100%);
-	}
 
 	h1 {
 		font-family: "Cal Sans", sans-serif;
@@ -135,6 +131,7 @@
 			#272727;
 		-webkit-background-clip: text;
 		-webkit-text-fill-color: transparent;
+    font-weight: 600;
 	}
 
 	.square {
