@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.45
+
+### Patch Changes
+
+-   fix: slider disabled still allowed pointer to change value ([#882](https://github.com/huntabyte/bits-ui/pull/882))
+
 ## 1.0.0-next.44
 
 ### Patch Changes
