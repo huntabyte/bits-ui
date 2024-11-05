@@ -453,11 +453,13 @@ class MenuItemSharedState {
 
 type MenuItemStateProps = ReadableBoxedValues<{
 	onSelect: AnyFn;
+	closeOnSelect: boolean;
 }>;
 
 class MenuItemState {
 	#item: MenuItemSharedState;
 	#onSelect: MenuItemStateProps["onSelect"];
+	#closeOnSelect: MenuItemStateProps["closeOnSelect"];
 	#isPointerDown = $state(false);
 	root: MenuRootState;
 
@@ -465,6 +467,7 @@ class MenuItemState {
 		this.#item = item;
 		this.root = item.content.parentMenu.root;
 		this.#onSelect = props.onSelect;
+		this.#closeOnSelect = props.closeOnSelect;
 	}
 
 	#onkeydown = (e: KeyboardEvent) => {
@@ -490,7 +493,9 @@ class MenuItemState {
 		await tick();
 		if (selectEvent.defaultPrevented) {
 			this.#item.content.parentMenu.root.isUsingKeyboard.current = false;
-		} else {
+			return;
+		}
+		if (this.#closeOnSelect.current) {
 			this.#item.content.parentMenu.root.onClose();
 		}
 	};
@@ -830,6 +835,7 @@ class MenuRadioGroupState {
 type MenuRadioItemStateProps = ReadableBoxedValues<{
 	value: string;
 	id: string;
+	closeOnSelect: boolean;
 }> &
 	WritableBoxedValues<{
 		ref: HTMLElement | null;
@@ -838,6 +844,7 @@ type MenuRadioItemStateProps = ReadableBoxedValues<{
 class MenuRadioItemState {
 	#id: MenuRadioItemStateProps["id"];
 	#ref: MenuRadioItemStateProps["ref"];
+	#closeOnSelect: MenuRadioItemStateProps["closeOnSelect"];
 	#item: MenuItemState;
 	#value: MenuRadioItemStateProps["value"];
 	#group: MenuRadioGroupState;
@@ -849,6 +856,7 @@ class MenuRadioItemState {
 		this.#ref = props.ref;
 		this.#group = group;
 		this.#value = props.value;
+		this.#closeOnSelect = props.closeOnSelect;
 
 		useRefById({
 			id: this.#id,

@@ -17,7 +17,10 @@ import { noop } from "$lib/internal/noop.js";
 import { getOwnerDocument, isOrContainsTarget } from "$lib/internal/elements.js";
 import { isElement } from "$lib/internal/is.js";
 
-const layers = new Map<DismissibleLayerState, ReadableBox<InteractOutsideBehaviorType>>();
+globalThis.bitsDismissableLayers ??= new Map<
+	DismissibleLayerState,
+	ReadableBox<InteractOutsideBehaviorType>
+>();
 
 type DismissibleLayerStateProps = ReadableBoxedValues<
 	Required<Omit<DismissibleLayerImplProps, "children">>
@@ -64,7 +67,7 @@ export class DismissibleLayerState {
 
 		const cleanup = () => {
 			this.#resetState();
-			layers.delete(this);
+			globalThis.bitsDismissableLayers.delete(this);
 			this.#handleInteractOutside.destroy();
 			unsubEvents();
 		};
@@ -72,10 +75,12 @@ export class DismissibleLayerState {
 		$effect(() => {
 			if (this.#enabled.current && this.currNode) {
 				afterSleep(1, () => {
-					layers.set(
+					if (!this.currNode) return;
+					globalThis.bitsDismissableLayers.set(
 						this,
 						untrack(() => this.#behaviorType)
 					);
+
 					unsubEvents();
 					unsubEvents = this.#addEventListeners();
 				});
@@ -87,7 +92,7 @@ export class DismissibleLayerState {
 
 		onDestroyEffect(() => {
 			this.#resetState.destroy();
-			layers.delete(this);
+			globalThis.bitsDismissableLayers.delete(this);
 			this.#handleInteractOutside.destroy();
 			this.#unsubClickListener();
 			unsubEvents();
@@ -246,7 +251,7 @@ function getTopMostLayer(
 }
 
 function isResponsibleLayer(node: HTMLElement): boolean {
-	const layersArr = [...layers];
+	const layersArr = [...globalThis.bitsDismissableLayers];
 	/**
 	 * We first check if we can find a top layer with `close` or `ignore`.
 	 * If that top layer was found and matches the provided node, then the node is

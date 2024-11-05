@@ -66,6 +66,10 @@ const sharedItemProps = {
 		definition: NoopProp,
 		description: "A callback that is fired when the menu item is selected.",
 	}),
+	closeOnSelect: createBooleanProp({
+		default: C.TRUE,
+		description: "Whether or not the menu item should close when selected.",
+	}),
 	...withChildProps({ elType: "HTMLDivElement" }),
 } as const;
 

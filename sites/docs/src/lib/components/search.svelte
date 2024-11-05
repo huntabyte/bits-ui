@@ -77,14 +77,14 @@
 			<Dialog.Description class="sr-only">Search for documentation</Dialog.Description>
 			<Command.Root
 				shouldFilter={false}
-				class="flex h-full w-full flex-col divide-y divide-border self-start overflow-hidden rounded-xl border border-muted bg-background"
+				class="flex h-full w-full flex-col divide-y divide-border self-start overflow-hidden rounded-xl  bg-background"
 			>
 				<Command.Input
 					bind:value={searchQuery}
 					autocomplete="off"
 					spellcheck="false"
 					type="search"
-					class="focus-override inline-flex h-input w-[296px] truncate rounded-xl bg-background px-4 text-sm transition-colors placeholder:text-foreground-alt/50 focus:outline-none focus:ring-0"
+					class="focus-override inline-flex h-input w-full truncate rounded-xl bg-background px-4 text-sm transition-colors placeholder:text-foreground-alt/50 focus:outline-none focus:ring-0"
 					placeholder="Search for something..."
 				/>
 				{#if searchQuery !== "" && results.length === 0}
