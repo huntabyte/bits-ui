@@ -70,9 +70,9 @@ class TooltipProviderState {
 type TooltipRootStateProps = ReadableBoxedValues<{
 	delayDuration: number | undefined;
 	disableHoverableContent: boolean | undefined;
-	disableCloseOnTriggerClick: boolean;
-	disabled: boolean;
-	ignoreNonKeyboardFocus: boolean;
+	disableCloseOnTriggerClick: boolean | undefined;
+	disabled: boolean | undefined;
+	ignoreNonKeyboardFocus: boolean | undefined;
 }> &
 	WritableBoxedValues<{
 		open: boolean;
