@@ -25,7 +25,9 @@
 								<X class="size-3" />
 							</TagsInput.TagRemove>
 						</TagsInput.TagContent>
-						<TagsInput.TagEdit />
+						<TagsInput.TagEdit
+							class="inline-flex h-5 w-auto items-center rounded-sm border border-border-input bg-background px-2 text-sm placeholder:text-foreground-alt/50 hover:border-dark-40 focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2 focus:ring-offset-background"
+						/>
 					</TagsInput.Tag>
 				{/each}
 			</TagsInput.List>
