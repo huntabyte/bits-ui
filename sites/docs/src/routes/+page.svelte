@@ -82,7 +82,7 @@
 				>
 			</a>
 			<h1
-				class="mb-[0.35em] mt-[0.2em] text-balance bg-clip-text pb-[0.1em] font-['Cal_Sans'] text-[4.25rem] font-semibold leading-[102%] text-transparent antialiased selection:text-foreground"
+				class="mb-[0.35em] mt-[0.2em] text-balance pb-[0.1em] font-['Cal_Sans'] text-[4.25rem] font-semibold leading-[102%] text-transparent antialiased selection:text-foreground"
 			>
 				The headless components for Svelte
 			</h1>
@@ -221,6 +221,7 @@
 				rgba(255, 255, 255, 0) 41.43%
 			),
 			#272727;
+		background-clip: text;
 	}
 
 	.square {
