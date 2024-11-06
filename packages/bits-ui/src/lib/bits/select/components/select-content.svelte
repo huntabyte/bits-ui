@@ -16,6 +16,7 @@
 		onEscapeKeydown = noop,
 		children,
 		child,
+		preventScroll = false,
 		...restProps
 	}: SelectContentProps = $props();
 
@@ -56,7 +57,7 @@
 		onCloseAutoFocus={(e) => e.preventDefault()}
 		trapFocus={false}
 		loop={false}
-		preventScroll={false}
+		{preventScroll}
 		onPlaced={() => (contentState.isPositioned = true)}
 		forceMount={true}
 	>
@@ -83,7 +84,7 @@
 		onCloseAutoFocus={(e) => e.preventDefault()}
 		trapFocus={false}
 		loop={false}
-		preventScroll={false}
+		{preventScroll}
 		onPlaced={() => (contentState.isPositioned = true)}
 		forceMount={false}
 	>

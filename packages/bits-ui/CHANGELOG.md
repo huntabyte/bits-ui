@@ -1,5 +1,35 @@
 # bits-ui
 
+## 1.0.0-next.45
+
+### Patch Changes
+
+-   fix: slider disabled still allowed pointer to change value ([#882](https://github.com/huntabyte/bits-ui/pull/882))
+
+## 1.0.0-next.44
+
+### Patch Changes
+
+-   fix: remove defaults from `Tooltip.Root` to favor `Tooltip.Provider` ([#880](https://github.com/huntabyte/bits-ui/pull/880))
+
+## 1.0.0-next.43
+
+### Patch Changes
+
+-   fix: ensure `Tooltip.Provider` props are applied to `Tooltip.Root` unless overridden ([#878](https://github.com/huntabyte/bits-ui/pull/878))
+
+## 1.0.0-next.42
+
+### Patch Changes
+
+-   fix: nested outside clicks ([#875](https://github.com/huntabyte/bits-ui/pull/875))
+
+## 1.0.0-next.41
+
+### Patch Changes
+
+-   fix: make layers global for use with other libs that depend on Bits UI (like `vaul-svelte`) ([#873](https://github.com/huntabyte/bits-ui/pull/873))
+
 ## 1.0.0-next.40
 
 ### Patch Changes
