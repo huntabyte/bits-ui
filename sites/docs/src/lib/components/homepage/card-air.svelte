@@ -22,7 +22,6 @@
 					><span class="text-[3.625rem] leading-[1] text-indigo-950">69</span
 					></Tabs.Content
 				>
-
 				<Tabs.List class="ml-1 flex flex-col gap-2 text-[14px]">
 					<Tabs.Trigger
 						value="c"
