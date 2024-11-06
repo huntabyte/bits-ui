@@ -30,8 +30,10 @@ class LinkPreviewRootState {
 	timeout: number | null = null;
 	contentNode = $state<HTMLElement | null>(null);
 	contentId = $state<string | undefined>(undefined);
+	contentMounted = $state(false);
 	triggerNode = $state<HTMLElement | null>(null);
 	isPointerInTransit = box(false);
+	isOpening = $state(false);
 
 	constructor(props: LinkPreviewRootStateProps) {
 		this.open = props.open;
@@ -87,17 +89,23 @@ class LinkPreviewRootState {
 	handleOpen = () => {
 		this.clearTimeout();
 		if (this.open.current) return;
+		this.isOpening = true;
 		this.timeout = window.setTimeout(() => {
-			this.open.current = true;
+			if (this.isOpening) {
+				this.open.current = true;
+				this.isOpening = false;
+			}
 		}, this.openDelay.current);
 	};
 
 	immediateClose = () => {
 		this.clearTimeout();
+		this.isOpening = false;
 		this.open.current = false;
 	};
 
 	handleClose = () => {
+		this.isOpening = false;
 		this.clearTimeout();
 
 		if (!this.isPointerDownOnContent && !this.hasSelection) {
@@ -134,6 +142,13 @@ class LinkPreviewTriggerState {
 		this.#root.handleOpen();
 	};
 
+	#onpointerleave = (e: PointerEvent) => {
+		if (isTouch(e)) return;
+		if (!this.#root.contentMounted) {
+			this.#root.immediateClose();
+		}
+	};
+
 	#onfocus = (e: FocusEvent & { currentTarget: HTMLElement }) => {
 		if (!isFocusVisible(e.currentTarget)) return;
 		this.#root.handleOpen();
@@ -156,6 +171,7 @@ class LinkPreviewTriggerState {
 				onpointerenter: this.#onpointerenter,
 				onfocus: this.#onfocus,
 				onblur: this.#onblur,
+				onpointerleave: this.#onpointerleave,
 			}) as const
 	);
 }
