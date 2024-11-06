@@ -5,7 +5,7 @@ import Description from "./alert-description.svelte";
 import Title from "./alert-title.svelte";
 
 export const alertVariants = tv({
-	base: "relative w-full rounded-[16px] px-5 pb-[30px] pt-5 [&>h5]:tracking-normal ",
+	base: "relative w-full rounded-[16px] p-5 [&>h5]:tracking-normal ",
 
 	variants: {
 		variant: {
@@ -13,7 +13,7 @@ export const alertVariants = tv({
 			danger: "border-rose-200 bg-rose-50 text-foreground dark:border-rose-600 dark:bg-rose-500/20 [&>h5]:text-red-600 dark:[&>h5]:text-red-300 [&>svg]:text-red-800 dark:[&>svg]:text-red-300",
 			tip: "dark:[&>h5]:[#0040A7] bg-[#FFDFDA] text-[#0040A7] dark:bg-[#FFDFDA] [&>.dot]:bg-[#0040A7] [&>h5]:text-[#0040A7]",
 			warning:
-				"bg-[#FEFCE8] text-foreground-alt dark:bg-[#FEFCE8] [&>.dot]:bg-foreground-alt [&>h5]:text-foreground-alt dark:[&>h5]:text-foreground-alt",
+				"bg-[#FEFCE8] text-[#525252] dark:bg-[#FEFCE8] [&>.dot]:bg-[#525252] [&>h5]:text-[#525252] dark:[&>h5]:text-[#525252]",
 		},
 	},
 	defaultVariants: {
