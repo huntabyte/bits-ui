@@ -2,13 +2,13 @@
 	import { Slider } from "bits-ui";
 	import { cn } from "$lib/utils/styles.js";
 
-	export let value = [5];
+	let { value = $bindable([5]) }: { value: number[] } = $props();
 </script>
 
 <div class="w-full">
 	<Slider.Root
-		bind:value
-		onValueChange={(v) => {
+		{value}
+		onValueCommit={(v) => {
 			value = v;
 		}}
 		class="relative flex w-full touch-none select-none items-center shadow-mini-inset"
