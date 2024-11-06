@@ -11,13 +11,11 @@
 		{ value: "design", label: "Design" },
 	];
 
-  //let value = $state<string>("new");
-  let { value = $bindable<string>("new") } = $props();
+	let { value = $bindable("new") }: { value: string } = $props();
 
 	const selectedLabel = $derived(
 		value ? themes.find((theme) => theme.value === value)?.label : "New app"
 	);
-
 </script>
 
 <Select.Root type="single" bind:value items={themes}>

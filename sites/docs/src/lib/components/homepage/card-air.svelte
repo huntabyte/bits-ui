@@ -5,7 +5,7 @@
 
 	let foo = $state([50]);
 
-  const temps:number[] = [ 50, 80, 95, 80, 50, 40, 60]
+	const temps: number[] = [50, 80, 95, 80, 50, 40, 60];
 </script>
 
 <div class="relative order-2 lg:order-3 lg:-translate-y-3">
@@ -55,7 +55,8 @@
 				{#each temps as temp}
 					<div class="outer relative h-16 w-4 rounded-[35px] bg-[#000231]/10">
 						<div
-							class="inner absolute bottom-0 w-full rounded-[35px] bg-indigo-950" style="height: {temp}%"
+							class="inner absolute bottom-0 w-full rounded-[35px] bg-indigo-950"
+							style="height: {temp}%"
 						></div>
 					</div>
 				{/each}

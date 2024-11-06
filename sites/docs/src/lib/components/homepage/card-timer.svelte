@@ -43,12 +43,11 @@
 	}
 
 	const chips = ["design", "code", "other"];
-  let foo = $state("new")
-  
+	let foo = $state("new");
 </script>
 
 <div class="relative order-1 lg:order-5 lg:translate-y-[7%]">
-	<div class="w-[calc(100%+50px)] line_top_gradient absolute -left-10 top-0 h-[1px]"></div>
+	<div class="line_top_gradient absolute -left-10 top-0 h-[1px] w-[calc(100%+50px)]"></div>
 	<div class="line_right_gradient absolute -top-[200px] bottom-0 right-0 w-px rotate-180"></div>
 	<div class="m-[10px]">
 		<div
@@ -92,7 +91,6 @@
 			</div>
 
 			<div class="flex gap-2">
-        
 				<HomeSelect bind:value={foo} />
 				<HomeSwitch
 					bind:checked
