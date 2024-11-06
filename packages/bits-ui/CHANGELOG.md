@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.46
+
+### Patch Changes
+
+-   fix: issue with `LinkPreview` where content wouldn't close when the trigger was entered and exited quickly ([#889](https://github.com/huntabyte/bits-ui/pull/889))
+
 ## 1.0.0-next.45
 
 ### Patch Changes
