@@ -9,10 +9,11 @@ export const alertVariants = tv({
 
 	variants: {
 		variant: {
-			note: "bg-[#E0F2FE] text-[#363661] [&>.dot]:bg-[#363661] [&>h5]:text-[#363661] dark:[&>h5]:text-[#C7E6FA] dark:bg-[#272730] dark:[&>.dot]:bg-[#C7E6FA] dark:text-foreground",
+			note: "bg-[#E0F2FE] text-[#363661] dark:bg-[#272730] dark:text-foreground [&>.dot]:bg-[#363661] dark:[&>.dot]:bg-[#C7E6FA] [&>h5]:text-[#363661] dark:[&>h5]:text-[#C7E6FA]",
 			danger: "border-rose-200 bg-rose-50 text-foreground dark:border-rose-600 dark:bg-rose-500/20 [&>h5]:text-red-600 dark:[&>h5]:text-red-300 [&>svg]:text-red-800 dark:[&>svg]:text-red-300",
-			tip: "bg-[#FFE5E0] text-[#0040A7] [&>.dot]:bg-[#0040A7] [&>h5]:text-[#0040A7] dark:[&>h5]:text-[#FFC3BA] dark:bg-[#272730] dark:[&>.dot]:bg-[#FFC3BA] dark:text-foreground",
-			warning: "bg-[#FEFCE8] text-[#525252] [&>.dot]:bg-[#525252] [&>h5]:text-[#525252] dark:[&>h5]:text-[#FFF8B7] dark:bg-[#272730] dark:[&>.dot]:bg-[#FFF8B7] dark:text-foreground",
+			tip: "bg-[#FFE5E0] text-[#0040A7] dark:bg-[#272730] dark:text-foreground [&>.dot]:bg-[#0040A7] dark:[&>.dot]:bg-[#FFC3BA] [&>h5]:text-[#0040A7] dark:[&>h5]:text-[#FFC3BA]",
+			warning:
+				"bg-[#FEFCE8] text-[#525252] dark:bg-[#272730] dark:text-foreground [&>.dot]:bg-[#525252] dark:[&>.dot]:bg-[#FFF8B7] [&>h5]:text-[#525252] dark:[&>h5]:text-[#FFF8B7]",
 		},
 	},
 	defaultVariants: {
