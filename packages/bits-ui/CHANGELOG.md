@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.48
+
+### Patch Changes
+
+-   BREAKING: `Checkbox` and `*Menu.CheckboxItem` `checked` prop is now of type `boolean` with `indeterminate` being a separate prop ([#898](https://github.com/huntabyte/bits-ui/pull/898))
+
 ## 1.0.0-next.47
 
 ### Patch Changes
