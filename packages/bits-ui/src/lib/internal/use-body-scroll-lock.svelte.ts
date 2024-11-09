@@ -120,13 +120,14 @@ export function useBodyScrollLock(
 	$effect(() => {
 		return () => {
 			countState.map.delete(id);
+			// if any locks are still active, we don't reset the body style
+			if (isAnyLocked(countState.map)) return;
 
-			if (!isAnyLocked(countState.map)) {
-				if (_restoreScrollDelay === null) {
-					requestAnimationFrame(() => countState.resetBodyStyle());
-				} else {
-					afterSleep(_restoreScrollDelay, () => countState.resetBodyStyle());
-				}
+			// if no locks are active (meaning this was the last lock), we reset the body style
+			if (_restoreScrollDelay === null) {
+				requestAnimationFrame(() => countState.resetBodyStyle());
+			} else {
+				afterSleep(_restoreScrollDelay, () => countState.resetBodyStyle());
 			}
 		};
 	});
