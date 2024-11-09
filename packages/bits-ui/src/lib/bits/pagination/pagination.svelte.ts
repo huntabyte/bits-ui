@@ -36,7 +36,10 @@ class PaginationRootState {
 	siblingCount: PaginationRootStateProps["siblingCount"];
 	page: PaginationRootStateProps["page"];
 	loop: PaginationRootStateProps["loop"];
-	totalPages = $derived.by(() => Math.ceil(this.count.current / this.perPage.current));
+	totalPages = $derived.by(() => {
+		if (this.count.current === 0) return 1;
+		return Math.ceil(this.count.current / this.perPage.current);
+	});
 	range = $derived.by(() => {
 		const start = (this.page.current - 1) * this.perPage.current;
 		const end = Math.min(start + this.perPage.current, this.count.current);
