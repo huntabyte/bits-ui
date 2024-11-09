@@ -50,7 +50,7 @@ describe("checkbox", () => {
 	});
 
 	it("should be able to be indeterminate", async () => {
-		const { getByTestId, root, input } = setup({ checked: "indeterminate" });
+		const { getByTestId, root, input } = setup({ indeterminate: true });
 		const indicator = getByTestId("indicator");
 		expect(root).toHaveAttribute("data-state", "indeterminate");
 		expect(root).toHaveAttribute("aria-checked", "mixed");

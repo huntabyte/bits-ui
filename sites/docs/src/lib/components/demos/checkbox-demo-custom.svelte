@@ -26,12 +26,12 @@
 			name="hello"
 			{...restProps}
 		>
-			{#snippet children({ checked })}
+			{#snippet children({ checked, indeterminate })}
 				<div class="inline-flex items-center justify-center text-background">
-					{#if checked === true}
-						<Check class="size-[15px]" weight="bold" />
-					{:else if checked === "indeterminate"}
+					{#if indeterminate}
 						<Minus class="size-[15px]" weight="bold" />
+					{:else if checked}
+						<Check class="size-[15px]" weight="bold" />
 					{/if}
 				</div>
 			{/snippet}

@@ -240,7 +240,7 @@ class ToolbarGroupItemState {
 	isPressed = $derived.by(() => this.#group.includesItem(this.#value.current));
 
 	#ariaChecked = $derived.by(() => {
-		return this.#group.isMulti ? undefined : getAriaChecked(this.isPressed);
+		return this.#group.isMulti ? undefined : getAriaChecked(this.isPressed, false);
 	});
 
 	#ariaPressed = $derived.by(() => {

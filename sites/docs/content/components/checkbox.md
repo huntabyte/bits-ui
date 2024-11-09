@@ -42,8 +42,8 @@ Here's an overview of how the Checkbox component is structured in code:
 </script>
 
 <Checkbox.Root>
-	{#snippet children({ checked })}
-		{#if checked === "indeterminate"}
+	{#snippet children({ checked, indeterminate })}
+		{#if indeterminate}
 			-
 		{:else if checked}
 			✅
@@ -75,8 +75,8 @@ It's recommended to use the `Checkbox` primitive to create your own custom check
 </script>
 
 <Checkbox.Root bind:checked bind:ref {...restProps}>
-	{#snippet children({ checked })}
-		{#if checked === "indeterminate"}
+	{#snippet children({ checked, indeterminate })}
+		{#if indeterminate}
 			-
 		{:else if checked}
 			✅
@@ -179,6 +179,95 @@ To implement controlled state:
 #### When to Use
 
 -   Implementing complex checked/unchecked logic
+-   Coordinating multiple UI elements
+-   Debugging state-related issues
+
+<Callout>
+
+While powerful, fully controlled state should be used judiciously as it increases complexity and can cause unexpected behaviors if not handled carefully.
+
+For more in-depth information on controlled components and advanced state management techniques, refer to our [Controlled State](/docs/controlled-state) documentation.
+
+</Callout>
+
+## Managing Indeterminate State
+
+Bits UI offers several approaches to manage and synchronize the Checkbox's `indeterminate` state, catering to different levels of control and integration needs.
+
+### 1. Two-Way Binding
+
+For seamless state synchronization, use Svelte's `bind:indeterminate` directive. This method automatically keeps your local state in sync with the checkbox's internal state.
+
+```svelte
+<script lang="ts">
+	import MyCheckbox from "$lib/components/MyCheckbox.svelte";
+	let myIndeterminate = $state(true);
+</script>
+
+<button onclick={() => (myIndeterminate = false)}> clear indeterminate </button>
+
+<MyCheckbox bind:indeterminate={myIndeterminate} />
+```
+
+#### Key Benefits
+
+-   Simplifies state management
+-   Automatically updates `myIndeterminate` when the checkbox changes (e.g., via clicking on the checkbox)
+-   Allows external control (e.g., checking via a separate button/programmatically)
+
+### 2. Change Handler
+
+For more granular control or to perform additional logic on state changes, use the `onIndeterminateChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
+
+```svelte
+<script lang="ts">
+	import MyCheckbox from "$lib/components/MyCheckbox.svelte";
+	let myIndeterminate = $state(true);
+</script>
+
+<MyCheckbox
+	indeterminate={myIndeterminate}
+	onIndeterminateChange={(indeterminate) => {
+		myIndeterminate = indeterminate;
+		// additional logic here.
+	}}
+/>
+```
+
+#### Use Cases
+
+-   Implementing custom behaviors
+-   Integrating with external state management solutions
+-   Triggering side effects (e.g., logging, data fetching)
+
+### 3. Fully Controlled
+
+For complete control over the checkbox's checked state, use the `controlledIndeterminate` prop. This approach requires you to manually manage the `indeterminate` state, giving you full control over when and how the checkbox responds to change events.
+
+To implement controlled state:
+
+1. Set the `controlledIndeterminate` prop to `true` on the `Checkbox.Root` component.
+2. Provide a `indeterminate` prop to `Checkbox.Root`, which should be a variable holding the current state.
+3. Implement an `onIndeterminateChange` handler to update the state when the internal state changes.
+
+```svelte
+<script lang="ts">
+	import { Checkbox } from "bits-ui";
+	let myIndeterminate = $state(true);
+</script>
+
+<Checkbox.Root
+	controlledIndeterminate
+	indeterminate={myIndeterminate}
+	onIndeterminateChange={(i) => (myIndeterminate = i)}
+>
+	<!-- ... -->
+</Checkbox.Root>
+```
+
+#### When to Use
+
+-   Implementing complex indeterminate logic
 -   Coordinating multiple UI elements
 -   Debugging state-related issues
 

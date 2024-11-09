@@ -651,34 +651,41 @@ class MenuSubTriggerState {
 }
 
 type MenuCheckboxItemStateProps = WritableBoxedValues<{
-	checked: boolean | "indeterminate";
+	checked: boolean;
+	indeterminate: boolean;
 }>;
 
 class MenuCheckboxItemState {
 	#item: MenuItemState;
 	#checked: MenuCheckboxItemStateProps["checked"];
+	#indeterminate: MenuCheckboxItemStateProps["indeterminate"];
 
 	constructor(props: MenuCheckboxItemStateProps, item: MenuItemState) {
 		this.#item = item;
 		this.#checked = props.checked;
+		this.#indeterminate = props.indeterminate;
 	}
 
 	toggleChecked = () => {
-		if (this.#checked.current === true) {
-			this.#checked.current = false;
-		} else if (this.#checked.current === false) {
+		if (this.#indeterminate.current) {
+			this.#indeterminate.current = false;
 			this.#checked.current = true;
-		} else if (this.#checked.current === "indeterminate") {
-			this.#checked.current = true;
+		} else {
+			this.#checked.current = !this.#checked.current;
 		}
 	};
+
+	snippetProps = $derived.by(() => ({
+		checked: this.#checked.current,
+		indeterminate: this.#indeterminate.current,
+	}));
 
 	props = $derived.by(
 		() =>
 			({
 				...this.#item.props,
 				role: "menuitemcheckbox",
-				"aria-checked": getAriaChecked(this.#checked.current),
+				"aria-checked": getAriaChecked(this.#checked.current, this.#indeterminate.current),
 				"data-state": getCheckedState(this.#checked.current),
 				[this.#item.root.getAttr("checkbox-item")]: "",
 			}) as const
@@ -874,7 +881,7 @@ class MenuRadioItemState {
 				[this.#group.root.getAttr("radio-item")]: "",
 				...this.#item.props,
 				role: "menuitemradio",
-				"aria-checked": getAriaChecked(this.isChecked),
+				"aria-checked": getAriaChecked(this.isChecked, false),
 				"data-state": getCheckedState(this.isChecked),
 			}) as const
 	);

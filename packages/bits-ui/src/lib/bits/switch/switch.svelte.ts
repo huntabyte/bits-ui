@@ -79,7 +79,7 @@ class SwitchRootState {
 				id: this.#id.current,
 				role: "switch",
 				disabled: getDisabled(this.disabled.current),
-				"aria-checked": getAriaChecked(this.checked.current),
+				"aria-checked": getAriaChecked(this.checked.current, false),
 				"aria-required": getAriaRequired(this.required.current),
 				[ROOT_ATTR]: "",
 				//

@@ -15,7 +15,8 @@ type CheckboxRootStateProps = WithRefProps<
 		value: string | undefined;
 	}> &
 		WritableBoxedValues<{
-			checked: boolean | "indeterminate";
+			checked: boolean;
+			indeterminate: boolean;
 		}>
 >;
 
@@ -27,6 +28,7 @@ class CheckboxRootState {
 	required: CheckboxRootStateProps["required"];
 	name: CheckboxRootStateProps["name"];
 	value: CheckboxRootStateProps["value"];
+	indeterminate: CheckboxRootStateProps["indeterminate"];
 
 	constructor(props: CheckboxRootStateProps) {
 		this.checked = props.checked;
@@ -36,6 +38,7 @@ class CheckboxRootState {
 		this.value = props.value;
 		this.#ref = props.ref;
 		this.#id = props.id;
+		this.indeterminate = props.indeterminate;
 
 		useRefById({
 			id: this.#id,
@@ -53,7 +56,8 @@ class CheckboxRootState {
 	};
 
 	#toggle = () => {
-		if (this.checked.current === "indeterminate") {
+		if (this.indeterminate.current) {
+			this.indeterminate.current = false;
 			this.checked.current = true;
 		} else {
 			this.checked.current = !this.checked.current;
@@ -72,10 +76,13 @@ class CheckboxRootState {
 				role: "checkbox",
 				type: "button",
 				disabled: this.disabled.current,
-				"aria-checked": getAriaChecked(this.checked.current),
+				"aria-checked": getAriaChecked(this.checked.current, this.indeterminate.current),
 				"aria-required": getAriaRequired(this.required.current),
 				"data-disabled": getDataDisabled(this.disabled.current),
-				"data-state": getCheckboxDataState(this.checked.current),
+				"data-state": getCheckboxDataState(
+					this.checked.current,
+					this.indeterminate.current
+				),
 				[CHECKBOX_ROOT_ATTR]: "",
 				//
 				onclick: this.#onclick,
@@ -115,8 +122,8 @@ class CheckboxInputState {
 // HELPERS
 //
 
-function getCheckboxDataState(checked: boolean | "indeterminate") {
-	if (checked === "indeterminate") {
+function getCheckboxDataState(checked: boolean, indeterminate: boolean) {
+	if (indeterminate) {
 		return "indeterminate";
 	}
 	return checked ? "checked" : "unchecked";

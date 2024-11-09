@@ -149,7 +149,7 @@ class RadioGroupItemState {
 				"data-orientation": this.#root.orientation.current,
 				"data-disabled": getDataDisabled(this.#isDisabled),
 				"data-state": this.#isChecked ? "checked" : "unchecked",
-				"aria-checked": getAriaChecked(this.#isChecked),
+				"aria-checked": getAriaChecked(this.#isChecked, false),
 				[RADIO_GROUP_ITEM_ATTR]: "",
 				type: "button",
 				role: "radio",
