@@ -1,6 +1,5 @@
 import { SvelteMap } from "svelte/reactivity";
 import { type Getter, afterSleep, afterTick, box } from "svelte-toolbelt";
-import { Previous } from "runed";
 import { untrack } from "svelte";
 import type { Fn } from "./types.js";
 import { isBrowser, isIOS } from "./is.js";
@@ -24,8 +23,6 @@ const useBodyLockStackCount = createSharedHook(() => {
 		}
 		return false;
 	});
-
-	const prevLocked = new Previous(() => locked);
 
 	let initialBodyStyle: Partial<CSSStyleDeclaration> = $state<Partial<CSSStyleDeclaration>>({});
 
@@ -123,10 +120,10 @@ export function useBodyScrollLock(
 	$effect(() => {
 		return () => {
 			countState.map.delete(id);
-			const length = Array.from(countState.map.values()).length;
-			if (length === 0) {
+
+			if (!isAnyLocked(countState.map)) {
 				if (_restoreScrollDelay === null) {
-					countState.resetBodyStyle();
+					requestAnimationFrame(() => countState.resetBodyStyle());
 				} else {
 					afterSleep(_restoreScrollDelay, () => countState.resetBodyStyle());
 				}
@@ -135,4 +132,11 @@ export function useBodyScrollLock(
 	});
 
 	return locked;
+}
+
+function isAnyLocked(map: Map<string, boolean>) {
+	for (const [_, value] of map) {
+		if (value) return true;
+	}
+	return false;
 }

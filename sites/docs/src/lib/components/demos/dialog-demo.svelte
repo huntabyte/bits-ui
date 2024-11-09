@@ -21,8 +21,9 @@
 		>
 			<Dialog.Title
 				class="flex w-full items-center justify-center text-lg font-semibold tracking-tight"
-				>Create API key</Dialog.Title
 			>
+				Create API key
+			</Dialog.Title>
 			<Separator.Root class="-mx-5 mb-6 mt-5 block h-px bg-muted" />
 			<Dialog.Description class="text-sm text-foreground-alt">
 				Create and manage API keys. You can create multiple keys to organize your
