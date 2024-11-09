@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.49
+
+### Patch Changes
+
+-   fix: make `*Menu.CheckboxItem` `indeterminate` prop bindable ([#900](https://github.com/huntabyte/bits-ui/pull/900))
+
 ## 1.0.0-next.48
 
 ### Patch Changes
