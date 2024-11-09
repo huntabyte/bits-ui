@@ -1,5 +1,15 @@
 # bits-ui
 
+## 1.0.0-next.47
+
+### Patch Changes
+
+-   fix: issue with nested scroll prevention ([#896](https://github.com/huntabyte/bits-ui/pull/896))
+
+-   fix: pagination with `count={0}` displaying page 0 ([#893](https://github.com/huntabyte/bits-ui/pull/893))
+
+-   fix: pin input paste not working without pattern ([#897](https://github.com/huntabyte/bits-ui/pull/897))
+
 ## 1.0.0-next.46
 
 ### Patch Changes
