@@ -1,3 +1,3 @@
 ```ts
-(checked: boolean | 'indeterminate') => void
+(checked: boolean) => void
 ```

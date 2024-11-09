@@ -16,6 +16,9 @@
 		onSelect = noop,
 		controlledChecked = false,
 		closeOnSelect = true,
+		indeterminate = false,
+		controlledIndeterminate = false,
+		onIndeterminateChange = noop,
 		...restProps
 	}: MenuCheckboxItemProps = $props();
 
@@ -39,6 +42,17 @@
 			(v) => (ref = v)
 		),
 		closeOnSelect: box.with(() => closeOnSelect),
+		indeterminate: box.with(
+			() => indeterminate,
+			(v) => {
+				if (controlledIndeterminate) {
+					onIndeterminateChange(v);
+				} else {
+					indeterminate = v;
+					onIndeterminateChange(v);
+				}
+			}
+		),
 	});
 
 	function handleSelect(e: Event) {
@@ -51,9 +65,9 @@
 </script>
 
 {#if child}
-	{@render child({ props: mergedProps, checked })}
+	{@render child({ props: mergedProps, ...checkboxItemState.snippetProps })}
 {:else}
 	<div {...mergedProps}>
-		{@render children?.({ checked })}
+		{@render children?.(checkboxItemState.snippetProps)}
 	</div>
 {/if}

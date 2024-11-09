@@ -1,13 +1,9 @@
 export { default as CalendarOnValueChangeProp } from "./calendar-on-value-change-prop.md";
 export { default as CalendarValueProp } from "./calendar-value-prop.md";
-export { default as CheckedChildSnippetProps } from "./checked-child-snippet-props.md";
-export { default as CheckedChildrenSnippetProps } from "./checked-children-snippet-props.md";
-export { default as CheckedProp } from "./checked-prop.md";
 export { default as ChildDefaultSnippetProps } from "./child-default-snippet-props.md";
 export { default as DateFieldInputChildSnippetProps } from "./date-field-input-child-snippet-props.md";
 export { default as DateFieldInputChildrenSnippetProps } from "./date-field-input-children-snippet-props.md";
 export { default as DateMatcherProp } from "./date-matcher-prop.md";
-export { default as DateOnPlaceholderChangeProp } from "./date-on-placeholder-change-prop.md";
 export { default as DateOnRangeChangeProp } from "./date-on-range-change-prop.md";
 export { default as DateRangeProp } from "./date-range-prop.md";
 export { default as DateValueProp } from "./date-value-prop.md";
@@ -22,7 +18,6 @@ export { default as InteractOutsideBehaviorProp } from "./interact-outside-behav
 export { default as MonthProp } from "./month-prop.md";
 export { default as NoopProp } from "./noop-prop.md";
 export { default as OnChangeStringOrArrayProp } from "./on-change-string-or-array-prop.md";
-export { default as OnCheckedChangeProp } from "./on-checked-change-prop.md";
 export { default as OnEscapeKeydownProp } from "./on-escape-keydown-prop.md";
 export { default as OnInteractOutsideProp } from "./on-interact-outside-prop.md";
 export { default as OnFocusOutsideProp } from "./on-focus-outside-prop.md";

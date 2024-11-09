@@ -19,6 +19,7 @@ import {
 	arrowProps,
 	childrenSnippet,
 	controlledCheckedProp,
+	controlledIndeterminateProp,
 	controlledOpenProp,
 	controlledValueProp,
 	createBooleanProp,
@@ -38,11 +39,7 @@ import {
 	withChildProps,
 } from "./helpers.js";
 import {
-	CheckedChildSnippetProps,
-	CheckedChildrenSnippetProps,
-	CheckedProp,
 	NoopProp,
-	OnCheckedChangeProp,
 	OnOpenChangeProp,
 	OnStringValueChangeProp,
 	OpenChildSnippetProps,
@@ -53,6 +50,12 @@ import {
 } from "./extended-types/shared/index.js";
 import { MenuCheckedStateAttr } from "./extended-types/menu/index.js";
 import { RadioGroupStateAttr } from "./extended-types/radio-group/index.js";
+import {
+	CheckboxRootChildSnippetProps,
+	CheckboxRootChildrenSnippetProps,
+	CheckboxRootOnCheckedChangeProp,
+	CheckboxRootOnIndeterminateChangeProp,
+} from "./extended-types/checkbox/index.js";
 import type { APISchema, DataAttrSchema, PropObj } from "$lib/types/index.js";
 import * as C from "$lib/content/constants.js";
 import { enums } from "$lib/content/api-reference/helpers.js";
@@ -171,24 +174,32 @@ const checkboxItemProps = {
 		description:
 			"Whether or not the checkbox menu item is disabled. Disabled items cannot be interacted with and are skipped when navigating with the keyboard.",
 	}),
-	checked: createUnionProp({
-		options: ["boolean", "'indeterminate'"],
+	checked: createBooleanProp({
 		default: C.FALSE,
 		description: "The checkbox menu item's checked state.",
 		bindable: true,
-		definition: CheckedProp,
 	}),
 	onCheckedChange: createFunctionProp({
-		definition: OnCheckedChangeProp,
+		definition: CheckboxRootOnCheckedChangeProp,
 		description:
 			"A callback that is fired when the checkbox menu item's checked state changes.",
 	}),
 	controlledChecked: controlledCheckedProp,
+	indeterminate: createBooleanProp({
+		default: C.FALSE,
+		description: "Whether the checkbox menu item is in an indeterminate state or not.",
+		bindable: true,
+	}),
+	onIndeterminateChange: createFunctionProp({
+		definition: CheckboxRootOnIndeterminateChangeProp,
+		description: "A callback that is fired when the indeterminate state changes.",
+	}),
+	controlledIndeterminate: controlledIndeterminateProp,
 	...omit(sharedItemProps, "child", "children"),
 	...withChildProps({
 		elType: "HTMLDivElement",
-		childrenDef: CheckedChildrenSnippetProps,
-		childDef: CheckedChildSnippetProps,
+		childrenDef: CheckboxRootChildrenSnippetProps,
+		childDef: CheckboxRootChildSnippetProps,
 	}),
 } satisfies PropObj<DropdownMenuCheckboxItemPropsWithoutHTML>;
 

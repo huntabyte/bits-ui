@@ -1,6 +1,7 @@
 ```ts
 type ChildSnippetProps = {
-	checked: boolean | "indeterminate";
+	checked: boolean;
+	indeterminate: boolean;
 	props: Record<string, unknown>;
-};
+}
 ```
