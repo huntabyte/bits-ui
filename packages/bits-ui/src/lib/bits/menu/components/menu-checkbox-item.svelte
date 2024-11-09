@@ -16,7 +16,7 @@
 		onSelect = noop,
 		controlledChecked = false,
 		closeOnSelect = true,
-		indeterminate = false,
+		indeterminate = $bindable(false),
 		controlledIndeterminate = false,
 		onIndeterminateChange = noop,
 		...restProps
