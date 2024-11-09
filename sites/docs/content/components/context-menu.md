@@ -242,8 +242,10 @@ You can use the `ContextMenu.CheckboxItem` component to create a `menuitemcheckb
 </script>
 
 <ContextMenu.CheckboxItem bind:checked={notifications}>
-	{#snippet children({ checked })}
-		{#if checked}
+	{#snippet children({ checked, indeterminate })}
+		{#if indeterminate}
+			-
+		{:else if checked}
 			✅
 		{/if}
 		Notifications
