@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.51
+
+### Patch Changes
+
+-   add tooltip data-attr ([#908](https://github.com/huntabyte/bits-ui/pull/908))
+
 ## 1.0.0-next.50
 
 ### Patch Changes
