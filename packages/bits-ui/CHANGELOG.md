@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.50
+
+### Patch Changes
+
+-   add `data-arrow` attribute to floating arrow svg ([#906](https://github.com/huntabyte/bits-ui/pull/906))
+
 ## 1.0.0-next.49
 
 ### Patch Changes
