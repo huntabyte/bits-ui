@@ -277,6 +277,7 @@ class TooltipTriggerState {
 		"data-delay-duration": `${this.#root.delayDuration}`,
 		[TRIGGER_ATTR]: "",
 		tabindex: this.#isDisabled ? undefined : 0,
+		disabled: this.#disabled.current,
 		onpointerup: this.#onpointerup,
 		onpointerdown: this.#onpointerdown,
 		onpointermove: this.#onpointermove,
