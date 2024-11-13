@@ -1,5 +1,13 @@
 # bits-ui
 
+## 1.0.0-next.53
+
+### Patch Changes
+
+-   fix: ensure `disabled` attribute is passed to a disabled tooltip trigger ([#916](https://github.com/huntabyte/bits-ui/pull/916))
+
+-   fix: ensure `disabled` is passed to `Popover.Trigger` ([#918](https://github.com/huntabyte/bits-ui/pull/918))
+
 ## 1.0.0-next.52
 
 ### Patch Changes
