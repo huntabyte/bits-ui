@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.52
+
+### Patch Changes
+
+-   fix(Pagination): disable prev/next buttons when no prev/next page ([#910](https://github.com/huntabyte/bits-ui/pull/910))
+
 ## 1.0.0-next.51
 
 ### Patch Changes
