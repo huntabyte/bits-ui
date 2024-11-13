@@ -89,6 +89,7 @@ class PopoverTriggerState {
 				"data-state": getDataOpenClosed(this.#root.open.current),
 				"aria-controls": this.#getAriaControls(),
 				"data-popover-trigger": "",
+				disabled: this.#disabled.current,
 				//
 				onpointerdown: this.#onpointerdown,
 				onkeydown: this.#onkeydown,
