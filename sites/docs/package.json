@@ -42,7 +42,7 @@
 		"remove-markdown": "^0.5.5",
 		"runed": "^0.15.2",
 		"shiki": "^1.1.1",
-		"svelte": "^5.1.0",
+		"svelte": "^5.1.16",
 		"svelte-check": "4.0.3",
 		"svelte-sonner": "^0.3.24",
 		"tailwind-merge": "^2.2.1",
