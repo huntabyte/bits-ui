@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.54
+
+### Patch Changes
+
+-   fix: ensure highlighted item is reset when items mount/unmount ([#919](https://github.com/huntabyte/bits-ui/pull/919))
+
 ## 1.0.0-next.53
 
 ### Patch Changes
