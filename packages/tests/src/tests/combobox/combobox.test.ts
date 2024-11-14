@@ -39,7 +39,6 @@ function setupSingle(
 	component: Component<any, any, any> = ComboboxTest
 ) {
 	const user = setupUserEvents();
-	// @ts-expect-error - testing lib needs to update their generic types
 	const returned = render(component, { name: "test", ...props, items });
 	const input = returned.getByTestId("input");
 	const trigger = returned.getByTestId("trigger");
@@ -70,7 +69,6 @@ function setupSingle(
 
 function setupMultiple(props: Partial<ComboboxMultipleTestProps> = {}, items: Item[] = testItems) {
 	const user = setupUserEvents();
-	// @ts-expect-error - testing lib needs to update their generic types
 	const returned = render(ComboboxMultiTest, { name: "test", ...props, items });
 	const input = returned.getByTestId("input");
 	const trigger = returned.getByTestId("trigger");
@@ -155,8 +153,7 @@ async function openMultiple(
 const OPEN_KEYS = [kbd.ARROW_DOWN, kbd.ARROW_UP];
 
 describe("combobox - single", () => {
-	it("should have noaccessibility violations", async () => {
-		// @ts-expect-error - testing lib needs to update their generic types
+	it("should have no accessibility violations", async () => {
 		const { container } = render(ComboboxTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});
@@ -450,7 +447,6 @@ describe("combobox - single", () => {
 ////////////////////////////////////
 describe("combobox - multiple", () => {
 	it("should have no accessibility violations", async () => {
-		// @ts-expect-error - testing lib needs to update their generic types
 		const { container } = render(ComboboxMultiTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});

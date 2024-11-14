@@ -22,7 +22,6 @@ const months = ["January", "February", "March", "April", "May", "June", "July", 
 
 function setup(props: Partial<CalendarSingleTestProps> = {}) {
 	const user = userEvent.setup();
-	// @ts-expect-error - testing lib needs to update their generic types
 	const returned = render(CalendarTest, { ...props, type: "single" });
 	const calendar = returned.getByTestId("calendar");
 	expect(calendar).toBeVisible();
@@ -31,7 +30,6 @@ function setup(props: Partial<CalendarSingleTestProps> = {}) {
 
 function setupMulti(props: Partial<CalendarMultiTestProps> = {}) {
 	const user = userEvent.setup();
-	// @ts-expect-error - testing lib needs to update their generic types
 	const returned = render(CalendarMultiTest, { ...props, type: "multiple" });
 	const calendar = returned.getByTestId("calendar");
 	expect(calendar).toBeVisible();
@@ -40,7 +38,6 @@ function setupMulti(props: Partial<CalendarMultiTestProps> = {}) {
 
 describe("calendar", () => {
 	it("should have no accessibility violations", async () => {
-		// @ts-expect-error - testing lib needs to update their generic types
 		const { container } = render(CalendarTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});

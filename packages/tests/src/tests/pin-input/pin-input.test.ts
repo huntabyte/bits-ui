@@ -31,7 +31,6 @@ function setup(props: Partial<PinInput.RootProps> = {}) {
 
 describe("pin Input", () => {
 	it("should have no accessibility violations", async () => {
-		// @ts-expect-error - testing lib needs to update their generic types
 		const { container } = render(PinInputTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});

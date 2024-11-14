@@ -18,7 +18,6 @@ function setup(
 	component: Component = ContextMenuTest
 ) {
 	const user = setupUserEvents();
-	// @ts-expect-error - testing lib needs to update their generic types
 	const returned = render(component, { ...props });
 	const trigger = returned.getByTestId("trigger");
 	function getContent() {
@@ -68,7 +67,6 @@ async function openSubmenu(props: Awaited<ReturnType<typeof open>>) {
 
 describe("context menu", () => {
 	it("should have no accessibility violations", async () => {
-		// @ts-expect-error - testing lib needs to update their generic types
 		const { container } = render(ContextMenuTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});

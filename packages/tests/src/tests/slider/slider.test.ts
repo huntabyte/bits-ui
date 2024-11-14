@@ -2,7 +2,6 @@
 import { render } from "@testing-library/svelte";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
-import { tick } from "svelte";
 import { getTestKbd, setupUserEvents } from "../utils.js";
 import SliderTest, { type SliderTestProps } from "./slider-test.svelte";
 import SliderRangeTest, { type SliderRangeTestProps } from "./slider-range-test.svelte";
@@ -10,11 +9,9 @@ import SliderRangeTest, { type SliderRangeTestProps } from "./slider-range-test.
 const kbd = getTestKbd();
 
 function renderSlider(props: SliderTestProps = {}) {
-	// @ts-expect-error - testing lib needs to update their generic types
 	return render(SliderTest, { ...props });
 }
 function renderSliderRange(props: SliderRangeTestProps = {}) {
-	// @ts-expect-error - testing lib needs to update their generic types
 	return render(SliderRangeTest, { ...props });
 }
 
@@ -34,7 +31,6 @@ function setup(props: SliderTestProps = {}, kind: "default" | "range" = "default
 
 describe("slider (default)", () => {
 	it("should have no accessibility violations", async () => {
-		// @ts-expect-error - testing lib needs to update their generic types
 		const { container } = render(SliderTest);
 
 		expect(await axe(container)).toHaveNoViolations();

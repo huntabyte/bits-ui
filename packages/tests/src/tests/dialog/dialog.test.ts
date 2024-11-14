@@ -30,7 +30,6 @@ async function expectIsOpen(
 
 function setup(props: DialogTestProps = {}) {
 	const user = userEvent.setup({ pointerEventsCheck: 0 });
-	// @ts-expect-error - testing lib needs to update their generic types
 	const returned = render(DialogTest, { ...props });
 	const trigger = returned.getByTestId("trigger");
 
@@ -53,7 +52,6 @@ async function open(props: DialogTestProps = {}) {
 
 describe("dialog", () => {
 	it("should have no accessibility violations", async () => {
-		// @ts-expect-error - testing lib needs to update their generic types
 		const { container } = render(DialogTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});

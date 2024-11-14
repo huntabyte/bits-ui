@@ -7,7 +7,6 @@ import AvatarTest from "./avatar-test.svelte";
 const src = "https://github.com/huntabyte.png";
 
 function setup(props: { src: string }) {
-	// @ts-expect-error - testing lib needs to update their generic types
 	return render(AvatarTest, { props });
 }
 
