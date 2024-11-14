@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.56
+
+### Patch Changes
+
+-   fix: don't auto select first radio item unless there is already a selected value ([#927](https://github.com/huntabyte/bits-ui/pull/927))
+
 ## 1.0.0-next.55
 
 ### Patch Changes
