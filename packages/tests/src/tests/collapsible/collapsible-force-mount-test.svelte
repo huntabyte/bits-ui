@@ -24,7 +24,7 @@
 			</Collapsible.Content>
 		{:else}
 			<Collapsible.Content data-testid="content" forceMount>
-				{#snippet child({ props })}
+				{#snippet child({ props, open: _open })}
 					<div {...props}>Content</div>
 				{/snippet}
 			</Collapsible.Content>

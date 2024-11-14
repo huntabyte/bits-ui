@@ -33,7 +33,6 @@ const months = ["January", "February", "March", "April", "May", "June", "July", 
 
 function setup(props: Partial<RangeCalendarTestProps> = {}) {
 	const user = userEvent.setup();
-	// @ts-expect-error - testing lib needs to update their generic types
 	const returned = render(RangeCalendarTest, { ...props });
 	const calendar = returned.getByTestId("calendar");
 	expect(calendar).toBeVisible();
@@ -45,7 +44,6 @@ const SELECTED_ATTR = "data-selected";
 
 describe("calendar", () => {
 	it("should have no accessibility violations", async () => {
-		// @ts-expect-error - testing lib needs to update their generic types
 		const { container } = render(RangeCalendarTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});

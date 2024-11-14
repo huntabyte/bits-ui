@@ -38,7 +38,6 @@ function setupSingle(
 	component: Component<any, any, any> = SelectTest
 ) {
 	const user = setupUserEvents();
-	// @ts-expect-error - testing lib needs to update their generic types
 	const returned = render(component, { name: "test", ...props, items });
 	const trigger = returned.getByTestId("trigger");
 	const openBinding = returned.getByTestId("open-binding");
@@ -147,7 +146,6 @@ const OPEN_KEYS = [kbd.ARROW_DOWN, kbd.ARROW_UP];
 
 describe("select - single", () => {
 	it("should have no accessibility violations", async () => {
-		// @ts-expect-error - testing lib needs to update their generic types
 		const { container } = render(SelectTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});
@@ -465,7 +463,6 @@ describe("select - single", () => {
 ////////////////////////////////////
 describe("select - multiple", () => {
 	it("should have no accessibility violations", async () => {
-		// @ts-expect-error - testing lib needs to update their generic types
 		const { container } = render(SelectMultiTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});

@@ -35,7 +35,7 @@
 				</Popover.Content>
 			{:else}
 				<Popover.Content {...contentProps} data-testid="content" forceMount>
-					{#snippet child({ props })}
+					{#snippet child({ props, open: _open })}
 						<div {...props}>
 							content
 							<Popover.Close data-testid="close">close</Popover.Close>

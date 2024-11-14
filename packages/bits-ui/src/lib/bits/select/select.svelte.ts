@@ -842,7 +842,7 @@ class SelectItemState {
 
 		$effect(() => {
 			if (!this.mounted) return;
-			this.root.setInitialHighlightedNode();
+			untrack(() => this.root.setInitialHighlightedNode());
 		});
 	}
 

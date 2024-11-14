@@ -35,7 +35,7 @@
 	);
 </script>
 
-<Select.Root type="single" bind:value items={themes}>
+<Select.Root type="single" onValueChange={(v) => (value = v)}>
 	<Select.Trigger
 		class="inline-flex h-input w-[296px] select-none items-center rounded-9px border border-border-input bg-background px-[11px] text-sm transition-colors placeholder:text-foreground-alt/50"
 		aria-label="Select a theme"
@@ -46,7 +46,7 @@
 	</Select.Trigger>
 	<Select.Portal>
 		<Select.Content
-			class="focus-override z-50 max-h-96 w-[var(--bits-select-anchor-width)] min-w-[var(--bits-select-anchor-width)] select-none rounded-xl border border-muted bg-background px-1 py-3 shadow-popover outline-none"
+			class="focus-override z-50 max-h-96 w-[var(--bits-select-anchor-width)] min-w-[var(--bits-select-anchor-width)] select-none rounded-xl border border-muted bg-background px-1 py-3 shadow-popover outline-none data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2"
 			sideOffset={10}
 		>
 			<Select.ScrollUpButton class="flex w-full items-center justify-center">

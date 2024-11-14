@@ -48,7 +48,7 @@
 					{...contentProps}
 					forceMount
 				>
-					{#snippet child({ props })}
+					{#snippet child({ props, open: _open })}
 						<div {...props}>Content</div>
 					{/snippet}
 				</LinkPreview.Content>
