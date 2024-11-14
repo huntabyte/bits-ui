@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.55
+
+### Patch Changes
+
+-   fix: `Select` and `Combobox` infinite loop on item selection ([#925](https://github.com/huntabyte/bits-ui/pull/925))
+
 ## 1.0.0-next.54
 
 ### Patch Changes
