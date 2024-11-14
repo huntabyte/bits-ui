@@ -4,6 +4,7 @@
 	import type { SelectItemProps } from "../types.js";
 	import { useId } from "$lib/internal/use-id.js";
 	import { noop } from "$lib/internal/noop.js";
+	import Mounted from "$lib/bits/utilities/mounted.svelte";
 
 	let {
 		id = useId(),
@@ -41,3 +42,9 @@
 		{@render children?.(itemState.snippetProps)}
 	</div>
 {/if}
+
+<Mounted
+	onMountedChange={(m) => {
+		itemState.mounted = m;
+	}}
+/>

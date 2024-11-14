@@ -187,7 +187,7 @@ class SelectSingleRootState extends SelectBaseRootState {
 		$effect(() => {
 			if (!this.open.current) return;
 			afterTick(() => {
-				this.#setInitialHighlightedNode();
+				this.setInitialHighlightedNode();
 			});
 		});
 	}
@@ -201,8 +201,8 @@ class SelectSingleRootState extends SelectBaseRootState {
 		this.inputValue = itemLabel;
 	};
 
-	#setInitialHighlightedNode = () => {
-		if (this.highlightedNode) return;
+	setInitialHighlightedNode = () => {
+		if (this.highlightedNode && document.contains(this.highlightedNode)) return;
 		if (this.value.current !== "") {
 			const node = this.getNodeByValue(this.value.current);
 			if (node) {
@@ -235,7 +235,7 @@ class SelectMultipleRootState extends SelectBaseRootState {
 			if (!this.open.current) return;
 			afterTick(() => {
 				if (!this.highlightedNode) {
-					this.#setInitialHighlightedNode();
+					this.setInitialHighlightedNode();
 				}
 			});
 		});
@@ -254,7 +254,7 @@ class SelectMultipleRootState extends SelectBaseRootState {
 		this.inputValue = itemLabel;
 	};
 
-	#setInitialHighlightedNode = () => {
+	setInitialHighlightedNode = () => {
 		if (this.highlightedNode) return;
 		if (this.value.current.length && this.value.current[0] !== "") {
 			const node = this.getNodeByValue(this.value.current[0]!);
@@ -815,6 +815,7 @@ class SelectItemState {
 	isHighlighted = $derived.by(() => this.root.highlightedValue === this.value.current);
 	prevHighlighted = new Previous(() => this.isHighlighted);
 	textId = $state("");
+	mounted = $state(false);
 
 	constructor(props: SelectItemStateProps, root: SelectRootState) {
 		this.root = root;
@@ -837,6 +838,11 @@ class SelectItemState {
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
+		});
+
+		$effect(() => {
+			if (!this.mounted) return;
+			this.root.setInitialHighlightedNode();
 		});
 	}
 
