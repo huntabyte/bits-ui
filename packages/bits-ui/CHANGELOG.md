@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.57
+
+### Patch Changes
+
+-   fix: Avatar should render fallback if src is updated and is `null`/`undefined` ([#929](https://github.com/huntabyte/bits-ui/pull/929))
+
 ## 1.0.0-next.56
 
 ### Patch Changes
