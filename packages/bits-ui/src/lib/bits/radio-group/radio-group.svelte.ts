@@ -8,6 +8,7 @@ import {
 	useRovingFocus,
 } from "$lib/internal/use-roving-focus.svelte.js";
 import { createContext } from "$lib/internal/create-context.js";
+import { kbd } from "$lib/internal/kbd.js";
 
 const RADIO_GROUP_ROOT_ATTR = "data-radio-group-root";
 const RADIO_GROUP_ITEM_ATTR = "data-radio-group-item";
@@ -32,6 +33,7 @@ class RadioGroupRootState {
 	name: RadioGroupRootStateProps["name"];
 	value: RadioGroupRootStateProps["value"];
 	rovingFocusGroup: UseRovingFocusReturn;
+	hasValue = $derived.by(() => this.value.current !== "");
 
 	constructor(props: RadioGroupRootStateProps) {
 		this.#id = props.id;
@@ -42,6 +44,7 @@ class RadioGroupRootState {
 		this.name = props.name;
 		this.value = props.value;
 		this.#ref = props.ref;
+
 		this.rovingFocusGroup = useRovingFocus({
 			rootNodeId: this.#id,
 			candidateAttr: RADIO_GROUP_ITEM_ATTR,
@@ -129,10 +132,17 @@ class RadioGroupItemState {
 	};
 
 	#onfocus = () => {
+		if (!this.#root.hasValue) return;
 		this.#root.setValue(this.#value.current);
 	};
 
 	#onkeydown = (e: KeyboardEvent) => {
+		if (this.#isDisabled) return;
+		if (e.key === kbd.SPACE) {
+			e.preventDefault();
+			this.#root.setValue(this.#value.current);
+			return;
+		}
 		this.#root.rovingFocusGroup.handleKeydown(this.#ref.current, e, true);
 	};
 
