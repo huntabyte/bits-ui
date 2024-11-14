@@ -43,7 +43,7 @@
 				</Accordion.Content>
 			{:else}
 				<Accordion.Content data-testid="{value}-content" forceMount>
-					{#snippet child({ props })}
+					{#snippet child({ props, open: _open })}
 						<div {...props}>
 							{content}
 						</div>

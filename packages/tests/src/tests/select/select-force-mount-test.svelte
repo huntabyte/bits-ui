@@ -62,7 +62,10 @@
 									>
 									{#each filteredItems as { value, label, disabled }}
 										<Select.Item data-testid={value} {disabled} {value} {label}>
-											{#snippet children({ selected })}
+											{#snippet children({
+												selected,
+												highlighted: _highlighted,
+											})}
 												{#if selected}
 													<span data-testid="{value}-indicator">x</span>
 												{/if}
@@ -77,7 +80,7 @@
 				</Select.Content>
 			{:else}
 				<Select.Content data-testid="content" {...contentProps} forceMount>
-					{#snippet child({ props })}
+					{#snippet child({ props, open: _open })}
 						<div {...props}>
 							<Select.Group data-testid="group">
 								<Select.GroupHeading data-testid="group-label"
@@ -85,7 +88,7 @@
 								>
 								{#each filteredItems as { value, label, disabled }}
 									<Select.Item data-testid={value} {disabled} {value} {label}>
-										{#snippet children({ selected })}
+										{#snippet children({ selected, highlighted: _highlighted })}
 											{#if selected}
 												<span data-testid="{value}-indicator">x</span>
 											{/if}

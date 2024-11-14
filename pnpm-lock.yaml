@@ -276,8 +276,8 @@ importers:
         specifier: ^5.1.16
         version: 5.1.16
       svelte-check:
-        specifier: 4.0.3
-        version: 4.0.3(picomatch@4.0.2)(svelte@5.1.16)(typescript@5.6.2)
+        specifier: 4.0.7
+        version: 4.0.7(picomatch@4.0.2)(svelte@5.1.16)(typescript@5.6.2)
       svelte-sonner:
         specifier: ^0.3.24
         version: 0.3.25(svelte@5.1.16)
@@ -4209,6 +4209,14 @@ packages:
       svelte: ^4.0.0 || ^5.0.0-next.0
       typescript: '>=5.0.0'
 
+  svelte-check@4.0.7:
+    resolution: {integrity: sha512-24hwo+D5L35HOXsh3Z2sU4WhdDLavlHquYaJhrEqAt+mV1xOVzoMVYThW80n99osDJxyuH+vxjNFkNRL4EvwTg==}
+    engines: {node: '>= 18.0.0'}
+    hasBin: true
+    peerDependencies:
+      svelte: ^4.0.0 || ^5.0.0-next.0
+      typescript: '>=5.0.0'
+
   svelte-eslint-parser@0.41.1:
     resolution: {integrity: sha512-08ndI6zTghzI8SuJAFpvMbA/haPSGn3xz19pjre19yYMw8Nw/wQJ2PrZBI/L8ijGTgtkWCQQiLLy+Z1tfaCwNA==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
@@ -4821,7 +4829,7 @@ snapshots:
   '@babel/code-frame@7.24.7':
     dependencies:
       '@babel/highlight': 7.24.7
-      picocolors: 1.0.1
+      picocolors: 1.1.0
 
   '@babel/helper-string-parser@7.24.8': {}
 
@@ -6250,7 +6258,7 @@ snapshots:
       chai: 5.1.1
       tinyrainbow: 1.2.0
 
-  '@vitest/mocker@2.1.1(@vitest/spy@2.1.1)(vite@5.4.6)':
+  '@vitest/mocker@2.1.1(@vitest/spy@2.1.1)(vite@5.4.6(@types/node@20.14.10)(terser@5.34.1))':
     dependencies:
       '@vitest/spy': 2.1.1
       estree-walker: 3.0.3
@@ -9223,6 +9231,18 @@ snapshots:
     transitivePeerDependencies:
       - picomatch
 
+  svelte-check@4.0.7(picomatch@4.0.2)(svelte@5.1.16)(typescript@5.6.2):
+    dependencies:
+      '@jridgewell/trace-mapping': 0.3.25
+      chokidar: 4.0.1
+      fdir: 6.3.0(picomatch@4.0.2)
+      picocolors: 1.1.0
+      sade: 1.8.1
+      svelte: 5.1.16
+      typescript: 5.6.2
+    transitivePeerDependencies:
+      - picomatch
+
   svelte-eslint-parser@0.41.1(svelte@5.1.0):
     dependencies:
       eslint-scope: 7.2.2
@@ -9601,7 +9621,7 @@ snapshots:
   vitest@2.1.1(@types/node@20.14.10)(@vitest/ui@2.1.1)(jsdom@24.1.0)(terser@5.34.1):
     dependencies:
       '@vitest/expect': 2.1.1
-      '@vitest/mocker': 2.1.1(@vitest/spy@2.1.1)(vite@5.4.6)
+      '@vitest/mocker': 2.1.1(@vitest/spy@2.1.1)(vite@5.4.6(@types/node@20.14.10)(terser@5.34.1))
       '@vitest/pretty-format': 2.1.1
       '@vitest/runner': 2.1.1
       '@vitest/snapshot': 2.1.1

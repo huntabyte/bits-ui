@@ -26,7 +26,7 @@
 		data-testid="input"
 		{...restProps}
 	>
-		{#snippet children({ cells })}
+		{#snippet children({ cells, isFocused: _isFocused, isHovering: _isHovering })}
 			<div class="flex">
 				{#each cells.slice(0, 3) as cell, idx}
 					{@render Cell(cell, idx)}
