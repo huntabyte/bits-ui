@@ -20,6 +20,7 @@
 		controlledIndeterminate = false,
 		onIndeterminateChange,
 		child,
+		type = "button",
 		...restProps
 	}: CheckboxRootProps = $props();
 
@@ -55,6 +56,7 @@
 				}
 			}
 		),
+		type: box.with(() => type),
 	});
 
 	const mergedProps = $derived(mergeProps({ ...restProps }, rootState.props));

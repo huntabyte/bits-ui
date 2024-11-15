@@ -1,4 +1,5 @@
 import { srOnlyStyles, styleToString, useRefById } from "svelte-toolbelt";
+import type { HTMLButtonAttributes } from "svelte/elements";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { getAriaChecked, getAriaRequired, getDataDisabled } from "$lib/internal/attrs.js";
@@ -13,6 +14,7 @@ type CheckboxRootStateProps = WithRefProps<
 		required: boolean;
 		name: string | undefined;
 		value: string | undefined;
+		type: HTMLButtonAttributes["type"];
 	}> &
 		WritableBoxedValues<{
 			checked: boolean;
@@ -23,6 +25,7 @@ type CheckboxRootStateProps = WithRefProps<
 class CheckboxRootState {
 	#id: CheckboxRootStateProps["id"];
 	#ref: CheckboxRootStateProps["ref"];
+	#type: CheckboxRootStateProps["type"];
 	checked: CheckboxRootStateProps["checked"];
 	disabled: CheckboxRootStateProps["disabled"];
 	required: CheckboxRootStateProps["required"];
@@ -39,6 +42,7 @@ class CheckboxRootState {
 		this.#ref = props.ref;
 		this.#id = props.id;
 		this.indeterminate = props.indeterminate;
+		this.#type = props.type;
 
 		useRefById({
 			id: this.#id,
@@ -74,7 +78,7 @@ class CheckboxRootState {
 			({
 				id: this.#id.current,
 				role: "checkbox",
-				type: "button",
+				type: this.#type.current,
 				disabled: this.disabled.current,
 				"aria-checked": getAriaChecked(this.checked.current, this.indeterminate.current),
 				"aria-required": getAriaRequired(this.required.current),
