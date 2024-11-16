@@ -130,19 +130,19 @@ export function useFocusScope({
 			}
 		}
 
-		const unsubEvents = executeCallbacks(
-			addEventListener(document, "focusin", handleFocusIn),
-			addEventListener(document, "focusout", handleFocusOut)
-		);
-		const mutationObserver = new MutationObserver(handleMutations);
-		if (container) {
+		return untrack(() => {
+			const unsubEvents = executeCallbacks(
+				addEventListener(document, "focusin", handleFocusIn),
+				addEventListener(document, "focusout", handleFocusOut)
+			);
+			const mutationObserver = new MutationObserver(handleMutations);
 			mutationObserver.observe(container, { childList: true, subtree: true });
-		}
 
-		return () => {
-			unsubEvents();
-			mutationObserver.disconnect();
-		};
+			return () => {
+				unsubEvents();
+				mutationObserver.disconnect();
+			};
+		});
 	});
 
 	$effect(() => {
@@ -161,8 +161,8 @@ export function useFocusScope({
 
 	$effect(() => {
 		if (!forceMount.current) return;
-		let container = ref.current;
 		enabled.current;
+		const container = ref.current;
 		const previouslyFocusedElement = document.activeElement as HTMLElement | null;
 		untrack(() => {
 			handleMount(container, previouslyFocusedElement);
@@ -175,9 +175,7 @@ export function useFocusScope({
 	});
 
 	function handleMount(container: HTMLElement | null, prevFocusedElement: HTMLElement | null) {
-		if (!container) {
-			container = document.getElementById(id.current);
-		}
+		if (!container) container = document.getElementById(id.current);
 		if (!container) return;
 		focusScopeStack.add(focusScope);
 		const hasFocusedCandidate = container.contains(prevFocusedElement);
