@@ -12,5 +12,5 @@ export function shouldTrapFocus({
 	if (forceMount) {
 		return open && trapFocus;
 	}
-	return present && trapFocus;
+	return present && trapFocus && open;
 }
