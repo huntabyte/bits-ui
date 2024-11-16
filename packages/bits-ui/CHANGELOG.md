@@ -1,5 +1,15 @@
 # bits-ui
 
+## 1.0.0-next.58
+
+### Patch Changes
+
+-   fix: cleanup focus scope handlers ([#936](https://github.com/huntabyte/bits-ui/pull/936))
+
+-   Allow users to override the `type` attribute on `Checkbox.Root` ([#934](https://github.com/huntabyte/bits-ui/pull/934))
+
+-   fix: Dialog buttons not responding on certain mobile platforms ([#937](https://github.com/huntabyte/bits-ui/pull/937))
+
 ## 1.0.0-next.57
 
 ### Patch Changes
