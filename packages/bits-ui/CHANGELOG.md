@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.59
+
+### Patch Changes
+
+-   fix: radio group onValueChange loop ([#939](https://github.com/huntabyte/bits-ui/pull/939))
+
 ## 1.0.0-next.58
 
 ### Patch Changes
