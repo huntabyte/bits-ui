@@ -21,7 +21,7 @@
 		{...restProps}
 	>
 		<Switch.Thumb
-			class="group pointer-events-none flex size-[30px] shrink-0 items-center justify-center rounded-full bg-background transition-transform data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0 data-[state=unchecked]:shadow-mini dark:border dark:border-none dark:border-background/30 dark:bg-foreground dark:shadow-[0px_1.3px_0px_1.3px_rgba(0,0,0,0.04)] dark:data-[state=unchecked]:border"
+			class="group pointer-events-none flex size-[30px] shrink-0 items-center justify-center rounded-full bg-background transition-transform data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0 data-[state=unchecked]:shadow-mini dark:border dark:border-none dark:border-background/30 dark:bg-white dark:shadow-[0px_1.3px_0px_1.3px_rgba(0,0,0,0.04)] dark:data-[state=unchecked]:border"
 		>
 			<Play
 				class="size-4 group-data-[state=checked]:hidden dark:text-[#171717]"

@@ -18,7 +18,7 @@
 	import Consistent from "$lib/components/homepage/svg-consistent.svelte";
 </script>
 
-<div class="border-b border-solid border-black/10 bg-white dark:bg-[#171717]">
+<div class="border-b border-solid border-black/10 bg-white dark:border-white/20 dark:bg-[#171717]">
 	<header class="grid grid-cols-3 px-5 py-[17px]">
 		<a
 			href="/"
