@@ -20,11 +20,11 @@
 
 <Select.Root type="single" bind:value items={themes}>
 	<Select.Trigger
-		class="inline-flex h-[37px] w-full select-none items-center rounded-9px border border-border-input bg-background px-3 pr-2  text-sm transition-colors placeholder:text-foreground-alt/50"
+		class="inline-flex h-[37px] w-full select-none items-center rounded-9px border border-border-input bg-background px-3 pr-2  text-sm transition-colors placeholder:text-foreground-alt/50 dark:border-[#18181B2B] dark:bg-white dark:text-[#171717]"
 		aria-label="Select task"
 	>
 		{selectedLabel}
-		<CaretUpDown class="ml-auto size-6 text-muted-foreground" />
+		<CaretUpDown class="ml-auto size-6 text-muted-foreground dark:text-[#17171766]" />
 	</Select.Trigger>
 	<Select.Portal>
 		<Select.Content

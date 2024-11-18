@@ -5,6 +5,7 @@
 	import SlidersHorizontal from "phosphor-svelte/lib/SlidersHorizontal";
 	import Keyboard from "phosphor-svelte/lib/Keyboard";
 	import Stack from "phosphor-svelte/lib/Stack";
+	import { mode } from "mode-watcher";
 	import CardAir from "$lib/components/homepage/card-air.svelte";
 	import CardSound from "$lib/components/homepage/card-sound.svelte";
 	import CardTimer from "$lib/components/homepage/card-timer.svelte";
@@ -17,7 +18,7 @@
 	import Consistent from "$lib/components/homepage/svg-consistent.svelte";
 </script>
 
-<div class="border-b border-solid border-black/10 bg-[#f5f5f5]/30">
+<div class="border-b border-solid border-black/10 bg-white dark:bg-[#171717]">
 	<header class="grid grid-cols-3 px-5 py-[17px]">
 		<a
 			href="/"
@@ -73,7 +74,7 @@
 		<div class="mx-auto w-7/12 text-center">
 			<a
 				href="/docs"
-				class="inline-flex gap-2 rounded-card-lg border border-border-input bg-white py-1.5 pl-3 pr-4 shadow-mini"
+				class="inline-flex gap-2 rounded-card-lg border border-border-input bg-white py-1.5 pl-3 pr-4 shadow-mini dark:border-[#F4F4F5]/20 dark:bg-[#242429]"
 			>
 				<Sparkle class="mt-[2px] size-4" aria-label="Stars" />
 				<span
@@ -82,7 +83,7 @@
 				>
 			</a>
 			<h1
-				class="mb-[0.35em] mt-[0.2em] text-balance pb-[0.1em] font-['Cal_Sans'] text-[4.25rem] font-semibold leading-[102%] text-transparent antialiased selection:text-foreground"
+				class="mb-[0.35em] mt-[0.2em] text-balance pb-[0.1em] font-['Cal_Sans'] text-[4.25rem] font-semibold leading-[102%] text-transparent antialiased selection:text-foreground dark:!text-[#EAEAEA]"
 			>
 				The headless components for Svelte
 			</h1>
@@ -95,11 +96,11 @@
 			<Button.Root
 				class="inline-flex h-10 items-center justify-center rounded-input bg-dark
         px-3 shadow-mini
-        hover:bg-dark/95 active:scale-98 active:transition-all"
+        hover:bg-dark/95 active:scale-98 active:transition-all dark:bg-white"
 				href="/docs"
 			>
 				<kbd
-					class="pointer-events-none hidden h-5 select-none items-center gap-1 rounded border bg-background-alt px-1.5 font-mono text-xxs font-medium opacity-100 shadow-[0px_2px_0px_0px_#59595b] sm:flex"
+					class="pointer-events-none hidden h-5 select-none items-center gap-1 rounded border bg-background-alt px-1.5 font-mono text-xxs font-medium opacity-100 shadow-[0px_2px_0px_0px_#59595b] dark:border-[rgba(0,_0,_0,_0.10)] dark:bg-white dark:shadow-[0px_2px_0px_0px_#B8B8B8] sm:flex"
 				>
 					<span class="text-xs text-foreground-alt">S</span>
 				</kbd>
@@ -112,7 +113,7 @@
 
 		<div class="mx-auto mt-20 grid grid-cols-2 gap-0 lg:grid-cols-[1fr_repeat(4,259px)_1fr]">
 			<div class="relative hidden lg:order-1 lg:block">
-				<div class="square"></div>
+				<div class="square {$mode === 'dark' ? 'dark' : ''}"></div>
 			</div>
 
 			<CardSound />
@@ -121,7 +122,7 @@
 			<CardTimer />
 
 			<div class="relative hidden lg:order-6 lg:block">
-				<div class="circle"></div>
+				<div class="circle {$mode === 'dark' ? 'dark' : ''}"></div>
 			</div>
 		</div>
 	</section>
@@ -248,6 +249,16 @@
 				#fff 100%
 			);
 		}
+		&.dark {
+			background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='40' ry='40' stroke='%23B2B2B2FF' stroke-width='2' stroke-dasharray='2%2c 8' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
+			&:after {
+				background: radial-gradient(
+					83.66% 83.66% at 95.63% 5.58%,
+					rgba(255, 255, 255, 0) 0%,
+					#171717 100%
+				);
+			}
+		}
 	}
 
 	.circle {
@@ -273,6 +284,16 @@
 				rgba(255, 255, 255, 0) 0%,
 				#fff 100%
 			);
+		}
+		&.dark {
+			background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='200' ry='200' stroke='%23B2B2B2FF' stroke-width='2' stroke-dasharray='2%2c8' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
+			&:after {
+				background: radial-gradient(
+					84.28% 84.28% at 40.53% 20.39%,
+					rgba(255, 255, 255, 0) 0%,
+					#171717 100%
+				);
+			}
 		}
 	}
 </style>

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { mode } from "mode-watcher";
 	import X from "phosphor-svelte/lib/X";
 	import HomeSwitch from "$lib/components/homepage/home-switch.svelte";
 	import HomeSelect from "$lib/components/homepage/home-select.svelte";
@@ -47,13 +48,23 @@
 </script>
 
 <div class="relative order-1 lg:order-5 lg:translate-y-[7%]">
-	<div class="line_top_gradient absolute -left-10 top-0 h-[1px] w-[calc(100%+50px)]"></div>
-	<div class="line_right_gradient absolute -top-[200px] bottom-0 right-0 w-px rotate-180"></div>
+	<div
+		class="line_top_gradient absolute -left-10 top-0 h-[1px] w-[calc(100%+50px)] {$mode ===
+		'dark'
+			? 'dark'
+			: ''}"
+	></div>
+	<div
+		class="line_right_gradient absolute -top-[200px] bottom-0 right-0 w-px rotate-180 {$mode ===
+		'dark'
+			? 'dark'
+			: ''}"
+	></div>
 	<div class="m-[10px]">
 		<div
-			class="aspect-square w-full rounded-card-lg border border-border-input bg-white px-[14px] py-3 shadow-card"
+			class="aspect-square w-full rounded-card-lg border border-border-input bg-white px-[14px] py-3 shadow-card dark:bg-[#FAF8F5]"
 		>
-			<div class="mb-5 rounded-15px bg-foreground p-1">
+			<div class="mb-5 rounded-15px bg-foreground p-1 dark:bg-[#171717]">
 				<div class="rounded-xl bg-[rgba(81,84,95,0.6)] px-2 pb-8 pt-3 text-white">
 					<div class="text-[2.563rem] font-medium leading-[100%]">
 						{displayTime}
@@ -77,7 +88,7 @@
 					{#each chips as chip, i}
 						<div
 							data-active={i === 0 ? "" : undefined}
-							class="group flex select-none items-center rounded-[25px] bg-[#31343e] px-2 text-[11px] text-white/70 data-[active]:bg-white data-[active]:text-foreground"
+							class="group flex select-none items-center rounded-[25px] bg-[#31343e] px-2 text-[11px] text-white/70 data-[active]:bg-white data-[active]:text-foreground dark:data-[active]:text-[#171717]"
 						>
 							{chip}
 							<X
@@ -114,6 +125,13 @@
 		background-size:
 			10px 1px,
 			100% 1px;
+		&.dark {
+			background: linear-gradient(to right, transparent 50%, #171717 50%),
+				linear-gradient(to right, rgba(186, 186, 186, 0), rgba(186, 186, 186, 1));
+			background-size:
+				10px 1px,
+				100% 1px;
+		}
 	}
 	.line_right_gradient {
 		background: linear-gradient(to top, transparent 50%, white 50%),
@@ -121,6 +139,13 @@
 		background-size:
 			1px 10px,
 			100% 100%;
+		&.dark {
+			background: linear-gradient(to top, transparent 50%, #171717 50%),
+				linear-gradient(to top, rgba(186, 186, 186, 0), rgba(186, 186, 186, 1));
+			background-size:
+				1px 10px,
+				100% 100%;
+		}
 	}
 
 	.ping_anim {

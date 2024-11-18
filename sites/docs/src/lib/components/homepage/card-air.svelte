@@ -10,7 +10,7 @@
 
 <div class="relative order-2 lg:order-3 lg:-translate-y-3">
 	<div
-		class="m-2.5 flex aspect-square flex-col justify-between rounded-card-lg bg-[#e0f2fe] px-5 pb-8 pt-5"
+		class="m-2.5 flex aspect-square flex-col justify-between rounded-card-lg bg-[#e0f2fe] px-5 pb-8 pt-5 dark:bg-[#C7E6FA]"
 	>
 		<div class="flex justify-between">
 			<Tabs.Root value="c" class="flex items-center font-medium">
