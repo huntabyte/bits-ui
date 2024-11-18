@@ -941,6 +941,19 @@ describe("date field", () => {
 		await user.keyboard(kbd.ARROW_UP);
 		expect(hour).toHaveTextContent("00");
 	});
+
+	it("should display correct hour when prepopulated with value and hourCycle is 24", async () => {
+		const value = new CalendarDateTime(2023, 10, 12, 0, 30, 30, 0);
+		const { getByTestId } = setup({
+			name: "hello",
+			value,
+			hourCycle: 24,
+		});
+
+		const { getHour } = getTimeSegments(getByTestId);
+		const hour = getHour();
+		expect(hour).toHaveTextContent("00");
+	});
 });
 
 /**
