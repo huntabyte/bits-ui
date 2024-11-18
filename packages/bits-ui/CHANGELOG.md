@@ -1,5 +1,13 @@
 # bits-ui
 
+## 1.0.0-next.60
+
+### Patch Changes
+
+-   fix: DateField 24 hour cycling ([#945](https://github.com/huntabyte/bits-ui/pull/945))
+
+-   fix: issue causing labels associated with radio group items not to select the item ([#943](https://github.com/huntabyte/bits-ui/pull/943))
+
 ## 1.0.0-next.59
 
 ### Patch Changes
