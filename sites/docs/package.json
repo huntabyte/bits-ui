@@ -7,7 +7,7 @@
 	"scripts": {
 		"dev": "concurrently \"pnpm:dev:content\" \"pnpm:dev:svelte\" \"pnpm:replace:velite\"",
 		"dev:content": "velite dev --watch",
-		"dev:svelte": "vite dev --host",
+		"dev:svelte": "vite dev",
 		"build": "velite && node ./other/update-velite-output.js && pnpm build:search && vite build",
 		"replace:velite": "node ./other/watch-velite-output.js",
 		"build:content": "velite",
