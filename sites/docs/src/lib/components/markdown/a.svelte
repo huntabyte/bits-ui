@@ -9,6 +9,6 @@
 	const target = $derived(!internal ? "_blank" : undefined);
 </script>
 
-<a {href} {target} {rel} class={cn("link leading-7", className)} {...restProps}>
+<a {href} {target} {rel} class={cn("link ", className)} {...restProps}>
 	{@render children?.()}
 </a>
