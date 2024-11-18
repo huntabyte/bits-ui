@@ -486,7 +486,8 @@ export class DateFieldRootState {
 				this.states.hour.updating = next;
 				if (next !== null && prev.dayPeriod !== null) {
 					const dayPeriod = this.formatter.dayPeriod(
-						toDate(dateRef.set({ hour: Number.parseInt(next) }))
+						toDate(dateRef.set({ hour: Number.parseInt(next) })),
+						this.hourCycle.current
 					);
 					if (dayPeriod === "AM" || dayPeriod === "PM") {
 						prev.dayPeriod = dayPeriod;
@@ -1506,6 +1507,12 @@ class DateFieldHourSegmentState {
 					this.#announcer.announce("12");
 					return "12";
 				}
+
+				if (next === 0 && this.#root.hourCycle.current === 24) {
+					this.#announcer.announce("00");
+					return "00";
+				}
+
 				this.#announcer.announce(next);
 				return `${next}`;
 			});
@@ -1532,6 +1539,12 @@ class DateFieldHourSegmentState {
 					this.#announcer.announce("12");
 					return "12";
 				}
+
+				if (next === 0 && this.#root.hourCycle.current === 24) {
+					this.#announcer.announce("00");
+					return "00";
+				}
+
 				this.#announcer.announce(next);
 				return `${next}`;
 			});
@@ -1541,10 +1554,12 @@ class DateFieldHourSegmentState {
 		if (isNumberString(e.key)) {
 			const num = Number.parseInt(e.key);
 			const max =
-				"dayPeriod" in this.#root.segmentValues &&
-				this.#root.segmentValues.dayPeriod !== null
-					? 12
-					: 23;
+				this.#root.hourCycle.current === 24
+					? 23
+					: "dayPeriod" in this.#root.segmentValues &&
+						  this.#root.segmentValues.dayPeriod !== null
+						? 12
+						: 23;
 			const maxStart = Math.floor(max / 10);
 			let moveToNext = false;
 			const numIsZero = num === 0;
@@ -1623,6 +1638,16 @@ class DateFieldHourSegmentState {
 					 * move to the next segment, returning the new number with a leading 0.
 					 */
 					if (num !== 0) {
+						moveToNext = true;
+						this.#root.states.hour.lastKeyZero = false;
+						return `0${num}`;
+					}
+
+					/**
+					 * If the new number is 0 and the hour cycle is set to 24, then we move
+					 * to the next segment, returning the new number with a leading 0.
+					 */
+					if (num === 0 && this.#root.hourCycle.current === 24) {
 						moveToNext = true;
 						this.#root.states.hour.lastKeyZero = false;
 						return `0${num}`;

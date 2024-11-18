@@ -1,5 +1,6 @@
 import { DateFormatter, type DateValue } from "@internationalized/date";
 import { hasTime, isZonedDateTime, toDate } from "./utils.js";
+import type { HourCycle } from "$lib/shared/date/types.js";
 
 export type Formatter = ReturnType<typeof createFormatter>;
 
@@ -75,10 +76,11 @@ export function createFormatter(initialLocale: string) {
 		return new DateFormatter(locale, { weekday: length }).format(date);
 	}
 
-	function dayPeriod(date: Date) {
+	function dayPeriod(date: Date, hourCycle: HourCycle | undefined = undefined) {
 		const parts = new DateFormatter(locale, {
 			hour: "numeric",
 			minute: "numeric",
+			hourCycle: hourCycle === 24 ? "h23" : undefined,
 		}).formatToParts(date);
 		const value = parts.find((p) => p.type === "dayPeriod")?.value;
 		if (value === "PM") {

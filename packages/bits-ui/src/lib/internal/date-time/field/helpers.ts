@@ -89,7 +89,7 @@ function createContentObj(props: CreateContentObjProps) {
 				return "0";
 			} else if (!isNull(value) && !isNull(intValue)) {
 				const formatted = formatter.part(dateRef.set({ [part]: value }), part, {
-					hourCycle: props.hourCycle === 24 ? "h24" : undefined,
+					hourCycle: props.hourCycle === 24 ? "h23" : undefined,
 				});
 
 				/**
@@ -220,7 +220,7 @@ function getOptsByGranularity(granularity: Granularity, hourCycle: HourCycle | u
 		minute: "2-digit",
 		second: "2-digit",
 		timeZoneName: "short",
-		hourCycle: hourCycle === 24 ? "h24" : undefined,
+		hourCycle: hourCycle === 24 ? "h23" : undefined,
 		hour12: hourCycle === 24 ? false : undefined,
 	};
 
