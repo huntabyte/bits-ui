@@ -134,11 +134,14 @@ export type TagsInputTagPropsWithoutHTML = WithChild<{
 	index: number;
 
 	/**
-	 * Whether or not the tag is editable.
+	 * The type of edit mode to use for the tag. If set to `'input'`, the tag will be editable
+	 * using the `TagsInput.TagEdit` component. If set to `'contenteditable'`, the tag will be
+	 * editable using the `contenteditable` attribute on the `TagsInput.TagText` component. If
+	 * set to `'none'`, the tag will not be editable.
 	 *
 	 * @defaultValue true
 	 */
-	editable?: boolean;
+	editMode?: "input" | "contenteditable" | "none";
 
 	/**
 	 * Whether the tag can be removed or not.

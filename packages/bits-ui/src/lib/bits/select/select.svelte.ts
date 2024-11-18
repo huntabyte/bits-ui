@@ -1,6 +1,6 @@
 import { Previous } from "runed";
 import { untrack } from "svelte";
-import { afterTick, srOnlyStyles, styleToString, useRefById } from "svelte-toolbelt";
+import { afterTick, box, srOnlyStyles, styleToString, useRefById } from "svelte-toolbelt";
 import { backward, forward, next, prev } from "$lib/internal/arrays.js";
 import {
 	getAriaExpanded,
@@ -54,7 +54,7 @@ class SelectBaseRootState {
 	items: SelectBaseRootStateProps["items"];
 	allowDeselect: SelectBaseRootStateProps["allowDeselect"];
 	touchedInput = $state(false);
-	inputValue = $state<string>("");
+	inputValue: SelectInputStateProps["value"] = box("");
 	inputNode = $state<HTMLElement | null>(null);
 	contentNode = $state<HTMLElement | null>(null);
 	triggerNode = $state<HTMLElement | null>(null);
@@ -198,7 +198,7 @@ class SelectSingleRootState extends SelectBaseRootState {
 
 	toggleItem = (itemValue: string, itemLabel: string = itemValue) => {
 		this.value.current = this.includesItem(itemValue) ? "" : itemValue;
-		this.inputValue = itemLabel;
+		this.inputValue.current = itemLabel;
 	};
 
 	setInitialHighlightedNode = () => {
@@ -242,7 +242,8 @@ class SelectMultipleRootState extends SelectBaseRootState {
 	}
 
 	includesItem = (itemValue: string) => {
-		return this.value.current.includes(itemValue);
+		const ss = $state.snapshot(this.value.current);
+		return ss.includes(itemValue);
 	};
 
 	toggleItem = (itemValue: string, itemLabel: string = itemValue) => {
@@ -251,7 +252,7 @@ class SelectMultipleRootState extends SelectBaseRootState {
 		} else {
 			this.value.current = [...this.value.current, itemValue];
 		}
-		this.inputValue = itemLabel;
+		this.inputValue.current = itemLabel;
 	};
 
 	setInitialHighlightedNode = () => {
@@ -272,7 +273,7 @@ class SelectMultipleRootState extends SelectBaseRootState {
 
 type SelectRootState = SelectSingleRootState | SelectMultipleRootState;
 
-type SelectInputStateProps = WithRefProps;
+type SelectInputStateProps = WithRefProps & WritableBoxedValues<{ value: string }>;
 
 class SelectInputState {
 	#id: SelectInputStateProps["id"];
@@ -283,6 +284,7 @@ class SelectInputState {
 		this.root = root;
 		this.#id = props.id;
 		this.#ref = props.ref;
+		this.root.inputValue = props.value;
 
 		useRefById({
 			id: this.#id,
@@ -297,7 +299,7 @@ class SelectInputState {
 		this.root.isUsingKeyboard = true;
 		if (e.key === kbd.ESCAPE) return;
 		const open = this.root.open.current;
-		const inputValue = this.root.inputValue;
+		const inputValue = this.root.inputValue.current;
 
 		// prevent arrow up/down from moving the position of the cursor in the input
 		if (e.key === kbd.ARROW_UP || e.key === kbd.ARROW_DOWN) e.preventDefault();
@@ -389,7 +391,7 @@ class SelectInputState {
 	};
 
 	#oninput = (e: Event & { currentTarget: HTMLInputElement }) => {
-		this.root.inputValue = e.currentTarget.value;
+		this.root.inputValue.current = e.currentTarget.value;
 		afterTick(() => {
 			this.root.setHighlightedToFirstCandidate();
 		});

@@ -9,7 +9,8 @@
 		id = useId(),
 		ref = $bindable(null),
 		child,
-		defaultValue,
+		defaultValue = "",
+		value = $bindable(defaultValue),
 		...restProps
 	}: ComboboxInputProps = $props();
 
@@ -19,14 +20,14 @@
 			() => ref,
 			(v) => (ref = v)
 		),
+		value: box.with(
+			() => value,
+			(v) => (value = v)
+		),
 	});
 
-	if (defaultValue) {
-		inputState.root.inputValue = defaultValue;
-	}
-
 	const mergedProps = $derived(
-		mergeProps(restProps, inputState.props, { value: inputState.root.inputValue })
+		mergeProps(restProps, inputState.props, { value: inputState.root.inputValue.current })
 	);
 </script>
 

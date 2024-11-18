@@ -10,7 +10,7 @@
 		ref = $bindable(null),
 		value,
 		index,
-		editable = true,
+		editMode = "input",
 		removable = true,
 		children,
 		child,
@@ -28,7 +28,7 @@
 			(v) => (value = v)
 		),
 		index: box.with(() => index),
-		editable: box.with(() => editable),
+		editMode: box.with(() => editMode),
 		removable: box.with(() => removable),
 	});
 
@@ -37,7 +37,7 @@
 </script>
 
 {#snippet EditButton()}
-	{#if tagState.editable.current}
+	{#if tagState.editMode.current !== "none"}
 		<button
 			tabindex={-1}
 			onclick={tagState.startEditing}

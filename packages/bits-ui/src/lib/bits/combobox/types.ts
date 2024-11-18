@@ -1,3 +1,4 @@
+import type { HTMLInputAttributes } from "svelte/elements";
 import type { BitsPrimitiveInputAttributes } from "$lib/shared/attributes.js";
 import type { WithChild, Without } from "$lib/internal/types.js";
 
@@ -40,7 +41,14 @@ export type ComboboxInputPropsWithoutHTML = WithChild<{
 	 * the input when the combobox is first mounted if there is already a value set.
 	 */
 	defaultValue?: string;
+
+	/**
+	 * The value of the input. This should not be used to handle search queries, but rather for
+	 * more complex controlled use cases. For search queries, use the `oninput` event handler as
+	 * Bits UI handles the value internally.
+	 */
+	value?: string;
 }>;
 
 export type ComboboxInputProps = ComboboxInputPropsWithoutHTML &
-	Without<Omit<BitsPrimitiveInputAttributes, "value">, ComboboxInputPropsWithoutHTML>;
+	Without<BitsPrimitiveInputAttributes, ComboboxInputPropsWithoutHTML>;

@@ -1,12 +1,13 @@
 import {
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
+	afterSleep,
 	afterTick,
 	box,
 	srOnlyStyles,
 	useRefById,
 } from "svelte-toolbelt";
-import type { FocusEventHandler } from "svelte/elements";
+import type { FocusEventHandler, KeyboardEventHandler } from "svelte/elements";
 import type { TagsInputBlurBehavior, TagsInputPasteBehavior } from "./types.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { createContext } from "$lib/internal/create-context.js";
@@ -33,7 +34,6 @@ type TagsInputRootStateProps = WithRefProps &
 		delimiters: string[];
 		name: string;
 		required: boolean;
-
 		validate: (value: string) => boolean;
 	}>;
 
@@ -217,8 +217,8 @@ class TagsInputListState {
 type TagsInputTagStateProps = WithRefProps &
 	ReadableBoxedValues<{
 		index: number;
-		editable: boolean;
 		removable: boolean;
+		editMode: "input" | "contenteditable" | "none";
 	}> &
 	WritableBoxedValues<{
 		value: string;
@@ -229,14 +229,15 @@ class TagsInputTagState {
 	#id: TagsInputTagStateProps["id"];
 	value: TagsInputTagStateProps["value"];
 	index: TagsInputTagStateProps["index"];
-	editable: TagsInputTagStateProps["editable"];
 	removable: TagsInputTagStateProps["removable"];
+	editMode: TagsInputTagStateProps["editMode"];
 	root: TagsInputRootState;
 	list: TagsInputListState;
 	textNode = $state<HTMLElement | null>(null);
 	removeNode = $state<HTMLElement | null>(null);
 	editCell = $state<HTMLElement | null>(null);
 	editInput = $state<HTMLInputElement | null>(null);
+	isEditable = $derived.by(() => this.editMode.current !== "none");
 	isEditing = $state(false);
 	#tabIndex = $state(0);
 
@@ -247,8 +248,8 @@ class TagsInputTagState {
 		this.list = list;
 		this.value = props.value;
 		this.index = props.index;
-		this.editable = props.editable;
 		this.removable = props.removable;
+		this.editMode = props.editMode;
 
 		useRefById({
 			id: this.#id,
@@ -270,14 +271,20 @@ class TagsInputTagState {
 	};
 
 	startEditing = () => {
-		if (this.editable.current === false) return;
+		if (this.isEditable === false) return;
 		this.isEditing = true;
-		this.editInput?.focus();
-		this.editInput?.select();
+
+		if (this.editMode.current === "input") {
+			this.editInput?.focus();
+			this.editInput?.select();
+		} else if (this.editMode.current === "contenteditable") {
+			this.textNode?.focus();
+		}
 	};
 
 	stopEditing = (focusTag = true) => {
 		this.isEditing = false;
+
 		if (focusTag) {
 			this.#ref.current?.focus();
 		}
@@ -318,7 +325,7 @@ class TagsInputTagState {
 				id: this.#id.current,
 				role: "gridcell",
 				"data-editing": this.isEditing ? "" : undefined,
-				"data-editable": this.editable.current ? "" : undefined,
+				"data-editable": this.isEditable ? "" : undefined,
 				"data-removable": this.removable.current ? "" : undefined,
 				"data-invalid": getDataInvalid(this.root.isInvalid),
 				tabindex: this.#tabIndex,
@@ -352,14 +359,64 @@ class TagsInputTagTextState {
 		});
 	}
 
+	#onkeydown: KeyboardEventHandler<HTMLElement> = (e) => {
+		if (this.#tag.editMode.current !== "contenteditable" || !this.#tag.isEditing) {
+			return;
+		}
+		if (e.key === kbd.ESCAPE) {
+			this.#tag.stopEditing();
+			e.currentTarget.innerText = this.#tag.value.current;
+		} else if (e.key === kbd.TAB) {
+			this.#tag.stopEditing(false);
+			e.currentTarget.innerText = this.#tag.value.current;
+		} else if (e.key === kbd.ENTER) {
+			e.preventDefault();
+			const value = e.currentTarget.innerText;
+			if (value === "") {
+				this.#tag.stopEditing();
+				this.#tag.remove();
+			} else {
+				this.#tag.setValue(value);
+				this.#tag.stopEditing();
+			}
+		}
+	};
+
+	#onblur: FocusEventHandler<HTMLElement> = () => {
+		if (this.#tag.editMode.current !== "contenteditable") return;
+		if (this.#tag.isEditing) {
+			this.#tag.stopEditing(false);
+		}
+	};
+
+	#onfocus: FocusEventHandler<HTMLElement> = (e) => {
+		if (this.#tag.editMode.current !== "contenteditable" || !this.#tag.isEditing) return;
+		afterSleep(0, () => {
+			if (!this.#ref.current) return;
+			const selection = window.getSelection();
+			const range = document.createRange();
+
+			range.selectNodeContents(this.#ref.current);
+			selection?.removeAllRanges();
+			selection?.addRange(range);
+		});
+	};
+
 	props = $derived.by(
 		() =>
 			({
 				id: this.#id.current,
 				[TAG_TEXT_ATTR]: "",
 				tabindex: -1,
-				"data-editable": this.#tag.editable.current ? "" : undefined,
+				"data-editable": this.#tag.isEditable ? "" : undefined,
 				"data-removable": this.#tag.removable.current ? "" : undefined,
+				contenteditable:
+					this.#tag.editMode.current === "contenteditable" && this.#tag.isEditing
+						? "true"
+						: undefined,
+				onkeydown: this.#onkeydown,
+				onblur: this.#onblur,
+				onfocus: this.#onfocus,
 			}) as const
 	);
 }
@@ -386,11 +443,11 @@ class TagsInputTagEditState {
 	}
 
 	#style = $derived.by(() => {
-		if (this.tag.isEditing) return undefined;
+		if (this.tag.isEditing && this.tag.editMode.current === "input") return undefined;
 		return srOnlyStyles;
 	});
 
-	#onkeydown = (e: KeyboardEvent & { currentTarget: HTMLInputElement }) => {
+	#onkeydown: KeyboardEventHandler<HTMLInputElement> = (e) => {
 		if (e.key === kbd.ESCAPE) {
 			this.tag.stopEditing();
 			e.currentTarget.value = this.tag.value.current;
@@ -410,7 +467,7 @@ class TagsInputTagEditState {
 		}
 	};
 
-	#onblur = (e: FocusEvent) => {
+	#onblur: FocusEventHandler<HTMLInputElement> = () => {
 		if (this.tag.isEditing) {
 			this.tag.stopEditing(false);
 		}
@@ -424,7 +481,7 @@ class TagsInputTagEditState {
 				tabindex: -1,
 				"data-editing": this.tag.isEditing ? "" : undefined,
 				"data-invalid": getDataInvalid(this.tag.root.isInvalid),
-				"data-editable": this.tag.editable.current ? "" : undefined,
+				"data-editable": this.tag.isEditable ? "" : undefined,
 				"data-removable": this.tag.removable.current ? "" : undefined,
 				value: this.tag.value.current,
 				style: this.#style,
@@ -492,7 +549,7 @@ class TagsInputTagRemoveState {
 				"aria-label": "Remove",
 				"aria-labelledby": this.#ariaLabelledBy,
 				"data-editing": this.#tag.isEditing ? "" : undefined,
-				"data-editable": this.#tag.editable.current ? "" : undefined,
+				"data-editable": this.#tag.isEditable ? "" : undefined,
 				"data-removable": this.#tag.removable.current ? "" : undefined,
 				tabindex: -1,
 				onclick: this.#onclick,
@@ -643,11 +700,12 @@ class TagsInputTagContentState {
 	}
 
 	#style = $derived.by(() => {
-		if (this.tag.isEditing) return srOnlyStyles;
+		if (this.tag.isEditing && this.tag.editMode.current === "input") return srOnlyStyles;
 		return undefined;
 	});
 
 	#ondblclick = (e: MouseEvent) => {
+		if (!this.tag.isEditable) return;
 		const target = e.target as HTMLElement;
 		if (this.tag.removeNode && isOrContainsTarget(this.tag.removeNode, target)) {
 			return;
