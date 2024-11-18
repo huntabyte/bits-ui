@@ -28,6 +28,7 @@ const testItems: Item[] = [
 ];
 
 const itemIds = testItems.map((item) => `${item.value}-item`);
+const labelIds = testItems.map((item) => `${item.value}-label`);
 const indicatorIds = testItems.map((item) => `${item.value}-indicator`);
 
 function setup(props: Partial<RadioGroupTestProps> = {}, items: Item[] = testItems) {
@@ -236,5 +237,19 @@ describe("radio group", () => {
 		await user.keyboard(kbd.ARROW_UP);
 		expect(aItem).toHaveFocus();
 		expect(input).toHaveValue("a");
+	});
+
+	it("should change the value when a label associated with an item is clicked", async () => {
+		const { getByTestId, user } = setup();
+
+		for (const indicator of indicatorIds) {
+			expect(getByTestId(indicator)).toHaveTextContent("false");
+		}
+		const itemIdx = randItem();
+
+		const label = getByTestId(labelIds[itemIdx] as string);
+
+		await user.click(label);
+		expect(getByTestId(indicatorIds[itemIdx] as string)).toHaveTextContent("true");
 	});
 });

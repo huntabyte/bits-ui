@@ -1,4 +1,5 @@
 import { srOnlyStyles, styleToString, useRefById } from "svelte-toolbelt";
+import type { FocusEventHandler, KeyboardEventHandler, MouseEventHandler } from "svelte/elements";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { getAriaChecked, getAriaRequired, getDataDisabled } from "$lib/internal/attrs.js";
@@ -117,26 +118,17 @@ class RadioGroupItemState {
 		});
 	}
 
-	#onpointerdown = (e: PointerEvent) => {
+	#onclick: MouseEventHandler<HTMLButtonElement> = (e) => {
 		if (this.#disabled.current) return;
-		if (e.pointerType === "touch") return e.preventDefault();
 		this.#root.setValue(this.#value.current);
 	};
 
-	#onpointerup = (e: PointerEvent) => {
-		if (this.#disabled.current) return;
-		if (e.pointerType === "touch") {
-			e.preventDefault();
-			this.#root.setValue(this.#value.current);
-		}
-	};
-
-	#onfocus = () => {
+	#onfocus: FocusEventHandler<HTMLButtonElement> = () => {
 		if (!this.#root.hasValue) return;
 		this.#root.setValue(this.#value.current);
 	};
 
-	#onkeydown = (e: KeyboardEvent) => {
+	#onkeydown: KeyboardEventHandler<HTMLButtonElement> = (e) => {
 		if (this.#isDisabled) return;
 		if (e.key === kbd.SPACE) {
 			e.preventDefault();
@@ -165,10 +157,9 @@ class RadioGroupItemState {
 				role: "radio",
 				tabindex: this.#tabIndex,
 				//
-				onpointerdown: this.#onpointerdown,
-				onpointerup: this.#onpointerup,
 				onkeydown: this.#onkeydown,
 				onfocus: this.#onfocus,
+				onclick: this.#onclick,
 			}) as const
 	);
 }
