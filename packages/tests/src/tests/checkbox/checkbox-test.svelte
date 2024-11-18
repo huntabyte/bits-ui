@@ -7,9 +7,13 @@
 <main>
 	<p data-testid="binding">{checked}</p>
 	<Checkbox.Root name="terms" data-testid="root" bind:checked {...restProps}>
-		{#snippet children({ checked })}
+		{#snippet children({ checked, indeterminate })}
 			<span data-testid="indicator">
-				{checked}
+				{#if indeterminate}
+					indeterminate
+				{:else}
+					{checked}
+				{/if}
 			</span>
 		{/snippet}
 	</Checkbox.Root>

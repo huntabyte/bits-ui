@@ -222,6 +222,7 @@ class PinInputRootState {
 		"Tab",
 		"Shift",
 		"Control",
+		"Meta",
 	];
 
 	#onkeydown = (e: KeyboardEvent) => {

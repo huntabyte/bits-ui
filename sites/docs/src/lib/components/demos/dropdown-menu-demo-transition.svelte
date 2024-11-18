@@ -11,7 +11,7 @@
 	import DotOutline from "phosphor-svelte/lib/DotOutline";
 	import { fly } from "svelte/transition";
 
-	let notifications = $state<"indeterminate" | boolean>(false);
+	let notifications = $state<boolean>(false);
 	let invited = $state("");
 </script>
 

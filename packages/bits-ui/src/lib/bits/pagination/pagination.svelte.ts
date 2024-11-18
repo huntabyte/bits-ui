@@ -36,7 +36,10 @@ class PaginationRootState {
 	siblingCount: PaginationRootStateProps["siblingCount"];
 	page: PaginationRootStateProps["page"];
 	loop: PaginationRootStateProps["loop"];
-	totalPages = $derived.by(() => Math.ceil(this.count.current / this.perPage.current));
+	totalPages = $derived.by(() => {
+		if (this.count.current === 0) return 1;
+		return Math.ceil(this.count.current / this.perPage.current);
+	});
 	range = $derived.by(() => {
 		const start = (this.page.current - 1) * this.perPage.current;
 		const end = Math.min(start + this.perPage.current, this.count.current);
@@ -81,6 +84,9 @@ class PaginationRootState {
 		if (!node) return;
 		return node.querySelector<HTMLElement>(`[data-pagination-${type}]`);
 	};
+
+	hasPrevPage = $derived.by(() => this.page.current > 1);
+	hasNextPage = $derived.by(() => this.page.current < this.totalPages);
 
 	prevPage = () => {
 		this.page.current = Math.max(this.page.current - 1, 1);
@@ -212,6 +218,13 @@ class PaginationButtonState {
 		this.type === "prev" ? this.#root.prevPage() : this.#root.nextPage();
 	};
 
+	#isDisabled = $derived.by(() => {
+		if (this.#disabled.current) return true;
+		if (this.type === "prev") return !this.#root.hasPrevPage;
+		if (this.type === "next") return !this.#root.hasNextPage;
+		return false;
+	});
+
 	#onpointerdown = (e: PointerEvent) => {
 		if (this.#disabled.current) return;
 		if (e.pointerType === "touch") return e.preventDefault();
@@ -241,6 +254,7 @@ class PaginationButtonState {
 				id: this.id.current,
 				[PREV_ATTR]: this.type === "prev" ? "" : undefined,
 				[NEXT_ATTR]: this.type === "next" ? "" : undefined,
+				disabled: this.#isDisabled,
 				//
 				onpointerdown: this.#onpointerdown,
 				onpointerup: this.#onpointerup,

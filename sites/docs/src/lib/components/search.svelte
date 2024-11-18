@@ -52,12 +52,12 @@
 		</span>
 		<span class="flex items-center gap-[1px]">
 			<kbd
-				class="pointer-events-none hidden h-5 select-none items-center gap-1 rounded border bg-background-alt px-1.5 font-mono text-[10px] font-medium opacity-100 shadow-kbd sm:flex"
+				class="pointer-events-none hidden h-5 select-none items-center gap-1 rounded border bg-background-alt px-1.5 font-mono text-[10px] font-medium opacity-100 shadow-kbd dark:bg-dark-10 dark:shadow-[0px_2px_0px_0px_rgba(0,0,0,0.07)] sm:flex"
 			>
 				<span class="text-xs">⌘</span>
 			</kbd>
 			<kbd
-				class="pointer-events-none hidden h-5 select-none items-center gap-1 rounded border bg-background-alt px-1.5 font-mono text-[10px] font-medium opacity-100 shadow-kbd sm:flex"
+				class="pointer-events-none hidden h-5 select-none items-center gap-1 rounded border bg-background-alt px-1.5 font-mono text-[10px] font-medium opacity-100 shadow-kbd dark:bg-dark-10 dark:shadow-[0px_2px_0px_0px_rgba(0,0,0,0.07)] sm:flex"
 			>
 				K
 			</kbd>

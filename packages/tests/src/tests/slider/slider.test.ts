@@ -9,11 +9,9 @@ import SliderRangeTest, { type SliderRangeTestProps } from "./slider-range-test.
 const kbd = getTestKbd();
 
 function renderSlider(props: SliderTestProps = {}) {
-	// @ts-expect-error - testing lib needs to update their generic types
 	return render(SliderTest, { ...props });
 }
 function renderSliderRange(props: SliderRangeTestProps = {}) {
-	// @ts-expect-error - testing lib needs to update their generic types
 	return render(SliderRangeTest, { ...props });
 }
 
@@ -32,8 +30,7 @@ function setup(props: SliderTestProps = {}, kind: "default" | "range" = "default
 }
 
 describe("slider (default)", () => {
-	it("should haveno accessibility violations", async () => {
-		// @ts-expect-error - testing lib needs to update their generic types
+	it("should have no accessibility violations", async () => {
 		const { container } = render(SliderTest);
 
 		expect(await axe(container)).toHaveNoViolations();
@@ -108,6 +105,17 @@ describe("slider (default)", () => {
 		await user.keyboard(kbd.END);
 
 		expectPercentage({ percentage: 100, thumb, range });
+	});
+
+	it("should not allow the value to change when the `disabled` prop is set to true", async () => {
+		const { getByTestId, user } = setup({ disabled: true });
+
+		const thumb = getByTestId("thumb");
+		const range = getByTestId("range");
+
+		thumb.focus();
+		await user.keyboard(kbd.HOME);
+		expectPercentage({ percentage: 30, thumb, range });
 	});
 });
 

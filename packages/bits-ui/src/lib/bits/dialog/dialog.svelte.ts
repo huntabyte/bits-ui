@@ -1,4 +1,5 @@
 import { useRefById } from "svelte-toolbelt";
+import type { KeyboardEventHandler, MouseEventHandler, PointerEventHandler } from "svelte/elements";
 import { getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { createContext } from "$lib/internal/create-context.js";
@@ -88,7 +89,13 @@ class DialogTriggerState {
 		});
 	}
 
-	#onpointerdown = (e: PointerEvent) => {
+	#onclick: MouseEventHandler<HTMLButtonElement> = (e) => {
+		if (this.#disabled.current) return;
+		if (e.button > 0) return;
+		this.#root.handleOpen();
+	};
+
+	#onpointerdown: PointerEventHandler<HTMLButtonElement> = (e) => {
 		if (this.#disabled.current) return;
 		if (e.pointerType === "touch") return e.preventDefault();
 		if (e.button > 0) return;
@@ -99,15 +106,7 @@ class DialogTriggerState {
 		this.#root.handleOpen();
 	};
 
-	#onpointerup = (e: PointerEvent) => {
-		if (this.#disabled.current) return;
-		if (e.pointerType === "touch") {
-			e.preventDefault();
-			this.#root.handleOpen();
-		}
-	};
-
-	#onkeydown = (e: KeyboardEvent) => {
+	#onkeydown: KeyboardEventHandler<HTMLButtonElement> = (e) => {
 		if (this.#disabled.current) return;
 		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
 			e.preventDefault();
@@ -125,7 +124,7 @@ class DialogTriggerState {
 				[this.#root.attrs.trigger]: "",
 				onpointerdown: this.#onpointerdown,
 				onkeydown: this.#onkeydown,
-				onpointerup: this.#onpointerup,
+				onclick: this.#onclick,
 				...this.#root.sharedProps,
 			}) as const
 	);
@@ -158,22 +157,24 @@ class DialogCloseState {
 		});
 	}
 
-	#onpointerdown = (e: PointerEvent) => {
+	#onclick: MouseEventHandler<HTMLButtonElement> = (e) => {
 		if (this.#disabled.current) return;
-		if (e.pointerType === "touch") return e.preventDefault();
 		if (e.button > 0) return;
 		this.#root.handleClose();
 	};
 
-	#onpointerup = (e: PointerEvent) => {
+	#onpointerdown: PointerEventHandler<HTMLButtonElement> = (e) => {
 		if (this.#disabled.current) return;
-		if (e.pointerType === "touch") {
-			e.preventDefault();
-			this.#root.handleClose();
-		}
+		if (e.pointerType === "touch") return e.preventDefault();
+		if (e.button > 0) return;
+		// by default, it will attempt to focus this trigger on pointerdown
+		// since this also opens the dialog we want to prevent that behavior
+		e.preventDefault();
+
+		this.#root.handleClose();
 	};
 
-	#onkeydown = (e: KeyboardEvent) => {
+	#onkeydown: KeyboardEventHandler<HTMLButtonElement> = (e) => {
 		if (this.#disabled.current) return;
 		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
 			e.preventDefault();
@@ -187,7 +188,7 @@ class DialogCloseState {
 				id: this.#id.current,
 				[this.#attr]: "",
 				onpointerdown: this.#onpointerdown,
-				onpointerup: this.#onpointerup,
+				onclick: this.#onclick,
 				onkeydown: this.#onkeydown,
 				...this.#root.sharedProps,
 			}) as const
@@ -398,24 +399,26 @@ class AlertDialogCancelState {
 		});
 	}
 
-	#onpointerdown = (e: PointerEvent) => {
+	#onclick: MouseEventHandler<HTMLButtonElement> = (e) => {
 		if (this.#disabled.current) return;
-		if (e.pointerType === "touch") return e.preventDefault();
 		if (e.button > 0) return;
 		this.#root.handleClose();
 	};
 
-	#onkeydown = (e: KeyboardEvent) => {
+	#onpointerdown: PointerEventHandler<HTMLButtonElement> = (e) => {
 		if (this.#disabled.current) return;
-		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
-			e.preventDefault();
-			this.#root.handleClose();
-		}
+		if (e.pointerType === "touch") return e.preventDefault();
+		if (e.button > 0) return;
+		// by default, it will attempt to focus this trigger on pointerdown
+		// since this also opens the dialog we want to prevent that behavior
+		e.preventDefault();
+
+		this.#root.handleClose();
 	};
 
-	#onpointerup = (e: PointerEvent) => {
+	#onkeydown: KeyboardEventHandler<HTMLButtonElement> = (e) => {
 		if (this.#disabled.current) return;
-		if (e.pointerType === "touch") {
+		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
 			e.preventDefault();
 			this.#root.handleClose();
 		}
@@ -427,7 +430,7 @@ class AlertDialogCancelState {
 				id: this.#id.current,
 				[this.#root.attrs.cancel]: "",
 				onpointerdown: this.#onpointerdown,
-				onpointerup: this.#onpointerup,
+				onclick: this.#onclick,
 				onkeydown: this.#onkeydown,
 				...this.#root.sharedProps,
 			}) as const

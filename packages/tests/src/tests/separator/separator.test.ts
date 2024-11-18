@@ -7,7 +7,6 @@ import SeparatorTest from "./separator-test.svelte";
 
 function setup(props: Separator.RootProps = {}) {
 	const user = userEvent.setup();
-	// @ts-expect-error - testing lib needs to update their generic types
 	const returned = render(SeparatorTest, { ...props });
 	const { getByTestId } = returned;
 	const root = getByTestId("root");
@@ -16,7 +15,6 @@ function setup(props: Separator.RootProps = {}) {
 
 describe("separator", () => {
 	it("should have no accessibility violations", async () => {
-		// @ts-expect-error - testing lib needs to update their generic types
 		const { container } = render(SeparatorTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});

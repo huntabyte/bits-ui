@@ -11,12 +11,12 @@
 		class="peer inline-flex size-[25px] items-center justify-center rounded-md border border-muted bg-foreground transition-all duration-150 ease-in-out active:scale-98 data-[state=unchecked]:border-border-input data-[state=unchecked]:bg-background data-[state=unchecked]:hover:border-dark-40"
 		name="hello"
 	>
-		{#snippet children({ checked })}
+		{#snippet children({ checked, indeterminate })}
 			<div class="inline-flex items-center justify-center text-background">
-				{#if checked === true}
-					<Check class="size-[15px]" weight="bold" />
-				{:else if checked === "indeterminate"}
+				{#if indeterminate}
 					<Minus class="size-[15px]" weight="bold" />
+				{:else if checked}
+					<Check class="size-[15px]" weight="bold" />
 				{/if}
 			</div>
 		{/snippet}

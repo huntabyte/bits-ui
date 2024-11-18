@@ -16,7 +16,11 @@
 		value = "on",
 		id = useId(),
 		controlledChecked = false,
+		indeterminate = $bindable(false),
+		controlledIndeterminate = false,
+		onIndeterminateChange,
 		child,
+		type = "button",
 		...restProps
 	}: CheckboxRootProps = $props();
 
@@ -41,17 +45,34 @@
 			() => ref,
 			(v) => (ref = v)
 		),
+		indeterminate: box.with(
+			() => indeterminate,
+			(v) => {
+				if (controlledIndeterminate) {
+					onIndeterminateChange?.(v);
+				} else {
+					indeterminate = v;
+					onIndeterminateChange?.(v);
+				}
+			}
+		),
+		type: box.with(() => type),
 	});
 
 	const mergedProps = $derived(mergeProps({ ...restProps }, rootState.props));
 </script>
 
 {#if child}
-	{@render child({ props: mergedProps, checked: rootState.checked.current })}
+	{@render child({
+		props: mergedProps,
+		checked: rootState.checked.current,
+		indeterminate: rootState.indeterminate.current,
+	})}
 {:else}
 	<button {...mergedProps}>
 		{@render children?.({
 			checked: rootState.checked.current,
+			indeterminate: rootState.indeterminate.current,
 		})}
 	</button>
 {/if}

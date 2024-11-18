@@ -32,7 +32,6 @@ const indicatorIds = testItems.map((item) => `${item.value}-indicator`);
 
 function setup(props: Partial<RadioGroupTestProps> = {}, items: Item[] = testItems) {
 	const user = userEvent.setup();
-	// @ts-expect-error - testing lib needs to update their generic types
 	const returned = render(RadioGroupTest, { ...props, items });
 	const input = document.querySelector("input") as HTMLInputElement;
 	return {
@@ -48,13 +47,11 @@ function randItem() {
 
 describe("radio group", () => {
 	it("should have no accessibility violations", async () => {
-		// @ts-expect-error - testing lib needs to update their generic types
 		const { container } = render(RadioGroupTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
 	it("should have bits data attrs", async () => {
-		// @ts-expect-error - testing lib needs to update their generic types
 		const { getByTestId } = render(RadioGroupTest, {
 			items: [testItems[0] as Item],
 			value: testItems[0]?.value,
@@ -94,19 +91,19 @@ describe("radio group", () => {
 		const item2 = getByTestId(itemIds[2] as string);
 		const item3 = getByTestId(itemIds[3] as string);
 		item0.focus();
-		await waitFor(() => expect(item0).toHaveFocus());
+		expect(item0).toHaveFocus();
 		await user.keyboard(kbd.ARROW_DOWN);
-		await waitFor(() => expect(item1).toHaveFocus());
+		expect(item1).toHaveFocus();
 		await user.keyboard(kbd.ARROW_DOWN);
-		await waitFor(() => expect(item2).toHaveFocus());
+		expect(item2).toHaveFocus();
 		await user.keyboard(kbd.ARROW_DOWN);
-		await waitFor(() => expect(item3).toHaveFocus());
+		expect(item3).toHaveFocus();
 		await user.keyboard(kbd.ARROW_UP);
-		await waitFor(() => expect(item2).toHaveFocus());
+		expect(item2).toHaveFocus();
 		await user.keyboard(kbd.ARROW_UP);
-		await waitFor(() => expect(item1).toHaveFocus());
+		expect(item1).toHaveFocus();
 		await user.keyboard(kbd.ARROW_UP);
-		await waitFor(() => expect(item0).toHaveFocus());
+		expect(item0).toHaveFocus();
 	});
 
 	it("should navigate through the items using the keyboard (left and right)", async () => {
@@ -117,19 +114,19 @@ describe("radio group", () => {
 		const item2 = getByTestId(itemIds[2] as string);
 		const item3 = getByTestId(itemIds[3] as string);
 		item0.focus();
-		await waitFor(() => expect(item0).toHaveFocus());
+		expect(item0).toHaveFocus();
 		await user.keyboard(kbd.ARROW_RIGHT);
-		await waitFor(() => expect(item1).toHaveFocus());
+		expect(item1).toHaveFocus();
 		await user.keyboard(kbd.ARROW_RIGHT);
-		await waitFor(() => expect(item2).toHaveFocus());
+		expect(item2).toHaveFocus();
 		await user.keyboard(kbd.ARROW_RIGHT);
-		await waitFor(() => expect(item3).toHaveFocus());
+		expect(item3).toHaveFocus();
 		await user.keyboard(kbd.ARROW_LEFT);
-		await waitFor(() => expect(item2).toHaveFocus());
+		expect(item2).toHaveFocus();
 		await user.keyboard(kbd.ARROW_LEFT);
-		await waitFor(() => expect(item1).toHaveFocus());
+		expect(item1).toHaveFocus();
 		await user.keyboard(kbd.ARROW_LEFT);
-		await waitFor(() => expect(item0).toHaveFocus());
+		expect(item0).toHaveFocus();
 	});
 
 	it("should respect the loop prop", async () => {
@@ -140,14 +137,14 @@ describe("radio group", () => {
 		const item0 = getByTestId(itemIds[0] as string);
 		const item3 = getByTestId(itemIds[3] as string);
 		item0.focus();
-		await waitFor(() => expect(item0).toHaveFocus());
+		expect(item0).toHaveFocus();
 		await user.keyboard(kbd.ARROW_UP);
-		await waitFor(() => expect(item0).toHaveFocus());
+		expect(item0).toHaveFocus();
 
 		item3.focus();
-		await waitFor(() => expect(item3).toHaveFocus());
+		expect(item3).toHaveFocus();
 		await user.keyboard(kbd.ARROW_DOWN);
-		await waitFor(() => expect(item3).toHaveFocus());
+		expect(item3).toHaveFocus();
 	});
 
 	it("should respect the value prop & binding", async () => {
@@ -173,14 +170,14 @@ describe("radio group", () => {
 		const item0 = getByTestId(itemIds[0] as string);
 		const item3 = getByTestId(itemIds[3] as string);
 		item0.focus();
-		await waitFor(() => expect(item0).toHaveFocus());
+		expect(item0).toHaveFocus();
 		await user.keyboard(kbd.ARROW_LEFT);
-		await waitFor(() => expect(item0).toHaveFocus());
+		expect(item0).toHaveFocus();
 
 		item3.focus();
-		await waitFor(() => expect(item3).toHaveFocus());
+		expect(item3).toHaveFocus();
 		await user.keyboard(kbd.ARROW_RIGHT);
-		await waitFor(() => expect(item3).toHaveFocus());
+		expect(item3).toHaveFocus();
 	});
 
 	it("should not render an input if the `name` prop isn't passed", async () => {
@@ -222,5 +219,22 @@ describe("radio group", () => {
 		});
 
 		expect(input).toHaveAttribute("disabled");
+	});
+
+	it("should not automatically select the first item focused when the radio group does not have a value", async () => {
+		const { getByTestId, user, input } = setup({ name: "radio-group" });
+
+		const aItem = getByTestId("a-item");
+		aItem.focus();
+		expect(input).toHaveValue("");
+		await user.keyboard(kbd.ARROW_DOWN);
+		expect(input).toHaveValue("");
+		const bItem = getByTestId("b-item");
+		expect(bItem).toHaveFocus();
+		await user.keyboard(kbd.SPACE);
+		expect(input).toHaveValue("b");
+		await user.keyboard(kbd.ARROW_UP);
+		expect(aItem).toHaveFocus();
+		expect(input).toHaveValue("a");
 	});
 });

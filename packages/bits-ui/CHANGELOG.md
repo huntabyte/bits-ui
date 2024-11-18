@@ -1,5 +1,105 @@
 # bits-ui
 
+## 1.0.0-next.59
+
+### Patch Changes
+
+-   fix: radio group onValueChange loop ([#939](https://github.com/huntabyte/bits-ui/pull/939))
+
+## 1.0.0-next.58
+
+### Patch Changes
+
+-   fix: cleanup focus scope handlers ([#936](https://github.com/huntabyte/bits-ui/pull/936))
+
+-   Allow users to override the `type` attribute on `Checkbox.Root` ([#934](https://github.com/huntabyte/bits-ui/pull/934))
+
+-   fix: Dialog buttons not responding on certain mobile platforms ([#937](https://github.com/huntabyte/bits-ui/pull/937))
+
+## 1.0.0-next.57
+
+### Patch Changes
+
+-   fix: Avatar should render fallback if src is updated and is `null`/`undefined` ([#929](https://github.com/huntabyte/bits-ui/pull/929))
+
+## 1.0.0-next.56
+
+### Patch Changes
+
+-   fix: don't auto select first radio item unless there is already a selected value ([#927](https://github.com/huntabyte/bits-ui/pull/927))
+
+## 1.0.0-next.55
+
+### Patch Changes
+
+-   fix: `Select` and `Combobox` infinite loop on item selection ([#925](https://github.com/huntabyte/bits-ui/pull/925))
+
+## 1.0.0-next.54
+
+### Patch Changes
+
+-   fix: ensure highlighted item is reset when items mount/unmount ([#919](https://github.com/huntabyte/bits-ui/pull/919))
+
+## 1.0.0-next.53
+
+### Patch Changes
+
+-   fix: ensure `disabled` attribute is passed to a disabled tooltip trigger ([#916](https://github.com/huntabyte/bits-ui/pull/916))
+
+-   fix: ensure `disabled` is passed to `Popover.Trigger` ([#918](https://github.com/huntabyte/bits-ui/pull/918))
+
+## 1.0.0-next.52
+
+### Patch Changes
+
+-   fix(Pagination): disable prev/next buttons when no prev/next page ([#910](https://github.com/huntabyte/bits-ui/pull/910))
+
+## 1.0.0-next.51
+
+### Patch Changes
+
+-   add tooltip data-attr ([#908](https://github.com/huntabyte/bits-ui/pull/908))
+
+## 1.0.0-next.50
+
+### Patch Changes
+
+-   add `data-arrow` attribute to floating arrow svg ([#906](https://github.com/huntabyte/bits-ui/pull/906))
+
+## 1.0.0-next.49
+
+### Patch Changes
+
+-   fix: make `*Menu.CheckboxItem` `indeterminate` prop bindable ([#900](https://github.com/huntabyte/bits-ui/pull/900))
+
+## 1.0.0-next.48
+
+### Patch Changes
+
+-   BREAKING: `Checkbox` and `*Menu.CheckboxItem` `checked` prop is now of type `boolean` with `indeterminate` being a separate prop ([#898](https://github.com/huntabyte/bits-ui/pull/898))
+
+## 1.0.0-next.47
+
+### Patch Changes
+
+-   fix: issue with nested scroll prevention ([#896](https://github.com/huntabyte/bits-ui/pull/896))
+
+-   fix: pagination with `count={0}` displaying page 0 ([#893](https://github.com/huntabyte/bits-ui/pull/893))
+
+-   fix: pin input paste not working without pattern ([#897](https://github.com/huntabyte/bits-ui/pull/897))
+
+## 1.0.0-next.46
+
+### Patch Changes
+
+-   fix: issue with `LinkPreview` where content wouldn't close when the trigger was entered and exited quickly ([#889](https://github.com/huntabyte/bits-ui/pull/889))
+
+## 1.0.0-next.45
+
+### Patch Changes
+
+-   fix: slider disabled still allowed pointer to change value ([#882](https://github.com/huntabyte/bits-ui/pull/882))
+
 ## 1.0.0-next.44
 
 ### Patch Changes

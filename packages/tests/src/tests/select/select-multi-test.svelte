@@ -64,7 +64,7 @@
 					<Select.GroupHeading data-testid="group-label">Options</Select.GroupHeading>
 					{#each filteredItems as { value, label, disabled }}
 						<Select.Item data-testid={value} {disabled} {value} {label}>
-							{#snippet children({ selected })}
+							{#snippet children({ selected, highlighted: _highlighted })}
 								{#if selected}
 									<span data-testid="{value}-indicator">x</span>
 								{/if}

@@ -32,6 +32,7 @@
 		value: box.with(
 			() => value,
 			(v) => {
+				if (v === value) return;
 				if (controlledValue) {
 					onValueChange(v);
 				} else {

@@ -256,8 +256,10 @@ You can use the `DropdownMenu.CheckboxItem` component to create a `menuitemcheck
 </script>
 
 <DropdownMenu.CheckboxItem bind:checked={notifications}>
-	{#snippet children({ checked })}
-		{#if checked}
+	{#snippet children({ checked, indeterminate })}
+		{#if indeterminate}
+			-
+		{:else if checked}
 			✅
 		{/if}
 		Notifications

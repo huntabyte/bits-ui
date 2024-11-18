@@ -201,7 +201,7 @@ class ToggleGroupItemState {
 	isPressed = $derived.by(() => this.#root.includesItem(this.#value.current));
 
 	#ariaChecked = $derived.by(() => {
-		return this.#root.isMulti ? undefined : getAriaChecked(this.isPressed);
+		return this.#root.isMulti ? undefined : getAriaChecked(this.isPressed, false);
 	});
 
 	#ariaPressed = $derived.by(() => {

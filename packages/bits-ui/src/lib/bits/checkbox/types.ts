@@ -1,7 +1,7 @@
 import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
 import type { BitsPrimitiveButtonAttributes } from "$lib/shared/attributes.js";
 
-export type CheckboxRootSnippetProps = { checked: boolean | "indeterminate" };
+export type CheckboxRootSnippetProps = { checked: boolean; indeterminate: boolean };
 
 export type CheckboxRootPropsWithoutHTML = WithChild<
 	{
@@ -39,16 +39,15 @@ export type CheckboxRootPropsWithoutHTML = WithChild<
 		 * The checked state of the checkbox. It can be one of:
 		 * - `true` for checked
 		 * - `false` for unchecked
-		 * - `"indeterminate"` for indeterminate
 		 *
 		 * @defaultValue false
 		 */
-		checked?: boolean | "indeterminate" | undefined;
+		checked?: boolean;
 
 		/**
 		 * A callback function called when the checked state changes.
 		 */
-		onCheckedChange?: OnChangeFn<boolean | "indeterminate">;
+		onCheckedChange?: OnChangeFn<boolean>;
 
 		/**
 		 * Whether or not the checkbox is controlled or not. If `true`, the checkbox will not update
@@ -59,6 +58,28 @@ export type CheckboxRootPropsWithoutHTML = WithChild<
 		 * @defaultValue false
 		 */
 		controlledChecked?: boolean;
+
+		/**
+		 * Whether the checkbox is in an indeterminate state or not.
+		 *
+		 * @defaultValue false
+		 */
+		indeterminate?: boolean;
+
+		/**
+		 * A callback function called when the indeterminate state changes.
+		 */
+		onIndeterminateChange?: OnChangeFn<boolean>;
+
+		/**
+		 * Whether the indeterminate state is controlled or not. If `true`, the checkbox will
+		 * not update the indeterminate state internally, instead it will call
+		 * `onIndeterminateChange` when it would have otherwise, and it is up to you to update
+		 * the `indeterminate` prop that is passed to the component.
+		 *
+		 * @defaultValue false
+		 */
+		controlledIndeterminate?: boolean;
 	},
 	CheckboxRootSnippetProps
 >;

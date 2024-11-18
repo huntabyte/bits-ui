@@ -6,10 +6,12 @@ import { addEventListener } from "./events.js";
 import type { Side } from "$lib/bits/utilities/floating-layer/useFloatingLayer.svelte.js";
 
 export function useGraceArea(
-	triggerNode: Getter<HTMLElement | null>,
-	contentNode: Getter<HTMLElement | null>
+	getTriggerNode: Getter<HTMLElement | null>,
+	getContentNode: Getter<HTMLElement | null>
 ) {
 	const isPointerInTransit = boxAutoReset(false, 300);
+	const triggerNode = $derived(getTriggerNode());
+	const contentNode = $derived(getContentNode());
 
 	let pointerGraceArea = $state<Polygon | null>(null);
 	const pointerExit = createEventHook<void>();
@@ -32,21 +34,19 @@ export function useGraceArea(
 	}
 
 	$effect(() => {
-		const trigger = triggerNode();
-		const content = contentNode();
-		if (!trigger || !content) return;
+		if (!triggerNode || !contentNode) return;
 
 		const handleTriggerLeave = (e: PointerEvent) => {
-			handleCreateGraceArea(e, content!);
+			handleCreateGraceArea(e, contentNode!);
 		};
 
 		const handleContentLeave = (e: PointerEvent) => {
-			handleCreateGraceArea(e, trigger!);
+			handleCreateGraceArea(e, triggerNode!);
 		};
 
 		const unsub = executeCallbacks(
-			addEventListener(trigger, "pointerleave", handleTriggerLeave),
-			addEventListener(content, "pointerleave", handleContentLeave)
+			addEventListener(triggerNode, "pointerleave", handleTriggerLeave),
+			addEventListener(contentNode, "pointerleave", handleContentLeave)
 		);
 		return unsub;
 	});
@@ -58,10 +58,8 @@ export function useGraceArea(
 			if (!pointerGraceArea) return;
 			const target = e.target;
 			if (!isElement(target)) return;
-			const trigger = triggerNode();
-			const content = contentNode();
 			const pointerPosition = { x: e.clientX, y: e.clientY };
-			const hasEnteredTarget = trigger?.contains(target) || content?.contains(target);
+			const hasEnteredTarget = triggerNode?.contains(target) || contentNode?.contains(target);
 			const isPointerOutsideGraceArea = !isPointInPolygon(pointerPosition, pointerGraceArea);
 
 			if (hasEnteredTarget) {

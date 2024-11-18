@@ -120,21 +120,23 @@ export type MenuItemPropsWithoutHTML<U extends Record<PropertyKey, unknown> = { 
 export type MenuItemProps = MenuItemPropsWithoutHTML &
 	Without<BitsPrimitiveDivAttributes, MenuItemPropsWithoutHTML>;
 
-export type MenuCheckboxItemSnippetProps = { checked: boolean | "indeterminate" };
+export type MenuCheckboxItemSnippetProps = { checked: boolean; indeterminate: boolean };
 
 export type MenuCheckboxItemPropsWithoutHTML =
 	MenuItemPropsWithoutHTML<MenuCheckboxItemSnippetProps> & {
 		/**
-		 * The checked state of the checkbox item.
+		 * The checked state of the checkbox. It can be one of:
+		 * - `true` for checked
+		 * - `false` for unchecked
 		 *
-		 * Supports two-way binding with `bind:checked`.
+		 * @defaultValue false
 		 */
-		checked?: boolean | "indeterminate";
+		checked?: boolean;
 
 		/**
 		 * A callback that is fired when the checked state changes.
 		 */
-		onCheckedChange?: OnChangeFn<boolean | "indeterminate">;
+		onCheckedChange?: OnChangeFn<boolean>;
 
 		/**
 		 * Whether or not the checked state is controlled or not. If `true`, the component will not
@@ -145,6 +147,28 @@ export type MenuCheckboxItemPropsWithoutHTML =
 		 * @defaultValue false
 		 */
 		controlledChecked?: boolean;
+
+		/**
+		 * Whether the checkbox is in an indeterminate state or not.
+		 *
+		 * @defaultValue false
+		 */
+		indeterminate?: boolean;
+
+		/**
+		 * A callback function called when the indeterminate state changes.
+		 */
+		onIndeterminateChange?: OnChangeFn<boolean>;
+
+		/**
+		 * Whether the indeterminate state is controlled or not. If `true`, the checkbox will
+		 * not update the indeterminate state internally, instead it will call
+		 * `onIndeterminateChange` when it would have otherwise, and it is up to you to update
+		 * the `indeterminate` prop that is passed to the component.
+		 *
+		 * @defaultValue false
+		 */
+		controlledIndeterminate?: boolean;
 
 		/**
 		 * Whether or not the menu item should close when selected.

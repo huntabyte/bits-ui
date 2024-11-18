@@ -23,7 +23,6 @@ const zonedDateTime = toZoned(calendarDateTime, "America/New_York");
 
 function setup(props: DateFieldTestProps = {}) {
 	const user = setupUserEvents();
-	// @ts-expect-error - testing lib needs to update their generic types
 	const returned = render(DateFieldTest, { ...props });
 	const month = returned.getByTestId("month");
 	const day = returned.getByTestId("day");

@@ -55,7 +55,7 @@
 								bind:checked={subChecked}
 								data-testid="sub-checkbox-item"
 							>
-								{#snippet children({ checked })}
+								{#snippet children({ checked, indeterminate: _indeterminate })}
 									<span data-testid="sub-checkbox-indicator">
 										{checked}
 									</span>
@@ -71,7 +71,7 @@
 						>disabled item 2</DropdownMenu.Item
 					>
 					<DropdownMenu.CheckboxItem bind:checked data-testid="checkbox-item">
-						{#snippet children({ checked })}
+						{#snippet children({ checked, indeterminate: _indeterminate })}
 							<span data-testid="checkbox-indicator">
 								{checked}
 							</span>

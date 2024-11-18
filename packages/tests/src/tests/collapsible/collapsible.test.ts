@@ -14,7 +14,6 @@ function setup(
 	component: Component = CollapsibleTest
 ) {
 	const user = setupUserEvents();
-	// @ts-expect-error - testing lib needs to update their generic types
 	const returned = render(component, props);
 	const root = returned.getByTestId("root");
 	const trigger = returned.getByTestId("trigger");
@@ -32,7 +31,6 @@ function setup(
 
 describe("collapsible", () => {
 	it("should have no accessibility violations", async () => {
-		// @ts-expect-error - testing lib needs to update their generic types
 		const { container } = render(CollapsibleTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});

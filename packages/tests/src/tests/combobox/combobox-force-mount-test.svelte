@@ -80,7 +80,10 @@
 											{value}
 											{label}
 										>
-											{#snippet children({ selected })}
+											{#snippet children({
+												selected,
+												highlighted: _highlighted,
+											})}
 												{#if selected}
 													<span data-testid="{value}-indicator">x</span>
 												{/if}
@@ -95,7 +98,7 @@
 				</Combobox.Content>
 			{:else}
 				<Combobox.Content data-testid="content" {...contentProps} forceMount>
-					{#snippet child({ props })}
+					{#snippet child({ props, open: _open })}
 						<div {...props}>
 							<Combobox.Group data-testid="group">
 								<Combobox.GroupHeading data-testid="group-label"
@@ -103,7 +106,7 @@
 								>
 								{#each filteredItems as { value, label, disabled }}
 									<Combobox.Item data-testid={value} {disabled} {value} {label}>
-										{#snippet children({ selected })}
+										{#snippet children({ selected, highlighted: _highlighted })}
 											{#if selected}
 												<span data-testid="{value}-indicator">x</span>
 											{/if}

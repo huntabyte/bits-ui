@@ -41,7 +41,7 @@ class AvatarRootState {
 		});
 	}
 
-	loadImage(src: string, crossorigin?: CrossOrigin, referrerPolicy?: ReferrerPolicy) {
+	loadImage = (src: string, crossorigin?: CrossOrigin, referrerPolicy?: ReferrerPolicy) => {
 		let imageTimerId: number;
 		const image = new Image();
 
@@ -59,9 +59,9 @@ class AvatarRootState {
 			this.loadingStatus.current = "error";
 		};
 		return () => {
-			clearTimeout(imageTimerId);
+			window.clearTimeout(imageTimerId);
 		};
-	}
+	};
 
 	props = $derived.by(
 		() =>
@@ -107,7 +107,10 @@ class AvatarImageState {
 		});
 
 		$effect.pre(() => {
-			if (!this.#src.current) return;
+			if (!this.#src.current) {
+				this.#root.loadingStatus.current = "error";
+				return;
+			}
 			// dependency on crossorigin
 			this.#crossOrigin.current;
 			untrack(() =>

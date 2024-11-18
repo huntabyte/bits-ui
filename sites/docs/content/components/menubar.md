@@ -200,8 +200,10 @@ You can use the `Menubar.CheckboxItem` component to create a `menuitemcheckbox` 
 </script>
 
 <Menubar.CheckboxItem bind:checked={notifications}>
-	{#snippet children({ checked })}
-		{#if checked}
+	{#snippet children({ checked, indeterminate })}
+		{#if indeterminate}
+			-
+		{:else if checked}
 			✅
 		{/if}
 		Notifications

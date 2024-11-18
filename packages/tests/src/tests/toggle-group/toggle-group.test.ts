@@ -32,7 +32,7 @@ const items: Item[] = [
 
 function setupMultiple(props: Partial<MultipleToggleGroupTestProps> = {}) {
 	const user = userEvent.setup();
-	// @ts-expect-error - testing lib needs to update their generic types
+	// @ts-expect-error - shh
 	const returned = render(ToggleGroupMultipleTest, { ...props, items });
 	const root = returned.getByTestId("root");
 	const binding = returned.getByTestId("binding");
@@ -46,7 +46,7 @@ function setupMultiple(props: Partial<MultipleToggleGroupTestProps> = {}) {
 
 function setup(props: Partial<SingleToggleGroupTestProps> = {}) {
 	const user = userEvent.setup();
-	// @ts-expect-error - testing lib needs to update their generic types
+	// @ts-expect-error - shh
 	const returned = render(ToggleGroupTest, { ...props, items });
 	const root = returned.getByTestId("root");
 	const binding = returned.getByTestId("binding");

@@ -66,7 +66,10 @@
 												bind:checked={subChecked}
 												data-testid="sub-checkbox-item"
 											>
-												{#snippet children({ checked })}
+												{#snippet children({
+													checked,
+													indeterminate: _indeterminate,
+												})}
 													<span data-testid="sub-checkbox-indicator">
 														{checked}
 													</span>
@@ -85,7 +88,10 @@
 										bind:checked
 										data-testid="checkbox-item"
 									>
-										{#snippet children({ checked })}
+										{#snippet children({
+											checked,
+											indeterminate: _indeterminate,
+										})}
 											<span data-testid="checkbox-indicator">
 												{checked}
 											</span>
@@ -120,7 +126,7 @@
 					</ContextMenu.Content>
 				{:else}
 					<ContextMenu.Content {...contentProps} data-testid="content" forceMount>
-						{#snippet child({ props })}
+						{#snippet child({ props, open: _open })}
 							<div {...props}>
 								<ContextMenu.Separator data-testid="separator" />
 								<ContextMenu.Group data-testid="group">
@@ -144,7 +150,10 @@
 											bind:checked={subChecked}
 											data-testid="sub-checkbox-item"
 										>
-											{#snippet children({ checked })}
+											{#snippet children({
+												checked,
+												indeterminate: _indeterminate,
+											})}
 												<span data-testid="sub-checkbox-indicator">
 													{checked}
 												</span>
@@ -160,7 +169,7 @@
 									>disabled item 2</ContextMenu.Item
 								>
 								<ContextMenu.CheckboxItem bind:checked data-testid="checkbox-item">
-									{#snippet children({ checked })}
+									{#snippet children({ checked, indeterminate: _indeterminate })}
 										<span data-testid="checkbox-indicator">
 											{checked}
 										</span>

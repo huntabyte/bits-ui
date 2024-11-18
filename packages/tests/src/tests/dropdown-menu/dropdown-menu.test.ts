@@ -19,7 +19,6 @@ function setup(
 	component: Component = DropdownMenuTest
 ) {
 	const user = setupUserEvents();
-	// @ts-expect-error - testing lib needs to update their generic types
 	const { getByTestId, queryByTestId } = render(component, { ...props });
 	const trigger = getByTestId("trigger");
 	return {
@@ -72,7 +71,6 @@ async function openSubmenu(props: Awaited<ReturnType<typeof openWithKbd>>) {
 
 describe("dropdown menu", () => {
 	it("should have no accessibility violations", async () => {
-		// @ts-expect-error - testing lib needs to update their generic types
 		const { container } = render(DropdownMenuTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});
