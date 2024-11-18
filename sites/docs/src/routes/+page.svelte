@@ -33,21 +33,21 @@
 					<a
 						data-active
 						href="/"
-						class="rounded-[40px] px-[0.9em] pb-[0.4em] pt-[0.3em] text-sm font-medium leading-[1] tracking-[0.01em] data-[active]:bg-black/5 data-[active]:text-foreground"
+						class="rounded-[40px] px-[0.9em] pb-[0.4em] pt-[0.3em] text-sm font-medium leading-[1] tracking-[0.01em] data-[active]:bg-black/5 data-[active]:text-foreground dark:text-white/50 dark:data-[active]:bg-white/10 dark:data-[active]:text-white/100"
 						>Home</a
 					>
 				</li>
 				<li class="inline-block">
 					<a
 						href="/"
-						class="rounded-[40px] px-[0.9em] pb-[0.4em] pt-[0.3em] text-sm font-medium leading-[1] tracking-[0.01em] data-[active]:bg-black/5 data-[active]:text-foreground"
+						class="rounded-[40px] px-[0.9em] pb-[0.4em] pt-[0.3em] text-sm font-medium leading-[1] tracking-[0.01em] data-[active]:bg-black/5 data-[active]:text-foreground dark:text-white/50 dark:data-[active]:bg-white/10 dark:data-[active]:text-white/100"
 						>Showcase</a
 					>
 				</li>
 				<li class="inline-block">
 					<a
 						href="/docs"
-						class="rounded-[40px] px-[0.9em] pb-[0.4em] pt-[0.3em] text-sm font-medium leading-[1] tracking-[0.01em] data-[active]:bg-black/5 data-[active]:text-foreground"
+						class="rounded-[40px] px-[0.9em] pb-[0.4em] pt-[0.3em] text-sm font-medium leading-[1] tracking-[0.01em] data-[active]:bg-black/5 data-[active]:text-foreground dark:text-white/50 dark:data-[active]:bg-white/10 dark:data-[active]:text-white/100"
 						>Docs</a
 					>
 				</li>
