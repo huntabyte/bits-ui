@@ -891,6 +891,56 @@ describe("date field", () => {
 		await user.keyboard(kbd.ARROW_UP);
 		expect(input).toHaveValue(value.add({ years: 1 }).toString());
 	});
+
+	it("should handle 24 hour time appropriately", async () => {
+		const value = new CalendarDateTime(2023, 10, 12, 12, 30, 30, 0);
+		const { getByTestId, user } = setup({
+			name: "hello",
+			value,
+			hourCycle: 24,
+		});
+
+		const { getHour } = getTimeSegments(getByTestId);
+		const hour = getHour();
+		hour.focus();
+		await user.keyboard("22");
+		expect(hour).toHaveTextContent("22");
+	});
+
+	it("should allow 00 to be entered when hourCycle is 24", async () => {
+		const value = new CalendarDateTime(2023, 10, 12, 12, 30, 30, 0);
+		const { getByTestId, user } = setup({
+			name: "hello",
+			value,
+			hourCycle: 24,
+		});
+
+		const { getHour } = getTimeSegments(getByTestId);
+		const hour = getHour();
+		hour.focus();
+		await user.keyboard("00");
+		expect(hour).toHaveTextContent("00");
+	});
+
+	it("navigating to 00 with ArrowUp/Down when hourCycle is 24 should show 00 and not 0", async () => {
+		const value = new CalendarDateTime(2023, 10, 12, 1, 30, 30, 0);
+		const { getByTestId, user } = setup({
+			name: "hello",
+			value,
+			hourCycle: 24,
+		});
+
+		const { getHour } = getTimeSegments(getByTestId);
+		const hour = getHour();
+		hour.focus();
+		await user.keyboard(kbd.ARROW_DOWN);
+		expect(hour).toHaveTextContent("00");
+		expect(hour.textContent).not.toBe("0");
+		await user.keyboard(kbd.ARROW_DOWN);
+		expect(hour).toHaveTextContent("23");
+		await user.keyboard(kbd.ARROW_UP);
+		expect(hour).toHaveTextContent("00");
+	});
 });
 
 /**
