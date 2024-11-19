@@ -11,6 +11,7 @@
 		child,
 		children,
 		disabled = false,
+		type = "button",
 		...restProps
 	}: MenuTriggerProps = $props();
 
@@ -23,7 +24,7 @@
 		),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, triggerState.props));
+	const mergedProps = $derived(mergeProps(restProps, triggerState.props, { type }));
 </script>
 
 <FloatingLayerAnchor {id}>
