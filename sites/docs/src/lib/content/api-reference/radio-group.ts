@@ -135,7 +135,7 @@ export const indicator: APISchema = {
 	},
 	dataAttributes: [
 		{
-			name: "radio-item-indicator",
+			name: "radio-group-item-indicator",
 			description: "Present on the indicator element.",
 		},
 	],
