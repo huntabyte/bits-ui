@@ -246,4 +246,19 @@ describe("tabs", () => {
 			expect(content.getAttribute("aria-labelledby")).toBe(trigger.id);
 		}
 	});
+
+	it("should apply tabindex 0 to the active tab trigger on mount", async () => {
+		const { getByTestId } = setup({
+			value: "2",
+		});
+		const [trigger1, trigger2, trigger3] = [
+			getByTestId("trigger-1"),
+			getByTestId("trigger-2"),
+			getByTestId("trigger-3"),
+		];
+
+		expect(trigger1).toHaveAttribute("tabindex", "-1");
+		expect(trigger2).toHaveAttribute("tabindex", "0");
+		expect(trigger3).toHaveAttribute("tabindex", "-1");
+	});
 });
