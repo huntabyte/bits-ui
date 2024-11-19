@@ -1,5 +1,13 @@
 # bits-ui
 
+## 1.0.0-next.61
+
+### Patch Changes
+
+-   `DropdownMenu.Trigger` should default to `type="button"` while enabling users to override via the `type` prop ([#951](https://github.com/huntabyte/bits-ui/pull/951))
+
+-   fix: `TabTrigger` default tabindex handling ([#949](https://github.com/huntabyte/bits-ui/pull/949))
+
 ## 1.0.0-next.60
 
 ### Patch Changes
