@@ -23,8 +23,8 @@
 		defaultPressed: pressed,
 		onPressedChange: ({ next }) => {
 			if (pressed !== next) {
-				onPressedChange?.(next);
 				pressed = next;
+				onPressedChange?.(next);
 			}
 			return next;
 		},
