@@ -5,11 +5,10 @@
 	"license": "MIT",
 	"private": true,
 	"scripts": {
-		"dev": "concurrently \"pnpm:dev:content\" \"pnpm:dev:svelte\" \"pnpm:replace:velite\"",
+		"dev": "concurrently \"pnpm:dev:content\" \"pnpm:dev:svelte\"",
 		"dev:content": "velite dev --watch",
 		"dev:svelte": "vite dev",
-		"build": "velite && node ./other/update-velite-output.js && pnpm build:search && vite build",
-		"replace:velite": "node ./other/watch-velite-output.js",
+		"build": "velite && pnpm build:search && vite build",
 		"build:content": "velite",
 		"preview": "vite preview",
 		"build:search": "node ./other/build-search-data.js",
@@ -54,7 +53,7 @@
 		"unified": "^11.0.5",
 		"unist-builder": "^4.0.0",
 		"unist-util-visit": "^5.0.0",
-		"velite": "^0.1.1",
+		"velite": "^0.2.1",
 		"vite": "^5.4.11"
 	},
 	"type": "module",
