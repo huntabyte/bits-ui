@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.63
+
+### Patch Changes
+
+-   fix: export `Portal` from `Menubar` namespace ([#955](https://github.com/huntabyte/bits-ui/pull/955))
+
 ## 1.0.0-next.62
 
 ### Patch Changes
