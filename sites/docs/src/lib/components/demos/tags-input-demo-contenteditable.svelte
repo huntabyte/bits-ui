@@ -13,7 +13,7 @@
 		>
 			<TagsInput.List class="flex min-h-5 flex-wrap gap-1.5">
 				{#each value as tag, index}
-					<TagsInput.Tag value={tag} {index}>
+					<TagsInput.Tag value={tag} {index} editMode="contenteditable">
 						<TagsInput.TagContent
 							class="flex items-center gap-3 divide-x divide-pink-300/50 rounded-[4px] bg-[#FCDAFE] text-[0.7rem] font-semibold leading-none text-[#2A266B] no-underline group-hover:no-underline"
 						>
@@ -33,9 +33,6 @@
 								</TagsInput.TagRemove>
 							</div>
 						</TagsInput.TagContent>
-						<TagsInput.TagEditInput
-							class="inline-flex h-5 w-auto items-center rounded-sm border border-border-input bg-background px-2 text-sm placeholder:text-foreground-alt/50 hover:border-dark-40 focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2 focus:ring-offset-background"
-						/>
 					</TagsInput.Tag>
 				{/each}
 			</TagsInput.List>

@@ -1,0 +1,3 @@
+```ts
+"input" | "contenteditable" | "none";
+```

@@ -5,7 +5,7 @@ navLabel: Preview
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, TagsInputDemo, Callout } from '$lib/components'
+	import { APISection, ComponentPreviewV2, TagsInputDemo, TagsInputDemoContentEditable, Callout } from '$lib/components'
 	export let schemas;
 </script>
 
@@ -181,6 +181,8 @@ You can use the `validate` prop to validate the tag input's value before adding 
 
 This single function enables you to validate a number of different scenarios, such as ensuring the value is not empty, ensuring it doesn't contain any invalid characters, or ensuring it doesn't exceed a certain length.
 
+The following examples show how you might use the `validate` prop to implement these scenarios.
+
 ### Maximum Tags
 
 The `validate` prop can also be used to limit the maximum number of tags that can be added to the list.
@@ -212,21 +214,39 @@ You can also use the `validate` prop to prevent duplicate tags from being added 
 </TagsInput.Root>
 ```
 
+## Edit Modes
+
+The `editMode` prop on the `TagsInput.Tag` component determines how the tag is editable. It can be set to one of the following values: `'input'`, `'contenteditable'`, or `'none'`. The default value is `'input'`.
+
+-   `'input'`: the tag will be editable using the `TagsInput.TagEdit` component, which is an input element.
+-   `'contenteditable'`: the tag will be editable using the `contenteditable` attribute on the `TagsInput.TagText` component.
+-   `'none'`: the tag will not be editable.
+
+### Examples
+
+#### Input
+
+The main demo at the top of this page shows an example of the default `editMode` of `'input'`.
+
+### Content Editable
+
+The demo below shows an example of the `editMode` of `'contenteditable'`. Try double-clicking on a tag to edit it.
+
+<ComponentPreviewV2 name="tags-input-demo-contenteditable" comp="Tags Input" containerClass="mt-2">
+
+{#snippet preview()}
+<TagsInputDemoContentEditable />
+{/snippet}
+
+</ComponentPreviewV2>
+
 ## Blur Behavior
 
 The `blurBehavior` prop determines how the input field is handled when it is blurred. It can be set to one of the following values: `'clear'`, `'add'`, or `'none'`. The default value is `'none'`.
 
-### None
-
-When the `blurBehavior` is set to `'none'`, the input field will not be cleared or modified when it is blurred, it will behave as an input normally would.
-
-### Clear
-
-When the `blurBehavior` is set to `'clear'`, the input field will be cleared when it is blurred.
-
-### Add
-
-When the `blurBehavior` is set to `'add'`, the input field will be cleared and the value will be added as a new tag when it is blurred.
+-   `'none'`: the input field will not be cleared or modified when it is blurred, it will behave as an input normally would.
+-   `'clear'`: the input field will be cleared when it is blurred.
+-   `'add'`: the input field will be cleared and the value will be added as a new tag when it is blurred.
 
 ## Paste Behavior
 
@@ -234,12 +254,7 @@ The `pasteBehavior` prop determines how the input field is handled when text is 
 
 It can be set to one of the following values: `'add'` or `'none'`.
 
-### Add
-
-When the `pasteBehavior` is set to `'add'`, the pasted text will be added as a new tag when it is pasted into the input field.
-
-### None
-
-When the `pasteBehavior` is set to `'none'`, the pasted text will not be automatically added as a new tag when it is pasted into the input field.
+-   `'add'`: the pasted text will be added as a new tag when it is pasted into the input field.
+-   `'none'`: the pasted text will not be automatically added as a new tag when it is pasted into the input field.
 
 <APISection {schemas} />

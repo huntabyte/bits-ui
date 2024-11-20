@@ -166,9 +166,14 @@ export type TagsInputTagRemoveProps = TagsInputTagRemovePropsWithoutHTML &
 
 export type TagsInputTagEditPropsWithoutHTML = WithChild;
 
-export type TagsInputTagEditProps = Omit<
-	TagsInputTagEditPropsWithoutHTML &
-		Without<BitsPrimitiveInputAttributes, TagsInputTagEditPropsWithoutHTML>,
+export type TagsInputTagEditProps = TagsInputTagEditPropsWithoutHTML &
+	Without<BitsPrimitiveButtonAttributes, TagsInputTagEditPropsWithoutHTML>;
+
+export type TagsInputTagEditInputPropsWithoutHTML = WithChild;
+
+export type TagsInputTagEditInputProps = Omit<
+	TagsInputTagEditInputPropsWithoutHTML &
+		Without<BitsPrimitiveInputAttributes, TagsInputTagEditInputPropsWithoutHTML>,
 	"children"
 >;
 

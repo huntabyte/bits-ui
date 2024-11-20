@@ -7,7 +7,14 @@ import {
 	srOnlyStyles,
 	useRefById,
 } from "svelte-toolbelt";
-import type { FocusEventHandler, KeyboardEventHandler } from "svelte/elements";
+import type {
+	ClipboardEventHandler,
+	FocusEventHandler,
+	HTMLButtonAttributes,
+	KeyboardEventHandler,
+	MouseEventHandler,
+} from "svelte/elements";
+import { IsFocusWithin } from "runed";
 import type { TagsInputBlurBehavior, TagsInputPasteBehavior } from "./types.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { createContext } from "$lib/internal/create-context.js";
@@ -24,6 +31,7 @@ const TAG_ATTR = "data-tags-input-tag";
 const TAG_TEXT_ATTR = "data-tags-input-tag-text";
 const TAG_CONTENT_ATTR = "data-tags-input-tag-content";
 const TAG_REMOVE_ATTR = "data-tags-input-tag-remove";
+const TAG_EDIT_INPUT_ATTR = "data-tags-input-tag-edit-input";
 const TAG_EDIT_ATTR = "data-tags-input-tag-edit";
 
 type TagsInputRootStateProps = WithRefProps &
@@ -240,6 +248,8 @@ class TagsInputTagState {
 	isEditable = $derived.by(() => this.editMode.current !== "none");
 	isEditing = $state(false);
 	#tabIndex = $state(0);
+	#focusWithin: IsFocusWithin;
+	isFocusWithin = $derived.by(() => this.#focusWithin.current);
 
 	constructor(props: TagsInputTagStateProps, list: TagsInputListState) {
 		this.#ref = props.ref;
@@ -256,6 +266,8 @@ class TagsInputTagState {
 			ref: this.#ref,
 			deps: () => this.index.current,
 		});
+
+		this.#focusWithin = new IsFocusWithin(() => this.#ref.current ?? undefined);
 
 		$effect(() => {
 			// we want to track the value here so when we remove the actively focused
@@ -296,7 +308,7 @@ class TagsInputTagState {
 		this.root.recomputeTabIndex();
 	};
 
-	#onkeydown = (e: KeyboardEvent) => {
+	#onkeydown: KeyboardEventHandler<HTMLElement> = (e) => {
 		if (e.target !== this.#ref.current) return;
 		if (HORIZONTAL_NAV_KEYS.includes(e.key)) {
 			e.preventDefault();
@@ -330,7 +342,6 @@ class TagsInputTagState {
 				"data-invalid": getDataInvalid(this.root.isInvalid),
 				tabindex: this.#tabIndex,
 				[TAG_ATTR]: "",
-				"aria-label": `${this.value.current}`,
 				onkeydown: this.#onkeydown,
 			}) as const
 	);
@@ -421,14 +432,14 @@ class TagsInputTagTextState {
 	);
 }
 
-type TagsInputTagEditStateProps = WithRefProps;
+type TagsInputTagEditInputStateProps = WithRefProps;
 
-class TagsInputTagEditState {
-	#ref: TagsInputTagEditStateProps["ref"];
-	#id: TagsInputTagEditStateProps["id"];
+class TagsInputTagEditInputState {
+	#ref: TagsInputTagEditInputStateProps["ref"];
+	#id: TagsInputTagEditInputStateProps["id"];
 	tag: TagsInputTagState;
 
-	constructor(props: TagsInputTagEditStateProps, tag: TagsInputTagState) {
+	constructor(props: TagsInputTagEditInputStateProps, tag: TagsInputTagState) {
 		this.#ref = props.ref;
 		this.#id = props.id;
 		this.tag = tag;
@@ -477,7 +488,7 @@ class TagsInputTagEditState {
 		() =>
 			({
 				id: this.#id.current,
-				[TAG_EDIT_ATTR]: "",
+				[TAG_EDIT_INPUT_ATTR]: "",
 				tabindex: -1,
 				"data-editing": this.tag.isEditing ? "" : undefined,
 				"data-invalid": getDataInvalid(this.tag.root.isInvalid),
@@ -523,11 +534,11 @@ class TagsInputTagRemoveState {
 		});
 	}
 
-	#onclick = () => {
+	#onclick: MouseEventHandler<HTMLButtonElement> = () => {
 		this.#tag.remove();
 	};
 
-	#onkeydown = (e: KeyboardEvent) => {
+	#onkeydown: KeyboardEventHandler<HTMLButtonElement> = (e) => {
 		if (e.key === kbd.ENTER || e.key === kbd.SPACE) {
 			e.preventDefault();
 			this.#tag.remove();
@@ -551,7 +562,72 @@ class TagsInputTagRemoveState {
 				"data-editing": this.#tag.isEditing ? "" : undefined,
 				"data-editable": this.#tag.isEditable ? "" : undefined,
 				"data-removable": this.#tag.removable.current ? "" : undefined,
-				tabindex: -1,
+				tabindex: this.#tag.isFocusWithin ? 0 : -1,
+				onclick: this.#onclick,
+				onkeydown: this.#onkeydown,
+			}) as const
+	);
+}
+
+type TagsInputTagEditStateProps = WithRefProps &
+	ReadableBoxedValues<{
+		disabled: HTMLButtonAttributes["disabled"];
+	}>;
+
+class TagsInputTagEditState {
+	#ref: TagsInputTagEditStateProps["ref"];
+	#id: TagsInputTagEditStateProps["id"];
+	#tag: TagsInputTagState;
+	#disabled: TagsInputTagEditStateProps["disabled"];
+	root: TagsInputRootState;
+	#ariaLabelledBy = $derived.by(() => {
+		if (this.#tag.textNode && this.#tag.textNode.id) {
+			return `${this.#id.current} ${this.#tag.textNode.id}`;
+		}
+		return this.#id.current;
+	});
+
+	constructor(props: TagsInputTagEditStateProps, tag: TagsInputTagState) {
+		this.#ref = props.ref;
+		this.#id = props.id;
+		this.#tag = tag;
+		this.root = tag.root;
+		this.#disabled = props.disabled;
+
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+			onRefChange: (node) => {
+				this.#tag.removeNode = node;
+			},
+		});
+	}
+
+	#onclick: MouseEventHandler<HTMLButtonElement> = () => {
+		if (this.#disabled.current) return;
+		this.#tag.startEditing();
+	};
+
+	#onkeydown: KeyboardEventHandler<HTMLButtonElement> = (e) => {
+		if (this.#disabled.current) return;
+		if (e.key === kbd.ENTER || e.key === kbd.SPACE) {
+			e.preventDefault();
+			this.#tag.startEditing();
+		}
+	};
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.current,
+				[TAG_EDIT_ATTR]: "",
+				role: "button",
+				"aria-label": "Remove",
+				"aria-labelledby": this.#ariaLabelledBy,
+				"data-editing": this.#tag.isEditing ? "" : undefined,
+				"data-editable": this.#tag.isEditable ? "" : undefined,
+				"data-removable": this.#tag.removable.current ? "" : undefined,
+				tabindex: this.#tag.isFocusWithin ? 0 : -1,
 				onclick: this.#onclick,
 				onkeydown: this.#onkeydown,
 			}) as const
@@ -594,7 +670,7 @@ class TagsInputInputState {
 		this.value.current = "";
 	};
 
-	#onkeydown = (e: KeyboardEvent & { currentTarget: HTMLInputElement }) => {
+	#onkeydown: KeyboardEventHandler<HTMLInputElement> = (e) => {
 		if (e.key === kbd.ENTER) {
 			const valid = this.#root.addValue(e.currentTarget.value);
 			if (valid) this.#resetValue();
@@ -611,7 +687,7 @@ class TagsInputInputState {
 		}
 	};
 
-	#onpaste = (e: ClipboardEvent & { currentTarget: HTMLInputElement }) => {
+	#onpaste: ClipboardEventHandler<HTMLInputElement> = (e) => {
 		if (!e.clipboardData || this.#pasteBehavior.current === "none") return;
 		const rawClipboardData = e.clipboardData.getData("text/plain");
 		// we're splitting this by the delimiters
@@ -663,7 +739,7 @@ class TagsInputClearState {
 		});
 	}
 
-	#onclick = () => {
+	#onclick: MouseEventHandler<HTMLButtonElement> = () => {
 		this.#root.clearValue();
 	};
 
@@ -704,7 +780,7 @@ class TagsInputTagContentState {
 		return undefined;
 	});
 
-	#ondblclick = (e: MouseEvent) => {
+	#ondblclick: MouseEventHandler<HTMLElement> = (e) => {
 		if (!this.tag.isEditable) return;
 		const target = e.target as HTMLElement;
 		if (this.tag.removeNode && isOrContainsTarget(this.tag.removeNode, target)) {
@@ -832,6 +908,10 @@ export function useTagsInputTag(props: TagsInputTagStateProps) {
 
 export function useTagsInputTagText(props: TagsInputTagTextStateProps) {
 	return new TagsInputTagTextState(props, getTagsInputTagContext());
+}
+
+export function useTagsInputTagEditInput(props: TagsInputTagEditInputStateProps) {
+	return new TagsInputTagEditInputState(props, getTagsInputTagContext());
 }
 
 export function useTagsInputTagEdit(props: TagsInputTagEditStateProps) {

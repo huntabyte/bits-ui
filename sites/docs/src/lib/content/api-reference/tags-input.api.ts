@@ -4,13 +4,14 @@ import type {
 	TagsInputListPropsWithoutHTML,
 	TagsInputRootPropsWithoutHTML,
 	TagsInputTagContentPropsWithoutHTML,
-	TagsInputTagEditPropsWithoutHTML,
+	TagsInputTagEditInputPropsWithoutHTML,
 	TagsInputTagPropsWithoutHTML,
 	TagsInputTagRemovePropsWithoutHTML,
 	TagsInputTagTextPropsWithoutHTML,
 } from "bits-ui";
 import {
 	TagsInputBlurBehaviorProp,
+	TagsInputEditModeProp,
 	TagsInputInputOnValueChangeProp,
 	TagsInputOnValueChangeProp,
 	TagsInputPasteBehaviorProp,
@@ -105,10 +106,11 @@ const tag = createApiSchema<TagsInputTagPropsWithoutHTML>({
 			description: "The index of the tag in the value array.",
 			required: true,
 		}),
-		editable: createBooleanProp({
-			description:
-				"Whether or not the tag is editable or not. This determines the behavior when a user double clicks or presses enter on a tag.",
-			default: C.TRUE,
+		editMode: createEnumProp({
+			options: ["input", "contenteditable", "none"],
+			description: "The edit mode of the tag.",
+			default: "'input'",
+			definition: TagsInputEditModeProp,
 		}),
 		removable: createBooleanProp({
 			description: "Whether or not the tag is removable or not.",
@@ -160,10 +162,11 @@ const tagText = createApiSchema<TagsInputTagTextPropsWithoutHTML>({
 	],
 });
 
-const tagEdit = createApiSchema<TagsInputTagEditPropsWithoutHTML>({
-	title: "TagEdit",
-	description: "The edit button for the tag.",
-	props: withChildProps({ elType: "HTMLButtonElement" }),
+const tagEditInput = createApiSchema<TagsInputTagEditInputPropsWithoutHTML>({
+	title: "TagEditInput",
+	description:
+		"The input that will receive focus when the tag is edited and the `editMode` is `'input'`.",
+	props: withChildProps({ elType: "HTMLInputElement" }),
 	dataAttributes: [
 		createDataAttrSchema({
 			name: "tags-input-tag-edit",
@@ -271,4 +274,14 @@ const tagContent = createApiSchema<TagsInputTagContentPropsWithoutHTML>({
 	],
 });
 
-export const tagsInput = [root, list, tag, tagContent, tagText, tagRemove, tagEdit, input, clear];
+export const tagsInput = [
+	root,
+	list,
+	tag,
+	tagContent,
+	tagText,
+	tagRemove,
+	tagEditInput,
+	input,
+	clear,
+];
