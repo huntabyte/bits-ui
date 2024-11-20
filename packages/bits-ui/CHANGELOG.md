@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.62
+
+### Patch Changes
+
+-   DropdownMenu.Trigger `type="button"` by default ([#953](https://github.com/huntabyte/bits-ui/pull/953))
+
 ## 1.0.0-next.61
 
 ### Patch Changes
