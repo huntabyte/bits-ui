@@ -1,6 +1,7 @@
 import { untrack } from "svelte";
 import { SvelteMap } from "svelte/reactivity";
 import { useRefById } from "svelte-toolbelt";
+import type { FocusEventHandler, KeyboardEventHandler, MouseEventHandler } from "svelte/elements";
 import type { TabsActivationMode } from "./types.js";
 import {
 	getAriaOrientation,
@@ -189,8 +190,11 @@ class TabsTriggerState {
 		});
 
 		$effect(() => {
-			if (this.#root.triggerIds.length) {
-				this.#tabIndex = this.#root.rovingFocusGroup.getTabIndex(this.#ref.current);
+			this.#root.triggerIds.length;
+			if (this.#isActive || !this.#root.value.current) {
+				this.#tabIndex = 0;
+			} else {
+				this.#tabIndex = -1;
 			}
 		});
 	}
@@ -200,29 +204,17 @@ class TabsTriggerState {
 		this.#root.setValue(this.#value.current);
 	};
 
-	#onfocus = () => {
-		if (this.#root.activationMode.current !== "automatic" || this.#disabled.current) return;
+	#onfocus: FocusEventHandler<HTMLButtonElement> = () => {
+		if (this.#root.activationMode.current !== "automatic" || this.#isDisabled) return;
 		this.activate();
 	};
 
-	#onpointerdown = (e: PointerEvent) => {
-		if (this.#disabled.current) return;
-		if (e.pointerType === "touch" || e.button !== 0) return e.preventDefault();
-		e.preventDefault();
-		this.#ref.current?.focus();
+	#onclick: MouseEventHandler<HTMLButtonElement> = (e) => {
+		if (this.#isDisabled) return;
 		this.activate();
 	};
 
-	#onpointerup = (e: PointerEvent) => {
-		if (this.#disabled.current) return;
-		if (e.pointerType === "touch") {
-			e.preventDefault();
-			this.#ref.current?.focus();
-			this.activate();
-		}
-	};
-
-	#onkeydown = (e: KeyboardEvent) => {
+	#onkeydown: KeyboardEventHandler<HTMLButtonElement> = (e) => {
 		if (this.#isDisabled) return;
 		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
 			e.preventDefault();
@@ -240,15 +232,14 @@ class TabsTriggerState {
 				"data-state": getTabDataState(this.#isActive),
 				"data-value": this.#value.current,
 				"data-orientation": getDataOrientation(this.#root.orientation.current),
-				"data-disabled": getDataDisabled(this.#disabled.current),
+				"data-disabled": getDataDisabled(this.#isDisabled),
 				"aria-selected": getAriaSelected(this.#isActive),
 				"aria-controls": this.#ariaControls,
 				[TRIGGER_ATTR]: "",
-				disabled: getDisabled(this.#disabled.current),
+				disabled: getDisabled(this.#isDisabled),
 				tabindex: this.#tabIndex,
 				//
-				onpointerdown: this.#onpointerdown,
-				onpointerup: this.#onpointerup,
+				onclick: this.#onclick,
 				onfocus: this.#onfocus,
 				onkeydown: this.#onkeydown,
 			}) as const

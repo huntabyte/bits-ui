@@ -1,5 +1,33 @@
 # bits-ui
 
+## 1.0.0-next.63
+
+### Patch Changes
+
+-   fix: export `Portal` from `Menubar` namespace ([#955](https://github.com/huntabyte/bits-ui/pull/955))
+
+## 1.0.0-next.62
+
+### Patch Changes
+
+-   DropdownMenu.Trigger `type="button"` by default ([#953](https://github.com/huntabyte/bits-ui/pull/953))
+
+## 1.0.0-next.61
+
+### Patch Changes
+
+-   `DropdownMenu.Trigger` should default to `type="button"` while enabling users to override via the `type` prop ([#951](https://github.com/huntabyte/bits-ui/pull/951))
+
+-   fix: `TabTrigger` default tabindex handling ([#949](https://github.com/huntabyte/bits-ui/pull/949))
+
+## 1.0.0-next.60
+
+### Patch Changes
+
+-   fix: DateField 24 hour cycling ([#945](https://github.com/huntabyte/bits-ui/pull/945))
+
+-   fix: issue causing labels associated with radio group items not to select the item ([#943](https://github.com/huntabyte/bits-ui/pull/943))
+
 ## 1.0.0-next.59
 
 ### Patch Changes
