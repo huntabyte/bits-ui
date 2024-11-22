@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.64
+
+### Patch Changes
+
+-   fix: only submit values with `FormData` on Combobox/Select `type="multiple"` if a value is selected to align with native `<select multiple>` behavior ([#961](https://github.com/huntabyte/bits-ui/pull/961))
+
 ## 1.0.0-next.63
 
 ### Patch Changes
