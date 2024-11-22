@@ -73,9 +73,7 @@
 </FloatingLayer>
 
 {#if Array.isArray(rootState.value.current)}
-	{#if rootState.value.current.length === 0}
-		<SelectHiddenInput value="" />
-	{:else}
+	{#if rootState.value.current.length}
 		{#each rootState.value.current as item}
 			<SelectHiddenInput value={item} />
 		{/each}

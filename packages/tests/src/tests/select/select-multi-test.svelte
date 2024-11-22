@@ -18,6 +18,7 @@
 		items: Item[];
 		searchValue?: string;
 		onSelectedLabelChange?: (value: string) => void;
+		onFormSubmit?: (fd: FormData) => void;
 	};
 </script>
 
@@ -30,6 +31,7 @@
 		open = false,
 		searchValue = "",
 		onSelectedLabelChange,
+		onFormSubmit,
 		...restProps
 	}: SelectMultipleTestProps = $props();
 
@@ -53,39 +55,50 @@
 </script>
 
 <main data-testid="main">
-	<Select.Root bind:value bind:open {...restProps} type="multiple">
-		<Select.Trigger data-testid="trigger">
-			{selectedLabel}
-		</Select.Trigger>
+	<form
+		data-testid="form"
+		method="POST"
+		onsubmit={(e) => {
+			e.preventDefault();
+			const formData = new FormData(e.target as HTMLFormElement);
+			onFormSubmit?.(formData);
+		}}
+	>
+		<Select.Root bind:value bind:open {...restProps} type="multiple">
+			<Select.Trigger data-testid="trigger">
+				{selectedLabel}
+			</Select.Trigger>
 
-		<Select.Portal {...portalProps}>
-			<Select.Content data-testid="content" {...contentProps}>
-				<Select.Group data-testid="group">
-					<Select.GroupHeading data-testid="group-label">Options</Select.GroupHeading>
-					{#each filteredItems as { value, label, disabled }}
-						<Select.Item data-testid={value} {disabled} {value} {label}>
-							{#snippet children({ selected, highlighted: _highlighted })}
-								{#if selected}
-									<span data-testid="{value}-indicator">x</span>
-								{/if}
-								{label}
-							{/snippet}
-						</Select.Item>
-					{/each}
-				</Select.Group>
-			</Select.Content>
-		</Select.Portal>
-	</Select.Root>
-	<div data-testid="outside"></div>
-	<button data-testid="open-binding" onclick={() => (open = !open)}>
-		{open}
-	</button>
-	<button data-testid="value-binding" onclick={() => (value = [])}>
-		{#if value.length === 0}
-			empty
-		{:else}
-			{value}
-		{/if}
-	</button>
+			<Select.Portal {...portalProps}>
+				<Select.Content data-testid="content" {...contentProps}>
+					<Select.Group data-testid="group">
+						<Select.GroupHeading data-testid="group-label">Options</Select.GroupHeading>
+						{#each filteredItems as { value, label, disabled }}
+							<Select.Item data-testid={value} {disabled} {value} {label}>
+								{#snippet children({ selected, highlighted: _highlighted })}
+									{#if selected}
+										<span data-testid="{value}-indicator">x</span>
+									{/if}
+									{label}
+								{/snippet}
+							</Select.Item>
+						{/each}
+					</Select.Group>
+				</Select.Content>
+			</Select.Portal>
+		</Select.Root>
+		<div data-testid="outside"></div>
+		<button type="button" data-testid="open-binding" onclick={() => (open = !open)}>
+			{open}
+		</button>
+		<button type="button" data-testid="value-binding" onclick={() => (value = [])}>
+			{#if value.length === 0}
+				empty
+			{:else}
+				{value}
+			{/if}
+		</button>
+		<button data-testid="submit" type="submit"> Submit </button>
+	</form>
 </main>
 <div data-testid="portal-target" id="portal-target"></div>

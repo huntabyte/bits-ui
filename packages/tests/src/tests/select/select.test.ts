@@ -72,6 +72,7 @@ function setupMultiple(props: Partial<SelectMultipleTestProps> = {}, items: Item
 	const openBinding = returned.getByTestId("open-binding");
 	const valueBinding = returned.getByTestId("value-binding");
 	const outside = returned.getByTestId("outside");
+	const submit = returned.getByTestId("submit");
 
 	function getHiddenInputs(name = "test") {
 		return returned.container.querySelectorAll<HTMLElement>(`input[name="${name}"]`);
@@ -87,6 +88,7 @@ function setupMultiple(props: Partial<SelectMultipleTestProps> = {}, items: Item
 		openBinding,
 		valueBinding,
 		outside,
+		submit,
 		getHiddenInputs,
 		getContent,
 		...returned,
@@ -499,9 +501,9 @@ describe("select - multiple", () => {
 		expect(trigger).not.toHaveAttribute("data-placeholder");
 	});
 
-	it("should render a hidden input if the `name` prop is passed", async () => {
+	it("should not render a hidden input if the `name` prop is passed and a value is not selected", async () => {
 		const { getHiddenInputs } = setupMultiple();
-		expect(getHiddenInputs()).toHaveLength(1);
+		expect(getHiddenInputs()).toHaveLength(0);
 	});
 
 	it("should render a hidden input for each value in the `value` array, each with the same `name` prop", async () => {
@@ -569,12 +571,12 @@ describe("select - multiple", () => {
 
 	it("should not portal if `disabled` is passed as portal prop", async () => {
 		const { content, getByTestId } = await openMultiple({ portalProps: { disabled: true } });
-		const main = getByTestId("main");
-		expect(content.parentElement?.parentElement).toBe(main);
+		const form = getByTestId("form");
+		expect(content.parentElement?.parentElement).toBe(form);
 	});
 
 	it("should respect binding the `open` prop", async () => {
-		const { getContent, getByTestId, user, openBinding } = await openMultiple();
+		const { getContent, user, openBinding } = await openMultiple();
 		expect(openBinding).toHaveTextContent("true");
 		await user.click(openBinding);
 		expect(openBinding).toHaveTextContent("false");
@@ -726,6 +728,19 @@ describe("select - multiple", () => {
 		expect(getHiddenInputs()[0]).toHaveValue("2");
 		const [_, item2] = getItems(getByTestId);
 		expectSelected(item2!);
+	});
+
+	it("should submit an empty array when the user submits the form without selecting any items", async () => {
+		let submittedValues: string[] | undefined;
+		const { submit, user } = setupMultiple({
+			onFormSubmit: (fd) => {
+				submittedValues = fd.getAll("themes") as string[];
+			},
+			name: "themes",
+		});
+
+		await user.click(submit);
+		expect(submittedValues).toHaveLength(0);
 	});
 });
 
