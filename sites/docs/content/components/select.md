@@ -97,13 +97,7 @@ Here's an example of how you might create a reusable `MySelect` component that r
 
 <Select.Root bind:value {...restProps}>
 	<Select.Trigger>
-		{#if selectedLabel}
-			<Select.Value>
-				{selectedLabel}
-			</Select.Value>
-		{:else}
-			<Select.Value {placeholder} />
-		{/if}
+		{selectedLabel ? selectedLabel : placeholder}
 	</Select.Trigger>
 	<Select.Portal>
 		<Select.Content {...contentProps}>
