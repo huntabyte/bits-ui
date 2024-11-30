@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.65
+
+### Patch Changes
+
+-   improve export strategy ([#966](https://github.com/huntabyte/bits-ui/pull/966))
+
 ## 1.0.0-next.64
 
 ### Patch Changes
