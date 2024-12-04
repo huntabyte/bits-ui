@@ -44,7 +44,7 @@ The `Tooltip.Provider` component is required to be an ancestor of the `Tooltip.R
 	import { Tooltip } from "bits-ui";
 </script>
 
-<Tooltip.Provider delayDuration={0} disabledHoverableContent={true}>
+<Tooltip.Provider delayDuration={0} disableHoverableContent={true}>
 	<!-- Will have a delayDuration of 0 and disableHoverableContent of true -->
 	<Tooltip.Root>
 		<Tooltip.Trigger />
