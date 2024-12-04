@@ -11,7 +11,7 @@
 	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
 
 	let {
-		open = false,
+		open = $bindable(false),
 		onOpenChange = noop,
 		value = $bindable(),
 		onValueChange = noop,
