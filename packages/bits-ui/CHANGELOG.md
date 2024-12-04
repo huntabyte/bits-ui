@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.66
+
+### Patch Changes
+
+-   fix: make `open` prop of `DateRangePicker` and `DatePicker` `$bindable` ([#975](https://github.com/huntabyte/bits-ui/pull/975))
+
 ## 1.0.0-next.65
 
 ### Patch Changes
