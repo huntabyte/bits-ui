@@ -56,6 +56,7 @@ type CommandRootStateProps = WithRefProps<
 		loop: boolean;
 		vimBindings: boolean;
 		disablePointerSelection: boolean;
+		onStateChange?: (state: Readonly<CommandState>) => void;
 	}> &
 		WritableBoxedValues<{
 			value: string;
@@ -66,6 +67,11 @@ type CommandRootStateProps = WithRefProps<
 type SetState = <K extends keyof CommandState>(key: K, value: CommandState[K], opts?: any) => void;
 
 class CommandRootState {
+	#isFirstMount = true;
+	//indicating if state updates are currently being processed
+	#isUpdating = false;
+	//indicating if there are pending state changes to emit
+	#pendingEmit = false;
 	allItems = new Set<string>(); // [...itemIds]
 	allGroups = new Map<string, Set<string>>(); // groupId → [...itemIds]
 	allIds = new Map<string, { value: string; keywords?: string[] }>();
@@ -73,6 +79,7 @@ class CommandRootState {
 	ref: CommandRootStateProps["ref"];
 	filter: CommandRootStateProps["filter"];
 	shouldFilter: CommandRootStateProps["shouldFilter"];
+	onStateChange: CommandRootStateProps["onStateChange"];
 	loop: CommandRootStateProps["loop"];
 	// attempt to prevent the harsh delay when user is typing fast
 	key = $state(0);
@@ -87,9 +94,14 @@ class CommandRootState {
 	// internal state that we mutate in batches and publish to the `state` at once
 	_commandState = $state<CommandState>(null!);
 	snapshot = () => this._commandState;
+
 	setState: SetState = (key, value, opts) => {
 		if (Object.is(this._commandState[key], value)) return;
+
+		this.#isUpdating = true;
+
 		this._commandState[key] = value;
+
 		if (key === "search") {
 			// Filter synchronously before emitting back to children
 			this.#filterItems();
@@ -102,11 +114,26 @@ class CommandRootState {
 				this.#scrollSelectedIntoView();
 			}
 		}
-		// notify subscribers that the state has changed
-		this.emit();
+
+		// Mark that we need to emit, but don't emit yet
+		this.#pendingEmit = true;
+
+		// Schedule emission for after all updates are done
+		afterTick(() => {
+			if (this.#pendingEmit) {
+				this.#isUpdating = false;
+				this.#pendingEmit = false;
+				this.emit();
+			}
+		});
 	};
+
 	emit = () => {
-		this.commandState = $state.snapshot(this._commandState);
+		if (!this.#isUpdating && !this.#isFirstMount) {
+			const snapshot = $state.snapshot(this._commandState);
+			this.commandState = snapshot;
+			this.onStateChange?.current?.(snapshot);
+		}
 	};
 
 	constructor(props: CommandRootStateProps) {
@@ -118,6 +145,7 @@ class CommandRootState {
 		this.valueProp = props.value;
 		this.#vimBindings = props.vimBindings;
 		this.disablePointerSelection = props.disablePointerSelection;
+		this.onStateChange = props.onStateChange;
 
 		const defaultState = {
 			/** Value of the search query */
@@ -133,12 +161,18 @@ class CommandRootState {
 				groups: new Set<string>(),
 			},
 		};
+
 		this._commandState = defaultState;
 		this.commandState = defaultState;
 
 		useRefById({
 			id: this.id,
 			ref: this.ref,
+		});
+
+		// Wait for initial mount to complete
+		afterTick(() => {
+			this.#isFirstMount = false;
 		});
 	}
 
@@ -224,6 +258,7 @@ class CommandRootState {
 				this.key++;
 			});
 		}
+		// Don't emit here since setState will handle it
 		this.setState("value", value, opts);
 		this.valueProp.current = value;
 	};
