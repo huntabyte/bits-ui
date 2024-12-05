@@ -67,13 +67,9 @@ type CommandRootStateProps = WithRefProps<
 type SetState = <K extends keyof CommandState>(key: K, value: CommandState[K], opts?: any) => void;
 
 class CommandRootState {
-	#isFirstMount = true;
-	//indicating if state updates are currently being processed
-	#isUpdating = false;
-	//indicating if there are pending state changes to emit
-	#pendingEmit = false;
-	allItems = new Set<string>(); // [...itemIds]
-	allGroups = new Map<string, Set<string>>(); // groupId → [...itemIds]
+	#updateScheduled = false;
+	allItems = new Set<string>();
+	allGroups = new Map<string, Set<string>>();
 	allIds = new Map<string, { value: string; keywords?: string[] }>();
 	id: CommandRootStateProps["id"];
 	ref: CommandRootStateProps["ref"];
@@ -95,10 +91,25 @@ class CommandRootState {
 	_commandState = $state<CommandState>(null!);
 	snapshot = () => this._commandState;
 
+	#scheduleUpdate = () => {
+		if (this.#updateScheduled) return;
+		this.#updateScheduled = true;
+
+		afterTick(() => {
+			this.#updateScheduled = false;
+
+			const currentState = this.snapshot();
+			const hasStateChanged = !Object.is(this.commandState, currentState);
+
+			if (hasStateChanged) {
+				this.commandState = currentState;
+				this.onStateChange?.current?.($state.snapshot(currentState));
+			}
+		});
+	};
+
 	setState: SetState = (key, value, opts) => {
 		if (Object.is(this._commandState[key], value)) return;
-
-		this.#isUpdating = true;
 
 		this._commandState[key] = value;
 
@@ -115,25 +126,7 @@ class CommandRootState {
 			}
 		}
 
-		// Mark that we need to emit, but don't emit yet
-		this.#pendingEmit = true;
-
-		// Schedule emission for after all updates are done
-		afterTick(() => {
-			if (this.#pendingEmit) {
-				this.#isUpdating = false;
-				this.#pendingEmit = false;
-				this.emit();
-			}
-		});
-	};
-
-	emit = () => {
-		if (!this.#isUpdating && !this.#isFirstMount) {
-			const snapshot = $state.snapshot(this._commandState);
-			this.commandState = snapshot;
-			this.onStateChange?.current?.(snapshot);
-		}
+		this.#scheduleUpdate();
 	};
 
 	constructor(props: CommandRootStateProps) {
@@ -169,11 +162,6 @@ class CommandRootState {
 			id: this.id,
 			ref: this.ref,
 		});
-
-		// Wait for initial mount to complete
-		afterTick(() => {
-			this.#isFirstMount = false;
-		});
 	}
 
 	#score = (value: string, keywords?: string[]) => {
@@ -183,7 +171,11 @@ class CommandRootState {
 	};
 
 	#sort = () => {
-		if (!this._commandState.search || this.shouldFilter.current === false) return;
+		if (!this._commandState.search || this.shouldFilter.current === false) {
+			// If no search and no selection yet, select first item
+			if (!this.commandState.value) this.#selectFirstItem();
+			return;
+		}
 
 		const scores = this._commandState.filtered.items;
 
@@ -258,7 +250,6 @@ class CommandRootState {
 				this.key++;
 			});
 		}
-		// Don't emit here since setState will handle it
 		this.setState("value", value, opts);
 		this.valueProp.current = value;
 	};
@@ -401,7 +392,6 @@ class CommandRootState {
 		this._commandState.filtered.items.set(id, this.#score(value, keywords));
 
 		this.#sort();
-		this.emit();
 
 		return () => {
 			this.allIds.delete(id);
@@ -423,12 +413,7 @@ class CommandRootState {
 		this.#filterItems();
 		this.#sort();
 
-		// Could be initial mount, select the first item if none already selected
-		if (!this.commandState.value) {
-			this.#selectFirstItem();
-		}
-
-		this.emit();
+		this.#scheduleUpdate();
 		return () => {
 			this.allIds.delete(id);
 			this.allItems.delete(id);
@@ -441,7 +426,7 @@ class CommandRootState {
 			// so selection should be moved to the first
 			if (selectedItem?.getAttribute("id") === id) this.#selectFirstItem();
 
-			this.emit();
+			this.#scheduleUpdate();
 		};
 	};
 
