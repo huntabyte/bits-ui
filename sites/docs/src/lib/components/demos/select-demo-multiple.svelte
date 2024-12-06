@@ -7,7 +7,6 @@
 	import CaretDoubleDown from "phosphor-svelte/lib/CaretDoubleDown";
 
 	const themes = [
-		{ value: "", label: "Select your favorite themes" },
 		{ value: "light-monochrome", label: "Light Monochrome" },
 		{ value: "dark-green", label: "Dark Green" },
 		{ value: "svelte-orange", label: "Svelte Orange" },
