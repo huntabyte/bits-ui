@@ -280,9 +280,9 @@ describe("select - single", () => {
 	it("should navigate through the items using the keyboard (loop = false)", async () => {
 		const { getByTestId, user } = await openSingle({}, kbd.ARROW_DOWN);
 
-		const [itemFalsely, item1, item2, item3, item4] = getItems(getByTestId);
+		const [item0, item1, item2, item3, item4] = getItems(getByTestId);
 
-		expectHighlighted(itemFalsely!);
+		expectHighlighted(item0!);
 		await user.keyboard(kbd.ARROW_DOWN);
 		expectHighlighted(item1!);
 		await user.keyboard(kbd.ARROW_DOWN);
@@ -298,7 +298,7 @@ describe("select - single", () => {
 		await user.keyboard(kbd.ARROW_UP);
 		expectHighlighted(item1!);
 		await user.keyboard(kbd.ARROW_UP);
-		expectHighlighted(itemFalsely!);
+		expectHighlighted(item0!);
 	});
 	it("should navigate through the items using the keyboard (loop = true)", async () => {
 		const { getByTestId, user } = await openSingle(
@@ -308,9 +308,9 @@ describe("select - single", () => {
 			kbd.ARROW_DOWN
 		);
 
-		const [itemFalsely, item1, item2, item3, item4] = getItems(getByTestId);
+		const [item0, item1, item2, item3, item4] = getItems(getByTestId);
 
-		expectHighlighted(itemFalsely!);
+		expectHighlighted(item0!);
 		await user.keyboard(kbd.ARROW_DOWN);
 		expectHighlighted(item1!);
 		await user.keyboard(kbd.ARROW_DOWN);
@@ -321,7 +321,7 @@ describe("select - single", () => {
 		expectHighlighted(item4!);
 		await user.keyboard(kbd.ARROW_DOWN);
 		expectNotHighlighted(item4!);
-		expectHighlighted(itemFalsely!);
+		expectHighlighted(item0!);
 
 		await user.keyboard(kbd.ARROW_UP);
 		expectHighlighted(item4!);
@@ -332,7 +332,7 @@ describe("select - single", () => {
 		await user.keyboard(kbd.ARROW_UP);
 		expectHighlighted(item1!);
 		await user.keyboard(kbd.ARROW_UP);
-		expectHighlighted(itemFalsely!);
+		expectHighlighted(item0!);
 		await user.keyboard(kbd.ARROW_UP);
 		expectHighlighted(item4!);
 	});
@@ -446,7 +446,7 @@ describe("select - single", () => {
 		expect(queryByTestId("2-indicator")).not.toBeNull();
 		expect(trigger).toHaveTextContent("B");
 		expect(getHiddenInput()).toHaveValue("2");
-		const [itemFalsely, _, item2] = getItems(getByTestId);
+		const [_, __, item2] = getItems(getByTestId);
 		expectSelected(item2!);
 	});
 
@@ -681,9 +681,9 @@ describe("select - multiple", () => {
 	it("should navigate through the items using the keyboard (loop = false)", async () => {
 		const { getByTestId, user } = await openMultiple({}, kbd.ARROW_DOWN);
 
-		const [itemFalsely, item1, item2, item3, item4] = getItems(getByTestId);
+		const [item0, item1, item2, item3, item4] = getItems(getByTestId);
 
-		expectHighlighted(itemFalsely!);
+		expectHighlighted(item0!);
 		await user.keyboard(kbd.ARROW_DOWN);
 		expectHighlighted(item1!);
 		await user.keyboard(kbd.ARROW_DOWN);
@@ -701,7 +701,7 @@ describe("select - multiple", () => {
 		await user.keyboard(kbd.ARROW_UP);
 		expectHighlighted(item1!);
 		await user.keyboard(kbd.ARROW_UP);
-		expectHighlighted(itemFalsely!);
+		expectHighlighted(item0!);
 	});
 	it("should navigate through the items using the keyboard (loop = true)", async () => {
 		const { getByTestId, user } = await openSingle(
