@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.67
+
+### Patch Changes
+
+-   fix: allow `Select` to handle empty string values via keyboard ([#979](https://github.com/huntabyte/bits-ui/pull/979))
+
 ## 1.0.0-next.66
 
 ### Patch Changes
