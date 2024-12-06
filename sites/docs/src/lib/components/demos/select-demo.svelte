@@ -7,14 +7,15 @@
 	import CaretDoubleDown from "phosphor-svelte/lib/CaretDoubleDown";
 
 	const themes = [
+		{ value: "", label: "None" },
 		{ value: "light-monochrome", label: "Light Monochrome" },
 		{ value: "dark-green", label: "Dark Green" },
 		{ value: "svelte-orange", label: "Svelte Orange" },
 		{ value: "punk-pink", label: "Punk Pink" },
-		{ value: "ocean-blue", label: "Ocean Blue" },
+		{ value: "ocean-blue", label: "Ocean Blue", disabled: true },
 		{ value: "sunset-red", label: "Sunset Red" },
 		{ value: "forest-green", label: "Forest Green" },
-		{ value: "lavender-purple", label: "Lavender Purple" },
+		{ value: "lavender-purple", label: "Lavender Purple", disabled: true },
 		{ value: "mustard-yellow", label: "Mustard Yellow" },
 		{ value: "slate-gray", label: "Slate Gray" },
 		{ value: "neon-green", label: "Neon Green" },
@@ -55,9 +56,10 @@
 			<Select.Viewport class="p-1">
 				{#each themes as theme, i (i + theme.value)}
 					<Select.Item
-						class="flex h-10 w-full select-none items-center rounded-button py-3 pl-5 pr-1.5 text-sm capitalize outline-none duration-75 data-[highlighted]:bg-muted"
+						class="flex h-10 w-full select-none items-center rounded-button py-3 pl-5 pr-1.5 text-sm capitalize outline-none duration-75 data-[highlighted]:bg-muted data-[disabled]:opacity-50"
 						value={theme.value}
 						label={theme.label}
+						disabled={theme.disabled}
 					>
 						{#snippet children({ selected })}
 							{theme.label}
