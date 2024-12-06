@@ -3,6 +3,7 @@ import { axe } from "jest-axe";
 import { describe, it, vi } from "vitest";
 import { type Component, tick } from "svelte";
 import { type AnyFn, getTestKbd, setupUserEvents, sleep } from "../utils.js";
+import { getTestId } from "../helpers/select.js";
 import SelectTest from "./select-test.svelte";
 import type { Item, SelectSingleTestProps } from "./select-test.svelte";
 import type { SelectMultipleTestProps } from "./select-multi-test.svelte";
@@ -13,6 +14,10 @@ import SelectForceMountTest from "./select-force-mount-test.svelte";
 const kbd = getTestKbd();
 
 const testItems: Item[] = [
+	{
+		value: "",
+		label: "None",
+	},
 	{
 		value: "1",
 		label: "A",
@@ -171,7 +176,7 @@ describe("select - single", () => {
 		trigger.focus();
 		await user.keyboard(kbd.ARROW_DOWN);
 		await user.keyboard(kbd.ENTER);
-		expect(trigger).toHaveTextContent("B");
+		expect(trigger).toHaveTextContent("A");
 	});
 
 	it("should have the placeholder attribute when empty and not when not empty", async () => {
@@ -180,7 +185,7 @@ describe("select - single", () => {
 		expect(trigger).toHaveAttribute("data-placeholder");
 		await user.keyboard(kbd.ARROW_DOWN);
 		await user.keyboard(kbd.ENTER);
-		expect(trigger).toHaveTextContent("B");
+		expect(trigger).toHaveTextContent("A");
 		expect(trigger).not.toHaveAttribute("data-placeholder");
 	});
 
@@ -262,7 +267,7 @@ describe("select - single", () => {
 
 	it("should select items when clicked", async () => {
 		const { getByTestId, user, queryByTestId, trigger, getHiddenInput } = await openSingle();
-		const [item1] = getItems(getByTestId);
+		const [_, item1] = getItems(getByTestId);
 		expect(queryByTestId("1-indicator")).toBeNull();
 		await user.click(item1!);
 		expect(trigger).toHaveTextContent("A");
@@ -275,7 +280,7 @@ describe("select - single", () => {
 	it("should navigate through the items using the keyboard (loop = false)", async () => {
 		const { getByTestId, user } = await openSingle({}, kbd.ARROW_DOWN);
 
-		const [item0, item1, item2, item3] = getItems(getByTestId);
+		const [item0, item1, item2, item3, item4] = getItems(getByTestId);
 
 		expectHighlighted(item0!);
 		await user.keyboard(kbd.ARROW_DOWN);
@@ -285,17 +290,16 @@ describe("select - single", () => {
 		await user.keyboard(kbd.ARROW_DOWN);
 		expectHighlighted(item3!);
 		await user.keyboard(kbd.ARROW_DOWN);
+		expectHighlighted(item4!);
+		await user.keyboard(kbd.ARROW_UP);
 		expectHighlighted(item3!);
 		await user.keyboard(kbd.ARROW_UP);
 		expectHighlighted(item2!);
 		await user.keyboard(kbd.ARROW_UP);
 		expectHighlighted(item1!);
-		await user.keyboard(kbd.ARROW_UP);
-		expectHighlighted(item0!);
 		await user.keyboard(kbd.ARROW_UP);
 		expectHighlighted(item0!);
 	});
-
 	it("should navigate through the items using the keyboard (loop = true)", async () => {
 		const { getByTestId, user } = await openSingle(
 			{
@@ -304,7 +308,7 @@ describe("select - single", () => {
 			kbd.ARROW_DOWN
 		);
 
-		const [item0, item1, item2, item3] = getItems(getByTestId);
+		const [item0, item1, item2, item3, item4] = getItems(getByTestId);
 
 		expectHighlighted(item0!);
 		await user.keyboard(kbd.ARROW_DOWN);
@@ -314,8 +318,13 @@ describe("select - single", () => {
 		await user.keyboard(kbd.ARROW_DOWN);
 		expectHighlighted(item3!);
 		await user.keyboard(kbd.ARROW_DOWN);
-		expectNotHighlighted(item3!);
+		expectHighlighted(item4!);
+		await user.keyboard(kbd.ARROW_DOWN);
+		expectNotHighlighted(item4!);
 		expectHighlighted(item0!);
+
+		await user.keyboard(kbd.ARROW_UP);
+		expectHighlighted(item4!);
 		await user.keyboard(kbd.ARROW_UP);
 		expectHighlighted(item3!);
 		await user.keyboard(kbd.ARROW_UP);
@@ -325,14 +334,15 @@ describe("select - single", () => {
 		await user.keyboard(kbd.ARROW_UP);
 		expectHighlighted(item0!);
 		await user.keyboard(kbd.ARROW_UP);
-		expectHighlighted(item3!);
+		expectHighlighted(item4!);
 	});
 
 	it("should allow items to be selected using the keyboard", async () => {
 		const { getByTestId, user, trigger, getHiddenInput } = await openSingle({}, kbd.ARROW_DOWN);
 
-		const [item0, item1, item2, item3] = getItems(getByTestId);
+		const [item0, item1, item2, item3, item4] = getItems(getByTestId);
 
+		await user.keyboard(kbd.ARROW_DOWN);
 		await user.keyboard(kbd.ARROW_DOWN);
 		await user.keyboard(kbd.ARROW_DOWN);
 		await user.keyboard(kbd.ARROW_DOWN);
@@ -341,8 +351,68 @@ describe("select - single", () => {
 		expect(getByTestId("trigger")).toHaveTextContent("D");
 		expect(getHiddenInput()).toHaveValue("4");
 		await user.click(trigger);
-		expectNotSelected([item0!, item1!, item2!]);
-		expectSelected(item3!);
+		expectNotSelected([item0!, item1!, item2!, item3!]);
+		expectSelected(item4!);
+	});
+
+	it("should select first item with empty string value when pressing Enter", async () => {
+		const { user, trigger, valueBinding } = await openSingle();
+		trigger.focus();
+		await user.keyboard(kbd.ENTER); // first item ("")
+		expect(valueBinding).toHaveTextContent("empty");
+		expect(trigger).toHaveTextContent("Open Listbox");
+	});
+
+	it("should select empty string value after navigating through items", async () => {
+		const { user, trigger, valueBinding } = await openSingle();
+		trigger.focus();
+		await user.keyboard(kbd.ARROW_DOWN); // to "1"
+		await user.keyboard(kbd.ARROW_UP); // back to ""
+		await user.keyboard(kbd.ENTER);
+		expect(valueBinding).toHaveTextContent("empty");
+		expect(trigger).toHaveTextContent("Open Listbox");
+	});
+
+	it("should select empty string value in loop navigation", async () => {
+		const { user, trigger, valueBinding } = await openSingle({ loop: true });
+		trigger.focus();
+		await user.keyboard(kbd.ARROW_DOWN); // to "1"
+		await user.keyboard(kbd.ARROW_DOWN); // to "2"
+		await user.keyboard(kbd.ARROW_DOWN); // to "3"
+		await user.keyboard(kbd.ARROW_DOWN); // to "4"
+		await user.keyboard(kbd.ARROW_DOWN); // back to ""
+		await user.keyboard(kbd.ENTER);
+		expect(valueBinding).toHaveTextContent("empty");
+		expect(trigger).toHaveTextContent("Open Listbox");
+	});
+
+	it("should revert to empty state when deselecting a value", async () => {
+		const { user, trigger, valueBinding } = await openSingle();
+		trigger.focus();
+		// First select a non-empty value
+		await user.keyboard(kbd.ARROW_DOWN); // to "1"
+		await user.keyboard(kbd.ENTER);
+		expect(valueBinding).not.toHaveTextContent("empty");
+
+		// Then deselect by selecting empty value
+		await user.click(trigger);
+		await user.keyboard(kbd.ARROW_UP); // back to ""
+		await user.keyboard(kbd.ENTER);
+		expect(valueBinding).toHaveTextContent("empty");
+		expect(trigger).toHaveTextContent("Open Listbox");
+	});
+
+	it("should maintain empty value after reopening", async () => {
+		const { user, trigger, valueBinding } = await openSingle();
+		// Select empty value
+		await user.keyboard(kbd.ENTER);
+		expect(valueBinding).toHaveTextContent("empty");
+
+		// Close and reopen
+		await user.keyboard(kbd.ESCAPE);
+		await user.click(trigger);
+		expect(valueBinding).toHaveTextContent("empty");
+		expect(trigger).toHaveTextContent("Open Listbox");
 	});
 
 	it("should apply the `data-highlighted` attribute on mouseover", async () => {
@@ -376,7 +446,7 @@ describe("select - single", () => {
 		expect(queryByTestId("2-indicator")).not.toBeNull();
 		expect(trigger).toHaveTextContent("B");
 		expect(getHiddenInput()).toHaveValue("2");
-		const [_, item2] = getItems(getByTestId);
+		const [_, __, item2] = getItems(getByTestId);
 		expectSelected(item2!);
 	});
 
@@ -384,7 +454,7 @@ describe("select - single", () => {
 		const { getByTestId, user, getContent, trigger } = await openSingle();
 		trigger.focus();
 
-		const [item0, item1, item2, item3] = getItems(getByTestId);
+		const [item0, item1, item2, item3, item4] = getItems(getByTestId);
 		expectHighlighted(item0!);
 		await user.keyboard(kbd.ARROW_DOWN);
 		expectHighlighted(item1!);
@@ -393,7 +463,9 @@ describe("select - single", () => {
 		await user.keyboard(kbd.ARROW_DOWN);
 		expectHighlighted(item3!);
 		await user.keyboard(kbd.ARROW_DOWN);
-		expectHighlighted(item3!);
+		expectHighlighted(item4!);
+		await user.keyboard(kbd.ARROW_DOWN);
+		expectHighlighted(item4!);
 		await user.keyboard(kbd.ESCAPE);
 		await waitFor(() => expect(getContent()).toBeNull());
 
@@ -429,15 +501,15 @@ describe("select - single", () => {
 
 	it("should deselect the selected item when the user clicks on the selected item", async () => {
 		const { getByTestId, user, trigger } = await openSingle();
-		const [item0] = getItems(getByTestId);
-		await user.click(item0!);
-		expectSelected(item0!);
+		const [_, item1] = getItems(getByTestId);
+		await user.click(item1!);
+		expectSelected(item1!);
 		await user.click(trigger);
 
-		const [item0v2] = getItems(getByTestId);
+		const [__, item2] = getItems(getByTestId);
 
-		await user.click(item0v2!);
-		expectNotSelected(item0v2!);
+		await user.click(item2!);
+		expectNotSelected(item2!);
 	});
 
 	it("should not allow deselecting an item when `allowDeselect` is false", async () => {
@@ -485,7 +557,7 @@ describe("select - multiple", () => {
 		trigger.focus();
 		await user.keyboard(kbd.ARROW_DOWN);
 		await user.keyboard(kbd.ENTER);
-		expect(mockFn).toHaveBeenCalledWith("B");
+		expect(mockFn).toHaveBeenCalledWith("A");
 	});
 
 	it("should have the placeholder attribute when empty and not when not empty", async () => {
@@ -497,7 +569,7 @@ describe("select - multiple", () => {
 		expect(trigger).toHaveAttribute("data-placeholder");
 		await user.keyboard(kbd.ARROW_DOWN);
 		await user.keyboard(kbd.ENTER);
-		expect(mockFn).toHaveBeenCalledWith("B");
+		expect(mockFn).toHaveBeenCalledWith("A");
 		expect(trigger).not.toHaveAttribute("data-placeholder");
 	});
 
@@ -595,7 +667,7 @@ describe("select - multiple", () => {
 
 	it("should select items when clicked", async () => {
 		const { getByTestId, user, queryByTestId, trigger, getHiddenInputs } = await openMultiple();
-		const [item] = getItems(getByTestId);
+		const [_, item] = getItems(getByTestId);
 		await waitFor(() => expect(queryByTestId("1-indicator")).toBeNull());
 		await user.click(item!);
 		expect(trigger).toHaveTextContent("A");
@@ -609,7 +681,7 @@ describe("select - multiple", () => {
 	it("should navigate through the items using the keyboard (loop = false)", async () => {
 		const { getByTestId, user } = await openMultiple({}, kbd.ARROW_DOWN);
 
-		const [item0, item1, item2, item3] = getItems(getByTestId);
+		const [item0, item1, item2, item3, item4] = getItems(getByTestId);
 
 		expectHighlighted(item0!);
 		await user.keyboard(kbd.ARROW_DOWN);
@@ -619,26 +691,27 @@ describe("select - multiple", () => {
 		await user.keyboard(kbd.ARROW_DOWN);
 		expectHighlighted(item3!);
 		await user.keyboard(kbd.ARROW_DOWN);
+		expectHighlighted(item4!);
+		await user.keyboard(kbd.ARROW_DOWN);
+		expectHighlighted(item4!);
+		await user.keyboard(kbd.ARROW_UP);
 		expectHighlighted(item3!);
 		await user.keyboard(kbd.ARROW_UP);
 		expectHighlighted(item2!);
 		await user.keyboard(kbd.ARROW_UP);
 		expectHighlighted(item1!);
-		await user.keyboard(kbd.ARROW_UP);
-		expectHighlighted(item0!);
 		await user.keyboard(kbd.ARROW_UP);
 		expectHighlighted(item0!);
 	});
-
 	it("should navigate through the items using the keyboard (loop = true)", async () => {
-		const { getByTestId, user } = await openMultiple(
+		const { getByTestId, user } = await openSingle(
 			{
 				loop: true,
 			},
 			kbd.ARROW_DOWN
 		);
 
-		const [item0, item1, item2, item3] = getItems(getByTestId);
+		const [item0, item1, item2, item3, item4] = getItems(getByTestId);
 
 		expectHighlighted(item0!);
 		await user.keyboard(kbd.ARROW_DOWN);
@@ -648,8 +721,12 @@ describe("select - multiple", () => {
 		await user.keyboard(kbd.ARROW_DOWN);
 		expectHighlighted(item3!);
 		await user.keyboard(kbd.ARROW_DOWN);
-		expectNotHighlighted(item3!);
+		expectHighlighted(item4!);
+		await user.keyboard(kbd.ARROW_DOWN);
+		expectNotHighlighted(item4!);
 		expectHighlighted(item0!);
+		await user.keyboard(kbd.ARROW_UP);
+		expectHighlighted(item4!);
 		await user.keyboard(kbd.ARROW_UP);
 		expectHighlighted(item3!);
 		await user.keyboard(kbd.ARROW_UP);
@@ -659,7 +736,7 @@ describe("select - multiple", () => {
 		await user.keyboard(kbd.ARROW_UP);
 		expectHighlighted(item0!);
 		await user.keyboard(kbd.ARROW_UP);
-		expectHighlighted(item3!);
+		expectHighlighted(item4!);
 	});
 
 	it("should allow items to be selected using the keyboard", async () => {
@@ -668,8 +745,9 @@ describe("select - multiple", () => {
 			kbd.ARROW_DOWN
 		);
 
-		const [item0, item1, item2, item3] = getItems(getByTestId);
+		const [item0, item1, item2, item3, item4] = getItems(getByTestId);
 
+		await user.keyboard(kbd.ARROW_DOWN);
 		await user.keyboard(kbd.ARROW_DOWN);
 		await user.keyboard(kbd.ARROW_DOWN);
 		await user.keyboard(kbd.ARROW_DOWN);
@@ -679,8 +757,8 @@ describe("select - multiple", () => {
 		expect(hiddenInputs).toHaveLength(1);
 		expect(hiddenInputs[0]).toHaveValue("4");
 		await user.click(trigger);
-		expectNotSelected([item0!, item1!, item2!]);
-		expectSelected(item3!);
+		expectNotSelected([item0!, item1!, item2!, item3!]);
+		expectSelected(item4!);
 	});
 
 	it("should allow multiple items to be selected using the keyboard", async () => {
@@ -689,8 +767,9 @@ describe("select - multiple", () => {
 			kbd.ARROW_DOWN
 		);
 
-		const [item0, item1, item2, item3] = getItems(getByTestId);
+		const [item0, item1, item2, item3, item4] = getItems(getByTestId);
 
+		await user.keyboard(kbd.ARROW_DOWN);
 		await user.keyboard(kbd.ARROW_DOWN);
 		await user.keyboard(kbd.ARROW_DOWN);
 		await user.keyboard(kbd.ARROW_DOWN);
@@ -699,13 +778,13 @@ describe("select - multiple", () => {
 		const hiddenInputs = getHiddenInputs();
 		expect(hiddenInputs).toHaveLength(1);
 		expect(hiddenInputs[0]).toHaveValue("4");
-		expectSelected(item3!);
-		expectNotSelected([item0!, item1!, item2!]);
+		expectSelected(item4!);
+		expectNotSelected([item0!, item1!, item2!, item3!]);
 		await user.keyboard(kbd.ARROW_UP);
-		expectHighlighted(item2!);
+		expectHighlighted(item3!);
 		await user.keyboard(kbd.ENTER);
-		expectSelected([item3!, item2!]);
-		expectNotSelected([item0!, item1!]);
+		expectSelected([item4!, item3!]);
+		expectNotSelected([item0!, item1!, item2!]);
 	});
 
 	it("should apply the `data-highlighted` attribute on mouseover", async () => {
@@ -726,7 +805,7 @@ describe("select - multiple", () => {
 		expect(trigger).toHaveTextContent("B");
 
 		expect(getHiddenInputs()[0]).toHaveValue("2");
-		const [_, item2] = getItems(getByTestId);
+		const [_, __, item2] = getItems(getByTestId);
 		expectSelected(item2!);
 	});
 
@@ -747,7 +826,7 @@ describe("select - multiple", () => {
 function getItems(getter: AnyFn, items = testItems) {
 	const itemsArr: HTMLElement[] = [];
 	for (const item of items) {
-		itemsArr.push(getter(item.value));
+		itemsArr.push(getter(getTestId(item)));
 	}
 	return itemsArr as HTMLElement[];
 }

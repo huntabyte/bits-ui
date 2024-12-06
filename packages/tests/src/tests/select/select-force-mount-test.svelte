@@ -5,6 +5,7 @@
 		type WithoutChildren,
 		type WithoutChildrenOrChild,
 	} from "bits-ui";
+	import { generateTestId } from "../helpers/select";
 	export type Item = {
 		value: string;
 		label: string;
@@ -61,13 +62,19 @@
 										>Options</Select.GroupHeading
 									>
 									{#each filteredItems as { value, label, disabled }}
-										<Select.Item data-testid={value} {disabled} {value} {label}>
+										{@const testId = generateTestId(value)}
+										<Select.Item
+											data-testid={testId}
+											{disabled}
+											{value}
+											{label}
+										>
 											{#snippet children({
 												selected,
 												highlighted: _highlighted,
 											})}
 												{#if selected}
-													<span data-testid="{value}-indicator">x</span>
+													<span data-testid="{testId}-indicator">x</span>
 												{/if}
 												{label}
 											{/snippet}
@@ -87,10 +94,11 @@
 									>Options</Select.GroupHeading
 								>
 								{#each filteredItems as { value, label, disabled }}
-									<Select.Item data-testid={value} {disabled} {value} {label}>
+									{@const testId = generateTestId(value)}
+									<Select.Item data-testid={testId} {disabled} {value} {label}>
 										{#snippet children({ selected, highlighted: _highlighted })}
 											{#if selected}
-												<span data-testid="{value}-indicator">x</span>
+												<span data-testid="{testId}-indicator">x</span>
 											{/if}
 											{label}
 										{/snippet}

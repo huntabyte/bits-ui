@@ -566,7 +566,8 @@ class SelectTriggerState {
 				return;
 			}
 
-			if (highlightedValue) {
+			//"" is a valid value for a select item so we need to check for that
+			if (highlightedValue !== null) {
 				this.root.toggleItem(highlightedValue, this.root.highlightedLabel ?? undefined);
 			}
 
