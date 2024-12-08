@@ -145,14 +145,14 @@ class FloatingContentState {
 					mainAxis: this.#sideOffset.current + this.#arrowHeight,
 					alignmentAxis: this.#alignOffset.current,
 				}),
-				this.#avoidCollisions &&
+				this.#avoidCollisions.current &&
 					shift({
 						mainAxis: true,
 						crossAxis: false,
 						limiter: this.#sticky.current === "partial" ? limitShift() : undefined,
 						...this.detectOverflowOptions,
 					}),
-				this.#avoidCollisions && flip({ ...this.detectOverflowOptions }),
+				this.#avoidCollisions.current && flip({ ...this.detectOverflowOptions }),
 				size({
 					...this.detectOverflowOptions,
 					apply: ({ rects, availableWidth, availableHeight }) => {
