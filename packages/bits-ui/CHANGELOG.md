@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.68
+
+### Patch Changes
+
+-   fix: `avoidCollisions` in Floating UI components ([#984](https://github.com/huntabyte/bits-ui/pull/984))
+
 ## 1.0.0-next.67
 
 ### Patch Changes
