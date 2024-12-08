@@ -4,7 +4,7 @@ import { getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { addEventListener } from "$lib/internal/events.js";
 import { isElement, isFocusVisible, isTouch } from "$lib/internal/is.js";
-import type { WithRefProps } from "$lib/internal/types.js";
+import type { BitsFocusEvent, BitsPointerEvent, WithRefProps } from "$lib/internal/types.js";
 import { getTabbableCandidates } from "$lib/internal/focus.js";
 import { createContext } from "$lib/internal/create-context.js";
 import { useGraceArea } from "$lib/internal/use-grace-area.svelte.js";
@@ -79,14 +79,14 @@ class LinkPreviewRootState {
 		});
 	}
 
-	clearTimeout = () => {
+	clearTimeout() {
 		if (this.timeout) {
 			window.clearTimeout(this.timeout);
 			this.timeout = null;
 		}
-	};
+	}
 
-	handleOpen = () => {
+	handleOpen() {
 		this.clearTimeout();
 		if (this.open.current) return;
 		this.isOpening = true;
@@ -96,15 +96,15 @@ class LinkPreviewRootState {
 				this.isOpening = false;
 			}
 		}, this.openDelay.current);
-	};
+	}
 
-	immediateClose = () => {
+	immediateClose() {
 		this.clearTimeout();
 		this.isOpening = false;
 		this.open.current = false;
-	};
+	}
 
-	handleClose = () => {
+	handleClose() {
 		this.isOpening = false;
 		this.clearTimeout();
 
@@ -113,7 +113,7 @@ class LinkPreviewRootState {
 				this.open.current = false;
 			}, this.closeDelay.current);
 		}
-	};
+	}
 }
 
 type LinkPreviewTriggerStateProps = WithRefProps;
@@ -128,6 +128,11 @@ class LinkPreviewTriggerState {
 		this.#ref = props.ref;
 		this.#root = root;
 
+		this.onpointerenter = this.onpointerenter.bind(this);
+		this.onpointerleave = this.onpointerleave.bind(this);
+		this.onfocus = this.onfocus.bind(this);
+		this.onblur = this.onblur.bind(this);
+
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
@@ -137,26 +142,26 @@ class LinkPreviewTriggerState {
 		});
 	}
 
-	#onpointerenter = (e: PointerEvent) => {
+	onpointerenter(e: BitsPointerEvent) {
 		if (isTouch(e)) return;
 		this.#root.handleOpen();
-	};
+	}
 
-	#onpointerleave = (e: PointerEvent) => {
+	onpointerleave(e: BitsPointerEvent) {
 		if (isTouch(e)) return;
 		if (!this.#root.contentMounted) {
 			this.#root.immediateClose();
 		}
-	};
+	}
 
-	#onfocus = (e: FocusEvent & { currentTarget: HTMLElement }) => {
+	onfocus(e: BitsFocusEvent) {
 		if (!isFocusVisible(e.currentTarget)) return;
 		this.#root.handleOpen();
-	};
+	}
 
-	#onblur = () => {
+	onblur(_: BitsFocusEvent) {
 		this.#root.handleClose();
-	};
+	}
 
 	props = $derived.by(
 		() =>
@@ -168,10 +173,10 @@ class LinkPreviewTriggerState {
 				"aria-controls": this.#root.contentId,
 				role: "button",
 				[TRIGGER_ATTR]: "",
-				onpointerenter: this.#onpointerenter,
-				onfocus: this.#onfocus,
-				onblur: this.#onblur,
-				onpointerleave: this.#onpointerleave,
+				onpointerenter: this.onpointerenter,
+				onfocus: this.onfocus,
+				onblur: this.onblur,
+				onpointerleave: this.onpointerleave,
 			}) as const
 	);
 }
@@ -187,6 +192,10 @@ class LinkPreviewContentState {
 		this.#id = props.id;
 		this.#ref = props.ref;
 		this.root = root;
+
+		this.onpointerdown = this.onpointerdown.bind(this);
+		this.onpointerenter = this.onpointerenter.bind(this);
+		this.onfocusout = this.onfocusout.bind(this);
 
 		useRefById({
 			id: this.#id,
@@ -217,7 +226,7 @@ class LinkPreviewContentState {
 		});
 	}
 
-	#onpointerdown = (e: PointerEvent & { currentTarget: HTMLElement }) => {
+	onpointerdown(e: BitsPointerEvent) {
 		const target = e.target;
 		if (!isElement(target)) return;
 
@@ -226,16 +235,16 @@ class LinkPreviewContentState {
 		}
 		this.root.hasSelection = true;
 		this.root.isPointerDownOnContent = true;
-	};
+	}
 
-	#onpointerenter = (e: PointerEvent) => {
+	onpointerenter(e: BitsPointerEvent) {
 		if (isTouch(e)) return;
 		this.root.handleOpen();
-	};
+	}
 
-	#onfocusout = (e: FocusEvent) => {
+	onfocusout(e: BitsFocusEvent) {
 		e.preventDefault();
-	};
+	}
 
 	snippetProps = $derived.by(() => ({ open: this.root.open.current }));
 
@@ -246,9 +255,9 @@ class LinkPreviewContentState {
 				tabindex: -1,
 				"data-state": getDataOpenClosed(this.root.open.current),
 				[CONTENT_ATTR]: "",
-				onpointerdown: this.#onpointerdown,
-				onpointerenter: this.#onpointerenter,
-				onfocusout: this.#onfocusout,
+				onpointerdown: this.onpointerdown,
+				onpointerenter: this.onpointerenter,
+				onfocusout: this.onfocusout,
 			}) as const
 	);
 }

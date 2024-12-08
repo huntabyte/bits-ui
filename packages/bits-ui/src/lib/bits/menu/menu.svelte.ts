@@ -21,7 +21,14 @@ import {
 import { focusFirst } from "$lib/internal/focus.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { addEventListener } from "$lib/internal/events.js";
-import type { AnyFn, WithRefProps } from "$lib/internal/types.js";
+import type {
+	AnyFn,
+	BitsFocusEvent,
+	BitsKeyboardEvent,
+	BitsMouseEvent,
+	BitsPointerEvent,
+	WithRefProps,
+} from "$lib/internal/types.js";
 import { useDOMTypeahead } from "$lib/internal/use-dom-typeahead.svelte.js";
 import { isElement, isElementOrSVGElement, isHTMLElement } from "$lib/internal/is.js";
 import { useRovingFocus } from "$lib/internal/use-roving-focus.svelte.js";
@@ -114,9 +121,9 @@ class MenuRootState {
 		});
 	}
 
-	getAttr = (name: string) => {
+	getAttr(name: string) {
 		return `data-${this.variant.current}-${name}`;
-	};
+	}
 }
 
 type MenuMenuStateProps = WritableBoxedValues<{
@@ -146,17 +153,17 @@ class MenuMenuState {
 		}
 	}
 
-	toggleOpen = () => {
+	toggleOpen() {
 		this.open.current = !this.open.current;
-	};
+	}
 
-	onOpen = () => {
+	onOpen() {
 		this.open.current = true;
-	};
+	}
 
-	onClose = () => {
+	onClose() {
 		this.open.current = false;
-	};
+	}
 }
 
 type MenuContentStateProps = ReadableBoxedValues<{
@@ -192,6 +199,12 @@ class MenuContentState {
 		this.contentRef = props.ref;
 		this.isMounted = props.isMounted;
 
+		this.onkeydown = this.onkeydown.bind(this);
+		this.onblur = this.onblur.bind(this);
+		this.onpointermove = this.onpointermove.bind(this);
+		this.onfocus = this.onfocus.bind(this);
+		this.handleInteractOutside = this.handleInteractOutside.bind(this);
+
 		useRefById({
 			id: this.#id,
 			ref: this.contentRef,
@@ -216,7 +229,7 @@ class MenuContentState {
 		});
 	}
 
-	getCandidateNodes = () => {
+	#getCandidateNodes() {
 		const node = this.parentMenu.contentNode;
 		if (!node) return [];
 		const candidates = Array.from(
@@ -225,18 +238,18 @@ class MenuContentState {
 			)
 		);
 		return candidates;
-	};
+	}
 
-	isPointerMovingToSubmenu = (e: PointerEvent) => {
+	#isPointerMovingToSubmenu(e: BitsPointerEvent) {
 		const isMovingTowards = this.#pointerDir === this.#pointerGraceIntent?.side;
 		return isMovingTowards && isPointerInGraceArea(e, this.#pointerGraceIntent?.area);
-	};
+	}
 
-	onPointerGraceIntentChange = (intent: GraceIntent | null) => {
+	onPointerGraceIntentChange(intent: GraceIntent | null) {
 		this.#pointerGraceIntent = intent;
-	};
+	}
 
-	#onkeydown = (e: KeyboardEvent) => {
+	onkeydown(e: BitsKeyboardEvent) {
 		if (e.defaultPrevented) return;
 
 		const target = e.target;
@@ -255,7 +268,7 @@ class MenuContentState {
 		// prevent space from being considered with typeahead
 		if (e.code === "Space") return;
 
-		const candidateNodes = this.getCandidateNodes();
+		const candidateNodes = this.#getCandidateNodes();
 
 		if (isKeydownInside) {
 			// menus do not respect the tab key
@@ -275,9 +288,9 @@ class MenuContentState {
 			candidateNodes.reverse();
 		}
 		focusFirst(candidateNodes);
-	};
+	}
 
-	#onblur = (e: FocusEvent) => {
+	onblur(e: BitsFocusEvent) {
 		if (!isElement(e.currentTarget)) return;
 		if (!isElement(e.target)) return;
 		// clear search buffer when leaving the menu
@@ -285,14 +298,14 @@ class MenuContentState {
 			window.clearTimeout(this.#timer);
 			this.search = "";
 		}
-	};
+	}
 
-	#onfocus = () => {
+	onfocus(_: BitsFocusEvent) {
 		if (!this.parentMenu.root.isUsingKeyboard.current) return;
 		afterTick(() => this.rovingFocusGroup.focusFirstCandidate());
-	};
+	}
 
-	#onpointermove = (e: PointerEvent) => {
+	onpointermove(e: BitsPointerEvent) {
 		if (!isMouseEvent(e)) return;
 		const target = e.target;
 		if (!isElement(target)) return;
@@ -307,24 +320,24 @@ class MenuContentState {
 			this.#pointerDir = newDir;
 			this.#lastPointerX = e.clientX;
 		}
-	};
+	}
 
-	onItemEnter = (e: PointerEvent) => {
-		if (this.isPointerMovingToSubmenu(e)) return true;
+	onItemEnter(e: BitsPointerEvent) {
+		if (this.#isPointerMovingToSubmenu(e)) return true;
 		return false;
-	};
+	}
 
-	onItemLeave = (e: PointerEvent) => {
-		if (this.isPointerMovingToSubmenu(e)) return;
+	onItemLeave(e: BitsPointerEvent) {
+		if (this.#isPointerMovingToSubmenu(e)) return;
 		const contentNode = this.parentMenu.contentNode;
 		contentNode?.focus();
 		this.rovingFocusGroup.setCurrentTabStopId("");
-	};
+	}
 
-	onTriggerLeave = (e: PointerEvent) => {
-		if (this.isPointerMovingToSubmenu(e)) return true;
+	onTriggerLeave(e: BitsPointerEvent) {
+		if (this.#isPointerMovingToSubmenu(e)) return true;
 		return false;
-	};
+	}
 
 	onOpenAutoFocus = (e: Event) => {
 		if (e.defaultPrevented) return;
@@ -333,7 +346,7 @@ class MenuContentState {
 		contentNode?.focus();
 	};
 
-	handleInteractOutside = (e: PointerEvent) => {
+	handleInteractOutside(e: PointerEvent) {
 		if (!isElementOrSVGElement(e.target)) return;
 		const triggerId = this.parentMenu.triggerNode?.id;
 		if (e.target.id === triggerId) {
@@ -343,7 +356,7 @@ class MenuContentState {
 		if (e.target.closest(`#${triggerId}`)) {
 			e.preventDefault();
 		}
-	};
+	}
 
 	snippetProps = $derived.by(() => ({ open: this.parentMenu.open.current }));
 
@@ -355,10 +368,10 @@ class MenuContentState {
 				"aria-orientation": getAriaOrientation("vertical"),
 				[this.parentMenu.root.getAttr("content")]: "",
 				"data-state": getDataOpenClosed(this.parentMenu.open.current),
-				onkeydown: this.#onkeydown,
-				onblur: this.#onblur,
-				onpointermove: this.#onpointermove,
-				onfocus: this.#onfocus,
+				onkeydown: this.onkeydown,
+				onblur: this.onblur,
+				onpointermove: this.onpointermove,
+				onfocus: this.onfocus,
 				dir: this.parentMenu.root.dir.current,
 				style: {
 					pointerEvents: "auto",
@@ -387,6 +400,10 @@ class MenuItemSharedState {
 		this.id = props.id;
 		this.disabled = props.disabled;
 		this.ref = props.ref;
+		this.onpointermove = this.onpointermove.bind(this);
+		this.onpointerleave = this.onpointerleave.bind(this);
+		this.onfocus = this.onfocus.bind(this);
+		this.onblur = this.onblur.bind(this);
 
 		useRefById({
 			id: this.id,
@@ -395,7 +412,7 @@ class MenuItemSharedState {
 		});
 	}
 
-	#onpointermove = (e: PointerEvent) => {
+	onpointermove(e: BitsPointerEvent) {
 		if (e.defaultPrevented) return;
 		if (!isMouseEvent(e)) return;
 
@@ -408,29 +425,29 @@ class MenuItemSharedState {
 			if (!isHTMLElement(item)) return;
 			item.focus();
 		}
-	};
+	}
 
-	#onpointerleave = async (e: PointerEvent) => {
+	onpointerleave(e: BitsPointerEvent) {
 		afterTick(() => {
 			if (e.defaultPrevented) return;
 			if (!isMouseEvent(e)) return;
 			this.content.onItemLeave(e);
 		});
-	};
+	}
 
-	#onfocus = async (e: FocusEvent) => {
+	onfocus(e: BitsFocusEvent) {
 		afterTick(() => {
 			if (e.defaultPrevented || this.disabled.current) return;
 			this.#isFocused = true;
 		});
-	};
+	}
 
-	#onblur = async (e: FocusEvent) => {
+	onblur(e: BitsFocusEvent) {
 		afterTick(() => {
 			if (e.defaultPrevented) return;
 			this.#isFocused = false;
 		});
-	};
+	}
 
 	props = $derived.by(
 		() =>
@@ -443,10 +460,10 @@ class MenuItemSharedState {
 				"data-highlighted": this.#isFocused ? "" : undefined,
 				[this.content.parentMenu.root.getAttr("item")]: "",
 				//
-				onpointermove: this.#onpointermove,
-				onpointerleave: this.#onpointerleave,
-				onfocus: this.#onfocus,
-				onblur: this.#onblur,
+				onpointermove: this.onpointermove,
+				onpointerleave: this.onpointerleave,
+				onfocus: this.onfocus,
+				onblur: this.onblur,
 			}) as const
 	);
 }
@@ -468,9 +485,29 @@ class MenuItemState {
 		this.root = item.content.parentMenu.root;
 		this.#onSelect = props.onSelect;
 		this.#closeOnSelect = props.closeOnSelect;
+
+		this.onkeydown = this.onkeydown.bind(this);
+		this.onclick = this.onclick.bind(this);
+		this.onpointerdown = this.onpointerdown.bind(this);
+		this.onpointerup = this.onpointerup.bind(this);
 	}
 
-	#onkeydown = (e: KeyboardEvent) => {
+	#handleSelect() {
+		if (this.#item.disabled.current) return;
+		const selectEvent = new CustomEvent("menuitemselect", { bubbles: true, cancelable: true });
+		this.#onSelect.current(selectEvent);
+		afterTick(() => {
+			if (selectEvent.defaultPrevented) {
+				this.#item.content.parentMenu.root.isUsingKeyboard.current = false;
+				return;
+			}
+			if (this.#closeOnSelect.current) {
+				this.#item.content.parentMenu.root.onClose();
+			}
+		});
+	}
+
+	onkeydown(e: BitsKeyboardEvent) {
 		const isTypingAhead = this.#item.content.search !== "";
 		if (this.#item.disabled.current || (isTypingAhead && e.key === kbd.SPACE)) return;
 		if (SELECTION_KEYS.includes(e.key)) {
@@ -484,45 +521,31 @@ class MenuItemState {
 			 */
 			e.preventDefault();
 		}
-	};
+	}
 
-	#handleSelect = async () => {
-		if (this.#item.disabled.current) return;
-		const selectEvent = new CustomEvent("menuitemselect", { bubbles: true, cancelable: true });
-		this.#onSelect.current(selectEvent);
-		await tick();
-		if (selectEvent.defaultPrevented) {
-			this.#item.content.parentMenu.root.isUsingKeyboard.current = false;
-			return;
-		}
-		if (this.#closeOnSelect.current) {
-			this.#item.content.parentMenu.root.onClose();
-		}
-	};
-
-	#onclick = () => {
+	onclick(_: BitsMouseEvent) {
 		if (this.#item.disabled.current) return;
 		this.#handleSelect();
-	};
+	}
 
-	#onpointerup = async (e: PointerEvent) => {
+	onpointerup(e: BitsPointerEvent) {
 		if (e.defaultPrevented) return;
 		if (!this.#isPointerDown) {
 			if (!isHTMLElement(e.currentTarget)) return;
 			e.currentTarget?.click();
 		}
-	};
+	}
 
-	#onpointerdown = () => {
+	onpointerdown(_: BitsPointerEvent) {
 		this.#isPointerDown = true;
-	};
+	}
 
 	props = $derived.by(() =>
 		mergeProps(this.#item.props, {
-			onclick: this.#onclick,
-			onpointerdown: this.#onpointerdown,
-			onpointerup: this.#onpointerup,
-			onkeydown: this.#onkeydown,
+			onclick: this.onclick,
+			onpointerdown: this.onpointerdown,
+			onpointerup: this.onpointerup,
+			onkeydown: this.onkeydown,
 		})
 	);
 }
@@ -540,6 +563,11 @@ class MenuSubTriggerState {
 		this.#content = content;
 		this.#submenu = submenu;
 
+		this.onpointerleave = this.onpointerleave.bind(this);
+		this.onpointermove = this.onpointermove.bind(this);
+		this.onkeydown = this.onkeydown.bind(this);
+		this.onclick = this.onclick.bind(this);
+
 		onDestroyEffect(() => {
 			this.#clearOpenTimer();
 		});
@@ -553,13 +581,13 @@ class MenuSubTriggerState {
 		});
 	}
 
-	#clearOpenTimer = () => {
+	#clearOpenTimer() {
 		if (this.#openTimer === null) return;
 		window.clearTimeout(this.#openTimer);
 		this.#openTimer = null;
-	};
+	}
 
-	#onpointermove = (e: PointerEvent) => {
+	onpointermove(e: BitsPointerEvent) {
 		if (!isMouseEvent(e)) return;
 		const defaultPrevented = this.#content.onItemEnter(e);
 		if (defaultPrevented) return;
@@ -570,9 +598,9 @@ class MenuSubTriggerState {
 				this.#clearOpenTimer();
 			}, 100);
 		}
-	};
+	}
 
-	#onpointerleave = (e: PointerEvent) => {
+	onpointerleave(e: BitsPointerEvent) {
 		if (!isMouseEvent(e)) return;
 		this.#clearOpenTimer();
 
@@ -600,9 +628,9 @@ class MenuSubTriggerState {
 			// There's 100ms where the user may leave an item before the submenu was opened.
 			this.#content.onPointerGraceIntentChange(null);
 		}
-	};
+	}
 
-	#onkeydown = (e: KeyboardEvent) => {
+	onkeydown(e: BitsKeyboardEvent) {
 		const isTypingAhead = this.#content.search !== "";
 		if (this.#item.disabled.current || (isTypingAhead && e.key === kbd.SPACE)) return;
 
@@ -614,9 +642,9 @@ class MenuSubTriggerState {
 			contentNode?.focus();
 			e.preventDefault();
 		}
-	};
+	}
 
-	#onclick = (e: MouseEvent) => {
+	onclick(e: BitsMouseEvent) {
 		if (this.#item.disabled.current) return;
 		/**
 		 * We manually focus because iOS Safari doesn't always focus on click (e.g. buttons)
@@ -628,7 +656,7 @@ class MenuSubTriggerState {
 		if (!this.#submenu.open.current) {
 			this.#submenu.onOpen();
 		}
-	};
+	}
 
 	props = $derived.by(() =>
 		mergeProps(
@@ -640,10 +668,10 @@ class MenuSubTriggerState {
 					? this.#submenu.contentId.current
 					: undefined,
 				[this.#submenu.root.getAttr("sub-trigger")]: "",
-				onclick: this.#onclick,
-				onpointermove: this.#onpointermove,
-				onpointerleave: this.#onpointerleave,
-				onkeydown: this.#onkeydown,
+				onclick: this.onclick,
+				onpointermove: this.onpointermove,
+				onpointerleave: this.onpointerleave,
+				onkeydown: this.onkeydown,
 			},
 			this.#item.props
 		)
@@ -666,14 +694,14 @@ class MenuCheckboxItemState {
 		this.#indeterminate = props.indeterminate;
 	}
 
-	toggleChecked = () => {
+	toggleChecked() {
 		if (this.#indeterminate.current) {
 			this.#indeterminate.current = false;
 			this.#checked.current = true;
 		} else {
 			this.#checked.current = !this.#checked.current;
 		}
-	};
+	}
 
 	snippetProps = $derived.by(() => ({
 		checked: this.#checked.current,
@@ -824,9 +852,9 @@ class MenuRadioGroupState {
 		});
 	}
 
-	setValue = (v: string) => {
+	setValue(v: string) {
 		this.value.current = v;
-	};
+	}
 
 	props = $derived.by(
 		() =>
@@ -871,9 +899,9 @@ class MenuRadioItemState {
 		});
 	}
 
-	selectValue = () => {
+	selectValue() {
 		this.#group.setValue(this.#value.current);
-	};
+	}
 
 	props = $derived.by(
 		() =>
@@ -911,6 +939,10 @@ class DropdownMenuTriggerState {
 		this.#parentMenu = parentMenu;
 		this.#disabled = props.disabled;
 
+		this.onpointerdown = this.onpointerdown.bind(this);
+		this.onpointerup = this.onpointerup.bind(this);
+		this.onkeydown = this.onkeydown.bind(this);
+
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
@@ -920,7 +952,7 @@ class DropdownMenuTriggerState {
 		});
 	}
 
-	#onpointerdown = (e: PointerEvent) => {
+	onpointerdown(e: BitsPointerEvent) {
 		if (this.#disabled.current) return;
 		if (e.pointerType === "touch") return e.preventDefault();
 
@@ -930,17 +962,17 @@ class DropdownMenuTriggerState {
 			// the content to be given focus without competition
 			if (!this.#parentMenu.open.current) e.preventDefault();
 		}
-	};
+	}
 
-	#onpointerup = (e: PointerEvent) => {
+	onpointerup(e: BitsPointerEvent) {
 		if (this.#disabled.current) return;
 		if (e.pointerType === "touch") {
 			e.preventDefault();
 			this.#parentMenu.toggleOpen();
 		}
-	};
+	}
 
-	#onkeydown = (e: KeyboardEvent) => {
+	onkeydown(e: BitsKeyboardEvent) {
 		if (this.#disabled.current) return;
 		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
 			this.#parentMenu.toggleOpen();
@@ -951,7 +983,7 @@ class DropdownMenuTriggerState {
 			this.#parentMenu.onOpen();
 			e.preventDefault();
 		}
-	};
+	}
 
 	#ariaControls = $derived.by(() => {
 		if (this.#parentMenu.open.current && this.#parentMenu.contentId.current)
@@ -971,9 +1003,9 @@ class DropdownMenuTriggerState {
 				"data-state": getDataOpenClosed(this.#parentMenu.open.current),
 				[this.#parentMenu.root.getAttr("trigger")]: "",
 				//
-				onpointerdown: this.#onpointerdown,
-				onpointerup: this.#onpointerup,
-				onkeydown: this.#onkeydown,
+				onpointerdown: this.onpointerdown,
+				onpointerup: this.onpointerup,
+				onkeydown: this.onkeydown,
 			}) as const
 	);
 }
@@ -1005,6 +1037,12 @@ class ContextMenuTriggerState {
 		this.#id = props.id;
 		this.#ref = props.ref;
 
+		this.oncontextmenu = this.oncontextmenu.bind(this);
+		this.onpointerdown = this.onpointerdown.bind(this);
+		this.onpointermove = this.onpointermove.bind(this);
+		this.onpointercancel = this.onpointercancel.bind(this);
+		this.onpointerup = this.onpointerup.bind(this);
+
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
@@ -1035,44 +1073,44 @@ class ContextMenuTriggerState {
 		});
 	}
 
-	#clearLongPressTimer = () => {
+	#clearLongPressTimer() {
 		if (this.#longPressTimer === null) return;
 		window.clearTimeout(this.#longPressTimer);
-	};
+	}
 
-	#handleOpen = (e: MouseEvent | PointerEvent) => {
+	#handleOpen(e: BitsMouseEvent | BitsPointerEvent) {
 		this.#point = { x: e.clientX, y: e.clientY };
 		this.#parentMenu.onOpen();
-	};
+	}
 
-	#oncontextmenu = (e: MouseEvent) => {
+	oncontextmenu(e: BitsMouseEvent) {
 		if (this.#disabled.current) return;
 		this.#clearLongPressTimer();
 		this.#handleOpen(e);
 		e.preventDefault();
 		this.#parentMenu.contentNode?.focus();
-	};
+	}
 
-	#onpointerdown = (e: PointerEvent) => {
+	onpointerdown(e: BitsPointerEvent) {
 		if (this.#disabled.current || isMouseEvent(e)) return;
 		this.#clearLongPressTimer();
 		this.#longPressTimer = window.setTimeout(() => this.#handleOpen(e), 700);
-	};
+	}
 
-	#onpointermove = (e: PointerEvent) => {
+	onpointermove(e: BitsPointerEvent) {
 		if (this.#disabled.current || isMouseEvent(e)) return;
 		this.#clearLongPressTimer();
-	};
+	}
 
-	#onpointercancel = (e: PointerEvent) => {
+	onpointercancel(e: BitsPointerEvent) {
 		if (this.#disabled.current || isMouseEvent(e)) return;
 		this.#clearLongPressTimer();
-	};
+	}
 
-	#onpointerup = (e: PointerEvent) => {
+	onpointerup(e: BitsPointerEvent) {
 		if (this.#disabled.current || isMouseEvent(e)) return;
 		this.#clearLongPressTimer();
-	};
+	}
 
 	props = $derived.by(
 		() =>
@@ -1083,11 +1121,11 @@ class ContextMenuTriggerState {
 				"data-state": getDataOpenClosed(this.#parentMenu.open.current),
 				[CONTEXT_MENU_TRIGGER_ATTR]: "",
 				//
-				onpointerdown: this.#onpointerdown,
-				onpointermove: this.#onpointermove,
-				onpointercancel: this.#onpointercancel,
-				onpointerup: this.#onpointerup,
-				oncontextmenu: this.#oncontextmenu,
+				onpointerdown: this.onpointerdown,
+				onpointermove: this.onpointermove,
+				onpointercancel: this.onpointercancel,
+				onpointerup: this.onpointerup,
+				oncontextmenu: this.oncontextmenu,
 			}) as const
 	);
 }

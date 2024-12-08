@@ -12,7 +12,12 @@ import { getAriaExpanded, getDataDisabled, getDataOpenClosed } from "$lib/intern
 import { kbd } from "$lib/internal/kbd.js";
 import { wrapArray } from "$lib/internal/arrays.js";
 import { isBrowser } from "$lib/internal/is.js";
-import type { WithRefProps } from "$lib/internal/types.js";
+import type {
+	BitsFocusEvent,
+	BitsKeyboardEvent,
+	BitsPointerEvent,
+	WithRefProps,
+} from "$lib/internal/types.js";
 
 const ROOT_ATTR = "data-menubar-root";
 const TRIGGER_ATTR = "data-menubar-trigger";
@@ -46,6 +51,13 @@ class MenubarRootState {
 		this.id = props.id;
 		this.ref = props.ref;
 
+		this.onMenuClose = this.onMenuClose.bind(this);
+		this.onMenuOpen = this.onMenuOpen.bind(this);
+		this.onMenuToggle = this.onMenuToggle.bind(this);
+
+		this.registerTrigger = this.registerTrigger.bind(this);
+		this.deRegisterTrigger = this.deRegisterTrigger.bind(this);
+
 		useRefById({
 			id: this.id,
 			ref: this.ref,
@@ -59,32 +71,32 @@ class MenubarRootState {
 		});
 	}
 
-	registerTrigger = (id: string) => {
+	registerTrigger(id: string) {
 		this.triggerIds.push(id);
-	};
+	}
 
-	deRegisterTrigger = (id: string) => {
+	deRegisterTrigger(id: string) {
 		this.triggerIds = this.triggerIds.filter((triggerId) => triggerId !== id);
-	};
+	}
 
-	getTriggers = () => {
+	getTriggers() {
 		const node = this.ref.current;
 		if (!node) return [];
 		return Array.from(node.querySelectorAll<HTMLButtonElement>(`[${TRIGGER_ATTR}]`));
-	};
+	}
 
-	onMenuOpen = (id: string) => {
+	onMenuOpen(id: string) {
 		this.value.current = id;
 		this.currentTabStopId.current = id;
-	};
+	}
 
-	onMenuClose = () => {
+	onMenuClose() {
 		this.value.current = "";
-	};
+	}
 
-	onMenuToggle = (id: string) => {
+	onMenuToggle(id: string) {
 		this.value.current = this.value.current ? "" : id;
-	};
+	}
 
 	props = $derived.by(
 		() =>
@@ -136,14 +148,10 @@ class MenubarMenuState {
 		});
 	}
 
-	getTriggerNode = () => {
+	getTriggerNode() {
 		if (!isBrowser) return null;
 		return this.triggerNode;
-	};
-
-	getContentNode = () => {
-		return this.contentNode;
-	};
+	}
 }
 
 type MenubarTriggerStateProps = WithRefProps<
@@ -167,6 +175,12 @@ class MenubarTriggerState {
 		this.id = props.id;
 		this.ref = props.ref;
 		this.root = menu.root;
+
+		this.onpointerdown = this.onpointerdown.bind(this);
+		this.onpointerenter = this.onpointerenter.bind(this);
+		this.onkeydown = this.onkeydown.bind(this);
+		this.onfocus = this.onfocus.bind(this);
+		this.onblur = this.onblur.bind(this);
 
 		useRefById({
 			id: this.id,
@@ -193,27 +207,27 @@ class MenubarTriggerState {
 		});
 	}
 
-	#onpointerdown = (e: PointerEvent) => {
+	onpointerdown(e: BitsPointerEvent) {
 		// only call if the left button but not when the CTRL key is pressed
 		if (!this.disabled.current && e.button === 0 && e.ctrlKey === false) {
 			// prevent trigger from focusing when opening
-			// which allows the content to focus withut competition
+			// which allows the content to focus without competition
 			if (!this.menu.open) {
 				e.preventDefault();
 			}
 			this.root.onMenuOpen(this.menu.value.current);
 		}
-	};
+	}
 
-	#onpointerenter = () => {
+	onpointerenter(_: BitsPointerEvent) {
 		const isMenubarOpen = Boolean(this.root.value.current);
 		if (isMenubarOpen && !this.menu.open) {
 			this.root.onMenuOpen(this.menu.value.current);
 			this.menu.getTriggerNode()?.focus();
 		}
-	};
+	}
 
-	#onkeydown = (e: KeyboardEvent) => {
+	onkeydown(e: BitsKeyboardEvent) {
 		if (this.disabled.current) return;
 		if (e.key === kbd.ENTER || e.key === kbd.SPACE) {
 			this.root.onMenuToggle(this.menu.value.current);
@@ -222,22 +236,22 @@ class MenubarTriggerState {
 			this.root.onMenuOpen(this.menu.value.current);
 		}
 		// prevent keydown from scrolling window / first focused item
-		// from inadvertedly closing the menu
+		// from inadvertently closing the menu
 		if (e.key === kbd.ENTER || e.key === kbd.SPACE || e.key === kbd.ARROW_DOWN) {
 			this.menu.wasOpenedByKeyboard = true;
 			e.preventDefault();
 		}
 
 		this.root.rovingFocusGroup.handleKeydown(this.menu.getTriggerNode(), e);
-	};
+	}
 
-	#onfocus = () => {
+	onfocus(_: BitsFocusEvent) {
 		this.isFocused = true;
-	};
+	}
 
-	#onblur = () => {
+	onblur(_: BitsFocusEvent) {
 		this.isFocused = false;
-	};
+	}
 
 	props = $derived.by(
 		() =>
@@ -255,11 +269,11 @@ class MenubarTriggerState {
 				disabled: this.disabled.current ? true : undefined,
 				tabIndex: this.#tabIndex,
 				[TRIGGER_ATTR]: "",
-				onpointerdown: this.#onpointerdown,
-				onpointerenter: this.#onpointerenter,
-				onkeydown: this.#onkeydown,
-				onfocus: this.#onfocus,
-				onblur: this.#onblur,
+				onpointerdown: this.onpointerdown,
+				onpointerenter: this.onpointerenter,
+				onkeydown: this.onkeydown,
+				onfocus: this.onfocus,
+				onblur: this.onblur,
 			}) as const
 	);
 }
@@ -285,6 +299,12 @@ class MenubarContentState {
 		this.ref = props.ref;
 		this.root = menu.root;
 
+		this.onCloseAutoFocus = this.onCloseAutoFocus.bind(this);
+		this.onFocusOutside = this.onFocusOutside.bind(this);
+		this.onInteractOutside = this.onInteractOutside.bind(this);
+		this.onOpenAutoFocus = this.onOpenAutoFocus.bind(this);
+		this.onkeydown = this.onkeydown.bind(this);
+
 		useRefById({
 			id: this.id,
 			ref: this.ref,
@@ -295,7 +315,7 @@ class MenubarContentState {
 		});
 	}
 
-	onCloseAutoFocus = (e: Event) => {
+	onCloseAutoFocus(e: Event) {
 		const menubarOpen = Boolean(this.root.value.current);
 		if (!menubarOpen && !this.hasInteractedOutside) {
 			this.menu.getTriggerNode()?.focus();
@@ -303,25 +323,25 @@ class MenubarContentState {
 
 		this.hasInteractedOutside = false;
 		e.preventDefault();
-	};
+	}
 
-	onFocusOutside = (e: Event) => {
+	onFocusOutside(e: Event) {
 		const target = e.target as HTMLElement;
 		const isMenubarTrigger = this.root
 			.getTriggers()
 			.some((trigger) => trigger.contains(target));
 		if (isMenubarTrigger) e.preventDefault();
-	};
+	}
 
-	onInteractOutside = () => {
+	onInteractOutside() {
 		this.hasInteractedOutside = true;
-	};
+	}
 
-	onOpenAutoFocus = () => {
+	onOpenAutoFocus() {
 		afterTick(() => this.ref.current?.focus());
-	};
+	}
 
-	#onkeydown = (e: KeyboardEvent) => {
+	onkeydown(e: BitsKeyboardEvent) {
 		if (e.key !== kbd.ARROW_LEFT && e.key !== kbd.ARROW_RIGHT) return;
 
 		const target = e.target as HTMLElement;
@@ -348,20 +368,26 @@ class MenubarContentState {
 			: candidateValues.slice(currentIndex + 1);
 		const [nextValue] = candidateValues;
 		if (nextValue) this.root.onMenuOpen(nextValue);
-	};
+	}
 
-	props = $derived.by(() => ({
-		id: this.id.current,
-		"aria-labelledby": this.menu.triggerNode?.id,
-		style: {
-			"--bits-menubar-content-transform-origin": "var(--bits-floating-transform-origin)",
-			"--bits-menubar-content-available-width": "var(--bits-floating-available-width)",
-			"--bits-menubar-content-available-height": "var(--bits-floating-available-height)",
-			"--bits-menubar-anchor-width": "var(--bits-floating-anchor-width)",
-			"--bits-menubar-anchor-height": "var(--bits-floating-anchor-height)",
-		},
-		onkeydown: this.#onkeydown,
-	}));
+	props = $derived.by(
+		() =>
+			({
+				id: this.id.current,
+				"aria-labelledby": this.menu.triggerNode?.id,
+				style: {
+					"--bits-menubar-content-transform-origin":
+						"var(--bits-floating-transform-origin)",
+					"--bits-menubar-content-available-width":
+						"var(--bits-floating-available-width)",
+					"--bits-menubar-content-available-height":
+						"var(--bits-floating-available-height)",
+					"--bits-menubar-anchor-width": "var(--bits-floating-anchor-width)",
+					"--bits-menubar-anchor-height": "var(--bits-floating-anchor-height)",
+				},
+				onkeydown: this.onkeydown,
+			}) as const
+	);
 }
 
 const [setMenubarRootContext, getMenubarRootContext] =
