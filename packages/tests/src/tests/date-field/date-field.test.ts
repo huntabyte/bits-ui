@@ -954,6 +954,21 @@ describe("date field", () => {
 		const hour = getHour();
 		expect(hour).toHaveTextContent("00");
 	});
+
+	it("should reset the segment values when the value is reset", async () => {
+		const { getByTestId, user, day, month, year } = setup({
+			value: new CalendarDateTime(2023, 10, 12, 12, 30, 30, 0),
+			granularity: "second",
+		});
+
+		const reset = getByTestId("reset");
+
+		await user.click(reset);
+
+		expect(day).toHaveTextContent("dd");
+		expect(month).toHaveTextContent("mm");
+		expect(year).toHaveTextContent("yyyy");
+	});
 });
 
 /**
