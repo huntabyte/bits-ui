@@ -1,41 +1,88 @@
-import type { HTMLButtonAttributes, HTMLInputAttributes } from "svelte/elements";
-import type { CreateCheckboxProps as MeltCheckboxProps } from "@melt-ui/svelte";
-import type { CustomEventHandler } from "$lib/index.js";
-import type {
-	DOMEl,
-	DOMElement,
-	Expand,
-	HTMLDivAttributes,
-	OmitChecked,
-	OnChangeFn,
-} from "$lib/internal/index.js";
+import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
+import type { BitsPrimitiveButtonAttributes } from "$lib/shared/attributes.js";
 
-export type CheckboxPropsWithoutHTML = Expand<
-	OmitChecked<MeltCheckboxProps> & {
+export type CheckboxRootSnippetProps = { checked: boolean; indeterminate: boolean };
+
+export type CheckboxRootPropsWithoutHTML = WithChild<
+	{
 		/**
-		 * The state of the checkbox.
-		 * You can bind this to a boolean value to programmatically control the checked state.
+		 * Whether the checkbox is disabled.
 		 *
 		 * @defaultValue false
 		 */
-		checked?: boolean | "indeterminate" | undefined;
+		disabled?: boolean | null | undefined;
+
+		/**
+		 * Whether the checkbox is required (for form validation).
+		 *
+		 * @defaultValue false
+		 */
+		required?: boolean;
+
+		/**
+		 * The name of the checkbox used in form submission.
+		 * If not provided, the hidden input will not be rendered.
+		 *
+		 * @defaultValue undefined
+		 */
+		// eslint-disable-next-line ts/no-explicit-any
+		name?: any;
+
+		/**
+		 * The value of the checkbox used in form submission.
+		 *
+		 * @defaultValue undefined
+		 */
+		value?: string;
+
+		/**
+		 * The checked state of the checkbox. It can be one of:
+		 * - `true` for checked
+		 * - `false` for unchecked
+		 *
+		 * @defaultValue false
+		 */
+		checked?: boolean;
 
 		/**
 		 * A callback function called when the checked state changes.
 		 */
-		onCheckedChange?: OnChangeFn<boolean | "indeterminate"> | undefined;
-	} & DOMElement<HTMLButtonElement>
+		onCheckedChange?: OnChangeFn<boolean>;
+
+		/**
+		 * Whether or not the checkbox is controlled or not. If `true`, the checkbox will not update
+		 * the checked state internally, instead it will call `onCheckedChange` when it would have
+		 * otherwise, and it is up to you to update the `checked` prop that is passed to the
+		 * component.
+		 *
+		 * @defaultValue false
+		 */
+		controlledChecked?: boolean;
+
+		/**
+		 * Whether the checkbox is in an indeterminate state or not.
+		 *
+		 * @defaultValue false
+		 */
+		indeterminate?: boolean;
+
+		/**
+		 * A callback function called when the indeterminate state changes.
+		 */
+		onIndeterminateChange?: OnChangeFn<boolean>;
+
+		/**
+		 * Whether the indeterminate state is controlled or not. If `true`, the checkbox will
+		 * not update the indeterminate state internally, instead it will call
+		 * `onIndeterminateChange` when it would have otherwise, and it is up to you to update
+		 * the `indeterminate` prop that is passed to the component.
+		 *
+		 * @defaultValue false
+		 */
+		controlledIndeterminate?: boolean;
+	},
+	CheckboxRootSnippetProps
 >;
 
-export type CheckboxIndicatorPropsWithoutHTML = DOMElement;
-
-export type CheckboxProps = CheckboxPropsWithoutHTML & HTMLButtonAttributes;
-
-export type CheckboxIndicatorProps = CheckboxIndicatorPropsWithoutHTML & HTMLDivAttributes;
-
-export type CheckboxInputProps = Omit<HTMLInputAttributes, "value"> & DOMEl<HTMLInputElement>;
-
-export type CheckboxEvents = {
-	click: CustomEventHandler<MouseEvent, HTMLButtonElement>;
-	keydown: CustomEventHandler<KeyboardEvent, HTMLButtonElement>;
-};
+export type CheckboxRootProps = CheckboxRootPropsWithoutHTML &
+	Without<BitsPrimitiveButtonAttributes, CheckboxRootPropsWithoutHTML>;
