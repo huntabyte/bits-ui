@@ -56,6 +56,7 @@ type CommandRootStateProps = WithRefProps<
 		loop: boolean;
 		vimBindings: boolean;
 		disablePointerSelection: boolean;
+		onStateChange?: (state: Readonly<CommandState>) => void;
 	}> &
 		WritableBoxedValues<{
 			value: string;
@@ -66,13 +67,15 @@ type CommandRootStateProps = WithRefProps<
 type SetState = <K extends keyof CommandState>(key: K, value: CommandState[K], opts?: any) => void;
 
 class CommandRootState {
-	allItems = new Set<string>(); // [...itemIds]
-	allGroups = new Map<string, Set<string>>(); // groupId → [...itemIds]
+	#updateScheduled = false;
+	allItems = new Set<string>();
+	allGroups = new Map<string, Set<string>>();
 	allIds = new Map<string, { value: string; keywords?: string[] }>();
 	id: CommandRootStateProps["id"];
 	ref: CommandRootStateProps["ref"];
 	filter: CommandRootStateProps["filter"];
 	shouldFilter: CommandRootStateProps["shouldFilter"];
+	onStateChange: CommandRootStateProps["onStateChange"];
 	loop: CommandRootStateProps["loop"];
 	// attempt to prevent the harsh delay when user is typing fast
 	key = $state(0);
@@ -87,9 +90,29 @@ class CommandRootState {
 	// internal state that we mutate in batches and publish to the `state` at once
 	_commandState = $state<CommandState>(null!);
 	snapshot = () => this._commandState;
+
+	#scheduleUpdate = () => {
+		if (this.#updateScheduled) return;
+		this.#updateScheduled = true;
+
+		afterTick(() => {
+			this.#updateScheduled = false;
+
+			const currentState = this.snapshot();
+			const hasStateChanged = !Object.is(this.commandState, currentState);
+
+			if (hasStateChanged) {
+				this.commandState = currentState;
+				this.onStateChange?.current?.($state.snapshot(currentState));
+			}
+		});
+	};
+
 	setState: SetState = (key, value, opts) => {
 		if (Object.is(this._commandState[key], value)) return;
+
 		this._commandState[key] = value;
+
 		if (key === "search") {
 			// Filter synchronously before emitting back to children
 			this.#filterItems();
@@ -102,11 +125,8 @@ class CommandRootState {
 				this.#scrollSelectedIntoView();
 			}
 		}
-		// notify subscribers that the state has changed
-		this.emit();
-	};
-	emit = () => {
-		this.commandState = $state.snapshot(this._commandState);
+
+		this.#scheduleUpdate();
 	};
 
 	constructor(props: CommandRootStateProps) {
@@ -118,6 +138,7 @@ class CommandRootState {
 		this.valueProp = props.value;
 		this.#vimBindings = props.vimBindings;
 		this.disablePointerSelection = props.disablePointerSelection;
+		this.onStateChange = props.onStateChange;
 
 		const defaultState = {
 			/** Value of the search query */
@@ -133,6 +154,7 @@ class CommandRootState {
 				groups: new Set<string>(),
 			},
 		};
+
 		this._commandState = defaultState;
 		this.commandState = defaultState;
 
@@ -149,7 +171,11 @@ class CommandRootState {
 	};
 
 	#sort = () => {
-		if (!this._commandState.search || this.shouldFilter.current === false) return;
+		if (!this._commandState.search || this.shouldFilter.current === false) {
+			// If no search and no selection yet, select first item
+			if (!this.commandState.value) this.#selectFirstItem();
+			return;
+		}
 
 		const scores = this._commandState.filtered.items;
 
@@ -366,7 +392,6 @@ class CommandRootState {
 		this._commandState.filtered.items.set(id, this.#score(value, keywords));
 
 		this.#sort();
-		this.emit();
 
 		return () => {
 			this.allIds.delete(id);
@@ -388,12 +413,7 @@ class CommandRootState {
 		this.#filterItems();
 		this.#sort();
 
-		// Could be initial mount, select the first item if none already selected
-		if (!this.commandState.value) {
-			this.#selectFirstItem();
-		}
-
-		this.emit();
+		this.#scheduleUpdate();
 		return () => {
 			this.allIds.delete(id);
 			this.allItems.delete(id);
@@ -406,7 +426,7 @@ class CommandRootState {
 			// so selection should be moved to the first
 			if (selectedItem?.getAttribute("id") === id) this.#selectFirstItem();
 
-			this.emit();
+			this.#scheduleUpdate();
 		};
 	};
 

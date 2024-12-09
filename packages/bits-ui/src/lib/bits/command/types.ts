@@ -47,6 +47,11 @@ export type CommandRootPropsWithoutHTML = WithChild<{
 	filter?: (value: string, search: string, keywords?: string[]) => number;
 
 	/**
+	 * A function that is called when the command state changes.
+	 */
+	onStateChange?: (state: Readonly<CommandState>) => void;
+
+	/**
 	 * Optionally provide or bind to the selected command menu item.
 	 */
 	value?: string;
