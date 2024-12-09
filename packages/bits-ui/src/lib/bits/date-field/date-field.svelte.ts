@@ -203,6 +203,12 @@ export class DateFieldRootState {
 		});
 
 		$effect(() => {
+			if (this.value.current === undefined) {
+				this.segmentValues = initializeSegmentValues(this.inferredGranularity);
+			}
+		});
+
+		$effect(() => {
 			this.validationStatus;
 			untrack(() => {
 				if (this.validationStatus !== false) {
