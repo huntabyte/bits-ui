@@ -14,7 +14,7 @@ import {
 } from "$lib/internal/use-roving-focus.svelte.js";
 import type { Orientation } from "$lib/shared/index.js";
 import { createContext } from "$lib/internal/create-context.js";
-import type { WithRefProps } from "$lib/internal/types.js";
+import type { BitsKeyboardEvent, BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
 
 const ROOT_ATTR = "data-toolbar-root";
 // all links, buttons, and items must have the ITEM_ATTR for roving focus
@@ -123,20 +123,16 @@ class ToolbarGroupSingleState extends ToolbarGroupBaseState {
 		this.#value = props.value;
 	}
 
-	includesItem = (item: string) => {
+	includesItem(item: string) {
 		return this.#value.current === item;
-	};
+	}
 
-	toggleItem = (item: string) => {
+	toggleItem(item: string) {
 		if (this.includesItem(item)) {
 			this.#value.current = "";
 		} else {
 			this.#value.current = item;
 		}
-	};
-
-	createItem(props: ToolbarGroupItemStateProps) {
-		return new ToolbarGroupItemState(props, this, this.root);
 	}
 }
 
@@ -159,17 +155,17 @@ class ToolbarGroupMultipleState extends ToolbarGroupBaseState {
 		this.#value = props.value;
 	}
 
-	includesItem = (item: string) => {
+	includesItem(item: string) {
 		return this.#value.current.includes(item);
-	};
+	}
 
-	toggleItem = (item: string) => {
+	toggleItem(item: string) {
 		if (this.includesItem(item)) {
 			this.#value.current = this.#value.current.filter((v) => v !== item);
 		} else {
 			this.#value.current = [...this.#value.current, item];
 		}
-	};
+	}
 }
 
 type ToolbarGroupState = ToolbarGroupSingleState | ToolbarGroupMultipleState;
@@ -214,28 +210,31 @@ class ToolbarGroupItemState {
 		$effect(() => {
 			this.#tabIndex = this.#root.rovingFocusGroup.getTabIndex(this.#ref.current);
 		});
+
+		this.onclick = this.onclick.bind(this);
+		this.onkeydown = this.onkeydown.bind(this);
 	}
 
-	toggleItem = () => {
+	#toggleItem() {
 		if (this.#isDisabled) return;
 		this.#group.toggleItem(this.#value.current);
-	};
+	}
 
-	#onclick = () => {
+	onclick(_: BitsMouseEvent) {
 		if (this.#isDisabled) return;
-		this.toggleItem();
-	};
+		this.#toggleItem();
+	}
 
-	#onkeydown = (e: KeyboardEvent) => {
+	onkeydown(e: BitsKeyboardEvent) {
 		if (this.#isDisabled) return;
 		if (e.key === kbd.ENTER || e.key === kbd.SPACE) {
 			e.preventDefault();
-			this.toggleItem();
+			this.#toggleItem();
 			return;
 		}
 
 		this.#root.rovingFocusGroup.handleKeydown(this.#ref.current, e);
-	};
+	}
 
 	isPressed = $derived.by(() => this.#group.includesItem(this.#value.current));
 
@@ -265,8 +264,8 @@ class ToolbarGroupItemState {
 				[GROUP_ITEM_ATTR]: "",
 				disabled: getDisabled(this.#isDisabled),
 				//
-				onclick: this.#onclick,
-				onkeydown: this.#onkeydown,
+				onclick: this.onclick,
+				onkeydown: this.onkeydown,
 			}) as const
 	);
 }
@@ -291,11 +290,13 @@ class ToolbarLinkState {
 		$effect(() => {
 			this.#tabIndex = this.#root.rovingFocusGroup.getTabIndex(this.#ref.current);
 		});
+
+		this.onkeydown = this.onkeydown.bind(this);
 	}
 
-	#onkeydown = (e: KeyboardEvent) => {
+	onkeydown(e: BitsKeyboardEvent) {
 		this.#root.rovingFocusGroup.handleKeydown(this.#ref.current, e);
-	};
+	}
 
 	#role = $derived.by(() => {
 		if (!this.#ref.current) return undefined;
@@ -314,7 +315,7 @@ class ToolbarLinkState {
 		tabindex: this.#tabIndex,
 		"data-orientation": getDataOrientation(this.#root.orientation.current),
 		//
-		onkeydown: this.#onkeydown,
+		onkeydown: this.onkeydown,
 	}));
 }
 
@@ -344,11 +345,13 @@ class ToolbarButtonState {
 		$effect(() => {
 			this.#tabIndex = this.#root.rovingFocusGroup.getTabIndex(this.#ref.current);
 		});
+
+		this.onkeydown = this.onkeydown.bind(this);
 	}
 
-	#onkeydown = (e: KeyboardEvent) => {
+	onkeydown(e: BitsKeyboardEvent) {
 		this.#root.rovingFocusGroup.handleKeydown(this.#ref.current, e);
-	};
+	}
 
 	#tabIndex = $state(0);
 
@@ -371,7 +374,7 @@ class ToolbarButtonState {
 				"data-orientation": getDataOrientation(this.#root.orientation.current),
 				disabled: getDisabled(this.#disabled.current),
 				//
-				onkeydown: this.#onkeydown,
+				onkeydown: this.onkeydown,
 			}) as const
 	);
 }

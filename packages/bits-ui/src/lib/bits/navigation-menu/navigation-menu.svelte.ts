@@ -17,7 +17,13 @@ import { useId } from "$lib/internal/use-id.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { useArrowNavigation } from "$lib/internal/use-arrow-navigation.js";
 import { boxAutoReset } from "$lib/internal/box-auto-reset.svelte.js";
-import type { ElementRef, WithRefProps } from "$lib/internal/types.js";
+import type {
+	BitsKeyboardEvent,
+	BitsMouseEvent,
+	BitsPointerEvent,
+	ElementRef,
+	WithRefProps,
+} from "$lib/internal/types.js";
 import { noop } from "$lib/internal/noop.js";
 import { useRovingFocus } from "$lib/internal/use-roving-focus.svelte.js";
 
@@ -69,9 +75,9 @@ class NavigationMenuRootState {
 	skipDelayTimer = 0;
 	isOpenDelayed = $state<boolean>(false);
 
-	setValue = (v: string) => {
+	#setValue(v: string) {
 		this.value.current = v;
-	};
+	}
 
 	constructor(props: NavigationMenuRootStateProps) {
 		this.id = props.id;
@@ -81,6 +87,13 @@ class NavigationMenuRootState {
 		this.dir = props.dir;
 		this.value = props.value;
 		this.rootRef = props.ref;
+
+		this.onTriggerEnter = this.onTriggerEnter.bind(this);
+		this.onTriggerLeave = this.onTriggerLeave.bind(this);
+		this.onContentEnter = this.onContentEnter.bind(this);
+		this.onContentLeave = this.onContentLeave.bind(this);
+		this.onItemSelect = this.onItemSelect.bind(this);
+		this.onItemDismiss = this.onItemDismiss.bind(this);
 
 		useRefById({
 			id: this.id,
@@ -116,22 +129,22 @@ class NavigationMenuRootState {
 		});
 	}
 
-	startCloseTimer = () => {
+	#startCloseTimer() {
 		window.clearTimeout(this.closeTimer);
-		this.closeTimer = window.setTimeout(() => this.setValue(""), 150);
-	};
+		this.closeTimer = window.setTimeout(() => this.#setValue(""), 150);
+	}
 
-	handleOpen = (itemValue: string) => {
+	#handleOpen(itemValue: string) {
 		window.clearTimeout(this.closeTimer);
-		this.setValue(itemValue);
-	};
+		this.#setValue(itemValue);
+	}
 
-	handleClose = () => {
+	handleClose() {
 		this.onItemDismiss();
 		this.onContentLeave();
-	};
+	}
 
-	handleDelayedOpen = (itemValue: string) => {
+	#handleDelayedOpen(itemValue: string) {
 		const isOpenItem = this.value.current === itemValue;
 		if (isOpenItem) {
 			// If the item is already open (e.g. we're transitioning from the content to the trigger)
@@ -140,49 +153,52 @@ class NavigationMenuRootState {
 		} else {
 			this.openTimer = window.setTimeout(() => {
 				window.clearTimeout(this.closeTimer);
-				this.setValue(itemValue);
+				this.#setValue(itemValue);
 			}, this.delayDuration.current);
 		}
-	};
+	}
 
-	onTriggerEnter = (itemValue: string) => {
+	onTriggerEnter(itemValue: string) {
 		window.clearTimeout(this.openTimer);
 		if (this.isOpenDelayed) {
-			this.handleDelayedOpen(itemValue);
+			this.#handleDelayedOpen(itemValue);
 		} else {
-			this.handleOpen(itemValue);
+			this.#handleOpen(itemValue);
 		}
-	};
+	}
 
-	onTriggerLeave = () => {
+	onTriggerLeave() {
 		window.clearTimeout(this.openTimer);
-		this.startCloseTimer();
-	};
+		this.#startCloseTimer();
+	}
 
-	onContentEnter = () => {
+	onContentEnter() {
 		window.clearTimeout(this.closeTimer);
-	};
+	}
 
-	onContentLeave = () => {
-		this.startCloseTimer();
-	};
+	onContentLeave() {
+		this.#startCloseTimer();
+	}
 
-	onItemSelect = (itemValue: string) => {
+	onItemSelect(itemValue: string) {
 		const prevValue = this.value.current;
-		this.setValue(prevValue === itemValue ? "" : itemValue);
-	};
+		this.#setValue(prevValue === itemValue ? "" : itemValue);
+	}
 
-	onItemDismiss = () => {
-		this.setValue("");
-	};
+	onItemDismiss() {
+		this.#setValue("");
+	}
 
-	props = $derived.by(() => ({
-		id: this.id.current,
-		"aria-label": "Main",
-		"data-orientation": getDataOrientation(this.orientation.current),
-		dir: this.dir.current,
-		[ROOT_ATTR]: "",
-	}));
+	props = $derived.by(
+		() =>
+			({
+				id: this.id.current,
+				"aria-label": "Main",
+				"data-orientation": getDataOrientation(this.orientation.current),
+				dir: this.dir.current,
+				[ROOT_ATTR]: "",
+			}) as const
+	);
 }
 
 type NavigationMenuMenuStateProps = ReadableBoxedValues<{
@@ -238,19 +254,19 @@ class NavigationMenuMenuState {
 		this.previousValue = props.previousValue;
 	}
 
-	registerTrigger = (ref: ElementRef) => {
+	registerTrigger(ref: ElementRef) {
 		this.triggerRefs.add(ref);
-	};
+	}
 
-	deRegisterTrigger = (ref: ElementRef) => {
+	deRegisterTrigger(ref: ElementRef) {
 		this.triggerRefs.delete(ref);
-	};
+	}
 
-	getTriggerNodes = () => {
+	getTriggerNodes() {
 		return Array.from(this.triggerRefs)
 			.map((ref) => ref.current)
 			.filter((node): node is HTMLElement => Boolean(node));
-	};
+	}
 }
 
 type NavigationMenuSubStateProps = ReadableBoxedValues<{
@@ -295,49 +311,36 @@ class NavigationMenuSubState {
 		});
 	}
 
-	onTriggerEnter = (itemValue: string) => {
+	onTriggerEnter(itemValue: string) {
 		this.value.current = itemValue;
-	};
+	}
 
-	onItemSelect = (itemValue: string) => {
+	onItemSelect(itemValue: string) {
 		this.value.current = itemValue;
-	};
+	}
 
-	onItemDismiss = () => {
-		this.value.current = "";
-	};
-
-	registerTrigger = (ref: ElementRef) => {
+	registerTrigger(ref: ElementRef) {
 		this.triggerRefs.add(ref);
-	};
+	}
 
-	deRegisterTrigger = (ref: ElementRef) => {
+	deRegisterTrigger(ref: ElementRef) {
 		this.triggerRefs.delete(ref);
-	};
+	}
 
-	getTriggerNodes = () => {
+	getTriggerNodes() {
 		return Array.from(this.triggerRefs)
 			.map((ref) => ref.current)
 			.filter((node): node is HTMLElement => Boolean(node));
-	};
-
-	createList(props: NavigationMenuListStateProps) {
-		return new NavigationMenuListState(props, this);
 	}
 
-	createIndicator(props: NavigationMenuIndicatorStateProps) {
-		return new NavigationMenuIndicatorState(props, this);
-	}
-
-	createViewport(props: NavigationMenuViewportStateProps) {
-		return new NavigationMenuViewportState(props, this);
-	}
-
-	props = $derived.by(() => ({
-		id: this.id.current,
-		"data-orientation": getDataOrientation(this.orientation.current),
-		[SUB_ATTR]: "",
-	}));
+	props = $derived.by(
+		() =>
+			({
+				id: this.id.current,
+				"data-orientation": getDataOrientation(this.orientation.current),
+				[SUB_ATTR]: "",
+			}) as const
+	);
 }
 
 type NavigationMenuListStateProps = ReadableBoxedValues<{
@@ -395,10 +398,6 @@ class NavigationMenuListState {
 			}) as const
 	);
 
-	createItem(props: NavigationMenuItemStateProps) {
-		return new NavigationMenuItemState(props, this, this.menu);
-	}
-
 	props = $derived.by(
 		() =>
 			({
@@ -440,13 +439,16 @@ class NavigationMenuItemState {
 		this.menu = menu;
 		this.list = list;
 
+		this.handleContentEntry = this.handleContentEntry.bind(this);
+		this.handleContentExit = this.handleContentExit.bind(this);
+
 		useRefById({
 			id: this.id,
 			ref: this.#ref,
 		});
 	}
 
-	#handleContentEntry = (side: "start" | "end" = "start") => {
+	handleContentEntry(side: "start" | "end" = "start") {
 		if (!this.contentNode) return;
 		this.restoreContentTabOrder();
 		const candidates = getTabbableCandidates(this.contentNode);
@@ -457,20 +459,20 @@ class NavigationMenuItemState {
 				candidates[candidates.length - 1]?.focus();
 			}
 		}
-	};
+	}
 
-	#handleContentExit = () => {
+	handleContentExit() {
 		if (!this.contentNode) return;
 		const candidates = getTabbableCandidates(this.contentNode);
 		if (candidates.length) {
 			this.restoreContentTabOrder = removeFromTabOrder(candidates);
 		}
-	};
+	}
 
-	onEntryKeydown = this.#handleContentEntry;
-	onFocusProxyEnter = this.#handleContentEntry;
-	onContentFocusOutside = this.#handleContentExit;
-	onRootContentClose = this.#handleContentExit;
+	onEntryKeydown = this.handleContentEntry;
+	onFocusProxyEnter = this.handleContentEntry;
+	onContentFocusOutside = this.handleContentExit;
+	onRootContentClose = this.handleContentExit;
 
 	props = $derived.by(
 		() =>
@@ -532,14 +534,20 @@ class NavigationMenuTriggerState {
 				this.menu.deRegisterTrigger(this.#ref);
 			};
 		});
+
+		this.onpointerenter = this.onpointerenter.bind(this);
+		this.onpointermove = this.onpointermove.bind(this);
+		this.onpointerleave = this.onpointerleave.bind(this);
+		this.onclick = this.onclick.bind(this);
+		this.onkeydown = this.onkeydown.bind(this);
 	}
 
-	#onpointerenter = () => {
+	onpointerenter(_: BitsPointerEvent) {
 		this.wasClickClose = false;
 		this.item.wasEscapeClose = false;
-	};
+	}
 
-	#onpointermove = (e: PointerEvent) => {
+	onpointermove(e: BitsPointerEvent) {
 		if (e.pointerType !== "mouse") return;
 		if (
 			this.disabled.current ||
@@ -550,16 +558,16 @@ class NavigationMenuTriggerState {
 			return;
 		this.menu.onTriggerEnter(this.item.value.current);
 		this.hasPointerMoveOpened.current = true;
-	};
+	}
 
-	#onpointerleave = (e: PointerEvent) => {
+	onpointerleave(e: BitsPointerEvent) {
 		if (e.pointerType !== "mouse" || this.disabled.current) return;
 		this.menu.onTriggerLeave?.();
 		this.hasPointerMoveOpened.current = false;
-	};
+	}
 
-	#onclick = (_: PointerEvent) => {
-		// if opened via pointer move, we prevent clicke event
+	onclick(_: BitsPointerEvent) {
+		// if opened via pointer move, we prevent clicked event
 		if (this.hasPointerMoveOpened.current) return;
 		if (this.open) {
 			this.menu.onItemSelect("");
@@ -567,9 +575,9 @@ class NavigationMenuTriggerState {
 			this.menu.onItemSelect(this.item.value.current);
 		}
 		this.wasClickClose = this.open;
-	};
+	}
 
-	#onkeydown = (e: KeyboardEvent) => {
+	onkeydown(e: BitsKeyboardEvent) {
 		const verticalEntryKey = this.menu.dir.current === "rtl" ? kbd.ARROW_LEFT : kbd.ARROW_RIGHT;
 		const entryKey = {
 			horizontal: kbd.ARROW_DOWN,
@@ -582,7 +590,7 @@ class NavigationMenuTriggerState {
 			return;
 		}
 		this.item.list.rovingFocusGroup.handleKeydown(this.#ref.current, e);
-	};
+	}
 
 	props = $derived.by(
 		() =>
@@ -594,11 +602,11 @@ class NavigationMenuTriggerState {
 				"aria-expanded": getAriaExpanded(this.open),
 				"aria-controls": this.item.contentNode ? this.item.contentNode.id : undefined,
 				"data-value": this.item.value.current,
-				onpointerenter: this.#onpointerenter,
-				onpointermove: this.#onpointermove,
-				onpointerleave: this.#onpointerleave,
-				onclick: this.#onclick,
-				onkeydown: this.#onkeydown,
+				onpointerenter: this.onpointerenter,
+				onpointermove: this.onpointermove,
+				onpointerleave: this.onpointerleave,
+				onclick: this.onclick,
+				onkeydown: this.onkeydown,
 				[TRIGGER_ATTR]: "",
 			}) as const
 	);
@@ -653,9 +661,11 @@ class NavigationMenuLinkState {
 			id: this.#id,
 			ref: this.#ref,
 		});
+		this.onclick = this.onclick.bind(this);
+		this.onkeydown = this.onkeydown.bind(this);
 	}
 
-	#onclick = (e: MouseEvent) => {
+	onclick(e: BitsMouseEvent) {
 		const linkSelectEvent = new CustomEvent("navigationMenu.linkSelect", {
 			bubbles: true,
 			cancelable: true,
@@ -666,11 +676,11 @@ class NavigationMenuLinkState {
 		if (!linkSelectEvent.defaultPrevented && !e.metaKey) {
 			//
 		}
-	};
+	}
 
-	#onkeydown = (e: KeyboardEvent) => {
+	onkeydown(e: BitsKeyboardEvent) {
 		this.item.list.rovingFocusGroup.handleKeydown(this.#ref.current, e);
-	};
+	}
 
 	props = $derived.by(
 		() =>
@@ -679,9 +689,9 @@ class NavigationMenuLinkState {
 				"data-active": this.active.current ? "" : undefined,
 				"aria-current": this.active.current ? "page" : undefined,
 				"data-list-link": this.content ? undefined : "",
-				onclick: this.#onclick,
+				onclick: this.onclick,
 				onfocus: (_: FocusEvent) => {},
-				onkeydown: this.content ? undefined : this.#onkeydown,
+				onkeydown: this.content ? undefined : this.onkeydown,
 			}) as const
 	);
 }
@@ -853,9 +863,14 @@ class NavigationMenuContentState {
 			this.prevMotionAttribute = attribute;
 			this.motionAttribute = attribute;
 		});
+
+		this.onFocusOutside = this.onFocusOutside.bind(this);
+		this.onInteractOutside = this.onInteractOutside.bind(this);
+		this.onEscapeKeydown = this.onEscapeKeydown.bind(this);
+		this.onkeydown = this.onkeydown.bind(this);
 	}
 
-	onFocusOutside = (e: Event) => {
+	onFocusOutside(e: Event) {
 		this.item.onContentFocusOutside();
 		const target = e.target as HTMLElement;
 		// only dismiss content when focus moves outside the menu
@@ -865,9 +880,9 @@ class NavigationMenuContentState {
 		} else {
 			this.menu.root.handleClose();
 		}
-	};
+	}
 
-	onInteractOutside = (e: Event) => {
+	onInteractOutside(e: Event) {
 		if (e.defaultPrevented) return;
 		const target = e.target as HTMLElement;
 		const isTrigger = this.menu.getTriggerNodes().some((node) => node.contains(target));
@@ -877,7 +892,7 @@ class NavigationMenuContentState {
 		if (isTrigger || isRootViewport || !this.menu.isRoot) {
 			e.preventDefault();
 		}
-	};
+	}
 
 	onEscapeKeydown = (e: KeyboardEvent) => {
 		this.menu.root.handleClose();
@@ -889,7 +904,7 @@ class NavigationMenuContentState {
 		this.item.wasEscapeClose = true;
 	};
 
-	#onkeydown = (e: KeyboardEvent) => {
+	onkeydown(e: BitsKeyboardEvent) {
 		const isMetaKey = e.altKey || e.ctrlKey || e.metaKey;
 		const isTabKey = e.key === kbd.TAB && !isMetaKey;
 
@@ -927,7 +942,7 @@ class NavigationMenuContentState {
 		);
 
 		newSelectedElement?.focus();
-	};
+	}
 
 	props = $derived.by(
 		() =>
@@ -943,7 +958,7 @@ class NavigationMenuContentState {
 				style: {
 					pointerEvents: !this.open && this.menu.isRoot ? "none" : undefined,
 				},
-				onkeydown: this.#onkeydown,
+				onkeydown: this.onkeydown,
 			}) as const
 	);
 }
@@ -1004,16 +1019,19 @@ class NavigationMenuViewportState {
 				}
 			}
 		);
+
+		this.onpointerenter = this.onpointerenter.bind(this);
+		this.onpointerleave = this.onpointerleave.bind(this);
 	}
 
-	#onpointerenter = () => {
+	onpointerenter(_: BitsPointerEvent) {
 		this.menu.onContentEnter?.();
-	};
+	}
 
-	#onpointerleave = (e: PointerEvent) => {
+	onpointerleave(e: BitsPointerEvent) {
 		if (e.pointerType !== "mouse") return;
 		this.menu.onContentLeave?.();
-	};
+	}
 
 	props = $derived.by(
 		() =>
@@ -1030,8 +1048,8 @@ class NavigationMenuViewportState {
 						? `${this.size.height}px`
 						: undefined,
 				},
-				onpointerenter: this.#onpointerenter,
-				onpointerleave: this.#onpointerleave,
+				onpointerenter: this.onpointerenter,
+				onpointerleave: this.onpointerleave,
 			}) as const
 	);
 }

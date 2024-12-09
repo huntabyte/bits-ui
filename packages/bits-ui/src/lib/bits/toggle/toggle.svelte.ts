@@ -1,8 +1,7 @@
 import { useRefById } from "svelte-toolbelt";
 import { getAriaPressed, getDataDisabled, getDisabled } from "$lib/internal/attrs.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import { kbd } from "$lib/internal/kbd.js";
-import type { WithRefProps } from "$lib/internal/types.js";
+import type { BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
 
 const ROOT_ATTR = "data-toggle-root";
 
@@ -31,18 +30,20 @@ class ToggleRootState {
 			id: this.#id,
 			ref: this.#ref,
 		});
+
+		this.onclick = this.onclick.bind(this);
 	}
 
-	#togglePressed = () => {
+	#togglePressed() {
 		if (!this.#disabled.current) {
 			this.pressed.current = !this.pressed.current;
 		}
-	};
+	}
 
-	#onclick = () => {
+	onclick(_: BitsMouseEvent) {
 		if (this.#disabled.current) return;
 		this.#togglePressed();
-	};
+	}
 
 	props = $derived.by(
 		() =>
@@ -53,7 +54,7 @@ class ToggleRootState {
 				"aria-pressed": getAriaPressed(this.pressed.current),
 				"data-state": getToggleDataState(this.pressed.current),
 				disabled: getDisabled(this.#disabled.current),
-				onclick: this.#onclick,
+				onclick: this.onclick,
 			}) as const
 	);
 }

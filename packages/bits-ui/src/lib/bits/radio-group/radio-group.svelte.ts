@@ -1,7 +1,12 @@
 import { srOnlyStyles, styleToString, useRefById } from "svelte-toolbelt";
 import type { FocusEventHandler, KeyboardEventHandler, MouseEventHandler } from "svelte/elements";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import type { WithRefProps } from "$lib/internal/types.js";
+import type {
+	BitsFocusEvent,
+	BitsKeyboardEvent,
+	BitsMouseEvent,
+	WithRefProps,
+} from "$lib/internal/types.js";
 import { getAriaChecked, getAriaRequired, getDataDisabled } from "$lib/internal/attrs.js";
 import type { Orientation } from "$lib/shared/index.js";
 import {
@@ -59,13 +64,13 @@ class RadioGroupRootState {
 		});
 	}
 
-	isChecked = (value: string) => {
+	isChecked(value: string) {
 		return this.value.current === value;
-	};
+	}
 
-	setValue = (value: string) => {
+	setValue(value: string) {
 		this.value.current = value;
-	};
+	}
 
 	props = $derived.by(
 		() =>
@@ -116,19 +121,23 @@ class RadioGroupItemState {
 		$effect(() => {
 			this.#tabIndex = this.#root.rovingFocusGroup.getTabIndex(this.#ref.current);
 		});
+
+		this.onclick = this.onclick.bind(this);
+		this.onkeydown = this.onkeydown.bind(this);
+		this.onfocus = this.onfocus.bind(this);
 	}
 
-	#onclick: MouseEventHandler<HTMLButtonElement> = (e) => {
+	onclick(e: BitsMouseEvent) {
 		if (this.#disabled.current) return;
 		this.#root.setValue(this.#value.current);
-	};
+	}
 
-	#onfocus: FocusEventHandler<HTMLButtonElement> = () => {
+	onfocus(_: BitsFocusEvent) {
 		if (!this.#root.hasValue) return;
 		this.#root.setValue(this.#value.current);
-	};
+	}
 
-	#onkeydown: KeyboardEventHandler<HTMLButtonElement> = (e) => {
+	onkeydown(e: BitsKeyboardEvent) {
 		if (this.#isDisabled) return;
 		if (e.key === kbd.SPACE) {
 			e.preventDefault();
@@ -136,7 +145,7 @@ class RadioGroupItemState {
 			return;
 		}
 		this.#root.rovingFocusGroup.handleKeydown(this.#ref.current, e, true);
-	};
+	}
 
 	#tabIndex = $state(0);
 
@@ -157,9 +166,9 @@ class RadioGroupItemState {
 				role: "radio",
 				tabindex: this.#tabIndex,
 				//
-				onkeydown: this.#onkeydown,
-				onfocus: this.#onfocus,
-				onclick: this.#onclick,
+				onkeydown: this.onkeydown,
+				onfocus: this.onfocus,
+				onclick: this.onclick,
 			}) as const
 	);
 }

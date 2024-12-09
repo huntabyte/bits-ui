@@ -1,6 +1,6 @@
 import { useRefById } from "svelte-toolbelt";
 import type { Page, PageItem } from "./types.js";
-import type { WithRefProps } from "$lib/internal/types.js";
+import type { BitsKeyboardEvent, BitsPointerEvent, WithRefProps } from "$lib/internal/types.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { getDataOrientation } from "$lib/internal/attrs.js";
 import { getElemDirection } from "$lib/internal/locale.js";
@@ -69,32 +69,32 @@ class PaginationRootState {
 		});
 	}
 
-	setPage = (page: number) => {
+	setPage(page: number) {
 		this.page.current = page;
-	};
+	}
 
-	getPageTriggerNodes = () => {
+	getPageTriggerNodes() {
 		const node = this.ref.current;
 		if (!node) return [];
 		return Array.from(node.querySelectorAll<HTMLElement>("[data-pagination-page]"));
-	};
+	}
 
-	getButtonNode = (type: "prev" | "next") => {
+	getButtonNode(type: "prev" | "next") {
 		const node = this.ref.current;
 		if (!node) return;
 		return node.querySelector<HTMLElement>(`[data-pagination-${type}]`);
-	};
+	}
 
 	hasPrevPage = $derived.by(() => this.page.current > 1);
 	hasNextPage = $derived.by(() => this.page.current < this.totalPages);
 
-	prevPage = () => {
+	prevPage() {
 		this.page.current = Math.max(this.page.current - 1, 1);
-	};
+	}
 
-	nextPage = () => {
+	nextPage() {
 		this.page.current = Math.min(this.page.current + 1, this.totalPages);
-	};
+	}
 
 	snippetProps = $derived.by(() => ({
 		pages: this.pages,
@@ -142,30 +142,34 @@ class PaginationPageState {
 			id: this.#id,
 			ref: this.#ref,
 		});
+
+		this.onpointerdown = this.onpointerdown.bind(this);
+		this.onpointerup = this.onpointerup.bind(this);
+		this.onkeydown = this.onkeydown.bind(this);
 	}
 
-	#onpointerdown = (e: PointerEvent) => {
+	onpointerdown(e: BitsPointerEvent) {
 		if (this.#disabled.current) return;
 		if (e.pointerType === "touch") return e.preventDefault();
 		this.#root.setPage(this.page.current.value);
-	};
+	}
 
-	#onpointerup = (e: PointerEvent) => {
+	onpointerup(e: BitsPointerEvent) {
 		if (this.#disabled.current) return;
 		if (e.pointerType === "touch") {
 			e.preventDefault();
 			this.#root.setPage(this.page.current.value);
 		}
-	};
+	}
 
-	#onkeydown = (e: KeyboardEvent) => {
+	onkeydown(e: BitsKeyboardEvent) {
 		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
 			e.preventDefault();
 			this.#root.setPage(this.page.current.value);
 		} else {
 			handleTriggerKeydown(e, this.#ref.current, this.#root);
 		}
-	};
+	}
 
 	props = $derived.by(
 		() =>
@@ -176,9 +180,9 @@ class PaginationPageState {
 				"data-selected": this.#isSelected ? "" : undefined,
 				[PAGE_ATTR]: "",
 				//
-				onpointerdown: this.#onpointerdown,
-				onpointerup: this.#onpointerup,
-				onkeydown: this.#onkeydown,
+				onpointerdown: this.onpointerdown,
+				onpointerup: this.onpointerup,
+				onkeydown: this.onkeydown,
 			}) as const
 	);
 }
@@ -212,11 +216,15 @@ class PaginationButtonState {
 			id: this.id,
 			ref: this.#ref,
 		});
+
+		this.onpointerdown = this.onpointerdown.bind(this);
+		this.onpointerup = this.onpointerup.bind(this);
+		this.onkeydown = this.onkeydown.bind(this);
 	}
 
-	#action = () => {
+	#action() {
 		this.type === "prev" ? this.#root.prevPage() : this.#root.nextPage();
-	};
+	}
 
 	#isDisabled = $derived.by(() => {
 		if (this.#disabled.current) return true;
@@ -225,28 +233,28 @@ class PaginationButtonState {
 		return false;
 	});
 
-	#onpointerdown = (e: PointerEvent) => {
+	onpointerdown(e: BitsPointerEvent) {
 		if (this.#disabled.current) return;
 		if (e.pointerType === "touch") return e.preventDefault();
 		this.#action();
-	};
+	}
 
-	#onpointerup = (e: PointerEvent) => {
+	onpointerup(e: BitsPointerEvent) {
 		if (this.#disabled.current) return;
 		if (e.pointerType === "touch") {
 			e.preventDefault();
 			this.#action();
 		}
-	};
+	}
 
-	#onkeydown = (e: KeyboardEvent) => {
+	onkeydown(e: BitsKeyboardEvent) {
 		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
 			e.preventDefault();
 			this.#action();
 		} else {
 			handleTriggerKeydown(e, this.#ref.current, this.#root);
 		}
-	};
+	}
 
 	props = $derived.by(
 		() =>
@@ -256,9 +264,9 @@ class PaginationButtonState {
 				[NEXT_ATTR]: this.type === "next" ? "" : undefined,
 				disabled: this.#isDisabled,
 				//
-				onpointerdown: this.#onpointerdown,
-				onpointerup: this.#onpointerup,
-				onkeydown: this.#onkeydown,
+				onpointerdown: this.onpointerdown,
+				onpointerup: this.onpointerup,
+				onkeydown: this.onkeydown,
 			}) as const
 	);
 }

@@ -3,7 +3,7 @@ import type { WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
 import { createContext } from "$lib/internal/create-context.js";
-import type { WithRefProps } from "$lib/internal/types.js";
+import type { BitsKeyboardEvent, BitsPointerEvent, WithRefProps } from "$lib/internal/types.js";
 
 type PopoverRootStateProps = WritableBoxedValues<{
 	open: boolean;
@@ -19,14 +19,14 @@ class PopoverRootState {
 		this.open = props.open;
 	}
 
-	toggleOpen = () => {
+	toggleOpen() {
 		this.open.current = !this.open.current;
-	};
+	}
 
-	close = () => {
+	close() {
 		if (!this.open.current) return;
 		this.open.current = false;
-	};
+	}
 }
 
 type PopoverTriggerStateProps = WithRefProps & ReadableBoxedValues<{ disabled: boolean }>;
@@ -50,35 +50,39 @@ class PopoverTriggerState {
 				this.#root.triggerNode = node;
 			},
 		});
+
+		this.onpointerdown = this.onpointerdown.bind(this);
+		this.onpointerup = this.onpointerup.bind(this);
+		this.onkeydown = this.onkeydown.bind(this);
 	}
 
-	#onpointerdown = (e: PointerEvent) => {
+	onpointerdown(e: BitsPointerEvent) {
 		if (this.#disabled.current) return;
 		if (e.pointerType === "touch" || e.button !== 0) return e.preventDefault();
 		this.#root.toggleOpen();
-	};
+	}
 
-	#onpointerup = (e: PointerEvent) => {
+	onpointerup(e: BitsPointerEvent) {
 		if (this.#disabled.current) return;
 		if (e.pointerType === "touch") {
 			e.preventDefault();
 			this.#root.toggleOpen();
 		}
-	};
+	}
 
-	#onkeydown = (e: KeyboardEvent) => {
+	onkeydown(e: BitsKeyboardEvent) {
 		if (this.#disabled.current) return;
 		if (!(e.key === kbd.ENTER || e.key === kbd.SPACE)) return;
 		e.preventDefault();
 		this.#root.toggleOpen();
-	};
+	}
 
-	#getAriaControls = () => {
+	#getAriaControls() {
 		if (this.#root.open.current && this.#root.contentId) {
 			return this.#root.contentId;
 		}
 		return undefined;
-	};
+	}
 
 	props = $derived.by(
 		() =>
@@ -91,9 +95,9 @@ class PopoverTriggerState {
 				"data-popover-trigger": "",
 				disabled: this.#disabled.current,
 				//
-				onpointerdown: this.#onpointerdown,
-				onkeydown: this.#onkeydown,
-				onpointerup: this.#onpointerup,
+				onpointerdown: this.onpointerdown,
+				onkeydown: this.onkeydown,
+				onpointerup: this.onpointerup,
 			}) as const
 	);
 }
@@ -150,32 +154,26 @@ class PopoverCloseState {
 			ref: this.#ref,
 			deps: () => this.#root.open.current,
 		});
+		this.onclick = this.onclick.bind(this);
+		this.onkeydown = this.onkeydown.bind(this);
 	}
 
-	#onpointerdown = (e: PointerEvent) => {
-		if (e.pointerType === "touch") return e.preventDefault();
+	onclick(e: BitsPointerEvent) {
 		this.#root.close();
-	};
+	}
 
-	#onpointerup = (e: PointerEvent) => {
-		e.preventDefault();
-		if (e.pointerType === "touch") {
-			this.#root.close();
-		}
-	};
-
-	#onkeydown = (e: KeyboardEvent) => {
+	onkeydown(e: BitsKeyboardEvent) {
 		if (!(e.key === kbd.ENTER || e.key === kbd.SPACE)) return;
 		e.preventDefault();
 		this.#root.close();
-	};
+	}
 
 	props = $derived.by(
 		() =>
 			({
 				id: this.#id.current,
-				onclick: this.#onpointerdown,
-				onkeydown: this.#onkeydown,
+				onclick: this.onclick,
+				onkeydown: this.onkeydown,
 				type: "button",
 				"data-popover-close": "",
 			}) as const

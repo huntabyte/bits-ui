@@ -16,7 +16,12 @@ import { kbd } from "$lib/internal/kbd.js";
 import { isElementOrSVGElement } from "$lib/internal/is.js";
 import { isValidIndex } from "$lib/internal/arrays.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import type { OnChangeFn, WithRefProps } from "$lib/internal/types.js";
+import type {
+	BitsKeyboardEvent,
+	BitsPointerEvent,
+	OnChangeFn,
+	WithRefProps,
+} from "$lib/internal/types.js";
 import { addEventListener } from "$lib/internal/events.js";
 import type { Direction, Orientation } from "$lib/shared/index.js";
 import { createContext } from "$lib/internal/create-context.js";
@@ -116,7 +121,7 @@ class SliderRootState {
 		});
 	}
 
-	applyPosition = ({
+	applyPosition({
 		clientXY,
 		activeThumbIdx,
 		start,
@@ -126,7 +131,7 @@ class SliderRootState {
 		activeThumbIdx: number;
 		start: number;
 		end: number;
-	}) => {
+	}) {
 		const min = this.min.current;
 		const max = this.max.current;
 		const percent = (clientXY - start) / (end - start);
@@ -151,9 +156,9 @@ class SliderRootState {
 				this.updateValue(newValue, activeThumbIdx);
 			}
 		}
-	};
+	}
 
-	getClosestThumb = (e: PointerEvent) => {
+	#getClosestThumb = (e: PointerEvent) => {
 		const thumbs = this.getAllThumbs();
 		if (!thumbs.length) return;
 		for (const thumb of thumbs) {
@@ -226,7 +231,7 @@ class SliderRootState {
 	handlePointerDown = (e: PointerEvent) => {
 		if (e.button !== 0 || this.disabled.current) return;
 		const sliderNode = this.ref.current;
-		const closestThumb = this.getClosestThumb(e);
+		const closestThumb = this.#getClosestThumb(e);
 		if (!closestThumb || !sliderNode) return;
 
 		const target = e.target;
@@ -481,47 +486,15 @@ class SliderThumbState {
 			id: this.#id,
 			ref: this.#ref,
 		});
+
+		this.onkeydown = this.onkeydown.bind(this);
 	}
 
-	updateValue = (newValue: number) => {
+	#updateValue(newValue: number) {
 		this.#root.updateValue(newValue, this.#index.current);
-	};
+	}
 
-	moveValue = (thumbValue: number, increment: number) => {
-		const newValue = thumbValue + increment;
-		if (newValue >= this.#root.min.current && newValue <= this.#root.max.current) {
-			this.updateValue(newValue);
-		}
-	};
-
-	handleArrowKey = (
-		thumbValue: number,
-		isPositiveDirection: boolean,
-		isHorizontal: boolean,
-		e: KeyboardEvent
-	) => {
-		const orientation = this.#root.orientation.current;
-		const direction = this.#root.direction;
-		if (
-			(isHorizontal && orientation !== "horizontal") ||
-			(!isHorizontal && orientation === "horizontal")
-		)
-			return;
-
-		const isForwardDirection =
-			(isHorizontal && direction === "lr") || (!isHorizontal && direction === "bt");
-
-		if (e.metaKey) {
-			const max = this.#root.max.current;
-			const min = this.#root.min.current;
-			this.updateValue(isForwardDirection === isPositiveDirection ? max : min);
-		} else {
-			const step = this.#root.step.current;
-			this.moveValue(thumbValue, isForwardDirection === isPositiveDirection ? step : -step);
-		}
-	};
-
-	#onkeydown = (e: KeyboardEvent) => {
+	onkeydown(e: BitsKeyboardEvent) {
 		if (this.#isDisabled) return;
 		const currNode = this.#ref.current;
 		if (!currNode) return;
@@ -545,63 +518,63 @@ class SliderThumbState {
 
 		switch (e.key) {
 			case kbd.HOME:
-				this.updateValue(min);
+				this.#updateValue(min);
 				break;
 			case kbd.END:
-				this.updateValue(max);
+				this.#updateValue(max);
 				break;
 			case kbd.ARROW_LEFT:
 				if (orientation !== "horizontal") break;
 				if (e.metaKey) {
 					const newValue = direction === "rl" ? max : min;
-					this.updateValue(newValue);
+					this.#updateValue(newValue);
 				} else if (direction === "rl" && thumbValue < max) {
-					this.updateValue(thumbValue + step);
+					this.#updateValue(thumbValue + step);
 				} else if (direction === "lr" && thumbValue > min) {
-					this.updateValue(thumbValue - step);
+					this.#updateValue(thumbValue - step);
 				}
 				break;
 			case kbd.ARROW_RIGHT:
 				if (orientation !== "horizontal") break;
 				if (e.metaKey) {
 					const newValue = direction === "rl" ? min : max;
-					this.updateValue(newValue);
+					this.#updateValue(newValue);
 				} else if (direction === "rl" && thumbValue > min) {
-					this.updateValue(thumbValue - step);
+					this.#updateValue(thumbValue - step);
 				} else if (direction === "lr" && thumbValue < max) {
-					this.updateValue(thumbValue + step);
+					this.#updateValue(thumbValue + step);
 				}
 				break;
 			case kbd.ARROW_UP:
 				if (e.metaKey) {
 					const newValue = direction === "tb" ? min : max;
-					this.updateValue(newValue);
+					this.#updateValue(newValue);
 				} else if (direction === "tb" && thumbValue > min) {
-					this.updateValue(thumbValue - step);
+					this.#updateValue(thumbValue - step);
 				} else if (direction !== "tb" && thumbValue < max) {
-					this.updateValue(thumbValue + step);
+					this.#updateValue(thumbValue + step);
 				}
 				break;
 			case kbd.ARROW_DOWN:
 				if (e.metaKey) {
 					const newValue = direction === "tb" ? max : min;
-					this.updateValue(newValue);
+					this.#updateValue(newValue);
 				} else if (direction === "tb" && thumbValue < max) {
-					this.updateValue(thumbValue + step);
+					this.#updateValue(thumbValue + step);
 				} else if (direction !== "tb" && thumbValue > min) {
-					this.updateValue(thumbValue - step);
+					this.#updateValue(thumbValue - step);
 				}
 				break;
 		}
 		this.#root.onValueCommit.current(this.#root.value.current);
-	};
+	}
 
 	props = $derived.by(
 		() =>
 			({
 				...this.#root.thumbsPropsArr[this.#index.current]!,
 				id: this.#id.current,
-				onkeydown: this.#onkeydown,
+				onkeydown: this.onkeydown,
 			}) as const
 	);
 }

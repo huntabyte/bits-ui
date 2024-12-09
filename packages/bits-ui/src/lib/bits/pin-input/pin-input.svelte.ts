@@ -4,7 +4,13 @@ import { type WritableBox, box, useRefById } from "svelte-toolbelt";
 import { usePasswordManagerBadge } from "./usePasswordManager.svelte.js";
 import type { PinInputCell, PinInputRootProps as RootComponentProps } from "./types.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import type { WithRefProps } from "$lib/internal/types.js";
+import type {
+	BitsEvent,
+	BitsFocusEvent,
+	BitsKeyboardEvent,
+	BitsMouseEvent,
+	WithRefProps,
+} from "$lib/internal/types.js";
 import { noop } from "$lib/internal/noop.js";
 import { addEventListener } from "$lib/internal/events.js";
 import { getDisabled } from "$lib/internal/attrs.js";
@@ -150,7 +156,7 @@ class PinInputRootState {
 				}
 
 				if (!document.getElementById("pin-input-style")) {
-					this.applyStyles();
+					this.#applyStyles();
 				}
 
 				const updateRootHeight = () => {
@@ -206,6 +212,15 @@ class PinInputRootState {
 				onComplete(value);
 			}
 		});
+
+		this.onkeydown = this.onkeydown.bind(this);
+
+		this.oninput = this.oninput.bind(this);
+		this.onfocus = this.onfocus.bind(this);
+		this.onmouseover = this.onmouseover.bind(this);
+		this.onmouseleave = this.onmouseleave.bind(this);
+		this.onblur = this.onblur.bind(this);
+		this.onpaste = this.onpaste.bind(this);
 	}
 
 	keysToIgnore = [
@@ -225,13 +240,13 @@ class PinInputRootState {
 		"Meta",
 	];
 
-	#onkeydown = (e: KeyboardEvent) => {
+	onkeydown(e: BitsKeyboardEvent) {
 		const key = e.key;
 		if (this.keysToIgnore.includes(key)) return;
 		if (key && this.#regexPattern && !this.#regexPattern.test(key)) {
 			e.preventDefault();
 		}
-	};
+	}
 
 	#rootStyles = $derived.by(() => ({
 		position: "relative",
@@ -288,7 +303,7 @@ class PinInputRootState {
 		fontVariantNumeric: "tabular-nums",
 	}));
 
-	applyStyles = () => {
+	#applyStyles() {
 		const styleEl = document.createElement("style");
 		styleEl.id = "pin-input-style";
 		document.head.appendChild(styleEl);
@@ -317,7 +332,7 @@ class PinInputRootState {
 				`[data-pin-input-input] + * { pointer-events: all !important; }`
 			);
 		}
-	};
+	}
 
 	#onDocumentSelectionChange = () => {
 		const input = this.#inputRef.current;
@@ -383,7 +398,7 @@ class PinInputRootState {
 		this.#prevInputMetadata.prev = [s, e, dir];
 	};
 
-	#oninput = (e: Event & { currentTarget: HTMLInputElement }) => {
+	oninput(e: BitsEvent<Event, HTMLInputElement>) {
 		const newValue = e.currentTarget.value.slice(0, this.#maxLength.current);
 		if (newValue.length > 0 && this.#regexPattern && !this.#regexPattern.test(newValue)) {
 			e.preventDefault();
@@ -402,9 +417,9 @@ class PinInputRootState {
 			document.dispatchEvent(new Event("selectionchange"));
 		}
 		this.value.current = newValue;
-	};
+	}
 
-	#onfocus = (_: FocusEvent & { currentTarget: HTMLInputElement }) => {
+	onfocus = (_: BitsFocusEvent<HTMLInputElement>) => {
 		const input = this.#inputRef.current;
 		if (input) {
 			const start = Math.min(input.value.length, this.#maxLength.current - 1);
@@ -416,7 +431,7 @@ class PinInputRootState {
 		this.#isFocused.current = true;
 	};
 
-	#onpaste = (e: ClipboardEvent & { currentTarget: HTMLInputElement }) => {
+	onpaste = (e: BitsEvent<ClipboardEvent>) => {
 		const input = this.#inputRef.current;
 
 		if (!this.#initialLoad.isIOS) {
@@ -474,15 +489,15 @@ class PinInputRootState {
 		this.#mirrorSelectionEnd = selEnd;
 	};
 
-	#onmouseover = () => {
+	onmouseover = (_: BitsMouseEvent) => {
 		this.#isHoveringInput = true;
 	};
 
-	#onmouseleave = () => {
+	onmouseleave = (_: BitsMouseEvent) => {
 		this.#isHoveringInput = false;
 	};
 
-	#onblur = () => {
+	onblur = (_: BitsFocusEvent) => {
 		if (this.#prevInputMetadata.willSyntheticBlur) {
 			this.#prevInputMetadata.willSyntheticBlur = false;
 			return;
@@ -503,13 +518,13 @@ class PinInputRootState {
 		value: this.value.current,
 		disabled: getDisabled(this.#disabled.current),
 		//
-		onpaste: this.#onpaste,
-		oninput: this.#oninput,
-		onkeydown: this.#onkeydown,
-		onmouseover: this.#onmouseover,
-		onmouseleave: this.#onmouseleave,
-		onfocus: this.#onfocus,
-		onblur: this.#onblur,
+		onpaste: this.onpaste,
+		oninput: this.oninput,
+		onkeydown: this.onkeydown,
+		onmouseover: this.onmouseover,
+		onmouseleave: this.onmouseleave,
+		onfocus: this.onfocus,
+		onblur: this.onblur,
 	}));
 
 	#cells = $derived.by(() =>
