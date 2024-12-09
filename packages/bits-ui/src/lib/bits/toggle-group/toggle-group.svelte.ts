@@ -14,7 +14,7 @@ import {
 	useRovingFocus,
 } from "$lib/internal/use-roving-focus.svelte.js";
 import { createContext } from "$lib/internal/create-context.js";
-import type { WithRefProps } from "$lib/internal/types.js";
+import type { BitsKeyboardEvent, BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
 
 const ROOT_ATTR = "data-toggle-group-root";
 const ITEM_ATTR = "data-toggle-group-item";
@@ -88,18 +88,18 @@ class ToggleGroupSingleState extends ToggleGroupBaseState {
 		this.#value = props.value;
 	}
 
-	includesItem = (item: string) => {
+	includesItem(item: string) {
 		return this.#value.current === item;
-	};
+	}
 
-	toggleItem = (item: string, id: string) => {
+	toggleItem(item: string, id: string) {
 		if (this.includesItem(item)) {
 			this.#value.current = "";
 		} else {
 			this.#value.current = item;
 			this.rovingFocusGroup.setCurrentTabStopId(id);
 		}
-	};
+	}
 }
 
 //
@@ -121,18 +121,18 @@ class ToggleGroupMultipleState extends ToggleGroupBaseState {
 		this.#value = props.value;
 	}
 
-	includesItem = (item: string) => {
+	includesItem(item: string) {
 		return this.#value.current.includes(item);
-	};
+	}
 
-	toggleItem = (item: string, id: string) => {
+	toggleItem(item: string, id: string) {
 		if (this.includesItem(item)) {
 			this.#value.current = this.#value.current.filter((v) => v !== item);
 		} else {
 			this.#value.current = [...this.#value.current, item];
 			this.rovingFocusGroup.setCurrentTabStopId(id);
 		}
-	};
+	}
 }
 
 type ToggleGroupState = ToggleGroupSingleState | ToggleGroupMultipleState;
@@ -177,29 +177,32 @@ class ToggleGroupItemState {
 				this.#tabIndex = this.#root.rovingFocusGroup.getTabIndex(this.#ref.current);
 			}
 		});
+
+		this.onclick = this.onclick.bind(this);
+		this.onkeydown = this.onkeydown.bind(this);
 	}
 
-	toggleItem = () => {
+	#toggleItem() {
 		if (this.#isDisabled) return;
 		this.#root.toggleItem(this.#value.current, this.#id.current);
-	};
+	}
 
-	#onclick = () => {
+	onclick(_: BitsMouseEvent) {
 		if (this.#isDisabled) return;
 		this.#root.toggleItem(this.#value.current, this.#id.current);
-	};
+	}
 
-	#onkeydown = (e: KeyboardEvent) => {
+	onkeydown(e: BitsKeyboardEvent) {
 		if (this.#isDisabled) return;
 		if (e.key === kbd.ENTER || e.key === kbd.SPACE) {
 			e.preventDefault();
-			this.toggleItem();
+			this.#toggleItem();
 			return;
 		}
 		if (!this.#root.rovingFocus.current) return;
 
 		this.#root.rovingFocusGroup.handleKeydown(this.#ref.current, e);
-	};
+	}
 
 	isPressed = $derived.by(() => this.#root.includesItem(this.#value.current));
 
@@ -228,8 +231,8 @@ class ToggleGroupItemState {
 				disabled: getDisabled(this.#isDisabled),
 				[ITEM_ATTR]: "",
 				//
-				onclick: this.#onclick,
-				onkeydown: this.#onkeydown,
+				onclick: this.onclick,
+				onkeydown: this.onkeydown,
 			}) as const
 	);
 }

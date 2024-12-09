@@ -35,13 +35,15 @@ class AvatarRootState {
 		this.#ref = props.ref;
 		this.#id = props.id;
 
+		this.loadImage = this.loadImage.bind(this);
+
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
 		});
 	}
 
-	loadImage = (src: string, crossorigin?: CrossOrigin, referrerPolicy?: ReferrerPolicy) => {
+	loadImage(src: string, crossorigin?: CrossOrigin, referrerPolicy?: ReferrerPolicy) {
 		let imageTimerId: number;
 		const image = new Image();
 
@@ -61,7 +63,7 @@ class AvatarRootState {
 		return () => {
 			window.clearTimeout(imageTimerId);
 		};
-	};
+	}
 
 	props = $derived.by(
 		() =>

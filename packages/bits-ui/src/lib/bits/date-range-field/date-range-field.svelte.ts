@@ -151,10 +151,10 @@ export class DateRangeFieldRootState {
 			const value = this.value.current;
 			untrack(() => {
 				if (value.start !== undefined && value.start !== this.startValue.current) {
-					this.setStartValue(value.start);
+					this.#setStartValue(value.start);
 				}
 				if (value.end !== undefined && value.end !== this.endValue.current) {
-					this.setEndValue(value.end);
+					this.#setEndValue(value.end);
 				}
 			});
 		});
@@ -222,13 +222,13 @@ export class DateRangeFieldRootState {
 		return true;
 	});
 
-	setStartValue = (value: DateValue | undefined) => {
+	#setStartValue(value: DateValue | undefined) {
 		this.startValue.current = value;
-	};
+	}
 
-	setEndValue = (value: DateValue | undefined) => {
+	#setEndValue(value: DateValue | undefined) {
 		this.endValue.current = value;
-	};
+	}
 
 	/**
 	 * These props are used to override those of the child fields.

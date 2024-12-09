@@ -21,7 +21,7 @@ import {
 } from "$lib/internal/attrs.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { createContext } from "$lib/internal/create-context.js";
-import type { WithRefProps } from "$lib/internal/types.js";
+import type { BitsKeyboardEvent, BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
 import { useId } from "$lib/internal/use-id.js";
 import type { DateMatcher, Month } from "$lib/shared/index.js";
 import { type Announcer, getAnnouncer } from "$lib/internal/date-time/announcer.js";
@@ -131,6 +131,23 @@ export class CalendarRootState {
 		this.announcer = getAnnouncer();
 		this.formatter = createFormatter(this.locale.current);
 
+		this.setMonths = this.setMonths.bind(this);
+		this.nextPage = this.nextPage.bind(this);
+		this.prevPage = this.prevPage.bind(this);
+		this.prevYear = this.prevYear.bind(this);
+		this.nextYear = this.nextYear.bind(this);
+		this.setYear = this.setYear.bind(this);
+		this.setMonth = this.setMonth.bind(this);
+		this.isOutsideVisibleMonths = this.isOutsideVisibleMonths.bind(this);
+		this.isDateDisabled = this.isDateDisabled.bind(this);
+		this.isDateSelected = this.isDateSelected.bind(this);
+		this.shiftFocus = this.shiftFocus.bind(this);
+		this.handleCellClick = this.handleCellClick.bind(this);
+		this.handleMultipleUpdate = this.handleMultipleUpdate.bind(this);
+		this.handleSingleUpdate = this.handleSingleUpdate.bind(this);
+		this.onkeydown = this.onkeydown.bind(this);
+		this.getBitsAttr = this.getBitsAttr.bind(this);
+
 		useRefById({
 			id: this.id,
 			ref: this.ref,
@@ -193,7 +210,7 @@ export class CalendarRootState {
 			locale: this.locale,
 			numberOfMonths: this.numberOfMonths,
 			placeholder: this.placeholder,
-			setMonths: this.#setMonths,
+			setMonths: this.setMonths,
 			weekStartsOn: this.weekStartsOn,
 		});
 
@@ -226,7 +243,9 @@ export class CalendarRootState {
 		});
 	}
 
-	#setMonths = (months: Month<DateValue>[]) => (this.months = months);
+	setMonths(months: Month<DateValue>[]) {
+		this.months = months;
+	}
 
 	/**
 	 * This derived state holds an array of localized day names for the current
@@ -246,50 +265,50 @@ export class CalendarRootState {
 	/**
 	 * Navigates to the next page of the calendar.
 	 */
-	nextPage = () => {
+	nextPage() {
 		handleCalendarNextPage({
 			fixedWeeks: this.fixedWeeks.current,
 			locale: this.locale.current,
 			numberOfMonths: this.numberOfMonths.current,
 			pagedNavigation: this.pagedNavigation.current,
-			setMonths: this.#setMonths,
+			setMonths: this.setMonths,
 			setPlaceholder: (date: DateValue) => (this.placeholder.current = date),
 			weekStartsOn: this.weekStartsOn.current,
 			months: this.months,
 		});
-	};
+	}
 
 	/**
 	 * Navigates to the previous page of the calendar.
 	 */
-	prevPage = () => {
+	prevPage() {
 		handleCalendarPrevPage({
 			fixedWeeks: this.fixedWeeks.current,
 			locale: this.locale.current,
 			numberOfMonths: this.numberOfMonths.current,
 			pagedNavigation: this.pagedNavigation.current,
-			setMonths: this.#setMonths,
+			setMonths: this.setMonths,
 			setPlaceholder: (date: DateValue) => (this.placeholder.current = date),
 			weekStartsOn: this.weekStartsOn.current,
 			months: this.months,
 		});
-	};
+	}
 
-	nextYear = () => {
+	nextYear() {
 		this.placeholder.current = this.placeholder.current.add({ years: 1 });
-	};
+	}
 
-	prevYear = () => {
+	prevYear() {
 		this.placeholder.current = this.placeholder.current.subtract({ years: 1 });
-	};
+	}
 
-	setYear = (year: number) => {
+	setYear(year: number) {
 		this.placeholder.current = this.placeholder.current.set({ year });
-	};
+	}
 
-	setMonth = (month: number) => {
+	setMonth(month: number) {
 		this.placeholder.current = this.placeholder.current.set({ month });
-	};
+	}
 
 	isNextButtonDisabled = $derived.by(() => {
 		return getIsNextButtonDisabled({
@@ -337,20 +356,20 @@ export class CalendarRootState {
 		return `${this.calendarLabel.current} ${this.headingValue}`;
 	});
 
-	isOutsideVisibleMonths = (date: DateValue) => {
+	isOutsideVisibleMonths(date: DateValue) {
 		return !this.visibleMonths.some((month) => isSameMonth(date, month));
-	};
+	}
 
-	isDateDisabled = (date: DateValue) => {
+	isDateDisabled(date: DateValue) {
 		if (this.isDateDisabledProp.current(date) || this.disabled.current) return true;
 		const minValue = this.minValue.current;
 		const maxValue = this.maxValue.current;
 		if (minValue && isBefore(date, minValue)) return true;
 		if (maxValue && isBefore(maxValue, date)) return true;
 		return false;
-	};
+	}
 
-	isDateSelected = (date: DateValue) => {
+	isDateSelected(date: DateValue) {
 		const value = this.value.current;
 		if (Array.isArray(value)) {
 			return value.some((d) => isSameDay(d, date));
@@ -359,9 +378,9 @@ export class CalendarRootState {
 		} else {
 			return isSameDay(value, date);
 		}
-	};
+	}
 
-	#shiftFocus = (node: HTMLElement, add: number) => {
+	shiftFocus(node: HTMLElement, add: number) {
 		return shiftCalendarFocus({
 			node,
 			add,
@@ -372,9 +391,9 @@ export class CalendarRootState {
 			months: this.months,
 			numberOfMonths: this.numberOfMonths.current,
 		});
-	};
+	}
 
-	handleCellClick = (_: Event, date: DateValue) => {
+	handleCellClick(_: Event, date: DateValue) {
 		const readonly = this.readonly.current;
 		if (readonly) return;
 		const isDateDisabled = this.isDateDisabledProp.current;
@@ -385,11 +404,11 @@ export class CalendarRootState {
 		const multiple = this.type.current === "multiple";
 		if (multiple) {
 			if (Array.isArray(prev) || prev === undefined) {
-				this.value.current = this.#handleMultipleUpdate(prev, date);
+				this.value.current = this.handleMultipleUpdate(prev, date);
 			}
 		} else {
 			if (!Array.isArray(prev)) {
-				const next = this.#handleSingleUpdate(prev, date);
+				const next = this.handleSingleUpdate(prev, date);
 				if (!next) {
 					this.announcer.announce("Selected date is now empty.", "polite", 5000);
 				} else {
@@ -404,9 +423,9 @@ export class CalendarRootState {
 				}
 			}
 		}
-	};
+	}
 
-	#handleMultipleUpdate = (prev: DateValue[] | undefined, date: DateValue) => {
+	handleMultipleUpdate(prev: DateValue[] | undefined, date: DateValue) {
 		if (!prev) return [date];
 		if (!Array.isArray(prev)) {
 			if (DEV) throw new Error("Invalid value for multiple prop.");
@@ -426,9 +445,9 @@ export class CalendarRootState {
 			}
 			return next;
 		}
-	};
+	}
 
-	#handleSingleUpdate = (prev: DateValue | undefined, date: DateValue) => {
+	handleSingleUpdate(prev: DateValue | undefined, date: DateValue) {
 		if (Array.isArray(prev)) {
 			if (DEV) throw new Error("Invalid value for single prop.");
 		}
@@ -439,25 +458,25 @@ export class CalendarRootState {
 			return undefined;
 		}
 		return date;
-	};
+	}
 
-	#onkeydown = (event: KeyboardEvent) => {
+	onkeydown(event: BitsKeyboardEvent) {
 		handleCalendarKeydown({
 			event,
 			handleCellClick: this.handleCellClick,
-			shiftFocus: this.#shiftFocus,
+			shiftFocus: this.shiftFocus,
 			placeholderValue: this.placeholder.current,
 		});
-	};
+	}
 
 	snippetProps = $derived.by(() => ({
 		months: this.months,
 		weekdays: this.weekdays,
 	}));
 
-	getBitsAttr = (part: CalendarParts) => {
+	getBitsAttr(part: CalendarParts) {
 		return `data-bits-calendar-${part}`;
-	};
+	}
 
 	props = $derived.by(
 		() =>
@@ -471,7 +490,7 @@ export class CalendarRootState {
 				}),
 				[this.getBitsAttr("root")]: "",
 				//
-				onkeydown: this.#onkeydown,
+				onkeydown: this.onkeydown,
 			}) as const
 	);
 }
@@ -607,6 +626,7 @@ class CalendarDayState {
 	) {
 		this.id = props.id;
 		this.ref = props.ref;
+		this.onclick = this.onclick.bind(this);
 
 		useRefById({
 			id: this.id,
@@ -623,10 +643,10 @@ class CalendarDayState {
 				: -1
 	);
 
-	#onclick = (e: MouseEvent) => {
+	onclick(e: BitsMouseEvent) {
 		if (this.cell.isDisabled) return;
 		this.cell.root.handleCellClick(e, this.cell.date.current);
-	};
+	}
 
 	snippetProps = $derived.by(() => ({
 		disabled: this.cell.isDisabled,
@@ -648,7 +668,7 @@ class CalendarDayState {
 				// Shared logic for range calendar and calendar
 				"data-bits-day": "",
 				//
-				onclick: this.#onclick,
+				onclick: this.onclick,
 			}) as const
 	);
 }
@@ -666,6 +686,7 @@ export class CalendarNextButtonState {
 	) {
 		this.id = props.id;
 		this.ref = props.ref;
+		this.onclick = this.onclick.bind(this);
 
 		useRefById({
 			id: this.id,
@@ -673,10 +694,10 @@ export class CalendarNextButtonState {
 		});
 	}
 
-	#onclick = () => {
+	onclick(_: BitsMouseEvent) {
 		if (this.isDisabled) return;
 		this.root.nextPage();
-	};
+	}
 
 	props = $derived.by(
 		() =>
@@ -690,7 +711,7 @@ export class CalendarNextButtonState {
 				disabled: this.isDisabled,
 				[this.root.getBitsAttr("next-button")]: "",
 				//
-				onclick: this.#onclick,
+				onclick: this.onclick,
 			}) as const
 	);
 }
@@ -708,6 +729,7 @@ export class CalendarPrevButtonState {
 	) {
 		this.id = props.id;
 		this.ref = props.ref;
+		this.onclick = this.onclick.bind(this);
 
 		useRefById({
 			id: this.id,
@@ -715,10 +737,10 @@ export class CalendarPrevButtonState {
 		});
 	}
 
-	#onclick = () => {
+	onclick(_: BitsMouseEvent) {
 		if (this.isDisabled) return;
 		this.root.prevPage();
-	};
+	}
 
 	props = $derived.by(
 		() =>
@@ -732,7 +754,7 @@ export class CalendarPrevButtonState {
 				disabled: this.isDisabled,
 				[this.root.getBitsAttr("prev-button")]: "",
 				//
-				onclick: this.#onclick,
+				onclick: this.onclick,
 			}) as const
 	);
 }

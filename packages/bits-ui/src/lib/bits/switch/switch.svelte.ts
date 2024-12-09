@@ -11,7 +11,7 @@ import {
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { createContext } from "$lib/internal/create-context.js";
-import type { WithRefProps } from "$lib/internal/types.js";
+import type { BitsKeyboardEvent, BitsPointerEvent, WithRefProps } from "$lib/internal/types.js";
 
 const ROOT_ATTR = "data-switch-root";
 const THUMB_ATTR = "data-switch-thumb";
@@ -49,22 +49,25 @@ class SwitchRootState {
 			id: this.#id,
 			ref: this.#ref,
 		});
+
+		this.onkeydown = this.onkeydown.bind(this);
+		this.onclick = this.onclick.bind(this);
 	}
 
-	#toggle = () => {
+	#toggle() {
 		this.checked.current = !this.checked.current;
-	};
+	}
 
-	#onkeydown = (e: KeyboardEvent) => {
+	onkeydown(e: BitsKeyboardEvent) {
 		if (!(e.key === kbd.ENTER || e.key === kbd.SPACE) || this.disabled.current) return;
 		e.preventDefault();
 		this.#toggle();
-	};
+	}
 
-	#onclick = (e: PointerEvent) => {
+	onclick(_: BitsPointerEvent) {
 		if (this.disabled.current) return;
 		this.#toggle();
-	};
+	}
 
 	sharedProps = $derived.by(() => ({
 		"data-disabled": getDataDisabled(this.disabled.current),
@@ -83,8 +86,8 @@ class SwitchRootState {
 				"aria-required": getAriaRequired(this.required.current),
 				[ROOT_ATTR]: "",
 				//
-				onclick: this.#onclick,
-				onkeydown: this.#onkeydown,
+				onclick: this.onclick,
+				onkeydown: this.onkeydown,
 			}) as const
 	);
 }

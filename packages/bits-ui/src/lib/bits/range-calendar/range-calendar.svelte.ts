@@ -9,7 +9,12 @@ import { untrack } from "svelte";
 import { useRefById } from "svelte-toolbelt";
 import type { DateRange, Month } from "$lib/shared/index.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import type { WithRefProps } from "$lib/internal/types.js";
+import type {
+	BitsFocusEvent,
+	BitsKeyboardEvent,
+	BitsMouseEvent,
+	WithRefProps,
+} from "$lib/internal/types.js";
 import { useId } from "$lib/internal/use-id.js";
 import {
 	getAriaDisabled,
@@ -162,7 +167,7 @@ export class RangeCalendarRootState {
 			locale: this.locale,
 			fixedWeeks: this.fixedWeeks,
 			numberOfMonths: this.numberOfMonths,
-			setMonths: this.#setMonths,
+			setMonths: this.setMonths,
 		});
 
 		/**
@@ -174,7 +179,7 @@ export class RangeCalendarRootState {
 			locale: this.locale,
 			numberOfMonths: this.numberOfMonths,
 			placeholder: this.placeholder,
-			setMonths: this.#setMonths,
+			setMonths: this.setMonths,
 			weekStartsOn: this.weekStartsOn,
 		});
 
@@ -234,8 +239,8 @@ export class RangeCalendarRootState {
 						if (isBefore(endValue, startValue)) {
 							const start = startValue;
 							const end = endValue;
-							this.setStartValue(end);
-							this.setEndValue(start);
+							this.#setStartValue(end);
+							this.#setEndValue(start);
 							return { start: endValue, end: startValue };
 						} else {
 							return {
@@ -252,26 +257,42 @@ export class RangeCalendarRootState {
 				}
 			});
 		});
+
+		this.shiftFocus = this.shiftFocus.bind(this);
+		this.handleCellClick = this.handleCellClick.bind(this);
+		this.onkeydown = this.onkeydown.bind(this);
+		this.nextPage = this.nextPage.bind(this);
+		this.prevPage = this.prevPage.bind(this);
+		this.nextYear = this.nextYear.bind(this);
+		this.prevYear = this.prevYear.bind(this);
+		this.setYear = this.setYear.bind(this);
+		this.setMonth = this.setMonth.bind(this);
+		this.isDateDisabled = this.isDateDisabled.bind(this);
+		this.isDateUnavailable = this.isDateUnavailable.bind(this);
+		this.isOutsideVisibleMonths = this.isOutsideVisibleMonths.bind(this);
+		this.isSelected = this.isSelected.bind(this);
 	}
 
-	#updateValue = (cb: (value: DateRange) => DateRange) => {
+	#updateValue(cb: (value: DateRange) => DateRange) {
 		const value = this.value.current;
 		const newValue = cb(value);
 		this.value.current = newValue;
 		if (newValue.start && newValue.end) {
 			this.onRangeSelect?.current?.();
 		}
-	};
+	}
 
-	setStartValue = (value: DateValue | undefined) => {
+	#setStartValue(value: DateValue | undefined) {
 		this.startValue.current = value;
-	};
+	}
 
-	setEndValue = (value: DateValue | undefined) => {
+	#setEndValue(value: DateValue | undefined) {
 		this.endValue.current = value;
-	};
+	}
 
-	#setMonths = (months: Month<DateValue>[]) => (this.months = months);
+	setMonths = (months: Month<DateValue>[]) => {
+		this.months = months;
+	};
 
 	/**
 	 * This derived state holds an array of localized day names for the current
@@ -288,23 +309,23 @@ export class RangeCalendarRootState {
 		});
 	});
 
-	isOutsideVisibleMonths = (date: DateValue) => {
+	isOutsideVisibleMonths(date: DateValue) {
 		return !this.visibleMonths.some((month) => isSameMonth(date, month));
-	};
+	}
 
-	isDateDisabled = (date: DateValue) => {
+	isDateDisabled(date: DateValue) {
 		if (this.isDateDisabledProp.current(date) || this.disabled.current) return true;
 		const minValue = this.minValue.current;
 		const maxValue = this.maxValue.current;
 		if (minValue && isBefore(date, minValue)) return true;
 		if (maxValue && isAfter(date, maxValue)) return true;
 		return false;
-	};
+	}
 
-	isDateUnavailable = (date: DateValue) => {
+	isDateUnavailable(date: DateValue) {
 		if (this.isDateUnavailableProp.current(date)) return true;
 		return false;
-	};
+	}
 
 	isStartInvalid = $derived.by(() => {
 		if (!this.startValue.current) return false;
@@ -361,24 +382,24 @@ export class RangeCalendarRootState {
 
 	fullCalendarLabel = $derived.by(() => `${this.calendarLabel.current} ${this.headingValue}`);
 
-	isSelectionStart = (date: DateValue) => {
+	isSelectionStart(date: DateValue) {
 		if (!this.startValue.current) return false;
 		return isSameDay(date, this.startValue.current);
-	};
+	}
 
-	isSelectionEnd = (date: DateValue) => {
+	isSelectionEnd(date: DateValue) {
 		if (!this.endValue.current) return false;
 		return isSameDay(date, this.endValue.current);
-	};
+	}
 
-	isSelected = (date: DateValue) => {
+	isSelected(date: DateValue) {
 		if (this.startValue.current && isSameDay(this.startValue.current, date)) return true;
 		if (this.endValue.current && isSameDay(this.endValue.current, date)) return true;
 		if (this.startValue.current && this.endValue.current) {
 			return isBetweenInclusive(date, this.startValue.current, this.endValue.current);
 		}
 		return false;
-	};
+	}
 
 	highlightedRange = $derived.by(() => {
 		if (this.startValue.current && this.endValue.current) return null;
@@ -411,7 +432,7 @@ export class RangeCalendarRootState {
 		return null;
 	});
 
-	#shiftFocus = (node: HTMLElement, add: number) => {
+	shiftFocus(node: HTMLElement, add: number) {
 		return shiftCalendarFocus({
 			node,
 			add,
@@ -422,27 +443,27 @@ export class RangeCalendarRootState {
 			months: this.months,
 			numberOfMonths: this.numberOfMonths.current,
 		});
-	};
+	}
 
-	#announceEmpty = () => {
+	#announceEmpty() {
 		this.announcer.announce("Selected date is now empty.", "polite");
-	};
+	}
 
-	#announceSelectedDate = (date: DateValue) => {
+	#announceSelectedDate(date: DateValue) {
 		this.announcer.announce(
 			`Selected Date: ${this.formatter.selectedDate(date, false)}`,
 			"polite"
 		);
-	};
+	}
 
-	#announceSelectedRange = (start: DateValue, end: DateValue) => {
+	#announceSelectedRange(start: DateValue, end: DateValue) {
 		this.announcer.announce(
 			`Selected Dates: ${this.formatter.selectedDate(start, false)} to ${this.formatter.selectedDate(end, false)}`,
 			"polite"
 		);
-	};
+	}
 
-	handleCellClick = (e: Event, date: DateValue) => {
+	handleCellClick(e: Event, date: DateValue) {
 		if (this.isDateDisabled(date) || this.isDateUnavailable(date)) return;
 		const prevLastPressedDate = this.lastPressedDateValue;
 		this.lastPressedDateValue = date;
@@ -453,14 +474,14 @@ export class RangeCalendarRootState {
 				!this.preventDeselect.current &&
 				!this.endValue.current
 			) {
-				this.setStartValue(undefined);
+				this.#setStartValue(undefined);
 				this.placeholder.current = date;
 				this.#announceEmpty();
 				return;
 			} else if (!this.endValue.current) {
 				e.preventDefault();
 				if (prevLastPressedDate && isSameDay(prevLastPressedDate, date)) {
-					this.setStartValue(date);
+					this.#setStartValue(date);
 					this.#announceSelectedDate(date);
 				}
 			}
@@ -472,8 +493,8 @@ export class RangeCalendarRootState {
 			isSameDay(this.endValue.current, date) &&
 			!this.preventDeselect.current
 		) {
-			this.setStartValue(undefined);
-			this.setEndValue(undefined);
+			this.#setStartValue(undefined);
+			this.#setEndValue(undefined);
 			this.placeholder.current = date;
 			this.#announceEmpty();
 			return;
@@ -481,77 +502,77 @@ export class RangeCalendarRootState {
 
 		if (!this.startValue.current) {
 			this.#announceSelectedDate(date);
-			this.setStartValue(date);
+			this.#setStartValue(date);
 		} else if (!this.endValue.current) {
 			this.#announceSelectedRange(this.startValue.current, date);
-			this.setEndValue(date);
+			this.#setEndValue(date);
 		} else if (this.endValue.current && this.startValue.current) {
-			this.setEndValue(undefined);
+			this.#setEndValue(undefined);
 			this.#announceSelectedDate(date);
-			this.setStartValue(date);
+			this.#setStartValue(date);
 		}
-	};
+	}
 
-	#onkeydown = (event: KeyboardEvent) => {
+	onkeydown(event: BitsKeyboardEvent) {
 		return handleCalendarKeydown({
 			event,
 			handleCellClick: this.handleCellClick,
 			placeholderValue: this.placeholder.current,
-			shiftFocus: this.#shiftFocus,
+			shiftFocus: this.shiftFocus,
 		});
-	};
+	}
 
 	/**
 	 * Navigates to the next page of the calendar.
 	 */
-	nextPage = () => {
+	nextPage() {
 		handleCalendarNextPage({
 			fixedWeeks: this.fixedWeeks.current,
 			locale: this.locale.current,
 			numberOfMonths: this.numberOfMonths.current,
 			pagedNavigation: this.pagedNavigation.current,
-			setMonths: this.#setMonths,
+			setMonths: this.setMonths,
 			setPlaceholder: (date: DateValue) => (this.placeholder.current = date),
 			weekStartsOn: this.weekStartsOn.current,
 			months: this.months,
 		});
-	};
+	}
 
 	/**
 	 * Navigates to the previous page of the calendar.
 	 */
-	prevPage = () => {
+	prevPage() {
 		handleCalendarPrevPage({
 			fixedWeeks: this.fixedWeeks.current,
 			locale: this.locale.current,
 			numberOfMonths: this.numberOfMonths.current,
 			pagedNavigation: this.pagedNavigation.current,
-			setMonths: this.#setMonths,
+			setMonths: this.setMonths,
 			setPlaceholder: (date: DateValue) => (this.placeholder.current = date),
 			weekStartsOn: this.weekStartsOn.current,
 			months: this.months,
 		});
-	};
+	}
 
-	nextYear = () => {
+	nextYear() {
 		this.placeholder.current = this.placeholder.current.add({ years: 1 });
-	};
+	}
 
-	prevYear = () => {
+	prevYear() {
 		this.placeholder.current = this.placeholder.current.subtract({ years: 1 });
-	};
+	}
 
-	setYear = (year: number) => {
+	setYear(year: number) {
 		this.placeholder.current = this.placeholder.current.set({ year });
-	};
+	}
 
-	setMonth = (month: number) => {
+	setMonth(month: number) {
 		this.placeholder.current = this.placeholder.current.set({ month });
-	};
+	}
 
-	getBitsAttr = (part: CalendarParts) => {
+	getBitsAttr(part: CalendarParts) {
 		return `data-range-calendar-${part}`;
-	};
+	}
 
 	snippetProps = $derived.by(() => ({
 		months: this.months,
@@ -570,7 +591,7 @@ export class RangeCalendarRootState {
 				}),
 				[this.getBitsAttr("root")]: "",
 				//
-				onkeydown: this.#onkeydown,
+				onkeydown: this.onkeydown,
 			}) as const
 	);
 }
@@ -695,6 +716,10 @@ class RangeCalendarDayState {
 			id: this.id,
 			ref: this.ref,
 		});
+
+		this.onclick = this.onclick.bind(this);
+		this.onmouseenter = this.onmouseenter.bind(this);
+		this.onfocusin = this.onfocusin.bind(this);
 	}
 
 	#tabindex = $derived.by(() =>
@@ -706,20 +731,20 @@ class RangeCalendarDayState {
 				: -1
 	);
 
-	#onclick = (e: MouseEvent) => {
+	onclick(e: BitsMouseEvent) {
 		if (this.cell.isDisabled) return;
 		this.cell.root.handleCellClick(e, this.cell.date.current);
-	};
+	}
 
-	#onmouseenter = () => {
+	onmouseenter(_: BitsMouseEvent) {
 		if (this.cell.isDisabled) return;
 		this.cell.root.focusedValue = this.cell.date.current;
-	};
+	}
 
-	#onfocusin = () => {
+	onfocusin(_: BitsFocusEvent) {
 		if (this.cell.isDisabled) return;
 		this.cell.root.focusedValue = this.cell.date.current;
-	};
+	}
 
 	snippetProps = $derived.by(() => ({
 		disabled: this.cell.isDisabled,
@@ -741,9 +766,9 @@ class RangeCalendarDayState {
 				// Shared logic for range calendar and calendar
 				"data-bits-day": "",
 				//
-				onclick: this.#onclick,
-				onmouseenter: this.#onmouseenter,
-				onfocusin: this.#onfocusin,
+				onclick: this.onclick,
+				onmouseenter: this.onmouseenter,
+				onfocusin: this.onfocusin,
 			}) as const
 	);
 }

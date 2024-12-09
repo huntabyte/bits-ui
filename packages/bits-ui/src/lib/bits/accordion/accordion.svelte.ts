@@ -1,6 +1,6 @@
 import { afterTick, useRefById } from "svelte-toolbelt";
 import type { Box, ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import type { WithRefProps } from "$lib/internal/types.js";
+import type { BitsKeyboardEvent, BitsPointerEvent, WithRefProps } from "$lib/internal/types.js";
 import {
 	getAriaDisabled,
 	getAriaExpanded,
@@ -86,15 +86,17 @@ export class AccordionSingleState extends AccordionBaseState {
 	constructor(props: AccordionSingleStateProps) {
 		super(props);
 		this.#value = props.value;
+		this.includesItem = this.includesItem.bind(this);
+		this.toggleItem = this.toggleItem.bind(this);
 	}
 
-	includesItem = (item: string) => {
+	includesItem(item: string) {
 		return this.#value.current === item;
-	};
+	}
 
-	toggleItem = (item: string) => {
+	toggleItem(item: string) {
 		this.#value.current = this.includesItem(item) ? "" : item;
-	};
+	}
 }
 
 //
@@ -110,19 +112,22 @@ export class AccordionMultiState extends AccordionBaseState {
 	constructor(props: AccordionMultiStateProps) {
 		super(props);
 		this.#value = props.value;
+
+		this.includesItem = this.includesItem.bind(this);
+		this.toggleItem = this.toggleItem.bind(this);
 	}
 
-	includesItem = (item: string) => {
+	includesItem(item: string) {
 		return this.#value.current.includes(item);
-	};
+	}
 
-	toggleItem = (item: string) => {
+	toggleItem(item: string) {
 		if (this.includesItem(item)) {
 			this.#value.current = this.#value.current.filter((v) => v !== item);
 		} else {
 			this.#value.current = [...this.#value.current, item];
 		}
-	};
+	}
 }
 
 //
@@ -154,6 +159,8 @@ export class AccordionItemState {
 		this.#id = props.id;
 		this.#ref = props.ref;
 
+		this.updateValue = this.updateValue.bind(this);
+
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
@@ -161,9 +168,9 @@ export class AccordionItemState {
 		});
 	}
 
-	updateValue = () => {
+	updateValue() {
 		this.root.toggleItem(this.value.current);
-	};
+	}
 
 	props = $derived.by(
 		() =>
@@ -206,6 +213,9 @@ class AccordionTriggerState {
 		this.#root = itemState.root;
 		this.#id = props.id;
 		this.#ref = props.ref;
+		this.onpointerdown = this.onpointerdown.bind(this);
+		this.onpointerup = this.onpointerup.bind(this);
+		this.onkeydown = this.onkeydown.bind(this);
 
 		useRefById({
 			id: props.id,
@@ -213,21 +223,21 @@ class AccordionTriggerState {
 		});
 	}
 
-	#onpointerdown = (e: PointerEvent) => {
+	onpointerdown(e: BitsPointerEvent) {
 		if (this.#isDisabled) return;
 		if (e.pointerType === "touch" || e.button !== 0) return e.preventDefault();
 		this.#itemState.updateValue();
-	};
+	}
 
-	#onpointerup = (e: PointerEvent) => {
+	onpointerup(e: BitsPointerEvent) {
 		if (this.#isDisabled) return;
 		if (e.pointerType === "touch") {
 			e.preventDefault();
 			this.#itemState.updateValue();
 		}
-	};
+	}
 
-	#onkeydown = (e: KeyboardEvent) => {
+	onkeydown(e: BitsKeyboardEvent) {
 		if (this.#isDisabled) return;
 		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
 			e.preventDefault();
@@ -236,7 +246,7 @@ class AccordionTriggerState {
 		}
 
 		this.#root.rovingFocusGroup.handleKeydown(this.#ref.current, e);
-	};
+	}
 
 	props = $derived.by(
 		() =>
@@ -251,9 +261,9 @@ class AccordionTriggerState {
 				[ACCORDION_TRIGGER_ATTR]: "",
 				tabindex: 0,
 				//
-				onpointerdown: this.#onpointerdown,
-				onpointerup: this.#onpointerup,
-				onkeydown: this.#onkeydown,
+				onpointerdown: this.onpointerdown,
+				onpointerup: this.onpointerup,
+				onkeydown: this.onkeydown,
 			}) as const
 	);
 }

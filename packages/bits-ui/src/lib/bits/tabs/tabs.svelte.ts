@@ -13,7 +13,12 @@ import {
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import type { WithRefProps } from "$lib/internal/types.js";
+import type {
+	BitsFocusEvent,
+	BitsKeyboardEvent,
+	BitsMouseEvent,
+	WithRefProps,
+} from "$lib/internal/types.js";
 import type { Orientation } from "$lib/shared/index.js";
 import {
 	type UseRovingFocusReturn,
@@ -75,7 +80,7 @@ class TabsRootState {
 		});
 	}
 
-	registerTrigger = (id: string, value: string) => {
+	registerTrigger(id: string, value: string) {
 		this.triggerIds.push(id);
 		this.valueToTriggerId.set(value, id);
 
@@ -84,20 +89,20 @@ class TabsRootState {
 			this.triggerIds = this.triggerIds.filter((triggerId) => triggerId !== id);
 			this.valueToTriggerId.delete(value);
 		};
-	};
+	}
 
-	registerContent = (id: string, value: string) => {
+	registerContent(id: string, value: string) {
 		this.valueToContentId.set(value, id);
 
 		// returns the deregister function
 		return () => {
 			this.valueToContentId.delete(value);
 		};
-	};
+	}
 
-	setValue = (v: string) => {
+	setValue(v: string) {
 		this.value.current = v;
-	};
+	}
 
 	props = $derived.by(
 		() =>
@@ -200,28 +205,31 @@ class TabsTriggerState {
 				this.#tabIndex = -1;
 			}
 		});
+		this.onfocus = this.onfocus.bind(this);
+		this.onclick = this.onclick.bind(this);
+		this.onkeydown = this.onkeydown.bind(this);
 	}
 
-	activate = () => {
+	#activate() {
 		if (this.#root.value.current === this.#value.current) return;
 		this.#root.setValue(this.#value.current);
-	};
+	}
 
-	#onfocus: FocusEventHandler<HTMLButtonElement> = () => {
+	onfocus = (_: BitsFocusEvent) => {
 		if (this.#root.activationMode.current !== "automatic" || this.#isDisabled) return;
-		this.activate();
+		this.#activate();
 	};
 
-	#onclick: MouseEventHandler<HTMLButtonElement> = (e) => {
+	onclick = (_: BitsMouseEvent) => {
 		if (this.#isDisabled) return;
-		this.activate();
+		this.#activate();
 	};
 
-	#onkeydown: KeyboardEventHandler<HTMLButtonElement> = (e) => {
+	onkeydown = (e: BitsKeyboardEvent) => {
 		if (this.#isDisabled) return;
 		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
 			e.preventDefault();
-			this.activate();
+			this.#activate();
 			return;
 		}
 		this.#root.rovingFocusGroup.handleKeydown(this.#ref.current, e);
@@ -242,9 +250,9 @@ class TabsTriggerState {
 				disabled: getDisabled(this.#isDisabled),
 				tabindex: this.#tabIndex,
 				//
-				onclick: this.#onclick,
-				onfocus: this.#onfocus,
-				onkeydown: this.#onkeydown,
+				onclick: this.onclick,
+				onfocus: this.onfocus,
+				onkeydown: this.onkeydown,
 			}) as const
 	);
 }

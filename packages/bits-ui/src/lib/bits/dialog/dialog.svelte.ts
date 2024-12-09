@@ -3,7 +3,12 @@ import type { KeyboardEventHandler, MouseEventHandler, PointerEventHandler } fro
 import { getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { createContext } from "$lib/internal/create-context.js";
-import type { WithRefProps } from "$lib/internal/types.js";
+import type {
+	BitsKeyboardEvent,
+	BitsMouseEvent,
+	BitsPointerEvent,
+	WithRefProps,
+} from "$lib/internal/types.js";
 import { kbd } from "$lib/internal/kbd.js";
 
 type DialogVariant = "alert-dialog" | "dialog";
@@ -45,17 +50,19 @@ class DialogRootState {
 	constructor(props: DialogRootStateProps) {
 		this.open = props.open;
 		this.variant = props.variant;
+		this.handleOpen = this.handleOpen.bind(this);
+		this.handleClose = this.handleClose.bind(this);
 	}
 
-	handleOpen = () => {
+	handleOpen() {
 		if (this.open.current) return;
 		this.open.current = true;
-	};
+	}
 
-	handleClose = () => {
+	handleClose() {
 		if (!this.open.current) return;
 		this.open.current = false;
-	};
+	}
 
 	sharedProps = $derived.by(
 		() =>
@@ -79,6 +86,10 @@ class DialogTriggerState {
 		this.#ref = props.ref;
 		this.#disabled = props.disabled;
 
+		this.onclick = this.onclick.bind(this);
+		this.onpointerdown = this.onpointerdown.bind(this);
+		this.onkeydown = this.onkeydown.bind(this);
+
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
@@ -89,13 +100,13 @@ class DialogTriggerState {
 		});
 	}
 
-	#onclick: MouseEventHandler<HTMLButtonElement> = (e) => {
+	onclick = (e: BitsMouseEvent) => {
 		if (this.#disabled.current) return;
 		if (e.button > 0) return;
 		this.#root.handleOpen();
 	};
 
-	#onpointerdown: PointerEventHandler<HTMLButtonElement> = (e) => {
+	onpointerdown = (e: BitsPointerEvent) => {
 		if (this.#disabled.current) return;
 		if (e.pointerType === "touch") return e.preventDefault();
 		if (e.button > 0) return;
@@ -106,7 +117,7 @@ class DialogTriggerState {
 		this.#root.handleOpen();
 	};
 
-	#onkeydown: KeyboardEventHandler<HTMLButtonElement> = (e) => {
+	onkeydown = (e: BitsKeyboardEvent) => {
 		if (this.#disabled.current) return;
 		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
 			e.preventDefault();
@@ -122,9 +133,9 @@ class DialogTriggerState {
 				"aria-expanded": getAriaExpanded(this.#root.open.current),
 				"aria-controls": this.#root.contentId,
 				[this.#root.attrs.trigger]: "",
-				onpointerdown: this.#onpointerdown,
-				onkeydown: this.#onkeydown,
-				onclick: this.#onclick,
+				onpointerdown: this.onpointerdown,
+				onkeydown: this.onkeydown,
+				onclick: this.onclick,
 				...this.#root.sharedProps,
 			}) as const
 	);
@@ -150,6 +161,10 @@ class DialogCloseState {
 		this.#variant = props.variant;
 		this.#disabled = props.disabled;
 
+		this.onclick = this.onclick.bind(this);
+		this.onpointerdown = this.onpointerdown.bind(this);
+		this.onkeydown = this.onkeydown.bind(this);
+
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
@@ -157,13 +172,13 @@ class DialogCloseState {
 		});
 	}
 
-	#onclick: MouseEventHandler<HTMLButtonElement> = (e) => {
+	onclick(e: BitsMouseEvent) {
 		if (this.#disabled.current) return;
 		if (e.button > 0) return;
 		this.#root.handleClose();
-	};
+	}
 
-	#onpointerdown: PointerEventHandler<HTMLButtonElement> = (e) => {
+	onpointerdown(e: BitsPointerEvent) {
 		if (this.#disabled.current) return;
 		if (e.pointerType === "touch") return e.preventDefault();
 		if (e.button > 0) return;
@@ -172,24 +187,24 @@ class DialogCloseState {
 		e.preventDefault();
 
 		this.#root.handleClose();
-	};
+	}
 
-	#onkeydown: KeyboardEventHandler<HTMLButtonElement> = (e) => {
+	onkeydown(e: BitsKeyboardEvent) {
 		if (this.#disabled.current) return;
 		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
 			e.preventDefault();
 			this.#root.handleClose();
 		}
-	};
+	}
 
 	props = $derived.by(
 		() =>
 			({
 				id: this.#id.current,
 				[this.#attr]: "",
-				onpointerdown: this.#onpointerdown,
-				onclick: this.#onclick,
-				onkeydown: this.#onkeydown,
+				onpointerdown: this.onpointerdown,
+				onclick: this.onclick,
+				onkeydown: this.onkeydown,
 				...this.#root.sharedProps,
 			}) as const
 	);
@@ -388,6 +403,9 @@ class AlertDialogCancelState {
 		this.#ref = props.ref;
 		this.#root = root;
 		this.#disabled = props.disabled;
+		this.onclick = this.onclick.bind(this);
+		this.onpointerdown = this.onpointerdown.bind(this);
+		this.onkeydown = this.onkeydown.bind(this);
 
 		useRefById({
 			id: this.#id,
@@ -399,13 +417,13 @@ class AlertDialogCancelState {
 		});
 	}
 
-	#onclick: MouseEventHandler<HTMLButtonElement> = (e) => {
+	onclick(e: BitsMouseEvent) {
 		if (this.#disabled.current) return;
 		if (e.button > 0) return;
 		this.#root.handleClose();
-	};
+	}
 
-	#onpointerdown: PointerEventHandler<HTMLButtonElement> = (e) => {
+	onpointerdown(e: BitsPointerEvent) {
 		if (this.#disabled.current) return;
 		if (e.pointerType === "touch") return e.preventDefault();
 		if (e.button > 0) return;
@@ -414,24 +432,24 @@ class AlertDialogCancelState {
 		e.preventDefault();
 
 		this.#root.handleClose();
-	};
+	}
 
-	#onkeydown: KeyboardEventHandler<HTMLButtonElement> = (e) => {
+	onkeydown(e: BitsKeyboardEvent) {
 		if (this.#disabled.current) return;
 		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
 			e.preventDefault();
 			this.#root.handleClose();
 		}
-	};
+	}
 
 	props = $derived.by(
 		() =>
 			({
 				id: this.#id.current,
 				[this.#root.attrs.cancel]: "",
-				onpointerdown: this.#onpointerdown,
-				onclick: this.#onclick,
-				onkeydown: this.#onkeydown,
+				onpointerdown: this.onpointerdown,
+				onclick: this.onclick,
+				onkeydown: this.onkeydown,
 				...this.#root.sharedProps,
 			}) as const
 	);

@@ -13,7 +13,14 @@ import {
 import type { Box, ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { createContext } from "$lib/internal/create-context.js";
 import { kbd } from "$lib/internal/kbd.js";
-import type { WithRefProps } from "$lib/internal/types.js";
+import type {
+	BitsEvent,
+	BitsFocusEvent,
+	BitsKeyboardEvent,
+	BitsMouseEvent,
+	BitsPointerEvent,
+	WithRefProps,
+} from "$lib/internal/types.js";
 import { noop } from "$lib/internal/noop.js";
 import { addEventListener } from "$lib/internal/events.js";
 import { type DOMTypeahead, useDOMTypeahead } from "$lib/internal/use-dom-typeahead.svelte.js";
@@ -97,56 +104,56 @@ class SelectBaseRootState {
 		});
 	}
 
-	setHighlightedNode = (node: HTMLElement | null) => {
+	setHighlightedNode(node: HTMLElement | null) {
 		this.highlightedNode = node;
 		if (node) {
 			if (this.isUsingKeyboard) {
 				node.scrollIntoView({ block: "nearest" });
 			}
 		}
-	};
+	}
 
-	getCandidateNodes = (): HTMLElement[] => {
+	getCandidateNodes(): HTMLElement[] {
 		const node = this.contentNode;
 		if (!node) return [];
 		const nodes = Array.from(
 			node.querySelectorAll<HTMLElement>(`[${this.bitsAttrs.item}]:not([data-disabled])`)
 		);
 		return nodes;
-	};
+	}
 
-	setHighlightedToFirstCandidate = () => {
+	setHighlightedToFirstCandidate() {
 		this.setHighlightedNode(null);
 		const candidateNodes = this.getCandidateNodes();
 		if (!candidateNodes.length) return;
 		this.setHighlightedNode(candidateNodes[0]!);
-	};
+	}
 
-	getNodeByValue = (value: string): HTMLElement | null => {
+	getNodeByValue(value: string): HTMLElement | null {
 		const candidateNodes = this.getCandidateNodes();
 		return candidateNodes.find((node) => node.dataset.value === value) ?? null;
-	};
+	}
 
-	setOpen = (open: boolean) => {
+	setOpen(open: boolean) {
 		this.open.current = open;
-	};
+	}
 
-	toggleOpen = () => {
+	toggleOpen() {
 		this.open.current = !this.open.current;
-	};
+	}
 
-	handleOpen = () => {
+	handleOpen() {
 		this.setOpen(true);
-	};
+	}
 
-	handleClose = () => {
+	handleClose() {
 		this.setHighlightedNode(null);
 		this.setOpen(false);
-	};
+	}
 
-	toggleMenu = () => {
+	toggleMenu() {
 		this.toggleOpen();
-	};
+	}
 }
 
 type SelectSingleRootStateProps = SelectBaseRootStateProps &
@@ -192,16 +199,16 @@ class SelectSingleRootState extends SelectBaseRootState {
 		});
 	}
 
-	includesItem = (itemValue: string) => {
+	includesItem(itemValue: string) {
 		return this.value.current === itemValue;
-	};
+	}
 
-	toggleItem = (itemValue: string, itemLabel: string = itemValue) => {
+	toggleItem(itemValue: string, itemLabel: string = itemValue) {
 		this.value.current = this.includesItem(itemValue) ? "" : itemValue;
 		this.inputValue = itemLabel;
-	};
+	}
 
-	setInitialHighlightedNode = () => {
+	setInitialHighlightedNode() {
 		if (this.highlightedNode && document.contains(this.highlightedNode)) return;
 		if (this.value.current !== "") {
 			const node = this.getNodeByValue(this.value.current);
@@ -214,7 +221,7 @@ class SelectSingleRootState extends SelectBaseRootState {
 		const firstCandidate = this.getCandidateNodes()[0];
 		if (!firstCandidate) return;
 		this.setHighlightedNode(firstCandidate);
-	};
+	}
 }
 
 type SelectMultipleRootStateProps = SelectBaseRootStateProps &
@@ -241,20 +248,20 @@ class SelectMultipleRootState extends SelectBaseRootState {
 		});
 	}
 
-	includesItem = (itemValue: string) => {
+	includesItem(itemValue: string) {
 		return this.value.current.includes(itemValue);
-	};
+	}
 
-	toggleItem = (itemValue: string, itemLabel: string = itemValue) => {
+	toggleItem(itemValue: string, itemLabel: string = itemValue) {
 		if (this.includesItem(itemValue)) {
 			this.value.current = this.value.current.filter((v) => v !== itemValue);
 		} else {
 			this.value.current = [...this.value.current, itemValue];
 		}
 		this.inputValue = itemLabel;
-	};
+	}
 
-	setInitialHighlightedNode = () => {
+	setInitialHighlightedNode() {
 		if (this.highlightedNode) return;
 		if (this.value.current.length && this.value.current[0] !== "") {
 			const node = this.getNodeByValue(this.value.current[0]!);
@@ -267,7 +274,7 @@ class SelectMultipleRootState extends SelectBaseRootState {
 		const firstCandidate = this.getCandidateNodes()[0];
 		if (!firstCandidate) return;
 		this.setHighlightedNode(firstCandidate);
-	};
+	}
 }
 
 type SelectRootState = SelectSingleRootState | SelectMultipleRootState;
@@ -291,9 +298,12 @@ class SelectInputState {
 				this.root.inputNode = node;
 			},
 		});
+
+		this.onkeydown = this.onkeydown.bind(this);
+		this.oninput = this.oninput.bind(this);
 	}
 
-	#onkeydown = async (e: KeyboardEvent) => {
+	onkeydown(e: BitsKeyboardEvent) {
 		this.root.isUsingKeyboard = true;
 		if (e.key === kbd.ESCAPE) return;
 		const open = this.root.open.current;
@@ -386,14 +396,14 @@ class SelectInputState {
 			this.root.setHighlightedToFirstCandidate();
 		}
 		// this.root.setHighlightedToFirstCandidate();
-	};
+	}
 
-	#oninput = (e: Event & { currentTarget: HTMLInputElement }) => {
+	oninput(e: BitsEvent<Event, HTMLInputElement>) {
 		this.root.inputValue = e.currentTarget.value;
 		afterTick(() => {
 			this.root.setHighlightedToFirstCandidate();
 		});
-	};
+	}
 
 	props = $derived.by(
 		() =>
@@ -406,8 +416,8 @@ class SelectInputState {
 				"aria-expanded": getAriaExpanded(this.root.open.current),
 				"data-state": getDataOpenClosed(this.root.open.current),
 				"data-disabled": getDataDisabled(this.root.disabled.current),
-				onkeydown: this.#onkeydown,
-				oninput: this.#oninput,
+				onkeydown: this.onkeydown,
+				oninput: this.oninput,
 				[this.root.bitsAttrs.input]: "",
 			}) as const
 	);
@@ -429,9 +439,12 @@ class SelectComboTriggerState {
 			id: this.#id,
 			ref: this.#ref,
 		});
+
+		this.onkeydown = this.onkeydown.bind(this);
+		this.onpointerdown = this.onpointerdown.bind(this);
 	}
 
-	#onkeydown = (e: KeyboardEvent) => {
+	onkeydown(e: BitsKeyboardEvent) {
 		if (e.key === kbd.ENTER || e.key === kbd.SPACE) {
 			e.preventDefault();
 			if (document.activeElement !== this.root.inputNode) {
@@ -439,20 +452,20 @@ class SelectComboTriggerState {
 			}
 			this.root.toggleMenu();
 		}
-	};
+	}
 
 	/**
 	 * `pointerdown` fires before the `focus` event, so we can prevent the default
 	 * behavior of focusing the button and keep focus on the input.
 	 */
-	#onpointerdown = (e: MouseEvent) => {
+	onpointerdown(e: BitsPointerEvent) {
 		if (this.root.disabled.current) return;
 		e.preventDefault();
 		if (document.activeElement !== this.root.inputNode) {
 			this.root.inputNode?.focus();
 		}
 		this.root.toggleMenu();
-	};
+	}
 
 	props = $derived.by(
 		() =>
@@ -463,8 +476,8 @@ class SelectComboTriggerState {
 				"data-state": getDataOpenClosed(this.root.open.current),
 				"data-disabled": getDataDisabled(this.root.disabled.current),
 				[this.root.bitsAttrs.trigger]: "",
-				onpointerdown: this.#onpointerdown,
-				onkeydown: this.#onkeydown,
+				onpointerdown: this.onpointerdown,
+				onkeydown: this.onkeydown,
 			}) as const
 	);
 }
@@ -512,9 +525,28 @@ class SelectTriggerState {
 			},
 			enabled: !this.root.isMulti && this.root.dataTypeaheadEnabled,
 		});
+
+		this.onkeydown = this.onkeydown.bind(this);
+		this.onpointerdown = this.onpointerdown.bind(this);
+		this.onpointerup = this.onpointerup.bind(this);
+		this.onclick = this.onclick.bind(this);
 	}
 
-	#onkeydown = (e: KeyboardEvent) => {
+	#handleOpen() {
+		this.root.open.current = true;
+		this.#dataTypeahead.resetTypeahead();
+		this.#domTypeahead.resetTypeahead();
+	}
+
+	#handlePointerOpen(e: PointerEvent) {
+		this.#handleOpen();
+		this.root.triggerPointerDownPos = {
+			x: Math.round(e.pageX),
+			y: Math.round(e.pageY),
+		};
+	}
+
+	onkeydown(e: BitsKeyboardEvent) {
 		this.root.isUsingKeyboard = true;
 		if (e.key === kbd.ARROW_UP || e.key === kbd.ARROW_DOWN) e.preventDefault();
 
@@ -626,23 +658,9 @@ class SelectTriggerState {
 		if (!this.root.highlightedNode) {
 			this.root.setHighlightedToFirstCandidate();
 		}
-	};
+	}
 
-	#handleOpen = () => {
-		this.root.open.current = true;
-		this.#dataTypeahead.resetTypeahead();
-		this.#domTypeahead.resetTypeahead();
-	};
-
-	#handlePointerOpen = (e: PointerEvent) => {
-		this.#handleOpen();
-		this.root.triggerPointerDownPos = {
-			x: Math.round(e.pageX),
-			y: Math.round(e.pageY),
-		};
-	};
-
-	#onclick = (e: MouseEvent) => {
+	onclick(e: BitsMouseEvent) {
 		// While browsers generally have no issue focusing the trigger when clicking
 		// on a label, Safari seems to struggle with the fact that there's no `onClick`.
 		// We force `focus` in this case. Note: this doesn't create any other side-effect
@@ -650,13 +668,13 @@ class SelectTriggerState {
 		// this only runs for a label 'click'
 		const currTarget = e.currentTarget as HTMLElement;
 		currTarget.focus();
-	};
+	}
 
 	/**
 	 * `pointerdown` fires before the `focus` event, so we can prevent the default
 	 * behavior of focusing the button and keep focus on the input.
 	 */
-	#onpointerdown = (e: PointerEvent) => {
+	onpointerdown = (e: BitsPointerEvent) => {
 		if (this.root.disabled.current) return;
 		// prevent opening on touch down which can be triggered when scrolling on touch devices
 		if (e.pointerType === "touch") return e.preventDefault();
@@ -679,7 +697,7 @@ class SelectTriggerState {
 		}
 	};
 
-	#onpointerup = (e: PointerEvent) => {
+	onpointerup = (e: BitsPointerEvent) => {
 		e.preventDefault();
 		if (e.pointerType === "touch") {
 			this.#handlePointerOpen(e);
@@ -696,11 +714,10 @@ class SelectTriggerState {
 				"data-disabled": getDataDisabled(this.root.disabled.current),
 				"data-placeholder": this.root.hasValue ? undefined : "",
 				[this.root.bitsAttrs.trigger]: "",
-				onpointerdown: this.#onpointerdown,
-				onkeydown: this.#onkeydown,
-				onclick: this.#onclick,
-				onpointerup: this.#onpointerup,
-				// onclick: this.#onclick,
+				onpointerdown: this.onpointerdown,
+				onkeydown: this.onkeydown,
+				onclick: this.onclick,
+				onpointerup: this.onpointerup,
 			}) as const
 	);
 }
@@ -739,11 +756,14 @@ class SelectContentState {
 				this.isPositioned = false;
 			}
 		});
+
+		this.onpointermove = this.onpointermove.bind(this);
+		this.handleInteractOutside = this.handleInteractOutside.bind(this);
 	}
 
-	#onpointermove = () => {
+	onpointermove(_: BitsPointerEvent) {
 		this.root.isUsingKeyboard = false;
-	};
+	}
 
 	#styles = $derived.by(() => {
 		if (this.root.isCombobox) {
@@ -765,11 +785,11 @@ class SelectContentState {
 		}
 	});
 
-	handleInteractOutside = (e: PointerEvent) => {
+	handleInteractOutside(e: PointerEvent) {
 		if (e.target === this.root.triggerNode || e.target === this.root.inputNode) {
 			e.preventDefault();
 		}
-	};
+	}
 
 	snippetProps = $derived.by(() => ({ open: this.root.open.current }));
 
@@ -788,7 +808,7 @@ class SelectContentState {
 					pointerEvents: "auto",
 					...this.#styles,
 				},
-				onpointermove: this.#onpointermove,
+				onpointermove: this.onpointermove,
 			}) as const
 	);
 }
@@ -845,6 +865,9 @@ class SelectItemState {
 			if (!this.mounted) return;
 			untrack(() => this.root.setInitialHighlightedNode());
 		});
+		this.onpointerdown = this.onpointerdown.bind(this);
+		this.onpointerup = this.onpointerup.bind(this);
+		this.onpointermove = this.onpointermove.bind(this);
 	}
 
 	snippetProps = $derived.by(() => ({
@@ -852,17 +875,17 @@ class SelectItemState {
 		highlighted: this.isHighlighted,
 	}));
 
-	#onpointerdown = (e: PointerEvent) => {
+	onpointerdown(e: BitsPointerEvent) {
 		// prevent focus from leaving the combobox
 		e.preventDefault();
-	};
+	}
 
 	/**
 	 * Using `pointerup` instead of `click` allows power users to pointerdown
 	 * the trigger, then release pointerup on an item to select it vs having to do
 	 * multiple clicks.
 	 */
-	#onpointerup = (e: PointerEvent) => {
+	onpointerup(e: BitsPointerEvent) {
 		if (e.defaultPrevented) return;
 		// prevent any default behavior
 		e.preventDefault();
@@ -881,17 +904,13 @@ class SelectItemState {
 		if (!this.root.isMulti && !isCurrentSelectedValue) {
 			this.root.handleClose();
 		}
-	};
+	}
 
-	#onpointermove = (_: PointerEvent) => {
+	onpointermove(_: BitsPointerEvent) {
 		if (this.root.highlightedNode !== this.#ref.current) {
 			this.root.setHighlightedNode(this.#ref.current);
 		}
-	};
-
-	setTextId = (id: string) => {
-		this.textId = id;
-	};
+	}
 
 	props = $derived.by(
 		() =>
@@ -907,9 +926,9 @@ class SelectItemState {
 				"data-label": this.label.current,
 				[this.root.bitsAttrs.item]: "",
 
-				onpointermove: this.#onpointermove,
-				onpointerdown: this.#onpointerdown,
-				onpointerup: this.#onpointerup,
+				onpointermove: this.onpointermove,
+				onpointerdown: this.onpointerdown,
+				onpointerup: this.onpointerup,
 			}) as const
 	);
 }
@@ -986,9 +1005,10 @@ class SelectHiddenInputState {
 	constructor(props: SelectHiddenInputStateProps, root: SelectBaseRootState) {
 		this.root = root;
 		this.#value = props.value;
+		this.onfocus = this.onfocus.bind(this);
 	}
 
-	#onfocus = (e: FocusEvent) => {
+	onfocus(e: BitsFocusEvent) {
 		e.preventDefault();
 
 		if (!this.root.isCombobox) {
@@ -996,7 +1016,7 @@ class SelectHiddenInputState {
 		} else {
 			this.root.inputNode?.focus();
 		}
-	};
+	}
 
 	props = $derived.by(
 		() =>
@@ -1007,7 +1027,7 @@ class SelectHiddenInputState {
 				value: this.#value.current,
 				style: styleToString(srOnlyStyles),
 				tabindex: -1,
-				onfocus: this.#onfocus,
+				onfocus: this.onfocus,
 			}) as const
 	);
 }
@@ -1084,31 +1104,35 @@ class SelectScrollButtonImplState {
 			const activeItem = untrack(() => this.root.highlightedNode);
 			activeItem?.scrollIntoView({ block: "nearest" });
 		});
+
+		this.onpointerdown = this.onpointerdown.bind(this);
+		this.onpointermove = this.onpointermove.bind(this);
+		this.onpointerleave = this.onpointerleave.bind(this);
 	}
 
-	clearAutoScrollTimer = () => {
+	clearAutoScrollTimer() {
 		if (this.autoScrollTimer === null) return;
 		window.clearInterval(this.autoScrollTimer);
 		this.autoScrollTimer = null;
-	};
+	}
 
-	#onpointerdown = () => {
+	onpointerdown(_: BitsPointerEvent) {
 		if (this.autoScrollTimer !== null) return;
 		this.autoScrollTimer = window.setInterval(() => {
 			this.onAutoScroll();
 		}, 50);
-	};
+	}
 
-	#onpointermove = () => {
+	onpointermove(_: BitsPointerEvent) {
 		if (this.autoScrollTimer !== null) return;
 		this.autoScrollTimer = window.setInterval(() => {
 			this.onAutoScroll();
 		}, 50);
-	};
+	}
 
-	#onpointerleave = () => {
+	onpointerleave(_: BitsPointerEvent) {
 		this.clearAutoScrollTimer();
-	};
+	}
 
 	props = $derived.by(
 		() =>
@@ -1118,9 +1142,9 @@ class SelectScrollButtonImplState {
 				style: {
 					flexShrink: 0,
 				},
-				onpointerdown: this.#onpointerdown,
-				onpointermove: this.#onpointermove,
-				onpointerleave: this.#onpointerleave,
+				onpointerdown: this.onpointerdown,
+				onpointermove: this.onpointermove,
+				onpointerleave: this.onpointerleave,
 			}) as const
 	);
 }

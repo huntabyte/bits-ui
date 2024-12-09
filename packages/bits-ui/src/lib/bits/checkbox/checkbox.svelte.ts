@@ -1,7 +1,7 @@
 import { srOnlyStyles, styleToString, useRefById } from "svelte-toolbelt";
 import type { HTMLButtonAttributes } from "svelte/elements";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import type { WithRefProps } from "$lib/internal/types.js";
+import type { BitsKeyboardEvent, BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
 import { getAriaChecked, getAriaRequired, getDataDisabled } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { createContext } from "$lib/internal/create-context.js";
@@ -43,6 +43,8 @@ class CheckboxRootState {
 		this.#id = props.id;
 		this.indeterminate = props.indeterminate;
 		this.#type = props.type;
+		this.onkeydown = this.onkeydown.bind(this);
+		this.onclick = this.onclick.bind(this);
 
 		useRefById({
 			id: this.#id,
@@ -50,28 +52,28 @@ class CheckboxRootState {
 		});
 	}
 
-	#onkeydown = (e: KeyboardEvent) => {
+	onkeydown(e: BitsKeyboardEvent) {
 		if (this.disabled.current) return;
 		if (e.key === kbd.ENTER) e.preventDefault();
 		if (e.key === kbd.SPACE) {
 			e.preventDefault();
 			this.#toggle();
 		}
-	};
+	}
 
-	#toggle = () => {
+	#toggle() {
 		if (this.indeterminate.current) {
 			this.indeterminate.current = false;
 			this.checked.current = true;
 		} else {
 			this.checked.current = !this.checked.current;
 		}
-	};
+	}
 
-	#onclick = () => {
+	onclick(_: BitsMouseEvent) {
 		if (this.disabled.current) return;
 		this.#toggle();
-	};
+	}
 
 	props = $derived.by(
 		() =>
@@ -89,8 +91,8 @@ class CheckboxRootState {
 				),
 				[CHECKBOX_ROOT_ATTR]: "",
 				//
-				onclick: this.#onclick,
-				onkeydown: this.#onkeydown,
+				onclick: this.onclick,
+				onkeydown: this.onkeydown,
 			}) as const
 	);
 }
