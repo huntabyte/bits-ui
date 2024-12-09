@@ -1,5 +1,13 @@
 # bits-ui
 
+## 1.0.0-next.69
+
+### Patch Changes
+
+-   fix: allow resetting `DateField` value ([#988](https://github.com/huntabyte/bits-ui/pull/988))
+
+-   optimize classes via prototype bindings ([#986](https://github.com/huntabyte/bits-ui/pull/986))
+
 ## 1.0.0-next.68
 
 ### Patch Changes
