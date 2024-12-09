@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.69
+
+### Patch Changes
+
+-   optimize classes via prototype bindings ([#986](https://github.com/huntabyte/bits-ui/pull/986))
+
 ## 1.0.0-next.68
 
 ### Patch Changes
