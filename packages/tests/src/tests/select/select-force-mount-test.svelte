@@ -42,6 +42,33 @@
 	const selectedLabel = $derived(filteredItems.find((item) => item.value === value)?.label);
 </script>
 
+{#snippet Content({
+	props,
+	wrapperProps,
+}: {
+	props: Record<string, unknown>;
+	wrapperProps: Record<string, unknown>;
+})}
+	<div {...wrapperProps}>
+		<div {...props}>
+			<Select.Group data-testid="group">
+				<Select.GroupHeading data-testid="group-label">Options</Select.GroupHeading>
+				{#each filteredItems as { value, label, disabled }}
+					{@const testId = generateTestId(value)}
+					<Select.Item data-testid={testId} {disabled} {value} {label}>
+						{#snippet children({ selected, highlighted: _highlighted })}
+							{#if selected}
+								<span data-testid="{testId}-indicator">x</span>
+							{/if}
+							{label}
+						{/snippet}
+					</Select.Item>
+				{/each}
+			</Select.Group>
+		</div>
+	</div>
+{/snippet}
+
 <main data-testid="main">
 	<Select.Root bind:value bind:open {...restProps}>
 		<Select.Trigger data-testid="trigger">
@@ -54,58 +81,16 @@
 		<Select.Portal {...portalProps}>
 			{#if withOpenCheck}
 				<Select.Content data-testid="content" {...contentProps} forceMount>
-					{#snippet child({ props, open })}
-						{#if open}
-							<div {...props}>
-								<Select.Group data-testid="group">
-									<Select.GroupHeading data-testid="group-label"
-										>Options</Select.GroupHeading
-									>
-									{#each filteredItems as { value, label, disabled }}
-										{@const testId = generateTestId(value)}
-										<Select.Item
-											data-testid={testId}
-											{disabled}
-											{value}
-											{label}
-										>
-											{#snippet children({
-												selected,
-												highlighted: _highlighted,
-											})}
-												{#if selected}
-													<span data-testid="{testId}-indicator">x</span>
-												{/if}
-												{label}
-											{/snippet}
-										</Select.Item>
-									{/each}
-								</Select.Group>
-							</div>
+					{#snippet child(props)}
+						{#if props.open}
+							{@render Content(props)}
 						{/if}
 					{/snippet}
 				</Select.Content>
 			{:else}
 				<Select.Content data-testid="content" {...contentProps} forceMount>
-					{#snippet child({ props, open: _open })}
-						<div {...props}>
-							<Select.Group data-testid="group">
-								<Select.GroupHeading data-testid="group-label"
-									>Options</Select.GroupHeading
-								>
-								{#each filteredItems as { value, label, disabled }}
-									{@const testId = generateTestId(value)}
-									<Select.Item data-testid={testId} {disabled} {value} {label}>
-										{#snippet children({ selected, highlighted: _highlighted })}
-											{#if selected}
-												<span data-testid="{testId}-indicator">x</span>
-											{/if}
-											{label}
-										{/snippet}
-									</Select.Item>
-								{/each}
-							</Select.Group>
-						</div>
+					{#snippet child(props)}
+						{@render Content(props)}
 					{/snippet}
 				</Select.Content>
 			{/if}
