@@ -11,6 +11,7 @@ import type {
 	BitsPrimitiveButtonAttributes,
 	BitsPrimitiveDivAttributes,
 } from "$lib/shared/attributes.js";
+import type { FloatingContentSnippetProps, StaticContentSnippetProps } from "$lib/shared/types.js";
 
 export type PopoverRootPropsWithoutHTML = WithChildren<{
 	/**
@@ -35,17 +36,9 @@ export type PopoverRootPropsWithoutHTML = WithChildren<{
 
 export type PopoverRootProps = PopoverRootPropsWithoutHTML;
 
-export type PopoverContentSnippetProps = {
-	/**
-	 * Whether the content is open or closed. Used alongside the `forceMount` prop to
-	 * conditionally render the content using Svelte transitions.
-	 */
-	open: boolean;
-};
-
 export type PopoverContentPropsWithoutHTML = WithChildNoChildrenSnippetProps<
 	Omit<PopperLayerProps, "content" | "loop">,
-	PopoverContentSnippetProps
+	FloatingContentSnippetProps
 >;
 
 export type PopoverContentProps = PopoverContentPropsWithoutHTML &
@@ -53,7 +46,7 @@ export type PopoverContentProps = PopoverContentPropsWithoutHTML &
 
 export type PopoverContentStaticPropsWithoutHTML = WithChildNoChildrenSnippetProps<
 	Omit<PopperLayerStaticProps, "content" | "loop">,
-	PopoverContentSnippetProps
+	StaticContentSnippetProps
 >;
 
 export type PopoverContentStaticProps = PopoverContentStaticPropsWithoutHTML &

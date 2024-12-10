@@ -14,6 +14,7 @@ import type {
 	WithChildren,
 	Without,
 } from "$lib/internal/types.js";
+import type { FloatingContentSnippetProps, StaticContentSnippetProps } from "$lib/shared/types.js";
 
 export type LinkPreviewRootPropsWithoutHTML = WithChildren<{
 	/**
@@ -69,14 +70,6 @@ export type LinkPreviewRootPropsWithoutHTML = WithChildren<{
 
 export type LinkPreviewRootProps = LinkPreviewRootPropsWithoutHTML;
 
-export type LinkPreviewContentSnippetProps = {
-	/**
-	 * Whether the content is open or closed. Used alongside the `forceMount` prop to
-	 * conditionally render the content using Svelte transitions.
-	 */
-	open: boolean;
-};
-
 export type LinkPreviewContentPropsWithoutHTML = WithChildNoChildrenSnippetProps<
 	Pick<
 		FloatingLayerContentProps,
@@ -101,13 +94,13 @@ export type LinkPreviewContentPropsWithoutHTML = WithChildNoChildrenSnippetProps
 			 */
 			forceMount?: boolean;
 		},
-	LinkPreviewContentSnippetProps
+	FloatingContentSnippetProps
 >;
 
 export type LinkPreviewContentProps = LinkPreviewContentPropsWithoutHTML &
 	Without<BitsPrimitiveDivAttributes, LinkPreviewContentPropsWithoutHTML>;
 
-export type LinkPreviewContentStaticPropsWithoutHTML = WithChild<
+export type LinkPreviewContentStaticPropsWithoutHTML = WithChildNoChildrenSnippetProps<
 	Pick<FloatingLayerContentProps, "dir"> &
 		Omit<DismissibleLayerProps, "onInteractOutsideStart"> &
 		EscapeLayerProps & {
@@ -118,7 +111,7 @@ export type LinkPreviewContentStaticPropsWithoutHTML = WithChild<
 			 */
 			forceMount?: boolean;
 		},
-	LinkPreviewContentSnippetProps
+	StaticContentSnippetProps
 >;
 
 export type LinkPreviewContentStaticProps = LinkPreviewContentStaticPropsWithoutHTML &

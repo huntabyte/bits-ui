@@ -20,7 +20,7 @@ import {
 } from "./utils.js";
 import { focusFirst } from "$lib/internal/focus.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import { addEventListener } from "$lib/internal/events.js";
+import { addEventListener, createCustomEvent } from "$lib/internal/events.js";
 import type {
 	AnyFn,
 	BitsFocusEvent,
@@ -73,10 +73,15 @@ export type MenuRootStateProps = ReadableBoxedValues<{
 	onClose: AnyFn;
 };
 
+export const [dispatchMenuOpen, listenMenuOpen] = createCustomEvent("bitsmenuopen", {
+	bubbles: false,
+	cancelable: true,
+});
+
 class MenuRootState {
 	onClose: MenuRootStateProps["onClose"];
 	variant: MenuRootStateProps["variant"];
-	isUsingKeyboard = box(false);
+	isUsingKeyboard = $state(false);
 	dir: MenuRootStateProps["dir"];
 
 	constructor(props: MenuRootStateProps) {
@@ -88,11 +93,11 @@ class MenuRootState {
 			const callbacksToDispose: AnyFn[] = [];
 
 			const handlePointer = (_: PointerEvent) => {
-				this.isUsingKeyboard.current = false;
+				this.isUsingKeyboard = false;
 			};
 
 			const handleKeydown = (_: KeyboardEvent) => {
-				this.isUsingKeyboard.current = true;
+				this.isUsingKeyboard = true;
 
 				const disposePointerDown = addEventListener(
 					document,
@@ -227,6 +232,18 @@ class MenuContentState {
 			loop: this.#loop,
 			orientation: box.with(() => "vertical"),
 		});
+
+		$effect(() => {
+			const contentNode = this.parentMenu.contentNode;
+			if (!contentNode) return;
+			const handler = () => {
+				afterTick(() => {
+					if (!this.parentMenu.root.isUsingKeyboard) return;
+					this.rovingFocusGroup.focusFirstCandidate();
+				});
+			};
+			return listenMenuOpen(contentNode, handler);
+		});
 	}
 
 	#getCandidateNodes() {
@@ -301,7 +318,7 @@ class MenuContentState {
 	}
 
 	onfocus(_: BitsFocusEvent) {
-		if (!this.parentMenu.root.isUsingKeyboard.current) return;
+		if (!this.parentMenu.root.isUsingKeyboard) return;
 		afterTick(() => this.rovingFocusGroup.focusFirstCandidate());
 	}
 
@@ -498,7 +515,7 @@ class MenuItemState {
 		this.#onSelect.current(selectEvent);
 		afterTick(() => {
 			if (selectEvent.defaultPrevented) {
-				this.#item.content.parentMenu.root.isUsingKeyboard.current = false;
+				this.#item.content.parentMenu.root.isUsingKeyboard = false;
 				return;
 			}
 			if (this.#closeOnSelect.current) {
@@ -636,10 +653,11 @@ class MenuSubTriggerState {
 
 		if (SUB_OPEN_KEYS[this.#submenu.root.dir.current].includes(e.key)) {
 			this.#submenu.onOpen();
-
-			const contentNode = this.#submenu.contentNode;
-
-			contentNode?.focus();
+			afterTick(() => {
+				const contentNode = this.#submenu.contentNode;
+				if (!contentNode) return;
+				dispatchMenuOpen(contentNode);
+			});
 			e.preventDefault();
 		}
 	}

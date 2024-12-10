@@ -56,6 +56,7 @@ import {
 	CheckboxRootOnCheckedChangeProp,
 	CheckboxRootOnIndeterminateChangeProp,
 } from "./extended-types/checkbox/index.js";
+import { FloatingContentChildSnippetProps } from "./extended-types/floating/index.js";
 import type { APISchema, DataAttrSchema, PropObj } from "$lib/types/index.js";
 import * as C from "$lib/content/constants.js";
 import { enums } from "$lib/content/api-reference/helpers.js";
@@ -121,7 +122,7 @@ const contentProps = {
 	...withChildProps({
 		elType: "HTMLDivElement",
 		childrenDef: OpenChildrenSnippetProps,
-		childDef: OpenChildSnippetProps,
+		childDef: FloatingContentChildSnippetProps,
 	}),
 } satisfies PropObj<DropdownMenuContentPropsWithoutHTML>;
 

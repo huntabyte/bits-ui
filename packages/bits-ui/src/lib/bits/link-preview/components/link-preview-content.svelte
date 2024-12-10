@@ -75,15 +75,17 @@
 		preventScroll={false}
 		forceMount={true}
 	>
-		{#snippet popper({ props })}
+		{#snippet popper({ props, wrapperProps })}
 			{@const mergedProps = mergeProps(props, {
 				style: getFloatingContentCSSVars("link-preview"),
 			})}
 			{#if child}
-				{@render child({ props: mergedProps, ...contentState.snippetProps })}
+				{@render child({ props: mergedProps, wrapperProps, ...contentState.snippetProps })}
 			{:else}
-				<div {...mergedProps}>
-					{@render children?.()}
+				<div {...wrapperProps}>
+					<div {...mergedProps}>
+						{@render children?.()}
+					</div>
 				</div>
 			{/if}
 		{/snippet}
@@ -102,15 +104,17 @@
 		preventScroll={false}
 		forceMount={false}
 	>
-		{#snippet popper({ props })}
+		{#snippet popper({ props, wrapperProps })}
 			{@const mergedProps = mergeProps(props, {
 				style: getFloatingContentCSSVars("link-preview"),
 			})}
 			{#if child}
-				{@render child({ props: mergedProps, ...contentState.snippetProps })}
+				{@render child({ props: mergedProps, wrapperProps, ...contentState.snippetProps })}
 			{:else}
-				<div {...mergedProps}>
-					{@render children?.()}
+				<div {...wrapperProps}>
+					<div {...mergedProps}>
+						{@render children?.()}
+					</div>
 				</div>
 			{/if}
 			<Mounted onMountedChange={(m) => (contentState.root.contentMounted = m)} />

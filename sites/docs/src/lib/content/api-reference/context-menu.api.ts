@@ -33,6 +33,7 @@ import {
 	withChildProps,
 } from "./helpers.js";
 import { menu } from "./menu.api.js";
+import { FloatingContentChildSnippetProps } from "./extended-types/floating/index.js";
 import * as C from "$lib/content/constants.js";
 import { omit } from "$lib/utils/omit.js";
 
@@ -75,7 +76,7 @@ export const content = createApiSchema<ContextMenuContentPropsWithoutHTML>({
 			description:
 				"Whether or not the context menu should loop through items when reaching the end.",
 		}),
-		...withChildProps({ elType: "HTMLDivElement" }),
+		...withChildProps({ elType: "HTMLDivElement", childDef: FloatingContentChildSnippetProps }),
 	},
 	dataAttributes: menu.content.dataAttributes,
 	cssVars: [

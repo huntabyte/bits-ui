@@ -65,15 +65,17 @@
 		loop
 		forceMount={true}
 	>
-		{#snippet popper({ props })}
+		{#snippet popper({ props, wrapperProps })}
 			{@const finalProps = mergeProps(props, {
 				style: getFloatingContentCSSVars("popover"),
 			})}
 			{#if child}
-				{@render child({ props: finalProps, ...contentState.snippetProps })}
+				{@render child({ props: finalProps, wrapperProps, ...contentState.snippetProps })}
 			{:else}
-				<div {...finalProps}>
-					{@render children?.()}
+				<div {...wrapperProps}>
+					<div {...finalProps}>
+						{@render children?.()}
+					</div>
 				</div>
 			{/if}
 		{/snippet}
@@ -91,15 +93,17 @@
 		loop
 		forceMount={false}
 	>
-		{#snippet popper({ props })}
+		{#snippet popper({ props, wrapperProps })}
 			{@const finalProps = mergeProps(props, {
 				style: getFloatingContentCSSVars("popover"),
 			})}
 			{#if child}
-				{@render child({ props: finalProps, ...contentState.snippetProps })}
+				{@render child({ props: finalProps, wrapperProps, ...contentState.snippetProps })}
 			{:else}
-				<div {...finalProps}>
-					{@render children?.()}
+				<div {...wrapperProps}>
+					<div {...finalProps}>
+						{@render children?.()}
+					</div>
 				</div>
 			{/if}
 		{/snippet}

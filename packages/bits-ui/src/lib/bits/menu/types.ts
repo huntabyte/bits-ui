@@ -14,6 +14,7 @@ import type {
 } from "$lib/shared/attributes.js";
 import type { Direction } from "$lib/shared/index.js";
 import type { PortalProps } from "$lib/bits/utilities/portal/types.js";
+import type { FloatingContentSnippetProps, StaticContentSnippetProps } from "$lib/shared/types.js";
 
 export type MenuRootPropsWithoutHTML = WithChildren<{
 	/**
@@ -54,18 +55,10 @@ export type _SharedMenuContentProps = {
 	loop?: boolean;
 };
 
-export type MenuContentSnippetProps = {
-	/**
-	 * Whether the content is open or closed. Used alongside the `forceMount` prop to
-	 * conditionally render the content using Svelte transitions.
-	 */
-	open: boolean;
-};
-
 export type MenuContentPropsWithoutHTML = Expand<
 	WithChildNoChildrenSnippetProps<
 		Omit<PopperLayerProps, "content"> & _SharedMenuContentProps,
-		MenuContentSnippetProps
+		FloatingContentSnippetProps
 	>
 >;
 
@@ -75,7 +68,7 @@ export type MenuContentProps = MenuContentPropsWithoutHTML &
 export type MenuContentStaticPropsWithoutHTML = Expand<
 	WithChildNoChildrenSnippetProps<
 		Omit<PopperLayerStaticProps, "content"> & _SharedMenuContentProps,
-		MenuContentSnippetProps
+		StaticContentSnippetProps
 	>
 >;
 
@@ -219,7 +212,7 @@ export type MenuSubProps = MenuSubPropsWithoutHTML;
 export type MenuSubContentPropsWithoutHTML = Expand<
 	WithChildNoChildrenSnippetProps<
 		Omit<PopperLayerProps, "content" | "preventScroll"> & _SharedMenuContentProps,
-		MenuContentSnippetProps
+		FloatingContentSnippetProps
 	>
 >;
 
@@ -229,7 +222,7 @@ export type MenuSubContentProps = MenuSubContentPropsWithoutHTML &
 export type MenuSubContentStaticPropsWithoutHTML = Expand<
 	WithChildNoChildrenSnippetProps<
 		Omit<PopperLayerStaticProps, "content" | "preventScroll"> & _SharedMenuContentProps,
-		MenuContentSnippetProps
+		StaticContentSnippetProps
 	>
 >;
 

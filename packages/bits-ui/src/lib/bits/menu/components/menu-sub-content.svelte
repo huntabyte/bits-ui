@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { afterTick, box, mergeProps } from "svelte-toolbelt";
+	import { box, mergeProps } from "svelte-toolbelt";
 	import type { MenuSubContentProps } from "../types.js";
-	import { useMenuContent } from "../menu.svelte.js";
+	import { dispatchMenuOpen, useMenuContent } from "../menu.svelte.js";
 	import { SUB_CLOSE_KEYS } from "../utils.js";
 	import { useId } from "$lib/internal/use-id.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
@@ -67,13 +67,13 @@
 	function handleOpenAutoFocus(e: Event) {
 		onOpenAutoFocusProp(e);
 		if (e.defaultPrevented) return;
-		afterTick(() => {
-			e.preventDefault();
-			if (subContentState.parentMenu.root.isUsingKeyboard.current) {
-				const subContentEl = subContentState.parentMenu.contentNode;
-				subContentEl?.focus();
-			}
-		});
+		e.preventDefault();
+		if (
+			subContentState.parentMenu.root.isUsingKeyboard &&
+			subContentState.parentMenu.contentNode
+		) {
+			dispatchMenuOpen(subContentState.parentMenu.contentNode);
+		}
 	}
 
 	function handleCloseAutoFocus(e: Event) {
@@ -121,15 +121,21 @@
 		{loop}
 		trapFocus={false}
 	>
-		{#snippet popper({ props })}
+		{#snippet popper({ props, wrapperProps })}
 			{@const finalProps = mergeProps(props, mergedProps, {
 				style: getFloatingContentCSSVars("menu"),
 			})}
 			{#if child}
-				{@render child({ props: finalProps, ...subContentState.snippetProps })}
+				{@render child({
+					props: finalProps,
+					wrapperProps,
+					...subContentState.snippetProps,
+				})}
 			{:else}
-				<div {...finalProps}>
-					{@render children?.()}
+				<div {...wrapperProps}>
+					<div {...finalProps}>
+						{@render children?.()}
+					</div>
 				</div>
 			{/if}
 			<Mounted bind:isMounted />
@@ -150,15 +156,21 @@
 		{loop}
 		trapFocus={false}
 	>
-		{#snippet popper({ props })}
+		{#snippet popper({ props, wrapperProps })}
 			{@const finalProps = mergeProps(props, mergedProps, {
 				style: getFloatingContentCSSVars("menu"),
 			})}
 			{#if child}
-				{@render child({ props: finalProps, ...subContentState.snippetProps })}
+				{@render child({
+					props: finalProps,
+					wrapperProps,
+					...subContentState.snippetProps,
+				})}
 			{:else}
-				<div {...finalProps}>
-					{@render children?.()}
+				<div {...wrapperProps}>
+					<div {...finalProps}>
+						{@render children?.()}
+					</div>
 				</div>
 			{/if}
 			<Mounted bind:isMounted />

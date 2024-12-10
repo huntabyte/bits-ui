@@ -7,6 +7,7 @@ import type {
 	PopoverTriggerPropsWithoutHTML,
 } from "bits-ui";
 import { OnOpenChangeProp, OpenClosedProp } from "./extended-types/shared/index.js";
+import { FloatingContentChildSnippetProps } from "./extended-types/floating/index.js";
 import {
 	arrowProps,
 	childrenSnippet,
@@ -81,7 +82,7 @@ export const content = createApiSchema<PopoverContentPropsWithoutHTML>({
 		},
 		forceMount: forceMountProp,
 		dir: dirProp,
-		...withChildProps({ elType: "HTMLDivElement" }),
+		...withChildProps({ elType: "HTMLDivElement", childDef: FloatingContentChildSnippetProps }),
 	},
 	dataAttributes: [
 		openClosedDataAttr,

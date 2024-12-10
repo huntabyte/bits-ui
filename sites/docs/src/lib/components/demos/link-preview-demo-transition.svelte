@@ -34,36 +34,40 @@
 		sideOffset={8}
 		forceMount
 	>
-		{#snippet child({ open, props })}
+		{#snippet child({ open, props, wrapperProps })}
 			{#if open}
-				<div {...props} transition:fly={{ duration: 300 }}>
-					<div class="flex space-x-4">
-						<Avatar.Root
-							bind:loadingStatus={loadingStatusContent}
-							class="h-12 w-12 rounded-full border {loadingStatusContent === 'loaded'
-								? 'border-foreground'
-								: 'border-transparent'} bg-muted text-[17px] font-medium uppercase text-muted-foreground"
-						>
-							<div
-								class="flex h-full w-full items-center justify-center overflow-hidden rounded-full border-2 border-transparent"
+				<div {...wrapperProps}>
+					<div {...props} transition:fly={{ duration: 300 }}>
+						<div class="flex space-x-4">
+							<Avatar.Root
+								bind:loadingStatus={loadingStatusContent}
+								class="h-12 w-12 rounded-full border {loadingStatusContent ===
+								'loaded'
+									? 'border-foreground'
+									: 'border-transparent'} bg-muted text-[17px] font-medium uppercase text-muted-foreground"
 							>
-								<Avatar.Image src="/avatar-1.png" alt="@huntabyte" />
-								<Avatar.Fallback class="border border-muted">HB</Avatar.Fallback>
-							</div>
-						</Avatar.Root>
-						<div class="space-y-1 text-sm">
-							<h4 class="font-medium">@huntabyte</h4>
-							<p>I do things on the internet.</p>
-							<div
-								class="flex items-center gap-[21px] pt-2 text-xs text-muted-foreground"
-							>
-								<div class="flex items-center text-xs">
-									<MapPin class="mr-1 size-4" />
-									<span> FL, USA </span>
+								<div
+									class="flex h-full w-full items-center justify-center overflow-hidden rounded-full border-2 border-transparent"
+								>
+									<Avatar.Image src="/avatar-1.png" alt="@huntabyte" />
+									<Avatar.Fallback class="border border-muted">HB</Avatar.Fallback
+									>
 								</div>
-								<div class="flex items-center text-xs">
-									<CalendarBlank class="mr-1 size-4" />
-									<span> Joined May 2020</span>
+							</Avatar.Root>
+							<div class="space-y-1 text-sm">
+								<h4 class="font-medium">@huntabyte</h4>
+								<p>I do things on the internet.</p>
+								<div
+									class="flex items-center gap-[21px] pt-2 text-xs text-muted-foreground"
+								>
+									<div class="flex items-center text-xs">
+										<MapPin class="mr-1 size-4" />
+										<span> FL, USA </span>
+									</div>
+									<div class="flex items-center text-xs">
+										<CalendarBlank class="mr-1 size-4" />
+										<span> Joined May 2020</span>
+									</div>
 								</div>
 							</div>
 						</div>
