@@ -1,5 +1,17 @@
 # bits-ui
 
+## 1.0.0-next.70
+
+### Patch Changes
+
+-   feat: add `onStateChange` callback to `Command` component ([#972](https://github.com/huntabyte/bits-ui/pull/972))
+
+-   BREAKING: Update `child` snippet behavior of Floating UI-based `Content` components ([#994](https://github.com/huntabyte/bits-ui/pull/994))
+
+-   fix: issue where you were unable to navigate to the previous menu from within a menu of the menubar via arrow keys ([#990](https://github.com/huntabyte/bits-ui/pull/990))
+
+-   perf: optimize command methods ([#992](https://github.com/huntabyte/bits-ui/pull/992))
+
 ## 1.0.0-next.69
 
 ### Patch Changes
