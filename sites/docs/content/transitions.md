@@ -4,7 +4,7 @@ description: Learn how to use transitions with Bits UI components.
 ---
 
 <script>
-	import Callout from '$lib/components/Callout.svelte';
+	import Callout from '$lib/components/callout.svelte';
 </script>
 
 Svelte Transitions are one of the awesome features of Svelte. Unfortunately, they don't play very nicely with components, due to the fact that they rely on various directives like `in:`, `out:`, and `transition:`, which aren't supported by components.
