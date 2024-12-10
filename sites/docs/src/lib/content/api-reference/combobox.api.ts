@@ -21,6 +21,7 @@ import {
 } from "./extended-types/shared/index.js";
 import { ComboboxScrollAlignmentProp } from "./extended-types/combobox/index.js";
 import { ItemsProp } from "./extended-types/select/index.js";
+import { FloatingContentChildSnippetProps } from "./extended-types/floating/index.js";
 import {
 	arrowProps,
 	childrenSnippet,
@@ -152,7 +153,7 @@ export const content = createApiSchema<ComboboxContentPropsWithoutHTML>({
 		...withChildProps({
 			elType: "HTMLDivElement",
 			childrenDef: OpenChildrenSnippetProps,
-			childDef: OpenChildSnippetProps,
+			childDef: FloatingContentChildSnippetProps,
 		}),
 	},
 	dataAttributes: [
