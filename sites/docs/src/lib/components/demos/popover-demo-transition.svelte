@@ -21,60 +21,64 @@
 			sideOffset={8}
 			forceMount
 		>
-			{#snippet child({ props, open })}
+			{#snippet child({ wrapperProps, props, open })}
 				{#if open}
-					<div {...props} transition:fly={{ duration: 300 }}>
-						<div class="flex items-center">
-							<div
-								class="mr-3 flex size-12 items-center justify-center rounded-full bg-muted"
-							>
-								<ImageSquare class="size-6" />
-							</div>
-							<div class="flex flex-col">
-								<h4 class="text-[17px] font-semibold leading-5 tracking-[-0.01em]">
-									Resize image
-								</h4>
-								<p class="text-sm font-medium text-muted-foreground">
-									Resize your photos easily
-								</p>
-							</div>
-						</div>
-						<Separator.Root class="-mx-4 mb-6 mt-[17px] block h-px bg-dark-10" />
-						<div class="flex items-center pb-2">
-							<div class="mr-2 flex items-center">
-								<div class="relative mr-2">
-									<span class="sr-only">Width</span>
-									<span
-										aria-hidden="true"
-										class="absolute left-5 top-4 text-xxs text-muted-foreground"
-										>W</span
-									>
-									<input
-										type="number"
-										class="h-input w-[119px] rounded-10px border border-border-input bg-background pl-10 pr-2 text-sm text-foreground"
-										bind:value={width}
-									/>
+					<div {...wrapperProps}>
+						<div {...props} transition:fly={{ duration: 300 }}>
+							<div class="flex items-center">
+								<div
+									class="mr-3 flex size-12 items-center justify-center rounded-full bg-muted"
+								>
+									<ImageSquare class="size-6" />
 								</div>
-								<div class="relative">
-									<span class="sr-only">Height</span>
-									<span
-										aria-hidden="true"
-										class="absolute left-5 top-4 text-xxs text-muted-foreground"
-										>H</span
+								<div class="flex flex-col">
+									<h4
+										class="text-[17px] font-semibold leading-5 tracking-[-0.01em]"
 									>
-									<input
-										type="number"
-										class="h-input w-[119px] rounded-10px border border-border-input bg-background pl-10 pr-2 text-sm text-foreground"
-										bind:value={height}
-									/>
+										Resize image
+									</h4>
+									<p class="text-sm font-medium text-muted-foreground">
+										Resize your photos easily
+									</p>
 								</div>
 							</div>
-							<Toggle.Root
-								aria-label="toggle constrain portions"
-								class="inline-flex size-10 items-center justify-center rounded-[9px] bg-background transition-all hover:bg-muted active:scale-98 data-[state=on]:bg-muted"
-							>
-								<LinkSimpleHorizontalBreak class="size-6" />
-							</Toggle.Root>
+							<Separator.Root class="-mx-4 mb-6 mt-[17px] block h-px bg-dark-10" />
+							<div class="flex items-center pb-2">
+								<div class="mr-2 flex items-center">
+									<div class="relative mr-2">
+										<span class="sr-only">Width</span>
+										<span
+											aria-hidden="true"
+											class="absolute left-5 top-4 text-xxs text-muted-foreground"
+											>W</span
+										>
+										<input
+											type="number"
+											class="h-input w-[119px] rounded-10px border border-border-input bg-background pl-10 pr-2 text-sm text-foreground"
+											bind:value={width}
+										/>
+									</div>
+									<div class="relative">
+										<span class="sr-only">Height</span>
+										<span
+											aria-hidden="true"
+											class="absolute left-5 top-4 text-xxs text-muted-foreground"
+											>H</span
+										>
+										<input
+											type="number"
+											class="h-input w-[119px] rounded-10px border border-border-input bg-background pl-10 pr-2 text-sm text-foreground"
+											bind:value={height}
+										/>
+									</div>
+								</div>
+								<Toggle.Root
+									aria-label="toggle constrain portions"
+									class="inline-flex size-10 items-center justify-center rounded-[9px] bg-background transition-all hover:bg-muted active:scale-98 data-[state=on]:bg-muted"
+								>
+									<LinkSimpleHorizontalBreak class="size-6" />
+								</Toggle.Root>
+							</div>
 						</div>
 					</div>
 				{/if}

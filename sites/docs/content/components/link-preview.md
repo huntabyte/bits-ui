@@ -182,10 +182,12 @@ You can use the `forceMount` prop along with the `child` snippet to forcefully m
 </script>
 
 <LinkPreview.Content forceMount>
-	{#snippet child({ props, open })}
+	{#snippet child({ wrapperProps, props, open })}
 		{#if open}
-			<div {...props} transition:fly>
-				<!-- ... -->
+			<div {...wrapperProps}>
+				<div {...props} transition:fly>
+					<!-- ... -->
+				</div>
 			</div>
 		{/if}
 	{/snippet}

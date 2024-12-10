@@ -305,8 +305,6 @@ You can create nested menus using the `ContextMenu.Sub` component to create comp
 </ContextMenu.Content>
 ```
 
-<!-- <ContextMenuDemoNested /> -->
-
 ## Svelte Transitions
 
 You can use the `forceMount` prop along with the `child` snippet to forcefully mount the `ContextMenu.Content` component to use Svelte Transitions or another animation library that requires more control.
@@ -318,11 +316,13 @@ You can use the `forceMount` prop along with the `child` snippet to forcefully m
 </script>
 
 <ContextMenu.Content forceMount>
-	{#snippet child({ props, open })}
+	{#snippet child({ wrapperProps, props, open })}
 		{#if open}
-			<div {...props} transition:fly>
-				<ContextMenu.Item>Item 1</ContextMenu.Item>
-				<ContextMenu.Item>Item 2</ContextMenu.Item>
+			<div {...wrapperProps}>
+				<div {...props} transition:fly>
+					<ContextMenu.Item>Item 1</ContextMenu.Item>
+					<ContextMenu.Item>Item 2</ContextMenu.Item>
+				</div>
 			</div>
 		{/if}
 	{/snippet}
