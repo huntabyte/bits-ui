@@ -4,7 +4,12 @@ import { findNextSibling, findPreviousSibling } from "./utils.js";
 import { commandScore } from "./command-score.js";
 import type { CommandState } from "./types.js";
 import { createContext } from "$lib/internal/create-context.js";
-import type { WithRefProps } from "$lib/internal/types.js";
+import type {
+	BitsKeyboardEvent,
+	BitsMouseEvent,
+	BitsPointerEvent,
+	WithRefProps,
+} from "$lib/internal/types.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import {
@@ -89,16 +94,19 @@ class CommandRootState {
 	commandState = $state.raw<CommandState>(null!);
 	// internal state that we mutate in batches and publish to the `state` at once
 	_commandState = $state<CommandState>(null!);
-	snapshot = () => this._commandState;
 
-	#scheduleUpdate = () => {
+	#snapshot() {
+		return this._commandState;
+	}
+
+	#scheduleUpdate() {
 		if (this.#updateScheduled) return;
 		this.#updateScheduled = true;
 
 		afterTick(() => {
 			this.#updateScheduled = false;
 
-			const currentState = this.snapshot();
+			const currentState = this.#snapshot();
 			const hasStateChanged = !Object.is(this.commandState, currentState);
 
 			if (hasStateChanged) {
@@ -106,9 +114,9 @@ class CommandRootState {
 				this.onStateChange?.current?.($state.snapshot(currentState));
 			}
 		});
-	};
+	}
 
-	setState: SetState = (key, value, opts) => {
+	setState<K extends keyof CommandState>(key: K, value: CommandState[K], opts?: boolean) {
 		if (Object.is(this._commandState[key], value)) return;
 
 		this._commandState[key] = value;
@@ -127,7 +135,7 @@ class CommandRootState {
 		}
 
 		this.#scheduleUpdate();
-	};
+	}
 
 	constructor(props: CommandRootStateProps) {
 		this.id = props.id;
@@ -162,15 +170,17 @@ class CommandRootState {
 			id: this.id,
 			ref: this.ref,
 		});
+
+		this.onkeydown = this.onkeydown.bind(this);
 	}
 
-	#score = (value: string, keywords?: string[]) => {
+	#score(value: string, keywords?: string[]) {
 		const filter = this.filter.current ?? defaultFilter;
 		const score = value ? filter(value, this._commandState.search, keywords) : 0;
 		return score;
-	};
+	}
 
-	#sort = () => {
+	#sort() {
 		if (!this._commandState.search || this.shouldFilter.current === false) {
 			// If no search and no selection yet, select first item
 			if (!this.commandState.value) this.#selectFirstItem();
@@ -242,9 +252,9 @@ class CommandRootState {
 			);
 			element?.parentElement?.appendChild(element);
 		}
-	};
+	}
 
-	setValue = (value: string, opts?: boolean) => {
+	setValue(value: string, opts?: boolean) {
 		if (value !== this.valueProp.current && value === "") {
 			afterTick(() => {
 				this.key++;
@@ -252,9 +262,9 @@ class CommandRootState {
 		}
 		this.setState("value", value, opts);
 		this.valueProp.current = value;
-	};
+	}
 
-	#selectFirstItem = () => {
+	#selectFirstItem() {
 		afterTick(() => {
 			const item = this.#getValidItems().find(
 				(item) => item.getAttribute("aria-disabled") !== "true"
@@ -262,9 +272,9 @@ class CommandRootState {
 			const value = item?.getAttribute(VALUE_ATTR);
 			this.setValue(value || "");
 		});
-	};
+	}
 
-	#filterItems = () => {
+	#filterItems() {
 		if (!this._commandState.search || this.shouldFilter.current === false) {
 			this._commandState.filtered.count = this.allItems.size;
 			return;
@@ -296,18 +306,18 @@ class CommandRootState {
 		}
 
 		this._commandState.filtered.count = itemCount;
-	};
+	}
 
-	#getValidItems = () => {
+	#getValidItems() {
 		const node = this.ref.current;
 		if (!node) return [];
 		const validItems = Array.from(
 			node.querySelectorAll<HTMLElement>(VALID_ITEM_SELECTOR)
 		).filter((el): el is HTMLElement => !!el);
 		return validItems;
-	};
+	}
 
-	#getSelectedItem = () => {
+	#getSelectedItem() {
 		const node = this.ref.current;
 		if (!node) return;
 		const selectedNode = node.querySelector<HTMLElement>(
@@ -315,9 +325,9 @@ class CommandRootState {
 		);
 		if (!selectedNode) return;
 		return selectedNode;
-	};
+	}
 
-	#scrollSelectedIntoView = () => {
+	#scrollSelectedIntoView() {
 		afterSleep(1, () => {
 			const item = this.#getSelectedItem();
 			if (!item) return;
@@ -333,17 +343,17 @@ class CommandRootState {
 			}
 			item.scrollIntoView({ block: "nearest" });
 		});
-	};
+	}
 
-	#updateSelectedToIndex = (index: number) => {
+	#updateSelectedToIndex(index: number) {
 		const items = this.#getValidItems();
 		const item = items[index];
 		if (item) {
 			this.setValue(item.getAttribute(VALUE_ATTR) ?? "");
 		}
-	};
+	}
 
-	#updateSelectedByItem = (change: 1 | -1) => {
+	#updateSelectedByItem(change: 1 | -1) {
 		const selected = this.#getSelectedItem();
 		const items = this.#getValidItems();
 		const index = items.findIndex((item) => item === selected);
@@ -363,9 +373,9 @@ class CommandRootState {
 		if (newSelected) {
 			this.setValue(newSelected.getAttribute(VALUE_ATTR) ?? "");
 		}
-	};
+	}
 
-	#updateSelectedByGroup = (change: 1 | -1) => {
+	#updateSelectedByGroup(change: 1 | -1) {
 		const selected = this.#getSelectedItem();
 		let group = selected?.closest(GROUP_SELECTOR);
 		let item: HTMLElement | null | undefined;
@@ -383,10 +393,10 @@ class CommandRootState {
 		} else {
 			this.#updateSelectedByItem(change);
 		}
-	};
+	}
 
 	// keep id -> { value, keywords } mapping up to date
-	registerValue = (id: string, value: string, keywords?: string[]) => {
+	registerValue(id: string, value: string, keywords?: string[]) {
 		if (value === this.allIds.get(id)?.value) return;
 		this.allIds.set(id, { value, keywords });
 		this._commandState.filtered.items.set(id, this.#score(value, keywords));
@@ -396,9 +406,9 @@ class CommandRootState {
 		return () => {
 			this.allIds.delete(id);
 		};
-	};
+	}
 
-	registerItem = (id: string, groupId: string | undefined) => {
+	registerItem(id: string, groupId: string | undefined) {
 		this.allItems.add(id);
 
 		// Track this item within the group
@@ -428,9 +438,9 @@ class CommandRootState {
 
 			this.#scheduleUpdate();
 		};
-	};
+	}
 
-	registerGroup = (id: string) => {
+	registerGroup(id: string) {
 		if (!this.allGroups.has(id)) {
 			this.allGroups.set(id, new Set());
 		}
@@ -439,13 +449,13 @@ class CommandRootState {
 			this.allIds.delete(id);
 			this.allGroups.delete(id);
 		};
-	};
+	}
 
-	#last = () => {
+	#last() {
 		return this.#updateSelectedToIndex(this.#getValidItems().length - 1);
-	};
+	}
 
-	#next = (e: KeyboardEvent) => {
+	#next(e: BitsKeyboardEvent) {
 		e.preventDefault();
 
 		if (e.metaKey) {
@@ -455,9 +465,9 @@ class CommandRootState {
 		} else {
 			this.#updateSelectedByItem(1);
 		}
-	};
+	}
 
-	#prev = (e: KeyboardEvent) => {
+	#prev(e: BitsKeyboardEvent) {
 		e.preventDefault();
 
 		if (e.metaKey) {
@@ -470,9 +480,9 @@ class CommandRootState {
 			// Previous item
 			this.#updateSelectedByItem(-1);
 		}
-	};
+	}
 
-	#onkeydown = (e: KeyboardEvent) => {
+	onkeydown(e: BitsKeyboardEvent) {
 		switch (e.key) {
 			case kbd.n:
 			case kbd.j: {
@@ -522,7 +532,7 @@ class CommandRootState {
 				}
 			}
 		}
-	};
+	}
 
 	props = $derived.by(
 		() =>
@@ -531,7 +541,7 @@ class CommandRootState {
 				role: "application",
 				[ROOT_ATTR]: "",
 				tabindex: -1,
-				onkeydown: this.#onkeydown,
+				onkeydown: this.onkeydown,
 			}) as const
 	);
 }
@@ -646,14 +656,6 @@ class CommandGroupContainerState {
 				[GROUP_ATTR]: "",
 			}) as const
 	);
-
-	createGroupHeading(props: CommandGroupHeadingStateProps) {
-		return new CommandGroupHeadingState(props, this);
-	}
-
-	createGroupItems(props: CommandGroupItemsStateProps) {
-		return new CommandGroupItemsState(props, this);
-	}
 }
 
 type CommandGroupHeadingStateProps = WithRefProps;
@@ -879,28 +881,32 @@ class CommandItemState {
 				node.setAttribute(VALUE_ATTR, this.trueValue);
 			});
 		});
+
+		// bindings
+		this.onclick = this.onclick.bind(this);
+		this.onpointermove = this.onpointermove.bind(this);
 	}
 
-	#onSelect = () => {
+	#onSelect() {
 		if (this.#disabled.current) return;
 		this.#select();
 		this.#onSelectProp?.current();
-	};
+	}
 
-	#select = () => {
+	#select() {
 		if (this.#disabled.current) return;
 		this.root.setValue(this.trueValue, true);
-	};
+	}
 
-	#onpointermove = () => {
+	onpointermove(_: BitsPointerEvent) {
 		if (this.#disabled.current || this.root.disablePointerSelection.current) return;
 		this.#select();
-	};
+	}
 
-	#onclick = () => {
+	onclick(_: BitsMouseEvent) {
 		if (this.#disabled.current) return;
 		this.#onSelect();
-	};
+	}
 
 	props = $derived.by(
 		() =>
@@ -912,8 +918,8 @@ class CommandItemState {
 				"data-selected": getDataSelected(this.isSelected),
 				[ITEM_ATTR]: "",
 				role: "option",
-				onpointermove: this.#onpointermove,
-				onclick: this.#onclick,
+				onpointermove: this.onpointermove,
+				onclick: this.onclick,
 			}) as const
 	);
 }
