@@ -121,15 +121,21 @@
 		{loop}
 		trapFocus={false}
 	>
-		{#snippet popper({ props })}
+		{#snippet popper({ props, wrapperProps })}
 			{@const finalProps = mergeProps(props, mergedProps, {
 				style: getFloatingContentCSSVars("menu"),
 			})}
 			{#if child}
-				{@render child({ props: finalProps, ...subContentState.snippetProps })}
+				{@render child({
+					props: finalProps,
+					wrapperProps,
+					...subContentState.snippetProps,
+				})}
 			{:else}
-				<div {...finalProps}>
-					{@render children?.()}
+				<div {...wrapperProps}>
+					<div {...finalProps}>
+						{@render children?.()}
+					</div>
 				</div>
 			{/if}
 			<Mounted bind:isMounted />
@@ -150,15 +156,21 @@
 		{loop}
 		trapFocus={false}
 	>
-		{#snippet popper({ props })}
+		{#snippet popper({ props, wrapperProps })}
 			{@const finalProps = mergeProps(props, mergedProps, {
 				style: getFloatingContentCSSVars("menu"),
 			})}
 			{#if child}
-				{@render child({ props: finalProps, ...subContentState.snippetProps })}
+				{@render child({
+					props: finalProps,
+					wrapperProps,
+					...subContentState.snippetProps,
+				})}
 			{:else}
-				<div {...finalProps}>
-					{@render children?.()}
+				<div {...wrapperProps}>
+					<div {...finalProps}>
+						{@render children?.()}
+					</div>
 				</div>
 			{/if}
 			<Mounted bind:isMounted />
