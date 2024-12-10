@@ -48,3 +48,37 @@ export function addEventListener(
 		events.forEach((_event) => target.removeEventListener(_event, handler, options));
 	};
 }
+
+/**
+ * Creates a typed event dispatcher and listener pair for custom events
+ * @template T - The type of data that will be passed in the event detail
+ * @param eventName - The name of the custom event
+ * @param options - CustomEvent options (bubbles, cancelable, etc.)
+ * @returns A tuple containing dispatch and listen functions
+ */
+export function createCustomEvent<T = unknown>(
+	eventName: string,
+	options: Omit<CustomEventInit<T>, "detail"> = { bubbles: true, cancelable: true }
+) {
+	type CustomEventType = CustomEvent<T>;
+	type EventListener = (event: CustomEventType) => void;
+
+	function dispatch(element: HTMLElement, detail?: T) {
+		const event = new CustomEvent<T>(eventName, {
+			...options,
+			detail,
+		});
+		element.dispatchEvent(event);
+	}
+
+	function listen(element: EventTarget, callback: EventListener) {
+		const handler = (event: Event) => {
+			callback(event as CustomEventType);
+		};
+
+		// @ts-expect-error shh
+		return addEventListener(element, eventName, handler);
+	}
+
+	return [dispatch, listen] as const;
+}
