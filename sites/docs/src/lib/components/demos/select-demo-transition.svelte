@@ -51,33 +51,37 @@
 			sideOffset={10}
 			forceMount
 		>
-			{#snippet child({ props, open })}
+			{#snippet child({ wrapperProps, props, open })}
 				{#if open}
-					<div {...props} transition:fly={{ duration: 300 }}>
-						<Select.ScrollUpButton class="flex w-full items-center justify-center">
-							<CaretDoubleUp class="size-3" />
-						</Select.ScrollUpButton>
-						<Select.Viewport class="p-1">
-							{#each themes as theme, i (i + theme.value)}
-								<Select.Item
-									class="flex h-10 w-full select-none items-center rounded-button py-3 pl-5 pr-1.5 text-sm capitalize outline-none duration-75 data-[highlighted]:bg-muted"
-									value={theme.value}
-									label={theme.label}
-								>
-									{#snippet children({ selected })}
-										{theme.label}
-										{#if selected}
-											<div class="ml-auto">
-												<Check />
-											</div>
-										{/if}
-									{/snippet}
-								</Select.Item>
-							{/each}
-						</Select.Viewport>
-						<Select.ScrollDownButton class="flex w-full items-center justify-center">
-							<CaretDoubleDown class="size-3" />
-						</Select.ScrollDownButton>
+					<div {...wrapperProps}>
+						<div {...props} transition:fly={{ duration: 300 }}>
+							<Select.ScrollUpButton class="flex w-full items-center justify-center">
+								<CaretDoubleUp class="size-3" />
+							</Select.ScrollUpButton>
+							<Select.Viewport class="p-1">
+								{#each themes as theme, i (i + theme.value)}
+									<Select.Item
+										class="flex h-10 w-full select-none items-center rounded-button py-3 pl-5 pr-1.5 text-sm capitalize outline-none duration-75 data-[highlighted]:bg-muted"
+										value={theme.value}
+										label={theme.label}
+									>
+										{#snippet children({ selected })}
+											{theme.label}
+											{#if selected}
+												<div class="ml-auto">
+													<Check />
+												</div>
+											{/if}
+										{/snippet}
+									</Select.Item>
+								{/each}
+							</Select.Viewport>
+							<Select.ScrollDownButton
+								class="flex w-full items-center justify-center"
+							>
+								<CaretDoubleDown class="size-3" />
+							</Select.ScrollDownButton>
+						</div>
 					</div>
 				{/if}
 			{/snippet}

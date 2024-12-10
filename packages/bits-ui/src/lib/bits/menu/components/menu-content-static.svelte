@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
-	import type { MenuContentProps } from "../types.js";
+	import type { MenuContentStaticProps } from "../types.js";
 	import { useMenuContent } from "../menu.svelte.js";
 	import { useId } from "$lib/internal/use-id.js";
 	import { noop } from "$lib/internal/noop.js";
@@ -19,7 +19,7 @@
 		onEscapeKeydown = noop,
 		forceMount = false,
 		...restProps
-	}: MenuContentProps = $props();
+	}: MenuContentStaticProps = $props();
 
 	let isMounted = $state(false);
 

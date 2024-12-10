@@ -57,6 +57,4 @@
 	);
 </script>
 
-<div {...mergedProps}>
-	{@render content?.({ props: contentState.props })}
-</div>
+{@render content?.({ props: contentState.props, wrapperProps: mergedProps })}

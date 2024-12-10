@@ -42,7 +42,9 @@ export type PopperLayerImplProps = Omit<
 		Omit<PresenceLayerImplProps, "presence"> &
 		TextSelectionLayerImplProps &
 		FocusScopeImplProps & {
-			popper: Snippet<[{ props: Record<string, unknown> }]>;
+			popper: Snippet<
+				[{ props: Record<string, unknown>; wrapperProps: Record<string, unknown> }]
+			>;
 			isStatic?: boolean;
 		},
 	"enabled"

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
-	import type { TooltipContentProps } from "../types.js";
+	import type { TooltipContentStaticProps } from "../types.js";
 	import { useTooltipContent } from "../tooltip.svelte.js";
 	import { useId } from "$lib/internal/use-id.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
@@ -12,19 +12,12 @@
 		child,
 		id = useId(),
 		ref = $bindable(null),
-		side = "top",
-		sideOffset = 0,
-		align = "center",
-		avoidCollisions = true,
-		arrowPadding = 0,
-		sticky = "partial",
-		hideWhenDetached = false,
-		collisionPadding = 0,
+
 		onInteractOutside,
 		onEscapeKeydown,
 		forceMount = false,
 		...restProps
-	}: TooltipContentProps = $props();
+	}: TooltipContentStaticProps = $props();
 
 	const contentState = useTooltipContent({
 		id: box.with(() => id),
@@ -34,18 +27,7 @@
 		),
 	});
 
-	const floatingProps = $derived({
-		side,
-		sideOffset,
-		align,
-		avoidCollisions,
-		arrowPadding,
-		sticky,
-		hideWhenDetached,
-		collisionPadding,
-	});
-
-	const mergedProps = $derived(mergeProps(restProps, floatingProps, contentState.props));
+	const mergedProps = $derived(mergeProps(restProps, contentState.props));
 
 	function handleInteractOutside(e: PointerEvent) {
 		onInteractOutside?.(e);

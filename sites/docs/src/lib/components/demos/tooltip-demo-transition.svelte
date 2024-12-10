@@ -13,13 +13,15 @@
 			<MagicWand class="size-5" />
 		</Tooltip.Trigger>
 		<Tooltip.Content sideOffset={8} forceMount>
-			{#snippet child({ props, open })}
+			{#snippet child({ wrapperProps, props, open })}
 				{#if open}
-					<div {...props} transition:fly={{ duration: 300 }}>
-						<div
-							class="z-0 flex items-center justify-center rounded-input border border-dark-10 bg-background p-3 text-sm font-medium shadow-popover outline-none"
-						>
-							Make some magic!
+					<div {...wrapperProps}>
+						<div {...props} transition:fly={{ duration: 300 }}>
+							<div
+								class="z-0 flex items-center justify-center rounded-input border border-dark-10 bg-background p-3 text-sm font-medium shadow-popover outline-none"
+							>
+								Make some magic!
+							</div>
 						</div>
 					</div>
 				{/if}

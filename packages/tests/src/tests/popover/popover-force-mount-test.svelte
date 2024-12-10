@@ -17,30 +17,38 @@
 	}: PopoverForceMountTestProps = $props();
 </script>
 
+{#snippet Content({
+	props,
+	wrapperProps,
+}: {
+	props: Record<string, unknown>;
+	wrapperProps: Record<string, unknown>;
+})}
+	<div {...wrapperProps}>
+		<div {...props}>
+			content
+			<Popover.Close data-testid="close">close</Popover.Close>
+			<Popover.Arrow data-testid="arrow" />
+		</div>
+	</div>
+{/snippet}
+
 <main data-testid="main">
 	<Popover.Root bind:open {...restProps}>
 		<Popover.Trigger data-testid="trigger">trigger</Popover.Trigger>
 		<Popover.Portal {...portalProps}>
 			{#if withOpenCheck}
 				<Popover.Content {...contentProps} data-testid="content" forceMount>
-					{#snippet child({ props, open })}
-						{#if open}
-							<div {...props}>
-								content
-								<Popover.Close data-testid="close">close</Popover.Close>
-								<Popover.Arrow data-testid="arrow" />
-							</div>
+					{#snippet child(props)}
+						{#if props.open}
+							{@render Content(props)}
 						{/if}
 					{/snippet}
 				</Popover.Content>
 			{:else}
 				<Popover.Content {...contentProps} data-testid="content" forceMount>
-					{#snippet child({ props, open: _open })}
-						<div {...props}>
-							content
-							<Popover.Close data-testid="close">close</Popover.Close>
-							<Popover.Arrow data-testid="arrow" />
-						</div>
+					{#snippet child(props)}
+						{@render Content(props)}
 					{/snippet}
 				</Popover.Content>
 			{/if}

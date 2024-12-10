@@ -13,6 +13,7 @@ import type {
 	WithChildren,
 	Without,
 } from "$lib/internal/types.js";
+import type { FloatingContentSnippetProps, StaticContentSnippetProps } from "$lib/shared/types.js";
 
 export type SelectBaseRootPropsWithoutHTML = WithChildren<{
 	/**
@@ -177,19 +178,11 @@ export type _SharedSelectContentProps = {
 	loop?: boolean;
 };
 
-export type SelectContentSnippetProps = {
-	/**
-	 * Whether the content is open or closed. Used alongside the `forceMount` prop to conditionally
-	 * render the content using Svelte transitions.
-	 */
-	open: boolean;
-};
-
 export type SelectContentPropsWithoutHTML = Expand<
 	WithChildNoChildrenSnippetProps<
 		Omit<PopperLayerProps, "content" | "onOpenAutoFocus" | "trapFocus"> &
 			_SharedSelectContentProps,
-		SelectContentSnippetProps
+		FloatingContentSnippetProps
 	>
 >;
 
@@ -200,7 +193,7 @@ export type SelectContentStaticPropsWithoutHTML = Expand<
 	WithChildNoChildrenSnippetProps<
 		Omit<PopperLayerStaticProps, "content" | "onOpenAutoFocus" | "trapFocus"> &
 			_SharedSelectContentProps,
-		SelectContentSnippetProps
+		StaticContentSnippetProps
 	>
 >;
 

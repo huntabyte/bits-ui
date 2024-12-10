@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { afterTick, box, mergeProps } from "svelte-toolbelt";
-	import type { MenuSubContentProps } from "../types.js";
+	import type { MenuSubContentStaticProps } from "../types.js";
 	import { useMenuContent } from "../menu.svelte.js";
 	import { SUB_CLOSE_KEYS } from "../utils.js";
 	import { useId } from "$lib/internal/use-id.js";
@@ -25,9 +25,8 @@
 		onOpenAutoFocus: onOpenAutoFocusProp = noop,
 		onCloseAutoFocus: onCloseAutoFocusProp = noop,
 		onFocusOutside = noop,
-		side = "right",
 		...restProps
-	}: MenuSubContentProps = $props();
+	}: MenuSubContentStaticProps = $props();
 
 	let isMounted = $state(false);
 
@@ -58,7 +57,6 @@
 
 	const mergedProps = $derived(
 		mergeProps(restProps, subContentState.props, {
-			side,
 			onkeydown,
 			[dataAttr]: "",
 		})
