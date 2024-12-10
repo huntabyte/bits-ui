@@ -74,3 +74,49 @@ Behind the scenes, components using the child prop typically implement logic sim
 	</button>
 {/if}
 ```
+
+## Floating Content Components
+
+Floating content components (tooltips, popovers, dropdowns, etc.) require special handling when used with the `child` snippet due to their positioning requirements with Floating UI.
+
+### Implementation Details
+
+When implementing floating content, you must:
+
+-   Include a wrapper element within the `child` snippet
+-   Spread the `wrapperProps` prop to this wrapper element
+-   Place your floating content inside this wrapper
+
+```svelte {4,8} /wrapperProps/
+<Popover.Content>
+	{#snippet child({ wrapperProps, props, open })}
+		{#if open}
+			<div {...wrapperProps}>
+				<div {...props}>
+					<!-- ... -->
+				</div>
+			</div>
+		{/if}
+	{/snippet}
+</Popover.Content>
+```
+
+### Important Considerations
+
+-   The wrapper element must remain unstyled as its positioning is managed internally by Floating UI
+-   The `wrapperProps` contain computed positioning data essential for proper floating behavior
+-   Modifying the wrapper element's styles or structure may break positioning calculations
+
+### Affected Components
+
+The following components require a wrapper element:
+
+-   `Combobox.Content`
+-   `DatePicker.Content`
+-   `DateRangePicker.Content`
+-   `DropdownMenu.Content`
+-   `LinkPreview.Content`
+-   `Menubar.Content`
+-   `Popover.Content`
+-   `Select.Content`
+-   `Tooltip.Content`
