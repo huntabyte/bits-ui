@@ -62,6 +62,7 @@ class MenubarRootState {
 			id: this.id,
 			ref: this.ref,
 		});
+
 		this.rovingFocusGroup = useRovingFocus({
 			rootNodeId: this.id,
 			candidateAttr: TRIGGER_ATTR,
@@ -386,6 +387,7 @@ class MenubarContentState {
 					"--bits-menubar-anchor-height": "var(--bits-floating-anchor-height)",
 				},
 				onkeydown: this.onkeydown,
+				"data-menu-content": "",
 			}) as const
 	);
 }

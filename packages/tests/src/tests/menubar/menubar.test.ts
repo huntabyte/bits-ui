@@ -12,12 +12,17 @@ const kbd = getTestKbd();
 /**
  * Helper function to reduce boilerplate in tests
  */
-function setup(props: Menubar.RootProps = {}, menuId: string = "1") {
+function setup(props: Menubar.RootProps = {}) {
 	const user = userEvent.setup();
 	const returned = render(MenubarTest, { ...props });
 	const { getByTestId } = returned;
-	const trigger = getByTestId(`${menuId}-trigger`);
-	return { user, ...returned, trigger };
+
+	const getTrigger = (id: string) => getByTestId(`${id}-trigger`);
+	const getContent = (id: string) => getByTestId(`${id}-content`);
+	const getSubTrigger = (id: string) => getByTestId(`${id}-sub-trigger`);
+	const getSubContent = (id: string) => getByTestId(`${id}-sub-content`);
+
+	return { user, ...returned, getTrigger, getContent, getSubTrigger, getSubContent };
 }
 
 describe("menubar", () => {
@@ -28,7 +33,8 @@ describe("menubar", () => {
 
 	it.skip("should have bits data attrs", async () => {
 		const menuId = "1";
-		const { user, trigger, getByTestId, queryByTestId } = setup({}, menuId);
+		const { user, getTrigger, getByTestId, queryByTestId } = setup();
+		const trigger = getTrigger(menuId);
 		await user.click(trigger);
 		await user.click(trigger);
 		const content = queryByTestId("1-content");
@@ -65,28 +71,46 @@ describe("menubar", () => {
 	});
 
 	it("should navigate triggers within the menubar using arrow keys", async () => {
-		const { user, trigger, getByTestId } = setup({}, "1");
+		const { user, getTrigger } = setup();
+		const trigger = getTrigger("1");
 		trigger.focus();
 		await user.keyboard(kbd.ARROW_RIGHT);
-		expect(getByTestId("2-trigger")).toHaveFocus();
+		expect(getTrigger("2")).toHaveFocus();
 		await user.keyboard(kbd.ARROW_RIGHT);
-		expect(getByTestId("3-trigger")).toHaveFocus();
+		expect(getTrigger("3")).toHaveFocus();
 		await user.keyboard(kbd.ARROW_RIGHT);
-		expect(getByTestId("4-trigger")).toHaveFocus();
+		expect(getTrigger("4")).toHaveFocus();
 		await user.keyboard(kbd.ARROW_RIGHT);
-		expect(getByTestId("1-trigger")).toHaveFocus();
+		expect(getTrigger("1")).toHaveFocus();
 	});
 
 	it("should respect the loop prop", async () => {
-		const { user, trigger, getByTestId } = setup({ loop: false }, "1");
+		const { user, getTrigger } = setup({ loop: false });
+		const trigger = getTrigger("1");
 		trigger.focus();
 		await user.keyboard(kbd.ARROW_RIGHT);
-		expect(getByTestId("2-trigger")).toHaveFocus();
+		expect(getTrigger("2")).toHaveFocus();
 		await user.keyboard(kbd.ARROW_RIGHT);
-		expect(getByTestId("3-trigger")).toHaveFocus();
+		expect(getTrigger("3")).toHaveFocus();
 		await user.keyboard(kbd.ARROW_RIGHT);
-		expect(getByTestId("4-trigger")).toHaveFocus();
+		expect(getTrigger("4")).toHaveFocus();
 		await user.keyboard(kbd.ARROW_RIGHT);
-		expect(getByTestId("4-trigger")).toHaveFocus();
+		expect(getTrigger("4")).toHaveFocus();
+	});
+
+	it("should navigate between menus when using the arrow keys and focus is within a menu", async () => {
+		const { user, getTrigger, getContent } = setup();
+		const trigger = getTrigger("1");
+		trigger.focus();
+		await user.keyboard(kbd.ARROW_DOWN);
+		const content1 = getContent("1");
+		expect(content1).toBeVisible();
+		await user.keyboard(kbd.ARROW_RIGHT);
+		const content2 = getContent("2");
+		expect(content2).toBeVisible();
+		expect(content1).not.toBeVisible();
+		await user.keyboard(kbd.ARROW_LEFT);
+		expect(getContent("1")).toBeVisible();
+		expect(content2).not.toBeVisible();
 	});
 });
