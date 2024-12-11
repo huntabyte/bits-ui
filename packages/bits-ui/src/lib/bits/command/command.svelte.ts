@@ -810,7 +810,6 @@ class CommandItemState {
 	#ref: CommandItemStateProps["ref"];
 	id: CommandItemStateProps["id"];
 	root: CommandRootState;
-
 	#value: CommandItemStateProps["value"];
 	#disabled: CommandItemStateProps["disabled"];
 	#onSelectProp: CommandItemStateProps["onSelect"];
@@ -916,6 +915,7 @@ class CommandItemState {
 				"aria-selected": getAriaSelected(this.isSelected),
 				"data-disabled": getDataDisabled(this.#disabled.current),
 				"data-selected": getDataSelected(this.isSelected),
+				"data-value": this.trueValue,
 				[ITEM_ATTR]: "",
 				role: "option",
 				onpointermove: this.onpointermove,
