@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.71
+
+### Patch Changes
+
+-   fix: `Command` arrow navigation after empty state displayed ([#997](https://github.com/huntabyte/bits-ui/pull/997))
+
 ## 1.0.0-next.70
 
 ### Patch Changes
