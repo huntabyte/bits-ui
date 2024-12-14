@@ -7,12 +7,15 @@ import {
 	type AnyFn,
 	type ReadableBoxedValues,
 	type WithRefProps,
+	type WritableBox,
 	type WritableBoxedValues,
 	box,
 	onDestroyEffect,
 	useRefById,
 } from "svelte-toolbelt";
-import { Previous } from "runed";
+import { watch } from "runed";
+import { untrack } from "svelte";
+import { SvelteMap } from "svelte/reactivity";
 import { createContext } from "$lib/internal/create-context.js";
 import { type Direction, type Orientation, useId } from "$lib/shared/index.js";
 import {
@@ -32,6 +35,7 @@ import type {
 import { kbd } from "$lib/internal/kbd.js";
 import { createCustomEvent } from "$lib/internal/events.js";
 import { useResizeObserver } from "$lib/internal/use-resize-observer.svelte.js";
+import { PreviousWithInit } from "$lib/internal/previous-with-init.svelte.js";
 
 const ROOT_ATTR = "data-navigation-menu-root";
 const SUB_ATTR = "data-navigation-menu-sub";
@@ -60,12 +64,13 @@ type NavigationMenuProviderStateProps = ReadableBoxedValues<{
 class NavigationMenuProviderState {
 	isRootMenu: NavigationMenuProviderStateProps["isRootMenu"];
 	value: NavigationMenuProviderStateProps["value"];
-	previousValue: Previous<string>;
+	previousValue: PreviousWithInit<string>;
 	dir: NavigationMenuProviderStateProps["dir"];
 	orientation: NavigationMenuProviderStateProps["orientation"];
 	rootNavigationMenuRef: NavigationMenuProviderStateProps["rootNavigationMenuRef"];
 	indicatorTrackRef = box<HTMLElement | null>(null);
 	viewportRef = box<HTMLElement | null>(null);
+	viewportContent = new SvelteMap<string, NavigationMenuItemState>();
 	onTriggerEnter: NavigationMenuProviderStateProps["onTriggerEnter"];
 	onTriggerLeave: () => void = noop;
 	onContentEnter: () => void = noop;
@@ -76,7 +81,7 @@ class NavigationMenuProviderState {
 	constructor(props: NavigationMenuProviderStateProps) {
 		this.isRootMenu = props.isRootMenu;
 		this.value = props.value;
-		this.previousValue = new Previous(() => this.value.current);
+		this.previousValue = new PreviousWithInit(() => this.value.current);
 		this.dir = props.dir;
 		this.orientation = props.orientation;
 		this.rootNavigationMenuRef = props.rootNavigationMenuRef;
@@ -93,6 +98,15 @@ class NavigationMenuProviderState {
 		this.onTriggerLeave = this.onTriggerLeave.bind(this);
 		this.onContentEnter = this.onContentEnter.bind(this);
 		this.onContentLeave = this.onContentLeave.bind(this);
+	}
+
+	onViewportContentChange(contentValue: string, item: NavigationMenuItemState) {
+		this.viewportContent.set(contentValue, item);
+	}
+
+	onViewportContentRemove(contentValue: string) {
+		if (!this.viewportContent.has(contentValue)) return;
+		this.viewportContent.delete(contentValue);
 	}
 }
 
@@ -235,7 +249,6 @@ class NavigationMenuRootState {
 		() =>
 			({
 				id: this.id.current,
-				"aria-label": "Main",
 				"data-orientation": getDataOrientation(this.orientation.current),
 				dir: this.dir.current,
 				[ROOT_ATTR]: "",
@@ -365,6 +378,8 @@ class NavigationMenuItemState {
 	focusProxyNode = $state<HTMLElement | null>(null);
 	restoreContentTabOrder: AnyFn = noop;
 	wasEscapeClose = $state(false);
+	contentId = $derived.by(() => this.contentNode?.id);
+	triggerId = $derived.by(() => this.triggerNode?.id);
 
 	constructor(props: NavigationMenuItemStateProps) {
 		this.ref = props.ref;
@@ -413,7 +428,6 @@ class NavigationMenuTriggerState {
 	context: NavigationMenuProviderState;
 	itemContext: NavigationMenuItemState;
 	listContext: NavigationMenuListState;
-	contentId = $derived.by(() => this.itemContext.contentNode?.id ?? undefined);
 	hasPointerMoveOpened = $state(false);
 	wasClickClose = $state(false);
 	open = $derived.by(() => this.itemContext.value.current === this.context.value.current);
@@ -528,7 +542,7 @@ class NavigationMenuTriggerState {
 				"data-state": getDataOpenClosed(this.open),
 				"data-value": this.itemContext.value.current,
 				"aria-expanded": getAriaExpanded(this.open),
-				"aria-controls": this.contentId,
+				"aria-controls": this.itemContext.contentId,
 				[TRIGGER_ATTR]: "",
 			}) as const
 	);
@@ -545,7 +559,7 @@ class NavigationMenuTriggerState {
 	restructureSpanProps = $derived.by(
 		() =>
 			({
-				"aria-owns": this.contentId,
+				"aria-owns": this.itemContext.contentId,
 			}) as const
 	);
 }
@@ -703,16 +717,269 @@ class NavigationMenuIndicatorImplState {
 type NavigationMenuContentStateProps = WithRefProps;
 
 class NavigationMenuContentState {
+	id: NavigationMenuContentStateProps["id"];
+	ref: NavigationMenuContentStateProps["ref"];
 	context: NavigationMenuProviderState;
 	itemContext: NavigationMenuItemState;
+	listContext: NavigationMenuListState;
 	open = $derived.by(() => this.itemContext.value.current === this.context.value.current);
+	value = $derived.by(() => this.itemContext.value.current);
 
-	constructor(context: NavigationMenuProviderState, itemContext: NavigationMenuItemState) {
-		this.context = context;
-		this.itemContext = itemContext;
+	constructor(
+		props: NavigationMenuContentStateProps,
+		context: {
+			provider: NavigationMenuProviderState;
+			item: NavigationMenuItemState;
+			list: NavigationMenuListState;
+		}
+	) {
+		this.id = props.id;
+		this.ref = props.ref;
+		this.context = context.provider;
+		this.itemContext = context.item;
+		this.listContext = context.list;
+
+		useRefById({
+			id: this.id,
+			ref: this.ref,
+		});
 	}
 
 	props = $derived.by(() => ({}));
+}
+
+type MotionAttribute = "to-start" | "to-end" | "from-start" | "from-end";
+type NavigationMenuContentImplStateProps = WithRefProps;
+
+class NavigationMenuContentImplState {
+	context: NavigationMenuProviderState;
+	itemContext: NavigationMenuItemState;
+	contentContext: NavigationMenuContentState;
+	listContext: NavigationMenuListState;
+	prevMotionAttribute = $state<MotionAttribute | null>(null);
+
+	motionAttribute: MotionAttribute | null = $derived.by(() => {
+		const items = this.listContext.listTriggers;
+		const values = items.map((item) => item.getAttribute("data-value")).filter(Boolean);
+		if (this.context.dir.current === "rtl") values.reverse();
+		const index = values.indexOf(this.context.value.current);
+		const prevIndex = values.indexOf(this.context.previousValue.current);
+		const isSelected = this.itemContext.value.current === this.context.value.current;
+		const wasSelected = prevIndex === values.indexOf(this.itemContext.value.current);
+
+		// We only want to update selected and the last selected content
+		// this avoids animations being interrupted outside of that range
+		if (!isSelected && !wasSelected) return untrack(() => this.prevMotionAttribute);
+
+		const attribute = (() => {
+			// Don't provide a direction on the initial open
+			if (index !== prevIndex) {
+				// If we're moving to this item from another
+				if (isSelected && prevIndex !== -1)
+					return index > prevIndex ? "from-end" : "from-start";
+				// If we're leaving this item for another
+				if (wasSelected && index !== -1) return index > prevIndex ? "to-start" : "to-end";
+			}
+			// Otherwise we're entering from close or leaving the list
+			// entirely and should not animate in any direction
+			return null;
+		})();
+
+		untrack(() => (this.prevMotionAttribute = attribute));
+		return attribute;
+	});
+
+	constructor(
+		props: NavigationMenuContentImplStateProps,
+		contentContext: NavigationMenuContentState
+	) {
+		this.contentContext = contentContext;
+		this.listContext = contentContext.listContext;
+		this.itemContext = contentContext.itemContext;
+		this.context = contentContext.context;
+
+		watch(
+			[
+				() => this.itemContext.value.current,
+				() => this.itemContext.triggerNode,
+				() => this.contentContext.ref.current,
+			],
+			() => {
+				const content = this.contentContext.ref.current;
+				if (!(content && this.context.isRootMenu)) return;
+
+				const handleClose = () => {
+					this.context.onItemDismiss();
+					this.itemContext.onRootContentClose();
+					if (content.contains(document.activeElement)) {
+						this.itemContext.triggerNode?.focus();
+					}
+				};
+
+				const removeListener = listenRootContentDismiss(content, handleClose);
+
+				return () => {
+					removeListener();
+				};
+			}
+		);
+
+		this.onFocusOutside = this.onFocusOutside.bind(this);
+		this.onInteractOutside = this.onInteractOutside.bind(this);
+		this.onkeydown = this.onkeydown.bind(this);
+		this.onEscapeKeydown = this.onEscapeKeydown.bind(this);
+	}
+
+	onFocusOutside(e: Event) {
+		this.itemContext.onContentFocusOutside();
+		const target = e.target as HTMLElement;
+		// only dismiss content when focus moves outside of the menu
+		if (this.context.rootNavigationMenuRef.current?.contains(target)) {
+			e.preventDefault();
+		}
+	}
+
+	onInteractOutside(e: PointerEvent) {
+		const target = e.target as HTMLElement;
+		const isTrigger = this.listContext.listTriggers.some((trigger) => trigger.contains(target));
+		const isRootViewport =
+			this.context.isRootMenu && this.context.viewportRef.current?.contains(target);
+		if (isTrigger || isRootViewport || !this.context.isRootMenu) e.preventDefault();
+	}
+
+	onkeydown(e: BitsKeyboardEvent) {
+		const isMetaKey = e.altKey || e.ctrlKey || e.metaKey;
+		const isTabKey = e.key === kbd.TAB && !isMetaKey;
+		if (!isTabKey) return;
+		const candidates = getTabbableCandidates(e.currentTarget);
+		const focusedElement = document.activeElement;
+		const index = candidates.findIndex((candidate) => candidate === focusedElement);
+		const isMovingBackwards = e.shiftKey;
+		const nextCandidates = isMovingBackwards
+			? candidates.slice(0, index).reverse()
+			: candidates.slice(index + 1, candidates.length);
+
+		if (focusFirst(nextCandidates)) {
+			// prevent browser tab keydown because we've handled focus
+			e.preventDefault();
+		} else {
+			// If we can't focus that means we're at the edges
+			// so focus the proxy and let browser handle
+			// tab/shift+tab keypress on the proxy instead
+			this.itemContext.focusProxyNode?.focus();
+		}
+	}
+
+	onEscapeKeydown(_: KeyboardEvent) {
+		// prevent the dropdown from reopening after the
+		// escape key has been pressed
+		this.itemContext.wasEscapeClose = true;
+	}
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.contentContext.id.current,
+				"aria-labelledby": this.itemContext.triggerId,
+				"data-motion": this.motionAttribute ?? undefined,
+				"data-orientation": getDataOrientation(this.context.orientation.current),
+			}) as const
+	);
+}
+
+class NavigationMenuViewportContentMounterState {
+	context: NavigationMenuProviderState;
+	contentContext: NavigationMenuContentState;
+
+	constructor(context: NavigationMenuProviderState, contentContext: NavigationMenuContentState) {
+		this.context = context;
+		this.contentContext = contentContext;
+
+		$effect(() => {
+			this.context.onViewportContentChange(
+				this.contentContext.value,
+				this.contentContext.itemContext
+			);
+		});
+
+		onDestroyEffect(() => {
+			this.context.onViewportContentRemove(this.contentContext.value);
+		});
+	}
+}
+
+class NavigationMenuViewportState {
+	context: NavigationMenuProviderState;
+	open = $derived.by(() => Boolean(this.context.value.current));
+
+	constructor(context: NavigationMenuProviderState) {
+		this.context = context;
+	}
+}
+
+type NavigationMenuViewportImplStateProps = WithRefProps;
+
+class NavigationMenuViewportImplState {
+	id: NavigationMenuViewportImplStateProps["id"];
+	ref: NavigationMenuViewportImplStateProps["ref"];
+	context: NavigationMenuProviderState;
+	size = $state<{ width: number; height: number } | null>(null);
+	contentNode = $state<HTMLElement | null>(null);
+	viewportWidth = $derived.by(() => (this.size ? `${this.size.width}px` : undefined));
+	viewportHeight = $derived.by(() => (this.size ? `${this.size.height}px` : undefined));
+	open = $derived.by(() => Boolean(this.context.value.current));
+	// We persist the last active content value as the viewport may be animating out
+	// and we want the content to remain mounted for the lifecycle of the viewport.
+	activeContentValue = $derived.by(() =>
+		this.open ? this.context.value.current : this.context.previousValue.current
+	);
+
+	constructor(props: NavigationMenuViewportImplStateProps, context: NavigationMenuProviderState) {
+		this.id = props.id;
+		this.ref = props.ref;
+		this.context = context;
+
+		useRefById({
+			id: this.id,
+			ref: this.ref,
+			onRefChange: (node) => {
+				this.context.viewportRef.current = node;
+			},
+		});
+
+		/**
+		 * Update viewport size to match the active content node.
+		 * We prefer offset dimensions over `getBoundingClientRect` as the latter respects CSS transform.
+		 * For example, if content animates in from `scale(0.5)` the dimensions would be anything
+		 * from `0.5` to `1` of the intended size.
+		 */
+		const handleSizeChange = () => {
+			if (this.contentNode) {
+				this.size = {
+					width: this.contentNode.offsetWidth,
+					height: this.contentNode.offsetHeight,
+				};
+			}
+		};
+
+		useResizeObserver(() => this.contentNode, handleSizeChange);
+	}
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.id.current,
+				"data-state": getDataOpenClosed(this.open),
+				"data-orientation": getDataOrientation(this.context.orientation.current),
+				style: {
+					pointerEvents: !this.open && this.context.isRootMenu ? "none" : undefined,
+					"--bits-navigation-menu-viewport-width": this.viewportWidth,
+					"--bits-navigation-menu-viewport-height": this.viewportHeight,
+				},
+				onpointerenter: this.context.onContentEnter,
+				onpointerleave: this.context.onContentLeave,
+			}) as const
+	);
 }
 
 const [setNavigationMenuProviderContext, getNavigationMenuProviderContext] =
@@ -723,6 +990,13 @@ const [setNavigationMenuItemContext, getNavigationMenuItemContext] =
 
 const [setNavigationMenuListContext, getNavigationMenuListContext] =
 	createContext<NavigationMenuListState>("NavigationMenu.List");
+
+const [setNavigationMenuContentContext, getNavigationMenuContentContext] =
+	createContext<NavigationMenuContentState>("NavigationMenu.Content");
+
+export function useNavigationMenuRoot(props: NavigationMenuRootStateProps) {
+	return new NavigationMenuRootState(props);
+}
 
 export function useNavigationMenuProvider(props: NavigationMenuProviderStateProps) {
 	return setNavigationMenuProviderContext(new NavigationMenuProviderState(props));
@@ -755,6 +1029,39 @@ export function useNavigationMenuTrigger(props: NavigationMenuTriggerStateProps)
 		item: getNavigationMenuItemContext(),
 		list: getNavigationMenuListContext(),
 	});
+}
+
+export function useNavigationMenuContent(props: NavigationMenuContentStateProps) {
+	return setNavigationMenuContentContext(
+		new NavigationMenuContentState(props, {
+			provider: getNavigationMenuProviderContext(),
+			item: getNavigationMenuItemContext(),
+			list: getNavigationMenuListContext(),
+		})
+	);
+}
+
+export function useNavigationMenuLink(props: NavigationMenuLinkStateProps) {
+	return new NavigationMenuLinkState(props, getNavigationMenuProviderContext());
+}
+
+export function useNavigationMenuContentImpl(props: NavigationMenuContentImplStateProps) {
+	return new NavigationMenuContentImplState(props, getNavigationMenuContentContext());
+}
+
+export function useNavigationMenuViewport() {
+	return new NavigationMenuViewportState(getNavigationMenuProviderContext());
+}
+
+export function useNavigationMenuViewportImpl(props: NavigationMenuViewportImplStateProps) {
+	return new NavigationMenuViewportImplState(props, getNavigationMenuProviderContext());
+}
+
+export function useNavigationMenuViewportContentMounter() {
+	return new NavigationMenuViewportContentMounterState(
+		getNavigationMenuProviderContext(),
+		getNavigationMenuContentContext()
+	);
 }
 
 //

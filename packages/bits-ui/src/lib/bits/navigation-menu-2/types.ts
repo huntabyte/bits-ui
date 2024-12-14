@@ -73,6 +73,13 @@ export type NavigationMenuSubPropsWithoutHTML = WithChild<{
 	onValueChange?: OnChangeFn<string>;
 
 	/**
+	 * Whether or not the value state is controlled or not. If `true`, the component will not update
+	 * the value state internally, instead it will call `onValueChange` when it would have
+	 * otherwise, and it is up to you to update the `value` prop that is passed to the component.
+	 */
+	controlledValue?: boolean;
+
+	/**
 	 * The orientation of the menu.
 	 */
 	orientation?: Orientation;

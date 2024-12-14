@@ -16,4 +16,5 @@ export type {
 	NavigationMenuIndicatorProps as IndicatorProps,
 	NavigationMenuContentProps as ContentProps,
 	NavigationMenuLinkProps as LinkProps,
+	NavigationMenuSubProps as SubProps,
 } from "./types.js";
