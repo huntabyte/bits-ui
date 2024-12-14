@@ -3,18 +3,18 @@
  * https://www.radix-ui.com/docs/primitives/components/navigation-menu
  */
 
-import { createContext } from "$lib/internal/create-context.js";
-import { useId, type Direction, type Orientation } from "$lib/shared/index.js";
 import {
-	box,
-	onDestroyEffect,
-	useRefById,
 	type AnyFn,
 	type ReadableBoxedValues,
 	type WithRefProps,
 	type WritableBoxedValues,
+	box,
+	onDestroyEffect,
+	useRefById,
 } from "svelte-toolbelt";
 import { Previous } from "runed";
+import { createContext } from "$lib/internal/create-context.js";
+import { type Direction, type Orientation, useId } from "$lib/shared/index.js";
 import {
 	getAriaExpanded,
 	getDataDisabled,
@@ -31,6 +31,7 @@ import type {
 } from "$lib/internal/types.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { createCustomEvent } from "$lib/internal/events.js";
+import { useResizeObserver } from "$lib/internal/use-resize-observer.svelte.js";
 
 const ROOT_ATTR = "data-navigation-menu-root";
 const SUB_ATTR = "data-navigation-menu-sub";
@@ -48,12 +49,12 @@ type NavigationMenuProviderStateProps = ReadableBoxedValues<{
 		value: string;
 	}> & {
 		isRootMenu: boolean;
-		onTriggerEnter(itemValue: string): void;
-		onTriggerLeave?(): void;
-		onContentEnter?(): void;
-		onContentLeave?(): void;
-		onItemSelect(itemValue: string): void;
-		onItemDismiss(): void;
+		onTriggerEnter: (itemValue: string) => void;
+		onTriggerLeave?: () => void;
+		onContentEnter?: () => void;
+		onContentLeave?: () => void;
+		onItemSelect: (itemValue: string) => void;
+		onItemDismiss: () => void;
 	};
 
 class NavigationMenuProviderState {
@@ -115,12 +116,10 @@ class NavigationMenuRootState {
 	orientation: NavigationMenuRootStateProps["orientation"];
 	delayDuration: NavigationMenuRootStateProps["delayDuration"];
 	skipDelayDuration: NavigationMenuRootStateProps["skipDelayDuration"];
-
 	openTimer = $state(0);
 	closeTimer = $state(0);
 	skipDelayTimer = $state(0);
 	isOpenDelayed = $state(true);
-
 	provider: NavigationMenuProviderState;
 
 	constructor(props: NavigationMenuRootStateProps) {
@@ -306,6 +305,7 @@ class NavigationMenuListState {
 	context: NavigationMenuProviderState;
 	wrapperId = box.with(() => useId());
 	wrapperRef = box<HTMLElement | null>(null);
+	listTriggers = $state.raw<HTMLElement[]>([]);
 
 	constructor(props: NavigationMenuListStateProps, context: NavigationMenuProviderState) {
 		this.id = props.id;
@@ -324,6 +324,13 @@ class NavigationMenuListState {
 				this.context.indicatorTrackRef.current = node;
 			},
 		});
+	}
+
+	registerTrigger(trigger: HTMLElement | null) {
+		if (trigger) this.listTriggers.push(trigger);
+		return () => {
+			this.listTriggers = this.listTriggers.filter((t) => t.id !== trigger!.id);
+		};
 	}
 
 	wrapperProps = $derived.by(
@@ -405,6 +412,7 @@ class NavigationMenuTriggerState {
 	disabled: NavigationMenuTriggerStateProps["disabled"];
 	context: NavigationMenuProviderState;
 	itemContext: NavigationMenuItemState;
+	listContext: NavigationMenuListState;
 	contentId = $derived.by(() => this.itemContext.contentNode?.id ?? undefined);
 	hasPointerMoveOpened = $state(false);
 	wasClickClose = $state(false);
@@ -412,15 +420,18 @@ class NavigationMenuTriggerState {
 
 	constructor(
 		props: NavigationMenuTriggerStateProps,
-		context: NavigationMenuProviderState,
-		itemContext: NavigationMenuItemState
+		context: {
+			provider: NavigationMenuProviderState;
+			item: NavigationMenuItemState;
+			list: NavigationMenuListState;
+		}
 	) {
 		this.id = props.id;
 		this.ref = props.ref;
 		this.disabled = props.disabled;
-		this.context = context;
-		this.itemContext = itemContext;
-		this.open = itemContext.value.current === context.value.current;
+		this.context = context.provider;
+		this.itemContext = context.item;
+		this.listContext = context.list;
 
 		useRefById({
 			id: this.id,
@@ -434,6 +445,18 @@ class NavigationMenuTriggerState {
 				this.itemContext.focusProxyNode = node;
 			},
 			deps: () => this.open,
+		});
+
+		$effect(() => {
+			const node = this.ref.current;
+
+			if (node) {
+				const unregister = this.listContext.registerTrigger(node);
+
+				return () => {
+					unregister();
+				};
+			}
 		});
 
 		this.onpointerenter = this.onpointerenter.bind(this);
@@ -503,6 +526,7 @@ class NavigationMenuTriggerState {
 				disabled: this.disabled.current,
 				"data-disabled": getDataDisabled(Boolean(this.disabled.current)),
 				"data-state": getDataOpenClosed(this.open),
+				"data-value": this.itemContext.value.current,
 				"aria-expanded": getAriaExpanded(this.open),
 				"aria-controls": this.contentId,
 				[TRIGGER_ATTR]: "",
@@ -603,22 +627,92 @@ class NavigationMenuIndicatorImplState {
 	id: NavigationMenuIndicatorStateProps["id"];
 	ref: NavigationMenuIndicatorStateProps["ref"];
 	context: NavigationMenuProviderState;
-	activeTrigger = $state<HTMLElement | null>(null);
-	position = $state<{ size: number; offset: number } | null>(null);
+	listContext: NavigationMenuListState;
+	position = $state.raw<{ size: number; offset: number } | null>(null);
 	isHorizontal = $derived.by(() => this.context.orientation.current === "horizontal");
 	isVisible = $derived.by(() => Boolean(this.context.value.current));
+	activeTrigger = $derived.by(() => {
+		const items = this.listContext.listTriggers;
+		const triggerNode = items.find(
+			(item) => item.getAttribute("data-value") === this.context.value.current
+		);
+		return triggerNode ?? null;
+	});
+	shouldRender = $derived.by(() => this.position !== null);
 
-	constructor(props: NavigationMenuIndicatorStateProps, context: NavigationMenuProviderState) {
+	constructor(
+		props: NavigationMenuIndicatorStateProps,
+		context: {
+			provider: NavigationMenuProviderState;
+			list: NavigationMenuListState;
+		}
+	) {
 		this.id = props.id;
 		this.ref = props.ref;
-		this.context = context;
+		this.context = context.provider;
+		this.listContext = context.list;
 
 		useRefById({
 			id: this.id,
 			ref: this.ref,
 			deps: () => this.context.value.current,
 		});
+
+		useResizeObserver(() => this.activeTrigger, this.handlePositionChange);
+		useResizeObserver(() => this.context.indicatorTrackRef.current, this.handlePositionChange);
 	}
+
+	handlePositionChange = () => {
+		if (!this.activeTrigger) return;
+		this.position = {
+			size: this.isHorizontal
+				? this.activeTrigger.offsetWidth
+				: this.activeTrigger.offsetHeight,
+			offset: this.isHorizontal
+				? this.activeTrigger.offsetLeft
+				: this.activeTrigger.offsetTop,
+		};
+	};
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.id.current,
+				"data-state": this.isVisible ? "visible" : "hidden",
+				"data-orientation": getDataOrientation(this.context.orientation.current),
+				style: this.position
+					? {
+							position: "absolute",
+							...(this.isHorizontal
+								? {
+										left: 0,
+										width: `${this.position.size}px`,
+										transform: `translateX(${this.position.offset}px)`,
+									}
+								: {
+										top: 0,
+										height: `${this.position.size}px`,
+										transform: `translateY(${this.position.offset}px)`,
+									}),
+						}
+					: undefined,
+			}) as const
+	);
+}
+
+type NavigationMenuContentStateProps = WithRefProps;
+
+class NavigationMenuContentState {
+	context: NavigationMenuProviderState;
+	itemContext: NavigationMenuItemState;
+	open = $derived.by(() => this.itemContext.value.current === this.context.value.current);
+
+	constructor(context: NavigationMenuProviderState, itemContext: NavigationMenuItemState) {
+		this.context = context;
+		this.itemContext = itemContext;
+	}
+
+	props = $derived.by(() => ({}));
 }
 
 const [setNavigationMenuProviderContext, getNavigationMenuProviderContext] =
@@ -626,6 +720,9 @@ const [setNavigationMenuProviderContext, getNavigationMenuProviderContext] =
 
 const [setNavigationMenuItemContext, getNavigationMenuItemContext] =
 	createContext<NavigationMenuItemState>("NavigationMenu.Item");
+
+const [setNavigationMenuListContext, getNavigationMenuListContext] =
+	createContext<NavigationMenuListState>("NavigationMenu.List");
 
 export function useNavigationMenuProvider(props: NavigationMenuProviderStateProps) {
 	return setNavigationMenuProviderContext(new NavigationMenuProviderState(props));
@@ -636,11 +733,28 @@ export function useNavigationMenuSub(props: NavigationMenuSubStateProps) {
 }
 
 export function useNavigationMenuList(props: NavigationMenuListStateProps) {
-	return new NavigationMenuListState(props, getNavigationMenuProviderContext());
+	return setNavigationMenuListContext(
+		new NavigationMenuListState(props, getNavigationMenuProviderContext())
+	);
 }
 
 export function useNavigationMenuItem(props: NavigationMenuItemStateProps) {
 	return setNavigationMenuItemContext(new NavigationMenuItemState(props));
+}
+
+export function useNavigationMenuIndicatorImpl(props: NavigationMenuIndicatorStateProps) {
+	return new NavigationMenuIndicatorImplState(props, {
+		provider: getNavigationMenuProviderContext(),
+		list: getNavigationMenuListContext(),
+	});
+}
+
+export function useNavigationMenuTrigger(props: NavigationMenuTriggerStateProps) {
+	return new NavigationMenuTriggerState(props, {
+		provider: getNavigationMenuProviderContext(),
+		item: getNavigationMenuItemContext(),
+		list: getNavigationMenuListContext(),
+	});
 }
 
 //
