@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.72
+
+### Minor Changes
+
+-   feat: `Checkbox.Group` and `Checkbox.GroupLabel` components ([#1003](https://github.com/huntabyte/bits-ui/pull/1003))
+
 ## 1.0.0-next.71
 
 ### Patch Changes

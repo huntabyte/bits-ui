@@ -4,7 +4,7 @@ description: Allow users to switch between checked, unchecked, and indeterminate
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, CheckboxDemo, CheckboxDemoCustom, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, CheckboxDemo, CheckboxDemoCustom, CheckboxDemoGroup, Callout } from '$lib/components/index.js'
 	export let schemas;
 </script>
 
@@ -320,5 +320,143 @@ If you want to make the checkbox required, you can use the `required` prop.
 ```
 
 This will apply the `required` attribute to the hidden input element, ensuring that proper form submission is enforced.
+
+## Checkbox Groups
+
+You can use the `Checkbox.Group` component to create a checkbox group.
+
+```svelte
+<script lang="ts">
+	import { Checkbox } from "bits-ui";
+</script>
+
+<Checkbox.Group name="notifications">
+	<Checkbox.GroupLabel>Notifications</Checkbox.GroupLabel>
+	<Checkbox.Root value="marketing" />
+	<Checkbox.Root value="promotions" />
+	<Checkbox.Root value="news" />
+</Checkbox.Group>
+```
+
+<ComponentPreviewV2 name="checkbox-demo-group" comp="Checkbox" containerClass="mt-6">
+
+{#snippet preview()}
+<CheckboxDemoGroup />
+{/snippet}
+
+</ComponentPreviewV2>
+
+### Managing Value State
+
+Bits UI offers several approaches to manage and synchronize a Checkbox Group's value state, catering to different levels of control and integration needs.
+
+#### 1. Two-Way Binding
+
+For seamless state synchronization, use Svelte's `bind:value` directive. This method automatically keeps your local state in sync with the group's internal state.
+
+```svelte
+<script lang="ts">
+	import { Checkbox } from "bits-ui";
+	let myValue = $state<string[]>([]);
+</script>
+
+<button
+	onclick={() => {
+		myValue = ["item-1", "item-2"];
+	}}
+>
+	Open Items 1 and 2
+</button>
+
+<Checkbox.Group name="myItems" bind:value={myValue}>
+	<Checkbox.GroupLabel>Items</Checkbox.GroupLabel>
+	<Checkbox.Root value="item-1" />
+	<Checkbox.Root value="item-2" />
+	<Checkbox.Root value="item-3" />
+</Checkbox.Group>
+```
+
+##### Key Benefits
+
+-   Simplifies state management
+-   Automatically updates `myValue` when the accordion changes (e.g., via clicking on an item's trigger)
+-   Allows external control (e.g., opening an item via a separate button)
+
+#### 2. Change Handler
+
+For more granular control or to perform additional logic on state changes, use the `onValueChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
+
+```svelte
+<script lang="ts">
+	import { Checkbox } from "bits-ui";
+	let myValue = $state<string[]>([]);
+</script>
+
+<Checkbox.Group
+	value={myValue}
+	onValueChange={(value) => {
+		myValue = value;
+		// additional logic here.
+	}}
+>
+	<Checkbox.GroupLabel>Items</Checkbox.GroupLabel>
+	<Checkbox.Root value="item-1" />
+	<Checkbox.Root value="item-2" />
+	<Checkbox.Root value="item-3" />
+</Accordion.Root>
+```
+
+#### Use Cases
+
+-   Implementing custom behaviors on value change
+-   Integrating with external state management solutions
+-   Triggering side effects (e.g., logging, data fetching)
+
+#### 3. Fully Controlled
+
+For complete control over the Checkbox Group's value state, use the `controlledValue` prop. This approach requires you to manually manage the value state, giving you full control over when and how the group responds to value change events.
+
+To implement controlled state:
+
+1. Set the `controlledValue` prop to `true` on the `Checkbox.Group` component.
+2. Provide a `value` prop to `Checkbox.Group`, which should be a variable holding the current state.
+3. Implement an `onValueChange` handler to update the state when the internal state changes.
+
+```svelte
+<script lang="ts">
+	import { Checkbox } from "bits-ui";
+	let myValue = $state("");
+</script>
+
+<Checkbox.Group controlledValue value={myValue} onValueChange={(v) => (myValue = v)}>
+	<!-- ... -->
+</Checkbox.Group>
+```
+
+##### When to Use
+
+-   Implementing complex logic
+-   Coordinating multiple UI elements
+-   Debugging state-related issues
+
+<Callout>
+
+While powerful, fully controlled state should be used judiciously as it increases complexity and can cause unexpected behaviors if not handled carefully.
+
+For more in-depth information on controlled components and advanced state management techniques, refer to our [Controlled State](/docs/controlled-state) documentation.
+
+</Callout>
+
+### HTML Forms
+
+To render hidden `<input />` elements for the various checkboxes within a group, pass a `name` to `Checkbox.Group`. All descendent checkboxes will then render hidden inputs with the same name.
+
+```svelte /name="notifications"/
+<Checkbox.Group name="notifications">
+	<!-- ... -->
+</Checkbox.Group>
+```
+
+When a `Checkbox.Group` component is used, its descendent `Checkbox.Root` components will use certain properties from the group, such as the `name`, `required`, and `disabled`.
 
 <APISection {schemas} />

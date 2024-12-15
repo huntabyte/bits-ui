@@ -1,16 +1,23 @@
-import type { CheckboxRootPropsWithoutHTML } from "bits-ui";
+import type {
+	CheckboxGroupLabelPropsWithoutHTML,
+	CheckboxGroupPropsWithoutHTML,
+	CheckboxRootPropsWithoutHTML,
+} from "bits-ui";
 import {
 	controlledCheckedProp,
 	controlledIndeterminateProp,
+	controlledValueProp,
 	createApiSchema,
 	createBooleanProp,
 	createDataAttrSchema,
 	createEnumDataAttr,
 	createFunctionProp,
+	createPropSchema,
 	createStringProp,
 	withChildProps,
 } from "./helpers.js";
 import {
+	CheckboxGroupOnValueChangeProp,
 	CheckboxRootChildSnippetProps,
 	CheckboxRootChildrenSnippetProps,
 	CheckboxRootOnCheckedChangeProp,
@@ -86,4 +93,67 @@ export const root = createApiSchema<CheckboxRootPropsWithoutHTML>({
 	],
 });
 
-export const checkbox = [root];
+export const group = createApiSchema<CheckboxGroupPropsWithoutHTML>({
+	title: "Group",
+	description: "A group that synchronizes its value state with its descendant checkboxes.",
+	props: {
+		value: createPropSchema({
+			description:
+				"The value of the group. This is an array of the values of the checked checkboxes within the group.",
+			bindable: true,
+			default: "[]",
+			type: "string[]",
+		}),
+		onValueChange: createFunctionProp({
+			definition: CheckboxGroupOnValueChangeProp,
+			description: "A callback that is fired when the checkbox group's value state changes.",
+		}),
+		controlledValue: controlledValueProp,
+		disabled: createBooleanProp({
+			default: C.FALSE,
+			description:
+				"Whether or not the checkbox group is disabled. If `true`, all checkboxes within the group will be disabled. To disable a specific checkbox in the group, pass the `disabled` prop to the checkbox.",
+		}),
+		required: createBooleanProp({
+			default: C.FALSE,
+			description: "Whether or not the checkbox group is required for form submission.",
+		}),
+		name: createStringProp({
+			description:
+				"The name of the checkbox group. If provided a hidden input will be rendered to use for form submission.",
+		}),
+		...withChildProps({
+			elType: "HTMLDivElement",
+		}),
+	},
+	dataAttributes: [
+		createDataAttrSchema({
+			name: "disabled",
+			description: "Present when the checkbox group is disabled.",
+		}),
+		createDataAttrSchema({
+			name: "checkbox-group",
+			description: "Present on the group element.",
+		}),
+	],
+});
+
+export const groupLabel = createApiSchema<CheckboxGroupLabelPropsWithoutHTML>({
+	title: "GroupLabel",
+	description: "An accessible label for the checkbox group.",
+	props: withChildProps({
+		elType: "HTMLLabelElement",
+	}),
+	dataAttributes: [
+		createDataAttrSchema({
+			name: "disabled",
+			description: "Present when the checkbox group is disabled.",
+		}),
+		createDataAttrSchema({
+			name: "checkbox-group-label",
+			description: "Present on the label element.",
+		}),
+	],
+});
+
+export const checkbox = [root, group, groupLabel];
