@@ -7,7 +7,6 @@ import {
 	type AnyFn,
 	type ReadableBoxedValues,
 	type WithRefProps,
-	type WritableBox,
 	type WritableBoxedValues,
 	box,
 	onDestroyEffect,
@@ -349,7 +348,7 @@ class NavigationMenuListState {
 	wrapperProps = $derived.by(
 		() =>
 			({
-				id: this.id.current,
+				id: this.wrapperId.current,
 			}) as const
 	);
 
@@ -431,6 +430,7 @@ class NavigationMenuTriggerState {
 	hasPointerMoveOpened = $state(false);
 	wasClickClose = $state(false);
 	open = $derived.by(() => this.itemContext.value.current === this.context.value.current);
+	focusProxyMounted = $state(false);
 
 	constructor(
 		props: NavigationMenuTriggerStateProps,
@@ -458,7 +458,7 @@ class NavigationMenuTriggerState {
 			onRefChange: (node) => {
 				this.itemContext.focusProxyNode = node;
 			},
-			deps: () => this.open,
+			deps: () => this.focusProxyMounted,
 		});
 
 		$effect(() => {
@@ -544,6 +544,11 @@ class NavigationMenuTriggerState {
 				"aria-expanded": getAriaExpanded(this.open),
 				"aria-controls": this.itemContext.contentId,
 				[TRIGGER_ATTR]: "",
+				onpointermove: this.onpointermove,
+				onpointerleave: this.onpointerleave,
+				onpointerenter: this.onpointerenter,
+				onclick: this.onclick,
+				onkeydown: this.onkeydown,
 			}) as const
 	);
 
@@ -743,9 +748,26 @@ class NavigationMenuContentState {
 			id: this.id,
 			ref: this.ref,
 		});
+
+		this.onpointerenter = this.onpointerenter.bind(this);
 	}
 
-	props = $derived.by(() => ({}));
+	onpointerenter(_: BitsPointerEvent) {
+		this.context.onContentEnter;
+	}
+
+	onpointerleave = whenMouse(() => {
+		this.context.onContentLeave();
+	});
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.id.current,
+				onpointerenter: this.onpointerenter,
+				onpointerleave: this.onpointerleave,
+			}) as const
+	);
 }
 
 type MotionAttribute = "to-start" | "to-end" | "from-start" | "from-end";
@@ -1062,6 +1084,10 @@ export function useNavigationMenuViewportContentMounter() {
 		getNavigationMenuProviderContext(),
 		getNavigationMenuContentContext()
 	);
+}
+
+export function useNavigationMenuIndicator() {
+	return new NavigationMenuIndicatorState(getNavigationMenuProviderContext());
 }
 
 //

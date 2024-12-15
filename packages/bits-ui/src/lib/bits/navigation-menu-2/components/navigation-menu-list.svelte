@@ -18,19 +18,18 @@
 			() => ref,
 			(v) => (ref = v)
 		),
-		indicatorTrackRef: box(null),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, listState.props));
-	const indicatorTrackProps = $derived(mergeProps(listState.indicatorTrackProps, {}));
+	const wrapperProps = $derived(mergeProps(listState.wrapperProps));
 </script>
 
-<div {...indicatorTrackProps}>
-	{#if child}
-		{@render child({ props: mergedProps })}
-	{:else}
+{#if child}
+	{@render child({ props: mergedProps, wrapperProps })}
+{:else}
+	<div {...wrapperProps}>
 		<ul {...mergedProps}>
 			{@render children?.()}
 		</ul>
-	{/if}
-</div>
+	</div>
+{/if}

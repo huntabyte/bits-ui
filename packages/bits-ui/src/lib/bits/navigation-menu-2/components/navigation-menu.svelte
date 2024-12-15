@@ -25,6 +25,7 @@
 		value: box.with(
 			() => value,
 			(v) => {
+				rootState.handleValueChange(v);
 				if (controlledValue) {
 					onValueChange(v);
 				} else {
