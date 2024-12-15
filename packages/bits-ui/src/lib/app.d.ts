@@ -12,4 +12,6 @@ declare global {
 	var bitsEscapeLayers: Map<EscapeLayerState, ReadableBox<EscapeBehaviorType>>;
 	// eslint-disable-next-line vars-on-top, no-var
 	var bitsTextSelectionLayers: Map<TextSelectionLayerState, ReadableBox<boolean>>;
+	// eslint-disable-next-line vars-on-top, no-var
+	var bitsIdCounter: { current: number };
 }
