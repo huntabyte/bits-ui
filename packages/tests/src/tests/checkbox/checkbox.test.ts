@@ -143,7 +143,7 @@ describe("checkbox", () => {
 		expect(input.checked).toBe(false);
 		expect(input.disabled).toBe(true);
 		await user.click(root);
-		expectChecked(root);
+		expectUnchecked(root);
 		expect(root).toBeDisabled();
 		expect(input.checked).toBe(false);
 	});
