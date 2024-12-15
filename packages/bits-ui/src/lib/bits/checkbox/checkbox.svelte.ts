@@ -65,6 +65,7 @@ class CheckboxGroupState {
 				id: this.id.current,
 				role: "group",
 				"aria-labelledby": this.labelId,
+				"data-disabled": getDataDisabled(this.disabled.current),
 				[CHECKBOX_GROUP_ATTR]: "",
 			}) as const
 	);
@@ -99,6 +100,7 @@ class CheckboxGroupLabelState {
 		() =>
 			({
 				id: this.id.current,
+				"data-disabled": getDataDisabled(this.group.disabled.current),
 				[CHECKBOX_GROUP_LABEL_ATTR]: "",
 			}) as const
 	);

@@ -2,9 +2,11 @@
 	import { Checkbox, Label, useId } from "bits-ui";
 	import Check from "phosphor-svelte/lib/Check";
 	import Minus from "phosphor-svelte/lib/Minus";
+
+	let myValue = $state<string[]>(["marketing", "news"]);
 </script>
 
-<Checkbox.Group class="flex flex-col gap-3">
+<Checkbox.Group class="flex flex-col gap-3" bind:value={myValue} name="notifications">
 	<Checkbox.GroupLabel class="text-sm font-medium text-foreground-alt">
 		Notifications
 	</Checkbox.GroupLabel>
