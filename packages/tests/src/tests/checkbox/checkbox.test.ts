@@ -174,7 +174,7 @@ describe("checkbox", () => {
 	});
 });
 
-describe.only("checkbox group", () => {
+describe("checkbox group", () => {
 	it("should have no accessibility violations", async () => {
 		const { container } = render(CheckboxGroupTest);
 		expect(await axe(container)).toHaveNoViolations();
