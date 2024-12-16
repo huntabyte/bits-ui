@@ -32,13 +32,21 @@
 <div {...mergedProps}>
 	{#each viewportContent as [value, item]}
 		{@const isActive = viewportState.activeContentValue === value}
-		<PresenceLayer id={item.contentId ?? useId()} present={forceMount || isActive}>
+		<PresenceLayer
+			id={(item.contentProps.current.id as string) ?? useId()}
+			present={forceMount || isActive}
+		>
 			{#snippet presence()}
 				<NavigationMenuContentImpl
 					itemState={item}
-					{...item.props}
+					{...item.contentProps.current}
 					children={item.contentChild.current}
 					child={item.contentChild.current}
+					onRefChange={(v) => {
+						if (isActive && v) {
+							viewportState.contentNode = v;
+						}
+					}}
 				/>
 			{/snippet}
 		</PresenceLayer>

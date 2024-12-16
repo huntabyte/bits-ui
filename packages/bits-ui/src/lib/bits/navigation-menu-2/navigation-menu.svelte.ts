@@ -378,6 +378,7 @@ export class NavigationMenuItemState {
 	listContext: NavigationMenuListState;
 	contentChildren: ReadableBox<Snippet | undefined> = box(undefined);
 	contentChild: ReadableBox<Snippet | undefined> = box(undefined);
+	contentProps: ReadableBox<Record<string, unknown>> = box({});
 
 	constructor(props: NavigationMenuItemStateProps, listContext: NavigationMenuListState) {
 		this.ref = props.ref;
@@ -819,6 +820,12 @@ class NavigationMenuContentImplState {
 		this.listContext = itemContext.listContext;
 		this.context = itemContext.listContext.context;
 
+		useRefById({
+			id: this.id,
+			ref: this.ref,
+			deps: () => this.context.value.current,
+		});
+
 		watch(
 			[
 				() => this.itemContext.value.current,
@@ -911,6 +918,7 @@ class NavigationMenuContentImplState {
 type NavigationMenuViewportContentMounterStateProps = ReadableBoxedValues<{
 	children: Snippet | undefined;
 	child: Snippet | undefined;
+	props: Record<string, unknown>;
 }>;
 
 class NavigationMenuViewportContentMounterState {
@@ -926,6 +934,7 @@ class NavigationMenuViewportContentMounterState {
 		this.contentContext = contentContext;
 		this.contentContext.itemContext.contentChildren = props.children;
 		this.contentContext.itemContext.contentChild = props.child;
+		this.contentContext.itemContext.contentProps = props.props;
 
 		$effect(() => {
 			this.context.onViewportContentChange(

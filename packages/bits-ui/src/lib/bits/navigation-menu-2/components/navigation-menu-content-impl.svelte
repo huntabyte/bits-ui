@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
+	import { untrack } from "svelte";
 	import type { NavigationMenuContentProps } from "../types.js";
 	import {
 		NavigationMenuItemState,
@@ -13,17 +14,19 @@
 	let {
 		ref = $bindable(null),
 		id = useId(),
-		child,
-		children: childrenProp,
+		child: _child,
+		children: _childrenProp,
 		onInteractOutside = noop,
 		onFocusOutside = noop,
 		onEscapeKeydown = noop,
 		escapeKeydownBehavior = "close",
 		interactOutsideBehavior = "close",
 		itemState,
+		onRefChange,
 		...restProps
 	}: NavigationMenuContentProps & {
 		itemState?: NavigationMenuItemState;
+		onRefChange?: (ref: HTMLElement | null) => void;
 	} = $props();
 
 	const contentImplState = useNavigationMenuContentImpl(
@@ -31,7 +34,10 @@
 			id: box.with(() => id),
 			ref: box.with(
 				() => ref,
-				(v) => (ref = v)
+				(v) => {
+					ref = v;
+					untrack(() => onRefChange?.(v));
+				}
 			),
 		},
 		itemState
@@ -66,12 +72,11 @@
 			{escapeKeydownBehavior}
 		>
 			{@const finalProps = mergeProps(mergedProps, dismissibleProps)}
-			{#if child && !childrenProp}
-				{@render child({ props: finalProps })}
+			{#if contentImplState.itemContext.contentChild.current}
+				{@render contentImplState.itemContext.contentChild.current?.({ props: finalProps })}
 			{:else}
 				<div {...finalProps}>
-					<p>Here I am</p>
-					{@render childrenProp?.()}
+					{@render contentImplState.itemContext.contentChildren.current?.()}
 				</div>
 			{/if}
 		</EscapeLayer>

@@ -34,5 +34,5 @@
 		{/snippet}
 	</PresenceLayer>
 {:else}
-	<NavigationMenuViewportContentMounter {children} {child} />
+	<NavigationMenuViewportContentMounter {children} {child} {...mergedProps} />
 {/if}
