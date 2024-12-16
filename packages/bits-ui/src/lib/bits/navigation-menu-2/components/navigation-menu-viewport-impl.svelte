@@ -22,14 +22,24 @@
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, viewportState.props));
+
+	const viewportContent = $derived.by(() => {
+		viewportState.context.viewportContent.keys();
+		return Array.from(viewportState.context.viewportContent);
+	});
 </script>
 
 <div {...mergedProps}>
-	{#each Array.from(viewportState.context.viewportContent) as [value, item]}
+	{#each viewportContent as [value, item]}
 		{@const isActive = viewportState.activeContentValue === value}
-		<PresenceLayer id={item.id.current} present={forceMount || isActive}>
+		<PresenceLayer id={item.contentId ?? useId()} present={forceMount || isActive}>
 			{#snippet presence()}
-				<NavigationMenuContentImpl {...item.props} />
+				<NavigationMenuContentImpl
+					itemState={item}
+					{...item.props}
+					children={item.contentChild.current}
+					child={item.contentChild.current}
+				/>
 			{/snippet}
 		</PresenceLayer>
 	{/each}

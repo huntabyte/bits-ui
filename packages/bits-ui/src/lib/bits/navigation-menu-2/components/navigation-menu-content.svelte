@@ -34,5 +34,5 @@
 		{/snippet}
 	</PresenceLayer>
 {:else}
-	<NavigationMenuViewportContentMounter />
+	<NavigationMenuViewportContentMounter {children} {child} />
 {/if}

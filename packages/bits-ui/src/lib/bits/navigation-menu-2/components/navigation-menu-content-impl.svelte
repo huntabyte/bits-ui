@@ -1,7 +1,10 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { NavigationMenuContentProps } from "../types.js";
-	import { useNavigationMenuContentImpl } from "../navigation-menu.svelte.js";
+	import {
+		NavigationMenuItemState,
+		useNavigationMenuContentImpl,
+	} from "../navigation-menu.svelte.js";
 	import { noop } from "$lib/internal/noop.js";
 	import { useId } from "$lib/internal/use-id.js";
 	import DismissibleLayer from "$lib/bits/utilities/dismissible-layer/dismissible-layer.svelte";
@@ -17,16 +20,22 @@
 		onEscapeKeydown = noop,
 		escapeKeydownBehavior = "close",
 		interactOutsideBehavior = "close",
+		itemState,
 		...restProps
-	}: NavigationMenuContentProps = $props();
+	}: NavigationMenuContentProps & {
+		itemState?: NavigationMenuItemState;
+	} = $props();
 
-	const contentImplState = useNavigationMenuContentImpl({
-		id: box.with(() => id),
-		ref: box.with(
-			() => ref,
-			(v) => (ref = v)
-		),
-	});
+	const contentImplState = useNavigationMenuContentImpl(
+		{
+			id: box.with(() => id),
+			ref: box.with(
+				() => ref,
+				(v) => (ref = v)
+			),
+		},
+		itemState
+	);
 
 	const mergedProps = $derived(mergeProps(restProps, contentImplState.props));
 </script>
@@ -57,10 +66,11 @@
 			{escapeKeydownBehavior}
 		>
 			{@const finalProps = mergeProps(mergedProps, dismissibleProps)}
-			{#if child}
+			{#if child && !childrenProp}
 				{@render child({ props: finalProps })}
 			{:else}
 				<div {...finalProps}>
+					<p>Here I am</p>
 					{@render childrenProp?.()}
 				</div>
 			{/if}
