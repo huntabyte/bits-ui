@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.73
+
+### Patch Changes
+
+-   Update Svelte `peerDependency` from `^5.0.0-next.1` to `^5.0.0` ([#869](https://github.com/huntabyte/bits-ui/pull/869))
+
 ## 1.0.0-next.72
 
 ### Minor Changes
