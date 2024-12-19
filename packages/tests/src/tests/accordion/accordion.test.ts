@@ -23,6 +23,13 @@ const kbd = getTestKbd();
 
 const items: Item[] = [
 	{
+		value: "item-0",
+		title: "Item 0",
+		content: "Content 0",
+		disabled: false,
+		level: 3,
+	},
+	{
 		value: "item-1",
 		title: "Item 1",
 		content: "Content 1",
@@ -43,17 +50,10 @@ const items: Item[] = [
 		disabled: false,
 		level: 3,
 	},
-	{
-		value: "item-4",
-		title: "Item 4",
-		content: "Content 4",
-		disabled: false,
-		level: 3,
-	},
 ];
 
 const itemsWithDisabled = items.map((item) => {
-	if (item.value === "item-2") {
+	if (item.value === "item-1") {
 		return { ...item, disabled: true };
 	}
 	return item;
@@ -301,6 +301,7 @@ describe("accordion - single", () => {
 
 		const triggers = items.map((item) => getByTestId(`${item.value}-trigger`));
 		await user.click(triggers[0] as HTMLElement);
+		expect(triggers[0]).toHaveFocus();
 
 		await user.keyboard(kbd.ARROW_DOWN);
 		expect(triggers[1]).not.toHaveFocus();
@@ -326,17 +327,17 @@ describe("accordion - single", () => {
 	it("should update the `bind:value` prop when the value changes", async () => {
 		const user = setupUserEvents();
 		const { getByTestId } = render(AccordionSingleTestControlledSvelte as any, { items });
-		const trigger = getByTestId("item-1-trigger");
+		const trigger = getByTestId("item-0-trigger");
 
 		const value = getByTestId("value");
 
 		expect(value).toHaveTextContent("");
 
 		await user.click(trigger);
-		expect(value).toHaveTextContent("item-1");
+		expect(value).toHaveTextContent("item-0");
 	});
 
-	it('should handle programatic changes to the "value" prop', async () => {
+	it('should handle programmatic changes to the "value" prop', async () => {
 		const user = setupUserEvents();
 		const { getByTestId } = render(AccordionSingleTestControlledSvelte as any, { items });
 		const updateButton = getByTestId("update-value");
@@ -344,12 +345,12 @@ describe("accordion - single", () => {
 
 		expect(value).toHaveTextContent("");
 
-		const itemTwoItem = getByTestId("item-2-item");
-		expect(itemTwoItem).toHaveAttribute("data-state", "closed");
+		const itemOneItem = getByTestId("item-1-item");
+		expect(itemOneItem).toHaveAttribute("data-state", "closed");
 
 		await user.click(updateButton);
-		expect(value).toHaveTextContent("item-2");
-		expect(itemTwoItem).toHaveAttribute("data-state", "open");
+		expect(value).toHaveTextContent("item-1");
+		expect(itemOneItem).toHaveAttribute("data-state", "open");
 	});
 });
 
@@ -579,17 +580,17 @@ describe("accordion - multiple", () => {
 		const { getByTestId, queryByTestId } = render(AccordionMultiTestControlled as any, {
 			items,
 		});
-		const trigger = getByTestId("item-1-trigger");
+		const trigger = getByTestId("item-0-trigger");
 
 		const value = getByTestId("value");
 
 		expect(value).toHaveTextContent("");
 
 		await user.click(trigger);
-		expect(queryByTestId("value")).toHaveTextContent("item-1");
+		expect(queryByTestId("value")).toHaveTextContent("item-0");
 	});
 
-	it('should handle programatic changes to the "value" prop', async () => {
+	it('should handle programmatic changes to the "value" prop', async () => {
 		const user = setupUserEvents();
 		const { getByTestId, queryByTestId } = render(AccordionMultiTestControlled as any, {
 			items,
@@ -599,9 +600,9 @@ describe("accordion - multiple", () => {
 
 		expect(value).toHaveTextContent("");
 
-		const itemTwoItem = getByTestId("item-2-item");
-		expect(itemTwoItem).toHaveAttribute("data-state", "closed");
+		const itemOneItem = getByTestId("item-1-item");
+		expect(itemOneItem).toHaveAttribute("data-state", "closed");
 		await user.click(updateButton);
-		expect(itemTwoItem).toHaveAttribute("data-state", "open");
+		expect(itemOneItem).toHaveAttribute("data-state", "open");
 	});
 });

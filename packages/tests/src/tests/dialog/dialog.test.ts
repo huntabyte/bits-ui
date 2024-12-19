@@ -9,7 +9,7 @@ import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import { tick } from "svelte";
-import { getTestKbd, sleep } from "../utils.js";
+import { getTestKbd, setupUserEvents, sleep } from "../utils.js";
 import DialogTest, { type DialogTestProps } from "./dialog-test.svelte";
 
 const kbd = getTestKbd();
@@ -29,7 +29,7 @@ async function expectIsOpen(
 }
 
 function setup(props: DialogTestProps = {}) {
-	const user = userEvent.setup({ pointerEventsCheck: 0 });
+	const user = setupUserEvents();
 	const returned = render(DialogTest, { ...props });
 	const trigger = returned.getByTestId("trigger");
 
@@ -44,7 +44,7 @@ async function open(props: DialogTestProps = {}) {
 	const { getByTestId, queryByTestId, user, trigger } = setup(props);
 	const content = queryByTestId("content");
 	expect(content).toBeNull();
-	await user.click(trigger);
+	await user.pointerDownUp(trigger);
 	const contentAfter = getByTestId("content");
 	expect(contentAfter).not.toBeNull();
 	return { getByTestId, queryByTestId, user };
