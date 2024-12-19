@@ -108,13 +108,10 @@ class DialogTriggerState {
 
 	onpointerdown = (e: BitsPointerEvent) => {
 		if (this.#disabled.current) return;
-		if (e.pointerType === "touch") return e.preventDefault();
 		if (e.button > 0) return;
 		// by default, it will attempt to focus this trigger on pointerdown
 		// since this also opens the dialog we want to prevent that behavior
 		e.preventDefault();
-
-		this.#root.handleOpen();
 	};
 
 	onkeydown = (e: BitsKeyboardEvent) => {
@@ -180,10 +177,9 @@ class DialogCloseState {
 
 	onpointerdown(e: BitsPointerEvent) {
 		if (this.#disabled.current) return;
-		if (e.pointerType === "touch") return e.preventDefault();
 		if (e.button > 0) return;
 		// by default, it will attempt to focus this trigger on pointerdown
-		// since this also opens the dialog we want to prevent that behavior
+		// since this also closes the dialog and restores focus we want to prevent that behavior
 		e.preventDefault();
 
 		this.#root.handleClose();

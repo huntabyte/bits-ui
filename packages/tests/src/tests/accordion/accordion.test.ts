@@ -2,7 +2,7 @@
 import { render, waitFor } from "@testing-library/svelte/svelte5";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
-import { tick } from "svelte";
+import { type ComponentProps, tick } from "svelte";
 import { getTestKbd, setupUserEvents, sleep } from "../utils.js";
 import AccordionSingleTest from "./accordion-single-test.svelte";
 import AccordionMultiTest from "./accordion-multi-test.svelte";
@@ -59,9 +59,46 @@ const itemsWithDisabled = items.map((item) => {
 	return item;
 });
 
+function setupSingle(props: ComponentProps<typeof AccordionSingleTest> = { items }) {
+	const user = setupUserEvents();
+	const returned = render(AccordionSingleTest, { ...props });
+	const itemEls = items.map((item) => returned.getByTestId(`${item.value}-item`));
+	const triggerEls = items.map((item) => returned.getByTestId(`${item.value}-trigger`));
+	return {
+		user,
+		itemEls,
+		triggerEls,
+		...returned,
+	};
+}
+
+function expectOpen(...itemEls: HTMLElement[]) {
+	for (const itemEl of itemEls) {
+		expect(itemEl).toHaveAttribute("data-state", "open");
+	}
+}
+
+function expectClosed(...itemEls: HTMLElement[]) {
+	for (const itemEl of itemEls) {
+		expect(itemEl).toHaveAttribute("data-state", "closed");
+	}
+}
+
+function expectDisabled(...triggerEls: HTMLElement[]) {
+	for (const triggerEl of triggerEls) {
+		expect(triggerEl).toHaveAttribute("data-disabled");
+	}
+}
+
+function expectNotDisabled(...triggerEls: HTMLElement[]) {
+	for (const triggerEl of triggerEls) {
+		expect(triggerEl).not.toHaveAttribute("data-disabled");
+	}
+}
+
 describe("accordion - single", () => {
 	it("should have no accessibility violations", async () => {
-		const { container } = render(AccordionSingleTest as any, { items });
+		const { container } = setupSingle();
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
@@ -81,22 +118,15 @@ describe("accordion - single", () => {
 
 	it("should have expected data attributes", async () => {
 		const user = setupUserEvents();
-		const { getByTestId } = render(AccordionSingleTest as any, { items: itemsWithDisabled });
-		const itemEls = items.map((item) => getByTestId(`${item.value}-item`));
-		const triggerEls = items.map((item) => getByTestId(`${item.value}-trigger`));
+		const { itemEls, triggerEls } = setupSingle({ items: itemsWithDisabled });
 
-		expect(itemEls[0]).toHaveAttribute("data-state", "closed");
-		expect(itemEls[0]).not.toHaveAttribute("data-disabled");
-		expect(triggerEls[0]).toHaveAttribute("data-state", "closed");
-		expect(triggerEls[0]).not.toHaveAttribute("data-disabled");
+		expectClosed(itemEls[0], triggerEls[0]);
+		expectNotDisabled(itemEls[0], triggerEls[0]);
 
 		await user.click(triggerEls[0] as HTMLElement);
 		await tick();
-		expect(itemEls[0]).toHaveAttribute("data-state", "open");
-		expect(triggerEls[0]).toHaveAttribute("data-state", "open");
-
-		expect(itemEls[1]).toHaveAttribute("data-disabled");
-		expect(triggerEls[1]).toHaveAttribute("data-disabled");
+		expectOpen(itemEls[0], triggerEls[0]);
+		expectDisabled(itemEls[1], triggerEls[1]);
 	});
 
 	it("should forceMount the content when `forceMount` is true", async () => {
@@ -143,16 +173,16 @@ describe("accordion - single", () => {
 
 		const triggerEls = items.map((item) => getByTestId(`${item.value}-trigger`));
 		await user.click(triggerEls[0] as HTMLElement);
-		expect(triggerEls[0]).not.toHaveAttribute("data-state", "open");
-		expect(triggerEls[0]).toHaveAttribute("data-disabled");
+		expectClosed(triggerEls[0]);
+		expectDisabled(triggerEls[0]);
 
 		await user.click(triggerEls[1] as HTMLElement);
-		expect(triggerEls[1]).not.toHaveAttribute("data-state", "open");
-		expect(triggerEls[1]).toHaveAttribute("data-disabled");
+		expectClosed(triggerEls[1]);
+		expectDisabled(triggerEls[1]);
 
 		await user.click(triggerEls[2] as HTMLElement);
-		expect(triggerEls[2]).not.toHaveAttribute("data-state", "open");
-		expect(triggerEls[2]).toHaveAttribute("data-disabled");
+		expectClosed(triggerEls[2]);
+		expectDisabled(triggerEls[2]);
 	});
 
 	it("should display content when an item is expanded", async () => {
@@ -163,12 +193,12 @@ describe("accordion - single", () => {
 			const trigger = getByTestId(`${item.value}-trigger`);
 			const content = getByTestId(`${item.value}-content`);
 			const itemEl = getByTestId(`${item.value}-item`);
-			expect(itemEl).toHaveAttribute("data-state", "closed");
-			expect(itemEl).toHaveAttribute("data-state", "closed");
+			expectClosed(itemEl, trigger);
 			expect(content).not.toBeVisible();
 			await user.click(trigger);
 			const contentAfter = getByTestId(`${item.value}-content`);
 			expect(contentAfter).toHaveTextContent(item.content);
+			expectOpen(itemEl, trigger);
 			expect(itemEl).toHaveAttribute("data-state", "open");
 		}
 	});
@@ -181,13 +211,12 @@ describe("accordion - single", () => {
 			const trigger = getByTestId(`${item.value}-trigger`);
 			const content = getByTestId(`${item.value}-content`);
 			const itemEl = getByTestId(`${item.value}-item`);
-			expect(itemEl).toHaveAttribute("data-state", "closed");
-			expect(itemEl).toHaveAttribute("data-state", "closed");
+			expectClosed(itemEl, trigger);
 			expect(content).not.toBeVisible();
 			await user.click(trigger);
 			const contentAfter = getByTestId(`${item.value}-content`);
 			expect(contentAfter).toHaveTextContent(item.content);
-			expect(itemEl).toHaveAttribute("data-state", "open");
+			expectOpen(itemEl, trigger);
 		}
 		const openItems = Array.from(
 			document.querySelectorAll("[data-state='open'][data-accordion-item]")
@@ -205,14 +234,13 @@ describe("accordion - single", () => {
 			const trigger = getByTestId(`${item.value}-trigger`);
 			const content = getByTestId(`${item.value}-content`);
 			const itemEl = getByTestId(`${item.value}-item`);
-			expect(itemEl).toHaveAttribute("data-state", "closed");
-			expect(itemEl).toHaveAttribute("data-state", "closed");
+			expectClosed(itemEl, trigger);
 			expect(content).not.toBeVisible();
 			trigger.focus();
 			await user.keyboard(kbd.ENTER);
 			const contentAfter = getByTestId(`${item.value}-content`);
 			expect(contentAfter).toHaveTextContent(item.content);
-			expect(itemEl).toHaveAttribute("data-state", "open");
+			expectOpen(itemEl, trigger);
 		}
 	});
 
@@ -226,14 +254,13 @@ describe("accordion - single", () => {
 			const trigger = getByTestId(`${item.value}-trigger`);
 			const content = getByTestId(`${item.value}-content`);
 			const itemEl = getByTestId(`${item.value}-item`);
-			expect(itemEl).toHaveAttribute("data-state", "closed");
-			expect(itemEl).toHaveAttribute("data-state", "closed");
+			expectClosed(itemEl, trigger);
 			expect(content).not.toBeVisible();
 			trigger.focus();
 			await user.keyboard(kbd.SPACE);
 			const contentAfter = getByTestId(`${item.value}-content`);
 			expect(contentAfter).toHaveTextContent(item.content);
-			expect(itemEl).toHaveAttribute("data-state", "open");
+			expectOpen(itemEl, trigger);
 		}
 	});
 
@@ -346,11 +373,11 @@ describe("accordion - single", () => {
 		expect(value).toHaveTextContent("");
 
 		const itemOneItem = getByTestId("item-1-item");
-		expect(itemOneItem).toHaveAttribute("data-state", "closed");
+		expectClosed(itemOneItem);
 
 		await user.click(updateButton);
 		expect(value).toHaveTextContent("item-1");
-		expect(itemOneItem).toHaveAttribute("data-state", "open");
+		expectOpen(itemOneItem);
 	});
 });
 
@@ -370,17 +397,12 @@ describe("accordion - multiple", () => {
 		const itemEls = items.map((item) => getByTestId(`${item.value}-item`));
 		const triggerEls = items.map((item) => getByTestId(`${item.value}-trigger`));
 
-		expect(itemEls[0]).toHaveAttribute("data-state", "closed");
-		expect(itemEls[0]).not.toHaveAttribute("data-disabled");
-		expect(triggerEls[0]).toHaveAttribute("data-state", "closed");
-		expect(triggerEls[0]).not.toHaveAttribute("data-disabled");
+		expectClosed(itemEls[0], triggerEls[0]);
+		expectNotDisabled(itemEls[0], triggerEls[0]);
 
 		await user.click(triggerEls[0] as HTMLElement);
-		await waitFor(() => expect(triggerEls[0]).toHaveAttribute("data-state", "open"));
-		expect(itemEls[0]).toHaveAttribute("data-state", "open");
-
-		expect(itemEls[1]).toHaveAttribute("data-disabled");
-		expect(triggerEls[1]).toHaveAttribute("data-disabled");
+		expectOpen(itemEls[0], triggerEls[0]);
+		expectDisabled(itemEls[1], triggerEls[1]);
 	});
 
 	it("should disable everything when the `disabled` prop is true", async () => {
@@ -392,16 +414,16 @@ describe("accordion - multiple", () => {
 
 		const triggerEls = items.map((item) => getByTestId(`${item.value}-trigger`));
 		await user.click(triggerEls[0] as HTMLElement);
-		expect(triggerEls[0]).not.toHaveAttribute("data-state", "open");
-		expect(triggerEls[0]).toHaveAttribute("data-disabled");
+		expectClosed(triggerEls[0]);
+		expectDisabled(triggerEls[0]);
 
 		await user.click(triggerEls[1] as HTMLElement);
-		expect(triggerEls[1]).not.toHaveAttribute("data-state", "open");
-		expect(triggerEls[1]).toHaveAttribute("data-disabled");
+		expectClosed(triggerEls[1]);
+		expectDisabled(triggerEls[1]);
 
 		await user.click(triggerEls[2] as HTMLElement);
-		expect(triggerEls[2]).not.toHaveAttribute("data-state", "open");
-		expect(triggerEls[2]).toHaveAttribute("data-disabled");
+		expectClosed(triggerEls[2]);
+		expectDisabled(triggerEls[2]);
 	});
 
 	it("should display content when an item is expanded", async () => {
@@ -412,14 +434,12 @@ describe("accordion - multiple", () => {
 			const trigger = getByTestId(`${item.value}-trigger`);
 			const content = getByTestId(`${item.value}-content`);
 			const itemEl = getByTestId(`${item.value}-item`);
-			expect(itemEl).toHaveAttribute("data-state", "closed");
-			expect(itemEl).toHaveAttribute("data-state", "closed");
+			expectClosed(itemEl, trigger);
 			expect(content).not.toBeVisible();
 			await user.click(trigger);
 			const contentAfter = getByTestId(`${item.value}-content`);
 			expect(contentAfter).toHaveTextContent(item.content);
-
-			await waitFor(() => expect(itemEl).toHaveAttribute("data-state", "open"));
+			expectOpen(itemEl, trigger);
 		}
 	});
 
@@ -433,12 +453,12 @@ describe("accordion - multiple", () => {
 			const trigger = getByTestId(`${item.value}-trigger`);
 			const content = getByTestId(`${item.value}-content`);
 			const itemEl = getByTestId(`${item.value}-item`);
-			expect(itemEl).toHaveAttribute("data-state", "closed");
+			expectClosed(itemEl, trigger);
 			expect(content).not.toBeVisible();
 			await user.click(trigger);
 			const contentAfter = getByTestId(`${item.value}-content`);
 			expect(contentAfter).toHaveTextContent(item.content);
-			expect(itemEl).toHaveAttribute("data-state", "open");
+			expectOpen(itemEl, trigger);
 		}
 		const openItems = Array.from(
 			document.querySelectorAll("[data-state='open'][data-accordion-item]")
@@ -456,14 +476,13 @@ describe("accordion - multiple", () => {
 			const trigger = getByTestId(`${item.value}-trigger`);
 			const content = getByTestId(`${item.value}-content`);
 			const itemEl = getByTestId(`${item.value}-item`);
-			expect(itemEl).toHaveAttribute("data-state", "closed");
-			expect(itemEl).toHaveAttribute("data-state", "closed");
+			expectClosed(itemEl, trigger);
 			expect(content).not.toBeVisible();
 			trigger.focus();
 			await user.keyboard(kbd.ENTER);
 			const contentAfter = getByTestId(`${item.value}-content`);
 			expect(contentAfter).toHaveTextContent(item.content);
-			expect(itemEl).toHaveAttribute("data-state", "open");
+			expectOpen(itemEl, trigger);
 		}
 	});
 
@@ -477,15 +496,14 @@ describe("accordion - multiple", () => {
 			const trigger = getByTestId(`${item.value}-trigger`);
 			const content = getByTestId(`${item.value}-content`);
 			const itemEl = getByTestId(`${item.value}-item`);
-			expect(itemEl).toHaveAttribute("data-state", "closed");
-			expect(itemEl).toHaveAttribute("data-state", "closed");
+			expectClosed(itemEl, trigger);
 			expect(content).not.toBeVisible();
 			trigger.focus();
 			await user.keyboard(kbd.SPACE);
 			await sleep(19);
 			const contentAfter = getByTestId(`${item.value}-content`);
 			expect(contentAfter).toHaveTextContent(item.content);
-			expect(itemEl).toHaveAttribute("data-state", "open");
+			expectOpen(itemEl, trigger);
 		}
 	});
 
@@ -592,7 +610,7 @@ describe("accordion - multiple", () => {
 
 	it('should handle programmatic changes to the "value" prop', async () => {
 		const user = setupUserEvents();
-		const { getByTestId, queryByTestId } = render(AccordionMultiTestControlled as any, {
+		const { getByTestId } = render(AccordionMultiTestControlled as any, {
 			items,
 		});
 		const updateButton = getByTestId("update-value");
@@ -601,8 +619,8 @@ describe("accordion - multiple", () => {
 		expect(value).toHaveTextContent("");
 
 		const itemOneItem = getByTestId("item-1-item");
-		expect(itemOneItem).toHaveAttribute("data-state", "closed");
+		expectClosed(itemOneItem);
 		await user.click(updateButton);
-		expect(itemOneItem).toHaveAttribute("data-state", "open");
+		expectOpen(itemOneItem);
 	});
 });

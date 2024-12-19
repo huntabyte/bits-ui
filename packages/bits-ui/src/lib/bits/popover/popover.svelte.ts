@@ -1,9 +1,14 @@
-import { type ReadableBoxedValues, useRefById } from "svelte-toolbelt";
+import { type ReadableBoxedValues, afterSleep, afterTick, useRefById } from "svelte-toolbelt";
 import type { WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
 import { createContext } from "$lib/internal/create-context.js";
-import type { BitsKeyboardEvent, BitsPointerEvent, WithRefProps } from "$lib/internal/types.js";
+import type {
+	BitsKeyboardEvent,
+	BitsMouseEvent,
+	BitsPointerEvent,
+	WithRefProps,
+} from "$lib/internal/types.js";
 
 type PopoverRootStateProps = WritableBoxedValues<{
 	open: boolean;
@@ -23,7 +28,7 @@ class PopoverRootState {
 		this.open.current = !this.open.current;
 	}
 
-	close() {
+	handleClose() {
 		if (!this.open.current) return;
 		this.open.current = false;
 	}
@@ -51,23 +56,23 @@ class PopoverTriggerState {
 			},
 		});
 
+		this.onclick = this.onclick.bind(this);
 		this.onpointerdown = this.onpointerdown.bind(this);
-		this.onpointerup = this.onpointerup.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
+	}
+
+	onclick(e: BitsMouseEvent) {
+		if (this.#disabled.current) return;
+		if (e.button !== 0) return;
+		this.#root.toggleOpen();
 	}
 
 	onpointerdown(e: BitsPointerEvent) {
 		if (this.#disabled.current) return;
-		if (e.pointerType === "touch" || e.button !== 0) return e.preventDefault();
-		this.#root.toggleOpen();
-	}
-
-	onpointerup(e: BitsPointerEvent) {
-		if (this.#disabled.current) return;
-		if (e.pointerType === "touch") {
-			e.preventDefault();
-			this.#root.toggleOpen();
-		}
+		if (e.button !== 0) return;
+		// We prevent default to prevent focus from moving to the trigger
+		// since this action will open the popover and focus will move to the content
+		e.preventDefault();
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
@@ -97,7 +102,7 @@ class PopoverTriggerState {
 				//
 				onpointerdown: this.onpointerdown,
 				onkeydown: this.onkeydown,
-				onpointerup: this.onpointerup,
+				onclick: this.onclick,
 			}) as const
 	);
 }
@@ -158,14 +163,14 @@ class PopoverCloseState {
 		this.onkeydown = this.onkeydown.bind(this);
 	}
 
-	onclick(e: BitsPointerEvent) {
-		this.#root.close();
+	onclick(_: BitsPointerEvent) {
+		this.#root.handleClose();
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
 		if (!(e.key === kbd.ENTER || e.key === kbd.SPACE)) return;
 		e.preventDefault();
-		this.#root.close();
+		this.#root.handleClose();
 	}
 
 	props = $derived.by(

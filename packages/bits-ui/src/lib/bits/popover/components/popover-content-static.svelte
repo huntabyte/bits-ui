@@ -35,13 +35,13 @@
 	function handleInteractOutside(e: PointerEvent) {
 		onInteractOutside(e);
 		if (e.defaultPrevented) return;
-		contentState.root.close();
+		contentState.root.handleClose();
 	}
 
 	function handleEscapeKeydown(e: KeyboardEvent) {
 		onEscapeKeydown(e);
 		if (e.defaultPrevented) return;
-		contentState.root.close();
+		contentState.root.handleClose();
 	}
 
 	function handleCloseAutoFocus(e: Event) {

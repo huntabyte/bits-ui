@@ -7,6 +7,7 @@
 	import { useId } from "$lib/internal/use-id.js";
 	import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
 	import PopperLayerForceMount from "$lib/bits/utilities/popper-layer/popper-layer-force-mount.svelte";
+	import { isHTMLElement } from "$lib/internal/is.js";
 
 	let {
 		child,
@@ -35,13 +36,14 @@
 	function handleInteractOutside(e: PointerEvent) {
 		onInteractOutside(e);
 		if (e.defaultPrevented) return;
-		contentState.root.close();
+		if (isHTMLElement(e.target) && e.target.closest("[data-popover-trigger")) return;
+		contentState.root.handleClose();
 	}
 
 	function handleEscapeKeydown(e: KeyboardEvent) {
 		onEscapeKeydown(e);
 		if (e.defaultPrevented) return;
-		contentState.root.close();
+		contentState.root.handleClose();
 	}
 
 	function handleCloseAutoFocus(e: Event) {
