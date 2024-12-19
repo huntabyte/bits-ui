@@ -45,6 +45,7 @@ async function open(props: DialogTestProps = {}) {
 	const content = queryByTestId("content");
 	expect(content).toBeNull();
 	await user.pointerDownUp(trigger);
+	await tick();
 	const contentAfter = getByTestId("content");
 	expect(contentAfter).not.toBeNull();
 	return { getByTestId, queryByTestId, user };
@@ -153,14 +154,14 @@ describe("dialog", () => {
 		const trigger = getByTestId("trigger");
 		const binding = getByTestId("binding");
 		expect(binding).toHaveTextContent("false");
-		await user.click(trigger);
+		await user.pointerDownUp(trigger);
 		expect(binding).toHaveTextContent("true");
 		await user.keyboard(kbd.ESCAPE);
 		expect(binding).toHaveTextContent("false");
 
 		const toggle = getByTestId("toggle");
 		expectIsClosed(queryByTestId);
-		await user.click(toggle);
+		await user.pointerDownUp(toggle);
 		await expectIsOpen(queryByTestId);
 	});
 
