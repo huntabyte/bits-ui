@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.74
+
+### Patch Changes
+
+-   revert to `onclick` events for most components except where it makes sense (like menus, select, etc.) ([#1011](https://github.com/huntabyte/bits-ui/pull/1011))
+
 ## 1.0.0-next.73
 
 ### Patch Changes
