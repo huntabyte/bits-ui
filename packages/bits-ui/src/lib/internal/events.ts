@@ -63,21 +63,38 @@ export function createCustomEvent<T = unknown>(
 	type CustomEventType = CustomEvent<T>;
 	type EventListener = (event: CustomEventType) => void;
 
-	function dispatch(element: HTMLElement, detail?: T) {
+	/**
+	 * Dispatches a custom event on the specified element with the given detail.
+	 *
+	 * @returns The dispatched event.
+	 */
+	function dispatch(element: HTMLElement, detail?: T): CustomEvent<T> {
 		const event = new CustomEvent<T>(eventName, {
 			...options,
 			detail,
 		});
 		element.dispatchEvent(event);
+		return event;
 	}
 
-	function listen(element: EventTarget, callback: EventListener) {
+	/**
+	 *
+	 * Listens for a custom event on the specified element and calls the given callback
+	 * when the event is triggered.
+	 *
+	 * @returns A function that removes the event listener from the target element(s).
+	 */
+	function listen(
+		element: EventTarget,
+		callback: EventListener,
+		options?: AddEventListenerOptions
+	) {
 		const handler = (event: Event) => {
 			callback(event as CustomEventType);
 		};
 
 		// @ts-expect-error shh
-		return addEventListener(element, eventName, handler);
+		return addEventListener(element, eventName, handler, options);
 	}
 
 	return [dispatch, listen] as const;
