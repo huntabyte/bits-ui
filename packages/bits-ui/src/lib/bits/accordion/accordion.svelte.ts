@@ -1,6 +1,7 @@
 import { afterTick, useRefById } from "svelte-toolbelt";
+import { watch } from "runed";
 import type { Box, ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import type { BitsKeyboardEvent, BitsPointerEvent, WithRefProps } from "$lib/internal/types.js";
+import type { BitsKeyboardEvent, BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
 import {
 	getAriaDisabled,
 	getAriaExpanded,
@@ -213,9 +214,8 @@ class AccordionTriggerState {
 		this.#root = itemState.root;
 		this.#id = props.id;
 		this.#ref = props.ref;
-		this.onpointerdown = this.onpointerdown.bind(this);
-		this.onpointerup = this.onpointerup.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
+		this.onclick = this.onclick.bind(this);
 
 		useRefById({
 			id: props.id,
@@ -223,18 +223,10 @@ class AccordionTriggerState {
 		});
 	}
 
-	onpointerdown(e: BitsPointerEvent) {
+	onclick(e: BitsMouseEvent) {
 		if (this.#isDisabled) return;
-		if (e.pointerType === "touch" || e.button !== 0) return e.preventDefault();
+		if (e.button !== 0) return e.preventDefault();
 		this.#itemState.updateValue();
-	}
-
-	onpointerup(e: BitsPointerEvent) {
-		if (this.#isDisabled) return;
-		if (e.pointerType === "touch") {
-			e.preventDefault();
-			this.#itemState.updateValue();
-		}
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
@@ -261,8 +253,7 @@ class AccordionTriggerState {
 				[ACCORDION_TRIGGER_ATTR]: "",
 				tabindex: 0,
 				//
-				onpointerdown: this.onpointerdown,
-				onpointerup: this.onpointerup,
+				onclick: this.onclick,
 				onkeydown: this.onkeydown,
 			}) as const
 	);
@@ -311,11 +302,8 @@ class AccordionContentState {
 			};
 		});
 
-		$effect(() => {
-			this.present;
-			const node = this.#ref.current;
+		watch([() => this.present, () => this.#ref.current], ([_, node]) => {
 			if (!node) return;
-
 			afterTick(() => {
 				if (!this.#ref.current) return;
 				// get the dimensions of the element

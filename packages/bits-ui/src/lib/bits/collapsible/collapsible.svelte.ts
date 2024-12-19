@@ -3,7 +3,7 @@ import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box
 import { getAriaExpanded, getDataDisabled, getDataOpenClosed } from "$lib/internal/attrs.js";
 import { createContext } from "$lib/internal/create-context.js";
 import { kbd } from "$lib/internal/kbd.js";
-import type { BitsKeyboardEvent, BitsPointerEvent } from "$lib/internal/types.js";
+import type { BitsKeyboardEvent, BitsMouseEvent, BitsPointerEvent } from "$lib/internal/types.js";
 
 const COLLAPSIBLE_ROOT_ATTR = "data-collapsible-root";
 const COLLAPSIBLE_CONTENT_ATTR = "data-collapsible-content";
@@ -176,8 +176,7 @@ class CollapsibleTriggerState {
 		this.#ref = props.ref;
 		this.#disabled = props.disabled;
 
-		this.onpointerdown = this.onpointerdown.bind(this);
-		this.onpointerup = this.onpointerup.bind(this);
+		this.onclick = this.onclick.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
 
 		useRefById({
@@ -186,23 +185,17 @@ class CollapsibleTriggerState {
 		});
 	}
 
-	onpointerdown(e: BitsPointerEvent) {
+	onclick(e: BitsMouseEvent) {
 		if (this.#isDisabled) return;
-		if (e.pointerType === "touch" || e.button !== 0) return e.preventDefault();
+		if (e.button !== 0) return e.preventDefault();
 		this.#root.toggleOpen();
-	}
-
-	onpointerup(e: BitsPointerEvent) {
-		if (this.#isDisabled) return;
-		if (e.pointerType === "touch") {
-			e.preventDefault();
-			this.#root.toggleOpen();
-		}
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
 		if (this.#isDisabled) return;
+
 		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
+			e.preventDefault();
 			this.#root.toggleOpen();
 		}
 	}
@@ -219,8 +212,7 @@ class CollapsibleTriggerState {
 				"data-disabled": getDataDisabled(this.#isDisabled),
 				[COLLAPSIBLE_TRIGGER_ATTR]: "",
 				//
-				onpointerdown: this.onpointerdown,
-				onpointerup: this.onpointerup,
+				onclick: this.onclick,
 				onkeydown: this.onkeydown,
 			}) as const
 	);

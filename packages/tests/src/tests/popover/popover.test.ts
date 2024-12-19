@@ -1,7 +1,7 @@
 import { render, waitFor } from "@testing-library/svelte/svelte5";
 import { axe } from "jest-axe";
 import { describe, it, vi } from "vitest";
-import { type Component, tick } from "svelte";
+import type { Component } from "svelte";
 import { getTestKbd, setupUserEvents } from "../utils.js";
 import PopoverTest, { type PopoverTestProps } from "./popover-test.svelte";
 import PopoverForceMountTest, {
@@ -29,7 +29,7 @@ async function open(props: PopoverTestProps = {}, openWith: "click" | (string & 
 	const { trigger, getByTestId, queryByTestId, user, getContent, ...returned } = setup(props);
 	expect(getContent()).toBeNull();
 	if (openWith === "click") {
-		await user.click(trigger);
+		await user.pointerDownUp(trigger);
 	} else {
 		trigger.focus();
 		await user.keyboard(openWith);
@@ -88,7 +88,7 @@ describe("popover", () => {
 	it("should close when the close button is clicked", async () => {
 		const { user, getContent, getByTestId } = await open();
 		const close = getByTestId("close");
-		await user.click(close);
+		await user.pointerDownUp(close);
 		expect(getContent()).toBeNull();
 	});
 
@@ -151,7 +151,7 @@ describe("popover", () => {
 			},
 		});
 		const outside = getByTestId("outside");
-		await user.click(outside);
+		await user.pointerDownUp(outside);
 		expect(getContent()).not.toBeNull();
 	});
 
@@ -184,7 +184,7 @@ describe("popover", () => {
 			PopoverForceMountTest
 		);
 		expect(queryByTestId("content")).toBeNull();
-		await user.click(trigger);
+		await user.pointerDownUp(trigger);
 		const content = getByTestId("content");
 		expect(content).toBeVisible();
 	});
