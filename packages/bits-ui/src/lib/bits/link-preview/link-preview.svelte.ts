@@ -29,7 +29,7 @@ class LinkPreviewRootState {
 	containsSelection = $state(false);
 	timeout: number | null = null;
 	contentNode = $state<HTMLElement | null>(null);
-	contentId = $state<string | undefined>(undefined);
+	contentId = $derived(this.contentNode?.id);
 	contentMounted = $state(false);
 	triggerNode = $state<HTMLElement | null>(null);
 	isPointerInTransit = box(false);
@@ -202,7 +202,6 @@ class LinkPreviewContentState {
 			ref: this.#ref,
 			onRefChange: (node) => {
 				this.root.contentNode = node;
-				this.root.contentId = node?.id;
 			},
 			deps: () => this.root.open.current,
 		});

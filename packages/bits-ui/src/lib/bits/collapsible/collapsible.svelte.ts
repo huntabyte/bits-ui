@@ -24,7 +24,7 @@ class CollapsibleRootState {
 	open: CollapsibleRootStateProps["open"];
 	disabled: CollapsibleRootStateProps["disabled"];
 	contentNode = $state<HTMLElement | null>(null);
-	contentId = $state<string | undefined>(undefined);
+	contentId = $derived(this.contentNode?.id);
 
 	constructor(props: CollapsibleRootStateProps) {
 		this.open = props.open;
@@ -87,7 +87,6 @@ class CollapsibleContentState {
 			deps: () => this.present,
 			onRefChange: (node) => {
 				this.root.contentNode = node;
-				this.root.contentId = node?.id;
 			},
 		});
 
