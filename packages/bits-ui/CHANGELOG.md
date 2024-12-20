@@ -1,5 +1,11 @@
 # bits-ui
 
+## 0.22.0
+
+### Minor Changes
+
+-   Resolves peer dependency issues for Svelte 5 projects ([#868](https://github.com/huntabyte/bits-ui/pull/868))
+
 ## 1.0.0-next.74
 
 ### Patch Changes
