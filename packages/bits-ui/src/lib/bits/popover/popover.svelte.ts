@@ -18,7 +18,6 @@ class PopoverRootState {
 	open: PopoverRootStateProps["open"];
 	contentNode = $state<HTMLElement | null>(null);
 	triggerNode = $state<HTMLElement | null>(null);
-	contentId = $derived(this.contentNode?.id);
 
 	constructor(props: PopoverRootStateProps) {
 		this.open = props.open;
@@ -83,8 +82,8 @@ class PopoverTriggerState {
 	}
 
 	#getAriaControls() {
-		if (this.#root.open.current && this.#root.contentId) {
-			return this.#root.contentId;
+		if (this.#root.open.current && this.#root.contentNode?.id) {
+			return this.#root.contentNode?.id;
 		}
 		return undefined;
 	}

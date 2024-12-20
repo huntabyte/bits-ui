@@ -24,7 +24,6 @@ class CollapsibleRootState {
 	open: CollapsibleRootStateProps["open"];
 	disabled: CollapsibleRootStateProps["disabled"];
 	contentNode = $state<HTMLElement | null>(null);
-	contentId = $derived(this.contentNode?.id);
 
 	constructor(props: CollapsibleRootStateProps) {
 		this.open = props.open;
@@ -205,7 +204,7 @@ class CollapsibleTriggerState {
 				id: this.#id.current,
 				type: "button",
 				disabled: this.#isDisabled,
-				"aria-controls": this.#root.contentId,
+				"aria-controls": this.#root.contentNode?.id,
 				"aria-expanded": getAriaExpanded(this.#root.open.current),
 				"data-state": getDataOpenClosed(this.#root.open.current),
 				"data-disabled": getDataDisabled(this.#isDisabled),
