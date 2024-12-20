@@ -215,17 +215,17 @@ class TabsTriggerState {
 		this.#root.setValue(this.#value.current);
 	}
 
-	onfocus = (_: BitsFocusEvent) => {
+	onfocus(_: BitsFocusEvent) {
 		if (this.#root.activationMode.current !== "automatic" || this.#isDisabled) return;
 		this.#activate();
-	};
+	}
 
-	onclick = (_: BitsMouseEvent) => {
+	onclick(_: BitsMouseEvent) {
 		if (this.#isDisabled) return;
 		this.#activate();
-	};
+	}
 
-	onkeydown = (e: BitsKeyboardEvent) => {
+	onkeydown(e: BitsKeyboardEvent) {
 		if (this.#isDisabled) return;
 		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
 			e.preventDefault();
@@ -233,7 +233,7 @@ class TabsTriggerState {
 			return;
 		}
 		this.#root.rovingFocusGroup.handleKeydown(this.#ref.current, e);
-	};
+	}
 
 	props = $derived.by(
 		() =>

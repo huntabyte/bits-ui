@@ -17,7 +17,6 @@ type PopoverRootStateProps = WritableBoxedValues<{
 class PopoverRootState {
 	open: PopoverRootStateProps["open"];
 	contentNode = $state<HTMLElement | null>(null);
-	contentId = $state<string | undefined>(undefined);
 	triggerNode = $state<HTMLElement | null>(null);
 
 	constructor(props: PopoverRootStateProps) {
@@ -83,8 +82,8 @@ class PopoverTriggerState {
 	}
 
 	#getAriaControls() {
-		if (this.#root.open.current && this.#root.contentId) {
-			return this.#root.contentId;
+		if (this.#root.open.current && this.#root.contentNode?.id) {
+			return this.#root.contentNode?.id;
 		}
 		return undefined;
 	}
@@ -124,22 +123,24 @@ class PopoverContentState {
 			deps: () => this.root.open.current,
 			onRefChange: (node) => {
 				this.root.contentNode = node;
-				this.root.contentId = node?.id;
 			},
 		});
 	}
 
 	snippetProps = $derived.by(() => ({ open: this.root.open.current }));
 
-	props = $derived.by(() => ({
-		id: this.#id.current,
-		tabindex: -1,
-		"data-state": getDataOpenClosed(this.root.open.current),
-		"data-popover-content": "",
-		style: {
-			pointerEvents: "auto",
-		},
-	}));
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.current,
+				tabindex: -1,
+				"data-state": getDataOpenClosed(this.root.open.current),
+				"data-popover-content": "",
+				style: {
+					pointerEvents: "auto",
+				},
+			}) as const
+	);
 }
 
 type PopoverCloseStateProps = WithRefProps;
