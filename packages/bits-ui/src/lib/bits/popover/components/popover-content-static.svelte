@@ -35,7 +35,7 @@
 	function handleInteractOutside(e: PointerEvent) {
 		onInteractOutside(e);
 		if (e.defaultPrevented) return;
-		contentState.root.handleClose();
+		contentState.handleInteractOutside(e);
 	}
 
 	function handleEscapeKeydown(e: KeyboardEvent) {
