@@ -9,6 +9,7 @@ import type {
 	BitsPointerEvent,
 	WithRefProps,
 } from "$lib/internal/types.js";
+import { isHTMLElement } from "$lib/internal/is.js";
 
 type PopoverRootStateProps = WritableBoxedValues<{
 	open: boolean;
@@ -125,6 +126,15 @@ class PopoverContentState {
 				this.root.contentNode = node;
 			},
 		});
+
+		this.handleInteractOutside = this.handleInteractOutside.bind(this);
+	}
+
+	handleInteractOutside(e: PointerEvent) {
+		if (!isHTMLElement(e.target)) return;
+		const closestTrigger = e.target.closest(`[data-popover-trigger]`);
+		if (closestTrigger === this.root.triggerNode) return;
+		this.root.handleClose();
 	}
 
 	snippetProps = $derived.by(() => ({ open: this.root.open.current }));
