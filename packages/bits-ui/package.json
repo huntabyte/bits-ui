@@ -51,7 +51,7 @@
 		"@floating-ui/dom": "^1.6.7",
 		"@internationalized/date": "^3.5.6",
 		"esm-env": "^1.1.2",
-		"runed": "^0.15.2",
+		"runed": "^0.22.0",
 		"svelte-toolbelt": "^0.7.0"
 	},
 	"peerDependencies": {

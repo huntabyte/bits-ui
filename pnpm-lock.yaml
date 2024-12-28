@@ -60,8 +60,8 @@ importers:
         specifier: ^1.1.2
         version: 1.1.4
       runed:
-        specifier: ^0.15.2
-        version: 0.15.2(svelte@5.16.0)
+        specifier: ^0.22.0
+        version: 0.22.0(svelte@5.16.0)
       svelte-toolbelt:
         specifier: ^0.7.0
         version: 0.7.0(svelte@5.16.0)
@@ -3984,6 +3984,11 @@ packages:
 
   runed@0.20.0:
     resolution: {integrity: sha512-YqPxaUdWL5nUXuSF+/v8a+NkVN8TGyEGbQwTA25fLY35MR/2bvZ1c6sCbudoo1kT4CAJPh4kUkcgGVxW127WKw==}
+    peerDependencies:
+      svelte: ^5.7.0
+
+  runed@0.22.0:
+    resolution: {integrity: sha512-ZWVXWhOr0P5xdNgtviz6D1ivLUDWKLCbeC5SUEJ3zBkqLReVqWHenFxMNFeFaiC5bfxhFxyxzyzB+98uYFtwdA==}
     peerDependencies:
       svelte: ^5.7.0
 
@@ -8919,6 +8924,11 @@ snapshots:
   runed@0.20.0(svelte@5.16.0):
     dependencies:
       esm-env: 1.1.4
+      svelte: 5.16.0
+
+  runed@0.22.0(svelte@5.16.0):
+    dependencies:
+      esm-env: 1.2.1
       svelte: 5.16.0
 
   rxjs@7.8.1:
