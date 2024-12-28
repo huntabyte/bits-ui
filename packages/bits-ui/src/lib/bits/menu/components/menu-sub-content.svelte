@@ -69,7 +69,7 @@
 		if (e.defaultPrevented) return;
 		e.preventDefault();
 		if (
-			subContentState.parentMenu.root.isUsingKeyboard &&
+			subContentState.parentMenu.root.isUsingKeyboard.current &&
 			subContentState.parentMenu.contentNode
 		) {
 			dispatchMenuOpen(subContentState.parentMenu.contentNode);

@@ -41,14 +41,13 @@
 	function handleEscapeKeydown(e: KeyboardEvent) {
 		onEscapeKeydown(e);
 		if (e.defaultPrevented) return;
-		contentState.root.handleClose();
+		contentState.handleEscapeKeydown(e);
 	}
 
 	function handleCloseAutoFocus(e: Event) {
 		onCloseAutoFocus(e);
 		if (e.defaultPrevented) return;
-		e.preventDefault();
-		contentState.root.triggerNode?.focus();
+		contentState.handleCloseAutoFocus(e);
 	}
 </script>
 

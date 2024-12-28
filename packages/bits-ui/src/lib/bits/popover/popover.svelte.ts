@@ -1,4 +1,5 @@
-import { type ReadableBoxedValues, afterSleep, afterTick, useRefById } from "svelte-toolbelt";
+import { type ReadableBoxedValues, useRefById } from "svelte-toolbelt";
+import { IsUsingKeyboard } from "$lib/bits/utilities/is-using-keyboard/is-using-keyboard.svelte.js";
 import type { WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
@@ -19,6 +20,7 @@ class PopoverRootState {
 	open: PopoverRootStateProps["open"];
 	contentNode = $state<HTMLElement | null>(null);
 	triggerNode = $state<HTMLElement | null>(null);
+	isUsingKeyboard = new IsUsingKeyboard();
 
 	constructor(props: PopoverRootStateProps) {
 		this.open = props.open;
@@ -128,6 +130,8 @@ class PopoverContentState {
 		});
 
 		this.handleInteractOutside = this.handleInteractOutside.bind(this);
+		this.handleEscapeKeydown = this.handleEscapeKeydown.bind(this);
+		this.handleCloseAutoFocus = this.handleCloseAutoFocus.bind(this);
 	}
 
 	handleInteractOutside(e: PointerEvent) {
@@ -135,6 +139,17 @@ class PopoverContentState {
 		const closestTrigger = e.target.closest(`[data-popover-trigger]`);
 		if (closestTrigger === this.root.triggerNode) return;
 		this.root.handleClose();
+	}
+
+	handleEscapeKeydown(_: KeyboardEvent) {
+		this.root.handleClose();
+	}
+
+	handleCloseAutoFocus(e: Event) {
+		if (this.root.isUsingKeyboard.current) {
+			e.preventDefault();
+			this.root.triggerNode?.focus();
+		}
 	}
 
 	snippetProps = $derived.by(() => ({ open: this.root.open.current }));

@@ -1,13 +1,7 @@
-import {
-	afterTick,
-	box,
-	executeCallbacks,
-	mergeProps,
-	onDestroyEffect,
-	useRefById,
-} from "svelte-toolbelt";
-import { tick, untrack } from "svelte";
+import { afterTick, box, mergeProps, onDestroyEffect, useRefById } from "svelte-toolbelt";
+import { untrack } from "svelte";
 import { IsFocusWithin } from "runed";
+import { IsUsingKeyboard } from "../utilities/is-using-keyboard/is-using-keyboard.svelte.js";
 import {
 	FIRST_LAST_KEYS,
 	type GraceIntent,
@@ -20,7 +14,7 @@ import {
 } from "./utils.js";
 import { focusFirst } from "$lib/internal/focus.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import { addEventListener, createCustomEvent } from "$lib/internal/events.js";
+import { createCustomEvent } from "$lib/internal/events.js";
 import type {
 	AnyFn,
 	BitsFocusEvent,
@@ -81,49 +75,13 @@ export const [dispatchMenuOpen, listenMenuOpen] = createCustomEvent("bitsmenuope
 class MenuRootState {
 	onClose: MenuRootStateProps["onClose"];
 	variant: MenuRootStateProps["variant"];
-	isUsingKeyboard = $state(false);
+	isUsingKeyboard = new IsUsingKeyboard();
 	dir: MenuRootStateProps["dir"];
 
 	constructor(props: MenuRootStateProps) {
 		this.onClose = props.onClose;
 		this.dir = props.dir;
 		this.variant = props.variant;
-
-		$effect(() => {
-			const callbacksToDispose: AnyFn[] = [];
-
-			const handlePointer = (_: PointerEvent) => {
-				this.isUsingKeyboard = false;
-			};
-
-			const handleKeydown = (_: KeyboardEvent) => {
-				this.isUsingKeyboard = true;
-
-				const disposePointerDown = addEventListener(
-					document,
-					"pointerdown",
-					handlePointer,
-					{ capture: true, once: true }
-				);
-				const disposePointerMove = addEventListener(
-					document,
-					"pointermove",
-					handlePointer,
-					{ capture: true, once: true }
-				);
-
-				callbacksToDispose.push(disposePointerDown, disposePointerMove);
-			};
-
-			const disposeKeydown = addEventListener(document, "keydown", handleKeydown, {
-				capture: true,
-			});
-			callbacksToDispose.push(disposeKeydown);
-
-			return () => {
-				executeCallbacks(callbacksToDispose);
-			};
-		});
 	}
 
 	getAttr(name: string) {
@@ -238,7 +196,7 @@ class MenuContentState {
 			if (!contentNode) return;
 			const handler = () => {
 				afterTick(() => {
-					if (!this.parentMenu.root.isUsingKeyboard) return;
+					if (!this.parentMenu.root.isUsingKeyboard.current) return;
 					this.rovingFocusGroup.focusFirstCandidate();
 				});
 			};
@@ -318,7 +276,7 @@ class MenuContentState {
 	}
 
 	onfocus(_: BitsFocusEvent) {
-		if (!this.parentMenu.root.isUsingKeyboard) return;
+		if (!this.parentMenu.root.isUsingKeyboard.current) return;
 		afterTick(() => this.rovingFocusGroup.focusFirstCandidate());
 	}
 
@@ -515,7 +473,7 @@ class MenuItemState {
 		this.#onSelect.current(selectEvent);
 		afterTick(() => {
 			if (selectEvent.defaultPrevented) {
-				this.#item.content.parentMenu.root.isUsingKeyboard = false;
+				this.#item.content.parentMenu.root.isUsingKeyboard.current = false;
 				return;
 			}
 			if (this.#closeOnSelect.current) {

@@ -67,7 +67,7 @@
 		if (e.defaultPrevented) return;
 		afterTick(() => {
 			e.preventDefault();
-			if (subContentState.parentMenu.root.isUsingKeyboard) {
+			if (subContentState.parentMenu.root.isUsingKeyboard.current) {
 				const subContentEl = subContentState.parentMenu.contentNode;
 				subContentEl?.focus();
 			}
