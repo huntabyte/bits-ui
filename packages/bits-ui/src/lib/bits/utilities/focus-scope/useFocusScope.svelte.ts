@@ -1,5 +1,5 @@
 import { untrack } from "svelte";
-import { type Getter, afterTick, box, executeCallbacks, useRefById } from "svelte-toolbelt";
+import { afterTick, box, executeCallbacks, useRefById } from "svelte-toolbelt";
 import {
 	createFocusScopeAPI,
 	createFocusScopeStack,
