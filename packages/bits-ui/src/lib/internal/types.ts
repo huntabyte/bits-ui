@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Snippet } from "svelte";
 
 import type { Box, ReadableBoxedValues, WritableBoxedValues } from "./box.svelte.js";
@@ -74,7 +75,6 @@ export type Without<T extends object, U extends object> = Omit<T, keyof U>;
 export type Arrayable<T> = T[] | T;
 
 export type Fn = () => void;
-// eslint-disable-next-line ts/no-explicit-any
 export type AnyFn = (...args: any[]) => any;
 
 export type WithRefProps<T = {}> = T &

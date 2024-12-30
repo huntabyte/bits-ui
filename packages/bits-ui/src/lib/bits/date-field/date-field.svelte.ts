@@ -1440,7 +1440,7 @@ class DateFieldYearSegmentState {
 		}
 	}
 
-	onfocusout(e: BitsFocusEvent) {
+	onfocusout(_: BitsFocusEvent) {
 		this.#root.states.year.hasLeftFocus = true;
 		this.#pressedKeys = [];
 		this.#resetBackspaceCount();

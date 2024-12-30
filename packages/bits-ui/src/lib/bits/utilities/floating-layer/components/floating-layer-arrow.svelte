@@ -14,8 +14,7 @@
 		),
 	});
 
-	// explicit any here because the `asChild` and `child` are causing this to never out
-	const mergedProps = $derived<any>(mergeProps(restProps, arrowState.props));
+	const mergedProps = $derived(mergeProps(restProps, arrowState.props));
 </script>
 
 <Arrow {...mergedProps} />

@@ -26,7 +26,6 @@ import {
 	createDataAttrSchema,
 	createFunctionProp,
 	createStringProp,
-	createUnionProp,
 	dirProp,
 	dismissibleLayerProps,
 	escapeLayerProps,

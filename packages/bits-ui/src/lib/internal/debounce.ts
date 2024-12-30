@@ -1,4 +1,4 @@
-// eslint-disable-next-line ts/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function debounce<T extends (...args: any[]) => any>(fn: T, wait = 500) {
 	let timeout: NodeJS.Timeout | null = null;
 

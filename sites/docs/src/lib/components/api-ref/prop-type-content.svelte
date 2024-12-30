@@ -58,6 +58,7 @@
 		>
 			<div class="max-h-[400px] max-w-[700px] overflow-auto">
 				<Code class="h-auto bg-transparent px-0 tracking-tight text-foreground">
+					<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 					{@html parseTypeDef(typeDef)}
 				</Code>
 			</div>

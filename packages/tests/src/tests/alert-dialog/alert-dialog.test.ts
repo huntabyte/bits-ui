@@ -5,7 +5,6 @@ import {
 	screen,
 	waitFor,
 } from "@testing-library/svelte/svelte5";
-import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import type { Component } from "svelte";

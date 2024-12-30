@@ -1,5 +1,5 @@
-/* eslint-disable ts/no-explicit-any */
-import { render, waitFor } from "@testing-library/svelte/svelte5";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { render } from "@testing-library/svelte/svelte5";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import { type ComponentProps, tick } from "svelte";

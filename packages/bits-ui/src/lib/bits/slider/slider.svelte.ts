@@ -344,7 +344,6 @@ class SliderRootState {
 
 		let count = Math.ceil(difference / step);
 
-		// eslint-disable-next-line eqeqeq
 		if (difference % step == 0) {
 			count++;
 		}

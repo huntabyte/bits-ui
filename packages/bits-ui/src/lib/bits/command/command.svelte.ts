@@ -65,9 +65,6 @@ type CommandRootStateProps = WithRefProps<
 		}>
 >;
 
-// eslint-disable-next-line ts/no-explicit-any
-type SetState = <K extends keyof CommandState>(key: K, value: CommandState[K], opts?: any) => void;
-
 class CommandRootState {
 	#updateScheduled = false;
 	allItems = new Set<string>();

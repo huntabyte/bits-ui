@@ -311,10 +311,10 @@ function createWrappedEvent(e: PointerEvent | MouseEvent): PointerEvent {
 				return isPrevented;
 			}
 			if (prop in target) {
-				// eslint-disable-next-line ts/no-explicit-any
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				return (target as any)[prop];
 			}
-			// eslint-disable-next-line ts/no-explicit-any
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			return (e as any)[prop];
 		},
 	});

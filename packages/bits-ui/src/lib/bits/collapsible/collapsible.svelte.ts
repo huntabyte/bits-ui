@@ -99,7 +99,7 @@ class CollapsibleContentState {
 			};
 		});
 
-		watch([() => this.present, () => this.#ref.current], ([present, node]) => {
+		watch([() => this.#ref.current, () => this.present], ([node]) => {
 			if (!node) return;
 			afterTick(() => {
 				if (!this.#ref.current) return;

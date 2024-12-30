@@ -29,7 +29,7 @@ export type CheckboxRootPropsWithoutHTML = WithChild<
 		 *
 		 * @defaultValue undefined
 		 */
-		// eslint-disable-next-line ts/no-explicit-any
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		name?: any;
 
 		/**
@@ -117,7 +117,7 @@ export type CheckboxGroupPropsWithoutHTML = WithChild<{
 	 *
 	 * @defaultValue undefined
 	 */
-	// eslint-disable-next-line ts/no-explicit-any
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	name?: any;
 
 	/**

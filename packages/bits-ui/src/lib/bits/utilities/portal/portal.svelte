@@ -37,6 +37,7 @@
 		return localTarget;
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	let instance: any;
 
 	function unmountInstance() {
@@ -52,6 +53,7 @@
 			return;
 		}
 		instance = mount(PortalConsumer, {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			target: target as any,
 			props: { children },
 			context,

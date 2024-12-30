@@ -126,7 +126,7 @@ class RadioGroupItemState {
 		this.onfocus = this.onfocus.bind(this);
 	}
 
-	onclick(e: BitsMouseEvent) {
+	onclick(_: BitsMouseEvent) {
 		if (this.#disabled.current) return;
 		this.#root.setValue(this.#value.current);
 	}

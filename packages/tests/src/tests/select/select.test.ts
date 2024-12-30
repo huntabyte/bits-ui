@@ -1,7 +1,7 @@
 import { render, waitFor } from "@testing-library/svelte";
 import { axe } from "jest-axe";
 import { describe, it, vi } from "vitest";
-import { type Component, tick } from "svelte";
+import { type Component } from "svelte";
 import { type AnyFn, getTestKbd, setupUserEvents, sleep } from "../utils.js";
 import { getTestId } from "../helpers/select.js";
 import SelectTest from "./select-test.svelte";
@@ -39,7 +39,7 @@ const testItems: Item[] = [
 function setupSingle(
 	props: Partial<SelectSingleTestProps | SelectForceMountTestProps> = {},
 	items: Item[] = testItems,
-	// eslint-disable-next-line ts/no-explicit-any
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	component: Component<any, any, any> = SelectTest
 ) {
 	const user = setupUserEvents();
@@ -103,7 +103,7 @@ function setupMultiple(props: Partial<SelectMultipleTestProps> = {}, items: Item
 async function openSingle(
 	props: Partial<SelectSingleTestProps> = {},
 	openWith: "click" | "type" | (string & {}) = "click",
-	searchValue?: string
+	_searchValue?: string
 ) {
 	const returned = setupSingle(props);
 
@@ -130,7 +130,7 @@ async function openSingle(
 async function openMultiple(
 	props: Partial<SelectMultipleTestProps> = {},
 	openWith: "click" | "type" | (string & {}) = "click",
-	searchValue?: string
+	_searchValue?: string
 ) {
 	const returned = setupMultiple(props);
 	const { queryByTestId, getByTestId, user, trigger } = returned;

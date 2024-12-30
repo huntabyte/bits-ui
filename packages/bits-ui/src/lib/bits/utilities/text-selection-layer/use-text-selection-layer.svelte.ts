@@ -1,4 +1,3 @@
-import { untrack } from "svelte";
 import {
 	type ReadableBox,
 	box,
